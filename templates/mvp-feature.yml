@@ -1,0 +1,56 @@
+name: MVP Feature
+about: MVP 단위 기능 작업 기준서
+labels: [mvp]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: 목표
+      description: 한 문장 목표와 해결하려는 문제를 적는다.
+    validations:
+      required: true
+  - type: textarea
+    id: flow
+    attributes:
+      label: 핵심 흐름
+      description: 플레이어 또는 시스템 흐름을 적는다.
+    validations:
+      required: true
+  - type: textarea
+    id: benchmark
+    attributes:
+      label: 벤치마킹 반영/제외 결론
+      description: 필요한 경우만 작성한다.
+    validations:
+      required: false
+  - type: textarea
+    id: scope
+    attributes:
+      label: 구현 범위
+    validations:
+      required: true
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: 제외 범위
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: 완료 기준
+      description: 조건 → 행동 → 관찰 결과 형태로 적는다.
+    validations:
+      required: true
+  - type: textarea
+    id: risk
+    attributes:
+      label: 위험 / 영향 파일
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: 검증 방법
+    validations:
+      required: true
