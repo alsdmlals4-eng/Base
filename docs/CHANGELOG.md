@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.0.2 - custom instructions and file lifecycle notes
+
+맞춤형 지침과 파일 변경 의도 기록 규칙을 추가했다.
+
+변경:
+
+- `docs/CUSTOM_INSTRUCTIONS_GUIDE.md`를 추가했다.
+- `templates/custom-instructions.gpt.md`를 추가했다.
+- `templates/custom-instructions.codex.md`를 추가했다.
+- `README.md`와 `docs/DOCUMENTATION_MAP.md`에 맞춤형 지침 문서를 추가했다.
+- `docs/AI_SHARED_WORK_RULES.md`에 파일 생성/수정/삭제/이동/이름 변경 시 의도와 영향 기록 규칙을 추가했다.
+- `docs/MVP_WORKFLOW_CHECKLIST.md`에 파일 변경 의도 체크리스트를 추가했다.
+
 ## v1.0.1 - workflow cleanup
 
 공용 규칙 문서 구조를 정리했다.
