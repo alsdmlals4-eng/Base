@@ -16,6 +16,7 @@ Base는 여러 프로젝트에 공통으로 필요한 AI 협업 원칙과 템플
 | 공용 원본 | `docs/MVP_WORKFLOW_CHECKLIST.md` | 실제 작업 시작/종료 체크리스트 |
 | 공용 원본 | `docs/BENCHMARKING_REFERENCE_GUIDE.md` | 벤치마킹 기록과 적용 기준 |
 | 공용 원본 | `docs/DOCUMENTATION_MAP.md` | 공용 문서와 프로젝트 문서의 책임 경계 |
+| 공용 원본 | `docs/CUSTOM_INSTRUCTIONS_GUIDE.md` | ChatGPT/Codex 맞춤형 지침 작성 기준 |
 | 공용 원본 | `docs/CHANGELOG.md` | Base 규칙 변경 기록 |
 | 공용 원본 | `templates/` | 프로젝트용 문서 템플릿 |
 
@@ -35,6 +36,7 @@ Base는 여러 프로젝트에 공통으로 필요한 AI 협업 원칙과 템플
 - `docs/MVP_WORKFLOW_CHECKLIST.md`
 - `docs/BENCHMARKING_REFERENCE_GUIDE.md`
 - `docs/DOCUMENTATION_MAP.md`
+- `docs/CUSTOM_INSTRUCTIONS_GUIDE.md`
 - 필요한 `templates/` 파일
 
 ## 프로젝트에서 새로 작성할 문서
@@ -56,4 +58,5 @@ Base는 여러 프로젝트에 공통으로 필요한 AI 협업 원칙과 템플
 - 엔진, 폴더 구조, 세계관, 데이터, MVP 상태는 프로젝트 전용 문서에 둔다.
 - Issue는 현재 작업 기준서다.
 - Goal은 구현 실행 지시서다.
+- 맞춤형 지침은 짧고 안정적인 행동 원칙만 담고, 상세 정보는 GitHub 문서에 둔다.
 - Base 승격 후보는 사용자 승인 후 Base에 별도 커밋으로 반영한다.
