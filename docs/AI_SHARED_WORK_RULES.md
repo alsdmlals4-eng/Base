@@ -33,6 +33,7 @@ Base 원격은 일상 작업의 직접 의존성이 아니다. 프로젝트는 `
 - `AGENTS.md`: 공용 최상위 원칙
 - `docs/AI_SHARED_WORK_RULES.md`: 공용 AI 작업 원칙
 - `docs/AI_WORKFLOW_RULES.md`: 작업 순서와 Goal 작성 기준
+- `docs/AI_SKILL_ADOPTION_GUIDE.md`: 외부 스킬 라우팅, 권한 점검, context compact 기준
 - `docs/MVP_WORKFLOW_CHECKLIST.md`: MVP 시작과 종료 체크리스트
 - `docs/BENCHMARKING_REFERENCE_GUIDE.md`: 벤치마킹 기록과 적용 기준
 - `docs/DOCUMENTATION_MAP.md`: 공용/전용 문서의 책임 경계

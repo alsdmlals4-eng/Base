@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.1.0 - skill adoption and context compaction
+
+외부 AI 스킬을 공용 규칙에 안전하게 채택하고 긴 작업 context를 줄이는 기준을 추가했다.
+
+변경:
+
+- `docs/AI_SKILL_ADOPTION_GUIDE.md`를 추가했다.
+- 7개 공개 스킬 저장소에서 최소 구현, 간결한 보고, UI brief, feedback loop, 보안 preflight, 최신성 조사, verification 원칙을 추출했다.
+- 외부 스킬은 프로젝트 규칙보다 낮은 선택형 보조 수단으로 정의했다.
+- 플러그인 설치 전 스크립트·hook·MCP·외부 API·쿠키·비밀값·쓰기 권한을 확인하도록 했다.
+- active context capsule과 phase-boundary compact 기준을 추가했다.
+- README, 공용 문서 목록, workflow 문서를 새 가이드에 연결했다.
+
 ## v1.0.2 - custom instructions and file lifecycle notes
 
 맞춤형 지침과 파일 변경 의도 기록 규칙을 추가했다.

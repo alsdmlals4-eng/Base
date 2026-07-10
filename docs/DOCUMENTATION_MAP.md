@@ -13,6 +13,7 @@ Base는 여러 프로젝트에 공통으로 필요한 AI 협업 원칙과 템플
 | 공용 원본 | `AGENTS.md` | 최소 공용 AI 작업 원칙 |
 | 공용 원본 | `docs/AI_SHARED_WORK_RULES.md` | 역할, 범위, 품질 원칙, Base 승격 운영 방식 |
 | 공용 원본 | `docs/AI_WORKFLOW_RULES.md` | 공통 작업 순서와 Goal 작성 기준 |
+| 공용 원본 | `docs/AI_SKILL_ADOPTION_GUIDE.md` | 외부 스킬 채택, 권한 점검, 최소 라우팅, context compact 기준 |
 | 공용 원본 | `docs/MVP_WORKFLOW_CHECKLIST.md` | 실제 작업 시작/종료 체크리스트 |
 | 공용 원본 | `docs/BENCHMARKING_REFERENCE_GUIDE.md` | 벤치마킹 기록과 적용 기준 |
 | 공용 원본 | `docs/DOCUMENTATION_MAP.md` | 공용 문서와 프로젝트 문서의 책임 경계 |
@@ -33,6 +34,7 @@ Base는 여러 프로젝트에 공통으로 필요한 AI 협업 원칙과 템플
 - `AGENTS.md`
 - `docs/AI_SHARED_WORK_RULES.md`
 - `docs/AI_WORKFLOW_RULES.md`
+- `docs/AI_SKILL_ADOPTION_GUIDE.md`
 - `docs/MVP_WORKFLOW_CHECKLIST.md`
 - `docs/BENCHMARKING_REFERENCE_GUIDE.md`
 - `docs/DOCUMENTATION_MAP.md`
