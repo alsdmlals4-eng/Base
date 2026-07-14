@@ -13,12 +13,14 @@ Base는 여러 프로젝트에 공통으로 필요한 AI 협업 원칙과 템플
 | 공용 원본 | `AGENTS.md` | 최소 공용 AI 작업 원칙 |
 | 공용 원본 | `docs/AI_SHARED_WORK_RULES.md` | 역할, 범위, 품질 원칙, Base 승격 운영 방식 |
 | 공용 원본 | `docs/AI_WORKFLOW_RULES.md` | 공통 작업 순서와 Goal 작성 기준 |
+| 공용 원본 | `docs/CONTENT_DESIGN_METHOD.md` | 의도→경험→규칙→흐름 기반 콘텐츠 기획, 첫 10분, PoC, 채택·제외 기준 |
 | 공용 원본 | `docs/AI_SKILL_ADOPTION_GUIDE.md` | 외부 스킬 채택, 권한 점검, 최소 라우팅, context compact 기준 |
 | 공용 원본 | `docs/MVP_WORKFLOW_CHECKLIST.md` | 실제 작업 시작/종료 체크리스트 |
 | 공용 원본 | `docs/BENCHMARKING_REFERENCE_GUIDE.md` | 벤치마킹 기록과 적용 기준 |
 | 공용 원본 | `docs/DOCUMENTATION_MAP.md` | 공용 문서와 프로젝트 문서의 책임 경계 |
 | 공용 원본 | `docs/CUSTOM_INSTRUCTIONS_GUIDE.md` | ChatGPT/Codex 맞춤형 지침 작성 기준 |
 | 공용 원본 | `docs/CHANGELOG.md` | Base 규칙 변경 기록 |
+| 공용 템플릿 | `templates/CONTENT_DESIGN_BRIEF.md` | 핵심 재미·첫 10분·콘텐츠 정체성·PoC를 정리하는 프로젝트용 양식 |
 | 공용 원본 | `templates/` | 프로젝트용 문서 템플릿 |
 
 ## 프로젝트 동기화 규칙
@@ -34,11 +36,13 @@ Base는 여러 프로젝트에 공통으로 필요한 AI 협업 원칙과 템플
 - `AGENTS.md`
 - `docs/AI_SHARED_WORK_RULES.md`
 - `docs/AI_WORKFLOW_RULES.md`
+- `docs/CONTENT_DESIGN_METHOD.md`
 - `docs/AI_SKILL_ADOPTION_GUIDE.md`
 - `docs/MVP_WORKFLOW_CHECKLIST.md`
 - `docs/BENCHMARKING_REFERENCE_GUIDE.md`
 - `docs/DOCUMENTATION_MAP.md`
 - `docs/CUSTOM_INSTRUCTIONS_GUIDE.md`
+- `templates/CONTENT_DESIGN_BRIEF.md`
 - 필요한 `templates/` 파일
 
 ## 프로젝트에서 새로 작성할 문서
