@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.4.0 - content design and first-10-minute validation
+
+기능 목록보다 의도·플레이 경험·규칙·흐름을 먼저 설계하고, 핵심 재미와 첫 10분을 최소 PoC로 검증하는 공용 콘텐츠 기획 기준을 추가했다.
+
+변경:
+
+- `docs/CONTENT_DESIGN_METHOD.md`를 추가했다.
+- 핵심 재미, Dopamine Driven Development, 첫 10분 계약, 콘텐츠 정체성 카드, 정보 역할 분리, PoC 재조정 기준을 정리했다.
+- 콘텐츠를 추가하지 않는 판단과 P0/P1/P2 우선순위 기준을 추가했다.
+- Codex 전달용 사양 항목과 구현 사실·승인 설계·미확정 구분을 명시했다.
+- `templates/CONTENT_DESIGN_BRIEF.md`를 추가했다.
+- README와 문서 역할표에 새 공용 문서와 템플릿을 연결했다.
+
 ## v1.3.0 - resource-aware agent operation
 
 여러 AI와 선택형 보조 도구를 함께 사용할 때 핵심 작업량을 유지하면서 로컬 자원 중복을 줄이는 공용 기준을 추가했다.
