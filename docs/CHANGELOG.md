@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.6.0 - planning, narrative and presentation knowledge expansion
+
+공용 기획 지식 베이스를 전체 기획 체계, 서사·관계, 캐릭터 아트, 대화·이벤트 연출, 기획·조사·인수 실무 스킬과 프로젝트 사례까지 확장했다.
+
+변경:
+
+- `PLANNING_SYSTEM_METHOD.md`를 추가해 상태·방향·분야별 책임 문서·로드맵·검증의 계층을 정리했다.
+- `NARRATIVE_AND_RELATIONSHIP_METHOD.md`를 추가해 장면, 대사 모드, 선택 기억, 관계 태그, 후일담과 데이터 경계를 정의했다.
+- `CHARACTER_AND_NARRATIVE_ART_METHOD.md`를 추가해 초상·표정·캐릭터 자산·생성 이미지·텍스트 분리와 실제 화면 QA를 정리했다.
+- `DIALOGUE_AND_EVENT_PRESENTATION_METHOD.md`를 추가해 대화 UI, 배치, 표정 의미 키, 컷인, 음향, 접근성, 상태 비소유 원칙을 정리했다.
+- `PLANNING_RESEARCH_HANDOFF_SKILL_MATRIX.md`를 추가해 의도 합성, 현재 상태 감사, PoC, 수용 기준, 인수인계와 지식 승격 능력을 계약화했다.
+- urban-legend 프로젝트에서 추출한 장면 중심 UI, 표시명·내부 ID 분리, 대사 밀도, 선택 기억, 프레젠테이션 상태 경계, 텍스트 없는 생성 자산, 문서 생명주기 사례 7건을 추가했다.
+- 프로젝트 방향, 서사, 아트, 연출, handoff 전문 템플릿을 `templates/planning/`에 추가했다.
+- README, Documentation Map, knowledge 인덱스와 사례 인덱스를 새 구조에 맞게 갱신했다.
+- 병렬로 생긴 `docs/planning/` 중복 구조는 canonical `docs/knowledge/`로 통합하고 제거하도록 정리했다.
+
 ## v1.5.0 - shared planning knowledge library
 
 공용 AI 협업 규칙 저장소를 기획·아트·연출·조사·인수인계 방법과 사례를 누적하는 지식 베이스로 확장했다.
