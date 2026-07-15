@@ -12,6 +12,15 @@
 - `제외`: 검토했으나 적용하지 않음.
 - `폐기`: 더 나은 접근으로 대체.
 
+## 벤치마킹 사례
+
+| 사례 | 참고 범위 | 주제 | 상태 |
+|---|---|---|---|
+| `BENCHMARK_MYSTERY_EVIDENCE_REVIEW_CASE.md` | 관찰형 미스터리·추리 게임 | 근거 재열람, 정보 역할, 힌트와 정답의 경계 | 조건부 참고 |
+| `BENCHMARK_CHARACTER_REACTION_AND_LEARNING_FAILURE_CASE.md` | 캐릭터 선택·규칙 학습 게임 | 짧은 동료 반응, 선택 기억, 학습 가능한 실패 | 조건부 참고 |
+
+외부 사례는 원리만 기록한다. 중요한 현재 기능·가격·정책 판단에서는 최신 원본과 1차 출처를 다시 확인한다.
+
 ## OMENWARD 사례
 
 | 사례 | 주제 | 상태 |
@@ -37,6 +46,8 @@
 
 | 문제 | 우선 사례 |
 |---|---|
+| 근거 재열람과 힌트가 정답을 대신함 | `BENCHMARK_MYSTERY_EVIDENCE_REVIEW_CASE.md` |
+| 짧은 동료 반응·실패 학습·선택 기억 | `BENCHMARK_CHARACTER_REACTION_AND_LEARNING_FAILURE_CASE.md` |
 | 화면에 정보가 많아 현재 행동이 묻힘 | `URBAN_LEGEND_SCENE_FIRST_UI_CASE.md` |
 | 공개 명칭 변경과 저장 호환 | `URBAN_LEGEND_DISPLAY_NAME_INTERNAL_ID_CASE.md` |
 | 캐릭터 대사가 기능 흐름을 방해함 | `URBAN_LEGEND_DIALOGUE_DENSITY_BY_CONTEXT_CASE.md` |
