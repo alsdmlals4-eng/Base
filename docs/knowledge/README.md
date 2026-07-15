@@ -34,7 +34,7 @@ Base에 둔다:
 - 현재 프로젝트의 세계관·캐릭터·밸런스 수치.
 - 활성 로드맵, 구현 상태, 정확한 엔진 버전과 파일 경로.
 - 프로젝트 전용 아트 팔레트·스프라이트·사운드.
-- 현재 Issue와 승인된 구현 제안서.
+- 현재 Issue, Work Order와 승인된 구현 제안서.
 - 비공개 원문이나 외부 공개가 허용되지 않은 자료.
 
 사례 문서는 프로젝트 이름을 표시할 수 있지만 활성 기획서 전체를 복제하지 않는다. 사례에는 문제, 판단, 결과, 재사용 가능한 교훈만 남긴다.
@@ -58,6 +58,7 @@ Base에 둔다:
 |---|---|
 | 전체 기획 체계·상태·책임 원본 | `methods/PLANNING_SYSTEM_METHOD.md` |
 | 프로젝트 인수인계·문서 구조 | `methods/PROJECT_HANDOFF_CONTEXT_METHOD.md` |
+| 새 Codex 채팅·Plan Mode 작업 패키지 | `methods/CODEX_PLAN_MODE_WORK_PACKAGE_METHOD.md` |
 | 장면·대사·선택·관계 | `methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md` |
 | 전장·유닛·구조물 아트 | `methods/ART_DIRECTION_METHOD.md` |
 | 캐릭터·초상·서사형 아트 | `methods/CHARACTER_AND_NARRATIVE_ART_METHOD.md` |
@@ -106,9 +107,24 @@ Base에 둔다:
 | `templates/planning/ART_DIRECTION_BRIEF.md` | 시각 약속·스타일 축·자산 티어·QA |
 | `templates/planning/PRESENTATION_PLAN.md` | 시선 흐름·표정·컷인·접근성 |
 | `templates/planning/HANDOFF_CONTEXT.md` | 현재 상태·책임 원본·다음 작업 |
+| `templates/planning/CODEX_PLAN_MODE_WORK_ORDER.md` | 새 Codex 채팅의 읽기 순서·불변 조건·검토 범위·산출물·승인 게이트 |
 | `templates/KNOWLEDGE_CASE_STUDY.md` | 공용 사례 기록 |
 
-## 8. 품질 원칙
+## 8. Codex 작업 문서 구분
+
+```text
+프로젝트 Work Order
+→ Codex Plan Mode 제안서
+→ 사용자 승인
+→ 구현 결과와 PR
+```
+
+- Work Order는 Codex에 주는 입력이다.
+- Plan Mode 제안서는 Codex가 실제 저장소를 조사해 만드는 출력이다.
+- 구현은 사용자 승인 뒤 별도 실행이다.
+- 사전 기술 추천은 Plan Mode 제안서가 아니며 검증 대상임을 표시한다.
+
+## 9. 품질 원칙
 
 - 추상적인 조언보다 입력, 출력, 검증 기준을 남긴다.
 - “멋있게”, “재미있게”, “깔끔하게”처럼 측정할 수 없는 표현만으로 끝내지 않는다.
