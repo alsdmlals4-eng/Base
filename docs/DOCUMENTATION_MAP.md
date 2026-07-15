@@ -2,7 +2,7 @@
 
 ## Base의 책임
 
-Base는 여러 프로젝트에 공통으로 필요한 AI 협업 원칙, 기획·아트·연출 방법, 정보 수집 기준, 실무 스킬과 일반화된 사례 연구의 원본 저장소다.
+Base는 여러 프로젝트에 공통으로 필요한 AI 협업 원칙, 기획·서사·아트·연출 방법, 정보 수집 기준, 실무 스킬과 일반화된 사례 연구의 원본 저장소다.
 
 프로젝트별 엔진 규칙, 활성 제품 기획, 코드, 현재 수치, 파일 경로와 테스트 결과는 각 프로젝트 저장소가 책임진다.
 
@@ -39,14 +39,37 @@ README.md
 | 구분 | 파일 | 역할 |
 |---|---|---|
 | 지식 인덱스 | `docs/knowledge/README.md` | methods·research·skills·cases 구조와 승격 규칙 |
-| 인수인계 방법 | `docs/knowledge/methods/PROJECT_HANDOFF_CONTEXT_METHOD.md` | 문서만으로 현재 방향과 다음 작업을 이해시키는 방법 |
-| 아트 방법 | `docs/knowledge/methods/ART_DIRECTION_METHOD.md` | 화면 기준, 형태 언어, 제작 규격, 검수 |
-| 애니메이션 방법 | `docs/knowledge/methods/ANIMATION_AND_PRESENTATION_METHOD.md` | 상태, 판정 동기화, 피격·승리, 재사용 구조 |
+| 기획 시스템 | `docs/knowledge/methods/PLANNING_SYSTEM_METHOD.md` | 상태·방향·분야별 책임 문서·로드맵·검증 체계 |
+| 인수인계 | `docs/knowledge/methods/PROJECT_HANDOFF_CONTEXT_METHOD.md` | 문서만으로 현재 방향과 다음 작업을 이해시키는 방법 |
+| 서사·관계 | `docs/knowledge/methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md` | 장면·대사·선택 기억·관계·후일담 |
+| 전장·유닛 아트 | `docs/knowledge/methods/ART_DIRECTION_METHOD.md` | 화면 기준, 형태 언어, 제작 규격, 검수 |
+| 캐릭터·서사 아트 | `docs/knowledge/methods/CHARACTER_AND_NARRATIVE_ART_METHOD.md` | 초상·표정·텍스트 없는 자산·실제 화면 검수 |
+| 전투 애니메이션 | `docs/knowledge/methods/ANIMATION_AND_PRESENTATION_METHOD.md` | 상태·판정·이동·공격·피격·승리 연출 |
+| 대화·이벤트 연출 | `docs/knowledge/methods/DIALOGUE_AND_EVENT_PRESENTATION_METHOD.md` | 대화 UI·배치·표정·컷인·음향·접근성 |
 | 조사 방법 | `docs/knowledge/research/DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md` | 조사 질문, 출처, 근거, 적용·제외 결론 |
+| 기획·조사·인수 스킬 | `docs/knowledge/skills/PLANNING_RESEARCH_HANDOFF_SKILL_MATRIX.md` | 의도 합성, 상태 감사, PoC, 수용 기준, handoff |
 | 아트 스킬 | `docs/knowledge/skills/ART_DIRECTION_SKILL_MATRIX.md` | 아트 디렉션 입력·산출물·실패 기준 |
 | 연출 스킬 | `docs/knowledge/skills/ANIMATION_PRESENTATION_SKILL_MATRIX.md` | 모션·전투 연출 실무 계약 |
 | 인수인계 스킬 | `docs/knowledge/skills/DESIGN_HANDOFF_AND_REVIEW_SKILL_MATRIX.md` | 책임 원본·동기화·콜드 스타트 검수 |
-| 사례 인덱스 | `docs/knowledge/cases/README.md` | 프로젝트·벤치마킹 사례 목록과 상태 |
+| 사례 인덱스 | `docs/knowledge/cases/README.md` | 프로젝트·벤치마킹 사례 목록과 문제별 라우팅 |
+
+## 작업별 최소 읽기
+
+| 작업 | 문서 |
+|---|---|
+| 요구 구체화·Issue·Goal | `AGENTS.md`, `AI_WORKFLOW_RULES.md`, 관련 템플릿 |
+| 전체 기획 체계 | `PLANNING_SYSTEM_METHOD.md`, `CONTENT_DESIGN_METHOD.md` |
+| 핵심 재미·첫 10분 | `CONTENT_DESIGN_METHOD.md`, `CONTENT_DESIGN_BRIEF.md` |
+| 프로젝트 인수인계 | `PROJECT_HANDOFF_CONTEXT_METHOD.md`, `DESIGN_HANDOFF_AND_REVIEW_SKILL_MATRIX.md` |
+| 장면·대사·관계 | `NARRATIVE_AND_RELATIONSHIP_METHOD.md`, 관련 cases |
+| 전장·유닛 아트 | `ART_DIRECTION_METHOD.md`, `ART_DIRECTION_SKILL_MATRIX.md`, 관련 cases |
+| 캐릭터·서사 아트 | `CHARACTER_AND_NARRATIVE_ART_METHOD.md`, 관련 cases |
+| 이동·공격·승리 연출 | `ANIMATION_AND_PRESENTATION_METHOD.md`, `ANIMATION_PRESENTATION_SKILL_MATRIX.md` |
+| 대화 UI·표정·컷인 | `DIALOGUE_AND_EVENT_PRESENTATION_METHOD.md`, 관련 cases |
+| 정보 조사·벤치마킹 | `DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md`, `BENCHMARKING_REFERENCE_GUIDE.md` |
+| 기획·조사·handoff 실무 | `PLANNING_RESEARCH_HANDOFF_SKILL_MATRIX.md` |
+| 외부 AI 스킬 도입 | `AI_SKILL_ADOPTION_GUIDE.md` |
+| 작업 종료·교훈 승격 | `AI_SHARED_WORK_RULES.md`, `knowledge/README.md`, 사례 템플릿 |
 
 ## 사례 라우팅
 
@@ -56,6 +79,13 @@ README.md
 | 화면 전체가 보이는데 미니맵을 둘지 판단 | `docs/knowledge/cases/OMENWARD_TACTICAL_VISIBILITY_WITHOUT_MINIMAP_CASE.md` |
 | 특수 경로·범위를 언제 공개할지 판단 | `docs/knowledge/cases/OMENWARD_FOGGED_SPECIALIST_ROUTE_CASE.md` |
 | 버전 문서와 레거시 Issue 정리 | `docs/knowledge/cases/OMENWARD_CANONICAL_HANDOFF_CONTEXT_CASE.md` |
+| 정보 패널이 장면과 선택을 가림 | `docs/knowledge/cases/URBAN_LEGEND_SCENE_FIRST_UI_CASE.md` |
+| 표시 이름 변경과 저장 호환 | `docs/knowledge/cases/URBAN_LEGEND_DISPLAY_NAME_INTERNAL_ID_CASE.md` |
+| 대사량이 기능 흐름을 방해함 | `docs/knowledge/cases/URBAN_LEGEND_DIALOGUE_DENSITY_BY_CONTEXT_CASE.md` |
+| 관계를 점수·보너스로만 표현함 | `docs/knowledge/cases/URBAN_LEGEND_RELATIONSHIP_MEMORY_CASE.md` |
+| 연출 UI가 결과·저장을 중복 소유함 | `docs/knowledge/cases/URBAN_LEGEND_PRESENTATION_STATE_BOUNDARY_CASE.md` |
+| 생성 이미지의 글자·현지화 문제 | `docs/knowledge/cases/URBAN_LEGEND_TEXT_FREE_GENERATIVE_ART_CASE.md` |
+| 오래된 문서가 기본 읽기를 방해함 | `docs/knowledge/cases/URBAN_LEGEND_ACTIVE_DOCUMENT_ARCHIVE_CASE.md` |
 
 ## 공용 템플릿
 
@@ -63,20 +93,12 @@ README.md
 |---|---|
 | `templates/CONTENT_DESIGN_BRIEF.md` | 핵심 재미·첫 10분·PoC 기획 양식 |
 | `templates/KNOWLEDGE_CASE_STUDY.md` | 공용 사례 연구 양식 |
-| `templates/` | 프로젝트용 문서·Issue·Goal 템플릿 |
-
-## 작업별 최소 읽기
-
-| 작업 | 문서 |
-|---|---|
-| 요구 구체화·Issue·Goal | `AGENTS.md`, `AI_WORKFLOW_RULES.md`, 관련 템플릿 |
-| 핵심 재미·첫 10분 | `CONTENT_DESIGN_METHOD.md`, `CONTENT_DESIGN_BRIEF.md` |
-| 프로젝트 인수인계 | `PROJECT_HANDOFF_CONTEXT_METHOD.md`, `DESIGN_HANDOFF_AND_REVIEW_SKILL_MATRIX.md` |
-| 아트 기획·검수 | `ART_DIRECTION_METHOD.md`, `ART_DIRECTION_SKILL_MATRIX.md`, 관련 cases |
-| 이동·공격·승리 연출 | `ANIMATION_AND_PRESENTATION_METHOD.md`, `ANIMATION_PRESENTATION_SKILL_MATRIX.md` |
-| 정보 조사·벤치마킹 | `DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md`, `BENCHMARKING_REFERENCE_GUIDE.md` |
-| 외부 AI 스킬 도입 | `AI_SKILL_ADOPTION_GUIDE.md` |
-| 작업 종료·교훈 승격 | `AI_SHARED_WORK_RULES.md`, `knowledge/README.md`, 사례 템플릿 |
+| `templates/planning/PROJECT_DIRECTION_BRIEF.md` | 프로젝트 방향과 불변 조건 |
+| `templates/planning/NARRATIVE_CONTENT_PLAN.md` | 장면·대사·선택·관계 |
+| `templates/planning/ART_DIRECTION_BRIEF.md` | 시각 약속·스타일 축·자산 티어 |
+| `templates/planning/PRESENTATION_PLAN.md` | 화면 시선·표정·컷인·접근성 |
+| `templates/planning/HANDOFF_CONTEXT.md` | 현재 상태·책임 원본·다음 작업 |
+| `templates/` | 프로젝트용 기타 문서·Issue·Goal 템플릿 |
 
 ## 프로젝트 동기화 규칙
 
@@ -100,8 +122,7 @@ README.md
 - `docs/DOCUMENTATION_MAP.md`
 - `docs/CUSTOM_INSTRUCTIONS_GUIDE.md`
 - 필요한 `docs/knowledge/` 문서
-- `templates/CONTENT_DESIGN_BRIEF.md`
-- `templates/KNOWLEDGE_CASE_STUDY.md`
+- 필요한 `templates/planning/` 문서
 
 ## 프로젝트에서 새로 작성할 문서
 
@@ -109,11 +130,11 @@ README.md
 - 프로젝트 전용 `AGENTS.md`
 - `README.md`
 - Handoff 또는 Active Context
-- 프로젝트 전체 기획서
+- 프로젝트 방향 기획서
+- 분야별 책임 기획서
 - Documentation Map
 - Roadmap
 - Decisions Pending
-- 주제별 승인 책임 문서
 - 현재 Issue·Goal·승인 제안서
 - 프로젝트 설정, 데이터, 코드, Scene, 테스트 자산
 
