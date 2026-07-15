@@ -1,8 +1,8 @@
 # 공용 기획 지식 베이스
 
-이 폴더는 여러 프로젝트에서 재사용할 수 있는 **기획·아트 디자인·연출·정보 수집·검수 방법과 실제 적용 사례**를 누적하는 공용 학습 데이터다.
+이 폴더는 여러 프로젝트에서 재사용할 수 있는 **기획·아트 디자인·서사·연출·정보 수집·검수 방법과 실제 적용 사례**를 누적하는 공용 학습 데이터다.
 
-Base의 기존 작업 규칙은 “어떻게 협업할 것인가”를 정의한다. 이 지식 베이스는 “좋은 결과물을 만들기 위해 무엇을 관찰하고, 어떤 순서로 판단하며, 무엇을 검증할 것인가”를 정의한다.
+Base의 작업 규칙은 “어떻게 협업할 것인가”를 정의한다. 이 지식 베이스는 “좋은 결과물을 만들기 위해 무엇을 관찰하고, 어떤 순서로 판단하며, 무엇을 검증할 것인가”를 정의한다.
 
 ## 1. 폴더 구분
 
@@ -37,11 +37,9 @@ Base에 둔다:
 - 현재 Issue와 승인된 구현 제안서.
 - 비공개 원문이나 외부 공개가 허용되지 않은 자료.
 
-사례 문서는 프로젝트 이름을 표시할 수 있지만, 활성 기획서 전체를 복제하지 않는다. 사례에는 문제, 판단, 결과, 재사용 가능한 교훈만 남긴다.
+사례 문서는 프로젝트 이름을 표시할 수 있지만 활성 기획서 전체를 복제하지 않는다. 사례에는 문제, 판단, 결과, 재사용 가능한 교훈만 남긴다.
 
 ## 3. 지식 상태
-
-모든 방법·스킬·사례는 가능한 한 다음 상태를 표시한다.
 
 | 상태 | 의미 |
 |---|---|
@@ -54,7 +52,23 @@ Base에 둔다:
 
 검증되지 않은 관찰을 보편적 사실처럼 작성하지 않는다.
 
-## 4. 프로젝트에서 Base로 승격하는 흐름
+## 4. 공용 방법 라우팅
+
+| 작업 | 먼저 읽을 문서 |
+|---|---|
+| 전체 기획 체계·상태·책임 원본 | `methods/PLANNING_SYSTEM_METHOD.md` |
+| 프로젝트 인수인계·문서 구조 | `methods/PROJECT_HANDOFF_CONTEXT_METHOD.md` |
+| 장면·대사·선택·관계 | `methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md` |
+| 전장·유닛·구조물 아트 | `methods/ART_DIRECTION_METHOD.md` |
+| 캐릭터·초상·서사형 아트 | `methods/CHARACTER_AND_NARRATIVE_ART_METHOD.md` |
+| 전투 애니메이션·판정 연출 | `methods/ANIMATION_AND_PRESENTATION_METHOD.md` |
+| 대화 UI·표정·컷인·이벤트 연출 | `methods/DIALOGUE_AND_EVENT_PRESENTATION_METHOD.md` |
+| 조사·벤치마킹·근거 평가 | `research/DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md` |
+| 기획·조사·인수 실무 능력 | `skills/PLANNING_RESEARCH_HANDOFF_SKILL_MATRIX.md` |
+| 기존 아트·애니메이션·인수 검수 | `skills/`의 분야별 매트릭스 |
+| 실제 적용과 실패 사례 | `cases/README.md` |
+
+## 5. 프로젝트에서 Base로 승격하는 흐름
 
 ```text
 프로젝트 문제 발생
@@ -68,7 +82,7 @@ Base에 둔다:
 
 한 프로젝트에서 한 번 사용한 규칙은 우선 사례로 남긴다. 두 개 이상의 다른 맥락에서 같은 원리가 유효하거나, 강한 이론적 근거와 검증이 있을 때 공용 방법으로 승격한다.
 
-## 5. 사례 문서 필수 항목
+## 6. 사례 문서 필수 항목
 
 - 사례명과 출처.
 - 해결하려던 문제.
@@ -83,16 +97,18 @@ Base에 둔다:
 
 새 사례는 `templates/KNOWLEDGE_CASE_STUDY.md`를 사용한다.
 
-## 6. 읽기 라우팅
+## 7. 전문 템플릿
 
-- 프로젝트 인수인계·문서 구조: `methods/PROJECT_HANDOFF_CONTEXT_METHOD.md`
-- 아트 방향·실루엣·제작 규격: `methods/ART_DIRECTION_METHOD.md`
-- 이동·공격·피격·승리 연출: `methods/ANIMATION_AND_PRESENTATION_METHOD.md`
-- 조사·벤치마킹·근거 평가: `research/DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md`
-- 작업별 실무 역량과 검수: `skills/`
-- 실제 적용과 실패 사례: `cases/`
+| 템플릿 | 역할 |
+|---|---|
+| `templates/planning/PROJECT_DIRECTION_BRIEF.md` | 프로젝트 약속·핵심 경험·불변 조건 |
+| `templates/planning/NARRATIVE_CONTENT_PLAN.md` | 장면·대사·선택·관계·데이터 경계 |
+| `templates/planning/ART_DIRECTION_BRIEF.md` | 시각 약속·스타일 축·자산 티어·QA |
+| `templates/planning/PRESENTATION_PLAN.md` | 시선 흐름·표정·컷인·접근성 |
+| `templates/planning/HANDOFF_CONTEXT.md` | 현재 상태·책임 원본·다음 작업 |
+| `templates/KNOWLEDGE_CASE_STUDY.md` | 공용 사례 기록 |
 
-## 7. 품질 원칙
+## 8. 품질 원칙
 
 - 추상적인 조언보다 입력, 출력, 검증 기준을 남긴다.
 - “멋있게”, “재미있게”, “깔끔하게”처럼 측정할 수 없는 표현만으로 끝내지 않는다.
