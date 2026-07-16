@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.7.1 - deferred item lifecycle
+
+아이디어를 삭제하지 않고 보존하면서도 활성 기획·구현 범위와 혼동하지 않도록 보류 문서의 수명주기 규칙을 추가했다.
+
+변경:
+
+- `docs/AI_SHARED_WORK_RULES.md`에 `[보류]`, `deferred`, `parking-lot` 영역을 활성 작업의 기본 읽기 대상에서 제외하는 규칙을 추가했다.
+- 구현 AI가 보류 문서를 직접 구현하지 않고, 재개 시 기준 문서와 Issue·Goal·Plan에 다시 통합하도록 했다.
+- 백업·아카이브와 보류 영역의 목적을 구분했다. 백업은 과거 상태 보존, 보류는 미확정·후속 아이디어 보존이다.
+
 ## v1.7.0 - automatic Base promotion and canonical document lifecycle
 
 프로젝트 작업에서 발견한 안정적이고 일반화 가능한 공용 규칙을 후보 보고에서 멈추지 않고 Base에 자동 반영하는 운영 방식으로 변경했다.
