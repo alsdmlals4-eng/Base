@@ -126,16 +126,76 @@
 - 생성 결과를 그대로 납품.
 - 출처·권리·후처리 책임 미기록.
 
-## 7. 작업 완료 기준
+## 7. 디자인 기술·프롬프트 운용
+
+필요 능력:
+
+- 사용 목적, 유지 요소, 변경 요소, 출력 규격을 프롬프트 모듈로 분리.
+- 표정·포즈·레이아웃 제어어를 자연어와 함께 사용.
+- 모델·서비스·버전·확인일과 검증 상태 기록.
+- FACS AU 등 외부 코드가 모델의 공식 명령인지 실험적 별칭인지 구분.
+- 캐릭터 포스터의 메인 일러스트, 정보 슬롯, 인셋, 실제 타이포그래피를 분리.
+- 실패 프롬프트를 분석해 보호 문장과 재생성 기준으로 환류.
+
+산출물:
+
+- 아트·UI 디자인 기술 카드.
+- 기본 생성·원본 편집·실패 수정 프롬프트.
+- 표정·포즈·색·레이아웃 변형 표.
+- 모델 호환성과 검증 기록.
+- 텍스트 없는 마스터와 편집 레이어 계획.
+
+추천 데이터:
+
+```text
+technique_id, name, category, goal, user_value,
+use_when, avoid_when, inputs, model_compatibility,
+prompt_pattern, prompt_cases, control_terms,
+editable_points, protected_elements, risks, qa,
+evidence, scope, status
+```
+
+UI·UX 추가 데이터:
+
+```text
+target_screen, primary_action, information_priority,
+layout_pattern, interaction_pattern, state_variants,
+motion_policy, accessibility, localization_risk,
+implementation_notes
+```
+
+검수 질문:
+
+- 이 기술이 어떤 사용자 문제를 해결하는가?
+- 모델 이름을 제거해도 작업 원리와 QA가 남는가?
+- 유지할 정체성과 변경 축이 분리됐는가?
+- 한 번의 성공 사례를 보편적 사실로 쓰지 않았는가?
+- 실제 화면과 현지화에서 수정 가능한가?
+
+실패:
+
+- 긴 형용사 목록만 있고 사용 목적과 출력 계약이 없음.
+- AU 번호만으로 표정 결과를 보장한다고 주장.
+- 생성 이미지의 가짜 한글·로고를 최종 제품에 사용.
+- 캐릭터마다 프롬프트 구조를 처음부터 다시 작성.
+
+관련 기준:
+
+- `docs/knowledge/methods/AI_ART_PROMPT_TECHNIQUE_METHOD.md`
+- `skills/designing-art-prompts-and-technique-cards/SKILL.md`
+- `templates/planning/ART_TECHNIQUE_CARD.md`
+
+## 8. 작업 완료 기준
 
 - 실제 화면 크기에서 역할·진영·상태를 읽을 수 있다.
 - 형태 언어와 제작 규격이 문서화되어 있다.
 - 최소 한 개 대표 자산을 실제 HUD와 배경 위에서 검증했다.
 - 자동 탈락 조건과 수정 경로가 있다.
 - 미완성·임시·최종 자산이 구분된다.
+- 디자인 기술과 프롬프트의 모델·상태·QA가 기록된다.
 - 검증하지 않은 품질을 완료로 보고하지 않는다.
 
-## 8. 작업 프롬프트에 포함할 항목
+## 9. 작업 프롬프트에 포함할 항목
 
 ```md
 - 제품과 플레이어 경험
@@ -145,6 +205,8 @@
 - 포함·제외 범위
 - 제작 방식과 예산
 - 필요한 산출물
+- 디자인 기술과 프롬프트 사례
+- 유지할 요소와 변경할 요소
 - 실제 화면 검수 기준
 - 저작권·생성형 도구 경계
 ```

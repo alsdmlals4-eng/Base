@@ -1,5 +1,23 @@
 # Changelog
 
+## v1.9.0 - external AI worktrees and art prompt technique library
+
+DeepSeek를 포함한 외부 AI의 대용량 초안을 별도 worktree에서 생성하고 Codex가 실제 diff·근거·테스트를 검수해 반영하는 협업 구조를 추가했다. 아트·UI 디자인 기술을 프롬프트 사례, 모델 호환성, 실패 기준과 함께 관리하고 FACS 표정 편집 및 캐릭터 프로모션 포스터 사례를 공용 지식으로 정리했다.
+
+변경:
+
+- `orchestrating-deepseek-worktrees`와 `reviewing-external-ai-drafts` 실행 스킬을 추가했다.
+- GPT가 기획·작업 패키지를 만들고 DeepSeek가 격리 공간에서 대량 초안을 작성하며 Codex가 세부 검수·실제 반영을 담당하는 역할 계약을 추가했다.
+- 안정적인 프롬프트 접두부, 파일 allowlist, 구조화 출력, cache hit·miss 기록 등 토큰·컨텍스트 효율 원칙을 정리했다.
+- 프로젝트별 GPT·DeepSeek·Codex 역할, worktree, 비용·보안 정책을 기록하는 AI 협업 프로필과 작업·검수 템플릿을 추가했다.
+- `designing-art-prompts-and-technique-cards` 스킬과 `AI_ART_PROMPT_TECHNIQUE_METHOD.md`를 추가했다.
+- 아트·UI 기술 카드에 사용자 가치, 사용·비사용 조건, 모델 호환성, 프롬프트 패턴, 제어어, UI/UX 데이터, QA와 검증 상태를 기록하도록 했다.
+- FACS AU를 자연어 표정 설명의 보조 어휘로 사용하는 방법과 표준 코드·제공 레퍼런스의 비표준 별칭 경계를 정리했다.
+- 캐릭터 포스터를 메인 일러스트, 정보 슬롯, 인셋 표정, 편집 가능한 타이포그래피로 분리하는 사례와 템플릿을 추가했다.
+- 아트디자인 기획서에 디자인 기술 라이브러리, 기본·편집·실패 수정 프롬프트, 모델·현지화·후처리 QA를 추가했다.
+- Git worktree, DeepSeek context caching·JSON output, OpenAI prompt caching·prompt engineering 공식 자료 메모를 추가했다.
+- README, Documentation Map, 작업 흐름, 스킬 가이드, 아트 스킬 매트릭스와 사례 인덱스를 갱신했다.
+
 ## v1.8.0 - executable prompt, design-document and vertical-slice skills
 
 짧은 사용자 요청을 실행 가능한 프롬프트로 변환하고, 기획서 체계·Vertical Slice·프로젝트 지식 승격을 실제로 적용할 수 있는 실행 스킬 구조를 추가했다. 동시에 중복 설명을 책임 문서와 스킬로 분리해 Base 진입 문서를 압축했다.

@@ -61,6 +61,34 @@ brainstorming
 
 플러그인이 없으면 같은 단계를 일반 작업 절차로 수행한다. 스킬 지시가 프로젝트 규칙이나 최신 사용자 지시와 충돌하면 상위 규칙을 따른다.
 
+### 외부 AI 대량 작업
+
+DeepSeek 또는 다른 외부 모델은 대용량 초안·분류·후보 생성에 사용할 수 있다. 실제 기준 문서와 코드의 검수·세부 조정·반영 책임은 Codex 또는 저장소 책임자에게 둔다.
+
+```text
+GPT 기획·작업 패키지
+→ 별도 worktree·브랜치
+→ DeepSeek 대량 초안
+→ 구조화된 결과·미확인 목록
+→ Codex diff·근거·테스트 검수
+→ 승인된 최소 변경만 실제 반영
+```
+
+- 외부 AI는 main 또는 사용자의 활성 worktree를 직접 수정하지 않는다.
+- 한 worktree는 한 목적과 한 브랜치를 가진다.
+- 공통 컨텍스트는 고정 접두부로 유지하고 가변 작업은 뒤에 둔다.
+- 저장소 전체가 아니라 allowlist와 Active Context만 제공한다.
+- 결과는 고정 Markdown 또는 JSON 계약으로 회수한다.
+- 외부 AI 보고만 믿지 않고 실제 diff·참조·테스트를 확인한다.
+- dirty·미통합 worktree는 자동 삭제하지 않는다.
+
+관련 기준:
+
+- `skills/orchestrating-deepseek-worktrees/SKILL.md`
+- `skills/reviewing-external-ai-drafts/SKILL.md`
+- `templates/ai/DEEPSEEK_WORK_PACKAGE.md`
+- `templates/ai/PROJECT_AI_COLLABORATION_PROFILE.md`
+
 ## 4. 기획서와 실행 지시
 
 - 기획서는 왜 만들고 무엇을 경험하게 할지 설명한다.

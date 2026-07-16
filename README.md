@@ -30,9 +30,9 @@ README.md
 |---|---|
 | `AGENTS.md` | 최소 공용 작업 규칙 |
 | `docs/AI_SHARED_WORK_RULES.md` | 역할, 범위, 품질, 파일 수명주기, Base 승격 |
-| `docs/AI_WORKFLOW_RULES.md` | 요청 분류부터 검증까지의 공통 흐름 |
+| `docs/AI_WORKFLOW_RULES.md` | 요청 분류, Superpowers·외부 AI 라우팅, 검증 흐름 |
 | `docs/CONTENT_DESIGN_METHOD.md` | 의도→경험→규칙→흐름→검증 기반 콘텐츠 기획 |
-| `docs/AI_SKILL_ADOPTION_GUIDE.md` | 외부 스킬 검토, 권한, compact, 검증 |
+| `docs/AI_SKILL_ADOPTION_GUIDE.md` | 스킬·외부 모델 검토, 권한, 비용, compact, 검증 |
 | `docs/DOCUMENTATION_MAP.md` | 문서·스킬·템플릿 라우터 |
 | `docs/knowledge/README.md` | methods·research·skill contracts·cases 지식 베이스 |
 | `docs/CHANGELOG.md` | Base 버전 기록 |
@@ -44,6 +44,9 @@ README.md
 | `skills/transforming-requests-into-prompts/` | 짧거나 모호한 요청을 실행 가능한 프롬프트로 변환 |
 | `skills/designing-vertical-slices/` | 핵심 경험을 대표하는 완성 구간과 제작 파이프라인 검증 |
 | `skills/writing-game-design-documents/` | 기획서 종류, 책임 원본, 로드맵과 명세 구조 설계 |
+| `skills/orchestrating-deepseek-worktrees/` | 대용량 초안·분류를 격리 worktree의 외부 AI에 위임 |
+| `skills/reviewing-external-ai-drafts/` | 외부 AI 결과를 실제 diff·근거·테스트로 검수 |
+| `skills/designing-art-prompts-and-technique-cards/` | 아트·UI 기술 추천, 이미지 프롬프트와 QA 카드 작성 |
 | `skills/promoting-project-knowledge/` | 프로젝트 교훈을 Base 규칙·method·skill·case로 승격 |
 
 스킬은 도구 브랜드가 아니라 **사용 조건, 입력, 작업 절차, 산출물, 검증, 실패 기준**을 정의합니다.
@@ -53,9 +56,16 @@ README.md
 `docs/knowledge/`는 다음을 관리합니다.
 
 - `methods/`: 반복 가능한 설계·제작 판단 방법
-- `research/`: 정보 수집·벤치마킹·근거 평가
+- `research/`: 정보 수집·벤치마킹·표준·근거 평가
 - `skills/`: 분야별 능력 계약과 검수 매트릭스
 - `cases/`: 프로젝트와 벤치마킹에서 일반화한 사례
+
+주요 추가 라우팅:
+
+- AI 아트 프롬프트·디자인 기술: `docs/knowledge/methods/AI_ART_PROMPT_TECHNIQUE_METHOD.md`
+- FACS 프롬프트 참고표: `docs/knowledge/research/FACS_ACTION_UNIT_PROMPT_REFERENCE.md`
+- FACS 표정 편집 사례: `docs/knowledge/cases/FACS_EXPRESSION_EDITING_PROMPT_CASE.md`
+- 캐릭터 포스터 사례: `docs/knowledge/cases/CHARACTER_PROMO_POSTER_LAYOUT_CASE.md`
 
 실행 가능한 절차는 루트 `skills/`에 두고, 넓은 분야의 역량 지도와 참고 계약은 `docs/knowledge/skills/`에 둡니다.
 
@@ -64,8 +74,15 @@ README.md
 | 파일 | 역할 |
 |---|---|
 | `templates/EXECUTABLE_PROMPT.md` | 목적·맥락·경험·범위·제약·산출물·완료·검증 |
+| `templates/ai/PROJECT_AI_COLLABORATION_PROFILE.md` | 프로젝트별 GPT·DeepSeek·Codex 역할과 worktree 정책 |
+| `templates/ai/DEEPSEEK_WORK_PACKAGE.md` | 외부 AI 대량 작업 입력·출력 계약 |
+| `templates/ai/EXTERNAL_AI_DRAFT_REVIEW.md` | Codex·책임자의 외부 초안 검수 |
 | `templates/planning/VERTICAL_SLICE_PLAN.md` | 수직 슬라이스 범위와 품질 기준 |
 | `templates/planning/DESIGN_DOCUMENT_SYSTEM.md` | 프로젝트 기획서 종류와 책임 원본 지도 |
+| `templates/planning/ART_DIRECTION_BRIEF.md` | 아트 방향, 디자인 기술, 프롬프트 사례, QA |
+| `templates/planning/ART_TECHNIQUE_CARD.md` | 아트·UI 기술의 데이터·프롬프트·검증 카드 |
+| `templates/planning/EXPRESSION_CONTROL_CARD.md` | 캐릭터 표정·FACS 보조 제어 카드 |
+| `templates/planning/CHARACTER_PROMO_POSTER_BRIEF.md` | 캐릭터 포스터·상세 페이지 정보 슬롯 설계 |
 | `templates/skills/PROJECT_SKILL_EXTENSION.md` | Base 스킬의 프로젝트 전용 확장 |
 | `templates/CONTENT_DESIGN_BRIEF.md` | 핵심 재미·첫 10분·PoC |
 | `templates/KNOWLEDGE_CASE_STUDY.md` | 일반화된 사례 연구 |
