@@ -47,6 +47,20 @@ L2 이상에서는 다음 순서를 적용한다.
 
 상세 절차는 `skills/transforming-requests-into-prompts/SKILL.md`, 출력 형식은 `templates/EXECUTABLE_PROMPT.md`를 따른다.
 
+### Superpowers 호환 순서
+
+Superpowers 또는 동등한 프로세스 스킬을 사용할 수 있는 L2·L3 작업은 다음 순서로 연결한다.
+
+```text
+brainstorming
+→ 사용자 승인과 기획서 기록
+→ writing-plans
+→ 작업 성격에 맞는 구현·디버깅 스킬
+→ verification-before-completion
+```
+
+플러그인이 없으면 같은 단계를 일반 작업 절차로 수행한다. 스킬 지시가 프로젝트 규칙이나 최신 사용자 지시와 충돌하면 상위 규칙을 따른다.
+
 ## 4. 기획서와 실행 지시
 
 - 기획서는 왜 만들고 무엇을 경험하게 할지 설명한다.
