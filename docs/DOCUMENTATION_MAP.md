@@ -104,6 +104,12 @@ README.md
 - 아트 실무 능력: `skills/ART_DIRECTION_SKILL_MATRIX.md`
 - 구체 사례: `cases/README.md`
 
+적용 사례 라우팅:
+
+- 규칙·UI·연출·QA 추적성: `cases/TEN_PACES_RULE_PRESENTATION_TRACEABILITY_CASE.md`
+- 선택적 하이라이트와 정상 완주 경로: `cases/TEN_PACES_OPTIONAL_HIGHLIGHT_VERTICAL_SLICE_CASE.md`
+- 내부 데이터의 세계관 문구 변환: `cases/DIEGETIC_OPPONENT_INFORMATION_CASE.md`
+
 ## 6. 기획서와 템플릿
 
 | 목적 | 템플릿 |
@@ -131,13 +137,14 @@ README.md
 | 작업 | 최소 기준 |
 |---|---|
 | 요구 구체화·Goal | AGENTS, Base version, 요청 변환 스킬, 프로젝트 방향, 실행 프롬프트 템플릿 |
-| 전체 기획 체계 | Handoff, 기획 시스템 method, 기획서 작성 스킬, Roadmap |
+| 전체 기획 체계 | Handoff, 기획 시스템 method, 기획서 작성 스킬, Roadmap, 규칙·표현 추적성 사례 |
 | 핵심 재미·첫 10분 | 프로젝트 방향, 콘텐츠 기획 method와 brief |
-| Vertical Slice | 프로젝트 방향·Roadmap, Vertical Slice 스킬과 템플릿 |
+| Vertical Slice | 프로젝트 방향·Roadmap, Vertical Slice 스킬과 템플릿, 선택적 하이라이트 사례 |
 | DeepSeek 대량 초안 | 프로젝트 AI 프로필, DeepSeek worktree 스킬과 작업 패키지 |
 | 외부 AI 결과 실제 반영 | 프로젝트 책임 문서, 외부 AI 검수 스킬과 검수 템플릿 |
 | 인수인계 | Handoff method·템플릿, Roadmap, Documentation Map, skill extensions |
 | 서사·아트·연출 | 프로젝트 방향·관련 책임 기획서·해당 Base method·skill matrix·case |
+| 정보형 대사·세계관 카피 | 서사·대화 method, 내부 데이터→세계관 문구 사례, 프로젝트 의미 키 계약 |
 | 아트 기술 추천·이미지 프롬프트 | 프로젝트 아트 방향, AI 아트 prompt method, 실행 스킬, 기술 카드 |
 | FACS 표정 편집 | 프로젝트 캐릭터 원본, FACS reference, 표정 카드, 관련 case |
 | 캐릭터 포스터 | 프로젝트 아트 방향, 포스터 brief와 관련 case |

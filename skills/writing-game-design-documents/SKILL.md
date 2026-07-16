@@ -108,4 +108,22 @@ description: Use when creating, restructuring, reviewing, updating, or handing o
 4. 방향 변경은 기획서뿐 아니라 Roadmap, Handoff, Documentation Map과 관련 skill extension까지 갱신한다.
 5. 새 작업자는 10분 안에 핵심 경험, 현재 단계, 다음 작업, 책임 원본과 검증 방법을 찾는다.
 
+## Applied case — UI 명세에서 연출 책임을 분리하기
+
+한 프로젝트에서 UI 명세가 카드 정보 배치, 화면 흐름, 감정 곡선, 카메라·VFX·음향, 접근성 폴백까지 함께 책임해 변경 영향과 상태 소유가 불명확해졌다. 다음 순서로 정리했다.
+
+1. 먼저 질문을 분리했다.
+   - `무엇을 어디에 표시하는가`는 UI 명세.
+   - `어떤 순서와 강도로 경험시키는가`는 연출 기획서.
+   - `누가 결과와 저장을 소유하는가`는 아키텍처.
+   - `사용자가 무엇을 이해해야 하는가`는 테스트 명세.
+2. 각 질문에 현행 책임 원본 하나를 지정했다.
+3. 같은 규칙 전문을 복사하지 않고 공통 의미 단계와 원본 링크만 공유했다.
+4. Roadmap과 Active Context에 새 책임 경계와 다음 승인 게이트를 반영했다.
+5. 새 작업자가 10분 안에 규칙→UI→연출→QA 경로를 찾는지 확인했다.
+
+이 사례의 핵심은 문서를 많이 만드는 것이 아니라 **과적재된 문서를 질문과 상태 소유 기준으로 분리하고, 같은 결과를 끝까지 추적 가능하게 만드는 것**이다. 실제 런타임 검증 전에는 문서 구조 채택 상태로만 기록한다.
+
+관련 사례: `docs/knowledge/cases/TEN_PACES_RULE_PRESENTATION_TRACEABILITY_CASE.md`
+
 Template: `templates/planning/DESIGN_DOCUMENT_SYSTEM.md`
