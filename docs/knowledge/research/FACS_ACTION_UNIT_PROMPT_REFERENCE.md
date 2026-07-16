@@ -46,12 +46,13 @@ AU46
 | AU10 | Upper Lip Raiser | 윗입술 올리기 |
 | AU11 | Nasolabial Deepener | 비순 고랑 깊게 하기 |
 | AU12 | Lip Corner Puller | 입꼬리 올리기 |
-| AU13 | Cheek Puffer | 뺨 부풀리기 계열. 일부 비공식 그리드의 `Sharp Lip Puller` 표기와 다름 |
+| AU13 | Sharp Lip Puller | 입꼬리를 위쪽으로 날카롭게 당기기 |
 | AU14 | Dimpler | 보조개·입꼬리 안쪽 당기기 |
 | AU15 | Lip Corner Depressor | 입꼬리 내리기 |
 | AU16 | Lower Lip Depressor | 아랫입술 내리기 |
 | AU17 | Chin Raiser | 턱끝 올리기 |
 | AU18 | Lip Pucker | 입술 오므리기 |
+| AU19 | Tongue Show | 혀 보이기 |
 | AU20 | Lip Stretcher | 입술 옆으로 늘리기 |
 | AU22 | Lip Funneler | 입술 깔때기 모양 |
 | AU23 | Lip Tightener | 입술 조이기 |
@@ -60,6 +61,8 @@ AU46
 | AU26 | Jaw Drop | 턱 내리기 |
 | AU27 | Mouth Stretch | 입 크게 벌리기 |
 | AU28 | Lip Suck | 입술 안으로 말기 |
+| AU38 | Nostril Dilator | 콧구멍 벌리기 |
+| AU39 | Nostril Compressor | 콧구멍 좁히기 |
 | AU41 | Lid Droop | 윗눈꺼풀 처짐 |
 | AU42 | Slit | 눈 가늘게 뜨기 |
 | AU43 | Eyes Closed | 눈 감기 |
@@ -79,22 +82,24 @@ AU46
 | AU63 | Eyes Up | 시선 위 |
 | AU64 | Eyes Down | 시선 아래 |
 | AU81 | Chewing | 씹는 동작 |
+| AU82 | Shoulder Shrug | 어깨 으쓱하기 |
+| AU84 | Head Shake Back and Forth | 머리를 좌우로 젓기 |
+| AU85 | Head Nod Up and Down | 고개 끄덕이기 |
 
 강도는 FACS 기록에서 A~E로 표현되는 경우가 있다. 이미지 모델에는 `AU12B`처럼 코드만 쓰지 말고 `아주 약하게 입꼬리를 올린다` 같은 자연어를 함께 쓴다.
 
 ## 3. 제공된 캐릭터 레퍼런스 그리드의 비표준 별칭
 
-사용자가 제공한 그리드에는 다음과 같은 편집용 별칭이 포함되어 있다.
+제공된 그리드의 AU1~64와 AU81 일부는 널리 쓰이는 FACS 명칭과 대체로 일치한다. 다음 항목은 표준 목록의 코드와 충돌하거나 비표준 별칭이므로 자연어를 우선한다.
 
-| 그리드 코드 | 그리드 표기 | 운용 규칙 |
-|---:|---|---|
-| AU13 | Sharp Lip Puller | 표준 AU13 설명과 다르므로 모델별 별칭으로 취급 |
-| AU71 | Brow Furrow | 표준 FACS AU 번호로 확정하지 말고 `미간 주름` 자연어 병기 |
-| AU72 | Brow Bulge | 비표준 별칭. `눈썹 주변 부풀림` 자연어 병기 |
-| AU82 | Nostril Dilator | 일부 표준 목록의 다른 번호와 충돌 가능. `콧구멍 벌리기`를 우선 사용 |
-| AU83 | Nostril Compressor | `콧구멍 좁히기` 자연어를 우선 사용 |
-| AU84 | Tongue Up | `혀 올리기` 자연어를 우선 사용 |
-| AU85 | Tongue Out | `혀 내밀기` 자연어를 우선 사용 |
+| 그리드 코드 | 그리드 표기 | 표준 목록과의 관계 | 운용 규칙 |
+|---:|---|---|---|
+| AU71 | Brow Furrow | 표준 목록에서는 가시성 코드 `Eyes not visible`로 쓰이는 자료가 있음 | `미간 주름짓기` 자연어를 우선 사용 |
+| AU72 | Brow Bulge | 표준 목록에서는 가시성 코드 `Lower face not visible`로 쓰이는 자료가 있음 | `눈썹 주변을 부풀리듯 올리기` 자연어를 우선 사용 |
+| AU82 | Nostril Dilator | 표준 AU38과 의미가 겹치며 표준 AU82는 Shoulder Shrug | `콧구멍 벌리기`, 보조 코드 AU38을 우선 사용 |
+| AU83 | Nostril Compressor | 표준 AU39와 의미가 겹치며 AU83은 일반 표정 AU로 일관되게 쓰이지 않음 | `콧구멍 좁히기`, 보조 코드 AU39를 우선 사용 |
+| AU84 | Tongue Up | 표준 AU84는 머리 좌우 흔들기 | `혀를 위로 올리기` 자연어를 우선 사용 |
+| AU85 | Tongue Out | 표준 AU85는 고개 끄덕이기 | `혀 내밀기`, 보조 코드 AU19를 우선 사용 |
 
 이 별칭은 해당 레퍼런스 그리드와 특정 이미지 모델에서 짧은 제어어로 시험할 수 있지만, Base의 표준 FACS 정의로 사용하지 않는다.
 
