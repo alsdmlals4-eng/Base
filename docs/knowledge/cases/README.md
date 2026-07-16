@@ -8,18 +8,21 @@
 
 - `가설`: 채택했지만 아직 실제 검증 전.
 - `부분 검증`: 일부 PoC·화면·문서 검증 완료.
+- `패턴`: 같은 조건에서 반복 재현됐지만 범용성은 추가 확인 필요.
 - `검증`: 실제 작업·플레이테스트·운영에서 효과 확인.
 - `제외`: 검토했으나 적용하지 않음.
 - `폐기`: 더 나은 접근으로 대체.
 
-## 벤치마킹 사례
+## 벤치마킹·프롬프트 사례
 
 | 사례 | 참고 범위 | 주제 | 상태 |
 |---|---|---|---|
 | `BENCHMARK_MYSTERY_EVIDENCE_REVIEW_CASE.md` | 관찰형 미스터리·추리 게임 | 근거 재열람, 정보 역할, 힌트와 정답의 경계 | 조건부 참고 |
 | `BENCHMARK_CHARACTER_REACTION_AND_LEARNING_FAILURE_CASE.md` | 캐릭터 선택·규칙 학습 게임 | 짧은 동료 반응, 선택 기억, 학습 가능한 실패 | 조건부 참고 |
+| `FACS_EXPRESSION_EDITING_PROMPT_CASE.md` | 원본 캐릭터 표정 편집 | 자연어·FACS AU·보호 조건 결합 | 가설·모델별 검증 필요 |
+| `CHARACTER_PROMO_POSTER_LAYOUT_CASE.md` | 캐릭터 포스터·상세 페이지 | 메인 일러스트와 정보 슬롯 모듈화 | 패턴·시각 검증 필요 |
 
-외부 사례는 원리만 기록한다. 중요한 현재 기능·가격·정책 판단에서는 최신 원본과 1차 출처를 다시 확인한다.
+외부 사례는 원리만 기록한다. 중요한 현재 기능·가격·정책·모델 동작 판단에서는 최신 원본과 1차 출처를 다시 확인한다.
 
 ## OMENWARD 사례
 
@@ -48,12 +51,14 @@
 |---|---|
 | 근거 재열람과 힌트가 정답을 대신함 | `BENCHMARK_MYSTERY_EVIDENCE_REVIEW_CASE.md` |
 | 짧은 동료 반응·실패 학습·선택 기억 | `BENCHMARK_CHARACTER_REACTION_AND_LEARNING_FAILURE_CASE.md` |
+| 캐릭터 정체성을 유지하며 윙크·미소·시선을 편집 | `FACS_EXPRESSION_EDITING_PROMPT_CASE.md` |
+| 캐릭터 포스터·상세 페이지를 다른 캐릭터에도 재사용 | `CHARACTER_PROMO_POSTER_LAYOUT_CASE.md` |
 | 화면에 정보가 많아 현재 행동이 묻힘 | `URBAN_LEGEND_SCENE_FIRST_UI_CASE.md` |
 | 공개 명칭 변경과 저장 호환 | `URBAN_LEGEND_DISPLAY_NAME_INTERNAL_ID_CASE.md` |
 | 캐릭터 대사가 기능 흐름을 방해함 | `URBAN_LEGEND_DIALOGUE_DENSITY_BY_CONTEXT_CASE.md` |
 | 관계를 점수와 보너스로만 표현함 | `URBAN_LEGEND_RELATIONSHIP_MEMORY_CASE.md` |
 | UI·연출이 결과·저장을 중복 소유함 | `URBAN_LEGEND_PRESENTATION_STATE_BOUNDARY_CASE.md` |
-| 생성 이미지 글자·현지화 문제 | `URBAN_LEGEND_TEXT_FREE_GENERATIVE_ART_CASE.md` |
+| 생성 이미지 글자·현지화 문제 | `URBAN_LEGEND_TEXT_FREE_GENERATIVE_ART_CASE.md`, `CHARACTER_PROMO_POSTER_LAYOUT_CASE.md` |
 | 오래된 문서가 기본 읽기를 방해함 | `URBAN_LEGEND_ACTIVE_DOCUMENT_ARCHIVE_CASE.md`, `OMENWARD_CANONICAL_HANDOFF_CONTEXT_CASE.md` |
 | 같은 역할의 진영별 데이터 중복 | `OMENWARD_SHARED_ARCHETYPE_FACTION_VISUAL_CASE.md` |
 | 전체 조망 화면의 미니맵 필요성 | `OMENWARD_TACTICAL_VISIBILITY_WITHOUT_MINIMAP_CASE.md` |
@@ -65,6 +70,7 @@
 - 프로젝트 이름과 공개 가능한 맥락을 표시한다.
 - 외부 작품의 아트·코드·문구를 복제하지 않는다.
 - 채택안뿐 아니라 제외안과 위험도 남긴다.
-- 실제 결과가 없으면 `가설` 또는 `구현 전`으로 표시한다.
+- 실제 결과가 없으면 `가설`, `패턴`, `구현 전`처럼 범위를 표시한다.
+- 모델 의존 사례는 모델·버전·원본·확인일을 기록한다.
 - 여러 프로젝트에서 반복 확인된 원칙만 methods 또는 skills로 승격한다.
 - 현재 프로젝트의 수치·파일 경로·비공개 원문은 프로젝트 저장소에 남긴다.
