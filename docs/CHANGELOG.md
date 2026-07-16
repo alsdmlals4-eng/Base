@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.9.3 - applied planning, dialogue and vertical-slice cases
+
+십보강호의 활성·백업·보류 문서 전체를 감사해 문서 작성 과정에서 확인한 재사용 가능한 노하우를 기존 Base 기획 method, 서사 method와 실행 skill에 적용 사례로 반영했다. 프로젝트 고유 수치와 무협 콘텐츠는 승격하지 않았으며, 실제 구현·플레이테스트 전인 항목은 사례 상태를 유지했다.
+
+변경:
+
+- `TEN_PACES_RULE_PRESENTATION_TRACEABILITY_CASE.md`를 추가해 규칙→구조화 결과→UI·연출→사용자 설명 가능성 QA의 추적 구조를 사례화했다.
+- `TEN_PACES_OPTIONAL_HIGHLIGHT_VERTICAL_SLICE_CASE.md`를 추가해 대표 상위 하이라이트의 보유·미보유 경로를 모두 완주 가능하게 검증하는 방법을 정리했다.
+- `DIEGETIC_OPPONENT_INFORMATION_CASE.md`에 최초·반복·상세·결과 확인 문구 역할과 현지화·매핑 검수를 보강했다.
+- `CONTENT_DESIGN_METHOD.md`, `PLANNING_SYSTEM_METHOD.md`, `NARRATIVE_AND_RELATIONSHIP_METHOD.md`에 프로젝트 유래 적용 사례를 추가했다.
+- `writing-game-design-documents`와 `designing-vertical-slices` 스킬에 책임 원본 분리와 선택적 하이라이트 사례를 추가했다.
+- README와 사례 인덱스에 신규 사례를 연결했다.
+- 이전 6슬롯·9전·1~5성 문서는 백업 반례로, 문파별 성과 평가는 보류 반례로만 사용했다.
+- 실제 런타임, 플레이어 문구 학습, 보유·미보유 완주율은 아직 검증되지 않았으므로 공용 검증 스킬로 승격하지 않았다.
+
 ## v1.9.2 - bidirectional learning and diegetic information cases
 
 십보강호의 기획·연출·인수인계 최적화에서 얻은 공용 교훈을 프로젝트 고유 수치와 분리해 Base 사례로 추가했다. 공용 Base를 프로젝트에 적용하는 과정과 프로젝트 결과를 다시 Base 학습 데이터로 환류하는 과정을 사례화했으며, 내부 난도·성장 데이터를 일관된 세계관 표현으로 암시하는 정보 설계 사례를 기록했다.
