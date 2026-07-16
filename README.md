@@ -1,135 +1,96 @@
 # Base
 
-여러 프로젝트가 함께 사용하는 **AI 협업 규칙과 공용 기획 지식 베이스**의 원본 저장소입니다.
+여러 프로젝트가 공유하는 **AI 작업 규칙, 공용 기획 지식, 실행 가능한 스킬과 템플릿**의 원본 저장소입니다.
 
-Base에는 특정 게임, 엔진, 세계관, 제품의 활성 사양을 두지 않습니다. 대신 여러 프로젝트에서 재사용할 수 있는 작업 원칙, 기획 방법, 아트·서사·연출 제작 기준, 정보 수집 방법, 검수 스킬과 일반화된 사례 연구를 관리합니다.
+Base에는 특정 프로젝트의 활성 GDD, 세계관, 밸런스, 코드, 파일 경로를 두지 않습니다. 각 프로젝트는 필요한 Base 문서를 로컬 사본 또는 기준 커밋으로 연결하고, 프로젝트 전용 결정과 구현 상태는 자체 저장소에서 관리합니다.
 
-각 프로젝트는 필요한 Base 문서를 저장소 내부에 로컬 사본 또는 명시적 참고 기준으로 연결하고, 프로젝트 전용 규칙과 현재 상태는 해당 프로젝트 저장소에 둡니다.
+## 구조
 
-## 목적
+```text
+AGENTS.md          최소 공용 규칙
+docs/              상세 작업 규칙과 공용 지식
+skills/            직접 적용 가능한 실행 스킬
+templates/         프로젝트에 복사할 산출물 양식
+```
 
-- 새 프로젝트와 새 AI가 같은 작업 기준으로 시작한다.
-- 공용 방법과 프로젝트 전용 기획을 섞지 않는다.
-- 좋은 기획·아트·서사·연출 작업의 판단 순서와 검수 기준을 누적한다.
-- 프로젝트와 벤치마킹에서 얻은 교훈을 재사용 가능한 사례로 남긴다.
-- Base 원격 변경이 진행 중인 프로젝트를 갑자기 바꾸지 않도록 기준 커밋을 기록한다.
-- 안정적이고 일반화 가능한 작업 규칙을 작업 종료 시 Base에 자동 승격한다.
+## 시작 순서
 
-## 공용 작업 규칙
+```text
+README.md
+→ AGENTS.md
+→ docs/DOCUMENTATION_MAP.md
+→ 작업에 맞는 docs/knowledge 문서 또는 skills/<name>/SKILL.md
+```
+
+프로젝트 작업에서는 Base 원격보다 프로젝트의 `AGENTS.md`, Handoff·Active Context, 현재 Issue·Goal, Base 로컬 사본을 우선합니다.
+
+## 핵심 작업 문서
 
 | 파일 | 역할 |
 |---|---|
-| `AGENTS.md` | 여러 프로젝트에 공통인 최소 AI 작업 원칙 |
-| `docs/AI_SHARED_WORK_RULES.md` | 역할 분리, 범위 관리, 품질 원칙, Base 자동 승격 운영 방식 |
-| `docs/AI_WORKFLOW_RULES.md` | 공통 작업 순서와 Goal 작성 기준 |
-| `docs/CONTENT_DESIGN_METHOD.md` | 의도→경험→규칙→흐름 기반 콘텐츠 기획, 첫 10분, PoC와 채택 기준 |
-| `docs/AI_SKILL_ADOPTION_GUIDE.md` | 외부 스킬 채택, 보안 사전점검, context compact 기준 |
-| `docs/MVP_WORKFLOW_CHECKLIST.md` | 실제 작업 시작·종료 체크리스트 |
-| `docs/BENCHMARKING_REFERENCE_GUIDE.md` | 벤치마킹 기록과 적용 기준 |
-| `docs/DOCUMENTATION_MAP.md` | Base와 프로젝트 문서의 책임 경계 |
-| `docs/CUSTOM_INSTRUCTIONS_GUIDE.md` | ChatGPT·Codex 맞춤형 지침 작성 기준 |
-| `docs/CHANGELOG.md` | Base 변경 기록 |
+| `AGENTS.md` | 최소 공용 작업 규칙 |
+| `docs/AI_SHARED_WORK_RULES.md` | 역할, 범위, 품질, 파일 수명주기, Base 승격 |
+| `docs/AI_WORKFLOW_RULES.md` | 요청 분류부터 검증까지의 공통 흐름 |
+| `docs/CONTENT_DESIGN_METHOD.md` | 의도→경험→규칙→흐름→검증 기반 콘텐츠 기획 |
+| `docs/AI_SKILL_ADOPTION_GUIDE.md` | 외부 스킬 검토, 권한, compact, 검증 |
+| `docs/DOCUMENTATION_MAP.md` | 문서·스킬·템플릿 라우터 |
+| `docs/knowledge/README.md` | methods·research·skill contracts·cases 지식 베이스 |
+| `docs/CHANGELOG.md` | Base 버전 기록 |
 
-## 공용 기획 지식 베이스
+## 실행 스킬
 
-시작 문서: [`docs/knowledge/README.md`](docs/knowledge/README.md)
+| 스킬 | 사용 시점 |
+|---|---|
+| `skills/transforming-requests-into-prompts/` | 짧거나 모호한 요청을 실행 가능한 프롬프트로 변환 |
+| `skills/designing-vertical-slices/` | 핵심 경험을 대표하는 완성 구간과 제작 파이프라인 검증 |
+| `skills/writing-game-design-documents/` | 기획서 종류, 책임 원본, 로드맵과 명세 구조 설계 |
+| `skills/promoting-project-knowledge/` | 프로젝트 교훈을 Base 규칙·method·skill·case로 승격 |
 
-```text
-docs/knowledge/
-├─ methods/   반복 가능한 기획·제작 방법
-├─ research/  정보 수집·벤치마킹·근거 관리
-├─ skills/    작업 유형별 입력·산출물·검수 능력 계약
-└─ cases/     프로젝트·벤치마킹에서 추출한 사례 연구
-```
+스킬은 도구 브랜드가 아니라 **사용 조건, 입력, 작업 절차, 산출물, 검증, 실패 기준**을 정의합니다.
 
-### 핵심 methods
+## 공용 지식
 
-- `PLANNING_SYSTEM_METHOD.md` — 상태·방향·분야별 책임 문서·로드맵·검증을 연결하는 기획 체계.
-- `PROJECT_HANDOFF_CONTEXT_METHOD.md` — 문서만으로 현재 방향과 다음 작업을 이해시키는 인수인계 구조.
-- `NARRATIVE_AND_RELATIONSHIP_METHOD.md` — 장면·대사·선택 기억·관계·후일담 설계.
-- `ART_DIRECTION_METHOD.md` — 화면 기준, 형태 언어, 제작 규격과 아트 검수.
-- `CHARACTER_AND_NARRATIVE_ART_METHOD.md` — 캐릭터·초상·표정·텍스트 없는 서사형 자산 운영.
-- `ANIMATION_AND_PRESENTATION_METHOD.md` — 상태·판정·이동·공격·피격·승리 연출 동기화.
-- `DIALOGUE_AND_EVENT_PRESENTATION_METHOD.md` — 대화 UI·캐릭터 배치·표정·컷인·음향·접근성.
+`docs/knowledge/`는 다음을 관리합니다.
 
-### research·skills·cases
+- `methods/`: 반복 가능한 설계·제작 판단 방법
+- `research/`: 정보 수집·벤치마킹·근거 평가
+- `skills/`: 분야별 능력 계약과 검수 매트릭스
+- `cases/`: 프로젝트와 벤치마킹에서 일반화한 사례
 
-- `research/DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md` — 조사 질문, 출처 평가, 적용·제외 결론.
-- `skills/PLANNING_RESEARCH_HANDOFF_SKILL_MATRIX.md` — 의도 합성, 상태 감사, 기획, 조사, PoC, 인수인계 능력 계약.
-- 기존 `skills/` — 아트, 애니메이션, 인수인계·검수 실무 매트릭스.
-- `cases/README.md` — 프로젝트와 벤치마킹에서 추출한 공용 사례 라우터.
+실행 가능한 절차는 루트 `skills/`에 두고, 넓은 분야의 역량 지도와 참고 계약은 `docs/knowledge/skills/`에 둡니다.
 
-## 템플릿
+## 주요 템플릿
 
 | 파일 | 역할 |
 |---|---|
-| `templates/CONTENT_DESIGN_BRIEF.md` | 핵심 재미·첫 10분·콘텐츠 정체성·PoC 정리 |
-| `templates/KNOWLEDGE_CASE_STUDY.md` | 프로젝트·벤치마킹 사례를 공용 학습 데이터로 기록 |
-| `templates/planning/PROJECT_DIRECTION_BRIEF.md` | 프로젝트 약속·핵심 경험·불변 조건 |
-| `templates/planning/NARRATIVE_CONTENT_PLAN.md` | 장면·대사·선택·관계·데이터 경계 |
-| `templates/planning/ART_DIRECTION_BRIEF.md` | 시각 약속·스타일 축·자산 티어·QA |
-| `templates/planning/PRESENTATION_PLAN.md` | 화면 시선·표정·컷인·접근성 |
-| `templates/planning/HANDOFF_CONTEXT.md` | 현재 상태·책임 원본·다음 작업 인수인계 |
-| `templates/` | 새 프로젝트용 기타 작업·기획 템플릿 |
+| `templates/EXECUTABLE_PROMPT.md` | 목적·맥락·경험·범위·제약·산출물·완료·검증 |
+| `templates/planning/VERTICAL_SLICE_PLAN.md` | 수직 슬라이스 범위와 품질 기준 |
+| `templates/planning/DESIGN_DOCUMENT_SYSTEM.md` | 프로젝트 기획서 종류와 책임 원본 지도 |
+| `templates/skills/PROJECT_SKILL_EXTENSION.md` | Base 스킬의 프로젝트 전용 확장 |
+| `templates/CONTENT_DESIGN_BRIEF.md` | 핵심 재미·첫 10분·PoC |
+| `templates/KNOWLEDGE_CASE_STUDY.md` | 일반화된 사례 연구 |
 
-## 사용 방식
-
-1. Base에서 공용 작업 규칙, methods, research, skills, cases를 관리한다.
-2. 프로젝트는 필요한 문서를 로컬 사본으로 동기화하거나 기준 커밋과 경로를 기록한다.
-3. 일상적인 프로젝트 작업에서는 프로젝트의 `AGENTS.md`, Handoff/Active Context, 현재 Issue를 먼저 읽는다.
-4. Base는 작업 방법, 조사 방식, 품질 기준과 유사 사례를 찾을 때 사용한다.
-5. Base의 내용이 프로젝트 최신 승인과 충돌하면 프로젝트 규칙이 우선한다.
-6. 프로젝트에 `docs/BASE_RULES_VERSION.md`가 존재하면 기준 Base 커밋 SHA와 동기화 날짜를 기록한다.
-7. Base 변경을 프로젝트에 무조건 자동 병합하지 않는다. 해당 프로젝트의 로컬 사본과 버전 기록이 실제로 있을 때만 연결 영향을 확인해 동기화한다.
-
-## 기준 문서 수명주기
-
-- 한 주제에는 현행 책임 문서 하나만 둔다.
-- 확정된 변경은 기존 파일에 직접 반영한다.
-- `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않는다.
-- 이전 내용은 Git 이력으로 보존하며, 별도 백업 파일은 사용자가 명시적으로 요구하거나 감사·법무·외부 링크 보존 사유가 있을 때만 만든다.
-- 새 문서로 통합된 이전 버전과 중복 파일은 참조를 확인한 뒤 제거한다.
-- 기존 archive·`[백업]` 폴더는 현재 작업의 기본 읽기와 수정 대상에서 제외한다.
-
-## 자동 지식 승격 방식
+## 공용화 기준
 
 ```text
-프로젝트 작업·검수
-→ 프로젝트 전용 내용과 공용 규칙 분리
-→ 안정성·일반성 판단
-→ Base 기존 기준 파일에 자동 반영
-→ 필요하면 cases 기록
-→ 반복 검증 뒤 methods 또는 skills로 확장
+프로젝트 문제
+→ 프로젝트 전용 해결과 검증
+→ 고유 정보와 공용 원칙 분리
+→ 기존 Base 책임 문서와 중복 확인
+→ 규칙·method·skill·template·case 중 적절한 위치에 반영
+→ 프로젝트 로컬 사본과 버전 기록의 동기화 확인
 ```
 
-- 프로젝트 고유 이름, 수치, 경로, 저장 구조는 제거한다.
-- 검증되지 않은 결정은 `관찰`, `가설`, `확인 필요` 상태로 남기고 자동 승격하지 않는다.
-- 안정적이고 일반화 가능한 공용 규칙은 별도 재승인 없이 Base의 기존 기준 파일에 자동 반영한다.
-- 한 프로젝트의 구체 사례는 필요할 때 cases로 기록하고, methods·skills 승격은 반복 검증 또는 강한 근거를 요구한다.
-- Base 반영 결과에는 변경한 Base 파일, 프로젝트 전용으로 남긴 내용, 프로젝트 로컬 사본의 동기화 필요 여부를 포함한다.
+검증되지 않은 아이디어는 프로젝트의 `확인 필요` 또는 `보류`에 남깁니다. 특정 프로젝트의 이름, 수치, 세계관, 엔진 경로와 일회성 구현 세부는 Base로 승격하지 않습니다.
 
-## 맞춤형 지침 운영
+## 동기화
 
-ChatGPT나 Codex 맞춤형 지침에는 긴 프로젝트 세계관이나 MVP 명세를 넣지 않는다.
+GitHub와 로컬 파일은 자동 양방향 동기화되지 않습니다. 로컬 변경은 commit·push, 원격 변경은 fetch·pull이 필요합니다. 프로젝트에 `docs/BASE_RULES_VERSION.md`가 있으면 기준 Base 커밋과 동기화 날짜를 기록합니다.
 
-- 맞춤형 지침: 안정적인 작업 태도와 읽기 순서.
-- Base: 공용 작업 방법과 지식.
-- 프로젝트 GitHub 문서: 프로젝트별 상세 규칙과 현재 상태.
-- Issue / Goal / 전달 패키지: 현재 작업의 구체적 구현 기준.
+## 문서 수명주기
 
-기준 문서:
-
-- `docs/CUSTOM_INSTRUCTIONS_GUIDE.md`
-- `templates/custom-instructions.gpt.md`
-- `templates/custom-instructions.codex.md`
-
-## 경계
-
-Base에 두지 않는다:
-
-- 활성 프로젝트의 전체 GDD와 현재 밸런스 수치.
-- 엔진 코드와 프로젝트 전용 데이터·테스트 결과.
-- 비공개 원문과 공개 권한이 없는 자료.
-- 외부 작품의 코드·아트·사운드·문구·UI 복제본.
-
-Base 사례에는 프로젝트 이름과 공개 가능한 맥락을 적을 수 있지만 문제·결정·결과·재사용 원칙으로 일반화한다. 현재 구현 경로와 세부 수치는 프로젝트 책임 문서에서 관리한다.
+- 한 주제에는 현행 책임 문서 하나만 유지합니다.
+- `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않습니다.
+- 이전 내용은 Git 이력으로 보존합니다.
+- `archive`, `[백업]`, `hold`, `[보류]`는 활성 작업의 기본 읽기에서 제외합니다.
+- 통합이 끝난 중복 파일은 참조 확인 후 제거합니다.

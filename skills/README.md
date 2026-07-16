@@ -1,0 +1,19 @@
+# Base 실행 스킬
+
+이 폴더는 여러 프로젝트에서 직접 적용할 수 있는 단계형 작업 스킬을 관리한다.
+
+| 스킬 | Trigger |
+|---|---|
+| `transforming-requests-into-prompts` | 요청이 짧거나 모호하고 범위·완료·검증이 부족함 |
+| `designing-vertical-slices` | 핵심 경험과 최종 품질·제작 파이프라인을 작은 구간에서 검증함 |
+| `writing-game-design-documents` | 기획서 종류, 책임 원본, 로드맵과 명세 구조를 정함 |
+| `promoting-project-knowledge` | 프로젝트 교훈을 Base 공용 지식으로 일반화함 |
+
+## 배치 원칙
+
+- 실행 절차: `skills/<name>/SKILL.md`
+- 분야별 참고·능력 매트릭스: `docs/knowledge/skills/`
+- 복사 가능한 출력 형식: `templates/`
+- 구체 사례: `docs/knowledge/cases/`
+
+새 스킬은 `docs/AI_SKILL_ADOPTION_GUIDE.md`의 검증 절차를 통과한 뒤 `검증` 상태로 표시한다.
