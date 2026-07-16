@@ -17,6 +17,21 @@ description: Use when a user request is brief, ambiguous, design-sensitive, span
 - `L3`: 여러 시스템·핵심 구조 — 기획서와 Plan 분리
 - `L4`: 재사용 방법 — 프로젝트 검증 후 Base 승격
 
+## Superpowers-compatible routing
+
+Superpowers 또는 동등한 프로세스 스킬을 사용할 수 있으면 다음 순서로 연결한다.
+
+```text
+L2·L3 요청
+→ brainstorming으로 의도·대안·설계 확정
+→ 승인된 설계를 실행 프롬프트와 기획서로 기록
+→ writing-plans로 실제 작업 단위 분해
+→ 구현·디버깅에 맞는 스킬 적용
+→ verification-before-completion으로 결과 확인
+```
+
+플러그인이 없더라도 같은 게이트를 일반 절차로 적용한다. 스킬은 최신 사용자 지시와 프로젝트 규칙을 덮어쓰지 않는다.
+
 ## Required inputs
 
 - 사용자 원문
