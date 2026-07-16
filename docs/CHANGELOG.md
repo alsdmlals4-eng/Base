@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.7.0 - automatic Base promotion and canonical document lifecycle
+
+프로젝트 작업에서 발견한 안정적이고 일반화 가능한 공용 규칙을 후보 보고에서 멈추지 않고 Base에 자동 반영하는 운영 방식으로 변경했다.
+
+변경:
+
+- `AGENTS.md`에 모든 프로젝트 작업의 공용 규칙 자동 승격을 기본 원칙으로 추가했다.
+- `docs/AI_SHARED_WORK_RULES.md`의 승인 후 수동 승격 절차를 자동 승격 절차와 금지 기준으로 교체했다.
+- `docs/AI_WORKFLOW_RULES.md` 종료 단계에 공용 규칙 분리, Base 자동 반영, 프로젝트 동기화 확인을 추가했다.
+- `docs/MVP_WORKFLOW_CHECKLIST.md`의 `Base 승격 후보` 단계를 자동 승격 체크리스트로 교체했다.
+- `README.md`, `docs/DOCUMENTATION_MAP.md`, `docs/knowledge/README.md`의 승격 흐름을 동일한 정책으로 정렬했다.
+- 검증되지 않은 가설과 프로젝트 고유 이름·수치·세계관·엔진 경로는 자동 승격에서 제외하도록 했다.
+- 현행 책임 문서 하나만 유지하고 기존 파일을 직접 갱신하며, 이전 내용은 Git 이력으로 보존하는 문서 수명주기 원칙을 추가했다.
+
 ## v1.6.0 - planning, narrative and presentation knowledge expansion
 
 공용 기획 지식 베이스를 전체 기획 체계, 서사·관계, 캐릭터 아트, 대화·이벤트 연출, 기획·조사·인수 실무 스킬과 프로젝트 사례까지 확장했다.
