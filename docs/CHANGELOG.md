@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.8.0 - executable prompt, design-document and vertical-slice skills
+
+짧은 사용자 요청을 실행 가능한 프롬프트로 변환하고, 기획서 체계·Vertical Slice·프로젝트 지식 승격을 실제로 적용할 수 있는 실행 스킬 구조를 추가했다. 동시에 중복 설명을 책임 문서와 스킬로 분리해 Base 진입 문서를 압축했다.
+
+변경:
+
+- 루트 `skills/`에 실행 가능한 `SKILL.md` 구조와 라우터를 추가했다.
+- `transforming-requests-into-prompts`에 목적·맥락·경험·범위·제약·산출물·완료·검증의 8요소 공식을 추가했다.
+- `designing-vertical-slices`에 Prototype·Vertical Slice·MVP·Demo 구분, 대표 경험, 품질 기준, 제작 파이프라인 검증을 추가했다.
+- `writing-game-design-documents`에 기획서 종류, 질문별 책임 원본, 프로젝트 전용 확장 기준을 추가했다.
+- `promoting-project-knowledge`에 프로젝트 결과를 규칙·method·research·skill·template·case로 분류하는 승격 절차를 추가했다.
+- 실행 프롬프트, Vertical Slice, 기획 문서 체계, 프로젝트 스킬 확장 템플릿을 추가했다.
+- `AGENTS.md`, `README.md`, 작업 흐름, 스킬 가이드, 문서 지도와 지식 베이스 라우터를 새 구조에 맞게 압축·정렬했다.
+- 저장소 전체 무조건 읽기 대신 Documentation Map 기반 영향 범위 검토, L0~L4 작업 분류, 리팩터링 동작 불변, GitHub·로컬 비자동 동기화 규칙을 명확히 했다.
+- 활성 기준 문서를 새 버전 복제본으로 만들지 않고 기존 원본을 직접 갱신하는 정책을 유지했다.
+
 ## v1.7.1 - deferred item lifecycle
 
 아이디어를 삭제하지 않고 보존하면서도 활성 기획·구현 범위와 혼동하지 않도록 보류 문서의 수명주기 규칙을 추가했다.
