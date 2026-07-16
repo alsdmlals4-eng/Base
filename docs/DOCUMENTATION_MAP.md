@@ -20,9 +20,9 @@ README.md
 |---|---|---|
 | 최소 규칙 | `AGENTS.md` | 우선순위, 작업 흐름, 파일 수명주기, 검증 |
 | 상세 규칙 | `docs/AI_SHARED_WORK_RULES.md` | 역할·범위·품질·승격 운영 |
-| 작업 흐름 | `docs/AI_WORKFLOW_RULES.md` | L0~L4 분류와 설계→실행→검증 |
+| 작업 흐름 | `docs/AI_WORKFLOW_RULES.md` | L0~L4, Superpowers, 외부 AI 격리, 설계→실행→검증 |
 | 콘텐츠 기획 | `docs/CONTENT_DESIGN_METHOD.md` | 의도→경험→규칙→흐름→검증 |
-| 스킬 운영 | `docs/AI_SKILL_ADOPTION_GUIDE.md` | 스킬 선택·작성·권한·검증 |
+| 스킬 운영 | `docs/AI_SKILL_ADOPTION_GUIDE.md` | 스킬·외부 모델 선택, 권한·비용·검증 |
 | 실행 체크 | `docs/MVP_WORKFLOW_CHECKLIST.md` | 작업 시작·종료 체크 |
 | 벤치마킹 | `docs/BENCHMARKING_REFERENCE_GUIDE.md` | 조사와 적용·제외 결론 |
 | 맞춤 지침 | `docs/CUSTOM_INSTRUCTIONS_GUIDE.md` | ChatGPT·Codex 지침 작성 |
@@ -35,6 +35,9 @@ README.md
 | 요청을 좋은 프롬프트로 변환 | `skills/transforming-requests-into-prompts/SKILL.md` |
 | Vertical Slice 설계 | `skills/designing-vertical-slices/SKILL.md` |
 | 기획서 종류·책임 구조 설계 | `skills/writing-game-design-documents/SKILL.md` |
+| DeepSeek·외부 AI 대량 작업 격리 | `skills/orchestrating-deepseek-worktrees/SKILL.md` |
+| 외부 AI 초안·diff 검수 | `skills/reviewing-external-ai-drafts/SKILL.md` |
+| 아트·UI 프롬프트와 디자인 기술 카드 | `skills/designing-art-prompts-and-technique-cards/SKILL.md` |
 | 프로젝트 지식 Base 승격 | `skills/promoting-project-knowledge/SKILL.md` |
 
 루트 `skills/`는 직접 적용 가능한 절차를 관리한다. `docs/knowledge/skills/`는 넓은 분야의 능력 지도와 검수 계약을 관리한다.
@@ -46,7 +49,7 @@ README.md
 | 영역 | 책임 |
 |---|---|
 | `methods/` | 반복 가능한 설계·제작 판단 방법 |
-| `research/` | 조사 질문·출처·근거·적용 결론 |
+| `research/` | 조사 질문·출처·표준·근거·적용 결론 |
 | `skills/` | 분야별 입력·산출물·검수 능력 계약 |
 | `cases/` | 프로젝트·벤치마킹 사례에서 추출한 교훈 |
 
@@ -57,10 +60,13 @@ README.md
 - 서사·관계: `methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md`
 - 아트: `methods/ART_DIRECTION_METHOD.md`
 - 캐릭터·서사 아트: `methods/CHARACTER_AND_NARRATIVE_ART_METHOD.md`
+- AI 아트 프롬프트·기술 카드: `methods/AI_ART_PROMPT_TECHNIQUE_METHOD.md`
 - 애니메이션·전투 연출: `methods/ANIMATION_AND_PRESENTATION_METHOD.md`
 - 대화·이벤트 연출: `methods/DIALOGUE_AND_EVENT_PRESENTATION_METHOD.md`
 - 조사·근거: `research/DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md`
+- FACS 표정 제어 참고: `research/FACS_ACTION_UNIT_PROMPT_REFERENCE.md`
 - 분야별 능력 지도: `skills/PLANNING_RESEARCH_HANDOFF_SKILL_MATRIX.md`
+- 아트 실무 능력: `skills/ART_DIRECTION_SKILL_MATRIX.md`
 - 구체 사례: `cases/README.md`
 
 ## 5. 기획서와 템플릿
@@ -68,12 +74,18 @@ README.md
 | 목적 | 템플릿 |
 |---|---|
 | 실행 프롬프트 | `templates/EXECUTABLE_PROMPT.md` |
+| 프로젝트 AI 역할·worktree | `templates/ai/PROJECT_AI_COLLABORATION_PROFILE.md` |
+| DeepSeek 작업 패키지 | `templates/ai/DEEPSEEK_WORK_PACKAGE.md` |
+| 외부 AI 결과 검수 | `templates/ai/EXTERNAL_AI_DRAFT_REVIEW.md` |
 | 기획서 책임 지도 | `templates/planning/DESIGN_DOCUMENT_SYSTEM.md` |
 | 프로젝트 방향 | `templates/planning/PROJECT_DIRECTION_BRIEF.md` |
 | 콘텐츠·첫 10분·PoC | `templates/CONTENT_DESIGN_BRIEF.md` |
 | Vertical Slice | `templates/planning/VERTICAL_SLICE_PLAN.md` |
 | 서사·관계 | `templates/planning/NARRATIVE_CONTENT_PLAN.md` |
-| 아트 방향 | `templates/planning/ART_DIRECTION_BRIEF.md` |
+| 아트 방향·기술·프롬프트 | `templates/planning/ART_DIRECTION_BRIEF.md` |
+| 아트·UI 디자인 기술 카드 | `templates/planning/ART_TECHNIQUE_CARD.md` |
+| 표정·FACS 보조 제어 | `templates/planning/EXPRESSION_CONTROL_CARD.md` |
+| 캐릭터 포스터·상세 페이지 | `templates/planning/CHARACTER_PROMO_POSTER_BRIEF.md` |
 | 연출 | `templates/planning/PRESENTATION_PLAN.md` |
 | 인수인계 | `templates/planning/HANDOFF_CONTEXT.md` |
 | 프로젝트 스킬 확장 | `templates/skills/PROJECT_SKILL_EXTENSION.md` |
@@ -87,8 +99,13 @@ README.md
 | 전체 기획 체계 | 기획 시스템 method, 기획서 작성 스킬 |
 | 핵심 재미·첫 10분 | 콘텐츠 기획 method와 brief |
 | Vertical Slice | Vertical Slice 스킬과 템플릿 |
+| DeepSeek 대량 초안 | DeepSeek worktree 스킬과 작업 패키지 |
+| 외부 AI 결과 실제 반영 | 외부 AI 검수 스킬과 검수 템플릿 |
 | 인수인계 | Handoff method와 템플릿 |
 | 서사·아트·연출 | 해당 method·skill matrix·관련 case |
+| 아트 기술 추천·이미지 프롬프트 | AI 아트 prompt method, 실행 스킬, 기술 카드 |
+| FACS 표정 편집 | FACS reference, 표정 카드, 관련 case |
+| 캐릭터 포스터 | 포스터 brief와 관련 case |
 | 벤치마킹 | 조사 method와 벤치마킹 가이드 |
 | 스킬 도입 | 스킬 채택 가이드 |
 | 지식 승격 | 승격 스킬과 knowledge README |
@@ -107,6 +124,7 @@ Base:
 - 세계관·캐릭터·수치·데이터·파일 경로
 - 활성 로드맵·Issue·Goal·Plan
 - 현재 구현과 테스트 결과
+- 실제 모델·계정·비용·원본 이미지·승인 프롬프트
 - Base 스킬의 프로젝트 전용 확장
 
 ## 8. 프로젝트 기본 문서
@@ -119,9 +137,11 @@ Base:
 - Documentation Map
 - Handoff 또는 Active Context
 - 프로젝트 방향서와 분야별 책임 기획서
+- 프로젝트 AI 협업 프로필
 - Roadmap과 Decisions Pending
 - 현재 Issue·Goal·Plan
 - 프로젝트 전용 skill extension
+- 아트 기술 카드·프롬프트 사례·자산 manifest
 - 테스트·QA 기록
 
 ## 9. 관리 원칙
@@ -130,6 +150,7 @@ Base:
 - 한 질문에는 현행 책임 원본 하나를 둔다.
 - 실행 절차는 루트 `skills/`, 넓은 참고 계약은 `docs/knowledge/skills/`에 둔다.
 - 검증되지 않은 가설은 프로젝트에 남기고 Base 확정 규칙으로 쓰지 않는다.
+- 외부 AI 결과는 실제 diff·근거·테스트 확인 전까지 검수 대기 입력이다.
 - 구버전은 Git 이력으로 보존하고 활성 복제본을 만들지 않는다.
 - `archive`·`hold`는 기본 읽기에서 제외한다.
 - 외부 사례의 표면을 복제하지 않고 문제 해결 원리만 기록한다.
