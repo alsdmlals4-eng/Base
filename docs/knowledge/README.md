@@ -115,6 +115,14 @@ docs/knowledge/
 - 아트 프롬프트·기술 카드: `../../skills/designing-art-prompts-and-technique-cards/SKILL.md`
 - 지식 승격: `../../skills/promoting-project-knowledge/SKILL.md`
 
+십보강호에서 승격한 적용 사례:
+
+- 규칙·UI·연출·QA 추적성: `cases/TEN_PACES_RULE_PRESENTATION_TRACEABILITY_CASE.md`
+- 선택적 하이라이트와 정상 완주 경로: `cases/TEN_PACES_OPTIONAL_HIGHLIGHT_VERTICAL_SLICE_CASE.md`
+- 내부 데이터의 세계관 문구 변환: `cases/DIEGETIC_OPPONENT_INFORMATION_CASE.md`
+
+세 사례는 문서 구조와 기획 채택을 근거로 하며 실제 구현·플레이 검증 전이다. 따라서 검증 완료된 공용 규칙이 아니라 적용 조건과 후속 검증을 가진 학습 사례로 사용한다.
+
 ## 7. 아트 프롬프트 지식 운영
 
 ```text
