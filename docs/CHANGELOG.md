@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.9.2 - bidirectional learning and diegetic information cases
+
+십보강호의 기획·연출·인수인계 최적화에서 얻은 공용 교훈을 프로젝트 고유 수치와 분리해 Base 사례로 추가했다. 공용 Base를 프로젝트에 적용하는 과정과 프로젝트 결과를 다시 Base 학습 데이터로 환류하는 과정을 사례화했으며, 내부 난도·성장 데이터를 일관된 세계관 표현으로 암시하는 정보 설계 사례를 기록했다.
+
+변경:
+
+- `BASE_PROJECT_BIDIRECTIONAL_LEARNING_CASE.md`를 추가해 Base 문서 지도 확인→프로젝트 구체화→검증→Base 환류의 양방향 학습 순환을 사례화했다.
+- `DIEGETIC_OPPONENT_INFORMATION_CASE.md`를 추가해 내부 강도·행운·투자 스타일과 이명·풍문·평가·정탐 표현을 의미 키로 분리하는 방법을 정리했다.
+- 두 사례에 프로젝트 전용 수치·세계관·파일 경로를 복사하지 않는 경계와 후속 검증 조건을 명시했다.
+- `docs/knowledge/cases/README.md`의 사례 분류와 문제별 라우팅에 두 사례를 연결했다.
+- 내부 데이터→세계관 표현 자동화와 표준 테스트는 실제 구현·플레이 검증 전이므로 새 검증 스킬로 승격하지 않고 사례 상태로 유지했다.
+
 ## v1.9.1 - learning Base, project specialization and cold-start continuity
 
 Base를 **[학습형] [공용] 데이터 원본**, 프로젝트를 공용 지식을 실제 게임에 맞게 분화·적용·검증하는 전용 작업 공간으로 명확히 정의했다. 새 채팅·새 AI·새 작업자가 과거 대화 없이 저장소만으로 작업을 재개할 수 있도록 기획서·Roadmap·스킬·Active Context·Documentation Map의 지속성 계약을 최상위 규칙으로 추가했다.
