@@ -96,6 +96,9 @@ README.md
 - FACS 프롬프트 참고표: `docs/knowledge/research/FACS_ACTION_UNIT_PROMPT_REFERENCE.md`
 - FACS 표정 편집 사례: `docs/knowledge/cases/FACS_EXPRESSION_EDITING_PROMPT_CASE.md`
 - 캐릭터 포스터 사례: `docs/knowledge/cases/CHARACTER_PROMO_POSTER_LAYOUT_CASE.md`
+- 규칙·UI·연출·QA 추적성 사례: `docs/knowledge/cases/TEN_PACES_RULE_PRESENTATION_TRACEABILITY_CASE.md`
+- 선택적 하이라이트 Vertical Slice 사례: `docs/knowledge/cases/TEN_PACES_OPTIONAL_HIGHLIGHT_VERTICAL_SLICE_CASE.md`
+- 내부 데이터의 세계관 문구 변환 사례: `docs/knowledge/cases/DIEGETIC_OPPONENT_INFORMATION_CASE.md`
 
 실행 가능한 절차는 루트 `skills/`에 두고, 넓은 분야의 역량 지도와 참고 계약은 `docs/knowledge/skills/`에 둡니다.
 
@@ -110,7 +113,7 @@ README.md
 | `templates/planning/VERTICAL_SLICE_PLAN.md` | 수직 슬라이스 범위와 품질 기준 |
 | `templates/planning/DESIGN_DOCUMENT_SYSTEM.md` | 프로젝트 기획서 종류와 책임 원본 지도 |
 | `templates/planning/ART_DIRECTION_BRIEF.md` | 아트 방향, 디자인 기술, 프롬프트 사례, QA |
-| `templates/planning/ART_TECHNIQUE_CARD.md` | 아트·UI 기술의 데이터·프롬프트·검증 카드 |
+| `templates/planning/ART_TECHNIQUE_CARD.md` | 아트·UI 디자인 기술 카드 |
 | `templates/planning/EXPRESSION_CONTROL_CARD.md` | 캐릭터 표정·FACS 보조 제어 카드 |
 | `templates/planning/CHARACTER_PROMO_POSTER_BRIEF.md` | 캐릭터 포스터·상세 페이지 정보 슬롯 설계 |
 | `templates/skills/PROJECT_SKILL_EXTENSION.md` | Base 스킬의 프로젝트 전용 확장 |
