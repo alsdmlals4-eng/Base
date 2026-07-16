@@ -1,5 +1,23 @@
 # Changelog
 
+## v1.9.1 - learning Base, project specialization and cold-start continuity
+
+Base를 **[학습형] [공용] 데이터 원본**, 프로젝트를 공용 지식을 실제 게임에 맞게 분화·적용·검증하는 전용 작업 공간으로 명확히 정의했다. 새 채팅·새 AI·새 작업자가 과거 대화 없이 저장소만으로 작업을 재개할 수 있도록 기획서·Roadmap·스킬·Active Context·Documentation Map의 지속성 계약을 최상위 규칙으로 추가했다.
+
+변경:
+
+- `AGENTS.md`에 Base·프로젝트 경계, 공용·전용 컨텍스트 동시 확인, 작업 종료·인수인계 학습 환류와 콜드 스타트 규칙을 추가했다.
+- 프로젝트 기획서만으로 핵심 경험, 방향, 범위와 금지 방향을 이해하고 세부 구현은 참조 원본을 따라 확인하도록 책임을 분리했다.
+- Roadmap에 현재 단계, 우선순위, 선행 조건, 다음 작업, 종료 기준과 검증을 항상 유지하도록 했다.
+- Base skill과 프로젝트 skill extension을 실제 파일·데이터·완료·실패 기준에 연결하도록 했다.
+- `AI_SHARED_WORK_RULES.md`, `AI_WORKFLOW_RULES.md`, `MVP_WORKFLOW_CHECKLIST.md`를 공용 학습→프로젝트 분화→실제 검증→Base 환류 흐름으로 정렬했다.
+- `docs/knowledge/README.md`에 관찰→가설→채택→패턴→검증의 학습 상태와 작업 시작·종료 규칙을 추가했다.
+- `promoting-project-knowledge`와 `writing-game-design-documents` 스킬에 작업 종료·인수인계 사례 작성, 지식 상태, Roadmap·스킬 최신화와 콜드 스타트 검수를 추가했다.
+- `PROJECT_HANDOFF_CONTEXT_METHOD.md`, `DESIGN_DOCUMENT_SYSTEM.md`, `HANDOFF_CONTEXT.md`, 프로젝트 `AGENTS.md` 템플릿을 새 작업자 재개 기준에 맞게 갱신했다.
+- 인수인계 템플릿의 오래된 작성 방법 경로를 실제 `docs/knowledge/methods/PROJECT_HANDOFF_CONTEXT_METHOD.md`로 수정했다.
+- `DOCUMENTATION_MAP.md`에 공용 학습 데이터와 프로젝트 전용 데이터의 읽기 순서, 책임 원본, 종료 갱신 체크를 연결했다.
+- 공용화 가능한 내용이 없을 때 Base를 억지로 수정하지 않고 프로젝트 전용·단발성 작업으로 기록하도록 했다.
+
 ## v1.9.0 - external AI worktrees and art prompt technique library
 
 DeepSeek를 포함한 외부 AI의 대용량 초안을 별도 worktree에서 생성하고 Codex가 실제 diff·근거·테스트를 검수해 반영하는 협업 구조를 추가했다. 아트·UI 디자인 기술을 프롬프트 사례, 모델 호환성, 실패 기준과 함께 관리하고 FACS 표정 편집 및 캐릭터 프로모션 포스터 사례를 공용 지식으로 정리했다.
