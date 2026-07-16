@@ -23,12 +23,12 @@ README.md
 
 | 구분 | 파일 | 역할 |
 |---|---|---|
-| 작업 원칙 | `AGENTS.md` | 최소 공용 AI 작업 원칙 |
-| 작업 원칙 | `docs/AI_SHARED_WORK_RULES.md` | 역할, 범위, 품질, Base 승격 운영 |
+| 작업 원칙 | `AGENTS.md` | 최소 공용 AI 작업 원칙과 자동 승격 원칙 |
+| 작업 원칙 | `docs/AI_SHARED_WORK_RULES.md` | 역할, 범위, 품질, Base 자동 승격 운영 |
 | 작업 흐름 | `docs/AI_WORKFLOW_RULES.md` | 공통 작업 순서와 Goal 기준 |
 | 콘텐츠 기획 | `docs/CONTENT_DESIGN_METHOD.md` | 의도→경험→규칙→흐름, 첫 10분, PoC |
 | 스킬 채택 | `docs/AI_SKILL_ADOPTION_GUIDE.md` | 외부 스킬, 권한, compact, 검증 |
-| 실행 체크 | `docs/MVP_WORKFLOW_CHECKLIST.md` | 작업 시작·종료 체크리스트 |
+| 실행 체크 | `docs/MVP_WORKFLOW_CHECKLIST.md` | 작업 시작·종료·자동 승격 체크리스트 |
 | 벤치마킹 | `docs/BENCHMARKING_REFERENCE_GUIDE.md` | 사례 조사와 적용 결론 |
 | 문서 라우터 | `docs/DOCUMENTATION_MAP.md` | Base와 프로젝트 책임 경계 |
 | 맞춤 지침 | `docs/CUSTOM_INSTRUCTIONS_GUIDE.md` | ChatGPT·Codex 지침 작성 |
@@ -69,7 +69,7 @@ README.md
 | 정보 조사·벤치마킹 | `DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md`, `BENCHMARKING_REFERENCE_GUIDE.md` |
 | 기획·조사·handoff 실무 | `PLANNING_RESEARCH_HANDOFF_SKILL_MATRIX.md` |
 | 외부 AI 스킬 도입 | `AI_SKILL_ADOPTION_GUIDE.md` |
-| 작업 종료·교훈 승격 | `AI_SHARED_WORK_RULES.md`, `knowledge/README.md`, 사례 템플릿 |
+| 작업 종료·교훈 자동 승격 | `AI_SHARED_WORK_RULES.md`, `MVP_WORKFLOW_CHECKLIST.md`, `knowledge/README.md` |
 
 ## 사례 라우팅
 
@@ -104,11 +104,12 @@ README.md
 
 1. 프로젝트는 필요한 Base 문서를 로컬 사본으로 두거나 기준 경로를 명시한다.
 2. 일상 작업에서는 프로젝트 내부의 최신 문서를 우선 읽는다.
-3. Base 커밋 SHA와 동기화 날짜는 프로젝트의 `docs/BASE_RULES_VERSION.md`에 기록한다.
+3. Base 커밋 SHA와 동기화 날짜는 프로젝트에 `docs/BASE_RULES_VERSION.md`가 있을 때 기록한다.
 4. 프로젝트 전용 규칙은 Base를 보완하며 더 구체적인 규칙이 우선한다.
-5. Base 원격 변경을 자동 병합하지 않는다.
-6. 프로젝트 해결안은 먼저 프로젝트에서 검증하고, 공용성 확인 뒤 cases에 승격한다.
-7. 반복 검증된 사례만 methods 또는 skills로 승격한다.
+5. Base 원격 변경을 프로젝트에 무조건 자동 병합하지 않는다.
+6. 프로젝트 작업에서 발견한 안정적이고 일반화 가능한 공용 규칙은 Base 기존 기준 파일에 자동 승격한다.
+7. 검증되지 않은 가설은 프로젝트의 `확인 필요` 또는 후보 상태로 남긴다.
+8. 구체 사례는 필요할 때 cases에 기록하고, methods 또는 skills 승격은 반복 검증이나 강한 근거를 요구한다.
 
 ## 새 프로젝트에 복사·연결할 기본 문서
 
@@ -144,8 +145,8 @@ README.md
 - 반복 가능한 방법은 methods에 둔다.
 - 조사·근거 평가 절차는 research에 둔다.
 - 작업 역량·입력·산출물·검수는 skills에 둔다.
-- 한 프로젝트의 결정과 결과는 먼저 cases에 둔다.
+- 한 프로젝트의 구체 결정과 결과는 필요할 때 cases에 둔다.
+- 안정적이고 일반화 가능한 작업 규칙은 작업 종료 시 Base 기존 파일에 자동 반영한다.
 - 엔진, 세계관, 현재 수치, 구현 상태는 프로젝트 저장소에 둔다.
 - Issue는 현재 작업 기준서, Goal은 구현 실행 지시서다.
 - 외부 작품의 표면을 복제하지 않고 문제 해결 원리만 기록한다.
-- Base 승격은 사용자 승인 뒤 별도 커밋으로 반영한다.
