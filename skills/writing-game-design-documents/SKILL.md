@@ -21,6 +21,16 @@ description: Use when creating, restructuring, reviewing, updating, or handing o
 - Active Context·Handoff: 현재 상태와 읽기 순서
 - Documentation Map: 질문별 현행 책임 원본
 
+사용자가 처음 읽을 프로젝트 활성 본책은 다음 다섯 분야로 제한한다.
+
+1. 게임 기획서
+2. 프로그래밍·MVP·로드맵 기획서
+3. 아트 기획서
+4. 사운드 기획서
+5. QA·PM 기획서
+
+다섯 본책은 방향·현재 상태·최신 자료·완료 기준을 자급적으로 설명한다. 세부 수치와 데이터 계약은 부록으로 연결하되, 같은 설명을 본책과 부록에 장문 복제하지 않는다.
+
 방향, 수치, 용어, 범위, 구현 상태, 우선순위 또는 작업 절차가 바뀌면 같은 작업 안에서 관련 원본을 갱신한다.
 
 ## Document router
@@ -57,6 +67,9 @@ description: Use when creating, restructuring, reviewing, updating, or handing o
 12. 파일 생성·통합·이동·삭제 시 Documentation Map, README와 참조를 갱신한다.
 13. 작업 종료·인수인계에서 프로젝트 전용 결과와 Base 공용 학습 데이터를 분리하고 case를 기록한다.
 14. 콜드 스타트 질문을 10분 안에 답할 수 있는지 확인한다.
+15. 작업 시작 시 주 책임 분야와 영향 분야를 선택한다.
+16. 작업 종료 시 영향받은 본책의 방향·구현·검증·미확정 상태와 최신 자료를 갱신한다.
+17. 최신 승인 이미지는 버전 없는 안정 경로 하나로 관리하고 이전 내용은 Git 이력 또는 명시적 아카이브로 보존한다.
 
 ## Base and project split
 
@@ -99,6 +112,9 @@ description: Use when creating, restructuring, reviewing, updating, or handing o
 - Issue만 최신이고 기획서·Roadmap·Handoff는 오래된 상태
 - Base skill과 프로젝트 실제 경로·검증이 연결되지 않음
 - 새 작업자가 과거 대화 없이는 방향과 다음 작업을 알 수 없음
+- 사용자가 여러 상세 명세를 순회해야만 프로젝트 방향을 이해할 수 있음
+- 최신 이미지와 폐기된 이미지가 같은 승인 상태로 노출됨
+- 작업 결과가 관련 분야 본책에 반영되지 않음
 
 ## Validation scenarios
 
