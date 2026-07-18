@@ -28,7 +28,7 @@ project/docs/[기획서]/
 src/[기획서]/
 ```
 
-기존 프로젝트의 안정된 기획 폴더가 다른 이름이라면 감사와 사용자 승인 없이 강제 이동하지 않는다. 다만 신규 설치와 승인된 마이그레이션의 기본 목표 위치는 루트 `[기획서]`다.
+기존 프로젝트의 안정된 기획 폴더가 다른 이름이라면 감사와 사용자 승인 없이 강제 이동하지 않는다. 신규 설치와 승인된 마이그레이션의 기본 목표 위치는 루트 `[기획서]`다.
 
 ## 템플릿 목록
 
@@ -51,11 +51,16 @@ src/[기획서]/
 | 파일 | 대상 프로젝트 역할 |
 |---|---|
 | `DISCIPLINE_BIBLE.md` | 분야별 활성 본책 공통 골격 |
-| `PROJECT_SKILL_MAP.md` | 사람이 읽는 Foundation·분야 스킬 책임 지도 |
-| `SKILL_REGISTRY.json` | 기계 판독 선택적 호출·상태·학습 인덱스 |
+| `SKILL_REGISTRY.json` | AI가 판독하는 선택적 호출·상태·학습 책임 원본 |
+| `PROJECT_SKILL_MAP.pdf` | 사람이 가장 먼저 보는 이미지 포함 최신 스킬맵 |
+| `PROJECT_SKILL_MAP.docx` | PDF와 함께 자동 생성되는 문서 열람·검토본 |
+| `PROJECT_SKILL_MAP.assets/` | 호출 흐름·분야 라우팅·상태 매트릭스 이미지 |
+| `SKILL_MAP_PUBLICATION_MANIFEST.json` | Registry와 DOCX·PDF·이미지의 해시·검수 상태 |
 | `skills/FOUNDATION_SKILL.md` | 여러 분야가 공통 사용하는 실행 계약 |
 | `skills/DISCIPLINE_SKILL.md` | 분야 고유 판단·실제 경로·검증 계약 |
 | `skills/SKILL_LEARNING_LOG.md` | 모든 의미 있는 호출의 결과·실패·갱신 판정 |
+
+`PROJECT_SKILL_MAP.md`는 만들지 않는다. 스킬 정보는 `SKILL_REGISTRY.json`에서 편집하고 `tools/build_project_skill_map.py`로 DOCX·PDF와 다이어그램을 재생성한다.
 
 ### 이미지·PDF
 
@@ -64,7 +69,8 @@ src/[기획서]/
 | `VISUAL_SOURCE_OF_TRUTH.md` | 이미지 승인·일관성·실제 캡처 기준 |
 | `ASSET_MANIFEST.yml` | 이미지·자산 상태와 캐노니컬 경로 |
 | `DISCIPLINE_PDF_PUBLICATION.md` | 분야 전체 과정과 승인 이미지를 포함하는 PDF 발행 계획 |
-| `PUBLICATION_MANIFEST.json` | PDF 입력·출력·해시·시각 검수·최신 상태 |
+| `PUBLICATION_MANIFEST.json` | 분야 PDF 입력·출력·해시·시각 검수·최신 상태 |
+| `SKILL_MAP_PUBLICATION_MANIFEST.json` | 프로젝트 스킬맵의 Registry·DOCX·PDF·다이어그램 최신성 |
 
 ### GitHub 운영
 
@@ -73,8 +79,9 @@ src/[기획서]/
 | `github/ISSUE_TEMPLATE.yml` | 목표·분야·Ready·스킬·검증 Issue Form 예시 |
 | `github/PULL_REQUEST_TEMPLATE.md` | 게이트·본책·스킬·Manifest·PDF·학습·미검증 PR 체크 |
 | `github/CODEOWNERS.example` | 분야별 문서·스킬·자동화 리뷰 예시 |
-| `github/documentation-governance.json` | 루트 기획서·필수 경로·스킬 Registry·PDF 강제 설정 |
-| `github/check_documentation_governance.py` | 링크·파일명·자산·스킬·PDF·갱신 누락 검사기 |
+| `github/documentation-governance.json` | 루트 기획서·필수 경로·Skill Registry·스킬맵·분야 PDF 강제 설정 |
+| `github/check_documentation_governance.py` | 링크·파일명·자산·분야 PDF·갱신 누락 검사기 |
+| `github/check_skill_routing_governance.py` | Registry·분야 진입·Learning Log·스킬맵 파생본 검사기 |
 | `github/documentation-governance.yml` | GitHub Actions 예시 |
 
 ## 권장 대상 구조
@@ -83,14 +90,24 @@ src/[기획서]/
 AGENTS.md
 README.md
 
+tools/
+├─ build_project_skill_map.py
+└─ skill_map_diagrams.py
+
 [기획서]/
 ├─ 00_프로젝트_허브/
 │  ├─ START_HERE.md
 │  ├─ ACTIVE_CONTEXT.md
 │  ├─ DOCUMENTATION_MAP.md
 │  ├─ DEVELOPMENT_GATES.md
-│  ├─ PROJECT_SKILL_MAP.md
 │  ├─ SKILL_REGISTRY.json
+│  ├─ PROJECT_SKILL_MAP.docx
+│  ├─ PROJECT_SKILL_MAP.pdf
+│  ├─ PROJECT_SKILL_MAP.assets/
+│  │  ├─ skill-flow.png
+│  │  ├─ discipline-routing.png
+│  │  └─ skill-matrix.png
+│  ├─ SKILL_MAP_PUBLICATION_MANIFEST.json
 │  ├─ DOCUMENT_UPDATE_MATRIX.md
 │  ├─ DECISION_LOG.md
 │  ├─ CHANGELOG.md
@@ -134,14 +151,27 @@ skills/
 분야 진입 문서
 → 분야 활성 본책
 → SKILL_REGISTRY의 분야 진입 스킬
+→ 사람용 PROJECT_SKILL_MAP.pdf
 → 현재 Roadmap·Issue·Goal·Plan
 → 실제 코드·데이터·자산
 → 테스트·검수
-→ 최신 PDF
+→ 최신 분야 PDF
 → Learning Log
 ```
 
 여러 분야에서 공통으로 사용하는 절차는 foundation 스킬에 한 번만 둔다.
+
+## 사람용·AI용 스킬맵 경계
+
+```text
+AI·자동 검사 → SKILL_REGISTRY.json
+사람의 빠른 열람 → PROJECT_SKILL_MAP.pdf
+사람의 문서 검토 → PROJECT_SKILL_MAP.docx
+그림 원본 확인 → PROJECT_SKILL_MAP.assets/
+최신성 판정 → SKILL_MAP_PUBLICATION_MANIFEST.json
+```
+
+DOCX와 PDF는 독립 책임 원본이 아니다. 사람이 DOCX를 수정했더라도 Registry에 반영되지 않았다면 공식 변경으로 인정하지 않는다.
 
 ## 선택적 호출과 항상 학습
 
@@ -151,6 +181,7 @@ skills/
 - 모든 의미 있는 스킬 호출은 Learning Log에 결과를 기록한다.
 - 스킬 본문은 반복 실패·새 예외·책임·경로·검증 변경이 있을 때만 갱신한다.
 - 변경 근거가 없으면 `스킬 변경 없음`과 이유를 기록한다.
+- Registry의 스킬·분야 진입·상태·호출 조건이 바뀌면 DOCX·PDF·다이어그램을 재생성한다.
 
 ## 적용 규칙
 
@@ -161,11 +192,12 @@ skills/
 5. 프로젝트 이름, 엔진, 실제 경로, 검증 명령과 팀 구조를 채운다.
 6. 존재하지 않는 자동화·PDF·테스트를 설치 완료로 표시하지 않는다.
 7. 기존 승인 이미지가 있으면 새 시안을 만들지 않고 Visual Source·Manifest에 등록한다.
-8. Markdown을 책임 원본으로 사용하고 PDF·HTML·DOCX는 파생 열람본으로 둔다.
-9. 분야 PDF는 전체 과정과 승인 이미지를 포함하고 Publication Manifest로 최신성을 추적한다.
-10. GitHub 검사 템플릿은 실제 프로젝트 경로에 맞게 설정하고 정상·실패 시나리오를 테스트한다.
-11. `[백업]`, `[보류]`, `[제거 후보]`는 기본 작업 컨텍스트에서 제외한다.
-12. 설치·마이그레이션·주요 게이트 후 운영체계 Health Review를 수행한다.
+8. 일반 기획서는 Markdown·구조화 데이터가 책임 원본이고 PDF·HTML·DOCX는 파생 열람본이다.
+9. 프로젝트 스킬맵은 `SKILL_REGISTRY.json`이 책임 원본이며 DOCX·PDF·PNG만 사람용 파생본으로 생성한다.
+10. 분야 PDF는 전체 과정과 승인 이미지를 포함하고 Publication Manifest로 최신성을 추적한다.
+11. GitHub 검사 템플릿은 실제 프로젝트 경로에 맞게 설정하고 정상·실패 시나리오를 테스트한다.
+12. `[백업]`, `[보류]`, `[제거 후보]`는 기본 작업 컨텍스트에서 제외한다.
+13. 설치·마이그레이션·주요 게이트 후 운영체계 Health Review를 수행한다.
 
 ## 설치 상태 표기
 
@@ -173,8 +205,8 @@ skills/
 |---|---|
 | 설계됨 | 템플릿과 적용 계획만 존재 |
 | 설치됨 | 프로젝트 파일과 실제 책임 원본 연결이 생성됨 |
-| 실행 확인 | 실제 작업·스킬 라우팅·학습 기록·PDF 빌드·PR에서 절차가 수행됨 |
+| 실행 확인 | 실제 작업·스킬 라우팅·학습 기록·DOCX/PDF 빌드·PR에서 절차가 수행됨 |
 | 강제됨 | 브랜치 보호의 Required Check·리뷰로 활성화됨 |
 | 미검증 | 파일은 있으나 실제 실행·렌더링·보호 설정 미확인 |
 
-GitHub Actions 파일, Skill Registry 또는 PDF 생성 계획이 존재한다는 사실만으로 `실행 확인` 또는 `강제됨`으로 기록하지 않는다.
+GitHub Actions 파일, Skill Registry 또는 DOCX/PDF 생성 계획이 존재한다는 사실만으로 `실행 확인` 또는 `강제됨`으로 기록하지 않는다.
