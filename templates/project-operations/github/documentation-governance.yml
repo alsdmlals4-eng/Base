@@ -1,0 +1,42 @@
+name: Documentation Governance
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  governance:
+    name: documentation-governance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate documentation governance
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python tools/check_documentation_governance.py \
+            --config .github/documentation-governance.json \
+            --base "$BASE_SHA" \
+            --head "$HEAD_SHA"
+
+# 프로젝트 적용 절차:
+# 1. 이 파일을 .github/workflows/documentation-governance.yml로 복사·분화한다.
+# 2. checker를 tools/check_documentation_governance.py에 둔다.
+# 3. config를 .github/documentation-governance.json에 둔다.
+# 4. 실제 PR에서 성공·실패 사례를 검증한다.
+# 5. 저장소 브랜치 보호에서 `documentation-governance`를 Required Status Check로 지정한다.
+# 파일 존재와 브랜치 보호 실제 활성화는 서로 다른 상태다.
