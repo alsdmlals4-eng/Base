@@ -14,6 +14,7 @@ on:
       - "tests/test_documentation_governance.py"
       - "tests/test_skill_routing_governance.py"
       - "tests/test_design_document_*.py"
+      - "tests/test_project_skill_map_generation.py"
       - ".github/workflows/validate-game-project-operating-system.yml"
   workflow_dispatch:
 
@@ -57,15 +58,17 @@ jobs:
             tests/test_skill_routing_governance.py \
             tests/test_design_document_publication_governance.py \
             tests/test_design_document_generation.py \
+            tests/test_project_skill_map_generation.py \
             tests/test_game_project_operating_system_structure.py
 
-      - name: Run operating system regression tests
+      - name: Run operating system regression and generation tests
         run: |
           python -m unittest \
             tests/test_documentation_governance.py \
             tests/test_skill_routing_governance.py \
             tests/test_design_document_publication_governance.py \
             tests/test_design_document_generation.py \
+            tests/test_project_skill_map_generation.py \
             tests/test_game_project_operating_system_structure.py \
             -v
 
