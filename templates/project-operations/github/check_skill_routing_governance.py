@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate root design-document location and project skill routing governance.
+"""Validate root design documents, skill routing, and human skill-map publications.
 
 Usage:
   python tools/check_skill_routing_governance.py \
@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import fnmatch
+import hashlib
 import json
 import os
 import subprocess
@@ -49,6 +50,14 @@ def load_json(path: Path) -> dict:
     if not isinstance(data, dict):
         raise SystemExit(f"JSON root must be an object: {path}")
     return data
+
+
+def file_digest(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def check_design_root(root: Path, config: dict) -> list[str]:
@@ -100,22 +109,22 @@ def nonempty_string_list(value: object) -> bool:
     )
 
 
-def check_skill_registry(root: Path, config: dict) -> tuple[list[str], set[str]]:
+def check_skill_registry(root: Path, config: dict) -> tuple[list[str], set[str], dict]:
     errors: list[str] = []
     registry_name = str(config.get("skill_registry", "")).strip()
     enforce = bool(config.get("enforce_skill_registry", False))
 
     if not registry_name:
-        return (["skill_registry path is required"] if enforce else []), set()
+        return ((["skill_registry path is required"] if enforce else []), set(), {})
 
     registry_path = root / registry_name
     if not registry_path.exists():
-        return ([f"Skill registry missing: {registry_name}"] if enforce else []), set()
+        return (([f"Skill registry missing: {registry_name}"] if enforce else []), set(), {})
 
     try:
         registry = load_json(registry_path)
     except SystemExit as exc:
-        return [str(exc)], set()
+        return [str(exc)], set(), {}
 
     routing = registry.get("routing_policy", {})
     if not isinstance(routing, dict):
@@ -129,9 +138,28 @@ def check_skill_registry(root: Path, config: dict) -> tuple[list[str], set[str]]
     if routing.get("require_trigger_match") is not True:
         errors.append(f"{registry_name}: routing_policy.require_trigger_match must be true")
 
+    human = registry.get("human_presentation", {})
+    if bool(config.get("enforce_skill_map_publication", False)):
+        if not isinstance(human, dict):
+            errors.append(f"{registry_name}: human_presentation must be an object")
+            human = {}
+        expected_human = {
+            "primary_reading_format": "PROJECT_SKILL_MAP.pdf",
+            "editable_derivative": "PROJECT_SKILL_MAP.docx",
+            "diagram_directory": "PROJECT_SKILL_MAP.assets",
+            "publication_manifest": "SKILL_MAP_PUBLICATION_MANIFEST.json",
+            "source_of_truth": "SKILL_REGISTRY.json",
+            "markdown_skill_map_allowed": False,
+        }
+        for field, expected in expected_human.items():
+            if human.get(field) != expected:
+                errors.append(
+                    f"{registry_name}: human_presentation.{field} must be {expected!r}"
+                )
+
     skills = registry.get("skills", [])
     if not isinstance(skills, list):
-        return errors + [f"{registry_name}: skills must be a list"], set()
+        return errors + [f"{registry_name}: skills must be a list"], set(), registry
     if enforce and not skills:
         errors.append(f"{registry_name}: at least one active project skill is required")
 
@@ -203,7 +231,128 @@ def check_skill_registry(root: Path, config: dict) -> tuple[list[str], set[str]]
                     f"{skill_id}"
                 )
 
-    return errors, active_ids
+    return errors, active_ids, registry
+
+
+def check_file_header(path: Path, expected: bytes) -> bool:
+    try:
+        return path.read_bytes()[: len(expected)] == expected
+    except OSError:
+        return False
+
+
+def resolve_manifest_path(manifest_path: Path, value: str) -> Path:
+    candidate = Path(value)
+    if candidate.is_absolute():
+        return candidate
+    return manifest_path.parent / candidate
+
+
+def check_skill_map_publication(root: Path, config: dict, registry: dict) -> list[str]:
+    errors: list[str] = []
+    enforce = bool(config.get("enforce_skill_map_publication", False))
+    manifest_name = str(config.get("skill_map_publication_manifest", "")).strip()
+    forbidden_md = str(config.get("forbidden_markdown_skill_map", "")).strip()
+
+    if forbidden_md and (root / forbidden_md).exists():
+        errors.append(
+            f"Markdown project skill map is forbidden: {forbidden_md}; "
+            "edit SKILL_REGISTRY.json and regenerate DOCX/PDF"
+        )
+
+    if not manifest_name:
+        return errors + (["skill_map_publication_manifest is required"] if enforce else [])
+
+    manifest_path = root / manifest_name
+    if not manifest_path.exists():
+        return errors + ([f"Skill-map publication manifest missing: {manifest_name}"] if enforce else [])
+
+    try:
+        manifest = load_json(manifest_path)
+    except SystemExit as exc:
+        return errors + [str(exc)]
+
+    registry_name = str(config.get("skill_registry", "")).strip()
+    registry_path = root / registry_name
+    if not registry_path.exists():
+        return errors
+
+    expected_registry_hash = file_digest(registry_path)
+    if str(manifest.get("source_sha256", "")).lower() != expected_registry_hash:
+        errors.append(
+            f"{manifest_name}: registry input changed; expected source_sha256 "
+            f"{expected_registry_hash}"
+        )
+
+    if manifest.get("role") != "human-readable-derivative":
+        errors.append(f"{manifest_name}: role must be human-readable-derivative")
+    if manifest.get("status") != "CURRENT":
+        errors.append(f"{manifest_name}: status must be CURRENT")
+    if manifest.get("automated_render_review") != "PASSED":
+        errors.append(f"{manifest_name}: automated_render_review must be PASSED")
+    if bool(config.get("require_human_skill_map_visual_review", False)) and manifest.get(
+        "human_visual_review"
+    ) != "PASSED":
+        errors.append(f"{manifest_name}: human_visual_review must be PASSED")
+
+    output_specs = [
+        ("output_docx", "output_docx_sha256", b"PK", "DOCX"),
+        ("output_pdf", "output_pdf_sha256", b"%PDF-", "PDF"),
+    ]
+    for path_field, digest_field, header, label in output_specs:
+        relative = str(manifest.get(path_field, "")).strip()
+        if not relative:
+            errors.append(f"{manifest_name}: {path_field} is required")
+            continue
+        path = resolve_manifest_path(manifest_path, relative)
+        if not path.is_file():
+            errors.append(f"{manifest_name}: {label} missing: {relative}")
+            continue
+        if not check_file_header(path, header):
+            errors.append(f"{manifest_name}: invalid {label} header: {relative}")
+        expected = str(manifest.get(digest_field, "")).lower()
+        actual = file_digest(path)
+        if expected != actual:
+            errors.append(f"{manifest_name}: {label} hash mismatch: {relative}")
+
+    diagrams = manifest.get("diagram_paths", [])
+    hashes = manifest.get("diagram_sha256", {})
+    if not isinstance(diagrams, list) or not diagrams:
+        errors.append(f"{manifest_name}: diagram_paths must contain at least one image")
+        diagrams = []
+    if not isinstance(hashes, dict):
+        errors.append(f"{manifest_name}: diagram_sha256 must be an object")
+        hashes = {}
+    for relative_value in diagrams:
+        relative = str(relative_value)
+        path = resolve_manifest_path(manifest_path, relative)
+        if not path.is_file():
+            errors.append(f"{manifest_name}: diagram missing: {relative}")
+            continue
+        if path.suffix.lower() not in {".png", ".jpg", ".jpeg", ".webp"}:
+            errors.append(f"{manifest_name}: unsupported diagram format: {relative}")
+        expected = str(hashes.get(relative, "")).lower()
+        if expected != file_digest(path):
+            errors.append(f"{manifest_name}: diagram hash mismatch: {relative}")
+
+    human = registry.get("human_presentation", {}) if isinstance(registry, dict) else {}
+    if isinstance(human, dict):
+        expected_names = {
+            str(human.get("primary_reading_format", "")),
+            str(human.get("editable_derivative", "")),
+            str(human.get("publication_manifest", "")),
+        }
+        actual_names = {
+            str(manifest.get("output_pdf", "")),
+            str(manifest.get("output_docx", "")),
+            manifest_path.name,
+        }
+        if expected_names != actual_names:
+            errors.append(
+                f"{manifest_name}: Registry human_presentation paths do not match publication outputs"
+            )
+
+    return errors
 
 
 def git_changed_files(root: Path, base: str, head: str) -> list[str]:
@@ -230,26 +379,33 @@ def check_skill_change_sync(changed: list[str], config: dict) -> list[str]:
         return []
 
     skill_globs = config.get("skill_change_globs", ["skills/**/SKILL.md"])
-    if not any(matches_any(path, skill_globs) for path in changed):
+    generator_globs = config.get("skill_map_generator_globs", [])
+    registry_name = str(config.get("skill_registry", "")).strip()
+    skill_changed = any(matches_any(path, skill_globs) for path in changed)
+    source_changed = skill_changed or registry_name in changed or any(
+        matches_any(path, generator_globs) for path in changed
+    )
+    if not source_changed:
         return []
 
     errors: list[str] = []
-    registry_name = str(config.get("skill_registry", "")).strip()
-    skill_map = str(config.get("skill_map", "")).strip()
-    learning_globs = config.get(
-        "learning_log_globs",
-        ["skills/**/LEARNING_LOG.md", "skills/**/SKILL_LEARNING_LOG.md"],
-    )
+    sync_paths = [str(path) for path in config.get("skill_map_sync_paths", [])]
+    for path in sync_paths:
+        if path not in changed:
+            errors.append(f"Skill-map source changed; regenerate and update: {path}")
 
-    if registry_name and registry_name not in changed:
-        errors.append(f"Skill contract changed; update registry: {registry_name}")
-    if skill_map and skill_map not in changed:
-        errors.append(f"Skill contract changed; update skill map: {skill_map}")
-    if learning_globs and not any(matches_any(path, learning_globs) for path in changed):
-        errors.append(
-            "Skill contract changed; update at least one Learning Log matching: "
-            + ", ".join(learning_globs)
+    if skill_changed:
+        if registry_name and registry_name not in changed:
+            errors.append(f"Skill contract changed; update registry: {registry_name}")
+        learning_globs = config.get(
+            "learning_log_globs",
+            ["skills/**/LEARNING_LOG.md", "skills/**/SKILL_LEARNING_LOG.md"],
         )
+        if learning_globs and not any(matches_any(path, learning_globs) for path in changed):
+            errors.append(
+                "Skill contract changed; update at least one Learning Log matching: "
+                + ", ".join(learning_globs)
+            )
 
     return errors
 
@@ -261,8 +417,9 @@ def main() -> int:
 
     errors: list[str] = []
     errors += check_design_root(root, config)
-    registry_errors, active_ids = check_skill_registry(root, config)
+    registry_errors, active_ids, registry = check_skill_registry(root, config)
     errors += registry_errors
+    errors += check_skill_map_publication(root, config, registry)
 
     try:
         changed = git_changed_files(root, args.base, args.head)
