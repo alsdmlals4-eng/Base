@@ -1,8 +1,6 @@
 # Base 문서·스킬 역할표
 
-Base는 **[학습형] [공용]** 작업 원칙, 기획·아트·서사·연출 방법, 조사 기준, 실행 스킬, 템플릿과 일반화된 사례를 관리한다. 프로젝트 저장소는 이 공용 지식을 자신의 세계관, 수치, 엔진, 파일 경로와 현재 구현 상태에 맞게 분화·적용·검증한다.
-
-프로젝트의 활성 기획, 코드, 수치, 파일 경로와 테스트 결과는 프로젝트 저장소가 책임진다. 프로젝트 작업에서 얻은 공용 교훈은 작업 종료·인수인계 시 Base method·skill·template·case로 환류한다.
+Base는 **[학습형] [공용]** 작업 원칙, 설계 방법, 실행 스킬, 템플릿과 일반화된 사례를 관리한다. 프로젝트의 세계관, 실제 수치, 구현 상태, 파일 경로, 승인 이미지와 테스트 결과는 프로젝트 저장소가 책임진다.
 
 ## 1. 최초 읽기
 
@@ -13,170 +11,158 @@ START_HERE.md
 → README.md
 → AGENTS.md
 → docs/DOCUMENTATION_MAP.md
-→ 작업에 맞는 기준 문서 또는 skills/<name>/SKILL.md
-→ 필요한 method·research·case·template
+→ 현재 작업에 맞는 method·skill
+→ 필요한 template·research·case
+→ 대상 프로젝트 현행 책임 원본과 실제 파일
 ```
 
-사용자가 다음처럼 요청하면 `START_HERE.md`의 호출 계약을 적용한다.
+최소 호출문:
 
-> `https://github.com/alsdmlals4-eng/Base 를 전부 살펴보고 참고해서 작업해줘.`
+> `https://github.com/alsdmlals4-eng/Base 를 전부 살펴보고 참고해서 이 프로젝트를 작업해줘.`
 
-프로젝트 작업에서는 다음 순서를 사용한다.
+프로젝트 작업 읽기 순서:
 
 ```text
 프로젝트 AGENTS.md
-→ BASE_RULES_VERSION.md와 Base 기준
-→ 프로젝트 START_HERE·Documentation Map
-→ Handoff·Active Context
-→ 프로젝트 방향·전체 기획서
-→ 관련 분야 책임 문서
-→ Roadmap
-→ 현재 Issue·Goal·Plan
-→ 프로젝트 skill extension
-→ 실제 대상과 연결 파일
+→ BASE_RULES_VERSION.md와 적용 Base 기준
+→ 프로젝트 START_HERE·Active Context·Documentation Map
+→ DEVELOPMENT_GATES·PROJECT_SKILL_MAP
+→ 관련 분야 본책·분야 스킬
+→ Roadmap·Issue·Goal·Plan
+→ 실제 코드·데이터·자산·테스트
+→ 현재 작업에 필요한 Base method·skill·template·case
 ```
 
-`공용 정보와 프로젝트 정보를 모두 확인한다`는 것은 저장소 모든 파일을 무작정 읽는다는 뜻이 아니다. 현재 작업에 적용되는 공용·전용 현행 책임 원본과 영향 파일을 Documentation Map과 참조 관계로 선별해 빠짐없이 확인한다.
+저장소 전체를 무작정 읽지 않는다. Documentation Map에서 현재 질문과 영향 분야에 필요한 현행 책임 원본만 선택한다. `[백업]`, `[보류]`, `[제거 후보]`, archive·hold·deprecated는 감사·재개 요청이 없는 한 기본 읽기에서 제외한다.
 
-## 2. 최상위 지속성 규칙
+## 2. 최상위 지속성 계약
 
-새 채팅, 새 AI, 새 작업자는 저장소만으로 다음을 확인할 수 있어야 한다.
+새 채팅과 새 AI는 저장소만으로 다음을 확인할 수 있어야 한다.
 
-- 프로젝트의 핵심 플레이어 경험과 방향
-- 현재 단계, 우선순위, 선행 조건과 다음 작업
-- 승인·구현·검증·미확정 상태
-- 변경하면 안 되는 범위와 폐기된 방향
-- 질문별 현행 책임 문서
-- 적용할 Base skill과 프로젝트 extension
-- 최신 이미지·자산과 실제 캡처
-- 실제 파일·데이터·테스트 경로
-- 작업 종료 시 Base로 환류할 공용 학습 데이터
+- 프로젝트 목적과 핵심 플레이어 경험
+- 현재 개발 단계, 다음 게이트와 최우선 작업
+- 승인·구현·검증·미확정·보류 상태
+- 변경하면 안 되는 결정과 보호 경로
+- 분야별 현행 책임 본책과 프로젝트 스킬
+- 실제 코드·데이터·자산·테스트 경로
+- 승인 이미지, 실제 캡처와 최신 분야 PDF
+- 작업 종료 시 갱신 대상과 Base 환류 경계
 
-이를 위해 프로젝트 본책·Roadmap·스킬·Documentation Map·Active Context를 항상 현재 상태로 유지한다. 방향, 수치, 용어, 범위, 구현 상태 또는 작업 절차가 바뀌면 같은 작업 안에서 영향받는 책임 원본을 갱신한다.
-
-## 3. 공용 작업 원본
+## 3. Base 공용 작업 원본
 
 | 구분 | 파일 | 책임 |
 |---|---|---|
-| 최초 라우터 | `START_HERE.md` | Base URL 호출 계약, 요청별 method·skill 라우팅 |
-| 최소 규칙 | `AGENTS.md` | 우선순위, 지속성, 공용·전용 확인, 작업 종료·학습 환류 |
-| 상세 규칙 | `docs/AI_SHARED_WORK_RULES.md` | 역할·범위·품질·승격 운영 |
-| 작업 흐름 | `docs/AI_WORKFLOW_RULES.md` | L0~L4, 공용·전용 컨텍스트, 외부 AI, 검증·환류 |
+| 최초 라우터 | `START_HERE.md` | Base URL 호출 계약과 요청별 라우팅 |
+| 최소 규칙 | `AGENTS.md` | 우선순위, 보존, 검증, 문서 수명주기와 학습 환류 |
+| 저장소 개요 | `README.md` | 주요 구조·method·skill·template 안내 |
+| 상세 공용 규칙 | `docs/AI_SHARED_WORK_RULES.md` | 역할·범위·품질·공용화 운영 |
+| AI 작업 흐름 | `docs/AI_WORKFLOW_RULES.md` | L0~L4, 공용·전용 컨텍스트, 외부 AI, 검증 |
+| 실행 체크 | `docs/MVP_WORKFLOW_CHECKLIST.md` | 시작·게이트·구현·종료 체크 |
 | 콘텐츠 기획 | `docs/CONTENT_DESIGN_METHOD.md` | 의도→경험→규칙→흐름→검증 |
-| 스킬 운영 | `docs/AI_SKILL_ADOPTION_GUIDE.md` | 스킬·외부 모델 선택, 권한·비용·검증 |
-| 실행 체크 | `docs/MVP_WORKFLOW_CHECKLIST.md` | 작업 시작·종료 체크 |
-| 벤치마킹 | `docs/BENCHMARKING_REFERENCE_GUIDE.md` | 조사와 적용·제외 결론 |
+| 스킬 채택 | `docs/AI_SKILL_ADOPTION_GUIDE.md` | 외부 스킬·모델·권한·비용·검증 |
+| 벤치마킹 | `docs/BENCHMARKING_REFERENCE_GUIDE.md` | 조사 질문·근거·적용·제외 |
 | 맞춤 지침 | `docs/CUSTOM_INSTRUCTIONS_GUIDE.md` | ChatGPT·Codex 지침 작성 |
-| 변경 기록 | `docs/CHANGELOG.md` | Base 버전과 변경 |
+| 변경 기록 | `docs/CHANGELOG.md` | Base 변경과 동기화 기준 |
 
-## 4. 실행 스킬
+## 4. 게임 프로젝트 운영체계 Method
+
+| 질문 | Method |
+|---|---|
+| 분야별 본책·이미지·GitHub 운영을 어떻게 연결하는가? | `docs/knowledge/methods/GAME_PROJECT_OPERATING_SYSTEM_METHOD.md` |
+| 작업과 제품 단계의 개발 게이트를 어떻게 판정하는가? | `docs/knowledge/methods/DEVELOPMENT_GATES_METHOD.md` |
+| 운영 중인 기존 프로젝트를 어떻게 안전하게 재배치하는가? | `docs/knowledge/methods/EXISTING_PROJECT_SAFE_MIGRATION_METHOD.md` |
+| 분야별 프로젝트 스킬을 어떻게 분리·학습·통합하는가? | `docs/knowledge/methods/DISCIPLINE_SKILL_EVOLUTION_METHOD.md` |
+| 분야별 최신 PDF를 어떻게 생성·검수하는가? | `docs/knowledge/methods/DISCIPLINE_PDF_PUBLICATION_METHOD.md` |
+| 전체 기획 계층과 책임 원본을 어떻게 설계하는가? | `docs/knowledge/methods/PLANNING_SYSTEM_METHOD.md` |
+| 새 AI가 재개할 Handoff를 어떻게 만드는가? | `docs/knowledge/methods/PROJECT_HANDOFF_CONTEXT_METHOD.md` |
+
+추가 분야 Method:
+
+- 서사·관계: `docs/knowledge/methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md`
+- 아트 방향: `docs/knowledge/methods/ART_DIRECTION_METHOD.md`
+- 캐릭터·서사 아트: `docs/knowledge/methods/CHARACTER_AND_NARRATIVE_ART_METHOD.md`
+- AI 아트 프롬프트: `docs/knowledge/methods/AI_ART_PROMPT_TECHNIQUE_METHOD.md`
+- 애니메이션·전투 연출: `docs/knowledge/methods/ANIMATION_AND_PRESENTATION_METHOD.md`
+- 대화·이벤트 연출: `docs/knowledge/methods/DIALOGUE_AND_EVENT_PRESENTATION_METHOD.md`
+- 조사·근거: `docs/knowledge/research/DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md`
+
+## 5. 실행 스킬
 
 | 작업 | 스킬 |
 |---|---|
-| 게임 프로젝트 운영체계 감사·설치·이관 | `skills/installing-game-project-operating-system/SKILL.md` |
-| 요청을 좋은 프롬프트로 변환 | `skills/transforming-requests-into-prompts/SKILL.md` |
+| 새 프로젝트 운영체계 감사·설치 | `skills/installing-game-project-operating-system/SKILL.md` |
+| 기존 운영 프로젝트 안전 마이그레이션 | `skills/migrating-existing-game-project-structure/SKILL.md` |
+| 분야별 프로젝트 스킬 생성·통합·학습 | `skills/evolving-project-discipline-skills/SKILL.md` |
+| 분야별 기획서 PDF 생성·최신성 검수 | `skills/publishing-discipline-bibles/SKILL.md` |
+| 요청을 실행 가능한 프롬프트로 변환 | `skills/transforming-requests-into-prompts/SKILL.md` |
 | Vertical Slice 설계 | `skills/designing-vertical-slices/SKILL.md` |
 | 기획서 종류·책임 구조 설계 | `skills/writing-game-design-documents/SKILL.md` |
 | DeepSeek·외부 AI 대량 작업 격리 | `skills/orchestrating-deepseek-worktrees/SKILL.md` |
 | 외부 AI 초안·diff 검수 | `skills/reviewing-external-ai-drafts/SKILL.md` |
-| 아트·UI 프롬프트와 디자인 기술 카드 | `skills/designing-art-prompts-and-technique-cards/SKILL.md` |
-| 프로젝트 결과를 Base 학습 데이터로 환류 | `skills/promoting-project-knowledge/SKILL.md` |
+| 아트·UI 프롬프트와 기술 카드 | `skills/designing-art-prompts-and-technique-cards/SKILL.md` |
+| 프로젝트 교훈을 Base로 환류 | `skills/promoting-project-knowledge/SKILL.md` |
 
-루트 `skills/`는 직접 적용 가능한 절차를 관리한다. `docs/knowledge/skills/`는 넓은 분야의 능력 지도와 검수 계약을 관리한다.
+루트 `skills/`는 직접 실행 가능한 절차를 관리한다. `docs/knowledge/skills/`는 넓은 분야의 능력 지도와 검수 계약을 관리한다.
 
-## 5. 공용 학습 지식 베이스
-
-시작 문서: `docs/knowledge/README.md`
-
-| 영역 | 책임 |
-|---|---|
-| `methods/` | 반복 가능한 설계·제작 판단 방법 |
-| `research/` | 조사 질문·출처·표준·근거·적용 결론 |
-| `skills/` | 분야별 입력·산출물·검수 능력 계약 |
-| `cases/` | 프로젝트·벤치마킹 사례에서 추출한 성공·실패·미검증 교훈 |
-
-핵심 라우팅:
-
-- 게임 프로젝트 운영체계: `methods/GAME_PROJECT_OPERATING_SYSTEM_METHOD.md`
-- 전체 기획 체계: `methods/PLANNING_SYSTEM_METHOD.md`
-- 인수인계·콜드 스타트: `methods/PROJECT_HANDOFF_CONTEXT_METHOD.md`
-- 서사·관계: `methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md`
-- 아트: `methods/ART_DIRECTION_METHOD.md`
-- 캐릭터·서사 아트: `methods/CHARACTER_AND_NARRATIVE_ART_METHOD.md`
-- AI 아트 프롬프트·기술 카드: `methods/AI_ART_PROMPT_TECHNIQUE_METHOD.md`
-- 애니메이션·전투 연출: `methods/ANIMATION_AND_PRESENTATION_METHOD.md`
-- 대화·이벤트 연출: `methods/DIALOGUE_AND_EVENT_PRESENTATION_METHOD.md`
-- 조사·근거: `research/DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md`
-- 외부 AI·프롬프트 공식 자료: `research/AI_WORKFLOW_AND_PROMPT_SOURCE_NOTES.md`
-- FACS 표정 제어 참고: `research/FACS_ACTION_UNIT_PROMPT_REFERENCE.md`
-- 분야별 능력 지도: `skills/PLANNING_RESEARCH_HANDOFF_SKILL_MATRIX.md`
-- 아트 실무 능력: `skills/ART_DIRECTION_SKILL_MATRIX.md`
-- 구체 사례: `cases/README.md`
-
-적용 사례 라우팅:
-
-- 규칙·UI·연출·QA 추적성: `cases/TEN_PACES_RULE_PRESENTATION_TRACEABILITY_CASE.md`
-- 선택적 하이라이트와 정상 완주 경로: `cases/TEN_PACES_OPTIONAL_HIGHLIGHT_VERTICAL_SLICE_CASE.md`
-- 내부 데이터의 세계관 문구 변환: `cases/DIEGETIC_OPPONENT_INFORMATION_CASE.md`
-- 이미지 목적·월드 스프라이트 기준 교체: `cases/OMENWARD_UNIT_ROSTER_TO_BATTLEFIELD_SPRITE_REFERENCE_CASE.md`
-
-## 6. 기획서와 템플릿
+## 6. 프로젝트 운영 키트 템플릿
 
 | 목적 | 템플릿 |
 |---|---|
-| 게임 프로젝트 운영체계 키트 | `templates/project-operations/README.md` |
-| 운영체계 감사·설치 Work Order | `templates/project-operations/PROJECT_OPERATING_SYSTEM_INSTALLATION_PLAN.md` |
-| 사용자용 프로젝트 시작 화면 | `templates/project-operations/PROJECT_START_HERE.md` |
+| 키트 인덱스 | `templates/project-operations/README.md` |
+| 신규 설치 계획 | `templates/project-operations/PROJECT_OPERATING_SYSTEM_INSTALLATION_PLAN.md` |
+| 기존 프로젝트 마이그레이션 감사 | `templates/project-operations/EXISTING_PROJECT_MIGRATION_AUDIT.md` |
+| 사용자·AI 시작 화면 | `templates/project-operations/PROJECT_START_HERE.md` |
+| 프로젝트 Documentation Map | `templates/project-operations/PROJECT_DOCUMENTATION_MAP.md` |
+| 개발 게이트 | `templates/project-operations/DEVELOPMENT_GATES.md` |
 | 분야별 활성 본책 | `templates/project-operations/DISCIPLINE_BIBLE.md` |
+| 프로젝트 스킬 지도 | `templates/project-operations/PROJECT_SKILL_MAP.md` |
+| Foundation 스킬 계약 | `templates/project-operations/skills/FOUNDATION_SKILL.md` |
+| 분야 스킬 계약 | `templates/project-operations/skills/DISCIPLINE_SKILL.md` |
+| 스킬 학습 기록 | `templates/project-operations/skills/SKILL_LEARNING_LOG.md` |
 | 변경 유형별 갱신 판정 | `templates/project-operations/DOCUMENT_UPDATE_MATRIX.md` |
-| GPT·Codex·GitHub 작업 흐름 | `templates/project-operations/AI_WORKFLOW.md` |
+| GPT·Codex·GitHub Workflow | `templates/project-operations/AI_WORKFLOW.md` |
+| 현행·백업·보류·제거 후보 | `templates/project-operations/LIFECYCLE_AREAS.md` |
 | 시각 책임 원본 | `templates/project-operations/VISUAL_SOURCE_OF_TRUTH.md` |
 | 이미지·자산 Manifest | `templates/project-operations/ASSET_MANIFEST.yml` |
-| GitHub Issue·PR·자동 검사 | `templates/project-operations/github/` |
-| 실행 프롬프트 | `templates/EXECUTABLE_PROMPT.md` |
-| 프로젝트 AI 역할·worktree | `templates/ai/PROJECT_AI_COLLABORATION_PROFILE.md` |
-| DeepSeek 작업 패키지 | `templates/ai/DEEPSEEK_WORK_PACKAGE.md` |
-| 외부 AI 결과 검수 | `templates/ai/EXTERNAL_AI_DRAFT_REVIEW.md` |
-| 기획서 책임 지도·Roadmap·스킬 연결 | `templates/planning/DESIGN_DOCUMENT_SYSTEM.md` |
-| 프로젝트 방향 | `templates/planning/PROJECT_DIRECTION_BRIEF.md` |
-| 콘텐츠·첫 10분·PoC | `templates/CONTENT_DESIGN_BRIEF.md` |
-| Vertical Slice | `templates/planning/VERTICAL_SLICE_PLAN.md` |
-| 서사·관계 | `templates/planning/NARRATIVE_CONTENT_PLAN.md` |
-| 아트 방향·기술·프롬프트 | `templates/planning/ART_DIRECTION_BRIEF.md` |
-| 아트·UI 디자인 기술 카드 | `templates/planning/ART_TECHNIQUE_CARD.md` |
-| 표정·FACS 보조 제어 | `templates/planning/EXPRESSION_CONTROL_CARD.md` |
-| 캐릭터 포스터·상세 페이지 | `templates/planning/CHARACTER_PROMO_POSTER_BRIEF.md` |
-| 연출 | `templates/planning/PRESENTATION_PLAN.md` |
-| 인수인계 | `templates/planning/HANDOFF_CONTEXT.md` |
-| 프로젝트 스킬 확장 | `templates/skills/PROJECT_SKILL_EXTENSION.md` |
-| 사례 연구 | `templates/KNOWLEDGE_CASE_STUDY.md` |
+| 분야 PDF 발행 계획 | `templates/project-operations/DISCIPLINE_PDF_PUBLICATION.md` |
+| PDF 최신성 Manifest | `templates/project-operations/PUBLICATION_MANIFEST.json` |
+| Issue·PR·CODEOWNERS·자동 검사 | `templates/project-operations/github/` |
+
+기존 공용 템플릿:
+
+- 실행 프롬프트: `templates/EXECUTABLE_PROMPT.md`
+- 프로젝트 AI 역할: `templates/ai/PROJECT_AI_COLLABORATION_PROFILE.md`
+- 외부 AI 작업·검수: `templates/ai/DEEPSEEK_WORK_PACKAGE.md`, `templates/ai/EXTERNAL_AI_DRAFT_REVIEW.md`
+- Vertical Slice: `templates/planning/VERTICAL_SLICE_PLAN.md`
+- 프로젝트 방향: `templates/planning/PROJECT_DIRECTION_BRIEF.md`
+- 콘텐츠 기획: `templates/CONTENT_DESIGN_BRIEF.md`
+- 서사·아트·연출: `templates/planning/`
+- Base skill 프로젝트 확장: `templates/skills/PROJECT_SKILL_EXTENSION.md`
+- 사례 연구: `templates/KNOWLEDGE_CASE_STUDY.md`
 
 ## 7. 작업별 최소 읽기
 
 | 작업 | 최소 기준 |
 |---|---|
-| 새 프로젝트 운영체계 설치 | Base START_HERE, 운영체계 method·installer skill·project-operations 템플릿, 대상 프로젝트 전체 감사 |
-| 기존 프로젝트 문서·이미지 전면 정리 | 대상 AGENTS·Map·Handoff·본책·이미지 인덱스·실제 파일, installer skill |
-| 요구 구체화·Goal | AGENTS, Base version, 요청 변환 스킬, 프로젝트 방향, 실행 프롬프트 템플릿 |
-| 전체 기획 체계 | Handoff, 기획 시스템 method, 기획서 작성 스킬, Roadmap, 규칙·표현 추적성 사례 |
-| 핵심 재미·첫 10분 | 프로젝트 방향, 콘텐츠 기획 method와 brief |
-| Vertical Slice | 프로젝트 방향·Roadmap, Vertical Slice 스킬과 템플릿, 선택적 하이라이트 사례 |
-| DeepSeek 대량 초안 | 프로젝트 AI 프로필, DeepSeek worktree 스킬과 작업 패키지 |
-| 외부 AI 결과 실제 반영 | 프로젝트 책임 문서, 외부 AI 검수 스킬과 검수 템플릿 |
-| 인수인계 | Handoff method·템플릿, Roadmap, Documentation Map, skill extensions |
-| 서사·아트·연출 | 프로젝트 방향·관련 책임 본책·해당 Base method·skill matrix·case |
-| 이미지 유입·교체 | 프로젝트 Visual Source·Asset Manifest, 아트 method, 관련 이미지 사례, 실제 캡처 |
-| 정보형 대사·세계관 카피 | 서사·대화 method, 내부 데이터→세계관 문구 사례, 프로젝트 의미 키 계약 |
-| 아트 기술 추천·이미지 프롬프트 | 프로젝트 아트 방향, AI 아트 prompt method, 실행 스킬, 기술 카드 |
-| FACS 표정 편집 | 프로젝트 캐릭터 원본, FACS reference, 표정 카드, 관련 case |
-| 캐릭터 포스터 | 프로젝트 아트 방향, 포스터 brief와 관련 case |
-| 벤치마킹 | 프로젝트 문제·결정 범위, 조사 method와 벤치마킹 가이드 |
-| 스킬 도입 | 프로젝트 AI 프로필, 스킬 채택 가이드 |
-| 지식 승격·인수인계 | 실제 결과·검증, 승격 스킬과 knowledge README |
+| 새 프로젝트 운영체계 설치 | Base START_HERE, 운영체계 Method, installer Skill, project-operations 키트, 대상 프로젝트 현황 |
+| 기존 프로젝트 구조 검수·재배치 | 대상 저장소 전체 현황, 안전 마이그레이션 Method·Skill·Audit 템플릿 |
+| 개발 게이트 설계·검수 | 프로젝트 방향·Roadmap·현재 증거, DEVELOPMENT_GATES Method·템플릿 |
+| 분야별 프로젝트 스킬 구축 | 분야 본책·실제 작업·검증, 스킬 진화 Method·Skill·Skill Map |
+| 분야 PDF 발행 | 분야 본책·활성 부록·Visual Source·Manifest·실제 캡처, PDF Method·Skill |
+| 요구 구체화·Goal | 프로젝트 방향, 요청 변환 Skill, 실행 프롬프트 템플릿 |
+| 전체 기획 체계 | Handoff, 기획 시스템 Method, 기획서 Skill, Roadmap |
+| 핵심 재미·첫 10분 | 프로젝트 방향, 콘텐츠 기획 Method와 Brief |
+| Vertical Slice | 방향·Roadmap·게이트, Vertical Slice Skill·템플릿·사례 |
+| 이미지 유입·교체 | Visual Source·Asset Manifest, 아트 Method, 기존 승인 이미지, 실제 캡처 |
+| DeepSeek 대량 초안 | 프로젝트 AI 프로필, worktree Skill과 작업 패키지 |
+| 외부 AI 결과 반영 | 프로젝트 책임 원본, 외부 AI 검수 Skill과 실제 diff·테스트 |
+| 인수인계 | Handoff Method·템플릿, Roadmap, Map, Project Skill Map |
+| 벤치마킹 | 프로젝트 결정 질문, 조사 Method, 벤치마킹 가이드 |
+| 지식 승격 | 실제 결과·반복 검증, 승격 Skill과 기존 Base 중복 확인 |
 
-## 8. 게임 프로젝트 운영 분야
+## 8. 게임 프로젝트 기본 책임 분야
 
-프로젝트 규모에 따라 문서를 통합할 수 있지만 다음 책임은 누락하지 않는다.
+프로젝트 규모에 따라 폴더·본책을 통합할 수 있지만 다음 책임은 누락하지 않는다.
 
 1. 설정·내러티브
 2. 게임 디자인
@@ -190,66 +176,62 @@ START_HERE.md
 10. 분석·유저리서치
 11. 통합검수
 
-작은 프로젝트는 한 사람이 여러 분야를 맡을 수 있다. 이 경우에도 본책의 장과 `DOCUMENT_UPDATE_MATRIX.md`에서 입력·출력·검증 책임을 구분한다.
+각 분야는 `분야 진입 문서 → 활성 본책 → 프로젝트 분야 스킬 → Roadmap·Issue·Plan → 실제 파일 → 검증 → PDF`로 연결한다. 공용 절차는 foundation 스킬에 둔다.
 
-## 9. Base와 프로젝트 책임
+## 9. Base와 프로젝트 경계
 
 ### Base — [학습형] [공용]
 
-- 재사용 가능한 규칙·method·research·skill·template
+- 재사용 가능한 규칙·Method·Research·Skill·Template
 - 검증 상태와 적용 조건이 기록된 체크리스트
 - 프로젝트 결과에서 일반화한 성공·실패·미검증 사례
-- 프로젝트가 분화해 사용할 공용 원본
 
 ### 프로젝트 — [전용] [분화·적용·검증]
 
-- 프로젝트 비전과 실제 GDD
-- 세계관·캐릭터·수치·데이터·파일 경로
+- 비전·세계관·캐릭터·게임 규칙·수치
+- 실제 파일·데이터·자산·엔진 경로
 - 활성 Roadmap·Issue·Goal·Plan
-- 현재 구현과 테스트 결과
-- 실제 모델·계정·비용·원본 이미지·승인 프롬프트
-- Base 스킬의 프로젝트 전용 확장
-- 공용화 전의 관찰·가설·실험 결과
+- 현재 구현·테스트·PDF·승인 이미지
+- Base 공용 스킬을 실제 경로에 연결한 프로젝트 스킬
+- 공용화 전 관찰·가설·실험 결과
 
-## 10. 프로젝트 기본 문서
+충돌 시 최신 사용자 지시와 프로젝트 현행 책임 원본이 우선한다.
 
-프로젝트가 필요에 따라 관리하되 새 작업자가 저장소만으로 재개할 수 있도록 다음 책임을 유지한다.
+## 10. 프로젝트 최소 책임 원본
 
-- `AGENTS.md`: 최상위 규칙
-- `docs/BASE_RULES_VERSION.md`: 공용 학습 데이터 기준 버전
-- 프로젝트 `START_HERE.md`: 사용자용 현재 상태 대시보드
-- Documentation Map: 질문별 책임 원본
-- Handoff 또는 Active Context: 현재 상태와 다음 작업
-- 프로젝트 방향서와 전체·분야별 활성 본책
-- `DOCUMENT_UPDATE_MATRIX.md`: 변경 영향과 필수 갱신
-- Roadmap과 Decisions Pending
-- 프로젝트 AI 협업 프로필
-- 현재 Issue·Goal·Plan
-- 프로젝트 전용 skill extension
-- Visual Source·Asset Manifest·골든 스크린샷
+- `AGENTS.md`
+- `BASE_RULES_VERSION.md`
+- `START_HERE.md`
+- Active Context·Handoff
+- Documentation Map
+- 프로젝트 방향서와 분야별 본책
+- Development Gates와 Roadmap
+- Document Update Matrix
+- Project Skill Map과 분야별 프로젝트 스킬
+- Visual Source·Asset Manifest·실제 캡처
+- Publication Manifest와 분야별 PDF
 - 테스트·QA·통합검수 기록
 
-## 11. 작업 종료·인수인계 갱신
+실제 프로젝트에 필요하지 않은 파일을 억지로 생성하지 않는다. 기존 파일이 같은 책임을 안정적으로 수행하면 경로를 유지하고 Map에서 연결한다.
 
-반드시 확인한다.
+## 11. 작업 종료·인수인계
 
-1. 본책에 최신 방향, 플레이어 가치, 범위와 금지 방향이 반영됐는가?
-2. 승인·구현·검증·미확정 상태가 실제 결과와 일치하는가?
-3. Roadmap에 현재 단계, 우선순위, 선행 조건, 다음 작업과 종료 기준이 반영됐는가?
-4. 프로젝트 skill extension이 실제 파일·데이터·검증과 일치하는가?
-5. Active Context·Handoff가 현재 상태와 읽기 순서를 올바르게 연결하는가?
-6. Documentation Map, README와 이미지·자산 경로가 유효한가?
-7. 프로젝트 전용 기록과 Base 공용 학습 데이터가 구분됐는가?
-8. method·skill·template 반영과 case 작성·상태 갱신이 필요한가?
-9. 새 작업자가 콜드 스타트 질문에 10분 안에 답할 수 있는가?
+1. 실제 결과와 승인·구현·검증 상태를 본책에 반영한다.
+2. Roadmap·게이트·Active Context·Handoff를 갱신한다.
+3. Documentation Map과 Project Skill Map의 경로를 확인한다.
+4. 분야 스킬이 실제 파일·검증과 일치하는지 확인한다.
+5. 이미지·자산·PDF Manifest와 파생본 최신성을 확인한다.
+6. 백업·보류·제거 후보가 기본 컨텍스트에 혼입되지 않는지 확인한다.
+7. 프로젝트 전용 교훈과 Base 공용화 후보를 분리한다.
+8. 새 작업자가 10분 안에 방향·상태·다음 작업·스킬·검증을 찾는지 확인한다.
 
 ## 12. 관리 원칙
 
-- 같은 규칙을 여러 문서에 장문으로 복사하지 않는다.
-- 한 질문에는 현행 책임 원본 하나를 둔다.
-- 실행 절차는 루트 `skills/`, 넓은 참고 계약은 `docs/knowledge/skills/`에 둔다.
-- 한 번 성공한 방법은 먼저 case로 남기고 반복 검증 전에는 공용 확정 규칙으로 쓰지 않는다.
+- 한 질문에 현행 책임 원본 하나를 둔다.
+- 같은 내용을 여러 문서·스킬·PDF에 장문 복사하지 않는다.
+- 단순 이전 버전은 Git 이력으로 보존한다.
+- `[백업]`은 외부 원본·감사·승인 근거처럼 Git 이력만으로 부족할 때만 사용한다.
+- `[보류]`에는 보류 이유·재개 조건·책임 원본·선행 작업을 기록한다.
+- 제거 후보는 고유 정보·참조·복구·사용자 승인을 검증하기 전 삭제하지 않는다.
+- 한 번 성공한 방법은 관찰·가설로 기록하고 반복 검증 전에는 공용 강제 규칙으로 쓰지 않는다.
 - 외부 AI 결과는 실제 diff·근거·테스트 확인 전까지 검수 대기 입력이다.
-- 구버전은 Git 이력으로 보존하고 활성 복제본을 만들지 않는다.
-- `archive`·`hold`는 기본 읽기에서 제외한다.
-- 외부 사례의 표면을 복제하지 않고 문제 해결 원리만 기록한다.
