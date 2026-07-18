@@ -15,8 +15,7 @@
 
 ```md
 ### [날짜] [skill_id]
-
-- 프로젝트·작업: [공개 가능한 일반화 이름 또는 PR]
+- 프로젝트·작업:
 - 기준 스킬 커밋:
 - 호출 트리거:
 - 입력 범위:
@@ -48,17 +47,39 @@
 
 ## 정기 Health Review
 
-다음 중 하나가 발생하면 `verifying-game-project-operating-system` 또는 `evolving-project-discipline-skills`를 호출해 스킬 상태를 검토한다.
+다음 중 하나가 발생하면 `verifying-game-project-operating-system` 또는 `evolving-project-discipline-skills`를 호출한다.
 
 - 동일 실패가 두 번 이상 반복됨
-- 90일 이상 사용됐지만 검토 기록이 없음
-- 책임 본책·경로·검증 명령이 변경됨
-- 새 분야나 반복 작업 유형이 추가됨
-- 두 개 이상 스킬이 같은 절차를 중복함
-- 새 채팅에서 필요한 스킬을 찾지 못함
-- 스킬을 과도하게 호출해 컨텍스트 비용이 증가함
+- 90일 이상 검토 기록이 없음
+- JSON 본책·실제 경로·검증 명령 변경
+- 새 분야·반복 작업 유형 추가
+- 스킬 절차 중복
+- 새 채팅이 필요한 스킬·기획서를 찾지 못함
+- 과도한 스킬 호출
+- DOCX/PDF·다이어그램 발행본이 Registry보다 오래됨
 
 ## 기록
+
+### 2026-07-19 structured design documents and human publication pipeline
+
+- 프로젝트·작업: Base — 모든 프로젝트·분야 기획서의 AI JSON + 사람용 DOCX/PDF + 다이어그램·승인 이미지 구조
+- 기준 스킬 커밋: `51d3535afa3eea5b19d262e1fe87d06f183c2224`
+- 호출 트리거: 스킬맵뿐 아니라 모든 기획서가 이미지 확인 가능한 사람용 문서를 가져야 한다는 사용자 피드백
+- 입력 범위: Base 시작 규칙·운영 Method·기획서 작성·마이그레이션·발행·스킬 진화·Health Review·프로젝트 템플릿·GitHub 검사·회귀 테스트
+- 실제 산출물: Design Document Registry·JSON 본책 템플릿·DOCX/PDF·다이어그램 생성기·승인 이미지 포함·세 번째 Governance Checker·실제 생성 통합 테스트
+- 실행한 검증: 로컬 예시 6페이지 DOCX/PDF 생성·전 페이지 렌더·시각 확인 완료; PR GitHub Actions 실행 예정
+- 결과: 미검증
+- 성공 조건: 기획서·스킬맵 실제 생성, 세 Governance Checker, 구조 회귀, PDF 렌더와 whitespace가 최종 head에서 모두 통과
+- 실패·예외·재현 조건: 사람용 편집성을 이유로 DOCX를 책임 원본으로 두면 JSON과 분기되므로 DOCX는 검토용 파생본으로 제한
+- 사용자 피드백: AI는 JSON을 읽고 사람은 DOCX/PDF와 이미지·다이어그램을 한눈에 확인해야 함
+- 불필요하게 호출한 스킬: 없음
+- 누락된 스킬·검증: 기존 구조에는 프로젝트 전체·분야 기획서용 구조화 Registry, 승인 이미지 포함 DOCX, 생성기 해시와 전 페이지 PDF 렌더 검사가 없었음
+- 스킬 본문 변경 필요: 예
+- 변경하지 않는 이유: 해당 없음
+- 지식 상태: 가설
+- 프로젝트 전용으로 유지할 내용: 실제 게임의 세계관·수치·구현 경로·승인 이미지·생성된 기획서 바이너리
+- Base Method·Skill·Template·Test 환류 후보: 이번 브랜치의 JSON 계약·생성기·Checker·통합 테스트 전체
+- 다음 검토 트리거: PR Workflow 결과와 첫 대상 프로젝트 실제 마이그레이션
 
 ### 2026-07-19 operating-system skill routing and learning audit
 
@@ -67,16 +88,16 @@
 - 호출 트리거: 분야별·Foundation 스킬의 항상 학습, 필요한 경우에만 호출, 운영체계 연결 검증, 루트 `[기획서]` 요청
 - 입력 범위: Base START_HERE·AGENTS·README·Documentation Map·운영체계 Method·Installer·Project Operations 템플릿·GitHub 검사·회귀 테스트
 - 실제 산출물: 공용·프로젝트 Skill Registry, 라우팅·Handoff·Health Review 스킬, Learning Log 계약, 루트 기획서·Registry 자동 검사와 회귀 테스트
-- 실행한 검증: Python 문법, 기존 Documentation Governance 회귀 테스트, 신규 Skill Routing Governance 회귀 테스트, Base 운영체계 구조 테스트, `git diff --check`
+- 실행한 검증: Python 문법, Documentation Governance, Skill Routing Governance, Base 구조 테스트, `git diff --check`
 - 결과: 성공
-- 성공 조건: 기존 운영체계 테스트와 신규 Registry·루트 기획서·동기화 실패 테스트가 모두 통과하고 PR diff·whitespace가 정상임
-- 실패·예외·재현 조건: `[기획서]` 대괄호를 glob으로 검색할 때 문자 집합으로 해석될 수 있어 실제 폴더명 비교로 검사기 수정
-- 사용자 피드백: 스킬이 항상 학습 가능해야 하며 필요한 때만 호출되고 활성 기획서는 최상위 폴더에서 보여야 함
+- 성공 조건: Registry·루트 기획서·동기화 실패 테스트와 whitespace 정상
+- 실패·예외·재현 조건: `[기획서]` 대괄호 glob 해석 문제를 실제 폴더명 비교로 수정
+- 사용자 피드백: 스킬이 항상 학습 가능하고 필요한 때만 호출되며 활성 기획서는 최상위 폴더에서 보여야 함
 - 불필요하게 호출한 스킬: 없음
-- 누락된 스킬·검증: 공용 요청 라우팅, Active Context·Handoff 관리, 운영체계 Health Review와 Skill Registry 검사가 기존 구조에 없었음
+- 누락된 스킬·검증: 요청 라우팅, Context·Handoff, Health Review와 Skill Registry 검사
 - 스킬 본문 변경 필요: 예
 - 변경하지 않는 이유: 해당 없음
 - 지식 상태: 패턴
-- 프로젝트 전용으로 유지할 내용: 대상 게임의 분야별 구체 스킬·실제 경로·승인 자산
-- Base Method·Skill·Template·Test 환류 후보: 이번 PR의 Method·Skill·Registry·Health Report·Governance Checker·회귀 테스트
+- 프로젝트 전용으로 유지할 내용: 대상 게임의 구체 스킬·실제 경로·승인 자산
+- Base Method·Skill·Template·Test 환류 후보: Method·Skill·Registry·Health Report·Checker·회귀 테스트
 - 다음 검토 트리거: 대상 프로젝트 첫 실제 적용, 동일 라우팅 실패 반복, 90일 이상 미검토
