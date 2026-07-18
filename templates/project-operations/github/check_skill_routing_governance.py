@@ -76,8 +76,8 @@ def check_design_root(root: Path, config: dict) -> list[str]:
     if enforce_top_level:
         target_name = design_root.name
         expected_resolved = expected.resolve()
-        for candidate in root.rglob(target_name):
-            if not candidate.is_dir():
+        for candidate in root.rglob("*"):
+            if not candidate.is_dir() or candidate.name != target_name:
                 continue
             if ".git" in candidate.parts:
                 continue
