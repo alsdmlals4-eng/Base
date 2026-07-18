@@ -1,11 +1,11 @@
 name: 작업 요청
-description: 분야·개발 게이트·프로젝트 스킬·완료 기준·검증을 갖춘 게임 제작 작업 요청
+description: 루트 기획서·분야·개발 게이트·선택적 프로젝트 스킬·완료 기준·검증을 갖춘 게임 제작 작업 요청
 labels: []
 body:
   - type: markdown
     attributes:
       value: |
-        작업 전에 주 책임 분야, 영향 분야, 현재 게이트와 사용할 프로젝트 스킬을 지정합니다. 승인·구현·검증·PDF 발행 상태를 서로 구분합니다.
+        작업 전에 주 책임 분야, 영향 분야, 현재 게이트와 Registry에서 선택한 최소 프로젝트 스킬을 지정합니다. 승인·구현·검증·PDF 발행 상태를 서로 구분합니다.
 
   - type: dropdown
     id: project_mode
@@ -17,6 +17,7 @@ body:
         - 기존 프로젝트 Audit only
         - 승인된 기존 프로젝트 마이그레이션
         - GitHub Enforcement 설치·검증
+        - 운영체계 Health Review
     validations:
       required: true
 
@@ -83,9 +84,10 @@ body:
         - 일정·범위·예산·위험
         - 분석·벤치마킹·유저리서치
         - 개발 게이트·마일스톤
-        - 프로젝트 스킬·학습 구조
+        - 프로젝트 스킬·Registry·학습 구조
+        - Active Context·Handoff
         - PDF·Publication Manifest
-        - 문서·경로·운영체계
+        - 문서·경로·루트 기획서·운영체계
         - 기존 프로젝트 마이그레이션·수명주기
     validations:
       required: true
@@ -110,7 +112,7 @@ body:
     id: scope
     attributes:
       label: 포함 범위
-      description: 실제로 변경할 기능·문서·스킬·자산·PDF·파일 범위를 적습니다.
+      description: 실제로 변경할 기능·문서·Registry·스킬·자산·PDF·파일 범위를 적습니다.
     validations:
       required: true
 
@@ -126,23 +128,23 @@ body:
     id: sources
     attributes:
       label: 먼저 읽을 책임 원본과 실제 파일
-      description: START_HERE, 분야 본책, Roadmap, 실제 코드·데이터·자산·테스트와 관련 근거를 적습니다.
+      description: 루트 [기획서] START_HERE, 분야 본책, Roadmap, 실제 코드·데이터·자산·테스트와 관련 근거를 적습니다.
     validations:
       required: true
 
   - type: textarea
     id: skills
     attributes:
-      label: 적용할 Foundation·분야 프로젝트 스킬
-      description: PROJECT_SKILL_MAP에서 선택한 공용 스킬과 주 책임 분야 스킬, Learning Log 경로를 적습니다.
+      label: Registry에서 선택한 Foundation·분야 프로젝트 스킬
+      description: SKILL_REGISTRY.json과 PROJECT_SKILL_MAP에서 선택한 최소 스킬, 호출 trigger, 호출하지 않을 후속 스킬과 Learning Log 경로를 적습니다.
     validations:
       required: true
 
   - type: textarea
     id: lifecycle
     attributes:
-      label: 보존·백업·보류·제거 후보 영향
-      description: 기존 프로젝트 작업이면 보존 대상, 보류 재개 조건, 제거 후보와 사용자 승인 필요 여부를 적습니다.
+      label: 루트 기획서·보존·백업·보류·제거 후보 영향
+      description: [기획서] 위치 영향과 기존 프로젝트의 보존 대상, 보류 재개 조건, 제거 후보와 사용자 승인 필요 여부를 적습니다.
 
   - type: textarea
     id: acceptance
@@ -156,15 +158,15 @@ body:
     id: validation
     attributes:
       label: 검증 계획
-      description: 정적 검사, 자동 테스트, 정상·예외 경로, 저장·호환성, 실제 플레이·시각·오디오·성능과 사용자 검수를 적습니다.
+      description: 정적 검사, 자동 테스트, 정상·예외 경로, 저장·호환성, 실제 플레이·시각·오디오·성능, Skill Routing Governance와 사용자 검수를 적습니다.
     validations:
       required: true
 
   - type: textarea
     id: updates
     attributes:
-      label: 필수 갱신 본책·게이트·스킬·Manifest·PDF
-      description: DOCUMENT_UPDATE_MATRIX에 따라 갱신할 본책, Active Context, Gates, Project Skill Map, Asset·Publication Manifest와 PDF를 적습니다.
+      label: 필수 갱신 본책·게이트·Registry·스킬·Log·Manifest·PDF
+      description: DOCUMENT_UPDATE_MATRIX에 따라 갱신할 본책, Active Context, Gates, Project Skill Map, Skill Registry, Learning Log, Asset·Publication Manifest와 PDF를 적습니다.
     validations:
       required: true
 
@@ -179,7 +181,9 @@ body:
           required: true
         - label: 현행 책임 원본과 실제 대상 파일을 확인했습니다.
           required: true
-        - label: 관련 Foundation·분야 프로젝트 스킬을 지정했습니다.
+        - label: 루트 [기획서]와 중첩 현행 복제 여부를 확인했습니다.
+          required: true
+        - label: Registry trigger와 사용·비사용 조건에 따라 최소 스킬을 지정했습니다.
           required: true
         - label: 완료 기준과 검증 방법이 있습니다.
           required: true
