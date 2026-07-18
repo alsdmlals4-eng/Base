@@ -17,6 +17,11 @@
     "AGENTS.md",
     "tools/build_project_skill_map.py",
     "tools/skill_map_diagrams.py",
+    "tools/build_design_documents.py",
+    "tools/design_document_diagrams.py",
+    "tools/check_documentation_governance.py",
+    "tools/check_skill_routing_governance.py",
+    "tools/check_design_document_publications.py",
     "[기획서]/00_프로젝트_허브/START_HERE.md",
     "[기획서]/00_프로젝트_허브/ACTIVE_CONTEXT.md",
     "[기획서]/00_프로젝트_허브/DOCUMENTATION_MAP.md",
@@ -27,8 +32,8 @@
     "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.pdf",
     "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.assets",
     "[기획서]/00_프로젝트_허브/SKILL_MAP_PUBLICATION_MANIFEST.json",
+    "[기획서]/00_프로젝트_허브/DESIGN_DOCUMENT_REGISTRY.json",
     "[기획서]/00_프로젝트_허브/AI_WORKFLOW.md",
-    "[기획서]/00_프로젝트_허브/PUBLICATION_MANIFEST.json",
     "skills/foundation"
   ],
   "forbidden_active_name_patterns": [
@@ -41,7 +46,6 @@
   "asset_manifests": [
     "[기획서]/06_아트/ASSET_MANIFEST.yml"
   ],
-  "publication_manifest": "[기획서]/00_프로젝트_허브/PUBLICATION_MANIFEST.json",
   "enforce_publications": false,
   "skill_registry": "[기획서]/00_프로젝트_허브/SKILL_REGISTRY.json",
   "enforce_skill_registry": true,
@@ -60,6 +64,31 @@
   "skill_map_generator_globs": [
     "tools/build_project_skill_map.py",
     "tools/skill_map_diagrams.py"
+  ],
+  "design_document_registry": "[기획서]/00_프로젝트_허브/DESIGN_DOCUMENT_REGISTRY.json",
+  "enforce_design_document_publications": true,
+  "require_human_design_document_visual_review": false,
+  "design_document_diagram_generator": "tools/design_document_diagrams.py",
+  "required_design_document_coverage": [
+    "프로젝트 전체",
+    "설정·내러티브",
+    "게임 디자인",
+    "UX·UI·접근성",
+    "개발·엔지니어링",
+    "테크니컬 아트·파이프라인",
+    "아트",
+    "사운드",
+    "QA",
+    "프로덕션·PM",
+    "분석·유저리서치",
+    "통합검수"
+  ],
+  "forbidden_markdown_design_bible_names": [
+    "DISCIPLINE_BIBLE.md",
+    "PROJECT_MASTER_PLAN.md"
+  ],
+  "forbidden_markdown_design_bible_suffixes": [
+    "_기획서.md"
   ],
   "required_skill_disciplines": [
     "설정·내러티브",
@@ -84,27 +113,48 @@
   "change_rules": [
     {
       "name": "gameplay-or-data-change",
-      "source_globs": ["scripts/**", "scenes/**", "data/**", "resources/**"],
-      "required_any": [
-        "[기획서]/02_게임_디자인/게임_기획서.md",
-        "[기획서]/04_개발_엔지니어링/개발_기획서.md"
+      "source_globs": [
+        "scripts/**",
+        "scenes/**",
+        "data/**",
+        "resources/**"
       ],
-      "required_all": ["[기획서]/00_프로젝트_허브/ACTIVE_CONTEXT.md"]
+      "required_any": [
+        "[기획서]/02_게임_디자인/게임_기획서.json",
+        "[기획서]/04_개발_엔지니어링/개발_기획서.json"
+      ],
+      "required_all": [
+        "[기획서]/00_프로젝트_허브/ACTIVE_CONTEXT.md"
+      ]
     },
     {
       "name": "visual-asset-change",
-      "source_globs": ["assets/**", "art/**", "images/**"],
-      "required_any": [
-        "[기획서]/05_테크니컬아트_파이프라인/테크니컬아트_기획서.md",
-        "[기획서]/06_아트/아트_기획서.md"
+      "source_globs": [
+        "assets/**",
+        "art/**",
+        "images/**"
       ],
-      "required_all": ["[기획서]/06_아트/ASSET_MANIFEST.yml"]
+      "required_any": [
+        "[기획서]/05_테크니컬아트_파이프라인/테크니컬아트_기획서.json",
+        "[기획서]/06_아트/아트_기획서.json"
+      ],
+      "required_all": [
+        "[기획서]/06_아트/ASSET_MANIFEST.yml"
+      ]
     },
     {
       "name": "audio-change",
-      "source_globs": ["audio/**", "sound/**", "music/**"],
-      "required_any": ["[기획서]/07_사운드/사운드_기획서.md"],
-      "required_all": ["[기획서]/00_프로젝트_허브/ACTIVE_CONTEXT.md"]
+      "source_globs": [
+        "audio/**",
+        "sound/**",
+        "music/**"
+      ],
+      "required_any": [
+        "[기획서]/07_사운드/사운드_기획서.json"
+      ],
+      "required_all": [
+        "[기획서]/00_프로젝트_허브/ACTIVE_CONTEXT.md"
+      ]
     },
     {
       "name": "responsibility-path-change",
@@ -119,7 +169,8 @@
       "required_all": [
         "[기획서]/00_프로젝트_허브/DOCUMENTATION_MAP.md",
         "[기획서]/00_프로젝트_허브/SKILL_REGISTRY.json",
-        "[기획서]/00_프로젝트_허브/SKILL_MAP_PUBLICATION_MANIFEST.json"
+        "[기획서]/00_프로젝트_허브/SKILL_MAP_PUBLICATION_MANIFEST.json",
+        "[기획서]/00_프로젝트_허브/DESIGN_DOCUMENT_REGISTRY.json"
       ]
     },
     {
@@ -130,16 +181,23 @@
         "[기획서]/11_통합검수/**"
       ],
       "required_any": [],
-      "required_all": ["[기획서]/00_프로젝트_허브/ACTIVE_CONTEXT.md"]
+      "required_all": [
+        "[기획서]/00_프로젝트_허브/ACTIVE_CONTEXT.md"
+      ]
     },
     {
-      "name": "publication-policy-change",
+      "name": "design-document-publication-change",
       "source_globs": [
-        "tools/build_discipline_publications.py",
-        "[기획서]/00_프로젝트_허브/PUBLICATION_MANIFEST.json"
+        "tools/build_design_documents.py",
+        "tools/design_document_diagrams.py",
+        "[기획서]/**/*_기획서.json",
+        "[기획서]/**/PROJECT_MASTER_PLAN.json",
+        "[기획서]/**/*.assets/**"
       ],
       "required_any": [],
-      "required_all": ["[기획서]/00_프로젝트_허브/AI_WORKFLOW.md"]
+      "required_all": [
+        "[기획서]/00_프로젝트_허브/DESIGN_DOCUMENT_REGISTRY.json"
+      ]
     }
   ]
 }
