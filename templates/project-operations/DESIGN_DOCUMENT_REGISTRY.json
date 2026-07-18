@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "registry_role": "ai-design-document-router-and-publication-index",
+  "project_name": "[프로젝트명]",
+  "source_of_truth_policy": "Each active project or discipline bible is a structured JSON source. DOCX, PDF and diagram assets are generated human-readable derivatives.",
+  "human_presentation": {
+    "primary_reading_format": "PDF",
+    "editable_review_format": "DOCX",
+    "diagram_assets_required": true,
+    "approved_visuals_embedded": true,
+    "markdown_design_bibles_allowed": false
+  },
+  "required_responsibility_coverage": [
+    "프로젝트 전체",
+    "설정·내러티브",
+    "게임 디자인",
+    "UX·UI·접근성",
+    "개발·엔지니어링",
+    "테크니컬 아트·파이프라인",
+    "아트",
+    "사운드",
+    "QA",
+    "프로덕션·PM",
+    "분석·유저리서치",
+    "통합검수"
+  ],
+  "documents": [],
+  "document_contract_example": {
+    "document_id": "game-design-bible",
+    "discipline": "게임 디자인",
+    "responsibility_coverage": [
+      "게임 디자인"
+    ],
+    "status": "NOT_INSTALLED",
+    "source_json": "../02_게임_디자인/게임_기획서.json",
+    "output_docx": "../02_게임_디자인/게임_기획서.docx",
+    "output_pdf": "../02_게임_디자인/게임_기획서.pdf",
+    "asset_dir": "../02_게임_디자인/게임_기획서.assets",
+    "publication_manifest": "../02_게임_디자인/게임_기획서_PUBLICATION_MANIFEST.json",
+    "generator": "tools/build_design_documents.py"
+  }
+}
