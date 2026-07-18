@@ -1,0 +1,90 @@
+{
+  "design_root": "[기획서]",
+  "active_roots": [
+    "[기획서]"
+  ],
+  "ignored_segments": [
+    "archive",
+    "[백업]",
+    "[보류]",
+    "hold",
+    "deprecated"
+  ],
+  "required_files": [
+    "AGENTS.md",
+    "[기획서]/00_프로젝트_허브/START_HERE.md",
+    "[기획서]/00_프로젝트_허브/ACTIVE_CONTEXT.md",
+    "[기획서]/00_프로젝트_허브/DOCUMENTATION_MAP.md",
+    "[기획서]/00_프로젝트_허브/DOCUMENT_UPDATE_MATRIX.md",
+    "[기획서]/00_프로젝트_허브/AI_WORKFLOW.md"
+  ],
+  "forbidden_active_name_patterns": [
+    "(?i)(^|[_-])(v[0-9]+|final|latest|copy|new)([_-]|\\.)"
+  ],
+  "markdown_link_roots": [
+    "[기획서]"
+  ],
+  "asset_manifests": [
+    "[기획서]/06_아트/ASSET_MANIFEST.yml"
+  ],
+  "change_rules": [
+    {
+      "name": "gameplay-or-data-change",
+      "source_globs": [
+        "scripts/**",
+        "scenes/**",
+        "data/**",
+        "resources/**"
+      ],
+      "required_any": [
+        "[기획서]/02_게임_디자인/게임_기획서.md",
+        "[기획서]/04_개발_엔지니어링/개발_기획서.md"
+      ],
+      "required_all": [
+        "[기획서]/00_프로젝트_허브/ACTIVE_CONTEXT.md"
+      ]
+    },
+    {
+      "name": "visual-asset-change",
+      "source_globs": [
+        "assets/**",
+        "art/**",
+        "images/**"
+      ],
+      "required_any": [
+        "[기획서]/05_테크니컬아트_파이프라인/테크니컬아트_기획서.md",
+        "[기획서]/06_아트/아트_기획서.md"
+      ],
+      "required_all": [
+        "[기획서]/06_아트/ASSET_MANIFEST.yml"
+      ]
+    },
+    {
+      "name": "audio-change",
+      "source_globs": [
+        "audio/**",
+        "sound/**",
+        "music/**"
+      ],
+      "required_any": [
+        "[기획서]/07_사운드/사운드_기획서.md"
+      ],
+      "required_all": [
+        "[기획서]/00_프로젝트_허브/ACTIVE_CONTEXT.md"
+      ]
+    },
+    {
+      "name": "responsibility-path-change",
+      "source_globs": [
+        "AGENTS.md",
+        "[기획서]/**/README.md",
+        "[기획서]/**/START_HERE.md",
+        "[기획서]/**/DOCUMENTATION_MAP.md"
+      ],
+      "required_any": [],
+      "required_all": [
+        "[기획서]/00_프로젝트_허브/DOCUMENTATION_MAP.md"
+      ]
+    }
+  ]
+}
