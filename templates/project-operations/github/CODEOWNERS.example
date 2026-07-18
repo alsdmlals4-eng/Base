@@ -1,0 +1,41 @@
+# 프로젝트 적용 시 실제 GitHub 사용자·팀으로 교체합니다.
+# CODEOWNERS는 리뷰 요청을 자동화하지만 브랜치 보호에서
+# "Require review from Code Owners"를 활성화해야 병합 게이트가 됩니다.
+
+# 프로젝트 허브·운영 정책·게이트·PDF 최신성
+/[기획서]/00_프로젝트_허브/          @project-owner @production-owner @qa-owner
+
+# 분야별 활성 본책·부록·PDF
+/[기획서]/01_설정_내러티브/          @narrative-owner
+/[기획서]/02_게임_디자인/            @game-design-owner
+/[기획서]/03_UX_UI_접근성/           @ux-owner
+/[기획서]/04_개발_엔지니어링/        @engineering-owner
+/[기획서]/05_테크니컬아트_파이프라인/ @technical-art-owner @engineering-owner
+/[기획서]/06_아트/                   @art-owner @technical-art-owner
+/[기획서]/07_사운드/                 @audio-owner
+/[기획서]/08_QA/                     @qa-owner
+/[기획서]/09_프로덕션_PM/            @production-owner
+/[기획서]/10_분석_유저리서치/        @research-owner
+/[기획서]/11_통합검수/               @project-owner @qa-owner
+
+# 공용 Foundation 프로젝트 스킬
+/skills/foundation/                  @project-owner @engineering-owner @qa-owner
+
+# 분야별 프로젝트 스킬
+/skills/narrative/                   @narrative-owner
+/skills/game-design/                 @game-design-owner
+/skills/ux-ui-accessibility/         @ux-owner
+/skills/engineering/                 @engineering-owner
+/skills/technical-art/               @technical-art-owner @engineering-owner
+/skills/art/                         @art-owner
+/skills/audio/                       @audio-owner
+/skills/qa/                          @qa-owner
+/skills/production/                  @production-owner
+/skills/analytics-user-research/     @research-owner
+/skills/integrated-review/           @project-owner @qa-owner
+
+# 자동화·빌드·Publication 파이프라인
+/.github/                            @project-owner @engineering-owner @qa-owner
+/tools/                              @engineering-owner
+/AGENTS.md                           @project-owner
+/README.md                           @project-owner

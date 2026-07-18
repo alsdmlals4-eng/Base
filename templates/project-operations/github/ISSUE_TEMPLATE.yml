@@ -1,0 +1,189 @@
+name: 작업 요청
+description: 분야·개발 게이트·프로젝트 스킬·완료 기준·검증을 갖춘 게임 제작 작업 요청
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        작업 전에 주 책임 분야, 영향 분야, 현재 게이트와 사용할 프로젝트 스킬을 지정합니다. 승인·구현·검증·PDF 발행 상태를 서로 구분합니다.
+
+  - type: dropdown
+    id: project_mode
+    attributes:
+      label: 프로젝트·작업 모드
+      options:
+        - 일반 운영 작업
+        - 신규 운영체계 설치
+        - 기존 프로젝트 Audit only
+        - 승인된 기존 프로젝트 마이그레이션
+        - GitHub Enforcement 설치·검증
+    validations:
+      required: true
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: 목표와 사용자·플레이어 가치
+      description: 무엇을 왜 바꾸며 사용자·플레이어·작업자에게 어떤 가치가 생기는지 적습니다.
+      placeholder: "예: 룰렛 슬롯 이동 대상을 즉시 이해하게 해 오조작을 줄인다."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: primary_discipline
+    attributes:
+      label: 주 책임 분야
+      options:
+        - 설정·내러티브
+        - 게임 디자인
+        - UX·UI·접근성
+        - 개발·엔지니어링
+        - 테크니컬 아트·콘텐츠 파이프라인
+        - 아트
+        - 사운드
+        - QA
+        - 프로덕션·PM
+        - 분석·유저리서치
+        - 통합검수
+        - 프로젝트 허브·Foundation 운영
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: affected_disciplines
+    attributes:
+      label: 영향 분야
+      options:
+        - label: 설정·내러티브
+        - label: 게임 디자인
+        - label: UX·UI·접근성
+        - label: 개발·엔지니어링
+        - label: 테크니컬 아트·콘텐츠 파이프라인
+        - label: 아트
+        - label: 사운드
+        - label: QA
+        - label: 프로덕션·PM
+        - label: 분석·유저리서치
+        - label: 통합검수
+
+  - type: dropdown
+    id: change_type
+    attributes:
+      label: 변경 유형
+      options:
+        - 방향·대상 플레이어
+        - 세계관·명칭·시나리오
+        - 게임 규칙·밸런스
+        - UX·UI·접근성
+        - 코드·Scene·데이터
+        - 자산 규격·Import
+        - 이미지·애니메이션·VFX
+        - 사운드·음성
+        - 테스트·버그·성능
+        - 일정·범위·예산·위험
+        - 분석·벤치마킹·유저리서치
+        - 개발 게이트·마일스톤
+        - 프로젝트 스킬·학습 구조
+        - PDF·Publication Manifest
+        - 문서·경로·운영체계
+        - 기존 프로젝트 마이그레이션·수명주기
+    validations:
+      required: true
+
+  - type: dropdown
+    id: current_gate
+    attributes:
+      label: 현재 작업 게이트
+      options:
+        - Intake·Context
+        - Definition of Ready 검수
+        - Planning·Approval
+        - Implementation
+        - Verification
+        - Documentation
+        - Integration·Completion
+        - 제품 마일스톤 Greenlight 검수
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: 포함 범위
+      description: 실제로 변경할 기능·문서·스킬·자산·PDF·파일 범위를 적습니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: 제외 범위와 보호 대상
+      description: 바꾸지 않을 기능, 승인 결정, 데이터, 자산, 파일 경로와 사용자 변경을 적습니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sources
+    attributes:
+      label: 먼저 읽을 책임 원본과 실제 파일
+      description: START_HERE, 분야 본책, Roadmap, 실제 코드·데이터·자산·테스트와 관련 근거를 적습니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: skills
+    attributes:
+      label: 적용할 Foundation·분야 프로젝트 스킬
+      description: PROJECT_SKILL_MAP에서 선택한 공용 스킬과 주 책임 분야 스킬, Learning Log 경로를 적습니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: lifecycle
+    attributes:
+      label: 보존·백업·보류·제거 후보 영향
+      description: 기존 프로젝트 작업이면 보존 대상, 보류 재개 조건, 제거 후보와 사용자 승인 필요 여부를 적습니다.
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: 조건 → 행동 → 관찰 결과로 완료 기준을 적습니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: validation
+    attributes:
+      label: 검증 계획
+      description: 정적 검사, 자동 테스트, 정상·예외 경로, 저장·호환성, 실제 플레이·시각·오디오·성능과 사용자 검수를 적습니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: updates
+    attributes:
+      label: 필수 갱신 본책·게이트·스킬·Manifest·PDF
+      description: DOCUMENT_UPDATE_MATRIX에 따라 갱신할 본책, Active Context, Gates, Project Skill Map, Asset·Publication Manifest와 PDF를 적습니다.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: ready
+    attributes:
+      label: Definition of Ready
+      options:
+        - label: 목적과 사용자·플레이어 가치가 명확합니다.
+          required: true
+        - label: 포함·제외 범위와 보호 대상이 있습니다.
+          required: true
+        - label: 현행 책임 원본과 실제 대상 파일을 확인했습니다.
+          required: true
+        - label: 관련 Foundation·분야 프로젝트 스킬을 지정했습니다.
+          required: true
+        - label: 완료 기준과 검증 방법이 있습니다.
+          required: true
+        - label: 미확정·보류·미검증을 구현 범위와 분리했습니다.
+          required: true
+        - label: 기존 프로젝트 마이그레이션이면 승인 전 대규모 삭제·이동·통합을 하지 않습니다.
+          required: true

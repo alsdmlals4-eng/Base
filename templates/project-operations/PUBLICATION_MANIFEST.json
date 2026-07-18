@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "generated_by": "project-specific publication pipeline",
+  "publications": [
+    {
+      "publication_id": "example-discipline-bible",
+      "discipline": "[분야명]",
+      "role": "read_only_derivative",
+      "source_files": [
+        "[기획서]/00_분야/분야_기획서.md"
+      ],
+      "approved_image_paths": [],
+      "output_pdf": "[기획서]/00_분야/분야_기획서.pdf",
+      "source_commit": "",
+      "content_sha256": "",
+      "generated_at": "",
+      "generator": "",
+      "status": "NOT_BUILT",
+      "visual_review": "NOT_RUN",
+      "notes": "프로젝트 적용 시 실제 경로로 교체하고 enforcement를 활성화합니다."
+    }
+  ]
+}
