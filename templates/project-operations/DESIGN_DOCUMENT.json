@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "document_id": "replace-with-stable-id",
+  "document_kind": "project-master-plan-or-discipline-bible",
+  "project": "[프로젝트명]",
+  "title": "[기획서 제목]",
+  "discipline": "[책임 분야]",
+  "owner": "[최종 책임]",
+  "status": "NOT_INSTALLED",
+  "metadata": {
+    "last_edited": "",
+    "last_reviewed": "",
+    "source_commit": "",
+    "current_product_gate": "",
+    "current_work_gate": "",
+    "next_review_trigger": ""
+  },
+  "overview": {
+    "purpose": "",
+    "player_value": "",
+    "current_goal": "",
+    "summary": "",
+    "largest_risk": "",
+    "next_action": ""
+  },
+  "goals": [],
+  "quality_bar": [
+    {
+      "criterion": "",
+      "pass_condition": "",
+      "evidence": "",
+      "status": "미확정"
+    }
+  ],
+  "prohibited_directions": [],
+  "responsibilities": {
+    "owns": [],
+    "does_not_own": [],
+    "interfaces": [
+      {
+        "discipline": "",
+        "receives": "",
+        "provides": "",
+        "update_together": ""
+      }
+    ]
+  },
+  "workflow": [
+    {
+      "step": "",
+      "inputs": [],
+      "decision_or_work": "",
+      "outputs": [],
+      "paths": [],
+      "fallback": "",
+      "validation": "",
+      "next_gate": ""
+    }
+  ],
+  "development_gates": {
+    "work": [
+      {
+        "gate": "Intake·Context",
+        "entry": "",
+        "exit": "",
+        "evidence": "",
+        "status": "미확정"
+      }
+    ],
+    "product": [
+      {
+        "gate": "Vertical Slice",
+        "proof": "",
+        "quality_bar": "",
+        "evidence": "",
+        "status": "미확정"
+      }
+    ]
+  },
+  "skills": {
+    "foundation": [],
+    "discipline_entry": [],
+    "subskills": [],
+    "learning_log": "",
+    "knowledge_state": "OBSERVATION",
+    "next_review_trigger": ""
+  },
+  "current_state": [
+    {
+      "item": "",
+      "confirmed": "",
+      "implemented": "",
+      "validated": "",
+      "unresolved": "",
+      "hold": "",
+      "evidence": ""
+    }
+  ],
+  "decisions": [],
+  "implementation": [],
+  "validation": [],
+  "sections": [],
+  "approved_visuals": [
+    {
+      "asset_id": "",
+      "title": "",
+      "path": "",
+      "status": "REFERENCE",
+      "caption": "",
+      "adopted_elements": [],
+      "excluded_elements": [],
+      "include_in_publication": true
+    }
+  ],
+  "risks": [],
+  "next_actions": [],
+  "definition_of_ready": [],
+  "definition_of_done": [],
+  "appendices": [],
+  "change_history": []
+}
