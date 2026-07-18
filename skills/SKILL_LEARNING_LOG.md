@@ -62,24 +62,24 @@
 
 ### 2026-07-19 structured design documents and human publication pipeline
 
-- 프로젝트·작업: Base — 모든 프로젝트·분야 기획서의 AI JSON + 사람용 DOCX/PDF + 다이어그램·승인 이미지 구조
+- 프로젝트·작업: Base PR #8 — 모든 프로젝트·분야 기획서의 AI JSON + 사람용 DOCX/PDF + 다이어그램·승인 이미지 구조
 - 기준 스킬 커밋: `51d3535afa3eea5b19d262e1fe87d06f183c2224`
 - 호출 트리거: 스킬맵뿐 아니라 모든 기획서가 이미지 확인 가능한 사람용 문서를 가져야 한다는 사용자 피드백
 - 입력 범위: Base 시작 규칙·운영 Method·기획서 작성·마이그레이션·발행·스킬 진화·Health Review·프로젝트 템플릿·GitHub 검사·회귀 테스트
 - 실제 산출물: Design Document Registry·JSON 본책 템플릿·DOCX/PDF·다이어그램 생성기·승인 이미지 포함·세 번째 Governance Checker·실제 생성 통합 테스트
-- 실행한 검증: 로컬 예시 6페이지 DOCX/PDF 생성·전 페이지 렌더·시각 확인 완료; PR GitHub Actions 실행 예정
-- 결과: 미검증
-- 성공 조건: 기획서·스킬맵 실제 생성, 세 Governance Checker, 구조 회귀, PDF 렌더와 whitespace가 최종 head에서 모두 통과
-- 실패·예외·재현 조건: 사람용 편집성을 이유로 DOCX를 책임 원본으로 두면 JSON과 분기되므로 DOCX는 검토용 파생본으로 제한
+- 실행한 검증: Python 문법, Documentation Governance, Skill Routing Governance, Design Publication Governance, JSON 기획서와 Skill Registry의 DOCX/PDF·다이어그램 실제 생성, 승인 이미지 포함, PDF 전 페이지 렌더, 구조 회귀, whitespace
+- 결과: 성공
+- 성공 조건: 기획서·스킬맵 실제 생성, 세 Governance Checker, 구조 회귀, PDF 렌더와 whitespace가 최종 head의 GitHub Actions run #18에서 모두 통과
+- 실패·예외·재현 조건: 초기 CI에서 pip 캐시 입력 파일 부재로 Python 설정이 실패해 캐시를 제거함. 다음 실행에서 스킬 진화 Method와 Health Review 스킬 연결 문구 누락이 구조 테스트에 검출돼 계약을 보완함.
 - 사용자 피드백: AI는 JSON을 읽고 사람은 DOCX/PDF와 이미지·다이어그램을 한눈에 확인해야 함
 - 불필요하게 호출한 스킬: 없음
 - 누락된 스킬·검증: 기존 구조에는 프로젝트 전체·분야 기획서용 구조화 Registry, 승인 이미지 포함 DOCX, 생성기 해시와 전 페이지 PDF 렌더 검사가 없었음
 - 스킬 본문 변경 필요: 예
 - 변경하지 않는 이유: 해당 없음
-- 지식 상태: 가설
+- 지식 상태: 패턴
 - 프로젝트 전용으로 유지할 내용: 실제 게임의 세계관·수치·구현 경로·승인 이미지·생성된 기획서 바이너리
-- Base Method·Skill·Template·Test 환류 후보: 이번 브랜치의 JSON 계약·생성기·Checker·통합 테스트 전체
-- 다음 검토 트리거: PR Workflow 결과와 첫 대상 프로젝트 실제 마이그레이션
+- Base Method·Skill·Template·Test 환류 후보: 이번 PR의 JSON 계약·생성기·Checker·통합 테스트 전체
+- 다음 검토 트리거: 첫 대상 프로젝트 실제 마이그레이션, DOCX/PDF 렌더 실패 반복, Registry와 발행본 불일치
 
 ### 2026-07-19 operating-system skill routing and learning audit
 
