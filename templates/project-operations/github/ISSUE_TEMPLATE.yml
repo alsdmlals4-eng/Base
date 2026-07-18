@@ -1,0 +1,132 @@
+name: 작업 요청
+about: 분야·범위·완료 기준·검증을 갖춘 게임 제작 작업 요청
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        작업을 시작하기 전에 주 책임 분야와 영향 분야를 지정하고, 승인·구현·검증 상태를 구분합니다.
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: 목표와 사용자·플레이어 가치
+      description: 무엇을 왜 바꾸며, 플레이어 또는 작업자에게 어떤 가치가 생기는지 적습니다.
+      placeholder: "예: 룰렛 슬롯 이동 대상을 화면에서 즉시 이해하게 해 오조작을 줄인다."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: primary_discipline
+    attributes:
+      label: 주 책임 분야
+      options:
+        - 설정·내러티브
+        - 게임 디자인
+        - UX·UI·접근성
+        - 개발·엔지니어링
+        - 테크니컬 아트·콘텐츠 파이프라인
+        - 아트
+        - 사운드
+        - QA
+        - 프로덕션·PM
+        - 분석·유저리서치
+        - 통합검수
+        - 프로젝트 허브·문서 운영
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: affected_disciplines
+    attributes:
+      label: 영향 분야
+      options:
+        - label: 설정·내러티브
+        - label: 게임 디자인
+        - label: UX·UI·접근성
+        - label: 개발·엔지니어링
+        - label: 테크니컬 아트·콘텐츠 파이프라인
+        - label: 아트
+        - label: 사운드
+        - label: QA
+        - label: 프로덕션·PM
+        - label: 분석·유저리서치
+        - label: 통합검수
+
+  - type: dropdown
+    id: change_type
+    attributes:
+      label: 변경 유형
+      options:
+        - 방향·대상 플레이어
+        - 세계관·명칭·시나리오
+        - 게임 규칙·밸런스
+        - UX·UI·접근성
+        - 코드·Scene·데이터
+        - 자산 규격·Import
+        - 이미지·애니메이션·VFX
+        - 사운드·음성
+        - 테스트·버그·성능
+        - 일정·범위·예산·위험
+        - 분석·벤치마킹·유저리서치
+        - 문서·경로·운영체계
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: 포함 범위
+      description: 이번 작업에서 실제로 변경할 기능·문서·파일 범위를 적습니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: 제외 범위와 보호 대상
+      description: 이번 작업에서 바꾸지 않을 기능, 기존 동작, 데이터와 경로를 적습니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sources
+    attributes:
+      label: 먼저 읽을 책임 원본과 실제 파일
+      description: 관련 본책, Decision, Roadmap, 코드·데이터·자산·테스트 경로를 적습니다.
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: 조건 → 행동 → 관찰 결과로 완료 기준을 적습니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: validation
+    attributes:
+      label: 검증 계획
+      description: 자동 테스트, 수동 경로, 실제 플레이, 시각·오디오·성능 검증을 적습니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: docs
+    attributes:
+      label: 필수 갱신 문서·Manifest
+      description: DOCUMENT_UPDATE_MATRIX에 따라 갱신할 본책, Active Context, Roadmap, 이미지·자산 Manifest를 적습니다.
+
+  - type: checkboxes
+    id: ready
+    attributes:
+      label: Definition of Ready
+      options:
+        - label: 목적과 사용자·플레이어 가치가 명확합니다.
+          required: true
+        - label: 포함·제외 범위와 보호 대상이 있습니다.
+          required: true
+        - label: 완료 기준과 검증 방법이 있습니다.
+          required: true
+        - label: 미확정 결정은 구현 범위와 분리했습니다.
+          required: true
