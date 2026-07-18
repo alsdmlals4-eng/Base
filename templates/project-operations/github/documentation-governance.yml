@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Validate documentation and publication governance
+      - name: Validate documentation and path governance
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -33,7 +33,7 @@ jobs:
             --base "$BASE_SHA" \
             --head "$HEAD_SHA"
 
-      - name: Validate root design folder and skill routing governance
+      - name: Validate root design folder and skill routing publications
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -43,11 +43,16 @@ jobs:
             --base "$BASE_SHA" \
             --head "$HEAD_SHA"
 
+      - name: Validate JSON design documents and human publications
+        run: |
+          python tools/check_design_document_publications.py \
+            --config .github/documentation-governance.json
+
 # 프로젝트 적용 절차:
 # 1. 이 파일을 .github/workflows/documentation-governance.yml로 복사·분화한다.
-# 2. 두 checker를 tools/에 둔다.
+# 2. 세 checker를 tools/에 둔다.
 # 3. config를 .github/documentation-governance.json에 둔다.
-# 4. 루트 [기획서], Skill Registry, Learning Log, PDF를 실제 경로에 맞춘다.
-# 5. 정상·실패 샘플 PR에서 두 checker를 검증한다.
+# 4. 루트 [기획서], Skill Registry, Design Document Registry, Learning Log를 실제 경로에 맞춘다.
+# 5. JSON 기획서와 DOCX/PDF/다이어그램/Manifest 정상·실패 샘플 PR을 검증한다.
 # 6. 저장소 브랜치 보호에서 `documentation-governance`를 Required Status Check로 지정한다.
 # 파일 존재와 브랜치 보호 실제 활성화는 서로 다른 상태다.
