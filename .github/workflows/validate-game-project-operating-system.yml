@@ -1,0 +1,42 @@
+name: Validate Game Project Operating System
+
+on:
+  pull_request:
+    paths:
+      - "START_HERE.md"
+      - "AGENTS.md"
+      - "README.md"
+      - "docs/**"
+      - "skills/**"
+      - "templates/project-operations/**"
+      - "tests/test_documentation_governance.py"
+      - ".github/workflows/validate-game-project-operating-system.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-operating-system:
+    name: validate-operating-system
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check Python syntax
+        run: |
+          python -m py_compile \
+            templates/project-operations/github/check_documentation_governance.py \
+            tests/test_documentation_governance.py
+
+      - name: Run governance regression tests
+        run: python -m unittest tests/test_documentation_governance.py -v
+
+      - name: Check whitespace errors
+        run: git diff --check origin/${{ github.base_ref }}...HEAD
