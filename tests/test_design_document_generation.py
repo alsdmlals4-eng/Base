@@ -17,7 +17,10 @@ GENERATOR = REPOSITORY_ROOT / "tools/build_design_documents.py"
 DIAGRAM_GENERATOR = REPOSITORY_ROOT / "tools/design_document_diagrams.py"
 
 
-@unittest.skipUnless(shutil.which("libreoffice") and shutil.which("pdftoppm"), "LibreOffice and pdftoppm are required")
+@unittest.skipUnless(
+    (shutil.which("libreoffice") or shutil.which("soffice")) and shutil.which("pdftoppm"),
+    "LibreOffice and pdftoppm are required",
+)
 class DesignDocumentGenerationTests(unittest.TestCase):
     def test_json_generates_docx_pdf_diagrams_and_manifest(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:

@@ -16,7 +16,10 @@ GENERATOR = REPOSITORY_ROOT / "tools/build_project_skill_map.py"
 DIAGRAM_GENERATOR = REPOSITORY_ROOT / "tools/skill_map_diagrams.py"
 
 
-@unittest.skipUnless(shutil.which("libreoffice") and shutil.which("pdftoppm"), "LibreOffice and pdftoppm are required")
+@unittest.skipUnless(
+    (shutil.which("libreoffice") or shutil.which("soffice")) and shutil.which("pdftoppm"),
+    "LibreOffice and pdftoppm are required",
+)
 class ProjectSkillMapGenerationTests(unittest.TestCase):
     def test_registry_generates_docx_pdf_diagrams_and_manifest(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:
