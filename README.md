@@ -1,21 +1,17 @@
 # Base
 
-여러 프로젝트가 공유하는 **[학습형] [공용] AI 작업 규칙, 기획 지식, 실행 스킬과 템플릿**의 원본 저장소입니다.
+여러 게임 프로젝트가 공유하는 **[학습형] [공용] AI 작업 규칙, 설계 방법, 실행 스킬, 템플릿과 검증 사례**의 원본 저장소입니다.
 
-Base는 프로젝트에서 얻은 문제 해결 방법, 실패 사례와 검증 결과를 일반화해 계속 학습·갱신합니다. 각 프로젝트는 Base를 그대로 복제하지 않고, 자신의 세계관, 수치, 엔진, 파일 경로와 현재 구현 상태에 맞게 **분화·적용·검증**합니다.
-
-Base에는 특정 프로젝트의 활성 GDD, 세계관, 밸런스, 코드와 실제 경로를 두지 않습니다. 프로젝트 고유 결정과 구현 상태는 해당 프로젝트 저장소가 책임집니다.
+Base는 `어떻게 판단하고 작업하며 검증할 것인가`를 관리합니다. 각 프로젝트는 자신의 세계관, 규칙, 수치, 엔진, 실제 경로, 승인 이미지와 구현 상태를 자체 저장소에서 관리하고 Base를 프로젝트 상황에 맞게 **분화·적용·검증**합니다.
 
 ## 가장 먼저 읽기
-
-새 채팅, 새 GPT, 새 Codex 또는 새 작업자는 다음에서 시작합니다.
 
 ```text
 START_HERE.md
 → AGENTS.md
 → docs/DOCUMENTATION_MAP.md
-→ 현재 작업에 맞는 method·skill·template·case
-→ 대상 프로젝트의 현행 책임 원본과 실제 파일
+→ 현재 작업에 필요한 Method·Skill·Template·Case
+→ 대상 프로젝트 현행 책임 원본과 실제 파일
 ```
 
 - [Base 시작 지점](START_HERE.md)
@@ -24,161 +20,203 @@ START_HERE.md
 
 ## 사용자가 기억할 최소 요청
 
-다음처럼 요청하면 됩니다.
-
 > `https://github.com/alsdmlals4-eng/Base 를 전부 살펴보고 참고해서 이 프로젝트를 작업해줘.`
 
-저장소 접근이 가능한 AI는 `START_HERE.md`의 호출 계약에 따라 Base를 무작정 전부 복사하지 않고, 현재 작업에 필요한 공용 책임 원본과 대상 프로젝트의 현행 기준을 함께 확인합니다.
-
-게임 프로젝트의 문서·이미지·팀 분야·GitHub 작업 흐름을 처음 설치하거나 전면 정리할 때는 다음 스킬을 사용합니다.
-
-- `skills/installing-game-project-operating-system/SKILL.md`
-
-이 스킬은 다음 효과를 목표로 합니다.
-
-- GPT와 Codex가 같은 시작 문서를 읽음
-- 분야별 활성 책임 원본 고정
-- 변경 전 주 책임 분야·영향 분야 판정
-- 관련 본책·상태·로드맵·검증 문서 동기화
-- 이미지 중복과 임의 교체 방지
-- PR에서 문서·이미지 갱신 누락 탐지
-- 새 AI가 과거 대화 없이 저장소만으로 현재 상태 복원
+저장소 접근이 가능한 GPT·Codex는 Base 전체를 무작정 복사하지 않고 대상 프로젝트의 START_HERE, Documentation Map, Active Context, 분야 본책, 프로젝트 스킬과 실제 파일을 함께 확인합니다.
 
 ## 운영 모델
 
 ```text
-Base 공용 학습 데이터
-→ 프로젝트별 전용 기획·스킬·구현으로 분화
-→ 실제 작업·플레이테스트·검수
-→ 성공·실패·미검증 사례 기록
-→ 공용 원리와 프로젝트 고유 값 분리
-→ Base method·skill·template·case 갱신
+Base 공용 Method·Skill·Template
+→ 프로젝트별 본책·스킬·실제 경로로 분화
+→ 기획·구현·제작·검증
+→ 성공·실패·미검증 기록
+→ 프로젝트 스킬 학습
+→ 반복 검증된 공용 원리만 Base로 환류
 ```
 
-- Base는 `어떻게 판단하고 작업하며 검증할 것인가`를 학습합니다.
-- 프로젝트는 `이 게임에서 무엇을 만들고 현재 어디까지 구현했는가`를 관리합니다.
-- 한 번 성공한 방법은 먼저 사례·가설로 기록하고 반복 검증 뒤 공용 규칙이나 스킬로 승격합니다.
+한 번 성공한 방법은 먼저 `관찰` 또는 `가설`로 기록하고 반복 검증 뒤 `패턴`, `검증`, `승격 후보`로 올립니다.
 
-## 구조
+## 저장소 구조
 
 ```text
-START_HERE.md      사람·AI 공용 최초 라우터
+START_HERE.md      새 채팅·새 AI 최초 라우터
 AGENTS.md          최소 공용 규칙
-README.md          저장소 개요와 주요 경로
-docs/              상세 작업 규칙과 공용 지식
-skills/            직접 적용 가능한 실행 스킬
-templates/         프로젝트에 복사·분화할 산출물 양식
+README.md          저장소 개요
+docs/              상세 규칙·Method·Research·Skill Matrix·Case
+skills/            직접 실행 가능한 공용 Skill
+templates/         프로젝트에 복사·분화할 템플릿
 ```
 
-## 프로젝트 작업 시작 순서
+## 게임 프로젝트 운영체계
 
-프로젝트 작업에서는 **현재 작업에 적용되는 공용 기준 전체와 프로젝트 현행 기준 전체**를 함께 확인합니다. `전체`는 저장소의 모든 파일을 무조건 읽는다는 뜻이 아니라 Documentation Map과 참조 관계로 관련 책임 원본과 영향 파일을 빠짐없이 선택한다는 뜻입니다.
+공용 운영체계는 다음을 연결합니다.
 
 ```text
-프로젝트 AGENTS.md
-→ BASE_RULES_VERSION.md와 Base 기준
-→ 프로젝트 START_HERE·Documentation Map
-→ Handoff·Active Context
-→ 프로젝트 방향과 관련 분야 본책
-→ Roadmap·Issue·Goal·Plan
-→ 실제 수정 대상·자산·테스트
+프로젝트 방향
+→ 분야별 활성 본책
+→ 개발 게이트·Roadmap
+→ Foundation·분야별 프로젝트 스킬
+→ Issue·Goal·Plan
+→ 코드·데이터·자산
+→ 테스트·캡처·PDF 증거
+→ 상태·인수인계·학습 갱신
 ```
 
-## 핵심 작업 문서
+기본 책임 분야:
 
-| 파일 | 역할 |
+1. 설정·내러티브
+2. 게임 디자인
+3. UX·UI·접근성
+4. 개발·엔지니어링
+5. 테크니컬 아트·콘텐츠 파이프라인
+6. 아트
+7. 사운드
+8. QA
+9. 프로덕션·PM
+10. 분석·유저리서치
+11. 통합검수
+
+작은 프로젝트는 폴더·본책을 통합할 수 있지만 책임, 입력·출력, 프로젝트 스킬과 검증 경계는 유지합니다.
+
+## 핵심 Method
+
+| Method | 역할 |
 |---|---|
-| `START_HERE.md` | Base 호출 계약과 요청별 라우팅 |
-| `AGENTS.md` | 최소 공용 작업 규칙과 학습 환류 원칙 |
-| `docs/AI_SHARED_WORK_RULES.md` | 역할, 범위, 품질, 파일 수명주기, Base 승격 |
-| `docs/AI_WORKFLOW_RULES.md` | 요청 분류, 공용·전용 컨텍스트 확인, 검증과 학습 환류 |
-| `docs/CONTENT_DESIGN_METHOD.md` | 의도→경험→규칙→흐름→검증 기반 콘텐츠 기획 |
-| `docs/AI_SKILL_ADOPTION_GUIDE.md` | 스킬·외부 모델 검토, 권한, 비용과 검증 |
-| `docs/DOCUMENTATION_MAP.md` | 문서·스킬·템플릿 라우터 |
-| `docs/knowledge/README.md` | 공용 methods·research·skill contracts·cases |
-| `docs/knowledge/methods/GAME_PROJECT_OPERATING_SYSTEM_METHOD.md` | 분야별 본책·이미지·GitHub 운영체계 설계 방법 |
-| `docs/CHANGELOG.md` | Base 버전과 변경 기록 |
+| `docs/knowledge/methods/GAME_PROJECT_OPERATING_SYSTEM_METHOD.md` | 분야별 본책·이미지·GitHub 운영체계 |
+| `docs/knowledge/methods/DEVELOPMENT_GATES_METHOD.md` | Ready·Implementation·Verification·Documentation·Completion과 제품 마일스톤 게이트 |
+| `docs/knowledge/methods/EXISTING_PROJECT_SAFE_MIGRATION_METHOD.md` | 기존 프로젝트 고유 정보·참조를 보존하는 안전 마이그레이션 |
+| `docs/knowledge/methods/DISCIPLINE_SKILL_EVOLUTION_METHOD.md` | Foundation·분야 스킬 분리와 학습·통합·Base 환류 |
+| `docs/knowledge/methods/DISCIPLINE_PDF_PUBLICATION_METHOD.md` | 승인 이미지를 포함한 분야별 최신 PDF 통합본 |
+| `docs/knowledge/methods/PLANNING_SYSTEM_METHOD.md` | 기획 책임 계층과 추적성 |
+| `docs/knowledge/methods/PROJECT_HANDOFF_CONTEXT_METHOD.md` | 새 AI의 콜드 스타트와 인수인계 |
+
+서사·아트·연출·조사 Method는 [Documentation Map](docs/DOCUMENTATION_MAP.md)에서 작업별로 선택합니다.
 
 ## 실행 스킬
 
-| 스킬 | 사용 시점 |
+| Skill | 사용 시점 |
 |---|---|
-| `skills/installing-game-project-operating-system/` | 프로젝트 운영체계 감사·설치·이관·자동 검사 연결 |
-| `skills/transforming-requests-into-prompts/` | 짧거나 모호한 요청을 실행 가능한 프롬프트로 변환 |
-| `skills/designing-vertical-slices/` | 핵심 경험을 대표하는 완성 구간과 제작 파이프라인 검증 |
-| `skills/writing-game-design-documents/` | 기획서 종류, 책임 원본, 로드맵과 명세 구조 설계 |
-| `skills/orchestrating-deepseek-worktrees/` | 대용량 초안·분류를 격리 worktree의 외부 AI에 위임 |
+| `skills/installing-game-project-operating-system/` | 새 프로젝트 또는 운영체계 미설치 프로젝트 |
+| `skills/migrating-existing-game-project-structure/` | 운영 중인 기존 프로젝트의 안전한 구조 검수·재배치 |
+| `skills/evolving-project-discipline-skills/` | 분야별 프로젝트 스킬 생성·통합·학습 |
+| `skills/publishing-discipline-bibles/` | 분야 Markdown·승인 이미지에서 PDF 생성·최신성 검수 |
+| `skills/transforming-requests-into-prompts/` | 짧거나 모호한 요청을 실행 가능한 작업 계약으로 변환 |
+| `skills/designing-vertical-slices/` | 최종 품질과 제작 파이프라인을 대표 구간에서 검증 |
+| `skills/writing-game-design-documents/` | 책임 원본·Roadmap·기획서 구조 설계 |
+| `skills/orchestrating-deepseek-worktrees/` | 외부 AI 대량 초안을 격리 worktree에서 생성 |
 | `skills/reviewing-external-ai-drafts/` | 외부 AI 결과를 실제 diff·근거·테스트로 검수 |
-| `skills/designing-art-prompts-and-technique-cards/` | 아트·UI 기술 추천, 이미지 프롬프트와 QA 카드 작성 |
-| `skills/promoting-project-knowledge/` | 프로젝트 교훈을 Base 학습 데이터로 환류 |
+| `skills/designing-art-prompts-and-technique-cards/` | 아트·UI 기술 카드와 이미지 프롬프트 설계 |
+| `skills/promoting-project-knowledge/` | 프로젝트 교훈을 Base 공용 지식으로 환류 |
 
-스킬은 도구 브랜드가 아니라 **사용 조건, 입력, 작업 절차, 산출물, 검증과 실패 기준**을 정의합니다.
+스킬은 특정 AI 브랜드가 아니라 사용 조건, 입력, 책임 원본, 절차, 산출물, 완료 기준, 검증, 실패 조건과 학습 조건을 정의합니다.
 
 ## 게임 프로젝트 운영 키트
 
-`templates/project-operations/`는 다음을 제공합니다.
+`templates/project-operations/`에는 다음이 있습니다.
 
-- 프로젝트 운영체계 설치 계획
-- 사용자용 `START_HERE` 대시보드
-- 분야별 본책 골격
-- 변경 유형별 문서 갱신 매트릭스
+- 신규 설치 계획과 기존 프로젝트 마이그레이션 감사
+- 사용자·AI START_HERE와 Documentation Map
+- Development Gates와 Document Update Matrix
+- 분야별 활성 본책
+- Project Skill Map과 Foundation·분야 스킬 계약
 - GPT·Codex·GitHub Workflow
 - Visual Source of Truth와 Asset Manifest
-- Issue·PR 템플릿
-- 문서·이미지·갱신 누락 검사 스크립트와 GitHub Actions 예시
+- 분야 PDF 발행 계획과 Publication Manifest
+- `[현행]`, `[백업]`, `[보류]`, `[제거 후보]` 수명주기
+- Issue·PR·CODEOWNERS·governance 검사 예시
 
-템플릿은 대상 프로젝트 구조에 맞게 분화하며 폴더 전체를 그대로 복사하지 않습니다.
+템플릿 폴더를 그대로 복사하지 않습니다. 기존 프로젝트는 먼저 현재 책임·참조·고유 정보를 감사하고 승인된 처리표 범위만 변경합니다.
 
-## 공용 학습 지식
+## 개발 게이트
 
-`docs/knowledge/`는 다음을 관리합니다.
+작업 단위:
 
-- `methods/`: 반복 가능한 설계·제작 판단 방법
-- `research/`: 정보 수집·벤치마킹·표준·근거 평가
-- `skills/`: 분야별 능력 계약과 검수 매트릭스
-- `cases/`: 프로젝트와 벤치마킹에서 일반화한 성공·실패·미검증 사례
+```text
+Intake·Context
+→ Definition of Ready
+→ Planning·Approval
+→ Implementation
+→ Verification
+→ Documentation
+→ Integration·Completion
+```
 
-주요 라우팅:
+제품 단계:
 
-- 프로젝트 운영체계: `docs/knowledge/methods/GAME_PROJECT_OPERATING_SYSTEM_METHOD.md`
-- 전체 기획 체계: `docs/knowledge/methods/PLANNING_SYSTEM_METHOD.md`
-- 프로젝트 인수인계: `docs/knowledge/methods/PROJECT_HANDOFF_CONTEXT_METHOD.md`
-- AI 아트 프롬프트: `docs/knowledge/methods/AI_ART_PROMPT_TECHNIQUE_METHOD.md`
-- 규칙·UI·연출·QA 추적성: `docs/knowledge/cases/TEN_PACES_RULE_PRESENTATION_TRACEABILITY_CASE.md`
-- 이미지 목적·기준 교체: `docs/knowledge/cases/OMENWARD_UNIT_ROSTER_TO_BATTLEFIELD_SPRITE_REFERENCE_CASE.md`
+```text
+Concept
+→ Prototype
+→ Graybox
+→ First Playable
+→ Vertical Slice
+→ Production
+→ Alpha
+→ Feature Complete
+→ Content Complete
+→ Beta
+→ Release Candidate
+```
 
-실행 가능한 절차는 루트 `skills/`에 두고, 넓은 분야의 역량 지도와 참고 계약은 `docs/knowledge/skills/`에 둡니다.
+**Vertical Slice(버티컬 슬라이스)**는 최종 게임의 핵심 시스템·아트·사운드·UX·성능과 제작 파이프라인을 좁은 범위에서 목표 품질로 증명하는 플레이 가능한 구간입니다.
 
-## 주요 템플릿
+## 문서·이미지·PDF 원칙
 
-| 파일 | 역할 |
-|---|---|
-| `templates/project-operations/README.md` | 게임 프로젝트 운영체계 키트 인덱스 |
-| `templates/EXECUTABLE_PROMPT.md` | 목적·맥락·경험·범위·제약·산출물·완료·검증 |
-| `templates/ai/PROJECT_AI_COLLABORATION_PROFILE.md` | 프로젝트별 GPT·DeepSeek·Codex 역할과 worktree 정책 |
-| `templates/ai/DEEPSEEK_WORK_PACKAGE.md` | 외부 AI 대량 작업 입력·출력 계약 |
-| `templates/ai/EXTERNAL_AI_DRAFT_REVIEW.md` | 외부 초안 검수 |
-| `templates/planning/VERTICAL_SLICE_PLAN.md` | 버티컬 슬라이스 범위와 품질 기준 |
-| `templates/planning/DESIGN_DOCUMENT_SYSTEM.md` | 기획서 책임 지도·로드맵·스킬 연결 |
-| `templates/planning/ART_DIRECTION_BRIEF.md` | 아트 방향, 디자인 기술, 프롬프트 사례와 QA |
-| `templates/skills/PROJECT_SKILL_EXTENSION.md` | Base 스킬의 프로젝트 전용 확장 |
-| `templates/KNOWLEDGE_CASE_STUDY.md` | 일반화된 사례 연구 |
-
-## 작업 종료·인수인계
-
-1. 프로젝트 고유 결정과 구현 상태를 프로젝트 본책·Roadmap·테스트·Active Context에 반영합니다.
-2. 공용으로 재사용할 수 있는 판단법, 절차, 템플릿과 체크리스트를 분리합니다.
-3. 검증된 공용 데이터는 기존 Base method·skill·template에 반영합니다.
-4. 문제, 선택, 결과, 실패와 미검증 항목은 사례로 기록합니다.
-5. 미검증 내용은 확정 규칙이 아니라 `관찰` 또는 `가설`로 남깁니다.
-6. Base 변경 뒤 프로젝트 로컬 사본과 기준 버전의 동기화 필요를 기록합니다.
-
-## 동기화와 문서 수명주기
-
-GitHub와 로컬 파일은 자동 양방향 동기화되지 않습니다. 로컬 변경은 commit·push, 원격 변경은 fetch·pull이 필요합니다.
-
-- 한 주제에는 현행 책임 원본 하나만 유지합니다.
+- 한 질문에는 현행 책임 원본 하나만 둡니다.
+- Markdown·구조화 데이터가 편집 가능한 책임 원본입니다.
 - `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않습니다.
-- 이전 내용은 Git 이력으로 보존합니다.
-- `archive`, `[백업]`, `hold`, `[보류]`는 활성 작업의 기본 읽기에서 제외합니다.
-- 통합이 끝난 중복 파일은 참조와 고유 정보 확인 후 제거합니다.
+- 기존 승인 이미지가 있으면 별도 지시 없이 같은 항목의 새 시안을 만들지 않습니다.
+- 이미지에는 Asset ID, 상태, 캐노니컬 경로, 채택·비채택 요소와 실제 캡처를 연결합니다.
+- 분야 PDF는 요약이 아니라 목적부터 전체 작업 과정, 승인 이미지, 구현·검증 상태와 다음 작업까지 포함하는 읽기 전용 통합본입니다.
+- Publication Manifest와 입력 해시로 PDF 최신성을 추적합니다.
+
+## 수명주기와 컨텍스트 효율
+
+- `[현행]`: 현재 책임 원본과 실행 스킬
+- `[백업]`: 외부 원본·감사·승인 근거처럼 Git 이력만으로 부족한 자료
+- `[보류]`: 재개 이유·조건·선행 작업을 가진 미래 항목
+- `[제거 후보]`: 고유 정보·참조·복구·승인을 검증하기 전 삭제하지 않는 후보
+
+단순 이전 버전은 별도 백업 복제본 대신 Git 이력으로 보존합니다. 기본 컨텍스트는 Documentation Map에서 현재 작업에 필요한 현행 문서와 스킬만 선택합니다.
+
+## GitHub 운영
+
+프로젝트 적용 시 다음을 분화할 수 있습니다.
+
+- Issue Form: 목표·분야·범위·Ready·검증
+- PR Template: 영향 분야·게이트·문서·스킬·Manifest·PDF·미검증
+- CODEOWNERS: 분야별 리뷰 요청
+- Governance Checker: 필수 경로·링크·금지 파일명·Manifest·PDF 최신성·갱신 누락
+- GitHub Actions·Required Status Checks
+
+파일이 존재하는 것과 실제 브랜치 보호·Required Check가 활성화된 것을 구분합니다.
+
+## Base와 프로젝트 경계
+
+Base에 둡니다.
+
+- 여러 프로젝트에 재사용 가능한 판단법·절차·템플릿·검증 계약
+- 적용 조건·실패 조건이 기록된 스킬
+- 일반화한 성공·실패·미검증 사례
+
+프로젝트에 둡니다.
+
+- 세계관·캐릭터·규칙·수치·용어
+- 실제 엔진·코드·데이터·자산 경로
+- 승인 이미지·프롬프트·PDF
+- 구현·테스트·Roadmap·Issue·Plan
+- Base 공용 스킬을 실제 경로에 연결한 프로젝트 스킬
+
+## 동기화와 완료
+
+GitHub와 로컬은 자동 양방향 동기화되지 않습니다. 로컬 변경은 commit·push, 원격 변경은 fetch·pull이 필요합니다.
+
+작업 완료 전에는 다음을 확인합니다.
+
+1. 실제 결과와 승인·구현·검증 상태가 일치하는가?
+2. 관련 본책·게이트·Project Skill Map·Active Context가 최신인가?
+3. 이미지·자산·PDF Manifest가 최신인가?
+4. 실행한 검증과 미검증이 분리됐는가?
+5. 백업·보류·제거 후보가 기본 컨텍스트에서 제외됐는가?
+6. 새 AI가 10분 안에 방향·상태·다음 작업·스킬·검증을 찾는가?
+7. 프로젝트 고유 정보와 Base 환류 후보가 분리됐는가?
