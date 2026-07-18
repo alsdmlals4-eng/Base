@@ -1,5 +1,23 @@
 # Changelog
 
+## v2.0.0 - game project repository operating system
+
+새 채팅, 새 GPT와 새 Codex가 Base URL 하나에서 동일한 시작 규칙을 찾고, 대상 게임 프로젝트에 분야별 본책·이미지 책임 원본·GitHub 검사를 분화해 설치할 수 있는 공용 저장소 운영체계를 추가했다.
+
+변경:
+
+- 루트 `START_HERE.md`를 추가해 Base URL 호출 계약과 요청별 method·skill 라우팅을 고정했다.
+- `AGENTS.md`에 Base 호출, 운영체계 설치, 분야·영향도 선언, Markdown 책임 원본과 이미지 캐노니컬 경로 규칙을 추가했다.
+- `GAME_PROJECT_OPERATING_SYSTEM_METHOD.md`를 추가해 프로젝트 허브, 11개 제작·지원 분야, 분야별 본책, 상태 언어, 사용자 가독성, Visual Source, 개발 게이트와 자동화 경계를 정리했다.
+- `installing-game-project-operating-system` 스킬을 추가해 감사→인벤토리→책임 구조 설계→설치 계획→문서·이미지·GitHub Workflow 설치→이관→콜드 스타트 검수 절차를 실행 가능하게 만들었다.
+- `templates/project-operations/`에 설치 Work Order, 사용자용 시작 대시보드, 분야별 본책, 갱신 매트릭스, GPT·Codex·GitHub Workflow, Visual Source와 Asset Manifest를 추가했다.
+- GitHub Issue·PR 템플릿, 경로·변경 규칙 설정, 표준 라이브러리 기반 governance 검사기와 GitHub Actions 예시를 추가했다.
+- 검사기는 필수 시작 문서, 깨진 로컬 Markdown 링크, 금지된 활성 버전 파일명, Asset ID·캐노니컬 경로 중복과 변경 유형별 관련 본책 갱신 누락을 확인하도록 설계했다.
+- README와 Documentation Map을 `START_HERE → 운영체계 설치 스킬 → 프로젝트 전용 템플릿` 경로로 갱신했다.
+- 기존 승인 이미지가 있으면 별도 지시 없이 새 시안을 만들지 않고, 콘셉트·방향 승인·제작 준비·구현·시각 검증과 `MIGRATION_PENDING`을 구분하도록 했다.
+- GitHub Actions 파일 존재, 실제 실행 확인, 브랜치 보호의 Required Status Check 강제를 서로 다른 설치 상태로 구분했다.
+- 특정 프로젝트의 세계관·수치·실제 경로는 Base에 승격하지 않고 대상 프로젝트 본책과 Manifest에서 관리하도록 경계를 유지했다.
+
 ## v1.9.3 - applied planning, dialogue and vertical-slice cases
 
 십보강호의 활성·백업·보류 문서 전체를 감사해 문서 작성 과정에서 확인한 재사용 가능한 노하우를 기존 Base 기획 method, 서사 method와 실행 skill에 적용 사례로 반영했다. 프로젝트 고유 수치와 무협 콘텐츠는 승격하지 않았으며, 실제 구현·플레이테스트 전인 항목은 사례 상태를 유지했다.
