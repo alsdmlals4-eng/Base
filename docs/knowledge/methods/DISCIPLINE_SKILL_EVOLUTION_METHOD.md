@@ -81,16 +81,7 @@ AI·자동 검사 → SKILL_REGISTRY.json
 }
 ```
 
-작업 시작 시 `routing-project-work-by-discipline`가 다음을 판정한다.
-
-```text
-요청·변경 유형
-→ 주 책임 분야 하나
-→ 영향 분야
-→ 필요한 Foundation
-→ 주 책임 분야 진입 스킬
-→ 후속 단계에서만 호출할 발행·검증·Handoff 스킬
-```
+작업 시작 시 `routing-project-work-by-discipline`가 주 책임 분야 하나, 영향 분야, 필요한 Foundation, 분야 진입 스킬과 후속 단계 스킬을 판정한다.
 
 금지:
 
@@ -98,7 +89,7 @@ AI·자동 검사 → SKILL_REGISTRY.json
 - Trigger와 무관한 호출
 - 같은 책임의 중복 스킬 동시 호출
 - 보류·백업·제거 후보 호출
-- 후속 스킬 조기 호출
+- 발행·검증·Handoff 스킬 조기 호출
 
 ## 4. 최소 스킬 계약
 
@@ -129,7 +120,10 @@ last_reviewed_commit:
 knowledge_state:
 ```
 
-`read_first_design_document_ids`는 Design Document Registry의 JSON 본책을 가리킨다. 프로젝트 고유 명칭·수치·경로·승인 자산은 프로젝트 스킬과 JSON에 둔다.
+- `read_first_design_document_ids`는 Design Document Registry의 JSON 본책을 가리킨다.
+- `trigger_tags`와 사용·비사용 조건은 선택적 호출의 근거다.
+- 활성 스킬도 `load_by_default=false`다.
+- 프로젝트 고유 명칭·수치·경로·승인 자산은 프로젝트 스킬과 JSON에 둔다.
 
 ## 5. 학습 상태
 
@@ -168,7 +162,7 @@ knowledge_state:
 
 ## 7. 사람용 Skill Map 생성
 
-Registry 변경 후 실행:
+Registry 변경 후 실행한다.
 
 ```text
 python tools/build_project_skill_map.py \
@@ -191,7 +185,7 @@ python tools/build_project_skill_map.py \
 
 ## 8. 자동·수동 검수
 
-자동:
+자동 검수:
 
 - Registry JSON 문법·중복 ID
 - 활성 스킬 경로·Trigger·비사용 조건
@@ -202,7 +196,7 @@ python tools/build_project_skill_map.py \
 - Registry 변경 후 미재생성
 - Markdown Skill Map 재생성
 
-수동:
+수동 검수:
 
 - 실제 작업과 스킬 책임 일치
 - 호출 집합의 과다 여부
@@ -211,7 +205,9 @@ python tools/build_project_skill_map.py \
 - Foundation·분야 중복
 - 사람용 Skill Map 가독성
 
-## 9. 검토 Trigger
+## 9. 검토 Trigger와 Health Review
+
+다음 중 하나가 발생하면 스킬을 검토한다.
 
 - 동일 실패 반복
 - 사용자 피드백과 Done 불일치
@@ -222,6 +218,8 @@ python tools/build_project_skill_map.py \
 - 새 채팅이 필요한 스킬을 찾지 못함
 - 90일 이상 활성 스킬 미검토
 - Registry와 DOCX/PDF 불일치
+
+스킬 구조를 설치·통합·대규모 변경한 뒤에는 `verifying-game-project-operating-system`을 호출해 Registry, 사람용 Skill Map, Learning Log, 분야 진입점, 선택적 호출과 Governance 파이프라인이 실제로 연결됐는지 검수한다.
 
 ## 10. 통합·Base 환류
 
