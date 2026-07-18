@@ -1,0 +1,90 @@
+schema_version: 1
+project: ""
+last_reviewed: ""
+source_commit: ""
+
+status_definitions:
+  - REFERENCE
+  - DIRECTION_APPROVED
+  - PRODUCTION_READY
+  - IMPLEMENTED
+  - VISUALLY_VALIDATED
+  - PARTIAL_REFERENCE
+  - SUPERSEDED
+  - MIGRATION_PENDING
+  - REJECTED
+
+canonical_rules:
+  one_active_path_per_asset: true
+  preserve_history_in_git: true
+  forbid_unapproved_replacement: true
+  forbidden_active_name_tokens:
+    - v2
+    - final
+    - latest
+    - copy
+    - new
+
+assets:
+  - asset_id: EXAMPLE-001
+    name: "예시 자산 — 프로젝트 적용 시 교체"
+    category: battlefield
+    purpose: ""
+    owner_discipline: art
+    affected_disciplines:
+      - game-design
+      - ux-ui-accessibility
+      - technical-art
+      - engineering
+      - qa
+      - integrated-review
+    statuses:
+      - REFERENCE
+    canonical_path: ""
+    source_path: ""
+    runtime_path: ""
+    latest_capture_path: ""
+    golden_screenshot_path: ""
+    source_type: provided-image
+    source_and_license: ""
+    approved_reference: ""
+    supersedes: ""
+    superseded_by: ""
+    replacement_requires_approval: true
+    reference_elements:
+      use:
+        - ""
+      do_not_use:
+        - "임시 수치·문구를 게임 규칙으로 확정하지 않음"
+    visual_dna:
+      silhouette: ""
+      proportion: ""
+      camera: ""
+      resolution_or_pixel_density: ""
+      palette: ""
+      lighting: ""
+      material_language: ""
+      outline_and_readability: ""
+      allowed_variation: ""
+      forbidden_elements: ""
+      post_process: ""
+      engine_import: ""
+      performance_budget: ""
+      accessibility_fallback: ""
+    generation_record:
+      tool_and_model: ""
+      prompt_core: ""
+      seed_or_reproduction: ""
+      manual_post_process: ""
+      known_remaining_issues: ""
+    validation:
+      target_resolutions: []
+      runtime_verified: false
+      visual_qa_verified: false
+      accessibility_verified: false
+      evidence: []
+      last_verified_commit: ""
+    next_review_triggers:
+      - "캐노니컬 이미지 교체"
+      - "실제 게임 적용"
+      - "골든 스크린샷 갱신"
