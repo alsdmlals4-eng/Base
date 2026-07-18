@@ -1,5 +1,6 @@
 {
   "design_root": "[기획서]",
+  "enforce_top_level_design_root": true,
   "active_roots": [
     "[기획서]",
     "skills"
@@ -20,6 +21,7 @@
     "[기획서]/00_프로젝트_허브/DOCUMENT_UPDATE_MATRIX.md",
     "[기획서]/00_프로젝트_허브/DEVELOPMENT_GATES.md",
     "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.md",
+    "[기획서]/00_프로젝트_허브/SKILL_REGISTRY.json",
     "[기획서]/00_프로젝트_허브/AI_WORKFLOW.md",
     "[기획서]/00_프로젝트_허브/PUBLICATION_MANIFEST.json",
     "skills/foundation"
@@ -36,6 +38,29 @@
   ],
   "publication_manifest": "[기획서]/00_프로젝트_허브/PUBLICATION_MANIFEST.json",
   "enforce_publications": false,
+  "skill_registry": "[기획서]/00_프로젝트_허브/SKILL_REGISTRY.json",
+  "skill_map": "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.md",
+  "enforce_skill_registry": true,
+  "required_skill_disciplines": [
+    "설정·내러티브",
+    "게임 디자인",
+    "UX·UI·접근성",
+    "개발·엔지니어링",
+    "테크니컬 아트·파이프라인",
+    "아트",
+    "사운드",
+    "QA",
+    "프로덕션·PM",
+    "분석·유저리서치",
+    "통합검수"
+  ],
+  "skill_change_globs": [
+    "skills/**/SKILL.md"
+  ],
+  "learning_log_globs": [
+    "skills/**/LEARNING_LOG.md",
+    "skills/**/SKILL_LEARNING_LOG.md"
+  ],
   "change_rules": [
     {
       "name": "gameplay-or-data-change",
@@ -94,7 +119,8 @@
       "required_any": [],
       "required_all": [
         "[기획서]/00_프로젝트_허브/DOCUMENTATION_MAP.md",
-        "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.md"
+        "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.md",
+        "[기획서]/00_프로젝트_허브/SKILL_REGISTRY.json"
       ]
     },
     {
@@ -116,7 +142,8 @@
       ],
       "required_any": [],
       "required_all": [
-        "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.md"
+        "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.md",
+        "[기획서]/00_프로젝트_허브/SKILL_REGISTRY.json"
       ]
     },
     {

@@ -1,6 +1,6 @@
 ---
 name: installing-game-project-operating-system
-description: Use when creating or installing a persistent game-project repository operating system so GPT, Codex, GitHub documents, discipline skills, images, PDFs, tests, gates, and handoff stay aligned across new chats.
+description: Use when creating or installing a persistent game-project repository operating system so GPT, Codex, GitHub documents, selective discipline skills, images, PDFs, tests, gates, and handoff stay aligned across new chats.
 ---
 
 # Installing a Game Project Operating System
@@ -24,16 +24,20 @@ description: Use when creating or installing a persistent game-project repositor
 
 폴더 생성이 아니라 다음 상태를 만든다.
 
+- 활성 `[기획서]`가 저장소 루트 바로 아래에 있다.
 - 새 GPT와 Codex가 같은 시작 문서를 읽는다.
 - 질문별 현행 책임 원본이 하나다.
 - 작업·제품 개발 게이트가 증거와 연결된다.
-- 모든 L1 이상 작업이 주 책임 분야와 영향 분야를 가진다.
-- 공용 foundation 스킬과 분야별 프로젝트 스킬이 분리된다.
-- 변경 시 본책·Roadmap·스킬·Manifest·PDF·상태 문서를 갱신한다.
+- 사람용 Project Skill Map과 기계 판독 Skill Registry가 있다.
+- 전체 스킬이 아니라 trigger에 맞는 최소 스킬만 호출된다.
+- 공용 Foundation 스킬과 분야별 프로젝트 스킬이 분리된다.
+- 모든 의미 있는 스킬 호출이 Learning Log에 기록된다.
+- 변경 시 본책·Roadmap·Registry·스킬·Manifest·PDF·상태 문서를 갱신한다.
 - 이미지의 승인·구현·검증·교체 상태와 캐노니컬 경로가 추적된다.
 - 분야 PDF가 전체 과정과 승인 이미지를 포함하고 최신성이 추적된다.
 - PR 검사로 문서·이미지·스킬·PDF 누락을 발견할 수 있다.
 - 새 작업자가 과거 대화 없이 저장소만으로 작업을 재개한다.
+- 설치 후 Health Review로 실제 연결 상태를 확인한다.
 
 ## Trigger
 
@@ -67,6 +71,8 @@ existing_start_and_map:
 existing_active_context:
 existing_design_docs:
 existing_project_skills:
+existing_skill_registry:
+existing_skill_learning_logs:
 existing_images_and_assets:
 existing_pdfs_and_publication_manifest:
 existing_tests_and_validation:
@@ -83,10 +89,13 @@ current_roadmap_issues_plans_prs:
 4. 기존 승인 이미지가 있으면 새 시안을 만들지 않는다.
 5. 프로젝트 고유 정보는 대상 프로젝트에 둔다.
 6. Base 전체를 복사하지 않고 필요한 Method·Skill·Template만 분화한다.
-7. Markdown·구조화 데이터가 책임 원본이고 PDF·DOCX는 파생본이다.
-8. `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않는다.
-9. 승인·구현·검증·미확정·보류를 분리한다.
-10. 자동화·PDF·브랜치 보호가 실행되지 않았다면 완료로 보고하지 않는다.
+7. 신규·승인된 설치의 활성 기획서는 루트 `[기획서]`에 둔다.
+8. Markdown·구조화 데이터가 책임 원본이고 PDF·DOCX는 파생본이다.
+9. `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않는다.
+10. 승인·구현·검증·미확정·보류를 분리한다.
+11. 전체 skills 폴더를 기본 로드하지 않는다.
+12. 모든 의미 있는 스킬 호출은 Learning Log에 기록한다.
+13. 자동화·PDF·브랜치 보호가 실행되지 않았다면 완료로 보고하지 않는다.
 
 ## Phase 0 — Resolve project mode
 
@@ -94,7 +103,7 @@ current_roadmap_issues_plans_prs:
 |---|---|
 | 신규·내용 거의 없음 | 이 스킬 계속 진행 |
 | 기존 운영 중·고유 문서/자산/이력 있음 | `migrating-existing-game-project-structure`로 전환 |
-| 이미 운영체계 설치됨 | 프로젝트 AGENTS·Map·Skill Map을 읽고 일반 작업 진행 |
+| 이미 운영체계 설치됨 | 프로젝트 AGENTS·Map·Registry를 읽고 일반 작업 진행 |
 
 설치 수준:
 
@@ -118,7 +127,7 @@ current_roadmap_issues_plans_prs:
 → 방향·전체 기획·Roadmap
 → 분야별 본책·부록
 → Development Gates
-→ Project Skill Map·분야별 스킬
+→ Project Skill Map·Skill Registry·Learning Logs
 → Visual Source·Manifest·승인 이미지
 → PDF·Publication Manifest
 → Issue·Goal·Plan·PR
@@ -136,6 +145,7 @@ current_roadmap_issues_plans_prs:
 
 ### Detect
 
+- 활성 `[기획서]`가 루트가 아닌 위치에 있거나 중첩 복제됨
 - 중복 책임 원본과 오래된 링크
 - 채팅에만 남은 승인 결정
 - 문서상 구현과 실제 파일 차이
@@ -143,12 +153,26 @@ current_roadmap_issues_plans_prs:
 - 승인 이미지와 실제 화면 차이
 - 누락된 작업·제품 게이트
 - 누락·중복된 분야 스킬과 공용 절차 복제
+- Skill Registry·Map·실제 경로 불일치
+- trigger·비사용 조건·Learning Log 누락
+- 전체 스킬 자동 로드 또는 불필요한 과다 호출
 - 분야 PDF의 전체 과정·승인 이미지·최신성 누락
 - 숫자·용어·데이터 계약 충돌
 - Roadmap·Issue·현재 상태 불일치
 - 테스트 증거 없는 완료 표시
 
 ## Phase 2 — Design target responsibility system
+
+### Root planning folder
+
+신규 프로젝트의 목표:
+
+```text
+<repository-root>/[기획서]/
+└─ 00_프로젝트_허브/
+```
+
+기존 프로젝트는 안전 마이그레이션 감사와 사용자 승인 후에만 이동한다. 중첩 현행 기획서 복제본은 만들지 않는다.
 
 ### Project hub minimum responsibilities
 
@@ -157,14 +181,16 @@ current_roadmap_issues_plans_prs:
 - Documentation Map
 - Development Gates
 - Project Skill Map
+- Skill Registry
 - Document Update Matrix
 - Decision Log·Changelog
 - AI Workflow
 - Publication Manifest
 - Source·Migration Audit
 - Lifecycle areas
+- Operating System Health Review
 
-모든 파일을 무조건 만들지 않는다. 기존 원본이 같은 역할을 안정적으로 수행하면 경로를 유지한다.
+모든 파일을 무조건 만들지 않는다. 기존 원본이 같은 역할을 안정적으로 수행하면 감사·승인 후 경로를 유지하고 Map에서 연결한다.
 
 ### Discipline responsibilities
 
@@ -189,7 +215,7 @@ current_roadmap_issues_plans_prs:
 - 책임·협업 경계
 - 전체 작업 과정
 - 작업·제품 개발 게이트
-- Foundation·분야 프로젝트 스킬
+- Registry ID와 필요한 Foundation·분야 프로젝트 스킬
 - 확정·구현·검증·미확정·보류
 - 최신 이미지·실제 캡처
 - 실제 파일·테스트
@@ -230,35 +256,41 @@ Concept
 
 현재 단계, 다음 Greenlight, 진입·종료 기준, Quality Bar, 증거와 미검증을 기록한다.
 
-## Phase 4 — Install project skill system
+## Phase 4 — Install selective project skill system
 
 실행 스킬: `skills/evolving-project-discipline-skills/SKILL.md`
 
 템플릿:
 
 - `PROJECT_SKILL_MAP.md`
+- `SKILL_REGISTRY.json`
 - `skills/FOUNDATION_SKILL.md`
 - `skills/DISCIPLINE_SKILL.md`
 - `skills/SKILL_LEARNING_LOG.md`
 
 설치 규칙:
 
-- 공용 절차는 foundation에서 한 번만 책임진다.
+- 공용 절차는 Foundation에서 한 번만 책임진다.
 - 각 활성 분야는 진입 프로젝트 스킬 또는 명시적 통합 책임을 가진다.
 - 분야 스킬은 본책·실제 경로·산출물·Quality Bar·검증·실패 조건을 연결한다.
-- 전체 skills 폴더를 읽지 않고 현재 작업에 필요한 스킬만 선택한다.
-- 실제 작업·피드백·실패 후 Learning Log와 스킬 계약을 갱신한다.
+- Registry에 skill ID, layer, discipline, path, status, trigger tags, 사용·비사용 조건, Learning Log, review trigger와 지식 상태를 등록한다.
+- `load_all_skills=false`, `default_selection=none`, `load_by_default=false`를 기본값으로 둔다.
+- 새 요청은 `routing-project-work-by-discipline`로 최소 스킬 집합을 판정한다.
+- 검증·PDF·Handoff 스킬은 해당 단계에서만 후속 호출한다.
+- 모든 의미 있는 실제 작업 후 Learning Log에 결과와 변경 필요성을 기록한다.
+- 스킬 본문은 근거가 있을 때만 갱신한다.
 
 ## Phase 5 — Install governance foundation
 
 ### Project AGENTS
 
-- 기본 읽기 순서
+- 루트 `[기획서]`와 기본 읽기 순서
 - Base 기준 버전
-- 분야·영향도 선언
+- 분야·영향도·변경 유형 선언
+- Skill Registry 기반 선택적 호출
 - 개발 게이트와 승인
 - 문서·이미지·PDF 수명주기
-- 프로젝트 스킬 학습
+- 모든 스킬 호출의 Learning Log
 - 작업 종료 갱신
 - 실제 검증 명령
 
@@ -266,156 +298,181 @@ Concept
 
 ### Start and maps
 
-- 사용자는 START_HERE에서 현재 상태를 읽는다.
-- AI는 AGENTS에서 규칙을 읽는다.
-- Documentation Map은 질문별 책임 원본을 연결한다.
-- Project Skill Map은 foundation + 분야 스킬을 연결한다.
-- Active Context는 현재 사실과 다음 작업만 압축한다.
+- 사용자는 루트 `[기획서]/00_프로젝트_허브/START_HERE.md`에서 상태를 읽는다.
+- AI는 `AGENTS.md`에서 실행 규칙을 읽는다.
+- `DOCUMENTATION_MAP.md`는 질문별 책임 원본을 연결한다.
+- `SKILL_REGISTRY.json`은 trigger 기반 후보를 기계 판독한다.
+- `PROJECT_SKILL_MAP.md`는 사람용 책임·관계를 설명한다.
+- `ACTIVE_CONTEXT.md`는 현재 상태와 다음 작업만 압축한다.
 
-### Status·update matrix
+### Lifecycle
 
-L1 이상 작업은 `primary_discipline`, `affected_disciplines`, `change_type`, `foundation_skills`, `discipline_skills`를 가진다.
+- `[현행]`: 활성 책임 원본·스킬
+- `[백업]`: 외부 원본·감사·승인 근거
+- `[보류]`: 재개 조건이 있는 미래 항목
+- `[제거 후보]`: 보존·참조·복구·승인 대기
 
-## Phase 6 — Install visual system
+## Phase 6 — Install visual and publication systems
 
-`VISUAL_SOURCE_OF_TRUTH.md`와 `ASSET_MANIFEST.yml`을 분화한다.
+- Visual Source와 Asset Manifest를 설치한다.
+- 기존 승인 이미지에 새 시안을 임의 생성하지 않는다.
+- 캐노니컬 경로, 채택·비채택 요소, 실제 캡처와 Visual DNA를 연결한다.
+- 분야 PDF 발행 계획과 Publication Manifest를 설치한다.
+- PDF는 전체 과정과 승인 이미지를 포함한다.
+- 입력 hash, PDF header와 visual review를 추적한다.
+- 생성 파이프라인이 없으면 `NOT_BUILT`로 남긴다.
 
-- 기존 승인 이미지 인벤토리
-- Asset ID·캐노니컬 경로
-- 참고·비참고 요소
-- Visual DNA·실제 캡처
-- 새 이미지 임의 생성 금지
-- 대체·이전 대기 상태
-
-## Phase 7 — Install user-readable PDF publications
-
-실행 스킬: `skills/publishing-discipline-bibles/SKILL.md`
-
-- 분야 Markdown과 활성 부록을 책임 원본으로 사용
-- 승인 이미지와 실제 캡처 포함
-- 분야 목적부터 전체 과정·현재 상태·다음 작업까지 구성
-- 재현 가능한 생성 명령
-- Publication Manifest에 입력·출력·해시·시각 검수 기록
-- 파이프라인 미설치 시 `NOT_BUILT`
-- 원본 변경 시 `STALE` 또는 재생성
-- 렌더링 검수 전 `CURRENT` 금지
-
-## Phase 8 — Install GitHub workflow
+## Phase 7 — Install GitHub workflow
 
 대상 프로젝트에 맞게 분화한다.
 
-- Issue Form: 목표·분야·Ready·스킬·검증
-- PR Template: 게이트·본책·스킬·Manifest·PDF·미검증
-- Governance config·checker
-- GitHub Actions
-- CODEOWNERS
-- Required Status Check 이름
+- Issue Form: 목표, 분야, 범위, Ready, 선택 스킬, 검증
+- PR Template: 게이트, 본책, Registry, 스킬, Learning Log, Manifest, PDF, 미검증
+- CODEOWNERS: 분야 본책·스킬·자동화 책임
+- Documentation Governance Checker
+- Skill Routing Governance Checker
+- GitHub Actions Workflow
+- Required Status Check·브랜치 보호 계획
 
-`파일 존재`, `실행 확인`, `강제됨`을 구분한다.
+두 Checker는 최소 다음을 검사한다.
 
-## Phase 9 — Migrate content when approved
+- 루트 `[기획서]`와 중첩 복제본
+- 필수 시작 문서·링크·금지 파일명
+- Asset ID·캐노니컬 경로
+- Skill Registry JSON·중복 ID·경로·trigger·Learning Log
+- 분야 진입 스킬과 전체 스킬 자동 로드 금지
+- 스킬 변경 시 Registry·Map·Learning Log 동기화
+- 변경 유형별 본책 갱신
+- PDF 입력 hash·header·visual review·Manifest
 
-기존 프로젝트는 안전 마이그레이션 Skill과 승인된 처리표를 따른다.
+브랜치 보호 설정은 파일 존재와 실제 활성 상태를 구분한다.
 
-```text
-기존 원본
-→ 주 책임 분야 지정
-→ 고유 결정·수치·계약 추출
-→ 본책·스킬·Manifest·PDF 계획으로 승계
-→ Documentation Map·참조 갱신
-→ 변경 전후 보존 대조
-→ 통합검수
-→ 완전히 흡수된 중복만 제거 후보 처리
-```
+## Phase 8 — Validate
 
-## Phase 10 — Validation
+### Structural checks
 
-### Structural
-
-- 필수 시작·게이트·스킬 지도 존재
-- 분야별 활성 원본·진입 스킬 중복 없음
-- 링크·Manifest·캐노니컬 경로 유효
+- 루트 `[기획서]` 존재·중첩 복제 없음
+- 필수 시작 문서 존재
+- Documentation Map·Skill Registry 링크 유효
+- 분야별 활성 원본 중복 없음
 - 금지 활성 버전 파일명 없음
-- 백업·보류·제거 후보 기본 읽기 제외
+- 캐노니컬 이미지·Skill ID 중복 없음
+- 활성 스킬 경로·Learning Log 존재
+- 모든 11개 책임 분야 진입 스킬 등록
+- 전체 스킬 자동 로드 금지
+- PDF Manifest·입력·출력 상태 유효
 
-### PDF
+### Traceability checks
 
-- 책임 Markdown·승인 이미지·PDF 존재
-- Publication Manifest 입력 해시 일치
-- 실제 PDF 헤더
-- 목차·표·이미지·링크·한글 렌더링 검수
-- 원본 변경 PR에서 PDF·Manifest 동기화
-
-### Traceability
-
-결정 3개 이상:
+샘플 결정 3개 이상을 선택한다.
 
 ```text
 결정
 → 본책
-→ 프로젝트 스킬
 → Issue·Plan
-→ 구현·자산
+→ 실제 구현·자산
 → 테스트·캡처
-→ PDF·현재 상태
+→ 현재 상태·PDF
 ```
 
-### Cold start
+샘플 작업 3개 이상에서 라우팅 결과를 확인한다.
 
-새 작업자가 10분 안에 찾는다.
+```text
+요청
+→ 주 책임 분야
+→ 최소 Foundation·분야 스킬
+→ 실제 파일·검증
+→ Learning Log
+```
 
+### Regression tests
+
+- 정상 구성 통과
+- 중첩 `[기획서]` 실패
+- `load_all_skills=true` 실패
+- 분야 진입 스킬 누락 실패
+- Learning Log 경로 누락 실패
+- 스킬 변경 후 Registry·Map·Log 미갱신 실패
+- 금지 활성 파일명·PDF stale 실패
+
+### Cold-start test
+
+새 작업자 관점에서 10분 안에 다음을 찾는다.
+
+- 루트 `[기획서]`
 - 핵심 게임 약속
-- 현재 단계·다음 게이트
-- 최우선 작업
-- 승인·구현·검증·미확정·보류
-- 분야별 본책·프로젝트 스킬
-- 최신 승인 이미지·실제 캡처·PDF
-- 실제 파일·테스트
-- 작업 종료 갱신 경로
+- 현재 개발 단계와 최우선 작업
+- 확정·구현·검증·미확정
+- 분야별 책임 본책·Registry 진입 스킬
+- 현재 요청에 필요한 최소 스킬
+- 최신 이미지·실제 캡처·PDF
+- 실제 코드·데이터·테스트
+- 작업 종료 갱신·Learning Log
 
-### Runtime truth
+## Phase 9 — Operating System Health Review
 
-문서 감사만 수행했다면 런타임 검증 완료로 쓰지 않는다.
+`skills/verifying-game-project-operating-system/SKILL.md`와 `OPERATING_SYSTEM_HEALTH_REPORT.md`를 사용한다.
+
+설치 상태는 다음을 구분한다.
+
+- 설계됨
+- 설치됨
+- 실행 확인
+- 강제됨
+- 미검증
+
+Workflow 파일·Registry·PDF 계획이 있다는 사실만으로 실행 확인이나 강제 상태로 표시하지 않는다.
 
 ## Output contract
 
 ```md
-## 설치 범위·프로젝트 유형
-## 저장소 감사·보존 결과
-## 적용한 분야·책임 원본
+## 설치 범위
+## 루트 기획서 위치
+## 저장소 감사 결과
+## 적용한 분야와 책임 경계
+## 생성·갱신한 시작 문서와 본책
+## Skill Registry·Map·선택적 호출
+## 분야·Foundation 스킬과 Learning Log
 ## 개발 게이트
-## Foundation·분야 프로젝트 스킬
-## 이미지·자산 운영체계
-## 분야 PDF·Publication Manifest
+## 이미지·자산·PDF 운영체계
 ## GitHub Issue·PR·자동 검사
-## 기존 문서 승계·백업·보류·제거 후보
-## 실행한 구조·PDF·런타임 검증
-## 미검증·남은 위험
-## 콜드 스타트 결과
-## 다음 작업·Base 동기화
+## 기존 문서 승계·보존·삭제 후보
+## 실행한 구조·회귀 검증
+## 실행한 런타임 검증
+## 운영체계 Health Review
+## 미검증 항목과 남은 위험
+## 콜드 스타트 테스트 결과
+## 다음 작업
 ```
 
 ## Failure conditions
 
-- 기존 프로젝트를 신규처럼 취급해 폴더부터 대량 생성
-- Base 전체 복사
-- 고유 결정·보류·참조 감사 없는 삭제·통합
-- 승인 이미지 확인 없는 새 시안
-- 공용 절차를 모든 분야 스킬에 장문 복사
-- Markdown와 PDF·DOCX를 독립 원본으로 운영
-- PDF가 요약만 포함하거나 승인 이미지를 누락
-- 문서·PDF 존재를 구현·검증 완료로 표시
-- Workflow 파일만 추가하고 브랜치 보호까지 활성화됐다고 보고
-- 실제 검증 없이 `항상 최신`을 보장한다고 주장
+- Base 전체를 대상 프로젝트에 복사함
+- 저장소 감사 없이 폴더부터 대량 생성함
+- 신규 설치인데 `[기획서]`를 중첩 경로에 둠
+- 기존 승인 이미지를 확인하지 않고 새 시안을 만듦
+- 같은 정보를 여러 본책에 전문 복사함
+- 전체 skills 폴더를 기본 로드함
+- Registry·Map·Learning Log 없이 스킬 폴더만 만듦
+- trigger·비사용 조건 없는 스킬을 활성화함
+- 스킬 호출 결과를 기록하지 않음
+- Markdown와 PDF를 둘 다 독립 원본으로 운영함
+- 문서 존재를 구현·검증 완료로 표시함
+- 기존 고유 결정 확인 없이 파일을 삭제함
+- Workflow 파일만 추가하고 브랜치 보호까지 활성화됐다고 보고함
+- 자동 검사 없이 `항상 최신`을 보장한다고 주장함
+- 저장소 접근 없이 설치 완료를 주장함
 
 ## Handoff
 
-- Base 기준 커밋·적용 날짜
-- 설치된 운영체계 상태
-- 프로젝트가 추가·대체한 규칙
-- 현재 게이트·다음 Greenlight
-- 프로젝트 스킬 지도·학습 상태
-- PDF 생성·검수·강제 상태
+설치 후 프로젝트에 다음을 남긴다.
+
+- Base 기준 커밋과 적용 날짜
+- 설치된 운영체계 버전
+- 루트 `[기획서]` 경로
+- 프로젝트가 Base에서 추가·대체한 규칙
+- Skill Registry·Map·Learning Log 경로
 - 미설치 자동화와 수동 절차
+- Health Review 결과
 - 다음 검토 트리거
-- Base 환류 후보
+- Base로 환류할 공용 교훈 후보

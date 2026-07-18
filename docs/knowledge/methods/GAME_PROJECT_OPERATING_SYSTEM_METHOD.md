@@ -1,7 +1,7 @@
 # 게임 프로젝트 저장소 운영체계 방법
 
 - 상태: 공용 상위 방법·라우터
-- 목적: 게임 방향, 분야별 본책, 프로젝트 스킬, 개발 게이트, 이미지·PDF, 구현·검증과 GitHub 작업을 하나의 추적 가능한 운영체계로 연결한다.
+- 목적: 게임 방향, 루트 기획서, 분야별 본책, 선택적 프로젝트 스킬, 개발 게이트, 이미지·PDF, 구현·검증과 GitHub 작업을 하나의 추적 가능한 운영체계로 연결한다.
 - 적용 대상: 개인 개발, 소규모 팀, AI 협업 팀과 프리프로덕션부터 출시 준비 단계의 게임 프로젝트
 
 > 이 문서는 핵심 책임과 연결 구조만 소유한다. 안전 마이그레이션, 개발 게이트, 분야 스킬 학습과 PDF 발행의 상세 절차는 각각의 전문 Method·Skill을 따른다.
@@ -10,21 +10,26 @@
 
 ```text
 사용자 방향
+→ 저장소 루트 [기획서]
 → 프로젝트 허브·분야별 현행 본책
 → Development Gates·Roadmap
-→ Foundation·분야 프로젝트 스킬
+→ Project Skill Registry·Map
+→ 필요한 Foundation·분야 프로젝트 스킬
 → Issue·Goal·Plan
 → 코드·데이터·자산
 → 테스트·플레이·캡처·PDF 증거
-→ 상태·인수인계·학습 갱신
+→ Active Context·Handoff·Learning Log 갱신
 ```
 
 운영체계는 문서 수를 늘리는 것이 아니라 다음을 보장한다.
 
 - 새 GPT와 Codex가 같은 시작 문서를 읽는다.
+- 사용자가 저장소 루트에서 `[기획서]`를 즉시 찾는다.
 - 한 질문에는 현행 책임 원본 하나가 있다.
 - 승인·구현·검증·미확정·보류를 혼동하지 않는다.
 - 변경 전에 주 책임 분야와 영향 분야를 판정한다.
+- 전체 스킬이 아니라 필요한 최소 스킬만 호출한다.
+- 모든 의미 있는 스킬 호출이 학습 기록으로 남는다.
 - 분야별 프로젝트 스킬이 실제 본책·파일·검증에 연결된다.
 - 이미지와 PDF가 책임 원본·승인 상태·실제 결과에 연결된다.
 - 변경 누락을 PR과 자동 검사에서 발견한다.
@@ -34,16 +39,27 @@
 
 | 작업 | Method | 실행 Skill·템플릿 |
 |---|---|---|
+| 새 요청의 분야·스킬 판정 | 이 문서·스킬 진화 Method | `skills/routing-project-work-by-discipline/` |
 | 운영체계 신규 설치 | 이 문서 | `skills/installing-game-project-operating-system/`, `templates/project-operations/` |
 | 기존 프로젝트 구조 재배치 | `EXISTING_PROJECT_SAFE_MIGRATION_METHOD.md` | `skills/migrating-existing-game-project-structure/` |
 | 작업·제품 게이트 | `DEVELOPMENT_GATES_METHOD.md` | `templates/project-operations/DEVELOPMENT_GATES.md` |
-| 분야별 프로젝트 스킬 | `DISCIPLINE_SKILL_EVOLUTION_METHOD.md` | `skills/evolving-project-discipline-skills/`, `PROJECT_SKILL_MAP.md` |
+| 분야별 프로젝트 스킬 | `DISCIPLINE_SKILL_EVOLUTION_METHOD.md` | `skills/evolving-project-discipline-skills/`, `PROJECT_SKILL_MAP.md`, `SKILL_REGISTRY.json` |
+| Active Context·Handoff | `PROJECT_HANDOFF_CONTEXT_METHOD.md` | `skills/maintaining-project-context-and-handoff/` |
 | 분야별 PDF | `DISCIPLINE_PDF_PUBLICATION_METHOD.md` | `skills/publishing-discipline-bibles/`, `PUBLICATION_MANIFEST.json` |
+| 운영체계 Health Review | 이 문서·전문 Method | `skills/verifying-game-project-operating-system/`, `OPERATING_SYSTEM_HEALTH_REPORT.md` |
 | 기획 책임 구조 | `PLANNING_SYSTEM_METHOD.md` | `skills/writing-game-design-documents/` |
-| 인수인계 | `PROJECT_HANDOFF_CONTEXT_METHOD.md` | Handoff 템플릿 |
 | Vertical Slice | `DEVELOPMENT_GATES_METHOD.md` | `skills/designing-vertical-slices/` |
 
-## 3. 프로젝트 허브
+## 3. 루트 기획서와 프로젝트 허브
+
+신규 프로젝트와 승인된 마이그레이션의 활성 기획서는 저장소 루트 바로 아래에 둔다.
+
+```text
+<repository-root>/[기획서]/
+└─ 00_프로젝트_허브/
+```
+
+중첩 `docs/[기획서]`, `src/[기획서]`를 별도 현행 원본으로 만들지 않는다. 운영 중인 기존 프로젝트의 경로는 감사와 사용자 승인 없이 강제 이동하지 않는다.
 
 프로젝트 허브는 부서가 아니라 사람과 AI의 통제·라우팅 계층이다.
 
@@ -53,14 +69,13 @@
 - 현재 상태·다음 작업·보호 범위
 - Documentation Map
 - Development Gates와 Roadmap
-- Project Skill Map
+- Project Skill Map·Skill Registry
 - 변경 갱신 매트릭스
 - 결정·변경·출처·마이그레이션 기록
 - Visual Source·Asset Manifest
 - Publication Manifest
 - GPT·Codex·GitHub Workflow
-
-권장 경로는 `[기획서]/00_프로젝트_허브/`지만, 기존 프로젝트의 안정된 경로가 같은 책임을 수행하면 강제로 바꾸지 않는다.
+- 운영체계 Health Review
 
 ## 4. 기본 책임 분야
 
@@ -78,7 +93,7 @@
 | QA | 의도한 기능이 실제로 작동하는가? | 자동·수동·회귀·성능·시각·오디오·호환성 테스트 |
 | 프로덕션·PM | 언제 누가 무엇을 완료하는가? | 마일스톤, 일정, 의존성, 위험, 범위, 예산 상태 |
 | 분석·유저리서치 | 사용자는 어떻게 행동하고 이해하는가? | 벤치마킹, SWOT, 플레이테스트, 텔레메트리, 개선안 |
-| 통합검수 | 전체 결과가 서로 일치하는가? | 문서·구현·자산·검증·일정·릴리스 준비도 |
+| 통합검수 | 전체 결과가 서로 일치하는가? | 문서·구현·자산·검증·일정·스킬·PDF·릴리스 준비도 |
 
 분야를 독립시킬 기준:
 
@@ -98,10 +113,13 @@
 세부 수치·스키마·계약 → 부록·실제 데이터
 작업·제품 단계 → Development Gates·Roadmap
 현재 실행 범위 → Issue·Goal·Plan
+스킬 선택·상태 → Skill Registry·Project Skill Map
 반복 절차 → Foundation·분야 프로젝트 스킬
+스킬 실행 결과 → Learning Log
 이미지 상태 → Visual Source·Asset Manifest
 사용자 열람본 → 분야 PDF·Publication Manifest
 완료 증거 → 테스트·QA·캡처
+운영체계 상태 → Health Review
 결정 이유 → Decision Log
 과거 상태 → Git 이력
 ```
@@ -119,7 +137,7 @@
 - 책임과 다른 분야의 입력·출력
 - 분야 전체 작업 과정
 - 현재 작업·제품 게이트 기여
-- Foundation·분야 프로젝트 스킬
+- Registry ID와 필요한 Foundation·분야 프로젝트 스킬
 - 확정·구현·검증·미확정·보류
 - 실제 코드·데이터·자산·테스트
 - 승인 이미지·실제 캡처
@@ -176,14 +194,23 @@ Concept
 
 각 단계는 진입·종료 기준, Quality Bar, 증거, 미검증과 다음 Greenlight를 가진다.
 
-## 9. 분야별 프로젝트 스킬 연결
+## 9. 선택적 스킬 호출과 항상 학습
 
-- 여러 분야 공통 절차는 foundation에 한 번만 둔다.
-- 각 분야는 본책·실제 경로·산출물·검증을 연결하는 진입 스킬을 가진다.
-- 새 채팅은 Project Skill Map에서 현재 작업에 필요한 foundation + 분야 스킬만 읽는다.
-- 실제 작업 후 Learning Log에 성공·실패·예외·사용자 피드백을 기록한다.
-- 지식 상태는 `관찰 → 가설 → 패턴 → 검증 → 승격 후보`로 관리한다.
-- 프로젝트 고유 수치·경로·승인 자산은 Base 공용 스킬에 넣지 않는다.
+프로젝트는 사람용 `PROJECT_SKILL_MAP.md`와 기계 판독용 `SKILL_REGISTRY.json`을 함께 둔다.
+
+기본 정책:
+
+- 전체 skills 폴더 기본 로드 금지
+- 기본 선택 없음
+- trigger 일치 필수
+- 주 책임 분야 스킬 최대 하나
+- Foundation 스킬은 실제 절차에 필요한 최소 개수
+- 검증·PDF·Handoff 스킬은 해당 단계에서만 호출
+- 보류·백업·제거 후보 스킬 호출 금지
+
+모든 의미 있는 스킬 호출은 Learning Log에 결과·실패·예외·사용자 피드백과 변경 필요성을 기록한다. 스킬 본문은 매번 무조건 수정하지 않고 반복 실패, 새 예외, 책임·경로·검증 변경처럼 근거가 있을 때 갱신한다.
+
+지식 상태는 `관찰 → 가설 → 패턴 → 검증 → 승격 후보`로 관리한다. 프로젝트 고유 수치·경로·승인 자산은 Base 공용 스킬에 넣지 않는다.
 
 ## 10. 이미지·자산 운영
 
@@ -192,99 +219,123 @@ Concept
 ```yaml
 asset_id:
 purpose:
-owner_discipline:
 status:
 canonical_path:
-approved_elements:
-rejected_elements:
-visual_dna:
+approved_reference:
 implemented_path:
 latest_capture:
+visual_dna:
 replacement_requires_approval:
 ```
 
-원칙:
-
+- 항목별 캐노니컬 경로는 하나다.
 - 기존 승인 이미지가 있으면 별도 지시 없이 새 시안을 만들지 않는다.
-- 한 항목에는 캐노니컬 경로 하나만 사용한다.
 - 콘셉트·방향 승인·제작 준비·구현·시각 검증을 구분한다.
-- 이미지 전체가 아니라 채택·비채택 요소를 기록한다.
-- 등록됐지만 파일이 없으면 `MIGRATION_PENDING`이다.
+- 이미지 전체가 아니라 채택 요소와 비채택 요소를 기록한다.
 - 이전 상태는 Git 이력으로 보존한다.
 
-## 11. 분야별 PDF 운영
+## 11. 분야 PDF 운영
 
-PDF는 분야 Markdown·활성 부록·승인 이미지와 실제 캡처에서 생성하는 읽기 전용 통합본이다.
+분야 PDF는 Markdown과 승인 이미지에서 생성하는 읽기 전용 최신 통합본이다.
 
-반드시 포함:
+포함:
 
-- 분야 목적·전체 과정·게이트·프로젝트 스킬
-- 승인 결정·실제 경로
-- 승인 이미지·상태 캡션·실제 캡처
-- 구현·검증·미검증·보류
-- 다음 작업·부록·기준 커밋
+- 분야 목적·역할·플레이어 가치
+- 승인 결정과 전체 작업 흐름
+- 단계별 입력·산출물·관련 게이트·스킬
+- 실제 파일·자산·테스트 경로
+- 승인 이미지·다이어그램·실제 캡처
+- 현재 구현·검증 상태
+- 위험·보류·다음 작업
 
-Publication Manifest에서 입력 경로, 출력 PDF, 입력 해시, 생성기, 상태와 시각 검수를 추적한다. 생성·렌더링을 검증하지 못했으면 `CURRENT`로 표시하지 않는다.
+Publication Manifest는 입력 파일, 승인 이미지, 출력 PDF, content hash, 생성기, 상태와 시각 검수를 기록한다.
 
-## 12. 수명주기·컨텍스트 효율
+## 12. 변경 추적과 GitHub
 
-- `[현행]`: 현재 책임 원본과 실행 스킬
-- `[백업]`: 외부 원본·감사·승인 근거처럼 Git 이력만으로 부족한 자료
-- `[보류]`: 이유·재개 조건·책임 원본·선행 작업이 있는 미래 항목
-- `[제거 후보]`: 고유 정보·참조·복구·승인을 확인하기 전 삭제하지 않는 후보
+모든 L1 이상 작업은 다음을 선언한다.
 
-단순 이전 버전은 Git 이력으로 보존한다. 기본 작업 컨텍스트는 Documentation Map에서 현재 작업에 필요한 현행 문서와 스킬만 선택한다.
-
-## 13. 기존 프로젝트 적용 경계
-
-기존 프로젝트는 다음 순서를 따른다.
-
-```text
-내용 보존
-→ 책임·참조·고유 정보 감사
-→ 중복·충돌·누락 분석
-→ 변경 전후 보존 대조를 포함한 제안
-→ 사용자 승인
-→ 승인 범위만 변경
-→ 링크·스킬·PDF·콜드 스타트 검증
+```yaml
+primary_discipline:
+affected_disciplines:
+change_type:
+design_sources:
+foundation_skills:
+discipline_skills:
+implementation_paths:
+asset_paths:
+test_paths:
+required_evidence:
 ```
 
-Base 예시 경로와 명칭을 강제하지 않는다. 프로젝트 고유 결정·구현·승인 자산·실패·보류를 보존한다.
+권장 추적:
 
-## 14. GitHub 운영
+```text
+결정 ID
+→ 분야 본책
+→ Issue·Plan
+→ 실제 코드·데이터·자산
+→ 테스트·캡처
+→ 현재 상태·PDF
+```
 
-권장 구성:
+GitHub는 Issue·PR 계약, CODEOWNERS, Actions, Required Status Check와 이력을 관리한다. 파일 존재와 실제 실행·브랜치 보호 강제를 구분한다.
 
-- Issue Form: 목표·분야·Ready·스킬·검증
-- PR Template: 게이트·본책·스킬·Manifest·PDF·보존 대조
-- CODEOWNERS: 분야별 본책·스킬·자동화 리뷰
-- Governance Checker: 필수 경로, 링크, 금지 파일명, 자산·PDF 최신성, 변경 갱신 누락
-- GitHub Actions·Required Status Checks·브랜치 보호
+## 13. 자동화 경계
 
-`파일 존재`, `실행 확인`, `강제됨`을 서로 다른 상태로 기록한다.
+자동 검사 적합:
 
-## 15. 작업 종료
+- 루트 `[기획서]` 존재와 중첩 복제본
+- 필수 시작 문서와 링크
+- 금지 활성 버전 파일명
+- Asset ID·캐노니컬 경로 중복
+- Skill Registry JSON·중복 ID·경로·trigger·Learning Log
+- 전체 스킬 자동 로드 금지와 분야 진입 스킬
+- 스킬 변경 시 Registry·Map·Learning Log 동기화
+- 변경 유형별 본책 갱신
+- PDF 입력 해시·헤더·Manifest·시각 검수 상태
+- 코드·데이터 자동 테스트
 
-작업 종료 시 확인한다.
+사람·AI 통합검수 필요:
 
-1. 실제 결과와 승인·구현·검증 상태
-2. 관련 본책·Roadmap·Development Gates
-3. Documentation Map·Project Skill Map
-4. 분야 스킬·Learning Log
-5. Visual Source·Asset Manifest
-6. PDF·Publication Manifest
-7. Active Context·Handoff·Decision Log·Changelog
-8. 미검증·불일치·위험·다음 작업
-9. 보존·참조·콜드 스타트
-10. 프로젝트 전용 교훈과 Base 환류 후보
+- 플레이 재미와 명확성
+- 스킬 책임·호출 범위 적합성
+- 학습 기록이 실제 개선으로 이어졌는지
+- 이미지가 프로젝트 방향에 맞는지
+- 상충하는 기획의 의미 판단
+- Vertical Slice·릴리스 Quality Bar 충족
+- 예산·일정·출시 승인
 
-## 16. 완료 판단 질문
+## 14. 설치·이관 원칙
 
-- 새 AI가 10분 안에 방향·상태·다음 게이트를 찾는가?
-- 각 분야의 본책·프로젝트 스킬·실제 검증 경로가 연결되는가?
-- 승인 이미지와 최신 PDF를 찾을 수 있는가?
-- 백업·보류·제거 후보가 기본 컨텍스트에서 제외되는가?
-- PR이 관련 본책·스킬·Manifest·PDF 누락을 발견할 수 있는가?
-- 실행하지 않은 검증을 완료로 표시하지 않았는가?
+신규 설치는 루트 `[기획서]`, Project Skill Registry·Map, Learning Log와 두 Governance Checker를 함께 연결한다.
 
-하나라도 답하지 못하면 운영체계 설치·마이그레이션은 완료되지 않았다.
+기존 프로젝트는 바로 이동·삭제하지 않는다.
+
+```text
+저장소 감사
+→ 문서·이미지·스킬·코드·테스트 인벤토리
+→ 주 책임 분야·영향 분야 분류
+→ 고유 결정·수치·계약 확인
+→ 목표 구조·Registry·보존 대조 계획
+→ 사용자 승인
+→ 경로·참조·자동화 설치
+→ 통합검수·Health Review
+→ 완전히 흡수된 중복만 제거
+```
+
+## 15. 콜드 스타트·Health Review 완료 기준
+
+새 작업자가 10분 안에 다음을 답해야 한다.
+
+1. 저장소 루트 `[기획서]`는 어디인가?
+2. 게임의 핵심 약속과 대상 플레이어는 누구인가?
+3. 현재 개발 단계와 다음 게이트는 무엇인가?
+4. 현재 최우선 작업과 선행 조건은 무엇인가?
+5. 무엇이 확정·구현·검증·미확정인가?
+6. 분야별 현행 책임 본책과 Registry 진입 스킬은 어디인가?
+7. 현재 요청에 필요한 최소 스킬은 무엇인가?
+8. 최신 이미지와 실제 게임 캡처는 어디인가?
+9. 관련 코드·데이터·테스트와 최신 PDF는 어디인가?
+10. 작업 종료 시 무엇을 갱신하고 어떤 Learning Log를 남기는가?
+
+답할 수 없거나 자동 검사·콜드 스타트가 실패하면 운영체계 설치가 완료된 것이 아니다. `skills/verifying-game-project-operating-system/SKILL.md`로 원인과 수정 책임을 기록한다.

@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "registry_role": "project-skill-router-and-learning-index",
+  "routing_policy": {
+    "load_all_skills": false,
+    "default_selection": "none",
+    "require_trigger_match": true,
+    "max_primary_discipline_skills": 1,
+    "max_foundation_skills": 3,
+    "exclude_statuses": [
+      "HOLD",
+      "BACKUP",
+      "REMOVAL_CANDIDATE"
+    ]
+  },
+  "skills": [],
+  "discipline_entrypoints": {
+    "설정·내러티브": [],
+    "게임 디자인": [],
+    "UX·UI·접근성": [],
+    "개발·엔지니어링": [],
+    "테크니컬 아트·파이프라인": [],
+    "아트": [],
+    "사운드": [],
+    "QA": [],
+    "프로덕션·PM": [],
+    "분석·유저리서치": [],
+    "통합검수": []
+  },
+  "skill_contract_example": {
+    "skill_id": "example-skill",
+    "layer": "foundation-or-discipline",
+    "discipline": "responsible-discipline",
+    "path": "skills/foundation/example-skill/SKILL.md",
+    "status": "NOT_INSTALLED",
+    "load_by_default": false,
+    "trigger_tags": [
+      "replace-with-concrete-trigger"
+    ],
+    "use_when": [
+      "이 스킬이 필요한 구체적 상황"
+    ],
+    "do_not_use_when": [
+      "비슷해 보이지만 이 스킬을 호출하지 않을 상황"
+    ],
+    "learning_log": "skills/foundation/example-skill/LEARNING_LOG.md",
+    "review_triggers": [
+      "반복 실패 또는 책임·경로·검증 변경"
+    ],
+    "last_reviewed_at": "",
+    "last_reviewed_commit": "",
+    "knowledge_state": "OBSERVATION"
+  }
+}

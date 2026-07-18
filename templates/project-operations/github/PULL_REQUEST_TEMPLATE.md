@@ -8,6 +8,7 @@
 - 변경 유형:
 - 관련 Issue·Plan:
 - 기준 Base·프로젝트 커밋:
+- 루트 `[기획서]` 경로:
 
 ## 범위·보호
 
@@ -34,12 +35,12 @@
 
 ## 작업 실행 게이트
 
-- [ ] Intake·Context — 책임 원본·실제 파일·보호 범위 확인
-- [ ] Definition of Ready — 목적·범위·의존성·완료 기준·검증·스킬 확인
+- [ ] Intake·Context — 루트 기획서·책임 원본·실제 파일·Registry·보호 범위 확인
+- [ ] Definition of Ready — 목적·범위·의존성·완료 기준·검증·최소 스킬 확인
 - [ ] Planning·Approval — 실제 저장소 기반 Plan과 사용자 승인
 - [ ] Implementation — 승인 범위·최소 변경·기존 동작 보호
 - [ ] Verification — 자동·수동·실제 경로 검증
-- [ ] Documentation — 본책·게이트·스킬·Manifest·PDF 갱신
+- [ ] Documentation — 본책·게이트·Registry·스킬·Learning Log·Manifest·PDF 갱신
 - [ ] Integration·Completion — 증거·리뷰·콜드 스타트·다음 작업
 
 현재 제품 단계:
@@ -60,8 +61,11 @@
 
 승인·구현·검증을 같은 상태로 간주하지 않는다.
 
-## 책임 원본·현재 상태 갱신
+## 루트 기획서·책임 원본
 
+- [ ] 활성 `[기획서]`가 저장소 루트 바로 아래에 있음
+- [ ] 중첩 `docs/[기획서]`, `src/[기획서]` 같은 현행 복제본 없음
+- [ ] 기존 경로 이동은 감사·참조 조사·사용자 승인을 거침
 - [ ] 주 책임 분야 본책
 - [ ] 영향 분야 본책의 계약·상태
 - [ ] `ACTIVE_CONTEXT.md`·Handoff
@@ -76,11 +80,19 @@
 
 - 적용한 Foundation 스킬:
 - 적용한 분야 스킬:
-- [ ] `PROJECT_SKILL_MAP.md` 경로·상태 확인
+- 호출하지 않은 후속 스킬과 조건:
+- [ ] `SKILL_REGISTRY.json`의 trigger·상태·경로 확인
+- [ ] `PROJECT_SKILL_MAP.md`의 책임·관계 확인
+- [ ] 전체 skills 폴더를 기본 로드하지 않음
+- [ ] 주 책임 분야 스킬 최대 하나·Foundation 최소 호출
 - [ ] 분야 스킬이 본책·실제 파일·검증을 연결
 - [ ] 공용 절차를 분야 스킬에 장문 복제하지 않음
-- [ ] Learning Log에 성공·실패·예외·사용자 피드백 기록
+- [ ] 모든 의미 있는 호출을 Learning Log에 기록
+- [ ] 성공·부분 성공·실패·미검증·예외·사용자 피드백 기록
+- [ ] 불필요하게 호출한 스킬·누락된 스킬·검증 기록
+- [ ] 스킬 변경 필요 여부와 변경하지 않는 이유 기록
 - [ ] 지식 상태를 관찰·가설·패턴·검증·승격 후보로 판정
+- [ ] 스킬 변경 시 Registry·Map·Log 함께 갱신
 
 스킬 변경·학습 결과:
 
@@ -117,7 +129,7 @@
 - [ ] 첫 단계에서 Audit only를 수행함
 - [ ] 사용자 승인 전 대규모 삭제·이동·통합·강제 개명을 하지 않음
 - [ ] 승인 결정·고유 수치·구현·자산·실패·보류를 보존함
-- [ ] 코드·문서·Issue·PR·스킬·PDF·자동화 참조를 검색함
+- [ ] 코드·문서·Issue·PR·Registry·스킬·PDF·자동화 참조를 검색함
 - [ ] 변경 전후 보존 대조를 작성함
 - [ ] `[백업]`에 Git 이력만으로 부족한 보존 이유가 있음
 - [ ] `[보류]`에 이유·재개 조건·책임 원본·선행 작업이 있음
@@ -139,16 +151,18 @@
 | 실제 플레이 |  |  |  |
 | 시각·오디오 |  |  |  |
 | 성능·접근성 |  |  |  |
-| 문서 governance |  |  |  |
+| Documentation Governance |  |  |  |
+| Skill Routing Governance |  |  |  |
 | PDF 최신성·렌더링 |  |  |  |
 | 콜드 스타트 |  |  |  |
+| 운영체계 Health Review |  |  |  |
 
 ## Acceptance Criteria
 
 - [ ] 조건 → 행동 → 관찰 결과로 확인 가능
 - [ ] 승인된 포함 범위를 만족
 - [ ] 제외·보호 범위를 침범하지 않음
-- [ ] 본책·게이트·스킬·자산·PDF·검증 상태가 실제 결과와 일치
+- [ ] 본책·게이트·Registry·스킬·Learning Log·자산·PDF·검증 상태가 실제 결과와 일치
 
 ## 미검증·위험
 
@@ -162,13 +176,15 @@
 
 - 다음 작업:
 - 선행 조건·재개 조건:
-- 다음 작업자가 먼저 읽을 문서·스킬:
+- 다음 작업자가 먼저 읽을 문서·Registry·스킬:
+- Active Context·Handoff 갱신:
+- 다음 Health Review 트리거:
 - Base version 후속 동기화:
 
 ## Base 환류
 
 - [ ] 공용 학습 데이터 없음 — 프로젝트 전용 또는 단발성
-- [ ] Base Method·Skill·Template·Case 후보 있음
+- [ ] Base Method·Skill·Template·Case·Test 후보 있음
 
 - 후보:
 - 지식 상태: 관찰/가설/패턴/검증/승격 후보

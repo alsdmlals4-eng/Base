@@ -1,5 +1,23 @@
 # Changelog
 
+## v2.1.0 - selective skill routing, continuous learning and root planning governance
+
+게임 프로젝트의 Foundation·분야별 스킬이 모든 의미 있는 실행에서 학습 기록을 남기고, 실제 근거가 있을 때만 스킬 계약을 갱신하도록 운영체계를 보강했다. 새 AI는 전체 스킬을 읽지 않고 Registry에서 현재 요청에 필요한 최소 스킬만 선택하며, 활성 `[기획서]`는 저장소 루트에서 즉시 찾을 수 있도록 했다.
+
+변경:
+
+- Base 공용 스킬의 기계 판독 라우터 `skills/SKILL_REGISTRY.json`과 공용 학습 기록 `skills/SKILL_LEARNING_LOG.md`를 추가했다.
+- `routing-project-work-by-discipline` 스킬을 추가해 주 책임 분야 하나, 영향 분야, 변경 유형, 최소 Foundation·분야 스킬과 후속 스킬을 판정하도록 했다.
+- `maintaining-project-context-and-handoff` 스킬을 추가해 Active Context·Handoff를 책임 원본의 복제본이 아닌 현재 상태·다음 작업·위험 라우터로 유지하도록 했다.
+- `verifying-game-project-operating-system` 스킬과 Health Review 템플릿을 추가해 루트 기획서, 책임 원본, Registry, Learning Log, 개발 게이트, 이미지·PDF, 자동화와 콜드 스타트를 증거 기반으로 검수하도록 했다.
+- 분야 스킬 Method·실행 스킬·템플릿에 `trigger_tags`, `load_by_default=false`, 사용·비사용 조건, Learning Log, review trigger와 지식 상태를 추가했다.
+- 모든 의미 있는 스킬 호출은 결과·실패·예외·사용자 피드백·과다 호출·누락 검증과 스킬 변경 필요성을 기록하되, 근거가 없으면 스킬 본문을 무조건 수정하지 않고 `변경 없음`과 이유를 남기도록 했다.
+- 신규·승인된 프로젝트 구조에서 활성 `[기획서]`를 저장소 루트 바로 아래에 두고 중첩 현행 복제본을 금지하도록 시작 문서·Method·Installer·Documentation Map·계획 템플릿을 정렬했다.
+- 프로젝트용 `SKILL_REGISTRY.json`, 사람용 `PROJECT_SKILL_MAP.md`, Foundation·분야 Skill 계약과 Learning Log 템플릿을 연결했다.
+- Skill Routing Governance Checker를 추가해 루트 `[기획서]`, Registry 정책, 중복 ID, 활성 경로, trigger, Learning Log, 11개 분야 진입 스킬과 스킬 변경 동기화를 검사하도록 했다.
+- Issue·PR·CODEOWNERS·GitHub Actions·공용 체크리스트를 Registry·Learning Log·Health Review와 연결했다.
+- 정상 Registry, 중첩 기획서, 전체 스킬 자동 로드, 분야 진입 스킬 누락, Learning Log 누락과 스킬 변경 동기화 실패 회귀 테스트를 추가했다.
+
 ## v2.0.0 - game project repository operating system
 
 새 채팅, 새 GPT와 새 Codex가 Base URL 하나에서 동일한 시작 규칙을 찾고, 대상 게임 프로젝트에 분야별 본책·이미지 책임 원본·GitHub 검사를 분화해 설치할 수 있는 공용 저장소 운영체계를 추가했다.
@@ -123,7 +141,7 @@ DeepSeek를 포함한 외부 AI의 대용량 초안을 별도 worktree에서 생
 
 ## v1.6.0 - planning, narrative and presentation knowledge expansion
 
-공용 기획 지식 베이스를 전체 기획 체계, 서사·관계, 캐릭터 아트, 대화·이벤트 연출, 기획·조사·인수 실무 스킬과 프로젝트 사례까지 확장했다.
+공용 기획 지식 베이스를 전체 기획 체계, 서사·관계, 캐릭터 아트, 대화·이벤트 연출, 기획·조사·인수인계 방법과 프로젝트 사례까지 확장했다.
 
 변경:
 
