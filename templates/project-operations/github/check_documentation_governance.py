@@ -5,12 +5,17 @@ Usage:
   python tools/check_documentation_governance.py \
     --config .github/documentation-governance.json \
     --base "$BASE_SHA" --head "$HEAD_SHA"
+
+The checker uses only the Python standard library so projects can run it in a
+minimal GitHub Actions environment. Project-specific paths and enforcement
+levels belong in the JSON configuration, not in this script.
 """
 
 from __future__ import annotations
 
 import argparse
 import fnmatch
+import hashlib
 import json
 import os
 import re
@@ -37,13 +42,13 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def load_config(path: Path) -> dict:
+def load_json(path: Path) -> dict:
     try:
         return json.loads(path.read_text(encoding="utf-8"))
     except FileNotFoundError:
-        raise SystemExit(f"Configuration not found: {path}")
+        raise SystemExit(f"JSON file not found: {path}")
     except json.JSONDecodeError as exc:
-        raise SystemExit(f"Invalid JSON configuration {path}: {exc}")
+        raise SystemExit(f"Invalid JSON file {path}: {exc}")
 
 
 def has_ignored_segment(path: Path, ignored: set[str]) -> bool:
@@ -79,7 +84,11 @@ def check_markdown_links(root: Path, markdown_roots: list[str], ignored: set[str
     for path in iter_active_files(root, markdown_roots, ignored):
         if path.suffix.lower() != ".md":
             continue
-        text = path.read_text(encoding="utf-8")
+        try:
+            text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError as exc:
+            errors.append(f"{path}: unable to decode Markdown as UTF-8: {exc}")
+            continue
         for raw in LINK_RE.findall(text):
             target = normalize_link_target(raw)
             if not target or target.startswith(
@@ -97,8 +106,8 @@ def check_markdown_links(root: Path, markdown_roots: list[str], ignored: set[str
     return errors
 
 
-def check_required_files(root: Path, required: list[str]) -> list[str]:
-    return [f"Required file missing: {item}" for item in required if not (root / item).exists()]
+def check_required_paths(root: Path, required: list[str]) -> list[str]:
+    return [f"Required path missing: {item}" for item in required if not (root / item).exists()]
 
 
 def check_forbidden_names(
@@ -154,6 +163,133 @@ def check_asset_manifests(root: Path, manifests: list[str]) -> list[str]:
     return errors
 
 
+def content_digest(root: Path, relative_paths: list[str]) -> tuple[str, list[str]]:
+    digest = hashlib.sha256()
+    errors: list[str] = []
+
+    for relative in sorted(set(relative_paths)):
+        path = root / relative
+        if not path.exists():
+            errors.append(f"Publication input missing: {relative}")
+            continue
+        if not path.is_file():
+            errors.append(f"Publication input is not a file: {relative}")
+            continue
+        digest.update(relative.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(path.read_bytes())
+        digest.update(b"\0")
+
+    return digest.hexdigest(), errors
+
+
+def check_pdf_header(path: Path) -> bool:
+    try:
+        return path.read_bytes()[:5] == b"%PDF-"
+    except OSError:
+        return False
+
+
+def load_publications(root: Path, manifest_name: str) -> tuple[list[dict], list[str]]:
+    if not manifest_name:
+        return [], []
+
+    manifest = root / manifest_name
+    if not manifest.exists():
+        return [], [f"Publication manifest missing: {manifest_name}"]
+
+    try:
+        data = load_json(manifest)
+    except SystemExit as exc:
+        return [], [str(exc)]
+
+    publications = data.get("publications", [])
+    if not isinstance(publications, list):
+        return [], [f"{manifest_name}: 'publications' must be a list"]
+    return publications, []
+
+
+def check_publications(
+    root: Path,
+    manifest_name: str,
+    enforce: bool,
+) -> tuple[list[str], list[dict]]:
+    publications, errors = load_publications(root, manifest_name)
+    seen_ids: set[str] = set()
+    seen_outputs: set[str] = set()
+
+    for item in publications:
+        if not isinstance(item, dict):
+            errors.append(f"{manifest_name}: each publication must be an object")
+            continue
+
+        publication_id = str(item.get("publication_id", "")).strip()
+        output_pdf = str(item.get("output_pdf", "")).strip()
+        source_files = item.get("source_files", [])
+        image_paths = item.get("approved_image_paths", [])
+        status = str(item.get("status", "NOT_BUILT")).upper()
+        role = str(item.get("role", "")).strip()
+        expected_digest = str(item.get("content_sha256", "")).strip().lower()
+        visual_review = str(item.get("visual_review", "NOT_RUN")).upper()
+
+        if not publication_id:
+            errors.append(f"{manifest_name}: publication_id is required")
+        elif publication_id in seen_ids:
+            errors.append(f"Duplicate publication_id: {publication_id}")
+        seen_ids.add(publication_id)
+
+        if role != "read_only_derivative":
+            errors.append(
+                f"{publication_id or manifest_name}: role must be read_only_derivative"
+            )
+
+        if not isinstance(source_files, list) or not source_files:
+            errors.append(f"{publication_id}: source_files must contain at least one path")
+            source_files = []
+        if not isinstance(image_paths, list):
+            errors.append(f"{publication_id}: approved_image_paths must be a list")
+            image_paths = []
+
+        inputs = [str(path) for path in source_files + image_paths]
+        actual_digest, digest_errors = content_digest(root, inputs)
+        errors += [f"{publication_id}: {error}" for error in digest_errors]
+
+        if output_pdf:
+            if output_pdf in seen_outputs:
+                errors.append(f"Duplicate output_pdf: {output_pdf}")
+            seen_outputs.add(output_pdf)
+        elif enforce or status == "CURRENT":
+            errors.append(f"{publication_id}: output_pdf is required")
+
+        output_path = root / output_pdf if output_pdf else None
+        if status == "CURRENT" or enforce:
+            if not output_path or not output_path.exists():
+                errors.append(f"{publication_id}: PDF missing: {output_pdf}")
+            elif not check_pdf_header(output_path):
+                errors.append(f"{publication_id}: output is not a valid PDF header: {output_pdf}")
+
+            if not expected_digest:
+                errors.append(f"{publication_id}: CURRENT publication requires content_sha256")
+            elif not digest_errors and expected_digest != actual_digest:
+                errors.append(
+                    f"{publication_id}: publication inputs changed; expected {expected_digest}, "
+                    f"actual {actual_digest}"
+                )
+
+            if visual_review != "PASSED":
+                errors.append(
+                    f"{publication_id}: CURRENT publication requires visual_review=PASSED"
+                )
+
+        allowed = {"NOT_BUILT", "CURRENT", "STALE", "FAILED", "MISSING_ASSET"}
+        if status not in allowed:
+            errors.append(f"{publication_id}: unsupported publication status: {status}")
+        if enforce and status != "CURRENT":
+            errors.append(f"{publication_id}: publication enforcement requires status=CURRENT")
+
+    return errors, publications
+
+
 def git_changed_files(root: Path, base: str, head: str) -> list[str]:
     if not base or set(base) == {"0"}:
         return []
@@ -200,14 +336,50 @@ def check_change_rules(changed: list[str], rules: list[dict]) -> list[str]:
     return errors
 
 
+def check_publication_changes(
+    changed: list[str],
+    manifest_name: str,
+    publications: list[dict],
+    enforce: bool,
+) -> list[str]:
+    if not changed or not manifest_name:
+        return []
+
+    errors: list[str] = []
+    changed_set = set(changed)
+
+    for item in publications:
+        if not isinstance(item, dict):
+            continue
+        publication_id = str(item.get("publication_id", "unnamed"))
+        inputs = [
+            str(path)
+            for path in item.get("source_files", []) + item.get("approved_image_paths", [])
+        ]
+        if not any(path in changed_set for path in inputs):
+            continue
+
+        output_pdf = str(item.get("output_pdf", ""))
+        if manifest_name not in changed_set:
+            errors.append(
+                f"{publication_id}: source or approved image changed; update {manifest_name}"
+            )
+        if enforce and output_pdf and output_pdf not in changed_set:
+            errors.append(
+                f"{publication_id}: source or approved image changed; regenerate {output_pdf}"
+            )
+
+    return errors
+
+
 def main() -> int:
     args = parse_args()
     root = Path.cwd()
-    config = load_config(root / args.config)
+    config = load_json(root / args.config)
     ignored = set(config.get("ignored_segments", []))
 
     errors: list[str] = []
-    errors += check_required_files(root, config.get("required_files", []))
+    errors += check_required_paths(root, config.get("required_paths", config.get("required_files", [])))
     errors += check_forbidden_names(
         root,
         config.get("active_roots", []),
@@ -221,6 +393,15 @@ def main() -> int:
     )
     errors += check_asset_manifests(root, config.get("asset_manifests", []))
 
+    publication_manifest = str(config.get("publication_manifest", ""))
+    enforce_publications = bool(config.get("enforce_publications", False))
+    publication_errors, publications = check_publications(
+        root,
+        publication_manifest,
+        enforce_publications,
+    )
+    errors += publication_errors
+
     try:
         changed = git_changed_files(root, args.base, args.head)
     except RuntimeError as exc:
@@ -228,6 +409,12 @@ def main() -> int:
         changed = []
 
     errors += check_change_rules(changed, config.get("change_rules", []))
+    errors += check_publication_changes(
+        changed,
+        publication_manifest,
+        publications,
+        enforce_publications,
+    )
 
     if errors:
         print("Documentation governance failed:\n")
@@ -238,6 +425,8 @@ def main() -> int:
     print("Documentation governance passed.")
     if changed:
         print(f"Checked {len(changed)} changed file(s).")
+    if publications:
+        print(f"Checked {len(publications)} publication(s).")
     return 0
 
 
