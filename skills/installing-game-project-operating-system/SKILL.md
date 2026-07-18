@@ -202,8 +202,8 @@ python tools/build_design_documents.py \
 - 각 활성 분야는 진입 스킬 또는 명시적 통합 책임을 가진다.
 - `SKILL_REGISTRY.json`은 AI 라우터다.
 - `PROJECT_SKILL_MAP.docx/.pdf/.assets`는 사람용 파생본이다.
-- `PROJECT_SKILL_MAP.md`는 만들지 않는다.
-- 모든 의미 있는 호출은 Learning Log에 기록한다.
+- `PROJECT_SKILL_MAP.md`는 수동 책임 원본으로 만들지 않는다. schema v3에서는 Registry에서 생성한 선택 요약만 허용한다.
+- 실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 호출은 Learning Log에 기록한다.
 
 ## Phase 6 — Install Development Gates
 

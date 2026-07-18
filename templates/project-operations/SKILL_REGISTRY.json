@@ -23,6 +23,7 @@
     "markdown_skill_map_allowed": false
   },
   "skills": [],
+  "selected_disciplines": [],
   "discipline_entrypoints": {
     "설정·내러티브": [],
     "게임 디자인": [],

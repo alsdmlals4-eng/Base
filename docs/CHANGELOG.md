@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased - Base audit and operating-contract consistency
+
+- PR #8 이전 템플릿과 현재 `main`의 무손실 승계를 대조한 읽기 전용 감사를 추가했다.
+- GitHub Issue와 사용자 승인 직접 요청을 동등한 작업 계약으로 지원한다.
+- 프로젝트 로컬 Base 버전을 우선하고 원격 Base는 업데이트 조사 때만 비교하도록 통일했다.
+- Active Context, Handoff, Roadmap, Decision Log, Changelog, Base Rules Version 템플릿을 추가했다.
+- 11개 분야를 선택 가능한 공용 카탈로그로 정의하고 미선택 분야 강제를 제거했다.
+- 자동 렌더 검수와 사람 시각 검수를 서로 독립된 상태로 분리했다.
+- 삭제된 템플릿 참조와 임시 Google Docs 가져오기 파일을 정리했다.
+- 필요한 도구·파일·폰트·인증·권한이 없을 때 사용자에게 이유와 설치·적용·확인 방법을 요청하고 실제 환경을 재검증하는 계약을 추가했다.
+
 ## v2.1.0 - selective skill routing, continuous learning and root planning governance
 
 게임 프로젝트의 Foundation·분야별 스킬이 모든 의미 있는 실행에서 학습 기록을 남기고, 실제 근거가 있을 때만 스킬 계약을 갱신하도록 운영체계를 보강했다. 새 AI는 전체 스킬을 읽지 않고 Registry에서 현재 요청에 필요한 최소 스킬만 선택하며, 활성 `[기획서]`는 저장소 루트에서 즉시 찾을 수 있도록 했다.

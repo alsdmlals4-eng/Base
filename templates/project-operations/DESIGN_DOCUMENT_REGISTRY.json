@@ -11,7 +11,9 @@
     "markdown_design_bibles_allowed": false
   },
   "required_responsibility_coverage": [
-    "프로젝트 전체",
+    "프로젝트 전체"
+  ],
+  "available_responsibility_catalog": [
     "설정·내러티브",
     "게임 디자인",
     "UX·UI·접근성",

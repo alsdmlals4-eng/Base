@@ -85,7 +85,7 @@
 - [ ] 전체 skills 폴더를 기본 로드하지 않음
 - [ ] 주 책임 분야 스킬 최대 하나·Foundation 최소 호출
 - [ ] 분야 스킬이 관련 JSON·실제 파일·검증을 연결
-- [ ] 모든 의미 있는 호출을 Learning Log에 기록
+- [ ] 실패·중요 결정·재사용 가능한 교훈·실제 검증 결과를 Learning Log에 기록
 - [ ] 스킬 변경 시 Skill Map DOCX/PDF·assets·Manifest 재생성
 - [ ] `PROJECT_SKILL_MAP.md`를 만들지 않음
 

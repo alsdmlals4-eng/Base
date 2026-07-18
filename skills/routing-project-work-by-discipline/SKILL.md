@@ -33,9 +33,9 @@ project_start_here:
 active_context:
 documentation_map:
 project_skill_registry:
-project_skill_map:
 current_stage_and_gate:
-current_issue_or_plan:
+work_contract_type: github_issue/approved_direct_request
+current_issue_or_approved_request:
 ```
 
 ## Read first
@@ -45,7 +45,7 @@ current_issue_or_plan:
 3. 루트 `[기획서]/00_프로젝트_허브/START_HERE.md`
 4. Active Context와 Documentation Map
 5. `SKILL_REGISTRY.json`
-6. 필요한 경우에만 `PROJECT_SKILL_MAP.md`
+6. 필요한 경우에만 Registry에서 생성된 사람용 Skill Map 파생본
 
 ## Process
 
@@ -126,7 +126,7 @@ routing_reason:
 
 ## Definition of Done
 
-- [ ] Plan·Issue에 라우팅 결과가 반영됐다.
+- [ ] Issue 또는 사용자가 승인한 직접 요청·Plan에 라우팅 결과가 반영됐다.
 - [ ] 호출하지 않은 스킬이 명확하다.
 - [ ] 범위 변경 시 다시 라우팅할 조건이 기록됐다.
 - [ ] 잘못된 라우팅이나 누락이 발견되면 Learning Log에 기록했다.
