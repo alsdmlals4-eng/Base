@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Any
 
@@ -18,14 +19,19 @@ SUCCESS = "#027A48"
 
 def _font_path(bold: bool = False) -> str:
     candidates = [
+        os.environ.get("BASE_FONT_BOLD" if bold else "BASE_FONT_REGULAR", ""),
+        "C:/Windows/Fonts/malgunbd.ttf" if bold else "C:/Windows/Fonts/malgun.ttf",
         "/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf" if bold else "/usr/share/fonts/truetype/nanum/NanumGothic.ttf",
         "/usr/share/fonts/truetype/nanum/NanumBarunGothicBold.ttf" if bold else "/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf",
         "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc" if bold else "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
     ]
     for candidate in candidates:
-        if Path(candidate).exists():
+        if candidate and Path(candidate).exists():
             return candidate
-    raise FileNotFoundError("Install fonts-nanum or fonts-noto-cjk before building design documents.")
+    raise FileNotFoundError(
+        "Set BASE_FONT_REGULAR/BASE_FONT_BOLD or install Malgun Gothic, "
+        "fonts-nanum, or fonts-noto-cjk before building design documents."
+    )
 
 
 def _font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:

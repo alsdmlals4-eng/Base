@@ -36,6 +36,12 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "tools/build_design_documents.py",
             "tools/design_document_diagrams.py",
             "templates/project-operations/PROJECT_START_HERE.md",
+            "templates/project-operations/ACTIVE_CONTEXT.md",
+            "templates/project-operations/HANDOFF.md",
+            "templates/project-operations/ROADMAP.md",
+            "templates/project-operations/DECISION_LOG.md",
+            "templates/project-operations/CHANGELOG.md",
+            "templates/project-operations/BASE_RULES_VERSION.md",
             "templates/project-operations/PROJECT_DOCUMENTATION_MAP.md",
             "templates/project-operations/DEVELOPMENT_GATES.md",
             "templates/project-operations/DESIGN_DOCUMENT.json",
@@ -219,8 +225,47 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
 
     def test_skill_evolution_contract_requires_always_learning_without_forced_rewrites(self) -> None:
         text = (ROOT / "docs/knowledge/methods/DISCIPLINE_SKILL_EVOLUTION_METHOD.md").read_text(encoding="utf-8")
-        for term in ["모든 의미 있는 호출", "Learning Log", "load_by_default", "trigger_tags", "변경 없음", "verifying-game-project-operating-system"]:
+        for term in ["실패", "중요한 결정", "실제 검증 결과", "Learning Log", "load_by_default", "trigger_tags", "verifying-game-project-operating-system"]:
             self.assertIn(term, text)
+
+    def test_project_kit_exposes_optional_discipline_catalog(self) -> None:
+        config = json.loads((ROOT / "templates/project-operations/github/documentation-governance.json").read_text(encoding="utf-8"))
+        registry = json.loads((ROOT / "templates/project-operations/DESIGN_DOCUMENT_REGISTRY.json").read_text(encoding="utf-8"))
+        self.assertEqual(config["required_design_document_coverage"], ["프로젝트 전체"])
+        self.assertEqual(config["required_skill_disciplines"], [])
+        self.assertIn("게임 디자인", config["available_discipline_catalog"])
+        self.assertEqual(registry["required_responsibility_coverage"], ["프로젝트 전체"])
+
+    def test_direct_request_and_local_base_contracts_are_explicit(self) -> None:
+        agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        routing = (ROOT / "skills/routing-project-work-by-discipline/SKILL.md").read_text(encoding="utf-8")
+        migration = (ROOT / "templates/project-operations/EXISTING_PROJECT_MIGRATION_AUDIT.md").read_text(encoding="utf-8")
+        project_readme = (ROOT / "templates/project-operations/README.md").read_text(encoding="utf-8")
+        self.assertIn("approved_direct_request", agents)
+        self.assertIn("approved_direct_request", routing)
+        self.assertNotIn("`PROJECT_SKILL_MAP.md`를 읽", routing)
+        self.assertIn("기존 책임 원본", migration)
+        self.assertIn("BASE_RULES_VERSION.md", project_readme)
+        self.assertIn("프로젝트에 동기화된 Base", project_readme)
+
+    def test_generic_publication_review_states_are_separate(self) -> None:
+        config = json.loads((ROOT / "templates/project-operations/github/documentation-governance.json").read_text(encoding="utf-8"))
+        checker = (ROOT / "templates/project-operations/github/check_documentation_governance.py").read_text(encoding="utf-8")
+        self.assertFalse(config["require_human_publication_visual_review"])
+        self.assertIn("automated_render_review", checker)
+        self.assertIn("human_visual_review", checker)
+
+    def test_missing_environment_contract_requests_user_action(self) -> None:
+        agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        shared = (ROOT / "docs/AI_SHARED_WORK_RULES.md").read_text(encoding="utf-8")
+        project_agents = (ROOT / "templates/AGENTS.project.md").read_text(encoding="utf-8")
+        for text in (agents, shared, project_agents):
+            self.assertIn("설치", text)
+            self.assertIn("권한", text)
+            self.assertIn("확인", text)
+            self.assertIn("사용자", text)
+        self.assertIn("required_tools_and_files", agents)
+        self.assertIn("required_permissions", agents)
 
 
 if __name__ == "__main__":

@@ -15,6 +15,7 @@
   ],
   "required_paths": [
     "AGENTS.md",
+    "docs/BASE_RULES_VERSION.md",
     "tools/build_project_skill_map.py",
     "tools/skill_map_diagrams.py",
     "tools/build_design_documents.py",
@@ -24,6 +25,10 @@
     "tools/check_design_document_publications.py",
     "[기획서]/00_프로젝트_허브/START_HERE.md",
     "[기획서]/00_프로젝트_허브/ACTIVE_CONTEXT.md",
+    "[기획서]/00_프로젝트_허브/HANDOFF.md",
+    "[기획서]/00_프로젝트_허브/ROADMAP.md",
+    "[기획서]/00_프로젝트_허브/DECISION_LOG.md",
+    "[기획서]/00_프로젝트_허브/CHANGELOG.md",
     "[기획서]/00_프로젝트_허브/DOCUMENTATION_MAP.md",
     "[기획서]/00_프로젝트_허브/DOCUMENT_UPDATE_MATRIX.md",
     "[기획서]/00_프로젝트_허브/DEVELOPMENT_GATES.md",
@@ -47,6 +52,7 @@
     "[기획서]/06_아트/ASSET_MANIFEST.yml"
   ],
   "enforce_publications": false,
+  "require_human_publication_visual_review": false,
   "skill_registry": "[기획서]/00_프로젝트_허브/SKILL_REGISTRY.json",
   "enforce_skill_registry": true,
   "skill_map_publication_manifest": "[기획서]/00_프로젝트_허브/SKILL_MAP_PUBLICATION_MANIFEST.json",
@@ -70,7 +76,9 @@
   "require_human_design_document_visual_review": false,
   "design_document_diagram_generator": "tools/design_document_diagrams.py",
   "required_design_document_coverage": [
-    "프로젝트 전체",
+    "프로젝트 전체"
+  ],
+  "available_discipline_catalog": [
     "설정·내러티브",
     "게임 디자인",
     "UX·UI·접근성",
@@ -90,19 +98,7 @@
   "forbidden_markdown_design_bible_suffixes": [
     "_기획서.md"
   ],
-  "required_skill_disciplines": [
-    "설정·내러티브",
-    "게임 디자인",
-    "UX·UI·접근성",
-    "개발·엔지니어링",
-    "테크니컬 아트·파이프라인",
-    "아트",
-    "사운드",
-    "QA",
-    "프로덕션·PM",
-    "분석·유저리서치",
-    "통합검수"
-  ],
+  "required_skill_disciplines": [],
   "skill_change_globs": [
     "skills/**/SKILL.md"
   ],

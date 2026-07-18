@@ -7,6 +7,7 @@ import json
 import os
 import shutil
 import subprocess
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -206,12 +207,32 @@ def convert_pdf(docx: Path, output_dir: Path) -> Path:
     executable = shutil.which("libreoffice") or shutil.which("soffice")
     if not executable:
         raise RuntimeError("LibreOffice is required to generate PROJECT_SKILL_MAP.pdf")
-    profile = output_dir / ".libreoffice-profile"
-    profile.mkdir(exist_ok=True)
-    command = [executable, f"-env:UserInstallation=file://{profile}", "--headless", "--convert-to", "pdf", "--outdir", str(output_dir), str(docx)]
-    result = subprocess.run(command, capture_output=True, text=True)
-    if result.returncode:
-        raise RuntimeError(result.stdout + result.stderr)
+    with tempfile.TemporaryDirectory(prefix="skill-map-lo-") as temp:
+        profile = Path(temp) / "profile"
+        profile.mkdir()
+        command = [
+            executable,
+            f"-env:UserInstallation={profile.resolve().as_uri()}",
+            "--headless",
+            "--convert-to",
+            "pdf",
+            "--outdir",
+            str(output_dir),
+            str(docx),
+        ]
+        try:
+            result = subprocess.run(
+                command,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=120,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise RuntimeError("LibreOffice skill-map conversion timed out after 120 seconds.") from exc
+        if result.returncode:
+            raise RuntimeError(result.stdout + result.stderr)
     pdf = output_dir / f"{docx.stem}.pdf"
     if not pdf.exists() or pdf.read_bytes()[:5] != b"%PDF-":
         raise RuntimeError("LibreOffice did not create a valid PDF")

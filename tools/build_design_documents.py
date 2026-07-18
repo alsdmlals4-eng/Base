@@ -351,7 +351,7 @@ def convert_pdf(docx_path: Path, pdf_path: Path) -> None:
         profile = Path(temp) / "profile"
         command = [
             executable,
-            f"-env:UserInstallation=file://{profile}",
+            f"-env:UserInstallation={profile.resolve().as_uri()}",
             "--headless",
             "--convert-to",
             "pdf",
@@ -359,7 +359,17 @@ def convert_pdf(docx_path: Path, pdf_path: Path) -> None:
             str(pdf_path.parent),
             str(docx_path),
         ]
-        result = subprocess.run(command, capture_output=True, text=True)
+        try:
+            result = subprocess.run(
+                command,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=120,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise RuntimeError("LibreOffice PDF conversion timed out after 120 seconds.") from exc
         if result.returncode:
             raise RuntimeError(result.stdout + result.stderr)
     generated = pdf_path.parent / f"{docx_path.stem}.pdf"

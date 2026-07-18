@@ -37,7 +37,7 @@
 | 왜 이 프로젝트를 만드는가? | 프로젝트 종합 기획서 JSON | 프로젝트 종합 PDF | 방향·대상 플레이어 변경 |
 | 다음 개발 게이트는 무엇인가? | `DEVELOPMENT_GATES.md` | 게이트 검수 보고 | 게이트 판정 변경 |
 | 어떤 스킬을 사용하는가? | `SKILL_REGISTRY.json` | `PROJECT_SKILL_MAP.pdf`·`.docx` | 스킬·trigger·상태 변경 |
-| 스킬이 무엇을 학습했는가? | 각 Learning Log |  | 모든 의미 있는 호출 |
+| 스킬이 무엇을 학습했는가? | 각 Learning Log |  | 실패·중요 결정·재사용 교훈·실제 검증 |
 | 승인 이미지와 자산은 어디인가? | 각 JSON `approved_visuals`·Asset Manifest | 각 `.assets/`·PDF | 승인·교체·이전 |
 | 발행본이 최신인가? | 각 `_PUBLICATION_MANIFEST.json` | DOCX·PDF·렌더 | JSON·이미지·생성기 변경 |
 | 운영체계가 정상인가? | Health Review | Governance Workflow | 설치·마이그레이션·주요 게이트 |

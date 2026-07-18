@@ -9,7 +9,7 @@ description: Use when creating, separating, reviewing, consolidating, or improvi
 
 공용 절차는 Foundation에서 한 번만 책임지고, 각 분야 스킬은 해당 분야의 고유 판단·JSON 본책·실제 경로·산출물·검증·학습을 책임한다.
 
-모든 의미 있는 호출은 Learning Log에 남긴다. 스킬 본문은 반복 실패, 새 예외, 책임·경로·검증 변경처럼 근거가 있을 때만 갱신한다.
+실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 호출은 Learning Log에 남긴다. 사소한 성공 호출은 기록을 강제하지 않는다. 스킬 본문은 반복 실패, 새 예외, 책임·경로·검증 변경처럼 근거가 있을 때만 갱신한다.
 
 ## 책임 구조
 

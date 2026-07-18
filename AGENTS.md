@@ -25,6 +25,13 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Meth
 
 저장소 접근 없이 설치·마이그레이션·검수 완료를 주장하지 않는다.
 
+### 필요한 작업 환경 요청
+
+- 작업·최적화·검증에 필요한 실행 파일, 라이브러리, 폰트, 기준 파일, 계정 인증 또는 저장소·브랜치 권한이 없으면 우회 결과를 정상 완료로 처리하지 않는다.
+- 사용자에게 `필요 항목`, `필요한 이유`, `권장 설치·설정 방법`, `적용 또는 재시작 방법`, `설치 후 확인 명령`, `요청하는 최소 권한 범위`를 구체적으로 안내하고 요청한다.
+- 사용자 승인 없이 시스템 전역 설치, 계정·보안 설정 변경, 권한 확대, Branch protection 변경을 수행하지 않는다.
+- 사용자가 설치·권한 부여를 완료했다고 알려도 실제 경로·버전·인증·쓰기 가능 여부를 확인한 뒤 사용한다.
+
 ## 2. 루트 기획서와 책임 원본
 
 신규 프로젝트와 승인된 마이그레이션의 활성 기획서는 저장소 루트 아래에 둔다.
@@ -110,7 +117,7 @@ PROJECT_SKILL_MAP.assets/
 1. 사용자의 최신 지시
 2. 프로젝트 `AGENTS.md`와 보안·엔진 규칙
 3. 프로젝트 Active Context·Handoff
-4. 승인된 기획서 JSON과 Issue·Goal·Plan
+4. 승인된 기획서와 `GitHub Issue` 또는 사용자가 승인한 직접 요청·Goal·Plan
 5. 실제 구현·데이터·자산·테스트 증거
 6. 프로젝트에 동기화된 Base 기준
 7. Base 원격 원본
@@ -137,6 +144,7 @@ Active Context·Handoff는 본책을 복제하지 않고 현재 상태와 읽기
 ## 7. 작업 시작 계약
 
 ```yaml
+work_contract_type: github_issue/approved_direct_request
 primary_discipline:
 affected_disciplines:
 change_type:
@@ -145,6 +153,8 @@ user_or_player_value:
 scope:
 out_of_scope:
 protected_paths:
+required_tools_and_files:
+required_permissions:
 required_design_document_ids:
 foundation_skills:
 discipline_skills:
@@ -154,6 +164,8 @@ publication_impact:
 acceptance_criteria:
 validation:
 ```
+
+직접 요청 작업은 Issue가 없어도 된다. 대신 승인된 요청이나 PR 본문·Goal에 목표, 배경, 범위, 제외 범위, 보호 대상, 완료 기준과 검증 증거를 남긴다. 여러 시스템·장기 추적·여러 PR이 필요한 작업은 Issue를 권장한다.
 
 작업 실행 게이트:
 

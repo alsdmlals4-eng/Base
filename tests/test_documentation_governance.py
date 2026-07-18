@@ -88,7 +88,8 @@ class DocumentationGovernanceTests(unittest.TestCase):
                     "generated_at": "2026-07-18T00:00:00Z",
                     "generator": "unit-test",
                     "status": "CURRENT",
-                    "visual_review": "PASSED",
+                    "automated_render_review": "PASSED",
+                    "human_visual_review": "NOT_RUN",
                 }
             ],
         }
@@ -120,6 +121,7 @@ class DocumentationGovernanceTests(unittest.TestCase):
             "asset_manifests": [],
             "publication_manifest": "[기획서]/00_프로젝트_허브/PUBLICATION_MANIFEST.json",
             "enforce_publications": True,
+            "require_human_publication_visual_review": False,
             "change_rules": [],
         }
         self.config_path.write_text(
@@ -167,10 +169,10 @@ class DocumentationGovernanceTests(unittest.TestCase):
         result = self._run_checker()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
-    def test_pdf_header_and_visual_review_are_required(self) -> None:
+    def test_pdf_header_and_automated_render_review_are_required(self) -> None:
         self.pdf.write_text("not a pdf", encoding="utf-8")
         data = json.loads(self.publication_manifest.read_text(encoding="utf-8"))
-        data["publications"][0]["visual_review"] = "NOT_RUN"
+        data["publications"][0]["automated_render_review"] = "FAILED"
         self.publication_manifest.write_text(
             json.dumps(data, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
@@ -178,7 +180,18 @@ class DocumentationGovernanceTests(unittest.TestCase):
         result = self._run_checker()
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("not a valid PDF header", result.stdout)
-        self.assertIn("visual_review=PASSED", result.stdout)
+        self.assertIn("automated_render_review=PASSED", result.stdout)
+
+    def test_human_review_is_required_only_when_the_gate_enables_it(self) -> None:
+        config = json.loads(self.config_path.read_text(encoding="utf-8"))
+        config["require_human_publication_visual_review"] = True
+        self.config_path.write_text(
+            json.dumps(config, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        result = self._run_checker()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("human_visual_review=PASSED", result.stdout)
 
 
 if __name__ == "__main__":

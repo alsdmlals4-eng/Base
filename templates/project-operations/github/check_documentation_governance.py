@@ -213,6 +213,7 @@ def check_publications(
     root: Path,
     manifest_name: str,
     enforce: bool,
+    require_human_review: bool = False,
 ) -> tuple[list[str], list[dict]]:
     publications, errors = load_publications(root, manifest_name)
     seen_ids: set[str] = set()
@@ -230,7 +231,10 @@ def check_publications(
         status = str(item.get("status", "NOT_BUILT")).upper()
         role = str(item.get("role", "")).strip()
         expected_digest = str(item.get("content_sha256", "")).strip().lower()
-        visual_review = str(item.get("visual_review", "NOT_RUN")).upper()
+        automated_render_review = str(
+            item.get("automated_render_review", item.get("visual_review", "NOT_RUN"))
+        ).upper()
+        human_visual_review = str(item.get("human_visual_review", "NOT_RUN")).upper()
 
         if not publication_id:
             errors.append(f"{manifest_name}: publication_id is required")
@@ -276,9 +280,14 @@ def check_publications(
                     f"actual {actual_digest}"
                 )
 
-            if visual_review != "PASSED":
+            if automated_render_review != "PASSED":
                 errors.append(
-                    f"{publication_id}: CURRENT publication requires visual_review=PASSED"
+                    f"{publication_id}: CURRENT publication requires "
+                    "automated_render_review=PASSED"
+                )
+            if require_human_review and human_visual_review != "PASSED":
+                errors.append(
+                    f"{publication_id}: this gate requires human_visual_review=PASSED"
                 )
 
         allowed = {"NOT_BUILT", "CURRENT", "STALE", "FAILED", "MISSING_ASSET"}
@@ -399,6 +408,7 @@ def main() -> int:
         root,
         publication_manifest,
         enforce_publications,
+        bool(config.get("require_human_publication_visual_review", False)),
     )
     errors += publication_errors
 

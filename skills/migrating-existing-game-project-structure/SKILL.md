@@ -49,7 +49,7 @@ protected_paths:
 protected_decisions:
 protected_assets:
 explicitly_approved_changes:
-target_design_document_contract: JSON + DOCX + PDF + assets + manifest
+target_design_document_contract: preserve-current-or-use-explicitly-approved-target
 ```
 
 ## Phase 1 — Audit only

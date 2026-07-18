@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Any
 
@@ -18,13 +19,19 @@ ACCENT_LIGHT, WARN, BORDER, WHITE = "#E8EEFF", "#B54708", "#D0D5DD", "#FFFFFF"
 
 def font_path(bold: bool = False) -> str:
     candidates = [
+        os.environ.get("BASE_FONT_BOLD" if bold else "BASE_FONT_REGULAR", ""),
+        "C:/Windows/Fonts/malgunbd.ttf" if bold else "C:/Windows/Fonts/malgun.ttf",
         "/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf" if bold else "/usr/share/fonts/truetype/nanum/NanumGothic.ttf",
         "/usr/share/fonts/truetype/nanum/NanumBarunGothicBold.ttf" if bold else "/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf",
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc" if bold else "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
     ]
     for path in candidates:
-        if Path(path).exists():
+        if path and Path(path).exists():
             return path
-    raise FileNotFoundError("Install fonts-nanum before building the skill map.")
+    raise FileNotFoundError(
+        "Set BASE_FONT_REGULAR/BASE_FONT_BOLD or install Malgun Gothic, "
+        "fonts-nanum, or fonts-noto-cjk before building the skill map."
+    )
 
 
 def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:

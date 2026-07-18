@@ -142,10 +142,25 @@ class SkillRoutingGovernanceTests(unittest.TestCase):
         command = [sys.executable, str(CHECKER), "--config", str(self.config_path)]
         if base:
             command += ["--base", base, "--head", head]
-        return subprocess.run(command, cwd=self.root, capture_output=True, text=True, check=False)
+        return subprocess.run(
+            command,
+            cwd=self.root,
+            capture_output=True,
+            text=True,
+            errors="replace",
+            check=False,
+        )
 
     def _git(self, *args: str) -> str:
-        result = subprocess.run(["git", *args], cwd=self.root, capture_output=True, text=True, check=True)
+        result = subprocess.run(
+            ["git", *args],
+            cwd=self.root,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=True,
+        )
         return result.stdout.strip()
 
     def test_valid_root_registry_and_publication_pass(self) -> None:
