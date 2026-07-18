@@ -31,15 +31,17 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "skills/migrating-existing-game-project-structure/SKILL.md",
             "skills/evolving-project-discipline-skills/SKILL.md",
             "skills/publishing-discipline-bibles/SKILL.md",
+            "tools/build_project_skill_map.py",
+            "tools/skill_map_diagrams.py",
+            "tools/build_design_documents.py",
+            "tools/design_document_diagrams.py",
             "templates/project-operations/PROJECT_START_HERE.md",
             "templates/project-operations/PROJECT_DOCUMENTATION_MAP.md",
             "templates/project-operations/DEVELOPMENT_GATES.md",
-            "templates/project-operations/DISCIPLINE_BIBLE.md",
-            "templates/project-operations/PROJECT_SKILL_MAP.md",
+            "templates/project-operations/DESIGN_DOCUMENT.json",
+            "templates/project-operations/DESIGN_DOCUMENT_REGISTRY.json",
             "templates/project-operations/SKILL_REGISTRY.json",
             "templates/project-operations/OPERATING_SYSTEM_HEALTH_REPORT.md",
-            "templates/project-operations/DISCIPLINE_PDF_PUBLICATION.md",
-            "templates/project-operations/PUBLICATION_MANIFEST.json",
             "templates/project-operations/EXISTING_PROJECT_MIGRATION_AUDIT.md",
             "templates/project-operations/LIFECYCLE_AREAS.md",
             "templates/project-operations/skills/FOUNDATION_SKILL.md",
@@ -47,18 +49,40 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "templates/project-operations/skills/SKILL_LEARNING_LOG.md",
             "templates/project-operations/github/check_documentation_governance.py",
             "templates/project-operations/github/check_skill_routing_governance.py",
+            "templates/project-operations/github/check_design_document_publications.py",
             "templates/project-operations/github/documentation-governance.json",
             "templates/project-operations/github/documentation-governance.yml",
             "templates/project-operations/github/ISSUE_TEMPLATE.yml",
             "templates/project-operations/github/PULL_REQUEST_TEMPLATE.md",
             "templates/project-operations/github/CODEOWNERS.example",
+            "tests/test_design_document_publication_governance.py",
+            "tests/test_design_document_generation.py",
         ]
         missing = [path for path in required if not (ROOT / path).exists()]
         self.assertEqual(missing, [], f"Missing operating-system paths: {missing}")
 
+    def test_deprecated_markdown_bible_templates_are_absent(self) -> None:
+        forbidden = [
+            "templates/project-operations/DISCIPLINE_BIBLE.md",
+            "templates/project-operations/PROJECT_SKILL_MAP.md",
+            "templates/project-operations/DISCIPLINE_PDF_PUBLICATION.md",
+            "templates/project-operations/PUBLICATION_MANIFEST.json",
+        ]
+        present = [path for path in forbidden if (ROOT / path).exists()]
+        self.assertEqual(present, [], f"Deprecated active templates still exist: {present}")
+
     def test_minimum_base_invocation_is_preserved(self) -> None:
         start = (ROOT / "START_HERE.md").read_text(encoding="utf-8")
         self.assertIn("https://github.com/alsdmlals4-eng/Base", start)
+        for term in [
+            "DESIGN_DOCUMENT_REGISTRY.json",
+            "기획서 JSON",
+            "기획서 PDF",
+            "기획서 DOCX",
+            "PROJECT_SKILL_MAP.pdf",
+            "PROJECT_SKILL_MAP.docx",
+        ]:
+            self.assertIn(term, start)
         for skill in [
             "routing-project-work-by-discipline",
             "migrating-existing-game-project-structure",
@@ -70,9 +94,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             self.assertIn(skill, start)
 
     def test_gate_contract_contains_work_and_product_gates(self) -> None:
-        text = (
-            ROOT / "docs/knowledge/methods/DEVELOPMENT_GATES_METHOD.md"
-        ).read_text(encoding="utf-8")
+        text = (ROOT / "docs/knowledge/methods/DEVELOPMENT_GATES_METHOD.md").read_text(encoding="utf-8")
         for term in [
             "Definition of Ready",
             "Implementation Gate",
@@ -94,22 +116,15 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             match = re.search(r"^name:\s*['\"]?([^'\"\n]+)", text, re.MULTILINE)
             self.assertIsNotNone(match, f"Missing skill name: {path}")
             name = match.group(1).strip()
-            self.assertNotIn(
-                name,
-                names,
-                f"Duplicate skill name {name}: {names.get(name)} and {path}",
-            )
+            self.assertNotIn(name, names, f"Duplicate skill name {name}: {names.get(name)} and {path}")
             names[name] = path
 
     def test_base_skill_registry_is_valid_and_selective(self) -> None:
-        registry = json.loads(
-            (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
-        )
+        registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
         policy = registry["routing_policy"]
         self.assertFalse(policy["load_all_skills"])
         self.assertEqual(policy["default_selection"], "none")
         self.assertTrue(policy["require_trigger_match"])
-
         seen: set[str] = set()
         for item in registry["skills"]:
             skill_id = item["skill_id"]
@@ -123,28 +138,37 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             self.assertTrue((ROOT / item["path"]).is_file())
             self.assertTrue((ROOT / item["learning_log"]).is_file())
 
-    def test_project_skill_map_covers_all_responsibility_disciplines(self) -> None:
-        text = (
-            ROOT / "templates/project-operations/PROJECT_SKILL_MAP.md"
-        ).read_text(encoding="utf-8")
-        disciplines = [
-            "설정·내러티브",
-            "게임 디자인",
-            "UX·UI·접근성",
-            "개발·엔지니어링",
-            "테크니컬 아트·파이프라인",
-            "아트",
-            "사운드",
-            "QA",
-            "프로덕션·PM",
-            "분석·유저리서치",
-            "통합검수",
-        ]
-        missing = [discipline for discipline in disciplines if discipline not in text]
-        self.assertEqual(missing, [], f"Missing discipline skill routes: {missing}")
-        self.assertIn("SKILL_REGISTRY.json", text)
-        self.assertIn("전체 스킬 자동 로드: 금지", text)
-        self.assertIn("모든 의미 있는 스킬 호출", text)
+    def test_project_skill_registry_defines_human_publications(self) -> None:
+        registry = json.loads((ROOT / "templates/project-operations/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
+        human = registry["human_presentation"]
+        self.assertEqual(human["source_of_truth"], "SKILL_REGISTRY.json")
+        self.assertEqual(human["primary_reading_format"], "PROJECT_SKILL_MAP.pdf")
+        self.assertEqual(human["editable_derivative"], "PROJECT_SKILL_MAP.docx")
+        self.assertEqual(human["diagram_directory"], "PROJECT_SKILL_MAP.assets")
+        self.assertFalse(human["markdown_skill_map_allowed"])
+        self.assertEqual(set(registry["discipline_entrypoints"]), {
+            "설정·내러티브", "게임 디자인", "UX·UI·접근성", "개발·엔지니어링",
+            "테크니컬 아트·파이프라인", "아트", "사운드", "QA", "프로덕션·PM",
+            "분석·유저리서치", "통합검수",
+        })
+
+    def test_design_document_templates_define_json_and_human_outputs(self) -> None:
+        source = json.loads((ROOT / "templates/project-operations/DESIGN_DOCUMENT.json").read_text(encoding="utf-8"))
+        registry = json.loads((ROOT / "templates/project-operations/DESIGN_DOCUMENT_REGISTRY.json").read_text(encoding="utf-8"))
+        self.assertIn("document_id", source)
+        self.assertIn("overview", source)
+        self.assertIn("workflow", source)
+        self.assertIn("approved_visuals", source)
+        self.assertIn("definition_of_done", source)
+        human = registry["human_presentation"]
+        self.assertEqual(human["primary_reading_format"], "PDF")
+        self.assertEqual(human["editable_review_format"], "DOCX")
+        self.assertTrue(human["diagram_assets_required"])
+        self.assertTrue(human["approved_visuals_embedded"])
+        self.assertFalse(human["markdown_design_bibles_allowed"])
+        example = registry["document_contract_example"]
+        for field in ("source_json", "output_docx", "output_pdf", "asset_dir", "publication_manifest", "generator"):
+            self.assertTrue(example[field])
 
     def test_project_template_places_design_folder_at_repository_root(self) -> None:
         for relative in [
@@ -156,67 +180,46 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
                 text = (ROOT / relative).read_text(encoding="utf-8")
                 self.assertIn("저장소 루트", text)
                 self.assertIn("[기획서]", text)
-
-        config = json.loads(
-            (
-                ROOT
-                / "templates/project-operations/github/documentation-governance.json"
-            ).read_text(encoding="utf-8")
-        )
+        config = json.loads((ROOT / "templates/project-operations/github/documentation-governance.json").read_text(encoding="utf-8"))
         self.assertEqual(config["design_root"], "[기획서]")
         self.assertTrue(config["enforce_top_level_design_root"])
+        self.assertTrue(config["enforce_skill_map_publication"])
+        self.assertTrue(config["enforce_design_document_publications"])
+        self.assertEqual(config["design_document_registry"], "[기획서]/00_프로젝트_허브/DESIGN_DOCUMENT_REGISTRY.json")
 
     def test_json_templates_are_valid(self) -> None:
         for relative in [
             "skills/SKILL_REGISTRY.json",
             "templates/project-operations/SKILL_REGISTRY.json",
-            "templates/project-operations/PUBLICATION_MANIFEST.json",
+            "templates/project-operations/DESIGN_DOCUMENT.json",
+            "templates/project-operations/DESIGN_DOCUMENT_REGISTRY.json",
             "templates/project-operations/github/documentation-governance.json",
         ]:
             with self.subTest(path=relative):
                 json.loads((ROOT / relative).read_text(encoding="utf-8"))
 
-    def test_pdf_contract_requires_full_process_and_approved_images(self) -> None:
-        text = (
-            ROOT / "docs/knowledge/methods/DISCIPLINE_PDF_PUBLICATION_METHOD.md"
-        ).read_text(encoding="utf-8")
+    def test_design_publication_contract_requires_full_process_and_approved_images(self) -> None:
+        text = (ROOT / "docs/knowledge/methods/DISCIPLINE_PDF_PUBLICATION_METHOD.md").read_text(encoding="utf-8")
         for term in [
-            "전체 작업 흐름",
-            "승인된 이미지",
-            "실제 게임 캡처",
-            "Publication Manifest",
-            "content hash",
-            "read_only_derivative",
+            "AI용 구조화 JSON 책임 원본",
+            "DOCX",
+            "PDF",
+            "workflow.png",
+            "승인 이미지",
+            "DESIGN_DOCUMENT_REGISTRY.json",
+            "SHA-256",
+            "전 페이지",
         ]:
             self.assertIn(term, text)
 
     def test_migration_contract_requires_audit_and_preservation(self) -> None:
-        text = (
-            ROOT / "docs/knowledge/methods/EXISTING_PROJECT_SAFE_MIGRATION_METHOD.md"
-        ).read_text(encoding="utf-8")
-        for term in [
-            "Audit only",
-            "절대 보존 대상",
-            "사용자 승인",
-            "변경 전후 보존 검증",
-            "[백업]",
-            "[보류]",
-            "[제거 후보]",
-        ]:
+        text = (ROOT / "docs/knowledge/methods/EXISTING_PROJECT_SAFE_MIGRATION_METHOD.md").read_text(encoding="utf-8")
+        for term in ["Audit only", "절대 보존 대상", "사용자 승인", "변경 전후 보존 검증", "[백업]", "[보류]", "[제거 후보]"]:
             self.assertIn(term, text)
 
     def test_skill_evolution_contract_requires_always_learning_without_forced_rewrites(self) -> None:
-        text = (
-            ROOT / "docs/knowledge/methods/DISCIPLINE_SKILL_EVOLUTION_METHOD.md"
-        ).read_text(encoding="utf-8")
-        for term in [
-            "모든 의미 있는 호출",
-            "Learning Log",
-            "load_by_default",
-            "trigger_tags",
-            "변경 없음",
-            "verifying-game-project-operating-system",
-        ]:
+        text = (ROOT / "docs/knowledge/methods/DISCIPLINE_SKILL_EVOLUTION_METHOD.md").read_text(encoding="utf-8")
+        for term in ["모든 의미 있는 호출", "Learning Log", "load_by_default", "trigger_tags", "변경 없음", "verifying-game-project-operating-system"]:
             self.assertIn(term, text)
 
 
