@@ -62,21 +62,21 @@
 
 ### 2026-07-19 operating-system skill routing and learning audit
 
-- 프로젝트·작업: Base 운영체계의 선택적 스킬 호출·지속 학습·루트 기획서 검수
+- 프로젝트·작업: Base PR #7 — 선택적 스킬 호출·지속 학습·루트 기획서 검수
 - 기준 스킬 커밋: `c65ffe2e589caf8e38c546dbdfcd37e669b09f9f`
 - 호출 트리거: 분야별·Foundation 스킬의 항상 학습, 필요한 경우에만 호출, 운영체계 연결 검증, 루트 `[기획서]` 요청
 - 입력 범위: Base START_HERE·AGENTS·README·Documentation Map·운영체계 Method·Installer·Project Operations 템플릿·GitHub 검사·회귀 테스트
 - 실제 산출물: 공용·프로젝트 Skill Registry, 라우팅·Handoff·Health Review 스킬, Learning Log 계약, 루트 기획서·Registry 자동 검사와 회귀 테스트
-- 실행한 검증: 정적 구조 검수 완료; PR GitHub Actions 실행 예정
-- 결과: 미검증
-- 성공 조건: 기존 운영체계 테스트와 신규 Registry·루트 기획서·동기화 실패 테스트가 모두 통과하고 PR diff·whitespace가 정상이어야 함
+- 실행한 검증: Python 문법, 기존 Documentation Governance 회귀 테스트, 신규 Skill Routing Governance 회귀 테스트, Base 운영체계 구조 테스트, `git diff --check`
+- 결과: 성공
+- 성공 조건: 기존 운영체계 테스트와 신규 Registry·루트 기획서·동기화 실패 테스트가 모두 통과하고 PR diff·whitespace가 정상임
 - 실패·예외·재현 조건: `[기획서]` 대괄호를 glob으로 검색할 때 문자 집합으로 해석될 수 있어 실제 폴더명 비교로 검사기 수정
 - 사용자 피드백: 스킬이 항상 학습 가능해야 하며 필요한 때만 호출되고 활성 기획서는 최상위 폴더에서 보여야 함
 - 불필요하게 호출한 스킬: 없음
 - 누락된 스킬·검증: 공용 요청 라우팅, Active Context·Handoff 관리, 운영체계 Health Review와 Skill Registry 검사가 기존 구조에 없었음
 - 스킬 본문 변경 필요: 예
 - 변경하지 않는 이유: 해당 없음
-- 지식 상태: 가설
+- 지식 상태: 패턴
 - 프로젝트 전용으로 유지할 내용: 대상 게임의 분야별 구체 스킬·실제 경로·승인 자산
-- Base Method·Skill·Template·Test 환류 후보: 이번 브랜치의 Method·Skill·Registry·Health Report·Governance Checker·회귀 테스트
-- 다음 검토 트리거: PR Workflow 결과와 대상 프로젝트 첫 실제 적용
+- Base Method·Skill·Template·Test 환류 후보: 이번 PR의 Method·Skill·Registry·Health Report·Governance Checker·회귀 테스트
+- 다음 검토 트리거: 대상 프로젝트 첫 실제 적용, 동일 라우팅 실패 반복, 90일 이상 미검토
