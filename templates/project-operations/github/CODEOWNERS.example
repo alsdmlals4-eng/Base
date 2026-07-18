@@ -1,18 +1,23 @@
 # 프로젝트 적용 시 실제 GitHub 사용자·팀으로 교체합니다.
-# CODEOWNERS는 리뷰 요청을 자동화하지만 브랜치 보호에서
-# "Require review from Code Owners"를 활성화해야 병합 게이트가 됩니다.
+# CODEOWNERS는 브랜치 보호에서 "Require review from Code Owners"를 켜야 게이트가 됩니다.
 
 # 저장소 루트 진입 문서
 /AGENTS.md                           @project-owner
 /README.md                           @project-owner
 
-# 프로젝트 허브·운영 정책·게이트·Skill Registry·PDF 최신성
-/[기획서]/00_프로젝트_허브/          @project-owner @production-owner @qa-owner
-/[기획서]/00_프로젝트_허브/SKILL_REGISTRY.json @project-owner @qa-owner
-/[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.md @project-owner @qa-owner
-/[기획서]/00_프로젝트_허브/PUBLICATION_MANIFEST.json @project-owner @production-owner @qa-owner
+# 프로젝트 허브·Registry·게이트·사람용 스킬맵
+/[기획서]/00_프로젝트_허브/START_HERE.md                    @project-owner
+/[기획서]/00_프로젝트_허브/ACTIVE_CONTEXT.md                @project-owner @production-owner
+/[기획서]/00_프로젝트_허브/DOCUMENTATION_MAP.md             @project-owner @qa-owner
+/[기획서]/00_프로젝트_허브/DEVELOPMENT_GATES.md             @project-owner @production-owner @qa-owner
+/[기획서]/00_프로젝트_허브/DESIGN_DOCUMENT_REGISTRY.json    @project-owner @production-owner @qa-owner
+/[기획서]/00_프로젝트_허브/SKILL_REGISTRY.json              @project-owner @qa-owner
+/[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.docx           @project-owner @qa-owner
+/[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.pdf            @project-owner @qa-owner
+/[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.assets/        @project-owner @qa-owner
+/[기획서]/00_프로젝트_허브/SKILL_MAP_PUBLICATION_MANIFEST.json @project-owner @qa-owner
 
-# 분야별 활성 본책·부록·PDF
+# 분야별 JSON 본책·DOCX/PDF·다이어그램·승인 이미지
 /[기획서]/01_설정_내러티브/          @narrative-owner
 /[기획서]/02_게임_디자인/            @game-design-owner
 /[기획서]/03_UX_UI_접근성/           @ux-owner
@@ -25,11 +30,8 @@
 /[기획서]/10_분석_유저리서치/        @research-owner
 /[기획서]/11_통합검수/               @project-owner @qa-owner
 
-# 공용 Foundation 프로젝트 스킬·학습 기록
+# Foundation·분야별 프로젝트 스킬과 Learning Log
 /skills/foundation/                  @project-owner @engineering-owner @qa-owner
-/skills/foundation/**/LEARNING_LOG.md @project-owner @qa-owner
-
-# 분야별 프로젝트 스킬·학습 기록
 /skills/narrative/                   @narrative-owner
 /skills/game-design/                 @game-design-owner
 /skills/ux-ui-accessibility/         @ux-owner
@@ -42,8 +44,12 @@
 /skills/analytics-user-research/     @research-owner
 /skills/integrated-review/           @project-owner @qa-owner
 
-# 자동화·빌드·Publication·Skill Governance 파이프라인
-/.github/                            @project-owner @engineering-owner @qa-owner
-/tools/check_documentation_governance.py @engineering-owner @qa-owner
-/tools/check_skill_routing_governance.py @engineering-owner @qa-owner
-/tools/build_discipline_publications.py @engineering-owner @production-owner @qa-owner
+# 생성·검사·GitHub Governance 파이프라인
+/.github/                                  @project-owner @engineering-owner @qa-owner
+/tools/build_project_skill_map.py          @engineering-owner @qa-owner
+/tools/skill_map_diagrams.py               @engineering-owner @qa-owner
+/tools/build_design_documents.py           @engineering-owner @production-owner @qa-owner
+/tools/design_document_diagrams.py         @engineering-owner @production-owner @qa-owner
+/tools/check_documentation_governance.py   @engineering-owner @qa-owner
+/tools/check_skill_routing_governance.py   @engineering-owner @qa-owner
+/tools/check_design_document_publications.py @engineering-owner @production-owner @qa-owner

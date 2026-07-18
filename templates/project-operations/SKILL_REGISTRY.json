@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "registry_role": "project-skill-router-and-learning-index",
   "routing_policy": {
     "load_all_skills": false,
@@ -12,6 +12,15 @@
       "BACKUP",
       "REMOVAL_CANDIDATE"
     ]
+  },
+  "human_presentation": {
+    "primary_reading_format": "PROJECT_SKILL_MAP.pdf",
+    "editable_derivative": "PROJECT_SKILL_MAP.docx",
+    "diagram_directory": "PROJECT_SKILL_MAP.assets",
+    "publication_manifest": "SKILL_MAP_PUBLICATION_MANIFEST.json",
+    "generator": "tools/build_project_skill_map.py",
+    "source_of_truth": "SKILL_REGISTRY.json",
+    "markdown_skill_map_allowed": false
   },
   "skills": [],
   "discipline_entrypoints": {

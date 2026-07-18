@@ -1,129 +1,146 @@
 ---
 name: writing-game-design-documents
-description: Use when creating, restructuring, reviewing, updating, or handing off game design documents, roadmaps, system specifications, presentation plans, project skill extensions, or documentation maps.
+description: Use when creating, restructuring, reviewing, updating, or handing off game design responsibility structures, Design Document Registry entries, structured JSON bibles, roadmaps, specifications, or documentation maps.
 ---
 
-# Writing Game Design Documents
+# Writing Structured Game Design Documents
 
 ## Core principle
 
-좋은 기획서는 정보량이 아니라 **질문별 책임 원본, 실행 가능한 결정, 관찰 가능한 검증, 새 작업자의 재개 가능성**으로 평가한다.
+좋은 기획서는 정보량이 아니라 **질문별 책임 원본, 실행 가능한 결정, 관찰 가능한 검증, 사람 가독성, 새 작업자의 재개 가능성**으로 평가한다.
 
-기획서만 읽어도 프로젝트 방향, 핵심 플레이어 경험, 범위와 금지 방향을 이해할 수 있어야 한다. 세부 데이터·파일·테스트는 명시된 책임 원본으로 연결한다.
+프로젝트·분야 본책의 책임 원본은 구조화 JSON이다. 사람은 같은 JSON에서 생성한 DOCX·PDF·다이어그램·승인 이미지 통합본을 본다.
+
+## Responsibility contract
+
+```text
+AI·자동 검사 → DESIGN_DOCUMENT_REGISTRY.json·기획서 JSON
+사람 기본 열람 → 기획서 PDF
+사람 문서 검토 → 기획서 DOCX
+시각 자료 → 기획서.assets/
+최신성 → 기획서_PUBLICATION_MANIFEST.json
+현재 상태 → ACTIVE_CONTEXT.md
+작업 순서 → Roadmap·Issue·Plan
+반복 절차 → Project Skill
+```
+
+활성 `*_기획서.md`, `DISCIPLINE_BIBLE.md`, `PROJECT_MASTER_PLAN.md`는 사용하지 않는다. 운영 라우터 Markdown은 유지할 수 있다.
 
 ## Continuity contract
 
-새 채팅, 새 AI, 새 작업자가 과거 대화 없이 작업을 이어갈 수 있도록 다음 원본을 항상 최신화한다.
+항상 최신화:
 
-- 기획서: 방향, 핵심 경험, 승인·미확정 사항, 범위와 금지 방향
-- Roadmap: 현재 단계, 우선순위, 선행 조건, 다음 작업, 종료 기준과 검증
-- Project skill extension: Base skill을 실제 경로·데이터·검증에 연결
+- Design Document Registry: 문서 ID·책임 범위·JSON·DOCX·PDF·자산·Manifest 경로
+- 기획서 JSON: 방향·경험·승인·상태·범위·금지 방향·실제 경로·검증
+- 사람용 발행본: DOCX·PDF·다이어그램·승인 이미지
+- Roadmap: 현재 단계·우선순위·선행 조건·다음 작업·종료 기준
+- Skill Registry·Project Skill: 실제 경로·데이터·검증 연결
 - Active Context·Handoff: 현재 상태와 읽기 순서
 - Documentation Map: 질문별 현행 책임 원본
 
-방향, 수치, 용어, 범위, 구현 상태, 우선순위 또는 작업 절차가 바뀌면 같은 작업 안에서 관련 원본을 갱신한다.
+방향, 수치, 용어, 범위, 구현 상태, 우선순위 또는 절차가 바뀌면 같은 작업에서 관련 JSON·발행본·상태 원본을 갱신한다.
 
 ## Document router
 
-| 질문 | 책임 문서 |
+| 질문 | 책임 원본 |
 |---|---|
-| 왜 이 게임을 만드는가 | 프로젝트 비전·방향서 |
-| 플레이어가 무엇을 반복하는가 | 전체 GDD·핵심 루프 |
-| 한 시스템이 어떻게 작동하는가 | 시스템 기획서 |
-| 한 기능을 무엇까지 구현하는가 | 기능 명세·Issue |
-| 장면·대사·콘텐츠가 어떻게 흐르는가 | 콘텐츠·내러티브 기획서 |
-| 화면·카메라·사운드가 무엇을 전달하는가 | UI·UX·연출 기획서 |
-| 어떤 데이터를 누가 소유하는가 | 데이터 설계서 |
-| 어떤 순서로 진행하는가 | Roadmap |
-| 현재 무엇이 사실인가 | Active Context·Handoff |
-| 반복 작업을 어떤 절차로 수행하는가 | Base skill·Project skill extension |
-| 완료를 어떻게 판단하는가 | 테스트·QA 명세 |
-| 왜 이 결정을 했는가 | Decision Record |
-| 다음 작업자는 무엇을 먼저 읽는가 | Documentation Map·Handoff |
+| 왜 이 게임을 만드는가? | 프로젝트 종합 기획서 JSON |
+| 플레이어가 무엇을 반복하는가? | 게임 디자인 JSON |
+| 한 시스템이 어떻게 작동하는가? | 책임 분야 JSON의 상세 Section·실제 데이터 |
+| 한 기능을 무엇까지 구현하는가? | JSON 승인 범위·Issue·Plan |
+| 장면·대사·콘텐츠가 어떻게 흐르는가? | 설정·내러티브 JSON |
+| 화면·카메라·사운드가 무엇을 전달하는가? | UX·아트·사운드 JSON |
+| 어떤 데이터를 누가 소유하는가? | 개발 JSON·스키마·코드 |
+| 어떤 순서로 진행하는가? | Roadmap·Development Gates |
+| 현재 무엇이 사실인가? | Active Context·실제 파일·테스트 |
+| 반복 작업을 어떤 절차로 수행하는가? | Skill Registry·Project Skill |
+| 완료를 어떻게 판단하는가? | QA JSON·테스트 증거 |
+| 왜 이 결정을 했는가? | Decision Log·기획서 JSON decision |
+| 사람이 무엇을 읽는가? | 각 PDF·DOCX·assets |
 
 ## Process
 
 1. 사용자 약속과 현재 문제를 한 문장으로 쓴다.
-2. Base 공용 method·skill·template과 프로젝트 현행 문서를 함께 확인한다.
-3. 기존 Documentation Map을 확인하고 새 문서가 필요한지 판단한다.
-4. 한 질문에 현행 책임 원본 하나만 지정한다.
+2. Base Method·Skill과 프로젝트 Registry·현재 JSON·실제 파일을 확인한다.
+3. Design Document Registry에서 기존 책임 원본을 확인한다.
+4. 한 질문에 현행 JSON 책임 원본 하나만 지정한다.
 5. 구현 사실, 승인 계획, 진행 중, 가설, 보류를 분리한다.
-6. 각 기획을 목적→경험→규칙→흐름→예외→검증 순서로 작성한다.
-7. 실제 파일·데이터·Issue와 연결하되 전문을 중복 복사하지 않는다.
-8. 포함·제외 범위, 위험, 완료 기준을 명시한다.
-9. Roadmap에 현재 단계, 선행 조건, 다음 작업, 종료 기준과 검증을 연결한다.
-10. Base skill과 Project extension을 실제 경로·데이터·검증에 연결한다.
-11. 새 작업자가 3~6개 시작 문서에서 모든 책임 원본으로 이동할 수 있는 읽기 순서를 만든다.
-12. 파일 생성·통합·이동·삭제 시 Documentation Map, README와 참조를 갱신한다.
-13. 작업 종료·인수인계에서 프로젝트 전용 결과와 Base 공용 학습 데이터를 분리하고 case를 기록한다.
-14. 콜드 스타트 질문을 10분 안에 답할 수 있는지 확인한다.
+6. `목적 → 경험 → 규칙 → 흐름 → 예외 → 검증` 순서로 JSON을 작성한다.
+7. 세부 데이터·코드·자산·테스트 경로를 연결하고 전문을 복제하지 않는다.
+8. 책임 범위, 포함·제외, 위험, Ready·Done을 명시한다.
+9. 승인 이미지·실제 캡처는 Asset ID·상태·채택 범위와 함께 등록한다.
+10. Registry 항목을 갱신한다.
+11. `build_design_documents.py`로 DOCX·PDF·다이어그램·Manifest를 생성한다.
+12. PDF 전 페이지와 승인 이미지·표·한글을 시각 검수한다.
+13. Roadmap·Skill·Active Context·Documentation Map을 갱신한다.
+14. 새 AI가 10분 안에 모든 책임 원본과 다음 작업을 찾는지 확인한다.
+
+## JSON minimum contract
+
+- document ID·kind·title·discipline·owner·status
+- 목적·플레이어 가치·현재 목표·요약
+- 목표·Quality Bar·금지 방향
+- 책임·비책임·분야 간 계약
+- 전체 작업 과정
+- 작업·제품 게이트
+- Foundation·분야 Skill·Learning Log
+- 확정·구현·검증·확인 필요·보류
+- 결정·구현 경로·검증 증거
+- 상세 Sections
+- 승인 이미지·실제 캡처
+- 위험·다음 작업·Ready·Done
+- 부록·변경·학습 이력
 
 ## Base and project split
 
-### Base — [학습형] [공용]
+### Base — 공용
 
-- 작성 방법, 문서 종류, 검수 기준, 템플릿
-- 여러 프로젝트에서 반복 검증된 일반 원칙
-- 성공·실패·미검증 사례와 지식 상태
+- JSON 계약·작성 방법·검수 기준·생성기·템플릿
+- 여러 프로젝트에서 반복 검증된 일반 원리
+- 성공·실패·미검증 사례와 회귀 테스트
 
-### Project — [전용] [분화·적용·검증]
+### Project — 전용
 
-- 실제 비전, 세계관, 시스템, 수치, 콘텐츠
-- 현재 파일 경로, 상태, Roadmap, 테스트 결과
-- Base 규칙을 구체화한 전용 문서와 skill extension
-- 공용화 전 관찰·가설·실험 결과
+- 실제 비전·세계관·시스템·수치·콘텐츠
+- 실제 경로·구현·검증·Roadmap
+- 승인 이미지·프롬프트·DOCX/PDF
+- Project Skill과 관찰·가설
 
 ## Output contract
 
 ```md
-## 프로젝트 방향과 플레이어 경험
-## 책임 문서 지도
-## 문서별 승인·구현·검증 상태
-## Roadmap 연결
-## Base skill·Project extension 연결
-## 실제 파일·데이터·테스트 참조
-## 최초 읽기 순서
-## 콜드 스타트 검수
-## 프로젝트 전용 최신화
-## Base 공용 학습 데이터·case
+## 구조화 기획서 작업 결과
+- Design Document Registry 변경:
+- 프로젝트·분야 JSON:
+- 책임 범위:
+- 사람용 DOCX·PDF:
+- 다이어그램·승인 이미지:
+- Publication Manifest:
+- Roadmap·게이트 연결:
+- Skill Registry·Project Skill 연결:
+- 실제 파일·데이터·테스트:
+- 콜드 스타트 검수:
+- 미검증·보류·제거 후보:
 ```
 
 ## Failure conditions
 
-- 한 문서가 상태·계획·Roadmap·QA를 모두 소유
-- 같은 규칙을 여러 문서에 장문 복사
+- 한 JSON이 모든 분야의 세부 상태·Roadmap·QA를 무차별 소유
+- 같은 규칙을 여러 JSON에 장문 복사
 - `final`, `latest`, `v2` 활성 복제본 생성
+- DOCX·PDF를 독립 책임 원본으로 수정
+- 활성 Markdown 기획 본책 생성
 - 문서 존재를 구현 완료로 판단
-- 플레이어 경험과 제외 범위가 없음
-- 구현자가 찾을 실제 경로와 검증 방법이 없음
-- Issue만 최신이고 기획서·Roadmap·Handoff는 오래된 상태
-- Base skill과 프로젝트 실제 경로·검증이 연결되지 않음
+- 플레이어 경험·제외 범위·검증 없음
+- 실제 경로와 테스트가 없음
+- JSON은 최신인데 DOCX/PDF·Manifest가 오래됨
+- Issue만 최신이고 JSON·Roadmap·Handoff가 오래됨
 - 새 작업자가 과거 대화 없이는 방향과 다음 작업을 알 수 없음
 
 ## Validation scenarios
 
-1. 새 프로젝트는 비전, 전체 기획, 분야별 원본, Roadmap, Handoff, skill extension, QA의 책임을 분리한다.
-2. 기존 문서가 중복되면 최신 기준을 하나로 통합하고 참조 확인 후 구버전을 제거한다.
-3. 작은 기능은 새 GDD를 만들지 않고 기존 시스템 문서, Roadmap 상태와 Issue에 차이만 기록한다.
-4. 방향 변경은 기획서뿐 아니라 Roadmap, Handoff, Documentation Map과 관련 skill extension까지 갱신한다.
-5. 새 작업자는 10분 안에 핵심 경험, 현재 단계, 다음 작업, 책임 원본과 검증 방법을 찾는다.
-
-## Applied case — UI 명세에서 연출 책임을 분리하기
-
-한 프로젝트에서 UI 명세가 카드 정보 배치, 화면 흐름, 감정 곡선, 카메라·VFX·음향, 접근성 폴백까지 함께 책임해 변경 영향과 상태 소유가 불명확해졌다. 다음 순서로 정리했다.
-
-1. 먼저 질문을 분리했다.
-   - `무엇을 어디에 표시하는가`는 UI 명세.
-   - `어떤 순서와 강도로 경험시키는가`는 연출 기획서.
-   - `누가 결과와 저장을 소유하는가`는 아키텍처.
-   - `사용자가 무엇을 이해해야 하는가`는 테스트 명세.
-2. 각 질문에 현행 책임 원본 하나를 지정했다.
-3. 같은 규칙 전문을 복사하지 않고 공통 의미 단계와 원본 링크만 공유했다.
-4. Roadmap과 Active Context에 새 책임 경계와 다음 승인 게이트를 반영했다.
-5. 새 작업자가 10분 안에 규칙→UI→연출→QA 경로를 찾는지 확인했다.
-
-이 사례의 핵심은 문서를 많이 만드는 것이 아니라 **과적재된 문서를 질문과 상태 소유 기준으로 분리하고, 같은 결과를 끝까지 추적 가능하게 만드는 것**이다. 실제 런타임 검증 전에는 문서 구조 채택 상태로만 기록한다.
-
-관련 사례: `docs/knowledge/cases/TEN_PACES_RULE_PRESENTATION_TRACEABILITY_CASE.md`
-
-Template: `templates/planning/DESIGN_DOCUMENT_SYSTEM.md`
+1. 신규 프로젝트는 프로젝트 전체와 분야별 JSON 책임 범위를 Registry에 등록한다.
+2. 기존 문서는 안전 감사 후 고유 정보를 JSON에 승계하고 발행 검증 전 원본을 제거하지 않는다.
+3. 작은 기능은 새 본책을 만들지 않고 기존 JSON Section·Issue·Roadmap에 차이를 기록한다.
+4. 방향 변경은 JSON·DOCX/PDF·Roadmap·Handoff·관련 Skill을 함께 갱신한다.
+5. 새 작업자는 PDF로 전체 방향을 읽고 JSON·실제 파일로 세부 근거를 확인한다.
