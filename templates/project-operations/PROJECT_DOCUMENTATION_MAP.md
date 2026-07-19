@@ -33,6 +33,7 @@
 |---|---|---|---|
 | 프로젝트를 어디서 시작하는가? | `START_HERE.md` |  | 시작 경로 변경 |
 | 현재 무엇이 사실인가? | `ACTIVE_CONTEXT.md`·실제 파일 | 테스트·캡처 | 구현·검증·우선순위 변경 |
+| 현재 요구가 확정됐는가? | `INTERVIEW_REGISTRY.json`·현재 인터뷰 기록 | 사용자 확인 근거·확정 실행 프롬프트 | 방향·범위·산출물·검증 변경 |
 | 전체·분야 기획서는 어디인가? | `DESIGN_DOCUMENT_REGISTRY.json` | 각 책임 원본·PDF·Manifest·선택 파생본 | 본책 생성·통합·이동·상태 변경 |
 | 왜 이 프로젝트를 만드는가? | 프로젝트 종합 기획 책임 원본 | 프로젝트 종합 PDF | 방향·대상 플레이어 변경 |
 | 다음 개발 게이트는 무엇인가? | `DEVELOPMENT_GATES.md` | 게이트 검수 보고 | 게이트 판정 변경 |
@@ -65,7 +66,7 @@
 
 | 작업 | JSON·현행 원본 | Foundation 스킬 | 분야 스킬 | 후속 호출 | 검증 |
 |---|---|---|---|---|---|
-| 새 요청·분야 판정 | START_HERE·Active Context·두 Registry | routing-project-work-by-discipline | 주 책임 분야 진입 스킬 | 필요 시 요구 구체화 | 라우팅 재현성 |
+| 새 요청·분야 판정 | START_HERE·Active Context·Registry | routing-project-work-by-discipline | 주 책임 분야 진입 스킬 | 대상이면 conducting-deep-requirement-interviews → 요구 변환 | 라우팅·확인 추적성 |
 | 방향·핵심 경험 변경 | 프로젝트 종합 책임 원본 | 기획 책임 구조 | 영향 분야 | 발행·Handoff | 사용자 승인·원본 해시 |
 | 시스템·수치 변경 | 게임 디자인·개발 책임 원본 | 영향도 분석 | 게임 디자인·개발 | QA·통합검수·발행 | 데이터·플레이 회귀 |
 | UI·UX 변경 | UX·게임 디자인 책임 원본 | 영향도 분석 | UX·UI | 시각 QA·발행 | 사용성·접근성 |

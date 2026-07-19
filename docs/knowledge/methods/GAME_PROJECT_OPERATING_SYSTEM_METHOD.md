@@ -251,7 +251,7 @@ GitHub Actions 파일 존재, 실제 실행, Required Status Check 강제를 서
 ```text
 Audit only
 → 기존 Markdown·DOCX·PDF·이미지·참조 지도
-→ JSON 책임 구조와 발행 구조 제안
+→ 보존하거나 승인할 Markdown/JSON 책임 구조와 발행 구조 제안
 → 고유 정보·결정·보류 보존 대조
 → 사용자 승인
 → 승인 범위만 승계
@@ -267,6 +267,6 @@ Audit only
 - Skill Registry와 사람용 스킬맵이 일치한다.
 - Development Gates·Roadmap·Active Context가 연결된다.
 - 승인 이미지와 실제 캡처 상태가 추적된다.
-- 세 Governance Checker가 정상·실패 시나리오를 통과한다.
+- 네 Governance Checker가 정상·실패 시나리오를 통과한다.
 - 새 AI가 저장소만으로 방향·상태·기획서·스킬·검증을 찾는다.
 - 실행하지 않은 테스트·렌더·브랜치 보호를 완료로 보고하지 않는다.

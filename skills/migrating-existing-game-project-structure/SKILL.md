@@ -170,7 +170,7 @@ target_design_document_contract: preserve-current-or-use-explicitly-approved-tar
 - 링크·코드·Issue 참조
 - JSON·DOCX·PDF·다이어그램·Manifest
 
-| 기존 내용 | 기존 위치 | JSON 위치 | 사람용 출력 | 보존 | 검증 |
+| 기존 내용 | 기존 위치 | 새 책임 원본 위치 | 사람용 출력 | 보존 | 검증 |
 |---|---|---|---|---|---|
 |  |  |  |  |  |  |
 

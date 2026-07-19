@@ -104,9 +104,14 @@ AGENTS.md
 
 ## Request-to-work rule
 
-L2 이상의 설계 작업은 목적·맥락·경험·범위·제약·산출물·완료 기준·검증으로 변환한 뒤 시작한다.
+기능·게임 경험·아트 방향·구조·워크플로 변경은 저장소 사실 확인 → 딥인터뷰 → 사용자 마지막 재진술 확인 → 실행 프롬프트 변환 순서로 시작한다. 오탈자, 명확한 단일 파일 기계 수정, 입력이 같은 검사 재실행은 예외다.
 
-- Base skill:
+기존 프로젝트의 인터뷰 경로가 다르면 감사와 승인 없이 이동하지 않고 Documentation Map에 현행 대응 경로를 연결한다.
+
+L2 이상의 설계 작업은 목적·맥락·경험·범위·제약·산출물·완료 기준·검증으로 변환한 뒤 시작한다. 딥인터뷰 대상은 `INTERVIEW_REGISTRY.json`이 `CONFIRMED`이고 사용자 확인 근거가 있을 때만 실행 프롬프트를 만든다.
+
+- Interview ID·status·confirmation:
+- Base skill: `conducting-deep-requirement-interviews` → `transforming-requests-into-prompts`
 - Project extension:
 - Current executable prompt:
 

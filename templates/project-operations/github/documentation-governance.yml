@@ -23,6 +23,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install governance dependencies
+        run: python -m pip install jsonschema==4.26.0
+
       - name: Validate documentation and path governance
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
@@ -48,9 +51,15 @@ jobs:
           python tools/check_design_document_publications.py \
             --config .github/documentation-governance.json
 
+      - name: Validate deep-interview confirmation gate
+        run: |
+          python tools/check_interview_contract.py \
+            --root . \
+            --registry "[기획서]/00_프로젝트_허브/INTERVIEW_REGISTRY.json"
+
 # 프로젝트 적용 절차:
 # 1. 이 파일을 .github/workflows/documentation-governance.yml로 복사·분화한다.
-# 2. 세 checker를 tools/에 둔다.
+# 2. 네 checker와 interview Registry Schema를 tools/·schemas/에 둔다.
 # 3. config를 .github/documentation-governance.json에 둔다.
 # 4. 루트 [기획서], Skill Registry, Design Document Registry, Learning Log를 실제 경로에 맞춘다.
 # 5. Markdown·JSON 기획서와 PDF·선택 DOCX/다이어그램·Manifest 정상·실패 샘플 PR을 검증한다.

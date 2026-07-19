@@ -65,6 +65,9 @@
 │  ├─ DEVELOPMENT_GATES.md
 │  ├─ DESIGN_DOCUMENT_REGISTRY.json
 │  ├─ SKILL_REGISTRY.json
+│  ├─ INTERVIEW_REGISTRY.json
+│  ├─ INTERVIEWS/
+│  ├─ EXECUTABLE_PROMPTS/
 │  ├─ PROJECT_SKILL_MAP.md       # 선택 자동 생성
 │  ├─ PROJECT_SKILL_MAP.docx     # 선택 Word 검토
 │  ├─ PROJECT_SKILL_MAP.pdf
@@ -92,7 +95,7 @@
 |  | 분석·유저리서치 |  |  |  |  |  |  |
 |  | 통합검수 |  |  |  |  |  |  |
 
-통합 본책은 `responsibility_coverage`에 담당 분야를 모두 기록한다.
+표의 11개 분야는 선택 가능한 공용 카탈로그다. 프로젝트가 실제로 선택한 분야만 설치한다. 통합 본책은 `responsibility_coverage`에 담당 분야를 모두 기록한다.
 
 ## 5. Markdown·JSON 혼용 본책 계약
 
@@ -130,7 +133,7 @@ Markdown 또는 JSON 책임 원본
 
 ## 7. 프로젝트 스킬 설치
 
-| 분야·공용 | Registry ID | 진입 스킬 | 관련 JSON | 실제 파일 | 검증 | Learning Log |
+| 분야·공용 | Registry ID | 진입 스킬 | 관련 책임 원본 | 실제 파일 | 검증 | Learning Log |
 |---|---|---|---|---|---|---|
 |  |  |  |  |  |  |  |
 
@@ -197,7 +200,7 @@ Concept → Prototype → Graybox → First Playable → Vertical Slice → Prod
 
 ## 12. 변경 전후 보존 대조
 
-| 기존 내용 | 기존 위치 | JSON 위치 | 사람용 출력 | 보존 | 참조 검증 |
+| 기존 내용 | 기존 위치 | 새 책임 원본 위치 | 사람용 출력 | 보존 | 참조 검증 |
 |---|---|---|---|---|---|
 |  |  |  |  |  |  |
 
@@ -232,6 +235,6 @@ Concept → Prototype → Graybox → First Playable → Vertical Slice → Prod
 - [ ] Skill Registry와 사람용 스킬맵이 일치한다.
 - [ ] Development Gates·Roadmap·Active Context가 연결된다.
 - [ ] 승인 이미지와 실제 캡처가 추적된다.
-- [ ] 세 Governance Checker와 생성 통합 테스트가 통과한다.
+- [ ] 네 Governance Checker와 생성 통합 테스트가 통과한다.
 - [ ] 새 채팅이 저장소만으로 작업을 재개한다.
 - [ ] 실행하지 않은 렌더링·테스트·브랜치 보호를 완료로 표시하지 않았다.

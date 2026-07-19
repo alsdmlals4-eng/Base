@@ -104,6 +104,19 @@ PROJECT_SKILL_MAP.assets/
 - 외부 AI 결과 검수: `reviewing-external-ai-drafts`
 - 프로젝트 교훈 환류: `promoting-project-knowledge`
 - Base 수정제안서 승인·구현: `reviewing-and-implementing-base-change-proposals`
+- 기능·경험·아트 방향·구조·워크플로 결정 전 딥인터뷰: `conducting-deep-requirement-interviews`
+
+기능·게임 경험·아트 방향·구조·워크플로·Base 변경 제안은 다음 순서를 따른다.
+
+```text
+저장소 사실 확인
+→ 딥인터뷰
+→ 사용자 마지막 재진술 확인
+→ transforming-requests-into-prompts
+→ Planning·Implementation
+```
+
+오탈자, 명확한 단일 파일 기계 수정, 입력이 같은 검사 재실행은 딥인터뷰 예외다. 이미 상세한 요청은 처음부터 다시 묻지 않고 저장소 사실과 충돌·누락만 확인한다.
 
 금지:
 
@@ -149,6 +162,11 @@ Active Context·Handoff는 본책을 복제하지 않고 현재 상태와 읽기
 
 ```yaml
 work_contract_type: github_issue/approved_direct_request
+deep_interview_required:
+interview_id:
+interview_status:
+user_confirmation_ref:
+executable_prompt_path:
 primary_discipline:
 affected_disciplines:
 change_type:
@@ -175,6 +193,7 @@ validation:
 
 ```text
 Intake·Context
+→ Deep Interview·User Confirmation (대상 작업)
 → Definition of Ready
 → Planning·Approval
 → Implementation

@@ -31,6 +31,22 @@
       "knowledge_state": "PATTERN"
     },
     {
+      "skill_id": "conducting-deep-requirement-interviews",
+      "layer": "foundation",
+      "discipline": "planning",
+      "path": "skills/conducting-deep-requirement-interviews/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": ["feature-direction", "player-experience", "art-direction", "architecture", "workflow-change", "base-change-proposal", "material-ambiguity"],
+      "use_when": ["저장소 사실을 먼저 조사하고 사용자만 결정할 수 있는 요구를 확정한 뒤 실행 계약으로 넘긴다."],
+      "do_not_use_when": ["오탈자, 명확한 단일 파일 기계 수정, 입력이 같은 검사 재실행이다."],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": ["이미 확인 가능한 사실을 반복 질문", "사용자 확인 없는 실행", "요구 산출물 손실", "모호성 축 누락"],
+      "last_reviewed_at": "2026-07-19",
+      "last_reviewed_commit": "62574a3c7910370ffd2b11b9bc5dba75b73cc90d",
+      "knowledge_state": "PATTERN"
+    },
+    {
       "skill_id": "installing-game-project-operating-system",
       "layer": "foundation",
       "discipline": "project-operations",

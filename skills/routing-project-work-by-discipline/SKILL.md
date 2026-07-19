@@ -61,6 +61,8 @@ current_issue_or_approved_request:
 
 방향, 설정, 규칙, 밸런스, UX, 코드·데이터, 자산, 사운드, 검증, 일정, 문서·경로, 스킬, PDF·발행 중 해당 유형을 선택한다.
 
+기능·게임 경험·아트 방향·구조·워크플로·Base 변경 제안이면 `conducting-deep-requirement-interviews`를 Foundation 선행 게이트로 선택한다. 오탈자, 명확한 단일 파일 기계 수정, 동일 검사 재실행은 예외다.
+
 ### 3. 분야 판정
 
 - 최종 결정을 소유하는 분야를 `primary_discipline` 하나로 지정한다.
@@ -112,6 +114,10 @@ required_docs: []
 actual_paths: []
 validation: []
 routing_reason:
+deep_interview_required: true/false
+deep_interview_exception_reason:
+interview_id:
+interview_status:
 ```
 
 `deferred_skills`는 현재 단계에서는 호출하지 않지만 후속 게이트에서 필요할 수 있는 스킬이다.
@@ -123,6 +129,7 @@ routing_reason:
 - [ ] 주 책임 분야가 하나다.
 - [ ] 필요한 스킬만 선택했다.
 - [ ] 본책·실제 경로·검증이 연결됐다.
+- [ ] 딥인터뷰 대상이면 현재 인터뷰와 확인 게이트를 연결했다.
 
 ## Definition of Done
 

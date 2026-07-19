@@ -4,6 +4,7 @@
 
 | 스킬 | Trigger |
 |---|---|
+| `conducting-deep-requirement-interviews` | 기능·경험·아트 방향·구조·워크플로·Base 변경 제안의 사실과 사용자 결정을 실행 전에 확정함 |
 | `transforming-requests-into-prompts` | 요청이 짧거나 모호하고 범위·완료·검증이 부족함 |
 | `designing-vertical-slices` | 핵심 경험과 최종 품질·제작 파이프라인을 작은 구간에서 검증함 |
 | `writing-game-design-documents` | 기획서 종류, 책임 원본, 로드맵과 명세 구조를 정함 |

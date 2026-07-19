@@ -2,6 +2,9 @@
 
 ## Unreleased - Base audit and operating-contract consistency
 
+- Ouroboros 기준 커밋의 1,465개 tracked 파일을 전수 인벤토리화하고, 외부 MCP 없이 동작하는 `conducting-deep-requirement-interviews` Foundation 스킬을 추가했다.
+- 기능·게임 경험·아트 방향·구조·워크플로·Base 변경 제안에 저장소 사실 확인 → 딥인터뷰 → 사용자 마지막 확인 → 실행 프롬프트 게이트를 연결했다.
+- 인터뷰 Registry·기록 템플릿·JSON Schema·검사기를 추가해 사용자 확인 전 실행 프롬프트 생성을 차단한다.
 - 프로젝트 교훈을 `[수정제안서]`의 제안 전용 PR로 먼저 보존하고 사용자 승인 뒤 별도 구현 PR로 승격하는 계약을 추가했다.
 - Base Skill Registry와 수정제안서 Registry에 JSON Schema 검증을 추가했다.
 - 분야 스킬 진화 계약의 JSON 전용 입력, 11개 분야 전체 진입점, DOCX·다이어그램 상시 생성 표현을 schema v3 선택 계약에 맞게 수정했다.
