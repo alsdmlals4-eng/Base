@@ -24,6 +24,23 @@ Base START_HERE
 
 저장소 접근 없이 설치·마이그레이션·검수 완료를 주장하지 않는다.
 
+### Base 저장소 자체를 콜드 스타트할 때
+
+`Base`는 프로젝트 운영 키트의 공용 원본이므로 프로젝트 전용 `ACTIVE_CONTEXT.md`, `DEVELOPMENT_GATES.md`, `ROADMAP.md`, `INTERVIEW_REGISTRY.json`을 활성 파일로 두지 않는다. 이 경로들은 `templates/project-operations/`에서 대상 프로젝트에 설치하는 템플릿이다.
+
+Base 자체의 현재 상태는 다음 책임 원본에서 찾는다.
+
+```text
+확정된 운영 계약 → AGENTS.md·START_HERE.md·docs/DOCUMENTATION_MAP.md
+완료된 변경 → docs/CHANGELOG.md
+활성 스킬 → skills/SKILL_REGISTRY.json
+검토 대기 작업 → [수정제안서]/PROPOSAL_REGISTRY.json·개별 PROPOSAL.md
+진행 중 구현 → GitHub PR·Actions
+현재 인터뷰 → Base 변경 인터뷰가 실제 등록된 경우에만 해당 Registry·기록
+```
+
+활성 Base 인터뷰가 없으면 `등록 없음`, 제출된 제안의 우선순위가 승인되지 않았으면 `사용자 검토 대기·우선순위 미확정`으로 답한다. 프로젝트용 상태 파일이 Base 루트에 없다는 이유만으로 결함이나 누락으로 판정하지 않는다.
+
 ## 루트 기획서 위치
 
 신규 프로젝트와 승인된 마이그레이션의 활성 기획서는 저장소 루트 바로 아래에 둔다.
