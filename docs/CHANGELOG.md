@@ -15,6 +15,7 @@
 - 자동 렌더 검수와 사람 시각 검수를 서로 독립된 상태로 분리했다.
 - 삭제된 템플릿 참조와 임시 Google Docs 가져오기 파일을 정리했다.
 - 필요한 도구·파일·폰트·인증·권한이 없을 때 사용자에게 이유와 설치·적용·확인 방법을 요청하고 실제 환경을 재검증하는 계약을 추가했다.
+- schema v3 최종 감사에서 요구사항 추적, 무손실 승계, 13페이지 Codex 시각 검수, Actions·콜드 스타트·Branch protection 상태를 증거별로 기록했다.
 
 ## v2.1.0 - selective skill routing, continuous learning and root planning governance
 
