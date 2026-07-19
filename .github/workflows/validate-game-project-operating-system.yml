@@ -128,7 +128,18 @@ jobs:
       - name: Install Windows publication dependencies
         shell: pwsh
         run: |
-          choco install libreoffice-fresh poppler -y --no-progress
+          choco install libreoffice-fresh -y --no-progress
+          $popplerVersion = "24.08.0-0"
+          $popplerUrl = "https://github.com/oschwartz10612/poppler-windows/releases/download/v$popplerVersion/Release-$popplerVersion.zip"
+          $popplerZip = Join-Path $env:RUNNER_TEMP "poppler-$popplerVersion.zip"
+          $popplerRoot = Join-Path $env:RUNNER_TOOL_CACHE "poppler-$popplerVersion"
+          Invoke-WebRequest -Uri $popplerUrl -OutFile $popplerZip
+          $actualHash = (Get-FileHash -Algorithm SHA256 $popplerZip).Hash
+          $expectedHash = "58A6F9AE269756231D2F9AA6CBA39D75FEC6DEACAF3C4A50683383B5F3D5A527"
+          if ($actualHash -ne $expectedHash) {
+            throw "Poppler archive SHA-256 mismatch: expected $expectedHash, got $actualHash"
+          }
+          Expand-Archive -LiteralPath $popplerZip -DestinationPath $popplerRoot
           python -m pip install --upgrade pip
           python -m pip install -r requirements-publication.txt
           pnpm install --frozen-lockfile
@@ -137,19 +148,13 @@ jobs:
         shell: pwsh
         env:
           BASE_LIBREOFFICE: C:\Program Files\LibreOffice\program\soffice.exe
+          BASE_PDFTOPPM: ${{ runner.tool_cache }}\poppler-24.08.0-0\poppler-24.08.0\Library\bin\pdftoppm.exe
           PUPPETEER_EXECUTABLE_PATH: C:\Program Files\Google\Chrome\Application\chrome.exe
           PYTHONIOENCODING: utf-8
         run: |
-          $popplerCommand = Get-Command pdftoppm.exe -ErrorAction SilentlyContinue
-          $poppler = if ($popplerCommand) {
-            Get-Item $popplerCommand.Source
-          } else {
-            Get-ChildItem -Path C:\ProgramData\chocolatey\lib\poppler\tools -Recurse -File -ErrorAction SilentlyContinue |
-              Where-Object { $_.Name -ieq "pdftoppm.exe" } |
-              Select-Object -First 1
+          if (-not (Test-Path -LiteralPath $env:BASE_PDFTOPPM)) {
+            throw "pdftoppm.exe not found at pinned path: $env:BASE_PDFTOPPM"
           }
-          if (-not $poppler) { throw "pdftoppm.exe not found after Poppler installation" }
-          $env:BASE_PDFTOPPM = $poppler.FullName
           python tools/check_publication_environment.py --require-mermaid
           python -m unittest tests.test_design_document_generation tests.test_project_skill_map_generation -v
 
