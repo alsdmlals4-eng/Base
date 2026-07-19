@@ -21,6 +21,7 @@ START_HERE.md
 - [공용 스킬 Registry](skills/SKILL_REGISTRY.json)
 - [공용 스킬 학습 기록](skills/SKILL_LEARNING_LOG.md)
 - [Base 수정제안서]([수정제안서]/README.md)
+- [Ouroboros 딥인터뷰 Source Audit](docs/knowledge/research/OUROBOROS_DEEP_INTERVIEW_SOURCE_AUDIT.md)
 
 ## 사용자가 기억할 최소 요청
 
@@ -148,6 +149,7 @@ tests/             운영체계·발행·Governance 회귀 테스트
 | Skill | 사용할 때 |
 |---|---|
 | `routing-project-work-by-discipline` | 주 책임 분야·영향 분야·최소 스킬 판정 |
+| `conducting-deep-requirement-interviews` | 저장소 사실 조사·사용자 결정·마지막 확인을 실행 전에 연결 |
 | `installing-game-project-operating-system` | 신규·미설치 프로젝트 운영체계 설치 |
 | `migrating-existing-game-project-structure` | 기존 프로젝트 안전 감사·재배치 |
 | `evolving-project-discipline-skills` | 분야별 스킬 생성·통합·학습 |

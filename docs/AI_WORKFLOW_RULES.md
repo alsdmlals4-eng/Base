@@ -42,10 +42,13 @@
 
 ## 3. 요청 구체화
 
-L2 이상에서는 다음 순서를 적용한다.
+기능·게임 경험·아트 방향·구조·워크플로·Base 변경 제안은 L1 이상에서도 딥인터뷰 대상이다. 오탈자, 명확한 단일 파일 기계 수정, 동일 검사 재실행만 예외로 한다. L2 이상에서는 다음 순서를 적용한다.
 
 ```text
-문제와 목적
+저장소 사실 확인
+→ 딥인터뷰와 모호성 장부
+→ 사용자 마지막 재진술 확인
+→ 문제와 목적
 → 플레이어·사용자 경험
 → 공용 기준과 프로젝트 고유 조건
 → 확정 사실과 미확정 분리
@@ -61,7 +64,7 @@ L2 이상에서는 다음 순서를 적용한다.
 목적 → 맥락 → 경험 → 범위 → 제약 → 산출물 → 완료 기준 → 검증
 ```
 
-상세 절차는 `skills/transforming-requests-into-prompts/SKILL.md`, 출력 형식은 `templates/EXECUTABLE_PROMPT.md`를 따른다.
+인터뷰는 `skills/conducting-deep-requirement-interviews/SKILL.md`, 변환은 `skills/transforming-requests-into-prompts/SKILL.md`, 출력 형식은 `templates/EXECUTABLE_PROMPT.md`를 따른다. 인터뷰 대상은 Registry가 `CONFIRMED`이고 사용자 확인 근거가 있을 때만 실행 프롬프트를 만든다.
 
 ### Superpowers 호환 순서
 

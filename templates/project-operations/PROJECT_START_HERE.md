@@ -109,6 +109,9 @@ AI·자동 검사
 - 다이어그램: `PROJECT_SKILL_MAP.assets/`
 - 발행 Manifest: `SKILL_MAP_PUBLICATION_MANIFEST.json`
 - 요청 라우팅 스킬: `routing-project-work-by-discipline`
+- 딥인터뷰 스킬: `conducting-deep-requirement-interviews`
+- 현재 인터뷰: `INTERVIEW_REGISTRY.json`의 활성 항목 또는 없음
+- 확정 실행 프롬프트: `CONFIRMED` 인터뷰의 연결 경로 또는 없음
 - 현재 작업의 주 책임 분야 스킬:
 - 필요한 Foundation 스킬:
 - 후속 단계에서만 호출할 스킬:
@@ -128,6 +131,7 @@ AI·자동 검사
 → 현재 분야 Markdown 또는 JSON 책임 원본
 → SKILL_REGISTRY.json
 → 필요한 Foundation·분야 스킬
+→ 대상 작업이면 현재 인터뷰·사용자 확인·확정 실행 프롬프트
 → 사람 검토 시 기획서 PDF·DOCX·자산
 → Roadmap·Issue·Goal·Plan
 → 실제 코드·데이터·자산·테스트
@@ -149,7 +153,7 @@ AI·자동 검사
 
 ## 다음 작업
 
-| 우선순위 | 작업 | 주 책임 | 영향 분야 | 선행 조건·Ready | 완료 기준 | 검증 | 관련 JSON·스킬 |
+| 우선순위 | 작업 | 주 책임 | 영향 분야 | 선행 조건·Ready | 완료 기준 | 검증 | 관련 책임 원본·스킬 |
 |---:|---|---|---|---|---|---|---|
 | 1 |  |  |  |  |  |  |  |
 

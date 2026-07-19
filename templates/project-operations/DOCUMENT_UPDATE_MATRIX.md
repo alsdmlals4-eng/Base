@@ -84,13 +84,13 @@ SKILL.md·Learning Log
 - [ ] Asset ID·상태·캐노니컬 경로 확인
 - [ ] 채택·비채택 요소 기록
 - [ ] 콘셉트·실제 캡처 구분
-- [ ] 관련 JSON `approved_visuals` 갱신
+- [ ] 관련 책임 원본의 승인 이미지 메타데이터 갱신
 - [ ] PDF·Manifest와 선언한 선택 파생본을 재생성하거나 `STALE` 표시
 
 ## 5. 프로젝트 스킬 판정
 
 - [ ] 공용 절차는 Foundation에 한 번만 존재
-- [ ] 분야 스킬이 관련 JSON·실제 경로·산출물·검증을 연결
+- [ ] 분야 스킬이 관련 Markdown/JSON 책임 원본·실제 경로·산출물·검증을 연결
 - [ ] Trigger·비사용 조건·실패 조건 존재
 - [ ] Learning Log에 결과·실패·피드백 기록
 - [ ] Skill Registry 갱신
@@ -121,11 +121,11 @@ SKILL.md·Learning Log
 ## 8. 작업 종료
 
 - [ ] 실제 결과와 승인·구현·검증 상태 일치
-- [ ] 관련 JSON·두 Registry 최신
+- [ ] 관련 Markdown/JSON 책임 원본·Design/Skill/Interview Registry 최신
 - [ ] 관련 Skill·Learning Log 최신
 - [ ] DOCX·PDF·다이어그램·Manifest 최신
 - [ ] Active Context·Roadmap·Gates·Map 최신
 - [ ] 자동·수동·시각 검증과 미검증 분리
 - [ ] 다음 작업·선행 조건·Handoff 기록
-- [ ] 세 Governance Checker 통과
+- [ ] 네 Governance Checker 통과
 - [ ] 새 AI가 저장소만으로 작업 재개 가능

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/interview-registry-v1.schema.json",
+  "title": "Project Interview Registry v1",
+  "type": "object",
+  "required": ["schema_version", "registry_role", "interviews"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "registry_role": {"const": "deep-requirement-interview-index"},
+    "interviews": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["interview_id", "title", "record_path", "status", "work_contract_type", "created_at", "updated_at", "user_confirmation_ref", "executable_prompt_path", "supersedes"],
+        "properties": {
+          "interview_id": {"type": "string", "pattern": "^INT-[0-9]{4}-[0-9]{3}(?:-[a-z0-9]+(?:-[a-z0-9]+)*)?$"},
+          "title": {"type": "string", "minLength": 1},
+          "record_path": {"type": "string", "minLength": 1},
+          "status": {"enum": ["IN_PROGRESS", "AWAITING_USER_CONFIRMATION", "CONFIRMED", "SUPERSEDED", "ABANDONED"]},
+          "work_contract_type": {"enum": ["github_issue", "approved_direct_request"]},
+          "created_at": {"type": "string", "format": "date"},
+          "updated_at": {"type": "string", "format": "date"},
+          "user_confirmation_ref": {"type": ["string", "null"]},
+          "executable_prompt_path": {"type": ["string", "null"]},
+          "supersedes": {"type": ["string", "null"]}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

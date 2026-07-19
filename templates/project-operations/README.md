@@ -56,6 +56,8 @@ src/[기획서]/
 | `CHANGELOG.md` | 프로젝트 변경·검증·미검증 기록 |
 | `BASE_RULES_VERSION.md` | 적용 Base 커밋·동기화 날짜·프로젝트 차이 기록 |
 | `PROJECT_DOCUMENTATION_MAP.md` | 질문·작업별 책임 원본·스킬·검증 라우터 |
+| `INTERVIEW_REGISTRY.json` | 딥인터뷰 상태·확인 근거·실행 프롬프트 연결 책임 원본 |
+| `INTERVIEW_RECORD.md` | 원 요청·저장소 사실·결정·모호성·사용자 확인 기록 템플릿 |
 | `DEVELOPMENT_GATES.md` | Ready·Implementation·Verification·Documentation·Completion과 마일스톤 Greenlight |
 | `DOCUMENT_UPDATE_MATRIX.md` | 변경 유형별 필수 갱신 책임 |
 | `AI_WORKFLOW.md` | GPT·Codex·GitHub 협업 흐름 |
@@ -100,6 +102,7 @@ src/[기획서]/
 | `github/check_documentation_governance.py` | 링크·파일명·자산·분야 PDF·갱신 누락 검사기 |
 | `github/check_skill_routing_governance.py` | Registry·분야 진입·Learning Log·스킬맵 파생본 검사기 |
 | `github/documentation-governance.yml` | GitHub Actions 예시 |
+| Base `tools/check_interview_contract.py` | 인터뷰 Schema·기록·사용자 확인 전 실행 차단 검사기; 프로젝트 `tools/`로 복사·분화 |
 
 ## 권장 대상 구조
 
@@ -121,6 +124,11 @@ tools/
 │  ├─ DOCUMENTATION_MAP.md
 │  ├─ DEVELOPMENT_GATES.md
 │  ├─ SKILL_REGISTRY.json
+│  ├─ INTERVIEW_REGISTRY.json
+│  ├─ INTERVIEWS/
+│  │  └─ YYYY-MM-DD-slug.md
+│  ├─ EXECUTABLE_PROMPTS/
+│  │  └─ INT-YYYY-NNN-slug.md
 │  ├─ PROJECT_SKILL_MAP.md       # 선택 자동 생성
 │  ├─ PROJECT_SKILL_MAP.docx     # 선택 Word 검토
 │  ├─ PROJECT_SKILL_MAP.pdf

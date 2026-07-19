@@ -1,0 +1,4 @@
+interface:
+  display_name: "딥인터뷰"
+  short_description: "저장소 사실과 사용자 결정을 분리해 실행 전 요구를 확정합니다."
+  default_prompt: "Use $conducting-deep-requirement-interviews to investigate repository facts, resolve material ambiguity with the user, record confirmation, and hand off a lossless executable prompt."

@@ -188,7 +188,7 @@ def build_docx(registry: dict[str, Any], project_name: str, registry_hash: str, 
 
     doc.add_heading("2. 분야별 진입 구조", level=1)
     doc.add_picture(str(assets["discipline"]), width=Inches(7.1))
-    caption = doc.add_paragraph("그림 2. 11개 책임 분야의 진입 스킬 등록 상태"); caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    caption = doc.add_paragraph("그림 2. 프로젝트가 선택한 책임 분야의 진입 스킬 등록 상태"); caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
     table(doc, ["분야", "진입 스킬", "상태"], [[discipline, ", ".join(registry["discipline_entrypoints"].get(discipline, [])) or "[설치 필요]", "등록" if registry["discipline_entrypoints"].get(discipline) else "미등록"] for discipline in DISCIPLINES])
 
     section = doc.add_section()

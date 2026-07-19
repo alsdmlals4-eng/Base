@@ -27,12 +27,14 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "skills/SKILL_REGISTRY.json",
             "schemas/base-skill-registry-v1.schema.json",
             "schemas/base-change-proposal-registry-v1.schema.json",
+            "schemas/interview-registry-v1.schema.json",
             "[수정제안서]/README.md",
             "[수정제안서]/PROPOSAL_REGISTRY.json",
             "templates/BASE_CHANGE_PROPOSAL.md",
             "tools/check_base_change_proposals.py",
             "skills/SKILL_LEARNING_LOG.md",
             "skills/routing-project-work-by-discipline/SKILL.md",
+            "skills/conducting-deep-requirement-interviews/SKILL.md",
             "skills/maintaining-project-context-and-handoff/SKILL.md",
             "skills/verifying-game-project-operating-system/SKILL.md",
             "skills/installing-game-project-operating-system/SKILL.md",
@@ -45,6 +47,8 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "tools/design_document_diagrams.py",
             "tools/publication_v3.py",
             "tools/check_publication_environment.py",
+            "tools/check_interview_contract.py",
+            "tools/audit_external_source.py",
             "requirements-publication.txt",
             "package.json",
             "pnpm-lock.yaml",
@@ -54,6 +58,8 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "schemas/skill-registry-v3.schema.json",
             "templates/project-operations/PROJECT_START_HERE.md",
             "templates/project-operations/ACTIVE_CONTEXT.md",
+            "templates/project-operations/INTERVIEW_REGISTRY.json",
+            "templates/project-operations/INTERVIEW_RECORD.md",
             "templates/project-operations/HANDOFF.md",
             "templates/project-operations/ROADMAP.md",
             "templates/project-operations/DECISION_LOG.md",
@@ -113,6 +119,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "evolving-project-discipline-skills",
             "maintaining-project-context-and-handoff",
             "verifying-game-project-operating-system",
+            "conducting-deep-requirement-interviews",
         ]:
             self.assertIn(skill, start)
 
@@ -309,6 +316,27 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             self.assertIn("사용자", text)
         self.assertIn("required_tools_and_files", agents)
         self.assertIn("required_permissions", agents)
+
+    def test_deep_interview_gate_is_wired_to_project_contracts(self) -> None:
+        for relative in [
+            "AGENTS.md",
+            "START_HERE.md",
+            "templates/AGENTS.project.md",
+            "templates/project-operations/AI_WORKFLOW.md",
+            "templates/project-operations/PROJECT_START_HERE.md",
+        ]:
+            with self.subTest(path=relative):
+                text = (ROOT / relative).read_text(encoding="utf-8")
+                self.assertIn("conducting-deep-requirement-interviews", text)
+                self.assertIn("사용자", text)
+
+    def test_installer_preserves_hybrid_and_optional_contract(self) -> None:
+        text = (ROOT / "skills/installing-game-project-operating-system/SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("Markdown 또는 JSON", text)
+        self.assertIn("프로젝트가 실제로 선택한 책임 분야", text)
+        self.assertIn("INTERVIEW_REGISTRY.json", text)
+        self.assertNotIn("프로젝트 전체와 11개 책임 분야", text)
+        self.assertNotIn("기획 본책은 JSON으로 만든다", text)
 
 
 if __name__ == "__main__":

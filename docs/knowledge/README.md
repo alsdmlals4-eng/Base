@@ -100,6 +100,7 @@ docs/knowledge/
 | 대화·이벤트 연출 | `methods/DIALOGUE_AND_EVENT_PRESENTATION_METHOD.md` |
 | 조사·벤치마킹 | `research/DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md` |
 | 외부 AI·프롬프트 공식 자료 | `research/AI_WORKFLOW_AND_PROMPT_SOURCE_NOTES.md` |
+| 딥인터뷰 외부 소스 감사 | `research/OUROBOROS_DEEP_INTERVIEW_SOURCE_AUDIT.md` |
 | FACS 표정 제어 참고 | `research/FACS_ACTION_UNIT_PROMPT_REFERENCE.md` |
 | 기획·조사·인수 능력 | `skills/PLANNING_RESEARCH_HANDOFF_SKILL_MATRIX.md` |
 | 아트·프롬프트 능력 | `skills/ART_DIRECTION_SKILL_MATRIX.md` |
@@ -108,6 +109,7 @@ docs/knowledge/
 실행 스킬:
 
 - 요청 변환: `../../skills/transforming-requests-into-prompts/SKILL.md`
+- 요구 딥인터뷰: `../../skills/conducting-deep-requirement-interviews/SKILL.md`
 - Vertical Slice: `../../skills/designing-vertical-slices/SKILL.md`
 - 기획서 작성: `../../skills/writing-game-design-documents/SKILL.md`
 - DeepSeek·외부 AI worktree: `../../skills/orchestrating-deepseek-worktrees/SKILL.md`

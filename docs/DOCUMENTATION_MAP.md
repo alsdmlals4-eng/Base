@@ -158,6 +158,7 @@ PROJECT_SKILL_MAP.assets/
 | Active Context·Handoff | `maintaining-project-context-and-handoff` | 상태·다음 작업·게이트·위험 변경 |
 | 운영체계 Health Review | `verifying-game-project-operating-system` | 설치·마이그레이션·주요 게이트·콜드 스타트 실패 |
 | 실행 프롬프트 변환 | `transforming-requests-into-prompts` | 요청·범위·완료 기준이 모호함 |
+| 딥인터뷰·사용자 확인 | `conducting-deep-requirement-interviews` | 기능·경험·아트 방향·구조·워크플로·Base 변경 제안 |
 | Vertical Slice 설계 | `designing-vertical-slices` | 대표 품질·제작 파이프라인 검증 |
 | 기획 책임 구조 설계 | `writing-game-design-documents` | Registry·Markdown/JSON 책임 원본·Roadmap 구조 변경 |
 | 외부 AI 작업 격리 | `orchestrating-deepseek-worktrees` | 대량 초안·분류 위임 |

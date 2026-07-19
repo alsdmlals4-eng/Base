@@ -31,7 +31,8 @@
 
 | 작업 신호 | 우선 스킬·원칙 |
 |---|---|
-| 짧거나 모호한 요청 | `transforming-requests-into-prompts` |
+| 기능·경험·아트 방향·구조·워크플로·Base 변경 제안 | `conducting-deep-requirement-interviews` |
+| 확인된 요구를 실행 계약으로 변환 | `transforming-requests-into-prompts` |
 | 기획서 구조·종류 결정 | `writing-game-design-documents` |
 | 핵심 경험과 제작 품질 검증 | `designing-vertical-slices` |
 | 대용량 초안·분류·반복 변환 | `orchestrating-deepseek-worktrees` |
