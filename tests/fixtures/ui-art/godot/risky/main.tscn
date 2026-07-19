@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[node name="RiskyPanel" type="PanelContainer"]
+offset_left = 120.0
+offset_top = 80.0
+offset_right = 900.0
+offset_bottom = 620.0

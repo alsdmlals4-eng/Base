@@ -2,6 +2,9 @@
 
 ## Unreleased - Base audit and operating-contract consistency
 
+- SlopSlap 기준 커밋의 51개 tracked 파일과 27개 시각 자산을 전수 감사하고, 외부 Claude·브라우저 런타임 없이 동작하는 Godot/Web UI 아트 감사 스킬을 추가했다.
+- A~E 읽기 전용 후보 검사, 목적 있는 디자인 반례, 사용자 승인 게이트, 순차 개선, 독립 재감사와 실제 전후 렌더 계약을 추가했다.
+- UI Art Findings JSON Schema와 Windows/Linux 호환 정적 검사기를 추가했으며, 정적 패턴만으로 결함이나 “AI slop”을 확정하지 않도록 했다.
 - Ouroboros 기준 커밋의 1,465개 tracked 파일을 전수 인벤토리화하고, 외부 MCP 없이 동작하는 `conducting-deep-requirement-interviews` Foundation 스킬을 추가했다.
 - 기능·게임 경험·아트 방향·구조·워크플로·Base 변경 제안에 저장소 사실 확인 → 딥인터뷰 → 사용자 마지막 확인 → 실행 프롬프트 게이트를 연결했다.
 - 인터뷰 Registry·기록 템플릿·JSON Schema·검사기를 추가해 사용자 확인 전 실행 프롬프트 생성을 차단한다.

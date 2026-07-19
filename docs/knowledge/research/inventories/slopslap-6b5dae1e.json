@@ -1,0 +1,427 @@
+{
+  "branch_at_audit": "main",
+  "commit": "6b5dae1efaa319d7bb015ee5c2d593933b92911b",
+  "files": [
+    {
+      "bytes": 463,
+      "content_kind": "text",
+      "media_type": "application/json",
+      "path": ".claude-plugin/marketplace.json",
+      "role": "configuration",
+      "sha256": "c384f5ae716504c7b10292bbe724670c145593a58b5233cf88357e529b509a3e"
+    },
+    {
+      "bytes": 683,
+      "content_kind": "text",
+      "media_type": "application/json",
+      "path": ".claude-plugin/plugin.json",
+      "role": "configuration",
+      "sha256": "9ca338befc01c9daf07ec0ea374440af24a17f4e2d235b9b31c038dbad0f56b2"
+    },
+    {
+      "bytes": 16111,
+      "content_kind": "text",
+      "media_type": "text/markdown",
+      "path": ".claude/skills/slopslap/SKILL.md",
+      "role": "skill",
+      "sha256": "3ca536608ed0142e0d852ec5118afad01a53989bfe4c388befc71206ff57c90d"
+    },
+    {
+      "bytes": 19241,
+      "content_kind": "text",
+      "media_type": "text/markdown",
+      "path": ".claude/skills/slopslap/references/inspection-areas.md",
+      "role": "skill",
+      "sha256": "f70636cb9f1b733109c4ed76770332e2378a3b2c2290c5c96ffc87a16777f382"
+    },
+    {
+      "bytes": 3571,
+      "content_kind": "text",
+      "media_type": "text/markdown",
+      "path": ".claude/skills/slopslap/references/matrix-schema.md",
+      "role": "skill",
+      "sha256": "7c67b2a670a2a244ef4244f133385123fbd209b9d74e778d0396a9f1424a9a7a"
+    },
+    {
+      "bytes": 47,
+      "content_kind": "text",
+      "media_type": "application/octet-stream",
+      "path": ".gitignore",
+      "role": "configuration",
+      "sha256": "e4f2853f41b940c1f1459175cc72921732a13032eae56c680100244fdbef8eb0"
+    },
+    {
+      "bytes": 5485,
+      "content_kind": "text",
+      "media_type": "text/markdown",
+      "path": "DEPLOY.md",
+      "role": "documentation",
+      "sha256": "9323a1531ab9d56468f334b75a869aa3747fffdc9bc63b8bc2c023ffa9c3a28d"
+    },
+    {
+      "bytes": 1065,
+      "content_kind": "text",
+      "media_type": "application/octet-stream",
+      "path": "LICENSE",
+      "role": "documentation",
+      "sha256": "8af2d291ea6a5f03a4c86f4ed3e5ff899c565f31e35d66bf23f8d67cf952a63e"
+    },
+    {
+      "bytes": 6940,
+      "content_kind": "text",
+      "media_type": "text/markdown",
+      "path": "README.md",
+      "role": "documentation",
+      "sha256": "ee020bcfe1963cbc25ba1992c142594f39de1302d0d1bf02e29efd232eaede63"
+    },
+    {
+      "bytes": 8315,
+      "content_kind": "text",
+      "media_type": "text/markdown",
+      "path": "docs/ai-slop-reflection.md",
+      "role": "documentation",
+      "sha256": "44cba9151ceca02294814b2abd5151ee725708836bb2ec9905d562f0dc753d00"
+    },
+    {
+      "bytes": 3052,
+      "content_kind": "text",
+      "media_type": "image/svg+xml",
+      "path": "docs/assets/eval-function.svg",
+      "role": "asset",
+      "sha256": "46d67204defe59132267ce9b059aef2d2be7d1d893638d4a374fdbe52e1a8002"
+    },
+    {
+      "bytes": 6422,
+      "content_kind": "text",
+      "media_type": "image/svg+xml",
+      "path": "docs/assets/five-sins.svg",
+      "role": "asset",
+      "sha256": "63b93d77f164eaadd335fbf4c0de0f8427929dc5d526422ffeb1119db526c7ba"
+    },
+    {
+      "bytes": 2793,
+      "content_kind": "text",
+      "media_type": "image/svg+xml",
+      "path": "docs/assets/hero.svg",
+      "role": "asset",
+      "sha256": "9361226307b148cf840746e5fab07b86bd6f0e54acb651a0b204f08274fb1bfd"
+    },
+    {
+      "bytes": 7175,
+      "content_kind": "text",
+      "media_type": "image/svg+xml",
+      "path": "docs/assets/pipeline.svg",
+      "role": "asset",
+      "sha256": "3f6913e45ed067eb9370da537dbbdd7f62d721e7ae745a9cc58a8d984a71c60b"
+    },
+    {
+      "bytes": 982130,
+      "content_kind": "binary",
+      "media_type": "image/png",
+      "path": "docs/assets/readme/eval-function.png",
+      "role": "asset",
+      "sha256": "57ecb644f9c3c919fae100746ebe330a97ab331b98dc318965a60516f580e677"
+    },
+    {
+      "bytes": 1266306,
+      "content_kind": "binary",
+      "media_type": "image/png",
+      "path": "docs/assets/readme/hero-system.png",
+      "role": "asset",
+      "sha256": "cbf3bfd29622d6b0cbf6757e09a3074a3400552f8059e14877607d151fa6b003"
+    },
+    {
+      "bytes": 1318047,
+      "content_kind": "binary",
+      "media_type": "image/png",
+      "path": "docs/assets/readme/inspection-areas.png",
+      "role": "asset",
+      "sha256": "996af03760843ee7ea40dfc9128cf0975ebb794bad4fe0839ceab0f0be199216"
+    },
+    {
+      "bytes": 1369873,
+      "content_kind": "binary",
+      "media_type": "image/png",
+      "path": "docs/assets/readme/reference-snap.png",
+      "role": "asset",
+      "sha256": "869c9c6edfbd3ffeccadb7bc1d347eca7c5817d06fd277f84bc409c77dccd944"
+    },
+    {
+      "bytes": 1190157,
+      "content_kind": "binary",
+      "media_type": "image/png",
+      "path": "docs/assets/readme/runtime-pipeline.png",
+      "role": "asset",
+      "sha256": "bef2515b599b41f369849b4f94102489a6ea38e4d30908ba0920d44d033d12f4"
+    },
+    {
+      "bytes": 1297800,
+      "content_kind": "binary",
+      "media_type": "image/png",
+      "path": "docs/assets/readme/skill-anatomy.png",
+      "role": "asset",
+      "sha256": "1d530a00ed93c993de0179e2997d24fe3db06a53504631e3cf1d9b954f62d189"
+    },
+    {
+      "bytes": 1054135,
+      "content_kind": "binary",
+      "media_type": "image/png",
+      "path": "docs/assets/readme/usage-strip.png",
+      "role": "asset",
+      "sha256": "bb451cf08b34d8d78c6ae611e931e848f5615fdd291ac0f879473b7c37324b29"
+    },
+    {
+      "bytes": 23058,
+      "content_kind": "text",
+      "media_type": "text/markdown",
+      "path": "docs/readme-visual-asset-plan.md",
+      "role": "documentation",
+      "sha256": "94241c9e3df60bfda114c4ad2c8ab22932b7c682b0eaf9d19cde9c1ed8e89558"
+    },
+    {
+      "bytes": 34978,
+      "content_kind": "text",
+      "media_type": "application/json",
+      "path": "package-lock.json",
+      "role": "lockfile",
+      "sha256": "f55577cfdf0891f42959b9a277c1b596416360a4ed4afd23815ca84d8e4ce916"
+    },
+    {
+      "bytes": 374,
+      "content_kind": "text",
+      "media_type": "application/json",
+      "path": "package.json",
+      "role": "configuration",
+      "sha256": "1a89f415e2774c76ca02fff1ed8c62b73ba7ce4a67d37c76922a329135f20ef4"
+    },
+    {
+      "bytes": 12804,
+      "content_kind": "text",
+      "media_type": "text/javascript",
+      "path": "scripts/build-findings-report.mjs",
+      "role": "source",
+      "sha256": "045610a7e856cf9418853459fb287c530dbee3024d6c78cac94a9a0e1cd89fbb"
+    },
+    {
+      "bytes": 5978,
+      "content_kind": "text",
+      "media_type": "text/javascript",
+      "path": "scripts/capture-reference.mjs",
+      "role": "source",
+      "sha256": "56d7619f20bed053a020eaf7271acaebe5c795bdbdaab8507ff3312fce93a5cd"
+    },
+    {
+      "bytes": 1772,
+      "content_kind": "text",
+      "media_type": "text/javascript",
+      "path": "scripts/fetch-answer.mjs",
+      "role": "source",
+      "sha256": "6066e1fe5b03ff97c842b55b6cc67a2325d9676f2f93c6af8ad71ce276f0f171"
+    },
+    {
+      "bytes": 2720,
+      "content_kind": "text",
+      "media_type": "text/javascript",
+      "path": "scripts/fetch-references.mjs",
+      "role": "source",
+      "sha256": "42f4938a73e238693070cecd82e0a5a9dee68c417276737852bdd11981254963"
+    },
+    {
+      "bytes": 11216,
+      "content_kind": "text",
+      "media_type": "text/javascript",
+      "path": "scripts/gen-reference-data.mjs",
+      "role": "source",
+      "sha256": "1f4d0e621653274d5d96007e24cc02bdab3784342c4097089103a893d6f6517a"
+    },
+    {
+      "bytes": 4733,
+      "content_kind": "text",
+      "media_type": "text/javascript",
+      "path": "scripts/scan-slop-signals.mjs",
+      "role": "source",
+      "sha256": "ad74a69a88653b3b029dfcf037f49390312507fd19290da53700bbc2943ac8ef"
+    },
+    {
+      "bytes": 163999,
+      "content_kind": "text",
+      "media_type": "text/javascript",
+      "path": "src/data/aiSlopTaxonomyData.js",
+      "role": "source",
+      "sha256": "860f590a8dde13ebb24c57fca3f68d37bff99431720c20ecb5e93acd8b2ad37b"
+    },
+    {
+      "bytes": 15383,
+      "content_kind": "text",
+      "media_type": "text/javascript",
+      "path": "src/data/referenceData.js",
+      "role": "source",
+      "sha256": "61842b04793121c13196b41da46e0cd757585d53cc3eb3bcf84972348af0ea5d"
+    },
+    {
+      "bytes": 2387,
+      "content_kind": "text",
+      "media_type": "application/json",
+      "path": "src/data/referenceMatrix/cells.json",
+      "role": "configuration",
+      "sha256": "89976819844956cdabb8e106fb54ad4386d97580d14ec9c9e2705ed15c62b7d2"
+    },
+    {
+      "bytes": 3519,
+      "content_kind": "text",
+      "media_type": "text/javascript",
+      "path": "src/data/referenceMatrix/index.js",
+      "role": "source",
+      "sha256": "b5e121d83705cb9040c19a3402678cd206a558fed847f9cbb69361ee531835f7"
+    },
+    {
+      "bytes": 42578,
+      "content_kind": "binary",
+      "media_type": "image/jpeg",
+      "path": "src/data/referenceMatrix/shots/apple-com.jpg",
+      "role": "asset",
+      "sha256": "900ebecad54d86286ed28a994a77b43e04f2bdca8f735386d246dbf269eaf6a4"
+    },
+    {
+      "bytes": 54169,
+      "content_kind": "binary",
+      "media_type": "image/jpeg",
+      "path": "src/data/referenceMatrix/shots/arc-net.jpg",
+      "role": "asset",
+      "sha256": "54b8414e62d2a0d0450ed6739076ee9a227af4f9eea820dde065c818e8d8a458"
+    },
+    {
+      "bytes": 69140,
+      "content_kind": "binary",
+      "media_type": "image/jpeg",
+      "path": "src/data/referenceMatrix/shots/basecamp-com.jpg",
+      "role": "asset",
+      "sha256": "277c0b705b9d7780a7880ab21cbd19ea10b97e9bab18b669036281265e382d22"
+    },
+    {
+      "bytes": 28653,
+      "content_kind": "binary",
+      "media_type": "image/jpeg",
+      "path": "src/data/referenceMatrix/shots/clerk-com.jpg",
+      "role": "asset",
+      "sha256": "31512f2467a52f94a841d1db0ffb5b62f2108c23a2fcb5bf87f6d4f0e9a782e4"
+    },
+    {
+      "bytes": 18131,
+      "content_kind": "binary",
+      "media_type": "image/jpeg",
+      "path": "src/data/referenceMatrix/shots/framer-com.jpg",
+      "role": "asset",
+      "sha256": "3ac71c6344a21786a525fe3040caf21d45726b601ce81481512581ba87f5dd5d"
+    },
+    {
+      "bytes": 20853,
+      "content_kind": "binary",
+      "media_type": "image/jpeg",
+      "path": "src/data/referenceMatrix/shots/linear-app.jpg",
+      "role": "asset",
+      "sha256": "63e568faa32851ab9dee578c7206754a938fb17ed6135170e4408cf1fa956f0d"
+    },
+    {
+      "bytes": 47922,
+      "content_kind": "binary",
+      "media_type": "image/jpeg",
+      "path": "src/data/referenceMatrix/shots/mailchimp-com.jpg",
+      "role": "asset",
+      "sha256": "c6d5784d162ae1cb66547854dd38d9ea56089a6532edd16cb52a7a1a8553ded0"
+    },
+    {
+      "bytes": 46724,
+      "content_kind": "binary",
+      "media_type": "image/jpeg",
+      "path": "src/data/referenceMatrix/shots/notion-so.jpg",
+      "role": "asset",
+      "sha256": "235edbd5166c997b6e4325f7413498bcc07b06338e080d67ca81aa71a7b51da8"
+    },
+    {
+      "bytes": 9880,
+      "content_kind": "binary",
+      "media_type": "image/jpeg",
+      "path": "src/data/referenceMatrix/shots/pitch-com.jpg",
+      "role": "asset",
+      "sha256": "eaa10bdfcc84446bedc6134caf567a58a21aeafd5d00f774982332241c036dde"
+    },
+    {
+      "bytes": 174588,
+      "content_kind": "binary",
+      "media_type": "image/jpeg",
+      "path": "src/data/referenceMatrix/shots/posthog-com.jpg",
+      "role": "asset",
+      "sha256": "5a7d7daa3c870a54c5439bb0beccd68fe9da0364edf436cfc8e4dc92f0a78052"
+    },
+    {
+      "bytes": 20622,
+      "content_kind": "binary",
+      "media_type": "image/jpeg",
+      "path": "src/data/referenceMatrix/shots/railway-com.jpg",
+      "role": "asset",
+      "sha256": "274e15f2e10336a837da4c2745a76e7970d90e26dfdc45ad9bc73dc0fc961d13"
+    },
+    {
+      "bytes": 15263,
+      "content_kind": "binary",
+      "media_type": "image/jpeg",
+      "path": "src/data/referenceMatrix/shots/resend-com.jpg",
+      "role": "asset",
+      "sha256": "14aa518290ac374912da95955e8e6e99eef193151a0b73e111a966cdc3ce68d9"
+    },
+    {
+      "bytes": 20162,
+      "content_kind": "binary",
+      "media_type": "image/jpeg",
+      "path": "src/data/referenceMatrix/shots/stripe-com.jpg",
+      "role": "asset",
+      "sha256": "c5044b5c79eb1554edf3a56111b9c92ee656c574d19e953c52c1cac1ab7c0f84"
+    },
+    {
+      "bytes": 27072,
+      "content_kind": "binary",
+      "media_type": "image/jpeg",
+      "path": "src/data/referenceMatrix/shots/supabase-com.jpg",
+      "role": "asset",
+      "sha256": "141ea7adebe057623789bf293514868cb308ba1f027696942dc43746a1a3d475"
+    },
+    {
+      "bytes": 31180,
+      "content_kind": "binary",
+      "media_type": "image/jpeg",
+      "path": "src/data/referenceMatrix/shots/tailwindcss-com.jpg",
+      "role": "asset",
+      "sha256": "0fbaf36304a32a4eade1ac0ddc349ba9c7a02d1ff67f56d15e4e59abacb7f919"
+    },
+    {
+      "bytes": 19403,
+      "content_kind": "binary",
+      "media_type": "image/jpeg",
+      "path": "src/data/referenceMatrix/shots/vercel-com.jpg",
+      "role": "asset",
+      "sha256": "20f7194e28cfbebf5a83cb9f9e2f4dbafd27f3092497e1eaeff0591395d7b830"
+    },
+    {
+      "bytes": 17412,
+      "content_kind": "text",
+      "media_type": "application/json",
+      "path": "src/data/referenceMatrix/units.json",
+      "role": "configuration",
+      "sha256": "97981e6851b442a86f62beac2e91beb40fb2bbbe86b1ae09f20732dd57a18cd6"
+    }
+  ],
+  "role_counts": {
+    "asset": 27,
+    "configuration": 6,
+    "documentation": 5,
+    "lockfile": 1,
+    "skill": 3,
+    "source": 9
+  },
+  "schema_version": 1,
+  "source_name": "SlopSlap",
+  "source_url": "https://github.com/vibedesignlab/slopslap",
+  "total_bytes": 9506484,
+  "tracked_file_count": 51
+}

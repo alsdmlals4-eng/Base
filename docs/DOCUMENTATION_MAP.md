@@ -164,6 +164,7 @@ PROJECT_SKILL_MAP.assets/
 | 외부 AI 작업 격리 | `orchestrating-deepseek-worktrees` | 대량 초안·분류 위임 |
 | 외부 AI 결과 검수 | `reviewing-external-ai-drafts` | 외부 AI 결과 실제 반영 전 |
 | 아트 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` | 새 아트 방향·생성·편집 프롬프트 |
+| Godot·Web UI 아트 감사 | `auditing-and-refining-ui-art` | 실행 결과의 A~E 감사·승인된 개선·전후 렌더 재검수 |
 | 프로젝트 교훈 환류 | `promoting-project-knowledge` | 반복 검증된 프로젝트 독립 원리 존재 |
 | Base 수정제안서 검토·구현 | `reviewing-and-implementing-base-change-proposals` | 사용자가 BCP 검토 또는 승인된 구현을 요청 |
 

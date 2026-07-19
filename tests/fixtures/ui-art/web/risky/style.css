@@ -1,0 +1,9 @@
+.panel {
+  position: absolute;
+  width: 920px;
+  padding: 13px;
+  background: linear-gradient(135deg, #18102e, #52206f);
+  box-shadow: 0 18px 60px rgba(115, 42, 170, 0.55);
+  color: #a9a0b5;
+  font-size: 11px;
+}

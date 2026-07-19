@@ -105,6 +105,7 @@ PROJECT_SKILL_MAP.assets/
 - 프로젝트 교훈 환류: `promoting-project-knowledge`
 - Base 수정제안서 승인·구현: `reviewing-and-implementing-base-change-proposals`
 - 기능·경험·아트 방향·구조·워크플로 결정 전 딥인터뷰: `conducting-deep-requirement-interviews`
+- Godot·Web UI 실행 결과 감사·승인된 개선·독립 재검수: `auditing-and-refining-ui-art`
 
 기능·게임 경험·아트 방향·구조·워크플로·Base 변경 제안은 다음 순서를 따른다.
 
@@ -117,6 +118,8 @@ PROJECT_SKILL_MAP.assets/
 ```
 
 오탈자, 명확한 단일 파일 기계 수정, 입력이 같은 검사 재실행은 딥인터뷰 예외다. 이미 상세한 요청은 처음부터 다시 묻지 않고 저장소 사실과 충돌·누락만 확인한다.
+
+UI 아트 감사의 정적 패턴은 후보 탐색일 뿐 결함 판정이나 자동 삭제 권한이 아니다. 아트 방향을 확인하고 사용자 승인 전 대상 파일을 보존하며, 승인된 finding만 A→B→C→D→E로 수정한 뒤 실제 Godot/Web 렌더를 독립 재검수한다.
 
 금지:
 

@@ -1,0 +1,5 @@
+/* base-ui-audit: allow W-A-DECORATIVE-EFFECT reason=보스 경고 표면에만 쓰는 확정된 위험 신호 */
+.boss-warning {
+  background: linear-gradient(90deg, #250000, #7a1200);
+  box-shadow: 0 0 18px rgba(255, 40, 0, 0.5);
+}

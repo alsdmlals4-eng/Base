@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/ui-art-findings-v1.schema.json",
+  "title": "UI Art Audit Findings v1",
+  "type": "object",
+  "required": ["schema_version", "scanned_root", "adapters", "scanned_files", "suppressions", "findings"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "scanned_root": {"type": "string", "minLength": 1},
+    "adapters": {
+      "type": "array",
+      "items": {"enum": ["godot", "web"]},
+      "uniqueItems": true
+    },
+    "scanned_files": {"type": "integer", "minimum": 0},
+    "suppressions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["adapter", "file", "line", "rule_id", "reason"],
+        "properties": {
+          "adapter": {"enum": ["godot", "web"]},
+          "file": {"type": "string", "minLength": 1},
+          "line": {"type": "integer", "minimum": 1},
+          "rule_id": {"type": "string", "pattern": "^[GW]-[A-E]-[A-Z0-9-]+$"},
+          "reason": {"type": "string", "minLength": 3}
+        },
+        "additionalProperties": false
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding_id", "area", "adapter", "severity", "confidence", "file", "line", "observed_evidence", "design_risk", "proposed_change", "verification_predicate", "status"],
+        "properties": {
+          "finding_id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "area": {"enum": ["A", "B", "C", "D", "E"]},
+          "adapter": {"enum": ["godot", "web"]},
+          "severity": {"enum": ["HIGH", "MEDIUM", "LOW"]},
+          "confidence": {"enum": ["HIGH", "MEDIUM", "LOW"]},
+          "file": {"type": "string", "minLength": 1},
+          "line": {"type": "integer", "minimum": 1},
+          "observed_evidence": {"type": "string", "minLength": 1},
+          "design_risk": {"type": "string", "minLength": 1},
+          "proposed_change": {"type": "string", "minLength": 1},
+          "verification_predicate": {"type": "string", "minLength": 1},
+          "status": {"enum": ["CANDIDATE", "APPROVED", "WAIVED", "REJECTED", "RESOLVED"]}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

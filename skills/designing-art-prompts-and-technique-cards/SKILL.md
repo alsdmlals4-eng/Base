@@ -5,6 +5,8 @@ description: Use when recommending an art or UI visual technique, designing imag
 
 # Designing Art Prompts and Technique Cards
 
+이 스킬은 생성·편집 전 프롬프트와 기술 카드를 책임진다. 이미 구현된 Godot/Web UI의 시각 품질 감사와 승인된 개선은 `auditing-and-refining-ui-art`를 사용한다.
+
 ## Core principle
 
 좋은 아트 프롬프트는 형용사를 많이 나열하는 문장이 아니라 **사용 목적, 유지할 정체성, 변경할 축, 화면 구성, 산출물 규격, 실패 기준**을 가진 제작 계약이다.

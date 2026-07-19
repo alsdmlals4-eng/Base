@@ -23,6 +23,7 @@ on:
       - "tests/test_project_skill_map_generation.py"
       - "tests/test_base_change_proposals.py"
       - "tests/test_deep_interview_contract.py"
+      - "tests/test_ui_art_audit.py"
       - ".github/workflows/validate-game-project-operating-system.yml"
   workflow_dispatch:
 
@@ -71,6 +72,7 @@ jobs:
             tools/check_base_change_proposals.py \
             tools/check_interview_contract.py \
             tools/audit_external_source.py \
+            skills/auditing-and-refining-ui-art/scripts/scan_ui_art_signals.py \
             templates/project-operations/github/check_documentation_governance.py \
             templates/project-operations/github/check_skill_routing_governance.py \
             templates/project-operations/github/check_design_document_publications.py \
@@ -81,7 +83,8 @@ jobs:
             tests/test_project_skill_map_generation.py \
             tests/test_game_project_operating_system_structure.py \
             tests/test_base_change_proposals.py \
-            tests/test_deep_interview_contract.py
+            tests/test_deep_interview_contract.py \
+            tests/test_ui_art_audit.py
 
       - name: Validate Base change proposals
         if: github.event_name == 'pull_request'
@@ -100,6 +103,7 @@ jobs:
             tests/test_project_skill_map_generation.py \
             tests/test_base_change_proposals.py \
             tests/test_deep_interview_contract.py \
+            tests/test_ui_art_audit.py \
             tests/test_game_project_operating_system_structure.py \
             -v 2>&1 | tee operating-system-test-results.txt
           status=${PIPESTATUS[0]}
@@ -172,7 +176,7 @@ jobs:
             throw "pdftoppm.exe not found at pinned path: $env:BASE_PDFTOPPM"
           }
           python tools/check_publication_environment.py --require-mermaid
-          python -m unittest tests.test_design_document_generation tests.test_project_skill_map_generation -v
+          python -m unittest tests.test_design_document_generation tests.test_project_skill_map_generation tests.test_ui_art_audit -v
 
   validate-whitespace:
     name: validate-whitespace
