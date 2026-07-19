@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import importlib.util
+import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -58,6 +60,17 @@ class BaseChangeProposalTests(unittest.TestCase):
     def test_bootstrap_pr_is_explicitly_allowed(self) -> None:
         current = {"proposals": [{"proposal_id": "BCP-2026-001-bootstrap", "status": "SUBMITTED"}]}
         self.assertEqual(CHECKER.enforce_proposal_only_diff(current, None, ["AGENTS.md"]), [])
+
+    def test_git_paths_preserve_non_ascii_proposal_root(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            subprocess.run(["git", "init", "-q", str(root)], check=True)
+            proposal = root / "[수정제안서]" / "BCP-2026-999-example" / "PROPOSAL.md"
+            proposal.parent.mkdir(parents=True)
+            proposal.write_text("proposal\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+            paths = CHECKER.git_paths(root, "diff", "--cached", "--name-only", "-z")
+            self.assertEqual(paths, ["[수정제안서]/BCP-2026-999-example/PROPOSAL.md"])
 
 
 if __name__ == "__main__":
