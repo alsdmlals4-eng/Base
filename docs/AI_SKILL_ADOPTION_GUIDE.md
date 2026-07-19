@@ -38,6 +38,7 @@
 | 대용량 초안·분류·반복 변환 | `orchestrating-deepseek-worktrees` |
 | 외부 AI 초안·패치 실제 반영 | `reviewing-external-ai-drafts` |
 | 아트·UI 기술 추천·이미지 프롬프트 | `designing-art-prompts-and-technique-cards` |
+| Godot·Web UI 결과 감사·승인된 개선 | `auditing-and-refining-ui-art` |
 | 프로젝트 교훈 공용화 | `promoting-project-knowledge` |
 | 버그·성능 문제 | 재현→root cause→최소 수정→회귀 검증 |
 | 구현·리팩터링 | 테스트 가능한 작은 단위, 기존 동작 보호 |
@@ -108,6 +109,23 @@ DeepSeek, Claude, Gemini 또는 다른 외부 모델에 대량 작업을 맡길 
 - `docs/knowledge/methods/AI_ART_PROMPT_TECHNIQUE_METHOD.md`
 - `skills/designing-art-prompts-and-technique-cards/SKILL.md`
 - `templates/planning/ART_TECHNIQUE_CARD.md`
+
+## 6.1 UI 아트 결과 감사 스킬 채택
+
+생성·편집 프롬프트와 실제 UI 결과 감사는 분리한다. 결과 감사는 다음을 확인한다.
+
+- 딥인터뷰 또는 확정된 아트 방향을 먼저 읽었는가?
+- A 장식, B 구조, C 간격, D 타이포그래피, E 색상·상태를 각각 확인했는가?
+- 정적 패턴을 결함 확정이나 자동 삭제 근거로 사용하지 않았는가?
+- 사용자 승인 전 대상 UI 파일이 불변인가?
+- 승인된 항목만 A→B→C→D→E 순서로 수정했는가?
+- 새 검사 컨텍스트와 Godot/Web 실제 렌더로 전후를 다시 확인했는가?
+
+관련 기준:
+
+- `skills/auditing-and-refining-ui-art/SKILL.md`
+- `schemas/ui-art-findings-v1.schema.json`
+- `docs/knowledge/research/SLOPSLAP_UI_ART_SOURCE_AUDIT.md`
 
 ## 7. 실행 가능한 스킬 작성 규격
 

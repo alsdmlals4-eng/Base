@@ -160,6 +160,7 @@ tests/             운영체계·발행·Governance 회귀 테스트
 | `reviewing-and-implementing-base-change-proposals` | 승인된 제안만 별도 PR로 검토·구현 |
 | `designing-vertical-slices` | 대표 구간의 목표 품질·파이프라인 검증 |
 | `writing-game-design-documents` | 기획 책임 원본과 추적 구조 설계 |
+| `auditing-and-refining-ui-art` | Godot·Web UI 결과를 A~E로 감사하고 승인된 개선을 전후 렌더로 재검수 |
 
 ## 게임 프로젝트 운영 키트
 

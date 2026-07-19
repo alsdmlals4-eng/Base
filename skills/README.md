@@ -11,6 +11,7 @@
 | `orchestrating-deepseek-worktrees` | 대용량 초안·분류를 별도 worktree의 DeepSeek 또는 외부 AI에 위임함 |
 | `reviewing-external-ai-drafts` | 외부 AI·병렬 작업자의 초안과 diff를 기준 저장소 반영 전에 검수함 |
 | `designing-art-prompts-and-technique-cards` | 아트·UI 시각 기술을 추천하고 생성·편집 프롬프트와 QA 카드로 기록함 |
+| `auditing-and-refining-ui-art` | Godot·Web UI 결과를 A~E 영역으로 감사하고 승인된 범위만 순차 개선·독립 재검수함 |
 | `promoting-project-knowledge` | 프로젝트 교훈을 Base 수정제안서로 일반화·제출함 |
 | `reviewing-and-implementing-base-change-proposals` | 사용자 승인된 제안만 별도 Base 구현 PR로 진행함 |
 

@@ -1,0 +1,20 @@
+:root { --ink: #edf2f4; --muted: #aebbc2; --surface: #122027; --line: #29414c; --accent: #f1b84b; --accent-ink: #241900; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: #091116; color: var(--ink); font-family: "Noto Sans KR", "Malgun Gothic", sans-serif; }
+.shell { max-width: 68rem; min-height: 100vh; margin: 0 auto; padding: 4.5rem 3rem 3rem; display: flex; flex-direction: column; gap: 3rem; }
+header { display: flex; justify-content: space-between; align-items: end; gap: 2rem; border-bottom: 1px solid var(--line); padding-bottom: 2rem; }
+.context { margin: 0 0 .75rem; color: var(--accent); font-weight: 700; }
+h1 { margin: 0; font-size: clamp(2.6rem, 6vw, 4.8rem); line-height: 1; letter-spacing: -.04em; }
+.intro { max-width: 38rem; margin: 1.25rem 0 0; color: var(--muted); font-size: 1.05rem; line-height: 1.7; }
+.status { min-width: 13rem; margin: 0; padding-left: 1rem; border-left: 3px solid var(--accent); display: grid; gap: .35rem; }
+.status span { color: var(--muted); }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.steps article { min-height: 11rem; padding: 1.5rem; background: var(--surface); border: 1px solid var(--line); display: flex; gap: 1rem; align-items: flex-start; }
+.steps article > span { flex: 0 0 2rem; height: 2rem; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-weight: 800; }
+h2 { margin: .15rem 0 .75rem; font-size: 1.2rem; }
+.steps p { margin: 0; color: var(--muted); line-height: 1.6; }
+footer { margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+footer p { margin: 0; color: var(--muted); }
+button { border: 0; padding: .9rem 1.5rem; background: var(--accent); color: var(--accent-ink); font: inherit; font-weight: 800; cursor: pointer; }
+button:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+@media (max-width: 760px) { .shell { padding: 2rem 1.25rem; } header { align-items: start; flex-direction: column; } .steps { grid-template-columns: 1fr; } }

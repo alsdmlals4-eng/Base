@@ -1,0 +1,4 @@
+interface:
+  display_name: "UI 아트 감사"
+  short_description: "Godot·Web UI를 증거 기반으로 감사하고 승인된 개선만 수행합니다."
+  default_prompt: "Use $auditing-and-refining-ui-art to audit Godot or Web UI across areas A-E, report evidence without automatic edits, obtain approval, and independently re-review rendered results."

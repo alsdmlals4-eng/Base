@@ -239,6 +239,22 @@
       "knowledge_state": "PATTERN"
     },
     {
+      "skill_id": "auditing-and-refining-ui-art",
+      "layer": "specialist",
+      "discipline": "art-ui",
+      "path": "skills/auditing-and-refining-ui-art/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": ["ui-art-audit", "godot-ui", "web-ui", "visual-refinement", "render-review"],
+      "use_when": ["Godot·Web UI 결과를 A~E 영역으로 감사하고 사용자 승인 범위만 개선·재검수한다."],
+      "do_not_use_when": ["UI 결과 감사 없이 새 이미지 프롬프트나 기술 카드만 설계한다."],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": ["목적 있는 디자인 오탐", "승인 전 자동 수정", "전후 렌더 누락", "플랫폼 어댑터 누락"],
+      "last_reviewed_at": "2026-07-19",
+      "last_reviewed_commit": "28c93607dc119991c851d5b24e5d1e483507c432",
+      "knowledge_state": "PATTERN"
+    },
+    {
       "skill_id": "promoting-project-knowledge",
       "layer": "foundation",
       "discipline": "knowledge-management",

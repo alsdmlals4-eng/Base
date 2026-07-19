@@ -66,6 +66,7 @@ routing_reason:
 - 발행·검증·Handoff 스킬은 해당 단계에서만 호출
 - 기능·경험·아트 방향·구조·워크플로 변경은 딥인터뷰와 사용자 확인 전 실행 금지
 - 딥인터뷰 Foundation: `conducting-deep-requirement-interviews`
+- Godot·Web UI 결과 감사: `auditing-and-refining-ui-art` — 정적 후보 보고 → 사용자 승인 → A~E 순차 개선 → 독립 렌더 재검수
 
 기존 프로젝트 구조 개편은 안전 마이그레이션의 `Audit only`부터 시작한다.
 
