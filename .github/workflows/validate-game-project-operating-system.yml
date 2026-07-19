@@ -10,7 +10,7 @@ on:
       - "skills/**"
       - "tools/**"
       - "schemas/**"
-      - "[[]수정제안서[]]/**"
+      - '\[수정제안서\]/**'
       - "requirements-publication.txt"
       - "package.json"
       - "pnpm-lock.yaml"
