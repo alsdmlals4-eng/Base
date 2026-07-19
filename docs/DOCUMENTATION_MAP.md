@@ -119,6 +119,7 @@ PROJECT_SKILL_MAP.assets/
 | 문서·스킬 지도 | `docs/DOCUMENTATION_MAP.md` | 작업별 최소 읽기와 책임 원본 |
 | Base Skill Registry | `skills/SKILL_REGISTRY.json` | 공용 스킬 trigger·상태·경로 |
 | Base Skill Learning Log | `skills/SKILL_LEARNING_LOG.md` | 실행 결과·실패·갱신 판정 |
+| Base 수정제안서 | `[수정제안서]/PROPOSAL_REGISTRY.json` | 프로젝트발 승격 후보·승인·구현 상태 |
 | 실행 체크 | `docs/MVP_WORKFLOW_CHECKLIST.md` | 시작·게이트·발행·종료 검수 |
 | 변경 기록 | `docs/CHANGELOG.md` | Base 버전·동기화 기준 |
 
@@ -163,6 +164,7 @@ PROJECT_SKILL_MAP.assets/
 | 외부 AI 결과 검수 | `reviewing-external-ai-drafts` | 외부 AI 결과 실제 반영 전 |
 | 아트 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` | 새 아트 방향·생성·편집 프롬프트 |
 | 프로젝트 교훈 환류 | `promoting-project-knowledge` | 반복 검증된 프로젝트 독립 원리 존재 |
+| Base 수정제안서 검토·구현 | `reviewing-and-implementing-base-change-proposals` | 사용자가 BCP 검토 또는 승인된 구현을 요청 |
 
 ## 9. 선택적 호출과 항상 학습
 

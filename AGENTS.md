@@ -103,6 +103,7 @@ PROJECT_SKILL_MAP.assets/
 - 기획 책임 구조: `writing-game-design-documents`
 - 외부 AI 결과 검수: `reviewing-external-ai-drafts`
 - 프로젝트 교훈 환류: `promoting-project-knowledge`
+- Base 수정제안서 승인·구현: `reviewing-and-implementing-base-change-proposals`
 
 금지:
 
@@ -235,6 +236,21 @@ Intake·Context
 - 지식 상태와 다음 검토 트리거
 
 스킬 본문은 반복 실패, 새 예외, 책임·경로·검증 변경처럼 근거가 있을 때만 갱신한다. 한 번의 성공을 즉시 공용 강제 규칙으로 만들지 않는다.
+
+### 프로젝트 교훈의 Base 승격
+
+프로젝트에서 발견한 공용화 후보는 Base 루트 `[수정제안서]`에 제안 전용 PR로 먼저 제출한다. 신규 제안 PR은 `[수정제안서]/**`만 변경하며 사용자 승인 전에는 활성 Base 규칙·스킬·템플릿·도구·Schema·Test를 바꾸지 않는다.
+
+```text
+프로젝트 증거
+→ promoting-project-knowledge
+→ [수정제안서] SUBMITTED
+→ 사용자 검토·승인
+→ reviewing-and-implementing-base-change-proposals
+→ 별도 구현 PR
+```
+
+사용자가 직접 승인한 Base 변경 요청은 별도 제안서 없이 작업 계약이 될 수 있다.
 
 ## 11. Markdown·JSON 기획서 발행
 

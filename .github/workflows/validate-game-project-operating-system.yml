@@ -10,6 +10,7 @@ on:
       - "skills/**"
       - "tools/**"
       - "schemas/**"
+      - '\[수정제안서\]/**'
       - "requirements-publication.txt"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -20,6 +21,7 @@ on:
       - "tests/test_skill_routing_governance.py"
       - "tests/test_design_document_*.py"
       - "tests/test_project_skill_map_generation.py"
+      - "tests/test_base_change_proposals.py"
       - ".github/workflows/validate-game-project-operating-system.yml"
   workflow_dispatch:
 
@@ -34,6 +36,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           show-progress: false
 
       - name: Set up Python
@@ -64,6 +67,7 @@ jobs:
             tools/design_document_diagrams.py \
             tools/publication_v3.py \
             tools/check_publication_environment.py \
+            tools/check_base_change_proposals.py \
             templates/project-operations/github/check_documentation_governance.py \
             templates/project-operations/github/check_skill_routing_governance.py \
             templates/project-operations/github/check_design_document_publications.py \
@@ -72,7 +76,12 @@ jobs:
             tests/test_design_document_publication_governance.py \
             tests/test_design_document_generation.py \
             tests/test_project_skill_map_generation.py \
-            tests/test_game_project_operating_system_structure.py
+            tests/test_game_project_operating_system_structure.py \
+            tests/test_base_change_proposals.py
+
+      - name: Validate Base change proposals
+        if: github.event_name == 'pull_request'
+        run: python tools/check_base_change_proposals.py --base-ref "${{ github.event.pull_request.base.sha }}"
 
       - name: Run operating system regression and generation tests
         id: regression
@@ -85,6 +94,7 @@ jobs:
             tests/test_design_document_publication_governance.py \
             tests/test_design_document_generation.py \
             tests/test_project_skill_map_generation.py \
+            tests/test_base_change_proposals.py \
             tests/test_game_project_operating_system_structure.py \
             -v 2>&1 | tee operating-system-test-results.txt
           status=${PIPESTATUS[0]}
@@ -109,6 +119,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           show-progress: false
 
       - name: Set up Python

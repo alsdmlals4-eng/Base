@@ -2,6 +2,10 @@
 
 ## Unreleased - Base audit and operating-contract consistency
 
+- 프로젝트 교훈을 `[수정제안서]`의 제안 전용 PR로 먼저 보존하고 사용자 승인 뒤 별도 구현 PR로 승격하는 계약을 추가했다.
+- Base Skill Registry와 수정제안서 Registry에 JSON Schema 검증을 추가했다.
+- 분야 스킬 진화 계약의 JSON 전용 입력, 11개 분야 전체 진입점, DOCX·다이어그램 상시 생성 표현을 schema v3 선택 계약에 맞게 수정했다.
+- LibreOffice는 격리된 임시 문서를 실제 PDF로 변환하고 Poppler·Mermaid는 실행 결과를 확인해 경로만 존재하는 고장 난 환경을 사전점검에서 차단한다.
 - schema v3에서 서술형 Markdown과 구조화 JSON을 문서별 단일 책임 원본으로 선택한다.
 - PDF 상시 동기화, 선택 DOCX·Mermaid, 독립된 자동/Codex/사람 검수 상태를 구현했다.
 - Registry·구조 데이터·Manifest JSON Schema와 v2.2.0 수동 마이그레이션 안내를 추가했다.

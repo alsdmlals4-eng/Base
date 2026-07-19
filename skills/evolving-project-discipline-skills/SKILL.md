@@ -1,6 +1,6 @@
 ---
 name: evolving-project-discipline-skills
-description: Use when creating, separating, reviewing, consolidating, or improving Foundation and discipline project skills from actual work, validation, failures, and handoff evidence, while keeping SKILL_REGISTRY.json and generated human DOCX/PDF skill maps synchronized.
+description: Use when creating, separating, reviewing, consolidating, or improving Foundation and discipline project skills from actual work, validation, failures, and handoff evidence, while keeping SKILL_REGISTRY.json and its configured human skill-map derivatives synchronized.
 ---
 
 # Evolving Project Discipline Skills
@@ -16,8 +16,8 @@ description: Use when creating, separating, reviewing, consolidating, or improvi
 ```text
 AI·자동 검사 → SKILL_REGISTRY.json
 사람 기본 열람 → PROJECT_SKILL_MAP.pdf
-사람 문서 검토 → PROJECT_SKILL_MAP.docx
-시각 관계 → PROJECT_SKILL_MAP.assets/
+Word 검토를 설정한 경우 → PROJECT_SKILL_MAP.docx
+다이어그램을 설정한 경우 → PROJECT_SKILL_MAP.assets/
 최신성 → SKILL_MAP_PUBLICATION_MANIFEST.json
 ```
 
@@ -51,7 +51,7 @@ documentation_map:
 skill_registry:
 skill_map_publication_manifest:
 design_document_registry:
-relevant_design_document_json:
+relevant_design_document_sources:
 existing_project_skills:
 learning_logs:
 actual_work_examples:
@@ -135,7 +135,7 @@ skills/
 
 ## Phase 4 — Register selective routing
 
-`SKILL_REGISTRY.json`에 활성 스킬을 등록하고 11개 분야의 `discipline_entrypoints`를 연결한다.
+`SKILL_REGISTRY.json`에 활성 스킬을 등록하고 프로젝트가 선택한 분야만 `discipline_entrypoints`에 연결한다. 11개 분야는 선택 가능한 공용 카탈로그이며 미선택 분야 진입점을 강제하지 않는다.
 
 ```json
 {
@@ -168,14 +168,13 @@ python tools/build_project_skill_map.py \
   --source-commit <commit>
 ```
 
-생성:
+Registry 설정에 따라 생성:
 
-- `PROJECT_SKILL_MAP.docx`
 - `PROJECT_SKILL_MAP.pdf`
-- `PROJECT_SKILL_MAP.assets/skill-flow.png`
-- `PROJECT_SKILL_MAP.assets/discipline-routing.png`
-- `PROJECT_SKILL_MAP.assets/skill-matrix.png`
 - `SKILL_MAP_PUBLICATION_MANIFEST.json`
+- 선택 `PROJECT_SKILL_MAP.md`
+- 선택 `PROJECT_SKILL_MAP.docx`
+- 선택 `PROJECT_SKILL_MAP.assets/`
 
 사람은 PDF를 먼저 보고, AI는 Registry를 읽는다. DOCX를 직접 고쳐 책임 원본으로 사용하지 않는다.
 
@@ -268,7 +267,7 @@ python tools/build_project_skill_map.py \
 - 모든 분야에 같은 스킬 본문 복사
 - 전체 skills 폴더 기본 로드
 - Trigger 없이 호출
-- Registry 변경 후 DOCX/PDF·다이어그램 미재생성
+- Registry 변경 후 필수 PDF·Manifest 또는 설정한 선택 파생본 미재생성
 - 사람용 DOCX를 별도 책임 원본으로 수정
 - 실제 결과 없이 지식 상태를 검증으로 승격
 - Learning Log 누락
