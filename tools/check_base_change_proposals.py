@@ -63,15 +63,13 @@ def validate_repository(root: Path) -> tuple[dict, list[str]]:
     return registry, errors
 
 
-def git_output(root: Path, *args: str) -> str:
+def git_paths(root: Path, *args: str) -> list[str]:
     result = subprocess.run(
         ["git", "-C", str(root), *args],
         check=True,
         capture_output=True,
-        text=True,
-        encoding="utf-8",
     )
-    return result.stdout
+    return [raw.decode("utf-8") for raw in result.stdout.split(b"\0") if raw]
 
 
 def registry_at_ref(root: Path, base_ref: str) -> dict | None:
@@ -126,7 +124,9 @@ def main() -> int:
     registry, errors = validate_repository(root)
     if args.base_ref and registry:
         previous = registry_at_ref(root, args.base_ref)
-        changed = git_output(root, "diff", "--name-only", f"{args.base_ref}...HEAD").splitlines()
+        # NUL-delimited output disables core.quotePath escaping, so non-ASCII
+        # proposal roots are compared as their actual UTF-8 paths on every OS.
+        changed = git_paths(root, "diff", "--name-only", "-z", f"{args.base_ref}...HEAD")
         errors.extend(enforce_proposal_only_diff(registry, previous, changed))
     if errors:
         for error in errors:
