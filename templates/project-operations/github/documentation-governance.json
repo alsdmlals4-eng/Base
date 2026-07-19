@@ -17,12 +17,20 @@
     "AGENTS.md",
     "docs/BASE_RULES_VERSION.md",
     "tools/build_project_skill_map.py",
+    "tools/publication_v3.py",
     "tools/skill_map_diagrams.py",
     "tools/build_design_documents.py",
     "tools/design_document_diagrams.py",
     "tools/check_documentation_governance.py",
     "tools/check_skill_routing_governance.py",
     "tools/check_design_document_publications.py",
+    "requirements-publication.txt",
+    "package.json",
+    "pnpm-lock.yaml",
+    "schemas/design-document-registry-v3.schema.json",
+    "schemas/structured-design-document-v3.schema.json",
+    "schemas/publication-manifest-v3.schema.json",
+    "schemas/skill-registry-v3.schema.json",
     "[기획서]/00_프로젝트_허브/START_HERE.md",
     "[기획서]/00_프로젝트_허브/ACTIVE_CONTEXT.md",
     "[기획서]/00_프로젝트_허브/HANDOFF.md",
@@ -33,7 +41,7 @@
     "[기획서]/00_프로젝트_허브/DOCUMENT_UPDATE_MATRIX.md",
     "[기획서]/00_프로젝트_허브/DEVELOPMENT_GATES.md",
     "[기획서]/00_프로젝트_허브/SKILL_REGISTRY.json",
-    "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.docx",
+    "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.md",
     "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.pdf",
     "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.assets",
     "[기획서]/00_프로젝트_허브/SKILL_MAP_PUBLICATION_MANIFEST.json",
@@ -58,9 +66,8 @@
   "skill_map_publication_manifest": "[기획서]/00_프로젝트_허브/SKILL_MAP_PUBLICATION_MANIFEST.json",
   "enforce_skill_map_publication": true,
   "require_human_skill_map_visual_review": false,
-  "forbidden_markdown_skill_map": "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.md",
   "skill_map_sync_paths": [
-    "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.docx",
+    "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.md",
     "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.pdf",
     "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.assets/skill-flow.png",
     "[기획서]/00_프로젝트_허브/PROJECT_SKILL_MAP.assets/discipline-routing.png",
@@ -69,7 +76,13 @@
   ],
   "skill_map_generator_globs": [
     "tools/build_project_skill_map.py",
-    "tools/skill_map_diagrams.py"
+    "tools/skill_map_diagrams.py",
+    "tools/publication_v3.py",
+    "schemas/skill-registry-v3.schema.json",
+    "schemas/publication-manifest-v3.schema.json",
+    "package.json",
+    "pnpm-lock.yaml",
+    "requirements-publication.txt"
   ],
   "design_document_registry": "[기획서]/00_프로젝트_허브/DESIGN_DOCUMENT_REGISTRY.json",
   "enforce_design_document_publications": true,
@@ -91,13 +104,6 @@
     "분석·유저리서치",
     "통합검수"
   ],
-  "forbidden_markdown_design_bible_names": [
-    "DISCIPLINE_BIBLE.md",
-    "PROJECT_MASTER_PLAN.md"
-  ],
-  "forbidden_markdown_design_bible_suffixes": [
-    "_기획서.md"
-  ],
   "required_skill_disciplines": [],
   "skill_change_globs": [
     "skills/**/SKILL.md"
@@ -116,7 +122,9 @@
         "resources/**"
       ],
       "required_any": [
+        "[기획서]/02_게임_디자인/게임_기획서.md",
         "[기획서]/02_게임_디자인/게임_기획서.json",
+        "[기획서]/04_개발_엔지니어링/개발_기획서.md",
         "[기획서]/04_개발_엔지니어링/개발_기획서.json"
       ],
       "required_all": [
@@ -131,7 +139,9 @@
         "images/**"
       ],
       "required_any": [
+        "[기획서]/05_테크니컬아트_파이프라인/테크니컬아트_기획서.md",
         "[기획서]/05_테크니컬아트_파이프라인/테크니컬아트_기획서.json",
+        "[기획서]/06_아트/아트_기획서.md",
         "[기획서]/06_아트/아트_기획서.json"
       ],
       "required_all": [
@@ -146,6 +156,7 @@
         "music/**"
       ],
       "required_any": [
+        "[기획서]/07_사운드/사운드_기획서.md",
         "[기획서]/07_사운드/사운드_기획서.json"
       ],
       "required_all": [
@@ -186,7 +197,16 @@
       "source_globs": [
         "tools/build_design_documents.py",
         "tools/design_document_diagrams.py",
+        "tools/publication_v3.py",
+        "schemas/design-document-registry-v3.schema.json",
+        "schemas/structured-design-document-v3.schema.json",
+        "schemas/publication-manifest-v3.schema.json",
+        "requirements-publication.txt",
+        "package.json",
+        "pnpm-lock.yaml",
+        "[기획서]/**/*_기획서.md",
         "[기획서]/**/*_기획서.json",
+        "[기획서]/**/PROJECT_MASTER_PLAN.md",
         "[기획서]/**/PROJECT_MASTER_PLAN.json",
         "[기획서]/**/*.assets/**"
       ],

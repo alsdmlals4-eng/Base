@@ -53,6 +53,6 @@ jobs:
 # 2. 세 checker를 tools/에 둔다.
 # 3. config를 .github/documentation-governance.json에 둔다.
 # 4. 루트 [기획서], Skill Registry, Design Document Registry, Learning Log를 실제 경로에 맞춘다.
-# 5. JSON 기획서와 DOCX/PDF/다이어그램/Manifest 정상·실패 샘플 PR을 검증한다.
+# 5. Markdown·JSON 기획서와 PDF·선택 DOCX/다이어그램·Manifest 정상·실패 샘플 PR을 검증한다.
 # 6. 저장소 브랜치 보호에서 `documentation-governance`를 Required Status Check로 지정한다.
 # 파일 존재와 브랜치 보호 실제 활성화는 서로 다른 상태다.

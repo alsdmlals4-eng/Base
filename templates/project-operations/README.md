@@ -70,14 +70,14 @@ src/[기획서]/
 | `DESIGN_DOCUMENT_REGISTRY.json` | 문서 ID·분야·경로·발행 상태 라우터 |
 | `SKILL_REGISTRY.json` | AI가 판독하는 선택적 호출·상태·학습 책임 원본 |
 | `PROJECT_SKILL_MAP.pdf` | 사람이 가장 먼저 보는 이미지 포함 최신 스킬맵 |
-| `PROJECT_SKILL_MAP.docx` | PDF와 함께 자동 생성되는 문서 열람·검토본 |
+| `PROJECT_SKILL_MAP.md/.docx` | 설정한 경우만 생성되는 선택 요약·Word 검토 파생본 |
 | `PROJECT_SKILL_MAP.assets/` | 호출 흐름·분야 라우팅·상태 매트릭스 이미지 |
 | `SKILL_MAP_PUBLICATION_MANIFEST.json` | Registry와 DOCX·PDF·이미지의 해시·검수 상태 |
 | `skills/FOUNDATION_SKILL.md` | 여러 분야가 공통 사용하는 실행 계약 |
 | `skills/DISCIPLINE_SKILL.md` | 분야 고유 판단·실제 경로·검증 계약 |
 | `skills/SKILL_LEARNING_LOG.md` | 실패·중요 결정·재사용 가능한 교훈·검증 결과 기록 |
 
-`PROJECT_SKILL_MAP.md`는 만들지 않는다. 스킬 정보는 `SKILL_REGISTRY.json`에서 편집하고 `tools/build_project_skill_map.py`로 DOCX·PDF와 다이어그램을 재생성한다.
+`PROJECT_SKILL_MAP.md`는 설정한 경우에만 `SKILL_REGISTRY.json`에서 자동 생성한다. 수동 책임 원본으로 편집하지 않으며 파생본 표기와 Registry 해시를 유지한다.
 
 ### 이미지·PDF
 
@@ -121,7 +121,8 @@ tools/
 │  ├─ DOCUMENTATION_MAP.md
 │  ├─ DEVELOPMENT_GATES.md
 │  ├─ SKILL_REGISTRY.json
-│  ├─ PROJECT_SKILL_MAP.docx
+│  ├─ PROJECT_SKILL_MAP.md       # 선택 자동 생성
+│  ├─ PROJECT_SKILL_MAP.docx     # 선택 Word 검토
 │  ├─ PROJECT_SKILL_MAP.pdf
 │  ├─ PROJECT_SKILL_MAP.assets/
 │  │  ├─ skill-flow.png
@@ -185,7 +186,8 @@ skills/
 ```text
 AI·자동 검사 → SKILL_REGISTRY.json
 사람의 빠른 열람 → PROJECT_SKILL_MAP.pdf
-사람의 문서 검토 → PROJECT_SKILL_MAP.docx
+사람의 기본 열람 → PROJECT_SKILL_MAP.pdf
+Word 검토가 필요할 때 → PROJECT_SKILL_MAP.docx
 그림 원본 확인 → PROJECT_SKILL_MAP.assets/
 최신성 판정 → SKILL_MAP_PUBLICATION_MANIFEST.json
 ```

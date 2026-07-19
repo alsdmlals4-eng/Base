@@ -65,18 +65,19 @@
 │  ├─ DEVELOPMENT_GATES.md
 │  ├─ DESIGN_DOCUMENT_REGISTRY.json
 │  ├─ SKILL_REGISTRY.json
-│  ├─ PROJECT_SKILL_MAP.docx
+│  ├─ PROJECT_SKILL_MAP.md       # 선택 자동 생성
+│  ├─ PROJECT_SKILL_MAP.docx     # 선택 Word 검토
 │  ├─ PROJECT_SKILL_MAP.pdf
 │  ├─ PROJECT_SKILL_MAP.assets/
 │  └─ SKILL_MAP_PUBLICATION_MANIFEST.json
 └─ 분야별 폴더/
 ```
 
-운영 라우터는 Markdown을 유지할 수 있다. 프로젝트·분야 기획 본책은 JSON이다.
+서술 중심 기획 본책은 Markdown을 기본으로 하고 구조 검증이 필요한 데이터는 JSON을 사용한다. 각 문서는 Registry에 단일 책임 원본을 선언한다.
 
 ## 4. Design Document Registry 계획
 
-| 문서 ID | 책임 범위 | 상태 | JSON | DOCX | PDF | assets | Manifest |
+| 문서 ID | 책임 범위 | 상태 | source format/path | 선택 DOCX | PDF | 선택 assets | Manifest |
 |---|---|---|---|---|---|---|---|
 | project-master-plan | 프로젝트 전체 |  |  |  |  |  |  |
 |  | 설정·내러티브 |  |  |  |  |  |  |
@@ -93,7 +94,7 @@
 
 통합 본책은 `responsibility_coverage`에 담당 분야를 모두 기록한다.
 
-## 5. JSON 본책 계약
+## 5. Markdown·JSON 혼용 본책 계약
 
 각 활성 본책:
 
@@ -114,7 +115,7 @@
 ## 6. 사람용 발행 계획
 
 ```text
-기획서 JSON
+Markdown 또는 JSON 책임 원본
 → 자동 workflow·status·responsibility 다이어그램
 → 승인 이미지·실제 캡처 포함
 → DOCX
@@ -134,8 +135,8 @@
 |  |  |  |  |  |  |  |
 
 - [ ] `SKILL_REGISTRY.json`을 설치했다.
-- [ ] 사람용 `PROJECT_SKILL_MAP.docx/.pdf/.assets`를 생성했다.
-- [ ] `PROJECT_SKILL_MAP.md`를 만들지 않았다.
+- [ ] 사람용 필수 `PROJECT_SKILL_MAP.pdf`와 설정한 선택 `md/docx/assets`를 생성했다.
+- [ ] 선택 `PROJECT_SKILL_MAP.md`가 자동 생성 파생본이며 Registry 해시가 일치한다.
 - [ ] 전체 스킬 자동 로드가 꺼져 있다.
 - [ ] 각 분야에 진입 스킬 또는 명시적 통합 책임이 있다.
 - [ ] 실패·중요 결정·재사용 가능한 교훈·실제 검증 결과의 Learning Log 계약을 연결했다.
@@ -208,8 +209,8 @@ Concept → Prototype → Graybox → First Playable → Vertical Slice → Prod
 - 현재 구현·검증 상태
 - 다음 작업·게이트
 - 변경 금지 결정·자산
-- 프로젝트 전체·분야별 JSON 본책
-- 사람용 최신 DOCX/PDF·승인 이미지
+- 프로젝트 전체·분야별 Markdown 또는 JSON 책임 원본
+- 사람용 최신 PDF·선택 DOCX·승인 이미지
 - 분야별 스킬·검증 방법
 - 보류·확인 필요·미검증
 
@@ -226,8 +227,8 @@ Concept → Prototype → Graybox → First Playable → Vertical Slice → Prod
 ## 14. 완료 조건
 
 - [ ] 루트 `[기획서]`가 있다.
-- [ ] Design Document Registry가 프로젝트 전체와 모든 분야를 책임진다.
-- [ ] 모든 활성 본책에 JSON·DOCX·PDF·다이어그램·Manifest가 있다.
+- [ ] Design Document Registry가 프로젝트 전체와 프로젝트가 선택한 분야를 책임진다.
+- [ ] 모든 활성 본책에 등록된 단일 Markdown 또는 JSON 책임 원본·최신 PDF·Manifest와 선언한 선택 DOCX/다이어그램이 있다.
 - [ ] Skill Registry와 사람용 스킬맵이 일치한다.
 - [ ] Development Gates·Roadmap·Active Context가 연결된다.
 - [ ] 승인 이미지와 실제 캡처가 추적된다.

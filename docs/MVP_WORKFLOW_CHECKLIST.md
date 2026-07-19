@@ -8,7 +8,7 @@
 - [ ] 활성 `[기획서]`가 저장소 루트에 있는지 확인했다.
 - [ ] START_HERE·Active Context·Handoff·Documentation Map을 확인했다.
 - [ ] Development Gates·Roadmap·Issue·Plan을 확인했다.
-- [ ] `DESIGN_DOCUMENT_REGISTRY.json`과 관련 기획서 JSON을 확인했다.
+- [ ] `DESIGN_DOCUMENT_REGISTRY.json`과 관련 Markdown 또는 JSON 책임 원본을 확인했다.
 - [ ] `SKILL_REGISTRY.json`에서 현재 요청에 필요한 최소 스킬만 선택했다.
 - [ ] 실제 코드·데이터·자산·테스트·최근 diff를 확인했다.
 - [ ] 백업·보류·제거 후보는 기본 읽기에서 제외했다.
@@ -52,10 +52,10 @@ validation:
 - [ ] 승인 결정·세계관·수치·구현·자산·실패·보류를 보존 대상으로 등록했다.
 - [ ] Markdown·JSON·DOCX·PDF·이미지·코드·Issue·Skill·자동화 참조를 조사했다.
 - [ ] 기존 원본별 고유 정보와 중복·충돌·위험을 기록했다.
-- [ ] JSON 책임 구조와 사람용 발행 구조를 먼저 제안했다.
+- [ ] 기존 책임 원본을 보존하면서 문서별 Markdown 또는 JSON 책임 구조와 사람용 발행 구조를 먼저 제안했다.
 - [ ] 사용자 승인 전 대량 삭제·이동·통합·강제 개명을 하지 않았다.
 - [ ] 변경 전후 보존 대조표를 작성했다.
-- [ ] JSON 승계·DOCX/PDF 발행·참조 검증 전 기존 본책을 제거하지 않았다.
+- [ ] 책임 원본 승계·PDF 발행·참조 검증 전 기존 본책을 제거하지 않았다.
 
 ## 4. Definition of Ready
 
@@ -74,12 +74,12 @@ validation:
 - [ ] 변경·보호 파일과 상태 소유가 명확하다.
 - [ ] 이미지·UI·사운드·데이터·저장 영향이 있다.
 - [ ] 실패·취소·폴백·롤백이 있다.
-- [ ] JSON·Registry·Skill·Learning Log·DOCX/PDF 갱신 계획이 있다.
+- [ ] Markdown/JSON 책임 원본·Registry·Skill·Learning Log·PDF와 선택 파생본 갱신 계획이 있다.
 - [ ] L2 이상 또는 대형 마이그레이션은 사용자 승인을 받았다.
 
-## 6. 구조화 기획서 JSON
+## 6. Markdown·JSON 혼용 기획 책임 원본
 
-- [ ] 질문별 현행 JSON 책임 원본이 하나다.
+- [ ] 질문별 현행 단일 책임 원본이 하나이며 형식 역할이 명확하다.
 - [ ] 프로젝트 전체와 11개 분야 책임이 Registry에서 보존된다.
 - [ ] 목적·플레이어 가치·현재 목표가 있다.
 - [ ] Quality Bar·금지 방향이 있다.
@@ -90,7 +90,7 @@ validation:
 - [ ] 실제 코드·데이터·자산·테스트 경로가 있다.
 - [ ] 승인 이미지·실제 캡처에 Asset ID·상태·채택 범위가 있다.
 - [ ] 위험·다음 작업·Ready·Done이 있다.
-- [ ] 활성 Markdown 기획 본책을 만들지 않았다.
+- [ ] 모든 Markdown·JSON 기획 본책을 Registry에 등록했고 같은 서술을 중복 책임 원본으로 만들지 않았다.
 
 ## 7. 프로젝트 스킬과 항상 학습
 
@@ -103,8 +103,8 @@ validation:
 - [ ] 과다 호출·누락 스킬·검증을 기록했다.
 - [ ] 스킬 변경 필요 여부와 변경하지 않는 이유를 기록했다.
 - [ ] 지식 상태를 관찰·가설·패턴·검증·승격 후보로 구분했다.
-- [ ] Skill Registry 변경 시 Skill Map DOCX/PDF·assets·Manifest를 재생성했다.
-- [ ] `PROJECT_SKILL_MAP.md`를 만들지 않았다.
+- [ ] Skill Registry 변경 시 필수 PDF·Manifest와 설정한 선택 Markdown/DOCX/assets를 재생성했다.
+- [ ] `PROJECT_SKILL_MAP.md`가 있으면 Registry에서 자동 생성됐고 파생본 표기·Registry 해시가 일치한다.
 
 ## 8. 이미지·자산·사운드
 
@@ -136,13 +136,13 @@ validation:
 - [ ] diff가 승인 범위를 벗어나지 않음
 - [ ] 실행하지 못한 검증은 `[미검증]`
 
-## 11. 사람용 DOCX/PDF·다이어그램 발행
+## 11. 사람용 PDF·선택 DOCX/다이어그램 발행
 
 - [ ] `DESIGN_DOCUMENT_REGISTRY.json`의 활성 문서를 확인했다.
 - [ ] JSON 변경 후 `build_design_documents.py`를 실행했다.
 - [ ] workflow·status·responsibility 다이어그램을 생성했다.
 - [ ] 승인 이미지·실제 캡처를 포함했다.
-- [ ] DOCX가 유효한 OOXML 파일이다.
+- [ ] `output_docx`를 선언했다면 DOCX가 유효한 OOXML 파일이다.
 - [ ] PDF가 실제 PDF다.
 - [ ] PDF 전 페이지를 PNG로 렌더했다.
 - [ ] 빈 페이지·한글 깨짐·표·문장·이미지 잘림·겹침을 확인했다.
@@ -154,10 +154,10 @@ validation:
 
 같은 작업에서 확인:
 
-- [ ] 관련 기획서 JSON·Design Document Registry
+- [ ] 관련 Markdown 또는 JSON 책임 원본·Design Document Registry
 - [ ] Skill Registry·Skill·Learning Log
-- [ ] Skill Map DOCX/PDF·assets·Manifest
-- [ ] 기획서 DOCX/PDF·assets·Manifest
+- [ ] Skill Map 필수 PDF·Manifest와 설정한 선택 Markdown/DOCX/assets
+- [ ] 기획서 필수 PDF·Manifest와 설정한 선택 DOCX/assets
 - [ ] Roadmap·Development Gates
 - [ ] Active Context·Handoff·Documentation Map
 - [ ] Decision Log·Changelog

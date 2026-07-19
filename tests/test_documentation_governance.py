@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -130,6 +131,8 @@ class DocumentationGovernanceTests(unittest.TestCase):
         )
 
     def _run_checker(self) -> subprocess.CompletedProcess[str]:
+        env = os.environ.copy()
+        env["PYTHONIOENCODING"] = "utf-8"
         return subprocess.run(
             [
                 sys.executable,
@@ -140,6 +143,9 @@ class DocumentationGovernanceTests(unittest.TestCase):
             cwd=self.root,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
+            env=env,
             check=False,
         )
 

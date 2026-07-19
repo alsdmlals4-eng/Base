@@ -9,7 +9,7 @@
 사용자 방향
 → 저장소 루트 [기획서]
 → DESIGN_DOCUMENT_REGISTRY.json
-→ 프로젝트 전체·분야별 기획서 JSON
+→ 프로젝트 전체·분야별 Markdown 또는 JSON 책임 원본
 → DOCX·PDF·다이어그램·승인 이미지
 → Development Gates·Roadmap
 → SKILL_REGISTRY.json·분야별 스킬
@@ -22,13 +22,13 @@
 
 - 새 GPT와 Codex가 같은 시작 경로를 읽는다.
 - 사용자가 루트 `[기획서]`에서 사람용 최신 PDF를 찾는다.
-- AI는 구조화 JSON과 Registry에서 정확한 책임 원본을 찾는다.
+- AI는 Registry에서 문서별 Markdown 또는 JSON 책임 원본을 찾는다.
 - 한 질문에는 현행 책임 원본 하나가 있다.
 - 승인·구현·검증·미확정·보류를 혼동하지 않는다.
 - 변경 전에 주 책임 분야와 영향 분야를 판정한다.
 - 전체 스킬이 아니라 필요한 최소 스킬만 호출한다.
 - 모든 의미 있는 스킬 호출이 Learning Log에 남는다.
-- 이미지·DOCX·PDF가 JSON·승인 상태·실제 결과와 연결된다.
+- 이미지·PDF·선택 DOCX가 등록된 책임 원본·승인 상태·실제 결과와 연결된다.
 - 누락과 오래된 파생본을 PR에서 탐지한다.
 - 새 AI가 과거 대화 없이 저장소만으로 작업을 재개한다.
 
@@ -40,7 +40,7 @@
 | 운영체계 신규 설치 | 이 Method | `installing-game-project-operating-system` |
 | 기존 프로젝트 구조 재배치 | 안전 마이그레이션 Method | `migrating-existing-game-project-structure` |
 | 작업·제품 게이트 | Development Gates Method | `DEVELOPMENT_GATES.md` |
-| JSON 기획서·DOCX/PDF | 구조화 기획서 발행 Method | `publishing-discipline-bibles` |
+| Markdown·JSON 기획서·PDF | 혼용 기획서 발행 Method | `publishing-discipline-bibles` |
 | 분야별 프로젝트 스킬 | Discipline Skill Evolution Method | `evolving-project-discipline-skills` |
 | Active Context·Handoff | Handoff Method | `maintaining-project-context-and-handoff` |
 | 운영체계 Health Review | 이 Method | `verifying-game-project-operating-system` |
@@ -57,7 +57,8 @@
    ├─ DEVELOPMENT_GATES.md
    ├─ DESIGN_DOCUMENT_REGISTRY.json
    ├─ SKILL_REGISTRY.json
-   ├─ PROJECT_SKILL_MAP.docx
+   ├─ PROJECT_SKILL_MAP.md       # 선택 자동 생성
+   ├─ PROJECT_SKILL_MAP.docx     # 선택 Word 검토
    ├─ PROJECT_SKILL_MAP.pdf
    ├─ PROJECT_SKILL_MAP.assets/
    └─ SKILL_MAP_PUBLICATION_MANIFEST.json
@@ -100,9 +101,9 @@
 
 ```text
 현재 프로젝트 상태 → ACTIVE_CONTEXT.md
-프로젝트·분야 방향 → 기획서 JSON
+프로젝트·분야 방향 → Markdown 또는 JSON 책임 원본
 기획서 위치·책임 범위 → DESIGN_DOCUMENT_REGISTRY.json
-사람용 최신본 → DOCX·PDF·기획서.assets
+사람용 최신본 → PDF·Manifest·선택 DOCX/기획서.assets
 발행 최신성 → *_PUBLICATION_MANIFEST.json
 작업·제품 단계 → DEVELOPMENT_GATES.md·Roadmap
 현재 실행 범위 → Issue·Goal·Plan
@@ -118,7 +119,7 @@
 
 ## 6. 구조화 기획서 계약
 
-각 활성 기획서 JSON은 다음을 소유한다.
+각 활성 책임 원본은 문서 역할에 맞게 다음을 소유한다.
 
 - 문서 ID·종류·분야·책임·상태
 - 목적·플레이어 가치·현재 목표
@@ -145,7 +146,7 @@
 → 기획서_PUBLICATION_MANIFEST.json
 ```
 
-활성 `*_기획서.md`, `DISCIPLINE_BIBLE.md`, `PROJECT_MASTER_PLAN.md`는 만들지 않는다. 운영 라우터 Markdown은 유지할 수 있다.
+서술 중심 본책은 Registry에 등록한 Markdown을 사용할 수 있다. 같은 서술을 JSON과 중복 책임 원본으로 만들지 않는다.
 
 ## 7. 상태 언어
 
@@ -194,7 +195,7 @@ Concept
 ## 9. 선택적 프로젝트 스킬
 
 - 공용 절차는 Foundation에 한 번만 둔다.
-- 각 분야는 실제 JSON 본책·경로·산출물·검증을 연결하는 진입 스킬을 가진다.
+- 프로젝트가 선택한 각 분야는 등록된 Markdown 또는 JSON 책임 원본·경로·산출물·검증을 연결하는 진입 스킬 또는 명시적 통합 책임을 가진다.
 - `SKILL_REGISTRY.json`은 trigger에 맞는 최소 스킬만 선택한다.
 - `PROJECT_SKILL_MAP.pdf`는 사람용 관계·책임 지도다.
 - 모든 의미 있는 호출은 Learning Log에 성공·실패·예외·피드백을 기록한다.
@@ -261,8 +262,8 @@ Audit only
 ## 14. 완료 조건
 
 - 루트 `[기획서]`와 시작 문서가 있다.
-- Design Document Registry가 프로젝트 전체와 모든 분야를 책임진다.
-- 모든 활성 본책에 JSON·DOCX·PDF·다이어그램·Manifest가 있다.
+- Design Document Registry가 프로젝트 전체와 프로젝트가 선택한 분야를 책임진다.
+- 모든 활성 본책에 등록된 단일 Markdown 또는 JSON 책임 원본·최신 PDF·Manifest와 선언한 선택 DOCX/다이어그램이 있다.
 - Skill Registry와 사람용 스킬맵이 일치한다.
 - Development Gates·Roadmap·Active Context가 연결된다.
 - 승인 이미지와 실제 캡처 상태가 추적된다.

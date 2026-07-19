@@ -8,7 +8,7 @@
 스킬은 조언 모음이 아니라 다음을 고정하는 반복 실행 계약이다.
 
 ```text
-사용 조건 → 비사용 조건 → 필수 입력 → JSON 책임 원본 → 절차 → 산출물 → 완료 → 검증 → 실패 → 학습
+사용 조건 → 비사용 조건 → 필수 입력 → Markdown 또는 JSON 책임 원본 → 절차 → 산출물 → 완료 → 검증 → 실패 → 학습
 ```
 
 **항상 학습**은 스킬 본문을 매번 무조건 수정한다는 뜻이 아니다.
@@ -31,7 +31,7 @@
 - 영향도 분석
 - 개발 게이트 판정
 - Decision·추적성
-- JSON 기획서·발행 Governance
+- Markdown·JSON 기획서·발행 Governance
 - 검증·완료 선언
 - Context·Handoff
 - 외부 AI 결과 검수
@@ -62,12 +62,13 @@
 ```text
 AI·자동 검사 → SKILL_REGISTRY.json
 사람 기본 열람 → PROJECT_SKILL_MAP.pdf
-사람 문서 검토 → PROJECT_SKILL_MAP.docx
+사람 기본 열람 → PROJECT_SKILL_MAP.pdf
+선택 문서 검토 → PROJECT_SKILL_MAP.md 또는 PROJECT_SKILL_MAP.docx
 시각 관계 → PROJECT_SKILL_MAP.assets/
 최신성 → SKILL_MAP_PUBLICATION_MANIFEST.json
 ```
 
-`PROJECT_SKILL_MAP.md`는 사용하지 않는다.
+`PROJECT_SKILL_MAP.md`는 설정한 경우 Registry에서 자동 생성하며 수동 책임 원본으로 사용하지 않는다.
 
 기본 정책:
 
@@ -120,7 +121,7 @@ last_reviewed_commit:
 knowledge_state:
 ```
 
-- `read_first_design_document_ids`는 Design Document Registry의 JSON 본책을 가리킨다.
+- `read_first_design_document_ids`는 Design Document Registry에 등록된 Markdown 또는 JSON 책임 원본을 가리킨다.
 - `trigger_tags`와 사용·비사용 조건은 선택적 호출의 근거다.
 - 활성 스킬도 `load_by_default=false`다.
 - 프로젝트 고유 명칭·수치·경로·승인 자산은 프로젝트 스킬과 JSON에 둔다.
@@ -174,7 +175,7 @@ python tools/build_project_skill_map.py \
 
 생성 결과:
 
-- `PROJECT_SKILL_MAP.docx`
+- 선택 `PROJECT_SKILL_MAP.md`·`PROJECT_SKILL_MAP.docx`
 - `PROJECT_SKILL_MAP.pdf`
 - `PROJECT_SKILL_MAP.assets/skill-flow.png`
 - `PROJECT_SKILL_MAP.assets/discipline-routing.png`
@@ -200,7 +201,7 @@ python tools/build_project_skill_map.py \
 
 - 실제 작업과 스킬 책임 일치
 - 호출 집합의 과다 여부
-- JSON 본책·실제 경로·검증 연결
+- 등록된 책임 원본·실제 경로·검증 연결
 - 학습 기록의 의미
 - Foundation·분야 중복
 - 사람용 Skill Map 가독성
@@ -211,7 +212,7 @@ python tools/build_project_skill_map.py \
 
 - 동일 실패 반복
 - 사용자 피드백과 Done 불일치
-- JSON 본책·실제 경로·검증 명령 변경
+- 등록된 책임 원본·실제 경로·검증 명령 변경
 - 새 예외·폴백 필요
 - 여러 분야에 같은 절차 복제
 - 새 작업 유형에 대응할 스킬 없음

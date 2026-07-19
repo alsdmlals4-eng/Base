@@ -1,5 +1,6 @@
 {
-  "schema_version": 1,
+  "$schema": "../../schemas/structured-design-document-v3.schema.json",
+  "schema_version": 3,
   "document_id": "replace-with-stable-id",
   "document_kind": "project-master-plan-or-discipline-bible",
   "project": "[프로젝트명]",
@@ -24,58 +25,17 @@
     "next_action": ""
   },
   "goals": [],
-  "quality_bar": [
-    {
-      "criterion": "",
-      "pass_condition": "",
-      "evidence": "",
-      "status": "미확정"
-    }
-  ],
+  "quality_bar": [],
   "prohibited_directions": [],
   "responsibilities": {
     "owns": [],
     "does_not_own": [],
-    "interfaces": [
-      {
-        "discipline": "",
-        "receives": "",
-        "provides": "",
-        "update_together": ""
-      }
-    ]
+    "interfaces": []
   },
-  "workflow": [
-    {
-      "step": "",
-      "inputs": [],
-      "decision_or_work": "",
-      "outputs": [],
-      "paths": [],
-      "fallback": "",
-      "validation": "",
-      "next_gate": ""
-    }
-  ],
+  "workflow": [],
   "development_gates": {
-    "work": [
-      {
-        "gate": "Intake·Context",
-        "entry": "",
-        "exit": "",
-        "evidence": "",
-        "status": "미확정"
-      }
-    ],
-    "product": [
-      {
-        "gate": "Vertical Slice",
-        "proof": "",
-        "quality_bar": "",
-        "evidence": "",
-        "status": "미확정"
-      }
-    ]
+    "work": [],
+    "product": []
   },
   "skills": {
     "foundation": [],
@@ -85,33 +45,12 @@
     "knowledge_state": "OBSERVATION",
     "next_review_trigger": ""
   },
-  "current_state": [
-    {
-      "item": "",
-      "confirmed": "",
-      "implemented": "",
-      "validated": "",
-      "unresolved": "",
-      "hold": "",
-      "evidence": ""
-    }
-  ],
+  "current_state": [],
   "decisions": [],
   "implementation": [],
   "validation": [],
   "sections": [],
-  "approved_visuals": [
-    {
-      "asset_id": "",
-      "title": "",
-      "path": "",
-      "status": "REFERENCE",
-      "caption": "",
-      "adopted_elements": [],
-      "excluded_elements": [],
-      "include_in_publication": true
-    }
-  ],
+  "approved_visuals": [],
   "risks": [],
   "next_actions": [],
   "definition_of_ready": [],

@@ -2,6 +2,11 @@
 
 ## Unreleased - Base audit and operating-contract consistency
 
+- schema v3에서 서술형 Markdown과 구조화 JSON을 문서별 단일 책임 원본으로 선택한다.
+- PDF 상시 동기화, 선택 DOCX·Mermaid, 독립된 자동/Codex/사람 검수 상태를 구현했다.
+- Registry·구조 데이터·Manifest JSON Schema와 v2.2.0 수동 마이그레이션 안내를 추가했다.
+- 동일 입력 무재작성, 임시 생성·전 페이지 검증·원자 교체, 실패 시 기존 정상 산출물 보존을 구현했다.
+- Windows·Linux 의존성 사전 점검과 실제 생성 CI를 추가했다.
 - PR #8 이전 템플릿과 현재 `main`의 무손실 승계를 대조한 읽기 전용 감사를 추가했다.
 - GitHub Issue와 사용자 승인 직접 요청을 동등한 작업 계약으로 지원한다.
 - 프로젝트 로컬 Base 버전을 우선하고 원격 Base는 업데이트 조사 때만 비교하도록 통일했다.
@@ -10,6 +15,7 @@
 - 자동 렌더 검수와 사람 시각 검수를 서로 독립된 상태로 분리했다.
 - 삭제된 템플릿 참조와 임시 Google Docs 가져오기 파일을 정리했다.
 - 필요한 도구·파일·폰트·인증·권한이 없을 때 사용자에게 이유와 설치·적용·확인 방법을 요청하고 실제 환경을 재검증하는 계약을 추가했다.
+- schema v3 최종 감사에서 요구사항 추적, 무손실 승계, 13페이지 Codex 시각 검수, Actions·콜드 스타트·Branch protection 상태를 증거별로 기록했다.
 
 ## v2.1.0 - selective skill routing, continuous learning and root planning governance
 
