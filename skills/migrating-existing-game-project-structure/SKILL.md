@@ -1,6 +1,6 @@
 ---
 name: migrating-existing-game-project-structure
-description: Use when applying Base governance to an operating game project while preserving approved decisions, implementation state, assets, references, history, hold items, and unverified evidence before migrating active bibles to structured JSON and generated DOCX/PDF publications.
+description: Use when applying Base governance to an operating game project while preserving approved decisions, implementation state, assets, references, history, hold items, and unverified evidence before selecting schema v3 Markdown or JSON sources and generating current PDFs with optional derivatives.
 ---
 
 # Migrating an Existing Game Project Structure
@@ -94,7 +94,7 @@ target_design_document_contract: preserve-current-or-use-explicitly-approved-tar
 2. 현행 책임 문서·스킬·자산 지도
 3. 중복·충돌·누락 목록
 4. `DESIGN_DOCUMENT_REGISTRY.json` 목표안
-5. 프로젝트 전체·분야별 JSON 본책 목표안
+5. 프로젝트 전체·분야별 Markdown 또는 JSON 책임 원본 목표안
 6. DOCX·PDF·다이어그램·승인 이미지 발행 계획
 7. 이동·통합·재배치 제안
 8. 제거 후보와 보존 근거
@@ -185,7 +185,7 @@ target_design_document_contract: preserve-current-or-use-explicitly-approved-tar
 - 다음 작업과 선행 조건
 - 금지·보호 범위
 - Design Document Registry
-- 프로젝트 전체·분야별 JSON 본책
+- 프로젝트 전체·분야별 Markdown 또는 JSON 책임 원본
 - 사람용 최신 DOCX/PDF·승인 이미지
 - 분야별 스킬·검증 방법
 - 보류·확인 필요·미검증
@@ -216,7 +216,7 @@ target_design_document_contract: preserve-current-or-use-explicitly-approved-tar
 - Base 폴더명을 강제 적용
 - 고유 정보·보류·실패 기록 축약
 - 승인 이미지 임의 교체
-- JSON 승계·발행 검증 전 기존 본책 제거
+- 책임 원본 승계·발행 검증 전 기존 본책 제거
 - DOCX·PDF를 독립 원본으로 유지
 - 파일 수 감소를 성공으로 판단
 - 문서 정리만으로 구현·런타임 검증 완료 선언

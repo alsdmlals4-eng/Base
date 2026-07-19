@@ -10,7 +10,7 @@ START_HERE.md
 → docs/DOCUMENTATION_MAP.md
 → skills/SKILL_REGISTRY.json
 → 현재 작업의 Method·Skill·Template·Test
-→ 대상 프로젝트의 Registry·JSON 본책·실제 파일
+→ 대상 프로젝트의 Registry·Markdown 또는 JSON 책임 원본·실제 파일
 ```
 
 최소 호출문:
@@ -103,8 +103,8 @@ PROJECT_SKILL_MAP.assets/
 - 현재 개발 단계, 다음 게이트와 최우선 작업
 - 승인·구현·검증·미확정·보류 상태
 - 변경하면 안 되는 결정과 보호 경로
-- 프로젝트 전체·분야별 JSON 본책
-- 사람용 최신 DOCX/PDF와 승인 이미지
+- 프로젝트 전체·분야별 Markdown 또는 JSON 책임 원본
+- 사람용 최신 PDF·선택 DOCX와 승인 이미지
 - 분야별 프로젝트 스킬과 최소 호출 스킬
 - 실제 코드·데이터·자산·테스트 경로
 - 작업 종료 갱신 대상, Learning Log와 Base 환류 경계
@@ -114,7 +114,7 @@ PROJECT_SKILL_MAP.assets/
 | 구분 | 파일 | 책임 |
 |---|---|---|
 | 최초 라우터 | `START_HERE.md` | Base URL 호출과 프로젝트 읽기 순서 |
-| 공용 규칙 | `AGENTS.md` | 우선순위·보존·JSON 본책·발행·검증·학습 |
+| 공용 규칙 | `AGENTS.md` | 우선순위·보존·혼용 책임 원본·발행·검증·학습 |
 | 저장소 개요 | `README.md` | 구조·Method·Skill·Template·Test 안내 |
 | 문서·스킬 지도 | `docs/DOCUMENTATION_MAP.md` | 작업별 최소 읽기와 책임 원본 |
 | Base Skill Registry | `skills/SKILL_REGISTRY.json` | 공용 스킬 trigger·상태·경로 |
@@ -158,7 +158,7 @@ PROJECT_SKILL_MAP.assets/
 | 운영체계 Health Review | `verifying-game-project-operating-system` | 설치·마이그레이션·주요 게이트·콜드 스타트 실패 |
 | 실행 프롬프트 변환 | `transforming-requests-into-prompts` | 요청·범위·완료 기준이 모호함 |
 | Vertical Slice 설계 | `designing-vertical-slices` | 대표 품질·제작 파이프라인 검증 |
-| 기획 책임 구조 설계 | `writing-game-design-documents` | Registry·JSON 본책·Roadmap 구조 변경 |
+| 기획 책임 구조 설계 | `writing-game-design-documents` | Registry·Markdown/JSON 책임 원본·Roadmap 구조 변경 |
 | 외부 AI 작업 격리 | `orchestrating-deepseek-worktrees` | 대량 초안·분류 위임 |
 | 외부 AI 결과 검수 | `reviewing-external-ai-drafts` | 외부 AI 결과 실제 반영 전 |
 | 아트 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` | 새 아트 방향·생성·편집 프롬프트 |
@@ -234,14 +234,14 @@ Base 회귀 테스트와 프로젝트 Governance는 다음을 확인한다.
 
 - 루트 `[기획서]`와 중첩 복제본
 - Design Document Registry와 책임 범위
-- JSON 본책 ID·상태·필수 구조
-- DOCX·PDF 헤더·SHA-256
+- 책임 원본 ID·형식·상태·필수 구조
+- PDF·선택 DOCX 헤더·SHA-256
 - 생성기 변경 후 미재생성
 - 다이어그램·승인 이미지 누락·해시
 - PDF 전 페이지 렌더와 빈 페이지
 - 등록되지 않은 Markdown 본책과 수동 변경된 파생본 탐지
 - Skill Registry·분야 진입·Learning Log
-- 스킬맵 DOCX/PDF·다이어그램·Manifest
+- 스킬맵 필수 PDF·Manifest와 설정한 선택 Markdown/DOCX/다이어그램
 - 링크·금지 파일명·갱신 누락
 
 ## 13. 완료 시 갱신

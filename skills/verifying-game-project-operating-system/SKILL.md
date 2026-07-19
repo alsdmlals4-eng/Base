@@ -72,9 +72,9 @@ actual_code_data_assets_tests:
 ### 2. Design document responsibility
 
 - `DESIGN_DOCUMENT_REGISTRY.json`이 존재하고 활성 문서 ID가 고유한가?
-- 프로젝트 전체와 11개 분야 책임이 `responsibility_coverage`로 보존되는가?
-- 각 활성 항목의 JSON·DOCX·PDF·asset dir·Manifest 경로가 존재하는가?
-- 활성 `*_기획서.md`, `DISCIPLINE_BIBLE.md`, `PROJECT_MASTER_PLAN.md`가 재생성되지 않았는가?
+- 프로젝트 전체와 프로젝트가 선택한 분야 책임이 `responsibility_coverage`로 보존되는가?
+- 각 활성 항목의 단일 Markdown 또는 JSON 책임 원본·필수 PDF·Manifest와 선언한 선택 DOCX·asset dir 경로가 존재하는가?
+- 활성 Markdown 기획서는 Registry에 등록되고 required section·H1 계약을 만족하는가?
 - 질문마다 현행 단일 책임 원본이 하나이고 형식 역할이 명확한가?
 - 백업·보류·제거 후보가 기본 읽기에서 제외되는가?
 
@@ -82,8 +82,8 @@ actual_code_data_assets_tests:
 
 각 활성 기획서에서 확인:
 
-- JSON source SHA-256과 Manifest가 일치함
-- DOCX가 유효한 ZIP·OOXML 파일임
+- 등록된 책임 원본 SHA-256과 Manifest가 일치함
+- `output_docx`를 선언한 경우 DOCX가 유효한 ZIP·OOXML 파일임
 - PDF가 실제 PDF임
 - 생성기·다이어그램 생성기 해시가 현재 파일과 일치함
 - 작업 흐름·상태·책임 다이어그램이 존재함
@@ -99,7 +99,7 @@ actual_code_data_assets_tests:
 - 각 분야의 진입 스킬이 등록됨
 - 전체 스킬이 아니라 최소 집합만 선택됨
 - `PROJECT_SKILL_MAP.pdf`와 선택 `md/docx/assets`가 Registry와 동일한 해시 기준으로 생성됨
-- `PROJECT_SKILL_MAP.md`가 없음
+- 선택 `PROJECT_SKILL_MAP.md`가 Registry에서 자동 생성되고 파생본 표기·Registry 해시가 일치함
 - 호출 후 성공·실패·예외·피드백이 기록됨
 
 ### 5. Development gates and traceability
@@ -145,8 +145,8 @@ actual_code_data_assets_tests:
 - 프로젝트 목적과 핵심 경험은 무엇인가?
 - 현재 단계와 최우선 작업은 무엇인가?
 - 무엇을 변경하면 안 되는가?
-- 프로젝트 전체·각 분야 JSON 본책은 어디인가?
-- 사람이 볼 최신 PDF·DOCX·승인 이미지는 어디인가?
+- 프로젝트 전체·각 분야의 등록된 Markdown 또는 JSON 책임 원본은 어디인가?
+- 사람이 볼 최신 PDF·선택 DOCX·승인 이미지는 어디인가?
 - 각 분야 진입 스킬과 실제 검증은 어디인가?
 - 보류·미검증·위험은 어디인가?
 

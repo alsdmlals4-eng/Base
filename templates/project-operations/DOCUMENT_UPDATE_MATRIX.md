@@ -49,9 +49,9 @@ SKILL.md·Learning Log
 
 ## 3. 변경 유형별 기본 갱신
 
-| 변경 유형 | 주 책임 JSON | 영향 확인 | 공통 갱신 | 사람용 발행 영향 | 필수 증거 |
+| 변경 유형 | 주 책임 원본 | 영향 확인 | 공통 갱신 | 사람용 발행 영향 | 필수 증거 |
 |---|---|---|---|---|---|
-| 프로젝트 방향·대상 플레이어 | 프로젝트 종합·게임 디자인 | 모든 분야 | Active Context·Roadmap·Decision·Gates | 프로젝트 종합과 영향 분야 DOCX/PDF | 사용자 승인 |
+| 프로젝트 방향·대상 플레이어 | 프로젝트 종합·게임 디자인 | 영향 분야 | Active Context·Roadmap·Decision·Gates | 프로젝트 종합과 영향 분야 PDF·선택 파생본 | 사용자 승인 |
 | 세계관·명칭·캐릭터 정사 | 설정·내러티브 | 게임·UX·아트·사운드·QA | 용어·참조·Decision | 설정·연관 분야 PDF 문구·이미지 | 참조 검색 |
 | 핵심 루프·게임 규칙 | 게임 디자인 | UX·개발·QA·분석·통합검수 | Roadmap·Gates·데이터 계약 | 게임·UX·개발 PDF | 규칙 테스트·플레이 |
 | 밸런스·수치 | 게임 디자인·실제 데이터 | 개발·QA·분석 | 근거·데이터 diff | 게임 디자인 PDF | 시뮬레이션·플레이테스트 |
@@ -68,13 +68,13 @@ SKILL.md·Learning Log
 | 벤치마킹·유저리서치 | 분석·유저리서치 | 채택 대상 분야 | 출처·Decision | 분석 PDF | 관찰·해석·적용 결론 |
 | 문서·구현·자산 불일치 | 통합검수 | 관련 분야 전체 | 불일치·Gate 판정 | 통합검수 PDF | JSON·실제 결과 비교 |
 | 개발 게이트 변경 | 프로덕션·통합검수 | 영향 분야 전체 | Gates·Roadmap·Active Context | 영향 분야 PDF 상태 | 진입·종료 기준·증거 |
-| 프로젝트 스킬 변경 | 프로젝트 허브·해당 분야 | 관련 분야 | Skill Registry·Learning Log | Skill Map DOCX/PDF·관련 기획서 Skill Section | 실제 실행·피드백 |
+| 프로젝트 스킬 변경 | 프로젝트 허브·해당 분야 | 관련 분야 | Skill Registry·Learning Log | Skill Map PDF·Manifest·설정한 선택 파생본 | 실제 실행·피드백 |
 | 기획 책임 원본 변경 | 해당 분야 | 관련 분야·통합검수 | Design Document Registry | PDF·Manifest·선택 파생본 | 원본 해시·렌더 |
-| 승인 이미지 변경 | 해당 분야 | 아트·기술 아트·통합검수 | JSON approved_visuals·Asset Manifest | 관련 DOCX/PDF | 이미지 해시·캡션·시각 검수 |
-| 생성기 변경 | 프로젝트 허브·개발·통합검수 | 모든 활성 발행본 | Generator version | 모든 영향 DOCX/PDF·Manifest | 통합 테스트·전 페이지 렌더 |
+| 승인 이미지 변경 | 해당 분야 | 아트·기술 아트·통합검수 | 책임 원본의 approved visuals·Asset Manifest | 관련 PDF·선택 파생본 | 이미지 해시·캡션·시각 검수 |
+| 생성기 변경 | 프로젝트 허브·개발·통합검수 | 모든 활성 발행본 | Generator version | 모든 영향 PDF·Manifest·선택 파생본 | 통합 테스트·전 페이지 렌더 |
 | Base 규칙 적용 | 프로젝트 허브 | 관련 분야 | BASE_RULES_VERSION·Map | 영향 발행본 | 기준 커밋·적용 차이 |
 | 책임 원본·경로 변경 | 프로젝트 허브 | 참조하는 모든 분야 | 두 Registry·Map·CODEOWNERS | 관련 발행본 | 링크·검색·콜드 스타트 |
-| 기존 구조 마이그레이션 | 프로젝트 허브·통합검수 | 모든 영향 분야 | Migration Audit·보존 대조 | 새 JSON·DOCX/PDF·Manifest | 변경 전후 정보·참조 보존 |
+| 기존 구조 마이그레이션 | 프로젝트 허브·통합검수 | 모든 영향 분야 | Migration Audit·보존 대조 | 새 책임 원본·PDF·Manifest·선택 파생본 | 변경 전후 정보·참조 보존 |
 | 현행→백업·보류·제거 후보 | 원 책임 분야 | 참조 분야 | Lifecycle Map·두 Registry | 발행본 포함 여부 | 보존·재개·제거 조건·승인 |
 
 ## 4. 이미지 변경 판정
@@ -85,7 +85,7 @@ SKILL.md·Learning Log
 - [ ] 채택·비채택 요소 기록
 - [ ] 콘셉트·실제 캡처 구분
 - [ ] 관련 JSON `approved_visuals` 갱신
-- [ ] DOCX/PDF와 Manifest 재생성 또는 `STALE` 표시
+- [ ] PDF·Manifest와 선언한 선택 파생본을 재생성하거나 `STALE` 표시
 
 ## 5. 프로젝트 스킬 판정
 
@@ -94,7 +94,7 @@ SKILL.md·Learning Log
 - [ ] Trigger·비사용 조건·실패 조건 존재
 - [ ] Learning Log에 결과·실패·피드백 기록
 - [ ] Skill Registry 갱신
-- [ ] Skill Map DOCX/PDF·다이어그램·Manifest 재생성
+- [ ] Skill Map PDF·Manifest와 설정한 선택 Markdown/DOCX/다이어그램 재생성
 - [ ] 전체 스킬이 아니라 최소 스킬만 선택 가능
 
 ## 6. 기획서 발행 판정

@@ -44,29 +44,29 @@
 | 사용자 확인 |  |  |
 | 미검증·불일치 |  |  |
 
-## Design Document Registry·JSON 본책
+## Design Document Registry·Markdown/JSON 책임 원본
 
 - [ ] 활성 `[기획서]`가 저장소 루트에 있음
 - [ ] 중첩 현행 기획서 폴더 없음
 - [ ] `DESIGN_DOCUMENT_REGISTRY.json` 갱신
-- [ ] 주 책임·영향 분야 JSON 갱신
+- [ ] 주 책임·영향 분야의 등록된 Markdown 또는 JSON 책임 원본 갱신
 - [ ] 프로젝트 전체와 분야 책임 범위 누락 없음
 - [ ] 확정·구현·검증·확인 필요·보류 상태 일치
 - [ ] 실제 코드·데이터·자산·테스트 경로 연결
-- [ ] 활성 `*_기획서.md`, `DISCIPLINE_BIBLE.md`, `PROJECT_MASTER_PLAN.md`를 만들지 않음
+- [ ] 모든 활성 Markdown·JSON 기획 본책이 Registry에 등록되고 단일 책임 원본임
 
-| 문서 ID | 책임 범위 | JSON | 변경 이유 | 실제 증거 |
+| 문서 ID | 책임 범위 | source format/path | 변경 이유 | 실제 증거 |
 |---|---|---|---|---|
 |  |  |  |  |  |
 
-## 사람용 DOCX/PDF·다이어그램·승인 이미지
+## 사람용 PDF·선택 DOCX/다이어그램·승인 이미지
 
 - [ ] 영향 없음
-- [ ] JSON 변경 시 DOCX·PDF 재생성
+- [ ] 책임 원본·입력 변경 시 PDF·Manifest와 선언한 선택 파생본 재생성
 - [ ] workflow·status·responsibility 다이어그램 생성
 - [ ] 승인 이미지·실제 캡처와 상태 캡션 포함
 - [ ] JSON·생성기·출력·자산 SHA-256 Manifest 갱신
-- [ ] DOCX 유효성·PDF 헤더 확인
+- [ ] 선택 DOCX 유효성·PDF 헤더 확인
 - [ ] PDF 전 페이지 렌더·빈 페이지 검사
 - [ ] 한글·표·이미지 잘림·겹침 시각 검수
 - [ ] DOCX·PDF를 독립 책임 원본으로 수정하지 않음
@@ -86,8 +86,8 @@
 - [ ] 주 책임 분야 스킬 최대 하나·Foundation 최소 호출
 - [ ] 분야 스킬이 관련 JSON·실제 파일·검증을 연결
 - [ ] 실패·중요 결정·재사용 가능한 교훈·실제 검증 결과를 Learning Log에 기록
-- [ ] 스킬 변경 시 Skill Map DOCX/PDF·assets·Manifest 재생성
-- [ ] `PROJECT_SKILL_MAP.md`를 만들지 않음
+- [ ] 스킬 변경 시 필수 Skill Map PDF·Manifest와 설정한 선택 Markdown/DOCX/assets 재생성
+- [ ] 선택 `PROJECT_SKILL_MAP.md`가 자동 생성 파생본이며 Registry 해시가 일치함
 
 ## 이미지·자산·사운드
 

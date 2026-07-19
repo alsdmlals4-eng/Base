@@ -77,7 +77,7 @@ src/[기획서]/
 | `skills/DISCIPLINE_SKILL.md` | 분야 고유 판단·실제 경로·검증 계약 |
 | `skills/SKILL_LEARNING_LOG.md` | 실패·중요 결정·재사용 가능한 교훈·검증 결과 기록 |
 
-`PROJECT_SKILL_MAP.md`는 만들지 않는다. 스킬 정보는 `SKILL_REGISTRY.json`에서 편집하고 `tools/build_project_skill_map.py`로 DOCX·PDF와 다이어그램을 재생성한다.
+`PROJECT_SKILL_MAP.md`는 설정한 경우에만 `SKILL_REGISTRY.json`에서 자동 생성한다. 수동 책임 원본으로 편집하지 않으며 파생본 표기와 Registry 해시를 유지한다.
 
 ### 이미지·PDF
 

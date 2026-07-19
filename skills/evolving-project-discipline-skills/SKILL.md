@@ -7,7 +7,7 @@ description: Use when creating, separating, reviewing, consolidating, or improvi
 
 ## Core principle
 
-공용 절차는 Foundation에서 한 번만 책임지고, 각 분야 스킬은 해당 분야의 고유 판단·JSON 본책·실제 경로·산출물·검증·학습을 책임한다.
+공용 절차는 Foundation에서 한 번만 책임지고, 각 분야 스킬은 해당 분야의 고유 판단·등록된 Markdown 또는 JSON 책임 원본·실제 경로·산출물·검증·학습을 책임한다.
 
 실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 호출은 Learning Log에 남긴다. 사소한 성공 호출은 기록을 강제하지 않는다. 스킬 본문은 반복 실패, 새 예외, 책임·경로·검증 변경처럼 근거가 있을 때만 갱신한다.
 
@@ -68,7 +68,7 @@ base_version:
 찾을 것:
 
 - 설명만 있고 실행 절차가 없음
-- JSON 본책·실제 파일·테스트 경로가 없음
+- 등록된 책임 원본·실제 파일·테스트 경로가 없음
 - 사용·비사용 조건이나 Trigger가 없음
 - `load_by_default=true` 또는 전체 로드 요구
 - 공용 체크리스트 장문 복제
@@ -208,7 +208,7 @@ python tools/build_project_skill_map.py \
 
 - 고유 입력·출력·실패 조건 추출
 - 프로젝트 전용 규칙 보존
-- JSON 본책·Documentation Map·Issue·PR 참조 확인
+- 등록된 책임 원본·Documentation Map·작업 계약·PR 참조 확인
 - Learning Log와 지식 상태 보존
 - Registry와 사람용 발행본 경로 확인
 - 통합 후 새 스킬에서 모든 책임을 찾을 수 있는지 대조
@@ -252,7 +252,7 @@ python tools/build_project_skill_map.py \
 - 사람용 DOCX/PDF·다이어그램 상태:
 - 새로 작성·통합한 스킬:
 - 백업·보류·제거 후보:
-- JSON 본책·실제 파일·테스트 연결:
+- 등록된 책임 원본·실제 파일·테스트 연결:
 - 선택적 호출 검증:
 - 실행·검증 결과:
 - Learning Log:

@@ -28,7 +28,7 @@
 - 변경 전에 주 책임 분야와 영향 분야를 판정한다.
 - 전체 스킬이 아니라 필요한 최소 스킬만 호출한다.
 - 모든 의미 있는 스킬 호출이 Learning Log에 남는다.
-- 이미지·DOCX·PDF가 JSON·승인 상태·실제 결과와 연결된다.
+- 이미지·PDF·선택 DOCX가 등록된 책임 원본·승인 상태·실제 결과와 연결된다.
 - 누락과 오래된 파생본을 PR에서 탐지한다.
 - 새 AI가 과거 대화 없이 저장소만으로 작업을 재개한다.
 
@@ -103,7 +103,7 @@
 현재 프로젝트 상태 → ACTIVE_CONTEXT.md
 프로젝트·분야 방향 → Markdown 또는 JSON 책임 원본
 기획서 위치·책임 범위 → DESIGN_DOCUMENT_REGISTRY.json
-사람용 최신본 → DOCX·PDF·기획서.assets
+사람용 최신본 → PDF·Manifest·선택 DOCX/기획서.assets
 발행 최신성 → *_PUBLICATION_MANIFEST.json
 작업·제품 단계 → DEVELOPMENT_GATES.md·Roadmap
 현재 실행 범위 → Issue·Goal·Plan
@@ -195,7 +195,7 @@ Concept
 ## 9. 선택적 프로젝트 스킬
 
 - 공용 절차는 Foundation에 한 번만 둔다.
-- 각 분야는 실제 JSON 본책·경로·산출물·검증을 연결하는 진입 스킬을 가진다.
+- 프로젝트가 선택한 각 분야는 등록된 Markdown 또는 JSON 책임 원본·경로·산출물·검증을 연결하는 진입 스킬 또는 명시적 통합 책임을 가진다.
 - `SKILL_REGISTRY.json`은 trigger에 맞는 최소 스킬만 선택한다.
 - `PROJECT_SKILL_MAP.pdf`는 사람용 관계·책임 지도다.
 - 모든 의미 있는 호출은 Learning Log에 성공·실패·예외·피드백을 기록한다.
@@ -262,8 +262,8 @@ Audit only
 ## 14. 완료 조건
 
 - 루트 `[기획서]`와 시작 문서가 있다.
-- Design Document Registry가 프로젝트 전체와 모든 분야를 책임진다.
-- 모든 활성 본책에 JSON·DOCX·PDF·다이어그램·Manifest가 있다.
+- Design Document Registry가 프로젝트 전체와 프로젝트가 선택한 분야를 책임진다.
+- 모든 활성 본책에 등록된 단일 Markdown 또는 JSON 책임 원본·최신 PDF·Manifest와 선언한 선택 DOCX/다이어그램이 있다.
 - Skill Registry와 사람용 스킬맵이 일치한다.
 - Development Gates·Roadmap·Active Context가 연결된다.
 - 승인 이미지와 실제 캡처 상태가 추적된다.

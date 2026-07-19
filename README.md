@@ -93,7 +93,7 @@ PROJECT_SKILL_MAP.assets/
 ```text
 Base 공용 Method·Skill·Template·Test
 → Registry로 필요한 스킬만 선택
-→ 프로젝트 JSON 본책과 실제 경로로 분화
+→ 프로젝트의 등록된 Markdown 또는 JSON 책임 원본과 실제 경로로 분화
 → 기획·구현·제작·검증
 → DOCX/PDF·다이어그램·승인 이미지 발행
 → 성공·실패·미검증을 Learning Log에 기록
@@ -161,7 +161,7 @@ tests/             운영체계·발행·Governance 회귀 테스트
 - 루트 `[기획서]`·시작 문서·Documentation Map
 - `DESIGN_DOCUMENT_REGISTRY.json`
 - `DESIGN_DOCUMENT.json`
-- JSON → DOCX/PDF·다이어그램 생성 파이프라인
+- Markdown/JSON → PDF·Manifest·선택 DOCX/다이어그램 생성 파이프라인
 - `SKILL_REGISTRY.json`과 사람용 스킬맵 발행 구조
 - Development Gates·Document Update Matrix
 - Foundation·분야 스킬·Learning Log
@@ -211,7 +211,7 @@ Base는 다음을 회귀 테스트합니다.
 
 - 루트 `[기획서]`와 중첩 복제본
 - Skill Registry·분야 진입·Learning Log
-- Skill Map DOCX/PDF·다이어그램·Manifest 최신성
+- Skill Map 필수 PDF·Manifest와 설정한 선택 Markdown/DOCX/다이어그램 최신성
 - Design Document Registry·책임 범위
 - Markdown·JSON 책임 원본·PDF·선택 파생본·승인 이미지 해시
 - 생성기 변경 후 미재생성

@@ -22,7 +22,7 @@
 /[기획서]/00_프로젝트_허브/SKILL_MAP_PUBLICATION_MANIFEST.json @project-owner @qa-owner
 /docs/BASE_RULES_VERSION.md                                  @project-owner @qa-owner
 
-# 분야별 JSON 본책·DOCX/PDF·다이어그램·승인 이미지
+# 분야별 Markdown/JSON 책임 원본·PDF/Manifest·선택 DOCX/다이어그램·승인 이미지
 /[기획서]/01_설정_내러티브/          @narrative-owner
 /[기획서]/02_게임_디자인/            @game-design-owner
 /[기획서]/03_UX_UI_접근성/           @ux-owner
