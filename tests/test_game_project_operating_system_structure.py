@@ -5,6 +5,8 @@ import re
 import unittest
 from pathlib import Path
 
+from jsonschema import Draft202012Validator
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -23,6 +25,12 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "docs/knowledge/methods/DISCIPLINE_SKILL_EVOLUTION_METHOD.md",
             "docs/knowledge/methods/DISCIPLINE_PDF_PUBLICATION_METHOD.md",
             "skills/SKILL_REGISTRY.json",
+            "schemas/base-skill-registry-v1.schema.json",
+            "schemas/base-change-proposal-registry-v1.schema.json",
+            "[수정제안서]/README.md",
+            "[수정제안서]/PROPOSAL_REGISTRY.json",
+            "templates/BASE_CHANGE_PROPOSAL.md",
+            "tools/check_base_change_proposals.py",
             "skills/SKILL_LEARNING_LOG.md",
             "skills/routing-project-work-by-discipline/SKILL.md",
             "skills/maintaining-project-context-and-handoff/SKILL.md",
@@ -136,6 +144,9 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
 
     def test_base_skill_registry_is_valid_and_selective(self) -> None:
         registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
+        schema = json.loads((ROOT / "schemas/base-skill-registry-v1.schema.json").read_text(encoding="utf-8"))
+        errors = sorted(Draft202012Validator(schema).iter_errors(registry), key=lambda error: list(error.path))
+        self.assertEqual(errors, [], [error.message for error in errors])
         policy = registry["routing_policy"]
         self.assertFalse(policy["load_all_skills"])
         self.assertEqual(policy["default_selection"], "none")
@@ -152,6 +163,24 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             self.assertTrue(item["review_triggers"])
             self.assertTrue((ROOT / item["path"]).is_file())
             self.assertTrue((ROOT / item["learning_log"]).is_file())
+
+    def test_skill_evolution_uses_hybrid_optional_contract(self) -> None:
+        text = (ROOT / "skills/evolving-project-discipline-skills/SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("relevant_design_document_sources", text)
+        self.assertIn("프로젝트가 선택한 분야만", text)
+        self.assertIn("선택 `PROJECT_SKILL_MAP.docx`", text)
+        self.assertNotIn("relevant_design_document_json", text)
+        self.assertNotIn("11개 분야의 `discipline_entrypoints`", text)
+
+    def test_project_learning_requires_proposal_before_base_implementation(self) -> None:
+        promotion = (ROOT / "skills/promoting-project-knowledge/SKILL.md").read_text(encoding="utf-8")
+        implementation = (ROOT / "skills/reviewing-and-implementing-base-change-proposals/SKILL.md").read_text(encoding="utf-8")
+        agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        for text in (promotion, implementation, agents):
+            self.assertIn("[수정제안서]", text)
+            self.assertIn("사용자 승인", text)
+        self.assertIn("제안 PR에는 `[수정제안서]/**`만", promotion)
+        self.assertIn("approval_ref", implementation)
 
     def test_project_skill_registry_defines_human_publications(self) -> None:
         registry = json.loads((ROOT / "templates/project-operations/SKILL_REGISTRY.json").read_text(encoding="utf-8"))

@@ -124,7 +124,7 @@ knowledge_state:
 - `read_first_design_document_ids`는 Design Document Registry에 등록된 Markdown 또는 JSON 책임 원본을 가리킨다.
 - `trigger_tags`와 사용·비사용 조건은 선택적 호출의 근거다.
 - 활성 스킬도 `load_by_default=false`다.
-- 프로젝트 고유 명칭·수치·경로·승인 자산은 프로젝트 스킬과 JSON에 둔다.
+- 프로젝트 고유 명칭·수치·경로·승인 자산은 프로젝트 스킬과 등록된 Markdown 또는 JSON 책임 원본에 둔다.
 
 ## 5. 학습 상태
 
@@ -143,7 +143,7 @@ knowledge_state:
 - 작업·PR:
 - 기준 커밋:
 - 호출 Trigger:
-- 입력 JSON·실제 범위:
+- 입력 책임 원본·실제 범위:
 - 산출물:
 - 실행한 검증:
 - 결과: 성공/부분 성공/실패/미검증
@@ -193,7 +193,7 @@ python tools/build_project_skill_map.py \
 - `load_by_default=false`
 - Learning Log·분야 진입 등록
 - 보류·백업 기본 제외
-- 사람용 DOCX/PDF·다이어그램·Manifest 해시
+- 필수 PDF·Manifest와 설정한 선택 Markdown/DOCX·다이어그램 해시
 - Registry 변경 후 미재생성
 - Markdown Skill Map 재생성
 
@@ -218,7 +218,7 @@ python tools/build_project_skill_map.py \
 - 새 작업 유형에 대응할 스킬 없음
 - 새 채팅이 필요한 스킬을 찾지 못함
 - 90일 이상 활성 스킬 미검토
-- Registry와 DOCX/PDF 불일치
+- Registry와 필수 PDF·Manifest 또는 설정한 선택 파생본 불일치
 
 스킬 구조를 설치·통합·대규모 변경한 뒤에는 `verifying-game-project-operating-system`을 호출해 Registry, 사람용 Skill Map, Learning Log, 분야 진입점, 선택적 호출과 Governance 파이프라인이 실제로 연결됐는지 검수한다.
 

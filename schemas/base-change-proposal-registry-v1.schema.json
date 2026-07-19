@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/base-change-proposal-registry-v1.schema.json",
+  "title": "Base Change Proposal Registry v1",
+  "type": "object",
+  "required": ["schema_version", "registry_role", "proposal_root", "proposals"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "registry_role": {"const": "base-change-proposal-index"},
+    "proposal_root": {"const": "[수정제안서]"},
+    "proposals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["proposal_id", "title", "path", "status", "source_project", "source_commit", "submitted_at", "approval_ref", "implementation_pr"],
+        "properties": {
+          "proposal_id": {"type": "string", "pattern": "^BCP-[0-9]{4}-[0-9]{3}(?:-[a-z0-9]+(?:-[a-z0-9]+)*)?$"},
+          "title": {"type": "string", "minLength": 1},
+          "path": {"type": "string", "pattern": "^\\[수정제안서\\]/BCP-[^/]+/PROPOSAL\\.md$"},
+          "status": {"enum": ["SUBMITTED", "UNDER_REVIEW", "APPROVED_FOR_IMPLEMENTATION", "DEFERRED", "REJECTED", "IMPLEMENTED", "SUPERSEDED"]},
+          "source_project": {"type": "string", "minLength": 1},
+          "source_commit": {"type": "string", "minLength": 1},
+          "submitted_at": {"type": "string", "format": "date"},
+          "approval_ref": {"type": ["string", "null"]},
+          "implementation_pr": {"type": ["string", "null"]}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

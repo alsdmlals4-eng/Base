@@ -20,6 +20,7 @@ START_HERE.md
 - [문서·스킬 역할표](docs/DOCUMENTATION_MAP.md)
 - [공용 스킬 Registry](skills/SKILL_REGISTRY.json)
 - [공용 스킬 학습 기록](skills/SKILL_LEARNING_LOG.md)
+- [Base 수정제안서]([수정제안서]/README.md)
 
 ## 사용자가 기억할 최소 요청
 
@@ -97,7 +98,8 @@ Base 공용 Method·Skill·Template·Test
 → 기획·구현·제작·검증
 → DOCX/PDF·다이어그램·승인 이미지 발행
 → 성공·실패·미검증을 Learning Log에 기록
-→ 반복 검증된 공용 원리만 Base로 환류
+→ 반복 검증된 공용 원리는 [수정제안서]에 먼저 제출
+→ 사용자 승인 뒤 별도 구현 PR로 Base에 환류
 ```
 
 ## 저장소 구조
@@ -111,6 +113,7 @@ skills/            실행 Skill·Registry·Learning Log
 templates/         프로젝트 분화 템플릿
 tools/             DOCX/PDF·다이어그램 생성기
 tests/             운영체계·발행·Governance 회귀 테스트
+[수정제안서]/      프로젝트발 Base 승격 후보·승인·구현 이력
 ```
 
 ## 기본 책임 분야
@@ -151,6 +154,8 @@ tests/             운영체계·발행·Governance 회귀 테스트
 | `publishing-discipline-bibles` | Markdown·JSON 기획서의 PDF·선택 파생본 발행·검수 |
 | `maintaining-project-context-and-handoff` | 현재 상태·다음 작업·위험 압축 |
 | `verifying-game-project-operating-system` | 설치·마이그레이션·주요 게이트 후 Health Review |
+| `promoting-project-knowledge` | 프로젝트 교훈을 Base 수정제안서로 분리·제출 |
+| `reviewing-and-implementing-base-change-proposals` | 승인된 제안만 별도 PR로 검토·구현 |
 | `designing-vertical-slices` | 대표 구간의 목표 품질·파이프라인 검증 |
 | `writing-game-design-documents` | 기획 책임 원본과 추적 구조 설계 |
 
