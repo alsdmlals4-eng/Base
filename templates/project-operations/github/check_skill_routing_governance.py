@@ -125,6 +125,8 @@ def check_skill_registry(root: Path, config: dict) -> tuple[list[str], set[str],
         registry = load_json(registry_path)
     except SystemExit as exc:
         return [str(exc)], set(), {}
+    if registry.get("schema_version") != 3:
+        return [f"{registry_name}: schema v3 is required; follow docs/migrations/v2.2.0-to-v3.0.0.md"], set(), registry
 
     routing = registry.get("routing_policy", {})
     if not isinstance(routing, dict):
@@ -145,11 +147,8 @@ def check_skill_registry(root: Path, config: dict) -> tuple[list[str], set[str],
             human = {}
         expected_human = {
             "primary_reading_format": "PROJECT_SKILL_MAP.pdf",
-            "editable_derivative": "PROJECT_SKILL_MAP.docx",
-            "diagram_directory": "PROJECT_SKILL_MAP.assets",
             "publication_manifest": "SKILL_MAP_PUBLICATION_MANIFEST.json",
             "source_of_truth": "SKILL_REGISTRY.json",
-            "markdown_skill_map_allowed": False,
         }
         for field, expected in expected_human.items():
             if human.get(field) != expected:
@@ -219,7 +218,12 @@ def check_skill_registry(root: Path, config: dict) -> tuple[list[str], set[str],
         errors.append(f"{registry_name}: discipline_entrypoints must be an object")
         entrypoints = {}
 
-    for discipline in config.get("required_skill_disciplines", []):
+    selected = registry.get("selected_disciplines", [])
+    if not isinstance(selected, list) or not all(isinstance(item, str) and item.strip() for item in selected):
+        errors.append(f"{registry_name}: selected_disciplines must be a string list")
+        selected = []
+    required_disciplines = list(dict.fromkeys([*config.get("required_skill_disciplines", []), *selected]))
+    for discipline in required_disciplines:
         ids = entrypoints.get(discipline)
         if not nonempty_string_list(ids):
             errors.append(f"Missing active skill entrypoint for discipline: {discipline}")
@@ -252,13 +256,6 @@ def check_skill_map_publication(root: Path, config: dict, registry: dict) -> lis
     errors: list[str] = []
     enforce = bool(config.get("enforce_skill_map_publication", False))
     manifest_name = str(config.get("skill_map_publication_manifest", "")).strip()
-    forbidden_md = str(config.get("forbidden_markdown_skill_map", "")).strip()
-
-    if forbidden_md and (root / forbidden_md).exists():
-        errors.append(
-            f"Markdown project skill map is forbidden: {forbidden_md}; "
-            "edit SKILL_REGISTRY.json and regenerate DOCX/PDF"
-        )
 
     if not manifest_name:
         return errors + (["skill_map_publication_manifest is required"] if enforce else [])
@@ -286,8 +283,12 @@ def check_skill_map_publication(root: Path, config: dict, registry: dict) -> lis
 
     if manifest.get("role") != "human-readable-derivative":
         errors.append(f"{manifest_name}: role must be human-readable-derivative")
-    if manifest.get("status") != "CURRENT":
-        errors.append(f"{manifest_name}: status must be CURRENT")
+    if manifest.get("schema_version") != 3:
+        errors.append(f"{manifest_name}: schema v3 is required")
+    if manifest.get("source_format") != "skill-registry":
+        errors.append(f"{manifest_name}: source_format must be skill-registry")
+    if manifest.get("sync_status") != "CURRENT":
+        errors.append(f"{manifest_name}: sync_status must be CURRENT")
     if manifest.get("automated_render_review") != "PASSED":
         errors.append(f"{manifest_name}: automated_render_review must be PASSED")
     if bool(config.get("require_human_skill_map_visual_review", False)) and manifest.get(
@@ -295,10 +296,9 @@ def check_skill_map_publication(root: Path, config: dict, registry: dict) -> lis
     ) != "PASSED":
         errors.append(f"{manifest_name}: human_visual_review must be PASSED")
 
-    output_specs = [
-        ("output_docx", "output_docx_sha256", b"PK", "DOCX"),
-        ("output_pdf", "output_pdf_sha256", b"%PDF-", "PDF"),
-    ]
+    output_specs = [("output_pdf", "output_pdf_sha256", b"%PDF-", "PDF")]
+    if manifest.get("output_docx"):
+        output_specs.append(("output_docx", "output_docx_sha256", b"PK", "DOCX"))
     for path_field, digest_field, header, label in output_specs:
         relative = str(manifest.get(path_field, "")).strip()
         if not relative:
@@ -315,15 +315,11 @@ def check_skill_map_publication(root: Path, config: dict, registry: dict) -> lis
         if expected != actual:
             errors.append(f"{manifest_name}: {label} hash mismatch: {relative}")
 
-    diagrams = manifest.get("diagram_paths", [])
-    hashes = manifest.get("diagram_sha256", {})
-    if not isinstance(diagrams, list) or not diagrams:
-        errors.append(f"{manifest_name}: diagram_paths must contain at least one image")
-        diagrams = []
-    if not isinstance(hashes, dict):
-        errors.append(f"{manifest_name}: diagram_sha256 must be an object")
+    hashes = manifest.get("generated_assets", {})
+    if not isinstance(hashes, dict) or not hashes:
+        errors.append(f"{manifest_name}: generated_assets must contain at least one image")
         hashes = {}
-    for relative_value in diagrams:
+    for relative_value, expected_value in hashes.items():
         relative = str(relative_value)
         path = resolve_manifest_path(manifest_path, relative)
         if not path.is_file():
@@ -331,26 +327,39 @@ def check_skill_map_publication(root: Path, config: dict, registry: dict) -> lis
             continue
         if path.suffix.lower() not in {".png", ".jpg", ".jpeg", ".webp"}:
             errors.append(f"{manifest_name}: unsupported diagram format: {relative}")
-        expected = str(hashes.get(relative, "")).lower()
+        expected = str(expected_value).lower()
         if expected != file_digest(path):
             errors.append(f"{manifest_name}: diagram hash mismatch: {relative}")
 
     human = registry.get("human_presentation", {}) if isinstance(registry, dict) else {}
     if isinstance(human, dict):
-        expected_names = {
-            str(human.get("primary_reading_format", "")),
-            str(human.get("editable_derivative", "")),
-            str(human.get("publication_manifest", "")),
-        }
-        actual_names = {
-            str(manifest.get("output_pdf", "")),
-            str(manifest.get("output_docx", "")),
-            manifest_path.name,
-        }
+        expected_names = {str(human.get("primary_reading_format", "")), str(human.get("publication_manifest", ""))}
+        actual_names = {str(manifest.get("output_pdf", "")), manifest_path.name}
+        if human.get("editable_derivative"):
+            expected_names.add(str(human["editable_derivative"]))
+            actual_names.add(str(manifest.get("output_docx", "")))
         if expected_names != actual_names:
             errors.append(
                 f"{manifest_name}: Registry human_presentation paths do not match publication outputs"
             )
+        markdown_name = human.get("markdown_summary")
+        if markdown_name:
+            markdown_path = manifest_path.parent / str(markdown_name)
+            if not markdown_path.is_file():
+                errors.append(f"{manifest_name}: generated Markdown summary missing: {markdown_name}")
+            else:
+                text = markdown_path.read_text(encoding="utf-8")
+                if "자동 생성 파생본" not in text or expected_registry_hash not in text:
+                    errors.append(f"{manifest_name}: Markdown summary header/hash is invalid")
+                if manifest.get("markdown_summary_sha256") != file_digest(markdown_path):
+                    errors.append(f"{manifest_name}: Markdown summary hash mismatch")
+
+    pdf_hash = str(manifest.get("output_pdf_sha256", ""))
+    if manifest.get("human_visual_review") == "PASSED":
+        if manifest.get("human_visual_review_pdf_sha256") != pdf_hash:
+            errors.append(f"{manifest_name}: human review hash must match current PDF")
+    elif manifest.get("human_visual_review_pdf_sha256") is not None:
+        errors.append(f"{manifest_name}: unreviewed PDF must not retain a human review hash")
 
     return errors
 

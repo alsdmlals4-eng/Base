@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/publication-manifest-v3.schema.json",
+  "title": "Base Publication Manifest v3",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version", "publication_id", "role", "source_path", "source_format",
+    "source_sha256", "input_sha256", "generator", "generator_sha256", "source_commit",
+    "output_pdf", "output_pdf_sha256", "sync_status", "automated_render_review",
+    "human_visual_review", "human_visual_review_pdf_sha256", "rendered_page_count"
+  ],
+  "properties": {
+    "schema_version": {"const": 3},
+    "publication_id": {"type": "string", "minLength": 1},
+    "role": {"const": "human-readable-derivative"},
+    "source_path": {"type": "string", "minLength": 1},
+    "source_format": {"enum": ["markdown", "json", "skill-registry"]},
+    "source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "input_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "generator": {"type": "string", "minLength": 1},
+    "generator_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "source_commit": {"type": "string"},
+    "generated_at": {"type": "string"},
+    "output_pdf": {"type": "string", "minLength": 1},
+    "output_pdf_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "output_docx": {"type": ["string", "null"]},
+    "output_docx_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+    "sync_status": {"enum": ["CURRENT", "STALE", "FAILED", "NOT_BUILT"]},
+    "automated_render_review": {"enum": ["PASSED", "FAILED"]},
+    "human_visual_review": {"enum": ["NOT_RUN", "PASSED", "FAILED"]},
+    "human_visual_review_pdf_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+    "rendered_page_count": {"type": "integer", "minimum": 1},
+    "generated_assets": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
+    "approved_visuals": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
+    "mermaid_sources": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
+    "mermaid_svg": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
+    "mermaid_png": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+  }
+}

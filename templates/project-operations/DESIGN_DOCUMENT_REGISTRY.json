@@ -1,15 +1,9 @@
 {
-  "schema_version": 1,
+  "$schema": "../../schemas/design-document-registry-v3.schema.json",
+  "schema_version": 3,
   "registry_role": "ai-design-document-router-and-publication-index",
   "project_name": "[프로젝트명]",
-  "source_of_truth_policy": "Each active project or discipline bible is a structured JSON source. DOCX, PDF and diagram assets are generated human-readable derivatives.",
-  "human_presentation": {
-    "primary_reading_format": "PDF",
-    "editable_review_format": "DOCX",
-    "diagram_assets_required": true,
-    "approved_visuals_embedded": true,
-    "markdown_design_bibles_allowed": false
-  },
+  "source_of_truth_policy": "Each document has exactly one Markdown or JSON source of truth. PDF is always synchronized; DOCX and diagrams are optional derivatives.",
   "required_responsibility_coverage": [
     "프로젝트 전체"
   ],
@@ -29,16 +23,28 @@
   "documents": [],
   "document_contract_example": {
     "document_id": "game-design-bible",
+    "title": "게임 기획서",
     "discipline": "게임 디자인",
     "responsibility_coverage": [
       "게임 디자인"
     ],
     "status": "NOT_INSTALLED",
-    "source_json": "../02_게임_디자인/게임_기획서.json",
-    "output_docx": "../02_게임_디자인/게임_기획서.docx",
+    "source_path": "../02_게임_디자인/게임_기획서.md",
+    "source_format": "markdown",
+    "source_role": "narrative_spec",
+    "publication_policy": "always_sync",
     "output_pdf": "../02_게임_디자인/게임_기획서.pdf",
+    "output_docx": null,
     "asset_dir": "../02_게임_디자인/게임_기획서.assets",
+    "diagram_policy": "mermaid",
     "publication_manifest": "../02_게임_디자인/게임_기획서_PUBLICATION_MANIFEST.json",
-    "generator": "tools/build_design_documents.py"
+    "generator": "tools/build_design_documents.py",
+    "required_sections": [
+      "목표",
+      "배경과 의도",
+      "범위",
+      "규칙과 제약",
+      "검증과 완료 기준"
+    ]
   }
 }

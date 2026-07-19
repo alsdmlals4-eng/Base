@@ -7,7 +7,7 @@ description: Use after installing, migrating, or materially changing a game-proj
 
 ## Core principle
 
-파일이 존재하는지만 보지 않는다. **시작 문서 → Registry → JSON 책임 원본 → 선택적 스킬 → 실제 파일 → 검증 → DOCX/PDF·인수인계**가 실제로 이어지는지 증거로 확인한다.
+파일이 존재하는지만 보지 않는다. **시작 문서 → Registry → Markdown 또는 JSON 책임 원본 → 선택적 스킬 → 실제 파일 → 검증 → 최신 PDF·인수인계**가 실제로 이어지는지 증거로 확인한다.
 
 ## Use when
 
@@ -54,7 +54,7 @@ actual_code_data_assets_tests:
 → 루트 [기획서]/00_프로젝트_허브/START_HERE.md
 → Documentation Map·Active Context·Development Gates
 → DESIGN_DOCUMENT_REGISTRY.json·SKILL_REGISTRY.json
-→ 관련 기획서 JSON·분야 스킬
+→ 관련 Markdown 또는 JSON 책임 원본·분야 스킬
 → 사람용 DOCX/PDF·다이어그램·승인 이미지
 → Governance config·Workflow·검사 결과
 → 실제 코드·데이터·자산·테스트
@@ -75,7 +75,7 @@ actual_code_data_assets_tests:
 - 프로젝트 전체와 11개 분야 책임이 `responsibility_coverage`로 보존되는가?
 - 각 활성 항목의 JSON·DOCX·PDF·asset dir·Manifest 경로가 존재하는가?
 - 활성 `*_기획서.md`, `DISCIPLINE_BIBLE.md`, `PROJECT_MASTER_PLAN.md`가 재생성되지 않았는가?
-- 질문마다 현행 JSON 책임 원본이 하나인가?
+- 질문마다 현행 단일 책임 원본이 하나이고 형식 역할이 명확한가?
 - 백업·보류·제거 후보가 기본 읽기에서 제외되는가?
 
 ### 3. Human publications
@@ -98,7 +98,7 @@ actual_code_data_assets_tests:
 - 각 스킬에 Trigger·사용·비사용 조건·Learning Log·review trigger가 있음
 - 각 분야의 진입 스킬이 등록됨
 - 전체 스킬이 아니라 최소 집합만 선택됨
-- `PROJECT_SKILL_MAP.docx/.pdf/.assets`가 Registry와 동일한 해시 기준으로 생성됨
+- `PROJECT_SKILL_MAP.pdf`와 선택 `md/docx/assets`가 Registry와 동일한 해시 기준으로 생성됨
 - `PROJECT_SKILL_MAP.md`가 없음
 - 호출 후 성공·실패·예외·피드백이 기록됨
 
@@ -110,7 +110,7 @@ actual_code_data_assets_tests:
 
 ```text
 결정
-→ 기획서 JSON
+→ Markdown 또는 JSON 책임 원본
 → Issue·Plan
 → 실제 구현·자산
 → 테스트·캡처
@@ -157,7 +157,7 @@ actual_code_data_assets_tests:
 
 ## 결론
 ## 루트·시작 문서
-## Design Document Registry·JSON 책임 원본
+## Design Document Registry·혼용 책임 원본
 ## 사람용 DOCX/PDF·다이어그램·승인 이미지
 ## 분야·Foundation 스킬 라우팅
 ## 스킬 학습·갱신

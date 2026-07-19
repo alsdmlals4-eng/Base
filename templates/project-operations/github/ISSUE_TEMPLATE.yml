@@ -1,11 +1,11 @@
 name: 작업 요청
-description: JSON 기획서·사람용 DOCX/PDF·분야·게이트·선택적 스킬·검증을 갖춘 게임 제작 작업 요청
+description: Markdown·JSON 책임 원본·사람용 최신 PDF·분야·게이트·선택적 스킬·검증을 갖춘 게임 제작 작업 요청
 labels: []
 body:
   - type: markdown
     attributes:
       value: |
-        작업 전에 주 책임 분야, 영향 분야, 관련 기획서 JSON, 현재 게이트와 Registry에서 선택한 최소 스킬을 지정합니다. 승인·구현·검증·사람용 발행 상태를 구분합니다.
+        작업 전에 주 책임 분야, 영향 분야, 관련 Markdown 또는 JSON 책임 원본, 현재 게이트와 Registry에서 선택한 최소 스킬을 지정합니다. 승인·구현·검증·사람용 발행 상태를 구분합니다.
 
   - type: dropdown
     id: project_mode
@@ -16,7 +16,7 @@ body:
         - 신규 운영체계 설치
         - 기존 프로젝트 Audit only
         - 승인된 기존 프로젝트 마이그레이션
-        - 기획서 JSON·DOCX/PDF 발행
+        - Markdown·JSON 기획서·PDF 발행
         - GitHub Enforcement 설치·검증
         - 운영체계 Health Review
     validations:
@@ -86,7 +86,7 @@ body:
         - 분석·벤치마킹·유저리서치
         - 개발 게이트·마일스톤
         - 프로젝트 스킬·Registry·학습
-        - 기획서 JSON·DOCX/PDF·다이어그램
+        - Markdown·JSON 책임 원본·PDF·선택 DOCX/다이어그램
         - 승인 이미지·실제 캡처
         - 문서·경로·운영체계
         - 기존 프로젝트 마이그레이션·수명주기
@@ -129,7 +129,7 @@ body:
     id: sources
     attributes:
       label: 먼저 읽을 Registry·JSON·실제 파일
-      description: START_HERE, 두 Registry, 관련 기획서 JSON, 실제 코드·데이터·자산·테스트를 적습니다.
+      description: START_HERE, 두 Registry, 관련 Markdown 또는 JSON 책임 원본, 실제 코드·데이터·자산·테스트를 적습니다.
     validations:
       required: true
 

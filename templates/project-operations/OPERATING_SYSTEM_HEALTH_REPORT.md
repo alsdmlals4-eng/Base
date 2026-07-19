@@ -25,15 +25,15 @@
 | AGENTS·START_HERE·Documentation Map 읽기 순서 일치 |  |  |  |
 | 두 Registry·현재 상태·다음 작업 진입 경로 |  |  |  |
 
-## 3. Design Document Registry·JSON 책임 원본
+## 3. Design Document Registry·Markdown/JSON 책임 원본
 
 | 검수 | 상태 | 증거 | 문제·조치 |
 |---|---|---|---|
 | `DESIGN_DOCUMENT_REGISTRY.json` 유효 |  |  |  |
 | 프로젝트 전체와 11개 분야 책임 범위 |  |  |  |
 | 활성 문서 ID·경로·상태 고유 |  |  |  |
-| 질문별 현행 JSON 책임 원본 하나 |  |  |  |
-| 활성 Markdown 기획 본책 없음 |  |  |  |
+| 질문별 현행 단일 책임 원본 하나 |  |  |  |
+| 모든 Markdown·JSON 본책이 Registry에 등록되고 단일 책임 원본임 |  |  |  |
 | 백업·보류·제거 후보 기본 읽기 제외 |  |  |  |
 
 ## 4. 사람용 DOCX/PDF·다이어그램·승인 이미지
@@ -58,7 +58,7 @@
 | 활성 스킬의 Trigger·사용·비사용 조건 |  |  |  |
 | 각 분야 진입 스킬 등록 |  |  |  |
 | 전체 로드 금지·최소 스킬 선택 |  |  |  |
-| `PROJECT_SKILL_MAP.docx/.pdf/.assets` 최신 |  |  |  |
+| 필수 `PROJECT_SKILL_MAP.pdf`와 선택 `md/docx/assets` 최신 |  |  |  |
 | `PROJECT_SKILL_MAP.md` 없음 |  |  |  |
 
 ## 6. 스킬 학습·갱신

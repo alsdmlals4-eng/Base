@@ -14,7 +14,7 @@ description: Use when creating, restructuring, reviewing, updating, or handing o
 ## Responsibility contract
 
 ```text
-AI·자동 검사 → DESIGN_DOCUMENT_REGISTRY.json·기획서 JSON
+AI·자동 검사 → DESIGN_DOCUMENT_REGISTRY.json·문서별 Markdown 또는 JSON 책임 원본
 사람 기본 열람 → 기획서 PDF
 사람 문서 검토 → 기획서 DOCX
 시각 자료 → 기획서.assets/
@@ -24,14 +24,14 @@ AI·자동 검사 → DESIGN_DOCUMENT_REGISTRY.json·기획서 JSON
 반복 절차 → Project Skill
 ```
 
-활성 `*_기획서.md`, `DISCIPLINE_BIBLE.md`, `PROJECT_MASTER_PLAN.md`는 사용하지 않는다. 운영 라우터 Markdown은 유지할 수 있다.
+서술 중심 기획은 Registry에 등록한 Markdown을 기본 책임 원본으로 사용할 수 있다. 같은 서술을 JSON과 중복 책임 원본으로 두지 않는다.
 
 ## Continuity contract
 
 항상 최신화:
 
 - Design Document Registry: 문서 ID·책임 범위·JSON·DOCX·PDF·자산·Manifest 경로
-- 기획서 JSON: 방향·경험·승인·상태·범위·금지 방향·실제 경로·검증
+- 기획 책임 원본: 서술 중심 Markdown 또는 구조 검증·게임 데이터 JSON
 - 사람용 발행본: DOCX·PDF·다이어그램·승인 이미지
 - Roadmap: 현재 단계·우선순위·선행 조건·다음 작업·종료 기준
 - Skill Registry·Project Skill: 실제 경로·데이터·검증 연결
@@ -44,7 +44,7 @@ AI·자동 검사 → DESIGN_DOCUMENT_REGISTRY.json·기획서 JSON
 
 | 질문 | 책임 원본 |
 |---|---|
-| 왜 이 게임을 만드는가? | 프로젝트 종합 기획서 JSON |
+| 왜 이 게임을 만드는가? | 프로젝트 종합 기획 책임 원본 |
 | 플레이어가 무엇을 반복하는가? | 게임 디자인 JSON |
 | 한 시스템이 어떻게 작동하는가? | 책임 분야 JSON의 상세 Section·실제 데이터 |
 | 한 기능을 무엇까지 구현하는가? | JSON 승인 범위·Issue·Plan |
@@ -55,7 +55,7 @@ AI·자동 검사 → DESIGN_DOCUMENT_REGISTRY.json·기획서 JSON
 | 현재 무엇이 사실인가? | Active Context·실제 파일·테스트 |
 | 반복 작업을 어떤 절차로 수행하는가? | Skill Registry·Project Skill |
 | 완료를 어떻게 판단하는가? | QA JSON·테스트 증거 |
-| 왜 이 결정을 했는가? | Decision Log·기획서 JSON decision |
+| 왜 이 결정을 했는가? | Decision Log·기획 책임 원본의 결정 섹션 |
 | 사람이 무엇을 읽는가? | 각 PDF·DOCX·assets |
 
 ## Process
@@ -63,7 +63,7 @@ AI·자동 검사 → DESIGN_DOCUMENT_REGISTRY.json·기획서 JSON
 1. 사용자 약속과 현재 문제를 한 문장으로 쓴다.
 2. Base Method·Skill과 프로젝트 Registry·현재 JSON·실제 파일을 확인한다.
 3. Design Document Registry에서 기존 책임 원본을 확인한다.
-4. 한 질문에 현행 JSON 책임 원본 하나만 지정한다.
+4. 한 질문에 현행 단일 책임 원본 하나만 지정하고 `source_format`을 선언한다.
 5. 구현 사실, 승인 계획, 진행 중, 가설, 보류를 분리한다.
 6. `목적 → 경험 → 규칙 → 흐름 → 예외 → 검증` 순서로 JSON을 작성한다.
 7. 세부 데이터·코드·자산·테스트 경로를 연결하고 전문을 복제하지 않는다.
@@ -129,7 +129,7 @@ AI·자동 검사 → DESIGN_DOCUMENT_REGISTRY.json·기획서 JSON
 - 같은 규칙을 여러 JSON에 장문 복사
 - `final`, `latest`, `v2` 활성 복제본 생성
 - DOCX·PDF를 독립 책임 원본으로 수정
-- 활성 Markdown 기획 본책 생성
+- Registry에 등록되지 않은 Markdown 기획 본책 생성
 - 문서 존재를 구현 완료로 판단
 - 플레이어 경험·제외 범위·검증 없음
 - 실제 경로와 테스트가 없음

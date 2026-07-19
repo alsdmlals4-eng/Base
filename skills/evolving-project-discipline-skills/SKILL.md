@@ -21,7 +21,7 @@ AI·자동 검사 → SKILL_REGISTRY.json
 최신성 → SKILL_MAP_PUBLICATION_MANIFEST.json
 ```
 
-`PROJECT_SKILL_MAP.md`는 사용하지 않는다.
+`PROJECT_SKILL_MAP.md`는 설정한 경우 Registry에서 자동 생성하며 수동 책임 원본으로 사용하지 않는다.
 
 ## Trigger
 
@@ -104,7 +104,7 @@ skills/
 - 영향도 분석
 - 개발 게이트 검수
 - 결정·추적성
-- JSON 기획서·발행 Governance
+- Markdown·JSON 기획서·발행 Governance
 - 검증·완료 선언
 - Context·Handoff
 - 외부 AI 검수
@@ -121,7 +121,7 @@ skills/
 - 사용하는 조건·사용하지 않는 조건
 - `trigger_tags`
 - `load_by_default=false`
-- 필수 입력과 먼저 읽을 JSON 책임 원본
+- 필수 입력과 먼저 읽을 Markdown 또는 JSON 책임 원본
 - Foundation 의존성
 - 프로젝트 고유 규칙·실제 경로
 - 절차·산출물
@@ -222,10 +222,10 @@ python tools/build_project_skill_map.py \
 - `SKILL_REGISTRY.json`
 - 관련 `SKILL.md`
 - Learning Log
-- `PROJECT_SKILL_MAP.docx/.pdf/.assets`
+- 필수 `PROJECT_SKILL_MAP.pdf`와 선택 `md/docx/assets`
 - `SKILL_MAP_PUBLICATION_MANIFEST.json`
 - Documentation Map·START_HERE
-- 관련 기획서 JSON
+- 관련 Markdown 또는 JSON 책임 원본
 - Active Context·Handoff
 - Issue·PR·Governance 설정
 

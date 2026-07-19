@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/structured-design-document-v3.schema.json",
+  "title": "Base Structured Design Document v3",
+  "type": "object",
+  "required": ["schema_version", "document_id", "title", "discipline", "status", "overview", "workflow", "validation"],
+  "properties": {
+    "schema_version": {"const": 3},
+    "document_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "document_kind": {"type": "string"},
+    "project": {"type": "string"},
+    "title": {"type": "string", "minLength": 1},
+    "discipline": {"type": "string", "minLength": 1},
+    "owner": {"type": "string"},
+    "status": {"enum": ["ACTIVE", "SUPPORT", "HOLD", "BACKUP", "REMOVAL_CANDIDATE", "NOT_INSTALLED"]},
+    "metadata": {"type": "object"},
+    "overview": {
+      "type": "object",
+      "required": ["purpose", "summary", "next_action"],
+      "properties": {
+        "purpose": {"type": "string"},
+        "player_value": {"type": "string"},
+        "current_goal": {"type": "string"},
+        "summary": {"type": "string"},
+        "largest_risk": {"type": "string"},
+        "next_action": {"type": "string"}
+      }
+    },
+    "goals": {"type": "array"},
+    "quality_bar": {"type": "array"},
+    "prohibited_directions": {"type": "array"},
+    "responsibilities": {"type": "object"},
+    "workflow": {"type": "array"},
+    "development_gates": {"type": "object"},
+    "skills": {"type": "object"},
+    "current_state": {"type": "array"},
+    "decisions": {"type": "array"},
+    "implementation": {"type": "array"},
+    "validation": {"type": "array"},
+    "sections": {"type": "array"},
+    "approved_visuals": {"type": "array"},
+    "risks": {"type": "array"},
+    "next_actions": {"type": "array"},
+    "definition_of_ready": {"type": "array"},
+    "definition_of_done": {"type": "array"},
+    "appendices": {"type": "array"},
+    "change_history": {"type": "array"}
+  },
+  "additionalProperties": true
+}

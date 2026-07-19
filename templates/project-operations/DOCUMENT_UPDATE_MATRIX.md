@@ -1,4 +1,4 @@
-# JSON 기획서·스킬·자산·사람용 문서 갱신 매트릭스
+# Markdown·JSON 기획서·스킬·자산·사람용 문서 갱신 매트릭스
 
 > 모든 L1 이상 작업은 주 책임 분야, 영향 분야, 변경 유형, 관련 기획서 ID와 최소 스킬을 선언하고 이 표로 갱신 대상을 판정한다.
 
@@ -29,7 +29,7 @@ validation:
 기획 내용이 바뀌면 다음 순서로 갱신한다.
 
 ```text
-관련 기획서 JSON
+관련 Markdown 또는 JSON 책임 원본
 → DESIGN_DOCUMENT_REGISTRY.json 상태·경로 확인
 → 실제 코드·데이터·자산·테스트
 → DOCX·PDF·다이어그램 재생성
@@ -43,7 +43,7 @@ validation:
 ```text
 SKILL.md·Learning Log
 → SKILL_REGISTRY.json
-→ PROJECT_SKILL_MAP.docx/.pdf/.assets
+→ 필수 PROJECT_SKILL_MAP.pdf + 선택 md/docx/assets
 → SKILL_MAP_PUBLICATION_MANIFEST.json
 ```
 
@@ -69,7 +69,7 @@ SKILL.md·Learning Log
 | 문서·구현·자산 불일치 | 통합검수 | 관련 분야 전체 | 불일치·Gate 판정 | 통합검수 PDF | JSON·실제 결과 비교 |
 | 개발 게이트 변경 | 프로덕션·통합검수 | 영향 분야 전체 | Gates·Roadmap·Active Context | 영향 분야 PDF 상태 | 진입·종료 기준·증거 |
 | 프로젝트 스킬 변경 | 프로젝트 허브·해당 분야 | 관련 분야 | Skill Registry·Learning Log | Skill Map DOCX/PDF·관련 기획서 Skill Section | 실제 실행·피드백 |
-| 기획서 JSON 변경 | 해당 분야 | 관련 분야·통합검수 | Design Document Registry | DOCX·PDF·다이어그램·Manifest | JSON 해시·렌더 |
+| 기획 책임 원본 변경 | 해당 분야 | 관련 분야·통합검수 | Design Document Registry | PDF·Manifest·선택 파생본 | 원본 해시·렌더 |
 | 승인 이미지 변경 | 해당 분야 | 아트·기술 아트·통합검수 | JSON approved_visuals·Asset Manifest | 관련 DOCX/PDF | 이미지 해시·캡션·시각 검수 |
 | 생성기 변경 | 프로젝트 허브·개발·통합검수 | 모든 활성 발행본 | Generator version | 모든 영향 DOCX/PDF·Manifest | 통합 테스트·전 페이지 렌더 |
 | Base 규칙 적용 | 프로젝트 허브 | 관련 분야 | BASE_RULES_VERSION·Map | 영향 발행본 | 기준 커밋·적용 차이 |

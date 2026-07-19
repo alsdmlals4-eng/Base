@@ -9,6 +9,11 @@ on:
       - "docs/**"
       - "skills/**"
       - "tools/**"
+      - "schemas/**"
+      - "requirements-publication.txt"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
       - "templates/project-operations/**"
       - "tests/test_*operating_system*.py"
       - "tests/test_documentation_governance.py"
@@ -36,12 +41,19 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Set up Node and pnpm
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: corepack enable && corepack prepare pnpm@11.9.0 --activate
+
       - name: Install document publication dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends libreoffice-writer fonts-nanum poppler-utils
           python -m pip install --upgrade pip
-          python -m pip install python-docx Pillow
+          python -m pip install -r requirements-publication.txt
+          pnpm install --frozen-lockfile
 
       - name: Check Python syntax
         run: |
@@ -50,6 +62,8 @@ jobs:
             tools/skill_map_diagrams.py \
             tools/build_design_documents.py \
             tools/design_document_diagrams.py \
+            tools/publication_v3.py \
+            tools/check_publication_environment.py \
             templates/project-operations/github/check_documentation_governance.py \
             templates/project-operations/github/check_skill_routing_governance.py \
             templates/project-operations/github/check_design_document_publications.py \
@@ -76,6 +90,8 @@ jobs:
           status=${PIPESTATUS[0]}
           echo "exit_code=$status" >> "$GITHUB_OUTPUT"
           exit "$status"
+        env:
+          PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome
 
       - name: Upload operating system test report
         if: always()
@@ -85,6 +101,50 @@ jobs:
           path: operating-system-test-results.txt
           if-no-files-found: error
           retention-days: 1
+
+  validate-publications-windows:
+    name: validate-publications-windows
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node and pnpm
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - shell: pwsh
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.9.0 --activate
+
+      - name: Install Windows publication dependencies
+        shell: pwsh
+        run: |
+          choco install libreoffice-fresh poppler -y --no-progress
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-publication.txt
+          pnpm install --frozen-lockfile
+
+      - name: Run Windows publication smoke tests
+        shell: pwsh
+        env:
+          BASE_LIBREOFFICE: C:\Program Files\LibreOffice\program\soffice.exe
+          PUPPETEER_EXECUTABLE_PATH: C:\Program Files\Google\Chrome\Application\chrome.exe
+          PYTHONIOENCODING: utf-8
+        run: |
+          $poppler = Get-ChildItem C:\ProgramData\chocolatey\lib\poppler* -Recurse -Filter pdftoppm.exe | Select-Object -First 1
+          if (-not $poppler) { throw "pdftoppm.exe not found after Poppler installation" }
+          $env:BASE_PDFTOPPM = $poppler.FullName
+          python tools/check_publication_environment.py --require-mermaid
+          python -m unittest tests.test_design_document_generation tests.test_project_skill_map_generation -v
 
   validate-whitespace:
     name: validate-whitespace

@@ -9,7 +9,7 @@
 사용자 방향
 → 저장소 루트 [기획서]
 → DESIGN_DOCUMENT_REGISTRY.json
-→ 프로젝트 전체·분야별 기획서 JSON
+→ 프로젝트 전체·분야별 Markdown 또는 JSON 책임 원본
 → DOCX·PDF·다이어그램·승인 이미지
 → Development Gates·Roadmap
 → SKILL_REGISTRY.json·분야별 스킬
@@ -22,7 +22,7 @@
 
 - 새 GPT와 Codex가 같은 시작 경로를 읽는다.
 - 사용자가 루트 `[기획서]`에서 사람용 최신 PDF를 찾는다.
-- AI는 구조화 JSON과 Registry에서 정확한 책임 원본을 찾는다.
+- AI는 Registry에서 문서별 Markdown 또는 JSON 책임 원본을 찾는다.
 - 한 질문에는 현행 책임 원본 하나가 있다.
 - 승인·구현·검증·미확정·보류를 혼동하지 않는다.
 - 변경 전에 주 책임 분야와 영향 분야를 판정한다.
@@ -40,7 +40,7 @@
 | 운영체계 신규 설치 | 이 Method | `installing-game-project-operating-system` |
 | 기존 프로젝트 구조 재배치 | 안전 마이그레이션 Method | `migrating-existing-game-project-structure` |
 | 작업·제품 게이트 | Development Gates Method | `DEVELOPMENT_GATES.md` |
-| JSON 기획서·DOCX/PDF | 구조화 기획서 발행 Method | `publishing-discipline-bibles` |
+| Markdown·JSON 기획서·PDF | 혼용 기획서 발행 Method | `publishing-discipline-bibles` |
 | 분야별 프로젝트 스킬 | Discipline Skill Evolution Method | `evolving-project-discipline-skills` |
 | Active Context·Handoff | Handoff Method | `maintaining-project-context-and-handoff` |
 | 운영체계 Health Review | 이 Method | `verifying-game-project-operating-system` |
@@ -57,7 +57,8 @@
    ├─ DEVELOPMENT_GATES.md
    ├─ DESIGN_DOCUMENT_REGISTRY.json
    ├─ SKILL_REGISTRY.json
-   ├─ PROJECT_SKILL_MAP.docx
+   ├─ PROJECT_SKILL_MAP.md       # 선택 자동 생성
+   ├─ PROJECT_SKILL_MAP.docx     # 선택 Word 검토
    ├─ PROJECT_SKILL_MAP.pdf
    ├─ PROJECT_SKILL_MAP.assets/
    └─ SKILL_MAP_PUBLICATION_MANIFEST.json
@@ -100,7 +101,7 @@
 
 ```text
 현재 프로젝트 상태 → ACTIVE_CONTEXT.md
-프로젝트·분야 방향 → 기획서 JSON
+프로젝트·분야 방향 → Markdown 또는 JSON 책임 원본
 기획서 위치·책임 범위 → DESIGN_DOCUMENT_REGISTRY.json
 사람용 최신본 → DOCX·PDF·기획서.assets
 발행 최신성 → *_PUBLICATION_MANIFEST.json
@@ -118,7 +119,7 @@
 
 ## 6. 구조화 기획서 계약
 
-각 활성 기획서 JSON은 다음을 소유한다.
+각 활성 책임 원본은 문서 역할에 맞게 다음을 소유한다.
 
 - 문서 ID·종류·분야·책임·상태
 - 목적·플레이어 가치·현재 목표
@@ -145,7 +146,7 @@
 → 기획서_PUBLICATION_MANIFEST.json
 ```
 
-활성 `*_기획서.md`, `DISCIPLINE_BIBLE.md`, `PROJECT_MASTER_PLAN.md`는 만들지 않는다. 운영 라우터 Markdown은 유지할 수 있다.
+서술 중심 본책은 Registry에 등록한 Markdown을 사용할 수 있다. 같은 서술을 JSON과 중복 책임 원본으로 만들지 않는다.
 
 ## 7. 상태 언어
 

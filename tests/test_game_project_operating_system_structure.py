@@ -35,6 +35,15 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "tools/skill_map_diagrams.py",
             "tools/build_design_documents.py",
             "tools/design_document_diagrams.py",
+            "tools/publication_v3.py",
+            "tools/check_publication_environment.py",
+            "requirements-publication.txt",
+            "package.json",
+            "pnpm-lock.yaml",
+            "schemas/design-document-registry-v3.schema.json",
+            "schemas/structured-design-document-v3.schema.json",
+            "schemas/publication-manifest-v3.schema.json",
+            "schemas/skill-registry-v3.schema.json",
             "templates/project-operations/PROJECT_START_HERE.md",
             "templates/project-operations/ACTIVE_CONTEXT.md",
             "templates/project-operations/HANDOFF.md",
@@ -45,6 +54,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "templates/project-operations/PROJECT_DOCUMENTATION_MAP.md",
             "templates/project-operations/DEVELOPMENT_GATES.md",
             "templates/project-operations/DESIGN_DOCUMENT.json",
+            "templates/project-operations/DESIGN_DOCUMENT.md",
             "templates/project-operations/DESIGN_DOCUMENT_REGISTRY.json",
             "templates/project-operations/SKILL_REGISTRY.json",
             "templates/project-operations/OPERATING_SYSTEM_HEALTH_REPORT.md",
@@ -82,11 +92,10 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         self.assertIn("https://github.com/alsdmlals4-eng/Base", start)
         for term in [
             "DESIGN_DOCUMENT_REGISTRY.json",
-            "기획서 JSON",
+            "Markdown",
+            "JSON",
             "기획서 PDF",
-            "기획서 DOCX",
             "PROJECT_SKILL_MAP.pdf",
-            "PROJECT_SKILL_MAP.docx",
         ]:
             self.assertIn(term, start)
         for skill in [
@@ -149,32 +158,36 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         human = registry["human_presentation"]
         self.assertEqual(human["source_of_truth"], "SKILL_REGISTRY.json")
         self.assertEqual(human["primary_reading_format"], "PROJECT_SKILL_MAP.pdf")
-        self.assertEqual(human["editable_derivative"], "PROJECT_SKILL_MAP.docx")
+        self.assertIsNone(human["editable_derivative"])
         self.assertEqual(human["diagram_directory"], "PROJECT_SKILL_MAP.assets")
-        self.assertFalse(human["markdown_skill_map_allowed"])
+        self.assertEqual(human["markdown_summary"], "PROJECT_SKILL_MAP.md")
+        self.assertEqual(registry["schema_version"], 3)
         self.assertEqual(set(registry["discipline_entrypoints"]), {
             "설정·내러티브", "게임 디자인", "UX·UI·접근성", "개발·엔지니어링",
             "테크니컬 아트·파이프라인", "아트", "사운드", "QA", "프로덕션·PM",
             "분석·유저리서치", "통합검수",
         })
 
-    def test_design_document_templates_define_json_and_human_outputs(self) -> None:
+    def test_design_document_templates_define_hybrid_sources_and_outputs(self) -> None:
         source = json.loads((ROOT / "templates/project-operations/DESIGN_DOCUMENT.json").read_text(encoding="utf-8"))
         registry = json.loads((ROOT / "templates/project-operations/DESIGN_DOCUMENT_REGISTRY.json").read_text(encoding="utf-8"))
+        markdown = (ROOT / "templates/project-operations/DESIGN_DOCUMENT.md").read_text(encoding="utf-8")
+        self.assertEqual(source["schema_version"], 3)
         self.assertIn("document_id", source)
         self.assertIn("overview", source)
         self.assertIn("workflow", source)
         self.assertIn("approved_visuals", source)
         self.assertIn("definition_of_done", source)
-        human = registry["human_presentation"]
-        self.assertEqual(human["primary_reading_format"], "PDF")
-        self.assertEqual(human["editable_review_format"], "DOCX")
-        self.assertTrue(human["diagram_assets_required"])
-        self.assertTrue(human["approved_visuals_embedded"])
-        self.assertFalse(human["markdown_design_bibles_allowed"])
+        self.assertEqual(registry["schema_version"], 3)
+        self.assertIn("Markdown or JSON", registry["source_of_truth_policy"])
         example = registry["document_contract_example"]
-        for field in ("source_json", "output_docx", "output_pdf", "asset_dir", "publication_manifest", "generator"):
+        self.assertEqual(example["source_format"], "markdown")
+        self.assertEqual(example["publication_policy"], "always_sync")
+        self.assertIsNone(example["output_docx"])
+        for field in ("source_path", "output_pdf", "publication_manifest", "generator"):
             self.assertTrue(example[field])
+        for heading in ("## 목표", "## 배경과 의도", "## 범위", "## 규칙과 제약", "## 검증과 완료 기준"):
+            self.assertIn(heading, markdown)
 
     def test_project_template_places_design_folder_at_repository_root(self) -> None:
         for relative in [
@@ -207,10 +220,11 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
     def test_design_publication_contract_requires_full_process_and_approved_images(self) -> None:
         text = (ROOT / "docs/knowledge/methods/DISCIPLINE_PDF_PUBLICATION_METHOD.md").read_text(encoding="utf-8")
         for term in [
-            "AI용 구조화 JSON 책임 원본",
-            "DOCX",
+            "Markdown",
+            "JSON",
+            "선택",
             "PDF",
-            "workflow.png",
+            "Mermaid",
             "승인 이미지",
             "DESIGN_DOCUMENT_REGISTRY.json",
             "SHA-256",

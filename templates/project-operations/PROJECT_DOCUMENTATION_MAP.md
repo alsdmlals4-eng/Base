@@ -6,7 +6,7 @@
 - 기준 커밋:
 - Base 기준 커밋:
 
-> 모든 파일을 무작정 읽지 않는다. 질문에 맞는 JSON 책임 원본, 최소 스킬, 실제 파일과 사람 검토용 DOCX/PDF만 선택한다.
+> 모든 파일을 무작정 읽지 않는다. 질문에 맞는 Markdown 또는 JSON 책임 원본, 최소 스킬, 실제 파일과 사람용 최신 PDF만 선택한다.
 
 ## 1. 기본 읽기 순서
 
@@ -17,7 +17,7 @@
 → 이 DOCUMENTATION_MAP.md
 → DEVELOPMENT_GATES.md
 → DESIGN_DOCUMENT_REGISTRY.json
-→ 현재 분야 기획서 JSON
+→ 현재 분야 Markdown 또는 JSON 책임 원본
 → SKILL_REGISTRY.json
 → 필요한 Foundation·분야 스킬
 → 사람 검토 시 기획서 DOCX/PDF·다이어그램·승인 이미지
@@ -34,7 +34,7 @@
 | 프로젝트를 어디서 시작하는가? | `START_HERE.md` |  | 시작 경로 변경 |
 | 현재 무엇이 사실인가? | `ACTIVE_CONTEXT.md`·실제 파일 | 테스트·캡처 | 구현·검증·우선순위 변경 |
 | 전체·분야 기획서는 어디인가? | `DESIGN_DOCUMENT_REGISTRY.json` | 각 DOCX·PDF·assets | 본책 생성·통합·이동·상태 변경 |
-| 왜 이 프로젝트를 만드는가? | 프로젝트 종합 기획서 JSON | 프로젝트 종합 PDF | 방향·대상 플레이어 변경 |
+| 왜 이 프로젝트를 만드는가? | 프로젝트 종합 기획 책임 원본 | 프로젝트 종합 PDF | 방향·대상 플레이어 변경 |
 | 다음 개발 게이트는 무엇인가? | `DEVELOPMENT_GATES.md` | 게이트 검수 보고 | 게이트 판정 변경 |
 | 어떤 스킬을 사용하는가? | `SKILL_REGISTRY.json` | `PROJECT_SKILL_MAP.pdf`·`.docx` | 스킬·trigger·상태 변경 |
 | 스킬이 무엇을 학습했는가? | 각 Learning Log |  | 실패·중요 결정·재사용 교훈·실제 검증 |
@@ -66,7 +66,7 @@
 | 작업 | JSON·현행 원본 | Foundation 스킬 | 분야 스킬 | 후속 호출 | 검증 |
 |---|---|---|---|---|---|
 | 새 요청·분야 판정 | START_HERE·Active Context·두 Registry | routing-project-work-by-discipline | 주 책임 분야 진입 스킬 | 필요 시 요구 구체화 | 라우팅 재현성 |
-| 방향·핵심 경험 변경 | 프로젝트 종합 JSON | 기획 책임 구조 | 영향 분야 | 발행·Handoff | 사용자 승인·JSON 해시 |
+| 방향·핵심 경험 변경 | 프로젝트 종합 책임 원본 | 기획 책임 구조 | 영향 분야 | 발행·Handoff | 사용자 승인·원본 해시 |
 | 시스템·수치 변경 | 게임 디자인·개발 JSON | 영향도 분석 | 게임 디자인·개발 | QA·통합검수·발행 | 데이터·플레이 회귀 |
 | UI·UX 변경 | UX·게임 디자인 JSON | 영향도 분석 | UX·UI | 시각 QA·발행 | 사용성·접근성 |
 | 코드·데이터·저장 변경 | 개발 JSON | 개발 게이트 | 개발 | QA·Handoff | 자동 테스트·저장 호환성 |
@@ -88,7 +88,7 @@ AI 기획 원본 → *.json
 최신성 → *_PUBLICATION_MANIFEST.json
 ```
 
-DOCX·PDF를 직접 고쳐 책임 원본으로 사용하지 않는다. 활성 `*_기획서.md`와 `PROJECT_SKILL_MAP.md`는 사용하지 않는다.
+DOCX·PDF를 직접 고쳐 책임 원본으로 사용하지 않는다. 기획 Markdown은 Registry에 등록하고, `PROJECT_SKILL_MAP.md`는 선택적 자동 생성 파생본으로만 사용한다.
 
 ## 6. 상태와 수명주기
 

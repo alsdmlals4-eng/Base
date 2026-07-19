@@ -12,7 +12,7 @@ START_HERE.md
 → docs/DOCUMENTATION_MAP.md
 → skills/SKILL_REGISTRY.json
 → 현재 작업에 필요한 Method·Skill·Template·Case
-→ 대상 프로젝트의 JSON 기획서와 실제 파일
+→ 대상 프로젝트의 Markdown 또는 JSON 책임 원본과 실제 파일
 ```
 
 - [Base 시작 지점](START_HERE.md)
@@ -41,8 +41,8 @@ START_HERE.md
 
 ```text
 DESIGN_DOCUMENT_REGISTRY.json
-→ 프로젝트 종합 기획서 JSON
-→ 분야별 기획서 JSON
+→ 프로젝트 종합 기획서 책임 원본
+→ 분야별 Markdown 또는 JSON 책임 원본
 → 실제 코드·데이터·자산·테스트 경로
 ```
 
@@ -66,7 +66,7 @@ DESIGN_DOCUMENT_REGISTRY.json
 → JSON·생성기·DOCX·PDF·다이어그램·승인 이미지 해시
 ```
 
-활성 프로젝트·분야 본책은 구조화 JSON이 책임 원본입니다. DOCX·PDF를 독립 원본으로 수동 수정하지 않으며 활성 `*_기획서.md`, `DISCIPLINE_BIBLE.md`, `PROJECT_MASTER_PLAN.md`는 만들지 않습니다.
+서술 중심 기획은 Markdown을 기본 책임 원본으로, Registry·Manifest·상태·ID·경로·게임 데이터는 JSON으로 관리합니다. 각 문서는 단일 책임 원본만 가지며 PDF는 항상 동기화합니다. DOCX와 다이어그램은 필요한 경우의 선택 파생본입니다.
 
 `START_HERE`, `ACTIVE_CONTEXT`, `DOCUMENTATION_MAP`, 작업 절차와 Skill처럼 빠른 라우팅이 필요한 운영 문서는 Markdown을 유지할 수 있습니다.
 
@@ -79,14 +79,14 @@ SKILL_REGISTRY.json
 PROJECT_SKILL_MAP.pdf
 → 사람이 보는 이미지 포함 최신본
 
-PROJECT_SKILL_MAP.docx
+PROJECT_SKILL_MAP.md 또는 PROJECT_SKILL_MAP.docx
 → 문서 검토용 파생본
 
 PROJECT_SKILL_MAP.assets/
 → 호출 흐름·분야 라우팅·상태 매트릭스
 ```
 
-`PROJECT_SKILL_MAP.md`는 사용하지 않습니다.
+`PROJECT_SKILL_MAP.md`는 설정한 프로젝트에서만 자동 생성하며 수동 책임 원본으로 사용하지 않습니다.
 
 ## 운영 모델
 
@@ -137,7 +137,7 @@ tests/             운영체계·발행·Governance 회귀 테스트
 | `DEVELOPMENT_GATES_METHOD.md` | 작업 게이트와 제품 마일스톤 Greenlight |
 | `EXISTING_PROJECT_SAFE_MIGRATION_METHOD.md` | 기존 프로젝트의 안전한 구조 마이그레이션 |
 | `DISCIPLINE_SKILL_EVOLUTION_METHOD.md` | 선택적 호출·분야별 학습·Base 환류 |
-| `DISCIPLINE_PDF_PUBLICATION_METHOD.md` | JSON 기획서에서 DOCX·PDF·다이어그램·승인 이미지 발행 |
+| `DISCIPLINE_PDF_PUBLICATION_METHOD.md` | Markdown·JSON 책임 원본에서 최신 PDF와 선택 파생본 발행 |
 | `PROJECT_HANDOFF_CONTEXT_METHOD.md` | 새 AI 콜드 스타트와 인수인계 |
 
 ## 주요 실행 스킬
@@ -148,7 +148,7 @@ tests/             운영체계·발행·Governance 회귀 테스트
 | `installing-game-project-operating-system` | 신규·미설치 프로젝트 운영체계 설치 |
 | `migrating-existing-game-project-structure` | 기존 프로젝트 안전 감사·재배치 |
 | `evolving-project-discipline-skills` | 분야별 스킬 생성·통합·학습 |
-| `publishing-discipline-bibles` | JSON 기획서의 DOCX/PDF·다이어그램 발행·검수 |
+| `publishing-discipline-bibles` | Markdown·JSON 기획서의 PDF·선택 파생본 발행·검수 |
 | `maintaining-project-context-and-handoff` | 현재 상태·다음 작업·위험 압축 |
 | `verifying-game-project-operating-system` | 설치·마이그레이션·주요 게이트 후 Health Review |
 | `designing-vertical-slices` | 대표 구간의 목표 품질·파이프라인 검증 |
@@ -213,9 +213,9 @@ Base는 다음을 회귀 테스트합니다.
 - Skill Registry·분야 진입·Learning Log
 - Skill Map DOCX/PDF·다이어그램·Manifest 최신성
 - Design Document Registry·책임 범위
-- JSON 기획서·DOCX·PDF·다이어그램·승인 이미지 해시
+- Markdown·JSON 책임 원본·PDF·선택 파생본·승인 이미지 해시
 - 생성기 변경 후 미재생성
-- 활성 Markdown 본책 재생성
+- 등록되지 않은 Markdown 본책과 수동 변경된 파생본 탐지
 - DOCX/PDF 실제 생성과 PDF 전 페이지 렌더
 - whitespace와 기본 구조
 

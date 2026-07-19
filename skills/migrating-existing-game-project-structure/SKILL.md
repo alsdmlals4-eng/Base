@@ -17,7 +17,7 @@ description: Use when applying Base governance to an operating game project whil
 
 - 운영 중인 프로젝트를 Base 기준으로 검수·재배치
 - Markdown·DOCX·PDF·이미지 구조의 중복·누락 정리
-- 기존 기획 본책을 JSON 책임 원본 + 사람용 DOCX/PDF로 전환
+- 승인된 경우 기존 기획 본책을 역할별 Markdown·JSON 단일 책임 원본 + 최신 PDF·선택 DOCX로 전환
 - 책임 원본 재정의 또는 폴더 이동
 - `[백업]`, `[보류]`, 제거 후보 정리
 - 기존 프로젝트에 분야별 스킬·GitHub Governance 설치

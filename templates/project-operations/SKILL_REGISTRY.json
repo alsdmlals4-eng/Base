@@ -1,5 +1,6 @@
 {
-  "schema_version": 2,
+  "$schema": "../../schemas/skill-registry-v3.schema.json",
+  "schema_version": 3,
   "registry_role": "project-skill-router-and-learning-index",
   "routing_policy": {
     "load_all_skills": false,
@@ -7,20 +8,16 @@
     "require_trigger_match": true,
     "max_primary_discipline_skills": 1,
     "max_foundation_skills": 3,
-    "exclude_statuses": [
-      "HOLD",
-      "BACKUP",
-      "REMOVAL_CANDIDATE"
-    ]
+    "exclude_statuses": ["HOLD", "BACKUP", "REMOVAL_CANDIDATE"]
   },
   "human_presentation": {
     "primary_reading_format": "PROJECT_SKILL_MAP.pdf",
-    "editable_derivative": "PROJECT_SKILL_MAP.docx",
+    "editable_derivative": null,
     "diagram_directory": "PROJECT_SKILL_MAP.assets",
     "publication_manifest": "SKILL_MAP_PUBLICATION_MANIFEST.json",
     "generator": "tools/build_project_skill_map.py",
     "source_of_truth": "SKILL_REGISTRY.json",
-    "markdown_skill_map_allowed": false
+    "markdown_summary": "PROJECT_SKILL_MAP.md"
   },
   "skills": [],
   "selected_disciplines": [],
@@ -44,19 +41,11 @@
     "path": "skills/foundation/example-skill/SKILL.md",
     "status": "NOT_INSTALLED",
     "load_by_default": false,
-    "trigger_tags": [
-      "replace-with-concrete-trigger"
-    ],
-    "use_when": [
-      "이 스킬이 필요한 구체적 상황"
-    ],
-    "do_not_use_when": [
-      "비슷해 보이지만 이 스킬을 호출하지 않을 상황"
-    ],
+    "trigger_tags": ["replace-with-concrete-trigger"],
+    "use_when": ["이 스킬이 필요한 구체적인 상황"],
+    "do_not_use_when": ["비슷해 보이지만 이 스킬을 호출하지 않을 상황"],
     "learning_log": "skills/foundation/example-skill/LEARNING_LOG.md",
-    "review_triggers": [
-      "반복 실패 또는 책임·경로·검증 변경"
-    ],
+    "review_triggers": ["반복 실패 또는 책임·경로·검증 변경"],
     "last_reviewed_at": "",
     "last_reviewed_commit": "",
     "knowledge_state": "OBSERVATION"

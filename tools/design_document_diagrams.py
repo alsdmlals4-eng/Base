@@ -165,6 +165,8 @@ def build_responsibility_diagram(document: dict[str, Any], output: Path) -> None
     if not interfaces:
         interfaces = [{"discipline": "[상대 분야]", "receives": "[입력]", "provides": "[출력]"}]
     for index, item in enumerate(interfaces[:4]):
+        if not isinstance(item, dict):
+            item = {"discipline": str(item), "receives": "-", "provides": "-"}
         x = 70 + index * 425
         current = (x, y + 65, x + 385, y + 250)
         _box(draw, current)

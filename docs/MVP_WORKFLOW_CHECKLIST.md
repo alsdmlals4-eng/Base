@@ -8,7 +8,7 @@
 - [ ] 활성 `[기획서]`가 저장소 루트에 있는지 확인했다.
 - [ ] START_HERE·Active Context·Handoff·Documentation Map을 확인했다.
 - [ ] Development Gates·Roadmap·Issue·Plan을 확인했다.
-- [ ] `DESIGN_DOCUMENT_REGISTRY.json`과 관련 기획서 JSON을 확인했다.
+- [ ] `DESIGN_DOCUMENT_REGISTRY.json`과 관련 Markdown 또는 JSON 책임 원본을 확인했다.
 - [ ] `SKILL_REGISTRY.json`에서 현재 요청에 필요한 최소 스킬만 선택했다.
 - [ ] 실제 코드·데이터·자산·테스트·최근 diff를 확인했다.
 - [ ] 백업·보류·제거 후보는 기본 읽기에서 제외했다.
@@ -77,9 +77,9 @@ validation:
 - [ ] JSON·Registry·Skill·Learning Log·DOCX/PDF 갱신 계획이 있다.
 - [ ] L2 이상 또는 대형 마이그레이션은 사용자 승인을 받았다.
 
-## 6. 구조화 기획서 JSON
+## 6. Markdown·JSON 혼용 기획 책임 원본
 
-- [ ] 질문별 현행 JSON 책임 원본이 하나다.
+- [ ] 질문별 현행 단일 책임 원본이 하나이며 형식 역할이 명확하다.
 - [ ] 프로젝트 전체와 11개 분야 책임이 Registry에서 보존된다.
 - [ ] 목적·플레이어 가치·현재 목표가 있다.
 - [ ] Quality Bar·금지 방향이 있다.
@@ -90,7 +90,7 @@ validation:
 - [ ] 실제 코드·데이터·자산·테스트 경로가 있다.
 - [ ] 승인 이미지·실제 캡처에 Asset ID·상태·채택 범위가 있다.
 - [ ] 위험·다음 작업·Ready·Done이 있다.
-- [ ] 활성 Markdown 기획 본책을 만들지 않았다.
+- [ ] 모든 Markdown·JSON 기획 본책을 Registry에 등록했고 같은 서술을 중복 책임 원본으로 만들지 않았다.
 
 ## 7. 프로젝트 스킬과 항상 학습
 
@@ -154,7 +154,7 @@ validation:
 
 같은 작업에서 확인:
 
-- [ ] 관련 기획서 JSON·Design Document Registry
+- [ ] 관련 Markdown 또는 JSON 책임 원본·Design Document Registry
 - [ ] Skill Registry·Skill·Learning Log
 - [ ] Skill Map DOCX/PDF·assets·Manifest
 - [ ] 기획서 DOCX/PDF·assets·Manifest

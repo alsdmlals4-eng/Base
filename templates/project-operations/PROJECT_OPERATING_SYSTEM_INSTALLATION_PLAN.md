@@ -114,7 +114,7 @@
 ## 6. 사람용 발행 계획
 
 ```text
-기획서 JSON
+Markdown 또는 JSON 책임 원본
 → 자동 workflow·status·responsibility 다이어그램
 → 승인 이미지·실제 캡처 포함
 → DOCX
@@ -134,7 +134,7 @@
 |  |  |  |  |  |  |  |
 
 - [ ] `SKILL_REGISTRY.json`을 설치했다.
-- [ ] 사람용 `PROJECT_SKILL_MAP.docx/.pdf/.assets`를 생성했다.
+- [ ] 사람용 필수 `PROJECT_SKILL_MAP.pdf`와 설정한 선택 `md/docx/assets`를 생성했다.
 - [ ] `PROJECT_SKILL_MAP.md`를 만들지 않았다.
 - [ ] 전체 스킬 자동 로드가 꺼져 있다.
 - [ ] 각 분야에 진입 스킬 또는 명시적 통합 책임이 있다.
