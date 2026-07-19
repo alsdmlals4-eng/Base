@@ -140,7 +140,7 @@ tests/             운영체계·발행·Governance 회귀 테스트
 | `GAME_PROJECT_OPERATING_SYSTEM_METHOD.md` | 프로젝트 허브·본책·스킬·이미지·GitHub 운영체계 |
 | `DEVELOPMENT_GATES_METHOD.md` | 작업 게이트와 제품 마일스톤 Greenlight |
 | `EXISTING_PROJECT_SAFE_MIGRATION_METHOD.md` | 기존 프로젝트의 안전한 구조 마이그레이션 |
-| `DISCIPLINE_SKILL_EVOLUTION_METHOD.md` | 선택적 호출·분야별 학습·Base 환류 |
+| `DISCIPLINE_SKILL_EVOLUTION_METHOD.md` | trigger 기반 최소 호출·11개 분야별 학습·Base 환류 |
 | `DISCIPLINE_PDF_PUBLICATION_METHOD.md` | Markdown·JSON 책임 원본에서 최신 PDF와 선택 파생본 발행 |
 | `PROJECT_HANDOFF_CONTEXT_METHOD.md` | 새 AI 콜드 스타트와 인수인계 |
 

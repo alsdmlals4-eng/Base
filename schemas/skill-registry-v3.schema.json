@@ -3,7 +3,7 @@
   "$id": "https://github.com/alsdmlals4-eng/Base/schemas/skill-registry-v3.schema.json",
   "title": "Base Project Skill Registry v3",
   "type": "object",
-  "required": ["schema_version", "registry_role", "routing_policy", "human_presentation", "skills", "selected_disciplines", "discipline_entrypoints"],
+  "required": ["schema_version", "registry_role", "routing_policy", "human_presentation", "skills", "required_disciplines", "discipline_entrypoints"],
   "properties": {
     "schema_version": {"const": 3},
     "registry_role": {"const": "project-skill-router-and-learning-index"},
@@ -23,7 +23,7 @@
       "additionalProperties": true
     },
     "skills": {"type": "array"},
-    "selected_disciplines": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "required_disciplines": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
     "discipline_entrypoints": {"type": "object"},
     "skill_contract_example": {"type": "object"}
   },

@@ -52,7 +52,7 @@ class ProjectSkillMapGenerationTests(unittest.TestCase):
             log.write_text("# Log\n", encoding="utf-8")
             disciplines = [
                 "설정·내러티브", "게임 디자인", "UX·UI·접근성", "개발·엔지니어링",
-                "테크니컬 아트·파이프라인", "아트", "사운드", "QA", "프로덕션·PM",
+                "테크니컬 아트·콘텐츠 파이프라인", "아트", "사운드", "QA", "프로덕션·PM",
                 "분석·유저리서치", "통합검수",
             ]
             registry = hub / "SKILL_REGISTRY.json"
@@ -78,7 +78,7 @@ class ProjectSkillMapGenerationTests(unittest.TestCase):
                             "learning_log": "skills/foundation/test-skill/LEARNING_LOG.md", "review_triggers": ["실패"],
                             "last_reviewed_at": "2026-07-19", "last_reviewed_commit": "test", "knowledge_state": "OBSERVATION",
                         }],
-                        "selected_disciplines": ["게임 디자인"],
+                        "required_disciplines": disciplines,
                         "discipline_entrypoints": {discipline: (["test-skill"] if discipline == "게임 디자인" else []) for discipline in disciplines},
                     },
                     ensure_ascii=False,

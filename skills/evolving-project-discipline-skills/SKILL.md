@@ -96,7 +96,7 @@ skills/
 └─ integrated-review/
 ```
 
-필요하지 않은 폴더는 만들지 않는다. 통합 분야는 `discipline_entrypoints`에서 같은 Skill ID를 공유할 수 있지만 책임·검증 경계를 명시한다.
+11개 분야 모두에 폴더와 1:1 진입 스킬을 만든다. 공통 절차는 Foundation에서 공유하되 분야 책임·검증 경계는 분리한다.
 
 권장 Foundation 책임:
 
@@ -133,9 +133,9 @@ skills/
 - 마지막 검토일·기준 커밋
 - 지식 상태
 
-## Phase 4 — Register selective routing
+## Phase 4 — Register all eleven discipline entrypoints
 
-`SKILL_REGISTRY.json`에 활성 스킬을 등록하고 프로젝트가 선택한 분야만 `discipline_entrypoints`에 연결한다. 11개 분야는 선택 가능한 공용 카탈로그이며 미선택 분야 진입점을 강제하지 않는다.
+`SKILL_REGISTRY.json`에 활성 스킬을 등록하고 11개 분야의 `discipline_entrypoints`를 모두 연결한다. 각 분야에는 활성 Skill ID를 하나 이상 등록하며, 공통 절차는 Foundation 스킬에서 공유한다.
 
 ```json
 {

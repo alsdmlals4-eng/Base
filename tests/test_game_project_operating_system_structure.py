@@ -163,7 +163,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             self.assertNotIn(name, names, f"Duplicate skill name {name}: {names.get(name)} and {path}")
             names[name] = path
 
-    def test_base_skill_registry_is_valid_and_selective(self) -> None:
+    def test_base_skill_registry_is_valid_without_default_loading(self) -> None:
         registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
         schema = json.loads((ROOT / "schemas/base-skill-registry-v1.schema.json").read_text(encoding="utf-8"))
         errors = sorted(Draft202012Validator(schema).iter_errors(registry), key=lambda error: list(error.path))
@@ -185,13 +185,13 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             self.assertTrue((ROOT / item["path"]).is_file())
             self.assertTrue((ROOT / item["learning_log"]).is_file())
 
-    def test_skill_evolution_uses_hybrid_optional_contract(self) -> None:
+    def test_skill_evolution_requires_all_disciplines_with_hybrid_sources(self) -> None:
         text = (ROOT / "skills/evolving-project-discipline-skills/SKILL.md").read_text(encoding="utf-8")
         self.assertIn("relevant_design_document_sources", text)
-        self.assertIn("프로젝트가 선택한 분야만", text)
+        self.assertIn("11개 분야 모두", text)
         self.assertIn("선택 `PROJECT_SKILL_MAP.docx`", text)
         self.assertNotIn("relevant_design_document_json", text)
-        self.assertNotIn("11개 분야의 `discipline_entrypoints`", text)
+        self.assertIn("11개 분야의 `discipline_entrypoints`", text)
 
     def test_project_learning_requires_proposal_before_base_implementation(self) -> None:
         promotion = (ROOT / "skills/promoting-project-knowledge/SKILL.md").read_text(encoding="utf-8")
@@ -212,11 +212,28 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         self.assertEqual(human["diagram_directory"], "PROJECT_SKILL_MAP.assets")
         self.assertEqual(human["markdown_summary"], "PROJECT_SKILL_MAP.md")
         self.assertEqual(registry["schema_version"], 3)
+        self.assertIn("required_disciplines", registry)
+        self.assertNotIn("selected_disciplines", registry)
         self.assertEqual(set(registry["discipline_entrypoints"]), {
             "설정·내러티브", "게임 디자인", "UX·UI·접근성", "개발·엔지니어링",
-            "테크니컬 아트·파이프라인", "아트", "사운드", "QA", "프로덕션·PM",
+            "테크니컬 아트·콘텐츠 파이프라인", "아트", "사운드", "QA", "프로덕션·PM",
             "분석·유저리서치", "통합검수",
         })
+
+    def test_skill_map_uses_the_canonical_technical_art_label(self) -> None:
+        diagram_source = (ROOT / "tools/skill_map_diagrams.py").read_text(encoding="utf-8")
+        self.assertIn("테크니컬 아트·콘텐츠 파이프라인", diagram_source)
+        self.assertNotIn("테크니컬 아트·파이프라인", diagram_source)
+
+    def test_operating_system_workflow_uses_node24_action_majors(self) -> None:
+        workflow = (ROOT / ".github/workflows/validate-game-project-operating-system.yml").read_text(encoding="utf-8")
+        for action in (
+            "actions/checkout@v7",
+            "actions/setup-python@v6",
+            "actions/setup-node@v7",
+            "actions/upload-artifact@v7",
+        ):
+            self.assertIn(action, workflow)
 
     def test_design_document_templates_define_hybrid_sources_and_outputs(self) -> None:
         source = json.loads((ROOT / "templates/project-operations/DESIGN_DOCUMENT.json").read_text(encoding="utf-8"))
@@ -229,7 +246,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         self.assertIn("approved_visuals", source)
         self.assertIn("definition_of_done", source)
         self.assertEqual(registry["schema_version"], 3)
-        self.assertIn("Markdown or JSON", registry["source_of_truth_policy"])
+        self.assertIn("all eleven narrative discipline bibles use Markdown", registry["source_of_truth_policy"])
         example = registry["document_contract_example"]
         self.assertEqual(example["source_format"], "markdown")
         self.assertEqual(example["publication_policy"], "always_sync")
@@ -292,13 +309,19 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         for term in ["실패", "중요한 결정", "실제 검증 결과", "Learning Log", "load_by_default", "trigger_tags", "verifying-game-project-operating-system"]:
             self.assertIn(term, text)
 
-    def test_project_kit_exposes_optional_discipline_catalog(self) -> None:
+    def test_project_kit_requires_all_eleven_disciplines(self) -> None:
         config = json.loads((ROOT / "templates/project-operations/github/documentation-governance.json").read_text(encoding="utf-8"))
         registry = json.loads((ROOT / "templates/project-operations/DESIGN_DOCUMENT_REGISTRY.json").read_text(encoding="utf-8"))
-        self.assertEqual(config["required_design_document_coverage"], ["프로젝트 전체"])
-        self.assertEqual(config["required_skill_disciplines"], [])
-        self.assertIn("게임 디자인", config["available_discipline_catalog"])
-        self.assertEqual(registry["required_responsibility_coverage"], ["프로젝트 전체"])
+        required = [
+            "프로젝트 전체", "설정·내러티브", "게임 디자인", "UX·UI·접근성", "개발·엔지니어링",
+            "테크니컬 아트·콘텐츠 파이프라인", "아트", "사운드", "QA", "프로덕션·PM",
+            "분석·유저리서치", "통합검수",
+        ]
+        self.assertEqual(config["required_design_document_coverage"], required)
+        self.assertEqual(config["required_skill_disciplines"], required[1:])
+        self.assertEqual(config["available_discipline_catalog"], required[1:])
+        self.assertEqual(registry["required_responsibility_coverage"], required)
+        self.assertEqual(registry["available_responsibility_catalog"], required[1:])
 
     def test_direct_request_and_local_base_contracts_are_explicit(self) -> None:
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
@@ -344,12 +367,12 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
                 self.assertIn("conducting-deep-requirement-interviews", text)
                 self.assertIn("사용자", text)
 
-    def test_installer_preserves_hybrid_and_optional_contract(self) -> None:
+    def test_installer_preserves_hybrid_and_full_eleven_contract(self) -> None:
         text = (ROOT / "skills/installing-game-project-operating-system/SKILL.md").read_text(encoding="utf-8")
         self.assertIn("Markdown 또는 JSON", text)
-        self.assertIn("프로젝트가 실제로 선택한 책임 분야", text)
+        self.assertIn("프로젝트 전체와 11개 책임 분야", text)
         self.assertIn("INTERVIEW_REGISTRY.json", text)
-        self.assertNotIn("프로젝트 전체와 11개 책임 분야", text)
+        self.assertNotIn("프로젝트가 실제로 선택한 책임 분야", text)
         self.assertNotIn("기획 본책은 JSON으로 만든다", text)
 
 

@@ -26,6 +26,19 @@ from typing import Iterable
 ACTIVE_STATUSES = {"ACTIVE", "SUPPORT"}
 INACTIVE_STATUSES = {"HOLD", "BACKUP", "REMOVAL_CANDIDATE", "NOT_INSTALLED"}
 ALLOWED_STATUSES = ACTIVE_STATUSES | INACTIVE_STATUSES
+REQUIRED_DISCIPLINES = (
+    "설정·내러티브",
+    "게임 디자인",
+    "UX·UI·접근성",
+    "개발·엔지니어링",
+    "테크니컬 아트·콘텐츠 파이프라인",
+    "아트",
+    "사운드",
+    "QA",
+    "프로덕션·PM",
+    "분석·유저리서치",
+    "통합검수",
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -218,11 +231,22 @@ def check_skill_registry(root: Path, config: dict) -> tuple[list[str], set[str],
         errors.append(f"{registry_name}: discipline_entrypoints must be an object")
         entrypoints = {}
 
-    selected = registry.get("selected_disciplines", [])
-    if not isinstance(selected, list) or not all(isinstance(item, str) and item.strip() for item in selected):
-        errors.append(f"{registry_name}: selected_disciplines must be a string list")
-        selected = []
-    required_disciplines = list(dict.fromkeys([*config.get("required_skill_disciplines", []), *selected]))
+    declared_required = registry.get("required_disciplines", [])
+    if not isinstance(declared_required, list) or not all(isinstance(item, str) and item.strip() for item in declared_required):
+        errors.append(f"{registry_name}: required_disciplines must be a string list")
+        declared_required = []
+    configured_required = config.get("required_skill_disciplines", [])
+    if configured_required != list(REQUIRED_DISCIPLINES):
+        errors.append(
+            "required_skill_disciplines must list the 11 mandatory disciplines in Base order"
+        )
+    if declared_required != list(REQUIRED_DISCIPLINES):
+        errors.append(
+            f"{registry_name}: required_disciplines must list the 11 mandatory disciplines in Base order"
+        )
+
+    required_disciplines = list(REQUIRED_DISCIPLINES)
+    entrypoint_owners: dict[str, str] = {}
     for discipline in required_disciplines:
         ids = entrypoints.get(discipline)
         if not nonempty_string_list(ids):
@@ -234,6 +258,15 @@ def check_skill_registry(root: Path, config: dict) -> tuple[list[str], set[str],
                     f"Discipline entrypoint '{discipline}' references inactive or missing skill: "
                     f"{skill_id}"
                 )
+                continue
+            owner = entrypoint_owners.get(skill_id)
+            if owner and owner != discipline:
+                errors.append(
+                    f"Discipline entrypoint skill '{skill_id}' must belong to exactly one "
+                    f"required discipline; shared by {owner} and {discipline}"
+                )
+            else:
+                entrypoint_owners[skill_id] = discipline
 
     return errors, active_ids, registry
 

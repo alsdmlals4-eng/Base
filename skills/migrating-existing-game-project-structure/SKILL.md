@@ -112,7 +112,7 @@ target_design_document_contract: preserve-current-or-use-explicitly-approved-tar
 → 충돌 표시
 → 최신 사용자 결정과 실제 구현으로 현행 판정
 → 불확실성은 [확인 필요]
-→ 구조화 JSON 필드에 전체 승계
+→ 선택한 Markdown 또는 JSON 책임 원본에 전체 승계
 → Design Document Registry 등록
 → 승인 이미지 경로·상태·채택 범위 연결
 → DOCX·PDF·다이어그램 생성
@@ -149,7 +149,7 @@ target_design_document_contract: preserve-current-or-use-explicitly-approved-tar
 
 기존 Markdown·DOCX·PDF 본책은 다음을 모두 만족하기 전 삭제하지 않는다.
 
-- 모든 고유 정보가 JSON에 승계됨
+- 모든 고유 정보가 선택한 Markdown 또는 JSON 책임 원본에 승계됨
 - 이미지·표·예외·보류가 보존됨
 - 다른 파일·코드·Issue 참조가 새 경로로 갱신됨
 - DOCX·PDF 출력과 Manifest가 검증됨
