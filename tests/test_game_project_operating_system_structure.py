@@ -12,6 +12,20 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class GameProjectOperatingSystemStructureTests(unittest.TestCase):
+    def test_base_cold_start_distinguishes_project_templates_from_active_status(self) -> None:
+        start = (ROOT / "START_HERE.md").read_text(encoding="utf-8")
+        documentation_map = (ROOT / "docs" / "DOCUMENTATION_MAP.md").read_text(encoding="utf-8")
+        for required in (
+            "Base 저장소 자체를 콜드 스타트할 때",
+            "templates/project-operations/",
+            "docs/CHANGELOG.md",
+            "[수정제안서]/PROPOSAL_REGISTRY.json",
+            "GitHub PR·Actions",
+            "등록 없음",
+        ):
+            self.assertIn(required, start)
+        self.assertIn("프로젝트 설치 템플릿을 활성 상태 문서로 오인하지 않는다", documentation_map)
+
     def test_required_operating_system_paths_exist(self) -> None:
         required = [
             "START_HERE.md",
