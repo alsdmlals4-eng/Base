@@ -140,7 +140,14 @@ jobs:
           PUPPETEER_EXECUTABLE_PATH: C:\Program Files\Google\Chrome\Application\chrome.exe
           PYTHONIOENCODING: utf-8
         run: |
-          $poppler = Get-ChildItem C:\ProgramData\chocolatey\lib\poppler* -Recurse -Filter pdftoppm.exe | Select-Object -First 1
+          $popplerCommand = Get-Command pdftoppm.exe -ErrorAction SilentlyContinue
+          $poppler = if ($popplerCommand) {
+            Get-Item $popplerCommand.Source
+          } else {
+            Get-ChildItem -Path C:\ProgramData\chocolatey\lib\poppler\tools -Recurse -File -ErrorAction SilentlyContinue |
+              Where-Object { $_.Name -ieq "pdftoppm.exe" } |
+              Select-Object -First 1
+          }
           if (-not $poppler) { throw "pdftoppm.exe not found after Poppler installation" }
           $env:BASE_PDFTOPPM = $poppler.FullName
           python tools/check_publication_environment.py --require-mermaid
