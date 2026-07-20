@@ -11,6 +11,10 @@ description: Use when creating, separating, reviewing, consolidating, or improvi
 
 실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 호출은 Learning Log에 남긴다. 사소한 성공 호출은 기록을 강제하지 않는다. 스킬 본문은 반복 실패, 새 예외, 책임·경로·검증 변경처럼 근거가 있을 때만 갱신한다.
 
+## 전역 productivity와의 경계
+
+전역 `writing-great-skills`의 단일 책임, 짧은 trigger, 점진적 공개 원칙을 적용한다. 다만 외부 원문을 프로젝트 스킬에 복제하지 않고, 프로젝트 스킬에는 실제 책임 원본·경로·산출물·검증처럼 프로젝트에만 필요한 계약만 둔다. 전역 `teach`는 전용 학습 작업공간에서만 사용하며 게임 저장소에 학습 파일을 만들지 않는다.
+
 ## 책임 구조
 
 ```text

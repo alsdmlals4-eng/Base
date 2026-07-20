@@ -19,6 +19,7 @@ START_HERE.md
 - [공용 AI 작업 규칙](AGENTS.md)
 - [문서·스킬 역할표](docs/DOCUMENTATION_MAP.md)
 - [공용 스킬 Registry](skills/SKILL_REGISTRY.json)
+- [전역 productivity 출처·해시 Manifest](skills/PRODUCTIVITY_SOURCE_MANIFEST.json)
 - [공용 스킬 학습 기록](skills/SKILL_LEARNING_LOG.md)
 - [Base 수정제안서]([수정제안서]/README.md)
 - [Ouroboros 딥인터뷰 Source Audit](docs/knowledge/research/OUROBOROS_DEEP_INTERVIEW_SOURCE_AUDIT.md)
@@ -30,6 +31,10 @@ START_HERE.md
 저장소 접근이 가능한 GPT·Codex는 모든 파일과 스킬을 무작정 읽지 않습니다. Registry와 Documentation Map에서 현재 작업에 필요한 책임 원본과 최소 스킬만 선택합니다.
 
 작업에 필요한 실행 파일·라이브러리·폰트·입력 파일·인증·권한이 없으면 AI는 필요한 이유, 설치·적용 방법, 확인 명령과 최소 권한 범위를 사용자에게 요청합니다. 승인 없이 시스템 전역 설치나 권한 확대를 수행하지 않으며, 설치 완료 후 실제 환경을 다시 검증합니다.
+
+## 전역 productivity 스킬
+
+`grill-me`, `grilling`, `handoff`, `resume-work`, `teach`, `writing-great-skills`는 전역 Codex 스킬이다. Base와 프로젝트는 이를 물리 복사하지 않으며, 고정 출처·호출 경계는 [Manifest](skills/PRODUCTIVITY_SOURCE_MANIFEST.json)와 Registry에서 확인한다. `teach`는 전용 학습 작업공간에서만 사용하고, 프로젝트 Handoff와 전역 `handoff`는 서로 다른 책임을 가진다.
 
 ## 프로젝트 기획서 구조
 

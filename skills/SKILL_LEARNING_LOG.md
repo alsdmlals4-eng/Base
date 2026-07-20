@@ -76,6 +76,18 @@
 
 ## 기록
 
+### 2026-07-20 global productivity skill integration
+
+- 프로젝트·작업: Base 공용 스킬과 Matt Pocock productivity 묶음의 전역 통합
+- 기준: `mattpocock/skills` `9603c1cc8118d08bc1b3bf34cf714f62178dea3b`, MIT
+- 호출 트리거: 범용 인터뷰·대화 인수인계·세션 재개·학습·스킬 작성 원칙이 프로젝트 스킬과 중복됨
+- 실제 산출물: 전역 스킬 분리, `PRODUCTIVITY_SOURCE_MANIFEST.json`, Registry·Schema·라우팅 경계
+- 보존 결정: 프로젝트 사실·게이트 인터뷰는 `conducting-deep-requirement-interviews`, 저장소 Handoff는 `maintaining-project-context-and-handoff`, AgentMemory 재개는 `resume-work`로 유지
+- 금지 결정: 외부 productivity 스킬을 Base·프로젝트에 복제하지 않음; `teach` 학습 파일을 게임 저장소에 만들지 않음
+- 검증: 전역 frontmatter·호출 정책, Registry Schema, source manifest SHA-256 형식, 11개 분야 entrypoint 회귀 검사
+- 지식 상태: PATTERN
+- 다음 검토 트리거: 전역 스킬 업스트림 갱신, 동일 의미의 재중복, 프로젝트 콜드 스타트 실패
+
 ### 2026-07-19 structured design documents and human publication pipeline
 
 - 프로젝트·작업: Base PR #8 — 모든 프로젝트·분야 기획서의 AI JSON + 사람용 DOCX/PDF + 다이어그램·승인 이미지 구조

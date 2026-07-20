@@ -10,6 +10,13 @@
     "max_foundation_skills": 3,
     "exclude_statuses": ["HOLD", "BACKUP", "REMOVAL_CANDIDATE"]
   },
+  "global_productivity": {
+    "base_commit": "d2457e75a856260d309203e20262f2a2142d2dd6",
+    "source_manifest": "Base:skills/PRODUCTIVITY_SOURCE_MANIFEST.json",
+    "installation_scope": "GLOBAL_CODEX_ONLY",
+    "project_copy_policy": "FORBIDDEN",
+    "handoff_boundary": "Project Active Context and Handoff remain repository routers; global handoff is temporary conversation output; resume-work resumes AgentMemory."
+  },
   "human_presentation": {
     "primary_reading_format": "PROJECT_SKILL_MAP.pdf",
     "editable_derivative": null,

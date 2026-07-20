@@ -3,7 +3,7 @@
   "$id": "https://github.com/alsdmlals4-eng/Base/schemas/base-skill-registry-v1.schema.json",
   "title": "Base Shared Skill Registry v1",
   "type": "object",
-  "required": ["schema_version", "registry_role", "routing_policy", "skills"],
+  "required": ["schema_version", "registry_role", "routing_policy", "global_productivity", "skills"],
   "properties": {
     "schema_version": {"const": 1},
     "registry_role": {"const": "base-shared-skill-router"},
@@ -17,6 +17,17 @@
         "max_primary_discipline_skills": {"type": "integer", "minimum": 1},
         "max_foundation_skills": {"type": "integer", "minimum": 1},
         "exclude_statuses": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      },
+      "additionalProperties": false
+    },
+    "global_productivity": {
+      "type": "object",
+      "required": ["source_manifest", "installation_scope", "project_copy_policy", "fallback_rule"],
+      "properties": {
+        "source_manifest": {"const": "skills/PRODUCTIVITY_SOURCE_MANIFEST.json"},
+        "installation_scope": {"const": "GLOBAL_CODEX_ONLY"},
+        "project_copy_policy": {"const": "FORBIDDEN"},
+        "fallback_rule": {"const": "Base and project skills remain sufficient when global productivity skills are unavailable."}
       },
       "additionalProperties": false
     },

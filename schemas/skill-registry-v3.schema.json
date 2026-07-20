@@ -3,11 +3,23 @@
   "$id": "https://github.com/alsdmlals4-eng/Base/schemas/skill-registry-v3.schema.json",
   "title": "Base Project Skill Registry v3",
   "type": "object",
-  "required": ["schema_version", "registry_role", "routing_policy", "human_presentation", "skills", "required_disciplines", "discipline_entrypoints"],
+  "required": ["schema_version", "registry_role", "routing_policy", "global_productivity", "human_presentation", "skills", "required_disciplines", "discipline_entrypoints"],
   "properties": {
     "schema_version": {"const": 3},
     "registry_role": {"const": "project-skill-router-and-learning-index"},
     "routing_policy": {"type": "object"},
+    "global_productivity": {
+      "type": "object",
+      "required": ["base_commit", "source_manifest", "installation_scope", "project_copy_policy", "handoff_boundary"],
+      "properties": {
+        "base_commit": {"type": "string", "pattern": "^[0-9a-f]{7,40}$"},
+        "source_manifest": {"const": "Base:skills/PRODUCTIVITY_SOURCE_MANIFEST.json"},
+        "installation_scope": {"const": "GLOBAL_CODEX_ONLY"},
+        "project_copy_policy": {"const": "FORBIDDEN"},
+        "handoff_boundary": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
     "human_presentation": {
       "type": "object",
       "required": ["primary_reading_format", "publication_manifest", "generator", "source_of_truth", "markdown_summary"],

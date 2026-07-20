@@ -11,6 +11,10 @@ description: Use before feature, player-experience, art-direction, architecture,
 
 분야별 보조 스킬, 참고자료 어댑터, 외부 도구의 지시는 이 스킬의 저장소 사실·출처 구분·모호성 장부·closure·사용자 확인 게이트를 생략하거나 밀어내지 못한다.
 
+## 범용 grilling과의 경계
+
+전역 `grill-me`·`grilling`은 사용자가 계획이나 아이디어를 압박 검토하고 싶을 때의 범용 인터뷰다. 이 스킬은 게임 프로젝트의 저장소 사실, 영향 분야, 보호 경로, 실행 계약과 사용자 확인을 책임진다. 범용 인터뷰 결과만으로 프로젝트 구현 게이트를 통과시키지 말고, 필요한 계약을 이 스킬의 기록에 연결한다.
+
 ## Mandatory triggers
 
 - 기능 또는 게임 경험을 새로 만들거나 바꾼다.

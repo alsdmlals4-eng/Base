@@ -2,6 +2,8 @@
 
 이 폴더는 여러 프로젝트에서 직접 적용할 수 있는 단계형 작업 스킬을 관리한다.
 
+전역 productivity 스킬은 이 폴더에 복사하지 않는다. 고정 출처와 파일 해시는 `PRODUCTIVITY_SOURCE_MANIFEST.json`에서, 프로젝트별 사용 경계는 `SKILL_REGISTRY.json`에서 확인한다.
+
 | 스킬 | Trigger |
 |---|---|
 | `conducting-deep-requirement-interviews` | 기능·경험·아트 방향·구조·워크플로·Base 변경 제안의 사실과 사용자 결정을 실행 전에 확정함 |

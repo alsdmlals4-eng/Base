@@ -34,6 +34,8 @@ START_HERE.md
 
 저장소 전체나 전체 스킬을 무작정 읽지 않는다. 백업·보류·제거 후보는 감사·재개 요청이 없는 한 기본 읽기에서 제외한다.
 
+전역 productivity 스킬의 출처·고정 커밋·파일 해시는 `skills/PRODUCTIVITY_SOURCE_MANIFEST.json`에 있다. 프로젝트 Registry는 전역 스킬을 복사하지 않고 이 Base 계약만 참조한다. 저장소 상태 라우팅은 `maintaining-project-context-and-handoff`, 임시 대화 인수인계는 전역 `handoff`, 이전 세션 재개는 전역 `resume-work`가 책임진다.
+
 Base 저장소 자체의 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 문서로 오인하지 않는다. 완료 상태는 `docs/CHANGELOG.md`, 검토 대기 작업은 `[수정제안서]/PROPOSAL_REGISTRY.json`, 진행 중 구현은 GitHub PR·Actions가 책임진다. 활성 인터뷰가 없으면 `등록 없음`으로 명시한다.
 
 ## 2. 루트 기획서 계약

@@ -185,6 +185,22 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             self.assertTrue((ROOT / item["path"]).is_file())
             self.assertTrue((ROOT / item["learning_log"]).is_file())
 
+    def test_global_productivity_is_pinned_and_not_a_project_copy(self) -> None:
+        registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
+        productivity = registry["global_productivity"]
+        self.assertEqual(productivity["installation_scope"], "GLOBAL_CODEX_ONLY")
+        self.assertEqual(productivity["project_copy_policy"], "FORBIDDEN")
+        manifest = json.loads((ROOT / productivity["source_manifest"]).read_text(encoding="utf-8"))
+        self.assertEqual(manifest["pinned_commit"], "9603c1cc8118d08bc1b3bf34cf714f62178dea3b")
+        self.assertEqual(manifest["license"], "MIT")
+        self.assertEqual(
+            [entry["skill_id"] for entry in manifest["entries"]],
+            ["grill-me", "grilling", "handoff", "resume-work", "teach", "writing-great-skills"],
+        )
+        self.assertTrue(manifest["source_files"])
+        for item in manifest["source_files"]:
+            self.assertRegex(item["sha256"], r"^[0-9a-f]{64}$")
+
     def test_skill_evolution_requires_all_disciplines_with_hybrid_sources(self) -> None:
         text = (ROOT / "skills/evolving-project-discipline-skills/SKILL.md").read_text(encoding="utf-8")
         self.assertIn("relevant_design_document_sources", text)
@@ -212,6 +228,8 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         self.assertEqual(human["diagram_directory"], "PROJECT_SKILL_MAP.assets")
         self.assertEqual(human["markdown_summary"], "PROJECT_SKILL_MAP.md")
         self.assertEqual(registry["schema_version"], 3)
+        self.assertEqual(registry["global_productivity"]["installation_scope"], "GLOBAL_CODEX_ONLY")
+        self.assertEqual(registry["global_productivity"]["project_copy_policy"], "FORBIDDEN")
         self.assertIn("required_disciplines", registry)
         self.assertNotIn("selected_disciplines", registry)
         self.assertEqual(set(registry["discipline_entrypoints"]), {
