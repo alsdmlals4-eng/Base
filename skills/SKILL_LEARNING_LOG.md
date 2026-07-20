@@ -5,7 +5,7 @@
 - 프로젝트 운영 문서의 최신성은 파일 존재 검사가 아니라 활성 참조와 설치 매핑을 함께 검사해야 한다.
 - 발행본의 `CURRENT` 상태와 사람의 시각 검수 완료 상태는 서로 독립적으로 관리해야 한다.
 - Learning Log는 모든 호출이 아니라 실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있을 때 기록한다.
-- 11개 분야는 공용 카탈로그이며 프로젝트가 선택하지 않은 분야를 필수 진입점으로 강제하지 않는다.
+- 11개 분야는 모든 프로젝트의 필수 독립 책임이며 각 분야 진입 스킬을 등록한다.
 - 작업에 필요한 도구·파일·인증·권한이 없으면 사용자에게 이유와 설치·적용·확인 방법을 안내하고, 완료 통보 뒤 실제 환경을 다시 검증한다.
 
 > Base 실행 스킬의 실제 적용 결과, 실패, 예외와 갱신 결정을 기록한다. 이 문서는 기본 작업 컨텍스트가 아니며 `skills/SKILL_REGISTRY.json`에서 특정 스킬의 학습 검토가 필요할 때만 읽는다.
@@ -75,6 +75,18 @@
 - DOCX/PDF·다이어그램 발행본이 Registry보다 오래됨
 
 ## 기록
+
+### 2026-07-20 global productivity skill integration
+
+- 프로젝트·작업: Base 공용 스킬과 Matt Pocock productivity 묶음의 전역 통합
+- 기준: `mattpocock/skills` `9603c1cc8118d08bc1b3bf34cf714f62178dea3b`, MIT
+- 호출 트리거: 범용 인터뷰·대화 인수인계·세션 재개·학습·스킬 작성 원칙이 프로젝트 스킬과 중복됨
+- 실제 산출물: 전역 스킬 분리, `PRODUCTIVITY_SOURCE_MANIFEST.json`, Registry·Schema·라우팅 경계
+- 보존 결정: 프로젝트 사실·게이트 인터뷰는 `conducting-deep-requirement-interviews`, 저장소 Handoff는 `maintaining-project-context-and-handoff`, AgentMemory 재개는 `resume-work`로 유지
+- 금지 결정: 외부 productivity 스킬을 Base·프로젝트에 복제하지 않음; `teach` 학습 파일을 게임 저장소에 만들지 않음
+- 검증: 전역 frontmatter·호출 정책, Registry Schema, source manifest SHA-256 형식, 11개 분야 entrypoint 회귀 검사
+- 지식 상태: PATTERN
+- 다음 검토 트리거: 전역 스킬 업스트림 갱신, 동일 의미의 재중복, 프로젝트 콜드 스타트 실패
 
 ### 2026-07-19 structured design documents and human publication pipeline
 

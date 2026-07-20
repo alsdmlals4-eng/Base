@@ -87,7 +87,7 @@
 |  | 게임 디자인 |  |  |  |  |  |  |
 |  | UX·UI·접근성 |  |  |  |  |  |  |
 |  | 개발·엔지니어링 |  |  |  |  |  |  |
-|  | 테크니컬 아트·파이프라인 |  |  |  |  |  |  |
+|  | 테크니컬 아트·콘텐츠 파이프라인 |  |  |  |  |  |  |
 |  | 아트 |  |  |  |  |  |  |
 |  | 사운드 |  |  |  |  |  |  |
 |  | QA |  |  |  |  |  |  |
@@ -95,7 +95,7 @@
 |  | 분석·유저리서치 |  |  |  |  |  |  |
 |  | 통합검수 |  |  |  |  |  |  |
 
-표의 11개 분야는 선택 가능한 공용 카탈로그다. 프로젝트가 실제로 선택한 분야만 설치한다. 통합 본책은 `responsibility_coverage`에 담당 분야를 모두 기록한다.
+표의 11개 분야는 모든 프로젝트의 필수 독립 본책이다. 각 분야를 모두 설치하고 `responsibility_coverage`에 해당 책임을 명시한다.
 
 ## 5. Markdown·JSON 혼용 본책 계약
 
@@ -141,7 +141,7 @@ Markdown 또는 JSON 책임 원본
 - [ ] 사람용 필수 `PROJECT_SKILL_MAP.pdf`와 설정한 선택 `md/docx/assets`를 생성했다.
 - [ ] 선택 `PROJECT_SKILL_MAP.md`가 자동 생성 파생본이며 Registry 해시가 일치한다.
 - [ ] 전체 스킬 자동 로드가 꺼져 있다.
-- [ ] 각 분야에 진입 스킬 또는 명시적 통합 책임이 있다.
+- [ ] 11개 분야마다 1:1 진입 스킬이 있다.
 - [ ] 실패·중요 결정·재사용 가능한 교훈·실제 검증 결과의 Learning Log 계약을 연결했다.
 
 ## 8. 개발 게이트
@@ -230,7 +230,7 @@ Concept → Prototype → Graybox → First Playable → Vertical Slice → Prod
 ## 14. 완료 조건
 
 - [ ] 루트 `[기획서]`가 있다.
-- [ ] Design Document Registry가 프로젝트 전체와 프로젝트가 선택한 분야를 책임진다.
+- [ ] Design Document Registry가 프로젝트 전체와 11개 분야를 모두 책임진다.
 - [ ] 모든 활성 본책에 등록된 단일 Markdown 또는 JSON 책임 원본·최신 PDF·Manifest와 선언한 선택 DOCX/다이어그램이 있다.
 - [ ] Skill Registry와 사람용 스킬맵이 일치한다.
 - [ ] Development Gates·Roadmap·Active Context가 연결된다.

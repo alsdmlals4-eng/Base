@@ -188,7 +188,7 @@ def build_docx(registry: dict[str, Any], project_name: str, registry_hash: str, 
 
     doc.add_heading("2. 분야별 진입 구조", level=1)
     doc.add_picture(str(assets["discipline"]), width=Inches(7.1))
-    caption = doc.add_paragraph("그림 2. 프로젝트가 선택한 책임 분야의 진입 스킬 등록 상태"); caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    caption = doc.add_paragraph("그림 2. 프로젝트의 11개 필수 책임 분야 진입 스킬 등록 상태"); caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
     table(doc, ["분야", "진입 스킬", "상태"], [[discipline, ", ".join(registry["discipline_entrypoints"].get(discipline, [])) or "[설치 필요]", "등록" if registry["discipline_entrypoints"].get(discipline) else "미등록"] for discipline in DISCIPLINES])
 
     section = doc.add_section()
@@ -216,7 +216,7 @@ def build_docx(registry: dict[str, Any], project_name: str, registry_hash: str, 
         ["지식 상태", "관찰 → 가설 → 패턴 → 검증 → 승격 후보"], ["공용화 경계", "프로젝트 고유 수치·세계관·승인 자산은 프로젝트에 유지"],
     ])
     doc.add_heading("6. 운영·검수 체크", level=1)
-    for text in ["Registry의 현행 스킬 경로가 실제 존재한다.", "프로젝트가 선택한 각 분야에 진입 스킬 또는 통합 책임이 등록돼 있다.", "PDF와 설정한 Markdown·DOCX·다이어그램은 Registry 해시와 일치한다.", "사람은 이 PDF를 보고, AI는 Registry를 책임 원본으로 읽는다.", "스킬 변경 시 Registry·Learning Log·PDF와 설정한 선택 파생본을 같은 작업에서 갱신한다.", "문서가 생성됐다는 사실만으로 실제 스킬 실행·검증 완료로 표시하지 않는다."]:
+    for text in ["Registry의 현행 스킬 경로가 실제 존재한다.", "프로젝트의 11개 필수 분야마다 독립 진입 스킬이 등록돼 있다.", "PDF와 설정한 Markdown·DOCX·다이어그램은 Registry 해시와 일치한다.", "사람은 이 PDF를 보고, AI는 Registry를 책임 원본으로 읽는다.", "스킬 변경 시 Registry·Learning Log·PDF와 설정한 선택 파생본을 같은 작업에서 갱신한다.", "문서가 생성됐다는 사실만으로 실제 스킬 실행·검증 완료로 표시하지 않는다."]:
         doc.add_paragraph(text, style="List Bullet")
     doc.save(output)
 
@@ -267,15 +267,15 @@ def markdown_summary(registry: dict[str, Any], registry_hash: str) -> str:
         "> 자동 생성 파생본입니다. 수동 편집하지 마세요.",
         f"> SKILL_REGISTRY.json SHA-256: `{registry_hash}`",
         "",
-        "## 선택된 분야",
+        "## 필수 분야",
         "",
     ]
-    selected = registry.get("selected_disciplines", [])
-    lines.extend(f"- {item}" for item in selected) if selected else lines.append("- 선택된 분야 없음")
+    selected = registry.get("required_disciplines", [])
+    lines.extend(f"- {item}" for item in selected) if selected else lines.append("- 필수 분야 누락")
     lines.extend(["", "## 분야별 진입 스킬", "", "| 분야 | 진입 스킬 |", "|---|---|"])
     for discipline in selected:
         entrypoints = registry.get("discipline_entrypoints", {}).get(discipline, [])
-        lines.append(f"| {discipline} | {', '.join(entrypoints) or '[통합 책임 필요]'} |")
+        lines.append(f"| {discipline} | {', '.join(entrypoints) or '[진입 스킬 필요]'} |")
     lines.extend(["", "## 활성 스킬", "", "| Skill ID | 계층 | 분야 | Trigger |", "|---|---|---|---|"])
     for skill in registry.get("skills", []):
         if skill.get("status") not in {"ACTIVE", "SUPPORT"}:

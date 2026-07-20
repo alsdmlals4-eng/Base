@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import subprocess
 import tempfile
 import unittest
@@ -22,6 +23,7 @@ class BaseChangeProposalTests(unittest.TestCase):
         registry, errors = CHECKER.validate_repository(ROOT)
         self.assertEqual(errors, [])
         self.assertEqual(registry["proposal_root"], "[수정제안서]")
+        self.assertEqual(registry["proposals"], [])
 
     def test_new_proposal_pr_cannot_change_active_base(self) -> None:
         previous = {"proposals": []}
@@ -56,6 +58,42 @@ class BaseChangeProposalTests(unittest.TestCase):
             ["[수정제안서]/BCP-2026-999-example/PROPOSAL.md"],
         )
         self.assertTrue(any("must start as SUBMITTED" in error for error in errors))
+
+    def test_terminal_proposal_cannot_remain_in_active_registry(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "schemas").mkdir()
+            (root / "[수정제안서]").mkdir()
+            (root / "schemas/base-change-proposal-registry-v1.schema.json").write_text(
+                (ROOT / "schemas/base-change-proposal-registry-v1.schema.json").read_text(encoding="utf-8"),
+                encoding="utf-8",
+            )
+            proposal = {
+                "proposal_id": "BCP-2026-999-example",
+                "title": "terminal",
+                "path": "[수정제안서]/BCP-2026-999-example/PROPOSAL.md",
+                "status": "REJECTED",
+                "source_project": "Base",
+                "source_commit": "test",
+                "submitted_at": "2026-07-20",
+                "approval_ref": None,
+                "implementation_pr": None,
+            }
+            (root / "[수정제안서]/PROPOSAL_REGISTRY.json").write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "registry_role": "base-change-proposal-index",
+                        "proposal_root": "[수정제안서]",
+                        "proposals": [proposal],
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            registry, errors = CHECKER.validate_repository(root)
+            self.assertEqual(registry["proposals"][0]["status"], "REJECTED")
+            self.assertTrue(any("terminal proposal" in error for error in errors))
 
     def test_bootstrap_pr_is_explicitly_allowed(self) -> None:
         current = {"proposals": [{"proposal_id": "BCP-2026-001-bootstrap", "status": "SUBMITTED"}]}

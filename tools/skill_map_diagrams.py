@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 DISCIPLINES = [
     "설정·내러티브", "게임 디자인", "UX·UI·접근성", "개발·엔지니어링",
-    "테크니컬 아트·파이프라인", "아트", "사운드", "QA", "프로덕션·PM",
+    "테크니컬 아트·콘텐츠 파이프라인", "아트", "사운드", "QA", "프로덕션·PM",
     "분석·유저리서치", "통합검수",
 ]
 STATUS_KO = {"ACTIVE": "현행", "SUPPORT": "보조", "HOLD": "보류", "BACKUP": "백업", "REMOVAL_CANDIDATE": "제거 후보", "NOT_INSTALLED": "미설치"}
@@ -102,7 +102,7 @@ def discipline_diagram(registry: dict[str, Any], out: Path) -> None:
     image = Image.new("RGB", (1800, 1050), BG)
     draw = ImageDraw.Draw(image)
     draw.text((70, 40), "분야별 진입 스킬 라우팅", font=font(48, True), fill=INK)
-    draw.text((70, 102), "각 분야는 독립 진입 스킬 또는 명시적인 통합 책임을 가집니다.", font=font(22), fill=MUTED)
+    draw.text((70, 102), "11개 분야 모두는 독립 진입 스킬을 가집니다.", font=font(22), fill=MUTED)
     entries = registry.get("discipline_entrypoints", {})
     x0, y0, bw, bh, gx, gy = 70, 180, 500, 165, 55, 45
     for index, discipline in enumerate(DISCIPLINES):

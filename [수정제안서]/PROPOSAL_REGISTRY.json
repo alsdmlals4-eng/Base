@@ -2,28 +2,5 @@
   "schema_version": 1,
   "registry_role": "base-change-proposal-index",
   "proposal_root": "[수정제안서]",
-  "proposals": [
-    {
-      "proposal_id": "BCP-2026-001-base-skill-map-publication",
-      "title": "Base 공용 Skill Registry의 선택적 사람용 Map 발행",
-      "path": "[수정제안서]/BCP-2026-001-base-skill-map-publication/PROPOSAL.md",
-      "status": "SUBMITTED",
-      "source_project": "alsdmlals4-eng/Base",
-      "source_commit": "bc0eadca1c5c73ee4d5afd907d620953dbe02590",
-      "submitted_at": "2026-07-19",
-      "approval_ref": null,
-      "implementation_pr": null
-    },
-    {
-      "proposal_id": "BCP-2026-002-actions-node24-compatibility",
-      "title": "GitHub Actions Node 24 호환 버전 전환",
-      "path": "[수정제안서]/BCP-2026-002-actions-node24-compatibility/PROPOSAL.md",
-      "status": "SUBMITTED",
-      "source_project": "alsdmlals4-eng/Base",
-      "source_commit": "c85e40855400a7595bf8b1350cba53a0e3c7e94d",
-      "submitted_at": "2026-07-19",
-      "approval_ref": null,
-      "implementation_pr": null
-    }
-  ]
+  "proposals": []
 }

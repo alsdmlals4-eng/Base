@@ -9,6 +9,10 @@ description: Use when a game-project task changes current status, next work, ris
 
 Active Context와 Handoff는 다른 책임 원본을 복제하는 장문 문서가 아니라 **현재 상태, 읽기 순서, 미완료 작업과 위험을 연결하는 압축 라우터**다.
 
+## 전역 handoff와의 경계
+
+이 스킬의 Handoff는 저장소 안의 현행 상태 라우터다. 전역 `handoff`는 운영체제 임시 폴더에 만드는 대화 인수인계 문서이고, 전역 `resume-work`는 AgentMemory에서 이전 작업을 찾는 기능이다. 임시 대화 문서를 프로젝트의 책임 원본으로 등록하거나 Active Context를 대체하지 않는다.
+
 ## Use when
 
 - L1 이상 작업으로 현재 구현·검증·우선순위가 바뀌었다.

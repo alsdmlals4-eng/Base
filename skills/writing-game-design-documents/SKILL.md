@@ -125,7 +125,7 @@ AI·자동 검사 → DESIGN_DOCUMENT_REGISTRY.json·문서별 Markdown 또는 J
 
 ## Failure conditions
 
-- 한 책임 원본이 선택하지 않은 모든 분야의 세부 상태·Roadmap·QA를 무차별 소유
+- 한 책임 원본이 다른 모든 분야의 세부 상태·Roadmap·QA를 무차별 소유
 - 같은 규칙을 여러 책임 원본에 장문 복사
 - `final`, `latest`, `v2` 활성 복제본 생성
 - DOCX·PDF를 독립 책임 원본으로 수정
@@ -139,7 +139,7 @@ AI·자동 검사 → DESIGN_DOCUMENT_REGISTRY.json·문서별 Markdown 또는 J
 
 ## Validation scenarios
 
-1. 신규 프로젝트는 프로젝트 전체와 선택한 분야별 책임 원본의 형식·경로를 Registry에 등록한다.
+1. 신규 프로젝트는 프로젝트 전체와 11개 분야별 책임 원본의 형식·경로를 Registry에 등록한다.
 2. 기존 문서는 안전 감사 후 고유 정보를 역할에 맞는 Markdown 또는 JSON에 승계하고 발행 검증 전 원본을 제거하지 않는다.
 3. 작은 기능은 새 본책을 만들지 않고 기존 책임 원본 Section·작업 계약·Roadmap에 차이를 기록한다.
 4. 방향 변경은 책임 원본·PDF/Manifest·Roadmap·Handoff·관련 Skill을 함께 갱신한다.

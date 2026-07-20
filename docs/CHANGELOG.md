@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased - Base audit and operating-contract consistency
+## Unreleased - Base 11-discipline operating-contract consistency
 
 - SlopSlap 기준 커밋의 51개 tracked 파일과 27개 시각 자산을 전수 감사하고, 외부 Claude·브라우저 런타임 없이 동작하는 Godot/Web UI 아트 감사 스킬을 추가했다.
 - A~E 읽기 전용 후보 검사, 목적 있는 디자인 반례, 사용자 승인 게이트, 순차 개선, 독립 재감사와 실제 전후 렌더 계약을 추가했다.
@@ -21,7 +21,10 @@
 - GitHub Issue와 사용자 승인 직접 요청을 동등한 작업 계약으로 지원한다.
 - 프로젝트 로컬 Base 버전을 우선하고 원격 Base는 업데이트 조사 때만 비교하도록 통일했다.
 - Active Context, Handoff, Roadmap, Decision Log, Changelog, Base Rules Version 템플릿을 추가했다.
-- 11개 분야를 선택 가능한 공용 카탈로그로 정의하고 미선택 분야 강제를 제거했다.
+- 11개 분야를 모든 프로젝트의 독립 본책·1:1 진입 스킬 필수 계약으로 전환하고 선택·통합 허용 문구를 제거했다.
+- 이 확정 작업의 추적 원본은 GitHub Issue #17이며, 이후 프로젝트는 이 PR의 검증 커밋을 `BASE_RULES_VERSION.md`에 고정한다.
+- BCP-2026-001은 기존 Documentation Map·Registry와 중복되는 사람용 Base Skill Map을 만들지 않기로 기각하고, 근거를 이 기록과 PR 이력으로 승계했다.
+- BCP-2026-002는 공식 Node 24 runtime Action major 전환으로 구현하고, 제안 패키지와 증거는 이 기록·검증·PR 이력으로 승계했다.
 - 자동 렌더 검수와 사람 시각 검수를 서로 독립된 상태로 분리했다.
 - 삭제된 템플릿 참조와 임시 Google Docs 가져오기 파일을 정리했다.
 - 필요한 도구·파일·폰트·인증·권한이 없을 때 사용자에게 이유와 설치·적용·확인 방법을 요청하고 실제 환경을 재검증하는 계약을 추가했다.

@@ -89,14 +89,12 @@
   "require_human_design_document_visual_review": false,
   "design_document_diagram_generator": "tools/design_document_diagrams.py",
   "required_design_document_coverage": [
-    "프로젝트 전체"
-  ],
-  "available_discipline_catalog": [
+    "프로젝트 전체",
     "설정·내러티브",
     "게임 디자인",
     "UX·UI·접근성",
     "개발·엔지니어링",
-    "테크니컬 아트·파이프라인",
+    "테크니컬 아트·콘텐츠 파이프라인",
     "아트",
     "사운드",
     "QA",
@@ -104,7 +102,32 @@
     "분석·유저리서치",
     "통합검수"
   ],
-  "required_skill_disciplines": [],
+  "available_discipline_catalog": [
+    "설정·내러티브",
+    "게임 디자인",
+    "UX·UI·접근성",
+    "개발·엔지니어링",
+    "테크니컬 아트·콘텐츠 파이프라인",
+    "아트",
+    "사운드",
+    "QA",
+    "프로덕션·PM",
+    "분석·유저리서치",
+    "통합검수"
+  ],
+  "required_skill_disciplines": [
+    "설정·내러티브",
+    "게임 디자인",
+    "UX·UI·접근성",
+    "개발·엔지니어링",
+    "테크니컬 아트·콘텐츠 파이프라인",
+    "아트",
+    "사운드",
+    "QA",
+    "프로덕션·PM",
+    "분석·유저리서치",
+    "통합검수"
+  ],
   "skill_change_globs": [
     "skills/**/SKILL.md"
   ],
@@ -139,8 +162,8 @@
         "images/**"
       ],
       "required_any": [
-        "[기획서]/05_테크니컬아트_파이프라인/테크니컬아트_기획서.md",
-        "[기획서]/05_테크니컬아트_파이프라인/테크니컬아트_기획서.json",
+        "[기획서]/05_테크니컬아트_콘텐츠_파이프라인/테크니컬아트_기획서.md",
+        "[기획서]/05_테크니컬아트_콘텐츠_파이프라인/테크니컬아트_기획서.json",
         "[기획서]/06_아트/아트_기획서.md",
         "[기획서]/06_아트/아트_기획서.json"
       ],

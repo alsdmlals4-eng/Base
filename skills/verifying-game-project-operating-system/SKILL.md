@@ -72,7 +72,7 @@ actual_code_data_assets_tests:
 ### 2. Design document responsibility
 
 - `DESIGN_DOCUMENT_REGISTRY.json`이 존재하고 활성 문서 ID가 고유한가?
-- 프로젝트 전체와 프로젝트가 선택한 분야 책임이 `responsibility_coverage`로 보존되는가?
+- 프로젝트 전체와 11개 분야 책임이 `responsibility_coverage`로 모두 보존되는가?
 - 각 활성 항목의 단일 Markdown 또는 JSON 책임 원본·필수 PDF·Manifest와 선언한 선택 DOCX·asset dir 경로가 존재하는가?
 - 활성 Markdown 기획서는 Registry에 등록되고 required section·H1 계약을 만족하는가?
 - 질문마다 현행 단일 책임 원본이 하나이고 형식 역할이 명확한가?
@@ -145,7 +145,7 @@ actual_code_data_assets_tests:
 - 프로젝트 목적과 핵심 경험은 무엇인가?
 - 현재 단계와 최우선 작업은 무엇인가?
 - 무엇을 변경하면 안 되는가?
-- 프로젝트 전체·각 분야의 등록된 Markdown 또는 JSON 책임 원본은 어디인가?
+- 프로젝트 전체·11개 분야의 등록된 Markdown 또는 JSON 책임 원본은 어디인가?
 - 사람이 볼 최신 PDF·선택 DOCX·승인 이미지는 어디인가?
 - 각 분야 진입 스킬과 실제 검증은 어디인가?
 - 보류·미검증·위험은 어디인가?

@@ -11,6 +11,19 @@ from pathlib import Path
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 CHECKER = REPOSITORY_ROOT / "templates/project-operations/github/check_skill_routing_governance.py"
+DISCIPLINES = [
+    "설정·내러티브",
+    "게임 디자인",
+    "UX·UI·접근성",
+    "개발·엔지니어링",
+    "테크니컬 아트·콘텐츠 파이프라인",
+    "아트",
+    "사운드",
+    "QA",
+    "프로덕션·PM",
+    "분석·유저리서치",
+    "통합검수",
+]
 
 
 class SkillRoutingGovernanceTests(unittest.TestCase):
@@ -24,13 +37,15 @@ class SkillRoutingGovernanceTests(unittest.TestCase):
         self.pdf = self.hub / "PROJECT_SKILL_MAP.pdf"
         self.assets = self.hub / "PROJECT_SKILL_MAP.assets"
         self.manifest = self.hub / "SKILL_MAP_PUBLICATION_MANIFEST.json"
-        self.skill_path = self.root / "skills/foundation/test-skill/SKILL.md"
-        self.learning_log = self.root / "skills/foundation/test-skill/LEARNING_LOG.md"
+        self.skill_path = self.root / "skills/disciplines/skill-01/SKILL.md"
+        self.learning_log = self.root / "skills/disciplines/skill-01/LEARNING_LOG.md"
         self.hub.mkdir(parents=True)
         self.assets.mkdir(parents=True)
-        self.skill_path.parent.mkdir(parents=True)
-        self.skill_path.write_text("# Test Skill\n", encoding="utf-8")
-        self.learning_log.write_text("# Learning Log\n", encoding="utf-8")
+        for index, _discipline in enumerate(DISCIPLINES, start=1):
+            skill_dir = self.root / f"skills/disciplines/skill-{index:02d}"
+            skill_dir.mkdir(parents=True)
+            (skill_dir / "SKILL.md").write_text("# Test Skill\n", encoding="utf-8")
+            (skill_dir / "LEARNING_LOG.md").write_text("# Learning Log\n", encoding="utf-8")
         self._write_registry()
         self._write_publication()
         self._write_config()
@@ -62,24 +77,30 @@ class SkillRoutingGovernanceTests(unittest.TestCase):
                 "source_of_truth": "SKILL_REGISTRY.json",
                 "markdown_summary": "PROJECT_SKILL_MAP.md",
             },
-            "skills": [{
-                "skill_id": "test-skill",
-                "layer": "foundation",
-                "discipline": "project-operations",
-                "path": "skills/foundation/test-skill/SKILL.md",
-                "status": "ACTIVE",
-                "load_by_default": False,
-                "trigger_tags": ["test-trigger"],
-                "use_when": ["테스트 작업에서 사용한다."],
-                "do_not_use_when": ["테스트 범위가 아닐 때 사용하지 않는다."],
-                "learning_log": "skills/foundation/test-skill/LEARNING_LOG.md",
-                "review_triggers": ["테스트 실패"],
-                "last_reviewed_at": "2026-07-19",
-                "last_reviewed_commit": "test-commit",
-                "knowledge_state": "OBSERVATION",
-            }],
-            "selected_disciplines": ["사운드"],
-            "discipline_entrypoints": {"사운드": ["test-skill"]},
+            "skills": [
+                {
+                    "skill_id": f"skill-{index:02d}",
+                    "layer": "discipline",
+                    "discipline": discipline,
+                    "path": f"skills/disciplines/skill-{index:02d}/SKILL.md",
+                    "status": "ACTIVE",
+                    "load_by_default": False,
+                    "trigger_tags": ["test-trigger"],
+                    "use_when": ["테스트 작업에서 사용한다."],
+                    "do_not_use_when": ["테스트 범위가 아닐 때 사용하지 않는다."],
+                    "learning_log": f"skills/disciplines/skill-{index:02d}/LEARNING_LOG.md",
+                    "review_triggers": ["테스트 실패"],
+                    "last_reviewed_at": "2026-07-19",
+                    "last_reviewed_commit": "test-commit",
+                    "knowledge_state": "OBSERVATION",
+                }
+                for index, discipline in enumerate(DISCIPLINES, start=1)
+            ],
+            "required_disciplines": DISCIPLINES,
+            "discipline_entrypoints": {
+                discipline: [f"skill-{index:02d}"]
+                for index, discipline in enumerate(DISCIPLINES, start=1)
+            },
         }
 
     def _write_registry(self, data: dict | None = None) -> None:
@@ -135,7 +156,7 @@ class SkillRoutingGovernanceTests(unittest.TestCase):
             "skill_map_publication_manifest": "[기획서]/00_프로젝트_허브/SKILL_MAP_PUBLICATION_MANIFEST.json",
             "enforce_skill_map_publication": True,
             "require_human_skill_map_visual_review": False,
-            "required_skill_disciplines": [],
+            "required_skill_disciplines": DISCIPLINES,
             "skill_change_globs": ["skills/**/SKILL.md"],
             "skill_map_generator_globs": ["tools/build_project_skill_map.py"],
             "skill_map_sync_paths": [
@@ -184,7 +205,7 @@ class SkillRoutingGovernanceTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("load_all_skills must be false", result.stdout)
 
-    def test_only_selected_discipline_requires_entrypoint(self) -> None:
+    def test_every_required_discipline_requires_entrypoint(self) -> None:
         data = self._registry_data()
         data["discipline_entrypoints"]["사운드"] = []
         self._write_registry(data)
@@ -192,7 +213,16 @@ class SkillRoutingGovernanceTests(unittest.TestCase):
         result = self._run_checker()
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Missing active skill entrypoint for discipline: 사운드", result.stdout)
-        self.assertNotIn("게임 디자인", result.stdout)
+        self.assertNotIn("Missing active skill entrypoint for discipline: 게임 디자인", result.stdout)
+
+    def test_required_disciplines_cannot_share_an_entrypoint_skill(self) -> None:
+        data = self._registry_data()
+        data["discipline_entrypoints"]["사운드"] = ["skill-02"]
+        self._write_registry(data)
+        self._write_publication()
+        result = self._run_checker()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("must belong to exactly one required discipline", result.stdout)
 
     def test_missing_learning_log_fails(self) -> None:
         self.learning_log.unlink()

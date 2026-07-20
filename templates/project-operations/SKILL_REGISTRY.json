@@ -10,6 +10,13 @@
     "max_foundation_skills": 3,
     "exclude_statuses": ["HOLD", "BACKUP", "REMOVAL_CANDIDATE"]
   },
+  "global_productivity": {
+    "base_commit": "d2457e75a856260d309203e20262f2a2142d2dd6",
+    "source_manifest": "Base:skills/PRODUCTIVITY_SOURCE_MANIFEST.json",
+    "installation_scope": "GLOBAL_CODEX_ONLY",
+    "project_copy_policy": "FORBIDDEN",
+    "handoff_boundary": "Project Active Context and Handoff remain repository routers; global handoff is temporary conversation output; resume-work resumes AgentMemory."
+  },
   "human_presentation": {
     "primary_reading_format": "PROJECT_SKILL_MAP.pdf",
     "editable_derivative": null,
@@ -20,13 +27,25 @@
     "markdown_summary": "PROJECT_SKILL_MAP.md"
   },
   "skills": [],
-  "selected_disciplines": [],
+  "required_disciplines": [
+    "설정·내러티브",
+    "게임 디자인",
+    "UX·UI·접근성",
+    "개발·엔지니어링",
+    "테크니컬 아트·콘텐츠 파이프라인",
+    "아트",
+    "사운드",
+    "QA",
+    "프로덕션·PM",
+    "분석·유저리서치",
+    "통합검수"
+  ],
   "discipline_entrypoints": {
     "설정·내러티브": [],
     "게임 디자인": [],
     "UX·UI·접근성": [],
     "개발·엔지니어링": [],
-    "테크니컬 아트·파이프라인": [],
+    "테크니컬 아트·콘텐츠 파이프라인": [],
     "아트": [],
     "사운드": [],
     "QA": [],

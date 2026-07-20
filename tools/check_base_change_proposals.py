@@ -11,7 +11,8 @@ from jsonschema import Draft202012Validator
 
 PROPOSAL_ROOT = "[수정제안서]"
 REGISTRY_PATH = f"{PROPOSAL_ROOT}/PROPOSAL_REGISTRY.json"
-APPROVED_STATES = {"APPROVED_FOR_IMPLEMENTATION", "IMPLEMENTED"}
+APPROVED_STATES = {"APPROVED_FOR_IMPLEMENTATION"}
+ACTIVE_PROPOSAL_STATES = {"SUBMITTED", "UNDER_REVIEW", "APPROVED_FOR_IMPLEMENTATION"}
 REQUIRED_HEADINGS = (
     "## 출처와 상태",
     "## 관찰과 증거",
@@ -45,6 +46,10 @@ def validate_repository(root: Path) -> tuple[dict, list[str]]:
         if proposal_id in seen:
             errors.append(f"duplicate proposal_id: {proposal_id}")
         seen.add(proposal_id)
+        if proposal.get("status") not in ACTIVE_PROPOSAL_STATES:
+            errors.append(
+                f"terminal proposal must not remain in the active registry: {proposal_id}"
+            )
         path = root / proposal.get("path", "")
         expected = root / PROPOSAL_ROOT / proposal_id / "PROPOSAL.md"
         if path.resolve() != expected.resolve():

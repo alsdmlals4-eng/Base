@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "source_repository": "https://github.com/mattpocock/skills",
+  "source_path": "skills/productivity",
+  "pinned_commit": "9603c1cc8118d08bc1b3bf34cf714f62178dea3b",
+  "license": "MIT",
+  "installation_scope": "GLOBAL_CODEX_ONLY",
+  "project_copy_policy": "FORBIDDEN",
+  "entries": [
+    {"skill_id": "grill-me", "invocation": "USER_ONLY", "local_policy": "MERGED_WITH_EXISTING"},
+    {"skill_id": "grilling", "invocation": "MODEL_OR_USER", "local_policy": "UPSTREAM"},
+    {"skill_id": "handoff", "invocation": "USER_ONLY", "local_policy": "MERGED_WITH_EXISTING"},
+    {"skill_id": "resume-work", "invocation": "MODEL_OR_USER", "local_policy": "LOCAL_PRESERVATION"},
+    {"skill_id": "teach", "invocation": "USER_ONLY", "local_policy": "UPSTREAM_DEDICATED_WORKSPACE_ONLY"},
+    {"skill_id": "writing-great-skills", "invocation": "USER_ONLY", "local_policy": "UPSTREAM"}
+  ],
+  "source_files": [
+    {"path": "README.md", "bytes": 1114, "sha256": "af557e84f0b2468f7ddc36067a5f8bd44eb84ebbbc2209b4d88f0ad00d8022e5"},
+    {"path": "grill-me/SKILL.md", "bytes": 147, "sha256": "6189dfceb7304a6e5558f75d87e68fa3bc7fcf7ba120e44f21f8a61fe01eba54"},
+    {"path": "grill-me/agents/openai.yaml", "bytes": 137, "sha256": "c061e39c3e0f9d865fb1b97556d485704af2a8a58f4b8221a8917a5c2074a32b"},
+    {"path": "grilling/SKILL.md", "bytes": 843, "sha256": "44331dda57f461db4fec3f2efb6ddabe7aaaa0a57ae0f88a883bc61aed8a0587"},
+    {"path": "grilling/agents/openai.yaml", "bytes": 105, "sha256": "cf29b9a8dbf35a58a908a6ca4f64dcd86c2b2130291eee0a78b9f706b138825b"},
+    {"path": "handoff/SKILL.md", "bytes": 879, "sha256": "57c9f1f392d7352cdc85b1e39ca49eddc70ce1dc278bd9653fb4f23dfc2560fc"},
+    {"path": "handoff/agents/openai.yaml", "bytes": 141, "sha256": "5c479fd562c691851690e8b18c8501045bef0943c10743d636b2fae26add1d28"},
+    {"path": "teach/GLOSSARY-FORMAT.md", "bytes": 2131, "sha256": "d177def491519d97873291f2e860d8f1d60ead78feecb82eee022177958069c6"},
+    {"path": "teach/LEARNING-RECORD-FORMAT.md", "bytes": 2777, "sha256": "855f81017625256584bbf62bd5edb9b0c86605c4cc1139c56acc36b802595d17"},
+    {"path": "teach/MISSION-FORMAT.md", "bytes": 1553, "sha256": "8da6d3ac84eb2eb19f17c260b6acf01c560d3ac7a4501c415eea0e985602f4d7"},
+    {"path": "teach/RESOURCES-FORMAT.md", "bytes": 1926, "sha256": "2bc634a64b0d0daa10904f9222e7aa0d361420dfacabbf092fbe3a72222edc08"},
+    {"path": "teach/SKILL.md", "bytes": 9507, "sha256": "6d2dbe5e03084cf26fef66b535127b36cd1bcbe9478e26b0626029cd51dc2259"},
+    {"path": "teach/agents/openai.yaml", "bytes": 139, "sha256": "5856f3ae8aec742f1499c640aecdd5f1d6af5fa210a7c6ec794de8263a6f733f"},
+    {"path": "writing-great-skills/GLOSSARY.md", "bytes": 18488, "sha256": "cccd684c73fb7a06f523497b0121765f92d2b33d6ef9c51602294849233451d6"},
+    {"path": "writing-great-skills/SKILL.md", "bytes": 9414, "sha256": "4d6ccbc3760b1bd4107c495a79872286ea69494003f3b0a719fc95b147457061"},
+    {"path": "writing-great-skills/agents/openai.yaml", "bytes": 150, "sha256": "b3c555d2654ec61aed78f8435f583c6a0cd6bf980d71317724682ad20075c33d"}
+  ]
+}

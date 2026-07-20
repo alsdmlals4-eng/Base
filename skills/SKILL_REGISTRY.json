@@ -13,6 +13,12 @@
       "REMOVAL_CANDIDATE"
     ]
   },
+  "global_productivity": {
+    "source_manifest": "skills/PRODUCTIVITY_SOURCE_MANIFEST.json",
+    "installation_scope": "GLOBAL_CODEX_ONLY",
+    "project_copy_policy": "FORBIDDEN",
+    "fallback_rule": "Base and project skills remain sufficient when global productivity skills are unavailable."
+  },
   "skills": [
     {
       "skill_id": "routing-project-work-by-discipline",

@@ -11,6 +11,10 @@ description: Use when creating, separating, reviewing, consolidating, or improvi
 
 실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 호출은 Learning Log에 남긴다. 사소한 성공 호출은 기록을 강제하지 않는다. 스킬 본문은 반복 실패, 새 예외, 책임·경로·검증 변경처럼 근거가 있을 때만 갱신한다.
 
+## 전역 productivity와의 경계
+
+전역 `writing-great-skills`의 단일 책임, 짧은 trigger, 점진적 공개 원칙을 적용한다. 다만 외부 원문을 프로젝트 스킬에 복제하지 않고, 프로젝트 스킬에는 실제 책임 원본·경로·산출물·검증처럼 프로젝트에만 필요한 계약만 둔다. 전역 `teach`는 전용 학습 작업공간에서만 사용하며 게임 저장소에 학습 파일을 만들지 않는다.
+
 ## 책임 구조
 
 ```text
@@ -96,7 +100,7 @@ skills/
 └─ integrated-review/
 ```
 
-필요하지 않은 폴더는 만들지 않는다. 통합 분야는 `discipline_entrypoints`에서 같은 Skill ID를 공유할 수 있지만 책임·검증 경계를 명시한다.
+11개 분야 모두에 폴더와 1:1 진입 스킬을 만든다. 공통 절차는 Foundation에서 공유하되 분야 책임·검증 경계는 분리한다.
 
 권장 Foundation 책임:
 
@@ -133,9 +137,9 @@ skills/
 - 마지막 검토일·기준 커밋
 - 지식 상태
 
-## Phase 4 — Register selective routing
+## Phase 4 — Register all eleven discipline entrypoints
 
-`SKILL_REGISTRY.json`에 활성 스킬을 등록하고 프로젝트가 선택한 분야만 `discipline_entrypoints`에 연결한다. 11개 분야는 선택 가능한 공용 카탈로그이며 미선택 분야 진입점을 강제하지 않는다.
+`SKILL_REGISTRY.json`에 활성 스킬을 등록하고 11개 분야의 `discipline_entrypoints`를 모두 연결한다. 각 분야에는 활성 Skill ID를 하나 이상 등록하며, 공통 절차는 Foundation 스킬에서 공유한다.
 
 ```json
 {
