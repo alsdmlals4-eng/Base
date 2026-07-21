@@ -61,7 +61,17 @@ class ProjectSkillMapGenerationTests(unittest.TestCase):
                     {
                         "schema_version": 3,
                         "registry_role": "project-skill-router-and-learning-index",
-                        "routing_policy": {"load_all_skills": False, "default_selection": "none", "require_trigger_match": True, "max_primary_discipline_skills": 1, "max_foundation_skills": 3},
+                        "routing_policy": {
+                            "load_all_skills": False,
+                            "default_selection": "automatic-trigger-match",
+                            "automatic_selection": True,
+                            "user_skill_declaration_required": False,
+                            "require_trigger_match": True,
+                            "require_execution_report": True,
+                            "work_modes": ["PLAN", "BUILD", "REVIEW"],
+                            "max_primary_discipline_skills": 1,
+                            "max_foundation_skills": 3,
+                        },
                         "human_presentation": {
                             "primary_reading_format": "PROJECT_SKILL_MAP.pdf",
                             "editable_derivative": "PROJECT_SKILL_MAP.docx",
