@@ -13,6 +13,8 @@
 |---|---|
 | 한 줄 약속 |  |
 | 대상 플레이어 |  |
+| 핵심 행동·선택 |  |
+| 뾰족한 재미 가설 |  |
 | 장르·플랫폼 |  |
 | 엔진·핵심 기술 |  |
 | 현재 제품 단계 |  |
@@ -39,23 +41,28 @@
 
 ## 핵심 플레이어 경험
 
+- 한 문장 핵심 컨셉:
 - 플레이어가 반복해서 보는 것:
 - 반복해서 판단하는 것:
 - 반복해서 행동하는 것:
 - 행동 직후 받아야 하는 피드백:
+- 다음 플레이를 부르는 동기:
 - 지켜야 할 감정·약속:
 - 금지 방향:
+- 현재 PoC 가설·결과:
 
-프로젝트 전체의 상세 방향은 `DESIGN_DOCUMENT_REGISTRY.json`에서 프로젝트 종합 책임 원본을 찾는다.
+프로젝트 전체의 상세 방향은 `DESIGN_DOCUMENT_REGISTRY.json`에서 프로젝트 종합 책임 원본을 찾는다. 핵심 컨셉·뾰족한 재미·PoC가 미확정이면 `analyzing-and-refining-game-concepts`를 사용한다.
 
 ## 현재 개발 단계와 게이트
 
 | 구분 | 현재 상태 | 진입 조건 | 종료 기준 | 증거 | 책임 원본 |
 |---|---|---|---|---|---|
+| 기획 방향·PoC |  |  |  |  | 프로젝트 종합 책임 원본 |
 | 작업 실행 게이트 |  |  |  |  | `DEVELOPMENT_GATES.md` |
 | 제품 마일스톤 |  |  |  |  | `DEVELOPMENT_GATES.md`·Roadmap |
 
 ```text
+기획: 핵심 컨셉 → 제약 → 뾰족한 재미 → 기획 요소 정렬 → PoC → 기획 재조정 → Production 판정
 작업: Intake·Context → Ready → Approval → Implementation → Verification → Documentation → Completion
 제품: Concept → Prototype → Graybox → First Playable → Vertical Slice → Production → Alpha → Beta → Release Candidate
 ```
@@ -105,6 +112,8 @@ AI·자동 검사
 - 기획 책임 원본·발행: `managing-design-documents`
 - 프로젝트 Skill 통합·학습: `evolving-project-discipline-skills`
 - Active Context·Handoff: `maintaining-project-context-and-handoff`
+- 핵심 컨셉·SWOT·MDA/DDE·PoC·재조정: `analyzing-and-refining-game-concepts`
+- 변경·외부 AI 결과 검증: `reviewing-and-validating-project-changes`
 - Base 제안: `managing-base-change-proposals`
 - 현재 인터뷰: `INTERVIEW_REGISTRY.json`의 활성 항목 또는 없음
 - 확정 실행 계약: `CONFIRMED` 인터뷰의 연결 경로 또는 없음
@@ -139,6 +148,8 @@ AI·자동 검사
 - JSON·DOCX·PDF 존재를 구현·검증 완료로 표시하지 않는다.
 - DOCX·PDF를 독립 책임 원본으로 수동 수정하지 않는다.
 - 기획 책임 원본을 Registry 밖에 새로 만들지 않는다.
+- 기능 목록을 핵심 컨셉이나 PoC 증거로 대체하지 않는다.
+- 정의되지 않은 `DDD` 같은 약어를 임의 해석하지 않는다.
 - 범위 밖 리팩터링과 기능 확장을 현재 작업에 섞지 않는다.
 - `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않는다.
 - 백업·보류·제거 후보를 기본 컨텍스트에 포함하지 않는다.
@@ -160,6 +171,7 @@ AI·자동 검사
 - Skill Registry: `SKILL_REGISTRY.json`
 - 발행 상태: 각 Publication Manifest
 - 운영체계 Health Review: `managing-game-project-operating-system`의 `verify` 결과
+- 최근 변경 검증: `reviewing-and-validating-project-changes` 결과
 
 ## 수명주기 영역
 
@@ -172,8 +184,8 @@ AI·자동 검사
 
 새 작업자는 10분 안에 다음을 답할 수 있어야 한다.
 
-- 게임의 핵심 약속은 무엇인가?
-- 현재 구현·검증 상태와 다음 게이트는 무엇인가?
+- 게임의 핵심 약속과 뾰족한 재미는 무엇인가?
+- 현재 PoC·구현·검증 상태와 다음 게이트는 무엇인가?
 - 무엇을 변경하면 안 되는가?
 - 등록된 책임 원본과 실제 코드·데이터·테스트는 어디인가?
 - 현재 작업에 필요한 통합 Skill과 mode는 무엇인가?
