@@ -1,6 +1,6 @@
 ---
 name: analyzing-and-refining-game-concepts
-description: Use when defining or reworking a game's core concept, pointed fun, constraints, design coherence, PoC hypothesis, or production direction through structured analysis such as SWOT, MDA/DDE, loop, audience, differentiation, and feasibility review.
+description: Use when defining or reworking a game's core concept, pointed fun, constraints, design coherence, rapid-reward DDD, PoC hypothesis, or production direction through structured analysis such as SWOT, MDA/DDE, loop, audience, differentiation, and feasibility review.
 ---
 
 # Analyzing and Refining Game Concepts
@@ -9,11 +9,14 @@ description: Use when defining or reworking a game's core concept, pointed fun, 
 
 기획 요소를 많이 만드는 것이 목적이 아니다. 플레이어가 계속 플레이하게 만드는 원동력인 **뾰족한 재미**를 찾고, 모든 게임 요소를 핵심 컨셉에 정렬한 뒤, 가장 위험한 가설을 PoC로 빠르게 검증해 다음 방향을 결정한다.
 
+빠른 보상은 뾰족한 재미를 더 빨리 인식시키는 수단이다. 의미 있는 행동과 선택 없이 자극만 반복하는 구조를 핵심 재미로 대체하지 않는다.
+
 ## Distinguish
 
 | 작업 | 이 Skill | 다른 Skill |
 |---|---|---|
 | 핵심 컨셉·뾰족한 재미·방향성 진단 | 책임짐 | - |
+| DDD 빠른 보상·즉각 피드백 구조 진단 | 책임짐 | 실제 구현은 프로젝트 작업 계약 |
 | GDD·레벨·캐릭터·세계관 문서 작성 | 구조와 개선 방향만 제안 | `managing-design-documents` |
 | 최소 가설 PoC 계약 | 책임짐 | 실제 구현은 프로젝트 작업 계약 |
 | 대표 품질·제작 파이프라인 증명 | 선행 방향만 제공 | `designing-vertical-slices` |
@@ -25,7 +28,7 @@ description: Use when defining or reworking a game's core concept, pointed fun, 
 - `constrain`: 플랫폼·인력·시간·기술·콘텐츠·시장 제약을 확인한다.
 - `sharpen`: 반복 플레이의 원동력인 뾰족한 재미와 핵심 선택을 찾는다.
 - `structure`: 모든 기획 요소를 핵심 컨셉에 맞춰 구체화·정돈한다.
-- `analyze`: SWOT, MDA/DDE, 3C, 루프, 동기, 차별화, 제작성을 교차 분석한다.
+- `analyze`: SWOT, MDA/DDE, DDD, 3C, 루프, 동기, 차별화, 제작성을 교차 분석한다.
 - `poc-contract`: 가장 위험한 기획 가설과 최소 검증물을 정의한다.
 - `recalibrate`: PoC 결과에 따라 유지·수정·삭제·보류를 결정한다.
 - `production-gate`: 다음 Prototype·Vertical Slice·Production 진입 여부를 판정한다.
@@ -44,6 +47,24 @@ description: Use when defining or reworking a game's core concept, pointed fun, 
 
 사용자가 말한 `BIG BLIND`는 이 Skill에서 4단계 `CONCEPT_STRUCTURED`의 프로젝트 용어로 취급한다. 의미는 **레벨 디자인, 등장인물, 캐릭터 스타일, 스테이지, 세계관 등 모든 요소를 핵심 컨셉과 뾰족한 재미에 맞춰 정돈하는 단계**다. 외부 표준 용어로 가정하지 않는다.
 
+## DDD project definition
+
+이 Base의 게임 기획 맥락에서 `DDD`는 **Digital Dopamine Design**을 뜻한다.
+
+> 플레이 시작 또는 행동 직후 짧은 시간 안에 사용자가 의미 있는 보상, 변화, 성취와 다음 기대를 체감하도록 설계하는 빠른 보상 요소.
+
+여기서 `Digital Dopamine`은 실제 도파민 분비량을 측정하거나 의학적 중독을 진단하는 표현이 아니다. 다음과 같은 **체감 보상 설계축**을 가리키는 프로젝트 내부 용어다.
+
+- 첫 의미 있는 보상까지 걸리는 시간.
+- 입력·행동에서 시각·청각·촉각·수치·상태 변화까지의 피드백 지연.
+- 짧은 구간의 보상 빈도와 밀도.
+- 무엇을 왜 얻었는지 즉시 이해되는 보상 명료성.
+- 기대 형성 → 행동 → 공개·획득 → 다음 목표의 짧은 순환.
+- 초 단위 micro reward, 세션 단위 reward, 장기 meta reward의 연결.
+- 같은 자극의 반복 피로와 보상 인플레이션 방지.
+
+DDD는 뾰족한 재미를 빠르게 전달해야 한다. 의미 없는 이펙트·숫자·상자·알림을 많이 노출하는 것만으로 통과시키지 않는다.
+
 ## Required inputs
 
 ```yaml
@@ -57,9 +78,16 @@ current_risks_and_unknowns:
 existing_prototype_or_poc_results:
 team_and_production_capacity:
 framework_profile:
+ddd_profile:
+  first_meaningful_reward_target:
+  action_feedback_latency_target:
+  micro_reward_interval:
+  reward_ladder:
+  reward_legibility:
+  fatigue_and_inflation_risks:
 ```
 
-`framework_profile`에서 약어의 의미를 명시한다. `DDD`는 게임 기획에서 단일 표준 의미가 아니므로 프로젝트가 `Data-Driven Design`, `Domain-Driven Design`, 사용자 정의 분석축 등 어떤 의미로 쓰는지 확인하기 전에는 임의 해석하지 않는다. 게임 경험 분석이 목적이면 `MDA` 또는 `DDE(Design–Dynamics–Experience)`를 우선 후보로 제시할 수 있다.
+`framework_profile`에서 프로젝트가 추가로 사용하는 약어의 의미를 명시한다. Base에서 `DDD`는 위의 Digital Dopamine Design으로 정의하지만, 다른 프로젝트나 외부 자료에서 같은 약어가 다른 의미로 사용될 때는 임의 해석하지 않고 해당 출처의 정의를 먼저 확인한다.
 
 ## Phase 1 — Core concept
 
@@ -104,6 +132,7 @@ framework_profile:
 5. 다른 게임 요소가 이 재미를 강화하는가?
 6. 콘텐츠를 늘리지 않아도 변주가 생기는가?
 7. 다음 판·다음 단계·다음 빌드를 시도할 이유가 생기는가?
+8. DDD 보상이 이 재미를 빠르게 드러내는가, 아니면 자극으로 가리는가?
 
 후보를 `핵심`, `보조`, `장식`, `충돌`, `미검증`으로 분류한다.
 
@@ -119,6 +148,7 @@ framework_profile:
 - 세계관과 시스템 규칙의 연결.
 - UI·아트·사운드가 강조해야 하는 판단과 감정.
 - 성장·수집·경제·보상이 다음 플레이를 만드는 방식.
+- 첫 보상, 행동 피드백, 보상 사다리와 DDD 리듬.
 
 각 요소는 다음 중 하나로 판정한다.
 
@@ -153,6 +183,41 @@ UNPROVEN PoC가 필요한 가설
 
 설계자가 의도한 경험에서 역으로 Dynamics와 규칙을 대조한다.
 
+### DDD — Digital Dopamine Design
+
+DDD는 빠른 시간 안에 플레이어가 보상을 **인지하고 이해하고 다음 행동을 원하게 만드는지** 분석한다.
+
+| 분석축 | 확인 질문 |
+|---|---|
+| First meaningful reward | 시작 후 첫 의미 있는 보상까지 얼마나 걸리는가? |
+| Action-feedback latency | 입력·결정 후 변화가 즉시 보이는가? |
+| Reward legibility | 무엇을 왜 얻었는지 이해되는가? |
+| Reward density | 짧은 구간에 의미 있는 보상이 충분한가, 잡음이 과도한가? |
+| Anticipation and reveal | 기대와 공개 사이의 리듬이 짧고 명확한가? |
+| Reward ladder | micro·session·meta 보상이 서로 연결되는가? |
+| Next-action pull | 보상이 다음 선택·시도·빌드를 자연스럽게 부르는가? |
+| Fatigue and inflation | 같은 자극 반복으로 피로·무감각·보상 인플레이션이 생기는가? |
+
+DDD 개선 우선순위:
+
+1. 행동 원인과 결과를 더 가깝게 배치한다.
+2. 첫 의미 있는 보상을 앞당긴다.
+3. 보상 이유와 변화량을 명확하게 보여준다.
+4. 작은 보상을 다음 선택과 중기 목표에 연결한다.
+5. 무의미한 팝업·이펙트·숫자 중첩을 줄인다.
+6. 반복 자극 대신 선택·숙련·발견의 변주를 늘린다.
+
+### DDD guardrails
+
+다음은 빠른 보상으로 인정하지 않거나 별도 위험으로 표시한다.
+
+- 실제 가치가 없는 보상을 과장해 보여준다.
+- 확률·비용·손실 조건을 숨긴다.
+- 불필요한 대기와 불편을 만든 뒤 결제로 해소하게 한다.
+- 놓치면 손해라는 압박만으로 복귀를 유도한다.
+- 플레이어가 멈추거나 쉬기 어렵게 연속 알림·보상을 배치한다.
+- 뾰족한 재미와 무관한 자극으로 세션 시간을 늘린다.
+
 ### Additional lenses
 
 - 3C: Character, Camera, Control.
@@ -179,9 +244,17 @@ failure_signal:
 stop_condition:
 next_decision_if_passed:
 next_decision_if_failed:
+ddd_observation:
+  time_to_first_meaningful_reward:
+  action_to_feedback_latency:
+  reward_cause_understanding:
+  next_action_intent:
+  fatigue_or_overstimulation:
 ```
 
-가능하면 행동·선택·반복·감정의 관찰 증거를 사용한다. “재미있다” 한 문장만으로 통과시키지 않는다.
+가능하면 행동·선택·반복·감정의 관찰 증거를 사용한다. “재미있다” 한 문장이나 실제 도파민이 분비됐다는 추정만으로 통과시키지 않는다.
+
+DDD 수치는 모든 게임에 동일한 절대 기준을 강제하지 않는다. 장르·세션 길이·대상 플레이어에 맞춘 목표치를 먼저 선언하고 실제 플레이에서 비교한다.
 
 ## Phase 7 — Recalibration and production gate
 
@@ -198,6 +271,7 @@ Production 진입 조건:
 
 - 핵심 컨셉과 뾰족한 재미를 한 문장으로 설명할 수 있다.
 - 핵심 행동과 반복 동기가 PoC에서 관찰됐다.
+- DDD 빠른 보상이 핵심 행동의 결과를 명확히 전달하고 다음 행동으로 연결됐다.
 - 주요 기획 요소가 핵심 컨셉에 정렬됐다.
 - 가장 큰 제약과 위험의 대응 방향이 있다.
 - 다음 제작 범위와 제외 범위가 명확하다.
@@ -217,7 +291,8 @@ Production 진입 조건:
 ## 핵심·보조·장식·충돌 요소
 ## GDD·레벨·캐릭터·스테이지·세계관 정렬
 ## SWOT와 SO·WO·ST·WT 전략
-## MDA/DDE·3C·루프·동기 분석
+## MDA/DDE·DDD·3C·루프·동기 분석
+## DDD 첫 보상·피드백·보상 사다리·피로 위험
 ## 차별화·제작성·확장성
 ## PoC 계약
 ## PoC 결과와 유지·수정·삭제·보류
@@ -232,9 +307,11 @@ Production 진입 조건:
 - 제약을 반영한 선택과 제외 범위가 있다.
 - 게임 요소별 핵심 기여도를 판정했다.
 - 분석 프레임워크 결과를 실제 개선 행동으로 변환했다.
+- DDD의 첫 보상 시간·피드백 지연·보상 명료성·다음 행동 연결을 분석했다.
+- DDD가 뾰족한 재미를 강화하는지 단순 자극으로 대체하는지 구분했다.
 - 가장 위험한 가설을 검증하는 PoC 계약이 있다.
 - PoC 결과에 따른 재조정과 다음 게이트가 정의됐다.
-- `DDD` 등 모호한 약어를 임의로 해석하지 않았다.
+- 외부 자료의 `DDD` 등 모호한 약어를 임의 해석하지 않았다.
 
 ## Failure conditions
 
@@ -242,9 +319,12 @@ Production 진입 조건:
 - 뾰족한 재미가 플레이어 행동이 아니라 홍보 문구뿐이다.
 - 모든 요소를 핵심이라 부르며 우선순위를 만들지 않는다.
 - SWOT을 일반적인 장단점 목록으로 끝낸다.
+- DDD를 이펙트·팝업·숫자의 양으로만 평가한다.
+- 의미 있는 선택 없이 빠른 보상만 반복해 핵심 재미를 대체한다.
+- 실제 도파민 분비나 중독 여부를 관찰 없이 단정한다.
 - PoC가 전체 게임·Vertical Slice 규모로 팽창한다.
 - PoC 결과와 무관하게 기존 기획을 유지한다.
 - 시장 유행만으로 핵심 경험을 바꾼다.
-- 정의되지 않은 DDD 약어를 임의의 분석 틀로 확정한다.
+- 외부 자료에서 정의되지 않은 DDD 약어를 임의의 분석 틀로 확정한다.
 
 Template: `templates/planning/GAME_CONCEPT_DIRECTION_REVIEW.md`
