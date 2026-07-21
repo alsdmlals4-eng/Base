@@ -91,20 +91,20 @@
 - 기준 스킬 커밋: `main@eb40b912e5f5a0e4d369105a4f0a770e0a6179a9`
 - 호출 트리거: 유사하거나 순차 의존하는 Skill·Method·Checklist가 과도해 최소 호출과 책임 원본 원칙을 위반한다는 사용자 검토
 - 입력 범위: 활성 Skill 17개, Skill Registry, START_HERE, AGENTS, README, Documentation Map, 공용 Rules·Workflow·Checklist, 운영·마이그레이션·발행·Handoff·Skill Evolution Method
-- 실제 산출물: 활성 Skill 11개, 통합 Skill 4개, Legacy Alias, 통합 Operating Model, 축소된 라우터·원칙 문서, 발행 정책 3단계
-- 실행한 검증: Registry JSON·경로·Legacy Alias·잔여 참조·구조 회귀·GitHub Actions 검증 예정
-- 결과: 미검증
+- 실제 산출물: 활성 Skill 11개, 통합 Skill 4개, Legacy Alias, 통합 Operating Model, 축소된 라우터·원칙 문서, 발행 정책 3단계와 정책 선택 생성 도구
+- 실행한 검증: Python 문법, Base Skill Registry Schema·활성 경로, Legacy Alias·삭제 경로·잔여 템플릿 참조, Documentation·Skill Routing·Design Publication Governance, 정책 선택 생성기 통합, 구조·콜드 스타트·BCP·딥인터뷰·UI 감사·DOCX/PDF 생성 회귀 78개, Ubuntu와 Windows 실제 발행 검증, whitespace
+- 결과: 성공
 - 성공 조건: 기존 고유 절차 보존, 활성 이전 ID 제거, 새 ID 라우팅, 자동 검사·회귀·Actions 통과, 콜드 스타트에서 최소 Skill 탐색
-- 실패·예외·재현 조건: Connector 기반 파일별 커밋으로 변경했으므로 PR Actions와 참조 검사에서 누락을 탐지해야 함
+- 실패·예외·재현 조건: 1차 CI에서 역인터뷰와 별도 구현 PR 계약 문구 2개가 불일치해 통합 Skill 표현을 정렬했다. 추가 감사에서 3단계 발행 정책이 기존 Schema의 `always_sync` 단일 허용과 충돌한 것을 발견해 Schema·정책 선택기·Governance·회귀 테스트까지 함께 구현했다.
 - 사용자 피드백: 유사하거나 통합 가능한 Skill·구조를 합치고 통합 후 정상 작동과 추가 개선을 다시 점검할 것
 - 불필요하게 호출한 스킬: 통합 후 요청 접수 Foundation 연쇄 호출 3개를 1개로 축소
-- 누락된 스킬·검증: 현재 없음, Actions 결과에서 재판정
+- 누락된 스킬·검증: 실제 게임 프로젝트에 적용한 장기 사용성·오라우팅 빈도는 아직 프로젝트 검증 전
 - 스킬 본문 변경 필요: 예
 - 변경하지 않는 이유: 해당 없음
 - 지식 상태: 패턴
 - 프로젝트 전용으로 유지할 내용: 각 게임의 세계관·수치·실제 경로·승인 자산·프로젝트 Skill
-- Base Method·Skill·Template·Test 환류 후보: 통합 Skill mode·Legacy Alias·발행 정책과 회귀 검사
-- 다음 검토 트리거: 첫 대상 프로젝트 적용, Legacy Alias 오라우팅, 하나의 통합 Skill이 과도하게 비대해짐, Actions 실패
+- Base Method·Skill·Template·Test 환류 후보: 통합 Skill mode·Legacy Alias·발행 정책·정책 선택기·잔여 참조 회귀 검사
+- 다음 검토 트리거: 첫 대상 프로젝트 적용, Legacy Alias 오라우팅, 하나의 통합 Skill이 과도하게 비대해짐, 3단계 발행 정책의 실제 운영 비용 불균형
 
 ### 2026-07-19 structured design documents and human publication pipeline
 
