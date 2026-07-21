@@ -9,9 +9,11 @@ description: Use when a Godot, Unity, or comparable game-engine project crashes,
 
 증상을 추측으로 고치지 않는다. 같은 조건에서 재현하고 로그·Scene·Node·Component·Signal·데이터·상태 흐름을 좁힌 뒤 가장 작은 수정으로 원인을 제거한다.
 
+이 Skill은 엔진 런타임 원인 격리와 최소 수정을 책임진다. 일반 구조 개선은 `refactoring-with-contract-preservation`, 변경 전체의 정적·접근성·성능·호환성·PR 완료 판정은 `reviewing-and-validating-project-changes`가 책임진다.
+
 ## Modes
 
-`reproduce → isolate → form-hypotheses → fix-minimally → revalidate → prevent`
+`reproduce` → `isolate` → `form-hypotheses` → `fix-minimally` → `revalidate` → `prevent`
 
 ## Required inputs
 
