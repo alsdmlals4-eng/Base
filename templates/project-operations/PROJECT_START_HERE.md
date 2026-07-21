@@ -1,11 +1,11 @@
 # [프로젝트명] 시작 지점
 
-> 사용자, 새 GPT, 새 Codex와 새 작업자가 프로젝트 전체 상태를 가장 먼저 확인하는 대시보드다. 세부 기획은 문서별 Markdown 또는 JSON 책임 원본을, 사람 열람은 최신 PDF를, 구현 상태는 실제 파일과 테스트를 따른다.
+> 사용자, 새 GPT, 새 Codex와 새 작업자가 프로젝트 전체 상태를 가장 먼저 확인하는 대시보드다. 세부 기획은 등록된 Markdown 또는 JSON 책임 원본을, 구현 상태는 실제 파일과 테스트를 따른다.
 
 - 공식 위치: 저장소 루트 `[기획서]/00_프로젝트_허브/START_HERE.md`
 - 기획서 Registry: `DESIGN_DOCUMENT_REGISTRY.json`
-- 스킬 Registry: `SKILL_REGISTRY.json`
-- 사람용 스킬맵: 필수 `PROJECT_SKILL_MAP.pdf`, 선택 `PROJECT_SKILL_MAP.md`·`PROJECT_SKILL_MAP.docx`
+- Skill Registry: `SKILL_REGISTRY.json`
+- 사람용 Skill Map: Registry 정책이 요구하는 `PROJECT_SKILL_MAP.pdf`와 선택 파생본
 
 ## 한눈에 보기
 
@@ -13,6 +13,8 @@
 |---|---|
 | 한 줄 약속 |  |
 | 대상 플레이어 |  |
+| 핵심 행동·선택 |  |
+| 뾰족한 재미 가설 |  |
 | 장르·플랫폼 |  |
 | 엔진·핵심 기술 |  |
 | 현재 제품 단계 |  |
@@ -27,7 +29,7 @@
 
 ## 현재 상태
 
-| 구분 | 요약 | Markdown/JSON 책임 원본·실제 증거 |
+| 구분 | 요약 | 책임 원본·실제 증거 |
 |---|---|---|
 | 확정 |  |  |
 | 구현 |  |  |
@@ -39,104 +41,105 @@
 
 ## 핵심 플레이어 경험
 
+- 한 문장 핵심 컨셉:
 - 플레이어가 반복해서 보는 것:
 - 반복해서 판단하는 것:
 - 반복해서 행동하는 것:
 - 행동 직후 받아야 하는 피드백:
+- 다음 플레이를 부르는 동기:
 - 지켜야 할 감정·약속:
 - 금지 방향:
+- 현재 PoC 가설·결과:
 
-프로젝트 전체의 상세 방향은 `DESIGN_DOCUMENT_REGISTRY.json`에서 프로젝트 종합 책임 원본과 최신 PDF를 찾는다.
+프로젝트 전체의 상세 방향은 `DESIGN_DOCUMENT_REGISTRY.json`에서 프로젝트 종합 책임 원본을 찾는다. 핵심 컨셉·뾰족한 재미·PoC가 미확정이면 `analyzing-and-refining-game-concepts`를 사용한다.
 
 ## 현재 개발 단계와 게이트
 
 | 구분 | 현재 상태 | 진입 조건 | 종료 기준 | 증거 | 책임 원본 |
 |---|---|---|---|---|---|
+| 기획 방향·PoC |  |  |  |  | 프로젝트 종합 책임 원본 |
 | 작업 실행 게이트 |  |  |  |  | `DEVELOPMENT_GATES.md` |
 | 제품 마일스톤 |  |  |  |  | `DEVELOPMENT_GATES.md`·Roadmap |
 
 ```text
+기획: 핵심 컨셉 → 제약 → 뾰족한 재미 → 기획 요소 정렬 → PoC → 기획 재조정 → Production 판정
 작업: Intake·Context → Ready → Approval → Implementation → Verification → Documentation → Completion
 제품: Concept → Prototype → Graybox → First Playable → Vertical Slice → Production → Alpha → Beta → Release Candidate
 ```
 
-## 분야별 활성 기획서
+## 활성 기획 책임 원본
 
-| 분야·책임 범위 | Markdown/JSON 책임 원본 | 선택 DOCX | 최신 PDF | 선택 자산·다이어그램 | 발행 Manifest | 상태 | 현재 핵심 과제 |
+| 분야·책임 범위 | Markdown/JSON 책임 원본 | 발행 정책 | 선택 DOCX | PDF | 자산·다이어그램 | Manifest | 상태·과제 |
 |---|---|---|---|---|---|---|---|
 | 프로젝트 전체 |  |  |  |  |  |  |  |
-| 설정·내러티브 |  |  |  |  |  |  |  |
-| 게임 디자인 |  |  |  |  |  |  |  |
-| UX·UI·접근성 |  |  |  |  |  |  |  |
-| 개발·엔지니어링 |  |  |  |  |  |  |  |
-| 테크니컬 아트·파이프라인 |  |  |  |  |  |  |  |
-| 아트 |  |  |  |  |  |  |  |
-| 사운드 |  |  |  |  |  |  |  |
-| QA |  |  |  |  |  |  |  |
-| 프로덕션·PM |  |  |  |  |  |  |  |
-| 분석·유저리서치 |  |  |  |  |  |  |  |
-| 통합검수 |  |  |  |  |  |  |  |
+| 선택한 분야 |  |  |  |  |  |  |  |
 
-작은 프로젝트에서 여러 책임을 한 JSON에 통합하면 `DESIGN_DOCUMENT_REGISTRY.json`의 `responsibility_coverage`에 담당 범위를 모두 기록한다.
+작은 프로젝트에서 여러 책임을 한 원본에 통합하면 `responsibility_coverage`에 담당 범위를 모두 기록한다. 프로젝트가 사용하지 않는 분야를 강제로 만들지 않는다.
 
-## 기획서 읽기 규칙
+## 기획서 읽기·발행 규칙
 
 ```text
 AI·자동 검사
 → DESIGN_DOCUMENT_REGISTRY.json
-→ 현재 분야 Markdown 또는 JSON 책임 원본
+→ 현재 책임 원본
+→ 실제 코드·데이터·자산·테스트
 
 사람
-→ 현재 분야 기획서 PDF
-→ 필요 시 DOCX·다이어그램·승인 이미지
+→ 발행 정책이 요구하는 PDF
+→ 필요 시 선택 DOCX·다이어그램·승인 이미지
 ```
 
-서술 중심 기획은 Registry에 등록한 Markdown을 사용할 수 있다. 같은 서술을 JSON과 중복 책임 원본으로 만들지 않는다.
+- `source_only`: 원본과 직접 검증만 유지
+- `milestone_sync`: 주요 게이트·공유 시 PDF·Manifest 동기화
+- `always_sync`: 원본·승인 이미지·생성기 변경과 같은 작업에서 동기화
+
+같은 서술을 Markdown과 JSON 양쪽에 중복 책임 원본으로 만들지 않는다. DOCX·PDF는 독립 원본이 아니다.
 
 ## 최신 시각 자료
 
-| Asset ID | 항목 | 상태 | 캐노니컬 이미지 | 실제 게임 캡처 | 포함 기획서 | 차이·다음 작업 |
+| Asset ID | 항목 | 상태 | 캐노니컬 이미지 | 실제 게임 캡처 | 포함 책임 원본 | 차이·다음 작업 |
 |---|---|---|---|---|---|---|
 |  |  |  |  |  |  |  |
 
-콘셉트 이미지와 실제 구현 캡처를 같은 상태로 취급하지 않는다. 세부 상태는 Visual Source와 Asset Manifest, 각 책임 원본의 승인 이미지 메타데이터를 따른다.
+콘셉트 이미지와 실제 구현 캡처를 같은 상태로 취급하지 않는다.
 
-## 프로젝트 스킬 시작 경로
+## 프로젝트 Skill 시작 경로
 
 - AI용 Registry: `SKILL_REGISTRY.json`
-- 사람용 최신본: `PROJECT_SKILL_MAP.pdf`
-- 선택 문서 검토본: `PROJECT_SKILL_MAP.md` 또는 `PROJECT_SKILL_MAP.docx`
-- 다이어그램: `PROJECT_SKILL_MAP.assets/`
-- 발행 Manifest: `SKILL_MAP_PUBLICATION_MANIFEST.json`
-- 요청 라우팅 스킬: `routing-project-work-by-discipline`
-- 딥인터뷰 스킬: `conducting-deep-requirement-interviews`
+- 이전 Base ID 별칭: 프로젝트에 동기화한 `LEGACY_SKILL_ALIASES.md`
+- 요청 접수·작업 계약: `managing-project-intake-and-work-contract`
+- 운영체계: `managing-game-project-operating-system`
+- 기획 책임 원본·발행: `managing-design-documents`
+- 프로젝트 Skill 통합·학습: `evolving-project-discipline-skills`
+- Active Context·Handoff: `maintaining-project-context-and-handoff`
+- 핵심 컨셉·SWOT·MDA/DDE·PoC·재조정: `analyzing-and-refining-game-concepts`
+- 변경·외부 AI 결과 검증: `reviewing-and-validating-project-changes`
+- Base 제안: `managing-base-change-proposals`
 - 현재 인터뷰: `INTERVIEW_REGISTRY.json`의 활성 항목 또는 없음
-- 확정 실행 프롬프트: `CONFIRMED` 인터뷰의 연결 경로 또는 없음
-- 현재 작업의 주 책임 분야 스킬:
-- 필요한 Foundation 스킬:
-- 후속 단계에서만 호출할 스킬:
+- 확정 실행 계약: `CONFIRMED` 인터뷰의 연결 경로 또는 없음
+- 현재 작업의 주 책임 분야 Skill:
+- 필요한 Foundation Skill:
+- 후속 단계에서만 실행할 mode·Skill:
 - Learning Log:
 
-전체 skills 폴더를 읽지 않고 현재 작업에 필요한 최소 스킬만 선택한다. 실패·중요 결정·재사용 가능한 교훈·실제 검증 결과는 Learning Log에 남긴다.
+전체 skills 폴더를 읽지 않고 현재 작업에 필요한 최소 Skill만 선택한다.
 
 ## 새 작업자의 읽기 순서
 
 ```text
 프로젝트 AGENTS.md
 → 이 START_HERE.md
-→ ACTIVE_CONTEXT.md·HANDOFF.md
-→ DOCUMENTATION_MAP.md
-→ DEVELOPMENT_GATES.md
-→ DESIGN_DOCUMENT_REGISTRY.json
-→ 현재 분야 Markdown 또는 JSON 책임 원본
-→ SKILL_REGISTRY.json
-→ 필요한 Foundation·분야 스킬
-→ 대상 작업이면 현재 인터뷰·사용자 확인·확정 실행 프롬프트
-→ 사람 검토 시 기획서 PDF·DOCX·자산
+→ ACTIVE_CONTEXT.md
+→ DOCUMENTATION_MAP.md·DEVELOPMENT_GATES.md
+→ DESIGN_DOCUMENT_REGISTRY.json·현재 책임 원본
+→ SKILL_REGISTRY.json·필요한 통합 Skill과 mode
+→ 대상 작업이면 현재 인터뷰·사용자 확인·실행 계약
 → Roadmap·Issue·Goal·Plan
 → 실제 코드·데이터·자산·테스트
-→ 필요한 Base Method·Skill
+→ 필요 시 사람용 발행본
 ```
+
+별도 `HANDOFF.md`는 경계 시점의 스냅샷이며 두 번째 활성 현재 상태 원본으로 사용하지 않는다.
 
 ## 지금 하지 말아야 할 것
 
@@ -144,7 +147,9 @@ AI·자동 검사
 - 기존 승인 이미지가 있는 항목의 새 시안을 별도 지시 없이 만들지 않는다.
 - JSON·DOCX·PDF 존재를 구현·검증 완료로 표시하지 않는다.
 - DOCX·PDF를 독립 책임 원본으로 수동 수정하지 않는다.
-- Markdown·JSON 기획 본책을 Registry 밖에 새로 만들지 않는다.
+- 기획 책임 원본을 Registry 밖에 새로 만들지 않는다.
+- 기능 목록을 핵심 컨셉이나 PoC 증거로 대체하지 않는다.
+- 정의되지 않은 `DDD` 같은 약어를 임의 해석하지 않는다.
 - 범위 밖 리팩터링과 기능 확장을 현재 작업에 섞지 않는다.
 - `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않는다.
 - 백업·보류·제거 후보를 기본 컨텍스트에 포함하지 않는다.
@@ -153,7 +158,7 @@ AI·자동 검사
 
 ## 다음 작업
 
-| 우선순위 | 작업 | 주 책임 | 영향 분야 | 선행 조건·Ready | 완료 기준 | 검증 | 관련 책임 원본·스킬 |
+| 우선순위 | 작업 | 주 책임 | 영향 분야 | 선행 조건·Ready | 완료 기준 | 검증 | 관련 책임 원본·Skill |
 |---:|---|---|---|---|---|---|---|
 | 1 |  |  |  |  |  |  |  |
 
@@ -163,10 +168,10 @@ AI·자동 검사
 - 최근 변경: `CHANGELOG.md`
 - 현재 단계·게이트: `DEVELOPMENT_GATES.md`
 - 기획서 Registry: `DESIGN_DOCUMENT_REGISTRY.json`
-- 스킬 Registry: `SKILL_REGISTRY.json`
-- 사람용 스킬맵: `PROJECT_SKILL_MAP.pdf`
-- 기획서 발행 상태: 각 `_PUBLICATION_MANIFEST.json`
-- 운영체계 Health Review: 통합검수 보고서
+- Skill Registry: `SKILL_REGISTRY.json`
+- 발행 상태: 각 Publication Manifest
+- 운영체계 Health Review: `managing-game-project-operating-system`의 `verify` 결과
+- 최근 변경 검증: `reviewing-and-validating-project-changes` 결과
 
 ## 수명주기 영역
 
@@ -179,14 +184,12 @@ AI·자동 검사
 
 새 작업자는 10분 안에 다음을 답할 수 있어야 한다.
 
-- 게임의 핵심 약속은 무엇인가?
-- 현재 구현·검증 상태는 무엇인가?
-- 현재 단계와 다음 게이트는 무엇인가?
+- 게임의 핵심 약속과 뾰족한 재미는 무엇인가?
+- 현재 PoC·구현·검증 상태와 다음 게이트는 무엇인가?
 - 무엇을 변경하면 안 되는가?
-- 프로젝트 전체와 각 분야의 등록된 Markdown 또는 JSON 책임 원본은 어디인가?
-- 사람이 볼 최신 DOCX/PDF와 승인 이미지는 어디인가?
-- 각 분야의 진입 스킬과 검증 방법은 무엇인가?
+- 등록된 책임 원본과 실제 코드·데이터·테스트는 어디인가?
+- 현재 작업에 필요한 통합 Skill과 mode는 무엇인가?
+- 발행 정책과 사람이 볼 최신 자료는 무엇인가?
 - 보류·확인 필요·미검증은 어디인가?
-- 실제 코드·데이터·테스트는 어디인가?
 
-답하지 못하면 이 문서 또는 연결된 Registry·JSON·실제 증거를 갱신한다.
+답하지 못하면 이 문서 또는 연결된 Registry·책임 원본·실제 증거를 갱신한다.

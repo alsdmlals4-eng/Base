@@ -58,7 +58,7 @@ branch: ai/deepseek-<topic>   외부 AI 작업 브랜치
 6. 긴 저장소 전체를 전달하지 않고 Documentation Map과 allowlist로 필요한 파일만 제공한다.
 7. 결과는 고정 Markdown 또는 JSON 스키마로 회수한다.
 8. 외부 AI는 근거, 가정, 미확인, 변경 후보를 분리하고 자체 완료를 주장하지 않는다.
-9. Codex가 `skills/reviewing-external-ai-drafts/SKILL.md`로 결과를 검수한다.
+9. Codex가 `skills/reviewing-and-validating-project-changes/SKILL.md`의 `external-source-review` mode로 결과를 검수한다.
 10. 승인된 최소 diff만 실제 작업 브랜치에 재작성하거나 선택적으로 가져온다.
 11. 기준 테스트와 문서 동기화를 확인한 뒤 worktree를 정리한다.
 

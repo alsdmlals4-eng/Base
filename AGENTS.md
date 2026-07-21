@@ -1,6 +1,6 @@
 # Base 공용 AI 작업 규칙
 
-Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Method·Skill·Template·Case·Test의 원본이다. 프로젝트는 Base를 그대로 복제하지 않고 자신의 세계관, 수치, 엔진, 실제 경로, 승인 자산과 구현 상태에 맞게 분화·적용·검증한다.
+Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skill·Template·Case·Test의 원본이다. 전체 작업 구조와 상태·발행 정책은 `docs/OPERATING_MODEL.md`가 책임진다. 이 문서는 항상 적용되는 강제 규칙만 둔다.
 
 ## 1. Base URL 호출
 
@@ -8,31 +8,89 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Meth
 
 > `https://github.com/alsdmlals4-eng/Base 를 전부 살펴보고 참고해서 작업해줘.`
 
-모든 파일과 스킬을 무작정 읽지 않는다. `START_HERE.md`, `docs/DOCUMENTATION_MAP.md`, `skills/SKILL_REGISTRY.json`으로 현재 작업에 필요한 책임 원본과 최소 스킬 집합만 선택한다.
-
-대상 프로젝트 읽기 순서:
+모든 파일과 스킬을 무작정 읽지 않는다.
 
 ```text
-프로젝트 AGENTS.md
-→ 루트 [기획서]/00_프로젝트_허브/START_HERE.md
-→ ACTIVE_CONTEXT.md·DOCUMENTATION_MAP.md·DEVELOPMENT_GATES.md
-→ DESIGN_DOCUMENT_REGISTRY.json·SKILL_REGISTRY.json
-→ 현재 분야의 Markdown 또는 JSON 책임 원본·필요한 스킬
-→ 사람 열람이 필요하면 최신 PDF·선택적 DOCX·다이어그램·승인 이미지
-→ Roadmap·Issue·Goal·Plan
-→ 실제 코드·데이터·자산·테스트
+START_HERE.md
+→ docs/OPERATING_MODEL.md
+→ docs/DOCUMENTATION_MAP.md
+→ skills/SKILL_REGISTRY.json
+→ 대상 프로젝트의 현재 책임 원본·실제 파일
 ```
 
 저장소 접근 없이 설치·마이그레이션·검수 완료를 주장하지 않는다.
 
-### 필요한 작업 환경 요청
+## 2. 우선순위
 
-- 작업·최적화·검증에 필요한 실행 파일, 라이브러리, 폰트, 기준 파일, 계정 인증 또는 저장소·브랜치 권한이 없으면 우회 결과를 정상 완료로 처리하지 않는다.
-- 사용자에게 `필요 항목`, `필요한 이유`, `권장 설치·설정 방법`, `적용 또는 재시작 방법`, `설치 후 확인 명령`, `요청하는 최소 권한 범위`를 구체적으로 안내하고 요청한다.
-- 사용자 승인 없이 시스템 전역 설치, 계정·보안 설정 변경, 권한 확대, Branch protection 변경을 수행하지 않는다.
-- 사용자가 설치·권한 부여를 완료했다고 알려도 실제 경로·버전·인증·쓰기 가능 여부를 확인한 뒤 사용한다.
+1. 사용자의 최신 지시
+2. 프로젝트 `AGENTS.md`와 보안·엔진·데이터 규칙
+3. 프로젝트 Active Context와 승인된 작업 계약
+4. 등록된 책임 원본과 실제 코드·데이터·자산·테스트
+5. 프로젝트에 동기화된 Base 기준
+6. Base 원격 원본
+7. 과거 대화·초안·추정
 
-## 2. 루트 기획서와 책임 원본
+정상 동작 중인 사용자 변경을 임의로 되돌리지 않는다.
+
+## 3. 필요한 작업 환경·권한
+
+- 필요한 실행 파일, 라이브러리, 폰트, 입력 파일, 인증, 저장소·브랜치 권한을 작업과 검증 전에 확인한다.
+- 누락 항목은 `필요 항목 / 이유 / 설치·설정 방법 / 재시작·적용 / 확인 명령 / 최소 권한`으로 안내한다.
+- 사용자 승인 없이 시스템 전역 설치, 계정·보안 설정, 권한 확대, Branch protection 변경을 수행하지 않는다.
+- 사용자가 설치·권한 부여를 완료했다고 알려도 실제 경로·버전·인증·쓰기 가능 여부를 확인한다.
+- 실행하지 않은 검사·렌더·권한을 통과로 보고하지 않는다.
+
+## 4. 요청 라우팅·작업 계약
+
+새 L1 이상 요청은 `managing-project-intake-and-work-contract`에서 한 번만 처리한다.
+
+```text
+route
+→ 저장소 사실 조사
+→ 필요한 경우 clarify
+→ 사용자 마지막 확인
+→ contract
+```
+
+- 작업 수준 L0~L4
+- 주 책임 분야 하나와 실제 영향 분야
+- 변경 유형
+- 최소 Foundation·분야 Skill
+- 범위·제외·보호 대상
+- 완료 기준·검증·롤백
+
+오탈자, 명확한 단일 파일 기계 수정, 입력이 같은 검사 재실행은 예외다. 상세 요청은 처음부터 다시 묻지 않고 저장소 사실과 결과를 바꾸는 누락만 확인한다.
+
+금지:
+
+- 전체 skills 폴더 기본 로드
+- `load_by_default=true`인 활성 Skill
+- trigger와 무관한 호출
+- 같은 요청의 수준·범위·상태를 여러 Skill에서 중복 판정
+- 주 책임 분야 Skill을 여러 개 지정
+- 검증·발행·Handoff의 조기 실행
+- `[백업]`, `[보류]`, `[제거 후보]` Skill 호출
+
+## 5. 활성 통합 Skill
+
+| 책임 | Skill |
+|---|---|
+| 요청 라우팅·요구 확정·실행 계약 | `managing-project-intake-and-work-contract` |
+| 신규 설치·기존 감사·승인된 마이그레이션·Health Review | `managing-game-project-operating-system` |
+| 기획 책임 원본 작성·재구조화·발행·검수 | `managing-design-documents` |
+| 프로젝트 Skill 생성·통합·학습 | `evolving-project-discipline-skills` |
+| Active Context·Handoff | `maintaining-project-context-and-handoff` |
+| 핵심 컨셉·뾰족한 재미·SWOT·MDA/DDE·PoC·기획 재조정 | `analyzing-and-refining-game-concepts` |
+| Vertical Slice | `designing-vertical-slices` |
+| 외부 AI 작업 공간 | `orchestrating-deepseek-worktrees` |
+| 프로젝트 변경 계약·정적·런타임·회귀 검증 | `reviewing-and-validating-project-changes` |
+| 이미지 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` |
+| 구현된 Godot·Web UI 감사 | `auditing-and-refining-ui-art` |
+| 프로젝트 교훈·Base 변경 제안 생명주기 | `managing-base-change-proposals` |
+
+통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 mode로 변환한다. 새 Registry·문서·작업 계약에는 새 ID만 사용한다.
+
+## 6. 책임 원본과 발행
 
 신규 프로젝트와 승인된 마이그레이션의 활성 기획서는 저장소 루트 아래에 둔다.
 
@@ -40,279 +98,122 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Meth
 <repository-root>/[기획서]/
 ```
 
-기획 본책의 책임 구조:
-
-```text
-AI·자동 검사 → 문서별 단일 Markdown 또는 JSON 책임 원본
-사람 기본 열람 → 기획서 PDF
-Word 검토가 필요할 때 → 선택적 기획서 DOCX
-시각 자료가 필요할 때 → Mermaid + 기획서.assets/generated + approved
-최신성 → 기획서_PUBLICATION_MANIFEST.json
-전체 라우팅 → DESIGN_DOCUMENT_REGISTRY.json
-```
-
-- 서술 중심 기획 본책은 Markdown을 기본으로 하고, Registry·Manifest·상태·ID·경로·게임 데이터는 JSON을 사용한다.
-- 각 문서는 Registry에 `source_format: markdown | json`으로 단일 책임 원본을 선언한다.
-- PDF는 원본 변경과 같은 작업에서 항상 최신 동기화하며 DOCX·다이어그램은 선택 파생본이다.
-- DOCX·PDF를 별도 원본으로 수동 유지하지 않는다.
+- 한 질문에는 Registry에 등록된 단일 Markdown 또는 JSON 책임 원본 하나를 둔다.
+- 서술 중심 기획은 Markdown, Registry·Manifest·상태·ID·경로·게임 데이터는 JSON을 사용한다.
 - 같은 서술을 Markdown과 JSON 양쪽에 중복 책임 원본으로 만들지 않는다.
-- 기존 프로젝트의 안정된 경로와 본책은 감사·보존 대조·사용자 승인 없이 강제 이동·변환하지 않는다.
+- DOCX·PDF를 독립 책임 원본으로 수동 유지하지 않는다.
+- `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않는다.
 
-## 3. 프로젝트 스킬맵
+문서 발행은 `managing-design-documents`와 Registry의 정책을 따른다.
 
-```text
-SKILL_REGISTRY.json
-→ AI 선택적 호출 책임 원본
+- `source_only`: 원본과 직접 검증만 유지
+- `milestone_sync`: 주요 게이트·공유 시 PDF·Manifest 동기화
+- `always_sync`: 원본·승인 이미지·생성기 변경과 같은 작업에서 동기화
 
-PROJECT_SKILL_MAP.pdf
-→ 사람이 보는 이미지 포함 최신본
+DOCX와 다이어그램은 선언한 경우만 생성한다. `CURRENT`, 자동 렌더, Codex 시각 검수, 사용자 시각 검수는 독립 상태다.
 
-PROJECT_SKILL_MAP.md
-→ 설정한 프로젝트에서만 자동 생성하는 선택 요약 파생본
+## 7. 기존 프로젝트 안전 마이그레이션
 
-PROJECT_SKILL_MAP.docx
-→ Word 검토가 필요할 때만 생성하는 선택 파생본
-
-PROJECT_SKILL_MAP.assets/
-→ 호출 흐름·분야 라우팅·상태 매트릭스
-```
-
-자동 생성한 `PROJECT_SKILL_MAP.md`는 파생본 헤더와 Registry 해시를 포함하며 수동 책임 원본으로 사용하지 않는다.
-
-## 4. 작업 유형·스킬 라우팅
-
-새 L1 이상 요청은 `skills/routing-project-work-by-discipline/SKILL.md`로 다음을 판정한다.
-
-- 작업 수준 L0~L4
-- 주 책임 분야 하나
-- 영향 분야
-- 변경 유형
-- 필요한 Foundation 스킬
-- 주 책임 분야 진입 스킬
-- 후속 단계에서만 호출할 검증·발행·Handoff 스킬
-
-주요 라우팅:
-
-- 운영체계 신규 설치: `installing-game-project-operating-system`
-- 기존 프로젝트 안전 재배치: `migrating-existing-game-project-structure`
-- 분야별 스킬 생성·학습: `evolving-project-discipline-skills`
-- Markdown·JSON 기획서와 PDF 발행: `publishing-discipline-bibles`
-- Active Context·Handoff: `maintaining-project-context-and-handoff`
-- 운영체계 Health Review: `verifying-game-project-operating-system`
-- Vertical Slice: `designing-vertical-slices`
-- 기획 책임 구조: `writing-game-design-documents`
-- 외부 AI 결과 검수: `reviewing-external-ai-drafts`
-- 프로젝트 교훈 환류: `promoting-project-knowledge`
-- Base 수정제안서 승인·구현: `reviewing-and-implementing-base-change-proposals`
-- 기능·경험·아트 방향·구조·워크플로 결정 전 딥인터뷰: `conducting-deep-requirement-interviews`
-- Godot·Web UI 실행 결과 감사·승인된 개선·독립 재검수: `auditing-and-refining-ui-art`
-
-기능·게임 경험·아트 방향·구조·워크플로·Base 변경 제안은 다음 순서를 따른다.
+`managing-game-project-operating-system`을 사용한다.
 
 ```text
-저장소 사실 확인
-→ 딥인터뷰
-→ 사용자 마지막 재진술 확인
-→ transforming-requests-into-prompts
-→ Planning·Implementation
-```
-
-오탈자, 명확한 단일 파일 기계 수정, 입력이 같은 검사 재실행은 딥인터뷰 예외다. 이미 상세한 요청은 처음부터 다시 묻지 않고 저장소 사실과 충돌·누락만 확인한다.
-
-UI 아트 감사의 정적 패턴은 후보 탐색일 뿐 결함 판정이나 자동 삭제 권한이 아니다. 아트 방향을 확인하고 사용자 승인 전 대상 파일을 보존하며, 승인된 finding만 A→B→C→D→E로 수정한 뒤 실제 Godot/Web 렌더를 독립 재검수한다.
-
-금지:
-
-- 전체 skills 폴더 기본 로드
-- `load_by_default=true`인 활성 스킬
-- trigger와 무관한 호출
-- 같은 책임의 중복 스킬 동시 호출
-- `[백업]`, `[보류]`, `[제거 후보]` 스킬 호출
-- 검증·발행·Handoff 스킬의 조기 호출
-
-## 5. 우선순위
-
-충돌 시 다음을 따른다.
-
-1. 사용자의 최신 지시
-2. 프로젝트 `AGENTS.md`와 보안·엔진 규칙
-3. 프로젝트 Active Context·Handoff
-4. 승인된 기획서와 `GitHub Issue` 또는 사용자가 승인한 직접 요청·Goal·Plan
-5. 실제 구현·데이터·자산·테스트 증거
-6. 프로젝트에 동기화된 Base 기준
-7. Base 원격 원본
-8. 과거 대화·초안·추정
-
-실제 파일과 기획서가 다르면 차이를 보고한다. 정상 동작 중인 사용자 변경을 임의로 되돌리지 않는다.
-
-## 6. 프로젝트 지속성 계약
-
-새 채팅과 새 AI가 저장소만으로 다음을 찾을 수 있어야 한다.
-
-- 프로젝트 목적과 핵심 플레이어 경험
-- 현재 개발 단계·다음 게이트·최우선 작업
-- 확정·구현·검증·미확정·보류
-- 변경하면 안 되는 결정과 보호 경로
-- 프로젝트 전체·분야별 Markdown 또는 JSON 책임 원본
-- 사람용 최신 PDF·선택적 DOCX와 승인 이미지
-- 분야별 프로젝트 스킬과 최소 호출 스킬
-- 실제 코드·데이터·자산·테스트
-- 작업 종료 갱신 대상과 Base 환류 경계
-
-Active Context·Handoff는 본책을 복제하지 않고 현재 상태와 읽기 순서만 연결한다.
-
-## 7. 작업 시작 계약
-
-```yaml
-work_contract_type: github_issue/approved_direct_request
-deep_interview_required:
-interview_id:
-interview_status:
-user_confirmation_ref:
-executable_prompt_path:
-primary_discipline:
-affected_disciplines:
-change_type:
-goal:
-user_or_player_value:
-scope:
-out_of_scope:
-protected_paths:
-required_tools_and_files:
-required_permissions:
-required_design_document_ids:
-foundation_skills:
-discipline_skills:
-deferred_skills:
-asset_impact:
-publication_impact:
-acceptance_criteria:
-validation:
-```
-
-직접 요청 작업은 Issue가 없어도 된다. 대신 승인된 요청이나 PR 본문·Goal에 목표, 배경, 범위, 제외 범위, 보호 대상, 완료 기준과 검증 증거를 남긴다. 여러 시스템·장기 추적·여러 PR이 필요한 작업은 Issue를 권장한다.
-
-작업 실행 게이트:
-
-```text
-Intake·Context
-→ Deep Interview·User Confirmation (대상 작업)
-→ Definition of Ready
-→ Planning·Approval
-→ Implementation
-→ Verification
-→ Documentation
-→ Integration·Completion
-```
-
-- Ready 전에는 구현하지 않는다.
-- L2 이상은 실제 저장소 조사에 근거한 Plan과 사용자 승인을 우선한다.
-- 실행하지 않은 검증은 `[미검증]`으로 기록한다.
-- 작업 완료와 Vertical Slice·Alpha·Beta 통과를 혼동하지 않는다.
-
-## 8. 기존 프로젝트 안전 마이그레이션
-
-```text
-기존 내용 보존
-→ 책임·참조·고유 정보 감사
-→ Markdown·DOCX·PDF·이미지·코드 경로 조사
-→ 문서 역할에 맞는 Markdown·JSON 책임 구조와 발행 구조 제안
-→ 변경 전후 보존 대조
+audit
+→ 책임·참조·고유 정보 조사
+→ 목표 구조·보존·롤백 제안
 → 사용자 승인
-→ 승인 범위만 변경
-→ DOCX/PDF·링크·스킬·콜드 스타트 검증
-→ 기존 원본 제거 후보 별도 승인
+→ 승인된 처리표만 migrate
+→ 보존·참조·발행 대조
+→ verify
 ```
 
 사용자 승인 전 금지:
 
-- 파일·폴더 대량 삭제·이동
+- 파일·폴더 대량 삭제·이동·통합
 - 기존 책임 문서 대규모 축약
-- 여러 문서를 합친 뒤 원본 제거
 - 승인 이미지·자산 제거 또는 임의 교체
 - 프로젝트 용어·수치·결정 변경
 - `[보류]` 폐기
 - Base 구조에 맞춘 강제 개명
 
-## 9. 책임 원본·수명주기·토큰 효율
+고유 정보·참조·복구·사용자 승인이 확인되지 않은 항목은 삭제하지 않고 `[제거 후보]`로 유지한다.
 
-- 한 질문에는 현행 책임 원본 하나를 둔다.
-- 같은 내용을 Markdown·JSON·Skill·운영 문서에 장문 복사하지 않는다.
-- `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않는다.
-- 단순 이전 버전은 Git 이력으로 보존한다.
-- `[백업]`은 Git 이력만으로 부족한 외부 원본·감사·승인 근거에만 사용한다.
-- `[보류]`에는 이유·재개 조건·관련 책임 원본·선행 작업을 기록한다.
-- `[제거 후보]`는 고유 정보·참조·복구·사용자 승인 전 삭제하지 않는다.
-- 백업·보류·제거 후보는 기본 읽기에서 제외한다.
+## 8. Active Context·Handoff
 
-## 10. 분야별·Foundation 스킬의 학습
+Active Context는 현재 상태의 기본 원본이다. 프로젝트 방향·분야 본책·Roadmap·Skill을 먼저 갱신한 뒤 현재 차이·다음 작업·위험·읽기 순서만 압축한다.
 
-실패, 중요한 결정, 재사용 가능한 교훈 또는 실제 검증 결과가 있는 의미 있는 스킬 호출을 Learning Log에 기록한다. 사소한 조회와 반복 호출을 의무 기록하지 않는다.
+별도 Handoff는 세션·담당자·브랜치·마일스톤 경계의 스냅샷이며 두 번째 활성 현재 상태 원본으로 유지하지 않는다.
 
-- 호출 트리거와 실제 범위
-- 성공·부분 성공·실패·미검증
-- 실패·예외·사용자 피드백
-- 불필요하게 호출한 스킬
-- 누락된 스킬·검증
-- 스킬 변경 필요 여부와 변경하지 않는 이유
-- 지식 상태와 다음 검토 트리거
+## 9. Skill 학습·통합
 
-스킬 본문은 반복 실패, 새 예외, 책임·경로·검증 변경처럼 근거가 있을 때만 갱신한다. 한 번의 성공을 즉시 공용 강제 규칙으로 만들지 않는다.
+새 Skill을 만들기 전에 기존 통합 Skill의 mode로 처리할 수 있는지 확인한다. 독립된 입력·산출물·Quality Bar·검증·승인 경계가 있을 때만 새 Skill을 만든다.
 
-### 프로젝트 교훈의 Base 승격
+실패, 중요한 결정, 재사용 가능한 교훈 또는 실제 검증 결과가 있는 호출을 Learning Log에 기록한다. 한 번의 성공을 공용 강제 규칙으로 만들지 않는다.
 
-프로젝트에서 발견한 공용화 후보는 Base 루트 `[수정제안서]`에 제안 전용 PR로 먼저 제출한다. 신규 제안 PR은 `[수정제안서]/**`만 변경하며 사용자 승인 전에는 활성 Base 규칙·스킬·템플릿·도구·Schema·Test를 바꾸지 않는다.
+통합 시 고유 입력·산출물·실패 조건·검증·reference·script·Learning Log를 보존하고 이전 ID를 `LEGACY_SKILL_ALIASES.md`에 연결한다.
+
+## 10. 프로젝트 교훈의 Base 승격
+
+`managing-base-change-proposals`를 사용한다.
 
 ```text
 프로젝트 증거
-→ promoting-project-knowledge
+→ extract
+→ submit
 → [수정제안서] SUBMITTED
-→ 사용자 검토·승인
-→ reviewing-and-implementing-base-change-proposals
-→ 별도 구현 PR
+→ review·사용자 승인
+→ 별도 구현 PR에서 implement
+→ verify
 ```
 
-사용자가 직접 승인한 Base 변경 요청은 별도 제안서 없이 작업 계약이 될 수 있다.
+신규 제안 PR과 활성 Base 구현 PR을 합치지 않는다. 사용자 승인 전에는 활성 Base Skill·Template·Tool·Schema·Test를 바꾸지 않는다. 사용자가 직접 승인한 Base 변경 요청은 별도 제안서 없이 작업 계약이 될 수 있다.
 
-## 11. Markdown·JSON 기획서 발행
-
-관련 스킬: `publishing-discipline-bibles`
-
-```text
-DESIGN_DOCUMENT_REGISTRY.json에서 활성 문서 선택
-→ 문서별 Markdown 또는 JSON 책임 원본 갱신
-→ 필요한 문서에서만 Mermaid·생성 다이어그램 처리
-→ 승인 이미지·실제 캡처 포함
-→ 임시 또는 선택적 DOCX 생성
-→ PDF 변환
-→ 전 페이지 렌더 검수
-→ 입력·출력·생성기·이미지 해시 Manifest
-→ Governance 검사
-```
-
-책임 원본, 승인 이미지, Mermaid 또는 생성기가 바뀌면 PDF와 Manifest를 같은 작업에서 재생성한다. 선택한 DOCX·다이어그램도 함께 동기화한다. PDF 최신성과 사람 시각 검수 상태는 분리한다.
-
-## 12. 이미지·자산 계약
+## 11. 이미지·UI 계약
 
 - 기존 승인 이미지가 있으면 별도 지시 없이 새 시안을 만들지 않는다.
-- 활성 항목에는 캐노니컬 경로 하나만 사용한다.
-- 콘셉트·방향 승인·제작 준비·구현·실제 화면 검증을 구분한다.
-- Asset ID·출처·승인 상태·캡션·채택 요소·비채택 요소·실제 캡처를 책임 원본 또는 구조화 Asset Manifest에 연결한다.
+- Asset ID·캐노니컬 경로·출처·승인 상태·채택·비채택 요소·실제 캡처를 기록한다.
 - 이미지 안 임시 수치·문구를 공식 기획값으로 해석하지 않는다.
+- 생성 전 프롬프트 설계와 구현 후 UI 감사는 독립 Skill로 유지한다.
+- UI 감사 정적 패턴은 후보일 뿐 결함·자동 삭제 권한이 아니다.
+- 사용자 승인된 finding만 수정하고 실제 Godot/Web 전후 렌더로 독립 재검수한다.
+
+## 12. 기획 방향·PoC 계약
+
+핵심 컨셉, 제약, 뾰족한 재미, 게임 요소 정렬, PoC와 기획 재조정은 `analyzing-and-refining-game-concepts`를 사용한다.
+
+- 기능 목록을 핵심 컨셉으로 대체하지 않는다.
+- SWOT은 SO·WO·ST·WT 실행 방향으로 변환한다.
+- `DDD`처럼 의미가 여러 개인 약어는 프로젝트 정의 없이 임의 해석하지 않는다.
+- PoC는 가장 위험한 가설을 검증하는 최소 범위로 유지한다.
+- PoC 결과에 따라 유지·증폭·변경·삭제·보류·재검증을 결정한다.
+- 목표 품질과 제작 파이프라인 검증은 `designing-vertical-slices`로 넘긴다.
 
 ## 13. 검증과 완료
 
-작업은 다음이 끝나야 완료다.
+일반 변경 검증은 `reviewing-and-validating-project-changes`를 사용한다.
+
+최소 검증 순서:
+
+```text
+작업 계약·diff 대조
+→ 포맷·문법·정적 검사
+→ 관련 자동 테스트
+→ 정상·실패·경계 경로
+→ 저장·불러오기·호환성
+→ 실제 화면·플레이·오디오·성능
+→ 인접 기능 회귀
+→ 판정·미실행·위험·롤백
+```
+
+작업 완료 조건:
 
 1. 실제 결과와 승인·구현·검증 상태가 일치한다.
-2. 관련 Markdown 또는 JSON 책임 원본·Design Document Registry가 최신이다.
-3. 관련 Skill Registry·Learning Log가 최신이다.
-4. 책임 원본·이미지 변경 시 PDF·Manifest와 선택 파생본이 재생성됐다.
-5. Development Gates·Roadmap·Active Context·Documentation Map이 최신이다.
-6. 자동·수동·시각 검증과 미검증이 분리됐다.
-7. PR Required Checks와 리뷰가 통과했다.
-8. 다음 작업·선행 조건·Handoff가 존재한다.
-9. 새 AI가 저장소만으로 방향·상태·기획서·스킬·검증을 찾는다.
+2. 관련 책임 원본·Registry·Skill·Learning Log가 최신이다.
+3. 발행 정책이 요구하는 PDF·Manifest와 선택 파생본이 최신이다.
+4. Development Gates·Roadmap·Active Context·Documentation Map이 최신이다.
+5. 자동·수동·시각 검증과 미검증이 분리됐다.
+6. PR Required Checks와 리뷰가 통과했다.
+7. 다음 작업·선행 조건·롤백이 존재한다.
+8. 새 AI가 저장소만으로 방향·상태·책임 원본·Skill·검증을 찾는다.
 
 ## 14. 로컬과 GitHub
 
@@ -327,11 +228,11 @@ GitHub와 로컬 파일은 자동 양방향 동기화가 아니다.
 ## 15. 완료 보고
 
 - 주 책임·영향 분야
-- 변경한 JSON·코드·자산·스킬
-- 생성한 DOCX·PDF·다이어그램·Manifest
+- 실제 변경한 문서·코드·자산·Skill
+- 생성한 PDF·선택 DOCX·다이어그램·Manifest
 - 유지한 기존 결정·동작·자산
 - 실행한 검증과 결과
-- 미검증·불일치·남은 위험
+- 미검증·불일치·남은 위험·롤백
 - 보존·통합·백업·보류·제거 후보
 - 콜드 스타트 결과
 - Base 환류와 다음 작업

@@ -1,193 +1,141 @@
 # 공용 AI 작업 흐름
 
-이 문서는 요청을 이해하고, 공용 학습 데이터와 프로젝트 전용 컨텍스트를 함께 확인하고, 작업 프롬프트·산출물·검증·지식 환류까지 마치는 공통 순서를 정의한다.
+이 문서는 작업 순서를 빠르게 확인하는 라우터다. 전체 운영 계약은 `docs/OPERATING_MODEL.md`, 단계별 실행은 각 Skill이 책임진다.
 
-## 1. 작업 단계 분류
+## 1. 요청 접수
 
-| 단계 | 조건 | 기본 처리 |
-|---|---|---|
-| `L0` | 오탈자, 명확한 문장·형식 변경 | 실제 대상 확인 후 바로 처리 |
-| `L1` | 범위가 명확한 작은 수정 | 범위·제약·검증을 보완해 처리 |
-| `L2` | 대안이 있거나 한 시스템에 영향 | 컨텍스트 확인과 브레인스토밍 |
-| `L3` | 여러 시스템, 핵심 구조, 장기 방향 | 기획서·로드맵·실행 계획 작성 |
-| `L4` | 여러 프로젝트에서 재사용할 방법 | 프로젝트 검증 후 Base 학습 데이터로 반영 |
-
-이미 확정된 요구를 다시 질문하지 않는다. 작업이 여러 독립 하위 문제로 나뉘면 하나의 거대한 프롬프트 대신 별도 사양과 검증 단위로 분해한다.
-
-## 2. 시작 전 공용·전용 컨텍스트 확인
-
-작업 시작 전에는 다음 두 집합에서 현재 작업에 적용되는 현행 책임 원본과 영향 파일을 모두 확인한다.
-
-### Base 공용 학습 데이터
-
-- 공용 작업 규칙과 workflow
-- 관련 method·research
-- 실행 skill과 분야별 검수 matrix
-- 사용할 template
-- 유사 성공·실패·미검증 case
-
-### 프로젝트 전용 데이터
-
-- 최신 사용자 지시와 프로젝트 `AGENTS.md`
-- `BASE_RULES_VERSION.md`와 Base 로컬 사본
-- 프로젝트 Documentation Map
-- Handoff·Active Context
-- 프로젝트 방향과 관련 분야 기획서
-- 현재 Issue·Goal·Plan과 완료·제외 범위
-- 수정 대상, 참조 위치, 데이터 계약, 저장·호환성 위험
-
-`모두 확인`은 저장소 전체 파일을 무조건 읽는다는 뜻이 아니다. `DOCUMENTATION_MAP.md`와 참조 관계로 현재 작업에 적용되는 공용 기준과 프로젝트 기준의 범위를 결정하고, 그 범위 안의 현행 책임 원본과 영향 파일을 빠짐없이 확인한다.
-
-벤치마킹이 필요한 결정만 공식·1차 출처 중심으로 조사하고, 현재 작업에 필요한 최소 스킬만 적용한다.
-
-## 3. 요청 구체화
-
-기능·게임 경험·아트 방향·구조·워크플로·Base 변경 제안은 L1 이상에서도 딥인터뷰 대상이다. 오탈자, 명확한 단일 파일 기계 수정, 동일 검사 재실행만 예외로 한다. L2 이상에서는 다음 순서를 적용한다.
+`skills/managing-project-intake-and-work-contract/SKILL.md`
 
 ```text
-저장소 사실 확인
-→ 딥인터뷰와 모호성 장부
-→ 사용자 마지막 재진술 확인
-→ 문제와 목적
-→ 플레이어·사용자 경험
-→ 공용 기준과 프로젝트 고유 조건
-→ 확정 사실과 미확정 분리
-→ 2~3개 접근법과 trade-off
-→ 선택한 방향
-→ 범위와 제외
-→ 완료 기준과 검증
+route
+→ 저장소 사실 조사
+→ 필요한 경우 clarify
+→ 사용자 마지막 확인
+→ contract
 ```
 
-사용자 요청을 실행 프롬프트로 바꿀 때는 다음 8요소를 사용한다.
+- `L0`: 오탈자·명백한 형식 변경
+- `L1`: 범위가 명확한 작은 변경
+- `L2`: 대안·시스템 영향
+- `L3`: 여러 분야·핵심 구조·장기 방향
+- `L4`: 여러 프로젝트에 재사용 가능한 방법
+
+같은 요청의 작업 수준·분야·범위·검증을 여러 Skill에서 다시 판정하지 않는다.
+
+## 2. 작업 실행 게이트
 
 ```text
-목적 → 맥락 → 경험 → 범위 → 제약 → 산출물 → 완료 기준 → 검증
+Intake·Context
+→ Definition of Ready
+→ Planning·Approval
+→ Implementation
+→ Verification
+→ Documentation
+→ Integration·Completion
+→ Context·Learning
 ```
 
-인터뷰는 `skills/conducting-deep-requirement-interviews/SKILL.md`, 변환은 `skills/transforming-requests-into-prompts/SKILL.md`, 출력 형식은 `templates/EXECUTABLE_PROMPT.md`를 따른다. 인터뷰 대상은 Registry가 `CONFIRMED`이고 사용자 확인 근거가 있을 때만 실행 프롬프트를 만든다.
+세부 판정은 `docs/knowledge/methods/DEVELOPMENT_GATES_METHOD.md`를 따른다.
 
-### Superpowers 호환 순서
-
-Superpowers 또는 동등한 프로세스 스킬을 사용할 수 있는 L2·L3 작업은 다음 순서로 연결한다.
+기획 방향 탐색은 다음 내부 루프를 사용할 수 있다.
 
 ```text
-brainstorming
-→ 사용자 승인과 기획서 기록
-→ writing-plans
-→ 작업 성격에 맞는 구현·디버깅 스킬
-→ verification-before-completion
+핵심 컨셉
+→ 제약 조건
+→ 뾰족한 재미
+→ 기획 요소 정렬
+→ PoC
+→ 기획 재조정
+→ Production·Vertical Slice 진입 판정
 ```
 
-플러그인이 없으면 같은 단계를 일반 작업 절차로 수행한다. 스킬 지시가 프로젝트 규칙이나 최신 사용자 지시와 충돌하면 상위 규칙을 따른다.
+## 3. 실행 유형 라우팅
 
-### 외부 AI 대량 작업
+| 작업 | Skill |
+|---|---|
+| 운영체계 설치·기존 감사·마이그레이션·Health Review | `managing-game-project-operating-system` |
+| 핵심 컨셉·뾰족한 재미·SWOT·PoC | `analyzing-and-refining-game-concepts` |
+| 기획 책임 원본 작성·발행 | `managing-design-documents` |
+| 프로젝트 Skill 생성·통합·학습 | `evolving-project-discipline-skills` |
+| 현재 상태·Handoff | `maintaining-project-context-and-handoff` |
+| 프로젝트 교훈·Base 수정제안서 | `managing-base-change-proposals` |
+| Vertical Slice | `designing-vertical-slices` |
+| 외부 AI 작업 공간 | `orchestrating-deepseek-worktrees` |
+| 프로젝트 변경·외부 AI 결과 검증 | `reviewing-and-validating-project-changes` |
+| 이미지 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` |
+| 구현된 UI 감사·개선 | `auditing-and-refining-ui-art` |
 
-DeepSeek 또는 다른 외부 모델은 대용량 초안·분류·후보 생성에 사용할 수 있다. 실제 기준 문서와 코드의 검수·세부 조정·반영 책임은 Codex 또는 저장소 책임자에게 둔다.
+이전 Skill ID는 `skills/LEGACY_SKILL_ALIASES.md`로 변환한다.
+
+## 4. 기획 방향·PoC
+
+`analyzing-and-refining-game-concepts`를 사용한다.
+
+- `frame`: 한 문장 핵심 컨셉과 플레이어 약속
+- `constrain`: 플레이·제작·기술·콘텐츠·시장 제약
+- `sharpen`: 반복 플레이를 만드는 뾰족한 재미
+- `structure`: GDD·레벨·캐릭터·스테이지·세계관 정렬
+- `analyze`: SWOT→SO/WO/ST/WT, MDA/DDE, 3C, 루프·동기·차별화·제작성
+- `poc-contract`: 가장 위험한 가설을 검증하는 최소 범위
+- `recalibrate`: PoC 결과 기반 유지·수정·삭제·보류·재검증
+- `production-gate`: 다음 제작 단계 진입 판정
+
+`DDD`처럼 의미가 여러 개인 약어는 프로젝트 정의 없이 임의 해석하지 않는다.
+
+## 5. 외부 AI 대량 작업
 
 ```text
-GPT 기획·작업 패키지
-→ 별도 worktree·브랜치
-→ DeepSeek 대량 초안
-→ 구조화된 결과·미확인 목록
-→ Codex diff·근거·테스트 검수
-→ 승인된 최소 변경만 실제 반영
+승인된 작업 계약
+→ 별도 branch·worktree
+→ 제한된 입력 allowlist
+→ 구조화된 초안·미확인 목록
+→ reviewing-and-validating-project-changes: external-source-review
+→ 승인된 최소 변경만 반영
 ```
 
-- 외부 AI는 main 또는 사용자의 활성 worktree를 직접 수정하지 않는다.
-- 한 worktree는 한 목적과 한 브랜치를 가진다.
-- 공통 컨텍스트는 고정 접두부로 유지하고 가변 작업은 뒤에 둔다.
-- 저장소 전체가 아니라 allowlist와 Active Context만 제공한다.
-- 결과는 고정 Markdown 또는 JSON 계약으로 회수한다.
-- 외부 AI 보고만 믿지 않고 실제 diff·참조·테스트를 확인한다.
-- dirty·미통합 worktree는 자동 삭제하지 않는다.
+외부 AI는 main 또는 사용자의 활성 worktree를 직접 수정하지 않는다. 외부 AI 결과는 검수 대기 입력이다.
 
-관련 기준:
+## 6. 구현과 검증
 
-- `skills/orchestrating-deepseek-worktrees/SKILL.md`
-- `skills/reviewing-external-ai-drafts/SKILL.md`
-- `templates/ai/DEEPSEEK_WORK_PACKAGE.md`
-- `templates/ai/PROJECT_AI_COLLABORATION_PROFILE.md`
+일반 변경은 `reviewing-and-validating-project-changes`를 사용한다.
 
-## 4. 기획서와 실행 지시
+```text
+contract-check
+→ 필요한 경우 external-source-review
+→ static-validation
+→ runtime-validation
+→ regression
+→ evidence-report
+```
 
-- Base 기획 method·skill은 여러 프로젝트에서 재사용할 작성법과 판단법을 제공한다.
-- 프로젝트 기획서는 그 공용 방법을 현재 게임의 세계관, 수치, 데이터와 플레이 흐름에 맞게 분화한 전용 원본이다.
-- Issue 또는 사용자가 승인한 직접 요청은 문제, 범위, 완료 기준을 보존하는 작업 기준서다.
-- Goal·Work Order는 해당 작업 계약을 참조하는 압축된 실행 지시다.
-- Plan은 실제 파일 조사 결과를 반영한 작업 순서다.
-- PR·완료 보고는 변경 이유와 검증 근거를 남긴다.
+- 가장 작은 검증 가능한 변경으로 완료 기준을 만족한다.
+- 기존 기능·저장 데이터·공개 인터페이스·사용자 흐름을 보호한다.
+- 기능 추가와 대규모 리팩터링을 가능한 한 분리한다.
+- 실행하지 못한 검증은 `UNVERIFIED`와 사유로 기록한다.
 
-같은 내용을 여러 산출물에 장문으로 복사하지 않는다. 책임 원본을 정하고 다른 문서는 경로와 현재 작업에 필요한 차이만 적는다.
+최소 검증 순서:
 
-## 5. 구현과 리팩터링
+```text
+작업 계약·diff 대조
+→ 포맷·문법·정적 검사
+→ 관련 자동 테스트
+→ 정상·실패·경계·반례
+→ 저장·불러오기·호환성
+→ 실제 화면·플레이·오디오·성능
+→ 인접 기능 회귀
+→ 판정·위험·롤백
+```
 
-- 가장 작은 변경으로 완료 기준을 만족한다.
-- 기존 기능, 저장 데이터, 공개 인터페이스와 사용자 흐름을 보호한다.
-- 기능 추가와 리팩터링을 가능한 한 분리한다.
-- 리팩터링 전 현재 동작과 회귀 검증을 확보한다.
-- 범위 밖 개선은 별도 제안이나 작업 계약으로 분리한다.
-- `hold`·`[보류]`의 아이디어는 재개 결정 없이 구현하지 않는다.
+## 7. 문서·발행·상태 동기화
 
-## 6. 검증
+방향, 수치, 용어, 기능, 구현 상태, 승인 자산, 검증 또는 일정이 바뀌면 같은 작업에서 관련 책임 원본과 Registry·Roadmap·Active Context를 갱신한다.
 
-프로젝트에 실제로 존재하는 검증만 실행한다.
+기획서 작업은 `managing-design-documents`가 문서 생명주기와 발행 정책을 함께 처리한다. `source_only`, `milestone_sync`, `always_sync` 중 Registry가 선언한 정책을 따른다.
 
-1. 포맷·문법·타입·정적 검사
-2. 관련 자동 테스트
-3. 핵심 실행 경로와 예외
-4. 저장·불러오기·호환성
-5. 변경 diff와 범위
-6. 사용자가 확인할 수동 검수
+## 8. 종료·인수인계·학습
 
-완료 기준은 `조건 → 행동 → 관찰 결과`로 확인한다. 실행하지 않은 테스트는 미검증으로 보고한다.
-
-## 7. 종료·인수인계와 학습 환류
-
-작업 종료와 인수인계는 프로젝트 기록 정비와 Base 학습 환류를 함께 수행한다.
-
-### 7.1 프로젝트 전용 기록
-
-1. 확정된 결정, 수치, 구현 상태를 프로젝트의 현행 기획서·데이터 설계서·테스트·로드맵에 반영한다.
-2. Handoff·Active Context를 최신화해 다음 작업자가 과거 대화 없이 현재 상태를 이해하게 한다.
-3. 현재 Issue·Goal·Plan, README, Documentation Map의 연결 영향을 확인한다.
-4. 프로젝트 고유 세계관, 캐릭터, 수치, 경로, ID와 실제 자산·프롬프트는 프로젝트에 남긴다.
-
-### 7.2 공용 학습 데이터 추출
-
-1. 이번 작업에서 반복 사용할 수 있는 판단법, 작성법, 절차, 체크리스트, 템플릿과 실패 방지 교훈을 추출한다.
-2. 프로젝트 고유 값과 공용 원리를 분리한다.
-3. 기존 Base 책임 문서와 중복·충돌을 확인한다.
-4. 검증된 공용 내용은 관련 기획 method·research·skill·template에 갱신한다.
-5. 문제, 제약, 대안, 결정, 결과, 실패, 미검증 항목을 `templates/KNOWLEDGE_CASE_STUDY.md` 형식으로 사례화한다.
-6. 한 번 성공했거나 검증이 부족한 내용은 확정 규칙·스킬이 아니라 `관찰`·`가설` case로 남긴다.
-7. 여러 조건에서 반복 재현된 뒤 `패턴`·`검증` 상태로 올리고 필요하면 method·skill을 강화한다.
-
-### 7.3 동기화와 보고
-
-1. Base를 변경했다면 Base 버전과 Changelog를 갱신한다.
-2. 프로젝트의 Base 로컬 사본과 `BASE_RULES_VERSION.md` 후속 동기화를 확인한다.
-3. 변경 파일, 유지 동작, 검증, 미검증, 위험을 보고한다.
-4. `프로젝트 전용으로 남긴 내용`, `Base에 반영한 공용 데이터`, `작성·갱신한 사례`를 구분한다.
-
-공용화 가능한 내용이 없으면 억지로 Base를 수정하지 않고 `공용 학습 데이터 없음 — 프로젝트 전용 또는 단발성 작업`으로 기록한다.
-
-상세 승격 절차는 `skills/promoting-project-knowledge/SKILL.md`를 따른다.
-
-## 8. Context compact
-
-조사→설계, 설계→구현, 디버깅 종료처럼 논리적 경계에서만 압축한다.
-
-보존:
-
-- 최신 사용자 결정
-- 정확한 경로·명령·버전·식별자
-- 현재 실패 증상과 검증
-- 미완료 작업과 위험
-- 프로젝트 전용 결정과 Base 환류 상태
-
-제거:
-
-- 기준 문서에 저장된 원문 반복
-- 실패한 탐색의 전체 로그
-- 적용하지 않는 대안의 장문
-- 도구 호출 내역 자체
+1. 실제 변경과 검증 결과를 책임 원본에 반영한다.
+2. `maintaining-project-context-and-handoff`로 현재 상태·다음 작업·위험을 압축한다.
+3. 실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 Skill 호출을 Learning Log에 기록한다.
+4. 공용화 가치가 있으면 `managing-base-change-proposals`로 제안한다.
+5. 완료 보고에서 변경·검증·미검증·사용자 확인·위험·롤백을 분리한다.

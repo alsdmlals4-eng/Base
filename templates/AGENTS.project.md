@@ -1,22 +1,16 @@
 # AGENTS.md
 
-이 파일은 현재 프로젝트의 최상위 작업 규칙이다. Base의 **[학습형] [공용] 원칙**을 프로젝트의 엔진, 구조, 세계관, 용어, 금지 범위와 검증 방식에 맞게 분화한다.
-
-이 프로젝트 저장소는 공용 Base의 복제 원본이 아니라 **프로젝트 전용 기획·구현·검증 공간**이다. 프로젝트에서 얻은 재사용 가능한 방법과 실패 교훈은 작업 종료·인수인계 시 Base 공용 학습 데이터로 환류한다.
+이 파일은 현재 프로젝트의 최상위 작업 규칙이다. Base의 공용 원칙을 프로젝트의 엔진, 구조, 세계관, 용어, 금지 범위와 검증 방식에 맞게 분화한다.
 
 ## Top-level continuity rule
 
-새 채팅, 새 AI, 새 작업자가 과거 대화나 기존 작업자의 설명 없이도 저장소만으로 작업을 이어갈 수 있어야 한다.
+새 채팅, 새 AI, 새 작업자가 과거 대화 없이 저장소만으로 프로젝트의 방향, 현재 상태, 다음 작업, 보호 범위, 책임 원본과 검증 방법을 찾을 수 있어야 한다.
 
-- 프로젝트 기획서만 읽어도 핵심 플레이어 경험, 현재 방향, 확정·미확정 사항, 범위와 금지 방향을 이해할 수 있어야 한다.
-- 로드맵은 현재 단계, 우선순위, 선행 조건, 다음 작업, 단계별 종료 기준과 검증을 유지한다.
-- Base 스킬과 프로젝트 전용 스킬 확장은 현재 작업 구조, 입력, 절차, 산출물, 완료 기준과 실패 기준을 유지한다.
-- Active Context·Handoff는 기획서를 복제하지 않고 현재 상태, 최근 결정, 다음 실행 순서와 책임 문서를 연결한다.
-- Documentation Map은 질문별 현행 책임 원본과 최초 읽기 순서를 유지한다.
-- 방향, 수치, 용어, 범위, 구현 상태 또는 작업 절차가 바뀌면 같은 작업 안에서 관련 기획서·로드맵·스킬·Active Context·문서 지도를 갱신한다.
-- 같은 정보의 활성 복제본을 만들지 않고 현행 책임 원본 하나를 갱신한다.
-
-완료 전에는 새 작업자가 10분 안에 프로젝트의 핵심 방향, 현재 상태, 다음 작업, 금지 범위, 책임 문서와 검증 방법을 찾을 수 있는지 확인한다.
+- 프로젝트 기획서는 핵심 경험·방향·범위·금지 방향을 책임진다.
+- Roadmap은 단계·우선순위·선행 조건·종료 기준을 책임진다.
+- Active Context는 현재 상태의 기본 원본이며 Handoff는 경계 시점의 스냅샷이다.
+- Documentation Map은 질문별 현행 책임 원본을 연결한다.
+- 같은 정보의 활성 복제본을 만들지 않는다.
 
 ## Project
 
@@ -25,69 +19,59 @@
 - Language:
 - Genre:
 - Core player promise:
+- Pointed fun hypothesis:
+- Current concept·PoC stage:
+- Project definition of ambiguous terms such as DDD:
 
 ## Base
 
 - Repository: `alsdmlals4-eng/Base`
 - Version record: `docs/BASE_RULES_VERSION.md`
 - Local shared copy:
+  - `docs/OPERATING_MODEL.md`
   - `docs/AI_SHARED_WORK_RULES.md`
   - `docs/AI_WORKFLOW_RULES.md`
   - `docs/MVP_WORKFLOW_CHECKLIST.md`
   - `docs/DOCUMENTATION_MAP.md`
-  - 필요한 `docs/knowledge/`, `skills/`, `templates/`
+  - 필요한 `skills/`, `templates/`, `docs/knowledge/`
 
-일상 작업에서는 Base 원격보다 프로젝트 로컬 사본을 먼저 읽는다. GitHub와 로컬은 자동 동기화되지 않으므로 기준 커밋과 동기화 날짜를 기록한다.
+일상 작업에서는 Base 원격보다 프로젝트 로컬 사본을 먼저 읽는다. 기준 커밋과 동기화 날짜를 기록한다.
 
 ## Priority
 
 1. 최신 사용자 지시
 2. 이 `AGENTS.md`
 3. 프로젝트 보안·엔진·데이터 규칙
-4. 프로젝트 Active Context·Handoff
-5. 승인 기획서와 현재 Issue 또는 승인된 직접 요청·Goal·Plan
+4. 프로젝트 Active Context와 승인된 작업 계약
+5. 등록된 책임 원본과 실제 파일·테스트
 6. Base 로컬 사본
 7. Base 원격
 8. 과거 대화와 추정
 
 ## Default reading order
 
-작업 시작 전에는 현재 작업에 적용되는 공용 Base 정보와 프로젝트 전용 정보를 모두 확인한다.
-
-작업 계약은 `github_issue` 또는 `approved_direct_request`다. 직접 요청은 Issue가 없어도 되지만 Goal·PR에 범위·제외·완료 기준·검증을 남긴다.
-
-작업에 필요한 도구·파일·폰트·계정 인증·저장소 또는 브랜치 권한이 없으면 사용자에게 필요한 이유, 설치·적용 방법, 확인 명령과 최소 권한 범위를 안내해 요청한다. 사용자 승인 없이 시스템 전역 설치·권한 확대·보안 또는 Branch protection 설정 변경을 하지 않으며, 설치 완료 통보 후에도 실제 경로·버전·인증을 확인한다.
+작업 계약은 `github_issue` 또는 `approved_direct_request`다.
 
 ```text
 AGENTS.md
 → BASE_RULES_VERSION.md와 Base 로컬 사본
-→ 프로젝트 Documentation Map
-→ Handoff·Active Context
-→ 프로젝트 방향과 관련 분야 책임 문서
-→ Roadmap
+→ 프로젝트 START_HERE·Active Context·Documentation Map
+→ Development Gates·Roadmap
+→ Design Document Registry·현재 책임 원본
+→ Skill Registry·필요한 통합 Skill과 mode
 → 현재 Issue·Goal·Plan
-→ 실제 수정 대상과 연결 파일
+→ 실제 수정 대상·참조·테스트
 ```
 
-### Base 공용 확인 범위
+`모두 확인`은 저장소 전체를 읽는다는 뜻이 아니다. 백업·보류·제거 후보와 전체 skills 폴더는 기본 읽기에서 제외한다.
 
-- 관련 공용 작업 규칙
-- 해당 분야 method·research
-- 실행 skill과 검수 matrix
-- 사용할 template
-- 유사 성공·실패·미검증 case
+## Required environment
 
-### 프로젝트 전용 확인 범위
+- 필수 도구·입력 파일:
+- 필수 계정·저장소 권한:
+- 설치·적용 확인 명령:
 
-- 프로젝트 방향과 플레이어 경험
-- 실제 기획·데이터·UI·아트·연출 규칙
-- 현재 로드맵·구현·테스트 상태
-- 프로젝트 전용 skill extension과 작업 절차
-- 실제 파일, 호출, 참조, 저장·호환성 영향
-
-`모두 확인`은 저장소 전체를 무조건 읽는다는 뜻이 아니다. Documentation Map과 참조 관계로 현재 작업에 적용되는 공용·전용 현행 책임 원본과 영향 파일을 빠짐없이 확인한다.
-
-`archive`, `[백업]`, `hold`, `[보류]`는 재개 결정 전까지 기본 읽기·구현 대상에서 제외한다.
+필요한 도구·파일·폰트·인증·권한이 없으면 사용자에게 이유, 설치·적용 방법, 확인 명령과 최소 권한을 요청한다. 사용자 승인 없이 시스템 전역 설치·권한 확대·Branch protection 변경을 하지 않는다.
 
 ## Project-specific rules
 
@@ -97,72 +81,114 @@ AGENTS.md
 - UI·아트·연출 규칙:
 - 금지 구조:
 - 보호 경로:
-- 필수 도구·입력 파일:
-- 필수 계정·저장소 권한:
 - 범위 밖 리팩터링 금지:
 - 정상 사용자 변경 보존:
 
 ## Request-to-work rule
 
-기능·게임 경험·아트 방향·구조·워크플로 변경은 저장소 사실 확인 → 딥인터뷰 → 사용자 마지막 재진술 확인 → 실행 프롬프트 변환 순서로 시작한다. 오탈자, 명확한 단일 파일 기계 수정, 입력이 같은 검사 재실행은 예외다.
+기능·게임 경험·아트 방향·구조·워크플로 변경은 `managing-project-intake-and-work-contract`를 사용한다.
 
-기존 프로젝트의 인터뷰 경로가 다르면 감사와 승인 없이 이동하지 않고 Documentation Map에 현행 대응 경로를 연결한다.
+```text
+route
+→ 저장소 사실 조사
+→ 필요한 경우 clarify
+→ 사용자 마지막 재진술 확인
+→ contract
+```
 
-L2 이상의 설계 작업은 목적·맥락·경험·범위·제약·산출물·완료 기준·검증으로 변환한 뒤 시작한다. 딥인터뷰 대상은 `INTERVIEW_REGISTRY.json`이 `CONFIRMED`이고 사용자 확인 근거가 있을 때만 실행 프롬프트를 만든다.
+오탈자, 명확한 단일 파일 기계 수정, 입력이 같은 검사 재실행은 예외다. 인터뷰 Registry를 사용하는 프로젝트는 `CONFIRMED`와 사용자 확인 근거가 있을 때만 실행 계약을 확정한다.
 
+- Work contract type: `github_issue` / `approved_direct_request`
+- Intake Skill: `managing-project-intake-and-work-contract`
+- Intake mode/status:
 - Interview ID·status·confirmation:
-- Base skill: `conducting-deep-requirement-interviews` → `transforming-requests-into-prompts`
-- Project extension:
-- Current executable prompt:
+- Current executable contract:
+
+## Core concept and PoC
+
+핵심 컨셉·제약·뾰족한 재미·기획 요소 정렬·SWOT·MDA/DDE·PoC·기획 재조정은 `analyzing-and-refining-game-concepts`를 사용한다.
+
+```text
+frame
+→ constrain
+→ sharpen
+→ structure
+→ analyze
+→ poc-contract
+→ recalibrate
+→ production-gate
+```
+
+- 기능 목록을 핵심 컨셉으로 대체하지 않는다.
+- SWOT은 SO·WO·ST·WT 실행안으로 변환한다.
+- `DDD`처럼 의미가 여러 개인 약어는 프로젝트 정의 없이 임의 해석하지 않는다.
+- PoC는 가장 위험한 가설의 최소 검증이며 전체 게임이나 Vertical Slice로 팽창시키지 않는다.
+- PoC 결과는 기획의 유지·증폭·변경·삭제·보류·재검증 결정에 반영한다.
+
+## Project operating-system changes
+
+기존 프로젝트 구조 변경은 `managing-game-project-operating-system`을 사용한다.
+
+```text
+audit
+→ 목표 구조·보존·롤백 제안
+→ 사용자 승인
+→ 승인된 처리표만 migrate
+→ verify
+```
+
+사용자 승인 전 대량 삭제·이동·통합·강제 개명을 하지 않는다.
+
+## Design documents and publication
+
+기획 책임 원본은 `managing-design-documents`로 작성·갱신·발행한다.
+
+- `source_only`
+- `milestone_sync`
+- `always_sync`
+
+한 질문에는 등록된 단일 Markdown 또는 JSON 책임 원본 하나만 둔다. DOCX·PDF를 독립 원본으로 수정하지 않는다.
 
 ## Validation
 
+일반 변경은 `reviewing-and-validating-project-changes`로 작업 계약과 실제 diff·실행 증거를 대조한다.
+
+- Contract·diff check:
 - Format·lint:
 - Automated tests:
 - Run path:
 - Save·load:
+- Edge·failure·counterexample:
+- Adjacent regression:
 - Manual review:
-- Regression scope:
 - Cold-start review:
+- Evidence report:
+- Rollback:
 
-## File lifecycle
+외부 AI 결과가 있으면 `external-source-review` mode를 추가한다. 실행하지 않은 검증은 `UNVERIFIED`와 사유로 기록한다.
 
-- 한 질문에 현행 책임 문서 하나를 둔다.
-- `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않는다.
-- 이전 내용은 Git 이력으로 보존한다.
-- 생성·삭제·이동·이름 변경 시 참조와 동기화를 확인한다.
+## End-of-work and learning
 
-## End-of-work and handoff learning cycle
-
-작업 종료와 인수인계 시 다음을 수행한다.
-
-1. 프로젝트 고유 결정, 수치, 구현 상태를 현행 기획서·테스트·로드맵에 반영한다.
-2. Active Context 또는 Handoff를 최신화한다.
-3. 프로젝트 전용 skill extension과 실행 절차를 현재 구조에 맞게 갱신한다.
-4. Documentation Map, README, Issue·Goal·Plan의 연결을 확인한다.
-5. 이번 작업의 결과를 `프로젝트 전용`과 `공용 학습 데이터`로 분리한다.
-6. 재사용 가능한 판단법·작성법·절차·체크리스트·템플릿을 Base 관련 method·skill·template에 반영한다.
-7. 문제, 선택, 실제 결과, 실패, 수정 과정, 미검증 항목을 Base case 형식으로 작성하거나 기존 사례 상태를 갱신한다.
-8. 한 번 성공한 방법은 `관찰`·`가설`로 기록하고 반복 검증 전에는 공용 확정 규칙으로 표시하지 않는다.
-9. Base 변경 시 `docs/BASE_RULES_VERSION.md`와 로컬 사본의 동기화 필요를 기록한다.
-10. 새 작업자가 콜드 스타트 질문에 답할 수 있는지 확인한다.
-
-공용화 가능한 내용이 없으면 `공용 학습 데이터 없음 — 프로젝트 전용 또는 단발성 작업`으로 기록한다.
+1. 프로젝트 고유 결정·수치·구현 상태를 책임 원본·테스트·Roadmap에 반영한다.
+2. Active Context를 최신화하고 필요 시 Handoff 스냅샷을 만든다.
+3. Skill·Documentation Map·Issue·Plan 연결을 확인한다.
+4. 실패·중요 결정·재사용 교훈·실제 검증 결과를 Learning Log에 기록한다.
+5. 공용화 가치가 있으면 `managing-base-change-proposals`로 제안한다.
+6. 제안 PR과 승인된 구현 PR을 분리한다.
+7. 새 작업자가 콜드 스타트 질문에 답할 수 있는지 확인한다.
 
 ## Report format
 
 ```md
 ## 변경 파일과 이유
-## 유지한 기존 동작
-## 구현·문서 변경
-## 검증 결과
+## 유지한 기존 동작·결정·자산
+## 핵심 컨셉·PoC·기획 재조정
+## 구현·문서·발행 변경
+## 검증 판정과 증거
 ## 미검증·사용자 확인
-## 남은 위험
-## 기획서·로드맵·스킬·Active Context 최신화
+## 남은 위험·롤백
+## Active Context·Roadmap·Skill 최신화
 ## 콜드 스타트 검수
 ## 프로젝트 전용 최신화
-## Base 공용 학습 데이터
-## 갱신한 기획 method·스킬·템플릿
-## 작성·갱신한 사례와 지식 상태
-## 후속 동기화
+## Base 공용 학습 데이터·제안 상태
 ```

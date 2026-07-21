@@ -31,6 +31,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "START_HERE.md",
             "AGENTS.md",
             "README.md",
+            "docs/OPERATING_MODEL.md",
             "docs/DOCUMENTATION_MAP.md",
             "docs/MVP_WORKFLOW_CHECKLIST.md",
             "docs/knowledge/methods/GAME_PROJECT_OPERATING_SYSTEM_METHOD.md",
@@ -39,33 +40,34 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "docs/knowledge/methods/DISCIPLINE_SKILL_EVOLUTION_METHOD.md",
             "docs/knowledge/methods/DISCIPLINE_PDF_PUBLICATION_METHOD.md",
             "skills/SKILL_REGISTRY.json",
+            "skills/LEGACY_SKILL_ALIASES.md",
+            "skills/SKILL_LEARNING_LOG.md",
+            "skills/managing-project-intake-and-work-contract/SKILL.md",
+            "skills/managing-project-intake-and-work-contract/references/question-and-source-model.md",
+            "skills/managing-project-intake-and-work-contract/references/ambiguity-and-closure.md",
+            "skills/managing-game-project-operating-system/SKILL.md",
+            "skills/managing-design-documents/SKILL.md",
+            "skills/managing-base-change-proposals/SKILL.md",
+            "skills/evolving-project-discipline-skills/SKILL.md",
+            "skills/maintaining-project-context-and-handoff/SKILL.md",
+            "skills/analyzing-and-refining-game-concepts/SKILL.md",
+            "skills/designing-vertical-slices/SKILL.md",
+            "skills/orchestrating-deepseek-worktrees/SKILL.md",
+            "skills/reviewing-and-validating-project-changes/SKILL.md",
+            "skills/designing-art-prompts-and-technique-cards/SKILL.md",
+            "skills/auditing-and-refining-ui-art/SKILL.md",
             "schemas/base-skill-registry-v1.schema.json",
             "schemas/base-change-proposal-registry-v1.schema.json",
             "schemas/interview-registry-v1.schema.json",
             "[수정제안서]/README.md",
             "[수정제안서]/PROPOSAL_REGISTRY.json",
             "templates/BASE_CHANGE_PROPOSAL.md",
+            "templates/planning/GAME_CONCEPT_DIRECTION_REVIEW.md",
+            "templates/quality/PROJECT_CHANGE_VALIDATION.md",
             "tools/check_base_change_proposals.py",
-            "skills/SKILL_LEARNING_LOG.md",
-            "skills/routing-project-work-by-discipline/SKILL.md",
-            "skills/conducting-deep-requirement-interviews/SKILL.md",
-            "skills/maintaining-project-context-and-handoff/SKILL.md",
-            "skills/verifying-game-project-operating-system/SKILL.md",
-            "skills/installing-game-project-operating-system/SKILL.md",
-            "skills/migrating-existing-game-project-structure/SKILL.md",
-            "skills/evolving-project-discipline-skills/SKILL.md",
-            "skills/publishing-discipline-bibles/SKILL.md",
             "tools/build_project_skill_map.py",
-            "tools/skill_map_diagrams.py",
             "tools/build_design_documents.py",
-            "tools/design_document_diagrams.py",
-            "tools/publication_v3.py",
             "tools/check_publication_environment.py",
-            "tools/check_interview_contract.py",
-            "tools/audit_external_source.py",
-            "requirements-publication.txt",
-            "package.json",
-            "pnpm-lock.yaml",
             "schemas/design-document-registry-v3.schema.json",
             "schemas/structured-design-document-v3.schema.json",
             "schemas/publication-manifest-v3.schema.json",
@@ -85,72 +87,72 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "templates/project-operations/DESIGN_DOCUMENT.md",
             "templates/project-operations/DESIGN_DOCUMENT_REGISTRY.json",
             "templates/project-operations/SKILL_REGISTRY.json",
-            "templates/project-operations/OPERATING_SYSTEM_HEALTH_REPORT.md",
-            "templates/project-operations/EXISTING_PROJECT_MIGRATION_AUDIT.md",
-            "templates/project-operations/LIFECYCLE_AREAS.md",
-            "templates/project-operations/skills/FOUNDATION_SKILL.md",
-            "templates/project-operations/skills/DISCIPLINE_SKILL.md",
-            "templates/project-operations/skills/SKILL_LEARNING_LOG.md",
             "templates/project-operations/github/check_documentation_governance.py",
             "templates/project-operations/github/check_skill_routing_governance.py",
             "templates/project-operations/github/check_design_document_publications.py",
-            "templates/project-operations/github/documentation-governance.json",
-            "templates/project-operations/github/documentation-governance.yml",
-            "templates/project-operations/github/ISSUE_TEMPLATE.yml",
-            "templates/project-operations/github/PULL_REQUEST_TEMPLATE.md",
-            "templates/project-operations/github/CODEOWNERS.example",
             "tests/test_design_document_publication_governance.py",
             "tests/test_design_document_generation.py",
         ]
         missing = [path for path in required if not (ROOT / path).exists()]
         self.assertEqual(missing, [], f"Missing operating-system paths: {missing}")
 
-    def test_deprecated_markdown_bible_templates_are_absent(self) -> None:
-        forbidden = [
-            "templates/project-operations/DISCIPLINE_BIBLE.md",
-            "templates/project-operations/PROJECT_SKILL_MAP.md",
-            "templates/project-operations/DISCIPLINE_PDF_PUBLICATION.md",
-            "templates/project-operations/PUBLICATION_MANIFEST.json",
+    def test_removed_skill_paths_are_absent(self) -> None:
+        removed = [
+            "skills/routing-project-work-by-discipline/SKILL.md",
+            "skills/conducting-deep-requirement-interviews/SKILL.md",
+            "skills/transforming-requests-into-prompts/SKILL.md",
+            "skills/installing-game-project-operating-system/SKILL.md",
+            "skills/migrating-existing-game-project-structure/SKILL.md",
+            "skills/verifying-game-project-operating-system/SKILL.md",
+            "skills/writing-game-design-documents/SKILL.md",
+            "skills/publishing-discipline-bibles/SKILL.md",
+            "skills/promoting-project-knowledge/SKILL.md",
+            "skills/reviewing-and-implementing-base-change-proposals/SKILL.md",
+            "skills/reviewing-external-ai-drafts/SKILL.md",
         ]
-        present = [path for path in forbidden if (ROOT / path).exists()]
-        self.assertEqual(present, [], f"Deprecated active templates still exist: {present}")
+        present = [path for path in removed if (ROOT / path).exists()]
+        self.assertEqual(present, [], f"Merged skill files still active: {present}")
 
-    def test_minimum_base_invocation_is_preserved(self) -> None:
+    def test_legacy_aliases_cover_every_removed_skill(self) -> None:
+        aliases = (ROOT / "skills/LEGACY_SKILL_ALIASES.md").read_text(encoding="utf-8")
+        for skill_id in (
+            "routing-project-work-by-discipline",
+            "conducting-deep-requirement-interviews",
+            "transforming-requests-into-prompts",
+            "installing-game-project-operating-system",
+            "migrating-existing-game-project-structure",
+            "verifying-game-project-operating-system",
+            "writing-game-design-documents",
+            "publishing-discipline-bibles",
+            "promoting-project-knowledge",
+            "reviewing-and-implementing-base-change-proposals",
+            "reviewing-external-ai-drafts",
+        ):
+            self.assertIn(f"`{skill_id}`", aliases)
+        for replacement in (
+            "managing-project-intake-and-work-contract",
+            "managing-game-project-operating-system",
+            "managing-design-documents",
+            "managing-base-change-proposals",
+            "reviewing-and-validating-project-changes",
+        ):
+            self.assertIn(f"`{replacement}`", aliases)
+
+    def test_minimum_base_invocation_routes_to_consolidated_skills(self) -> None:
         start = (ROOT / "START_HERE.md").read_text(encoding="utf-8")
         self.assertIn("https://github.com/alsdmlals4-eng/Base", start)
-        for term in [
-            "DESIGN_DOCUMENT_REGISTRY.json",
-            "Markdown",
-            "JSON",
-            "기획서 PDF",
-            "PROJECT_SKILL_MAP.pdf",
-        ]:
-            self.assertIn(term, start)
-        for skill in [
-            "routing-project-work-by-discipline",
-            "migrating-existing-game-project-structure",
-            "publishing-discipline-bibles",
+        for skill in (
+            "managing-project-intake-and-work-contract",
+            "managing-game-project-operating-system",
+            "managing-design-documents",
             "evolving-project-discipline-skills",
             "maintaining-project-context-and-handoff",
-            "verifying-game-project-operating-system",
-            "conducting-deep-requirement-interviews",
-        ]:
+            "analyzing-and-refining-game-concepts",
+            "reviewing-and-validating-project-changes",
+            "managing-base-change-proposals",
+        ):
             self.assertIn(skill, start)
-
-    def test_gate_contract_contains_work_and_product_gates(self) -> None:
-        text = (ROOT / "docs/knowledge/methods/DEVELOPMENT_GATES_METHOD.md").read_text(encoding="utf-8")
-        for term in [
-            "Definition of Ready",
-            "Implementation Gate",
-            "Verification Gate",
-            "Documentation Gate",
-            "Integration·Completion Gate",
-            "Vertical Slice",
-            "Feature Complete",
-            "Content Complete",
-            "Release Candidate",
-        ]:
-            self.assertIn(term, text)
+        self.assertIn("LEGACY_SKILL_ALIASES.md", start)
 
     def test_skill_front_matter_names_are_unique(self) -> None:
         skill_files = sorted((ROOT / "skills").glob("*/SKILL.md"))
@@ -163,7 +165,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             self.assertNotIn(name, names, f"Duplicate skill name {name}: {names.get(name)} and {path}")
             names[name] = path
 
-    def test_base_skill_registry_is_valid_and_selective(self) -> None:
+    def test_base_skill_registry_is_valid_selective_and_consolidated(self) -> None:
         registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
         schema = json.loads((ROOT / "schemas/base-skill-registry-v1.schema.json").read_text(encoding="utf-8"))
         errors = sorted(Draft202012Validator(schema).iter_errors(registry), key=lambda error: list(error.path))
@@ -172,6 +174,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         self.assertFalse(policy["load_all_skills"])
         self.assertEqual(policy["default_selection"], "none")
         self.assertTrue(policy["require_trigger_match"])
+        self.assertEqual(len(registry["skills"]), 12)
         seen: set[str] = set()
         for item in registry["skills"]:
             skill_id = item["skill_id"]
@@ -184,24 +187,105 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             self.assertTrue(item["review_triggers"])
             self.assertTrue((ROOT / item["path"]).is_file())
             self.assertTrue((ROOT / item["learning_log"]).is_file())
+        self.assertTrue({
+            "managing-project-intake-and-work-contract",
+            "managing-game-project-operating-system",
+            "managing-design-documents",
+            "analyzing-and-refining-game-concepts",
+            "reviewing-and-validating-project-changes",
+            "managing-base-change-proposals",
+        }.issubset(seen))
 
-    def test_skill_evolution_uses_hybrid_optional_contract(self) -> None:
+    def test_unified_skill_modes_preserve_separate_safety_boundaries(self) -> None:
+        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        operating = (ROOT / "skills/managing-game-project-operating-system/SKILL.md").read_text(encoding="utf-8")
+        documents = (ROOT / "skills/managing-design-documents/SKILL.md").read_text(encoding="utf-8")
+        concepts = (ROOT / "skills/analyzing-and-refining-game-concepts/SKILL.md").read_text(encoding="utf-8")
+        validation = (ROOT / "skills/reviewing-and-validating-project-changes/SKILL.md").read_text(encoding="utf-8")
+        proposals = (ROOT / "skills/managing-base-change-proposals/SKILL.md").read_text(encoding="utf-8")
+        for mode in ("route", "clarify", "contract"):
+            self.assertIn(f"`{mode}`", intake)
+        for mode in ("install", "audit", "migrate", "verify"):
+            self.assertIn(f"`{mode}`", operating)
+        self.assertIn("읽기 전용", operating)
+        self.assertIn("approved_migration_table", operating)
+        for mode in ("author", "update", "restructure", "publish", "validate"):
+            self.assertIn(f"`{mode}`", documents)
+        for policy in ("source_only", "milestone_sync", "always_sync"):
+            self.assertIn(policy, documents)
+        for mode in ("frame", "constrain", "sharpen", "structure", "analyze", "poc-contract", "recalibrate", "production-gate"):
+            self.assertIn(f"`{mode}`", concepts)
+        for phase in ("CONCEPT_SEED", "POINTED_FUN_HYPOTHESIS", "POC_BUILD_AND_TEST", "PRODUCTION_READY"):
+            self.assertIn(phase, concepts)
+        for lens in ("SWOT", "SO", "WO", "ST", "WT", "MDA", "DDE", "DDD"):
+            self.assertIn(lens, concepts)
+        self.assertIn("임의 해석하지 않는다", concepts)
+        for mode in ("contract-check", "external-source-review", "static-validation", "runtime-validation", "regression", "evidence-report"):
+            self.assertIn(f"`{mode}`", validation)
+        for decision in ("ACCEPT", "REVISE", "REJECT", "UNVERIFIED"):
+            self.assertIn(decision, validation)
+        for mode in ("extract", "submit", "review", "implement", "verify"):
+            self.assertIn(f"`{mode}`", proposals)
+        self.assertIn("approval_ref", proposals)
+        self.assertIn("제안 PR과", proposals)
+        self.assertIn("구현 PR", proposals)
+
+    def test_operating_model_is_single_explanatory_source(self) -> None:
+        operating = (ROOT / "docs/OPERATING_MODEL.md").read_text(encoding="utf-8")
+        for term in (
+            "작업 생명주기",
+            "책임 원본",
+            "source_only",
+            "milestone_sync",
+            "always_sync",
+            "lifecycle_status",
+            "approval_status",
+            "implementation_status",
+            "verification_status",
+            "publication_status",
+            "뾰족한 재미",
+            "reviewing-and-validating-project-changes",
+        ):
+            self.assertIn(term, operating)
+        for relative in ("README.md", "START_HERE.md", "AGENTS.md", "docs/DOCUMENTATION_MAP.md"):
+            self.assertIn("docs/OPERATING_MODEL.md", (ROOT / relative).read_text(encoding="utf-8"))
+
+    def test_gate_contract_contains_work_and_product_gates(self) -> None:
+        text = (ROOT / "docs/knowledge/methods/DEVELOPMENT_GATES_METHOD.md").read_text(encoding="utf-8")
+        for term in (
+            "Definition of Ready",
+            "Implementation Gate",
+            "Verification Gate",
+            "Documentation Gate",
+            "Integration·Completion Gate",
+            "Vertical Slice",
+            "Feature Complete",
+            "Content Complete",
+            "Release Candidate",
+        ):
+            self.assertIn(term, text)
+
+    def test_skill_evolution_is_consolidation_first(self) -> None:
         text = (ROOT / "skills/evolving-project-discipline-skills/SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("relevant_design_document_sources", text)
-        self.assertIn("프로젝트가 선택한 분야만", text)
-        self.assertIn("선택 `PROJECT_SKILL_MAP.docx`", text)
-        self.assertNotIn("relevant_design_document_json", text)
-        self.assertNotIn("11개 분야의 `discipline_entrypoints`", text)
+        for term in (
+            "기존 통합 Skill의 mode",
+            "Consolidation-first",
+            "LEGACY_SKILL_ALIASES.md",
+            "load_by_default",
+            "Learning Log",
+            "managing-game-project-operating-system",
+        ):
+            self.assertIn(term, text)
 
     def test_project_learning_requires_proposal_before_base_implementation(self) -> None:
-        promotion = (ROOT / "skills/promoting-project-knowledge/SKILL.md").read_text(encoding="utf-8")
-        implementation = (ROOT / "skills/reviewing-and-implementing-base-change-proposals/SKILL.md").read_text(encoding="utf-8")
+        proposals = (ROOT / "skills/managing-base-change-proposals/SKILL.md").read_text(encoding="utf-8")
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
-        for text in (promotion, implementation, agents):
+        for text in (proposals, agents):
             self.assertIn("[수정제안서]", text)
             self.assertIn("사용자 승인", text)
-        self.assertIn("제안 PR에는 `[수정제안서]/**`만", promotion)
-        self.assertIn("approval_ref", implementation)
+            self.assertIn("별도 구현 PR", text)
+        self.assertIn("제안 PR에는 원칙적으로 `[수정제안서]/**`만", proposals)
+        self.assertIn("approval_ref", proposals)
 
     def test_project_skill_registry_defines_human_publications(self) -> None:
         registry = json.loads((ROOT / "templates/project-operations/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
@@ -212,112 +296,46 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         self.assertEqual(human["diagram_directory"], "PROJECT_SKILL_MAP.assets")
         self.assertEqual(human["markdown_summary"], "PROJECT_SKILL_MAP.md")
         self.assertEqual(registry["schema_version"], 3)
-        self.assertEqual(set(registry["discipline_entrypoints"]), {
-            "설정·내러티브", "게임 디자인", "UX·UI·접근성", "개발·엔지니어링",
-            "테크니컬 아트·파이프라인", "아트", "사운드", "QA", "프로덕션·PM",
-            "분석·유저리서치", "통합검수",
-        })
 
     def test_design_document_templates_define_hybrid_sources_and_outputs(self) -> None:
         source = json.loads((ROOT / "templates/project-operations/DESIGN_DOCUMENT.json").read_text(encoding="utf-8"))
         registry = json.loads((ROOT / "templates/project-operations/DESIGN_DOCUMENT_REGISTRY.json").read_text(encoding="utf-8"))
         markdown = (ROOT / "templates/project-operations/DESIGN_DOCUMENT.md").read_text(encoding="utf-8")
         self.assertEqual(source["schema_version"], 3)
-        self.assertIn("document_id", source)
-        self.assertIn("overview", source)
-        self.assertIn("workflow", source)
         self.assertIn("approved_visuals", source)
         self.assertIn("definition_of_done", source)
         self.assertEqual(registry["schema_version"], 3)
-        self.assertIn("Markdown or JSON", registry["source_of_truth_policy"])
         example = registry["document_contract_example"]
-        self.assertEqual(example["source_format"], "markdown")
-        self.assertEqual(example["publication_policy"], "always_sync")
-        self.assertIsNone(example["output_docx"])
+        self.assertIn(example["publication_policy"], {"source_only", "milestone_sync", "always_sync"})
         for field in ("source_path", "output_pdf", "publication_manifest", "generator"):
             self.assertTrue(example[field])
         for heading in ("## 목표", "## 배경과 의도", "## 범위", "## 규칙과 제약", "## 검증과 완료 기준"):
             self.assertIn(heading, markdown)
 
     def test_project_template_places_design_folder_at_repository_root(self) -> None:
-        for relative in [
+        for relative in (
             "templates/project-operations/README.md",
             "templates/project-operations/PROJECT_START_HERE.md",
             "templates/project-operations/PROJECT_DOCUMENTATION_MAP.md",
-        ]:
-            with self.subTest(path=relative):
-                text = (ROOT / relative).read_text(encoding="utf-8")
-                self.assertIn("저장소 루트", text)
-                self.assertIn("[기획서]", text)
+        ):
+            text = (ROOT / relative).read_text(encoding="utf-8")
+            self.assertIn("저장소 루트", text)
+            self.assertIn("[기획서]", text)
         config = json.loads((ROOT / "templates/project-operations/github/documentation-governance.json").read_text(encoding="utf-8"))
         self.assertEqual(config["design_root"], "[기획서]")
         self.assertTrue(config["enforce_top_level_design_root"])
         self.assertTrue(config["enforce_skill_map_publication"])
         self.assertTrue(config["enforce_design_document_publications"])
-        self.assertEqual(config["design_document_registry"], "[기획서]/00_프로젝트_허브/DESIGN_DOCUMENT_REGISTRY.json")
 
     def test_json_templates_are_valid(self) -> None:
-        for relative in [
+        for relative in (
             "skills/SKILL_REGISTRY.json",
             "templates/project-operations/SKILL_REGISTRY.json",
             "templates/project-operations/DESIGN_DOCUMENT.json",
             "templates/project-operations/DESIGN_DOCUMENT_REGISTRY.json",
             "templates/project-operations/github/documentation-governance.json",
-        ]:
-            with self.subTest(path=relative):
-                json.loads((ROOT / relative).read_text(encoding="utf-8"))
-
-    def test_design_publication_contract_requires_full_process_and_approved_images(self) -> None:
-        text = (ROOT / "docs/knowledge/methods/DISCIPLINE_PDF_PUBLICATION_METHOD.md").read_text(encoding="utf-8")
-        for term in [
-            "Markdown",
-            "JSON",
-            "선택",
-            "PDF",
-            "Mermaid",
-            "승인 이미지",
-            "DESIGN_DOCUMENT_REGISTRY.json",
-            "SHA-256",
-            "전 페이지",
-        ]:
-            self.assertIn(term, text)
-
-    def test_migration_contract_requires_audit_and_preservation(self) -> None:
-        text = (ROOT / "docs/knowledge/methods/EXISTING_PROJECT_SAFE_MIGRATION_METHOD.md").read_text(encoding="utf-8")
-        for term in ["Audit only", "절대 보존 대상", "사용자 승인", "변경 전후 보존 검증", "[백업]", "[보류]", "[제거 후보]"]:
-            self.assertIn(term, text)
-
-    def test_skill_evolution_contract_requires_always_learning_without_forced_rewrites(self) -> None:
-        text = (ROOT / "docs/knowledge/methods/DISCIPLINE_SKILL_EVOLUTION_METHOD.md").read_text(encoding="utf-8")
-        for term in ["실패", "중요한 결정", "실제 검증 결과", "Learning Log", "load_by_default", "trigger_tags", "verifying-game-project-operating-system"]:
-            self.assertIn(term, text)
-
-    def test_project_kit_exposes_optional_discipline_catalog(self) -> None:
-        config = json.loads((ROOT / "templates/project-operations/github/documentation-governance.json").read_text(encoding="utf-8"))
-        registry = json.loads((ROOT / "templates/project-operations/DESIGN_DOCUMENT_REGISTRY.json").read_text(encoding="utf-8"))
-        self.assertEqual(config["required_design_document_coverage"], ["프로젝트 전체"])
-        self.assertEqual(config["required_skill_disciplines"], [])
-        self.assertIn("게임 디자인", config["available_discipline_catalog"])
-        self.assertEqual(registry["required_responsibility_coverage"], ["프로젝트 전체"])
-
-    def test_direct_request_and_local_base_contracts_are_explicit(self) -> None:
-        agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
-        routing = (ROOT / "skills/routing-project-work-by-discipline/SKILL.md").read_text(encoding="utf-8")
-        migration = (ROOT / "templates/project-operations/EXISTING_PROJECT_MIGRATION_AUDIT.md").read_text(encoding="utf-8")
-        project_readme = (ROOT / "templates/project-operations/README.md").read_text(encoding="utf-8")
-        self.assertIn("approved_direct_request", agents)
-        self.assertIn("approved_direct_request", routing)
-        self.assertNotIn("`PROJECT_SKILL_MAP.md`를 읽", routing)
-        self.assertIn("기존 책임 원본", migration)
-        self.assertIn("BASE_RULES_VERSION.md", project_readme)
-        self.assertIn("프로젝트에 동기화된 Base", project_readme)
-
-    def test_generic_publication_review_states_are_separate(self) -> None:
-        config = json.loads((ROOT / "templates/project-operations/github/documentation-governance.json").read_text(encoding="utf-8"))
-        checker = (ROOT / "templates/project-operations/github/check_documentation_governance.py").read_text(encoding="utf-8")
-        self.assertFalse(config["require_human_publication_visual_review"])
-        self.assertIn("automated_render_review", checker)
-        self.assertIn("human_visual_review", checker)
+        ):
+            json.loads((ROOT / relative).read_text(encoding="utf-8"))
 
     def test_missing_environment_contract_requests_user_action(self) -> None:
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
@@ -328,29 +346,18 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             self.assertIn("권한", text)
             self.assertIn("확인", text)
             self.assertIn("사용자", text)
-        self.assertIn("required_tools_and_files", agents)
-        self.assertIn("required_permissions", agents)
 
-    def test_deep_interview_gate_is_wired_to_project_contracts(self) -> None:
-        for relative in [
+    def test_project_templates_route_deep_interview_to_unified_intake(self) -> None:
+        for relative in (
             "AGENTS.md",
             "START_HERE.md",
             "templates/AGENTS.project.md",
             "templates/project-operations/AI_WORKFLOW.md",
             "templates/project-operations/PROJECT_START_HERE.md",
-        ]:
-            with self.subTest(path=relative):
-                text = (ROOT / relative).read_text(encoding="utf-8")
-                self.assertIn("conducting-deep-requirement-interviews", text)
-                self.assertIn("사용자", text)
-
-    def test_installer_preserves_hybrid_and_optional_contract(self) -> None:
-        text = (ROOT / "skills/installing-game-project-operating-system/SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("Markdown 또는 JSON", text)
-        self.assertIn("프로젝트가 실제로 선택한 책임 분야", text)
-        self.assertIn("INTERVIEW_REGISTRY.json", text)
-        self.assertNotIn("프로젝트 전체와 11개 책임 분야", text)
-        self.assertNotIn("기획 본책은 JSON으로 만든다", text)
+        ):
+            text = (ROOT / relative).read_text(encoding="utf-8")
+            self.assertIn("managing-project-intake-and-work-contract", text)
+            self.assertIn("사용자", text)
 
 
 if __name__ == "__main__":

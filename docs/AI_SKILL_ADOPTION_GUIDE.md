@@ -1,228 +1,138 @@
 # AI Skill Adoption Guide
 
-외부 또는 내부 AI 스킬을 채택·작성·검증할 때 사용하는 공용 기준이다. 스킬은 도구 이름이 아니라 반복 가능한 판단과 작업 계약이다.
+외부 또는 내부 AI Skill을 채택·작성·검증할 때 사용하는 공용 기준이다. Skill은 도구 이름이 아니라 반복 가능한 판단과 작업 계약이다.
 
 ## 1. 우선순위
 
-스킬과 외부 모델은 다음을 덮어쓸 수 없다.
+Skill과 외부 모델은 다음을 덮어쓸 수 없다.
 
 1. 사용자의 최신 지시
 2. 프로젝트 `AGENTS.md`와 보안·엔진 규칙
-3. 승인된 기획서, Issue·Goal·Plan
+3. 승인된 책임 원본·Issue·Plan
 4. 실제 파일과 실행 결과
-5. Base 또는 외부 스킬·모델
+5. Base 또는 외부 Skill·모델
 
-플러그인 미설치나 실행 실패는 프로젝트 작업을 중단할 이유가 아니다. 필요한 원칙을 일반 작업 흐름으로 적용한다.
+플러그인 미설치나 실행 실패는 작업을 완료한 것으로 간주할 수 없지만, 동등한 일반 절차로 진행할 수 있다.
 
-## 2. 사용 전 확인
+## 2. 채택 전 확인
 
-- 현재 작업의 실제 trigger와 맞는가?
-- 해결하려는 문제와 산출물이 명확한가?
-- 기존 Base·프로젝트 규칙과 중복되거나 충돌하지 않는가?
-- 파일 쓰기, 네트워크, API 키, 브라우저 데이터 등 추가 권한이 필요한가?
-- 스크립트·hook·MCP·외부 전송을 첫 실행 전에 검토했는가?
-- 설치 없이 짧은 규칙이나 기존 도구로 해결할 수 있는가?
+- 실제 trigger와 맞는가?
+- 기존 통합 Skill의 mode로 처리할 수 있는가?
+- 독립된 입력·산출물·Quality Bar·검증 경로가 있는가?
+- 기존 Base·프로젝트 규칙과 중복되거나 충돌하는가?
+- 추가 파일 쓰기·네트워크·API 키·브라우저 데이터 권한이 필요한가?
 - 실패 시 복구와 독립 검증이 가능한가?
-- 외부 AI에 제공할 파일이 allowlist로 제한되는가?
+
+새 Skill은 기존 Skill의 mode로 표현할 수 없고, 반복 빈도와 별도 검증 경계가 있을 때만 만든다.
 
 ## 3. 최소 라우팅
 
-기본값은 프로세스 스킬 1개와 도메인 스킬 1개 이하이다. 독립된 하위 작업이 있을 때만 추가한다.
+기본값은 통합 Foundation Skill 1개와 필요한 전문 Skill 1개 이하이다. 발행·검증·Handoff는 해당 단계에서만 실행한다.
 
-| 작업 신호 | 우선 스킬·원칙 |
+| 작업 신호 | 우선 Skill·mode |
 |---|---|
-| 기능·경험·아트 방향·구조·워크플로·Base 변경 제안 | `conducting-deep-requirement-interviews` |
-| 확인된 요구를 실행 계약으로 변환 | `transforming-requests-into-prompts` |
-| 기획서 구조·종류 결정 | `writing-game-design-documents` |
-| 핵심 경험과 제작 품질 검증 | `designing-vertical-slices` |
-| 대용량 초안·분류·반복 변환 | `orchestrating-deepseek-worktrees` |
-| 외부 AI 초안·패치 실제 반영 | `reviewing-external-ai-drafts` |
-| 아트·UI 기술 추천·이미지 프롬프트 | `designing-art-prompts-and-technique-cards` |
-| Godot·Web UI 결과 감사·승인된 개선 | `auditing-and-refining-ui-art` |
-| 프로젝트 교훈 공용화 | `promoting-project-knowledge` |
-| 버그·성능 문제 | 재현→root cause→최소 수정→회귀 검증 |
-| 구현·리팩터링 | 테스트 가능한 작은 단위, 기존 동작 보호 |
-| 긴 조사 | 질문·기간·출처·최신성·적용 결론 분리 |
-| 완료 보고 | 실제 명령·결과·diff를 근거로 판단 |
+| 새 요청·모호성·작업 계약 | `managing-project-intake-and-work-contract` |
+| 신규 프로젝트 설치 | `managing-game-project-operating-system: install` |
+| 기존 프로젝트 구조 변경 | `managing-game-project-operating-system: audit → migrate → verify` |
+| 기획 책임 원본·발행 | `managing-design-documents` |
+| 프로젝트 Skill 통합·학습 | `evolving-project-discipline-skills` |
+| 현재 상태·Handoff | `maintaining-project-context-and-handoff` |
+| 핵심 컨셉·뾰족한 재미·SWOT·PoC | `analyzing-and-refining-game-concepts` |
+| 프로젝트 교훈·BCP | `managing-base-change-proposals` |
+| Vertical Slice | `designing-vertical-slices` |
+| 대량 외부 AI 작업 | `orchestrating-deepseek-worktrees` |
+| 변경·외부 AI 결과 통합 검증 | `reviewing-and-validating-project-changes` |
+| 이미지 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` |
+| Godot·Web UI 결과 감사 | `auditing-and-refining-ui-art` |
 
-## 4. 외부 AI·worktree 운용
+통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`를 사용한다.
 
-DeepSeek, Claude, Gemini 또는 다른 외부 모델에 대량 작업을 맡길 때는 다음 구조를 사용한다.
+## 4. 실행 가능한 Skill 계약
 
-```text
-승인된 작업 패키지
-→ 별도 브랜치·worktree
-→ 제한된 입력과 구조화 출력
-→ 외부 AI 초안
-→ Codex·책임자의 독립 검수
-→ 승인된 최소 diff만 기준 브랜치 반영
+```yaml
+name:
+skill_id:
+discipline:
+purpose:
+use_when:
+do_not_use_when:
+trigger_tags:
+load_by_default: false
+modes: []
+required_inputs:
+read_first:
+process:
+outputs:
+definition_of_ready:
+definition_of_done:
+validation:
+failure_conditions:
+related_skills:
+learning_log:
+review_triggers:
+last_reviewed_at:
+last_reviewed_commit:
+knowledge_state:
 ```
 
-- 외부 AI 결과는 검수 대기 입력이다.
-- main과 사용자의 활성 worktree를 직접 수정하게 하지 않는다.
-- 한 worktree는 한 목적과 한 브랜치를 가진다.
-- 같은 파일을 여러 모델이 동시에 수정하지 않는다.
-- 실패하거나 변경이 남은 worktree는 자동 삭제하지 않는다.
-- 보안·저장·호환성·테스트는 토큰 절약 대상이 아니다.
+하나의 생명주기를 단계별 Skill로 쪼개지 말고 하나의 Skill 내부 mode와 상태 머신으로 우선 표현한다. 반대로 생성 전 설계와 구현 후 감사처럼 입력·도구·승인 경계가 다르면 독립 Skill로 유지한다.
 
-관련 스킬:
-
-- `skills/orchestrating-deepseek-worktrees/SKILL.md`
-- `skills/reviewing-external-ai-drafts/SKILL.md`
-
-## 5. 토큰·컨텍스트 효율
-
-외부 API와 긴 에이전트 작업은 다음 원칙을 따른다.
-
-- 반복되는 시스템 규칙, 예시, 출력 스키마를 프롬프트 앞부분의 안정적인 접두부에 둔다.
-- 작업마다 바뀌는 대상·질문·파일은 뒤쪽 가변 구역에 둔다.
-- 저장소 전체 대신 Documentation Map, Active Context, 파일 allowlist를 제공한다.
-- 긴 원시 결과 대신 근거·결정·미확인·diff 요약을 회수한다.
-- 후속 처리에 안정적인 구조가 필요하면 JSON 또는 고정 Markdown 스키마를 사용한다.
-- 캐시 사용량을 제공하는 API에서는 cache hit·miss를 비용·구조 개선의 근거로 기록할 수 있다.
-- 모델 컨텍스트 한도를 채우는 것을 목표로 하지 않고, 결정과 검증에 필요한 내용만 유지한다.
-
-토큰 절약을 이유로 다음을 제거하지 않는다.
-
-- 최신 사용자 결정.
-- 정확한 경로·명령·버전·식별자.
-- 완료·제외 범위.
-- 데이터·보안·호환성 위험.
-- 테스트와 미검증 항목.
-
-## 6. 아트·UI 프롬프트 스킬 채택
-
-이미지 생성·편집 기술은 다음을 확인한다.
-
-- 어떤 사용자 문제와 사용 화면을 해결하는가?
-- 원본에서 유지할 요소와 변경할 요소가 분리되는가?
-- 프롬프트가 형태·색·재질·구도·레이아웃·출력 규격으로 내려오는가?
-- 모델·서비스·버전·원본·확인일이 기록되는가?
-- FACS AU, 태그, 스타일 키워드가 공식 지원 기능인지 실험적 보조어인지 구분되는가?
-- 생성 이미지의 문자·로고가 실제 UI·편집 레이어와 분리되는가?
-- 실제 크롭·축소·현지화·접근성 QA가 있는가?
-
-한 번 성공한 프롬프트는 먼저 `관찰`, `가설`, `패턴` 상태의 기술 카드나 case로 기록한다. 여러 자산과 조건에서 검증된 뒤 공용 method·skill을 갱신한다.
-
-관련 기준:
-
-- `docs/knowledge/methods/AI_ART_PROMPT_TECHNIQUE_METHOD.md`
-- `skills/designing-art-prompts-and-technique-cards/SKILL.md`
-- `templates/planning/ART_TECHNIQUE_CARD.md`
-
-## 6.1 UI 아트 결과 감사 스킬 채택
-
-생성·편집 프롬프트와 실제 UI 결과 감사는 분리한다. 결과 감사는 다음을 확인한다.
-
-- 딥인터뷰 또는 확정된 아트 방향을 먼저 읽었는가?
-- A 장식, B 구조, C 간격, D 타이포그래피, E 색상·상태를 각각 확인했는가?
-- 정적 패턴을 결함 확정이나 자동 삭제 근거로 사용하지 않았는가?
-- 사용자 승인 전 대상 UI 파일이 불변인가?
-- 승인된 항목만 A→B→C→D→E 순서로 수정했는가?
-- 새 검사 컨텍스트와 Godot/Web 실제 렌더로 전후를 다시 확인했는가?
-
-관련 기준:
-
-- `skills/auditing-and-refining-ui-art/SKILL.md`
-- `schemas/ui-art-findings-v1.schema.json`
-- `docs/knowledge/research/SLOPSLAP_UI_ART_SOURCE_AUDIT.md`
-
-## 7. 실행 가능한 스킬 작성 규격
-
-권장 구조:
+## 5. Skill 패키지 구조
 
 ```text
 skills/<skill-name>/
-└─ SKILL.md
+├─ SKILL.md
+├─ references/   # 고유한 상세 계약이 있을 때만
+└─ scripts/      # 실제 자동화가 있을 때만
 ```
 
-`SKILL.md`에는 다음을 포함한다.
+Method·Checklist·Template에 같은 실행 절차를 장문 복제하지 않는다.
 
-- YAML `name`, `description`
-- 목적과 핵심 원칙
-- 사용 조건과 사용하지 않을 조건
-- 필요한 입력
-- 수행 단계
-- 산출물 계약
-- 완료·실패 기준
-- 검증 시나리오
-- 관련 method·template·case
+- `SKILL.md`: 언제 사용하고 어떤 상태·mode로 실행하는가
+- `references/`: 이유·배경·상세 Schema·판단 모델
+- `templates/`: 복사할 출력 형식
+- `scripts/`: 자동 검사·변환
 
-`description`은 과정 요약이 아니라 **언제 읽어야 하는지**를 설명한다.
+## 6. 검증
 
-## 8. 스킬 검증
+새 Skill과 큰 수정은 다음을 검증한다.
 
-새 스킬과 큰 수정은 다음 단계로 검증한다.
-
-1. 스킬 없이 대표 작업을 수행했을 때의 누락·오판을 기록한다.
-2. 그 실패를 막는 최소 규칙을 작성한다.
+1. Skill 없이 대표 작업을 수행했을 때의 누락·오판을 기록한다.
+2. 그 실패를 막는 최소 계약을 작성한다.
 3. 동일·변형·반례 시나리오에 적용한다.
-4. 출력 누락, 과도한 절차, 잘못된 trigger를 수정한다.
-5. 프로젝트에서 실제 사용한 뒤 `가설`, `채택`, `패턴`, `검증` 상태를 갱신한다.
+4. 과도한 단계·잘못된 trigger·중복 mode를 수정한다.
+5. Registry 경로·상태·Learning Log를 검증한다.
+6. 실제 프로젝트에서 사용한 뒤 지식 상태를 갱신한다.
 
-검증하지 않은 스킬은 `검증됨`으로 표시하지 않는다. 단순한 문서 존재는 적용 성공의 증거가 아니다.
+문서 존재는 적용 성공의 증거가 아니다.
 
-## 9. 스킬과 프로젝트 확장
+기획 분석 Skill은 특히 다음을 확인한다.
 
-Base 스킬에는 재사용 가능한 절차만 둔다. 프로젝트별 세계관, 수치, 파일 경로, 데이터 필드, 모델 계정과 실제 자산은 프로젝트 전용 확장 문서에 둔다.
+- 기능 목록과 핵심 컨셉을 구분하는가?
+- SWOT을 SO·WO·ST·WT 행동으로 변환하는가?
+- MDA·DDE·3C·루프 같은 분석축이 개선 결정으로 연결되는가?
+- `DDD`처럼 다의적인 약어를 프로젝트 정의 없이 임의 해석하지 않는가?
+- PoC가 가장 위험한 가설을 검증하는 최소 범위인가?
 
-프로젝트 확장은 `templates/skills/PROJECT_SKILL_EXTENSION.md`를 사용하며 다음을 기록한다.
+변경 검증 Skill은 변경 주체와 무관하게 계약 대조, 정적 검사, 가능한 런타임, 대표·경계·반례·회귀, 미실행과 롤백을 연결해야 한다.
 
-- 적용 Base 스킬과 기준 버전
-- 프로젝트 추가 규칙
-- 상위 규칙과 충돌 시 우선할 전용 규칙
-- 실제 참조 문서·파일
-- 프로젝트 전용 검증
+## 7. 외부 AI·worktree
 
-AI 역할과 worktree 설정은 `templates/ai/PROJECT_AI_COLLABORATION_PROFILE.md`를 사용한다.
+- main과 사용자의 활성 worktree를 직접 수정하게 하지 않는다.
+- 저장소 전체 대신 Documentation Map·Active Context·allowlist를 제공한다.
+- 결과는 구조화된 초안과 미확인 목록으로 회수한다.
+- 실제 diff·참조·테스트를 `reviewing-and-validating-project-changes: external-source-review`로 독립 검수한다.
+- 보안·저장·호환성·테스트는 토큰 절약 대상이 아니다.
 
-Base 스킬 전체를 프로젝트에 복제해 별도 버전으로 유지하지 않는다. 필요한 경우 로컬 사본의 기준 커밋을 기록한다.
+## 8. 아트·UI Skill 경계
 
-## 10. Context compact
+- 생성·편집 전 계약과 프롬프트: `designing-art-prompts-and-technique-cards`
+- 구현된 화면의 구조·간격·타이포·상태 감사: `auditing-and-refining-ui-art`
 
-스킬 원문과 조사 자료 전체를 실행 대화에 유지하지 않는다. 다음만 Active Context로 남긴다.
+두 책임은 합치지 않는다. 한 번 성공한 프롬프트는 먼저 관찰·가설·패턴 상태의 기술 카드나 Case로 기록한다.
 
-```md
-## Active Context
-- Goal:
-- User value:
-- Decisions:
-- Scope:
-- Excluded:
-- Files:
-- Risks:
-- Next verification:
-```
+## 9. 학습과 통합
 
-정확한 경로, 명령, 버전, 최신 결정, 실패 증상과 다음 검증은 보존한다. 이미 책임 문서에 저장된 설명과 적용하지 않는 대안은 줄인다.
+실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 호출만 Learning Log에 기록한다.
 
-## 11. 권한·비용·보안
-
-- 비밀값을 출력·저장·전송하지 않는다.
-- 외부 스크립트와 네트워크 호출은 목적과 범위를 확인한다.
-- 읽기 작업으로 충분하면 쓰기 권한을 요청하지 않는다.
-- 여러 worker·MCP·브라우저를 사용할 때 자원 중복을 측정한다.
-- 외부 모델 사용량·비용은 프로젝트 정책에 따라 기록한다.
-- 실패하거나 변경이 남은 작업 공간은 자동 삭제하지 않는다.
-
-## 12. 프로젝트 교훈의 Base 승격
-
-외부 스킬 또는 프로젝트 작업에서 발견한 공용화 후보는 활성 Base에 바로 복사하지 않는다.
-
-1. 출처·커밋·라이선스·실제 성공과 실패 근거를 수집한다.
-2. 프로젝트 고유 코드·아트·수치·경로와 공용 절차를 분리한다.
-3. `[수정제안서]`에 `SUBMITTED` 제안서를 작성하고 제안 전용 PR을 만든다.
-4. 사용자가 적용 조건·반례·비용·위험을 검토한다.
-5. 승인된 경우에만 별도 구현 PR에서 Base를 변경한다.
-
-직접 승인 요청은 제안서의 대체 작업 계약이 될 수 있지만, 자동으로 추출한 승격 후보는 승인 전 구현하지 않는다.
-
-## 13. 완료 보고
-
-- 적용한 스킬과 이유
-- 생성·수정한 산출물
-- 실행한 검증 시나리오
-- 확인하지 못한 항목
-- 외부 모델에 전달한 자료 범위
-- 프로젝트 전용 확장
-- Base 반영 또는 후속 승격 필요 여부
+Skill 통합 전에는 고유 입력·산출물·실패 조건·검증·Learning Log·Registry 참조를 대조한다. 이전 버전은 Git 이력으로 보존하고, 과거 ID는 `LEGACY_SKILL_ALIASES.md`로 연결한다.

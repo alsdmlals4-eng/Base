@@ -37,15 +37,39 @@
         "source_path": {"type": "string", "minLength": 1},
         "source_format": {"enum": ["markdown", "json"]},
         "source_role": {"enum": ["narrative_spec", "structured_data", "registry", "state"]},
-        "publication_policy": {"const": "always_sync"},
-        "output_pdf": {"type": "string", "minLength": 1},
+        "publication_policy": {"enum": ["source_only", "milestone_sync", "always_sync"]},
+        "output_pdf": {"type": ["string", "null"]},
         "output_docx": {"type": ["string", "null"]},
         "asset_dir": {"type": ["string", "null"]},
         "diagram_policy": {"enum": ["none", "mermaid", "generated"]},
-        "publication_manifest": {"type": "string", "minLength": 1},
-        "generator": {"type": "string", "minLength": 1},
+        "publication_manifest": {"type": ["string", "null"]},
+        "generator": {"type": ["string", "null"]},
         "required_sections": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
-      }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"publication_policy": {"const": "source_only"}}, "required": ["publication_policy"]},
+          "then": {
+            "properties": {
+              "output_pdf": {"const": null},
+              "output_docx": {"const": null},
+              "diagram_policy": {"const": "none"},
+              "publication_manifest": {"const": null},
+              "generator": {"const": null}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"publication_policy": {"enum": ["milestone_sync", "always_sync"]}}, "required": ["publication_policy"]},
+          "then": {
+            "properties": {
+              "output_pdf": {"type": "string", "minLength": 1},
+              "publication_manifest": {"type": "string", "minLength": 1},
+              "generator": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      ]
     }
   }
 }

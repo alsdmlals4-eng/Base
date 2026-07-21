@@ -1,0 +1,113 @@
+from __future__ import annotations
+
+import unittest
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+OLD_SKILL_PATHS = (
+    "skills/routing-project-work-by-discipline/SKILL.md",
+    "skills/conducting-deep-requirement-interviews/SKILL.md",
+    "skills/transforming-requests-into-prompts/SKILL.md",
+    "skills/installing-game-project-operating-system/SKILL.md",
+    "skills/migrating-existing-game-project-structure/SKILL.md",
+    "skills/verifying-game-project-operating-system/SKILL.md",
+    "skills/writing-game-design-documents/SKILL.md",
+    "skills/publishing-discipline-bibles/SKILL.md",
+    "skills/promoting-project-knowledge/SKILL.md",
+    "skills/reviewing-and-implementing-base-change-proposals/SKILL.md",
+    "skills/reviewing-external-ai-drafts/SKILL.md",
+)
+TEXT_SUFFIXES = {".md", ".json", ".yml", ".yaml", ".py"}
+
+
+class ConsolidatedSkillReferenceTests(unittest.TestCase):
+    def test_active_entrypoints_and_templates_have_no_deleted_skill_paths(self) -> None:
+        candidates = [
+            ROOT / "AGENTS.md",
+            ROOT / "START_HERE.md",
+            ROOT / "README.md",
+            ROOT / "docs/OPERATING_MODEL.md",
+            ROOT / "docs/DOCUMENTATION_MAP.md",
+            ROOT / "docs/AI_SHARED_WORK_RULES.md",
+            ROOT / "docs/AI_WORKFLOW_RULES.md",
+            ROOT / "docs/AI_SKILL_ADOPTION_GUIDE.md",
+            ROOT / "docs/MVP_WORKFLOW_CHECKLIST.md",
+        ]
+        candidates += [
+            path for path in (ROOT / "templates").rglob("*")
+            if path.is_file() and path.suffix.lower() in TEXT_SUFFIXES
+        ]
+        candidates += [
+            path for path in (ROOT / "skills").rglob("*")
+            if path.is_file() and path.suffix.lower() in TEXT_SUFFIXES
+            and path.name != "LEGACY_SKILL_ALIASES.md"
+        ]
+        stale: list[str] = []
+        for path in sorted(set(candidates)):
+            text = path.read_text(encoding="utf-8", errors="replace")
+            for old_path in OLD_SKILL_PATHS:
+                if old_path in text:
+                    stale.append(f"{path.relative_to(ROOT)} -> {old_path}")
+        self.assertEqual(stale, [], "Deleted skill paths remain in active entrypoints/templates:\n" + "\n".join(stale))
+
+    def test_new_skill_paths_are_present_in_active_entrypoints(self) -> None:
+        combined = "\n".join(
+            path.read_text(encoding="utf-8", errors="replace")
+            for path in (
+                ROOT / "AGENTS.md",
+                ROOT / "START_HERE.md",
+                ROOT / "README.md",
+                ROOT / "docs/OPERATING_MODEL.md",
+                ROOT / "docs/DOCUMENTATION_MAP.md",
+            )
+        )
+        for skill_id in (
+            "managing-project-intake-and-work-contract",
+            "managing-game-project-operating-system",
+            "managing-design-documents",
+            "managing-base-change-proposals",
+            "analyzing-and-refining-game-concepts",
+            "reviewing-and-validating-project-changes",
+        ):
+            self.assertIn(skill_id, combined)
+
+    def test_digital_dopamine_design_contract_is_explicit_and_bounded(self) -> None:
+        skill = (ROOT / "skills/analyzing-and-refining-game-concepts/SKILL.md").read_text(encoding="utf-8")
+        template = (ROOT / "templates/planning/GAME_CONCEPT_DIRECTION_REVIEW.md").read_text(encoding="utf-8")
+        registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
+
+        for term in (
+            "Digital Dopamine Design",
+            "첫 의미 있는 보상",
+            "Action-feedback latency",
+            "Reward legibility",
+            "Reward ladder",
+            "Fatigue and inflation",
+            "실제 도파민 분비량",
+            "뾰족한 재미를 빠르게 전달",
+        ):
+            self.assertIn(term, skill)
+
+        for term in (
+            "첫 의미 있는 보상까지의 시간",
+            "행동 → 피드백 지연",
+            "Micro → Session → Meta 보상 사다리",
+            "실제 도파민 분비나 의학적 중독",
+        ):
+            self.assertIn(term, template)
+
+        for tag in (
+            "digital-dopamine-design",
+            "rapid-reward",
+            "instant-feedback",
+            "reward-latency",
+        ):
+            self.assertIn(tag, registry)
+
+        self.assertIn("의미 있는 선택 없이 빠른 보상만 반복", skill)
+        self.assertIn("외부 자료에서 정의되지 않은 DDD", skill)
+
+
+if __name__ == "__main__":
+    unittest.main()
