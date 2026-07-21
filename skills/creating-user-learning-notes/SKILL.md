@@ -9,9 +9,11 @@ description: Use when completed project work, AI collaboration, tools, mistakes,
 
 학습 노트는 AI 지침을 복사하는 문서가 아니라 사용자가 **왜 이런 구조가 필요한지 이해하고 스스로 판단·적용**하도록 돕는 설명 자료다.
 
+이 Skill은 사용자용 학습 결과물을 만든다. AI의 실행 계약은 해당 `SKILL.md`, 프로젝트 상태·인수인계는 `maintaining-project-context-and-handoff`, Skill 검증 경험과 지식 상태는 `skills/SKILL_LEARNING_LOG.md`가 책임진다.
+
 ## Modes
 
-`capture → explain → connect → practice → update`
+`capture` → `explain` → `connect` → `practice` → `update`
 
 ## Required inputs
 
