@@ -84,11 +84,19 @@ class DeepInterviewContractTests(unittest.TestCase):
         self.assertNotIn("other", payload["role_counts"])
         self.assertTrue(all(item["sha256"] and item["role"] for item in payload["files"]))
 
-    def test_skill_contract_has_triggers_exceptions_and_confirmation_gate(self) -> None:
-        text = (ROOT / "skills/conducting-deep-requirement-interviews/SKILL.md").read_text(encoding="utf-8")
+    def test_unified_intake_preserves_triggers_exceptions_and_confirmation_gate(self) -> None:
+        text = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
         for term in (
-            "Mandatory triggers", "Exceptions", "repository_observed", "AWAITING_USER_CONFIRMATION",
-            "CONFIRMED", "transforming-requests-into-prompts", "사용자 확인",
+            "route",
+            "clarify",
+            "contract",
+            "repository_observed",
+            "AWAITING_USER_CONFIRMATION",
+            "CONFIRMED",
+            "사용자 확인",
+            "오탈자",
+            "단일 파일 기계 수정",
+            "검사를 재실행",
         ):
             self.assertIn(term, text)
 
@@ -102,9 +110,9 @@ class DeepInterviewContractTests(unittest.TestCase):
         self.assertTrue(requires_deep_interview({"art-direction"}, explicit_single_file_mechanical=True))
 
     def test_detailed_request_uses_inverted_interview(self) -> None:
-        text = (ROOT / "skills/conducting-deep-requirement-interviews/references/ambiguity-and-closure.md").read_text(encoding="utf-8")
+        text = (ROOT / "skills/managing-project-intake-and-work-contract/references/ambiguity-and-closure.md").read_text(encoding="utf-8")
         self.assertIn("상세 요청의 역인터뷰", text)
-        self.assertIn("잘못되거나 빠진 부분", text)
+        self.assertIn("틀리거나 빠진 부분", text)
 
 
 if __name__ == "__main__":
