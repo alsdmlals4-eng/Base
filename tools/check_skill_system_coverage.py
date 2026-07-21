@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "skills/SKILL_REGISTRY.json"
 COVERAGE = ROOT / "skills/SKILL_COVERAGE.json"
 FRONT_NAME = re.compile(r"^name:\s*['\"]?([^'\"\n]+)", re.MULTILINE)
+ALLOWED_COVERAGE_STATUSES = {"COVERED", "COVERED_EXISTING"}
 
 COMPACT_TARGETS = {
     "identifying-project-core",
@@ -33,12 +34,32 @@ def validate() -> list[str]:
     coverage = json.loads(COVERAGE.read_text(encoding="utf-8"))
     by_id = {item["skill_id"]: item for item in registry["skills"]}
 
+    responsibility_ids: set[str] = set()
     for responsibility in coverage["responsibilities"]:
-        if not responsibility["skills"]:
-            errors.append(f"No skill target: {responsibility['id']}")
-        for skill_id in responsibility["skills"]:
-            if skill_id not in by_id:
-                errors.append(f"Coverage target not active: {responsibility['id']} -> {skill_id}")
+        responsibility_id = responsibility["id"]
+        if responsibility_id in responsibility_ids:
+            errors.append(f"Duplicate responsibility id: {responsibility_id}")
+        responsibility_ids.add(responsibility_id)
+
+        if responsibility.get("status") not in ALLOWED_COVERAGE_STATUSES:
+            errors.append(
+                f"Invalid coverage status: {responsibility_id} -> {responsibility.get('status')}"
+            )
+        targets = responsibility.get("skills", [])
+        if not targets:
+            errors.append(f"No skill target: {responsibility_id}")
+        if len(targets) != len(set(targets)):
+            errors.append(f"Duplicate skill target: {responsibility_id}")
+        for skill_id in targets:
+            entry = by_id.get(skill_id)
+            if entry is None:
+                errors.append(f"Coverage target not registered: {responsibility_id} -> {skill_id}")
+            elif entry["status"] != "ACTIVE":
+                errors.append(f"Coverage target not active: {responsibility_id} -> {skill_id}")
+
+    for skill_id in sorted(COMPACT_TARGETS):
+        if skill_id not in by_id:
+            errors.append(f"Compact target not registered: {skill_id}")
 
     for skill_id, item in by_id.items():
         path = ROOT / item["path"]
@@ -57,6 +78,13 @@ def validate() -> list[str]:
                 errors.append(
                     f"Compact SKILL.md exceeds 150 lines: {skill_id} ({len(text.splitlines())})"
                 )
+
+    for obsolete in (
+        ROOT / "tools/apply_skill_system_expansion.py",
+        ROOT / ".github/workflows/agent-expand-and-optimize-skill-system.yml",
+    ):
+        if obsolete.exists():
+            errors.append(f"Temporary expansion artifact remains: {obsolete.relative_to(ROOT)}")
 
     return errors
 
