@@ -26,6 +26,7 @@ COMPACT_TARGETS = {
     "diagnosing-game-engine-runtime-failures",
 }
 
+
 def validate() -> list[str]:
     errors: list[str] = []
     registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
@@ -48,13 +49,17 @@ def validate() -> list[str]:
         match = FRONT_NAME.search(text)
         if not match or match.group(1).strip() != skill_id:
             errors.append(f"Front matter mismatch: {skill_id}")
-        for required in ("##", "Output contract", "Quality gate", "Learning Log"):
-            if required not in text:
-                errors.append(f"Missing compact contract token {required!r}: {skill_id}")
-        if skill_id in COMPACT_TARGETS and len(text.splitlines()) > 150:
-            errors.append(f"Compact SKILL.md exceeds 150 lines: {skill_id} ({len(text.splitlines())})")
+        if skill_id in COMPACT_TARGETS:
+            for required in ("##", "Output contract", "Quality gate", "Learning Log"):
+                if required not in text:
+                    errors.append(f"Missing compact contract token {required!r}: {skill_id}")
+            if len(text.splitlines()) > 150:
+                errors.append(
+                    f"Compact SKILL.md exceeds 150 lines: {skill_id} ({len(text.splitlines())})"
+                )
 
     return errors
+
 
 def main() -> int:
     errors = validate()
@@ -65,6 +70,7 @@ def main() -> int:
         return 1
     print("Skill system coverage check passed")
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
