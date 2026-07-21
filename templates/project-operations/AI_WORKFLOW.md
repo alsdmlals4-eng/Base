@@ -13,6 +13,7 @@
 → 실제 저장소 조사·Plan
 → Implementation
 → reviewing-and-validating-project-changes
+→ 필요 시 auditing-canonical-reference-freshness
 → 책임 원본·발행·Active Context 동기화
 → PR Required Checks·리뷰
 → Learning Log·Base 제안
@@ -60,6 +61,7 @@ routing_reason:
 - 저장소에서 확인할 사실을 사용자에게 다시 묻지 않음
 - 기능·경험·아트 방향·구조·워크플로 변경은 사용자 확인 전 실행 금지
 - Godot·Web UI 결과 감사는 `auditing-and-refining-ui-art`
+- 정본·경로·ID·Schema·정책·생성기 변경은 `auditing-canonical-reference-freshness`를 검증 단계에 보류 등록
 
 ## 4. 주요 실행 Skill
 
@@ -76,6 +78,7 @@ routing_reason:
 | Vertical Slice | `designing-vertical-slices` |
 | 외부 AI 작업 공간 | `orchestrating-deepseek-worktrees` |
 | 변경·외부 AI 결과 검증 | `reviewing-and-validating-project-changes` |
+| 오래된 참조·정본 drift·변경 전파 누락 | `auditing-canonical-reference-freshness` |
 | 이미지 프롬프트 | `designing-art-prompts-and-technique-cards` |
 | 구현된 UI 감사 | `auditing-and-refining-ui-art` |
 
@@ -112,6 +115,8 @@ files_to_change:
 data_and_state_ownership:
 asset_ui_audio_impact:
 migration_and_compatibility:
+canonical_sources_and_consumers:
+known_renames_aliases_and_replacements:
 risks_and_fallbacks:
 acceptance_criteria:
 validation:
@@ -142,6 +147,7 @@ Intake·Context
 - 관찰 가능한 완료 기준
 - 자동·수동·사용자 검수
 - 책임 원본·Skill·발행 영향
+- 정본 변경과 영향 소비자·참조·파생본 후보
 
 ### Implementation
 
@@ -150,6 +156,7 @@ Intake·Context
 - 기능 추가와 대규모 리팩터링 분리
 - 저장·인터페이스·사용자 흐름 보호
 - 보류 항목·승인 이미지 임의 변경 금지
+- 파일·ID·Schema·경로를 바꾸면 새 정본만 추가하지 말고 이전 참조와 소비자도 추적
 
 ### Verification
 
@@ -158,11 +165,20 @@ Intake·Context
 ```text
 contract-check
 → 필요한 경우 external-source-review
+→ 정본·경로·ID·Schema 변경 시 reference-freshness
 → static-validation
 → runtime-validation
 → regression
 → evidence-report
 ```
+
+`reference-freshness`는 `auditing-canonical-reference-freshness`를 호출해 다음을 확인한다.
+
+- 활성 파일의 오래된 경로·Skill ID·문서 ID·명령.
+- 변경됐어야 하지만 untouched인 템플릿·테스트·Workflow·문서.
+- 동일 책임을 가진 활성 파일의 정책·상태 drift.
+- 원본·생성기와 맞지 않는 PDF·Manifest·해시.
+- 허용된 Legacy·Change Log·과거 case와 실제 stale reference의 구분.
 
 검증 시 대표 정상·실패·경계·원래 실패 반례·저장 호환성·실제 화면과 인접 기능 회귀를 확인한다. 실행하지 않은 검증은 `UNVERIFIED`와 이유로 기록한다.
 
@@ -189,6 +205,8 @@ Audit only
 → 보존·참조·발행·콜드 스타트 verify
 ```
 
+마이그레이션과 Skill 통합 뒤에는 이전 경로·ID가 활성 파일에 남지 않았는지 reference freshness 검사를 실행한다.
+
 ## 10. GitHub 역할
 
 - 책임 원본·코드·데이터·자산·발행본 이력
@@ -207,6 +225,7 @@ Audit only
 - 주 책임·영향 분야:
 - 핵심 컨셉·PoC·기획 재조정:
 - 변경한 책임 원본·실제 파일·Skill:
+- 정본·참조 최신성·변경 전파 결과:
 - 생성한 PDF·선택 DOCX·다이어그램·Manifest:
 - 보호한 결정·동작·자산:
 - 검증 판정·증거:
