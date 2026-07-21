@@ -78,14 +78,17 @@ Base 저장소 자체의 콜드 스타트에서는 프로젝트 설치 템플릿
 | 기획 책임 원본 작성·구조 변경·발행·검수 | `managing-design-documents` | `author` / `update` / `restructure` / `publish` / `validate` |
 | 분야별 스킬 생성·통합·학습 | `evolving-project-discipline-skills` | 스킬 추가·중복·반복 실패·Registry 변경 |
 | Active Context·Handoff | `maintaining-project-context-and-handoff` | 상태·다음 작업·게이트·위험 변경 |
-| 프로젝트 교훈·BCP 생명주기 | `managing-base-change-proposals` | `extract` / `submit` / `review` / 승인 뒤 `implement` / `verify` |
+| 핵심 컨셉·뾰족한 재미·기획 정렬·PoC | `analyzing-and-refining-game-concepts` | `frame` / `constrain` / `sharpen` / `structure` / `analyze` / `poc-contract` / `recalibrate` / `production-gate` |
 | Vertical Slice | `designing-vertical-slices` | 대표 품질·제작 파이프라인 검증 |
 | 외부 AI 작업 격리 | `orchestrating-deepseek-worktrees` | 대량 초안·분류 위임 |
-| 외부 AI 결과 검수 | `reviewing-external-ai-drafts` | 외부 AI 결과 실제 반영 전 |
+| 프로젝트 변경 통합 검증 | `reviewing-and-validating-project-changes` | `contract-check` / `external-source-review` / `static-validation` / `runtime-validation` / `regression` / `evidence-report` |
 | 아트 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` | 새 아트 방향·생성·편집 프롬프트 |
 | Godot·Web UI 아트 감사 | `auditing-and-refining-ui-art` | 실행 결과 A~E 감사·승인된 개선·전후 렌더 재검수 |
+| 프로젝트 교훈·BCP 생명주기 | `managing-base-change-proposals` | `extract` / `submit` / `review` / 승인 뒤 `implement` / `verify` |
 
 통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 mode로 변환한다. 새 Registry·문서·작업 계약에는 새 ID만 사용한다.
+
+기획 분석에서 `DDD`처럼 단일 표준 의미가 없는 약어는 프로젝트 정의를 먼저 기록한다. 게임 경험 구조 분석이 목적이면 MDA 또는 DDE를 후보로 사용하되, 약어를 임의 확정하지 않는다.
 
 ## 5. 선택적 호출 정책
 
@@ -159,4 +162,4 @@ Audit only
 - 남은 위험·롤백
 - 다음 작업·선행 조건
 
-실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 Skill 호출은 Learning Log에 기록한다. 한 번의 성공은 관찰 또는 가설이며 반복 검증 전에는 공용 강제 규칙으로 승격하지 않는다.
+변경 검증은 `reviewing-and-validating-project-changes`로 작업 계약, 실제 diff, 정적·런타임·회귀 증거를 연결한다. 실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 Skill 호출은 Learning Log에 기록한다. 한 번의 성공은 관찰 또는 가설이며 반복 검증 전에는 공용 강제 규칙으로 승격하지 않는다.
