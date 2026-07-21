@@ -1,11 +1,18 @@
 # Base Skill Learning Log
 
+## 2026-07-21 DDD 빠른 보상 설계 교훈
+
+- 이 Base의 게임 기획 맥락에서 `DDD`는 `Digital Dopamine Design`이다. 플레이 시작 또는 행동 직후 짧은 시간 안에 의미 있는 보상·변화·성취와 다음 기대를 체감시키는 빠른 보상 설계축을 뜻한다.
+- DDD는 실제 도파민 분비량을 측정하거나 의학적 중독을 진단하는 표현이 아니다. `첫 의미 있는 보상까지의 시간`, `행동-피드백 지연`, `보상 명료성`, `보상 밀도`, `micro-session-meta 보상 사다리`, `다음 행동 유도`, `피로·인플레이션`을 관찰한다.
+- 빠른 보상은 뾰족한 재미를 더 빨리 이해시키는 수단이어야 한다. 의미 있는 선택 없이 이펙트·팝업·숫자·알림만 반복하면 핵심 재미를 자극으로 대체한 실패다.
+- 빠른 보상을 설계할 때 가치·확률·비용 은폐, 인위적인 불편 뒤 결제 해소, 손실 압박, 중단을 방해하는 연속 알림 같은 위험을 별도 표시한다.
+- Base 내부 DDD 정의는 확정했지만, 외부 자료나 다른 프로젝트에서 같은 약어를 사용할 때는 해당 출처의 정의를 확인하기 전 임의 해석하지 않는다.
+
 ## 2026-07-21 핵심 컨셉·변경 검증 스킬 교훈
 
 - 게임 기획 방향을 잡는 작업은 GDD 문장 작성이나 Vertical Slice 제작과 다르다. 핵심 컨셉·제약·뾰족한 재미·요소 정렬·PoC·재조정을 하나의 상태 흐름으로 다뤄야 한다.
 - SWOT은 장단점 목록이 아니라 SO·WO·ST·WT 실행 방향으로 변환해야 의사결정 도구가 된다.
-- MDA·DDE·3C·루프 같은 프레임워크는 많이 적용하는 것이 목적이 아니라 핵심 재미와 불일치를 찾아 개선 우선순위를 만드는 데 사용한다.
-- `DDD`처럼 분야마다 의미가 달라지는 약어는 프로젝트 정의를 먼저 확인하고, 정의 전에는 임의의 표준 의미로 확정하지 않는다.
+- MDA·DDE·DDD·3C·루프 같은 프레임워크는 많이 적용하는 것이 목적이 아니라 핵심 재미와 불일치를 찾아 개선 우선순위를 만드는 데 사용한다.
 - PoC는 전체 게임이나 Vertical Slice가 아니라 가장 위험한 가설을 최소 비용으로 틀릴 수 있게 만드는 검증 계약이다.
 - 변경 검증은 외부 AI 결과에만 필요한 절차가 아니다. 사람·Codex·자동화가 만든 코드·데이터·문서·자산 모두 승인 계약, 실제 diff, 정적·런타임·회귀 증거로 같은 기준에서 검증한다.
 - 외부 AI 검수는 범용 변경 검증 Skill의 `external-source-review` mode로 흡수하고, 이전 ID는 Legacy Alias로 보존한다.
@@ -95,6 +102,27 @@
 
 ## 기록
 
+### 2026-07-21 Digital Dopamine Design definition and reward-analysis contract
+
+- 프로젝트·작업: Base 기획 분석의 DDD 의미를 Digital Dopamine Design으로 확정하고 빠른 보상·즉각 피드백 분석 계약을 구체화
+- 기준 스킬 커밋: `agent/consolidate-skills-and-structure@5679303d056a14bfeb41c8f3a35e2271815c3982`
+- 호출 트리거: DDD는 빠른 시간 안에 사용자가 보상을 체감하도록 하는 도파민형 빠른 보상 요소라는 사용자 정의
+- 입력 범위: `analyzing-and-refining-game-concepts`, GAME_CONCEPT_DIRECTION_REVIEW 템플릿, Base Skill Registry, 통합 Skill 참조 회귀 테스트
+- 실제 산출물: DDD 프로젝트 정의, 첫 의미 있는 보상·행동 피드백·보상 명료성·밀도·보상 사다리·다음 행동·피로 분석축, PoC 관찰 필드, 위험 가드레일, `digital-dopamine-design`·`rapid-reward`·`instant-feedback`·`reward-latency` 라우팅 태그
+- 실행한 검증: Registry Schema·활성 경로, DDD 정의·측정축·가드레일·템플릿·라우팅 회귀, Python 문법, Documentation·Skill Routing·Design Publication Governance, 전체 구조·생성 회귀 79개, Windows 실제 발행 스모크 테스트, whitespace
+- 결과: 성공 — GitHub Actions run #72, 79 tests 성공·1 skipped, Windows 발행·whitespace 성공
+- 성공 조건: DDD가 명확한 내부 용어와 관찰 가능한 설계축을 가지며, 뾰족한 재미를 단순 자극으로 대체하지 않고 외부 동명 약어와 구분됨
+- 실패·예외·재현 조건: 최초 run #71에서 기존 회귀가 요구한 `임의 해석하지 않는다` 정확 문구가 새 표현에 없어 1건 실패했다. 의미를 바꾸지 않고 호환 문장을 복원한 뒤 run #72에서 전체 통과했다.
+- 사용자 피드백: DDD는 도파민 중독형 빠른 보상, 즉 빠른 시간 안에 사용자가 도파민성 보상을 느끼게 하는 요소를 의미함
+- 불필요하게 호출한 스킬: 없음
+- 누락된 스킬·검증: 실제 게임의 첫 보상 시간·피드백 지연·다음 행동 전환과 장기 피로 데이터는 아직 없음
+- 스킬 본문 변경 필요: 예
+- 변경하지 않는 이유: 해당 없음
+- 지식 상태: DDD 용어 정의는 사용자 승인, 보상 설계 효과와 공용 목표 수치는 가설
+- 프로젝트 전용으로 유지할 내용: 장르별 목표 시간, 보상 간격, 실제 UX·경제·연출, 플레이테스트 결과와 허용 자극 강도
+- Base Method·Skill·Template·Test 환류 후보: DDD 측정 필드, PoC 관찰 계약, 자극 대 핵심 재미 판정, 위험 가드레일
+- 다음 검토 트리거: 서로 다른 두 프로젝트 적용, 빠른 보상이 핵심 선택을 약화함, 보상 인플레이션·피로, 목표 수치 일반화 시도
+
 ### 2026-07-21 concept analysis and unified project-change validation
 
 - 프로젝트·작업: Base 핵심 컨셉·뾰족한 재미·PoC 기획 분석 스킬 추가와 외부 AI 검수의 범용 변경 검증 통합
@@ -102,19 +130,19 @@
 - 호출 트리거: SWOT·DDD 요소 분석과 개선 방향, 핵심 컨셉→제약→뾰족한 재미→구체화→PoC→재조정→Production 흐름을 반복 가능한 스킬로 만들고 일반 변경 검증 공백을 해소하라는 사용자 요청
 - 입력 범위: 활성 Skill Registry, Operating Model, START_HERE, AGENTS, Documentation Map, Workflow·Checklist, 프로젝트 템플릿, 기존 Vertical Slice·외부 AI 검수 스킬과 구조 회귀 테스트
 - 실제 산출물: `analyzing-and-refining-game-concepts`, `reviewing-and-validating-project-changes`, 기획 방향·변경 검증 템플릿, 12개 활성 Skill Registry, Legacy Alias와 프로젝트 라우터 갱신
-- 실행한 검증: Registry Schema·활성 경로, 12개 선택적 라우팅, 기획 8개 mode·7단계 상태 흐름·SWOT 전략·MDA/DDE·DDD 모호성 계약, 변경 검증 6개 mode·5개 판정, 삭제 경로·Legacy Alias·프로젝트 템플릿 참조, Python 문법·BCP·Documentation·Skill Routing·Design Publication Governance, 구조·생성 회귀 78개, Windows 실제 발행 스모크 테스트, whitespace
+- 실행한 검증: Registry Schema·활성 경로, 12개 선택적 라우팅, 기획 8개 mode·7단계 상태 흐름·SWOT 전략·MDA/DDE·DDD 계약, 변경 검증 6개 mode·5개 판정, 삭제 경로·Legacy Alias·프로젝트 템플릿 참조, Python 문법·BCP·Documentation·Skill Routing·Design Publication Governance, 구조·생성 회귀 78개, Windows 실제 발행 스모크 테스트, whitespace
 - 결과: 성공
 - 성공 조건: 기존 기획 문서·Vertical Slice·UI 감사 경계를 보존하고 새 Skill의 trigger·mode·템플릿·라우팅·회귀·Actions가 통과함
-- 실패·예외·재현 조건: `BIG BLIND`와 `DDD`를 외부 표준 용어로 단정하면 오라우팅 위험이 있으므로 프로젝트 정의형 용어로 처리함. 최초 큰 파일 생성 요청이 보안 판정 불명으로 차단돼 동일 기능의 표현을 축약해 재시도함. 1차 Actions에서 기획 템플릿의 trailing whitespace 1건을 검출해 제거했으며 최종 run #66에서 전체 통과함.
+- 실패·예외·재현 조건: `BIG BLIND`와 초기 미정의 `DDD`를 외부 표준 용어로 단정하지 않고 프로젝트 정의형 용어로 처리했다. 최초 큰 파일 생성 요청이 보안 판정 불명으로 차단돼 동일 기능의 표현을 축약해 재시도했다. 1차 Actions에서 기획 템플릿의 trailing whitespace 1건을 검출해 제거했으며 최종 run #67에서 전체 통과했다.
 - 사용자 피드백: 핵심 컨셉과 지속 플레이 원동력 탐색, 모든 게임 요소의 정렬, PoC 결과 기반 기획 재조정, 7단계 Production 흐름을 포함할 것
 - 불필요하게 호출한 스킬: 없음
 - 누락된 스킬·검증: 실제 서로 다른 게임 프로젝트에서의 반복 적용 결과와 PoC 관찰 데이터는 아직 없음
 - 스킬 본문 변경 필요: 예
 - 변경하지 않는 이유: 해당 없음
 - 지식 상태: 핵심 컨셉 분석은 가설, 범용 변경 검증은 패턴
-- 프로젝트 전용으로 유지할 내용: 실제 게임의 컨셉 문장·SWOT 항목·DDD 정의·PoC 결과·수치·콘텐츠·Production 판정
-- Base Method·Skill·Template·Test 환류 후보: 기획 방향 상태 머신, SWOT-to-action, 약어 정의 계약, 범용 검증 판정·증거 템플릿과 Legacy Alias
-- 다음 검토 트리거: 첫 두 프로젝트 적용, PoC 범위 팽창, DDD 오해, SWOT 일반론화, 통합 검증 Skill 비대화, Actions 실패
+- 프로젝트 전용으로 유지할 내용: 실제 게임의 컨셉 문장·SWOT 항목·DDD 목표·PoC 결과·수치·콘텐츠·Production 판정
+- Base Method·Skill·Template·Test 환류 후보: 기획 방향 상태 머신, SWOT-to-action, DDD 정의 계약, 범용 검증 판정·증거 템플릿과 Legacy Alias
+- 다음 검토 트리거: 첫 두 프로젝트 적용, PoC 범위 팽창, DDD 목표 오라우팅, SWOT 일반론화, 통합 검증 Skill 비대화
 
 ### 2026-07-21 consolidated Base skills and operating structure
 
