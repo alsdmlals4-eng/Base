@@ -9,9 +9,11 @@ description: Use when a SKILL.md or operating router has grown too large and mus
 
 본문 간소화는 정보를 지우는 작업이 아니라 **항상 필요한 실행 계약만 본문에 남기고 조건부 세부사항을 필요할 때 읽는 reference로 이동**하는 작업이다.
 
+이 Skill은 SKILL.md와 실행 라우터의 점진적 공개만 책임진다. 죽은 자료 제거는 `pruning-stale-and-nonfunctional-material`, 사용 중인 구조의 재배치는 `refactoring-with-contract-preservation`, 일반 기획 문서의 편집·발행은 `managing-design-documents`로 넘긴다.
+
 ## Modes
 
-`inventory → classify-always-vs-conditional → extract-references → rewrite-router → validate-disclosure`
+`inventory` → `classify-always-vs-conditional` → `extract-references` → `rewrite-router` → `validate-disclosure`
 
 ## Keep in SKILL.md
 
