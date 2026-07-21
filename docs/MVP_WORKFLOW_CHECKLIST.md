@@ -45,7 +45,24 @@ validation:
 - [ ] 완료 기준이 `조건 → 행동 → 관찰 결과`다.
 - [ ] 정상·실패·경계·회귀·사용자 검수 방법이 있다.
 
-## 4. 기존 프로젝트 구조 변경
+## 4. 핵심 컨셉·기획 방향·PoC
+
+`analyzing-and-refining-game-concepts`가 필요한 작업인지 확인한다.
+
+- [ ] 한 문장 핵심 컨셉에 대상 플레이어·핵심 행동·감정·차별화가 있다.
+- [ ] 플레이·제작·기술·콘텐츠·시장 제약을 확인했다.
+- [ ] 뾰족한 재미가 홍보 문구가 아니라 반복 행동·선택·피드백·다음 동기다.
+- [ ] GDD·레벨·등장인물·캐릭터 스타일·스테이지·세계관을 핵심 컨셉에 정렬했다.
+- [ ] 요소를 `AMPLIFY / SUPPORT / NEUTRAL / CONFLICT / UNPROVEN`으로 판정했다.
+- [ ] SWOT을 SO·WO·ST·WT 실행 방향으로 변환했다.
+- [ ] MDA·DDE·3C·루프·동기·차별화·제작성을 필요한 만큼 분석했다.
+- [ ] `DDD` 등 다의적 약어의 프로젝트 정의를 확인했다.
+- [ ] PoC가 가장 위험한 가설을 검증하는 최소 범위다.
+- [ ] PoC 성공·실패·중단 기준과 다음 결정이 있다.
+- [ ] 결과에 따라 `KEEP / AMPLIFY / CHANGE / REMOVE / DEFER / RETEST`를 판정했다.
+- [ ] Production·Vertical Slice 진입 또는 PoC 반복·보류·중단을 결정했다.
+
+## 5. 기존 프로젝트 구조 변경
 
 `managing-game-project-operating-system`을 사용한다.
 
@@ -57,7 +74,7 @@ validation:
 - [ ] 변경 전후 보존·참조·발행을 대조했다.
 - [ ] 종료 전에 `verify`를 실행했다.
 
-## 5. Implementation
+## 6. Implementation
 
 - [ ] 승인 범위에 직접 관련된 파일만 변경했다.
 - [ ] 가장 작은 검증 가능한 변경을 사용했다.
@@ -66,18 +83,23 @@ validation:
 - [ ] 보류 항목을 별도 승인 없이 구현하지 않았다.
 - [ ] 범위 밖 개선은 별도 제안으로 분리했다.
 
-## 6. Verification
+## 7. Verification
 
+`reviewing-and-validating-project-changes`를 사용한다.
+
+- [ ] 승인 작업 계약과 실제 diff를 대조했다.
 - [ ] 포맷·문법·타입·정적 검사
 - [ ] 관련 자동 테스트
 - [ ] 핵심 정상 경로
-- [ ] 실패·취소·중복 입력·누락 데이터
+- [ ] 실패·취소·중복 입력·누락 데이터·원래 실패 반례
 - [ ] 저장·불러오기·호환성
 - [ ] 실제 화면·플레이·오디오·성능·접근성
-- [ ] diff와 승인 범위 대조
-- [ ] 실행하지 못한 검증은 `[미검증]`
+- [ ] 인접 기존 기능 회귀
+- [ ] 외부 AI 결과가 있으면 `external-source-review`
+- [ ] 실행하지 못한 검증은 `UNVERIFIED`와 이유로 기록
+- [ ] 판정·증거·남은 위험·롤백을 연결했다.
 
-## 7. 기획 책임 원본·발행
+## 8. 기획 책임 원본·발행
 
 `managing-design-documents`를 사용한다.
 
@@ -92,7 +114,7 @@ validation:
 - [ ] PDF 전 페이지 렌더와 잘림·겹침·한글을 확인했다.
 - [ ] `CURRENT`와 사람 시각 검수 완료를 혼동하지 않았다.
 
-## 8. Skill·Learning
+## 9. Skill·Learning
 
 - [ ] 기존 통합 Skill의 mode로 처리할 수 있는지 먼저 확인했다.
 - [ ] 독립 입력·산출물·Quality Bar·검증이 있을 때만 새 Skill을 만들었다.
@@ -101,14 +123,14 @@ validation:
 - [ ] 실패·중요 결정·재사용 가능한 교훈·실제 검증 결과를 Learning Log에 기록했다.
 - [ ] 이전 ID가 있으면 `LEGACY_SKILL_ALIASES.md`에 연결했다.
 
-## 9. Documentation·Context
+## 10. Documentation·Context
 
 - [ ] 관련 책임 원본·Registry·Roadmap·Decision·Changelog를 갱신했다.
 - [ ] Active Context가 실제 상태와 일치한다.
 - [ ] 별도 Handoff를 두 번째 활성 상태 원본으로 만들지 않았다.
 - [ ] 다음 작업·선행 조건·위험·롤백·읽기 순서가 있다.
 
-## 10. GitHub Governance
+## 11. GitHub Governance
 
 - [ ] Documentation Governance 검사
 - [ ] Skill Routing Governance 검사
@@ -118,7 +140,7 @@ validation:
 - [ ] GitHub Actions 실제 실행
 - [ ] Required Status Check·CODEOWNERS·브랜치 보호 실제 활성 상태 확인
 
-## 11. Integration·Completion
+## 12. Integration·Completion
 
 - [ ] Acceptance Criteria가 증거와 함께 판정됐다.
 - [ ] 실제 변경·검증·미검증·사용자 확인 대기를 분리했다.
