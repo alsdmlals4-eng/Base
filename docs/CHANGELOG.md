@@ -2,6 +2,9 @@
 
 ## Unreleased - Base audit and operating-contract consistency
 
+- 기존 프로젝트의 기획·시스템·코드 코어와 코어·MVP 경계를 판정하는 `identifying-project-core`를 추가했다.
+- PLAN 단계에서 코어 제안·반례 검토·사용자 승인·책임 원본 연결을 수행하는 `establishing-project-core`를 추가했다.
+- 레드팀 공격·비판 검증·승인된 finding만 개선·회귀 재검토하는 `running-adversarial-review-and-refinement`를 추가했다.
 - SlopSlap 기준 커밋의 51개 tracked 파일과 27개 시각 자산을 전수 감사하고, 외부 Claude·브라우저 런타임 없이 동작하는 Godot/Web UI 아트 감사 스킬을 추가했다.
 - A~E 읽기 전용 후보 검사, 목적 있는 디자인 반례, 사용자 승인 게이트, 순차 개선, 독립 재감사와 실제 전후 렌더 계약을 추가했다.
 - UI Art Findings JSON Schema와 Windows/Linux 호환 정적 검사기를 추가했으며, 정적 패턴만으로 결함이나 “AI slop”을 확정하지 않도록 했다.

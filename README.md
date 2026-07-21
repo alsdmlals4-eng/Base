@@ -48,7 +48,7 @@ START_HERE.md
 
 ## 활성 실행 스킬
 
-활성 Registry 스킬은 중복 통합 뒤 **13개**입니다.
+활성 Registry 스킬은 중복 통합 뒤 **16개**입니다.
 
 | Skill | 책임 |
 |---|---|
@@ -58,6 +58,9 @@ START_HERE.md
 | `evolving-project-discipline-skills` | 프로젝트 스킬 생성·통합·학습 |
 | `maintaining-project-context-and-handoff` | 현재 상태·다음 작업·위험 압축 |
 | `analyzing-and-refining-game-concepts` | 핵심 컨셉·DDD·벤치마크·플레이어 반응·플레이테스트·PoC·기획 재조정 |
+| `identifying-project-core` | 기존 프로젝트의 기획·시스템·코드 코어와 코어·MVP 경계를 근거로 판정 |
+| `establishing-project-core` | PLAN 단계에서 프로젝트 코어를 제안·반례 검토하고 사용자 승인으로 확정 |
+| `running-adversarial-review-and-refinement` | 실패 가정 공격·비판 검증·승인된 개선·회귀 재검토 |
 | `designing-vertical-slices` | 대표 구간의 목표 품질·실제 플레이 증거·접근성·성능·제작 파이프라인 검증 |
 | `orchestrating-deepseek-worktrees` | 외부 AI 대량 작업의 격리된 작업 공간 운용 |
 | `reviewing-and-validating-project-changes` | 코드·데이터·문서·자산 변경의 계약·정본·정적·런타임·접근성·성능·회귀 검증 |

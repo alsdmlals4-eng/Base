@@ -75,6 +75,9 @@ routing_reason:
 | 신규 운영체계 | `managing-game-project-operating-system: install → verify` |
 | 기존 구조 변경 | `managing-game-project-operating-system: audit → migrate → verify` |
 | 핵심 컨셉·DDD·SWOT·PoC·재조정 | `analyzing-and-refining-game-concepts` |
+| 기존 프로젝트 코어 판정 | `identifying-project-core` |
+| PLAN 단계 프로젝트 코어 확정 | `establishing-project-core` |
+| 적대적 검토·개선·회귀 | `running-adversarial-review-and-refinement` |
 | 경쟁작·플레이어 반응 조사 | `analyzing-and-refining-game-concepts: benchmark-and-player-research` |
 | 플레이테스트·퍼널·A/B 실험 | `analyzing-and-refining-game-concepts: playtest-and-experiment` |
 | 기획 책임 원본·발행 | `managing-design-documents` |
