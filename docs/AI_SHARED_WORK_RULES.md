@@ -4,8 +4,9 @@
 
 - 전체 운영 구조와 상태·발행 정책: `docs/OPERATING_MODEL.md`
 - 요청 라우팅·요구 확인·실행 계약: `skills/managing-project-intake-and-work-contract/SKILL.md`
-- 핵심 컨셉·뾰족한 재미·PoC: `skills/analyzing-and-refining-game-concepts/SKILL.md`
+- 핵심 컨셉·뾰족한 재미·DDD·PoC: `skills/analyzing-and-refining-game-concepts/SKILL.md`
 - 프로젝트 변경 검증: `skills/reviewing-and-validating-project-changes/SKILL.md`
+- 정본·참조 최신성 전문 감사: `skills/auditing-canonical-reference-freshness/SKILL.md`
 - 작업·제품 게이트: `docs/knowledge/methods/DEVELOPMENT_GATES_METHOD.md`
 - 작업별 최소 읽기: `docs/DOCUMENTATION_MAP.md`
 
@@ -65,8 +66,10 @@
 - 뾰족한 재미는 플레이어가 반복하는 행동·선택·피드백·다음 동기로 표현한다.
 - GDD·레벨·캐릭터·스테이지·세계관을 핵심 컨셉에 대조한다.
 - SWOT은 SO·WO·ST·WT 실행안으로 변환한다.
-- MDA·DDE·3C·루프 등은 개선 결정에 필요한 만큼만 사용한다.
-- `DDD`처럼 의미가 여러 개인 약어는 프로젝트 정의 없이 임의 해석하지 않는다.
+- MDA·DDE·DDD·3C·루프 등은 개선 결정에 필요한 만큼만 사용한다.
+- Base 내부 DDD는 Digital Dopamine Design이다. 첫 의미 있는 보상, 행동-피드백 지연, 보상 명료성·밀도, Micro→Session→Meta 보상 사다리, 다음 행동 의도, 피로·인플레이션을 관찰한다.
+- DDD는 실제 도파민 분비량 측정이나 의학적 중독 진단이 아니며, 의미 있는 선택을 이펙트·팝업·숫자·알림으로 대체하지 않는다.
+- 외부 자료의 동명 DDD는 출처 정의를 확인하기 전 임의 해석하지 않는다.
 - PoC는 가장 위험한 가설을 검증하는 최소 범위로 유지하고 결과를 기획 재조정에 반영한다.
 
 ## 6. 구현·변경 안전
@@ -77,6 +80,7 @@
 - `[보류]`는 재개 승인 없이 구현하지 않는다.
 - 범위 밖 개선은 별도 작업 계약이나 제안으로 분리한다.
 - 기존 프로젝트 구조 변경은 `managing-game-project-operating-system`의 `audit`부터 시작한다.
+- 정본·경로·ID·Schema·생성기를 바꾸면 이전 참조와 변경됐어야 하지만 untouched인 소비자를 추적한다.
 
 ## 7. 검증과 완료 보고
 
@@ -84,6 +88,7 @@
 
 ```text
 작업 계약·diff
+→ 정본·경로·ID·Schema 변경 시 reference-freshness
 → 포맷·문법·정적 검사
 → 관련 자동 테스트
 → 핵심 정상·실패·경계·반례
@@ -93,7 +98,7 @@
 → 판정·미실행·위험·롤백
 ```
 
-프로젝트에 실제로 존재하는 검증만 실행한다. 완료 보고는 `실제 변경`, `검증 완료`, `미검증`, `사용자 확인 대기`, `남은 위험·롤백`을 분리한다.
+`reference-freshness`는 `auditing-canonical-reference-freshness`를 조건부 호출한다. 프로젝트에 실제로 존재하는 검증만 실행하며, 완료 보고는 `실제 변경`, `검증 완료`, `미검증`, `사용자 확인 대기`, `남은 위험·롤백`을 분리한다.
 
 ## 8. 조사·벤치마킹
 
