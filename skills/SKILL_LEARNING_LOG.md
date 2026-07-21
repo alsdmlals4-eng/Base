@@ -1,5 +1,14 @@
 # Base Skill Learning Log
 
+## 2026-07-21 프로젝트 코어·적대적 검토 Skill 분리 교훈
+
+- 프로젝트 코어 판정은 기존 프로젝트의 승인 원본·실제 구현·의존 관계를 읽기 전용으로 대조하는 작업이며, 새 프로젝트의 코어를 제안·확정하는 기획 권한과 분리한다.
+- `identifying-project-core`는 기획·시스템·코드 코어와 코어 기능·MVP 지원 기능을 제거·대체 테스트로 구분한다.
+- `establishing-project-core`는 PLAN Work Mode에서 불변 조건과 변경 가능한 외피를 제안하고, 반례 검토 뒤 사용자의 명시적 승인만 `CORE_CONFIRMED`로 인정한다.
+- 적대적 검토는 레드팀 공격, 비판 검증, 승인된 finding의 최소 개선, 회귀 재검토를 분리한다. 비판도 취향·과잉 요구·잘못된 전제일 수 있으므로 그대로 반영하지 않는다.
+- 세 Skill은 읽기 권한, 승인 경계, 산출물이 달라 독립 Skill로 유지하되 실제 여러 프로젝트에서 오라우팅·코어 과대 판정·비판 과수용을 검증하기 전까지 지식 상태는 `OBSERVATION` 또는 `HYPOTHESIS`로 둔다.
+
+
 ## 2026-07-21 Work Mode·자동 Skill 라우팅·구형본 정리 교훈
 
 - `Mode`라는 단어를 세션 전체 작업 방식과 Skill 내부 절차에 함께 쓰면 라우팅 순서가 모호해진다. Base에서는 전자를 `Work Mode`, 후자를 `Skill Mode`로 구분한다.
@@ -134,6 +143,19 @@
 - PDF·다이어그램 발행본이 Registry보다 오래됨
 
 ## 기록
+
+### 2026-07-21 project core and adversarial review skills
+
+- 프로젝트·작업: 프로젝트 코어 판정, PLAN 단계 코어 확정, 적대적 검토·개선 루프를 독립 Skill로 추가
+- 호출 트리거: 사용자가 사람도 이해하기 쉬운 컨텍스트를 Base Skill로 분리하고 기획 모드의 코어 확정 Skill을 추가하도록 요청
+- 실제 산출물: `identifying-project-core`, `establishing-project-core`, `running-adversarial-review-and-refinement`, Registry·라우팅·회귀 동기화
+- 실행한 검증: Registry Schema, Skill 패키지 1:1, 진입점 발견성, 구조 회귀, 정본 최신성 검사
+- 결과: 부분 성공 — 공용 계약 추가, 실제 여러 프로젝트 적용은 미검증
+- 성공 조건: 코어와 MVP를 구분하고, 사용자 승인 없이 코어를 확정하지 않으며, 레드팀 비판을 검증한 뒤 유효한 문제만 수정하고 회귀를 재검사함
+- 실패·예외: 모든 중요 기능을 코어로 판정, 기술 부채를 불변 코어로 고정, 비판 전부 수용, 기능 팽창, 회귀 누락
+- 지식 상태: 코어 판정은 관찰, 코어 확정과 적대적 개선 루프는 가설
+- 다음 검토 트리거: 서로 다른 프로젝트 적용, 승인 없는 확정, 코어 과대 판정, 비판 과수용·기각 오류
+
 
 ### 2026-07-21 automatic Work Mode routing and legacy reconciliation
 

@@ -89,6 +89,9 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 | 분야별 스킬 생성·통합·학습 | `evolving-project-discipline-skills` | 스킬 추가·중복·반복 실패·Registry 변경 |
 | Active Context·Handoff | `maintaining-project-context-and-handoff` | 상태·다음 작업·게이트·위험 변경 |
 | 핵심 컨셉·뾰족한 재미·DDD·기획 정렬 | `analyzing-and-refining-game-concepts` | `frame` / `constrain` / `sharpen` / `structure` / `analyze` |
+| 프로젝트 코어 식별·코어/MVP 경계 | `identifying-project-core` | `inventory` / `extract-candidates` / `dependency-map` / `removal-and-change-test` / `classify` / `core-report` |
+| PLAN 단계 프로젝트 코어 확정 | `establishing-project-core` | `propose` / `stress-test` / `confirm` / `lock` / `reopen` |
+| 적대적 검토·비판 검증·개선·회귀 | `running-adversarial-review-and-refinement` | `attack` / `validate-critique` / `refine-approved-findings` / `regression-recheck` / `decision-report` |
 | 경쟁작·플레이어 반응·행동 근거 | `analyzing-and-refining-game-concepts` | `benchmark-and-player-research` |
 | 플레이테스트·이벤트·퍼널·A/B | `analyzing-and-refining-game-concepts` | `playtest-and-experiment` / `poc-contract` / `recalibrate` / `production-gate` |
 | Vertical Slice | `designing-vertical-slices` | `slice-contract` / `quality-bar` / `pipeline-proof` / `playtest-evidence` / `decision-gate` |

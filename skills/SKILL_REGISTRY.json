@@ -225,6 +225,114 @@
       "last_reviewed_at": "2026-07-21",
       "last_reviewed_commit": "b961baa2ca8ea8c1be61074aabbc2eebec8a3162",
       "knowledge_state": "PATTERN"
+    },
+    {
+      "skill_id": "identifying-project-core",
+      "layer": "foundation",
+      "discipline": "project-core-governance",
+      "path": "skills/identifying-project-core/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "project-core",
+        "core-identification",
+        "core-classification",
+        "core-loop-boundary",
+        "core-vs-mvp",
+        "identity-defining-system",
+        "technical-core",
+        "removal-test",
+        "change-impact"
+      ],
+      "use_when": [
+        "기존 프로젝트에서 무엇이 정체성·핵심 경험·중심 시스템·기술 기반의 프로젝트 코어인지 근거와 제거·대체 테스트로 판정하고 코어·MVP 지원·콘텐츠·외피를 구분한다."
+      ],
+      "do_not_use_when": [
+        "새 프로젝트의 코어를 승인·확정하는 기획 작업, 단순 핵심 컨셉 브레인스토밍, 실제 diff의 통합 검증만 필요한 경우다."
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": [
+        "중요 기능을 전부 코어로 판정",
+        "코어와 MVP 혼동",
+        "기술 의존성과 제품 정체성 혼동",
+        "근거 없는 확정",
+        "문서·구현 충돌 누락"
+      ],
+      "last_reviewed_at": "2026-07-21",
+      "last_reviewed_commit": "ee265576da7f67d3278f8099dd97d4e714ef0651",
+      "knowledge_state": "OBSERVATION"
+    },
+    {
+      "skill_id": "establishing-project-core",
+      "layer": "specialist",
+      "discipline": "game-design-strategy",
+      "path": "skills/establishing-project-core/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "establish-project-core",
+        "confirm-project-core",
+        "planning-core-contract",
+        "core-invariants",
+        "core-approval",
+        "core-protection-boundary",
+        "core-reopen"
+      ],
+      "use_when": [
+        "PLAN Work Mode에서 새 프로젝트 또는 방향 재정의 프로젝트의 정체성·핵심 경험·코어 루프·중심 시스템·불변 조건·변경 가능 외피를 제안하고 스트레스 테스트한 뒤 사용자 승인으로 확정한다."
+      ],
+      "do_not_use_when": [
+        "기존 프로젝트의 코어 사실만 읽기 전용으로 판정하거나, 사용자 승인 없이 코어를 확정하거나, 확정된 코어와 무관한 단일 기능을 구현하는 경우다."
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": [
+        "승인 없는 CORE_CONFIRMED",
+        "과도한 코어 범위",
+        "기능 목록을 코어로 고정",
+        "코어와 MVP 혼동",
+        "PoC 반증 무시",
+        "일반 변경으로 코어 암묵 변경"
+      ],
+      "last_reviewed_at": "2026-07-21",
+      "last_reviewed_commit": "ee265576da7f67d3278f8099dd97d4e714ef0651",
+      "knowledge_state": "HYPOTHESIS"
+    },
+    {
+      "skill_id": "running-adversarial-review-and-refinement",
+      "layer": "foundation",
+      "discipline": "integrated-review",
+      "path": "skills/running-adversarial-review-and-refinement/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "adversarial-review",
+        "red-team-review",
+        "critique-refine",
+        "self-refine",
+        "failure-assumption",
+        "critique-validation",
+        "approved-refinement",
+        "regression-recheck",
+        "negative-review"
+      ],
+      "use_when": [
+        "기획·계획·문서·코드 제안·데이터·UX 등 작업물이 실패했다고 가정해 결함을 공격적으로 찾고, 비판 자체를 검증한 뒤 유효한 문제만 최소 개선하고 회귀 재검토한다."
+      ],
+      "do_not_use_when": [
+        "칭찬·균형 평가만 요청됐거나, 같은 입력의 단순 검사 재실행이거나, 실제 변경의 정적·런타임 증거 검증만 필요한 경우다."
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": [
+        "레드팀 지적 전부 수용",
+        "취향을 결함으로 판정",
+        "프로젝트 코어 훼손",
+        "기능 팽창",
+        "보류·기각 항목 몰래 반영",
+        "회귀 검토 누락"
+      ],
+      "last_reviewed_at": "2026-07-21",
+      "last_reviewed_commit": "ee265576da7f67d3278f8099dd97d4e714ef0651",
+      "knowledge_state": "HYPOTHESIS"
     }
   ]
 }

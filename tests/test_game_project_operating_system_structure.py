@@ -52,6 +52,9 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "skills/evolving-project-discipline-skills/SKILL.md",
             "skills/maintaining-project-context-and-handoff/SKILL.md",
             "skills/analyzing-and-refining-game-concepts/SKILL.md",
+            "skills/identifying-project-core/SKILL.md",
+            "skills/establishing-project-core/SKILL.md",
+            "skills/running-adversarial-review-and-refinement/SKILL.md",
             "skills/designing-vertical-slices/SKILL.md",
             "skills/orchestrating-deepseek-worktrees/SKILL.md",
             "skills/reviewing-and-validating-project-changes/SKILL.md",
@@ -156,6 +159,9 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "evolving-project-discipline-skills",
             "maintaining-project-context-and-handoff",
             "analyzing-and-refining-game-concepts",
+            "identifying-project-core",
+            "establishing-project-core",
+            "running-adversarial-review-and-refinement",
             "reviewing-and-validating-project-changes",
             "auditing-canonical-reference-freshness",
             "managing-base-change-proposals",
@@ -186,7 +192,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         self.assertTrue(policy["require_trigger_match"])
         self.assertTrue(policy["require_execution_report"])
         self.assertEqual(policy["work_modes"], ["PLAN", "BUILD", "REVIEW"])
-        self.assertEqual(len(registry["skills"]), 13)
+        self.assertEqual(len(registry["skills"]), 16)
         seen: set[str] = set()
         for item in registry["skills"]:
             skill_id = item["skill_id"]
@@ -208,6 +214,20 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "auditing-canonical-reference-freshness",
             "managing-base-change-proposals",
         }.issubset(seen))
+
+    def test_project_core_and_adversarial_skills_have_distinct_contracts(self) -> None:
+        identify = (ROOT / "skills/identifying-project-core/SKILL.md").read_text(encoding="utf-8")
+        establish = (ROOT / "skills/establishing-project-core/SKILL.md").read_text(encoding="utf-8")
+        adversarial = (ROOT / "skills/running-adversarial-review-and-refinement/SKILL.md").read_text(encoding="utf-8")
+        for term in ("PROJECT_CORE", "MVP_SUPPORT", "removal-and-change-test", "UNVERIFIED"):
+            self.assertIn(term, identify)
+        for term in ("CORE_PROPOSED", "CORE_STRESS_TESTED", "CORE_CONFIRMED", "사용자 승인", "REQUIRES_REAPPROVAL"):
+            self.assertIn(term, establish)
+        for term in ("attack", "validate-critique", "refine-approved-findings", "regression-recheck", "MUST_FIX", "REJECT"):
+            self.assertIn(term, adversarial)
+        self.assertIn("읽기 전용", identify)
+        self.assertIn("사용자 승인 없이", establish)
+        self.assertIn("비판도 오류·취향·과잉 요구", adversarial)
 
     def test_work_mode_skill_and_skill_mode_are_distinct_and_automatic(self) -> None:
         routing = (ROOT / "docs/WORK_MODE_AND_SKILL_ROUTING.md").read_text(encoding="utf-8")
