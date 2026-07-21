@@ -1,5 +1,14 @@
 # Base Skill Learning Log
 
+## 2026-07-22 원문 책임 전수 매핑·Skill 구조 최적화
+
+- 1,201줄 학습 텍스트의 책임을 `skills/SKILL_COVERAGE.json`에 전수 매핑했다.
+- 가지치기·본문 간소화·행동 보존 리팩토링은 입력·산출물·삭제 권한·검증이 달라 독립 Skill로 분리했다.
+- 동기화·장기 작업 연속성·Games User Research 11영역·학습 노트·시각 대시보드·엔진 디버깅도 기존 Skill로 흡수할 수 없는 독립 계약으로 판정했다.
+- 요청 명세화·Issue/Goal·MVP·벤치마킹·문서 기억·검증은 기존 Skill에 이미 기능이 있어 중복 신설하지 않았다.
+- 코어 판정·코어 확정·적대적 검토·컨셉 분석·Skill 진화 본문을 compact router로 리팩토링하고 상세 판정표를 reference로 이동했다.
+- 전용 checker와 PR 회귀 테스트로 coverage, Registry, front matter, 파일 존재, 본문 최소 계약과 compact line budget을 검증한다.
+- 현재 지식 상태: 실제 Base 적용은 `OBSERVATION`, 여러 프로젝트 반복 전까지 새 Skill 계약은 `HYPOTHESIS`.
 ## 2026-07-21 프로젝트 코어·적대적 검토 Skill 분리 교훈
 
 - 프로젝트 코어 판정은 기존 프로젝트의 승인 원본·실제 구현·의존 관계를 읽기 전용으로 대조하는 작업이며, 새 프로젝트의 코어를 제안·확정하는 기획 권한과 분리한다.

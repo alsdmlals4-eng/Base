@@ -26,6 +26,7 @@ on:
       - "tests/test_consolidated_skill_references.py"
       - "tests/test_reference_freshness.py"
       - "tests/test_skill_package_integrity.py"
+      - "tests/test_skill_system_coverage.py"
       - "tests/test_project_skill_map_generation.py"
       - "tests/test_base_change_proposals.py"
       - "tests/test_deep_interview_contract.py"
@@ -81,6 +82,7 @@ jobs:
             tools/check_interview_contract.py \
             tools/audit_external_source.py \
             tools/check_canonical_reference_freshness.py \
+            tools/check_skill_system_coverage.py \
             skills/auditing-and-refining-ui-art/scripts/scan_ui_art_signals.py \
             templates/project-operations/github/check_documentation_governance.py \
             templates/project-operations/github/check_skill_routing_governance.py \
@@ -93,6 +95,7 @@ jobs:
             tests/test_consolidated_skill_references.py \
             tests/test_reference_freshness.py \
             tests/test_skill_package_integrity.py \
+            tests/test_skill_system_coverage.py \
             tests/test_project_skill_map_generation.py \
             tests/test_game_project_operating_system_structure.py \
             tests/test_base_change_proposals.py \
@@ -141,13 +144,22 @@ jobs:
             tests/test_consolidated_skill_references.py \
             tests/test_reference_freshness.py \
             tests/test_skill_package_integrity.py \
+            tests/test_skill_system_coverage.py \
             tests/test_project_skill_map_generation.py \
             tests/test_base_change_proposals.py \
             tests/test_deep_interview_contract.py \
             tests/test_ui_art_audit.py \
             tests/test_game_project_operating_system_structure.py \
             -v 2>&1 | tee operating-system-test-results.txt
-          status=${PIPESTATUS[0]}
+          test_status=${PIPESTATUS[0]}
+          python tools/check_skill_system_coverage.py \
+            2>&1 | tee -a operating-system-test-results.txt
+          checker_status=${PIPESTATUS[0]}
+          if [ "$test_status" -ne 0 ]; then
+            status=$test_status
+          else
+            status=$checker_status
+          fi
           echo "exit_code=$status" >> "$GITHUB_OUTPUT"
           exit "$status"
         env:

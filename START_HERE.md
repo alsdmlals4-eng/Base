@@ -265,3 +265,22 @@ contract-check
 ## 이전 Skill ID
 
 통합 전 Skill ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 mode로 연결한다. 새 문서와 Registry에는 새 ID만 사용하고 과거 Issue·PR·Git 이력은 그대로 보존한다.
+
+### 구조 최적화·동기화·장기 작업
+
+```text
+불필요 자료 판정 → pruning-stale-and-nonfunctional-material
+조건부 상세 분리 → simplifying-skill-bodies
+동작 보존 구조 변경 → refactoring-with-contract-preservation
+실패 가정 재검토 → running-adversarial-review-and-refinement
+실제 변경 증거 → reviewing-and-validating-project-changes
+```
+
+- 로컬·GitHub drift: `synchronizing-local-and-github-state`
+- 긴 작업 checkpoint·재개: `maintaining-long-running-task-continuity`
+- 게임 사용자 연구 11영역: `governing-game-user-research-coverage`
+- 사용자 학습 자료: `creating-user-learning-notes`
+- 프로젝트 HTML·상태 시각화: `building-project-visual-dashboards`
+- Godot·Unity 런타임 오류: `diagnosing-game-engine-runtime-failures`
+
+전체 원문 책임 매핑은 `docs/SKILL_COVERAGE_MAP.md`, 기계 검증은 `skills/SKILL_COVERAGE.json`을 사용한다.

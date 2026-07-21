@@ -48,7 +48,7 @@ START_HERE.md
 
 ## 활성 실행 스킬
 
-활성 Registry 스킬은 중복 통합 뒤 **16개**입니다.
+활성 Registry 스킬은 책임 경계 재검토와 최적화 뒤 **25개**입니다.
 
 | Skill | 책임 |
 |---|---|
@@ -56,6 +56,15 @@ START_HERE.md
 | `managing-game-project-operating-system` | 신규 설치·기존 감사·승인된 마이그레이션·Health Review |
 | `managing-design-documents` | 기획 책임 원본 작성·구조 변경·발행·검수 |
 | `evolving-project-discipline-skills` | 프로젝트 스킬 생성·통합·학습 |
+| `pruning-stale-and-nonfunctional-material` | 중복·죽은 자료·오래된 경로의 무손실 가지치기 |
+| `simplifying-skill-bodies` | SKILL.md 핵심 계약 유지와 조건부 reference 분리 |
+| `refactoring-with-contract-preservation` | 기능·인터페이스·데이터 보존 리팩토링 |
+| `synchronizing-local-and-github-state` | 로컬·GitHub 상태의 안전한 비교·동기화 |
+| `maintaining-long-running-task-continuity` | 장기 작업 checkpoint·재개·부분 전달 |
+| `governing-game-user-research-coverage` | 게임 사용자 연구 11영역 설치·증거 coverage 감사 |
+| `creating-user-learning-notes` | 작업 교훈을 사용자 학습 노트로 변환 |
+| `building-project-visual-dashboards` | 정본 연결형 프로젝트 시각 대시보드 |
+| `diagnosing-game-engine-runtime-failures` | Godot·Unity 런타임 재현·원인 격리·최소 수정 |
 | `maintaining-project-context-and-handoff` | 현재 상태·다음 작업·위험 압축 |
 | `analyzing-and-refining-game-concepts` | 핵심 컨셉·DDD·벤치마크·플레이어 반응·플레이테스트·PoC·기획 재조정 |
 | `identifying-project-core` | 기존 프로젝트의 기획·시스템·코드 코어와 코어·MVP 경계를 근거로 판정 |

@@ -1,414 +1,66 @@
 ---
 name: analyzing-and-refining-game-concepts
-description: Use when defining or reworking a game's core concept, pointed fun, constraints, design coherence, rapid-reward DDD, benchmark and player evidence, playtest or experiment design, PoC hypothesis, or production direction through SWOT, MDA/DDE, loop, differentiation, and feasibility review.
+description: Use when defining or reworking a game's core concept, pointed fun, constraints, design coherence, Digital Dopamine Design, benchmark and player evidence, playtest or experiment design, PoC hypothesis, or production direction.
 ---
 
 # Analyzing and Refining Game Concepts
 
 ## Core principle
 
-기획 요소를 많이 만드는 것이 목적이 아니다. 플레이어가 계속 플레이하게 만드는 원동력인 **뾰족한 재미**를 찾고, 모든 게임 요소를 핵심 컨셉에 정렬한 뒤, 외부 사례·플레이어 반응·실제 행동을 근거로 가장 위험한 가설을 PoC와 플레이테스트에서 빠르게 검증해 다음 방향을 결정한다.
+기능을 늘리는 것이 아니라 플레이어가 반복할 **뾰족한 재미**와 핵심 선택을 선명하게 만들고, 외부 사례·사용자 반응·행동 증거·PoC로 가장 위험한 가설을 검증한다.
 
-빠른 보상은 뾰족한 재미를 더 빨리 인식시키는 수단이다. 의미 있는 행동과 선택 없이 자극만 반복하는 구조를 핵심 재미로 대체하지 않는다. 벤치마크는 인기 기능을 복사하는 절차가 아니라 현재 가설을 반증하고 개선 원리를 추출하는 절차다.
+프로젝트 코어의 사실 판정·승인은 코어 Skill, 11영역 Games User Research 구조의 설치·누락 감사는 `governing-game-user-research-coverage`, 문서 작성은 `managing-design-documents`가 책임진다.
 
-## Distinguish
+## Modes and state
 
-| 작업 | 이 Skill | 다른 Skill |
-|---|---|---|
-| 핵심 컨셉·뾰족한 재미·방향성 진단 | 책임짐 | - |
-| DDD 빠른 보상·즉각 피드백 구조 진단 | 책임짐 | 실제 구현은 프로젝트 작업 계약 |
-| 경쟁작·인접 사례·플레이어 리뷰 조사와 개선 변환 | 책임짐 | 실제 인터넷 검색·수집 도구는 실행 환경 |
-| 플레이테스트·행동 이벤트·퍼널·A/B 실험 계약 | 기획 가설과 판정 기준 책임 | 실제 배포·계측 구현은 프로젝트 작업 계약 |
-| GDD·레벨·캐릭터·세계관 문서 작성 | 구조와 개선 방향만 제안 | `managing-design-documents` |
-| 최소 가설 PoC 계약 | 책임짐 | 실제 구현은 프로젝트 작업 계약 |
-| 대표 품질·제작 파이프라인 증명 | 선행 방향과 플레이테스트 계약 제공 | `designing-vertical-slices` |
-| 구현 결과의 코드·데이터·접근성·성능 검증 | 판단 기준만 제공 | `reviewing-and-validating-project-changes` |
+`frame` → `constrain` → `sharpen` → `structure` → `benchmark-and-player-research` → `analyze` → `playtest-and-experiment` → `poc-contract` → `recalibrate` → `production-gate`
 
-## Modes
-
-- `frame`: 한 문장 핵심 컨셉과 플레이어 약속을 정한다.
-- `constrain`: 플랫폼·인력·시간·기술·콘텐츠·시장 제약을 확인한다.
-- `sharpen`: 반복 플레이의 원동력인 뾰족한 재미와 핵심 선택을 찾는다.
-- `structure`: 모든 기획 요소를 핵심 컨셉에 맞춰 구체화·정돈한다.
-- `benchmark-and-player-research`: 비교 게임·인접 사례·유저 반응을 조사해 기대·불만·성공·실패 원리를 근거화하고 개선 후보로 변환한다.
-- `analyze`: SWOT, MDA/DDE, DDD, 3C, 루프, 동기, 차별화, 제작성을 교차 분석한다.
-- `playtest-and-experiment`: 플레이테스트 집단·과제·피드백 채널·행동 이벤트·퍼널·A/B 변형과 성공 기준을 설계한다.
-- `poc-contract`: 가장 위험한 기획 가설과 최소 검증물을 정의한다.
-- `recalibrate`: 조사·PoC·플레이테스트 결과에 따라 유지·수정·삭제·보류를 결정한다.
-- `production-gate`: 다음 Prototype·Vertical Slice·Production 진입 여부를 판정한다.
-
-## State model
-
-```text
-1. CONCEPT_SEED
-→ 2. CONSTRAINTS_CHECKED
-→ 3. POINTED_FUN_HYPOTHESIS
-→ 4. CONCEPT_STRUCTURED
-→ 5. POC_BUILD_AND_TEST
-→ 6. CONCEPT_RECALIBRATION
-→ 7. PRODUCTION_READY | REPEAT_POC | HOLD | STOP
-```
-
-`benchmark-and-player-research`는 3~5단계에서 필요한 만큼 실행하고, `playtest-and-experiment`는 5단계의 증거 계약을 강화한다. 조사 파일이 존재한다는 이유만으로 상태를 전진시키지 않는다.
-
-`BIG BLIND`는 이 Skill에서 4단계 `CONCEPT_STRUCTURED`의 프로젝트 용어다. 레벨 디자인, 등장인물, 캐릭터 스타일, 스테이지, 세계관 등 모든 요소를 핵심 컨셉과 뾰족한 재미에 맞춰 정돈한다.
-
-## DDD project definition
-
-이 Base의 게임 기획 맥락에서 `DDD`는 **Digital Dopamine Design**을 뜻한다.
-
-> 플레이 시작 또는 행동 직후 짧은 시간 안에 사용자가 의미 있는 보상, 변화, 성취와 다음 기대를 체감하도록 설계하는 빠른 보상 요소.
-
-`Digital Dopamine`은 실제 도파민 분비량을 측정하거나 의학적 중독을 진단하는 표현이 아니다. 다음 체감 보상 설계축을 가리키는 프로젝트 내부 용어다.
-
-- 첫 의미 있는 보상까지 걸리는 시간.
-- 입력·행동에서 시각·청각·촉각·수치·상태 변화까지의 피드백 지연.
-- 짧은 구간의 보상 빈도와 밀도.
-- 무엇을 왜 얻었는지 즉시 이해되는 보상 명료성.
-- 기대 형성 → 행동 → 공개·획득 → 다음 목표의 짧은 순환.
-- 초 단위 micro reward, 세션 단위 reward, 장기 meta reward의 연결.
-- 같은 자극의 반복 피로와 보상 인플레이션 방지.
-
-DDD는 뾰족한 재미를 빠르게 전달해야 한다. 의미 없는 이펙트·숫자·상자·알림을 많이 노출하는 것만으로 통과시키지 않는다.
-
-Base에서 DDD는 위 의미로 사용한다. 다른 프로젝트나 외부 자료의 `DDD`는 정의를 확인하기 전 임의 해석하지 않는다.
+`CONCEPT_SEED → CONSTRAINTS_CHECKED → POINTED_FUN_HYPOTHESIS → CONCEPT_STRUCTURED → POC_BUILD_AND_TEST → CONCEPT_RECALIBRATION → PRODUCTION_READY | REPEAT_POC | HOLD | STOP`
 
 ## Required inputs
 
 ```yaml
 current_idea_or_gdd:
 target_player_and_play_context:
-reference_games_and_non_game_references:
-known_constraints:
-core_loop_and_meta_loop:
-current_game_elements:
-current_risks_and_unknowns:
-existing_prototype_or_poc_results:
-team_and_production_capacity:
-framework_profile:
-benchmark_research:
-  decision_to_make:
-  current_hypothesis:
-  comparable_dimensions:
-  target_platform_region_language:
-  source_window_and_versions:
-  player_segments:
-  official_product_sources:
-  player_review_and_community_sources:
-  behavioral_or_telemetry_sources:
-playtest_experiment:
-  build_and_version:
-  tester_segment_and_prior_exposure:
-  tasks_or_play_window:
-  observation_points:
-  feedback_channel:
-  telemetry_events_and_funnel:
-  control_and_variants:
-  primary_and_guardrail_metrics:
-ddd_profile:
-  first_meaningful_reward_target:
-  action_feedback_latency_target:
-  micro_reward_interval:
-  reward_ladder:
-  reward_legibility:
-  fatigue_and_inflation_risks:
+core_loop_and_game_elements:
+constraints_and_production_capacity:
+reference_games_and_player_evidence:
+telemetry_playtest_experiment_evidence:
+prototype_or_poc_results:
+risks_unknowns_and_decision_to_make:
 ```
 
-## Phase 1 — Core concept
+## Analysis lenses
 
-```text
-[대상 플레이어]는 [핵심 행동과 선택]을 반복하며
-[고유한 감정·판타지·성취]를 경험한다.
-이 게임은 [비교 대상]과 달리 [차별화된 원리] 때문에 계속 플레이된다.
-```
+- `SWOT`은 설명에서 끝내지 않고 `SO / WO / ST / WT` 행동으로 변환한다.
+- `MDA / DDE / DDD`, 3C, 루프, 동기, 차별화, 제작성을 교차 확인한다.
+- Base에서 `DDD`는 `Digital Dopamine Design`이며 첫 의미 있는 보상, 행동-피드백 지연, 보상 명료성·밀도, Micro→Session→Meta 사다리, 피로·인플레이션을 본다. 외부 동명 약어는 정의 확인 전 **임의 해석하지 않는다**.
 
-핵심 컨셉은 플레이어 역할, 반복 행동, 중요한 선택, 즉시 피드백, 다음 플레이를 부르는 미완료 욕구와 요소 추가·삭제 판단 기준을 포함한다.
+세부 컨셉·제약·뾰족한 재미·PoC 게이트는 `references/concept-evidence-and-gates.md`를 읽는다. 벤치마크·사용자 반응·플레이테스트의 전체 증거 필드는 `references/benchmark-player-evidence-and-playtests.md`, DDD의 경계와 축약 계약은 `references/benchmark-playtest-and-ddd.md`를 해당 mode에서만 읽는다.
 
-## Phase 2 — Constraint check
+## Workflow
 
-| 제약 | 확인 내용 |
-|---|---|
-| 플레이 환경 | 세션 길이, 입력 방식, 온라인·오프라인, 접근성 |
-| 제작 | 인력, 기술, 일정, 자산 생산 속도, 반복 비용 |
-| 콘텐츠 | 필요한 변형 수, 재사용성, 소모 속도 |
-| 시스템 | 저장, 경제, 난이도, AI, 멀티플레이 의존성 |
-| 표현 | 아트 스타일, 연출, 가독성, 플랫폼 성능 |
-| 사업·시장 | 대상층, 가격·운영 방식, 경쟁작, 포지셔닝 |
-
-제약은 아이디어를 약화시키는 목록이 아니라 뾰족한 재미를 더 선명하게 만드는 설계 경계로 사용한다.
-
-## Phase 3 — Pointed fun
-
-뾰족한 재미 후보마다 다음을 확인한다.
-
-1. 플레이어가 직접 하는 행동인가?
-2. 반복할수록 판단·숙련·표현이 깊어지는가?
-3. 성공과 실패의 피드백이 명확한가?
-4. 한 문장과 짧은 플레이로 설명 가능한가?
-5. 다른 게임 요소가 이 재미를 강화하는가?
-6. 콘텐츠를 늘리지 않아도 변주가 생기는가?
-7. 다음 판·단계·빌드를 시도할 이유가 생기는가?
-8. DDD 보상이 이 재미를 빠르게 드러내는가, 자극으로 가리는가?
-9. 외부 사례와 플레이어 반응에서 같은 기대·불만이 반복되는가?
-
-후보를 `핵심`, `보조`, `장식`, `충돌`, `미검증`으로 분류한다.
-
-## Phase 4 — Concept structuring / BIG BLIND
-
-GDD 핵심 규칙, 레벨, 등장인물, 캐릭터 스타일, 스테이지, 세계관, UI·아트·사운드, 성장·수집·경제와 DDD 리듬을 핵심 컨셉에 대조한다.
-
-```text
-AMPLIFY  핵심 재미를 직접 강화
-SUPPORT  이해·리듬·동기를 보조
-NEUTRAL  존재하지만 핵심에 기여하지 않음
-CONFLICT 핵심 컨셉과 충돌
-UNPROVEN PoC가 필요한 가설
-```
-
-`NEUTRAL`과 `CONFLICT`는 삭제·축소·재설계 후보로 만든다.
-
-## Phase 5 — Benchmark and player evidence
-
-조사 전에 현재 결정을 바꿀 질문을 고정한다. “인기 게임을 조사한다”가 아니라 다음처럼 비교 차원을 명시한다.
-
-- 같은 핵심 행동·세션·입력 환경에서 어떤 기대와 불만이 생기는가?
-- 첫 보상·튜토리얼·난이도·반복 구조에서 어디서 이탈하는가?
-- 상점·영상·장르 약속과 실제 플레이 경험이 일치하는가?
-- 성공 사례의 원리가 우리 핵심 컨셉과 제작 제약에 맞는가?
-
-근거 층위:
-
-```text
-공식 제품 사실·실제 플레이
-→ 플레이어 리뷰·커뮤니티 자기보고
-→ 이벤트·퍼널·세션 행동
-→ 통제 실험
-→ 기사·해설·모델 추론
-```
-
-- 긍정·부정·혼합, 최신·누적, 초보·장기, 짧은·긴 플레이타임, 플랫폼·언어·패치 전후를 구분한다.
-- 리뷰에서 플레이어가 제안한 해결책보다 겪은 문제·기대·상황·영향을 먼저 추출한다.
-- 리뷰 폭탄·오프토픽·밈·복사 반응은 별도 표시한다.
-- 판매량·평점·큰 목소리를 원인 근거로 단정하지 않는다.
-- 사실, 반복 반응, 행동 근거, 해석, 개선 제안을 분리한다.
-
-각 발견을 판정한다.
-
-```text
-ADOPT  핵심 컨셉과 제약에 맞아 채택
-ADAPT  원리만 프로젝트에 맞게 변형
-AVOID  반복 실패·기대 불일치·제작 위험 때문에 회피
-TEST   근거 상충·적용성 미확정으로 PoC·플레이테스트
-IGNORE 비교 차원·플레이어·버전이 달라 현재 결정과 무관
-```
-
-상세 표본·코딩·근거 모델은 `references/benchmark-player-evidence-and-playtests.md`를 따른다.
-
-## Phase 6 — Analysis lenses
-
-### SWOT to action
-
-- `SO`: 강점으로 기회를 확대한다.
-- `WO`: 기회를 잡기 위해 약점을 보완한다.
-- `ST`: 강점으로 위협을 방어한다.
-- `WT`: 약점과 위협이 겹치는 범위를 제거·회피한다.
-
-SWOT은 목록으로 끝내지 않고 근거, 실행 행동과 우선순위를 연결한다.
-
-### MDA or DDE
-
-- Mechanics / Design: 플레이어가 실제로 다루는 규칙·입력·자원·상태.
-- Dynamics: 반복 플레이에서 규칙들이 만드는 전략·긴장·변주.
-- Aesthetics / Experience: 플레이어가 느껴야 하는 감정·판타지·성취.
-
-### DDD — Digital Dopamine Design
-
-DDD는 빠른 시간 안에 플레이어가 보상을 인지하고 이해하고 다음 행동을 원하게 만드는지 분석한다.
-
-| 분석축 | 확인 질문 |
-|---|---|
-| First meaningful reward | 시작 후 첫 의미 있는 보상까지 얼마나 걸리는가? |
-| Action-feedback latency | 입력·결정 후 변화가 즉시 보이는가? |
-| Reward legibility | 무엇을 왜 얻었는지 이해되는가? |
-| Reward density | 의미 있는 보상이 충분한가, 잡음이 과도한가? |
-| Anticipation and reveal | 기대와 공개 사이의 리듬이 짧고 명확한가? |
-| Reward ladder | micro·session·meta 보상이 서로 연결되는가? |
-| Next-action pull | 보상이 다음 선택·시도·빌드를 부르는가? |
-| Fatigue and inflation | 반복 피로·무감각·보상 인플레이션이 생기는가? |
-
-DDD 개선 순서:
-
-1. 행동 원인과 결과를 가깝게 배치한다.
-2. 첫 의미 있는 보상을 앞당긴다.
-3. 보상 이유와 변화량을 명확히 보여준다.
-4. 작은 보상을 다음 선택과 중기 목표에 연결한다.
-5. 무의미한 팝업·이펙트·숫자 중첩을 줄인다.
-6. 반복 자극 대신 선택·숙련·발견의 변주를 늘린다.
-
-### DDD guardrails
-
-다음은 빠른 보상으로 인정하지 않거나 별도 위험으로 표시한다.
-
-- 실제 가치가 없는 보상을 과장한다.
-- 확률·비용·손실 조건을 숨긴다.
-- 불필요한 불편을 만든 뒤 결제로 해소한다.
-- 놓치면 손해라는 압박만으로 복귀를 유도한다.
-- 멈추거나 쉬기 어렵게 연속 알림·보상을 배치한다.
-- 뾰족한 재미와 무관한 자극으로 세션 시간을 늘린다.
-
-### Additional lenses
-
-- 3C: Character, Camera, Control.
-- Core loop / session loop / meta loop.
-- 선택의 의미, 숙련 깊이, 실패 학습, 피드백 지연.
-- 플레이 동기: 숙련, 발견, 수집, 표현, 관계, 서사, 경쟁, 창조.
-- 차별화, 제작성, 확장성.
-
-## Phase 7 — Playtest and experiment
-
-플레이테스트는 “재미있었나요?”를 묻는 행사가 아니라 가설·대상 집단·빌드·과제·관찰·판정이 있는 검증이다.
-
-```yaml
-hypothesis:
-build_and_version:
-tester_segment:
-cohort_size_and_recruitment:
-prior_exposure:
-tasks_or_play_window:
-observation_points:
-feedback_questions:
-feedback_channel:
-telemetry_events:
-funnel_steps:
-control_and_variants:
-primary_metric:
-guardrail_metrics:
-success_failure_stop:
-```
-
-- 관찰된 행동, 이벤트·퍼널, 인터뷰·설문 자기보고를 분리한다.
-- 피드백 질문은 해결책을 유도하지 않고 혼란·기대·선택 이유·중단 지점을 묻는다.
-- 외부 테스트는 대상 플레이어와 피드백 채널을 명확히 알리고 빌드·버전을 고정한다.
-- 기존 지식이 결과를 오염시키면 새로운 테스터 집단으로 다시 확인한다.
-- 이벤트는 행동과 당시 맥락을 기록하고, 퍼널은 순서가 있는 단계의 이탈과 소요 시간을 확인한다.
-- A/B 테스트는 하나의 주요 가설, 통제군·변형, 사전 선언한 주 지표·가드레일로 비교한다.
-- 결과를 본 뒤 성공 기준을 바꾸지 않는다.
-
-## Phase 8 — PoC contract
-
-```yaml
-hypothesis:
-player_action:
-expected_experience:
-minimum_rules_and_content:
-excluded_scope:
-benchmark_and_player_evidence:
-build_and_version:
-tester_segment_and_prior_exposure:
-observation_method:
-feedback_channel:
-telemetry_events_and_funnel:
-control_and_variants:
-primary_and_guardrail_metrics:
-success_signal:
-failure_signal:
-stop_condition:
-next_decision_if_passed:
-next_decision_if_failed:
-ddd_observation:
-  time_to_first_meaningful_reward:
-  action_to_feedback_latency:
-  reward_cause_understanding:
-  next_action_intent:
-  fatigue_or_overstimulation:
-```
-
-PoC는 가장 위험한 가설을 최소 비용으로 틀릴 수 있게 만든다. “재미있다”는 감상이나 실제 도파민이 분비됐다는 추정만으로 통과시키지 않는다. DDD 목표값은 장르·세션 길이·대상 플레이어에 맞게 먼저 선언하고 실제 플레이에서 비교한다.
-
-## Phase 9 — Recalibration and production gate
-
-- `KEEP`: 유지.
-- `AMPLIFY`: 핵심으로 강화.
-- `CHANGE`: 원인과 수정안을 명시.
-- `REMOVE`: 삭제.
-- `DEFER`: 판단 보류.
-- `RETEST`: 조건을 바꿔 재검증.
-
-Production 진입 조건:
-
-- 핵심 컨셉과 뾰족한 재미를 한 문장으로 설명한다.
-- 핵심 행동과 반복 동기가 PoC·플레이테스트에서 관찰됐다.
-- DDD 빠른 보상이 핵심 행동의 결과와 다음 행동을 연결한다.
-- 외부 사례·플레이어 반응·행동 근거가 사실·해석·제안으로 분리됐다.
-- 벤치마크 개선안이 핵심 컨셉에 맞게 `ADOPT/ADAPT/AVOID/TEST/IGNORE`로 판정됐다.
-- 주요 기획 요소가 핵심 컨셉에 정렬됐다.
-- 제약·위험 대응, 다음 제작·제외 범위와 재조정 지점이 있다.
-
-목표 품질과 제작 파이프라인까지 증명해야 하면 `designing-vertical-slices`로 넘긴다.
+1. 대상 플레이어, 핵심 행동·선택, 감정·판타지, 차별 원리를 한 문장으로 고정한다.
+2. 플레이·제작·기술·콘텐츠·표현·시장 제약을 확인한다.
+3. 요소를 `AMPLIFY / SUPPORT / NEUTRAL / CONFLICT / UNPROVEN`으로 정렬한다.
+4. 결정을 바꿀 질문만 벤치마킹하고 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 결론낸다.
+5. 빌드·표본·과제·관찰·이벤트·퍼널·지표가 있는 플레이테스트·실험을 설계한다.
+6. 가장 위험한 가설을 최소 PoC로 검증하고 `KEEP / AMPLIFY / CHANGE / REMOVE / DEFER / RETEST`를 결정한다.
 
 ## Output contract
 
 ```md
-# 게임 핵심 컨셉·방향성 분석
-## 한 문장 핵심 컨셉
-## 대상 플레이어와 플레이 약속
-## 제약 조건
-## 뾰족한 재미 후보와 최종 가설
-## 핵심·보조·장식·충돌 요소
-## GDD·레벨·캐릭터·스테이지·세계관 정렬
-## 벤치마크 비교 차원·제품 사실
-## 플레이어 반응 클러스터·기대 불일치
-## 행동 이벤트·퍼널·실험 근거
-## ADOPT·ADAPT·AVOID·TEST·IGNORE 개선 판정
-## SWOT와 SO·WO·ST·WT 전략
-## MDA/DDE·DDD·3C·루프·동기 분석
-## DDD 첫 보상·피드백·보상 사다리·피로 위험
-## 차별화·제작성·확장성
-## 플레이테스트·실험 계약
-## PoC 계약
-## 조사·PoC·플레이테스트 결과와 유지·수정·삭제·보류
-## 개선 우선순위
-## Production·Vertical Slice 진입 판정
-## 편향·미검증·위험·다음 질문
+## 핵심 컨셉·대상 플레이어·뾰족한 재미
+## 제약과 코어 정렬
+## SWOT·MDA/DDE/DDD·루프·차별화 분석
+## 벤치마크·사용자·행동 증거와 판정
+## 플레이테스트·실험·PoC 계약
+## 유지·수정·삭제·보류 결정
+## Production gate·미검증·다음 검증
 ```
 
-## Definition of Done
+## Quality gate
 
-- 핵심 컨셉과 뾰족한 재미가 연결됐다.
-- 제약과 요소별 핵심 기여도를 판정했다.
-- 비교 대상이 장르 이름이 아니라 현재 결정의 비교 차원으로 선정됐다.
-- 제품 사실·플레이어 반응·행동 근거·해석·제안을 분리했다.
-- 긍정·부정·버전·플레이어 맥락과 표본 한계를 기록했다.
-- 벤치마크 결과를 모방이 아니라 채택·변형·회피·검증 결정으로 변환했다.
-- 프레임워크 결과를 실제 개선 행동으로 변환했다.
-- DDD의 첫 보상 시간·피드백 지연·보상 명료성·다음 행동 연결을 분석했다.
-- DDD가 뾰족한 재미를 강화하는지 단순 자극으로 대체하는지 구분했다.
-- 플레이테스트가 빌드·대상 집단·관찰·피드백·행동 계측·성공 기준을 가진다.
-- 가장 위험한 가설의 PoC, 결과 재조정과 다음 게이트가 정의됐다.
-- 외부 자료의 모호한 약어를 임의 해석하지 않는다.
+기능 복사, 리뷰 표본 편향, 자기보고와 행동 혼동, 여러 변수 동시 실험, PoC 범위 팽창, DDD의 무의미한 자극화, 결과를 본 뒤 성공 기준 변경을 금지한다.
 
-## Failure conditions
-
-- 장르·기능 목록을 핵심 컨셉으로 대체한다.
-- 뾰족한 재미가 플레이어 행동이 아니라 홍보 문구뿐이다.
-- 모든 요소를 핵심이라 부르며 우선순위를 만들지 않는다.
-- 인기 게임 기능·평점·판매량을 원인 분석 없이 복사한다.
-- 긍정 또는 부정 리뷰만 골라 현재 기획을 정당화한다.
-- 버전·패치·플레이타임·플랫폼·언어 차이를 무시한다.
-- 플레이어가 제안한 해결책을 문제 분석 없이 그대로 구현한다.
-- 자기보고만으로 행동을, 행동 수치만으로 감정·이유를 단정한다.
-- 여러 변수를 동시에 바꾼 실험을 인과 근거로 사용한다.
-- SWOT을 일반적인 장단점 목록으로 끝낸다.
-- DDD를 이펙트·팝업·숫자의 양으로만 평가한다.
-- 의미 있는 선택 없이 빠른 보상만 반복해 핵심 재미를 대체한다.
-- 실제 도파민 분비나 중독 여부를 관찰 없이 단정한다.
-- PoC가 전체 게임·Vertical Slice 규모로 팽창한다.
-- PoC 결과와 무관하게 기존 기획을 유지한다.
-- 시장 유행만으로 핵심 경험을 바꾼다.
-- 외부 자료에서 정의되지 않은 DDD 약어를 임의의 분석 틀로 확정한다.
-
-References and templates:
-
-- `references/benchmark-player-evidence-and-playtests.md`
-- `templates/planning/GAME_CONCEPT_DIRECTION_REVIEW.md`
-- `templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md`
+Learning Log: `skills/SKILL_LEARNING_LOG.md`

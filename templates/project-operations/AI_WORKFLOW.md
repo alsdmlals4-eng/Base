@@ -302,3 +302,17 @@ Audit only
 - Learning Log·Base 제안:
 - 다음 작업·Active Context·Handoff:
 ```
+
+## 구조 최적화·추가 지원 Skill
+
+| 작업 | Skill |
+|---|---|
+| 중복·죽은 자료 가지치기 | `pruning-stale-and-nonfunctional-material` |
+| SKILL.md 점진적 공개 | `simplifying-skill-bodies` |
+| 기능 보존 리팩토링 | `refactoring-with-contract-preservation` |
+| 로컬·GitHub 동기화 | `synchronizing-local-and-github-state` |
+| 장기 작업 checkpoint | `maintaining-long-running-task-continuity` |
+| Games User Research 11영역 | `governing-game-user-research-coverage` |
+| 사용자 학습 노트 | `creating-user-learning-notes` |
+| 시각 대시보드 | `building-project-visual-dashboards` |
+| 엔진 런타임 오류 | `diagnosing-game-engine-runtime-failures` |

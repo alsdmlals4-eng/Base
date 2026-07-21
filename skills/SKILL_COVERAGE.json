@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "coverage_role": "source-text-to-active-skill-responsibility-map",
+  "responsibilities": [
+    {
+      "id": "local-github-sync",
+      "skills": [
+        "synchronizing-local-and-github-state"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "id": "behavior-preserving-refactoring",
+      "skills": [
+        "refactoring-with-contract-preservation"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "id": "long-running-task-continuity",
+      "skills": [
+        "maintaining-long-running-task-continuity"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "id": "skill-body-simplification",
+      "skills": [
+        "simplifying-skill-bodies"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "id": "stale-dead-material-pruning",
+      "skills": [
+        "pruning-stale-and-nonfunctional-material"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "id": "games-user-research-eleven-domains",
+      "skills": [
+        "governing-game-user-research-coverage"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "id": "user-learning-notes",
+      "skills": [
+        "creating-user-learning-notes"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "id": "ambiguous-request-to-work-contract",
+      "skills": [
+        "managing-project-intake-and-work-contract"
+      ],
+      "status": "COVERED_EXISTING"
+    },
+    {
+      "id": "player-experience-and-core-concept",
+      "skills": [
+        "analyzing-and-refining-game-concepts",
+        "identifying-project-core",
+        "establishing-project-core"
+      ],
+      "status": "COVERED_EXISTING"
+    },
+    {
+      "id": "benchmarking-and-player-evidence",
+      "skills": [
+        "analyzing-and-refining-game-concepts",
+        "governing-game-user-research-coverage"
+      ],
+      "status": "COVERED_EXISTING"
+    },
+    {
+      "id": "mvp-scope-and-poc",
+      "skills": [
+        "managing-project-intake-and-work-contract",
+        "analyzing-and-refining-game-concepts"
+      ],
+      "status": "COVERED_EXISTING"
+    },
+    {
+      "id": "issue-goal-plan-contract",
+      "skills": [
+        "managing-project-intake-and-work-contract"
+      ],
+      "status": "COVERED_EXISTING"
+    },
+    {
+      "id": "project-memory-and-context-compaction",
+      "skills": [
+        "managing-design-documents",
+        "maintaining-project-context-and-handoff"
+      ],
+      "status": "COVERED_EXISTING"
+    },
+    {
+      "id": "visual-dashboard",
+      "skills": [
+        "building-project-visual-dashboards"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "id": "multi-role-adversarial-review",
+      "skills": [
+        "running-adversarial-review-and-refinement"
+      ],
+      "status": "COVERED_EXISTING"
+    },
+    {
+      "id": "change-test-and-completion-evidence",
+      "skills": [
+        "reviewing-and-validating-project-changes"
+      ],
+      "status": "COVERED_EXISTING"
+    },
+    {
+      "id": "game-engine-runtime-debugging",
+      "skills": [
+        "diagnosing-game-engine-runtime-failures"
+      ],
+      "status": "COVERED"
+    },
+    {
+      "id": "skill-compression-and-evolution",
+      "skills": [
+        "evolving-project-discipline-skills",
+        "simplifying-skill-bodies",
+        "pruning-stale-and-nonfunctional-material"
+      ],
+      "status": "COVERED_EXISTING"
+    }
+  ]
+}
