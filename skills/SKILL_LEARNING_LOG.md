@@ -98,14 +98,14 @@
 ### 2026-07-21 concept analysis and unified project-change validation
 
 - 프로젝트·작업: Base 핵심 컨셉·뾰족한 재미·PoC 기획 분석 스킬 추가와 외부 AI 검수의 범용 변경 검증 통합
-- 기준 스킬 커밋: `agent/consolidate-skills-and-structure@3dbda34b1a817145787dc114963a7869360eac97`
+- 기준 스킬 커밋: `agent/consolidate-skills-and-structure@e679219ab1e2f993602d9e928ddf98640b69df41`
 - 호출 트리거: SWOT·DDD 요소 분석과 개선 방향, 핵심 컨셉→제약→뾰족한 재미→구체화→PoC→재조정→Production 흐름을 반복 가능한 스킬로 만들고 일반 변경 검증 공백을 해소하라는 사용자 요청
 - 입력 범위: 활성 Skill Registry, Operating Model, START_HERE, AGENTS, Documentation Map, Workflow·Checklist, 프로젝트 템플릿, 기존 Vertical Slice·외부 AI 검수 스킬과 구조 회귀 테스트
 - 실제 산출물: `analyzing-and-refining-game-concepts`, `reviewing-and-validating-project-changes`, 기획 방향·변경 검증 템플릿, 12개 활성 Skill Registry, Legacy Alias와 프로젝트 라우터 갱신
-- 실행한 검증: Registry Schema·활성 경로, 12개 선택적 라우팅, 기획 8개 mode·상태 흐름·SWOT 전략·MDA/DDE·DDD 모호성 계약, 변경 검증 6개 mode·판정, 삭제 경로·Legacy Alias·프로젝트 템플릿 참조, 전체 GitHub Actions 예정
-- 결과: 미검증
+- 실행한 검증: Registry Schema·활성 경로, 12개 선택적 라우팅, 기획 8개 mode·7단계 상태 흐름·SWOT 전략·MDA/DDE·DDD 모호성 계약, 변경 검증 6개 mode·5개 판정, 삭제 경로·Legacy Alias·프로젝트 템플릿 참조, Python 문법·BCP·Documentation·Skill Routing·Design Publication Governance, 구조·생성 회귀 78개, Windows 실제 발행 스모크 테스트, whitespace
+- 결과: 성공
 - 성공 조건: 기존 기획 문서·Vertical Slice·UI 감사 경계를 보존하고 새 Skill의 trigger·mode·템플릿·라우팅·회귀·Actions가 통과함
-- 실패·예외·재현 조건: `BIG BLIND`와 `DDD`를 외부 표준 용어로 단정하면 오라우팅 위험이 있으므로 프로젝트 정의형 용어로 처리함. 최초 큰 파일 생성 요청이 보안 판정 불명으로 차단돼 동일 기능의 표현을 축약해 재시도함.
+- 실패·예외·재현 조건: `BIG BLIND`와 `DDD`를 외부 표준 용어로 단정하면 오라우팅 위험이 있으므로 프로젝트 정의형 용어로 처리함. 최초 큰 파일 생성 요청이 보안 판정 불명으로 차단돼 동일 기능의 표현을 축약해 재시도함. 1차 Actions에서 기획 템플릿의 trailing whitespace 1건을 검출해 제거했으며 최종 run #66에서 전체 통과함.
 - 사용자 피드백: 핵심 컨셉과 지속 플레이 원동력 탐색, 모든 게임 요소의 정렬, PoC 결과 기반 기획 재조정, 7단계 Production 흐름을 포함할 것
 - 불필요하게 호출한 스킬: 없음
 - 누락된 스킬·검증: 실제 서로 다른 게임 프로젝트에서의 반복 적용 결과와 PoC 관찰 데이터는 아직 없음
