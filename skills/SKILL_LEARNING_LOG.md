@@ -1,5 +1,16 @@
 # Base Skill Learning Log
 
+## 2026-07-21 Work Mode·자동 Skill 라우팅·구형본 정리 교훈
+
+- `Mode`라는 단어를 세션 전체 작업 방식과 Skill 내부 절차에 함께 쓰면 라우팅 순서가 모호해진다. Base에서는 전자를 `Work Mode`, 후자를 `Skill Mode`로 구분한다.
+- 요청 처리 순서는 `Prompt 의도·현재 단계 파악 → PLAN/BUILD/REVIEW Work Mode 선택 → Registry trigger 기반 Skill 자동 선택 → Skill Mode 선택 → 실행·검증 → 사용 이유·결과·증거 보고`가 기본이다.
+- 사용자는 Skill 이름이나 Skill Mode를 선언할 필요가 없다. `load_by_default=false`는 자동 사용 금지가 아니라 trigger가 없을 때 불필요하게 로드하지 않는다는 뜻이다.
+- `PLAN`은 읽기·조사·계약, `BUILD`는 승인 범위 구현, `REVIEW`는 적대적 검토·반례·증거를 기본 권한으로 둔다. 검토 중 수정이 필요하면 `REVIEW → BUILD → REVIEW`로 전환한다.
+- Skill 자동 사용은 숨겨진 절차가 되어서는 안 된다. L1 이상 작업은 실제 사용한 Work Mode·Skill·Skill Mode, 선택 이유, 수행 내용, 얻은 결과, 증거와 미검증을 보고한다.
+- 구형 파일 정리는 단순 삭제가 아니다. `CURRENT / UPDATE_IN_PLACE / MERGE_TO_CANONICAL / COMPATIBILITY_STUB / ARCHIVE_HISTORY / DELETE_APPROVED / KEEP_UNRESOLVED`로 판정하고 고유 정보·활성 참조·파생본·복구·승인을 확인한다.
+- 구형본 탐지·정리·마이그레이션은 같은 책임 원본과 삭제 권한을 공유하므로 신규 독립 Skill보다 `managing-game-project-operating-system: reconcile-legacy` Skill Mode로 통합하는 편이 중복과 오삭제를 줄인다.
+- 자동 라우팅과 구형본 정리 계약은 구조 회귀로 검증하되, 실제 서로 다른 프로젝트에서 오라우팅·과도한 보고·호환 stub 누락·오삭제 빈도를 확인하기 전까지 지식 상태는 `OBSERVATION` 또는 `HYPOTHESIS`로 유지한다.
+
 ## 2026-07-21 DDD 빠른 보상 설계 교훈
 
 - 이 Base의 게임 기획 맥락에서 `DDD`는 `Digital Dopamine Design`이다. 플레이 시작 또는 행동 직후 짧은 시간 안에 의미 있는 보상·변화·성취와 다음 기대를 체감시키는 빠른 보상 설계축을 뜻한다.
@@ -123,6 +134,27 @@
 - PDF·다이어그램 발행본이 Registry보다 오래됨
 
 ## 기록
+
+### 2026-07-21 automatic Work Mode routing and legacy reconciliation
+
+- 프로젝트·작업: Work Mode와 Skill Mode를 분리하고, 사용자 선언 없이 필요한 Skill을 자동 선택하며, 구형 파일을 안전하게 갱신·통합·아카이브·삭제하는 운영 계약 추가
+- 기준 스킬 커밋: `agent/automatic-skill-routing-and-legacy-reconcile`
+- 호출 트리거: Skill과 mode의 차이 확인, main 병합, 구형 파일 갱신·삭제 절차 확인, 별도 요청 없이 Skill 자동 사용과 사용 이유·결과 보고 요구
+- 입력 범위: 통합 Skill Registry, 요청 접수 Skill, 운영체계 Skill, 정본 최신성 감사, 프로젝트 Registry 템플릿, 구조 회귀와 기존 Learning Log
+- 실제 산출물: `PLAN/BUILD/REVIEW` Work Mode, Skill Mode 용어 계약, automatic-trigger-match 정책, `execution-report`, `reconcile-legacy`, Skill 실행 보고·구형 파일 정리 템플릿, Registry Schema와 구조 회귀
+- 실행한 검증: Registry Schema·13개 활성 경로·Work Mode·자동 선택·구형 파일 판정·템플릿 존재 회귀를 추가했으며 GitHub Actions 전체 실행으로 최종 확인한다.
+- 결과: 부분 성공 — 구조·계약·회귀 반영 완료, 실제 여러 프로젝트 적용은 미검증
+- 성공 조건: 사용자가 Skill을 선언하지 않아도 최소 Skill·Skill Mode가 선택되고, 최종 보고에서 이유·결과·증거가 보이며, 구형 파일 삭제 전 고유 정보·참조·파생본·복구·승인이 확인됨
+- 실패·예외·재현 조건: Work Mode와 Skill Mode 혼용, 모든 작업에서 과도한 Skill 보고, 파일명만 보고 구형본 삭제, 외부 호환 경로 제거, REVIEW에서 finding 없이 즉시 수정하는 위험
+- 사용자 피드백: 의도 파악→해당 Mode→Skill 실행 구조가 최선인지 확인하고, Skill은 자동 사용되며 이유와 결과를 명시할 것
+- 불필요하게 호출한 스킬: 신규 독립 구형 파일 정리 Skill은 만들지 않고 운영체계 Skill Mode로 통합함
+- 누락된 스킬·검증: 실제 프로젝트의 버전 복제본·외부 링크·대형 바이너리·장기 호환성 사례
+- 스킬 본문 변경 필요: 예
+- 변경하지 않는 이유: 해당 없음
+- 지식 상태: 용어·라우팅 계약은 패턴 후보, 구형본 자동 판정은 관찰·가설
+- 프로젝트 전용으로 유지할 내용: 실제 정본 경로, 삭제 승인자, 외부 소비자, 보존 기간, 호환 stub 정책
+- Base Method·Skill·Template·Test 환류 후보: 이번 Work Mode 문서, 두 통합 Skill, Registry 정책, 두 템플릿과 구조 회귀
+- 다음 검토 트리거: 첫 두 프로젝트 적용, 오라우팅, Skill 실행 보고 누락·과다, 오삭제, 호환 stub 누락, 사용자가 자동 선택 이유를 이해하지 못함
 
 ### 2026-07-21 benchmark, sequencing, playtest, accessibility and performance modes
 

@@ -4,8 +4,12 @@
   "registry_role": "project-skill-router-and-learning-index",
   "routing_policy": {
     "load_all_skills": false,
-    "default_selection": "none",
+    "default_selection": "automatic-trigger-match",
+    "automatic_selection": true,
+    "user_skill_declaration_required": false,
     "require_trigger_match": true,
+    "require_execution_report": true,
+    "work_modes": ["PLAN", "BUILD", "REVIEW"],
     "max_primary_discipline_skills": 1,
     "max_foundation_skills": 3,
     "exclude_statuses": ["HOLD", "BACKUP", "REMOVAL_CANDIDATE"]
