@@ -50,9 +50,10 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "skills/managing-base-change-proposals/SKILL.md",
             "skills/evolving-project-discipline-skills/SKILL.md",
             "skills/maintaining-project-context-and-handoff/SKILL.md",
+            "skills/analyzing-and-refining-game-concepts/SKILL.md",
             "skills/designing-vertical-slices/SKILL.md",
             "skills/orchestrating-deepseek-worktrees/SKILL.md",
-            "skills/reviewing-external-ai-drafts/SKILL.md",
+            "skills/reviewing-and-validating-project-changes/SKILL.md",
             "skills/designing-art-prompts-and-technique-cards/SKILL.md",
             "skills/auditing-and-refining-ui-art/SKILL.md",
             "schemas/base-skill-registry-v1.schema.json",
@@ -61,6 +62,8 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "[수정제안서]/README.md",
             "[수정제안서]/PROPOSAL_REGISTRY.json",
             "templates/BASE_CHANGE_PROPOSAL.md",
+            "templates/planning/GAME_CONCEPT_DIRECTION_REVIEW.md",
+            "templates/quality/PROJECT_CHANGE_VALIDATION.md",
             "tools/check_base_change_proposals.py",
             "tools/build_project_skill_map.py",
             "tools/build_design_documents.py",
@@ -105,6 +108,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "skills/publishing-discipline-bibles/SKILL.md",
             "skills/promoting-project-knowledge/SKILL.md",
             "skills/reviewing-and-implementing-base-change-proposals/SKILL.md",
+            "skills/reviewing-external-ai-drafts/SKILL.md",
         ]
         present = [path for path in removed if (ROOT / path).exists()]
         self.assertEqual(present, [], f"Merged skill files still active: {present}")
@@ -122,6 +126,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "publishing-discipline-bibles",
             "promoting-project-knowledge",
             "reviewing-and-implementing-base-change-proposals",
+            "reviewing-external-ai-drafts",
         ):
             self.assertIn(f"`{skill_id}`", aliases)
         for replacement in (
@@ -129,6 +134,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "managing-game-project-operating-system",
             "managing-design-documents",
             "managing-base-change-proposals",
+            "reviewing-and-validating-project-changes",
         ):
             self.assertIn(f"`{replacement}`", aliases)
 
@@ -141,6 +147,8 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "managing-design-documents",
             "evolving-project-discipline-skills",
             "maintaining-project-context-and-handoff",
+            "analyzing-and-refining-game-concepts",
+            "reviewing-and-validating-project-changes",
             "managing-base-change-proposals",
         ):
             self.assertIn(skill, start)
@@ -166,7 +174,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         self.assertFalse(policy["load_all_skills"])
         self.assertEqual(policy["default_selection"], "none")
         self.assertTrue(policy["require_trigger_match"])
-        self.assertEqual(len(registry["skills"]), 11)
+        self.assertEqual(len(registry["skills"]), 12)
         seen: set[str] = set()
         for item in registry["skills"]:
             skill_id = item["skill_id"]
@@ -183,6 +191,8 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "managing-project-intake-and-work-contract",
             "managing-game-project-operating-system",
             "managing-design-documents",
+            "analyzing-and-refining-game-concepts",
+            "reviewing-and-validating-project-changes",
             "managing-base-change-proposals",
         }.issubset(seen))
 
@@ -190,6 +200,8 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
         operating = (ROOT / "skills/managing-game-project-operating-system/SKILL.md").read_text(encoding="utf-8")
         documents = (ROOT / "skills/managing-design-documents/SKILL.md").read_text(encoding="utf-8")
+        concepts = (ROOT / "skills/analyzing-and-refining-game-concepts/SKILL.md").read_text(encoding="utf-8")
+        validation = (ROOT / "skills/reviewing-and-validating-project-changes/SKILL.md").read_text(encoding="utf-8")
         proposals = (ROOT / "skills/managing-base-change-proposals/SKILL.md").read_text(encoding="utf-8")
         for mode in ("route", "clarify", "contract"):
             self.assertIn(f"`{mode}`", intake)
@@ -201,6 +213,17 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             self.assertIn(f"`{mode}`", documents)
         for policy in ("source_only", "milestone_sync", "always_sync"):
             self.assertIn(policy, documents)
+        for mode in ("frame", "constrain", "sharpen", "structure", "analyze", "poc-contract", "recalibrate", "production-gate"):
+            self.assertIn(f"`{mode}`", concepts)
+        for phase in ("CONCEPT_SEED", "POINTED_FUN_HYPOTHESIS", "POC_BUILD_AND_TEST", "PRODUCTION_READY"):
+            self.assertIn(phase, concepts)
+        for lens in ("SWOT", "SO", "WO", "ST", "WT", "MDA", "DDE", "DDD"):
+            self.assertIn(lens, concepts)
+        self.assertIn("임의 해석하지 않는다", concepts)
+        for mode in ("contract-check", "external-source-review", "static-validation", "runtime-validation", "regression", "evidence-report"):
+            self.assertIn(f"`{mode}`", validation)
+        for decision in ("ACCEPT", "REVISE", "REJECT", "UNVERIFIED"):
+            self.assertIn(decision, validation)
         for mode in ("extract", "submit", "review", "implement", "verify"):
             self.assertIn(f"`{mode}`", proposals)
         self.assertIn("approval_ref", proposals)
@@ -220,6 +243,8 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "implementation_status",
             "verification_status",
             "publication_status",
+            "뾰족한 재미",
+            "reviewing-and-validating-project-changes",
         ):
             self.assertIn(term, operating)
         for relative in ("README.md", "START_HERE.md", "AGENTS.md", "docs/DOCUMENTATION_MAP.md"):
