@@ -39,6 +39,7 @@ design_document_registry:
 relevant_design_document_sources:
 existing_skills:
 legacy_skill_aliases:
+reference_freshness_config:
 learning_logs:
 actual_work_examples:
 validation_and_failures:
@@ -77,8 +78,9 @@ base_version:
 
 - 이미지 생성 전 프롬프트 설계
 - 구현된 Godot·Web UI 결과 감사
+- 범용 변경 검증이 오케스트레이션하지만 독립 자동 검사·영향 지도·파생본 증거를 가진 정본 최신성 감사
 
-두 작업은 시점·입력·도구·승인 경계가 다르므로 합치지 않는다.
+시점·입력·도구·승인 경계 또는 독립된 자동 증거가 다르면 억지로 한 파일에 합치지 않는다.
 
 ## Phase 3 — Skill contract
 
@@ -126,12 +128,21 @@ Registry에는 활성 Skill만 등록한다. 통합 전 ID는 `skills/LEGACY_SKI
 
 고유 절차는 새 Skill 또는 새 Skill의 `references/`에 승계한다. 이전 버전은 Git 이력으로 보존한다.
 
+통합·이름 변경·경로 이동 뒤에는 `auditing-canonical-reference-freshness`로 다음을 확인한다.
+
+- 이전 Skill ID·경로가 활성 파일에 남지 않았는가?
+- Legacy Alias가 모든 제거 ID를 새 Skill·mode로 연결하는가?
+- START_HERE·Documentation Map·템플릿·테스트가 새 진입점을 사용하는가?
+- Registry·사람용 Skill Map·Manifest가 현재 Skill 계약과 일치하는가?
+- 변경됐어야 하지만 untouched인 소비자가 없는가?
+
 ## Phase 6 — Apply and learn
 
 ```text
 통합·수정안
 → Registry·Skill·alias 갱신
 → 관련 문서·템플릿·검사 갱신
+→ canonical reference freshness 감사
 → 대표·변형·반례 검증
 → 필요 시 사람용 Skill Map 재생성
 → 결과·실패·예외·사용자 피드백 기록
@@ -151,10 +162,11 @@ Registry에는 활성 Skill만 등록한다. 통합 전 ID는 `skills/LEGACY_SKI
 - Registry 경로·trigger·비사용 조건
 - 활성 Skill 수와 중복 mode
 - Legacy alias의 완전성
+- 오래된 ID·경로·설명과 변경 전파 누락
 - Learning Log·지식 상태
 - 선택적 호출과 Foundation 연쇄 호출 수
 - 사람용 Skill Map·Manifest 최신성
-- Governance checker·회귀 테스트·GitHub Actions
+- Governance checker·reference freshness·회귀 테스트·GitHub Actions
 - 새 채팅의 최소 Skill 탐색
 
 ## Output contract
@@ -167,6 +179,7 @@ Registry에는 활성 Skill만 등록한다. 통합 전 ID는 `skills/LEGACY_SKI
 - Legacy alias:
 - Registry 상태:
 - 고유 절차·reference·script 보존:
+- 정본·참조 최신성·전파 누락:
 - 선택적 호출 검증:
 - 실행한 검사·회귀·Actions:
 - Learning Log·지식 상태:
@@ -181,5 +194,6 @@ Registry에는 활성 Skill만 등록한다. 통합 전 ID는 `skills/LEGACY_SKI
 - trigger 없이 호출함
 - 이전 ID를 alias 없이 제거함
 - Registry 변경 뒤 관련 문서·검사·발행본을 갱신하지 않음
+- 통합 뒤 오래된 ID·경로·untouched 소비자를 검사하지 않음
 - 실제 결과 없이 지식 상태를 검증으로 승격함
 - Learning Log를 누락함
