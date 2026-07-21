@@ -81,19 +81,29 @@ def git_changed_files(root: Path, base: str, head: str) -> set[str]:
     return {line.strip().replace("\\", "/") for line in result.stdout.splitlines() if line.strip()}
 
 
-def check_legacy_references(root: Path, files: list[Path], aliases: set[str], allowed_globs: list[str]) -> list[str]:
+def check_legacy_references(
+    root: Path,
+    files: list[Path],
+    aliases: set[str],
+    allowed_globs: list[str],
+    strict_id_globs: list[str],
+) -> list[str]:
     errors: list[str] = []
     for path in files:
         relative = path.relative_to(root).as_posix()
         if matches_any(relative, allowed_globs):
             continue
         text = path.read_text(encoding="utf-8", errors="replace")
+        check_bare_id = matches_any(relative, strict_id_globs)
         for alias in sorted(aliases):
             old_path = f"skills/{alias}/SKILL.md"
-            if re.search(rf"(?<![a-z0-9-]){re.escape(alias)}(?![a-z0-9-])", text):
-                errors.append(f"Legacy skill id remains in active file: {relative} -> {alias}")
             if old_path in text:
                 errors.append(f"Deleted skill path remains in active file: {relative} -> {old_path}")
+            if check_bare_id and re.search(
+                rf"(?<![a-z0-9-]){re.escape(alias)}(?![a-z0-9-])",
+                text,
+            ):
+                errors.append(f"Legacy skill id remains in execution entrypoint: {relative} -> {alias}")
     return errors
 
 
@@ -188,6 +198,7 @@ def main() -> int:
         files,
         aliases,
         [str(item) for item in config.get("allowed_legacy_globs", [])],
+        [str(item) for item in config.get("strict_legacy_id_globs", [])],
     ))
     errors.extend(check_forbidden_tokens(root, files, config.get("forbidden_tokens", [])))
     errors.extend(check_canonical_reference_rules(root, config.get("canonical_reference_rules", [])))
