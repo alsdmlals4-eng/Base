@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Validate schema v3 Markdown/JSON design sources and synchronized publications."""
+"""Validate schema v3 design sources and policy-driven publications."""
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -16,6 +17,7 @@ from markdown_it import MarkdownIt
 
 ACTIVE_STATUSES = {"ACTIVE", "CURRENT", "SUPPORT"}
 IGNORED_SEGMENTS = {"[백업]", "[보류]", "[제거 후보]", "archive", "hold", "deprecated"}
+PUBLICATION_POLICIES = {"source_only", "milestone_sync", "always_sync"}
 
 
 def parse_args() -> argparse.Namespace:
@@ -49,8 +51,6 @@ def validate_schema(data: dict[str, Any], schema_path: Path, label: str) -> list
 
 
 def check_hash(path: Path, expected: Any, label: str, header: bytes | None = None) -> list[str]:
-    import hashlib
-
     if not path.is_file():
         return [f"{label} missing: {path}"]
     errors = []
@@ -92,36 +92,45 @@ def validate_markdown(path: Path, entry: dict[str, Any]) -> list[str]:
     return errors
 
 
-def check_manifest(root: Path, registry_dir: Path, entry: dict[str, Any], config: dict[str, Any]) -> list[str]:
-    import hashlib
-
+def check_manifest(
+    root: Path,
+    registry_dir: Path,
+    entry: dict[str, Any],
+    config: dict[str, Any],
+    *,
+    require_current: bool,
+) -> list[str]:
     errors: list[str] = []
-    schema_dir = root / "schemas"
-    manifest_path = resolve(registry_dir, entry["publication_manifest"])
-    source_path = resolve(registry_dir, entry["source_path"])
+    manifest_value = entry.get("publication_manifest")
+    if not manifest_value:
+        return [f"Publication manifest path missing for {entry['document_id']}"] if require_current else []
+    manifest_path = resolve(registry_dir, str(manifest_value))
     if not manifest_path.is_file():
-        return [f"Publication manifest missing for {entry['document_id']}: {manifest_path}"]
+        return [f"Publication manifest missing for {entry['document_id']}: {manifest_path}"] if require_current else []
     try:
         manifest = load_json(manifest_path)
     except ValueError as exc:
         return [str(exc)]
-    if manifest.get("schema_version") != 3:
-        return [f"{manifest_path}: schema v3 is required; follow docs/migrations/v2.2.0-to-v3.0.0.md"]
+    schema_dir = root / "schemas"
     errors += validate_schema(manifest, schema_dir / "publication-manifest-v3.schema.json", str(manifest_path))
     if manifest.get("publication_id") != entry["document_id"]:
         errors.append(f"{manifest_path}: publication_id does not match Registry")
     if manifest.get("source_path") != entry["source_path"] or manifest.get("source_format") != entry["source_format"]:
         errors.append(f"{manifest_path}: source path/format does not match Registry")
-    if manifest.get("sync_status") != "CURRENT":
+    sync_status = manifest.get("sync_status")
+    if require_current and sync_status != "CURRENT":
         errors.append(f"{manifest_path}: sync_status must be CURRENT")
+    if not require_current and sync_status != "CURRENT":
+        return errors
     if manifest.get("automated_render_review") != "PASSED":
         errors.append(f"{manifest_path}: automated_render_review must be PASSED")
     if bool(config.get("require_human_design_document_visual_review", False)) and manifest.get("human_visual_review") != "PASSED":
         errors.append(f"{manifest_path}: human_visual_review must be PASSED")
+    source_path = resolve(registry_dir, entry["source_path"])
     source_hash = hashlib.sha256(source_path.read_bytes()).hexdigest()
     if manifest.get("source_sha256") != source_hash:
         errors.append(f"{manifest_path}: source changed; rebuild publication")
-    generator_path = root / entry["generator"]
+    generator_path = root / str(entry["generator"])
     errors += check_hash(generator_path, manifest.get("generator_sha256"), "Generator")
     pdf_path = resolve(registry_dir, str(manifest.get("output_pdf", "")))
     errors += check_hash(pdf_path, manifest.get("output_pdf_sha256"), "PDF", b"%PDF-")
@@ -149,15 +158,13 @@ def check_registry(root: Path, config: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     registry_rel = str(config.get("design_document_registry", "")).strip()
     enforce = bool(config.get("enforce_design_document_publications", False))
+    require_milestone = bool(config.get("require_milestone_design_document_publications", False))
     if not registry_rel:
         return ["design_document_registry is required"] if enforce else []
     registry_path = root / registry_rel
     if not registry_path.is_file():
         return [f"Design document registry missing: {registry_rel}"] if enforce else []
-    try:
-        registry = load_json(registry_path)
-    except ValueError as exc:
-        return [str(exc)]
+    registry = load_json(registry_path)
     if registry.get("schema_version") != 3:
         return [f"{registry_rel}: schema v3 is required; follow docs/migrations/v2.2.0-to-v3.0.0.md"]
     errors += validate_schema(registry, root / "schemas/design-document-registry-v3.schema.json", registry_rel)
@@ -178,6 +185,10 @@ def check_registry(root: Path, config: dict[str, Any]) -> list[str]:
         seen.add(document_id)
         if entry.get("status") not in ACTIVE_STATUSES:
             continue
+        policy = entry.get("publication_policy")
+        if policy not in PUBLICATION_POLICIES:
+            errors.append(f"{document_id}: unsupported publication_policy {policy!r}")
+            continue
         coverage.update(entry.get("responsibility_coverage", []))
         source_path = resolve(registry_dir, entry["source_path"])
         if not source_path.is_file():
@@ -196,7 +207,10 @@ def check_registry(root: Path, config: dict[str, Any]) -> list[str]:
         else:
             registered_markdown.add(source_path)
             errors += validate_markdown(source_path, entry)
-        errors += check_manifest(root, registry_dir, entry, config)
+        if policy == "always_sync":
+            errors += check_manifest(root, registry_dir, entry, config, require_current=True)
+        elif policy == "milestone_sync":
+            errors += check_manifest(root, registry_dir, entry, config, require_current=require_milestone)
     for responsibility in config.get("required_design_document_coverage", registry.get("required_responsibility_coverage", [])):
         if responsibility not in coverage:
             errors.append(f"Missing active design document responsibility coverage: {responsibility}")
