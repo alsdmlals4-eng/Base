@@ -19,6 +19,7 @@
   "legacy_aliases_path": "skills/LEGACY_SKILL_ALIASES.md",
   "allowed_legacy_globs": [
     "skills/LEGACY_SKILL_ALIASES.md",
+    "skills/SKILL_LEARNING_LOG.md",
     "skills/managing-project-intake-and-work-contract/SKILL.md",
     "skills/managing-game-project-operating-system/SKILL.md",
     "skills/managing-design-documents/SKILL.md",
