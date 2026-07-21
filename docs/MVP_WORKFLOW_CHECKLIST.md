@@ -44,6 +44,7 @@ validation:
 - [ ] 실제 대상 파일·상태 소유자·호환성 위험이 확인됐다.
 - [ ] 완료 기준이 `조건 → 행동 → 관찰 결과`다.
 - [ ] 정상·실패·경계·회귀·사용자 검수 방법이 있다.
+- [ ] 정본·경로·ID·Schema 변경과 영향 소비자 후보를 확인했다.
 
 ## 4. 핵심 컨셉·기획 방향·PoC
 
@@ -55,8 +56,14 @@ validation:
 - [ ] GDD·레벨·등장인물·캐릭터 스타일·스테이지·세계관을 핵심 컨셉에 정렬했다.
 - [ ] 요소를 `AMPLIFY / SUPPORT / NEUTRAL / CONFLICT / UNPROVEN`으로 판정했다.
 - [ ] SWOT을 SO·WO·ST·WT 실행 방향으로 변환했다.
-- [ ] MDA·DDE·3C·루프·동기·차별화·제작성을 필요한 만큼 분석했다.
-- [ ] `DDD` 등 다의적 약어의 프로젝트 정의를 확인했다.
+- [ ] MDA·DDE·DDD·3C·루프·동기·차별화·제작성을 필요한 만큼 분석했다.
+- [ ] Base 내부 DDD를 `Digital Dopamine Design`으로 적용했다.
+- [ ] 첫 의미 있는 보상까지의 시간과 행동 → 피드백 지연을 관찰했다.
+- [ ] 보상 원인·결과의 명료성과 짧은 구간의 의미 있는 보상 밀도를 확인했다.
+- [ ] Micro → Session → Meta 보상 사다리와 다음 행동 의도를 확인했다.
+- [ ] 반복 피로·무감각·보상 인플레이션을 확인했다.
+- [ ] DDD가 의미 있는 선택을 이펙트·팝업·숫자·알림·손실 압박으로 대체하지 않는다.
+- [ ] 외부 자료의 동명 DDD는 출처 정의를 확인하기 전 임의 해석하지 않았다.
 - [ ] PoC가 가장 위험한 가설을 검증하는 최소 범위다.
 - [ ] PoC 성공·실패·중단 기준과 다음 결정이 있다.
 - [ ] 결과에 따라 `KEEP / AMPLIFY / CHANGE / REMOVE / DEFER / RETEST`를 판정했다.
@@ -72,6 +79,7 @@ validation:
 - [ ] 사용자 승인 전 대량 삭제·이동·통합을 하지 않았다.
 - [ ] `migrate`는 승인된 처리표 항목만 수행한다.
 - [ ] 변경 전후 보존·참조·발행을 대조했다.
+- [ ] 이전 경로·ID와 변경 전파 누락을 `auditing-canonical-reference-freshness`로 확인했다.
 - [ ] 종료 전에 `verify`를 실행했다.
 
 ## 6. Implementation
@@ -82,12 +90,19 @@ validation:
 - [ ] 저장 형식·공개 인터페이스·사용자 흐름·승인 자산을 보호했다.
 - [ ] 보류 항목을 별도 승인 없이 구현하지 않았다.
 - [ ] 범위 밖 개선은 별도 제안으로 분리했다.
+- [ ] 파일·경로·ID·Schema·정본·생성기 변경 시 예상 소비자와 파생본을 기록했다.
 
 ## 7. Verification
 
 `reviewing-and-validating-project-changes`를 사용한다.
 
 - [ ] 승인 작업 계약과 실제 diff를 대조했다.
+- [ ] 정본·경로·ID·Schema·정책·생성기 변경 시 `reference-freshness`를 실행했다.
+- [ ] 활성 파일의 오래된 경로·ID·명령을 확인했다.
+- [ ] 변경됐어야 하지만 untouched인 소비자·템플릿·테스트·Workflow를 판정했다.
+- [ ] 중복 현행 정본과 정책·상태 content drift를 확인했다.
+- [ ] PDF·Manifest·해시·렌더 등 파생본 최신성을 확인했다.
+- [ ] 허용된 Legacy·Change Log·과거 case와 실행 stale reference를 구분했다.
 - [ ] 포맷·문법·타입·정적 검사
 - [ ] 관련 자동 테스트
 - [ ] 핵심 정상 경로
@@ -122,6 +137,7 @@ validation:
 - [ ] Registry 경로·trigger·비사용 조건이 유효하다.
 - [ ] 실패·중요 결정·재사용 가능한 교훈·실제 검증 결과를 Learning Log에 기록했다.
 - [ ] 이전 ID가 있으면 `LEGACY_SKILL_ALIASES.md`에 연결했다.
+- [ ] 통합·이름 변경·경로 이동 뒤 정본·참조 최신성과 untouched 소비자를 감사했다.
 
 ## 10. Documentation·Context
 
@@ -135,6 +151,7 @@ validation:
 - [ ] Documentation Governance 검사
 - [ ] Skill Routing Governance 검사
 - [ ] Design Publication Governance 검사
+- [ ] Canonical Reference Freshness 검사
 - [ ] 정상·실패 회귀 테스트
 - [ ] 필요한 실제 DOCX/PDF 생성·렌더 테스트
 - [ ] GitHub Actions 실제 실행
@@ -145,6 +162,7 @@ validation:
 - [ ] Acceptance Criteria가 증거와 함께 판정됐다.
 - [ ] 실제 변경·검증·미검증·사용자 확인 대기를 분리했다.
 - [ ] 제거·이동 파일의 잔여 참조가 없다.
+- [ ] 변경됐어야 하지만 갱신되지 않은 활성 소비자가 없다.
 - [ ] 다음 작업·선행 조건·Active Context가 있다.
 - [ ] 새 AI가 저장소만으로 방향·상태·책임 원본·Skill·검증을 찾는다.
 - [ ] 공용화 가치가 있으면 `managing-base-change-proposals`로 제안했다.
