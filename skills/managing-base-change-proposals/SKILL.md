@@ -14,7 +14,7 @@ description: Use when extracting reusable project knowledge, submitting a Base c
 - `extract`: 프로젝트 결과에서 공용 원리와 프로젝트 전용 값을 분리한다.
 - `submit`: `[수정제안서]`에 제안과 증거를 등록한다.
 - `review`: 중복·반례·위험을 검토하고 승인·보류·거절 판정을 제안한다.
-- `implement`: `APPROVED_FOR_IMPLEMENTATION`과 재현 가능한 `approval_ref`가 있는 범위만 별도 PR로 구현한다.
+- `implement`: `APPROVED_FOR_IMPLEMENTATION`과 재현 가능한 `approval_ref`가 있는 범위만 별도 구현 PR로 반영한다.
 - `verify`: 구현·회귀·Registry·제안서 연결과 롤백 가능성을 확인한다.
 
 ## State model
@@ -76,7 +76,7 @@ protected_and_excluded_scope:
 ### 4. Implement approved scope
 
 1. 승인 상태와 `approval_ref`를 기계적으로 확인한다.
-2. 제안 PR과 분리된 새 구현 브랜치·PR을 사용한다.
+2. 제안 PR과 분리된 별도 구현 PR을 사용한다.
 3. 승인 범위·제외 범위·보호 대상을 작업 계약으로 옮긴다.
 4. 필요한 Method·Skill·Template·Tool·Schema·Test만 변경한다.
 5. 기준·대표·변형·반례·회귀 시나리오를 검증한다.
