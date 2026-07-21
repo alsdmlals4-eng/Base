@@ -1,0 +1,1 @@
+Temporary synchronization trigger. This file is removed by the validation workflow.
