@@ -13,6 +13,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 ```text
 START_HERE.md
 → docs/OPERATING_MODEL.md
+→ docs/WORK_MODE_AND_SKILL_ROUTING.md
 → docs/DOCUMENTATION_MAP.md
 → skills/SKILL_REGISTRY.json
 → 대상 프로젝트의 현재 책임 원본·실제 파일
@@ -40,23 +41,41 @@ START_HERE.md
 - 사용자가 설치·권한 부여를 완료했다고 알려도 실제 경로·버전·인증·쓰기 가능 여부를 확인한다.
 - 실행하지 않은 조사·검사·렌더·권한을 통과로 보고하지 않는다.
 
-## 4. 요청 라우팅·작업 계약·실행 순서
+## 4. Work Mode·요청 라우팅·작업 계약·실행 보고
 
-새 L1 이상 요청은 `managing-project-intake-and-work-contract`에서 한 번만 처리한다.
+새 L1 이상 요청은 `managing-project-intake-and-work-contract`에서 한 번만 처리한다. 사용자는 Skill 이름이나 Skill Mode를 선언할 필요가 없다.
 
 ```text
-route
+Prompt 의도·현재 단계 파악
+→ PLAN / BUILD / REVIEW Work Mode 자동 선택
+→ Registry trigger 기반 최소 Skill 자동 선택
+→ 각 Skill의 필요한 Skill Mode 자동 선택
 → 저장소 사실 조사
 → 필요한 경우 clarify
 → 사용자 마지막 확인
 → contract
 → 필요한 경우 decompose-and-sequence
+→ 실행·검증
+→ execution-report
 ```
 
+- `Work Mode`: 현재 단계의 작업 자세·권한·증거 기준
+  - `PLAN`: 요구·근거·설계·순서, 기본 읽기·제안
+  - `BUILD`: 승인 범위의 구현·제작·갱신
+  - `REVIEW`: 적대적 검토·반례·검증, 기본 읽기 전용
+- `Skill`: 특정 책임을 수행하는 전문 계약
+- `Skill Mode`: Skill 안의 세부 절차
+- `Prompt`: 사용자의 구체적 목표·제약·산출물
+
+`load_by_default=false`는 자동 사용 금지가 아니라 trigger가 없을 때 불필요하게 읽지 않는다는 뜻이다. Registry의 `automatic-trigger-match`로 필요한 최소 Skill만 사용한다.
+
+라우팅 결과:
+
 - 작업 수준 L0~L4
+- 주 Work Mode 하나
 - 주 책임 분야 하나와 실제 영향 분야
 - 변경 유형
-- 최소 Foundation·분야 Skill
+- 최소 Foundation·분야 Skill과 Skill Mode
 - 범위·제외·보호 대상
 - 완료 기준·검증·롤백
 - 필요한 경우 검증 가능한 단계·의존성·병렬 묶음·게이트
@@ -65,11 +84,17 @@ route
 
 오탈자, 명확한 단일 파일 기계 수정, 입력이 같은 검사 재실행은 예외다. 상세 요청은 처음부터 다시 묻지 않고 저장소 사실과 결과를 바꾸는 누락만 확인한다.
 
+L1 이상 완료 보고에는 실제 사용한 `Work Mode / Skill / Skill Mode / 사용 이유 / 수행 내용 / 얻은 결과·증거 / 미검증`을 포함한다. Skill 파일을 읽은 것과 실제 Skill을 실행한 것을 구분한다.
+
 금지:
 
+- 사용자에게 Skill·Skill Mode 선택을 전가
+- Work Mode와 Skill Mode를 같은 개념으로 혼용
 - 전체 skills 폴더 기본 로드
 - `load_by_default=true`인 활성 Skill
 - trigger와 무관한 호출
+- 실제로 사용하지 않은 Skill을 사용했다고 보고
+- 사용 이유·결과 없이 Skill ID만 나열
 - 같은 요청의 수준·범위·상태를 여러 Skill에서 중복 판정
 - 주 책임 분야 Skill을 여러 개 지정
 - 사용자 확인 전 실행 계약·구현 순서 확정
@@ -82,8 +107,8 @@ route
 
 | 책임 | Skill |
 |---|---|
-| 요청 라우팅·요구 확정·실행 계약·작업 분해·순서 | `managing-project-intake-and-work-contract` |
-| 신규 설치·기존 감사·승인된 마이그레이션·Health Review | `managing-game-project-operating-system` |
+| Work Mode·요청 라우팅·요구 확정·실행 계약·작업 분해·실행 보고 | `managing-project-intake-and-work-contract` |
+| 신규 설치·기존 감사·구형본 정리·승인된 마이그레이션·Health Review | `managing-game-project-operating-system` |
 | 기획 책임 원본 작성·재구조화·발행·검수 | `managing-design-documents` |
 | 프로젝트 Skill 생성·통합·학습 | `evolving-project-discipline-skills` |
 | Active Context·Handoff | `maintaining-project-context-and-handoff` |
@@ -96,7 +121,7 @@ route
 | 구현된 Godot·Web UI 감사 | `auditing-and-refining-ui-art` |
 | 프로젝트 교훈·Base 변경 제안 생명주기 | `managing-base-change-proposals` |
 
-활성 Skill은 13개이며 모두 `load_by_default=false`다. 통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 mode로 변환한다. 새 Registry·문서·작업 계약에는 새 ID만 사용한다.
+활성 Skill은 13개이며 모두 `load_by_default=false`다. 통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 Skill Mode로 변환한다. 새 Registry·문서·작업 계약에는 새 ID만 사용한다.
 
 ## 6. 책임 원본과 발행
 
@@ -121,31 +146,45 @@ route
 
 DOCX와 다이어그램은 선언한 경우만 생성한다. `CURRENT`, 자동 렌더, Codex 시각 검수, 사용자 시각 검수는 독립 상태다.
 
-## 7. 기존 프로젝트 안전 마이그레이션
+## 7. 기존 프로젝트·구형 파일 안전 정리
 
-`managing-game-project-operating-system`을 사용한다.
+`managing-game-project-operating-system`을 자동 선택한다.
 
 ```text
-audit
-→ 책임·참조·고유 정보 조사
+PLAN: audit
+→ 책임·참조·고유 정보·버전 복제본 조사
+→ 필요 시 reconcile-legacy 처리표
 → 목표 구조·보존·롤백 제안
 → 사용자 승인
-→ 승인된 처리표만 migrate
-→ 보존·참조·발행 대조
+→ BUILD: 승인된 UPDATE·MERGE·STUB·ARCHIVE·DELETE·migrate
+→ REVIEW: 보존·참조·발행·복구 대조
 → reference-freshness
 → verify
+```
+
+구형 파일 판정:
+
+```text
+CURRENT
+UPDATE_IN_PLACE
+MERGE_TO_CANONICAL
+COMPATIBILITY_STUB
+ARCHIVE_HISTORY
+DELETE_APPROVED
+KEEP_UNRESOLVED
 ```
 
 사용자 승인 전 금지:
 
 - 파일·폴더 대량 삭제·이동·통합
+- 파일명에 `old`·`v2`·`final`이 있다는 이유만으로 삭제
 - 기존 책임 문서 대규모 축약
 - 승인 이미지·자산 제거 또는 임의 교체
 - 프로젝트 용어·수치·결정 변경
 - `[보류]` 폐기
 - Base 구조에 맞춘 강제 개명
 
-고유 정보·참조·복구·사용자 승인이 확인되지 않은 항목은 삭제하지 않고 `[제거 후보]`로 유지한다.
+고유 정보·활성 참조·파생본·복구·사용자 승인이 확인되지 않은 항목은 삭제하지 않고 `KEEP_UNRESOLVED` 또는 `[제거 후보]`로 유지한다.
 
 ## 8. Active Context·Handoff
 
@@ -155,7 +194,7 @@ Active Context는 현재 상태의 기본 원본이다. 프로젝트 방향·분
 
 ## 9. Skill 학습·통합
 
-새 Skill을 만들기 전에 기존 통합 Skill의 mode로 처리할 수 있는지 확인한다. 독립된 입력·산출물·Quality Bar·검증·승인 경계가 있을 때만 새 Skill을 만든다.
+새 Skill을 만들기 전에 기존 통합 Skill의 Skill Mode로 처리할 수 있는지 확인한다. 독립된 입력·산출물·Quality Bar·검증·승인 경계가 있을 때만 새 Skill을 만든다.
 
 실패, 중요한 결정, 재사용 가능한 교훈 또는 실제 검증 결과가 있는 호출을 Learning Log에 기록한다. 한 번의 성공을 공용 강제 규칙으로 만들지 않는다.
 
@@ -238,7 +277,8 @@ Active Context는 현재 상태의 기본 원본이다. 프로젝트 방향·분
 6. 자동·수동·시각·접근성·성능 검증과 미검증이 분리됐다.
 7. PR Required Checks와 리뷰가 통과했다.
 8. 다음 작업·의존성·선행 조건·롤백이 존재한다.
-9. 새 AI가 저장소만으로 방향·상태·책임 원본·Skill·mode·검증을 찾는다.
+9. 새 AI가 저장소만으로 방향·상태·책임 원본·Work Mode·Skill·Skill Mode·검증을 찾는다.
+10. 실제 사용한 Work Mode·Skill·Skill Mode의 이유와 얻은 결과·증거를 보고했다.
 
 ## 14. 로컬과 GitHub
 
@@ -252,10 +292,12 @@ GitHub와 로컬 파일은 자동 양방향 동기화가 아니다.
 
 ## 15. 완료 보고
 
+- 사용한 Work Mode·Skill·Skill Mode와 사용 이유
 - 주 책임·영향 분야
 - 실행 단계·의존성·게이트
 - 벤치마크·플레이테스트·PoC 결과
 - 실제 변경한 문서·코드·자산·Skill
+- 얻은 결과·증거
 - 정본·참조 최신성·변경 전파 결과
 - 접근성 장벽·성능 예산 결과
 - 생성한 PDF·선택 DOCX·다이어그램·Manifest
@@ -266,4 +308,4 @@ GitHub와 로컬 파일은 자동 양방향 동기화가 아니다.
 - 콜드 스타트 결과
 - Base 환류와 다음 작업
 
-실행하지 않은 조사, 테스트, 렌더링, 구현, 접근성·성능 검증, 브랜치 보호를 완료로 보고하지 않는다.
+실행하지 않은 Skill, 조사, 테스트, 렌더링, 구현, 접근성·성능 검증, 브랜치 보호를 완료로 보고하지 않는다.
