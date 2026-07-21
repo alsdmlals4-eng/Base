@@ -19,6 +19,7 @@ LOCAL_PREFIXES = (
     "[수정제안서]/",
 )
 LOCAL_SUFFIXES = {".md", ".json", ".py", ".yml", ".yaml", ".toml", ".txt"}
+PACKAGE_SOURCE_SUFFIXES = LOCAL_SUFFIXES
 BACKTICK = re.compile(r"`([^`\n]+)`")
 MARKDOWN_LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 FRONT_MATTER = re.compile(r"\A---\n(?P<body>.*?)\n---\n", re.DOTALL)
@@ -54,6 +55,12 @@ def candidate_local_path(raw: str, skill_path: Path) -> Path | None:
     if value.startswith(LOCAL_PREFIXES):
         return ROOT / value
     return None
+
+
+def is_package_source(path: Path) -> bool:
+    if path.suffix.lower() not in PACKAGE_SOURCE_SUFFIXES:
+        return False
+    return "__pycache__" not in path.parts and not any(part.startswith(".") for part in path.parts)
 
 
 class SkillPackageIntegrityTests(unittest.TestCase):
@@ -123,7 +130,7 @@ class SkillPackageIntegrityTests(unittest.TestCase):
                 folder = skill_dir / folder_name
                 if not folder.is_dir():
                     continue
-                for artifact in sorted(path for path in folder.rglob("*") if path.is_file()):
+                for artifact in sorted(path for path in folder.rglob("*") if path.is_file() and is_package_source(path)):
                     repo_relative = artifact.relative_to(ROOT).as_posix()
                     skill_relative = artifact.relative_to(skill_dir).as_posix()
                     if repo_relative not in text and skill_relative not in text:
