@@ -8,10 +8,11 @@
 사용자 방향
 → managing-project-intake-and-work-contract
 → Definition of Ready
+→ 필요 시 analyzing-and-refining-game-concepts·PoC
 → 사용자 승인
 → 실제 저장소 조사·Plan
 → Implementation
-→ Verification
+→ reviewing-and-validating-project-changes
 → 책임 원본·발행·Active Context 동기화
 → PR Required Checks·리뷰
 → Learning Log·Base 제안
@@ -67,17 +68,33 @@ routing_reason:
 | 요청 접수·작업 계약 | `managing-project-intake-and-work-contract` |
 | 신규 운영체계 | `managing-game-project-operating-system: install → verify` |
 | 기존 구조 변경 | `managing-game-project-operating-system: audit → migrate → verify` |
+| 핵심 컨셉·SWOT·MDA/DDE·PoC·재조정 | `analyzing-and-refining-game-concepts` |
 | 기획 책임 원본·발행 | `managing-design-documents` |
 | 프로젝트 Skill 학습·통합 | `evolving-project-discipline-skills` |
 | 현재 상태·Handoff | `maintaining-project-context-and-handoff` |
 | 프로젝트 교훈·Base 제안 | `managing-base-change-proposals` |
 | Vertical Slice | `designing-vertical-slices` |
 | 외부 AI 작업 공간 | `orchestrating-deepseek-worktrees` |
-| 외부 AI 결과 검수 | `reviewing-external-ai-drafts` |
+| 변경·외부 AI 결과 검증 | `reviewing-and-validating-project-changes` |
 | 이미지 프롬프트 | `designing-art-prompts-and-technique-cards` |
 | 구현된 UI 감사 | `auditing-and-refining-ui-art` |
 
-## 5. Plan contract
+## 5. 핵심 컨셉·PoC 흐름
+
+```text
+frame: 한 문장 핵심 컨셉·플레이어 약속
+→ constrain: 플레이·제작·기술·콘텐츠·시장 제약
+→ sharpen: 뾰족한 재미와 반복 원동력
+→ structure: GDD·레벨·캐릭터·스테이지·세계관 정렬
+→ analyze: SWOT→SO/WO/ST/WT, MDA/DDE, 3C, 루프·동기·차별화·제작성
+→ poc-contract: 가장 위험한 가설의 최소 검증
+→ recalibrate: KEEP/AMPLIFY/CHANGE/REMOVE/DEFER/RETEST
+→ production-gate: PRODUCTION_READY/REPEAT_POC/HOLD/STOP
+```
+
+`DDD`처럼 의미가 여러 개인 약어는 프로젝트 정의를 먼저 기록한다. PoC는 전체 게임이나 Vertical Slice가 아니며, 목표 품질과 제작 파이프라인 검증은 `designing-vertical-slices`로 넘긴다.
+
+## 6. Plan contract
 
 ```yaml
 problem:
@@ -104,7 +121,7 @@ rollback:
 
 L2 이상은 실제 저장소 조사에 기반한 Plan과 사용자 승인을 우선한다.
 
-## 6. 작업 실행 게이트
+## 7. 작업 실행 게이트
 
 ```text
 Intake·Context
@@ -136,19 +153,20 @@ Intake·Context
 
 ### Verification
 
+`reviewing-and-validating-project-changes`를 사용한다.
+
 ```text
-포맷·문법·정적 검사
-→ 자동 테스트
-→ 정상·실패·경계 경로
-→ 저장·호환성
-→ 실제 화면·플레이·오디오·성능
-→ diff·승인 범위
-→ 사용자 검수
+contract-check
+→ 필요한 경우 external-source-review
+→ static-validation
+→ runtime-validation
+→ regression
+→ evidence-report
 ```
 
-실행하지 않은 검증은 `[미검증]`으로 기록한다.
+검증 시 대표 정상·실패·경계·원래 실패 반례·저장 호환성·실제 화면과 인접 기능 회귀를 확인한다. 실행하지 않은 검증은 `UNVERIFIED`와 이유로 기록한다.
 
-## 7. 문서·발행 흐름
+## 8. 문서·발행 흐름
 
 `managing-design-documents`가 책임 원본 작성·구조 변경·발행·검수를 하나의 생명주기로 처리한다.
 
@@ -160,7 +178,7 @@ Registry 발행 정책:
 
 정책이 요구할 때만 PDF·Manifest를 동기화하고 DOCX·다이어그램은 선언한 경우만 생성한다. `CURRENT`와 사람 시각 검수 완료를 혼동하지 않는다.
 
-## 8. 기존 프로젝트 마이그레이션
+## 9. 기존 프로젝트 마이그레이션
 
 ```text
 Audit only
@@ -171,7 +189,7 @@ Audit only
 → 보존·참조·발행·콜드 스타트 verify
 ```
 
-## 9. GitHub 역할
+## 10. GitHub 역할
 
 - 책임 원본·코드·데이터·자산·발행본 이력
 - Issue·PR 작업 계약
@@ -182,15 +200,16 @@ Audit only
 
 파일 존재, Workflow 실행, Required Check 강제를 별도 상태로 기록한다.
 
-## 10. 완료 보고
+## 11. 완료 보고
 
 ```md
 ## 결과
 - 주 책임·영향 분야:
+- 핵심 컨셉·PoC·기획 재조정:
 - 변경한 책임 원본·실제 파일·Skill:
 - 생성한 PDF·선택 DOCX·다이어그램·Manifest:
 - 보호한 결정·동작·자산:
-- 실행한 검증:
+- 검증 판정·증거:
 - 사람 시각 검수:
 - 미검증·불일치·위험·롤백:
 - Learning Log·Base 제안:
