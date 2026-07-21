@@ -29,6 +29,18 @@
     "docs/knowledge/cases/**",
     "tests/**"
   ],
+  "strict_legacy_id_globs": [
+    "README.md",
+    "START_HERE.md",
+    "AGENTS.md",
+    "docs/OPERATING_MODEL.md",
+    "docs/DOCUMENTATION_MAP.md",
+    "skills/SKILL_REGISTRY.json",
+    "templates/AGENTS.project.md",
+    "templates/project-operations/AI_WORKFLOW.md",
+    "templates/project-operations/PROJECT_START_HERE.md",
+    "templates/project-operations/SKILL_REGISTRY.json"
+  ],
   "forbidden_tokens": [],
   "canonical_reference_rules": [
     {
