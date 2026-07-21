@@ -8,6 +8,19 @@
 - 빠른 보상을 설계할 때 가치·확률·비용 은폐, 인위적인 불편 뒤 결제 해소, 손실 압박, 중단을 방해하는 연속 알림 같은 위험을 별도 표시한다.
 - Base 내부 DDD 정의는 확정했지만, 외부 자료나 다른 프로젝트에서 같은 약어를 사용할 때는 해당 출처의 정의를 확인하기 전 임의 해석하지 않는다.
 
+## 2026-07-21 외부 근거·작업 순서·플레이 검증 교훈
+
+- 벤치마크는 인기 게임의 기능 목록을 모방하는 절차가 아니다. 현재 결정을 바꿀 질문과 비교 차원을 먼저 고정하고, 공식 제품 사실·플레이어 자기보고·행동 이벤트·퍼널·통제 실험·해석을 서로 다른 근거 층위로 관리한다.
+- 플레이어 리뷰는 기대가 어떻게 설정되고 실제 경험과 어디서 어긋나는지 찾는 채널이지만, 버전·패치·플레이타임·플랫폼·언어·긍정·부정·리뷰 폭탄을 구분하지 않으면 현재 기획을 정당화하는 선택 편향이 된다.
+- 외부 조사 결과는 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 변환해야 하며, 평점·판매량·강한 표현만으로 핵심 컨셉을 변경하지 않는다.
+- 작업 분해는 “코딩”, “문서 수정” 같은 활동 목록이 아니라 독립 검증 가능한 결과, `BLOCKS / INFORMS / USES_OUTPUT / SHARES_RESOURCE / VALIDATES` 의존성, 병렬 경계, 단계별 게이트·롤백으로 표현한다.
+- 실행 순서는 의존성 해소, 가장 위험한 가설, 핵심 사용자 가치, 피드백 속도, 되돌리기 난이도와 자원 충돌을 함께 고려하고 새 사실·실패가 생기면 이후 계획을 재구성한다.
+- 플레이테스트는 빌드·버전·대상 집단·기존 노출·과제·피드백 채널·관찰 행동·이벤트·퍼널·성공 기준이 있는 검증 계약이어야 한다. A/B 테스트는 한 주요 가설과 사전 선언한 주 지표·가드레일을 비교한다.
+- 접근성은 옵션 존재나 법적 준수 선언이 아니라 핵심 정보·입력·UI·시간·난이도·모션에서 실제 장벽과 대체 경로를 검수한다.
+- 성능은 평균 FPS 하나가 아니라 목표 플랫폼·동일 빌드·대표·최악 장면에서 frame time, CPU·GPU·메모리·네트워크·로딩을 baseline과 비교한다.
+- 위 기능은 별도 Skill을 늘리지 않고 `decompose-and-sequence`, `benchmark-and-player-research`, `playtest-and-experiment`, `accessibility-review`, `performance-profile` mode로 기존 생명주기에 흡수한다. 활성 Skill 수는 13개를 유지한다.
+- 공식 자료를 근거로 계약을 만들었지만 여러 실제 프로젝트에서 오라우팅·표본 편향·측정 비용을 검증하기 전까지 신규 mode의 지식 상태는 `OBSERVATION` 또는 `HYPOTHESIS`로 유지한다.
+
 ## 2026-07-21 정본·참조 최신성 감사 교훈
 
 - 패치 검수는 변경된 파일만 보는 것으로 충분하지 않다. 정본이 바뀌면 **변경됐어야 하지만 untouched인 소비자·템플릿·테스트·Workflow·파생본**을 함께 찾아야 한다.
@@ -110,6 +123,27 @@
 - PDF·다이어그램 발행본이 Registry보다 오래됨
 
 ## 기록
+
+### 2026-07-21 benchmark, sequencing, playtest, accessibility and performance modes
+
+- 프로젝트·작업: 게임 개발 벤치마크·유저 반응 조사, 작업 분해·순서, 플레이테스트·행동 계측, 접근성·성능 검증 공백을 기존 통합 Skill mode로 흡수
+- 기준 스킬 커밋: `agent/add-reference-freshness-audit-v3`
+- 호출 트리거: 벤치마킹 게임·유저 반응을 인터넷에서 조사해 분석·반영·개선하고, 작업 순서·스텝을 나누며, 추가로 필요한 게임 개발 스킬을 공식 자료에서 찾아 통합하라는 사용자 요청
+- 입력 범위: PR #19 DDD 기준선, PR #22 정본 최신성 구조, Steamworks Reviews·Playtest·Testing, Unity Analytics Events·Funnels·A/B testing, Scrum Guide, GitHub Issues·Dependencies·Milestones, Xbox Accessibility Guidelines, Unreal performance profiling, Unity Edit·Play·target player test 문서
+- 실제 산출물: `decompose-and-sequence`, `benchmark-and-player-research`, `playtest-and-experiment`, `accessibility-review`, `performance-profile`, Vertical Slice의 `slice-contract/quality-bar/pipeline-proof/playtest-evidence/decision-gate`, 3개 상세 reference, 2개 템플릿, Registry·Operating Model·프로젝트 Workflow·Skill Adoption Guide·회귀 테스트 동기화
+- 실행한 검증: 독립 Skill 추가 없이 활성 Skill 13개 유지, mode·trigger·공식 출처·참조 파일·라우팅 회귀 추가, 전체 GitHub Actions 실행 대기
+- 결과: 부분 성공
+- 성공 조건: 벤치마크가 기능 복사가 아니라 근거 층위와 `ADOPT/ADAPT/AVOID/TEST/IGNORE` 결정으로 연결되고, 작업 단계가 의존성·게이트·롤백을 가지며, 플레이테스트·접근성·성능이 실제 증거 계약으로 연결됨
+- 실패·예외·재현 조건: 리뷰 표본·버전·플랫폼 편향, 이벤트와 감정의 혼동, 한 실험에서 여러 변수 변경, 근거 없는 일정 추정, 접근성의 법적 준수 과장, 평균 FPS만으로 성능 통과를 주장할 위험이 있음
+- 사용자 피드백: 위 두 기능은 각각 별도 Skill이 아니라 통합 mode로 추가하고, 인터넷에서 필요한 게임 개발·작업 스킬을 더 찾아 통합·참고·개선할 것
+- 불필요하게 호출한 스킬: 없음. 신규 독립 Skill 2개 대신 기존 Intake·Concept·Validation·Vertical Slice 생명주기에 흡수함
+- 누락된 스킬·검증: 실제 프로젝트의 리뷰 표본 코딩, 외부 Playtest 모집·피드백 회수, 실제 target hardware 프로파일과 접근성 사용자 검수
+- 스킬 본문 변경 필요: 예
+- 변경하지 않는 이유: 해당 없음
+- 지식 상태: 작업 분해 원리는 패턴, 벤치마크·플레이테스트·접근성·성능 통합 계약은 관찰·가설
+- 프로젝트 전용으로 유지할 내용: 실제 비교 게임, 리뷰 데이터, 테스트 빌드·표본, 이벤트 Schema·퍼널, 장르별 목표 지표, 접근성 우선순위, 성능 예산·하드웨어
+- Base Method·Skill·Template·Test 환류 후보: 이번 mode·reference·template·Registry·회귀 전체
+- 다음 검토 트리거: 첫 두 프로젝트 적용, 오라우팅, 표본 편향, 실험 인과 오류, 작업 단계 과분해·과병렬화, 접근성·성능 검증 비용 과다
 
 ### 2026-07-21 Digital Dopamine Design definition and reward-analysis contract
 
