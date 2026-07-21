@@ -20,6 +20,7 @@
     "tools/publication_v3.py",
     "tools/skill_map_diagrams.py",
     "tools/build_design_documents.py",
+    "tools/build_policy_driven_design_documents.py",
     "tools/design_document_diagrams.py",
     "tools/check_documentation_governance.py",
     "tools/check_skill_routing_governance.py",
@@ -86,6 +87,7 @@
   ],
   "design_document_registry": "[기획서]/00_프로젝트_허브/DESIGN_DOCUMENT_REGISTRY.json",
   "enforce_design_document_publications": true,
+  "require_milestone_design_document_publications": false,
   "require_human_design_document_visual_review": false,
   "design_document_diagram_generator": "tools/design_document_diagrams.py",
   "required_design_document_coverage": [
@@ -196,6 +198,7 @@
       "name": "design-document-publication-change",
       "source_globs": [
         "tools/build_design_documents.py",
+        "tools/build_policy_driven_design_documents.py",
         "tools/design_document_diagrams.py",
         "tools/publication_v3.py",
         "schemas/design-document-registry-v3.schema.json",
