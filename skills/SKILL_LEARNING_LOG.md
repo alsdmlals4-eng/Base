@@ -1,5 +1,15 @@
 # Base Skill Learning Log
 
+## 2026-07-21 핵심 컨셉·변경 검증 스킬 교훈
+
+- 게임 기획 방향을 잡는 작업은 GDD 문장 작성이나 Vertical Slice 제작과 다르다. 핵심 컨셉·제약·뾰족한 재미·요소 정렬·PoC·재조정을 하나의 상태 흐름으로 다뤄야 한다.
+- SWOT은 장단점 목록이 아니라 SO·WO·ST·WT 실행 방향으로 변환해야 의사결정 도구가 된다.
+- MDA·DDE·3C·루프 같은 프레임워크는 많이 적용하는 것이 목적이 아니라 핵심 재미와 불일치를 찾아 개선 우선순위를 만드는 데 사용한다.
+- `DDD`처럼 분야마다 의미가 달라지는 약어는 프로젝트 정의를 먼저 확인하고, 정의 전에는 임의의 표준 의미로 확정하지 않는다.
+- PoC는 전체 게임이나 Vertical Slice가 아니라 가장 위험한 가설을 최소 비용으로 틀릴 수 있게 만드는 검증 계약이다.
+- 변경 검증은 외부 AI 결과에만 필요한 절차가 아니다. 사람·Codex·자동화가 만든 코드·데이터·문서·자산 모두 승인 계약, 실제 diff, 정적·런타임·회귀 증거로 같은 기준에서 검증한다.
+- 외부 AI 검수는 범용 변경 검증 Skill의 `external-source-review` mode로 흡수하고, 이전 ID는 Legacy Alias로 보존한다.
+
 ## 2026-07-21 스킬·운영 구조 통합 교훈
 
 - 하나의 요청 생명주기를 라우팅·인터뷰·실행 계약처럼 여러 Foundation Skill로 분리하면 같은 상태·범위·검증을 반복 판정하게 된다. 하나의 통합 Skill과 mode·상태 머신으로 우선 표현한다.
@@ -84,6 +94,27 @@
 - PDF·다이어그램 발행본이 Registry보다 오래됨
 
 ## 기록
+
+### 2026-07-21 concept analysis and unified project-change validation
+
+- 프로젝트·작업: Base 핵심 컨셉·뾰족한 재미·PoC 기획 분석 스킬 추가와 외부 AI 검수의 범용 변경 검증 통합
+- 기준 스킬 커밋: `agent/consolidate-skills-and-structure@3dbda34b1a817145787dc114963a7869360eac97`
+- 호출 트리거: SWOT·DDD 요소 분석과 개선 방향, 핵심 컨셉→제약→뾰족한 재미→구체화→PoC→재조정→Production 흐름을 반복 가능한 스킬로 만들고 일반 변경 검증 공백을 해소하라는 사용자 요청
+- 입력 범위: 활성 Skill Registry, Operating Model, START_HERE, AGENTS, Documentation Map, Workflow·Checklist, 프로젝트 템플릿, 기존 Vertical Slice·외부 AI 검수 스킬과 구조 회귀 테스트
+- 실제 산출물: `analyzing-and-refining-game-concepts`, `reviewing-and-validating-project-changes`, 기획 방향·변경 검증 템플릿, 12개 활성 Skill Registry, Legacy Alias와 프로젝트 라우터 갱신
+- 실행한 검증: Registry Schema·활성 경로, 12개 선택적 라우팅, 기획 8개 mode·상태 흐름·SWOT 전략·MDA/DDE·DDD 모호성 계약, 변경 검증 6개 mode·판정, 삭제 경로·Legacy Alias·프로젝트 템플릿 참조, 전체 GitHub Actions 예정
+- 결과: 미검증
+- 성공 조건: 기존 기획 문서·Vertical Slice·UI 감사 경계를 보존하고 새 Skill의 trigger·mode·템플릿·라우팅·회귀·Actions가 통과함
+- 실패·예외·재현 조건: `BIG BLIND`와 `DDD`를 외부 표준 용어로 단정하면 오라우팅 위험이 있으므로 프로젝트 정의형 용어로 처리함. 최초 큰 파일 생성 요청이 보안 판정 불명으로 차단돼 동일 기능의 표현을 축약해 재시도함.
+- 사용자 피드백: 핵심 컨셉과 지속 플레이 원동력 탐색, 모든 게임 요소의 정렬, PoC 결과 기반 기획 재조정, 7단계 Production 흐름을 포함할 것
+- 불필요하게 호출한 스킬: 없음
+- 누락된 스킬·검증: 실제 서로 다른 게임 프로젝트에서의 반복 적용 결과와 PoC 관찰 데이터는 아직 없음
+- 스킬 본문 변경 필요: 예
+- 변경하지 않는 이유: 해당 없음
+- 지식 상태: 핵심 컨셉 분석은 가설, 범용 변경 검증은 패턴
+- 프로젝트 전용으로 유지할 내용: 실제 게임의 컨셉 문장·SWOT 항목·DDD 정의·PoC 결과·수치·콘텐츠·Production 판정
+- Base Method·Skill·Template·Test 환류 후보: 기획 방향 상태 머신, SWOT-to-action, 약어 정의 계약, 범용 검증 판정·증거 템플릿과 Legacy Alias
+- 다음 검토 트리거: 첫 두 프로젝트 적용, PoC 범위 팽창, DDD 오해, SWOT 일반론화, 통합 검증 Skill 비대화, Actions 실패
 
 ### 2026-07-21 consolidated Base skills and operating structure
 
