@@ -34,6 +34,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "docs/OPERATING_MODEL.md",
             "docs/DOCUMENTATION_MAP.md",
             "docs/MVP_WORKFLOW_CHECKLIST.md",
+            "docs/WORK_MODE_AND_SKILL_ROUTING.md",
             "docs/knowledge/methods/GAME_PROJECT_OPERATING_SYSTEM_METHOD.md",
             "docs/knowledge/methods/DEVELOPMENT_GATES_METHOD.md",
             "docs/knowledge/methods/EXISTING_PROJECT_SAFE_MIGRATION_METHOD.md",
@@ -66,6 +67,8 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "templates/planning/GAME_CONCEPT_DIRECTION_REVIEW.md",
             "templates/quality/PROJECT_CHANGE_VALIDATION.md",
             "templates/quality/CANONICAL_REFERENCE_FRESHNESS_AUDIT.md",
+            "templates/project-operations/SKILL_EXECUTION_REPORT.md",
+            "templates/project-operations/LEGACY_ARTIFACT_RECONCILIATION.md",
             "tools/check_base_change_proposals.py",
             "tools/check_canonical_reference_freshness.py",
             ".github/reference-freshness.json",
@@ -177,8 +180,12 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         self.assertEqual(errors, [], [error.message for error in errors])
         policy = registry["routing_policy"]
         self.assertFalse(policy["load_all_skills"])
-        self.assertEqual(policy["default_selection"], "none")
+        self.assertEqual(policy["default_selection"], "automatic-trigger-match")
+        self.assertTrue(policy["automatic_selection"])
+        self.assertFalse(policy["user_skill_declaration_required"])
         self.assertTrue(policy["require_trigger_match"])
+        self.assertTrue(policy["require_execution_report"])
+        self.assertEqual(policy["work_modes"], ["PLAN", "BUILD", "REVIEW"])
         self.assertEqual(len(registry["skills"]), 13)
         seen: set[str] = set()
         for item in registry["skills"]:
@@ -202,6 +209,17 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "managing-base-change-proposals",
         }.issubset(seen))
 
+    def test_work_mode_skill_and_skill_mode_are_distinct_and_automatic(self) -> None:
+        routing = (ROOT / "docs/WORK_MODE_AND_SKILL_ROUTING.md").read_text(encoding="utf-8")
+        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        report = (ROOT / "templates/project-operations/SKILL_EXECUTION_REPORT.md").read_text(encoding="utf-8")
+        for term in ("Work Mode", "Skill Mode", "PLAN", "BUILD", "REVIEW", "자동 선택"):
+            self.assertIn(term, routing)
+            self.assertIn(term, intake)
+        for term in ("사용한 Work Mode·Skill·Skill Mode", "사용한 이유", "얻은 결과"):
+            self.assertIn(term, routing + intake + report)
+        self.assertIn("user_skill_declaration_required: false", report)
+
     def test_unified_skill_modes_preserve_separate_safety_boundaries(self) -> None:
         intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
         operating = (ROOT / "skills/managing-game-project-operating-system/SKILL.md").read_text(encoding="utf-8")
@@ -210,12 +228,15 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         validation = (ROOT / "skills/reviewing-and-validating-project-changes/SKILL.md").read_text(encoding="utf-8")
         freshness = (ROOT / "skills/auditing-canonical-reference-freshness/SKILL.md").read_text(encoding="utf-8")
         proposals = (ROOT / "skills/managing-base-change-proposals/SKILL.md").read_text(encoding="utf-8")
-        for mode in ("route", "clarify", "contract"):
+        for mode in ("route", "clarify", "contract", "execution-report"):
             self.assertIn(f"`{mode}`", intake)
-        for mode in ("install", "audit", "migrate", "verify"):
+        for mode in ("install", "audit", "reconcile-legacy", "migrate", "verify"):
             self.assertIn(f"`{mode}`", operating)
         self.assertIn("읽기 전용", operating)
         self.assertIn("approved_migration_table", operating)
+        self.assertIn("approved_legacy_reconciliation_table", operating)
+        for decision in ("UPDATE_IN_PLACE", "MERGE_TO_CANONICAL", "COMPATIBILITY_STUB", "ARCHIVE_HISTORY", "DELETE_APPROVED", "KEEP_UNRESOLVED"):
+            self.assertIn(decision, operating)
         for mode in ("author", "update", "restructure", "publish", "validate"):
             self.assertIn(f"`{mode}`", documents)
         for policy in ("source_only", "milestone_sync", "always_sync"):
@@ -305,12 +326,17 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
     def test_project_skill_registry_defines_human_publications(self) -> None:
         registry = json.loads((ROOT / "templates/project-operations/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
         human = registry["human_presentation"]
+        policy = registry["routing_policy"]
         self.assertEqual(human["source_of_truth"], "SKILL_REGISTRY.json")
         self.assertEqual(human["primary_reading_format"], "PROJECT_SKILL_MAP.pdf")
         self.assertIsNone(human["editable_derivative"])
         self.assertEqual(human["diagram_directory"], "PROJECT_SKILL_MAP.assets")
         self.assertEqual(human["markdown_summary"], "PROJECT_SKILL_MAP.md")
         self.assertEqual(registry["schema_version"], 3)
+        self.assertEqual(policy["default_selection"], "automatic-trigger-match")
+        self.assertTrue(policy["automatic_selection"])
+        self.assertFalse(policy["user_skill_declaration_required"])
+        self.assertTrue(policy["require_execution_report"])
 
     def test_design_document_templates_define_hybrid_sources_and_outputs(self) -> None:
         source = json.loads((ROOT / "templates/project-operations/DESIGN_DOCUMENT.json").read_text(encoding="utf-8"))
