@@ -9,9 +9,11 @@ description: Use when project concepts, loops, system relationships, MVP status,
 
 대시보드는 복잡한 관계를 보고 토론하는 작업 공간이다. 확정 결정과 구현 상태의 정본을 대체하지 않으며, 원본 경로·갱신 시점·상태를 명시한다.
 
+이 Skill은 시각화와 탐색 인터페이스를 책임진다. 기획 책임 원본의 작성·발행은 `managing-design-documents`, 수치 분석의 정확성은 해당 데이터 분석 계약, 대시보드가 주장하는 구현 상태는 `reviewing-and-validating-project-changes`의 증거로 확인한다.
+
 ## Modes
 
-`frame → map-sources → build → bind-status → validate`
+`frame` → `map-sources` → `build` → `bind-status` → `validate`
 
 ## Default form
 
