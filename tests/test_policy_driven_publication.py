@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import json
+import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -11,6 +14,7 @@ from tools.build_policy_driven_design_documents import load_registry, select_doc
 
 
 ROOT = Path(__file__).resolve().parents[1]
+WRAPPER = ROOT / "tools/build_policy_driven_design_documents.py"
 
 
 class PolicyDrivenPublicationTests(unittest.TestCase):
@@ -51,6 +55,50 @@ class PolicyDrivenPublicationTests(unittest.TestCase):
             path.write_text(json.dumps({"schema_version": 2}), encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "Schema v3"):
                 load_registry(path)
+
+    def test_wrapper_invokes_builder_with_policy_filtered_registry(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            tools = root / "tools"
+            hub = root / "[기획서]/00_프로젝트_허브"
+            tools.mkdir(parents=True)
+            hub.mkdir(parents=True)
+            shutil.copy2(WRAPPER, tools / WRAPPER.name)
+            (tools / "build_design_documents.py").write_text(
+                """from __future__ import annotations
+import argparse
+import json
+from pathlib import Path
+parser = argparse.ArgumentParser()
+parser.add_argument('--registry', required=True)
+args, _ = parser.parse_known_args()
+payload = json.loads(Path(args.registry).read_text(encoding='utf-8'))
+Path('selected.json').write_text(json.dumps([item['document_id'] for item in payload['documents']]), encoding='utf-8')
+""",
+                encoding="utf-8",
+            )
+            registry = hub / "DESIGN_DOCUMENT_REGISTRY.json"
+            registry.write_text(json.dumps(self.registry), encoding="utf-8")
+            default = subprocess.run(
+                [sys.executable, str(tools / WRAPPER.name), "--registry", str(registry)],
+                cwd=root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(default.returncode, 0, default.stdout + default.stderr)
+            self.assertEqual(json.loads((root / "selected.json").read_text(encoding="utf-8")), ["always"])
+            milestone = subprocess.run(
+                [sys.executable, str(tools / WRAPPER.name), "--registry", str(registry), "--include-milestone"],
+                cwd=root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(milestone.returncode, 0, milestone.stdout + milestone.stderr)
+            self.assertEqual(json.loads((root / "selected.json").read_text(encoding="utf-8")), ["milestone", "always"])
+            leftovers = list(hub.glob(".publication-registry-*.json"))
+            self.assertEqual(leftovers, [], f"Temporary registries were not cleaned up: {leftovers}")
 
     def test_schema_accepts_all_publication_policies(self) -> None:
         schema = json.loads((ROOT / "schemas/design-document-registry-v3.schema.json").read_text(encoding="utf-8"))
