@@ -9,9 +9,11 @@ description: Use when code, documents, data structures, automation, or a skill s
 
 리팩토링은 기능을 다시 설계하는 일이 아니라 **승인된 동작과 계약을 유지한 채 구조를 개선**하는 일이다. 기능 추가·삭제·정책 변경과 같은 PR에 섞지 않는다.
 
+도달 불가·오래된 자료의 제거는 `pruning-stale-and-nonfunctional-material`, SKILL.md의 조건부 상세 분리는 `simplifying-skill-bodies`, 의도적 기능 변경은 별도 작업 계약, 최종 diff·런타임·회귀 증거는 `reviewing-and-validating-project-changes`가 책임진다.
+
 ## Modes
 
-`baseline-contract → smell-audit → refactor → regression-validate → report`
+`baseline-contract` → `smell-audit` → `refactor` → `regression-validate` → `report`
 
 ## Required inputs
 
