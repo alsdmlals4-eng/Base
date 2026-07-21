@@ -19,6 +19,9 @@
 - Language:
 - Genre:
 - Core player promise:
+- Pointed fun hypothesis:
+- Current concept·PoC stage:
+- Project definition of ambiguous terms such as DDD:
 
 ## Base
 
@@ -101,6 +104,27 @@ route
 - Interview ID·status·confirmation:
 - Current executable contract:
 
+## Core concept and PoC
+
+핵심 컨셉·제약·뾰족한 재미·기획 요소 정렬·SWOT·MDA/DDE·PoC·기획 재조정은 `analyzing-and-refining-game-concepts`를 사용한다.
+
+```text
+frame
+→ constrain
+→ sharpen
+→ structure
+→ analyze
+→ poc-contract
+→ recalibrate
+→ production-gate
+```
+
+- 기능 목록을 핵심 컨셉으로 대체하지 않는다.
+- SWOT은 SO·WO·ST·WT 실행안으로 변환한다.
+- `DDD`처럼 의미가 여러 개인 약어는 프로젝트 정의 없이 임의 해석하지 않는다.
+- PoC는 가장 위험한 가설의 최소 검증이며 전체 게임이나 Vertical Slice로 팽창시키지 않는다.
+- PoC 결과는 기획의 유지·증폭·변경·삭제·보류·재검증 결정에 반영한다.
+
 ## Project operating-system changes
 
 기존 프로젝트 구조 변경은 `managing-game-project-operating-system`을 사용한다.
@@ -127,15 +151,21 @@ audit
 
 ## Validation
 
+일반 변경은 `reviewing-and-validating-project-changes`로 작업 계약과 실제 diff·실행 증거를 대조한다.
+
+- Contract·diff check:
 - Format·lint:
 - Automated tests:
 - Run path:
 - Save·load:
+- Edge·failure·counterexample:
+- Adjacent regression:
 - Manual review:
-- Regression scope:
 - Cold-start review:
+- Evidence report:
+- Rollback:
 
-실행하지 않은 검증은 `[미검증]`으로 기록한다.
+외부 AI 결과가 있으면 `external-source-review` mode를 추가한다. 실행하지 않은 검증은 `UNVERIFIED`와 사유로 기록한다.
 
 ## End-of-work and learning
 
@@ -152,8 +182,9 @@ audit
 ```md
 ## 변경 파일과 이유
 ## 유지한 기존 동작·결정·자산
+## 핵심 컨셉·PoC·기획 재조정
 ## 구현·문서·발행 변경
-## 검증 결과
+## 검증 판정과 증거
 ## 미검증·사용자 확인
 ## 남은 위험·롤백
 ## Active Context·Roadmap·Skill 최신화
