@@ -102,12 +102,28 @@ jobs:
         run: python tools/check_base_change_proposals.py --base-ref "${{ github.event.pull_request.base.sha }}"
 
       - name: Check canonical reference freshness
+        id: reference_freshness
         if: github.event_name == 'pull_request'
+        shell: bash
         run: |
+          set +e
           python tools/check_canonical_reference_freshness.py \
             --config .github/reference-freshness.json \
             --base "${{ github.event.pull_request.base.sha }}" \
-            --head "${{ github.event.pull_request.head.sha }}"
+            --head "${{ github.event.pull_request.head.sha }}" \
+            2>&1 | tee reference-freshness-results.txt
+          status=${PIPESTATUS[0]}
+          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          exit "$status"
+
+      - name: Upload reference freshness report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reference-freshness-report
+          path: reference-freshness-results.txt
+          if-no-files-found: warn
+          retention-days: 1
 
       - name: Run operating system regression and generation tests
         id: regression
@@ -140,7 +156,7 @@ jobs:
         with:
           name: operating-system-test-report
           path: operating-system-test-results.txt
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 1
 
   validate-publications-windows:
