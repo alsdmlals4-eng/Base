@@ -101,13 +101,13 @@
       "path": "skills/analyzing-and-refining-game-concepts/SKILL.md",
       "status": "ACTIVE",
       "load_by_default": false,
-      "trigger_tags": ["core-concept", "pointed-fun", "game-direction", "swot", "mda", "dde", "ddd-clarification", "poc", "concept-recalibration", "production-direction"],
-      "use_when": ["핵심 컨셉·뾰족한 재미·제약·기획 요소 정렬을 분석하고 PoC와 재조정 방향을 결정한다."],
+      "trigger_tags": ["core-concept", "pointed-fun", "game-direction", "swot", "mda", "dde", "digital-dopamine-design", "rapid-reward", "instant-feedback", "reward-latency", "poc", "concept-recalibration", "production-direction"],
+      "use_when": ["핵심 컨셉·뾰족한 재미·제약·기획 요소 정렬과 DDD 빠른 보상·즉각 피드백 구조를 분석하고 PoC와 재조정 방향을 결정한다."],
       "do_not_use_when": ["확정된 기획서의 단순 문장 편집, 단일 기능 구현, 이미 정의된 Vertical Slice 제작만 필요한 경우다."],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
-      "review_triggers": ["핵심 컨셉과 기능 목록 혼동", "PoC 범위 팽창", "프레임워크 결과의 실행안 부재", "DDD 약어 오해", "PoC 결과 미반영"],
+      "review_triggers": ["핵심 컨셉과 기능 목록 혼동", "PoC 범위 팽창", "프레임워크 결과의 실행안 부재", "DDD가 단순 자극으로 변질", "첫 의미 있는 보상 시간 미측정", "보상 인플레이션", "외부 DDD 약어 오해", "PoC 결과 미반영"],
       "last_reviewed_at": "2026-07-21",
-      "last_reviewed_commit": "a48f2fa1f13c410837bab94a6f9a78bcb9bc1f5f",
+      "last_reviewed_commit": "7e015ced6e19a58d01808444262d742470343190",
       "knowledge_state": "HYPOTHESIS"
     },
     {
