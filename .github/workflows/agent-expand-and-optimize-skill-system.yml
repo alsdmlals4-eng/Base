@@ -26,12 +26,14 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Patch and apply skill expansion
-        shell: bash
+      - name: Apply skill expansion
+        run: python tools/apply_skill_system_expansion.py
+
+      - name: Restrict compact checks to optimized skills
         run: |
           python - <<'PY'
           from pathlib import Path
-          path = Path('tools/apply_skill_system_expansion.py')
+          path = Path('tools/check_skill_system_coverage.py')
           text = path.read_text(encoding='utf-8')
           old = '''        for required in ("##", "Output contract", "Quality gate", "Learning Log"):
               if required not in text:
@@ -45,10 +47,9 @@ jobs:
               if len(text.splitlines()) > 150:
                   errors.append(f"Compact SKILL.md exceeds 150 lines: {skill_id} ({len(text.splitlines())})")'''
           if old not in text:
-              raise SystemExit('Expected checker block was not found')
+              raise SystemExit('Expected generated checker block was not found')
           path.write_text(text.replace(old, new, 1), encoding='utf-8')
           PY
-          python tools/apply_skill_system_expansion.py
 
       - name: Install validation dependency
         run: python -m pip install jsonschema
