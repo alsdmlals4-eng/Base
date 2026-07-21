@@ -16,6 +16,7 @@ OLD_SKILL_PATHS = (
     "skills/publishing-discipline-bibles/SKILL.md",
     "skills/promoting-project-knowledge/SKILL.md",
     "skills/reviewing-and-implementing-base-change-proposals/SKILL.md",
+    "skills/reviewing-external-ai-drafts/SKILL.md",
 )
 TEXT_SUFFIXES = {".md", ".json", ".yml", ".yaml", ".py"}
 
@@ -37,6 +38,11 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
             path for path in (ROOT / "templates").rglob("*")
             if path.is_file() and path.suffix.lower() in TEXT_SUFFIXES
         ]
+        candidates += [
+            path for path in (ROOT / "skills").rglob("*")
+            if path.is_file() and path.suffix.lower() in TEXT_SUFFIXES
+            and path.name != "LEGACY_SKILL_ALIASES.md"
+        ]
         stale: list[str] = []
         for path in sorted(set(candidates)):
             text = path.read_text(encoding="utf-8", errors="replace")
@@ -45,17 +51,24 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
                     stale.append(f"{path.relative_to(ROOT)} -> {old_path}")
         self.assertEqual(stale, [], "Deleted skill paths remain in active entrypoints/templates:\n" + "\n".join(stale))
 
-    def test_new_skill_paths_are_present_in_project_templates(self) -> None:
+    def test_new_skill_paths_are_present_in_active_entrypoints(self) -> None:
         combined = "\n".join(
             path.read_text(encoding="utf-8", errors="replace")
-            for path in (ROOT / "templates").rglob("*")
-            if path.is_file() and path.suffix.lower() in TEXT_SUFFIXES
+            for path in (
+                ROOT / "AGENTS.md",
+                ROOT / "START_HERE.md",
+                ROOT / "README.md",
+                ROOT / "docs/OPERATING_MODEL.md",
+                ROOT / "docs/DOCUMENTATION_MAP.md",
+            )
         )
         for skill_id in (
             "managing-project-intake-and-work-contract",
             "managing-game-project-operating-system",
             "managing-design-documents",
             "managing-base-change-proposals",
+            "analyzing-and-refining-game-concepts",
+            "reviewing-and-validating-project-changes",
         ):
             self.assertIn(skill_id, combined)
 
