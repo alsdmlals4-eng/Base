@@ -2,7 +2,7 @@
 
 ## 1. 현재 단계
 
-- 상태: `CONCEPT_SEED / CONSTRAINTS_CHECKED / POINTED_FUN_HYPOTHESIS / CONCEPT_STRUCTURED / POC_BUILD_AND_TEST / CONCEPT_RECALIBRATION / PRODUCTION_READY / HOLD / STOP`
+- 상태: `CONCEPT_SEED / CONSTRAINTS_CHECKED / POINTED_FUN_HYPOTHESIS / CONCEPT_STRUCTURED / POC_BUILD_AND_TEST / CONCEPT_RECALIBRATION / PRODUCTION_READY / REPEAT_POC / HOLD / STOP`
 - 분석 기준 커밋·기획서:
 - 분석 목적:
 
@@ -32,9 +32,9 @@
 
 ## 5. 뾰족한 재미
 
-| 후보 | 플레이어 행동 | 핵심 선택·긴장 | 숙련·변주 | 반복 원동력 | 판정 |
-|---|---|---|---|---|---|
-| | | | | | `핵심/보조/장식/충돌/미검증` |
+| 후보 | 플레이어 행동 | 핵심 선택·긴장 | 숙련·변주 | 반복 원동력 | DDD가 드러내는 방식 | 판정 |
+|---|---|---|---|---|---|---|
+| | | | | | | `핵심/보조/장식/충돌/미검증` |
 
 최종 가설:
 
@@ -52,6 +52,7 @@
 | 세계관 | | | | |
 | UI·아트·사운드 | | | | |
 | 성장·수집·경제 | | | | |
+| 첫 보상·행동 피드백·보상 사다리 | | | | |
 
 ## 7. SWOT와 실행 전략
 
@@ -74,7 +75,7 @@
 ## 8. 분석 프레임워크
 
 - framework_profile:
-- DDD 약어의 프로젝트 정의:
+- 외부 자료에서 사용하는 추가 약어 정의:
 
 ### MDA 또는 DDE
 
@@ -83,6 +84,37 @@
 | Mechanics / Design | | | |
 | Dynamics | | | |
 | Aesthetics / Experience | | | |
+
+### DDD — Digital Dopamine Design
+
+> 프로젝트 정의: 플레이 시작 또는 행동 직후 짧은 시간 안에 사용자가 의미 있는 보상, 변화, 성취와 다음 기대를 체감하도록 설계하는 빠른 보상 요소.
+
+| 분석축 | 현재 값·구조 | 목표 | 문제·개선 |
+|---|---|---|---|
+| 첫 의미 있는 보상까지의 시간 | | | |
+| 행동 → 피드백 지연 | | | |
+| 보상 원인·결과의 명료성 | | | |
+| 짧은 구간의 의미 있는 보상 밀도 | | | |
+| 기대 → 행동 → 공개·획득 리듬 | | | |
+| Micro → Session → Meta 보상 사다리 | | | |
+| 다음 행동·선택 유도 | | | |
+| 반복 피로·무감각·보상 인플레이션 | | | |
+
+DDD 핵심 판정:
+
+- DDD가 뾰족한 재미를 더 빨리 이해시키는가:
+- 단순 이펙트·팝업·숫자로 핵심 재미를 가리는가:
+- 줄여야 할 무의미한 자극:
+- 앞당겨야 할 첫 의미 있는 보상:
+- 다음 선택과 연결할 작은 보상:
+
+DDD 위험 점검:
+
+- [ ] 보상 가치·확률·비용을 과장하거나 숨기지 않는다.
+- [ ] 불필요한 불편을 만든 뒤 결제로 해소하지 않는다.
+- [ ] 손실 압박과 놓치면 손해라는 감정만으로 복귀를 유도하지 않는다.
+- [ ] 플레이어가 멈추거나 쉬기 어렵게 연속 알림·보상을 배치하지 않는다.
+- [ ] 실제 도파민 분비나 의학적 중독을 관찰 없이 단정하지 않는다.
 
 ### 3C·루프·동기
 
@@ -118,6 +150,12 @@ failure_signal:
 stop_condition:
 next_decision_if_passed:
 next_decision_if_failed:
+ddd_observation:
+  time_to_first_meaningful_reward:
+  action_to_feedback_latency:
+  reward_cause_understanding:
+  next_action_intent:
+  fatigue_or_overstimulation:
 ```
 
 ## 11. PoC 결과와 기획 재조정
@@ -138,5 +176,6 @@ next_decision_if_failed:
 - 다음 제작 범위:
 - 제외 범위:
 - Vertical Slice 선행 조건:
+- DDD 선행 검증:
 - 미검증·위험:
 - 다음 질문:
