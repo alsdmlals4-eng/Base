@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   apply:
-    if: github.actor != 'github-actions[bot]' && github.event.pull_request.head.ref == 'agent/add-project-core-and-adversarial-skills' && github.event.pull_request.head.repo.full_name == github.repository
+    if: github.actor != 'github-actions[bot]' && github.event.pull_request.head.ref == 'agent/project-core-and-adversarial-skills-v2' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
