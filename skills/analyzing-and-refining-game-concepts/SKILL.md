@@ -13,7 +13,7 @@ description: Use when defining or reworking a game's core concept, pointed fun, 
 
 ## Modes and state
 
-`frame → constrain → sharpen → structure → benchmark-and-player-research → analyze → playtest-and-experiment → poc-contract → recalibrate → production-gate`
+`frame` → `constrain` → `sharpen` → `structure` → `benchmark-and-player-research` → `analyze` → `playtest-and-experiment` → `poc-contract` → `recalibrate` → `production-gate`
 
 `CONCEPT_SEED → CONSTRAINTS_CHECKED → POINTED_FUN_HYPOTHESIS → CONCEPT_STRUCTURED → POC_BUILD_AND_TEST → CONCEPT_RECALIBRATION → PRODUCTION_READY | REPEAT_POC | HOLD | STOP`
 
@@ -36,7 +36,7 @@ risks_unknowns_and_decision_to_make:
 - `MDA / DDE / DDD`, 3C, 루프, 동기, 차별화, 제작성을 교차 확인한다.
 - Base에서 `DDD`는 `Digital Dopamine Design`이며 첫 의미 있는 보상, 행동-피드백 지연, 보상 명료성·밀도, Micro→Session→Meta 사다리, 피로·인플레이션을 본다. 외부 동명 약어는 정의 확인 전 **임의 해석하지 않는다**.
 
-세부 컨셉·제약·뾰족한 재미·PoC 게이트는 `references/concept-evidence-and-gates.md`, 벤치마크·사용자 근거·플레이테스트·DDD 계약은 `references/benchmark-playtest-and-ddd.md`를 필요할 때만 읽는다.
+세부 컨셉·제약·뾰족한 재미·PoC 게이트는 `references/concept-evidence-and-gates.md`를 읽는다. 벤치마크·사용자 반응·플레이테스트의 전체 증거 필드는 `references/benchmark-player-evidence-and-playtests.md`, DDD의 경계와 축약 계약은 `references/benchmark-playtest-and-ddd.md`를 해당 mode에서만 읽는다.
 
 ## Workflow
 
