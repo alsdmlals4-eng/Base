@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "scan_globs": [
+    "*.md",
+    "*.json",
+    ".github/**/*.json",
+    ".github/**/*.yml",
+    "docs/**/*.md",
+    "docs/**/*.json",
+    "skills/**/*.md",
+    "skills/**/*.json",
+    "templates/**/*.md",
+    "templates/**/*.json",
+    "templates/**/*.py",
+    "tests/**/*.py",
+    "tools/**/*.py"
+  ],
+  "ignore_globs": ["node_modules/**", ".git/**"],
+  "legacy_aliases_path": "skills/LEGACY_SKILL_ALIASES.md",
+  "allowed_legacy_globs": [
+    "skills/LEGACY_SKILL_ALIASES.md",
+    "skills/managing-project-intake-and-work-contract/SKILL.md",
+    "skills/managing-game-project-operating-system/SKILL.md",
+    "skills/managing-design-documents/SKILL.md",
+    "skills/reviewing-and-validating-project-changes/SKILL.md",
+    "skills/managing-base-change-proposals/SKILL.md",
+    "docs/CHANGELOG.md",
+    "docs/knowledge/cases/**",
+    "tests/**"
+  ],
+  "forbidden_tokens": [],
+  "canonical_reference_rules": [
+    {
+      "name": "operating-model-entrypoints",
+      "canonical_path": "docs/OPERATING_MODEL.md",
+      "reference_tokens": ["docs/OPERATING_MODEL.md"],
+      "required_consumers": ["README.md", "START_HERE.md", "AGENTS.md", "docs/DOCUMENTATION_MAP.md"]
+    },
+    {
+      "name": "base-skill-registry-entrypoints",
+      "canonical_path": "skills/SKILL_REGISTRY.json",
+      "reference_tokens": ["skills/SKILL_REGISTRY.json", "SKILL_REGISTRY.json"],
+      "required_consumers": ["START_HERE.md", "docs/OPERATING_MODEL.md"]
+    },
+    {
+      "name": "reference-freshness-skill-entrypoints",
+      "canonical_path": "skills/auditing-canonical-reference-freshness/SKILL.md",
+      "reference_tokens": ["auditing-canonical-reference-freshness"],
+      "required_consumers": ["docs/OPERATING_MODEL.md", "templates/project-operations/AI_WORKFLOW.md"]
+    }
+  ],
+  "coupled_change_rules": [
+    {
+      "name": "skill-contract-registry-learning-sync",
+      "when_changed": ["skills/**/SKILL.md"],
+      "require_all_changed": ["skills/SKILL_REGISTRY.json", "skills/SKILL_LEARNING_LOG.md"],
+      "require_any_changed": ["tests/test_game_project_operating_system_structure.py", "tests/test_consolidated_skill_references.py", "tests/test_reference_freshness.py"]
+    },
+    {
+      "name": "registry-structure-test-sync",
+      "when_changed": ["skills/SKILL_REGISTRY.json"],
+      "require_all_changed": ["skills/SKILL_LEARNING_LOG.md", "tests/test_game_project_operating_system_structure.py"],
+      "require_any_changed": ["docs/OPERATING_MODEL.md", "START_HERE.md", "templates/project-operations/AI_WORKFLOW.md"]
+    },
+    {
+      "name": "reference-checker-test-and-config-sync",
+      "when_changed": ["tools/check_canonical_reference_freshness.py"],
+      "require_all_changed": [".github/reference-freshness.json", "tests/test_reference_freshness.py"],
+      "require_any_changed": []
+    },
+    {
+      "name": "legacy-alias-test-sync",
+      "when_changed": ["skills/LEGACY_SKILL_ALIASES.md"],
+      "require_all_changed": ["tests/test_consolidated_skill_references.py"],
+      "require_any_changed": []
+    }
+  ]
+}
