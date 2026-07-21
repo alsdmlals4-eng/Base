@@ -36,6 +36,7 @@ class CanonicalReferenceFreshnessTests(unittest.TestCase):
             "ignore_globs": [],
             "legacy_aliases_path": "skills/LEGACY_SKILL_ALIASES.md",
             "allowed_legacy_globs": ["skills/LEGACY_SKILL_ALIASES.md", "docs/CHANGELOG.md"],
+            "strict_legacy_id_globs": ["README.md"],
             "forbidden_tokens": [],
             "canonical_reference_rules": [{
                 "name": "operating-model-entrypoint",
@@ -98,14 +99,31 @@ class CanonicalReferenceFreshnessTests(unittest.TestCase):
         result = self._run()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
-    def test_legacy_id_in_active_file_fails(self) -> None:
+    def test_legacy_id_in_execution_entrypoint_fails(self) -> None:
         (self.root / "README.md").write_text(
             "See docs/OPERATING_MODEL.md and old-skill\n",
             encoding="utf-8",
         )
         result = self._run()
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("Legacy skill id remains", result.stdout)
+        self.assertIn("Legacy skill id remains in execution entrypoint", result.stdout)
+
+    def test_bare_legacy_id_in_non_entrypoint_is_not_a_path_failure(self) -> None:
+        (self.root / "docs/NOTE.md").write_text(
+            "Historical discussion of old-skill.\n",
+            encoding="utf-8",
+        )
+        result = self._run()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_deleted_skill_path_fails_outside_strict_entrypoints(self) -> None:
+        (self.root / "docs/NOTE.md").write_text(
+            "Do not use skills/old-skill/SKILL.md.\n",
+            encoding="utf-8",
+        )
+        result = self._run()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Deleted skill path remains in active file", result.stdout)
 
     def test_missing_canonical_reference_fails(self) -> None:
         (self.root / "README.md").write_text("No current source\n", encoding="utf-8")
