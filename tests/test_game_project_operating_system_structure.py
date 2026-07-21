@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class GameProjectOperatingSystemStructureTests(unittest.TestCase):
     def test_base_cold_start_distinguishes_project_templates_from_active_status(self) -> None:
         start = (ROOT / "START_HERE.md").read_text(encoding="utf-8")
-        documentation_map = (ROOT / "docs" / "DOCUMENTATION_MAP.md").read_text(encoding="utf-8")
+        documentation_map = (ROOT / "docs/DOCUMENTATION_MAP.md").read_text(encoding="utf-8")
         for required in (
             "Base 저장소 자체를 콜드 스타트할 때",
             "templates/project-operations/",
@@ -54,6 +54,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "skills/designing-vertical-slices/SKILL.md",
             "skills/orchestrating-deepseek-worktrees/SKILL.md",
             "skills/reviewing-and-validating-project-changes/SKILL.md",
+            "skills/auditing-canonical-reference-freshness/SKILL.md",
             "skills/designing-art-prompts-and-technique-cards/SKILL.md",
             "skills/auditing-and-refining-ui-art/SKILL.md",
             "schemas/base-skill-registry-v1.schema.json",
@@ -64,9 +65,14 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "templates/BASE_CHANGE_PROPOSAL.md",
             "templates/planning/GAME_CONCEPT_DIRECTION_REVIEW.md",
             "templates/quality/PROJECT_CHANGE_VALIDATION.md",
+            "templates/quality/CANONICAL_REFERENCE_FRESHNESS_AUDIT.md",
             "tools/check_base_change_proposals.py",
+            "tools/check_canonical_reference_freshness.py",
+            ".github/reference-freshness.json",
+            "tests/test_reference_freshness.py",
             "tools/build_project_skill_map.py",
             "tools/build_design_documents.py",
+            "tools/build_policy_driven_design_documents.py",
             "tools/check_publication_environment.py",
             "schemas/design-document-registry-v3.schema.json",
             "schemas/structured-design-document-v3.schema.json",
@@ -87,6 +93,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "templates/project-operations/DESIGN_DOCUMENT.md",
             "templates/project-operations/DESIGN_DOCUMENT_REGISTRY.json",
             "templates/project-operations/SKILL_REGISTRY.json",
+            "templates/project-operations/AI_WORKFLOW.md",
             "templates/project-operations/github/check_documentation_governance.py",
             "templates/project-operations/github/check_skill_routing_governance.py",
             "templates/project-operations/github/check_design_document_publications.py",
@@ -127,19 +134,17 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "promoting-project-knowledge",
             "reviewing-and-implementing-base-change-proposals",
             "reviewing-external-ai-drafts",
-        ):
-            self.assertIn(f"`{skill_id}`", aliases)
-        for replacement in (
             "managing-project-intake-and-work-contract",
             "managing-game-project-operating-system",
             "managing-design-documents",
             "managing-base-change-proposals",
             "reviewing-and-validating-project-changes",
         ):
-            self.assertIn(f"`{replacement}`", aliases)
+            self.assertIn(f"`{skill_id}`", aliases)
 
     def test_minimum_base_invocation_routes_to_consolidated_skills(self) -> None:
         start = (ROOT / "START_HERE.md").read_text(encoding="utf-8")
+        operating = (ROOT / "docs/OPERATING_MODEL.md").read_text(encoding="utf-8")
         self.assertIn("https://github.com/alsdmlals4-eng/Base", start)
         for skill in (
             "managing-project-intake-and-work-contract",
@@ -149,15 +154,15 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "maintaining-project-context-and-handoff",
             "analyzing-and-refining-game-concepts",
             "reviewing-and-validating-project-changes",
+            "auditing-canonical-reference-freshness",
             "managing-base-change-proposals",
         ):
-            self.assertIn(skill, start)
+            self.assertIn(skill, start + operating)
         self.assertIn("LEGACY_SKILL_ALIASES.md", start)
 
     def test_skill_front_matter_names_are_unique(self) -> None:
-        skill_files = sorted((ROOT / "skills").glob("*/SKILL.md"))
         names: dict[str, Path] = {}
-        for path in skill_files:
+        for path in sorted((ROOT / "skills").glob("*/SKILL.md")):
             text = path.read_text(encoding="utf-8")
             match = re.search(r"^name:\s*['\"]?([^'\"\n]+)", text, re.MULTILINE)
             self.assertIsNotNone(match, f"Missing skill name: {path}")
@@ -174,7 +179,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         self.assertFalse(policy["load_all_skills"])
         self.assertEqual(policy["default_selection"], "none")
         self.assertTrue(policy["require_trigger_match"])
-        self.assertEqual(len(registry["skills"]), 12)
+        self.assertEqual(len(registry["skills"]), 13)
         seen: set[str] = set()
         for item in registry["skills"]:
             skill_id = item["skill_id"]
@@ -193,6 +198,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "managing-design-documents",
             "analyzing-and-refining-game-concepts",
             "reviewing-and-validating-project-changes",
+            "auditing-canonical-reference-freshness",
             "managing-base-change-proposals",
         }.issubset(seen))
 
@@ -202,6 +208,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         documents = (ROOT / "skills/managing-design-documents/SKILL.md").read_text(encoding="utf-8")
         concepts = (ROOT / "skills/analyzing-and-refining-game-concepts/SKILL.md").read_text(encoding="utf-8")
         validation = (ROOT / "skills/reviewing-and-validating-project-changes/SKILL.md").read_text(encoding="utf-8")
+        freshness = (ROOT / "skills/auditing-canonical-reference-freshness/SKILL.md").read_text(encoding="utf-8")
         proposals = (ROOT / "skills/managing-base-change-proposals/SKILL.md").read_text(encoding="utf-8")
         for mode in ("route", "clarify", "contract"):
             self.assertIn(f"`{mode}`", intake)
@@ -220,10 +227,14 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         for lens in ("SWOT", "SO", "WO", "ST", "WT", "MDA", "DDE", "DDD"):
             self.assertIn(lens, concepts)
         self.assertIn("임의 해석하지 않는다", concepts)
-        for mode in ("contract-check", "external-source-review", "static-validation", "runtime-validation", "regression", "evidence-report"):
+        for mode in ("contract-check", "external-source-review", "reference-freshness", "static-validation", "runtime-validation", "regression", "evidence-report"):
             self.assertIn(f"`{mode}`", validation)
         for decision in ("ACCEPT", "REVISE", "REJECT", "UNVERIFIED"):
             self.assertIn(decision, validation)
+        for mode in ("impact-map", "reference-scan", "content-drift", "derivative-freshness", "propagation-gap", "closure-report"):
+            self.assertIn(f"`{mode}`", freshness)
+        for finding in ("STALE_REFERENCE", "MISSING_PROPAGATION", "CONFLICTING_SOURCE", "DERIVATIVE_STALE", "ALLOWED_LEGACY"):
+            self.assertIn(finding, freshness)
         for mode in ("extract", "submit", "review", "implement", "verify"):
             self.assertIn(f"`{mode}`", proposals)
         self.assertIn("approval_ref", proposals)
@@ -245,6 +256,8 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "publication_status",
             "뾰족한 재미",
             "reviewing-and-validating-project-changes",
+            "auditing-canonical-reference-freshness",
+            "reference-freshness",
         ):
             self.assertIn(term, operating)
         for relative in ("README.md", "START_HERE.md", "AGENTS.md", "docs/DOCUMENTATION_MAP.md"):
@@ -330,6 +343,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
     def test_json_templates_are_valid(self) -> None:
         for relative in (
             "skills/SKILL_REGISTRY.json",
+            ".github/reference-freshness.json",
             "templates/project-operations/SKILL_REGISTRY.json",
             "templates/project-operations/DESIGN_DOCUMENT.json",
             "templates/project-operations/DESIGN_DOCUMENT_REGISTRY.json",
