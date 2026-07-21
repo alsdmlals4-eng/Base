@@ -80,12 +80,13 @@ route
 | 기획 책임 원본 작성·재구조화·발행·검수 | `managing-design-documents` |
 | 프로젝트 Skill 생성·통합·학습 | `evolving-project-discipline-skills` |
 | Active Context·Handoff | `maintaining-project-context-and-handoff` |
-| 프로젝트 교훈·Base 변경 제안 생명주기 | `managing-base-change-proposals` |
+| 핵심 컨셉·뾰족한 재미·SWOT·MDA/DDE·PoC·기획 재조정 | `analyzing-and-refining-game-concepts` |
 | Vertical Slice | `designing-vertical-slices` |
 | 외부 AI 작업 공간 | `orchestrating-deepseek-worktrees` |
-| 외부 AI 결과 독립 검수 | `reviewing-external-ai-drafts` |
+| 프로젝트 변경 계약·정적·런타임·회귀 검증 | `reviewing-and-validating-project-changes` |
 | 이미지 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` |
 | 구현된 Godot·Web UI 감사 | `auditing-and-refining-ui-art` |
+| 프로젝트 교훈·Base 변경 제안 생명주기 | `managing-base-change-proposals` |
 
 통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 mode로 변환한다. 새 Registry·문서·작업 계약에는 새 ID만 사용한다.
 
@@ -175,18 +176,32 @@ Active Context는 현재 상태의 기본 원본이다. 프로젝트 방향·분
 - UI 감사 정적 패턴은 후보일 뿐 결함·자동 삭제 권한이 아니다.
 - 사용자 승인된 finding만 수정하고 실제 Godot/Web 전후 렌더로 독립 재검수한다.
 
-## 12. 검증과 완료
+## 12. 기획 방향·PoC 계약
+
+핵심 컨셉, 제약, 뾰족한 재미, 게임 요소 정렬, PoC와 기획 재조정은 `analyzing-and-refining-game-concepts`를 사용한다.
+
+- 기능 목록을 핵심 컨셉으로 대체하지 않는다.
+- SWOT은 SO·WO·ST·WT 실행 방향으로 변환한다.
+- `DDD`처럼 의미가 여러 개인 약어는 프로젝트 정의 없이 임의 해석하지 않는다.
+- PoC는 가장 위험한 가설을 검증하는 최소 범위로 유지한다.
+- PoC 결과에 따라 유지·증폭·변경·삭제·보류·재검증을 결정한다.
+- 목표 품질과 제작 파이프라인 검증은 `designing-vertical-slices`로 넘긴다.
+
+## 13. 검증과 완료
+
+일반 변경 검증은 `reviewing-and-validating-project-changes`를 사용한다.
 
 최소 검증 순서:
 
 ```text
-포맷·문법·정적 검사
+작업 계약·diff 대조
+→ 포맷·문법·정적 검사
 → 관련 자동 테스트
 → 정상·실패·경계 경로
 → 저장·불러오기·호환성
 → 실제 화면·플레이·오디오·성능
-→ diff와 승인 범위
-→ 사용자 수동 검수
+→ 인접 기능 회귀
+→ 판정·미실행·위험·롤백
 ```
 
 작업 완료 조건:
@@ -200,7 +215,7 @@ Active Context는 현재 상태의 기본 원본이다. 프로젝트 방향·분
 7. 다음 작업·선행 조건·롤백이 존재한다.
 8. 새 AI가 저장소만으로 방향·상태·책임 원본·Skill·검증을 찾는다.
 
-## 13. 로컬과 GitHub
+## 14. 로컬과 GitHub
 
 GitHub와 로컬 파일은 자동 양방향 동기화가 아니다.
 
@@ -210,7 +225,7 @@ GitHub와 로컬 파일은 자동 양방향 동기화가 아니다.
 - Workflow 파일 존재와 실제 실행·Required Check 강제를 구분한다.
 - 생성 실패나 미검증 바이너리를 자동 push하지 않는다.
 
-## 14. 완료 보고
+## 15. 완료 보고
 
 - 주 책임·영향 분야
 - 실제 변경한 문서·코드·자산·Skill
