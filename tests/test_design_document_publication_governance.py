@@ -67,7 +67,7 @@ class DesignDocumentPublicationGovernanceTests(unittest.TestCase):
             "project_name": "Test", "required_responsibility_coverage": ["프로젝트 전체"], "documents": [self.entry],
         }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-    def _write_manifest(self) -> None:
+    def _write_manifest(self, *, sync_status: str = "CURRENT") -> None:
         data = {
             "schema_version": 3, "publication_id": "game-design-bible", "role": "human-readable-derivative",
             "source_path": self.entry["source_path"], "source_format": self.entry["source_format"],
@@ -78,15 +78,17 @@ class DesignDocumentPublicationGovernanceTests(unittest.TestCase):
             "output_pdf": self.entry["output_pdf"], "output_pdf_sha256": self._digest(self.pdf),
             "generated_assets": {}, "approved_visuals": {}, "source_images": {},
             "mermaid_sources": {}, "mermaid_svg": {}, "mermaid_png": {},
-            "sync_status": "CURRENT", "automated_render_review": "PASSED", "rendered_page_count": 1,
+            "sync_status": sync_status, "automated_render_review": "PASSED", "rendered_page_count": 1,
             "human_visual_review": "NOT_RUN", "human_visual_review_pdf_sha256": None,
         }
         self.manifest.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-    def _write_config(self, human: bool = False) -> None:
+    def _write_config(self, human: bool = False, milestone: bool = False) -> None:
         self.config.write_text(json.dumps({
             "design_root": "[기획서]", "design_document_registry": "[기획서]/00_프로젝트_허브/DESIGN_DOCUMENT_REGISTRY.json",
-            "enforce_design_document_publications": True, "require_human_design_document_visual_review": human,
+            "enforce_design_document_publications": True,
+            "require_milestone_design_document_publications": milestone,
+            "require_human_design_document_visual_review": human,
             "required_design_document_coverage": ["프로젝트 전체"],
         }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
@@ -97,11 +99,42 @@ class DesignDocumentPublicationGovernanceTests(unittest.TestCase):
         result = self._run()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
-    def test_stale_source_fails(self) -> None:
+    def test_stale_source_fails_for_always_sync(self) -> None:
         self.source.write_text(self.source.read_text(encoding="utf-8") + "\n", encoding="utf-8")
         result = self._run()
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("source changed", result.stdout)
+
+    def test_source_only_requires_no_manifest_or_outputs(self) -> None:
+        self.entry.update({
+            "publication_policy": "source_only",
+            "output_pdf": None,
+            "output_docx": None,
+            "publication_manifest": None,
+            "generator": None,
+            "diagram_policy": "none",
+        })
+        self._write_registry()
+        self.manifest.unlink()
+        self.pdf.unlink()
+        result = self._run()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_milestone_sync_allows_missing_manifest_outside_gate(self) -> None:
+        self.entry["publication_policy"] = "milestone_sync"
+        self._write_registry()
+        self.manifest.unlink()
+        result = self._run()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_milestone_sync_requires_current_manifest_at_gate(self) -> None:
+        self.entry["publication_policy"] = "milestone_sync"
+        self._write_registry()
+        self._write_manifest(sync_status="STALE")
+        self._write_config(milestone=True)
+        result = self._run()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("sync_status must be CURRENT", result.stdout)
 
     def test_generator_change_fails(self) -> None:
         self.generator.write_text("# changed\n", encoding="utf-8")
