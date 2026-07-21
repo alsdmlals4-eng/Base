@@ -28,9 +28,9 @@ START_HERE.md
 4. 등록된 책임 원본과 실제 코드·데이터·자산·테스트
 5. 프로젝트에 동기화된 Base 기준
 6. Base 원격 원본
-7. 과거 대화·초안·추정
+7. 외부 사례·리뷰·과거 대화·초안·추정
 
-정상 동작 중인 사용자 변경을 임의로 되돌리지 않는다.
+정상 동작 중인 사용자 변경을 임의로 되돌리지 않는다. 외부 벤치마크·리뷰·커뮤니티·모델 해석은 요구사항 권한이나 구현 사실의 정본이 아니다.
 
 ## 3. 필요한 작업 환경·권한
 
@@ -38,9 +38,9 @@ START_HERE.md
 - 누락 항목은 `필요 항목 / 이유 / 설치·설정 방법 / 재시작·적용 / 확인 명령 / 최소 권한`으로 안내한다.
 - 사용자 승인 없이 시스템 전역 설치, 계정·보안 설정, 권한 확대, Branch protection 변경을 수행하지 않는다.
 - 사용자가 설치·권한 부여를 완료했다고 알려도 실제 경로·버전·인증·쓰기 가능 여부를 확인한다.
-- 실행하지 않은 검사·렌더·권한을 통과로 보고하지 않는다.
+- 실행하지 않은 조사·검사·렌더·권한을 통과로 보고하지 않는다.
 
-## 4. 요청 라우팅·작업 계약
+## 4. 요청 라우팅·작업 계약·실행 순서
 
 새 L1 이상 요청은 `managing-project-intake-and-work-contract`에서 한 번만 처리한다.
 
@@ -50,6 +50,7 @@ route
 → 필요한 경우 clarify
 → 사용자 마지막 확인
 → contract
+→ 필요한 경우 decompose-and-sequence
 ```
 
 - 작업 수준 L0~L4
@@ -58,6 +59,9 @@ route
 - 최소 Foundation·분야 Skill
 - 범위·제외·보호 대상
 - 완료 기준·검증·롤백
+- 필요한 경우 검증 가능한 단계·의존성·병렬 묶음·게이트
+
+`decompose-and-sequence`는 승인된 L2 이상 작업이나 여러 의존성이 있는 작업에만 사용한다. 단계는 활동 이름이 아니라 결과·입력·출력·완료·검증·롤백을 가지며 `BLOCKS / INFORMS / USES_OUTPUT / SHARES_RESOURCE / VALIDATES / OPTIONAL_FOLLOWUP` 관계를 구분한다.
 
 오탈자, 명확한 단일 파일 기계 수정, 입력이 같은 검사 재실행은 예외다. 상세 요청은 처음부터 다시 묻지 않고 저장소 사실과 결과를 바꾸는 누락만 확인한다.
 
@@ -68,27 +72,31 @@ route
 - trigger와 무관한 호출
 - 같은 요청의 수준·범위·상태를 여러 Skill에서 중복 판정
 - 주 책임 분야 Skill을 여러 개 지정
+- 사용자 확인 전 실행 계약·구현 순서 확정
 - 검증·발행·Handoff의 조기 실행
 - `[백업]`, `[보류]`, `[제거 후보]` Skill 호출
+- 근거 없는 일정 숫자 발명
+- 같은 파일·Schema·자산 경계 없이 모든 작업 병렬화
 
 ## 5. 활성 통합 Skill
 
 | 책임 | Skill |
 |---|---|
-| 요청 라우팅·요구 확정·실행 계약 | `managing-project-intake-and-work-contract` |
+| 요청 라우팅·요구 확정·실행 계약·작업 분해·순서 | `managing-project-intake-and-work-contract` |
 | 신규 설치·기존 감사·승인된 마이그레이션·Health Review | `managing-game-project-operating-system` |
 | 기획 책임 원본 작성·재구조화·발행·검수 | `managing-design-documents` |
 | 프로젝트 Skill 생성·통합·학습 | `evolving-project-discipline-skills` |
 | Active Context·Handoff | `maintaining-project-context-and-handoff` |
-| 핵심 컨셉·뾰족한 재미·SWOT·MDA/DDE·PoC·기획 재조정 | `analyzing-and-refining-game-concepts` |
-| Vertical Slice | `designing-vertical-slices` |
+| 핵심 컨셉·DDD·벤치마크·플레이어 반응·플레이테스트·PoC | `analyzing-and-refining-game-concepts` |
+| 대표 구간·목표 품질·플레이 증거·제작 파이프라인 | `designing-vertical-slices` |
 | 외부 AI 작업 공간 | `orchestrating-deepseek-worktrees` |
-| 프로젝트 변경 계약·정적·런타임·회귀 검증 | `reviewing-and-validating-project-changes` |
+| 변경 계약·정본·정적·런타임·접근성·성능·회귀 검증 | `reviewing-and-validating-project-changes` |
+| 정본·경로·ID·파생본·전파 누락 감사 | `auditing-canonical-reference-freshness` |
 | 이미지 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` |
 | 구현된 Godot·Web UI 감사 | `auditing-and-refining-ui-art` |
 | 프로젝트 교훈·Base 변경 제안 생명주기 | `managing-base-change-proposals` |
 
-통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 mode로 변환한다. 새 Registry·문서·작업 계약에는 새 ID만 사용한다.
+활성 Skill은 13개이며 모두 `load_by_default=false`다. 통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 mode로 변환한다. 새 Registry·문서·작업 계약에는 새 ID만 사용한다.
 
 ## 6. 책임 원본과 발행
 
@@ -103,6 +111,7 @@ route
 - 같은 서술을 Markdown과 JSON 양쪽에 중복 책임 원본으로 만들지 않는다.
 - DOCX·PDF를 독립 책임 원본으로 수동 유지하지 않는다.
 - `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않는다.
+- 벤치마크·플레이어 반응 기록은 출처·날짜·버전·표본·해석을 포함하며 기획 책임 원본을 대체하지 않는다.
 
 문서 발행은 `managing-design-documents`와 Registry의 정책을 따른다.
 
@@ -123,6 +132,7 @@ audit
 → 사용자 승인
 → 승인된 처리표만 migrate
 → 보존·참조·발행 대조
+→ reference-freshness
 → verify
 ```
 
@@ -149,7 +159,7 @@ Active Context는 현재 상태의 기본 원본이다. 프로젝트 방향·분
 
 실패, 중요한 결정, 재사용 가능한 교훈 또는 실제 검증 결과가 있는 호출을 Learning Log에 기록한다. 한 번의 성공을 공용 강제 규칙으로 만들지 않는다.
 
-통합 시 고유 입력·산출물·실패 조건·검증·reference·script·Learning Log를 보존하고 이전 ID를 `LEGACY_SKILL_ALIASES.md`에 연결한다.
+통합 시 고유 입력·산출물·실패 조건·검증·reference·script·Learning Log를 보존하고 이전 ID를 `LEGACY_SKILL_ALIASES.md`에 연결한다. 통합·이름·경로 변경 뒤 `auditing-canonical-reference-freshness`로 이전 참조와 untouched 소비자를 확인한다.
 
 ## 10. 프로젝트 교훈의 Base 승격
 
@@ -167,7 +177,7 @@ Active Context는 현재 상태의 기본 원본이다. 프로젝트 방향·분
 
 신규 제안 PR과 활성 Base 구현 PR을 합치지 않는다. 사용자 승인 전에는 활성 Base Skill·Template·Tool·Schema·Test를 바꾸지 않는다. 사용자가 직접 승인한 Base 변경 요청은 별도 제안서 없이 작업 계약이 될 수 있다.
 
-## 11. 이미지·UI 계약
+## 11. 이미지·UI·접근성 계약
 
 - 기존 승인 이미지가 있으면 별도 지시 없이 새 시안을 만들지 않는다.
 - Asset ID·캐노니컬 경로·출처·승인 상태·채택·비채택 요소·실제 캡처를 기록한다.
@@ -175,17 +185,26 @@ Active Context는 현재 상태의 기본 원본이다. 프로젝트 방향·분
 - 생성 전 프롬프트 설계와 구현 후 UI 감사는 독립 Skill로 유지한다.
 - UI 감사 정적 패턴은 후보일 뿐 결함·자동 삭제 권한이 아니다.
 - 사용자 승인된 finding만 수정하고 실제 Godot/Web 전후 렌더로 독립 재검수한다.
+- 접근성은 옵션 존재가 아니라 텍스트·대비·정보 채널·입력·탐색·시간·난이도·모션의 실제 플레이 장벽과 대안을 검수한다.
+- 접근성 검수 결과를 법적 준수 인증으로 표현하지 않는다.
 
-## 12. 기획 방향·PoC 계약
+## 12. 기획 방향·벤치마크·플레이테스트·PoC 계약
 
-핵심 컨셉, 제약, 뾰족한 재미, 게임 요소 정렬, PoC와 기획 재조정은 `analyzing-and-refining-game-concepts`를 사용한다.
+핵심 컨셉, 제약, 뾰족한 재미, 게임 요소 정렬, 벤치마크, 플레이테스트, PoC와 기획 재조정은 `analyzing-and-refining-game-concepts`를 사용한다.
 
 - 기능 목록을 핵심 컨셉으로 대체하지 않는다.
 - SWOT은 SO·WO·ST·WT 실행 방향으로 변환한다.
-- `DDD`처럼 의미가 여러 개인 약어는 프로젝트 정의 없이 임의 해석하지 않는다.
+- Base 내부 `DDD`는 `Digital Dopamine Design`이며 첫 의미 있는 보상·행동 피드백·보상 사다리·다음 행동·피로를 분석한다.
+- DDD를 실제 도파민 분비량이나 의학적 중독 진단으로 사용하지 않는다.
+- 외부 자료의 동명 약어는 출처 정의 확인 전 임의 해석하지 않는다.
+- 벤치마크는 비교 차원과 결정 질문을 먼저 고정하고 제품 사실·플레이어 자기보고·행동·실험·해석을 분리한다.
+- 리뷰의 긍정·부정·버전·패치·플레이타임·플랫폼·언어·표본 편향을 기록한다.
+- 조사 결과는 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 개선 결정에 연결한다.
+- 플레이테스트는 빌드·대상 집단·기존 노출·과제·피드백 채널·행동 이벤트·퍼널·성공 기준을 가진다.
+- A/B 테스트는 한 주요 가설과 사전 선언한 지표·가드레일을 비교한다.
 - PoC는 가장 위험한 가설을 검증하는 최소 범위로 유지한다.
-- PoC 결과에 따라 유지·증폭·변경·삭제·보류·재검증을 결정한다.
-- 목표 품질과 제작 파이프라인 검증은 `designing-vertical-slices`로 넘긴다.
+- 조사·PoC·플레이테스트 결과에 따라 유지·증폭·변경·삭제·보류·재검증을 결정한다.
+- 목표 품질·실제 플레이 증거·제작 파이프라인 검증은 `designing-vertical-slices`로 넘긴다.
 
 ## 13. 검증과 완료
 
@@ -194,26 +213,32 @@ Active Context는 현재 상태의 기본 원본이다. 프로젝트 방향·분
 최소 검증 순서:
 
 ```text
-작업 계약·diff 대조
+작업 계약·실행 단계·diff 대조
+→ 정본·경로·ID·Schema 변경 시 reference-freshness
 → 포맷·문법·정적 검사
 → 관련 자동 테스트
-→ 정상·실패·경계 경로
+→ 실제 런타임·렌더·빌드
+→ 적용 시 accessibility-review
+→ 적용 시 performance-profile
+→ 정상·실패·경계·원래 실패 반례
 → 저장·불러오기·호환성
-→ 실제 화면·플레이·오디오·성능
 → 인접 기능 회귀
 → 판정·미실행·위험·롤백
 ```
+
+성능은 목표 플랫폼·동일 빌드·대표·최악 장면에서 frame time, CPU·GPU·메모리·네트워크·로딩을 baseline과 비교한다. 평균 FPS 하나나 에디터 빈 장면만으로 통과시키지 않는다.
 
 작업 완료 조건:
 
 1. 실제 결과와 승인·구현·검증 상태가 일치한다.
 2. 관련 책임 원본·Registry·Skill·Learning Log가 최신이다.
-3. 발행 정책이 요구하는 PDF·Manifest와 선택 파생본이 최신이다.
-4. Development Gates·Roadmap·Active Context·Documentation Map이 최신이다.
-5. 자동·수동·시각 검증과 미검증이 분리됐다.
-6. PR Required Checks와 리뷰가 통과했다.
-7. 다음 작업·선행 조건·롤백이 존재한다.
-8. 새 AI가 저장소만으로 방향·상태·책임 원본·Skill·검증을 찾는다.
+3. 정본 변경의 이전 참조·untouched 소비자·파생본이 판정됐다.
+4. 발행 정책이 요구하는 PDF·Manifest와 선택 파생본이 최신이다.
+5. Development Gates·Roadmap·Active Context·Documentation Map이 최신이다.
+6. 자동·수동·시각·접근성·성능 검증과 미검증이 분리됐다.
+7. PR Required Checks와 리뷰가 통과했다.
+8. 다음 작업·의존성·선행 조건·롤백이 존재한다.
+9. 새 AI가 저장소만으로 방향·상태·책임 원본·Skill·mode·검증을 찾는다.
 
 ## 14. 로컬과 GitHub
 
@@ -228,7 +253,11 @@ GitHub와 로컬 파일은 자동 양방향 동기화가 아니다.
 ## 15. 완료 보고
 
 - 주 책임·영향 분야
+- 실행 단계·의존성·게이트
+- 벤치마크·플레이테스트·PoC 결과
 - 실제 변경한 문서·코드·자산·Skill
+- 정본·참조 최신성·변경 전파 결과
+- 접근성 장벽·성능 예산 결과
 - 생성한 PDF·선택 DOCX·다이어그램·Manifest
 - 유지한 기존 결정·동작·자산
 - 실행한 검증과 결과
@@ -237,4 +266,4 @@ GitHub와 로컬 파일은 자동 양방향 동기화가 아니다.
 - 콜드 스타트 결과
 - Base 환류와 다음 작업
 
-실행하지 않은 테스트, 렌더링, 구현, 브랜치 보호를 완료로 보고하지 않는다.
+실행하지 않은 조사, 테스트, 렌더링, 구현, 접근성·성능 검증, 브랜치 보호를 완료로 보고하지 않는다.
