@@ -72,6 +72,42 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         ):
             self.assertIn(skill_id, combined)
 
+    def test_digital_dopamine_design_contract_is_explicit_and_bounded(self) -> None:
+        skill = (ROOT / "skills/analyzing-and-refining-game-concepts/SKILL.md").read_text(encoding="utf-8")
+        template = (ROOT / "templates/planning/GAME_CONCEPT_DIRECTION_REVIEW.md").read_text(encoding="utf-8")
+        registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
+
+        for term in (
+            "Digital Dopamine Design",
+            "첫 의미 있는 보상",
+            "Action-feedback latency",
+            "Reward legibility",
+            "Reward ladder",
+            "Fatigue and inflation",
+            "실제 도파민 분비량",
+            "뾰족한 재미를 빠르게 전달",
+        ):
+            self.assertIn(term, skill)
+
+        for term in (
+            "첫 의미 있는 보상까지의 시간",
+            "행동 → 피드백 지연",
+            "Micro → Session → Meta 보상 사다리",
+            "실제 도파민 분비나 의학적 중독",
+        ):
+            self.assertIn(term, template)
+
+        for tag in (
+            "digital-dopamine-design",
+            "rapid-reward",
+            "instant-feedback",
+            "reward-latency",
+        ):
+            self.assertIn(tag, registry)
+
+        self.assertIn("의미 있는 선택 없이 빠른 보상만 반복", skill)
+        self.assertIn("외부 자료에서 정의되지 않은 DDD", skill)
+
 
 if __name__ == "__main__":
     unittest.main()
