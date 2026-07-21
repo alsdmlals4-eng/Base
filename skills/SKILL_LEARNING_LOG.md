@@ -117,3 +117,24 @@
 - 프로젝트 전용으로 유지할 내용: 대상 게임의 구체 스킬·실제 경로·승인 자산
 - Base Method·Skill·Template·Test 환류 후보: Method·Skill·Registry·Health Report·Checker·회귀 테스트
 - 다음 검토 트리거: 대상 프로젝트 첫 실제 적용, 동일 라우팅 실패 반복, 90일 이상 미검토
+
+### 2026-07-21 project core and adversarial review foundations
+
+- 프로젝트·작업: Base 직접 승인 요청 — 프로젝트 코어 확인·형성 절차와 범용 적대적 비평–검증–개선 루프 추가
+- 기준 스킬 커밋: `3c78025e35d762e266414c9735d5557b4cac3c55`, `95e3dfd7645aed62ed438291912cebb417df6b96`
+- 호출 트리거: 프로젝트 코어를 기준선으로 형성하는 절차와, 코어에 한정되지 않고 모든 분야 산출물을 개선하는 범용 검토 절차가 필요하다는 사용자 요청
+- 입력 범위: Base README·AGENTS·Documentation Map·Skill Registry·외부 AI 검수 스킬·요청 프롬프트 변환 스킬·스킬 진화 계약·Learning Log
+- 실제 산출물: `defining-and-verifying-project-core`, `running-adversarial-critique-validation-refinement`, 프로젝트 코어 계약 템플릿, 적대적 검토 보고서 템플릿, Registry 항목
+- 실행한 검증: 신규 경로 GitHub 재조회, Registry JSON 로컬 파싱, `main` 대비 branch compare, 두 스킬의 사용·비사용 조건과 기존 외부 AI·UI·Health Review 스킬 책임 경계 수동 대조
+- 결과: 부분 성공
+- 성공 조건: 두 스킬과 템플릿이 별도 책임으로 등록되고, 적대적 검토가 프로젝트 코어 없이도 일반 개선에 독립 사용 가능하며 코어 영향 작업에서만 코어 스킬과 연결됨
+- 실패·예외·재현 조건: 현재 환경에서 저장소 clone과 GitHub Actions·Governance Checker 실행은 불가능해 자동 검증은 PR CI에 남음
+- 사용자 피드백: 적대적 검토 루프는 프로젝트 코어뿐 아니라 다른 모든 분야의 개선 스킬로 기능해야 함
+- 불필요하게 호출한 스킬: 없음
+- 누락된 스킬·검증: 첫 실제 프로젝트 적용, 자동 Skill Routing Governance, 콜드 스타트에서 신규 trigger 선택 검증
+- 스킬 본문 변경 필요: 예
+- 변경하지 않는 이유: 해당 없음
+- 지식 상태: 관찰
+- 프로젝트 전용으로 유지할 내용: 실제 프로젝트의 코어 계약, 고유 목표·수치·아트 방향·검토 finding과 결과
+- Base Method·Skill·Template·Test 환류 후보: 실제 적용 후 반복되는 거짓 양성·누락 관점·종료 조건을 회귀 사례로 추가
+- 다음 검토 트리거: 첫 대상 프로젝트 적용, CI 실패, 기존 분야 스킬과 책임 중복, 적대적 검토의 무한 반복 또는 코어 과잉 보호 발생
