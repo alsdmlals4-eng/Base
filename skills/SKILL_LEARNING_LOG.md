@@ -1,5 +1,14 @@
 # Base Skill Learning Log
 
+## 2026-07-21 정본·참조 최신성 감사 교훈
+
+- 패치 검수는 변경된 파일만 보는 것으로 충분하지 않다. 정본이 바뀌면 **변경됐어야 하지만 untouched인 소비자·템플릿·테스트·Workflow·파생본**을 함께 찾아야 한다.
+- 오래된 경로·Skill ID·문서 ID와 실제 실행 참조는 차단하되, Legacy Alias·Change Log·과거 case·Git 이력의 역사 참조는 별도 허용 상태로 구분해야 한다.
+- 문자열이 최신이어도 여러 활성 문서가 서로 다른 mode·정책·상태·완료 기준을 설명하면 content drift다. 자동 검색과 책임 원본 기반 수동 검토를 함께 사용한다.
+- 정본 변경 전파 검사는 범용 변경 검증의 `reference-freshness` mode에서 오케스트레이션하고, 영향 지도·오래된 참조·파생본 최신성은 독립 전문 Skill이 담당하는 구조가 중복을 줄인다.
+- 자동 검사 규칙은 Legacy ID 잔존, 필수 정본 링크, coupled-change 누락을 담당하고 PDF·Manifest·해시·실제 렌더는 분야별 발행·운영체계 검증과 연결한다.
+- 신규 전문 Skill은 실제 여러 프로젝트에서 오탐·누락률을 확인하기 전까지 `OBSERVATION`으로 유지한다.
+
 ## 2026-07-21 핵심 컨셉·변경 검증 스킬 교훈
 
 - 게임 기획 방향을 잡는 작업은 GDD 문장 작성이나 Vertical Slice 제작과 다르다. 핵심 컨셉·제약·뾰족한 재미·요소 정렬·PoC·재조정을 하나의 상태 흐름으로 다뤄야 한다.
@@ -94,6 +103,27 @@
 - PDF·다이어그램 발행본이 Registry보다 오래됨
 
 ## 기록
+
+### 2026-07-21 canonical reference freshness audit
+
+- 프로젝트·작업: Base 변경 시 오래된 파일·경로·Skill ID·정책 참조와 갱신 누락을 찾는 전문 Skill·자동 검사 추가
+- 기준 스킬 커밋: `agent/add-reference-freshness-audit@a0a86fa0107169c756edfaac66a03b8e0dee4b7f`
+- 호출 트리거: 패치나 변경 뒤 모든 활성 파일이 최신 정본을 따르는지, 오래된 파일을 참조하거나 갱신되지 않은 소비자가 있는지 찾는 Skill을 추가하라는 사용자 요청
+- 입력 범위: PR #19 통합 Skill Registry, 범용 변경 검증 Skill, Operating Model, 프로젝트 AI Workflow, Legacy Alias, 구조·참조 회귀 테스트와 Actions
+- 실제 산출물: `auditing-canonical-reference-freshness`, `reference-freshness` 검증 mode, 감사 템플릿, `.github/reference-freshness.json`, 표준 라이브러리 기반 checker, 단위 테스트와 CI 연결, 13개 활성 Skill Registry
+- 실행한 검증: checker 단위 테스트 4개 로컬 통과, Registry·구조·활성 진입점 테스트 갱신, Python 문법·Actions 실행 대기
+- 결과: 부분 성공
+- 성공 조건: 정본 변경 영향 지도, Legacy·History 허용, stale reference·content drift·파생본·untouched 소비자 검사와 자동 coupled-change 차단이 하나의 검증 흐름으로 연결됨
+- 실패·예외·재현 조건: 문자열 검색만으로 의미 drift를 완전히 판정할 수 없으며, 프로젝트별 History 허용 glob과 coupled-change 규칙이 과도하면 오탐이 발생할 수 있음
+- 사용자 피드백: 모든 파일이 최신 파일을 기준으로 내용을 따르는지와 오래된 파일 참조·갱신 누락을 찾아야 함
+- 불필요하게 호출한 스킬: 없음. 범용 검증에 직접 흡수하지 않고 독립 자동화·증거가 있는 specialist로 유지함
+- 누락된 스킬·검증: 실제 서로 다른 프로젝트의 rename·Schema·문서 통합 사례에서 오탐·누락률 검증
+- 스킬 본문 변경 필요: 예
+- 변경하지 않는 이유: 해당 없음
+- 지식 상태: 관찰
+- 프로젝트 전용으로 유지할 내용: 실제 정본 경로, History 허용 범위, 프로젝트별 coupled-change 규칙과 파생본 정책
+- Base Method·Skill·Template·Test 환류 후보: reference freshness config·checker·감사 템플릿·CI 게이트
+- 다음 검토 트리거: 첫 두 프로젝트 적용, Legacy 오탐, stale reference 누락, coupled-change 과도 차단, Manifest가 CURRENT지만 실제 입력과 불일치
 
 ### 2026-07-21 concept analysis and unified project-change validation
 
