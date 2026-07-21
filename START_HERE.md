@@ -92,6 +92,23 @@ audit
 
 사용자 승인 전 대량 이동·삭제·통합을 하지 않는다.
 
+### 핵심 컨셉·뾰족한 재미·기획 방향
+
+`skills/analyzing-and-refining-game-concepts/SKILL.md`
+
+```text
+frame
+→ constrain
+→ sharpen
+→ structure
+→ analyze
+→ poc-contract
+→ recalibrate
+→ production-gate
+```
+
+SWOT은 SO·WO·ST·WT 행동으로 변환하고, MDA·DDE·3C·루프·동기·차별화·제작성을 교차 분석한다. `DDD`는 프로젝트가 의미를 정의하기 전에는 임의 해석하지 않는다.
+
 ### 기획 책임 원본 작성·발행
 
 `skills/managing-design-documents/SKILL.md`
@@ -144,12 +161,27 @@ extract
 
 `skills/designing-vertical-slices/SKILL.md`
 
-대표 플레이 구간으로 핵심 경험·목표 품질·시스템 연결·제작 파이프라인을 함께 검증한다.
+대표 플레이 구간으로 핵심 경험·목표 품질·시스템 연결·제작 파이프라인을 함께 검증한다. 핵심 컨셉이나 뾰족한 재미가 미확정이면 먼저 `analyzing-and-refining-game-concepts`를 사용한다.
+
+### 프로젝트 변경 검증
+
+`skills/reviewing-and-validating-project-changes/SKILL.md`
+
+```text
+contract-check
+→ 필요한 경우 external-source-review
+→ static-validation
+→ runtime-validation
+→ regression
+→ evidence-report
+```
+
+코드·데이터·문서·자산 변경은 승인 계약, 실제 diff, 정적·런타임·회귀 증거를 연결한다. 실행 환경이 없으면 `UNVERIFIED`로 기록한다.
 
 ### 외부 AI 대량 작업
 
 - 작업 공간 운용: `skills/orchestrating-deepseek-worktrees/SKILL.md`
-- 결과 검수: `skills/reviewing-external-ai-drafts/SKILL.md`
+- 결과 검수: `skills/reviewing-and-validating-project-changes/SKILL.md`의 `external-source-review`
 
 외부 AI 결과는 검수 대기 입력이며 실제 diff·근거·테스트 확인 전에는 기준 원본으로 인정하지 않는다.
 
