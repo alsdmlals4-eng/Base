@@ -27,6 +27,7 @@
     "skills/managing-base-change-proposals/SKILL.md",
     "docs/CHANGELOG.md",
     "docs/knowledge/cases/**",
+    "docs/superpowers/plans/**",
     "tests/**"
   ],
   "strict_legacy_id_globs": [
