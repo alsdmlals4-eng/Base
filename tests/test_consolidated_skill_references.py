@@ -60,6 +60,7 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
                 ROOT / "README.md",
                 ROOT / "docs/OPERATING_MODEL.md",
                 ROOT / "docs/DOCUMENTATION_MAP.md",
+                ROOT / "templates/project-operations/AI_WORKFLOW.md",
             )
         )
         for skill_id in (
@@ -69,6 +70,7 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
             "managing-base-change-proposals",
             "analyzing-and-refining-game-concepts",
             "reviewing-and-validating-project-changes",
+            "auditing-canonical-reference-freshness",
         ):
             self.assertIn(skill_id, combined)
 
