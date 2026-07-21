@@ -21,6 +21,7 @@ on:
       - "tests/test_skill_routing_governance.py"
       - "tests/test_design_document_*.py"
       - "tests/test_policy_driven_publication.py"
+      - "tests/test_consolidated_skill_references.py"
       - "tests/test_project_skill_map_generation.py"
       - "tests/test_base_change_proposals.py"
       - "tests/test_deep_interview_contract.py"
@@ -83,6 +84,7 @@ jobs:
             tests/test_design_document_publication_governance.py \
             tests/test_design_document_generation.py \
             tests/test_policy_driven_publication.py \
+            tests/test_consolidated_skill_references.py \
             tests/test_project_skill_map_generation.py \
             tests/test_game_project_operating_system_structure.py \
             tests/test_base_change_proposals.py \
@@ -104,6 +106,7 @@ jobs:
             tests/test_design_document_publication_governance.py \
             tests/test_design_document_generation.py \
             tests/test_policy_driven_publication.py \
+            tests/test_consolidated_skill_references.py \
             tests/test_project_skill_map_generation.py \
             tests/test_base_change_proposals.py \
             tests/test_deep_interview_contract.py \
