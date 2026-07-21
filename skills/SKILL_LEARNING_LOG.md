@@ -8,6 +8,28 @@
 - 빠른 보상을 설계할 때 가치·확률·비용 은폐, 인위적인 불편 뒤 결제 해소, 손실 압박, 중단을 방해하는 연속 알림 같은 위험을 별도 표시한다.
 - Base 내부 DDD 정의는 확정했지만, 외부 자료나 다른 프로젝트에서 같은 약어를 사용할 때는 해당 출처의 정의를 확인하기 전 임의 해석하지 않는다.
 
+## 2026-07-21 외부 근거·작업 순서·플레이 검증 교훈
+
+- 벤치마크는 인기 게임의 기능 목록을 모방하는 절차가 아니다. 현재 결정을 바꿀 질문과 비교 차원을 먼저 고정하고, 공식 제품 사실·플레이어 자기보고·행동 이벤트·퍼널·통제 실험·해석을 서로 다른 근거 층위로 관리한다.
+- 플레이어 리뷰는 기대가 어떻게 설정되고 실제 경험과 어디서 어긋나는지 찾는 채널이지만, 버전·패치·플레이타임·플랫폼·언어·긍정·부정·리뷰 폭탄을 구분하지 않으면 현재 기획을 정당화하는 선택 편향이 된다.
+- 외부 조사 결과는 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 변환해야 하며, 평점·판매량·강한 표현만으로 핵심 컨셉을 변경하지 않는다.
+- 작업 분해는 “코딩”, “문서 수정” 같은 활동 목록이 아니라 독립 검증 가능한 결과, `BLOCKS / INFORMS / USES_OUTPUT / SHARES_RESOURCE / VALIDATES` 의존성, 병렬 경계, 단계별 게이트·롤백으로 표현한다.
+- 실행 순서는 의존성 해소, 가장 위험한 가설, 핵심 사용자 가치, 피드백 속도, 되돌리기 난이도와 자원 충돌을 함께 고려하고 새 사실·실패가 생기면 이후 계획을 재구성한다.
+- 플레이테스트는 빌드·버전·대상 집단·기존 노출·과제·피드백 채널·관찰 행동·이벤트·퍼널·성공 기준이 있는 검증 계약이어야 한다. A/B 테스트는 한 주요 가설과 사전 선언한 주 지표·가드레일을 비교한다.
+- 접근성은 옵션 존재나 법적 준수 선언이 아니라 핵심 정보·입력·UI·시간·난이도·모션에서 실제 장벽과 대체 경로를 검수한다.
+- 성능은 평균 FPS 하나가 아니라 목표 플랫폼·동일 빌드·대표·최악 장면에서 frame time, CPU·GPU·메모리·네트워크·로딩을 baseline과 비교한다.
+- 위 기능은 별도 Skill을 늘리지 않고 `decompose-and-sequence`, `benchmark-and-player-research`, `playtest-and-experiment`, `accessibility-review`, `performance-profile` mode로 기존 생명주기에 흡수한다. 활성 Skill 수는 13개를 유지한다.
+- 공식 자료를 근거로 계약을 만들었지만 여러 실제 프로젝트에서 오라우팅·표본 편향·측정 비용을 검증하기 전까지 신규 mode의 지식 상태는 `OBSERVATION` 또는 `HYPOTHESIS`로 유지한다.
+
+## 2026-07-21 정본·참조 최신성 감사 교훈
+
+- 패치 검수는 변경된 파일만 보는 것으로 충분하지 않다. 정본이 바뀌면 **변경됐어야 하지만 untouched인 소비자·템플릿·테스트·Workflow·파생본**을 함께 찾아야 한다.
+- 오래된 경로·Skill ID·문서 ID와 실제 실행 참조는 차단하되, Legacy Alias·Change Log·과거 case·Git 이력의 역사 참조는 별도 허용 상태로 구분해야 한다.
+- 문자열이 최신이어도 여러 활성 문서가 서로 다른 mode·정책·상태·완료 기준을 설명하면 content drift다. 자동 검색과 책임 원본 기반 수동 검토를 함께 사용한다.
+- 정본 변경 전파 검사는 범용 변경 검증의 `reference-freshness` mode에서 오케스트레이션하고, 영향 지도·오래된 참조·파생본 최신성은 독립 전문 Skill이 담당하는 구조가 중복을 줄인다.
+- 자동 검사 규칙은 Legacy ID 잔존, 필수 정본 링크, coupled-change 누락을 담당하고 PDF·Manifest·해시·실제 렌더는 분야별 발행·운영체계 검증과 연결한다.
+- 신규 전문 Skill은 실제 여러 프로젝트에서 오탐·누락률을 확인하기 전까지 `OBSERVATION`으로 유지한다.
+
 ## 2026-07-21 핵심 컨셉·변경 검증 스킬 교훈
 
 - 게임 기획 방향을 잡는 작업은 GDD 문장 작성이나 Vertical Slice 제작과 다르다. 핵심 컨셉·제약·뾰족한 재미·요소 정렬·PoC·재조정을 하나의 상태 흐름으로 다뤄야 한다.
@@ -102,6 +124,27 @@
 
 ## 기록
 
+### 2026-07-21 benchmark, sequencing, playtest, accessibility and performance modes
+
+- 프로젝트·작업: 게임 개발 벤치마크·유저 반응 조사, 작업 분해·순서, 플레이테스트·행동 계측, 접근성·성능 검증 공백을 기존 통합 Skill mode로 흡수
+- 기준 스킬 커밋: `agent/add-reference-freshness-audit-v3`
+- 호출 트리거: 벤치마킹 게임·유저 반응을 인터넷에서 조사해 분석·반영·개선하고, 작업 순서·스텝을 나누며, 추가로 필요한 게임 개발 스킬을 공식 자료에서 찾아 통합하라는 사용자 요청
+- 입력 범위: PR #19 DDD 기준선, PR #22 정본 최신성 구조, Steamworks Reviews·Playtest·Testing, Unity Analytics Events·Funnels·A/B testing, Scrum Guide, GitHub Issues·Dependencies·Milestones, Xbox Accessibility Guidelines, Unreal performance profiling, Unity Edit·Play·target player test 문서
+- 실제 산출물: `decompose-and-sequence`, `benchmark-and-player-research`, `playtest-and-experiment`, `accessibility-review`, `performance-profile`, Vertical Slice의 `slice-contract/quality-bar/pipeline-proof/playtest-evidence/decision-gate`, 3개 상세 reference, 2개 템플릿, Registry·Operating Model·프로젝트 Workflow·Skill Adoption Guide·회귀 테스트 동기화
+- 실행한 검증: 독립 Skill 추가 없이 활성 Skill 13개 유지, mode·trigger·공식 출처·참조 파일·라우팅 회귀 추가, 전체 GitHub Actions 실행 대기
+- 결과: 부분 성공
+- 성공 조건: 벤치마크가 기능 복사가 아니라 근거 층위와 `ADOPT/ADAPT/AVOID/TEST/IGNORE` 결정으로 연결되고, 작업 단계가 의존성·게이트·롤백을 가지며, 플레이테스트·접근성·성능이 실제 증거 계약으로 연결됨
+- 실패·예외·재현 조건: 리뷰 표본·버전·플랫폼 편향, 이벤트와 감정의 혼동, 한 실험에서 여러 변수 변경, 근거 없는 일정 추정, 접근성의 법적 준수 과장, 평균 FPS만으로 성능 통과를 주장할 위험이 있음
+- 사용자 피드백: 위 두 기능은 각각 별도 Skill이 아니라 통합 mode로 추가하고, 인터넷에서 필요한 게임 개발·작업 스킬을 더 찾아 통합·참고·개선할 것
+- 불필요하게 호출한 스킬: 없음. 신규 독립 Skill 2개 대신 기존 Intake·Concept·Validation·Vertical Slice 생명주기에 흡수함
+- 누락된 스킬·검증: 실제 프로젝트의 리뷰 표본 코딩, 외부 Playtest 모집·피드백 회수, 실제 target hardware 프로파일과 접근성 사용자 검수
+- 스킬 본문 변경 필요: 예
+- 변경하지 않는 이유: 해당 없음
+- 지식 상태: 작업 분해 원리는 패턴, 벤치마크·플레이테스트·접근성·성능 통합 계약은 관찰·가설
+- 프로젝트 전용으로 유지할 내용: 실제 비교 게임, 리뷰 데이터, 테스트 빌드·표본, 이벤트 Schema·퍼널, 장르별 목표 지표, 접근성 우선순위, 성능 예산·하드웨어
+- Base Method·Skill·Template·Test 환류 후보: 이번 mode·reference·template·Registry·회귀 전체
+- 다음 검토 트리거: 첫 두 프로젝트 적용, 오라우팅, 표본 편향, 실험 인과 오류, 작업 단계 과분해·과병렬화, 접근성·성능 검증 비용 과다
+
 ### 2026-07-21 Digital Dopamine Design definition and reward-analysis contract
 
 - 프로젝트·작업: Base 기획 분석의 DDD 의미를 Digital Dopamine Design으로 확정하고 빠른 보상·즉각 피드백 분석 계약을 구체화
@@ -110,9 +153,9 @@
 - 입력 범위: `analyzing-and-refining-game-concepts`, GAME_CONCEPT_DIRECTION_REVIEW 템플릿, Base Skill Registry, 통합 Skill 참조 회귀 테스트
 - 실제 산출물: DDD 프로젝트 정의, 첫 의미 있는 보상·행동 피드백·보상 명료성·밀도·보상 사다리·다음 행동·피로 분석축, PoC 관찰 필드, 위험 가드레일, `digital-dopamine-design`·`rapid-reward`·`instant-feedback`·`reward-latency` 라우팅 태그
 - 실행한 검증: Registry Schema·활성 경로, DDD 정의·측정축·가드레일·템플릿·라우팅 회귀, Python 문법, Documentation·Skill Routing·Design Publication Governance, 전체 구조·생성 회귀 79개, Windows 실제 발행 스모크 테스트, whitespace
-- 결과: 성공 — GitHub Actions run #72, 79 tests 성공·1 skipped, Windows 발행·whitespace 성공
+- 결과: 성공 — GitHub Actions run #73, 79 tests 성공·1 skipped, Windows 발행·whitespace 성공
 - 성공 조건: DDD가 명확한 내부 용어와 관찰 가능한 설계축을 가지며, 뾰족한 재미를 단순 자극으로 대체하지 않고 외부 동명 약어와 구분됨
-- 실패·예외·재현 조건: 최초 run #71에서 기존 회귀가 요구한 `임의 해석하지 않는다` 정확 문구가 새 표현에 없어 1건 실패했다. 의미를 바꾸지 않고 호환 문장을 복원한 뒤 run #72에서 전체 통과했다.
+- 실패·예외·재현 조건: 최초 run #71에서 기존 회귀가 요구한 `임의 해석하지 않는다` 정확 문구가 새 표현에 없어 1건 실패했다. 의미를 바꾸지 않고 호환 문장을 복원한 뒤 run #72와 Learning Log 동기화 후 run #73에서 전체 통과했다.
 - 사용자 피드백: DDD는 도파민 중독형 빠른 보상, 즉 빠른 시간 안에 사용자가 도파민성 보상을 느끼게 하는 요소를 의미함
 - 불필요하게 호출한 스킬: 없음
 - 누락된 스킬·검증: 실제 게임의 첫 보상 시간·피드백 지연·다음 행동 전환과 장기 피로 데이터는 아직 없음
@@ -122,6 +165,27 @@
 - 프로젝트 전용으로 유지할 내용: 장르별 목표 시간, 보상 간격, 실제 UX·경제·연출, 플레이테스트 결과와 허용 자극 강도
 - Base Method·Skill·Template·Test 환류 후보: DDD 측정 필드, PoC 관찰 계약, 자극 대 핵심 재미 판정, 위험 가드레일
 - 다음 검토 트리거: 서로 다른 두 프로젝트 적용, 빠른 보상이 핵심 선택을 약화함, 보상 인플레이션·피로, 목표 수치 일반화 시도
+
+### 2026-07-21 canonical reference freshness audit
+
+- 프로젝트·작업: Base 변경 시 오래된 파일·경로·Skill ID·정책 참조와 갱신 누락을 찾는 전문 Skill·자동 검사 추가
+- 기준 스킬 커밋: `agent/add-reference-freshness-audit-v3`
+- 호출 트리거: 패치나 변경 뒤 모든 활성 파일이 최신 정본을 따르는지, 오래된 파일을 참조하거나 갱신되지 않은 소비자가 있는지 찾는 Skill을 추가하라는 사용자 요청
+- 입력 범위: PR #19 최종 DDD head, 통합 Skill Registry, 범용 변경 검증 Skill, Operating Model, 프로젝트 AI Workflow, Legacy Alias, 구조·참조 회귀 테스트와 Actions
+- 실제 산출물: `auditing-canonical-reference-freshness`, `reference-freshness` 검증 mode, 감사 템플릿, `.github/reference-freshness.json`, 표준 라이브러리 기반 checker, 단위 테스트와 CI 연결, 13개 활성 Skill Registry
+- 실행한 검증: checker 단위 테스트 4개 추가, Registry·구조·활성 진입점 테스트 갱신, Python 문법·Actions 실행 대기
+- 결과: 부분 성공
+- 성공 조건: DDD 정의·라우팅·PoC 관찰 계약을 보존하면서 정본 변경 영향 지도, Legacy·History 허용, stale reference·content drift·파생본·untouched 소비자 검사와 자동 coupled-change 차단이 하나의 검증 흐름으로 연결됨
+- 실패·예외·재현 조건: 문자열 검색만으로 의미 drift를 완전히 판정할 수 없으며, 프로젝트별 History 허용 glob과 coupled-change 규칙이 과도하면 오탐이 발생할 수 있음
+- 사용자 피드백: 모든 파일이 최신 파일을 기준으로 내용을 따르는지와 오래된 파일 참조·갱신 누락을 찾아야 하며, 완료된 DDD 스킬과 최종 검증 결과를 기준선에 포함할 것
+- 불필요하게 호출한 스킬: 없음. 범용 검증에 직접 흡수하지 않고 독립 자동화·증거가 있는 specialist로 유지함
+- 누락된 스킬·검증: 실제 서로 다른 프로젝트의 rename·Schema·문서 통합 사례에서 오탐·누락률 검증
+- 스킬 본문 변경 필요: 예
+- 변경하지 않는 이유: 해당 없음
+- 지식 상태: 관찰
+- 프로젝트 전용으로 유지할 내용: 실제 정본 경로, History 허용 범위, 프로젝트별 coupled-change 규칙과 파생본 정책
+- Base Method·Skill·Template·Test 환류 후보: reference freshness config·checker·감사 템플릿·CI 게이트
+- 다음 검토 트리거: 첫 두 프로젝트 적용, Legacy 오탐, stale reference 누락, coupled-change 과도 차단, Manifest가 CURRENT지만 실제 입력과 불일치
 
 ### 2026-07-21 concept analysis and unified project-change validation
 
@@ -188,7 +252,7 @@
 
 ### 2026-07-19 operating-system skill routing and learning audit
 
-- 프로젝트·작업: Base PR #7 — 선택적 Skill 호출·지속 학습·루트 기획서 검수
+- 프로젝트·작업: Base PR #7 — 선택적 Skill 호출·지속 학습·루트 `[기획서]` 검수
 - 기준 스킬 커밋: `c65ffe2e589caf8e38c546dbdfcd37e669b09f9f`
 - 호출 트리거: 분야별·Foundation Skill의 항상 학습, 필요한 경우에만 호출, 운영체계 연결 검증, 루트 `[기획서]` 요청
 - 입력 범위: Base START_HERE·AGENTS·README·Documentation Map·운영체계 Method·Installer·Project Operations 템플릿·GitHub 검사·회귀 테스트

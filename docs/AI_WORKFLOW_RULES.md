@@ -44,6 +44,7 @@ Intake·Context
 → 제약 조건
 → 뾰족한 재미
 → 기획 요소 정렬
+→ DDD 빠른 보상 구조
 → PoC
 → 기획 재조정
 → Production·Vertical Slice 진입 판정
@@ -54,7 +55,7 @@ Intake·Context
 | 작업 | Skill |
 |---|---|
 | 운영체계 설치·기존 감사·마이그레이션·Health Review | `managing-game-project-operating-system` |
-| 핵심 컨셉·뾰족한 재미·SWOT·PoC | `analyzing-and-refining-game-concepts` |
+| 핵심 컨셉·뾰족한 재미·DDD·SWOT·PoC | `analyzing-and-refining-game-concepts` |
 | 기획 책임 원본 작성·발행 | `managing-design-documents` |
 | 프로젝트 Skill 생성·통합·학습 | `evolving-project-discipline-skills` |
 | 현재 상태·Handoff | `maintaining-project-context-and-handoff` |
@@ -62,6 +63,7 @@ Intake·Context
 | Vertical Slice | `designing-vertical-slices` |
 | 외부 AI 작업 공간 | `orchestrating-deepseek-worktrees` |
 | 프로젝트 변경·외부 AI 결과 검증 | `reviewing-and-validating-project-changes` |
+| 정본·경로·ID·Schema 변경 전파 감사 | `auditing-canonical-reference-freshness` |
 | 이미지 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` |
 | 구현된 UI 감사·개선 | `auditing-and-refining-ui-art` |
 
@@ -75,12 +77,26 @@ Intake·Context
 - `constrain`: 플레이·제작·기술·콘텐츠·시장 제약
 - `sharpen`: 반복 플레이를 만드는 뾰족한 재미
 - `structure`: GDD·레벨·캐릭터·스테이지·세계관 정렬
-- `analyze`: SWOT→SO/WO/ST/WT, MDA/DDE, 3C, 루프·동기·차별화·제작성
+- `analyze`: SWOT→SO/WO/ST/WT, MDA/DDE/DDD, 3C, 루프·동기·차별화·제작성
 - `poc-contract`: 가장 위험한 가설을 검증하는 최소 범위
 - `recalibrate`: PoC 결과 기반 유지·수정·삭제·보류·재검증
 - `production-gate`: 다음 제작 단계 진입 판정
 
-`DDD`처럼 의미가 여러 개인 약어는 프로젝트 정의 없이 임의 해석하지 않는다.
+Base 내부에서 `DDD`는 `Digital Dopamine Design`이다. 플레이 시작 또는 행동 직후 짧은 시간 안에 의미 있는 보상·변화·성취와 다음 기대를 체감시키는 빠른 보상 설계축이다.
+
+DDD는 다음을 관찰한다.
+
+- 첫 의미 있는 보상까지의 시간
+- 행동·입력에서 피드백까지의 지연
+- 보상 원인과 결과의 명료성
+- 짧은 구간의 의미 있는 보상 밀도
+- Micro → Session → Meta 보상 사다리
+- 다음 선택·시도·빌드 의도
+- 반복 피로·무감각·보상 인플레이션
+
+DDD는 실제 도파민 분비량 측정이나 의학적 중독 진단이 아니다. 빠른 보상은 뾰족한 재미와 의미 있는 선택을 빠르게 이해시키는 수단이어야 하며, 이펙트·팝업·숫자·알림·손실 압박으로 이를 대체하지 않는다. 외부 자료의 동명 DDD는 출처 정의를 확인하기 전 임의 해석하지 않는다.
+
+PoC는 전체 게임이나 Vertical Slice가 아니며, 목표 품질과 제작 파이프라인 검증은 `designing-vertical-slices`로 넘긴다.
 
 ## 5. 외부 AI 대량 작업
 
@@ -102,11 +118,14 @@ Intake·Context
 ```text
 contract-check
 → 필요한 경우 external-source-review
+→ 정본·경로·ID·Schema 변경 시 reference-freshness
 → static-validation
 → runtime-validation
 → regression
 → evidence-report
 ```
+
+`reference-freshness`는 `auditing-canonical-reference-freshness`를 조건부 호출해 오래된 경로·ID, 내용 drift, 파생본 불일치와 변경됐어야 하지만 untouched인 소비자를 찾는다.
 
 - 가장 작은 검증 가능한 변경으로 완료 기준을 만족한다.
 - 기존 기능·저장 데이터·공개 인터페이스·사용자 흐름을 보호한다.
@@ -117,6 +136,7 @@ contract-check
 
 ```text
 작업 계약·diff 대조
+→ 필요한 경우 정본·참조 최신성 감사
 → 포맷·문법·정적 검사
 → 관련 자동 테스트
 → 정상·실패·경계·반례

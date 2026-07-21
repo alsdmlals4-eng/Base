@@ -53,11 +53,12 @@ Base 자체의 현재 상태는 다음 책임 원본에서 찾는다.
 - 같은 요청의 수준·범위·상태를 여러 스킬에서 중복 판정
 - 검증·발행·Handoff의 조기 실행
 - `[보류]`, `[백업]`, `[제거 후보]` 스킬 호출
-- 실행하지 않은 테스트·렌더·권한을 통과로 표시
+- 실행하지 않은 조사·테스트·렌더·권한을 통과로 표시
+- 외부 벤치마크·리뷰를 요구사항 권한이나 구현 사실의 정본으로 사용
 
 ## 요청별 라우팅
 
-### 요청 접수·요구 확정·실행 계약
+### 요청 접수·요구 확정·실행 계약·작업 순서
 
 `skills/managing-project-intake-and-work-contract/SKILL.md`
 
@@ -67,9 +68,10 @@ route
 → 필요한 경우 clarify
 → 사용자 마지막 확인
 → contract
+→ 필요한 경우 decompose-and-sequence
 ```
 
-오탈자·명확한 단일 파일 기계 수정·동일 검사 재실행은 예외다.
+오탈자·명확한 단일 파일 기계 수정·동일 검사 재실행은 예외다. `decompose-and-sequence`는 승인된 L2 이상 작업이나 여러 의존성이 있는 경우에만 사용하며, 결과·의존성·병렬 묶음·게이트·검증·롤백을 만든다.
 
 ### 신규 프로젝트 운영체계 설치
 
@@ -92,7 +94,7 @@ audit
 
 사용자 승인 전 대량 이동·삭제·통합을 하지 않는다.
 
-### 핵심 컨셉·뾰족한 재미·기획 방향
+### 핵심 컨셉·DDD·벤치마크·플레이테스트·기획 방향
 
 `skills/analyzing-and-refining-game-concepts/SKILL.md`
 
@@ -101,13 +103,19 @@ frame
 → constrain
 → sharpen
 → structure
+→ 필요한 경우 benchmark-and-player-research
 → analyze
+→ 필요한 경우 playtest-and-experiment
 → poc-contract
 → recalibrate
 → production-gate
 ```
 
-SWOT은 SO·WO·ST·WT 행동으로 변환하고, MDA·DDE·3C·루프·동기·차별화·제작성을 교차 분석한다. `DDD`는 프로젝트가 의미를 정의하기 전에는 임의 해석하지 않는다.
+SWOT은 SO·WO·ST·WT 행동으로 변환하고, MDA·DDE·DDD·3C·루프·동기·차별화·제작성을 교차 분석한다.
+
+Base 내부에서 `DDD`는 `Digital Dopamine Design`이다. 첫 의미 있는 보상, 행동-피드백 지연, 보상 명료성·밀도, Micro→Session→Meta 보상 사다리, 다음 행동 의도와 피로·인플레이션을 관찰한다. 외부 자료의 동명 약어는 출처 정의를 확인하기 전 임의 해석하지 않는다.
+
+`benchmark-and-player-research`는 공식 제품 사실, 플레이어 자기보고, 행동 이벤트·퍼널, 통제 실험과 해석을 구분하고 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 개선 결정을 만든다. `playtest-and-experiment`는 빌드·대상 집단·과제·피드백 채널·행동 계측·성공 기준을 고정한다.
 
 ### 기획 책임 원본 작성·발행
 
@@ -134,7 +142,7 @@ DOCX와 다이어그램은 선언한 경우만 생성한다. `CURRENT`와 사람
 
 `skills/evolving-project-discipline-skills/SKILL.md`
 
-Registry에 trigger가 일치하는 최소 스킬만 등록한다. 실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 호출만 Learning Log에 기록한다.
+Registry에 trigger가 일치하는 최소 스킬만 등록한다. 실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 호출만 Learning Log에 기록한다. 통합·이름·경로 변경 뒤에는 정본·참조 최신성 감사를 실행한다.
 
 ### 현재 상태·인수인계
 
@@ -161,7 +169,15 @@ extract
 
 `skills/designing-vertical-slices/SKILL.md`
 
-대표 플레이 구간으로 핵심 경험·목표 품질·시스템 연결·제작 파이프라인을 함께 검증한다. 핵심 컨셉이나 뾰족한 재미가 미확정이면 먼저 `analyzing-and-refining-game-concepts`를 사용한다.
+```text
+slice-contract
+→ quality-bar
+→ pipeline-proof
+→ playtest-evidence
+→ decision-gate
+```
+
+대표 플레이 구간으로 핵심 경험·목표 품질·접근성·성능·시스템 연결·실제 플레이 증거·제작 파이프라인을 함께 검증한다. 핵심 컨셉이나 뾰족한 재미가 미확정이면 먼저 `analyzing-and-refining-game-concepts`를 사용한다.
 
 ### 프로젝트 변경 검증
 
@@ -170,13 +186,22 @@ extract
 ```text
 contract-check
 → 필요한 경우 external-source-review
+→ 정본·경로·ID·Schema 변경 시 reference-freshness
 → static-validation
 → runtime-validation
+→ 적용 시 accessibility-review
+→ 적용 시 performance-profile
 → regression
 → evidence-report
 ```
 
-코드·데이터·문서·자산 변경은 승인 계약, 실제 diff, 정적·런타임·회귀 증거를 연결한다. 실행 환경이 없으면 `UNVERIFIED`로 기록한다.
+코드·데이터·문서·자산 변경은 승인 계약, 실제 diff, 정적·런타임·회귀 증거를 연결한다. 접근성은 핵심 정보·입력·UI·시간·난이도·모션의 실제 장벽과 대안을 검수하고, 성능은 목표 플랫폼에서 frame time·CPU·GPU·메모리·네트워크·로딩을 baseline과 비교한다. 실행 환경이 없으면 `UNVERIFIED`로 기록한다.
+
+### 정본·참조 최신성 감사
+
+`skills/auditing-canonical-reference-freshness/SKILL.md`
+
+정본·파일·경로·ID·Schema·정책·생성기 변경이 여러 소비자에 전파될 가능성이 있을 때만 호출한다. 변경된 파일뿐 아니라 변경됐어야 하지만 untouched인 활성 소비자와 파생본을 확인한다.
 
 ### 외부 AI 대량 작업
 
@@ -189,8 +214,9 @@ contract-check
 
 - 생성 전 프롬프트·기술 카드: `skills/designing-art-prompts-and-technique-cards/SKILL.md`
 - 구현된 Godot·Web UI 결과 감사: `skills/auditing-and-refining-ui-art/SKILL.md`
+- 핵심 정보·입력·탐색의 플레이 장벽: `reviewing-and-validating-project-changes: accessibility-review`
 
-두 책임은 합치지 않는다. UI 감사는 사용자 승인 전 대상 파일을 수정하지 않으며 전후 실제 렌더로 재검수한다.
+생성 전 설계, 구현 후 시각 감사, 접근성 장벽 검수는 입력·도구·판정이 다르므로 구분한다. UI 감사는 사용자 승인 전 대상 파일을 수정하지 않으며 전후 실제 렌더로 재검수한다.
 
 ## 일반 프로젝트 작업 읽기 순서
 
@@ -204,7 +230,7 @@ contract-check
 → 현재 책임 원본
 → SKILL_REGISTRY.json
 → 필요한 통합 Skill과 mode
-→ Roadmap·Issue·Plan
+→ Roadmap·Issue·Plan·실행 순서
 → 실제 파일·자산·테스트
 ```
 

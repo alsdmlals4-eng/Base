@@ -60,6 +60,7 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
                 ROOT / "README.md",
                 ROOT / "docs/OPERATING_MODEL.md",
                 ROOT / "docs/DOCUMENTATION_MAP.md",
+                ROOT / "templates/project-operations/AI_WORKFLOW.md",
             )
         )
         for skill_id in (
@@ -69,6 +70,7 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
             "managing-base-change-proposals",
             "analyzing-and-refining-game-concepts",
             "reviewing-and-validating-project-changes",
+            "auditing-canonical-reference-freshness",
         ):
             self.assertIn(skill_id, combined)
 
@@ -107,6 +109,79 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
 
         self.assertIn("의미 있는 선택 없이 빠른 보상만 반복", skill)
         self.assertIn("외부 자료에서 정의되지 않은 DDD", skill)
+
+    def test_benchmark_and_work_sequence_are_integrated_modes_not_new_skills(self) -> None:
+        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        concepts = (ROOT / "skills/analyzing-and-refining-game-concepts/SKILL.md").read_text(encoding="utf-8")
+        registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
+
+        self.assertIn("`decompose-and-sequence`", intake)
+        self.assertIn("BLOCKS / INFORMS / USES_OUTPUT / SHARES_RESOURCE / VALIDATES", intake)
+        self.assertIn("`benchmark-and-player-research`", concepts)
+        self.assertIn("`playtest-and-experiment`", concepts)
+        for decision in ("ADOPT", "ADAPT", "AVOID", "TEST", "IGNORE"):
+            self.assertIn(decision, concepts)
+        for tag in (
+            "work-decomposition",
+            "dependency-map",
+            "benchmark-research",
+            "player-reviews",
+            "playtest-design",
+            "funnel-analysis",
+            "ab-testing",
+        ):
+            self.assertIn(tag, registry)
+
+        for path in (
+            "skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md",
+            "skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md",
+            "templates/planning/EXECUTION_SEQUENCE_PLAN.md",
+            "templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md",
+        ):
+            self.assertTrue((ROOT / path).is_file(), path)
+
+    def test_playtest_accessibility_and_performance_gaps_are_integrated(self) -> None:
+        concepts = (ROOT / "skills/analyzing-and-refining-game-concepts/SKILL.md").read_text(encoding="utf-8")
+        vertical = (ROOT / "skills/designing-vertical-slices/SKILL.md").read_text(encoding="utf-8")
+        validation = (ROOT / "skills/reviewing-and-validating-project-changes/SKILL.md").read_text(encoding="utf-8")
+        reference = (ROOT / "skills/reviewing-and-validating-project-changes/references/accessibility-and-performance-validation.md").read_text(encoding="utf-8")
+        operating = (ROOT / "docs/OPERATING_MODEL.md").read_text(encoding="utf-8")
+        workflow = (ROOT / "templates/project-operations/AI_WORKFLOW.md").read_text(encoding="utf-8")
+
+        for term in ("feedback_channel", "telemetry_events", "funnel_steps", "control_and_variants"):
+            self.assertIn(term, concepts)
+        for mode in ("slice-contract", "quality-bar", "pipeline-proof", "playtest-evidence", "decision-gate"):
+            self.assertIn(f"`{mode}`", vertical)
+        for mode in ("accessibility-review", "performance-profile"):
+            self.assertIn(f"`{mode}`", validation)
+            self.assertIn(mode, operating)
+            self.assertIn(mode, workflow)
+        for term in (
+            "Xbox Accessibility Guidelines",
+            "법적 준수",
+            "frame time",
+            "CPU·GPU·메모리·네트워크",
+            "target player",
+        ):
+            self.assertIn(term, reference)
+
+    def test_official_evidence_sources_are_recorded(self) -> None:
+        benchmark = (ROOT / "skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md").read_text(encoding="utf-8")
+        sequence = (ROOT / "skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md").read_text(encoding="utf-8")
+        quality = (ROOT / "skills/reviewing-and-validating-project-changes/references/accessibility-and-performance-validation.md").read_text(encoding="utf-8")
+
+        for source in (
+            "partner.steamgames.com/doc/store/reviews",
+            "partner.steamgames.com/doc/features/playtest",
+            "docs.unity.com/en-us/analytics/events/events",
+            "docs.unity.com/en-us/analytics/funnels/funnels",
+            "docs.unity.com/en-us/game-overrides/ab-testing",
+        ):
+            self.assertIn(source, benchmark)
+        for source in ("scrumguides.org/scrum-guide.html", "docs.github.com/en/issues"):
+            self.assertIn(source, sequence)
+        for source in ("learn.microsoft.com/en-us/xbox/accessibility", "dev.epicgames.com/documentation", "docs.unity3d.com"):
+            self.assertIn(source, quality)
 
 
 if __name__ == "__main__":

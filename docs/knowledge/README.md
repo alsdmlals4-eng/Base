@@ -108,14 +108,21 @@ docs/knowledge/
 
 실행 스킬:
 
-- 요청 변환: `../../skills/transforming-requests-into-prompts/SKILL.md`
-- 요구 딥인터뷰: `../../skills/conducting-deep-requirement-interviews/SKILL.md`
+- 요청 라우팅·요구 확인·실행 계약·작업 순서: `../../skills/managing-project-intake-and-work-contract/SKILL.md`
+- 핵심 컨셉·DDD·벤치마크·플레이어 반응·플레이테스트·PoC: `../../skills/analyzing-and-refining-game-concepts/SKILL.md`
 - Vertical Slice: `../../skills/designing-vertical-slices/SKILL.md`
-- 기획서 작성: `../../skills/writing-game-design-documents/SKILL.md`
+- 기획 책임 원본 작성·발행: `../../skills/managing-design-documents/SKILL.md`
 - DeepSeek·외부 AI worktree: `../../skills/orchestrating-deepseek-worktrees/SKILL.md`
-- 외부 AI 초안 검수: `../../skills/reviewing-external-ai-drafts/SKILL.md`
+- 변경·외부 AI 결과·접근성·성능 검증: `../../skills/reviewing-and-validating-project-changes/SKILL.md`
+- 정본·참조 최신성 감사: `../../skills/auditing-canonical-reference-freshness/SKILL.md`
 - 아트 프롬프트·기술 카드: `../../skills/designing-art-prompts-and-technique-cards/SKILL.md`
-- 지식 승격: `../../skills/promoting-project-knowledge/SKILL.md`
+- 프로젝트 지식의 Base 제안·승격: `../../skills/managing-base-change-proposals/SKILL.md`
+
+상세 reference와 template:
+
+- 작업 분해·순서: `../../skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md`, `../../templates/planning/EXECUTION_SEQUENCE_PLAN.md`
+- 벤치마크·플레이어 근거·플레이테스트: `../../skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md`, `../../templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md`
+- 접근성·성능: `../../skills/reviewing-and-validating-project-changes/references/accessibility-and-performance-validation.md`
 
 십보강호에서 승격한 적용 사례:
 
@@ -195,7 +202,7 @@ docs/knowledge/
 - 복사 가능한 산출물: `templates/`
 - 구체 문제와 결과: `cases/`
 
-상세 절차는 `skills/promoting-project-knowledge/SKILL.md`를 따른다.
+상세 절차는 `skills/managing-base-change-proposals/SKILL.md`를 따른다.
 
 ## 10. 사례 필수 항목
 
