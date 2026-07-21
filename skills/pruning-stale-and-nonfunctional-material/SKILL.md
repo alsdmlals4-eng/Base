@@ -9,9 +9,11 @@ description: Use when skills, documents, templates, references, tests, or genera
 
 가지치기는 파일 수를 줄이는 목표가 아니라 **행동을 바꾸지 않는 부피와 죽은 경로를 제거하면서 고유 기능·근거·호환성을 보존**하는 작업이다.
 
+현재 사용 중인 구조를 재배치하는 작업은 `refactoring-with-contract-preservation`, SKILL.md의 조건부 상세 분리는 `simplifying-skill-bodies`, Skill 생성·통합 경계 결정은 `evolving-project-discipline-skills`가 책임진다.
+
 ## Modes and decisions
 
-`inventory → classify → preserve-unique → prune-approved → verify-no-loss`
+`inventory` → `classify` → `preserve-unique` → `prune-approved` → `verify-no-loss`
 
 `KEEP / MERGE / MOVE_TO_REFERENCE / COMPATIBILITY_STUB / ARCHIVE / DELETE / UNVERIFIED`
 
