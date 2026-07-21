@@ -12,7 +12,7 @@ START_HERE.md
 → docs/OPERATING_MODEL.md
 → docs/DOCUMENTATION_MAP.md
 → skills/SKILL_REGISTRY.json
-→ 현재 작업에 필요한 Skill·Template·Case
+→ 현재 작업에 필요한 Skill·mode·reference·Template·Case
 → 대상 프로젝트의 책임 원본과 실제 파일
 ```
 
@@ -31,15 +31,15 @@ START_HERE.md
 
 `전부 살펴본다`는 모든 파일과 스킬을 무작정 읽는다는 뜻이 아닙니다. Registry와 Documentation Map에서 현재 요청에 필요한 책임 원본과 최소 스킬만 선택합니다.
 
-작업에 필요한 실행 파일·라이브러리·폰트·입력 파일·인증·권한이 없으면 필요한 이유, 설치·적용 방법, 확인 명령과 최소 권한을 안내합니다. 실행하지 않은 검사·권한·도구는 통과로 보고하지 않습니다.
+작업에 필요한 실행 파일·라이브러리·폰트·입력 파일·인증·권한이 없으면 필요한 이유, 설치·적용 방법, 확인 명령과 최소 권한을 안내합니다. 실행하지 않은 조사·검사·권한·도구는 통과로 보고하지 않습니다.
 
 ## 통합된 운영 구조
 
 ```text
 요청 라우팅·요구 확정
-→ 승인된 작업 계약
-→ 기획 방향·PoC 또는 구현·제작
-→ 검증
+→ 승인된 작업 계약·필요 시 실행 순서
+→ 기획 방향·외부 근거·PoC·플레이테스트 또는 구현·제작
+→ 정본·정적·런타임·접근성·성능·회귀 검증
 → 책임 원본·발행·현재 상태 동기화
 → 인수인계·학습
 ```
@@ -48,24 +48,34 @@ START_HERE.md
 
 ## 활성 실행 스킬
 
-활성 Registry 스킬은 중복 통합 뒤 **12개**입니다.
+활성 Registry 스킬은 중복 통합 뒤 **13개**입니다.
 
 | Skill | 책임 |
 |---|---|
-| `managing-project-intake-and-work-contract` | 요청 라우팅·저장소 사실 조사·사용자 확인·실행 계약 |
+| `managing-project-intake-and-work-contract` | 요청 라우팅·저장소 사실 조사·사용자 확인·실행 계약·작업 분해·의존성·순서화 |
 | `managing-game-project-operating-system` | 신규 설치·기존 감사·승인된 마이그레이션·Health Review |
 | `managing-design-documents` | 기획 책임 원본 작성·구조 변경·발행·검수 |
 | `evolving-project-discipline-skills` | 프로젝트 스킬 생성·통합·학습 |
 | `maintaining-project-context-and-handoff` | 현재 상태·다음 작업·위험 압축 |
-| `analyzing-and-refining-game-concepts` | 핵심 컨셉·뾰족한 재미·SWOT·MDA/DDE·PoC·기획 재조정 |
-| `designing-vertical-slices` | 대표 구간의 목표 품질·제작 파이프라인 검증 |
+| `analyzing-and-refining-game-concepts` | 핵심 컨셉·DDD·벤치마크·플레이어 반응·플레이테스트·PoC·기획 재조정 |
+| `designing-vertical-slices` | 대표 구간의 목표 품질·실제 플레이 증거·접근성·성능·제작 파이프라인 검증 |
 | `orchestrating-deepseek-worktrees` | 외부 AI 대량 작업의 격리된 작업 공간 운용 |
-| `reviewing-and-validating-project-changes` | 코드·데이터·문서·자산 변경의 계약·정적·런타임·회귀 검증 |
+| `reviewing-and-validating-project-changes` | 코드·데이터·문서·자산 변경의 계약·정본·정적·런타임·접근성·성능·회귀 검증 |
+| `auditing-canonical-reference-freshness` | 오래된 경로·ID·정본 drift·파생본·변경 전파 누락 감사 |
 | `designing-art-prompts-and-technique-cards` | 이미지 프롬프트·아트 기술 카드 |
 | `auditing-and-refining-ui-art` | Godot·Web UI 결과 감사와 승인된 개선 |
 | `managing-base-change-proposals` | 프로젝트 교훈 추출·BCP 제출·검토·승인된 구현 |
 
 통합 전 Skill ID는 [skills/LEGACY_SKILL_ALIASES.md](skills/LEGACY_SKILL_ALIASES.md)에서 새 Skill과 mode로 연결합니다.
+
+주요 통합 mode:
+
+- `decompose-and-sequence`: 검증 가능한 작업 결과·의존성·병렬화·게이트·롤백
+- `benchmark-and-player-research`: 비교 게임·유저 반응·행동 근거의 분석과 개선 판정
+- `playtest-and-experiment`: 빌드·테스터·피드백·이벤트·퍼널·A/B 테스트 계약
+- `accessibility-review`: 핵심 정보·입력·UI·시간·난이도·모션의 장벽·대안
+- `performance-profile`: 목표 플랫폼 frame time·CPU·GPU·메모리·네트워크·로딩 비교
+- `reference-freshness`: 정본·경로·ID·Schema 변경의 전파 감사
 
 ## 프로젝트 책임 원본
 
@@ -75,7 +85,7 @@ DESIGN_DOCUMENT_REGISTRY.json
 → 실제 코드·데이터·자산·테스트
 ```
 
-한 질문에는 현행 책임 원본 하나만 둡니다. 같은 서술을 Markdown과 JSON 양쪽에 독립 원본으로 복제하지 않습니다.
+한 질문에는 현행 책임 원본 하나만 둡니다. 같은 서술을 Markdown과 JSON 양쪽에 독립 원본으로 복제하지 않습니다. 외부 벤치마크·리뷰·커뮤니티는 요구사항이나 구현 상태의 정본을 대체하지 않습니다.
 
 각 문서는 Registry에서 발행 정책을 선택합니다.
 
@@ -93,10 +103,10 @@ AGENTS.md          항상 적용되는 공용 실행 규칙
 README.md          저장소 개요
 docs/OPERATING_MODEL.md  공용 작업 구조 단일 설명 원본
 docs/              Method·Research·Case·체크리스트
-skills/            실행 Skill·Registry·Learning Log
-templates/         프로젝트 분화 템플릿
-tools/             DOCX/PDF·다이어그램 생성기
-tests/             운영체계·발행·Governance 회귀 테스트
+skills/            실행 Skill·Registry·Learning Log·상세 reference
+templates/         프로젝트 분화·조사·실행·검증 템플릿
+tools/             DOCX/PDF·다이어그램 생성기·Governance checker
+tests/             운영체계·발행·라우팅·정본 최신성 회귀 테스트
 [수정제안서]/      프로젝트발 Base 승격 후보·승인·구현 이력
 ```
 
@@ -105,7 +115,7 @@ tests/             운영체계·발행·Governance 회귀 테스트
 ```text
 Intake·Context
 → Definition of Ready
-→ Planning·Approval
+→ Planning·Approval·Sequencing
 → Implementation
 → Verification
 → Documentation
@@ -132,6 +142,7 @@ Concept
 - 활성 스킬도 `load_by_default=false`입니다.
 - 주 책임 분야 스킬은 최대 하나입니다.
 - 통합 Skill 내부 mode는 같은 요청의 상태와 사실을 재사용합니다.
+- 벤치마크·플레이테스트·접근성·성능은 trigger와 영향 범위가 있을 때만 실행합니다.
 - 실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 호출을 Learning Log에 기록합니다.
 - 한 번의 성공은 관찰 또는 가설이며 반복 검증 전에는 공용 강제 규칙으로 승격하지 않습니다.
 
