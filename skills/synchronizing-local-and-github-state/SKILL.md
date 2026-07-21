@@ -9,9 +9,11 @@ description: Use when a local checkout and its GitHub branch must be compared, s
 
 동기화는 무조건 pull·commit·push하는 자동화가 아니다. 먼저 양쪽 상태와 권한을 판정하고, **clean + fast-forward + 승인된 변경**일 때만 자동 진행한다.
 
+이 Skill은 Git 상태의 동등성과 안전한 전달만 책임진다. 변경 내용의 품질·완료 여부는 `reviewing-and-validating-project-changes`, PR 제안·승인 정책은 `managing-base-change-proposals`, 장기 실행 checkpoint는 `maintaining-long-running-task-continuity`가 책임진다.
+
 ## Modes and states
 
-`inspect → reconcile → refresh-local | publish-remote → verify-sync`
+`inspect` → `reconcile` → `refresh-local | publish-remote` → `verify-sync`
 
 `SYNCED / DIRTY / LOCAL_AHEAD / REMOTE_AHEAD / DIVERGED / BLOCKED`
 
