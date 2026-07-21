@@ -7,7 +7,7 @@ description: Use when creating, restructuring, updating, publishing, or validati
 
 ## Core principle
 
-기획 내용·책임 구조·발행은 하나의 문서 생명주기다. 문서 작성 스킬과 PDF 발행 스킬이 같은 Registry·원본·상태를 다시 판정하지 않는다.
+기획 내용·책임 구조·발행은 하나의 문서 생명주기다. 문서 작성 Skill과 PDF 발행 Skill이 같은 Registry·원본·상태를 다시 판정하지 않는다.
 
 ## Modes
 
@@ -17,7 +17,7 @@ description: Use when creating, restructuring, updating, publishing, or validati
 - `publish`: 발행 정책에 따라 PDF·선택 DOCX·다이어그램·Manifest를 생성한다.
 - `validate`: 내용·Schema·발행 최신성·전 페이지 렌더를 검수한다.
 
-하나의 작업에서 필요한 모드를 순서대로 실행하되 같은 사실과 상태를 다시 판정하지 않는다.
+하나의 작업에서 필요한 mode를 순서대로 실행하되 같은 사실과 상태를 다시 판정하지 않는다.
 
 ## Required inputs
 
@@ -33,10 +33,11 @@ publication_policy: source_only/milestone_sync/always_sync
 approved_visuals:
 actual_captures:
 implementation_and_validation_evidence:
-output_pdf:
-output_docx: optional
+output_pdf: null-or-path
+output_docx: null-or-path
 diagram_policy: none/mermaid/generated
-publication_manifest:
+publication_manifest: null-or-path
+generator: null-or-path
 source_commit:
 human_visual_review_required:
 ```
@@ -58,7 +59,7 @@ Word 검토 → 선언한 경우의 선택 DOCX
 
 ## Publication policy
 
-- `source_only`: 내부 운영·라우팅 문서. 원본과 직접 검증만 필수다.
+- `source_only`: 내부 운영·라우팅 문서. `output_pdf`, `output_docx`, `publication_manifest`, `generator`는 `null`, `diagram_policy`는 `none`이다.
 - `milestone_sync`: 주요 게이트·정기 검토·외부 공유 시 PDF와 Manifest를 동기화한다.
 - `always_sync`: 원본·승인 이미지·생성기가 바뀐 같은 작업에서 PDF와 Manifest를 항상 재생성한다.
 
@@ -97,16 +98,39 @@ DOCX와 다이어그램은 Registry가 선언한 경우만 생성한다. `CURREN
 
 ### 4. Publish by policy
 
+정책 선택기는 `tools/build_policy_driven_design_documents.py`다.
+
+```text
+기본 실행
+→ always_sync만 생성
+
+--include-milestone
+→ always_sync + milestone_sync 생성
+
+--only <document-id>
+→ 지정한 milestone_sync 또는 always_sync 생성
+
+source_only
+→ 생성 대상이 아니며 요청 시 오류
+```
+
 1. Markdown은 H1·필수 Section·로컬 이미지·선택 Mermaid를 검증한다.
 2. JSON은 등록된 Schema로 검증한다.
 3. 환경과 생성기 의존성을 사전 점검한다.
-4. 임시 디렉터리에서 선택 DOCX·PDF·자산을 생성한다.
-5. PDF 전 페이지를 렌더하고 빈 페이지·한글·표·이미지 잘림을 확인한다.
-6. 모든 검증 성공 뒤 출력과 Manifest를 원자적으로 교체한다.
-7. 동일 입력 정상 재실행에서 추적 파일 diff 0을 확인한다.
-8. 사용자가 직접 확인하지 않았다면 `human_visual_review: NOT_RUN`을 유지한다.
+4. 정책 선택기가 발행 대상만 임시 Registry로 분리한다.
+5. 기존 `build_design_documents.py`가 임시 디렉터리에서 선택 DOCX·PDF·자산을 생성한다.
+6. PDF 전 페이지를 렌더하고 빈 페이지·한글·표·이미지 잘림을 확인한다.
+7. 모든 검증 성공 뒤 출력과 Manifest를 원자적으로 교체한다.
+8. 동일 입력 정상 재실행에서 추적 파일 diff 0을 확인한다.
+9. 사용자가 직접 확인하지 않았다면 `human_visual_review: NOT_RUN`을 유지한다.
 
-### 5. Close the documentation loop
+### 5. Validate by policy
+
+- `source_only`: 원본·Schema·등록·링크를 검증하며 Manifest를 요구하지 않는다.
+- `milestone_sync`: 일반 작업에서는 Manifest 부재·STALE를 허용하고, 주요 게이트 설정에서는 `CURRENT`와 전 페이지 렌더를 요구한다.
+- `always_sync`: 항상 `CURRENT`, 자동 렌더 `PASSED`, 현재 입력·생성기·출력 해시를 요구한다.
+
+### 6. Close the documentation loop
 
 같은 작업에서 Registry, 관련 책임 원본, Roadmap, Project Skill, Active Context, Documentation Map과 발행 상태를 맞춘다.
 
@@ -114,7 +138,7 @@ DOCX와 다이어그램은 Registry가 선언한 경우만 생성한다. `CURREN
 
 ```md
 ## 기획서 생명주기 결과
-- 실행 모드:
+- 실행 mode:
 - 문서 ID·책임 범위:
 - 책임 원본·형식·경로:
 - 발행 정책:
@@ -147,6 +171,7 @@ DOCX와 다이어그램은 Registry가 선언한 경우만 생성한다. `CURREN
 - `CURRENT`를 사람 검수 완료로 해석함
 - 전 페이지 렌더 없이 시각 검수를 통과 처리함
 - `source_only` 문서에 불필요한 PDF·DOCX를 강제함
+- `milestone_sync`를 일반 변경마다 `always_sync`처럼 강제함
 
 ## Legacy aliases
 
@@ -155,6 +180,8 @@ DOCX와 다이어그램은 Registry가 선언한 경우만 생성한다. `CURREN
 
 Tools:
 
+- `tools/build_policy_driven_design_documents.py`
 - `tools/build_design_documents.py`
 - `tools/design_document_diagrams.py`
 - `tools/check_publication_environment.py`
+- `templates/project-operations/github/check_design_document_publications.py`
