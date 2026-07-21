@@ -14,6 +14,7 @@
 | `publishing-discipline-bibles` | `managing-design-documents` | `publish` / `validate` |
 | `promoting-project-knowledge` | `managing-base-change-proposals` | `extract` / `submit` |
 | `reviewing-and-implementing-base-change-proposals` | `managing-base-change-proposals` | `review` / `implement` / `verify` |
+| `reviewing-external-ai-drafts` | `reviewing-and-validating-project-changes` | `external-source-review` / `static-validation` / `regression` / `evidence-report` |
 
 ## Migration rule
 
