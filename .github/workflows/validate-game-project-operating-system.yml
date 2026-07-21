@@ -16,6 +16,7 @@ on:
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
       - "templates/project-operations/**"
+      - "templates/planning/**"
       - "templates/quality/**"
       - "tests/test_*operating_system*.py"
       - "tests/test_documentation_governance.py"
