@@ -286,3 +286,11 @@ PLAN: audit only
 9. 미확정·보류·위험은 어디에 기록돼 있는가?
 
 Base 저장소 자체에서는 프로젝트 설치 템플릿을 활성 상태로 오인하지 않는다. Base의 완료 변경은 `docs/CHANGELOG.md`, 활성 Skill은 `skills/SKILL_REGISTRY.json`, 검토 대기 제안은 `[수정제안서]/PROPOSAL_REGISTRY.json`, 진행 중 구현은 GitHub PR·Actions가 책임진다.
+
+## 구조 최적화·작업 지원 Skill
+
+Base와 프로젝트 구조를 줄이거나 바꿀 때는 `pruning-stale-and-nonfunctional-material → simplifying-skill-bodies → refactoring-with-contract-preservation → running-adversarial-review-and-refinement → reviewing-and-validating-project-changes` 순서로 기능 보존과 회귀를 확인한다.
+
+Git 상태는 `synchronizing-local-and-github-state`, 긴 실행의 checkpoint는 `maintaining-long-running-task-continuity`, Games User Research 11영역은 `governing-game-user-research-coverage`, 학습 자료는 `creating-user-learning-notes`, 시각 작업 공간은 `building-project-visual-dashboards`, 엔진 런타임 오류는 `diagnosing-game-engine-runtime-failures`가 책임진다.
+
+책임 coverage 원본은 `skills/SKILL_COVERAGE.json`이며 사람용 설명은 `docs/SKILL_COVERAGE_MAP.md`다.

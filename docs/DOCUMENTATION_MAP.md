@@ -211,3 +211,19 @@ PLAN: audit only
 - 다음 작업·선행 조건
 
 변경 검증은 `reviewing-and-validating-project-changes`로 작업 계약, 실제 diff, 정본·참조, 정적·런타임·접근성·성능·회귀 증거를 연결한다. 실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 Skill 호출은 Learning Log에 기록한다. 한 번의 성공은 관찰 또는 가설이며 반복 검증 전에는 공용 강제 규칙으로 승격하지 않는다.
+
+## 구조 최적화·추가 전문 Skill
+
+| 책임 | Skill | 주요 mode |
+|---|---|---|
+| 무손실 가지치기 | `pruning-stale-and-nonfunctional-material` | `inventory / classify / preserve-unique / prune-approved / verify-no-loss` |
+| 본문 간소화 | `simplifying-skill-bodies` | `inventory / extract-references / rewrite-router / validate-disclosure` |
+| 동작 보존 리팩토링 | `refactoring-with-contract-preservation` | `baseline-contract / smell-audit / refactor / regression-validate` |
+| 로컬·GitHub 동기화 | `synchronizing-local-and-github-state` | `inspect / reconcile / refresh-local / publish-remote / verify-sync` |
+| 장기 작업 연속성 | `maintaining-long-running-task-continuity` | `initialize / checkpoint / resume / partial-delivery / close` |
+| Games User Research 11영역 | `governing-game-user-research-coverage` | `install / audit / plan-evidence / synthesize / verify-coverage` |
+| 사용자 학습 노트 | `creating-user-learning-notes` | `capture / explain / connect / practice / update` |
+| 프로젝트 대시보드 | `building-project-visual-dashboards` | `frame / map-sources / build / bind-status / validate` |
+| 엔진 런타임 디버깅 | `diagnosing-game-engine-runtime-failures` | `reproduce / isolate / fix-minimally / revalidate / prevent` |
+
+원문 책임 누락 검증: `docs/SKILL_COVERAGE_MAP.md` → `skills/SKILL_COVERAGE.json` → `tools/check_skill_system_coverage.py`.

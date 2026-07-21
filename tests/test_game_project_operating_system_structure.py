@@ -50,6 +50,20 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "skills/managing-design-documents/SKILL.md",
             "skills/managing-base-change-proposals/SKILL.md",
             "skills/evolving-project-discipline-skills/SKILL.md",
+            "skills/pruning-stale-and-nonfunctional-material/SKILL.md",
+            "skills/simplifying-skill-bodies/SKILL.md",
+            "skills/refactoring-with-contract-preservation/SKILL.md",
+            "skills/synchronizing-local-and-github-state/SKILL.md",
+            "skills/maintaining-long-running-task-continuity/SKILL.md",
+            "skills/governing-game-user-research-coverage/SKILL.md",
+            "skills/creating-user-learning-notes/SKILL.md",
+            "skills/building-project-visual-dashboards/SKILL.md",
+            "skills/diagnosing-game-engine-runtime-failures/SKILL.md",
+            "skills/SKILL_COVERAGE.json",
+            "docs/SKILL_COVERAGE_MAP.md",
+            "docs/SKILL_SYSTEM_OPTIMIZATION_REPORT.md",
+            "tools/check_skill_system_coverage.py",
+            "tests/test_skill_system_coverage.py",
             "skills/maintaining-project-context-and-handoff/SKILL.md",
             "skills/analyzing-and-refining-game-concepts/SKILL.md",
             "skills/identifying-project-core/SKILL.md",
@@ -192,7 +206,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         self.assertTrue(policy["require_trigger_match"])
         self.assertTrue(policy["require_execution_report"])
         self.assertEqual(policy["work_modes"], ["PLAN", "BUILD", "REVIEW"])
-        self.assertEqual(len(registry["skills"]), 16)
+        self.assertEqual(len(registry["skills"]), 25)
         seen: set[str] = set()
         for item in registry["skills"]:
             skill_id = item["skill_id"]

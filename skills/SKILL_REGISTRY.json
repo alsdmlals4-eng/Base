@@ -8,7 +8,11 @@
     "user_skill_declaration_required": false,
     "require_trigger_match": true,
     "require_execution_report": true,
-    "work_modes": ["PLAN", "BUILD", "REVIEW"],
+    "work_modes": [
+      "PLAN",
+      "BUILD",
+      "REVIEW"
+    ],
     "max_primary_discipline_skills": 1,
     "max_foundation_skills": 3,
     "exclude_statuses": [
@@ -25,11 +29,43 @@
       "path": "skills/managing-project-intake-and-work-contract/SKILL.md",
       "status": "ACTIVE",
       "load_by_default": false,
-      "trigger_tags": ["new-request", "cross-discipline", "ambiguous-scope", "material-ambiguity", "work-order", "acceptance-criteria", "work-decomposition", "task-breakdown", "dependency-map", "execution-sequence", "parallel-plan", "cold-start", "work-mode-selection", "automatic-skill-routing", "skill-execution-report"],
-      "use_when": ["요청 의도와 현재 단계를 파악해 PLAN·BUILD·REVIEW Work Mode, 최소 Skill·Skill Mode, 실행 계약과 의존성 순서를 자동 선택하고 사용 이유·결과를 보고한다."],
-      "do_not_use_when": ["L0 수정, 승인된 작은 작업, 입력이 같은 검사 재실행 또는 이미 유효한 실행 순서가 있는 작업이다."],
+      "trigger_tags": [
+        "new-request",
+        "cross-discipline",
+        "ambiguous-scope",
+        "material-ambiguity",
+        "work-order",
+        "acceptance-criteria",
+        "work-decomposition",
+        "task-breakdown",
+        "dependency-map",
+        "execution-sequence",
+        "parallel-plan",
+        "cold-start",
+        "work-mode-selection",
+        "automatic-skill-routing",
+        "skill-execution-report"
+      ],
+      "use_when": [
+        "요청 의도와 현재 단계를 파악해 PLAN·BUILD·REVIEW Work Mode, 최소 Skill·Skill Mode, 실행 계약과 의존성 순서를 자동 선택하고 사용 이유·결과를 보고한다."
+      ],
+      "do_not_use_when": [
+        "L0 수정, 승인된 작은 작업, 입력이 같은 검사 재실행 또는 이미 유효한 실행 순서가 있는 작업이다."
+      ],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
-      "review_triggers": ["오라우팅", "사용자에게 Skill 선택 전가", "Work Mode와 Skill Mode 혼용", "사용 이유·결과 보고 누락", "반복 질문", "사용자 확인 없는 실행", "계약 요구 손실", "동사만 있는 작업 목록", "의존성 누락", "과도한 병렬화", "불필요한 Foundation 연쇄 호출"],
+      "review_triggers": [
+        "오라우팅",
+        "사용자에게 Skill 선택 전가",
+        "Work Mode와 Skill Mode 혼용",
+        "사용 이유·결과 보고 누락",
+        "반복 질문",
+        "사용자 확인 없는 실행",
+        "계약 요구 손실",
+        "동사만 있는 작업 목록",
+        "의존성 누락",
+        "과도한 병렬화",
+        "불필요한 Foundation 연쇄 호출"
+      ],
       "last_reviewed_at": "2026-07-21",
       "last_reviewed_commit": "6c4ae8238e3302e3adc688bde5945bad8da87378",
       "knowledge_state": "PATTERN"
@@ -41,11 +77,39 @@
       "path": "skills/managing-game-project-operating-system/SKILL.md",
       "status": "ACTIVE",
       "load_by_default": false,
-      "trigger_tags": ["new-project", "missing-operating-system", "existing-project", "safe-migration", "document-restructure", "operating-system-health", "post-migration", "major-gate", "cold-start-failure", "legacy-file", "versioned-duplicate", "stale-copy", "obsolete-file", "legacy-reconciliation"],
-      "use_when": ["운영체계를 신규 설치하거나 기존 프로젝트를 감사하고, 구형·중복 파일을 현행 정본에 맞춰 갱신·통합·아카이브·승인 삭제하거나, 승인 범위로 마이그레이션하고 전체 연결을 검수한다."],
-      "do_not_use_when": ["운영체계와 무관한 L0·작은 구현 작업이거나 현행 정본과 참조가 이미 명확한 단일 파일 편집이다."],
+      "trigger_tags": [
+        "new-project",
+        "missing-operating-system",
+        "existing-project",
+        "safe-migration",
+        "document-restructure",
+        "operating-system-health",
+        "post-migration",
+        "major-gate",
+        "cold-start-failure",
+        "legacy-file",
+        "versioned-duplicate",
+        "stale-copy",
+        "obsolete-file",
+        "legacy-reconciliation"
+      ],
+      "use_when": [
+        "운영체계를 신규 설치하거나 기존 프로젝트를 감사하고, 구형·중복 파일을 현행 정본에 맞춰 갱신·통합·아카이브·승인 삭제하거나, 승인 범위로 마이그레이션하고 전체 연결을 검수한다."
+      ],
+      "do_not_use_when": [
+        "운영체계와 무관한 L0·작은 구현 작업이거나 현행 정본과 참조가 이미 명확한 단일 파일 편집이다."
+      ],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
-      "review_triggers": ["승인 전 구조 변경", "구형 파일 오삭제", "고유 정보 유실", "참조 경로 파손", "호환 stub 누락", "설치 누락", "콜드 스타트 실패", "파이프라인 실패"],
+      "review_triggers": [
+        "승인 전 구조 변경",
+        "구형 파일 오삭제",
+        "고유 정보 유실",
+        "참조 경로 파손",
+        "호환 stub 누락",
+        "설치 누락",
+        "콜드 스타트 실패",
+        "파이프라인 실패"
+      ],
       "last_reviewed_at": "2026-07-21",
       "last_reviewed_commit": "3dfed997e53a1b3e0d9992ea9e2e64df36cc9bec",
       "knowledge_state": "PATTERN"
@@ -57,11 +121,26 @@
       "path": "skills/evolving-project-discipline-skills/SKILL.md",
       "status": "ACTIVE",
       "load_by_default": false,
-      "trigger_tags": ["skill-audit", "skill-learning", "skill-consolidation", "missing-discipline-skill"],
-      "use_when": ["분야별·foundation 스킬을 생성·통합·학습·갱신하고 통합 뒤 오래된 ID·경로·참조 누락을 검증한다."],
-      "do_not_use_when": ["스킬 구조에 영향 없는 일반 구현 작업이다."],
+      "trigger_tags": [
+        "skill-audit",
+        "skill-learning",
+        "skill-consolidation",
+        "missing-discipline-skill"
+      ],
+      "use_when": [
+        "분야별·foundation 스킬을 생성·통합·학습·갱신하고 통합 뒤 오래된 ID·경로·참조 누락을 검증한다."
+      ],
+      "do_not_use_when": [
+        "스킬 구조에 영향 없는 일반 구현 작업이다."
+      ],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
-      "review_triggers": ["반복 실패", "중복 스킬", "새 작업 유형", "검증 경로 변경", "통합 뒤 오래된 참조 잔존"],
+      "review_triggers": [
+        "반복 실패",
+        "중복 스킬",
+        "새 작업 유형",
+        "검증 경로 변경",
+        "통합 뒤 오래된 참조 잔존"
+      ],
       "last_reviewed_at": "2026-07-21",
       "last_reviewed_commit": "802e862bfbdaa69f84981904b78ccd96d3fa764d",
       "knowledge_state": "PATTERN"
@@ -73,11 +152,31 @@
       "path": "skills/managing-design-documents/SKILL.md",
       "status": "ACTIVE",
       "load_by_default": false,
-      "trigger_tags": ["design-document", "responsibility-map", "roadmap-structure", "pdf-publication", "publication-stale", "approved-image-change", "document-restructure"],
-      "use_when": ["등록된 기획 책임 원본을 작성·갱신·재구조화하고 발행 정책에 따라 PDF·선택 파생본을 생성·검수한다."],
-      "do_not_use_when": ["문서 구조·내용·발행 상태에 영향 없는 코드 수정 또는 CURRENT 발행본의 단순 조회다."],
+      "trigger_tags": [
+        "design-document",
+        "responsibility-map",
+        "roadmap-structure",
+        "pdf-publication",
+        "publication-stale",
+        "approved-image-change",
+        "document-restructure"
+      ],
+      "use_when": [
+        "등록된 기획 책임 원본을 작성·갱신·재구조화하고 발행 정책에 따라 PDF·선택 파생본을 생성·검수한다."
+      ],
+      "do_not_use_when": [
+        "문서 구조·내용·발행 상태에 영향 없는 코드 수정 또는 CURRENT 발행본의 단순 조회다."
+      ],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
-      "review_triggers": ["중복 책임 원본", "문서 탐색 실패", "상태 용어 충돌", "PDF 생성 실패", "입력 해시 불일치", "시각 검수 실패", "과도한 발행 강제"],
+      "review_triggers": [
+        "중복 책임 원본",
+        "문서 탐색 실패",
+        "상태 용어 충돌",
+        "PDF 생성 실패",
+        "입력 해시 불일치",
+        "시각 검수 실패",
+        "과도한 발행 강제"
+      ],
       "last_reviewed_at": "2026-07-21",
       "last_reviewed_commit": "85faae334721f4913192f12c3f2cbf495f909994",
       "knowledge_state": "PATTERN"
@@ -89,11 +188,24 @@
       "path": "skills/maintaining-project-context-and-handoff/SKILL.md",
       "status": "ACTIVE",
       "load_by_default": false,
-      "trigger_tags": ["handoff", "active-context-change", "phase-boundary", "new-chat"],
-      "use_when": ["현재 상태·다음 작업·위험을 새 채팅용으로 압축 갱신한다."],
-      "do_not_use_when": ["저장소 상태가 바뀌지 않은 단순 대화다."],
+      "trigger_tags": [
+        "handoff",
+        "active-context-change",
+        "phase-boundary",
+        "new-chat"
+      ],
+      "use_when": [
+        "현재 상태·다음 작업·위험을 새 채팅용으로 압축 갱신한다."
+      ],
+      "do_not_use_when": [
+        "저장소 상태가 바뀌지 않은 단순 대화다."
+      ],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
-      "review_triggers": ["콜드 스타트 실패", "상태 불일치", "과도한 기본 컨텍스트"],
+      "review_triggers": [
+        "콜드 스타트 실패",
+        "상태 불일치",
+        "과도한 기본 컨텍스트"
+      ],
       "last_reviewed_at": "2026-07-19",
       "last_reviewed_commit": "c65ffe2e589caf8e38c546dbdfcd37e669b09f9f",
       "knowledge_state": "PATTERN"
@@ -105,11 +217,50 @@
       "path": "skills/analyzing-and-refining-game-concepts/SKILL.md",
       "status": "ACTIVE",
       "load_by_default": false,
-      "trigger_tags": ["core-concept", "pointed-fun", "game-direction", "benchmark-research", "competitor-analysis", "player-reviews", "user-sentiment", "playtest-design", "telemetry-events", "funnel-analysis", "ab-testing", "swot", "mda", "dde", "digital-dopamine-design", "rapid-reward", "instant-feedback", "reward-latency", "poc", "concept-recalibration", "production-direction"],
-      "use_when": ["핵심 컨셉·뾰족한 재미·제약·DDD를 분석하고 비교 게임·플레이어 반응·행동 근거·플레이테스트를 개선안과 PoC·재조정 방향으로 변환한다."],
-      "do_not_use_when": ["확정된 기획서의 단순 문장 편집, 단일 기능 구현, 출처 없는 인기 목록 수집, 이미 정의된 Vertical Slice 제작만 필요한 경우다."],
+      "trigger_tags": [
+        "core-concept",
+        "pointed-fun",
+        "game-direction",
+        "benchmark-research",
+        "competitor-analysis",
+        "player-reviews",
+        "user-sentiment",
+        "playtest-design",
+        "telemetry-events",
+        "funnel-analysis",
+        "ab-testing",
+        "swot",
+        "mda",
+        "dde",
+        "digital-dopamine-design",
+        "rapid-reward",
+        "instant-feedback",
+        "reward-latency",
+        "poc",
+        "concept-recalibration",
+        "production-direction"
+      ],
+      "use_when": [
+        "핵심 컨셉·뾰족한 재미·제약·DDD를 분석하고 비교 게임·플레이어 반응·행동 근거·플레이테스트를 개선안과 PoC·재조정 방향으로 변환한다."
+      ],
+      "do_not_use_when": [
+        "확정된 기획서의 단순 문장 편집, 단일 기능 구현, 출처 없는 인기 목록 수집, 이미 정의된 Vertical Slice 제작만 필요한 경우다."
+      ],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
-      "review_triggers": ["핵심 컨셉과 기능 목록 혼동", "벤치마크 기능 복사", "리뷰 표본 편향", "행동과 자기보고 혼동", "여러 변수 동시 실험", "PoC 범위 팽창", "프레임워크 결과의 실행안 부재", "DDD가 단순 자극으로 변질", "첫 의미 있는 보상 시간 미측정", "보상 인플레이션", "외부 DDD 약어 오해", "PoC 결과 미반영"],
+      "review_triggers": [
+        "핵심 컨셉과 기능 목록 혼동",
+        "벤치마크 기능 복사",
+        "리뷰 표본 편향",
+        "행동과 자기보고 혼동",
+        "여러 변수 동시 실험",
+        "PoC 범위 팽창",
+        "프레임워크 결과의 실행안 부재",
+        "DDD가 단순 자극으로 변질",
+        "첫 의미 있는 보상 시간 미측정",
+        "보상 인플레이션",
+        "외부 DDD 약어 오해",
+        "PoC 결과 미반영"
+      ],
       "last_reviewed_at": "2026-07-21",
       "last_reviewed_commit": "c5a58388f332c6303ee715ece04c4d9254e76ade",
       "knowledge_state": "HYPOTHESIS"
@@ -121,11 +272,32 @@
       "path": "skills/designing-vertical-slices/SKILL.md",
       "status": "ACTIVE",
       "load_by_default": false,
-      "trigger_tags": ["vertical-slice", "first-playable", "production-proof", "quality-bar", "pipeline-proof", "playtest-evidence", "external-playtest", "accessibility-target", "performance-budget"],
-      "use_when": ["대표 플레이 구간으로 핵심 재미, 목표 품질, 접근성·성능, 실제 플레이 증거와 제작 파이프라인을 함께 증명한다."],
-      "do_not_use_when": ["단일 기능 구현, 핵심 가설만 보는 작은 Prototype, 전체 MVP를 단순 나열하는 작업이다."],
+      "trigger_tags": [
+        "vertical-slice",
+        "first-playable",
+        "production-proof",
+        "quality-bar",
+        "pipeline-proof",
+        "playtest-evidence",
+        "external-playtest",
+        "accessibility-target",
+        "performance-budget"
+      ],
+      "use_when": [
+        "대표 플레이 구간으로 핵심 재미, 목표 품질, 접근성·성능, 실제 플레이 증거와 제작 파이프라인을 함께 증명한다."
+      ],
+      "do_not_use_when": [
+        "단일 기능 구현, 핵심 가설만 보는 작은 Prototype, 전체 MVP를 단순 나열하는 작업이다."
+      ],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
-      "review_triggers": ["대표성 부족", "내부 팀 반응만 사용", "빌드·표본·피드백 계약 누락", "파이프라인 증명 실패", "접근성·성능 미검증", "Quality Bar 변경"],
+      "review_triggers": [
+        "대표성 부족",
+        "내부 팀 반응만 사용",
+        "빌드·표본·피드백 계약 누락",
+        "파이프라인 증명 실패",
+        "접근성·성능 미검증",
+        "Quality Bar 변경"
+      ],
       "last_reviewed_at": "2026-07-21",
       "last_reviewed_commit": "94d5ba3c8490605872035153429e67b6eb1b3cd8",
       "knowledge_state": "VERIFIED"
@@ -137,11 +309,23 @@
       "path": "skills/orchestrating-deepseek-worktrees/SKILL.md",
       "status": "ACTIVE",
       "load_by_default": false,
-      "trigger_tags": ["external-ai", "large-draft", "isolated-worktree"],
-      "use_when": ["대량 초안·분류 작업을 격리된 외부 AI 작업 공간에 위임한다."],
-      "do_not_use_when": ["작은 작업이거나 외부 AI가 필요하지 않다."],
+      "trigger_tags": [
+        "external-ai",
+        "large-draft",
+        "isolated-worktree"
+      ],
+      "use_when": [
+        "대량 초안·분류 작업을 격리된 외부 AI 작업 공간에 위임한다."
+      ],
+      "do_not_use_when": [
+        "작은 작업이거나 외부 AI가 필요하지 않다."
+      ],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
-      "review_triggers": ["범위 오염", "비용·컨텍스트 과다", "결과 회수 실패"],
+      "review_triggers": [
+        "범위 오염",
+        "비용·컨텍스트 과다",
+        "결과 회수 실패"
+      ],
       "last_reviewed_at": "2026-07-19",
       "last_reviewed_commit": "c65ffe2e589caf8e38c546dbdfcd37e669b09f9f",
       "knowledge_state": "PATTERN"
@@ -153,11 +337,42 @@
       "path": "skills/reviewing-and-validating-project-changes/SKILL.md",
       "status": "ACTIVE",
       "load_by_default": false,
-      "trigger_tags": ["change-review", "contract-check", "external-ai-result", "diff-review", "reference-freshness", "static-validation", "runtime-validation", "accessibility-review", "input-barrier", "performance-profile", "target-platform", "frame-time", "memory-budget", "regression", "evidence-report"],
-      "use_when": ["코드·데이터·문서·자산 변경을 승인 계약, 최신 정본·참조, 실제 파일, 접근성 장벽, 목표 플랫폼 성능, 실행 결과와 회귀 증거로 통합 검증한다."],
-      "do_not_use_when": ["변경이 없는 아이디어 비교, 전문 UI 시각 감사만 필요한 경우, 적용되지 않는 비기능 검사를 모든 L0 작업에 강제하는 경우, 같은 입력의 단순 검사 재실행이다."],
+      "trigger_tags": [
+        "change-review",
+        "contract-check",
+        "external-ai-result",
+        "diff-review",
+        "reference-freshness",
+        "static-validation",
+        "runtime-validation",
+        "accessibility-review",
+        "input-barrier",
+        "performance-profile",
+        "target-platform",
+        "frame-time",
+        "memory-budget",
+        "regression",
+        "evidence-report"
+      ],
+      "use_when": [
+        "코드·데이터·문서·자산 변경을 승인 계약, 최신 정본·참조, 실제 파일, 접근성 장벽, 목표 플랫폼 성능, 실행 결과와 회귀 증거로 통합 검증한다."
+      ],
+      "do_not_use_when": [
+        "변경이 없는 아이디어 비교, 전문 UI 시각 감사만 필요한 경우, 적용되지 않는 비기능 검사를 모든 L0 작업에 강제하는 경우, 같은 입력의 단순 검사 재실행이다."
+      ],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
-      "review_triggers": ["범위 밖 변경", "검증 없는 반영", "오래된 참조 잔존", "변경 전파 누락", "접근성 옵션 존재만 확인", "평균 FPS만 사용", "목표 장치 미검증", "원래 실패 미재현", "미실행 검사 통과 처리", "반복 회귀"],
+      "review_triggers": [
+        "범위 밖 변경",
+        "검증 없는 반영",
+        "오래된 참조 잔존",
+        "변경 전파 누락",
+        "접근성 옵션 존재만 확인",
+        "평균 FPS만 사용",
+        "목표 장치 미검증",
+        "원래 실패 미재현",
+        "미실행 검사 통과 처리",
+        "반복 회귀"
+      ],
       "last_reviewed_at": "2026-07-21",
       "last_reviewed_commit": "625a2fbbbe2a05f23a48fbe51688907dc0f93dc9",
       "knowledge_state": "PATTERN"
@@ -169,11 +384,33 @@
       "path": "skills/auditing-canonical-reference-freshness/SKILL.md",
       "status": "ACTIVE",
       "load_by_default": false,
-      "trigger_tags": ["canonical-source-change", "stale-reference", "rename", "path-migration", "schema-change", "skill-id-change", "document-id-change", "generator-change", "publication-stale", "propagation-gap"],
-      "use_when": ["정본·경로·ID·Schema·정책·생성기 변경이 활성 참조·템플릿·테스트·파생본에 빠짐없이 전파됐는지 감사한다."],
-      "do_not_use_when": ["외부 참조가 없는 L0 오탈자 또는 동일 입력 검사 재실행이다."],
+      "trigger_tags": [
+        "canonical-source-change",
+        "stale-reference",
+        "rename",
+        "path-migration",
+        "schema-change",
+        "skill-id-change",
+        "document-id-change",
+        "generator-change",
+        "publication-stale",
+        "propagation-gap"
+      ],
+      "use_when": [
+        "정본·경로·ID·Schema·정책·생성기 변경이 활성 참조·템플릿·테스트·파생본에 빠짐없이 전파됐는지 감사한다."
+      ],
+      "do_not_use_when": [
+        "외부 참조가 없는 L0 오탈자 또는 동일 입력 검사 재실행이다."
+      ],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
-      "review_triggers": ["오래된 경로·ID 잔존", "변경 소비자 갱신 누락", "중복 현행 정본", "Manifest·해시 불일치", "Legacy 오탐", "새 채팅의 구버전 선택"],
+      "review_triggers": [
+        "오래된 경로·ID 잔존",
+        "변경 소비자 갱신 누락",
+        "중복 현행 정본",
+        "Manifest·해시 불일치",
+        "Legacy 오탐",
+        "새 채팅의 구버전 선택"
+      ],
       "last_reviewed_at": "2026-07-21",
       "last_reviewed_commit": "6f62268faec2f6a8cea18356c8cf367f3fa23c49",
       "knowledge_state": "OBSERVATION"
@@ -185,11 +422,23 @@
       "path": "skills/designing-art-prompts-and-technique-cards/SKILL.md",
       "status": "ACTIVE",
       "load_by_default": false,
-      "trigger_tags": ["art-direction", "image-prompt", "technique-card"],
-      "use_when": ["아트·UI 제작 기술과 이미지 생성·편집 프롬프트를 설계한다."],
-      "do_not_use_when": ["기존 승인 이미지의 상태·경로 정리만 필요하다."],
+      "trigger_tags": [
+        "art-direction",
+        "image-prompt",
+        "technique-card"
+      ],
+      "use_when": [
+        "아트·UI 제작 기술과 이미지 생성·편집 프롬프트를 설계한다."
+      ],
+      "do_not_use_when": [
+        "기존 승인 이미지의 상태·경로 정리만 필요하다."
+      ],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
-      "review_triggers": ["시각 일관성 실패", "모델 호환성 변경", "후처리 반복 실패"],
+      "review_triggers": [
+        "시각 일관성 실패",
+        "모델 호환성 변경",
+        "후처리 반복 실패"
+      ],
       "last_reviewed_at": "2026-07-19",
       "last_reviewed_commit": "c65ffe2e589caf8e38c546dbdfcd37e669b09f9f",
       "knowledge_state": "PATTERN"
@@ -201,11 +450,26 @@
       "path": "skills/auditing-and-refining-ui-art/SKILL.md",
       "status": "ACTIVE",
       "load_by_default": false,
-      "trigger_tags": ["ui-art-audit", "godot-ui", "web-ui", "visual-refinement", "render-review"],
-      "use_when": ["Godot·Web UI 결과를 A~E 영역으로 감사하고 사용자 승인 범위만 개선·재검수한다."],
-      "do_not_use_when": ["UI 결과 감사 없이 새 이미지 프롬프트나 기술 카드만 설계한다."],
+      "trigger_tags": [
+        "ui-art-audit",
+        "godot-ui",
+        "web-ui",
+        "visual-refinement",
+        "render-review"
+      ],
+      "use_when": [
+        "Godot·Web UI 결과를 A~E 영역으로 감사하고 사용자 승인 범위만 개선·재검수한다."
+      ],
+      "do_not_use_when": [
+        "UI 결과 감사 없이 새 이미지 프롬프트나 기술 카드만 설계한다."
+      ],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
-      "review_triggers": ["목적 있는 디자인 오탐", "승인 전 자동 수정", "전후 렌더 누락", "플랫폼 어댑터 누락"],
+      "review_triggers": [
+        "목적 있는 디자인 오탐",
+        "승인 전 자동 수정",
+        "전후 렌더 누락",
+        "플랫폼 어댑터 누락"
+      ],
       "last_reviewed_at": "2026-07-19",
       "last_reviewed_commit": "28c93607dc119991c851d5b24e5d1e483507c432",
       "knowledge_state": "PATTERN"
@@ -217,11 +481,28 @@
       "path": "skills/managing-base-change-proposals/SKILL.md",
       "status": "ACTIVE",
       "load_by_default": false,
-      "trigger_tags": ["project-learning", "base-promotion", "repeated-pattern", "base-change-proposal", "promotion-review", "approved-base-change"],
-      "use_when": ["프로젝트 교훈을 공용 원리로 분리해 BCP를 제출·검토하고 사용자 승인 범위만 별도 PR로 구현한다."],
-      "do_not_use_when": ["프로젝트 고유 값뿐이거나 공용화 근거·사용자 승인 없이 활성 Base를 직접 변경하려는 경우다."],
+      "trigger_tags": [
+        "project-learning",
+        "base-promotion",
+        "repeated-pattern",
+        "base-change-proposal",
+        "promotion-review",
+        "approved-base-change"
+      ],
+      "use_when": [
+        "프로젝트 교훈을 공용 원리로 분리해 BCP를 제출·검토하고 사용자 승인 범위만 별도 PR로 구현한다."
+      ],
+      "do_not_use_when": [
+        "프로젝트 고유 값뿐이거나 공용화 근거·사용자 승인 없이 활성 Base를 직접 변경하려는 경우다."
+      ],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
-      "review_triggers": ["공용·전용 경계 혼동", "제안·구현 PR 혼합", "승인 없는 구현", "미검증 규칙 승격", "프로젝트 고유 정보 유입"],
+      "review_triggers": [
+        "공용·전용 경계 혼동",
+        "제안·구현 PR 혼합",
+        "승인 없는 구현",
+        "미검증 규칙 승격",
+        "프로젝트 고유 정보 유입"
+      ],
       "last_reviewed_at": "2026-07-21",
       "last_reviewed_commit": "b961baa2ca8ea8c1be61074aabbc2eebec8a3162",
       "knowledge_state": "PATTERN"
@@ -332,6 +613,306 @@
       ],
       "last_reviewed_at": "2026-07-21",
       "last_reviewed_commit": "ee265576da7f67d3278f8099dd97d4e714ef0651",
+      "knowledge_state": "HYPOTHESIS"
+    },
+    {
+      "skill_id": "refactoring-with-contract-preservation",
+      "layer": "foundation",
+      "discipline": "structure-maintenance",
+      "path": "skills/refactoring-with-contract-preservation/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "refactor",
+        "code-smell",
+        "complexity-reduction",
+        "duplicate-removal",
+        "behavior-preservation",
+        "structural-improvement"
+      ],
+      "use_when": [
+        "승인된 동작·인터페이스·데이터 호환성을 유지하면서 코드·문서·자동화·Skill 구조의 중복과 복잡성을 줄인다."
+      ],
+      "do_not_use_when": [
+        "기능·정책·Schema 변경이 주목적이거나 baseline과 회귀 검증 없이 구조를 바꾸려는 경우다."
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": [
+        "기능 회귀",
+        "호환성 손실",
+        "리팩토링과 기능 변경 혼합",
+        "테스트 삭제로 통과",
+        "불필요한 추상화"
+      ],
+      "last_reviewed_at": "2026-07-22",
+      "last_reviewed_commit": "d2ec3899aaf897d7713a30ae7667707764b7336b",
+      "knowledge_state": "HYPOTHESIS"
+    },
+    {
+      "skill_id": "simplifying-skill-bodies",
+      "layer": "foundation",
+      "discipline": "skill-context-optimization",
+      "path": "skills/simplifying-skill-bodies/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "skill-body-simplification",
+        "progressive-disclosure",
+        "context-reduction",
+        "reference-extraction",
+        "compact-skill"
+      ],
+      "use_when": [
+        "비대해진 SKILL.md에서 항상 필요한 실행 계약만 남기고 조건부 상세를 연결된 reference로 이동한다."
+      ],
+      "do_not_use_when": [
+        "단순 문장 교정이거나 안전 규칙·핵심 절차를 숨기는 축약을 하려는 경우다."
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": [
+        "기능 손실",
+        "reference 발견 실패",
+        "깨진 링크",
+        "빈 라우터",
+        "거대 reference 재생성"
+      ],
+      "last_reviewed_at": "2026-07-22",
+      "last_reviewed_commit": "d2ec3899aaf897d7713a30ae7667707764b7336b",
+      "knowledge_state": "HYPOTHESIS"
+    },
+    {
+      "skill_id": "pruning-stale-and-nonfunctional-material",
+      "layer": "foundation",
+      "discipline": "repository-pruning",
+      "path": "skills/pruning-stale-and-nonfunctional-material/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "pruning",
+        "dead-material",
+        "stale-content",
+        "duplicate-content",
+        "orphan-reference",
+        "obsolete-artifact",
+        "repository-bloat"
+      ],
+      "use_when": [
+        "중복·죽은 자료·오래된 경로·행동을 바꾸지 않는 문장을 고유 기능과 호환성을 보존하며 병합·이동·보관·삭제한다."
+      ],
+      "do_not_use_when": [
+        "사용·소비자·승인·롤백을 확인하지 못했거나 단순히 파일 수를 줄이려는 경우다."
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": [
+        "고유 기능 유실",
+        "오삭제",
+        "외부 링크 파손",
+        "호환성 손실",
+        "보류 자료 기본 읽기 혼입"
+      ],
+      "last_reviewed_at": "2026-07-22",
+      "last_reviewed_commit": "d2ec3899aaf897d7713a30ae7667707764b7336b",
+      "knowledge_state": "HYPOTHESIS"
+    },
+    {
+      "skill_id": "synchronizing-local-and-github-state",
+      "layer": "specialist",
+      "discipline": "git-operations",
+      "path": "skills/synchronizing-local-and-github-state/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "git-sync",
+        "local-remote-drift",
+        "pull",
+        "push",
+        "branch-divergence",
+        "working-tree",
+        "github-sync"
+      ],
+      "use_when": [
+        "로컬 checkout과 GitHub branch의 HEAD·diff·working tree·권한을 대조해 안전하게 refresh·publish·reconcile하고 최종 동등성을 검증한다."
+      ],
+      "do_not_use_when": [
+        "저장소와 무관한 작업이거나 dirty/diverged 상태를 자동 force·reset으로 덮으려는 경우다."
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": [
+        "로컬 변경 유실",
+        "무검토 자동 커밋",
+        "force push",
+        "비밀 커밋",
+        "동기화와 기능 검증 혼동"
+      ],
+      "last_reviewed_at": "2026-07-22",
+      "last_reviewed_commit": "d2ec3899aaf897d7713a30ae7667707764b7336b",
+      "knowledge_state": "HYPOTHESIS"
+    },
+    {
+      "skill_id": "maintaining-long-running-task-continuity",
+      "layer": "foundation",
+      "discipline": "execution-continuity",
+      "path": "skills/maintaining-long-running-task-continuity/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "long-running-task",
+        "checkpoint",
+        "resume-work",
+        "partial-delivery",
+        "context-limit",
+        "tool-session-boundary"
+      ],
+      "use_when": [
+        "큰 다단계 작업을 검증 가능한 결과·checkpoint·부분 산출물·정확한 다음 행동으로 유지해 중단 후에도 재개 가능하게 한다."
+      ],
+      "do_not_use_when": [
+        "10초 이내 단순 작업이거나 백그라운드·미래 완료를 약속하려는 경우다."
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": [
+        "중간 결과 유실",
+        "진행 중을 완료로 보고",
+        "재개 지점 불명",
+        "반복 질문",
+        "비동기 완료 약속"
+      ],
+      "last_reviewed_at": "2026-07-22",
+      "last_reviewed_commit": "d2ec3899aaf897d7713a30ae7667707764b7336b",
+      "knowledge_state": "HYPOTHESIS"
+    },
+    {
+      "skill_id": "governing-game-user-research-coverage",
+      "layer": "specialist",
+      "discipline": "games-user-research-governance",
+      "path": "skills/governing-game-user-research-coverage/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "games-user-research",
+        "research-coverage",
+        "eleven-domains",
+        "tutorial-comprehension",
+        "ux-research",
+        "telemetry",
+        "balance-data",
+        "research-evidence"
+      ],
+      "use_when": [
+        "게임 기획 운영체계에 시장·경쟁·SWOT·사용자·플레이테스트·튜토리얼·UX·텔레메트리·밸런스·가설·개선 결정 11영역을 설치·감사한다."
+      ],
+      "do_not_use_when": [
+        "단일 벤치마크 질문만 있거나 근거 없는 연구 결과를 채우려는 경우다."
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": [
+        "영역 누락",
+        "빈 섹션을 완료로 판정",
+        "자기보고와 행동 혼동",
+        "표본·버전 누락",
+        "채택 근거 단절"
+      ],
+      "last_reviewed_at": "2026-07-22",
+      "last_reviewed_commit": "d2ec3899aaf897d7713a30ae7667707764b7336b",
+      "knowledge_state": "HYPOTHESIS"
+    },
+    {
+      "skill_id": "creating-user-learning-notes",
+      "layer": "specialist",
+      "discipline": "user-learning",
+      "path": "skills/creating-user-learning-notes/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "learning-note",
+        "study-note",
+        "explain-workflow",
+        "user-education",
+        "concept-summary",
+        "practice-exercise"
+      ],
+      "use_when": [
+        "완료한 작업·도구·실수·결정을 사용자가 이해하고 재사용할 수 있는 개념·이유·예시·오해·연습 중심 학습 노트로 변환한다."
+      ],
+      "do_not_use_when": [
+        "AI 실행 지침을 그대로 복사하거나 단순 작업 보고만 필요한 경우다."
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": [
+        "지침과 학습자료 혼동",
+        "검증·가설 혼동",
+        "프로젝트 사례의 공용화",
+        "연습·적용 연결 부족"
+      ],
+      "last_reviewed_at": "2026-07-22",
+      "last_reviewed_commit": "d2ec3899aaf897d7713a30ae7667707764b7336b",
+      "knowledge_state": "HYPOTHESIS"
+    },
+    {
+      "skill_id": "building-project-visual-dashboards",
+      "layer": "specialist",
+      "discipline": "project-visualization",
+      "path": "skills/building-project-visual-dashboards/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "project-dashboard",
+        "html-dashboard",
+        "system-map",
+        "mvp-board",
+        "ux-flow",
+        "visual-status"
+      ],
+      "use_when": [
+        "프로젝트 개요·루프·시스템 관계·MVP·UX·근거·위험·다음 작업을 정본에 연결된 편집 가능한 시각 대시보드로 만든다."
+      ],
+      "do_not_use_when": [
+        "확정 문서 정본을 대시보드로 대체하거나 단순 표 한 개면 충분한 경우다."
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": [
+        "정본과 상태 불일치",
+        "장식 우선",
+        "원본 경로 누락",
+        "접근성 문제",
+        "과도한 JavaScript"
+      ],
+      "last_reviewed_at": "2026-07-22",
+      "last_reviewed_commit": "d2ec3899aaf897d7713a30ae7667707764b7336b",
+      "knowledge_state": "HYPOTHESIS"
+    },
+    {
+      "skill_id": "diagnosing-game-engine-runtime-failures",
+      "layer": "specialist",
+      "discipline": "game-engine-debugging",
+      "path": "skills/diagnosing-game-engine-runtime-failures/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "godot-error",
+        "unity-error",
+        "runtime-failure",
+        "scene-node-signal",
+        "crash",
+        "state-corruption",
+        "engine-debugging"
+      ],
+      "use_when": [
+        "Godot·Unity 등 엔진의 오류·충돌·잘못된 로딩·연결·상태 동작을 재현하고 원인을 격리해 최소 수정 후 재검증한다."
+      ],
+      "do_not_use_when": [
+        "재현·로그·실행 환경 없이 구조 전체를 추측 수정하거나 일반 코드 리뷰만 필요한 경우다."
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": [
+        "재현 없는 수정",
+        "연쇄 오류를 원인으로 오인",
+        "대규모 추측 변경",
+        "엔진 버전 누락",
+        "수정 후 재검증 누락"
+      ],
+      "last_reviewed_at": "2026-07-22",
+      "last_reviewed_commit": "d2ec3899aaf897d7713a30ae7667707764b7336b",
       "knowledge_state": "HYPOTHESIS"
     }
   ]

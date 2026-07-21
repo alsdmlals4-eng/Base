@@ -2,6 +2,10 @@
 
 ## Unreleased - Base audit and operating-contract consistency
 
+- 제공된 학습 텍스트의 책임을 전수 매핑하고 9개 독립 Skill을 추가했으며, 중복 책임은 기존 통합 Skill에 유지했다.
+- 가지치기·본문 간소화·행동 보존 리팩토링 Skill을 분리하고 이를 Base의 코어·컨셉·적대적 검토·Skill 진화 본문에 실제 적용했다.
+- Games User Research 11영역, 로컬·GitHub 동기화, 장기 작업 연속성, 사용자 학습 노트, 프로젝트 대시보드, 엔진 런타임 디버깅 계약을 추가했다.
+- 원문 책임 coverage JSON·checker·회귀 테스트와 최적화 보고서를 추가했다.
 - 기존 프로젝트의 기획·시스템·코드 코어와 코어·MVP 경계를 판정하는 `identifying-project-core`를 추가했다.
 - PLAN 단계에서 코어 제안·반례 검토·사용자 승인·책임 원본 연결을 수행하는 `establishing-project-core`를 추가했다.
 - 레드팀 공격·비판 검증·승인된 finding만 개선·회귀 재검토하는 `running-adversarial-review-and-refinement`를 추가했다.
