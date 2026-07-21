@@ -38,7 +38,7 @@ START_HERE.md
 ```text
 요청 라우팅·요구 확정
 → 승인된 작업 계약
-→ 구현·제작
+→ 기획 방향·PoC 또는 구현·제작
 → 검증
 → 책임 원본·발행·현재 상태 동기화
 → 인수인계·학습
@@ -48,7 +48,7 @@ START_HERE.md
 
 ## 활성 실행 스킬
 
-활성 Registry 스킬은 17개에서 11개로 통합됐습니다.
+활성 Registry 스킬은 중복 통합 뒤 **12개**입니다.
 
 | Skill | 책임 |
 |---|---|
@@ -57,14 +57,15 @@ START_HERE.md
 | `managing-design-documents` | 기획 책임 원본 작성·구조 변경·발행·검수 |
 | `evolving-project-discipline-skills` | 프로젝트 스킬 생성·통합·학습 |
 | `maintaining-project-context-and-handoff` | 현재 상태·다음 작업·위험 압축 |
-| `managing-base-change-proposals` | 프로젝트 교훈 추출·BCP 제출·검토·승인된 구현 |
+| `analyzing-and-refining-game-concepts` | 핵심 컨셉·뾰족한 재미·SWOT·MDA/DDE·PoC·기획 재조정 |
 | `designing-vertical-slices` | 대표 구간의 목표 품질·제작 파이프라인 검증 |
 | `orchestrating-deepseek-worktrees` | 외부 AI 대량 작업의 격리된 작업 공간 운용 |
-| `reviewing-external-ai-drafts` | 외부 AI 결과의 독립 검수 |
+| `reviewing-and-validating-project-changes` | 코드·데이터·문서·자산 변경의 계약·정적·런타임·회귀 검증 |
 | `designing-art-prompts-and-technique-cards` | 이미지 프롬프트·아트 기술 카드 |
 | `auditing-and-refining-ui-art` | Godot·Web UI 결과 감사와 승인된 개선 |
+| `managing-base-change-proposals` | 프로젝트 교훈 추출·BCP 제출·검토·승인된 구현 |
 
-이전 10개 Skill ID는 [skills/LEGACY_SKILL_ALIASES.md](skills/LEGACY_SKILL_ALIASES.md)에서 새 Skill과 mode로 연결합니다.
+통합 전 Skill ID는 [skills/LEGACY_SKILL_ALIASES.md](skills/LEGACY_SKILL_ALIASES.md)에서 새 Skill과 mode로 연결합니다.
 
 ## 프로젝트 책임 원본
 
