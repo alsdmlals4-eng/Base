@@ -21,6 +21,15 @@ OLD_SKILL_PATHS = (
 TEXT_SUFFIXES = {".md", ".json", ".yml", ".yaml", ".py"}
 
 
+def skill_package_text(skill_id: str) -> str:
+    skill_dir = ROOT / "skills" / skill_id
+    paths = [skill_dir / "SKILL.md"]
+    references = skill_dir / "references"
+    if references.is_dir():
+        paths.extend(sorted(path for path in references.rglob("*") if path.is_file()))
+    return "\n".join(path.read_text(encoding="utf-8", errors="replace") for path in paths)
+
+
 class ConsolidatedSkillReferenceTests(unittest.TestCase):
     def test_active_entrypoints_and_templates_have_no_deleted_skill_paths(self) -> None:
         candidates = [
@@ -75,7 +84,7 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
             self.assertIn(skill_id, combined)
 
     def test_digital_dopamine_design_contract_is_explicit_and_bounded(self) -> None:
-        skill = (ROOT / "skills/analyzing-and-refining-game-concepts/SKILL.md").read_text(encoding="utf-8")
+        package = skill_package_text("analyzing-and-refining-game-concepts")
         template = (ROOT / "templates/planning/GAME_CONCEPT_DIRECTION_REVIEW.md").read_text(encoding="utf-8")
         registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
 
@@ -89,7 +98,7 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
             "실제 도파민 분비량",
             "뾰족한 재미를 빠르게 전달",
         ):
-            self.assertIn(term, skill)
+            self.assertIn(term, package)
 
         for term in (
             "첫 의미 있는 보상까지의 시간",
@@ -107,8 +116,8 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         ):
             self.assertIn(tag, registry)
 
-        self.assertIn("의미 있는 선택 없이 빠른 보상만 반복", skill)
-        self.assertIn("외부 자료에서 정의되지 않은 DDD", skill)
+        self.assertIn("의미 있는 선택 없이 빠른 보상만 반복", package)
+        self.assertIn("외부 자료에서 정의되지 않은 DDD", package)
 
     def test_benchmark_and_work_sequence_are_integrated_modes_not_new_skills(self) -> None:
         intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
@@ -141,7 +150,7 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
             self.assertTrue((ROOT / path).is_file(), path)
 
     def test_playtest_accessibility_and_performance_gaps_are_integrated(self) -> None:
-        concepts = (ROOT / "skills/analyzing-and-refining-game-concepts/SKILL.md").read_text(encoding="utf-8")
+        concepts = skill_package_text("analyzing-and-refining-game-concepts")
         vertical = (ROOT / "skills/designing-vertical-slices/SKILL.md").read_text(encoding="utf-8")
         validation = (ROOT / "skills/reviewing-and-validating-project-changes/SKILL.md").read_text(encoding="utf-8")
         reference = (ROOT / "skills/reviewing-and-validating-project-changes/references/accessibility-and-performance-validation.md").read_text(encoding="utf-8")
