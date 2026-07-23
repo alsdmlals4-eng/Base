@@ -222,13 +222,18 @@
         "multi-stage-game-design",
         "concept-to-production",
         "cross-discipline-game-design",
-        "game-design-recalibration"
+        "game-design-recalibration",
+        "digital-dopamine-design",
+        "ddd",
+        "benchmark-research",
+        "player-evidence",
+        "playtest-evidence"
       ],
       "use_when": [
-        "컨셉·시장 포지셔닝·코어 루프·기획 명세·PoC·재조정 중 둘 이상을 연결해 하나의 기획 라이프사이클 결정을 내려야 할 때, 전문 Skill의 순서·공유 사실·handoff를 조정한다."
+        "컨셉·시장 포지셔닝·코어 루프·기획 명세·PoC·재조정 중 둘 이상을 연결하거나, DDD·벤치마크·플레이어·플레이테스트 증거를 기획 결정으로 해석해야 할 때 전문 Skill의 순서·공유 사실·handoff를 조정한다."
       ],
       "do_not_use_when": [
-        "핵심 컨셉·PoC, SWOT·VRIO, 코어 루프, Why–How–What 중 하나만 다루는 요청이다. 해당 전문 Skill을 직접 선택한다."
+        "핵심 컨셉·PoC, SWOT·VRIO, 코어 루프, Why–How–What 중 하나만 다루고 DDD·증거 해석이 필요하지 않은 요청이다. 해당 전문 Skill을 직접 선택한다."
       ],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
       "review_triggers": [
