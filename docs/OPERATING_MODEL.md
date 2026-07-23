@@ -45,8 +45,8 @@ Base START_HERE
 → 프로젝트 START_HERE·Active Context·Documentation Map
 → 현재 책임 원본·Issue·Plan
 → Prompt 의도·현재 단계
-→ PLAN / BUILD / REVIEW Work Mode
-→ 자동 선택된 최소 Skill·Skill Mode
+→ L1 이상이면 PLAN → BUILD → REVIEW Work Mode sequence
+→ 각 단계에 자동 선택된 최소 Skill·Skill Mode
 → 실제 파일·테스트
 ```
 
@@ -56,8 +56,8 @@ Base START_HERE
 
 ```text
 요청 의도·현재 단계 파악
-→ Work Mode 자동 선택
-→ Skill·Skill Mode 자동 라우팅
+→ L1 이상이면 PLAN → BUILD → REVIEW 순서 고정
+→ 현재 단계의 Skill·Skill Mode 자동 라우팅
 → 요구 확정·Definition of Ready
 → 필요 시 작업 분해·의존성·실행 순서
 → 핵심 컨셉·외부 근거·PoC·플레이테스트 또는 계획·승인
@@ -80,6 +80,8 @@ Base START_HERE
 - `Skill`: 특정 책임을 반복 수행하는 전문 작업 계약이다.
 - `Skill Mode`: Skill 내부의 현재 세부 절차다. 별도 수식어 없이 Skill 문서에 적힌 `mode`는 Skill Mode를 뜻한다.
 - `Prompt`: 현재 사용자의 구체적인 목표·제약·산출물이다.
+
+L1 이상 실행 작업은 PLAN에서 요구·승인 경계와 완료 기준을 고정하고, BUILD에서 승인 범위만 수행하며, REVIEW에서 독립 검증·회귀·최종 판정을 마친다. PLAN 또는 BUILD만 끝난 상태는 완료가 아니다. L0 오탈자·단순 설명·동일 검사 재실행처럼 실행 산출물이나 변경이 없는 요청만 제외한다.
 
 ```text
 Prompt
