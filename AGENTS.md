@@ -238,7 +238,7 @@ Active Context는 현재 상태의 기본 원본이다. 프로젝트 방향·분
 | 행동→보상/결과→다음 선택→진척의 코어 루프 | `designing-game-core-loops` |
 | Why→How→What 추적성·기능/모드 명세 | `writing-traceable-game-design-rationales` |
 
-둘 이상의 단계를 연결할 때만 `analyzing-and-refining-game-concepts`를 공유 사실·전문 Skill handoff·PoC·재조정·프로덕션 게이트의 라이프사이클 라우터로 사용한다.
+둘 이상의 단계를 연결하거나 DDD·벤치마크·플레이어·플레이테스트 증거를 기획 결정으로 해석할 때만 `analyzing-and-refining-game-concepts`를 공유 사실·전문 Skill handoff·PoC·재조정·프로덕션 게이트의 라이프사이클 라우터로 사용한다.
 
 - 기능 목록을 핵심 컨셉으로 대체하지 않는다.
 - SWOT은 SO·WO·ST·WT 실행 방향으로, VRIO는 실제 자산의 가치·희소성·모방 가능성·조직화와 후속 검증으로 변환한다.
