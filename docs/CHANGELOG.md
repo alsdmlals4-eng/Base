@@ -2,6 +2,8 @@
 
 ## Unreleased - Base audit and operating-contract consistency
 
+- 컨셉·PoC, SWOT·VRIO 포지셔닝, 코어 루프, Why→How→What 기획 필연성을 각각 독립 실행 Skill로 분리했다. 기존 `analyzing-and-refining-game-concepts`는 여러 단계를 잇는 라이프사이클 라우터로 축소해 중복 선택을 방지했다.
+
 - 제공된 학습 텍스트의 책임을 전수 매핑하고 9개 독립 Skill을 추가했으며, 중복 책임은 기존 통합 Skill에 유지했다.
 - 가지치기·본문 간소화·행동 보존 리팩토링 Skill을 분리하고 이를 Base의 코어·컨셉·적대적 검토·Skill 진화 본문에 실제 적용했다.
 - Games User Research 11영역, 로컬·GitHub 동기화, 장기 작업 연속성, 사용자 학습 노트, 프로젝트 대시보드, 엔진 런타임 디버깅 계약을 추가했다.

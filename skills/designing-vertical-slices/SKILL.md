@@ -85,7 +85,7 @@ save_resume_error_recovery:
 
 ### 4. Playtest evidence
 
-`analyzing-and-refining-game-concepts: playtest-and-experiment`에서 정의한 가설과 표본 계약을 이어받는다.
+`developing-game-concepts-and-pocs`에서 정의한 PoC·플레이테스트 가설과 표본 계약을 이어받는다.
 
 - 빌드·버전·대상 플레이어·이전 노출을 고정한다.
 - 내부 팀의 숙련된 플레이와 목표 플레이어의 첫 경험을 구분한다.

@@ -9,7 +9,7 @@ description: Use in PLAN work when a new or changing project needs its identity-
 
 프로젝트 코어 확정은 앞으로 보호할 **최소 정체성 계약**을 정하는 일이다. AI는 후보를 제안하고 반례를 검사할 수 있지만, 사용자 승인 없이 `CORE_CONFIRMED`로 표시하지 않는다.
 
-기존 프로젝트의 사실 판정은 `identifying-project-core`, 컨셉·PoC 탐색은 `analyzing-and-refining-game-concepts`, 승인 계약의 문서화는 `managing-design-documents`가 책임진다.
+기존 프로젝트의 사실 판정은 `identifying-project-core`, 컨셉·PoC 탐색은 `developing-game-concepts-and-pocs`, DDD·다단계 기획 조정은 `analyzing-and-refining-game-concepts`, 승인 계약의 문서화는 `managing-design-documents`가 책임진다.
 
 ## Skill Modes and state
 

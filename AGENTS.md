@@ -112,7 +112,11 @@ L1 이상 완료 보고에는 실제 사용한 `Work Mode / Skill / Skill Mode /
 | 기획 책임 원본 작성·재구조화·발행·검수 | `managing-design-documents` |
 | 프로젝트 Skill 생성·통합·학습 | `evolving-project-discipline-skills` |
 | Active Context·Handoff | `maintaining-project-context-and-handoff` |
-| 핵심 컨셉·DDD·벤치마크·플레이어 반응·플레이테스트·PoC | `analyzing-and-refining-game-concepts` |
+| 컨셉·제약·뾰족한 재미·PoC·재조정 | `developing-game-concepts-and-pocs` |
+| 세그먼트·대안·SWOT·VRIO·포지셔닝 | `analyzing-game-positioning-with-swot-vrio` |
+| 행동·보상·선택·진척의 코어 루프 | `designing-game-core-loops` |
+| Why→How→What 기획 필연성·기능/모드 명세 | `writing-traceable-game-design-rationales` |
+| 여러 게임 기획 단계의 handoff·PoC 판단 | `analyzing-and-refining-game-concepts` |
 | 대표 구간·목표 품질·플레이 증거·제작 파이프라인 | `designing-vertical-slices` |
 | 외부 AI 작업 공간 | `orchestrating-deepseek-worktrees` |
 | 변경 계약·정본·정적·런타임·접근성·성능·회귀 검증 | `reviewing-and-validating-project-changes` |
@@ -121,7 +125,7 @@ L1 이상 완료 보고에는 실제 사용한 `Work Mode / Skill / Skill Mode /
 | 구현된 Godot·Web UI 감사 | `auditing-and-refining-ui-art` |
 | 프로젝트 교훈·Base 변경 제안 생명주기 | `managing-base-change-proposals` |
 
-활성 Skill은 13개이며 모두 `load_by_default=false`다. 통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 Skill Mode로 변환한다. 새 Registry·문서·작업 계약에는 새 ID만 사용한다.
+활성 Skill은 17개이며 모두 `load_by_default=false`다. 통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 Skill Mode로 변환한다. 새 Registry·문서·작업 계약에는 새 ID만 사용한다.
 
 ## 6. 책임 원본과 발행
 
@@ -227,22 +231,26 @@ Active Context는 현재 상태의 기본 원본이다. 프로젝트 방향·분
 - 접근성은 옵션 존재가 아니라 텍스트·대비·정보 채널·입력·탐색·시간·난이도·모션의 실제 플레이 장벽과 대안을 검수한다.
 - 접근성 검수 결과를 법적 준수 인증으로 표현하지 않는다.
 
-## 12. 기획 방향·벤치마크·플레이테스트·PoC 계약
+## 12. 게임 기획 전문 Skill과 통합 계약
 
-핵심 컨셉, 제약, 뾰족한 재미, 게임 요소 정렬, 벤치마크, 플레이테스트, PoC와 기획 재조정은 `analyzing-and-refining-game-concepts`를 사용한다.
+단일 기획 단계는 해당 전문 Skill을 직접 사용한다.
+
+| 필요 | Skill |
+|---|---|
+| 핵심 컨셉·제약·뾰족한 재미·PoC·재조정 | `developing-game-concepts-and-pocs` |
+| 타깃 세그먼트·대안·SWOT·VRIO·포지셔닝 | `analyzing-game-positioning-with-swot-vrio` |
+| 행동→보상/결과→다음 선택→진척의 코어 루프 | `designing-game-core-loops` |
+| Why→How→What 추적성·기능/모드 명세 | `writing-traceable-game-design-rationales` |
+
+둘 이상의 단계를 연결하거나 DDD·벤치마크·플레이어·플레이테스트 증거를 기획 결정으로 해석할 때만 `analyzing-and-refining-game-concepts`를 공유 사실·전문 Skill handoff·PoC·재조정·프로덕션 게이트의 라이프사이클 라우터로 사용한다.
 
 - 기능 목록을 핵심 컨셉으로 대체하지 않는다.
-- SWOT은 SO·WO·ST·WT 실행 방향으로 변환한다.
-- Base 내부 `DDD`는 `Digital Dopamine Design`이며 첫 의미 있는 보상·행동 피드백·보상 사다리·다음 행동·피로를 분석한다.
-- DDD를 실제 도파민 분비량이나 의학적 중독 진단으로 사용하지 않는다.
-- 외부 자료의 동명 약어는 출처 정의 확인 전 임의 해석하지 않는다.
-- 벤치마크는 비교 차원과 결정 질문을 먼저 고정하고 제품 사실·플레이어 자기보고·행동·실험·해석을 분리한다.
-- 리뷰의 긍정·부정·버전·패치·플레이타임·플랫폼·언어·표본 편향을 기록한다.
-- 조사 결과는 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 개선 결정에 연결한다.
-- 플레이테스트는 빌드·대상 집단·기존 노출·과제·피드백 채널·행동 이벤트·퍼널·성공 기준을 가진다.
-- A/B 테스트는 한 주요 가설과 사전 선언한 지표·가드레일을 비교한다.
-- PoC는 가장 위험한 가설을 검증하는 최소 범위로 유지한다.
+- SWOT은 SO·WO·ST·WT 실행 방향으로, VRIO는 실제 자산의 가치·희소성·모방 가능성·조직화와 후속 검증으로 변환한다.
+- 코어 루프는 행동·보상·다음 선택·진척의 반복 인과를 명시하며, 숫자 증가나 장르명만으로 정의하지 않는다.
+- 기능·모드의 각 요구는 최소 하나의 Why와 하나의 주된 How로 역추적 가능해야 한다.
+- PoC는 가장 위험한 가설을 검증하는 최소 범위로 유지하고 성공 기준을 사전에 고정한다.
 - 조사·PoC·플레이테스트 결과에 따라 유지·증폭·변경·삭제·보류·재검증을 결정한다.
+- Games User Research 11영역의 증거 coverage는 `governing-game-user-research-coverage`로 감사한다.
 - 목표 품질·실제 플레이 증거·제작 파이프라인 검증은 `designing-vertical-slices`로 넘긴다.
 
 ## 13. 검증과 완료
