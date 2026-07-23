@@ -112,7 +112,11 @@ L1 이상 완료 보고에는 실제 사용한 `Work Mode / Skill / Skill Mode /
 | 기획 책임 원본 작성·재구조화·발행·검수 | `managing-design-documents` |
 | 프로젝트 Skill 생성·통합·학습 | `evolving-project-discipline-skills` |
 | Active Context·Handoff | `maintaining-project-context-and-handoff` |
-| 컨셉·제약·뾰족한 재미·PoC·재조정 | `developing-game-concepts-and-pocs` |\n| 세그먼트·대안·SWOT·VRIO·포지셔닝 | `analyzing-game-positioning-with-swot-vrio` |\n| 행동·보상·선택·진척의 코어 루프 | `designing-game-core-loops` |\n| Why→How→What 기획 필연성·기능/모드 명세 | `writing-traceable-game-design-rationales` |\n| 여러 게임 기획 단계의 handoff·PoC 판단 | `analyzing-and-refining-game-concepts` |
+| 컨셉·제약·뾰족한 재미·PoC·재조정 | `developing-game-concepts-and-pocs` |
+| 세그먼트·대안·SWOT·VRIO·포지셔닝 | `analyzing-game-positioning-with-swot-vrio` |
+| 행동·보상·선택·진척의 코어 루프 | `designing-game-core-loops` |
+| Why→How→What 기획 필연성·기능/모드 명세 | `writing-traceable-game-design-rationales` |
+| 여러 게임 기획 단계의 handoff·PoC 판단 | `analyzing-and-refining-game-concepts` |
 | 대표 구간·목표 품질·플레이 증거·제작 파이프라인 | `designing-vertical-slices` |
 | 외부 AI 작업 공간 | `orchestrating-deepseek-worktrees` |
 | 변경 계약·정본·정적·런타임·접근성·성능·회귀 검증 | `reviewing-and-validating-project-changes` |
