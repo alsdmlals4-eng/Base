@@ -76,6 +76,18 @@
 
 ## 기록
 
+### 2026-07-23 domain-language and decision-context adoption
+
+- 프로젝트·작업: 외부 `grill-with-docs`/`domain-modeling`의 용어 정제·결정 기록 구조를 Base에 적응
+- 기준: `mattpocock/skills` `ed37663cc5fbef691ddfecd080dff42f7e7e350d`, MIT; 파일별 SHA-256은 `GRILL_WITH_DOCS_SOURCE_MANIFEST.json`
+- 호출 트리거: 동일 용어 충돌, 모호한 규칙, 코드·문서 의미 불일치, 되돌리기 어려운 실제 trade-off
+- 실제 산출물: `sharpening-project-domain-language-and-decisions` Specialist, Registry·Documentation Map·딥인터뷰 경계
+- 보존 결정: 프로젝트의 11개 본책, `DECISION_LOG.md`, `Documentation Map`, 딥인터뷰의 사용자 확인 게이트를 책임 원본으로 유지
+- 금지 결정: 외부 wrapper·`CONTEXT.md`·별도 ADR 폴더·원문 템플릿을 복제하지 않음; 모든 프로젝트에 빈 용어집을 설치하지 않음
+- 검증: Source commit·8개 파일 SHA-256, Base Registry Schema, 스킬 frontmatter·경계·지연 생성 계약 회귀 검사
+- 지식 상태: PATTERN
+- 다음 검토 트리거: 용어집이 본책을 중복함, Decision Log 오남용, 프로젝트 Documentation Map 연결 누락, 외부 원본 갱신
+
 ### 2026-07-20 global productivity skill integration
 
 - 프로젝트·작업: Base 공용 스킬과 Matt Pocock productivity 묶음의 전역 통합

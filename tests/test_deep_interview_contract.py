@@ -89,6 +89,7 @@ class DeepInterviewContractTests(unittest.TestCase):
         for term in (
             "Mandatory triggers", "Exceptions", "repository_observed", "AWAITING_USER_CONFIRMATION",
             "CONFIRMED", "transforming-requests-into-prompts", "사용자 확인",
+            "sharpening-project-domain-language-and-decisions",
         ):
             self.assertIn(term, text)
 

@@ -15,6 +15,8 @@ description: Use before feature, player-experience, art-direction, architecture,
 
 전역 `grill-me`·`grilling`은 사용자가 계획이나 아이디어를 압박 검토하고 싶을 때의 범용 인터뷰다. 이 스킬은 게임 프로젝트의 저장소 사실, 영향 분야, 보호 경로, 실행 계약과 사용자 확인을 책임진다. 범용 인터뷰 결과만으로 프로젝트 구현 게이트를 통과시키지 말고, 필요한 계약을 이 스킬의 기록에 연결한다.
 
+인터뷰 중 같은 용어의 뜻이 충돌하거나, 코드와 문서의 의미가 어긋나거나, 되돌리기 어려운 trade-off가 나타나면 `sharpening-project-domain-language-and-decisions`를 보조로 호출한다. 그 스킬은 필요할 때만 용어·결정 맥락을 기록하며, 이 스킬의 저장소 조사·사용자 확인·실행 계약 책임을 대체하지 않는다.
+
 ## Mandatory triggers
 
 - 기능 또는 게임 경험을 새로 만들거나 바꾼다.

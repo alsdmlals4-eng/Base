@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "manifest_role": "external-skill-adoption-provenance",
+  "source_repository": "https://github.com/mattpocock/skills",
+  "source_commit": "ed37663cc5fbef691ddfecd080dff42f7e7e350d",
+  "source_listing": "https://www.skills.sh/mattpocock/skills/grill-with-docs",
+  "license": "MIT",
+  "adopted_skill_id": "sharpening-project-domain-language-and-decisions",
+  "adoption_scope": "BASE_SHARED_ADAPTATION",
+  "installation_scope": "BASE_ONLY",
+  "project_copy_policy": "FORBIDDEN",
+  "source_skills": [
+    "grill-with-docs",
+    "domain-modeling"
+  ],
+  "retained_principles": [
+    "Use rigorous questioning to expose overloaded or conflicting domain terms.",
+    "Maintain a glossary only when terminology needs durable clarification.",
+    "Record a decision only when it is hard to reverse, surprising without context, and involves a real trade-off.",
+    "Keep glossary entries separate from implementation specifications."
+  ],
+  "base_equivalents": {
+    "project_context": "[기획서]/00_프로젝트_허브/ACTIVE_CONTEXT.md and the registered responsibility originals",
+    "lazy_glossary": "[기획서]/00_프로젝트_허브/DOMAIN_LANGUAGE.md",
+    "decision_record": "[기획서]/00_프로젝트_허브/DECISION_LOG.md",
+    "execution_confirmation": "conducting-deep-requirement-interviews"
+  },
+  "intentionally_not_copied": [
+    "The user-invoked wrapper command and its agent metadata.",
+    "Root-level CONTEXT.md and a separate docs/adr directory.",
+    "External source templates and wording verbatim.",
+    "Any replacement for the 11 discipline bibles, project registries, or user-confirmation gate."
+  ],
+  "source_files": [
+    {
+      "path": "skills/engineering/grill-with-docs/SKILL.md",
+      "sha256": "610d091047bcfb9db0f75c057d15538481a721111579fc5ec7f83ad9131a2165"
+    },
+    {
+      "path": "skills/engineering/grill-with-docs/agents/openai.yaml",
+      "sha256": "94cd0ab161fb468a836349f5ed482ba58ce8e709a05c57ce533d739dbd35cca9"
+    },
+    {
+      "path": "skills/engineering/domain-modeling/SKILL.md",
+      "sha256": "152e2c97239affb12a60c5f4a7e74ab546a49ae169688c81f4e2ccc42dafa579"
+    },
+    {
+      "path": "skills/engineering/domain-modeling/CONTEXT-FORMAT.md",
+      "sha256": "b8cc318f2a4285b530e908b6bc43901c3c5cd11100362636bbc4216639bef597"
+    },
+    {
+      "path": "skills/engineering/domain-modeling/ADR-FORMAT.md",
+      "sha256": "f1f36cd3f8d3b6474ddd5855da4e233bfc4ae1a1c5024909ccf11871819a41b2"
+    },
+    {
+      "path": "skills/engineering/domain-modeling/agents/openai.yaml",
+      "sha256": "f6bf2aa996c6e6f53fdd0708e18a0d16a56aed8322cca59fedbe3c0d2c75f06b"
+    },
+    {
+      "path": "docs/engineering/grill-with-docs.md",
+      "sha256": "76334d7e0c42e79799a9160c0194e4ae94e63dfe49a7557c12371807fb523e70"
+    },
+    {
+      "path": "docs/engineering/domain-modeling.md",
+      "sha256": "ff9d0a076ec577b72ab0aaced404858d31083a2147ba975f4c55b2f0f12a7a4d"
+    }
+  ]
+}

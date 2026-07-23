@@ -36,6 +36,8 @@ START_HERE.md
 
 전역 productivity 스킬의 출처·고정 커밋·파일 해시는 `skills/PRODUCTIVITY_SOURCE_MANIFEST.json`에 있다. 프로젝트 Registry는 전역 스킬을 복사하지 않고 이 Base 계약만 참조한다. 저장소 상태 라우팅은 `maintaining-project-context-and-handoff`, 임시 대화 인수인계는 전역 `handoff`, 이전 세션 재개는 전역 `resume-work`가 책임진다.
 
+외부 `grill-with-docs`/`domain-modeling`에서 구조화해 반영한 용어·결정 정제 원칙은 `skills/GRILL_WITH_DOCS_SOURCE_MANIFEST.json`과 `sharpening-project-domain-language-and-decisions`에 있다. 이는 전역 설치본이나 프로젝트 복제본이 아니며, 프로젝트 허브의 필요 시 `DOMAIN_LANGUAGE.md`와 기존 `DECISION_LOG.md`만 연결한다.
+
 Base 저장소 자체의 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 문서로 오인하지 않는다. 완료 상태는 `docs/CHANGELOG.md`, 검토 대기 작업은 `[수정제안서]/PROPOSAL_REGISTRY.json`, 진행 중 구현은 GitHub PR·Actions가 책임진다. 활성 인터뷰가 없으면 `등록 없음`으로 명시한다.
 
 ## 2. 루트 기획서 계약
@@ -163,6 +165,7 @@ PROJECT_SKILL_MAP.assets/
 | 운영체계 Health Review | `verifying-game-project-operating-system` | 설치·마이그레이션·주요 게이트·콜드 스타트 실패 |
 | 실행 프롬프트 변환 | `transforming-requests-into-prompts` | 요청·범위·완료 기준이 모호함 |
 | 딥인터뷰·사용자 확인 | `conducting-deep-requirement-interviews` | 기능·경험·아트 방향·구조·워크플로·Base 변경 제안 |
+| 용어·결정 맥락 정제 | `sharpening-project-domain-language-and-decisions` | 용어 충돌·모호한 규칙·코드/문서 불일치·되돌리기 어려운 trade-off |
 | Vertical Slice 설계 | `designing-vertical-slices` | 대표 품질·제작 파이프라인 검증 |
 | 기획 책임 구조 설계 | `writing-game-design-documents` | Registry·Markdown/JSON 책임 원본·Roadmap 구조 변경 |
 | 외부 AI 작업 격리 | `orchestrating-deepseek-worktrees` | 대량 초안·분류 위임 |

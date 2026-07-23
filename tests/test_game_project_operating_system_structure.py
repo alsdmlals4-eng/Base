@@ -39,6 +39,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "docs/knowledge/methods/DISCIPLINE_SKILL_EVOLUTION_METHOD.md",
             "docs/knowledge/methods/DISCIPLINE_PDF_PUBLICATION_METHOD.md",
             "skills/SKILL_REGISTRY.json",
+            "skills/GRILL_WITH_DOCS_SOURCE_MANIFEST.json",
             "schemas/base-skill-registry-v1.schema.json",
             "schemas/base-change-proposal-registry-v1.schema.json",
             "schemas/interview-registry-v1.schema.json",
@@ -49,6 +50,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "skills/SKILL_LEARNING_LOG.md",
             "skills/routing-project-work-by-discipline/SKILL.md",
             "skills/conducting-deep-requirement-interviews/SKILL.md",
+            "skills/sharpening-project-domain-language-and-decisions/SKILL.md",
             "skills/maintaining-project-context-and-handoff/SKILL.md",
             "skills/verifying-game-project-operating-system/SKILL.md",
             "skills/installing-game-project-operating-system/SKILL.md",
@@ -200,6 +202,29 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         self.assertTrue(manifest["source_files"])
         for item in manifest["source_files"]:
             self.assertRegex(item["sha256"], r"^[0-9a-f]{64}$")
+
+    def test_domain_language_skill_has_pinned_adaptation_and_lazy_project_boundary(self) -> None:
+        manifest = json.loads((ROOT / "skills/GRILL_WITH_DOCS_SOURCE_MANIFEST.json").read_text(encoding="utf-8"))
+        self.assertEqual(manifest["source_commit"], "ed37663cc5fbef691ddfecd080dff42f7e7e350d")
+        self.assertEqual(manifest["license"], "MIT")
+        self.assertEqual(manifest["adopted_skill_id"], "sharpening-project-domain-language-and-decisions")
+        self.assertEqual(manifest["project_copy_policy"], "FORBIDDEN")
+        self.assertEqual(len(manifest["source_files"]), 8)
+        for item in manifest["source_files"]:
+            self.assertRegex(item["sha256"], r"^[0-9a-f]{64}$")
+
+        text = (ROOT / "skills/sharpening-project-domain-language-and-decisions/SKILL.md").read_text(encoding="utf-8")
+        for term in (
+            "DOMAIN_LANGUAGE.md",
+            "DECISION_LOG.md",
+            "되돌리기 어렵다",
+            "놀라운 선택",
+            "trade-off",
+            "Documentation Map",
+            "11개 분야 본책",
+        ):
+            self.assertIn(term, text)
+        self.assertIn("sharpening-project-domain-language-and-decisions", (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
 
     def test_skill_evolution_requires_all_disciplines_with_hybrid_sources(self) -> None:
         text = (ROOT / "skills/evolving-project-discipline-skills/SKILL.md").read_text(encoding="utf-8")
