@@ -66,7 +66,11 @@ START_HERE.md
 | `building-project-visual-dashboards` | 정본 연결형 프로젝트 시각 대시보드 |
 | `diagnosing-game-engine-runtime-failures` | Godot·Unity 런타임 재현·원인 격리·최소 수정 |
 | `maintaining-project-context-and-handoff` | 현재 상태·다음 작업·위험 압축 |
-| `analyzing-and-refining-game-concepts` | 여러 게임 기획 단계를 연결하는 라이프사이클 라우터 |\n| `developing-game-concepts-and-pocs` | 핵심 컨셉·제약·뾰족한 재미·PoC·기획 재조정·프로덕션 게이트 |\n| `analyzing-game-positioning-with-swot-vrio` | 세그먼트·대안·SWOT·VRIO·방어 가능한 포지셔닝·시장 검증 |\n| `designing-game-core-loops` | 행동→보상/결과→다음 선택→진척의 반복 구조·경제·반복 동기 |\n| `writing-traceable-game-design-rationales` | Why→How→What 추적성, 기능 필연성, 규칙·흐름·수용 기준 |
+| `analyzing-and-refining-game-concepts` | 여러 게임 기획 단계를 연결하는 라이프사이클 라우터 |
+| `developing-game-concepts-and-pocs` | 핵심 컨셉·제약·뾰족한 재미·PoC·기획 재조정·프로덕션 게이트 |
+| `analyzing-game-positioning-with-swot-vrio` | 세그먼트·대안·SWOT·VRIO·방어 가능한 포지셔닝·시장 검증 |
+| `designing-game-core-loops` | 행동→보상/결과→다음 선택→진척의 반복 구조·경제·반복 동기 |
+| `writing-traceable-game-design-rationales` | Why→How→What 추적성, 기능 필연성, 규칙·흐름·수용 기준 |
 | `identifying-project-core` | 기존 프로젝트의 기획·시스템·코드 코어와 코어·MVP 경계를 근거로 판정 |
 | `establishing-project-core` | PLAN 단계에서 프로젝트 코어를 제안·반례 검토하고 사용자 승인으로 확정 |
 | `running-adversarial-review-and-refinement` | 실패 가정 공격·비판 검증·승인된 개선·회귀 재검토 |
