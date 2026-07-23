@@ -24,6 +24,17 @@
       "submitted_at": "2026-07-19",
       "approval_ref": null,
       "implementation_pr": null
+    },
+    {
+      "proposal_id": "BCP-2026-003-active-skill-authority",
+      "title": "활성 Skill 수와 목록의 Registry 단일 권한화",
+      "path": "[수정제안서]/BCP-2026-003-active-skill-authority/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "alsdmlals4-eng/urban-legend",
+      "source_commit": "5cf92312b53d49d3c2dec38d70c174fc40d4c7ed",
+      "submitted_at": "2026-07-23",
+      "approval_ref": null,
+      "implementation_pr": null
     }
   ]
 }
