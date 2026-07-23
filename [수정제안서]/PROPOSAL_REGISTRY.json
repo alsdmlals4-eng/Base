@@ -24,6 +24,17 @@
       "submitted_at": "2026-07-19",
       "approval_ref": null,
       "implementation_pr": null
+    },
+    {
+      "proposal_id": "BCP-2026-003-decision-surface-and-handoff-evidence",
+      "title": "결정 표면·구현 전달·파생 산출물 증거 모드 보강",
+      "path": "[수정제안서]/BCP-2026-003-decision-surface-and-handoff-evidence/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "cross-project",
+      "source_commit": "41a20584dd2ee51d917e5c9d7cab6838e1ceba7e",
+      "submitted_at": "2026-07-23",
+      "approval_ref": null,
+      "implementation_pr": null
     }
   ]
 }
