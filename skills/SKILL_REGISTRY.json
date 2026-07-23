@@ -218,48 +218,26 @@
       "status": "ACTIVE",
       "load_by_default": false,
       "trigger_tags": [
-        "core-concept",
-        "pointed-fun",
-        "game-direction",
-        "benchmark-research",
-        "competitor-analysis",
-        "player-reviews",
-        "user-sentiment",
-        "playtest-design",
-        "telemetry-events",
-        "funnel-analysis",
-        "ab-testing",
-        "swot",
-        "mda",
-        "dde",
-        "digital-dopamine-design",
-        "rapid-reward",
-        "instant-feedback",
-        "reward-latency",
-        "poc",
-        "concept-recalibration",
-        "production-direction"
+        "game-design-lifecycle",
+        "multi-stage-game-design",
+        "concept-to-production",
+        "cross-discipline-game-design",
+        "game-design-recalibration"
       ],
       "use_when": [
-        "핵심 컨셉·뾰족한 재미·제약·DDD를 분석하고 비교 게임·플레이어 반응·행동 근거·플레이테스트를 개선안과 PoC·재조정 방향으로 변환한다."
+        "컨셉·시장 포지셔닝·코어 루프·기획 명세·PoC·재조정 중 둘 이상을 연결해 하나의 기획 라이프사이클 결정을 내려야 할 때, 전문 Skill의 순서·공유 사실·handoff를 조정한다."
       ],
       "do_not_use_when": [
-        "확정된 기획서의 단순 문장 편집, 단일 기능 구현, 출처 없는 인기 목록 수집, 이미 정의된 Vertical Slice 제작만 필요한 경우다."
+        "핵심 컨셉·PoC, SWOT·VRIO, 코어 루프, Why–How–What 중 하나만 다루는 요청이다. 해당 전문 Skill을 직접 선택한다."
       ],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
       "review_triggers": [
-        "핵심 컨셉과 기능 목록 혼동",
-        "벤치마크 기능 복사",
-        "리뷰 표본 편향",
-        "행동과 자기보고 혼동",
-        "여러 변수 동시 실험",
+        "전문 Skill과 책임 중복",
+        "단계 순서 누락",
+        "공유 사실 불일치",
         "PoC 범위 팽창",
-        "프레임워크 결과의 실행안 부재",
-        "DDD가 단순 자극으로 변질",
-        "첫 의미 있는 보상 시간 미측정",
-        "보상 인플레이션",
-        "외부 DDD 약어 오해",
-        "PoC 결과 미반영"
+        "각 단계 결과 미반영",
+        "라우터가 상세 설계를 중복 작성"
       ],
       "last_reviewed_at": "2026-07-21",
       "last_reviewed_commit": "c5a58388f332c6303ee715ece04c4d9254e76ade",
@@ -913,6 +891,148 @@
       ],
       "last_reviewed_at": "2026-07-22",
       "last_reviewed_commit": "d2ec3899aaf897d7713a30ae7667707764b7336b",
+      "knowledge_state": "HYPOTHESIS"
+    },
+    {
+      "skill_id": "developing-game-concepts-and-pocs",
+      "layer": "specialist",
+      "discipline": "game-design-concept-development",
+      "path": "skills/developing-game-concepts-and-pocs/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "core-concept",
+        "pointed-fun",
+        "game-direction",
+        "design-constraints",
+        "concept-structure",
+        "poc",
+        "concept-recalibration",
+        "production-readiness"
+      ],
+      "use_when": [
+        "게임의 핵심 컨셉·제약·뾰족한 재미 가설을 선택하고, 요소를 정렬하며, 최소 PoC·재조정·프로덕션 게이트를 설계한다."
+      ],
+      "do_not_use_when": [
+        "SWOT·VRIO만, 코어 루프만, 기능 단위 Why–How–What 명세만 필요한 경우다."
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": [
+        "핵심 컨셉과 기능 목록 혼동",
+        "제약이 장식으로 변질",
+        "PoC 범위 팽창",
+        "성공 기준 사후 변경",
+        "PoC 결과 미반영"
+      ],
+      "last_reviewed_at": "2026-07-23",
+      "last_reviewed_commit": null,
+      "knowledge_state": "HYPOTHESIS"
+    },
+    {
+      "skill_id": "analyzing-game-positioning-with-swot-vrio",
+      "layer": "specialist",
+      "discipline": "game-design-strategy",
+      "path": "skills/analyzing-game-positioning-with-swot-vrio/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "game-positioning",
+        "swot",
+        "vrio",
+        "competitive-analysis",
+        "target-segment",
+        "differentiation",
+        "strategic-bet",
+        "market-validation"
+      ],
+      "use_when": [
+        "대상 세그먼트·대안·전략적 강약점과 방어 가능한 차별점을 SWOT·VRIO로 분석해 검증 가능한 포지셔닝과 투자 우선순위를 만든다."
+      ],
+      "do_not_use_when": [
+        "시장·경쟁·전략적 선택에 영향을 주지 않는 내부 기획 명세, 출처 없는 시장 규모 주장, 기능 복사만 필요한 경우다."
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": [
+        "프레임워크 결과만 있고 행동이 없음",
+        "기회를 근거 없는 수요로 오인",
+        "외부 추세를 강점으로 오인",
+        "모방 가능성을 과소평가",
+        "조직화 없는 차별 약속"
+      ],
+      "last_reviewed_at": "2026-07-23",
+      "last_reviewed_commit": null,
+      "knowledge_state": "HYPOTHESIS"
+    },
+    {
+      "skill_id": "designing-game-core-loops",
+      "layer": "specialist",
+      "discipline": "game-design-systems",
+      "path": "skills/designing-game-core-loops/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "core-loop",
+        "action-reward-progress",
+        "session-loop",
+        "meta-loop",
+        "resource-economy",
+        "repeat-play",
+        "return-trigger",
+        "retention-design"
+      ],
+      "use_when": [
+        "반복 행동·보상·결과·다음 선택·진척을 순간·세션·메타 규모로 정의·개선·검증하고, 경제·도전·변주와 반복 동기를 연결한다."
+      ],
+      "do_not_use_when": [
+        "핵심 재미가 미확정인 초기 컨셉 탐색, 단일 장면 연출, 반복 구조와 무관한 문장 편집만 필요한 경우다."
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": [
+        "그라인드",
+        "보상 인과 불명",
+        "죽은 보상",
+        "지배 전략",
+        "진척 함정",
+        "첫 5분 뒤 새 결정 부재",
+        "중단 벌점 의존"
+      ],
+      "last_reviewed_at": "2026-07-23",
+      "last_reviewed_commit": null,
+      "knowledge_state": "HYPOTHESIS"
+    },
+    {
+      "skill_id": "writing-traceable-game-design-rationales",
+      "layer": "specialist",
+      "discipline": "game-design-specification",
+      "path": "skills/writing-traceable-game-design-rationales/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "design-rationale",
+        "why-how-what",
+        "feature-justification",
+        "game-mode-design",
+        "design-specification",
+        "acceptance-criteria",
+        "necessity-review"
+      ],
+      "use_when": [
+        "게임 기능·모드·시스템·콘텐츠의 이슈와 목표를 Why–How–What으로 추적해 구현 가능한 규칙·흐름·의존성·수용 기준으로 만든다."
+      ],
+      "do_not_use_when": [
+        "프로젝트 코어와 방향이 전혀 없는 초기 아이디어, 코드 구현만, 근거 없이 정해진 기능 목록을 합리화하는 경우다."
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "review_triggers": [
+        "목표와 무관한 기능",
+        "인과 단절",
+        "진입·실패·회복 규칙 누락",
+        "trade-off 미기록",
+        "검증 불가능",
+        "What의 Why 추적 불가"
+      ],
+      "last_reviewed_at": "2026-07-23",
+      "last_reviewed_commit": null,
       "knowledge_state": "HYPOTHESIS"
     }
   ]
