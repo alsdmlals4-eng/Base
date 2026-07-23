@@ -47,7 +47,9 @@ START_HERE.md
 
 ```text
 Prompt 의도·현재 단계 파악
-→ PLAN / BUILD / REVIEW Work Mode 자동 선택
+→ PLAN: 계약·승인 경계 확정
+→ BUILD: 승인 범위 구현
+→ REVIEW: 독립 검증·최종 판정
 → Registry trigger 기반 최소 Skill 자동 선택
 → 각 Skill의 필요한 Skill Mode 자동 선택
 → 저장소 사실 조사
@@ -72,13 +74,16 @@ Prompt 의도·현재 단계 파악
 라우팅 결과:
 
 - 작업 수준 L0~L4
-- 주 Work Mode 하나
+- L1 이상이면 필수 Work Mode sequence `PLAN → BUILD → REVIEW`
+- 현재 단계의 주 Work Mode 하나
 - 주 책임 분야 하나와 실제 영향 분야
 - 변경 유형
 - 최소 Foundation·분야 Skill과 Skill Mode
 - 범위·제외·보호 대상
 - 완료 기준·검증·롤백
 - 필요한 경우 검증 가능한 단계·의존성·병렬 묶음·게이트
+
+L1 이상 실행 작업은 PLAN·BUILD·REVIEW를 모두 거쳐야 완료로 보고한다. L0 오탈자·단순 설명·동일 검사 재실행처럼 실행 산출물이나 변경이 없는 요청만 제외한다.
 
 `decompose-and-sequence`는 승인된 L2 이상 작업이나 여러 의존성이 있는 작업에만 사용한다. 단계는 활동 이름이 아니라 결과·입력·출력·완료·검증·롤백을 가지며 `BLOCKS / INFORMS / USES_OUTPUT / SHARES_RESOURCE / VALIDATES / OPTIONAL_FOLLOWUP` 관계를 구분한다.
 
