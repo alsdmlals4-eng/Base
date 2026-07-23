@@ -159,8 +159,8 @@ Registry 정책:
 
 - `decompose-and-sequence`는 승인된 L2 이상 작업이나 여러 의존성이 있는 작업에서만 실행한다.
 - `reconcile-legacy`는 `v2`, `final`, `latest`, 날짜 복제본, 중복 현행본, stale 파생본·참조가 있을 때 `audit` 뒤 실행한다.
-- `benchmark-and-player-research`는 기획 결정을 바꿀 외부 근거가 필요할 때 호출하고 출처·날짜·버전·표본을 기록한다.
-- `playtest-and-experiment`는 가설·빌드·대상 집단·피드백·행동 이벤트·성공 기준이 필요할 때 호출한다.
+- 기획 결정을 바꿀 외부 근거가 필요할 때는 `analyzing-game-positioning-with-swot-vrio`를 호출하고 출처·날짜·버전·표본을 기록한다.
+- 가설·빌드·대상 집단·피드백·행동 이벤트·성공 기준이 필요할 때는 `developing-game-concepts-and-pocs`로 PoC·플레이테스트 계약을 만든다.
 - `accessibility-review`와 `performance-profile`은 핵심 플레이·입력·UI·정보·플랫폼 부하에 영향이 있을 때만 적용한다.
 - `auditing-canonical-reference-freshness`는 파일·경로·ID·Schema·정책·생성기·정본이 바뀌어 여러 소비자에 전파될 가능성이 있을 때 `reviewing-and-validating-project-changes: reference-freshness`에서 호출한다.
 
