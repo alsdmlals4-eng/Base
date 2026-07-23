@@ -94,28 +94,20 @@ audit
 
 사용자 승인 전 대량 이동·삭제·통합을 하지 않는다.
 
-### 핵심 컨셉·DDD·벤치마크·플레이테스트·기획 방향
+### 게임 기획: 전문 Skill과 라이프사이클
 
-`skills/analyzing-and-refining-game-concepts/SKILL.md`
+한 단계만 필요하면 해당 전문 Skill을 직접 사용한다.
 
-```text
-frame
-→ constrain
-→ sharpen
-→ structure
-→ 필요한 경우 benchmark-and-player-research
-→ analyze
-→ 필요한 경우 playtest-and-experiment
-→ poc-contract
-→ recalibrate
-→ production-gate
-```
+| 요청 | Skill |
+|---|---|
+| 핵심 컨셉·제약·뾰족한 재미·PoC·재조정 | `developing-game-concepts-and-pocs` |
+| 세그먼트·대안·SWOT·VRIO·포지셔닝 | `analyzing-game-positioning-with-swot-vrio` |
+| 행동·보상·다음 선택·진척의 코어 루프 | `designing-game-core-loops` |
+| Why→How→What·기능 필연성·구현 명세 | `writing-traceable-game-design-rationales` |
 
-SWOT은 SO·WO·ST·WT 행동으로 변환하고, MDA·DDE·DDD·3C·루프·동기·차별화·제작성을 교차 분석한다.
+컨셉부터 포지셔닝·코어 루프·기능 명세·PoC·프로덕션 판단까지 둘 이상의 단계를 연결할 때만 `analyzing-and-refining-game-concepts`를 라이프사이클 라우터로 사용한다.
 
-Base 내부에서 `DDD`는 `Digital Dopamine Design`이다. 첫 의미 있는 보상, 행동-피드백 지연, 보상 명료성·밀도, Micro→Session→Meta 보상 사다리, 다음 행동 의도와 피로·인플레이션을 관찰한다. 외부 자료의 동명 약어는 출처 정의를 확인하기 전 임의 해석하지 않는다.
-
-`benchmark-and-player-research`는 공식 제품 사실, 플레이어 자기보고, 행동 이벤트·퍼널, 통제 실험과 해석을 구분하고 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 개선 결정을 만든다. `playtest-and-experiment`는 빌드·대상 집단·과제·피드백 채널·행동 계측·성공 기준을 고정한다.
+SWOT은 SO·WO·ST·WT 행동으로, VRIO는 실제 자산의 가치·희소성·모방 가능성·조직화와 후속 투자·검증으로 변환한다. Base 내부에서 `DDD`는 `Digital Dopamine Design`이며, 별도 요청에서만 첫 의미 있는 보상·피드백 지연·보상 사다리·피로·인플레이션을 분석한다.
 
 ### 프로젝트 코어 판정
 
