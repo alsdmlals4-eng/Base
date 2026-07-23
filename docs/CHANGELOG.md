@@ -2,6 +2,8 @@
 
 ## Unreleased - Base audit and operating-contract consistency
 
+- L1 이상 실행 작업은 PLAN에서 계약·승인 경계를 고정하고 BUILD에서 승인 범위만 수행한 뒤 REVIEW의 독립 검증을 거쳐야 완료로 판정하는 3단계 Work Mode 계약으로 강화했다. L0 오탈자·단순 설명·동일 검사 재실행만 예외로 둔다.
+
 - 제공된 학습 텍스트의 책임을 전수 매핑하고 9개 독립 Skill을 추가했으며, 중복 책임은 기존 통합 Skill에 유지했다.
 - 가지치기·본문 간소화·행동 보존 리팩토링 Skill을 분리하고 이를 Base의 코어·컨셉·적대적 검토·Skill 진화 본문에 실제 적용했다.
 - Games User Research 11영역, 로컬·GitHub 동기화, 장기 작업 연속성, 사용자 학습 노트, 프로젝트 대시보드, 엔진 런타임 디버깅 계약을 추가했다.
