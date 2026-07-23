@@ -120,6 +120,13 @@
       "status": "COVERED_EXISTING"
     },
     {
+      "id": "ci-cost-aware-validation",
+      "skills": [
+        "reviewing-and-validating-project-changes"
+      ],
+      "status": "COVERED_EXISTING"
+    },
+    {
       "id": "game-engine-runtime-debugging",
       "skills": [
         "diagnosing-game-engine-runtime-failures"
