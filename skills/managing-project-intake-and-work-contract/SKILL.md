@@ -47,7 +47,7 @@ description: Use automatically when a project request must be routed, repository
 - 결과를 적대적으로 검토하고 반례·회귀·증거를 찾는다.
 - 기본 읽기 전용이다. 수정까지 요청되거나 승인된 finding이 있으면 `BUILD`로 전환해 최소 수정하고 다시 `REVIEW`로 검증한다.
 
-복합 작업은 `PLAN → BUILD → REVIEW`로 전환할 수 있지만 한 시점의 주 Work Mode는 하나다.
+L1 이상 실행 작업은 예외 없이 `PLAN → BUILD → REVIEW`를 모두 거친다. 한 시점에는 현재 단계의 주 Work Mode 하나만 둔다. L0 오탈자·단순 설명·동일 검사 재실행처럼 실행 산출물이나 변경이 없는 요청은 이 순환의 대상이 아니다.
 
 ## Automatic selection policy
 
@@ -55,6 +55,7 @@ description: Use automatically when a project request must be routed, repository
 - `load_by_default=false`는 자동 선택 금지가 아니라 trigger 불일치 시 읽지 않는다는 뜻이다.
 - trigger가 일치하고 `do_not_use_when`에 걸리지 않는 최소 집합만 사용한다.
 - 주 책임 분야 Skill은 최대 하나다. Foundation·검증·발행·Handoff는 현재 단계에 필요한 것만 추가한다.
+- L1 이상 실행 작업은 PLAN에서 계약·승인 경계를 고정하고, BUILD에서 승인 범위만 변경하며, REVIEW에서 독립 검증을 마친 뒤에만 완료로 보고한다.
 - 사용자에게 “어떤 Skill을 쓸까요?”라고 선택을 전가하지 않는다.
 - 사용자가 Skill을 지정해도 trigger·권한·비사용 조건과 충돌하면 그대로 실행하지 않고 이유를 설명한다.
 - 새 범위·실패·정본 변경이 생기면 Work Mode와 Skill 라우팅을 다시 계산한다.
@@ -124,10 +125,12 @@ rollback_constraints:
 
 ```text
 요청 의도·현재 단계·위험
-→ PLAN / BUILD / REVIEW
+→ PLAN: 계약·승인·실행 순서
+→ BUILD: 승인 범위 구현
+→ REVIEW: 독립 검증·판정
 → Registry trigger·do_not_use_when
 → 최소 Skill 집합
-→ 각 Skill의 필요한 Skill Mode
+→ 각 단계의 필요한 Skill Mode
 ```
 
 발행·검증·Handoff Skill은 해당 단계에 도달할 때까지 `deferred_skills`에 둔다.
@@ -168,7 +171,8 @@ rollback_constraints:
 ```md
 # 작업 제목
 ## 목적
-## Work Mode
+## Work Mode sequence
+`PLAN → BUILD → REVIEW` (L1 이상 실행 작업에서 필수)
 ## 맥락
 ## 목표 사용자·플레이어 경험
 ## 작업 범위
@@ -224,7 +228,8 @@ rollback:
 실제로 실행한 항목마다 다음을 남긴다.
 
 ```yaml
-work_mode:
+work_mode_sequence: [PLAN, BUILD, REVIEW]
+current_work_mode:
 skill_id:
 skill_mode:
 selection: automatic | user-directed
@@ -303,13 +308,14 @@ remaining_unknowns: []
 - 범위·제외·보호·완료·검증이 추적된다.
 - 필요한 사용자 확인 전에는 구현 계약이나 실행 순서를 확정하지 않았다.
 - 큰 작업은 독립 검증 가능한 결과·의존성·병렬 묶음·게이트로 분해됐다.
-- 실제 사용한 Work Mode·Skill·Skill Mode의 이유와 결과·증거를 보고했다.
+- L1 이상 실행 작업에서 PLAN·BUILD·REVIEW 각각의 결과·증거와 실제 사용한 Skill·Skill Mode를 보고했다.
 - 새 작업자가 같은 입력에서 동등한 계약·라우팅·실행 보고를 복원할 수 있다.
 
 ## Failure conditions
 
 - 사용자에게 Skill 이름이나 Skill Mode 선언을 요구함
 - Work Mode와 Skill Mode를 같은 개념으로 혼용함
+- L1 이상 실행 작업에서 PLAN·BUILD·REVIEW 중 하나를 생략하고 완료로 보고함
 - 전체 skills 폴더를 기본 로드함
 - trigger 없이 임의로 Skill을 호출함
 - 저장소에서 확인할 사실을 사용자에게 질문함
