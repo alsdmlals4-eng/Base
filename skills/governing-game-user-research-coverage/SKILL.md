@@ -31,7 +31,7 @@ description: Use when a game project's design-document system must install, audi
 
 ## Boundary
 
-이 Skill은 누락 없는 구조와 증거 계획을 관리한다. 실제 컨셉·벤치마크·플레이테스트 해석은 `analyzing-and-refining-game-concepts`, 문서 생성은 `managing-design-documents`, 실제 계측 구현과 변경 검증은 프로젝트 계약과 검증 Skill이 책임진다.
+이 Skill은 누락 없는 구조와 증거 계획을 관리한다. 컨셉·PoC·플레이테스트 계약은 `developing-game-concepts-and-pocs`, SWOT·VRIO·포지셔닝 분석은 `analyzing-game-positioning-with-swot-vrio`, DDD·다단계 증거 해석은 `analyzing-and-refining-game-concepts`가 책임진다. 문서 생성은 `managing-design-documents`, 실제 계측 구현과 변경 검증은 프로젝트 계약과 검증 Skill이 책임진다.
 
 ## Output contract
 
