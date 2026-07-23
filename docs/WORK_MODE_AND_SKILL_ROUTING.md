@@ -12,7 +12,7 @@
 | `BUILD` | 승인된 계약의 코드·데이터·문서·자산 구현 | 범위 내 쓰기, 단계별 테스트·롤백 |
 | `REVIEW` | 결과를 적대적으로 검토·검증·판정 | 기본 읽기 전용, 증거·반례 우선, 승인된 수정은 `BUILD`로 전환 |
 
-복합 작업은 `PLAN → BUILD → REVIEW`처럼 순차 전환할 수 있다. 한 시점에는 주 Work Mode 하나만 둔다.
+L1 이상 실행 작업은 반드시 `PLAN → BUILD → REVIEW` 순서로 진행한다. 한 시점에는 현재 단계의 주 Work Mode 하나만 둔다. L0 오탈자·단순 설명·동일 검사 재실행처럼 실행 산출물이나 변경이 없는 요청만 이 순환에서 제외한다.
 
 ### Skill
 
@@ -37,8 +37,8 @@
 ```text
 사용자 Prompt
 → 의도·현재 단계·위험 파악
-→ 주 Work Mode 자동 선택
-→ Skill Registry trigger 대조
+→ L1 이상이면 PLAN → BUILD → REVIEW 순서 고정
+→ 현재 단계의 Skill Registry trigger 대조
 → 필요한 최소 Skill 자동 선택
 → 각 Skill의 Skill Mode 자동 선택
 → 실행·검증·필요 시 Work Mode 전환
@@ -55,9 +55,20 @@
 - Foundation·검증·발행·Handoff Skill은 현재 단계에 필요한 것만 추가한다.
 - 같은 책임을 여러 Skill로 중복 실행하지 않는다.
 - 새 사실·실패·범위 변경·정본 변경이 생기면 다시 라우팅한다.
+- L1 이상 실행 작업의 완료 조건은 REVIEW 판정이다. PLAN 또는 BUILD에서 끝나면 `PARTIAL` 또는 해당 단계 상태로만 보고한다.
 - Skill 파일을 읽은 것과 실제 절차를 실행한 것을 구분한다.
 
-## 4. 권한 전환
+## 4. 필수 3단계 전환
+
+L1 이상 실행 작업은 다음 순서를 생략하지 않는다.
+
+```text
+PLAN: 사실·요구·제약·완료 기준·승인 경계 확정
+→ BUILD: 승인된 변경과 단계별 자체 확인
+→ REVIEW: 독립 검증·반례·회귀·최종 판정
+```
+
+## 5. 권한 전환
 
 ```text
 PLAN
@@ -75,12 +86,13 @@ REVIEW
 - 수정 뒤 REVIEW로 돌아와 재검증
 ```
 
-## 5. 필수 실행 보고
+## 6. 필수 실행 보고
 
-L1 이상 작업은 최종 보고에 실제 사용한 항목을 남긴다.
+L1 이상 작업은 최종 보고에 PLAN·BUILD·REVIEW 각각의 실제 수행과 사용한 항목을 남긴다.
 
 ```yaml
-work_mode:
+work_mode_sequence: [PLAN, BUILD, REVIEW]
+current_work_mode:
 skill_id:
 skill_mode:
 selection: automatic | user-directed
@@ -101,7 +113,7 @@ status: PASS | PARTIAL | FAIL | UNVERIFIED
 
 중요 후보를 사용하지 않았으면 `trigger 불일치 / 비사용 조건 / 현재 단계 아님 / 도구·입력 없음`을 기록한다. 모든 Skill을 나열하지 않는다.
 
-## 6. 예시
+## 7. 예시
 
 ### 기능 구현
 

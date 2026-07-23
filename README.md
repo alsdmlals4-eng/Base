@@ -44,7 +44,7 @@ START_HERE.md
 → 인수인계·학습
 ```
 
-자세한 공용 규칙과 상태·발행 정책은 [docs/OPERATING_MODEL.md](docs/OPERATING_MODEL.md)가 단일 설명 원본입니다.
+자세한 공용 규칙과 상태·발행 정책은 [docs/OPERATING_MODEL.md](docs/OPERATING_MODEL.md)가 단일 설명 원본입니다. L1 이상 실행 작업은 `PLAN → BUILD → REVIEW`를 모두 거친 뒤에만 완료로 판정합니다.
 
 ## 활성 실행 스킬
 
