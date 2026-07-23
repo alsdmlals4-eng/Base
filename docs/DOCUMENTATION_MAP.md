@@ -88,12 +88,11 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 | 기획 책임 원본 작성·구조 변경·발행·검수 | `managing-design-documents` | `author` / `update` / `restructure` / `publish` / `validate` |
 | 분야별 스킬 생성·통합·학습 | `evolving-project-discipline-skills` | 스킬 추가·중복·반복 실패·Registry 변경 |
 | Active Context·Handoff | `maintaining-project-context-and-handoff` | 상태·다음 작업·게이트·위험 변경 |
-| 핵심 컨셉·뾰족한 재미·DDD·기획 정렬 | `analyzing-and-refining-game-concepts` | `frame` / `constrain` / `sharpen` / `structure` / `analyze` |
+| 컨셉·제약·뾰족한 재미·PoC·기획 재조정 | `developing-game-concepts-and-pocs` | concept → constraints → pointed fun → alignment → PoC → recalibration → production gate |\n| 세그먼트·대안·SWOT·VRIO·포지셔닝 | `analyzing-game-positioning-with-swot-vrio` | comparison frame → SWOT moves → VRIO → positioning → validation |\n| 행동·보상·선택·진척의 코어 루프 | `designing-game-core-loops` | moment / session / meta loop → economy → variation → test |\n| Why→How→What 기획 필연성·기능/모드 명세 | `writing-traceable-game-design-rationales` | issue → strategy → traceability → rules → necessity review |\n| 여러 게임 기획 단계의 공통 사실·handoff·PoC 판단 | `analyzing-and-refining-game-concepts` | frame → focused specialist handoffs → test → recalibration → production gate |
 | 프로젝트 코어 식별·코어/MVP 경계 | `identifying-project-core` | `inventory` / `extract-candidates` / `dependency-map` / `removal-and-change-test` / `classify` / `core-report` |
 | PLAN 단계 프로젝트 코어 확정 | `establishing-project-core` | `propose` / `stress-test` / `confirm` / `lock` / `reopen` |
 | 적대적 검토·비판 검증·개선·회귀 | `running-adversarial-review-and-refinement` | `attack` / `validate-critique` / `refine-approved-findings` / `regression-recheck` / `decision-report` |
-| 경쟁작·플레이어 반응·행동 근거 | `analyzing-and-refining-game-concepts` | `benchmark-and-player-research` |
-| 플레이테스트·이벤트·퍼널·A/B | `analyzing-and-refining-game-concepts` | `playtest-and-experiment` / `poc-contract` / `recalibrate` / `production-gate` |
+| 경쟁작·플레이어 반응·행동 근거 | `governing-game-user-research-coverage` | evidence coverage를 설치·감사하고, 전략 판단은 `analyzing-game-positioning-with-swot-vrio` 또는 컨셉 PoC로 handoff |\n| 플레이테스트·이벤트·퍼널·A/B | `developing-game-concepts-and-pocs` | PoC 가설·빌드·표본·행동·성공 기준·재조정 판단 |
 | Vertical Slice | `designing-vertical-slices` | `slice-contract` / `quality-bar` / `pipeline-proof` / `playtest-evidence` / `decision-gate` |
 | 외부 AI 작업 격리 | `orchestrating-deepseek-worktrees` | 대량 초안·분류 위임 |
 | 프로젝트 변경 통합 검증 | `reviewing-and-validating-project-changes` | `contract-check` / `external-source-review` / `static-validation` / `runtime-validation` / `regression` / `evidence-report` |
@@ -145,7 +144,7 @@ L1 이상 작업은 실제 사용한 Work Mode·Skill·Skill Mode, 선택 이유
 | Work Mode·Skill·Skill Mode를 어떻게 고르는가? | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | `templates/project-operations/SKILL_EXECUTION_REPORT.md` |
 | 구형 파일을 어떻게 갱신·통합·삭제하는가? | `skills/managing-game-project-operating-system/SKILL.md` | `templates/project-operations/LEGACY_ARTIFACT_RECONCILIATION.md` |
 | 작업을 어떤 단계와 순서로 나누는가? | `skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md` | `templates/planning/EXECUTION_SEQUENCE_PLAN.md` |
-| 어떤 게임·유저 반응을 어떻게 조사하고 반영하는가? | `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md` | `templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md` |
+| 어떤 게임·유저 반응을 어떻게 조사하고 반영하는가? | `skills/governing-game-user-research-coverage/SKILL.md`와 필요한 전문 Skill | `templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md` |
 | 접근성·성능을 어떤 증거로 검증하는가? | `skills/reviewing-and-validating-project-changes/references/accessibility-and-performance-validation.md` | `templates/quality/PROJECT_CHANGE_VALIDATION.md` |
 | 정본 변경이 모두 전파됐는가? | `skills/auditing-canonical-reference-freshness/SKILL.md` | `templates/quality/CANONICAL_REFERENCE_FRESHNESS_AUDIT.md` |
 
