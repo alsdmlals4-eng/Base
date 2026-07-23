@@ -105,7 +105,7 @@ audit
 | 행동·보상·다음 선택·진척의 코어 루프 | `designing-game-core-loops` |
 | Why→How→What·기능 필연성·구현 명세 | `writing-traceable-game-design-rationales` |
 
-컨셉부터 포지셔닝·코어 루프·기능 명세·PoC·프로덕션 판단까지 둘 이상의 단계를 연결할 때만 `analyzing-and-refining-game-concepts`를 라이프사이클 라우터로 사용한다.
+컨셉부터 포지셔닝·코어 루프·기능 명세·PoC·프로덕션 판단까지 둘 이상의 단계를 연결하거나, DDD·벤치마크·플레이어·플레이테스트 증거를 기획 결정으로 해석할 때만 `analyzing-and-refining-game-concepts`를 라이프사이클 라우터로 사용한다.
 
 SWOT은 SO·WO·ST·WT 행동으로, VRIO는 실제 자산의 가치·희소성·모방 가능성·조직화와 후속 투자·검증으로 변환한다. Base 내부에서 `DDD`는 `Digital Dopamine Design`이며, 별도 요청에서만 첫 의미 있는 보상·피드백 지연·보상 사다리·피로·인플레이션을 분석한다.
 
