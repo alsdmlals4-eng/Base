@@ -24,6 +24,7 @@
 - 문서 기억·정본·단계별 컨텍스트 압축: `managing-design-documents`, `maintaining-project-context-and-handoff`.
 - 다중 관점 공격·개선: `running-adversarial-review-and-refinement`.
 - 실제 diff·테스트·완료 증거: `reviewing-and-validating-project-changes`.
+- 변경 유형별 CI 계층, GitHub Actions 비용 절감, concurrency·`ci-gate`, Actions 차단 시 보류 상태: `reviewing-and-validating-project-changes`의 `ci-cost-optimization` Mode.
 - Skill 생성·통합·학습: `evolving-project-discipline-skills`.
 
 ## Base 자체 적용 순서
