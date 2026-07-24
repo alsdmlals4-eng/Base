@@ -8,7 +8,7 @@ Canonical policy: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
 
 ```text
 GPT
-= 기획·비-Godot 파일·GitHub 계약·Plan 문서·검수
+= 기획·비-Godot 파일·GitHub 계약·Plan 문서·검수·자동 병합 적격성 판정
 
 Codex Plan
 = 최신 저장소 읽기 전용 재검수와 기술 개선·변경 제안 보고
@@ -17,7 +17,10 @@ Codex Build
 = 지정 패키지 Branch의 Godot 구현·테스트·Commit·Push
 
 사용자
-= 프로젝트 방향·체감·기획 변경·PR 병합 최종 결정
+= 프로젝트 방향·체감·기획 변경 결정
+
+GitHub
+= 필수 병합 게이트 충족 후 자동 병합
 ```
 
 ## 2. 인계 준비 게이트
@@ -33,6 +36,7 @@ Codex Build
 - 패키지 Branch가 최신 기준 Commit에서 준비됨
 - Codex Plan 보고 Template과 테스트 명령 존재
 - 사용자 기존 변경·보호 경로 파악
+- 저장소 병합 정책과 Required Check 선언
 
 하나라도 차단되면 `BLOCKED` 또는 `UNVERIFIED`로 유지한다.
 
@@ -144,9 +148,47 @@ GPT는 Push된 Commit과 PR diff에서 확인한다.
 - `BLOCKED`
 - `UNVERIFIED`
 
-`PACKAGE_APPROVED*`만 다음 패키지 선행 조건을 충족한다. PR 병합은 별도로 사용자 승인이 필요하다.
+`PACKAGE_APPROVED*`만 다음 패키지 선행 조건과 자동 병합 적격성 검토에 진입한다.
 
-## 10. GitHub 구조
+## 10. 자동 병합 게이트
+
+기본 정책은 `AUTO_MERGE_AFTER_REQUIRED_CHECKS`다.
+
+```yaml
+merge_policy: AUTO_MERGE_AFTER_REQUIRED_CHECKS
+reviewed_head_sha:
+current_head_sha:
+required_check: ci-gate
+required_checks_passed:
+unresolved_review_threads:
+repository_auto_merge:
+ruleset:
+user_review_required:
+change_proposal:
+merge_gate:
+```
+
+허용 조건:
+
+- `PACKAGE_APPROVED` 또는 `PACKAGE_APPROVED_WITH_TECHNICAL_CHANGES`
+- PR이 Draft가 아님
+- HEAD SHA가 검수 뒤 바뀌지 않음
+- Required Check 성공
+- unresolved review thread 0
+- Repository `Allow auto-merge` 활성화
+- active Ruleset 또는 동등한 branch protection
+- `USER_REVIEW_REQUIRED`·`CHANGE_PROPOSAL` 없음
+
+상태:
+
+- `AUTO_MERGE_ELIGIBLE`
+- `AUTO_MERGE_ENABLED`
+- `AUTO_MERGE_BLOCKED`
+- `UNVERIFIED_REPOSITORY_SETTING`
+
+사용자 최종 병합 클릭은 기본 필수가 아니다. 사용자 결정이 필요한 상태에서는 결정을 반영한 뒤 다시 검수한다.
+
+## 11. GitHub 구조
 
 ```text
 상위 구현 Issue
@@ -158,7 +200,7 @@ GPT는 Push된 Commit과 PR diff에서 확인한다.
 
 기본 병렬성은 `SEQUENTIAL`이다. 완전히 독립적인 도구·자산 파이프라인만 병렬 허용한다.
 
-## 11. 중단·재개
+## 12. 중단·재개
 
 중단 시 Handoff에 다음을 남긴다.
 
@@ -167,6 +209,7 @@ GPT는 Push된 Commit과 PR diff에서 확인한다.
 - Codex Plan 결과
 - Push된 Commit·테스트
 - `CHANGE_PROPOSAL`·사용자 결정
+- 자동 병합 상태와 차단 원인
 - 다음 첫 행동
 - 롤백 경로
 

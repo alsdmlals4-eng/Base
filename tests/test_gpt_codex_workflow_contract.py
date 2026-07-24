@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
@@ -19,9 +20,14 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             "CHANGE_PROPOSAL",
             "PACKAGE_APPROVED_WITH_TECHNICAL_CHANGES",
             "USER_REVIEW_REQUIRED",
-            "사용자의 명시적 승인 전에는 PR을 병합하지 않는다",
+            "AUTO_MERGE_AFTER_REQUIRED_CHECKS",
+            "AUTO_MERGE_ELIGIBLE",
+            "AUTO_MERGE_ENABLED",
+            "AUTO_MERGE_BLOCKED",
+            "UNVERIFIED_REPOSITORY_SETTING",
         ):
             self.assertIn(term, text)
+        self.assertNotIn("사용자의 명시적 승인 전에는 PR을 병합하지 않는다", text)
 
     def test_handoff_skill_has_implementation_package_mode(self) -> None:
         text = (ROOT / "skills/maintaining-project-context-and-handoff/SKILL.md").read_text(encoding="utf-8")
@@ -32,7 +38,6 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             "ALLOWED_BRANCH_ONLY",
             "PACKAGE_APPROVED",
             "CHANGE_PROPOSAL",
-            "사용자의 명시적 승인 전에는 PR을 병합하지 않는다",
         ):
             self.assertIn(term, text)
 
@@ -45,10 +50,13 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             "commit_push_pr_issue: FORBIDDEN",
             "SEQUENTIAL",
             "원격 HEAD",
+            "AUTO_MERGE_AFTER_REQUIRED_CHECKS",
+            "AUTO_MERGE_ELIGIBLE",
         ):
             self.assertIn(term, text)
+        self.assertNotIn("PR 병합은 별도로 사용자 승인이 필요하다", text)
 
-    def test_master_plan_template_has_package_and_approval_contract(self) -> None:
+    def test_master_plan_template_has_package_and_merge_contract(self) -> None:
         text = (ROOT / "templates/project-operations/MASTER_IMPLEMENTATION_PLAN.md").read_text(encoding="utf-8")
         for term in (
             "구현 패키지 지도",
@@ -56,9 +64,12 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             "CHANGE_PROPOSAL",
             "PACKAGE_APPROVED",
             "USER_REVIEW_REQUIRED",
-            "사용자 병합 승인: `REQUIRED`",
+            "기본 병합 정책: `AUTO_MERGE_AFTER_REQUIRED_CHECKS`",
+            "Required Check: `ci-gate`",
+            "수동 사용자 병합 승인: `OPTIONAL_EXCEPTION`",
         ):
             self.assertIn(term, text)
+        self.assertNotIn("사용자 병합 승인: `REQUIRED`", text)
 
     def test_codex_plan_report_is_read_only_and_evidence_driven(self) -> None:
         text = (ROOT / "templates/project-operations/CODEX_PACKAGE_PLAN_REPORT.md").read_text(encoding="utf-8")
@@ -73,7 +84,7 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
 
-    def test_package_contract_limits_codex_git_authority(self) -> None:
+    def test_package_contract_limits_codex_git_authority_and_gates_merge(self) -> None:
         text = (ROOT / "templates/project-operations/IMPLEMENTATION_PACKAGE_CONTRACT.md").read_text(encoding="utf-8")
         for term in (
             "create_or_switch: FORBIDDEN",
@@ -84,15 +95,68 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             "create_or_update: FORBIDDEN",
             "merge: FORBIDDEN",
             "비-Godot 변경 반환 계약",
+            "merge_policy: AUTO_MERGE_AFTER_REQUIRED_CHECKS | MANUAL_USER_APPROVAL",
+            "required_check: ci-gate",
+            "AUTO_MERGE_ELIGIBLE",
+            "UNVERIFIED_REPOSITORY_SETTING",
         ):
             self.assertIn(term, text)
 
+    def test_github_pro_policy_declares_safe_rollout_and_blocking_states(self) -> None:
+        text = (ROOT / "docs/GITHUB_PRO_OPERATING_POLICY.md").read_text(encoding="utf-8")
+        for term in (
+            "Base → 비공개 `omenward` → 다른 활성 프로젝트",
+            "AUTO_MERGE_AFTER_REQUIRED_CHECKS",
+            "승인 리뷰 수 `0`",
+            "AUTO_MERGE_BLOCKED",
+            "UNVERIFIED_REPOSITORY_SETTING",
+            "USER_REVIEW_REQUIRED",
+            "CHANGE_PROPOSAL",
+            "비공개 Push ruleset",
+        ):
+            self.assertIn(term, text)
+
+    def test_solo_main_ruleset_is_importable_and_requires_ci_gate(self) -> None:
+        path = ROOT / "templates/project-operations/github/rulesets/solo-main-safety.json"
+        data = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(data["name"], "solo-main-safety")
+        self.assertEqual(data["target"], "branch")
+        self.assertEqual(data["enforcement"], "active")
+        self.assertEqual(data["conditions"]["ref_name"]["include"], ["~DEFAULT_BRANCH"])
+
+        rules = {rule["type"]: rule for rule in data["rules"]}
+        self.assertIn("deletion", rules)
+        self.assertIn("non_fast_forward", rules)
+        self.assertIn("required_linear_history", rules)
+        self.assertEqual(
+            rules["pull_request"]["parameters"]["required_approving_review_count"],
+            0,
+        )
+        self.assertTrue(
+            rules["pull_request"]["parameters"]["required_review_thread_resolution"]
+        )
+        self.assertEqual(
+            rules["required_status_checks"]["parameters"]["required_status_checks"],
+            [{"context": "ci-gate"}],
+        )
+        self.assertTrue(
+            rules["required_status_checks"]["parameters"]
+            ["strict_required_status_checks_policy"]
+        )
+
     def test_documentation_map_routes_without_new_duplicate_skill(self) -> None:
         text = (ROOT / "docs/DOCUMENTATION_MAP.md").read_text(encoding="utf-8")
-        self.assertIn("Grill Me 핵심 의사결정 인터뷰", text)
-        self.assertIn("`clarify` + `references/grill-me-protocol.md`", text)
-        self.assertIn("GPT→Codex 단계별 Godot 구현 인계", text)
-        self.assertIn("`implementation-package-handoff`", text)
+        for term in (
+            "Grill Me 핵심 의사결정 인터뷰",
+            "`clarify` + `references/grill-me-protocol.md`",
+            "GPT→Codex 단계별 Godot 구현 인계",
+            "`implementation-package-handoff`",
+            "GitHub Pro 저장소 운영",
+            "GitHub Pro 보호·Ruleset·자동 병합",
+            "GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md",
+            "GITHUB_USAGE_BUDGET.md",
+        ):
+            self.assertIn(term, text)
 
 
 if __name__ == "__main__":

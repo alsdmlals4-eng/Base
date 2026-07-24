@@ -81,25 +81,41 @@ updated_at:
 - 승인 기능 제거
 - 저장 호환성을 깨는 Schema 변경
 
-## 15. Branch·PR 계약
+## 15. Branch·PR·병합 계약
 
 - 상위 구현 Issue:
 - 패키지 Branch 형식:
 - 패키지 PR 형식:
 - 기본 병렬성: `SEQUENTIAL`
-- 사용자 병합 승인: `REQUIRED`
+- 기본 병합 정책: `AUTO_MERGE_AFTER_REQUIRED_CHECKS`
+- Required Check: `ci-gate`
+- 자동 병합 차단 상태: `USER_REVIEW_REQUIRED / CHANGE_PROPOSAL / REVISE / BLOCKED / UNVERIFIED`
+- 수동 사용자 병합 승인: `OPTIONAL_EXCEPTION`
 - Codex `main` 직접 Push: `FORBIDDEN`
 - Codex force push·amend·PR 생성·병합: `FORBIDDEN`
 
-## 16. 롤백 계획
+## 16. Repository 병합 설정
 
-## 17. Vertical Slice 완료 기준
+```yaml
+repository_auto_merge: enabled | disabled | UNVERIFIED
+ruleset: active | disabled | UNVERIFIED
+required_check: ci-gate
+required_review_thread_resolution: true
+required_approving_review_count: 0
+allowed_merge_method: squash
+```
 
-## 18. 다음 프로덕션 단계 진입 조건
+## 17. 롤백 계획
 
-## 19. 남은 위험과 `UNVERIFIED`
+## 18. Vertical Slice 완료 기준
 
-## 20. 사용자 승인 기록
+## 19. 다음 프로덕션 단계 진입 조건
+
+## 20. 남은 위험과 `UNVERIFIED`
+
+## 21. 사용자 결정 기록
+
+사용자 체감·프로젝트 코어·MVP·호환성처럼 실제 결정이 필요한 항목만 기록한다.
 
 | 결정 | 사용자 답변 | 기준 대화·Issue | 반영 Commit |
 |---|---|---|---|
