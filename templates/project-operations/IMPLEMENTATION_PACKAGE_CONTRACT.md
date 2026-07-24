@@ -128,12 +128,33 @@ rollback:
 - 사용자 체감 검수 필요:
 - 최종 패키지 상태:
 
-## 18. 사용자 승인
+## 18. 병합 정책
 
-- 병합 승인:
-- 승인 근거:
-- 승인 시점:
+```yaml
+merge_policy: AUTO_MERGE_AFTER_REQUIRED_CHECKS | MANUAL_USER_APPROVAL
+reviewed_head_sha:
+current_head_sha:
+required_check: ci-gate
+required_checks_passed: true | false | UNVERIFIED
+unresolved_review_threads:
+repository_auto_merge: enabled | disabled | UNVERIFIED
+ruleset: active | disabled | UNVERIFIED
+user_review_required: true | false
+change_proposal: true | false
+merge_gate: AUTO_MERGE_ELIGIBLE | AUTO_MERGE_ENABLED | AUTO_MERGE_BLOCKED | UNVERIFIED_REPOSITORY_SETTING
+```
 
-## 19. 롤백
+자동 병합은 `PACKAGE_APPROVED*`, 동일 HEAD SHA, 필수 검사 성공, unresolved thread 0, Repository auto-merge·Ruleset 확인, 사용자 결정·기획 변경 없음일 때만 허용한다.
 
-## 20. 다음 패키지 선행 조건
+## 19. 사용자 결정
+
+사용자 체감·프로젝트 코어·MVP·호환성 판단이 필요한 경우에만 작성한다.
+
+- 결정 항목:
+- 사용자 답변:
+- 계약 반영 위치:
+- 자동 병합 재개 조건:
+
+## 20. 롤백
+
+## 21. 다음 패키지 선행 조건
