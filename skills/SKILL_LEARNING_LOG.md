@@ -1,5 +1,15 @@
 # Base Skill Learning Log
 
+## 2026-07-24 GPT–Codex 역할 분리·Grill Me·비용 최적화 CI 교훈
+
+- Grill Me는 요구 확인과 승인 상태를 다시 만드는 독립 Skill이 아니라 `managing-project-intake-and-work-contract`의 `clarify` Mode에 통합하는 편이 중복 질문과 상태 충돌을 줄인다.
+- GPT는 기획·벤치마킹·시스템·데이터·UX·비-Godot 파일·GitHub 계약과 검수를 완료하고, Codex Plan은 최신 Godot 저장소를 읽기 전용으로 재검수하며, Codex Build는 지정 Branch의 Godot 구현만 담당하도록 의사결정 권한과 파일 권한을 분리했다.
+- 동일한 플레이어 결과와 데이터 계약을 유지하는 구조·성능·안정성·테스트 개선은 기술 변경으로 허용하되 프로젝트 코어·Core Loop·플레이 규칙·MVP·주요 UX·저장 호환성 변경은 `CHANGE_PROPOSAL`로 구현과 분리한다.
+- 전체 설계는 마스터 구현계획 하나로 유지하고 실제 구현은 검증 가능한 패키지, 상위 Issue, 패키지별 Branch·PR, 순차 진행, 영향도 기반 승인 게이트로 나누는 것이 회귀·롤백·중단 후 재개에 유리하다.
+- GitHub Actions 첫 실제 실행에서 `actions/setup-node`의 `cache: pnpm`이 Corepack 활성화 전에 pnpm을 요구해 Ubuntu·Windows 발행 Job이 모두 실패했다. 패키지 관리자 캐시는 해당 실행 파일의 준비 순서를 보장한 뒤에만 활성화해야 한다.
+- 같은 실행에서 Skill 본문만 바꾸고 Registry·Learning Log·집중 회귀 테스트를 함께 갱신하지 않은 coupled-change 누락이 정본 최신성 검사에 의해 차단됐다. Skill 계약 변경은 본문·Registry·학습·검증을 하나의 변경 단위로 취급한다.
+- 현재 지식 상태: 역할 경계와 승인 정책은 사용자 승인된 `PATTERN`, 실제 여러 게임 프로젝트의 단계별 Codex 인계 효과는 `OBSERVATION`, 변경 위험별 CI 비용 절감 효과는 후속 실행량 데이터 전까지 `HYPOTHESIS`.
+
 ## 2026-07-22 원문 책임 전수 매핑·Skill 구조 최적화
 
 - 1,201줄 학습 텍스트의 책임을 `skills/SKILL_COVERAGE.json`에 전수 매핑했다.

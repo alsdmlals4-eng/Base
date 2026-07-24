@@ -33,3 +33,22 @@
 3. 누락이 결과를 바꾸는 항목만 목록화한다.
 4. 현재 이해를 짧게 재진술하고 틀리거나 빠진 부분을 묻는다.
 5. 마지막 한 문장 확인을 받는다.
+
+## Grill Me 의사결정 인터뷰
+
+프로젝트 코어, 플레이어 경험, MVP, PoC, Vertical Slice, 역할·승인 경계처럼 사용자가 결정해야 하는 중요한 분기가 남으면 `clarify` Skill Mode에서 `grill-me-protocol.md`를 사용한다.
+
+```text
+저장소·대화에서 답 확인
+→ 이미 답한 질문 제거
+→ 결과를 바꾸는 결정 하나 선택
+→ 선택지·장단점·GPT 권장안 제시
+→ 사용자 답변
+→ 결정 원장·책임 원본 즉시 반영
+→ 다음 차단 질문 재평가
+```
+
+사용자가 `모두 권장안대로`라고 승인하면 남은 동등 유형 결정을 권장안으로 확정하고 불필요한 질문을 계속하지 않는다.
+
+Reference: `skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md`
+Template: `templates/project-operations/GRILL_ME_DECISION_RECORD.md`

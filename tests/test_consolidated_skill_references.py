@@ -174,6 +174,42 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         ):
             self.assertIn(term, reference)
 
+    def test_grill_me_and_staged_codex_handoff_are_integrated_modes(self) -> None:
+        registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
+        aliases = (ROOT / "skills/LEGACY_SKILL_ALIASES.md").read_text(encoding="utf-8")
+        intake = skill_package_text("managing-project-intake-and-work-contract")
+        handoff = skill_package_text("maintaining-project-context-and-handoff")
+
+        for tag in (
+            "grill-me",
+            "decision-interview",
+            "implementation-package-handoff",
+            "codex-plan-review",
+            "godot-package-handoff",
+            "ci-cost-optimization",
+            "ci-gate",
+        ):
+            self.assertIn(tag, registry)
+
+        for alias in ("`grill-me`", "`grillme`", "`Grill Me`"):
+            self.assertIn(alias, aliases)
+        self.assertIn("managing-project-intake-and-work-contract", aliases)
+        self.assertIn("한 번에 하나", intake)
+        self.assertIn("모두 권장안대로", intake)
+        self.assertIn("PLAN_REVIEW_ONLY", handoff)
+        self.assertIn("godot_runtime_files_only", handoff)
+        self.assertIn("CHANGE_PROPOSAL", handoff)
+
+        for path in (
+            "skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md",
+            "skills/maintaining-project-context-and-handoff/references/gpt-codex-implementation-handoff.md",
+            "templates/project-operations/GRILL_ME_DECISION_RECORD.md",
+            "templates/project-operations/MASTER_IMPLEMENTATION_PLAN.md",
+            "templates/project-operations/CODEX_PACKAGE_PLAN_REPORT.md",
+            "templates/project-operations/IMPLEMENTATION_PACKAGE_CONTRACT.md",
+        ):
+            self.assertTrue((ROOT / path).is_file(), path)
+
     def test_official_evidence_sources_are_recorded(self) -> None:
         benchmark = (ROOT / "skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md").read_text(encoding="utf-8")
         sequence = (ROOT / "skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md").read_text(encoding="utf-8")

@@ -59,6 +59,13 @@
       "status": "COVERED_EXISTING"
     },
     {
+      "id": "grill-me-decision-interview",
+      "skills": [
+        "managing-project-intake-and-work-contract"
+      ],
+      "status": "COVERED_EXISTING"
+    },
+    {
       "id": "player-experience-and-core-concept",
       "skills": [
         "analyzing-and-refining-game-concepts",
@@ -99,6 +106,13 @@
       "status": "COVERED_EXISTING"
     },
     {
+      "id": "gpt-codex-staged-implementation-handoff",
+      "skills": [
+        "maintaining-project-context-and-handoff"
+      ],
+      "status": "COVERED_EXISTING"
+    },
+    {
       "id": "visual-dashboard",
       "skills": [
         "building-project-visual-dashboards"
@@ -114,6 +128,13 @@
     },
     {
       "id": "change-test-and-completion-evidence",
+      "skills": [
+        "reviewing-and-validating-project-changes"
+      ],
+      "status": "COVERED_EXISTING"
+    },
+    {
+      "id": "ci-cost-aware-validation",
       "skills": [
         "reviewing-and-validating-project-changes"
       ],

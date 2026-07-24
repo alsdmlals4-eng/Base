@@ -30,17 +30,277 @@ on:
       - "tests/test_project_skill_map_generation.py"
       - "tests/test_base_change_proposals.py"
       - "tests/test_deep_interview_contract.py"
+      - "tests/test_gpt_codex_workflow_contract.py"
+      - "tests/test_ci_workflow_cost_policy.py"
       - "tests/test_ui_art_audit.py"
       - ".github/reference-freshness.json"
       - ".github/workflows/validate-game-project-operating-system.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "START_HERE.md"
+      - "AGENTS.md"
+      - "README.md"
+      - "docs/**"
+      - "skills/**"
+      - "tools/**"
+      - "schemas/**"
+      - '\[수정제안서\]/**'
+      - "requirements-publication.txt"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "templates/**"
+      - "tests/**"
+      - ".github/reference-freshness.json"
+      - ".github/workflows/validate-game-project-operating-system.yml"
+  schedule:
+    - cron: "15 18 * * *"
   workflow_dispatch:
+    inputs:
+      validation_level:
+        description: Validation tier to run
+        required: true
+        default: auto
+        type: choice
+        options:
+          - auto
+          - docs
+          - contract
+          - code
+          - full
 
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
-  validate-operating-system:
-    name: validate-operating-system
+  classify-changes:
+    name: classify-changes
+    runs-on: ubuntu-latest
+    outputs:
+      docs_only: ${{ steps.classify.outputs.docs_only }}
+      canonical_contract: ${{ steps.classify.outputs.canonical_contract }}
+      code_or_engine: ${{ steps.classify.outputs.code_or_engine }}
+      ci_toolchain_high_risk: ${{ steps.classify.outputs.ci_toolchain_high_risk }}
+      full_matrix: ${{ steps.classify.outputs.full_matrix }}
+      platform_smoke: ${{ steps.classify.outputs.platform_smoke }}
+      run_contract: ${{ steps.classify.outputs.run_contract }}
+      run_publication: ${{ steps.classify.outputs.run_publication }}
+      run_windows: ${{ steps.classify.outputs.run_windows }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Classify changed files
+        id: classify
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          VALIDATION_LEVEL: ${{ github.event.inputs.validation_level || 'auto' }}
+        run: |
+          set -euo pipefail
+
+          level=""
+          platform_smoke=false
+
+          if [[ "$GITHUB_EVENT_NAME" == "schedule" || "$GITHUB_EVENT_NAME" == "push" ]]; then
+            level=full
+          elif [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" && "$VALIDATION_LEVEL" != "auto" ]]; then
+            level="$VALIDATION_LEVEL"
+          elif [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
+            level=full
+          else
+            if [[ -z "$BASE_SHA" || -z "$HEAD_SHA" ]]; then
+              echo "Missing pull request base/head SHA; escalating to CI high risk."
+              level=ci
+            else
+              git diff --name-only "$BASE_SHA...$HEAD_SHA" > changed-files.txt
+              cat changed-files.txt
+
+              has_canonical=false
+              has_code=false
+              has_ci=false
+
+              while IFS= read -r path; do
+                [[ -z "$path" ]] && continue
+                case "$path" in
+                  .github/workflows/*|tests/test_ci_workflow_cost_policy.py)
+                    has_ci=true
+                    ;;
+                  tools/build_design_documents.py|tools/build_policy_driven_design_documents.py|tools/design_document_diagrams.py|tools/publication_v3.py|tools/check_publication_environment.py|tests/test_design_document_publication_governance.py|tests/test_design_document_generation.py|tests/test_policy_driven_publication.py|tests/test_project_skill_map_generation.py|tests/test_ui_art_audit.py|requirements-publication.txt|package.json|pnpm-lock.yaml|pnpm-workspace.yaml)
+                    has_code=true
+                    platform_smoke=true
+                    ;;
+                  tools/*|tests/*|*.py|*.js|*.mjs|*.cjs|*.ts|*.tsx|*.gd|*.tscn|*.tres|project.godot)
+                    has_code=true
+                    ;;
+                  AGENTS.md|START_HERE.md|docs/OPERATING_MODEL.md|docs/WORK_MODE_AND_SKILL_ROUTING.md|docs/DOCUMENTATION_MAP.md|docs/GPT_CODEX_WORKFLOW_POLICY.md|docs/CI_EXECUTION_COST_POLICY.md|skills/*|schemas/*|templates/*|.github/reference-freshness.json)
+                    has_canonical=true
+                    ;;
+                  README.md|docs/*|*.md|*.txt)
+                    ;;
+                  *)
+                    echo "Unknown change path '$path'; escalating to code validation."
+                    has_code=true
+                    ;;
+                esac
+              done < changed-files.txt
+
+              if [[ "$has_ci" == true ]]; then
+                level=ci
+              elif [[ "$has_code" == true ]]; then
+                level=code
+              elif [[ "$has_canonical" == true ]]; then
+                level=contract
+              else
+                level=docs
+              fi
+            fi
+          fi
+
+          case "$level" in
+            docs)
+              docs_only=true
+              canonical_contract=false
+              code_or_engine=false
+              ci_toolchain_high_risk=false
+              full_matrix=false
+              run_contract=false
+              run_publication=false
+              run_windows=false
+              ;;
+            contract)
+              docs_only=false
+              canonical_contract=true
+              code_or_engine=false
+              ci_toolchain_high_risk=false
+              full_matrix=false
+              run_contract=true
+              run_publication=false
+              run_windows=false
+              ;;
+            code)
+              docs_only=false
+              canonical_contract=false
+              code_or_engine=true
+              ci_toolchain_high_risk=false
+              full_matrix=false
+              run_contract=true
+              run_publication=true
+              run_windows="$platform_smoke"
+              ;;
+            ci)
+              docs_only=false
+              canonical_contract=false
+              code_or_engine=false
+              ci_toolchain_high_risk=true
+              full_matrix=false
+              platform_smoke=true
+              run_contract=true
+              run_publication=true
+              run_windows=true
+              ;;
+            full)
+              docs_only=false
+              canonical_contract=false
+              code_or_engine=false
+              ci_toolchain_high_risk=false
+              full_matrix=true
+              platform_smoke=true
+              run_contract=true
+              run_publication=true
+              run_windows=true
+              ;;
+            *)
+              echo "Unsupported validation level '$level'."
+              exit 1
+              ;;
+          esac
+
+          {
+            echo "docs_only=$docs_only"
+            echo "canonical_contract=$canonical_contract"
+            echo "code_or_engine=$code_or_engine"
+            echo "ci_toolchain_high_risk=$ci_toolchain_high_risk"
+            echo "full_matrix=$full_matrix"
+            echo "platform_smoke=$platform_smoke"
+            echo "run_contract=$run_contract"
+            echo "run_publication=$run_publication"
+            echo "run_windows=$run_windows"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Selected validation level: $level"
+
+  docs-validation:
+    name: docs-validation
+    needs: classify-changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Set up baseline Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate whitespace
+        id: whitespace
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set +e
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            git diff --check "$BASE_SHA...$HEAD_SHA" 2>&1 | tee whitespace-results.txt
+          elif [[ "$GITHUB_EVENT_NAME" == "push" && -n "$BEFORE_SHA" && ! "$BEFORE_SHA" =~ ^0+$ ]]; then
+            git diff --check "$BEFORE_SHA...$GITHUB_SHA" 2>&1 | tee whitespace-results.txt
+          else
+            git diff --check "${GITHUB_SHA}^...${GITHUB_SHA}" 2>&1 | tee whitespace-results.txt
+          fi
+          status=${PIPESTATUS[0]}
+          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          exit "$status"
+
+      - name: Run lightweight contract tests
+        if: always()
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m unittest \
+            tests/test_gpt_codex_workflow_contract.py \
+            tests/test_ci_workflow_cost_policy.py \
+            -v 2>&1 | tee docs-validation-results.txt
+
+      - name: Upload docs diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-validation-diagnostics
+          path: |
+            whitespace-results.txt
+            docs-validation-results.txt
+          if-no-files-found: warn
+          retention-days: 1
+
+  ubuntu-contract:
+    name: ubuntu-contract
+    needs: classify-changes
+    if: needs.classify-changes.outputs.run_contract == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -53,20 +313,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-publication.txt
 
-      - name: Set up Node and pnpm
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-      - run: corepack enable && corepack prepare pnpm@11.9.0 --activate
-
-      - name: Install document publication dependencies
+      - name: Install contract dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libreoffice-writer fonts-nanum poppler-utils
           python -m pip install --upgrade pip
           python -m pip install -r requirements-publication.txt
-          pnpm install --frozen-lockfile
 
       - name: Check Python syntax
         run: |
@@ -89,93 +342,123 @@ jobs:
             templates/project-operations/github/check_design_document_publications.py \
             tests/test_documentation_governance.py \
             tests/test_skill_routing_governance.py \
-            tests/test_design_document_publication_governance.py \
-            tests/test_design_document_generation.py \
-            tests/test_policy_driven_publication.py \
             tests/test_consolidated_skill_references.py \
             tests/test_reference_freshness.py \
             tests/test_skill_package_integrity.py \
             tests/test_skill_system_coverage.py \
-            tests/test_project_skill_map_generation.py \
             tests/test_game_project_operating_system_structure.py \
             tests/test_base_change_proposals.py \
             tests/test_deep_interview_contract.py \
-            tests/test_ui_art_audit.py
+            tests/test_gpt_codex_workflow_contract.py \
+            tests/test_ci_workflow_cost_policy.py
 
       - name: Validate Base change proposals
         if: github.event_name == 'pull_request'
         run: python tools/check_base_change_proposals.py --base-ref "${{ github.event.pull_request.base.sha }}"
 
       - name: Check canonical reference freshness
-        id: reference_freshness
         if: github.event_name == 'pull_request'
         shell: bash
         run: |
-          set +e
+          set -o pipefail
           python tools/check_canonical_reference_freshness.py \
             --config .github/reference-freshness.json \
             --base "${{ github.event.pull_request.base.sha }}" \
             --head "${{ github.event.pull_request.head.sha }}" \
             2>&1 | tee reference-freshness-results.txt
-          status=${PIPESTATUS[0]}
-          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
-          exit "$status"
 
-      - name: Upload reference freshness report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: reference-freshness-report
-          path: reference-freshness-results.txt
-          if-no-files-found: warn
-          retention-days: 1
-
-      - name: Run operating system regression and generation tests
-        id: regression
+      - name: Run contract and governance regression tests
         shell: bash
         run: |
-          set +e
+          set -o pipefail
           python -m unittest \
             tests/test_documentation_governance.py \
             tests/test_skill_routing_governance.py \
-            tests/test_design_document_publication_governance.py \
-            tests/test_design_document_generation.py \
-            tests/test_policy_driven_publication.py \
             tests/test_consolidated_skill_references.py \
             tests/test_reference_freshness.py \
             tests/test_skill_package_integrity.py \
             tests/test_skill_system_coverage.py \
-            tests/test_project_skill_map_generation.py \
+            tests/test_game_project_operating_system_structure.py \
             tests/test_base_change_proposals.py \
             tests/test_deep_interview_contract.py \
-            tests/test_ui_art_audit.py \
-            tests/test_game_project_operating_system_structure.py \
-            -v 2>&1 | tee operating-system-test-results.txt
-          test_status=${PIPESTATUS[0]}
+            tests/test_gpt_codex_workflow_contract.py \
+            tests/test_ci_workflow_cost_policy.py \
+            -v 2>&1 | tee operating-system-contract-results.txt
           python tools/check_skill_system_coverage.py \
-            2>&1 | tee -a operating-system-test-results.txt
-          checker_status=${PIPESTATUS[0]}
-          if [ "$test_status" -ne 0 ]; then
-            status=$test_status
-          else
-            status=$checker_status
-          fi
-          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
-          exit "$status"
-        env:
-          PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome
+            2>&1 | tee -a operating-system-contract-results.txt
 
-      - name: Upload operating system test report
-        if: always()
+      - name: Upload contract diagnostics on failure
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: operating-system-test-report
-          path: operating-system-test-results.txt
+          name: operating-system-contract-diagnostics
+          path: |
+            reference-freshness-results.txt
+            operating-system-contract-results.txt
           if-no-files-found: warn
           retention-days: 1
 
-  validate-publications-windows:
-    name: validate-publications-windows
+  publication-validation:
+    name: publication-validation
+    needs: classify-changes
+    if: needs.classify-changes.outputs.run_publication == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-publication.txt
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install publication dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libreoffice-writer fonts-nanum poppler-utils
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-publication.txt
+          corepack enable
+          corepack prepare pnpm@11.9.0 --activate
+          pnpm install --frozen-lockfile
+
+      - name: Run publication and generation tests
+        shell: bash
+        env:
+          PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome
+        run: |
+          set -o pipefail
+          python -m unittest \
+            tests/test_design_document_publication_governance.py \
+            tests/test_design_document_generation.py \
+            tests/test_policy_driven_publication.py \
+            tests/test_project_skill_map_generation.py \
+            tests/test_ui_art_audit.py \
+            -v 2>&1 | tee publication-test-results.txt
+
+      - name: Upload publication diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: publication-diagnostics-ubuntu
+          path: publication-test-results.txt
+          if-no-files-found: warn
+          retention-days: 1
+
+  platform-smoke-windows:
+    name: platform-smoke-windows
+    needs: classify-changes
+    if: needs.classify-changes.outputs.run_windows == 'true'
     runs-on: windows-latest
     steps:
       - name: Check out repository
@@ -188,19 +471,19 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-publication.txt
 
-      - name: Set up Node and pnpm
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: "24"
-      - shell: pwsh
-        run: |
-          corepack enable
-          corepack prepare pnpm@11.9.0 --activate
 
       - name: Install Windows publication dependencies
         shell: pwsh
         run: |
+          corepack enable
+          corepack prepare pnpm@11.9.0 --activate
           choco install libreoffice-fresh -y --no-progress
           $popplerVersion = "24.08.0-0"
           $popplerUrl = "https://github.com/oschwartz10612/poppler-windows/releases/download/v$popplerVersion/Release-$popplerVersion.zip"
@@ -231,35 +514,57 @@ jobs:
           python tools/check_publication_environment.py --require-mermaid
           python -m unittest tests.test_design_document_generation tests.test_policy_driven_publication tests.test_project_skill_map_generation tests.test_ui_art_audit -v
 
-  validate-whitespace:
-    name: validate-whitespace
-    if: github.event_name == 'pull_request'
+  ci-gate:
+    name: ci-gate
+    needs:
+      - classify-changes
+      - docs-validation
+      - ubuntu-contract
+      - publication-validation
+      - platform-smoke-windows
+    if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          show-progress: false
-
-      - name: Create whitespace report
-        id: whitespace
+      - name: Evaluate required validation jobs
         shell: bash
+        env:
+          CLASSIFY_RESULT: ${{ needs.classify-changes.result }}
+          DOCS_RESULT: ${{ needs.docs-validation.result }}
+          CONTRACT_REQUIRED: ${{ needs.classify-changes.outputs.run_contract }}
+          CONTRACT_RESULT: ${{ needs.ubuntu-contract.result }}
+          PUBLICATION_REQUIRED: ${{ needs.classify-changes.outputs.run_publication }}
+          PUBLICATION_RESULT: ${{ needs.publication-validation.result }}
+          WINDOWS_REQUIRED: ${{ needs.classify-changes.outputs.run_windows }}
+          WINDOWS_RESULT: ${{ needs.platform-smoke-windows.result }}
         run: |
-          set +e
-          git diff --check \
-            "${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}" \
-            > whitespace-errors.txt 2>&1
-          status=$?
-          cat whitespace-errors.txt
-          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
-          exit "$status"
+          set -euo pipefail
+          failed=0
 
-      - name: Upload whitespace report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: whitespace-report
-          path: whitespace-errors.txt
-          if-no-files-found: error
-          retention-days: 1
+          require_success() {
+            local job_name="$1"
+            local required="$2"
+            local result="$3"
+            if [[ "$required" == "true" && "$result" != "success" ]]; then
+              echo "required job failed or was not executed: $job_name (result=$result)"
+              failed=1
+            fi
+          }
+
+          if [[ "$CLASSIFY_RESULT" != "success" ]]; then
+            echo "required job failed or was not executed: classify-changes (result=$CLASSIFY_RESULT)"
+            failed=1
+          fi
+          if [[ "$DOCS_RESULT" != "success" ]]; then
+            echo "required job failed or was not executed: docs-validation (result=$DOCS_RESULT)"
+            failed=1
+          fi
+
+          require_success "ubuntu-contract" "$CONTRACT_REQUIRED" "$CONTRACT_RESULT"
+          require_success "publication-validation" "$PUBLICATION_REQUIRED" "$PUBLICATION_RESULT"
+          require_success "platform-smoke-windows" "$WINDOWS_REQUIRED" "$WINDOWS_RESULT"
+
+          if [[ "$failed" -ne 0 ]]; then
+            exit 1
+          fi
+
+          echo "CI gate passed"

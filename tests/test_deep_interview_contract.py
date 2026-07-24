@@ -113,6 +113,37 @@ class DeepInterviewContractTests(unittest.TestCase):
         text = (ROOT / "skills/managing-project-intake-and-work-contract/references/ambiguity-and-closure.md").read_text(encoding="utf-8")
         self.assertIn("상세 요청의 역인터뷰", text)
         self.assertIn("틀리거나 빠진 부분", text)
+        self.assertIn("Grill Me 의사결정 인터뷰", text)
+        self.assertIn("모두 권장안대로", text)
+
+    def test_grill_me_protocol_is_one_question_recommendation_and_ledger_driven(self) -> None:
+        text = (ROOT / "skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md").read_text(encoding="utf-8")
+        for term in (
+            "한 번에 하나",
+            "저장소·책임 원본·현재 대화",
+            "GPT 권장안",
+            "선택 시 확정되는 사항",
+            "GRILL_ME_0",
+            "GRILL_ME_3",
+            "CORE_CONFIRMED",
+            "READY_FOR_IMPLEMENTATION_HANDOFF",
+            "모두 권장안대로",
+        ):
+            self.assertIn(term, text)
+
+    def test_grill_me_decision_template_has_required_contract(self) -> None:
+        text = (ROOT / "templates/project-operations/GRILL_ME_DECISION_RECORD.md").read_text(encoding="utf-8")
+        for term in (
+            "질문 ID",
+            "GPT 권장안",
+            "사용자 답변",
+            "최종 결정",
+            "반영 Commit",
+            "비타협 조건",
+            "변경 가능한 요소",
+            "제거·보류 요소",
+        ):
+            self.assertIn(term, text)
 
 
 if __name__ == "__main__":

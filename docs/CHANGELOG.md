@@ -2,6 +2,13 @@
 
 ## Unreleased - Base audit and operating-contract consistency
 
+- GPT가 기획·벤치마킹·시스템·데이터·UX·비-Godot 파일·GitHub 계약과 검수를 완료하고 Codex에는 읽기 전용 Plan 재검수 뒤 단계별 Godot 구현만 인계하는 공용 정책을 추가했다.
+- Codex의 동작 보존 기술 개선과 프로젝트 코어·플레이 규칙·MVP·주요 UX·저장 호환성 변경을 `CHANGE_PROPOSAL`로 분리했다.
+- 마스터 구현계획, Codex 패키지 Plan 보고서, Godot 구현 패키지 계약, 상위 Issue·패키지별 Branch·PR·사용자 병합 승인 Template을 추가했다.
+- Grill Me를 새 중복 Skill로 만들지 않고 `managing-project-intake-and-work-contract`의 `clarify` Mode에 통합해 저장소 우선 조사, 한 번에 하나의 질문, GPT 권장안, 결정 원장과 종료 기준을 고정했다.
+- `maintaining-project-context-and-handoff`에 `implementation-package-handoff` Mode를 추가해 GPT 계약 갱신 → Codex Build → GPT diff·테스트 검수 → 사용자 승인 흐름을 연결했다.
+- GitHub Actions를 `DOCS_ONLY / CANONICAL_CONTRACT / CODE_OR_ENGINE / CI_TOOLCHAIN_HIGH_RISK / FULL_MATRIX`로 계층화하고 PR concurrency 취소, 조건부 발행·Windows smoke와 안정된 `ci-gate`를 추가했다.
+- 첫 Actions 실행에서 발견한 pnpm 초기화 순서와 Skill Registry·Learning Log·집중 회귀 동기화 누락을 수정하고 재발 방지 테스트를 추가했다.
 - 제공된 학습 텍스트의 책임을 전수 매핑하고 9개 독립 Skill을 추가했으며, 중복 책임은 기존 통합 Skill에 유지했다.
 - 가지치기·본문 간소화·행동 보존 리팩토링 Skill을 분리하고 이를 Base의 코어·컨셉·적대적 검토·Skill 진화 본문에 실제 적용했다.
 - Games User Research 11영역, 로컬·GitHub 동기화, 장기 작업 연속성, 사용자 학습 노트, 프로젝트 대시보드, 엔진 런타임 디버깅 계약을 추가했다.

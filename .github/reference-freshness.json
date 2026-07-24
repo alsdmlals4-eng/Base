@@ -68,13 +68,22 @@
       "name": "skill-contract-registry-learning-sync",
       "when_changed": ["skills/**/SKILL.md"],
       "require_all_changed": ["skills/SKILL_REGISTRY.json", "skills/SKILL_LEARNING_LOG.md"],
-      "require_any_changed": ["tests/test_game_project_operating_system_structure.py", "tests/test_consolidated_skill_references.py", "tests/test_reference_freshness.py"]
+      "require_any_changed": [
+        "tests/test_game_project_operating_system_structure.py",
+        "tests/test_consolidated_skill_references.py",
+        "tests/test_reference_freshness.py",
+        "tests/test_gpt_codex_workflow_contract.py"
+      ]
     },
     {
       "name": "registry-structure-test-sync",
       "when_changed": ["skills/SKILL_REGISTRY.json"],
-      "require_all_changed": ["skills/SKILL_LEARNING_LOG.md", "tests/test_game_project_operating_system_structure.py"],
-      "require_any_changed": ["docs/OPERATING_MODEL.md", "START_HERE.md", "templates/project-operations/AI_WORKFLOW.md"]
+      "require_all_changed": ["skills/SKILL_LEARNING_LOG.md"],
+      "require_any_changed": [
+        "tests/test_game_project_operating_system_structure.py",
+        "tests/test_consolidated_skill_references.py",
+        "tests/test_gpt_codex_workflow_contract.py"
+      ]
     },
     {
       "name": "reference-checker-test-and-config-sync",
