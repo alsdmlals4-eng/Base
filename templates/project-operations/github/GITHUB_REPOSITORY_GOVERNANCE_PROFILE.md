@@ -46,6 +46,7 @@ ruleset:
   name: solo-main-safety
   source_template: templates/project-operations/github/rulesets/solo-main-safety.json
   enforcement: active | disabled | unverified
+  behavior_verified: true | false | unverified
   default_branch_targeted: true | false | unverified
   pull_request_required: true | false | unverified
   linear_history: true | false | unverified
@@ -102,4 +103,7 @@ rollback:
 - Ruleset URL or ID:
 - Required Check run:
 - Auto-merge PR:
+- Auto-merge enabled at:
+- Observed merge method:
+- Observed merge commit:
 - Remaining unverified settings:
