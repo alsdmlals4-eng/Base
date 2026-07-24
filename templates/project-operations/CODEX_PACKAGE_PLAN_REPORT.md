@@ -71,6 +71,8 @@ package_contract:
 
 ## 10. 작업 단위
 
+각 작업은 `Red → Green → Refactor` 순서와 독립 회귀 증거를 가진다.
+
 ### 작업 PKG-X-01 — 작업명
 
 - 해결할 finding:
