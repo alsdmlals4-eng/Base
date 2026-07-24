@@ -256,22 +256,31 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Validate whitespace and lightweight contracts
+      - name: Validate whitespace
+        id: whitespace
         shell: bash
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           BEFORE_SHA: ${{ github.event.before }}
         run: |
-          set -o pipefail
+          set +e
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
-            git diff --check "$BASE_SHA...$HEAD_SHA"
+            git diff --check "$BASE_SHA...$HEAD_SHA" 2>&1 | tee whitespace-results.txt
           elif [[ "$GITHUB_EVENT_NAME" == "push" && -n "$BEFORE_SHA" && ! "$BEFORE_SHA" =~ ^0+$ ]]; then
-            git diff --check "$BEFORE_SHA...$GITHUB_SHA"
+            git diff --check "$BEFORE_SHA...$GITHUB_SHA" 2>&1 | tee whitespace-results.txt
           else
-            git diff --check "${GITHUB_SHA}^...${GITHUB_SHA}"
+            git diff --check "${GITHUB_SHA}^...${GITHUB_SHA}" 2>&1 | tee whitespace-results.txt
           fi
+          status=${PIPESTATUS[0]}
+          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          exit "$status"
 
+      - name: Run lightweight contract tests
+        if: always()
+        shell: bash
+        run: |
+          set -o pipefail
           python -m unittest \
             tests/test_gpt_codex_workflow_contract.py \
             tests/test_ci_workflow_cost_policy.py \
@@ -282,7 +291,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: docs-validation-diagnostics
-          path: docs-validation-results.txt
+          path: |
+            whitespace-results.txt
+            docs-validation-results.txt
           if-no-files-found: warn
           retention-days: 1
 
