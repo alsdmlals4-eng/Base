@@ -102,4 +102,7 @@ rollback:
 - Ruleset URL or ID:
 - Required Check run:
 - Auto-merge PR:
+- Auto-merge enabled at:
+- Observed merge method:
+- Observed merge commit:
 - Remaining unverified settings:
