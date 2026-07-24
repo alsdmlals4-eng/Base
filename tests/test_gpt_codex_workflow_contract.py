@@ -107,7 +107,7 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         for term in (
             "Base → 비공개 `omenward` → 다른 활성 프로젝트",
             "AUTO_MERGE_AFTER_REQUIRED_CHECKS",
-            "required_approving_review_count: 0",
+            "승인 리뷰 수 `0`",
             "AUTO_MERGE_BLOCKED",
             "UNVERIFIED_REPOSITORY_SETTING",
             "USER_REVIEW_REQUIRED",
