@@ -146,10 +146,17 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
 
     def test_documentation_map_routes_without_new_duplicate_skill(self) -> None:
         text = (ROOT / "docs/DOCUMENTATION_MAP.md").read_text(encoding="utf-8")
-        self.assertIn("Grill Me 핵심 의사결정 인터뷰", text)
-        self.assertIn("`clarify` + `references/grill-me-protocol.md`", text)
-        self.assertIn("GPT→Codex 단계별 Godot 구현 인계", text)
-        self.assertIn("`implementation-package-handoff`", text)
+        for term in (
+            "Grill Me 핵심 의사결정 인터뷰",
+            "`clarify` + `references/grill-me-protocol.md`",
+            "GPT→Codex 단계별 Godot 구현 인계",
+            "`implementation-package-handoff`",
+            "GitHub Pro 저장소 운영",
+            "GitHub Pro 보호·Ruleset·자동 병합",
+            "GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md",
+            "GITHUB_USAGE_BUDGET.md",
+        ):
+            self.assertIn(term, text)
 
 
 if __name__ == "__main__":
