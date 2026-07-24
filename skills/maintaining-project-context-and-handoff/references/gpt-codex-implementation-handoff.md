@@ -126,6 +126,7 @@ pull_request:
 GPT는 Push된 Commit과 PR diff에서 확인한다.
 
 - 지정 Branch·Commit·변경 파일
+- Commit SHA와 원격 HEAD 일치
 - Godot 런타임 파일 외 혼입
 - 승인된 패키지 범위
 - 기술 개선과 기획 변경 구분
