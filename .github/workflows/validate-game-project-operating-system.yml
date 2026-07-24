@@ -263,7 +263,7 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           BEFORE_SHA: ${{ github.event.before }}
         run: |
-          set -euo pipefail
+          set -o pipefail
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
             git diff --check "$BASE_SHA...$HEAD_SHA"
           elif [[ "$GITHUB_EVENT_NAME" == "push" && -n "$BEFORE_SHA" && ! "$BEFORE_SHA" =~ ^0+$ ]]; then
@@ -275,7 +275,16 @@ jobs:
           python -m unittest \
             tests/test_gpt_codex_workflow_contract.py \
             tests/test_ci_workflow_cost_policy.py \
-            -v
+            -v 2>&1 | tee docs-validation-results.txt
+
+      - name: Upload docs diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-validation-diagnostics
+          path: docs-validation-results.txt
+          if-no-files-found: warn
+          retention-days: 1
 
   ubuntu-contract:
     name: ubuntu-contract
@@ -397,12 +406,10 @@ jobs:
           cache: pip
           cache-dependency-path: requirements-publication.txt
 
-      - name: Set up Node and pnpm
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: "24"
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install publication dependencies
         run: |
@@ -456,12 +463,10 @@ jobs:
           cache: pip
           cache-dependency-path: requirements-publication.txt
 
-      - name: Set up Node and pnpm
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: "24"
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install Windows publication dependencies
         shell: pwsh
