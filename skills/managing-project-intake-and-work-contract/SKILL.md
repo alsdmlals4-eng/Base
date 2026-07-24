@@ -23,7 +23,7 @@ description: Use automatically when a project request must be routed, repository
 ## Skill Modes
 
 - `route`: 요청 의도·현재 단계·위험을 파악하고 Work Mode, 작업 수준, 변경 유형, 주 책임 분야와 최소 Skill 집합을 자동 판정한다.
-- `clarify`: 저장소에서 확인할 사실을 먼저 조사하고 사용자만 결정할 수 있는 모호성을 닫는다.
+- `clarify`: 저장소에서 확인할 사실을 먼저 조사하고 사용자만 결정할 수 있는 모호성을 닫는다. 프로젝트 방향을 바꾸는 핵심 결정은 `skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md`를 사용한다.
 - `contract`: 확정된 요구를 범위·제외·보호·완료·검증이 있는 실행 계약으로 변환한다.
 - `decompose-and-sequence`: 승인된 계약을 검증 가능한 결과 단위로 나누고 의존성·병렬화·게이트·롤백 순서를 정한다.
 - `execution-report`: 실제 실행한 Work Mode·Skill·Skill Mode, 선택 이유, 수행 내용, 결과·증거·미검증을 보고한다.
@@ -108,7 +108,8 @@ rollback_constraints:
 5. `SKILL_REGISTRY.json`
 6. 필요한 경우 `references/question-and-source-model.md`
 7. 종료 판정이 필요한 경우 `references/ambiguity-and-closure.md`
-8. 작업 분해·순서화가 필요한 경우 `references/work-decomposition-and-sequencing.md`
+8. Grill Me 핵심 결정 인터뷰가 필요한 경우 `references/grill-me-protocol.md`
+9. 작업 분해·순서화가 필요한 경우 `references/work-decomposition-and-sequencing.md`
 
 ## Workflow
 
@@ -328,10 +329,12 @@ remaining_unknowns: []
 
 - `routing-project-work-by-discipline` → `route`
 - `conducting-deep-requirement-interviews` → `clarify`
+- `grill-me`, `grillme`, `Grill Me` → `clarify` + `references/grill-me-protocol.md`
 - `transforming-requests-into-prompts` → `contract`
 
 Templates:
 
 - `templates/EXECUTABLE_PROMPT.md`
 - `templates/planning/EXECUTION_SEQUENCE_PLAN.md`
+- `templates/project-operations/GRILL_ME_DECISION_RECORD.md`
 - `templates/project-operations/SKILL_EXECUTION_REPORT.md`
