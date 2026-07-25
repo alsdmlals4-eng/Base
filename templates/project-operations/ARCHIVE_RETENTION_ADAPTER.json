@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "adapter_role": "project-archive-retention-adapter",
+  "base": {
+    "repository": "alsdmlals4-eng/Base",
+    "commit": "266c3fe233fd6bf9ddc67179a19014b0786e8dd7",
+    "skill_id": "governing-legacy-retention-and-archives"
+  },
+  "paths": {
+    "active_canon_roots": ["docs", "skills"],
+    "archive_root": "templates/project-operations",
+    "archive_readme": "templates/project-operations/ARCHIVE_README.md",
+    "archive_manifest": "templates/project-operations/ARCHIVE_MANIFEST.json",
+    "inactive_skill_roots": [],
+    "generated_derivative_roots": [],
+    "protected_evidence_roots": ["tests"]
+  },
+  "policies": {
+    "preserve_original_content": true,
+    "blank_placeholders_allowed": false,
+    "secrets_may_be_archived": false,
+    "default_active_authority": false,
+    "default_implementation_authority": "NONE",
+    "branch_retention": "AUDIT_TAG_THEN_DELETE"
+  },
+  "validation": {
+    "commands": [
+      "python templates/project-operations/github/check_archive_governance.py --root . --adapter templates/project-operations/ARCHIVE_RETENTION_ADAPTER.json --manifest templates/project-operations/ARCHIVE_MANIFEST.json"
+    ],
+    "status_vocabulary": ["PASS", "PARTIAL", "FAIL", "NOT_RUN"]
+  }
+}
