@@ -20,6 +20,7 @@
   "allowed_legacy_globs": [
     "skills/LEGACY_SKILL_ALIASES.md",
     "skills/SKILL_LEARNING_LOG.md",
+    "skills/**/LEARNING_LOG.md",
     "skills/managing-project-intake-and-work-contract/SKILL.md",
     "skills/managing-game-project-operating-system/SKILL.md",
     "skills/managing-design-documents/SKILL.md",
@@ -72,9 +73,13 @@
   ],
   "coupled_change_rules": [
     {
-      "name": "skill-contract-learning-and-test-sync",
+      "name": "local-skill-contract-registry-learning-sync",
       "when_changed": ["skills/**/SKILL.md"],
-      "require_all_changed": ["skills/SKILL_LEARNING_LOG.md"],
+      "exclude_when_changed": [
+        "skills/governing-legacy-retention-and-archives/SKILL.md",
+        "skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md"
+      ],
+      "require_all_changed": ["skills/SKILL_REGISTRY.json", "skills/SKILL_LEARNING_LOG.md"],
       "require_any_changed": [
         "tests/test_game_project_operating_system_structure.py",
         "tests/test_consolidated_skill_references.py",
@@ -84,20 +89,49 @@
       ]
     },
     {
-      "name": "skill-contract-registry-route-sync",
-      "when_changed": ["skills/**/SKILL.md"],
+      "name": "legacy-retention-shared-skill-sync",
+      "when_changed": ["skills/governing-legacy-retention-and-archives/SKILL.md"],
+      "exclude_when_changed": [],
+      "require_all_changed": [
+        "skills/BASE_SHARED_SKILL_ROUTES.json",
+        "skills/governing-legacy-retention-and-archives/LEARNING_LOG.md"
+      ],
+      "require_any_changed": [
+        "tests/test_reference_freshness.py",
+        "tests/test_skill_system_coverage.py"
+      ]
+    },
+    {
+      "name": "godot-asset-shared-skill-sync",
+      "when_changed": ["skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md"],
+      "exclude_when_changed": [],
+      "require_all_changed": [
+        "skills/BASE_SHARED_SKILL_ROUTES.json",
+        "skills/SKILL_LEARNING_LOG.md"
+      ],
+      "require_any_changed": [
+        "tests/test_base_shared_skill_routes.py",
+        "tests/test_reference_freshness.py"
+      ]
+    },
+    {
+      "name": "registry-structure-learning-sync",
+      "when_changed": ["skills/SKILL_REGISTRY.json", "skills/BASE_SHARED_SKILL_ROUTES.json"],
+      "exclude_when_changed": [],
       "require_all_changed": [],
       "require_any_changed": [
-        "skills/SKILL_REGISTRY.json",
-        "skills/BASE_SHARED_SKILL_ROUTES.json"
+        "skills/SKILL_LEARNING_LOG.md",
+        "skills/governing-legacy-retention-and-archives/LEARNING_LOG.md"
       ]
     },
     {
       "name": "registry-structure-test-sync",
       "when_changed": ["skills/SKILL_REGISTRY.json", "skills/BASE_SHARED_SKILL_ROUTES.json"],
-      "require_all_changed": ["skills/SKILL_LEARNING_LOG.md"],
+      "exclude_when_changed": [],
+      "require_all_changed": [],
       "require_any_changed": [
         "tests/test_game_project_operating_system_structure.py",
+        "tests/test_base_shared_skill_routes.py",
         "tests/test_consolidated_skill_references.py",
         "tests/test_gpt_codex_workflow_contract.py",
         "tests/test_skill_system_coverage.py"
@@ -106,12 +140,14 @@
     {
       "name": "reference-checker-test-and-config-sync",
       "when_changed": ["tools/check_canonical_reference_freshness.py"],
+      "exclude_when_changed": [],
       "require_all_changed": [".github/reference-freshness.json", "tests/test_reference_freshness.py"],
       "require_any_changed": []
     },
     {
       "name": "legacy-alias-test-sync",
       "when_changed": ["skills/LEGACY_SKILL_ALIASES.md"],
+      "exclude_when_changed": [],
       "require_all_changed": ["tests/test_consolidated_skill_references.py"],
       "require_any_changed": []
     }
