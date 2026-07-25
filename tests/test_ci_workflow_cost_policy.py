@@ -4,6 +4,10 @@ import re
 import unittest
 from pathlib import Path
 
+from tests.test_github_work_item_lifecycle_policy import (
+    GithubWorkItemLifecyclePolicyTests,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github/workflows/validate-game-project-operating-system.yml"
@@ -82,6 +86,13 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
         self.assertIn("tests/test_gpt_codex_workflow_contract.py", self.text)
         self.assertIn("tests/test_ci_workflow_cost_policy.py", self.text)
         self.assertIn("tests/test_deep_interview_contract.py", self.text)
+
+        source = Path(__file__).read_text(encoding="utf-8")
+        self.assertIn(
+            "from tests.test_github_work_item_lifecycle_policy import",
+            source,
+        )
+        self.assertTrue(issubclass(GithubWorkItemLifecyclePolicyTests, unittest.TestCase))
 
 
 if __name__ == "__main__":

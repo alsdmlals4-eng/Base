@@ -66,9 +66,9 @@
 
 ## Base 승격·프로젝트 동기화
 
-- Base 공용으로 승격할 내용:
+- Base 공용으로 남길 내용:
 - 프로젝트 전용으로 남길 내용:
-- Base 로컬 사본·관련 프로젝트 후속 동기화:
+- 후속 동기화 대상:
 
 ## 종료·대체 정보
 
@@ -80,11 +80,11 @@
 - 대체 Issue·PR:
 - 재개 조건:
 
-## 프로젝트 규칙 확인
+## Base 규칙 확인
 
-- [ ] 프로젝트 `AGENTS.md` 확인
-- [ ] `docs/BASE_RULES_VERSION.md` 확인
-- [ ] 프로젝트 `docs/DOCUMENTATION_MAP.md` 확인
-- [ ] 프로젝트에 동기화된 Base 로컬 사본 확인
-- [ ] 관련 Issue·Goal·책임 원본·실제 파일 확인
+- [ ] `AGENTS.md` 확인
+- [ ] `docs/OPERATING_MODEL.md` 확인
+- [ ] `docs/DOCUMENTATION_MAP.md` 확인
+- [ ] `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` 확인
+- [ ] 관련 책임 원본·Template·Test 확인
 - [ ] 기존 열린 PR을 자동 종료·삭제하지 않음
