@@ -18,9 +18,9 @@
     "active_context": "docs/ACTIVE_CONTEXT.md",
     "skill_registry": "skills/SKILL_REGISTRY.json",
     "canonical_sources": ["docs"],
-    "archive_root": "docs/archive",
-    "archive_readme": "docs/archive/README.md",
-    "archive_manifest": "docs/archive/MANIFEST.json",
+    "archive_root": "templates/project-operations",
+    "archive_readme": "templates/project-operations/ARCHIVE_README.md",
+    "archive_manifest": "templates/project-operations/ARCHIVE_MANIFEST.json",
     "protected_paths": [],
     "legacy_search_roots": ["docs", "skills"],
     "generated_derivative_roots": [],
@@ -36,9 +36,10 @@
   },
   "validation": {
     "commands": [
-      "python tools/check_archive_governance.py --root . --adapter docs/archive/ARCHIVE_RETENTION_ADAPTER.json --manifest docs/archive/MANIFEST.json"
+      "python templates/project-operations/github/check_archive_governance.py --root . --adapter templates/project-operations/ARCHIVE_RETENTION_ADAPTER.json --manifest templates/project-operations/ARCHIVE_MANIFEST.json --allow-template-pin"
     ],
     "manual_checks": [
+      "프로젝트 채택 시 Base commit, repository와 docs/archive 경로를 실제 값으로 교체",
       "archive가 current canon·기본 cold start·직접 Skill route에 포함되지 않는지 확인"
     ],
     "status_vocabulary": ["PASS", "PARTIAL", "FAIL", "NOT_RUN"]
