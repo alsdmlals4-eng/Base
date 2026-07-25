@@ -48,6 +48,7 @@ Base 저장소 자체의 콜드 스타트에서는 프로젝트 설치 템플릿
 | 통합 운영 모델 | `docs/OPERATING_MODEL.md` | 공용 작업 생명주기·책임 원본·상태·발행·근거·검증 정책의 단일 설명 원본 |
 | GPT–Codex 역할·인계 정책 | `docs/GPT_CODEX_WORKFLOW_POLICY.md` | GPT 비-Godot 완료, Codex 읽기 전용 Plan, 단계별 Godot 구현, 변경 권한, Branch·PR·자동 병합 게이트 |
 | GitHub Pro 저장소 운영 | `docs/GITHUB_PRO_OPERATING_POLICY.md` | Pro private 보호 기능, Ruleset, `ci-gate`, 자동 병합, 사용량 Budget, Base→`omenward`→순차 확산 |
+| GitHub 작업 항목 생명주기 | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | Issue·Goal·Branch·PR·Run·Artifact·Release 책임, PR WIP·재사용·종료·보존·무손실 정리 |
 | CI 실행·비용 정책 | `docs/CI_EXECUTION_COST_POLICY.md` | 변경 등급별 PR·main·nightly 검증, concurrency, `ci-gate`, Actions 차단 상태 |
 | Work Mode·Skill 라우팅 | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | PLAN·BUILD·REVIEW, Skill·Skill Mode 구분, Grill Me, GPT→Codex 자동 선택·실행 보고 상세 계약 |
 | 저장소 개요 | `README.md` | 사용 목적·구조·활성 스킬 안내 |
@@ -75,6 +76,7 @@ Grill Me 결정 → GRILL_ME_DECISION_RECORD와 해당 기획 책임 원본
 전체 구현 기준 → MASTER_IMPLEMENTATION_PLAN
 현재 Godot 구현 범위 → 패키지 계약·Branch·PR
 Repository 보호·병합 설정 → GITHUB_REPOSITORY_GOVERNANCE_PROFILE
+GitHub 작업 항목 생명주기 → GITHUB_WORK_ITEM_LIFECYCLE_POLICY와 PR Template
 GitHub 사용량 → GITHUB_USAGE_BUDGET
 외부 근거 → 출처·날짜·버전·표본·해석이 있는 조사 기록
 플레이 증거 → 빌드·테스터·행동·피드백·퍼널·실험 기록
@@ -164,6 +166,7 @@ L1 이상 작업은 실제 사용한 Work Mode·Skill·Skill Mode, 선택 이유
 | Codex Plan 재검수와 패키지 구현을 어떻게 인계하는가? | `skills/maintaining-project-context-and-handoff/references/gpt-codex-implementation-handoff.md` | `templates/project-operations/CODEX_PACKAGE_PLAN_REPORT.md`, `templates/project-operations/IMPLEMENTATION_PACKAGE_CONTRACT.md` |
 | GitHub Pro 보호·Ruleset·자동 병합을 어떻게 적용하는가? | `docs/GITHUB_PRO_OPERATING_POLICY.md` | `templates/project-operations/github/GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md`, `templates/project-operations/github/rulesets/solo-main-safety.json` |
 | GitHub 사용량·Budget을 어떻게 기록하는가? | `docs/GITHUB_PRO_OPERATING_POLICY.md` | `templates/project-operations/github/GITHUB_USAGE_BUDGET.md` |
+| PR·Run·Artifact 누적을 기록 손실 없이 어떻게 정리하는가? | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | `.github/pull_request_template.md`, `templates/pull_request_template.md` |
 | 구형 파일을 어떻게 갱신·통합·삭제하는가? | `skills/managing-game-project-operating-system/SKILL.md` | `templates/project-operations/LEGACY_ARTIFACT_RECONCILIATION.md` |
 | 작업을 어떤 단계와 순서로 나누는가? | `skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md` | `templates/planning/EXECUTION_SEQUENCE_PLAN.md` |
 | 어떤 게임·유저 반응을 어떻게 조사하고 반영하는가? | `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md` | `templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md` |
