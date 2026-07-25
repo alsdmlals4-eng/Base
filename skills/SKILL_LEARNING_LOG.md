@@ -343,3 +343,12 @@
 - 프로젝트 전용으로 유지할 내용: 대상 게임의 구체 Skill·실제 경로·승인 자산
 - Base Method·Skill·Template·Test 환류 후보: Method·Skill·Registry·Health Report·Checker·회귀 테스트
 - 다음 검토 트리거: 대상 프로젝트 첫 실제 적용, 동일 라우팅 실패 반복, 90일 이상 미검토
+
+## 2026-07-25 — Base 공용 Skill 어댑터와 Godot 자산 선행 검색
+
+- 상태: `PATTERN`
+- 추가 Skill: `governing-legacy-retention-and-archives`, `evaluating-godot-assets-and-plugins-before-creation`
+- 결정: Base 공용 Skill은 프로젝트에 복제하지 않고 route Registry와 프로젝트 경로 어댑터로 연결한다.
+- 결정: Godot 기능·에셋·상용 플러그인은 직접 제작 전에 기본 기능, 공식 Store, 기존 Asset Library, GitHub, itch.io와 제작자 원본을 조사한다.
+- 안전 경계: 구매·계정 연결·설치는 별도 사용자 승인, 기존 로컬 공용 Skill 복사본 삭제는 별도 레거시 감사가 필요하다.
+- 검증: Base Registry·Learning Log·운영체계 구조 테스트·프로젝트별 route·adapter의 정합성을 확인한다.

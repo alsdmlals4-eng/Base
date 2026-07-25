@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "registry_role": "base-shared-skill-extension-router",
+  "repository": "alsdmlals4-eng/Base",
+  "routing_policy": {
+    "load_all_skills": false,
+    "default_selection": "automatic-trigger-match",
+    "automatic_selection": true,
+    "require_trigger_match": true,
+    "project_adapter_required": true,
+    "copy_shared_skill_bodies_to_projects": false,
+    "max_primary_shared_skills": 1
+  },
+  "project_skill_policy": {
+    "base_shared_skills": "route-through-project-adapter",
+    "project_specific_skills": "create-and-maintain-in-project",
+    "duplicate_base_skill_bodies": "forbidden",
+    "existing_local_shared_copies": "retain-until-separate-legacy-reconciliation"
+  },
+  "adapter_contract": "docs/BASE_SHARED_SKILL_ADAPTER_CONTRACT.md",
+  "shared_skills": [
+    {
+      "skill_id": "governing-legacy-retention-and-archives",
+      "layer": "foundation",
+      "discipline": "knowledge-governance-and-archives",
+      "path": "skills/governing-legacy-retention-and-archives/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "legacy-retention",
+        "archive-governance",
+        "legacy-file",
+        "versioned-duplicate",
+        "stale-copy",
+        "canonical-merge",
+        "compatibility-stub",
+        "archive-history",
+        "delete-candidate",
+        "legacy-reconciliation"
+      ],
+      "skill_modes": [
+        "inventory",
+        "classify",
+        "reconcile",
+        "archive",
+        "delete-approved",
+        "verify"
+      ],
+      "use_when": [
+        "현행·레거시 문서, 자산, 경로, Skill 패키지와 파생본을 보존적으로 분류·통합·아카이브하거나 승인 삭제해야 한다."
+      ],
+      "do_not_use_when": [
+        "레거시 수명주기와 무관한 단일 오탈자 수정이거나 프로젝트 운영체계 전체 설치·마이그레이션이다."
+      ],
+      "project_adapter_roles": [
+        "project_agents",
+        "documentation_map",
+        "active_context",
+        "skill_registry",
+        "canonical_sources",
+        "archive_root",
+        "protected_paths",
+        "legacy_search_roots",
+        "validators",
+        "rollback_reference"
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "knowledge_state": "PATTERN"
+    },
+    {
+      "skill_id": "evaluating-godot-assets-and-plugins-before-creation",
+      "layer": "specialist",
+      "discipline": "godot-asset-and-plugin-evaluation",
+      "path": "skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md",
+      "status": "ACTIVE",
+      "load_by_default": false,
+      "trigger_tags": [
+        "godot-asset-search",
+        "godot-plugin-search",
+        "commercial-plugin",
+        "asset-store",
+        "asset-library",
+        "itchio-asset",
+        "github-addon",
+        "reuse-before-build",
+        "third-party-license",
+        "build-custom-decision"
+      ],
+      "skill_modes": [
+        "frame-need",
+        "search",
+        "evaluate",
+        "trial-plan",
+        "adoption-decision",
+        "revalidate"
+      ],
+      "use_when": [
+        "Godot 기능·도구·에셋·통합을 새로 만들기 전에 기본 기능, 공식 Store, 기존 Asset Library, GitHub, itch.io와 상용 후보를 조사·평가해야 한다."
+      ],
+      "do_not_use_when": [
+        "외부 자산과 무관한 오탈자·단일 수치 수정이거나 이미 승인된 동일 버전 자산을 단순 재사용한다."
+      ],
+      "project_adapter_roles": [
+        "engine_version",
+        "renderer",
+        "platforms",
+        "project_root",
+        "addon_root",
+        "asset_roots",
+        "canonical_design_sources",
+        "protected_paths",
+        "validators",
+        "third_party_inventory",
+        "license_record"
+      ],
+      "references": [
+        "skills/evaluating-godot-assets-and-plugins-before-creation/references/source-catalog.md"
+      ],
+      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "knowledge_state": "PATTERN"
+    }
+  ]
+}
