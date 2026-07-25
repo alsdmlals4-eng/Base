@@ -304,6 +304,19 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         self.assertIn("제안 PR과", proposals)
         self.assertIn("구현 PR", proposals)
 
+    def test_design_document_skill_requires_continuous_decision_sync(self) -> None:
+        documents = (ROOT / "skills/managing-design-documents/SKILL.md").read_text(encoding="utf-8")
+        workflow = (ROOT / "templates/project-operations/AI_WORKFLOW.md").read_text(encoding="utf-8")
+        registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
+        design_entry = next(item for item in registry["skills"] if item["skill_id"] == "managing-design-documents")
+        for term in ("승인 결정", "하위 시스템", "GitHub", "책임 원본", "UNVERIFIED"):
+            self.assertIn(term, documents)
+        for term in ("승인 결정 지속 기록", "하위 시스템 통합", "GitHub"):
+            self.assertIn(term, workflow)
+        for tag in ("decision-tracking", "subsystem-checkpoint", "canonical-integration"):
+            self.assertIn(tag, design_entry["trigger_tags"])
+        self.assertIn("하위 시스템 checkpoint", design_entry["use_when"][0])
+
     def test_operating_model_is_single_explanatory_source(self) -> None:
         operating = (ROOT / "docs/OPERATING_MODEL.md").read_text(encoding="utf-8")
         for term in (

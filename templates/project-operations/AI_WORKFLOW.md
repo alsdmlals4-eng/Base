@@ -259,6 +259,24 @@ Registry 발행 정책:
 
 정책이 요구할 때만 PDF·Manifest를 동기화하고 DOCX·다이어그램은 선언한 경우만 생성한다. `CURRENT`와 사람 시각 검수 완료를 혼동하지 않는다.
 
+### 승인 결정 지속 기록과 하위 시스템 통합
+
+```text
+사용자 승인·수정
+→ 현재 GitHub Issue·PR·Discussion·commit에 즉시 기록
+→ 결정 ID·영향 하위 시스템·대체 범위 연결
+→ 하위 시스템 완료 checkpoint
+→ 등록된 책임 원본·상태 JSON·Active Context 통합
+→ 누락·충돌·중복·참조 drift 검증
+```
+
+- 전투·성장·경제·진행·콘텐츠 등 하위 시스템 하나의 기획이 마무리될 때마다 누적 결정을 책임 원본에 통합한다.
+- 장기 기획에서 기록량이 커지면 중간 checkpoint를 실행하되 기획 완료나 구현 승인을 의미하지 않는다.
+- GitHub 추적 기록은 책임 원본 통합 전의 근거이며, 댓글만 존재하는 상태를 문서 갱신 완료로 보지 않는다.
+- 최신 승인안이 이전 결정과 충돌하면 최신안을 반영하고 대체 범위를 명시한다.
+- 공식·예시·예외·미결정·검증 상태를 함께 보존한다.
+- 실행하지 않은 검수·플레이테스트·CI는 `UNVERIFIED`를 유지한다.
+
 ## 10. 기존 프로젝트 마이그레이션
 
 ```text
@@ -277,6 +295,7 @@ Audit only
 - 책임 원본·코드·데이터·자산·발행본 이력
 - Parent Issue·sub-issue·dependency·milestone 작업 구조
 - Issue·PR 작업 계약과 단계별 완료 증거
+- 승인 결정의 즉시 추적 기록과 책임 원본 통합 checkpoint 근거
 - CODEOWNERS 리뷰
 - Governance Checker와 엔진 테스트
 - Required Status Checks
@@ -292,6 +311,8 @@ Audit only
 - 실행 단계·의존성·게이트:
 - 핵심 컨셉·DDD·벤치마크·플레이테스트·PoC:
 - 변경한 책임 원본·실제 파일·Skill:
+- 승인 결정 추적 ID·하위 시스템 checkpoint:
+- 누락·충돌·중복·대체 검수:
 - 정본·참조 최신성·변경 전파 결과:
 - 접근성 장벽·성능 예산 결과:
 - 생성한 PDF·선택 DOCX·다이어그램·Manifest:

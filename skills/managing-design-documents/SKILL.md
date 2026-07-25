@@ -9,6 +9,8 @@ description: Use when creating, restructuring, updating, publishing, or validati
 
 기획 내용·책임 구조·발행은 하나의 문서 생명주기다. 문서 작성 Skill과 PDF 발행 Skill이 같은 Registry·원본·상태를 다시 판정하지 않는다.
 
+승인된 기획 결정은 대화에만 남기지 않는다. 결정 직후 GitHub 추적 근거를 남기고, 하위 시스템 단위 checkpoint에서 책임 원본으로 통합해 누락·충돌·중복을 제거한다.
+
 ## Modes
 
 - `author`: 새 책임 원본을 설계하고 작성한다.
@@ -40,6 +42,8 @@ publication_manifest: null-or-path
 generator: null-or-path
 source_commit:
 human_visual_review_required:
+decision_tracking_surface: issue/pr/discussion/commit/null
+subsystem_checkpoint: null-or-name
 ```
 
 ## Responsibility contract
@@ -53,9 +57,12 @@ Word 검토 → 선언한 경우의 선택 DOCX
 현재 상태 → Active Context
 작업 순서 → Roadmap·Issue·Plan
 반복 절차 → Project Skill
+승인 결정 임시 추적 → GitHub Issue·PR·Discussion·commit
 ```
 
 한 질문에는 현행 책임 원본 하나만 둔다. 같은 서술을 Markdown과 JSON 양쪽에 복제하지 않는다.
+
+GitHub 댓글·Issue·PR·Discussion은 승인 결정의 추적 근거이지 최종 책임 원본의 대체물이 아니다.
 
 ## Publication policy
 
@@ -91,6 +98,27 @@ DOCX와 다이어그램은 Registry가 선언한 경우만 생성한다. `CURREN
 - 세부 코드·데이터·자산·테스트는 경로로 연결하고 전문을 복제하지 않는다.
 - 승인 이미지와 실제 캡처는 Asset ID·상태·채택 범위를 기록한다.
 - 작은 기능은 새 본책을 만들지 않고 기존 책임 원본 Section과 작업 계약에 차이를 기록한다.
+
+### 2A. Preserve approved decisions continuously
+
+승인·수정된 결정이 발생하면 다음 순서로 운영한다.
+
+```text
+사용자 승인·수정
+→ 현재 GitHub 추적 surface에 즉시 기록
+→ 결정 ID·날짜·영향 하위 시스템·대체 범위 연결
+→ 하위 시스템 checkpoint까지 누적
+→ 책임 원본·상태·Context에 통합
+→ 누락·충돌·중복·참조 drift 검증
+```
+
+- 기록에는 규칙, 공식, 예시, 예외, 대체되는 이전 결정, 미결정 항목을 포함한다.
+- 승인 문구가 없는 제안·가설은 승인 결정과 분리한다.
+- 전투·성장·경제·진행·콘텐츠 등 하나의 하위 시스템 기획이 마무리되면 통합 checkpoint를 실행한다.
+- 장기 작업에서 checkpoint 전 누적량이 커지면 중간 통합을 실행하되 기획 완료나 구현 승인을 의미하지 않는다.
+- 최신 승인 결정이 이전 기록과 충돌하면 최신 결정을 정본에 반영하고 대체 범위를 명시한다.
+- 댓글 기록만 존재하는 상태를 책임 원본 갱신 완료로 보고하지 않는다.
+- 실제로 수행하지 않은 검수·플레이테스트·CI는 `UNVERIFIED`를 유지한다.
 
 ### 3. Restructure safely when needed
 
@@ -134,6 +162,8 @@ source_only
 
 같은 작업에서 Registry, 관련 책임 원본, Roadmap, Project Skill, Active Context, Documentation Map과 발행 상태를 맞춘다.
 
+하위 시스템 checkpoint에서는 누적 GitHub 결정 ID와 책임 원본 반영 위치를 대조하고, 미반영·충돌·중복·대체 누락을 0으로 만든다. 미결정 항목은 삭제하지 않고 명시적으로 보류한다.
+
 ## Output contract
 
 ```md
@@ -143,6 +173,9 @@ source_only
 - 책임 원본·형식·경로:
 - 발행 정책:
 - 실제 변경:
+- 승인 결정 추적 surface·ID:
+- 하위 시스템 checkpoint·통합 범위:
+- 누락·충돌·중복·대체 검수:
 - PDF·선택 DOCX·다이어그램:
 - 승인 이미지·실제 캡처:
 - Manifest·입력 해시:
@@ -156,6 +189,8 @@ source_only
 - Registry가 한 문서의 단일 책임 원본과 발행 정책을 선언한다.
 - 같은 서술을 여러 형식의 독립 원본으로 유지하지 않는다.
 - 문서 변경이 실제 파일·테스트·상태와 연결된다.
+- 승인 결정이 GitHub 추적 근거에 기록되고 하위 시스템 checkpoint에서 책임 원본에 통합된다.
+- 누적 결정 ID와 원본 반영 위치의 대조 결과 미반영·충돌·중복·대체 누락이 없다.
 - 정책이 요구하는 발행본과 Manifest가 최신이다.
 - 생성 실패가 기존 정상 산출물을 덮어쓰지 않는다.
 - 새 작업자가 책임 원본과 사람용 출력·다음 작업을 찾는다.
@@ -167,6 +202,9 @@ source_only
 - Registry에 등록되지 않은 새 본책을 만듦
 - DOCX·PDF를 독립 책임 원본으로 수정함
 - 문서 존재를 구현·검증 완료로 판단함
+- 승인 결정을 대화에만 남기고 GitHub 추적 근거를 만들지 않음
+- GitHub 댓글·Issue·PR 기록만으로 책임 원본 통합 완료를 주장함
+- 하위 시스템 checkpoint에서 누적 결정의 누락·충돌·중복·대체 범위를 대조하지 않음
 - 감사·보존 대조 없이 기존 프로젝트 문서를 변환함
 - `CURRENT`를 사람 검수 완료로 해석함
 - 전 페이지 렌더 없이 시각 검수를 통과 처리함
