@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/archive-retention-adapter-v1.schema.json",
+  "title": "Archive Retention Adapter v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "adapter_role", "base", "paths", "policies", "validation"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "adapter_role": {"const": "project-archive-retention-adapter"},
+    "base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "commit", "skill_id"],
+      "properties": {
+        "repository": {"const": "alsdmlals4-eng/Base"},
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "skill_id": {"const": "governing-legacy-retention-and-archives"}
+      }
+    },
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["active_canon_roots", "archive_root", "archive_readme", "archive_manifest", "inactive_skill_roots", "generated_derivative_roots", "protected_evidence_roots"],
+      "properties": {
+        "active_canon_roots": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "archive_root": {"type": "string", "minLength": 1},
+        "archive_readme": {"type": "string", "minLength": 1},
+        "archive_manifest": {"type": "string", "minLength": 1},
+        "inactive_skill_roots": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "generated_derivative_roots": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "protected_evidence_roots": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "policies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["preserve_original_content", "blank_placeholders_allowed", "secrets_may_be_archived", "default_active_authority", "default_implementation_authority", "branch_retention"],
+      "properties": {
+        "preserve_original_content": {"const": true},
+        "blank_placeholders_allowed": {"const": false},
+        "secrets_may_be_archived": {"const": false},
+        "default_active_authority": {"const": false},
+        "default_implementation_authority": {"const": "NONE"},
+        "branch_retention": {"enum": ["AUDIT_TAG_THEN_DELETE", "CLOSED_PR_AND_TAG_UNTIL_DELETE_AVAILABLE"]}
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commands", "status_vocabulary"],
+      "properties": {
+        "commands": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "status_vocabulary": {"const": ["PASS", "PARTIAL", "FAIL", "NOT_RUN"]}
+      }
+    }
+  }
+}
