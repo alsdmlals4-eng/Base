@@ -1,0 +1,59 @@
+name: Fix Design Decision Sync Test
+
+on:
+  push:
+    branches:
+      - docs/design-decision-sync-governance
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: docs/design-decision-sync-governance
+          fetch-depth: 0
+
+      - name: Repair regression test indentation
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path("tests/test_game_project_operating_system_structure.py")
+          text = path.read_text(encoding="utf-8")
+          replacement = '''    def test_design_document_skill_requires_continuous_decision_sync(self) -> None:
+              documents = (ROOT / "skills/managing-design-documents/SKILL.md").read_text(encoding="utf-8")
+              workflow = (ROOT / "templates/project-operations/AI_WORKFLOW.md").read_text(encoding="utf-8")
+              registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
+              design_entry = next(item for item in registry["skills"] if item["skill_id"] == "managing-design-documents")
+              for term in ("승인 결정", "하위 시스템", "GitHub", "책임 원본", "UNVERIFIED"):
+                  self.assertIn(term, documents)
+              for term in ("승인 결정 지속 기록", "하위 시스템 통합", "GitHub"):
+                  self.assertIn(term, workflow)
+              for tag in ("decision-tracking", "subsystem-checkpoint", "canonical-integration"):
+                  self.assertIn(tag, design_entry["trigger_tags"])
+              self.assertIn("하위 시스템 checkpoint", design_entry["use_when"][0])
+
+          '''
+          pattern = re.compile(
+              r"    def test_design_document_skill_requires_continuous_decision_sync\(self\) -> None:\n.*?(?=    def test_operating_model_is_single_explanatory_source)",
+              re.DOTALL,
+          )
+          text, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f"expected one malformed test block, replaced {count}")
+          path.write_text(text, encoding="utf-8")
+          Path(".github/workflows/fix-design-decision-sync-test.yml").unlink()
+          PY
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/test_game_project_operating_system_structure.py .github/workflows/fix-design-decision-sync-test.yml
+          git commit -m "test: 결정 추적 회귀 테스트 들여쓰기 수정"
+          git push origin HEAD:docs/design-decision-sync-governance
