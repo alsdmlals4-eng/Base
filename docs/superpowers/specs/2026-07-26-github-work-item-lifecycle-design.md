@@ -56,7 +56,7 @@ PR과 Run의 내용을 별도 Archive 문서나 데이터베이스에 복제한 
 
 ## 3. 선택
 
-접근 A를 채택한다. Base의 기존 `GITHUB_PRO_OPERATING_POLICY.md`와 `CI_EXECUTION_COST_POLICY.md`는 각각 Repository 보호·병합 설정과 CI 실행 계층을 책임진다. 새 문서는 그 사이에서 Issue·Goal·Branch·PR·Run·Artifact·Release의 생명주기와 보존 책임을 단일 정본으로 관리한다.
+접근 A를 채택한다. Base의 기존 `docs/GITHUB_PRO_OPERATING_POLICY.md`와 `docs/CI_EXECUTION_COST_POLICY.md`는 각각 Repository 보호·병합 설정과 CI 실행 계층을 책임진다. 새 문서는 그 사이에서 Issue·Goal·Branch·PR·Run·Artifact·Release의 생명주기와 보존 책임을 단일 정본으로 관리한다.
 
 ## 4. 책임 경계
 
@@ -76,16 +76,11 @@ PR과 Run의 내용을 별도 Archive 문서나 데이터베이스에 복제한 
 
 새 PR 생성 전 같은 Issue·Goal·작업 Branch의 열린 PR을 검색한다. 범위가 동일하면 기존 PR과 Branch에 커밋을 추가한다. 리뷰 수정, 테스트 실패 수정, 문구 보완, 중단 후 재개는 새 PR 생성 사유가 아니다.
 
-독립 PR은 다음 중 하나일 때만 허용한다.
-
-- 별도 승인·롤백이 필요한 독립 변경
-- 서로 다른 책임 원본을 변경하고 병합 순서가 분리되는 작업
-- 기존 PR과 함께 병합할 수 없는 긴급 수정
-- 사용자 또는 정책이 별도 구현 PR을 요구하는 Base 수정제안
+독립 PR은 별도 승인·롤백이 필요한 변경, 병합 순서가 분리되는 변경, 긴급 수정, 정책상 제안·구현 분리가 필요한 변경에 한정한다.
 
 ### 5.2 열린 PR WIP 제한
 
-저장소 기본값은 다음과 같다.
+저장소 기본값:
 
 - `status:active`: 최대 1개
 - `status:review`: 최대 1개
@@ -98,10 +93,7 @@ PR과 Run의 내용을 별도 Archive 문서나 데이터베이스에 복제한 
 
 공용 Label 기본값:
 
-- `status:active`
-- `status:review`
-- `status:blocked`
-- `status:hold`
+- `status:active`, `status:review`, `status:blocked`, `status:hold`
 - `type:planning`, `type:docs`, `type:code`, `type:ci`, `type:data`
 - `scope:base`, `scope:project`, `scope:godot`, `scope:tooling`
 
@@ -116,19 +108,19 @@ Label 생성 권한이나 Repository 설정을 확인하지 못하면 정책 문
 
 ### 5.5 Run·Artifact 보존
 
-기본 보존값:
+기본 보존 목표:
 
 | 항목 | 기본 보존 |
 |---|---:|
-| 성공한 일반 CI 로그 | 14일 |
-| 실패한 일반 CI 로그 | 30일 |
+| 성공한 일반 CI 로그·Run | 14일 |
+| 실패한 일반 CI 로그·Run | 30일 |
 | 실패 진단 Artifact | 14일 |
 | 임시 HTML·스크린샷·테스트 보고서 | 14일 |
 | 개발용 빌드 | 7일 |
 | Release candidate | 30일 |
 | 정식 Release | Actions Artifact가 아니라 GitHub Release에 보존 |
 
-GitHub Repository·Organization 설정이 더 긴 최소 보존 기간을 강제하면 실제 지원 범위를 기록한다. Run 삭제 전 PR에는 결과, 실패 원인, 수정 내용, 최종 검증, 후속 작업을 남긴다.
+GitHub가 성공·실패 Run의 차등 보존을 직접 지원하지 않거나 더 긴 최소 기간을 강제하면 실제 지원 범위를 기록한다. Run 삭제 전 PR에는 결과, 실패 원인, 수정 내용, 최종 검증, 후속 작업을 남긴다.
 
 ### 5.6 오래된 Workflow
 
@@ -149,38 +141,24 @@ Issue·Goal·Branch·PR·Run·Artifact·Release의 책임, WIP, 종료, 보존, 
 
 ### 6.2 문서 라우팅
 
-`docs/DOCUMENTATION_MAP.md`에서 다음 질문을 새 정본으로 연결한다.
-
-- PR과 Run이 누적될 때 어떻게 정리하는가?
-- 새 PR을 만들지 기존 PR을 이어야 하는가?
-- Branch·Run·Artifact를 언제 삭제할 수 있는가?
+`docs/DOCUMENTATION_MAP.md`에서 PR·Run·Artifact 누적, 기존 PR 재사용, Branch·증거 삭제 질문을 새 정본으로 연결한다.
 
 ### 6.3 PR Template
 
-Base의 실제 PR을 위한 `.github/pull_request_template.md`와 프로젝트 배포용 `templates/pull_request_template.md`를 같은 계약으로 유지한다.
+- Base 실제 PR: `.github/pull_request_template.md`
+- 프로젝트 배포용: `templates/pull_request_template.md`
 
-필수 항목:
+두 Template은 원본 Issue·Goal, 기존 PR 검색, 새 PR 필요 사유, 포함·제외 범위, 검증·미검증, Run·Artifact 보존, Branch 처리, Base·프로젝트 동기화를 기록한다.
 
-- 원본 Issue·Goal
-- 기존 PR 검색 결과와 새 PR 필요 사유
-- 범위·제외 범위
-- 변경 파일·책임 원본
-- 검증 결과·미검증
-- Run·Artifact 장기 보존 필요 여부
-- 종료·병합 후 Branch 처리
-- Base 승격·프로젝트 동기화 영향
-
-존재하지 않는 `docs/BASE_RULES_VERSION.md`와 `docs/AI_SHARED_WORK_RULES.md`를 Base 자체 필수 참조로 강제하지 않는다.
+Base Template은 프로젝트 전용 `docs/BASE_RULES_VERSION.md`를 요구하지 않는다. 프로젝트 Template은 Base 동기화 추적을 위해 해당 경로를 유지한다. 두 Template 모두 삭제된 `docs/AI_SHARED_WORK_RULES.md`를 요구하지 않는다.
 
 ### 6.4 회귀 검증
 
-새 Python unittest는 다음을 검사한다.
+`tests/test_github_work_item_lifecycle_policy.py`는 정책 용어·WIP·보존 기간·Documentation Map·두 Template의 책임을 검사한다. 기존 Workflow가 이미 실행하는 `tests/test_ci_workflow_cost_policy.py`가 새 TestCase를 import하므로 Workflow 파일을 추가 수정하지 않는다.
 
-- 새 정책 문서가 존재하고 객체별 책임을 포함한다.
-- 하나의 Goal·하나의 활성 PR, WIP 3개, Squash merge, Branch 삭제, Run·Artifact 보존 계약이 존재한다.
-- Documentation Map에 새 정책이 등록된다.
-- 두 PR Template이 핵심 계약을 포함하고 stale Base 문서 참조를 포함하지 않는다.
-- CI가 새 테스트 파일을 경량·계약 검사에 포함한다.
+### 6.5 변경 기록 보존
+
+`docs/CHANGELOG.md`는 전체 파일을 안전하게 읽고 최소 patch할 수 없는 커넥터 경로에서 강제로 재작성하지 않는다. 구현 중 부분 교체 위험을 발견한 경우 `main`의 원본 blob으로 정확히 복구하고 최종 PR diff에서 제외한다. 이번 정책의 장기 변경 기록은 정책 문서, 설계, 실행 계획, PR과 squash commit이 보존한다.
 
 ## 7. 오류·예외 처리
 
@@ -193,8 +171,9 @@ Base의 실제 PR을 위한 `.github/pull_request_template.md`와 프로젝트 �
 ## 8. 완료 기준
 
 - 새 생명주기 정책이 공용 책임 원본으로 추가된다.
-- Documentation Map, Base PR Template, 프로젝트 PR Template, Changelog가 동기화된다.
-- 정적 회귀 테스트와 CI 호출 목록이 추가된다.
+- Documentation Map, Base PR Template, 프로젝트 PR Template이 동기화된다.
+- 정적 회귀 테스트가 기존 CI 계약 검사에서 실행된다.
 - 변경은 별도 Branch와 PR로 제출된다.
 - Repository 설정 중 도구로 확인·변경하지 못한 항목은 미검증으로 명시된다.
 - 기존 열린 PR은 자동 종료·삭제하지 않는다.
+- Changelog와 게임·런타임 파일에는 의도하지 않은 변경이 없다.
