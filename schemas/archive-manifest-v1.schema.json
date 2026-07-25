@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/archive-manifest-v1.schema.json",
+  "title": "Archive Manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "manifest_role", "records"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "manifest_role": {"const": "project-archive-retention-index"},
+    "records": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/record"}
+    }
+  },
+  "$defs": {
+    "classification": {
+      "enum": [
+        "CURRENT_AUTHORITY",
+        "COMPATIBILITY_ONLY",
+        "ARCHIVE_HISTORY",
+        "EVIDENCE_RETENTION",
+        "GENERATED_DERIVATIVE",
+        "DELETE_PROHIBITED_SECRET",
+        "DELETE_APPROVED",
+        "KEEP_UNRESOLVED"
+      ]
+    },
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "archive_id",
+        "classification",
+        "original_path",
+        "current_path",
+        "content_sha256",
+        "archived_at",
+        "superseded_by",
+        "reason",
+        "active_authority",
+        "implementation_authority",
+        "compatibility_consumers",
+        "rollback_ref",
+        "validation_status"
+      ],
+      "properties": {
+        "archive_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$"},
+        "classification": {"$ref": "#/$defs/classification"},
+        "original_path": {"type": "string", "minLength": 1},
+        "current_path": {"type": "string", "minLength": 1},
+        "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "archived_at": {"type": "string", "format": "date"},
+        "superseded_by": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "reason": {"type": "string", "minLength": 1},
+        "active_authority": {"const": false},
+        "implementation_authority": {"const": "NONE"},
+        "compatibility_consumers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "rollback_ref": {"type": "string", "minLength": 7},
+        "validation_status": {"enum": ["PASS", "PARTIAL", "FAIL", "NOT_RUN"]}
+      }
+    }
+  }
+}
