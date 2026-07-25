@@ -9,7 +9,7 @@ POLICY = ROOT / "docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md"
 DOC_MAP = ROOT / "docs/DOCUMENTATION_MAP.md"
 BASE_PR_TEMPLATE = ROOT / ".github/pull_request_template.md"
 PROJECT_PR_TEMPLATE = ROOT / "templates/pull_request_template.md"
-WORKFLOW = ROOT / ".github/workflows/validate-game-project-operating-system.yml"
+CI_TEST = ROOT / "tests/test_ci_workflow_cost_policy.py"
 
 
 class GithubWorkItemLifecyclePolicyTests(unittest.TestCase):
@@ -57,11 +57,15 @@ class GithubWorkItemLifecyclePolicyTests(unittest.TestCase):
         self.assertIn("docs/BASE_RULES_VERSION.md", project)
         self.assertNotIn("docs/AI_SHARED_WORK_RULES.md", project)
 
-    def test_documentation_map_and_ci_include_policy(self) -> None:
+    def test_documentation_map_and_existing_ci_suite_load_policy(self) -> None:
         doc_map = DOC_MAP.read_text(encoding="utf-8")
-        workflow = WORKFLOW.read_text(encoding="utf-8")
+        ci_test = CI_TEST.read_text(encoding="utf-8")
         self.assertIn("docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md", doc_map)
-        self.assertIn("tests/test_github_work_item_lifecycle_policy.py", workflow)
+        self.assertIn(
+            "from tests.test_github_work_item_lifecycle_policy import ",
+            ci_test,
+        )
+        self.assertIn("GithubWorkItemLifecyclePolicyTests", ci_test)
 
 
 if __name__ == "__main__":
