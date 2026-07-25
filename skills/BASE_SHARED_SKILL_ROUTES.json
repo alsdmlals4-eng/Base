@@ -29,12 +29,20 @@
       "trigger_tags": [
         "legacy-retention",
         "archive-governance",
+        "archive-policy",
         "legacy-file",
         "versioned-duplicate",
         "stale-copy",
         "canonical-merge",
         "compatibility-stub",
         "archive-history",
+        "archive-manifest",
+        "evidence-retention",
+        "generated-derivative",
+        "inactive-skill",
+        "backup-folder",
+        "blank-placeholder",
+        "branch-retention",
         "delete-candidate",
         "legacy-reconciliation"
       ],
@@ -47,10 +55,10 @@
         "verify"
       ],
       "use_when": [
-        "현행·레거시 문서, 자산, 경로, Skill 패키지와 파생본을 보존적으로 분류·통합·아카이브하거나 승인 삭제해야 한다."
+        "현행·레거시 문서, 자산, 경로, Skill 패키지, 증거, 파생본과 병합 브랜치를 원문과 복구 근거를 보존한 채 현재 권한에서 격리해야 한다."
       ],
       "do_not_use_when": [
-        "레거시 수명주기와 무관한 단일 오탈자 수정이거나 프로젝트 운영체계 전체 설치·마이그레이션이다."
+        "레거시 수명주기와 무관한 단일 오탈자 수정, 임시 빌드 산출물 청소, 비밀정보 보존 요청 또는 프로젝트 운영체계 전체 설치·마이그레이션이다."
       ],
       "project_adapter_roles": [
         "project_agents",
@@ -59,10 +67,27 @@
         "skill_registry",
         "canonical_sources",
         "archive_root",
+        "archive_readme",
+        "archive_manifest",
         "protected_paths",
         "legacy_search_roots",
+        "generated_derivative_roots",
+        "protected_evidence_roots",
         "validators",
         "rollback_reference"
+      ],
+      "references": [
+        "skills/governing-legacy-retention-and-archives/references/archive-contract.md"
+      ],
+      "schemas": [
+        "schemas/archive-retention-adapter-v1.schema.json",
+        "schemas/archive-manifest-v1.schema.json"
+      ],
+      "templates": [
+        "templates/project-operations/ARCHIVE_RETENTION_ADAPTER.json",
+        "templates/project-operations/ARCHIVE_MANIFEST.json",
+        "templates/project-operations/ARCHIVE_README.md",
+        "templates/project-operations/github/check_archive_governance.py"
       ],
       "learning_log": "skills/SKILL_LEARNING_LOG.md",
       "knowledge_state": "PATTERN"
