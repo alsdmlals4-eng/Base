@@ -1,0 +1,103 @@
+name: Apply Design Decision Sync Companions
+
+on:
+  push:
+    branches:
+      - docs/design-decision-sync-governance
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: docs/design-decision-sync-governance
+          fetch-depth: 0
+
+      - name: Synchronize registry, learning log, and regression test
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+
+          registry_path = Path("skills/SKILL_REGISTRY.json")
+          registry = json.loads(registry_path.read_text(encoding="utf-8"))
+          item = next(entry for entry in registry["skills"] if entry["skill_id"] == "managing-design-documents")
+
+          for tag in ("decision-tracking", "subsystem-checkpoint", "canonical-integration"):
+              if tag not in item["trigger_tags"]:
+                  item["trigger_tags"].append(tag)
+
+          item["use_when"] = [
+              "등록된 기획 책임 원본을 작성·갱신·재구조화하고 발행 정책에 따라 PDF·선택 파생본을 생성·검수하며, 승인 결정을 GitHub에 추적하고 하위 시스템 checkpoint에서 책임 원본·상태·Context로 통합한다."
+          ]
+          for trigger in (
+              "승인 결정 추적 누락",
+              "하위 시스템 통합 누락",
+              "댓글만으로 정본 갱신 완료 주장",
+              "대체 범위 누락",
+              "누적 결정과 책임 원본 불일치",
+          ):
+              if trigger not in item["review_triggers"]:
+                  item["review_triggers"].append(trigger)
+          item["last_reviewed_at"] = "2026-07-25"
+          item["last_reviewed_commit"] = "810b546891d779e86d4ee35a77d122aed67e7e87"
+          registry_path.write_text(
+              json.dumps(registry, ensure_ascii=False, separators=(",", ":")) + "\n",
+              encoding="utf-8",
+          )
+
+          learning_path = Path("skills/SKILL_LEARNING_LOG.md")
+          learning = learning_path.read_text(encoding="utf-8")
+          heading = "## 2026-07-25 승인 기획 결정 지속 기록·하위 시스템 통합 교훈"
+          section = f"""{heading}
+
+          - 십보강호 기획에서 승인 결정이 대화·PR 댓글에 누적되면 책임 원본·상태·Context와 drift가 생길 수 있음을 확인했다.
+          - 승인·수정 직후 GitHub 추적 근거를 남기고, 전투·성장·경제·진행·콘텐츠 등 하위 시스템 완료 checkpoint에서 책임 원본으로 통합한다.
+          - GitHub 댓글·Issue·PR·Discussion은 추적 근거이며 책임 원본의 대체물이 아니다. 최신 승인안의 대체 범위, 공식, 예시, 예외, 미결정, 검증 상태를 함께 보존한다.
+          - checkpoint에서는 누락·충돌·중복·대체 누락·참조 drift를 검사하고, 실행하지 않은 검수·플레이테스트·CI는 `UNVERIFIED`를 유지한다.
+          - 출처: `Ten-Paces-Hidden-Moves` PR #42 승인 기록 `5078806296`; Base 적용 PR #41.
+          - 현재 지식 상태: 프로젝트 적용과 사용자 승인은 `PATTERN`, 여러 프로젝트에서의 누락 감소 효과는 후속 관찰 전까지 `OBSERVATION`.
+
+          """
+          if heading not in learning:
+              learning = learning.replace("# Base Skill Learning Log\n\n", "# Base Skill Learning Log\n\n" + section, 1)
+              learning_path.write_text(learning, encoding="utf-8")
+
+          test_path = Path("tests/test_game_project_operating_system_structure.py")
+          test_text = test_path.read_text(encoding="utf-8")
+          marker = "    def test_design_document_skill_requires_continuous_decision_sync(self) -> None:\n"
+          method = '''    def test_design_document_skill_requires_continuous_decision_sync(self) -> None:
+              documents = (ROOT / "skills/managing-design-documents/SKILL.md").read_text(encoding="utf-8")
+              workflow = (ROOT / "templates/project-operations/AI_WORKFLOW.md").read_text(encoding="utf-8")
+              registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
+              design_entry = next(item for item in registry["skills"] if item["skill_id"] == "managing-design-documents")
+              for term in ("승인 결정", "하위 시스템", "GitHub", "책임 원본", "UNVERIFIED"):
+                  self.assertIn(term, documents)
+              for term in ("승인 결정 지속 기록", "하위 시스템 통합", "GitHub"):
+                  self.assertIn(term, workflow)
+              for tag in ("decision-tracking", "subsystem-checkpoint", "canonical-integration"):
+                  self.assertIn(tag, design_entry["trigger_tags"])
+              self.assertIn("하위 시스템 checkpoint", design_entry["use_when"][0])
+
+          '''
+          insertion = "    def test_operating_model_is_single_explanatory_source(self) -> None:\n"
+          if marker not in test_text:
+              if insertion not in test_text:
+                  raise SystemExit("test insertion point not found")
+              test_text = test_text.replace(insertion, method + insertion, 1)
+              test_path.write_text(test_text, encoding="utf-8")
+
+          Path(".github/workflows/apply-design-decision-sync.yml").unlink()
+          PY
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add skills/SKILL_REGISTRY.json skills/SKILL_LEARNING_LOG.md tests/test_game_project_operating_system_structure.py .github/workflows/apply-design-decision-sync.yml
+          git commit -m "docs(skill): 결정 추적 companion 계약 동기화"
+          git push origin HEAD:docs/design-decision-sync-governance
