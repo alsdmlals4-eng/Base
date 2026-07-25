@@ -10,7 +10,7 @@
 |---|---|---|
 | `PLAN` | 의도·요구·근거·설계·순서 확정 | 조사와 읽기 우선, 구현은 승인 전 보류 |
 | `BUILD` | 승인된 계약의 코드·데이터·문서·자산 구현 | 범위 내 쓰기, 단계별 테스트·롤백 |
-| `REVIEW` | 결과를 적대적으로 검토·검증·판정 | 기본 읽기 전용, 증거·반례 우선, 승인된 수정은 `BUILD`로 전환 |
+| `REVIEW` | 결과를 적대적으로 검토·검증·판정 | 기본 읽기 전용, 전체 영향 범위의 증거·반례·개선 후보 탐색, 승인된 수정은 `BUILD`로 전환 |
 
 복합 작업은 `PLAN → BUILD → REVIEW`처럼 순차 전환할 수 있다. 한 시점에는 주 Work Mode 하나만 둔다.
 
@@ -87,6 +87,39 @@ REVIEW
 - 사용자가 수정까지 요청했거나 승인 범위가 있으면 BUILD로 전환해 최소 수정
 - 수정 뒤 REVIEW로 돌아와 재검증
 ```
+
+### REVIEW 기본 루트
+
+`REVIEW`는 요청된 파일이나 diff만 수동 확인하는 모드가 아니다. Registry·Documentation Map·정본·참조 관계를 사용해 **변경 파일, 같은 책임의 원본, 활성 소비자, 인접 시스템, 변경됐어야 하지만 untouched인 파일, 테스트·템플릿·파생본**까지 영향 범위를 먼저 만든다.
+
+```text
+review-scope-map
+→ running-adversarial-review-and-refinement: attack
+→ validate-critique
+→ finding 분류
+   ├─ TECHNICAL_REVIEW_PROPOSAL
+   ├─ USER_DECISION_REQUIRED
+   ├─ BLOCKED_UNVERIFIED
+   └─ NO_CHANGE
+→ 기술적으로 판단 가능한 사항은 근거·우선순위·영향 파일·수정 방향·검증 방법을 검수안으로 일괄 정리
+→ 기획 결정을 요구하는 충돌만 가장 차단적인 것부터 한 번에 하나씩 사용자에게 제시
+→ 승인된 범위가 있으면 BUILD에서 최소 수정
+→ REVIEW로 복귀해 실제 diff·정적·런타임·회귀 검증
+→ evidence-report
+```
+
+- 기술적으로 자동 판단 가능한 사항은 정본·계약·테스트·표준·관찰 증거로 최소 안전안이 결정되는 항목이다. 사용자가 검수만 요청했다면 자동 수정하지 않고 검수안으로 제시한다.
+- 사용자에게 묻는 항목은 둘 이상의 유효한 선택지가 프로젝트 코어, 플레이어 경험, 주요 UX, 콘텐츠 의미, 범위 또는 비용 우선순위를 다르게 만드는 충돌로 제한한다.
+- 저장소나 도구로 답할 수 있는 사실, 명백한 오류, 참조 누락, 테스트 실패, 표준 위반은 사용자 질문으로 전가하지 않는다.
+- 사용자 결정 질문에는 충돌, 선택지, 장단점, GPT 권장안, 확정 영향을 포함한다. 여러 충돌을 한꺼번에 묻지 않는다.
+- 답변을 받으면 결정 원장과 책임 원본을 갱신하고 다음 충돌로 이동한다. 사용자가 `모두 권장안대로`라고 하면 남은 동등 유형 충돌을 권장안으로 확정한다.
+- 전체 저장소를 무조건 정독하지 않는다. 영향 지도를 근거로 범위를 넓히며, 새로운 연결 누락이 발견되면 재라우팅한다.
+
+담당 절차:
+
+- 공격·비판 검증·finding 분류·기획 충돌 큐: `running-adversarial-review-and-refinement`
+- 실제 diff·정적·런타임·접근성·성능·회귀 증거: `reviewing-and-validating-project-changes`
+- 사용자 결정 인터뷰: `managing-project-intake-and-work-contract: clarify`와 Grill Me 프로토콜
 
 ## 5. GPT → Codex 구현 라우팅
 
@@ -220,9 +253,11 @@ REVIEW: reference-freshness·발행본·복구 경로 검증
 
 ```text
 Prompt: GDD를 적대적으로 검토하고 개선해줘.
-REVIEW: 기획 검토 Skill·변경 검증 Skill 선택
+REVIEW: 영향 범위 지도 → 적대적 공격·비판 검증
+→ 기술 검수안 일괄 정리
+→ 기획 충돌만 한 번에 하나씩 사용자 확정
 BUILD: 승인된 개선안 반영
-REVIEW: 모순·누락·구현 가능성 재검증
+REVIEW: 모순·누락·구현 가능성·참조·회귀 재검증
 ```
 
 ### Grill Me
