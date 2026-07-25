@@ -80,6 +80,8 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
             "analyzing-and-refining-game-concepts",
             "reviewing-and-validating-project-changes",
             "auditing-canonical-reference-freshness",
+            "governing-legacy-retention-and-archives",
+            "evaluating-godot-assets-and-plugins-before-creation",
         ):
             self.assertIn(skill_id, combined)
 
