@@ -7,7 +7,7 @@ description: Use when current and legacy documents, assets, paths, skill package
 
 ## Core principle
 
-레거시 정리는 파일 수를 줄이는 작업이 아니다. **원문·고유 정보·활성 참조·호환성·복구 가능성**을 보존하면서 현재 정본·구현 권한·기본 라우팅에서 격리한다. 파일 경로만 남기고 내용을 비우는 방식은 보존이 아니다.
+레거시 정리는 파일 수를 줄이는 작업이 아니다. **원문을 비우지 않는다.** 고유 정보·활성 참조·호환성·복구 가능성을 보존하면서 현재 정본·구현 권한·기본 라우팅에서 격리한다.
 
 ## Skill Modes
 
@@ -68,7 +68,7 @@ Lifecycle은 처리 단계, retention classification은 보존 책임이다. 둘
 7. Registry·aliases·Documentation Map·링크·생성기·테스트와 파생본을 갱신한다.
 8. 본문·replacement·hash·rollback ref·secret boundary·cold start·직접 라우팅을 검증한다.
 
-상세 계약은 `references/archive-contract.md`를 필요한 경우에만 읽는다.
+상세 계약은 `references/archive-contract.md`, pressure 기록은 `references/pressure-scenarios.md`를 필요한 경우에만 읽는다.
 
 ## Content boundaries
 
