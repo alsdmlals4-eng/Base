@@ -129,4 +129,4 @@ compatibility_consumers / rollback_ref / validation_status
 
 ## Learning Log
 
-오삭제 위험, 고유 정보, 호환 stub, 복구 결과와 검증 누락을 `skills/SKILL_LEARNING_LOG.md`에 기록한다.
+`skills/governing-legacy-retention-and-archives/LEARNING_LOG.md`
