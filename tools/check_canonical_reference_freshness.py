@@ -155,9 +155,14 @@ def check_coupled_changes(changed: set[str], rules: list[dict]) -> list[str]:
     for index, rule in enumerate(rules):
         label = str(rule.get("name") or f"coupled_change_rules[{index}]")
         when = [str(item) for item in rule.get("when_changed", []) if str(item)]
+        exclude = [str(item) for item in rule.get("exclude_when_changed", []) if str(item)]
         require_all = [str(item) for item in rule.get("require_all_changed", []) if str(item)]
         require_any = [str(item) for item in rule.get("require_any_changed", []) if str(item)]
-        triggered = sorted(path for path in changed if matches_any(path, when))
+        triggered = sorted(
+            path
+            for path in changed
+            if matches_any(path, when) and not matches_any(path, exclude)
+        )
         if not triggered:
             continue
         missing_all = [

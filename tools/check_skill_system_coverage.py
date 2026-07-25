@@ -25,6 +25,7 @@ COMPACT_TARGETS = {
     "creating-user-learning-notes",
     "building-project-visual-dashboards",
     "diagnosing-game-engine-runtime-failures",
+    "governing-legacy-retention-and-archives",
 }
 
 

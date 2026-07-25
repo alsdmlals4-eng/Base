@@ -45,10 +45,20 @@ class CanonicalReferenceFreshnessTests(unittest.TestCase):
                 "required_consumers": ["README.md"],
             }],
             "coupled_change_rules": [{
-                "name": "skill-contract-sync",
+                "name": "local-skill-sync",
                 "when_changed": ["skills/**/SKILL.md"],
+                "exclude_when_changed": ["skills/shared-skill/SKILL.md"],
                 "require_all_changed": ["skills/SKILL_REGISTRY.json"],
                 "require_any_changed": ["skills/SKILL_LEARNING_LOG.md"],
+            }, {
+                "name": "shared-skill-sync",
+                "when_changed": ["skills/shared-skill/SKILL.md"],
+                "exclude_when_changed": [],
+                "require_all_changed": [
+                    "skills/BASE_SHARED_SKILL_ROUTES.json",
+                    "skills/shared-skill/LEARNING_LOG.md",
+                ],
+                "require_any_changed": ["tests/test_shared_skill.py"],
             }],
         }
         self._write_config()
@@ -95,6 +105,14 @@ class CanonicalReferenceFreshnessTests(unittest.TestCase):
         )
         return result.stdout.strip()
 
+    def _init_git(self) -> str:
+        self._git("init")
+        self._git("config", "user.email", "test@example.com")
+        self._git("config", "user.name", "Test User")
+        self._git("add", ".")
+        self._git("commit", "-m", "baseline")
+        return self._git("rev-parse", "HEAD")
+
     def test_valid_references_pass(self) -> None:
         result = self._run()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
@@ -131,26 +149,55 @@ class CanonicalReferenceFreshnessTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("does not reference current canonical source", result.stdout)
 
-    def test_coupled_change_requires_registry_and_learning_log(self) -> None:
+    def test_local_skill_change_requires_registry_and_learning_log(self) -> None:
         skill = self.root / "skills/new-skill/SKILL.md"
         skill.parent.mkdir(parents=True)
         skill.write_text("# Skill\n", encoding="utf-8")
         (self.root / "skills/SKILL_REGISTRY.json").write_text("{}\n", encoding="utf-8")
         (self.root / "skills/SKILL_LEARNING_LOG.md").write_text("# Log\n", encoding="utf-8")
-        self._git("init")
-        self._git("config", "user.email", "test@example.com")
-        self._git("config", "user.name", "Test User")
-        self._git("add", ".")
-        self._git("commit", "-m", "baseline")
-        base = self._git("rev-parse", "HEAD")
+        base = self._init_git()
         skill.write_text("# Changed Skill\n", encoding="utf-8")
         self._git("add", "skills/new-skill/SKILL.md")
-        self._git("commit", "-m", "change skill only")
-        head = self._git("rev-parse", "HEAD")
-        result = self._run(base, head)
+        self._git("commit", "-m", "change local skill only")
+        result = self._run(base, self._git("rev-parse", "HEAD"))
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("requires changed companions", result.stdout)
         self.assertIn("requires at least one changed companion", result.stdout)
+
+    def test_shared_skill_change_uses_route_and_package_log_not_local_registry(self) -> None:
+        skill = self.root / "skills/shared-skill/SKILL.md"
+        log = self.root / "skills/shared-skill/LEARNING_LOG.md"
+        skill.parent.mkdir(parents=True)
+        skill.write_text("# Shared Skill\n", encoding="utf-8")
+        log.write_text("# Log\n", encoding="utf-8")
+        (self.root / "skills/BASE_SHARED_SKILL_ROUTES.json").write_text("{}\n", encoding="utf-8")
+        (self.root / "tests/test_shared_skill.py").write_text("# test\n", encoding="utf-8")
+        base = self._init_git()
+        skill.write_text("# Changed Shared Skill\n", encoding="utf-8")
+        log.write_text("# Updated Log\n", encoding="utf-8")
+        (self.root / "skills/BASE_SHARED_SKILL_ROUTES.json").write_text('{"changed": true}\n', encoding="utf-8")
+        (self.root / "tests/test_shared_skill.py").write_text("# updated test\n", encoding="utf-8")
+        self._git("add", ".")
+        self._git("commit", "-m", "change shared skill companions")
+        result = self._run(base, self._git("rev-parse", "HEAD"))
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_shared_skill_change_without_package_log_fails(self) -> None:
+        skill = self.root / "skills/shared-skill/SKILL.md"
+        skill.parent.mkdir(parents=True)
+        skill.write_text("# Shared Skill\n", encoding="utf-8")
+        (self.root / "skills/shared-skill/LEARNING_LOG.md").write_text("# Log\n", encoding="utf-8")
+        (self.root / "skills/BASE_SHARED_SKILL_ROUTES.json").write_text("{}\n", encoding="utf-8")
+        (self.root / "tests/test_shared_skill.py").write_text("# test\n", encoding="utf-8")
+        base = self._init_git()
+        skill.write_text("# Changed Shared Skill\n", encoding="utf-8")
+        (self.root / "skills/BASE_SHARED_SKILL_ROUTES.json").write_text('{"changed": true}\n', encoding="utf-8")
+        (self.root / "tests/test_shared_skill.py").write_text("# updated test\n", encoding="utf-8")
+        self._git("add", ".")
+        self._git("commit", "-m", "omit shared log")
+        result = self._run(base, self._git("rev-parse", "HEAD"))
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("skills/shared-skill/LEARNING_LOG.md", result.stdout)
 
 
 if __name__ == "__main__":
