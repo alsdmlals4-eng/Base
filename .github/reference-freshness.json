@@ -62,7 +62,7 @@
       "name": "base-shared-skill-route-entrypoints",
       "canonical_path": "skills/BASE_SHARED_SKILL_ROUTES.json",
       "reference_tokens": ["skills/BASE_SHARED_SKILL_ROUTES.json", "BASE_SHARED_SKILL_ROUTES.json"],
-      "required_consumers": ["START_HERE.md", "docs/BASE_SHARED_SKILL_ADAPTER_CONTRACT.md"]
+      "required_consumers": ["docs/BASE_SHARED_SKILL_ADAPTER_CONTRACT.md"]
     },
     {
       "name": "reference-freshness-skill-entrypoints",
