@@ -746,3 +746,4 @@ Branch deletion은 이 rollout에서 `NOT_RUN`이다.
 - **Runtime value handling:** Base 병합 시점에만 정해지는 SHA는 Task 5의 명명된 출력 `base_merged_sha`로 전달하며 저장소 파일에는 실제 40자리 값만 기록한다.
 - **Type consistency:** 공용 validator signature는 `validate_archive_governance(root: Path, adapter_path: Path, manifest_path: Path) -> list[str]`; 모든 프로젝트는 동일한 adapter와 manifest field명을 사용한다.
 - **Scope:** 기존 구형 자료 이동·삭제, tag/branch 삭제와 history rewrite는 제외됐다.
+- **Approval:** 2026-07-25 사용자 설계 승인을 받았으며, 다음 단계는 실행 방식 선택이다.
