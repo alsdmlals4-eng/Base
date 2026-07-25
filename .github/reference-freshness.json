@@ -37,6 +37,7 @@
     "docs/OPERATING_MODEL.md",
     "docs/DOCUMENTATION_MAP.md",
     "skills/SKILL_REGISTRY.json",
+    "skills/BASE_SHARED_SKILL_ROUTES.json",
     "templates/AGENTS.project.md",
     "templates/project-operations/AI_WORKFLOW.md",
     "templates/project-operations/PROJECT_START_HERE.md",
@@ -57,6 +58,12 @@
       "required_consumers": ["START_HERE.md", "docs/OPERATING_MODEL.md"]
     },
     {
+      "name": "base-shared-skill-route-entrypoints",
+      "canonical_path": "skills/BASE_SHARED_SKILL_ROUTES.json",
+      "reference_tokens": ["skills/BASE_SHARED_SKILL_ROUTES.json", "BASE_SHARED_SKILL_ROUTES.json"],
+      "required_consumers": ["START_HERE.md", "docs/BASE_SHARED_SKILL_ADAPTER_CONTRACT.md"]
+    },
+    {
       "name": "reference-freshness-skill-entrypoints",
       "canonical_path": "skills/auditing-canonical-reference-freshness/SKILL.md",
       "reference_tokens": ["auditing-canonical-reference-freshness"],
@@ -65,24 +72,35 @@
   ],
   "coupled_change_rules": [
     {
-      "name": "skill-contract-registry-learning-sync",
+      "name": "skill-contract-learning-and-test-sync",
       "when_changed": ["skills/**/SKILL.md"],
-      "require_all_changed": ["skills/SKILL_REGISTRY.json", "skills/SKILL_LEARNING_LOG.md"],
-      "require_any_changed": [
-        "tests/test_game_project_operating_system_structure.py",
-        "tests/test_consolidated_skill_references.py",
-        "tests/test_reference_freshness.py",
-        "tests/test_gpt_codex_workflow_contract.py"
-      ]
-    },
-    {
-      "name": "registry-structure-test-sync",
-      "when_changed": ["skills/SKILL_REGISTRY.json"],
       "require_all_changed": ["skills/SKILL_LEARNING_LOG.md"],
       "require_any_changed": [
         "tests/test_game_project_operating_system_structure.py",
         "tests/test_consolidated_skill_references.py",
-        "tests/test_gpt_codex_workflow_contract.py"
+        "tests/test_reference_freshness.py",
+        "tests/test_gpt_codex_workflow_contract.py",
+        "tests/test_skill_system_coverage.py"
+      ]
+    },
+    {
+      "name": "skill-contract-registry-route-sync",
+      "when_changed": ["skills/**/SKILL.md"],
+      "require_all_changed": [],
+      "require_any_changed": [
+        "skills/SKILL_REGISTRY.json",
+        "skills/BASE_SHARED_SKILL_ROUTES.json"
+      ]
+    },
+    {
+      "name": "registry-structure-test-sync",
+      "when_changed": ["skills/SKILL_REGISTRY.json", "skills/BASE_SHARED_SKILL_ROUTES.json"],
+      "require_all_changed": ["skills/SKILL_LEARNING_LOG.md"],
+      "require_any_changed": [
+        "tests/test_game_project_operating_system_structure.py",
+        "tests/test_consolidated_skill_references.py",
+        "tests/test_gpt_codex_workflow_contract.py",
+        "tests/test_skill_system_coverage.py"
       ]
     },
     {
