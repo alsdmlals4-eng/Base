@@ -59,6 +59,12 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "skills/creating-user-learning-notes/SKILL.md",
             "skills/building-project-visual-dashboards/SKILL.md",
             "skills/diagnosing-game-engine-runtime-failures/SKILL.md",
+            "skills/BASE_SHARED_SKILL_ROUTES.json",
+            "skills/governing-legacy-retention-and-archives/SKILL.md",
+            "skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md",
+            "skills/evaluating-godot-assets-and-plugins-before-creation/references/source-catalog.md",
+            "docs/BASE_SHARED_SKILL_ADAPTER_CONTRACT.md",
+            "tests/test_base_shared_skill_routes.py",
             "skills/SKILL_COVERAGE.json",
             "docs/SKILL_COVERAGE_MAP.md",
             "docs/SKILL_SYSTEM_OPTIMIZATION_REPORT.md",
@@ -158,6 +164,8 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "managing-game-project-operating-system",
             "managing-design-documents",
             "managing-base-change-proposals",
+            "governing-legacy-retention-and-archives",
+            "evaluating-godot-assets-and-plugins-before-creation",
             "reviewing-and-validating-project-changes",
         ):
             self.assertIn(f"`{skill_id}`", aliases)
@@ -206,7 +214,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         self.assertTrue(policy["require_trigger_match"])
         self.assertTrue(policy["require_execution_report"])
         self.assertEqual(policy["work_modes"], ["PLAN", "BUILD", "REVIEW"])
-        self.assertEqual(len(registry["skills"]), 25)
+        self.assertEqual(len(registry["skills"]), 27)
         seen: set[str] = set()
         for item in registry["skills"]:
             skill_id = item["skill_id"]
