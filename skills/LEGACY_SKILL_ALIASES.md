@@ -16,6 +16,8 @@
 | `promoting-project-knowledge` | `managing-base-change-proposals` | `extract` / `submit` |
 | `reviewing-and-implementing-base-change-proposals` | `managing-base-change-proposals` | `review` / `implement` / `verify` |
 | `reviewing-external-ai-drafts` | `reviewing-and-validating-project-changes` | `external-source-review` / `static-validation` / `regression` / `evidence-report` |
+| `reconcile-legacy`, `legacy-retention-archives` | `governing-legacy-retention-and-archives` | `inventory` / `classify` / `reconcile` / `archive` / `verify` |
+| `asset-store-first`, `godot-asset-search-first`, `commercial-plugin-search` | `evaluating-godot-assets-and-plugins-before-creation` | `search` / `evaluate` / `trial-plan` / `adoption-decision` |
 
 ## Migration rule
 
