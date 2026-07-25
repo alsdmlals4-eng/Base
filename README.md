@@ -21,6 +21,8 @@ START_HERE.md
 - [통합 운영 모델](docs/OPERATING_MODEL.md)
 - [문서·스킬 역할표](docs/DOCUMENTATION_MAP.md)
 - [공용 스킬 Registry](skills/SKILL_REGISTRY.json)
+- [공용 어댑터 Skill Route](skills/BASE_SHARED_SKILL_ROUTES.json)
+- [프로젝트 어댑터 계약](docs/BASE_SHARED_SKILL_ADAPTER_CONTRACT.md)
 - [이전 Skill ID 별칭](skills/LEGACY_SKILL_ALIASES.md)
 - [공용 스킬 학습 기록](skills/SKILL_LEARNING_LOG.md)
 - [Base 수정제안서]([수정제안서]/README.md)
@@ -48,7 +50,7 @@ START_HERE.md
 
 ## 활성 실행 스킬
 
-활성 Registry 스킬은 책임 경계 재검토와 최적화 뒤 **25개**입니다.
+활성 Registry 스킬은 책임 경계 재검토와 최적화 뒤 **27개**입니다.
 
 | Skill | 책임 |
 |---|---|
@@ -77,6 +79,8 @@ START_HERE.md
 | `designing-art-prompts-and-technique-cards` | 이미지 프롬프트·아트 기술 카드 |
 | `auditing-and-refining-ui-art` | Godot·Web UI 결과 감사와 승인된 개선 |
 | `managing-base-change-proposals` | 프로젝트 교훈 추출·BCP 제출·검토·승인된 구현 |
+| `governing-legacy-retention-and-archives` | 레거시 보존·정본 통합·호환 stub·아카이브·승인 삭제 |
+| `evaluating-godot-assets-and-plugins-before-creation` | Godot 기본 기능·무료·오픈소스·상용 자산을 직접 제작 전에 평가 |
 
 통합 전 Skill ID는 [skills/LEGACY_SKILL_ALIASES.md](skills/LEGACY_SKILL_ALIASES.md)에서 새 Skill과 mode로 연결합니다.
 
