@@ -1,5 +1,14 @@
 # Base Skill Learning Log
 
+## 2026-07-25 승인 기획 결정 지속 기록·하위 시스템 통합 교훈
+
+- 십보강호 기획에서 승인 결정이 대화·PR 댓글에 누적되면 책임 원본·상태·Context와 drift가 생길 수 있음을 확인했다.
+- 승인·수정 직후 GitHub 추적 근거를 남기고, 전투·성장·경제·진행·콘텐츠 등 하위 시스템 완료 checkpoint에서 책임 원본으로 통합한다.
+- GitHub 댓글·Issue·PR·Discussion은 추적 근거이며 책임 원본의 대체물이 아니다. 최신 승인안의 대체 범위, 공식, 예시, 예외, 미결정, 검증 상태를 함께 보존한다.
+- checkpoint에서는 누락·충돌·중복·대체 누락·참조 drift를 검사하고, 실행하지 않은 검수·플레이테스트·CI는 `UNVERIFIED`를 유지한다.
+- 출처: `Ten-Paces-Hidden-Moves` PR #42 승인 기록 `5078806296`; Base 적용 PR #41.
+- 현재 지식 상태: 프로젝트 적용과 사용자 승인은 `PATTERN`, 여러 프로젝트에서의 누락 감소 효과는 후속 관찰 전까지 `OBSERVATION`.
+
 ## 2026-07-24 GPT–Codex 역할 분리·Grill Me·비용 최적화 CI 교훈
 
 - Grill Me는 요구 확인과 승인 상태를 다시 만드는 독립 Skill이 아니라 `managing-project-intake-and-work-contract`의 `clarify` Mode에 통합하는 편이 중복 질문과 상태 충돌을 줄인다.
