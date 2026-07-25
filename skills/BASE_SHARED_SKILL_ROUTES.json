@@ -89,7 +89,7 @@
         "templates/project-operations/ARCHIVE_README.md",
         "templates/project-operations/github/check_archive_governance.py"
       ],
-      "learning_log": "skills/SKILL_LEARNING_LOG.md",
+      "learning_log": "skills/governing-legacy-retention-and-archives/LEARNING_LOG.md",
       "knowledge_state": "PATTERN"
     },
     {
