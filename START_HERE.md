@@ -134,14 +134,18 @@ PLAN Work Mode에서 프로젝트 정체성·핵심 경험·코어 루프·불�
 `skills/running-adversarial-review-and-refinement/SKILL.md`
 
 ```text
-attack
+review-scope-map
+→ attack
 → validate-critique
-→ MUST_FIX·SHOULD_FIX만 refine-approved-findings
+→ route-findings
+→ 기술적으로 판단 가능한 사항은 technical-review-proposal로 일괄 정리
+→ 기획 결정을 요구하는 충돌만 한 번에 하나씩 사용자 확정
+→ 승인된 MUST_FIX·SHOULD_FIX만 refine-approved-findings
 → regression-recheck
 → decision-report
 ```
 
-레드팀 지적을 그대로 수용하지 않고 취향·범위 밖 요구·잘못된 전제를 다시 검증한다.
+`REVIEW` Work Mode의 기본 탐색 루프다. 요청 파일만 보지 않고 정본·활성 소비자·인접 시스템·untouched 영향 파일·테스트·템플릿·파생본을 연결한다. 레드팀 지적을 그대로 수용하지 않고 취향·범위 밖 요구·잘못된 전제를 다시 검증하며, 저장소와 증거로 답할 수 있는 기술 항목을 사용자 질문으로 전가하지 않는다.
 
 ### 기획 책임 원본 작성·발행
 
@@ -210,7 +214,11 @@ slice-contract
 `skills/reviewing-and-validating-project-changes/SKILL.md`
 
 ```text
-contract-check
+review-scope-map
+→ running-adversarial-review-and-refinement
+→ 기술 검수안과 USER_DECISION_REQUIRED 분리
+→ 기획 충돌이 있으면 한 번에 하나씩 확정
+→ contract-check
 → 필요한 경우 external-source-review
 → 정본·경로·ID·Schema 변경 시 reference-freshness
 → static-validation
@@ -221,7 +229,7 @@ contract-check
 → evidence-report
 ```
 
-코드·데이터·문서·자산 변경은 승인 계약, 실제 diff, 정적·런타임·회귀 증거를 연결한다. 접근성은 핵심 정보·입력·UI·시간·난이도·모션의 실제 장벽과 대안을 검수하고, 성능은 목표 플랫폼에서 frame time·CPU·GPU·메모리·네트워크·로딩을 baseline과 비교한다. 실행 환경이 없으면 `UNVERIFIED`로 기록한다.
+코드·데이터·문서·자산 변경은 먼저 전체 영향 범위에서 수정·개선 후보를 적대적으로 찾고, 기술적으로 판단 가능한 사항은 근거·우선순위·영향 파일·수정 방향·검증 방법을 검수안으로 정리한다. 프로젝트 코어·플레이어 경험·주요 UX·콘텐츠 의미처럼 기획 결정을 요구하는 충돌만 사용자에게 한 번에 하나씩 제시한다. 이후 승인 계약, 실제 diff, 정적·런타임·회귀 증거를 연결한다. 접근성은 핵심 정보·입력·UI·시간·난이도·모션의 실제 장벽과 대안을 검수하고, 성능은 목표 플랫폼에서 frame time·CPU·GPU·메모리·네트워크·로딩을 baseline과 비교한다. 실행 환경이 없으면 `UNVERIFIED`로 기록한다.
 
 ### 정본·참조 최신성 감사
 
