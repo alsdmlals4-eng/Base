@@ -13,7 +13,7 @@ def read(path: str) -> str:
 
 
 class VerticalSliceV6ContractTests(unittest.TestCase):
-    def test_vertical_slice_router_keeps_existing_modes_and_adds_integrated_modes(self) -> None:
+    def test_existing_vertical_slice_skill_authority_is_preserved(self) -> None:
         skill = read("skills/designing-vertical-slices/SKILL.md")
         for mode in (
             "slice-contract",
@@ -21,21 +21,15 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
             "pipeline-proof",
             "playtest-evidence",
             "decision-gate",
-            "integrated-demo-package",
-            "skill-coverage-audit",
         ):
             self.assertIn(f"`{mode}`", skill)
 
-        for term in (
-            "CORE_POC",
-            "SLICE_VALIDATION",
-            "PROTOTYPE_AND_VERTICAL_SLICE",
-            "Steam 메인, STOVE",
-            "Google Play",
-            "Balance Tuning Backlog",
-            "Skill 실행 증거",
-        ):
-            self.assertIn(term, skill)
+        for decision in ("EXPAND", "REWORK", "REPEAT_SLICE", "HOLD", "STOP"):
+            self.assertIn(decision, skill)
+
+        self.assertIn("templates/planning/VERTICAL_SLICE_PLAN.md", skill)
+        self.assertNotIn("integrated-demo-package", skill)
+        self.assertNotIn("skill-coverage-audit", skill)
 
     def test_conditional_references_exist_and_preserve_v6_responsibilities(self) -> None:
         stage = read("skills/designing-vertical-slices/references/integrated-demo-stage-gates.md")
@@ -115,19 +109,22 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
         ):
             self.assertIn(state, evidence)
 
-    def test_no_new_duplicate_skill_is_introduced(self) -> None:
+    def test_no_new_duplicate_skill_or_registry_trigger_is_introduced(self) -> None:
         registry = read("skills/SKILL_REGISTRY.json")
         self.assertIn('"skill_id":"designing-vertical-slices"', registry)
         self.assertEqual(registry.count('"skill_id":"designing-vertical-slices"'), 1)
         self.assertNotIn('"skill_id":"vertical-slice-master-reference"', registry)
+        self.assertNotIn('"integrated-demo-package"', registry)
+        self.assertNotIn('"skill-coverage-audit"', registry)
 
     def test_requirement_coverage_document_maps_v6_without_duplicate_canonical_source(self) -> None:
         coverage = read("docs/knowledge/VERTICAL_SLICE_V6_REQUIREMENT_COVERAGE.md")
         for term in (
             "대형 중복 정본",
-            "기존 `designing-vertical-slices`를 중심 라우터로 보강",
+            "기존 `designing-vertical-slices` Skill의 책임·mode·Registry 계약은 보존",
             "Requirement·Skill·Artifact 완전성",
             "v6 전체를 하나의 활성 Base 문서로 복제하지 않는다",
+            "기존 Skill 본문을 바꾸지 않아 Registry·Learning Log companion 계약",
         ):
             self.assertIn(term, coverage)
 
