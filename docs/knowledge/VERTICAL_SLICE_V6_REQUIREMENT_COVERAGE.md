@@ -1,0 +1,69 @@
+# Vertical Slice v6 요구사항의 Base 책임 매핑
+
+## 목적
+
+`VERTICAL_SLICE_MASTER_REFERENCE_v6`의 내용을 대형 중복 정본으로 Base에 복사하지 않고, 최신 Base의 Registry route·통합 Skill·조건부 reference·Template·Test 구조에 무손실로 배치한다.
+
+## 통합 원칙
+
+- 사용자 최신 지시가 최상위다.
+- Base 공용 Skill 본문은 프로젝트에 복제하지 않는다.
+- 새 Skill은 기존 Base에 같은 책임이 없을 때만 만든다.
+- 이번 변경은 새 Skill을 추가하지 않고 기존 `designing-vertical-slices`를 중심 라우터로 보강한다.
+- Grill Me·적대적 검토·자산 조사·문서·검증·인수인계는 기존 전문 Skill에 위임한다.
+- 전체 v6 본문은 참고 증거이며 Base의 활성 책임 원본은 Skill·reference·Template다.
+
+## Requirement Coverage
+
+| v6 책임 | Base 책임 원본 | 변경 |
+|---|---|---|
+| 4단계 제품 Gate | `designing-vertical-slices/references/integrated-demo-stage-gates.md` | 신규 reference |
+| `CORE_POC`와 `SLICE_VALIDATION` 분리 | concept Skill + integrated demo reference | 명시 강화 |
+| 프로토타입에서 멈추지 않는 Stage 2 | `designing-vertical-slices/SKILL.md` | Core principle·DoD 강화 |
+| PC Steam·STOVE·itch.io 패키지 | integrated demo reference·Vertical Slice Template | 신규 상세 계약 |
+| 모바일 Google Play 패키지 | integrated demo reference·Vertical Slice Template | 신규 상세 계약 |
+| Steam 출시 예정 페이지·트레일러·스크린샷 | integrated demo reference | Slice 추적성 추가 |
+| STOVE 피드백·핵심 재미 시작점 | integrated demo reference | 외부 검증 항목 추가 |
+| Steam Playtest | Vertical Slice Skill·integrated demo reference | 표본·빌드·퍼널 강화 |
+| 텀블벅 준비도 | integrated demo reference | 팬덤·리워드·남은 범위 계약 추가 |
+| 세부 수치 유예 | `asset-mascot-and-tuning.md`·Template | 상태·Backlog 추가 |
+| UI·UX·사운드 콘셉트 우선 | `asset-mascot-and-tuning.md` | 상세 역할 계약 추가 |
+| 에셋스토어 우선·없는 경우 생성 | 기존 Godot asset Skill + tuning reference | 라우팅 연결 |
+| 세계관 마스코트 | `asset-mascot-and-tuning.md` | 역할·제한·Slice 증거 추가 |
+| Grill Me 0~3 | `skill-orchestration-and-evidence.md` | 기존 clarify의 조건부 단계 복원 |
+| 적대적 검토 5개 렌즈 | orchestration reference + 기존 review Skill | 렌즈와 Finding 라우팅 연결 |
+| 많은 Skill의 적절한 사용 | orchestration reference | 단계별 최소 충분 Skill 체인 추가 |
+| Superpowers 개발 체인 | orchestration reference | 설치·Trigger 조건부 연결 |
+| DeepSeek·외부 AI 격리 | orchestration reference | external-source-review 연결 |
+| P0~P3 | orchestration reference·Template | 우선순위 복원 |
+| HiGodot 조건부 구조 검증 | orchestration reference | 실제 연결·도구 확인 조건 |
+| GitHub·PDF 발행 | orchestration reference | 조건부 프로필로 복원 |
+| Skill 실행 증거 | `SKILL_EXECUTION_EVIDENCE.md` | 신규 Template |
+| Requirement·Skill·Artifact 완전성 | Skill·reference·Template·test | 3중 감사 추가 |
+
+## 기존 책임 보존
+
+다음 기존 계약을 제거하지 않는다.
+
+- Prototype / Vertical Slice / MVP / Demo 구분
+- `slice-contract / quality-bar / pipeline-proof / playtest-evidence / decision-gate`
+- 접근성·성능 전문 검증 위임
+- 선택적 하이라이트의 보유·미보유 정상 완주 사례
+- 실제 빌드·표본·행동·자기보고 분리
+- 제작 파이프라인의 두 번째 콘텐츠 반복 증명
+- `EXPAND / REWORK / REPEAT_SLICE / HOLD / STOP`의 의미는 새 Gate 상태에 대응해 보존
+
+## 비채택·변형
+
+- v6 전체를 하나의 활성 Base 문서로 복제하지 않는다. 통합 Skill 구조와 중복 정본을 만들기 때문이다.
+- 모든 Skill을 한 번에 로드하지 않는다. 하위 작업별 최소 충분 Skill을 순차 오케스트레이션한다.
+- 고정 횟수의 적대적 검토 대신 5개 독립 렌즈를 Gate 위험에 맞춰 적용한다.
+- 모든 작업에서 PDF·HiGodot·DeepSeek를 강제하지 않는다. Trigger·도구·발행 정책이 맞을 때만 실행한다.
+- 세부 수치 조정은 기획 승인 질문이 아니라 플레이테스트 Backlog로 관리한다.
+
+## 검증
+
+- `tests/test_vertical_slice_v6_contract.py`
+- 기존 `tests/test_consolidated_skill_references.py`
+- Skill Registry·package integrity·reference freshness·documentation routing CI
+- PR Actions의 정적 검증 결과
