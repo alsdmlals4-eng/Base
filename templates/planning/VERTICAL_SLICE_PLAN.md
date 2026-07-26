@@ -1,5 +1,13 @@
 # Vertical Slice 통합 데모 계획
 
+## 상세 계약 라우팅
+
+현재 작업에 필요한 문서만 읽는다.
+
+- 4단계 Gate·PC/모바일 통합 데모: `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md`
+- Skill 오케스트레이션·Grill Me·적대적 검토·완전성 증거: `docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md`
+- 에셋·UI·UX·사운드·마스코트·수치 조정: `docs/knowledge/vertical-slice/ASSET_MASCOT_AND_TUNING.md`
+
 ## 0. 상태와 실행 계약
 
 - 프로젝트:
@@ -215,31 +223,31 @@ PC 프로젝트에서만 작성한다.
 
 ### P0
 
-- 
+- 없음
 
 ### P1
 
-- 
+- 없음
 
 ### P2
 
-- 
+- 없음
 
 ### P3
 
-- 
+- 없음
 
 ### TECHNICAL_REVIEW_PROPOSAL
 
-- 
+- 없음
 
 ### USER_DECISION_REQUIRED
 
-- 
+- 없음
 
 ### BLOCKED_UNVERIFIED
 
-- 
+- 없음
 
 ## 16. Skill 실행 증거
 
