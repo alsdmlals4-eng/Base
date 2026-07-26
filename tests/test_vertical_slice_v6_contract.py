@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL_DIR = ROOT / "skills" / "designing-vertical-slices"
+KNOWLEDGE_DIR = ROOT / "docs" / "knowledge" / "vertical-slice"
 
 
 def read(path: str) -> str:
@@ -31,17 +31,24 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
         self.assertNotIn("integrated-demo-package", skill)
         self.assertNotIn("skill-coverage-audit", skill)
 
-    def test_conditional_references_exist_and_preserve_v6_responsibilities(self) -> None:
-        stage = read("skills/designing-vertical-slices/references/integrated-demo-stage-gates.md")
-        orchestration = read("skills/designing-vertical-slices/references/skill-orchestration-and-evidence.md")
-        assets = read("skills/designing-vertical-slices/references/asset-mascot-and-tuning.md")
+    def test_knowledge_references_exist_and_preserve_v6_responsibilities(self) -> None:
+        stage_path = "docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md"
+        orchestration_path = "docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md"
+        assets_path = "docs/knowledge/vertical-slice/ASSET_MASCOT_AND_TUNING.md"
+        stage = read(stage_path)
+        orchestration = read(orchestration_path)
+        assets = read(assets_path)
 
         for path in (
-            SKILL_DIR / "references/integrated-demo-stage-gates.md",
-            SKILL_DIR / "references/skill-orchestration-and-evidence.md",
-            SKILL_DIR / "references/asset-mascot-and-tuning.md",
+            KNOWLEDGE_DIR / "INTEGRATED_DEMO_STAGE_GATES.md",
+            KNOWLEDGE_DIR / "SKILL_ORCHESTRATION_AND_EVIDENCE.md",
+            KNOWLEDGE_DIR / "ASSET_MASCOT_AND_TUNING.md",
         ):
             self.assertTrue(path.is_file(), str(path))
+
+        plan = read("templates/planning/VERTICAL_SLICE_PLAN.md")
+        for path in (stage_path, orchestration_path, assets_path):
+            self.assertIn(path, plan)
 
         for gate in (
             "CONCEPT_APPROVAL",
@@ -125,8 +132,17 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
             "Requirement·Skill·Artifact 완전성",
             "v6 전체를 하나의 활성 Base 문서로 복제하지 않는다",
             "기존 Skill 본문을 바꾸지 않아 Registry·Learning Log companion 계약",
+            "미연결 reference",
         ):
             self.assertIn(term, coverage)
+
+    def test_no_orphaned_v6_references_remain_inside_skill_package(self) -> None:
+        for path in (
+            ROOT / "skills/designing-vertical-slices/references/integrated-demo-stage-gates.md",
+            ROOT / "skills/designing-vertical-slices/references/skill-orchestration-and-evidence.md",
+            ROOT / "skills/designing-vertical-slices/references/asset-mascot-and-tuning.md",
+        ):
+            self.assertFalse(path.exists(), str(path))
 
 
 if __name__ == "__main__":
