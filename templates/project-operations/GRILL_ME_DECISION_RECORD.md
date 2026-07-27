@@ -38,7 +38,7 @@ updated_at:
 
 ## 질문 기록
 
-| Decision ID | 질문 | 분류 | 기존 Decision | GPT 권장안 | 사용자 답변 | 최종 결정 | 분야 정본 | main Commit | Sheet 위치 | 동기화 상태 |
+| 질문 ID / Decision ID | 질문 | 분류 | 기존 Decision | GPT 권장안 | 사용자 답변 | 최종 결정 | 분야 정본 | 반영 Commit | Sheet 위치 | 동기화 상태 |
 |---|---|---|---|---|---|---|---|---|---|---|
 
 분류:
@@ -139,7 +139,7 @@ reconsider_when:
 - `CURRENT_CONFIRMED_DECISIONS.md`:
 - 분야 책임 원본:
 - Active Context·작업 계약:
-- main Commit:
+- 반영 Commit:
 - Google Sheets tab·row:
 - GitHub 승인 댓글:
 
@@ -165,7 +165,7 @@ reconsider_when:
 
 - 없음
 
-## 제거·보류·기각 요소
+## 제거·보류 요소 (기각 포함)
 
 | 항목 | 상태 | 이유 | 관련 Decision | 다시 제안하지 않을 범위 | 재검토 조건 |
 |---|---|---|---|---|---|

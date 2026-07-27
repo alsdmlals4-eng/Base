@@ -126,7 +126,6 @@ GitHub와 Sheets가 다르면 최신 사용자 승인, Decision ID, Commit SHA�
 ```
 
 병합 후 표준 양식은 `templates/quality/POST_MERGE_ADVERSARIAL_REVIEW.md`를 사용한다.
-
 ## Post-merge final decisions
 
 - `NO_CONFLICT`: 정본·최근 승인·diff·Sheets·적용 검증에서 확인된 충돌이 없다.

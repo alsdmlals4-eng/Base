@@ -40,7 +40,7 @@ Grill Me는 `managing-project-intake-and-work-contract`의 `clarify` Skill Mode�
 
 다음 질문 전 게이트를 모두 통과해야 한다.
 
-1. 저장소·책임 원본·Google Sheets·현재 대화에서 답을 찾을 수 없는가?
+1. 저장소·책임 원본·현재 대화·Google Sheets에서 답을 찾을 수 없는가?
 2. 사용자가 이미 같은 결정에 답하지 않았는가?
 3. 최신 Decision으로 대체·폐기·보류되지 않았는가?
 4. 실제로 프로젝트 방향·플레이 경험·범위·제작 가능성을 바꾸는가?
