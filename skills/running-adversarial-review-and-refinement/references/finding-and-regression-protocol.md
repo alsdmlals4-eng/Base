@@ -22,6 +22,11 @@
 10. 미검증 가정, 근거 없는 확정, 인접 시스템 의존성.
 11. 접근성·성능·플랫폼 장벽.
 12. 저장·ID·Schema·호환성·롤백·복구 부재.
+13. 최근 사용자 승인 Decision 누락 또는 이전 Decision 부활.
+14. `CURRENT_CONFIRMED_DECISIONS.md`, 분야 책임 원본, 실제 diff의 불일치.
+15. 동일 Goal의 열린·최근 병합 PR, 중복 구현·문서·질문.
+16. GitHub `main`과 프로젝트 Google Sheets의 Decision·Commit·대체 관계 불일치.
+17. 병합 뒤 관련 Registry·Template·Test·파생본이 untouched로 남은 전파 누락.
 
 `attack`에서는 장점·칭찬·해결책으로 공격 강도를 희석하지 않는다. 장점 보호와 수정 여부는 뒤 단계에서 판단한다.
 
@@ -37,6 +42,9 @@ evidence:
 severity: CRITICAL/HIGH/MEDIUM/LOW
 confidence:
 suggested_direction:
+related_decision_ids:
+merged_pr_or_commit:
+canonical_and_sheet_scope:
 ```
 
 근거가 없는 의심은 가설로 기록할 수 있지만 `evidence`와 `confidence`를 비워 두지 않는다.
@@ -46,6 +54,10 @@ suggested_direction:
 각 지적에 다음을 확인한다.
 
 - 실제 요구·프로젝트 코어·책임 원본·관찰 증거에 근거하는가?
+- 최신 사용자 승인과 Decision 대체 관계를 확인했는가?
+- 실제 diff와 새 `main` HEAD를 확인했는가?
+- 동일 Goal의 열린·최근 병합 PR을 확인했는가?
+- 프로젝트가 Google Sheets를 사용하면 해당 행을 재조회했는가?
 - 단순 취향, 중복, 범위 밖 요구, 해결책 선호인가?
 - 발생 가능성과 실제 영향이 충분한가?
 - 수정 비용보다 개선 효과가 큰가?
@@ -54,7 +66,7 @@ suggested_direction:
 
 ```yaml
 finding_id:
-decision: MUST_FIX/SHOULD_FIX/DEFER/REJECT/UNVERIFIED
+decision: MUST_FIX/SHOULD_FIX/USER_DECISION_REQUIRED/DEFER/REJECTED_CRITIQUE/BLOCKED_UNVERIFIED
 decision_basis:
 evidence_quality:
 probability_and_impact:
@@ -62,6 +74,10 @@ cost_benefit:
 core_and_regression_risk:
 scope_fit:
 ```
+
+- `USER_DECISION_REQUIRED`: 둘 이상의 유효한 선택지가 프로젝트 코어·중요 기획·방향성을 다르게 만든다.
+- `REJECTED_CRITIQUE`: 취향, 중복, 잘못된 전제, 범위 밖 요구다.
+- `BLOCKED_UNVERIFIED`: 필요한 정본·도구·권한·CI·런타임·Sheets 증거가 없어 판정할 수 없다.
 
 레드팀의 높은 심각도가 자동으로 `MUST_FIX`가 되지는 않는다.
 
@@ -79,19 +95,34 @@ new_risks:
 validation_plan:
 ```
 
-`DEFER`, `REJECT`, `UNVERIFIED`는 몰래 반영하지 않는다. 실제 파일 변경 권한이 없으면 개선안만 제시한다.
+`USER_DECISION_REQUIRED`, `DEFER`, `REJECTED_CRITIQUE`, `BLOCKED_UNVERIFIED`는 몰래 반영하지 않는다. 실제 파일 변경 권한이 없으면 개선안만 제시한다.
 
 ## 회귀 재검토
 
 1. 원래 finding과 실패 사례가 실제로 사라졌는가?
 2. 승인 요구·완료 기준·프로젝트 코어가 유지되는가?
-3. 정상 경로와 기존 장점·자산이 손상되지 않았는가?
-4. 데이터·저장·ID·Schema·호환성이 유지되는가?
-5. 새 예외·악용·복잡성·접근성·성능·플랫폼 비용이 생기지 않았는가?
-6. 롤백·복구 경로가 유지되는가?
-7. 실행하지 못한 검사를 `UNVERIFIED`로 남겼는가?
+3. 최신 승인 Decision과 대체 관계가 유지되는가?
+4. 정상 경로와 기존 장점·자산이 손상되지 않았는가?
+5. 데이터·저장·ID·Schema·호환성이 유지되는가?
+6. 새 예외·악용·복잡성·접근성·성능·플랫폼 비용이 생기지 않았는가?
+7. 정본·Registry·Template·Test·파생본 전파 누락이 없는가?
+8. GitHub `main`과 Google Sheets를 재조회해 일치하는가?
+9. 동일 Goal의 중복 PR·중복 구현이 남지 않았는가?
+10. 롤백·복구 경로가 유지되는가?
+11. 실행하지 못한 검사를 `BLOCKED_UNVERIFIED`로 남겼는가?
 
-회귀 결정은 `PASS / PASS_WITH_FOLLOWUP / REVISE_AGAIN / REJECT_CHANGE / UNVERIFIED` 중 하나다. 실제 코드·데이터·자산 변경은 `reviewing-and-validating-project-changes`의 정적·런타임 증거로 연결한다.
+회귀 결정은 `PASS / PASS_WITH_FOLLOWUP / REVISE_AGAIN / REJECT_CHANGE / BLOCKED_UNVERIFIED` 중 하나다. 실제 코드·데이터·자산 변경은 `reviewing-and-validating-project-changes`의 정적·런타임 증거로 연결한다.
+
+병합 후 최종 판정은 다음을 사용한다.
+
+```text
+NO_CONFLICT
+CONFLICT_FIXED
+USER_DECISION_REQUIRED
+BLOCKED_UNVERIFIED
+```
+
+표준 보고 양식: `templates/quality/POST_MERGE_ADVERSARIAL_REVIEW.md`
 
 ## 심각도
 
