@@ -49,6 +49,7 @@ Base 저장소 자체의 콜드 스타트에서는 프로젝트 설치 템플릿
 | GPT–Codex 역할·인계 정책 | `docs/GPT_CODEX_WORKFLOW_POLICY.md` | GPT 비-Godot 완료, Codex 읽기 전용 Plan, 단계별 Godot 구현, 변경 권한, Branch·PR·자동 병합 게이트 |
 | GitHub Pro 저장소 운영 | `docs/GITHUB_PRO_OPERATING_POLICY.md` | Pro private 보호 기능, Ruleset, `ci-gate`, 자동 병합, 사용량 Budget, Base→`omenward`→순차 확산 |
 | GitHub 작업 항목 생명주기 | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | Issue·Goal·Branch·PR·Run·Artifact·Release 책임, PR WIP·재사용·종료·보존·무손실 정리 |
+| 승인 결정 즉시 동기화 | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | 질문 전 정본·PR·Sheets 대조, 중복 질문 방지, 승인 즉시 정본·main·Sheets 동기화, 병합 후 적대적 검토 |
 | CI 실행·비용 정책 | `docs/CI_EXECUTION_COST_POLICY.md` | 변경 등급별 PR·main·nightly 검증, concurrency, `ci-gate`, Actions 차단 상태 |
 | Work Mode·Skill 라우팅 | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | PLAN·BUILD·REVIEW, Skill·Skill Mode 구분, Grill Me, GPT→Codex 자동 선택·실행 보고 상세 계약 |
 | 저장소 개요 | `README.md` | 사용 목적·구조·활성 스킬 안내 |
@@ -73,6 +74,8 @@ Skill 선택·상태 → SKILL_REGISTRY.json
 Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 반복 절차 → Skill과 Skill Mode
 Grill Me 결정 → GRILL_ME_DECISION_RECORD와 해당 기획 책임 원본
+현재 승인 결정 복원 → CURRENT_CONFIRMED_DECISIONS.md
+승인 결정 동기화 → GitHub 추적 surface·분야 정본·main Commit·프로젝트 Google Sheets
 전체 구현 기준 → MASTER_IMPLEMENTATION_PLAN
 현재 Godot 구현 범위 → 패키지 계약·Branch·PR
 Repository 보호·병합 설정 → GITHUB_REPOSITORY_GOVERNANCE_PROFILE
@@ -93,7 +96,7 @@ GitHub 사용량 → GITHUB_USAGE_BUDGET
 | 작업 | Skill | Skill Mode 또는 호출 조건 |
 |---|---|---|
 | 의도·Work Mode·Skill 자동 라우팅·실행 보고 | `managing-project-intake-and-work-contract` | `route` → 필요 시 `clarify` → `contract` → 필요 시 `decompose-and-sequence` → `execution-report` |
-| Grill Me 핵심 의사결정 인터뷰 | `managing-project-intake-and-work-contract` | `clarify` + `references/grill-me-protocol.md`; 저장소 우선 조사 → 질문 하나 → 권장안 → 결정 원장 반영 |
+| Grill Me 핵심 의사결정 인터뷰 | `managing-project-intake-and-work-contract` | `clarify` + `references/grill-me-protocol.md`; main·PR·정본·Sheets 대조 → 중복 제거 → 중요 질문 하나 → 권장안 → 승인 즉시 정본·main·Sheets 동기화 |
 | 운영체계 신규 설치·기존 감사·마이그레이션·Health Review | `managing-game-project-operating-system` | `install` / `audit` / `migrate` / `verify` |
 | 구형·중복·버전명 파일 갱신·통합·아카이브·승인 삭제 | `managing-game-project-operating-system` | `audit` → `reconcile-legacy` → `verify` |
 | 기획 책임 원본 작성·구조 변경·발행·검수 | `managing-design-documents` | `author` / `update` / `restructure` / `publish` / `validate` |
@@ -104,7 +107,7 @@ GitHub 사용량 → GITHUB_USAGE_BUDGET
 | 핵심 컨셉·뾰족한 재미·DDD·기획 정렬 | `analyzing-and-refining-game-concepts` | `frame` / `constrain` / `sharpen` / `structure` / `analyze` |
 | 프로젝트 코어 식별·코어/MVP 경계 | `identifying-project-core` | `inventory` / `extract-candidates` / `dependency-map` / `removal-and-change-test` / `classify` / `core-report` |
 | PLAN 단계 프로젝트 코어 확정 | `establishing-project-core` | `propose` / `stress-test` / `confirm` / `lock` / `reopen` |
-| 적대적 검토·비판 검증·개선·회귀 | `running-adversarial-review-and-refinement` | `attack` / `validate-critique` / `refine-approved-findings` / `regression-recheck` / `decision-report` |
+| 적대적 검토·비판 검증·개선·회귀 | `running-adversarial-review-and-refinement` | `attack` / `validate-critique` / `refine-approved-findings` / `regression-recheck` / `decision-report`; 병합 후 새 main·Decision·정본·Sheets 재검사 |
 | 경쟁작·플레이어 반응·행동 근거 | `analyzing-and-refining-game-concepts` | `benchmark-and-player-research` |
 | 플레이테스트·이벤트·퍼널·A/B | `analyzing-and-refining-game-concepts` | `playtest-and-experiment` / `poc-contract` / `recalibrate` / `production-gate` |
 | Vertical Slice | `designing-vertical-slices` | `slice-contract` / `quality-bar` / `pipeline-proof` / `playtest-evidence` / `decision-gate` |

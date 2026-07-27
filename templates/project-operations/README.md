@@ -45,6 +45,7 @@
 | `ACTIVE_CONTEXT.md` | 현재 상태의 기본 원본 |
 | `HANDOFF.md` | 세션·담당자·브랜치·마일스톤 경계 스냅샷 |
 | `ROADMAP.md` | 단계·우선순위·선행 조건·종료 기준 |
+| `CURRENT_CONFIRMED_DECISIONS.md` | 현재 승인 Decision·대체 관계·main Commit·Google Sheets 동기화 복원 정본 |
 | `DECISION_LOG.md` | 결정·근거·재검토 조건 |
 | `CHANGELOG.md` | 프로젝트 변경·검증·미검증 |
 | `BASE_RULES_VERSION.md` | 적용 Base 커밋·동기화 차이 |
@@ -140,6 +141,7 @@ tools/
 │  ├─ EXECUTABLE_PROMPTS/
 │  ├─ PROJECT_SKILL_MAP.*         # 설정한 경우
 │  ├─ DOCUMENT_UPDATE_MATRIX.md
+│  ├─ CURRENT_CONFIRMED_DECISIONS.md
 │  ├─ DECISION_LOG.md
 │  ├─ CHANGELOG.md
 │  └─ AI_WORKFLOW.md
@@ -184,4 +186,5 @@ managing-game-project-operating-system: audit
 - [ ] 실제 코드·데이터·자산·테스트가 책임 원본과 연결된다.
 - [ ] Governance·Actions·Required Check의 실제 상태가 구분된다.
 - [ ] Active Context가 실제 상태와 일치한다.
+- [ ] 승인 Decision이 GitHub 정본·main·Google Sheets에 반영되고 재조회 결과가 일치한다.
 - [ ] 새 작업자가 저장소만으로 방향·상태·다음 작업·보호 범위를 찾는다.

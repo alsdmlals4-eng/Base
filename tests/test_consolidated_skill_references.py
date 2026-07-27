@@ -231,5 +231,40 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
             self.assertIn(source, quality)
 
 
+    def test_confirmed_decision_sync_and_post_merge_review_contract(self) -> None:
+        policy = (ROOT / "docs/CONFIRMED_DECISION_SYNC_POLICY.md").read_text(encoding="utf-8")
+        grill = skill_package_text("managing-project-intake-and-work-contract")
+        design = (ROOT / "skills/managing-design-documents/SKILL.md").read_text(encoding="utf-8")
+        adversarial = skill_package_text("running-adversarial-review-and-refinement")
+        registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
+
+        for term in (
+            "DUPLICATE_QUESTION",
+            "RECOMMENDED_DEFAULT",
+            "USER_DECISION_REQUIRED",
+            "APPROVED_PENDING_CANON",
+            "SHEET_UPDATED",
+            "SYNCED",
+            "NO_CONFLICT",
+            "CONFLICT_FIXED",
+        ):
+            self.assertIn(term, policy)
+        for file_path in (
+            "templates/project-operations/CURRENT_CONFIRMED_DECISIONS.md",
+            "templates/quality/POST_MERGE_ADVERSARIAL_REVIEW.md",
+        ):
+            self.assertTrue((ROOT / file_path).is_file(), file_path)
+        for term in ("질문 전 필수 대조", "중복 질문 판정", "답변 처리와 즉시 동기화"):
+            self.assertIn(term, grill)
+        self.assertIn("Preserve approved decisions immediately", design)
+        self.assertIn("Post-merge attack lenses", adversarial)
+        for tag in (
+            "confirmed-decision-sync",
+            "google-sheets-sync",
+            "post-merge-review",
+            "canonical-conflict",
+        ):
+            self.assertIn(tag, registry)
+
 if __name__ == "__main__":
     unittest.main()

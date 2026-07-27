@@ -1,5 +1,14 @@
 # Base Skill Learning Log
 
+## 2026-07-28 승인 즉시 정본화·중복 질문 방지·병합 후 검토 교훈
+
+- 장시간 기획·Grill Me에서 사용자 승인을 댓글이나 하위 시스템 checkpoint까지 누적하면 최근 결정이 분야 정본·현재 상태·Google Sheets에 승격되지 않는 운영 실패가 발생한다.
+- 질문 전에 최신 main, 동일 Goal의 열린·최근 병합 PR, `CURRENT_CONFIRMED_DECISIONS.md`, 분야 책임 원본, 실제 구현과 Google Sheets를 대조하고 이미 답한 질문은 다시 묻지 않는다.
+- 프로젝트 방향을 바꾸지 않는 기술 세부와 초기 수치는 `RECOMMENDED_DEFAULT`로 처리하고, 코어·중요 기획·방향성·정본 충돌만 `USER_DECISION_REQUIRED`로 올린다.
+- 승인 답변은 GitHub 추적 근거 → 현재 확정 결정 → 분야 정본 → 허용된 main 문서 Commit → Google Sheets → 양쪽 재조회까지 같은 승인 단위에서 완료하고 `SYNCED`를 증명한다.
+- 모든 병합 뒤 새 main과 실제 diff를 다시 읽어 최근 승인 누락, 이전 Decision 부활, 정본·Sheets 불일치, 중복 PR과 회귀를 적대적으로 검토한다.
+- 현재 지식 상태: 사용자 승인과 Base 정책 통합은 `PATTERN`, 여러 프로젝트에서의 실제 누락 감소 효과는 후속 관찰 전까지 `OBSERVATION`.
+
 ## 2026-07-25 승인 기획 결정 지속 기록·하위 시스템 통합 교훈
 
 - 십보강호 기획에서 승인 결정이 대화·PR 댓글에 누적되면 책임 원본·상태·Context와 drift가 생길 수 있음을 확인했다.
