@@ -266,5 +266,22 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         ):
             self.assertIn(tag, registry)
 
+    def test_confirmed_decisions_are_consumed_by_intake_and_project_os(self) -> None:
+        doc_map = (ROOT / "docs/DOCUMENTATION_MAP.md").read_text(encoding="utf-8")
+        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        operating = (ROOT / "skills/managing-game-project-operating-system/SKILL.md").read_text(encoding="utf-8")
+        registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
+
+        self.assertIn("→ CURRENT_CONFIRMED_DECISIONS.md", doc_map)
+        for term in ("current_confirmed_decisions", "project_google_sheet", "related_open_and_recent_prs"):
+            self.assertIn(term, intake)
+            self.assertIn(term, operating)
+        for term in ("RECOMMENDED_DEFAULT", "USER_DECISION_REQUIRED"):
+            self.assertIn(term, intake)
+        for term in ("install", "audit", "verify", "콜드 스타트"):
+            self.assertIn(term, operating)
+        for tag in ("decision-recovery", "pr-preflight", "project-cold-start"):
+            self.assertIn(tag, registry)
+
 if __name__ == "__main__":
     unittest.main()

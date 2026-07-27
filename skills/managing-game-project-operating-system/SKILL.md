@@ -42,6 +42,9 @@ project_agents:
 project_start_here:
 documentation_map:
 active_context:
+current_confirmed_decisions:
+project_google_sheet:
+related_open_and_recent_prs:
 development_gates:
 design_document_registry:
 skill_registry:
@@ -64,6 +67,7 @@ rollback_ref:
 → AGENTS·README·START_HERE
 → Work Mode·Skill 라우팅 계약
 → Active Context·Documentation Map·Roadmap·Development Gates
+→ CURRENT_CONFIRMED_DECISIONS.md·동일 Goal의 열린·최근 병합 PR·프로젝트 Google Sheets
 → Design Document Registry·Skill Registry
 → 관련 책임 원본·Skill·Learning Log
 → DOCX/PDF·다이어그램·승인 이미지·Manifest
@@ -81,19 +85,22 @@ rollback_ref:
 - 승인·구현·검증·발행 최신성·사람 검수 상태를 분리한다.
 - 기존 승인 결정·수치·자산·실패·보류·참조는 조사와 승인 없이 제거하지 않는다.
 - 파일 존재와 실제 실행·강제를 구분한다.
-- 새 AI가 과거 대화 없이 현재 상태와 다음 작업을 찾을 수 있어야 한다.
+- 새 AI가 과거 대화 없이 `CURRENT_CONFIRMED_DECISIONS.md`에서 현재 승인 상태와 다음 작업을 찾을 수 있어야 한다.
+- 질문 전에 최신 `main`, 기존 Decision, 분야 정본, 동일 Goal의 PR과 Google Sheets를 비교하고 이미 답한 질문은 반복하지 않는다.
+- 승인된 Decision은 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`에 따라 GitHub 정본·허용된 `main` 문서 Commit·Google Sheets에 즉시 동기화한다.
 
 ## Skill Mode: install
 
 1. 신규·빈 프로젝트인지 확인한다. 고유 문서·자산·이력이 있으면 `audit`로 전환한다.
-2. 루트 `[기획서]/00_프로젝트_허브/`와 시작 문서·Registry·게이트를 설치한다.
-3. 프로젝트가 실제 선택한 책임 분야만 등록한다.
-4. 서술은 Markdown, 구조·상태·게임 데이터는 JSON을 선택한다.
-5. 발행 생성기·Manifest·선택 파생본 정책을 설치한다.
-6. Foundation·분야 Skill Registry와 Learning Log를 설치한다.
-7. Visual Source·Asset Manifest와 승인 상태를 연결한다.
-8. Governance 검사·Actions·Required Check 준비 상태를 구분한다.
-9. `verify`로 콜드 스타트와 파이프라인을 확인한다.
+2. 루트 `[기획서]/00_프로젝트_허브/`와 시작 문서·`CURRENT_CONFIRMED_DECISIONS.md`·Registry·게이트를 설치한다.
+3. 제공된 프로젝트 Google Sheets URL·확정 결정 탭·마지막 Decision ID를 연결하고, 없으면 `NOT_CONFIGURED`로 명시한다.
+4. 프로젝트가 실제 선택한 책임 분야만 등록한다.
+5. 서술은 Markdown, 구조·상태·게임 데이터는 JSON을 선택한다.
+6. 발행 생성기·Manifest·선택 파생본 정책을 설치한다.
+7. Foundation·분야 Skill Registry와 Learning Log를 설치한다.
+8. Visual Source·Asset Manifest와 승인 상태를 연결한다.
+9. Governance 검사·Actions·Required Check 준비 상태를 구분한다.
+10. `verify`로 콜드 스타트와 결정 복원·동기화 파이프라인을 확인한다.
 
 ## Skill Mode: audit
 
@@ -105,6 +112,7 @@ rollback_ref:
 산출물:
 
 - 현재 책임 문서·Skill·자산·파생본 지도
+- `CURRENT_CONFIRMED_DECISIONS.md`·분야 정본·GitHub `main`·프로젝트 Google Sheets의 Decision·Commit·대체 관계 대조
 - 중복·충돌·누락·구형 참조 목록
 - 목표 Registry와 책임 원본 구조
 - 갱신·통합·호환 보존·아카이브·삭제 후보
@@ -181,14 +189,15 @@ KEEP_UNRESOLVED
 
 1. 루트와 시작 문서
 2. Work Mode·Skill 자동 라우팅과 실행 보고
-3. Design Document Registry와 단일 책임 원본
-4. 구형본 처리표·Legacy Alias·활성 stale reference 부재
-5. PDF·선택 DOCX·다이어그램·승인 이미지·Manifest
-6. Skill Registry·최소 라우팅·Learning Log
-7. Development Gates·Roadmap·결정 추적성
-8. Visual Source·Asset Manifest
-9. Governance checker·회귀 테스트·GitHub Actions·브랜치 보호
-10. 콜드 스타트
+3. `CURRENT_CONFIRMED_DECISIONS.md`·분야 정본·GitHub `main`·프로젝트 Google Sheets 동기화
+4. Design Document Registry와 단일 책임 원본
+5. 구형본 처리표·Legacy Alias·활성 stale reference 부재
+6. PDF·선택 DOCX·다이어그램·승인 이미지·Manifest
+7. Skill Registry·최소 라우팅·Learning Log
+8. Development Gates·Roadmap·결정 추적성
+9. Visual Source·Asset Manifest
+10. Governance checker·회귀 테스트·GitHub Actions·브랜치 보호
+11. 과거 대화 없이 현재 Decision을 복원하는 콜드 스타트
 
 ```text
 결정
@@ -211,6 +220,7 @@ KEEP_UNRESOLVED
 ## 실제 갱신·통합·아카이브·삭제
 ## 제안만 한 변경
 ## 보존·참조·롤백 대조
+## CURRENT_CONFIRMED_DECISIONS·GitHub·Google Sheets 동기화
 ## Registry·책임 원본·발행본
 ## Skill·Learning·Routing
 ## 자동화·GitHub 강제
