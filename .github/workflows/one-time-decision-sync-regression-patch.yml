@@ -1,0 +1,33 @@
+name: One-time decision sync regression patch
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-remove:
+    if: github.event.pull_request.head.ref == 'agent/confirmed-decision-sync' && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/confirmed-decision-sync
+          fetch-depth: 0
+      - name: Patch regression compatibility
+        run: python .github/scripts/patch_decision_sync_regressions.py
+      - name: Remove temporary patch files
+        run: git rm .github/scripts/patch_decision_sync_regressions.py .github/workflows/one-time-decision-sync-regression-patch.yml
+      - name: Commit and push patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add skills/SKILL_REGISTRY.json \
+            skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md \
+            templates/project-operations/GRILL_ME_DECISION_RECORD.md \
+            skills/running-adversarial-review-and-refinement/SKILL.md
+          git commit -m "fix: preserve decision sync contract compatibility"
+          git push origin HEAD:agent/confirmed-decision-sync
