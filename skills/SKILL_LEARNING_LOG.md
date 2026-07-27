@@ -1,5 +1,12 @@
 # Base Skill Learning Log
 
+## 2026-07-28 병합 후 결정 복원 진입점 누락 교훈
+
+- 승인 결정 동기화 정책과 템플릿만 추가해도 프로젝트 기본 읽기 순서와 운영체계 `install/audit/verify`가 이를 명시적으로 소비하지 않으면 새 채팅·신규 설치에서 복원 정본을 건너뛸 수 있다.
+- `CURRENT_CONFIRMED_DECISIONS.md`, 동일 Goal의 열린·최근 병합 PR, 분야 정본, GitHub `main`, 프로젝트 Google Sheets를 Intake와 운영체계 Skill의 Required inputs·Read order·설치·감사·검증 계약에 모두 연결한다.
+- 병합 후 적대적 검토는 새 파일의 존재가 아니라 실제 소비 진입점과 콜드 스타트 경로까지 검사해야 한다.
+- 현재 지식 상태: Base 회귀 검사와 병합 후 정본 대조로 확인한 `PATTERN`.
+
 ## 2026-07-28 승인 즉시 정본화·중복 질문 방지·병합 후 검토 교훈
 
 - 장시간 기획·Grill Me에서 사용자 승인을 댓글이나 하위 시스템 checkpoint까지 누적하면 최근 결정이 분야 정본·현재 상태·Google Sheets에 승격되지 않는 운영 실패가 발생한다.

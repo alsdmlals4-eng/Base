@@ -25,6 +25,7 @@ START_HERE.md
 프로젝트 AGENTS.md
 → 루트 [기획서]/00_프로젝트_허브/START_HERE.md
 → ACTIVE_CONTEXT.md·DOCUMENTATION_MAP.md·DEVELOPMENT_GATES.md
+→ CURRENT_CONFIRMED_DECISIONS.md
 → DESIGN_DOCUMENT_REGISTRY.json
 → 현재 책임 원본
 → SKILL_REGISTRY.json
@@ -97,7 +98,7 @@ GitHub 사용량 → GITHUB_USAGE_BUDGET
 |---|---|---|
 | 의도·Work Mode·Skill 자동 라우팅·실행 보고 | `managing-project-intake-and-work-contract` | `route` → 필요 시 `clarify` → `contract` → 필요 시 `decompose-and-sequence` → `execution-report` |
 | Grill Me 핵심 의사결정 인터뷰 | `managing-project-intake-and-work-contract` | `clarify` + `references/grill-me-protocol.md`; main·PR·정본·Sheets 대조 → 중복 제거 → 중요 질문 하나 → 권장안 → 승인 즉시 정본·main·Sheets 동기화 |
-| 운영체계 신규 설치·기존 감사·마이그레이션·Health Review | `managing-game-project-operating-system` | `install` / `audit` / `migrate` / `verify` |
+| 운영체계 신규 설치·기존 감사·마이그레이션·Health Review | `managing-game-project-operating-system` | `install` / `audit` / `migrate` / `verify`; CURRENT_CONFIRMED_DECISIONS·관련 PR·프로젝트 Sheets 포함 |
 | 구형·중복·버전명 파일 갱신·통합·아카이브·승인 삭제 | `managing-game-project-operating-system` | `audit` → `reconcile-legacy` → `verify` |
 | 기획 책임 원본 작성·구조 변경·발행·검수 | `managing-design-documents` | `author` / `update` / `restructure` / `publish` / `validate` |
 | 분야별 스킬 생성·통합·학습 | `evolving-project-discipline-skills` | 스킬 추가·중복·반복 실패·Registry 변경 |

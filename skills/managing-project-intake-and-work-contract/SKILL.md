@@ -20,6 +20,8 @@ description: Use automatically when a project request must be routed, repository
 
 상세 계약: `docs/WORK_MODE_AND_SKILL_ROUTING.md`
 
+승인 결정 복원·중복 질문 방지·GitHub·Google Sheets 동기화: `docs/CONFIRMED_DECISION_SYNC_POLICY.md`
+
 ## Skill Modes
 
 - `route`: 요청 의도·현재 단계·위험을 파악하고 Work Mode, 작업 수준, 변경 유형, 주 책임 분야와 최소 Skill 집합을 자동 판정한다.
@@ -84,6 +86,9 @@ request:
 project_agents:
 project_start_here:
 active_context:
+current_confirmed_decisions:
+project_google_sheet:
+related_open_and_recent_prs:
 documentation_map:
 design_document_registry:
 skill_registry:
@@ -103,13 +108,14 @@ rollback_constraints:
 
 1. 최신 사용자 지시
 2. 프로젝트 `AGENTS.md`, `START_HERE`, Active Context, Documentation Map
-3. `docs/WORK_MODE_AND_SKILL_ROUTING.md`
-4. 현재 Issue·Plan·책임 원본과 실제 파일
-5. `SKILL_REGISTRY.json`
-6. 필요한 경우 `references/question-and-source-model.md`
-7. 종료 판정이 필요한 경우 `references/ambiguity-and-closure.md`
-8. Grill Me 핵심 결정 인터뷰가 필요한 경우 `references/grill-me-protocol.md`
-9. 작업 분해·순서화가 필요한 경우 `references/work-decomposition-and-sequencing.md`
+3. `CURRENT_CONFIRMED_DECISIONS.md`, 동일 Goal의 열린·최근 병합 PR, 프로젝트 Google Sheets
+4. `docs/WORK_MODE_AND_SKILL_ROUTING.md`
+5. 현재 Issue·Plan·책임 원본과 실제 파일
+6. `SKILL_REGISTRY.json`
+7. 필요한 경우 `references/question-and-source-model.md`
+8. 종료 판정이 필요한 경우 `references/ambiguity-and-closure.md`
+9. Grill Me 핵심 결정 인터뷰가 필요한 경우 `references/grill-me-protocol.md`
+10. 작업 분해·순서화가 필요한 경우 `references/work-decomposition-and-sequencing.md`
 
 ## Workflow
 
@@ -135,7 +141,7 @@ rollback_constraints:
 
 ### 2. Inspect repository facts
 
-현재 파일·경로·호출·데이터·테스트에서 확인 가능한 것은 `repository_observed` 근거로 기록하고 사용자에게 되묻지 않는다. 외부 자료와 모델 추론은 요구사항 권한이 없으며 `[확인 필요]` 또는 후보로 남긴다.
+최신 `main`, 동일 Goal의 열린·최근 병합 PR, `CURRENT_CONFIRMED_DECISIONS.md`, 분야 책임 원본, 실제 파일과 프로젝트 Google Sheets에서 확인 가능한 것은 `repository_observed` 근거로 기록하고 사용자에게 되묻지 않는다. 외부 자료와 모델 추론은 요구사항 권한이 없으며 `[확인 필요]` 또는 후보로 남긴다.
 
 ### 3. Build one requirement model
 
@@ -153,7 +159,7 @@ rollback_constraints:
 
 ### 4. Ask only material user decisions
 
-결과를 바꾸는 가장 큰 의사결정 하나씩만 묻는다. 상세 요청은 처음부터 다시 인터뷰하지 않고 현재 이해를 반증 가능한 문장으로 재진술한 뒤 틀리거나 빠진 부분만 확인한다.
+결과를 바꾸는 가장 큰 의사결정 하나씩만 묻는다. 기존 Decision이 유효하면 다시 묻지 않는다. 프로젝트 방향을 바꾸지 않는 기술 세부·초기 수치는 `RECOMMENDED_DEFAULT`, 코어·중요 기획·방향성·정본 충돌은 `USER_DECISION_REQUIRED`로 분류한다. 상세 요청은 처음부터 다시 인터뷰하지 않고 현재 이해를 반증 가능한 문장으로 재진술한 뒤 틀리거나 빠진 부분만 확인한다.
 
 ### 5. Closure and confirmation
 

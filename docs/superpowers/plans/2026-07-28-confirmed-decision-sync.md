@@ -86,10 +86,10 @@
 - Produces: merge decision and post-merge conflict report
 
 - [x] **Step 1:** 동일 책임의 기존 정책·열린 PR과 중복 여부를 확인한다.
-- [ ] **Step 2:** PR을 생성하고 `Validate Game Project Operating System` 결과를 확인한다.
-- [ ] **Step 3:** Squash merge한다.
-- [ ] **Step 4:** 새 main을 기준으로 정본·PR·템플릿·Skill·Sheets 계약을 적대적으로 재검사한다.
-- [ ] **Step 5:** branch 자동 삭제 여부를 확인하고 확인하지 못하면 `UNVERIFIED_REPOSITORY_SETTING`으로 보고한다.
+- [x] **Step 2:** PR을 생성하고 `Validate Game Project Operating System` 결과를 확인한다.
+- [x] **Step 3:** Squash merge한다.
+- [x] **Step 4:** 새 main을 기준으로 정본·PR·템플릿·Skill·Sheets 계약을 적대적으로 재검사한다.
+- [x] **Step 5:** 병합 뒤 작업 branch가 존재하지 않음을 확인했다. 삭제 방식 자체는 별도 설정으로 추정하지 않는다.
 
 ## Verification findings resolved before merge
 
@@ -100,3 +100,9 @@
 - `MUST_FIX`: 기존 회귀 검사가 요구하는 호환 문구 세 개와 compact Skill 150줄 제한을 확인했다. 기능을 바꾸지 않고 호환 표기와 1줄 초과를 수정했다.
 - `REJECTED_CRITIQUE`: 과거 Learning Log의 checkpoint 기반 기록은 역사 증거이므로 삭제하지 않는다. 2026-07-28 최신 학습 항목과 현행 정책이 현재 권한을 가진다.
 - `NOT_APPLICABLE`: Base 저장소에는 이 작업에서 동기화할 프로젝트 Google Sheets 주소가 없다. 프로젝트 적용 시 Connector 재조회까지 필수다.
+
+## Post-merge follow-up
+
+- `MUST_FIX`: 최초 병합 뒤 프로젝트 기본 읽기 순서와 `managing-game-project-operating-system`의 `install/audit/verify`가 `CURRENT_CONFIRMED_DECISIONS.md`와 프로젝트 Google Sheets를 명시적으로 소비하지 않는 누락을 발견했다.
+- 처리: Intake·운영체계 Skill의 Required inputs·Read order·설치·감사·검증, Documentation Map, Registry, Learning Log와 회귀 테스트에 연결했다.
+- 검증 기준: 새 채팅·신규 설치·기존 프로젝트 감사에서 과거 대화 없이 현재 Decision·main Commit·Sheet 동기화 상태를 복원할 수 있어야 한다.
