@@ -83,9 +83,15 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
         self.assertIn("CI gate passed", self.text)
 
     def test_new_contract_tests_are_part_of_ci(self) -> None:
-        self.assertIn("tests/test_gpt_codex_workflow_contract.py", self.text)
-        self.assertIn("tests/test_ci_workflow_cost_policy.py", self.text)
-        self.assertIn("tests/test_deep_interview_contract.py", self.text)
+        for path in (
+            "tests/test_gpt_codex_workflow_contract.py",
+            "tests/test_ci_workflow_cost_policy.py",
+            "tests/test_deep_interview_contract.py",
+            "tests/test_demo_first_planning_sequence.py",
+            "tests/test_vertical_slice_v6_contract.py",
+            "tests/test_integrated_vertical_slice_prompt_v7.py",
+        ):
+            self.assertIn(path, self.text)
 
         source = Path(__file__).read_text(encoding="utf-8")
         self.assertIn(
