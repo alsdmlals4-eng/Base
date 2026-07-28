@@ -98,10 +98,10 @@
     },
     {
       "name": "integrated-vertical-slice-prompt-entrypoints",
-      "canonical_path": "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md",
+      "canonical_path": "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md",
       "reference_tokens": [
-        "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md",
-        "VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md"
+        "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md",
+        "VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md"
       ],
       "required_consumers": [
         "START_HERE.md",
@@ -129,7 +129,8 @@
         "tests/test_consolidated_skill_references.py",
         "tests/test_reference_freshness.py",
         "tests/test_gpt_codex_workflow_contract.py",
-        "tests/test_skill_system_coverage.py"
+        "tests/test_skill_system_coverage.py",
+        "tests/test_bca_visual_sheet_workflow.py"
       ]
     },
     {
@@ -188,7 +189,8 @@
         "tests/test_base_shared_skill_routes.py",
         "tests/test_consolidated_skill_references.py",
         "tests/test_gpt_codex_workflow_contract.py",
-        "tests/test_skill_system_coverage.py"
+        "tests/test_skill_system_coverage.py",
+        "tests/test_bca_visual_sheet_workflow.py"
       ]
     },
     {
@@ -217,12 +219,24 @@
     {
       "name": "integrated-prompt-contract-test-sync",
       "when_changed": [
-        "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md"
+        "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md"
       ],
       "exclude_when_changed": [],
       "require_all_changed": [],
       "require_any_changed": [
-        "tests/test_integrated_vertical_slice_prompt_v7.py"
+        "tests/test_bca_visual_sheet_workflow.py"
+      ]
+    },
+    {
+      "name": "bca-visual-sheet-policy-sync",
+      "when_changed": [
+        "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md",
+        "templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md"
+      ],
+      "exclude_when_changed": [],
+      "require_all_changed": [],
+      "require_any_changed": [
+        "tests/test_bca_visual_sheet_workflow.py"
       ]
     }
   ]

@@ -208,3 +208,8 @@
 - [ ] 이미지와 의미 텍스트가 분리돼 수정·현지화 가능하다.
 - [ ] 기술 카드에 모델·버전·검증 상태가 기록된다.
 - [ ] 실패 프롬프트와 수정 경로가 남아 있다.
+## GPT 이미지 생성·검수 연결
+
+- 이미지 단계: `PLANNING_VISUALIZATION / FINAL_VISUAL_CANDIDATE`
+- 기록 Template: `templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md`
+- 승인 전 생성 결과는 최종 자산이 아니다.

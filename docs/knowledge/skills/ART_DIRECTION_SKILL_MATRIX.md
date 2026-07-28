@@ -210,3 +210,9 @@ implementation_notes
 - 실제 화면 검수 기준
 - 저작권·생성형 도구 경계
 ```
+## 10. GPT 기획 시각화·최종 후보·승인 Mode
+
+- `planning-visualization`: 세계관·핵심루프·인물·시스템·UI 탐색 이미지와 목업.
+- `final-visual-candidate`: Demo-First·상점·홍보·키아트·UI 고도화 후보.
+- `visual-qa-and-approval`: 실제 화면·구현·권리·오류·재사용성과 승인 원장 검수.
+- 공용 정책: `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`.

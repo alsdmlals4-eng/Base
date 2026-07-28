@@ -395,3 +395,9 @@
 - 결정: Godot 기능·에셋·상용 플러그인은 직접 제작 전에 기본 기능, 공식 Store, 기존 Asset Library, GitHub, itch.io와 제작자 원본을 조사한다.
 - 안전 경계: 구매·계정 연결·설치는 별도 사용자 승인, 기존 로컬 공용 Skill 복사본 삭제는 별도 레거시 감사가 필요하다.
 - 검증: Base Registry·Learning Log·운영체계 구조 테스트·프로젝트별 route·adapter의 정합성을 확인한다.
+## 2026-07-28 — BCA Sheet·GPT 이미지 생성·검수 통합
+
+- `designing-art-prompts-and-technique-cards`에 `planning-visualization`, `final-visual-candidate`, `visual-qa-and-approval` mode를 통합했다.
+- 프로젝트 Sheet 의미 구조에 세계관·핵심루프·주요인물·조연·핵심시스템·이미지 계획·검수 tab을 추가했다.
+- 정확한 Sheet URL이 없으면 `NOT_CONFIGURED`로 유지하며 중복 생성을 금지한다.
+- v7은 호환본, v8은 활성 통합 실행문으로 전환한다.

@@ -2,7 +2,7 @@
 
 이 문서는 Base와 Base를 적용한 프로젝트에서 기획 작업을 어떤 순서로 묶고, 무엇을 먼저 비교하며, 어떤 근거로 승인하고, 새 정책·Template·Skill을 어디까지 전파 검증할지 정하는 공용 책임 원본이다.
 
-승인 결정의 즉시 정본화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`, 작업 분해의 상세 의존성은 `skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md`, 외부 근거의 판정은 `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md`, 데모 제작 Gate는 `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md`가 책임진다.
+승인 결정의 즉시 정본화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`, 작업 분해의 상세 의존성은 `skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md`, 외부 근거의 판정은 `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md`, 데모 제작 Gate는 `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md`, 프로젝트 Sheet와 GPT 이미지 생성·검수는 `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`가 책임진다.
 
 ## 1. 적용 범위
 
@@ -148,14 +148,21 @@ NO_CONFLICT | CONFLICT_FIXED | USER_DECISION_REQUIRED | BLOCKED_UNVERIFIED
 ```text
 00 프로젝트 기반·현재 상태
 → 10 제품 방향·시장 약속
+→ 11 세계관
+→ 12 핵심루프
+→ 13 주요인물
+→ 14 조연·세력·관계
 → 20 코어 경험·메인게임·데모 목표
 → 30 데모 범위·품질 기준·제작 기반
-→ 40 시스템·성장·경제
+→ 40 핵심시스템·메인콘텐츠
+→ 41 성장·경제
 → 50 메인 콘텐츠
 → 51 미니게임(해당 프로젝트만)
 → 52 글쓰기·서사(해당 프로젝트만)
 → 60 UX·UI·접근성
 → 70 아트·오디오·에셋
+→ 71 기획 이미지·목업 생성
+→ 72 이미지 검수·승인
 → 80 완성 품질 Vertical Slice 데모·플레이테스트
 → 90 본제작·출시·사업
 → 98 Base 반영 후보
@@ -201,14 +208,21 @@ Base에는 생성하지 않는다. 개별 프로젝트에서만 다음 순서를
 03_근거_라이브러리
 04_누락_충돌_감사
 10_제품방향
+11_세계관
+12_핵심루프
+13_주요인물
+14_조연_세력_관계
 20_코어경험_데모목표
 30_데모범위_품질기준_제작기반
-40_시스템_성장_경제
+40_핵심시스템_메인콘텐츠
+41_성장_경제
 50_메인콘텐츠
 51_미니게임
 52_글쓰기_서사
 60_UX_UI_접근성
 70_아트_오디오_에셋
+71_이미지기획_생성목록
+72_이미지검수_승인로그
 80_데모_버티컬슬라이스_플레이테스트
 90_본제작_출시_사업
 98_Base_반영후보

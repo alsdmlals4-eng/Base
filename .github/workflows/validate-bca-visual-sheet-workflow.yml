@@ -1,0 +1,78 @@
+name: Validate BCA Visual and Sheet Workflow
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md"
+      - "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md"
+      - "templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md"
+      - "templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md"
+      - "templates/project-operations/PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md"
+      - "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md"
+      - "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md"
+      - "skills/designing-art-prompts-and-technique-cards/**"
+      - "skills/SKILL_REGISTRY.json"
+      - "tests/test_bca_visual_sheet_workflow.py"
+      - ".github/reference-freshness.json"
+      - ".github/workflows/validate-bca-visual-sheet-workflow.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bca-visual-sheet-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Capture repository audit evidence
+        shell: bash
+        run: |
+          git ls-files | sort > bca-file-inventory.txt
+          git grep -n -I -E 'VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7|PROTOTYPE_AND_VERTICAL_SLICE|CORE_POC|_tmp_' -- . > bca-stale-token-candidates.txt || true
+          git grep -n -I 'VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md' -- . > bca-v8-consumers.txt || true
+      - name: Run BCA contract tests
+        shell: bash
+        run: |
+          set +e
+          {
+            python -m py_compile tests/test_bca_visual_sheet_workflow.py
+            python -m unittest tests.test_bca_visual_sheet_workflow -v
+          } > bca-contract-results.txt 2>&1
+          status=$?
+          cat bca-contract-results.txt
+          exit "$status"
+      - name: Check reference freshness
+        shell: bash
+        run: |
+          set +e
+          python tools/check_canonical_reference_freshness.py \
+            --config .github/reference-freshness.json \
+            --base "${{ github.event.pull_request.base.sha || github.event.before }}" \
+            --head "${{ github.sha }}" > bca-reference-results.txt 2>&1
+          status=$?
+          cat bca-reference-results.txt
+          exit "$status"
+      - name: Upload audit evidence and exact v8 prompt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bca-visual-sheet-validation
+          path: |
+            bca-contract-results.txt
+            bca-reference-results.txt
+            bca-file-inventory.txt
+            bca-stale-token-candidates.txt
+            bca-v8-consumers.txt
+            templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md
+          if-no-files-found: error

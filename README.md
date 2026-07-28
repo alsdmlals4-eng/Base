@@ -20,6 +20,10 @@ START_HERE.md
 - [공용 실행 규칙](AGENTS.md)
 - [통합 운영 모델](docs/OPERATING_MODEL.md)
 - [문서·스킬 역할표](docs/DOCUMENTATION_MAP.md)
+- [통합 Vertical Slice 실행문 v8](templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md)
+- [GPT 이미지 생성·검수 및 Sheet 정책](docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md)
+- [프로젝트 Google Sheets Workbook 계약](templates/project-operations/PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md)
+- [GPT 이미지 생성·검수 Plan](templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md)
 - [공용 스킬 Registry](skills/SKILL_REGISTRY.json)
 - [공용 어댑터 Skill Route](skills/BASE_SHARED_SKILL_ROUTES.json)
 - [프로젝트 어댑터 계약](docs/BASE_SHARED_SKILL_ADAPTER_CONTRACT.md)
@@ -33,6 +37,8 @@ START_HERE.md
 
 `전부 살펴본다`는 모든 파일과 스킬을 무작정 읽는다는 뜻이 아닙니다. Registry와 Documentation Map에서 현재 요청에 필요한 책임 원본과 최소 스킬만 선택합니다.
 
+상세 정본·작업 시작 인터뷰·Demo-First Vertical Slice·GPT→Codex·프로젝트 Sheet·GPT 이미지 생성과 검수를 파일 하나로 첨부하려면 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md`를 사용합니다. 프로젝트 Sheet는 정확한 URL이 확인된 개별 프로젝트에서만 연결하며 Base 자체는 `BASE_EXCLUDED`입니다.
+
 작업에 필요한 실행 파일·라이브러리·폰트·입력 파일·인증·권한이 없으면 필요한 이유, 설치·적용 방법, 확인 명령과 최소 권한을 안내합니다. 실행하지 않은 조사·검사·권한·도구는 통과로 보고하지 않습니다.
 
 ## 통합된 운영 구조
@@ -40,9 +46,11 @@ START_HERE.md
 ```text
 요청 라우팅·요구 확정
 → 승인된 작업 계약·필요 시 실행 순서
-→ 기획 방향·외부 근거·PoC·플레이테스트 또는 구현·제작
+→ 프로젝트 Sheet 의미 구조·기획 정본 연결
+→ 기획 방향·외부 근거·GPT 시각화·이미지 검수 또는 구현·제작
+→ Demo-First Vertical Slice·플레이테스트
 → 정본·정적·런타임·접근성·성능·회귀 검증
-→ 책임 원본·발행·현재 상태 동기화
+→ 책임 원본·Sheet·자산 원장·현재 상태 동기화
 → 인수인계·학습
 ```
 
@@ -71,12 +79,12 @@ START_HERE.md
 | `analyzing-and-refining-game-concepts` | 핵심 컨셉·DDD·벤치마크·플레이어 반응·플레이테스트·PoC·기획 재조정 |
 | `identifying-project-core` | 기존 프로젝트의 기획·시스템·코드 코어와 코어·MVP 경계를 근거로 판정 |
 | `establishing-project-core` | PLAN 단계에서 프로젝트 코어를 제안·반례 검토하고 사용자 승인으로 확정 |
-| `running-adversarial-review-and-refinement` | 실패 가정 공격·비판 검증·승인된 개선·회귀 재검토 |
+| `running-adversarial-review-and-refinement` | 실패 가정 공격·비판 검증·승인된 개선·회귀 재검토·저장소 전체 감사 |
 | `designing-vertical-slices` | 대표 구간의 목표 품질·실제 플레이 증거·접근성·성능·제작 파이프라인 검증 |
 | `orchestrating-deepseek-worktrees` | 외부 AI 대량 작업의 격리된 작업 공간 운용 |
 | `reviewing-and-validating-project-changes` | 코드·데이터·문서·자산 변경의 계약·정본·정적·런타임·접근성·성능·회귀 검증 |
 | `auditing-canonical-reference-freshness` | 오래된 경로·ID·정본 drift·파생본·변경 전파 누락 감사 |
-| `designing-art-prompts-and-technique-cards` | 이미지 프롬프트·아트 기술 카드 |
+| `designing-art-prompts-and-technique-cards` | 기획 시각화·최종 후보 이미지·목업·프롬프트·검수·승인 원장 |
 | `auditing-and-refining-ui-art` | Godot·Web UI 결과 감사와 승인된 개선 |
 | `managing-base-change-proposals` | 프로젝트 교훈 추출·BCP 제출·검토·승인된 구현 |
 | `governing-legacy-retention-and-archives` | 레거시 보존·정본 통합·호환 stub·아카이브·승인 삭제 |
@@ -89,9 +97,13 @@ START_HERE.md
 - `decompose-and-sequence`: 검증 가능한 작업 결과·의존성·병렬화·게이트·롤백
 - `benchmark-and-player-research`: 비교 게임·유저 반응·행동 근거의 분석과 개선 판정
 - `playtest-and-experiment`: 빌드·테스터·피드백·이벤트·퍼널·A/B 테스트 계약
+- `planning-visualization`: 기획 중 세계관·인물·핵심루프·시스템·UI 시각화
+- `final-visual-candidate`: 기획 종료 후 Demo·상점·홍보·UI·캐릭터 후보 제작
+- `visual-qa-and-approval`: 실제 화면·구현·권리·오류·재사용성 검수와 승인 판정
 - `accessibility-review`: 핵심 정보·입력·UI·시간·난이도·모션의 장벽·대안
 - `performance-profile`: 목표 플랫폼 frame time·CPU·GPU·메모리·네트워크·로딩 비교
 - `reference-freshness`: 정본·경로·ID·Schema 변경의 전파 감사
+- `repository-wide-audit`: tracked 파일·권한·구형 계약·untouched 소비자·Prompt drift 감사
 
 ## 프로젝트 책임 원본
 
@@ -137,42 +149,3 @@ Intake·Context
 → Documentation
 → Integration·Completion
 ```
-
-```text
-Concept
-→ Prototype
-→ Graybox
-→ First Playable
-→ Vertical Slice
-→ Production
-→ Alpha
-→ Feature Complete
-→ Content Complete
-→ Beta
-→ Release Candidate
-```
-
-## 선택적 호출과 학습
-
-- 전체 skills 폴더를 기본 로드하지 않습니다.
-- 활성 스킬도 `load_by_default=false`입니다.
-- 주 책임 분야 스킬은 최대 하나입니다.
-- 통합 Skill 내부 mode는 같은 요청의 상태와 사실을 재사용합니다.
-- 벤치마크·플레이테스트·접근성·성능은 trigger와 영향 범위가 있을 때만 실행합니다.
-- 실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 호출을 Learning Log에 기록합니다.
-- 한 번의 성공은 관찰 또는 가설이며 반복 검증 전에는 공용 강제 규칙으로 승격하지 않습니다.
-
-## 기존 프로젝트 적용
-
-템플릿 폴더를 그대로 복사하지 않습니다.
-
-```text
-Audit only
-→ 현행 책임·참조·고유 정보 조사
-→ 목표 구조·보존·롤백 제안
-→ 사용자 승인
-→ 승인된 처리표만 마이그레이션
-→ 보존·참조·발행·콜드 스타트 검증
-```
-
-파일이 존재한다는 사실과 실제 실행·GitHub Actions·Required Status Check 강제 상태를 구분합니다.
