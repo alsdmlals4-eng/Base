@@ -20,7 +20,7 @@
 
 작은 표본, 카드·종이·클릭 Mock, 기존 PoC overlay, simulated recognition, scripted outcome, fixed RNG 결과를 사용하는 사람 검증 계획은 다음을 함께 읽는다.
 
-- Governance: `skills/governing-game-user-research-coverage/references/human-validation-artifact-governance.md`
+- Governance: `docs/knowledge/game-development/HUMAN_VALIDATION_ARTIFACT_GOVERNANCE.md`
 - Session Packet: `templates/research/HUMAN_VALIDATION_SESSION_PACKET.md`
 
 이 경로에서는 다음을 분리한다.
