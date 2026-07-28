@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: evidence-knowledge-${{ github.event.pull_request.number || github.ref }}
@@ -61,3 +61,52 @@ jobs:
             skills/SKILL_LEARNING_LOG.md
             tests/test_evidence_based_game_development_knowledge.py
           if-no-files-found: error
+
+  prepend-learning-entry:
+    if: github.event_name == 'pull_request' && github.head_ref == 'gpt/evidence-based-game-development-knowledge-20260729'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out head branch
+        uses: actions/checkout@v4
+        with:
+          ref: gpt/evidence-based-game-development-knowledge-20260729
+          fetch-depth: 0
+
+      - name: Prepend learning entry without replacing history
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("skills/SKILL_LEARNING_LOG.md")
+          text = path.read_text(encoding="utf-8")
+          marker = "## 2026-07-29 — 근거 기반 게임 개발 지식체계"
+          if marker in text:
+              raise SystemExit(0)
+
+          entry = '''## 2026-07-29 — 근거 기반 게임 개발 지식체계
+
+- **Trigger:** 게임 기획·아트 기획뿐 아니라 Godot 개발·AI 활용·벤치마킹·유저리서치·접근성·프로덕션·출시 전반을 공식·현업·개발자·플레이어 근거로 개선하고 Base main에 통합하라는 요청.
+- **Finding:** 기존 Base에는 컨셉 분석·GUR 11영역·아트 프롬프트·Vertical Slice·AI 결과 검증·적대적 검토·Skill 진화가 이미 존재하므로 새 광역 Skill을 추가하면 책임이 중복된다. 또한 새 테스트 파일을 만들었지만 기존 CI의 명시적 테스트 목록에 연결되지 않아 첫 실행에서 검증되지 않는 소비처 누락을 확인했다.
+- **Decision:** **새 Skill을 추가하지 않음**. 기존 Skill이 실행 권한을 유지하고, `docs/knowledge/game-development/`에 Method·Guide·Reference를, `templates/research/`에 Evidence Pack·Case Card를 추가해 조건부로 소비한다. 성공·실패·혼합 사례와 공식 사실·현업 경험·플레이어 행동·자기보고·AI 추론을 분리한다.
+- **Evidence:** TDD RED Workflow에서 지식 패키지 미생성으로 계약 테스트 실패를 확인하고, README·Documentation Map·기획 근거 정책·전용 CI까지 소비 경로를 연결해 GREEN으로 전환한다. 외부 자료는 공식·학술·현업 원출처와 확인일·버전·사용 한계·재검증 조건을 기록한다.
+- **Learning state:** 구조와 계약은 `PATTERN` 후보지만, 다섯 게임 프로젝트에서 실제 결과물 품질·오라우팅·조사 비용·검증 효과를 측정하지 않았으므로 **프로젝트 Pilot 검증 대기**다.
+- **Promotion guard:** 한 번의 Base 문서 통합 성공이나 외부 사례만으로 **반복 검증 전 공용 강제 규칙으로 승격하지 않음**. 프로젝트별 세계관·수치·경로·승인 자산·실제 플레이테스트 결과는 프로젝트에 유지한다.
+- **Next trigger:** 십보강호·Blacksmith·OMENWARD·괴이기록국·GRIMOIRE 중 서로 다른 두 프로젝트 이상에서 Evidence Pack·Case Card·Guide를 사용하고, 기획 품질·누락 감소·토큰/조사 비용·플레이테스트 연결 결과를 비교할 때 재검토한다.
+
+'''
+          prefix = "# Base Skill Learning Log\n\n"
+          if not text.startswith(prefix):
+              raise SystemExit("unexpected learning log header")
+          path.write_text(prefix + entry + text[len(prefix):], encoding="utf-8")
+          PY
+
+      - name: Commit learning entry
+        run: |
+          if git diff --quiet -- skills/SKILL_LEARNING_LOG.md; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add skills/SKILL_LEARNING_LOG.md
+          git commit -m "docs: record evidence knowledge system learning"
+          git push origin HEAD:gpt/evidence-based-game-development-knowledge-20260729
