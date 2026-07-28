@@ -153,7 +153,7 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
             "document_role: MIGRATION_TRACEABILITY",
             "active_authority: false",
             "implementation_authority: NONE",
-            "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md",
+            "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md",
             "상세 정본과 작업 시작 인터뷰·실행 지시를 단일 첨부 파일로 통합",
             "기존 `designing-vertical-slices` Skill의 책임·mode·Registry 계약은 보존",
             "Requirement·Skill·Artifact 완전성",
