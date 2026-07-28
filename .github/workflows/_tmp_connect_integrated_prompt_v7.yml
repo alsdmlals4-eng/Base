@@ -1,0 +1,35 @@
+name: Connect Integrated Prompt v7 Entrypoints
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+    paths:
+      - tools/_tmp_connect_integrated_prompt_v7.py
+      - .github/workflows/_tmp_connect_integrated_prompt_v7.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.event.pull_request.head.ref == 'agent/integrated-vertical-slice-prompt-v7'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/integrated-vertical-slice-prompt-v7
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python tools/_tmp_connect_integrated_prompt_v7.py
+      - name: Commit and push
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add START_HERE.md docs/DOCUMENTATION_MAP.md templates/project-operations/README.md skills/SKILL_LEARNING_LOG.md docs/CHANGELOG.md
+          git diff --cached --check
+          git commit -m "docs: connect integrated prompt and repository audit entrypoints"
+          git push origin HEAD:agent/integrated-vertical-slice-prompt-v7
