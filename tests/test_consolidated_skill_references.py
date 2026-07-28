@@ -283,5 +283,34 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         for tag in ("decision-recovery", "pr-preflight", "project-cold-start"):
             self.assertIn(tag, registry)
 
+    def test_repository_wide_audit_is_an_integrated_mode_with_consumers(self) -> None:
+        adversarial = skill_package_text("running-adversarial-review-and-refinement")
+        registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
+        doc_map = (ROOT / "docs/DOCUMENTATION_MAP.md").read_text(encoding="utf-8")
+        prompt = (ROOT / "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md").read_text(encoding="utf-8")
+
+        for term in (
+            "`repository-wide-audit`",
+            "references/repository-wide-audit-protocol.md",
+            "CURRENT_AUTHORITY",
+            "UNTOUCHED_CONSUMER",
+            "ALLOWED_LEGACY",
+            "STALE_PROMPT_CONTRACT",
+        ):
+            self.assertIn(term, adversarial)
+
+        for tag in (
+            "repository-wide-audit",
+            "full-file-audit",
+            "stale-file-audit",
+            "untouched-consumer-audit",
+            "prompt-drift",
+        ):
+            self.assertIn(tag, registry)
+
+        self.assertIn("repository-wide-audit", doc_map)
+        self.assertIn("repository-wide-audit", prompt)
+        self.assertNotIn('"skill_id":"repository-wide-adversarial-audit"', registry)
+
 if __name__ == "__main__":
     unittest.main()
