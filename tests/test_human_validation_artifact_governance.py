@@ -15,10 +15,10 @@ class HumanValidationArtifactGovernanceTests(unittest.TestCase):
     def test_reference_and_template_exist(self) -> None:
         reference_path = (
             ROOT
-            / "skills"
-            / "governing-game-user-research-coverage"
-            / "references"
-            / "human-validation-artifact-governance.md"
+            / "docs"
+            / "knowledge"
+            / "game-development"
+            / "HUMAN_VALIDATION_ARTIFACT_GOVERNANCE.md"
         )
         template_path = ROOT / "templates" / "research" / "HUMAN_VALIDATION_SESSION_PACKET.md"
         plan_path = (
@@ -35,8 +35,8 @@ class HumanValidationArtifactGovernanceTests(unittest.TestCase):
 
     def test_reference_claim_ceiling_and_small_sample_contract(self) -> None:
         reference = read(
-            "skills/governing-game-user-research-coverage/references/"
-            "human-validation-artifact-governance.md"
+            "docs/knowledge/game-development/"
+            "HUMAN_VALIDATION_ARTIFACT_GOVERNANCE.md"
         )
 
         for term in (
@@ -94,8 +94,7 @@ class HumanValidationArtifactGovernanceTests(unittest.TestCase):
         self.assertIn("references/eleven-domain-coverage.md", skill)
 
         for path in (
-            "skills/governing-game-user-research-coverage/references/"
-            "human-validation-artifact-governance.md",
+            "docs/knowledge/game-development/HUMAN_VALIDATION_ARTIFACT_GOVERNANCE.md",
             "templates/research/HUMAN_VALIDATION_SESSION_PACKET.md",
         ):
             self.assertIn(path, coverage)
