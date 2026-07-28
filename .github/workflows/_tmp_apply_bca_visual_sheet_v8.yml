@@ -24,6 +24,19 @@ jobs:
         with:
           python-version: "3.12"
       - run: python tools/_tmp_apply_bca_visual_sheet_v8.py
+      - name: Normalize generated markdown endings
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for name in (
+              "docs/knowledge/skills/ART_DIRECTION_SKILL_MATRIX.md",
+              "skills/SKILL_LEARNING_LOG.md",
+              "templates/planning/ART_DIRECTION_BRIEF.md",
+          ):
+              path = Path(name)
+              path.write_text(path.read_text(encoding="utf-8").rstrip() + "\n", encoding="utf-8")
+          PY
       - name: Validate generated files
         shell: bash
         run: |
