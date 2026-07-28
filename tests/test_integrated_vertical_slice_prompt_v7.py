@@ -5,7 +5,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PROMPT_PATH = ROOT / "templates" / "prompts" / "VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md"
+PROMPT_PATH = ROOT / "templates" / "prompts" / "VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md"
+LEGACY_PROMPT_PATH = ROOT / "templates" / "prompts" / "VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md"
 
 
 def read(path: str | Path) -> str:
@@ -16,17 +17,26 @@ def read(path: str | Path) -> str:
 class IntegratedVerticalSlicePromptV7Tests(unittest.TestCase):
     def test_single_attachment_prompt_exists_and_replaces_split_v6_usage(self) -> None:
         self.assertTrue(PROMPT_PATH.is_file(), str(PROMPT_PATH))
+        self.assertTrue(LEGACY_PROMPT_PATH.is_file(), str(LEGACY_PROMPT_PATH))
         prompt = read(PROMPT_PATH)
+        legacy = read(LEGACY_PROMPT_PATH)
 
         for term in (
             'contract_name: VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT',
-            'contract_version: "7.0"',
+            'contract_version: "8.0"',
             "execution_model: INTERVIEW_DRIVEN_INTEGRATED_EXECUTION",
             "이 파일 하나만 첨부",
             "별도 축약 실행문을 요구하지 않는다",
             "STALE_PROMPT_CONTRACT",
         ):
             self.assertIn(term, prompt)
+
+        for term in (
+            "active_authority: false",
+            "status: SUPERSEDED_COMPATIBILITY",
+            "VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md",
+        ):
+            self.assertIn(term, legacy)
 
     def test_prompt_uses_current_preflight_planning_and_demo_first_contracts(self) -> None:
         prompt = read(PROMPT_PATH)
@@ -45,6 +55,9 @@ class IntegratedVerticalSlicePromptV7Tests(unittest.TestCase):
             "TECHNICAL_SPIKE",
             "00 프로젝트 기반·현재 상태",
             "80 완성 품질 Vertical Slice 데모·플레이테스트",
+            "PROJECT_SHEET_SEMANTIC_TABS",
+            "GPT_PLANNING_VISUALIZATION",
+            "GPT_FINAL_VISUAL_CANDIDATE_REVIEW",
         ):
             self.assertIn(term, prompt)
 
@@ -104,7 +117,7 @@ class IntegratedVerticalSlicePromptV7Tests(unittest.TestCase):
             "templates/project-operations/README.md",
         ):
             self.assertIn(
-                "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md",
+                "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md",
                 read(path),
                 path,
             )
@@ -119,7 +132,7 @@ class IntegratedVerticalSlicePromptV7Tests(unittest.TestCase):
         self.assertNotIn("`CORE_POC`·버티컬 슬라이스 계약", orchestration)
 
         coverage = read("docs/knowledge/VERTICAL_SLICE_V6_REQUIREMENT_COVERAGE.md")
-        self.assertIn("VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md", coverage)
+        self.assertIn("VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md", coverage)
         self.assertIn("MIGRATION_TRACEABILITY", coverage)
         self.assertIn("active_authority: false", coverage)
 
