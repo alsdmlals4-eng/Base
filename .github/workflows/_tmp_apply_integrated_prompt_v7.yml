@@ -1,18 +1,21 @@
 name: Apply Integrated Prompt v7 Patch
 
 on:
-  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
     branches:
-      - agent/integrated-vertical-slice-prompt-v7
+      - main
     paths:
       - tools/_tmp_apply_integrated_prompt_v7.py
       - .github/workflows/_tmp_apply_integrated_prompt_v7.yml
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   apply:
+    if: github.event.pull_request.head.ref == 'agent/integrated-vertical-slice-prompt-v7'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
