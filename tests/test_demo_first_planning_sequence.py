@@ -39,10 +39,15 @@ class DemoFirstPlanningSequenceTests(unittest.TestCase):
     def test_compact_size_ceiling_is_removed_without_losing_discoverability(self) -> None:
         skill = read("skills/simplifying-skill-bodies/SKILL.md")
         reference = read("skills/simplifying-skill-bodies/references/progressive-disclosure-rules.md")
+        coverage_checker = read("tools/check_skill_system_coverage.py")
         combined = skill + reference
         for term in ("줄 수", "문자 수", "분량 상한", "내용 보존", "한 단계 발견성"):
             self.assertIn(term, combined)
         self.assertNotIn("self.assertLessEqual", read("tests/test_skill_system_coverage.py"))
+        self.assertNotIn("exceeds 150 lines", coverage_checker)
+        self.assertNotIn("len(text.splitlines()) > 150", coverage_checker)
+        self.assertIn("completeness-first contract", coverage_checker)
+        self.assertIn("Missing completeness contract token", coverage_checker)
 
     def test_demo_first_vertical_slice_has_no_standalone_core_poc_section(self) -> None:
         stage = read("docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md")
