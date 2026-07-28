@@ -1,0 +1,37 @@
+name: Evidence Knowledge RED Proof
+
+on:
+  pull_request:
+    paths:
+      - "docs/knowledge/game-development/**"
+      - "templates/research/**"
+      - "templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md"
+      - "README.md"
+      - "docs/DOCUMENTATION_MAP.md"
+      - "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md"
+      - "docs/CHANGELOG.md"
+      - "skills/SKILL_LEARNING_LOG.md"
+      - "tests/test_evidence_based_game_development_knowledge.py"
+      - ".github/workflows/evidence-knowledge-red.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evidence-knowledge-red-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evidence-knowledge-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run evidence knowledge contract
+        run: python -m unittest tests/test_evidence_based_game_development_knowledge.py -v
