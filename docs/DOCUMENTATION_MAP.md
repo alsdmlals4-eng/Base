@@ -52,7 +52,8 @@ Base 저장소 자체의 콜드 스타트에서는 프로젝트 설치 템플릿
 | GitHub 작업 항목 생명주기 | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | Issue·Goal·Branch·PR·Run·Artifact·Release 책임, PR WIP·재사용·종료·보존·무손실 정리 |
 | 승인 결정 즉시 동기화 | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | 질문 전 정본·PR·Sheets 대조, 중복 질문 방지, 승인 즉시 정본·main·Sheets 동기화, 병합 후 적대적 검토 |
 | 기획 작업순서·근거·데모 우선 | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | 누락·충돌 선감사, 3층 근거 묶음, 분야별 Approval Bundle, 소비처 전파, 개별 프로젝트 Sheet tab, Demo-First Vertical Slice |
-| Vertical Slice 통합 첨부 실행문 | `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md` | 상세 정본·저장소 우선 인터뷰·기획·Demo-First Slice·GPT→Codex·전체 감사·검증을 파일 하나로 첨부; 최신 Base·프로젝트 정본이 우선 |
+| GPT 이미지 생성·검수·Sheet 구조 | `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md` | 기획 중 시각화, 기획 종료 후보, 이미지 QA·승인 원장, 의미 구조 Sheet tab |
+| Vertical Slice 통합 첨부 실행문 | `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md` | 상세 정본·저장소 우선 인터뷰·기획·Demo-First Slice·GPT→Codex·전체 감사·검증을 파일 하나로 첨부; 최신 Base·프로젝트 정본이 우선 |
 | CI 실행·비용 정책 | `docs/CI_EXECUTION_COST_POLICY.md` | 변경 등급별 PR·main·nightly 검증, concurrency, `ci-gate`, Actions 차단 상태 |
 | Work Mode·Skill 라우팅 | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | PLAN·BUILD·REVIEW, Skill·Skill Mode 구분, Grill Me, GPT→Codex 자동 선택·실행 보고 상세 계약 |
 | 저장소 개요 | `README.md` | 사용 목적·구조·활성 스킬 안내 |

@@ -25,7 +25,7 @@
 
 ## 단일 첨부용 통합 실행문
 
-상세 기획 정본과 작업 인터뷰·Demo-First Vertical Slice·GPT→Codex·적대적 검토·완전성 감사를 파일 하나로 전달할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md`를 첨부한다. 별도 축약 실행문은 필요하지 않다. Prompt는 프로젝트에 동기화된 Base 기준과 프로젝트 정본보다 높은 권한이 아니며 drift는 `STALE_PROMPT_CONTRACT`로 보고한다.
+상세 기획 정본과 작업 인터뷰·Demo-First Vertical Slice·GPT→Codex·적대적 검토·완전성 감사를 파일 하나로 전달할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md`를 첨부한다. 별도 축약 실행문은 필요하지 않다. Prompt는 프로젝트에 동기화된 Base 기준과 프로젝트 정본보다 높은 권한이 아니며 drift는 `STALE_PROMPT_CONTRACT`로 보고한다.
 
 ## 가장 중요한 위치 규칙
 
@@ -196,3 +196,6 @@ managing-game-project-operating-system: audit
 - [ ] Active Context가 실제 상태와 일치한다.
 - [ ] 승인 Decision이 GitHub 정본·main·Google Sheets에 반영되고 재조회 결과가 일치한다.
 - [ ] 새 작업자가 저장소만으로 방향·상태·다음 작업·보호 범위를 찾는다.
+
+- `PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md`: 세계관·핵심루프·인물·핵심시스템·이미지 검수 tab 설치 계약.
+- `../planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md`: 기획 중·기획 종료 GPT 이미지 생성과 승인 기록 Template.
