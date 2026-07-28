@@ -10,7 +10,7 @@
 → 프로젝트 기존 승인 자산
 → 프로젝트 보유·구매 자산
 → Registry의 에셋·라이선스 Skill
-→ Godot 기본 기능·공식 Asset Store·공식 GitHub·신뢰 가능한 마켓 조사
+→ Godot 기본 기능·공식 Asset Store(에셋스토어)·공식 GitHub·신뢰 가능한 마켓 조사
 → 라이선스·기술·스타일·성능 비교
 → ADOPT / ADAPT / TRIAL / REJECT / BUILD_CUSTOM
 → 적합한 자산이 없거나 코어 고유성이 필요할 때만 신규 생성

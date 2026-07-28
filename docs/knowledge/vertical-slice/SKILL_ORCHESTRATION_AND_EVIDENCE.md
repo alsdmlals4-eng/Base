@@ -12,7 +12,7 @@ Grill Me와 적대적 검토는 전체 파이프라인의 일부다. 최고의 �
 → 콘셉트·코어·사용자 연구
 → 책임 원본 작성
 → 데모 핵심 위험 등록·필요 시 내부 TECHNICAL_SPIKE
-→ Demo-First Slice 계약·품질·파이프라인
+→ DEMO_FIRST_VERTICAL_SLICE 계약·품질·파이프라인
 → 구현 계획·TDD·디버깅
 → 에셋·UI·사운드 검토
 → 외부 플레이 검증

@@ -107,7 +107,7 @@ implementation_authority: NONE
 - 세부 수치 조정은 기획 승인 질문이 아니라 플레이테스트 Backlog로 관리한다.
 - 검색 결과만으로 전체 저장소 검수를 완료했다고 주장하지 않는다. tracked inventory 또는 미검증 범위가 필요하다.
 
-## 허용된 Legacy
+## ALLOWED_LEGACY — 허용된 역사·호환 표현
 
 다음 위치의 과거 용어는 현행 권한이 없다는 문맥이 명시된 경우 유지할 수 있다.
 
