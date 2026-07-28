@@ -1,0 +1,37 @@
+name: Fix Integrated Prompt Contracts
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+    paths:
+      - tools/_tmp_fix_integrated_prompt_contracts.py
+      - .github/workflows/_tmp_fix_integrated_prompt_contracts.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.event.pull_request.head.ref == 'agent/integrated-vertical-slice-prompt-v7'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/integrated-vertical-slice-prompt-v7
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python tools/_tmp_fix_integrated_prompt_contracts.py
+      - name: Commit and push
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md \
+            docs/knowledge/vertical-slice/ASSET_MASCOT_AND_TUNING.md \
+            docs/knowledge/VERTICAL_SLICE_V6_REQUIREMENT_COVERAGE.md
+          git diff --cached --check
+          git commit -m "fix: align integrated prompt migration contracts"
+          git push origin HEAD:agent/integrated-vertical-slice-prompt-v7
