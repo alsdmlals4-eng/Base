@@ -21,9 +21,17 @@ class HumanValidationArtifactGovernanceTests(unittest.TestCase):
             / "human-validation-artifact-governance.md"
         )
         template_path = ROOT / "templates" / "research" / "HUMAN_VALIDATION_SESSION_PACKET.md"
+        plan_path = (
+            ROOT
+            / "docs"
+            / "superpowers"
+            / "plans"
+            / "2026-07-29-human-validation-artifact-governance.md"
+        )
 
         self.assertTrue(reference_path.is_file())
         self.assertTrue(template_path.is_file())
+        self.assertTrue(plan_path.is_file())
 
     def test_reference_claim_ceiling_and_small_sample_contract(self) -> None:
         reference = read(
@@ -76,41 +84,31 @@ class HumanValidationArtifactGovernanceTests(unittest.TestCase):
         ):
             self.assertIn(term, template)
 
-    def test_skill_and_documentation_map_route_governance(self) -> None:
+    def test_existing_gur_reference_routes_governance(self) -> None:
         skill = read("skills/governing-game-user-research-coverage/SKILL.md")
-        doc_map = read("docs/DOCUMENTATION_MAP.md")
-
-        reference_path = (
+        coverage = read(
             "skills/governing-game-user-research-coverage/references/"
-            "human-validation-artifact-governance.md"
+            "eleven-domain-coverage.md"
         )
-        template_path = "templates/research/HUMAN_VALIDATION_SESSION_PACKET.md"
 
-        for text in (skill, doc_map):
-            self.assertIn(reference_path, text)
-            self.assertIn(template_path, text)
+        self.assertIn("references/eleven-domain-coverage.md", skill)
 
-        for term in (
-            "simulated",
-            "작은 표본",
-            "행동",
-            "자기보고",
-            "진행자",
+        for path in (
+            "skills/governing-game-user-research-coverage/references/"
+            "human-validation-artifact-governance.md",
+            "templates/research/HUMAN_VALIDATION_SESSION_PACKET.md",
         ):
-            self.assertIn(term, skill)
-
-    def test_learning_and_changelog_record_pilot_findings(self) -> None:
-        learning = read("skills/SKILL_LEARNING_LOG.md")
-        changelog = read("docs/CHANGELOG.md")
+            self.assertIn(path, coverage)
 
         for term in (
-            "사람 검증 Artifact",
-            "작은 표본",
             "simulated",
+            "작은 표본",
+            "행동 관찰",
+            "플레이어 자기보고",
+            "진행자 개입",
             "PROMISING_DIRECTION",
         ):
-            self.assertIn(term, learning)
-            self.assertIn(term, changelog)
+            self.assertIn(term, coverage)
 
     def test_no_duplicate_human_validation_skill(self) -> None:
         registry = read("skills/SKILL_REGISTRY.json")
