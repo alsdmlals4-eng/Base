@@ -6,12 +6,14 @@ on:
     paths:
       - "templates/prompts/**"
       - "docs/knowledge/vertical-slice/**"
+      - "docs/knowledge/VERTICAL_SLICE_V6_REQUIREMENT_COVERAGE.md"
       - "skills/running-adversarial-review-and-refinement/**"
       - "skills/SKILL_REGISTRY.json"
       - "skills/SKILL_LEARNING_LOG.md"
       - "tests/test_integrated_vertical_slice_prompt_v7.py"
       - "tests/test_vertical_slice_v6_contract.py"
       - "tests/test_demo_first_planning_sequence.py"
+      - "tests/test_bca_visual_sheet_workflow.py"
       - ".github/reference-freshness.json"
       - ".github/workflows/validate-integrated-vertical-slice-prompt.yml"
   workflow_dispatch:
@@ -38,17 +40,18 @@ jobs:
         run: |
           git ls-files | sort > integrated-prompt-file-inventory.txt
           git grep -n -I -E \
-            'CORE_POC|PROTOTYPE_AND_VERTICAL_SLICE|SLICE_VALIDATION|VERTICAL_SLICE_FULL_PROFILE|VERTICAL_SLICE_MASTER_REFERENCE_v6|VERTICAL_SLICE_EXECUTION_PROMPT_SHORT|repository-wide-adversarial-audit|_tmp_' \
+            'CORE_POC|PROTOTYPE_AND_VERTICAL_SLICE|SLICE_VALIDATION|VERTICAL_SLICE_FULL_PROFILE|VERTICAL_SLICE_MASTER_REFERENCE_v6|VERTICAL_SLICE_EXECUTION_PROMPT_SHORT|VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7|repository-wide-adversarial-audit|_tmp_' \
             -- . > integrated-prompt-stale-token-candidates.txt || true
           git grep -n -I \
-            'VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md' \
+            'VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md' \
             -- . > integrated-prompt-consumer-links.txt || true
       - name: Check Python syntax
         run: |
           python -m py_compile \
             tests/test_integrated_vertical_slice_prompt_v7.py \
             tests/test_vertical_slice_v6_contract.py \
-            tests/test_demo_first_planning_sequence.py
+            tests/test_demo_first_planning_sequence.py \
+            tests/test_bca_visual_sheet_workflow.py
       - name: Run integrated prompt and migration contracts
         shell: bash
         run: |
@@ -57,6 +60,7 @@ jobs:
             tests.test_integrated_vertical_slice_prompt_v7 \
             tests.test_vertical_slice_v6_contract \
             tests.test_demo_first_planning_sequence \
+            tests.test_bca_visual_sheet_workflow \
             -v > integrated-prompt-test-results.txt 2>&1
           status=$?
           cat integrated-prompt-test-results.txt
@@ -83,5 +87,5 @@ jobs:
             integrated-prompt-file-inventory.txt
             integrated-prompt-stale-token-candidates.txt
             integrated-prompt-consumer-links.txt
-            templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md
+            templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md
           if-no-files-found: error
