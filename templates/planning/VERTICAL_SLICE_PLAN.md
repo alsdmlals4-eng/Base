@@ -12,7 +12,7 @@
 
 - 프로젝트:
 - 플랫폼: PC / MOBILE
-- 제품 단계: `PROTOTYPE_AND_VERTICAL_SLICE`
+- 제품 단계: `DEMO_FIRST_VERTICAL_SLICE` (`PROTOTYPE_AND_VERTICAL_SLICE`는 과거 호환 이름)
 - Work Mode: PLAN / BUILD / REVIEW
 - 실행 프로필:
 - 기준 Branch·Commit:
@@ -32,18 +32,19 @@
 - 세계관 마스코트·상징 동반자 후보:
 - 제약·제외 범위:
 
-## 2. CORE_POC 결과
+## 2. 데모 핵심 위험·내부 Spike
 
-- 핵심 가설:
-- 가장 위험한 전제:
-- 최소 구현:
+별도 `CORE_POC` Gate를 만들지 않는다. 아래는 데모 전체를 차단하는 기술 불확실성이 있을 때만 작성한다.
+
+- 데모 핵심 위험:
+- 영향을 받는 플레이어 약속·범위:
+- 필요한 `TECHNICAL_SPIKE` 질문:
+- 데모에서 재사용할 최소 산출물:
 - 빌드·환경:
-- 플레이 과제:
-- 관찰 행동:
 - 성공·실패·중단 기준:
-- 결과:
+- 결과·증거:
 - 판정: KEEP / AMPLIFY / CHANGE / REMOVE / DEFER / RETEST
-- 버티컬 슬라이스에 반영할 재조정:
+- 데모 계약·품질 기준에 반영할 조정:
 
 ## 3. Slice 검증 목적
 
@@ -147,7 +148,7 @@
 | ID | 시스템 | 변수 | 상태 | 임시값·범위 | 의도 | 관찰 지표 | 다음 검증 |
 |---|---|---|---|---|---|---|---|
 
-## 12. SLICE_VALIDATION
+## 12. DEMO_VALIDATION (`SLICE_VALIDATION` 호환)
 
 - 빌드·버전:
 - 대상 플레이어:

@@ -1,6 +1,6 @@
 ---
 name: simplifying-skill-bodies
-description: Use when a SKILL.md or operating router has grown too large and must retain only always-needed routing and execution rules while moving conditional templates, examples, domain detail, and decision tables into linked references with verified progressive disclosure.
+description: Use when a SKILL.md or operating router has become hard to navigate and must preserve all required behavior while separating always-needed routing from conditional detail through linked references with verified progressive disclosure and no numeric size ceiling.
 ---
 
 # Simplifying Skill Bodies
@@ -24,6 +24,13 @@ description: Use when a SKILL.md or operating router has grown too large and mus
 긴 예시, 템플릿 전문, 분야별 체크리스트, 상세 판정표, 드문 예외, 벤치마크·도메인 규칙, 반복 설명을 이동한다.
 
 세부 분류와 검증 기준은 `references/progressive-disclosure-rules.md`를 필요할 때만 읽는다.
+
+## Completeness-first rule
+
+- 줄 수, 문자 수, 페이지 수, 파일 크기나 임의의 분량 상한을 완료 조건으로 사용하지 않는다.
+- 본문과 reference의 총 내용에서 승인 결정·예외·검증·실패 조건이 보존돼야 한다.
+- Reference 이동은 내용 삭제나 테스트 통과용 축약이 아니라 책임 분리와 한 단계 발견성을 위한 것이다.
+- 짧아졌지만 필요한 판단을 찾기 어렵거나 내용이 빠지면 실패다. 길어도 책임과 경로가 명확하고 실행 가능하면 허용한다.
 
 ## Workflow
 
