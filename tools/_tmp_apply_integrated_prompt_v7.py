@@ -15,34 +15,6 @@ def replace_once(path: Path, old: str, new: str) -> None:
     path.write_text(text.replace(old, new, 1), encoding="utf-8")
 
 
-def update_workflow() -> None:
-    path = ROOT / ".github/workflows/validate-game-project-operating-system.yml"
-    replace_once(
-        path,
-        '      - "templates/quality/**"\n      - "tests/test_*operating_system*.py"',
-        '      - "templates/quality/**"\n      - "templates/prompts/**"\n      - "tests/test_*operating_system*.py"',
-    )
-    replace_once(
-        path,
-        '            tests/test_gpt_codex_workflow_contract.py \\\n            tests/test_ci_workflow_cost_policy.py\n',
-        '            tests/test_gpt_codex_workflow_contract.py \\\n            tests/test_ci_workflow_cost_policy.py \\\n            tests/test_demo_first_planning_sequence.py \\\n            tests/test_vertical_slice_v6_contract.py \\\n            tests/test_integrated_vertical_slice_prompt_v7.py\n',
-    )
-    replace_once(
-        path,
-        '            tests/test_gpt_codex_workflow_contract.py \\\n            tests/test_ci_workflow_cost_policy.py \\\n            -v 2>&1 | tee operating-system-contract-results.txt',
-        '            tests/test_gpt_codex_workflow_contract.py \\\n            tests/test_ci_workflow_cost_policy.py \\\n            tests/test_demo_first_planning_sequence.py \\\n            tests/test_vertical_slice_v6_contract.py \\\n            tests/test_integrated_vertical_slice_prompt_v7.py \\\n            -v 2>&1 | tee operating-system-contract-results.txt',
-    )
-
-
-def update_ci_policy_test() -> None:
-    path = ROOT / "tests/test_ci_workflow_cost_policy.py"
-    replace_once(
-        path,
-        '    def test_new_contract_tests_are_part_of_ci(self) -> None:\n        for path in (',
-        '    def test_new_contract_tests_are_part_of_ci(self) -> None:\n        self.assertIn(\'      - "templates/prompts/**"\', self.text)\n        for path in (',
-    )
-
-
 def update_registry() -> None:
     path = ROOT / "skills/SKILL_REGISTRY.json"
     data = json.loads(path.read_text(encoding="utf-8"))
@@ -112,7 +84,6 @@ def update_orchestration() -> None:
         replace_once(path, old, new)
 
 
-
 def update_reference_config() -> None:
     path = ROOT / ".github/reference-freshness.json"
     data = json.loads(path.read_text(encoding="utf-8"))
@@ -152,19 +123,9 @@ def update_reference_config() -> None:
 
 
 def main() -> None:
-    update_workflow()
-    update_ci_policy_test()
     update_registry()
     update_orchestration()
     update_reference_config()
-
-    for relative in (
-        "tools/_tmp_apply_integrated_prompt_v7.py",
-        ".github/workflows/_tmp_apply_integrated_prompt_v7.yml",
-    ):
-        target = ROOT / relative
-        if target.exists():
-            target.unlink()
 
 
 if __name__ == "__main__":
