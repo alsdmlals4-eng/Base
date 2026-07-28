@@ -6,11 +6,11 @@ active_authority: false
 implementation_authority: NONE
 ---
 
-# Vertical Slice v6 → 통합 실행문 v7 마이그레이션 추적표
+# Vertical Slice v6 → 통합 실행문 v8 마이그레이션 추적표
 
 ## 목적
 
-이 문서는 사용자가 제공한 `VERTICAL_SLICE_MASTER_REFERENCE_v6`와 별도 축약 실행문의 요구를 현재 Base의 Registry·통합 Skill·지식 Reference·Template·Test와 단일 첨부용 v7 통합 실행문에 어떻게 무손실로 승계했는지 추적한다.
+이 문서는 사용자가 제공한 `VERTICAL_SLICE_MASTER_REFERENCE_v6`와 별도 축약 실행문의 요구를 현재 Base의 Registry·통합 Skill·지식 Reference·Template·Test와 단일 첨부용 v8 통합 실행문에 어떻게 무손실로 승계했는지 추적한다.
 
 이 파일은 현행 실행 정본이 아니다. 실제 작업 실행은 다음 순서로 권한을 확인한다.
 
@@ -38,7 +38,7 @@ implementation_authority: NONE
 
 ## Requirement Coverage
 
-| v6 책임 | v7·Base 책임 원본 | 승계·변경 |
+| v6 책임 | v8·Base 책임 원본 | 승계·변경 |
 |---|---|---|
 | 상세 참고 파일 + 별도 축약 실행문 | `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md` | 상세 정본과 작업 시작 인터뷰·실행 지시를 단일 첨부 파일로 통합 |
 | 4단계 제품 Gate | `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md` + 통합 Prompt | `CONCEPT_APPROVAL → DEMO_FIRST_VERTICAL_SLICE → PRODUCTION_APPROVAL → RELEASE_CANDIDATE_APPROVAL` |
@@ -82,6 +82,8 @@ implementation_authority: NONE
 - 모든 L1 이상 작업은 중복·누락·충돌·구형 참조·소비처 미반영을 먼저 감사한다.
 - 새 정책·Template·Skill은 README·정본·Registry·프로젝트 설치·분야 소비자·Test의 실제 연결을 검증한다.
 - 중요한 기획은 벤치마킹·플레이어 반응·현업/공식 권장 근거를 함께 검토한다.
+- 프로젝트 Sheet는 세계관·핵심루프·주요인물·조연·세력·관계·핵심시스템·메인콘텐츠의 의미 구조를 포함한다.
+- GPT는 기획 중 시각화와 기획 종료 실사용 후보 이미지·목업을 만들 수 있으나, 검수·승인·자산 원장·실제 적용 검증 전에는 최종 자산이 아니다.
 
 ## 기존 책임 보존
 
@@ -99,7 +101,7 @@ implementation_authority: NONE
 
 ## 비채택·변형
 
-- v6 파일을 Base 정본보다 높은 독립 정본으로 두지 않는다. v7 통합 Prompt는 실행 Template이며 최신 정본 drift를 스스로 보고한다.
+- v6 파일을 Base 정본보다 높은 독립 정본으로 두지 않는다. v8 통합 Prompt는 실행 Template이며 최신 정본 drift를 스스로 보고한다.
 - 별도 짧은 실행문을 유지하지 않는다. 통합 Prompt의 시작 인터뷰가 현재 목표·단계·범위를 수집한다.
 - 모든 Skill을 한 번에 로드하지 않는다. 하위 작업별 최소 충분 Skill을 순차 오케스트레이션한다.
 - 고정 횟수의 적대적 검토 대신 독립 렌즈와 `repository-wide-audit`를 위험에 맞춰 적용한다.
