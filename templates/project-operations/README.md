@@ -23,6 +23,10 @@
 
 프로젝트 작업 중 원격 Base의 최신 상태를 암묵적으로 적용하지 않는다.
 
+## 단일 첨부용 통합 실행문
+
+상세 기획 정본과 작업 인터뷰·Demo-First Vertical Slice·GPT→Codex·적대적 검토·완전성 감사를 파일 하나로 전달할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md`를 첨부한다. 별도 축약 실행문은 필요하지 않다. Prompt는 프로젝트에 동기화된 Base 기준과 프로젝트 정본보다 높은 권한이 아니며 drift는 `STALE_PROMPT_CONTRACT`로 보고한다.
+
 ## 가장 중요한 위치 규칙
 
 신규 설치와 승인된 마이그레이션의 활성 기획서는 저장소 루트 바로 아래에 둔다.

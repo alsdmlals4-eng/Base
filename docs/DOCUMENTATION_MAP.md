@@ -52,6 +52,7 @@ Base 저장소 자체의 콜드 스타트에서는 프로젝트 설치 템플릿
 | GitHub 작업 항목 생명주기 | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | Issue·Goal·Branch·PR·Run·Artifact·Release 책임, PR WIP·재사용·종료·보존·무손실 정리 |
 | 승인 결정 즉시 동기화 | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | 질문 전 정본·PR·Sheets 대조, 중복 질문 방지, 승인 즉시 정본·main·Sheets 동기화, 병합 후 적대적 검토 |
 | 기획 작업순서·근거·데모 우선 | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | 누락·충돌 선감사, 3층 근거 묶음, 분야별 Approval Bundle, 소비처 전파, 개별 프로젝트 Sheet tab, Demo-First Vertical Slice |
+| Vertical Slice 통합 첨부 실행문 | `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md` | 상세 정본·저장소 우선 인터뷰·기획·Demo-First Slice·GPT→Codex·전체 감사·검증을 파일 하나로 첨부; 최신 Base·프로젝트 정본이 우선 |
 | CI 실행·비용 정책 | `docs/CI_EXECUTION_COST_POLICY.md` | 변경 등급별 PR·main·nightly 검증, concurrency, `ci-gate`, Actions 차단 상태 |
 | Work Mode·Skill 라우팅 | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | PLAN·BUILD·REVIEW, Skill·Skill Mode 구분, Grill Me, GPT→Codex 자동 선택·실행 보고 상세 계약 |
 | 저장소 개요 | `README.md` | 사용 목적·구조·활성 스킬 안내 |
@@ -109,7 +110,7 @@ GitHub 사용량 → GITHUB_USAGE_BUDGET
 | 핵심 컨셉·뾰족한 재미·DDD·기획 정렬 | `analyzing-and-refining-game-concepts` | `frame` / `constrain` / `sharpen` / `structure` / `analyze` |
 | 프로젝트 코어 식별·코어/MVP 경계 | `identifying-project-core` | `inventory` / `extract-candidates` / `dependency-map` / `removal-and-change-test` / `classify` / `core-report` |
 | PLAN 단계 프로젝트 코어 확정 | `establishing-project-core` | `propose` / `stress-test` / `confirm` / `lock` / `reopen` |
-| 적대적 검토·비판 검증·개선·회귀 | `running-adversarial-review-and-refinement` | `attack` / `validate-critique` / `refine-approved-findings` / `regression-recheck` / `decision-report`; 병합 후 새 main·Decision·정본·Sheets 재검사 |
+| 적대적 검토·비판 검증·개선·회귀 | `running-adversarial-review-and-refinement` | `attack` / `validate-critique` / `refine-approved-findings` / `regression-recheck` / `decision-report`; 전체 파일·구형 계약·untouched 소비자는 `repository-wide-audit`; 병합 후 새 main·Decision·정본·Sheets 재검사 |
 | 경쟁작·플레이어 반응·행동 근거 | `analyzing-and-refining-game-concepts` | `benchmark-and-player-research` |
 | 플레이테스트·이벤트·퍼널·A/B | `analyzing-and-refining-game-concepts` | `playtest-and-experiment` / `poc-contract` / `recalibrate` / `production-gate` |
 | Vertical Slice | `designing-vertical-slices` | `slice-contract` / `quality-bar` / `pipeline-proof` / `playtest-evidence` / `decision-gate` |
