@@ -50,7 +50,7 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
 
     def test_policy_forbids_duplicate_sheet_creation_and_false_approval(self) -> None:
         policy = (ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md").read_text(encoding="utf-8")
-        for term in ("NOT_CONFIGURED", "중복 Sheet", "자동 최종 자산", "repository-wide-audit", "71_이미지기획_생성목록", "72_이미지검수_승인로그"):
+        for term in ("NOT_CONFIGURED", "새 Sheet를 추정 생성", "자동 최종 자산", "repository-wide-audit", "71_이미지기획_생성목록", "72_이미지검수_승인로그"):
             self.assertIn(term, policy)
 
 
