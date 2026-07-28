@@ -31,7 +31,7 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
         self.assertNotIn("integrated-demo-package", skill)
         self.assertNotIn("skill-coverage-audit", skill)
 
-    def test_knowledge_references_exist_and_preserve_v6_responsibilities(self) -> None:
+    def test_knowledge_references_preserve_detail_under_demo_first_authority(self) -> None:
         stage_path = "docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md"
         orchestration_path = "docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md"
         assets_path = "docs/knowledge/vertical-slice/ASSET_MASCOT_AND_TUNING.md"
@@ -52,11 +52,17 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
 
         for gate in (
             "CONCEPT_APPROVAL",
-            "PROTOTYPE_AND_VERTICAL_SLICE",
+            "DEMO_FIRST_VERTICAL_SLICE",
             "PRODUCTION_APPROVAL",
             "RELEASE_CANDIDATE_APPROVAL",
         ):
             self.assertIn(gate, stage)
+
+        self.assertIn("PROTOTYPE_AND_VERTICAL_SLICE", stage)
+        self.assertIn("과거 기록 호환 이름", stage)
+        self.assertIn("별도 `CORE_POC` 제품 단계는 사용하지 않는다", stage)
+        self.assertIn("TECHNICAL_SPIKE", stage)
+        self.assertIn("DEMO_VALIDATION", stage)
 
         for term in (
             "Steam 메인, STOVE, itch.io",
@@ -70,7 +76,10 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
 
         for term in (
             "PLANNING_ONLY_PROFILE",
+            "DEMO_FIRST_FULL_PROFILE",
             "VERTICAL_SLICE_FULL_PROFILE",
+            "TECHNICAL_SPIKE",
+            "DEMO_VALIDATION",
             "GRILL_0_INITIAL_INTENT",
             "P0",
             "Superpowers",
@@ -80,6 +89,10 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
             "Artifact Coverage",
         ):
             self.assertIn(term, orchestration)
+
+        self.assertNotIn("→ CORE_POC", orchestration)
+        self.assertNotIn("`CORE_POC`·버티컬 슬라이스 계약", orchestration)
+        self.assertNotIn("→ 외부 Slice Validation", orchestration)
 
         for term in (
             "에셋스토어",
@@ -120,23 +133,32 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
         ):
             self.assertIn(state, evidence)
 
-    def test_no_new_duplicate_skill_or_registry_trigger_is_introduced(self) -> None:
+    def test_no_duplicate_vertical_slice_or_repository_audit_skill_is_introduced(self) -> None:
         registry = read("skills/SKILL_REGISTRY.json")
         self.assertIn('"skill_id":"designing-vertical-slices"', registry)
         self.assertEqual(registry.count('"skill_id":"designing-vertical-slices"'), 1)
+        self.assertEqual(
+            registry.count('"skill_id":"running-adversarial-review-and-refinement"'),
+            1,
+        )
+        self.assertIn('"repository-wide-audit"', registry)
         self.assertNotIn('"skill_id":"vertical-slice-master-reference"', registry)
+        self.assertNotIn('"skill_id":"repository-wide-adversarial-audit"', registry)
         self.assertNotIn('"integrated-demo-package"', registry)
         self.assertNotIn('"skill-coverage-audit"', registry)
 
-    def test_requirement_coverage_document_maps_v6_without_duplicate_canonical_source(self) -> None:
+    def test_requirement_coverage_is_non_authoritative_migration_traceability(self) -> None:
         coverage = read("docs/knowledge/VERTICAL_SLICE_V6_REQUIREMENT_COVERAGE.md")
         for term in (
-            "대형 중복 정본",
+            "document_role: MIGRATION_TRACEABILITY",
+            "active_authority: false",
+            "implementation_authority: NONE",
+            "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md",
+            "상세 정본과 작업 시작 인터뷰·실행 지시를 단일 첨부 파일로 통합",
             "기존 `designing-vertical-slices` Skill의 책임·mode·Registry 계약은 보존",
             "Requirement·Skill·Artifact 완전성",
-            "v6 전체를 하나의 활성 Base 문서로 복제하지 않는다",
-            "기존 Skill 본문을 바꾸지 않아 Registry·Learning Log companion 계약",
-            "미연결 reference",
+            "ALLOWED_LEGACY",
+            "STALE_PROMPT_CONTRACT",
         ):
             self.assertIn(term, coverage)
 
