@@ -96,7 +96,7 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
         evidence = read("templates/project-operations/SKILL_EXECUTION_EVIDENCE.md")
 
         for term in (
-            "CORE_POC 결과",
+            "데모 핵심 위험·내부 Spike",
             "WHY→플레이→판매 추적표",
             "PC 통합 데모 패키지",
             "모바일 통합 데모 패키지",
@@ -105,6 +105,10 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
             "Requirement Coverage",
         ):
             self.assertIn(term, plan)
+
+        self.assertIn("DEMO_FIRST_VERTICAL_SLICE", plan)
+        self.assertIn("DEMO_VALIDATION", plan)
+        self.assertNotIn("## 2. CORE_POC 결과", plan)
 
         for state in (
             "EXECUTED_AND_EVIDENCED",

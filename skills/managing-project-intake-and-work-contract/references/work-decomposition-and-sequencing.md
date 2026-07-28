@@ -19,6 +19,10 @@ rollback_constraints:
 
 요구가 확정되지 않았거나 중요한 사용자 결정이 남아 있으면 실행 순서를 확정하지 않는다.
 
+## 1.1 분해 전 누락·충돌 감사
+
+분해 전에 최신 main, 현재 Decision, 관련 분야 정본, 동일 Goal의 열린·최근 병합 PR, 실제 구현과 개별 프로젝트 Sheet를 비교한다. `DUPLICATE_WORK`, `DUPLICATE_QUESTION`, `MISSING_CANON`, `MISSING_CONSUMER`, `CANON_CONFLICT`, `IMPLEMENTATION_CONFLICT`, `STALE_REFERENCE`, `MISSING_SYNC`가 있으면 새 작업 목록보다 복원과 정리를 먼저 배치한다. Base 저장소 자체의 Sheet 상태는 `BASE_EXCLUDED`다.
+
 ## 2. 분해 단위
 
 하나의 작업 항목은 다음을 모두 가져야 한다.
@@ -125,6 +129,12 @@ replan_trigger:
 ```
 
 새 사실·실패·범위 변경이 생기면 이후 단계를 무조건 유지하지 않는다. Sprint Backlog처럼 계획은 목표를 향해 적응 가능해야 하며, 완료 기준과 보호 범위는 추적 가능하게 유지한다.
+
+## 7.1 Approval Bundle
+
+같은 플레이어 경험·시스템·정본·후속 구현에 영향을 주는 결정을 분야별 `Approval Bundle`로 묶는다. 각 Bundle은 현재 Decision, 누락·충돌 판정, Evidence ID, GPT 권장안, 사용자 승인, 영향받는 정본·소비처·Sheet tab, 검증 Gate를 가진다. 기술 세부와 초기 수치는 `RECOMMENDED_DEFAULT`, 코어·중요 기획·방향성·정본 충돌은 `USER_DECISION_REQUIRED`로 분리한다.
+
+승인 묶음의 기본 분야 순서는 `00 기반 → 10 제품 방향 → 20 코어 경험·데모 목표 → 30 데모 범위·품질·제작 기반 → 40 시스템·성장·경제 → 50 메인 콘텐츠 → 51 미니게임 → 52 글쓰기·서사 → 60 UX·UI·접근성 → 70 아트·오디오·에셋 → 80 데모 Vertical Slice·플레이테스트 → 90 본제작·출시 → 98 Base 후보 → 99 회고`다. 프로젝트에 없는 분야는 건너뛴다.
 
 ## 8. 출력 형식
 

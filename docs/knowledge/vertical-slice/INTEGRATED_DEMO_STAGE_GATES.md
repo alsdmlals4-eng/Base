@@ -6,9 +6,11 @@
 
 ```text
 CONCEPT_APPROVAL
-→ PROTOTYPE_AND_VERTICAL_SLICE
+→ DEMO_FIRST_VERTICAL_SLICE
 → PRODUCTION_APPROVAL
 → RELEASE_CANDIDATE_APPROVAL
+
+`PROTOTYPE_AND_VERTICAL_SLICE`는 과거 기록 호환 이름이며 새 작업에서는 `DEMO_FIRST_VERTICAL_SLICE`로 해석한다.
 ```
 
 제품 단계, Work Mode, Gate 판정, 구현 사실을 혼용하지 않는다.
@@ -37,7 +39,7 @@ CONCEPT_APPROVAL
 - SWOT의 `SO / WO / ST / WT` 행동
 - VRIO의 가치·희소성·모방 난도·1인 개발 조직화
 - 세계관 마스코트 또는 상징 동반자 후보
-- `CORE_POC` 가설
+- 데모 핵심 위험 등록부와 필요한 내부 `TECHNICAL_SPIKE` 후보
 - 버티컬 슬라이스 후보와 포함·제외 범위
 - Balance Tuning Backlog 초안
 
@@ -52,23 +54,25 @@ CONCEPT_APPROVAL
 - 핵심 기획 충돌이 해소됐다.
 - 세부 수치는 플레이테스트 대상으로 분리됐다.
 
-## 3. Gate 2 — 프로토타입＋버티컬 슬라이스
+## 3. Gate 2 — 데모 우선 버티컬 슬라이스
 
 ### 연속 프로그램
 
 ```text
-CORE_POC
-→ 기획 재조정
-→ 버티컬 슬라이스 제작
+데모 계약·품질 기준 확정
+→ 제작 의도 Vertical Slice 구현
 → 통합 데모 QA
-→ SLICE_VALIDATION
+→ 내부 플레이테스트
+→ 외부 플레이테스트·반응 조사
+→ DEMO_VALIDATION
 → 본제작 판단 자료
 ```
 
-- `CORE_POC`: 버티컬 슬라이스 전 가장 위험한 핵심 재미·기술·제작 가설의 최소 내부 검증.
-- `SLICE_VALIDATION`: 버티컬 슬라이스 완성 후 외부 플레이·시장 검증.
+별도 `CORE_POC` 제품 단계는 사용하지 않는다. 첫 통합 플레이 제품은 최종 방향에 가까운 아트·UI·UX·사운드·데이터·저장·복구·성능·접근성을 갖춘 **완성 품질 데모**다.
 
-프로토타입 완료를 Gate 2의 종료로 간주하지 않는다. 실패한 가설을 고품질 자산과 콘텐츠 양으로 덮지 않는다.
+데모 전체를 차단하는 기술 불확실성이 있을 때만 Vertical Slice 내부에 제한된 `TECHNICAL_SPIKE`를 둔다. Spike는 별도 Gate나 공개 데모가 아니며, 질문 하나와 성공·실패·중단 기준을 갖고 결과를 데모 구현에 재사용하거나 Decision 근거로 기록한다.
+
+`SLICE_VALIDATION`은 과거 호환 이름이며 새 작업에서는 내부·외부 플레이테스트와 반응 조사를 포함하는 `DEMO_VALIDATION`으로 해석한다. 위험한 가설을 완성 자산과 콘텐츠 양으로 덮지 않되, 저품질 폐기형 Prototype을 별도 마일스톤으로 승인하지 않는다.
 
 ### 대표 플레이 흐름
 
@@ -194,7 +198,7 @@ Google Play 계정·테스트·API·정책 조건은 실제 제출 시 최신 �
 
 ## 6. Gate 2 판정
 
-- `APPROVED`: Slice·통합 데모·외부 검증·제작 반복성이 증명됨.
+- `APPROVED`: 완성 품질 Slice 데모·내외부 플레이테스트·외부 검증·제작 반복성이 증명됨.
 - `APPROVED_WITH_CONDITIONS`: 코어는 유효하며 명시된 수정 조건 뒤 본제작 판단 가능.
 - `REWORK`: 코어 가설은 유지하되 루프·UX·표현·파이프라인 수정 필요.
 - `REPEAT_VALIDATION`: 구간·표본·빌드·가설이 대표적이지 않음.

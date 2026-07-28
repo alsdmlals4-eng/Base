@@ -19,7 +19,7 @@
 | v6 책임 | Base 책임 원본 | 변경 |
 |---|---|---|
 | 4단계 제품 Gate | `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md` | 신규 지식 reference |
-| `CORE_POC`와 `SLICE_VALIDATION` 분리 | concept Skill + Gate reference | 명시 강화 |
+| 과거 `CORE_POC`·`SLICE_VALIDATION` | concept Skill + Gate reference | 최신 사용자 결정으로 별도 Core PoC Gate를 제거하고 내부 `TECHNICAL_SPIKE`·`DEMO_VALIDATION` 호환 해석으로 변경 |
 | 프로토타입에서 멈추지 않는 Stage 2 | Gate reference·Vertical Slice Template | 연속 Gate·완료 기준 추가 |
 | PC Steam·STOVE·itch.io 패키지 | Gate reference·Vertical Slice Template | 신규 상세 계약 |
 | 모바일 Google Play 패키지 | Gate reference·Vertical Slice Template | 신규 상세 계약 |
@@ -41,6 +41,13 @@
 | GitHub·PDF 발행 | Skill orchestration reference | 조건부 프로필로 복원 |
 | Skill 실행 증거 | `SKILL_EXECUTION_EVIDENCE.md` | 신규 Template |
 | Requirement·Skill·Artifact 완전성 | 지식 reference·Template·test | 3중 감사 추가 |
+
+## 2026-07-28 최신 사용자 결정
+
+- 별도 `CORE_POC` 제품 단계는 사용하지 않는다.
+- 첫 통합 플레이 제품은 완성 품질의 `DEMO_FIRST_VERTICAL_SLICE`다.
+- 기술 불확실성은 Slice 내부의 제한된 `TECHNICAL_SPIKE`로만 검증한다.
+- 과거 v6의 `CORE_POC`·`PROTOTYPE_AND_VERTICAL_SLICE`·`SLICE_VALIDATION` 표기는 각각 내부 Spike·`DEMO_FIRST_VERTICAL_SLICE`·`DEMO_VALIDATION`의 역사·호환 용어다.
 
 ## 기존 책임 보존
 

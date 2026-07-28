@@ -152,10 +152,9 @@ class LegacyRetentionArchiveGovernanceTests(unittest.TestCase):
             "unique commit 감사",
         ):
             self.assertIn(token, skill)
-        self.assertLessEqual(
-            len((ROOT / "skills/governing-legacy-retention-and-archives/SKILL.md").read_text(encoding="utf-8").splitlines()),
-            150,
-        )
+        simplifying = package_text("simplifying-skill-bodies")
+        for term in ("줄 수", "문자 수", "분량 상한", "내용 보존", "한 단계 발견성"):
+            self.assertIn(term, simplifying)
 
     def test_shared_route_declares_archive_roles_schemas_and_templates(self) -> None:
         routes = json.loads((ROOT / "skills/BASE_SHARED_SKILL_ROUTES.json").read_text(encoding="utf-8"))

@@ -250,6 +250,8 @@ docs(decision): confirm DEC-YYYY-MM-DD-NNN <decision-title>
 
 ## 9. Google Sheets 동기화
 
+Base 저장소 자체는 프로젝트 Google Sheets 동기화 범위에서 제외하며 `BASE_EXCLUDED`로 기록한다. Base 작업을 Sheet 미동기화 때문에 실패로 판정하지 않는다. 아래 계약은 Base를 적용한 개별 프로젝트가 유효한 Sheet URL·tab·권한을 가진 경우에만 적용한다. Sheet가 없는 개별 프로젝트는 `NOT_CONFIGURED`로 기록한다.
+
 프로젝트 Sheet에는 `확정 결정` 또는 프로젝트가 선언한 동일 책임 탭을 사용한다.
 
 권장 열:

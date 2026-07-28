@@ -77,6 +77,10 @@ Active Context를 현재 상태의 기본 원본으로 사용한다. Handoff는 
 
 11개 분야는 선택 가능한 카탈로그다. 프로젝트에 필요하지 않은 분야를 강제로 설치하지 않는다.
 
+## 개별 프로젝트 기획 순서·Sheet tab
+
+Base 저장소 자체에는 Google Sheets를 만들지 않는다. 개별 프로젝트에서 `templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md`를 사용해 분야별 Approval Bundle과 tab 순서를 설치한다. 기본 제품 경로는 별도 Core PoC 없이 완성 품질의 Vertical Slice 데모·플레이테스트다.
+
 ## 발행 정책
 
 각 문서는 Registry에서 하나를 선택한다.
