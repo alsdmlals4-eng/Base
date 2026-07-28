@@ -16,7 +16,9 @@ class EvidenceKnowledgeWorkflowContractTests(unittest.TestCase):
         for required_path in (
             "tests/test_evidence_based_game_development_knowledge.py",
             "tests/test_evidence_knowledge_workflow_contract.py",
+            "tests/test_human_validation_artifact_governance.py",
             "skills/SKILL_LEARNING_LOG.md",
+            "skills/governing-game-user-research-coverage/references/**",
             "docs/knowledge/game-development/**",
             "templates/research/**",
         ):
