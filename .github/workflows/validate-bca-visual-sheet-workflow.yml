@@ -42,21 +42,35 @@ jobs:
           git grep -n -I -E 'VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7|PROTOTYPE_AND_VERTICAL_SLICE|CORE_POC|_tmp_' -- . > bca-stale-token-candidates.txt || true
           git grep -n -I 'VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md' -- . > bca-v8-consumers.txt || true
       - name: Run BCA contract tests
+        shell: bash
         run: |
-          python -m py_compile tests/test_bca_visual_sheet_workflow.py
-          python -m unittest tests.test_bca_visual_sheet_workflow -v
+          set +e
+          {
+            python -m py_compile tests/test_bca_visual_sheet_workflow.py
+            python -m unittest tests.test_bca_visual_sheet_workflow -v
+          } > bca-contract-results.txt 2>&1
+          status=$?
+          cat bca-contract-results.txt
+          exit "$status"
       - name: Check reference freshness
+        shell: bash
         run: |
+          set +e
           python tools/check_canonical_reference_freshness.py \
             --config .github/reference-freshness.json \
             --base "${{ github.event.pull_request.base.sha || github.event.before }}" \
-            --head "${{ github.sha }}"
+            --head "${{ github.sha }}" > bca-reference-results.txt 2>&1
+          status=$?
+          cat bca-reference-results.txt
+          exit "$status"
       - name: Upload audit evidence and exact v8 prompt
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: bca-visual-sheet-validation
           path: |
+            bca-contract-results.txt
+            bca-reference-results.txt
             bca-file-inventory.txt
             bca-stale-token-candidates.txt
             bca-v8-consumers.txt
