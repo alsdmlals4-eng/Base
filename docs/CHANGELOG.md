@@ -2,6 +2,7 @@
 
 ## Unreleased - Base audit and operating-contract consistency
 
+- 근거 기반 게임 개발 지식 허브를 추가해 게임 기획·아트·개발·AI·벤치마킹·유저리서치·접근성·프로덕션·출시를 `Method / Guide / Reference / Case / Template / Test`로 분리했다. 새 광역 Skill을 만들지 않고 기존 Skill의 실행 책임을 유지했으며, 12영역 Coverage, 6층 Evidence, 성공·실패·혼합 Case Card, AI Contextual Eval, Godot·플랫폼·출시 Guide와 전용 계약 테스트를 연결했다.
 - v6 상세 참고 계약과 축약 실행문을 상세 정본 포함 단일 `VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md`로 통합하고, 저장소 우선 인터뷰·Demo-First Slice·3층 Evidence Pack·Approval Bundle·GPT→Codex·완전성 감사를 연결했다. 적대적 검토에는 중복 Skill 없이 `repository-wide-audit` mode를 추가하고 활성 구형 계약·untouched 소비자·Prompt drift·파생본 최신성을 검수하도록 확장했다.
 
 - Base Sheet 제외, 컴팩트 수치 제한 제거, 작업 전 중복·누락·충돌 감사, 정책·Template·Skill 소비처 전파, 3층 근거 묶음, 분야별 Approval Bundle과 프로젝트 Sheet tab 순서, 별도 Core PoC 없는 완성 품질 Vertical Slice 데모·플레이테스트 기본 경로를 추가했다.

@@ -52,6 +52,7 @@ Base 저장소 자체의 콜드 스타트에서는 프로젝트 설치 템플릿
 | GitHub 작업 항목 생명주기 | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | Issue·Goal·Branch·PR·Run·Artifact·Release 책임, PR WIP·재사용·종료·보존·무손실 정리 |
 | 승인 결정 즉시 동기화 | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | 질문 전 정본·PR·Sheets 대조, 중복 질문 방지, 승인 즉시 정본·main·Sheets 동기화, 병합 후 적대적 검토 |
 | 기획 작업순서·근거·데모 우선 | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | 누락·충돌 선감사, 3층 근거 묶음, 분야별 Approval Bundle, 소비처 전파, 개별 프로젝트 Sheet tab, Demo-First Vertical Slice |
+| 근거 기반 게임 개발 지식 허브 | `docs/knowledge/game-development/README.md` | 게임 기획·아트·개발·AI·벤치마킹·유저리서치·출시의 Method·Guide·Reference·Case·Template 조건부 라우팅 |
 | GPT 이미지 생성·검수·Sheet 구조 | `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md` | 기획 중 시각화, 기획 종료 후보, 이미지 QA·승인 원장, 의미 구조 Sheet tab |
 | Vertical Slice 통합 첨부 실행문 | `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md` | 상세 정본·저장소 우선 인터뷰·기획·Demo-First Slice·GPT→Codex·전체 감사·검증을 파일 하나로 첨부; 최신 Base·프로젝트 정본이 우선 |
 | CI 실행·비용 정책 | `docs/CI_EXECUTION_COST_POLICY.md` | 변경 등급별 PR·main·nightly 검증, concurrency, `ci-gate`, Actions 차단 상태 |
@@ -86,6 +87,8 @@ Repository 보호·병합 설정 → GITHUB_REPOSITORY_GOVERNANCE_PROFILE
 GitHub 작업 항목 생명주기 → GITHUB_WORK_ITEM_LIFECYCLE_POLICY와 PR Template
 GitHub 사용량 → GITHUB_USAGE_BUDGET
 외부 근거 → 출처·날짜·버전·표본·해석이 있는 조사 기록
+근거 묶음 → templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md
+성공·실패·혼합 사례 → templates/research/GAME_DEVELOPMENT_CASE_CARD.md
 플레이 증거 → 빌드·테스터·행동·피드백·퍼널·실험 기록
 실제 상태 → 코드·데이터·자산·테스트·캡처·프로파일
 사람용 발행 → Registry 정책이 요구하는 PDF·선택 DOCX·assets
@@ -112,7 +115,7 @@ GitHub 사용량 → GITHUB_USAGE_BUDGET
 | 프로젝트 코어 식별·코어/MVP 경계 | `identifying-project-core` | `inventory` / `extract-candidates` / `dependency-map` / `removal-and-change-test` / `classify` / `core-report` |
 | PLAN 단계 프로젝트 코어 확정 | `establishing-project-core` | `propose` / `stress-test` / `confirm` / `lock` / `reopen` |
 | 적대적 검토·비판 검증·개선·회귀 | `running-adversarial-review-and-refinement` | `attack` / `validate-critique` / `refine-approved-findings` / `regression-recheck` / `decision-report`; 전체 파일·구형 계약·untouched 소비자는 `repository-wide-audit`; 병합 후 새 main·Decision·정본·Sheets 재검사 |
-| 경쟁작·플레이어 반응·행동 근거 | `analyzing-and-refining-game-concepts` | `benchmark-and-player-research` |
+| 경쟁작·플레이어 반응·행동 근거 | `analyzing-and-refining-game-concepts` | `benchmark-and-player-research`; 분야 횡단 조사는 `docs/knowledge/game-development/README.md`와 Evidence Pack·Case Card 사용 |
 | 플레이테스트·이벤트·퍼널·A/B | `analyzing-and-refining-game-concepts` | `playtest-and-experiment` / `poc-contract` / `recalibrate` / `production-gate` |
 | Vertical Slice | `designing-vertical-slices` | `slice-contract` / `quality-bar` / `pipeline-proof` / `playtest-evidence` / `decision-gate` |
 | 외부 AI 작업 격리 | `orchestrating-deepseek-worktrees` | 대량 초안·분류 위임 |
@@ -177,6 +180,12 @@ L1 이상 작업은 실제 사용한 Work Mode·Skill·Skill Mode, 선택 이유
 | 구형 파일을 어떻게 갱신·통합·삭제하는가? | `skills/managing-game-project-operating-system/SKILL.md` | `templates/project-operations/LEGACY_ARTIFACT_RECONCILIATION.md` |
 | 작업을 어떤 단계와 순서로 나누는가? | `skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md` | `templates/planning/EXECUTION_SEQUENCE_PLAN.md` |
 | 어떤 게임·유저 반응을 어떻게 조사하고 반영하는가? | `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md` | `templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md` |
+| 게임 기획·아트·개발·AI·벤치마킹을 분야 횡단 근거로 어떻게 개선하는가? | `docs/knowledge/game-development/README.md`, `docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`, `templates/research/GAME_DEVELOPMENT_CASE_CARD.md` |
+| 게임 코어·플레이어 경험·게임 필·보상·난이도를 어떻게 설계하는가? | `docs/knowledge/game-development/GAME_DESIGN_AND_PLAYER_EXPERIENCE_GUIDE.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md` |
+| Visual Pillar·Art Bible·Asset Specification을 어떻게 만든다? | `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`, `templates/research/GAME_DEVELOPMENT_CASE_CARD.md` |
+| ChatGPT·Codex·외부 AI의 Prompt·Context·Evals·보안·권리를 어떻게 관리하는가? | `docs/knowledge/game-development/AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md` |
+| Godot·저장·해상도·입력·성능·생산·출시를 어떻게 기획에 연결하는가? | `docs/knowledge/game-development/TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md` |
+| 공식·학술·현업 출처의 용도·한계·재검증 조건은 무엇인가? | `docs/knowledge/game-development/REFERENCE_SOURCE_CATALOG.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md` |
 | GitHub Actions 비용과 중복 전체 검증을 어떻게 줄이는가? | `docs/CI_EXECUTION_COST_POLICY.md` | `templates/quality/PROJECT_CHANGE_VALIDATION.md` |
 | 접근성·성능을 어떤 증거로 검증하는가? | `skills/reviewing-and-validating-project-changes/references/accessibility-and-performance-validation.md` | `templates/quality/PROJECT_CHANGE_VALIDATION.md` |
 | 정본 변경이 모두 전파됐는가? | `skills/auditing-canonical-reference-freshness/SKILL.md` | `templates/quality/CANONICAL_REFERENCE_FRESHNESS_AUDIT.md` |
@@ -199,6 +208,11 @@ DOCX·다이어그램은 선언한 경우만 생성한다. `CURRENT`, 자동 렌
 
 - 작업·제품 게이트: `docs/knowledge/methods/DEVELOPMENT_GATES_METHOD.md`
 - 전체 기획·추적성: `docs/knowledge/methods/PLANNING_SYSTEM_METHOD.md`
+- 근거 기반 게임 개발·12영역 Coverage: `docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md`
+- 게임 기획·플레이어 경험: `docs/knowledge/game-development/GAME_DESIGN_AND_PLAYER_EXPERIENCE_GUIDE.md`
+- Art Direction·Asset Planning: `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`
+- AI 활용 게임 개발: `docs/knowledge/game-development/AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md`
+- 기술 기획·프로덕션·출시: `docs/knowledge/game-development/TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md`
 - 콘텐츠·서사·아트·애니메이션 등 분야별 Method
 - 조사·근거 평가 Method
 
