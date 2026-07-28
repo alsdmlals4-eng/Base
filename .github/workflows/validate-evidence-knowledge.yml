@@ -1,0 +1,67 @@
+name: Validate Evidence-Based Game Development Knowledge
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "docs/knowledge/game-development/**"
+      - "templates/research/**"
+      - "templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md"
+      - "README.md"
+      - "docs/DOCUMENTATION_MAP.md"
+      - "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md"
+      - "docs/CHANGELOG.md"
+      - "skills/SKILL_LEARNING_LOG.md"
+      - "tests/test_evidence_based_game_development_knowledge.py"
+      - "tests/test_evidence_knowledge_workflow_contract.py"
+      - ".github/workflows/validate-evidence-knowledge.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evidence-knowledge-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evidence-knowledge-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run evidence knowledge contracts
+        shell: bash
+        run: |
+          set +e
+          {
+            python -m py_compile \
+              tests/test_evidence_based_game_development_knowledge.py \
+              tests/test_evidence_knowledge_workflow_contract.py
+            python -m unittest \
+              tests/test_evidence_based_game_development_knowledge.py \
+              tests/test_evidence_knowledge_workflow_contract.py \
+              -v
+          } > evidence-knowledge-results.txt 2>&1
+          status=$?
+          cat evidence-knowledge-results.txt
+          exit "$status"
+
+      - name: Upload contract evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-knowledge-validation
+          path: |
+            evidence-knowledge-results.txt
+            tests/test_evidence_based_game_development_knowledge.py
+            tests/test_evidence_knowledge_workflow_contract.py
+          if-no-files-found: error
