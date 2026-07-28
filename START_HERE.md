@@ -8,6 +8,8 @@
 
 `전부 살펴본다`는 모든 파일을 무작정 읽는 뜻이 아니다. 현재 작업에 필요한 책임 원본과 최소 스킬 집합을 Registry와 Documentation Map에서 선별한다.
 
+상세 기획·Demo-First Vertical Slice·GPT→Codex·전체 검수 지시를 파일 하나로 첨부해야 할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md`를 사용한다. 이 Prompt가 작업 시작 인터뷰를 수행하지만 최신 Base·프로젝트 정본보다 높은 권한을 갖지 않는다.
+
 ```text
 Base START_HERE
 → Base AGENTS
@@ -207,7 +209,7 @@ slice-contract
 → decision-gate
 ```
 
-대표 플레이 구간으로 핵심 경험·목표 품질·접근성·성능·시스템 연결·실제 플레이 증거·제작 파이프라인을 함께 검증한다. 핵심 컨셉이나 뾰족한 재미가 미확정이면 먼저 `analyzing-and-refining-game-concepts`를 사용한다.
+대표 플레이 구간으로 핵심 경험·목표 품질·접근성·성능·시스템 연결·실제 플레이 증거·제작 파이프라인을 함께 검증한다. 핵심 컨셉이나 뾰족한 재미가 미확정이면 먼저 `analyzing-and-refining-game-concepts`를 사용한다. 상세 정본과 인터뷰·실행 계약을 한 파일로 첨부할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md`를 사용한다.
 
 ### 프로젝트 변경 검증
 
@@ -228,6 +230,8 @@ review-scope-map
 → regression
 → evidence-report
 ```
+
+저장소 전체의 누락·구형 파일·중복 정본·untouched 소비자·Prompt drift를 감사할 때는 `running-adversarial-review-and-refinement`의 `repository-wide-audit` mode를 사용한다. 검색 결과만으로 전수 검수를 주장하지 않고 tracked inventory 또는 미검증 범위를 기록한다.
 
 코드·데이터·문서·자산 변경은 먼저 전체 영향 범위에서 수정·개선 후보를 적대적으로 찾고, 기술적으로 판단 가능한 사항은 근거·우선순위·영향 파일·수정 방향·검증 방법을 검수안으로 정리한다. 프로젝트 코어·플레이어 경험·주요 UX·콘텐츠 의미처럼 기획 결정을 요구하는 충돌만 사용자에게 한 번에 하나씩 제시한다. 이후 승인 계약, 실제 diff, 정적·런타임·회귀 증거를 연결한다. 접근성은 핵심 정보·입력·UI·시간·난이도·모션의 실제 장벽과 대안을 검수하고, 성능은 목표 플랫폼에서 frame time·CPU·GPU·메모리·네트워크·로딩을 baseline과 비교한다. 실행 환경이 없으면 `UNVERIFIED`로 기록한다.
 

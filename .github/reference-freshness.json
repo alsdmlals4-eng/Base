@@ -15,7 +15,10 @@
     "tests/**/*.py",
     "tools/**/*.py"
   ],
-  "ignore_globs": ["node_modules/**", ".git/**"],
+  "ignore_globs": [
+    "node_modules/**",
+    ".git/**"
+  ],
   "legacy_aliases_path": "skills/LEGACY_SKILL_ALIASES.md",
   "allowed_legacy_globs": [
     "skills/LEGACY_SKILL_ALIASES.md",
@@ -49,37 +52,78 @@
     {
       "name": "operating-model-entrypoints",
       "canonical_path": "docs/OPERATING_MODEL.md",
-      "reference_tokens": ["docs/OPERATING_MODEL.md"],
-      "required_consumers": ["README.md", "START_HERE.md", "AGENTS.md", "docs/DOCUMENTATION_MAP.md"]
+      "reference_tokens": [
+        "docs/OPERATING_MODEL.md"
+      ],
+      "required_consumers": [
+        "README.md",
+        "START_HERE.md",
+        "AGENTS.md",
+        "docs/DOCUMENTATION_MAP.md"
+      ]
     },
     {
       "name": "base-skill-registry-entrypoints",
       "canonical_path": "skills/SKILL_REGISTRY.json",
-      "reference_tokens": ["skills/SKILL_REGISTRY.json", "SKILL_REGISTRY.json"],
-      "required_consumers": ["START_HERE.md", "docs/OPERATING_MODEL.md"]
+      "reference_tokens": [
+        "skills/SKILL_REGISTRY.json",
+        "SKILL_REGISTRY.json"
+      ],
+      "required_consumers": [
+        "START_HERE.md",
+        "docs/OPERATING_MODEL.md"
+      ]
     },
     {
       "name": "base-shared-skill-route-entrypoints",
       "canonical_path": "skills/BASE_SHARED_SKILL_ROUTES.json",
-      "reference_tokens": ["skills/BASE_SHARED_SKILL_ROUTES.json", "BASE_SHARED_SKILL_ROUTES.json"],
-      "required_consumers": ["docs/BASE_SHARED_SKILL_ADAPTER_CONTRACT.md"]
+      "reference_tokens": [
+        "skills/BASE_SHARED_SKILL_ROUTES.json",
+        "BASE_SHARED_SKILL_ROUTES.json"
+      ],
+      "required_consumers": [
+        "docs/BASE_SHARED_SKILL_ADAPTER_CONTRACT.md"
+      ]
     },
     {
       "name": "reference-freshness-skill-entrypoints",
       "canonical_path": "skills/auditing-canonical-reference-freshness/SKILL.md",
-      "reference_tokens": ["auditing-canonical-reference-freshness"],
-      "required_consumers": ["docs/OPERATING_MODEL.md", "templates/project-operations/AI_WORKFLOW.md"]
+      "reference_tokens": [
+        "auditing-canonical-reference-freshness"
+      ],
+      "required_consumers": [
+        "docs/OPERATING_MODEL.md",
+        "templates/project-operations/AI_WORKFLOW.md"
+      ]
+    },
+    {
+      "name": "integrated-vertical-slice-prompt-entrypoints",
+      "canonical_path": "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md",
+      "reference_tokens": [
+        "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md",
+        "VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md"
+      ],
+      "required_consumers": [
+        "START_HERE.md",
+        "docs/DOCUMENTATION_MAP.md",
+        "templates/project-operations/README.md"
+      ]
     }
   ],
   "coupled_change_rules": [
     {
       "name": "local-skill-contract-registry-learning-sync",
-      "when_changed": ["skills/**/SKILL.md"],
+      "when_changed": [
+        "skills/**/SKILL.md"
+      ],
       "exclude_when_changed": [
         "skills/governing-legacy-retention-and-archives/SKILL.md",
         "skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md"
       ],
-      "require_all_changed": ["skills/SKILL_REGISTRY.json", "skills/SKILL_LEARNING_LOG.md"],
+      "require_all_changed": [
+        "skills/SKILL_REGISTRY.json",
+        "skills/SKILL_LEARNING_LOG.md"
+      ],
       "require_any_changed": [
         "tests/test_game_project_operating_system_structure.py",
         "tests/test_consolidated_skill_references.py",
@@ -90,7 +134,9 @@
     },
     {
       "name": "legacy-retention-shared-skill-sync",
-      "when_changed": ["skills/governing-legacy-retention-and-archives/SKILL.md"],
+      "when_changed": [
+        "skills/governing-legacy-retention-and-archives/SKILL.md"
+      ],
       "exclude_when_changed": [],
       "require_all_changed": [
         "skills/BASE_SHARED_SKILL_ROUTES.json",
@@ -103,7 +149,9 @@
     },
     {
       "name": "godot-asset-shared-skill-sync",
-      "when_changed": ["skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md"],
+      "when_changed": [
+        "skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md"
+      ],
       "exclude_when_changed": [],
       "require_all_changed": [
         "skills/BASE_SHARED_SKILL_ROUTES.json",
@@ -116,7 +164,10 @@
     },
     {
       "name": "registry-structure-learning-sync",
-      "when_changed": ["skills/SKILL_REGISTRY.json", "skills/BASE_SHARED_SKILL_ROUTES.json"],
+      "when_changed": [
+        "skills/SKILL_REGISTRY.json",
+        "skills/BASE_SHARED_SKILL_ROUTES.json"
+      ],
       "exclude_when_changed": [],
       "require_all_changed": [],
       "require_any_changed": [
@@ -126,7 +177,10 @@
     },
     {
       "name": "registry-structure-test-sync",
-      "when_changed": ["skills/SKILL_REGISTRY.json", "skills/BASE_SHARED_SKILL_ROUTES.json"],
+      "when_changed": [
+        "skills/SKILL_REGISTRY.json",
+        "skills/BASE_SHARED_SKILL_ROUTES.json"
+      ],
       "exclude_when_changed": [],
       "require_all_changed": [],
       "require_any_changed": [
@@ -139,17 +193,37 @@
     },
     {
       "name": "reference-checker-test-and-config-sync",
-      "when_changed": ["tools/check_canonical_reference_freshness.py"],
+      "when_changed": [
+        "tools/check_canonical_reference_freshness.py"
+      ],
       "exclude_when_changed": [],
-      "require_all_changed": [".github/reference-freshness.json", "tests/test_reference_freshness.py"],
+      "require_all_changed": [
+        ".github/reference-freshness.json",
+        "tests/test_reference_freshness.py"
+      ],
       "require_any_changed": []
     },
     {
       "name": "legacy-alias-test-sync",
-      "when_changed": ["skills/LEGACY_SKILL_ALIASES.md"],
+      "when_changed": [
+        "skills/LEGACY_SKILL_ALIASES.md"
+      ],
       "exclude_when_changed": [],
-      "require_all_changed": ["tests/test_consolidated_skill_references.py"],
+      "require_all_changed": [
+        "tests/test_consolidated_skill_references.py"
+      ],
       "require_any_changed": []
+    },
+    {
+      "name": "integrated-prompt-contract-test-sync",
+      "when_changed": [
+        "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md"
+      ],
+      "exclude_when_changed": [],
+      "require_all_changed": [],
+      "require_any_changed": [
+        "tests/test_integrated_vertical_slice_prompt_v7.py"
+      ]
     }
   ]
 }

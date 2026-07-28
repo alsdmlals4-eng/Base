@@ -1,0 +1,87 @@
+name: Validate Integrated Vertical Slice Prompt
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "templates/prompts/**"
+      - "docs/knowledge/vertical-slice/**"
+      - "skills/running-adversarial-review-and-refinement/**"
+      - "skills/SKILL_REGISTRY.json"
+      - "skills/SKILL_LEARNING_LOG.md"
+      - "tests/test_integrated_vertical_slice_prompt_v7.py"
+      - "tests/test_vertical_slice_v6_contract.py"
+      - "tests/test_demo_first_planning_sequence.py"
+      - ".github/reference-freshness.json"
+      - ".github/workflows/validate-integrated-vertical-slice-prompt.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: integrated-vertical-slice-prompt-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Capture tracked-file and stale-token audit evidence
+        shell: bash
+        run: |
+          git ls-files | sort > integrated-prompt-file-inventory.txt
+          git grep -n -I -E \
+            'CORE_POC|PROTOTYPE_AND_VERTICAL_SLICE|SLICE_VALIDATION|VERTICAL_SLICE_FULL_PROFILE|VERTICAL_SLICE_MASTER_REFERENCE_v6|VERTICAL_SLICE_EXECUTION_PROMPT_SHORT|repository-wide-adversarial-audit|_tmp_' \
+            -- . > integrated-prompt-stale-token-candidates.txt || true
+          git grep -n -I \
+            'VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md' \
+            -- . > integrated-prompt-consumer-links.txt || true
+      - name: Check Python syntax
+        run: |
+          python -m py_compile \
+            tests/test_integrated_vertical_slice_prompt_v7.py \
+            tests/test_vertical_slice_v6_contract.py \
+            tests/test_demo_first_planning_sequence.py
+      - name: Run integrated prompt and migration contracts
+        shell: bash
+        run: |
+          set +e
+          python -m unittest \
+            tests.test_integrated_vertical_slice_prompt_v7 \
+            tests.test_vertical_slice_v6_contract \
+            tests.test_demo_first_planning_sequence \
+            -v > integrated-prompt-test-results.txt 2>&1
+          status=$?
+          cat integrated-prompt-test-results.txt
+          exit "$status"
+      - name: Check canonical reference freshness
+        shell: bash
+        run: |
+          set +e
+          python tools/check_canonical_reference_freshness.py \
+            --config .github/reference-freshness.json \
+            --base "${{ github.event.pull_request.base.sha || github.event.before }}" \
+            --head "${{ github.sha }}" > integrated-prompt-reference-results.txt 2>&1
+          status=$?
+          cat integrated-prompt-reference-results.txt
+          exit "$status"
+      - name: Upload validation, inventory, and exact prompt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integrated-prompt-validation-results
+          path: |
+            integrated-prompt-test-results.txt
+            integrated-prompt-reference-results.txt
+            integrated-prompt-file-inventory.txt
+            integrated-prompt-stale-token-candidates.txt
+            integrated-prompt-consumer-links.txt
+            templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md
+          if-no-files-found: error

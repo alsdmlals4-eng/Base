@@ -11,8 +11,8 @@ Grill Me와 적대적 검토는 전체 파이프라인의 일부다. 최고의 �
 → 저장소·컨텍스트 조사
 → 콘셉트·코어·사용자 연구
 → 책임 원본 작성
-→ CORE_POC
-→ Slice 계약·품질·파이프라인
+→ 데모 핵심 위험 등록·필요 시 내부 TECHNICAL_SPIKE
+→ DEMO_FIRST_VERTICAL_SLICE 계약·품질·파이프라인
 → 구현 계획·TDD·디버깅
 → 에셋·UI·사운드 검토
 → 외부 플레이 검증
@@ -40,7 +40,7 @@ GPT가 총기획·조사·Grill Me·문서·검수를 수행한다.
 
 - 프로젝트 코어·세일즈포인트·Core Loop
 - 벤치마킹·SWOT·VRIO
-- `CORE_POC`·버티컬 슬라이스 계약
+- Demo-First Vertical Slice·데모 핵심 위험·내부 Spike 계약
 - P0~P3
 - Codex Plan·Issue·Goal 초안
 - 기획 Branch·PR·필요한 PDF
@@ -51,7 +51,9 @@ GPT가 총기획·조사·Grill Me·문서·검수를 수행한다.
 - Codex Build 실행
 - 구현 완료 선언
 
-### `VERTICAL_SLICE_FULL_PROFILE`
+### `DEMO_FIRST_FULL_PROFILE`
+
+과거 `VERTICAL_SLICE_FULL_PROFILE`은 호환 이름이며 새 작업에서는 `DEMO_FIRST_FULL_PROFILE`로 해석한다.
 
 ```text
 GPT PLAN
@@ -61,7 +63,9 @@ GPT PLAN
 → GPT REVIEW
 → 기술 검수안과 기획 충돌 분리
 → 승인 수정
-→ 외부 Slice Validation
+→ 통합 QA·내부 플레이테스트
+→ 외부 플레이테스트·반응 조사
+→ DEMO_VALIDATION
 → Gate 판정
 ```
 
@@ -181,7 +185,7 @@ Base Work Mode·프로젝트 규칙·승인 계약이 Superpowers보다 상위�
 - 벤치마킹·사용자 근거
 - 기획 책임 원본
 - Grill Me 차단 결정
-- `CORE_POC` 계약
+- 데모 핵심 위험 등록부·필요 시 내부 `TECHNICAL_SPIKE` 계약
 
 ### Gate 2
 
@@ -283,4 +287,4 @@ Finding은 다음으로 라우팅한다.
 
 필요한 게임 빌드·데이터·자산·문서·상점·테스트·GitHub 산출물이 실제로 존재하는가?
 
-누락은 `MUST_FIX / SHOULD_FIX / DEFER / REJECT / BLOCKED_UNVERIFIED`로 분류한다.
+누락은 `MUST_FIX / SHOULD_FIX / USER_DECISION_REQUIRED / DEFER / REJECTED_CRITIQUE / BLOCKED_UNVERIFIED / ALLOWED_LEGACY`로 분류한다.

@@ -1,5 +1,13 @@
 # Base Skill Learning Log
 
+## 2026-07-28 — 통합 실행문과 저장소 전체 감사
+
+- **Trigger:** v6 상세 참고 계약과 축약 실행문을 한 파일로 통합하고, 전체 파일에서 누락·구형 계약·untouched 소비자를 검수해야 했다.
+- **Finding:** 새 광역 Skill을 추가하면 기존 적대적 검토·reference freshness·legacy governance와 책임이 중복된다. 또한 활성 Vertical Slice 오케스트레이션에는 별도 `CORE_POC` 흐름이 남았고 관련 계약 테스트는 CI에서 직접 소비되지 않았다.
+- **Decision:** `running-adversarial-review-and-refinement`에 `repository-wide-audit` mode와 전문 Reference를 추가하고, 상세 정본과 인터뷰를 `VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md` 한 파일로 통합했다.
+- **Evidence:** Registry trigger, Migration Traceability, entrypoint, reference-freshness coupled rule, Demo-First·v6·v7 contract tests로 전파를 검증한다.
+- **Next trigger:** Prompt·Gate·Skill·Template 변경 뒤 활성 구형 용어 또는 untouched 소비자가 발견될 때 재감사한다.
+
 ## 2026-07-28 내용 보존·근거 묶음·Demo-First 기획 순서 교훈
 
 - 문서·Skill의 줄 수나 분량을 품질 Gate로 사용하면 실행 계약·예외·검증 조건을 삭제해 테스트만 통과하는 회귀를 만들 수 있다. 수치형 컴팩트 제한 대신 내용 보존·책임 분리·한 단계 발견성을 검증한다.

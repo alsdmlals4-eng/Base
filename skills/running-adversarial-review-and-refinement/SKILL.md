@@ -1,6 +1,6 @@
 ---
 name: running-adversarial-review-and-refinement
-description: Use when a design, plan, document, code proposal, data change, UX flow, merged pull request, direct main decision commit, or other work product should be attacked as if it failed, its criticisms independently validated, only justified findings refined, and the revised result regression-checked without changing project core or adding unnecessary scope.
+description: Use when a design, plan, document, code proposal, data change, UX flow, repository, merged pull request, direct main decision commit, or other work product should be attacked as if it failed, its criticisms independently validated, only justified findings refined, and the revised result regression-checked without changing project core or adding unnecessary scope.
 ---
 
 # Running Adversarial Review and Refinement
@@ -9,11 +9,19 @@ description: Use when a design, plan, document, code proposal, data change, UX f
 
 적대적 검토는 승인 거부 증거를 찾는 공격 단계다. 그러나 **비판도 오류·취향·과잉 요구**일 수 있으므로 공격과 검증을 분리하고, 검증된 문제만 최소 수정한다.
 
-실제 diff·정적·런타임·접근성·성능 증거는 `reviewing-and-validating-project-changes`, 프로젝트 코어 판정·확정은 관련 코어 Skill이 책임진다. 승인 결정·GitHub·Google Sheets 동기화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`를 따른다.
+실제 diff·정적·런타임·접근성·성능 증거는 `reviewing-and-validating-project-changes`, 프로젝트 코어 판정·확정은 관련 코어 Skill이 책임진다. 승인 결정·GitHub·Google Sheets 동기화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`를 따른다. 구형본의 archive·compatibility·삭제는 `governing-legacy-retention-and-archives`, 정본·경로·ID·Template·Test 전파는 `auditing-canonical-reference-freshness`가 책임진다.
 
-## Workflow
+## Skill Modes
 
-`attack → validate-critique → refine-approved-findings → regression-recheck → decision-report`
+- `attack`: 작업물이 실패했다고 가정하고 결함·모순·누락·악용·경계 실패를 찾는다.
+- `validate-critique`: 공격 결과의 사실성·발생 가능성·영향·범위·비용·코어 위험을 재검증한다.
+- `refine-approved-findings`: `MUST_FIX`와 승인된 `SHOULD_FIX`만 최소 수정한다.
+- `regression-recheck`: 수정 전후의 정상 경로·코어·데이터·호환성·새 결함을 다시 공격한다.
+- `decision-report`: 반영·보류·기각·미검증과 남은 위험을 기록한다.
+- `post-merge-review`: 병합 또는 직접 `main` 결정 Commit 뒤 새 `main`·Decision·정본·실제 diff·Sheets·PR·branch를 다시 검토한다.
+- `repository-wide-audit`: 저장소 전체의 권한 지도, 중복·stale·고아 파일, 구형 계약, untouched 소비자, Prompt·파생본 drift를 공격하고 전문 Skill로 처리를 라우팅한다.
+
+일반 작업은 `attack → validate-critique → refine-approved-findings → regression-recheck → decision-report`를 사용한다. 저장소 전체 감사는 `references/repository-wide-audit-protocol.md`, 세부 Finding·회귀 판정은 `references/finding-and-regression-protocol.md`를 필요할 때만 읽는다.
 
 기본 Work Mode는 `REVIEW → 필요한 경우 BUILD → REVIEW`다. 같은 수행자가 맡아도 단계별 입력과 출력을 섞지 않는다.
 
@@ -27,6 +35,22 @@ new-main-baseline
 → refine-approved-findings
 → regression-recheck
 → post-merge-decision-report
+```
+
+저장소 전체 감사에서는 다음 루트를 사용한다.
+
+```text
+repository-scope-map
+→ canonical-authority-map
+→ full-file-inventory
+→ stale-and-duplicate-attack
+→ untouched-consumer-attack
+→ derivative-and-prompt-drift-attack
+→ validate-critique
+→ legacy-classification
+→ approved-minimal-fix
+→ regression-and-freshness-recheck
+→ repository-audit-report
 ```
 
 ## Required inputs
@@ -48,9 +72,18 @@ protected_strengths_and_assets:
 constraints_and_validation_environment:
 change_authority:
 branch_cleanup_state:
+repository_audit:
+  repository_search_roots:
+  active_entrypoints_and_templates:
+  registries_maps_and_aliases:
+  actual_tracked_files_or_inventory_evidence:
+  known_renames_replacements_and_legacy_terms:
+  generated_derivatives_and_manifests:
+  prompt_contracts:
+  protected_paths_and_archive_roots:
 ```
 
-코어가 확정되지 않았다면 핵심 충돌은 `UNVERIFIED`로 둔다. Google Sheets 또는 Repository 설정을 읽지 못했으면 일치나 branch 삭제를 추정하지 않는다.
+코어가 확정되지 않았다면 핵심 충돌은 `UNVERIFIED`로 둔다. Google Sheets 또는 Repository 설정을 읽지 못했으면 일치나 branch 삭제를 추정하지 않는다. 저장소 전체 tracked 목록을 얻지 못했으면 검색 결과를 전수 감사로 표현하지 않고 미검증 범위를 기록한다.
 
 ## Finding decisions
 
@@ -60,10 +93,9 @@ branch_cleanup_state:
 - `DEFER`: 유효하지만 현재 범위·근거·비용상 보류한다.
 - `REJECTED_CRITIQUE`: 취향, 중복, 잘못된 전제, 범위 밖 요구다.
 - `BLOCKED_UNVERIFIED`: 필요한 정본·도구·권한·실행 증거가 없어 판정할 수 없다.
+- `ALLOWED_LEGACY`: 역사·Migration·Compatibility·Test fixture에서 현행 권한 없이 의도적으로 유지한다.
 
 기존 `REJECT`와 `UNVERIFIED` 기록은 각각 `REJECTED_CRITIQUE`, `BLOCKED_UNVERIFIED`로 해석한다.
-
-상세 공격 렌즈·판정표·회귀 프로토콜은 `references/finding-and-regression-protocol.md`를 필요할 때만 읽는다.
 
 ## Rules
 
@@ -76,6 +108,26 @@ branch_cleanup_state:
 7. 병합 뒤에는 설명이나 기존 PR 승인만 신뢰하지 않고 새 `main` HEAD와 실제 diff를 다시 읽는다.
 8. 질문 전·병합 후 동일 Goal의 열린 PR, 최근 병합 PR, 대체·후속 링크를 확인한다.
 9. 실행하지 않은 CI·런타임·렌더·Sheets 조회·branch 삭제를 통과로 표시하지 않는다.
+10. 저장소 전체 감사에서 검색 API 결과만으로 전체 파일을 검수했다고 주장하지 않는다.
+11. 파일명·버전·날짜만으로 구형 파일을 삭제하지 않고 권한·고유 정보·활성 소비자·복구 가능성을 판정한다.
+12. 변경된 파일뿐 아니라 변경됐어야 할 untouched 소비자·Template·Test·파생본을 공격한다.
+13. 새 광역 Skill을 만들기 전에 이 mode와 reference-freshness·legacy-governance 조합으로 해결 가능한지 확인한다.
+
+## Repository-wide attack lenses
+
+`repository-wide-audit`에서는 다음을 필수 공격한다.
+
+- 한 질문에 둘 이상의 현행 정본이 있는가.
+- 최신 승인 Decision이 누락되거나 `SUPERSEDED / REJECTED / DEFERRED` 결정이 부활했는가.
+- 구형 경로·ID·Schema·Skill·제품 단계·Prompt 계약이 활성 권한으로 남았는가.
+- 새 정책·Template·Skill을 소비해야 할 README·START_HERE·기획서·Registry·Test가 untouched인가.
+- 파일은 존재하지만 실제 routing·실행·검증 경로가 없는가.
+- PDF·DOCX·Dashboard·Manifest·생성본이 원본보다 오래됐는가.
+- 동일 Goal·기능·문서·질문·PR·branch가 중복됐는가.
+- Base Template·프로젝트 Sheet·프로젝트 상태의 권한이 혼동됐는가.
+- 별도 `CORE_POC`처럼 대체된 Gate가 현행 흐름으로 부활했는가.
+
+상세 권한 분류·`UNTOUCHED_CONSUMER` 표·처리 라우팅은 `references/repository-wide-audit-protocol.md`를 따른다.
 
 ## Post-merge attack lenses
 
@@ -111,21 +163,23 @@ GitHub와 Sheets가 다르면 최신 사용자 승인, Decision ID, Commit SHA�
 ## Output contract
 
 ```md
-## 공격 관점과 실패 가정
-## 병합 정보·새 main HEAD·관련 Decision
-## CURRENT_CONFIRMED_DECISIONS·분야 정본·실제 diff 비교
+## 검토 mode·공격 관점과 실패 가정
+## 기준 Branch·Commit·Decision·정본·실제 diff
 ## 열린·최근 병합 PR·중복 작업 비교
 ## Google Sheets 동기화 비교
-## finding·근거·심각도
-## MUST_FIX / SHOULD_FIX / USER_DECISION_REQUIRED / DEFER / REJECTED_CRITIQUE / BLOCKED_UNVERIFIED
+## 저장소 감사 범위·권한 지도·미검증 범위
+## stale·중복·고아·untouched 소비자·파생본 Finding
+## MUST_FIX / SHOULD_FIX / USER_DECISION_REQUIRED / DEFER
+## REJECTED_CRITIQUE / BLOCKED_UNVERIFIED / ALLOWED_LEGACY
 ## 실제 반영한 최소 변경
-## 보호한 코어·장점·범위
+## 보호한 코어·고유 정보·장점·범위
 ## reference freshness·정적·런타임·회귀 재검사
 ## branch cleanup 상태
 ## 최종 판정·남은 위험·다음 조건
 ```
 
 병합 후 표준 양식은 `templates/quality/POST_MERGE_ADVERSARIAL_REVIEW.md`를 사용한다.
+
 ## Post-merge final decisions
 
 - `NO_CONFLICT`: 정본·최근 승인·diff·Sheets·적용 검증에서 확인된 충돌이 없다.
@@ -146,5 +200,14 @@ GitHub와 Sheets가 다르면 최신 사용자 승인, Decision ID, Commit SHA�
 - 프로젝트가 Sheets를 사용하면 해당 Decision 행을 재조회했다.
 - 가능한 reference freshness·정적·런타임·회귀 검사를 실제 실행했다.
 - 실행하지 못한 검사를 성공으로 표시하지 않았다.
+
+`repository-wide-audit` 완료에는 추가로 다음이 필요하다.
+
+- tracked inventory 또는 정확한 미검증 범위를 기록했다.
+- `CURRENT_AUTHORITY`와 활성 소비자를 연결했다.
+- `UNTOUCHED_CONSUMER`와 변경 전파 누락을 판정했다.
+- 활성 stale와 `ALLOWED_LEGACY`를 구분했다.
+- Prompt·파생본·Manifest drift를 검사했다.
+- archive·compatibility·삭제 처리를 전문 Skill로 라우팅했다.
 
 Learning Log: `skills/SKILL_LEARNING_LOG.md`

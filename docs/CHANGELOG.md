@@ -2,6 +2,8 @@
 
 ## Unreleased - Base audit and operating-contract consistency
 
+- v6 상세 참고 계약과 축약 실행문을 상세 정본 포함 단일 `VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md`로 통합하고, 저장소 우선 인터뷰·Demo-First Slice·3층 Evidence Pack·Approval Bundle·GPT→Codex·완전성 감사를 연결했다. 적대적 검토에는 중복 Skill 없이 `repository-wide-audit` mode를 추가하고 활성 구형 계약·untouched 소비자·Prompt drift·파생본 최신성을 검수하도록 확장했다.
+
 - Base Sheet 제외, 컴팩트 수치 제한 제거, 작업 전 중복·누락·충돌 감사, 정책·Template·Skill 소비처 전파, 3층 근거 묶음, 분야별 Approval Bundle과 프로젝트 Sheet tab 순서, 별도 Core PoC 없는 완성 품질 Vertical Slice 데모·플레이테스트 기본 경로를 추가했다.
 - 질문 전 최신 main·PR·정본·Google Sheets를 비교해 중복 질문을 막고, 기술 기본값과 사용자 기획 결정을 분리하며, 승인 즉시 정본·main·Sheets 동기화와 병합 후 적대적 검토를 수행하는 공용 계약·템플릿·회귀 테스트를 추가했다.
 - GPT가 기획·벤치마킹·시스템·데이터·UX·비-Godot 파일·GitHub 계약과 검수를 완료하고 Codex에는 읽기 전용 Plan 재검수 뒤 단계별 Godot 구현만 인계하는 공용 정책을 추가했다.

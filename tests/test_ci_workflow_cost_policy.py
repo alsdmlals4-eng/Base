@@ -4,19 +4,26 @@ import re
 import unittest
 from pathlib import Path
 
+from tests.test_demo_first_planning_sequence import DemoFirstPlanningSequenceTests
 from tests.test_github_work_item_lifecycle_policy import (
     GithubWorkItemLifecyclePolicyTests,
 )
+from tests.test_integrated_vertical_slice_prompt_v7 import (
+    IntegratedVerticalSlicePromptV7Tests,
+)
+from tests.test_vertical_slice_v6_contract import VerticalSliceV6ContractTests
 
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github/workflows/validate-game-project-operating-system.yml"
+PROMPT_WORKFLOW = ROOT / ".github/workflows/validate-integrated-vertical-slice-prompt.yml"
 
 
 class CiWorkflowCostPolicyTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.text = WORKFLOW.read_text(encoding="utf-8")
+        cls.prompt_text = PROMPT_WORKFLOW.read_text(encoding="utf-8")
 
     def test_workflow_has_pr_main_nightly_and_manual_events(self) -> None:
         for term in (
@@ -82,17 +89,37 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
         self.assertIn("required job failed or was not executed", self.text)
         self.assertIn("CI gate passed", self.text)
 
-    def test_new_contract_tests_are_part_of_ci(self) -> None:
-        self.assertIn("tests/test_gpt_codex_workflow_contract.py", self.text)
-        self.assertIn("tests/test_ci_workflow_cost_policy.py", self.text)
-        self.assertIn("tests/test_deep_interview_contract.py", self.text)
-
+    def test_vertical_slice_contract_suites_are_aggregated_into_ci(self) -> None:
         source = Path(__file__).read_text(encoding="utf-8")
-        self.assertIn(
+        for import_term in (
+            "from tests.test_demo_first_planning_sequence import",
             "from tests.test_github_work_item_lifecycle_policy import",
-            source,
-        )
-        self.assertTrue(issubclass(GithubWorkItemLifecyclePolicyTests, unittest.TestCase))
+            "from tests.test_integrated_vertical_slice_prompt_v7 import",
+            "from tests.test_vertical_slice_v6_contract import",
+        ):
+            self.assertIn(import_term, source)
+
+        for suite in (
+            GithubWorkItemLifecyclePolicyTests,
+            DemoFirstPlanningSequenceTests,
+            VerticalSliceV6ContractTests,
+            IntegratedVerticalSlicePromptV7Tests,
+        ):
+            self.assertTrue(issubclass(suite, unittest.TestCase))
+
+    def test_prompt_changes_have_focused_lightweight_validation(self) -> None:
+        for term in (
+            '      - "templates/prompts/**"',
+            "tests.test_integrated_vertical_slice_prompt_v7",
+            "tests.test_vertical_slice_v6_contract",
+            "tests.test_demo_first_planning_sequence",
+            "tools/check_canonical_reference_freshness.py",
+            "cancel-in-progress: true",
+        ):
+            self.assertIn(term, self.prompt_text)
+
+        for forbidden in ("libreoffice", "poppler", "pnpm install", "windows-latest"):
+            self.assertNotIn(forbidden, self.prompt_text.lower())
 
 
 if __name__ == "__main__":
