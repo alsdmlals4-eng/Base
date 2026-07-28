@@ -25,10 +25,24 @@ jobs:
           python-version: "3.12"
       - run: python tools/_tmp_apply_bca_visual_sheet_v8.py
       - name: Validate generated files
+        shell: bash
         run: |
-          python -m py_compile tools/_tmp_apply_bca_visual_sheet_v8.py tests/test_bca_visual_sheet_workflow.py
-          python -m unittest tests.test_bca_visual_sheet_workflow -v
-          git diff --check
+          set +e
+          {
+            python -m py_compile tools/_tmp_apply_bca_visual_sheet_v8.py tests/test_bca_visual_sheet_workflow.py
+            python -m unittest tests.test_bca_visual_sheet_workflow -v
+            git diff --check
+          } > bca-patch-validation.txt 2>&1
+          status=$?
+          cat bca-patch-validation.txt
+          exit "$status"
+      - name: Upload patch diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bca-patch-validation
+          path: bca-patch-validation.txt
+          if-no-files-found: error
       - name: Commit and push
         shell: bash
         run: |
