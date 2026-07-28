@@ -1,5 +1,6 @@
 name: Apply Integrated Prompt v7 Patch
 
+# One-time PR-head patch. The job removes this workflow and its script in its own result commit.
 on:
   pull_request:
     types: [opened, synchronize, reopened]
