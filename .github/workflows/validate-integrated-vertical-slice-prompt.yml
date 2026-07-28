@@ -38,12 +38,24 @@ jobs:
             tests/test_vertical_slice_v6_contract.py \
             tests/test_demo_first_planning_sequence.py
       - name: Run integrated prompt and migration contracts
+        shell: bash
         run: |
+          set +e
           python -m unittest \
             tests.test_integrated_vertical_slice_prompt_v7 \
             tests.test_vertical_slice_v6_contract \
             tests.test_demo_first_planning_sequence \
-            -v
+            -v > integrated-prompt-test-results.txt 2>&1
+          status=$?
+          cat integrated-prompt-test-results.txt
+          exit "$status"
+      - name: Upload contract diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integrated-prompt-contract-results
+          path: integrated-prompt-test-results.txt
+          if-no-files-found: error
       - name: Check canonical reference freshness
         run: |
           python tools/check_canonical_reference_freshness.py \
