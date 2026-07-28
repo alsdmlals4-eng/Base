@@ -1,6 +1,6 @@
 # 프로젝트 기획 작업순서·Google Sheets tab Template
 
-이 Template은 Base 자체가 아니라 Base를 적용한 **개별 프로젝트**에서 사용한다. 프로젝트 Google Sheets가 없으면 `NOT_CONFIGURED`로 기록하고 Sheet가 있는 것처럼 추정하지 않는다.
+이 Template은 Base 자체가 아니라 Base를 적용한 **개별 프로젝트**에서 사용한다. 프로젝트 Google Sheets가 없거나 정확한 URL을 확인하지 못하면 `NOT_CONFIGURED`로 기록하고 새 Sheet나 임의 후보를 추정하지 않는다.
 
 ## 1. 설치할 tab
 
@@ -11,75 +11,108 @@
 03_근거_라이브러리
 04_누락_충돌_감사
 10_제품방향
+11_세계관
+12_핵심루프
+13_주요인물
+14_조연_세력_관계
 20_코어경험_데모목표
 30_데모범위_품질기준_제작기반
-40_시스템_성장_경제
+40_핵심시스템_메인콘텐츠
+41_성장_경제
 50_메인콘텐츠
-51_미니게임                 # 필요할 때만
-52_글쓰기_서사              # 필요할 때만
+51_미니게임                    # 필요할 때만
+52_글쓰기_서사                 # 필요할 때만
 60_UX_UI_접근성
 70_아트_오디오_에셋
+71_이미지기획_생성목록
+72_이미지검수_승인로그
 80_데모_버티컬슬라이스_플레이테스트
 90_본제작_출시_사업
 98_Base_반영후보
 99_변경이력
 ```
 
-## 2. `01_작업순서` 공통 열
+## 2. `00_프로젝트_허브`
 
-| 순서 | Approval Bundle | 분야 | 현재 단계 | 선행 조건 | `BLOCKS` | `INFORMS` | 승인 상태 | 정본 반영 | 소비처 반영 | 구현 | 검증 | 다음 작업 |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 프로젝트 | 한 문장 | 장르·플랫폼 | 현재 Stage | 현재 Work Mode | Base SHA | Sheet 상태 | GitHub | 다음 Approval Bundle | 차단 Finding |
+|---|---|---|---|---|---|---|---|---|---|
 
-## 3. 분야별 tab 공통 열
+## 3. `01_작업순서`
+
+| 순서 | Approval Bundle | 분야 | 현재 단계 | 선행 조건 | `BLOCKS` | `INFORMS` | 승인 상태 | 정본 반영 | 소비처 반영 | 구현 | 검증 | 이미지 필요 | 다음 작업 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+## 4. 분야별 tab 공통 열
 
 | 순서 | Decision ID | Approval Bundle | 현재 확정 내용 | 신규 제안 | 변경 이유 | Evidence ID | GPT 권장안 | 사용자 결정 | 선행·후속 | 책임 정본 경로 | 소비처 | 구현 상태 | 검증 | 누락·충돌 | Sheet 동기화 | 최종 상태 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 
-`최종 상태`는 `CURRENT / SUPERSEDED / DEFERRED / REJECTED / BLOCKED_UNVERIFIED`를 사용한다.
+`최종 상태`: `CURRENT / SUPERSEDED / DEFERRED / REJECTED / BLOCKED_UNVERIFIED`.
 
-## 4. `03_근거_라이브러리`
+## 5. 의미 구조 tab
+
+### `11_세계관`
+
+| World ID | 범주 | 현재 규칙·설정 | 플레이어가 아는 시점 | 관련 세력·장소·인물 | 게임플레이 영향 | 금기·모순 방지 | 책임 정본 | 이미지 필요 | 상태 |
+|---|---|---|---|---|---|---|---|---|---|
+
+### `12_핵심루프`
+
+| Loop ID | 단계 | 플레이어 행동 | 선택·고민 | 즉시 피드백 | 보상·손실 | 다음 단계 연결 | 실패·복구 | 관찰 지표 | 책임 정본 | 상태 |
+|---|---|---|---|---|---|---|---|---|---|---|
+
+### `13_주요인물`
+
+| Character ID | 이름 | 역할 | 목표 | 성격·가치 | 플레이어 관계 | 핵심 장면·기능 | 시각 키워드 | 표정·포즈·상태 | 책임 정본 | 이미지 상태 |
+|---|---|---|---|---|---|---|---|---|---|---|
+
+### `14_조연_세력_관계`
+
+| Entity ID | 이름 | 유형 | 소속·세력 | 주요인물 관계 | 기능 | 갈등·비밀 | 등장·정보 공개 시점 | 관련 콘텐츠 | 책임 정본 | 이미지 상태 |
+|---|---|---|---|---|---|---|---|---|---|---|
+
+### `40_핵심시스템_메인콘텐츠`
+
+| System ID | 시스템·메인콘텐츠 | 해결하는 플레이어 문제 | 핵심 입력 | 규칙·상태 | 출력·보상 | 다른 시스템 연결 | 실패·복구 | Demo 범위 | 책임 정본 | 검증 상태 |
+|---|---|---|---|---|---|---|---|---|---|---|
+
+## 6. 근거·감사 tab
+
+### `03_근거_라이브러리`
 
 | Evidence ID | 유형 | 출처 | 날짜·버전 | 비교 차원 | 대상 플레이어 | 관찰 사실 | 플레이어 반응 | 현업·공식 권장 | 적용 판정 | 신뢰도 | 후속 검증 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 
-유형:
-
-- `BENCHMARK_EVIDENCE`
-- `PLAYER_RESPONSE_EVIDENCE`
-- `PROFESSIONAL_OFFICIAL_EVIDENCE`
-- `BEHAVIORAL_EVIDENCE`
-- `CONTROLLED_EXPERIMENT`
-
-적용 판정은 `ADOPT / ADAPT / AVOID / TEST / IGNORE`를 사용한다.
-
-## 5. `04_누락_충돌_감사`
+### `04_누락_충돌_감사`
 
 | Audit ID | 날짜 | 작업·질문 | 비교한 main | 비교한 Decision | 비교한 PR | 비교한 정본 | 비교한 구현 | Sheet 상태 | 판정 | 영향 | 수정 위치 | 재검증 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 
-판정:
+## 7. 이미지 tab
 
-- `DUPLICATE_WORK`
-- `DUPLICATE_QUESTION`
-- `MISSING_CANON`
-- `MISSING_CONSUMER`
-- `CANON_CONFLICT`
-- `IMPLEMENTATION_CONFLICT`
-- `STALE_REFERENCE`
-- `MISSING_SYNC`
-- `NO_CONFLICT`
-- `BLOCKED_UNVERIFIED`
+### `71_이미지기획_생성목록`
 
-## 6. Approval Bundle 종료 조건
+| Image ID | 단계 | 분류 | 목적·사용처 | 관련 Decision·정본 | 브리프 | 비율·해상도 | 유지 요소 | 변경 축 | 레퍼런스·원출처 | 모델·버전 | 우선순위 | 상태 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+단계: `PLANNING_VISUALIZATION / FINAL_VISUAL_CANDIDATE`.
+
+### `72_이미지검수_승인로그`
+
+| Review ID | Image ID | 버전 | 기획 일치 | 실제 화면 가독성 | 구현 가능성 | 일관성 | 재사용·편집 | 권리·유사성 | 오류 | 수정 요청 | 승인자·일시 | 승인 상태 | GitHub·자산 경로 | 런타임 검증 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+승인 상태: `IN_REVIEW / REVISION_REQUIRED / REJECTED / APPROVED_CANDIDATE / PROJECT_ASSET_APPROVED / APPLIED_AND_RUNTIME_VERIFIED`.
+
+## 8. Approval Bundle 종료 조건
 
 ```text
 APPROVED
 → CANON_UPDATED
 → CONSUMERS_UPDATED
-→ PROJECT_SHEET_UPDATED
+→ PROJECT_SHEET_UPDATED | NOT_CONFIGURED
+→ VISUALS_NOT_REQUIRED | VISUALS_REVIEWED
 → IMPLEMENTED | IMPLEMENTATION_PENDING
 → VALIDATED | BLOCKED_UNVERIFIED
 → NO_CONFLICT | CONFLICT_FIXED | USER_DECISION_REQUIRED | BLOCKED_UNVERIFIED
 ```
-
-다음 Bundle은 현재 Bundle의 차단 Finding과 미동기화가 정리된 뒤 진행한다.
