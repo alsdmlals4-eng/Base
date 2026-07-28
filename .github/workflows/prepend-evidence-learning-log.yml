@@ -2,16 +2,13 @@ name: Prepend Evidence Learning Log
 
 on:
   push:
-    branches:
-      - gpt/evidence-based-game-development-knowledge-20260729
-    paths:
-      - .github/workflows/prepend-evidence-learning-log.yml
 
 permissions:
   contents: write
 
 jobs:
   prepend-learning-entry:
+    if: github.ref == 'refs/heads/gpt/evidence-based-game-development-knowledge-20260729'
     runs-on: ubuntu-latest
     steps:
       - name: Check out branch
