@@ -2,7 +2,9 @@
 
 이 문서는 Base와 Base를 적용한 프로젝트에서 기획 작업을 어떤 순서로 묶고, 무엇을 먼저 비교하며, 어떤 근거로 승인하고, 새 정책·Template·Skill을 어디까지 전파 검증할지 정하는 공용 책임 원본이다.
 
-승인 결정의 즉시 정본화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`, 작업 분해의 상세 의존성은 `skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md`, 외부 근거의 판정은 `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md`, 데모 제작 Gate는 `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md`, 프로젝트 Sheet와 GPT 이미지 생성·검수는 `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`가 책임진다.
+승인 결정의 즉시 정본화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`, 작업 분해의 상세 의존성은 `skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md`, 외부 근거의 판정은 `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md`, 분야 횡단 게임 개발 근거·Guide·Case는 `docs/knowledge/game-development/README.md`, 데모 제작 Gate는 `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md`, 프로젝트 Sheet와 GPT 이미지 생성·검수는 `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`가 책임진다.
+
+공통 조사 기록은 `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`, 성공·실패·혼합 사례는 `templates/research/GAME_DEVELOPMENT_CASE_CARD.md`를 사용한다. 이 Template은 외부 자료를 프로젝트 정본으로 승격하지 않고 결정 질문·Evidence ID·적용 판정·검증을 연결한다.
 
 ## 1. 적용 범위
 
@@ -80,7 +82,37 @@
 2. `PLAYER_RESPONSE_EVIDENCE`: 긍정·부정·혼합 리뷰, 커뮤니티, 플레이테스트, 행동 데이터.
 3. `PROFESSIONAL_OFFICIAL_EVIDENCE`: 현업 발표·사후 분석·공식 플랫폼·엔진·접근성·운영 권장사항.
 
-단순 오탈자, 기계적 링크 수정, 같은 입력의 검사 재실행 같은 L0 작업은 대규모 근거 조사를 요구하지 않는다. 근거는 정본을 대체하지 않으며 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 변환한다.
+분야 횡단 결정에서는 `docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md`의 12영역 Coverage 중 현재 결정에 필요한 영역만 선택한다.
+
+```text
+프로젝트 코어·게임 기획
+플레이어 경험·게임 필·보상·난이도
+아트 디렉션·캐릭터·환경·UI·애니메이션
+내러티브·세계관·콘텐츠
+UX·UI·접근성
+사운드·오디오 정보
+Godot·데이터·저장·성능·플랫폼
+QA·자동화·런타임·회귀
+프로덕션·Vertical Slice·반복 제작성
+벤치마킹·Games User Research·텔레메트리
+AI 협업·Prompt·Evals·보안·권리
+출시·스토어·마케팅 약속·출시 후 학습
+```
+
+모든 영역을 형식적으로 조사하지 않는다. 근거가 없으면 `NOT_STARTED`, 관련 없으면 이유를 가진 `NOT_APPLICABLE`로 둔다.
+
+Evidence는 다음을 분리한다.
+
+- `T1_PRIMARY_OFFICIAL`: 공식·원 논문·실제 프로젝트 증거
+- `T2_PROFESSIONAL_PRACTICE`: 현업 발표·개발자 회고·스튜디오 기술 자료
+- `T3_PLAYER_BEHAVIOR`: 플레이테스트 관찰·텔레메트리·퍼널
+- `T4_PLAYER_SELF_REPORT`: 리뷰·인터뷰·설문·커뮤니티 반응
+- `T5_SYNTHESIS`: 전문 서적·리뷰 논문·종합 자료
+- `T6_AI_INFERENCE`: AI 요약·분류·가설. 독립 권한 없음
+
+조사 결과는 `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`에 Evidence ID·원출처·날짜·버전·상태·한계로 기록하고, 성공·실패·혼합 사례는 `templates/research/GAME_DEVELOPMENT_CASE_CARD.md`로 연결한다.
+
+단순 오탈자, 기계적 링크 수정, 같은 입력의 검사 재실행 같은 L0 작업은 대규모 근거 조사를 요구하지 않는다. 근거는 정본을 대체하지 않으며 `ADOPT / ADAPT / TEST / AVOID / IGNORE / REFERENCE_ONLY`로 변환한다.
 
 ### 3.4 APPROVAL_BUNDLE
 
@@ -91,7 +123,9 @@ bundle_id:
 discipline:
 current_decisions:
 duplicate_omission_conflict_result:
+evidence_pack_path:
 evidence_ids:
+case_card_paths:
 questions_and_options:
 gpt_recommendation:
 approved_decisions:
@@ -108,6 +142,8 @@ validation_gate:
 
 승인된 Decision을 `CURRENT_CONFIRMED_DECISIONS.md`, 분야 책임 원본, 필요한 Active Context·Issue·Plan에 반영한다. 개별 프로젝트가 `PROJECT_SHEET_CONFIGURED`이면 같은 승인 단위에서 Sheet도 갱신한다.
 
+외부 Evidence Pack과 Case Card는 결정 근거를 소유하지만 최종 프로젝트 기획 권한은 등록된 책임 원본이 가진다. 실제 구현 사실은 코드·데이터·자산·테스트가 가진다.
+
 ### 3.6 PROPAGATION_AUDIT
 
 새 정책·Template·Skill·경로·ID를 추가하거나 바꾸면 파일 존재가 아니라 실제 소비를 검사한다.
@@ -117,6 +153,7 @@ validation_gate:
 - 라우팅: Skill Registry, Legacy Alias, shared route.
 - 프로젝트 설치: Template README, Project START_HERE, AI_WORKFLOW, 설치·감사·검증 Skill.
 - 분야 소비자: 관련 기획서, 분야 Skill, Reference, 데이터 계약.
+- 근거 소비자: Evidence Pack, Case Card, 벤치마크 Template, Reference Catalog.
 - 검증: reference freshness, 회귀 테스트, publication·generation, Governance.
 - 기록: Learning Log, Changelog, 구현 계획, 병합 후 보고.
 - 프로젝트 작업면: 개별 프로젝트 Google Sheets의 해당 tab·row.
@@ -125,7 +162,17 @@ validation_gate:
 
 ### 3.7 VALIDATION
 
-정본 비교, 정적 검사, 런타임, 접근성, 성능, 플레이테스트, 반응 조사, 적대적 검토 중 현재 범위에 필요한 검증을 실제 실행한다.
+정본 비교, 정적 검사, 런타임, 접근성, 성능, 플레이테스트, 반응 조사, AI Eval, 적대적 검토 중 현재 범위에 필요한 검증을 실제 실행한다.
+
+적대적 검토는 다음을 포함한다.
+
+- 성공 사례 표면 복사
+- 다른 장르·팀 규모·플랫폼 과잉 일반화
+- 행동과 자기보고 혼동
+- AI 추론을 공식 사실로 사용
+- 접근성·성능·보안·라이선스·제작 비용 누락
+- 새 Skill·Guide·Template의 중복 책임
+- 실행하지 않은 검증 완료 주장
 
 ### 3.8 GATE_CLOSE
 
@@ -231,14 +278,19 @@ Base에는 생성하지 않는다. 개별 프로젝트에서만 다음 순서를
 
 필요하지 않은 `51_미니게임`, `52_글쓰기_서사`는 생성하지 않는다. 공통 열과 분야별 세부 열은 `templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md`를 따른다.
 
+`03_근거_라이브러리`는 프로젝트별 Evidence Pack·Evidence ID·Case Card·원출처·확인일·판정·적용 위치를 연결한다. Base 자체에는 프로젝트 Sheet를 만들지 않는다.
+
 ## 7. 실패 조건
 
 - 이전 기록을 읽지 않고 같은 질문·작업을 반복한다.
 - 새 정책·Template·Skill을 만들고 실제 소비처를 연결하지 않는다.
 - 인기작 기능이나 단일 리뷰만으로 방향을 바꾼다.
+- 성공 사례만 조사하고 실패·혼합 반응·적용 조건을 누락한다.
 - 현업·공식 근거를 조사하지 않고 모델 추론만 권장안으로 제시한다.
+- 플레이어 행동과 플레이어 자기보고를 같은 증거로 취급한다.
 - 관련 결정을 여러 탭·문서·PR에 흩어 승인한다.
 - 문서 길이를 줄이기 위해 결정·예외·검증·실패 조건을 삭제한다.
 - 별도 `CORE_POC`를 필수 Gate로 되살린다.
 - 임시 Prototype 품질을 완성 데모 품질로 오인한다.
 - Base에 프로젝트 Google Sheets 동기화를 요구한다.
+- Evidence Pack·Case Card 작성만으로 실제 재미·접근성·성능·출시 준비를 검증했다고 주장한다.
