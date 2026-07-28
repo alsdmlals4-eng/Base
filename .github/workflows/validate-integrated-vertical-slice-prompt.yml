@@ -62,7 +62,7 @@ jobs:
           status=$?
           cat integrated-prompt-reference-results.txt
           exit "$status"
-      - name: Upload contract diagnostics
+      - name: Upload contract diagnostics and exact prompt
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -70,4 +70,5 @@ jobs:
           path: |
             integrated-prompt-test-results.txt
             integrated-prompt-reference-results.txt
+            templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md
           if-no-files-found: error
