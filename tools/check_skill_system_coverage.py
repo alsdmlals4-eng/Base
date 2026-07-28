@@ -10,7 +10,10 @@ COVERAGE = ROOT / "skills/SKILL_COVERAGE.json"
 FRONT_NAME = re.compile(r"^name:\s*['\"]?([^'\"\n]+)", re.MULTILINE)
 ALLOWED_COVERAGE_STATUSES = {"COVERED", "COVERED_EXISTING"}
 
-COMPACT_TARGETS = {
+# These packages were historically called compact targets. They now use a
+# completeness-first contract: required navigation and quality sections must be
+# present, but line, character, page, and file-size ceilings are not quality gates.
+CONTRACT_STRUCTURE_TARGETS = {
     "identifying-project-core",
     "establishing-project-core",
     "running-adversarial-review-and-refinement",
@@ -58,9 +61,9 @@ def validate() -> list[str]:
             elif entry["status"] != "ACTIVE":
                 errors.append(f"Coverage target not active: {responsibility_id} -> {skill_id}")
 
-    for skill_id in sorted(COMPACT_TARGETS):
+    for skill_id in sorted(CONTRACT_STRUCTURE_TARGETS):
         if skill_id not in by_id:
-            errors.append(f"Compact target not registered: {skill_id}")
+            errors.append(f"Contract structure target not registered: {skill_id}")
 
     for skill_id, item in by_id.items():
         path = ROOT / item["path"]
@@ -71,14 +74,10 @@ def validate() -> list[str]:
         match = FRONT_NAME.search(text)
         if not match or match.group(1).strip() != skill_id:
             errors.append(f"Front matter mismatch: {skill_id}")
-        if skill_id in COMPACT_TARGETS:
+        if skill_id in CONTRACT_STRUCTURE_TARGETS:
             for required in ("##", "Output contract", "Quality gate", "Learning Log"):
                 if required not in text:
-                    errors.append(f"Missing compact contract token {required!r}: {skill_id}")
-            if len(text.splitlines()) > 150:
-                errors.append(
-                    f"Compact SKILL.md exceeds 150 lines: {skill_id} ({len(text.splitlines())})"
-                )
+                    errors.append(f"Missing completeness contract token {required!r}: {skill_id}")
 
     for obsolete in (
         ROOT / "tools/apply_skill_system_expansion.py",
