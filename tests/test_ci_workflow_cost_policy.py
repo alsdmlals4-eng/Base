@@ -4,9 +4,14 @@ import re
 import unittest
 from pathlib import Path
 
+from tests.test_demo_first_planning_sequence import DemoFirstPlanningSequenceTests
 from tests.test_github_work_item_lifecycle_policy import (
     GithubWorkItemLifecyclePolicyTests,
 )
+from tests.test_integrated_vertical_slice_prompt_v7 import (
+    IntegratedVerticalSlicePromptV7Tests,
+)
+from tests.test_vertical_slice_v6_contract import VerticalSliceV6ContractTests
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -82,23 +87,30 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
         self.assertIn("required job failed or was not executed", self.text)
         self.assertIn("CI gate passed", self.text)
 
-    def test_new_contract_tests_are_part_of_ci(self) -> None:
-        for path in (
-            "tests/test_gpt_codex_workflow_contract.py",
-            "tests/test_ci_workflow_cost_policy.py",
-            "tests/test_deep_interview_contract.py",
-            "tests/test_demo_first_planning_sequence.py",
-            "tests/test_vertical_slice_v6_contract.py",
-            "tests/test_integrated_vertical_slice_prompt_v7.py",
-        ):
-            self.assertIn(path, self.text)
-
+    def test_vertical_slice_contract_suites_are_aggregated_into_ci(self) -> None:
         source = Path(__file__).read_text(encoding="utf-8")
-        self.assertIn(
+        for import_term in (
+            "from tests.test_demo_first_planning_sequence import",
             "from tests.test_github_work_item_lifecycle_policy import",
-            source,
-        )
-        self.assertTrue(issubclass(GithubWorkItemLifecyclePolicyTests, unittest.TestCase))
+            "from tests.test_integrated_vertical_slice_prompt_v7 import",
+            "from tests.test_vertical_slice_v6_contract import",
+        ):
+            self.assertIn(import_term, source)
+
+        for suite in (
+            GithubWorkItemLifecyclePolicyTests,
+            DemoFirstPlanningSequenceTests,
+            VerticalSliceV6ContractTests,
+            IntegratedVerticalSlicePromptV7Tests,
+        ):
+            self.assertTrue(issubclass(suite, unittest.TestCase))
+
+    def test_prompt_changes_are_covered_by_existing_canonical_paths(self) -> None:
+        # The integrated prompt is coupled to its contract test by reference-freshness.
+        # Changes to that test are included by the broad tests/** PR path and the
+        # contract suite is imported by this CI-listed module.
+        self.assertIn('      - "tests/**"', self.text)
+        self.assertIn("tests/test_ci_workflow_cost_policy.py", self.text)
 
 
 if __name__ == "__main__":
