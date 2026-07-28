@@ -16,12 +16,14 @@ from tests.test_vertical_slice_v6_contract import VerticalSliceV6ContractTests
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github/workflows/validate-game-project-operating-system.yml"
+PROMPT_WORKFLOW = ROOT / ".github/workflows/validate-integrated-vertical-slice-prompt.yml"
 
 
 class CiWorkflowCostPolicyTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.text = WORKFLOW.read_text(encoding="utf-8")
+        cls.prompt_text = PROMPT_WORKFLOW.read_text(encoding="utf-8")
 
     def test_workflow_has_pr_main_nightly_and_manual_events(self) -> None:
         for term in (
@@ -105,12 +107,19 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
         ):
             self.assertTrue(issubclass(suite, unittest.TestCase))
 
-    def test_prompt_changes_are_covered_by_existing_canonical_paths(self) -> None:
-        # The integrated prompt is coupled to its contract test by reference-freshness.
-        # Changes to that test are included by the broad tests/** PR path and the
-        # contract suite is imported by this CI-listed module.
-        self.assertIn('      - "tests/**"', self.text)
-        self.assertIn("tests/test_ci_workflow_cost_policy.py", self.text)
+    def test_prompt_changes_have_focused_lightweight_validation(self) -> None:
+        for term in (
+            '      - "templates/prompts/**"',
+            "tests.test_integrated_vertical_slice_prompt_v7",
+            "tests.test_vertical_slice_v6_contract",
+            "tests.test_demo_first_planning_sequence",
+            "tools/check_canonical_reference_freshness.py",
+            "cancel-in-progress: true",
+        ):
+            self.assertIn(term, self.prompt_text)
+
+        for forbidden in ("libreoffice", "poppler", "pnpm install", "windows-latest"):
+            self.assertNotIn(forbidden, self.prompt_text.lower())
 
 
 if __name__ == "__main__":
