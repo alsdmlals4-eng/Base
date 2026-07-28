@@ -18,7 +18,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: evidence-knowledge-${{ github.event.pull_request.number || github.ref }}
@@ -65,51 +65,3 @@ jobs:
             tests/test_evidence_based_game_development_knowledge.py
             tests/test_evidence_knowledge_workflow_contract.py
           if-no-files-found: error
-
-  repair-changelog-history:
-    if: github.event_name == 'pull_request' && github.head_ref == 'gpt/evidence-based-game-development-knowledge-20260729'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out head branch
-        uses: actions/checkout@v4
-        with:
-          ref: gpt/evidence-based-game-development-knowledge-20260729
-          fetch-depth: 0
-
-      - name: Restore main changelog and insert current entry
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import subprocess
-
-          path = Path("docs/CHANGELOG.md")
-          base = subprocess.check_output(
-              ["git", "show", "origin/main:docs/CHANGELOG.md"],
-              text=True,
-              encoding="utf-8",
-          )
-          entry = (
-              "- 근거 기반 게임 개발 지식 허브를 추가해 게임 기획·아트·개발·AI·벤치마킹·유저리서치·접근성·프로덕션·출시를 "
-              "`Method / Guide / Reference / Case / Template / Test`로 분리했다. 새 광역 Skill을 만들지 않고 기존 Skill의 실행 책임을 유지했으며, "
-              "12영역 Coverage, 6층 Evidence, 성공·실패·혼합 Case Card, AI Contextual Eval, Godot·플랫폼·출시 Guide와 전용 계약 테스트를 연결했다.\n"
-          )
-          if entry in base:
-              repaired = base
-          else:
-              needle = "## Unreleased - Base audit and operating-contract consistency\n\n"
-              if needle not in base:
-                  raise SystemExit("unreleased changelog heading not found")
-              repaired = base.replace(needle, needle + entry, 1)
-          path.write_text(repaired, encoding="utf-8")
-          PY
-
-      - name: Commit changelog repair
-        run: |
-          if git diff --quiet -- docs/CHANGELOG.md; then
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/CHANGELOG.md
-          git commit -m "docs: preserve changelog history for evidence knowledge update"
-          git push origin HEAD:gpt/evidence-based-game-development-knowledge-20260729
