@@ -1,7 +1,8 @@
-name: Evidence Knowledge RED Proof
+name: Validate Evidence-Based Game Development Knowledge
 
 on:
   pull_request:
+    branches: [main]
     paths:
       - "docs/knowledge/game-development/**"
       - "templates/research/**"
@@ -13,12 +14,13 @@ on:
       - "skills/SKILL_LEARNING_LOG.md"
       - "tests/test_evidence_based_game_development_knowledge.py"
       - ".github/workflows/evidence-knowledge-red.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: evidence-knowledge-red-${{ github.event.pull_request.number || github.ref }}
+  group: evidence-knowledge-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -27,6 +29,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -34,4 +38,26 @@ jobs:
           python-version: "3.12"
 
       - name: Run evidence knowledge contract
-        run: python -m unittest tests/test_evidence_based_game_development_knowledge.py -v
+        shell: bash
+        run: |
+          set +e
+          python -m py_compile tests/test_evidence_based_game_development_knowledge.py
+          compile_status=$?
+          python -m unittest tests/test_evidence_based_game_development_knowledge.py -v > evidence-knowledge-results.txt 2>&1
+          test_status=$?
+          cat evidence-knowledge-results.txt
+          if [ "$compile_status" -ne 0 ]; then
+            exit "$compile_status"
+          fi
+          exit "$test_status"
+
+      - name: Upload contract evidence and preserved learning log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-knowledge-validation
+          path: |
+            evidence-knowledge-results.txt
+            skills/SKILL_LEARNING_LOG.md
+            tests/test_evidence_based_game_development_knowledge.py
+          if-no-files-found: error
