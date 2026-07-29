@@ -5,9 +5,13 @@ on:
     branches: [main]
     paths:
       - "docs/knowledge/game-development/**"
+      - "docs/knowledge/research/PROMPT_RECIPE_SOURCE_AUDIT.md"
       - "docs/superpowers/plans/*human-validation-artifact-governance*.md"
       - "docs/superpowers/plans/*synthetic-tester*.md"
+      - "docs/superpowers/plans/*prompt-recipe-reference-integration*.md"
+      - "docs/superpowers/specs/*prompt-recipe-reference-integration*.md"
       - "skills/governing-game-user-research-coverage/references/**"
+      - "skills/designing-art-prompts-and-technique-cards/SKILL.md"
       - "templates/research/**"
       - "templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md"
       - "README.md"
@@ -19,6 +23,7 @@ on:
       - "tests/test_evidence_knowledge_workflow_contract.py"
       - "tests/test_human_validation_artifact_governance.py"
       - "tests/test_synthetic_tester_simulation_governance.py"
+      - "tests/test_prompt_recipe_reference_contract.py"
       - ".github/workflows/validate-evidence-knowledge.yml"
   workflow_dispatch:
 
@@ -52,12 +57,14 @@ jobs:
               tests/test_evidence_based_game_development_knowledge.py \
               tests/test_evidence_knowledge_workflow_contract.py \
               tests/test_human_validation_artifact_governance.py \
-              tests/test_synthetic_tester_simulation_governance.py
+              tests/test_synthetic_tester_simulation_governance.py \
+              tests/test_prompt_recipe_reference_contract.py
             python -m unittest \
               tests/test_evidence_based_game_development_knowledge.py \
               tests/test_evidence_knowledge_workflow_contract.py \
               tests/test_human_validation_artifact_governance.py \
               tests/test_synthetic_tester_simulation_governance.py \
+              tests/test_prompt_recipe_reference_contract.py \
               -v
           } > evidence-knowledge-results.txt 2>&1
           status=$?
@@ -75,4 +82,5 @@ jobs:
             tests/test_evidence_knowledge_workflow_contract.py
             tests/test_human_validation_artifact_governance.py
             tests/test_synthetic_tester_simulation_governance.py
+            tests/test_prompt_recipe_reference_contract.py
           if-no-files-found: error
