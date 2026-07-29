@@ -18,9 +18,12 @@ class EvidenceKnowledgeWorkflowContractTests(unittest.TestCase):
             "tests/test_evidence_knowledge_workflow_contract.py",
             "tests/test_human_validation_artifact_governance.py",
             "tests/test_synthetic_tester_simulation_governance.py",
+            "tests/test_prompt_recipe_reference_contract.py",
             "skills/SKILL_LEARNING_LOG.md",
             "skills/governing-game-user-research-coverage/references/**",
+            "skills/designing-art-prompts-and-technique-cards/SKILL.md",
             "docs/knowledge/game-development/**",
+            "docs/knowledge/research/PROMPT_RECIPE_SOURCE_AUDIT.md",
             "templates/research/**",
         ):
             self.assertIn(required_path, content)
