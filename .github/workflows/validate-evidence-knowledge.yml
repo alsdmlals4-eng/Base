@@ -9,7 +9,7 @@ on:
       - "docs/superpowers/plans/*human-validation-artifact-governance*.md"
       - "docs/superpowers/plans/*synthetic-tester*.md"
       - "skills/analyzing-and-refining-game-concepts/SKILL.md"
-      - "skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-and-combat-ai.md"
+      - "skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-*.md"
       - "skills/governing-game-user-research-coverage/references/**"
       - "skills/SKILL_REGISTRY.json"
       - "templates/research/**"
