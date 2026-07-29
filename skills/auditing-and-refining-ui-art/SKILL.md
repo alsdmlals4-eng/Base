@@ -1,50 +1,128 @@
 ---
 name: auditing-and-refining-ui-art
-description: Godot 또는 Web UI 결과물의 기계적 장식, 구조, 간격, 타이포그래피, 색상·상태 표현을 증거 기반으로 감사하고 사용자 승인 범위만 개선할 때 사용한다. UI 아트 방향 수립, 기존 화면 품질 감사, 정적 후보 검사, 전후 렌더 재검수가 필요한 요청에서 사용한다.
+description: Use when planning or reviewing game UX, UI information architecture, interaction patterns, input, accessibility, Godot UI contracts, rendered interface quality, or approved UI refinements without moving domain rules into presentation code.
 ---
 
-# UI 아트 감사와 개선
+# 게임 UX/UI 설계·감사
 
-## 역할
+## 역할과 경계
 
-Godot와 Web UI를 같은 품질 원칙으로 감사하되 플랫폼 구조는 각각의 어댑터로 해석한다. 정적 패턴은 후보만 보고하며 실행 화면, 확정된 아트 방향, 사용자 의도를 함께 대조한 뒤 판단한다.
+플레이어 경험을 화면·정보·입력·상태·피드백·접근성·Godot 구현 계약으로 변환하고, 구현된 Godot 또는 Web UI를 실제 렌더와 증거로 감사한다.
 
-이 스킬은 생성 프롬프트나 기술 카드를 만드는 `designing-art-prompts-and-technique-cards`와 역할이 다르다. 그 스킬은 생성 전 계약을 만들고, 이 스킬은 만들어진 UI를 감사하고 승인된 범위만 개선한다.
+- UX/UI는 표시 데이터를 입력받고 **사용자 의도**를 `Signal` 또는 명시적 이벤트로 반환한다.
+- 피해·보상·저장·진행 등 **도메인 규칙**을 UI에서 재계산하거나 새 상태 책임 원본으로 소유하지 않는다.
+- 게임 코어·벤치마크·플레이어 반응은 `analyzing-and-refining-game-concepts`, 문서 발행은 `managing-design-documents`, 공격 검토는 `running-adversarial-review-and-refinement`, 통합 증거는 `reviewing-and-validating-project-changes`가 책임진다.
+- 최종 이미지 생성·아트 기술 카드는 `designing-art-prompts-and-technique-cards`가 책임진다.
+
+## Skill Modes
+
+### 설계
+
+- `experience-contract`: 플레이어 감정·판단·행동·보상과 관찰 가능한 성공 기준을 정의한다.
+- `flow-and-information-architecture`: 사용자 여정, 화면별 중심 질문, 첫 시선, 상시/상세/결과 정보, 진입·취소·복귀를 구조화한다.
+- `pattern-selection`: 반복 문제를 패턴 카드와 대조하고 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 판정한다.
+- `design-system-contract`: 토큰·컴포넌트·상태·피드백 채널·문구·빈 상태·오류·파괴적 행동·재사용 경계를 정의한다.
+- `godot-ui-contract`: 기존 구조를 조사하고 `Theme`, `Control`, `Container`, 재사용 Scene, `Signal`, 포커스, 입력 액션과 상태 소유 경계를 정한다.
+- `accessibility-gate`: 정보·입력·탐색·시간·모션·음향·텍스트·인지 장벽과 동등한 경로를 설계한다.
+- `playtest-contract`: build·commit·해상도·입력·참가자·과제·가설·행동/설명 증거·중단/통과 기준을 고정한다.
+
+### 구현 결과 감사
+
+- `runtime-ui-audit`: 실제 실행 화면과 승인 방향을 A~E 영역으로 감사하고 정적 후보를 증거와 대조한다.
+- `refine-approved-findings`: 사용자 승인 finding만 구조→계층→타이포그래피→상태→장식 순으로 최소 개선한다.
+- `reaudit`: 기존 판단을 보지 않은 새 검사 컨텍스트에서 전후 렌더·입력·해상도·폴백·회귀를 다시 검수한다.
 
 ## 사용 조건
 
-- Godot `Control`, `Container`, `Theme`, `StyleBox` 기반 UI를 감사하거나 개선한다.
-- HTML, CSS, JavaScript, TypeScript, React 계열 UI를 감사하거나 개선한다.
-- 아트 방향과 실제 실행 결과의 차이를 증거로 정리해야 한다.
-- A~E 영역별 Findings와 전후 렌더 검증이 필요하다.
+- 신규 화면·HUD·카드·팝업·메뉴·튜토리얼·조사판·결과/복기 흐름을 설계한다.
+- 정보 계층, 점진 공개, 선택 비교, 예상 결과, 오류 복구, 포커스와 입력 계약이 필요하다.
+- Godot `Control`, `Container`, `Theme`, `StyleBox`, 재사용 Scene의 책임과 상태를 정한다.
+- 구현된 Godot/Web UI의 구조·간격·타이포그래피·색상·상태·접근성을 감사한다.
+- 실제 사용자 이해 가설과 플레이테스트 계약을 정의한다.
 
-다음 경우에는 사용하지 않는다.
+다음에는 주 Skill로 사용하지 않는다.
 
-- UI와 무관한 게임 로직, 네트워크, 저장 데이터만 변경한다.
-- 새 이미지 생성 프롬프트나 아트 기술 카드만 작성한다.
-- 사용자가 이미 승인한 명확한 단일 파일 기계 수정만 수행한다.
+- UI와 무관한 전투·경제·저장·네트워크 로직만 변경한다.
+- 최종 이미지 프롬프트나 아트 자산 제작만 수행한다.
+- 실제 화면 없이 미감 취향만 평가한다.
+- HTML 기획 대시보드·프로젝트 현황판 제작은 요청 범위에 포함하지 않는다.
+- 명확한 단일 기계 수정이며 UX·상태·입력 계약이 바뀌지 않는다.
 
-## 필수 절차
+## 설계 절차
+
+필요한 mode만 순서대로 사용한다.
+
+```text
+프로젝트 코어·현재 정본·실제 UI 조사
+→ experience-contract
+→ flow-and-information-architecture
+→ pattern-selection
+→ design-system-contract
+→ godot-ui-contract
+→ accessibility-gate
+→ playtest-contract
+→ 필요 시 runtime-ui-audit
+```
+
+1. 화면마다 플레이어의 중심 질문과 가장 중요한 행동을 하나씩 정한다.
+2. 상시 정보, 선택 시 상세, 실행 전 예상, 실행 후 결과·복기를 분리한다.
+3. 새 기능 추가 전에 `REMOVE → REDUCE → MERGE → CLARIFY → FEEDBACK 강화 → ADD` 순으로 검토한다.
+4. 정상·hover·focused·pressed·selected·disabled·locked·loading·error·new 중 필요한 상태를 선언한다.
+5. 상태는 색·소리·모션 하나에만 의존하지 않고 텍스트·형태·아이콘·로그 등 동등 신호를 둔다.
+6. 취소·되돌리기·파괴적 행동·오류·빈 상태·누락 자산의 복구 경로를 정의한다.
+7. 프로젝트의 최소/목표 해상도, 긴 한국어, 안전 영역, 선언된 입력 장치를 검증 조건에 넣는다.
+8. 기존 Theme·레이아웃·상태·편집 시스템을 조사한 뒤 가장 작은 재사용 단위를 정한다.
+9. 자동 검사와 사람 이해 증거를 분리하고 실행하지 않은 항목은 `NOT_RUN` 또는 `UNVERIFIED`로 둔다.
+
+상세 방법은 필요할 때만 읽는다.
+
+- [ux-ui-design-system-method.md](references/ux-ui-design-system-method.md)
+- [game-ux-pattern-library.md](references/game-ux-pattern-library.md)
+- [ux-ui-reference-library.md](references/ux-ui-reference-library.md)
+- [godot-ui-implementation-contract.md](references/godot-ui-implementation-contract.md)
+- [project-adapter-contract.md](references/project-adapter-contract.md)
+
+## 기존 UI 감사 절차 보존
 
 1. 프로젝트 책임 원본과 실제 UI 파일을 읽고 현재 화면을 렌더한다.
-2. 아트 방향이 미확정이거나 기능·게임 경험·구조·워크플로에 영향이 있으면 `managing-project-intake-and-work-contract`의 `clarify` mode를 먼저 사용한다.
+2. 아트 방향이나 기능·경험·구조가 미확정이면 요청 계약의 `clarify`를 먼저 사용한다.
 3. [inspection-areas.md](references/inspection-areas.md)의 A~E를 각각 독립적으로 감사한다.
 4. 플랫폼별 구조는 [platform-adapters.md](references/platform-adapters.md)로 해석한다.
-5. 필요하면 다음 명령으로 읽기 전용 후보를 만든다.
+5. 필요하면 읽기 전용 후보를 만든다.
 
 ```text
 python skills/auditing-and-refining-ui-art/scripts/scan_ui_art_signals.py --root <대상> --adapter auto --output-json <findings.json> --output-markdown <findings.md>
 ```
 
-6. Findings JSON과 Markdown에 파일·행·관찰 증거·디자인 위험·제안·검증 조건을 기록한다.
-7. 정적 패턴만으로 결함이나 “AI slop”을 확정하지 않는다. 각 후보를 실행 화면과 의도에 대조해 승인 요청 목록으로 정리한다.
-8. 사용자 승인 전에는 UI 파일, 이미지, Theme, CSS를 수정하지 않는다.
-9. 승인 후 A → B → C → D → E 순서로 수정한다. 앞 영역의 구조 변경이 뒤 영역의 판단을 바꿀 수 있으므로 한 영역씩 렌더하고 확인한다.
-10. 기존 판단을 보지 않은 새 검사 컨텍스트로 재감사하고 Godot/Web 실제 렌더 전후를 비교한다.
+6. 정적 결과는 `CANDIDATE`이며 결함 확정이 아니다. 실제 화면·의도·접근성·플랫폼과 대조한다.
+7. 각 finding에 파일·행·관찰 증거·플레이어 위험·제안·검증 조건을 기록한다.
+8. **사용자 승인 전** UI 파일·이미지·Theme·CSS를 수정하지 않는다.
+9. 승인 후 A→B→C→D→E 순서로 최소 수정하고 각 영역을 다시 렌더한다.
+10. 새 검사 컨텍스트로 **전후 렌더**와 입력·해상도·폴백을 비교한다.
 
-## Findings 계약
+## 설계 출력 계약
 
-각 finding은 다음 필드를 가진다.
+```yaml
+player_experience:
+platform_and_input:
+screen_question:
+first_attention:
+journey_and_flow:
+information_layers:
+selected_patterns:
+state_source:
+component_states:
+feedback_channels:
+input_and_focus:
+accessibility_barriers:
+fallbacks:
+godot_contract:
+validation_matrix:
+human_evidence: HUMAN_NOT_RUN | PARTIAL | PASSED | FAILED
+result: PASS | PARTIAL | FAIL | NOT_RUN | BLOCKED
+```
+
+## 감사 Finding 계약
 
 ```text
 finding_id
@@ -55,31 +133,21 @@ confidence
 file
 line
 observed_evidence
-design_risk
+player_or_design_risk
 proposed_change
 verification_predicate
 status
 ```
 
-검사기 결과의 초기 상태는 `CANDIDATE`다. 사용자가 승인하면 `APPROVED`, 보존하기로 하면 `WAIVED` 또는 `REJECTED`, 재검증까지 끝나면 `RESOLVED`로 기록한다.
+상태는 `CANDIDATE → APPROVED / WAIVED / REJECTED → RESOLVED`다. 목적 있는 표현은 기존 `base-ui-audit: allow <RULE_ID> reason=<이유>` 형식으로 예외 사유를 남길 수 있지만 실행 화면에서 이유가 확인되지 않으면 다시 후보로 올린다.
 
-목적 있는 표현은 해당 파일에 다음처럼 사유를 남겨 정적 후보에서 제외할 수 있다.
+## 품질 게이트
 
-```text
-base-ui-audit: allow <RULE_ID> reason=<보존 이유>
-```
-
-허용 지시는 결함을 숨기는 수단이 아니다. 실행 화면과 아트 방향에서 이유가 확인되지 않으면 다시 후보로 올린다.
-
-## 승인과 검증 게이트
-
-- 아트 방향 또는 승인 근거가 없으면 수정 단계로 넘어가지 않는다.
-- 참조 작품은 변환 축과 차별화 근거로만 사용하고 화면, 자산, 고유 표현을 복제하지 않는다.
-- Godot에서는 Scene 실행 결과, 테마 상속, 상태 피드백, 다른 해상도를 확인한다.
-- Web에서는 실제 브라우저, 반응형 폭, 키보드 포커스, 상태 표현을 확인한다.
-- 수정 후 정적 Findings가 줄었다는 사실만으로 통과시키지 않는다. 전후 렌더와 승인된 의도를 함께 검증한다.
-- 전후 화면과 재감사 증거가 없으면 완료가 아니다.
-
-## 필요한 도구·파일·권한 요청
-
-작업에 필요한 실행 파일, 폰트, 참조 원본, 브라우저, Godot 버전, 쓰기 권한이 없으면 임의 대체하지 않는다. 사용자에게 `필요 항목 / 필요한 이유 / 공식 설치·적용 방법 / 확인 명령 / 최소 권한`을 함께 제시하고 기존 정상 산출물을 보존한다.
+- 기능 목록보다 플레이어가 보고·판단하고·행동하고·확인하는 흐름이 먼저다.
+- 외부 레퍼런스는 변환 축과 차별화 근거로만 사용하고 화면·자산·브랜드 표현을 복제하지 않는다.
+- 비활성·잠금·오류 상태는 원인과 가능한 다음 행동을 제공한다.
+- 핵심 입력은 프로젝트가 선언한 포인터·키보드·게임패드·터치 경로에서 완결된다.
+- 팝업 종료 뒤 이전 의미 있는 포커스로 복귀한다.
+- 접근성 설정·모션 감소·음향 끄기·자산 누락이 게임 결과를 바꾸지 않는다.
+- 자동화 통과를 사람 이해·실기기·보조기기·법적 준수 증거로 과장하지 않는다.
+- 기존 정상 흐름과 프로젝트 코어를 보호한 전후 증거가 없으면 완료가 아니다.
