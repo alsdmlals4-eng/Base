@@ -1,4 +1,4 @@
-name: Apply Integrated Difficulty Reference Test
+name: Apply Difficulty Test Freshness Registration
 
 on:
   push:
@@ -14,7 +14,7 @@ permissions:
 
 concurrency:
   group: apply-game-design-difficulty-reference-test
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   apply:
@@ -31,29 +31,27 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Apply integrated reference test patch
+      - name: Register dedicated test in freshness policy
         run: |
           python -m py_compile tools/apply_game_design_difficulty_reference_test.py
           python tools/apply_game_design_difficulty_reference_test.py
 
-      - name: Validate focused and integrated contracts
+      - name: Validate focused contracts
         run: |
           python -m py_compile \
             tests/test_game_design_difficulty_workflow.py \
-            tests/test_consolidated_skill_references.py \
             tests/test_evidence_based_game_development_knowledge.py
           python -m unittest \
             tests/test_game_design_difficulty_workflow.py \
-            tests/test_consolidated_skill_references.py \
             tests/test_evidence_based_game_development_knowledge.py \
             -v
 
-      - name: Commit only the integrated test
+      - name: Commit only freshness configuration
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tests/test_consolidated_skill_references.py
+          git add .github/reference-freshness.json
           git diff --cached --check
-          git commit -m "test: integrate game design difficulty reference checks"
+          git commit -m "test: register game design difficulty freshness contract"
           git pull --rebase origin feat/game-design-difficulty-workflow
           git push origin HEAD:feat/game-design-difficulty-workflow
