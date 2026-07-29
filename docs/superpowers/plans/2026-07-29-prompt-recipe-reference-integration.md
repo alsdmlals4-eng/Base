@@ -198,7 +198,9 @@ Attack and classify:
 - Final verification and user review were completed.
 - The user explicitly approved merging PR #63 on 2026-07-29.
 - PR #63 was marked ready for review.
-- Required Check `ci-gate` must pass on the approval-triggered PR state before merge.
+- Latest merge revalidation baseline: `main@108fcb741c9ab46ee8b34b1e4a6fae298f6cb6ba`.
+- The prior approval-triggered `ci-gate` became stale when `main` advanced through the UI polishing merge, so a new synchronized validation run is required.
+- Required Check `ci-gate` must pass on the latest-main PR merge state before merge.
 - Auto-merge is enabled so the repository rules perform the merge immediately after the required check succeeds.
 - Local tests: `NOT_RUN` because GitHub DNS is unavailable in the local execution environment.
 - Actual image generation: `NOT_RUN`.
