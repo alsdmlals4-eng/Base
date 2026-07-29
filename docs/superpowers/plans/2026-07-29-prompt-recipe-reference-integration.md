@@ -195,8 +195,11 @@ Attack and classify:
 
 ## 10. Completion and publication state
 
-- Keep PR #63 as Draft until final verification and user integration decision.
-- Do not merge automatically.
+- Final verification and user review were completed.
+- The user explicitly approved merging PR #63 on 2026-07-29.
+- PR #63 was marked ready for review.
+- Required Check `ci-gate` must pass on the approval-triggered PR state before merge.
+- Auto-merge is enabled so the repository rules perform the merge immediately after the required check succeeds.
 - Local tests: `NOT_RUN` because GitHub DNS is unavailable in the local execution environment.
 - Actual image generation: `NOT_RUN`.
 - Project-specific application, runtime review, and human visual validation: `NOT_RUN`.
