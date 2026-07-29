@@ -1,0 +1,36 @@
+{
+  "author": {
+    "name": "alsdmlals4-eng"
+  },
+  "base_v9": {
+    "active_skill_count": 27,
+    "project_adapter_contract": "docs/BASE_SHARED_SKILL_ADAPTER_CONTRACT.md",
+    "registry_sha256": "76737e91af986533c34f82598731ad9d8ef96320f947e4b9a4734b9b1dc245d8",
+    "snapshot": "skills/BASE_V9_SKILL_SNAPSHOT.json",
+    "snapshot_sha256": "30175dec406c47f3897c9811ebc0425d516b4040a8b045704e040776e4f07500",
+    "source_of_truth": "skills/SKILL_REGISTRY.json"
+  },
+  "description": "Base v9 shared game-development operating-system adapter.",
+  "homepage": "https://github.com/alsdmlals4-eng/Base",
+  "interface": {
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "category": "Productivity",
+    "developerName": "alsdmlals4-eng",
+    "displayName": "Base v9",
+    "longDescription": "Registry-derived shared Skills, governance, and project adapter contracts for Godot game projects.",
+    "shortDescription": "Shared Godot game-development operating system."
+  },
+  "keywords": [
+    "godot",
+    "game-development",
+    "workflow",
+    "skills"
+  ],
+  "name": "base-v9",
+  "repository": "https://github.com/alsdmlals4-eng/Base",
+  "skills": "./skills/",
+  "version": "9.0.0-rc.1"
+}

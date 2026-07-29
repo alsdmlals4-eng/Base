@@ -71,32 +71,15 @@ Base START_HERE
 
 작업 실행 게이트와 제품 마일스톤 게이트는 구분한다. 한 기능의 Done은 프로젝트 전체의 Vertical Slice 통과를 뜻하지 않는다.
 
-### Work Mode·Skill 자동 라우팅
+### 5. Active Skill Registry View
 
-- `Work Mode`: AI의 현재 작업 자세·권한·증거 기준이다.
-  - `PLAN`: 요구·근거·설계·정본·실행 순서, 기본 읽기·제안
-  - `BUILD`: 승인 범위의 코드·데이터·문서·자산 구현·갱신
-  - `REVIEW`: 적대적 검토·반례·검증·판정, 기본 읽기 전용
-- `Skill`: 특정 책임을 반복 수행하는 전문 작업 계약이다.
-- `Skill Mode`: Skill 내부의 현재 세부 절차다. 별도 수식어 없이 Skill 문서에 적힌 `mode`는 Skill Mode를 뜻한다.
-- `Prompt`: 현재 사용자의 구체적인 목표·제약·산출물이다.
+The current active-Skill count, list, and status are generated from `skills/SKILL_REGISTRY.json` into `docs/generated/BASE_ACTIVE_SKILLS.md`. Human-facing documents do not duplicate the list.
 
-```text
-Prompt
-→ 의도·현재 단계·위험
-→ 주 Work Mode 하나
-→ Registry trigger·do_not_use_when
-→ 필요한 최소 Skill
-→ 각 Skill의 필요한 Skill Mode
-→ 실행·검증
-→ Work Mode·Skill·Skill Mode의 사용 이유·결과·증거 보고
-```
+Every active Skill exposes positive/negative triggers, owner, input, output, failure condition, verification, and next step. Count changes only when an independent input/output/authority/verification boundary and migration map support them.
 
-복합 작업은 `PLAN → BUILD → REVIEW`로 전환할 수 있다. `REVIEW`에서 수정이 승인되면 `BUILD`로 전환해 최소 수정하고 다시 `REVIEW`로 검증한다.
+UX/UI design, 폴리싱, and runtime-result audit use `auditing-and-refining-ui-art`.
 
-`load_by_default=false`는 자동 사용 금지가 아니라 trigger가 없을 때 불필요하게 읽지 않는다는 뜻이다. 사용자는 Skill 이름이나 Skill Mode를 선언할 필요가 없다.
-
-### 기획 방향 루프
+## 기획 방향 루프
 
 ```text
 핵심 컨셉
@@ -141,7 +124,7 @@ Prompt
 | 게임 UX/UI 설계·폴리싱·구현된 Godot·Web UI 감사·개선 | `auditing-and-refining-ui-art` |
 | 프로젝트 교훈 추출·BCP 제출·검토·승인된 구현 | `managing-base-change-proposals` |
 
-핵심 통합 실행 Skill은 13개이며 구조·운영·지원 Skill 14개를 포함한 **전체 ACTIVE Skill은 27개**다. 기계적 목록과 상태는 Registry를 따른다.
+현재 활성 Skill 수·목록·상태는 `skills/SKILL_REGISTRY.json`에서 생성한 `docs/generated/BASE_ACTIVE_SKILLS.md`를 따른다. 숫자는 고정된 설계 제약이 아니며, 기계적 권한은 Registry와 Skill frontmatter에 있다.
 
 Registry 정책:
 

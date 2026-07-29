@@ -1,5 +1,14 @@
 # Godot UI 구현 계약
 
+## v9 verification additions
+
+The implementation contract must explicitly verify `Control`, `Container`,
+`Theme`, `Signal`, authoritative-state separation, focus navigation, input paths,
+accessibility, long Korean text, and resolution fixtures. Use the official Godot
+references for [UI](https://docs.godotengine.org/en/stable/tutorials/ui/index.html)
+and [focus navigation](https://docs.godotengine.org/en/stable/tutorials/ui/gui_navigation.html)
+as engine evidence; do not treat them as a substitute for project runtime tests.
+
 ## 1. 원칙
 
 Godot UI는 게임 상태를 새로 계산하는 계층이 아니라, 권위 있는 상태를 표시하고 사용자 의도를 도메인 계층에 전달하는 경계다.

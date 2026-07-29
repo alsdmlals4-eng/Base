@@ -6,6 +6,14 @@ title:
 publisher:
 url:
 source_type: official-guideline | official-engine-doc | professional-research | product-case | player-evidence
+license:
+commercial_use: allowed | restricted | prohibited | unknown
+attribution: required | optional | not-required | unknown
+modification_and_redistribution: allowed | restricted | prohibited | unknown
+godot_compatibility:
+maintenance: active | limited | unmaintained | unknown
+dependency_removal:
+template_or_demo_origin:
 published_or_updated_at:
 checked_at:
 platform_and_version:
@@ -30,6 +38,7 @@ polishing_evidence:
   reduced_motion_mute_haptic_off_path:
   before_after_validation:
 copying_prohibited:
+transformation_and_validation:
 risks_and_biases:
 validation_required:
 canonical_project_destination:
@@ -46,6 +55,11 @@ review_status: DRAFT | REVIEWED | APPLIED | REJECTED | SUPERSEDED
 6. 링크·최종 확인일·대상 버전이 없으면 현행 근거로 사용하지 않는다.
 7. 채택하지 않은 자료도 `AVOID / IGNORE / REJECTED` 이유를 남겨 반복 조사를 막는다.
 8. 모션·음향·햅틱을 끈 경로와 같은 조건의 전후 비교가 없으면 폴리싱 효과를 확정하지 않는다.
+9. Open-source template or demo references require license, commercial use,
+   attribution, modification and redistribution, Godot compatibility,
+   maintenance, and dependency removal to be recorded before `ADOPT` or `ADAPT`.
+10. A template is evidence and a starting point, never a surface-level copying
+    instruction. Record the project transformation and validation result.
 
 ## 적용 요약
 

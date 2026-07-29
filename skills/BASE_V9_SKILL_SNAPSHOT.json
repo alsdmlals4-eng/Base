@@ -1,0 +1,495 @@
+{
+  "active_skill_count": 27,
+  "artifact_role": "deterministic-base-skill-snapshot",
+  "registry_sha256": "76737e91af986533c34f82598731ad9d8ef96320f947e4b9a4734b9b1dc245d8",
+  "schema_version": 1,
+  "skills": [
+    {
+      "contract": {
+        "failure": "오라우팅\n사용자에게 Skill 선택 전가\nWork Mode와 Skill Mode 혼용\n사용 이유·결과 보고 누락\n반복 질문\n사용자 확인 없는 실행\n계약 요구 손실\n동사만 있는 작업 목록\n의존성 누락\n과도한 병렬화\n불필요한 Foundation 연쇄 호출\n기존 Decision을 다시 질문함\nmain·PR·Google Sheets 사전 대조 누락\n기술 기본값을 사용자에게 전가함\nbaseline audit missing\nduplicate work\nconsumer propagation missing",
+        "input": "새 요청과 중요 기획 질문을 라우팅할 때 최신 main·CURRENT_CONFIRMED_DECISIONS·분야 정본·동일 Goal의 열린·최근 병합 PR·프로젝트 Google Sheets를 먼저 비교하고, 기술 기본값과 사용자 결정 사항을 분리해 실행 계약으로 만든다. 프로젝트 GDD Google Sheets를 USER_FACING_GDD_WORKSPACE로 읽고 PROPOSED_SHEET_CHANGE를 GitHub 정본·실제 구현과 비교한다.",
+        "negative_trigger": "L0 수정, 승인된 작은 작업, 입력이 같은 검사 재실행 또는 이미 유효한 실행 순서가 있는 작업이다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "managing-project-intake-and-work-contract execution result with scope, evidence, and unresolved items.",
+        "owner": "planning-project-operations",
+        "positive_trigger": "new-request; cross-discipline; ambiguous-scope; material-ambiguity; grill-me; decision-interview; work-order; acceptance-criteria; work-decomposition; task-breakdown; dependency-map; execution-sequence; parallel-plan; cold-start; work-mode-selection; automatic-skill-routing; skill-execution-report; current-confirmed-decisions; duplicate-question-prevention; recommended-default; google-sheets-sync; pr-preflight; approval-bundle; duplicate-omission-conflict-audit; planning-sequence; project-sheet-semantic-tabs; image-approval-bundle; project-gdd-sheet; gdd-workspace; proposed-sheet-change",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "planning-project-operations",
+      "frontmatter_description": "Use automatically when a project request must be routed, repository facts must be separated from user decisions, material ambiguity must be closed, a confirmed request must become an executable work contract, or approved work must be decomposed into dependency-aware execution steps.",
+      "layer": "foundation",
+      "path": "skills/managing-project-intake-and-work-contract/SKILL.md",
+      "skill_id": "managing-project-intake-and-work-contract",
+      "source_sha256": "2be5444a955e019b407c5c75c2df0d4ee50c9d35416a87ec940e3e5e0ab4ae4c"
+    },
+    {
+      "contract": {
+        "failure": "승인 전 구조 변경\n구형 파일 오삭제\n고유 정보 유실\n참조 경로 파손\n호환 stub 누락\n설치 누락\n콜드 스타트 실패\n파이프라인 실패\nCURRENT_CONFIRMED_DECISIONS 설치 누락\n프로젝트 Google Sheets 연결·재조회 누락\n콜드 스타트에서 승인 Decision 복원 실패",
+        "input": "프로젝트 운영체계를 설치·감사·마이그레이션·검증하면서 CURRENT_CONFIRMED_DECISIONS, 동일 Goal의 PR, 분야 정본, GitHub main과 프로젝트 Google Sheets의 결정 복원·동기화 상태를 포함한다. 프로젝트 GDD Google Sheets를 USER_FACING_GDD_WORKSPACE로 읽고 PROPOSED_SHEET_CHANGE를 GitHub 정본·실제 구현과 비교한다.",
+        "negative_trigger": "운영체계와 무관한 L0·작은 구현 작업이거나 현행 정본과 참조가 이미 명확한 단일 파일 편집이다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "managing-game-project-operating-system execution result with scope, evidence, and unresolved items.",
+        "owner": "project-operations-integrated-review",
+        "positive_trigger": "new-project; missing-operating-system; existing-project; safe-migration; document-restructure; operating-system-health; post-migration; major-gate; cold-start-failure; legacy-file; versioned-duplicate; stale-copy; obsolete-file; legacy-reconciliation; current-confirmed-decisions; decision-recovery; google-sheets-sync; project-cold-start; project-sheet-workbook; visual-workflow-install; project-gdd-sheet; gdd-workspace; proposed-sheet-change",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "project-operations-integrated-review",
+      "frontmatter_description": "Use automatically when installing, auditing, reconciling legacy files, migrating, or verifying the repository operating system that connects project entrypoints, design sources, selective skills, publications, assets, gates, automation, and cold-start handoff.",
+      "layer": "foundation",
+      "path": "skills/managing-game-project-operating-system/SKILL.md",
+      "skill_id": "managing-game-project-operating-system",
+      "source_sha256": "540e7eb4a3225a32f15776fd6cf208c248c47ed57dfd7ade8409f7ddfc2b0175"
+    },
+    {
+      "contract": {
+        "failure": "반복 실패\n중복 스킬\n새 작업 유형\n검증 경로 변경\n통합 뒤 오래된 참조 잔존",
+        "input": "분야별·foundation 스킬을 생성·통합·학습·갱신하고 통합 뒤 오래된 ID·경로·참조 누락을 검증한다.",
+        "negative_trigger": "스킬 구조에 영향 없는 일반 구현 작업이다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "evolving-project-discipline-skills execution result with scope, evidence, and unresolved items.",
+        "owner": "project-operations",
+        "positive_trigger": "skill-audit; skill-learning; skill-consolidation; missing-discipline-skill",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "project-operations",
+      "frontmatter_description": "Use when creating, reviewing, consolidating, or improving project Foundation and discipline skills from actual work and validation evidence while keeping the Registry, entrypoints, tests, references, and human derivatives synchronized.",
+      "layer": "foundation",
+      "path": "skills/evolving-project-discipline-skills/SKILL.md",
+      "skill_id": "evolving-project-discipline-skills",
+      "source_sha256": "e4945454411595f2ba7d2636a43e5e168640afa1b0371ec083a15f436f55b512"
+    },
+    {
+      "contract": {
+        "failure": "중복 책임 원본\n문서 탐색 실패\n상태 용어 충돌\nPDF 생성 실패\n입력 해시 불일치\n시각 검수 실패\n과도한 발행 강제\n승인 결정 추적 누락\n하위 시스템 통합 누락\n댓글만으로 정본 갱신 완료 주장\n대체 범위 누락\n누적 결정과 책임 원본 불일치\n중복 질문\n승인 결정 즉시 정본화 누락\nGitHub·Google Sheets 동기화 누락\nSYNCED 오판\ncheckpoint까지 승인 승격 지연",
+        "input": "등록된 기획 책임 원본을 작성·갱신·재구조화하고 발행 정책에 따라 파생본을 생성·검수하며, 질문 전 기존 Decision·PR·Google Sheets를 대조하고 승인 결정을 GitHub 추적 근거·CURRENT_CONFIRMED_DECISIONS·분야 정본·허용된 main 문서 Commit·Google Sheets에 즉시 동기화한다. 하위 시스템 checkpoint에서는 이미 즉시 정본화된 Decision의 누락·충돌·중복·대체 관계를 감사한다. 프로젝트 GDD Google Sheets를 USER_FACING_GDD_WORKSPACE로 읽고 PROPOSED_SHEET_CHANGE를 GitHub 정본·실제 구현과 비교한다.",
+        "negative_trigger": "문서 구조·내용·발행 상태에 영향 없는 코드 수정 또는 CURRENT 발행본의 단순 조회다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "managing-design-documents execution result with scope, evidence, and unresolved items.",
+        "owner": "planning-documentation-publication",
+        "positive_trigger": "design-document; responsibility-map; roadmap-structure; pdf-publication; publication-stale; approved-image-change; document-restructure; decision-tracking; subsystem-checkpoint; canonical-integration; confirmed-decision-sync; duplicate-question-prevention; google-sheets-sync; immediate-canonical-promotion; image-approval-ledger; visual-canonical-sync; project-gdd-sheet; gdd-workspace; proposed-sheet-change",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "planning-documentation-publication",
+      "frontmatter_description": "Use when creating, restructuring, updating, publishing, or validating registered project and discipline design documents with one Markdown or JSON source of truth and policy-driven human publications.",
+      "layer": "foundation",
+      "path": "skills/managing-design-documents/SKILL.md",
+      "skill_id": "managing-design-documents",
+      "source_sha256": "02383703e39b0ee0fd1aae39b6245a7d1c0c1424b0a434b3ac7c89dd5e7ae4d0"
+    },
+    {
+      "contract": {
+        "failure": "콜드 스타트 실패\n상태 불일치\n과도한 기본 컨텍스트\n승인 전 Codex Build\nCodex Plan 파일 수정\n비-Godot 파일 혼입\n지정 Branch 밖 Push\n기획 변경의 기술 변경 위장\n사용자 승인 전 병합",
+        "input": "현재 상태·다음 작업·위험을 새 채팅용으로 압축 갱신하거나, 승인된 기획을 마스터 계획과 단계별 Godot 구현 패키지로 변환해 Codex Plan·Build·GPT 검수·사용자 승인 흐름을 관리한다.",
+        "negative_trigger": "저장소 상태가 바뀌지 않은 단순 대화이거나 프로젝트 코어·통합 설계·패키지 범위가 승인되지 않은 상태에서 구현부터 시작하려는 경우다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "maintaining-project-context-and-handoff execution result with scope, evidence, and unresolved items.",
+        "owner": "project-operations",
+        "positive_trigger": "handoff; active-context-change; phase-boundary; new-chat; implementation-package-handoff; codex-plan-review; godot-package-handoff; resume-implementation",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "project-operations",
+      "frontmatter_description": "Use when a game-project task changes current status, next work, risks, decisions, gates, or ownership; when a new chat or worker must resume; or when approved planning must be converted into a staged GPT-to-Codex Godot implementation handoff without duplicating canonical documents.",
+      "layer": "foundation",
+      "path": "skills/maintaining-project-context-and-handoff/SKILL.md",
+      "skill_id": "maintaining-project-context-and-handoff",
+      "source_sha256": "1218eca05193f98a600ccc7928723b7ef3f3d295aea085e43d232975c9ecafd7"
+    },
+    {
+      "contract": {
+        "failure": "핵심 컨셉과 기능 목록 혼동\n벤치마크 기능 복사\n리뷰 표본 편향\n행동과 자기보고 혼동\n여러 변수 동시 실험\nPoC 범위 팽창\n프레임워크 결과의 실행안 부재\nDDD가 단순 자극으로 변질\n첫 의미 있는 보상 시간 미측정\n보상 인플레이션\n외부 DDD 약어 오해\nPoC 결과 미반영\nbenchmark-only decision\nplayer response missing\nprofessional evidence missing\nsystem boundary missing\ndifficulty reduced to health scaling\nunfair hidden information\nplayer input cheating\nattack budget missing\nthreat budget missing\ntension pacing missing\nsuccess punished by scaling\nadaptive difficulty oscillation\nhysteresis missing\ndifficulty change timing hidden\naccessibility confused with difficulty",
+        "input": "핵심 컨셉·뾰족한 재미·제약·DDD를 분석하고 비교 게임·플레이어 반응·행동 근거·플레이테스트를 개선안과 PoC·재조정 방향으로 변환한다.\n핵심 컨셉·뾰족한 재미·제약·DDD, 게임 시스템 경계, 난이도·전투 AI, 비교 게임·플레이어 반응·행동 근거·플레이테스트를 개선안과 PoC·재조정 방향으로 변환한다.",
+        "negative_trigger": "확정된 기획서의 단순 문장 편집, 단일 기능 구현, 출처 없는 인기 목록 수집, 이미 정의된 Vertical Slice 제작만 필요한 경우다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "analyzing-and-refining-game-concepts execution result with scope, evidence, and unresolved items.",
+        "owner": "game-design-strategy",
+        "positive_trigger": "core-concept; pointed-fun; game-direction; benchmark-research; competitor-analysis; player-reviews; user-sentiment; playtest-design; telemetry-events; funnel-analysis; ab-testing; swot; mda; dde; digital-dopamine-design; rapid-reward; instant-feedback; reward-latency; poc; concept-recalibration; production-direction; evidence-pack; professional-official-evidence; game-system-design; system-boundary; difficulty-design; combat-ai-design; adaptive-difficulty; dynamic-difficulty-adjustment; attack-budget; threat-budget; tension-pacing; enemy-ai-fairness",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "game-design-strategy",
+      "frontmatter_description": "Use when defining or reworking a game's core concept, pointed fun, constraints, game systems, difficulty, combat AI, Digital Dopamine Design, benchmark and player evidence, playtest or experiment design, PoC hypothesis, or production direction.",
+      "layer": "specialist",
+      "path": "skills/analyzing-and-refining-game-concepts/SKILL.md",
+      "skill_id": "analyzing-and-refining-game-concepts",
+      "source_sha256": "d05e90f03c069b78784edade1d2820f1838870e97f858c91c0141e1b5f78f554"
+    },
+    {
+      "contract": {
+        "failure": "대표성 부족\n내부 팀 반응만 사용\n빌드·표본·피드백 계약 누락\n파이프라인 증명 실패\n접근성·성능 미검증\nQuality Bar 변경\nstandalone core poc restored\nprototype quality mistaken for demo\ndemo validation missing",
+        "input": "대표 플레이 구간으로 핵심 재미, 목표 품질, 접근성·성능, 실제 플레이 증거와 제작 파이프라인을 함께 증명한다.",
+        "negative_trigger": "단일 기능 구현, 핵심 가설만 보는 작은 Prototype, 전체 MVP를 단순 나열하는 작업이다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "designing-vertical-slices execution result with scope, evidence, and unresolved items.",
+        "owner": "game-design-production",
+        "positive_trigger": "vertical-slice; first-playable; production-proof; quality-bar; pipeline-proof; playtest-evidence; external-playtest; accessibility-target; performance-budget; demo-first; polished-demo; vertical-slice-playtest; technical-spike",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "game-design-production",
+      "frontmatter_description": "Use when a project needs to validate its core experience, target quality, cross-system integration, content-production pipeline, representative playtest evidence, accessibility barriers, or target-platform performance through one playable segment.",
+      "layer": "specialist",
+      "path": "skills/designing-vertical-slices/SKILL.md",
+      "skill_id": "designing-vertical-slices",
+      "source_sha256": "97c137609865aab883af67ee84147d9572d1d21ff8acc36d3d595f525bb5fcbe"
+    },
+    {
+      "contract": {
+        "failure": "범위 오염\n비용·컨텍스트 과다\n결과 회수 실패",
+        "input": "대량 초안·분류 작업을 격리된 외부 AI 작업 공간에 위임한다.",
+        "negative_trigger": "작은 작업이거나 외부 AI가 필요하지 않다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "orchestrating-deepseek-worktrees execution result with scope, evidence, and unresolved items.",
+        "owner": "external-ai-operations",
+        "positive_trigger": "external-ai; large-draft; isolated-worktree",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "external-ai-operations",
+      "frontmatter_description": "Use when a large drafting, classification, comparison, or repetitive transformation task can be delegated to DeepSeek or another external model while Codex retains review and repository integration responsibility.",
+      "layer": "specialist",
+      "path": "skills/orchestrating-deepseek-worktrees/SKILL.md",
+      "skill_id": "orchestrating-deepseek-worktrees",
+      "source_sha256": "1fa4acafa2e2633391c8e7c9628b018b2f80e7a225d3483745838762df1f0ae3"
+    },
+    {
+      "contract": {
+        "failure": "범위 밖 변경\n검증 없는 반영\n오래된 참조 잔존\n변경 전파 누락\nCI 전체 검증 중복\n조건부 Job 누락\nActions 미실행을 통과 처리\n접근성 옵션 존재만 확인\n평균 FPS만 사용\n목표 장치 미검증\n원래 실패 미재현\n미실행 검사 통과 처리\n반복 회귀",
+        "input": "코드·데이터·문서·자산·CI 변경을 승인 계약, 최신 정본·참조, 실제 파일, 변경 위험별 Actions 계층, 접근성 장벽, 목표 플랫폼 성능, 실행 결과와 회귀 증거로 통합 검증한다.",
+        "negative_trigger": "변경이 없는 아이디어 비교, 전문 UI 시각 감사만 필요한 경우, 적용되지 않는 비기능 검사를 모든 L0 작업에 강제하는 경우, 같은 입력의 단순 검사 재실행이다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "reviewing-and-validating-project-changes execution result with scope, evidence, and unresolved items.",
+        "owner": "integrated-review",
+        "positive_trigger": "change-review; contract-check; external-ai-result; diff-review; reference-freshness; static-validation; runtime-validation; accessibility-review; input-barrier; performance-profile; target-platform; frame-time; memory-budget; ci-cost-optimization; github-actions-cost; ci-gate; regression; evidence-report",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "integrated-review",
+      "frontmatter_description": "Use when code, data, documents, assets, configuration, CI workflows, or external AI output must be checked against an approved work contract and verified with repository evidence, reference freshness, cost-aware CI execution, accessibility barriers, performance budgets, runtime behavior, and regression evidence before integration.",
+      "layer": "foundation",
+      "path": "skills/reviewing-and-validating-project-changes/SKILL.md",
+      "skill_id": "reviewing-and-validating-project-changes",
+      "source_sha256": "f90fc85fd16dfb930671bf4c534fa63133de709c51b92f9b0b7e5be6a5835870"
+    },
+    {
+      "contract": {
+        "failure": "오래된 경로·ID 잔존\n변경 소비자 갱신 누락\n중복 현행 정본\nManifest·해시 불일치\nLegacy 오탐\n새 채팅의 구버전 선택",
+        "input": "정본·경로·ID·Schema·정책·생성기 변경이 활성 참조·템플릿·테스트·파생본에 빠짐없이 전파됐는지 감사한다.",
+        "negative_trigger": "외부 참조가 없는 L0 오탈자 또는 동일 입력 검사 재실행이다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "auditing-canonical-reference-freshness execution result with scope, evidence, and unresolved items.",
+        "owner": "integrated-review-knowledge-governance",
+        "positive_trigger": "canonical-source-change; stale-reference; rename; path-migration; schema-change; skill-id-change; document-id-change; generator-change; publication-stale; propagation-gap",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "integrated-review-knowledge-governance",
+      "frontmatter_description": "Use when a patch, rename, consolidation, schema change, document update, generator change, or release may leave active files pointing to obsolete paths, superseded skill IDs, stale policies, outdated generated outputs, or canonical-source changes that were not propagated to dependent files.",
+      "layer": "specialist",
+      "path": "skills/auditing-canonical-reference-freshness/SKILL.md",
+      "skill_id": "auditing-canonical-reference-freshness",
+      "source_sha256": "8256ae213e1df3d4b4c4758793be2f8bee6f6d9c07445284f676f25b21071ac3"
+    },
+    {
+      "contract": {
+        "failure": "시각 일관성 실패\n모델 호환성 변경\n후처리 반복 실패\n생성 이미지를 자동 최종 자산으로 사용함\n기획 변경 뒤 stale 이미지 유지\n이미지 승인 로그·Sheet·Asset Ledger 전파 누락\n원출처·라이선스·유사성 검토 누락",
+        "input": "기획 중 세계관·인물·핵심루프·시스템·UI를 GPT 이미지·목업으로 시각화하거나, 기획 종료 후 Demo-First·상점·홍보용 후보를 생성하고 실제 화면·구현·권리·승인 상태를 검수한다.",
+        "negative_trigger": "기존 승인 이미지의 상태·경로 정리만 필요하다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "designing-art-prompts-and-technique-cards execution result with scope, evidence, and unresolved items.",
+        "owner": "art-ui",
+        "positive_trigger": "art-direction; image-prompt; technique-card; planning-visualization; final-visual-candidate; visual-qa-and-approval; image-mockup; image-approval; image-review-ledger",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "art-ui",
+      "frontmatter_description": "Use when recommending an art or UI visual technique, designing image-generation or image-editing prompts, generating planning or final-candidate images and mockups with GPT, recording reusable prompt patterns, or reviewing generated visuals before project approval.",
+      "layer": "specialist",
+      "path": "skills/designing-art-prompts-and-technique-cards/SKILL.md",
+      "skill_id": "designing-art-prompts-and-technique-cards",
+      "source_sha256": "7b2333333676162dc94c4166f564ab400c7a9490320bd1a41d2b84616ab4693a"
+    },
+    {
+      "contract": {
+        "failure": "목적 있는 디자인 오탐\n승인 전 자동 수정\n전후 렌더 누락\n플랫폼 어댑터 누락\n폴리싱으로 구조 결함 은폐\n효과 과잉\n반복 피로 미검증\n중단·재진입 중복 결과\nRegistry drift",
+        "input": "게임 UX/UI 경험·흐름·정보 구조·패턴·상태·접근성·Godot 계약을 설계하거나, 준비된 UI를 명확성·일관성·피드백·모션·음향·햅틱·반복 사용·성능 기준으로 폴리싱하거나, 구현된 Godot·Web UI를 실제 렌더·입력·폴백 증거로 감사·재검수한다.\nGodot·Web UI 결과를 A~E 영역으로 감사하고 사용자 승인 범위만 개선·재검수한다.",
+        "negative_trigger": "UI와 무관한 도메인 로직만 변경하거나, 실제 화면·UX 계약 없이 미감 취향만 평가하거나, 새 이미지 프롬프트·아트 자산 제작만 수행한다.\nUI 결과 감사 없이 새 이미지 프롬프트나 기술 카드만 설계한다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "auditing-and-refining-ui-art execution result with scope, evidence, and unresolved items.",
+        "owner": "art-ui",
+        "positive_trigger": "game-ux; ui-design; ui-information-architecture; interaction-pattern; ui-polishing; interaction-feedback; microinteraction; motion-feedback; audio-haptic-feedback; godot-ui; web-ui; runtime-ui-audit; visual-refinement; render-review; ui-art-audit",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "art-ui",
+      "frontmatter_description": "Use when planning, polishing, or reviewing game UX, UI information architecture, interaction patterns, input, accessibility, Godot UI contracts, rendered interface quality, or approved UI refinements without moving domain rules into presentation code.",
+      "layer": "specialist",
+      "path": "skills/auditing-and-refining-ui-art/SKILL.md",
+      "skill_id": "auditing-and-refining-ui-art",
+      "source_sha256": "0b3377c3901bd76270686de6932f3b451dfb1f7e67b1ae075a93d8e2e4f44898"
+    },
+    {
+      "contract": {
+        "failure": "공용·전용 경계 혼동\n제안·구현 PR 혼합\n승인 없는 구현\n미검증 규칙 승격\n프로젝트 고유 정보 유입",
+        "input": "프로젝트 교훈을 공용 원리로 분리해 BCP를 제출·검토하고 사용자 승인 범위만 별도 PR로 구현한다.",
+        "negative_trigger": "프로젝트 고유 값뿐이거나 공용화 근거·사용자 승인 없이 활성 Base를 직접 변경하려는 경우다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "managing-base-change-proposals execution result with scope, evidence, and unresolved items.",
+        "owner": "knowledge-management",
+        "positive_trigger": "project-learning; base-promotion; repeated-pattern; base-change-proposal; promotion-review; approved-base-change",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "knowledge-management",
+      "frontmatter_description": "Use when extracting reusable project knowledge, submitting a Base change proposal, reviewing an existing proposal, or implementing only a user-approved proposal through a separate change branch and PR.",
+      "layer": "foundation",
+      "path": "skills/managing-base-change-proposals/SKILL.md",
+      "skill_id": "managing-base-change-proposals",
+      "source_sha256": "4509b4f2ae23168adfda4332ec0f9c0a93b3698d1ee58287b3cc53d0b0ec705a"
+    },
+    {
+      "contract": {
+        "failure": "중요 기능을 전부 코어로 판정\n코어와 MVP 혼동\n기술 의존성과 제품 정체성 혼동\n근거 없는 확정\n문서·구현 충돌 누락",
+        "input": "기존 프로젝트에서 무엇이 정체성·핵심 경험·중심 시스템·기술 기반의 프로젝트 코어인지 근거와 제거·대체 테스트로 판정하고 코어·MVP 지원·콘텐츠·외피를 구분한다.",
+        "negative_trigger": "새 프로젝트의 코어를 승인·확정하는 기획 작업, 단순 핵심 컨셉 브레인스토밍, 실제 diff의 통합 검증만 필요한 경우다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "identifying-project-core execution result with scope, evidence, and unresolved items.",
+        "owner": "project-core-governance",
+        "positive_trigger": "project-core; core-identification; core-classification; core-loop-boundary; core-vs-mvp; identity-defining-system; technical-core; removal-test; change-impact",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "project-core-governance",
+      "frontmatter_description": "Use when an existing project needs an evidence-based, read-only determination of which experiences, loops, systems, rules, directions, or technical foundations are identity-defining project core rather than replaceable content, MVP support, or implementation detail.",
+      "layer": "foundation",
+      "path": "skills/identifying-project-core/SKILL.md",
+      "skill_id": "identifying-project-core",
+      "source_sha256": "9ba4f7b75a205e5f6c7a76f85d0242a7b74679d0d66c45c20bb99fbdff3bb4ac"
+    },
+    {
+      "contract": {
+        "failure": "승인 없는 CORE_CONFIRMED\n과도한 코어 범위\n기능 목록을 코어로 고정\n코어와 MVP 혼동\nPoC 반증 무시\n일반 변경으로 코어 암묵 변경",
+        "input": "PLAN Work Mode에서 새 프로젝트 또는 방향 재정의 프로젝트의 정체성·핵심 경험·코어 루프·중심 시스템·불변 조건·변경 가능 외피를 제안하고 스트레스 테스트한 뒤 사용자 승인으로 확정한다.",
+        "negative_trigger": "기존 프로젝트의 코어 사실만 읽기 전용으로 판정하거나, 사용자 승인 없이 코어를 확정하거나, 확정된 코어와 무관한 단일 기능을 구현하는 경우다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "establishing-project-core execution result with scope, evidence, and unresolved items.",
+        "owner": "game-design-strategy",
+        "positive_trigger": "establish-project-core; confirm-project-core; planning-core-contract; core-invariants; core-approval; core-protection-boundary; core-reopen",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "game-design-strategy",
+      "frontmatter_description": "Use in PLAN work when a new or changing project needs its identity-defining player promise, core actions, core loop, system anchors, invariants, changeable shell, and required technical foundations proposed, stress-tested, explicitly approved, and recorded as the project core contract.",
+      "layer": "specialist",
+      "path": "skills/establishing-project-core/SKILL.md",
+      "skill_id": "establishing-project-core",
+      "source_sha256": "42790bbe387f155d788cc8c0ed78a3a342a2174f679efd4c8558ae8492651649"
+    },
+    {
+      "contract": {
+        "failure": "레드팀 지적 전부 수용\n취향을 결함으로 판정\n프로젝트 코어 훼손\n기능 팽창\n보류·기각 항목 몰래 반영\n회귀 검토 누락\n병합 후 적대적 검토 누락\n최근 승인 Decision 누락\n이전 Decision 부활\nGitHub·Google Sheets 불일치\n중복 PR·구현 잔존\nrepository-wide stale authority\nuntouched consumer missing\nprompt contract drift\nhistory treated as current\nsearch results claimed as full inventory",
+        "input": "설계·계획·문서·코드·데이터·UX·병합 결과 또는 저장소 전체를 실패 관점으로 공격하고 비판을 재검증한 뒤, 검증된 Finding만 최소 수정·회귀 재검사한다. repository-wide-audit에서는 현행 권한·중복·stale·고아 파일·untouched 소비자·Prompt·파생본 drift를 전문 Skill과 연결해 감사한다.",
+        "negative_trigger": "칭찬·균형 평가만 요청됐거나, 같은 입력의 단순 검사 재실행이거나, 실제 변경의 정적·런타임 증거 검증만 필요한 경우다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "running-adversarial-review-and-refinement execution result with scope, evidence, and unresolved items.",
+        "owner": "integrated-review",
+        "positive_trigger": "adversarial-review; red-team-review; critique-refine; self-refine; failure-assumption; critique-validation; approved-refinement; regression-recheck; negative-review; post-merge-review; canonical-conflict; decision-omission; google-sheets-drift; merged-pr-regression; repository-wide-audit; full-file-audit; stale-file-audit; untouched-consumer-audit; prompt-drift",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "integrated-review",
+      "frontmatter_description": "Use when a design, plan, document, code proposal, data change, UX flow, repository, merged pull request, direct main decision commit, or other work product should be attacked as if it failed, its criticisms independently validated, only justified findings refined, and the revised result regression-checked without changing project core or adding unnecessary scope.",
+      "layer": "foundation",
+      "path": "skills/running-adversarial-review-and-refinement/SKILL.md",
+      "skill_id": "running-adversarial-review-and-refinement",
+      "source_sha256": "bf8b2ee0bdf1970364940d3fd135b5b4b067bde4c415c28ab199f871520e0d41"
+    },
+    {
+      "contract": {
+        "failure": "기능 회귀\n호환성 손실\n리팩토링과 기능 변경 혼합\n테스트 삭제로 통과\n불필요한 추상화",
+        "input": "승인된 동작·인터페이스·데이터 호환성을 유지하면서 코드·문서·자동화·Skill 구조의 중복과 복잡성을 줄인다.",
+        "negative_trigger": "기능·정책·Schema 변경이 주목적이거나 baseline과 회귀 검증 없이 구조를 바꾸려는 경우다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "refactoring-with-contract-preservation execution result with scope, evidence, and unresolved items.",
+        "owner": "structure-maintenance",
+        "positive_trigger": "refactor; code-smell; complexity-reduction; duplicate-removal; behavior-preservation; structural-improvement",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "structure-maintenance",
+      "frontmatter_description": "Use when code, documents, data structures, automation, or a skill system must be structurally improved by reducing duplication and complexity while preserving approved behavior, interfaces, data compatibility, outputs, and user-visible capabilities.",
+      "layer": "foundation",
+      "path": "skills/refactoring-with-contract-preservation/SKILL.md",
+      "skill_id": "refactoring-with-contract-preservation",
+      "source_sha256": "94f28256b532717375be715a2373c92c605b27bcdc7eac2f354f33381fa52261"
+    },
+    {
+      "contract": {
+        "failure": "기능 손실\nreference 발견 실패\n깨진 링크\n빈 라우터\n거대 reference 재생성\nnumeric compact limit\ncontent loss\ndeep reference chain",
+        "input": "비대해진 SKILL.md에서 항상 필요한 실행 계약만 남기고 조건부 상세를 연결된 reference로 이동한다.",
+        "negative_trigger": "단순 문장 교정이거나 안전 규칙·핵심 절차를 숨기는 축약을 하려는 경우다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "simplifying-skill-bodies execution result with scope, evidence, and unresolved items.",
+        "owner": "skill-context-optimization",
+        "positive_trigger": "skill-body-simplification; progressive-disclosure; context-reduction; reference-extraction; compact-skill; completeness-first; no-size-ceiling",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "skill-context-optimization",
+      "frontmatter_description": "Use when a SKILL.md or operating router has become hard to navigate and must preserve all required behavior while separating always-needed routing from conditional detail through linked references with verified progressive disclosure and no numeric size ceiling.",
+      "layer": "foundation",
+      "path": "skills/simplifying-skill-bodies/SKILL.md",
+      "skill_id": "simplifying-skill-bodies",
+      "source_sha256": "ce107673cf84ef6c6debc591117cd35fa58a2d3b8e29f6b05c99221f152b83ea"
+    },
+    {
+      "contract": {
+        "failure": "고유 기능 유실\n오삭제\n외부 링크 파손\n호환성 손실\n보류 자료 기본 읽기 혼입",
+        "input": "중복·죽은 자료·오래된 경로·행동을 바꾸지 않는 문장을 고유 기능과 호환성을 보존하며 병합·이동·보관·삭제한다.",
+        "negative_trigger": "사용·소비자·승인·롤백을 확인하지 못했거나 단순히 파일 수를 줄이려는 경우다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "pruning-stale-and-nonfunctional-material execution result with scope, evidence, and unresolved items.",
+        "owner": "repository-pruning",
+        "positive_trigger": "pruning; dead-material; stale-content; duplicate-content; orphan-reference; obsolete-artifact; repository-bloat",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "repository-pruning",
+      "frontmatter_description": "Use when skills, documents, templates, references, tests, or generated artifacts contain duplicated, stale, dead, unreachable, obsolete, or behavior-neutral material that should be reduced without losing unique capabilities, evidence, compatibility, or approved history.",
+      "layer": "foundation",
+      "path": "skills/pruning-stale-and-nonfunctional-material/SKILL.md",
+      "skill_id": "pruning-stale-and-nonfunctional-material",
+      "source_sha256": "dbd071405ce3aeb4e48427788d220c6ba1d8e4198610b20a454cd2e44ea55dc7"
+    },
+    {
+      "contract": {
+        "failure": "로컬 변경 유실\n무검토 자동 커밋\nforce push\n비밀 커밋\n동기화와 기능 검증 혼동",
+        "input": "로컬 checkout과 GitHub branch의 HEAD·diff·working tree·권한을 대조해 안전하게 refresh·publish·reconcile하고 최종 동등성을 검증한다.",
+        "negative_trigger": "저장소와 무관한 작업이거나 dirty/diverged 상태를 자동 force·reset으로 덮으려는 경우다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "synchronizing-local-and-github-state execution result with scope, evidence, and unresolved items.",
+        "owner": "git-operations",
+        "positive_trigger": "git-sync; local-remote-drift; pull; push; branch-divergence; working-tree; github-sync",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "git-operations",
+      "frontmatter_description": "Use when a local checkout and its GitHub branch must be compared, safely reconciled, refreshed, published, or verified as equivalent without overwriting uncommitted work, secrets, divergent history, or unreviewed changes.",
+      "layer": "specialist",
+      "path": "skills/synchronizing-local-and-github-state/SKILL.md",
+      "skill_id": "synchronizing-local-and-github-state",
+      "source_sha256": "20e8bfe8defe31357ab2e9b57172c69a64ef822238487939ab70d15d5a508b61"
+    },
+    {
+      "contract": {
+        "failure": "중간 결과 유실\n진행 중을 완료로 보고\n재개 지점 불명\n반복 질문\n비동기 완료 약속",
+        "input": "큰 다단계 작업을 검증 가능한 결과·checkpoint·부분 산출물·정확한 다음 행동으로 유지해 중단 후에도 재개 가능하게 한다.",
+        "negative_trigger": "10초 이내 단순 작업이거나 백그라운드·미래 완료를 약속하려는 경우다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "maintaining-long-running-task-continuity execution result with scope, evidence, and unresolved items.",
+        "owner": "execution-continuity",
+        "positive_trigger": "long-running-task; checkpoint; resume-work; partial-delivery; context-limit; tool-session-boundary",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "execution-continuity",
+      "frontmatter_description": "Use when a large multi-step task may exceed one response, tool session, context window, or execution attempt and must remain resumable through evidence-backed checkpoints, partial deliverables, explicit next actions, and truthful completion states.",
+      "layer": "foundation",
+      "path": "skills/maintaining-long-running-task-continuity/SKILL.md",
+      "skill_id": "maintaining-long-running-task-continuity",
+      "source_sha256": "753d236ad4d371037b1fbd52b716d1359bede3904932f602e830e80da7339fda"
+    },
+    {
+      "contract": {
+        "failure": "영역 누락\n빈 섹션을 완료로 판정\n자기보고와 행동 혼동\n표본·버전 누락\n채택 근거 단절",
+        "input": "게임 기획 운영체계에 시장·경쟁·SWOT·사용자·플레이테스트·튜토리얼·UX·텔레메트리·밸런스·가설·개선 결정 11영역을 설치·감사한다.",
+        "negative_trigger": "단일 벤치마크 질문만 있거나 근거 없는 연구 결과를 채우려는 경우다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "governing-game-user-research-coverage execution result with scope, evidence, and unresolved items.",
+        "owner": "games-user-research-governance",
+        "positive_trigger": "games-user-research; research-coverage; eleven-domains; tutorial-comprehension; ux-research; telemetry; balance-data; research-evidence",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "games-user-research-governance",
+      "frontmatter_description": "Use when a game project's design-document system must install, audit, plan, or synthesize complete Games User Research coverage across eleven required evidence domains without inventing findings or forcing irrelevant research activity.",
+      "layer": "specialist",
+      "path": "skills/governing-game-user-research-coverage/SKILL.md",
+      "skill_id": "governing-game-user-research-coverage",
+      "source_sha256": "62814af9e6f39673c5e8a932922647e152360d2c54f99a09f8c6e1621276ff00"
+    },
+    {
+      "contract": {
+        "failure": "지침과 학습자료 혼동\n검증·가설 혼동\n프로젝트 사례의 공용화\n연습·적용 연결 부족",
+        "input": "완료한 작업·도구·실수·결정을 사용자가 이해하고 재사용할 수 있는 개념·이유·예시·오해·연습 중심 학습 노트로 변환한다.",
+        "negative_trigger": "AI 실행 지침을 그대로 복사하거나 단순 작업 보고만 필요한 경우다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "creating-user-learning-notes execution result with scope, evidence, and unresolved items.",
+        "owner": "user-learning",
+        "positive_trigger": "learning-note; study-note; explain-workflow; user-education; concept-summary; practice-exercise",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "user-learning",
+      "frontmatter_description": "Use when completed project work, AI collaboration, tools, mistakes, or decisions should be converted into concise user-facing study notes that explain concepts, reasons, examples, misconceptions, practice steps, and reusable lessons rather than operational instructions for an AI.",
+      "layer": "specialist",
+      "path": "skills/creating-user-learning-notes/SKILL.md",
+      "skill_id": "creating-user-learning-notes",
+      "source_sha256": "e27aaed7677d391a8a7c38e2d8ae439c4a06bb1df6a357078a1110577f46d01d"
+    },
+    {
+      "contract": {
+        "failure": "정본과 상태 불일치\n장식 우선\n원본 경로 누락\n접근성 문제\n과도한 JavaScript",
+        "input": "사용자가 HTML 대시보드를 명시적으로 요청했거나 기존 프로젝트 대시보드 유지보수·시각 상태판이 필요한 경우에만 정본 연결형 대시보드를 만든다.",
+        "negative_trigger": "GitHub 정본과 프로젝트 GDD Google Sheets로 전체 흐름·상태 확인·수정이 충분하거나 사용자가 HTML 대시보드를 사용하지 않는 경우다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "building-project-visual-dashboards execution result with scope, evidence, and unresolved items.",
+        "owner": "project-visualization",
+        "positive_trigger": "project-dashboard; html-dashboard; system-map; mvp-board; ux-flow; visual-status",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "project-visualization",
+      "frontmatter_description": "Use when project concepts, loops, system relationships, MVP status, UX flows, evidence, risks, or next work need an editable visual dashboard while canonical decisions remain in registered GitHub documents and data sources.",
+      "layer": "specialist",
+      "path": "skills/building-project-visual-dashboards/SKILL.md",
+      "skill_id": "building-project-visual-dashboards",
+      "source_sha256": "405917e5f56ff6c8a2e4aa99472f20e7d7ae2a46d2665a3453121b6d7ca0905c"
+    },
+    {
+      "contract": {
+        "failure": "재현 없는 수정\n연쇄 오류를 원인으로 오인\n대규모 추측 변경\n엔진 버전 누락\n수정 후 재검증 누락",
+        "input": "Godot·Unity 등 엔진의 오류·충돌·잘못된 로딩·연결·상태 동작을 재현하고 원인을 격리해 최소 수정 후 재검증한다.",
+        "negative_trigger": "재현·로그·실행 환경 없이 구조 전체를 추측 수정하거나 일반 코드 리뷰만 필요한 경우다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "diagnosing-game-engine-runtime-failures execution result with scope, evidence, and unresolved items.",
+        "owner": "game-engine-debugging",
+        "positive_trigger": "godot-error; unity-error; runtime-failure; scene-node-signal; crash; state-corruption; engine-debugging",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "game-engine-debugging",
+      "frontmatter_description": "Use when a Godot, Unity, or comparable game-engine project crashes, throws errors, loads incorrectly, loses signals or references, corrupts state, or behaves differently at runtime and needs evidence-based reproduction, isolation, minimal repair, and revalidation.",
+      "layer": "specialist",
+      "path": "skills/diagnosing-game-engine-runtime-failures/SKILL.md",
+      "skill_id": "diagnosing-game-engine-runtime-failures",
+      "source_sha256": "6ca22bfd68cdbb201a1bf042bf6c2ecec4fc6bbc3eecf31765b621ca20e2f70f"
+    },
+    {
+      "contract": {
+        "failure": "파일명만으로 레거시 판정\n승인 전 삭제\n고유 정보 유실\n활성 참조 파손\n호환 stub 누락\n아카이브 인덱스 누락\n복구 경로 누락\n프로젝트 경로 하드코딩",
+        "input": "현행·레거시 문서, 자산, 경로, Skill 패키지와 파생본을 보존적으로 분류·통합·아카이브하거나 승인 삭제해야 한다.",
+        "negative_trigger": "레거시 수명주기와 무관한 단일 오탈자 수정이거나 프로젝트 운영체계 전체 설치·마이그레이션이다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "governing-legacy-retention-and-archives execution result with scope, evidence, and unresolved items.",
+        "owner": "knowledge-governance-and-archives",
+        "positive_trigger": "legacy-retention; archive-governance; legacy-file; versioned-duplicate; stale-copy; canonical-merge; compatibility-stub; archive-history; delete-candidate; legacy-reconciliation",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "knowledge-governance-and-archives",
+      "frontmatter_description": "Use when current and legacy documents, assets, paths, skill packages, generated derivatives, evidence, backup folders, blank placeholders, or merged branches must remain recoverable without retaining current authority.",
+      "layer": "foundation",
+      "path": "skills/governing-legacy-retention-and-archives/SKILL.md",
+      "skill_id": "governing-legacy-retention-and-archives",
+      "source_sha256": "57b56e3b3fd88fc15977e5599829c16212221863044ba39f607f94d3e700eec3"
+    },
+    {
+      "contract": {
+        "failure": "검색 없는 직접 제작\n라이선스 미확인\nGodot 버전 불일치\n유지보수 중단\n저장 데이터 lock-in\n제거 계획 누락\n사용자 승인 없는 구매·설치\n프로젝트 코어의 플러그인 종속",
+        "input": "Godot 기능·도구·에셋·통합을 새로 만들기 전에 기본 기능, 공식 Store, 기존 Asset Library, GitHub, itch.io와 상용 후보를 조사·평가해야 한다.",
+        "negative_trigger": "외부 자산과 무관한 오탈자·단일 수치 수정이거나 이미 승인된 동일 버전 자산을 단순 재사용한다.",
+        "next_step": "Route the outcome through the applicable PLAN, BUILD, REVIEW, or handoff stage.",
+        "output": "evaluating-godot-assets-and-plugins-before-creation execution result with scope, evidence, and unresolved items.",
+        "owner": "godot-asset-and-plugin-evaluation",
+        "positive_trigger": "godot-asset-search; godot-plugin-search; commercial-plugin; asset-store; asset-library; itchio-asset; github-addon; reuse-before-build; third-party-license; build-custom-decision",
+        "verification": "Validate the stated output against the approved contract and relevant evidence."
+      },
+      "discipline": "godot-asset-and-plugin-evaluation",
+      "frontmatter_description": "Use when a Godot feature, editor tool, content pipeline, UI system, integration, art asset, audio asset, shader, template, or reusable subsystem might already exist as a built-in capability, free asset, open-source addon, or commercial plugin before custom creation begins.",
+      "layer": "specialist",
+      "path": "skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md",
+      "skill_id": "evaluating-godot-assets-and-plugins-before-creation",
+      "source_sha256": "24064a03ab4b6f2cde892c87819a72eaefa4e6971d44c58d81d8919784d3f910"
+    }
+  ],
+  "source_of_truth": "skills/SKILL_REGISTRY.json"
+}

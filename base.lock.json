@@ -1,0 +1,13 @@
+{
+  "active_skill_count": 27,
+  "artifact_role": "base-release-lock",
+  "final_release": "v9.0.0",
+  "final_release_state": "WAVE_2_HOLD",
+  "generator": "tools/build_base_v9_artifacts.py",
+  "registry_sha256": "76737e91af986533c34f82598731ad9d8ef96320f947e4b9a4734b9b1dc245d8",
+  "release_line": "v9.0.0-rc.1",
+  "release_state": "RC_IN_PROGRESS",
+  "schema_version": 1,
+  "snapshot_sha256": "30175dec406c47f3897c9811ebc0425d516b4040a8b045704e040776e4f07500",
+  "source_of_truth": "skills/SKILL_REGISTRY.json"
+}

@@ -99,43 +99,16 @@ GitHub 사용량 → GITHUB_USAGE_BUDGET
 
 한 질문에는 현행 책임 원본 하나만 둔다. 같은 서술을 Markdown과 JSON 양쪽에 독립 원본으로 유지하지 않는다. 벤치마크·리뷰·커뮤니티는 요구사항이나 구현 상태의 정본을 대체하지 않는다.
 
-## 4. 활성 실행 스킬
+## 4. Active Skill Registry View
 
-핵심 통합 실행 Skill 13개와 구조·운영·지원 Skill 14개를 합쳐 **전체 ACTIVE Skill은 27개**다. 기계적 권한은 `skills/SKILL_REGISTRY.json`이 가진다.
+- [Current Active Base Skills](generated/BASE_ACTIVE_SKILLS.md): generated current list, responsibility, and triggers
+- `skills/SKILL_REGISTRY.json`: machine authority
+- `skills/BASE_V9_SKILL_SNAPSHOT.json`: deterministic snapshot and contract projection
+- `skills/LEGACY_SKILL_ALIASES.md`: compatibility path for prior identifiers
 
-| 작업 | Skill | Skill Mode 또는 호출 조건 |
-|---|---|---|
-| 의도·Work Mode·Skill 자동 라우팅·실행 보고 | `managing-project-intake-and-work-contract` | `route` → 필요 시 `clarify` → `contract` → 필요 시 `decompose-and-sequence` → `execution-report` |
-| Grill Me 핵심 의사결정 인터뷰 | `managing-project-intake-and-work-contract` | `clarify` + `references/grill-me-protocol.md`; main·PR·정본·Sheets 대조 → 중복 제거 → 중요 질문 하나 → 권장안 → 승인 즉시 정본·main·Sheets 동기화 |
-| 운영체계 신규 설치·기존 감사·마이그레이션·Health Review | `managing-game-project-operating-system` | `install` / `audit` / `migrate` / `verify`; CURRENT_CONFIRMED_DECISIONS·관련 PR·프로젝트 Sheets 포함 |
-| 구형·중복·버전명 파일 갱신·통합·아카이브·승인 삭제 | `managing-game-project-operating-system` | `audit` → `reconcile-legacy` → `verify` |
-| 기획 책임 원본 작성·구조 변경·발행·검수 | `managing-design-documents` | `author` / `update` / `restructure` / `publish` / `validate` |
-| 분야별 스킬 생성·통합·학습 | `evolving-project-discipline-skills` | 스킬 추가·중복·반복 실패·Registry 변경 |
-| Active Context·세션 Handoff | `maintaining-project-context-and-handoff` | `context-refresh` / `session-handoff` / `resume` |
-| GPT→Codex 단계별 Godot 구현 인계 | `maintaining-project-context-and-handoff` | `implementation-package-handoff`: 마스터 계획 → Codex 읽기 전용 Plan → GPT 계약 갱신 → Codex Build → GPT 검수 → `AUTO_MERGE_AFTER_REQUIRED_CHECKS` 또는 예외 수동 병합 |
-| GitHub Pro Ruleset·자동 병합·Budget 검수 | `reviewing-and-validating-project-changes` | `contract-check` + `ci-cost-optimization` + `static-validation` + 실제 Repository setting·Actions 증거 → `evidence-report` |
-| 핵심 컨셉·뾰족한 재미·DDD·게임 시스템·난이도·전투 AI·기획 정렬 | `analyzing-and-refining-game-concepts` | `frame` / `constrain` / `sharpen` / `structure` / `system-design` / `difficulty-and-combat-ai` / `analyze` |
-| 프로젝트 코어 식별·코어/MVP 경계 | `identifying-project-core` | `inventory` / `extract-candidates` / `dependency-map` / `removal-and-change-test` / `classify` / `core-report` |
-| PLAN 단계 프로젝트 코어 확정 | `establishing-project-core` | `propose` / `stress-test` / `confirm` / `lock` / `reopen` |
-| 적대적 검토·비판 검증·개선·회귀 | `running-adversarial-review-and-refinement` | `attack` / `validate-critique` / `refine-approved-findings` / `regression-recheck` / `decision-report`; 전체 파일·구형 계약·untouched 소비자는 `repository-wide-audit`; 병합 후 새 main·Decision·정본·Sheets 재검사 |
-| 경쟁작·플레이어 반응·행동 근거 | `analyzing-and-refining-game-concepts` | `benchmark-and-player-research`; 분야 횡단 조사는 `docs/knowledge/game-development/README.md`와 Evidence Pack·Case Card 사용 |
-| 플레이테스트·이벤트·퍼널·A/B | `analyzing-and-refining-game-concepts` | `playtest-and-experiment` / `poc-contract` / `recalibrate` / `production-gate` |
-| Vertical Slice | `designing-vertical-slices` | `slice-contract` / `quality-bar` / `pipeline-proof` / `playtest-evidence` / `decision-gate` |
-| 외부 AI 작업 격리 | `orchestrating-deepseek-worktrees` | 대량 초안·분류 위임 |
-| 프로젝트 변경 통합 검증 | `reviewing-and-validating-project-changes` | `contract-check` / `external-source-review` / `static-validation` / `runtime-validation` / `regression` / `evidence-report` |
-| CI 실행 비용·중복 검증 최적화 | `reviewing-and-validating-project-changes` | `ci-cost-optimization` → `static-validation` → 가능한 실제 Actions 실행 → `evidence-report` |
-| 접근성 장벽 검수 | `reviewing-and-validating-project-changes` | 핵심 정보·입력·UI·시간·난이도·모션 영향 시 `accessibility-review` |
-| 목표 플랫폼 성능 | `reviewing-and-validating-project-changes` | 렌더링·콘텐츠 부하·네트워크·플랫폼 영향 시 `performance-profile` |
-| 정본·참조·파생본 최신성 | `auditing-canonical-reference-freshness` | 경로·ID·Schema·정책·생성기·정본 전파 가능성 시 조건부 호출 |
-| 아트 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` | 새 아트 방향·생성·편집 프롬프트 |
-| 게임 UX/UI 설계·폴리싱·Godot·Web UI 감사 | `auditing-and-refining-ui-art` | 경험·정보 구조·상태·접근성·Godot 계약 설계 / `polishing-pass` / 실행 결과 A~E 감사·승인된 개선·전후 렌더 재검수 |
-| 프로젝트 교훈·BCP 생명주기 | `managing-base-change-proposals` | `extract` / `submit` / `review` / 승인 뒤 `implement` / `verify` |
+The documentation map does not duplicate active-Skill lists. The active Skill count is an observed Registry value.
 
-통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 Skill Mode로 변환한다. 새 Registry·문서·작업 계약에는 새 ID만 사용한다.
-
-Base 내부에서 `DDD`는 `Digital Dopamine Design`이다. 첫 의미 있는 보상·행동 피드백·보상 사다리·다음 행동·피로를 분석하며 실제 도파민 분비량이나 의학적 중독 진단으로 사용하지 않는다. 외부 자료의 동명 약어는 출처 정의 확인 전 임의 해석하지 않는다.
-
-### 프로젝트 GDD·대시보드 선택 기준
+## 프로젝트 GDD·대시보드 선택 기준
 
 일반 프로젝트 기획·상태 확인은 GitHub 정본과 **프로젝트 GDD Google Sheets**를 우선한다. HTML 대시보드는 사용자가 명시적으로 요청하거나 기존 대시보드 유지보수가 필요한 경우에만 호출한다.
 
@@ -282,3 +255,32 @@ PLAN: audit only
 | 엔진 런타임 디버깅 | `diagnosing-game-engine-runtime-failures` | `reproduce / isolate / fix-minimally / revalidate / prevent` |
 
 원문 책임 누락 검증: `docs/SKILL_COVERAGE_MAP.md` → `skills/SKILL_COVERAGE.json` → `tools/check_skill_system_coverage.py`.
+
+## Base v9 RC 운영 문서
+
+- [Base Rules Version](BASE_RULES_VERSION.md)
+- [System Map](operations/BASE_V9_SYSTEM_MAP.md)
+- [Maturity Model](operations/BASE_V9_MATURITY_MODEL.md)
+- [RC Design](operations/BASE_V9_RC_DESIGN.md)
+- [Implementation Plan](operations/BASE_V9_IMPLEMENTATION_PLAN.md)
+- [Migration Map](operations/BASE_V9_MIGRATION_MAP.md)
+- [Release Contract](operations/BASE_V9_RELEASE_CONTRACT.md)
+- [Integrity Audit](operations/BASE_V9_INTEGRITY_AUDIT.md)
+- [Adversarial Review Report](operations/BASE_V9_ADVERSARIAL_REVIEW_REPORT.md)
+- [Current Active Base Skills](generated/BASE_ACTIVE_SKILLS.md)
+- [Open-Source Godot UI Reference Catalog](knowledge/OPEN_SOURCE_GODOT_UI_REFERENCE_CATALOG.md)
+- [Held Common Project Adoption Work Order](../templates/prompts/BASE_V9_COMMON_PROJECT_ADOPTION_WORK_ORDER.md)
+
+## Retained route index
+
+- `repository-wide-audit`: integrated mode of `running-adversarial-review-and-refinement` for full-file, legacy-contract, untouched-consumer, and prompt-drift audits.
+- UX/UI design, 폴리싱, and runtime-result audit: `auditing-and-refining-ui-art`.
+- Grill Me 핵심 의사결정 인터뷰
+- `clarify` + `references/grill-me-protocol.md`
+- GPT→Codex 단계별 Godot 구현 인계
+- `implementation-package-handoff`
+- GitHub Pro 저장소 운영
+- GitHub Pro 보호·Ruleset·자동 병합
+- GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md
+- GITHUB_USAGE_BUDGET.md
+- Game-system routes: `system-design` / `difficulty-and-combat-ai` → `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md`

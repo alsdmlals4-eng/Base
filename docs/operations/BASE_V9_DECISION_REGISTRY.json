@@ -1,0 +1,21 @@
+{
+  "artifact_role": "base-v9-decision-registry",
+  "decisions": [
+    {
+      "decision": "Active Skill count is Registry-derived and not fixed.",
+      "id": "BASE-V9-001",
+      "status": "CONFIRMED"
+    },
+    {
+      "decision": "Google Sheets remain USER_FACING_GDD_WORKSPACE for projects; Base is BASE_EXCLUDED.",
+      "id": "BASE-V9-002",
+      "status": "CONFIRMED"
+    },
+    {
+      "decision": "v9.0.0 final release requires project adoption and verification evidence.",
+      "id": "BASE-V9-003",
+      "status": "HOLD"
+    }
+  ],
+  "schema_version": 1
+}

@@ -2,6 +2,17 @@
 
 ## Unreleased - Base audit and operating-contract consistency
 
+- Base v9.0.0-rc.1 adds Registry-derived plugin metadata, `base.lock.json`, a
+  deterministic active-Skill snapshot and summary, a project-hold Sheet control
+  contract, release/maturity/system/migration canon, and a Base-only integrity
+  checker. Active Skill count is now an observed generated value, not a fixed
+  policy number; `v9.0.0` remains `WAVE_2_HOLD` pending separate project evidence.
+- The UX/UI reference card now requires open-source template license, commercial
+  use, attribution, modification/redistribution, Godot compatibility,
+  maintenance, dependency-removal, non-copying, transformation, and validation
+  records. The Godot UI contract explicitly adds focus, input, accessibility,
+  long Korean text, and resolution verification.
+
 - 게임 시스템·난이도·전투 AI 설계 구조를 기존 `analyzing-and-refining-game-concepts`의 `system-design`·`difficulty-and-combat-ai` Mode로 통합했다. 새 독립 Skill을 추가하지 않음으로써 주 책임 분야 중복을 피하고, 전용 reference·프로젝트 contract·Registry trigger·사람용 라우팅·게임 기획 Guide·TDD 계약을 연결했다.
 
 - 프로젝트 Google Sheets를 `USER_FACING_GDD_WORKSPACE`로 정의해 사용자의 전체 GDD 흐름 확인·직접 수정과 AI의 GitHub·Sheet 공동 참조를 연결했다. Sheet-only 수정은 `PROPOSED_SHEET_CHANGE`로 보존하고 승인 후 GitHub 정본·Commit·Sheet 재조회로 동기화한다.

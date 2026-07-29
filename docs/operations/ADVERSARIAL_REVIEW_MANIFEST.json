@@ -1,0 +1,22 @@
+{
+  "artifact_role": "adversarial-review-manifest",
+  "attacks": [
+    "authority-drift",
+    "generated-artifact-drift",
+    "orphan-or-cycle",
+    "duplicate-responsibility",
+    "legacy-alias-loss",
+    "release-overclaim"
+  ],
+  "evidence_required": [
+    "focused-tests",
+    "full-regression",
+    "generator-idempotence",
+    "ci-evidence-or-not-run-status"
+  ],
+  "report": "docs/operations/BASE_V9_ADVERSARIAL_REVIEW_REPORT.md",
+  "required_gate": "adversarial-gate",
+  "schema_version": 1,
+  "scope": "Base v9.0.0-rc.1 only",
+  "status": "REVIEWED_WITH_FOLLOWUP"
+}

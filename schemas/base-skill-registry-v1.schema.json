@@ -59,6 +59,8 @@
           "last_reviewed_at": {"type": "string", "format": "date"},
           "last_reviewed_commit": {"type": "string", "minLength": 7},
           "knowledge_state": {"enum": ["OBSERVATION", "HYPOTHESIS", "PATTERN", "VERIFIED", "PROMOTION_CANDIDATE"]}
+          ,"responsibility_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"}
+          ,"depends_on": {"type": "array", "items": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"}, "uniqueItems": true}
         },
         "additionalProperties": false
       }

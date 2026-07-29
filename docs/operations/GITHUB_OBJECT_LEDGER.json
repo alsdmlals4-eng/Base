@@ -1,0 +1,45 @@
+{
+  "artifact_role": "github-object-ledger",
+  "object_types": [
+    "pr",
+    "issue"
+  ],
+  "objects": [
+    {
+      "disposition": "REASSESS",
+      "number": 5,
+      "type": "pr"
+    },
+    {
+      "disposition": "CONSOLIDATE_REVIEW",
+      "number": 18,
+      "type": "pr"
+    },
+    {
+      "disposition": "ADOPT_AS_CONTRACT",
+      "number": 28,
+      "type": "pr"
+    },
+    {
+      "disposition": "REASSESS_BOUNDARY",
+      "number": 29,
+      "type": "pr"
+    },
+    {
+      "disposition": "ADOPT_AS_GATE",
+      "number": 30,
+      "type": "pr"
+    },
+    {
+      "disposition": "IMPLEMENTATION_SOURCE",
+      "number": 54,
+      "type": "issue"
+    },
+    {
+      "disposition": "FINAL_RELEASE_HOLD",
+      "number": 55,
+      "type": "issue"
+    }
+  ],
+  "schema_version": 1
+}

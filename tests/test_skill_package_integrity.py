@@ -152,6 +152,7 @@ class SkillPackageIntegrityTests(unittest.TestCase):
             ROOT / "docs/OPERATING_MODEL.md",
             ROOT / "docs/DOCUMENTATION_MAP.md",
             ROOT / "templates/project-operations/AI_WORKFLOW.md",
+            ROOT / "docs/generated/BASE_ACTIVE_SKILLS.md",
         )
         combined = "\n".join(path.read_text(encoding="utf-8") for path in entrypoints)
         missing = [

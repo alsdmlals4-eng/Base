@@ -1,5 +1,25 @@
 # Base Skill Learning Log
 
+## 2026-07-30 Base v9 RC: generated authority instead of fixed Skill count
+
+- **Trigger:** Base needed a release-candidate operating contract without treating
+  the current active Skill count as an architecture target.
+- **Finding:** Human-maintained count summaries can drift from the Registry and
+  hide whether a Skill has a complete routing and verification boundary.
+- **Decision:** Keep the Registry and Skill frontmatter authoritative; generate
+  the plugin manifest, Base lock, active-Skill view, and snapshot from them.
+  Re-evaluate open Skill proposals through the migration map instead of merging
+  their file sets directly.
+- **Evidence:** Focused v9 RED→GREEN tests, deterministic second-generator run,
+  Base v9 integrity check, existing skill coverage check, and full local suite.
+- **Boundary:** No project repository or Google Sheet was read or written. Project
+  adoption and the final v9.0.0 release remain `WAVE_2_HOLD`.
+- **Learning state:** `PATTERN` for Base governance; project-level outcomes remain
+  `UNVERIFIED` until separately authorized adoption work produces evidence.
+- **Next trigger:** Re-run the migration and responsibility-boundary review when a
+  project adoption supplies new evidence or a proposed Skill has a distinct
+  input/output/authority/verification boundary.
+
 ## 2026-07-29 — UX/UI 폴리싱 패스와 Registry 전파 교훈
 
 - **Trigger:** UI 폴리싱 실무 방법을 외부 공식 근거와 함께 조사해 Base Skill·작업 구조에 반영하라는 요청.
