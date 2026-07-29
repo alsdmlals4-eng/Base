@@ -38,6 +38,8 @@
 | ChatGPT·Codex·외부 AI를 어떻게 안전하고 검증 가능하게 협업시키는가? | `AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md` | Prompt 계약·Context Pack·Evals·독립 검수 |
 | Godot·플랫폼·성능·제작 파이프라인·출시를 어떻게 기획에 연결하는가? | `TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md` | 기술 계약·성능 예산·반복 제작성·출시 증거 |
 | 어떤 공식·학술·현업 자료를 우선 참조하는가? | `REFERENCE_SOURCE_CATALOG.md` | 출처 메타데이터·사용 범위·재검증 조건 |
+| 작은 표본·저충실도 사람 세션을 어떻게 과장 없이 설계하는가? | `HUMAN_VALIDATION_ARTIFACT_GOVERNANCE.md` | 사람 세션 패킷·claim ceiling·미검증 분리 |
+| 실제 테스터가 없을 때 AI 가상 페르소나로 무엇을 검토할 수 있는가? | `SYNTHETIC_TESTER_SIMULATION_GOVERNANCE.md` | 프로젝트 구조 분석·T6 합성 위험 검토·TEST 게이트 |
 
 ## 4. 기존 Skill 라우팅
 
@@ -53,10 +55,14 @@
 | Skill 중복·과분할·학습 | `evolving-project-discipline-skills` | 반복 실패·Case·새 책임 경계 증거 |
 | 프로젝트 교훈의 Base 승격 | `managing-base-change-proposals` | 공용 원리와 프로젝트 고유값 분리 |
 
+합성 테스터 작업은 별도 Skill을 만들지 않는다. 프로젝트 Registry가 선택한 게임 디자인·유저리서치·UX·QA Skill과 Base GUR·적대적 검토·통합검증을 조합한다.
+
 ## 5. Template
 
 - 통합 조사 기록: `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`
 - 성공·실패·혼합 사례: `templates/research/GAME_DEVELOPMENT_CASE_CARD.md`
+- 사람 검증 세션 패킷: `templates/research/HUMAN_VALIDATION_SESSION_PACKET.md`
+- 합성 테스터 시뮬레이션: `templates/research/SYNTHETIC_TESTER_SIMULATION_PACKET.md`
 - 게임 벤치마크·플레이어 근거: `templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md`
 
 프로젝트는 Base 문서를 복제하지 않는다. 프로젝트 저장소에는 결정 질문, 선택한 Coverage, Evidence ID, 개선 판정, 실제 기획 반영, 검증 결과와 프로젝트 고유 Case만 둔다.
@@ -73,6 +79,6 @@
 
 ## 7. 완료 판정
 
-이 허브를 읽거나 문서를 작성한 것만으로 기획·구현·접근성·성능·출시가 검증된 것은 아니다. 완료는 선택한 기존 Skill의 Output Contract와 실제 프로젝트 증거를 따른다.
+이 허브를 읽거나 문서를 작성한 것만으로 기획·구현·접근성·성능·출시가 검증된 것은 아니다. 합성 테스터 결과도 실제 사람 행동·재미·선호·조작감·접근성·성능을 검증하지 않는다. 완료는 선택한 기존 Skill의 Output Contract와 실제 프로젝트 증거를 따른다.
 
-계약·라우팅·중복 Skill 방지·Learning Log 연결은 `tests/test_evidence_based_game_development_knowledge.py`, `tests/test_evidence_knowledge_workflow_contract.py`, `.github/workflows/validate-evidence-knowledge.yml`의 전용 GitHub Actions에서 검증한다. Workflow 파일 존재와 실제 실행 성공을 분리해 확인한다.
+계약·라우팅·중복 Skill 방지·Learning Log 연결은 `tests/test_evidence_based_game_development_knowledge.py`, `tests/test_evidence_knowledge_workflow_contract.py`, `tests/test_human_validation_artifact_governance.py`, `tests/test_synthetic_tester_simulation_governance.py`, `.github/workflows/validate-evidence-knowledge.yml`의 전용 GitHub Actions에서 검증한다. Workflow 파일 존재와 실제 실행 성공을 분리해 확인한다.
