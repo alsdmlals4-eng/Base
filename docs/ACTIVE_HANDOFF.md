@@ -1,8 +1,8 @@
 # UX/UI 공용 체계 확산 Active Handoff
 
-> 갱신: 2026-07-29 20:57 KST  
-> Mode: `session-handoff`  
-> 상태: `DOCUMENTATION_AND_VALIDATION_CONTRACTS_MERGED / HUMAN_VALIDATION_PENDING`  
+> 갱신: 2026-07-29 20:57 KST
+> Mode: `session-handoff`
+> 상태: `DOCUMENTATION_AND_VALIDATION_CONTRACTS_MERGED / HUMAN_VALIDATION_PENDING`
 > Base UX/UI 기준 커밋: `0fd95f4513343e77fd664af2763a01b02f52545b`
 
 이 문서는 UX/UI 공용 체계의 프로젝트 확산 작업을 다음 채팅이나 작업자가 즉시 재개하도록 연결하는 압축 라우터다. 프로젝트별 규칙·수치·구현 상태를 복제하지 않으며, 상세 내용은 각 저장소의 책임 원본·계획·Issue가 소유한다.
