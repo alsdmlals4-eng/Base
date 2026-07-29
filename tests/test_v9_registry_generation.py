@@ -1,16 +1,18 @@
 from __future__ import annotations
 
+import ast
 import hashlib
 import importlib.util
 import json
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PYTHON = ROOT / ".venv/Scripts/python.exe"
+PYTHON = Path(sys.executable)
 GENERATOR = ROOT / "tools/build_base_v9_artifacts.py"
 INTEGRITY_CHECK = ROOT / "tools/check_base_v9_integrity.py"
 REGISTRY = ROOT / "skills/SKILL_REGISTRY.json"
@@ -43,6 +45,17 @@ class V9RegistryGenerationTests(unittest.TestCase):
             capture_output=True,
             check=False,
         )
+
+    def test_generator_subprocess_uses_the_current_python_interpreter(self) -> None:
+        source = (ROOT / "tests/test_v9_registry_generation.py").read_text(encoding="utf-8")
+        tree = ast.parse(source)
+        assignment = next(
+            node
+            for node in tree.body
+            if isinstance(node, ast.Assign)
+            and any(isinstance(target, ast.Name) and target.id == "PYTHON" for target in node.targets)
+        )
+        self.assertEqual(ast.unparse(assignment.value), "Path(sys.executable)")
 
     def test_text_source_hash_ignores_line_ending_style(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
