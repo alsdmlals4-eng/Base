@@ -24,18 +24,34 @@ on:
       - "tests/test_human_validation_artifact_governance.py"
       - "tests/test_synthetic_tester_simulation_governance.py"
       - "tests/test_prompt_recipe_reference_contract.py"
+      - "tools/integrate_pr66.py"
       - ".github/workflows/validate-evidence-knowledge.yml"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: evidence-knowledge-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
+  integrate-pr66:
+    if: github.event_name == 'pull_request' && github.head_ref == 'integrate/pr66-game-design-difficulty'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out integration branch
+        uses: actions/checkout@v4
+        with:
+          ref: integrate/pr66-game-design-difficulty
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Integrate verified PR 66 head
+        run: python tools/integrate_pr66.py
+
   evidence-knowledge-contract:
+    if: github.head_ref != 'integrate/pr66-game-design-difficulty'
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
