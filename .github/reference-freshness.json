@@ -108,6 +108,27 @@
         "docs/DOCUMENTATION_MAP.md",
         "templates/project-operations/README.md"
       ]
+    },
+    {
+      "name": "project-gdd-google-sheets-entrypoints",
+      "canonical_path": "docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md",
+      "reference_tokens": [
+        "docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md",
+        "PROJECT_GDD_GOOGLE_SHEETS_POLICY.md"
+      ],
+      "required_consumers": [
+        "README.md",
+        "START_HERE.md",
+        "AGENTS.md",
+        "docs/OPERATING_MODEL.md",
+        "docs/DOCUMENTATION_MAP.md",
+        "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md",
+        "skills/managing-project-intake-and-work-contract/SKILL.md",
+        "skills/managing-game-project-operating-system/SKILL.md",
+        "skills/managing-design-documents/SKILL.md",
+        "templates/project-operations/PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md",
+        "templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md"
+      ]
     }
   ],
   "coupled_change_rules": [
@@ -130,7 +151,8 @@
         "tests/test_reference_freshness.py",
         "tests/test_gpt_codex_workflow_contract.py",
         "tests/test_skill_system_coverage.py",
-        "tests/test_bca_visual_sheet_workflow.py"
+        "tests/test_bca_visual_sheet_workflow.py",
+        "tests/test_project_gdd_google_sheets_contract.py"
       ]
     },
     {
@@ -190,7 +212,8 @@
         "tests/test_consolidated_skill_references.py",
         "tests/test_gpt_codex_workflow_contract.py",
         "tests/test_skill_system_coverage.py",
-        "tests/test_bca_visual_sheet_workflow.py"
+        "tests/test_bca_visual_sheet_workflow.py",
+        "tests/test_project_gdd_google_sheets_contract.py"
       ]
     },
     {
@@ -231,12 +254,15 @@
       "name": "bca-visual-sheet-policy-sync",
       "when_changed": [
         "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md",
-        "templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md"
+        "templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md",
+        "docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md",
+        "templates/project-operations/PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md"
       ],
       "exclude_when_changed": [],
       "require_all_changed": [],
       "require_any_changed": [
-        "tests/test_bca_visual_sheet_workflow.py"
+        "tests/test_bca_visual_sheet_workflow.py",
+        "tests/test_project_gdd_google_sheets_contract.py"
       ]
     }
   ]

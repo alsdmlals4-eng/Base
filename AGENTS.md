@@ -40,6 +40,8 @@ START_HERE.md
 - 중요 기획·방향성 결정은 벤치마킹, 플레이어 반응, 현업 또는 공식 권장 근거를 함께 검토한다.
 - 문서·Skill의 줄 수·문자 수·분량 상한보다 내용 보존·실행 가능성·한 단계 발견성을 우선한다.
 - Base 저장소 자체는 프로젝트 Google Sheets 동기화 대상이 아니다. 개별 프로젝트만 Sheet가 구성됐을 때 동기화한다.
+- 구성된 프로젝트 Sheet는 `USER_FACING_GDD_WORKSPACE`이며 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 따른다. 사용자의 Sheet 수정은 `PROPOSED_SHEET_CHANGE`로 보존하고 GitHub 정본·실제 파일과 비교한다.
+- 일반 기획·상태 확인은 GitHub 정본과 프로젝트 GDD Google Sheets를 우선하며 HTML 대시보드는 사용자 명시 요청 또는 기존 유지보수에만 사용한다.
 - 기본 제품 경로는 별도 CORE_POC Gate 없이 완성 품질의 Vertical Slice 데모와 플레이테스트로 진행한다. 상세 계약은 `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md`를 따른다.
 
 ## 3. 필요한 작업 환경·권한
@@ -130,7 +132,7 @@ L1 이상 완료 보고에는 실제 사용한 `Work Mode / Skill / Skill Mode /
 | 구현된 Godot·Web UI 감사 | `auditing-and-refining-ui-art` |
 | 프로젝트 교훈·Base 변경 제안 생명주기 | `managing-base-change-proposals` |
 
-활성 Skill은 13개이며 모두 `load_by_default=false`다. 통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 Skill Mode로 변환한다. 새 Registry·문서·작업 계약에는 새 ID만 사용한다.
+핵심 통합 실행 Skill은 13개이며, 구조·운영·지원 Skill 14개를 포함한 **전체 ACTIVE Skill은 27개**다. 모두 `load_by_default=false`이며 기계적 권한은 `skills/SKILL_REGISTRY.json`이 가진다. 통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 Skill Mode로 변환한다. 새 Registry·문서·작업 계약에는 새 ID만 사용한다.
 
 ## 6. 책임 원본과 발행
 

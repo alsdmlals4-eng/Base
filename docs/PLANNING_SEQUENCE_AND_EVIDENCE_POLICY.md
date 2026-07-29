@@ -2,7 +2,7 @@
 
 이 문서는 Base와 Base를 적용한 프로젝트에서 기획 작업을 어떤 순서로 묶고, 무엇을 먼저 비교하며, 어떤 근거로 승인하고, 새 정책·Template·Skill을 어디까지 전파 검증할지 정하는 공용 책임 원본이다.
 
-승인 결정의 즉시 정본화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`, 작업 분해의 상세 의존성은 `skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md`, 외부 근거의 판정은 `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md`, 분야 횡단 게임 개발 근거·Guide·Case는 `docs/knowledge/game-development/README.md`, 데모 제작 Gate는 `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md`, 프로젝트 Sheet와 GPT 이미지 생성·검수는 `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`가 책임진다.
+승인 결정의 즉시 정본화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`, 작업 분해의 상세 의존성은 `skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md`, 외부 근거의 판정은 `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md`, 분야 횡단 게임 개발 근거·Guide·Case는 `docs/knowledge/game-development/README.md`, 데모 제작 Gate는 `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md`, 프로젝트 Sheet와 GPT 이미지 생성·검수는 `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`가 책임진다. 프로젝트 GDD Google Sheets의 사용자 작업면·편집·동기화·시각화·수치화 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 책임진다.
 
 공통 조사 기록은 `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`, 성공·실패·혼합 사례는 `templates/research/GAME_DEVELOPMENT_CASE_CARD.md`를 사용한다. 이 Template은 외부 자료를 프로젝트 정본으로 승격하지 않고 결정 질문·Evidence ID·적용 판정·검증을 연결한다.
 
@@ -11,10 +11,13 @@
 ### Google Sheets
 
 - Base 저장소 자체: `BASE_EXCLUDED`. 프로젝트 Google Sheets를 만들거나 동기화하지 않는다.
-- 개별 프로젝트에 유효한 Sheet URL·tab·권한이 있음: `PROJECT_SHEET_CONFIGURED`.
+- 개별 프로젝트의 정확한 Sheet URL·ID·tab·권한이 확인됨: `PROJECT_SHEET_CONFIGURED`이며 역할은 `USER_FACING_GDD_WORKSPACE`다.
 - 개별 프로젝트에 Sheet가 없거나 아직 연결하지 않음: `NOT_CONFIGURED`.
 - Base 작업을 Sheet 미동기화로 실패 처리하지 않는다.
-- 개별 프로젝트에서만 승인 Decision과 작업순서를 프로젝트 Sheet에 동기화한다.
+- 사용자는 Sheet에서 전체 GDD 흐름·방향성·메인 시스템·이미지·수치·상태를 확인하고 수정한다.
+- AI는 GitHub 정본·실제 파일과 Sheet를 함께 읽고 `PROPOSED_SHEET_CHANGE`·누락·충돌을 판정한다.
+- Sheet는 시각화 우선, 지속 갱신, 명확한 수치화를 따르며 GitHub 정본이나 실제 구현을 대체하지 않는다.
+- 승인된 변경만 GitHub 정본·Commit·Sheet에 반영하고 재조회해 `SYNCED`를 증명한다.
 
 ### 내용 보존
 
@@ -254,11 +257,13 @@ Base에는 생성하지 않는다. 개별 프로젝트에서만 다음 순서를
 02_현재_확정결정
 03_근거_라이브러리
 04_누락_충돌_감사
+05_GDD_요약
 10_제품방향
 11_세계관
 12_핵심루프
 13_주요인물
 14_조연_세력_관계
+15_조작_게임규칙
 20_코어경험_데모목표
 30_데모범위_품질기준_제작기반
 40_핵심시스템_메인콘텐츠
