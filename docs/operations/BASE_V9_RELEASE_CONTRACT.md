@@ -4,11 +4,12 @@
 
 | Version | State | Entry condition | Exit condition |
 | --- | --- | --- | --- |
-| `v9.0.0` | `BASE_RELEASE_PENDING_CI` | Base-only design, machine contracts, generated artifacts, and local validation are consistent | Required GitHub Actions gates pass and the release is merged |
+| `v9.0.0` | `BASE_RELEASED` | Base-only design, machine contracts, generated artifacts, and required GitHub Actions gates were accepted | Released at `585a53a25be1b04c543196f5901551deb49c7691` (`release: finalize Base v9 operating system (#69)`) |
 | Project adoption | `POST_RELEASE_PROJECT_ADOPTION_WAVE` | Base v9.0.0 is released and a named project is explicitly resumed | The project records repository, Sheet-access, user-approval, and verification evidence |
 
-`v9.0.0` is a Base-only release. It must not imply that a project has adopted v9
-or that a Sheet has been created, read, or written.
+`v9.0.0` is a released Base-only line. It does not imply that a project has
+adopted v9 or that a Sheet has been created, read, or written.
+Project adoption remains separate and must not block the Base v9.0.0 release.
 
 ## Required Base release evidence
 
@@ -42,9 +43,9 @@ snapshots, and Google Sheets writes are not authorized by this Base change.
 
 ## Base release rule
 
-`v9.0.0` is released after Base-only contracts, deterministic generation,
-integrity checks, and required GitHub Actions evidence agree. The project adoption
-wave must not block the Base v9.0.0 release. It is a separately authorized phase
-with per-project evidence and compatibility review.
+`v9.0.0` was released at `585a53a25be1b04c543196f5901551deb49c7691` after
+Base-only contracts, deterministic generation, integrity checks, and required
+GitHub Actions evidence agreed. The project adoption wave is separately authorized
+and requires per-project evidence and compatibility review.
 
 최종 릴리스는 공통 프로젝트 적용과 검증을 대신하는 선언이 아니다.
