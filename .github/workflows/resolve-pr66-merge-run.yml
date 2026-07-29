@@ -1,0 +1,27 @@
+name: Resolve PR 66 Merge Runner
+
+on:
+  pull_request:
+    branches: [main]
+    types: [synchronize]
+
+permissions:
+  contents: write
+
+jobs:
+  resolve-merge:
+    if: github.event.pull_request.number == 66 && github.head_ref == 'feat/game-design-difficulty-workflow'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Build resolved merge commit object
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+        run: python tools/resolve_pr66_merge.py
