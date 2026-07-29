@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -23,6 +25,11 @@ OUTPUTS = (
     ROOT / "docs/operations/SHEET_CONTROL_CONTRACT.json",
 )
 
+GENERATOR_SPEC = importlib.util.spec_from_file_location("base_v9_generator", GENERATOR)
+assert GENERATOR_SPEC and GENERATOR_SPEC.loader
+GENERATOR_MODULE = importlib.util.module_from_spec(GENERATOR_SPEC)
+GENERATOR_SPEC.loader.exec_module(GENERATOR_MODULE)
+
 
 class V9RegistryGenerationTests(unittest.TestCase):
     maxDiff = None
@@ -36,6 +43,19 @@ class V9RegistryGenerationTests(unittest.TestCase):
             capture_output=True,
             check=False,
         )
+
+    def test_text_source_hash_ignores_line_ending_style(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            lf = root / "source-lf.txt"
+            crlf = root / "source-crlf.txt"
+            lf.write_bytes(b"alpha\nbeta\n")
+            crlf.write_bytes(b"alpha\r\nbeta\r\n")
+
+            self.assertEqual(
+                GENERATOR_MODULE.sha256_normalized_text_file(lf),
+                GENERATOR_MODULE.sha256_normalized_text_file(crlf),
+            )
 
     def test_generated_artifacts_match_current_registry_and_are_deterministic(self) -> None:
         first = self.run_generator("--write")

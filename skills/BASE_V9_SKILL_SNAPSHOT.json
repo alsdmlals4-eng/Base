@@ -1,7 +1,7 @@
 {
   "active_skill_count": 27,
   "artifact_role": "deterministic-base-skill-snapshot",
-  "registry_sha256": "76737e91af986533c34f82598731ad9d8ef96320f947e4b9a4734b9b1dc245d8",
+  "registry_sha256": "c136d9bb3fde9fc1473fbbe518cc975313023fc9c104efd9692f6834cbf8d8ae",
   "schema_version": 1,
   "skills": [
     {
@@ -20,7 +20,7 @@
       "layer": "foundation",
       "path": "skills/managing-project-intake-and-work-contract/SKILL.md",
       "skill_id": "managing-project-intake-and-work-contract",
-      "source_sha256": "2be5444a955e019b407c5c75c2df0d4ee50c9d35416a87ec940e3e5e0ab4ae4c"
+      "source_sha256": "b7ded38974874399268d71e251d310b41cf7ae1ebcbcf4832ebd02405e7f1410"
     },
     {
       "contract": {
@@ -38,7 +38,7 @@
       "layer": "foundation",
       "path": "skills/managing-game-project-operating-system/SKILL.md",
       "skill_id": "managing-game-project-operating-system",
-      "source_sha256": "540e7eb4a3225a32f15776fd6cf208c248c47ed57dfd7ade8409f7ddfc2b0175"
+      "source_sha256": "9325d3c1056be809ad7649c0800a6eeff3bd13893a0022154fbd21e2c4ae5b53"
     },
     {
       "contract": {
@@ -56,7 +56,7 @@
       "layer": "foundation",
       "path": "skills/evolving-project-discipline-skills/SKILL.md",
       "skill_id": "evolving-project-discipline-skills",
-      "source_sha256": "e4945454411595f2ba7d2636a43e5e168640afa1b0371ec083a15f436f55b512"
+      "source_sha256": "257d050d6a052f33b1026df1505fbc03978a1d391a0a295f103662dd7a36a619"
     },
     {
       "contract": {
@@ -74,7 +74,7 @@
       "layer": "foundation",
       "path": "skills/managing-design-documents/SKILL.md",
       "skill_id": "managing-design-documents",
-      "source_sha256": "02383703e39b0ee0fd1aae39b6245a7d1c0c1424b0a434b3ac7c89dd5e7ae4d0"
+      "source_sha256": "46983a8fba99cc79f893426321b413edbbd95350010902d533eab2edf7ccbffc"
     },
     {
       "contract": {
@@ -92,7 +92,7 @@
       "layer": "foundation",
       "path": "skills/maintaining-project-context-and-handoff/SKILL.md",
       "skill_id": "maintaining-project-context-and-handoff",
-      "source_sha256": "1218eca05193f98a600ccc7928723b7ef3f3d295aea085e43d232975c9ecafd7"
+      "source_sha256": "c02a8a8d7a7f7eba8f188f6a8d00a205e7bbbcd61be73a4e316a09b41609bacd"
     },
     {
       "contract": {
@@ -110,7 +110,7 @@
       "layer": "specialist",
       "path": "skills/analyzing-and-refining-game-concepts/SKILL.md",
       "skill_id": "analyzing-and-refining-game-concepts",
-      "source_sha256": "d05e90f03c069b78784edade1d2820f1838870e97f858c91c0141e1b5f78f554"
+      "source_sha256": "129ed89792fc4847dd5d4337c2e752215c7b019d212e2552d88e3c9f839d635d"
     },
     {
       "contract": {
@@ -128,7 +128,7 @@
       "layer": "specialist",
       "path": "skills/designing-vertical-slices/SKILL.md",
       "skill_id": "designing-vertical-slices",
-      "source_sha256": "97c137609865aab883af67ee84147d9572d1d21ff8acc36d3d595f525bb5fcbe"
+      "source_sha256": "51286883c0cc9f1c8f4125bb81395b9842967036399b2f60e67ac647ead5fe84"
     },
     {
       "contract": {
@@ -146,7 +146,7 @@
       "layer": "specialist",
       "path": "skills/orchestrating-deepseek-worktrees/SKILL.md",
       "skill_id": "orchestrating-deepseek-worktrees",
-      "source_sha256": "1fa4acafa2e2633391c8e7c9628b018b2f80e7a225d3483745838762df1f0ae3"
+      "source_sha256": "acdac0b09bcb036b5e3fe0669f6ed18d24367ad01ccc15a13f64111780aefabe"
     },
     {
       "contract": {
@@ -164,7 +164,7 @@
       "layer": "foundation",
       "path": "skills/reviewing-and-validating-project-changes/SKILL.md",
       "skill_id": "reviewing-and-validating-project-changes",
-      "source_sha256": "f90fc85fd16dfb930671bf4c534fa63133de709c51b92f9b0b7e5be6a5835870"
+      "source_sha256": "f5ee7d5bd5c25102f76b1025984270495aa18482ed9219b9f44f07188d868924"
     },
     {
       "contract": {
@@ -182,7 +182,7 @@
       "layer": "specialist",
       "path": "skills/auditing-canonical-reference-freshness/SKILL.md",
       "skill_id": "auditing-canonical-reference-freshness",
-      "source_sha256": "8256ae213e1df3d4b4c4758793be2f8bee6f6d9c07445284f676f25b21071ac3"
+      "source_sha256": "828aa4f860a0eb537d9e8ee54f0c53df04d06cf9eb07779fa469d63ee64340d3"
     },
     {
       "contract": {
@@ -200,7 +200,7 @@
       "layer": "specialist",
       "path": "skills/designing-art-prompts-and-technique-cards/SKILL.md",
       "skill_id": "designing-art-prompts-and-technique-cards",
-      "source_sha256": "7b2333333676162dc94c4166f564ab400c7a9490320bd1a41d2b84616ab4693a"
+      "source_sha256": "bfa57594b46782a2931e28014ec2bfccef4b61c6496a88203f558fdba967cba0"
     },
     {
       "contract": {
@@ -218,7 +218,7 @@
       "layer": "specialist",
       "path": "skills/auditing-and-refining-ui-art/SKILL.md",
       "skill_id": "auditing-and-refining-ui-art",
-      "source_sha256": "0b3377c3901bd76270686de6932f3b451dfb1f7e67b1ae075a93d8e2e4f44898"
+      "source_sha256": "a938ee116e4d282674bdfdce62731176a245ff07832dd0116d850de3150d2140"
     },
     {
       "contract": {
@@ -236,7 +236,7 @@
       "layer": "foundation",
       "path": "skills/managing-base-change-proposals/SKILL.md",
       "skill_id": "managing-base-change-proposals",
-      "source_sha256": "4509b4f2ae23168adfda4332ec0f9c0a93b3698d1ee58287b3cc53d0b0ec705a"
+      "source_sha256": "0bff4e8b8b2032100cdc6e09700df59193d6fd2162bb23fbbd0f05e6f30c7265"
     },
     {
       "contract": {
@@ -254,7 +254,7 @@
       "layer": "foundation",
       "path": "skills/identifying-project-core/SKILL.md",
       "skill_id": "identifying-project-core",
-      "source_sha256": "9ba4f7b75a205e5f6c7a76f85d0242a7b74679d0d66c45c20bb99fbdff3bb4ac"
+      "source_sha256": "df6f910b79c8c267b84830973283be8bb4db48f213afada4ebdaae031702d360"
     },
     {
       "contract": {
@@ -272,7 +272,7 @@
       "layer": "specialist",
       "path": "skills/establishing-project-core/SKILL.md",
       "skill_id": "establishing-project-core",
-      "source_sha256": "42790bbe387f155d788cc8c0ed78a3a342a2174f679efd4c8558ae8492651649"
+      "source_sha256": "f268e9ed9eabf096e8db252eca8d77935c9924d77aed8433ff9ef34469b5b146"
     },
     {
       "contract": {
@@ -290,7 +290,7 @@
       "layer": "foundation",
       "path": "skills/running-adversarial-review-and-refinement/SKILL.md",
       "skill_id": "running-adversarial-review-and-refinement",
-      "source_sha256": "bf8b2ee0bdf1970364940d3fd135b5b4b067bde4c415c28ab199f871520e0d41"
+      "source_sha256": "c3457b1f2ab3ce3b2eb56a44af9869417c9bd939fac7741e0225fac2eee63ec8"
     },
     {
       "contract": {
@@ -308,7 +308,7 @@
       "layer": "foundation",
       "path": "skills/refactoring-with-contract-preservation/SKILL.md",
       "skill_id": "refactoring-with-contract-preservation",
-      "source_sha256": "94f28256b532717375be715a2373c92c605b27bcdc7eac2f354f33381fa52261"
+      "source_sha256": "78d50a78284df1cd62c79c7951cadb71cb3828d7cd1bf7539d07f43df34eb99a"
     },
     {
       "contract": {
@@ -326,7 +326,7 @@
       "layer": "foundation",
       "path": "skills/simplifying-skill-bodies/SKILL.md",
       "skill_id": "simplifying-skill-bodies",
-      "source_sha256": "ce107673cf84ef6c6debc591117cd35fa58a2d3b8e29f6b05c99221f152b83ea"
+      "source_sha256": "1785d218a7bacef23b474b97539f16af2f2af53e7a0d090562f977b68cb292fd"
     },
     {
       "contract": {
@@ -344,7 +344,7 @@
       "layer": "foundation",
       "path": "skills/pruning-stale-and-nonfunctional-material/SKILL.md",
       "skill_id": "pruning-stale-and-nonfunctional-material",
-      "source_sha256": "dbd071405ce3aeb4e48427788d220c6ba1d8e4198610b20a454cd2e44ea55dc7"
+      "source_sha256": "b13cbfd40d514f14093e04cbfe7a8a52c5c8746b5546fee0210d7b0b43e43f12"
     },
     {
       "contract": {
@@ -362,7 +362,7 @@
       "layer": "specialist",
       "path": "skills/synchronizing-local-and-github-state/SKILL.md",
       "skill_id": "synchronizing-local-and-github-state",
-      "source_sha256": "20e8bfe8defe31357ab2e9b57172c69a64ef822238487939ab70d15d5a508b61"
+      "source_sha256": "c05a4a35000cf45a4000e7e701fa498a072e50921588426d77165560b8074405"
     },
     {
       "contract": {
@@ -380,7 +380,7 @@
       "layer": "foundation",
       "path": "skills/maintaining-long-running-task-continuity/SKILL.md",
       "skill_id": "maintaining-long-running-task-continuity",
-      "source_sha256": "753d236ad4d371037b1fbd52b716d1359bede3904932f602e830e80da7339fda"
+      "source_sha256": "86a23f2ebcbd9d0b1f8d34babf132c82351f9cc3c118a7055559520c373b045f"
     },
     {
       "contract": {
@@ -398,7 +398,7 @@
       "layer": "specialist",
       "path": "skills/governing-game-user-research-coverage/SKILL.md",
       "skill_id": "governing-game-user-research-coverage",
-      "source_sha256": "62814af9e6f39673c5e8a932922647e152360d2c54f99a09f8c6e1621276ff00"
+      "source_sha256": "7831187d418b2aba3d465fceee6a807d881e4bfde9daa3d349a414bb5366712a"
     },
     {
       "contract": {
@@ -416,7 +416,7 @@
       "layer": "specialist",
       "path": "skills/creating-user-learning-notes/SKILL.md",
       "skill_id": "creating-user-learning-notes",
-      "source_sha256": "e27aaed7677d391a8a7c38e2d8ae439c4a06bb1df6a357078a1110577f46d01d"
+      "source_sha256": "13ff3944c70e2e26435741d0fd0ca9afd686eb84508f5d16cee8459ba12cb354"
     },
     {
       "contract": {
@@ -434,7 +434,7 @@
       "layer": "specialist",
       "path": "skills/building-project-visual-dashboards/SKILL.md",
       "skill_id": "building-project-visual-dashboards",
-      "source_sha256": "405917e5f56ff6c8a2e4aa99472f20e7d7ae2a46d2665a3453121b6d7ca0905c"
+      "source_sha256": "7b7ab98fd61205e523d9795e2a9a6e24c10ff9fa42c1e89d46d0d39983383f71"
     },
     {
       "contract": {
@@ -452,7 +452,7 @@
       "layer": "specialist",
       "path": "skills/diagnosing-game-engine-runtime-failures/SKILL.md",
       "skill_id": "diagnosing-game-engine-runtime-failures",
-      "source_sha256": "6ca22bfd68cdbb201a1bf042bf6c2ecec4fc6bbc3eecf31765b621ca20e2f70f"
+      "source_sha256": "c13ee24ee565576421274d3016f9ebd3fe1824ab553e36b65b558ecdb3671d86"
     },
     {
       "contract": {
@@ -470,7 +470,7 @@
       "layer": "foundation",
       "path": "skills/governing-legacy-retention-and-archives/SKILL.md",
       "skill_id": "governing-legacy-retention-and-archives",
-      "source_sha256": "57b56e3b3fd88fc15977e5599829c16212221863044ba39f607f94d3e700eec3"
+      "source_sha256": "01673a5739061c8938c61533d3f5bdb8e3ac7948bd94260c2b113acd8d36d4c2"
     },
     {
       "contract": {
@@ -488,7 +488,7 @@
       "layer": "specialist",
       "path": "skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md",
       "skill_id": "evaluating-godot-assets-and-plugins-before-creation",
-      "source_sha256": "24064a03ab4b6f2cde892c87819a72eaefa4e6971d44c58d81d8919784d3f910"
+      "source_sha256": "8fd95c7dbddc0cdd186dae3e110676ccf6a8f5042024ebf4c76473a7db0f900a"
     }
   ],
   "source_of_truth": "skills/SKILL_REGISTRY.json"

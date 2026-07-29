@@ -42,8 +42,9 @@ def sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
 
-def sha256_file(path: Path) -> str:
-    return sha256_bytes(path.read_bytes())
+def sha256_normalized_text_file(path: Path) -> str:
+    text = path.read_text(encoding="utf-8").replace("\r\n", "\n").replace("\r", "\n")
+    return sha256_bytes(text.encode("utf-8"))
 
 
 def canonical_json(value: Any) -> bytes:
@@ -117,7 +118,7 @@ def load_active_skills() -> tuple[dict[str, Any], list[dict[str, Any]]]:
                 "discipline": entry.get("discipline"),
                 "path": path_value,
                 "frontmatter_description": fields.get("description"),
-                "source_sha256": sha256_file(skill_path),
+                "source_sha256": sha256_normalized_text_file(skill_path),
                 "contract": {
                     "positive_trigger": "; ".join(trigger_tags),
                     "negative_trigger": "\n".join(do_not_use),
@@ -156,7 +157,7 @@ def generated_summary(skills: list[dict[str, Any]], registry_hash: str) -> str:
 
 def build_artifacts() -> dict[Path, bytes]:
     registry, skills = load_active_skills()
-    registry_hash = sha256_file(REGISTRY_PATH)
+    registry_hash = sha256_normalized_text_file(REGISTRY_PATH)
     snapshot = {
         "schema_version": 1,
         "artifact_role": "deterministic-base-skill-snapshot",
