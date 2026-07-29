@@ -20,6 +20,7 @@ class GameDesignDifficultyWorkflowTests(unittest.TestCase):
             "system-design",
             "difficulty-and-combat-ai",
             "game-system-difficulty-and-combat-ai.md",
+            "game-system-difficulty-evidence-sources.md",
             "플레이어 경험 목표",
             "공정성·가독성·대응 가능성",
             "공격 예산",
@@ -28,13 +29,20 @@ class GameDesignDifficultyWorkflowTests(unittest.TestCase):
         ):
             self.assertIn(term, skill)
 
-    def test_reference_and_template_define_executable_contract(self) -> None:
+    def test_reference_template_and_evidence_define_executable_contract(self) -> None:
         reference_path = (
             ROOT
             / "skills"
             / "analyzing-and-refining-game-concepts"
             / "references"
             / "game-system-difficulty-and-combat-ai.md"
+        )
+        evidence_path = (
+            ROOT
+            / "skills"
+            / "analyzing-and-refining-game-concepts"
+            / "references"
+            / "game-system-difficulty-evidence-sources.md"
         )
         template_path = (
             ROOT
@@ -43,9 +51,11 @@ class GameDesignDifficultyWorkflowTests(unittest.TestCase):
             / "GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md"
         )
         self.assertTrue(reference_path.is_file())
+        self.assertTrue(evidence_path.is_file())
         self.assertTrue(template_path.is_file())
 
         reference = reference_path.read_text(encoding="utf-8")
+        evidence = evidence_path.read_text(encoding="utf-8")
         template = template_path.read_text(encoding="utf-8")
 
         for term in (
@@ -72,6 +82,19 @@ class GameDesignDifficultyWorkflowTests(unittest.TestCase):
             "프로젝트 전용 유지",
         ):
             self.assertIn(term, reference)
+
+        for term in (
+            "AI-L4D-PACING-001",
+            "AI-ATTACK-BUDGET-001",
+            "AI-REACTION-001",
+            "AI-ACCURACY-001",
+            "DDA-REVIEW-001",
+            "DDA-SLR-2025-001",
+            "ADOPT / ADAPT / TEST / AVOID / REFERENCE_ONLY",
+            "프로젝트 기본값이 아니다",
+            "실제 플레이어 검증을 완료했다고 주장하지 않는다",
+        ):
+            self.assertIn(term, evidence)
 
         for term in (
             "플레이어 경험 목표",
