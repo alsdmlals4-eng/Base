@@ -124,5 +124,5 @@
 
 - [x] **Step 1: Perform adversarial review for overlap, over-prescription, inaccessible difficulty, success-punishment, and weak source traceability risks**
 - [x] **Step 2: Apply only contract-preserving corrections, including evidence-source routing and whitespace cleanup**
-- [ ] **Step 3: Re-run all triggered checks after this final plan checkpoint**
-- [ ] **Step 4: Update the draft PR report and report Work Mode, Skill, Skill Mode, evidence, unverified items, and next project rollout step**
+- [x] **Step 3: Re-run all triggered checks after the final structure changes; BCA, Evidence, UX/UI, Vertical Slice, Game Project Operating System, Windows smoke, and `ci-gate` succeeded on head `2fa9330569d8a3c81448f333244f2d000649e75b`**
+- [x] **Step 4: Update the draft PR report and report Work Mode, Skill, Skill Mode, evidence, unverified items, and next project rollout step**
