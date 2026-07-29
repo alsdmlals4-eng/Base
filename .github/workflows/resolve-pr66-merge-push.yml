@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: write
-  statuses: write
 
 jobs:
   resolve-merge:
@@ -20,17 +19,18 @@ jobs:
           fetch-depth: 0
           show-progress: false
 
-      - name: Build resolved merge commit object
+      - name: Build and apply resolved merge commit
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPOSITORY: ${{ github.repository }}
         shell: bash
         run: |
           set -o pipefail
+          sed -i '/TEMP_PATHS = {/a\    ".github/workflows/resolve-pr66-merge-push.yml",' tools/resolve_pr66_merge.py
           python tools/resolve_pr66_merge.py | tee resolver-results.txt
           resolved_sha="$(sed -n 's/^RESOLVED_COMMIT_SHA=//p' resolver-results.txt | tail -n 1)"
           test -n "$resolved_sha"
-          gh api "repos/$GH_REPOSITORY/statuses/$GITHUB_SHA" \
-            -f state=success \
-            -f context=pr66-merge-resolver \
-            -f description="$resolved_sha"
+          gh api --method PATCH \
+            "repos/$GH_REPOSITORY/git/refs/heads/feat/game-design-difficulty-workflow" \
+            -f sha="$resolved_sha" \
+            -F force=false
