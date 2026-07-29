@@ -48,14 +48,11 @@ jobs:
             tests/test_evidence_based_game_development_knowledge.py \
             -v
 
-      - name: Commit integration test and remove temporary automation
+      - name: Commit only the integrated test
         run: |
-          rm tools/apply_game_design_difficulty_reference_test.py
-          rm .github/workflows/apply-game-design-difficulty-reference-test.yml
-          rm .github/workflows/diagnose-game-design-difficulty-reference-test.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add tests/test_consolidated_skill_references.py
           git diff --cached --check
           git commit -m "test: integrate game design difficulty reference checks"
           git pull --rebase origin feat/game-design-difficulty-workflow
