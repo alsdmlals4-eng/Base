@@ -252,10 +252,10 @@ review-scope-map
 ### 아트·UI
 
 - 생성 전 프롬프트·기술 카드: `skills/designing-art-prompts-and-technique-cards/SKILL.md`
-- 구현된 Godot·Web UI 결과 감사: `skills/auditing-and-refining-ui-art/SKILL.md`
+- 게임 UX/UI 설계·폴리싱·구현 결과 감사: `skills/auditing-and-refining-ui-art/SKILL.md`
 - 핵심 정보·입력·탐색의 플레이 장벽: `reviewing-and-validating-project-changes: accessibility-review`
 
-생성 전 설계, 구현 후 시각 감사, 접근성 장벽 검수는 입력·도구·판정이 다르므로 구분한다. UI 감사는 사용자 승인 전 대상 파일을 수정하지 않으며 전후 실제 렌더로 재검수한다.
+생성 전 설계, 준비된 화면의 UI 폴리싱, 구현 후 시각 감사, 접근성 장벽 검수는 입력·도구·판정이 다르므로 구분한다. 폴리싱·UI 감사는 사용자 승인 전 대상 파일을 수정하지 않으며 전후 실제 렌더로 재검수한다.
 
 ## 일반 프로젝트 작업 읽기 순서
 

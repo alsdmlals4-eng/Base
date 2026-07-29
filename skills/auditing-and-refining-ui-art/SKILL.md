@@ -1,13 +1,13 @@
 ---
 name: auditing-and-refining-ui-art
-description: Use when planning or reviewing game UX, UI information architecture, interaction patterns, input, accessibility, Godot UI contracts, rendered interface quality, or approved UI refinements without moving domain rules into presentation code.
+description: Use when planning, polishing, or reviewing game UX, UI information architecture, interaction patterns, input, accessibility, Godot UI contracts, rendered interface quality, or approved UI refinements without moving domain rules into presentation code.
 ---
 
-# 게임 UX/UI 설계·감사
+# 게임 UX/UI 설계·폴리싱·감사
 
 ## 역할과 경계
 
-플레이어 경험을 화면·정보·입력·상태·피드백·접근성·Godot 구현 계약으로 변환하고, 구현된 Godot 또는 Web UI를 실제 렌더와 증거로 감사한다.
+플레이어 경험을 화면·정보·입력·상태·피드백·접근성·Godot 구현 계약으로 변환하고, 준비된 UI를 증거 기반으로 폴리싱하며, 구현된 Godot 또는 Web UI를 실제 렌더와 증거로 감사한다.
 
 - UX/UI는 표시 데이터를 입력받고 **사용자 의도**를 `Signal` 또는 명시적 이벤트로 반환한다.
 - 피해·보상·저장·진행 등 **도메인 규칙**을 UI에서 재계산하거나 새 상태 책임 원본으로 소유하지 않는다.
@@ -26,6 +26,10 @@ description: Use when planning or reviewing game UX, UI information architecture
 - `accessibility-gate`: 정보·입력·탐색·시간·모션·음향·텍스트·인지 장벽과 동등한 경로를 설계한다.
 - `playtest-contract`: build·commit·해상도·입력·참가자·과제·가설·행동/설명 증거·중단/통과 기준을 고정한다.
 
+### 폴리싱
+
+- `polishing-pass`: 기능·정보 구조·상태 소유권이 충분히 안정된 화면에서 `P0 BLOCKER → P1 CLARITY → P2 CONSISTENCY → P3 DELIGHT` 순서로 계층·가독성·상태·피드백·모션·음향·햅틱·반복 사용·중단·재진입·성능을 마감하고 전후 증거를 만든다.
+
 ### 구현 결과 감사
 
 - `runtime-ui-audit`: 실제 실행 화면과 승인 방향을 A~E 영역으로 감사하고 정적 후보를 증거와 대조한다.
@@ -39,6 +43,7 @@ description: Use when planning or reviewing game UX, UI information architecture
 - Godot `Control`, `Container`, `Theme`, `StyleBox`, 재사용 Scene의 책임과 상태를 정한다.
 - 구현된 Godot/Web UI의 구조·간격·타이포그래피·색상·상태·접근성을 감사한다.
 - 실제 사용자 이해 가설과 플레이테스트 계약을 정의한다.
+- 기능과 정보 구조가 준비된 화면의 UI 폴리싱 우선순위·피드백 예산·반복 피로·중단·재진입·전후 증거를 정의한다.
 
 다음에는 주 Skill로 사용하지 않는다.
 
@@ -61,7 +66,8 @@ description: Use when planning or reviewing game UX, UI information architecture
 → godot-ui-contract
 → accessibility-gate
 → playtest-contract
-→ 필요 시 runtime-ui-audit
+→ 구현 준비도가 충족되면 polishing-pass
+→ runtime-ui-audit
 ```
 
 1. 화면마다 플레이어의 중심 질문과 가장 중요한 행동을 하나씩 정한다.
@@ -72,7 +78,10 @@ description: Use when planning or reviewing game UX, UI information architecture
 6. 취소·되돌리기·파괴적 행동·오류·빈 상태·누락 자산의 복구 경로를 정의한다.
 7. 프로젝트의 최소/목표 해상도, 긴 한국어, 안전 영역, 선언된 입력 장치를 검증 조건에 넣는다.
 8. 기존 Theme·레이아웃·상태·편집 시스템을 조사한 뒤 가장 작은 재사용 단위를 정한다.
-9. 자동 검사와 사람 이해 증거를 분리하고 실행하지 않은 항목은 `NOT_RUN` 또는 `UNVERIFIED`로 둔다.
+9. 폴리싱은 `P0 BLOCKER → P1 CLARITY → P2 CONSISTENCY → P3 DELIGHT` 순서로 진행하고, P0~P2가 남아 있으면 장식 효과를 보류한다.
+10. 자주 반복되는 행동은 낮은 피드백 강도를 사용하고 모션·음향·햅틱을 끈 동등 경로를 둔다.
+11. 빠른 반복 입력, 중복 입력, 애니메이션 중단·재진입, modal 재진입에서 결과 중복과 시각 drift를 검사한다.
+12. 자동 검사와 사람 이해 증거를 분리하고 실행하지 않은 항목은 `NOT_RUN` 또는 `UNVERIFIED`로 둔다.
 
 상세 방법은 필요할 때만 읽는다.
 
@@ -81,6 +90,7 @@ description: Use when planning or reviewing game UX, UI information architecture
 - [ux-ui-reference-library.md](references/ux-ui-reference-library.md)
 - [godot-ui-implementation-contract.md](references/godot-ui-implementation-contract.md)
 - [project-adapter-contract.md](references/project-adapter-contract.md)
+- [ui-polishing-method.md](references/ui-polishing-method.md)
 
 ## 기존 UI 감사 절차 보존
 
@@ -113,6 +123,11 @@ selected_patterns:
 state_source:
 component_states:
 feedback_channels:
+polish_readiness:
+polish_priority:
+feedback_budget:
+repetition_and_interruption:
+before_after_artifacts:
 input_and_focus:
 accessibility_barriers:
 fallbacks:
@@ -146,6 +161,8 @@ status
 - 기능 목록보다 플레이어가 보고·판단하고·행동하고·확인하는 흐름이 먼저다.
 - 외부 레퍼런스는 변환 축과 차별화 근거로만 사용하고 화면·자산·브랜드 표현을 복제하지 않는다.
 - 비활성·잠금·오류 상태는 원인과 가능한 다음 행동을 제공한다.
+- UI 폴리싱은 구조·가독성·상태·피드백을 먼저 해결하고 장식은 마지막에 적용한다.
+- 반복 사용·빠른 입력·애니메이션 중단·재진입에서 결과 중복, 누적 transform, 입력 지연과 피로를 검증한다.
 - 핵심 입력은 프로젝트가 선언한 포인터·키보드·게임패드·터치 경로에서 완결된다.
 - 팝업 종료 뒤 이전 의미 있는 포커스로 복귀한다.
 - 접근성 설정·모션 감소·음향 끄기·자산 누락이 게임 결과를 바꾸지 않는다.

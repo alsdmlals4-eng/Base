@@ -128,7 +128,7 @@ GitHub 사용량 → GITHUB_USAGE_BUDGET
 | 목표 플랫폼 성능 | `reviewing-and-validating-project-changes` | 렌더링·콘텐츠 부하·네트워크·플랫폼 영향 시 `performance-profile` |
 | 정본·참조·파생본 최신성 | `auditing-canonical-reference-freshness` | 경로·ID·Schema·정책·생성기·정본 전파 가능성 시 조건부 호출 |
 | 아트 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` | 새 아트 방향·생성·편집 프롬프트 |
-| Godot·Web UI 아트 감사 | `auditing-and-refining-ui-art` | 실행 결과 A~E 감사·승인된 개선·전후 렌더 재검수 |
+| 게임 UX/UI 설계·폴리싱·Godot·Web UI 감사 | `auditing-and-refining-ui-art` | 경험·정보 구조·상태·접근성·Godot 계약 설계 / `polishing-pass` / 실행 결과 A~E 감사·승인된 개선·전후 렌더 재검수 |
 | 프로젝트 교훈·BCP 생명주기 | `managing-base-change-proposals` | `extract` / `submit` / `review` / 승인 뒤 `implement` / `verify` |
 
 통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 Skill Mode로 변환한다. 새 Registry·문서·작업 계약에는 새 ID만 사용한다.
@@ -194,6 +194,7 @@ L1 이상 작업은 실제 사용한 Work Mode·Skill·Skill Mode, 선택 이유
 | Godot·저장·해상도·입력·성능·생산·출시를 어떻게 기획에 연결하는가? | `docs/knowledge/game-development/TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md` |
 | 공식·학술·현업 출처의 용도·한계·재검증 조건은 무엇인가? | `docs/knowledge/game-development/REFERENCE_SOURCE_CATALOG.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md` |
 | GitHub Actions 비용과 중복 전체 검증을 어떻게 줄이는가? | `docs/CI_EXECUTION_COST_POLICY.md` | `templates/quality/PROJECT_CHANGE_VALIDATION.md` |
+| UI 폴리싱을 어떤 순서와 증거로 진행하는가? | `skills/auditing-and-refining-ui-art/references/ui-polishing-method.md` | `templates/planning/GAME_UX_UI_SYSTEM.md`, `templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md` |
 | 접근성·성능을 어떤 증거로 검증하는가? | `skills/reviewing-and-validating-project-changes/references/accessibility-and-performance-validation.md` | `templates/quality/PROJECT_CHANGE_VALIDATION.md` |
 | 정본 변경이 모두 전파됐는가? | `skills/auditing-canonical-reference-freshness/SKILL.md` | `templates/quality/CANONICAL_REFERENCE_FRESHNESS_AUDIT.md` |
 

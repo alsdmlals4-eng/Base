@@ -98,7 +98,50 @@
 - `TEST`: 업무용 제품의 효율성 휴리스틱이 의도적 긴장·미스터리·발견을 제거하지 않는지 검증.
 - `AVOID`: 장르적 불확실성과 조작 불명료를 같은 것으로 취급.
 
-## 7. 레퍼런스 사용 절차
+## 7. UI 폴리싱 근거 보강
+
+### W3C 세부 성공 기준
+
+- 포커스 외형: https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance.html
+- 목표 크기 최소: https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html
+- 상호작용 애니메이션: https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html
+
+Base 판정:
+
+- `ADOPT`: 키보드 포커스는 인접 상태와 구분되고, 상호작용 모션은 필수 정보가 아니면 줄이거나 끌 수 있다.
+- `ADAPT`: 웹 CSS 수치를 게임 화면 거리·해상도·터치·게임패드에 그대로 고정하지 않고 목표 기기에서 검증한다.
+- `AVOID`: 체크리스트 수치만 충족하고 실제 포커스 탐색·읽기·입력 성공을 검증하지 않는 것.
+
+### Xbox 폴리싱 관련 지침
+
+- 오류·파괴적 행동: https://learn.microsoft.com/en-us/gaming/accessibility/xbox-accessibility-guidelines/115
+- 햅틱 피드백: https://learn.microsoft.com/en-us/gaming/accessibility/xbox-accessibility-guidelines/110
+
+Base 판정:
+
+- `ADOPT`: 영구 결과 전에 검토·수정하거나 가능한 경우 되돌리기, 햅틱 끄기와 동등한 시각·음향 경로.
+- `TEST`: 경고 지속 시간·진동 강도·반복 빈도는 실제 장르와 기기에서 검증한다.
+
+### Apple 피드백·모션·햅틱·게임 컨트롤
+
+- 피드백: https://developer.apple.com/design/human-interface-guidelines/feedback
+- 모션: https://developer.apple.com/design/human-interface-guidelines/motion
+- 햅틱: https://developer.apple.com/design/human-interface-guidelines/playing-haptics
+- 게임 컨트롤: https://developer.apple.com/design/human-interface-guidelines/game-controls
+
+Base 판정:
+
+- `ADAPT`: 행동 중요도에 비례한 피드백, 같은 원인에 정렬된 시각·음향·햅틱, 목적 있는 모션, 눌림 상태 가시성을 Godot 프로젝트에 변환한다.
+- `AVOID`: 모든 반복 행동에 햅틱·사운드·튕김을 중첩하거나 플랫폼 고유 외형을 게임 아트보다 우선하는 것.
+- `TEST`: 모션 거리·시간·음량·햅틱 강도와 반복 피로는 실제 기기에서 검증한다.
+
+### Godot 폴리싱 구현 원리
+
+- `Theme` preview와 variation으로 상태를 중앙 관리하고, `Container`와 focus neighbor를 실제 해상도·입력 순서로 검증한다.
+- Tween·AnimationPlayer는 표시를 책임하며 도메인 결과를 소유하지 않는다.
+- 중단·즉시 완료·재진입·입력 장치 전환에서도 선택과 포커스가 보존되는지 테스트한다.
+
+## 8. 레퍼런스 사용 절차
 
 ```text
 현재 플레이어 문제와 증거
@@ -112,7 +155,7 @@
 
 각 참고는 `templates/research/UX_UI_REFERENCE_CARD.md`로 기록한다.
 
-## 8. 금지
+## 9. 금지
 
 - 출처 제목만 보고 원문을 읽지 않은 채 규칙 생성.
 - 최신 확인일·플랫폼·버전 없이 영구 표준으로 고정.

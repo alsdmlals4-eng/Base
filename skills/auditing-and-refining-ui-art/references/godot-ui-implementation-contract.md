@@ -176,7 +176,51 @@ signal database_updated()
 - 자산 누락 시 기본 텍스트·도형·아이콘으로 핵심 기능이 유지된다.
 - 경고 플래시·흔들림·카메라 이동은 강도·반복·중단 가능성을 검증한다.
 
-## 12. 검증 매트릭스
+## 12. UI 폴리싱 구현 계약
+
+### semantic feedback token
+
+```text
+feedback_routine
+feedback_confirming
+feedback_warning
+feedback_reward
+feedback_critical
+motion_reduced
+sound_muted
+haptic_disabled
+```
+
+- token은 절대 시간·음량·색을 공용 상수로 강제하지 않고 프로젝트 Theme·Resource의 의미 계층을 제공한다.
+- 같은 의미는 화면마다 같은 feedback tier를 사용하며, 자주 반복되는 행동은 낮은 강도를 사용한다.
+
+### Tween·AnimationPlayer 중단과 재진입
+
+- 새 전환 시작 전에 기존 Tween의 종료·대체·병합 정책을 선언한다.
+- scale·alpha·position을 상대 누적해 재진입 drift를 만들지 않는다.
+- 즉시 완료와 `reduced motion` 경로에서도 최종 상태와 입력 가능 시점이 같다.
+- 애니메이션 완료 callback은 피해·보상·저장·진행 지급의 권위가 아니다.
+
+### 중복 입력
+
+- 도메인 계층이 중복 실행 방지와 idempotency를 책임한다.
+- UI는 pending 상태와 입력 접수 피드백을 제공하되 성공 결과를 선지급하지 않는다.
+- 빠른 연타, 게임패드 버튼 유지, 터치 double tap을 fixture로 검증한다.
+
+### 동등한 피드백 경로
+
+- `reduced motion`: 정적 상태·페이드·즉시 완료.
+- mute: 텍스트·아이콘·상태·로그.
+- haptic off: 시각·음향 또는 텍스트 상태.
+- 누락 자산: 기본 텍스트·도형·아이콘.
+
+### 반복 사용과 성능
+
+- 반복 화면 전환과 목록 갱신에서 Tween·Signal·Timer·AudioStreamPlayer가 누적되지 않는다.
+- UI 전환 frame time, allocation, draw call, memory spike 후보를 목표 플랫폼에서 기록한다.
+- 성능 측정을 실행하지 않았으면 `NOT_RUN` 또는 `UNVERIFIED`로 유지한다.
+
+## 13. 검증 매트릭스
 
 ### 정적
 
@@ -204,7 +248,7 @@ signal database_updated()
 
 자동 테스트가 통과해도 인간 항목은 `HUMAN_NOT_RUN`일 수 있다.
 
-## 13. 완료 출력
+## 14. 완료 출력
 
 ```yaml
 existing_ui_system:
@@ -218,6 +262,11 @@ input_paths:
 resolution_fixtures:
 text_fixtures:
 fallbacks:
+feedback_tiers:
+reduced_motion:
+duplicate_input_policy:
+interruption_and_reentry:
+repetition_and_performance:
 static_validation:
 runtime_validation:
 human_validation:

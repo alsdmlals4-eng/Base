@@ -129,7 +129,7 @@ L1 이상 완료 보고에는 실제 사용한 `Work Mode / Skill / Skill Mode /
 | 변경 계약·정본·정적·런타임·접근성·성능·회귀 검증 | `reviewing-and-validating-project-changes` |
 | 정본·경로·ID·파생본·전파 누락 감사 | `auditing-canonical-reference-freshness` |
 | 이미지 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` |
-| 구현된 Godot·Web UI 감사 | `auditing-and-refining-ui-art` |
+| 게임 UX/UI 설계·폴리싱·구현된 Godot·Web UI 감사 | `auditing-and-refining-ui-art` |
 | 프로젝트 교훈·Base 변경 제안 생명주기 | `managing-base-change-proposals` |
 
 핵심 통합 실행 Skill은 13개이며, 구조·운영·지원 Skill 14개를 포함한 **전체 ACTIVE Skill은 27개**다. 모두 `load_by_default=false`이며 기계적 권한은 `skills/SKILL_REGISTRY.json`이 가진다. 통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 Skill Mode로 변환한다. 새 Registry·문서·작업 계약에는 새 ID만 사용한다.

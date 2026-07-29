@@ -139,7 +139,53 @@ disabled / locked / loading / warning / error / new
 |---|---|---|---|---|---|---|
 | | | | | | | |
 
-## 11. 접근성 장벽
+## 11. UI 폴리싱 계약
+
+### 폴리싱 준비도
+
+| 항목 | 상태 | 차단 사유·다음 행동 |
+|---|---|---|
+| 기능 흐름 | PASS/PARTIAL/FAIL/NOT_RUN | |
+| 화면 중심 질문·정보 계층 | PASS/PARTIAL/FAIL/NOT_RUN | |
+| 상태 소유권 | PASS/PARTIAL/FAIL/NOT_RUN | |
+| 입력·해상도 baseline | PASS/PARTIAL/FAIL/NOT_RUN | |
+
+### P0~P3 우선순위
+
+| 우선순위 | Finding | 영향 | 변경 | 검증 | 상태 |
+|---|---|---|---|---|---|
+| P0 BLOCKER | | | | | |
+| P1 CLARITY | | | | | |
+| P2 CONSISTENCY | | | | | |
+| P3 DELIGHT | | | | | |
+
+### 피드백 예산
+
+| 등급 | 행동·상태 | 시각 | 음향 | 햅틱 | 반복 빈도 | 폴백 |
+|---|---|---|---|---|---|---|
+| routine | | | | | | |
+| confirming | | | | | | |
+| warning | | | | | | |
+| reward | | | | | | |
+| critical | | | | | | |
+
+### 반복 사용·중단·재진입
+
+| Fixture | 예상 결과 | 실행 결과 | 상태 | Artifact |
+|---|---|---|---|---|
+| 빠른 반복 입력·중복 입력 | | | NOT_RUN | |
+| 애니메이션 중단·즉시 완료 | | | NOT_RUN | |
+| modal 종료·재진입·포커스 복귀 | | | NOT_RUN | |
+| reduced motion·mute·haptic off | | | NOT_RUN | |
+| 반복 사용 피로·UI 성능 | | | NOT_RUN | |
+
+### 전후 Artifact
+
+| 조건 | Before | After | 관찰 변화 | 회귀 |
+|---|---|---|---|---|
+| 같은 build/state/resolution/input/locale | | | | |
+
+## 12. 접근성 장벽
 
 | 장벽 | 영향 행동 | 기본 경로 | 동등 경로 | 검증 | 상태 |
 |---|---|---|---|---|---|
@@ -151,7 +197,7 @@ disabled / locked / loading / warning / error / new
 | 모션 | | | | | NOT_RUN |
 | 음향 | | | | | NOT_RUN |
 
-## 12. Godot 구현 계약
+## 13. Godot 구현 계약
 
 ### 기존 구조
 
@@ -180,13 +226,13 @@ disabled / locked / loading / warning / error / new
 - UI animation 완료를 규칙 처리 시점으로 사용
 - 기존 시스템 조사 없이 새 UI 프레임워크 추가
 
-## 13. 레퍼런스 판정
+## 14. 레퍼런스 판정
 
 | 출처 | 확인일 | 문제 | 적용 원리 | 판정 | 변환 축 | 복제 금지 |
 |---|---|---|---|---|---|---|
 | | | | | ADOPT/ADAPT/AVOID/TEST/IGNORE | | |
 
-## 14. 검증 매트릭스
+## 15. 검증 매트릭스
 
 | 증거 | 대상 | 방법 | 통과 기준 | 상태 | Artifact |
 |---|---|---|---|---|---|
@@ -199,7 +245,7 @@ disabled / locked / loading / warning / error / new
 | 사람 이해 | | | | HUMAN_NOT_RUN | |
 | 보조기기 사용자 | | | | HUMAN_NOT_RUN | |
 
-## 15. Base 승격과 프로젝트 전용 유지
+## 16. Base 승격과 프로젝트 전용 유지
 
 ### Base 승격 후보
 
@@ -209,7 +255,7 @@ disabled / locked / loading / warning / error / new
 
 -
 
-## 16. 완료·미검증·다음 게이트
+## 17. 완료·미검증·다음 게이트
 
 - 완료:
 - 미검증:
