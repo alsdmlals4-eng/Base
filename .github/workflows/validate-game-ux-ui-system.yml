@@ -73,6 +73,7 @@ jobs:
         if: github.event_name == 'pull_request' && hashFiles('tools/apply_ui_polishing_system_patch.py') != ''
         run: |
           python tools/apply_ui_polishing_system_patch.py --reviewed-commit "${GITHUB_SHA}"
+          git checkout -- .github/workflows/validate-game-ux-ui-system.yml
 
       - name: Run UX UI system and audit regression tests
         run: |
@@ -102,7 +103,6 @@ jobs:
             skills/auditing-and-refining-ui-art \
             templates/planning/GAME_UX_UI_SYSTEM.md \
             templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md \
-            .github/reference-freshness.json \
-            .github/workflows/validate-game-ux-ui-system.yml
+            .github/reference-freshness.json
           git commit -m "feat: add evidence-based UI polishing pass"
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
