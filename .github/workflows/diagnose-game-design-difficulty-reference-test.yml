@@ -1,0 +1,47 @@
+name: Diagnose Integrated Difficulty Reference Patch
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "tools/apply_game_design_difficulty_reference_test.py"
+      - ".github/workflows/apply-game-design-difficulty-reference-test.yml"
+      - ".github/workflows/diagnose-game-design-difficulty-reference-test.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile patch script
+        run: python -m py_compile tools/apply_game_design_difficulty_reference_test.py
+
+      - name: Apply patch in diagnostic checkout
+        run: python tools/apply_game_design_difficulty_reference_test.py
+
+      - name: Show changed files
+        run: git diff --check && git diff --name-only
+
+      - name: Run focused and integrated contracts
+        run: |
+          python -m py_compile \
+            tests/test_game_design_difficulty_workflow.py \
+            tests/test_consolidated_skill_references.py \
+            tests/test_evidence_based_game_development_knowledge.py
+          python -m unittest \
+            tests/test_game_design_difficulty_workflow.py \
+            tests/test_consolidated_skill_references.py \
+            tests/test_evidence_based_game_development_knowledge.py \
+            -v
