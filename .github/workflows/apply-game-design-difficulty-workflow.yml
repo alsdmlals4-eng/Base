@@ -1,0 +1,56 @@
+name: Apply Game Design Difficulty Workflow
+
+on:
+  push:
+    branches:
+      - feat/game-design-difficulty-workflow
+    paths:
+      - "tools/apply_game_design_difficulty_workflow.py"
+      - ".github/workflows/apply-game-design-difficulty-workflow.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-game-design-difficulty-workflow
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: feat/game-design-difficulty-workflow
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Apply targeted propagation patch
+        run: python tools/apply_game_design_difficulty_workflow.py
+
+      - name: Validate focused contracts before commit
+        run: |
+          python -m py_compile \
+            tests/test_game_design_difficulty_workflow.py \
+            tests/test_evidence_based_game_development_knowledge.py
+          python -m unittest \
+            tests/test_game_design_difficulty_workflow.py \
+            tests/test_evidence_based_game_development_knowledge.py \
+            -v
+
+      - name: Commit propagated files and remove temporary automation
+        run: |
+          rm tools/apply_game_design_difficulty_workflow.py
+          rm .github/workflows/apply-game-design-difficulty-workflow.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "feat: propagate game design difficulty workflow"
+          git push origin HEAD:feat/game-design-difficulty-workflow
