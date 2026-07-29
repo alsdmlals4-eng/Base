@@ -12,6 +12,7 @@ REGISTRY = ROOT / "skills" / "SKILL_REGISTRY.json"
 REFERENCE_FRESHNESS = ROOT / ".github" / "reference-freshness.json"
 UX_UI_WORKFLOW = ROOT / ".github" / "workflows" / "validate-game-ux-ui-system.yml"
 PLANNING_TEMPLATE = ROOT / "templates" / "planning" / "GAME_UX_UI_SYSTEM.md"
+REFERENCE_CARD = ROOT / "templates" / "research" / "UX_UI_REFERENCE_CARD.md"
 REVIEW_CHECKLIST = ROOT / "templates" / "quality" / "GAME_UX_UI_REVIEW_CHECKLIST.md"
 
 
@@ -25,7 +26,7 @@ class GameUxUiSystemContractTests(unittest.TestCase):
             REFERENCE_ROOT / "project-adapter-contract.md",
             REFERENCE_ROOT / "ui-polishing-method.md",
             PLANNING_TEMPLATE,
-            ROOT / "templates" / "research" / "UX_UI_REFERENCE_CARD.md",
+            REFERENCE_CARD,
             REVIEW_CHECKLIST,
         ]
         missing = [path.relative_to(ROOT).as_posix() for path in required if not path.is_file()]
@@ -98,6 +99,19 @@ class GameUxUiSystemContractTests(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertIn(source, text)
 
+    def test_reference_card_carries_polishing_evidence(self) -> None:
+        text = REFERENCE_CARD.read_text(encoding="utf-8")
+        for required in (
+            "polishing_evidence",
+            "affected_priority",
+            "feedback_tier",
+            "expected_repetition_frequency",
+            "reduced_motion_mute_haptic_off_path",
+            "before_after_validation",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, text)
+
     def test_pattern_library_covers_core_player_risks(self) -> None:
         text = (REFERENCE_ROOT / "game-ux-pattern-library.md").read_text(encoding="utf-8")
         required_pattern_ids = {
@@ -165,7 +179,7 @@ class GameUxUiSystemContractTests(unittest.TestCase):
             with self.subTest(required=required):
                 self.assertIn(required, use_when)
 
-    def test_ui_skill_coupled_change_requires_router_learning_test_and_ci(self) -> None:
+    def test_ui_skill_coupled_change_requires_all_consumers(self) -> None:
         config = json.loads(REFERENCE_FRESHNESS.read_text(encoding="utf-8"))
         rule = next(
             item
@@ -176,6 +190,9 @@ class GameUxUiSystemContractTests(unittest.TestCase):
             "skills/SKILL_REGISTRY.json",
             "skills/SKILL_LEARNING_LOG.md",
             "skills/README.md",
+            "templates/planning/GAME_UX_UI_SYSTEM.md",
+            "templates/research/UX_UI_REFERENCE_CARD.md",
+            "templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md",
             "tests/test_game_ux_ui_system.py",
             ".github/workflows/validate-game-ux-ui-system.yml",
         }
