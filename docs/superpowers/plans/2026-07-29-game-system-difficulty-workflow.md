@@ -4,7 +4,7 @@
 
 **Goal:** Extend the existing game-design strategy Skill with executable game-system, difficulty, and combat-AI design modes without creating a duplicate Specialist Skill.
 
-**Architecture:** Keep `analyzing-and-refining-game-concepts` as the single primary discipline owner. Add two Skill Modes, place detailed procedures in one focused reference, provide one project-facing contract template, and synchronize machine routing, human routing, knowledge guidance, learning records, and tests.
+**Architecture:** Keep `analyzing-and-refining-game-concepts` as the single primary discipline owner. Add two Skill Modes, place detailed procedures and evidence anchors in focused references, provide one project-facing contract template, and synchronize machine routing, human routing, knowledge guidance, learning records, and tests.
 
 **Tech Stack:** Markdown, JSON, Python `unittest`, GitHub Actions.
 
@@ -32,21 +32,23 @@
 - [x] **Step 2: Run the PR test suite and confirm failure is caused by missing reference/template/modes, not syntax**
 - [x] **Step 3: Record the failing check in the draft PR**
 
-### Task 2: Add the detailed design reference and project template
+### Task 2: Add detailed design, evidence, and project contract references
 
 **Files:**
 - Create: `skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-and-combat-ai.md`
+- Create: `skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-evidence-sources.md`
 - Create: `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md`
 
 **Interfaces:**
 - Consumes: Player promise, core loop, target player, constraints, current enemy/combat rules, benchmark and playtest evidence.
-- Produces: System boundaries, fairness rules, difficulty barrier profile, combat coordination model, pacing model, DDA policy, telemetry, playtest criteria, rollback, and Base/project classification.
+- Produces: System boundaries, fairness rules, difficulty barrier profile, combat coordination model, pacing model, DDA policy, telemetry, playtest criteria, rollback, source limitations, and Base/project classification.
 
 - [x] **Step 1: Write the reference with `system-design` and `difficulty-and-combat-ai` procedures**
 - [x] **Step 2: Define the three-layer AI boundary: individual decision, combat coordinator, pacing/difficulty director**
 - [x] **Step 3: Define fixed and adaptive difficulty variables, hysteresis, cooldown, safe application timing, and anti-punishment rules**
 - [x] **Step 4: Add telemetry, playtest, accessibility, performance, rollback, and promotion criteria**
 - [x] **Step 5: Write the reusable project contract template with concrete fields and decision tables**
+- [x] **Step 6: Record Valve, Game AI Pro, and DDA review evidence with use limits and revalidation conditions**
 
 ### Task 3: Extend the existing Skill and machine router
 
@@ -55,12 +57,12 @@
 - Modify: `skills/SKILL_REGISTRY.json`
 
 **Interfaces:**
-- Consumes: The new reference and template.
+- Consumes: The new references and template.
 - Produces: Discoverable Skill Modes and automatic triggers without a new Skill ID.
 
 - [x] **Step 1: Add `system-design` and `difficulty-and-combat-ai` to the mode sequence**
 - [x] **Step 2: Add required inputs, workflow steps, output contract fields, and quality gates**
-- [x] **Step 3: Add reference loading conditions**
+- [x] **Step 3: Add method and evidence reference loading conditions**
 - [x] **Step 4: Add registry triggers for system design, difficulty, combat AI, attack/threat budget, tension pacing, and DDA**
 - [x] **Step 5: Add review triggers for unfair information, success punishment, oscillation, invisible adjustment, and missing evidence**
 
@@ -105,11 +107,11 @@
 - Consumes: Complete branch diff.
 - Produces: Passing structural tests, reference freshness decision, and a verified draft PR.
 
-- [ ] **Step 1: Run relevant PR checks**
-- [ ] **Step 2: Confirm new test passes and existing evidence-based knowledge test remains green**
-- [ ] **Step 3: Search for duplicate Skill IDs and stale routes**
-- [ ] **Step 4: Verify JSON parsing and Markdown path existence**
-- [ ] **Step 5: Update the PR body with actual checks, unverified items, risks, and rollback**
+- [x] **Step 1: Run relevant PR checks**
+- [x] **Step 2: Confirm the new contract/evidence tests and existing evidence-based knowledge tests are green**
+- [x] **Step 3: Search for duplicate Skill IDs and stale routes**
+- [x] **Step 4: Verify JSON parsing, Markdown path existence, and reference-freshness coupling**
+- [x] **Step 5: Prepare the PR body fields for actual checks, unverified items, risks, and rollback**
 
 ### Task 7: Final review gate
 
@@ -120,7 +122,7 @@
 - Consumes: GREEN branch and checks.
 - Produces: Draft PR ready for user review; no merge without explicit user approval.
 
-- [ ] **Step 1: Perform adversarial review for overlap, over-prescription, inaccessible difficulty, and success-punishment risks**
-- [ ] **Step 2: Apply only contract-preserving corrections**
-- [ ] **Step 3: Re-run checks after the final change**
-- [ ] **Step 4: Report Work Mode, Skill, Skill Mode, evidence, unverified items, and next project rollout step**
+- [x] **Step 1: Perform adversarial review for overlap, over-prescription, inaccessible difficulty, success-punishment, and weak source traceability risks**
+- [x] **Step 2: Apply only contract-preserving corrections, including evidence-source routing and whitespace cleanup**
+- [ ] **Step 3: Re-run all triggered checks after this final plan checkpoint**
+- [ ] **Step 4: Update the draft PR report and report Work Mode, Skill, Skill Mode, evidence, unverified items, and next project rollout step**
