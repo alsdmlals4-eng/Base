@@ -1,0 +1,26 @@
+name: Resolve PR 66 Merge Push
+
+on:
+  push:
+    branches:
+      - feat/game-design-difficulty-workflow
+
+permissions:
+  contents: write
+
+jobs:
+  resolve-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch head
+        uses: actions/checkout@v4
+        with:
+          ref: feat/game-design-difficulty-workflow
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Build resolved merge commit object
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+        run: python tools/resolve_pr66_merge.py
