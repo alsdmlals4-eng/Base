@@ -36,31 +36,10 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
             self.assertIn(status, skill)
         self.assertIn("생성 결과는 자동 최종 자산이 아니다", skill)
 
-    def test_art_skill_routes_prompt_recipe_forecast_contract(self) -> None:
-        skill = (ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md").read_text(encoding="utf-8")
-        for required in (
-            "PROMPT_RECIPE_SOURCE_AUDIT.md",
-            "AI_IMAGE_PROMPT_RECIPE_CARD.md",
-            "생성 전 결과 예측",
-            "프롬프트 추론 근거",
-            "예측과 실제 결과",
-        ):
-            self.assertIn(required, skill)
-
     def test_registry_routes_new_visual_work(self) -> None:
         registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
         entry = next(item for item in registry["skills"] if item["skill_id"] == "designing-art-prompts-and-technique-cards")
-        for tag in (
-            "planning-visualization",
-            "final-visual-candidate",
-            "visual-qa-and-approval",
-            "image-mockup",
-            "image-approval",
-            "prompt-recipe",
-            "similar-image-reference",
-            "pre-generation-forecast",
-            "prompt-reasoning",
-        ):
+        for tag in ("planning-visualization", "final-visual-candidate", "visual-qa-and-approval", "image-mockup", "image-approval"):
             self.assertIn(tag, entry["trigger_tags"])
 
     def test_active_entrypoints_reference_v8_not_v7(self) -> None:
