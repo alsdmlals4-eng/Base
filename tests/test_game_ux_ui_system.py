@@ -207,7 +207,7 @@ class GameUxUiSystemContractTests(unittest.TestCase):
         )
         self.assertIn("tests/test_game_ux_ui_system.py", rule["require_any_changed"])
 
-    def test_ui_workflow_watches_machine_router_and_human_entrypoints(self) -> None:
+    def test_ui_workflow_watches_all_contract_consumers(self) -> None:
         text = UX_UI_WORKFLOW.read_text(encoding="utf-8")
         for required in (
             "skills/SKILL_REGISTRY.json",
@@ -216,6 +216,8 @@ class GameUxUiSystemContractTests(unittest.TestCase):
             "START_HERE.md",
             "docs/OPERATING_MODEL.md",
             "docs/DOCUMENTATION_MAP.md",
+            "docs/superpowers/specs/2026-07-29-ui-polishing-system-design.md",
+            "docs/superpowers/plans/2026-07-29-ui-polishing-system.md",
         ):
             with self.subTest(required=required):
                 self.assertIn(f'      - "{required}"', text)
