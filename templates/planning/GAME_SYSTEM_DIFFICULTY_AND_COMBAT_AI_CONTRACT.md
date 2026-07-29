@@ -63,7 +63,7 @@ last_evidence_reviewed_at:
 
 프로젝트 고유 추가 규칙:
 
-- 
+-
 
 ## 6. 난이도 장벽 프로필
 
@@ -270,7 +270,7 @@ rollback_trigger:
 
 ## 18. 제외 범위
 
-- 
+-
 
 ## 19. 완료 기준
 
