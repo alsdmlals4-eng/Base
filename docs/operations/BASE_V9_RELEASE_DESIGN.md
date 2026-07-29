@@ -1,4 +1,4 @@
-# Base v9.0.0-rc.1 Design
+# Base v9.0.0 Release Design
 
 ## Purpose and boundary
 

@@ -3,7 +3,8 @@
 ## Status: [보류]
 
 This work order is intentionally not an authorization to alter a project. It is
-the reusable instruction to use only after the Base RC has been locked and the
+the reusable instruction to use only after the Base v9.0.0 release has been
+locked and the
 user explicitly resumes a named project.
 
 | Project | Status |
@@ -18,7 +19,7 @@ user explicitly resumes a named project.
 
 All prerequisites must be independently confirmed for the chosen project:
 
-1. Base RC lock
+1. Base v9.0.0 lock
 2. repository audit
 3. Sheet access
 4. user approval
@@ -39,4 +40,5 @@ installation occurs before the five prerequisites are met.
 4. Create a project-scoped PLAN→BUILD→REVIEW contract and validation plan.
 5. Apply only the approved project change, test it, and update project canon plus
    Sheet synchronization status.
-6. Record project evidence before considering any v9.0.0 final-release decision.
+6. Record project evidence for the post-release adoption wave; it does not
+   retroactively change the Base v9.0.0 release decision.

@@ -36,7 +36,7 @@
       "type": "issue"
     },
     {
-      "disposition": "FINAL_RELEASE_HOLD",
+      "disposition": "POST_RELEASE_ADOPTION",
       "number": 55,
       "type": "issue"
     }

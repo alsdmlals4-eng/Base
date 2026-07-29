@@ -2,7 +2,8 @@
 
 ## Scope
 
-Base v9.0.0-rc.1 files only. Project repositories and Google Sheets were not opened, modified, or used as release evidence.
+Base v9.0.0 files only. Project repositories and Google Sheets were not opened,
+modified, or used as release evidence.
 
 ## Attacks and decisions
 
@@ -13,7 +14,7 @@ Base v9.0.0-rc.1 files only. Project repositories and Google Sheets were not ope
 | An active package is orphaned or a dependency cycle is hidden | Registry/path/frontmatter and declared dependency-graph validation | `ACCEPT` for current declared graph |
 | A fixed active-Skill count becomes a policy constraint | Current operational documents no longer declare a fixed count; generated summary reports the observed count | `ACCEPT` |
 | A project or Sheet is accidentally modified during Base work | Sheet control contract, release contract, and held work order | `ACCEPT` |
-| Final release is overstated without project evidence | `v9.0.0` remains `WAVE_2_HOLD` | `ACCEPT` |
+| Project adoption is confused with Base release evidence | `POST_RELEASE_PROJECT_ADOPTION_WAVE` is separate and does not block the Base v9.0.0 release | `ACCEPT` |
 | CI or platform evidence is implied without execution | Local tests are recorded; GitHub Actions and Windows publication checks remain unexecuted | `UNVERIFIED` follow-up |
 
 ## Regression recheck
@@ -22,4 +23,6 @@ The static active-Skill tables were the validated finding. After consolidation t
 
 ## Decision
 
-`ACCEPT_WITH_FOLLOWUP`: the Base v9 RC design is internally consistent under local evidence. It is not a final release and does not clear `WAVE_2_HOLD`.
+`ACCEPT_WITH_FOLLOWUP`: the Base v9.0.0 release design is internally consistent
+under local evidence. Required GitHub Actions evidence remains a merge gate;
+project adoption is deferred to `POST_RELEASE_PROJECT_ADOPTION_WAVE`.

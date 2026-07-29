@@ -34,18 +34,18 @@ class V9GovernanceDocumentTests(unittest.TestCase):
         order = read("templates/prompts/BASE_V9_COMMON_PROJECT_ADOPTION_WORK_ORDER.md")
         for project in ("Ten Paces: Hidden Moves", "Blacksmith", "OMENWARD", "urban-legend", "GRIMOIRE"):
             self.assertIn(project, order)
-        for prerequisite in ("Base RC lock", "repository audit", "Sheet access", "user approval", "verification environment"):
+        for prerequisite in ("Base v9.0.0 lock", "repository audit", "Sheet access", "user approval", "verification environment"):
             self.assertIn(prerequisite, order)
         self.assertIn("[보류]", order)
         self.assertIn("No Sheet write", order)
 
-    def test_rc_design_plan_and_integrity_audit_keep_dispositions_and_evidence_visible(self) -> None:
-        design = read("docs/operations/BASE_V9_RC_DESIGN.md")
+    def test_release_design_plan_and_integrity_audit_keep_dispositions_and_evidence_visible(self) -> None:
+        design = read("docs/operations/BASE_V9_RELEASE_DESIGN.md")
         implementation = read("docs/operations/BASE_V9_IMPLEMENTATION_PLAN.md")
         audit = read("docs/operations/BASE_V9_INTEGRITY_AUDIT.md")
         for term in ("Registry", "frontmatter", "generated", "Base Adapter", "project-specific"):
             self.assertIn(term, design)
-        self.assertIn("WAVE_2_HOLD", implementation)
+        self.assertIn("POST_RELEASE_PROJECT_ADOPTION_WAVE", implementation)
         for disposition in ("KEEP", "CONSOLIDATE", "ARCHIVE", "RETIRE", "BLOCKED"):
             self.assertIn(disposition, audit)
         for check in ("link", "orphan", "cycle", "provenance", "template consumer"):

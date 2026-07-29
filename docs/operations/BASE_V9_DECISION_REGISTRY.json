@@ -12,9 +12,9 @@
       "status": "CONFIRMED"
     },
     {
-      "decision": "v9.0.0 final release requires project adoption and verification evidence.",
+      "decision": "Project adoption is a post-release wave and must not block the Base v9.0.0 release.",
       "id": "BASE-V9-003",
-      "status": "HOLD"
+      "status": "CONFIRMED"
     }
   ],
   "schema_version": 1

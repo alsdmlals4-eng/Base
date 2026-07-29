@@ -1,8 +1,8 @@
 # Base Skill Learning Log
 
-## 2026-07-30 Base v9 RC: generated authority instead of fixed Skill count
+## 2026-07-30 Base v9: generated authority instead of fixed Skill count
 
-- **Trigger:** Base needed a release-candidate operating contract without treating
+- **Trigger:** Base needed a final release operating contract without treating
   the current active Skill count as an architecture target.
 - **Finding:** Human-maintained count summaries can drift from the Registry and
   hide whether a Skill has a complete routing and verification boundary.
@@ -13,7 +13,7 @@
 - **Evidence:** Focused v9 RED→GREEN tests, deterministic second-generator run,
   Base v9 integrity check, existing skill coverage check, and full local suite.
 - **Boundary:** No project repository or Google Sheet was read or written. Project
-  adoption and the final v9.0.0 release remain `WAVE_2_HOLD`.
+  adoption is a `POST_RELEASE_PROJECT_ADOPTION_WAVE` and does not block Base v9.0.0.
 - **Learning state:** `PATTERN` for Base governance; project-level outcomes remain
   `UNVERIFIED` until separately authorized adoption work produces evidence.
 - **Next trigger:** Re-run the migration and responsibility-boundary review when a

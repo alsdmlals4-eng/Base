@@ -261,7 +261,7 @@ PLAN: audit only
 - [Base Rules Version](BASE_RULES_VERSION.md)
 - [System Map](operations/BASE_V9_SYSTEM_MAP.md)
 - [Maturity Model](operations/BASE_V9_MATURITY_MODEL.md)
-- [RC Design](operations/BASE_V9_RC_DESIGN.md)
+- [Base v9 Release Design](operations/BASE_V9_RELEASE_DESIGN.md)
 - [Implementation Plan](operations/BASE_V9_IMPLEMENTATION_PLAN.md)
 - [Migration Map](operations/BASE_V9_MIGRATION_MAP.md)
 - [Release Contract](operations/BASE_V9_RELEASE_CONTRACT.md)

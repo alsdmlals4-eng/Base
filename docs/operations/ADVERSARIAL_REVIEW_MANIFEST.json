@@ -17,6 +17,6 @@
   "report": "docs/operations/BASE_V9_ADVERSARIAL_REVIEW_REPORT.md",
   "required_gate": "adversarial-gate",
   "schema_version": 1,
-  "scope": "Base v9.0.0-rc.1 only",
+  "scope": "Base v9.0.0 release contract only",
   "status": "REVIEWED_WITH_FOLLOWUP"
 }

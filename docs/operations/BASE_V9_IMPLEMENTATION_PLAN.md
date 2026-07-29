@@ -1,4 +1,4 @@
-# Base v9.0.0-rc.1 Implementation Plan
+# Base v9.0.0 Implementation Plan
 
 ## RC work
 
@@ -11,13 +11,15 @@
 
 ## Release boundary
 
-The result may become `v9.0.0-rc.1` only after Base evidence is consistent.
-`v9.0.0` remains `WAVE_2_HOLD`: project repositories, GDD Sheets, project
-adapters, and project runtime validation are out of scope for this change.
+The result may become `v9.0.0` after Base-only evidence is consistent and the
+required GitHub Actions gates pass. Project repositories, GDD Sheets, project
+adapters, and project runtime validation are a separate
+`POST_RELEASE_PROJECT_ADOPTION_WAVE`.
 
 ## Non-goals
 
 - No project repository modification.
 - No Google Sheets read, write, or creation.
 - No direct merge of proposed Skill pull requests.
-- No final-release claim while WAVE_2_HOLD remains active.
+- Do not perform project adoption inside the Base release; it is resumed only in
+  `POST_RELEASE_PROJECT_ADOPTION_WAVE`.

@@ -26,7 +26,7 @@
   ],
   "project_sheet_role": "USER_FACING_GDD_WORKSPACE",
   "resume_prerequisites": [
-    "base-rc-lock",
+    "base-v9-final-lock",
     "repository-audit",
     "sheet-access",
     "user-approval",

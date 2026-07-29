@@ -2,11 +2,12 @@
 
 ## Unreleased - Base audit and operating-contract consistency
 
-- Base v9.0.0-rc.1 adds Registry-derived plugin metadata, `base.lock.json`, a
+- Base v9.0.0 adds Registry-derived plugin metadata, `base.lock.json`, a
   deterministic active-Skill snapshot and summary, a project-hold Sheet control
   contract, release/maturity/system/migration canon, and a Base-only integrity
   checker. Active Skill count is now an observed generated value, not a fixed
-  policy number; `v9.0.0` remains `WAVE_2_HOLD` pending separate project evidence.
+  policy number. Project adoption is a separate
+  `POST_RELEASE_PROJECT_ADOPTION_WAVE` and does not block the Base release.
 - The UX/UI reference card now requires open-source template license, commercial
   use, attribution, modification/redistribution, Godot compatibility,
   maintenance, dependency-removal, non-copying, transformation, and validation

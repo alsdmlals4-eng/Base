@@ -70,8 +70,10 @@ class V9RegistryGenerationTests(unittest.TestCase):
         plugin = json.loads((ROOT / ".codex-plugin/plugin.json").read_text(encoding="utf-8"))
         sheet = json.loads((ROOT / "docs/operations/SHEET_CONTROL_CONTRACT.json").read_text(encoding="utf-8"))
         ledger = json.loads((ROOT / "docs/operations/GITHUB_OBJECT_LEDGER.json").read_text(encoding="utf-8"))
-        self.assertEqual(lock["release_line"], "v9.0.0-rc.1")
-        self.assertEqual(lock["final_release_state"], "WAVE_2_HOLD")
+        self.assertEqual(lock["release_line"], "v9.0.0")
+        self.assertEqual(lock["release_state"], "BASE_RELEASE_PENDING_CI")
+        self.assertEqual(lock["project_adoption_state"], "POST_RELEASE_PROJECT_ADOPTION_WAVE")
+        self.assertEqual(plugin["version"], "9.0.0")
         self.assertEqual(plugin["author"]["name"], "alsdmlals4-eng")
         self.assertEqual(plugin["skills"], "./skills/")
         self.assertEqual(plugin["interface"]["displayName"], "Base v9")
@@ -79,7 +81,12 @@ class V9RegistryGenerationTests(unittest.TestCase):
         self.assertEqual(sheet["base_sheet_status"], "BASE_EXCLUDED")
         self.assertFalse(sheet["external_sheet_writes_authorized"])
         self.assertTrue(all(project["status"] == "HOLD" for project in sheet["held_projects"]))
+        self.assertIn("base-v9-final-lock", sheet["resume_prerequisites"])
         self.assertIn("pr", ledger["object_types"])
+        self.assertIn(
+            {"type": "issue", "number": 55, "disposition": "POST_RELEASE_ADOPTION"},
+            ledger["objects"],
+        )
 
     def test_integrity_checker_reports_generated_drift_orphans_and_cycles(self) -> None:
         generated = self.run_generator("--write")

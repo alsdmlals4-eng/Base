@@ -12,13 +12,15 @@ def read(path: str) -> str:
 
 
 class V9MachineContractTests(unittest.TestCase):
-    def test_base_version_and_release_contract_keep_rc_and_final_distinct(self) -> None:
+    def test_base_final_release_is_distinct_from_post_release_project_adoption(self) -> None:
         version = read("docs/BASE_RULES_VERSION.md")
         release = read("docs/operations/BASE_V9_RELEASE_CONTRACT.md")
 
-        self.assertIn("v9.0.0-rc.1", version)
+        self.assertIn("v9.0.0", version)
+        self.assertIn("BASE_RELEASE_PENDING_CI", version)
         self.assertIn("v9.0.0", release)
-        self.assertIn("WAVE_2_HOLD", release)
+        self.assertIn("POST_RELEASE_PROJECT_ADOPTION_WAVE", release)
+        self.assertIn("must not block the Base v9.0.0 release", release)
         self.assertIn("최종 릴리스", release)
 
     def test_system_map_declares_complete_recoverable_workflow(self) -> None:

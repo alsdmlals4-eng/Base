@@ -4,13 +4,13 @@
 
 | Version | State | Entry condition | Exit condition |
 | --- | --- | --- | --- |
-| `v9.0.0-rc.1` | `RC_IN_PROGRESS` | Base-only design, machine contracts, generated artifacts, and focused tests are implemented | All required Base validation evidence agrees and release review accepts the candidate |
-| `v9.0.0` | `WAVE_2_HOLD` | RC is accepted and common project adoption work is explicitly authorized | Each adopted project has actual repository, Sheet-access, user-approval, and verification evidence |
+| `v9.0.0` | `BASE_RELEASE_PENDING_CI` | Base-only design, machine contracts, generated artifacts, and local validation are consistent | Required GitHub Actions gates pass and the release is merged |
+| Project adoption | `POST_RELEASE_PROJECT_ADOPTION_WAVE` | Base v9.0.0 is released and a named project is explicitly resumed | The project records repository, Sheet-access, user-approval, and verification evidence |
 
-`v9.0.0-rc.1` is a Base release candidate. It must not imply that a project has
-adopted v9 or that a Sheet has been created, read, or written.
+`v9.0.0` is a Base-only release. It must not imply that a project has adopted v9
+or that a Sheet has been created, read, or written.
 
-## Required Base RC evidence
+## Required Base release evidence
 
 - Plugin manifest and Base lock validate against the Registry-derived view.
 - Registry/frontmatter, generated documentation, project snapshot, and hashes are
@@ -19,15 +19,15 @@ adopted v9 or that a Sheet has been created, read, or written.
   consumer, provenance, and documentation-link checks pass or retain an explicit
   non-passing status.
 - The Sheet control contract confirms `BASE_EXCLUDED`; no external Sheet write is
-  part of this candidate.
+  part of this Base release.
 - `ci-gate` and `adversarial-gate` appear for documentation-only, code, and
   workflow pull-request paths, with actual CI evidence recorded where runnable.
 - Windows/local and GitHub Actions results distinguish `PASSED`, `FAILED`,
   `NOT_RUN`, and `UNVERIFIED`.
 
-## WAVE_2_HOLD: common project adoption
+## POST_RELEASE_PROJECT_ADOPTION_WAVE
 
-The following projects are `[보류]` in this Base-only release candidate:
+The following projects are `[보류]` after the Base-only v9.0.0 release:
 
 - Ten Paces: Hidden Moves
 - Blacksmith
@@ -35,15 +35,16 @@ The following projects are `[보류]` in this Base-only release candidate:
 - urban-legend
 - GRIMOIRE: 세계를 다시 쓰는 법
 
-Before a held project can resume, all of the following are required: Base RC lock,
+Before a held project can resume, all of the following are required: Base v9.0.0 lock,
 actual repository audit, confirmed Sheet access, explicit user approval, and a
 working project verification environment. Project implementation, project Skill
 snapshots, and Google Sheets writes are not authorized by this Base change.
 
-## Final release rule
+## Base release rule
 
-`v9.0.0` is not a documentation milestone. It is released only after WAVE_2_HOLD
-is cleared with per-project evidence and a final compatibility review. Until then,
-the final release remains blocked by `WAVE_2_HOLD`.
+`v9.0.0` is released after Base-only contracts, deterministic generation,
+integrity checks, and required GitHub Actions evidence agree. The project adoption
+wave must not block the Base v9.0.0 release. It is a separately authorized phase
+with per-project evidence and compatibility review.
 
 최종 릴리스는 공통 프로젝트 적용과 검증을 대신하는 선언이 아니다.

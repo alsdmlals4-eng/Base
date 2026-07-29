@@ -169,7 +169,7 @@ def build_artifacts() -> dict[Path, bytes]:
     snapshot_hash = sha256_bytes(snapshot_bytes)
     plugin = {
         "name": "base-v9",
-        "version": "9.0.0-rc.1",
+        "version": "9.0.0",
         "description": "Base v9 shared game-development operating-system adapter.",
         "author": {"name": "alsdmlals4-eng"},
         "homepage": "https://github.com/alsdmlals4-eng/Base",
@@ -196,10 +196,11 @@ def build_artifacts() -> dict[Path, bytes]:
     lock = {
         "schema_version": 1,
         "artifact_role": "base-release-lock",
-        "release_line": "v9.0.0-rc.1",
-        "release_state": "RC_IN_PROGRESS",
+        "release_line": "v9.0.0",
+        "release_state": "BASE_RELEASE_PENDING_CI",
         "final_release": "v9.0.0",
-        "final_release_state": "WAVE_2_HOLD",
+        "final_release_state": "BASE_RELEASE_PENDING_CI",
+        "project_adoption_state": "POST_RELEASE_PROJECT_ADOPTION_WAVE",
         "source_of_truth": "skills/SKILL_REGISTRY.json",
         "registry_sha256": registry_hash,
         "snapshot_sha256": snapshot_hash,
@@ -212,7 +213,7 @@ def build_artifacts() -> dict[Path, bytes]:
         "decisions": [
             {"id": "BASE-V9-001", "status": "CONFIRMED", "decision": "Active Skill count is Registry-derived and not fixed."},
             {"id": "BASE-V9-002", "status": "CONFIRMED", "decision": "Google Sheets remain USER_FACING_GDD_WORKSPACE for projects; Base is BASE_EXCLUDED."},
-            {"id": "BASE-V9-003", "status": "HOLD", "decision": "v9.0.0 final release requires project adoption and verification evidence."},
+            {"id": "BASE-V9-003", "status": "CONFIRMED", "decision": "Project adoption is a post-release wave and must not block the Base v9.0.0 release."},
         ],
     }
     ledger = {
@@ -226,7 +227,7 @@ def build_artifacts() -> dict[Path, bytes]:
             {"type": "pr", "number": 29, "disposition": "REASSESS_BOUNDARY"},
             {"type": "pr", "number": 30, "disposition": "ADOPT_AS_GATE"},
             {"type": "issue", "number": 54, "disposition": "IMPLEMENTATION_SOURCE"},
-            {"type": "issue", "number": 55, "disposition": "FINAL_RELEASE_HOLD"},
+            {"type": "issue", "number": 55, "disposition": "POST_RELEASE_ADOPTION"},
         ],
     }
     adversarial = {
@@ -234,7 +235,7 @@ def build_artifacts() -> dict[Path, bytes]:
         "artifact_role": "adversarial-review-manifest",
         "status": "REVIEWED_WITH_FOLLOWUP",
         "required_gate": "adversarial-gate",
-        "scope": "Base v9.0.0-rc.1 only",
+        "scope": "Base v9.0.0 release contract only",
         "report": "docs/operations/BASE_V9_ADVERSARIAL_REVIEW_REPORT.md",
         "attacks": ["authority-drift", "generated-artifact-drift", "orphan-or-cycle", "duplicate-responsibility", "legacy-alias-loss", "release-overclaim"],
         "evidence_required": ["focused-tests", "full-regression", "generator-idempotence", "ci-evidence-or-not-run-status"],
@@ -253,7 +254,7 @@ def build_artifacts() -> dict[Path, bytes]:
             {"project": "urban-legend", "status": "HOLD"},
             {"project": "GRIMOIRE: 세계를 다시 쓰는 법", "status": "HOLD"},
         ],
-        "resume_prerequisites": ["base-rc-lock", "repository-audit", "sheet-access", "user-approval", "verification-environment"],
+        "resume_prerequisites": ["base-v9-final-lock", "repository-audit", "sheet-access", "user-approval", "verification-environment"],
     }
     return {
         OUTPUTS["plugin"]: canonical_json(plugin),
