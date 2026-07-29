@@ -1,224 +1,79 @@
 # PromptRecipe Reference Integration Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** This plan records the approved implementation and the TDD evidence used to refine its boundary. The final architecture below supersedes the initial direct-Skill-edit hypothesis.
 
-**Goal:** Integrate PromptRecipe and similar image/prompt examples into the existing Base art-prompt workflow so agents can forecast likely image results and explain the reasoning used to derive prompts before generation.
+**Goal:** Integrate PromptRecipe and similar image/prompt examples into the existing Base art-technique workflow so an AI can forecast likely image results and explain why each prompt expression is expected to move the result toward the requested target.
 
-**Architecture:** Keep `designing-art-prompts-and-technique-cards` as the single execution owner. Add a source audit and a reusable prompt-recipe card, connect them from the existing Skill, and validate discovery, prediction, reasoning, rights, and non-copying contracts through one focused unittest added to the existing evidence-knowledge workflow.
+**Final architecture:** Keep `designing-art-prompts-and-technique-cards` and its Registry entry unchanged. Add one Source Audit and one detailed Recipe Card, then connect both from the existing `templates/planning/ART_TECHNIQUE_CARD.md` used by `technique-card` mode. Validate the contract with a focused unittest in the existing Evidence Knowledge workflow.
 
-**Tech Stack:** Markdown, YAML examples, Python `unittest`, GitHub Actions, GitHub Contents API.
+**Tech stack:** Markdown, YAML examples, Python `unittest`, GitHub Actions.
 
-## Global Constraints
+## 1. Global constraints
 
-- Do not add a new shared Skill ID.
-- Do not copy PromptRecipe prompt bodies, protected images, identifiable characters, logos, signatures, or named-artist style instructions into Base.
-- Treat similar images and similar prompts as reference evidence, not project authority or guaranteed reproduction instructions.
-- Pre-generation output forecasts are hypotheses with `LOW / MEDIUM / HIGH` confidence, not promises.
-- Every important prompt phrase must connect a desired observable result to a reasoning basis, expected model response, and risk/correction.
-- Actual project prompts, generated images, approved assets, model/account settings, and runtime evidence remain project-specific.
-- Do not modify Godot code, scenes, resources, game data, project Sheets, or approved project assets.
-- Preserve every existing mode, lifecycle state, QA rule, Template link, and Pinterest/FACS/poster contract in `designing-art-prompts-and-technique-cards`.
-- PR #62 modifies other shared routing consumers. Before each shared-file write, re-fetch the current branch file and preserve unrelated content; do not overwrite PR #62 work if it reaches `main` during execution.
-- Local GitHub DNS is unavailable. Use Draft PR Actions for mandatory RED and GREEN evidence; local tests remain `NOT_RUN`.
+- Do not add a new shared Skill ID, Skill mode, or Registry trigger.
+- Do not copy PromptRecipe prompt bodies, protected images, identifiable characters, logos, signatures, named-artist instructions, or unique compositions into Base.
+- Treat similar images and similar prompts as separate reference evidence.
+- Treat pre-generation forecasts as `LOW / MEDIUM / HIGH` confidence hypotheses, never guarantees.
+- Connect every important prompt phrase to a desired observable result, reasoning basis, expected model response, and risk/correction.
+- Keep actual project prompts, generated images, approved assets, model/account settings, and runtime evidence in project repositories.
+- Do not modify Godot code, Scene, Resource, game data, project Google Sheets, or approved project assets.
+- Preserve the existing art-prompt Skill, Pinterest/FACS/poster contracts, lifecycle states, QA, Registry, and Learning Log.
+- Use GitHub Actions as the execution environment because local GitHub DNS is unavailable.
 
----
+## 2. Baseline and conflict audit
 
-### Task 1: Add the failing PromptRecipe contract test and Draft PR
+- Base fork point: `main@0fd95f4513343e77fd664af2763a01b02f52545b`.
+- Same-goal open PR before work: none.
+- Related open PR: #62, UX/UI polishing. Its final changed paths do not overlap this plan's final paths.
+- Existing execution owner: `designing-art-prompts-and-technique-cards: technique-card`.
+- Existing machine routing: `image-prompt` and `technique-card`; sufficient for this request.
 
-**Files:**
-- Create: `tests/test_prompt_recipe_reference_contract.py`
-- Modify: `.github/workflows/validate-evidence-knowledge.yml`
-- Modify: `tests/test_evidence_knowledge_workflow_contract.py`
+## 3. Task 1 — Establish TDD RED
 
-**Interfaces:**
-- Consumes: the approved design at `docs/superpowers/specs/2026-07-29-prompt-recipe-reference-integration-design.md`.
-- Produces: a failing contract that names every required Source Audit, Template, Skill link, forecast field, reasoning field, rights boundary, and workflow consumer.
+**Files**
 
-- [ ] **Step 1: Create the focused failing unittest**
+- Create `tests/test_prompt_recipe_reference_contract.py`.
+- Modify `.github/workflows/validate-evidence-knowledge.yml`.
+- Modify `tests/test_evidence_knowledge_workflow_contract.py`.
 
-Create `tests/test_prompt_recipe_reference_contract.py` with these exact behaviors:
+**Required failing behaviors**
 
-```python
-from __future__ import annotations
+- Source Audit file is missing.
+- Recipe Card file is missing.
+- The existing Art Technique Card does not yet link the forecast/reasoning contract.
 
-import unittest
-from pathlib import Path
+**Validation**
 
+- Open Draft PR #63.
+- Run `Validate Evidence-Based Game Development Knowledge` on the RED commit.
+- Accept RED only when failure is caused by missing planned artifacts, not YAML/Python errors or unrelated regressions.
 
-ROOT = Path(__file__).resolve().parents[1]
-SOURCE_AUDIT = ROOT / "docs" / "knowledge" / "research" / "PROMPT_RECIPE_SOURCE_AUDIT.md"
-RECIPE_CARD = ROOT / "templates" / "research" / "AI_IMAGE_PROMPT_RECIPE_CARD.md"
-SKILL = ROOT / "skills" / "designing-art-prompts-and-technique-cards" / "SKILL.md"
-DESIGN = ROOT / "docs" / "superpowers" / "specs" / "2026-07-29-prompt-recipe-reference-integration-design.md"
+**Observed result**
 
+- Run `30449161396`: failure.
+- Missing Source Audit and Recipe Card were detected as intended.
 
-class PromptRecipeReferenceContractTests(unittest.TestCase):
-    def test_required_files_exist(self) -> None:
-        missing = [
-            path.relative_to(ROOT).as_posix()
-            for path in (SOURCE_AUDIT, RECIPE_CARD, SKILL, DESIGN)
-            if not path.is_file()
-        ]
-        self.assertEqual([], missing)
+## 4. Task 2 — Add Source Audit
 
-    def test_source_audit_preserves_reference_and_rights_boundaries(self) -> None:
-        text = SOURCE_AUDIT.read_text(encoding="utf-8")
-        for required in (
-            "https://promptrecipe.pages.dev/",
-            "REFERENCE_ONLY",
-            "UNVERIFIED",
-            "원문 전문을 복제하지 않는다",
-            "유사 이미지",
-            "유사 프롬프트",
-            "특정 작가",
-            "재검증 조건",
-        ):
-            with self.subTest(required=required):
-                self.assertIn(required, text)
+**Create**
 
-    def test_recipe_card_requires_forecast_reasoning_and_result_comparison(self) -> None:
-        text = RECIPE_CARD.read_text(encoding="utf-8")
-        for required in (
-            "similar_image_references",
-            "similar_prompt_references",
-            "pre_generation_forecast",
-            "prediction_confidence",
-            "confidence_basis",
-            "unverified_assumptions",
-            "desired_observation_to_prompt",
-            "reasoning_basis",
-            "expected_model_response",
-            "risk_and_correction",
-            "actual_result_review",
-            "PREDICTION_NOT_TESTED",
-            "MODEL_OR_CONTEXT_CHANGED_RETEST_REQUIRED",
-        ):
-            with self.subTest(required=required):
-                self.assertIn(required, text)
+- `docs/knowledge/research/PROMPT_RECIPE_SOURCE_AUDIT.md`
 
-    def test_skill_routes_reference_assisted_forecast_before_generation(self) -> None:
-        text = SKILL.read_text(encoding="utf-8")
-        for required in (
-            "PROMPT_RECIPE_SOURCE_AUDIT.md",
-            "AI_IMAGE_PROMPT_RECIPE_CARD.md",
-            "생성 전 결과 예측",
-            "프롬프트 추론 근거",
-            "유사 이미지",
-            "유사 프롬프트",
-            "예측과 실제 결과",
-        ):
-            with self.subTest(required=required):
-                self.assertIn(required, text)
+**Contract**
 
-    def test_unrun_generation_cannot_be_verified(self) -> None:
-        source = SOURCE_AUDIT.read_text(encoding="utf-8")
-        card = RECIPE_CARD.read_text(encoding="utf-8")
-        combined = source + "\n" + card
-        self.assertIn("실제 생성 없이", combined)
-        self.assertIn("VERIFIED", combined)
-        self.assertIn("가설", combined)
+- `source_status: PARTIALLY_VERIFIED`
+- `source_decision: REFERENCE_ONLY`
+- Separate homepage observations from unverified individual page content, rights, model settings, and reproducibility.
+- Define similar-image analysis, similar-prompt analysis, pre-generation forecast limits, prompt reverse inference, rights/non-copying boundaries, Base/project responsibility, and revalidation conditions.
+- Explicitly prohibit copying full prompt bodies and claiming `VERIFIED` without actual generation and QA.
 
+## 5. Task 3 — Add detailed Recipe Card
 
-if __name__ == "__main__":
-    unittest.main()
-```
+**Create**
 
-- [ ] **Step 2: Add the test and relevant paths to the dedicated workflow**
+- `templates/research/AI_IMAGE_PROMPT_RECIPE_CARD.md`
 
-Update `.github/workflows/validate-evidence-knowledge.yml` so pull-request path filters include:
-
-```yaml
-      - "docs/knowledge/research/PROMPT_RECIPE_SOURCE_AUDIT.md"
-      - "docs/superpowers/specs/*prompt-recipe-reference-integration*.md"
-      - "docs/superpowers/plans/*prompt-recipe-reference-integration*.md"
-      - "skills/designing-art-prompts-and-technique-cards/SKILL.md"
-      - "tests/test_prompt_recipe_reference_contract.py"
-```
-
-Add `tests/test_prompt_recipe_reference_contract.py` to `py_compile`, `unittest`, and uploaded evidence paths.
-
-- [ ] **Step 3: Extend the workflow self-contract**
-
-Update `tests/test_evidence_knowledge_workflow_contract.py` to require:
-
-```python
-"tests/test_prompt_recipe_reference_contract.py",
-"docs/knowledge/research/PROMPT_RECIPE_SOURCE_AUDIT.md",
-"skills/designing-art-prompts-and-technique-cards/SKILL.md",
-```
-
-- [ ] **Step 4: Commit the RED contract**
-
-Commit message:
-
-```text
-test: define PromptRecipe reference contract
-```
-
-- [ ] **Step 5: Open a Draft PR**
-
-PR title:
-
-```text
-PromptRecipe 이미지·프롬프트 예측 레퍼런스 통합
-```
-
-The PR body must state that RED is expected because the Source Audit and Recipe Card do not exist and the Skill is not connected yet.
-
-- [ ] **Step 6: Verify RED in GitHub Actions**
-
-Inspect the PR-head workflow run for the RED commit.
-
-Expected result:
-
-```text
-Validate Evidence-Based Game Development Knowledge: FAILURE
-```
-
-The focused failure must name missing `PROMPT_RECIPE_SOURCE_AUDIT.md`, missing `AI_IMAGE_PROMPT_RECIPE_CARD.md`, or missing Skill contract phrases. A YAML parse failure or unrelated existing failure is not valid RED evidence.
-
----
-
-### Task 2: Implement the Source Audit and Prompt Recipe Card
-
-**Files:**
-- Create: `docs/knowledge/research/PROMPT_RECIPE_SOURCE_AUDIT.md`
-- Create: `templates/research/AI_IMAGE_PROMPT_RECIPE_CARD.md`
-
-**Interfaces:**
-- Consumes: design principles and the failing test from Task 1.
-- Produces: the source/rights contract and project-facing record schema consumed by the Skill in Task 3.
-
-- [ ] **Step 1: Create the Source Audit**
-
-The Source Audit must contain:
-
-```text
-source_status: PARTIALLY_VERIFIED
-source_decision: REFERENCE_ONLY
-checked_at: 2026-07-29
-```
-
-Required sections:
-
-```text
-1. 목적
-2. 확인된 범위
-3. 미검증 범위
-4. 유사 이미지 참고 원칙
-5. 유사 프롬프트 참고 원칙
-6. 생성 전 결과 예측의 증거 한계
-7. 원하는 결과에서 프롬프트를 역추론하는 방법
-8. 권리·복제·유사성 경계
-9. Base와 프로젝트 책임 경계
-10. 재검증 조건
-```
-
-The document must explicitly prohibit copying full prompt bodies and must classify observed homepage structure separately from unverified individual pages, model versions, rights, and reproducibility.
-
-- [ ] **Step 2: Create the reusable Recipe Card**
-
-The card must provide editable Markdown/YAML fields for:
+**Required fields**
 
 ```yaml
 source_audit:
@@ -237,210 +92,112 @@ prompt_derivation:
     expected_model_response:
     risk_and_correction:
 prompt_modules:
+generation_record:
 actual_result_review:
-  generation_status: NOT_RUN | RUN
   prediction_status: PREDICTION_NOT_TESTED | PREDICTION_PARTIALLY_MATCHED | PREDICTION_MATCHED | PREDICTION_FAILED | MODEL_OR_CONTEXT_CHANGED_RETEST_REQUIRED
+knowledge_state_decision:
 ```
 
-Add checklist gates for project identity protection, target-size readability, anatomy/text/logo/perspective risks, production feasibility, rights review, and actual result comparison.
+**QA**
 
-- [ ] **Step 3: Commit the knowledge artifacts**
+- Project identity and approved visuals are protected.
+- Target-size readability, anatomy, weapons, text, logo, perspective, lighting, production feasibility, rights, and actual-result comparison are reviewed.
 
-Commit message:
+## 6. Task 4 — Connect through the existing Technique Card
 
-```text
-docs: add PromptRecipe source audit and recipe card
-```
+**Modify**
 
-- [ ] **Step 4: Verify partial GREEN**
+- `templates/planning/ART_TECHNIQUE_CARD.md`
 
-Expected focused results after this commit:
+**Architecture decision**
 
-- file-existence test passes;
-- Source Audit and Recipe Card field tests pass;
-- Skill routing test still fails because the existing Skill has not been connected.
+The first implementation changed `skills/designing-art-prompts-and-technique-cards/SKILL.md`. Reference freshness correctly required Registry, Learning Log, and existing companion-test changes. Because the request does not introduce a new trigger, mode, input authority, or approval boundary, that expansion was excessive.
 
----
+The final implementation therefore:
 
-### Task 3: Connect the existing art-prompt Skill
+- restores the Skill and existing BCA test to their baseline blobs;
+- keeps Registry and Learning Log unchanged;
+- adds a `레퍼런스 기반 생성 전 예측·프롬프트 추론` section to the existing Art Technique Card;
+- links the Source Audit and detailed Recipe Card;
+- keeps only summary fields in the Art Technique Card and detailed fields in the Recipe Card.
 
-**Files:**
-- Modify: `skills/designing-art-prompts-and-technique-cards/SKILL.md`
+**Required output contract**
 
-**Interfaces:**
-- Consumes: Source Audit and Recipe Card from Task 2.
-- Produces: an explicit pre-generation `similar references → forecast → prompt derivation → generation → comparison` workflow without adding a new Skill or mode.
+- Similar image observations.
+- Similar prompt observations.
+- `ADOPT / ADAPT / TEST / AVOID / REFERENCE_ONLY` decision.
+- Expected result, likely failures, confidence, confidence basis, unverified assumptions.
+- Desired observation → prompt expression → reasoning → expected response → risk/correction table.
+- Forecast-versus-result comparison and minimum module to change.
 
-- [ ] **Step 1: Extend required inputs without removing existing inputs**
+## 7. Task 5 — Validate workflow and regressions
 
-Add:
-
-```text
-- 유사 이미지·유사 프롬프트 사례와 각 출처·확인일·권리 상태.
-- 원하는 결과를 관찰 가능한 문장으로 표현한 목표와 허용 오차.
-- 생성 전 예상 결과·실패 가능성·확신도와 추론 근거.
-```
-
-- [ ] **Step 2: Insert the reference-assisted forecast steps before prompt composition**
-
-The process order must become:
-
-```text
-사용 목적·화면·프로젝트 정체성 확인
-→ 유사 이미지와 유사 프롬프트를 별도 조사
-→ ADOPT / ADAPT / TEST / AVOID / REFERENCE_ONLY 분류
-→ 생성 전 결과 예측과 확신도 기록
-→ 원하는 관찰 결과에서 프롬프트 표현과 추론 근거 역산
-→ 기존 프롬프트 모듈 작성
-→ 생성
-→ 예측과 실제 결과 비교
-→ 최소 수정 모듈 결정
-→ visual-qa-and-approval
-```
-
-Reference the exact paths:
-
-```text
-docs/knowledge/research/PROMPT_RECIPE_SOURCE_AUDIT.md
-templates/research/AI_IMAGE_PROMPT_RECIPE_CARD.md
-```
-
-- [ ] **Step 3: Extend Technique Card and Output contracts**
-
-Add fields for:
-
-```text
-유사 이미지 관찰
-유사 프롬프트 구조
-생성 전 결과 예측
-프롬프트 추론 근거
-예측 확신도와 미검증 가정
-예측과 실제 결과 비교
-수정 프롬프트의 변경 모듈
-```
-
-- [ ] **Step 4: Extend failure and validation contracts**
-
-Failure conditions must include:
-
-```text
-유사 사례를 복제 대상으로 사용함
-예측을 보장으로 표현함
-근거 없이 형용사를 나열함
-실제 생성 없이 VERIFIED로 승격함
-```
-
-Validation scenarios must include one pre-generation forecast and one forecast-versus-result comparison scenario.
-
-- [ ] **Step 5: Add the Recipe Card to Templates**
-
-Append:
-
-```text
-- `templates/research/AI_IMAGE_PROMPT_RECIPE_CARD.md`
-```
-
-- [ ] **Step 6: Commit the Skill integration**
-
-Commit message:
-
-```text
-feat: add reference-assisted image prompt forecasting
-```
-
-- [ ] **Step 7: Verify focused GREEN in Actions**
-
-Expected:
-
-```text
-python -m unittest tests/test_prompt_recipe_reference_contract.py -v
-PASS
-```
-
-The full Evidence Knowledge workflow may still fail only if the workflow self-contract or another coupled consumer needs a verified correction.
-
----
-
-### Task 4: Final regression, conflict audit, and PR reporting
-
-**Files:**
-- Review: all branch changes.
-- Modify only when a verified regression or shared-file conflict is found.
-
-**Interfaces:**
-- Consumes: all prior tasks and the current open-PR state.
-- Produces: a reviewable Draft PR with actual RED/GREEN evidence and no unverified completion claim.
-
-- [ ] **Step 1: Re-check `main` and PR #62**
-
-Confirm whether `main` moved from `0fd95f4513343e77fd664af2763a01b02f52545b` and whether PR #62 merged or changed shared files.
-
-If `main` moved, compare the branch to new `main`. Preserve newer unrelated changes. Do not force-update or rewrite PR #62.
-
-- [ ] **Step 2: Run all PR-head Actions checks**
-
-Required evidence:
+**Focused suite**
 
 ```text
 Validate Evidence-Based Game Development Knowledge
-Validate Game Project Operating System or stable ci-gate when triggered
 ```
 
-Record success, failure, cancellation, and skipped jobs separately.
+Must compile and run:
 
-- [ ] **Step 3: Review the diff scope**
+- existing Evidence Knowledge tests;
+- human validation governance;
+- synthetic tester governance;
+- PromptRecipe focused contract.
 
-Expected changed paths are limited to:
+**Repository suite**
 
 ```text
-docs/superpowers/specs/2026-07-29-prompt-recipe-reference-integration-design.md
-docs/superpowers/plans/2026-07-29-prompt-recipe-reference-integration.md
-docs/knowledge/research/PROMPT_RECIPE_SOURCE_AUDIT.md
-templates/research/AI_IMAGE_PROMPT_RECIPE_CARD.md
-skills/designing-art-prompts-and-technique-cards/SKILL.md
-tests/test_prompt_recipe_reference_contract.py
-tests/test_evidence_knowledge_workflow_contract.py
+Validate Game Project Operating System
+```
+
+Must pass:
+
+- changed-file classification;
+- docs whitespace and lightweight contracts;
+- Python syntax;
+- Base proposal validation;
+- canonical reference freshness;
+- contract/governance regressions;
+- publication validation;
+- Windows publication smoke;
+- stable `ci-gate`.
+
+## 8. Final changed paths
+
+```text
 .github/workflows/validate-evidence-knowledge.yml
+docs/knowledge/research/PROMPT_RECIPE_SOURCE_AUDIT.md
+docs/superpowers/plans/2026-07-29-prompt-recipe-reference-integration.md
+docs/superpowers/specs/2026-07-29-prompt-recipe-reference-integration-design.md
+templates/planning/ART_TECHNIQUE_CARD.md
+templates/research/AI_IMAGE_PROMPT_RECIPE_CARD.md
+tests/test_evidence_knowledge_workflow_contract.py
+tests/test_prompt_recipe_reference_contract.py
 ```
 
-No Registry change is required because current triggers `image-prompt` and `technique-card` already route this work. A Registry change is allowed only if the focused test proves actual routing failure.
+No final diff is allowed in Skill, Registry, Learning Log, BCA tests, project code, Scene, data, assets, or Sheets.
 
-- [ ] **Step 4: Perform adversarial review**
+## 9. Adversarial review
 
-Attack:
+Attack and classify:
 
-```text
-PromptRecipe copied rather than adapted
-similar image and similar prompt evidence conflated
-prediction written as guarantee
-named-artist or identifiable-IP imitation
-project-specific prompt or asset values leaking into Base
-actual generation and runtime validation overclaimed
-new duplicate Skill or mode added
-existing Pinterest/FACS/poster/QA behavior removed
-PR #62 changes overwritten
-```
+- PromptRecipe copied instead of adapted.
+- Similar-image and similar-prompt evidence conflated.
+- Prediction written as guarantee.
+- Named-artist or identifiable-IP imitation.
+- Project-specific values leaked into Base.
+- Actual generation/runtime/human validation overclaimed.
+- Duplicate Skill/mode/trigger introduced.
+- Existing art-prompt behavior removed.
+- PR #62 changes overwritten.
+- Design/plan still describe the reverted direct-Skill-edit approach.
 
-Classify findings as `MUST_FIX`, `SHOULD_FIX`, `REJECTED_CRITIQUE`, `WAIVED`, or `USER_DECISION_REQUIRED`.
+## 10. Completion and publication state
 
-- [ ] **Step 5: Update the Draft PR body**
-
-Include:
-
-```text
-approved purpose
-Base structure decision
-similar image and similar prompt usage
-pre-generation forecast contract
-prompt reasoning contract
-rights/non-copying boundary
-RED run evidence
-GREEN run evidence
-changed files
-open PR #62 conflict result
-local tests NOT_RUN because GitHub DNS unavailable
-actual image generation NOT_RUN
-project propagation NOT_RUN
-```
-
-Do not mark the PR ready or merge without a final review decision.
+- Keep PR #63 as Draft until final verification and user integration decision.
+- Do not merge automatically.
+- Local tests: `NOT_RUN` because GitHub DNS is unavailable in the local execution environment.
+- Actual image generation: `NOT_RUN`.
+- Project-specific application, runtime review, and human visual validation: `NOT_RUN`.
+- Base-to-project propagation occurs only after Base merge and a separate project audit/approval change.
