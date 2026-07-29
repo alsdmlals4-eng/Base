@@ -2,6 +2,8 @@
 
 ## Unreleased - Base audit and operating-contract consistency
 
+- 게임 시스템·난이도·전투 AI 설계 구조를 기존 `analyzing-and-refining-game-concepts`의 `system-design`·`difficulty-and-combat-ai` Mode로 통합했다. 새 독립 Skill을 추가하지 않음으로써 주 책임 분야 중복을 피하고, 전용 reference·프로젝트 contract·Registry trigger·사람용 라우팅·게임 기획 Guide·TDD 계약을 연결했다.
+
 - 프로젝트 Google Sheets를 `USER_FACING_GDD_WORKSPACE`로 정의해 사용자의 전체 GDD 흐름 확인·직접 수정과 AI의 GitHub·Sheet 공동 참조를 연결했다. Sheet-only 수정은 `PROPOSED_SHEET_CHANGE`로 보존하고 승인 후 GitHub 정본·Commit·Sheet 재조회로 동기화한다.
 - 표준 GDD 6영역, 흐름도·관계도·와이어프레임·이미지 중심 시각화, 지속 갱신 메타데이터, 단위·초기 시험값·조정 범위·검증 상태 수치화 계약을 추가했다.
 - 활성 Skill 표기를 핵심 통합 13개와 구조·운영·지원 14개, 전체 ACTIVE 27개로 명확히 하고 HTML 대시보드를 사용자 명시 요청 또는 기존 유지보수에만 사용하는 선택 기능으로 고정했다.

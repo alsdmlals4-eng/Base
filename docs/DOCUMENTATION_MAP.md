@@ -114,7 +114,7 @@ GitHub 사용량 → GITHUB_USAGE_BUDGET
 | Active Context·세션 Handoff | `maintaining-project-context-and-handoff` | `context-refresh` / `session-handoff` / `resume` |
 | GPT→Codex 단계별 Godot 구현 인계 | `maintaining-project-context-and-handoff` | `implementation-package-handoff`: 마스터 계획 → Codex 읽기 전용 Plan → GPT 계약 갱신 → Codex Build → GPT 검수 → `AUTO_MERGE_AFTER_REQUIRED_CHECKS` 또는 예외 수동 병합 |
 | GitHub Pro Ruleset·자동 병합·Budget 검수 | `reviewing-and-validating-project-changes` | `contract-check` + `ci-cost-optimization` + `static-validation` + 실제 Repository setting·Actions 증거 → `evidence-report` |
-| 핵심 컨셉·뾰족한 재미·DDD·기획 정렬 | `analyzing-and-refining-game-concepts` | `frame` / `constrain` / `sharpen` / `structure` / `analyze` |
+| 핵심 컨셉·뾰족한 재미·DDD·게임 시스템·난이도·전투 AI·기획 정렬 | `analyzing-and-refining-game-concepts` | `frame` / `constrain` / `sharpen` / `structure` / `system-design` / `difficulty-and-combat-ai` / `analyze` |
 | 프로젝트 코어 식별·코어/MVP 경계 | `identifying-project-core` | `inventory` / `extract-candidates` / `dependency-map` / `removal-and-change-test` / `classify` / `core-report` |
 | PLAN 단계 프로젝트 코어 확정 | `establishing-project-core` | `propose` / `stress-test` / `confirm` / `lock` / `reopen` |
 | 적대적 검토·비판 검증·개선·회귀 | `running-adversarial-review-and-refinement` | `attack` / `validate-critique` / `refine-approved-findings` / `regression-recheck` / `decision-report`; 전체 파일·구형 계약·untouched 소비자는 `repository-wide-audit`; 병합 후 새 main·Decision·정본·Sheets 재검사 |
@@ -186,6 +186,7 @@ L1 이상 작업은 실제 사용한 Work Mode·Skill·Skill Mode, 선택 이유
 | PR·Run·Artifact 누적을 기록 손실 없이 어떻게 정리하는가? | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | `.github/pull_request_template.md`, `templates/pull_request_template.md` |
 | 구형 파일을 어떻게 갱신·통합·삭제하는가? | `skills/managing-game-project-operating-system/SKILL.md` | `templates/project-operations/LEGACY_ARTIFACT_RECONCILIATION.md` |
 | 작업을 어떤 단계와 순서로 나누는가? | `skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md` | `templates/planning/EXECUTION_SEQUENCE_PLAN.md` |
+| 게임 시스템 경계·난이도·적 전투 AI·공격 예산·긴장도·DDA를 어떻게 설계하는가? | `skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-and-combat-ai.md` | `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md` |
 | 어떤 게임·유저 반응을 어떻게 조사하고 반영하는가? | `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md` | `templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md` |
 | 게임 기획·아트·개발·AI·벤치마킹을 분야 횡단 근거로 어떻게 개선하는가? | `docs/knowledge/game-development/README.md`, `docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`, `templates/research/GAME_DEVELOPMENT_CASE_CARD.md` |
 | 게임 코어·플레이어 경험·게임 필·보상·난이도를 어떻게 설계하는가? | `docs/knowledge/game-development/GAME_DESIGN_AND_PLAYER_EXPERIENCE_GUIDE.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md` |
