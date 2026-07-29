@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_AUDIT = ROOT / "docs" / "knowledge" / "research" / "PROMPT_RECIPE_SOURCE_AUDIT.md"
 RECIPE_CARD = ROOT / "templates" / "research" / "AI_IMAGE_PROMPT_RECIPE_CARD.md"
+TECHNIQUE_CARD = ROOT / "templates" / "planning" / "ART_TECHNIQUE_CARD.md"
 SKILL = ROOT / "skills" / "designing-art-prompts-and-technique-cards" / "SKILL.md"
 DESIGN = (
     ROOT
@@ -21,7 +22,7 @@ class PromptRecipeReferenceContractTests(unittest.TestCase):
     def test_required_files_exist(self) -> None:
         missing = [
             path.relative_to(ROOT).as_posix()
-            for path in (SOURCE_AUDIT, RECIPE_CARD, SKILL, DESIGN)
+            for path in (SOURCE_AUDIT, RECIPE_CARD, TECHNIQUE_CARD, SKILL, DESIGN)
             if not path.is_file()
         ]
         self.assertEqual([], missing)
@@ -61,24 +62,28 @@ class PromptRecipeReferenceContractTests(unittest.TestCase):
             with self.subTest(required=required):
                 self.assertIn(required, text)
 
-    def test_skill_routes_reference_assisted_forecast_before_generation(self) -> None:
-        text = SKILL.read_text(encoding="utf-8")
+    def test_existing_technique_card_routes_reference_assisted_forecast(self) -> None:
+        technique = TECHNIQUE_CARD.read_text(encoding="utf-8")
+        skill = SKILL.read_text(encoding="utf-8")
+        self.assertIn("`technique-card`", skill)
+        self.assertIn("templates/planning/ART_TECHNIQUE_CARD.md", skill)
         for required in (
             "PROMPT_RECIPE_SOURCE_AUDIT.md",
             "AI_IMAGE_PROMPT_RECIPE_CARD.md",
-            "생성 전 결과 예측",
+            "생성 전 예측",
             "프롬프트 추론 근거",
             "유사 이미지",
             "유사 프롬프트",
             "예측과 실제 결과",
         ):
             with self.subTest(required=required):
-                self.assertIn(required, text)
+                self.assertIn(required, technique)
 
     def test_unrun_generation_cannot_be_verified(self) -> None:
         source = SOURCE_AUDIT.read_text(encoding="utf-8")
         card = RECIPE_CARD.read_text(encoding="utf-8")
-        combined = source + "\n" + card
+        technique = TECHNIQUE_CARD.read_text(encoding="utf-8")
+        combined = source + "\n" + card + "\n" + technique
         self.assertIn("실제 생성 없이", combined)
         self.assertIn("VERIFIED", combined)
         self.assertIn("가설", combined)
