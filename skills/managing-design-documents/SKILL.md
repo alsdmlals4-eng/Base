@@ -13,6 +13,8 @@ description: Use when creating, restructuring, updating, publishing, or validati
 
 공용 승인 동기화 계약은 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`를 따른다.
 
+프로젝트 GDD Google Sheets의 사용자 작업면·제안 편집·시각화·수치화 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 따른다.
+
 ## Modes
 
 - `author`: 새 책임 원본을 설계하고 작성한다.
@@ -72,6 +74,10 @@ Word 검토 → 선언한 경우의 선택 DOCX
 GitHub 댓글·Issue·PR·Discussion은 승인 결정의 추적 근거이지 최종 책임 원본의 대체물이 아니다. Google Sheets도 상세 책임 원본을 대체하지 않으며 GitHub 정본의 동기화 작업면으로 사용한다.
 
 `CURRENT_CONFIRMED_DECISIONS.md`는 현재 승인 Decision의 핵심·대체 관계·상세 정본 경로·Commit·Sheet 위치를 책임지고, 시스템 상세 규칙은 등록된 분야 원본이 책임진다.
+
+## Project GDD Google Sheets responsibility
+
+프로젝트 Sheet는 `USER_FACING_GDD_WORKSPACE`이며 사용자의 전체 흐름 확인과 직접 수정에 사용한다. Sheet에만 있는 수정은 `PROPOSED_SHEET_CHANGE`로 기록하고, 등록된 분야 정본과 실제 구현을 비교해 승인된 변경만 GitHub 정본·Commit·Sheet에 동기화한다. Sheet의 시각 요약과 수치 표는 상세 Markdown·JSON 정본을 대체하지 않는다.
 
 ## Publication policy
 

@@ -2,6 +2,10 @@
 
 ## Unreleased - Base audit and operating-contract consistency
 
+- 프로젝트 Google Sheets를 `USER_FACING_GDD_WORKSPACE`로 정의해 사용자의 전체 GDD 흐름 확인·직접 수정과 AI의 GitHub·Sheet 공동 참조를 연결했다. Sheet-only 수정은 `PROPOSED_SHEET_CHANGE`로 보존하고 승인 후 GitHub 정본·Commit·Sheet 재조회로 동기화한다.
+- 표준 GDD 6영역, 흐름도·관계도·와이어프레임·이미지 중심 시각화, 지속 갱신 메타데이터, 단위·초기 시험값·조정 범위·검증 상태 수치화 계약을 추가했다.
+- 활성 Skill 표기를 핵심 통합 13개와 구조·운영·지원 14개, 전체 ACTIVE 27개로 명확히 하고 HTML 대시보드를 사용자 명시 요청 또는 기존 유지보수에만 사용하는 선택 기능으로 고정했다.
+
 - 근거 기반 게임 개발 지식 허브를 추가해 게임 기획·아트·개발·AI·벤치마킹·유저리서치·접근성·프로덕션·출시를 `Method / Guide / Reference / Case / Template / Test`로 분리했다. 새 광역 Skill을 만들지 않고 기존 Skill의 실행 책임을 유지했으며, 12영역 Coverage, 6층 Evidence, 성공·실패·혼합 Case Card, AI Contextual Eval, Godot·플랫폼·출시 Guide와 전용 계약 테스트를 연결했다.
 - v6 상세 참고 계약과 축약 실행문을 상세 정본 포함 단일 `VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md`로 통합하고, 저장소 우선 인터뷰·Demo-First Slice·3층 Evidence Pack·Approval Bundle·GPT→Codex·완전성 감사를 연결했다. 적대적 검토에는 중복 Skill 없이 `repository-wide-audit` mode를 추가하고 활성 구형 계약·untouched 소비자·Prompt drift·파생본 최신성을 검수하도록 확장했다.
 

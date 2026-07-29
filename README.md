@@ -27,6 +27,7 @@ START_HERE.md
 - [통합 Vertical Slice 실행문 v8](templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md)
 - [GPT 이미지 생성·검수 및 Sheet 정책](docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md)
 - [프로젝트 Google Sheets Workbook 계약](templates/project-operations/PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md)
+- [프로젝트 GDD Google Sheets 정책](docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md)
 - [GPT 이미지 생성·검수 Plan](templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md)
 - [공용 스킬 Registry](skills/SKILL_REGISTRY.json)
 - [공용 어댑터 Skill Route](skills/BASE_SHARED_SKILL_ROUTES.json)
@@ -65,7 +66,7 @@ START_HERE.md
 
 ## 활성 실행 스킬
 
-활성 Registry 스킬은 책임 경계 재검토와 최적화 뒤 **27개**입니다.
+활성 Registry는 **핵심 통합 실행 Skill 13개 + 구조·운영·지원 Skill 14개 = 전체 ACTIVE Skill 27개**를 관리합니다. 기계적 권한은 `skills/SKILL_REGISTRY.json`이 가집니다.
 
 | Skill | 책임 |
 |---|---|
@@ -111,6 +112,10 @@ START_HERE.md
 - `performance-profile`: 목표 플랫폼 frame time·CPU·GPU·메모리·네트워크·로딩 비교
 - `reference-freshness`: 정본·경로·ID·Schema 변경의 전파 감사
 - `repository-wide-audit`: tracked 파일·권한·구형 계약·untouched 소비자·Prompt drift 감사
+
+## 프로젝트 GDD와 선택형 대시보드
+
+일반 프로젝트 기획·상태 확인은 GitHub 정본과 **프로젝트 GDD Google Sheets**를 우선합니다. HTML 대시보드는 사용자가 명시적으로 요청하거나 기존 대시보드 유지보수가 필요한 경우에만 선택적으로 사용합니다.
 
 ## 프로젝트 책임 원본
 

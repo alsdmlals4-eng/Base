@@ -52,6 +52,7 @@ Base 저장소 자체의 콜드 스타트에서는 프로젝트 설치 템플릿
 | GitHub 작업 항목 생명주기 | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | Issue·Goal·Branch·PR·Run·Artifact·Release 책임, PR WIP·재사용·종료·보존·무손실 정리 |
 | 승인 결정 즉시 동기화 | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | 질문 전 정본·PR·Sheets 대조, 중복 질문 방지, 승인 즉시 정본·main·Sheets 동기화, 병합 후 적대적 검토 |
 | 기획 작업순서·근거·데모 우선 | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | 누락·충돌 선감사, 3층 근거 묶음, 분야별 Approval Bundle, 소비처 전파, 개별 프로젝트 Sheet tab, Demo-First Vertical Slice |
+| 프로젝트 GDD Google Sheets | `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` | 사용자 중심 시각형 GDD 작업면, Sheet 편집 제안, GitHub·Sheet 공동 읽기, 지속 갱신·수치화·동기화 |
 | 근거 기반 게임 개발 지식 허브 | `docs/knowledge/game-development/README.md` | 게임 기획·아트·개발·AI·벤치마킹·유저리서치·출시의 Method·Guide·Reference·Case·Template 조건부 라우팅 |
 | GPT 이미지 생성·검수·Sheet 구조 | `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md` | 기획 중 시각화, 기획 종료 후보, 이미지 QA·승인 원장, 의미 구조 Sheet tab |
 | Vertical Slice 통합 첨부 실행문 | `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md` | 상세 정본·저장소 우선 인터뷰·기획·Demo-First Slice·GPT→Codex·전체 감사·검증을 파일 하나로 첨부; 최신 Base·프로젝트 정본이 우선 |
@@ -100,6 +101,8 @@ GitHub 사용량 → GITHUB_USAGE_BUDGET
 
 ## 4. 활성 실행 스킬
 
+핵심 통합 실행 Skill 13개와 구조·운영·지원 Skill 14개를 합쳐 **전체 ACTIVE Skill은 27개**다. 기계적 권한은 `skills/SKILL_REGISTRY.json`이 가진다.
+
 | 작업 | Skill | Skill Mode 또는 호출 조건 |
 |---|---|---|
 | 의도·Work Mode·Skill 자동 라우팅·실행 보고 | `managing-project-intake-and-work-contract` | `route` → 필요 시 `clarify` → `contract` → 필요 시 `decompose-and-sequence` → `execution-report` |
@@ -131,6 +134,10 @@ GitHub 사용량 → GITHUB_USAGE_BUDGET
 통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 Skill Mode로 변환한다. 새 Registry·문서·작업 계약에는 새 ID만 사용한다.
 
 Base 내부에서 `DDD`는 `Digital Dopamine Design`이다. 첫 의미 있는 보상·행동 피드백·보상 사다리·다음 행동·피로를 분석하며 실제 도파민 분비량이나 의학적 중독 진단으로 사용하지 않는다. 외부 자료의 동명 약어는 출처 정의 확인 전 임의 해석하지 않는다.
+
+### 프로젝트 GDD·대시보드 선택 기준
+
+일반 프로젝트 기획·상태 확인은 GitHub 정본과 **프로젝트 GDD Google Sheets**를 우선한다. HTML 대시보드는 사용자가 명시적으로 요청하거나 기존 대시보드 유지보수가 필요한 경우에만 호출한다.
 
 ## 5. 자동 호출 정책
 

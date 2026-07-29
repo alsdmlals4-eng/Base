@@ -15,6 +15,7 @@ Base START_HERE
 → Base AGENTS
 → docs/OPERATING_MODEL.md
 → Base Documentation Map
+→ 프로젝트가 Sheet를 사용하면 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`
 → Base Skill Registry
 → 대상 프로젝트 AGENTS
 → 루트 [기획서]/00_프로젝트_허브/START_HERE
@@ -46,7 +47,7 @@ Base 자체의 현재 상태는 다음 책임 원본에서 찾는다.
 
 ## 공용 운영 계약
 
-공용 구조와 상태·발행 정책의 단일 설명 원본은 `docs/OPERATING_MODEL.md`다. 이 문서는 요청을 해당 실행 Skill로 라우팅하는 역할만 가진다.
+공용 구조와 상태·발행 정책의 단일 설명 원본은 `docs/OPERATING_MODEL.md`다. 이 문서는 요청을 해당 실행 Skill로 라우팅하는 역할만 가진다. 프로젝트 GDD Google Sheets 작업은 GitHub 정본과 함께 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 읽는다.
 
 금지:
 

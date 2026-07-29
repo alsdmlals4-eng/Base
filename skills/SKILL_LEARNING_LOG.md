@@ -1,5 +1,14 @@
 # Base Skill Learning Log
 
+## 2026-07-29 — 프로젝트 Google Sheets의 시각형 GDD 역할
+
+- **Trigger:** 각 프로젝트 Google Sheets를 사용자의 전체 흐름 확인·정보 갱신 확인·직접 수정용 GDD로 사용하고, AI도 GitHub와 함께 방향성·메인 시스템을 참조하라는 요청.
+- **Finding:** Sheet를 단순 운영 mirror로만 두면 사용자 편집의 의미가 약하고, 반대로 Sheet를 단일 정본으로 승격하면 GitHub 상세 정본·실제 구현과 충돌한다. 기존 Intake·운영체계·문서 Skill이 이미 Sheet 비교·동기화를 책임지므로 새 광역 Skill은 중복이다.
+- **Decision:** **새 Skill을 추가하지 않음**. Sheet를 `USER_FACING_GDD_WORKSPACE`로 정의하고, 사용자 편집은 `PROPOSED_SHEET_CHANGE`로 보존한 뒤 GitHub 정본·실제 구현과 비교한다. 시각화 우선·지속 갱신·단위·초기 시험값·조정 범위·검증 상태를 공용 계약으로 추가한다.
+- **Boundary:** GitHub 등록 정본과 실제 파일의 권한을 유지한다. HTML 대시보드는 사용자 명시 요청 또는 기존 유지보수에만 선택적으로 사용한다.
+- **Learning state:** 정책·Template·회귀 계약은 `PATTERN` 후보이며, 여러 프로젝트에서 사용자 수정 누락 감소·AI 방향 복원·운영 비용을 확인하기 전까지 실제 효과는 `OBSERVATION`이다.
+- **Next trigger:** 서로 다른 두 프로젝트 이상에서 Sheet 편집→승인→GitHub 정본→Sheet 재동기화 흐름과 시각 GDD 사용성을 검증할 때 재검토한다.
+
 ## 2026-07-29 — 근거 기반 게임 개발 지식체계
 
 - **Trigger:** 게임 기획·아트 기획뿐 아니라 Godot 개발·AI 활용·벤치마킹·유저리서치·접근성·프로덕션·출시 전반을 공식·현업·개발자·플레이어 근거로 개선하고 Base main에 통합하라는 요청.

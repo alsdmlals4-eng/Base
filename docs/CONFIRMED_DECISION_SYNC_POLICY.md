@@ -2,7 +2,7 @@
 
 이 문서는 Base와 Base를 적용한 프로젝트에서 기획·Grill Me·검수 중 확정된 결정을 누락 없이 복원하고, 같은 질문 반복·정본 drift·PR 누적을 막기 위한 공용 정본이다.
 
-GitHub 객체의 생명주기는 `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md`, Work Mode와 Skill 라우팅은 `docs/WORK_MODE_AND_SKILL_ROUTING.md`, 문서 책임 원본과 발행은 `skills/managing-design-documents/SKILL.md`, 실제 변경 검증은 `skills/reviewing-and-validating-project-changes/SKILL.md`가 계속 책임진다.
+GitHub 객체의 생명주기는 `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md`, Work Mode와 Skill 라우팅은 `docs/WORK_MODE_AND_SKILL_ROUTING.md`, 문서 책임 원본과 발행은 `skills/managing-design-documents/SKILL.md`, 실제 변경 검증은 `skills/reviewing-and-validating-project-changes/SKILL.md`가 계속 책임진다. 프로젝트 GDD Google Sheets의 역할·편집·동기화 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 책임진다.
 
 ## 1. 목표
 
@@ -25,7 +25,7 @@ GitHub 객체의 생명주기는 `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md`, Wo
 | 등록된 분야 Markdown·JSON | 시스템·서사·아트·UI 등 상세 규칙과 예외 | 질문별 상세 책임 원본 |
 | `ACTIVE_CONTEXT.md` | 현재 단계·작업·위험·다음 행동 | 현재 상태 원본 |
 | GitHub `main` | 반영된 문서·코드·데이터·자산의 실제 저장소 상태 | 통합 상태 |
-| 프로젝트 Google Sheets | 사용자가 확인·편집하는 동기화 작업면 | GitHub 정본의 운영 mirror |
+| 프로젝트 Google Sheets | `USER_FACING_GDD_WORKSPACE`: 사용자가 전체 흐름을 확인·수정하고 AI가 GitHub와 함께 읽는 GDD 작업면 | GitHub 정본·실제 구현을 대체하지 않는 제안·동기화 surface |
 | 과거 PR·Commit | 검토·변경·롤백 이력 | 과거 증거 |
 
 `CURRENT_CONFIRMED_DECISIONS.md`는 상세 기획서를 장문 복제하지 않는다. 결정의 핵심, 보호 범위, 대체 관계와 상세 책임 원본 경로를 기록한다. 상세 규칙 충돌 시 최신 사용자 승인과 등록된 분야 책임 원본을 대조해 해결한다.
@@ -277,6 +277,30 @@ GitHub 추적 surface
 Sheets 쓰기 전 정확한 Spreadsheet ID, tab 이름, sheetId, headers, target row를 읽는다. 쓰기 후 해당 행을 다시 읽어 GitHub 정본과 대조한다.
 
 GitHub와 Sheets가 다르면 자동으로 둘 중 하나를 덮어쓰지 않는다. 최신 사용자 승인, Decision ID, Commit SHA, 수정 시각, 분야 정본을 비교해 어느 쪽이 누락됐는지 판정한다. GitHub `main`의 승인 정본이 반영돼 있고 Sheet만 늦으면 `SHEET_OUTDATED`로 복구한다.
+
+### 9.1 프로젝트 GDD Sheet 편집 처리
+
+프로젝트 Sheet는 단순 읽기 전용 mirror가 아니다. 사용자가 방향성·메인 시스템·수치·설명을 수정하면 자동 덮어쓰지 않고 `PROPOSED_SHEET_CHANGE`로 보존한다.
+
+```text
+PROPOSED_SHEET_CHANGE
+→ 최신 main·Decision·분야 정본·실제 구현과 비교
+→ 기존 승인 복원 또는 신규 제안 분류
+→ 승인된 변경만 GitHub 정본에 반영
+→ main Commit SHA 기록
+→ Sheet 재동기화·재조회
+→ SYNCED
+```
+
+추가 상태:
+
+```text
+GITHUB_UPDATE_PENDING_SHEET
+SHEET_UPDATE_PENDING_GITHUB
+SHEET_GITHUB_CONFLICT
+```
+
+GitHub와 Sheet가 충돌하면 어느 한쪽을 자동으로 덮어쓰지 않는다. 최신 사용자 승인, Decision ID, Commit SHA, 수정 시각, 분야 정본과 실제 구현으로 누락 위치를 판정한다.
 
 ## 10. 동기화 상태
 

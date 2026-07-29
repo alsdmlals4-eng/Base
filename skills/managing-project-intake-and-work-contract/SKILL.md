@@ -22,6 +22,8 @@ description: Use automatically when a project request must be routed, repository
 
 승인 결정 복원·중복 질문 방지·GitHub·Google Sheets 동기화: `docs/CONFIRMED_DECISION_SYNC_POLICY.md`
 
+프로젝트 GDD Google Sheets 역할·편집·시각화·수치화: `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`
+
 ## Skill Modes
 
 - `route`: 요청 의도·현재 단계·위험을 파악하고 Work Mode, 작업 수준, 변경 유형, 주 책임 분야와 최소 Skill 집합을 자동 판정한다.
@@ -253,6 +255,10 @@ status: PASS/PARTIAL/FAIL/UNVERIFIED
 중요 후보를 사용하지 않았으면 `trigger 불일치 / 비사용 조건 / 현재 단계 아님 / 도구·입력 없음` 중 하나로 이유를 기록한다. 모든 Registry 항목을 나열하지 않는다.
 
 템플릿: `templates/project-operations/SKILL_EXECUTION_REPORT.md`
+
+## Project GDD Google Sheets handling
+
+프로젝트가 구성된 Sheet를 사용하면 이를 `USER_FACING_GDD_WORKSPACE`로 읽는다. 최신 GitHub 정본·실제 파일과 Sheet를 비교하고, Sheet에만 있는 사용자 수정은 `PROPOSED_SHEET_CHANGE`로 보존한다. 기술 기본값과 중요 기획 결정을 분리하고 승인된 변경만 GitHub 정본·Commit·Sheet에 반영한 뒤 재조회한다.
 
 ## State model
 

@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md"
+      - "docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md"
       - "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md"
       - "templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md"
       - "templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md"
@@ -12,8 +13,12 @@ on:
       - "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md"
       - "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md"
       - "skills/designing-art-prompts-and-technique-cards/**"
+      - "skills/managing-project-intake-and-work-contract/**"
+      - "skills/managing-game-project-operating-system/**"
+      - "skills/managing-design-documents/**"
       - "skills/SKILL_REGISTRY.json"
       - "tests/test_bca_visual_sheet_workflow.py"
+      - "tests/test_project_gdd_google_sheets_contract.py"
       - ".github/reference-freshness.json"
       - ".github/workflows/validate-bca-visual-sheet-workflow.yml"
   workflow_dispatch:
@@ -41,13 +46,16 @@ jobs:
           git ls-files | sort > bca-file-inventory.txt
           git grep -n -I -E 'VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7|PROTOTYPE_AND_VERTICAL_SLICE|CORE_POC|_tmp_' -- . > bca-stale-token-candidates.txt || true
           git grep -n -I 'VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md' -- . > bca-v8-consumers.txt || true
+          git grep -n -I 'PROJECT_GDD_GOOGLE_SHEETS_POLICY.md' -- . > project-gdd-sheet-consumers.txt || true
       - name: Run BCA contract tests
         shell: bash
         run: |
           set +e
           {
             python -m py_compile tests/test_bca_visual_sheet_workflow.py
+            python -m py_compile tests/test_project_gdd_google_sheets_contract.py
             python -m unittest tests.test_bca_visual_sheet_workflow -v
+            python -m unittest tests.test_project_gdd_google_sheets_contract -v
           } > bca-contract-results.txt 2>&1
           status=$?
           cat bca-contract-results.txt
@@ -74,5 +82,6 @@ jobs:
             bca-file-inventory.txt
             bca-stale-token-candidates.txt
             bca-v8-consumers.txt
+            project-gdd-sheet-consumers.txt
             templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md
           if-no-files-found: error

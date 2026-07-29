@@ -18,7 +18,7 @@ Base는 게임 프로젝트가 다음을 저장소만으로 지속하도록 돕�
 → 반복 가능한 스킬 학습
 ```
 
-Base에는 여러 프로젝트에서 재사용 가능한 판단·절차·검증만 둔다. 프로젝트 고유 세계관·수치·경로·자산·구현 상태는 대상 프로젝트가 책임진다.
+Base에는 여러 프로젝트에서 재사용 가능한 판단·절차·검증만 둔다. 프로젝트 고유 세계관·수치·경로·자산·구현 상태는 대상 프로젝트가 책임진다. 구성된 프로젝트 Google Sheets는 `USER_FACING_GDD_WORKSPACE`로 사용하며 상세 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 책임진다.
 
 ## 2. 우선순위
 
@@ -141,6 +141,8 @@ Prompt
 | 구현된 Godot·Web UI 감사·개선 | `auditing-and-refining-ui-art` |
 | 프로젝트 교훈 추출·BCP 제출·검토·승인된 구현 | `managing-base-change-proposals` |
 
+핵심 통합 실행 Skill은 13개이며 구조·운영·지원 Skill 14개를 포함한 **전체 ACTIVE Skill은 27개**다. 기계적 목록과 상태는 Registry를 따른다.
+
 Registry 정책:
 
 ```json
@@ -184,6 +186,7 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 사람용 발행 → Registry 정책이 요구하는 PDF·선택 DOCX·assets
 발행 최신성 → Publication Manifest
 실제 상태 → 코드·데이터·자산·테스트·캡처·프로파일
+사용자 GDD 작업면 → 프로젝트 Google Sheets(`USER_FACING_GDD_WORKSPACE`), 제안 편집은 `PROPOSED_SHEET_CHANGE`
 과거 상태 → Git 이력
 ```
 
@@ -286,6 +289,10 @@ PLAN: audit only
 9. 미확정·보류·위험은 어디에 기록돼 있는가?
 
 Base 저장소 자체에서는 프로젝트 설치 템플릿을 활성 상태로 오인하지 않는다. Base의 완료 변경은 `docs/CHANGELOG.md`, 활성 Skill은 `skills/SKILL_REGISTRY.json`, 검토 대기 제안은 `[수정제안서]/PROPOSAL_REGISTRY.json`, 진행 중 구현은 GitHub PR·Actions가 책임진다.
+
+## 프로젝트 GDD와 HTML 대시보드 경계
+
+일반 프로젝트의 전체 흐름 확인·정보 수정은 GitHub 정본과 프로젝트 GDD Google Sheets를 우선한다. HTML 대시보드는 사용자 명시 요청 또는 기존 대시보드 유지보수에서만 선택적으로 사용한다.
 
 ## 구조 최적화·작업 지원 Skill
 
