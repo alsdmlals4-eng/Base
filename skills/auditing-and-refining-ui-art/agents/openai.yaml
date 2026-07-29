@@ -1,4 +1,4 @@
 interface:
-  display_name: "게임 UX/UI 설계·감사"
-  short_description: "게임 경험·정보 구조·접근성·Godot UI 계약을 설계하고 실제 화면을 증거 기반으로 감사합니다."
-  default_prompt: "Use $auditing-and-refining-ui-art to define the player experience, information flow, interaction patterns, component states, accessibility fallbacks, and Godot UI ownership contract before auditing rendered results. Preserve domain rules, require approval before edits, and separate automated checks from human evidence."
+  display_name: "게임 UX/UI 설계·폴리싱·감사"
+  short_description: "게임 경험·정보 구조·접근성·Godot UI 계약을 설계하고 준비된 화면을 증거 기반으로 폴리싱한 뒤 실제 결과를 감사합니다."
+  default_prompt: "Use $auditing-and-refining-ui-art to define the player experience, information flow, interaction patterns, component states, accessibility fallbacks, and Godot UI ownership contract; run the polishing-pass only after functional and information-architecture readiness; then audit rendered results. Prioritize P0 blockers, P1 clarity, and P2 consistency before P3 delight, preserve domain rules, require approval before edits, test repeated use and interruption, and separate automated checks from human evidence."

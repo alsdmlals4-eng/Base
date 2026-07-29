@@ -138,7 +138,7 @@ Prompt
 | 변경의 계약·참조·정적·런타임·접근성·성능·회귀 검증 | `reviewing-and-validating-project-changes` |
 | 정본 변경의 오래된 참조·내용 drift·파생본·전파 누락 감사 | `auditing-canonical-reference-freshness` |
 | 이미지 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` |
-| 구현된 Godot·Web UI 감사·개선 | `auditing-and-refining-ui-art` |
+| 게임 UX/UI 설계·폴리싱·구현된 Godot·Web UI 감사·개선 | `auditing-and-refining-ui-art` |
 | 프로젝트 교훈 추출·BCP 제출·검토·승인된 구현 | `managing-base-change-proposals` |
 
 핵심 통합 실행 Skill은 13개이며 구조·운영·지원 Skill 14개를 포함한 **전체 ACTIVE Skill은 27개**다. 기계적 목록과 상태는 Registry를 따른다.

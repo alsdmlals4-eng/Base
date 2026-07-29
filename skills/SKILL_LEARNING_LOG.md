@@ -1,5 +1,15 @@
 # Base Skill Learning Log
 
+## 2026-07-29 — UX/UI 폴리싱 패스와 Registry 전파 교훈
+
+- **Trigger:** UI 폴리싱 실무 방법을 외부 공식 근거와 함께 조사해 Base Skill·작업 구조에 반영하라는 요청.
+- **Finding:** 2026-07-29 PR #57에서 `auditing-and-refining-ui-art`가 UX/UI 설계까지 확장됐지만 기계 권한인 `skills/SKILL_REGISTRY.json`은 구현 후 감사 중심의 이전 trigger와 설명을 유지했다. UX/UI 전용 coupled-change rule도 Registry·Learning Log 동기화를 요구하지 않아 consumer drift를 차단하지 못했다.
+- **Decision:** **새 Skill을 추가하지 않음**. 기존 Skill에 `polishing-pass`를 추가하고 `ui-polishing-method.md`, 프로젝트 Template, Review Checklist, Godot 중단·재진입·반복 사용 계약을 연결한다. Skill 변경 시 Registry·Learning Log·전용 Test·CI·상위 라우터를 함께 갱신하도록 coupled-change를 강화한다.
+- **Evidence:** TDD RED에서 새 Reference·Mode·Template·Registry·라우터 누락이 실제 실패했고 기존 A~E 감사 회귀는 통과했다. W3C·Xbox·Apple·Godot·Material·Nielsen 원칙은 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 사용하며 프로젝트 정본을 대체하지 않는다.
+- **Boundary:** 실제 모션 시간·색·간격·폰트·사운드·햅틱, Scene·script·asset 경로, 렌더·기기·플레이어 결과는 프로젝트에 유지한다. Base 문서 반영은 런타임·사람 검증 완료가 아니다.
+- **Learning state:** 공용 구조와 drift 방지 계약은 `PATTERN` 후보이며, 여러 프로젝트에서 이해 시간·오입력·반복 피로·재작업 감소를 확인하기 전 실제 효과는 `OBSERVATION`이다.
+- **Next trigger:** 서로 다른 두 프로젝트 이상에서 `polishing-pass`와 전후 Artifact를 사용하고 P0~P3 finding·입력 오류·피로·성능·사람 이해 결과를 비교할 때 재검토한다.
+
 ## 2026-07-29 — 프로젝트 Google Sheets의 시각형 GDD 역할
 
 - **Trigger:** 각 프로젝트 Google Sheets를 사용자의 전체 흐름 확인·정보 갱신 확인·직접 수정용 GDD로 사용하고, AI도 GitHub와 함께 방향성·메인 시스템을 참조하라는 요청.
