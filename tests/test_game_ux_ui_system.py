@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
@@ -7,6 +8,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "skills" / "auditing-and-refining-ui-art" / "SKILL.md"
 REFERENCE_ROOT = ROOT / "skills" / "auditing-and-refining-ui-art" / "references"
+REGISTRY = ROOT / "skills" / "SKILL_REGISTRY.json"
+REFERENCE_FRESHNESS = ROOT / ".github" / "reference-freshness.json"
+UX_UI_WORKFLOW = ROOT / ".github" / "workflows" / "validate-game-ux-ui-system.yml"
+PLANNING_TEMPLATE = ROOT / "templates" / "planning" / "GAME_UX_UI_SYSTEM.md"
+REVIEW_CHECKLIST = ROOT / "templates" / "quality" / "GAME_UX_UI_REVIEW_CHECKLIST.md"
 
 
 class GameUxUiSystemContractTests(unittest.TestCase):
@@ -17,14 +23,15 @@ class GameUxUiSystemContractTests(unittest.TestCase):
             REFERENCE_ROOT / "ux-ui-reference-library.md",
             REFERENCE_ROOT / "godot-ui-implementation-contract.md",
             REFERENCE_ROOT / "project-adapter-contract.md",
-            ROOT / "templates" / "planning" / "GAME_UX_UI_SYSTEM.md",
+            REFERENCE_ROOT / "ui-polishing-method.md",
+            PLANNING_TEMPLATE,
             ROOT / "templates" / "research" / "UX_UI_REFERENCE_CARD.md",
-            ROOT / "templates" / "quality" / "GAME_UX_UI_REVIEW_CHECKLIST.md",
+            REVIEW_CHECKLIST,
         ]
         missing = [path.relative_to(ROOT).as_posix() for path in required if not path.is_file()]
         self.assertEqual([], missing)
 
-    def test_skill_exposes_design_and_audit_modes(self) -> None:
+    def test_skill_exposes_design_polishing_and_audit_modes(self) -> None:
         text = SKILL.read_text(encoding="utf-8")
         required_modes = {
             "experience-contract",
@@ -34,6 +41,7 @@ class GameUxUiSystemContractTests(unittest.TestCase):
             "godot-ui-contract",
             "accessibility-gate",
             "playtest-contract",
+            "polishing-pass",
             "runtime-ui-audit",
             "refine-approved-findings",
             "reaudit",
@@ -41,6 +49,20 @@ class GameUxUiSystemContractTests(unittest.TestCase):
         for mode in required_modes:
             with self.subTest(mode=mode):
                 self.assertIn(f"`{mode}`", text)
+
+    def test_skill_defines_polishing_priority_and_repetition_contract(self) -> None:
+        text = SKILL.read_text(encoding="utf-8")
+        for required in (
+            "P0 BLOCKER",
+            "P1 CLARITY",
+            "P2 CONSISTENCY",
+            "P3 DELIGHT",
+            "반복 사용",
+            "중단·재진입",
+            "ui-polishing-method.md",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, text)
 
     def test_skill_preserves_existing_ui_audit_contract(self) -> None:
         text = SKILL.read_text(encoding="utf-8")
@@ -96,10 +118,98 @@ class GameUxUiSystemContractTests(unittest.TestCase):
             with self.subTest(pattern_id=pattern_id):
                 self.assertIn(pattern_id, text)
 
-    def test_human_validation_is_not_replaced_by_automation(self) -> None:
-        checklist = (ROOT / "templates" / "quality" / "GAME_UX_UI_REVIEW_CHECKLIST.md").read_text(
-            encoding="utf-8"
+    def test_project_template_carries_polishing_contract(self) -> None:
+        text = PLANNING_TEMPLATE.read_text(encoding="utf-8")
+        for required in (
+            "폴리싱 준비도",
+            "피드백 예산",
+            "반복 사용·중단·재진입",
+            "전후 Artifact",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, text)
+
+    def test_review_checklist_carries_polishing_gates(self) -> None:
+        text = REVIEW_CHECKLIST.read_text(encoding="utf-8")
+        for required in (
+            "P0",
+            "P1",
+            "P2",
+            "P3",
+            "reduced motion",
+            "중복 입력",
+            "애니메이션 중단",
+            "반복 사용",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, text)
+
+    def test_registry_routes_design_polishing_and_runtime_audit(self) -> None:
+        registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+        skill = next(
+            item
+            for item in registry["skills"]
+            if item["skill_id"] == "auditing-and-refining-ui-art"
         )
+        required_tags = {
+            "game-ux",
+            "ui-design",
+            "ui-polishing",
+            "interaction-feedback",
+            "godot-ui",
+            "runtime-ui-audit",
+        }
+        self.assertTrue(required_tags.issubset(set(skill["trigger_tags"])))
+        use_when = " ".join(skill["use_when"])
+        for required in ("설계", "폴리싱", "감사"):
+            with self.subTest(required=required):
+                self.assertIn(required, use_when)
+
+    def test_ui_skill_coupled_change_requires_router_learning_test_and_ci(self) -> None:
+        config = json.loads(REFERENCE_FRESHNESS.read_text(encoding="utf-8"))
+        rule = next(
+            item
+            for item in config["coupled_change_rules"]
+            if item["name"] == "game-ux-ui-skill-sync"
+        )
+        required = {
+            "skills/SKILL_REGISTRY.json",
+            "skills/SKILL_LEARNING_LOG.md",
+            "skills/README.md",
+            "tests/test_game_ux_ui_system.py",
+            ".github/workflows/validate-game-ux-ui-system.yml",
+        }
+        self.assertTrue(required.issubset(set(rule["require_all_changed"])))
+
+    def test_ui_workflow_watches_machine_router_and_human_entrypoints(self) -> None:
+        text = UX_UI_WORKFLOW.read_text(encoding="utf-8")
+        for required in (
+            "skills/SKILL_REGISTRY.json",
+            "skills/SKILL_LEARNING_LOG.md",
+            "AGENTS.md",
+            "START_HERE.md",
+            "docs/OPERATING_MODEL.md",
+            "docs/DOCUMENTATION_MAP.md",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(f'      - "{required}"', text)
+
+    def test_human_entrypoints_route_design_polishing_and_audit(self) -> None:
+        paths = [
+            ROOT / "skills" / "README.md",
+            ROOT / "AGENTS.md",
+            ROOT / "START_HERE.md",
+            ROOT / "docs" / "OPERATING_MODEL.md",
+            ROOT / "docs" / "DOCUMENTATION_MAP.md",
+        ]
+        for path in paths:
+            text = path.read_text(encoding="utf-8")
+            with self.subTest(path=path.relative_to(ROOT).as_posix()):
+                self.assertIn("auditing-and-refining-ui-art", text)
+                self.assertIn("폴리싱", text)
+
+    def test_human_validation_is_not_replaced_by_automation(self) -> None:
+        checklist = REVIEW_CHECKLIST.read_text(encoding="utf-8")
         self.assertIn("HUMAN_NOT_RUN", checklist)
         self.assertIn("자동 검사", checklist)
         self.assertIn("사람 이해", checklist)
