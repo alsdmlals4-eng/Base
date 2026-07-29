@@ -29,8 +29,8 @@
 - Produces: A failing structural contract for all new files, modes, triggers, routes, and required concepts.
 
 - [x] **Step 1: Write the failing structural test**
-- [ ] **Step 2: Run the PR test suite and confirm failure is caused by missing reference/template/modes, not syntax**
-- [ ] **Step 3: Record the failing check in the draft PR**
+- [x] **Step 2: Run the PR test suite and confirm failure is caused by missing reference/template/modes, not syntax**
+- [x] **Step 3: Record the failing check in the draft PR**
 
 ### Task 2: Add the detailed design reference and project template
 
@@ -42,11 +42,11 @@
 - Consumes: Player promise, core loop, target player, constraints, current enemy/combat rules, benchmark and playtest evidence.
 - Produces: System boundaries, fairness rules, difficulty barrier profile, combat coordination model, pacing model, DDA policy, telemetry, playtest criteria, rollback, and Base/project classification.
 
-- [ ] **Step 1: Write the reference with `system-design` and `difficulty-and-combat-ai` procedures**
-- [ ] **Step 2: Define the three-layer AI boundary: individual decision, combat coordinator, pacing/difficulty director**
-- [ ] **Step 3: Define fixed and adaptive difficulty variables, hysteresis, cooldown, safe application timing, and anti-punishment rules**
-- [ ] **Step 4: Add telemetry, playtest, accessibility, performance, rollback, and promotion criteria**
-- [ ] **Step 5: Write the reusable project contract template with concrete fields and decision tables**
+- [x] **Step 1: Write the reference with `system-design` and `difficulty-and-combat-ai` procedures**
+- [x] **Step 2: Define the three-layer AI boundary: individual decision, combat coordinator, pacing/difficulty director**
+- [x] **Step 3: Define fixed and adaptive difficulty variables, hysteresis, cooldown, safe application timing, and anti-punishment rules**
+- [x] **Step 4: Add telemetry, playtest, accessibility, performance, rollback, and promotion criteria**
+- [x] **Step 5: Write the reusable project contract template with concrete fields and decision tables**
 
 ### Task 3: Extend the existing Skill and machine router
 
@@ -58,11 +58,11 @@
 - Consumes: The new reference and template.
 - Produces: Discoverable Skill Modes and automatic triggers without a new Skill ID.
 
-- [ ] **Step 1: Add `system-design` and `difficulty-and-combat-ai` to the mode sequence**
-- [ ] **Step 2: Add required inputs, workflow steps, output contract fields, and quality gates**
-- [ ] **Step 3: Add reference loading conditions**
-- [ ] **Step 4: Add registry triggers for system design, difficulty, combat AI, attack/threat budget, tension pacing, and DDA**
-- [ ] **Step 5: Add review triggers for unfair information, success punishment, oscillation, invisible adjustment, and missing evidence**
+- [x] **Step 1: Add `system-design` and `difficulty-and-combat-ai` to the mode sequence**
+- [x] **Step 2: Add required inputs, workflow steps, output contract fields, and quality gates**
+- [x] **Step 3: Add reference loading conditions**
+- [x] **Step 4: Add registry triggers for system design, difficulty, combat AI, attack/threat budget, tension pacing, and DDA**
+- [x] **Step 5: Add review triggers for unfair information, success punishment, oscillation, invisible adjustment, and missing evidence**
 
 ### Task 4: Synchronize human routing and knowledge guidance
 
@@ -75,10 +75,10 @@
 - Consumes: The Skill and template paths.
 - Produces: Cold-start discovery and a conceptual guide that points to the executable contract.
 
-- [ ] **Step 1: Add route text and mode sequence to START_HERE**
-- [ ] **Step 2: Add the task, reference, and template row to Documentation Map**
-- [ ] **Step 3: Expand the guide with system boundary, fairness, attack budget, tension curve, fixed/adaptive difficulty, and anti-punishment guidance**
-- [ ] **Step 4: Preserve the distinction between guide knowledge and Skill execution authority**
+- [x] **Step 1: Add route text and mode sequence to START_HERE**
+- [x] **Step 2: Add the task, reference, and template row to Documentation Map**
+- [x] **Step 3: Expand the guide with system boundary, fairness, attack budget, tension curve, fixed/adaptive difficulty, and anti-punishment guidance**
+- [x] **Step 4: Preserve the distinction between guide knowledge and Skill execution authority**
 
 ### Task 5: Record learning and change state
 
@@ -90,9 +90,9 @@
 - Consumes: Implemented structure and test evidence.
 - Produces: Base change history and a non-overgeneralized learning state.
 
-- [ ] **Step 1: Record that the existing Skill was extended and no new independent Skill was added**
-- [ ] **Step 2: Record project Pilot validation as pending**
-- [ ] **Step 3: State that initial values remain project-specific and one success does not become a shared mandatory rule**
+- [x] **Step 1: Record that the existing Skill was extended and no new independent Skill was added**
+- [x] **Step 2: Record project Pilot validation as pending**
+- [x] **Step 3: State that initial values remain project-specific and one success does not become a shared mandatory rule**
 
 ### Task 6: GREEN validation and reference-freshness review
 
