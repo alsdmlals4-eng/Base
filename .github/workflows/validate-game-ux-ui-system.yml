@@ -1,0 +1,62 @@
+name: Validate Game UX UI System
+
+on:
+  pull_request:
+    paths:
+      - "skills/auditing-and-refining-ui-art/**"
+      - "skills/README.md"
+      - ".github/reference-freshness.json"
+      - "templates/planning/GAME_UX_UI_SYSTEM.md"
+      - "templates/research/UX_UI_REFERENCE_CARD.md"
+      - "templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md"
+      - "tests/test_game_ux_ui_system.py"
+      - "tests/test_ui_art_audit.py"
+      - ".github/workflows/validate-game-ux-ui-system.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "skills/auditing-and-refining-ui-art/**"
+      - "skills/README.md"
+      - ".github/reference-freshness.json"
+      - "templates/planning/GAME_UX_UI_SYSTEM.md"
+      - "templates/research/UX_UI_REFERENCE_CARD.md"
+      - "templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md"
+      - "tests/test_game_ux_ui_system.py"
+      - "tests/test_ui_art_audit.py"
+      - ".github/workflows/validate-game-ux-ui-system.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ux-ui-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-publication.txt
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-publication.txt
+
+      - name: Run UX UI system and audit regression tests
+        run: |
+          git diff --check
+          python -m unittest \
+            tests/test_game_ux_ui_system.py \
+            tests/test_ui_art_audit.py \
+            -v
