@@ -5,7 +5,8 @@
 | Field | Value |
 | --- | --- |
 | Base rules line | `v9.0.0` |
-| Status | `BASE_RELEASE_PENDING_CI` |
+| Status | `BASE_RELEASED` |
+| Release commit | `585a53a25be1b04c543196f5901551deb49c7691` (`release: finalize Base v9 operating system (#69)`) |
 | Baseline reviewed | `f87502a1bb97bdd02a1551cdd41b1d95cad457dd` |
 | Active Skill count | Generated from `skills/SKILL_REGISTRY.json`; not a design constraint |
 | Project adoption | `POST_RELEASE_PROJECT_ADOPTION_WAVE`; it does not block the Base v9.0.0 release |
@@ -27,10 +28,11 @@ number of active Skills is an observed Registry value, not a release target.
 
 ## Release boundary
 
-`v9.0.0` is a Base-only release. It may be released after Base contracts,
-deterministic generated artifacts, integrity checks, and required GitHub Actions
-evidence agree. Project adoption is a separate post-release wave and must not
-block the Base v9.0.0 release.
+`v9.0.0` is a released Base-only line. Its release commit is
+`585a53a25be1b04c543196f5901551deb49c7691`; the required Base contracts,
+deterministic generated artifacts, integrity checks, and GitHub Actions evidence
+were accepted for that merge. Project adoption is a separate post-release wave and
+does not block the Base v9.0.0 release.
 
 The five named project repositories and their Sheets are outside this change. They
 remain `[보류]`; Base must not write to those repositories or Sheets as part of

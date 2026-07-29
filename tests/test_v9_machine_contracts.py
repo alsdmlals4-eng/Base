@@ -17,7 +17,8 @@ class V9MachineContractTests(unittest.TestCase):
         release = read("docs/operations/BASE_V9_RELEASE_CONTRACT.md")
 
         self.assertIn("v9.0.0", version)
-        self.assertIn("BASE_RELEASE_PENDING_CI", version)
+        self.assertIn("BASE_RELEASED", version)
+        self.assertIn("585a53a25be1b04c543196f5901551deb49c7691", version)
         self.assertIn("v9.0.0", release)
         self.assertIn("POST_RELEASE_PROJECT_ADOPTION_WAVE", release)
         self.assertIn("must not block the Base v9.0.0 release", release)
