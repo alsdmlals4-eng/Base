@@ -4,21 +4,27 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - "START_HERE.md"
       - "docs/knowledge/game-development/**"
       - "docs/knowledge/research/PROMPT_RECIPE_SOURCE_AUDIT.md"
       - "docs/superpowers/plans/*human-validation-artifact-governance*.md"
       - "docs/superpowers/plans/*synthetic-tester*.md"
       - "docs/superpowers/plans/*prompt-recipe-reference-integration*.md"
       - "docs/superpowers/specs/*prompt-recipe-reference-integration*.md"
+      - "skills/analyzing-and-refining-game-concepts/SKILL.md"
+      - "skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-*.md"
       - "skills/governing-game-user-research-coverage/references/**"
+      - "skills/SKILL_REGISTRY.json"
       - "templates/research/**"
       - "templates/planning/ART_TECHNIQUE_CARD.md"
       - "templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md"
+      - "templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md"
       - "README.md"
       - "docs/DOCUMENTATION_MAP.md"
       - "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md"
       - "docs/CHANGELOG.md"
       - "skills/SKILL_LEARNING_LOG.md"
+      - "tests/test_game_design_difficulty_workflow.py"
       - "tests/test_evidence_based_game_development_knowledge.py"
       - "tests/test_evidence_knowledge_workflow_contract.py"
       - "tests/test_human_validation_artifact_governance.py"
@@ -54,12 +60,14 @@ jobs:
           set +e
           {
             python -m py_compile \
+              tests/test_game_design_difficulty_workflow.py \
               tests/test_evidence_based_game_development_knowledge.py \
               tests/test_evidence_knowledge_workflow_contract.py \
               tests/test_human_validation_artifact_governance.py \
               tests/test_synthetic_tester_simulation_governance.py \
               tests/test_prompt_recipe_reference_contract.py
             python -m unittest \
+              tests/test_game_design_difficulty_workflow.py \
               tests/test_evidence_based_game_development_knowledge.py \
               tests/test_evidence_knowledge_workflow_contract.py \
               tests/test_human_validation_artifact_governance.py \
@@ -83,6 +91,7 @@ jobs:
             docs/superpowers/specs/2026-07-29-prompt-recipe-reference-integration-design.md
             templates/planning/ART_TECHNIQUE_CARD.md
             templates/research/AI_IMAGE_PROMPT_RECIPE_CARD.md
+            tests/test_game_design_difficulty_workflow.py
             tests/test_evidence_based_game_development_knowledge.py
             tests/test_evidence_knowledge_workflow_contract.py
             tests/test_human_validation_artifact_governance.py
