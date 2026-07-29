@@ -16,6 +16,8 @@
 
 사람 세션을 실행하지 않은 상태는 `NOT_RUN`으로 유지한다.
 
+실제 참가자가 없고 AI 페르소나로 위험을 검토하는 경우에는 이 문서의 사람 관찰 상태를 채우지 않는다. 대신 `docs/knowledge/game-development/SYNTHETIC_TESTER_SIMULATION_GOVERNANCE.md`를 사용하며 결과는 `T6_AI_INFERENCE`로 분리한다.
+
 ## 2. 적용 조건
 
 다음 중 하나라도 해당하면 이 Reference를 사용한다.
@@ -151,6 +153,7 @@ observer_interpretation:
 - 자기보고는 감정·이유·기억·선호다.
 - 진행자 개입은 안내·재질문·오류 교정·결과 공개다.
 - 관찰자 해석은 원자료와 별도 열에 둔다.
+- AI가 가정한 행동은 `behavior_observation`에 넣지 않고 합성 시뮬레이션 문서의 `assumed_first_attempt`에 넣는다.
 
 ## 7. 진행자 개입 통제
 
@@ -210,7 +213,7 @@ ADOPT:
 
 ## 10. 보고서 계약
 
-사람 세션을 실제 실행한 뒤에만 보고서를 생성한다.
+사람 세션을 실제 실행한 뒤에만 사람 검증 보고서를 생성한다.
 
 필수 항목:
 
@@ -226,6 +229,8 @@ ADOPT:
 - 미실행 검증과 다음 fidelity 게이트.
 - 제품 코드·정본 변경 권한 상태.
 
+AI 가상 페르소나만 실행했다면 사람 보고서를 작성하지 않고 `templates/research/SYNTHETIC_TESTER_SIMULATION_PACKET.md`를 사용한다.
+
 ## 11. 개인정보·원자료
 
 - 이름·연락처·계정·음성 경로를 기본 원자료에 저장하지 않는다.
@@ -238,10 +243,18 @@ ADOPT:
 다음이면 Governance 위반이다.
 
 - 작은 표본 비율만으로 제품 방향을 `ADOPT`함.
-- simulated 결과를 실제 알고리즘 정확도·지연·확률로 보고함.
-- fixed 결과 하나로 RNG 통제감이나 밸런스를 증명함.
-- 피드백 전 최초 시도를 보존하지 않음.
-- 행동과 자기보고를 같은 필드로 합침.
-- 진행자 힌트·교정을 기록하지 않음.
-- 저충실도 Artifact 통과를 제품 UI·접근성·성능 통과로 확대함.
-- 사람 세션을 실행하지 않고 `VALIDATED` 또는 `HUMAN_QA_PASS`를 선언함.
+- simulated 결과를 실제 알고리즘 정확도·확률·성능으로 주장함.
+- fixed 결과 하나를 실제 RNG 체감·밸런스 증거로 사용함.
+- first attempt와 post-feedback attempt를 합침.
+- 행동 관찰과 플레이어 자기보고·진행자 개입을 합침.
+- 실제 사람 없이 `human_validation`을 통과 상태로 변경함.
+- AI 페르소나 가정을 실제 참가자 발언·행동으로 기록함.
+
+## 13. 완료 조건
+
+- Artifact fidelity와 claim ceiling이 명시돼 있다.
+- 실제 사람 행동·자기보고·진행자 개입·로그가 분리돼 있다.
+- 작은 표본의 수치가 자동 채택을 만들지 않는다.
+- simulated·scripted·fixed 요소의 측정 불가 항목이 남아 있다.
+- 실제 실행하지 않은 플랫폼·접근성·성능·사람 검증은 `NOT_RUN`이다.
+- 결과가 다음 fidelity 검증 또는 명시적 수정으로 연결된다.

@@ -6,6 +6,7 @@ on:
     paths:
       - "docs/knowledge/game-development/**"
       - "docs/superpowers/plans/*human-validation-artifact-governance*.md"
+      - "docs/superpowers/plans/*synthetic-tester*.md"
       - "skills/governing-game-user-research-coverage/references/**"
       - "templates/research/**"
       - "templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md"
@@ -17,6 +18,7 @@ on:
       - "tests/test_evidence_based_game_development_knowledge.py"
       - "tests/test_evidence_knowledge_workflow_contract.py"
       - "tests/test_human_validation_artifact_governance.py"
+      - "tests/test_synthetic_tester_simulation_governance.py"
       - ".github/workflows/validate-evidence-knowledge.yml"
   workflow_dispatch:
 
@@ -49,11 +51,13 @@ jobs:
             python -m py_compile \
               tests/test_evidence_based_game_development_knowledge.py \
               tests/test_evidence_knowledge_workflow_contract.py \
-              tests/test_human_validation_artifact_governance.py
+              tests/test_human_validation_artifact_governance.py \
+              tests/test_synthetic_tester_simulation_governance.py
             python -m unittest \
               tests/test_evidence_based_game_development_knowledge.py \
               tests/test_evidence_knowledge_workflow_contract.py \
               tests/test_human_validation_artifact_governance.py \
+              tests/test_synthetic_tester_simulation_governance.py \
               -v
           } > evidence-knowledge-results.txt 2>&1
           status=$?
@@ -70,4 +74,5 @@ jobs:
             tests/test_evidence_based_game_development_knowledge.py
             tests/test_evidence_knowledge_workflow_contract.py
             tests/test_human_validation_artifact_governance.py
+            tests/test_synthetic_tester_simulation_governance.py
           if-no-files-found: error
