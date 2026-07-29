@@ -38,8 +38,8 @@
 | ChatGPT·Codex·외부 AI를 어떻게 안전하고 검증 가능하게 협업시키는가? | `AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md` | Prompt 계약·Context Pack·Evals·독립 검수 |
 | Godot·플랫폼·성능·제작 파이프라인·출시를 어떻게 기획에 연결하는가? | `TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md` | 기술 계약·성능 예산·반복 제작성·출시 증거 |
 | 어떤 공식·학술·현업 자료를 우선 참조하는가? | `REFERENCE_SOURCE_CATALOG.md` | 출처 메타데이터·사용 범위·재검증 조건 |
-| 작은 표본·저충실도 사람 세션을 어떻게 과장 없이 설계하는가? | `HUMAN_VALIDATION_ARTIFACT_GOVERNANCE.md` | 사람 세션 패킷·claim ceiling·미검증 분리 |
-| 실제 테스터가 없을 때 AI 가상 페르소나로 무엇을 검토할 수 있는가? | `SYNTHETIC_TESTER_SIMULATION_GOVERNANCE.md` | 프로젝트 구조 분석·T6 합성 위험 검토·TEST 게이트 |
+| 작은 표본·저충실도 사람 세션을 어떻게 과장 없이 설계하는가? | `docs/knowledge/game-development/HUMAN_VALIDATION_ARTIFACT_GOVERNANCE.md` | 사람 세션 패킷·claim ceiling·미검증 분리 |
+| 실제 테스터가 없을 때 AI 가상 페르소나로 무엇을 검토할 수 있는가? | `docs/knowledge/game-development/SYNTHETIC_TESTER_SIMULATION_GOVERNANCE.md` | 프로젝트 구조 분석·T6 합성 위험 검토·TEST 게이트 |
 
 ## 4. 기존 Skill 라우팅
 
