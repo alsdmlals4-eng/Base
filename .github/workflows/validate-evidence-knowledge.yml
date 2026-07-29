@@ -11,8 +11,8 @@ on:
       - "docs/superpowers/plans/*prompt-recipe-reference-integration*.md"
       - "docs/superpowers/specs/*prompt-recipe-reference-integration*.md"
       - "skills/governing-game-user-research-coverage/references/**"
-      - "skills/designing-art-prompts-and-technique-cards/SKILL.md"
       - "templates/research/**"
+      - "templates/planning/ART_TECHNIQUE_CARD.md"
       - "templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md"
       - "README.md"
       - "docs/DOCUMENTATION_MAP.md"
@@ -83,6 +83,5 @@ jobs:
             tests/test_human_validation_artifact_governance.py
             tests/test_synthetic_tester_simulation_governance.py
             tests/test_prompt_recipe_reference_contract.py
-            skills/SKILL_REGISTRY.json
-            skills/SKILL_LEARNING_LOG.md
+            templates/planning/ART_TECHNIQUE_CARD.md
           if-no-files-found: error
