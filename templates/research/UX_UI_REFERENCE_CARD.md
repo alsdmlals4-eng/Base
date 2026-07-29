@@ -22,6 +22,13 @@ transformation_axes:
   input:
   accessibility:
   godot_implementation:
+polishing_evidence:
+  affected_priority: P0_BLOCKER | P1_CLARITY | P2_CONSISTENCY | P3_DELIGHT | NOT_APPLICABLE
+  feedback_tier: routine | confirming | warning | reward | critical | NOT_APPLICABLE
+  expected_repetition_frequency:
+  motion_audio_haptic_dependency:
+  reduced_motion_mute_haptic_off_path:
+  before_after_validation:
 copying_prohibited:
 risks_and_biases:
 validation_required:
@@ -35,9 +42,10 @@ review_status: DRAFT | REVIEWED | APPLIED | REJECTED | SUPERSEDED
 2. 공식 사실, 전문가 해석, 플레이어 자기보고, 행동 증거를 구분한다.
 3. 화면·브랜드·고유 문구·자산을 복제하지 않고 원리와 변환 축만 기록한다.
 4. 외부 자료를 프로젝트 정본이나 구현 사실보다 높은 권한으로 사용하지 않는다.
-5. 수치·크기·시간은 플랫폼과 실제 플레이 검증 전 `TEST`로 둔다.
+5. 수치·크기·시간·효과 강도·반복 횟수는 플랫폼과 실제 플레이 검증 전 `TEST`로 둔다.
 6. 링크·최종 확인일·대상 버전이 없으면 현행 근거로 사용하지 않는다.
 7. 채택하지 않은 자료도 `AVOID / IGNORE / REJECTED` 이유를 남겨 반복 조사를 막는다.
+8. 모션·음향·햅틱을 끈 경로와 같은 조건의 전후 비교가 없으면 폴리싱 효과를 확정하지 않는다.
 
 ## 적용 요약
 
