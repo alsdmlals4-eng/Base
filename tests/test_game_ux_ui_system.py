@@ -181,6 +181,15 @@ class GameUxUiSystemContractTests(unittest.TestCase):
         }
         self.assertTrue(required.issubset(set(rule["require_all_changed"])))
 
+    def test_registry_structure_rule_accepts_ui_system_contract_test(self) -> None:
+        config = json.loads(REFERENCE_FRESHNESS.read_text(encoding="utf-8"))
+        rule = next(
+            item
+            for item in config["coupled_change_rules"]
+            if item["name"] == "registry-structure-test-sync"
+        )
+        self.assertIn("tests/test_game_ux_ui_system.py", rule["require_any_changed"])
+
     def test_ui_workflow_watches_machine_router_and_human_entrypoints(self) -> None:
         text = UX_UI_WORKFLOW.read_text(encoding="utf-8")
         for required in (
