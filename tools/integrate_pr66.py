@@ -3,15 +3,10 @@ from __future__ import annotations
 import json
 import pathlib
 import subprocess
-import tempfile
 
-ORIGINAL_HEAD = "7b246272f1d0c649d2c6d60456876cddaddbebb1"
 INTEGRATION_BRANCH = "integrate/pr66-game-design-difficulty"
-WORKFLOW_PATH = ".github/workflows/validate-evidence-knowledge.yml"
-JSON_CONFLICTS = {
-    ".github/reference-freshness.json",
-    "skills/SKILL_REGISTRY.json",
-}
+REGISTRY_PATH = pathlib.Path("skills/SKILL_REGISTRY.json")
+FRESHNESS_PATH = pathlib.Path(".github/reference-freshness.json")
 
 
 def git(*args: str, check: bool = True) -> str:
@@ -30,187 +25,141 @@ def git(*args: str, check: bool = True) -> str:
     return result.stdout.strip()
 
 
-def show(ref: str, path: str) -> str:
-    return git("show", f"{ref}:{path}")
-
-
-MISSING = object()
-
-
-def keyed_list(values: list) -> str | None:
-    if not values or not all(isinstance(item, dict) for item in values):
-        return None
-    for candidate in ("skill_id", "name", "source_id", "id"):
-        if all(candidate in item for item in values):
-            keys = [item[candidate] for item in values]
-            if len(keys) == len(set(keys)):
-                return candidate
-    return None
-
-
-def merge3(base, ours, theirs, path: str = "root"):
-    if ours == theirs:
-        return ours
-    if ours == base:
-        return theirs
-    if theirs == base:
-        return ours
-
-    if all(isinstance(value, dict) for value in (base, ours, theirs)):
+def merge_values(first, second, *, prefer_second: bool):
+    if first == second:
+        return first
+    if isinstance(first, dict) and isinstance(second, dict):
         result = {}
-        keys = list(dict.fromkeys([*base.keys(), *ours.keys(), *theirs.keys()]))
-        for key in keys:
-            b = base.get(key, MISSING)
-            o = ours.get(key, MISSING)
-            t = theirs.get(key, MISSING)
-            if o is MISSING and t is MISSING:
-                continue
-            if b is MISSING:
-                if o is MISSING:
-                    result[key] = t
-                elif t is MISSING or o == t:
-                    result[key] = o
-                else:
-                    result[key] = merge3({}, o, t, f"{path}.{key}")
-                continue
-            if o is MISSING:
-                if t != b:
-                    result[key] = t
-                continue
-            if t is MISSING:
-                if o != b:
-                    result[key] = o
-                continue
-            result[key] = merge3(b, o, t, f"{path}.{key}")
+        for key in dict.fromkeys([*first.keys(), *second.keys()]):
+            if key not in first:
+                result[key] = second[key]
+            elif key not in second:
+                result[key] = first[key]
+            else:
+                result[key] = merge_values(
+                    first[key], second[key], prefer_second=prefer_second
+                )
         return result
-
-    if all(isinstance(value, list) for value in (base, ours, theirs)):
-        combined = [*base, *ours, *theirs]
-        key = keyed_list(combined)
-        if key:
-            b_map = {item[key]: item for item in base}
-            o_map = {item[key]: item for item in ours}
-            t_map = {item[key]: item for item in theirs}
-            order = []
-            for source in (ours, theirs, base):
-                for item in source:
-                    if item[key] not in order:
-                        order.append(item[key])
-            result = []
-            for item_key in order:
-                b = b_map.get(item_key, MISSING)
-                o = o_map.get(item_key, MISSING)
-                t = t_map.get(item_key, MISSING)
-                if b is MISSING:
-                    if o is MISSING:
-                        result.append(t)
-                    elif t is MISSING or o == t:
-                        result.append(o)
-                    else:
-                        result.append(merge3({}, o, t, f"{path}[{item_key!r}]"))
-                elif o is MISSING:
-                    if t != b:
-                        result.append(t)
-                elif t is MISSING:
-                    if o != b:
-                        result.append(o)
-                else:
-                    result.append(merge3(b, o, t, f"{path}[{item_key!r}]"))
-            return result
-
+    if isinstance(first, list) and isinstance(second, list):
         result = []
-        for item in [*ours, *theirs]:
+        for item in [*first, *second]:
             if item not in result:
                 result.append(item)
         return result
+    return second if prefer_second else first
 
-    raise RuntimeError(
-        f"Unresolved scalar/type conflict at {path}: "
-        f"base={base!r}, ours={ours!r}, theirs={theirs!r}"
+
+def dedupe_keyed(items: list[dict], key: str, prefer_second_ids: set[str]) -> list[dict]:
+    order: list[str] = []
+    merged: dict[str, dict] = {}
+    duplicate_counts: dict[str, int] = {}
+
+    for item in items:
+        item_id = item[key]
+        if item_id not in merged:
+            order.append(item_id)
+            merged[item_id] = item
+            duplicate_counts[item_id] = 1
+            continue
+        duplicate_counts[item_id] += 1
+        merged[item_id] = merge_values(
+            merged[item_id],
+            item,
+            prefer_second=item_id in prefer_second_ids,
+        )
+
+    duplicates = {item_id: count for item_id, count in duplicate_counts.items() if count > 1}
+    print(f"DEDUPLICATED {key}: {json.dumps(duplicates, ensure_ascii=False, sort_keys=True)}")
+    return [merged[item_id] for item_id in order]
+
+
+def normalize_registry() -> None:
+    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    registry["skills"] = dedupe_keyed(
+        registry["skills"],
+        "skill_id",
+        {"analyzing-and-refining-game-concepts"},
+    )
+
+    ids = [item["skill_id"] for item in registry["skills"]]
+    if len(ids) != len(set(ids)):
+        raise RuntimeError("Duplicate skill_id remains after normalization")
+
+    skills = {item["skill_id"]: item for item in registry["skills"]}
+    game_design = skills["analyzing-and-refining-game-concepts"]
+    for required in (
+        "game-system-design",
+        "difficulty-design",
+        "combat-ai-design",
+        "attack-budget",
+        "threat-budget",
+        "tension-pacing",
+    ):
+        if required not in game_design["trigger_tags"]:
+            raise RuntimeError(f"Missing game design trigger: {required}")
+
+    ui = skills["auditing-and-refining-ui-art"]
+    for required in ("ui-polishing", "microinteraction", "motion-feedback"):
+        if required not in ui["trigger_tags"]:
+            raise RuntimeError(f"Missing UI polishing trigger: {required}")
+
+    REGISTRY_PATH.write_text(
+        json.dumps(registry, ensure_ascii=False, separators=(",", ":")) + "\n",
+        encoding="utf-8",
     )
 
 
-def resolve_markdown_union(base_ref: str, ours_ref: str, theirs_ref: str, path: str) -> None:
-    with tempfile.TemporaryDirectory() as temp_dir:
-        temp = pathlib.Path(temp_dir)
-        ours_file = temp / "ours"
-        base_file = temp / "base"
-        theirs_file = temp / "theirs"
-        ours_file.write_text(show(ours_ref, path) + "\n", encoding="utf-8")
-        base_file.write_text(show(base_ref, path) + "\n", encoding="utf-8")
-        theirs_file.write_text(show(theirs_ref, path) + "\n", encoding="utf-8")
-        result = subprocess.run(
-            [
-                "git",
-                "merge-file",
-                "-p",
-                "--union",
-                str(ours_file),
-                str(base_file),
-                str(theirs_file),
-            ],
-            check=True,
-            text=True,
-            stdout=subprocess.PIPE,
-        )
-        pathlib.Path(path).write_text(result.stdout, encoding="utf-8")
+def normalize_freshness() -> None:
+    config = json.loads(FRESHNESS_PATH.read_text(encoding="utf-8"))
+    config["canonical_reference_rules"] = dedupe_keyed(
+        config["canonical_reference_rules"], "name", set()
+    )
+    config["coupled_change_rules"] = dedupe_keyed(
+        config["coupled_change_rules"], "name", set()
+    )
+
+    names = [item["name"] for item in config["coupled_change_rules"]]
+    if len(names) != len(set(names)):
+        raise RuntimeError("Duplicate coupled-change rule remains after normalization")
+
+    rules = {item["name"]: item for item in config["coupled_change_rules"]}
+    for rule_name in (
+        "local-skill-contract-registry-learning-sync",
+        "registry-structure-test-sync",
+    ):
+        required = rules[rule_name]["require_any_changed"]
+        if "tests/test_game_design_difficulty_workflow.py" not in required:
+            raise RuntimeError(f"Game design test missing from {rule_name}")
+
+    ui_rule = rules["game-ux-ui-skill-sync"]
+    for required in (
+        "skills/SKILL_REGISTRY.json",
+        "skills/SKILL_LEARNING_LOG.md",
+        "tests/test_game_ux_ui_system.py",
+    ):
+        if required not in ui_rule["require_all_changed"]:
+            raise RuntimeError(f"UI coupled-change contract missing: {required}")
+
+    FRESHNESS_PATH.write_text(
+        json.dumps(config, ensure_ascii=False, separators=(",", ":")) + "\n",
+        encoding="utf-8",
+    )
 
 
 def main() -> None:
     git("config", "user.name", "github-actions[bot]")
     git("config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com")
-    git("fetch", "origin", "main")
 
-    ours = git("rev-parse", "HEAD")
-    theirs = ORIGINAL_HEAD
-    base = git("merge-base", ours, theirs)
-    print(f"OURS={ours}")
-    print(f"THEIRS={theirs}")
-    print(f"BASE={base}")
+    normalize_registry()
+    normalize_freshness()
 
-    merge = subprocess.run(
-        ["git", "merge", "--no-commit", "--no-ff", theirs],
-        check=False,
-        text=True,
-    )
-    if merge.returncode not in (0, 1):
-        raise RuntimeError(f"git merge failed with status {merge.returncode}")
-
-    conflicts = [
-        line
-        for line in git("diff", "--name-only", "--diff-filter=U", check=False).splitlines()
-        if line
-    ]
-    print("CONFLICTS=" + json.dumps(conflicts, ensure_ascii=False))
-
-    for path in conflicts:
-        if path == WORKFLOW_PATH:
-            git("checkout", "--ours", "--", path)
-        elif path in JSON_CONFLICTS:
-            merged = merge3(
-                json.loads(show(base, path)),
-                json.loads(show(ours, path)),
-                json.loads(show(theirs, path)),
-                path,
-            )
-            pathlib.Path(path).write_text(
-                json.dumps(merged, ensure_ascii=False, separators=(",", ":")) + "\n",
-                encoding="utf-8",
-            )
-        elif path.endswith(".md"):
-            resolve_markdown_union(base, ours, theirs, path)
-        else:
-            raise RuntimeError(f"Unexpected unresolved path: {path}")
-        git("add", "--", path)
-
-    remaining = git("diff", "--name-only", "--diff-filter=U", check=False)
-    if remaining:
-        raise RuntimeError(f"Unresolved paths remain:\n{remaining}")
-
-    git("add", "-A")
+    git("add", str(REGISTRY_PATH), str(FRESHNESS_PATH))
     git("diff", "--cached", "--check")
-    git("commit", "-m", "chore: integrate verified PR 66 onto latest main")
-    git("push", "origin", f"HEAD:{INTEGRATION_BRANCH}")
+    if not git("diff", "--cached", "--quiet", check=False):
+        git("commit", "-m", "chore: normalize integrated skill contracts")
+        git("push", "origin", f"HEAD:{INTEGRATION_BRANCH}")
+    else:
+        print("No normalization changes required")
 
 
 if __name__ == "__main__":
