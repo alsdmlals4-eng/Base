@@ -106,6 +106,8 @@ frame
 → constrain
 → sharpen
 → structure
+→ 필요한 경우 system-design
+→ 필요한 경우 difficulty-and-combat-ai
 → 필요한 경우 benchmark-and-player-research
 → analyze
 → 필요한 경우 playtest-and-experiment
@@ -119,6 +121,22 @@ SWOT은 SO·WO·ST·WT 행동으로 변환하고, MDA·DDE·DDD·3C·루프·동
 Base 내부에서 `DDD`는 `Digital Dopamine Design`이다. 첫 의미 있는 보상, 행동-피드백 지연, 보상 명료성·밀도, Micro→Session→Meta 보상 사다리, 다음 행동 의도와 피로·인플레이션을 관찰한다. 외부 자료의 동명 약어는 출처 정의를 확인하기 전 임의 해석하지 않는다.
 
 `benchmark-and-player-research`는 공식 제품 사실, 플레이어 자기보고, 행동 이벤트·퍼널, 통제 실험과 해석을 구분하고 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 개선 결정을 만든다. `playtest-and-experiment`는 빌드·대상 집단·과제·피드백 채널·행동 계측·성공 기준을 고정한다.
+
+### 게임 시스템·난이도·전투 AI 설계
+
+`analyzing-and-refining-game-concepts`의 `system-design` 또는 `difficulty-and-combat-ai` Skill Mode를 사용한다.
+
+```text
+플레이어 경험 목표
+→ 시스템 경계·행동/선택/결과
+→ 난이도 장벽·공정성 안전 규칙
+→ 개별 적 판단·전투 조율자·난이도/페이싱 디렉터
+→ 공격·위협 예산·긴장도 상태
+→ 고정·적응형 난이도
+→ 텔레메트리·플레이테스트·PoC
+```
+
+상세 절차는 `skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-and-combat-ai.md`, 프로젝트 작성 틀은 `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md`를 사용한다. 새 독립 난이도·전투 AI Skill을 만들지 않는다.
 
 ### 프로젝트 코어 판정
 
