@@ -70,6 +70,7 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
                 ROOT / "docs/OPERATING_MODEL.md",
                 ROOT / "docs/DOCUMENTATION_MAP.md",
                 ROOT / "templates/project-operations/AI_WORKFLOW.md",
+                ROOT / "docs/generated/BASE_ACTIVE_SKILLS.md",
             )
         )
         for skill_id in (

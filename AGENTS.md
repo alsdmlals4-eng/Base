@@ -114,25 +114,13 @@ L1 이상 완료 보고에는 실제 사용한 `Work Mode / Skill / Skill Mode /
 - 근거 없는 일정 숫자 발명
 - 같은 파일·Schema·자산 경계 없이 모든 작업 병렬화
 
-## 5. 활성 통합 Skill
+## 5. Active Skill Registry View
 
-| 책임 | Skill |
-|---|---|
-| Work Mode·요청 라우팅·요구 확정·실행 계약·작업 분해·실행 보고 | `managing-project-intake-and-work-contract` |
-| 신규 설치·기존 감사·구형본 정리·승인된 마이그레이션·Health Review | `managing-game-project-operating-system` |
-| 기획 책임 원본 작성·재구조화·발행·검수 | `managing-design-documents` |
-| 프로젝트 Skill 생성·통합·학습 | `evolving-project-discipline-skills` |
-| Active Context·Handoff | `maintaining-project-context-and-handoff` |
-| 핵심 컨셉·DDD·벤치마크·플레이어 반응·플레이테스트·PoC | `analyzing-and-refining-game-concepts` |
-| 대표 구간·목표 품질·플레이 증거·제작 파이프라인 | `designing-vertical-slices` |
-| 외부 AI 작업 공간 | `orchestrating-deepseek-worktrees` |
-| 변경 계약·정본·정적·런타임·접근성·성능·회귀 검증 | `reviewing-and-validating-project-changes` |
-| 정본·경로·ID·파생본·전파 누락 감사 | `auditing-canonical-reference-freshness` |
-| 이미지 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` |
-| 게임 UX/UI 설계·폴리싱·구현된 Godot·Web UI 감사 | `auditing-and-refining-ui-art` |
-| 프로젝트 교훈·Base 변경 제안 생명주기 | `managing-base-change-proposals` |
+The current active-Skill count and list are generated only from `skills/SKILL_REGISTRY.json` into `docs/generated/BASE_ACTIVE_SKILLS.md`; this document keeps no duplicate table.
 
-핵심 통합 실행 Skill은 13개이며, 구조·운영·지원 Skill 14개를 포함한 **전체 ACTIVE Skill은 27개**다. 모두 `load_by_default=false`이며 기계적 권한은 `skills/SKILL_REGISTRY.json`이 가진다. 통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 Skill Mode로 변환한다. 새 Registry·문서·작업 계약에는 새 ID만 사용한다.
+Every active Skill is projected with positive/negative triggers, owner, input, output, failure condition, verification, and next step. Add, consolidate, or retire a Skill only through that boundary and the migration map.
+
+UX/UI design, 폴리싱, and runtime-result audit use `auditing-and-refining-ui-art`.
 
 ## 6. 책임 원본과 발행
 

@@ -64,54 +64,13 @@ START_HERE.md
 
 자세한 공용 규칙과 상태·발행 정책은 [docs/OPERATING_MODEL.md](docs/OPERATING_MODEL.md)가 단일 설명 원본입니다.
 
-## 활성 실행 스킬
+## Active Skill Registry View
 
-활성 Registry는 **핵심 통합 실행 Skill 13개 + 구조·운영·지원 Skill 14개 = 전체 ACTIVE Skill 27개**를 관리합니다. 기계적 권한은 `skills/SKILL_REGISTRY.json`이 가집니다.
+The current active-Skill count, list, owner, and positive/negative triggers are generated from [Current Active Base Skills](docs/generated/BASE_ACTIVE_SKILLS.md). This entrypoint does not maintain a second Skill list.
 
-| Skill | 책임 |
-|---|---|
-| `managing-project-intake-and-work-contract` | 요청 라우팅·저장소 사실 조사·사용자 확인·실행 계약·작업 분해·의존성·순서화 |
-| `managing-game-project-operating-system` | 신규 설치·기존 감사·승인된 마이그레이션·Health Review |
-| `managing-design-documents` | 기획 책임 원본 작성·구조 변경·발행·검수 |
-| `evolving-project-discipline-skills` | 프로젝트 스킬 생성·통합·학습 |
-| `pruning-stale-and-nonfunctional-material` | 중복·죽은 자료·오래된 경로의 무손실 가지치기 |
-| `simplifying-skill-bodies` | SKILL.md 핵심 계약 유지와 조건부 reference 분리 |
-| `refactoring-with-contract-preservation` | 기능·인터페이스·데이터 보존 리팩토링 |
-| `synchronizing-local-and-github-state` | 로컬·GitHub 상태의 안전한 비교·동기화 |
-| `maintaining-long-running-task-continuity` | 장기 작업 checkpoint·재개·부분 전달 |
-| `governing-game-user-research-coverage` | 게임 사용자 연구 11영역 설치·증거 coverage 감사 |
-| `creating-user-learning-notes` | 작업 교훈을 사용자 학습 노트로 변환 |
-| `building-project-visual-dashboards` | 정본 연결형 프로젝트 시각 대시보드 |
-| `diagnosing-game-engine-runtime-failures` | Godot·Unity 런타임 재현·원인 격리·최소 수정 |
-| `maintaining-project-context-and-handoff` | 현재 상태·다음 작업·위험 압축 |
-| `analyzing-and-refining-game-concepts` | 핵심 컨셉·DDD·벤치마크·플레이어 반응·플레이테스트·PoC·기획 재조정 |
-| `identifying-project-core` | 기존 프로젝트의 기획·시스템·코드 코어와 코어·MVP 경계를 근거로 판정 |
-| `establishing-project-core` | PLAN 단계에서 프로젝트 코어를 제안·반례 검토하고 사용자 승인으로 확정 |
-| `running-adversarial-review-and-refinement` | 실패 가정 공격·비판 검증·승인된 개선·회귀 재검토·저장소 전체 감사 |
-| `designing-vertical-slices` | 대표 구간의 목표 품질·실제 플레이 증거·접근성·성능·제작 파이프라인 검증 |
-| `orchestrating-deepseek-worktrees` | 외부 AI 대량 작업의 격리된 작업 공간 운용 |
-| `reviewing-and-validating-project-changes` | 코드·데이터·문서·자산 변경의 계약·정본·정적·런타임·접근성·성능·회귀 검증 |
-| `auditing-canonical-reference-freshness` | 오래된 경로·ID·정본 drift·파생본·변경 전파 누락 감사 |
-| `designing-art-prompts-and-technique-cards` | 기획 시각화·최종 후보 이미지·목업·프롬프트·검수·승인 원장 |
-| `auditing-and-refining-ui-art` | Godot·Web UI 결과 감사와 승인된 개선 |
-| `managing-base-change-proposals` | 프로젝트 교훈 추출·BCP 제출·검토·승인된 구현 |
-| `governing-legacy-retention-and-archives` | 레거시 보존·정본 통합·호환 stub·아카이브·승인 삭제 |
-| `evaluating-godot-assets-and-plugins-before-creation` | Godot 기본 기능·무료·오픈소스·상용 자산을 직접 제작 전에 평가 |
-
-통합 전 Skill ID는 [skills/LEGACY_SKILL_ALIASES.md](skills/LEGACY_SKILL_ALIASES.md)에서 새 Skill과 mode로 연결합니다.
-
-주요 통합 mode:
-
-- `decompose-and-sequence`: 검증 가능한 작업 결과·의존성·병렬화·게이트·롤백
-- `benchmark-and-player-research`: 비교 게임·유저 반응·행동 근거의 분석과 개선 판정
-- `playtest-and-experiment`: 빌드·테스터·피드백·이벤트·퍼널·A/B 테스트 계약
-- `planning-visualization`: 기획 중 세계관·인물·핵심루프·시스템·UI 시각화
-- `final-visual-candidate`: 기획 종료 후 Demo·상점·홍보·UI·캐릭터 후보 제작
-- `visual-qa-and-approval`: 실제 화면·구현·권리·오류·재사용성 검수와 승인 판정
-- `accessibility-review`: 핵심 정보·입력·UI·시간·난이도·모션의 장벽·대안
-- `performance-profile`: 목표 플랫폼 frame time·CPU·GPU·메모리·네트워크·로딩 비교
-- `reference-freshness`: 정본·경로·ID·Schema 변경의 전파 감사
-- `repository-wide-audit`: tracked 파일·권한·구형 계약·untouched 소비자·Prompt drift 감사
+- Machine authority: `skills/SKILL_REGISTRY.json` and each `SKILL.md` frontmatter
+- Derivatives: `.codex-plugin/plugin.json`, `base.lock.json`, and `skills/BASE_V9_SKILL_SNAPSHOT.json`
+- Legacy IDs: `skills/LEGACY_SKILL_ALIASES.md`
 
 ## 프로젝트 GDD와 선택형 대시보드
 

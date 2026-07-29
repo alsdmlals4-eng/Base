@@ -1,0 +1,85 @@
+name: Validate Base v9 RC
+
+on:
+  pull_request:
+    paths:
+      - "README.md"
+      - "START_HERE.md"
+      - "AGENTS.md"
+      - "base.lock.json"
+      - ".codex-plugin/**"
+      - "docs/**"
+      - "skills/**"
+      - "templates/**"
+      - "tools/**"
+      - "schemas/**"
+      - "tests/**"
+      - ".github/workflows/**"
+  push:
+    branches: [main]
+    paths:
+      - "README.md"
+      - "START_HERE.md"
+      - "AGENTS.md"
+      - "base.lock.json"
+      - ".codex-plugin/**"
+      - "docs/**"
+      - "skills/**"
+      - "templates/**"
+      - "tools/**"
+      - "schemas/**"
+      - "tests/**"
+      - ".github/workflows/**"
+
+permissions:
+  contents: read
+
+jobs:
+  base-v9-contract:
+    name: base-v9-contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate generated artifacts and integrity topology
+        run: |
+          python tools/build_base_v9_artifacts.py --check
+          python tools/check_base_v9_integrity.py
+      - name: Run Base v9 focused tests
+        run: |
+          python -m unittest \
+            tests.test_v9_machine_contracts \
+            tests.test_v9_registry_generation \
+            tests.test_v9_governance_documents \
+            tests.test_project_gdd_google_sheets_contract \
+            -v
+
+  ci-gate:
+    name: ci-gate
+    needs: base-v9-contract
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require Base v9 contract success
+        env:
+          CONTRACT_RESULT: ${{ needs.base-v9-contract.result }}
+        run: |
+          test "$CONTRACT_RESULT" = "success"
+          echo "CI gate passed"
+
+  adversarial-gate:
+    name: adversarial-gate
+    needs: [base-v9-contract, ci-gate]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require contract and CI evidence before adversarial review
+        env:
+          CONTRACT_RESULT: ${{ needs.base-v9-contract.result }}
+          CI_RESULT: ${{ needs.ci-gate.result }}
+        run: |
+          test "$CONTRACT_RESULT" = "success"
+          test "$CI_RESULT" = "success"
+          echo "Adversarial gate is ready for evidence-backed review"

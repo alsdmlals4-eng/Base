@@ -1,5 +1,9 @@
 # Base 시작 지점
 
+> Base v9 RC status and release boundary: `docs/BASE_RULES_VERSION.md`
+> Registry-derived active Skill view: `docs/generated/BASE_ACTIVE_SKILLS.md`
+> Game-system routes: `system-design` / `difficulty-and-combat-ai` → `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md`
+
 이 문서는 새 채팅, 새 GPT, 새 Codex 또는 새 작업자가 `Base`를 프로젝트 작업에 적용할 때 사용하는 최상위 라우터다.
 
 ## 사용자가 기억할 최소 요청
