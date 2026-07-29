@@ -83,4 +83,6 @@ jobs:
             tests/test_human_validation_artifact_governance.py
             tests/test_synthetic_tester_simulation_governance.py
             tests/test_prompt_recipe_reference_contract.py
+            skills/SKILL_REGISTRY.json
+            skills/SKILL_LEARNING_LOG.md
           if-no-files-found: error
