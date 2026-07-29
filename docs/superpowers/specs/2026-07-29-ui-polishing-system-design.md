@@ -26,7 +26,7 @@
 
 1. 기존 설계 모드와 런타임 감사 모드 사이에 폴리싱 전용 실행 단계가 없다.
 2. 상태·피드백 항목은 있으나 효과 우선순위, 모션·음향·햅틱 강도, 반복 피로, 중단·재진입, 성능 예산을 한 번에 다루는 마감 절차가 없다.
-3. 프로젝트 UX/UI Template과 Review Checklist에 폴리싱 준비도·전후 증거·반복 사용 검증 필드가 없다.
+3. 프로젝트 UX/UI Template·Reference Card·Review Checklist에 폴리싱 준비도·전후 증거·반복 사용 검증 필드가 없다.
 4. `skills/SKILL_REGISTRY.json`의 `auditing-and-refining-ui-art` 항목이 2026-07-29 병합된 설계 기능을 반영하지 못해 자동 라우팅이 구현 후 UI 감사에만 치우쳐 있다.
 5. `.github/reference-freshness.json`의 UX/UI 전용 coupled change rule이 Skill Registry와 Learning Log 동기화를 요구하지 않아 위 drift를 차단하지 못한다.
 6. 상위 라우터 일부가 여전히 이 Skill을 “구현된 UI 감사”로만 설명한다.
@@ -138,12 +138,13 @@
 - `godot-ui-implementation-contract.md`: semantic polish token, Tween 중단·재진입, reduced motion, 반복 성능 계약.
 - `agents/openai.yaml`: 설계·폴리싱·감사의 전체 역할 반영.
 - `GAME_UX_UI_SYSTEM.md`: 폴리싱 준비도·예산·전후 Artifact·반복 검증 Section 추가.
+- `UX_UI_REFERENCE_CARD.md`: 외부 근거별 P0~P3·피드백 등급·반복 빈도·동등 경로·전후 검증 필드 추가.
 - `GAME_UX_UI_REVIEW_CHECKLIST.md`: P0~P3·효과 강도·반복 피로·중단·재진입·폴백·전후 증거 검사 추가.
 - `SKILL_REGISTRY.json`: 설계·폴리싱 trigger와 실제 use_when·review trigger 갱신.
 - `SKILL_LEARNING_LOG.md`: 중복 Skill을 만들지 않은 이유와 Registry coupled-rule 누락 교훈 기록.
-- `.github/reference-freshness.json`: UX/UI Skill 변경 시 Registry·Learning Log·Test·CI 동기화 강제.
+- `.github/reference-freshness.json`: 기존 기획 Template·Reference Card·Review Checklist 소비자를 보존하면서 Registry·Learning Log·README·Test·CI 동기화를 추가로 강제.
 - `.github/workflows/validate-game-ux-ui-system.yml`: Registry·Learning Log·상위 라우터 변경도 전용 검증을 실행하도록 paths 확장.
-- `tests/test_game_ux_ui_system.py`: 폴리싱 계약과 소비처 동기화 회귀 테스트.
+- `tests/test_game_ux_ui_system.py`: 폴리싱 계약과 전체 소비처 동기화 회귀 테스트.
 - `skills/README.md`, `AGENTS.md`, `START_HERE.md`, `docs/OPERATING_MODEL.md`, `docs/DOCUMENTATION_MAP.md`: 설계·폴리싱·감사 전체 역할을 한 줄 라우터에 반영.
 
 ## 6. 출력 계약
@@ -185,8 +186,8 @@ remaining_risks:
 
 ### 자동·정적
 
-- 새 Reference와 Mode, Template Section, Checklist 항목, Registry trigger가 존재한다.
-- UX/UI Skill 변경 시 Registry·Learning Log·전용 테스트·CI가 coupled change로 요구된다.
+- 새 Reference와 Mode, Planning Template, Reference Card, Review Checklist, Registry trigger가 존재한다.
+- UX/UI Skill 변경 시 기존 Template·Reference Card·Checklist와 Registry·Learning Log·README·전용 테스트·CI가 coupled change로 요구된다.
 - 상위 라우터가 Skill을 구현 후 감사로만 축소 설명하지 않는다.
 - 기존 12개 UX 패턴, A~E UI 감사, 사용자 승인 전 수정 금지, 도메인 상태 경계가 보존된다.
 
@@ -224,6 +225,6 @@ Base 자체는 프로젝트 UI를 실행하지 않으므로 공용 계약 반영
 - 새 공용 Skill ID 추가
 - HTML 기획 대시보드 복원
 - 게임 코드·Scene·데이터·자산 수정
-- 모든 프로젝트에 동일한 시간·크기·대비 수치 강제
+- 모든 프로젝트에 동일한 시간·크기·대비·반복 횟수 강제
 - 폴리싱으로 미확정 코어·정보 구조·도메인 규칙 문제를 은폐
 - Base 문서 변경을 프로젝트 구현 또는 사람 검증 완료로 표시
