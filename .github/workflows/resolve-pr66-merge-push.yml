@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  statuses: write
 
 jobs:
   resolve-merge:
@@ -23,4 +24,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPOSITORY: ${{ github.repository }}
-        run: python tools/resolve_pr66_merge.py
+        shell: bash
+        run: |
+          set -o pipefail
+          python tools/resolve_pr66_merge.py | tee resolver-results.txt
+          resolved_sha="$(sed -n 's/^RESOLVED_COMMIT_SHA=//p' resolver-results.txt | tail -n 1)"
+          test -n "$resolved_sha"
+          gh api "repos/$GH_REPOSITORY/statuses/$GITHUB_SHA" \
+            -f state=success \
+            -f context=pr66-merge-resolver \
+            -f description="$resolved_sha"
