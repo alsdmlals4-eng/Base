@@ -127,10 +127,10 @@ class VerticalSliceV9ContractTests(unittest.TestCase):
         contract = read("docs/operations/BASE_V9_3_RELEASE_CONTRACT.md")
 
         self.assertEqual(candidate["release_line"], "v9.3.0")
-        self.assertEqual(candidate["release_state"], "RELEASE_CANDIDATE")
+        self.assertEqual(candidate["release_state"], "BASE_RELEASED")
         self.assertEqual(candidate["github_issue"], 107)
-        self.assertIsNone(candidate["candidate_release_commit"])
-        self.assertIsNone(candidate["candidate_release_evidence_commit"])
+        self.assertEqual(candidate["candidate_release_commit"], "30ca6c7b5f93521f0eb0eed42d01437cd43c50ae")
+        self.assertEqual(candidate["candidate_release_evidence_commit"], "462a86db192d23d0f386281a1eb54b0a8cbad62e")
         self.assertEqual(v92["release_state"], "BASE_RELEASED")
         self.assertIn("does not rewrite\nthe v9.2 payload", contract)
         self.assertIn("single-attachment integrated execution behavior", contract)

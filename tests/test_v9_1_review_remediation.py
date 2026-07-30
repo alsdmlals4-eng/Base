@@ -388,8 +388,8 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
 
     def test_v93_candidate_and_evidence_records_bind_to_the_declared_issue_and_payload(self) -> None:
         candidate = json.loads((ROOT / "base-v9.3.lock.json").read_text(encoding="utf-8"))
-        trusted_history = "30ca6c7b5f93521f0eb0eed42d01437cd43c50ae"
-        evidence_payload = "17f93334b6e68940ec2206c53164035b235ffb7a"
+        trusted_history = "462a86db192d23d0f386281a1eb54b0a8cbad62e"
+        evidence_payload = "30ca6c7b5f93521f0eb0eed42d01437cd43c50ae"
         self.assertEqual(self.integrity.v93_release_lock_errors(ROOT, candidate, trusted_history), [])
 
         evidence = {
