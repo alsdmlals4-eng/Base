@@ -3,6 +3,7 @@ from __future__ import annotations
 import unittest
 import json
 import hashlib
+import subprocess
 from pathlib import Path
 
 
@@ -138,10 +139,12 @@ class VerticalSliceV9ContractTests(unittest.TestCase):
         self.assertIn("def latest_released_base_version", core)
         self.assertIn("selected_base_version = base_version or latest_released_base_version(base_repository)", core)
         self.assertIn("newest locally available lock with usable release and evidence pins", read("tools/migrate_project_operating_contract.py"))
-        self.assertEqual(
-            candidate["candidate_registry"]["sha256"],
-            hashlib.sha256((ROOT / "skills/SKILL_REGISTRY.json").read_bytes()).hexdigest(),
-        )
+        registry_blob = subprocess.run(
+            ["git", "-C", str(ROOT), "show", "HEAD:skills/SKILL_REGISTRY.json"],
+            capture_output=True,
+            check=True,
+        ).stdout
+        self.assertEqual(candidate["candidate_registry"]["sha256"], hashlib.sha256(registry_blob).hexdigest())
         self.assertTrue((ROOT / "schemas/base-v9-3-candidate-lock-v1.schema.json").is_file())
         self.assertTrue((ROOT / "schemas/base-v9-3-release-evidence-v1.schema.json").is_file())
 
