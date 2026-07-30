@@ -36,7 +36,7 @@ START_HERE.md
 과거 기록 → docs/archive/ARCHIVE_MANIFEST.json·Git 이력
 ```
 
-Base에는 프로젝트별 활성 `ACTIVE_CONTEXT`, `CURRENT_STATUS`, `ROADMAP`을 두 번째 정본으로 유지하지 않는다. `docs/ACTIVE_HANDOFF.md`는 과거 링크 보존용 `COMPATIBILITY_ONLY` Stub이며 현재 상태를 소유하지 않는다.
+Base 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 문서로 오인하지 않는다. Base에는 프로젝트별 활성 `ACTIVE_CONTEXT`, `CURRENT_STATUS`, `ROADMAP`을 두 번째 정본으로 유지하지 않는다. `docs/ACTIVE_HANDOFF.md`는 과거 링크 보존용 `COMPATIBILITY_ONLY` Stub이며 현재 상태를 소유하지 않는다.
 
 ### 대상 프로젝트
 
