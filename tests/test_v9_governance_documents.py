@@ -130,6 +130,24 @@ class V9GovernanceDocumentTests(unittest.TestCase):
         ):
             self.assertNotIn(f"| `{legacy_id}` |", readme)
 
+    def test_agent_metadata_lives_under_the_active_integrated_skill_package(self) -> None:
+        active_path = ROOT / "skills/managing-project-intake-and-work-contract/agents/openai.yaml"
+        legacy_path = ROOT / "skills/conducting-deep-requirement-interviews/agents/openai.yaml"
+
+        self.assertTrue(active_path.is_file(), active_path.relative_to(ROOT).as_posix())
+        self.assertFalse(legacy_path.exists(), legacy_path.relative_to(ROOT).as_posix())
+
+        metadata = active_path.read_text(encoding="utf-8")
+        for term in (
+            "프로젝트 요청·결정 계약",
+            "$managing-project-intake-and-work-contract",
+            "저장소 사실",
+            "사용자 결정",
+            "실행 계약",
+        ):
+            self.assertIn(term, metadata)
+        self.assertNotIn("$conducting-deep-requirement-interviews", metadata)
+
 
 if __name__ == "__main__":
     unittest.main()
