@@ -34,9 +34,9 @@
       "additionalProperties": false,
       "required": ["base_routes", "project_routes", "inactive_routes", "aliases", "precedence"],
       "properties": {
-        "base_routes": {"type": "array", "items": {"$ref": "#/$defs/route"}},
-        "project_routes": {"type": "array", "items": {"$ref": "#/$defs/route"}},
-        "inactive_routes": {"type": "array", "items": {"$ref": "#/$defs/route"}},
+        "base_routes": {"type": "array", "items": {"$ref": "#/$defs/activeRoute"}},
+        "project_routes": {"type": "array", "items": {"$ref": "#/$defs/activeRoute"}},
+        "inactive_routes": {"type": "array", "items": {"$ref": "#/$defs/inactiveRoute"}},
         "aliases": {"type": "array", "items": {"$ref": "#/$defs/alias"}},
         "precedence": {"const": "PROJECT_LOCAL_THEN_BASE_SHARED"}
       }
@@ -65,10 +65,21 @@
     "compatibility": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["cycle", "views"],
+      "required": ["cycle", "views", "legacy_inputs"],
       "properties": {
         "cycle": {"const": "ONE_CYCLE"},
-        "views": {"type": "array", "uniqueItems": true, "minItems": 3, "items": {"type": "string"}}
+        "views": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "skills/BASE_V9_ADAPTER.json",
+              "skills/PROJECT_BASE_SKILL_ADAPTER.json",
+              "skills/PROJECT_PATH_ADAPTER.json"
+            ]
+          }
+        },
+        "legacy_inputs": {"type": "object", "additionalProperties": {"type": "string", "minLength": 1}}
       }
     }
   },
@@ -83,6 +94,18 @@
         "status": {"enum": ["ACTIVE", "INACTIVE", "HOLD", "RETIRED"]}
       }
     },
+    "activeRoute": {
+      "allOf": [
+        {"$ref": "#/$defs/route"},
+        {"properties": {"status": {"const": "ACTIVE"}}}
+      ]
+    },
+    "inactiveRoute": {
+      "allOf": [
+        {"$ref": "#/$defs/route"},
+        {"properties": {"status": {"enum": ["INACTIVE", "HOLD", "RETIRED"]}}}
+      ]
+    },
     "alias": {
       "type": "object",
       "additionalProperties": false,
@@ -95,10 +118,11 @@
     "registry": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["path", "sha256"],
+      "required": ["path", "sha256", "hash_definition"],
       "properties": {
         "path": {"type": "string", "minLength": 1},
-        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "hash_definition": {"const": "RAW_FILE_BYTES_SHA256"}
       }
     }
   }

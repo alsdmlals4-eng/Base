@@ -6,6 +6,9 @@ The canonical project integration file is `skills/PROJECT_BASE_ADAPTER.json`.
 `skills/PROJECT_BASE_SKILL_ADAPTER.json`, `skills/BASE_V9_ADAPTER.json`, and
 `skills/PROJECT_PATH_ADAPTER.json` remain for one compatibility cycle only as
 deterministic `GENERATED_COMPATIBILITY_VIEW` outputs. Never hand-edit them.
+They are also `HISTORY_ONLY`: they are omitted when no preserved file-specific
+legacy input exists and can never become an active adapter authority. Any older
+JSON examples below are historical consumer shapes, not editable v9.1 inputs.
 
 The canonical schema separates release payload and evidence pins and owns
 `base_release`, `project`, `routing`, `skill_registry`, `shared_overrides`,

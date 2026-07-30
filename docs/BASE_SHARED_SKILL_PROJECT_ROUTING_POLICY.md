@@ -5,7 +5,9 @@ generated `skills/PROJECT_SKILL_SNAPSHOT.json`. Project-local same-name routes
 take precedence over Base shared routes. Pin, hash, or generated-view mismatch
 refuses execution.
 
-The old route remains recognizable for exactly one compatibility cycle:
+The old route remains recognizable for exactly one compatibility cycle as a
+`GENERATED_COMPATIBILITY_VIEW` / `HISTORY_ONLY` projection. It is never an
+active editable input and is generated only when a preserved legacy source exists:
 
 ```json
 {"adapter": "skills/PROJECT_BASE_SKILL_ADAPTER.json", "artifact_role": "GENERATED_COMPATIBILITY_VIEW"}
@@ -26,11 +28,16 @@ Base의 공용 Skill은 프로젝트 저장소에 본문을 복사하지 않는�
   "base_registry_route": {
     "source_registry": "skills/SKILL_REGISTRY.json",
     "selection": "automatic-trigger-match",
-    "adapter": "skills/PROJECT_BASE_SKILL_ADAPTER.json",
+    "adapter": "skills/PROJECT_BASE_ADAPTER.json",
     "copy_skill_bodies_to_project": false
   }
 }
 ```
+
+`skills/PROJECT_BASE_SKILL_ADAPTER.json`, `skills/BASE_V9_ADAPTER.json`, and
+`skills/PROJECT_PATH_ADAPTER.json` are `HISTORY_ONLY` names. Consumers may read
+a source-backed generated projection for one cycle; authors must edit only
+`skills/PROJECT_BASE_ADAPTER.json`.
 
 이 route는 작업 계약, 기획서 관리, 프로젝트 코어, 검증, 정본 최신성, 런타임 진단 등 Base 메인 Registry의 공용 절차를 담당한다.
 

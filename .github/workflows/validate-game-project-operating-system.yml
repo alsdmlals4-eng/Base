@@ -418,7 +418,7 @@ jobs:
           cache-dependency-path: requirements-publication.txt
 
       - name: Set up Node
-        uses: actions/setup-node@1e60f620b9541d4a0d9f3e92ff9c80b076c39d50
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "24"
 
@@ -475,7 +475,7 @@ jobs:
           cache-dependency-path: requirements-publication.txt
 
       - name: Set up Node
-        uses: actions/setup-node@1e60f620b9541d4a0d9f3e92ff9c80b076c39d50
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "24"
 

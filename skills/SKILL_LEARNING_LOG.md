@@ -1,5 +1,12 @@
 # Base Skill Learning Log
 
+## 2026-07-30 — Base v9.1 review remediation
+
+- Replaced string-only pressure evidence with four executable temporary-repository fixtures.
+- Historical Base Registry authority now comes from the pinned Git blob; current Registry evolution is separate.
+- Added ACTIVE-only route/alias resolution, evidence-derived health verdicts, protected/path fail-closed rules, and source-backed compatibility projections.
+- Declared near-duplicate Skill similarity below normalized hash equality as a manual-review gap.
+
 ## 2026-07-30 Base v9.1: fail-closed project routing
 
 - **Trigger:** pressure scenarios encouraged body copying, stale-pin execution, shared-route shadowing, and mismatch ignoring.

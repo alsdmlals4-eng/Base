@@ -27,3 +27,10 @@ Operating maturity and product evidence answer different questions. They never a
 ## Critical gates
 
 Static, runtime, device, accessibility, and human gates use `PASS / FAIL / NOT_RUN / NOT_APPLICABLE / BLOCKED`. A `FAIL` remains visible regardless of `OM-L*` or `PE-*`. `NOT_RUN` is not failure and never becomes PASS through documentation volume.
+
+Every claimed maturity step consumes one structured evidence record, so a
+self-reported level is capped by available metadata. `OM-L5`, `PE-5`, and GDD
+Sheet `CURRENT` therefore require their respective operating, product, or Sheet
+evidence. A gate `FAIL` derives verdict `FAIL`; otherwise any `BLOCKED` derives
+`BLOCKED`; otherwise any applicable `NOT_RUN` derives
+`PASS_WITH_NOT_RUN_GATES`; only fully evidenced applicable gates derive `PASS`.

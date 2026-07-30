@@ -7,6 +7,30 @@
     "runtime": "NOT_RUN",
     "static": "NOT_RUN"
   },
+  "evidence": {
+    "gates": {
+      "accessibility": [],
+      "device": [],
+      "human": [],
+      "runtime": [],
+      "static": [
+        {
+          "id": "static-contract-check",
+          "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "source": "replace-with-static-check-evidence"
+        }
+      ]
+    },
+    "operating": [
+      {
+        "id": "adapter-installed",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "source": "skills/PROJECT_BASE_ADAPTER.json"
+      }
+    ],
+    "product": [],
+    "sheet": []
+  },
   "integrity_verdict": "BLOCKED",
   "operating_maturity": "OM-L0",
   "product_evidence_maturity": "PE-0",

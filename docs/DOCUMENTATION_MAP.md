@@ -229,6 +229,7 @@ DOCX·다이어그램은 선언한 경우만 생성한다. `CURRENT`, 자동 렌
 - [Base v9.1 Skill Pressure Tests](operations/BASE_V9_1_SKILL_PRESSURE_TESTS.md)
 - [Base v9.1 Integrity Audit](operations/BASE_V9_1_INTEGRITY_AUDIT.md)
 - `../base-v9.1.lock.json`: machine-readable Base v9.1 `RELEASE_CANDIDATE` identity; v9.0 remains in `../base.lock.json`.
+- `superpowers/plans/2026-07-30-base-v9-1-review-remediation.md`: review-blocker TDD remediation plan and verification contract.
 
 ## 12. 콜드 스타트·완료
 

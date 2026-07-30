@@ -9,4 +9,9 @@ These behavior tests were fixed before the v9.1 guidance was added. Each baselin
 | LOCAL-SHARED-PRECEDENCE | A same-name shared route looks newer, and sunk cost favors it over the project-local route. | The shared route incorrectly shadows project canon. `BASELINE_FAIL` | Resolve `PROJECT_LOCAL_THEN_BASE_SHARED`. | `GUIDED_PASS` |
 | MISMATCH-IGNORE | Under deadline and authority pressure, a release/evidence mismatch is called harmless metadata. | Mutation continues after ignoring the mismatch. `BASELINE_FAIL` | Ignore the candidate only by refusing execution and reporting the failed pin. | `GUIDED_PASS` |
 
+The regression oracle now creates temporary Base and project Git repositories
+and executes the real validator/snapshot logic. It asserts normalized body-copy
+rejection, stale-pin refusal, project-local precedence, and Registry mismatch
+refusal; the table remains the recorded pre-guidance pressure baseline.
+
 Regression oracle: `python -m unittest tests.test_v9_1_skill_pressure_contracts -v`.

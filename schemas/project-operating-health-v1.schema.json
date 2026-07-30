@@ -4,7 +4,7 @@
   "title": "Base v9.1 Project Operating Health",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "artifact_role", "operating_maturity", "product_evidence_maturity", "critical_gates", "integrity_verdict"],
+  "required": ["schema_version", "artifact_role", "operating_maturity", "product_evidence_maturity", "critical_gates", "integrity_verdict", "evidence"],
   "properties": {
     "schema_version": {"const": 1},
     "artifact_role": {"const": "PROJECT_OPERATING_HEALTH"},
@@ -15,6 +15,40 @@
       "additionalProperties": {"enum": ["PASS", "FAIL", "NOT_RUN", "NOT_APPLICABLE", "BLOCKED"]},
       "required": ["static", "runtime", "device", "accessibility", "human"]
     },
-    "integrity_verdict": {"enum": ["PASS", "PASS_WITH_NOT_RUN_GATES", "FAIL", "BLOCKED"]}
+    "integrity_verdict": {"enum": ["PASS", "PASS_WITH_NOT_RUN_GATES", "FAIL", "BLOCKED"]},
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operating", "product", "gates", "sheet"],
+      "properties": {
+        "operating": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+        "product": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+        "sheet": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+        "gates": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["static", "runtime", "device", "accessibility", "human"],
+          "properties": {
+            "static": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+            "runtime": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+            "device": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+            "accessibility": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+            "human": {"type": "array", "items": {"$ref": "#/$defs/evidence"}}
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "source", "sha256"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "source": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
   }
 }

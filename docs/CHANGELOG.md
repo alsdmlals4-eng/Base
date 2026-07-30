@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-30 — Base v9.1 review remediation
+
+- Closed Issue #71 review blockers across Action provenance, historical artifact immutability, release-lock binding, health evidence, routing/aliases, protected/path safety, generator preflight, legacy projections, dashboard provenance, migration pins, Skill duplication, Windows wrapper safety, and clean-runner dependencies.
+- Replaced prose-only pressure checks with executable Git fixtures and retained runtime/device/accessibility/human evidence as `NOT_RUN`.
+
 ## Unreleased - Base audit and operating-contract consistency
 
 - Base 저장소 무결성 감사에서 프로젝트 간 `docs/ACTIVE_HANDOFF.md` 이중 정본을 제거하고, 원문은 `docs/archive/handoffs/2026-07-29-ux-ui-common-system-expansion.md`에 `ARCHIVE_HISTORY`로 보존했으며 기존 경로는 `COMPATIBILITY_ONLY` Stub으로 전환했다. Archive Manifest·본문 SHA-256·rollback ref·소비자 연결 회귀를 추가했다.

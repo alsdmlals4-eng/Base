@@ -29,6 +29,50 @@ MARKDOWN_LINK = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 LOCAL_SUFFIXES = {".md", ".json", ".py", ".yml", ".yaml", ".pdf", ".docx", ".png", ".svg"}
 
 
+def frozen_artifact_errors(repository: Path, candidate_lock: dict) -> list[str]:
+    """Compare every declared v9.0 frozen artifact with its evidence-commit blob."""
+    errors: list[str] = []
+    compatibility = candidate_lock.get("compatibility_base", {})
+    evidence_commit = compatibility.get("release_evidence_commit")
+    frozen = compatibility.get("frozen_artifacts", [])
+    if not isinstance(evidence_commit, str) or not evidence_commit:
+        return ["v9.0 frozen artifacts require a release evidence commit"]
+    if not isinstance(frozen, list) or not frozen:
+        return ["v9.0 frozen artifact declaration is empty"]
+    for value in frozen:
+        relative = Path(str(value))
+        if relative.is_absolute() or ".." in relative.parts:
+            errors.append(f"Unsafe v9.0 frozen artifact path: {value}")
+            continue
+        current = repository / relative
+        traversal = repository
+        unsafe_traversal = False
+        for part in relative.parts:
+            traversal = traversal / part
+            if traversal.is_symlink() or (
+                traversal.exists()
+                and getattr(traversal.stat(follow_symlinks=False), "st_file_attributes", 0) & 0x400
+            ):
+                errors.append(f"v9.0 frozen artifact uses unsafe symlink/reparse traversal: {value}")
+                unsafe_traversal = True
+                break
+        if unsafe_traversal:
+            continue
+        if not current.is_file():
+            errors.append(f"v9.0 frozen artifact is missing: {value}")
+            continue
+        historical = subprocess.run(
+            ["git", "-C", str(repository), "show", f"{evidence_commit}:{relative.as_posix()}"],
+            capture_output=True,
+            check=False,
+        )
+        if historical.returncode:
+            errors.append(f"v9.0 frozen artifact historical blob is unavailable: {value}")
+        elif current.read_bytes() != historical.stdout:
+            errors.append(f"v9.0 frozen artifact differs from release evidence: {value}")
+    return errors
+
+
 def graph_errors(skills: list[dict]) -> list[str]:
     errors: list[str] = []
     active = [skill for skill in skills if skill.get("status") == "ACTIVE"]
@@ -115,6 +159,7 @@ def main() -> int:
         ):
             location = ".".join(str(part) for part in error.path) or "<root>"
             errors.append(f"Base v9.1 candidate lock {location}: {error.message}")
+        errors.extend(frozen_artifact_errors(ROOT, candidate_lock))
     except (OSError, json.JSONDecodeError) as error:
         errors.append(f"Base v9.1 candidate lock cannot be validated: {error}")
     if not GENERATED_SUMMARY.is_file():

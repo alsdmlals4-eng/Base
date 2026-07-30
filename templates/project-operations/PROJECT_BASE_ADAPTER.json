@@ -1,18 +1,15 @@
 {
   "artifact_role": "PROJECT_BASE_ADAPTER",
   "base_release": {
-    "release_commit": "585a53a25be1b04c543196f5901551deb49c7691",
-    "release_evidence_commit": "dc98a666563b1f0f87b665eac97dbd8a8be37576",
+    "release_commit": "0000000000000000000000000000000000000000",
+    "release_evidence_commit": "0000000000000000000000000000000000000000",
     "repository": "alsdmlals4-eng/Base",
     "version": "9.1.0"
   },
   "compatibility": {
     "cycle": "ONE_CYCLE",
-    "views": [
-      "skills/BASE_V9_ADAPTER.json",
-      "skills/PROJECT_BASE_SKILL_ADAPTER.json",
-      "skills/PROJECT_PATH_ADAPTER.json"
-    ]
+    "legacy_inputs": {},
+    "views": []
   },
   "gdd_sheet": {
     "role": "USER_FACING_GDD_WORKSPACE",
@@ -39,10 +36,12 @@
   "shared_overrides": {},
   "skill_registry": {
     "base": {
+      "hash_definition": "RAW_FILE_BYTES_SHA256",
       "path": "skills/SKILL_REGISTRY.json",
       "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
     },
     "project": {
+      "hash_definition": "RAW_FILE_BYTES_SHA256",
       "path": "skills/SKILL_REGISTRY.json",
       "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
     }

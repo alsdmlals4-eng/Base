@@ -4,27 +4,60 @@
   "title": "Base v9.1 Release Candidate Lock",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "artifact_role", "release_line", "release_state", "github_issue", "compatibility_base", "candidate_release_commit", "candidate_release_evidence_commit", "binary_attestation", "canonical_contracts"],
+  "required": ["schema_version", "artifact_role", "release_line", "release_state", "repository", "github_issue", "compatibility_base", "candidate_release_commit", "candidate_release_evidence_commit", "candidate_registry", "binary_attestation", "canonical_contracts"],
   "properties": {
     "schema_version": {"const": 1},
     "artifact_role": {"const": "BASE_V9_1_RELEASE_CANDIDATE_LOCK"},
     "release_line": {"const": "v9.1.0"},
     "release_state": {"const": "RELEASE_CANDIDATE"},
+    "repository": {"const": "alsdmlals4-eng/Base"},
     "github_issue": {"const": 71},
     "compatibility_base": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["release_line", "release_state", "release_commit", "release_evidence_commit"],
+      "required": ["release_line", "release_state", "release_commit", "release_evidence_commit", "frozen_artifacts"],
       "properties": {
         "release_line": {"const": "v9.0.0"},
         "release_state": {"const": "BASE_RELEASED"},
         "release_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "release_evidence_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+        "release_evidence_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "frozen_artifacts": {
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 3,
+          "items": {"type": "string", "minLength": 1}
+        }
       }
     },
     "candidate_release_commit": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
     "candidate_release_evidence_commit": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
+    "candidate_registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "hash_definition"],
+      "properties": {
+        "path": {"const": "skills/SKILL_REGISTRY.json"},
+        "sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "hash_definition": {"const": "RAW_FILE_BYTES_SHA256"}
+      }
+    },
     "binary_attestation": {"const": "DEFERRED_UNTIL_RELEASE_ARTIFACT"},
     "canonical_contracts": {"type": "array", "uniqueItems": true, "minItems": 4, "items": {"type": "string", "minLength": 1}}
-  }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "candidate_release_commit": {"type": "null"},
+        "candidate_release_evidence_commit": {"type": "null"},
+        "candidate_registry": {"properties": {"sha256": {"type": "null"}}}
+      }
+    },
+    {
+      "properties": {
+        "candidate_release_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "candidate_release_evidence_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "candidate_registry": {"properties": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}
+      }
+    }
+  ]
 }

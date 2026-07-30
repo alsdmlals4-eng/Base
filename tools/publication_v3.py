@@ -5,6 +5,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import zipfile
 from datetime import datetime, timezone
@@ -132,14 +133,36 @@ def pdftoppm_path() -> str | None:
     return resolved
 
 
-def safe_executable_command(executable: str, arguments: Iterable[str]) -> list[str]:
+def trusted_wrapper_roots(executable: str) -> tuple[Path, ...]:
+    """Return explicit roots authorized to contain Windows command wrappers."""
+    candidate = Path(executable).resolve()
+    roots = {Path(__file__).resolve().parents[1], Path(sys.executable).resolve().parent}
+    configured = os.environ.get("BASE_PDFTOPPM", "").strip()
+    if configured and Path(configured).resolve() == candidate:
+        roots.add(candidate.parent)
+    return tuple(sorted(roots, key=str))
+
+
+def safe_executable_command(
+    executable: str,
+    arguments: Iterable[str],
+    *,
+    trusted_wrapper_roots: Iterable[Path] = (),
+) -> list[str]:
     """Return a no-shell command array for native executables or Windows wrappers."""
     values = [str(item) for item in arguments]
     if Path(executable).suffix.lower() not in {".cmd", ".bat"}:
         return [executable, *values]
+    wrapper = Path(executable).resolve()
+    roots = [Path(root).resolve() for root in trusted_wrapper_roots]
+    if not wrapper.is_file() or not any(wrapper.is_relative_to(root) for root in roots):
+        raise ValueError(f"Untrusted Windows command wrapper path: {executable}")
+    metacharacters = set("&|<>^()%!")
+    for value in (str(wrapper), *values):
+        if any(character in value for character in metacharacters):
+            raise ValueError("Windows command wrapper executable/arguments contain cmd metacharacters")
     command_processor = os.environ.get("COMSPEC") or shutil.which("cmd.exe") or "cmd.exe"
-    command_line = subprocess.list2cmdline([executable, *values])
-    return [command_processor, "/d", "/s", "/c", command_line]
+    return [command_processor, "/d", "/s", "/c", "call", str(wrapper), *values]
 
 
 def mermaid_cli_path(repository_root: Path) -> str | None:
@@ -234,7 +257,11 @@ def render_pdf_for_review(pdf_path: Path, output_dir: Path) -> list[Path]:
     output_dir.mkdir(parents=True, exist_ok=True)
     prefix = output_dir / "page"
     result = subprocess.run(
-        safe_executable_command(executable, ["-png", "-r", "120", str(pdf_path), str(prefix)]),
+        safe_executable_command(
+            executable,
+            ["-png", "-r", "120", str(pdf_path), str(prefix)],
+            trusted_wrapper_roots=trusted_wrapper_roots(executable),
+        ),
         capture_output=True,
         text=True,
         encoding="utf-8",

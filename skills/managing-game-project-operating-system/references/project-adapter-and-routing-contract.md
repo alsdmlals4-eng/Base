@@ -24,7 +24,10 @@ All four are fail-closed conditions. Validate, report the exact mismatch, and st
 ## Generated outputs
 
 - `skills/PROJECT_SKILL_SNAPSHOT.json`: normalized routes, aliases, effective resolution, and source path/hash.
-- `skills/BASE_V9_ADAPTER.json`, `skills/PROJECT_BASE_SKILL_ADAPTER.json`, `skills/PROJECT_PATH_ADAPTER.json`: one-cycle `GENERATED_COMPATIBILITY_VIEW` outputs.
+- Requested `skills/BASE_V9_ADAPTER.json`, `skills/PROJECT_BASE_SKILL_ADAPTER.json`, or `skills/PROJECT_PATH_ADAPTER.json`: file-specific one-cycle `GENERATED_COMPATIBILITY_VIEW` / `HISTORY_ONLY` projection, emitted only from its preserved legacy input.
 - `docs/PROJECT_OPERATING_DASHBOARD.html`: deterministic view of health and separate maturity axes.
 
 Never hand-edit these outputs. Use the generator `--check` path to detect manual modification.
+
+Source hashes use `RAW_FILE_BYTES_SHA256`. Near-duplicate Skill bodies that do
+not share a normalized content hash remain a declared manual-review gap.

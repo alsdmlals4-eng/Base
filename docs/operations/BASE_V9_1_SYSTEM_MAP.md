@@ -11,7 +11,7 @@ Base release payload commit
      -> skills/PROJECT_SKILL_SNAPSHOT.json
      -> docs/PROJECT_OPERATING_HEALTH.json
      -> docs/PROJECT_OPERATING_DASHBOARD.html
-     -> one-cycle GENERATED_COMPATIBILITY_VIEW outputs
+     -> requested, source-backed one-cycle GENERATED_COMPATIBILITY_VIEW outputs
 ```
 
 ## Authority and routing
@@ -31,4 +31,4 @@ No score can hide a critical failure. Migration and execution fail closed, prese
 
 ## Cross-repository boundary
 
-`tools/migrate_project_operating_contract.py` creates the canonical adapter without modifying legacy inputs. `tools/build_project_operating_artifacts.py` writes or checks deterministic views. `tools/check_project_operating_contract.py` validates Base and project repositories together, including optional protected-path diffs.
+`tools/migrate_project_operating_contract.py` creates the canonical adapter without modifying legacy inputs and requires explicit lock-matching v9.1 pins. `tools/build_project_operating_artifacts.py` runs the same full validator before writing or checking deterministic views. `tools/check_project_operating_contract.py` validates Base and project repositories together, including optional protected-path diffs.

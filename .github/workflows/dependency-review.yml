@@ -4,10 +4,24 @@ on:
   pull_request:
     paths:
       - "**/package.json"
+      - "**/package-lock.json"
       - "**/pnpm-lock.yaml"
+      - "**/yarn.lock"
+      - "**/bun.lockb"
+      - "**/bun.lock"
       - "**/requirements*.txt"
       - "**/pyproject.toml"
       - "**/poetry.lock"
+      - "**/Pipfile.lock"
+      - "**/uv.lock"
+      - "**/Cargo.toml"
+      - "**/Cargo.lock"
+      - "**/go.mod"
+      - "**/go.sum"
+      - "**/Gemfile"
+      - "**/Gemfile.lock"
+      - "**/composer.json"
+      - "**/composer.lock"
 
 permissions:
   contents: read
