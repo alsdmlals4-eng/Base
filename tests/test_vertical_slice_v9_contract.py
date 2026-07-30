@@ -79,19 +79,19 @@ class VerticalSliceV9ContractTests(unittest.TestCase):
         ):
             self.assertIn(term, packet)
 
-    def test_candidate_lock_prevents_unpinned_project_adoption(self) -> None:
+    def test_finalized_lock_binds_the_trusted_payload_and_evidence(self) -> None:
         lock = json.loads((ROOT / "base-v9.2.lock.json").read_text(encoding="utf-8"))
         self.assertEqual(lock["release_line"], "v9.2.0")
-        self.assertEqual(lock["release_state"], "RELEASE_CANDIDATE")
-        self.assertIsNone(lock["candidate_release_commit"])
-        self.assertIsNone(lock["candidate_release_evidence_commit"])
+        self.assertEqual(lock["release_state"], "BASE_RELEASED")
+        self.assertEqual(lock["candidate_release_commit"], "648b9f60e53c4dbc7780d463be8d1bbd3a5a5e88")
+        self.assertEqual(lock["candidate_release_evidence_commit"], "839154eca628084b023776f4ccf91770c344d7e6")
         self.assertEqual(
             lock["candidate_registry"]["sha256"],
             hashlib.sha256((ROOT / "skills/SKILL_REGISTRY.json").read_bytes()).hexdigest(),
         )
         release_contract = read("docs/operations/BASE_V9_2_RELEASE_CONTRACT.md")
         self.assertIn("must not self-attest", release_contract)
-        self.assertIn("No project may pin Base v9.2", release_contract)
+        self.assertIn("Projects may now pin Base v9.2", release_contract)
 
         core = read("tools/project_operating_contract.py")
         self.assertIn('"9.2.0": Path("base-v9.2.lock.json")', core)
@@ -106,7 +106,7 @@ class VerticalSliceV9ContractTests(unittest.TestCase):
         self.assertEqual(evidence["release_payload_commit"], "648b9f60e53c4dbc7780d463be8d1bbd3a5a5e88")
         self.assertEqual(evidence["candidate_registry"], lock["candidate_registry"])
         self.assertEqual(evidence["product_evidence"]["godot_runtime"], "NOT_RUN")
-        self.assertIsNone(lock["candidate_release_commit"])
+        self.assertEqual(evidence["release_payload_commit"], lock["candidate_release_commit"])
         self.assertTrue((ROOT / "schemas/base-v9-2-release-evidence-v1.schema.json").is_file())
 
     def test_visual_policy_and_skill_share_the_checkpoint_boundary(self) -> None:
