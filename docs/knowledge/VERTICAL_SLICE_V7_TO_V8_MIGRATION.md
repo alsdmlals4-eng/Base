@@ -1,7 +1,7 @@
 ---
 document_role: MIGRATION_TRACEABILITY
 source_contract: VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7
-replacement_execution_prompt: templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md
+replacement_execution_prompt: templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md
 active_authority: false
 implementation_authority: NONE
 ---
@@ -22,7 +22,7 @@ v8은 v7의 상세 정본·인터뷰·Demo-First·GPT→Codex·적대적 검토�
 최신 사용자 승인
 → 프로젝트 정본·실제 파일·Decision·PR
 → 프로젝트가 고정한 Base main SHA
-→ VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md
+→ VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md
 → 이 Migration Traceability 기록
 ```
 

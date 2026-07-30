@@ -1,6 +1,9 @@
 ---
 contract_name: VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT
 contract_version: "8.0"
+active_authority: false
+status: SUPERSEDED_COMPATIBILITY
+replacement_execution_prompt: templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md
 language: ko-KR
 usage: "이 파일 하나만 첨부하면 저장소 우선 인터뷰부터 기획·구현·검수·동기화까지 현재 작업에 필요한 절차를 실행한다."
 base_repository: "https://github.com/alsdmlals4-eng/Base"

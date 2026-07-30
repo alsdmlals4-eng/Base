@@ -1165,7 +1165,7 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
             "INACTIVE: 0",
             "EFFECTIVE: 2",
             self.pinned_base_registry_sha,
-            digest(self.project_registry),
+            adapter["skill_registry"]["project"]["sha256"],
             "example/&lt;script&gt;alert(1)&lt;/script&gt;",
         ):
             self.assertIn(term, dashboard)

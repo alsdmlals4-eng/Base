@@ -57,6 +57,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--release-commit", default="")
     parser.add_argument("--release-evidence-commit", default="")
+    parser.add_argument("--base-version", default="9.1.0")
     parser.add_argument("--protected-baseline-commit", default="")
     parser.add_argument("--protected-authority-kind", default="")
     parser.add_argument("--protected-authority-ref", default="")
@@ -86,6 +87,7 @@ def main() -> int:
             options.protected_baseline_commit,
             options.protected_authority_kind,
             options.protected_authority_ref,
+            options.base_version,
         )
         compatibility_inputs = preserved_compatibility_inputs(project_root, write=options.write)
         data["compatibility"] = {

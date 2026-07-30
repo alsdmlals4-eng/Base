@@ -1,4 +1,4 @@
-name: Validate Integrated Vertical Slice Prompt
+﻿name: Validate Integrated Vertical Slice Prompt
 
 on:
   pull_request:
@@ -7,10 +7,17 @@ on:
       - "templates/prompts/**"
       - "docs/knowledge/vertical-slice/**"
       - "docs/knowledge/VERTICAL_SLICE_V6_REQUIREMENT_COVERAGE.md"
+      - "docs/knowledge/VERTICAL_SLICE_V7_TO_V8_MIGRATION.md"
+      - "docs/knowledge/VERTICAL_SLICE_V8_TO_V9_MIGRATION.md"
+      - "docs/VISUAL_COLLABORATION_TOOL_POLICY.md"
+      - "templates/project-operations/VERTICAL_SLICE_PROJECT_APPLICATION_v9.md"
+      - "templates/project-operations/VERTICAL_SLICE_RECONCILIATION_PACKET_v9.md"
+      - "skills/designing-art-prompts-and-technique-cards/**"
       - "skills/running-adversarial-review-and-refinement/**"
       - "skills/SKILL_REGISTRY.json"
       - "skills/SKILL_LEARNING_LOG.md"
       - "tests/test_integrated_vertical_slice_prompt_v7.py"
+      - "tests/test_vertical_slice_v9_contract.py"
       - "tests/test_vertical_slice_v6_contract.py"
       - "tests/test_demo_first_planning_sequence.py"
       - "tests/test_bca_visual_sheet_workflow.py"
@@ -40,15 +47,16 @@ jobs:
         run: |
           git ls-files | sort > integrated-prompt-file-inventory.txt
           git grep -n -I -E \
-            'CORE_POC|PROTOTYPE_AND_VERTICAL_SLICE|SLICE_VALIDATION|VERTICAL_SLICE_FULL_PROFILE|VERTICAL_SLICE_MASTER_REFERENCE_v6|VERTICAL_SLICE_EXECUTION_PROMPT_SHORT|VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7|repository-wide-adversarial-audit|_tmp_' \
+            'VERTICAL_SLICE_EXECUTION_PROMPT_SHORT|repository-wide-adversarial-audit|_tmp_' \
             -- . > integrated-prompt-stale-token-candidates.txt || true
           git grep -n -I \
-            'VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md' \
+            'VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md' \
             -- . > integrated-prompt-consumer-links.txt || true
       - name: Check Python syntax
         run: |
           python -m py_compile \
             tests/test_integrated_vertical_slice_prompt_v7.py \
+            tests/test_vertical_slice_v9_contract.py \
             tests/test_vertical_slice_v6_contract.py \
             tests/test_demo_first_planning_sequence.py \
             tests/test_bca_visual_sheet_workflow.py
@@ -58,6 +66,7 @@ jobs:
           set +e
           python -m unittest \
             tests.test_integrated_vertical_slice_prompt_v7 \
+            tests.test_vertical_slice_v9_contract \
             tests.test_vertical_slice_v6_contract \
             tests.test_demo_first_planning_sequence \
             tests.test_bca_visual_sheet_workflow \
@@ -87,5 +96,5 @@ jobs:
             integrated-prompt-file-inventory.txt
             integrated-prompt-stale-token-candidates.txt
             integrated-prompt-consumer-links.txt
-            templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md
+            templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md
           if-no-files-found: error

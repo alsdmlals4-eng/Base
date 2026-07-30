@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Base v9.1 canonical project adapter generation and fail-closed validation."""
+"""Versioned Base project-adapter generation and fail-closed validation."""
 
 from __future__ import annotations
 
@@ -24,7 +24,10 @@ CANONICAL_ADAPTER = Path("skills/PROJECT_BASE_ADAPTER.json")
 HEALTH_PATH = Path("docs/PROJECT_OPERATING_HEALTH.json")
 SNAPSHOT_PATH = Path("skills/PROJECT_SKILL_SNAPSHOT.json")
 DASHBOARD_PATH = Path("docs/PROJECT_OPERATING_DASHBOARD.html")
-CANDIDATE_LOCK_PATH = Path("base-v9.1.lock.json")
+RELEASE_LOCK_PATHS = {
+    "9.1.0": Path("base-v9.1.lock.json"),
+    "9.2.0": Path("base-v9.2.lock.json"),
+}
 COMPATIBILITY_VIEWS = (
     Path("skills/BASE_V9_ADAPTER.json"),
     Path("skills/PROJECT_BASE_SKILL_ADAPTER.json"),
@@ -34,6 +37,14 @@ COMPATIBILITY_VIEWS = (
 
 class ContractError(ValueError):
     """A fail-closed project operating-contract violation."""
+
+
+def release_lock_path(version: str) -> Path:
+    """Return the exact release lock for a declared Base adapter version."""
+    path = RELEASE_LOCK_PATHS.get(version)
+    if path is None:
+        raise ContractError(f"Unsupported Base adapter version for a release lock: {version!r}")
+    return path
 
 
 def canonical_json(data: Any) -> bytes:
@@ -325,15 +336,22 @@ def _release_lock_contract(
     adapter: dict[str, Any], base_repository: Path
 ) -> tuple[list[str], dict[str, Any] | None, bytes | None]:
     errors: list[str] = []
+    base_release = adapter["base_release"]
+    version = base_release.get("version")
+    if not isinstance(version, str):
+        return ["Adapter Base version is missing or invalid"], None, None
     try:
-        lock_path = safe_repository_path(base_repository, CANDIDATE_LOCK_PATH, "Base v9.1 release lock")
+        lock_relative = release_lock_path(version)
+    except ContractError as error:
+        return [str(error)], None, None
+    try:
+        lock_path = safe_repository_path(base_repository, lock_relative, f"Base v{version} release lock")
     except ContractError as error:
         return [str(error)], None, None
     try:
         lock = load_object(lock_path)
     except ContractError as error:
-        return [f"Base v9.1 release lock unavailable: {error}"], None, None
-    base_release = adapter["base_release"]
+        return [f"Base v{version} release lock unavailable: {error}"], None, None
     expected_identity = {
         "repository": lock.get("repository"),
         "version": str(lock.get("release_line", "")).removeprefix("v"),
@@ -343,45 +361,45 @@ def _release_lock_contract(
     release_pin = expected_identity["release_commit"]
     evidence_pin = expected_identity["release_evidence_commit"]
     if not isinstance(release_pin, str) or not isinstance(evidence_pin, str):
-        errors.append("Base v9.1 candidate release/evidence pins are null or inconsistent; refusing execution")
+        errors.append(f"Base v{version} candidate release/evidence pins are null or inconsistent; refusing execution")
     elif not re.fullmatch(r"[0-9a-f]{40}", release_pin) or not re.fullmatch(r"[0-9a-f]{40}", evidence_pin):
-        errors.append("Base v9.1 candidate release/evidence pins are malformed; refusing execution")
+        errors.append(f"Base v{version} candidate release/evidence pins are malformed; refusing execution")
     for field, expected in expected_identity.items():
         if base_release.get(field) != expected:
             errors.append(
-                f"Adapter {field} does not match Base v9.1 release lock: "
+                f"Adapter {field} does not match Base v{version} release lock: "
                 f"expected {expected!r}, got {base_release.get(field)!r}"
             )
     if isinstance(release_pin, str) and isinstance(evidence_pin, str):
         if not _commit_exists(base_repository, release_pin):
-            errors.append(f"Base v9.1 release lock pin is absent: {release_pin}")
+            errors.append(f"Base v{version} release lock pin is absent: {release_pin}")
         if not _commit_exists(base_repository, evidence_pin):
-            errors.append(f"Base v9.1 release lock evidence pin is absent: {evidence_pin}")
+            errors.append(f"Base v{version} release lock evidence pin is absent: {evidence_pin}")
         if (
             _commit_exists(base_repository, release_pin)
             and _commit_exists(base_repository, evidence_pin)
             and not _is_ancestor(base_repository, release_pin, evidence_pin)
         ):
-            errors.append("Base v9.1 release lock pin is not an ancestor of its evidence pin")
+            errors.append(f"Base v{version} release lock pin is not an ancestor of its evidence pin")
     registry_lock = lock.get("candidate_registry")
     pinned_registry: bytes | None = None
     if not isinstance(registry_lock, dict):
-        errors.append("Base v9.1 release lock candidate_registry is missing")
+        errors.append(f"Base v{version} release lock candidate_registry is missing")
     else:
         path = registry_lock.get("path")
         expected_hash = registry_lock.get("sha256")
         if not isinstance(path, str) or not isinstance(expected_hash, str):
-            errors.append("Base v9.1 candidate Registry path/hash is null or inconsistent")
+            errors.append(f"Base v{version} candidate Registry path/hash is null or inconsistent")
         else:
             adapter_registry = adapter["skill_registry"]["base"]
             if adapter_registry != registry_lock:
-                errors.append("Adapter pinned Base Registry path/hash does not match Base v9.1 release lock")
+                errors.append(f"Adapter pinned Base Registry path/hash does not match Base v{version} release lock")
             if isinstance(evidence_pin, str):
                 pinned_registry = _git_show_bytes(base_repository, evidence_pin, path)
                 if pinned_registry is None:
                     errors.append(f"Pinned Base Registry blob is unavailable: {evidence_pin}:{path}")
                 elif sha256_bytes(pinned_registry) != expected_hash:
-                    errors.append("Pinned Base Registry hash does not match Base v9.1 release lock")
+                    errors.append(f"Pinned Base Registry hash does not match Base v{version} release lock")
     return errors, lock, pinned_registry
 
 
@@ -797,7 +815,10 @@ def build_artifacts(
     artifacts: dict[Path, bytes] = {
         safe_repository_path(project_root, SNAPSHOT_PATH, "snapshot output"): canonical_json(snapshot),
         safe_repository_path(project_root, DASHBOARD_PATH, "dashboard output"): _dashboard(
-            adapter, snapshot, health, load_object(base_repository / CANDIDATE_LOCK_PATH)
+            adapter,
+            snapshot,
+            health,
+            load_object(base_repository / release_lock_path(str(adapter["base_release"]["version"]))),
         ),
         safe_repository_path(project_root, _project_router_path(adapter), "project router output"): _project_router(adapter),
     }
@@ -1093,6 +1114,7 @@ def migrated_adapter(
     protected_baseline_commit: str,
     protected_authority_kind: str,
     protected_authority_ref: str,
+    base_version: str = "9.1.0",
 ) -> dict[str, Any]:
     if not release_commit or not release_evidence_commit:
         raise ContractError("Explicit v9.1 release and release-evidence pins are required for migration")
@@ -1138,18 +1160,18 @@ def migrated_adapter(
         raise ContractError(f"First-migration legacy policy source is invalid: {error}") from error
     if not isinstance(baseline_legacy, dict):
         raise ContractError("First-migration legacy policy source root must be an object")
-    lock = load_object(base_repository / CANDIDATE_LOCK_PATH)
+    lock = load_object(base_repository / release_lock_path(base_version))
     expected_release = lock.get("candidate_release_commit")
     expected_evidence = lock.get("candidate_release_evidence_commit")
     if release_commit != expected_release or release_evidence_commit != expected_evidence:
-        raise ContractError("Explicit migration pins do not match the Base v9.1 release lock")
+        raise ContractError(f"Explicit migration pins do not match the Base v{base_version} release lock")
     if not _commit_exists(base_repository, release_commit) or not _commit_exists(base_repository, release_evidence_commit):
         raise ContractError("Explicit migration pin is absent from the Base repository")
     if not _is_ancestor(base_repository, release_commit, release_evidence_commit):
         raise ContractError("Explicit migration release pin is not an ancestor of its evidence pin")
     registry_lock = lock.get("candidate_registry")
     if not isinstance(registry_lock, dict) or not isinstance(registry_lock.get("sha256"), str):
-        raise ContractError("Base v9.1 release lock has no pinned candidate Registry")
+        raise ContractError(f"Base v{base_version} release lock has no pinned candidate Registry")
     role_bindings = legacy.get("role_bindings", {})
     project_info = legacy.get("project", {})
     declared_registry = (
@@ -1165,6 +1187,14 @@ def migrated_adapter(
         raise ContractError("Migration requires a project Skill Registry")
     project_registry_relative = project_registry.relative_to(project_root).as_posix()
     project_registry_data = load_object(project_registry)
+    clean_project_registry, registry_error = _clean_tracked_blob_bytes(
+        project_root, project_registry, "Project Skill Registry"
+    )
+    if registry_error and "uncommitted content changes" not in registry_error:
+        raise ContractError(registry_error)
+    project_registry_hash = sha256_bytes(
+        clean_project_registry if clean_project_registry is not None else project_registry.read_bytes()
+    )
     project_entries = project_registry_data.get("skills", [])
     if not isinstance(project_entries, list):
         raise ContractError("Project Skill Registry skills must be a list")
@@ -1256,7 +1286,7 @@ def migrated_adapter(
         "artifact_role": "PROJECT_BASE_ADAPTER",
         "base_release": {
             "repository": str(lock.get("repository")),
-            "version": "9.1.0",
+            "version": base_version,
             "release_commit": release_commit,
             "release_evidence_commit": release_evidence_commit,
         },
@@ -1272,7 +1302,7 @@ def migrated_adapter(
             "base": dict(registry_lock),
             "project": {
                 "path": project_registry_relative,
-                "sha256": sha256_file(project_registry),
+                "sha256": project_registry_hash,
                 "hash_definition": "RAW_FILE_BYTES_SHA256",
             },
         },

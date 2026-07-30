@@ -20,6 +20,13 @@ release boundary. Its project adapters separate `release_commit` from
 `release_evidence_commit`; `../base-v9.1.lock.json` records the machine-readable
 `RELEASE_CANDIDATE` identity without rewriting the table above.
 
+Base v9.2 is the next compatible candidate operating layer. It activates the v9
+Vertical Slice reconciliation contract while retaining v6~v8 as non-authoritative
+compatibility inputs. Its release identity is recorded separately in
+`../base-v9.2.lock.json`; it must not rewrite the immutable v9.0 table above.
+Until its separate evidence and pin-finalization PRs are merged, its candidate
+pins are null and projects must continue to use their existing verified Base pin.
+
 ## Compatibility rule
 
 The Registry and each active Skill's frontmatter are the machine-readable source
@@ -66,3 +73,5 @@ this Base release.
 - [Base v9.1 release contract](operations/BASE_V9_1_RELEASE_CONTRACT.md)
 - [Base v9.1 system map](operations/BASE_V9_1_SYSTEM_MAP.md)
 - [Base v9.1 dual-axis maturity model](operations/BASE_V9_1_MATURITY_MODEL.md)
+- [Vertical Slice v8 → v9 migration traceability](knowledge/VERTICAL_SLICE_V8_TO_V9_MIGRATION.md)
+- [Base v9.2 release contract](operations/BASE_V9_2_RELEASE_CONTRACT.md)

@@ -1,5 +1,12 @@
 # Base Skill Learning Log
 
+## 2026-07-31 — Canonical-bound intermediate visual checkpoint
+
+- Status: `PATTERN`.
+- Decision: extend the existing art-prompt Skill instead of creating a Figma-, Whimsical-, or checkpoint-only duplicate Skill. Trigger the checkpoint from a mid-review request or P1 interpretation risk and use only the current project canon.
+- Boundary: require one Screen Brief and a Screen Interpretation Review; output remains `DRAFT_VISUAL` or a text/Mermaid/Figma fallback. It is never an automatic canon change, final asset, license approval, implementation handoff, or runtime/human evidence.
+- Verification trigger: Registry tags, the shared v9 contract, visual-workspace policy, project application template, and v9 contract tests must remain connected.
+
 ## 2026-07-30 — Verified agent merge execution
 
 - Status: `PATTERN`.
