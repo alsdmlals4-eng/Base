@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/project-base-adapter-v1.schema.json",
+  "title": "Base v9.1 Project Base Adapter",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_role", "base_release", "project", "routing", "skill_registry", "shared_overrides", "gdd_sheet", "protected_paths", "validators", "compatibility"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "PROJECT_BASE_ADAPTER"},
+    "base_release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "version", "release_commit", "release_evidence_commit"],
+      "properties": {
+        "repository": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+        "release_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "release_evidence_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      }
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["repository", "engine", "root"],
+      "properties": {
+        "repository": {"type": "string", "minLength": 1},
+        "engine": {"type": "string", "minLength": 1},
+        "root": {"type": "string", "minLength": 1}
+      }
+    },
+    "routing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base_routes", "project_routes", "inactive_routes", "aliases", "precedence"],
+      "properties": {
+        "base_routes": {"type": "array", "items": {"$ref": "#/$defs/route"}},
+        "project_routes": {"type": "array", "items": {"$ref": "#/$defs/route"}},
+        "inactive_routes": {"type": "array", "items": {"$ref": "#/$defs/route"}},
+        "aliases": {"type": "array", "items": {"$ref": "#/$defs/alias"}},
+        "precedence": {"const": "PROJECT_LOCAL_THEN_BASE_SHARED"}
+      }
+    },
+    "skill_registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base", "project"],
+      "properties": {
+        "base": {"$ref": "#/$defs/registry"},
+        "project": {"$ref": "#/$defs/registry"}
+      }
+    },
+    "shared_overrides": {"type": "object", "additionalProperties": {"type": ["string", "number", "boolean", "array", "object", "null"]}},
+    "gdd_sheet": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["role", "sync_status"],
+      "properties": {
+        "role": {"const": "USER_FACING_GDD_WORKSPACE"},
+        "sync_status": {"enum": ["NOT_CONFIGURED", "CURRENT", "PROPOSED_SHEET_CHANGE", "STALE", "BLOCKED"]}
+      }
+    },
+    "protected_paths": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "validators": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cycle", "views"],
+      "properties": {
+        "cycle": {"const": "ONE_CYCLE"},
+        "views": {"type": "array", "uniqueItems": true, "minItems": 3, "items": {"type": "string"}}
+      }
+    }
+  },
+  "$defs": {
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["route_id", "skill_id", "status"],
+      "properties": {
+        "route_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+        "skill_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+        "status": {"enum": ["ACTIVE", "INACTIVE", "HOLD", "RETIRED"]}
+      }
+    },
+    "alias": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alias", "target"],
+      "properties": {
+        "alias": {"type": "string", "minLength": 1},
+        "target": {"type": "string", "minLength": 1}
+      }
+    },
+    "registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

@@ -1,5 +1,13 @@
 # Base Skill Learning Log
 
+## 2026-07-30 Base v9.1: fail-closed project routing
+
+- **Trigger:** pressure scenarios encouraged body copying, stale-pin execution, shared-route shadowing, and mismatch ignoring.
+- **Finding:** route prose without machine validation allowed deadline, sunk cost, and authority pressure to bypass ownership.
+- **Decision:** one canonical adapter drives deterministic views; project-local routes win; shared bodies remain in Base; every pin/hash mismatch refuses execution.
+- **Evidence:** four recorded `BASELINE_FAIL` scenarios, four `GUIDED_PASS` decisions, focused Skill tests, and cross-repository validator tests.
+- **Boundary:** no project runtime, device, accessibility, human, or product-code validation was performed.
+
 ## 2026-07-30 Base v9: generated authority instead of fixed Skill count
 
 - **Trigger:** Base needed a final release operating contract without treating

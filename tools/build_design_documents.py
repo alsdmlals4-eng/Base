@@ -684,7 +684,7 @@ def render_pdf_for_review(pdf_path: Path, output_dir: Path) -> list[Path]:
     output_dir.mkdir(parents=True, exist_ok=True)
     prefix = output_dir / "page"
     result = subprocess.run(
-        [executable, "-png", "-r", "120", str(pdf_path), str(prefix)],
+        pub.safe_executable_command(executable, ["-png", "-r", "120", str(pdf_path), str(prefix)]),
         capture_output=True,
         text=True,
         encoding="utf-8",

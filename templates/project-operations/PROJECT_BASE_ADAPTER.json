@@ -1,0 +1,53 @@
+{
+  "artifact_role": "PROJECT_BASE_ADAPTER",
+  "base_release": {
+    "release_commit": "585a53a25be1b04c543196f5901551deb49c7691",
+    "release_evidence_commit": "dc98a666563b1f0f87b665eac97dbd8a8be37576",
+    "repository": "alsdmlals4-eng/Base",
+    "version": "9.1.0"
+  },
+  "compatibility": {
+    "cycle": "ONE_CYCLE",
+    "views": [
+      "skills/BASE_V9_ADAPTER.json",
+      "skills/PROJECT_BASE_SKILL_ADAPTER.json",
+      "skills/PROJECT_PATH_ADAPTER.json"
+    ]
+  },
+  "gdd_sheet": {
+    "role": "USER_FACING_GDD_WORKSPACE",
+    "sync_status": "NOT_CONFIGURED"
+  },
+  "project": {
+    "engine": "Godot 4.7",
+    "repository": "owner/project",
+    "root": "."
+  },
+  "protected_paths": [
+    "project.godot",
+    "game/**",
+    "assets/**"
+  ],
+  "routing": {
+    "aliases": [],
+    "base_routes": [],
+    "inactive_routes": [],
+    "precedence": "PROJECT_LOCAL_THEN_BASE_SHARED",
+    "project_routes": []
+  },
+  "schema_version": 1,
+  "shared_overrides": {},
+  "skill_registry": {
+    "base": {
+      "path": "skills/SKILL_REGISTRY.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "project": {
+      "path": "skills/SKILL_REGISTRY.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  },
+  "validators": [
+    "python tools/check_project_operating_contract.py --project-root . --base-repository ../Base --check"
+  ]
+}

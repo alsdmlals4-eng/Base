@@ -1,5 +1,16 @@
 # Base 공용 Skill 어댑터 계약
 
+## Base v9.1 canonical authority
+
+The canonical project integration file is `skills/PROJECT_BASE_ADAPTER.json`.
+`skills/PROJECT_BASE_SKILL_ADAPTER.json`, `skills/BASE_V9_ADAPTER.json`, and
+`skills/PROJECT_PATH_ADAPTER.json` remain for one compatibility cycle only as
+deterministic `GENERATED_COMPATIBILITY_VIEW` outputs. Never hand-edit them.
+
+The canonical schema separates release payload and evidence pins and owns
+`base_release`, `project`, `routing`, `skill_registry`, `shared_overrides`,
+`gdd_sheet`, `protected_paths`, `validators`, and `compatibility`.
+
 ## 목적
 
 Base는 여러 프로젝트가 공유하는 판단 절차와 품질 기준을 단일 원본으로 유지한다. 각 프로젝트는 공용 Skill 본문을 복제하지 않고 **route Registry + 프로젝트 어댑터**로 연결하며, 프로젝트 고유 규칙만 로컬 Skill로 만든다.

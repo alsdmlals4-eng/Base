@@ -5,6 +5,8 @@ description: Use when code, data, documents, assets, configuration, CI workflows
 
 # Reviewing and Validating Project Changes
 
+For a Base v9.1 project, record a separate `PROJECT_OPERATING_INTEGRITY` verdict. A stale pin, Registry hash mismatch, alias cycle, copied shared body, protected-path change, or generated-view drift is fail-closed. Runtime, device, accessibility, and human gates remain `NOT_RUN` until direct evidence exists.
+
 ## Core principle
 
 변경 주체가 사람이든 AI든 설명보다 실제 diff, 책임 원본, 실행 결과를 우선한다. 승인된 작업 계약과 관찰 가능한 증거가 일치하고, 변경된 정본이 모든 활성 소비자에 전파되며, 적용되는 CI·접근성·성능 기준을 충족하기 전에는 완료로 판정하지 않는다.

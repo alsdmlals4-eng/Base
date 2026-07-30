@@ -1,0 +1,14 @@
+{
+  "artifact_role": "PROJECT_OPERATING_HEALTH",
+  "critical_gates": {
+    "accessibility": "NOT_RUN",
+    "device": "NOT_RUN",
+    "human": "NOT_RUN",
+    "runtime": "NOT_RUN",
+    "static": "NOT_RUN"
+  },
+  "integrity_verdict": "BLOCKED",
+  "operating_maturity": "OM-L0",
+  "product_evidence_maturity": "PE-0",
+  "schema_version": 1
+}

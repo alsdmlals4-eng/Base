@@ -5,6 +5,8 @@ description: Use automatically when installing, auditing, reconciling legacy fil
 
 # Managing the Game Project Operating System
 
+Base v9.1 projects use the focused [project adapter and routing contract](references/project-adapter-and-routing-contract.md). Validate the canonical adapter and generated snapshot before shared-route execution; copied shared bodies or failed pins are blocking integrity failures.
+
 ## Core principle
 
 신규 설치, 기존 구조 감사, 구형 파일 정리, 승인된 마이그레이션과 운영체계 검수는 같은 책임 원본·참조·복구 계약을 공유한다. `Work Mode`와 `Skill Mode`를 구분하며, 읽기 전용 조사와 승인된 쓰기 작업을 혼동하지 않는다. 프로젝트 GDD Google Sheets 설치·감사·검증은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 따른다.

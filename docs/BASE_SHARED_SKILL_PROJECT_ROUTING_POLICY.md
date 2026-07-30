@@ -1,5 +1,16 @@
 # Base 공용 Skill 프로젝트 라우팅 정책
 
+Base v9.1 routes through `skills/PROJECT_BASE_ADAPTER.json` and consumes the
+generated `skills/PROJECT_SKILL_SNAPSHOT.json`. Project-local same-name routes
+take precedence over Base shared routes. Pin, hash, or generated-view mismatch
+refuses execution.
+
+The old route remains recognizable for exactly one compatibility cycle:
+
+```json
+{"adapter": "skills/PROJECT_BASE_SKILL_ADAPTER.json", "artifact_role": "GENERATED_COMPATIBILITY_VIEW"}
+```
+
 ## 목적
 
 Base의 공용 Skill은 프로젝트 저장소에 본문을 복사하지 않는다. 모든 프로젝트는 공용 절차를 **Base Registry route → 프로젝트 어댑터**로 사용하고, 세계관·게임 규칙·실제 데이터 계약처럼 프로젝트에만 존재하는 책임만 로컬 Skill로 만든다.

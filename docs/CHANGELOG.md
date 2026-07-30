@@ -7,6 +7,7 @@
 - `skills/README.md`의 통합 전 수동 Skill 표를 Registry Router로 교체하고, 구형 `conducting-deep-requirement-interviews` agent metadata를 현행 `managing-project-intake-and-work-contract` package로 승계했다.
 - 릴리스 전 `BASE_V9_INTEGRITY_AUDIT.md`를 `HISTORY_ONLY` release evidence snapshot으로 명확히 구분했다.
 - 해결된 구형 PR이 반복 감사되지 않도록 `GITHUB_OBJECT_LEDGER.json`과 Migration Map에 terminal marker를 추가했다. PR #5·#28은 `[구현됨]`, PR #18·#29·#30은 `[대체됨]`으로 현행 대체 경로·검증·`do_not_reassess: true`를 기록하고 종료했다.
+- Base v9.1 adds a canonical project adapter, deterministic Skill snapshot/health dashboard and one-cycle compatibility views, fail-closed cross-repository validation, dual OM/PE maturity axes, safe Windows PDF wrapper execution, and least-privilege SHA-pinned CI contracts. The v9.0 release history remains unchanged; runtime/device/accessibility/human evidence is not claimed.
 
 - Base v9.0.0 adds Registry-derived plugin metadata, `base.lock.json`, a
   deterministic active-Skill snapshot and summary, a project-hold Sheet control

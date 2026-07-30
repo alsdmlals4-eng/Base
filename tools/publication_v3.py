@@ -116,7 +116,30 @@ def libreoffice_path() -> str | None:
 
 
 def pdftoppm_path() -> str | None:
-    return find_executable("BASE_PDFTOPPM", ("pdftoppm",))
+    resolved = find_executable("BASE_PDFTOPPM", ("pdftoppm",))
+    if not resolved or Path(resolved).suffix.lower() not in {".cmd", ".bat"}:
+        return resolved
+    wrapper = Path(resolved)
+    candidates = [
+        wrapper.with_suffix(".exe"),
+        wrapper.parent.parent / "Library/bin/pdftoppm.exe",
+    ]
+    for parent in wrapper.parents:
+        candidates.append(parent / "native/poppler/Library/bin/pdftoppm.exe")
+    for candidate in candidates:
+        if candidate.is_file():
+            return str(candidate.resolve())
+    return resolved
+
+
+def safe_executable_command(executable: str, arguments: Iterable[str]) -> list[str]:
+    """Return a no-shell command array for native executables or Windows wrappers."""
+    values = [str(item) for item in arguments]
+    if Path(executable).suffix.lower() not in {".cmd", ".bat"}:
+        return [executable, *values]
+    command_processor = os.environ.get("COMSPEC") or shutil.which("cmd.exe") or "cmd.exe"
+    command_line = subprocess.list2cmdline([executable, *values])
+    return [command_processor, "/d", "/s", "/c", command_line]
 
 
 def mermaid_cli_path(repository_root: Path) -> str | None:
@@ -211,7 +234,7 @@ def render_pdf_for_review(pdf_path: Path, output_dir: Path) -> list[Path]:
     output_dir.mkdir(parents=True, exist_ok=True)
     prefix = output_dir / "page"
     result = subprocess.run(
-        [executable, "-png", "-r", "120", str(pdf_path), str(prefix)],
+        safe_executable_command(executable, ["-png", "-r", "120", str(pdf_path), str(prefix)]),
         capture_output=True,
         text=True,
         encoding="utf-8",

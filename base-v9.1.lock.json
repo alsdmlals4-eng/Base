@@ -1,0 +1,25 @@
+{
+  "artifact_role": "BASE_V9_1_RELEASE_CANDIDATE_LOCK",
+  "binary_attestation": "DEFERRED_UNTIL_RELEASE_ARTIFACT",
+  "candidate_release_commit": null,
+  "candidate_release_evidence_commit": null,
+  "canonical_contracts": [
+    "schemas/project-base-adapter-v1.schema.json",
+    "schemas/project-skill-snapshot-v1.schema.json",
+    "schemas/project-operating-health-v1.schema.json",
+    "docs/operations/BASE_V9_1_RELEASE_CONTRACT.md",
+    "docs/operations/BASE_V9_1_SYSTEM_MAP.md",
+    "docs/operations/BASE_V9_1_MATURITY_MODEL.md",
+    "docs/operations/BASE_V9_1_DASHBOARD_CONTRACT.md"
+  ],
+  "compatibility_base": {
+    "release_commit": "585a53a25be1b04c543196f5901551deb49c7691",
+    "release_evidence_commit": "dc98a666563b1f0f87b665eac97dbd8a8be37576",
+    "release_line": "v9.0.0",
+    "release_state": "BASE_RELEASED"
+  },
+  "github_issue": 71,
+  "release_line": "v9.1.0",
+  "release_state": "RELEASE_CANDIDATE",
+  "schema_version": 1
+}

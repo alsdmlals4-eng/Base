@@ -9,11 +9,15 @@ import subprocess
 import sys
 from pathlib import Path
 
+from jsonschema import Draft202012Validator
+
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "skills/SKILL_REGISTRY.json"
 GENERATOR = ROOT / "tools/build_base_v9_artifacts.py"
 GENERATED_SUMMARY = ROOT / "docs/generated/BASE_ACTIVE_SKILLS.md"
+CANDIDATE_LOCK = ROOT / "base-v9.1.lock.json"
+CANDIDATE_LOCK_SCHEMA = ROOT / "schemas/base-v9-1-candidate-lock-v1.schema.json"
 ENTRYPOINTS = (
     ROOT / "README.md",
     ROOT / "AGENTS.md",
@@ -102,6 +106,17 @@ def main() -> int:
         return 1
     errors.extend(graph_errors(registry.get("skills", [])))
     errors.extend(documentation_link_errors())
+    try:
+        candidate_lock = json.loads(CANDIDATE_LOCK.read_text(encoding="utf-8"))
+        candidate_schema = json.loads(CANDIDATE_LOCK_SCHEMA.read_text(encoding="utf-8"))
+        for error in sorted(
+            Draft202012Validator(candidate_schema).iter_errors(candidate_lock),
+            key=lambda item: list(item.path),
+        ):
+            location = ".".join(str(part) for part in error.path) or "<root>"
+            errors.append(f"Base v9.1 candidate lock {location}: {error.message}")
+    except (OSError, json.JSONDecodeError) as error:
+        errors.append(f"Base v9.1 candidate lock cannot be validated: {error}")
     if not GENERATED_SUMMARY.is_file():
         errors.append("Generated active-Skill summary is missing")
     for entrypoint in ENTRYPOINTS:

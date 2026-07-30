@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/project-skill-snapshot-v1.schema.json",
+  "title": "Base v9.1 Project Skill Snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_role", "generated", "source_registry", "base_registry", "project_registry", "base_routes", "project_routes", "inactive_routes", "aliases", "effective_routes"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "PROJECT_SKILL_SNAPSHOT"},
+    "generated": {"const": true},
+    "source_registry": {"$ref": "#/$defs/source"},
+    "base_registry": {"$ref": "#/$defs/source"},
+    "project_registry": {"$ref": "#/$defs/source"},
+    "base_routes": {"type": "array", "items": {"type": "object"}},
+    "project_routes": {"type": "array", "items": {"type": "object"}},
+    "inactive_routes": {"type": "array", "items": {"type": "object"}},
+    "aliases": {"type": "array", "items": {"type": "object"}},
+    "effective_routes": {"type": "object", "additionalProperties": {"type": "object"}}
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

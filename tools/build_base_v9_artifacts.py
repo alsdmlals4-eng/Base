@@ -179,6 +179,19 @@ def terminal_pr(
 
 
 def build_artifacts() -> dict[Path, bytes]:
+    # v9.0.0 is released history. Its lock, snapshot, and plugin payload are
+    # immutable even when the compatible v9.1 layer evolves current Skills.
+    if OUTPUTS["lock"].is_file():
+        frozen_lock = json.loads(OUTPUTS["lock"].read_text(encoding="utf-8"))
+        if frozen_lock.get("release_line") == "v9.0.0" and frozen_lock.get("release_state") == "BASE_RELEASED":
+            missing = [path for path in OUTPUTS.values() if not path.is_file()]
+            if missing:
+                raise ValueError(
+                    "Released Base v9.0.0 artifact is missing: "
+                    + ", ".join(path.relative_to(ROOT).as_posix() for path in missing)
+                )
+            return {path: path.read_bytes() for path in OUTPUTS.values()}
+
     registry, skills = load_active_skills()
     registry_hash = sha256_normalized_text_file(REGISTRY_PATH)
     snapshot = {
