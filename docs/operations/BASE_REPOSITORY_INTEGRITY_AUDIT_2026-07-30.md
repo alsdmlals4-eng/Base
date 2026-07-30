@@ -1,8 +1,9 @@
 # Base 저장소 전체 무결성 감사 — 2026-07-30
 
-> 상태: `FINAL_VALIDATION_PENDING`
+> 상태: `PASSED_WITH_NOT_RUN_SCOPE`
 > Work Mode: `REVIEW → BUILD → REVIEW`
 > 기준 main: `dc98a666563b1f0f87b665eac97dbd8a8be37576`
+> 검증 HEAD: `425a60aa5668f7d2031291d7eeefc384659ae058`
 > 작업 Branch: `agent/base-repository-integrity-audit-20260730`
 > 작업 PR: `PR #72`
 > 프로젝트 Google Sheets: `BASE_EXCLUDED`
@@ -34,7 +35,7 @@
 | PLAN/BUILD | `governing-legacy-retention-and-archives` | `inventory / classify / reconcile / archive` | Handoff 원문 Archive + compatibility Stub 적용 |
 | BUILD | Superpowers `test-driven-development` | Archive·Skill Router·agent metadata·PR terminal 상태 회귀 방지 | 의도적 RED 뒤 구현 |
 | REVIEW | `auditing-canonical-reference-freshness` | 정본·경로·생성본·소비자 확인 | Documentation Map·Manifest·generator·test 연결 |
-| REVIEW | Superpowers `verification-before-completion` | 완료 주장 전 실제 CI 확인 | 최신 HEAD 최종 GREEN 대기 |
+| REVIEW | Superpowers `verification-before-completion` | 완료 주장 전 실제 CI 확인 | 최신 검증 HEAD의 필수 Workflow GREEN 확인 |
 
 ## 3. 감사 범위와 미검증 범위
 
@@ -46,14 +47,14 @@
 - 관련 Skill 본문과 repository-wide audit·archive contract
 - main 대비 작업 Branch 전체 diff
 - PR #5, #18, #28, #29, #30과 Issue #54, #55, #71
-- PR #72의 GitHub Actions RED·회귀 복구 증거
+- PR #72의 GitHub Actions RED·회귀 복구·최종 GREEN 증거
 
-미검증:
+미검증·범위 밖:
 
 - Connector 검색 결과만으로 tracked 전체 목록·모든 inbound reference를 완전 증명했다고 주장하지 않는다.
-- 로컬 checkout이 없어 `python -m unittest discover`, `git diff --check`, 로컬 명령 기반 전수 링크 검사는 직접 실행하지 못했다.
-- 전체 회귀·생성기 최신성·발행 검증은 PR #72 GitHub Actions의 최신 HEAD 결과를 사용한다.
-- 개별 프로젝트와 Sheet는 범위 밖이며 상태 일치를 추정하지 않는다.
+- 로컬 checkout이 없어 로컬 환경의 `python -m unittest discover`, `git diff --check`, 명령 기반 전수 링크 검사는 `NOT_RUN`이다.
+- 개별 프로젝트 저장소·Godot 런타임·Google Sheets는 `OUT_OF_SCOPE`다.
+- Windows smoke는 변경 분류상 필요하지 않아 Workflow에서 의도적으로 `SKIPPED`됐다.
 
 ## 4. 권한 지도
 
@@ -82,14 +83,14 @@
   - Manifest: `docs/archive/ARCHIVE_MANIFEST.json`
   - Rollback ref: `dc98a666563b1f0f87b665eac97dbd8a8be37576`
 - 회귀: Archive 본문 SHA-256, Manifest 권한 필드, Stub 소비 경로를 테스트한다.
-- 상태: `RESOLVED / FINAL_CI_PENDING`.
+- 상태: `RESOLVED / PASSED`.
 
 ### F-002 — `skills/README.md`의 구형 활성 Skill 표
 
 - 유형: `STALE_REFERENCE / CONFLICTING_SOURCE`
 - 처리: 수동 활성 표를 제거하고 `skills/SKILL_REGISTRY.json`·생성 뷰·Legacy Alias를 안내하는 Router로 교체했다.
 - 사람 진입점 회귀로 `auditing-and-refining-ui-art`·폴리싱 안정 라우트를 보존했다.
-- 상태: `RESOLVED / FINAL_CI_PENDING`.
+- 상태: `RESOLVED / PASSED`.
 
 ### F-003 — 통합 전 Skill agent metadata의 구형 경로 잔존
 
@@ -98,14 +99,14 @@
   - 현행: `skills/managing-project-intake-and-work-contract/agents/openai.yaml`
   - 제거: `skills/conducting-deep-requirement-interviews/agents/openai.yaml`
   - metadata를 route·저장소 사실·사용자 결정·Grill Me·실행 계약 범위로 승계했다.
-- 상태: `RESOLVED / FINAL_CI_PENDING`.
+- 상태: `RESOLVED / PASSED`.
 
 ### F-004 — v7·v8 통합 Prompt 동시 존재
 
 - 유형: `LEGACY_REFERENCE_ALLOWED`
 - 근거: v7은 `active_authority: false`, `SUPERSEDED_COMPATIBILITY`, v8 replacement 경로를 명시한다.
 - 판정: 삭제하지 않고 호환·마이그레이션 비교용으로 유지한다.
-- 상태: `ALLOWED_LEGACY`.
+- 상태: `ALLOWED_LEGACY / PASSED`.
 
 ### F-005 — v9 이전 구형 PR 5개
 
@@ -124,15 +125,15 @@
 | #29 | `[대체됨]` | 4개 Skill ID 분할 대신 통합 게임기획 Skill·reference 유지 |
 | #30 | `[대체됨]` | 전 L1 3단계 강제 대신 위험·규모 비례 Work Mode 계약 유지 |
 
-다섯 PR 모두 제목·종료 댓글·기계 원장을 갱신하고 닫았다. 현재 열린 PR은 #72 하나다.
+다섯 PR 모두 제목·종료 댓글·기계 원장을 갱신하고 닫았다. 감사 시점의 열린 PR 검색에서는 #72만 남았다.
 
-상태: `RESOLVED / FINAL_CI_PENDING`.
+상태: `RESOLVED / PASSED`.
 
 ### F-006 — 릴리스 전 감사 보고서와 현재 `BASE_RELEASED` 혼동
 
 - 유형: `HISTORY_CURRENT_STATUS_AMBIGUITY`
 - 처리: `docs/operations/BASE_V9_INTEGRITY_AUDIT.md` 상단에 `HISTORY_ONLY`, `release_evidence_snapshot`, 현재 release authority·contract를 명시했다.
-- 상태: `RESOLVED / FINAL_CI_PENDING`.
+- 상태: `RESOLVED / PASSED`.
 
 ## 6. 실제 반영한 변경
 
@@ -146,6 +147,7 @@
 - `GITHUB_OBJECT_LEDGER.json`과 생성기에 `[구현됨]`·`[대체됨]` terminal 상태를 추가.
 - PR #5·#18·#28·#29·#30에 판정 댓글과 제목 marker를 남기고 종료.
 - 관련 기계·문서 회귀 테스트 보강.
+- `docs/CHANGELOG.md`에 감사·Archive·terminal PR 결과를 기록.
 
 ## 7. RED·회귀 증거
 
@@ -176,17 +178,29 @@ run `30522940314`:
 - Base 콜드 스타트에서 프로젝트 설치 템플릿을 활성 상태로 오인하지 않는 문구
 - UX/UI 폴리싱 사람 진입점
 
-## 8. 최종 검증 순서
+## 8. 최종 GitHub Actions 증거
 
-1. `tools/build_base_v9_artifacts.py --check` 생성기 결정성.
-2. Base v9 focused tests와 신규 terminal PR 회귀.
-3. Documentation·reference freshness·Skill package·UX/UI·GDD·BCA 전용 Workflow.
-4. GitHub open PR 검색에서 #72만 남는지 확인.
-5. PR #72 설명·Changelog·감사 보고서 최종 상태 동기화.
-6. 최종 적대적 검토 후 PASS·PARTIAL·NOT_RUN 분리.
+검증 HEAD `425a60aa5668f7d2031291d7eeefc384659ae058`:
 
-## 9. 현재 판정
+| Workflow | Run | 결과 |
+|---|---:|---|
+| Validate Base v9 RC | `30525963038` | `SUCCESS` |
+| Validate Game Project Operating System | `30525958819` | `SUCCESS` |
+| Validate Game UX UI System | `30525962845` | `SUCCESS` |
+| Validate Evidence-Based Game Development Knowledge | `30525958840` | `SUCCESS` |
+| Validate BCA Visual and Sheet Workflow | `30525958800` | `SUCCESS` |
 
-`FINAL_VALIDATION_PENDING / PASS_NOT_CLAIMED`
+운영체계 Workflow 내부:
 
-기술 수정과 구형 PR terminal 정리는 반영됐지만 최신 HEAD의 전체 Workflow가 모두 GREEN임을 확인하기 전에는 완료로 보고하지 않는다. 로컬 전수 실행과 프로젝트·Sheet 검증은 `NOT_RUN / OUT_OF_SCOPE`다.
+- change classification: `SUCCESS`
+- Ubuntu contract·reference freshness·regression: `SUCCESS`
+- docs whitespace·lightweight contracts: `SUCCESS`
+- publication dependencies·generation tests: `SUCCESS`
+- `ci-gate`: `SUCCESS`
+- Windows smoke: 변경 분류상 `SKIPPED`
+
+## 9. 최종 판정
+
+`PASSED_WITH_NOT_RUN_SCOPE`
+
+Base 저장소의 이번 변경 범위에 대한 GitHub Actions 계약·문서·참조 최신성·생성기·발행·UX/UI·근거 지식·BCA 검증은 통과했다. 로컬 환경 전수 실행과 프로젝트 저장소·Godot 런타임·Google Sheets 검증은 수행하지 않았으며 각각 `NOT_RUN / OUT_OF_SCOPE`다. PR #72는 병합 전 사용자 검토 대상으로 유지한다.
