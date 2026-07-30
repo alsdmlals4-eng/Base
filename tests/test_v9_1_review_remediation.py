@@ -386,6 +386,44 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
             )
             self.assertEqual(self.integrity.registry_authority_errors(repository, lock), [])
 
+    def test_v93_candidate_and_evidence_records_bind_to_the_declared_issue_and_payload(self) -> None:
+        candidate = json.loads((ROOT / "base-v9.3.lock.json").read_text(encoding="utf-8"))
+        trusted_payload = "17f93334b6e68940ec2206c53164035b235ffb7a"
+        self.assertEqual(self.integrity.v93_release_lock_errors(ROOT, candidate, trusted_payload), [])
+
+        evidence = {
+            "schema_version": 1,
+            "artifact_role": "BASE_V9_3_RELEASE_EVIDENCE",
+            "release_line": "v9.3.0",
+            "evidence_status": "RECORDED_ON_TRUSTED_MAIN_BEFORE_PIN_FINALIZATION",
+            "repository": "alsdmlals4-eng/Base",
+            "candidate_issue": 107,
+            "candidate_pull_request": 108,
+            "release_payload_commit": trusted_payload,
+            "candidate_registry": candidate["candidate_registry"],
+            "validation": {"base_v93_contract_ci": "PASSED"},
+            "product_evidence": {
+                "godot_runtime": "NOT_RUN",
+                "device": "NOT_RUN",
+                "accessibility": "NOT_RUN",
+                "human_validation": "NOT_RUN",
+            },
+        }
+        self.assertEqual(
+            self.integrity.v93_evidence_record_errors(ROOT, candidate, evidence, trusted_payload),
+            [],
+        )
+        wrong_issue = json.loads(json.dumps(evidence))
+        wrong_issue["candidate_issue"] = 0
+        self.assertTrue(
+            any(
+                "candidate Issue" in error
+                for error in self.integrity.v93_evidence_record_errors(
+                    ROOT, candidate, wrong_issue, trusted_payload
+                )
+            )
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
