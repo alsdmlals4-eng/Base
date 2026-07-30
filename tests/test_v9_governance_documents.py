@@ -148,6 +148,18 @@ class V9GovernanceDocumentTests(unittest.TestCase):
             self.assertIn(term, metadata)
         self.assertNotIn("$conducting-deep-requirement-interviews", metadata)
 
+    def test_pre_release_integrity_audit_is_marked_as_historical_after_release(self) -> None:
+        audit = read("docs/operations/BASE_V9_INTEGRITY_AUDIT.md")
+        for term in (
+            "HISTORY_ONLY",
+            "release_evidence_snapshot",
+            "docs/BASE_RULES_VERSION.md",
+            "docs/operations/BASE_V9_RELEASE_CONTRACT.md",
+            "BASE_RELEASED",
+            "Status before final verification",
+        ):
+            self.assertIn(term, audit)
+
 
 if __name__ == "__main__":
     unittest.main()
