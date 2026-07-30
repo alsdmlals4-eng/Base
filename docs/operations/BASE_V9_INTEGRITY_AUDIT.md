@@ -1,5 +1,14 @@
 # Base v9 Integrity Audit
 
+> classification: `HISTORY_ONLY`
+> artifact_role: `release_evidence_snapshot`
+> snapshot_phase: `v9 RC before final verification`
+> current_release_authority: `docs/BASE_RULES_VERSION.md`
+> current_release_contract: `docs/operations/BASE_V9_RELEASE_CONTRACT.md`
+> current_release_state: `BASE_RELEASED`
+
+이 문서는 Base v9 RC의 **최종 검증 전 감사 상태**를 보존하는 역사 증거다. 아래 `Status before final verification` 값은 현재 main의 검증 상태가 아니며, 현재 릴리스 판정은 `docs/BASE_RULES_VERSION.md`와 `docs/operations/BASE_V9_RELEASE_CONTRACT.md`를 따른다.
+
 ## Scope
 
 This report defines the repository-wide integrity audit required for the v9 RC.
