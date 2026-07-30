@@ -1,8 +1,8 @@
 {
   "artifact_role": "BASE_V9_1_RELEASE_CANDIDATE_LOCK",
   "binary_attestation": "DEFERRED_UNTIL_RELEASE_ARTIFACT",
-  "candidate_release_commit": null,
-  "candidate_release_evidence_commit": null,
+  "candidate_release_commit": "3c158f52cfdad889970aef4d6ce6650a6fea0645",
+  "candidate_release_evidence_commit": "dd20ad3852e264d7e337e34d2cb963f71053a6cb",
   "candidate_registry": {
     "hash_definition": "RAW_FILE_BYTES_SHA256",
     "path": "skills/SKILL_REGISTRY.json",
@@ -12,6 +12,7 @@
     "schemas/project-base-adapter-v1.schema.json",
     "schemas/project-skill-snapshot-v1.schema.json",
     "schemas/project-operating-health-v1.schema.json",
+    "schemas/base-v9-1-release-evidence-v1.schema.json",
     "docs/operations/BASE_V9_1_RELEASE_CONTRACT.md",
     "docs/operations/BASE_V9_1_SYSTEM_MAP.md",
     "docs/operations/BASE_V9_1_MATURITY_MODEL.md",

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-30 — Base v9.1 immutable project pins
+
+- Finalized the v9.1 payload pin (`3c158f5…`) and separate trusted-main evidence pin (`dd20ad3…`) for project adapters.
+- The integrity checker now rejects self-attested, non-ancestral, payload-mismatched, Registry-mismatched, or Registry-mutating evidence. Released Registry bytes are read from the evidence commit, so later Base Skill evolution does not alter the v9.1 release contract.
+
 ## 2026-07-30 — Base v9.1 trusted release-evidence record
 
 - Added a schema-validated v9.1 evidence record for merged candidate payload `3c158f52cfdad889970aef4d6ce6650a6fea0645` and its raw-byte Skill Registry identity.

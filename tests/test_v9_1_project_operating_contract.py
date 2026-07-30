@@ -1395,8 +1395,8 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         self.assertEqual(candidate["release_line"], "v9.1.0")
         self.assertEqual(candidate["release_state"], "RELEASE_CANDIDATE")
         self.assertEqual(candidate["github_issue"], 71)
-        self.assertIsNone(candidate["candidate_release_commit"])
-        self.assertIsNone(candidate["candidate_release_evidence_commit"])
+        self.assertEqual(candidate["candidate_release_commit"], "3c158f52cfdad889970aef4d6ce6650a6fea0645")
+        self.assertEqual(candidate["candidate_release_evidence_commit"], "dd20ad3852e264d7e337e34d2cb963f71053a6cb")
         self.assertEqual(candidate["binary_attestation"], "DEFERRED_UNTIL_RELEASE_ARTIFACT")
         self.assertEqual(candidate["compatibility_base"]["release_line"], "v9.0.0")
         self.assertEqual(
