@@ -471,6 +471,33 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         self.assertNotEqual(body_copy.returncode, 0)
         self.assertIn("shared skill body", body_copy.stderr.lower())
 
+    def test_validator_uses_clean_tracked_registry_bytes_across_crlf_checkout(self) -> None:
+        (self.project / ".gitattributes").write_text("*.json text eol=lf\n", encoding="utf-8")
+        commit_all(self.project, "normalize JSON checkout")
+        raw = subprocess.run(
+            ["git", "-C", str(self.project), "show", "HEAD:skills/SKILL_REGISTRY.json"],
+            capture_output=True,
+            check=True,
+        ).stdout
+        adapter = json.loads(self.adapter.read_text(encoding="utf-8"))
+        adapter["skill_registry"]["project"]["sha256"] = hashlib.sha256(raw).hexdigest()
+        self.adapter.write_text(json.dumps(adapter, sort_keys=True) + "\n", encoding="utf-8")
+        commit_all(self.project, "pin project Registry Git bytes")
+        raw_text = raw.decode("utf-8")
+        self.project_registry.write_text(raw_text.replace("\n", "\r\n"), encoding="utf-8", newline="")
+
+        clean = self.run_tool(
+            CHECK, "--project-root", str(self.project), "--base-repository", str(self.base)
+        )
+        self.assertEqual(clean.returncode, 0, clean.stdout + clean.stderr)
+
+        self.project_registry.write_text(raw_text.replace("local-skill", "changed-local-skill"), encoding="utf-8")
+        modified = self.run_tool(
+            CHECK, "--project-root", str(self.project), "--base-repository", str(self.base)
+        )
+        self.assertNotEqual(modified.returncode, 0)
+        self.assertIn("uncommitted", modified.stderr.lower())
+
     def test_shared_skill_duplication_is_detected_by_normalized_body_and_duplicate_provenance(self) -> None:
         shared = subprocess.run(
             ["git", "-C", str(self.base), "show", f"{self.evidence_commit}:skills/shared-skill/SKILL.md"],
