@@ -98,6 +98,17 @@ class ProjectGDDGoogleSheetsContractTests(unittest.TestCase):
         self.assertIn("40_표현", tabs)
         self.assertIn("50_제작_검증", tabs)
 
+    def test_gdd_visual_index_keeps_external_artifacts_linked_not_copied(self) -> None:
+        policy = read("docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md")
+        workbook = read("templates/project-operations/PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md")
+        tabs = read("templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md")
+        for text in (policy, workbook, tabs):
+            self.assertIn("06_시각_작업면", text)
+            self.assertIn("Artifact ID", text)
+            self.assertIn("GDD|EXTERNAL_COLLABORATION|BOTH", text)
+        self.assertIn("복사하지 않는다", workbook)
+        self.assertIn("Decision ID", tabs)
+
 
 if __name__ == "__main__":
     unittest.main()

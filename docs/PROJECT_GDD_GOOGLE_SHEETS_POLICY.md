@@ -19,8 +19,8 @@ Google Sheets는 사용자의 기본 GDD 작업면이지만 GitHub 정본을 대
 
 | 참조 | 관찰한 구조 | 이 계약의 적용 |
 |---|---|---|
-| [IdeaPlan GDD](https://www.ideaplan.io/templates/game-design-document-template) | 개요와 Core Loop부터 검증하고 제작 단계에서 확장하는 협업형 GDD | 허브에서 플레이어 약속·루프·현재 Stage를 먼저 읽는다. |
-| [A Playful Production Process](https://www.playfulproductionprocess.com/templates/) | 디자인 매크로 차트, burndown, 플레이테스트, 버그 추적을 분리한 Google Sheet 작업면 | GDD 본문과 근거·감사·제작·검증을 분리하되 Decision ID로 연결한다. |
+| [Nuclino GDD](https://www.nuclino.com/templates/game-design-document) | 범위와 공통 방향을 잡는 살아있는 GDD, 시각 자료와 지속 갱신을 권장 | 허브에서 플레이어 약속·루프·현재 Stage를 먼저 읽고 긴 전문은 정본에 둔다. |
+| [CrocoApps GDD](https://crocoapps.com/game-design-document-template/) | 개요·대상·플랫폼·Core Loop를 기능·제작 입력·QA·출시 요구와 연결 | GDD 본문과 근거·감사·제작·검증을 분리하되 Decision ID로 연결한다. |
 | [StraySpark 2026 GDD](https://www.strayspark.studio/blog/game-design-document-template-indie-developers-2026) | 짧고 매주 갱신 가능한 living brief, pillar·loop·scope·risk·milestone 연결 | 다섯 분야 묶음과 `02_현재_확정결정`의 단일 원장을 사용한다. |
 | [Allo living GDD](https://allo.io/blog/en/game-design-document-template/) | 정적 문서 대신 결정 로그, feature brief, scope matrix를 연결한 living hub | `00`·`05` 요약은 링크와 상태만, 상세은 분야 tab만 책임진다. |
 
@@ -152,6 +152,9 @@ GDD는 탭 수를 늘려 같은 내용을 여러 번 적는 문서가 아니라,
 02_현재_확정결정
   = 단일 현재 결정 원장: 현재 유효한 Decision ID, 한 문장 결정, 근거, 정본, 상태의 유일한 목록
 
+06_시각_작업면 (선택적 색인)
+  = GDD·외부 협업 시각 Artifact를 같은 ID로 연결하는 링크 층
+
 10_경험 · 20_시스템_콘텐츠 · 30_세계_서사 · 40_표현 · 50_제작_검증
   = 결정의 의미·흐름·수치·시각·검증을 설명하는 분야 층
 ```
@@ -159,6 +162,7 @@ GDD는 탭 수를 늘려 같은 내용을 여러 번 적는 문서가 아니라,
 - **단일 현재 결정 원장:** `02_현재_확정결정`만 `CURRENT` 결정을 보유한다. `SUPERSEDED` 결정과 전체 변경 이력은 `99_변경이력`으로 보낸다.
 - **Decision ID 참조:** 분야 층은 결정의 전문이나 상태를 복사하지 않고 `Decision ID`를 참조한다. 분야별 행에는 해당 분야에 필요한 규칙·흐름·수치·시각·검증만 둔다.
 - **중복 금지:** `00_프로젝트_허브`와 `05_GDD_요약`은 카드형 요약·링크·상태만 제공한다. 시스템, 인물, 세계관, UX, 로드맵의 상세 내용을 다시 적지 않는다.
+- **시각 작업면 색인:** `06_시각_작업면`은 실제 Figma·Whimsical·기타 Artifact가 있을 때만 쓴다. 각 행은 `Artifact ID`, `usage_context`(`GDD|EXTERNAL_COLLABORATION|BOTH`), 목적, Decision ID, 책임 정본, 링크·Snapshot, 상태와 다음 Gate만 가진다. 보드·Frame 전문을 Sheet에 복사하지 않는다. GDD 안·밖 어느 용도도 이 색인을 통해 연결할 수 있으며, 사용하지 않는 프로젝트에 tab을 강제하지 않는다.
 - **다섯 묶음:** 경험(플레이어 약속·루프·조작), 시스템·콘텐츠(규칙·성장·경제·콘텐츠), 세계·서사(세계 규칙·인물·관계·정보 공개), 표현(UX/UI·접근성·아트·오디오·시각 자산), 제작·검증(범위·기술·위험·마일스톤·플레이테스트)으로 유사 책임을 묶는다.
 - 기존 세부 tab은 삭제를 전제하지 않는다. 소비자와 이력이 있으면 위 다섯 묶음의 **상세 보기**로 남기고, 그 외에는 병합 후보·보존 계획·사용자 승인 없이는 변경하지 않는다.
 

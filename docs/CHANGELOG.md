@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-30 — GDD module and visual-workspace index
+
+- Kept the compact six-domain GDD and single current-decision ledger, while adding a `GDD Module ID` card so a reader can find one topic's decision, responsible source, visual reference, implementation state, and next gate together.
+- Added an optional `06_시각_작업면` Sheet index for Figma, Whimsical, or other visual artifacts in `GDD`, `EXTERNAL_COLLABORATION`, or `BOTH` contexts. It links IDs and snapshots rather than copying boards or becoming a second canon.
+- Updated the working-template comparison to current living-GDD examples and preserved the existing `PROPOSED_SHEET_CHANGE` and post-main-sync boundaries.
+
 ## 2026-07-30 — Base v9.1 derived project routing
 
 - First migration now derives active/inactive project routes from the declared project Registry and Base routes only from active Base Skills explicitly named by legacy shared overrides.

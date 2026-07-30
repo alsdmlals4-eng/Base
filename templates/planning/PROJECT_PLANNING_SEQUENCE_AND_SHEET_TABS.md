@@ -13,6 +13,7 @@
 03_근거_라이브러리
 04_누락_충돌_감사
 05_GDD_요약
+06_시각_작업면 (Artifact가 있을 때만)
 10_경험
 20_시스템_콘텐츠
 30_세계_서사
@@ -66,12 +67,23 @@
 
 ## 4. `05_GDD_요약`
 
-| GDD 영역 | 현재 한 문장 요약 | 대표 흐름도·관계도 | 와이어프레임·이미지·캡처 | 핵심 수치·상태 | 책임 정본 경로 | main Commit SHA | 마지막 수정 시각 | 수정 주체 | 동기화 상태 | 다음 확인 |
+| GDD Module ID | GDD 영역·사용자 질문 | 현재 한 문장 요약 | Decision ID | 대표 흐름도·관계도 | Artifact ID·와이어프레임·이미지·캡처 | 핵심 수치·상태 | 책임 정본 경로 | main Commit SHA | 마지막 수정 시각 | 수정 주체 | 동기화 상태 | 다음 확인 |
 |---|---|---|---|---|---|---|---|---|---|---|
 
 이 tab은 장문 본책이 아니라 사용자가 전체 게임을 빠르게 훑는 시작 화면이다.
 
 `05_GDD_요약`에는 상세 전문이나 별도 상태값을 복사하지 않는다. 여섯 영역 카드가 `02_현재_확정결정`의 Decision ID와 다섯 분야 tab으로 연결되는지만 유지한다.
+
+`GDD Module ID`는 사람이 같은 주제의 결정·정본·시각 참조·검증을 한 카드에서 찾게 하는 식별자다. 동일 정보를 새 정본으로 만들지 않는다.
+
+## 4A. `06_시각_작업면` — 선택적 GDD·외부 협업 Artifact 색인
+
+실제 Figma·Whimsical·기타 시각 Artifact가 있을 때만 설치한다. 이 tab은 GDD 전용이 아니며 GDD 안·밖의 시각 작업면을 같은 계약으로 연결한다.
+
+| Artifact ID | 도구 | 사용 맥락 `GDD|EXTERNAL_COLLABORATION|BOTH` | 목적·Artifact 유형 | GDD Module ID·Decision ID | 책임 정본 경로 | 링크·Board/Page/Frame | Snapshot | 시각 상태 | 대상 플랫폼·해상도·입력 | 구현·제외 범위 | 검증·다음 Gate |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+
+보드·Frame 전문, 게임 규칙, 구현 완료 주장을 복사하지 않는다. `VISUAL_ARTIFACT_REGISTRY.json` 및 `docs/VISUAL_COLLABORATION_TOOL_POLICY.md`와 동일 Artifact ID를 사용한다.
 
 ## 5. `01_작업순서`
 

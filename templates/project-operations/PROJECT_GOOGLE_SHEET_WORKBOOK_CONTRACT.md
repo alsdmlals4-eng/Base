@@ -56,6 +56,7 @@ last_verified_commit:
 
 ```text
 00_프로젝트_허브 → 05_GDD_요약 → 02_현재_확정결정
+→ 06_시각_작업면 (Artifact가 있을 때만)
 → 10_경험 | 20_시스템_콘텐츠 | 30_세계_서사 | 40_표현 | 50_제작_검증
 → 03_근거_라이브러리 | 04_누락_충돌_감사 | 99_변경이력
 ```
@@ -63,6 +64,17 @@ last_verified_commit:
 - 결정 원장은 `CURRENT`의 단일 목록이며, 분야 tab에는 전문·승인 상태·정본 경로를 복사하지 않는다.
 - `00`과 `05`는 카드형 요약과 링크만 제공한다. 상세 규칙·수치·서사는 분야 tab에만 둔다.
 - 기존 세부 tab은 이력·소비자가 있는 경우 다섯 분야 묶음 아래 상세 보기로 보존한다. 사용자 승인 없이 삭제·강제 병합하지 않는다.
+
+## 선택적 시각 작업면 색인
+
+Figma·Whimsical·기타 시각 Artifact가 실제로 있을 때만 `06_시각_작업면`을 둔다. 이 tab은 GDD 안과 외부 협업 모두를 위해 쓸 수 있는 **링크 색인**이며, 보드·Frame의 복사본이나 새 정본이 아니다.
+
+| Artifact ID | 도구 | 사용 맥락 `GDD|EXTERNAL_COLLABORATION|BOTH` | 목적 | GDD Module ID·Decision ID | 책임 정본 | 링크·Snapshot | 상태 | 다음 Gate |
+|---|---|---|---|---|---|---|---|---|
+
+- 한 주제의 카드에는 GDD Module ID, Decision ID, 책임 정본, Artifact ID, 실제 구현·검증 상태를 연결한다. 같은 설명을 다시 적지 않는다.
+- Artifact ID는 `VISUAL_ARTIFACT_REGISTRY.json`과 같아야 하며, 링크만으로 Godot 구현·사람·기기 검증이 완료됐다고 기록하지 않는다.
+- 시각 Artifact가 없거나 접근할 수 없으면 tab·가짜 링크를 강제하지 않고 `VISUAL_NOT_PREPARED` 또는 해당 접근 상태를 책임 정본에 기록한다.
 
 ## 시각·수치 계약
 
