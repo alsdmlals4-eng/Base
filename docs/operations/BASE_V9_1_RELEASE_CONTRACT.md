@@ -58,6 +58,12 @@ The validator reads the evidence record from that pinned historical commit and
 requires its payload SHA and Registry identity to match the lock. This prevents
 an untrusted feature branch from self-attesting a newly invented release pin.
 
+Project migration keeps an existing project Skill Registry path when the
+legacy adapter declares `role_bindings.skill_registry` (or
+`project.local_registry`). The path must remain inside the project root and is
+raw-byte hashed in the canonical adapter; `skills/SKILL_REGISTRY.json` is only
+the safe default for projects that already use it.
+
 ## Supply chain
 
 GitHub workflows use least permissions and official Actions pinned to full commit SHAs. Dependency review is capability-gated for pull requests that change dependency manifests or lockfiles: the repository owner enables the dependency graph/security capability first, then sets `DEPENDENCY_REVIEW_ENABLED=true`. Until that explicit opt-in exists, the workflow records `DEFERRED_UNTIL_REPOSITORY_SECURITY_ENABLED` rather than reporting a false security pass. Binary attestation is `DEFERRED_UNTIL_RELEASE_ARTIFACT`; no attestation claim is made before a releasable binary exists.
