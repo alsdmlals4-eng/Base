@@ -32,7 +32,7 @@ dependency-review and adapter-hash consistency gaps.
 
 | Severity | Review state | Evidence recorded in this cycle |
 |---|---|---|
-| P0 | `CLOSED_BY_POST_FIX_VERIFICATION` | missing/fake/duplicate/escaped/reparse evidence fixtures; complete eight-output set equality; one-byte mutation; clean clone with `core.autocrlf=true` |
+| P0 | `CLOSED_BY_POST_FIX_VERIFICATION` | missing/fake/duplicate/escaped/reparse evidence fixtures; complete eight-output historical pin set; blob OID/SHA-256 mutation; clean clone with `core.autocrlf=true` |
 | P1 | `CLOSED_BY_POST_FIX_VERIFICATION` | commit-qualified historical Registry versus current candidate Registry; standard `--check` protection without a CLI baseline; explicit migration baseline |
 | P2 | `CLOSED_BY_POST_FIX_VERIFICATION` | workflow/Action dependency-review paths; snapshot/dashboard `RAW_FILE_BYTES_SHA256` consistency |
 
@@ -84,7 +84,9 @@ and confirmation that the externally fixed old baseline still detects the
 protected product change. The 30 focused tests passed, followed by a complete
 285-test run with one declared Mermaid environment skip. Deterministic Base v9
 generation, Base v9 integrity, `git diff --check`, `git fsck --strict`, all
-eight frozen v9.0 outputs, and unchanged Godot product paths also passed.
+eight frozen v9.0 evidence-blob identities, and unchanged Godot product paths
+also passed. After #72, approved current governance artifacts may differ from
+their v9.0 historical blobs without changing those pinned identities.
 
 ## Protected scope
 

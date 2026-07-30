@@ -41,7 +41,7 @@ V9_GENERATED_OUTPUTS = {
 
 
 def frozen_artifact_errors(repository: Path, candidate_lock: dict) -> list[str]:
-    """Compare every declared v9.0 frozen artifact with its evidence-commit blob."""
+    """Verify immutable identities for every declared v9.0 evidence-commit blob."""
     errors: list[str] = []
     compatibility = candidate_lock.get("compatibility_base", {})
     evidence_commit = compatibility.get("release_evidence_commit")
@@ -50,55 +50,47 @@ def frozen_artifact_errors(repository: Path, candidate_lock: dict) -> list[str]:
         return ["v9.0 frozen artifacts require a release evidence commit"]
     if not isinstance(frozen, list) or not frozen:
         return ["v9.0 frozen artifact declaration is empty"]
-    frozen_values = [str(value) for value in frozen]
-    frozen_set = set(frozen_values)
-    if len(frozen_values) != len(frozen_set) or frozen_set != V9_GENERATED_OUTPUTS:
+    frozen_paths = [entry.get("path") for entry in frozen if isinstance(entry, dict)]
+    frozen_set = {path for path in frozen_paths if isinstance(path, str)}
+    if len(frozen_paths) != len(frozen) or len(frozen_paths) != len(frozen_set) or frozen_set != V9_GENERATED_OUTPUTS:
         missing = sorted(V9_GENERATED_OUTPUTS - frozen_set)
         extra = sorted(frozen_set - V9_GENERATED_OUTPUTS)
         errors.append(
             "v9.0 frozen artifact declaration must be the complete generated output set"
-            f" (missing={missing}, extra={extra}, duplicates={len(frozen_values) != len(frozen_set)})"
+            f" (missing={missing}, extra={extra}, duplicates={len(frozen_paths) != len(frozen_set)})"
         )
-    for value in frozen_values:
+    for entry in frozen:
+        if not isinstance(entry, dict):
+            errors.append(f"Invalid v9.0 frozen artifact identity: {entry}")
+            continue
+        value = entry.get("path")
+        pinned_oid = entry.get("git_blob_oid")
+        pinned_sha256 = entry.get("sha256")
         relative = Path(str(value))
         if relative.is_absolute() or ".." in relative.parts:
             errors.append(f"Unsafe v9.0 frozen artifact path: {value}")
             continue
-        current = repository / relative
-        traversal = repository
-        unsafe_traversal = False
-        for part in relative.parts:
-            traversal = traversal / part
-            if traversal.is_symlink() or (
-                traversal.exists()
-                and getattr(traversal.stat(follow_symlinks=False), "st_file_attributes", 0) & 0x400
-            ):
-                errors.append(f"v9.0 frozen artifact uses unsafe symlink/reparse traversal: {value}")
-                unsafe_traversal = True
-                break
-        if unsafe_traversal:
-            continue
-        if not current.is_file():
-            errors.append(f"v9.0 frozen artifact is missing: {value}")
-            continue
-        current_blob = subprocess.run(
-            ["git", "-C", str(repository), "hash-object", f"--path={relative.as_posix()}", str(current)],
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            check=False,
-        )
-        historical_blob = subprocess.run(
+        historical_oid = subprocess.run(
             ["git", "-C", str(repository), "rev-parse", f"{evidence_commit}:{relative.as_posix()}"],
             capture_output=True,
             text=True,
             encoding="utf-8",
             check=False,
         )
-        if historical_blob.returncode:
+        historical_blob = subprocess.run(
+            ["git", "-C", str(repository), "show", f"{evidence_commit}:{relative.as_posix()}"],
+            capture_output=True,
+            check=False,
+        )
+        if historical_oid.returncode or historical_blob.returncode:
             errors.append(f"v9.0 frozen artifact historical blob is unavailable: {value}")
-        elif current_blob.returncode or current_blob.stdout.strip() != historical_blob.stdout.strip():
-            errors.append(f"v9.0 frozen artifact differs from release evidence: {value}")
+            continue
+        actual_oid = historical_oid.stdout.strip()
+        if not isinstance(pinned_oid, str) or pinned_oid != actual_oid:
+            errors.append(f"v9.0 frozen artifact historical blob ID mismatch: {value}")
+        actual_sha256 = hashlib.sha256(historical_blob.stdout).hexdigest()
+        if not isinstance(pinned_sha256, str) or pinned_sha256 != actual_sha256:
+            errors.append(f"v9.0 frozen artifact historical blob SHA-256 mismatch: {value}")
     return errors
 
 

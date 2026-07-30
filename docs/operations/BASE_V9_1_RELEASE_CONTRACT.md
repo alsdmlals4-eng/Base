@@ -10,10 +10,14 @@ but while either candidate commit pin is null, v9.1 adapter generation and
 migration still fail closed. The v9.0 pins are compatibility history, not
 runnable v9.1 adapter pins.
 
-All eight outputs declared by `tools/build_base_v9_artifacts.py` are the exact
-v9.0 frozen set. Each is compared with its release-evidence Git blob using the
-repository clean filter, so Windows CRLF checkout conversion does not create a
-false failure while a real content mutation still fails.
+All eight outputs declared by `tools/build_base_v9_artifacts.py` form the v9.0
+historical freeze set. For each path, `base-v9.1.lock.json` pins the Git blob OID
+and raw SHA-256 resolved at `release_evidence_commit`. The checker validates
+those immutable historical identities directly from Git, so Windows CRLF
+checkout conversion cannot create a false failure. Current working paths may
+evolve through a separately approved change, such as the #72 terminal-state
+update to `GITHUB_OBJECT_LEDGER.json`; current-path equality is not the v9.0
+freeze boundary.
 
 ## Release pins
 

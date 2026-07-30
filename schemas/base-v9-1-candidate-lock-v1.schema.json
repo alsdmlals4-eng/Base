@@ -24,8 +24,9 @@
         "frozen_artifacts": {
           "type": "array",
           "uniqueItems": true,
-          "minItems": 3,
-          "items": {"type": "string", "minLength": 1}
+          "minItems": 8,
+          "maxItems": 8,
+          "items": {"$ref": "#/$defs/frozenArtifact"}
         },
         "historical_registry": {"$ref": "#/$defs/commitRegistry"}
       }
@@ -60,6 +61,16 @@
     }
   ],
   "$defs": {
+    "frozenArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "git_blob_oid", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "git_blob_oid": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
     "commitRegistry": {
       "type": "object",
       "additionalProperties": false,

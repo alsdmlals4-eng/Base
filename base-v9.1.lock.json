@@ -19,14 +19,46 @@
   ],
   "compatibility_base": {
     "frozen_artifacts": [
-      ".codex-plugin/plugin.json",
-      "base.lock.json",
-      "docs/generated/BASE_ACTIVE_SKILLS.md",
-      "docs/operations/ADVERSARIAL_REVIEW_MANIFEST.json",
-      "docs/operations/BASE_V9_DECISION_REGISTRY.json",
-      "docs/operations/GITHUB_OBJECT_LEDGER.json",
-      "docs/operations/SHEET_CONTROL_CONTRACT.json",
-      "skills/BASE_V9_SKILL_SNAPSHOT.json"
+      {
+        "git_blob_oid": "93fad4a3d8dc4f5572e7bd52a8a3faf39d989334",
+        "path": ".codex-plugin/plugin.json",
+        "sha256": "d9e07b1fa73f674892a6097fd34fad5b1c0f982ca45c2c71dac1f1051360eb70"
+      },
+      {
+        "git_blob_oid": "f24b35c331c989d527a97a02560e7052c16db1d6",
+        "path": "base.lock.json",
+        "sha256": "b363504dc372d16faa2812403656578237b05bba6f57782fa3f31abdaeece6b1"
+      },
+      {
+        "git_blob_oid": "05ed8cf7854db97c526f1efb61eefab7ca178c8d",
+        "path": "docs/generated/BASE_ACTIVE_SKILLS.md",
+        "sha256": "43ae492594d5b7d5d77a04d63cbfc884c82bdac257c6d0d6a2842bbc0860b59d"
+      },
+      {
+        "git_blob_oid": "cd473c39e2b4b575d9b57ef7cf0d58f789845fc2",
+        "path": "docs/operations/ADVERSARIAL_REVIEW_MANIFEST.json",
+        "sha256": "b69aa042b3923c94001754db9dc121c8c832afa1035e612494432da238f03b1e"
+      },
+      {
+        "git_blob_oid": "6c99f1f387bf159eabf64eea4af2598565120682",
+        "path": "docs/operations/BASE_V9_DECISION_REGISTRY.json",
+        "sha256": "275cb3cd5e7459aaae9a4c633f74f96e400d62b4d4b556e8d2e99f4ace06d880"
+      },
+      {
+        "git_blob_oid": "c6646c782cce5daaefe16e3b4f12c18d70c65ce1",
+        "path": "docs/operations/GITHUB_OBJECT_LEDGER.json",
+        "sha256": "e3a143f103c48b032fcdb90809b2a3dfa4330c4e0b473f35d2a6b6ddef3903ec"
+      },
+      {
+        "git_blob_oid": "bf47fd0a3f9d0825eefefe22f701ca0abb1d9ca8",
+        "path": "docs/operations/SHEET_CONTROL_CONTRACT.json",
+        "sha256": "7872d7037d127687e19894e42367a2cc837dd82ba5c4dc89233244e2a4cd388e"
+      },
+      {
+        "git_blob_oid": "cb11bf7b92ba99341ab518b6e7f6acc1df12e052",
+        "path": "skills/BASE_V9_SKILL_SNAPSHOT.json",
+        "sha256": "e30fca95d201a31937c7bddcbc341c79764d4940c318933a8902cb5bf901ba57"
+      }
     ],
     "historical_registry": {
       "commit": "dc98a666563b1f0f87b665eac97dbd8a8be37576",

@@ -44,6 +44,19 @@ def commit_all(root: Path, message: str) -> str:
     return git(root, "rev-parse", "HEAD")
 
 
+def frozen_entry(root: Path, evidence: str, relative: str) -> dict[str, str]:
+    raw = subprocess.run(
+        ["git", "-C", str(root), "show", f"{evidence}:{relative}"],
+        capture_output=True,
+        check=True,
+    ).stdout
+    return {
+        "path": relative,
+        "git_blob_oid": git(root, "rev-parse", f"{evidence}:{relative}"),
+        "sha256": hashlib.sha256(raw).hexdigest(),
+    }
+
+
 class BaseV91ReviewRemediationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -98,7 +111,7 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
         ):
             self.assertIn(pattern, workflow)
 
-    def test_v90_frozen_artifacts_exactly_match_all_generated_outputs_and_historical_blobs(self) -> None:
+    def test_v90_frozen_artifacts_pin_all_historical_blobs_without_freezing_current_paths(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             repository = Path(temporary)
             git(repository, "init", "-q")
@@ -111,25 +124,52 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
             lock = {
                 "compatibility_base": {
                     "release_evidence_commit": evidence,
-                    "frozen_artifacts": list(frozen),
+                    "frozen_artifacts": [frozen_entry(repository, evidence, relative) for relative in frozen],
                 }
             }
+            self.assertEqual(self.integrity.frozen_artifact_errors(repository, lock), [])
+
+            for relative in frozen:
+                (repository / relative).write_bytes(f"current evolution: {relative}\r\n".encode("utf-8"))
             self.assertEqual(self.integrity.frozen_artifact_errors(repository, lock), [])
 
             incomplete = json.loads(json.dumps(lock))
             incomplete["compatibility_base"]["frozen_artifacts"].pop()
             self.assertTrue(any("complete" in error.lower() for error in self.integrity.frozen_artifact_errors(repository, incomplete)))
 
-            for relative in frozen:
-                with self.subTest(relative=relative):
-                    path = repository / relative
-                    original = path.read_bytes()
-                    path.write_bytes(original + b"x")
-                    errors = self.integrity.frozen_artifact_errors(repository, lock)
-                    self.assertTrue(any(relative in error for error in errors), errors)
-                    path.write_bytes(original)
+            duplicate = json.loads(json.dumps(lock))
+            duplicate["compatibility_base"]["frozen_artifacts"][-1] = duplicate["compatibility_base"]["frozen_artifacts"][0]
+            self.assertTrue(any("complete" in error.lower() for error in self.integrity.frozen_artifact_errors(repository, duplicate)))
 
-    def test_v90_frozen_check_is_crlf_safe_in_clean_autocrlf_checkout_and_detects_mutation(self) -> None:
+            additional = json.loads(json.dumps(lock))
+            additional["compatibility_base"]["frozen_artifacts"].append(
+                {"path": "extra.json", "git_blob_oid": "0" * 40, "sha256": "0" * 64}
+            )
+            self.assertTrue(any("complete" in error.lower() for error in self.integrity.frozen_artifact_errors(repository, additional)))
+
+            bad_oid = json.loads(json.dumps(lock))
+            bad_oid["compatibility_base"]["frozen_artifacts"][0]["git_blob_oid"] = "0" * 40
+            self.assertTrue(any("blob id" in error.lower() for error in self.integrity.frozen_artifact_errors(repository, bad_oid)))
+
+            bad_hash = json.loads(json.dumps(lock))
+            bad_hash["compatibility_base"]["frozen_artifacts"][0]["sha256"] = "0" * 64
+            self.assertTrue(any("sha-256" in error.lower() for error in self.integrity.frozen_artifact_errors(repository, bad_hash)))
+
+            unavailable_repository = repository / "unavailable"
+            unavailable_repository.mkdir()
+            git(unavailable_repository, "init", "-q")
+            (unavailable_repository / "README.md").write_text("no frozen blobs\n", encoding="utf-8")
+            unavailable_evidence = commit_all(unavailable_repository, "evidence without frozen outputs")
+            unavailable = json.loads(json.dumps(lock))
+            unavailable["compatibility_base"]["release_evidence_commit"] = unavailable_evidence
+            self.assertTrue(
+                any(
+                    "historical blob is unavailable" in error.lower()
+                    for error in self.integrity.frozen_artifact_errors(unavailable_repository, unavailable)
+                )
+            )
+
+    def test_v90_historical_blob_check_is_crlf_and_current_evolution_safe(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             workspace = Path(temporary)
             source = workspace / "source"
@@ -149,13 +189,15 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
             lock = {
                 "compatibility_base": {
                     "release_evidence_commit": evidence,
-                    "frozen_artifacts": sorted(V90_OUTPUTS),
+                    "frozen_artifacts": [
+                        frozen_entry(source, evidence, relative) for relative in sorted(V90_OUTPUTS)
+                    ],
                 }
             }
             self.assertEqual(self.integrity.frozen_artifact_errors(clone, lock), [])
             mutated = clone / "docs/generated/BASE_ACTIVE_SKILLS.md"
             mutated.write_bytes(mutated.read_bytes() + b"semantic-mutation")
-            self.assertTrue(self.integrity.frozen_artifact_errors(clone, lock))
+            self.assertEqual(self.integrity.frozen_artifact_errors(clone, lock), [])
 
     def test_v91_lock_separates_historical_and_current_registry_authority(self) -> None:
         lock = json.loads((ROOT / "base-v9.1.lock.json").read_text(encoding="utf-8"))
