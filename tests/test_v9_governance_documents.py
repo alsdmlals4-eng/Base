@@ -107,6 +107,29 @@ class V9GovernanceDocumentTests(unittest.TestCase):
         for term in ("DEC-2026-07-30-001", archive_path, "ARCHIVE_HISTORY", "PR #72"):
             self.assertIn(term, audit)
 
+    def test_skills_readme_is_a_registry_router_not_a_manual_legacy_skill_table(self) -> None:
+        readme = read("skills/README.md")
+
+        for term in (
+            "skills/SKILL_REGISTRY.json",
+            "docs/generated/BASE_ACTIVE_SKILLS.md",
+            "skills/LEGACY_SKILL_ALIASES.md",
+            "load_all_skills",
+            "automatic-trigger-match",
+        ):
+            self.assertIn(term, readme)
+
+        self.assertNotIn("| 스킬 | Trigger |", readme)
+        for legacy_id in (
+            "conducting-deep-requirement-interviews",
+            "transforming-requests-into-prompts",
+            "writing-game-design-documents",
+            "reviewing-external-ai-drafts",
+            "promoting-project-knowledge",
+            "reviewing-and-implementing-base-change-proposals",
+        ):
+            self.assertNotIn(f"| `{legacy_id}` |", readme)
+
 
 if __name__ == "__main__":
     unittest.main()
