@@ -95,7 +95,53 @@ def _protected_match(path: str, patterns: list[str]) -> bool:
     return any(fnmatch.fnmatchcase(normalized, _normalized_path(pattern)) for pattern in patterns)
 
 
-def _protected_policy_errors(project_root: Path, adapter: dict[str, Any], protected_base: str) -> list[str]:
+def _extract_protected_paths(raw: bytes, pointer: str, label: str) -> list[str]:
+    try:
+        value: Any = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ContractError(f"{label} is not valid UTF-8 JSON: {error}") from error
+    if not pointer.startswith("/"):
+        raise ContractError(f"{label} protected-path JSON Pointer is invalid: {pointer}")
+    for encoded_token in pointer[1:].split("/"):
+        token = encoded_token.replace("~1", "/").replace("~0", "~")
+        if not isinstance(value, dict) or token not in value:
+            raise ContractError(f"{label} cannot extract protected paths at JSON Pointer {pointer}")
+        value = value[token]
+    if (
+        not isinstance(value, list)
+        or not value
+        or not all(isinstance(item, str) and item for item in value)
+        or len(value) != len(set(value))
+    ):
+        raise ContractError(f"{label} protected paths must be a non-empty unique string list")
+    return list(value)
+
+
+def _protected_policy_hash(patterns: list[str]) -> str:
+    return sha256_bytes(canonical_json(patterns))
+
+
+def _commit_blob_bytes(repository: Path, commit: str, relative: str, label: str) -> bytes:
+    path = Path(relative)
+    if path.is_absolute() or ".." in path.parts or not path.parts:
+        raise ContractError(f"Unsafe {label} path escapes its approved repository root: {relative}")
+    tree = _git(repository, "ls-tree", commit, "--", path.as_posix())
+    if tree.returncode or not tree.stdout.strip():
+        raise ContractError(f"{label} is unavailable at {commit}:{path.as_posix()}")
+    metadata = tree.stdout.split(None, 3)
+    if len(metadata) < 3 or metadata[0] == "120000" or metadata[1] != "blob":
+        raise ContractError(f"{label} is not a regular Git blob at {commit}:{path.as_posix()}")
+    raw = _git_show_bytes(repository, commit, path.as_posix())
+    if raw is None:
+        raise ContractError(f"{label} is unavailable at {commit}:{path.as_posix()}")
+    return raw
+
+
+def _protected_policy_errors(
+    project_root: Path,
+    adapter: dict[str, Any],
+    protected_base_override: str = "",
+) -> list[str]:
     errors: list[str] = []
     patterns = adapter["protected_paths"]
     if not patterns or any(not re.sub(r"[*?\[\]!]", "", pattern).strip("./") for pattern in patterns):
@@ -112,20 +158,37 @@ def _protected_policy_errors(project_root: Path, adapter: dict[str, Any], protec
         names = [item for item in tracked.stdout.split("\0") if item]
         if not any(_protected_match(name, patterns) for name in names):
             errors.append("Protected-path policy has no intended coverage in the project")
-    if not protected_base:
-        return errors
+    baseline = adapter["protected_baseline"]
+    protected_base = protected_base_override or baseline["commit"]
     if not _commit_exists(project_root, protected_base):
         errors.append(f"Protected baseline is not a valid project commit: {protected_base}")
         return errors
-    baseline_raw = _git_show_bytes(project_root, protected_base, CANONICAL_ADAPTER.as_posix())
-    if baseline_raw is None:
-        errors.append("Protected baseline adapter is unavailable; refusing comparison")
+    source_type = baseline["policy_source_type"]
+    source_path = baseline["policy_source_path"]
+    if source_type == "CANONICAL_ADAPTER_SOURCE" and source_path != CANONICAL_ADAPTER.as_posix():
+        errors.append("CANONICAL_ADAPTER_SOURCE must use skills/PROJECT_BASE_ADAPTER.json")
+        return errors
+    if source_type == "FIRST_MIGRATION_LEGACY_SOURCE" and source_path == CANONICAL_ADAPTER.as_posix():
+        errors.append("FIRST_MIGRATION_LEGACY_SOURCE cannot claim the canonical adapter path")
         return errors
     try:
-        baseline_adapter = json.loads(baseline_raw.decode("utf-8"))
-        baseline_patterns = baseline_adapter["protected_paths"]
-    except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError):
-        errors.append("Protected baseline adapter is invalid; refusing comparison")
+        baseline_raw = _commit_blob_bytes(
+            project_root, protected_base, source_path, "Protected baseline policy source"
+        )
+        baseline_patterns = _extract_protected_paths(
+            baseline_raw,
+            baseline["protected_paths_pointer"],
+            "Protected baseline policy source",
+        )
+    except ContractError as error:
+        errors.append(str(error))
+        return errors
+    actual_policy_hash = _protected_policy_hash(baseline_patterns)
+    if actual_policy_hash != baseline["policy_sha256"]:
+        errors.append(
+            "Protected baseline policy hash mismatch: "
+            f"expected {baseline['policy_sha256']}, got {actual_policy_hash}"
+        )
         return errors
     current_normalized = {_normalized_path(pattern) for pattern in patterns}
     missing = sorted(
@@ -797,11 +860,7 @@ def validation_errors(
                 continue
             if not required.exists():
                 errors.append(f"Protected path does not exist: {protected_path}")
-    effective_protected_base = protected_base or adapter.get("protected_baseline_commit", "")
-    if not effective_protected_base:
-        errors.append("Protected baseline commit is required; refusing protected-path validation")
-    else:
-        errors.extend(_protected_policy_errors(project_root, adapter, effective_protected_base))
+    errors.extend(_protected_policy_errors(project_root, adapter, protected_base))
 
     if check_generated and not errors:
         try:
@@ -819,6 +878,7 @@ def migrated_adapter(
     project_root: Path,
     base_repository: Path,
     legacy: dict[str, Any],
+    legacy_source_path: str,
     release_commit: str,
     release_evidence_commit: str,
     protected_baseline_commit: str,
@@ -829,6 +889,23 @@ def migrated_adapter(
         raise ContractError("Explicit protected baseline commit is required for migration")
     if not _commit_exists(project_root, protected_baseline_commit):
         raise ContractError("Explicit protected baseline is absent from the project repository")
+    baseline_legacy_raw = _commit_blob_bytes(
+        project_root,
+        protected_baseline_commit,
+        legacy_source_path,
+        "First-migration legacy policy source",
+    )
+    baseline_protected_paths = _extract_protected_paths(
+        baseline_legacy_raw,
+        "/protected_paths",
+        "First-migration legacy policy source",
+    )
+    try:
+        baseline_legacy = json.loads(baseline_legacy_raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ContractError(f"First-migration legacy policy source is invalid: {error}") from error
+    if not isinstance(baseline_legacy, dict):
+        raise ContractError("First-migration legacy policy source root must be an object")
     lock = load_object(base_repository / CANDIDATE_LOCK_PATH)
     expected_release = lock.get("candidate_release_commit")
     expected_evidence = lock.get("candidate_release_evidence_commit")
@@ -844,7 +921,7 @@ def migrated_adapter(
     project_registry = safe_repository_path(project_root, "skills/SKILL_REGISTRY.json", "project Registry")
     if not project_registry.is_file():
         raise ContractError("Migration requires a project Skill Registry")
-    project_info = legacy.get("project", {})
+    project_info = baseline_legacy.get("project", {})
     return {
         "schema_version": 1,
         "artifact_role": "PROJECT_BASE_ADAPTER",
@@ -876,9 +953,15 @@ def migrated_adapter(
         },
         "shared_overrides": {},
         "gdd_sheet": {"role": "USER_FACING_GDD_WORKSPACE", "sync_status": "NOT_CONFIGURED"},
-        "protected_baseline_commit": protected_baseline_commit,
-        "protected_paths": list(legacy.get("protected_paths", [])),
-        "validators": list(legacy.get("validators", [])),
+        "protected_baseline": {
+            "commit": protected_baseline_commit,
+            "policy_source_type": "FIRST_MIGRATION_LEGACY_SOURCE",
+            "policy_source_path": legacy_source_path,
+            "protected_paths_pointer": "/protected_paths",
+            "policy_sha256": _protected_policy_hash(baseline_protected_paths),
+        },
+        "protected_paths": baseline_protected_paths,
+        "validators": list(baseline_legacy.get("validators", [])),
         "compatibility": {
             "cycle": "ONE_CYCLE",
             "views": [],

@@ -42,6 +42,27 @@ Mermaid environment skip. The final verification below was repeated after this
 audit update; no runtime, device, accessibility, human, or binary evidence is
 inferred from these static checks.
 
+## Review cycle 4: first-migration baseline source correction
+
+Final review found that the required protected baseline still assumed
+`skills/PROJECT_BASE_ADAPTER.json` existed before the first migration. That
+made a real legacy-only migration impossible despite the fail-closed baseline
+requirement.
+
+The adapter now records a commit-qualified protected-policy source contract:
+`FIRST_MIGRATION_LEGACY_SOURCE` reads the explicit legacy JSON blob, while
+`CANONICAL_ADAPTER_SOURCE` supports later waves. Both bind source path,
+`/protected_paths` pointer, and canonical policy SHA-256. Missing sources,
+non-regular blobs, extraction failures, hash mismatch, weakening, and protected
+product changes fail closed.
+
+Cycle 4 RED/GREEN fixtures use a baseline commit containing a real legacy
+adapter and protected product file but no canonical adapter. They cover
+successful migration and standard validation, missing source, fake hash,
+unextractable policy, weakening, later canonical baseline, and protected
+product mutation. Focused tests passed, followed by a complete 284-test run
+with one declared Mermaid environment skip.
+
 ## Protected scope
 
 Base v9.1 changed no Godot project product path, scene, Resource, gameplay data, asset, balance, or player-facing rule. The cross-repository validator always uses the adapter's required pre-migration/main comparison commit during standard `--check`, unless an explicit CLI override is supplied.
@@ -49,7 +70,7 @@ Base v9.1 changed no Godot project product path, scene, Resource, gameplay data,
 ## Evidence status
 
 - Focused static remediation evidence: `PASS`, including clean-clone `core.autocrlf=true` coverage.
-- Final full repository evidence: `PASS` — 283 tests, one declared Mermaid environment skip.
+- Final full repository evidence: `PASS` — 284 tests, one declared Mermaid environment skip.
 - Runtime: `NOT_RUN`.
 - Device: `NOT_RUN`.
 - Accessibility: `NOT_RUN`.

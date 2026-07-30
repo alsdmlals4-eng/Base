@@ -4,7 +4,7 @@
   "title": "Base v9.1 Project Base Adapter",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "artifact_role", "base_release", "project", "routing", "skill_registry", "shared_overrides", "gdd_sheet", "protected_baseline_commit", "protected_paths", "validators", "compatibility"],
+  "required": ["schema_version", "artifact_role", "base_release", "project", "routing", "skill_registry", "shared_overrides", "gdd_sheet", "protected_baseline", "protected_paths", "validators", "compatibility"],
   "properties": {
     "schema_version": {"const": 1},
     "artifact_role": {"const": "PROJECT_BASE_ADAPTER"},
@@ -60,7 +60,7 @@
         "sync_status": {"enum": ["NOT_CONFIGURED", "CURRENT", "PROPOSED_SHEET_CHANGE", "STALE", "BLOCKED"]}
       }
     },
-    "protected_baseline_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "protected_baseline": {"$ref": "#/$defs/protectedBaseline"},
     "protected_paths": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
     "validators": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
     "compatibility": {
@@ -85,6 +85,18 @@
     }
   },
   "$defs": {
+    "protectedBaseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit", "policy_source_type", "policy_source_path", "protected_paths_pointer", "policy_sha256"],
+      "properties": {
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "policy_source_type": {"enum": ["FIRST_MIGRATION_LEGACY_SOURCE", "CANONICAL_ADAPTER_SOURCE"]},
+        "policy_source_path": {"type": "string", "minLength": 1},
+        "protected_paths_pointer": {"const": "/protected_paths"},
+        "policy_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
     "route": {
       "type": "object",
       "additionalProperties": false,

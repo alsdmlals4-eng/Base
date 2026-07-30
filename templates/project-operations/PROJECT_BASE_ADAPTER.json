@@ -20,7 +20,13 @@
     "repository": "owner/project",
     "root": "."
   },
-  "protected_baseline_commit": "0000000000000000000000000000000000000000",
+  "protected_baseline": {
+    "commit": "0000000000000000000000000000000000000000",
+    "policy_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "policy_source_path": "skills/LEGACY_PROJECT_ADAPTER.json",
+    "policy_source_type": "FIRST_MIGRATION_LEGACY_SOURCE",
+    "protected_paths_pointer": "/protected_paths"
+  },
   "protected_paths": [
     "project.godot",
     "game/**",

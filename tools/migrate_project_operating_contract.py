@@ -45,6 +45,7 @@ def main() -> int:
             project_root,
             base_repository,
             load_object(legacy_path),
+            legacy_relative.as_posix(),
             options.release_commit,
             options.release_evidence_commit,
             options.protected_baseline_commit,

@@ -33,6 +33,11 @@ def commit_all(root: Path, message: str) -> str:
     return git(root, "rev-parse", "HEAD")
 
 
+def policy_digest(paths: list[str]) -> str:
+    content = (json.dumps(paths, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    return hashlib.sha256(content).hexdigest()
+
+
 class BaseV91SkillPressureContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -164,7 +169,13 @@ class BaseV91SkillPressureContractTests(unittest.TestCase):
             },
             "shared_overrides": {},
             "gdd_sheet": {"role": "USER_FACING_GDD_WORKSPACE", "sync_status": "NOT_CONFIGURED"},
-            "protected_baseline_commit": self.protected_baseline,
+            "protected_baseline": {
+                "commit": self.protected_baseline,
+                "policy_source_type": "CANONICAL_ADAPTER_SOURCE",
+                "policy_source_path": "skills/PROJECT_BASE_ADAPTER.json",
+                "protected_paths_pointer": "/protected_paths",
+                "policy_sha256": policy_digest(["project.godot"]),
+            },
             "protected_paths": ["project.godot"],
             "validators": [],
             "compatibility": {"cycle": "ONE_CYCLE", "views": [], "legacy_inputs": {}},

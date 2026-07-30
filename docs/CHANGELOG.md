@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-30 — Base v9.1 first-migration baseline source fix
+
+- Replaced the canonical-adapter-at-baseline assumption with a commit-qualified protected-policy source contract supporting legacy-only first migrations and canonical later waves.
+- Migration now anchors protected paths to the explicit legacy Git blob and refuses missing, unextractable, hash-mismatched, or weakened policy.
+
 ## 2026-07-30 — Base v9.1 second-review hardening
 
 - Required project-confined, existing, raw-SHA-matching, globally unique health evidence and a mandatory protected baseline commit.
