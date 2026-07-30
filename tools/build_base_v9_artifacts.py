@@ -222,8 +222,31 @@ def build_artifacts() -> dict[Path, bytes]:
         "schema_version": 1,
         "artifact_role": "github-object-ledger",
         "object_types": ["pr", "issue"],
+        "terminal_status_markers": {
+            "[구현됨]": "Current contract and verification paths preserve the PR's required value. Do not reassess unless a regression or new conflicting requirement is evidenced."
+        },
         "objects": [
-            {"type": "pr", "number": 5, "disposition": "REASSESS"},
+            {
+                "type": "pr",
+                "number": 5,
+                "disposition": "IMPLEMENTED",
+                "resolution": "IMPLEMENTED_BY_CURRENT_CONTRACT",
+                "status_marker": "[구현됨]",
+                "terminal": True,
+                "do_not_reassess": True,
+                "resolved_at": "2026-07-30",
+                "resolution_note": "The fixed five-book proposal was implemented in a broader, registry-driven form with selectable discipline documents, update routing, and image approval governance.",
+                "replacement_paths": [
+                    "templates/project-operations/README.md",
+                    "templates/project-operations/DESIGN_DOCUMENT_REGISTRY.json",
+                    "templates/project-operations/DOCUMENT_UPDATE_MATRIX.md",
+                    "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md",
+                ],
+                "verification_paths": [
+                    "tests/test_game_project_operating_system_structure.py",
+                    "tests/test_v9_machine_contracts.py",
+                ],
+            },
             {"type": "pr", "number": 18, "disposition": "CONSOLIDATE_REVIEW"},
             {"type": "pr", "number": 28, "disposition": "ADOPT_AS_CONTRACT"},
             {"type": "pr", "number": 29, "disposition": "REASSESS_BOUNDARY"},
