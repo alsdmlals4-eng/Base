@@ -1,8 +1,8 @@
 # Base 문서·스킬 역할표
 
-Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** 작업 원칙, Skill, Template, Test와 일반화된 Case를 관리한다. 프로젝트의 세계관, 실제 수치, 구현 상태, 파일 경로, 승인 이미지와 테스트 결과는 프로젝트 저장소가 책임진다.
+Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** 작업 원칙, Skill, Template, Test와 일반화된 Case를 관리한다. 프로젝트의 세계관·실제 수치·구현 상태·파일 경로·승인 자산·테스트 결과는 각 프로젝트 저장소가 책임진다.
 
-## 1. 최초 읽기
+## 1. 최소 시작 경로
 
 ```text
 START_HERE.md
@@ -11,15 +11,34 @@ START_HERE.md
 → docs/WORK_MODE_AND_SKILL_ROUTING.md
 → docs/DOCUMENTATION_MAP.md
 → skills/SKILL_REGISTRY.json
-→ 현재 작업의 Work Mode·Skill·Skill Mode·reference·Template·Test·Case
-→ 대상 프로젝트의 Registry·책임 원본·실제 파일
+→ 현재 작업에 필요한 Skill·Skill Mode·reference·Template·Test
+→ 대상 프로젝트의 책임 원본과 실제 파일
 ```
 
 최소 호출문:
 
 > `https://github.com/alsdmlals4-eng/Base 를 전부 살펴보고 참고해서 작업해줘.`
 
-대상 프로젝트 읽기 순서:
+`전부 살펴본다`는 전체 파일·전체 Skill을 기본 로드한다는 뜻이 아니다. Registry와 이 역할표로 현재 요청의 책임 원본·활성 소비자·검증 파일을 선별한다. 백업·보류·제거 후보·Archive는 감사·재개·구형본 정리 요청이 없는 한 기본 읽기에서 제외한다.
+
+## 2. 권한 경계
+
+### Base 저장소
+
+```text
+확정 운영 계약 → AGENTS.md·START_HERE.md·docs/OPERATING_MODEL.md
+문서 위치·책임 → docs/DOCUMENTATION_MAP.md
+활성 Skill → skills/SKILL_REGISTRY.json
+이전 Skill ID → skills/LEGACY_SKILL_ALIASES.md
+완료 변경 → docs/CHANGELOG.md
+검토 대기 제안 → [수정제안서]/PROPOSAL_REGISTRY.json
+진행 중 구현 → GitHub Issue·PR·Actions
+과거 기록 → docs/archive/ARCHIVE_MANIFEST.json·Git 이력
+```
+
+Base에는 프로젝트별 활성 `ACTIVE_CONTEXT`, `CURRENT_STATUS`, `ROADMAP`을 두 번째 정본으로 유지하지 않는다. `docs/ACTIVE_HANDOFF.md`는 과거 링크 보존용 `COMPATIBILITY_ONLY` Stub이며 현재 상태를 소유하지 않는다.
+
+### 대상 프로젝트
 
 ```text
 프로젝트 AGENTS.md
@@ -27,92 +46,72 @@ START_HERE.md
 → ACTIVE_CONTEXT.md·DOCUMENTATION_MAP.md·DEVELOPMENT_GATES.md
 → CURRENT_CONFIRMED_DECISIONS.md
 → DESIGN_DOCUMENT_REGISTRY.json
-→ 현재 책임 원본
+→ 현재 분야 책임 원본
 → SKILL_REGISTRY.json
-→ Prompt 의도와 현재 단계
-→ PLAN / BUILD / REVIEW Work Mode
-→ 자동 선택된 최소 Skill과 Skill Mode
 → Roadmap·Issue·Plan·실행 순서
-→ 실제 코드·데이터·자산·테스트
+→ 실제 코드·데이터·Scene·Resource·자산·테스트
 ```
 
-저장소 전체나 전체 스킬을 무작정 읽지 않는다. 백업·보류·제거 후보는 감사·재개·구형본 정리 요청이 없는 한 기본 읽기에서 제외한다.
+한 질문에는 현행 책임 원본 하나만 둔다. 외부 사례·리뷰·Google Sheets·Archive·과거 대화는 요구사항이나 구현 사실의 정본을 대체하지 않는다.
 
-Base 저장소 자체의 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 문서로 오인하지 않는다. 완료 상태는 `docs/CHANGELOG.md`, 검토 대기 작업은 `[수정제안서]/PROPOSAL_REGISTRY.json`, 진행 중 구현은 GitHub PR·Actions가 책임진다. 활성 인터뷰가 없으면 `등록 없음`으로 명시한다.
-
-## 2. 공용 책임 원본
+## 3. Base 공용 책임 원본
 
 | 구분 | 파일 | 책임 |
 |---|---|---|
 | 최초 라우터 | `START_HERE.md` | 요청 유형별 최소 읽기와 실행 Skill·Skill Mode 연결 |
 | 항상 적용 규칙 | `AGENTS.md` | 우선순위·보안·승인·완료 보고 금지 규칙 |
-| 통합 운영 모델 | `docs/OPERATING_MODEL.md` | 공용 작업 생명주기·책임 원본·상태·발행·근거·검증 정책의 단일 설명 원본 |
-| GPT–Codex 역할·인계 정책 | `docs/GPT_CODEX_WORKFLOW_POLICY.md` | GPT 비-Godot 완료, Codex 읽기 전용 Plan, 단계별 Godot 구현, 변경 권한, Branch·PR·자동 병합 게이트 |
-| GitHub Pro 저장소 운영 | `docs/GITHUB_PRO_OPERATING_POLICY.md` | Pro private 보호 기능, Ruleset, `ci-gate`, 자동 병합, 사용량 Budget, Base→`omenward`→순차 확산 |
-| GitHub 작업 항목 생명주기 | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | Issue·Goal·Branch·PR·Run·Artifact·Release 책임, PR WIP·재사용·종료·보존·무손실 정리 |
-| 승인 결정 즉시 동기화 | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | 질문 전 정본·PR·Sheets 대조, 중복 질문 방지, 승인 즉시 정본·main·Sheets 동기화, 병합 후 적대적 검토 |
-| 기획 작업순서·근거·데모 우선 | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | 누락·충돌 선감사, 3층 근거 묶음, 분야별 Approval Bundle, 소비처 전파, 개별 프로젝트 Sheet tab, Demo-First Vertical Slice |
-| 프로젝트 GDD Google Sheets | `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` | 사용자 중심 시각형 GDD 작업면, Sheet 편집 제안, GitHub·Sheet 공동 읽기, 지속 갱신·수치화·동기화 |
-| 근거 기반 게임 개발 지식 허브 | `docs/knowledge/game-development/README.md` | 게임 기획·아트·개발·AI·벤치마킹·유저리서치·출시의 Method·Guide·Reference·Case·Template 조건부 라우팅 |
-| GPT 이미지 생성·검수·Sheet 구조 | `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md` | 기획 중 시각화, 기획 종료 후보, 이미지 QA·승인 원장, 의미 구조 Sheet tab |
-| Vertical Slice 통합 첨부 실행문 | `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md` | 상세 정본·저장소 우선 인터뷰·기획·Demo-First Slice·GPT→Codex·전체 감사·검증을 파일 하나로 첨부; 최신 Base·프로젝트 정본이 우선 |
-| CI 실행·비용 정책 | `docs/CI_EXECUTION_COST_POLICY.md` | 변경 등급별 PR·main·nightly 검증, concurrency, `ci-gate`, Actions 차단 상태 |
-| Work Mode·Skill 라우팅 | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | PLAN·BUILD·REVIEW, Skill·Skill Mode 구분, Grill Me, GPT→Codex 자동 선택·실행 보고 상세 계약 |
-| 저장소 개요 | `README.md` | 사용 목적·구조·활성 스킬 안내 |
-| 문서·스킬 지도 | `docs/DOCUMENTATION_MAP.md` | 질문별 책임 원본과 최소 읽기 |
-| Base Skill Registry | `skills/SKILL_REGISTRY.json` | 자동 Skill trigger·상태·경로·Skill Mode 라우팅 신호 |
-| 이전 ID 별칭 | `skills/LEGACY_SKILL_ALIASES.md` | 통합 전 Skill ID를 새 Skill Mode로 연결 |
-| Base Skill Learning Log | `skills/SKILL_LEARNING_LOG.md` | 실행 결과·실패·갱신 판정 |
-| Base 수정제안서 | `[수정제안서]/PROPOSAL_REGISTRY.json` | 프로젝트발 승격 후보·승인·구현 상태 |
-| 실행 체크 | `docs/MVP_WORKFLOW_CHECKLIST.md` | 운영 모델에서 파생한 시작·게이트·종료 체크 |
-| 변경 기록 | `docs/CHANGELOG.md` | Base 변경과 동기화 기준 |
+| 통합 운영 모델 | `docs/OPERATING_MODEL.md` | 작업 생명주기·책임 원본·상태·발행·근거·검증 정책 |
+| Work Mode·Skill 라우팅 | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | PLAN·BUILD·REVIEW, 자동 선택, Grill Me, 실행 보고 |
+| GPT–Codex 역할·인계 | `docs/GPT_CODEX_WORKFLOW_POLICY.md` | GPT 비-Godot 완료, Codex Plan 검토, 단계별 Godot 구현·PR Gate |
+| GitHub Pro 운영 | `docs/GITHUB_PRO_OPERATING_POLICY.md` | Ruleset·`ci-gate`·자동 병합·사용량 Budget |
+| GitHub 작업 항목 수명주기 | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | Issue·Goal·Branch·PR·Run·Artifact·Release 보존·종료 |
+| 승인 결정 동기화 | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | 질문 전 대조, 중복 질문 방지, 승인 즉시 정본화, 병합 후 검토 |
+| 기획 순서·근거·Demo-First | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | 누락·충돌 선감사, Evidence Pack, Approval Bundle, Vertical Slice |
+| 프로젝트 GDD Google Sheets | `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` | `USER_FACING_GDD_WORKSPACE`, Sheet 제안·GitHub 동기화 |
+| 이미지 생성·검수·Sheet 구조 | `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md` | 기획 시각화, 이미지 QA·승인 원장·의미 구조 |
+| 근거 기반 게임 개발 허브 | `docs/knowledge/game-development/README.md` | 기획·아트·개발·AI·연구·출시 Method·Guide·Case 라우팅 |
+| CI 실행·비용 | `docs/CI_EXECUTION_COST_POLICY.md` | 변경 등급별 검증·concurrency·Windows·비용 Gate |
+| 활성 Skill 기계 원본 | `skills/SKILL_REGISTRY.json` | trigger·상태·경로·Skill Mode 라우팅 |
+| 활성 Skill 생성 뷰 | `docs/generated/BASE_ACTIVE_SKILLS.md` | Registry에서 생성한 사람용 목록; 직접 편집 금지 |
+| 이전 Skill 별칭 | `skills/LEGACY_SKILL_ALIASES.md` | 통합 전 ID를 현행 Skill·Mode로 연결 |
+| Skill 실행 학습 | `skills/SKILL_LEARNING_LOG.md` | 실패·결정·검증·갱신 판정 |
+| Base 수정제안서 | `[수정제안서]/PROPOSAL_REGISTRY.json` | 프로젝트발 공용화 후보·승인·구현 상태 |
+| 실행 체크 | `docs/MVP_WORKFLOW_CHECKLIST.md` | 운영 모델에서 파생한 시작·Gate·종료 체크 |
+| 변경 기록 | `docs/CHANGELOG.md` | 완료된 Base 변경과 동기화 기준 |
+| Handoff 호환 경로 | `docs/ACTIVE_HANDOFF.md` | `COMPATIBILITY_ONLY`; 프로젝트별 현재 상태를 소유하지 않음 |
+| Archive 운영 | `docs/archive/README.md`, `docs/archive/ARCHIVE_MANIFEST.json` | 비활성 원문·hash·replacement·rollback·권한 기록 |
 
-## 3. 프로젝트 책임 원본
+## 4. 프로젝트 책임 원본
 
 ```text
-현재 상태 → ACTIVE_CONTEXT.md
+현재 상태 → ACTIVE_CONTEXT.md 또는 프로젝트가 선언한 CURRENT_STATUS.md
 문서 위치·책임 → DESIGN_DOCUMENT_REGISTRY.json
 프로젝트·분야 방향 → 등록된 Markdown 또는 JSON 원본
+현재 승인 결정 복원 → CURRENT_CONFIRMED_DECISIONS.md
 현재 실행 범위 → Issue·승인된 직접 요청·Plan
-Work Mode → 현재 단계의 PLAN / BUILD / REVIEW
-실행 순서 → 단계·의존성·병렬 묶음·게이트 계획
+Work Mode → PLAN / BUILD / REVIEW
+실행 순서 → 단계·의존성·병렬 묶음·Gate
 Skill 선택·상태 → SKILL_REGISTRY.json
 Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
-반복 절차 → Skill과 Skill Mode
-Grill Me 결정 → GRILL_ME_DECISION_RECORD와 해당 기획 책임 원본
-현재 승인 결정 복원 → CURRENT_CONFIRMED_DECISIONS.md
-승인 결정 동기화 → GitHub 추적 surface·분야 정본·main Commit·프로젝트 Google Sheets
 전체 구현 기준 → MASTER_IMPLEMENTATION_PLAN
-현재 Godot 구현 범위 → 패키지 계약·Branch·PR
-Repository 보호·병합 설정 → GITHUB_REPOSITORY_GOVERNANCE_PROFILE
-GitHub 작업 항목 생명주기 → GITHUB_WORK_ITEM_LIFECYCLE_POLICY와 PR Template
-GitHub 사용량 → GITHUB_USAGE_BUDGET
+현재 Godot 구현 범위 → 구현 패키지 계약·Branch·PR
 외부 근거 → 출처·날짜·버전·표본·해석이 있는 조사 기록
-근거 묶음 → templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md
-성공·실패·혼합 사례 → templates/research/GAME_DEVELOPMENT_CASE_CARD.md
-플레이 증거 → 빌드·테스터·행동·피드백·퍼널·실험 기록
-실제 상태 → 코드·데이터·자산·테스트·캡처·프로파일
-사람용 발행 → Registry 정책이 요구하는 PDF·선택 DOCX·assets
+플레이 증거 → build·tester·행동·feedback·funnel·experiment 기록
+실제 상태 → 코드·데이터·Scene·Resource·자산·테스트·캡처·프로파일
 발행 최신성 → Publication Manifest
-과거 상태 → Git 이력
+과거 상태 → Git 이력·승인된 Archive
 ```
 
-한 질문에는 현행 책임 원본 하나만 둔다. 같은 서술을 Markdown과 JSON 양쪽에 독립 원본으로 유지하지 않는다. 벤치마크·리뷰·커뮤니티는 요구사항이나 구현 상태의 정본을 대체하지 않는다.
+일반 프로젝트의 기획·상태 확인은 GitHub 정본과 구성된 프로젝트 GDD Google Sheets를 우선한다. HTML 대시보드는 사용자 명시 요청 또는 기존 유지보수에만 사용한다.
 
-## 4. Active Skill Registry View
+## 5. Active Skill Registry View
 
-- [Current Active Base Skills](generated/BASE_ACTIVE_SKILLS.md): generated current list, responsibility, and triggers
-- `skills/SKILL_REGISTRY.json`: machine authority
-- `skills/BASE_V9_SKILL_SNAPSHOT.json`: deterministic snapshot and contract projection
-- `skills/LEGACY_SKILL_ALIASES.md`: compatibility path for prior identifiers
+- `skills/SKILL_REGISTRY.json`: 기계 권한
+- `docs/generated/BASE_ACTIVE_SKILLS.md`: 생성된 현재 목록·책임·trigger
+- `skills/BASE_V9_SKILL_SNAPSHOT.json`: 결정론적 contract projection
+- `skills/LEGACY_SKILL_ALIASES.md`: 이전 ID 호환 경로
 
-The documentation map does not duplicate active-Skill lists. The active Skill count is an observed Registry value.
-
-## 프로젝트 GDD·대시보드 선택 기준
-
-일반 프로젝트 기획·상태 확인은 GitHub 정본과 **프로젝트 GDD Google Sheets**를 우선한다. HTML 대시보드는 사용자가 명시적으로 요청하거나 기존 대시보드 유지보수가 필요한 경우에만 호출한다.
-
-## 5. 자동 호출 정책
+활성 Skill 수는 Registry 관찰값이며 설계 제약이 아니다. 사용자는 Skill·Skill Mode를 선언할 필요가 없고, Prompt 의도와 현재 단계에서 trigger가 일치하는 최소 Skill만 자동 선택한다.
 
 ```json
 {
@@ -128,140 +127,79 @@ The documentation map does not duplicate active-Skill lists. The active Skill co
 }
 ```
 
-사용자는 Skill·Skill Mode를 선언할 필요가 없다. Prompt 의도와 현재 단계에서 Work Mode를 선택하고, Registry trigger가 일치하는 최소 Skill을 자동 선택한다. 같은 요청의 작업 수준·범위·상태를 여러 Skill에서 다시 판정하지 않는다.
-
 - `PLAN`: 요구·근거·설계·정본·실행 순서
 - `BUILD`: 승인 범위의 구현·제작·갱신
 - `REVIEW`: 적대적 검토·반례·검증·판정
-- `clarify` + Grill Me: 사용자만 결정할 수 있는 핵심 분기가 남았을 때 사용
-- `decompose-and-sequence`: 승인된 큰 작업·다중 의존성에만 사용
-- `implementation-package-handoff`: GPT 비-Godot 완료 뒤 Codex에 단계별 Godot 구현을 넘길 때 사용
-- `AUTO_MERGE_AFTER_REQUIRED_CHECKS`: 패키지 승인·HEAD·Required Check·Ruleset·Repository setting이 모두 확인됐을 때 사용
-- `reconcile-legacy`: 구형·중복 파일과 stale 파생본이 있을 때 사용
-- `benchmark-and-player-research`: 외부 근거가 현재 기획 결정을 바꿀 수 있을 때 사용
-- `playtest-and-experiment`: 가설·빌드·표본·행동·피드백 판정이 필요할 때 사용
-- `accessibility-review`·`performance-profile`: 변경 영향과 목표 플랫폼이 있을 때만 사용
-- `ci-cost-optimization`: CI 비용·중복 실행·matrix·Actions 차단 상태가 작업 범위에 있을 때 사용
-- `auditing-canonical-reference-freshness`: 정본 변경 전파 가능성이 있을 때만 사용
+- `clarify` + Grill Me: 사용자만 결정할 수 있는 중요 충돌
+- `decompose-and-sequence`: 승인된 L2 이상·다중 의존성
+- `reconcile-legacy`: 구형·중복·stale 파생본
+- `reference-freshness`: 정본·경로·ID·Schema·생성기 변경 전파
+- `accessibility-review`·`performance-profile`: 변경 영향과 목표 플랫폼이 있을 때만 적용
 
-L1 이상 작업은 실제 사용한 Work Mode·Skill·Skill Mode, 선택 이유, 수행 내용, 결과·증거·미검증을 보고한다. Skill 파일을 읽은 것과 실제 실행한 것을 구분한다.
-
-## 6. 상세 Reference와 Template
+## 6. 질문별 Reference·Template
 
 | 질문 | 먼저 읽을 Reference | 출력 Template |
 |---|---|---|
-| Work Mode·Skill·Skill Mode를 어떻게 고르는가? | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | `templates/project-operations/SKILL_EXECUTION_REPORT.md` |
-| Grill Me로 핵심 결정을 어떻게 한 번에 하나씩 확정하는가? | `skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md` | `templates/project-operations/GRILL_ME_DECISION_RECORD.md` |
-| GPT에서 무엇을 끝내고 Codex에는 무엇을 넘기는가? | `docs/GPT_CODEX_WORKFLOW_POLICY.md` | `templates/project-operations/MASTER_IMPLEMENTATION_PLAN.md` |
-| Codex Plan 재검수와 패키지 구현을 어떻게 인계하는가? | `skills/maintaining-project-context-and-handoff/references/gpt-codex-implementation-handoff.md` | `templates/project-operations/CODEX_PACKAGE_PLAN_REPORT.md`, `templates/project-operations/IMPLEMENTATION_PACKAGE_CONTRACT.md` |
-| GitHub Pro 보호·Ruleset·자동 병합을 어떻게 적용하는가? | `docs/GITHUB_PRO_OPERATING_POLICY.md` | `templates/project-operations/github/GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md`, `templates/project-operations/github/rulesets/solo-main-safety.json` |
-| GitHub 사용량·Budget을 어떻게 기록하는가? | `docs/GITHUB_PRO_OPERATING_POLICY.md` | `templates/project-operations/github/GITHUB_USAGE_BUDGET.md` |
-| PR·Run·Artifact 누적을 기록 손실 없이 어떻게 정리하는가? | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | `.github/pull_request_template.md`, `templates/pull_request_template.md` |
-| 구형 파일을 어떻게 갱신·통합·삭제하는가? | `skills/managing-game-project-operating-system/SKILL.md` | `templates/project-operations/LEGACY_ARTIFACT_RECONCILIATION.md` |
-| 작업을 어떤 단계와 순서로 나누는가? | `skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md` | `templates/planning/EXECUTION_SEQUENCE_PLAN.md` |
-| 게임 시스템 경계·난이도·적 전투 AI·공격 예산·긴장도·DDA를 어떻게 설계하는가? | `skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-and-combat-ai.md` | `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md` |
-| 어떤 게임·유저 반응을 어떻게 조사하고 반영하는가? | `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md` | `templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md` |
-| 게임 기획·아트·개발·AI·벤치마킹을 분야 횡단 근거로 어떻게 개선하는가? | `docs/knowledge/game-development/README.md`, `docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`, `templates/research/GAME_DEVELOPMENT_CASE_CARD.md` |
-| 게임 코어·플레이어 경험·게임 필·보상·난이도를 어떻게 설계하는가? | `docs/knowledge/game-development/GAME_DESIGN_AND_PLAYER_EXPERIENCE_GUIDE.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md` |
-| Visual Pillar·Art Bible·Asset Specification을 어떻게 만든다? | `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`, `templates/research/GAME_DEVELOPMENT_CASE_CARD.md` |
-| ChatGPT·Codex·외부 AI의 Prompt·Context·Evals·보안·권리를 어떻게 관리하는가? | `docs/knowledge/game-development/AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md` |
-| Godot·저장·해상도·입력·성능·생산·출시를 어떻게 기획에 연결하는가? | `docs/knowledge/game-development/TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md` |
-| 공식·학술·현업 출처의 용도·한계·재검증 조건은 무엇인가? | `docs/knowledge/game-development/REFERENCE_SOURCE_CATALOG.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md` |
-| GitHub Actions 비용과 중복 전체 검증을 어떻게 줄이는가? | `docs/CI_EXECUTION_COST_POLICY.md` | `templates/quality/PROJECT_CHANGE_VALIDATION.md` |
-| UI 폴리싱을 어떤 순서와 증거로 진행하는가? | `skills/auditing-and-refining-ui-art/references/ui-polishing-method.md` | `templates/planning/GAME_UX_UI_SYSTEM.md`, `templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md` |
-| 접근성·성능을 어떤 증거로 검증하는가? | `skills/reviewing-and-validating-project-changes/references/accessibility-and-performance-validation.md` | `templates/quality/PROJECT_CHANGE_VALIDATION.md` |
-| 정본 변경이 모두 전파됐는가? | `skills/auditing-canonical-reference-freshness/SKILL.md` | `templates/quality/CANONICAL_REFERENCE_FRESHNESS_AUDIT.md` |
+| Work Mode·Skill·Skill Mode 선택 | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | `templates/project-operations/SKILL_EXECUTION_REPORT.md` |
+| Grill Me 핵심 결정 | `skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md` | `templates/project-operations/GRILL_ME_DECISION_RECORD.md` |
+| 실행 단계·의존성·병렬화 | `skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md` | `templates/planning/EXECUTION_SEQUENCE_PLAN.md` |
+| GPT→Codex 구현 인계 | `skills/maintaining-project-context-and-handoff/references/gpt-codex-implementation-handoff.md` | `MASTER_IMPLEMENTATION_PLAN.md`, `CODEX_PACKAGE_PLAN_REPORT.md`, `IMPLEMENTATION_PACKAGE_CONTRACT.md` |
+| GitHub 보호·Ruleset·자동 병합 | `docs/GITHUB_PRO_OPERATING_POLICY.md` | `templates/project-operations/github/GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md` |
+| PR·Run·Artifact 무손실 정리 | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | `.github/pull_request_template.md`, `templates/pull_request_template.md` |
+| 구형 파일 분류·보존·Archive | `skills/governing-legacy-retention-and-archives/SKILL.md` | `templates/project-operations/LEGACY_ARTIFACT_RECONCILIATION.md` |
+| 게임 코어 판정·확정 | `skills/identifying-project-core/SKILL.md`, `skills/establishing-project-core/SKILL.md` | 프로젝트 코어 책임 원본 |
+| 게임 시스템·난이도·전투 AI | `skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-and-combat-ai.md` | `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md` |
+| 벤치마크·플레이어 근거·실험 | `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md` | `templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md` |
+| 게임 기획·아트·개발·AI·출시 근거 | `docs/knowledge/game-development/README.md` | `GAME_DEVELOPMENT_EVIDENCE_PACK.md`, `GAME_DEVELOPMENT_CASE_CARD.md` |
+| UI 설계·폴리싱·런타임 감사 | `skills/auditing-and-refining-ui-art/SKILL.md` | `GAME_UX_UI_SYSTEM.md`, `GAME_UX_UI_REVIEW_CHECKLIST.md` |
+| 접근성·성능 | `skills/reviewing-and-validating-project-changes/references/accessibility-and-performance-validation.md` | `templates/quality/PROJECT_CHANGE_VALIDATION.md` |
+| 정본 변경 전파 | `skills/auditing-canonical-reference-freshness/SKILL.md` | `templates/quality/CANONICAL_REFERENCE_FRESHNESS_AUDIT.md` |
+| 저장소 전체 누락·stale·Prompt drift | `skills/running-adversarial-review-and-refinement/references/repository-wide-audit-protocol.md` | 저장소 전체 적대적 감사 보고 |
 
-## 7. 발행 정책
+## 7. Archive·호환 문서
 
-각 문서는 `DESIGN_DOCUMENT_REGISTRY.json`에서 하나의 정책을 선택한다.
+- `docs/ACTIVE_HANDOFF.md`: 과거 링크 보존용 `COMPATIBILITY_ONLY` Stub
+- `docs/archive/README.md`: Archive 권한·복구 규칙
+- `docs/archive/ARCHIVE_MANIFEST.json`: archive ID·원문 hash·replacement·rollback·검증 상태
+- `docs/archive/handoffs/2026-07-29-ux-ui-common-system-expansion.md`: 2026-07-29 UX/UI 공용 체계 확산 Handoff 원문 (`ARCHIVE_HISTORY`)
+
+Archive는 기본 콜드 스타트·현재 정본·자동 실행 계획에 포함하지 않는다. 복원은 Archive 파일을 직접 현행으로 복사하지 않고 현재 정본과 충돌을 검토한 별도 변경안으로 수행한다.
+
+## 8. 발행 정책
+
+각 문서는 Registry에서 하나의 정책을 선택한다.
 
 | 정책 | 사용 |
 |---|---|
-| `source_only` | 빠른 운영·라우팅 문서, 원본과 직접 검증만 유지 |
-| `milestone_sync` | 주요 게이트·정기 검토·외부 공유 시 PDF·Manifest 동기화 |
-| `always_sync` | 원본·승인 이미지·생성기 변경과 같은 작업에서 상시 동기화 |
+| `source_only` | 원본과 직접 검증만 유지 |
+| `milestone_sync` | 주요 Gate·정기 검토·외부 공유 시 PDF·Manifest 동기화 |
+| `always_sync` | 원본·승인 이미지·생성기 변경 시 상시 동기화 |
 
-DOCX·다이어그램은 선언한 경우만 생성한다. `CURRENT`, 자동 렌더, Codex 시각 검수, 사람 시각 검수는 독립 상태다.
+DOCX·다이어그램은 선언한 경우만 생성한다. `CURRENT`, 자동 렌더, Codex 시각 검수, 사용자 시각 검수는 독립 상태다.
 
-## 8. 독립 Method와 호환 문서
+## 9. 구조 최적화·지원 Skill
 
-독립 개념 책임을 유지하는 Method:
-
-- 작업·제품 게이트: `docs/knowledge/methods/DEVELOPMENT_GATES_METHOD.md`
-- 전체 기획·추적성: `docs/knowledge/methods/PLANNING_SYSTEM_METHOD.md`
-- 근거 기반 게임 개발·12영역 Coverage: `docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md`
-- 게임 기획·플레이어 경험: `docs/knowledge/game-development/GAME_DESIGN_AND_PLAYER_EXPERIENCE_GUIDE.md`
-- Art Direction·Asset Planning: `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`
-- AI 활용 게임 개발: `docs/knowledge/game-development/AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md`
-- 기술 기획·프로덕션·출시: `docs/knowledge/game-development/TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md`
-- 콘텐츠·서사·아트·애니메이션 등 분야별 Method
-- 조사·근거 평가 Method
-
-다음 기존 Method 경로는 외부 참조 호환성을 위해 유지하되 실행 절차의 최종 원본은 통합 Skill이다.
-
-| 기존 Method | 실행 책임 원본 |
-|---|---|
-| `GAME_PROJECT_OPERATING_SYSTEM_METHOD.md` | `docs/OPERATING_MODEL.md`, `managing-game-project-operating-system` |
-| `EXISTING_PROJECT_SAFE_MIGRATION_METHOD.md` | `managing-game-project-operating-system`의 `audit`·`reconcile-legacy`·`migrate` |
-| `DISCIPLINE_PDF_PUBLICATION_METHOD.md` | `managing-design-documents`의 `publish`·`validate` |
-| `PROJECT_HANDOFF_CONTEXT_METHOD.md` | `maintaining-project-context-and-handoff` |
-| `DISCIPLINE_SKILL_EVOLUTION_METHOD.md` | `evolving-project-discipline-skills` |
-
-## 9. 기존 프로젝트 안전 적용
-
-```text
-PLAN: audit only
-→ 현행 책임·참조·고유 정보 인벤토리
-→ 필요 시 reconcile-legacy 처리표
-→ 목표 구조·보존·롤백 제안
-→ 사용자 승인
-→ BUILD: 승인된 갱신·통합·아카이브·삭제·migrate
-→ REVIEW: 보존·참조·발행·복구 대조
-→ verify
-```
-
-기존 승인 결정·세계관·수치·구현·자산·실패·보류·외부 참조는 조사와 승인 없이 삭제·축약·이동하지 않는다.
-
-## 10. 콜드 스타트와 완료
-
-새 작업자는 저장소만으로 프로젝트 목적, 현재 단계, Work Mode, 보호 범위, 책임 원본, 실제 파일, 자동 선택된 Skill·Skill Mode, Grill Me 결정, 구현 패키지·Branch·Commit·Plan 상태, Repository Ruleset·Required Check·자동 병합 상태, 실행 순서, 외부 근거, 플레이테스트, CI·접근성·성능 검증, 다음 작업과 위험을 찾아야 한다.
-
-완료 보고는 다음을 분리한다.
-
-- 사용한 Work Mode·Skill·Skill Mode와 이유
-- 실제 변경
-- 얻은 결과·증거
-- 실행한 검증
-- 실행하지 못한 검증
-- 사용자 확인 대기
-- 남은 위험·롤백
-- 다음 작업·선행 조건
-
-변경 검증은 `reviewing-and-validating-project-changes`로 작업 계약, 실제 diff, 정본·참조, CI·정적·런타임·접근성·성능·회귀 증거를 연결한다. GitHub Actions를 사용할 수 없으면 `BLOCKED_BY_GITHUB_ACTIONS`, 판정 `UNVERIFIED`로 기록하고 보류 workflow·Job·Required Check·재개 조건을 남긴다. Repository auto-merge·Ruleset을 확인할 수 없으면 `UNVERIFIED_REPOSITORY_SETTING`으로 기록하고 자동 병합하지 않는다. 실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 Skill 호출은 Learning Log에 기록한다. 한 번의 성공은 관찰 또는 가설이며 반복 검증 전에는 공용 강제 규칙으로 승격하지 않는다.
-
-## 구조 최적화·추가 전문 Skill
-
-| 책임 | Skill | 주요 mode |
+| 책임 | Skill | 주요 Mode |
 |---|---|---|
 | 무손실 가지치기 | `pruning-stale-and-nonfunctional-material` | `inventory / classify / preserve-unique / prune-approved / verify-no-loss` |
 | 본문 간소화 | `simplifying-skill-bodies` | `inventory / extract-references / rewrite-router / validate-disclosure` |
-| 동작 보존 리팩토링 | `refactoring-with-contract-preservation` | `baseline-contract / smell-audit / refactor / regression-validate` |
+| 계약 보존 리팩토링 | `refactoring-with-contract-preservation` | `baseline-contract / smell-audit / refactor / regression-validate` |
+| 적대적 검토 | `running-adversarial-review-and-refinement` | `repository-wide-audit / attack / validate-critique / regression-recheck` |
+| 변경 검증 | `reviewing-and-validating-project-changes` | `contract-check / static-validation / regression / evidence-report` |
 | 로컬·GitHub 동기화 | `synchronizing-local-and-github-state` | `inspect / reconcile / refresh-local / publish-remote / verify-sync` |
 | 장기 작업 연속성 | `maintaining-long-running-task-continuity` | `initialize / checkpoint / resume / partial-delivery / close` |
-| Games User Research 11영역 | `governing-game-user-research-coverage` | `install / audit / plan-evidence / synthesize / verify-coverage` |
+| Games User Research | `governing-game-user-research-coverage` | `install / audit / plan-evidence / synthesize / verify-coverage` |
 | 사용자 학습 노트 | `creating-user-learning-notes` | `capture / explain / connect / practice / update` |
-| 프로젝트 대시보드 | `building-project-visual-dashboards` | `frame / map-sources / build / bind-status / validate` |
 | 엔진 런타임 디버깅 | `diagnosing-game-engine-runtime-failures` | `reproduce / isolate / fix-minimally / revalidate / prevent` |
 
-원문 책임 누락 검증: `docs/SKILL_COVERAGE_MAP.md` → `skills/SKILL_COVERAGE.json` → `tools/check_skill_system_coverage.py`.
+원문 책임 Coverage는 `docs/SKILL_COVERAGE_MAP.md` → `skills/SKILL_COVERAGE.json` → `tools/check_skill_system_coverage.py` 순서로 확인한다.
 
-## Base v9 RC 운영 문서
+## 10. Base v9 운영 문서
 
 - [Base Rules Version](BASE_RULES_VERSION.md)
 - [System Map](operations/BASE_V9_SYSTEM_MAP.md)
 - [Maturity Model](operations/BASE_V9_MATURITY_MODEL.md)
-- [Base v9 Release Design](operations/BASE_V9_RELEASE_DESIGN.md)
+- [Release Design](operations/BASE_V9_RELEASE_DESIGN.md)
 - [Implementation Plan](operations/BASE_V9_IMPLEMENTATION_PLAN.md)
 - [Migration Map](operations/BASE_V9_MIGRATION_MAP.md)
 - [Release Contract](operations/BASE_V9_RELEASE_CONTRACT.md)
@@ -271,16 +209,15 @@ PLAN: audit only
 - [Open-Source Godot UI Reference Catalog](knowledge/OPEN_SOURCE_GODOT_UI_REFERENCE_CATALOG.md)
 - [Held Common Project Adoption Work Order](../templates/prompts/BASE_V9_COMMON_PROJECT_ADOPTION_WORK_ORDER.md)
 
-## Retained route index
+## 11. 콜드 스타트·완료
 
-- `repository-wide-audit`: integrated mode of `running-adversarial-review-and-refinement` for full-file, legacy-contract, untouched-consumer, and prompt-drift audits.
-- UX/UI design, 폴리싱, and runtime-result audit: `auditing-and-refining-ui-art`.
-- Grill Me 핵심 의사결정 인터뷰
-- `clarify` + `references/grill-me-protocol.md`
-- GPT→Codex 단계별 Godot 구현 인계
-- `implementation-package-handoff`
-- GitHub Pro 저장소 운영
-- GitHub Pro 보호·Ruleset·자동 병합
-- GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md
-- GITHUB_USAGE_BUDGET.md
-- Game-system routes: `system-design` / `difficulty-and-combat-ai` → `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md`
+새 작업자는 저장소만으로 다음을 찾아야 한다.
+
+1. Base와 프로젝트가 각각 무엇을 책임지는가.
+2. 현재 단계·Work Mode·보호 범위는 무엇인가.
+3. 현재 책임 원본·실제 파일·활성 Skill·Skill Mode는 어디인가.
+4. 어떤 결정·Issue·PR·실행 순서가 현재 작업을 통제하는가.
+5. 정적·런타임·렌더·사람·접근성·성능 검증 중 무엇이 실행됐는가.
+6. 미확정·보류·위험·롤백·다음 진입 조건은 무엇인가.
+
+L1 이상 완료 보고는 실제 사용한 Work Mode·Skill·Skill Mode와 이유, 변경 파일, 근거, 검증 결과, 미검증, Archive·호환·롤백, 다음 작업을 분리한다. GitHub Actions·Repository 설정·런타임·Google Sheets를 확인하지 못했으면 성공으로 추정하지 않는다.
