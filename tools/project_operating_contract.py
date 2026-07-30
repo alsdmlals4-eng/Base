@@ -711,6 +711,33 @@ def _dashboard(
     return document.encode("utf-8")
 
 
+def _project_router_path(adapter: dict[str, Any]) -> Path:
+    repository = str(adapter["project"]["repository"]).rsplit("/", 1)[-1].lower()
+    slug = re.sub(r"[^a-z0-9]+", "-", repository).strip("-") or "project"
+    return Path(".agents") / "skills" / f"{slug}-workflow-router" / "SKILL.md"
+
+
+def _project_router(adapter: dict[str, Any]) -> bytes:
+    repository = str(adapter["project"]["repository"])
+    return f"""---
+name: {repository.rsplit('/', 1)[-1].lower()}-workflow-router
+description: Resolve this project's Base shared and project-local Skills through its verified v9.1 operating contracts.
+---
+
+# Project Workflow Router
+
+Before selecting any route, run the project operating-contract validator for
+this repository and its pinned Base checkout. On a nonzero result, stop; do
+not infer, repair, or execute a route. Then read only
+`skills/PROJECT_BASE_ADAPTER.json` and the generated
+`skills/PROJECT_SKILL_SNAPSHOT.json`.
+
+Resolve `effective_routes` exactly as generated. Project-local routes take
+precedence over same-name Base routes. Follow the selected recorded package at
+its path; this router contains no copied Base shared Skill body.
+""".encode("utf-8")
+
+
 def build_artifacts(
     project_root: Path, base_repository: Path, *, prevalidated: bool = False
 ) -> dict[Path, bytes]:
@@ -737,6 +764,7 @@ def build_artifacts(
         safe_repository_path(project_root, DASHBOARD_PATH, "dashboard output"): _dashboard(
             adapter, snapshot, health, load_object(base_repository / CANDIDATE_LOCK_PATH)
         ),
+        safe_repository_path(project_root, _project_router_path(adapter), "project router output"): _project_router(adapter),
     }
     requested_views = {Path(path) for path in adapter["compatibility"]["views"]}
     legacy_inputs = adapter["compatibility"]["legacy_inputs"]
@@ -1095,6 +1123,47 @@ def migrated_adapter(
     if not project_registry.is_file():
         raise ContractError("Migration requires a project Skill Registry")
     project_registry_relative = project_registry.relative_to(project_root).as_posix()
+    project_registry_data = load_object(project_registry)
+    project_entries = project_registry_data.get("skills", [])
+    if not isinstance(project_entries, list):
+        raise ContractError("Project Skill Registry skills must be a list")
+    project_routes: list[dict[str, str]] = []
+    inactive_routes: list[dict[str, str]] = []
+    for entry in project_entries:
+        if not isinstance(entry, dict):
+            continue
+        skill_id = entry.get("skill_id")
+        if not isinstance(skill_id, str) or not re.fullmatch(r"[a-z0-9][a-z0-9-]*", skill_id):
+            raise ContractError(f"Project Skill Registry has invalid route-capable Skill ID: {skill_id!r}")
+        status = str(entry.get("status", "INACTIVE"))
+        route = {"route_id": skill_id, "skill_id": skill_id, "status": status}
+        if status == "ACTIVE":
+            project_routes.append(route)
+        else:
+            inactive_routes.append({**route, "status": status if status in {"INACTIVE", "HOLD", "RETIRED"} else "INACTIVE"})
+    pinned_base_registry = _git_show_bytes(base_repository, release_evidence_commit, str(registry_lock.get("path", "")))
+    if pinned_base_registry is None:
+        raise ContractError("Pinned Base Registry is unavailable for route migration")
+    try:
+        base_entries = json.loads(pinned_base_registry.decode("utf-8")).get("skills", [])
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ContractError(f"Pinned Base Registry is invalid for route migration: {error}") from error
+    active_base_ids = {
+        item.get("skill_id") for item in base_entries
+        if isinstance(item, dict) and item.get("status") == "ACTIVE" and isinstance(item.get("skill_id"), str)
+    }
+    shared_overrides = legacy.get("shared_skill_overrides", {})
+    if not isinstance(shared_overrides, dict):
+        raise ContractError("Legacy shared_skill_overrides must be an object")
+    missing_base_overrides = sorted(set(shared_overrides) - active_base_ids)
+    if missing_base_overrides:
+        raise ContractError(
+            "Legacy shared override references absent or inactive Base Skills: " + ", ".join(missing_base_overrides)
+        )
+    base_routes = [
+        {"route_id": skill_id, "skill_id": skill_id, "status": "ACTIVE"}
+        for skill_id in sorted(shared_overrides)
+    ]
     project_info = baseline_legacy.get("project", {})
     return {
         "schema_version": 1,
@@ -1111,9 +1180,9 @@ def migrated_adapter(
             "root": ".",
         },
         "routing": {
-            "base_routes": [],
-            "project_routes": [],
-            "inactive_routes": [],
+            "base_routes": base_routes,
+            "project_routes": sorted(project_routes, key=lambda item: item["route_id"]),
+            "inactive_routes": sorted(inactive_routes, key=lambda item: item["route_id"]),
             "aliases": [],
             "precedence": "PROJECT_LOCAL_THEN_BASE_SHARED",
         },
@@ -1125,7 +1194,7 @@ def migrated_adapter(
                 "hash_definition": "RAW_FILE_BYTES_SHA256",
             },
         },
-        "shared_overrides": {},
+        "shared_overrides": shared_overrides,
         "gdd_sheet": {"role": "USER_FACING_GDD_WORKSPACE", "sync_status": "NOT_CONFIGURED"},
         "protected_baseline": {
             "authority_kind": protected_authority_kind,

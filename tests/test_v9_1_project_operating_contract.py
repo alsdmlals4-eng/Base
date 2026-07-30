@@ -372,6 +372,7 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         generated = [
             self.project / "skills/PROJECT_SKILL_SNAPSHOT.json",
             self.project / "docs/PROJECT_OPERATING_DASHBOARD.html",
+            self.project / ".agents/skills/project-workflow-router/SKILL.md",
             self.project / "skills/BASE_V9_ADAPTER.json",
             self.project / "skills/PROJECT_BASE_SKILL_ADAPTER.json",
             self.project / "skills/PROJECT_PATH_ADAPTER.json",
@@ -388,8 +389,12 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         self.assertEqual(snapshot["source_registry"]["sha256"], digest(self.adapter))
         self.assertEqual(snapshot["base_routes"][0]["route_id"], "shared-skill")
         self.assertEqual(snapshot["project_routes"][0]["route_id"], "local-skill")
+        router = generated[2].read_text(encoding="utf-8")
+        self.assertIn("PROJECT_BASE_ADAPTER.json", router)
+        self.assertIn("PROJECT_SKILL_SNAPSHOT.json", router)
+        self.assertNotIn("# Shared", router)
         expected_consumer_fields = ("base_route", "role_bindings", "path_bindings")
-        for compatibility_view, consumer_field in zip(generated[2:], expected_consumer_fields):
+        for compatibility_view, consumer_field in zip(generated[3:], expected_consumer_fields):
             data = json.loads(compatibility_view.read_text(encoding="utf-8"))
             self.assertEqual(data["artifact_role"], "GENERATED_COMPATIBILITY_VIEW")
             self.assertEqual(data["lifecycle"], "ONE_CYCLE")
@@ -1285,6 +1290,10 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
             "skills/LEGACY_PROJECT_ADAPTER.json",
         )
         self.assertEqual(migrated["protected_baseline"]["policy_sha256"], self.protected_policy_hash)
+        self.assertEqual(
+            migrated["routing"]["project_routes"],
+            [{"route_id": "local-skill", "skill_id": "local-skill", "status": "ACTIVE"}],
+        )
         self.adapter.write_bytes(output.read_bytes())
         validates = self.run_tool(
             CHECK,
