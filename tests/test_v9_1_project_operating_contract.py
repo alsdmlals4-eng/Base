@@ -223,7 +223,14 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         git(self.project, "update-ref", "refs/remotes/origin/main", self.protected_baseline_commit)
         self.protected_policy_hash = policy_digest(["project.godot", "game/**", "assets/**"])
         self.adapter = self.project / "skills/PROJECT_BASE_ADAPTER.json"
-        self.adapter.write_text(json.dumps(self.adapter_data(), ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        adapter = self.adapter_data()
+        project_registry_blob = subprocess.run(
+            ["git", "-C", str(self.project), "show", f"{self.protected_baseline_commit}:skills/SKILL_REGISTRY.json"],
+            capture_output=True,
+            check=True,
+        ).stdout
+        adapter["skill_registry"]["project"]["sha256"] = hashlib.sha256(project_registry_blob).hexdigest()
+        self.adapter.write_text(json.dumps(adapter, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         self.project_commit = commit_all(self.project, "install v9.1 adapter")
 
     def tearDown(self) -> None:
@@ -704,6 +711,21 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("protected", result.stderr.lower())
         self.assertIn("project.godot", result.stderr)
+
+    def test_generator_requires_exact_trusted_baseline_after_remote_ref_advances(self) -> None:
+        args = ["--project-root", str(self.project), "--base-repository", str(self.base), "--write"]
+        git(self.project, "update-ref", "refs/remotes/origin/main", self.project_commit)
+
+        blocked = self.run_tool(BUILD, *args)
+        self.assertNotEqual(blocked.returncode, 0)
+        self.assertIn("external protected authority", blocked.stderr.lower())
+
+        trusted = self.run_tool(BUILD, *args, "--protected-base", self.protected_baseline_commit)
+        self.assertEqual(trusted.returncode, 0, trusted.stdout + trusted.stderr)
+
+        wrong = self.run_tool(BUILD, *args, "--protected-base", self.project_commit)
+        self.assertNotEqual(wrong.returncode, 0)
+        self.assertIn("trusted", wrong.stderr.lower())
 
     def test_protected_paths_fail_closed_for_bad_baseline_untracked_case_and_policy_weakening(self) -> None:
         args = ["--project-root", str(self.project), "--base-repository", str(self.base)]
