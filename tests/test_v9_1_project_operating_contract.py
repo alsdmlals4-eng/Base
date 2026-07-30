@@ -1349,6 +1349,42 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         self.assertNotEqual(unsafe.returncode, 0)
         self.assertIn("escapes", unsafe.stderr.lower())
 
+    def test_migrator_preserves_registry_identity_and_gdd_contract(self) -> None:
+        registry = json.loads(self.project_registry.read_text(encoding="utf-8"))
+        registry["project"] = {"repository": "example/actual-project"}
+        registry["base_registry_route"] = {
+            "project_sheet_id": "sheet-123",
+            "project_sheet_role": "USER_FACING_GDD_WORKSPACE",
+            "project_sheet_edit_policy": "PROPOSED_SHEET_CHANGE",
+            "project_sheet_status": "PROJECT_SHEET_CONFIGURED",
+        }
+        self.project_registry.write_text(json.dumps(registry, sort_keys=True) + "\n", encoding="utf-8")
+        legacy = json.loads(self.legacy_adapter.read_text(encoding="utf-8"))
+        legacy["project"]["repository"] = "example/old-project"
+        self.legacy_adapter.write_text(json.dumps(legacy, sort_keys=True) + "\n", encoding="utf-8")
+        output = self.project / "skills/MIGRATED_PROJECT_BASE_ADAPTER.json"
+        args = (
+            "--project-root", str(self.project),
+            "--base-repository", str(self.base),
+            "--legacy-adapter", str(self.legacy_adapter),
+            "--output", str(output),
+            "--release-commit", self.release_commit,
+            "--release-evidence-commit", self.evidence_commit,
+            "--protected-baseline-commit", self.protected_baseline_commit,
+            "--protected-authority-kind", "REMOTE_TRACKING_REF",
+            "--protected-authority-ref", "refs/remotes/origin/main",
+        )
+        written = self.run_tool(MIGRATE, *args, "--write")
+        self.assertEqual(written.returncode, 0, written.stdout + written.stderr)
+        migrated = json.loads(output.read_text(encoding="utf-8"))
+        self.assertEqual(migrated["project"]["repository"], "example/actual-project")
+        self.assertEqual(migrated["project"]["legacy_repository_aliases"], ["example/project"])
+        self.assertEqual(migrated["gdd_sheet"]["id"], "sheet-123")
+        self.assertEqual(migrated["gdd_sheet"]["sync_status"], "BLOCKED")
+        self.assertEqual(migrated["gdd_sheet"]["sheet_only_change_policy"], "PROPOSED_SHEET_CHANGE")
+        checked = self.run_tool(MIGRATE, *args, "--check")
+        self.assertEqual(checked.returncode, 0, checked.stdout + checked.stderr)
+
     def test_project_skill_paths_may_be_relative_to_the_declared_registry(self) -> None:
         registry = self.project / "docs/planning/SKILL_REGISTRY.json"
         registry.parent.mkdir(parents=True)
