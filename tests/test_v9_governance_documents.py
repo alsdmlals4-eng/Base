@@ -61,17 +61,19 @@ class V9GovernanceDocumentTests(unittest.TestCase):
     def test_cross_project_handoff_is_archived_without_active_authority(self) -> None:
         archive_path = "docs/archive/handoffs/2026-07-29-ux-ui-common-system-expansion.md"
         manifest_path = "docs/archive/ARCHIVE_MANIFEST.json"
+        audit_path = "docs/operations/BASE_REPOSITORY_INTEGRITY_AUDIT_2026-07-30.md"
         stub = read("docs/ACTIVE_HANDOFF.md")
         archive_file = ROOT / archive_path
 
         self.assertTrue(archive_file.is_file(), archive_path)
         self.assertTrue((ROOT / "docs/archive/README.md").is_file())
         self.assertTrue((ROOT / manifest_path).is_file(), manifest_path)
+        self.assertTrue((ROOT / audit_path).is_file(), audit_path)
         archive = archive_file.read_text(encoding="utf-8")
         archive_readme = read("docs/archive/README.md")
         manifest = json.loads(read(manifest_path))
         documentation_map = read("docs/DOCUMENTATION_MAP.md")
-        changelog = read("docs/CHANGELOG.md")
+        audit = read(audit_path)
 
         for term in ("COMPATIBILITY_ONLY", archive_path, "프로젝트 저장소"):
             self.assertIn(term, stub)
@@ -102,7 +104,8 @@ class V9GovernanceDocumentTests(unittest.TestCase):
 
         self.assertIn(archive_path, documentation_map)
         self.assertIn("COMPATIBILITY_ONLY", documentation_map)
-        self.assertIn(archive_path, changelog)
+        for term in ("DEC-2026-07-30-001", archive_path, "ARCHIVE_HISTORY", "PR #72"):
+            self.assertIn(term, audit)
 
 
 if __name__ == "__main__":
