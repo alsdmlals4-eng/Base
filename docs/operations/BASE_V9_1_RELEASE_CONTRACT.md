@@ -5,10 +5,11 @@ Base v9.1 preserves the v9.0 release artifacts and history. It adds compatible p
 The machine-readable candidate identity is `base-v9.1.lock.json` with
 `release_state=RELEASE_CANDIDATE`. Candidate payload/evidence commits remain
 null until the corresponding commits exist; the lock must not invent them.
-The current candidate Registry path and raw-byte hash are recorded independently,
-but while either candidate commit pin is null, v9.1 adapter generation and
-migration still fail closed. The v9.0 pins are compatibility history, not
-runnable v9.1 adapter pins.
+While candidate pins are null, the current v9.1 Registry path and raw-byte hash
+are recorded independently and adapter generation/migration fail closed. Once
+both pins exist, the same Registry identity is read from the pinned evidence
+commit; later Base Registry evolution cannot rewrite the released contract. The
+v9.0 pins are compatibility history, not runnable v9.1 adapter pins.
 
 All eight outputs declared by `tools/build_base_v9_artifacts.py` form the v9.0
 historical freeze set. For each path, `base-v9.1.lock.json` pins the Git blob OID

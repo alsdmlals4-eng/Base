@@ -296,9 +296,31 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
         self.assertEqual(historical["commit"], lock["compatibility_base"]["release_evidence_commit"])
         self.assertEqual(historical["path"], base_lock["source_of_truth"])
         self.assertEqual(historical["sha256"], base_lock["registry_sha256"])
-        current_path = ROOT / current["path"]
-        self.assertEqual(current["sha256"], hashlib.sha256(current_path.read_bytes()).hexdigest())
+        self.assertEqual(lock["candidate_release_commit"], "3c158f52cfdad889970aef4d6ce6650a6fea0645")
+        self.assertEqual(lock["candidate_release_evidence_commit"], "dd20ad3852e264d7e337e34d2cb963f71053a6cb")
+        evidence_registry = subprocess.run(
+            [
+                "git", "-C", str(ROOT), "show",
+                f"{lock['candidate_release_evidence_commit']}:{current['path']}",
+            ],
+            capture_output=True,
+            check=True,
+        ).stdout
+        self.assertEqual(current["sha256"], hashlib.sha256(evidence_registry).hexdigest())
         self.assertEqual(self.integrity.registry_authority_errors(ROOT, lock), [])
+        release_errors = getattr(self.integrity, "candidate_release_evidence_errors", lambda *_: [])
+        self.assertEqual(release_errors(ROOT, lock, "dd20ad3852e264d7e337e34d2cb963f71053a6cb"), [])
+
+        bad_registry = json.loads(json.dumps(lock))
+        bad_registry["candidate_registry"]["sha256"] = "0" * 64
+        self.assertTrue(any("registry" in error.lower() for error in release_errors(ROOT, bad_registry, "dd20ad3852e264d7e337e34d2cb963f71053a6cb")))
+
+        self.assertTrue(
+            any(
+                "trusted history" in error.lower()
+                for error in release_errors(ROOT, lock, "3c158f52cfdad889970aef4d6ce6650a6fea0645")
+            )
+        )
 
     def test_release_evidence_is_exact_transition_inside_trusted_history(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
