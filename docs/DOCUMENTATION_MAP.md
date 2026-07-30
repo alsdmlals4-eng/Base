@@ -67,7 +67,7 @@ Base 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 �
 | GitHub 작업 항목 수명주기 | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | Issue·Goal·Branch·PR·Run·Artifact·Release 보존·종료 |
 | 승인 결정 동기화 | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | 질문 전 대조, 중복 질문 방지, 승인 즉시 정본화, 병합 후 검토 |
 | 기획 순서·근거·Demo-First | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | 누락·충돌 선감사, Evidence Pack, Approval Bundle, Vertical Slice |
-| 프로젝트 GDD Google Sheets | `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` | `USER_FACING_GDD_WORKSPACE`, Sheet 제안·GitHub 동기화 |
+| 프로젝트 GDD Google Sheets | `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` | `USER_FACING_GDD_WORKSPACE`, 단일 결정·GDD Module·선택적 시각 Artifact 색인, Sheet 제안·GitHub 동기화 |
 | 시각 협업 도구 | `docs/VISUAL_COLLABORATION_TOOL_POLICY.md` | Figma·Whimsical의 GDD/외부 협업 역할·Artifact·정본 경계 |
 | 재사용 Capability 조합 | `docs/CAPABILITY_COMPOSITION_MAP.md` | 허용 context·조합·금지 경계·필요 증거 |
 | 이미지 생성·검수·Sheet 구조 | `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md` | 기획 시각화, 이미지 QA·승인 원장·의미 구조 |
