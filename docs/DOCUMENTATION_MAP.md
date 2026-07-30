@@ -156,7 +156,21 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 | 정본 변경 전파 | `skills/auditing-canonical-reference-freshness/SKILL.md` | `templates/quality/CANONICAL_REFERENCE_FRESHNESS_AUDIT.md` |
 | 저장소 전체 누락·stale·Prompt drift | `skills/running-adversarial-review-and-refinement/references/repository-wide-audit-protocol.md` | 저장소 전체 적대적 감사 보고 |
 
-## 7. Archive·호환 문서
+## 7. 안정 호환 라우팅 인덱스
+
+아래 문자열과 경로는 기존 Template·Test·외부 참조가 현재 책임 원본을 찾는 안정 경로다. 설명을 중복 확장하지 않되 제거하거나 임의로 축약하지 않는다.
+
+- 현행 Vertical Slice 통합 첨부 Prompt: `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md`
+- Grill Me 핵심 의사결정 인터뷰
+- `clarify` + `references/grill-me-protocol.md`
+- GPT→Codex 단계별 Godot 구현 인계
+- `implementation-package-handoff`
+- GitHub Pro 저장소 운영
+- GitHub Pro 보호·Ruleset·자동 병합
+- `GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md`
+- `GITHUB_USAGE_BUDGET.md`
+
+## 8. Archive·호환 문서
 
 - `docs/ACTIVE_HANDOFF.md`: 과거 링크 보존용 `COMPATIBILITY_ONLY` Stub
 - `docs/archive/README.md`: Archive 권한·복구 규칙
@@ -165,7 +179,7 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 
 Archive는 기본 콜드 스타트·현재 정본·자동 실행 계획에 포함하지 않는다. 복원은 Archive 파일을 직접 현행으로 복사하지 않고 현재 정본과 충돌을 검토한 별도 변경안으로 수행한다.
 
-## 8. 발행 정책
+## 9. 발행 정책
 
 각 문서는 Registry에서 하나의 정책을 선택한다.
 
@@ -177,7 +191,7 @@ Archive는 기본 콜드 스타트·현재 정본·자동 실행 계획에 포�
 
 DOCX·다이어그램은 선언한 경우만 생성한다. `CURRENT`, 자동 렌더, Codex 시각 검수, 사용자 시각 검수는 독립 상태다.
 
-## 9. 구조 최적화·지원 Skill
+## 10. 구조 최적화·지원 Skill
 
 | 책임 | Skill | 주요 Mode |
 |---|---|---|
@@ -194,7 +208,7 @@ DOCX·다이어그램은 선언한 경우만 생성한다. `CURRENT`, 자동 렌
 
 원문 책임 Coverage는 `docs/SKILL_COVERAGE_MAP.md` → `skills/SKILL_COVERAGE.json` → `tools/check_skill_system_coverage.py` 순서로 확인한다.
 
-## 10. Base v9 운영 문서
+## 11. Base v9 운영 문서
 
 - [Base Rules Version](BASE_RULES_VERSION.md)
 - [System Map](operations/BASE_V9_SYSTEM_MAP.md)
@@ -209,7 +223,7 @@ DOCX·다이어그램은 선언한 경우만 생성한다. `CURRENT`, 자동 렌
 - [Open-Source Godot UI Reference Catalog](knowledge/OPEN_SOURCE_GODOT_UI_REFERENCE_CATALOG.md)
 - [Held Common Project Adoption Work Order](../templates/prompts/BASE_V9_COMMON_PROJECT_ADOPTION_WORK_ORDER.md)
 
-## 11. 콜드 스타트·완료
+## 12. 콜드 스타트·완료
 
 새 작업자는 저장소만으로 다음을 찾아야 한다.
 
