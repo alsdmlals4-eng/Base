@@ -74,6 +74,30 @@ class ProjectGDDGoogleSheetsContractTests(unittest.TestCase):
         ):
             self.assertIn(term, planning)
 
+    def test_gdd_information_architecture_has_single_current_decision_register_and_grouped_domains(self) -> None:
+        policy = read("docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md")
+        workbook = read("templates/project-operations/PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md")
+        tabs = read("templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md")
+        for term in (
+            "단일 현재 결정 원장",
+            "02_현재_확정결정",
+            "Decision ID 참조",
+            "중복 금지",
+            "경험",
+            "시스템·콘텐츠",
+            "세계·서사",
+            "표현",
+            "제작·검증",
+        ):
+            self.assertIn(term, policy)
+        self.assertIn("결정 원장", workbook)
+        self.assertIn("GDD 읽기 순서", workbook)
+        self.assertIn("10_경험", tabs)
+        self.assertIn("20_시스템_콘텐츠", tabs)
+        self.assertIn("30_세계_서사", tabs)
+        self.assertIn("40_표현", tabs)
+        self.assertIn("50_제작_검증", tabs)
+
 
 if __name__ == "__main__":
     unittest.main()
