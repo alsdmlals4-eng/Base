@@ -3,6 +3,7 @@ from __future__ import annotations
 import unittest
 import json
 import hashlib
+import importlib.util
 from pathlib import Path
 
 
@@ -14,16 +15,27 @@ def read(relative_path: str) -> str:
 
 
 class VerticalSliceV9ContractTests(unittest.TestCase):
-    def test_active_contract_declares_reconciliation_only_first_wave(self) -> None:
+    def test_active_contract_restores_the_single_attachment_integrated_route(self) -> None:
         prompt = read("templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md")
         for term in (
-            'contract_version: "9.0"',
+            'contract_version: "9.1"',
+            'release_line: "Base v9.3"',
             "active_authority: true",
+            "SINGLE_ATTACHMENT_RECONCILIATION_AWARE_INTEGRATED_EXECUTION",
+            "이 파일 하나만 첨부하면 저장소 우선 인터뷰부터 기획·Codex 인계·구현·검수·병합 후 동기화까지",
             "APPLICATION_BINDING",
+            "REPOSITORY_FIRST_INTERVIEW",
+            "INTEGRATED_DELIVERY_PROFILE",
             "RECONCILIATION_PLANNING_PROFILE",
+            "CONDITIONAL_RECONCILIATION",
+            "모든 첨부의 기본값이 아니라",
+            "PLAN_AND_CODEX_HANDOFF",
+            "CANONICAL_UPDATE_AND_IMPLEMENTATION",
+            "MERGE_AND_SYNC",
+            "병합된 main을 기준으로만",
             "금지: 게임 코드·Scene·데이터·에셋 수정",
             "Google Sheet 쓰기",
-            "제품 범위 PR 병합",
+            "요청·승인·Issue/Goal 없이 제품 범위를 발명하는 구현",
         ):
             self.assertIn(term, prompt)
 
@@ -109,6 +121,77 @@ class VerticalSliceV9ContractTests(unittest.TestCase):
         self.assertEqual(evidence["release_payload_commit"], lock["candidate_release_commit"])
         self.assertTrue((ROOT / "schemas/base-v9-2-release-evidence-v1.schema.json").is_file())
 
+    def test_v93_candidate_preserves_v92_and_declares_the_compatibility_fix(self) -> None:
+        candidate = json.loads((ROOT / "base-v9.3.lock.json").read_text(encoding="utf-8"))
+        v92 = json.loads((ROOT / "base-v9.2.lock.json").read_text(encoding="utf-8"))
+        contract = read("docs/operations/BASE_V9_3_RELEASE_CONTRACT.md")
+
+        self.assertEqual(candidate["release_line"], "v9.3.0")
+        self.assertEqual(candidate["release_state"], "RELEASE_CANDIDATE")
+        self.assertEqual(candidate["github_issue"], 107)
+        self.assertIsNone(candidate["candidate_release_commit"])
+        self.assertIsNone(candidate["candidate_release_evidence_commit"])
+        self.assertEqual(v92["release_state"], "BASE_RELEASED")
+        self.assertIn("does not rewrite\nthe v9.2 payload", contract)
+        self.assertIn("single-attachment integrated execution behavior", contract)
+        self.assertIn('"9.3.0": Path("base-v9.3.lock.json")', read("tools/project_operating_contract.py"))
+        core = read("tools/project_operating_contract.py")
+        self.assertIn("def latest_released_base_version", core)
+        self.assertIn("selected_base_version = base_version or latest_released_base_version(base_repository)", core)
+        self.assertIn("newest locally available lock with usable release and evidence pins", read("tools/migrate_project_operating_contract.py"))
+        self.assertEqual(
+            candidate["candidate_registry"]["sha256"],
+            hashlib.sha256((ROOT / "skills/SKILL_REGISTRY.json").read_bytes()).hexdigest(),
+        )
+        self.assertTrue((ROOT / "schemas/base-v9-3-candidate-lock-v1.schema.json").is_file())
+        self.assertTrue((ROOT / "schemas/base-v9-3-release-evidence-v1.schema.json").is_file())
+
+        spec = importlib.util.spec_from_file_location(
+            "check_base_v9_integrity_v93", ROOT / "tools/check_base_v9_integrity.py"
+        )
+        assert spec and spec.loader
+        integrity = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(integrity)
+        self.assertEqual(integrity.v93_release_lock_errors(ROOT, candidate, "17f93334b6e68940ec2206c53164035b235ffb7a"), [])
+        mismatched_registry = json.loads(json.dumps(candidate))
+        mismatched_registry["candidate_registry"]["sha256"] = "0" * 64
+        self.assertTrue(
+            any("Registry hash" in error for error in integrity.v93_release_lock_errors(
+                ROOT, mismatched_registry, "17f93334b6e68940ec2206c53164035b235ffb7a"
+            ))
+        )
+        evidence = {
+            "schema_version": 1,
+            "artifact_role": "BASE_V9_3_RELEASE_EVIDENCE",
+            "release_line": "v9.3.0",
+            "evidence_status": "RECORDED_ON_TRUSTED_MAIN_BEFORE_PIN_FINALIZATION",
+            "repository": "alsdmlals4-eng/Base",
+            "candidate_issue": 107,
+            "candidate_pull_request": 108,
+            "release_payload_commit": "17f93334b6e68940ec2206c53164035b235ffb7a",
+            "candidate_registry": candidate["candidate_registry"],
+            "validation": {"base_v93_contract_ci": "PASSED"},
+            "product_evidence": {
+                "godot_runtime": "NOT_RUN",
+                "device": "NOT_RUN",
+                "accessibility": "NOT_RUN",
+                "human_validation": "NOT_RUN",
+            },
+        }
+        self.assertEqual(
+            integrity.v93_evidence_record_errors(
+                ROOT, candidate, evidence, "17f93334b6e68940ec2206c53164035b235ffb7a"
+            ),
+            [],
+        )
+        wrong_issue = json.loads(json.dumps(evidence))
+        wrong_issue["candidate_issue"] = 0
+        self.assertTrue(
+            any("candidate Issue" in error for error in integrity.v93_evidence_record_errors(
+                ROOT, candidate, wrong_issue, "17f93334b6e68940ec2206c53164035b235ffb7a"
+            ))
+        )
+
     def test_visual_policy_and_skill_share_the_checkpoint_boundary(self) -> None:
         policy = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
         skill = read("skills/designing-art-prompts-and-technique-cards/SKILL.md")
@@ -116,6 +199,17 @@ class VerticalSliceV9ContractTests(unittest.TestCase):
             self.assertIn(term, policy)
         for term in ("`intermediate-visual-checkpoint`", "Screen Interpretation Review", "사용자 Decision 없이"):
             self.assertIn(term, skill)
+
+    def test_merged_main_sheet_sync_requires_exact_configured_destination_and_readback(self) -> None:
+        prompt = read("templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md")
+        for term in (
+            "PROJECT_SHEET_CONFIGURED",
+            "spreadsheet URL·ID·쓰기 권한·대상 tab·변경 range",
+            "계약된 tab·range만",
+            "전후 값을 즉시 재조회",
+            "병합된 **뒤에만**",
+        ):
+            self.assertIn(term, prompt)
 
 
 if __name__ == "__main__":

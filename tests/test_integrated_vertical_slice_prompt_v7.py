@@ -26,9 +26,13 @@ class IntegratedVerticalSlicePromptV7Tests(unittest.TestCase):
 
         for term in (
             'contract_name: VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT',
-            'contract_version: "9.0"',
-            "execution_model: RECONCILIATION_FIRST_INTEGRATED_EXECUTION",
+            'contract_version: "9.1"',
+            'release_line: "Base v9.3"',
+            "usage: \"이 파일 하나만 첨부하면 저장소 우선 인터뷰부터 기획·Codex 인계·구현·검수·병합 후 동기화까지 현재 작업에 필요한 절차를 실행한다.\"",
+            "execution_model: SINGLE_ATTACHMENT_RECONCILIATION_AWARE_INTEGRATED_EXECUTION",
             "APPLICATION_BINDING",
+            "REPOSITORY_FIRST_INTERVIEW",
+            "INTEGRATED_DELIVERY_PROFILE",
             "RECONCILIATION_PLANNING_PROFILE",
             "STALE_PROMPT_CONTRACT",
         ):
@@ -85,6 +89,26 @@ class IntegratedVerticalSlicePromptV7Tests(unittest.TestCase):
             "Google Sheet",
             "Source / Consumer / Propagation Map",
             "Approval Bundle",
+            "PLAN_AND_CODEX_HANDOFF",
+            "CANONICAL_UPDATE_AND_IMPLEMENTATION",
+            "MERGE_AND_SYNC",
+            "merged main",
+        ):
+            self.assertIn(term, prompt)
+
+    def test_reconciliation_is_conditional_and_single_attachment_can_finish_an_authorized_delivery(self) -> None:
+        prompt = read(PROMPT_PATH)
+
+        self.assertIn("모든 첨부의 기본값이 아니라", prompt)
+        self.assertIn("`INTEGRATED_DELIVERY_PROFILE`은 `PLAN_OR_DECISION` 또는 `IMPLEMENTATION_REQUESTED`에 쓰는 기본 실행 경로", prompt)
+        self.assertIn("새 첨부나 별도 축약 Prompt를 요구하지 않는다", prompt)
+        for term in (
+            "GitHub Issue",
+            "/goal Implement GitHub Issue #[NUMBER] exactly as specified.",
+            "Codex 구현 인계",
+            "독립 리뷰·적대적 검토",
+            "병합된 main을 기준으로만",
+            "Sheet 단독 편집은 언제나 `PROPOSED_SHEET_CHANGE`",
         ):
             self.assertIn(term, prompt)
 

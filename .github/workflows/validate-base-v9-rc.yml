@@ -1,4 +1,4 @@
-name: Validate Base v9.1 Operating Contract
+name: Validate Base v9 Operating Contracts
 
 on:
   pull_request:
@@ -8,6 +8,8 @@ on:
       - "AGENTS.md"
       - "base.lock.json"
       - "base-v9.1.lock.json"
+      - "base-v9.2.lock.json"
+      - "base-v9.3.lock.json"
       - ".codex-plugin/**"
       - "docs/**"
       - "skills/**"
@@ -24,6 +26,8 @@ on:
       - "AGENTS.md"
       - "base.lock.json"
       - "base-v9.1.lock.json"
+      - "base-v9.2.lock.json"
+      - "base-v9.3.lock.json"
       - ".codex-plugin/**"
       - "docs/**"
       - "skills/**"
@@ -55,7 +59,7 @@ jobs:
         run: |
           python tools/build_base_v9_artifacts.py --check
           python tools/check_base_v9_integrity.py --trusted-history-commit "$TRUSTED_HISTORY_COMMIT"
-      - name: Run Base v9 and v9.1 focused tests
+      - name: Run Base v9, v9.1, and active v9 prompt focused tests
         run: |
           python -m unittest \
             tests.test_v9_machine_contracts \
@@ -65,6 +69,7 @@ jobs:
             tests.test_v9_1_review_remediation \
             tests.test_v9_1_skill_pressure_contracts \
             tests.test_project_gdd_google_sheets_contract \
+            tests.test_vertical_slice_v9_contract \
             -v
 
   ci-gate:

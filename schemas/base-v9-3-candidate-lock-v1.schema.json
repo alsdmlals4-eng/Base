@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/base-v9-3-candidate-lock-v1.schema.json",
+  "title": "Base v9.3 Release Candidate Lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_role", "release_line", "release_state", "repository", "github_issue", "candidate_release_commit", "candidate_release_evidence_commit", "candidate_registry"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "BASE_V9_3_RELEASE_CANDIDATE_LOCK"},
+    "release_line": {"const": "v9.3.0"},
+    "release_state": {"enum": ["RELEASE_CANDIDATE", "BASE_RELEASED"]},
+    "repository": {"const": "alsdmlals4-eng/Base"},
+    "github_issue": {"const": 107},
+    "candidate_release_commit": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
+    "candidate_release_evidence_commit": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
+    "candidate_registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "hash_definition"],
+      "properties": {
+        "path": {"const": "skills/SKILL_REGISTRY.json"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "hash_definition": {"const": "RAW_FILE_BYTES_SHA256"}
+      }
+    }
+  },
+  "oneOf": [
+    {"properties": {"release_state": {"const": "RELEASE_CANDIDATE"}, "candidate_release_commit": {"type": "null"}, "candidate_release_evidence_commit": {"type": "null"}}},
+    {"properties": {"release_state": {"const": "BASE_RELEASED"}, "candidate_release_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "candidate_release_evidence_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}}}
+  ]
+}

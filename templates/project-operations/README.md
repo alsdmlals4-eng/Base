@@ -25,7 +25,7 @@
 
 ## 단일 첨부용 통합 실행문
 
-상세 기획 정본의 복원·작업 인터뷰·Demo-First Vertical Slice·GPT→Codex·적대적 검토·완전성 감사를 파일 하나로 전달할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 첨부한다. 별도 축약 실행문은 필요하지 않다. Prompt는 프로젝트에 동기화된 Base 기준과 프로젝트 정본보다 높은 권한이 아니며 drift는 `STALE_PROMPT_CONTRACT`로 보고한다. 프로젝트에는 공용 본문 대신 `VERTICAL_SLICE_PROJECT_APPLICATION_v9.md`와 복원·감사 패킷을 얇게 적용한다.
+저장소 우선 인터뷰부터 기획·Demo-First Vertical Slice·GPT→Codex 인계·구현·검수·병합 후 동기화까지 현재 요청에 필요한 절차를 파일 하나로 전달할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 첨부한다. 별도 축약 실행문은 필요하지 않다. Prompt는 프로젝트에 동기화된 Base 기준과 프로젝트 정본보다 높은 권한이 아니며 drift는 `STALE_PROMPT_CONTRACT`로 보고한다. 감사·복원만 필요한 경우에는 계약이 `RECONCILIATION_PLANNING_PROFILE`을 선택하고, 구현이 요청·승인된 경우에는 `INTEGRATED_DELIVERY_PROFILE`로 계속 진행한다. 프로젝트에는 공용 본문 대신 `VERTICAL_SLICE_PROJECT_APPLICATION_v9.md`와 복원·감사 패킷을 얇게 적용한다.
 
 ## 가장 중요한 위치 규칙
 

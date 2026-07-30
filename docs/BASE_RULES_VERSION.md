@@ -27,6 +27,13 @@ compatibility inputs. Its release identity is recorded separately in
 Until its separate evidence and pin-finalization PRs are merged, its candidate
 pins are null and projects must continue to use their existing verified Base pin.
 
+Base v9.3 is the compatible correction line for the active v9 contract. It keeps
+the v9.2 release commits intact while restoring the v8 single-attachment journey:
+repository-first interview, planning, Codex handoff/implementation, validation,
+and merged-main synchronization when the request and project gates authorize it.
+Its release identity is recorded in `../base-v9.3.lock.json`; reconciliation is
+now a conditional safety profile, not the universal default.
+
 ## Compatibility rule
 
 The Registry and each active Skill's frontmatter are the machine-readable source
@@ -75,3 +82,4 @@ this Base release.
 - [Base v9.1 dual-axis maturity model](operations/BASE_V9_1_MATURITY_MODEL.md)
 - [Vertical Slice v8 → v9 migration traceability](knowledge/VERTICAL_SLICE_V8_TO_V9_MIGRATION.md)
 - [Base v9.2 release contract](operations/BASE_V9_2_RELEASE_CONTRACT.md)
+- [Base v9.3 release contract](operations/BASE_V9_3_RELEASE_CONTRACT.md)
