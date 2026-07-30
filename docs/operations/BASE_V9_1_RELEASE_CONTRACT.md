@@ -35,6 +35,14 @@ a released project adapter reads the matching Registry blob with
 
 GitHub workflows use least permissions and official Actions pinned to full commit SHAs. Dependency review runs for pull requests that change dependency manifests or lockfiles. Binary attestation is `DEFERRED_UNTIL_RELEASE_ARTIFACT`; no attestation claim is made before a releasable binary exists.
 
+The project adoption workflow passes `github.event.pull_request.base.sha` to
+the validator and requires exact equality with the adapter's recorded commit.
+When `GITHUB_PR_BASE` is selected, its authority ref is exactly that event
+expression; local validation instead selects and resolves an explicit
+remote-tracking ref. `--protected-base` is trusted input from the caller's CI
+boundary; it is not a replacement baseline and does not provide cryptographic
+attestation.
+
 ## Evidence boundary
 
 This Base change may verify schemas, generators, validators, repositories, CI syntax, and publication tooling. Godot runtime, device, accessibility, and human evidence remain `NOT_RUN`. Project migrations require separate project-owned branches and evidence.

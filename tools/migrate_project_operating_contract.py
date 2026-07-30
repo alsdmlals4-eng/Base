@@ -25,6 +25,8 @@ def main() -> int:
     parser.add_argument("--release-commit", default="")
     parser.add_argument("--release-evidence-commit", default="")
     parser.add_argument("--protected-baseline-commit", default="")
+    parser.add_argument("--protected-authority-kind", default="")
+    parser.add_argument("--protected-authority-ref", default="")
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--write", action="store_true")
     mode.add_argument("--check", action="store_true")
@@ -49,6 +51,8 @@ def main() -> int:
             options.release_commit,
             options.release_evidence_commit,
             options.protected_baseline_commit,
+            options.protected_authority_kind,
+            options.protected_authority_ref,
         )
         content = canonical_json(data)
         if options.check:

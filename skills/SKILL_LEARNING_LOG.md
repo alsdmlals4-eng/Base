@@ -1,5 +1,13 @@
 # Base Skill Learning Log
 
+## 2026-07-30 — External authority for protected baselines
+
+- Status: `PATTERN`.
+- Decision: a mutable project adapter cannot attest its own comparison base. Record an authority kind/ref and require its resolved commit to equal the adapter commit.
+- Local boundary: resolve an explicit remote-tracking ref; do not infer the baseline from `HEAD`.
+- Pull-request boundary: pass the event base SHA as trusted caller input and require equality; this is not cryptographic attestation.
+- Verification trigger: missing refs, mismatched CLI values, or a protected product change combined with a feature-branch adapter baseline update must fail closed.
+
 ## 2026-07-30 — Base project router baseline hardening
 
 - 상태: `PATTERN`

@@ -13,11 +13,17 @@ JSON examples below are historical consumer shapes, not editable v9.1 inputs.
 The canonical schema separates release payload and evidence pins and owns
 `base_release`, `project`, `routing`, `skill_registry`, `shared_overrides`,
 `gdd_sheet`, `protected_baseline`, `protected_paths`, `validators`, and
-`compatibility`. `protected_baseline` binds an approved commit to a confined
-policy source path, source type, `/protected_paths` JSON Pointer, and policy
-SHA-256. First migration reads the real legacy source at that commit; later
-waves may read the canonical adapter at their baseline. Standard validation
-never silently skips or self-attests the protected-path comparison.
+`compatibility`. `protected_baseline` binds an approved commit to an external
+authority kind/reference plus a confined policy source path, source type,
+`/protected_paths` JSON Pointer, and policy SHA-256. First migration reads the
+real legacy source at that commit; later waves may read the canonical adapter
+at their baseline. Local standard validation resolves the recorded
+`REMOTE_TRACKING_REF` (normally `refs/remotes/origin/main`) and requires exact
+commit equality. Pull-request CI passes `github.event.pull_request.base.sha`
+as `--protected-base`, which must exactly equal the adapter record and can
+never replace it. This CLI value is trusted caller input, not cryptographic
+attestation. Standard validation never silently skips or self-attests the
+protected-path comparison.
 
 ## 목적
 

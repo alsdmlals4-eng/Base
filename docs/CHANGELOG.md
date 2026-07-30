@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-30 — Base v9.1 external protected-baseline authority
+
+- Anchored each protected baseline to an explicit external Git authority and required exact equality instead of allowing adapter or CLI baseline replacement.
+- Added fail-closed local remote-ref resolution, exact GitHub pull-request base-SHA invocation, explicit migration authority inputs, and adversarial self-attestation fixtures.
+
 ## 2026-07-30 — Base v9.1 first-migration baseline source fix
 
 - Replaced the canonical-adapter-at-baseline assumption with a commit-qualified protected-policy source contract supporting legacy-only first migrations and canonical later waves.

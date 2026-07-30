@@ -14,7 +14,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--project-root", type=Path, required=True)
     parser.add_argument("--base-repository", type=Path, required=True)
-    parser.add_argument("--protected-base", default="")
+    parser.add_argument(
+        "--protected-base",
+        default="",
+        help="trusted external baseline commit; it must exactly equal the adapter record",
+    )
     parser.add_argument("--check", action="store_true", help="require generated views to be current")
     options = parser.parse_args()
     errors = validation_errors(

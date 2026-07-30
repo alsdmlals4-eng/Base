@@ -220,6 +220,7 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
             encoding="utf-8",
         )
         self.protected_baseline_commit = commit_all(self.project, "pre-migration protected baseline")
+        git(self.project, "update-ref", "refs/remotes/origin/main", self.protected_baseline_commit)
         self.protected_policy_hash = policy_digest(["project.godot", "game/**", "assets/**"])
         self.adapter = self.project / "skills/PROJECT_BASE_ADAPTER.json"
         self.adapter.write_text(json.dumps(self.adapter_data(), ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -269,6 +270,8 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
             "shared_overrides": {},
             "gdd_sheet": {"role": "USER_FACING_GDD_WORKSPACE", "sync_status": "NOT_CONFIGURED"},
             "protected_baseline": {
+                "authority_kind": "REMOTE_TRACKING_REF",
+                "authority_ref": "refs/remotes/origin/main",
                 "commit": self.protected_baseline_commit,
                 "policy_source_type": "FIRST_MIGRATION_LEGACY_SOURCE",
                 "policy_source_path": "skills/LEGACY_PROJECT_ADAPTER.json",
@@ -329,6 +332,8 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         )
         self.assertRegex(template["protected_baseline"]["commit"], r"^[0-9a-f]{40}$")
         self.assertRegex(template["protected_baseline"]["policy_sha256"], r"^[0-9a-f]{64}$")
+        self.assertEqual(template["protected_baseline"]["authority_kind"], "REMOTE_TRACKING_REF")
+        self.assertEqual(template["protected_baseline"]["authority_ref"], "refs/remotes/origin/main")
         for field in ("base_routes", "project_routes", "inactive_routes", "aliases", "source_registry"):
             self.assertIn(field, snapshot_schema["required"])
         self.assertEqual(health_schema["properties"]["operating_maturity"]["enum"], [f"OM-L{i}" for i in range(6)])
@@ -662,7 +667,7 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
             str(self.base),
             "--check",
             "--protected-base",
-            self.project_commit,
+            self.protected_baseline_commit,
         )
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("protected", result.stderr.lower())
@@ -675,7 +680,7 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         self.assertIn("baseline", bad_base.stderr.lower())
 
         (self.project / "PROJECT.GODOT").write_text("case variant\n", encoding="utf-8")
-        untracked = self.run_tool(CHECK, *args, "--protected-base", self.project_commit)
+        untracked = self.run_tool(CHECK, *args, "--protected-base", self.protected_baseline_commit)
         self.assertNotEqual(untracked.returncode, 0)
         self.assertIn("project.godot", untracked.stderr.lower())
         self.assertTrue(self.core._protected_match("assets/e\u0301/icon.png", ["assets/é/**"]))
@@ -684,7 +689,7 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         adapter = json.loads(self.adapter.read_text(encoding="utf-8"))
         adapter["protected_paths"] = ["docs/CANON.md"]
         self.adapter.write_text(json.dumps(adapter, sort_keys=True) + "\n", encoding="utf-8")
-        weakened = self.run_tool(CHECK, *args, "--protected-base", self.project_commit)
+        weakened = self.run_tool(CHECK, *args, "--protected-base", self.protected_baseline_commit)
         self.assertNotEqual(weakened.returncode, 0)
         self.assertIn("weaken", weakened.stderr.lower())
 
@@ -698,7 +703,7 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         args = [
             "--project-root", str(self.project),
             "--base-repository", str(self.base),
-            "--protected-base", self.project_commit,
+            "--protected-base", self.protected_baseline_commit,
         ]
         game = self.project / "game"
         game.mkdir()
@@ -1015,15 +1020,71 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         canonical_baseline_commit = commit_all(self.project, "canonical policy baseline")
         later = json.loads(self.adapter.read_text(encoding="utf-8"))
         later["protected_baseline"] = {
+            "authority_kind": "REMOTE_TRACKING_REF",
+            "authority_ref": "refs/remotes/origin/main",
             "commit": canonical_baseline_commit,
             "policy_source_type": "CANONICAL_ADAPTER_SOURCE",
             "policy_source_path": "skills/PROJECT_BASE_ADAPTER.json",
             "protected_paths_pointer": "/protected_paths",
             "policy_sha256": policy_digest(later["protected_paths"]),
         }
+        git(self.project, "update-ref", "refs/remotes/origin/main", canonical_baseline_commit)
         self.adapter.write_text(json.dumps(later, sort_keys=True) + "\n", encoding="utf-8")
         later_result = self.run_tool(CHECK, "--project-root", str(self.project), "--base-repository", str(self.base))
         self.assertEqual(later_result.returncode, 0, later_result.stderr)
+
+    def test_external_git_authority_prevents_feature_branch_baseline_self_attestation(self) -> None:
+        args = ["--project-root", str(self.project), "--base-repository", str(self.base)]
+        correct_remote_base = self.run_tool(CHECK, *args)
+        self.assertEqual(correct_remote_base.returncode, 0, correct_remote_base.stderr)
+
+        cli_mismatch = self.run_tool(CHECK, *args, "--protected-base", self.project_commit)
+        self.assertNotEqual(cli_mismatch.returncode, 0)
+        self.assertIn("must equal adapter baseline", cli_mismatch.stderr.lower())
+
+        original = json.loads(self.adapter.read_text(encoding="utf-8"))
+        missing_ref = json.loads(json.dumps(original))
+        missing_ref["protected_baseline"]["authority_ref"] = "refs/remotes/origin/missing"
+        self.adapter.write_text(json.dumps(missing_ref, sort_keys=True) + "\n", encoding="utf-8")
+        missing_result = self.run_tool(CHECK, *args)
+        self.assertNotEqual(missing_result.returncode, 0)
+        self.assertIn("authority ref", missing_result.stderr.lower())
+
+        github_base = json.loads(json.dumps(original))
+        github_base["protected_baseline"]["authority_kind"] = "GITHUB_PR_BASE"
+        github_base["protected_baseline"]["authority_ref"] = "github.event.pull_request.base.sha"
+        self.adapter.write_text(json.dumps(github_base, sort_keys=True) + "\n", encoding="utf-8")
+        missing_trusted_input = self.run_tool(CHECK, *args)
+        self.assertNotEqual(missing_trusted_input.returncode, 0)
+        self.assertIn("requires trusted --protected-base", missing_trusted_input.stderr.lower())
+        github_event_base = self.run_tool(
+            CHECK, *args, "--protected-base", self.protected_baseline_commit
+        )
+        self.assertEqual(github_event_base.returncode, 0, github_event_base.stderr)
+
+        self.adapter.write_text(json.dumps(original, sort_keys=True) + "\n", encoding="utf-8")
+        git(self.project, "checkout", "-q", "-b", "feature/self-attested-baseline")
+        (self.project / "project.godot").write_text("[application]\nconfig/name=\"Attacked\"\n", encoding="utf-8")
+        feature_head = commit_all(self.project, "protected product change")
+        attacked = json.loads(self.adapter.read_text(encoding="utf-8"))
+        attacked["protected_baseline"] = {
+            "authority_kind": "REMOTE_TRACKING_REF",
+            "authority_ref": "refs/remotes/origin/main",
+            "commit": feature_head,
+            "policy_source_type": "CANONICAL_ADAPTER_SOURCE",
+            "policy_source_path": "skills/PROJECT_BASE_ADAPTER.json",
+            "protected_paths_pointer": "/protected_paths",
+            "policy_sha256": policy_digest(attacked["protected_paths"]),
+        }
+        self.adapter.write_text(json.dumps(attacked, sort_keys=True) + "\n", encoding="utf-8")
+        self_attested = self.run_tool(CHECK, *args)
+        self.assertNotEqual(self_attested.returncode, 0)
+        self.assertIn("external protected authority", self_attested.stderr.lower())
+
+        self.adapter.write_text(json.dumps(original, sort_keys=True) + "\n", encoding="utf-8")
+        fixed_old_baseline = self.run_tool(CHECK, *args)
+        self.assertNotEqual(fixed_old_baseline.returncode, 0)
+        self.assertIn("project.godot", fixed_old_baseline.stderr)
 
     def test_dashboard_is_static_accessible_and_keeps_maturity_axes_separate(self) -> None:
         adapter = json.loads(self.adapter.read_text(encoding="utf-8"))
@@ -1107,6 +1168,7 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
             encoding="utf-8",
         )
         broken_baseline = commit_all(self.project, "legacy source without protected policy")
+        git(self.project, "update-ref", "refs/remotes/origin/main", broken_baseline)
         broken_result = self.run_tool(
             MIGRATE,
             "--project-root",
@@ -1123,10 +1185,15 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
             self.evidence_commit,
             "--protected-baseline-commit",
             broken_baseline,
+            "--protected-authority-kind",
+            "REMOTE_TRACKING_REF",
+            "--protected-authority-ref",
+            "refs/remotes/origin/main",
             "--write",
         )
         self.assertNotEqual(broken_result.returncode, 0)
         self.assertIn("protected paths", broken_result.stderr.lower())
+        git(self.project, "update-ref", "refs/remotes/origin/main", self.protected_baseline_commit)
 
         same_path = self.run_tool(
             MIGRATE,
@@ -1144,10 +1211,39 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
             self.evidence_commit,
             "--protected-baseline-commit",
             self.protected_baseline_commit,
+            "--protected-authority-kind",
+            "REMOTE_TRACKING_REF",
+            "--protected-authority-ref",
+            "refs/remotes/origin/main",
             "--write",
         )
         self.assertNotEqual(same_path.returncode, 0)
         self.assertIn("same", same_path.stderr.lower())
+
+        head_authority = self.run_tool(
+            MIGRATE,
+            "--project-root",
+            str(self.project),
+            "--base-repository",
+            str(self.base),
+            "--legacy-adapter",
+            str(legacy),
+            "--output",
+            str(output),
+            "--release-commit",
+            self.release_commit,
+            "--release-evidence-commit",
+            self.evidence_commit,
+            "--protected-baseline-commit",
+            self.protected_baseline_commit,
+            "--protected-authority-kind",
+            "REMOTE_TRACKING_REF",
+            "--protected-authority-ref",
+            "HEAD",
+            "--write",
+        )
+        self.assertNotEqual(head_authority.returncode, 0)
+        self.assertIn("remote-tracking ref", head_authority.stderr.lower())
 
         result = self.run_tool(
             MIGRATE,
@@ -1165,6 +1261,10 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
             self.evidence_commit,
             "--protected-baseline-commit",
             self.protected_baseline_commit,
+            "--protected-authority-kind",
+            "REMOTE_TRACKING_REF",
+            "--protected-authority-ref",
+            "refs/remotes/origin/main",
             "--write",
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
@@ -1174,6 +1274,8 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         self.assertEqual(migrated["base_release"]["release_commit"], self.release_commit)
         self.assertEqual(migrated["base_release"]["release_evidence_commit"], self.evidence_commit)
         self.assertEqual(migrated["protected_baseline"]["commit"], self.protected_baseline_commit)
+        self.assertEqual(migrated["protected_baseline"]["authority_kind"], "REMOTE_TRACKING_REF")
+        self.assertEqual(migrated["protected_baseline"]["authority_ref"], "refs/remotes/origin/main")
         self.assertEqual(
             migrated["protected_baseline"]["policy_source_type"],
             "FIRST_MIGRATION_LEGACY_SOURCE",
@@ -1277,6 +1379,13 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         dependency = (ROOT / ".github/workflows/dependency-review.yml").read_text(encoding="utf-8")
         self.assertIn("dependency-review-action", dependency)
         self.assertIn("pull_request", dependency)
+
+        project_ci = (
+            ROOT / "templates/project-operations/github/validate-project-base-adapter.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}", project_ci)
+        self.assertIn('--protected-base "$PR_BASE_SHA"', project_ci)
+        self.assertIn("--check", project_ci)
 
     def test_v91_has_a_separate_candidate_lock_without_rewriting_v90(self) -> None:
         schema = json.loads((ROOT / "schemas/base-v9-1-candidate-lock-v1.schema.json").read_text(encoding="utf-8"))

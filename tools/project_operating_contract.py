@@ -121,6 +121,54 @@ def _protected_policy_hash(patterns: list[str]) -> str:
     return sha256_bytes(canonical_json(patterns))
 
 
+def _resolve_commit(repository: Path, reference: str) -> str | None:
+    result = _git(repository, "rev-parse", "--verify", f"{reference}^{{commit}}")
+    resolved = result.stdout.strip()
+    if result.returncode or not re.fullmatch(r"[0-9a-f]{40}", resolved):
+        return None
+    return resolved
+
+
+def _trusted_protected_base(
+    project_root: Path,
+    baseline: dict[str, Any],
+    protected_base_override: str = "",
+) -> tuple[str | None, list[str]]:
+    adapter_commit = baseline["commit"]
+    if protected_base_override:
+        if not re.fullmatch(r"[0-9a-f]{40}", protected_base_override) or not _commit_exists(
+            project_root, protected_base_override
+        ):
+            return None, [
+                "Trusted protected baseline --protected-base is not a valid full project commit: "
+                f"{protected_base_override}"
+            ]
+        if protected_base_override != adapter_commit:
+            return None, [
+                "Trusted --protected-base must equal adapter baseline commit: "
+                f"{protected_base_override} != {adapter_commit}"
+            ]
+        return protected_base_override, []
+
+    authority_kind = baseline["authority_kind"]
+    authority_ref = baseline["authority_ref"]
+    if authority_kind == "REMOTE_TRACKING_REF":
+        resolved = _resolve_commit(project_root, authority_ref)
+        if resolved is None:
+            return None, [f"Protected authority ref cannot be resolved to a commit: {authority_ref}"]
+        if resolved != adapter_commit:
+            return None, [
+                "External protected authority must equal adapter baseline commit: "
+                f"{authority_ref} resolves to {resolved}, adapter records {adapter_commit}"
+            ]
+        return resolved, []
+    if authority_kind == "GITHUB_PR_BASE":
+        return None, [
+            "GITHUB_PR_BASE requires trusted --protected-base from github.event.pull_request.base.sha"
+        ]
+    return None, [f"Unsupported protected baseline authority kind: {authority_kind}"]
+
+
 def _commit_blob_bytes(repository: Path, commit: str, relative: str, label: str) -> bytes:
     path = Path(relative)
     if path.is_absolute() or ".." in path.parts or not path.parts:
@@ -159,9 +207,11 @@ def _protected_policy_errors(
         if not any(_protected_match(name, patterns) for name in names):
             errors.append("Protected-path policy has no intended coverage in the project")
     baseline = adapter["protected_baseline"]
-    protected_base = protected_base_override or baseline["commit"]
-    if not _commit_exists(project_root, protected_base):
-        errors.append(f"Protected baseline is not a valid project commit: {protected_base}")
+    protected_base, authority_errors = _trusted_protected_base(
+        project_root, baseline, protected_base_override
+    )
+    errors.extend(authority_errors)
+    if protected_base is None:
         return errors
     source_type = baseline["policy_source_type"]
     source_path = baseline["policy_source_path"]
@@ -882,6 +932,8 @@ def migrated_adapter(
     release_commit: str,
     release_evidence_commit: str,
     protected_baseline_commit: str,
+    protected_authority_kind: str,
+    protected_authority_ref: str,
 ) -> dict[str, Any]:
     if not release_commit or not release_evidence_commit:
         raise ContractError("Explicit v9.1 release and release-evidence pins are required for migration")
@@ -889,6 +941,27 @@ def migrated_adapter(
         raise ContractError("Explicit protected baseline commit is required for migration")
     if not _commit_exists(project_root, protected_baseline_commit):
         raise ContractError("Explicit protected baseline is absent from the project repository")
+    if not protected_authority_kind or not protected_authority_ref:
+        raise ContractError("Explicit externally resolved protected authority kind and ref are required for migration")
+    if protected_authority_kind == "REMOTE_TRACKING_REF":
+        if not re.fullmatch(r"refs/remotes/[A-Za-z0-9._/-]+", protected_authority_ref):
+            raise ContractError("REMOTE_TRACKING_REF migration authority must be an explicit remote-tracking ref")
+    elif protected_authority_kind == "GITHUB_PR_BASE":
+        if protected_authority_ref != "github.event.pull_request.base.sha":
+            raise ContractError(
+                "GITHUB_PR_BASE migration authority ref must be github.event.pull_request.base.sha"
+            )
+    else:
+        raise ContractError(f"Unsupported protected baseline authority kind: {protected_authority_kind}")
+    baseline_authority = {
+        "commit": protected_baseline_commit,
+        "authority_kind": protected_authority_kind,
+        "authority_ref": protected_authority_ref,
+    }
+    trusted_input = protected_baseline_commit if protected_authority_kind == "GITHUB_PR_BASE" else ""
+    _, authority_errors = _trusted_protected_base(project_root, baseline_authority, trusted_input)
+    if authority_errors:
+        raise ContractError(authority_errors[0])
     baseline_legacy_raw = _commit_blob_bytes(
         project_root,
         protected_baseline_commit,
@@ -954,6 +1027,8 @@ def migrated_adapter(
         "shared_overrides": {},
         "gdd_sheet": {"role": "USER_FACING_GDD_WORKSPACE", "sync_status": "NOT_CONFIGURED"},
         "protected_baseline": {
+            "authority_kind": protected_authority_kind,
+            "authority_ref": protected_authority_ref,
             "commit": protected_baseline_commit,
             "policy_source_type": "FIRST_MIGRATION_LEGACY_SOURCE",
             "policy_source_path": legacy_source_path,

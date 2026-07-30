@@ -141,6 +141,7 @@ class BaseV91SkillPressureContractTests(unittest.TestCase):
         self.protected_baseline = "0" * 40
         self.write_adapter()
         self.protected_baseline = commit_all(self.project, "protected baseline")
+        git(self.project, "update-ref", "refs/remotes/origin/main", self.protected_baseline)
         self.write_adapter()
         commit_all(self.project, "install adapter baseline pin")
 
@@ -170,6 +171,8 @@ class BaseV91SkillPressureContractTests(unittest.TestCase):
             "shared_overrides": {},
             "gdd_sheet": {"role": "USER_FACING_GDD_WORKSPACE", "sync_status": "NOT_CONFIGURED"},
             "protected_baseline": {
+                "authority_kind": "REMOTE_TRACKING_REF",
+                "authority_ref": "refs/remotes/origin/main",
                 "commit": self.protected_baseline,
                 "policy_source_type": "CANONICAL_ADAPTER_SOURCE",
                 "policy_source_path": "skills/PROJECT_BASE_ADAPTER.json",

@@ -88,14 +88,26 @@
     "protectedBaseline": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["commit", "policy_source_type", "policy_source_path", "protected_paths_pointer", "policy_sha256"],
+      "required": ["commit", "authority_kind", "authority_ref", "policy_source_type", "policy_source_path", "protected_paths_pointer", "policy_sha256"],
       "properties": {
         "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "authority_kind": {"enum": ["REMOTE_TRACKING_REF", "GITHUB_PR_BASE"]},
+        "authority_ref": {"type": "string", "minLength": 1},
         "policy_source_type": {"enum": ["FIRST_MIGRATION_LEGACY_SOURCE", "CANONICAL_ADAPTER_SOURCE"]},
         "policy_source_path": {"type": "string", "minLength": 1},
         "protected_paths_pointer": {"const": "/protected_paths"},
         "policy_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
-      }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"authority_kind": {"const": "REMOTE_TRACKING_REF"}}},
+          "then": {"properties": {"authority_ref": {"pattern": "^refs/remotes/[A-Za-z0-9._/-]+$"}}}
+        },
+        {
+          "if": {"properties": {"authority_kind": {"const": "GITHUB_PR_BASE"}}},
+          "then": {"properties": {"authority_ref": {"const": "github.event.pull_request.base.sha"}}}
+        }
+      ]
     },
     "route": {
       "type": "object",

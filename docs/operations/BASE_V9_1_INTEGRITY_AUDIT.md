@@ -63,14 +63,37 @@ unextractable policy, weakening, later canonical baseline, and protected
 product mutation. Focused tests passed, followed by a complete 284-test run
 with one declared Mermaid environment skip.
 
+## Review cycle 5: external protected-baseline authority
+
+Final adversarial review found that a feature branch could move the adapter's
+recorded baseline after changing a protected product file, allowing the mutable
+adapter to attest its own comparison base. A CLI baseline could also replace
+the adapter record.
+
+The adapter now records `authority_kind` and `authority_ref` in addition to the
+baseline commit. Local standard validation resolves a `REMOTE_TRACKING_REF`
+and requires exact commit equality. Pull-request CI passes the exact
+`github.event.pull_request.base.sha` as trusted caller input and requires it to
+equal the adapter commit; it never overrides the record. This boundary is not
+a cryptographic attestation claim. Migration requires an explicit baseline,
+authority kind, and authority ref and never derives them from `HEAD`.
+
+Cycle 5 RED/GREEN fixtures cover a correct remote baseline, a mismatched CLI
+baseline, a missing authority ref, a feature-branch self-attestation attempt,
+and confirmation that the externally fixed old baseline still detects the
+protected product change. The 30 focused tests passed, followed by a complete
+285-test run with one declared Mermaid environment skip. Deterministic Base v9
+generation, Base v9 integrity, `git diff --check`, `git fsck --strict`, all
+eight frozen v9.0 outputs, and unchanged Godot product paths also passed.
+
 ## Protected scope
 
-Base v9.1 changed no Godot project product path, scene, Resource, gameplay data, asset, balance, or player-facing rule. The cross-repository validator always uses the adapter's required pre-migration/main comparison commit during standard `--check`, unless an explicit CLI override is supplied.
+Base v9.1 changed no Godot project product path, scene, Resource, gameplay data, asset, balance, or player-facing rule. The cross-repository validator uses an externally resolved commit that must exactly equal the adapter baseline; trusted CLI input can verify equality but cannot replace the adapter record.
 
 ## Evidence status
 
 - Focused static remediation evidence: `PASS`, including clean-clone `core.autocrlf=true` coverage.
-- Final full repository evidence: `PASS` — 284 tests, one declared Mermaid environment skip.
+- Final full repository evidence: `PASS` — 285 tests, one declared Mermaid environment skip.
 - Runtime: `NOT_RUN`.
 - Device: `NOT_RUN`.
 - Accessibility: `NOT_RUN`.

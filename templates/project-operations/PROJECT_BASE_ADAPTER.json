@@ -21,6 +21,8 @@
     "root": "."
   },
   "protected_baseline": {
+    "authority_kind": "REMOTE_TRACKING_REF",
+    "authority_ref": "refs/remotes/origin/main",
     "commit": "0000000000000000000000000000000000000000",
     "policy_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
     "policy_source_path": "skills/LEGACY_PROJECT_ADAPTER.json",
