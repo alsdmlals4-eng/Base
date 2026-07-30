@@ -88,6 +88,30 @@ eight frozen v9.0 evidence-blob identities, and unchanged Godot product paths
 also passed. After #72, approved current governance artifacts may differ from
 their v9.0 historical blobs without changing those pinned identities.
 
+## Review cycle 6: trusted release-history boundary
+
+Final review found that the compatibility evidence commit and all eight frozen
+outputs could be rebound together to a later commit on the same history. It
+also found that historical Registry validation still compared against the
+current working `base.lock.json`, allowing later lock evolution to affect the
+v9.0 authority check.
+
+The integrity checker now requires an externally trusted history tip and
+accepts only the exact v9.0 `base.lock.json` transition from
+`BASE_RELEASE_PENDING_CI` to `BASE_RELEASED`. The evidence commit must be an
+ancestor of that trusted tip, its payload pin must match the compatibility
+release commit, and that payload must be its ancestor. Historical Registry
+authority is read from the evidence commit's `base.lock.json` blob rather than
+the current checkout. Local validation resolves `refs/remotes/origin/main`;
+CI passes the pull-request base SHA or `github.sha` after a full-history
+checkout.
+
+Cycle 6 focused RED/GREEN fixtures cover valid historical evidence, later-tip
+self-rebinding, missing and unrelated trusted tips, current-lock evolution,
+and exact workflow trust wiring. Static integrity, deterministic generation,
+reference freshness, whitespace checks, and strict Git object validation are
+recorded separately; no runtime or human evidence is inferred.
+
 ## Protected scope
 
 Base v9.1 changed no Godot project product path, scene, Resource, gameplay data, asset, balance, or player-facing rule. The cross-repository validator uses an externally resolved commit that must exactly equal the adapter baseline; trusted CLI input can verify equality but cannot replace the adapter record.

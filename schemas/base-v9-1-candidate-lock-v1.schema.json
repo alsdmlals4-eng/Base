@@ -19,8 +19,8 @@
       "properties": {
         "release_line": {"const": "v9.0.0"},
         "release_state": {"const": "BASE_RELEASED"},
-        "release_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "release_evidence_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "release_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$", "description": "v9.0 payload commit; it must be an ancestor of the release evidence boundary."},
+        "release_evidence_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$", "description": "Exact trusted-history boundary where base.lock.json changes from BASE_RELEASE_PENDING_CI to BASE_RELEASED."},
         "frozen_artifacts": {
           "type": "array",
           "uniqueItems": true,

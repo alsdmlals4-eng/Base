@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import hashlib
 import re
@@ -38,6 +39,96 @@ V9_GENERATED_OUTPUTS = {
     "docs/operations/ADVERSARIAL_REVIEW_MANIFEST.json",
     "docs/operations/SHEET_CONTROL_CONTRACT.json",
 }
+
+
+def _resolve_commit(repository: Path, reference: str) -> str | None:
+    result = subprocess.run(
+        ["git", "-C", str(repository), "rev-parse", "--verify", f"{reference}^{{commit}}"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
+    resolved = result.stdout.strip()
+    return resolved if not result.returncode and re.fullmatch(r"[0-9a-f]{40}", resolved) else None
+
+
+def _commit_json(repository: Path, commit: str, relative: str) -> dict | None:
+    result = subprocess.run(
+        ["git", "-C", str(repository), "show", f"{commit}:{relative}"],
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode:
+        return None
+    try:
+        value = json.loads(result.stdout.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return None
+    return value if isinstance(value, dict) else None
+
+
+def resolve_trusted_history_commit(repository: Path, provided: str = "") -> tuple[str | None, list[str]]:
+    if provided:
+        if not re.fullmatch(r"[0-9a-f]{40}", provided) or _resolve_commit(repository, provided) != provided:
+            return None, [f"Trusted history commit is not an exact available commit: {provided}"]
+        return provided, []
+    reference = "refs/remotes/origin/main"
+    resolved = _resolve_commit(repository, reference)
+    if resolved is None:
+        return None, [f"Trusted history ref cannot be resolved: {reference}"]
+    return resolved, []
+
+
+def release_evidence_errors(
+    repository: Path,
+    candidate_lock: dict,
+    trusted_history_commit: str,
+) -> list[str]:
+    errors: list[str] = []
+    compatibility = candidate_lock.get("compatibility_base", {})
+    evidence = compatibility.get("release_evidence_commit")
+    release_commit = compatibility.get("release_commit")
+    if _resolve_commit(repository, trusted_history_commit) != trusted_history_commit:
+        return [f"Trusted history commit is unavailable: {trusted_history_commit}"]
+    if not isinstance(evidence, str) or _resolve_commit(repository, evidence) != evidence:
+        return [f"v9.0 release evidence commit is unavailable: {evidence}"]
+    ancestry = subprocess.run(
+        ["git", "-C", str(repository), "merge-base", "--is-ancestor", evidence, trusted_history_commit],
+        capture_output=True,
+        check=False,
+    )
+    if ancestry.returncode:
+        errors.append("v9.0 release evidence is not an ancestor of trusted history")
+    parent = _resolve_commit(repository, f"{evidence}^")
+    parent_lock = _commit_json(repository, parent, "base.lock.json") if parent else None
+    evidence_lock = _commit_json(repository, evidence, "base.lock.json")
+    if parent_lock is None or evidence_lock is None:
+        errors.append("v9.0 release transition boundary base.lock.json is unavailable or invalid")
+        return errors
+    if (
+        parent_lock.get("release_state") != "BASE_RELEASE_PENDING_CI"
+        or parent_lock.get("final_release_state") != "BASE_RELEASE_PENDING_CI"
+    ):
+        errors.append("v9.0 release evidence is not the exact pending-to-released transition boundary")
+    if (
+        evidence_lock.get("release_state") != "BASE_RELEASED"
+        or evidence_lock.get("final_release_state") != "BASE_RELEASED"
+        or evidence_lock.get("release_line") != "v9.0.0"
+        or evidence_lock.get("release_commit") != release_commit
+    ):
+        errors.append("v9.0 release evidence base.lock.json does not match the released compatibility contract")
+    if not isinstance(release_commit, str) or _resolve_commit(repository, release_commit) != release_commit:
+        errors.append(f"v9.0 release commit is unavailable: {release_commit}")
+    else:
+        payload_ancestry = subprocess.run(
+            ["git", "-C", str(repository), "merge-base", "--is-ancestor", release_commit, evidence],
+            capture_output=True,
+            check=False,
+        )
+        if payload_ancestry.returncode:
+            errors.append("v9.0 release commit is not an ancestor of its evidence commit")
+    return errors
 
 
 def frozen_artifact_errors(repository: Path, candidate_lock: dict) -> list[str]:
@@ -100,10 +191,10 @@ def registry_authority_errors(repository: Path, candidate_lock: dict) -> list[st
     compatibility = candidate_lock.get("compatibility_base", {})
     historical = compatibility.get("historical_registry")
     current = candidate_lock.get("candidate_registry")
-    try:
-        base_lock = json.loads((repository / "base.lock.json").read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as error:
-        return [f"Historical v9.0 base lock cannot be read: {error}"]
+    evidence_commit = compatibility.get("release_evidence_commit")
+    base_lock = _commit_json(repository, evidence_commit, "base.lock.json") if isinstance(evidence_commit, str) else None
+    if base_lock is None:
+        return ["Historical v9.0 evidence base.lock.json Git blob cannot be read"]
     if not isinstance(historical, dict):
         errors.append("Historical v9.0 Registry authority is missing")
     else:
@@ -226,6 +317,9 @@ def documentation_link_errors() -> list[str]:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--trusted-history-commit", default="")
+    options = parser.parse_args()
     errors: list[str] = []
     try:
         registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
@@ -243,6 +337,10 @@ def main() -> int:
         ):
             location = ".".join(str(part) for part in error.path) or "<root>"
             errors.append(f"Base v9.1 candidate lock {location}: {error.message}")
+        trusted_history, trusted_errors = resolve_trusted_history_commit(ROOT, options.trusted_history_commit)
+        errors.extend(trusted_errors)
+        if trusted_history is not None:
+            errors.extend(release_evidence_errors(ROOT, candidate_lock, trusted_history))
         errors.extend(frozen_artifact_errors(ROOT, candidate_lock))
         errors.extend(registry_authority_errors(ROOT, candidate_lock))
     except (OSError, json.JSONDecodeError) as error:

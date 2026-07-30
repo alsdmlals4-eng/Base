@@ -5,6 +5,7 @@
 - Anchored each protected baseline to an explicit external Git authority and required exact equality instead of allowing adapter or CLI baseline replacement.
 - Added fail-closed local remote-ref resolution, exact GitHub pull-request base-SHA invocation, explicit migration authority inputs, and adversarial self-attestation fixtures.
 - Reconciled the #72 governance-ledger evolution with v9.0 immutability by pinning each release-evidence Git blob OID and SHA-256 instead of requiring current working-path equality.
+- Bound those historical pins to the exact v9.0 pending-to-released transition inside an externally trusted Git history and sourced historical Registry authority from the evidence `base.lock.json` blob.
 
 ## 2026-07-30 — Base v9.1 first-migration baseline source fix
 

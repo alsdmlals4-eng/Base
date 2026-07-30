@@ -34,3 +34,12 @@ No score can hide a critical failure. Migration and execution fail closed, prese
 `tools/migrate_project_operating_contract.py` creates the canonical adapter without modifying legacy inputs and requires explicit lock-matching v9.1 pins plus an externally resolved baseline commit, authority kind, and authority ref; it never derives the protected baseline from `HEAD`. For a first migration it reads the explicit legacy input from that Git commit, extracts `/protected_paths`, and records `FIRST_MIGRATION_LEGACY_SOURCE` with the policy hash; missing or unextractable policy fails. Later waves may record `CANONICAL_ADAPTER_SOURCE`. `tools/build_project_operating_artifacts.py` runs the same full validator before writing or checking deterministic views. `tools/check_project_operating_contract.py` validates Base and project repositories together, verifies the exact commit-qualified policy source and hash, rejects weakening, and compares protected changes during standard `--check`.
 
 For local standard validation, a `REMOTE_TRACKING_REF` such as `refs/remotes/origin/main` is resolved in Git and must equal `protected_baseline.commit`. For pull requests, `templates/project-operations/github/validate-project-base-adapter.yml` supplies the exact `${{ github.event.pull_request.base.sha }}` as `--protected-base`; the CLI value must equal the adapter commit and cannot override it. Trust in that CLI input belongs to the invoking CI boundary and is not a cryptographic attestation claim. A missing ref, unequal commit, or feature-branch attempt to move only the adapter baseline fails closed before protected-path comparison.
+
+The Base release-history check uses the same external-trust principle. The
+v9.0 evidence commit must be the exact `base.lock.json`
+`BASE_RELEASE_PENDING_CI` to `BASE_RELEASED` boundary for `v9.0.0`, with the
+recorded payload as its ancestor, and it must itself be an ancestor of the
+trusted history tip. Local checks use `refs/remotes/origin/main`; CI supplies
+the pull-request base SHA or `github.sha`. Historical Registry authority is
+read from the evidence commit's `base.lock.json` blob, so later working-tree
+lock evolution cannot rewrite the historical comparison.

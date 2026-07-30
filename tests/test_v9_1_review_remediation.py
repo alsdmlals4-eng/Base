@@ -57,6 +57,67 @@ def frozen_entry(root: Path, evidence: str, relative: str) -> dict[str, str]:
     }
 
 
+def write_json(path: Path, value: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(value, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def release_history(root: Path) -> tuple[dict, str, str]:
+    git(root, "init", "-q")
+    git(root, "config", "core.autocrlf", "false")
+    registry = root / "skills/SKILL_REGISTRY.json"
+    registry.parent.mkdir(parents=True, exist_ok=True)
+    registry.write_text('{"skills":[]}\n', encoding="utf-8")
+    for index, relative in enumerate(sorted(V90_OUTPUTS - {"base.lock.json"})):
+        path = root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(f"artifact-{index}\n", encoding="utf-8")
+    pending = {
+        "release_line": "v9.0.0",
+        "release_state": "BASE_RELEASE_PENDING_CI",
+        "final_release_state": "BASE_RELEASE_PENDING_CI",
+        "source_of_truth": "skills/SKILL_REGISTRY.json",
+        "registry_sha256": hashlib.sha256(registry.read_bytes()).hexdigest(),
+    }
+    write_json(root / "base.lock.json", pending)
+    release_commit = commit_all(root, "v9.0 release payload")
+    released = dict(pending)
+    released.update(
+        {
+            "release_state": "BASE_RELEASED",
+            "final_release_state": "BASE_RELEASED",
+            "release_commit": release_commit,
+        }
+    )
+    write_json(root / "base.lock.json", released)
+    evidence_commit = commit_all(root, "v9.0 release evidence")
+    (root / "README.md").write_text("later trusted history\n", encoding="utf-8")
+    trusted_tip = commit_all(root, "later trusted history")
+    lock = {
+        "compatibility_base": {
+            "release_line": "v9.0.0",
+            "release_state": "BASE_RELEASED",
+            "release_commit": release_commit,
+            "release_evidence_commit": evidence_commit,
+            "frozen_artifacts": [
+                frozen_entry(root, evidence_commit, relative) for relative in sorted(V90_OUTPUTS)
+            ],
+            "historical_registry": {
+                "commit": evidence_commit,
+                "path": "skills/SKILL_REGISTRY.json",
+                "sha256": hashlib.sha256(registry.read_bytes()).hexdigest(),
+                "hash_definition": "RAW_FILE_BYTES_SHA256",
+            },
+        },
+        "candidate_registry": {
+            "path": "skills/SKILL_REGISTRY.json",
+            "sha256": hashlib.sha256(registry.read_bytes()).hexdigest(),
+            "hash_definition": "RAW_FILE_BYTES_SHA256",
+        },
+    }
+    return lock, evidence_commit, trusted_tip
+
+
 class BaseV91ReviewRemediationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -90,6 +151,12 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
         install = "python -m pip install --requirement .github/validation-requirements.txt"
         self.assertIn(install, workflow)
         self.assertLess(workflow.index(install), workflow.index("python tools/build_base_v9_artifacts.py --check"))
+        self.assertIn("fetch-depth: 0", workflow)
+        self.assertIn(
+            "TRUSTED_HISTORY_COMMIT: ${{ github.event.pull_request.base.sha || github.sha }}",
+            workflow,
+        )
+        self.assertIn('--trusted-history-commit "$TRUSTED_HISTORY_COMMIT"', workflow)
 
     def test_dependency_review_covers_common_manifest_and_lock_formats(self) -> None:
         workflow = (ROOT / ".github/workflows/dependency-review.yml").read_text(encoding="utf-8")
@@ -210,6 +277,70 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
         current_path = ROOT / current["path"]
         self.assertEqual(current["sha256"], hashlib.sha256(current_path.read_bytes()).hexdigest())
         self.assertEqual(self.integrity.registry_authority_errors(ROOT, lock), [])
+
+    def test_release_evidence_is_exact_transition_inside_trusted_history(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repository = Path(temporary)
+            lock, evidence_commit, trusted_tip = release_history(repository)
+            release_errors = getattr(self.integrity, "release_evidence_errors", lambda *_: [])
+            self.assertEqual(
+                release_errors(repository, lock, trusted_tip),
+                [],
+            )
+
+            rebound = json.loads(json.dumps(lock))
+            rebound["compatibility_base"]["release_evidence_commit"] = trusted_tip
+            rebound["compatibility_base"]["historical_registry"]["commit"] = trusted_tip
+            rebound["compatibility_base"]["frozen_artifacts"] = [
+                frozen_entry(repository, trusted_tip, relative) for relative in sorted(V90_OUTPUTS)
+            ]
+            self.assertEqual(self.integrity.frozen_artifact_errors(repository, rebound), [])
+            self.assertTrue(
+                any(
+                    "transition boundary" in error.lower()
+                    for error in release_errors(repository, rebound, trusted_tip)
+                )
+            )
+
+            self.assertTrue(
+                any(
+                    "trusted history" in error.lower()
+                    for error in release_errors(repository, lock, "f" * 40)
+                )
+            )
+            tree = git(repository, "rev-parse", f"{evidence_commit}^{{tree}}")
+            unrelated = subprocess.run(
+                [
+                    "git", "-C", str(repository),
+                    "-c", "user.name=Review Tests",
+                    "-c", "user.email=review@example.invalid",
+                    "commit-tree", tree, "-m", "unrelated trusted tip",
+                ],
+                capture_output=True,
+                text=True,
+                check=True,
+            ).stdout.strip()
+            self.assertTrue(
+                any(
+                    "not an ancestor" in error.lower()
+                    for error in release_errors(repository, lock, unrelated)
+                )
+            )
+
+    def test_historical_registry_uses_evidence_base_lock_not_current_worktree(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repository = Path(temporary)
+            lock, _, _ = release_history(repository)
+            write_json(
+                repository / "base.lock.json",
+                {
+                    "release_line": "v10.0.0",
+                    "release_state": "FUTURE_EVOLUTION",
+                    "source_of_truth": "future/REGISTRY.json",
+                    "registry_sha256": "0" * 64,
+                },
+            )
+            self.assertEqual(self.integrity.registry_authority_errors(repository, lock), [])
 
 
 if __name__ == "__main__":
