@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "manifest_role": "base-archive-authority-registry",
+  "records": [
+    {
+      "archive_id": "BASE-ARCHIVE-2026-07-29-UX-UI-HANDOFF",
+      "classification": "ARCHIVE_HISTORY",
+      "lifecycle": "ARCHIVE_HISTORY",
+      "status": "SUPERSEDED",
+      "original_path": "docs/ACTIVE_HANDOFF.md",
+      "current_path": "docs/archive/handoffs/2026-07-29-ux-ui-common-system-expansion.md",
+      "content_sha256": "0ece907ea3b789348061dcfea67bd3ed06ac87c49e72d60822aa74b2af2e4167",
+      "archived_at": "2026-07-30",
+      "superseded_by": [
+        "docs/CHANGELOG.md",
+        "external:github/issues-and-pull-requests",
+        "external:project-repositories/current-authorities"
+      ],
+      "reason": "Base가 프로젝트별 현재 상태를 이중 정본으로 소유하지 않도록 UX/UI 공용 체계 확산 Handoff를 이력으로 격리한다.",
+      "unique_material_preserved": [
+        "2026-07-29 UX/UI 공용 체계 확산 당시의 프로젝트별 기준 commit과 진입 조건",
+        "자동·렌더·사람·접근성 검증의 당시 상태와 미실행 범위",
+        "프로젝트별 후속 Issue와 롤백 경로"
+      ],
+      "active_authority": false,
+      "implementation_authority": "NONE",
+      "compatibility_consumers": [
+        "docs/ACTIVE_HANDOFF.md"
+      ],
+      "rollback_ref": "dc98a666563b1f0f87b665eac97dbd8a8be37576",
+      "validation_status": "PASSED_GITHUB_ACTIONS",
+      "validation_evidence": [
+        "Validate Base v9 RC run 30525963038",
+        "Validate Game Project Operating System run 30525958819"
+      ]
+    }
+  ]
+}

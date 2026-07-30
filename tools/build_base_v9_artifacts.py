@@ -155,6 +155,29 @@ def generated_summary(skills: list[dict[str, Any]], registry_hash: str) -> str:
     return "\n".join(lines) + "\n"
 
 
+def terminal_pr(
+    number: int,
+    marker: str,
+    resolution: str,
+    note: str,
+    replacement_paths: list[str],
+    verification_paths: list[str],
+) -> dict[str, Any]:
+    return {
+        "type": "pr",
+        "number": number,
+        "disposition": "IMPLEMENTED" if marker == "[구현됨]" else "SUPERSEDED",
+        "resolution": resolution,
+        "status_marker": marker,
+        "terminal": True,
+        "do_not_reassess": True,
+        "resolved_at": "2026-07-30",
+        "resolution_note": note,
+        "replacement_paths": replacement_paths,
+        "verification_paths": verification_paths,
+    }
+
+
 def build_artifacts() -> dict[Path, bytes]:
     registry, skills = load_active_skills()
     registry_hash = sha256_normalized_text_file(REGISTRY_PATH)
@@ -222,12 +245,92 @@ def build_artifacts() -> dict[Path, bytes]:
         "schema_version": 1,
         "artifact_role": "github-object-ledger",
         "object_types": ["pr", "issue"],
+        "terminal_status_markers": {
+            "[구현됨]": "Current contract and verification paths preserve the PR's required value. Do not reassess unless a regression or new conflicting requirement is evidenced.",
+            "[대체됨]": "The PR's exact structure is not current, but its preserved value and unresolved remnants have explicit current owners. Do not reassess unless those replacement paths or decisions change.",
+        },
         "objects": [
-            {"type": "pr", "number": 5, "disposition": "REASSESS"},
-            {"type": "pr", "number": 18, "disposition": "CONSOLIDATE_REVIEW"},
-            {"type": "pr", "number": 28, "disposition": "ADOPT_AS_CONTRACT"},
-            {"type": "pr", "number": 29, "disposition": "REASSESS_BOUNDARY"},
-            {"type": "pr", "number": 30, "disposition": "ADOPT_AS_GATE"},
+            terminal_pr(
+                5,
+                "[구현됨]",
+                "IMPLEMENTED_BY_CURRENT_CONTRACT",
+                "The fixed five-book proposal was implemented in a broader, registry-driven form with selectable discipline documents, update routing, and image approval governance.",
+                [
+                    "templates/project-operations/README.md",
+                    "templates/project-operations/DESIGN_DOCUMENT_REGISTRY.json",
+                    "templates/project-operations/DOCUMENT_UPDATE_MATRIX.md",
+                    "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md",
+                ],
+                [
+                    "tests/test_game_project_operating_system_structure.py",
+                    "tests/test_v9_machine_contracts.py",
+                ],
+            ),
+            terminal_pr(
+                18,
+                "[대체됨]",
+                "SUPERSEDED_BY_CURRENT_CONTRACT",
+                "The forced eleven-book structure was replaced by an optional discipline catalog. Proposal governance remains current, and the Node 24 action upgrade is tracked separately as BCP-2026-002.",
+                [
+                    "templates/project-operations/README.md",
+                    "skills/SKILL_REGISTRY.json",
+                    "[수정제안서]/PROPOSAL_REGISTRY.json",
+                    "[수정제안서]/BCP-2026-002-actions-node24-compatibility/PROPOSAL.md",
+                ],
+                [
+                    "tests/test_game_project_operating_system_structure.py",
+                    "tests/test_base_change_proposals.py",
+                ],
+            ),
+            terminal_pr(
+                28,
+                "[구현됨]",
+                "IMPLEMENTED_BY_CURRENT_CONTRACT",
+                "Implementation handoff, player decision-surface design, and derivative provenance were implemented across the current handoff, UX/UI, design-document, and reference-freshness contracts.",
+                [
+                    "skills/maintaining-project-context-and-handoff/SKILL.md",
+                    "skills/auditing-and-refining-ui-art/SKILL.md",
+                    "skills/managing-design-documents/SKILL.md",
+                    "skills/auditing-canonical-reference-freshness/SKILL.md",
+                ],
+                [
+                    "tests/test_gpt_codex_workflow_contract.py",
+                    "tests/test_game_ux_ui_system.py",
+                    "tests/test_v9_machine_contracts.py",
+                ],
+            ),
+            terminal_pr(
+                29,
+                "[대체됨]",
+                "SUPERSEDED_BY_CURRENT_CONTRACT",
+                "The proposed four game-design Skill IDs were not adopted. Their responsibilities remain inside the integrated game-concept Skill and its references to avoid responsibility fragmentation.",
+                [
+                    "skills/analyzing-and-refining-game-concepts/SKILL.md",
+                    "skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-and-combat-ai.md",
+                    "docs/SKILL_COVERAGE_MAP.md",
+                    "skills/SKILL_REGISTRY.json",
+                ],
+                [
+                    "tests/test_skill_package_integrity.py",
+                    "tools/check_skill_system_coverage.py",
+                ],
+            ),
+            terminal_pr(
+                30,
+                "[대체됨]",
+                "SUPERSEDED_BY_CURRENT_CONTRACT",
+                "The blanket mandatory three-mode sequence for every L1 task was replaced by risk-scaled Work Mode transitions with REVIEW evidence required before supported completion claims.",
+                [
+                    "docs/WORK_MODE_AND_SKILL_ROUTING.md",
+                    "docs/OPERATING_MODEL.md",
+                    "docs/operations/BASE_V9_MATURITY_MODEL.md",
+                    "skills/managing-project-intake-and-work-contract/SKILL.md",
+                ],
+                [
+                    "tests/test_game_project_operating_system_structure.py",
+                    "tests/test_v9_machine_contracts.py",
+                ],
+            ),
             {"type": "issue", "number": 54, "disposition": "IMPLEMENTATION_SOURCE"},
             {"type": "issue", "number": 55, "disposition": "POST_RELEASE_ADOPTION"},
         ],
