@@ -27,24 +27,89 @@
       ]
     },
     {
-      "disposition": "CONSOLIDATE_REVIEW",
+      "disposition": "SUPERSEDED",
+      "do_not_reassess": true,
       "number": 18,
-      "type": "pr"
+      "replacement_paths": [
+        "templates/project-operations/README.md",
+        "skills/SKILL_REGISTRY.json",
+        "[수정제안서]/PROPOSAL_REGISTRY.json",
+        "[수정제안서]/BCP-2026-002-actions-node24-compatibility/PROPOSAL.md"
+      ],
+      "resolution": "SUPERSEDED_BY_CURRENT_CONTRACT",
+      "resolution_note": "The forced eleven-book structure was replaced by an optional discipline catalog. Proposal governance remains current, and the Node 24 action upgrade is tracked separately as BCP-2026-002.",
+      "resolved_at": "2026-07-30",
+      "status_marker": "[대체됨]",
+      "terminal": true,
+      "type": "pr",
+      "verification_paths": [
+        "tests/test_game_project_operating_system_structure.py",
+        "tests/test_base_change_proposals.py"
+      ]
     },
     {
-      "disposition": "ADOPT_AS_CONTRACT",
+      "disposition": "IMPLEMENTED",
+      "do_not_reassess": true,
       "number": 28,
-      "type": "pr"
+      "replacement_paths": [
+        "skills/maintaining-project-context-and-handoff/SKILL.md",
+        "skills/auditing-and-refining-ui-art/SKILL.md",
+        "skills/managing-design-documents/SKILL.md",
+        "skills/auditing-canonical-reference-freshness/SKILL.md"
+      ],
+      "resolution": "IMPLEMENTED_BY_CURRENT_CONTRACT",
+      "resolution_note": "Implementation handoff, player decision-surface design, and derivative provenance were implemented across the current handoff, UX/UI, design-document, and reference-freshness contracts.",
+      "resolved_at": "2026-07-30",
+      "status_marker": "[구현됨]",
+      "terminal": true,
+      "type": "pr",
+      "verification_paths": [
+        "tests/test_gpt_codex_workflow_contract.py",
+        "tests/test_game_ux_ui_system.py",
+        "tests/test_v9_machine_contracts.py"
+      ]
     },
     {
-      "disposition": "REASSESS_BOUNDARY",
+      "disposition": "SUPERSEDED",
+      "do_not_reassess": true,
       "number": 29,
-      "type": "pr"
+      "replacement_paths": [
+        "skills/analyzing-and-refining-game-concepts/SKILL.md",
+        "skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-and-combat-ai.md",
+        "docs/SKILL_COVERAGE_MAP.md",
+        "skills/SKILL_REGISTRY.json"
+      ],
+      "resolution": "SUPERSEDED_BY_CURRENT_CONTRACT",
+      "resolution_note": "The proposed four game-design Skill IDs were not adopted. Their responsibilities remain inside the integrated game-concept Skill and its references to avoid responsibility fragmentation.",
+      "resolved_at": "2026-07-30",
+      "status_marker": "[대체됨]",
+      "terminal": true,
+      "type": "pr",
+      "verification_paths": [
+        "tests/test_skill_package_integrity.py",
+        "tools/check_skill_system_coverage.py"
+      ]
     },
     {
-      "disposition": "ADOPT_AS_GATE",
+      "disposition": "SUPERSEDED",
+      "do_not_reassess": true,
       "number": 30,
-      "type": "pr"
+      "replacement_paths": [
+        "docs/WORK_MODE_AND_SKILL_ROUTING.md",
+        "docs/OPERATING_MODEL.md",
+        "docs/operations/BASE_V9_MATURITY_MODEL.md",
+        "skills/managing-project-intake-and-work-contract/SKILL.md"
+      ],
+      "resolution": "SUPERSEDED_BY_CURRENT_CONTRACT",
+      "resolution_note": "The blanket mandatory three-mode sequence for every L1 task was replaced by risk-scaled Work Mode transitions with REVIEW evidence required before supported completion claims.",
+      "resolved_at": "2026-07-30",
+      "status_marker": "[대체됨]",
+      "terminal": true,
+      "type": "pr",
+      "verification_paths": [
+        "tests/test_game_project_operating_system_structure.py",
+        "tests/test_v9_machine_contracts.py"
+      ]
     },
     {
       "disposition": "IMPLEMENTATION_SOURCE",
@@ -59,6 +124,7 @@
   ],
   "schema_version": 1,
   "terminal_status_markers": {
-    "[구현됨]": "Current contract and verification paths preserve the PR's required value. Do not reassess unless a regression or new conflicting requirement is evidenced."
+    "[구현됨]": "Current contract and verification paths preserve the PR's required value. Do not reassess unless a regression or new conflicting requirement is evidenced.",
+    "[대체됨]": "The PR's exact structure is not current, but its preserved value and unresolved remnants have explicit current owners. Do not reassess unless those replacement paths or decisions change."
   }
 }
