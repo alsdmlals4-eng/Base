@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import unittest
 from pathlib import Path
@@ -10,6 +11,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def read(relative_path: str) -> str:
     return (ROOT / relative_path).read_text(encoding="utf-8")
+
+
+def archived_body(text: str) -> str:
+    if not text.startswith("---\n"):
+        raise AssertionError("Archive document must start with YAML frontmatter")
+    parts = text.split("---\n", 2)
+    if len(parts) != 3:
+        raise AssertionError("Archive document frontmatter is not closed")
+    return parts[2].lstrip("\n")
 
 
 class V9GovernanceDocumentTests(unittest.TestCase):
@@ -101,6 +111,14 @@ class V9GovernanceDocumentTests(unittest.TestCase):
         self.assertFalse(record["active_authority"])
         self.assertEqual(record["implementation_authority"], "NONE")
         self.assertEqual(record["rollback_ref"], "dc98a666563b1f0f87b665eac97dbd8a8be37576")
+
+        actual_hash = hashlib.sha256(archived_body(archive).encode("utf-8")).hexdigest()
+        self.assertEqual(record["content_sha256"], actual_hash)
+        self.assertIn(f"content_sha256: {actual_hash}", archive)
+        for consumer in record["compatibility_consumers"]:
+            consumer_text = read(consumer)
+            self.assertIn(archive_path, consumer_text)
+            self.assertIn("COMPATIBILITY_ONLY", consumer_text)
 
         self.assertIn(archive_path, documentation_map)
         self.assertIn("COMPATIBILITY_ONLY", documentation_map)
