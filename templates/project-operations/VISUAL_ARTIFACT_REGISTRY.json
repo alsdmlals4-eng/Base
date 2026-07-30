@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "registry_role": "project-visual-artifact-registry",
+  "artifacts": [
+    {
+      "visual_artifact_id": "VIS-EXAMPLE-001",
+      "tool": "FIGMA|WHIMSICAL|OTHER",
+      "usage_context": "GDD|EXTERNAL_COLLABORATION|BOTH",
+      "purpose": "",
+      "artifact_type": "",
+      "responsible_document_id": "",
+      "related_decision_ids": [],
+      "url": "",
+      "workspace_or_file_id": "",
+      "page_or_board_id": "",
+      "frame_or_node_id": "",
+      "status": "DRAFT_VISUAL",
+      "owner": "",
+      "last_verified_at": "",
+      "source_commit": "",
+      "snapshot_path": "",
+      "target_platform": "",
+      "target_resolution": "",
+      "input_method": "",
+      "implementation_scope": "",
+      "excluded_scope": "",
+      "supersedes": "",
+      "sync_status": "UNVERIFIED"
+    }
+  ]
+}

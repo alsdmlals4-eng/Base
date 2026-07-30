@@ -56,6 +56,11 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
         for term in ("NOT_CONFIGURED", "새 Sheet를 추정 생성", "자동 최종 자산", "repository-wide-audit", "71_이미지기획_생성목록", "72_이미지검수_승인로그"):
             self.assertIn(term, policy)
 
+    def test_visual_workspace_policy_supports_gdd_and_external_contexts(self) -> None:
+        policy = (ROOT / "docs/VISUAL_COLLABORATION_TOOL_POLICY.md").read_text(encoding="utf-8")
+        for context in ("GDD", "EXTERNAL_COLLABORATION", "BOTH"):
+            self.assertIn(context, policy)
+
 
 if __name__ == "__main__":
     unittest.main()
