@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from project_operating_contract import (
+    COMPATIBILITY_VIEWS,
     ContractError,
     canonical_json,
     initial_operating_health,
@@ -15,6 +16,37 @@ from project_operating_contract import (
     migrated_adapter,
     safe_repository_path,
 )
+
+
+LEGACY_ARCHIVE_ROOT = Path("docs/archive/base-v9-legacy-inputs")
+
+
+def preserved_compatibility_inputs(project_root: Path, *, write: bool) -> dict[str, str]:
+    """Archive legacy adapters once before their public paths become generated views."""
+    inputs: dict[str, str] = {}
+    for view in COMPATIBILITY_VIEWS:
+        source = safe_repository_path(project_root, view, "legacy compatibility view")
+        if not source.is_file():
+            continue
+        current = load_object(source)
+        if current.get("artifact_role") == "GENERATED_COMPATIBILITY_VIEW":
+            archive = safe_repository_path(project_root, LEGACY_ARCHIVE_ROOT / view.name, "legacy compatibility archive")
+            if not archive.is_file():
+                raise ContractError(f"Generated compatibility view has no preserved legacy input: {view.as_posix()}")
+            inputs[view.as_posix()] = archive.relative_to(project_root).as_posix()
+            continue
+        archive = safe_repository_path(project_root, LEGACY_ARCHIVE_ROOT / view.name, "legacy compatibility archive")
+        raw = source.read_bytes()
+        if archive.exists():
+            if not archive.is_file() or archive.read_bytes() != raw:
+                raise ContractError(f"Legacy compatibility archive mismatch: {archive.relative_to(project_root)}")
+        elif write:
+            archive.parent.mkdir(parents=True, exist_ok=True)
+            archive.write_bytes(raw)
+        else:
+            raise ContractError(f"Legacy compatibility archive is missing: {archive.relative_to(project_root)}")
+        inputs[view.as_posix()] = archive.relative_to(project_root).as_posix()
+    return inputs
 
 
 def main() -> int:
@@ -55,6 +87,12 @@ def main() -> int:
             options.protected_authority_kind,
             options.protected_authority_ref,
         )
+        compatibility_inputs = preserved_compatibility_inputs(project_root, write=options.write)
+        data["compatibility"] = {
+            "cycle": "ONE_CYCLE",
+            "views": sorted(compatibility_inputs),
+            "legacy_inputs": compatibility_inputs,
+        }
         content = canonical_json(data)
         if options.check:
             if not output.is_file() or output.read_bytes() != content:

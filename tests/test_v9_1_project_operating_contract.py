@@ -1421,6 +1421,39 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
             "BLOCKED",
         )
 
+    def test_migrator_archives_legacy_adapters_before_generating_compatibility_views(self) -> None:
+        legacy_views = {
+            "BASE_V9_ADAPTER.json": {"schema_version": 1, "adapter_role": "legacy-base"},
+            "PROJECT_BASE_SKILL_ADAPTER.json": {"schema_version": 1, "adapter_role": "legacy-project"},
+        }
+        for name, content in legacy_views.items():
+            (self.project / "skills" / name).write_text(
+                json.dumps(content, sort_keys=True) + "\n", encoding="utf-8"
+            )
+        output = self.project / "skills/MIGRATED_PROJECT_BASE_ADAPTER.json"
+        result = self.run_tool(
+            MIGRATE,
+            "--project-root", str(self.project),
+            "--base-repository", str(self.base),
+            "--legacy-adapter", str(self.legacy_adapter),
+            "--output", str(output),
+            "--release-commit", self.release_commit,
+            "--release-evidence-commit", self.evidence_commit,
+            "--protected-baseline-commit", self.protected_baseline_commit,
+            "--protected-authority-kind", "REMOTE_TRACKING_REF",
+            "--protected-authority-ref", "refs/remotes/origin/main",
+            "--write",
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        migrated = json.loads(output.read_text(encoding="utf-8"))
+        self.assertEqual(
+            migrated["compatibility"]["views"],
+            ["skills/BASE_V9_ADAPTER.json", "skills/PROJECT_BASE_SKILL_ADAPTER.json"],
+        )
+        for name, content in legacy_views.items():
+            archive = self.project / "docs/archive/base-v9-legacy-inputs" / name
+            self.assertEqual(json.loads(archive.read_text(encoding="utf-8")), content)
+
     def test_windows_script_runner_uses_explicit_command_array_without_shell(self) -> None:
         pub_spec = importlib.util.spec_from_file_location("publication_v3", ROOT / "tools/publication_v3.py")
         assert pub_spec and pub_spec.loader
