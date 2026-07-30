@@ -16,6 +16,7 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
         self.assertIn("GPT_PLANNING_VISUALIZATION", v8)
         self.assertIn("GPT_FINAL_VISUAL_CANDIDATE_REVIEW", v8)
         self.assertIn("PROJECT_BASE_ADAPTER.json", v8)
+        self.assertIn("AGENT_MERGE_REQUIRED", v8)
         self.assertIn("PROJECT_BASE_SKILL_ADAPTER.json은 GENERATED_COMPATIBILITY_VIEW", v8)
         self.assertIn("SUPERSEDED_COMPATIBILITY", v7)
         self.assertIn("VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md", v7)

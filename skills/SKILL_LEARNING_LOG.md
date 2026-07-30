@@ -1,5 +1,12 @@
 # Base Skill Learning Log
 
+## 2026-07-30 — Verified agent merge execution
+
+- Status: `PATTERN`.
+- Decision: a non-Draft PR at its reviewed SHA must be merged by the responsible agent after required checks, independent review, unresolved-thread, and decision gates pass. A separate user click is not a normal merge gate.
+- Boundary: `USER_REVIEW_REQUIRED` and `CHANGE_PROPOSAL` remain pre-implementation decision gates; P0/P1 findings, failed or missing checks, unresolved threads, conflicts, or unsupported merge methods block execution.
+- Verification trigger: the policy, implementation handoff Skill, active prompt, Registry, learning log, and contract tests must change together. Repository auto-merge availability may vary, so direct merge is used only when its allowed method and every gate are confirmed.
+
 ## 2026-07-30 — External authority for protected baselines
 
 - Status: `PATTERN`.

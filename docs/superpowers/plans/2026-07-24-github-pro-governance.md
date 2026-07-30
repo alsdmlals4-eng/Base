@@ -50,7 +50,7 @@
 - Consumes: `AUTO_MERGE_AFTER_REQUIRED_CHECKS` policy.
 - Produces: one consistent merge gate across policy, Skill, reference and package contract.
 
-- [ ] Add `MANUAL_USER_APPROVAL` and `AUTO_MERGE_AFTER_REQUIRED_CHECKS` merge modes.
+- [x] Superseded by `AUTO_MERGE_AFTER_REQUIRED_CHECKS` with `AGENT_MERGE_REQUIRED`; separate user merge approval is not a default mode.
 - [ ] Set automatic gated merge as the default selected policy for this workspace.
 - [ ] Add `AUTO_MERGE_ELIGIBLE`, `AUTO_MERGE_ENABLED`, `AUTO_MERGE_BLOCKED` states.
 - [ ] Keep user review mandatory for player-experience and planning decisions, not routine PR merge clicks.
