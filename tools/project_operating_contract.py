@@ -370,6 +370,88 @@ def _registry_index(registry: dict[str, Any]) -> dict[str, dict[str, Any]]:
     }
 
 
+def _project_registry_skill_path(
+    project_root: Path, registry_path: Path, entry_path: str
+) -> Path:
+    """Resolve project Skill paths from root or the declared Registry directory."""
+    candidates: list[Path] = []
+    errors: list[ContractError] = []
+    try:
+        candidates.append(safe_repository_path(project_root, Path(entry_path), "project Skill body"))
+    except ContractError as error:
+        errors.append(error)
+    resolved_root = project_root.resolve()
+    registry_candidate = (registry_path.parent / entry_path).resolve()
+    try:
+        relative_candidate = registry_candidate.relative_to(resolved_root)
+    except ValueError:
+        errors.append(
+            ContractError(
+                f"Unsafe project Skill body path escapes its approved repository root: {entry_path}"
+            )
+        )
+    else:
+        traversal = resolved_root
+        for part in relative_candidate.parts:
+            traversal = traversal / part
+            if traversal.is_symlink() or (
+                traversal.exists()
+                and getattr(traversal.stat(follow_symlinks=False), "st_file_attributes", 0) & 0x400
+            ):
+                errors.append(
+                    ContractError(
+                        f"Unsafe project Skill body path uses link traversal: {entry_path}"
+                    )
+                )
+                break
+        else:
+            if registry_candidate not in candidates:
+                candidates.append(registry_candidate)
+    existing = [candidate for candidate in candidates if candidate.is_file()]
+    if len(existing) > 1:
+        raise ContractError(
+            "Ambiguous project Skill body path resolves from both project root and Registry directory: "
+            f"{entry_path}"
+        )
+    if existing:
+        return existing[0]
+    if candidates:
+        return candidates[0]
+    if errors:
+        raise errors[0]
+    raise ContractError(f"Project Skill body path is empty or invalid: {entry_path}")
+
+
+def initial_operating_health() -> dict[str, Any]:
+    """Return the conservative first-migration state; later evidence may raise it."""
+    return {
+        "schema_version": 1,
+        "artifact_role": "PROJECT_OPERATING_HEALTH",
+        "operating_maturity": "OM-L0",
+        "product_evidence_maturity": "PE-0",
+        "critical_gates": {
+            "static": "NOT_RUN",
+            "runtime": "NOT_RUN",
+            "device": "NOT_RUN",
+            "accessibility": "NOT_RUN",
+            "human": "NOT_RUN",
+        },
+        "integrity_verdict": "PASS_WITH_NOT_RUN_GATES",
+        "evidence": {
+            "operating": [],
+            "product": [],
+            "sheet": [],
+            "gates": {
+                "static": [],
+                "runtime": [],
+                "device": [],
+                "accessibility": [],
+                "human": [],
+            },
+        },
+    }
+
+
 def _route_duplicates(routes: Iterable[dict[str, Any]]) -> set[str]:
     seen: set[str] = set()
     duplicates: set[str] = set()
@@ -822,7 +904,11 @@ def validation_errors(
                 errors.append(f"{owner} route {route['route_id']} references non-ACTIVE Skill ID {skill_id}")
             relative_skill = str(entry.get("path", ""))
             try:
-                skill_path = safe_repository_path(root, relative_skill, f"{owner} Skill")
+                skill_path = (
+                    safe_repository_path(root, relative_skill, f"{owner} Skill")
+                    if owner == "base"
+                    else _project_registry_skill_path(project_root, registries[owner][0], relative_skill)
+                )
             except ContractError as error:
                 errors.append(str(error))
                 continue
@@ -858,8 +944,8 @@ def validation_errors(
                 base_hashes.setdefault(body_hash, []).append(skill_id)
         for skill_id, entry in project_index.items():
             try:
-                project_body = safe_repository_path(
-                    project_root, str(entry.get("path", "")), "project Skill body"
+                project_body = _project_registry_skill_path(
+                    project_root, registries["project"][0], str(entry.get("path", ""))
                 )
             except ContractError as error:
                 errors.append(str(error))
@@ -908,7 +994,11 @@ def validation_errors(
             except ContractError as error:
                 errors.append(str(error))
                 continue
-            if not required.exists():
+            # A first-migration policy may deliberately reserve a future root
+            # such as assets/. Its baseline/hash and all later changes remain
+            # protected; a slash-terminated directory declaration is allowed
+            # to be absent, while required files still fail closed.
+            if not required.exists() and not protected_path.endswith("/"):
                 errors.append(f"Protected path does not exist: {protected_path}")
     errors.extend(_protected_policy_errors(project_root, adapter, protected_base))
 

@@ -10,6 +10,7 @@ from pathlib import Path
 from project_operating_contract import (
     ContractError,
     canonical_json,
+    initial_operating_health,
     load_object,
     migrated_adapter,
     safe_repository_path,
@@ -58,9 +59,16 @@ def main() -> int:
         if options.check:
             if not output.is_file() or output.read_bytes() != content:
                 raise ContractError(f"Migrated adapter is stale: {output}")
+            health = safe_repository_path(project_root, Path("docs/PROJECT_OPERATING_HEALTH.json"), "initial operating health")
+            if not health.is_file():
+                raise ContractError("First migration operating health artifact is missing")
         else:
             output.parent.mkdir(parents=True, exist_ok=True)
             output.write_bytes(content)
+            health = safe_repository_path(project_root, Path("docs/PROJECT_OPERATING_HEALTH.json"), "initial operating health")
+            if not health.exists():
+                health.parent.mkdir(parents=True, exist_ok=True)
+                health.write_bytes(canonical_json(initial_operating_health()))
     except ContractError as error:
         print(f"Project adapter migration failed: {error}", file=sys.stderr)
         return 1
