@@ -143,15 +143,15 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 | Work Mode·Skill·Skill Mode 선택 | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | `templates/project-operations/SKILL_EXECUTION_REPORT.md` |
 | Grill Me 핵심 결정 | `skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md` | `templates/project-operations/GRILL_ME_DECISION_RECORD.md` |
 | 실행 단계·의존성·병렬화 | `skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md` | `templates/planning/EXECUTION_SEQUENCE_PLAN.md` |
-| GPT→Codex 구현 인계 | `skills/maintaining-project-context-and-handoff/references/gpt-codex-implementation-handoff.md` | `MASTER_IMPLEMENTATION_PLAN.md`, `CODEX_PACKAGE_PLAN_REPORT.md`, `IMPLEMENTATION_PACKAGE_CONTRACT.md` |
+| GPT→Codex 구현 인계 | `skills/maintaining-project-context-and-handoff/references/gpt-codex-implementation-handoff.md` | `templates/project-operations/MASTER_IMPLEMENTATION_PLAN.md`, `templates/project-operations/CODEX_PACKAGE_PLAN_REPORT.md`, `templates/project-operations/IMPLEMENTATION_PACKAGE_CONTRACT.md` |
 | GitHub 보호·Ruleset·자동 병합 | `docs/GITHUB_PRO_OPERATING_POLICY.md` | `templates/project-operations/github/GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md` |
 | PR·Run·Artifact 무손실 정리 | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | `.github/pull_request_template.md`, `templates/pull_request_template.md` |
 | 구형 파일 분류·보존·Archive | `skills/governing-legacy-retention-and-archives/SKILL.md` | `templates/project-operations/LEGACY_ARTIFACT_RECONCILIATION.md` |
 | 게임 코어 판정·확정 | `skills/identifying-project-core/SKILL.md`, `skills/establishing-project-core/SKILL.md` | 프로젝트 코어 책임 원본 |
 | 게임 시스템·난이도·전투 AI (`system-design` / `difficulty-and-combat-ai`) | `skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-and-combat-ai.md` | `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md` |
 | 벤치마크·플레이어 근거·실험 | `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md` | `templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md` |
-| 게임 기획·아트·개발·AI·출시 근거 | `docs/knowledge/game-development/README.md` | `GAME_DEVELOPMENT_EVIDENCE_PACK.md`, `GAME_DEVELOPMENT_CASE_CARD.md` |
-| UI 설계·폴리싱·런타임 감사 | `skills/auditing-and-refining-ui-art/SKILL.md` | `GAME_UX_UI_SYSTEM.md`, `GAME_UX_UI_REVIEW_CHECKLIST.md` |
+| 게임 기획·아트·개발·AI·출시 근거 | `docs/knowledge/game-development/README.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`, `templates/research/GAME_DEVELOPMENT_CASE_CARD.md` |
+| UI 설계·폴리싱·런타임 감사 | `skills/auditing-and-refining-ui-art/SKILL.md` | `templates/planning/GAME_UX_UI_SYSTEM.md`, `templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md` |
 | 접근성·성능 | `skills/reviewing-and-validating-project-changes/references/accessibility-and-performance-validation.md` | `templates/quality/PROJECT_CHANGE_VALIDATION.md` |
 | 정본 변경 전파 | `skills/auditing-canonical-reference-freshness/SKILL.md` | `templates/quality/CANONICAL_REFERENCE_FRESHNESS_AUDIT.md` |
 | 저장소 전체 누락·stale·Prompt drift | `skills/running-adversarial-review-and-refinement/references/repository-wide-audit-protocol.md` | 저장소 전체 적대적 감사 보고 |
