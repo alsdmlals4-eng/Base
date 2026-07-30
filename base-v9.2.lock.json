@@ -5,11 +5,11 @@
     "path": "skills/SKILL_REGISTRY.json",
     "sha256": "9847bb2b225c776ad7916930f0f48c490bc2a898bea8e02ea1fdd0e6caac60c1"
   },
-  "candidate_release_commit": null,
-  "candidate_release_evidence_commit": null,
+  "candidate_release_commit": "648b9f60e53c4dbc7780d463be8d1bbd3a5a5e88",
+  "candidate_release_evidence_commit": "839154eca628084b023776f4ccf91770c344d7e6",
   "github_issue": 101,
   "release_line": "v9.2.0",
-  "release_state": "RELEASE_CANDIDATE",
+  "release_state": "BASE_RELEASED",
   "repository": "alsdmlals4-eng/Base",
   "schema_version": 1
 }
