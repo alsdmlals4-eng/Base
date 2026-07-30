@@ -147,6 +147,8 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
         self.assertTrue(requirements.is_file())
         requirement_text = requirements.read_text(encoding="utf-8")
         self.assertRegex(requirement_text, r"(?m)^jsonschema==[0-9]+\.[0-9]+\.[0-9]+$")
+        self.assertRegex(requirement_text, r"(?m)^Pillow==[0-9]+\.[0-9]+\.[0-9]+$")
+        self.assertRegex(requirement_text, r"(?m)^markdown-it-py==[0-9]+\.[0-9]+\.[0-9]+$")
         workflow = (ROOT / ".github/workflows/validate-base-v9-rc.yml").read_text(encoding="utf-8")
         install = "python -m pip install --requirement .github/validation-requirements.txt"
         self.assertIn(install, workflow)
@@ -160,6 +162,8 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
 
     def test_dependency_review_covers_common_manifest_and_lock_formats(self) -> None:
         workflow = (ROOT / ".github/workflows/dependency-review.yml").read_text(encoding="utf-8")
+        self.assertIn("vars.DEPENDENCY_REVIEW_ENABLED == 'true'", workflow)
+        self.assertIn("DEFERRED_UNTIL_REPOSITORY_SECURITY_ENABLED", workflow)
         for pattern in (
             "**/package-lock.json",
             "**/yarn.lock",

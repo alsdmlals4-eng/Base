@@ -37,6 +37,9 @@ concurrency:
 
 jobs:
   dependency-review:
+    # Private repositories require GitHub Advanced Security. Repository owners
+    # opt in after enabling it by setting DEPENDENCY_REVIEW_ENABLED=true.
+    if: ${{ github.event.repository.private == false || vars.DEPENDENCY_REVIEW_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -44,3 +47,10 @@ jobs:
         uses: actions/dependency-review-action@da24556b548a50705dd671f47852072ea4c105d9
         with:
           fail-on-severity: high
+
+  dependency-review-deferred:
+    if: ${{ github.event.repository.private && vars.DEPENDENCY_REVIEW_ENABLED != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record unavailable repository security capability
+        run: echo "DEFERRED_UNTIL_REPOSITORY_SECURITY_ENABLED"
