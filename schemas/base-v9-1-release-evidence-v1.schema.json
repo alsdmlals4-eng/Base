@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/base-v9-1-release-evidence-v1.schema.json",
+  "title": "Base v9.1 Release Evidence Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_role", "release_line", "evidence_status", "repository", "candidate_pull_request", "release_payload_commit", "candidate_registry", "validation", "product_evidence"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "BASE_V9_1_RELEASE_EVIDENCE"},
+    "release_line": {"const": "v9.1.0"},
+    "evidence_status": {"const": "RECORDED_ON_TRUSTED_MAIN_BEFORE_PIN_FINALIZATION"},
+    "repository": {"const": "alsdmlals4-eng/Base"},
+    "candidate_pull_request": {"const": 73},
+    "release_payload_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "candidate_registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "hash_definition"],
+      "properties": {
+        "path": {"const": "skills/SKILL_REGISTRY.json"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "hash_definition": {"const": "RAW_FILE_BYTES_SHA256"}
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base_v91_contract_ci", "full_python_suite", "integrity", "generated_artifacts"],
+      "properties": {
+        "base_v91_contract_ci": {"const": "PASSED"},
+        "full_python_suite": {"const": "PASSED_293_WITH_1_DECLARED_SKIP"},
+        "integrity": {"const": "PASSED"},
+        "generated_artifacts": {"const": "PASSED"}
+      }
+    },
+    "product_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["godot_runtime", "device", "accessibility", "human_validation"],
+      "properties": {
+        "godot_runtime": {"const": "NOT_RUN"},
+        "device": {"const": "NOT_RUN"},
+        "accessibility": {"const": "NOT_RUN"},
+        "human_validation": {"const": "NOT_RUN"}
+      }
+    }
+  }
+}

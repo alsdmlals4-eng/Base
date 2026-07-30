@@ -10,6 +10,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from jsonschema import Draft202012Validator
+
 
 ROOT = Path(__file__).resolve().parents[1]
 V90_OUTPUTS = {
@@ -183,6 +185,20 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
             "**/action.yaml",
         ):
             self.assertIn(pattern, workflow)
+
+    def test_v91_release_evidence_record_binds_the_merged_candidate_payload(self) -> None:
+        evidence_path = ROOT / "docs/operations/BASE_V9_1_RELEASE_EVIDENCE.json"
+        schema_path = ROOT / "schemas/base-v9-1-release-evidence-v1.schema.json"
+        evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        errors = sorted(Draft202012Validator(schema).iter_errors(evidence), key=lambda error: list(error.path))
+        self.assertEqual(errors, [])
+        self.assertEqual(evidence["release_payload_commit"], "3c158f52cfdad889970aef4d6ce6650a6fea0645")
+        self.assertEqual(evidence["candidate_registry"]["path"], "skills/SKILL_REGISTRY.json")
+        self.assertEqual(
+            evidence["candidate_registry"]["sha256"],
+            "e06003cb986e979aa46c06839de178c3fb9ff10bdf440e750712d90d6c5ae7bb",
+        )
 
     def test_v90_frozen_artifacts_pin_all_historical_blobs_without_freezing_current_paths(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

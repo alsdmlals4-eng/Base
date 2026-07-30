@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-30 — Base v9.1 trusted release-evidence record
+
+- Added a schema-validated v9.1 evidence record for merged candidate payload `3c158f52cfdad889970aef4d6ce6650a6fea0645` and its raw-byte Skill Registry identity.
+- Established the two-step trusted-main sequence: merge evidence without changing the Registry, then finalize immutable project pins in a separate PR. Runtime, device, accessibility, and human validation remain `NOT_RUN`.
+
 ## 2026-07-30 — Base v9.1 CI capability correction
 
 - Added the pinned Pillow, Markdown-It, and PyPDF validation dependencies required by the Windows PDF command safety and document-publication regressions on clean GitHub runners.

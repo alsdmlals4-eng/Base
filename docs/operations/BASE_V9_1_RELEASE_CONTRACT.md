@@ -46,6 +46,17 @@ checkout Registry path and raw-byte SHA-256. Once candidate commits are issued,
 a released project adapter reads the matching Registry blob with
 `git show <release_evidence_commit>:<candidate_registry.path>`.
 
+## v9.1 evidence record and pin finalization
+
+The v9.1 payload and its evidence boundary are deliberately separate. The
+release-evidence record at
+[`BASE_V9_1_RELEASE_EVIDENCE.json`](BASE_V9_1_RELEASE_EVIDENCE.json) is first
+merged to trusted `main` without changing the candidate Registry. A subsequent
+pin-finalization PR may then set both candidate pins in `base-v9.1.lock.json`.
+The validator reads the evidence record from that pinned historical commit and
+requires its payload SHA and Registry identity to match the lock. This prevents
+an untrusted feature branch from self-attesting a newly invented release pin.
+
 ## Supply chain
 
 GitHub workflows use least permissions and official Actions pinned to full commit SHAs. Dependency review is capability-gated for pull requests that change dependency manifests or lockfiles: the repository owner enables the dependency graph/security capability first, then sets `DEPENDENCY_REVIEW_ENABLED=true`. Until that explicit opt-in exists, the workflow records `DEFERRED_UNTIL_REPOSITORY_SECURITY_ENABLED` rather than reporting a false security pass. Binary attestation is `DEFERRED_UNTIL_RELEASE_ARTIFACT`; no attestation claim is made before a releasable binary exists.
