@@ -65,6 +65,10 @@ class GameUxUiSystemContractTests(unittest.TestCase):
             with self.subTest(required=required):
                 self.assertIn(required, text)
 
+    def test_visual_workspace_contract_is_routed_without_a_tool_named_skill(self) -> None:
+        self.assertIn("VISUAL_COLLABORATION_TOOL_POLICY.md", (ROOT / "docs/DOCUMENTATION_MAP.md").read_text(encoding="utf-8"))
+        self.assertIn("usage_context", PLANNING_TEMPLATE.read_text(encoding="utf-8"))
+
     def test_skill_preserves_existing_ui_audit_contract(self) -> None:
         text = SKILL.read_text(encoding="utf-8")
         for required in (

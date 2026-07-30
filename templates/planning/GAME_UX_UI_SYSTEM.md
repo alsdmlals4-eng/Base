@@ -6,6 +6,13 @@
 
 ## 1. 프로젝트 UX 약속
 
+## 시각 협업 Artifact
+
+- usage_context: GDD / EXTERNAL_COLLABORATION / BOTH
+- Figma Frame·Whimsical Board:
+- Decision ID·GitHub 책임 원본:
+- Snapshot·Source Commit·구현 제외 범위:
+
 ```text
 <플레이어가 무엇을 보고>
 → <어떤 판단을 하고>

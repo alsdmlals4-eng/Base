@@ -65,3 +65,5 @@ skills/<skill-id>/agents/        지원 플랫폼용 발견 metadata
 - 파일 수나 길이만을 이유로 안전 규칙·고유 절차·검증 근거 삭제
 
 프로젝트 교훈은 먼저 `[수정제안서]`에서 검토하고, 승인된 Base 변경만 별도 구현 PR에서 Registry·Skill·Template·Test·생성본과 함께 갱신한다.
+
+외부 시각 도구는 `docs/VISUAL_COLLABORATION_TOOL_POLICY.md`의 Artifact·정본 경계를 따라 기존 책임 Skill에서 사용한다.

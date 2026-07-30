@@ -1,5 +1,7 @@
 # 게임 UX/UI 디자인 시스템 방법
 
+For visual-workspace selection, pinning, and Godot comparison, follow `docs/VISUAL_COLLABORATION_TOOL_POLICY.md`; Figma is a screen contract, not an implementation verdict.
+
 ## 1. 목적
 
 화면을 예쁘게 만드는 작업과 플레이어가 게임을 이해하고 선택하는 구조를 분리하지 않는다. UX/UI 작업은 다음 순서로 진행한다.
