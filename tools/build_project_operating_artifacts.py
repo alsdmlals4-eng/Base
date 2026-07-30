@@ -14,13 +14,21 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--project-root", type=Path, required=True)
     parser.add_argument("--base-repository", type=Path, required=True)
+    parser.add_argument(
+        "--protected-base",
+        default="",
+        help="trusted external baseline commit; it must exactly equal the adapter record",
+    )
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--write", action="store_true")
     mode.add_argument("--check", action="store_true")
     options = parser.parse_args()
     try:
         mismatches = write_or_check_artifacts(
-            options.project_root.resolve(), options.base_repository.resolve(), check=options.check
+            options.project_root.resolve(),
+            options.base_repository.resolve(),
+            check=options.check,
+            protected_base=options.protected_base,
         )
     except ContractError as error:
         print(f"Project operating artifact generation failed: {error}", file=sys.stderr)

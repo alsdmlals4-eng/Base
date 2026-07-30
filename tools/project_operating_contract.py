@@ -765,10 +765,19 @@ its path; this router contains no copied Base shared Skill body.
 
 
 def build_artifacts(
-    project_root: Path, base_repository: Path, *, prevalidated: bool = False
+    project_root: Path,
+    base_repository: Path,
+    *,
+    prevalidated: bool = False,
+    protected_base: str = "",
 ) -> dict[Path, bytes]:
     if not prevalidated:
-        errors = validation_errors(project_root, base_repository, check_generated=False)
+        errors = validation_errors(
+            project_root,
+            base_repository,
+            protected_base=protected_base,
+            check_generated=False,
+        )
         if errors:
             raise ContractError("\n".join(errors))
     adapter_path = safe_repository_path(project_root, CANONICAL_ADAPTER, "canonical adapter")
@@ -815,8 +824,9 @@ def write_or_check_artifacts(
     base_repository: Path,
     *,
     check: bool,
+    protected_base: str = "",
 ) -> list[Path]:
-    artifacts = build_artifacts(project_root, base_repository)
+    artifacts = build_artifacts(project_root, base_repository, protected_base=protected_base)
     mismatches = [path for path, content in artifacts.items() if not path.is_file() or path.read_bytes() != content]
     if check and mismatches:
         names = ", ".join(path.relative_to(project_root).as_posix() for path in mismatches)
