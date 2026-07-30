@@ -6,6 +6,8 @@ Base v9.2 is a compatible candidate layer over immutable Base v9.0 and does not 
 
 `base-v9.2.lock.json` is the machine-readable candidate identity. During this candidate PR both `candidate_release_commit` and `candidate_release_evidence_commit` are intentionally `null`: a branch must not self-attest its own release or evidence SHA.
 
+The separate evidence record is `BASE_V9_2_RELEASE_EVIDENCE.json`. It fixes the payload commit, candidate Registry bytes, CI evidence, and declared `NOT_RUN` product evidence without changing the candidate lock.
+
 No project may pin Base v9.2 or execute a v9.2 Application Binding until a later trusted-main evidence record and pin-finalization PR provide both values. The release payload pin must be an ancestor of the evidence pin, and the Registry raw-byte SHA must equal the Registry blob at the pinned evidence commit. Unknown, missing, stale, or non-ancestral pins fail closed.
 
 ## Required release sequence
