@@ -3,17 +3,23 @@
 
 from __future__ import annotations
 
+import argparse
 import json
+import hashlib
 import re
 import subprocess
 import sys
 from pathlib import Path
+
+from jsonschema import Draft202012Validator
 
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "skills/SKILL_REGISTRY.json"
 GENERATOR = ROOT / "tools/build_base_v9_artifacts.py"
 GENERATED_SUMMARY = ROOT / "docs/generated/BASE_ACTIVE_SKILLS.md"
+CANDIDATE_LOCK = ROOT / "base-v9.1.lock.json"
+CANDIDATE_LOCK_SCHEMA = ROOT / "schemas/base-v9-1-candidate-lock-v1.schema.json"
 ENTRYPOINTS = (
     ROOT / "README.md",
     ROOT / "AGENTS.md",
@@ -23,6 +29,223 @@ ENTRYPOINTS = (
 )
 MARKDOWN_LINK = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 LOCAL_SUFFIXES = {".md", ".json", ".py", ".yml", ".yaml", ".pdf", ".docx", ".png", ".svg"}
+V9_GENERATED_OUTPUTS = {
+    ".codex-plugin/plugin.json",
+    "base.lock.json",
+    "skills/BASE_V9_SKILL_SNAPSHOT.json",
+    "docs/generated/BASE_ACTIVE_SKILLS.md",
+    "docs/operations/BASE_V9_DECISION_REGISTRY.json",
+    "docs/operations/GITHUB_OBJECT_LEDGER.json",
+    "docs/operations/ADVERSARIAL_REVIEW_MANIFEST.json",
+    "docs/operations/SHEET_CONTROL_CONTRACT.json",
+}
+
+
+def _resolve_commit(repository: Path, reference: str) -> str | None:
+    result = subprocess.run(
+        ["git", "-C", str(repository), "rev-parse", "--verify", f"{reference}^{{commit}}"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
+    resolved = result.stdout.strip()
+    return resolved if not result.returncode and re.fullmatch(r"[0-9a-f]{40}", resolved) else None
+
+
+def _commit_json(repository: Path, commit: str, relative: str) -> dict | None:
+    result = subprocess.run(
+        ["git", "-C", str(repository), "show", f"{commit}:{relative}"],
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode:
+        return None
+    try:
+        value = json.loads(result.stdout.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return None
+    return value if isinstance(value, dict) else None
+
+
+def resolve_trusted_history_commit(repository: Path, provided: str = "") -> tuple[str | None, list[str]]:
+    if provided:
+        if not re.fullmatch(r"[0-9a-f]{40}", provided) or _resolve_commit(repository, provided) != provided:
+            return None, [f"Trusted history commit is not an exact available commit: {provided}"]
+        return provided, []
+    reference = "refs/remotes/origin/main"
+    resolved = _resolve_commit(repository, reference)
+    if resolved is None:
+        return None, [f"Trusted history ref cannot be resolved: {reference}"]
+    return resolved, []
+
+
+def release_evidence_errors(
+    repository: Path,
+    candidate_lock: dict,
+    trusted_history_commit: str,
+) -> list[str]:
+    errors: list[str] = []
+    compatibility = candidate_lock.get("compatibility_base", {})
+    evidence = compatibility.get("release_evidence_commit")
+    release_commit = compatibility.get("release_commit")
+    if _resolve_commit(repository, trusted_history_commit) != trusted_history_commit:
+        return [f"Trusted history commit is unavailable: {trusted_history_commit}"]
+    if not isinstance(evidence, str) or _resolve_commit(repository, evidence) != evidence:
+        return [f"v9.0 release evidence commit is unavailable: {evidence}"]
+    ancestry = subprocess.run(
+        ["git", "-C", str(repository), "merge-base", "--is-ancestor", evidence, trusted_history_commit],
+        capture_output=True,
+        check=False,
+    )
+    if ancestry.returncode:
+        errors.append("v9.0 release evidence is not an ancestor of trusted history")
+    parent = _resolve_commit(repository, f"{evidence}^")
+    parent_lock = _commit_json(repository, parent, "base.lock.json") if parent else None
+    evidence_lock = _commit_json(repository, evidence, "base.lock.json")
+    if parent_lock is None or evidence_lock is None:
+        errors.append("v9.0 release transition boundary base.lock.json is unavailable or invalid")
+        return errors
+    if (
+        parent_lock.get("release_state") != "BASE_RELEASE_PENDING_CI"
+        or parent_lock.get("final_release_state") != "BASE_RELEASE_PENDING_CI"
+    ):
+        errors.append("v9.0 release evidence is not the exact pending-to-released transition boundary")
+    if (
+        evidence_lock.get("release_state") != "BASE_RELEASED"
+        or evidence_lock.get("final_release_state") != "BASE_RELEASED"
+        or evidence_lock.get("release_line") != "v9.0.0"
+        or evidence_lock.get("release_commit") != release_commit
+    ):
+        errors.append("v9.0 release evidence base.lock.json does not match the released compatibility contract")
+    if not isinstance(release_commit, str) or _resolve_commit(repository, release_commit) != release_commit:
+        errors.append(f"v9.0 release commit is unavailable: {release_commit}")
+    else:
+        payload_ancestry = subprocess.run(
+            ["git", "-C", str(repository), "merge-base", "--is-ancestor", release_commit, evidence],
+            capture_output=True,
+            check=False,
+        )
+        if payload_ancestry.returncode:
+            errors.append("v9.0 release commit is not an ancestor of its evidence commit")
+    return errors
+
+
+def frozen_artifact_errors(repository: Path, candidate_lock: dict) -> list[str]:
+    """Verify immutable identities for every declared v9.0 evidence-commit blob."""
+    errors: list[str] = []
+    compatibility = candidate_lock.get("compatibility_base", {})
+    evidence_commit = compatibility.get("release_evidence_commit")
+    frozen = compatibility.get("frozen_artifacts", [])
+    if not isinstance(evidence_commit, str) or not evidence_commit:
+        return ["v9.0 frozen artifacts require a release evidence commit"]
+    if not isinstance(frozen, list) or not frozen:
+        return ["v9.0 frozen artifact declaration is empty"]
+    frozen_paths = [entry.get("path") for entry in frozen if isinstance(entry, dict)]
+    frozen_set = {path for path in frozen_paths if isinstance(path, str)}
+    if len(frozen_paths) != len(frozen) or len(frozen_paths) != len(frozen_set) or frozen_set != V9_GENERATED_OUTPUTS:
+        missing = sorted(V9_GENERATED_OUTPUTS - frozen_set)
+        extra = sorted(frozen_set - V9_GENERATED_OUTPUTS)
+        errors.append(
+            "v9.0 frozen artifact declaration must be the complete generated output set"
+            f" (missing={missing}, extra={extra}, duplicates={len(frozen_paths) != len(frozen_set)})"
+        )
+    for entry in frozen:
+        if not isinstance(entry, dict):
+            errors.append(f"Invalid v9.0 frozen artifact identity: {entry}")
+            continue
+        value = entry.get("path")
+        pinned_oid = entry.get("git_blob_oid")
+        pinned_sha256 = entry.get("sha256")
+        relative = Path(str(value))
+        if relative.is_absolute() or ".." in relative.parts:
+            errors.append(f"Unsafe v9.0 frozen artifact path: {value}")
+            continue
+        historical_oid = subprocess.run(
+            ["git", "-C", str(repository), "rev-parse", f"{evidence_commit}:{relative.as_posix()}"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=False,
+        )
+        historical_blob = subprocess.run(
+            ["git", "-C", str(repository), "show", f"{evidence_commit}:{relative.as_posix()}"],
+            capture_output=True,
+            check=False,
+        )
+        if historical_oid.returncode or historical_blob.returncode:
+            errors.append(f"v9.0 frozen artifact historical blob is unavailable: {value}")
+            continue
+        actual_oid = historical_oid.stdout.strip()
+        if not isinstance(pinned_oid, str) or pinned_oid != actual_oid:
+            errors.append(f"v9.0 frozen artifact historical blob ID mismatch: {value}")
+        actual_sha256 = hashlib.sha256(historical_blob.stdout).hexdigest()
+        if not isinstance(pinned_sha256, str) or pinned_sha256 != actual_sha256:
+            errors.append(f"v9.0 frozen artifact historical blob SHA-256 mismatch: {value}")
+    return errors
+
+
+def registry_authority_errors(repository: Path, candidate_lock: dict) -> list[str]:
+    """Verify historical v9.0 Registry authority separately from the current v9.1 candidate."""
+    errors: list[str] = []
+    compatibility = candidate_lock.get("compatibility_base", {})
+    historical = compatibility.get("historical_registry")
+    current = candidate_lock.get("candidate_registry")
+    evidence_commit = compatibility.get("release_evidence_commit")
+    base_lock = _commit_json(repository, evidence_commit, "base.lock.json") if isinstance(evidence_commit, str) else None
+    if base_lock is None:
+        return ["Historical v9.0 evidence base.lock.json Git blob cannot be read"]
+    if not isinstance(historical, dict):
+        errors.append("Historical v9.0 Registry authority is missing")
+    else:
+        commit = historical.get("commit")
+        path = historical.get("path")
+        expected_hash = historical.get("sha256")
+        if commit != compatibility.get("release_evidence_commit"):
+            errors.append("Historical v9.0 Registry commit must equal the compatibility evidence commit")
+        if path != base_lock.get("source_of_truth") or expected_hash != base_lock.get("registry_sha256"):
+            errors.append("Historical v9.0 Registry authority does not match frozen base.lock.json")
+        if isinstance(commit, str) and isinstance(path, str) and isinstance(expected_hash, str):
+            relative = Path(path)
+            if relative.is_absolute() or ".." in relative.parts:
+                errors.append(f"Unsafe historical v9.0 Registry path: {path}")
+            else:
+                blob = subprocess.run(
+                    ["git", "-C", str(repository), "show", f"{commit}:{relative.as_posix()}"],
+                    capture_output=True,
+                    check=False,
+                )
+                if blob.returncode:
+                    errors.append("Historical v9.0 Registry Git blob is unavailable")
+                elif hashlib.sha256(blob.stdout).hexdigest() != expected_hash:
+                    errors.append("Historical v9.0 Registry Git blob hash mismatch")
+    if not isinstance(current, dict):
+        errors.append("Current v9.1 candidate Registry authority is missing")
+    else:
+        path = current.get("path")
+        expected_hash = current.get("sha256")
+        relative = Path(str(path))
+        if not isinstance(path, str) or relative.is_absolute() or ".." in relative.parts:
+            errors.append(f"Unsafe current v9.1 candidate Registry path: {path}")
+        else:
+            target = repository / relative
+            traversal = repository
+            unsafe = False
+            for part in relative.parts:
+                traversal = traversal / part
+                if traversal.is_symlink() or (
+                    traversal.exists()
+                    and getattr(traversal.stat(follow_symlinks=False), "st_file_attributes", 0) & 0x400
+                ):
+                    unsafe = True
+                    break
+            if unsafe:
+                errors.append(f"Current v9.1 candidate Registry uses unsafe link traversal: {path}")
+            elif not target.is_file():
+                errors.append(f"Current v9.1 candidate Registry is missing: {path}")
+            elif not isinstance(expected_hash, str) or hashlib.sha256(target.read_bytes()).hexdigest() != expected_hash:
+                errors.append("Current v9.1 candidate Registry raw-byte hash mismatch")
+    return errors
 
 
 def graph_errors(skills: list[dict]) -> list[str]:
@@ -94,6 +317,9 @@ def documentation_link_errors() -> list[str]:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--trusted-history-commit", default="")
+    options = parser.parse_args()
     errors: list[str] = []
     try:
         registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
@@ -102,6 +328,23 @@ def main() -> int:
         return 1
     errors.extend(graph_errors(registry.get("skills", [])))
     errors.extend(documentation_link_errors())
+    try:
+        candidate_lock = json.loads(CANDIDATE_LOCK.read_text(encoding="utf-8"))
+        candidate_schema = json.loads(CANDIDATE_LOCK_SCHEMA.read_text(encoding="utf-8"))
+        for error in sorted(
+            Draft202012Validator(candidate_schema).iter_errors(candidate_lock),
+            key=lambda item: list(item.path),
+        ):
+            location = ".".join(str(part) for part in error.path) or "<root>"
+            errors.append(f"Base v9.1 candidate lock {location}: {error.message}")
+        trusted_history, trusted_errors = resolve_trusted_history_commit(ROOT, options.trusted_history_commit)
+        errors.extend(trusted_errors)
+        if trusted_history is not None:
+            errors.extend(release_evidence_errors(ROOT, candidate_lock, trusted_history))
+        errors.extend(frozen_artifact_errors(ROOT, candidate_lock))
+        errors.extend(registry_authority_errors(ROOT, candidate_lock))
+    except (OSError, json.JSONDecodeError) as error:
+        errors.append(f"Base v9.1 candidate lock cannot be validated: {error}")
     if not GENERATED_SUMMARY.is_file():
         errors.append("Generated active-Skill summary is missing")
     for entrypoint in ENTRYPOINTS:

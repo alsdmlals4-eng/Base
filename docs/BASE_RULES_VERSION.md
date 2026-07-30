@@ -15,6 +15,11 @@ This document is the canonical source for Base's own version and release state. 
 does not claim a project version, project implementation state, or Google Sheets
 state.
 
+Base v9.1 is a compatible candidate operating layer over this immutable v9.0.0
+release boundary. Its project adapters separate `release_commit` from
+`release_evidence_commit`; `../base-v9.1.lock.json` records the machine-readable
+`RELEASE_CANDIDATE` identity without rewriting the table above.
+
 ## Compatibility rule
 
 The Registry and each active Skill's frontmatter are the machine-readable source
@@ -46,3 +51,6 @@ this Base release.
 - [Base v9 release contract](operations/BASE_V9_RELEASE_CONTRACT.md)
 - [Project GDD Google Sheets policy](PROJECT_GDD_GOOGLE_SHEETS_POLICY.md)
 - [Base shared Skill adapter contract](BASE_SHARED_SKILL_ADAPTER_CONTRACT.md)
+- [Base v9.1 release contract](operations/BASE_V9_1_RELEASE_CONTRACT.md)
+- [Base v9.1 system map](operations/BASE_V9_1_SYSTEM_MAP.md)
+- [Base v9.1 dual-axis maturity model](operations/BASE_V9_1_MATURITY_MODEL.md)

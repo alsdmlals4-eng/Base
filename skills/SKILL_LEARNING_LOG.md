@@ -1,5 +1,35 @@
 # Base Skill Learning Log
 
+## 2026-07-30 — External authority for protected baselines
+
+- Status: `PATTERN`.
+- Decision: a mutable project adapter cannot attest its own comparison base. Record an authority kind/ref and require its resolved commit to equal the adapter commit.
+- Local boundary: resolve an explicit remote-tracking ref; do not infer the baseline from `HEAD`.
+- Pull-request boundary: pass the event base SHA as trusted caller input and require equality; this is not cryptographic attestation.
+- Verification trigger: missing refs, mismatched CLI values, or a protected product change combined with a feature-branch adapter baseline update must fail closed.
+
+## 2026-07-30 — Base project router baseline hardening
+
+- 상태: `PATTERN`
+- 결정: 프로젝트 라우터는 스냅샷을 읽기 전에 표준 `--check`를 실행하며, 첫 마이그레이션에서는 commit-qualified legacy 정책 소스, 후속 wave에서는 canonical adapter 정책 소스를 사용한다.
+- 실패 조건: adapter와 CLI 양쪽에 기준선이 없거나, 기준선 이후 보호 경로가 변경되었으면 route 실행을 중단한다.
+- 검증: 기준선 없는 검사, `project.godot` 변경, 마이그레이터 기준선 누락을 실행형 임시 Git 저장소 테스트로 확인한다.
+
+## 2026-07-30 — Base v9.1 review remediation
+
+- Replaced string-only pressure evidence with four executable temporary-repository fixtures.
+- Historical Base Registry authority now comes from the pinned Git blob; current Registry evolution is separate.
+- Added ACTIVE-only route/alias resolution, evidence-derived health verdicts, protected/path fail-closed rules, and source-backed compatibility projections.
+- Declared near-duplicate Skill similarity below normalized hash equality as a manual-review gap.
+
+## 2026-07-30 Base v9.1: fail-closed project routing
+
+- **Trigger:** pressure scenarios encouraged body copying, stale-pin execution, shared-route shadowing, and mismatch ignoring.
+- **Finding:** route prose without machine validation allowed deadline, sunk cost, and authority pressure to bypass ownership.
+- **Decision:** one canonical adapter drives deterministic views; project-local routes win; shared bodies remain in Base; every pin/hash mismatch refuses execution.
+- **Evidence:** four recorded `BASELINE_FAIL` scenarios, four `GUIDED_PASS` decisions, focused Skill tests, and cross-repository validator tests.
+- **Boundary:** no project runtime, device, accessibility, human, or product-code validation was performed.
+
 ## 2026-07-30 Base v9: generated authority instead of fixed Skill count
 
 - **Trigger:** Base needed a final release operating contract without treating

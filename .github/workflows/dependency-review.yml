@@ -1,0 +1,56 @@
+name: Dependency Review
+
+on:
+  pull_request:
+    paths:
+      - "**/package.json"
+      - "**/package-lock.json"
+      - "**/pnpm-lock.yaml"
+      - "**/yarn.lock"
+      - "**/bun.lockb"
+      - "**/bun.lock"
+      - "**/requirements*.txt"
+      - "**/pyproject.toml"
+      - "**/poetry.lock"
+      - "**/Pipfile.lock"
+      - "**/uv.lock"
+      - "**/Cargo.toml"
+      - "**/Cargo.lock"
+      - "**/go.mod"
+      - "**/go.sum"
+      - "**/Gemfile"
+      - "**/Gemfile.lock"
+      - "**/composer.json"
+      - "**/composer.lock"
+      - ".github/workflows/**"
+      - "action.yml"
+      - "action.yaml"
+      - "**/action.yml"
+      - "**/action.yaml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-review-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependency-review:
+    # The action cannot report whether dependency graph/security is enabled.
+    # Owners opt in only after enabling the required repository capability.
+    if: ${{ vars.DEPENDENCY_REVIEW_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Review dependency changes
+        uses: actions/dependency-review-action@da24556b548a50705dd671f47852072ea4c105d9
+        with:
+          fail-on-severity: high
+
+  dependency-review-deferred:
+    if: ${{ vars.DEPENDENCY_REVIEW_ENABLED != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record unavailable repository security capability
+        run: echo "DEFERRED_UNTIL_REPOSITORY_SECURITY_ENABLED"

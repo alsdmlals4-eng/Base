@@ -44,6 +44,10 @@
 | 파일 | 역할 |
 |---|---|
 | `PROJECT_OPERATING_SYSTEM_INSTALLATION_PLAN.md` | 신규 설치 계획 |
+| `PROJECT_BASE_ADAPTER.json` | Base v9.1 canonical project integration authority; install as `skills/PROJECT_BASE_ADAPTER.json` |
+| `github/validate-project-base-adapter.yml` | Pull-request validator template that supplies the exact GitHub PR base SHA as trusted external baseline input |
+| `PROJECT_OPERATING_HEALTH.json` | Independent OM/PE axes and explicit critical-gate state; install under `docs/` |
+| `.agents/skills/base-project-router/SKILL.md` | Thin repository-discovered router; it contains no shared workflow body |
 | `EXISTING_PROJECT_MIGRATION_AUDIT.md` | 기존 프로젝트 보존·참조 감사 |
 | `PROJECT_START_HERE.md` | 사용자·새 AI용 대시보드 |
 | `ACTIVE_CONTEXT.md` | 현재 상태의 기본 원본 |

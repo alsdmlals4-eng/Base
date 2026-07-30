@@ -222,6 +222,14 @@ DOCX·다이어그램은 선언한 경우만 생성한다. `CURRENT`, 자동 렌
 - [Current Active Base Skills](generated/BASE_ACTIVE_SKILLS.md)
 - [Open-Source Godot UI Reference Catalog](knowledge/OPEN_SOURCE_GODOT_UI_REFERENCE_CATALOG.md)
 - [Held Common Project Adoption Work Order](../templates/prompts/BASE_V9_COMMON_PROJECT_ADOPTION_WORK_ORDER.md)
+- [Base v9.1 Release Contract](operations/BASE_V9_1_RELEASE_CONTRACT.md)
+- [Base v9.1 System Map](operations/BASE_V9_1_SYSTEM_MAP.md)
+- [Base v9.1 Dual-Axis Maturity](operations/BASE_V9_1_MATURITY_MODEL.md)
+- [Base v9.1 Dashboard Contract](operations/BASE_V9_1_DASHBOARD_CONTRACT.md)
+- [Base v9.1 Skill Pressure Tests](operations/BASE_V9_1_SKILL_PRESSURE_TESTS.md)
+- [Base v9.1 Integrity Audit](operations/BASE_V9_1_INTEGRITY_AUDIT.md)
+- `../base-v9.1.lock.json`: machine-readable Base v9.1 `RELEASE_CANDIDATE` identity; v9.0 remains in `../base.lock.json`.
+- `superpowers/plans/2026-07-30-base-v9-1-review-remediation.md`: review-blocker TDD remediation plan and verification contract.
 
 ## 12. 콜드 스타트·완료
 

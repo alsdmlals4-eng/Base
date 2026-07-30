@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-07-30 — Base v9.1 CI capability correction
+
+- Added the pinned Pillow, Markdown-It, and PyPDF validation dependencies required by the Windows PDF command safety and document-publication regressions on clean GitHub runners.
+- Made dependency review capability-aware: it runs on public repositories or after a private repository owner enables GitHub Advanced Security and sets `DEPENDENCY_REVIEW_ENABLED=true`; otherwise the workflow records `DEFERRED_UNTIL_REPOSITORY_SECURITY_ENABLED` instead of a false pass.
+
+## 2026-07-30 — Base v9.1 external protected-baseline authority
+
+- Anchored each protected baseline to an explicit external Git authority and required exact equality instead of allowing adapter or CLI baseline replacement.
+- Added fail-closed local remote-ref resolution, exact GitHub pull-request base-SHA invocation, explicit migration authority inputs, and adversarial self-attestation fixtures.
+- Reconciled the #72 governance-ledger evolution with v9.0 immutability by pinning each release-evidence Git blob OID and SHA-256 instead of requiring current working-path equality.
+- Bound those historical pins to the exact v9.0 pending-to-released transition inside an externally trusted Git history and sourced historical Registry authority from the evidence `base.lock.json` blob.
+
+## 2026-07-30 — Base v9.1 first-migration baseline source fix
+
+- Replaced the canonical-adapter-at-baseline assumption with a commit-qualified protected-policy source contract supporting legacy-only first migrations and canonical later waves.
+- Migration now anchors protected paths to the explicit legacy Git blob and refuses missing, unextractable, hash-mismatched, or weakened policy.
+
+## 2026-07-30 — Base v9.1 second-review hardening
+
+- Required project-confined, existing, raw-SHA-matching, globally unique health evidence and a mandatory protected baseline commit.
+- Expanded the v9.0 frozen contract to all eight generator outputs with CRLF-safe Git-blob comparison, and separated historical v9.0 Registry authority from the current v9.1 candidate Registry.
+- Standardized snapshot/dashboard adapter provenance on `RAW_FILE_BYTES_SHA256` and expanded dependency review to workflow and Action metadata.
+
+## 2026-07-30 — Base v9.1 review remediation
+
+- Closed Issue #71 review blockers across Action provenance, historical artifact immutability, release-lock binding, health evidence, routing/aliases, protected/path safety, generator preflight, legacy projections, dashboard provenance, migration pins, Skill duplication, Windows wrapper safety, and clean-runner dependencies.
+- Replaced prose-only pressure checks with executable Git fixtures and retained runtime/device/accessibility/human evidence as `NOT_RUN`.
+
 ## Unreleased - Base audit and operating-contract consistency
 
 - Base 저장소 무결성 감사에서 프로젝트 간 `docs/ACTIVE_HANDOFF.md` 이중 정본을 제거하고, 원문은 `docs/archive/handoffs/2026-07-29-ux-ui-common-system-expansion.md`에 `ARCHIVE_HISTORY`로 보존했으며 기존 경로는 `COMPATIBILITY_ONLY` Stub으로 전환했다. Archive Manifest·본문 SHA-256·rollback ref·소비자 연결 회귀를 추가했다.
@@ -7,6 +35,7 @@
 - `skills/README.md`의 통합 전 수동 Skill 표를 Registry Router로 교체하고, 구형 `conducting-deep-requirement-interviews` agent metadata를 현행 `managing-project-intake-and-work-contract` package로 승계했다.
 - 릴리스 전 `BASE_V9_INTEGRITY_AUDIT.md`를 `HISTORY_ONLY` release evidence snapshot으로 명확히 구분했다.
 - 해결된 구형 PR이 반복 감사되지 않도록 `GITHUB_OBJECT_LEDGER.json`과 Migration Map에 terminal marker를 추가했다. PR #5·#28은 `[구현됨]`, PR #18·#29·#30은 `[대체됨]`으로 현행 대체 경로·검증·`do_not_reassess: true`를 기록하고 종료했다.
+- Base v9.1 adds a canonical project adapter, deterministic Skill snapshot/health dashboard and one-cycle compatibility views, fail-closed cross-repository validation, dual OM/PE maturity axes, safe Windows PDF wrapper execution, and least-privilege SHA-pinned CI contracts. The v9.0 release history remains unchanged; runtime/device/accessibility/human evidence is not claimed.
 
 - Base v9.0.0 adds Registry-derived plugin metadata, `base.lock.json`, a
   deterministic active-Skill snapshot and summary, a project-hold Sheet control

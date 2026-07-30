@@ -281,3 +281,9 @@ runtime_validation:
 human_validation:
 remaining_risks:
 ```
+
+## Godot 4.7 maintained UI baseline
+
+Use Godot 4.7.1-stable as the current 4.7 maintenance reference (2026-07-14). Build runtime UI with native `Control`, `Container`, and `Theme` ownership. Preserve deterministic focus traversal, visible focus, keyboard/gamepad escape paths, and meaningful `accessibility_region` landmarks where supported.
+
+Validate overflow and wrapping with long Korean strings rather than shortened English-only fixtures. Inspect the same UI contract at 1280x720 and 1920x1080. These static requirements stay `NOT_RUN` until the target project supplies runtime, device, accessibility, and human evidence.

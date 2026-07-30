@@ -358,7 +358,7 @@ affected_consumers:
 
 ```text
 Base skills/SKILL_REGISTRY.json 자동 trigger route
-→ 프로젝트 skills/PROJECT_BASE_SKILL_ADAPTER.json
+→ 프로젝트 skills/PROJECT_BASE_ADAPTER.json (구형 PROJECT_BASE_SKILL_ADAPTER.json은 GENERATED_COMPATIBILITY_VIEW)
 → 필요한 전문 extension route
 → 프로젝트 고유 책임만 프로젝트 전용 Skill
 ```

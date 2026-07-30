@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/project-operating-health-v1.schema.json",
+  "title": "Base v9.1 Project Operating Health",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_role", "operating_maturity", "product_evidence_maturity", "critical_gates", "integrity_verdict", "evidence"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "PROJECT_OPERATING_HEALTH"},
+    "operating_maturity": {"enum": ["OM-L0", "OM-L1", "OM-L2", "OM-L3", "OM-L4", "OM-L5"]},
+    "product_evidence_maturity": {"enum": ["PE-0", "PE-1", "PE-2", "PE-3", "PE-4", "PE-5"]},
+    "critical_gates": {
+      "type": "object",
+      "additionalProperties": {"enum": ["PASS", "FAIL", "NOT_RUN", "NOT_APPLICABLE", "BLOCKED"]},
+      "required": ["static", "runtime", "device", "accessibility", "human"]
+    },
+    "integrity_verdict": {"enum": ["PASS", "PASS_WITH_NOT_RUN_GATES", "FAIL", "BLOCKED"]},
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operating", "product", "gates", "sheet"],
+      "properties": {
+        "operating": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+        "product": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+        "sheet": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+        "gates": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["static", "runtime", "device", "accessibility", "human"],
+          "properties": {
+            "static": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+            "runtime": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+            "device": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+            "accessibility": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+            "human": {"type": "array", "items": {"$ref": "#/$defs/evidence"}}
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "source", "sha256"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "source": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

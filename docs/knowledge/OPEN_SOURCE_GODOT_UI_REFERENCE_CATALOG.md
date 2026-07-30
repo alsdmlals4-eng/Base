@@ -20,3 +20,11 @@ revision, license, assets, dependencies, and Godot version before adoption.
    architecture; do not copy visual identity, text, layout composition, or assets.
 5. Validate focus, keyboard/gamepad input, accessibility paths, long Korean text,
    and supported resolutions in the target project.
+
+## Base v9.1 reference-card decisions
+
+- Maaack Game Template 1.4.7: MIT, Godot 4.7 compatible (4.3+). Use patterns only. Do not install the template as project authority, copy its state ownership, or reproduce its presentation identity.
+- Kenney UI Pack 2.0: CC0. Use patterns only and record asset provenance. Do not treat surface assets as a project Theme, navigation, or state contract.
+- Official Godot 4.7 UI references: adapt native `Control`/`Container`/`Theme`, focus, and accessibility-region patterns. Do not copy a demo's identity or distinctive expression.
+
+Each card records version, checked date, license, allowed use, exclusions, dependency removal, and a target-project validation plan. Template installation and state-ownership replication are prohibited unless a separate approved project decision explicitly changes scope.

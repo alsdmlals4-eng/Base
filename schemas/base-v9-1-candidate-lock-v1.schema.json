@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/base-v9-1-candidate-lock-v1.schema.json",
+  "title": "Base v9.1 Release Candidate Lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_role", "release_line", "release_state", "repository", "github_issue", "compatibility_base", "candidate_release_commit", "candidate_release_evidence_commit", "candidate_registry", "binary_attestation", "canonical_contracts"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "BASE_V9_1_RELEASE_CANDIDATE_LOCK"},
+    "release_line": {"const": "v9.1.0"},
+    "release_state": {"const": "RELEASE_CANDIDATE"},
+    "repository": {"const": "alsdmlals4-eng/Base"},
+    "github_issue": {"const": 71},
+    "compatibility_base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["release_line", "release_state", "release_commit", "release_evidence_commit", "frozen_artifacts", "historical_registry"],
+      "properties": {
+        "release_line": {"const": "v9.0.0"},
+        "release_state": {"const": "BASE_RELEASED"},
+        "release_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$", "description": "v9.0 payload commit; it must be an ancestor of the release evidence boundary."},
+        "release_evidence_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$", "description": "Exact trusted-history boundary where base.lock.json changes from BASE_RELEASE_PENDING_CI to BASE_RELEASED."},
+        "frozen_artifacts": {
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 8,
+          "maxItems": 8,
+          "items": {"$ref": "#/$defs/frozenArtifact"}
+        },
+        "historical_registry": {"$ref": "#/$defs/commitRegistry"}
+      }
+    },
+    "candidate_release_commit": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
+    "candidate_release_evidence_commit": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
+    "candidate_registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "hash_definition"],
+      "properties": {
+        "path": {"const": "skills/SKILL_REGISTRY.json"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "hash_definition": {"const": "RAW_FILE_BYTES_SHA256"}
+      }
+    },
+    "binary_attestation": {"const": "DEFERRED_UNTIL_RELEASE_ARTIFACT"},
+    "canonical_contracts": {"type": "array", "uniqueItems": true, "minItems": 4, "items": {"type": "string", "minLength": 1}}
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "candidate_release_commit": {"type": "null"},
+        "candidate_release_evidence_commit": {"type": "null"}
+      }
+    },
+    {
+      "properties": {
+        "candidate_release_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "candidate_release_evidence_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      }
+    }
+  ],
+  "$defs": {
+    "frozenArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "git_blob_oid", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "git_blob_oid": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "commitRegistry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit", "path", "sha256", "hash_definition"],
+      "properties": {
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "hash_definition": {"const": "RAW_FILE_BYTES_SHA256"}
+      }
+    }
+  }
+}

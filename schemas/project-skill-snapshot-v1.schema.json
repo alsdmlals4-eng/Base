@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/project-skill-snapshot-v1.schema.json",
+  "title": "Base v9.1 Project Skill Snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_role", "generated", "source_registry", "base_registry", "project_registry", "base_routes", "project_routes", "inactive_routes", "aliases", "alias_resolutions", "effective_routes"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "PROJECT_SKILL_SNAPSHOT"},
+    "generated": {"const": true},
+    "source_registry": {"$ref": "#/$defs/source"},
+    "base_registry": {"$ref": "#/$defs/source"},
+    "project_registry": {"$ref": "#/$defs/source"},
+    "base_routes": {"type": "array", "items": {"$ref": "#/$defs/route"}},
+    "project_routes": {"type": "array", "items": {"$ref": "#/$defs/route"}},
+    "inactive_routes": {"type": "array", "items": {"$ref": "#/$defs/route"}},
+    "aliases": {"type": "array", "items": {"$ref": "#/$defs/alias"}},
+    "alias_resolutions": {"type": "object", "additionalProperties": {"$ref": "#/$defs/effective"}},
+    "effective_routes": {"type": "object", "additionalProperties": {"$ref": "#/$defs/effective"}}
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "hash_definition"],
+      "properties": {
+        "path": {"type": "string"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "hash_definition": {"const": "RAW_FILE_BYTES_SHA256"}
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["route_id", "skill_id", "status"],
+      "properties": {
+        "route_id": {"type": "string", "minLength": 1},
+        "skill_id": {"type": "string", "minLength": 1},
+        "status": {"enum": ["ACTIVE", "INACTIVE", "HOLD", "RETIRED"]}
+      }
+    },
+    "alias": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alias", "target"],
+      "properties": {
+        "alias": {"type": "string", "minLength": 1},
+        "target": {"type": "string", "minLength": 1}
+      }
+    },
+    "effective": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["route_id", "skill_id", "status", "source", "target_route_id"],
+      "properties": {
+        "route_id": {"type": "string", "minLength": 1},
+        "target_route_id": {"type": "string", "minLength": 1},
+        "skill_id": {"type": "string", "minLength": 1},
+        "status": {"const": "ACTIVE"},
+        "source": {"enum": ["BASE_SHARED", "PROJECT_LOCAL"]}
+      }
+    }
+  }
+}

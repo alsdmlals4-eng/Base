@@ -47,6 +47,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "skills/managing-project-intake-and-work-contract/references/question-and-source-model.md",
             "skills/managing-project-intake-and-work-contract/references/ambiguity-and-closure.md",
             "skills/managing-game-project-operating-system/SKILL.md",
+            "skills/managing-game-project-operating-system/references/project-adapter-and-routing-contract.md",
             "skills/managing-design-documents/SKILL.md",
             "skills/managing-base-change-proposals/SKILL.md",
             "skills/evolving-project-discipline-skills/SKILL.md",
@@ -236,6 +237,22 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "auditing-canonical-reference-freshness",
             "managing-base-change-proposals",
         }.issubset(seen))
+
+    def test_v9_1_operating_integrity_routes_are_registered_and_fail_closed(self) -> None:
+        registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
+        entries = {item["skill_id"]: item for item in registry["skills"]}
+        operating = entries["managing-game-project-operating-system"]
+        review = entries["reviewing-and-validating-project-changes"]
+        self.assertIn("project-base-adapter", operating["trigger_tags"])
+        self.assertIn("project-operating-integrity", operating["trigger_tags"])
+        self.assertIn("project-operating-integrity", review["trigger_tags"])
+        self.assertIn("fail-closed-operating-gate", review["trigger_tags"])
+
+        operating_body = (ROOT / operating["path"]).read_text(encoding="utf-8")
+        review_body = (ROOT / review["path"]).read_text(encoding="utf-8")
+        self.assertIn("project adapter and routing contract", operating_body)
+        self.assertIn("PROJECT_OPERATING_INTEGRITY", review_body)
+        self.assertIn("NOT_RUN", review_body)
 
     def test_project_core_and_adversarial_skills_have_distinct_contracts(self) -> None:
         identify = (ROOT / "skills/identifying-project-core/SKILL.md").read_text(encoding="utf-8")
