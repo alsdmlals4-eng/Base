@@ -311,10 +311,64 @@ def _sorted_routes(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return sorted(items, key=lambda item: (item.get("route_id", ""), item.get("skill_id", "")))
 
 
-def _health_semantic_errors(adapter: dict[str, Any], health: dict[str, Any]) -> list[str]:
+def _health_semantic_errors(
+    project_root: Path, adapter: dict[str, Any], health: dict[str, Any]
+) -> list[str]:
     errors: list[str] = []
     gates = health["critical_gates"]
     evidence = health["evidence"]
+    evidence_lists: dict[str, list[dict[str, Any]]] = {
+        "operating": evidence["operating"],
+        "product": evidence["product"],
+        "sheet": evidence["sheet"],
+        **{f"gate:{gate}": records for gate, records in evidence["gates"].items()},
+    }
+    candidates: list[tuple[str, dict[str, Any], str | None, bool]] = []
+    source_counts: dict[str, int] = {}
+    id_counts: dict[str, int] = {}
+    for category, records in evidence_lists.items():
+        for record in records:
+            record_id = str(record["id"])
+            id_counts[record_id] = id_counts.get(record_id, 0) + 1
+            source_key: str | None = None
+            valid = True
+            try:
+                source = safe_repository_path(
+                    project_root, str(record["source"]), "health evidence"
+                )
+            except ContractError as error:
+                errors.append(str(error))
+                valid = False
+            else:
+                source_key = _normalized_path(source.relative_to(project_root.resolve()).as_posix())
+                source_counts[source_key] = source_counts.get(source_key, 0) + 1
+                if not source.is_file():
+                    errors.append(f"Health evidence source does not exist as a file: {record['source']}")
+                    valid = False
+                else:
+                    actual_hash = sha256_file(source)
+                    if actual_hash != record["sha256"]:
+                        errors.append(
+                            f"Health evidence raw-byte hash mismatch for {record['source']}: "
+                            f"expected {record['sha256']}, got {actual_hash}"
+                        )
+                        valid = False
+            candidates.append((category, record, source_key, valid))
+    duplicate_sources = sorted(source for source, count in source_counts.items() if count > 1)
+    duplicate_ids = sorted(record_id for record_id, count in id_counts.items() if count > 1)
+    if duplicate_sources:
+        errors.append(f"Duplicate evidence source records are forbidden: {', '.join(duplicate_sources)}")
+    if duplicate_ids:
+        errors.append(f"Duplicate evidence IDs are forbidden: {', '.join(duplicate_ids)}")
+    verified: dict[str, list[dict[str, Any]]] = {category: [] for category in evidence_lists}
+    for category, record, source_key, valid in candidates:
+        if (
+            valid
+            and source_key is not None
+            and source_counts.get(source_key) == 1
+            and id_counts.get(str(record["id"])) == 1
+        ):
+            verified[category].append(record)
     statuses = set(gates.values())
     if "FAIL" in statuses:
         derived_verdict = "FAIL"
@@ -330,16 +384,16 @@ def _health_semantic_errors(adapter: dict[str, Any], health: dict[str, Any]) -> 
             f"not {health['integrity_verdict']}"
         )
     for gate, status in gates.items():
-        if status in {"PASS", "FAIL", "BLOCKED"} and not evidence["gates"][gate]:
-            errors.append(f"Gate {gate} status {status} requires evidence metadata")
+        if status in {"PASS", "FAIL", "BLOCKED"} and not verified[f"gate:{gate}"]:
+            errors.append(f"Gate {gate} status {status} requires verified unique evidence")
     operating_level = int(health["operating_maturity"].removeprefix("OM-L"))
     product_level = int(health["product_evidence_maturity"].removeprefix("PE-"))
-    if operating_level > min(5, len(evidence["operating"])):
-        errors.append(f"{health['operating_maturity']} exceeds operating evidence cap")
-    if product_level > min(5, len(evidence["product"])):
-        errors.append(f"{health['product_evidence_maturity']} exceeds product evidence cap")
-    if adapter["gdd_sheet"]["sync_status"] == "CURRENT" and not evidence["sheet"]:
-        errors.append("CURRENT Sheet status requires Sheet evidence metadata")
+    if operating_level > min(5, len(verified["operating"])):
+        errors.append(f"{health['operating_maturity']} exceeds verified operating evidence cap")
+    if product_level > min(5, len(verified["product"])):
+        errors.append(f"{health['product_evidence_maturity']} exceeds verified product evidence cap")
+    if adapter["gdd_sheet"]["sync_status"] == "CURRENT" and not verified["sheet"]:
+        errors.append("CURRENT Sheet status requires verified unique Sheet evidence")
     return errors
 
 
@@ -398,7 +452,7 @@ def _dashboard(
         f'<li><strong>{html.escape(name)}</strong>: {html.escape(str(status))}</li>'
         for name, status in sorted(health["critical_gates"].items())
     )
-    source_hash = sha256_bytes(canonical_json(adapter))
+    source_hash = snapshot["source_registry"]["sha256"]
     release = adapter["base_release"]
     release_items = "".join(
         f"<li><strong>{html.escape(label)}</strong>: {html.escape(str(value))}</li>"
@@ -455,7 +509,7 @@ def _dashboard(
     <section id="critical-gates" aria-labelledby="gates"><h2 id="gates">Critical gates</h2><ul>{gate_items}</ul></section>
     <section aria-labelledby="verdict"><h2 id="verdict">Integrity verdict</h2><strong>{verdict}</strong></section>
   </main>
-  <footer><small>source sha256: {source_hash}</small></footer>
+  <footer><small>adapter RAW_FILE_BYTES_SHA256: {source_hash}</small></footer>
 </body>
 </html>
 """
@@ -723,7 +777,7 @@ def validation_errors(
             health_schema_errors = validate_schema(health, HEALTH_SCHEMA, "PROJECT_OPERATING_HEALTH")
             errors.extend(health_schema_errors)
             if not health_schema_errors:
-                errors.extend(_health_semantic_errors(adapter, health))
+                errors.extend(_health_semantic_errors(project_root, adapter, health))
         except ContractError as error:
             errors.append(str(error))
 
@@ -743,7 +797,11 @@ def validation_errors(
                 continue
             if not required.exists():
                 errors.append(f"Protected path does not exist: {protected_path}")
-    errors.extend(_protected_policy_errors(project_root, adapter, protected_base))
+    effective_protected_base = protected_base or adapter.get("protected_baseline_commit", "")
+    if not effective_protected_base:
+        errors.append("Protected baseline commit is required; refusing protected-path validation")
+    else:
+        errors.extend(_protected_policy_errors(project_root, adapter, effective_protected_base))
 
     if check_generated and not errors:
         try:
@@ -763,9 +821,14 @@ def migrated_adapter(
     legacy: dict[str, Any],
     release_commit: str,
     release_evidence_commit: str,
+    protected_baseline_commit: str,
 ) -> dict[str, Any]:
     if not release_commit or not release_evidence_commit:
         raise ContractError("Explicit v9.1 release and release-evidence pins are required for migration")
+    if not protected_baseline_commit:
+        raise ContractError("Explicit protected baseline commit is required for migration")
+    if not _commit_exists(project_root, protected_baseline_commit):
+        raise ContractError("Explicit protected baseline is absent from the project repository")
     lock = load_object(base_repository / CANDIDATE_LOCK_PATH)
     expected_release = lock.get("candidate_release_commit")
     expected_evidence = lock.get("candidate_release_evidence_commit")
@@ -813,6 +876,7 @@ def migrated_adapter(
         },
         "shared_overrides": {},
         "gdd_sheet": {"role": "USER_FACING_GDD_WORKSPACE", "sync_status": "NOT_CONFIGURED"},
+        "protected_baseline_commit": protected_baseline_commit,
         "protected_paths": list(legacy.get("protected_paths", [])),
         "validators": list(legacy.get("validators", [])),
         "compatibility": {

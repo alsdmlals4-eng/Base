@@ -6,7 +6,7 @@
   "candidate_registry": {
     "hash_definition": "RAW_FILE_BYTES_SHA256",
     "path": "skills/SKILL_REGISTRY.json",
-    "sha256": null
+    "sha256": "e06003cb986e979aa46c06839de178c3fb9ff10bdf440e750712d90d6c5ae7bb"
   },
   "canonical_contracts": [
     "schemas/project-base-adapter-v1.schema.json",
@@ -19,10 +19,21 @@
   ],
   "compatibility_base": {
     "frozen_artifacts": [
-      "base.lock.json",
       ".codex-plugin/plugin.json",
+      "base.lock.json",
+      "docs/generated/BASE_ACTIVE_SKILLS.md",
+      "docs/operations/ADVERSARIAL_REVIEW_MANIFEST.json",
+      "docs/operations/BASE_V9_DECISION_REGISTRY.json",
+      "docs/operations/GITHUB_OBJECT_LEDGER.json",
+      "docs/operations/SHEET_CONTROL_CONTRACT.json",
       "skills/BASE_V9_SKILL_SNAPSHOT.json"
     ],
+    "historical_registry": {
+      "commit": "dc98a666563b1f0f87b665eac97dbd8a8be37576",
+      "hash_definition": "RAW_FILE_BYTES_SHA256",
+      "path": "skills/SKILL_REGISTRY.json",
+      "sha256": "c136d9bb3fde9fc1473fbbe518cc975313023fc9c104efd9692f6834cbf8d8ae"
+    },
     "release_commit": "585a53a25be1b04c543196f5901551deb49c7691",
     "release_evidence_commit": "dc98a666563b1f0f87b665eac97dbd8a8be37576",
     "release_line": "v9.0.0",

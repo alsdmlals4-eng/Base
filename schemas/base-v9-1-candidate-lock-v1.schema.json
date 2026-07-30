@@ -15,7 +15,7 @@
     "compatibility_base": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["release_line", "release_state", "release_commit", "release_evidence_commit", "frozen_artifacts"],
+      "required": ["release_line", "release_state", "release_commit", "release_evidence_commit", "frozen_artifacts", "historical_registry"],
       "properties": {
         "release_line": {"const": "v9.0.0"},
         "release_state": {"const": "BASE_RELEASED"},
@@ -26,7 +26,8 @@
           "uniqueItems": true,
           "minItems": 3,
           "items": {"type": "string", "minLength": 1}
-        }
+        },
+        "historical_registry": {"$ref": "#/$defs/commitRegistry"}
       }
     },
     "candidate_release_commit": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
@@ -37,7 +38,7 @@
       "required": ["path", "sha256", "hash_definition"],
       "properties": {
         "path": {"const": "skills/SKILL_REGISTRY.json"},
-        "sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "hash_definition": {"const": "RAW_FILE_BYTES_SHA256"}
       }
     },
@@ -48,16 +49,27 @@
     {
       "properties": {
         "candidate_release_commit": {"type": "null"},
-        "candidate_release_evidence_commit": {"type": "null"},
-        "candidate_registry": {"properties": {"sha256": {"type": "null"}}}
+        "candidate_release_evidence_commit": {"type": "null"}
       }
     },
     {
       "properties": {
         "candidate_release_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "candidate_release_evidence_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "candidate_registry": {"properties": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}
+        "candidate_release_evidence_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
       }
     }
-  ]
+  ],
+  "$defs": {
+    "commitRegistry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit", "path", "sha256", "hash_definition"],
+      "properties": {
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "hash_definition": {"const": "RAW_FILE_BYTES_SHA256"}
+      }
+    }
+  }
 }

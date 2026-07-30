@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-30 — Base v9.1 second-review hardening
+
+- Required project-confined, existing, raw-SHA-matching, globally unique health evidence and a mandatory protected baseline commit.
+- Expanded the v9.0 frozen contract to all eight generator outputs with CRLF-safe Git-blob comparison, and separated historical v9.0 Registry authority from the current v9.1 candidate Registry.
+- Standardized snapshot/dashboard adapter provenance on `RAW_FILE_BYTES_SHA256` and expanded dependency review to workflow and Action metadata.
+
 ## 2026-07-30 — Base v9.1 review remediation
 
 - Closed Issue #71 review blockers across Action provenance, historical artifact immutability, release-lock binding, health evidence, routing/aliases, protected/path safety, generator preflight, legacy projections, dashboard provenance, migration pins, Skill duplication, Windows wrapper safety, and clean-runner dependencies.

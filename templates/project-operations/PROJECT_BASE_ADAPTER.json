@@ -20,6 +20,7 @@
     "repository": "owner/project",
     "root": "."
   },
+  "protected_baseline_commit": "0000000000000000000000000000000000000000",
   "protected_paths": [
     "project.godot",
     "game/**",

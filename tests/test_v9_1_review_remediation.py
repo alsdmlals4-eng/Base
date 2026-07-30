@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import re
 import importlib.util
+import hashlib
 import json
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -10,6 +12,16 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+V90_OUTPUTS = {
+    ".codex-plugin/plugin.json",
+    "base.lock.json",
+    "skills/BASE_V9_SKILL_SNAPSHOT.json",
+    "docs/generated/BASE_ACTIVE_SKILLS.md",
+    "docs/operations/BASE_V9_DECISION_REGISTRY.json",
+    "docs/operations/GITHUB_OBJECT_LEDGER.json",
+    "docs/operations/ADVERSARIAL_REVIEW_MANIFEST.json",
+    "docs/operations/SHEET_CONTROL_CONTRACT.json",
+}
 
 
 def git(root: Path, *arguments: str) -> str:
@@ -78,18 +90,19 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
             "**/go.sum",
             "**/Gemfile.lock",
             "**/composer.lock",
+            ".github/workflows/**",
+            '"action.yml"',
+            '"action.yaml"',
+            "**/action.yml",
+            "**/action.yaml",
         ):
             self.assertIn(pattern, workflow)
 
-    def test_v90_frozen_artifacts_match_declared_historical_blobs_byte_for_byte(self) -> None:
+    def test_v90_frozen_artifacts_exactly_match_all_generated_outputs_and_historical_blobs(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             repository = Path(temporary)
             git(repository, "init", "-q")
-            frozen = (
-                "base.lock.json",
-                ".codex-plugin/plugin.json",
-                "skills/BASE_V9_SKILL_SNAPSHOT.json",
-            )
+            frozen = tuple(sorted(V90_OUTPUTS))
             for index, relative in enumerate(frozen):
                 path = repository / relative
                 path.parent.mkdir(parents=True, exist_ok=True)
@@ -103,6 +116,10 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
             }
             self.assertEqual(self.integrity.frozen_artifact_errors(repository, lock), [])
 
+            incomplete = json.loads(json.dumps(lock))
+            incomplete["compatibility_base"]["frozen_artifacts"].pop()
+            self.assertTrue(any("complete" in error.lower() for error in self.integrity.frozen_artifact_errors(repository, incomplete)))
+
             for relative in frozen:
                 with self.subTest(relative=relative):
                     path = repository / relative
@@ -111,6 +128,46 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
                     errors = self.integrity.frozen_artifact_errors(repository, lock)
                     self.assertTrue(any(relative in error for error in errors), errors)
                     path.write_bytes(original)
+
+    def test_v90_frozen_check_is_crlf_safe_in_clean_autocrlf_checkout_and_detects_mutation(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = Path(temporary)
+            source = workspace / "source"
+            clone = workspace / "clone"
+            source.mkdir()
+            git(source, "init", "-q")
+            for index, relative in enumerate(sorted(V90_OUTPUTS)):
+                path = source / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(f"line-{index}\nsecond-line\n".encode("utf-8"))
+            evidence = commit_all(source, "v9.0 evidence")
+            subprocess.run(
+                ["git", "clone", "-q", "-c", "core.autocrlf=true", str(source), str(clone)],
+                check=True,
+                capture_output=True,
+            )
+            lock = {
+                "compatibility_base": {
+                    "release_evidence_commit": evidence,
+                    "frozen_artifacts": sorted(V90_OUTPUTS),
+                }
+            }
+            self.assertEqual(self.integrity.frozen_artifact_errors(clone, lock), [])
+            mutated = clone / "docs/generated/BASE_ACTIVE_SKILLS.md"
+            mutated.write_bytes(mutated.read_bytes() + b"semantic-mutation")
+            self.assertTrue(self.integrity.frozen_artifact_errors(clone, lock))
+
+    def test_v91_lock_separates_historical_and_current_registry_authority(self) -> None:
+        lock = json.loads((ROOT / "base-v9.1.lock.json").read_text(encoding="utf-8"))
+        base_lock = json.loads((ROOT / "base.lock.json").read_text(encoding="utf-8"))
+        historical = lock["compatibility_base"]["historical_registry"]
+        current = lock["candidate_registry"]
+        self.assertEqual(historical["commit"], lock["compatibility_base"]["release_evidence_commit"])
+        self.assertEqual(historical["path"], base_lock["source_of_truth"])
+        self.assertEqual(historical["sha256"], base_lock["registry_sha256"])
+        current_path = ROOT / current["path"]
+        self.assertEqual(current["sha256"], hashlib.sha256(current_path.read_bytes()).hexdigest())
+        self.assertEqual(self.integrity.registry_authority_errors(ROOT, lock), [])
 
 
 if __name__ == "__main__":

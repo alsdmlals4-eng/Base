@@ -22,14 +22,34 @@ Post-fix review cycle 2 records all verified blockers as closed by focused
 RED/GREEN evidence and a complete 279-test run with one declared Mermaid
 environment skip. This is a static repository verdict, not runtime or human evidence.
 
+## Review cycle 3: verified second-review remediation
+
+A second independent review found that cycle 2 still trusted self-reported
+health evidence, froze only three of eight v9.0 generator outputs, compared
+worktree bytes in a CRLF-sensitive way, conflated historical/current Registry
+authority, and allowed the protected baseline to be omitted. It also found
+dependency-review and adapter-hash consistency gaps.
+
+| Severity | Review state | Evidence recorded in this cycle |
+|---|---|---|
+| P0 | `CLOSED_BY_POST_FIX_VERIFICATION` | missing/fake/duplicate/escaped/reparse evidence fixtures; complete eight-output set equality; one-byte mutation; clean clone with `core.autocrlf=true` |
+| P1 | `CLOSED_BY_POST_FIX_VERIFICATION` | commit-qualified historical Registry versus current candidate Registry; standard `--check` protection without a CLI baseline; explicit migration baseline |
+| P2 | `CLOSED_BY_POST_FIX_VERIFICATION` | workflow/Action dependency-review paths; snapshot/dashboard `RAW_FILE_BYTES_SHA256` consistency |
+
+Cycle 3 focused tests passed, including the clean-clone CRLF regression. The
+first complete post-fix repository run passed 283 tests with one declared
+Mermaid environment skip. The final verification below was repeated after this
+audit update; no runtime, device, accessibility, human, or binary evidence is
+inferred from these static checks.
+
 ## Protected scope
 
-Base v9.1 changed no Godot project product path, scene, Resource, gameplay data, asset, balance, or player-facing rule. The cross-repository validator rejects configured protected-path changes when given a comparison commit.
+Base v9.1 changed no Godot project product path, scene, Resource, gameplay data, asset, balance, or player-facing rule. The cross-repository validator always uses the adapter's required pre-migration/main comparison commit during standard `--check`, unless an explicit CLI override is supplied.
 
 ## Evidence status
 
-- Focused static remediation evidence: `PASS`.
-- Final full repository evidence: `PASS` — 279 tests, one declared Mermaid environment skip.
+- Focused static remediation evidence: `PASS`, including clean-clone `core.autocrlf=true` coverage.
+- Final full repository evidence: `PASS` — 283 tests, one declared Mermaid environment skip.
 - Runtime: `NOT_RUN`.
 - Device: `NOT_RUN`.
 - Accessibility: `NOT_RUN`.

@@ -24,6 +24,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--release-commit", default="")
     parser.add_argument("--release-evidence-commit", default="")
+    parser.add_argument("--protected-baseline-commit", default="")
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--write", action="store_true")
     mode.add_argument("--check", action="store_true")
@@ -46,6 +47,7 @@ def main() -> int:
             load_object(legacy_path),
             options.release_commit,
             options.release_evidence_commit,
+            options.protected_baseline_commit,
         )
         content = canonical_json(data)
         if options.check:

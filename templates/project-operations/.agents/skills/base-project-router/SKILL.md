@@ -5,7 +5,7 @@ description: Use when a project must resolve a Base shared route or a project-lo
 
 # Base Project Router
 
-Run `python tools/check_project_operating_contract.py --project-root . --base-repository ../Base --check` before reading `skills/PROJECT_SKILL_SNAPSHOT.json`. On any nonzero exit, stop without reading or executing routes.
+Confirm that `skills/PROJECT_BASE_ADAPTER.json` records the approved pre-migration/main `protected_baseline_commit`, then run `python tools/check_project_operating_contract.py --project-root . --base-repository ../Base --check` before reading `skills/PROJECT_SKILL_SNAPSHOT.json`. The validator uses that recorded baseline unless an explicit CLI override is supplied. On any nonzero exit, stop without reading or executing routes.
 
 After a zero exit, read `skills/PROJECT_BASE_ADAPTER.json` and the current generated snapshot. Refuse routing when the validator reports a stale pin, mismatched pin, hash drift, alias cycle, or generated-view drift.
 

@@ -147,8 +147,13 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
             encoding="utf-8",
         )
         (self.project / "docs").mkdir()
+        (self.project / "evidence").mkdir()
         (self.project / "project.godot").write_text('[application]\nconfig/name="Project"\n', encoding="utf-8")
         (self.project / "docs/CANON.md").write_text("canon\n", encoding="utf-8")
+        self.operating_evidence = self.project / "evidence/adapter-installed.txt"
+        self.static_evidence = self.project / "evidence/static-contract-check.txt"
+        self.operating_evidence.write_text("adapter installed\n", encoding="utf-8")
+        self.static_evidence.write_text("static contract passed\n", encoding="utf-8")
         (self.project / "docs/PROJECT_OPERATING_HEALTH.json").write_text(
             json.dumps(
                 {
@@ -165,12 +170,22 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
                     },
                     "evidence": {
                         "operating": [
-                            {"id": "adapter", "source": "skills/PROJECT_BASE_ADAPTER.json", "sha256": "0" * 64}
+                            {
+                                "id": "adapter",
+                                "source": "evidence/adapter-installed.txt",
+                                "sha256": digest(self.operating_evidence),
+                            }
                         ],
                         "product": [],
                         "sheet": [],
                         "gates": {
-                            "static": [{"id": "static", "source": "tests", "sha256": "0" * 64}],
+                            "static": [
+                                {
+                                    "id": "static",
+                                    "source": "evidence/static-contract-check.txt",
+                                    "sha256": digest(self.static_evidence),
+                                }
+                            ],
                             "runtime": [],
                             "device": [],
                             "accessibility": [],
@@ -186,7 +201,11 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         )
         self.adapter = self.project / "skills/PROJECT_BASE_ADAPTER.json"
         self.adapter.write_text(json.dumps(self.adapter_data(), ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-        self.project_commit = commit_all(self.project, "project baseline")
+        self.protected_baseline_commit = commit_all(self.project, "pre-migration protected baseline")
+        adapter = json.loads(self.adapter.read_text(encoding="utf-8"))
+        adapter["protected_baseline_commit"] = self.protected_baseline_commit
+        self.adapter.write_text(json.dumps(adapter, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        self.project_commit = commit_all(self.project, "install v9.1 adapter")
 
     def tearDown(self) -> None:
         self.temp.cleanup()
@@ -231,6 +250,7 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
             },
             "shared_overrides": {},
             "gdd_sheet": {"role": "USER_FACING_GDD_WORKSPACE", "sync_status": "NOT_CONFIGURED"},
+            "protected_baseline_commit": "0" * 40,
             "protected_paths": ["project.godot", "game/**", "assets/**"],
             "validators": [
                 "python tools/check_project_operating_contract.py --project-root . --base-repository ../Base --check"
@@ -271,6 +291,7 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
                 "skill_registry",
                 "shared_overrides",
                 "gdd_sheet",
+                "protected_baseline_commit",
                 "protected_paths",
                 "validators",
                 "compatibility",
@@ -278,6 +299,7 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         )
         self.assertIn("release_commit", adapter_schema["properties"]["base_release"]["required"])
         self.assertIn("release_evidence_commit", adapter_schema["properties"]["base_release"]["required"])
+        self.assertRegex(template["protected_baseline_commit"], r"^[0-9a-f]{40}$")
         for field in ("base_routes", "project_routes", "inactive_routes", "aliases", "source_registry"):
             self.assertIn(field, snapshot_schema["required"])
         self.assertEqual(health_schema["properties"]["operating_maturity"]["enum"], [f"OM-L{i}" for i in range(6)])
@@ -392,6 +414,7 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
                 result = self.run_tool(CHECK, *args)
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn(expected, result.stderr.lower())
+
         self.adapter.write_text(original, encoding="utf-8")
 
         copied = self.project / "skills/shared-skill/SKILL.md"
@@ -792,6 +815,121 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn(expected, result.stderr.lower())
 
+    def test_health_evidence_must_be_unique_existing_confined_and_match_raw_sha256(self) -> None:
+        health_path = self.project / "docs/PROJECT_OPERATING_HEALTH.json"
+        original = json.loads(health_path.read_text(encoding="utf-8"))
+        cases = (
+            (
+                "missing",
+                lambda health: health["evidence"]["operating"][0].update(source="evidence/missing.txt"),
+                "does not exist",
+            ),
+            (
+                "fake-hash",
+                lambda health: health["evidence"]["operating"][0].update(sha256="f" * 64),
+                "hash mismatch",
+            ),
+            (
+                "absolute",
+                lambda health: health["evidence"]["operating"][0].update(source=str(self.operating_evidence.resolve())),
+                "unsafe",
+            ),
+            (
+                "parent",
+                lambda health: health["evidence"]["operating"][0].update(source="../outside.txt"),
+                "unsafe",
+            ),
+            (
+                "duplicate-source",
+                lambda health: health["evidence"]["product"].append(
+                    {
+                        "id": "repeated-under-new-id",
+                        "source": "evidence/adapter-installed.txt",
+                        "sha256": digest(self.operating_evidence),
+                    }
+                ),
+                "duplicate evidence",
+            ),
+        )
+        for label, mutate, expected in cases:
+            with self.subTest(label=label):
+                health = json.loads(json.dumps(original))
+                mutate(health)
+                health_path.write_text(json.dumps(health, sort_keys=True) + "\n", encoding="utf-8")
+                result = self.run_tool(
+                    CHECK,
+                    "--project-root",
+                    str(self.project),
+                    "--base-repository",
+                    str(self.base),
+                )
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(expected, result.stderr.lower())
+
+        outside = self.workspace / "outside-evidence"
+        outside.mkdir()
+        outside_file = outside / "runtime.txt"
+        outside_file.write_text("runtime evidence\n", encoding="utf-8")
+        link = self.project / "evidence-link"
+        try:
+            os.symlink(outside, link, target_is_directory=True)
+        except OSError as error:
+            junction = subprocess.run(
+                ["cmd", "/d", "/c", "mklink", "/J", str(link), str(outside)],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                check=False,
+            )
+            if junction.returncode:
+                self.fail(f"Could not create evidence reparse point: {error}; {junction.stdout}{junction.stderr}")
+        linked_health = json.loads(json.dumps(original))
+        linked_health["evidence"]["operating"][0] = {
+            "id": "linked",
+            "source": "evidence-link/runtime.txt",
+            "sha256": digest(outside_file),
+        }
+        health_path.write_text(json.dumps(linked_health, sort_keys=True) + "\n", encoding="utf-8")
+        linked_result = self.run_tool(
+            CHECK,
+            "--project-root",
+            str(self.project),
+            "--base-repository",
+            str(self.base),
+        )
+        self.assertNotEqual(linked_result.returncode, 0)
+        self.assertRegex(linked_result.stderr.lower(), r"symlink|reparse")
+
+    def test_standard_check_uses_required_adapter_protected_baseline(self) -> None:
+        adapter = json.loads(self.adapter.read_text(encoding="utf-8"))
+        adapter.pop("protected_baseline_commit")
+        self.adapter.write_text(json.dumps(adapter, sort_keys=True) + "\n", encoding="utf-8")
+        missing = self.run_tool(
+            CHECK,
+            "--project-root",
+            str(self.project),
+            "--base-repository",
+            str(self.base),
+            "--check",
+        )
+        self.assertNotEqual(missing.returncode, 0)
+        self.assertIn("protected_baseline_commit", missing.stderr)
+
+        adapter["protected_baseline_commit"] = self.protected_baseline_commit
+        self.adapter.write_text(json.dumps(adapter, sort_keys=True) + "\n", encoding="utf-8")
+        (self.project / "project.godot").write_text("[application]\nconfig/name=\"Changed\"\n", encoding="utf-8")
+        result = self.run_tool(
+            CHECK,
+            "--project-root",
+            str(self.project),
+            "--base-repository",
+            str(self.base),
+            "--check",
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("protected-path changes", result.stderr.lower())
+
     def test_dashboard_is_static_accessible_and_keeps_maturity_axes_separate(self) -> None:
         adapter = json.loads(self.adapter.read_text(encoding="utf-8"))
         adapter["project"]["repository"] = "example/<script>alert(1)</script>"
@@ -824,6 +962,11 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         self.assertNotIn("<script>alert(1)</script>", dashboard)
         self.assertNotIn("average", dashboard.lower())
         self.assertNotIn("<script", dashboard.lower())
+        adapter_raw_hash = digest(self.adapter)
+        self.assertEqual(dashboard.count(adapter_raw_hash), 2)
+        canonical_hash = hashlib.sha256(self.core.canonical_json(adapter)).hexdigest()
+        if canonical_hash != adapter_raw_hash:
+            self.assertNotIn(canonical_hash, dashboard)
 
     def test_migrator_converts_legacy_inputs_without_overwriting_them(self) -> None:
         legacy = self.project / "skills/PROJECT_BASE_SKILL_ADAPTER.json"
@@ -857,6 +1000,25 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         self.assertNotEqual(missing_pins.returncode, 0)
         self.assertIn("explicit", missing_pins.stderr.lower())
 
+        missing_baseline = self.run_tool(
+            MIGRATE,
+            "--project-root",
+            str(self.project),
+            "--base-repository",
+            str(self.base),
+            "--legacy-adapter",
+            str(legacy),
+            "--output",
+            str(output),
+            "--release-commit",
+            self.release_commit,
+            "--release-evidence-commit",
+            self.evidence_commit,
+            "--write",
+        )
+        self.assertNotEqual(missing_baseline.returncode, 0)
+        self.assertIn("baseline", missing_baseline.stderr.lower())
+
         same_path = self.run_tool(
             MIGRATE,
             "--project-root",
@@ -871,6 +1033,8 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
             self.release_commit,
             "--release-evidence-commit",
             self.evidence_commit,
+            "--protected-baseline-commit",
+            self.protected_baseline_commit,
             "--write",
         )
         self.assertNotEqual(same_path.returncode, 0)
@@ -890,6 +1054,8 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
             self.release_commit,
             "--release-evidence-commit",
             self.evidence_commit,
+            "--protected-baseline-commit",
+            self.protected_baseline_commit,
             "--write",
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
@@ -898,6 +1064,7 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         self.assertEqual(migrated["artifact_role"], "PROJECT_BASE_ADAPTER")
         self.assertEqual(migrated["base_release"]["release_commit"], self.release_commit)
         self.assertEqual(migrated["base_release"]["release_evidence_commit"], self.evidence_commit)
+        self.assertEqual(migrated["protected_baseline_commit"], self.protected_baseline_commit)
 
     def test_windows_script_runner_uses_explicit_command_array_without_shell(self) -> None:
         pub_spec = importlib.util.spec_from_file_location("publication_v3", ROOT / "tools/publication_v3.py")

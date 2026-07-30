@@ -22,6 +22,11 @@ on:
       - "**/Gemfile.lock"
       - "**/composer.json"
       - "**/composer.lock"
+      - ".github/workflows/**"
+      - "action.yml"
+      - "action.yaml"
+      - "**/action.yml"
+      - "**/action.yaml"
 
 permissions:
   contents: read

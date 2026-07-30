@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import re
 import subprocess
 import sys
@@ -27,6 +28,16 @@ ENTRYPOINTS = (
 )
 MARKDOWN_LINK = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 LOCAL_SUFFIXES = {".md", ".json", ".py", ".yml", ".yaml", ".pdf", ".docx", ".png", ".svg"}
+V9_GENERATED_OUTPUTS = {
+    ".codex-plugin/plugin.json",
+    "base.lock.json",
+    "skills/BASE_V9_SKILL_SNAPSHOT.json",
+    "docs/generated/BASE_ACTIVE_SKILLS.md",
+    "docs/operations/BASE_V9_DECISION_REGISTRY.json",
+    "docs/operations/GITHUB_OBJECT_LEDGER.json",
+    "docs/operations/ADVERSARIAL_REVIEW_MANIFEST.json",
+    "docs/operations/SHEET_CONTROL_CONTRACT.json",
+}
 
 
 def frozen_artifact_errors(repository: Path, candidate_lock: dict) -> list[str]:
@@ -39,7 +50,16 @@ def frozen_artifact_errors(repository: Path, candidate_lock: dict) -> list[str]:
         return ["v9.0 frozen artifacts require a release evidence commit"]
     if not isinstance(frozen, list) or not frozen:
         return ["v9.0 frozen artifact declaration is empty"]
-    for value in frozen:
+    frozen_values = [str(value) for value in frozen]
+    frozen_set = set(frozen_values)
+    if len(frozen_values) != len(frozen_set) or frozen_set != V9_GENERATED_OUTPUTS:
+        missing = sorted(V9_GENERATED_OUTPUTS - frozen_set)
+        extra = sorted(frozen_set - V9_GENERATED_OUTPUTS)
+        errors.append(
+            "v9.0 frozen artifact declaration must be the complete generated output set"
+            f" (missing={missing}, extra={extra}, duplicates={len(frozen_values) != len(frozen_set)})"
+        )
+    for value in frozen_values:
         relative = Path(str(value))
         if relative.is_absolute() or ".." in relative.parts:
             errors.append(f"Unsafe v9.0 frozen artifact path: {value}")
@@ -61,15 +81,87 @@ def frozen_artifact_errors(repository: Path, candidate_lock: dict) -> list[str]:
         if not current.is_file():
             errors.append(f"v9.0 frozen artifact is missing: {value}")
             continue
-        historical = subprocess.run(
-            ["git", "-C", str(repository), "show", f"{evidence_commit}:{relative.as_posix()}"],
+        current_blob = subprocess.run(
+            ["git", "-C", str(repository), "hash-object", f"--path={relative.as_posix()}", str(current)],
             capture_output=True,
+            text=True,
+            encoding="utf-8",
             check=False,
         )
-        if historical.returncode:
+        historical_blob = subprocess.run(
+            ["git", "-C", str(repository), "rev-parse", f"{evidence_commit}:{relative.as_posix()}"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=False,
+        )
+        if historical_blob.returncode:
             errors.append(f"v9.0 frozen artifact historical blob is unavailable: {value}")
-        elif current.read_bytes() != historical.stdout:
+        elif current_blob.returncode or current_blob.stdout.strip() != historical_blob.stdout.strip():
             errors.append(f"v9.0 frozen artifact differs from release evidence: {value}")
+    return errors
+
+
+def registry_authority_errors(repository: Path, candidate_lock: dict) -> list[str]:
+    """Verify historical v9.0 Registry authority separately from the current v9.1 candidate."""
+    errors: list[str] = []
+    compatibility = candidate_lock.get("compatibility_base", {})
+    historical = compatibility.get("historical_registry")
+    current = candidate_lock.get("candidate_registry")
+    try:
+        base_lock = json.loads((repository / "base.lock.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return [f"Historical v9.0 base lock cannot be read: {error}"]
+    if not isinstance(historical, dict):
+        errors.append("Historical v9.0 Registry authority is missing")
+    else:
+        commit = historical.get("commit")
+        path = historical.get("path")
+        expected_hash = historical.get("sha256")
+        if commit != compatibility.get("release_evidence_commit"):
+            errors.append("Historical v9.0 Registry commit must equal the compatibility evidence commit")
+        if path != base_lock.get("source_of_truth") or expected_hash != base_lock.get("registry_sha256"):
+            errors.append("Historical v9.0 Registry authority does not match frozen base.lock.json")
+        if isinstance(commit, str) and isinstance(path, str) and isinstance(expected_hash, str):
+            relative = Path(path)
+            if relative.is_absolute() or ".." in relative.parts:
+                errors.append(f"Unsafe historical v9.0 Registry path: {path}")
+            else:
+                blob = subprocess.run(
+                    ["git", "-C", str(repository), "show", f"{commit}:{relative.as_posix()}"],
+                    capture_output=True,
+                    check=False,
+                )
+                if blob.returncode:
+                    errors.append("Historical v9.0 Registry Git blob is unavailable")
+                elif hashlib.sha256(blob.stdout).hexdigest() != expected_hash:
+                    errors.append("Historical v9.0 Registry Git blob hash mismatch")
+    if not isinstance(current, dict):
+        errors.append("Current v9.1 candidate Registry authority is missing")
+    else:
+        path = current.get("path")
+        expected_hash = current.get("sha256")
+        relative = Path(str(path))
+        if not isinstance(path, str) or relative.is_absolute() or ".." in relative.parts:
+            errors.append(f"Unsafe current v9.1 candidate Registry path: {path}")
+        else:
+            target = repository / relative
+            traversal = repository
+            unsafe = False
+            for part in relative.parts:
+                traversal = traversal / part
+                if traversal.is_symlink() or (
+                    traversal.exists()
+                    and getattr(traversal.stat(follow_symlinks=False), "st_file_attributes", 0) & 0x400
+                ):
+                    unsafe = True
+                    break
+            if unsafe:
+                errors.append(f"Current v9.1 candidate Registry uses unsafe link traversal: {path}")
+            elif not target.is_file():
+                errors.append(f"Current v9.1 candidate Registry is missing: {path}")
+            elif not isinstance(expected_hash, str) or hashlib.sha256(target.read_bytes()).hexdigest() != expected_hash:
+                errors.append("Current v9.1 candidate Registry raw-byte hash mismatch")
     return errors
 
 
@@ -160,6 +252,7 @@ def main() -> int:
             location = ".".join(str(part) for part in error.path) or "<root>"
             errors.append(f"Base v9.1 candidate lock {location}: {error.message}")
         errors.extend(frozen_artifact_errors(ROOT, candidate_lock))
+        errors.extend(registry_authority_errors(ROOT, candidate_lock))
     except (OSError, json.JSONDecodeError) as error:
         errors.append(f"Base v9.1 candidate lock cannot be validated: {error}")
     if not GENERATED_SUMMARY.is_file():

@@ -97,7 +97,12 @@ class BaseV91SkillPressureContractTests(unittest.TestCase):
             encoding="utf-8",
         )
         (self.project / "docs").mkdir()
+        (self.project / "evidence").mkdir()
         (self.project / "project.godot").write_text("[application]\n", encoding="utf-8")
+        operating_evidence = self.project / "evidence/adapter.txt"
+        static_evidence = self.project / "evidence/static.txt"
+        operating_evidence.write_text("adapter\n", encoding="utf-8")
+        static_evidence.write_text("static\n", encoding="utf-8")
         (self.project / "docs/PROJECT_OPERATING_HEALTH.json").write_text(
             json.dumps(
                 {
@@ -114,11 +119,11 @@ class BaseV91SkillPressureContractTests(unittest.TestCase):
                     },
                     "integrity_verdict": "PASS_WITH_NOT_RUN_GATES",
                     "evidence": {
-                        "operating": [{"id": "adapter", "source": "adapter", "sha256": "0" * 64}],
+                        "operating": [{"id": "adapter", "source": "evidence/adapter.txt", "sha256": hashlib.sha256(operating_evidence.read_bytes()).hexdigest()}],
                         "product": [],
                         "sheet": [],
                         "gates": {
-                            "static": [{"id": "static", "source": "test", "sha256": "0" * 64}],
+                            "static": [{"id": "static", "source": "evidence/static.txt", "sha256": hashlib.sha256(static_evidence.read_bytes()).hexdigest()}],
                             "runtime": [], "device": [], "accessibility": [], "human": [],
                         },
                     },
@@ -128,7 +133,11 @@ class BaseV91SkillPressureContractTests(unittest.TestCase):
             encoding="utf-8",
         )
         self.adapter_path = self.project / "skills/PROJECT_BASE_ADAPTER.json"
+        self.protected_baseline = "0" * 40
         self.write_adapter()
+        self.protected_baseline = commit_all(self.project, "protected baseline")
+        self.write_adapter()
+        commit_all(self.project, "install adapter baseline pin")
 
     def tearDown(self) -> None:
         self.temporary.cleanup()
@@ -155,6 +164,7 @@ class BaseV91SkillPressureContractTests(unittest.TestCase):
             },
             "shared_overrides": {},
             "gdd_sheet": {"role": "USER_FACING_GDD_WORKSPACE", "sync_status": "NOT_CONFIGURED"},
+            "protected_baseline_commit": self.protected_baseline,
             "protected_paths": ["project.godot"],
             "validators": [],
             "compatibility": {"cycle": "ONE_CYCLE", "views": [], "legacy_inputs": {}},

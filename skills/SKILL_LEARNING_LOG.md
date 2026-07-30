@@ -1,5 +1,12 @@
 # Base Skill Learning Log
 
+## 2026-07-30 — Base project router baseline hardening
+
+- 상태: `PATTERN`
+- 결정: 프로젝트 라우터는 스냅샷을 읽기 전에 표준 `--check`를 실행하며, canonical adapter의 필수 `protected_baseline_commit`을 사용한다.
+- 실패 조건: adapter와 CLI 양쪽에 기준선이 없거나, 기준선 이후 보호 경로가 변경되었으면 route 실행을 중단한다.
+- 검증: 기준선 없는 검사, `project.godot` 변경, 마이그레이터 기준선 누락을 실행형 임시 Git 저장소 테스트로 확인한다.
+
 ## 2026-07-30 — Base v9.1 review remediation
 
 - Replaced string-only pressure evidence with four executable temporary-repository fixtures.

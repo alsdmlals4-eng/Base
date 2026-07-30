@@ -31,4 +31,4 @@ No score can hide a critical failure. Migration and execution fail closed, prese
 
 ## Cross-repository boundary
 
-`tools/migrate_project_operating_contract.py` creates the canonical adapter without modifying legacy inputs and requires explicit lock-matching v9.1 pins. `tools/build_project_operating_artifacts.py` runs the same full validator before writing or checking deterministic views. `tools/check_project_operating_contract.py` validates Base and project repositories together, including optional protected-path diffs.
+`tools/migrate_project_operating_contract.py` creates the canonical adapter without modifying legacy inputs and requires explicit lock-matching v9.1 pins plus the approved pre-migration/main protected baseline commit. `tools/build_project_operating_artifacts.py` runs the same full validator before writing or checking deterministic views. `tools/check_project_operating_contract.py` validates Base and project repositories together and always compares protected paths with the adapter baseline during standard `--check`; an explicit CLI baseline may override it, but omission from both sources fails closed.

@@ -1,0 +1,10 @@
+# Base v9 registry and generated release artifacts have stable LF bytes on every platform.
+skills/SKILL_REGISTRY.json text eol=lf
+.codex-plugin/plugin.json text eol=lf
+base.lock.json text eol=lf
+skills/BASE_V9_SKILL_SNAPSHOT.json text eol=lf
+docs/generated/BASE_ACTIVE_SKILLS.md text eol=lf
+docs/operations/BASE_V9_DECISION_REGISTRY.json text eol=lf
+docs/operations/GITHUB_OBJECT_LEDGER.json text eol=lf
+docs/operations/ADVERSARIAL_REVIEW_MANIFEST.json text eol=lf
+docs/operations/SHEET_CONTROL_CONTRACT.json text eol=lf

@@ -12,7 +12,9 @@ JSON examples below are historical consumer shapes, not editable v9.1 inputs.
 
 The canonical schema separates release payload and evidence pins and owns
 `base_release`, `project`, `routing`, `skill_registry`, `shared_overrides`,
-`gdd_sheet`, `protected_paths`, `validators`, and `compatibility`.
+`gdd_sheet`, `protected_baseline_commit`, `protected_paths`, `validators`, and
+`compatibility`. The baseline is the approved pre-migration/main project commit;
+standard validation never silently skips the protected-path comparison.
 
 ## 목적
 

@@ -28,9 +28,12 @@ Operating maturity and product evidence answer different questions. They never a
 
 Static, runtime, device, accessibility, and human gates use `PASS / FAIL / NOT_RUN / NOT_APPLICABLE / BLOCKED`. A `FAIL` remains visible regardless of `OM-L*` or `PE-*`. `NOT_RUN` is not failure and never becomes PASS through documentation volume.
 
-Every claimed maturity step consumes one structured evidence record, so a
-self-reported level is capped by available metadata. `OM-L5`, `PE-5`, and GDD
-Sheet `CURRENT` therefore require their respective operating, product, or Sheet
-evidence. A gate `FAIL` derives verdict `FAIL`; otherwise any `BLOCKED` derives
+Every claimed maturity step consumes one verified, unique evidence file under
+the project root. Evidence paths must be relative, must not cross symlinks or
+reparse points, must exist, and must match their declared raw-byte SHA-256.
+Duplicate IDs or reuse of one source file are rejected globally, so repeated
+metadata cannot inflate a gate, `OM-L*`, `PE-*`, or Sheet claim. `OM-L5`, `PE-5`,
+and GDD Sheet `CURRENT` therefore require their respective verified operating,
+product, or Sheet evidence. A gate `FAIL` derives verdict `FAIL`; otherwise any `BLOCKED` derives
 `BLOCKED`; otherwise any applicable `NOT_RUN` derives
 `PASS_WITH_NOT_RUN_GATES`; only fully evidenced applicable gates derive `PASS`.
