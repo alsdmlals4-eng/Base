@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
@@ -59,11 +60,16 @@ class V9GovernanceDocumentTests(unittest.TestCase):
 
     def test_cross_project_handoff_is_archived_without_active_authority(self) -> None:
         archive_path = "docs/archive/handoffs/2026-07-29-ux-ui-common-system-expansion.md"
+        manifest_path = "docs/archive/ARCHIVE_MANIFEST.json"
         stub = read("docs/ACTIVE_HANDOFF.md")
         archive_file = ROOT / archive_path
 
         self.assertTrue(archive_file.is_file(), archive_path)
+        self.assertTrue((ROOT / "docs/archive/README.md").is_file())
+        self.assertTrue((ROOT / manifest_path).is_file(), manifest_path)
         archive = archive_file.read_text(encoding="utf-8")
+        archive_readme = read("docs/archive/README.md")
+        manifest = json.loads(read(manifest_path))
         documentation_map = read("docs/DOCUMENTATION_MAP.md")
         changelog = read("docs/CHANGELOG.md")
 
@@ -80,6 +86,19 @@ class V9GovernanceDocumentTests(unittest.TestCase):
             "# UX/UI 공용 체계 확산 Active Handoff",
         ):
             self.assertIn(term, archive)
+
+        for term in ("기본 콜드 스타트", "active_authority: false", "ARCHIVE_MANIFEST.json"):
+            self.assertIn(term, archive_readme)
+
+        self.assertEqual(manifest["schema_version"], 1)
+        record = manifest["records"][0]
+        self.assertEqual(record["archive_id"], "BASE-ARCHIVE-2026-07-29-UX-UI-HANDOFF")
+        self.assertEqual(record["classification"], "ARCHIVE_HISTORY")
+        self.assertEqual(record["original_path"], "docs/ACTIVE_HANDOFF.md")
+        self.assertEqual(record["current_path"], archive_path)
+        self.assertFalse(record["active_authority"])
+        self.assertEqual(record["implementation_authority"], "NONE")
+        self.assertEqual(record["rollback_ref"], "dc98a666563b1f0f87b665eac97dbd8a8be37576")
 
         self.assertIn(archive_path, documentation_map)
         self.assertIn("COMPATIBILITY_ONLY", documentation_map)
