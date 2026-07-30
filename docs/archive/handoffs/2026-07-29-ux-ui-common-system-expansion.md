@@ -6,7 +6,7 @@ archive_metadata:
   archived_at: 2026-07-30
   original_path: docs/ACTIVE_HANDOFF.md
   archived_path: docs/archive/handoffs/2026-07-29-ux-ui-common-system-expansion.md
-  content_sha256: feb2cefe5e61c646068f69d38a7dba0c8382492cfcc30ad7b0888220439c7878
+  content_sha256: 0ece907ea3b789348061dcfea67bd3ed06ac87c49e72d60822aa74b2af2e4167
   superseded_by:
     - docs/CHANGELOG.md
     - external:github/issues-and-pull-requests
