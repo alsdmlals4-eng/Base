@@ -64,6 +64,11 @@ legacy adapter declares `role_bindings.skill_registry` (or
 raw-byte hashed in the canonical adapter; `skills/SKILL_REGISTRY.json` is only
 the safe default for projects that already use it.
 
+First migration creates `docs/PROJECT_OPERATING_HEALTH.json` only when absent,
+with `OM-L0`, `PE-0`, and every critical gate `NOT_RUN`. It never overwrites
+project evidence. A baseline-declared future protected root remains an active
+policy boundary even before the project creates that directory.
+
 ## Supply chain
 
 GitHub workflows use least permissions and official Actions pinned to full commit SHAs. Dependency review is capability-gated for pull requests that change dependency manifests or lockfiles: the repository owner enables the dependency graph/security capability first, then sets `DEPENDENCY_REVIEW_ENABLED=true`. Until that explicit opt-in exists, the workflow records `DEFERRED_UNTIL_REPOSITORY_SECURITY_ENABLED` rather than reporting a false security pass. Binary attestation is `DEFERRED_UNTIL_RELEASE_ARTIFACT`; no attestation claim is made before a releasable binary exists.

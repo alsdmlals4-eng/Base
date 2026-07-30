@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-30 — Base v9.1 first-migration completion
+
+- Project-local Skill body paths may resolve relative to the declared project Registry only when their fully resolved path stays within the project root and contains no link traversal.
+- First migration now creates a conservative, non-overwriting `PROJECT_OPERATING_HEALTH` artifact when it is absent. Baseline-declared future protected roots remain protected without being falsely reported as missing product paths.
+
 ## 2026-07-30 — Base v9.1 legacy project Registry-path migration
 
 - The migration generator now preserves a legacy adapter's declared local Skill Registry path instead of requiring a copied `skills/SKILL_REGISTRY.json`.

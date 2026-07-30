@@ -1340,6 +1340,78 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         self.assertNotEqual(unsafe.returncode, 0)
         self.assertIn("escapes", unsafe.stderr.lower())
 
+    def test_project_skill_paths_may_be_relative_to_the_declared_registry(self) -> None:
+        registry = self.project / "docs/planning/SKILL_REGISTRY.json"
+        registry.parent.mkdir(parents=True)
+        registry.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "skills": [
+                        {
+                            "skill_id": "local-skill",
+                            "status": "ACTIVE",
+                            "path": "../../skills/local-skill/SKILL.md",
+                        }
+                    ],
+                },
+                sort_keys=True,
+            ) + "\n",
+            encoding="utf-8",
+        )
+        adapter = self.adapter_data()
+        adapter["skill_registry"]["project"].update(
+            path="docs/planning/SKILL_REGISTRY.json", sha256=digest(registry)
+        )
+        self.adapter.write_text(json.dumps(adapter, sort_keys=True) + "\n", encoding="utf-8")
+        self.assertEqual(
+            self.core.validation_errors(self.project, self.base, check_generated=False),
+            [],
+        )
+
+        data = json.loads(registry.read_text(encoding="utf-8"))
+        data["skills"][0]["path"] = "../../../outside/SKILL.md"
+        registry.write_text(json.dumps(data, sort_keys=True) + "\n", encoding="utf-8")
+        adapter["skill_registry"]["project"]["sha256"] = digest(registry)
+        self.adapter.write_text(json.dumps(adapter, sort_keys=True) + "\n", encoding="utf-8")
+        self.assertTrue(
+            any(
+                "escapes" in error.lower()
+                for error in self.core.validation_errors(self.project, self.base, check_generated=False)
+            )
+        )
+
+    def test_migrator_initializes_missing_health_without_overwrite(self) -> None:
+        health = self.project / "docs/PROJECT_OPERATING_HEALTH.json"
+        health.unlink()
+        output = self.project / "skills/MIGRATED_PROJECT_BASE_ADAPTER.json"
+        args = (
+            "--project-root", str(self.project),
+            "--base-repository", str(self.base),
+            "--legacy-adapter", str(self.legacy_adapter),
+            "--output", str(output),
+            "--release-commit", self.release_commit,
+            "--release-evidence-commit", self.evidence_commit,
+            "--protected-baseline-commit", self.protected_baseline_commit,
+            "--protected-authority-kind", "REMOTE_TRACKING_REF",
+            "--protected-authority-ref", "refs/remotes/origin/main",
+        )
+        result = self.run_tool(MIGRATE, *args, "--write")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        initial = json.loads(health.read_text(encoding="utf-8"))
+        self.assertEqual(initial["operating_maturity"], "OM-L0")
+        self.assertEqual(initial["product_evidence_maturity"], "PE-0")
+        self.assertEqual(set(initial["critical_gates"].values()), {"NOT_RUN"})
+
+        initial["critical_gates"]["runtime"] = "BLOCKED"
+        health.write_text(json.dumps(initial, sort_keys=True) + "\n", encoding="utf-8")
+        second = self.run_tool(MIGRATE, *args, "--write")
+        self.assertEqual(second.returncode, 0, second.stdout + second.stderr)
+        self.assertEqual(
+            json.loads(health.read_text(encoding="utf-8"))["critical_gates"]["runtime"],
+            "BLOCKED",
+        )
+
     def test_windows_script_runner_uses_explicit_command_array_without_shell(self) -> None:
         pub_spec = importlib.util.spec_from_file_location("publication_v3", ROOT / "tools/publication_v3.py")
         assert pub_spec and pub_spec.loader
