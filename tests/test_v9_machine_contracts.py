@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
@@ -55,6 +56,25 @@ class V9MachineContractTests(unittest.TestCase):
             self.assertIn(pr, migration)
         self.assertIn("직접 병합하지 않는다", migration)
         self.assertIn("ROLLBACK", migration)
+
+    def test_implemented_legacy_prs_are_terminal_and_not_reassessed(self) -> None:
+        migration = read("docs/operations/BASE_V9_MIGRATION_MAP.md")
+        ledger = json.loads(read("docs/operations/GITHUB_OBJECT_LEDGER.json"))
+
+        self.assertIn("[구현됨]", migration)
+        self.assertIn("do_not_reassess", migration)
+
+        pr5 = next(
+            item
+            for item in ledger["objects"]
+            if item["type"] == "pr" and item["number"] == 5
+        )
+        self.assertEqual(pr5["status_marker"], "[구현됨]")
+        self.assertEqual(pr5["resolution"], "IMPLEMENTED_BY_CURRENT_CONTRACT")
+        self.assertTrue(pr5["terminal"])
+        self.assertTrue(pr5["do_not_reassess"])
+        self.assertTrue(pr5["replacement_paths"])
+        self.assertTrue(pr5["verification_paths"])
 
 
 if __name__ == "__main__":
