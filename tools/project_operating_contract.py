@@ -1165,6 +1165,51 @@ def migrated_adapter(
         for skill_id in sorted(shared_overrides)
     ]
     project_info = baseline_legacy.get("project", {})
+    legacy_repository = project_info.get("repository") if isinstance(project_info, dict) else None
+    registry_project = project_registry_data.get("project", {})
+    registry_repository = (
+        registry_project.get("repository") if isinstance(registry_project, dict) else None
+    )
+    repository = (
+        registry_repository
+        if isinstance(registry_repository, str) and registry_repository
+        else legacy_repository
+    )
+    if not isinstance(repository, str) or not repository:
+        repository = "owner/project"
+    legacy_engine = baseline_legacy.get("engine", {})
+    engine = str(project_info.get("engine", "Godot 4.7"))
+    if isinstance(legacy_engine, dict) and legacy_engine.get("project_file") == "NOT_CREATED":
+        engine = "NOT_APPLICABLE_NO_PROJECT"
+    project_contract = {
+        "repository": repository,
+        "engine": engine,
+        "root": ".",
+    }
+    if isinstance(legacy_repository, str) and legacy_repository and legacy_repository != repository:
+        project_contract["legacy_repository_aliases"] = [legacy_repository]
+
+    sheet_route = project_registry_data.get("base_registry_route", {})
+    sheet_route = sheet_route if isinstance(sheet_route, dict) else {}
+    legacy_sheet_path = safe_repository_path(
+        project_root, "skills/BASE_V9_ADAPTER.json", "legacy Base v9 adapter"
+    )
+    legacy_sheet = load_object(legacy_sheet_path).get("sheet", {}) if legacy_sheet_path.is_file() else {}
+    legacy_sheet = legacy_sheet if isinstance(legacy_sheet, dict) else {}
+    sheet_id = legacy_sheet.get("id") or sheet_route.get("project_sheet_id")
+    if isinstance(sheet_id, str) and sheet_id:
+        gdd_sheet = {
+            "role": "USER_FACING_GDD_WORKSPACE",
+            "sync_status": "BLOCKED",
+            "id": sheet_id,
+            "sheet_only_change_policy": "PROPOSED_SHEET_CHANGE",
+            "write_policy": "NO_AUTOMATIC_OVERWRITE",
+        }
+        declared_status = legacy_sheet.get("sync_status") or sheet_route.get("project_sheet_status")
+        if isinstance(declared_status, str) and declared_status:
+            gdd_sheet["declared_sync_status"] = declared_status
+    else:
+        gdd_sheet = {"role": "USER_FACING_GDD_WORKSPACE", "sync_status": "NOT_CONFIGURED"}
     return {
         "schema_version": 1,
         "artifact_role": "PROJECT_BASE_ADAPTER",
@@ -1174,11 +1219,7 @@ def migrated_adapter(
             "release_commit": release_commit,
             "release_evidence_commit": release_evidence_commit,
         },
-        "project": {
-            "repository": str(project_info.get("repository", "owner/project")),
-            "engine": str(project_info.get("engine", "Godot 4.7")),
-            "root": ".",
-        },
+        "project": project_contract,
         "routing": {
             "base_routes": base_routes,
             "project_routes": sorted(project_routes, key=lambda item: item["route_id"]),
@@ -1195,7 +1236,7 @@ def migrated_adapter(
             },
         },
         "shared_overrides": shared_overrides,
-        "gdd_sheet": {"role": "USER_FACING_GDD_WORKSPACE", "sync_status": "NOT_CONFIGURED"},
+        "gdd_sheet": gdd_sheet,
         "protected_baseline": {
             "authority_kind": protected_authority_kind,
             "authority_ref": protected_authority_ref,
