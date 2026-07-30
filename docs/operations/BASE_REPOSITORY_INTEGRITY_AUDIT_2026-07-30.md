@@ -76,7 +76,8 @@
 - 심각도: `MUST_FIX`
 - 사용자 결정: `DEC-2026-07-30-001` — Archive 원문 + compatibility Stub 승인.
 - 처리:
-  - 원문: `docs/archive/handoffs/2026-07-29-ux-ui-common-system-expansion.md`
+  - 원문 분류: `ARCHIVE_HISTORY`
+  - 원문 경로: `docs/archive/handoffs/2026-07-29-ux-ui-common-system-expansion.md`
   - 기존 경로: `docs/ACTIVE_HANDOFF.md` → `COMPATIBILITY_ONLY`
   - Manifest: `docs/archive/ARCHIVE_MANIFEST.json`
   - Rollback ref: `dc98a666563b1f0f87b665eac97dbd8a8be37576`
