@@ -295,6 +295,32 @@ def _git_show_bytes(repository: Path, commit: str, relative: str) -> bytes | Non
     return result.stdout if result.returncode == 0 else None
 
 
+def _clean_tracked_blob_bytes(
+    repository: Path, path: Path, label: str
+) -> tuple[bytes | None, str | None]:
+    """Return canonical Git bytes for a clean tracked file, preserving bootstrap fallback."""
+    try:
+        relative = path.resolve().relative_to(repository.resolve()).as_posix()
+    except ValueError:
+        return None, f"Unsafe {label} path escapes its approved repository root"
+    tracked = _git(repository, "ls-files", "--error-unmatch", "--", relative)
+    if tracked.returncode:
+        return None, None
+    for arguments in (("diff", "--quiet", "--", relative), ("diff", "--cached", "--quiet", "--", relative)):
+        result = _git(repository, *arguments)
+        if result.returncode == 1:
+            return None, f"{label} has uncommitted content changes; refusing execution"
+        if result.returncode:
+            return None, f"Cannot inspect {label} Git worktree state; refusing execution"
+    head = _resolve_commit(repository, "HEAD")
+    if head is None:
+        return None, None
+    try:
+        return _commit_blob_bytes(repository, head, relative, label), None
+    except ContractError as error:
+        return None, str(error)
+
+
 def _release_lock_contract(
     adapter: dict[str, Any], base_repository: Path
 ) -> tuple[list[str], dict[str, Any] | None, bytes | None]:
@@ -855,7 +881,12 @@ def validation_errors(
             if not path.is_file():
                 errors.append(f"{owner} Skill Registry path does not exist: {contract['path']}")
                 continue
-            raw = path.read_bytes()
+            tracked_raw, tracked_error = _clean_tracked_blob_bytes(
+                project_root, path, "Project Skill Registry"
+            )
+            if tracked_error:
+                errors.append(tracked_error)
+            raw = tracked_raw if tracked_raw is not None else path.read_bytes()
         actual = sha256_bytes(raw)
         if actual != contract["sha256"]:
             errors.append(
