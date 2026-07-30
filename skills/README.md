@@ -21,6 +21,12 @@ skills/SKILL_REGISTRY.json
 
 Registry 정책은 `load_all_skills: false`, `default_selection: automatic-trigger-match`다. 사용자는 Skill 이름을 선언할 필요가 없으며, trigger가 일치하는 최소 package만 선택한다. 활성 Skill 수와 목록을 이 문서에 수동 복제하지 않는다.
 
+## 안정 도메인 진입점
+
+전체 활성 목록은 생성 뷰를 따르되, 사람이 자주 찾는 통합 책임은 안정 라우트로 유지한다.
+
+- 게임 UX/UI 설계·정보 구조·접근성·Godot UI 계약·폴리싱·구현 결과 감사: `auditing-and-refining-ui-art`
+
 ## Package 배치
 
 ```text
