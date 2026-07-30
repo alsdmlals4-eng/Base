@@ -6,9 +6,25 @@
   ],
   "objects": [
     {
-      "disposition": "REASSESS",
+      "disposition": "IMPLEMENTED",
+      "do_not_reassess": true,
       "number": 5,
-      "type": "pr"
+      "replacement_paths": [
+        "templates/project-operations/README.md",
+        "templates/project-operations/DESIGN_DOCUMENT_REGISTRY.json",
+        "templates/project-operations/DOCUMENT_UPDATE_MATRIX.md",
+        "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md"
+      ],
+      "resolution": "IMPLEMENTED_BY_CURRENT_CONTRACT",
+      "resolution_note": "The fixed five-book proposal was implemented in a broader, registry-driven form with selectable discipline documents, update routing, and image approval governance.",
+      "resolved_at": "2026-07-30",
+      "status_marker": "[구현됨]",
+      "terminal": true,
+      "type": "pr",
+      "verification_paths": [
+        "tests/test_game_project_operating_system_structure.py",
+        "tests/test_v9_machine_contracts.py"
+      ]
     },
     {
       "disposition": "CONSOLIDATE_REVIEW",
@@ -41,5 +57,8 @@
       "type": "issue"
     }
   ],
-  "schema_version": 1
+  "schema_version": 1,
+  "terminal_status_markers": {
+    "[구현됨]": "Current contract and verification paths preserve the PR's required value. Do not reassess unless a regression or new conflicting requirement is evidenced."
+  }
 }
