@@ -12,6 +12,12 @@ current_execution_contract: templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTIO
 
 v9는 v6~v8에서 이미 진행된 기획·정본·구현을 폐기하지 않는다. 이 문서는 과거 첨부물이 현재 실행 권한이 아님을 명확히 하고, 프로젝트별 복원·감사에서 어떤 항목을 비교해야 하는지 제공한다.
 
+## v9.3 단일 첨부 실행 복원
+
+Base v9.3의 활성 v9.1 계약은 v8의 핵심 사용성을 명시적으로 보존한다. 파일 하나만 첨부하면 `APPLICATION_BINDING`과 저장소 우선 인터뷰를 먼저 실행하고, 현재 요청과 Gate에 따라 기획, Codex 인계·구현, 검수, 병합 후 Sheet 동기화까지 연결한다. `RECONCILIATION_PLANNING_PROFILE`은 감사·미승인·차단 충돌에만 선택하는 조건부 안전 프로필이며, 모든 첨부를 감사 전용으로 제한하지 않는다.
+
+첨부는 제품 범위 승인을 대신하지 않는다. 구현에는 요청된 범위, Issue/Goal, 수용 기준, 보호 경로·소비처·검증 계약이 필요하다. 이 경계는 v8의 한 파일 경험을 유지하면서도 현행 Base adapter·Snapshot·dynamic Skill route와 이후 추가되는 호환 Skill을 안전하게 사용하기 위한 것이다.
+
 ## 첨부 입력 식별
 
 | 입력 | SHA-256 | 분류 | 처리 |

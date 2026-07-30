@@ -22,6 +22,10 @@ CANDIDATE_LOCK = ROOT / "base-v9.1.lock.json"
 CANDIDATE_LOCK_SCHEMA = ROOT / "schemas/base-v9-1-candidate-lock-v1.schema.json"
 CANDIDATE_EVIDENCE_PATH = "docs/operations/BASE_V9_1_RELEASE_EVIDENCE.json"
 CANDIDATE_EVIDENCE_SCHEMA = ROOT / "schemas/base-v9-1-release-evidence-v1.schema.json"
+V93_CANDIDATE_LOCK = ROOT / "base-v9.3.lock.json"
+V93_CANDIDATE_LOCK_SCHEMA = ROOT / "schemas/base-v9-3-candidate-lock-v1.schema.json"
+V93_EVIDENCE_PATH = "docs/operations/BASE_V9_3_RELEASE_EVIDENCE.json"
+V93_EVIDENCE_SCHEMA = ROOT / "schemas/base-v9-3-release-evidence-v1.schema.json"
 ENTRYPOINTS = (
     ROOT / "README.md",
     ROOT / "AGENTS.md",
@@ -214,6 +218,139 @@ def candidate_release_evidence_errors(
             errors.append("v9.1 evidence parent Registry Git blob is unavailable")
         elif not evidence_blob.returncode and parent_blob.stdout != evidence_blob.stdout:
             errors.append("v9.1 release evidence must not change the candidate Registry")
+    return errors
+
+
+def v93_evidence_record_errors(
+    repository: Path,
+    candidate_lock: dict,
+    evidence: dict,
+    trusted_history_commit: str,
+) -> list[str]:
+    """Validate v9.3 evidence against the candidate identity and trusted base history."""
+    errors: list[str] = []
+    try:
+        evidence_schema = json.loads(V93_EVIDENCE_SCHEMA.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return [f"v9.3 release evidence schema is unavailable: {error}"]
+    for error in sorted(Draft202012Validator(evidence_schema).iter_errors(evidence), key=lambda item: list(item.path)):
+        location = ".".join(str(part) for part in error.path) or "<root>"
+        errors.append(f"v9.3 release evidence record {location}: {error.message}")
+    if evidence.get("candidate_issue") != candidate_lock.get("github_issue"):
+        errors.append("v9.3 release evidence candidate Issue does not match the candidate lock")
+    release_commit = evidence.get("release_payload_commit")
+    if not isinstance(release_commit, str) or _resolve_commit(repository, release_commit) != release_commit:
+        return errors + [f"v9.3 release evidence payload commit is unavailable: {release_commit}"]
+    if _resolve_commit(repository, trusted_history_commit) != trusted_history_commit:
+        return errors + [f"Trusted history commit is unavailable: {trusted_history_commit}"]
+    payload_ancestry = subprocess.run(
+        ["git", "-C", str(repository), "merge-base", "--is-ancestor", release_commit, trusted_history_commit],
+        capture_output=True,
+        check=False,
+    )
+    if payload_ancestry.returncode:
+        errors.append("v9.3 release evidence payload is not an ancestor of trusted history")
+    registry = candidate_lock.get("candidate_registry")
+    if evidence.get("candidate_registry") != registry:
+        errors.append("v9.3 release evidence Registry identity does not match the candidate lock")
+        return errors
+    if not isinstance(registry, dict):
+        return errors + ["v9.3 candidate Registry authority is missing"]
+    registry_path = registry.get("path")
+    registry_hash = registry.get("sha256")
+    if not isinstance(registry_path, str) or not isinstance(registry_hash, str):
+        return errors + ["v9.3 candidate Registry path/hash is malformed"]
+    payload_blob = subprocess.run(
+        ["git", "-C", str(repository), "show", f"{release_commit}:{registry_path}"],
+        capture_output=True,
+        check=False,
+    )
+    if payload_blob.returncode:
+        errors.append("v9.3 release evidence payload Registry Git blob is unavailable")
+    elif hashlib.sha256(payload_blob.stdout).hexdigest() != registry_hash:
+        errors.append("v9.3 release evidence payload Registry hash does not match the candidate lock")
+    return errors
+
+
+def v93_release_lock_errors(repository: Path, candidate_lock: dict, trusted_history_commit: str) -> list[str]:
+    """Validate v9.3 candidate and released pins without self-attesting a PR branch."""
+    errors: list[str] = []
+    try:
+        schema = json.loads(V93_CANDIDATE_LOCK_SCHEMA.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return [f"v9.3 candidate lock schema is unavailable: {error}"]
+    for error in sorted(Draft202012Validator(schema).iter_errors(candidate_lock), key=lambda item: list(item.path)):
+        location = ".".join(str(part) for part in error.path) or "<root>"
+        errors.append(f"v9.3 candidate lock {location}: {error.message}")
+
+    registry = candidate_lock.get("candidate_registry")
+    if not isinstance(registry, dict):
+        return errors + ["v9.3 candidate Registry authority is missing"]
+    registry_path = registry.get("path")
+    registry_hash = registry.get("sha256")
+    if not isinstance(registry_path, str) or not isinstance(registry_hash, str):
+        return errors + ["v9.3 candidate Registry path/hash is malformed"]
+    current_registry = repository / registry_path
+    if not current_registry.is_file():
+        errors.append("v9.3 candidate Registry file is unavailable")
+    elif hashlib.sha256(current_registry.read_bytes()).hexdigest() != registry_hash:
+        errors.append("v9.3 candidate Registry hash does not match raw file bytes")
+
+    state = candidate_lock.get("release_state")
+    release_commit = candidate_lock.get("candidate_release_commit")
+    evidence_commit = candidate_lock.get("candidate_release_evidence_commit")
+    if state == "RELEASE_CANDIDATE":
+        if release_commit is not None or evidence_commit is not None:
+            errors.append("v9.3 release candidate must retain null release and evidence pins")
+        evidence_path = repository / V93_EVIDENCE_PATH
+        if evidence_path.is_file():
+            try:
+                current_evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as error:
+                errors.append(f"v9.3 candidate evidence record cannot be read: {error}")
+            else:
+                errors.extend(
+                    v93_evidence_record_errors(repository, candidate_lock, current_evidence, trusted_history_commit)
+                )
+        return errors
+    if state != "BASE_RELEASED":
+        return errors + [f"v9.3 release state is unsupported: {state}"]
+    if _resolve_commit(repository, trusted_history_commit) != trusted_history_commit:
+        return errors + [f"Trusted history commit is unavailable: {trusted_history_commit}"]
+    if not isinstance(release_commit, str) or _resolve_commit(repository, release_commit) != release_commit:
+        errors.append(f"v9.3 release payload commit is unavailable: {release_commit}")
+    if not isinstance(evidence_commit, str) or _resolve_commit(repository, evidence_commit) != evidence_commit:
+        errors.append(f"v9.3 release evidence commit is unavailable: {evidence_commit}")
+    if errors:
+        return errors
+
+    def is_ancestor(ancestor: str, descendant: str) -> bool:
+        return not subprocess.run(
+            ["git", "-C", str(repository), "merge-base", "--is-ancestor", ancestor, descendant],
+            capture_output=True,
+            check=False,
+        ).returncode
+
+    if not is_ancestor(release_commit, evidence_commit):
+        errors.append("v9.3 release payload is not an ancestor of its evidence commit")
+    if not is_ancestor(evidence_commit, trusted_history_commit):
+        errors.append("v9.3 release evidence is not an ancestor of trusted history")
+    evidence = _commit_json(repository, trusted_history_commit, V93_EVIDENCE_PATH)
+    if evidence is None:
+        return errors + ["v9.3 release evidence is unavailable from trusted history"]
+    errors.extend(v93_evidence_record_errors(repository, candidate_lock, evidence, trusted_history_commit))
+    if evidence.get("release_payload_commit") != release_commit:
+        errors.append("v9.3 release evidence payload does not match the candidate lock")
+    if evidence_commit != trusted_history_commit:
+        evidence_blob = subprocess.run(
+            ["git", "-C", str(repository), "show", f"{evidence_commit}:{registry_path}"],
+            capture_output=True,
+            check=False,
+        )
+        if evidence_blob.returncode:
+            errors.append("v9.3 release evidence Registry Git blob is unavailable")
+        elif hashlib.sha256(evidence_blob.stdout).hexdigest() != registry_hash:
+            errors.append("v9.3 release evidence Registry hash does not match the candidate lock")
     return errors
 
 
@@ -445,6 +582,14 @@ def main() -> int:
         errors.extend(registry_authority_errors(ROOT, candidate_lock))
     except (OSError, json.JSONDecodeError) as error:
         errors.append(f"Base v9.1 candidate lock cannot be validated: {error}")
+    try:
+        v93_lock = json.loads(V93_CANDIDATE_LOCK.read_text(encoding="utf-8"))
+        trusted_history, trusted_errors = resolve_trusted_history_commit(ROOT, options.trusted_history_commit)
+        errors.extend(trusted_errors)
+        if trusted_history is not None:
+            errors.extend(v93_release_lock_errors(ROOT, v93_lock, trusted_history))
+    except (OSError, json.JSONDecodeError) as error:
+        errors.append(f"Base v9.3 candidate lock cannot be validated: {error}")
     if not GENERATED_SUMMARY.is_file():
         errors.append("Generated active-Skill summary is missing")
     for entrypoint in ENTRYPOINTS:

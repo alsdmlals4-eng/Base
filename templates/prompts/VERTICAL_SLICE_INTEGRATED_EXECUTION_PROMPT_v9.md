@@ -1,19 +1,23 @@
 ---
 contract_name: VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT
-contract_version: "9.0"
-release_line: "Base v9.2"
+contract_version: "9.1"
+release_line: "Base v9.3"
 active_authority: true
 status: ACTIVE_EXECUTION_CONTRACT
 language: ko-KR
 base_repository: "https://github.com/alsdmlals4-eng/Base"
-execution_model: RECONCILIATION_FIRST_INTEGRATED_EXECUTION
+usage: "이 파일 하나만 첨부하면 저장소 우선 인터뷰부터 기획·Codex 인계·구현·검수·병합 후 동기화까지 현재 작업에 필요한 절차를 실행한다."
+execution_model: SINGLE_ATTACHMENT_RECONCILIATION_AWARE_INTEGRATED_EXECUTION
 legacy_contracts:
   - templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md
   - templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md
   - LEGACY_REFERENCE_INPUT: VERTICAL_SLICE_MASTER_REFERENCE_v6.md
 core_policies:
   - APPLICATION_BINDING
+  - REPOSITORY_FIRST_INTERVIEW
+  - INTEGRATED_DELIVERY_PROFILE
   - RECONCILIATION_PLANNING_PROFILE
+  - CONDITIONAL_RECONCILIATION
   - DUPLICATE_OMISSION_CONFLICT_AUDIT
   - LEGACY_REQUIREMENT_TRACEABILITY
   - SOURCE_CONSUMER_PROPAGATION_AUDIT
@@ -28,7 +32,9 @@ core_policies:
 
 ## 0. 사용 범위와 권한 순서
 
-이 파일은 기존 기획을 폐기하거나 새 게임을 백지에서 설계하는 실행문이 아니다. 먼저 이미 진행된 프로젝트의 정본·실제 구현·결정·증거를 복원하고, 누락·부족·중복·충돌·구형 참조만 영향도에 맞게 보완하는 **통합 실행 계약**이다.
+이 파일은 **상세 정본과 실행 지시를 합친 단일 첨부용 통합 실행문**이다. 이 파일 하나만 첨부해도 저장소 우선 인터뷰를 시작하고, 현재 요청·프로젝트 Gate·승인 범위에 맞춰 기획, Codex 인계와 구현, 검수, GitHub 병합, 병합 후 Google Sheet 동기화까지 필요한 단계를 연결한다.
+
+기존 기획을 폐기하거나 새 게임을 백지에서 설계하지 않는다. 먼저 이미 진행된 프로젝트의 정본·실제 구현·결정·증거를 복원하고, 누락·부족·중복·충돌·구형 참조만 영향도에 맞게 보완한다. **첨부 사실만으로 제품 범위나 사용자 Decision을 추정·승인하지 않는다.** 현재 사용자 요청이 감사·검토만이면 그 경계에서 끝내고, 구현을 요청·승인한 경우에만 아래의 Codex 인계와 구현 단계를 연다.
 
 권한은 아래 순서로 해석한다. 하위 자료가 상위 자료를 자동으로 덮어쓰지 않는다.
 
@@ -53,7 +59,7 @@ core_policies:
 1. `origin/main`의 정확한 SHA와 현재 작업 브랜치·PR 기준선.
 2. `skills/PROJECT_BASE_ADAPTER.json`, `skills/PROJECT_SKILL_SNAPSHOT.json`, `.agents/skills/<project>-workflow-router/SKILL.md`.
 3. 프로젝트의 Active Context, Decision Log/Registry, 설계 문서 지도, 구현 상태, 열린 Issue/PR.
-4. 보호 경로와 실제 Godot 프로젝트 경로. 보호된 코드·Scene·데이터·에셋은 감사만 하고 이 프로필에서 수정하지 않는다.
+4. 보호 경로와 실제 Godot 프로젝트 경로. 읽기·감사 단계에서는 보호된 코드·Scene·데이터·에셋을 수정하지 않는다. 후속 구현은 승인된 Issue/Goal·범위·검증 계약이 있을 때에만 보호 정책을 통과해 수행한다.
 5. Google Sheet 구성·마지막 동기화 SHA·쓰기 권한. Sheet가 없거나 읽을 수 없으면 내용을 추정하지 않고 `NOT_CONFIGURED` 또는 접근 상태만 기록한다.
 6. 고정된 Base `release_commit`, `release_evidence_commit`, Registry raw-byte hash, 프로젝트 로컬 Registry hash.
 
@@ -61,9 +67,45 @@ core_policies:
 
 ## 2. 실행 프로필과 작업 경계
 
+### 기본: REPOSITORY_FIRST_INTERVIEW + INTEGRATED_DELIVERY_PROFILE
+
+첨부 직후 `APPLICATION_BINDING`을 완료하면, 기본으로 `REPOSITORY_FIRST_INTERVIEW`를 실행한다. 이 인터뷰는 프로젝트 정본·실제 구현·열린 Issue/PR·GDD Sheet 상태를 먼저 읽고, 이미 확정된 질문을 되묻지 않으며, 현재 요청을 다음 네 가지로 분류한다.
+
+```text
+AUDIT_ONLY                 → 읽기·감사·시각 점검·Change Plan
+PLAN_OR_DECISION           → 기획·Approval Bundle·책임 정본 갱신 제안
+IMPLEMENTATION_REQUESTED   → Issue → /plan(필요 시) → /goal → Codex 인계·구현·검수
+SYNC_OR_RELEASE_FOLLOWUP   → merged main 재조회 → 허용된 Sheet 동기화 → Gate Close
+```
+
+`INTEGRATED_DELIVERY_PROFILE`은 `PLAN_OR_DECISION` 또는 `IMPLEMENTATION_REQUESTED`에 쓰는 기본 실행 경로다. 필요한 최소 Skill을 현재 Registry와 프로젝트 Snapshot에서 선택하고, 해당 Skill이 이후 추가·교체되어도 route·입력 정본·검증 증거가 유효하면 그대로 선택할 수 있다. 고정된 Skill 이름 목록이나 과거 Prompt의 절차 목록으로 제한하지 않는다.
+
+```text
+허용: 저장소 우선 인터뷰, 기획, Approval Bundle, GitHub Issue, /plan(필요 시),
+      /goal, Codex 구현 인계, 승인된 범위의 정본/제품 변경, 테스트·Godot 검증,
+      독립 리뷰·적대적 검토, 필수 Gate 통과 뒤 병합, merged main 기준 Sheet 동기화와 재조회
+금지: 요청·승인·Issue/Goal 없이 제품 범위를 발명하는 구현, 보호 경로 우회,
+      브랜치 SHA를 CURRENT로 기록하는 Sheet 쓰기, Sheet 단독 변경의 자동 정본 승격,
+      실제 증거 없는 런타임·사람·기기 검증 완료 주장
+```
+
+구현을 여는 최소 조건은 다음과 같다.
+
+1. 현재 요청이 구현 또는 승인된 Change Plan 실행을 명시한다.
+2. `APPLICATION_BINDING`과 필요한 정본 복원이 완료되고, 차단 `P0/P1` 또는 `CANON_CONFLICT`가 해결·승인되었다.
+3. GitHub Issue와 `/goal Implement GitHub Issue #[NUMBER] exactly as specified.`가 있으며, 다중 파일·고위험·모호한 작업은 그 전에 `/plan`을 작성했다.
+4. 영향받는 소비처, 보호 경로, 수용 기준, 자동·Godot 수동 검증과 문서 갱신 책임이 구현 계약에 있다.
+
+구현 PR이 main에 병합된 **뒤에만** GitHub main SHA와 실제 구현을 다시 읽는다. Sheet 쓰기는 `PROJECT_SHEET_CONFIGURED`이고 정확한 spreadsheet URL·ID·쓰기 권한·대상 tab·변경 range를 구현 직전에 재확인한 경우에만 허용한다. 이때 `00_프로젝트_허브`, `04_누락_충돌_감사`, `05_GDD_요약`, `99_변경이력` 같은 해당 프로젝트의 **계약된 tab·range만** 갱신하고 전후 값을 즉시 재조회한다. Sheet 단독 편집은 언제나 `PROPOSED_SHEET_CHANGE`이며 GitHub 정본을 자동으로 덮어쓰지 않는다.
+
 ### RECONCILIATION_PLANNING_PROFILE
 
-첫 파동의 기본 프로필은 읽기·감사·이미지 기반 검토·계획·승인 묶음만 허용한다.
+`RECONCILIATION_PLANNING_PROFILE`은 모든 첨부의 기본값이 아니라 다음 경우에만 선택하는 안전한 감사 프로필이다.
+
+- 사용자가 감사·복원·중간 점검·보완 계획만 요청했다.
+- 구현 권한이나 제품 범위가 아직 승인되지 않았다.
+- 정본 충돌, 누락된 책임, 보호 경로 영향, `P0/P1`, `CANON_CONFLICT` 때문에 구현 전 Approval Bundle이 필요하다.
+- 첫 이관 파동처럼 프로젝트 적용 계약이 명시적으로 감사 전용으로 고정되어 있다.
 
 ```text
 허용: 정본 복원, 비교, 무결성 검사, 시각 시뮬레이션, Finding/Change Plan/Issue 초안
@@ -71,23 +113,26 @@ core_policies:
       Google Sheet 쓰기, 제품 범위 PR 병합, 성숙도/런타임 증거의 근거 없는 상승
 ```
 
-이 프로필 자체를 담는 문서·계약·감사 산출물의 PR은 허용된다. 구현·정본 변경은 사용자 Decision과 별도 승인 묶음의 후속 Change Plan으로 분리한다.
+이 프로필 자체를 담는 문서·계약·감사 산출물의 PR은 허용된다. 구현·정본 변경은 사용자 Decision과 별도 승인 묶음의 후속 Change Plan으로 분리한다. 감사 결과가 구현 조건을 충족하면 같은 단일 첨부 계약 안에서 `INTEGRATED_DELIVERY_PROFILE`로 전환할 수 있으며, 새 첨부나 별도 축약 Prompt를 요구하지 않는다.
 
 ### 후속 프로필 선택
 
 후속 작업에서만 `CONCEPT_APPROVAL`, `DEMO_FIRST_VERTICAL_SLICE`, `DEMO_VALIDATION`, `TECHNICAL_SPIKE`, `PRODUCTION_APPROVAL`, `RELEASE_CANDIDATE_APPROVAL` 중 필요한 최소 프로필을 선택한다. `CORE_POC`나 이전 전체 실행 프로필을 자동으로 치환하지 않는다.
 
-## 3. 9단계 복원·기획·검수 루프
+## 3. 단일 첨부 통합 실행 루프
 
 1. `APPLICATION_BINDING` — 적용 대상, Base 핀, 보호 경계, Sheet 상태를 확정한다.
-2. `BASELINE_RECOVERY` — 기존 정본·실제 파일·결정·진행·증거를 요구사항 단위로 복원한다.
-3. `DUPLICATE_OMISSION_CONFLICT_AUDIT` — 동일 책임 정본, 누락 소비처, 충돌, 구형화, 보호 경로 영향 여부를 Finding Ledger에 적는다.
-4. `EVIDENCE_PACK` — Git SHA, 테스트/런타임/사람 검증 상태, 소스 링크, 가정과 미결정을 구분한다.
-5. `APPROVAL_BUNDLE` — 바꾸려는 책임·범위·위험·결정 질문·수용 기준을 묶는다. 이미 확정된 질문은 다시 묻지 않는다.
-6. `CANONICAL_UPDATE` — 승인된 후속 작업에서만 책임 정본을 최소 변경한다. 첫 감사 파동에서는 Change Plan만 만든다.
-7. `PROPAGATION_AUDIT` — 변경된 정본의 Sheet, 시각 자료, Skill, Issue, 구현 계약, 테스트 소비처를 재조회한다.
-8. `VALIDATION` — 정적 검사, 관련 테스트, Godot headless/사람/기기 증거를 분리해 실행 또는 `NOT_RUN`으로 기록한다.
-9. `GATE_CLOSE` — Critical Gate와 P0/P1을 별도로 판정한다. 평균 점수로 차단 문제를 가리지 않는다.
+2. `REPOSITORY_FIRST_INTERVIEW` — 요청을 정본·실제 구현·진행 상태에 대조하고, 범위·결정·다음 Gate를 확인한다. 필요한 질문만 한 번에 묻는다.
+3. `PROFILE_SELECTION` — 감사만 필요한 경우 `RECONCILIATION_PLANNING_PROFILE`, 그 밖에는 `INTEGRATED_DELIVERY_PROFILE`을 선택한다.
+4. `BASELINE_RECOVERY` + `DUPLICATE_OMISSION_CONFLICT_AUDIT` — 필요한 깊이만큼 기존 정본·실제 파일·결정·증거를 복원하고 Finding Ledger를 만든다.
+5. `EVIDENCE_PACK` + `APPROVAL_BUNDLE` — Git SHA, 검증 상태, 소스 링크, 가정·미결정과 변경 책임·범위·수용 기준을 묶는다. 이미 확정된 질문은 다시 묻지 않는다.
+6. `PLAN_AND_CODEX_HANDOFF` — 구현이 요청·승인되면 Issue → `/plan`(필요 시) → `/goal` → 구현 계약을 만든다. 요청이 감사뿐이면 Change Plan과 다음 사용자 Decision으로 끝낸다.
+7. `CANONICAL_UPDATE_AND_IMPLEMENTATION` — 승인된 Issue/Goal 범위에서만 책임 정본과 Godot 구현을 최소 변경한다. 첫 감사 파동에서는 Change Plan만 만든다.
+8. `PROPAGATION_AUDIT` — 변경된 정본의 Sheet, 시각 자료, Skill, Issue, 구현 계약, 테스트 소비처를 재조회한다.
+9. `VALIDATION` — 정적 검사, 관련 테스트, Godot headless/사람/기기 증거를 분리해 실행 또는 `NOT_RUN`으로 기록한다.
+10. `INDEPENDENT_REVIEW` — 코드리뷰와 적대적 검토로 권한 원본 중복, Base/프로젝트 책임 침범, 보호 경로 변경, Sheet 무단 덮어쓰기, 근거 없는 성숙도 상승을 확인한다.
+11. `MERGE_AND_SYNC` — 필수 Gate가 통과하면 병합하고, 병합된 main을 기준으로만 허용된 Sheet 동기화와 재조회를 실행한다.
+12. `GATE_CLOSE` — Critical Gate와 P0/P1을 별도로 판정하고, 다음 작업·미검증·보류를 남긴다. 평균 점수로 차단 문제를 가리지 않는다.
 
 ## 4. 필수 복원·감사 산출물
 
@@ -167,7 +212,7 @@ GitHub Markdown·JSON → 규칙, 승인 결정, 구현 계약, 변경 이력의
 Godot + tests → 실제 구현과 검증 증거
 ```
 
-Sheet에는 요약·링크·상태만 기록한다. 상세 규칙·수치·스키마·승인 결정·테스트 결과를 시각 도구나 Sheet에만 남기지 않는다. Sheet 단독 편집은 `PROPOSED_SHEET_CHANGE`이며, 이 첫 파동에서는 읽기 전용이다.
+Sheet에는 요약·링크·상태만 기록한다. 상세 규칙·수치·스키마·승인 결정·테스트 결과를 시각 도구나 Sheet에만 남기지 않는다. Sheet 단독 편집은 `PROPOSED_SHEET_CHANGE`이다. `RECONCILIATION_PLANNING_PROFILE`에서는 읽기 전용이며, `INTEGRATED_DELIVERY_PROFILE`에서는 병합된 main 재조회 뒤에만 계약된 범위를 동기화한다.
 
 ## 8. Vertical Slice 계약과 검증 증거
 
@@ -195,7 +240,7 @@ Intent → Player Experience → Scope → Implementation Contract → Verificat
 
 ## 10. 완료 보고와 후속 Change Plan
 
-첫 파동의 완료는 “감사 결과, 중간 시각화 검토, 승인 가능한 보완 계획이 책임 정본에 연결됨”이다. 게임 구현 완료나 런타임 검증 완료를 주장하지 않는다.
+감사 전용 파동의 완료는 “감사 결과, 중간 시각화 검토, 승인 가능한 보완 계획이 책임 정본에 연결됨”이다. `INTEGRATED_DELIVERY_PROFILE`의 완료는 이보다 더 나아가 승인된 기획·Codex 인계·구현·검수·병합 후 동기화까지, **이번 요청에 실제로 포함된 단계**의 증거를 남긴 상태다. 실행하지 않은 게임 구현·런타임·사람 검증을 주장하지 않는다.
 
 완료 보고는 다음을 구분한다.
 

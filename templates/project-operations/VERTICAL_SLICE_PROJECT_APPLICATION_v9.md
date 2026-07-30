@@ -2,7 +2,7 @@
 document_role: PROJECT_V9_APPLICATION_CONTRACT
 contract_source: templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md
 shared_body_policy: REFERENCE_ONLY_NO_COPY
-execution_profile: RECONCILIATION_PLANNING_PROFILE
+execution_profile: SELECT_AT_RUNTIME_FROM_ACTIVE_V9_CONTRACT
 ---
 
 # [프로젝트명] Vertical Slice v9 적용 계약
@@ -12,8 +12,8 @@ execution_profile: RECONCILIATION_PLANNING_PROFILE
 | 항목 | 값 |
 | --- | --- |
 | 프로젝트 `origin/main` SHA | `[실행 시 기록]` |
-| Base release commit | `[Base v9.2 release pin]` |
-| Base evidence commit | `[Base v9.2 evidence pin]` |
+| Base release commit | `[프로젝트에 고정된 Base v9.3 또는 호환 release pin]` |
+| Base evidence commit | `[프로젝트에 고정된 Base v9.3 또는 호환 evidence pin]` |
 | Adapter / Snapshot / router | `[경로와 hash]` |
 | 로컬 Registry / 프로젝트 전용 Skill | `[경로와 hash]` |
 | Google Sheet | `[읽기 상태와 마지막 main SHA]` |
@@ -28,10 +28,11 @@ execution_profile: RECONCILIATION_PLANNING_PROFILE
 5. `Base v9` 공용 계약
 6. `[v6~v8 legacy reference와 판정]`
 
-## 3. 첫 파동 범위
+## 3. 실행 프로필과 범위
 
-- 복원·누락/충돌 감사·중간 시각화 점검·Approval Bundle·후속 Change Plan만 수행한다.
-- 제품 코드, Scene, 데이터, 에셋, 승인 Decision, Google Sheet 값은 변경하지 않는다.
+- `REPOSITORY_FIRST_INTERVIEW` 뒤에 현재 요청·승인 범위·Critical Gate로 실행 프로필을 선택한다.
+- 감사·복원·중간 시각화·보완 계획만 요청했거나 차단 충돌이 있으면 `RECONCILIATION_PLANNING_PROFILE`을 사용한다. 이 경우 제품 코드, Scene, 데이터, 에셋, 승인 Decision, Google Sheet 값은 변경하지 않는다.
+- 구현이 요청·승인되고 Issue/Goal·수용 기준·보호 경로 검증이 있으면 `INTEGRATED_DELIVERY_PROFILE`로 기획·Codex 인계·구현·검수·병합 후 동기화를 수행한다.
 - 현재 Gate와 사람/실기기/런타임 증거는 실제 근거가 없으면 올리지 않는다.
 
 ## 4. 프로젝트 고유 경계

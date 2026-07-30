@@ -27,6 +27,7 @@ DASHBOARD_PATH = Path("docs/PROJECT_OPERATING_DASHBOARD.html")
 RELEASE_LOCK_PATHS = {
     "9.1.0": Path("base-v9.1.lock.json"),
     "9.2.0": Path("base-v9.2.lock.json"),
+    "9.3.0": Path("base-v9.3.lock.json"),
 }
 COMPATIBILITY_VIEWS = (
     Path("skills/BASE_V9_ADAPTER.json"),
@@ -45,6 +46,33 @@ def release_lock_path(version: str) -> Path:
     if path is None:
         raise ContractError(f"Unsupported Base adapter version for a release lock: {version!r}")
     return path
+
+
+def latest_released_base_version(base_repository: Path) -> str:
+    """Select the newest usable Base pin while retaining v9.1-only compatibility fixtures."""
+    released: list[tuple[tuple[int, ...], str]] = []
+    for version, path in RELEASE_LOCK_PATHS.items():
+        lock_path = base_repository / path
+        if not lock_path.is_file():
+            continue
+        try:
+            lock = load_object(lock_path)
+        except ContractError:
+            continue
+        is_released = lock.get("release_state") == "BASE_RELEASED"
+        has_verified_candidate_pins = isinstance(lock.get("candidate_release_commit"), str) and isinstance(
+            lock.get("candidate_release_evidence_commit"), str
+        )
+        if not is_released and not has_verified_candidate_pins:
+            continue
+        try:
+            version_key = tuple(int(part) for part in version.split("."))
+        except ValueError:
+            continue
+        released.append((version_key, version))
+    if not released:
+        raise ContractError("No locally available Base release lock has usable release and evidence pins for migration")
+    return max(released)[1]
 
 
 def canonical_json(data: Any) -> bytes:
@@ -1114,7 +1142,7 @@ def migrated_adapter(
     protected_baseline_commit: str,
     protected_authority_kind: str,
     protected_authority_ref: str,
-    base_version: str = "9.1.0",
+    base_version: str = "",
 ) -> dict[str, Any]:
     if not release_commit or not release_evidence_commit:
         raise ContractError("Explicit v9.1 release and release-evidence pins are required for migration")
@@ -1160,18 +1188,19 @@ def migrated_adapter(
         raise ContractError(f"First-migration legacy policy source is invalid: {error}") from error
     if not isinstance(baseline_legacy, dict):
         raise ContractError("First-migration legacy policy source root must be an object")
-    lock = load_object(base_repository / release_lock_path(base_version))
+    selected_base_version = base_version or latest_released_base_version(base_repository)
+    lock = load_object(base_repository / release_lock_path(selected_base_version))
     expected_release = lock.get("candidate_release_commit")
     expected_evidence = lock.get("candidate_release_evidence_commit")
     if release_commit != expected_release or release_evidence_commit != expected_evidence:
-        raise ContractError(f"Explicit migration pins do not match the Base v{base_version} release lock")
+        raise ContractError(f"Explicit migration pins do not match the Base v{selected_base_version} release lock")
     if not _commit_exists(base_repository, release_commit) or not _commit_exists(base_repository, release_evidence_commit):
         raise ContractError("Explicit migration pin is absent from the Base repository")
     if not _is_ancestor(base_repository, release_commit, release_evidence_commit):
         raise ContractError("Explicit migration release pin is not an ancestor of its evidence pin")
     registry_lock = lock.get("candidate_registry")
     if not isinstance(registry_lock, dict) or not isinstance(registry_lock.get("sha256"), str):
-        raise ContractError(f"Base v{base_version} release lock has no pinned candidate Registry")
+        raise ContractError(f"Base v{selected_base_version} release lock has no pinned candidate Registry")
     role_bindings = legacy.get("role_bindings", {})
     project_info = legacy.get("project", {})
     declared_registry = (
@@ -1286,7 +1315,7 @@ def migrated_adapter(
         "artifact_role": "PROJECT_BASE_ADAPTER",
         "base_release": {
             "repository": str(lock.get("repository")),
-            "version": base_version,
+            "version": selected_base_version,
             "release_commit": release_commit,
             "release_evidence_commit": release_evidence_commit,
         },
