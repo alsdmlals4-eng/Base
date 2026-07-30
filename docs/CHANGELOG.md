@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-30 — Base v9.1 derived project routing
+
+- First migration now derives active/inactive project routes from the declared project Registry and Base routes only from active Base Skills explicitly named by legacy shared overrides.
+- The artifact generator writes a project-specific thin workflow router from the adapter and snapshot without copying shared Base Skill bodies.
+
 ## 2026-07-30 — Base v9.1 first-migration completion
 
 - Project-local Skill body paths may resolve relative to the declared project Registry only when their fully resolved path stays within the project root and contains no link traversal.
