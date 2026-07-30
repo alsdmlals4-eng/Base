@@ -95,6 +95,7 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
             "from tests.test_demo_first_planning_sequence import",
             "from tests.test_github_work_item_lifecycle_policy import",
             "from tests.test_integrated_vertical_slice_prompt_v7 import",
+            "tests.test_vertical_slice_v9_contract",
             "from tests.test_vertical_slice_v6_contract import",
         ):
             self.assertIn(import_term, source)
@@ -111,6 +112,7 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
         for term in (
             '      - "templates/prompts/**"',
             "tests.test_integrated_vertical_slice_prompt_v7",
+            "tests.test_vertical_slice_v9_contract",
             "tests.test_vertical_slice_v6_contract",
             "tests.test_demo_first_planning_sequence",
             "tools/check_canonical_reference_freshness.py",

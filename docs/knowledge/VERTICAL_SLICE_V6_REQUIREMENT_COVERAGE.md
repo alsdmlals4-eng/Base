@@ -1,7 +1,7 @@
 ---
 document_role: MIGRATION_TRACEABILITY
 source_contract: VERTICAL_SLICE_MASTER_REFERENCE_v6
-replacement_execution_prompt: templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md
+replacement_execution_prompt: templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md
 active_authority: false
 implementation_authority: NONE
 ---
@@ -19,7 +19,7 @@ implementation_authority: NONE
 → 프로젝트 AGENTS·CURRENT_CONFIRMED_DECISIONS·분야 정본·실제 파일
 → 프로젝트에 동기화된 Base 규칙
 → Base 최신 main 정본·Registry
-→ templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md
+→ templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md
 → 이 MIGRATION_TRACEABILITY 기록
 ```
 
@@ -31,7 +31,7 @@ implementation_authority: NONE
 - 저장소 전체 감사는 새 중복 Skill이 아니라 `running-adversarial-review-and-refinement: repository-wide-audit` mode와 전문 Reference로 통합한다.
 - 기존 `designing-vertical-slices` Skill의 책임·mode·Registry 계약은 보존한다.
 - Grill Me·적대적 검토·자산 조사·문서·검증·인수인계는 기존 전문 Skill에 위임한다.
-- v6 상세 내용과 당시 축약 실행 지시는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md` 한 파일에 통합한다.
+- v6 상세 내용과 당시 축약 실행 지시는 v8에서 통합되었고, 현재 실행은 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 사용한다.
 - 통합 Prompt는 Base·프로젝트 정본보다 높은 권한을 갖지 않으며 drift는 `STALE_PROMPT_CONTRACT`로 보고한다.
 - 별도 `CORE_POC` 제품 Gate는 사용하지 않고 완성 품질 `DEMO_FIRST_VERTICAL_SLICE`와 필요 시 Slice 내부 `TECHNICAL_SPIKE`로 승계한다.
 - Base 자체는 Google Sheets 동기화 대상이 아니며 `BASE_EXCLUDED`다.
@@ -40,7 +40,7 @@ implementation_authority: NONE
 
 | v6 책임 | v8·Base 책임 원본 | 승계·변경 |
 |---|---|---|
-| 상세 참고 파일 + 별도 축약 실행문 | `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md` | 상세 정본과 작업 시작 인터뷰·실행 지시를 단일 첨부 파일로 통합 |
+| 상세 참고 파일 + 별도 축약 실행문 | `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md` | 상세 정본 복원·작업 시작 인터뷰·실행 지시를 단일 첨부 파일로 통합 |
 | 4단계 제품 Gate | `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md` + 통합 Prompt | `CONCEPT_APPROVAL → DEMO_FIRST_VERTICAL_SLICE → PRODUCTION_APPROVAL → RELEASE_CANDIDATE_APPROVAL` |
 | 과거 `CORE_POC`·`SLICE_VALIDATION` | concept Skill + Gate Reference + 통합 Prompt | 별도 Core PoC Gate를 제거하고 내부 `TECHNICAL_SPIKE`·`DEMO_VALIDATION` 호환 해석으로 변경 |
 | 프로토타입에서 멈추지 않는 Stage 2 | Gate Reference·Vertical Slice Template·통합 Prompt | 완성 품질 데모·통합 QA·내부/외부 플레이테스트·반응 조사까지 연속 프로그램으로 확정 |

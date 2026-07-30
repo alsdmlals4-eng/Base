@@ -11,6 +11,7 @@ description: Use when recommending an art or UI visual technique, designing imag
 
 - `technique-card`: 재사용 가능한 아트·UI 기술과 프롬프트 패턴을 기록한다.
 - `planning-visualization`: 기획 중 세계관·인물·핵심루프·시스템·UI·대표 장면을 시각화해 방향과 모순을 비교한다.
+- `intermediate-visual-checkpoint`: 사용자가 중간 점검·예상 게임 화면·UI 포함 화면을 요청하거나 P1 해석 위험이 있을 때, 현재 정본만으로 한 화면 흐름을 `DRAFT_VISUAL` 또는 대체 와이어프레임으로 검토한다.
 - `final-visual-candidate`: 승인된 기획을 바탕으로 Demo-First·상점·홍보·UI·캐릭터·시스템 설명에 사용할 고품질 후보를 만든다.
 - `visual-qa-and-approval`: 생성물의 기획 일치성·실제 화면·구현 가능성·권리·오류·재사용성을 검수하고 승인 후보 상태를 판정한다.
 
@@ -31,7 +32,7 @@ description: Use when recommending an art or UI visual technique, designing imag
 
 ## Process
 
-1. `planning-visualization`인지 `final-visual-candidate`인지 정한다.
+1. `planning-visualization`, `intermediate-visual-checkpoint`, `final-visual-candidate` 중 필요한 mode를 정한다.
 2. 결과물이 쓰일 화면과 가장 먼저 전달할 정보를 정한다.
 3. 원본에서 유지할 요소와 변경할 요소를 분리한다.
 4. Pinterest를 포함한 발견 레퍼런스는 원작자·원출처·라이선스·유사성을 확인하고 표면 복제를 금지한다.
@@ -56,6 +57,12 @@ description: Use when recommending an art or UI visual technique, designing imag
 10. 생성 뒤 `visual-qa-and-approval`을 실행하고 `templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md`에 기록한다.
 11. 승인된 Decision만 정본·GitHub·Sheet·Asset Ledger에 동기화한다.
 12. 모델·버전·입력 이미지·확인일이 달라지면 재검증한다.
+
+## Intermediate visual checkpoint
+
+정본·Decision ID·화면 제약이 없는 경우에는 이미지를 추정 생성하지 말고 `MISSING_CANON`으로 반환한다. 한 번에 한 화면 흐름만 다루고, 화면 목적·첫 시선·주요 행동·플랫폼/화면비/입력·위험/비용/보상·성공/실패/복구·긴 한글·접근성·확인 사실과 미결정을 Brief에 쓴다. 이미지 생성 도구가 없거나 권한이 없으면 텍스트 와이어프레임·Mermaid·Figma 대체안을 쓴다.
+
+생성 직후 `Screen Interpretation Review`에 정본과 일치한 요소, `MISSING_CANON`, `VISUAL_CANONICAL_CONFLICT`, `TECHNICAL_REVIEW_PROPOSAL`, 버린 표현을 기록한다. 이 mode의 결과는 `DRAFT_VISUAL`이며 최종 리소스·라이선스 승인·Figma 구현 명세·Godot 구현·런타임/사람 검증을 뜻하지 않는다. 사용자 Decision 없이 정본이나 Visual Artifact Registry의 승인 상태로 올리지 않는다.
 
 ## Status lifecycle
 

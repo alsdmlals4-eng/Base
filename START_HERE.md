@@ -12,7 +12,7 @@
 
 `전부 살펴본다`는 모든 파일을 무작정 읽는 뜻이 아니다. 현재 작업에 필요한 책임 원본과 최소 스킬 집합을 Registry와 Documentation Map에서 선별한다.
 
-상세 기획·Demo-First Vertical Slice·GPT→Codex·전체 검수 지시를 파일 하나로 첨부해야 할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md`를 사용한다. 이 Prompt가 작업 시작 인터뷰를 수행하지만 최신 Base·프로젝트 정본보다 높은 권한을 갖지 않는다.
+기존 기획을 복원하고 Vertical Slice·GPT→Codex·전체 검수를 한 파일로 실행할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 사용한다. 이 Prompt는 Application Binding과 중간 시각화 점검을 수행하지만 최신 사용자 결정·프로젝트 정본보다 높은 권한을 갖지 않는다. v6~v8은 이력·비교 입력이다.
 
 ```text
 Base START_HERE
@@ -232,7 +232,7 @@ slice-contract
 → decision-gate
 ```
 
-대표 플레이 구간으로 핵심 경험·목표 품질·접근성·성능·시스템 연결·실제 플레이 증거·제작 파이프라인을 함께 검증한다. 핵심 컨셉이나 뾰족한 재미가 미확정이면 먼저 `analyzing-and-refining-game-concepts`를 사용한다. 상세 정본과 인터뷰·실행 계약을 한 파일로 첨부할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md`를 사용한다.
+대표 플레이 구간으로 핵심 경험·목표 품질·접근성·성능·시스템 연결·실제 플레이 증거·제작 파이프라인을 함께 검증한다. 핵심 컨셉이나 뾰족한 재미가 미확정이면 먼저 `analyzing-and-refining-game-concepts`를 사용한다. 기존 정본 복원부터 인터뷰·실행 계약을 한 파일로 첨부할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 사용한다.
 
 ### 프로젝트 변경 검증
 

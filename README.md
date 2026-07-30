@@ -24,7 +24,7 @@ START_HERE.md
 - [근거 기반 게임 개발 지식 허브](docs/knowledge/game-development/README.md)
 - [게임 개발 Evidence Pack](templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md)
 - [게임 개발 Case Card](templates/research/GAME_DEVELOPMENT_CASE_CARD.md)
-- [통합 Vertical Slice 실행문 v8](templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md)
+- [통합 Vertical Slice 실행문 v9](templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md)
 - [GPT 이미지 생성·검수 및 Sheet 정책](docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md)
 - [프로젝트 Google Sheets Workbook 계약](templates/project-operations/PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md)
 - [프로젝트 GDD Google Sheets 정책](docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md)
@@ -44,7 +44,7 @@ START_HERE.md
 
 게임 기획·아트 기획·개발·AI 활용·벤치마킹·유저리서치·출시 판단을 외부 공식·현업·개발자·플레이어 근거로 개선할 때는 `docs/knowledge/game-development/README.md`에서 관련 Guide만 선택하고, `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`와 `templates/research/GAME_DEVELOPMENT_CASE_CARD.md`로 결정 질문·근거·성공/실패 사례·적용 판정·검증을 연결합니다. 이 허브는 새 Skill이 아니며 기존 Skill의 실행 책임을 대체하지 않습니다.
 
-상세 정본·작업 시작 인터뷰·Demo-First Vertical Slice·GPT→Codex·프로젝트 Sheet·GPT 이미지 생성과 검수를 파일 하나로 첨부하려면 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md`를 사용합니다. 프로젝트 Sheet는 정확한 URL이 확인된 개별 프로젝트에서만 연결하며 Base 자체는 `BASE_EXCLUDED`입니다.
+기존 정본 복원·작업 시작 인터뷰·Demo-First Vertical Slice·GPT→Codex·프로젝트 Sheet·중간 시각화 점검을 파일 하나로 실행하려면 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 사용합니다. 프로젝트 Sheet는 정확한 URL이 확인된 개별 프로젝트에서만 연결하며 Base 자체는 `BASE_EXCLUDED`입니다.
 
 작업에 필요한 실행 파일·라이브러리·폰트·입력 파일·인증·권한이 없으면 필요한 이유, 설치·적용 방법, 확인 명령과 최소 권한을 안내합니다. 실행하지 않은 조사·검사·권한·도구는 통과로 보고하지 않습니다.
 

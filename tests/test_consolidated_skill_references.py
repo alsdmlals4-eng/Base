@@ -288,7 +288,7 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         adversarial = skill_package_text("running-adversarial-review-and-refinement")
         registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
         doc_map = (ROOT / "docs/DOCUMENTATION_MAP.md").read_text(encoding="utf-8")
-        prompt = (ROOT / "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md").read_text(encoding="utf-8")
+        prompt = (ROOT / "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md").read_text(encoding="utf-8")
 
         for term in (
             "`repository-wide-audit`",

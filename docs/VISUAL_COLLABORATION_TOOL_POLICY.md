@@ -45,6 +45,12 @@ If access is unavailable, use Markdown, Mermaid, a table, or a text wireframe; m
 
 Sheets hold a short Artifact ID, purpose, context, Decision ID, responsible source, status, link, snapshot, and next check. They do not copy full boards or frames. An implementation handoff uses a pinned Figma frame or a Whimsical structural reference plus a GitHub implementation contract; actual Godot render, input, accessibility, device, and human evidence remain independent and remain `NOT_RUN` until evidence exists.
 
+## Intermediate visual checkpoint
+
+When a user asks for a mid-review, an expected game screen, or a UI-included game screen—or when a planning interpretation gap is `P1`—use the current canonical sources to produce one `DRAFT_VISUAL` screen flow. Require a Screen Brief with purpose, first glance, primary action, platform/resolution/aspect/input, state/risk/cost/reward/success/failure/recovery, Korean and accessibility constraints, Decision IDs, confirmed facts, and `MISSING_CANON` items.
+
+Use image generation only when it is available and authorized. Otherwise use the same brief as a text wireframe, Mermaid, or Figma fallback. Immediately record a Screen Interpretation Review: confirmed alignment, `MISSING_CANON`, `VISUAL_CANONICAL_CONFLICT`, `TECHNICAL_REVIEW_PROPOSAL`, and rejected expressions. A checkpoint never changes canon or becomes a final asset, license approval, Figma handoff, Godot completion, runtime proof, or human-validation proof without a later user Decision and the normal Artifact lifecycle.
+
 ## Adversarial review
 
 Reject a change if it makes a visual tool a second canon, forces both tools, duplicates full content across tools, pins a live file without a snapshot, treats a prototype as runtime proof, silently bypasses access failure, or mixes project URL/token/design decisions into Base.

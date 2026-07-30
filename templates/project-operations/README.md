@@ -25,7 +25,7 @@
 
 ## 단일 첨부용 통합 실행문
 
-상세 기획 정본과 작업 인터뷰·Demo-First Vertical Slice·GPT→Codex·적대적 검토·완전성 감사를 파일 하나로 전달할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md`를 첨부한다. 별도 축약 실행문은 필요하지 않다. Prompt는 프로젝트에 동기화된 Base 기준과 프로젝트 정본보다 높은 권한이 아니며 drift는 `STALE_PROMPT_CONTRACT`로 보고한다.
+상세 기획 정본의 복원·작업 인터뷰·Demo-First Vertical Slice·GPT→Codex·적대적 검토·완전성 감사를 파일 하나로 전달할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 첨부한다. 별도 축약 실행문은 필요하지 않다. Prompt는 프로젝트에 동기화된 Base 기준과 프로젝트 정본보다 높은 권한이 아니며 drift는 `STALE_PROMPT_CONTRACT`로 보고한다. 프로젝트에는 공용 본문 대신 `VERTICAL_SLICE_PROJECT_APPLICATION_v9.md`와 복원·감사 패킷을 얇게 적용한다.
 
 ## 가장 중요한 위치 규칙
 
@@ -47,6 +47,8 @@
 | `PROJECT_BASE_ADAPTER.json` | Base v9.1 canonical project integration authority; install as `skills/PROJECT_BASE_ADAPTER.json` |
 | `github/validate-project-base-adapter.yml` | Pull-request validator template that supplies the exact GitHub PR base SHA as trusted external baseline input |
 | `PROJECT_OPERATING_HEALTH.json` | Independent OM/PE axes and explicit critical-gate state; install under `docs/` |
+| `VERTICAL_SLICE_PROJECT_APPLICATION_v9.md` | Project-only v9 binding, protected boundary, local skills and default visual checkpoint |
+| `VERTICAL_SLICE_RECONCILIATION_PACKET_v9.md` | Baseline recovery, legacy traceability, finding, readiness and change-plan packet |
 | `.agents/skills/base-project-router/SKILL.md` | Thin repository-discovered router; it contains no shared workflow body |
 | `EXISTING_PROJECT_MIGRATION_AUDIT.md` | 기존 프로젝트 보존·참조 감사 |
 | `PROJECT_START_HERE.md` | 사용자·새 AI용 대시보드 |

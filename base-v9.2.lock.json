@@ -1,0 +1,15 @@
+{
+  "artifact_role": "BASE_V9_2_RELEASE_CANDIDATE_LOCK",
+  "candidate_registry": {
+    "hash_definition": "RAW_FILE_BYTES_SHA256",
+    "path": "skills/SKILL_REGISTRY.json",
+    "sha256": "9847bb2b225c776ad7916930f0f48c490bc2a898bea8e02ea1fdd0e6caac60c1"
+  },
+  "candidate_release_commit": null,
+  "candidate_release_evidence_commit": null,
+  "github_issue": 101,
+  "release_line": "v9.2.0",
+  "release_state": "RELEASE_CANDIDATE",
+  "repository": "alsdmlals4-eng/Base",
+  "schema_version": 1
+}

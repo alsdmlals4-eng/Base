@@ -1,10 +1,11 @@
-name: Validate BCA Visual and Sheet Workflow
+﻿name: Validate BCA Visual and Sheet Workflow
 
 on:
   pull_request:
     branches: [main]
     paths:
       - "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md"
+      - "docs/VISUAL_COLLABORATION_TOOL_POLICY.md"
       - "docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md"
       - "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md"
       - "templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md"
@@ -12,6 +13,7 @@ on:
       - "templates/project-operations/PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md"
       - "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md"
       - "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md"
+      - "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md"
       - "skills/designing-art-prompts-and-technique-cards/**"
       - "skills/managing-project-intake-and-work-contract/**"
       - "skills/managing-game-project-operating-system/**"
@@ -45,7 +47,7 @@ jobs:
         run: |
           git ls-files | sort > bca-file-inventory.txt
           git grep -n -I -E 'VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7|PROTOTYPE_AND_VERTICAL_SLICE|CORE_POC|_tmp_' -- . > bca-stale-token-candidates.txt || true
-          git grep -n -I 'VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md' -- . > bca-v8-consumers.txt || true
+          git grep -n -I 'VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md' -- . > bca-v9-consumers.txt || true
           git grep -n -I 'PROJECT_GDD_GOOGLE_SHEETS_POLICY.md' -- . > project-gdd-sheet-consumers.txt || true
       - name: Run BCA contract tests
         shell: bash
@@ -71,7 +73,7 @@ jobs:
           status=$?
           cat bca-reference-results.txt
           exit "$status"
-      - name: Upload audit evidence and exact v8 prompt
+      - name: Upload audit evidence and exact v9 prompt
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -81,7 +83,7 @@ jobs:
             bca-reference-results.txt
             bca-file-inventory.txt
             bca-stale-token-candidates.txt
-            bca-v8-consumers.txt
+            bca-v9-consumers.txt
             project-gdd-sheet-consumers.txt
-            templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md
+            templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md
           if-no-files-found: error

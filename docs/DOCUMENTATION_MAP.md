@@ -162,7 +162,8 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 
 아래 문자열과 경로는 기존 Template·Test·외부 참조가 현재 책임 원본을 찾는 안정 경로다. 설명을 중복 확장하지 않되 제거하거나 임의로 축약하지 않는다.
 
-- 현행 Vertical Slice 통합 첨부 Prompt: `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md`
+- 현행 Vertical Slice 통합 첨부 Prompt: `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`
+- v8 → v9 이관·첨부 변형 hash: `docs/knowledge/VERTICAL_SLICE_V8_TO_V9_MIGRATION.md`
 - Grill Me 핵심 의사결정 인터뷰
 - `clarify` + `references/grill-me-protocol.md`
 - GPT→Codex 단계별 Godot 구현 인계
