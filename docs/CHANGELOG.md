@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-30 — Agent merge execution policy
+
+- Replaced separate user merge approval with `AGENT_MERGE_REQUIRED`: a non-Draft PR whose reviewed HEAD, required checks, independent review, thread state, and decision gates all pass must be merged by the responsible agent using GitHub auto-merge or the repository's allowed direct method.
+- Kept `USER_REVIEW_REQUIRED`, `CHANGE_PROPOSAL`, P0/P1 findings, failed or missing checks, unresolved threads, conflicts, and unsupported merge methods as explicit merge blockers; these are evidence gates, not a default approval wait.
+
 ## 2026-07-30 — Base v9.1 immutable project pins
 
 - Finalized the v9.1 payload pin (`3c158f5…`) and separate trusted-main evidence pin (`dd20ad3…`) for project adapters.

@@ -88,11 +88,12 @@ updated_at:
 - 패키지 PR 형식:
 - 기본 병렬성: `SEQUENTIAL`
 - 기본 병합 정책: `AUTO_MERGE_AFTER_REQUIRED_CHECKS`
+- 병합 실행: `AGENT_MERGE_REQUIRED`
 - Required Check: `ci-gate`
 - 자동 병합 차단 상태: `USER_REVIEW_REQUIRED / CHANGE_PROPOSAL / REVISE / BLOCKED / UNVERIFIED`
-- 수동 사용자 병합 승인: `OPTIONAL_EXCEPTION`
+- 별도 사용자 병합 승인: `NOT_REQUIRED`
 - Codex `main` 직접 Push: `FORBIDDEN`
-- Codex force push·amend·PR 생성·병합: `FORBIDDEN`
+- Codex Build force push·amend·PR 생성·병합: `FORBIDDEN` (검수 담당 에이전트가 병합)
 
 ## 16. Repository 병합 설정
 

@@ -131,7 +131,8 @@ rollback:
 ## 18. 병합 정책
 
 ```yaml
-merge_policy: AUTO_MERGE_AFTER_REQUIRED_CHECKS | MANUAL_USER_APPROVAL
+merge_policy: AUTO_MERGE_AFTER_REQUIRED_CHECKS
+agent_merge_execution: REQUIRED
 reviewed_head_sha:
 current_head_sha:
 required_check: ci-gate
@@ -144,7 +145,10 @@ change_proposal: true | false
 merge_gate: AUTO_MERGE_ELIGIBLE | AUTO_MERGE_ENABLED | AUTO_MERGE_BLOCKED | UNVERIFIED_REPOSITORY_SETTING
 ```
 
-자동 병합은 `PACKAGE_APPROVED*`, 동일 HEAD SHA, 필수 검사 성공, unresolved thread 0, Repository auto-merge·Ruleset 확인, 사용자 결정·기획 변경 없음일 때만 허용한다.
+`AGENT_MERGE_REQUIRED`: `PACKAGE_APPROVED*`, 동일 HEAD SHA, 필수 검사 성공,
+unresolved thread 0, Repository Ruleset·허용된 병합 방식 확인, 사용자 결정·기획
+변경 없음일 때 담당 에이전트가 즉시 병합한다. 별도 사용자 병합 승인은 필요하지
+않다.
 
 ## 19. 사용자 결정
 

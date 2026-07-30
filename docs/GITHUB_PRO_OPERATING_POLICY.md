@@ -74,7 +74,7 @@ AUTO_MERGE_AFTER_REQUIRED_CHECKS
 - 저장소가 선언한 Required Check 성공
 - unresolved review thread 없음
 - `USER_REVIEW_REQUIRED`, `CHANGE_PROPOSAL`, `REVISE`, `BLOCKED`, `UNVERIFIED` 없음
-- Repository의 `Allow auto-merge` 활성화
+- 저장소의 허용된 병합 방식 확인
 - active Ruleset 또는 동등한 branch protection 존재
 
 상태:
@@ -84,7 +84,7 @@ AUTO_MERGE_AFTER_REQUIRED_CHECKS
 - `AUTO_MERGE_BLOCKED`: 기획 결정·검증·Repository 설정으로 차단됨
 - `UNVERIFIED_REPOSITORY_SETTING`: Repository 설정을 실제 확인하지 못함
 
-사용자 최종 병합 클릭은 기본 필수가 아니다. 다만 `USER_REVIEW_REQUIRED`와 `CHANGE_PROPOSAL`은 자동 병합 전에 사용자 결정을 요구한다.
+`AGENT_MERGE_REQUIRED`에 따라 조건을 충족한 PR은 담당 에이전트가 즉시 병합한다. `Allow auto-merge`가 활성화되면 예약하고, 그렇지 않으면 저장소가 허용한 직접 병합을 실행한다. 별도 사용자 병합 승인은 필요하지 않다. 다만 `USER_REVIEW_REQUIRED`와 `CHANGE_PROPOSAL`은 병합 승인이 아니라 구현 전 사용자 결정을 요구한다.
 
 ## 5. Auto-merge Repository 설정
 

@@ -2305,7 +2305,9 @@ P0·P1을 수치 점수만으로 판정하지 않는다. 실제 실패 시나리
 7. 통합 명세·Codex Plan
 8. PDF·Manifest·발행 마감
 
-기획 PR과 구현 PR은 분리한다. 기본 Branch에 직접 Commit하지 않으며 사용자가 요청하지 않으면 병합하지 않는다.
+기획 PR과 구현 PR은 분리한다. 기본 Branch에 직접 Commit하지 않는다. 모든 필수
+게이트를 통과한 PR은 `AGENT_MERGE_REQUIRED`에 따라 별도 사용자 병합 승인 없이
+저장소의 허용된 방식으로 병합한다.
 
 ## 19.5 PDF·Manifest 상세 검수
 

@@ -71,7 +71,7 @@ implementation_handoff:
   protected_non_godot_scope:
   data_save_schema_constraints:
   required_tests:
-  user_merge_approval:
+  merge_execution: AGENT_MERGE_REQUIRED | AUTO_MERGE_BLOCKED
 ```
 
 ## Read first
@@ -230,7 +230,11 @@ GPT는 Commit·원격 HEAD·diff·테스트 증거를 확인하고 다음으로 
 - `BLOCKED`
 - `UNVERIFIED`
 
-사용자의 명시적 승인 전에는 PR을 병합하지 않는다.
+기본 병합 정책은 `AUTO_MERGE_AFTER_REQUIRED_CHECKS`와
+`AGENT_MERGE_REQUIRED`다. 별도 사용자 병합 승인 없이 동일 HEAD, 필수
+검사·독립 검토 통과, unresolved thread 0, P0/P1 없음, 열린
+`USER_REVIEW_REQUIRED`·`CHANGE_PROPOSAL` 없음이 확인되면 담당 에이전트가
+저장소의 허용된 방식으로 병합한다.
 
 ### 12. `resume`
 
@@ -317,7 +321,7 @@ rollback:
 - Codex Plan이 파일을 수정하지 않았는가?
 - Codex Build가 지정 Branch와 Godot 범위만 수정했는가?
 - Commit SHA·원격 HEAD·테스트 결과를 실제 확인했는가?
-- 사용자 승인 전 PR을 병합하지 않았는가?
+- `AGENT_MERGE_REQUIRED` 조건과 허용된 병합 방식을 실제 확인했는가?
 
 ## Failure conditions
 
@@ -330,8 +334,8 @@ rollback:
 - Codex Plan이 파일·Issue·PR을 수정함
 - 기술 개선을 이유로 프로젝트 코어·MVP·플레이 규칙을 암묵 변경함
 - Codex가 비-Godot 책임 원본을 수정함
-- 지정 Branch 밖 Push·force push·amend·PR 병합
-- 사용자 승인 전 PR 병합
+- 지정 Branch 밖 Push·force push·amend
+- 게이트 미통과, P0/P1 잔존 또는 허용되지 않은 방식의 PR 병합
 
 ## Learning contract
 
