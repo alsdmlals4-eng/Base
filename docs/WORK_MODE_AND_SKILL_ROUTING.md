@@ -150,7 +150,7 @@ GPT REVIEW
 → 패키지 게이트 판정
 
 사용자
-→ 체감·기획 변경·PR 병합 최종 결정
+→ 체감·기획 변경 최종 결정 (병합은 `AGENT_MERGE_REQUIRED`)
 ```
 
 ### GPT 권한
@@ -196,7 +196,11 @@ GPT REVIEW
 - `BLOCKED`
 - `UNVERIFIED`
 
-사용자의 명시적 승인 전에는 PR을 병합하지 않는다.
+기본 병합 정책은 `AUTO_MERGE_AFTER_REQUIRED_CHECKS`와
+`AGENT_MERGE_REQUIRED`다. 별도 사용자 병합 승인은 필요하지 않다. 담당
+에이전트는 동일 HEAD, 필수 검사·독립 검토 통과, unresolved thread 0,
+`USER_REVIEW_REQUIRED`·`CHANGE_PROPOSAL`·P0/P1 없음이 확인되면 저장소의
+허용된 방식으로 병합한다.
 
 담당 Skill: `maintaining-project-context-and-handoff`의 `implementation-package-handoff`.
 
@@ -237,7 +241,7 @@ Codex PLAN: 실제 Godot 저장 구조·파일·테스트 읽기 전용 재검�
 GPT: Plan 보고 반영·READY_FOR_BUILD
 Codex BUILD: 지정 Branch 구현·테스트·Commit·Push
 GPT REVIEW: 저장·불러오기·경계·회귀·기획 일치 검수
-사용자: 병합 승인
+담당 에이전트: 필수 게이트 통과 후 병합
 ```
 
 ### 구형 파일 정리

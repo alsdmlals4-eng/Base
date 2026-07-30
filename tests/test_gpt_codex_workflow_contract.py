@@ -25,6 +25,7 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             "AUTO_MERGE_ENABLED",
             "AUTO_MERGE_BLOCKED",
             "UNVERIFIED_REPOSITORY_SETTING",
+            "AGENT_MERGE_REQUIRED",
         ):
             self.assertIn(term, text)
         self.assertNotIn("사용자의 명시적 승인 전에는 PR을 병합하지 않는다", text)
@@ -38,6 +39,7 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             "ALLOWED_BRANCH_ONLY",
             "PACKAGE_APPROVED",
             "CHANGE_PROPOSAL",
+            "AGENT_MERGE_REQUIRED",
         ):
             self.assertIn(term, text)
 
@@ -65,8 +67,9 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             "PACKAGE_APPROVED",
             "USER_REVIEW_REQUIRED",
             "기본 병합 정책: `AUTO_MERGE_AFTER_REQUIRED_CHECKS`",
+            "병합 실행: `AGENT_MERGE_REQUIRED`",
             "Required Check: `ci-gate`",
-            "수동 사용자 병합 승인: `OPTIONAL_EXCEPTION`",
+            "별도 사용자 병합 승인: `NOT_REQUIRED`",
         ):
             self.assertIn(term, text)
         self.assertNotIn("사용자 병합 승인: `REQUIRED`", text)
@@ -95,12 +98,26 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             "create_or_update: FORBIDDEN",
             "merge: FORBIDDEN",
             "비-Godot 변경 반환 계약",
-            "merge_policy: AUTO_MERGE_AFTER_REQUIRED_CHECKS | MANUAL_USER_APPROVAL",
+            "merge_policy: AUTO_MERGE_AFTER_REQUIRED_CHECKS",
+            "agent_merge_execution: REQUIRED",
             "required_check: ci-gate",
             "AUTO_MERGE_ELIGIBLE",
             "UNVERIFIED_REPOSITORY_SETTING",
         ):
             self.assertIn(term, text)
+        self.assertNotIn("MANUAL_USER_APPROVAL", text)
+
+    def test_base_rules_require_agent_merge_after_all_gates(self) -> None:
+        rules = (ROOT / "docs/BASE_RULES_VERSION.md").read_text(encoding="utf-8")
+        routing = (ROOT / "docs/WORK_MODE_AND_SKILL_ROUTING.md").read_text(encoding="utf-8")
+        handoff = (ROOT / "skills/maintaining-project-context-and-handoff/SKILL.md").read_text(encoding="utf-8")
+        for text in (rules, routing, handoff):
+            self.assertIn("AGENT_MERGE_REQUIRED", text)
+        self.assertIn("A separate user merge", rules)
+        self.assertIn("별도 사용자 병합 승인", routing)
+        self.assertIn("별도 사용자 병합 승인", handoff)
+        self.assertNotIn("사용자의 명시적 승인 전에는 PR을 병합하지 않는다", routing)
+        self.assertNotIn("사용자의 명시적 승인 전에는 PR을 병합하지 않는다", handoff)
 
     def test_github_pro_policy_declares_safe_rollout_and_blocking_states(self) -> None:
         text = (ROOT / "docs/GITHUB_PRO_OPERATING_POLICY.md").read_text(encoding="utf-8")

@@ -21,12 +21,16 @@ pull_requests:
   allowed_merge_methods:
     - squash
   auto_merge: enabled | disabled | unverified
-  merge_policy: AUTO_MERGE_AFTER_REQUIRED_CHECKS | MANUAL_USER_APPROVAL
+  merge_policy: AUTO_MERGE_AFTER_REQUIRED_CHECKS
+  agent_merge_execution: required
   required_approving_review_count: 0
   required_review_thread_resolution: true
   require_code_owner_review: false
   require_last_push_approval: false
 ```
+
+`agent_merge_execution: required`는 필수 게이트 통과 뒤 별도 사용자 병합
+승인 없이 담당 에이전트가 auto-merge 또는 허용된 직접 병합을 실행한다는 뜻이다.
 
 ## Required Checks
 

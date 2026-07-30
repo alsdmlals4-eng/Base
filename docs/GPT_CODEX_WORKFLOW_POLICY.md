@@ -10,12 +10,12 @@ GPT에서 결정·설계·비-Godot 작업을 완료
 → GPT가 기술 개선·기획 변경을 판정하고 계약 최신화
 → Codex가 지정 Branch에서 Godot 구현
 → GPT가 diff·테스트·기획 일치를 검수
-→ 필수 게이트 통과 시 GitHub가 자동 병합하거나 지정된 수동 정책으로 병합
+→ 필수 게이트 통과 시 담당 에이전트가 허용된 방식으로 즉시 병합
 ```
 
 Codex는 GPT의 하위 단순 실행기가 아니다. 실제 Godot 저장소를 다시 조사하고 더 안전하거나 효율적인 구현안을 제안한다. 다만 프로젝트 코어와 플레이어 계약을 독자적으로 변경하지 않는다.
 
-기본 병합 정책은 `AUTO_MERGE_AFTER_REQUIRED_CHECKS`다. 사용자 최종 병합 클릭은 일상적인 기술 PR의 기본 필수 조건이 아니지만, 사용자 체감·프로젝트 코어·MVP·호환성 판단은 자동 병합 전에 반드시 사용자에게 반환한다.
+기본 병합 정책은 `AUTO_MERGE_AFTER_REQUIRED_CHECKS`와 `AGENT_MERGE_REQUIRED`다. 별도 사용자 병합 승인은 필요하지 않으며, 담당 에이전트는 모든 게이트가 통과한 PR을 GitHub auto-merge 또는 저장소가 허용한 직접 병합으로 처리한다. 사용자 체감·프로젝트 코어·MVP·호환성 판단은 병합 승인이 아니라 구현 전의 `USER_REVIEW_REQUIRED` 또는 `CHANGE_PROPOSAL` 결정으로 사용자에게 반환한다.
 
 ## 2. GPT 책임
 
@@ -196,6 +196,10 @@ GPT는 기술 구현과 승인 명세가 일치하고 자동·Godot 검증이 �
 
 기본 정책이다.
 
+`AGENT_MERGE_REQUIRED`: 자동 병합 설정이 있으면 이를 활성화하고, 없으면
+저장소가 허용한 직접 병합을 실행한다. 모든 게이트를 통과한 PR을 별도 사용자
+승인 대기로 남기지 않는다.
+
 자동 병합 허용 조건:
 
 - PR이 Draft가 아님
@@ -203,8 +207,7 @@ GPT는 기술 구현과 승인 명세가 일치하고 자동·Godot 검증이 �
 - `PACKAGE_APPROVED` 또는 `PACKAGE_APPROVED_WITH_TECHNICAL_CHANGES`
 - 저장소 Required Check 성공
 - unresolved review thread 없음
-- Repository에서 `Allow auto-merge` 활성화
-- active Ruleset 또는 동등한 branch protection 존재
+- 허용된 병합 방식과 active Ruleset 또는 동등한 branch protection 확인
 
 상태:
 
@@ -220,10 +223,6 @@ GPT는 기술 구현과 승인 명세가 일치하고 자동·Godot 검증이 �
 - `REVISE`
 - `BLOCKED`
 - `UNVERIFIED`
-
-### `MANUAL_USER_APPROVAL`
-
-출시, 파괴적 마이그레이션, 사용자 명시 요청 또는 Repository가 auto-merge를 지원하지 않는 경우 선택할 수 있다. 이 모드는 예외이며 패키지 계약에 이유를 기록한다.
 
 ## 10. GitHub 구조
 
@@ -243,7 +242,7 @@ GPT는 기술 구현과 승인 명세가 일치하고 자동·Godot 검증이 �
 - Codex는 지정 Branch에서 Godot 파일만 Stage·Commit·Push할 수 있다.
 - `main` 직접 Push, force push, amend, PR 생성·병합은 금지한다.
 - 사용자의 기존 변경과 무관한 파일을 포함하지 않는다.
-- GPT가 자동 병합 적격성을 판정하고 GitHub가 Required Check 통과 후 병합할 수 있다.
+- GPT가 자동 병합 적격성을 판정하고, `AGENT_MERGE_REQUIRED`에 따라 GitHub auto-merge 또는 허용된 직접 병합을 실행한다.
 
 ## 11. Codex Push 전후 가드레일
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-30 — Agent merge execution policy
+
+- Replaced separate user merge approval with `AGENT_MERGE_REQUIRED`: a non-Draft PR whose reviewed HEAD, required checks, independent review, thread state, and decision gates all pass must be merged by the responsible agent using GitHub auto-merge or the repository's allowed direct method.
+- Kept `USER_REVIEW_REQUIRED`, `CHANGE_PROPOSAL`, P0/P1 findings, failed or missing checks, unresolved threads, conflicts, and unsupported merge methods as explicit merge blockers; these are evidence gates, not a default approval wait.
+
 ## 2026-07-30 — Base v9.1 CI capability correction
 
 - Added the pinned Pillow, Markdown-It, and PyPDF validation dependencies required by the Windows PDF command safety and document-publication regressions on clean GitHub runners.

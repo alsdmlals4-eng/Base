@@ -31,6 +31,18 @@ Skill additions, consolidations, and retirements are permitted when their
 responsibility boundary is explicit and their migration path is recorded. The
 number of active Skills is an observed Registry value, not a release target.
 
+## Merge execution authority
+
+The default merge policy is `AUTO_MERGE_AFTER_REQUIRED_CHECKS` with
+`AGENT_MERGE_REQUIRED`. Once a repository-owned PR is non-Draft, its reviewed
+HEAD still matches, all required checks and independent review gates pass, no
+unresolved review thread or P0/P1 finding remains, and no
+`USER_REVIEW_REQUIRED` or `CHANGE_PROPOSAL` decision is open, the responsible
+agent must merge it with the repository's allowed method. A separate user merge
+click is not required. When GitHub auto-merge is unavailable, execute the
+allowed direct PR merge after the same evidence is verified; do not treat an
+available merge as an approval-wait state.
+
 ## Release boundary
 
 `v9.0.0` is a released Base-only line. Its release commit is
