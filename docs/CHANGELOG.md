@@ -2,7 +2,7 @@
 
 ## 2026-07-30 — Base v9.1 CI capability correction
 
-- Added the pinned Pillow and Markdown-It validation dependencies required by the Windows PDF command safety and document-publication regressions on clean GitHub runners.
+- Added the pinned Pillow, Markdown-It, and PyPDF validation dependencies required by the Windows PDF command safety and document-publication regressions on clean GitHub runners.
 - Made dependency review capability-aware: it runs on public repositories or after a private repository owner enables GitHub Advanced Security and sets `DEPENDENCY_REVIEW_ENABLED=true`; otherwise the workflow records `DEFERRED_UNTIL_REPOSITORY_SECURITY_ENABLED` instead of a false pass.
 
 ## 2026-07-30 — Base v9.1 external protected-baseline authority
