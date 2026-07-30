@@ -49,7 +49,7 @@ class V9MachineContractTests(unittest.TestCase):
         self.assertIn("위험", maturity)
         self.assertIn("강제하지 않는다", maturity)
 
-    def test_migration_map_preserves_open_pr_decisions_without_direct_merge(self) -> None:
+    def test_migration_map_preserves_legacy_pr_decisions_without_direct_merge(self) -> None:
         migration = read("docs/operations/BASE_V9_MIGRATION_MAP.md")
 
         for pr in ("#5", "#18", "#28", "#29", "#30"):
@@ -57,22 +57,30 @@ class V9MachineContractTests(unittest.TestCase):
         self.assertIn("직접 병합하지 않는다", migration)
         self.assertIn("ROLLBACK", migration)
 
-    def test_implemented_legacy_prs_are_terminal_and_not_reassessed(self) -> None:
+    def test_terminal_legacy_prs_are_not_reassessed(self) -> None:
         migration = read("docs/operations/BASE_V9_MIGRATION_MAP.md")
         ledger = json.loads(read("docs/operations/GITHUB_OBJECT_LEDGER.json"))
 
-        self.assertIn("[구현됨]", migration)
+        for marker in ("[구현됨]", "[대체됨]"):
+            self.assertIn(marker, migration)
         self.assertIn("do_not_reassess", migration)
 
-        for pr_number in (5, 28):
+        expected = {
+            5: ("[구현됨]", "IMPLEMENTED_BY_CURRENT_CONTRACT"),
+            18: ("[대체됨]", "SUPERSEDED_BY_CURRENT_CONTRACT"),
+            28: ("[구현됨]", "IMPLEMENTED_BY_CURRENT_CONTRACT"),
+            29: ("[대체됨]", "SUPERSEDED_BY_CURRENT_CONTRACT"),
+            30: ("[대체됨]", "SUPERSEDED_BY_CURRENT_CONTRACT"),
+        }
+        for pr_number, (marker, resolution) in expected.items():
             with self.subTest(pr_number=pr_number):
                 record = next(
                     item
                     for item in ledger["objects"]
                     if item["type"] == "pr" and item["number"] == pr_number
                 )
-                self.assertEqual(record["status_marker"], "[구현됨]")
-                self.assertEqual(record["resolution"], "IMPLEMENTED_BY_CURRENT_CONTRACT")
+                self.assertEqual(record["status_marker"], marker)
+                self.assertEqual(record["resolution"], resolution)
                 self.assertTrue(record["terminal"])
                 self.assertTrue(record["do_not_reassess"])
                 self.assertTrue(record["replacement_paths"])
