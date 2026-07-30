@@ -21,7 +21,10 @@ archive_metadata:
   compatibility_consumers:
     - docs/ACTIVE_HANDOFF.md
   rollback_ref: dc98a666563b1f0f87b665eac97dbd8a8be37576
-  validation_status: PENDING_CI
+  validation_status: PASSED_GITHUB_ACTIONS
+  validation_evidence:
+    - Validate Base v9 RC run 30525963038
+    - Validate Game Project Operating System run 30525958819
 ---
 
 # UX/UI 공용 체계 확산 Active Handoff
