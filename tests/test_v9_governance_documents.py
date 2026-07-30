@@ -57,6 +57,34 @@ class V9GovernanceDocumentTests(unittest.TestCase):
             self.assertIn(term, workflow)
         self.assertIn("check_base_v9_integrity.py", workflow)
 
+    def test_cross_project_handoff_is_archived_without_active_authority(self) -> None:
+        archive_path = "docs/archive/handoffs/2026-07-29-ux-ui-common-system-expansion.md"
+        stub = read("docs/ACTIVE_HANDOFF.md")
+        archive_file = ROOT / archive_path
+
+        self.assertTrue(archive_file.is_file(), archive_path)
+        archive = archive_file.read_text(encoding="utf-8")
+        documentation_map = read("docs/DOCUMENTATION_MAP.md")
+        changelog = read("docs/CHANGELOG.md")
+
+        for term in ("COMPATIBILITY_ONLY", archive_path, "프로젝트 저장소"):
+            self.assertIn(term, stub)
+        self.assertNotIn("| `Blacksmith` |", stub)
+
+        for term in (
+            "status: SUPERSEDED",
+            "original_path: docs/ACTIVE_HANDOFF.md",
+            "active_authority: false",
+            "implementation_authority: NONE",
+            "rollback_ref: dc98a666563b1f0f87b665eac97dbd8a8be37576",
+            "# UX/UI 공용 체계 확산 Active Handoff",
+        ):
+            self.assertIn(term, archive)
+
+        self.assertIn(archive_path, documentation_map)
+        self.assertIn("COMPATIBILITY_ONLY", documentation_map)
+        self.assertIn(archive_path, changelog)
+
 
 if __name__ == "__main__":
     unittest.main()
