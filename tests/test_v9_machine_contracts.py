@@ -64,17 +64,19 @@ class V9MachineContractTests(unittest.TestCase):
         self.assertIn("[구현됨]", migration)
         self.assertIn("do_not_reassess", migration)
 
-        pr5 = next(
-            item
-            for item in ledger["objects"]
-            if item["type"] == "pr" and item["number"] == 5
-        )
-        self.assertEqual(pr5["status_marker"], "[구현됨]")
-        self.assertEqual(pr5["resolution"], "IMPLEMENTED_BY_CURRENT_CONTRACT")
-        self.assertTrue(pr5["terminal"])
-        self.assertTrue(pr5["do_not_reassess"])
-        self.assertTrue(pr5["replacement_paths"])
-        self.assertTrue(pr5["verification_paths"])
+        for pr_number in (5, 28):
+            with self.subTest(pr_number=pr_number):
+                record = next(
+                    item
+                    for item in ledger["objects"]
+                    if item["type"] == "pr" and item["number"] == pr_number
+                )
+                self.assertEqual(record["status_marker"], "[구현됨]")
+                self.assertEqual(record["resolution"], "IMPLEMENTED_BY_CURRENT_CONTRACT")
+                self.assertTrue(record["terminal"])
+                self.assertTrue(record["do_not_reassess"])
+                self.assertTrue(record["replacement_paths"])
+                self.assertTrue(record["verification_paths"])
 
 
 if __name__ == "__main__":
