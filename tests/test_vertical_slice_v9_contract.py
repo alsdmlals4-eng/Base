@@ -98,6 +98,17 @@ class VerticalSliceV9ContractTests(unittest.TestCase):
         self.assertIn("release_lock_path(str(adapter[\"base_release\"][\"version\"]))", core)
         self.assertIn("candidate release/evidence pins are null or inconsistent", core)
 
+    def test_release_evidence_records_the_merged_payload_without_finalizing_pins(self) -> None:
+        lock = json.loads((ROOT / "base-v9.2.lock.json").read_text(encoding="utf-8"))
+        evidence = json.loads(
+            (ROOT / "docs/operations/BASE_V9_2_RELEASE_EVIDENCE.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(evidence["release_payload_commit"], "648b9f60e53c4dbc7780d463be8d1bbd3a5a5e88")
+        self.assertEqual(evidence["candidate_registry"], lock["candidate_registry"])
+        self.assertEqual(evidence["product_evidence"]["godot_runtime"], "NOT_RUN")
+        self.assertIsNone(lock["candidate_release_commit"])
+        self.assertTrue((ROOT / "schemas/base-v9-2-release-evidence-v1.schema.json").is_file())
+
     def test_visual_policy_and_skill_share_the_checkpoint_boundary(self) -> None:
         policy = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
         skill = read("skills/designing-art-prompts-and-technique-cards/SKILL.md")

@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "artifact_role": "BASE_V9_2_RELEASE_EVIDENCE",
+  "release_line": "v9.2.0",
+  "evidence_status": "RECORDED_ON_TRUSTED_MAIN_BEFORE_PIN_FINALIZATION",
+  "repository": "alsdmlals4-eng/Base",
+  "candidate_pull_request": 102,
+  "release_payload_commit": "648b9f60e53c4dbc7780d463be8d1bbd3a5a5e88",
+  "candidate_registry": {
+    "path": "skills/SKILL_REGISTRY.json",
+    "sha256": "9847bb2b225c776ad7916930f0f48c490bc2a898bea8e02ea1fdd0e6caac60c1",
+    "hash_definition": "RAW_FILE_BYTES_SHA256"
+  },
+  "validation": {
+    "base_v92_contract_ci": "PASSED",
+    "full_python_suite": "PASSED_314_WITH_1_DECLARED_SKIP",
+    "integrity": "PASSED",
+    "generated_artifacts": "PASSED",
+    "windows_smoke": "PASSED_AFTER_TRANSIENT_MERMAID_BROWSER_TIMEOUT_RETRY"
+  },
+  "product_evidence": {
+    "godot_runtime": "NOT_RUN",
+    "device": "NOT_RUN",
+    "accessibility": "NOT_RUN",
+    "human_validation": "NOT_RUN"
+  }
+}
