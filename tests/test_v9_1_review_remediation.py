@@ -388,8 +388,9 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
 
     def test_v93_candidate_and_evidence_records_bind_to_the_declared_issue_and_payload(self) -> None:
         candidate = json.loads((ROOT / "base-v9.3.lock.json").read_text(encoding="utf-8"))
-        trusted_payload = "17f93334b6e68940ec2206c53164035b235ffb7a"
-        self.assertEqual(self.integrity.v93_release_lock_errors(ROOT, candidate, trusted_payload), [])
+        trusted_history = "30ca6c7b5f93521f0eb0eed42d01437cd43c50ae"
+        evidence_payload = "17f93334b6e68940ec2206c53164035b235ffb7a"
+        self.assertEqual(self.integrity.v93_release_lock_errors(ROOT, candidate, trusted_history), [])
 
         evidence = {
             "schema_version": 1,
@@ -399,7 +400,7 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
             "repository": "alsdmlals4-eng/Base",
             "candidate_issue": 107,
             "candidate_pull_request": 108,
-            "release_payload_commit": trusted_payload,
+            "release_payload_commit": evidence_payload,
             "candidate_registry": candidate["candidate_registry"],
             "validation": {"base_v93_contract_ci": "PASSED"},
             "product_evidence": {
@@ -410,7 +411,7 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
             },
         }
         self.assertEqual(
-            self.integrity.v93_evidence_record_errors(ROOT, candidate, evidence, trusted_payload),
+            self.integrity.v93_evidence_record_errors(ROOT, candidate, evidence, trusted_history),
             [],
         )
         wrong_issue = json.loads(json.dumps(evidence))
@@ -419,7 +420,7 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
             any(
                 "candidate Issue" in error
                 for error in self.integrity.v93_evidence_record_errors(
-                    ROOT, candidate, wrong_issue, trusted_payload
+                    ROOT, candidate, wrong_issue, trusted_history
                 )
             )
         )

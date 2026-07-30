@@ -290,11 +290,15 @@ def v93_release_lock_errors(repository: Path, candidate_lock: dict, trusted_hist
     registry_hash = registry.get("sha256")
     if not isinstance(registry_path, str) or not isinstance(registry_hash, str):
         return errors + ["v9.3 candidate Registry path/hash is malformed"]
-    current_registry = repository / registry_path
-    if not current_registry.is_file():
-        errors.append("v9.3 candidate Registry file is unavailable")
-    elif hashlib.sha256(current_registry.read_bytes()).hexdigest() != registry_hash:
-        errors.append("v9.3 candidate Registry hash does not match raw file bytes")
+    candidate_blob = subprocess.run(
+        ["git", "-C", str(repository), "show", f"HEAD:{registry_path}"],
+        capture_output=True,
+        check=False,
+    )
+    if candidate_blob.returncode:
+        errors.append("v9.3 candidate Registry Git blob is unavailable")
+    elif hashlib.sha256(candidate_blob.stdout).hexdigest() != registry_hash:
+        errors.append("v9.3 candidate Registry hash does not match Git raw bytes")
 
     state = candidate_lock.get("release_state")
     release_commit = candidate_lock.get("candidate_release_commit")
