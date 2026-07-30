@@ -991,9 +991,20 @@ def migrated_adapter(
     registry_lock = lock.get("candidate_registry")
     if not isinstance(registry_lock, dict) or not isinstance(registry_lock.get("sha256"), str):
         raise ContractError("Base v9.1 release lock has no pinned candidate Registry")
-    project_registry = safe_repository_path(project_root, "skills/SKILL_REGISTRY.json", "project Registry")
+    role_bindings = legacy.get("role_bindings", {})
+    project_info = legacy.get("project", {})
+    declared_registry = (
+        role_bindings.get("skill_registry") if isinstance(role_bindings, dict) else None
+    )
+    if declared_registry is None and isinstance(project_info, dict):
+        declared_registry = project_info.get("local_registry")
+    project_registry_path = declared_registry or "skills/SKILL_REGISTRY.json"
+    if not isinstance(project_registry_path, str):
+        raise ContractError("Project Skill Registry path must be a string")
+    project_registry = safe_repository_path(project_root, project_registry_path, "project Registry")
     if not project_registry.is_file():
         raise ContractError("Migration requires a project Skill Registry")
+    project_registry_relative = project_registry.relative_to(project_root).as_posix()
     project_info = baseline_legacy.get("project", {})
     return {
         "schema_version": 1,
@@ -1019,7 +1030,7 @@ def migrated_adapter(
         "skill_registry": {
             "base": dict(registry_lock),
             "project": {
-                "path": "skills/SKILL_REGISTRY.json",
+                "path": project_registry_relative,
                 "sha256": sha256_file(project_registry),
                 "hash_definition": "RAW_FILE_BYTES_SHA256",
             },

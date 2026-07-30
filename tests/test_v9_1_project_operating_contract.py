@@ -1295,6 +1295,51 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         )
         self.assertEqual(validates.returncode, 0, validates.stderr)
 
+    def test_migrator_uses_the_legacy_declared_project_registry_path(self) -> None:
+        custom_registry = self.project / "docs/planning/SKILL_REGISTRY.json"
+        custom_registry.parent.mkdir(parents=True)
+        custom_registry.write_bytes(self.project_registry.read_bytes())
+        self.project_registry.unlink()
+        legacy = json.loads(self.legacy_adapter.read_text(encoding="utf-8"))
+        legacy["role_bindings"] = {"skill_registry": "docs/planning/SKILL_REGISTRY.json"}
+        self.legacy_adapter.write_text(json.dumps(legacy, sort_keys=True) + "\n", encoding="utf-8")
+        output = self.project / "skills/MIGRATED_PROJECT_BASE_ADAPTER.json"
+        result = self.run_tool(
+            MIGRATE,
+            "--project-root", str(self.project),
+            "--base-repository", str(self.base),
+            "--legacy-adapter", str(self.legacy_adapter),
+            "--output", str(output),
+            "--release-commit", self.release_commit,
+            "--release-evidence-commit", self.evidence_commit,
+            "--protected-baseline-commit", self.protected_baseline_commit,
+            "--protected-authority-kind", "REMOTE_TRACKING_REF",
+            "--protected-authority-ref", "refs/remotes/origin/main",
+            "--write",
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        migrated = json.loads(output.read_text(encoding="utf-8"))
+        self.assertEqual(migrated["skill_registry"]["project"]["path"], "docs/planning/SKILL_REGISTRY.json")
+        self.assertEqual(migrated["skill_registry"]["project"]["sha256"], digest(custom_registry))
+
+        legacy["role_bindings"]["skill_registry"] = "../outside/SKILL_REGISTRY.json"
+        self.legacy_adapter.write_text(json.dumps(legacy, sort_keys=True) + "\n", encoding="utf-8")
+        unsafe = self.run_tool(
+            MIGRATE,
+            "--project-root", str(self.project),
+            "--base-repository", str(self.base),
+            "--legacy-adapter", str(self.legacy_adapter),
+            "--output", str(output),
+            "--release-commit", self.release_commit,
+            "--release-evidence-commit", self.evidence_commit,
+            "--protected-baseline-commit", self.protected_baseline_commit,
+            "--protected-authority-kind", "REMOTE_TRACKING_REF",
+            "--protected-authority-ref", "refs/remotes/origin/main",
+            "--write",
+        )
+        self.assertNotEqual(unsafe.returncode, 0)
+        self.assertIn("escapes", unsafe.stderr.lower())
+
     def test_windows_script_runner_uses_explicit_command_array_without_shell(self) -> None:
         pub_spec = importlib.util.spec_from_file_location("publication_v3", ROOT / "tools/publication_v3.py")
         assert pub_spec and pub_spec.loader

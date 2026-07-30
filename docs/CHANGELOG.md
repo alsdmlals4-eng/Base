@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-30 — Base v9.1 legacy project Registry-path migration
+
+- The migration generator now preserves a legacy adapter's declared local Skill Registry path instead of requiring a copied `skills/SKILL_REGISTRY.json`.
+- Added non-default path and root-escape regressions so per-project canonical structures remain local and fail closed.
+
 ## 2026-07-30 — Agent merge execution policy
 
 - Replaced separate user merge approval with `AGENT_MERGE_REQUIRED`: a non-Draft PR whose reviewed HEAD, required checks, independent review, thread state, and decision gates all pass must be merged by the responsible agent using GitHub auto-merge or the repository's allowed direct method.
