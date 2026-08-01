@@ -58,8 +58,8 @@ Base 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 �
 
 | 구분 | 파일 | 책임 |
 |---|---|---|
-| 최초 라우터 | `START_HERE.md` | 요청 유형별 최소 읽기와 실행 Skill·Skill Mode 연결 |
-| 항상 적용 규칙 | `AGENTS.md` | 우선순위·보안·승인·완료 보고 금지 규칙 |
+| 최초 라우터 | `START_HERE.md` | 최소 호출·콜드 스타트·요청 유형별 한 단계 Skill·Skill Mode 연결; 상세 절차는 정본에 위임 |
+| 항상 적용 규칙 | `AGENTS.md` | 모든 작업의 권한·환경·승인·보호·증거·정확한 HEAD·완료 보고 불변 규칙 |
 | 통합 운영 모델 | `docs/OPERATING_MODEL.md` | 작업 생명주기·책임 원본·상태·발행·근거·검증 정책 |
 | Work Mode·Skill 라우팅 | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | PLAN·BUILD·REVIEW, 자동 선택, Grill Me, 실행 보고 |
 | GPT–Codex 역할·인계 | `docs/GPT_CODEX_WORKFLOW_POLICY.md` | GPT 비-Godot 완료, Codex Plan 검토, 단계별 Godot 구현·PR Gate |

@@ -132,7 +132,7 @@ Intake·Context
 현재 브랜치의 전체 계약을 저장소 소유 임시 디렉터리 안에서 검증하려면 다음 단일 진입점을 사용합니다.
 
 ```bash
-python tools/run_local_validation.py --trusted-history-commit origin/main
+python tools/run_local_validation.py --trusted-history-commit <trusted-main-commit-sha>
 ```
 
-이 명령은 전체 회귀, 필수 CI topology, Base v9 생성물·무결성, Skill coverage, Git 공백·객체 검사를 순서대로 실행하고 첫 실패 코드를 그대로 반환합니다. LibreOffice·Poppler 또는 필수 regular/bold 폰트 중 하나라도 실제 실행 준비가 되지 않으면 발행 생성 테스트는 원인이 적힌 `SKIPPED`이며, 발행 검증이 통과한 것으로 해석하지 않습니다.
+`<trusted-main-commit-sha>`에는 검증 전에 확인한 정확한 40자 main SHA를 넣고 이동 가능한 ref 이름은 넘기지 않습니다. 이 명령은 전체 회귀, 필수 CI topology, Base v9 생성물·무결성, Skill coverage, Git 공백·객체 검사를 순서대로 실행하고 첫 실패 코드를 그대로 반환합니다. LibreOffice·Poppler 또는 필수 regular/bold 폰트 중 하나라도 실제 실행 준비가 되지 않으면 발행 생성 테스트는 원인이 적힌 `SKIPPED`이며, 발행 검증이 통과한 것으로 해석하지 않습니다.
