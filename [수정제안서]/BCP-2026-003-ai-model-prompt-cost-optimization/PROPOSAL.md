@@ -5,7 +5,7 @@
 - 출처 프로젝트: `alsdmlals4-eng/Base`
 - 기준 커밋: `a82976a3a42450ea413cdc5d4aebf701678110d8`
 - 제출일: `2026-07-31`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `SUBMITTED`
 - 지식 상태: `패턴 + 검증 필요 수치`
 - 추적 Issue: `#113`
 
@@ -103,8 +103,8 @@ Base에는 공용 분류법, provider profile 형식, 측정식, 실패 조건�
 ## 승인과 구현
 
 - 사용자 승인 근거: `https://github.com/alsdmlals4-eng/Base/issues/113`
-- 승인 상태: `APPROVED_FOR_IMPLEMENTATION`
-- 구현 PR: `없음 — 제안 PR과 분리 예정`
+- 제안 상태: `SUBMITTED` — 신규 제안은 제안 PR에서 이 상태로 시작한다.
+- 구현 상태 전환: 제안 PR 병합 후 별도 v9.4 구현 PR에서 `APPROVED_FOR_IMPLEMENTATION`과 `approval_ref`를 기록한다.
 - 구현 순서: Issue #113과 #115의 독립 책임을 하나의 v9.4 후보 구현 PR에서 별도 Task·Commit·Test로 적용한 뒤 evidence PR과 pin-finalization PR을 진행한다.
 - 책임 경계: 모델 라우팅·비용·캐싱의 입력·출력·검증을 지시·컨텍스트·UI 모션 책임과 합치지 않는다.
 - 제외: 프로젝트 자동 반영, 실제 모델 전환 조작, 검증되지 않은 수치 상수화, v9.3 history rewrite
