@@ -65,9 +65,9 @@ deterministic generated artifacts, integrity checks, and GitHub Actions evidence
 were accepted for that merge. Project adoption is a separate post-release wave and
 does not block the Base v9.0.0 release.
 
-The five named project repositories and their Sheets are outside this change. They
-remain `[보류]`; Base must not write to those repositories or Sheets as part of
-this Base release.
+The named project repositories and their Sheets are outside Base release payloads.
+Base must not write to those repositories or Sheets as part of a Base candidate,
+evidence, or pin-finalization PR.
 
 ## Related canonical documents
 
@@ -83,7 +83,16 @@ this Base release.
 - [Vertical Slice v8 → v9 migration traceability](knowledge/VERTICAL_SLICE_V8_TO_V9_MIGRATION.md)
 - [Base v9.2 release contract](operations/BASE_V9_2_RELEASE_CONTRACT.md)
 - [Base v9.3 release contract](operations/BASE_V9_3_RELEASE_CONTRACT.md)
+- [Base v9.4 release contract](operations/BASE_V9_4_RELEASE_CONTRACT.md)
 
-## Base v9.4 compatible candidate
+## Base v9.4 released compatible line
 
-Base v9.4 is the compatible AI-operations candidate over released v9.3. It adds model/effort/cost routing and judgment-centered instruction, context, artifact, and game UI motion contracts. Its identity is recorded in `../base-v9.4.lock.json`; candidate release and evidence pins remain null until separate trusted-main evidence and pin-finalization PRs are merged. The immutable v9.0 table and released v9.3 identity are not rewritten.
+Base v9.4 is the released AI-operations line over v9.3. It adds model/effort/cost routing and judgment-centered instruction, context, artifact, and game UI motion contracts while preserving their independent responsibility boundaries.
+
+Its machine identity is recorded in `../base-v9.4.lock.json`:
+
+- payload commit: `a728712cb776ec98f4875914a580fcf7d0156593`
+- trusted evidence commit: `ef1fba11167e4da0b298123b0c85ebd268191a42`
+- Registry SHA-256: `693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59`
+
+The immutable v9.0 table and released v9.1-v9.3 identities are not rewritten. Project adoption is a separate post-release wave and must pin this verified payload/evidence pair before using the new contracts.
