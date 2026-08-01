@@ -11,21 +11,31 @@
 | Active Skill count | Generated from `skills/SKILL_REGISTRY.json`; not a design constraint |
 | Project adoption | `POST_RELEASE_PROJECT_ADOPTION_WAVE`; it does not block the Base v9.0.0 release |
 
+## Authority layers
+
+| Field | Authority |
+| --- | --- |
+| Immutable rules baseline | `v9.0.0` and `base.lock.json` at its trusted release history |
+| Latest released compatible line | `v9.4.0` and `base-v9.4.lock.json` |
+| Current routing authority | `skills/SKILL_REGISTRY.json` plus each active Skill's frontmatter |
+| Frozen v9.0 release derivatives | `.codex-plugin/plugin.json`, `base.lock.json`, `skills/BASE_V9_SKILL_SNAPSHOT.json` |
+
+The frozen v9.0 release derivatives prove the v9.0 release payload. They are not a current projection of later compatible Skill descriptions or routing changes. The current human-readable active list is `docs/generated/BASE_ACTIVE_SKILLS.md`, bound to the current Registry bytes.
+
 This document is the canonical source for Base's own version and release state. It
 does not claim a project version, project implementation state, or Google Sheets
 state.
 
-Base v9.1 is a compatible candidate operating layer over this immutable v9.0.0
+Base v9.1 is a released compatible operating layer over this immutable v9.0.0
 release boundary. Its project adapters separate `release_commit` from
-`release_evidence_commit`; `../base-v9.1.lock.json` records the machine-readable
-`RELEASE_CANDIDATE` identity without rewriting the table above.
+`release_evidence_commit`; `../base-v9.1.lock.json` records that released identity
+without rewriting the table above.
 
-Base v9.2 is the next compatible candidate operating layer. It activates the v9
+Base v9.2 is a released compatible operating layer. It activates the v9
 Vertical Slice reconciliation contract while retaining v6~v8 as non-authoritative
 compatibility inputs. Its release identity is recorded separately in
 `../base-v9.2.lock.json`; it must not rewrite the immutable v9.0 table above.
-Until its separate evidence and pin-finalization PRs are merged, its candidate
-pins are null and projects must continue to use their existing verified Base pin.
+Its evidence and pin-finalization history remains in its own lock and release record.
 
 Base v9.3 is the compatible correction line for the active v9 contract. It keeps
 the v9.2 release commits intact while restoring the v8 single-attachment journey:

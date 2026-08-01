@@ -1,6 +1,6 @@
 ---
 name: evaluating-godot-assets-and-plugins-before-creation
-description: Use when a Godot feature, editor tool, content pipeline, UI system, integration, art asset, audio asset, shader, template, or reusable subsystem might already exist as a built-in capability, free asset, open-source addon, or commercial plugin before custom creation begins.
+description: Use when a Godot feature, tool, pipeline, UI, integration, asset, shader, template, or subsystem may be reusable before custom creation.
 ---
 
 # Evaluating Godot Assets and Plugins Before Creation

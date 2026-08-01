@@ -1,6 +1,6 @@
 ---
 name: managing-game-project-operating-system
-description: Use automatically when installing, auditing, reconciling legacy files, migrating, or verifying the repository operating system that connects project entrypoints, design sources, selective skills, publications, assets, gates, automation, and cold-start handoff.
+description: Use when installing, auditing, reconciling, migrating, or verifying a project repository operating system and its cold-start paths.
 ---
 
 # Managing the Game Project Operating System

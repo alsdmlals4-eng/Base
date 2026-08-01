@@ -1,6 +1,6 @@
 ---
 name: managing-design-documents
-description: Use when creating, restructuring, updating, publishing, or validating registered project and discipline design documents with one Markdown or JSON source of truth and policy-driven human publications.
+description: Use when authoring, restructuring, publishing, or validating registered design-document sources and their policy-driven derivatives.
 ---
 
 # Managing Design Documents

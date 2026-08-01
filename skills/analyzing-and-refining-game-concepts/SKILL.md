@@ -1,6 +1,6 @@
 ---
 name: analyzing-and-refining-game-concepts
-description: Use when defining or reworking a game's core concept, pointed fun, constraints, game systems, difficulty, combat AI, Digital Dopamine Design, benchmark and player evidence, playtest or experiment design, PoC hypothesis, or production direction.
+description: Use when defining or revising game concept, pointed fun, systems, difficulty, combat AI, benchmarks, playtests, PoC, or production direction.
 ---
 
 # Analyzing and Refining Game Concepts

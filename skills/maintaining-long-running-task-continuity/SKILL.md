@@ -1,6 +1,6 @@
 ---
 name: maintaining-long-running-task-continuity
-description: Use when a large multi-step task may exceed one response, tool session, context window, or execution attempt and must remain resumable through evidence-backed checkpoints, partial deliverables, explicit next actions, and truthful completion states.
+description: Use when a multi-step task may cross response, tool, context, or execution boundaries and needs resumable evidence-backed checkpoints.
 ---
 
 # Maintaining Long-Running Task Continuity

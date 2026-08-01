@@ -81,6 +81,94 @@ def git_changed_files(root: Path, base: str, head: str) -> set[str]:
     return {line.strip().replace("\\", "/") for line in result.stdout.splitlines() if line.strip()}
 
 
+def git_file_text(root: Path, ref: str, path: str) -> str | None:
+    result = subprocess.run(
+        ["git", "show", f"{ref}:{path}"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    return result.stdout if result.returncode == 0 else None
+
+
+def without_frontmatter_keys(text: str, ignored_keys: set[str]) -> str:
+    lines = text.splitlines(keepends=True)
+    if not lines or lines[0].strip() != "---":
+        return text
+    try:
+        closing = next(index for index, line in enumerate(lines[1:], 1) if line.strip() == "---")
+    except StopIteration:
+        return text
+
+    kept = [lines[0]]
+    dropping = False
+    key_pattern = re.compile(r"^([A-Za-z_][A-Za-z0-9_-]*):")
+    for line in lines[1:closing]:
+        match = key_pattern.match(line)
+        if match:
+            dropping = match.group(1) in ignored_keys
+        if not dropping:
+            kept.append(line)
+    kept.extend(lines[closing:])
+    return "".join(kept)
+
+
+def frontmatter_fields(text: str | None) -> dict[str, str]:
+    if text is None:
+        return {}
+    lines = text.splitlines(keepends=True)
+    if not lines or lines[0].strip() != "---":
+        return {}
+    try:
+        closing = next(index for index, line in enumerate(lines[1:], 1) if line.strip() == "---")
+    except StopIteration:
+        return {}
+
+    fields: dict[str, list[str]] = {}
+    current = ""
+    key_pattern = re.compile(r"^([A-Za-z_][A-Za-z0-9_-]*):")
+    for line in lines[1:closing]:
+        match = key_pattern.match(line)
+        if match:
+            current = match.group(1)
+            fields.setdefault(current, [])
+        if current:
+            fields[current].append(line)
+    return {key: "".join(value) for key, value in fields.items()}
+
+
+def has_frontmatter_key_change(
+    root: Path,
+    base: str,
+    head: str,
+    path: str,
+    keys: set[str],
+) -> bool:
+    if not keys:
+        return True
+    before = frontmatter_fields(git_file_text(root, base, path))
+    after = frontmatter_fields(git_file_text(root, head, path))
+    return any(before.get(key) != after.get(key) for key in keys)
+
+
+def is_ignored_frontmatter_only_change(
+    root: Path,
+    base: str,
+    head: str,
+    path: str,
+    ignored_keys: set[str],
+) -> bool:
+    if not ignored_keys:
+        return False
+    before = git_file_text(root, base, path)
+    after = git_file_text(root, head, path)
+    if before is None or after is None or before == after:
+        return False
+    return without_frontmatter_keys(before, ignored_keys) == without_frontmatter_keys(after, ignored_keys)
+
+
 def check_legacy_references(
     root: Path,
     files: list[Path],
@@ -148,7 +236,13 @@ def check_canonical_reference_rules(root: Path, rules: list[dict]) -> list[str]:
     return errors
 
 
-def check_coupled_changes(changed: set[str], rules: list[dict]) -> list[str]:
+def check_coupled_changes(
+    root: Path,
+    base: str,
+    head: str,
+    changed: set[str],
+    rules: list[dict],
+) -> list[str]:
     if not changed:
         return []
     errors: list[str] = []
@@ -156,12 +250,24 @@ def check_coupled_changes(changed: set[str], rules: list[dict]) -> list[str]:
         label = str(rule.get("name") or f"coupled_change_rules[{index}]")
         when = [str(item) for item in rule.get("when_changed", []) if str(item)]
         exclude = [str(item) for item in rule.get("exclude_when_changed", []) if str(item)]
+        ignored_frontmatter_keys = {
+            str(item) for item in rule.get("ignore_frontmatter_only_keys", []) if str(item)
+        }
+        required_frontmatter_changes = {
+            str(item) for item in rule.get("when_frontmatter_keys_changed", []) if str(item)
+        }
         require_all = [str(item) for item in rule.get("require_all_changed", []) if str(item)]
         require_any = [str(item) for item in rule.get("require_any_changed", []) if str(item)]
         triggered = sorted(
             path
             for path in changed
             if matches_any(path, when) and not matches_any(path, exclude)
+            and has_frontmatter_key_change(
+                root, base, head, path, required_frontmatter_changes
+            )
+            and not is_ignored_frontmatter_only_change(
+                root, base, head, path, ignored_frontmatter_keys
+            )
         )
         if not triggered:
             continue
@@ -208,7 +314,13 @@ def main() -> int:
     errors.extend(check_forbidden_tokens(root, files, config.get("forbidden_tokens", [])))
     errors.extend(check_canonical_reference_rules(root, config.get("canonical_reference_rules", [])))
     changed = git_changed_files(root, args.base, args.head)
-    errors.extend(check_coupled_changes(changed, config.get("coupled_change_rules", [])))
+    errors.extend(check_coupled_changes(
+        root,
+        args.base,
+        args.head,
+        changed,
+        config.get("coupled_change_rules", []),
+    ))
 
     if errors:
         print("REFERENCE FRESHNESS CHECK: FAIL")

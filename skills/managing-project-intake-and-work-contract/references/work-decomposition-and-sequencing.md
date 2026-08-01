@@ -43,6 +43,42 @@ validation:
 rollback:
 ```
 
+위험·가치·불확실성을 검증하는 단계에는 다음 `Build-Measure-Learn` 계약을 추가한다.
+
+```yaml
+hypothesis:
+minimum_test_unit:
+element_purpose:
+observation_method:
+success_threshold:
+failure_threshold:
+integration_interface:
+evidence_decision: KEEP / REVISE / REDUCE / REMOVE / RETEST
+learning_destination: BASE_CANDIDATE / PROJECT_ONLY / NO_PROMOTION
+```
+
+- `Build`: 가설을 판정하는 데 필요한 `minimum_test_unit`만 만든다.
+- `Measure`: 해석이 아니라 `observation_method`와 사전 선언한 성공·실패 기준으로 결과를 수집한다.
+- `Learn`: 결과에 따라 `KEEP / REVISE / REDUCE / REMOVE / RETEST` 중 하나를 선택한다.
+- 실제 결과가 없으면 `evidence_decision`을 비워 두거나 `RETEST`로 유지하며 성공으로 승격하지 않는다.
+
+## 2.1 복합 작업의 요소 분해·통합
+
+UI·시스템·데이터·이미지/아트·문서/Skill처럼 여러 요소가 맞물린 작업은 다음 순서로 분해한다.
+
+```text
+전체 목표·실패 가설
+→ element_purpose별 구성 요소
+→ 요소별 입력·출력·불변조건·최소 초안
+→ 적용 가능한 다관점 검토
+→ integration_interface와 결합 순서
+→ 통합 결과
+→ Golden Path·Edge·Regression
+→ 회고와 재사용 경계
+```
+
+요소를 나눈 뒤 각각을 독립 제품처럼 최적화하지 않는다. 모든 요소는 상위 플레이어·사용자 경험과 `integration_interface`에 다시 연결돼야 하며, 통합 뒤에만 드러나는 상태·순서·소유권·피드백 충돌을 별도 검증한다.
+
 좋은 단계는 “코딩하기”, “문서 수정하기”가 아니라 다음처럼 관찰 가능한 결과를 만든다.
 
 - 저장 Schema와 마이그레이션 계약을 확정한다.
@@ -148,6 +184,8 @@ replan_trigger:
 → 다음 단계 진입 조건
 ```
 
+가설 검증이 포함되면 `hypothesis → minimum_test_unit → observation_method → success/failure_threshold → evidence_decision`을 함께 보고한다. 회고에서는 재사용 조건이 반복 증거를 갖춘 공용 판단인지, 프로젝트 고유 수치·세계관·경로·자산인지 구분해 `BASE_CANDIDATE / PROJECT_ONLY / NO_PROMOTION`으로 판정한다.
+
 ## 9. 실패 조건
 
 - 동사만 있는 체크리스트를 만든다.
@@ -158,6 +196,8 @@ replan_trigger:
 - 테스트·문서·발행을 마지막 한 단계에 몰아넣는다.
 - 일정 숫자를 근거 없이 발명한다.
 - 선행 단계 실패 후에도 이후 계획을 그대로 실행한다.
+- 측정 전 가설을 성공으로 기록하거나, 결과와 무관하게 원안을 유지한다.
+- 요소별 결과는 통과했지만 `integration_interface`와 통합 E2E를 검증하지 않는다.
 
 ## 공식 참고 자료
 

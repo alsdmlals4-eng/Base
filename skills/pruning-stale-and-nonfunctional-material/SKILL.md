@@ -1,6 +1,6 @@
 ---
 name: pruning-stale-and-nonfunctional-material
-description: Use when skills, documents, templates, references, tests, or generated artifacts contain duplicated, stale, dead, unreachable, obsolete, or behavior-neutral material that should be reduced without losing unique capabilities, evidence, compatibility, or approved history.
+description: Use when stale, duplicate, dead, unreachable, obsolete, or behavior-neutral repository material may be safely reduced without losing evidence or compatibility.
 ---
 
 # Pruning Stale and Nonfunctional Material

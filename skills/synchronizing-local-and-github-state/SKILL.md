@@ -1,6 +1,6 @@
 ---
 name: synchronizing-local-and-github-state
-description: Use when a local checkout and its GitHub branch must be compared, safely reconciled, refreshed, published, or verified as equivalent without overwriting uncommitted work, secrets, divergent history, or unreviewed changes.
+description: Use when local and GitHub state must be compared, reconciled, refreshed, published, or verified without overwriting work or divergent history.
 ---
 
 # Synchronizing Local and GitHub State

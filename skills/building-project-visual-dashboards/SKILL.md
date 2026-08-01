@@ -1,6 +1,6 @@
 ---
 name: building-project-visual-dashboards
-description: Use when project concepts, loops, system relationships, MVP status, UX flows, evidence, risks, or next work need an editable visual dashboard while canonical decisions remain in registered GitHub documents and data sources.
+description: Use when project concepts, loops, system relations, status, UX flows, evidence, risks, or next work require an editable visual dashboard.
 ---
 
 # Building Project Visual Dashboards

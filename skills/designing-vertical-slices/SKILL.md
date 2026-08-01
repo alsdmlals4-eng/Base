@@ -1,6 +1,6 @@
 ---
 name: designing-vertical-slices
-description: Use when a project needs to validate its core experience, target quality, cross-system integration, content-production pipeline, representative playtest evidence, accessibility barriers, or target-platform performance through one playable segment.
+description: Use when one playable segment must prove core experience, target quality, system integration, production pipeline, playtest, accessibility, or performance.
 ---
 
 # Designing Vertical Slices

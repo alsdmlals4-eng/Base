@@ -1,6 +1,6 @@
 ---
 name: maintaining-project-context-and-handoff
-description: Use when a game-project task changes current status, next work, risks, decisions, gates, or ownership; when a new chat or worker must resume; or when approved planning must be converted into a staged GPT-to-Codex Godot implementation handoff without duplicating canonical documents.
+description: Use when project state must be resumed or approved planning must become a staged GPT-to-Codex Godot implementation handoff.
 ---
 
 # Maintaining Project Context and Handoff

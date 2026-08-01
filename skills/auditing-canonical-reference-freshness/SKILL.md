@@ -1,6 +1,6 @@
 ---
 name: auditing-canonical-reference-freshness
-description: Use when a patch, rename, consolidation, schema change, document update, generator change, or release may leave active files pointing to obsolete paths, superseded skill IDs, stale policies, outdated generated outputs, or canonical-source changes that were not propagated to dependent files.
+description: Use when a canonical, path, ID, schema, generator, or release change may leave stale references, derivatives, or untouched consumers.
 ---
 
 # Auditing Canonical Reference Freshness

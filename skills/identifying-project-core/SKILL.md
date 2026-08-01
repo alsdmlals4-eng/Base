@@ -1,6 +1,6 @@
 ---
 name: identifying-project-core
-description: Use when an existing project needs an evidence-based, read-only determination of which experiences, loops, systems, rules, directions, or technical foundations are identity-defining project core rather than replaceable content, MVP support, or implementation detail.
+description: Use when an existing project's identity-defining experience, loop, systems, rules, or technical core must be classified read-only from evidence.
 ---
 
 # Identifying Project Core

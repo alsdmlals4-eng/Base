@@ -1,6 +1,6 @@
 ---
 name: reviewing-and-validating-project-changes
-description: Use when code, data, documents, assets, configuration, CI workflows, or external AI output must be checked against an approved work contract and verified with repository evidence, reference freshness, cost-aware CI execution, accessibility barriers, performance budgets, runtime behavior, and regression evidence before integration.
+description: Use when project changes or external AI output need contract, reference, static, runtime, accessibility, performance, CI, or regression evidence.
 ---
 
 # Reviewing and Validating Project Changes
@@ -14,6 +14,7 @@ For a Base v9.1 project, record a separate `PROJECT_OPERATING_INTEGRITY` verdict
 ## Modes
 
 - `contract-check`: 승인 목표, 범위, 보호 대상과 실제 변경을 대조한다.
+- `multi-lens-review`: 복합 변경을 Simplify, Style Guide, Domain Review, Security/Safety/Trust Boundary 관점에서 검토하고 제외 이유를 기록한다.
 - `external-source-review`: 외부 AI·병렬 작업자의 초안과 주장을 독립 검수한다.
 - `ci-cost-optimization`: 변경 위험에 따라 GitHub Actions 실행 계층을 분리하고 중복 실행·불필요한 matrix·고비용 설치를 줄이면서 Required Check 증거를 보존한다.
 - `reference-freshness`: 변경된 정본·경로·ID·Schema가 활성 참조·템플릿·테스트·파생본에 전파됐는지 감사한다.
@@ -102,7 +103,20 @@ change_producer:
 3. 외부 설명보다 실제 파일·diff·명령 결과를 우선한다.
 4. 확인할 수 없는 경로·명령·함수·필드를 승인하지 않는다.
 
-### 2A. CI cost optimization
+### 2A. Multi-lens review
+
+복합 UI·시스템·데이터·이미지/아트·문서/Skill 변경은 다음 네 관점을 각각 `APPLIED / NOT_APPLICABLE / BLOCKED_UNVERIFIED`로 판정한다. 관련 없는 관점도 생략하지 말고 이유를 남긴다.
+
+| Lens | 핵심 질문 |
+|---|---|
+| `Simplify` | 중복·불필요한 단계·상태·추상화를 줄여도 계약과 사용자 가치가 보존되는가? |
+| `Style Guide` | 프로젝트·언어·엔진·문서·UI의 등록된 표현·구조 규칙과 일치하는가? |
+| `Domain Review` | 게임 규칙·데이터 의미·플레이어 경험·분야 정본을 정확히 구현하는가? |
+| `Security/Safety/Trust Boundary` | 권한·입력·외부 결과·비가역 작업·데이터 손상·오용 경계가 통제되는가? |
+
+네 관점은 서로 대체하지 않는다. Style Guide 통과는 Domain Review나 Security/Safety/Trust Boundary 통과 증거가 아니다.
+
+### 2B. CI cost optimization
 
 `docs/CI_EXECUTION_COST_POLICY.md`를 정본으로 사용한다.
 
@@ -223,10 +237,10 @@ baseline 반복 측정
 
 ### 8. Regression
 
-1. 대표 정상 경로.
-2. 최소·최대·빈 값·누락 입력 같은 경계 경로.
+1. `Golden Path`: 대표 정상 사용자·플레이어 경로.
+2. `Edge`: 최소·최대·빈 값·누락 입력·취소·재시도 같은 경계 경로.
 3. 원래 실패를 재현하는 반례.
-4. 변경과 인접한 기존 기능.
+4. `Regression`: 변경과 인접한 기존 기능과 보호된 동작.
 5. 실패 후 복구·롤백 경로.
 6. 최신 정본과 이전 참조가 다시 공존하지 않는지 확인한다.
 7. CI 최적화가 필요한 검증을 누락하거나 Required Check를 영구 대기 상태로 만들지 않는지 확인한다.
@@ -254,7 +268,8 @@ baseline 반복 측정
 ## 런타임·렌더·빌드 검증
 ## 접근성 장벽·대안·심각도
 ## 성능 예산·baseline·profile·변경 후 비교
-## 대표·경계·반례·회귀 결과
+## Simplify·Style Guide·Domain Review·Security/Safety/Trust Boundary
+## Golden Path·Edge·반례·Regression 결과
 ## 외부 산출물 독립 검수
 ## 실패·미실행·남은 위험
 ## 필요한 최소 수정

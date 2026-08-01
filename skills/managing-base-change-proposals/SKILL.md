@@ -1,6 +1,6 @@
 ---
 name: managing-base-change-proposals
-description: Use when extracting reusable project knowledge, submitting a Base change proposal, reviewing an existing proposal, or implementing only a user-approved proposal through a separate change branch and PR.
+description: Use when extracting project learning for Base, submitting or reviewing a Base proposal, or implementing an approved proposal separately.
 ---
 
 # Managing Base Change Proposals

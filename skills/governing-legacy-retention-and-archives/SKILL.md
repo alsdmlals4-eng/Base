@@ -1,6 +1,6 @@
 ---
 name: governing-legacy-retention-and-archives
-description: Use when current and legacy documents, assets, paths, skill packages, generated derivatives, evidence, backup folders, blank placeholders, or merged branches must remain recoverable without retaining current authority.
+description: Use when legacy documents, assets, paths, skills, derivatives, evidence, backups, placeholders, or branches need recoverable non-current retention.
 ---
 
 # Governing Legacy Retention and Archives

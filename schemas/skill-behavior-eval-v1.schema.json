@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/skill-behavior-eval-v1.schema.json",
+  "title": "Base Skill Behavior Evaluation Set",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_role", "status", "model_run_status", "source_issue", "cases"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "BASE_SKILL_BEHAVIOR_EVAL_SET"},
+    "status": {"enum": ["ACTIVE", "HOLD"]},
+    "model_run_status": {"const": "NOT_RUN"},
+    "source_issue": {"type": "string", "format": "uri"},
+    "cases": {
+      "type": "array",
+      "minItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "case_id",
+          "case_type",
+          "prompt",
+          "expected_work_mode",
+          "expected_primary_skill",
+          "expected_supporting_skills",
+          "expected_skill_modes",
+          "forbidden_skills",
+          "required_evidence",
+          "expected_user_decision_state",
+          "rationale"
+        ],
+        "properties": {
+          "case_id": {"type": "string", "pattern": "^SBE-[0-9]{3}$"},
+          "case_type": {"enum": ["positive", "negative", "boundary", "cross-skill"]},
+          "prompt": {"type": "string", "minLength": 20},
+          "expected_work_mode": {"enum": ["PLAN", "BUILD", "REVIEW"]},
+          "expected_primary_skill": {"type": "string", "minLength": 1},
+          "expected_supporting_skills": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "expected_skill_modes": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "forbidden_skills": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "required_evidence": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "expected_user_decision_state": {"enum": ["NOT_REQUIRED", "REQUIRED", "DEFERRED"]},
+          "rationale": {"type": "string", "minLength": 10}
+        }
+      }
+    }
+  }
+}
