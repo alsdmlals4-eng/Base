@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/base-v9-4-release-evidence-v1.schema.json",
+  "title": "Base v9.4 Trusted Release Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_role",
+    "release_line",
+    "repository",
+    "payload_commit",
+    "registry_sha256",
+    "candidate_issue",
+    "candidate_pr",
+    "verification",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "BASE_V9_4_TRUSTED_RELEASE_EVIDENCE"},
+    "release_line": {"const": "v9.4.0"},
+    "repository": {"const": "alsdmlals4-eng/Base"},
+    "payload_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "registry_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "candidate_issue": {"const": 113},
+    "linked_issue": {"const": 115},
+    "candidate_pr": {"type": "integer", "minimum": 1},
+    "verification": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    },
+    "limitations": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    }
+  }
+}
