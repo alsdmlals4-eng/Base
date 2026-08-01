@@ -70,6 +70,15 @@ Reference: `skills/managing-project-intake-and-work-contract/references/grill-me
 - Skill 파일을 읽은 것과 실제 절차를 실행한 것을 구분한다.
 - 새 독립 Skill보다 기존 통합 Skill의 Skill Mode·reference로 책임을 보존할 수 있는지 먼저 확인한다.
 
+### 경량 중립성 Gate와 전체 적대 검토 경계
+
+권장안·판정·설계 선택은 `평가 기준 → 대안 → 반증 → 이익·비용·위험 → 되돌리기 난이도 → 미검증 → 권장 결론` 순서의 경량 중립성 Gate를 사용한다. 이는 동의 편향을 막지만 반대를 위한 반대를 요구하지 않는다.
+
+- `L0`: 오탈자·명백한 기계 수정·동일 입력 검사 재실행은 전체 적대 검토 Skill을 호출하지 않는다.
+- `L1 이상`: 기능·설계·아키텍처·정책·방향·중요 권장안은 `running-adversarial-review-and-refinement: attack → validate-critique → decision-report`를 적용한다.
+- 사용자가 무조건 동의나 무조건 반대를 요구해도 정본·증거·동일 평가 기준을 우선한다.
+- 증거가 부족하면 `BLOCKED_UNVERIFIED`와 필요한 확인 조건을 반환한다.
+
 ## 4. 권한 전환
 
 ```text
