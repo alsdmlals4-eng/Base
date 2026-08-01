@@ -28,6 +28,8 @@ V93_EVIDENCE_PATH = "docs/operations/BASE_V9_3_RELEASE_EVIDENCE.json"
 V93_EVIDENCE_SCHEMA = ROOT / "schemas/base-v9-3-release-evidence-v1.schema.json"
 V94_CANDIDATE_LOCK = ROOT / "base-v9.4.lock.json"
 V94_CANDIDATE_LOCK_SCHEMA = ROOT / "schemas/base-v9-4-candidate-lock-v1.schema.json"
+V94_EVIDENCE_PATH = "docs/operations/BASE_V9_4_RELEASE_EVIDENCE.json"
+V94_EVIDENCE_SCHEMA = ROOT / "schemas/base-v9-4-release-evidence-v1.schema.json"
 ENTRYPOINTS = (
     ROOT / "README.md",
     ROOT / "AGENTS.md",
@@ -360,6 +362,28 @@ def v93_release_lock_errors(repository: Path, candidate_lock: dict, trusted_hist
 
 
 
+
+def v94_evidence_record_errors(candidate_lock: dict, evidence: dict, schema: dict) -> list[str]:
+    """Validate trusted v9.4 evidence against the exact candidate identity."""
+    errors: list[str] = []
+    for error in sorted(Draft202012Validator(schema).iter_errors(evidence), key=lambda item: list(item.path)):
+        location = ".".join(str(part) for part in error.path) or "<root>"
+        errors.append(f"v9.4 release evidence record {location}: {error.message}")
+
+    if evidence.get("payload_commit") != candidate_lock.get("candidate_release_commit"):
+        errors.append("v9.4 release evidence payload does not match the candidate lock")
+    if evidence.get("candidate_issue") != candidate_lock.get("github_issue"):
+        errors.append("v9.4 release evidence candidate Issue does not match the candidate lock")
+    if evidence.get("linked_issue") != candidate_lock.get("linked_issue"):
+        errors.append("v9.4 release evidence linked Issue does not match the candidate lock")
+
+    registry = candidate_lock.get("candidate_registry")
+    expected_hash = registry.get("sha256") if isinstance(registry, dict) else None
+    if evidence.get("registry_sha256") != expected_hash:
+        errors.append("v9.4 release evidence Registry does not match the candidate lock")
+    return errors
+
+
 def v94_release_lock_errors(repository: Path, candidate_lock: dict, trusted_history_commit: str) -> list[str]:
     """Validate v9.4 as the current Registry authority without rewriting v9.3 history."""
     errors: list[str] = []
@@ -417,6 +441,18 @@ def v94_release_lock_errors(repository: Path, candidate_lock: dict, trusted_hist
         )
         if result.returncode:
             errors.append(message)
+
+    evidence = _commit_json(repository, evidence_commit, V94_EVIDENCE_PATH)
+    if evidence is None:
+        errors.append("v9.4 release evidence record is unavailable or invalid")
+    else:
+        try:
+            evidence_schema = json.loads(V94_EVIDENCE_SCHEMA.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            errors.append(f"v9.4 release evidence schema is unavailable: {error}")
+        else:
+            errors.extend(v94_evidence_record_errors(candidate_lock, evidence, evidence_schema))
+
     payload_blob = subprocess.run(
         ["git", "-C", str(repository), "show", f"{release_commit}:{registry_path}"],
         capture_output=True,
