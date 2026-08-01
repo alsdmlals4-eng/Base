@@ -1,5 +1,14 @@
 # Base Skill Learning Log
 
+## 2026-08-01 — Repository governance files are not repository-setting evidence
+
+- **Trigger:** the public Base repository had reusable operating materials and dependency-review CI but no License, Security policy, CODEOWNERS, or Dependabot configuration.
+- **Finding:** adding placeholder community files could falsely imply reuse permission, a private contact channel, valid team ownership, or enabled security settings. A Dependabot file disconnected from actual manifests could also be accepted while monitoring the wrong surface.
+- **Decision:** use one MIT license for Base-owned material, support only current `main`, route sensitive reports to GitHub private reporting without claiming it is enabled, derive CODEOWNERS from the mutable current repository governance profile, and enable only currently documented Dependabot combinations. Frozen release locks remain historical identities. `pip` and `github-actions` are active; pnpm 11 is visibly deferred because GitHub currently documents pnpm v7-v10.
+- **Evidence:** repository inventory, public visibility and owner write/admin metadata, official GitHub file-location and ecosystem/version contracts, plus semantic RED/GREEN tests for unique precedence locations, mutable current identity, scope, manifest mapping, supported-versus-deferred updates, grouping, and docs-only as well as contract CI consumption.
+- **Boundary:** license selection is not legal advice. Private reporting availability, CODEOWNERS review requests, Ruleset enforcement, Dependabot parsing, and its first scheduled update remain `UNVERIFIED_REPOSITORY_SETTING` or `NOT_RUN` until GitHub supplies direct evidence.
+- **Next trigger:** repository rename/transfer, new package ecosystem or manifest directory, license exception, maintainer/team change, private-reporting setting verification, or first Dependabot PR.
+
 ## 2026-08-01 — Entrypoint ownership before size reduction
 
 - **Trigger:** `AGENTS.md` and `START_HERE.md` repeated lifecycle, publication, review, legacy, and completion procedures already owned by the operating model, routing contract, and Skill packages.

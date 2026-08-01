@@ -64,6 +64,8 @@ Base 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 �
 | Work Mode·Skill 라우팅 | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | PLAN·BUILD·REVIEW, 자동 선택, Grill Me, 실행 보고 |
 | GPT–Codex 역할·인계 | `docs/GPT_CODEX_WORKFLOW_POLICY.md` | GPT 비-Godot 완료, Codex Plan 검토, 단계별 Godot 구현·PR Gate |
 | GitHub Pro 운영 | `docs/GITHUB_PRO_OPERATING_POLICY.md` | Ruleset·`ci-gate`·자동 병합·사용량 Budget |
+| Base GitHub 저장소 현행 Profile | `docs/operations/BASE_GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md` | 가변 owner·visibility·기본 Branch·플랫폼 검증 상태; 동결 release lock과 분리 |
+| 저장소 재사용·보안·소유·의존성 | `LICENSE`, `SECURITY.md`, `.github/CODEOWNERS`, `.github/dependabot.yml` | MIT 재사용 조건·비공개 취약점 신고·실제 owner·manifest 기반 갱신 제안; 설정 활성화는 별도 증거 |
 | GitHub 작업 항목 수명주기 | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | Issue·Goal·Branch·PR·Run·Artifact·Release 보존·종료 |
 | 승인 결정 동기화 | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | 질문 전 대조, 중복 질문 방지, 승인 즉시 정본화, 병합 후 검토 |
 | 기획 순서·근거·Demo-First | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | 누락·충돌 선감사, Evidence Pack, Approval Bundle, Vertical Slice |

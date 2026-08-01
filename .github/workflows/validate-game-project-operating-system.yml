@@ -256,6 +256,7 @@ jobs:
             tests/test_ci_workflow_cost_policy.py \
             tests/test_ci_required_gate_topology.py \
             tests/test_ci_required_gate_evaluator.py \
+            tests/test_repository_governance_baseline.py \
             -v 2>&1 | tee docs-validation-results.txt
 
       - name: Upload docs diagnostics on failure
@@ -330,7 +331,8 @@ jobs:
             tests/test_ci_required_gate_topology.py \
             tests/test_ci_required_gate_evaluator.py \
             tests/test_publication_readiness.py \
-            tests/test_local_validation.py
+            tests/test_local_validation.py \
+            tests/test_repository_governance_baseline.py
 
       - name: Validate Base change proposals
         if: github.event_name == 'pull_request'
@@ -367,6 +369,7 @@ jobs:
             tests/test_ci_required_gate_evaluator.py \
             tests/test_publication_readiness.py \
             tests/test_local_validation.py \
+            tests/test_repository_governance_baseline.py \
             -v 2>&1 | tee operating-system-contract-results.txt
           python tools/check_skill_system_coverage.py \
             2>&1 | tee -a operating-system-contract-results.txt

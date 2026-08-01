@@ -5,6 +5,7 @@
 ```yaml
 repository:
   name:
+  owner:
   visibility: public | private
   account_plan: Free | Pro | Team | Enterprise
   primary_branch: main
