@@ -5,10 +5,10 @@
 - 출처 프로젝트: `alsdmlals4-eng/Base`
 - 기준 커밋: `a82976a3a42450ea413cdc5d4aebf701678110d8`
 - 제출일: `2026-08-01`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `SUBMITTED`
 - 지식 상태: `패턴`
 - Decision ID: `DEC-2026-08-01-001`
-- 승인 근거: `https://github.com/alsdmlals4-eng/Base/issues/115`
+- 사용자 승인 근거: `https://github.com/alsdmlals4-eng/Base/issues/115`
 
 ## 관찰과 증거
 
@@ -189,9 +189,10 @@ Artifact는 실제 런타임·사람 이해·접근성·성능을 자동으로 �
 
 ## 승인과 구현
 
-- 승인 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 제안 상태: `SUBMITTED` — 신규 제안은 제안 PR에서 이 상태로 시작한다.
+- 사용자 승인 근거는 존재하지만 기계 상태 전환은 별도 구현 PR에서 수행한다.
 - 구현 PR: `없음 — 제안 PR과 분리 예정`
-- 구현 순서: BCP-2026-003과 BCP-2026-004를 하나의 Base v9.4 후보 구현 PR에서 독립 Task·Commit·Test로 적용한 뒤 evidence PR과 pin-finalization PR을 진행한다.
+- 구현 순서: BCP-2026-003과 BCP-2026-004를 하나의 Base v9.4 후보 구현 PR에서 독립 Task·Commit·Test로 적용하고, 그 PR에서 `APPROVED_FOR_IMPLEMENTATION`과 `approval_ref`를 기록한 뒤 evidence PR과 pin-finalization PR을 진행한다.
 - 책임 경계: 모델 라우팅·비용·캐싱과 지시·컨텍스트·UI 모션의 입력·출력·검증을 합치지 않는다.
 - 프로젝트 적용: Base v9.4가 검증·릴리스된 뒤 각 프로젝트의 로컬 Base 사본과 정본에 맞춰 별도 PR로 적용한다.
-- 롤백: 제안 PR을 닫거나 승인 상태를 보존한 채 구현하지 않는다. 활성 Base 파일은 이 제안 PR에서 변경하지 않는다.
+- 롤백: 제안 PR을 닫거나 제출 상태를 보존한 채 구현하지 않는다. 활성 Base 파일은 이 제안 PR에서 변경하지 않는다.
