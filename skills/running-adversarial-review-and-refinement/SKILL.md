@@ -9,6 +9,8 @@ description: Use when a work product, repository, PR, or merged decision must be
 
 적대적 검토는 승인 거부 증거를 찾는 공격 단계다. 그러나 **비판도 오류·취향·과잉 요구**일 수 있으므로 공격과 검증을 분리하고, 검증된 문제만 최소 수정한다.
 
+사용자안과 AI 최초안은 같은 평가 기준으로 공격·검증한다. 검토 목적은 이견 생산이 아니라 실패 가능성 감소다. 사용자안이 반례·위험 검토를 통과해 가장 강한 결론이면 근거와 함께 동의할 수 있다.
+
 실제 diff·정적·런타임·접근성·성능 증거는 `reviewing-and-validating-project-changes`, 프로젝트 코어 판정·확정은 관련 코어 Skill이 책임진다. 승인 결정·GitHub·Google Sheets 동기화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`를 따른다. 구형본의 archive·compatibility·삭제는 `governing-legacy-retention-and-archives`, 정본·경로·ID·Template·Test 전파는 `auditing-canonical-reference-freshness`가 책임진다.
 
 ## Skill Modes
@@ -101,6 +103,9 @@ repository_audit:
 
 1. `attack`은 실패·모순·악용·누락·경계 조건을 최대한 찾는다.
 2. `validate-critique`는 사실성, 발생 가능성, 영향, 범위, 수정 비용을 재판정한다.
+- 사용자안과 AI 최초안을 동일한 사실성·영향·비용·코어·호환성 기준으로 비교한다.
+- 사용자가 동의를 요구했다는 이유로 비판을 생략하지 않고, 적대 검토를 반대를 위한 반대로 오용하지 않는다.
+- 장점과 정상 경로도 보존하며 유효한 비판이 없으면 `REJECTED_CRITIQUE` 또는 근거 있는 동의로 판정한다.
 3. `refine-approved-findings`는 `MUST_FIX`와 승인된 `SHOULD_FIX`만 최소 수정한다.
 4. 기획 방향을 바꾸는 finding은 몰래 수정하지 않고 `USER_DECISION_REQUIRED`로 분리한다.
 5. `regression-recheck`는 기존 장점·정상 경로·코어·범위와 새 결함을 다시 공격한다.
