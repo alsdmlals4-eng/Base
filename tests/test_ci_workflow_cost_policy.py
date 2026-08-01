@@ -24,6 +24,9 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.text = WORKFLOW.read_text(encoding="utf-8")
         cls.prompt_text = PROMPT_WORKFLOW.read_text(encoding="utf-8")
+        cls.gate_evaluator = (
+            ROOT / "tools/evaluate_ci_required_gate.py"
+        ).read_text(encoding="utf-8")
 
     def test_workflow_has_pr_main_nightly_and_manual_events(self) -> None:
         for term in (
@@ -86,8 +89,9 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
     def test_workflow_has_stable_ci_gate(self) -> None:
         self.assertIn("ci-gate:", self.text)
         self.assertIn("if: always()", self.text)
-        self.assertIn("required job failed or was not executed", self.text)
-        self.assertIn("CI gate passed", self.text)
+        self.assertIn("run: python tools/evaluate_ci_required_gate.py", self.text)
+        self.assertIn("required job failed or was not executed", self.gate_evaluator)
+        self.assertIn("CI REQUIRED GATE: PASS", self.gate_evaluator)
 
     def test_vertical_slice_contract_suites_are_aggregated_into_ci(self) -> None:
         source = Path(__file__).read_text(encoding="utf-8")

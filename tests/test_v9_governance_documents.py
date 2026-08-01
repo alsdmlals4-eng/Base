@@ -62,10 +62,17 @@ class V9GovernanceDocumentTests(unittest.TestCase):
         for check in ("link", "orphan", "cycle", "provenance", "template consumer"):
             self.assertIn(check, audit)
 
-    def test_v9_workflow_exposes_ci_and_adversarial_gates_for_all_change_paths(self) -> None:
+    def test_v9_focused_workflow_preserves_contract_and_adversarial_evidence(self) -> None:
         workflow = read(".github/workflows/validate-base-v9-rc.yml")
-        for term in ("docs/**", "tools/**", ".github/workflows/**", "ci-gate:", "adversarial-gate:"):
+        for term in (
+            "docs/**",
+            "tools/**",
+            ".github/workflows/**",
+            "base-v9-contract:",
+            "adversarial-gate:",
+        ):
             self.assertIn(term, workflow)
+        self.assertNotIn("\n  ci-gate:", workflow)
         self.assertIn("check_base_v9_integrity.py", workflow)
 
     def test_cross_project_handoff_is_archived_without_active_authority(self) -> None:
