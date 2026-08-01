@@ -29,11 +29,11 @@
       "proposal_id": "BCP-2026-003-ai-model-prompt-cost-optimization",
       "title": "AI 모델 라우팅·프롬프트 캐싱 비용 최적화",
       "path": "[수정제안서]/BCP-2026-003-ai-model-prompt-cost-optimization/PROPOSAL.md",
-      "status": "APPROVED_FOR_IMPLEMENTATION",
+      "status": "SUBMITTED",
       "source_project": "alsdmlals4-eng/Base",
       "source_commit": "a82976a3a42450ea413cdc5d4aebf701678110d8",
       "submitted_at": "2026-07-31",
-      "approval_ref": "https://github.com/alsdmlals4-eng/Base/issues/113",
+      "approval_ref": null,
       "implementation_pr": null
     }
   ]
