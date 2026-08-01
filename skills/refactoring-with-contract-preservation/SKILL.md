@@ -1,6 +1,6 @@
 ---
 name: refactoring-with-contract-preservation
-description: Use when code, documents, data structures, automation, or a skill system must be structurally improved by reducing duplication and complexity while preserving approved behavior, interfaces, data compatibility, outputs, and user-visible capabilities.
+description: Use when code, documents, data, automation, or skills need structural simplification while preserving behavior, interfaces, compatibility, and outputs.
 ---
 
 # Refactoring with Contract Preservation

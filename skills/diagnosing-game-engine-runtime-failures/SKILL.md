@@ -1,6 +1,6 @@
 ---
 name: diagnosing-game-engine-runtime-failures
-description: Use when a Godot, Unity, or comparable game-engine project crashes, throws errors, loads incorrectly, loses signals or references, corrupts state, or behaves differently at runtime and needs evidence-based reproduction, isolation, minimal repair, and revalidation.
+description: Use when Godot, Unity, or another game engine crashes, errors, loses references or state, loads incorrectly, or differs at runtime.
 ---
 
 # Diagnosing Game Engine Runtime Failures

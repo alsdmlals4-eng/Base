@@ -1,6 +1,6 @@
 ---
 name: simplifying-skill-bodies
-description: Use when a SKILL.md or operating router has become hard to navigate and must preserve all required behavior while separating always-needed routing from conditional detail through linked references with verified progressive disclosure and no numeric size ceiling.
+description: Use when a SKILL.md or router needs verified progressive disclosure without losing required behavior, safety, examples, or discoverability.
 ---
 
 # Simplifying Skill Bodies

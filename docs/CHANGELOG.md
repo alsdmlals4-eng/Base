@@ -1,5 +1,28 @@
 # Changelog
 
+## Unreleased — Base v9.5 focused maintenance candidate
+
+- Clarified the immutable v9.0 baseline, released v9.4 compatible line, current routing authority, and frozen v9.0 release derivatives without changing released locks.
+- Reduced active Skill discovery metadata while preserving Registry bytes, Skill IDs, trigger contracts, and Skill bodies.
+- Added realistic prompt-to-Skill behavior fixtures and a deterministic contract/result scorer; live model execution remains `NOT_RUN` until external results are supplied.
+- Integrated Issue #74's Build-Measure-Learn, element decomposition, four review lenses, Golden Path/Edge/Regression, and Base-versus-project learning boundary into existing workflows rather than adding a broad Skill.
+
+## 2026-08-01 — Base v9.4 released pins
+
+- Finalized Base v9.4 as `BASE_RELEASED`.
+- Payload: `a728712cb776ec98f4875914a580fcf7d0156593`.
+- Trusted evidence: `ef1fba11167e4da0b298123b0c85ebd268191a42`.
+- Registry SHA-256: `693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59`.
+- BCP-2026-003 and BCP-2026-004 transitioned to `IMPLEMENTED`.
+- Project adoption remains a separate post-release wave.
+
+## 2026-08-01 — Base v9.4 AI operations candidate
+
+- Added provider-neutral model/effort routing, Prompt caching boundaries, cost measurement and recalibration.
+- Added instruction authority budgeting, Interface-first Prompt, Context curation, Example-as-Fixture and Artifact claim limits.
+- Added Godot game UI motion contracts for interruption, instant completion, repetition, Reduced Motion, mute, haptic-off and domain authority.
+- Preserved released Base v9.3 history and separated candidate, trusted evidence and pin-finalization stages.
+
 ## 2026-07-30 — GDD module and visual-workspace index
 
 - Kept the compact six-domain GDD and single current-decision ledger, while adding a `GDD Module ID` card so a reader can find one topic's decision, responsible source, visual reference, implementation state, and next gate together.
@@ -98,7 +121,7 @@
 - 질문 전 최신 main·PR·정본·Google Sheets를 비교해 중복 질문을 막고, 기술 기본값과 사용자 기획 결정을 분리하며, 승인 즉시 정본·main·Sheets 동기화와 병합 후 적대적 검토를 수행하는 공용 계약·템플릿·회귀 테스트를 추가했다.
 - GPT가 기획·벤치마킹·시스템·데이터·UX·비-Godot 파일·GitHub 계약과 검수를 완료하고 Codex에는 읽기 전용 Plan 재검수 뒤 단계별 Godot 구현만 인계하는 공용 정책을 추가했다.
 - Codex의 동작 보존 기술 개선과 프로젝트 코어·플레이 규칙·MVP·주요 UX·저장 호환성 변경을 `CHANGE_PROPOSAL`로 분리했다.
-- 마스터 구현계획, Codex 패키지 Plan 보고서, Godot 구현 패키지 계약, 상위 Issue·패키지별 Branch·PR·사용자 병합 승인 Template을 추가했다.
+- 마스터 구현계획, Codex 패키지 Plan 보고서, Godot 구현 패키지 계약, 상위 Issue·패키지별 Branch·PR·사용자 병합 승인 Template을 추가했다. `SUPERSEDED`: 현재 기본 정책은 `AGENT_MERGE_REQUIRED`이며 별도 사용자 병합 승인을 요구하지 않는다.
 - Grill Me를 새 중복 Skill로 만들지 않고 `managing-project-intake-and-work-contract`의 `clarify` Mode에 통합해 저장소 우선 조사, 한 번에 하나의 질문, GPT 권장안, 결정 원장과 종료 기준을 고정했다.
 - `maintaining-project-context-and-handoff`에 `implementation-package-handoff` Mode를 추가해 GPT 계약 갱신 → Codex Build → GPT diff·테스트 검수 → 사용자 승인 흐름을 연결했다.
 - GitHub Actions를 `DOCS_ONLY / CANONICAL_CONTRACT / CODE_OR_ENGINE / CI_TOOLCHAIN_HIGH_RISK / FULL_MATRIX`로 계층화하고 PR concurrency 취소, 조건부 발행·Windows smoke와 안정된 `ci-gate`를 추가했다.
@@ -158,20 +181,3 @@
 새 채팅, 새 GPT와 새 Codex가 Base URL 하나에서 동일한 시작 규칙을 찾고, 대상 게임 프로젝트에 분야별 본책·이미지 책임 원본·GitHub 검사를 분화해 설치할 수 있는 공용 저장소 운영체계를 추가했다.
 
 변경:
-
-### Base v9.4 AI operations candidate
-
-- Added provider-neutral model/effort routing, Prompt caching boundaries, cost measurement and recalibration.
-- Added instruction authority budgeting, Interface-first Prompt, Context curation, Example-as-Fixture and Artifact claim limits.
-- Added Godot game UI motion contracts for interruption, instant completion, repetition, Reduced Motion, mute, haptic-off and domain authority.
-- Preserved released Base v9.3 history and separated candidate, trusted evidence and pin-finalization stages.
-
-
-### Base v9.4 released pins
-
-- Finalized Base v9.4 as `BASE_RELEASED`.
-- Payload: `a728712cb776ec98f4875914a580fcf7d0156593`.
-- Trusted evidence: `ef1fba11167e4da0b298123b0c85ebd268191a42`.
-- Registry SHA-256: `693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59`.
-- BCP-2026-003 and BCP-2026-004 transitioned to `IMPLEMENTED`.
-- Project adoption remains a separate post-release wave.

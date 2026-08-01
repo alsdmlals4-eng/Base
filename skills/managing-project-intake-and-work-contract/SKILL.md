@@ -1,6 +1,6 @@
 ---
 name: managing-project-intake-and-work-contract
-description: Use automatically when a project request must be routed, repository facts must be separated from user decisions, material ambiguity must be closed, a confirmed request must become an executable work contract, or approved work must be decomposed into dependency-aware execution steps.
+description: Use when routing a project request, closing material ambiguity, defining a work contract, or sequencing approved dependent work.
 ---
 
 # Managing Project Intake and Work Contracts

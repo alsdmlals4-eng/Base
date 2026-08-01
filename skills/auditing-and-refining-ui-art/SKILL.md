@@ -1,6 +1,6 @@
 ---
 name: auditing-and-refining-ui-art
-description: Use when planning, polishing, or reviewing game UX, UI information architecture, interaction patterns, input, accessibility, Godot UI contracts, rendered interface quality, or approved UI refinements without moving domain rules into presentation code.
+description: Use when planning, polishing, or auditing game UX, UI structure, interaction, input, accessibility, Godot UI, or rendered interface quality.
 ---
 
 # 게임 UX/UI 설계·폴리싱·감사

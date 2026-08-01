@@ -1,6 +1,6 @@
 ---
 name: governing-game-user-research-coverage
-description: Use when a game project's design-document system must install, audit, plan, or synthesize complete Games User Research coverage across eleven required evidence domains without inventing findings or forcing irrelevant research activity.
+description: Use when a game project must install, audit, plan, or synthesize Games User Research coverage across its eleven evidence domains.
 ---
 
 # Governing Games User Research Coverage

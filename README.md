@@ -69,8 +69,12 @@ START_HERE.md
 The current active-Skill count, list, owner, and positive/negative triggers are generated from [Current Active Base Skills](docs/generated/BASE_ACTIVE_SKILLS.md). This entrypoint does not maintain a second Skill list.
 
 - Machine authority: `skills/SKILL_REGISTRY.json` and each `SKILL.md` frontmatter
-- Derivatives: `.codex-plugin/plugin.json`, `base.lock.json`, and `skills/BASE_V9_SKILL_SNAPSHOT.json`
+- Current human view: `docs/generated/BASE_ACTIVE_SKILLS.md`
+- Historical identity: `.codex-plugin/plugin.json`, `base.lock.json`, and `skills/BASE_V9_SKILL_SNAPSHOT.json` are frozen v9.0 release derivatives, not the current routing authority
+- Behavior evaluation: `skills/SKILL_BEHAVIOR_EVALS.json` and `tools/check_skill_behavior_evals.py`
 - Legacy IDs: `skills/LEGACY_SKILL_ALIASES.md`
+
+활성 Skill 수는 Registry 관찰값이며 설계 제약이 아니다. 독립 책임과 검증 경계가 확인되면 새 Skill을 추가하고, 기존 mode로 충분하면 통합한다.
 
 ## 프로젝트 GDD와 선택형 대시보드
 

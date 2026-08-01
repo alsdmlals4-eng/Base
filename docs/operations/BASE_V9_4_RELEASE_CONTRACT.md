@@ -49,7 +49,6 @@ candidate_registry:
 4. trusted-main evidence PR #120
 5. trusted evidence merge `ef1fba11167e4da0b298123b0c85ebd268191a42`
 6. pin-finalization PR
-7. six project adoption audits and PRs
 ```
 
 ### Candidate
@@ -100,6 +99,14 @@ Godot UI 모션·목표 기기 성능 → NOT_RUN
 문서와 자동 Test 통과를 위 항목의 성공 증거로 과장하지 않는다.
 
 ## 7. 프로젝트 적용
+
+```yaml
+project_adoption: NOT_STARTED
+release_dependency: NONE
+execution_boundary: SEPARATE_PROJECT_ISSUE_BRANCH_PR
+```
+
+프로젝트 적용은 완료된 v9.4 릴리스 단계가 아니라 별도 post-release wave다. 실행 전까지 프로젝트별 감사·PR을 완료로 보고하지 않는다.
 
 릴리스 pin 확정 뒤 다음 순서로 프로젝트별 최신 main·로컬 Base 사본·기획 정본·실제 구현을 감사한다.
 

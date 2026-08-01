@@ -34,6 +34,16 @@ user_skill_declaration_required: false
 - 남은 위험·롤백:
 - 다음 작업:
 
+## 가설·학습·재사용 경계
+
+- 검증한 가설과 최소 단위:
+- 관찰·성공·실패 기준:
+- 결과 결정: `KEEP / REVISE / REDUCE / REMOVE / RETEST`
+- Base 공용 후보:
+- 프로젝트 전용:
+- 승격하지 않은 내용과 이유:
+- 실제 모델·런타임·사람 검증 상태:
+
 ## 규칙
 
 - “도움이 될 것 같아서”가 아니라 Registry trigger와 현재 단계로 이유를 쓴다.

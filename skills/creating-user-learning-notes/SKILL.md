@@ -1,6 +1,6 @@
 ---
 name: creating-user-learning-notes
-description: Use when completed project work, AI collaboration, tools, mistakes, or decisions should be converted into concise user-facing study notes that explain concepts, reasons, examples, misconceptions, practice steps, and reusable lessons rather than operational instructions for an AI.
+description: Use when completed work, AI collaboration, tools, mistakes, or decisions should become concise user-facing study notes and practice.
 ---
 
 # Creating User Learning Notes

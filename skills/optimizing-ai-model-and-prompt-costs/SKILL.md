@@ -1,6 +1,6 @@
 ---
 name: optimizing-ai-model-and-prompt-costs
-description: Use when an AI work package needs a model and reasoning-effort recommendation, a cacheable prompt boundary, cost estimation, actual usage measurement, or recalibration that includes quality failures and rework instead of choosing the cheapest model in isolation.
+description: Use when AI work needs model and reasoning-effort routing, cache boundaries, cost estimates, usage measurement, or quality-aware recalibration.
 ---
 
 # AI 모델·추론·Prompt 비용 최적화

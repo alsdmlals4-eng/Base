@@ -1,6 +1,6 @@
 ---
 name: establishing-project-core
-description: Use in PLAN work when a new or changing project needs its identity-defining player promise, core actions, core loop, system anchors, invariants, changeable shell, and required technical foundations proposed, stress-tested, explicitly approved, and recorded as the project core contract.
+description: Use when PLAN work must propose, stress-test, approve, and record a new or changing project's player promise and core invariants.
 ---
 
 # Establishing Project Core

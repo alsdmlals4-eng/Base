@@ -48,12 +48,28 @@ class CanonicalReferenceFreshnessTests(unittest.TestCase):
                 "name": "local-skill-sync",
                 "when_changed": ["skills/**/SKILL.md"],
                 "exclude_when_changed": ["skills/shared-skill/SKILL.md"],
+                "ignore_frontmatter_only_keys": ["description"],
+                "require_all_changed": ["skills/SKILL_LEARNING_LOG.md"],
+                "require_any_changed": ["tests/test_local_skill.py"],
+            }, {
+                "name": "skill-identity-registry-sync",
+                "when_changed": ["skills/**/SKILL.md"],
+                "exclude_when_changed": [],
+                "when_frontmatter_keys_changed": ["name"],
                 "require_all_changed": ["skills/SKILL_REGISTRY.json"],
-                "require_any_changed": ["skills/SKILL_LEARNING_LOG.md"],
+                "require_any_changed": ["tests/test_local_skill.py"],
+            }, {
+                "name": "skill-description-learning-test-sync",
+                "when_changed": ["skills/**/SKILL.md"],
+                "exclude_when_changed": [],
+                "when_frontmatter_keys_changed": ["description"],
+                "require_all_changed": ["skills/SKILL_LEARNING_LOG.md"],
+                "require_any_changed": ["tests/test_local_skill.py"],
             }, {
                 "name": "shared-skill-sync",
                 "when_changed": ["skills/shared-skill/SKILL.md"],
                 "exclude_when_changed": [],
+                "ignore_frontmatter_only_keys": ["description"],
                 "require_all_changed": [
                     "skills/BASE_SHARED_SKILL_ROUTES.json",
                     "skills/shared-skill/LEARNING_LOG.md",
@@ -149,12 +165,13 @@ class CanonicalReferenceFreshnessTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("does not reference current canonical source", result.stdout)
 
-    def test_local_skill_change_requires_registry_and_learning_log(self) -> None:
+    def test_local_skill_body_change_requires_learning_log_and_test(self) -> None:
         skill = self.root / "skills/new-skill/SKILL.md"
         skill.parent.mkdir(parents=True)
         skill.write_text("# Skill\n", encoding="utf-8")
         (self.root / "skills/SKILL_REGISTRY.json").write_text("{}\n", encoding="utf-8")
         (self.root / "skills/SKILL_LEARNING_LOG.md").write_text("# Log\n", encoding="utf-8")
+        (self.root / "tests/test_local_skill.py").write_text("# test\n", encoding="utf-8")
         base = self._init_git()
         skill.write_text("# Changed Skill\n", encoding="utf-8")
         self._git("add", "skills/new-skill/SKILL.md")
@@ -163,6 +180,80 @@ class CanonicalReferenceFreshnessTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("requires changed companions", result.stdout)
         self.assertIn("requires at least one changed companion", result.stdout)
+
+    def test_skill_name_change_requires_registry_even_when_learning_and_test_change(self) -> None:
+        skill = self.root / "skills/new-skill/SKILL.md"
+        skill.parent.mkdir(parents=True)
+        skill.write_text(
+            "---\nname: old-name\ndescription: Use when needed.\n---\n# Skill\n",
+            encoding="utf-8",
+        )
+        registry = self.root / "skills/SKILL_REGISTRY.json"
+        learning = self.root / "skills/SKILL_LEARNING_LOG.md"
+        test = self.root / "tests/test_local_skill.py"
+        registry.write_text("{}\n", encoding="utf-8")
+        learning.write_text("# Log\n", encoding="utf-8")
+        test.write_text("# test\n", encoding="utf-8")
+        base = self._init_git()
+        skill.write_text(
+            "---\nname: new-name\ndescription: Use when needed.\n---\n# Skill\n",
+            encoding="utf-8",
+        )
+        learning.write_text("# Updated Log\n", encoding="utf-8")
+        test.write_text("# updated test\n", encoding="utf-8")
+        self._git("add", "skills/new-skill/SKILL.md", "skills/SKILL_LEARNING_LOG.md", "tests/test_local_skill.py")
+        self._git("commit", "-m", "rename skill without registry")
+        result = self._run(base, self._git("rev-parse", "HEAD"))
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("skill-identity-registry-sync", result.stdout)
+        self.assertIn("skills/SKILL_REGISTRY.json", result.stdout)
+
+    def test_description_only_change_requires_learning_and_test_but_not_registry(self) -> None:
+        skill = self.root / "skills/new-skill/SKILL.md"
+        skill.parent.mkdir(parents=True)
+        skill.write_text(
+            "---\nname: new-skill\ndescription: Use when the old wording applies.\n---\n# Skill\n",
+            encoding="utf-8",
+        )
+        registry = self.root / "skills/SKILL_REGISTRY.json"
+        learning = self.root / "skills/SKILL_LEARNING_LOG.md"
+        test = self.root / "tests/test_local_skill.py"
+        registry.write_text("{}\n", encoding="utf-8")
+        learning.write_text("# Log\n", encoding="utf-8")
+        test.write_text("# test\n", encoding="utf-8")
+        base = self._init_git()
+        skill.write_text(
+            "---\nname: new-skill\ndescription: Use when the shorter wording applies.\n---\n# Skill\n",
+            encoding="utf-8",
+        )
+        learning.write_text("# Updated Log\n", encoding="utf-8")
+        test.write_text("# updated test\n", encoding="utf-8")
+        self._git("add", "skills/new-skill/SKILL.md", "skills/SKILL_LEARNING_LOG.md", "tests/test_local_skill.py")
+        self._git("commit", "-m", "shorten discovery description")
+        result = self._run(base, self._git("rev-parse", "HEAD"))
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_description_only_change_without_learning_and_test_fails(self) -> None:
+        skill = self.root / "skills/new-skill/SKILL.md"
+        skill.parent.mkdir(parents=True)
+        skill.write_text(
+            "---\nname: new-skill\ndescription: Use when the old wording applies.\n---\n# Skill\n",
+            encoding="utf-8",
+        )
+        (self.root / "skills/SKILL_REGISTRY.json").write_text("{}\n", encoding="utf-8")
+        (self.root / "skills/SKILL_LEARNING_LOG.md").write_text("# Log\n", encoding="utf-8")
+        (self.root / "tests/test_local_skill.py").write_text("# test\n", encoding="utf-8")
+        base = self._init_git()
+        skill.write_text(
+            "---\nname: new-skill\ndescription: Use when materially different routing applies.\n---\n# Skill\n",
+            encoding="utf-8",
+        )
+        self._git("add", "skills/new-skill/SKILL.md")
+        self._git("commit", "-m", "change discovery authority without evidence")
+        result = self._run(base, self._git("rev-parse", "HEAD"))
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("skill-description-learning-test-sync", result.stdout)
+        self.assertIn("skills/SKILL_LEARNING_LOG.md", result.stdout)
 
     def test_shared_skill_change_uses_route_and_package_log_not_local_registry(self) -> None:
         skill = self.root / "skills/shared-skill/SKILL.md"

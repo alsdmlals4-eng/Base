@@ -30,20 +30,42 @@
 | 문서·참조 | | | |
 | 자산·구성 | | | |
 
+## 4.1 가설·요소·다관점 검토
+
+```yaml
+hypothesis:
+minimum_test_unit:
+observation_method:
+success_threshold:
+failure_threshold:
+evidence_decision: KEEP / REVISE / REDUCE / REMOVE / RETEST
+```
+
+| 요소 | element_purpose | 입력·출력 | integration_interface | 개별 결과 | 통합 결과 |
+|---|---|---|---|---|---|
+| | | | | | |
+
+| Lens | APPLIED / NOT_APPLICABLE / BLOCKED_UNVERIFIED | Finding·제외 이유 | 증거 |
+|---|---|---|---|
+| Simplify | | | |
+| Style Guide | | | |
+| Domain Review | | | |
+| Security/Safety/Trust Boundary | | | |
+
 ## 5. 런타임·렌더·빌드 검증
 
 | 시작점·환경 | 실행 절차 | 기대 결과 | 실제 결과 | 판정 |
 |---|---|---|---|---|
 | | | | | |
 
-## 6. 대표·경계·반례·회귀
+## 6. Golden Path·Edge·반례·Regression
 
 | 유형 | 시나리오 | 결과 | 증거 |
 |---|---|---|---|
-| 대표 정상 | | | |
-| 경계 | | | |
+| Golden Path | | | |
+| Edge | | | |
 | 원래 실패 반례 | | | |
-| 인접 기존 기능 | | | |
+| Regression | | | |
 | 복구·롤백 | | | |
 
 ## 7. 외부 산출물 독립 검수
@@ -79,3 +101,10 @@
 - 로그·리포트:
 - 캡처·렌더:
 - 관련 Issue·PR:
+
+## 12. 회고·재사용 경계
+
+- Base 공용 후보:
+- 프로젝트 전용:
+- 승격하지 않음:
+- 반복 검증이 필요한 조건:

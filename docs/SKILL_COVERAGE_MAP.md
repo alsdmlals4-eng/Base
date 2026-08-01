@@ -23,11 +23,12 @@
 - 플레이어 경험·벤치마킹·MVP·PoC·플레이테스트: `analyzing-and-refining-game-concepts`.
 - 프로젝트 코어 사실 판정과 승인 확정: `identifying-project-core`, `establishing-project-core`.
 - 문서 기억·정본·단계별 컨텍스트 압축: `managing-design-documents`, `maintaining-project-context-and-handoff`.
-- GPT 비-Godot 완료→Codex 읽기 전용 Plan→단계별 Godot 구현→GPT 검수→사용자 병합 승인: `maintaining-project-context-and-handoff`의 `implementation-package-handoff` Mode.
+- GPT 비-Godot 완료→Codex 읽기 전용 Plan→단계별 Godot 구현→GPT 검수→`AGENT_MERGE_REQUIRED` Gate: `maintaining-project-context-and-handoff`의 `implementation-package-handoff` Mode.
 - 다중 관점 공격·개선: `running-adversarial-review-and-refinement`.
 - 실제 diff·테스트·완료 증거: `reviewing-and-validating-project-changes`.
 - 변경 유형별 CI 계층, GitHub Actions 비용 절감, concurrency·`ci-gate`, Actions 차단 시 보류 상태: `reviewing-and-validating-project-changes`의 `ci-cost-optimization` Mode.
 - Skill 생성·통합·학습: `evolving-project-discipline-skills`.
+- 실제 Prompt→Work Mode·Skill·Skill Mode 행동 평가: `evolving-project-discipline-skills`의 `behavior-eval` Mode와 `skills/SKILL_BEHAVIOR_EVALS.json`.
 
 ## Base 자체 적용 순서
 

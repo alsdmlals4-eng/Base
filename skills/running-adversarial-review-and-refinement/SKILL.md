@@ -1,6 +1,6 @@
 ---
 name: running-adversarial-review-and-refinement
-description: Use when a design, plan, document, code proposal, data change, UX flow, repository, merged pull request, direct main decision commit, or other work product should be attacked as if it failed, its criticisms independently validated, only justified findings refined, and the revised result regression-checked without changing project core or adding unnecessary scope.
+description: Use when a work product, repository, PR, or merged decision must be attacked for failure, its criticisms validated, and approved findings regression-checked.
 ---
 
 # Running Adversarial Review and Refinement

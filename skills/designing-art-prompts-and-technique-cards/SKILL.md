@@ -1,6 +1,6 @@
 ---
 name: designing-art-prompts-and-technique-cards
-description: Use when recommending an art or UI visual technique, designing image-generation or image-editing prompts, generating planning or final-candidate images and mockups with GPT, recording reusable prompt patterns, or reviewing generated visuals before project approval.
+description: Use when designing art or UI image prompts, generating planning or candidate visuals, recording techniques, or reviewing generated images before approval.
 ---
 
 # Designing Art Prompts and Technique Cards

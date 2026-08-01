@@ -1,6 +1,6 @@
 ---
 name: orchestrating-deepseek-worktrees
-description: Use when a large drafting, classification, comparison, or repetitive transformation task can be delegated to DeepSeek or another external model while Codex retains review and repository integration responsibility.
+description: Use when a large drafting, classification, comparison, or repetitive transformation can be isolated for an external model.
 ---
 
 # Orchestrating DeepSeek Worktrees
