@@ -12,6 +12,7 @@
     "payload_commit",
     "registry_sha256",
     "candidate_issue",
+    "linked_issue",
     "candidate_pr",
     "verification",
     "limitations"
