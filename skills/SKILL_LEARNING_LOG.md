@@ -537,3 +537,15 @@
 - 검증: 실행형 topology checker, fixture RED→GREEN, focused Python 회귀, 전체 Python 회귀 388개 통과·환경 의존 5개 건너뜀.
 - 미실행 검증: 실제 PR Actions `PENDING`.
 - 다음 검토 트리거: Required Check Pending 재발, Workflow 추가·이름 변경, Ruleset context 변경.
+
+## 2026-08-01 — 중립적 적대 검토와 기능 생명주기
+
+- 상태: `OBSERVATION`
+- 호출 트리거: 기능 구현 전반과 전체 제작 생명주기를 결합하고, 사용자 의견에 무조건 긍정하지 말며 중립적 적대 검토로 최선의 결론을 도출하라는 사용자 결정
+- 결정: 새 광역 Skill을 만들지 않고 `managing-project-intake-and-work-contract`를 상위 라우터로 유지한다. 사용자안과 AI 최초안에 같은 평가 기준을 적용하며, 근거 없는 동의와 반대를 위한 반대를 모두 실패 조건으로 둔다.
+- 적용 경계: 권장안·판정에는 경량 중립성 Gate, L1 이상 기능·설계·아키텍처·정책·방향 결정에는 전체 적대 검토 루프를 적용한다. L0 오탈자·명백한 기계 수정·동일 입력 재실행은 전체 루프에서 제외한다.
+- 실제 산출물: 항상 적용 규칙, 운영 모델의 기능 생명주기, 라우팅 경계, intake의 `neutral-recommendation-gate`, 적대 검토의 대칭 평가 규칙, `SBE-011` 행동 Fixture와 집중 회귀
+- 검증: 집중 계약, 행동 평가 계약, Skill package, 문서 governance, reference freshness, 전체 회귀와 Base v9 integrity의 실제 결과를 PR 증거로 기록한다.
+- 미검증: 외부 모델 결과를 사용한 동의 편향 감소율과 실제 프로젝트별 오라우팅 변화는 `NOT_RUN`
+- 프로젝트 전용 유지: 실제 기능 요구, 기술 스택, PyTorch·머신러닝 데이터·모델·수치, 프로젝트 코드·자산·Google Sheets
+- 다음 검토 트리거: 과도한 REVIEW 호출, 명백한 사실에 불필요한 대안 생성, 사용자 결정권 약화, 모델 결과에서 근거 없는 동의 또는 기계적 반대 재발
