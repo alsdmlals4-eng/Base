@@ -94,7 +94,7 @@ class V9RegistryGenerationTests(unittest.TestCase):
             candidate["candidate_registry"]["sha256"],
             hashlib.sha256(REGISTRY.read_bytes()).hexdigest(),
         )
-        self.assertIn(f"- Active Skill count: `{len(active)}`", summary)
+        self.assertIn(f"> Current active Skill count: `{len(active)}`", summary)
         self.assertIn("`optimizing-ai-model-and-prompt-costs`", summary)
 
         for item in snapshot["skills"]:
