@@ -165,7 +165,6 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             "managing-game-project-operating-system",
             "managing-design-documents",
             "managing-base-change-proposals",
-            "optimizing-ai-model-and-prompt-costs",
             "governing-legacy-retention-and-archives",
             "evaluating-godot-assets-and-plugins-before-creation",
             "reviewing-and-validating-project-changes",
