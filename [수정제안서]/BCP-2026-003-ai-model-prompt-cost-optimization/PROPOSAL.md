@@ -5,7 +5,7 @@
 - 출처 프로젝트: `alsdmlals4-eng/Base`
 - 기준 커밋: `a82976a3a42450ea413cdc5d4aebf701678110d8`
 - 제출일: `2026-07-31`
-- 상태: `SUBMITTED`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 지식 상태: `패턴 + 검증 필요 수치`
 - 추적 Issue: `#113`
 
@@ -109,3 +109,10 @@ Base에는 공용 분류법, provider profile 형식, 측정식, 실패 조건�
 - 책임 경계: 모델 라우팅·비용·캐싱의 입력·출력·검증을 지시·컨텍스트·UI 모션 책임과 합치지 않는다.
 - 제외: 프로젝트 자동 반영, 실제 모델 전환 조작, 검증되지 않은 수치 상수화, v9.3 history rewrite
 - 롤백: 제안 PR을 닫거나 상태를 보존한 채 구현하지 않는다. 활성 Base 파일은 이 제안 PR에서 변경하지 않는다.
+
+## Base v9.4 구현 연결
+
+- approval_ref: `https://github.com/alsdmlals4-eng/Base/issues/113`
+- implementation_pr: `https://github.com/alsdmlals4-eng/Base/pull/118`
+- 상태 전환 위치: 제안 PR이 아니라 승인된 별도 Base v9.4 구현 PR
+- BCP-2026-003과 BCP-2026-004는 같은 후보 PR을 사용하지만 Skill·Method·Reference·Test 책임을 분리한다.

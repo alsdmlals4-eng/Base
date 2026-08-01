@@ -70,7 +70,7 @@ class V9RegistryGenerationTests(unittest.TestCase):
                 GENERATOR_MODULE.sha256_normalized_text_file(crlf),
             )
 
-    def test_generated_artifacts_match_current_registry_and_are_deterministic(self) -> None:
+    def test_generated_artifacts_preserve_released_v90_snapshot_and_publish_current_registry_view(self) -> None:
         first = self.run_generator("--write")
         self.assertEqual(first.returncode, 0, first.stderr)
         before = {path: hashlib.sha256(path.read_bytes()).hexdigest() for path in OUTPUTS}
@@ -84,11 +84,19 @@ class V9RegistryGenerationTests(unittest.TestCase):
         registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
         active = [item for item in registry["skills"] if item["status"] == "ACTIVE"]
         snapshot = json.loads((ROOT / "skills/BASE_V9_SKILL_SNAPSHOT.json").read_text(encoding="utf-8"))
-        self.assertEqual(snapshot["active_skill_count"], len(active))
+        released_lock = json.loads((ROOT / "base.lock.json").read_text(encoding="utf-8"))
+        candidate = json.loads((ROOT / "base-v9.4.lock.json").read_text(encoding="utf-8"))
+        summary = (ROOT / "docs/generated/BASE_ACTIVE_SKILLS.md").read_text(encoding="utf-8")
+
+        self.assertEqual(snapshot["active_skill_count"], released_lock["active_skill_count"])
+        self.assertEqual(len(snapshot["skills"]), released_lock["active_skill_count"])
         self.assertEqual(
-            [item["skill_id"] for item in snapshot["skills"]],
-            [item["skill_id"] for item in active],
+            candidate["candidate_registry"]["sha256"],
+            hashlib.sha256(REGISTRY.read_bytes()).hexdigest(),
         )
+        self.assertIn(f"> Current active Skill count: `{len(active)}`", summary)
+        self.assertIn("`optimizing-ai-model-and-prompt-costs`", summary)
+
         for item in snapshot["skills"]:
             self.assertEqual(
                 set(item["contract"]),

@@ -337,3 +337,11 @@ Audit only
 | 사용자 학습 노트 | `creating-user-learning-notes` |
 | 시각 대시보드 | `building-project-visual-dashboards` |
 | 엔진 런타임 오류 | `diagnosing-game-engine-runtime-failures` |
+
+## Base v9.4 AI 작업 패키지
+
+- `[모델 추천]`: 현재 작업을 `SIMPLE_BULK / ROUTINE_BALANCED / HIGH_RISK_REASONING`으로 분류하고 모델·추론 단계·이유·변경 checkpoint를 제시한다.
+- 지시 권위: `HARD_CONSTRAINT / RECOMMENDED_DEFAULT / JUDGMENT_SPACE`를 구분한다.
+- Context 큐레이션: 현재 결정 질문, 포함·제외 기준, 권위, freshness, known conflicts, 반대 근거, progressive load와 refresh trigger를 기록한다.
+- 예시는 인터페이스 뒤의 Fixture·Golden Set이며 정본을 덮어쓰지 않는다.
+- Artifact는 주장 상한과 실행하지 않은 검증을 `NOT_RUN`으로 남긴다.

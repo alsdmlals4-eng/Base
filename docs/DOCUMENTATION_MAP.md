@@ -246,3 +246,12 @@ DOCX·다이어그램은 선언한 경우만 생성한다. `CURRENT`, 자동 렌
 6. 미확정·보류·위험·롤백·다음 진입 조건은 무엇인가.
 
 L1 이상 완료 보고는 실제 사용한 Work Mode·Skill·Skill Mode와 이유, 변경 파일, 근거, 검증 결과, 미검증, Archive·호환·롤백, 다음 작업을 분리한다. GitHub Actions·Repository 설정·런타임·Google Sheets를 확인하지 못했으면 성공으로 추정하지 않는다.
+
+## Base v9.4 AI 운영 계약
+
+| 질문 | 책임 원본 |
+|---|---|
+| 모델·추론 단계·Prompt caching·비용 | `skills/optimizing-ai-model-and-prompt-costs/SKILL.md` |
+| 지시 권위·Interface-first·Context 큐레이션·Artifact 주장 상한 | `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md` |
+| 게임 UI 모션·중단·반복·Reduced Motion | `skills/auditing-and-refining-ui-art/references/ui-motion-and-interaction-principles.md` |
+| Base v9.4 후보·evidence·pin 순서 | `docs/operations/BASE_V9_4_RELEASE_CONTRACT.md` |

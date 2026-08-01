@@ -10,6 +10,7 @@ on:
       - "base-v9.1.lock.json"
       - "base-v9.2.lock.json"
       - "base-v9.3.lock.json"
+      - "base-v9.4.lock.json"
       - ".codex-plugin/**"
       - "docs/**"
       - "skills/**"
@@ -28,6 +29,7 @@ on:
       - "base-v9.1.lock.json"
       - "base-v9.2.lock.json"
       - "base-v9.3.lock.json"
+      - "base-v9.4.lock.json"
       - ".codex-plugin/**"
       - "docs/**"
       - "skills/**"
@@ -59,7 +61,7 @@ jobs:
         run: |
           python tools/build_base_v9_artifacts.py --check
           python tools/check_base_v9_integrity.py --trusted-history-commit "$TRUSTED_HISTORY_COMMIT"
-      - name: Run Base v9, v9.1, and active v9 prompt focused tests
+      - name: Run Base v9, v9.1, v9.4, and active v9 prompt focused tests
         run: |
           python -m unittest \
             tests.test_v9_machine_contracts \
@@ -70,6 +72,8 @@ jobs:
             tests.test_v9_1_skill_pressure_contracts \
             tests.test_project_gdd_google_sheets_contract \
             tests.test_vertical_slice_v9_contract \
+            tests.test_base_v9_4_ai_operations_contract \
+            tests.test_base_v9_4_release_evidence_contract \
             -v
 
   ci-gate:

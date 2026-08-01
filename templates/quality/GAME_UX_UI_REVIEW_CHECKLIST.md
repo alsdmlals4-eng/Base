@@ -120,3 +120,12 @@ remaining_risks:
 rollback:
 next_gate:
 ```
+
+## UI 모션·상호작용 검수
+
+- [ ] 모션 목적과 상태 변화가 명확하다.
+- [ ] 입력 접수·처리 중·실제 결과가 구분된다.
+- [ ] AnimationPlayer·Tween이 도메인 상태 권위를 소유하지 않는다.
+- [ ] 중단·즉시 완료·빠른 반복·재진입에서 결과 중복과 transform drift가 없다.
+- [ ] Reduced Motion·mute·haptic-off에서 핵심 정보와 결과가 유지된다.
+- [ ] 목표 해상도·긴 한국어·성능·전후 증거를 실제로 검사했다.
