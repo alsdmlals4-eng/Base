@@ -34,7 +34,7 @@
       "source_commit": "a82976a3a42450ea413cdc5d4aebf701678110d8",
       "submitted_at": "2026-07-31",
       "approval_ref": "https://github.com/alsdmlals4-eng/Base/issues/113",
-      "implementation_pr": 118
+      "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/118"
     },
     {
       "proposal_id": "BCP-2026-004-ai-instruction-context-ui-motion",
@@ -45,7 +45,7 @@
       "source_commit": "7978093e16577f1a4e2f60fbc85ebf25d906673b",
       "submitted_at": "2026-08-01",
       "approval_ref": "https://github.com/alsdmlals4-eng/Base/issues/115",
-      "implementation_pr": 118
+      "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/118"
     }
   ]
 }
