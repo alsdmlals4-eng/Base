@@ -1,0 +1,5 @@
+# Default owner for the personal Base repository.
+* @alsdmlals4-eng
+
+# Keep workflows, dependency policy, and this ownership file self-owned.
+/.github/ @alsdmlals4-eng
