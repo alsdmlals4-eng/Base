@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "artifact_role": "BASE_V9_4_TRUSTED_RELEASE_EVIDENCE",
+  "release_line": "v9.4.0",
+  "repository": "alsdmlals4-eng/Base",
+  "payload_commit": "a728712cb776ec98f4875914a580fcf7d0156593",
+  "registry_sha256": "693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59",
+  "candidate_issue": 113,
+  "linked_issue": 115,
+  "candidate_pr": 118,
+  "verification": {
+    "candidate_exact_head": "82c65329a90172de7a67d00c7b43c457fe2a50ad",
+    "base_v94_focused_contract": "PASSED",
+    "base_v94_integrity": "PASSED",
+    "proposal_lifecycle_and_schema": "PASSED",
+    "canonical_reference_freshness": "PASSED",
+    "ubuntu_governance_regression": "PASSED",
+    "docs_publication_generation": "PASSED",
+    "windows_publication_smoke": "PASSED",
+    "ux_ui_motion_regression": "PASSED",
+    "vertical_slice_prompt": "PASSED",
+    "bca_visual_sheet_workflow": "PASSED",
+    "evidence_knowledge_workflow": "PASSED",
+    "dependency_review": "PASSED",
+    "codeql": "PASSED_NO_ALERTS",
+    "unresolved_review_threads": "0",
+    "adversarial_p0_p1": "0",
+    "post_merge_adversarial_review": "NO_CONFLICT"
+  },
+  "limitations": {
+    "provider_billing_cache_hit_actual_savings": "NOT_RUN",
+    "automatic_chatgpt_model_switching": "NOT_APPLICABLE",
+    "godot_runtime_ui_motion_target_device_performance": "NOT_RUN",
+    "human_ui_comprehension_repetition_fatigue": "HUMAN_NOT_RUN",
+    "project_adoption": "NOT_STARTED"
+  }
+}
