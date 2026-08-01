@@ -74,6 +74,7 @@ jobs:
             tests.test_vertical_slice_v9_contract \
             tests.test_base_v9_4_ai_operations_contract \
             tests.test_base_v9_4_release_evidence_contract \
+            tests.test_base_v9_4_trusted_evidence_record \
             -v
 
   ci-gate:
