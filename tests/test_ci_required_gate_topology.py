@@ -101,7 +101,7 @@ jobs:
 
 class CiRequiredGateTopologyTests(unittest.TestCase):
     def _run(self, workflows: dict[str, str]) -> subprocess.CompletedProcess[str]:
-        with tempfile.TemporaryDirectory(dir=ROOT) as temporary:
+        with tempfile.TemporaryDirectory(prefix="base-ci-topology-") as temporary:
             fixture = Path(temporary)
             workflow_root = fixture / ".github/workflows"
             workflow_root.mkdir(parents=True)

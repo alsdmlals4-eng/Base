@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 import shutil
 import subprocess
 import sys
@@ -13,26 +12,23 @@ from pathlib import Path
 
 from docx import Document
 
+from tools.publication_readiness import publication_readiness
+
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 GENERATOR = REPOSITORY_ROOT / "tools/build_project_skill_map.py"
 SUPPORT = REPOSITORY_ROOT / "tools/publication_v3.py"
 DIAGRAM_GENERATOR = REPOSITORY_ROOT / "tools/skill_map_diagrams.py"
 SCHEMAS = REPOSITORY_ROOT / "schemas"
+PUBLICATION_READINESS = publication_readiness(REPOSITORY_ROOT)
 
 
 def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def publication_tools_available() -> bool:
-    libreoffice = os.environ.get("BASE_LIBREOFFICE") or shutil.which("libreoffice") or shutil.which("soffice")
-    pdftoppm = os.environ.get("BASE_PDFTOPPM") or shutil.which("pdftoppm")
-    return bool(libreoffice and Path(libreoffice).is_file() and pdftoppm and Path(pdftoppm).is_file())
-
-
 @unittest.skipUnless(
-    publication_tools_available(),
-    "LibreOffice and pdftoppm are required",
+    PUBLICATION_READINESS.ready,
+    PUBLICATION_READINESS.skip_reason,
 )
 class ProjectSkillMapGenerationTests(unittest.TestCase):
     def test_registry_generates_optional_markdown_docx_pdf_and_manifest(self) -> None:

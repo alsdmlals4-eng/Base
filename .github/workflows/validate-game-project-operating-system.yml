@@ -103,7 +103,7 @@ jobs:
                   .github/workflows/*|tests/test_ci_workflow_cost_policy.py)
                     has_ci=true
                     ;;
-                  tools/build_design_documents.py|tools/build_policy_driven_design_documents.py|tools/design_document_diagrams.py|tools/publication_v3.py|tools/check_publication_environment.py|tests/test_design_document_publication_governance.py|tests/test_design_document_generation.py|tests/test_policy_driven_publication.py|tests/test_project_skill_map_generation.py|tests/test_ui_art_audit.py|requirements-publication.txt|package.json|pnpm-lock.yaml|pnpm-workspace.yaml)
+                  tools/build_design_documents.py|tools/build_policy_driven_design_documents.py|tools/design_document_diagrams.py|tools/publication_v3.py|tools/publication_readiness.py|tools/check_publication_environment.py|tests/test_design_document_publication_governance.py|tests/test_design_document_generation.py|tests/test_policy_driven_publication.py|tests/test_project_skill_map_generation.py|tests/test_publication_readiness.py|tests/test_ui_art_audit.py|requirements-publication.txt|package.json|pnpm-lock.yaml|pnpm-workspace.yaml)
                     has_code=true
                     platform_smoke=true
                     ;;
@@ -302,7 +302,9 @@ jobs:
             tools/build_policy_driven_design_documents.py \
             tools/design_document_diagrams.py \
             tools/publication_v3.py \
+            tools/publication_readiness.py \
             tools/check_publication_environment.py \
+            tools/run_local_validation.py \
             tools/check_base_change_proposals.py \
             tools/check_interview_contract.py \
             tools/audit_external_source.py \
@@ -326,7 +328,9 @@ jobs:
             tests/test_gpt_codex_workflow_contract.py \
             tests/test_ci_workflow_cost_policy.py \
             tests/test_ci_required_gate_topology.py \
-            tests/test_ci_required_gate_evaluator.py
+            tests/test_ci_required_gate_evaluator.py \
+            tests/test_publication_readiness.py \
+            tests/test_local_validation.py
 
       - name: Validate Base change proposals
         if: github.event_name == 'pull_request'
@@ -361,6 +365,8 @@ jobs:
             tests/test_ci_workflow_cost_policy.py \
             tests/test_ci_required_gate_topology.py \
             tests/test_ci_required_gate_evaluator.py \
+            tests/test_publication_readiness.py \
+            tests/test_local_validation.py \
             -v 2>&1 | tee operating-system-contract-results.txt
           python tools/check_skill_system_coverage.py \
             2>&1 | tee -a operating-system-contract-results.txt
@@ -421,6 +427,7 @@ jobs:
             tests/test_design_document_generation.py \
             tests/test_policy_driven_publication.py \
             tests/test_project_skill_map_generation.py \
+            tests/test_publication_readiness.py \
             tests/test_ui_art_audit.py \
             -v 2>&1 | tee publication-test-results.txt
 
@@ -490,7 +497,7 @@ jobs:
             throw "pdftoppm.exe not found at pinned path: $env:BASE_PDFTOPPM"
           }
           python tools/check_publication_environment.py --require-mermaid
-          python -m unittest tests.test_design_document_generation tests.test_policy_driven_publication tests.test_project_skill_map_generation tests.test_ui_art_audit -v
+          python -m unittest tests.test_design_document_generation tests.test_policy_driven_publication tests.test_project_skill_map_generation tests.test_publication_readiness tests.test_ui_art_audit -v
 
   ci-gate:
     name: ci-gate

@@ -537,3 +537,15 @@
 - 검증: 실행형 topology checker, fixture RED→GREEN, focused Python 회귀, 전체 Python 회귀 388개 통과·환경 의존 5개 건너뜀.
 - 미실행 검증: 실제 PR Actions `PENDING`.
 - 다음 검토 트리거: Required Check Pending 재발, Workflow 추가·이름 변경, Ruleset context 변경.
+
+## 2026-08-02 — 실행형 발행 준비도와 로컬 검증 격리
+
+- 상태: `OBSERVATION`
+- 문제: 경로 존재만 확인한 두 생성 테스트의 gate가 실행 불가능한 래퍼와 누락 폰트를 준비 완료로 오판했다. 396개 기준 회귀에서 생성 class가 진입해 폰트 관련 실패 2건이 발생했다.
+- 구현 가설: LibreOffice의 실제 PDF 변환, Poppler 실행, regular/bold 폰트를 하나의 공유 준비도 계약으로 검사하고, 전체 로컬 검증은 저장소가 소유한 `.tmp/local-validation-*` 세션에 `TMPDIR`·`TMP`·`TEMP`를 고정한다.
+- 현재 결과: 공유 준비도 fixture와 소비자 회귀는 통과했다. 현재 환경에는 필수 폰트가 없어 생성 검사는 이유가 표시된 `SKIPPED`이며 발행 검증 `PASSED`가 아니다.
+- 적대적 검토: `MUST_FIX`로 공용 probe가 Windows `.cmd/.bat` 안전 실행 계약을 우회한 회귀를 발견해 기존 안전 command-array 생성기로 복구했다. `SHOULD_FIX`로 timeout pipe 잔존과 세션 경로 바꿔치기가 자식 실패 코드를 가리는 문제를 확인해 process drain·세션 identity·원래 실패 코드 보존 회귀를 추가했다.
+- 독립 코드 리뷰: 자손이 probe pipe를 상속한 timeout의 무제한 drain, root-only readiness cache의 stale override, Windows 전체 readiness fixture skip을 `Important`로 확인했다. 자손 process-group 종료와 bounded drain, resolved tool·file identity cache key, Windows 전용 실제 `.cmd` 실행 회귀로 수정했으며 재리뷰 결과 Critical/Important 0건이었다. Windows 실제 실행 결과는 exact-head Actions 전까지 `NOT_RUN`이다.
+- 안전 경계: 정리 대상은 현재 실행이 만든 정확한 세션 하나뿐이며 일반 `tmp*`, 사용자 파일, `.venv`, 캐시는 삭제하지 않는다. `.gitignore`도 `.tmp/`와 `.venv/`만 숨긴다.
+- 지식 상태: Base 한 저장소의 성공만으로 외부 프로젝트 전체에 적용할 범용 의무를 확정하지 않는다. 서로 다른 프로젝트와 Windows/Linux 실제 발행 환경에서 재현될 때 `PATTERN` 승격을 검토한다.
+- 다음 검토 트리거: 준비된 CI에서 생성 검사가 skip되거나 실패하는 경우, 임시 파일 잔존 재발, 외부 프로젝트 어댑터 적용 결과.
