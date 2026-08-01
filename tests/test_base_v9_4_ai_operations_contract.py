@@ -20,6 +20,8 @@ V94_LOCK = ROOT / "base-v9.4.lock.json"
 V94_SCHEMA = ROOT / "schemas" / "base-v9-4-candidate-lock-v1.schema.json"
 V93_LOCK = ROOT / "base-v9.3.lock.json"
 PROPOSALS = ROOT / "[수정제안서]" / "PROPOSAL_REGISTRY.json"
+PAYLOAD_COMMIT = "a728712cb776ec98f4875914a580fcf7d0156593"
+EVIDENCE_COMMIT = "ef1fba11167e4da0b298123b0c85ebd268191a42"
 
 
 class BaseV94AiOperationsContractTests(unittest.TestCase):
@@ -33,6 +35,7 @@ class BaseV94AiOperationsContractTests(unittest.TestCase):
             V94_LOCK,
             V94_SCHEMA,
             ROOT / "docs" / "operations" / "BASE_V9_4_RELEASE_CONTRACT.md",
+            ROOT / "docs" / "operations" / "BASE_V9_4_RELEASE_EVIDENCE.json",
         ]
         missing = [path.relative_to(ROOT).as_posix() for path in required if not path.is_file()]
         self.assertEqual([], missing)
@@ -190,7 +193,7 @@ class BaseV94AiOperationsContractTests(unittest.TestCase):
                 with self.subTest(path=path.relative_to(ROOT).as_posix(), required=required):
                     self.assertIn(required, text)
 
-    def test_bcp_003_and_004_are_approved_and_linked(self) -> None:
+    def test_bcp_003_and_004_are_implemented_and_linked(self) -> None:
         registry = json.loads(PROPOSALS.read_text(encoding="utf-8"))
         by_id = {item["proposal_id"]: item for item in registry["proposals"]}
         expected = {
@@ -200,18 +203,18 @@ class BaseV94AiOperationsContractTests(unittest.TestCase):
         for proposal_id, approval_ref in expected.items():
             with self.subTest(proposal_id=proposal_id):
                 proposal = by_id[proposal_id]
-                self.assertEqual("APPROVED_FOR_IMPLEMENTATION", proposal["status"])
+                self.assertEqual("IMPLEMENTED", proposal["status"])
                 self.assertEqual(approval_ref, proposal["approval_ref"])
-                self.assertIsNotNone(proposal["implementation_pr"])
+                self.assertEqual("https://github.com/alsdmlals4-eng/Base/pull/118", proposal["implementation_pr"])
 
-    def test_v94_candidate_has_null_pins_and_current_registry_hash(self) -> None:
+    def test_v94_released_pins_and_current_registry_hash(self) -> None:
         lock = json.loads(V94_LOCK.read_text(encoding="utf-8"))
         schema = json.loads(V94_SCHEMA.read_text(encoding="utf-8"))
         errors = list(Draft202012Validator(schema).iter_errors(lock))
         self.assertEqual([], [error.message for error in errors])
-        self.assertEqual("RELEASE_CANDIDATE", lock["release_state"])
-        self.assertIsNone(lock["candidate_release_commit"])
-        self.assertIsNone(lock["candidate_release_evidence_commit"])
+        self.assertEqual("BASE_RELEASED", lock["release_state"])
+        self.assertEqual(PAYLOAD_COMMIT, lock["candidate_release_commit"])
+        self.assertEqual(EVIDENCE_COMMIT, lock["candidate_release_evidence_commit"])
         self.assertEqual(113, lock["github_issue"])
         self.assertEqual(115, lock["linked_issue"])
         self.assertEqual(

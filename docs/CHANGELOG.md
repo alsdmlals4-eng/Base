@@ -165,3 +165,13 @@
 - Added instruction authority budgeting, Interface-first Prompt, Context curation, Example-as-Fixture and Artifact claim limits.
 - Added Godot game UI motion contracts for interruption, instant completion, repetition, Reduced Motion, mute, haptic-off and domain authority.
 - Preserved released Base v9.3 history and separated candidate, trusted evidence and pin-finalization stages.
+
+
+### Base v9.4 released pins
+
+- Finalized Base v9.4 as `BASE_RELEASED`.
+- Payload: `a728712cb776ec98f4875914a580fcf7d0156593`.
+- Trusted evidence: `ef1fba11167e4da0b298123b0c85ebd268191a42`.
+- Registry SHA-256: `693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59`.
+- BCP-2026-003 and BCP-2026-004 transitioned to `IMPLEMENTED`.
+- Project adoption remains a separate post-release wave.

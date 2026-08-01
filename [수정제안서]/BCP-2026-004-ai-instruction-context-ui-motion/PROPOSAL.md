@@ -5,7 +5,7 @@
 - 출처 프로젝트: `alsdmlals4-eng/Base`
 - 기준 커밋: `7978093e16577f1a4e2f60fbc85ebf25d906673b`
 - 제출일: `2026-08-01`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `패턴`
 - Decision ID: `DEC-2026-08-01-001`
 - 사용자 승인 근거: `https://github.com/alsdmlals4-eng/Base/issues/115`
@@ -189,9 +189,9 @@ Artifact는 실제 런타임·사람 이해·접근성·성능을 자동으로 �
 
 ## 승인과 구현
 
-- 제안 상태: `SUBMITTED` — 신규 제안은 제안 PR에서 이 상태로 시작한다.
-- 사용자 승인 근거는 존재하지만 기계 상태 전환은 별도 구현 PR에서 수행한다.
-- 구현 PR: `없음 — 제안 PR과 분리 예정`
+- 최종 상태: `IMPLEMENTED`
+- 승인·구현·trusted evidence·pin-finalization은 분리된 PR로 완료됐다.
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/118`
 - 구현 순서: BCP-2026-003과 BCP-2026-004를 하나의 Base v9.4 후보 구현 PR에서 독립 Task·Commit·Test로 적용하고, 그 PR에서 `APPROVED_FOR_IMPLEMENTATION`과 `approval_ref`를 기록한 뒤 evidence PR과 pin-finalization PR을 진행한다.
 - 책임 경계: 모델 라우팅·비용·캐싱과 지시·컨텍스트·UI 모션의 입력·출력·검증을 합치지 않는다.
 - 프로젝트 적용: Base v9.4가 검증·릴리스된 뒤 각 프로젝트의 로컬 Base 사본과 정본에 맞춰 별도 PR로 적용한다.
@@ -203,3 +203,16 @@ Artifact는 실제 런타임·사람 이해·접근성·성능을 자동으로 �
 - implementation_pr: `https://github.com/alsdmlals4-eng/Base/pull/118`
 - 상태 전환 위치: 제안 PR이 아니라 승인된 별도 Base v9.4 구현 PR
 - BCP-2026-003과 BCP-2026-004는 같은 후보 PR을 사용하지만 Skill·Method·Reference·Test 책임을 분리한다.
+
+
+## Base v9.4 릴리스 완료
+
+- 상태: `IMPLEMENTED`
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/118`
+- payload commit: `a728712cb776ec98f4875914a580fcf7d0156593`
+- trusted evidence PR: `https://github.com/alsdmlals4-eng/Base/pull/120`
+- trusted evidence commit: `ef1fba11167e4da0b298123b0c85ebd268191a42`
+- Registry SHA-256: `693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59`
+- pin-finalization: `base-v9.4.lock.json`의 `BASE_RELEASED` 상태
+- 프로젝트 적용: Base 릴리스와 분리된 프로젝트별 Issue·Branch·PR에서 수행
+- 증거 상한: provider billing·cache hit·실제 절감, Godot runtime 모션·성능, 사람 UI 이해·피로는 각 적용 환경에서 별도 검증

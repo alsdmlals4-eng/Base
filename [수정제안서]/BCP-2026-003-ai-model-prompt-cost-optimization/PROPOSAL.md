@@ -5,7 +5,7 @@
 - 출처 프로젝트: `alsdmlals4-eng/Base`
 - 기준 커밋: `a82976a3a42450ea413cdc5d4aebf701678110d8`
 - 제출일: `2026-07-31`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `패턴 + 검증 필요 수치`
 - 추적 Issue: `#113`
 
@@ -103,8 +103,8 @@ Base에는 공용 분류법, provider profile 형식, 측정식, 실패 조건�
 ## 승인과 구현
 
 - 사용자 승인 근거: `https://github.com/alsdmlals4-eng/Base/issues/113`
-- 제안 상태: `SUBMITTED` — 신규 제안은 제안 PR에서 이 상태로 시작한다.
-- 구현 상태 전환: 제안 PR 병합 후 별도 v9.4 구현 PR에서 `APPROVED_FOR_IMPLEMENTATION`과 `approval_ref`를 기록한다.
+- 최종 상태: `IMPLEMENTED`
+- 구현 상태: PR #118에서 구현되고 trusted evidence PR #120 뒤 pin-finalization됐다.
 - 구현 순서: Issue #113과 #115의 독립 책임을 하나의 v9.4 후보 구현 PR에서 별도 Task·Commit·Test로 적용한 뒤 evidence PR과 pin-finalization PR을 진행한다.
 - 책임 경계: 모델 라우팅·비용·캐싱의 입력·출력·검증을 지시·컨텍스트·UI 모션 책임과 합치지 않는다.
 - 제외: 프로젝트 자동 반영, 실제 모델 전환 조작, 검증되지 않은 수치 상수화, v9.3 history rewrite
@@ -116,3 +116,16 @@ Base에는 공용 분류법, provider profile 형식, 측정식, 실패 조건�
 - implementation_pr: `https://github.com/alsdmlals4-eng/Base/pull/118`
 - 상태 전환 위치: 제안 PR이 아니라 승인된 별도 Base v9.4 구현 PR
 - BCP-2026-003과 BCP-2026-004는 같은 후보 PR을 사용하지만 Skill·Method·Reference·Test 책임을 분리한다.
+
+
+## Base v9.4 릴리스 완료
+
+- 상태: `IMPLEMENTED`
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/118`
+- payload commit: `a728712cb776ec98f4875914a580fcf7d0156593`
+- trusted evidence PR: `https://github.com/alsdmlals4-eng/Base/pull/120`
+- trusted evidence commit: `ef1fba11167e4da0b298123b0c85ebd268191a42`
+- Registry SHA-256: `693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59`
+- pin-finalization: `base-v9.4.lock.json`의 `BASE_RELEASED` 상태
+- 프로젝트 적용: Base 릴리스와 분리된 프로젝트별 Issue·Branch·PR에서 수행
+- 증거 상한: provider billing·cache hit·실제 절감, Godot runtime 모션·성능, 사람 UI 이해·피로는 각 적용 환경에서 별도 검증
