@@ -40,62 +40,9 @@ on:
       - ".github/workflows/**"
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  migration-preview:
-    name: migration-preview
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
-        with:
-          python-version: "3.12"
-      - name: Apply deterministic Base v9.4 migration in workspace
-        run: python tools/apply_base_v9_4_ai_operations.py
-      - name: Commit exact migration to the PR branch
-        if: github.event_name == 'pull_request'
-        env:
-          HEAD_REF: ${{ github.head_ref }}
-        run: |
-          if git diff --quiet; then
-            echo "Migration already committed"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add --all
-          git commit -m "feat: apply Base v9.4 AI operations migration"
-          git push origin "HEAD:${HEAD_REF}"
-      - name: Upload exact generated migration files
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: base-v9-4-migration-preview
-          if-no-files-found: error
-          path: |
-            skills/SKILL_REGISTRY.json
-            docs/generated/BASE_ACTIVE_SKILLS.md
-            base-v9.4.lock.json
-            [수정제안서]/PROPOSAL_REGISTRY.json
-            [수정제안서]/BCP-2026-003-ai-model-prompt-cost-optimization/PROPOSAL.md
-            [수정제안서]/BCP-2026-004-ai-instruction-context-ui-motion/PROPOSAL.md
-            skills/managing-project-intake-and-work-contract/SKILL.md
-            skills/simplifying-skill-bodies/SKILL.md
-            skills/simplifying-skill-bodies/references/progressive-disclosure-rules.md
-            skills/auditing-and-refining-ui-art/SKILL.md
-            skills/auditing-and-refining-ui-art/references/ux-ui-design-system-method.md
-            docs/knowledge/game-development/AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md
-            docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md
-            docs/DOCUMENTATION_MAP.md
-            templates/project-operations/AI_WORKFLOW.md
-            templates/planning/GAME_UX_UI_SYSTEM.md
-            templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md
-            docs/BASE_RULES_VERSION.md
-            docs/CHANGELOG.md
-            skills/SKILL_LEARNING_LOG.md
-
   base-v9-contract:
     name: base-v9-contract
     runs-on: ubuntu-latest
