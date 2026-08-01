@@ -24,6 +24,17 @@
       "submitted_at": "2026-07-19",
       "approval_ref": null,
       "implementation_pr": null
+    },
+    {
+      "proposal_id": "BCP-2026-004-ai-instruction-context-ui-motion",
+      "title": "판단 중심 AI 지시·컨텍스트 큐레이션·UI 모션 원칙 통합",
+      "path": "[수정제안서]/BCP-2026-004-ai-instruction-context-ui-motion/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "alsdmlals4-eng/Base",
+      "source_commit": "a82976a3a42450ea413cdc5d4aebf701678110d8",
+      "submitted_at": "2026-08-01",
+      "approval_ref": "https://github.com/alsdmlals4-eng/Base/issues/115",
+      "implementation_pr": null
     }
   ]
 }
