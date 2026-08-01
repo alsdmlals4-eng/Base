@@ -71,6 +71,25 @@ Base START_HERE
 
 작업 실행 게이트와 제품 마일스톤 게이트는 구분한다. 한 기능의 Done은 프로젝트 전체의 Vertical Slice 통과를 뜻하지 않는다.
 
+### 중립적 적대 검토 Gate와 기능 생명주기
+
+권장안·판정·설계 선택에는 경량 중립성 Gate를 적용한다. 사용자안과 AI 최초안을 동일한 기준으로 비교하고, L1 이상 기능·설계·아키텍처·정책·방향 결정은 `running-adversarial-review-and-refinement`의 공격·비판 검증을 거친다.
+
+```text
+요청·현재 단계
+→ 정본·실제 구현·최근 결정 복원
+→ 문제·사용자 가치·완료 기준
+→ 대안·반증·위험·되돌리기 난이도 비교
+→ 사용자 결정 Gate
+→ 실행 계약·기능 패키지·의존성·롤백
+→ 분야 Skill BUILD
+→ 계약·정적·런타임·접근성·성능·회귀 검증
+→ 책임 원본·상태·발행·Handoff 동기화
+→ 실행 증거·Learning Log
+```
+
+새 광역 Skill을 만들지 않는다. 상위 흐름은 `managing-project-intake-and-work-contract`, 분야 구현은 trigger가 일치하는 주 책임 Skill 하나, 비판 검증은 `running-adversarial-review-and-refinement`, 실제 변경 증거는 `reviewing-and-validating-project-changes`가 책임진다.
+
 ### 5. Active Skill Registry View
 
 The current active-Skill count, list, and status are generated from `skills/SKILL_REGISTRY.json` into `docs/generated/BASE_ACTIVE_SKILLS.md`. Human-facing documents do not duplicate the list.
