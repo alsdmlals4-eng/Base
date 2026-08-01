@@ -36,6 +36,8 @@ rollout_stage: BASE | PILOT | ACTIVE | DEFERRED
 
 확인하지 못한 설정은 `unverified`로 둔다.
 
+Base의 Required Check `ci-gate` 소유자는 `.github/workflows/validate-game-project-operating-system.yml` 하나다. 다른 Workflow는 고유한 Job 이름을 사용하며, Repository Ruleset에서 선택된 `ci-gate`가 이 소유자의 check run인지 실제 PR로 확인한다.
+
 ## 3. Solo Main Safety Ruleset
 
 기본 Template:

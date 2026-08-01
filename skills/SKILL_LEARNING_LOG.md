@@ -528,3 +528,12 @@
 - 프로젝트 전용으로 유지할 내용: 실제 게임의 프롬프트·모델 결과·세계관·수치·데이터·자산·프로젝트 Skill
 - Base Method·Skill·Template·Test 환류 후보: 행동 평가 계약, 가설 검증·요소 분해·다각도 검토·Golden Path/Edge/Regression, Base 공용 후보와 프로젝트 전용 학습의 분리
 - 다음 검토 트리거: 실제 모델 결과 채점, 모델별·프로젝트별 오라우팅, 8,000자 탐색 예산 회귀, 평가 Fixture가 구현 세부사항에 과적합되는 징후
+
+## 2026-08-02 — Required Check 단일 소유와 내부 비용 분류
+
+- 상태: `OBSERVATION`
+- 문제: 서로 다른 Workflow가 같은 `ci-gate` check name을 만들고, Required Check 소유 Workflow의 path filter가 일부 PR에서 check를 생성하지 않을 수 있었다.
+- 결정: Required Check 이름은 저장소 전체에서 단일 소유하고, 소유 Workflow는 모든 PR에서 시작한 뒤 내부 classifier로 비용을 제어한다.
+- 검증: 실행형 topology checker, fixture RED→GREEN, focused Python 회귀, 전체 Python 회귀 388개 통과·환경 의존 5개 건너뜀.
+- 미실행 검증: 실제 PR Actions `PENDING`.
+- 다음 검토 트리거: Required Check Pending 재발, Workflow 추가·이름 변경, Ruleset context 변경.

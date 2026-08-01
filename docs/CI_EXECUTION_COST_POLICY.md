@@ -31,6 +31,8 @@
 5. **보류와 통과 분리**: Actions 미사용·권한 제한·결제 제한·runner 장애는 `UNVERIFIED`이며 성공이 아니다.
 6. **프로젝트 지원 범위가 정본**: 지원하지 않는 운영체제·Python 버전을 관성적으로 matrix에 추가하지 않는다.
 
+저장소 전체에서 `name: ci-gate`를 노출하는 Job은 하나뿐이어야 한다. 그 Job을 소유한 Workflow의 `pull_request` 이벤트에는 Workflow-level `paths`·`paths-ignore`를 두지 않고 내부 분류 Job에서 비용 계층을 선택한다. 집중 Workflow는 path filter를 사용할 수 있지만 `ci-gate` 이름을 재사용하지 않는다.
+
 ## 4. 변경 분류
 
 변경 파일을 먼저 분류하고 가장 높은 위험 등급을 해당 실행의 등급으로 사용한다.
