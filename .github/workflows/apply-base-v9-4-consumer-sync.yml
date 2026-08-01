@@ -25,6 +25,7 @@ jobs:
         env:
           HEAD_REF: ${{ github.head_ref }}
         run: |
+          git checkout -- .github/workflows/validate-game-ux-ui-system.yml
           if git diff --quiet; then
             echo "Consumers already synchronized"
             exit 0
@@ -35,7 +36,6 @@ jobs:
             skills/README.md \
             templates/research/UX_UI_REFERENCE_CARD.md \
             tests/test_game_ux_ui_system.py \
-            tests/test_skill_system_coverage.py \
-            .github/workflows/validate-game-ux-ui-system.yml
+            tests/test_skill_system_coverage.py
           git commit -m "test: synchronize Base v9.4 Skill consumers"
           git push origin "HEAD:${HEAD_REF}"
