@@ -528,3 +528,9 @@ Update PR #125 with changed files, RED→GREEN evidence, full checks, explicit `
 - Interfaces: `neutral-recommendation-gate`, `SBE-011`, expected modes, evidence tokens, and Registry hash are consistent across tests and implementation steps.
 - Evidence boundary: contract tests and behavior-fixture validation do not claim that a live model passed.
 - Execution boundary: Draft PR remains blocked until fresh checks and adversarial recheck complete.
+
+## Independent-review remediation
+
+- Registry bytes를 보존하면서 `칭찬·균형 평가만 요청` 비사용 조건을 결정·권장안이 없는 설명형 요약으로 좁힌다.
+- 구현 전 `attack → validate-critique → decision-report`를 PLAN 사전판정으로 구분한다. 승인 finding은 `refine-approved-findings`에서 분야 Skill BUILD가 한 번만 반영하고 `regression-recheck → decision-report`로 이동하게 해 전체 생명주기 Gate를 닫는다.
+- `SBE-012` 기계적 반대, `SBE-013` 불완전 증거, `SBE-014` 결정 없는 설명형 요약 Fixture를 추가해 양방향 편향·증거 한계·과잉 라우팅 경계를 모두 실행형 계약으로 만든다.

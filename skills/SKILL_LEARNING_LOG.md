@@ -1,5 +1,24 @@
 # Base Skill Learning Log
 
+## 2026-08-01 — Repository governance files are not repository-setting evidence
+
+- **Trigger:** the public Base repository had reusable operating materials and dependency-review CI but no License, Security policy, CODEOWNERS, or Dependabot configuration.
+- **Finding:** adding placeholder community files could falsely imply reuse permission, a private contact channel, valid team ownership, or enabled security settings. A Dependabot file disconnected from actual manifests could also be accepted while monitoring the wrong surface.
+- **Decision:** use one MIT license for Base-owned material, support only current `main`, route sensitive reports to GitHub private reporting without claiming it is enabled, derive CODEOWNERS from the mutable current repository governance profile, and enable only currently documented Dependabot combinations. Frozen release locks remain historical identities. `pip` and `github-actions` are active; pnpm 11 is visibly deferred because GitHub currently documents pnpm v7-v10.
+- **Evidence:** repository inventory, public visibility and owner write/admin metadata, official GitHub file-location and ecosystem/version contracts, plus semantic RED/GREEN tests for unique precedence locations, mutable current identity, scope, manifest mapping, supported-versus-deferred updates, grouping, and docs-only as well as contract CI consumption.
+- **Boundary:** license selection is not legal advice. Private reporting availability, CODEOWNERS review requests, Ruleset enforcement, Dependabot parsing, and its first scheduled update remain `UNVERIFIED_REPOSITORY_SETTING` or `NOT_RUN` until GitHub supplies direct evidence.
+- **Next trigger:** repository rename/transfer, new package ecosystem or manifest directory, license exception, maintainer/team change, private-reporting setting verification, or first Dependabot PR.
+
+## 2026-08-01 — Entrypoint ownership before size reduction
+
+- **Trigger:** `AGENTS.md` and `START_HERE.md` repeated lifecycle, publication, review, legacy, and completion procedures already owned by the operating model, routing contract, and Skill packages.
+- **Finding:** shortening both files independently would preserve mixed ownership and allow drift. A numerical line or character gate could also reward deleting necessary exceptions instead of delegating them.
+- **Decision:** keep `AGENTS.md` as the always-on invariant layer and `START_HERE.md` as the request-by-request one-step router. Delegate conditional detail to `docs/OPERATING_MODEL.md`, `docs/WORK_MODE_AND_SKILL_ROUTING.md`, `docs/DOCUMENTATION_MAP.md`, the Registry-derived view, and selected Skill packages.
+- **Benchmark:** OpenAI's Codex guidance says durable `AGENTS.md` guidance should stay small and supports linked/layered instructions; OpenAI Skills and GitHub path-specific instructions use progressive disclosure. These sources inform presentation only and do not override Base authority.
+- **Evidence:** semantic RED tests reproduced the mixed-role contract and duplicate publication/review detail; the compact entrypoints then passed focused cold-start, consolidated-Skill, UI, difficulty/AI, Vertical Slice, and GDD Sheet regressions. The first canonical local-validation run also proved that the active `origin/main` example violated the checker's exact-commit boundary, so active examples and a regression now require a 40-character trusted main SHA. Independent review then caught a deleted direct-approval exception, a template route that bypassed its owning Skill, and missing archive/plugin/model-cost high-risk routes; Registry-trigger-derived regressions now preserve those boundaries. Re-review found that the game-system table was corrected while the top banner still bypassed the owner, so the regression now enumerates every first-hop representation of that route instead of sampling one table row.
+- **Boundary:** this is structural and automated evidence. Live model behavior, project installation, project runtime, Google Sheets, accessibility, performance, and human comprehension remain `NOT_RUN` until separately exercised.
+- **Next trigger:** if a new policy adds detailed procedure to either entrypoint, require an explicit reason it is always-on or one-step routing; otherwise link its canonical owner and extend semantic discovery tests.
+
 ## 2026-07-31 — Canonical-bound intermediate visual checkpoint
 
 - Status: `PATTERN`.
@@ -543,9 +562,22 @@
 - 상태: `OBSERVATION`
 - 호출 트리거: 기능 구현 전반과 전체 제작 생명주기를 결합하고, 사용자 의견에 무조건 긍정하지 말며 중립적 적대 검토로 최선의 결론을 도출하라는 사용자 결정
 - 결정: 새 광역 Skill을 만들지 않고 `managing-project-intake-and-work-contract`를 상위 라우터로 유지한다. 사용자안과 AI 최초안에 같은 평가 기준을 적용하며, 근거 없는 동의와 반대를 위한 반대를 모두 실패 조건으로 둔다.
-- 적용 경계: 권장안·판정에는 경량 중립성 Gate, L1 이상 기능·설계·아키텍처·정책·방향 결정에는 전체 적대 검토 루프를 적용한다. L0 오탈자·명백한 기계 수정·동일 입력 재실행은 전체 루프에서 제외한다.
-- 실제 산출물: 항상 적용 규칙, 운영 모델의 기능 생명주기, 라우팅 경계, intake의 `neutral-recommendation-gate`, 적대 검토의 대칭 평가 규칙, `SBE-011` 행동 Fixture와 집중 회귀
+- 적용 경계: 권장안·판정에는 경량 중립성 Gate를 적용한다. L1 이상 기능·설계·아키텍처·정책·방향 결정은 PLAN 사전판정 `attack → validate-critique → decision-report`를 거친다. 승인 finding은 `refine-approved-findings`에서 분야 Skill BUILD가 한 번만 반영하고 `regression-recheck → decision-report`로 이동해 전체 루프를 닫는다. L0 오탈자·명백한 기계 수정·동일 입력 재실행과 결정·권장안 없는 설명형 요약은 전체 루프에서 제외한다.
+- 실제 산출물: 항상 적용 규칙, 운영 모델의 기능 생명주기, 라우팅 경계, intake의 `neutral-recommendation-gate`, 적대 검토의 대칭 평가 규칙, 동의 유도·기계적 반대·불완전 증거·결정 없는 설명형 요약을 각각 다루는 `SBE-011`~`SBE-014` 행동 Fixture와 집중 회귀
 - 검증: 집중 계약, 행동 평가 계약, Skill package, 문서 governance, reference freshness, 전체 회귀와 Base v9 integrity의 실제 결과를 PR 증거로 기록한다.
 - 미검증: 외부 모델 결과를 사용한 동의 편향 감소율과 실제 프로젝트별 오라우팅 변화는 `NOT_RUN`
 - 프로젝트 전용 유지: 실제 기능 요구, 기술 스택, PyTorch·머신러닝 데이터·모델·수치, 프로젝트 코드·자산·Google Sheets
 - 다음 검토 트리거: 과도한 REVIEW 호출, 명백한 사실에 불필요한 대안 생성, 사용자 결정권 약화, 모델 결과에서 근거 없는 동의 또는 기계적 반대 재발
+
+## 2026-08-02 — 실행형 발행 준비도와 로컬 검증 격리
+
+- 상태: `OBSERVATION`
+- 문제: 경로 존재만 확인한 두 생성 테스트의 gate가 실행 불가능한 래퍼와 누락 폰트를 준비 완료로 오판했다. 396개 기준 회귀에서 생성 class가 진입해 폰트 관련 실패 2건이 발생했다.
+- 구현 가설: LibreOffice의 실제 PDF 변환, Poppler 실행, regular/bold 폰트를 하나의 공유 준비도 계약으로 검사하고, 전체 로컬 검증은 저장소가 소유한 `.tmp/local-validation-*` 세션에 `TMPDIR`·`TMP`·`TEMP`를 고정한다.
+- 현재 결과: 공유 준비도 fixture와 소비자 회귀는 통과했다. 현재 환경에는 필수 폰트가 없어 생성 검사는 이유가 표시된 `SKIPPED`이며 발행 검증 `PASSED`가 아니다.
+- 적대적 검토: `MUST_FIX`로 공용 probe가 Windows `.cmd/.bat` 안전 실행 계약을 우회한 회귀를 발견해 기존 안전 command-array 생성기로 복구했다. `SHOULD_FIX`로 timeout pipe 잔존과 세션 경로 바꿔치기가 자식 실패 코드를 가리는 문제를 확인해 process drain·세션 identity·원래 실패 코드 보존 회귀를 추가했다.
+- 독립 코드 리뷰: 자손이 probe pipe를 상속한 timeout의 무제한 drain, root-only readiness cache의 stale override, Windows 전체 readiness fixture skip을 `Important`로 확인했다. 자손 process-group 종료와 bounded drain, resolved tool·file identity cache key, Windows 전용 실제 `.cmd` 실행 회귀로 수정했으며 재리뷰 결과 Critical/Important 0건이었다. Windows 실제 실행 결과는 exact-head Actions 전까지 `NOT_RUN`이다.
+- 첫 exact-head Windows Actions: 실제 `.cmd` probe는 성공했지만 안전 runner가 정규화한 8.3 경로와 테스트 원문 경로 비교가 달라 smoke가 실패했다. 동시에 Chrome GUI의 `--version` timeout에 따른 preflight 실패가 뒤 unittest의 성공 코드로 덮일 수 있음을 확인했다. 경로 비교를 정규화하고, Chrome은 기존 계약처럼 파일 존재만 확인하되 실제 Mermaid 생성 회귀로 실행성을 검증하며, PowerShell이 preflight non-zero에서 즉시 종료하도록 수정했다. 재실행 전 상태는 `PENDING`이다.
+- 안전 경계: 정리 대상은 현재 실행이 만든 정확한 세션 하나뿐이며 일반 `tmp*`, 사용자 파일, `.venv`, 캐시는 삭제하지 않는다. `.gitignore`도 `.tmp/`와 `.venv/`만 숨긴다.
+- 지식 상태: Base 한 저장소의 성공만으로 외부 프로젝트 전체에 적용할 범용 의무를 확정하지 않는다. 서로 다른 프로젝트와 Windows/Linux 실제 발행 환경에서 재현될 때 `PATTERN` 승격을 검토한다.
+- 다음 검토 트리거: 준비된 CI에서 생성 검사가 skip되거나 실패하는 경우, 임시 파일 잔존 재발, 외부 프로젝트 어댑터 적용 결과.

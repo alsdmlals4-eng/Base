@@ -8,6 +8,9 @@
 - Added realistic prompt-to-Skill behavior fixtures and a deterministic contract/result scorer; live model execution remains `NOT_RUN` until external results are supplied.
 - Integrated Issue #74's Build-Measure-Learn, element decomposition, four review lenses, Golden Path/Edge/Regression, and Base-versus-project learning boundary into existing workflows rather than adding a broad Skill.
 - Consolidated the Required Check to one owner, removed the canonical PR trigger filter, and kept focused Base v9 evidence as a separate check.
+- Replaced file-existence publication gates with shared executable LibreOffice/Poppler and regular/bold-font readiness, and added an isolated canonical local-validation entrypoint whose owned temporary session is cleaned on success or failure.
+- Split the two Base entrypoints by responsibility: `AGENTS.md` now keeps only always-on authority, safety, protection, evidence, and completion invariants, while `START_HERE.md` is a one-step request router to existing canonical procedures. Semantic regressions preserve discoverability without introducing a line or character limit, and active local-validation examples now require the exact trusted 40-character main SHA instead of a moving ref name.
+- Added a repository governance baseline: MIT reuse terms, a scope-bound private vulnerability reporting policy, actual-owner CODEOWNERS, and weekly manifest-backed Dependabot proposals for pip and GitHub Actions. The repository's pnpm 11 is outside GitHub's currently documented pnpm v7-v10 range, so it remains explicitly deferred instead of falsely reported as covered or silently downgraded. Current repository identity now lives in a mutable governance profile instead of a frozen release lock, and the governance regression runs even for docs-only changes. Repository settings and first platform behavior remain separately verified rather than inferred from files.
 
 ## 2026-08-01 — Base v9.4 released pins
 

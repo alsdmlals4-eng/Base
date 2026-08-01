@@ -51,6 +51,31 @@ class NeutralAdversarialFeatureLifecycleTests(unittest.TestCase):
         ):
             self.assertIn(term, routing)
 
+    def test_registry_balanced_only_exclusion_is_narrow_and_full_loop_resumes(self) -> None:
+        registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+        adversarial_entry = next(
+            item
+            for item in registry["skills"]
+            if item["skill_id"] == "running-adversarial-review-and-refinement"
+        )
+        self.assertTrue(
+            any("칭찬·균형 평가만 요청" in item for item in adversarial_entry["do_not_use_when"])
+        )
+
+        routing = read("docs/WORK_MODE_AND_SKILL_ROUTING.md")
+        intake = read("skills/managing-project-intake-and-work-contract/SKILL.md")
+        adversarial = read("skills/running-adversarial-review-and-refinement/SKILL.md")
+        for term in (
+            "결정·권장안이 없는 설명형 칭찬·균형 요약",
+            "PLAN 사전판정",
+            "`refine-approved-findings`에서 분야 Skill BUILD로 한 번만 구현·수정",
+            "regression-recheck → decision-report",
+        ):
+            self.assertIn(term, routing)
+        self.assertIn("PLAN 사전판정", intake)
+        self.assertIn("결정·권장안이 없는 설명형 칭찬·균형 요약", adversarial)
+        self.assertIn("이미 구현된 finding을 다시 수정하지 않는다", adversarial)
+
     def test_intake_requires_neutral_recommendation_before_contract(self) -> None:
         intake = read("skills/managing-project-intake-and-work-contract/SKILL.md")
         for term in (
@@ -93,6 +118,58 @@ class NeutralAdversarialFeatureLifecycleTests(unittest.TestCase):
             set(case["required_evidence"]),
         )
         self.assertEqual("REQUIRED", case["expected_user_decision_state"])
+
+    def test_behavior_fixtures_cover_opposition_pressure_and_evidence_gap(self) -> None:
+        data = json.loads((ROOT / "skills" / "SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8"))
+        cases = {item["case_id"]: item for item in data["cases"]}
+        opposition = cases["SBE-012"]
+        evidence_gap = cases["SBE-013"]
+
+        for case in (opposition, evidence_gap):
+            self.assertEqual("boundary", case["case_type"])
+            self.assertEqual("PLAN", case["expected_work_mode"])
+            self.assertEqual("managing-project-intake-and-work-contract", case["expected_primary_skill"])
+            self.assertEqual(
+                ["running-adversarial-review-and-refinement"],
+                case["expected_supporting_skills"],
+            )
+            self.assertEqual(
+                ["route", "attack", "validate-critique", "decision-report"],
+                case["expected_skill_modes"],
+            )
+
+        self.assertIn("무조건 틀렸", opposition["prompt"])
+        self.assertEqual(
+            {"동일 평가 기준", "장점", "반증", "위험", "권장 결론"},
+            set(opposition["required_evidence"]),
+        )
+        self.assertEqual("REQUIRED", opposition["expected_user_decision_state"])
+
+        self.assertIn("증거가 없", evidence_gap["prompt"])
+        self.assertEqual(
+            {"증거 한계", "BLOCKED_UNVERIFIED", "확인 조건", "미검증"},
+            set(evidence_gap["required_evidence"]),
+        )
+        self.assertEqual("DEFERRED", evidence_gap["expected_user_decision_state"])
+
+    def test_behavior_fixture_excludes_decisionless_balanced_summary(self) -> None:
+        data = json.loads((ROOT / "skills" / "SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8"))
+        cases = {item["case_id"]: item for item in data["cases"]}
+        summary = cases["SBE-014"]
+
+        self.assertEqual("boundary", summary["case_type"])
+        self.assertEqual("PLAN", summary["expected_work_mode"])
+        self.assertEqual("creating-user-learning-notes", summary["expected_primary_skill"])
+        self.assertEqual([], summary["expected_supporting_skills"])
+        self.assertEqual(["capture", "explain"], summary["expected_skill_modes"])
+        self.assertIn("running-adversarial-review-and-refinement", summary["forbidden_skills"])
+        self.assertIn("managing-project-intake-and-work-contract", summary["forbidden_skills"])
+        self.assertIn("권장하거나 결정하지 말고", summary["prompt"])
+        self.assertEqual(
+            {"장점", "한계", "미결정"},
+            set(summary["required_evidence"]),
+        )
+        self.assertEqual("NOT_REQUIRED", summary["expected_user_decision_state"])
 
     def test_reference_freshness_recognizes_the_focused_contract_test(self) -> None:
         config = json.loads((ROOT / ".github" / "reference-freshness.json").read_text(encoding="utf-8"))

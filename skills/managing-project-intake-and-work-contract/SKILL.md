@@ -178,7 +178,8 @@ agreement_or_disagreement_reason:
 - 다른 안이 더 강하면 차이를 만드는 증거와 함께 권장한다.
 - 반대를 위한 반대를 만들지 않는다.
 - 증거 부족은 `BLOCKED_UNVERIFIED`로 남긴다.
-- L1 이상 기능·설계·아키텍처·정책·방향 결정은 `running-adversarial-review-and-refinement`의 `attack → validate-critique → decision-report`를 지원 Skill로 실행한다.
+- L1 이상 기능·설계·아키텍처·정책·방향 결정은 `running-adversarial-review-and-refinement`의 `attack → validate-critique → decision-report`를 PLAN 사전판정 지원 Skill로 실행한다.
+- 이 판정의 승인 finding은 `refine-approved-findings`에서 주 책임 분야 Skill BUILD로 한 번만 구현·수정하고, `regression-recheck → decision-report`로 복귀한다.
 
 ### 4. Ask only material user decisions
 

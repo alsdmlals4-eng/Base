@@ -1,0 +1,29 @@
+version: 2
+updates:
+  # DEPENDABOT_DEFERRED_PNPM_11: GitHub currently documents pnpm v7-v10.
+  # Keep pnpm@11.9.0 manual until official support and a real update run exist.
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "03:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    groups:
+      pip-routine:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "03:15"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    groups:
+      github-actions-routine:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]

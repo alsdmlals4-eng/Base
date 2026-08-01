@@ -58,12 +58,14 @@ Base 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 �
 
 | 구분 | 파일 | 책임 |
 |---|---|---|
-| 최초 라우터 | `START_HERE.md` | 요청 유형별 최소 읽기와 실행 Skill·Skill Mode 연결 |
-| 항상 적용 규칙 | `AGENTS.md` | 우선순위·보안·승인·완료 보고 금지 규칙 |
+| 최초 라우터 | `START_HERE.md` | 최소 호출·콜드 스타트·요청 유형별 한 단계 Skill·Skill Mode 연결; 상세 절차는 정본에 위임 |
+| 항상 적용 규칙 | `AGENTS.md` | 모든 작업의 권한·환경·승인·보호·증거·정확한 HEAD·완료 보고 불변 규칙 |
 | 통합 운영 모델 | `docs/OPERATING_MODEL.md` | 작업 생명주기·책임 원본·상태·발행·근거·검증 정책 |
 | Work Mode·Skill 라우팅 | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | PLAN·BUILD·REVIEW, 자동 선택, Grill Me, 실행 보고 |
 | GPT–Codex 역할·인계 | `docs/GPT_CODEX_WORKFLOW_POLICY.md` | GPT 비-Godot 완료, Codex Plan 검토, 단계별 Godot 구현·PR Gate |
 | GitHub Pro 운영 | `docs/GITHUB_PRO_OPERATING_POLICY.md` | Ruleset·`ci-gate`·자동 병합·사용량 Budget |
+| Base GitHub 저장소 현행 Profile | `docs/operations/BASE_GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md` | 가변 owner·visibility·기본 Branch·플랫폼 검증 상태; 동결 release lock과 분리 |
+| 저장소 재사용·보안·소유·의존성 | `LICENSE`, `SECURITY.md`, `.github/CODEOWNERS`, `.github/dependabot.yml` | MIT 재사용 조건·비공개 취약점 신고·실제 owner·manifest 기반 갱신 제안; 설정 활성화는 별도 증거 |
 | GitHub 작업 항목 수명주기 | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | Issue·Goal·Branch·PR·Run·Artifact·Release 보존·종료 |
 | 승인 결정 동기화 | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | 질문 전 대조, 중복 질문 방지, 승인 즉시 정본화, 병합 후 검토 |
 | 기획 순서·근거·Demo-First | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | 누락·충돌 선감사, Evidence Pack, Approval Bundle, Vertical Slice |
@@ -78,6 +80,7 @@ Base 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 �
 | 이전 Skill 별칭 | `skills/LEGACY_SKILL_ALIASES.md` | 통합 전 ID를 현행 Skill·Mode로 연결 |
 | Skill 실행 학습 | `skills/SKILL_LEARNING_LOG.md` | 실패·결정·검증·갱신 판정 |
 | Skill 행동 평가 | `skills/SKILL_BEHAVIOR_EVALS.json` | 실제 Prompt의 예상 Work Mode·Skill·Mode·금지 라우팅·필수 증거 |
+| 로컬 통합 검증 | `tools/run_local_validation.py` | 저장소 소유 임시 환경에서 전체 회귀·CI topology·v9 무결성·Skill coverage·Git 검사를 실행하는 단일 진입점 |
 | Base 수정제안서 | `[수정제안서]/PROPOSAL_REGISTRY.json` | 프로젝트발 공용화 후보·승인·구현 상태 |
 | 실행 체크 | `docs/MVP_WORKFLOW_CHECKLIST.md` | 운영 모델에서 파생한 시작·Gate·종료 체크 |
 | 변경 기록 | `docs/CHANGELOG.md` | 완료된 Base 변경과 동기화 기준 |

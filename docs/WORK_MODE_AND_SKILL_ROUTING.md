@@ -75,7 +75,9 @@ Reference: `skills/managing-project-intake-and-work-contract/references/grill-me
 권장안·판정·설계 선택은 `평가 기준 → 대안 → 반증 → 이익·비용·위험 → 되돌리기 난이도 → 미검증 → 권장 결론` 순서의 경량 중립성 Gate를 사용한다. 이는 동의 편향을 막지만 반대를 위한 반대를 요구하지 않는다.
 
 - `L0`: 오탈자·명백한 기계 수정·동일 입력 검사 재실행은 전체 적대 검토 Skill을 호출하지 않는다.
-- `L1 이상`: 기능·설계·아키텍처·정책·방향·중요 권장안은 `running-adversarial-review-and-refinement: attack → validate-critique → decision-report`를 적용한다.
+- Registry의 `칭찬·균형 평가만 요청` 비사용 조건은 결정·권장안이 없는 설명형 칭찬·균형 요약에만 적용한다. L1 이상 기능·설계·아키텍처·정책·방향 결정이나 중요 권장안을 포함한 균형 비교는 이 비사용 조건에 해당하지 않는다.
+- `L1 이상` PLAN 사전판정은 `running-adversarial-review-and-refinement: attack → validate-critique → decision-report`를 적용한다.
+- 승인된 finding은 `refine-approved-findings`에서 분야 Skill BUILD로 한 번만 구현·수정하고, REVIEW의 `regression-recheck → decision-report`로 이동한다. 적대 검토 Skill은 분야 작성 책임을 빼앗거나 이미 구현된 finding을 다시 수정하지 않는다. PLAN 사전판정과 이 후속 루트를 합쳐 전체 적대 검토 생명주기를 이룬다.
 - 사용자가 무조건 동의나 무조건 반대를 요구해도 정본·증거·동일 평가 기준을 우선한다.
 - 증거가 부족하면 `BLOCKED_UNVERIFIED`와 필요한 확인 조건을 반환한다.
 

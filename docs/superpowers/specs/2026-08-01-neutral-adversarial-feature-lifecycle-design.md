@@ -124,6 +124,8 @@ PyTorch·머신러닝·fine-tuning 같은 기술은 실제 기능 요청에서 t
 - 기존 v9.5 행동 평가 검사와 문서·Skill package·reference freshness 회귀 사용
 - 필요한 경우 집중 계약 테스트를 추가하되 문자열 존재만으로 모델 행동 통과를 주장하지 않는다.
 
+Registry의 기존 `칭찬·균형 평가만 요청` 비사용 조건은 결정·권장안이 없는 설명형 요약에만 적용하고, 이 비사용 경계도 행동 Fixture로 고정한다. L1 이상 결정·중요 권장안의 PLAN 사전판정은 `attack → validate-critique → decision-report`를 실행한다. 승인 finding은 `refine-approved-findings`에서 분야 Skill BUILD가 한 번만 반영하고 `regression-recheck → decision-report`로 이동해 전체 루프를 닫는다.
+
 ### 기록
 
 - `docs/CHANGELOG.md`: 완료된 변경만 기록

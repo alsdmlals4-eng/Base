@@ -18,12 +18,28 @@ Official references:
 - https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/automatically-merging-a-pull-request
 - https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-auto-merge-for-pull-requests-in-your-repository
 
+## 1.1 Repository health baseline
+
+Base의 공개 저장소 표면은 다음 네 파일이 책임진다.
+
+| 표면 | 정본 | 계약 |
+|---|---|---|
+| 재사용 권한 | `LICENSE` | Base 자체의 MIT 조건; 제3자 고지는 별도 유지 |
+| 취약점 신고 | `SECURITY.md` | `main` 지원, 민감 정보 공개 금지, private reporting 우선 |
+| 변경 소유 | `.github/CODEOWNERS` | 실제 write owner와 `.github/` 자체 소유 |
+| 의존성 갱신 | `.github/dependabot.yml` | 지원되는 실제 manifest 기반 주간 제안; 자동 병합 권한 없음 |
+
+파일 존재와 Repository setting은 다른 증거다. `SECURITY.md`는 private vulnerability reporting을 활성화하지 않고, `CODEOWNERS`는 승인 필수 Ruleset을 활성화하지 않으며, `dependabot.yml`은 Dependabot alerts나 dependency graph 설정을 활성화하지 않는다. 실제 설정이나 첫 GitHub 실행을 확인하기 전에는 각각 `UNVERIFIED_REPOSITORY_SETTING` 또는 `NOT_RUN`으로 기록한다.
+
+Base의 현재 의존성 생태계는 루트 `package.json`·`pnpm-lock.yaml`의 `npm`(pnpm), `requirements-publication.txt`의 `pip`, `.github/workflows/`의 `github-actions` 세 가지다. 그러나 저장소는 `pnpm@11.9.0`을 선언하고 현재 GitHub 공식 지원표는 pnpm v7-v10만 명시하므로, `npm` entry는 `DEPENDABOT_DEFERRED_PNPM_11`로 보류한다. package manager를 이 작업에서 임의 하향하지 않으며 공식 지원과 실제 update run을 확인한 뒤 별도 활성화한다. 활성화된 `pip`·`github-actions`의 minor/patch는 생태계별로 묶을 수 있지만 major 변경은 별도 PR·exact-head CI·리뷰를 거친다. Dependabot PR도 일반 Required Check와 병합 금지 조건을 우회하지 않는다.
+
 ## 2. Repository Governance Profile
 
-각 저장소는 `templates/project-operations/github/GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md`를 사용해 다음을 선언한다.
+각 저장소는 `templates/project-operations/github/GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md`를 사용해 다음을 선언한다. Base 자체의 현행 값은 `docs/operations/BASE_GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md`가 책임진다.
 
 ```yaml
 repository:
+owner:
 visibility: public | private
 plan_capability: FREE_PUBLIC | PRO_PRIVATE
 primary_branch:
@@ -35,6 +51,8 @@ rollout_stage: BASE | PILOT | ACTIVE | DEFERRED
 ```
 
 확인하지 못한 설정은 `unverified`로 둔다.
+
+Repository Governance Profile은 rename·transfer·visibility·기본 Branch·Required Check 같은 현재 상태를 갱신하는 가변 정본이다. 반대로 `base*.lock.json`은 발행 당시의 동결된 역사적 identity이므로 현재 CODEOWNERS나 보안 경로를 유도하는 입력으로 사용하지 않는다. 현재 profile의 identity가 바뀌면 `.github/CODEOWNERS`, 보안 경로, Workflow와 회귀 검사를 같은 변경에서 대조한다.
 
 Base의 Required Check `ci-gate` 소유자는 `.github/workflows/validate-game-project-operating-system.yml` 하나다. 다른 Workflow는 고유한 Job 이름을 사용하며, Repository Ruleset에서 선택된 `ci-gate`가 이 소유자의 check run인지 실제 PR로 확인한다.
 

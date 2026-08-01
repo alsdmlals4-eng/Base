@@ -115,6 +115,12 @@ tests/             운영체계·발행·라우팅·정본 최신성 회귀 테�
 [수정제안서]/      프로젝트발 Base 승격 후보·승인·구현 이력
 ```
 
+## 라이선스와 보안
+
+Base 자체는 [MIT License](LICENSE)로 배포됩니다. 저장소가 참조하거나 별도 고지한 제3자 코드·문서·자산의 라이선스는 해당 원출처와 고지를 따릅니다.
+
+민감한 취약점은 공개 Issue에 내용을 남기지 말고 [Security Policy](SECURITY.md)의 지원 범위와 비공개 신고 경로를 따릅니다.
+
 ## 개발 게이트
 
 ```text
@@ -126,3 +132,13 @@ Intake·Context
 → Documentation
 → Integration·Completion
 ```
+
+## 로컬 검증
+
+현재 브랜치의 전체 계약을 저장소 소유 임시 디렉터리 안에서 검증하려면 다음 단일 진입점을 사용합니다.
+
+```bash
+python tools/run_local_validation.py --trusted-history-commit <trusted-main-commit-sha>
+```
+
+`<trusted-main-commit-sha>`에는 검증 전에 확인한 정확한 40자 main SHA를 넣고 이동 가능한 ref 이름은 넘기지 않습니다. 이 명령은 전체 회귀, 필수 CI topology, Base v9 생성물·무결성, Skill coverage, Git 공백·객체 검사를 순서대로 실행하고 첫 실패 코드를 그대로 반환합니다. LibreOffice·Poppler 또는 필수 regular/bold 폰트 중 하나라도 실제 실행 준비가 되지 않으면 발행 생성 테스트는 원인이 적힌 `SKIPPED`이며, 발행 검증이 통과한 것으로 해석하지 않습니다.

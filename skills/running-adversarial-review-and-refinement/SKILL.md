@@ -11,6 +11,8 @@ description: Use when a work product, repository, PR, or merged decision must be
 
 사용자안과 AI 최초안은 같은 평가 기준으로 공격·검증한다. 검토 목적은 이견 생산이 아니라 실패 가능성 감소다. 사용자안이 반례·위험 검토를 통과해 가장 강한 결론이면 근거와 함께 동의할 수 있다.
 
+Registry의 `칭찬·균형 평가만 요청` 비사용 조건은 결정·권장안이 없는 설명형 칭찬·균형 요약에만 적용한다. L1 이상 기능·설계·아키텍처·정책·방향 결정이나 중요 권장안이 포함된 균형 비교는 적대 검토 대상이다.
+
 실제 diff·정적·런타임·접근성·성능 증거는 `reviewing-and-validating-project-changes`, 프로젝트 코어 판정·확정은 관련 코어 Skill이 책임진다. 승인 결정·GitHub·Google Sheets 동기화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`를 따른다. 구형본의 archive·compatibility·삭제는 `governing-legacy-retention-and-archives`, 정본·경로·ID·Template·Test 전파는 `auditing-canonical-reference-freshness`가 책임진다.
 
 ## Skill Modes
@@ -24,6 +26,8 @@ description: Use when a work product, repository, PR, or merged decision must be
 - `repository-wide-audit`: 저장소 전체의 권한 지도, 중복·stale·고아 파일, 구형 계약, untouched 소비자, Prompt·파생본 drift를 공격하고 전문 Skill로 처리를 라우팅한다.
 
 일반 작업은 `attack → validate-critique → refine-approved-findings → regression-recheck → decision-report`를 사용한다. 저장소 전체 감사는 `references/repository-wide-audit-protocol.md`, 세부 Finding·회귀 판정은 `references/finding-and-regression-protocol.md`를 필요할 때만 읽는다.
+
+구현 전 PLAN 사전판정은 아직 수정할 작업물이 없으므로 `attack → validate-critique → decision-report`까지만 실행한다. 승인 finding은 `refine-approved-findings`에서 주 책임 분야 Skill이 한 번만 구현·수정하며, 이 Skill은 분야 작성 책임을 빼앗거나 이미 구현된 finding을 다시 수정하지 않는다. 그 뒤 `regression-recheck → decision-report`로 복귀해야 전체 루프가 완료된다.
 
 기본 Work Mode는 `REVIEW → 필요한 경우 BUILD → REVIEW`다. 같은 수행자가 맡아도 단계별 입력과 출력을 섞지 않는다.
 
