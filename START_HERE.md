@@ -2,320 +2,100 @@
 
 > Base v9 RC status and release boundary: `docs/BASE_RULES_VERSION.md`
 > Registry-derived active Skill view: `docs/generated/BASE_ACTIVE_SKILLS.md`
-> Game-system routes: `system-design` / `difficulty-and-combat-ai` → `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md`
+> Game-system routes: `system-design` / `difficulty-and-combat-ai` → `skills/analyzing-and-refining-game-concepts/SKILL.md`
 
-이 문서는 새 채팅, 새 GPT, 새 Codex 또는 새 작업자가 `Base`를 프로젝트 작업에 적용할 때 사용하는 최상위 라우터다.
+이 문서는 새 채팅, 새 GPT, 새 Codex 또는 새 작업자가 Base와 프로젝트 작업의 책임 원본을 찾는 요청별 한 단계 라우터다. 전체 운영 설명은 `docs/OPERATING_MODEL.md`, 항상 적용되는 규칙은 `AGENTS.md`, Work Mode·Skill 선택은 `docs/WORK_MODE_AND_SKILL_ROUTING.md`, 문서 위치는 `docs/DOCUMENTATION_MAP.md`가 책임진다.
 
 ## 사용자가 기억할 최소 요청
 
 > `https://github.com/alsdmlals4-eng/Base 를 전부 살펴보고 참고해서 이 프로젝트를 작업해줘.`
 
-`전부 살펴본다`는 모든 파일을 무작정 읽는 뜻이 아니다. 현재 작업에 필요한 책임 원본과 최소 스킬 집합을 Registry와 Documentation Map에서 선별한다.
+`전부 살펴본다`는 모든 파일과 Skill을 무작정 읽는 뜻이 아니다. 현재 요청에 필요한 책임 원본과 최소 Skill만 `skills/SKILL_REGISTRY.json`과 `docs/generated/BASE_ACTIVE_SKILLS.md`에서 선별한다. 저장소 접근 없이 설치·마이그레이션·검수 완료를 주장하지 않는다.
 
-기존 기획을 복원하고 Vertical Slice·GPT→Codex·전체 검수를 한 파일로 실행할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 사용한다. 이 Prompt는 Application Binding과 중간 시각화 점검을 수행하지만 최신 사용자 결정·프로젝트 정본보다 높은 권한을 갖지 않는다. v6~v8은 이력·비교 입력이다.
+## 최초 읽기 순서
 
 ```text
-Base START_HERE
-→ Base AGENTS
+Base START_HERE.md·AGENTS.md
 → docs/OPERATING_MODEL.md
-→ Base Documentation Map
-→ 프로젝트가 Sheet를 사용하면 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`
-→ Base Skill Registry
-→ 대상 프로젝트 AGENTS
-→ 루트 [기획서]/00_프로젝트_허브/START_HERE
-→ Active Context·Documentation Map·Development Gates
-→ Design Document Registry·Skill Registry
-→ 현재 책임 원본·필요한 Skill mode
-→ 실제 코드·데이터·자산·테스트
+→ docs/WORK_MODE_AND_SKILL_ROUTING.md
+→ docs/DOCUMENTATION_MAP.md
+→ skills/SKILL_REGISTRY.json
+→ 대상 프로젝트 AGENTS.md·프로젝트 START_HERE
+→ 현재 책임 원본·실제 코드·데이터·자산·테스트
 ```
 
-저장소 접근 없이 설치·마이그레이션·검수 완료를 주장하지 않는다.
+프로젝트가 Google Sheets를 사용하면 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 함께 읽는다. 통합 Vertical Slice 실행이 승인된 경우에만 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 사용한다. 이 Prompt와 과거 v6~v8 자료는 최신 사용자 결정·프로젝트 정본보다 높은 권한을 갖지 않는다.
 
 ## Base 저장소 자체를 콜드 스타트할 때
 
-`Base`는 프로젝트 운영 키트의 공용 원본이므로 프로젝트 전용 `ACTIVE_CONTEXT.md`, `DEVELOPMENT_GATES.md`, `ROADMAP.md`, `INTERVIEW_REGISTRY.json`을 활성 파일로 두지 않는다. 이 경로들은 `templates/project-operations/`에서 대상 프로젝트에 설치하는 템플릿이다.
+Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 상태 파일을 Base의 활성 현재 상태로 오인하지 않는다.
 
-Base 자체의 현재 상태는 다음 책임 원본에서 찾는다.
+- `templates/project-operations/`: 대상 프로젝트에 설치할 Template이며 Base의 활성 상태가 아니다.
+- 확정된 운영 계약: `AGENTS.md`, `START_HERE.md`, `docs/OPERATING_MODEL.md`, `docs/DOCUMENTATION_MAP.md`
+- 완료된 Base 변경: `docs/CHANGELOG.md`
+- 활성 Skill: `skills/SKILL_REGISTRY.json`
+- 이전 Skill ID: `skills/LEGACY_SKILL_ALIASES.md`
+- 검토 대기 제안: `[수정제안서]/PROPOSAL_REGISTRY.json`과 개별 `PROPOSAL.md`
+- 진행 중 구현과 실제 검사: GitHub PR·Actions
 
-```text
-확정된 운영 계약 → AGENTS.md·START_HERE.md·docs/OPERATING_MODEL.md·docs/DOCUMENTATION_MAP.md
-완료된 변경 → docs/CHANGELOG.md
-활성 스킬 → skills/SKILL_REGISTRY.json
-이전 Skill ID → skills/LEGACY_SKILL_ALIASES.md
-검토 대기 작업 → [수정제안서]/PROPOSAL_REGISTRY.json·개별 PROPOSAL.md
-진행 중 구현 → GitHub PR·Actions
-현재 인터뷰 → Base 변경 인터뷰가 실제 등록된 경우에만 해당 Registry·기록
-```
-
-활성 Base 인터뷰가 없으면 `등록 없음`, 제출된 제안의 우선순위가 승인되지 않았으면 `사용자 검토 대기·우선순위 미확정`으로 답한다. 프로젝트용 상태 파일이 Base 루트에 없다는 이유만으로 결함이나 누락으로 판정하지 않는다.
-
-## 공용 운영 계약
-
-공용 구조와 상태·발행 정책의 단일 설명 원본은 `docs/OPERATING_MODEL.md`다. 이 문서는 요청을 해당 실행 Skill로 라우팅하는 역할만 가진다. 프로젝트 GDD Google Sheets 작업은 GitHub 정본과 함께 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 읽는다.
-
-금지:
-
-- 전체 skills 폴더 기본 로드
-- trigger와 무관한 스킬 호출
-- 같은 요청의 수준·범위·상태를 여러 스킬에서 중복 판정
-- 검증·발행·Handoff의 조기 실행
-- `[보류]`, `[백업]`, `[제거 후보]` 스킬 호출
-- 실행하지 않은 조사·테스트·렌더·권한을 통과로 표시
-- 외부 벤치마크·리뷰를 요구사항 권한이나 구현 사실의 정본으로 사용
+활성 Base 인터뷰가 없으면 `등록 없음`, 제출 제안의 우선순위가 승인되지 않았으면 `사용자 검토 대기·우선순위 미확정`으로 답한다.
 
 ## 요청별 라우팅
 
-### 요청 접수·요구 확정·실행 계약·작업 순서
+먼저 `managing-project-intake-and-work-contract`에서 사용자 의도·저장소 사실·범위·승인·실행 계약을 한 번만 처리한 뒤 아래 주 책임으로 이동한다. 각 행은 다음 한 파일만 가리키며 상세 절차를 이 문서에 복제하지 않는다.
 
-`skills/managing-project-intake-and-work-contract/SKILL.md`
+| 요청 | 주 책임·mode | 다음 파일 |
+|---|---|---|
+| 신규 프로젝트 운영체계 설치 | `managing-game-project-operating-system: install / verify` | `skills/managing-game-project-operating-system/SKILL.md` |
+| 기존 프로젝트 구조 감사·마이그레이션 | `managing-game-project-operating-system: audit / reconcile-legacy / migrate / verify` | `skills/managing-game-project-operating-system/SKILL.md` |
+| 구형 자료 분류·보존·Archive·승인 삭제 | `governing-legacy-retention-and-archives` | `skills/governing-legacy-retention-and-archives/SKILL.md` |
+| 핵심 컨셉·DDD·벤치마크·플레이테스트·PoC | `analyzing-and-refining-game-concepts` | `skills/analyzing-and-refining-game-concepts/SKILL.md` |
+| 게임 시스템·난이도·전투 AI | `analyzing-and-refining-game-concepts: system-design / difficulty-and-combat-ai` | `skills/analyzing-and-refining-game-concepts/SKILL.md` |
+| 기존 프로젝트 코어 판정 | `identifying-project-core` | `skills/identifying-project-core/SKILL.md` |
+| 기획 단계 프로젝트 코어 확정 | `establishing-project-core` | `skills/establishing-project-core/SKILL.md` |
+| 적대적 검토·저장소 전수 감사·승인 finding 개선 | `running-adversarial-review-and-refinement` | `skills/running-adversarial-review-and-refinement/SKILL.md` |
+| 일반 변경·외부 AI 결과 검증 | `reviewing-and-validating-project-changes` | `skills/reviewing-and-validating-project-changes/SKILL.md` |
+| 정본·경로·ID·Schema 전파 누락 | `auditing-canonical-reference-freshness` | `skills/auditing-canonical-reference-freshness/SKILL.md` |
+| 기획 책임 원본 작성·구조 변경·발행 | `managing-design-documents` | `skills/managing-design-documents/SKILL.md` |
+| 프로젝트 Skill 생성·통합·학습 | `evolving-project-discipline-skills` | `skills/evolving-project-discipline-skills/SKILL.md` |
+| 현재 상태·다음 작업·Handoff | `maintaining-project-context-and-handoff` | `skills/maintaining-project-context-and-handoff/SKILL.md` |
+| 프로젝트 교훈의 Base 제안·승인 구현 | `managing-base-change-proposals` | `skills/managing-base-change-proposals/SKILL.md` |
+| Vertical Slice 품질·플레이·제작 파이프라인 | `designing-vertical-slices` | `skills/designing-vertical-slices/SKILL.md` |
+| 아트 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` | `skills/designing-art-prompts-and-technique-cards/SKILL.md` |
+| Godot 에셋·플러그인 제작 전 조사·라이선스·구매 판단 | `evaluating-godot-assets-and-plugins-before-creation` | `skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md` |
+| 게임 UX/UI 설계·폴리싱·구현 결과 감사 | `auditing-and-refining-ui-art` | `skills/auditing-and-refining-ui-art/SKILL.md` |
+| 외부 AI 작업 공간 운용 | `orchestrating-deepseek-worktrees` | `skills/orchestrating-deepseek-worktrees/SKILL.md` |
+| AI 모델·추론 effort·Prompt cache·실측 비용 최적화 | `optimizing-ai-model-and-prompt-costs` | `skills/optimizing-ai-model-and-prompt-costs/SKILL.md` |
 
-```text
-route
-→ 저장소 사실 조사
-→ 필요한 경우 clarify
-→ 사용자 마지막 확인
-→ contract
-→ 필요한 경우 decompose-and-sequence
-```
+활성 Skill의 trigger·비사용 조건·입력·출력·실패·검증은 `skills/SKILL_REGISTRY.json`과 해당 `SKILL.md`가 책임진다. Skill 이름을 사용자에게 고르게 하거나 전체 Skill을 기본 로드하지 않는다.
 
-오탈자·명확한 단일 파일 기계 수정·동일 검사 재실행은 예외다. `decompose-and-sequence`는 승인된 L2 이상 작업이나 여러 의존성이 있는 경우에만 사용하며, 결과·의존성·병렬 묶음·게이트·검증·롤백을 만든다.
+작성 산출물 Template은 소유 Skill이 `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md`로 연결한다.
 
-### 신규 프로젝트 운영체계 설치
+## 보조 라우트
 
-`skills/managing-game-project-operating-system/SKILL.md`의 `install` mode를 사용한다.
+| 요청 | 다음 책임 |
+|---|---|
+| 로컬·GitHub drift | `synchronizing-local-and-github-state` |
+| 긴 작업 checkpoint·재개 | `maintaining-long-running-task-continuity` |
+| 구조 단순화·동작 보존 리팩터링 | `simplifying-skill-bodies` / `refactoring-with-contract-preservation` |
+| 불필요 자료 판정 | `pruning-stale-and-nonfunctional-material` |
+| 게임 사용자 연구 11영역 | `governing-game-user-research-coverage` |
+| 사용자 학습 자료 | `creating-user-learning-notes` |
+| 프로젝트 HTML·상태 시각화 | `building-project-visual-dashboards` |
+| Godot·Unity 런타임 오류 | `diagnosing-game-engine-runtime-failures` |
 
-설치 뒤 같은 Skill의 `verify` mode로 Registry·발행·스킬·자동화·콜드 스타트를 검수한다.
+전체 원문 책임 매핑은 `docs/SKILL_COVERAGE_MAP.md`, 기계 검증은 `skills/SKILL_COVERAGE.json`을 사용한다.
 
-### 기존 프로젝트 구조 감사·마이그레이션
-
-`skills/managing-game-project-operating-system/SKILL.md`
-
-```text
-audit
-→ 현행 책임·참조·고유 정보 조사
-→ 목표 구조·보존·롤백 제안
-→ 사용자 승인
-→ migrate
-→ verify
-```
-
-사용자 승인 전 대량 이동·삭제·통합을 하지 않는다.
-
-### 핵심 컨셉·DDD·벤치마크·플레이테스트·기획 방향
-
-`skills/analyzing-and-refining-game-concepts/SKILL.md`
-
-```text
-frame
-→ constrain
-→ sharpen
-→ structure
-→ 필요한 경우 system-design
-→ 필요한 경우 difficulty-and-combat-ai
-→ 필요한 경우 benchmark-and-player-research
-→ analyze
-→ 필요한 경우 playtest-and-experiment
-→ poc-contract
-→ recalibrate
-→ production-gate
-```
-
-SWOT은 SO·WO·ST·WT 행동으로 변환하고, MDA·DDE·DDD·3C·루프·동기·차별화·제작성을 교차 분석한다.
-
-Base 내부에서 `DDD`는 `Digital Dopamine Design`이다. 첫 의미 있는 보상, 행동-피드백 지연, 보상 명료성·밀도, Micro→Session→Meta 보상 사다리, 다음 행동 의도와 피로·인플레이션을 관찰한다. 외부 자료의 동명 약어는 출처 정의를 확인하기 전 임의 해석하지 않는다.
-
-`benchmark-and-player-research`는 공식 제품 사실, 플레이어 자기보고, 행동 이벤트·퍼널, 통제 실험과 해석을 구분하고 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 개선 결정을 만든다. `playtest-and-experiment`는 빌드·대상 집단·과제·피드백 채널·행동 계측·성공 기준을 고정한다.
-
-### 게임 시스템·난이도·전투 AI 설계
-
-`analyzing-and-refining-game-concepts`의 `system-design` 또는 `difficulty-and-combat-ai` Skill Mode를 사용한다.
+## 일반 프로젝트 읽기 순서
 
 ```text
-플레이어 경험 목표
-→ 시스템 경계·행동/선택/결과
-→ 난이도 장벽·공정성 안전 규칙
-→ 개별 적 판단·전투 조율자·난이도/페이싱 디렉터
-→ 공격·위협 예산·긴장도 상태
-→ 고정·적응형 난이도
-→ 텔레메트리·플레이테스트·PoC
-```
-
-상세 절차는 `skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-and-combat-ai.md`, 프로젝트 작성 틀은 `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md`를 사용한다. 새 독립 난이도·전투 AI Skill을 만들지 않는다.
-
-### 프로젝트 코어 판정
-
-`skills/identifying-project-core/SKILL.md`
-
-기존 프로젝트의 기획·시스템·코드 코어와 코어 기능·MVP 지원 기능의 경계를 승인 원본·실제 구현·제거·대체 테스트로 판정한다. 기본 권한은 읽기 전용이다.
-
-### 기획 단계 프로젝트 코어 확정
-
-`skills/establishing-project-core/SKILL.md`
-
-PLAN Work Mode에서 프로젝트 정체성·핵심 경험·코어 루프·불변 조건·변경 가능한 외피를 제안하고 반례 검토 뒤 사용자의 명시적 승인으로 확정한다.
-
-### 적대적 검토·개선 루프
-
-`skills/running-adversarial-review-and-refinement/SKILL.md`
-
-```text
-review-scope-map
-→ attack
-→ validate-critique
-→ route-findings
-→ 기술적으로 판단 가능한 사항은 technical-review-proposal로 일괄 정리
-→ 기획 결정을 요구하는 충돌만 한 번에 하나씩 사용자 확정
-→ 승인된 MUST_FIX·SHOULD_FIX만 refine-approved-findings
-→ regression-recheck
-→ decision-report
-```
-
-`REVIEW` Work Mode의 기본 탐색 루프다. 요청 파일만 보지 않고 정본·활성 소비자·인접 시스템·untouched 영향 파일·테스트·템플릿·파생본을 연결한다. 레드팀 지적을 그대로 수용하지 않고 취향·범위 밖 요구·잘못된 전제를 다시 검증하며, 저장소와 증거로 답할 수 있는 기술 항목을 사용자 질문으로 전가하지 않는다.
-
-### 기획 책임 원본 작성·발행
-
-`skills/managing-design-documents/SKILL.md`
-
-필요한 mode만 사용한다.
-
-```text
-author | update | restructure
-→ Registry 발행 정책 확인
-→ publish
-→ validate
-```
-
-발행 정책:
-
-- `source_only`
-- `milestone_sync`
-- `always_sync`
-
-DOCX와 다이어그램은 선언한 경우만 생성한다. `CURRENT`와 사람 시각 검수 완료를 혼동하지 않는다.
-
-### 프로젝트 스킬 생성·통합·학습
-
-`skills/evolving-project-discipline-skills/SKILL.md`
-
-Registry에 trigger가 일치하는 최소 스킬만 등록한다. 실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 호출만 Learning Log에 기록한다. 통합·이름·경로 변경 뒤에는 정본·참조 최신성 감사를 실행한다.
-
-### 현재 상태·인수인계
-
-`skills/maintaining-project-context-and-handoff/SKILL.md`
-
-Active Context는 현재 상태·다음 작업·위험·읽기 순서만 압축한다. 책임 원본 전문을 복제하지 않는다.
-
-### 프로젝트 교훈의 Base 환류
-
-`skills/managing-base-change-proposals/SKILL.md`
-
-```text
-extract
-→ submit
-→ review
-→ 사용자 승인
-→ 별도 구현 PR에서 implement
-→ verify
-```
-
-제안 PR과 활성 Base 구현 PR을 합치지 않는다.
-
-### Vertical Slice
-
-`skills/designing-vertical-slices/SKILL.md`
-
-```text
-slice-contract
-→ quality-bar
-→ pipeline-proof
-→ playtest-evidence
-→ decision-gate
-```
-
-대표 플레이 구간으로 핵심 경험·목표 품질·접근성·성능·시스템 연결·실제 플레이 증거·제작 파이프라인을 함께 검증한다. 핵심 컨셉이나 뾰족한 재미가 미확정이면 먼저 `analyzing-and-refining-game-concepts`를 사용한다. 기존 정본 복원부터 인터뷰·실행 계약을 한 파일로 첨부할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 사용한다.
-
-### 프로젝트 변경 검증
-
-`skills/reviewing-and-validating-project-changes/SKILL.md`
-
-```text
-review-scope-map
-→ running-adversarial-review-and-refinement
-→ 기술 검수안과 USER_DECISION_REQUIRED 분리
-→ 기획 충돌이 있으면 한 번에 하나씩 확정
-→ contract-check
-→ 필요한 경우 external-source-review
-→ 정본·경로·ID·Schema 변경 시 reference-freshness
-→ static-validation
-→ runtime-validation
-→ 적용 시 accessibility-review
-→ 적용 시 performance-profile
-→ regression
-→ evidence-report
-```
-
-저장소 전체의 누락·구형 파일·중복 정본·untouched 소비자·Prompt drift를 감사할 때는 `running-adversarial-review-and-refinement`의 `repository-wide-audit` mode를 사용한다. 검색 결과만으로 전수 검수를 주장하지 않고 tracked inventory 또는 미검증 범위를 기록한다.
-
-코드·데이터·문서·자산 변경은 먼저 전체 영향 범위에서 수정·개선 후보를 적대적으로 찾고, 기술적으로 판단 가능한 사항은 근거·우선순위·영향 파일·수정 방향·검증 방법을 검수안으로 정리한다. 프로젝트 코어·플레이어 경험·주요 UX·콘텐츠 의미처럼 기획 결정을 요구하는 충돌만 사용자에게 한 번에 하나씩 제시한다. 이후 승인 계약, 실제 diff, 정적·런타임·회귀 증거를 연결한다. 접근성은 핵심 정보·입력·UI·시간·난이도·모션의 실제 장벽과 대안을 검수하고, 성능은 목표 플랫폼에서 frame time·CPU·GPU·메모리·네트워크·로딩을 baseline과 비교한다. 실행 환경이 없으면 `UNVERIFIED`로 기록한다.
-
-### 정본·참조 최신성 감사
-
-`skills/auditing-canonical-reference-freshness/SKILL.md`
-
-정본·파일·경로·ID·Schema·정책·생성기 변경이 여러 소비자에 전파될 가능성이 있을 때만 호출한다. 변경된 파일뿐 아니라 변경됐어야 하지만 untouched인 활성 소비자와 파생본을 확인한다.
-
-### 외부 AI 대량 작업
-
-- 작업 공간 운용: `skills/orchestrating-deepseek-worktrees/SKILL.md`
-- 결과 검수: `skills/reviewing-and-validating-project-changes/SKILL.md`의 `external-source-review`
-
-외부 AI 결과는 검수 대기 입력이며 실제 diff·근거·테스트 확인 전에는 기준 원본으로 인정하지 않는다.
-
-### 아트·UI
-
-- 생성 전 프롬프트·기술 카드: `skills/designing-art-prompts-and-technique-cards/SKILL.md`
-- 게임 UX/UI 설계·폴리싱·구현 결과 감사: `skills/auditing-and-refining-ui-art/SKILL.md`
-- 핵심 정보·입력·탐색의 플레이 장벽: `reviewing-and-validating-project-changes: accessibility-review`
-
-생성 전 설계, 준비된 화면의 UI 폴리싱, 구현 후 시각 감사, 접근성 장벽 검수는 입력·도구·판정이 다르므로 구분한다. 폴리싱·UI 감사는 사용자 승인 전 대상 파일을 수정하지 않으며 전후 실제 렌더로 재검수한다.
-
-## 일반 프로젝트 작업 읽기 순서
-
-```text
-프로젝트 AGENTS
-→ 루트 [기획서]/00_프로젝트_허브/START_HERE
-→ ACTIVE_CONTEXT.md
-→ DOCUMENTATION_MAP.md
-→ DEVELOPMENT_GATES.md
-→ DESIGN_DOCUMENT_REGISTRY.json
-→ 현재 책임 원본
-→ SKILL_REGISTRY.json
-→ 필요한 통합 Skill과 mode
+프로젝트 AGENTS.md
+→ 루트 [기획서]/00_프로젝트_허브/START_HERE.md
+→ ACTIVE_CONTEXT.md·DOCUMENTATION_MAP.md·DEVELOPMENT_GATES.md
+→ DESIGN_DOCUMENT_REGISTRY.json·현재 책임 원본
+→ SKILL_REGISTRY.json·필요한 Skill과 mode
 → Roadmap·Issue·Plan·실행 순서
 → 실제 파일·자산·테스트
 ```
 
-변경 후 `DOCUMENT_UPDATE_MATRIX.md`로 영향 범위를 확인한다.
-
-## 이전 Skill ID
-
-통합 전 Skill ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 새 Skill과 mode로 연결한다. 새 문서와 Registry에는 새 ID만 사용하고 과거 Issue·PR·Git 이력은 그대로 보존한다.
-
-### 구조 최적화·동기화·장기 작업
-
-```text
-불필요 자료 판정 → pruning-stale-and-nonfunctional-material
-조건부 상세 분리 → simplifying-skill-bodies
-동작 보존 구조 변경 → refactoring-with-contract-preservation
-실패 가정 재검토 → running-adversarial-review-and-refinement
-실제 변경 증거 → reviewing-and-validating-project-changes
-```
-
-- 로컬·GitHub drift: `synchronizing-local-and-github-state`
-- 긴 작업 checkpoint·재개: `maintaining-long-running-task-continuity`
-- 게임 사용자 연구 11영역: `governing-game-user-research-coverage`
-- 사용자 학습 자료: `creating-user-learning-notes`
-- 프로젝트 HTML·상태 시각화: `building-project-visual-dashboards`
-- Godot·Unity 런타임 오류: `diagnosing-game-engine-runtime-failures`
-
-전체 원문 책임 매핑은 `docs/SKILL_COVERAGE_MAP.md`, 기계 검증은 `skills/SKILL_COVERAGE.json`을 사용한다.
+변경 후 `DOCUMENT_UPDATE_MATRIX.md`로 영향 범위를 확인한다. 과거 Skill ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 현재 Skill·mode로 해석하며, 새 문서와 Registry에는 현행 ID만 사용한다.

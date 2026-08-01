@@ -1,5 +1,15 @@
 # Base Skill Learning Log
 
+## 2026-08-01 — Entrypoint ownership before size reduction
+
+- **Trigger:** `AGENTS.md` and `START_HERE.md` repeated lifecycle, publication, review, legacy, and completion procedures already owned by the operating model, routing contract, and Skill packages.
+- **Finding:** shortening both files independently would preserve mixed ownership and allow drift. A numerical line or character gate could also reward deleting necessary exceptions instead of delegating them.
+- **Decision:** keep `AGENTS.md` as the always-on invariant layer and `START_HERE.md` as the request-by-request one-step router. Delegate conditional detail to `docs/OPERATING_MODEL.md`, `docs/WORK_MODE_AND_SKILL_ROUTING.md`, `docs/DOCUMENTATION_MAP.md`, the Registry-derived view, and selected Skill packages.
+- **Benchmark:** OpenAI's Codex guidance says durable `AGENTS.md` guidance should stay small and supports linked/layered instructions; OpenAI Skills and GitHub path-specific instructions use progressive disclosure. These sources inform presentation only and do not override Base authority.
+- **Evidence:** semantic RED tests reproduced the mixed-role contract and duplicate publication/review detail; the compact entrypoints then passed focused cold-start, consolidated-Skill, UI, difficulty/AI, Vertical Slice, and GDD Sheet regressions. The first canonical local-validation run also proved that the active `origin/main` example violated the checker's exact-commit boundary, so active examples and a regression now require a 40-character trusted main SHA. Independent review then caught a deleted direct-approval exception, a template route that bypassed its owning Skill, and missing archive/plugin/model-cost high-risk routes; Registry-trigger-derived regressions now preserve those boundaries. Re-review found that the game-system table was corrected while the top banner still bypassed the owner, so the regression now enumerates every first-hop representation of that route instead of sampling one table row.
+- **Boundary:** this is structural and automated evidence. Live model behavior, project installation, project runtime, Google Sheets, accessibility, performance, and human comprehension remain `NOT_RUN` until separately exercised.
+- **Next trigger:** if a new policy adds detailed procedure to either entrypoint, require an explicit reason it is always-on or one-step routing; otherwise link its canonical owner and extend semantic discovery tests.
+
 ## 2026-07-31 — Canonical-bound intermediate visual checkpoint
 
 - Status: `PATTERN`.

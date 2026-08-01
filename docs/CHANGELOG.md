@@ -8,6 +8,7 @@
 - Integrated Issue #74's Build-Measure-Learn, element decomposition, four review lenses, Golden Path/Edge/Regression, and Base-versus-project learning boundary into existing workflows rather than adding a broad Skill.
 - Consolidated the Required Check to one owner, removed the canonical PR trigger filter, and kept focused Base v9 evidence as a separate check.
 - Replaced file-existence publication gates with shared executable LibreOffice/Poppler and regular/bold-font readiness, and added an isolated canonical local-validation entrypoint whose owned temporary session is cleaned on success or failure.
+- Split the two Base entrypoints by responsibility: `AGENTS.md` now keeps only always-on authority, safety, protection, evidence, and completion invariants, while `START_HERE.md` is a one-step request router to existing canonical procedures. Semantic regressions preserve discoverability without introducing a line or character limit, and active local-validation examples now require the exact trusted 40-character main SHA instead of a moving ref name.
 
 ## 2026-08-01 — Base v9.4 released pins
 
