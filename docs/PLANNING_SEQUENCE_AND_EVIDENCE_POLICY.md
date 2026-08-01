@@ -299,3 +299,9 @@ Base에는 생성하지 않는다. 개별 프로젝트에서만 다음 순서를
 - 임시 Prototype 품질을 완성 데모 품질로 오인한다.
 - Base에 프로젝트 Google Sheets 동기화를 요구한다.
 - Evidence Pack·Case Card 작성만으로 실제 재미·접근성·성능·출시 준비를 검증했다고 주장한다.
+
+## Base v9.4 Context 큐레이션 Gate
+
+Context 선별이 기획 근거를 바꾸는 작업에서는 `decision_question / include_criteria / exclude_criteria / authority_level / freshness / representation / deduplication / known_conflicts / progressive_load_trigger / refresh_trigger`를 기록한다.
+
+반대 근거·실패 사례·보호 규칙을 관련 없다는 이유로 제거하지 않는다. 제외에는 이유와 재조회 조건을 남기며, 화면·Schema·Fixture 같은 Artifact가 런타임·사람 이해·접근성·성능을 증명한다고 과장하지 않는다.

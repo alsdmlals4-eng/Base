@@ -350,3 +350,11 @@ Templates:
 - `templates/planning/EXECUTION_SEQUENCE_PLAN.md`
 - `templates/project-operations/GRILL_ME_DECISION_RECORD.md`
 - `templates/project-operations/SKILL_EXECUTION_REPORT.md`
+
+## Base v9.4 지시 권위·Context 큐레이션
+
+L1 이상 Prompt 계약에서 강한 지시를 추가하기 전에 `HARD_CONSTRAINT / RECOMMENDED_DEFAULT / JUDGMENT_SPACE`로 권위를 분류한다. 보안·권한·데이터 무결성·비가역 변경·저장 호환성·법적 경계는 완화하지 않는다.
+
+입력·출력·불변조건·실패조건·검증을 예시보다 먼저 정의하는 Interface-first 계약을 사용한다. 예시는 정상·실패·경계·회귀 Fixture 또는 Golden Set으로 보존한다.
+
+Context 큐레이션은 현재 `decision_question`을 고정한 뒤 권위·freshness·representation·deduplication·known conflicts·반대 근거·`progressive_load_trigger`·`refresh_trigger`를 기록한다. 상세 Method: `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`.
