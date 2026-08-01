@@ -2,6 +2,7 @@
 
 ## Unreleased — Base v9.5 focused maintenance candidate
 
+- Added a neutral-adversarial recommendation Gate to the existing feature lifecycle: user proposals and AI first proposals now receive the same criteria, alternatives, counterevidence, risk, reversibility, and evidence-limit review; unsupported agreement and disagreement-for-its-own-sake are both rejected without adding a broad Skill or changing Registry bytes.
 - Clarified the immutable v9.0 baseline, released v9.4 compatible line, current routing authority, and frozen v9.0 release derivatives without changing released locks.
 - Reduced active Skill discovery metadata while preserving Registry bytes, Skill IDs, trigger contracts, and Skill bodies.
 - Added realistic prompt-to-Skill behavior fixtures and a deterministic contract/result scorer; live model execution remains `NOT_RUN` until external results are supplied.
