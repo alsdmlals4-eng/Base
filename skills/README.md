@@ -67,3 +67,11 @@ skills/<skill-id>/agents/        지원 플랫폼용 발견 metadata
 프로젝트 교훈은 먼저 `[수정제안서]`에서 검토하고, 승인된 Base 변경만 별도 구현 PR에서 Registry·Skill·Template·Test·생성본과 함께 갱신한다.
 
 외부 시각 도구는 `docs/VISUAL_COLLABORATION_TOOL_POLICY.md`의 Artifact·정본 경계를 따라 기존 책임 Skill에서 사용한다.
+
+## Base v9.4 AI 운영 진입점
+
+- 모델·추론 단계·Prompt caching·비용 추정·실측 재보정: `optimizing-ai-model-and-prompt-costs`
+- 지시 권위·Interface-first Prompt·Context 큐레이션·Artifact 주장 상한: `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`
+- 게임 UI 모션·중단·반복·Reduced Motion·도메인 상태 권위: `auditing-and-refining-ui-art` → `references/ui-motion-and-interaction-principles.md`
+
+Luna / Terra / Sol은 논리적 작업 등급이며 실제 provider 옵션의 존재를 보장하지 않는다. BCP-2026-004는 새 활성 Skill을 만들지 않고 기존 intake·simplifying·UI Skill의 책임으로 유지한다.

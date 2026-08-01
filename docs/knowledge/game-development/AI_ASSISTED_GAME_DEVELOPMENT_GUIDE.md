@@ -461,3 +461,9 @@ AI 조사·제안
 ## 실제 변경·증거·미검증·롤백
 ## Learning Log·다음 Eval
 ```
+
+## Base v9.4 지시·Context·모델 비용 라우팅
+
+Prompt·Context의 지시 권위, Interface-first, Example as Fixture, 결정 질문 중심 큐레이션과 Artifact 주장 상한은 `AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`를 사용한다.
+
+모델·추론 단계·Prompt caching·비용 추정과 실제 usage 재보정은 `optimizing-ai-model-and-prompt-costs`를 사용한다. `[모델 추천]` 호출 시 모델·추론 단계·이유·다음 checkpoint를 먼저 제안하며 실제 설정을 자동 변경했다고 주장하지 않는다.

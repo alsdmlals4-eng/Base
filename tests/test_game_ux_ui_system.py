@@ -246,6 +246,52 @@ class GameUxUiSystemContractTests(unittest.TestCase):
         self.assertIn("자동 검사", checklist)
         self.assertIn("사람 이해", checklist)
 
+    def test_ui_motion_reference_is_routed_and_reviewable(self) -> None:
+        motion = REFERENCE_ROOT / "ui-motion-and-interaction-principles.md"
+        self.assertTrue(motion.is_file())
+        text = motion.read_text(encoding="utf-8")
+        for required in (
+            "staging",
+            "입력 접수",
+            "처리 중",
+            "중단",
+            "즉시 완료",
+            "빠른 반복",
+            "재진입",
+            "Reduced Motion",
+            "mute",
+            "haptic-off",
+            "AnimationPlayer",
+            "Tween",
+            "도메인 상태 권위",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, text)
+        self.assertIn("ui-motion-and-interaction-principles.md", SKILL.read_text(encoding="utf-8"))
+
+    def test_reference_card_tracks_motion_claims_and_domain_authority(self) -> None:
+        text = REFERENCE_CARD.read_text(encoding="utf-8")
+        for required in (
+            "motion_interaction_evidence",
+            "motion_purpose",
+            "input_accepted_processing_result",
+            "interruption_and_instant_complete",
+            "rapid_repeat_and_reentry",
+            "domain_state_authority",
+            "target_platform_performance",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, text)
+
+    def test_registry_routes_v94_ui_motion_without_a_duplicate_skill(self) -> None:
+        registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+        by_id = {item["skill_id"]: item for item in registry["skills"]}
+        ui = by_id["auditing-and-refining-ui-art"]
+        for trigger in ("ui-motion-design", "animation-interruption", "instant-complete", "reduced-motion"):
+            with self.subTest(trigger=trigger):
+                self.assertIn(trigger, ui["trigger_tags"])
+        self.assertNotIn("designing-ui-motion", by_id)
+
 
 if __name__ == "__main__":
     unittest.main()
