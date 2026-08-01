@@ -37,6 +37,15 @@ polishing_evidence:
   motion_audio_haptic_dependency:
   reduced_motion_mute_haptic_off_path:
   before_after_validation:
+motion_interaction_evidence:
+  motion_purpose: ORIENT | CONFIRM | PROGRESS | RESULT | WARN | REWARD | DECORATE | NOT_APPLICABLE
+  staging_and_first_attention:
+  input_accepted_processing_result:
+  interruption_and_instant_complete:
+  rapid_repeat_and_reentry:
+  reduced_motion_mute_haptic_off:
+  domain_state_authority:
+  target_platform_performance:
 copying_prohibited:
 transformation_and_validation:
 risks_and_biases:
@@ -82,3 +91,6 @@ review_status: DRAFT | REVIEWED | APPLIED | REJECTED | SUPERSEDED
 ### 검증할 행동
 
 -
+
+11. UI 모션 자료는 staging·입력 접수/처리 중/결과·중단·즉시 완료·빠른 반복·재진입·Reduced Motion·mute·haptic-off·도메인 상태 권위를 함께 검토한다.
+12. AnimationPlayer·Tween 표현이 구매·보상·저장·진행의 실제 결과를 소유하는 사례는 `AVOID`한다.

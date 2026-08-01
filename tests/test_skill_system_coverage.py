@@ -124,6 +124,24 @@ class SkillSystemCoverageTests(unittest.TestCase):
         self.assertTrue((ROOT / "docs/SKILL_COVERAGE_MAP.md").is_file())
         self.assertTrue((ROOT / "skills/SKILL_COVERAGE.json").is_file())
 
+    def test_base_v94_ai_operations_have_distinct_registry_boundaries(self) -> None:
+        registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
+        by_id = {item["skill_id"]: item for item in registry["skills"]}
+        model = by_id["optimizing-ai-model-and-prompt-costs"]
+        self.assertEqual("skills/optimizing-ai-model-and-prompt-costs/SKILL.md", model["path"])
+        self.assertEqual("ACTIVE", model["status"])
+        self.assertFalse(model["load_by_default"])
+        self.assertTrue({"model-recommendation", "prompt-caching", "provider-profile"}.issubset(model["trigger_tags"]))
+
+        intake = by_id["managing-project-intake-and-work-contract"]
+        simplifying = by_id["simplifying-skill-bodies"]
+        ui = by_id["auditing-and-refining-ui-art"]
+        self.assertIn("instruction-authority", intake["trigger_tags"])
+        self.assertIn("example-as-fixture", simplifying["trigger_tags"])
+        self.assertIn("ui-motion-design", ui["trigger_tags"])
+        self.assertNotIn("designing-ai-instructions", by_id)
+        self.assertNotIn("designing-ui-motion", by_id)
+
 
 class LegacyRetentionArchiveGovernanceTests(unittest.TestCase):
     def test_archive_contract_files_exist(self) -> None:

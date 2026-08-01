@@ -97,10 +97,18 @@ class VerticalSliceV9ContractTests(unittest.TestCase):
         self.assertEqual(lock["release_state"], "BASE_RELEASED")
         self.assertEqual(lock["candidate_release_commit"], "648b9f60e53c4dbc7780d463be8d1bbd3a5a5e88")
         self.assertEqual(lock["candidate_release_evidence_commit"], "839154eca628084b023776f4ccf91770c344d7e6")
-        self.assertEqual(
-            lock["candidate_registry"]["sha256"],
-            hashlib.sha256((ROOT / "skills/SKILL_REGISTRY.json").read_bytes()).hexdigest(),
-        )
+        registry_blob = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(ROOT),
+                "show",
+                f"{lock['candidate_release_commit']}:skills/SKILL_REGISTRY.json",
+            ],
+            capture_output=True,
+            check=True,
+        ).stdout
+        self.assertEqual(lock["candidate_registry"]["sha256"], hashlib.sha256(registry_blob).hexdigest())
         release_contract = read("docs/operations/BASE_V9_2_RELEASE_CONTRACT.md")
         self.assertIn("must not self-attest", release_contract)
         self.assertIn("Projects may now pin Base v9.2", release_contract)
@@ -140,7 +148,13 @@ class VerticalSliceV9ContractTests(unittest.TestCase):
         self.assertIn("selected_base_version = base_version or latest_released_base_version(base_repository)", core)
         self.assertIn("newest locally available lock with usable release and evidence pins", read("tools/migrate_project_operating_contract.py"))
         registry_blob = subprocess.run(
-            ["git", "-C", str(ROOT), "show", "HEAD:skills/SKILL_REGISTRY.json"],
+            [
+                "git",
+                "-C",
+                str(ROOT),
+                "show",
+                f"{candidate['candidate_release_commit']}:skills/SKILL_REGISTRY.json",
+            ],
             capture_output=True,
             check=True,
         ).stdout
@@ -151,6 +165,7 @@ class VerticalSliceV9ContractTests(unittest.TestCase):
         integrity = read("tools/check_base_v9_integrity.py")
         self.assertIn("def v93_evidence_record_errors", integrity)
         self.assertIn("def v93_release_lock_errors", integrity)
+        self.assertIn("def v94_release_lock_errors", integrity)
         self.assertIn("v9.3 release evidence candidate Issue does not match the candidate lock", integrity)
 
     def test_visual_policy_and_skill_share_the_checkpoint_boundary(self) -> None:
