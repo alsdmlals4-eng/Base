@@ -78,6 +78,7 @@ Base 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 �
 | 이전 Skill 별칭 | `skills/LEGACY_SKILL_ALIASES.md` | 통합 전 ID를 현행 Skill·Mode로 연결 |
 | Skill 실행 학습 | `skills/SKILL_LEARNING_LOG.md` | 실패·결정·검증·갱신 판정 |
 | Skill 행동 평가 | `skills/SKILL_BEHAVIOR_EVALS.json` | 실제 Prompt의 예상 Work Mode·Skill·Mode·금지 라우팅·필수 증거 |
+| 로컬 통합 검증 | `tools/run_local_validation.py` | 저장소 소유 임시 환경에서 전체 회귀·CI topology·v9 무결성·Skill coverage·Git 검사를 실행하는 단일 진입점 |
 | Base 수정제안서 | `[수정제안서]/PROPOSAL_REGISTRY.json` | 프로젝트발 공용화 후보·승인·구현 상태 |
 | 실행 체크 | `docs/MVP_WORKFLOW_CHECKLIST.md` | 운영 모델에서 파생한 시작·Gate·종료 체크 |
 | 변경 기록 | `docs/CHANGELOG.md` | 완료된 Base 변경과 동기화 기준 |

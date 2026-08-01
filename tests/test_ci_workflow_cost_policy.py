@@ -75,6 +75,53 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
         self.assertIsNotNone(windows_match)
         self.assertIn("if: needs.classify-changes.outputs.run_windows == 'true'", windows_match.group("body"))
 
+    def test_runtime_readiness_and_local_runner_are_validated_at_their_risk_tiers(self) -> None:
+        publication_risk = re.search(
+            r"case \"\$path\" in(?P<body>.*?)has_code=true\n\s+platform_smoke=true",
+            self.text,
+            flags=re.DOTALL,
+        )
+        self.assertIsNotNone(publication_risk)
+        for path in (
+            "tools/publication_readiness.py",
+            "tests/test_publication_readiness.py",
+        ):
+            self.assertIn(path, publication_risk.group("body"))
+
+        syntax_step = re.search(
+            r"- name: Check Python syntax(?P<body>.*?)(?=\n\s+- name: Validate Base change proposals)",
+            self.text,
+            flags=re.DOTALL,
+        )
+        self.assertIsNotNone(syntax_step)
+        for path in (
+            "tools/publication_readiness.py",
+            "tools/run_local_validation.py",
+            "tests/test_publication_readiness.py",
+            "tests/test_local_validation.py",
+        ):
+            self.assertIn(path, syntax_step.group("body"))
+
+        publication_job = re.search(
+            r"publication-validation:\n(?P<body>.*?)(?=\n  platform-smoke-windows:)",
+            self.text,
+            flags=re.DOTALL,
+        )
+        windows_job = re.search(
+            r"platform-smoke-windows:\n(?P<body>.*?)(?=\n  ci-gate:)",
+            self.text,
+            flags=re.DOTALL,
+        )
+        self.assertIsNotNone(publication_job)
+        self.assertIsNotNone(windows_job)
+        self.assertIn("tests/test_publication_readiness.py", publication_job.group("body"))
+        self.assertIn("tests.test_publication_readiness", windows_job.group("body"))
+        self.assertRegex(
+            windows_job.group("body"),
+            r"python tools/check_publication_environment\.py --require-mermaid\s+"
+            r"if \(\$LASTEXITCODE -ne 0\) \{ exit \$LASTEXITCODE \}",
+        )
+
     def test_docs_job_does_not_install_heavy_dependencies(self) -> None:
         docs_match = re.search(
             r"docs-validation:\n(?P<body>.*?)(?=\n  [a-zA-Z0-9_-]+:|\Z)",

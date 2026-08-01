@@ -7,6 +7,7 @@
 - Added realistic prompt-to-Skill behavior fixtures and a deterministic contract/result scorer; live model execution remains `NOT_RUN` until external results are supplied.
 - Integrated Issue #74's Build-Measure-Learn, element decomposition, four review lenses, Golden Path/Edge/Regression, and Base-versus-project learning boundary into existing workflows rather than adding a broad Skill.
 - Consolidated the Required Check to one owner, removed the canonical PR trigger filter, and kept focused Base v9 evidence as a separate check.
+- Replaced file-existence publication gates with shared executable LibreOffice/Poppler and regular/bold-font readiness, and added an isolated canonical local-validation entrypoint whose owned temporary session is cleaned on success or failure.
 
 ## 2026-08-01 — Base v9.4 released pins
 
