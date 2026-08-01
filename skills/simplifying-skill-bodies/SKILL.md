@@ -56,3 +56,9 @@ description: Use when a SKILL.md or operating router has become hard to navigate
 본문을 목차만 남긴 빈 라우터로 만들거나, 중요 안전 규칙을 reference 깊숙이 숨기거나, 여러 문서를 한 거대 reference로 합치거나, 이동한 파일을 본문에서 연결하지 않으면 실패다.
 
 Learning Log: `skills/SKILL_LEARNING_LOG.md`
+
+## Base v9.4 지시 분류와 Fixture 보존
+
+Skill 본문을 정리할 때 문단을 `Always hard constraint / Conditional default / Judgment space / Fixture or example / Historical / Duplicate`로 분류한다. 강한 안전 규칙을 단순화 명목으로 숨기지 않고, 판단 가능한 표현·배치·비파괴 초안은 불필요한 강제 규칙으로 고정하지 않는다.
+
+Example은 삭제 대상이 아니라 정상·실패·경계·회귀를 검출하는 Fixture다. 예시를 이동·축약할 때 그 행동을 Golden Set·Test·Reference가 계속 검증하는지 비교한다. 상세 Method: `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`.

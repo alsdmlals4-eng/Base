@@ -1,0 +1,41 @@
+name: Apply Base v9.4 Consumer Sync
+
+on:
+  pull_request:
+    paths:
+      - "tools/apply_base_v9_4_consumer_sync.py"
+      - ".github/workflows/apply-base-v9-4-consumer-sync.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apply-consumer-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+      - name: Synchronize Skill and UI consumers
+        run: python tools/apply_base_v9_4_consumer_sync.py
+      - name: Commit exact consumer synchronization
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if git diff --quiet; then
+            echo "Consumers already synchronized"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            skills/README.md \
+            templates/research/UX_UI_REFERENCE_CARD.md \
+            tests/test_game_ux_ui_system.py \
+            tests/test_skill_system_coverage.py \
+            .github/workflows/validate-game-ux-ui-system.yml
+          git commit -m "test: synchronize Base v9.4 Skill consumers"
+          git push origin "HEAD:${HEAD_REF}"

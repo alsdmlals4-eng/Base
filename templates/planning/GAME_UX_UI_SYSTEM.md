@@ -269,3 +269,24 @@ disabled / locked / loading / warning / error / new
 - 남은 위험:
 - 다음 게이트:
 - 롤백:
+
+## UI 모션·상호작용 계약
+
+```yaml
+모션 목적:
+상태 변화:
+staging과 첫 시선:
+입력 접수:
+처리 중:
+결과 위치:
+중단:
+즉시 완료:
+빠른 반복·재진입:
+Reduced Motion:
+mute:
+haptic-off:
+도메인 상태 권위:
+성능·전후 증거:
+```
+
+프로젝트별 timing·easing 값은 실제 반복 빈도와 목표 플랫폼에서 검증한다.
