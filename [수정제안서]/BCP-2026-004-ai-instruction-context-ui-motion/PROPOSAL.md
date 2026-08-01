@@ -5,7 +5,7 @@
 - 출처 프로젝트: `alsdmlals4-eng/Base`
 - 기준 커밋: `7978093e16577f1a4e2f60fbc85ebf25d906673b`
 - 제출일: `2026-08-01`
-- 상태: `SUBMITTED`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 지식 상태: `패턴`
 - Decision ID: `DEC-2026-08-01-001`
 - 사용자 승인 근거: `https://github.com/alsdmlals4-eng/Base/issues/115`
@@ -196,3 +196,10 @@ Artifact는 실제 런타임·사람 이해·접근성·성능을 자동으로 �
 - 책임 경계: 모델 라우팅·비용·캐싱과 지시·컨텍스트·UI 모션의 입력·출력·검증을 합치지 않는다.
 - 프로젝트 적용: Base v9.4가 검증·릴리스된 뒤 각 프로젝트의 로컬 Base 사본과 정본에 맞춰 별도 PR로 적용한다.
 - 롤백: 제안 PR을 닫거나 제출 상태를 보존한 채 구현하지 않는다. 활성 Base 파일은 이 제안 PR에서 변경하지 않는다.
+
+## Base v9.4 구현 연결
+
+- approval_ref: `https://github.com/alsdmlals4-eng/Base/issues/115`
+- implementation_pr: `https://github.com/alsdmlals4-eng/Base/pull/118`
+- 상태 전환 위치: 제안 PR이 아니라 승인된 별도 Base v9.4 구현 PR
+- BCP-2026-003과 BCP-2026-004는 같은 후보 PR을 사용하지만 Skill·Method·Reference·Test 책임을 분리한다.

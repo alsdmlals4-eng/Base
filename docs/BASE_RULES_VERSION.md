@@ -83,3 +83,7 @@ this Base release.
 - [Vertical Slice v8 → v9 migration traceability](knowledge/VERTICAL_SLICE_V8_TO_V9_MIGRATION.md)
 - [Base v9.2 release contract](operations/BASE_V9_2_RELEASE_CONTRACT.md)
 - [Base v9.3 release contract](operations/BASE_V9_3_RELEASE_CONTRACT.md)
+
+## Base v9.4 compatible candidate
+
+Base v9.4 is the compatible AI-operations candidate over released v9.3. It adds model/effort/cost routing and judgment-centered instruction, context, artifact, and game UI motion contracts. Its identity is recorded in `../base-v9.4.lock.json`; candidate release and evidence pins remain null until separate trusted-main evidence and pin-finalization PRs are merged. The immutable v9.0 table and released v9.3 identity are not rewritten.

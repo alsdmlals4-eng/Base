@@ -158,3 +158,10 @@
 새 채팅, 새 GPT와 새 Codex가 Base URL 하나에서 동일한 시작 규칙을 찾고, 대상 게임 프로젝트에 분야별 본책·이미지 책임 원본·GitHub 검사를 분화해 설치할 수 있는 공용 저장소 운영체계를 추가했다.
 
 변경:
+
+### Base v9.4 AI operations candidate
+
+- Added provider-neutral model/effort routing, Prompt caching boundaries, cost measurement and recalibration.
+- Added instruction authority budgeting, Interface-first Prompt, Context curation, Example-as-Fixture and Artifact claim limits.
+- Added Godot game UI motion contracts for interruption, instant completion, repetition, Reduced Motion, mute, haptic-off and domain authority.
+- Preserved released Base v9.3 history and separated candidate, trusted evidence and pin-finalization stages.
