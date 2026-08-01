@@ -252,7 +252,6 @@ def probe_publication_readiness(
     if require_mermaid:
         version_arguments = {
             "mermaid_cli": ["--version"],
-            "chrome": ["--version"],
             "node": ["--version"],
             "pnpm": ["--version"],
         }

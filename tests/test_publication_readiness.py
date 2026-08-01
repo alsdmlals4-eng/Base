@@ -136,6 +136,24 @@ subprocess.Popen([sys.executable, "-c", "import time; time.sleep(4)"])
         self.assertEqual((), report.missing)
         self.assertEqual({}, report.probe_failures)
 
+    def test_mermaid_readiness_does_not_launch_the_chrome_gui_directly(self) -> None:
+        chrome = self.root / "chrome-gui-fixture"
+        chrome.write_bytes(b"path-only Chrome fixture")
+        version_tool = self.executable('print("tool version fixture")\n')
+        report = readiness.probe_publication_readiness(
+            replace(
+                self.working_tools(),
+                mermaid_cli=version_tool,
+                chrome=str(chrome),
+                node=version_tool,
+                pnpm=version_tool,
+            ),
+            require_mermaid=True,
+        )
+
+        self.assertTrue(report.ready, report.skip_reason)
+        self.assertIsNone(report.versions["chrome"])
+
     def test_cached_readiness_rechecks_changed_environment_overrides(self) -> None:
         environment = {
             "BASE_LIBREOFFICE": self.working_libreoffice,
@@ -201,7 +219,15 @@ class PublicationWrapperCommandTests(unittest.TestCase):
             command = readiness._probe_command(str(wrapper), ["-v"])
 
         self.assertEqual(
-            [command_processor, "/d", "/s", "/c", "call", str(wrapper), "-v"],
+            [
+                command_processor,
+                "/d",
+                "/s",
+                "/c",
+                "call",
+                str(wrapper.resolve()),
+                "-v",
+            ],
             command,
         )
 

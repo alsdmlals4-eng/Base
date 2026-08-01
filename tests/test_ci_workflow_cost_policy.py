@@ -116,6 +116,11 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
         self.assertIsNotNone(windows_job)
         self.assertIn("tests/test_publication_readiness.py", publication_job.group("body"))
         self.assertIn("tests.test_publication_readiness", windows_job.group("body"))
+        self.assertRegex(
+            windows_job.group("body"),
+            r"python tools/check_publication_environment\.py --require-mermaid\s+"
+            r"if \(\$LASTEXITCODE -ne 0\) \{ exit \$LASTEXITCODE \}",
+        )
 
     def test_docs_job_does_not_install_heavy_dependencies(self) -> None:
         docs_match = re.search(

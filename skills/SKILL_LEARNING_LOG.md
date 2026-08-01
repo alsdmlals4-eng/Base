@@ -546,6 +546,7 @@
 - 현재 결과: 공유 준비도 fixture와 소비자 회귀는 통과했다. 현재 환경에는 필수 폰트가 없어 생성 검사는 이유가 표시된 `SKIPPED`이며 발행 검증 `PASSED`가 아니다.
 - 적대적 검토: `MUST_FIX`로 공용 probe가 Windows `.cmd/.bat` 안전 실행 계약을 우회한 회귀를 발견해 기존 안전 command-array 생성기로 복구했다. `SHOULD_FIX`로 timeout pipe 잔존과 세션 경로 바꿔치기가 자식 실패 코드를 가리는 문제를 확인해 process drain·세션 identity·원래 실패 코드 보존 회귀를 추가했다.
 - 독립 코드 리뷰: 자손이 probe pipe를 상속한 timeout의 무제한 drain, root-only readiness cache의 stale override, Windows 전체 readiness fixture skip을 `Important`로 확인했다. 자손 process-group 종료와 bounded drain, resolved tool·file identity cache key, Windows 전용 실제 `.cmd` 실행 회귀로 수정했으며 재리뷰 결과 Critical/Important 0건이었다. Windows 실제 실행 결과는 exact-head Actions 전까지 `NOT_RUN`이다.
+- 첫 exact-head Windows Actions: 실제 `.cmd` probe는 성공했지만 안전 runner가 정규화한 8.3 경로와 테스트 원문 경로 비교가 달라 smoke가 실패했다. 동시에 Chrome GUI의 `--version` timeout에 따른 preflight 실패가 뒤 unittest의 성공 코드로 덮일 수 있음을 확인했다. 경로 비교를 정규화하고, Chrome은 기존 계약처럼 파일 존재만 확인하되 실제 Mermaid 생성 회귀로 실행성을 검증하며, PowerShell이 preflight non-zero에서 즉시 종료하도록 수정했다. 재실행 전 상태는 `PENDING`이다.
 - 안전 경계: 정리 대상은 현재 실행이 만든 정확한 세션 하나뿐이며 일반 `tmp*`, 사용자 파일, `.venv`, 캐시는 삭제하지 않는다. `.gitignore`도 `.tmp/`와 `.venv/`만 숨긴다.
 - 지식 상태: Base 한 저장소의 성공만으로 외부 프로젝트 전체에 적용할 범용 의무를 확정하지 않는다. 서로 다른 프로젝트와 Windows/Linux 실제 발행 환경에서 재현될 때 `PATTERN` 승격을 검토한다.
 - 다음 검토 트리거: 준비된 CI에서 생성 검사가 skip되거나 실패하는 경우, 임시 파일 잔존 재발, 외부 프로젝트 어댑터 적용 결과.
