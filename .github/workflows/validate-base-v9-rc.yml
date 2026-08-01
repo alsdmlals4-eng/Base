@@ -40,7 +40,7 @@ on:
       - ".github/workflows/**"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   migration-preview:
@@ -55,6 +55,20 @@ jobs:
           python-version: "3.12"
       - name: Apply deterministic Base v9.4 migration in workspace
         run: python tools/apply_base_v9_4_ai_operations.py
+      - name: Commit exact migration to the PR branch
+        if: github.event_name == 'pull_request'
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if git diff --quiet; then
+            echo "Migration already committed"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all
+          git commit -m "feat: apply Base v9.4 AI operations migration"
+          git push origin "HEAD:${HEAD_REF}"
       - name: Upload exact generated migration files
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
