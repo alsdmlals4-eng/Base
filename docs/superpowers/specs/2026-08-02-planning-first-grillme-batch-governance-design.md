@@ -4,13 +4,25 @@
 
 Base 작업 순서에 다음 세 계약을 하나의 상태 흐름으로 통합한다.
 
-1. 기획 우선: L1 이상 작업은 PLAN과 승인된 실행 계약 없이 BUILD로 진입하지 않는다.
+1. 기획 우선: `L1` 이상 작업은 `PLAN`과 승인된 실행 계약 없이 `BUILD`로 진입하지 않는다.
 2. 상세 데이터·초기 수치는 GPT `RECOMMENDED_DEFAULT`로 진행하되, 프로젝트 방향을 바꾸는 기획 충돌은 Grill Me로 사용자 승인 후 확정한다.
 3. Grill Me 승인 Decision은 최대 10건 단위로 하나의 배치 PR에서 exact-head 검사와 적대적 검토를 통과한 뒤 병합한다.
 
 ## Existing conflict
 
 현행 정책은 승인 Decision 한 건마다 정본과 `main`에 즉시 반영할 수 있다. 새 요구는 10건 단위 PR 검증·병합을 요구한다. 승인 기록을 10건 동안 메모리에만 누적하면 중단 복원과 즉시 동기화 계약을 깨고, 반대로 매 건 `main`에 직접 반영하면 배치 PR 검증을 우회한다.
+
+## Authority design
+
+상세 문구를 여러 장문 문서에 복제하지 않는다.
+
+- `AGENTS.md`: 항상 적용되는 기획 우선·결정권·10건 상한의 불변 규칙과 상세 정책 경로
+- `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`: 상태 전이, 분류, 조기 체크포인트, PR·적대적 검토·Sheet 계약의 단일 상세 원본
+- `templates/project-operations/GRILL_ME_BATCH_CHECKPOINT.md`: 프로젝트 실행 기록 Template
+- `tests/test_deep_interview_contract.py`: 기존 Required CI가 실행하는 연결 회귀
+- `tests/test_planning_first_grillme_batch_governance.py`: focused 전체 계약 회귀
+
+이 정책은 기존 즉시 동기화를 폐기하지 않는다. Grill Me 승인에서 “즉시”는 활성 배치 Branch와 GitHub 추적 surface에 내구 기록한다는 의미이며, main 통합 완료는 배치 PR 병합 뒤에만 확정한다.
 
 ## Chosen model
 
@@ -44,7 +56,7 @@ Base 작업 순서에 다음 세 계약을 하나의 상태 흐름으로 통합�
 
 ### GPT recommended detailed defaults
 
-다음은 `RECOMMENDED_DEFAULT`로 진행할 수 있다.
+다음은 `DETAILED_NUMERIC_DEFAULT` / `RECOMMENDED_DEFAULT`로 진행할 수 있다.
 
 - 플레이테스트 전 밸런스 초깃값
 - 쿨다운·입력 버퍼·전환 시간의 초기 시험값
@@ -55,7 +67,7 @@ Base 작업 순서에 다음 세 계약을 하나의 상태 흐름으로 통합�
 
 ### Grill Me required conflicts
 
-수치라도 난이도 곡선, 경제, 성장 속도, 세션 길이, 빌드 우열, 보상 의미, 핵심 플레이 경험을 실질적으로 바꾸면 `USER_DECISION_REQUIRED`다. 분야 정본 간 충돌, 기존 승인 Decision의 폐기·대체, 주요 UX·범위·비용 충돌도 Grill Me에서 한 번에 하나씩 승인받는다.
+수치라도 난이도 곡선, 경제, 성장 속도, 세션 길이, 빌드 우열, 보상 의미, 핵심 플레이 경험을 실질적으로 바꾸면 `PLANNING_CONFLICT` / `USER_DECISION_REQUIRED` / `GRILL_ME_REQUIRED`다. 분야 정본 간 충돌, 기존 승인 Decision의 폐기·대체, 주요 UX·범위·비용 충돌도 Grill Me에서 한 번에 하나씩 승인받는다.
 
 ## Authority and state
 
@@ -66,10 +78,10 @@ Base 작업 순서에 다음 세 계약을 하나의 상태 흐름으로 통합�
 
 ## Verification
 
-- 문서·Skill·Template가 동일 용어와 상태를 사용한다.
+- `AGENTS.md`가 단일 상세 정책과 Template을 발견 가능하게 연결한다.
 - focused contract test가 기획 우선, 분류, 10건 상한, 조기 체크포인트, exact-head, 적대적 검토, merged-main Sheet 승격을 검사한다.
-- 기존 중립적 적대 검토와 deep-interview 회귀를 함께 실행한다.
-- Skill 본문 변경은 Learning Log와 reference-freshness 결합 규칙을 충족한다.
+- 기존 CI가 실행하는 deep-interview 회귀가 새 정책 파일과 Template의 핵심 계약을 확인한다.
+- Registry와 v9.4.1 release lock bytes는 변경하지 않는다.
 
 ## Benchmark interpretation
 
@@ -83,4 +95,5 @@ Base 작업 순서에 다음 세 계약을 하나의 상태 흐름으로 통합�
 - Registry 또는 v9.4.1 release lock 변경
 - 모든 수치를 사용자에게 질문
 - 승인 Decision을 10건 동안 메모리에만 보류
+- 기존 장문 운영 문서에 같은 상세 절차 복제
 - 실제 외부 모델·사람·기기 검증을 자동 완료로 승격
