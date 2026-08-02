@@ -1,6 +1,6 @@
 # Base 공용 AI 작업 규칙
 
-Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skill·Template·Case·Test의 원본이다. 이 파일은 모든 Base 작업에 항상 적용되는 불변 규칙만 책임진다. 요청별 탐색은 `START_HERE.md`, 전체 운영 생명주기는 `docs/OPERATING_MODEL.md`, Work Mode·Skill 선택과 병합 게이트는 `docs/WORK_MODE_AND_SKILL_ROUTING.md`, 문서 위치는 `docs/DOCUMENTATION_MAP.md`가 책임진다.
+Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skill·Template·Case·Test의 원본이다. 이 파일은 모든 Base 작업에 항상 적용되는 불변 규칙만 책임진다. 요청별 탐색은 `START_HERE.md`, 전체 운영 생명주기는 `docs/OPERATING_MODEL.md`, Work Mode·Skill 선택과 병합 게이트는 `docs/WORK_MODE_AND_SKILL_ROUTING.md`, 기획 우선·Grill Me 승인 배치는 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`, 문서 위치는 `docs/DOCUMENTATION_MAP.md`가 책임진다.
 
 ## 1. 권한과 읽기 순서
 
@@ -37,6 +37,17 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - 적대적 검토를 반대를 위한 반대로 오용하거나 유효한 장점을 억지로 부정하지 않는다.
 - 검토 뒤 사용자안이 가장 강하면 근거와 함께 동의하고, 다른 안이 더 강하면 근거와 함께 이견을 제시한다.
 - 판정할 증거가 없으면 결론을 꾸미지 않고 `BLOCKED_UNVERIFIED`와 확인 조건을 기록한다.
+
+## 2.2 기획 우선 원칙
+
+- `L1` 이상 작업은 `PLAN`에서 최신 정본·실제 구현·대안·기획 충돌·완료 기준·검증·롤백을 먼저 닫는다. 사용자 승인 또는 기존에 승인된 실행 계약 없이 제품·정본 변경 `BUILD`에 진입하지 않는다.
+- `L0` 오탈자, 명백한 단일 파일 기계 수정, 동일 입력 검사 재실행은 기획 우선 Gate의 예외다.
+- 프로젝트 방향을 바꾸지 않는 가역적 상세 데이터·초기 시험 수치는 `DETAILED_NUMERIC_DEFAULT`이자 `RECOMMENDED_DEFAULT`로 GPT 권장안을 적용하고 근거·조정 조건·검증·미검증을 기록한다.
+- 난이도 곡선·경제·성장 속도·세션 길이·빌드 우열·보상 의미·핵심 플레이 경험 또는 분야 책임 원본이 충돌하면 `PLANNING_CONFLICT`, `USER_DECISION_REQUIRED`, `GRILL_ME_REQUIRED`로 분류하고 Grill Me 사용자 승인 전 확정하지 않는다.
+- Grill Me 승인 Decision은 즉시 활성 배치 Branch와 GitHub 추적 surface에 같은 Decision ID로 기록한다. `MAX_APPROVED_DECISIONS_PER_BATCH: 10`은 최소 대기량이 아니라 최대 배치 크기이며, 10건 또는 조기 체크포인트에서 하나의 PR로 exact-head 검사와 `attack → validate-critique → regression-recheck → decision-report`를 수행한다.
+- 10번째 승인 뒤에는 배치 PR 병합·재동기화 전 11번째 질문을 금지한다. `unresolved thread 0`, `P0/P1 0`과 필수 검사가 충족된 뒤 병합하고 merged main SHA와 구성된 Sheet를 재조회해 `SYNCED_TO_MAIN`을 확정한다.
+
+상세 상태·조기 체크포인트·Sheet 의미는 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`가 책임진다.
 
 ## 3. Work Mode·Skill·사용자 결정
 

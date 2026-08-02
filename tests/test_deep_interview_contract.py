@@ -131,6 +131,44 @@ class DeepInterviewContractTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
 
+    def test_planning_first_grill_me_batch_contract(self) -> None:
+        agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        policy_path = ROOT / "docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md"
+        template_path = ROOT / "templates/project-operations/GRILL_ME_BATCH_CHECKPOINT.md"
+        self.assertTrue(policy_path.is_file())
+        self.assertTrue(template_path.is_file())
+        policy = policy_path.read_text(encoding="utf-8")
+        template = template_path.read_text(encoding="utf-8")
+
+        self.assertIn("기획 우선 원칙", agents)
+        self.assertIn("docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md", agents)
+        for term in (
+            "DETAILED_NUMERIC_DEFAULT",
+            "PLANNING_CONFLICT",
+            "GRILL_ME_REQUIRED",
+            "MAX_APPROVED_DECISIONS_PER_BATCH: 10",
+            "GM-BATCH-YYYY-MM-DD-NN",
+            "조기 체크포인트",
+            "APPROVED_PENDING_MERGE",
+            "SYNCED_TO_MAIN",
+            "exact-head",
+            "attack → validate-critique → regression-recheck → decision-report",
+            "11번째 질문",
+            "병합·재동기화 전",
+        ):
+            self.assertIn(term, policy)
+
+        for term in (
+            "grill_me_batch_id",
+            "max_approved_decisions_per_batch: 10",
+            "approved_decision_count",
+            "checkpoint_reason",
+            "batch_exact_head",
+            "adversarial_review",
+            "merge_commit",
+        ):
+            self.assertIn(term, template)
+
     def test_grill_me_decision_template_has_required_contract(self) -> None:
         text = (ROOT / "templates/project-operations/GRILL_ME_DECISION_RECORD.md").read_text(encoding="utf-8")
         for term in (
