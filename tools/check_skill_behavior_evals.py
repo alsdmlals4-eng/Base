@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from jsonschema import Draft202012Validator
+from jsonschema import Draft202012Validator, FormatChecker
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -69,8 +69,9 @@ def validate_result_identity(root: Path, results: dict[str, Any]) -> list[str]:
         schema = load_json(root / RESULT_SCHEMA_PATH)
     except (OSError, json.JSONDecodeError) as error:
         return [f"result schema unavailable or invalid: {error}"]
+    validator = Draft202012Validator(schema, format_checker=FormatChecker())
     for error in sorted(
-        Draft202012Validator(schema).iter_errors(results),
+        validator.iter_errors(results),
         key=lambda item: list(item.path),
     ):
         location = ".".join(str(part) for part in error.path) or "<root>"
@@ -79,6 +80,20 @@ def validate_result_identity(root: Path, results: dict[str, Any]) -> list[str]:
         return errors
     if results.get("run_status") != "COMPLETED":
         errors.append("result run_status must be COMPLETED for scoring")
+    model = results.get("model", {})
+    review = results.get("review", {})
+    required_metadata = [
+        model.get("provider"),
+        model.get("model"),
+        model.get("version"),
+        review.get("author_context_id"),
+        review.get("reviewer_context_id"),
+    ]
+    if any(
+        isinstance(value, str) and value.strip().casefold() == "unset"
+        for value in required_metadata
+    ):
+        errors.append("completed result contains placeholder model metadata")
     commit = current_commit(root)
     if commit is None:
         errors.append("current repository commit is unavailable")
@@ -93,13 +108,35 @@ def validate_result_identity(root: Path, results: dict[str, Any]) -> list[str]:
         errors.append("result evaluation paths do not match current sources")
     if source.get("evaluation_sha256") != evaluation_sha256(root):
         errors.append("result evaluation SHA-256 does not match current source")
-    review = results.get("review", {})
     if (
         not review.get("independent")
         or review.get("author_context_id") == review.get("reviewer_context_id")
     ):
         errors.append("result review context is not independent")
     return errors
+
+
+def validate_eval_documents(
+    root: Path,
+    schema: dict[str, Any],
+) -> tuple[list[dict[str, Any]], list[str]]:
+    documents: list[dict[str, Any]] = []
+    errors: list[str] = []
+    validator = Draft202012Validator(schema)
+    for relative in evaluation_paths(root):
+        try:
+            document = load_json(root / relative)
+        except (OSError, json.JSONDecodeError) as error:
+            errors.append(f"{relative.as_posix()}: unavailable or invalid: {error}")
+            continue
+        documents.append(document)
+        for error in sorted(
+            validator.iter_errors(document),
+            key=lambda item: list(item.path),
+        ):
+            location = ".".join(str(part) for part in error.path) or "<root>"
+            errors.append(f"{relative.as_posix()} {location}: {error.message}")
+    return documents, errors
 
 
 def load_eval_set(root: Path = ROOT) -> dict[str, Any]:
@@ -144,12 +181,8 @@ def validate_contract(root: Path = ROOT) -> list[str]:
     except (OSError, json.JSONDecodeError) as error:
         return [f"contract file unavailable or invalid: {error}"]
 
-    for error in sorted(
-        Draft202012Validator(schema).iter_errors(evals),
-        key=lambda item: list(item.path),
-    ):
-        location = ".".join(str(part) for part in error.path) or "<root>"
-        errors.append(f"schema {location}: {error.message}")
+    _, document_errors = validate_eval_documents(root, schema)
+    errors.extend(document_errors)
 
     entries = {
         entry["skill_id"]: entry
