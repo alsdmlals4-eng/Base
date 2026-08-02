@@ -82,7 +82,7 @@ description: Use when routing a project request, closing material ambiguity, def
 ## Do not use when
 
 - 오탈자나 명확한 단일 파일 기계 수정인 L0 작업이다.
-- 입력과 판정 기준이 동일한 검사 재실행이다.
+- 입력과 판정 기준이 동일한 검사를 재실행한다.
 - 승인된 Plan에 분야·범위·완료·검증·실행 순서가 이미 확정됐고 범위가 변하지 않았다. 이때 기존 approval reference를 재사용한다.
 - 저장소 변경·결정·검증이 없는 단순 설명이다.
 - 요구가 확정되지 않았는데 구현 세부 순서부터 고정하려 한다.
