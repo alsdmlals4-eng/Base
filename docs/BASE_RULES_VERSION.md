@@ -16,7 +16,7 @@
 | Field | Authority |
 | --- | --- |
 | Immutable rules baseline | `v9.0.0` and `base.lock.json` at its trusted release history |
-| Latest released compatible line | `v9.4.2` and `base-v9.4.2.lock.json` |
+| Latest released compatible line | `v9.4.3` and `base-v9.4.3.lock.json` |
 | Current routing authority | `skills/SKILL_REGISTRY.json` plus each active Skill's frontmatter |
 | Frozen v9.0 release derivatives | `.codex-plugin/plugin.json`, `base.lock.json`, `skills/BASE_V9_SKILL_SNAPSHOT.json` |
 
@@ -96,6 +96,7 @@ evidence, or pin-finalization PR.
 - [Base v9.4 release contract](operations/BASE_V9_4_RELEASE_CONTRACT.md)
 - [Base v9.4.1 compatibility release contract](operations/BASE_V9_4_1_RELEASE_CONTRACT.md)
 - [Base v9.4.2 compatibility release contract](operations/BASE_V9_4_2_RELEASE_CONTRACT.md)
+- [Base v9.4.3 compatibility release contract](operations/BASE_V9_4_3_RELEASE_CONTRACT.md)
 
 ## Base v9.4 released compatible line
 
@@ -132,3 +133,15 @@ Its machine identity is recorded in `../base-v9.4.2.lock.json`:
 - Registry SHA-256: `693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59`
 
 Project adoption is a separate post-release wave and must pin this exact payload/evidence pair before claiming v9.4.2 planning-first governance adoption. Real project Grill Me batch execution, external model behavior, and human process usability remain `NOT_RUN` until separately piloted.
+
+## Base v9.4.3 released compatible line
+
+Base v9.4.3 is the released first-prompt intake compatibility line over v9.4.2. It preserves the v9.4.2 Registry bytes while adding a direction anchor at the start of generated instructions, Task·Context·Source·Constraints·Output·Validation completeness, conditional response diversification, and the mandatory `first-prompt → contract → Grill Me` execution gate for L1+ work.
+
+Its machine identity is recorded in `../base-v9.4.3.lock.json`:
+
+- payload commit: `7dd1a4f80388bc5faca767ff74a3eb32dc9d0ac8`
+- trusted evidence commit: `da33a350d61b8adc52df97fccc7001708a933370`
+- Registry SHA-256: `693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59`
+
+Project adoption is a separate post-release wave and must pin this exact payload/evidence pair before claiming v9.4.3 first-prompt governance adoption. Cross-model behavior improvement, prompt rework reduction, human comprehension, and real project Adapter execution remain `NOT_RUN` until separately piloted.
