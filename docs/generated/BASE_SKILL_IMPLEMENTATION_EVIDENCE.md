@@ -15,7 +15,7 @@
 | `maintaining-project-context-and-handoff` | project-operations | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_gpt_codex_workflow_contract.py` |
 | `analyzing-and-refining-game-concepts` | game-design-strategy | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_game_design_difficulty_workflow.py` |
 | `designing-vertical-slices` | game-design-production | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_vertical_slice_v9_contract.py` |
-| `orchestrating-deepseek-worktrees` | external-ai-operations | PASS | PASS | CONTRACT_EVIDENCE | CONTRACT: `docs/SKILL_COVERAGE_MAP.md` |
+| `orchestrating-deepseek-worktrees` | external-ai-operations | PASS | PASS | EXECUTABLE_EVIDENCE | TOOL: `tools/check_external_ai_worktree_contract.py`<br>TEST: `tests/test_external_ai_worktree_contract.py` |
 | `reviewing-and-validating-project-changes` | integrated-review | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_consolidated_skill_references.py` |
 | `auditing-canonical-reference-freshness` | integrated-review-knowledge-governance | PASS | PASS | EXECUTABLE_EVIDENCE | TOOL: `tools/check_canonical_reference_freshness.py`<br>TEST: `tests/test_reference_freshness.py` |
 | `designing-art-prompts-and-technique-cards` | art-ui | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_bca_visual_sheet_workflow.py` |
