@@ -76,9 +76,9 @@ class BaseV941CompatibilityReleaseTests(unittest.TestCase):
         self.assertEqual(139, lock["release_issue"])
         self.assertEqual(138, lock["source_pr"])
 
-    def test_version_document_declares_latest_compatible_release(self) -> None:
+    def test_version_document_preserves_v941_historical_identity(self) -> None:
         text = VERSION_PATH.read_text(encoding="utf-8")
-        self.assertIn("Latest released compatible line | `v9.4.1`", text)
+        self.assertIn("## Base v9.4.1 released compatible line", text)
         self.assertIn(PAYLOAD_COMMIT, text)
         self.assertIn(EVIDENCE_COMMIT, text)
         self.assertIn("base-v9.4.1.lock.json", text)
