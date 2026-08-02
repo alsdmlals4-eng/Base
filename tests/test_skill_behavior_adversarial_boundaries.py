@@ -75,7 +75,7 @@ def behavior_case(case_id: str, primary: str, forbidden: str, case_type: str) ->
 def cases() -> list[dict]:
     kinds = ["positive", "negative", "boundary", "cross-skill"]
     values = []
-    for index in range(8):
+    for index in range(16):
         primary = "alpha-skill" if index % 2 == 0 else "beta-skill"
         forbidden = "beta-skill" if primary == "alpha-skill" else "alpha-skill"
         values.append(behavior_case(f"SBE-{index + 1:03d}", primary, forbidden, kinds[index % 4]))
@@ -107,7 +107,7 @@ class SkillBehaviorAdversarialBoundaryTests(unittest.TestCase):
                 "status": "ACTIVE",
                 "model_run_status": "NOT_RUN",
                 "source_issue": "https://example.com/core",
-                "cases": cases()[:4],
+                "cases": cases()[:8],
             },
         )
         write_json(
@@ -118,7 +118,7 @@ class SkillBehaviorAdversarialBoundaryTests(unittest.TestCase):
                 "status": "ACTIVE",
                 "model_run_status": "NOT_RUN",
                 "source_issue": "https://example.com/coverage",
-                "cases": cases()[4:],
+                "cases": cases()[8:],
             },
         )
         for skill_id in ("alpha-skill", "beta-skill"):
@@ -223,15 +223,28 @@ class SkillBehaviorAdversarialBoundaryTests(unittest.TestCase):
                 "schema_version": 1,
                 "artifact_role": "WRONG_ROLE",
                 "entries": [
-                    {"skill_id": "alpha-skill", "evidence": [{"kind": "CONTRACT", "path": "skills/alpha-skill/SKILL.md"}]},
-                    {"skill_id": "beta-skill", "evidence": [{"kind": "CONTRACT", "path": "skills/beta-skill/SKILL.md"}]},
+                    {
+                        "skill_id": "alpha-skill",
+                        "evidence": [
+                            {"kind": "CONTRACT", "path": "skills/alpha-skill/SKILL.md"}
+                        ],
+                    },
+                    {
+                        "skill_id": "beta-skill",
+                        "evidence": [
+                            {"kind": "CONTRACT", "path": "skills/beta-skill/SKILL.md"}
+                        ],
+                    },
                 ],
             },
         )
 
         errors = self.builder.validate_evidence_index(self.root)
 
-        self.assertIn("evidence index artifact_role must be BASE_SKILL_IMPLEMENTATION_EVIDENCE_INDEX", errors)
+        self.assertIn(
+            "evidence index artifact_role must be BASE_SKILL_IMPLEMENTATION_EVIDENCE_INDEX",
+            errors,
+        )
 
 
 if __name__ == "__main__":
