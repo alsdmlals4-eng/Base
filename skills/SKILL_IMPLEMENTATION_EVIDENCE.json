@@ -49,7 +49,8 @@
     {
       "skill_id": "orchestrating-deepseek-worktrees",
       "evidence": [
-        {"kind": "CONTRACT", "path": "docs/SKILL_COVERAGE_MAP.md"}
+        {"kind": "TOOL", "path": "tools/check_external_ai_worktree_contract.py"},
+        {"kind": "TEST", "path": "tests/test_external_ai_worktree_contract.py"}
       ]
     },
     {
