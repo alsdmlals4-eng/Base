@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "artifact_role": "BASE_SKILL_BEHAVIOR_RESULTS",
+  "run_status": "NOT_RUN",
+  "repository": "alsdmlals4-eng/Base",
+  "commit_sha": "0000000000000000000000000000000000000000",
+  "generated_at": "1970-01-01T00:00:00Z",
+  "model": {
+    "provider": "UNSET",
+    "model": "UNSET",
+    "version": "UNSET",
+    "reasoning": "UNSET"
+  },
+  "source_identity": {
+    "registry_path": "skills/SKILL_REGISTRY.json",
+    "registry_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "evaluation_paths": [
+      "skills/SKILL_BEHAVIOR_EVALS.json",
+      "skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json"
+    ],
+    "evaluation_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "review": {
+    "author_context_id": "UNSET",
+    "reviewer_context_id": "UNSET",
+    "independent": false,
+    "author_summary_visible": false
+  },
+  "results": []
+}

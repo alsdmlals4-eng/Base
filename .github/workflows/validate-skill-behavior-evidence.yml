@@ -1,0 +1,52 @@
+name: Validate Skill Behavior Evidence
+
+on:
+  pull_request:
+    paths:
+      - "skills/SKILL_BEHAVIOR_EVALS.json"
+      - "skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json"
+      - "skills/SKILL_BEHAVIOR_RESULTS.template.json"
+      - "skills/SKILL_IMPLEMENTATION_EVIDENCE.json"
+      - "skills/evolving-project-discipline-skills/**"
+      - "schemas/skill-behavior-results-v1.schema.json"
+      - "schemas/external-ai-worktree-contract-v1.schema.json"
+      - "templates/ai/DEEPSEEK_WORK_PACKAGE.md"
+      - "templates/ai/EXTERNAL_AI_WORKTREE_CONTRACT.json"
+      - "tools/check_skill_behavior_evals.py"
+      - "tools/build_skill_implementation_evidence.py"
+      - "tools/check_external_ai_worktree_contract.py"
+      - "docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md"
+      - "tests/test_skill_behavior_*.py"
+      - "tests/test_skill_implementation_evidence.py"
+      - "tests/test_external_ai_worktree_contract.py"
+      - ".github/workflows/validate-skill-behavior-evidence.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  focused-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+      - name: Install contract dependency
+        run: python -m pip install jsonschema==4.26.0
+      - name: Validate behavior coverage contract
+        run: python tools/check_skill_behavior_evals.py
+      - name: Validate generated implementation evidence
+        run: python tools/build_skill_implementation_evidence.py --check
+      - name: Run focused behavior and worktree tests
+        run: |
+          python -m unittest \
+            tests/test_skill_behavior_evidence_hardening.py \
+            tests/test_skill_behavior_adversarial_boundaries.py \
+            tests/test_skill_behavior_governance_integration.py \
+            tests/test_skill_implementation_evidence.py \
+            tests/test_external_ai_worktree_contract.py \
+            -v

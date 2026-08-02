@@ -1,0 +1,84 @@
+from __future__ import annotations
+
+import json
+import unittest
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+class SkillBehaviorGovernanceIntegrationTests(unittest.TestCase):
+    def test_skill_behavior_eval_contract_names_complete_evidence_surfaces(self) -> None:
+        skill = (ROOT / "skills/evolving-project-discipline-skills/SKILL.md").read_text(encoding="utf-8")
+        for token in (
+            "skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json",
+            "schemas/skill-behavior-results-v1.schema.json",
+            "skills/SKILL_BEHAVIOR_RESULTS.template.json",
+            "skills/SKILL_IMPLEMENTATION_EVIDENCE.json",
+            "docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md",
+            "independent reviewer context",
+        ):
+            self.assertIn(token, skill)
+
+    def test_focused_learning_log_records_truthful_limits(self) -> None:
+        log_path = ROOT / "skills/evolving-project-discipline-skills/LEARNING_LOG.md"
+        self.assertTrue(log_path.is_file())
+        text = log_path.read_text(encoding="utf-8")
+        for token in (
+            "MODEL_RUN_STATUS: NOT_RUN",
+            "active Skill",
+            "primary behavior coverage",
+            "non-selection behavior coverage",
+            "exact commit",
+            "independent reviewer",
+            "CONTRACT_EVIDENCE",
+        ):
+            self.assertIn(token, text)
+
+    def test_reference_freshness_couples_behavior_evidence_contract(self) -> None:
+        config = json.loads((ROOT / ".github/reference-freshness.json").read_text(encoding="utf-8"))
+        rules = {rule["name"]: rule for rule in config["coupled_change_rules"]}
+        self.assertIn("skill-behavior-evidence-sync", rules)
+        rule = rules["skill-behavior-evidence-sync"]
+        for path in (
+            "tools/check_skill_behavior_evals.py",
+            "tools/build_skill_implementation_evidence.py",
+            "skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json",
+            "skills/SKILL_IMPLEMENTATION_EVIDENCE.json",
+            "schemas/skill-behavior-results-v1.schema.json",
+        ):
+            self.assertIn(path, rule["when_changed"])
+        for path in (
+            "tests/test_skill_behavior_evidence_hardening.py",
+            "tests/test_skill_implementation_evidence.py",
+            "tests/test_skill_behavior_governance_integration.py",
+            "docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md",
+        ):
+            self.assertIn(path, rule["require_all_changed"])
+
+    def test_skill_body_change_uses_focused_learning_companions(self) -> None:
+        config = json.loads((ROOT / ".github/reference-freshness.json").read_text(encoding="utf-8"))
+        rules = {rule["name"]: rule for rule in config["coupled_change_rules"]}
+        generic = rules["local-skill-contract-learning-test-sync"]
+        self.assertIn(
+            "skills/evolving-project-discipline-skills/SKILL.md",
+            generic["exclude_when_changed"],
+        )
+        focused = rules["skill-evolution-behavior-evidence-sync"]
+        self.assertEqual(
+            ["skills/evolving-project-discipline-skills/SKILL.md"],
+            focused["when_changed"],
+        )
+        for path in (
+            "skills/evolving-project-discipline-skills/LEARNING_LOG.md",
+            "tests/test_skill_behavior_evidence_hardening.py",
+            "tests/test_skill_implementation_evidence.py",
+            "tests/test_skill_behavior_governance_integration.py",
+            "docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md",
+        ):
+            self.assertIn(path, focused["require_all_changed"])
+
+
+if __name__ == "__main__":
+    unittest.main()
