@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/external-ai-worktree-contract-v1.schema.json",
+  "title": "External AI Worktree Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_role",
+    "repository",
+    "base_branch",
+    "start_commit",
+    "worktree_path",
+    "task_branch",
+    "allowlist",
+    "protected_paths",
+    "result_state",
+    "integration_state",
+    "cleanup_requested"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "EXTERNAL_AI_WORKTREE_CONTRACT"},
+    "repository": {"type": "string", "minLength": 3},
+    "base_branch": {"type": "string", "minLength": 1},
+    "start_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "worktree_path": {
+      "type": "string",
+      "pattern": "^\\.worktrees/[A-Za-z0-9._/-]+$"
+    },
+    "task_branch": {
+      "type": "string",
+      "pattern": "^ai/deepseek-[A-Za-z0-9._/-]+$"
+    },
+    "allowlist": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["read", "write"],
+      "properties": {
+        "read": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "write": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "protected_paths": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "result_state": {"const": "REVIEW_PENDING"},
+    "integration_state": {
+      "enum": ["NOT_INTEGRATED", "APPROVED_INTEGRATED"]
+    },
+    "cleanup_requested": {"type": "boolean"}
+  }
+}
