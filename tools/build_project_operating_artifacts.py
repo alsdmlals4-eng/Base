@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate or check Base v9.1 project operating views."""
+"""Generate or check Base project operating views."""
 
 from __future__ import annotations
 
@@ -7,7 +7,11 @@ import argparse
 import sys
 from pathlib import Path
 
-from project_operating_contract import ContractError, write_or_check_artifacts
+import project_operating_contract as contract
+from base_release_index import install_release_lock_paths
+
+
+install_release_lock_paths(contract)
 
 
 def main() -> int:
@@ -24,13 +28,13 @@ def main() -> int:
     mode.add_argument("--check", action="store_true")
     options = parser.parse_args()
     try:
-        mismatches = write_or_check_artifacts(
+        mismatches = contract.write_or_check_artifacts(
             options.project_root.resolve(),
             options.base_repository.resolve(),
             check=options.check,
             protected_base=options.protected_base,
         )
-    except ContractError as error:
+    except contract.ContractError as error:
         print(f"Project operating artifact generation failed: {error}", file=sys.stderr)
         return 1
     if options.check:
