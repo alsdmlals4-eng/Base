@@ -1,6 +1,6 @@
 ---
 contract_name: PROJECT_TOTAL_PLANNING_AUDIT_AND_IMPROVEMENT_WORK_INSTRUCTION
-contract_version: "3.0"
+contract_version: "3.1"
 status: ACTIVE_PROJECT_TOTAL_PLANNING_AUDIT_AND_IMPROVEMENT_PROMPT
 language: ko-KR
 base_repository: "https://github.com/alsdmlals4-eng/Base"
@@ -20,9 +20,12 @@ core_gates:
   - GRILL_ME_DECISION_GATE
   - ADVERSARIAL_REVIEW_LIFECYCLE
   - EVIDENCE_BEFORE_COMPLETION
+  - IMMEDIATE_CANONICAL_DECISION_SYNC
+  - CODEX_IMPLEMENTATION_HANDOFF
+  - COMPLETE_VERTICAL_SLICE_TARGET
 ---
 
-# 프로젝트 `[총기획]`·`[검수]` 통합 작업지시문 v3
+# 프로젝트 `[총기획]`·`[검수]` 통합 작업지시문 v3.1
 
 ## 0. 입력
 
@@ -32,6 +35,8 @@ base_repository: https://github.com/alsdmlals4-eng/Base
 project_repository:
 previous_total_planning_instruction:
 project_google_sheet:
+codex_repository_and_environment:
+vertical_slice_scope:
 current_goal:
 requested_deliverables:
 protected_decisions: []
@@ -104,6 +109,9 @@ merge_authority: NOT_REQUESTED | EXPLICITLY_REQUESTED
 5. 한 질문에는 하나의 현행 책임 원본만 존재한다.
 6. 새 채팅이나 새 작업자가 과거 대화 없이 저장소만으로 작업을 이어갈 수 있다.
 7. 검증된 프로젝트 교훈은 프로젝트 Skill에 반영되고, 공용화 후보만 Base로 분리된다.
+8. 기획·검수 완료 뒤 Codex가 재해석 없이 구현할 수 있는 실행 계약이 존재한다.
+9. 제작 목표는 승인된 전체 기획과 구성을 실제로 플레이할 수 있는 완성형 버티컬 슬라이스 데모다.
+10. 주요 변경과 승인 Decision은 다음 단계로 미루지 않고 GitHub 정본·계획 데이터·연결 Sheet에 즉시 동기화된다.
 
 ### `[검수]`의 정확한 의미
 
@@ -366,6 +374,11 @@ WHOLE_PROJECT_BASELINE_RECOVERY
 → REGRESSION_RECHECK
 → PR_CHECK_EXACT_HEAD
 → DECISION_REPORT
+→ PLANNING_AND_REVIEW_COMPLETE_GATE
+→ IMMEDIATE_CANONICAL_DECISION_SYNC
+→ CODEX_IMPLEMENTATION_HANDOFF
+→ COMPLETE_VERTICAL_SLICE_TARGET
+→ VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md
 ```
 
 ### 단계 원칙
@@ -377,6 +390,9 @@ WHOLE_PROJECT_BASELINE_RECOVERY
 - 승인된 finding만 해당 분야 주 책임 Skill로 수정한다.
 - 수정 뒤 전체 연결과 기존 정상 경로를 다시 검사한다.
 - 정확한 현재 HEAD의 증거만 완료 판정에 사용한다.
+- 주요 변경·승인은 발견 시점에 즉시 동기화하며 최종 보고까지 배치 처리하지 않는다.
+- 기획·검수 완료 Gate가 닫히기 전 Codex 구현 작업을 시작하지 않는다.
+- Codex 구현은 완성형 버티컬 슬라이스 데모의 수용 기준을 닫는 방향으로 라우팅한다.
 
 ---
 
@@ -428,6 +444,8 @@ WHOLE_PROJECT_BASELINE_RECOVERY
 - 자동화·Workflow
 - 생성기·발행 설정
 - 외부 AI 작업·검수 경계
+- Codex 구현 인계 Packet·실행 책임
+- 버티컬 슬라이스 완성도 Matrix·데모 Gate
 - 학습·회고·Base 환류
 
 ### 7.5 사용자 작업면·파생본
@@ -677,6 +695,8 @@ regression_test_or_review:
 - 배포·출시·운영·사업
 - 위험·대안·중단 조건·롤백
 - Codex·개발팀 인계
+- 완성형 버티컬 슬라이스의 시스템·콘텐츠·표현·데이터·검증 완결성
+- 데모 Build·패키징·실행·배포 준비
 
 ### `99 변경·학습`
 
@@ -1020,7 +1040,218 @@ rollback:
 
 ---
 
-## 20. 파일 처리 Matrix
+## 20. 주요 변경·승인 Decision 즉시 동기화
+
+### IMMEDIATE_CANONICAL_DECISION_SYNC
+
+다음 사건이 발생하면 최종 단계까지 미루지 않고 같은 작업 흐름 안에서 즉시 동기화한다.
+
+- 사용자가 주요 기획안·권장안·변경안을 승인함
+- Decision이 `PROPOSED`에서 `APPROVED / REPLACED / REJECTED / DEFERRED`로 바뀜
+- 프로젝트 코어·기능 범위·완료 기준·버티컬 슬라이스 범위가 바뀜
+- 기획과 실제 구현의 충돌을 해결함
+- Codex 인계 계약이나 구현 순서가 바뀜
+- 정본·계획·Sheet 중 하나의 내용이 다른 Surface보다 앞서감
+
+### NO_DEFERRED_DECISION_SYNC
+
+```text
+승인·주요 변경 감지
+→ 동일 Decision ID 생성 또는 기존 ID 재사용
+→ GitHub 권위 문서·계획 데이터 위치 탐색
+→ 연결된 Google Sheet의 Tab·Range·행 탐색
+→ GitHub 정본·Decision Registry·GDD·Plan 갱신
+→ Commit
+→ commit SHA와 변경 경로·섹션·행 기록
+→ 연결된 Google Sheet에 동일 Decision ID·상태·요약·GitHub 위치·commit SHA 반영
+→ GitHub와 Sheet 재조회
+→ SAME_DECISION_ID·내용·상태·Commit 일치 검증
+→ DECISION_SYNC_LEDGER 기록
+→ SYNCED 판정
+```
+
+GitHub가 권위 원본이며 Google Sheet는 연결된 계획·운영 Surface다. Sheet 내용이 GitHub 정본을 임의로 덮어쓰지 않는다.
+
+### 동일 Decision 기록 계약
+
+```yaml
+SAME_DECISION_ID:
+decision_status:
+decision_summary:
+rationale_and_evidence:
+approval_source_and_time:
+affected_scope:
+GITHUB_CANONICAL_LOCATION:
+  repository:
+  file_path:
+  section_or_line:
+  plan_or_issue:
+  commit_SHA:
+GOOGLE_SHEET_LOCATION:
+  spreadsheet:
+  tab:
+  range_or_row:
+  github_commit_reference:
+readback_result:
+sync_status:
+```
+
+### DECISION_SYNC_LEDGER
+
+| Decision ID | 상태 | GitHub 권위 문서·계획 데이터 | 변경 경로·섹션·행 | commit SHA | 연결된 Google Sheet 위치 | 재조회 | 동기화 상태 |
+|---|---|---|---|---|---|---|---|
+
+동기화 상태:
+
+- `SYNCED`: 동일 Decision ID·의미·상태·GitHub 위치·commit SHA가 재조회 결과 일치
+- `PARTIAL_SYNC_BLOCKED`: GitHub 또는 Sheet 중 하나를 읽거나 쓸 수 없음
+- `SYNC_CONFLICT`: 같은 Decision ID의 내용·상태가 다름
+- `NOT_APPLICABLE`: 프로젝트에 연결된 Sheet가 없다는 사실이 확인되고 정본에 기록됨
+
+`PARTIAL_SYNC_BLOCKED` 또는 `SYNC_CONFLICT` 상태에서는 동기화 완료를 주장하지 않으며, 사용자 승인으로 명시적 보류 처리하지 않는 한 **다음 주요 기획·구현 단계로 진행하지 않는다**.
+
+---
+
+## 21. 기획·검수 완료와 Codex 구현 인계
+
+### PLANNING_AND_REVIEW_COMPLETE_GATE
+
+다음이 모두 닫혀야 Codex 구현 인계를 생성한다.
+
+- `[핵심 내용]` 추적 항목이 허용 상태로 닫힘
+- 프로젝트 코어·전체 기획 Coverage·버티컬 슬라이스 범위 확정
+- `MUST_FIX` 0 또는 승인된 보류·재개 조건 존재
+- 필요한 Grill Me Decision 완료
+- GitHub 권위 문서·계획 데이터·연결 Sheet가 최신 Decision ID로 `SYNCED`
+- 실제 구현 기준선과 보호할 정상 경로 기록
+- 구현 범위·제외 범위·의존성·수용 기준·검증·롤백 확정
+- v9 버티컬 슬라이스 구현 Prompt와 충돌 없는 책임 경계 확인
+
+하나라도 닫히지 않으면 `CODEX_NOT_READY`다.
+
+### CODEX_DEFINITION_OF_READY
+
+Codex는 기획을 다시 설계하거나 빈칸을 추측하는 역할이 아니다. 다음 항목을 저장소 사실과 함께 전달한다.
+
+```yaml
+implementation_goal:
+player_observable_result:
+approved_decision_ids:
+canonical_baseline_commit:
+working_branch_and_head:
+vertical_slice_scope:
+exact_in_scope_features_and_content:
+explicit_out_of_scope:
+protected_behaviors_assets_and_interfaces:
+existing_implementation_state:
+exact_files_scenes_resources_data_and_schema:
+interfaces_and_dependencies:
+implementation_sequence:
+save_migration_and_compatibility:
+accessibility_and_performance_constraints:
+automated_test_commands_and_expected_results:
+manual_engine_and_demo_checks:
+document_and_sheet_sync_targets:
+commit_and_pr_strategy:
+rollback:
+ambiguities_or_blockers:
+```
+
+### CODEX_EXECUTION_PACKET
+
+Codex에 전달하는 구현 계약은 다음을 포함한다.
+
+1. **왜 만드는가** — 플레이어 약속·기획 의도·완성 데모의 관찰 가능한 결과
+2. **무엇을 구현하는가** — 기능·시스템·콘텐츠·UI·자산·데이터의 정확한 범위
+3. **어디를 수정하는가** — 실제 경로·Scene·Resource·Schema·ID·소비자
+4. **어떤 순서로 구현하는가** — 의존성에 따른 Goal·Task·Checkpoint
+5. **무엇을 보존하는가** — 정상 경로·저장 호환성·승인 자산·공개 인터페이스
+6. **어떻게 검증하는가** — 테스트 명령·기대 결과·수동 실행·데모 시나리오
+7. **어떻게 기록하는가** — Decision ID·Commit·PR·정본·Sheet 갱신 위치
+8. **어떻게 되돌리는가** — 롤백 단위와 복구 기준
+
+금지:
+
+- “적절히 구현”, “알아서 완성”, “기획서를 참고” 같은 비검증 지시
+- 존재하지 않는 파일·API·Scene·Resource 추정
+- 사용자 승인 없이 기능 삭제·축소·대체
+- 테스트 명령·관찰 결과 없는 완료 기준
+- Codex 보고만 신뢰하고 실제 diff·실행·정본 동기화를 생략
+
+불명확한 핵심 계약이 발견되면 Codex는 임의 보완하지 않고 `BLOCKED_IMPLEMENTATION_CONTRACT`로 보고한다.
+
+실제 제품 구현은 `VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`로 라우팅하되, 이 Packet의 Decision ID·범위·수용 기준을 입력 계약으로 사용한다.
+
+---
+
+## 22. 완성형 버티컬 슬라이스 데모 목표
+
+### COMPLETE_VERTICAL_SLICE_TARGET
+
+게임 제작의 목표는 아이디어 확인용·일회성 프로토타입이 아니라 **승인된 전체 기획과 구성을 실제로 플레이할 수 있는 완성형 데모**다.
+
+버티컬 슬라이스 범위 안의 모든 승인 기획은 다음 중 하나여야 한다.
+
+```text
+IMPLEMENTED_AND_VALIDATED
+또는
+EXPLICITLY_EXCLUDED_WITH_DECISION_ID
+```
+
+이 조건을 `ALL_APPROVED_PLANNING_IMPLEMENTED_OR_EXPLICITLY_EXCLUDED`로 관리한다.
+
+“전체 기획 구현”은 출시판의 모든 콘텐츠 수량을 미리 만드는 뜻이 아니다. 대신 최종 게임 경험에 필요한 승인된 시스템 종류·상호작용·표현·데이터·제작 파이프라인을 대표 콘텐츠와 함께 실제 품질로 완결한다. 버티컬 슬라이스 범위 안에는 `NO_PAPER_ONLY_FEATURES`, 즉 문서에만 존재하는 승인 기능을 남기지 않는다.
+
+### VERTICAL_SLICE_COMPLETENESS_MATRIX
+
+| Surface | 승인 기획·Decision ID | 구현 위치 | 대표 콘텐츠 | 자동 검증 | 수동 데모 검증 | 상태 |
+|---|---|---|---|---|---|---|
+| 핵심 플레이·Core Loop |  |  |  |  |  |  |
+| Session·Meta Loop |  |  |  |  |  |  |
+| 주요 시스템·상호작용 |  |  |  |  |  |  |
+| 대표 콘텐츠·난이도 |  |  |  |  |  |  |
+| 온보딩·조작·UX·UI |  |  |  |  |  |  |
+| 실패·복구·보상 |  |  |  |  |  |  |
+| 아트·애니메이션·이펙트 |  |  |  |  |  |  |
+| 사운드·음악·정보 전달 |  |  |  |  |  |  |
+| 데이터·저장·불러오기·마이그레이션 |  |  |  |  |  |  |
+| 접근성·가독성 |  |  |  |  |  |  |
+| 성능·안정성 |  |  |  |  |  |  |
+| Build·패키징·실행 |  |  |  |  |  |  |
+| QA·회귀·데모 시나리오 |  |  |  |  |  |  |
+| 정본·Sheet·Handoff |  |  |  |  |  |  |
+
+상태:
+
+- `IMPLEMENTED_AND_VALIDATED`
+- `IMPLEMENTED_TEST_PENDING`
+- `PARTIAL`
+- `MISSING`
+- `EXPLICITLY_EXCLUDED_WITH_DECISION_ID`
+- `BLOCKED_UNVERIFIED`
+
+### DEMO_READY_GATE
+
+다음을 모두 만족해야 완성형 버티컬 슬라이스 데모로 판정한다.
+
+- 승인된 전체 기획과 Matrix 항목이 구현되거나 Decision ID로 명시적 제외됨
+- 프로젝트 시작부터 핵심 목표·결과까지 한 세션을 끝까지 플레이 가능
+- 핵심 경로에 진행을 막는 미구현·가짜 버튼·임시 데이터·수동 조작 의존이 없음
+- 대표 콘텐츠가 시스템의 재미·난이도·반복 가능성을 검증할 수 있음
+- 온보딩·조작·상태 전달·실패·복구가 실제 동작함
+- 저장·불러오기·데이터 호환성 또는 명시적 비적용 근거가 있음
+- 승인된 UI·아트·사운드가 정보 전달과 게임 필을 지원함
+- 접근성·성능·안정성 기준을 실행 증거로 확인함
+- 자동 테스트와 수동 플레이테스트의 실제 결과가 있음
+- 깨끗한 환경에서 Build·패키징·설치·실행·종료가 가능함
+- GDD·Decision·Codex Packet·실제 구현·GitHub Commit·연결 Sheet가 일치함
+- 알려진 제한·보류·롤백과 이후 제작 확장 경로가 기록됨
+
+Matrix에 `MISSING / PARTIAL / BLOCKED_UNVERIFIED`가 남으면 `DEMO_NOT_READY`다. 문서·스크린샷·테스트 일부 통과만으로 데모 완료를 주장하지 않는다.
+
+---
+
+## 23. 파일 처리 Matrix
 
 모든 관련 파일을 다음으로 분류한다.
 
@@ -1055,7 +1286,7 @@ KEEP / INTEGRATE / REVISE / CREATE / HOLD / REMOVE_CANDIDATE
 
 ---
 
-## 21. PDF·파생본 감사
+## 24. PDF·파생본 감사
 
 ### PDF_AND_DERIVATIVE_AUDIT
 
@@ -1080,7 +1311,7 @@ KEEP / INTEGRATE / REVISE / CREATE / HOLD / REMOVE_CANDIDATE
 
 ---
 
-## 22. Skill·작업 흐름 감사
+## 25. Skill·작업 흐름 감사
 
 ### SKILL_AND_WORKFLOW_AUDIT
 
@@ -1110,7 +1341,7 @@ Skill 최소 계약:
 
 ---
 
-## 23. 콜드 스타트 검증
+## 26. 콜드 스타트 검증
 
 ### COLD_START_VALIDATION
 
@@ -1149,7 +1380,7 @@ AGENTS
 
 ---
 
-## 24. 프로젝트 학습·Base 환류
+## 27. 프로젝트 학습·Base 환류
 
 ### PROJECT_LEARNING_AND_BASE_FEEDBACK
 
@@ -1186,7 +1417,7 @@ Skill 적용
 
 ---
 
-## 25. 검증 계층
+## 28. 검증 계층
 
 현재 범위에 적용되는 것만 실제 실행한다.
 
@@ -1201,6 +1432,10 @@ contract-check
 → accessibility-review
 → performance-profile
 → cold-start-validation
+→ decision-sync-readback
+→ codex-packet-readiness
+→ vertical-slice-completeness
+→ demo-build-and-playthrough
 → regression
 → evidence-report
 ```
@@ -1223,7 +1458,7 @@ contract-check
 
 ---
 
-## 26. PR Check
+## 29. PR Check
 
 파일 변경 시 다음을 수행한다.
 
@@ -1279,7 +1514,7 @@ PR 상태:
 
 ---
 
-## 27. 필수 산출물
+## 30. 필수 산출물
 
 ### `[총기획]`
 
@@ -1303,8 +1538,12 @@ PR 상태:
 18. Skill·Workflow 감사
 19. 콜드 스타트 검증
 20. 프로젝트 학습·Base 환류 후보
-21. 검증 보고
-22. 변경 시 PR exact-HEAD Check
+21. Decision Sync Ledger와 동일 Decision ID 재조회 증거
+22. Planning and Review Complete Gate 판정
+23. Codex Definition of Ready와 Codex Execution Packet
+24. Vertical Slice Completeness Matrix와 Demo Ready 판정
+25. 검증 보고
+26. 변경 시 PR exact-HEAD Check
 
 ### `[검수]`
 
@@ -1312,7 +1551,7 @@ PR 상태:
 
 ---
 
-## 28. 완료 기준
+## 31. 완료 기준
 
 다음을 모두 충족해야 한다.
 
@@ -1332,6 +1571,10 @@ PR 상태:
 - Active Context·Handoff가 현재 상태를 반영함
 - 실행하지 않은 검증이 명시됨
 - 프로젝트 고유 정보와 Base 공용 원리가 분리됨
+- 주요 변경·승인 Decision이 GitHub 권위 문서·계획 데이터·연결 Sheet에 동일 Decision ID와 commit SHA로 `SYNCED`
+- 기획·검수 완료 Gate가 닫히고 Codex가 재해석 없이 실행 가능한 Packet이 존재함
+- 승인된 버티컬 슬라이스 기획이 구현·검증되거나 Decision ID로 명시적 제외됨
+- 완성형 데모의 Build·패키징·실행·플레이스루 증거가 있음
 - exact-HEAD PR Check가 현재 변경과 일치함
 - 차단 finding이 없거나 사용자 결정·재개 조건이 명시됨
 
@@ -1347,7 +1590,7 @@ PR 상태:
 
 ---
 
-## 29. 최종 보고 형식
+## 32. 최종 보고 형식
 
 ```md
 # 프로젝트 총기획·검수 결과
@@ -1392,35 +1635,55 @@ PR 상태:
 
 ## 8. 정본·소비자·파생본 반영
 
-## 9. 적대적 검토
+## 9. Decision 즉시 동기화
+- Decision ID:
+- GitHub 권위 위치:
+- 계획 데이터 위치:
+- 연결 Sheet 위치:
+- commit SHA:
+- 재조회·SYNCED:
+
+## 10. Codex 구현 인계
+- Planning and Review Complete Gate:
+- Codex Definition of Ready:
+- Execution Packet:
+- v9 라우팅:
+
+## 11. 완성형 버티컬 슬라이스
+- Completeness Matrix:
+- 미구현·명시적 제외:
+- Demo Ready Gate:
+- Build·패키징·플레이스루:
+
+## 12. 적대적 검토
 - MUST_FIX:
 - SHOULD_FIX:
 - REJECTED_CRITIQUE:
 - BLOCKED_UNVERIFIED:
 - 회귀 재검사:
 
-## 10. 검증
+## 13. 검증
 - PASS:
 - FAIL:
 - NOT_RUN:
 - NOT_APPLICABLE:
 - BLOCKED_UNVERIFIED:
 
-## 11. PR Check
+## 14. PR Check
 - exact HEAD:
 - changed files:
 - Required Check:
 - unresolved thread:
 - merge 판정:
 
-## 12. 보류·제거 후보·Base 환류
+## 15. 보류·제거 후보·Base 환류
 
-## 13. 다음 Gate·롤백
+## 16. 다음 Gate·롤백
 ```
 
 ---
 
-## 30. 실패 조건
+## 33. 실패 조건
 
 다음 중 하나라도 해당하면 완료가 아니다.
 
@@ -1438,6 +1701,15 @@ PR 상태:
 - 반대를 위한 적대 검토를 수행함
 - 비판의 사실성·영향을 재검증하지 않음
 - 사용자 승인 없이 주요 기획·자산을 변경함
+- 주요 변경·승인 Decision을 작업 끝까지 배치하고 즉시 정본·Sheet 동기화하지 않음
+- 동일 Decision ID 없이 GitHub와 Sheet에 서로 다른 기록을 남김
+- commit SHA·변경 경로·섹션·행·Sheet 위치를 기록하지 않음
+- `PARTIAL_SYNC_BLOCKED` 상태에서 다음 주요 기획·구현 단계로 진행함
+- 기획·검수 Gate가 닫히기 전에 Codex 구현을 시작함
+- Codex에 파일·데이터·Scene·테스트·수용 기준 없이 모호한 지시를 전달함
+- Codex가 기획 공백을 임의 재해석하도록 방치함
+- 승인된 버티컬 슬라이스 범위에 문서상 기능·미구현·가짜 흐름을 남기고 데모 완료를 주장함
+- Build·패키징·전체 플레이스루 없이 완성형 데모를 주장함
 - changed file만 보고 untouched 소비자를 누락함
 - 모든 파일을 거대한 단일 문서로 합침
 - 새 버전·final·latest 복제본을 현행 정본으로 만듦
