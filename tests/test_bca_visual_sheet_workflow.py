@@ -87,6 +87,13 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
         ):
             self.assertIn(statement, prompt)
 
+    def test_prompt_index_exposes_current_integrated_and_art_routes(self) -> None:
+        index = (ROOT / "templates/prompts/README.md").read_text(encoding="utf-8")
+        self.assertIn("VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md", index)
+        self.assertIn("PROJECT_ADAPTIVE_INGAME_ART_CHECKPOINT_PROMPT.md", index)
+        self.assertIn("Grill Me 화면 구성 승인", index)
+        self.assertIn("신규 작업의 현행 통합 진입점으로 사용하지 않는다", index)
+
     def test_active_entrypoints_reference_v9_not_v7(self) -> None:
         for path in ("START_HERE.md", "docs/DOCUMENTATION_MAP.md", "templates/project-operations/README.md"):
             text = (ROOT / path).read_text(encoding="utf-8")
