@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/base-v9-4-2-release-evidence-v1.schema.json",
+  "title": "Base v9.4.2 Trusted Release Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_role",
+    "release_line",
+    "repository",
+    "payload_commit",
+    "registry_sha256",
+    "release_issue",
+    "source_pr",
+    "verification",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "BASE_V9_4_2_TRUSTED_RELEASE_EVIDENCE"},
+    "release_line": {"const": "v9.4.2"},
+    "repository": {"const": "alsdmlals4-eng/Base"},
+    "payload_commit": {"const": "dd705d7f48a7919187bc0507610ba5fc5b43a658"},
+    "registry_sha256": {"const": "693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59"},
+    "release_issue": {"const": 144},
+    "source_pr": {"const": 142},
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_exact_head",
+        "base_v9_contract",
+        "game_project_operating_system",
+        "deep_interview_contract",
+        "canonical_reference_freshness",
+        "publication_generation",
+        "adversarial_gate",
+        "unresolved_review_threads",
+        "adversarial_p0_p1"
+      ],
+      "properties": {
+        "source_exact_head": {"const": "9ec18827adec003600758c3e72cff434803c749f"},
+        "base_v9_contract": {"const": "PASSED"},
+        "game_project_operating_system": {"const": "PASSED"},
+        "deep_interview_contract": {"const": "PASSED"},
+        "canonical_reference_freshness": {"const": "PASSED"},
+        "publication_generation": {"const": "PASSED"},
+        "adversarial_gate": {"const": "PASSED"},
+        "unresolved_review_threads": {"const": "0"},
+        "adversarial_p0_p1": {"const": "0"}
+      }
+    },
+    "limitations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "real_project_grill_me_batch_execution",
+        "actual_external_model_behavior",
+        "independent_human_external_review",
+        "runtime_device_accessibility"
+      ],
+      "properties": {
+        "real_project_grill_me_batch_execution": {"const": "NOT_RUN"},
+        "actual_external_model_behavior": {"const": "NOT_RUN"},
+        "independent_human_external_review": {"const": "NOT_RUN"},
+        "runtime_device_accessibility": {"const": "NOT_APPLICABLE"}
+      }
+    }
+  }
+}
