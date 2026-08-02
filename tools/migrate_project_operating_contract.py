@@ -65,10 +65,7 @@ def main() -> int:
     parser.add_argument(
         "--base-version",
         default="",
-        help=(
-            "Optional exact Base version. Defaults to the newest locally available lock "
-            "with usable release and evidence pins."
-        ),
+        help="Optional exact Base version. Defaults to the newest locally available lock with usable release and evidence pins.",
     )
     parser.add_argument("--protected-baseline-commit", default="")
     parser.add_argument("--protected-authority-kind", default="")
