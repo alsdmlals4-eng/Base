@@ -16,7 +16,7 @@
 | Field | Authority |
 | --- | --- |
 | Immutable rules baseline | `v9.0.0` and `base.lock.json` at its trusted release history |
-| Latest released compatible line | `v9.4.0` and `base-v9.4.lock.json` |
+| Latest released compatible line | `v9.4.1` and `base-v9.4.1.lock.json` |
 | Current routing authority | `skills/SKILL_REGISTRY.json` plus each active Skill's frontmatter |
 | Frozen v9.0 release derivatives | `.codex-plugin/plugin.json`, `base.lock.json`, `skills/BASE_V9_SKILL_SNAPSHOT.json` |
 
@@ -94,6 +94,7 @@ evidence, or pin-finalization PR.
 - [Base v9.2 release contract](operations/BASE_V9_2_RELEASE_CONTRACT.md)
 - [Base v9.3 release contract](operations/BASE_V9_3_RELEASE_CONTRACT.md)
 - [Base v9.4 release contract](operations/BASE_V9_4_RELEASE_CONTRACT.md)
+- [Base v9.4.1 compatibility release contract](operations/BASE_V9_4_1_RELEASE_CONTRACT.md)
 
 ## Base v9.4 released compatible line
 
@@ -105,4 +106,16 @@ Its machine identity is recorded in `../base-v9.4.lock.json`:
 - trusted evidence commit: `ef1fba11167e4da0b298123b0c85ebd268191a42`
 - Registry SHA-256: `693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59`
 
-The immutable v9.0 table and released v9.1-v9.3 identities are not rewritten. Project adoption is a separate post-release wave and must pin this verified payload/evidence pair before using the new contracts.
+The immutable v9.0 table and released v9.1-v9.3 identities are not rewritten.
+
+## Base v9.4.1 released compatible line
+
+Base v9.4.1 is the released Skill-evidence and external-AI worktree compatibility line over v9.4.0. It preserves the v9.4.0 Registry bytes while adding complete active-Skill behavior coverage, reproducible result identity, explicit implementation evidence, and executable worktree isolation validation.
+
+Its machine identity is recorded in `../base-v9.4.1.lock.json`:
+
+- payload commit: `3f2c4a624d302b704c1b5322eb5c9f34ad55abb9`
+- trusted evidence commit: `ff117d24d5bdb121314e109a6aa9b4f552e0fdc1`
+- Registry SHA-256: `693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59`
+
+Project adoption is a separate post-release wave and must pin this exact payload/evidence pair before claiming v9.4.1 validator adoption. Actual external model routing and real project external-AI worktree execution remain `NOT_RUN` until separately executed.

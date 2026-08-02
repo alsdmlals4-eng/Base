@@ -14,6 +14,7 @@ LOCK_SCHEMA_PATH = ROOT / "schemas/base-v9-4-1-release-lock-v1.schema.json"
 EVIDENCE_PATH = ROOT / "docs/operations/BASE_V9_4_1_RELEASE_EVIDENCE.json"
 EVIDENCE_SCHEMA_PATH = ROOT / "schemas/base-v9-4-1-release-evidence-v1.schema.json"
 RELEASE_CONTRACT_PATH = ROOT / "docs/operations/BASE_V9_4_1_RELEASE_CONTRACT.md"
+VERSION_PATH = ROOT / "docs/BASE_RULES_VERSION.md"
 RELEASE_INDEX_PATH = ROOT / "tools/base_release_index.py"
 RELEASE_CHECKER_PATH = ROOT / "tools/check_base_v9_4_1_release.py"
 WORKFLOW_PATH = ROOT / ".github/workflows/validate-base-v9-rc.yml"
@@ -25,6 +26,7 @@ PROJECT_CLI_PATHS = (
 )
 
 PAYLOAD_COMMIT = "3f2c4a624d302b704c1b5322eb5c9f34ad55abb9"
+EVIDENCE_COMMIT = "ff117d24d5bdb121314e109a6aa9b4f552e0fdc1"
 REGISTRY_SHA256 = "693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59"
 PREDECESSOR_PAYLOAD = "a728712cb776ec98f4875914a580fcf7d0156593"
 PREDECESSOR_EVIDENCE = "ef1fba11167e4da0b298123b0c85ebd268191a42"
@@ -42,6 +44,7 @@ class BaseV941CompatibilityReleaseTests(unittest.TestCase):
             EVIDENCE_PATH,
             EVIDENCE_SCHEMA_PATH,
             RELEASE_CONTRACT_PATH,
+            VERSION_PATH,
             RELEASE_INDEX_PATH,
             RELEASE_CHECKER_PATH,
         ):
@@ -64,12 +67,21 @@ class BaseV941CompatibilityReleaseTests(unittest.TestCase):
         lock = load_json(LOCK_PATH)
         evidence = load_json(EVIDENCE_PATH)
         self.assertEqual("v9.4.1", lock["release_line"])
+        self.assertEqual("BASE_RELEASED", lock["release_state"])
         self.assertEqual(PAYLOAD_COMMIT, lock["candidate_release_commit"])
+        self.assertEqual(EVIDENCE_COMMIT, lock["candidate_release_evidence_commit"])
         self.assertEqual(REGISTRY_SHA256, lock["candidate_registry"]["sha256"])
         self.assertEqual(PAYLOAD_COMMIT, evidence["payload_commit"])
         self.assertEqual(REGISTRY_SHA256, evidence["registry_sha256"])
         self.assertEqual(139, lock["release_issue"])
         self.assertEqual(138, lock["source_pr"])
+
+    def test_version_document_declares_latest_compatible_release(self) -> None:
+        text = VERSION_PATH.read_text(encoding="utf-8")
+        self.assertIn("Latest released compatible line | `v9.4.1`", text)
+        self.assertIn(PAYLOAD_COMMIT, text)
+        self.assertIn(EVIDENCE_COMMIT, text)
+        self.assertIn("base-v9.4.1.lock.json", text)
 
     def test_release_index_installs_v941_for_all_project_clis(self) -> None:
         result = subprocess.run(
