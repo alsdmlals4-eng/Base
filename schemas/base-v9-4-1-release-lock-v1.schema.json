@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/base-v9-4-1-release-lock-v1.schema.json",
+  "title": "Base v9.4.1 Compatibility Release Lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_role",
+    "release_line",
+    "release_state",
+    "repository",
+    "release_issue",
+    "source_pr",
+    "predecessor",
+    "candidate_release_commit",
+    "candidate_release_evidence_commit",
+    "candidate_registry",
+    "released_validator_paths"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "BASE_V9_4_1_COMPATIBILITY_RELEASE_LOCK"},
+    "release_line": {"const": "v9.4.1"},
+    "release_state": {"enum": ["TRUSTED_EVIDENCE_PENDING", "BASE_RELEASED"]},
+    "repository": {"const": "alsdmlals4-eng/Base"},
+    "release_issue": {"type": "integer", "minimum": 1},
+    "source_pr": {"type": "integer", "minimum": 1},
+    "predecessor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "release_line", "release_commit", "release_evidence_commit"],
+      "properties": {
+        "path": {"const": "base-v9.4.lock.json"},
+        "release_line": {"const": "v9.4.0"},
+        "release_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "release_evidence_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      }
+    },
+    "candidate_release_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "candidate_release_evidence_commit": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "candidate_registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "hash_definition"],
+      "properties": {
+        "path": {"const": "skills/SKILL_REGISTRY.json"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "hash_definition": {"const": "RAW_FILE_BYTES_SHA256"}
+      }
+    },
+    "released_validator_paths": {
+      "type": "array",
+      "minItems": 3,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"release_state": {"const": "TRUSTED_EVIDENCE_PENDING"}}},
+      "then": {"properties": {"candidate_release_evidence_commit": {"type": "null"}}}
+    },
+    {
+      "if": {"properties": {"release_state": {"const": "BASE_RELEASED"}}},
+      "then": {"properties": {"candidate_release_evidence_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}}}
+    }
+  ]
+}

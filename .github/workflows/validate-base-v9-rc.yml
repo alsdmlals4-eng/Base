@@ -11,6 +11,7 @@ on:
       - "base-v9.2.lock.json"
       - "base-v9.3.lock.json"
       - "base-v9.4.lock.json"
+      - "base-v9.4.1.lock.json"
       - ".codex-plugin/**"
       - "docs/**"
       - "skills/**"
@@ -30,6 +31,7 @@ on:
       - "base-v9.2.lock.json"
       - "base-v9.3.lock.json"
       - "base-v9.4.lock.json"
+      - "base-v9.4.1.lock.json"
       - ".codex-plugin/**"
       - "docs/**"
       - "skills/**"
@@ -61,7 +63,8 @@ jobs:
         run: |
           python tools/build_base_v9_artifacts.py --check
           python tools/check_base_v9_integrity.py --trusted-history-commit "$TRUSTED_HISTORY_COMMIT"
-      - name: Run Base v9, v9.1, v9.4, and active v9 prompt focused tests
+          python tools/check_base_v9_4_1_release.py --trusted-history-commit "$TRUSTED_HISTORY_COMMIT"
+      - name: Run Base v9, v9.1, v9.4, v9.4.1, and active v9 prompt focused tests
         run: |
           python -m unittest \
             tests.test_v9_machine_contracts \
@@ -75,6 +78,7 @@ jobs:
             tests.test_base_v9_4_ai_operations_contract \
             tests.test_base_v9_4_release_evidence_contract \
             tests.test_base_v9_4_trusted_evidence_record \
+            tests.test_base_v9_4_1_compatibility_release \
             -v
 
   adversarial-gate:

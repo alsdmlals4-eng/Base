@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "artifact_role": "BASE_V9_4_1_TRUSTED_RELEASE_EVIDENCE",
+  "release_line": "v9.4.1",
+  "repository": "alsdmlals4-eng/Base",
+  "payload_commit": "3f2c4a624d302b704c1b5322eb5c9f34ad55abb9",
+  "registry_sha256": "693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59",
+  "release_issue": 139,
+  "source_pr": 138,
+  "verification": {
+    "source_exact_head": "1a4c9b4ba6da16a980ad49f3f8cae1b7c5e4030c",
+    "skill_behavior_evidence": "PASSED",
+    "base_v9_contract": "PASSED",
+    "game_project_operating_system": "PASSED",
+    "canonical_reference_freshness": "PASSED",
+    "publication_generation": "PASSED",
+    "windows_publication_smoke": "PASSED",
+    "dependency_review": "PASSED",
+    "unresolved_review_threads": "0",
+    "adversarial_p0_p1": "0"
+  },
+  "limitations": {
+    "actual_external_model_routing": "NOT_RUN",
+    "independent_external_model_code_review": "NOT_RUN",
+    "real_project_external_ai_worktree_execution": "NOT_RUN",
+    "engine_runtime_target_device_accessibility_human": "NOT_APPLICABLE"
+  }
+}

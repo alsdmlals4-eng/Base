@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/base-v9-4-1-release-evidence-v1.schema.json",
+  "title": "Base v9.4.1 Trusted Release Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_role",
+    "release_line",
+    "repository",
+    "payload_commit",
+    "registry_sha256",
+    "release_issue",
+    "source_pr",
+    "verification",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "BASE_V9_4_1_TRUSTED_RELEASE_EVIDENCE"},
+    "release_line": {"const": "v9.4.1"},
+    "repository": {"const": "alsdmlals4-eng/Base"},
+    "payload_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "registry_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "release_issue": {"type": "integer", "minimum": 1},
+    "source_pr": {"type": "integer", "minimum": 1},
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_exact_head",
+        "skill_behavior_evidence",
+        "base_v9_contract",
+        "game_project_operating_system",
+        "canonical_reference_freshness",
+        "publication_generation",
+        "windows_publication_smoke",
+        "dependency_review",
+        "unresolved_review_threads",
+        "adversarial_p0_p1"
+      ],
+      "properties": {
+        "source_exact_head": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "skill_behavior_evidence": {"const": "PASSED"},
+        "base_v9_contract": {"const": "PASSED"},
+        "game_project_operating_system": {"const": "PASSED"},
+        "canonical_reference_freshness": {"const": "PASSED"},
+        "publication_generation": {"const": "PASSED"},
+        "windows_publication_smoke": {"const": "PASSED"},
+        "dependency_review": {"const": "PASSED"},
+        "unresolved_review_threads": {"const": "0"},
+        "adversarial_p0_p1": {"const": "0"}
+      }
+    },
+    "limitations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actual_external_model_routing",
+        "independent_external_model_code_review",
+        "real_project_external_ai_worktree_execution",
+        "engine_runtime_target_device_accessibility_human"
+      ],
+      "properties": {
+        "actual_external_model_routing": {"const": "NOT_RUN"},
+        "independent_external_model_code_review": {"const": "NOT_RUN"},
+        "real_project_external_ai_worktree_execution": {"const": "NOT_RUN"},
+        "engine_runtime_target_device_accessibility_human": {"enum": ["NOT_RUN", "NOT_APPLICABLE"]}
+      }
+    }
+  }
+}

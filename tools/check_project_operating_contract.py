@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate a Base v9.1 project contract against project and Base repositories."""
+"""Validate a Base project contract against project and Base repositories."""
 
 from __future__ import annotations
 
@@ -7,7 +7,11 @@ import argparse
 import sys
 from pathlib import Path
 
-from project_operating_contract import validation_errors
+import project_operating_contract as contract
+from base_release_index import install_release_lock_paths
+
+
+install_release_lock_paths(contract)
 
 
 def main() -> int:
@@ -21,7 +25,7 @@ def main() -> int:
     )
     parser.add_argument("--check", action="store_true", help="require generated views to be current")
     options = parser.parse_args()
-    errors = validation_errors(
+    errors = contract.validation_errors(
         options.project_root.resolve(),
         options.base_repository.resolve(),
         protected_base=options.protected_base,

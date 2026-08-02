@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Migrate a legacy project adapter to the Base v9.1 canonical adapter contract."""
+"""Migrate a legacy project adapter to the canonical Base project contract."""
 
 from __future__ import annotations
 
@@ -7,16 +7,11 @@ import argparse
 import sys
 from pathlib import Path
 
-from project_operating_contract import (
-    COMPATIBILITY_VIEWS,
-    ContractError,
-    canonical_json,
-    initial_operating_health,
-    load_object,
-    migrated_adapter,
-    safe_repository_path,
-)
+import project_operating_contract as contract
+from base_release_index import install_release_lock_paths
 
+
+install_release_lock_paths(contract)
 
 LEGACY_ARCHIVE_ROOT = Path("docs/archive/base-v9-legacy-inputs")
 
@@ -24,27 +19,37 @@ LEGACY_ARCHIVE_ROOT = Path("docs/archive/base-v9-legacy-inputs")
 def preserved_compatibility_inputs(project_root: Path, *, write: bool) -> dict[str, str]:
     """Archive legacy adapters once before their public paths become generated views."""
     inputs: dict[str, str] = {}
-    for view in COMPATIBILITY_VIEWS:
-        source = safe_repository_path(project_root, view, "legacy compatibility view")
+    for view in contract.COMPATIBILITY_VIEWS:
+        source = contract.safe_repository_path(project_root, view, "legacy compatibility view")
         if not source.is_file():
             continue
-        current = load_object(source)
+        current = contract.load_object(source)
         if current.get("artifact_role") == "GENERATED_COMPATIBILITY_VIEW":
-            archive = safe_repository_path(project_root, LEGACY_ARCHIVE_ROOT / view.name, "legacy compatibility archive")
+            archive = contract.safe_repository_path(
+                project_root, LEGACY_ARCHIVE_ROOT / view.name, "legacy compatibility archive"
+            )
             if not archive.is_file():
-                raise ContractError(f"Generated compatibility view has no preserved legacy input: {view.as_posix()}")
+                raise contract.ContractError(
+                    f"Generated compatibility view has no preserved legacy input: {view.as_posix()}"
+                )
             inputs[view.as_posix()] = archive.relative_to(project_root).as_posix()
             continue
-        archive = safe_repository_path(project_root, LEGACY_ARCHIVE_ROOT / view.name, "legacy compatibility archive")
+        archive = contract.safe_repository_path(
+            project_root, LEGACY_ARCHIVE_ROOT / view.name, "legacy compatibility archive"
+        )
         raw = source.read_bytes()
         if archive.exists():
             if not archive.is_file() or archive.read_bytes() != raw:
-                raise ContractError(f"Legacy compatibility archive mismatch: {archive.relative_to(project_root)}")
+                raise contract.ContractError(
+                    f"Legacy compatibility archive mismatch: {archive.relative_to(project_root)}"
+                )
         elif write:
             archive.parent.mkdir(parents=True, exist_ok=True)
             archive.write_bytes(raw)
         else:
-            raise ContractError(f"Legacy compatibility archive is missing: {archive.relative_to(project_root)}")
+            raise contract.ContractError(
+                f"Legacy compatibility archive is missing: {archive.relative_to(project_root)}"
+            )
         inputs[view.as_posix()] = archive.relative_to(project_root).as_posix()
     return inputs
 
@@ -76,15 +81,19 @@ def main() -> int:
             legacy_relative = options.legacy_adapter.resolve().relative_to(project_root)
             output_relative = options.output.resolve().relative_to(project_root)
         except ValueError as error:
-            raise ContractError("Migration input/output must remain under the approved project root") from error
-        legacy_path = safe_repository_path(project_root, legacy_relative, "legacy migration input")
-        output = safe_repository_path(project_root, output_relative, "migration output")
+            raise contract.ContractError(
+                "Migration input/output must remain under the approved project root"
+            ) from error
+        legacy_path = contract.safe_repository_path(
+            project_root, legacy_relative, "legacy migration input"
+        )
+        output = contract.safe_repository_path(project_root, output_relative, "migration output")
         if legacy_path == output:
-            raise ContractError("Legacy migration input and output cannot be the same path")
-        data = migrated_adapter(
+            raise contract.ContractError("Legacy migration input and output cannot be the same path")
+        data = contract.migrated_adapter(
             project_root,
             base_repository,
-            load_object(legacy_path),
+            contract.load_object(legacy_path),
             legacy_relative.as_posix(),
             options.release_commit,
             options.release_evidence_commit,
@@ -93,27 +102,37 @@ def main() -> int:
             options.protected_authority_ref,
             options.base_version,
         )
-        compatibility_inputs = preserved_compatibility_inputs(project_root, write=options.write)
+        compatibility_inputs = preserved_compatibility_inputs(
+            project_root, write=options.write
+        )
         data["compatibility"] = {
             "cycle": "ONE_CYCLE",
             "views": sorted(compatibility_inputs),
             "legacy_inputs": compatibility_inputs,
         }
-        content = canonical_json(data)
+        content = contract.canonical_json(data)
         if options.check:
             if not output.is_file() or output.read_bytes() != content:
-                raise ContractError(f"Migrated adapter is stale: {output}")
-            health = safe_repository_path(project_root, Path("docs/PROJECT_OPERATING_HEALTH.json"), "initial operating health")
+                raise contract.ContractError(f"Migrated adapter is stale: {output}")
+            health = contract.safe_repository_path(
+                project_root,
+                Path("docs/PROJECT_OPERATING_HEALTH.json"),
+                "initial operating health",
+            )
             if not health.is_file():
-                raise ContractError("First migration operating health artifact is missing")
+                raise contract.ContractError("First migration operating health artifact is missing")
         else:
             output.parent.mkdir(parents=True, exist_ok=True)
             output.write_bytes(content)
-            health = safe_repository_path(project_root, Path("docs/PROJECT_OPERATING_HEALTH.json"), "initial operating health")
+            health = contract.safe_repository_path(
+                project_root,
+                Path("docs/PROJECT_OPERATING_HEALTH.json"),
+                "initial operating health",
+            )
             if not health.exists():
                 health.parent.mkdir(parents=True, exist_ok=True)
-                health.write_bytes(canonical_json(initial_operating_health()))
-    except ContractError as error:
+                health.write_bytes(contract.canonical_json(contract.initial_operating_health()))
+    except contract.ContractError as error:
         print(f"Project adapter migration failed: {error}", file=sys.stderr)
         return 1
     print("Project adapter migration is current" if options.check else "Project adapter migrated")
