@@ -43,23 +43,28 @@ class TutorialAndOnboardingDesignContractTests(unittest.TestCase):
         ):
             self.assertIn(phrase, combined)
 
-    def test_existing_skill_owns_tutorial_design(self) -> None:
+    def test_existing_skill_owns_tutorial_design_without_new_broad_skill(self) -> None:
         skill = SKILL.read_text(encoding="utf-8")
         self.assertIn("tutorial-and-onboarding-design", skill)
         self.assertIn("TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md", skill)
         self.assertIn("TUTORIAL_AND_ONBOARDING_DESIGN_CONTRACT.md", skill)
+
         registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+        skill_ids = {item["skill_id"] for item in registry["skills"]}
+        self.assertNotIn("tutorial-and-onboarding-design", skill_ids)
+
         owner = next(
             item
             for item in registry["skills"]
             if item["skill_id"] == "analyzing-and-refining-game-concepts"
         )
-        for trigger in (
-            "tutorial-design",
-            "game-onboarding",
-            "first-session-learning",
+        for existing_trigger in (
+            "game-system-design",
+            "playtest-design",
+            "digital-dopamine-design",
+            "instant-feedback",
         ):
-            self.assertIn(trigger, owner["trigger_tags"])
+            self.assertIn(existing_trigger, owner["trigger_tags"])
 
     def test_human_discoverability_routes_to_existing_owner(self) -> None:
         start = START.read_text(encoding="utf-8")
