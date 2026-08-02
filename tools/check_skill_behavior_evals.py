@@ -9,6 +9,7 @@ import json
 import re
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -63,6 +64,17 @@ def current_commit(root: Path = ROOT) -> str | None:
         return None
 
 
+def is_timezone_aware_rfc3339(value: Any) -> bool:
+    if not isinstance(value, str) or not value:
+        return False
+    normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
+    try:
+        parsed = datetime.fromisoformat(normalized)
+    except ValueError:
+        return False
+    return parsed.tzinfo is not None
+
+
 def validate_result_identity(root: Path, results: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     try:
@@ -76,6 +88,12 @@ def validate_result_identity(root: Path, results: dict[str, Any]) -> list[str]:
     ):
         location = ".".join(str(part) for part in error.path) or "<root>"
         errors.append(f"result schema {location}: {error.message}")
+    if not is_timezone_aware_rfc3339(results.get("generated_at")):
+        timestamp_error = (
+            "result schema generated_at: must be a valid timezone-aware RFC3339 timestamp"
+        )
+        if not any(error.startswith("result schema generated_at:") for error in errors):
+            errors.append(timestamp_error)
     if errors:
         return errors
     if results.get("run_status") != "COMPLETED":
@@ -119,35 +137,39 @@ def validate_result_identity(root: Path, results: dict[str, Any]) -> list[str]:
 def validate_eval_documents(
     root: Path,
     schema: dict[str, Any],
-) -> tuple[list[dict[str, Any]], list[str]]:
-    documents: list[dict[str, Any]] = []
+) -> tuple[list[dict[str, Any]], dict[str, Any], list[str]]:
     errors: list[str] = []
-    validator = Draft202012Validator(schema)
+    documents: list[dict[str, Any]] = []
+    merged: dict[str, Any] | None = None
     for relative in evaluation_paths(root):
         try:
             document = load_json(root / relative)
         except (OSError, json.JSONDecodeError) as error:
             errors.append(f"{relative.as_posix()}: unavailable or invalid: {error}")
             continue
-        documents.append(document)
-        for error in sorted(
-            validator.iter_errors(document),
+        document_errors = sorted(
+            Draft202012Validator(schema).iter_errors(document),
             key=lambda item: list(item.path),
-        ):
+        )
+        for error in document_errors:
             location = ".".join(str(part) for part in error.path) or "<root>"
-            errors.append(f"{relative.as_posix()} {location}: {error.message}")
-    return documents, errors
+            errors.append(f"{relative.as_posix()} schema {location}: {error.message}")
+        documents.append(document)
+        if merged is None:
+            merged = dict(document)
+            merged["cases"] = list(document.get("cases", []))
+        else:
+            merged["cases"].extend(document.get("cases", []))
+    if merged is None:
+        merged = {"cases": []}
+    return documents, merged, errors
 
 
 def load_eval_set(root: Path = ROOT) -> dict[str, Any]:
-    core = load_json(root / EVAL_PATH)
-    cases = list(core.get("cases", []))
-    coverage_path = root / COVERAGE_EVAL_PATH
-    if coverage_path.is_file():
-        coverage = load_json(coverage_path)
-        cases.extend(coverage.get("cases", []))
-    merged = dict(core)
-    merged["cases"] = cases
+    schema = load_json(root / SCHEMA_PATH)
+    _, merged, errors = validate_eval_documents(root, schema)
+    if errors:
+        raise ValueError("\n".join(errors))
     return merged
 
 
@@ -176,12 +198,11 @@ def validate_contract(root: Path = ROOT) -> list[str]:
     errors: list[str] = []
     try:
         registry = load_json(root / REGISTRY_PATH)
-        evals = load_eval_set(root)
         schema = load_json(root / SCHEMA_PATH)
     except (OSError, json.JSONDecodeError) as error:
         return [f"contract file unavailable or invalid: {error}"]
 
-    _, document_errors = validate_eval_documents(root, schema)
+    _, evals, document_errors = validate_eval_documents(root, schema)
     errors.extend(document_errors)
 
     entries = {
@@ -290,7 +311,7 @@ def score_results(root: Path, results_path: Path) -> list[str]:
     try:
         evals = load_eval_set(root)
         results = load_json(results_path)
-    except (OSError, json.JSONDecodeError) as error:
+    except (OSError, json.JSONDecodeError, ValueError) as error:
         return [f"result file unavailable or invalid: {error}"]
 
     identity_errors = validate_result_identity(root, results)
