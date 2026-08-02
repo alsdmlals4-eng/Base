@@ -14,6 +14,16 @@ MODEL_SKILL = ROOT / "skills" / "optimizing-ai-model-and-prompt-costs" / "SKILL.
 MODEL_ROUTING = ROOT / "skills" / "optimizing-ai-model-and-prompt-costs" / "references" / "model-stack-routing.md"
 PROMPT_CACHING = ROOT / "skills" / "optimizing-ai-model-and-prompt-costs" / "references" / "prompt-caching.md"
 INSTRUCTION_METHOD = ROOT / "docs" / "knowledge" / "game-development" / "AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md"
+INTAKE_SKILL = ROOT / "skills" / "managing-project-intake-and-work-contract" / "SKILL.md"
+FIRST_PROMPT_REFERENCE = (
+    ROOT
+    / "skills"
+    / "managing-project-intake-and-work-contract"
+    / "references"
+    / "first-prompt-direction-anchoring.md"
+)
+AGENTS = ROOT / "AGENTS.md"
+LEGACY_ALIASES = ROOT / "skills" / "LEGACY_SKILL_ALIASES.md"
 UI_SKILL = ROOT / "skills" / "auditing-and-refining-ui-art" / "SKILL.md"
 UI_MOTION = ROOT / "skills" / "auditing-and-refining-ui-art" / "references" / "ui-motion-and-interaction-principles.md"
 V94_LOCK = ROOT / "base-v9.4.lock.json"
@@ -31,6 +41,7 @@ class BaseV94AiOperationsContractTests(unittest.TestCase):
             MODEL_ROUTING,
             PROMPT_CACHING,
             INSTRUCTION_METHOD,
+            FIRST_PROMPT_REFERENCE,
             UI_MOTION,
             V94_LOCK,
             V94_SCHEMA,
@@ -110,6 +121,59 @@ class BaseV94AiOperationsContractTests(unittest.TestCase):
         ):
             with self.subTest(required=required):
                 self.assertIn(required, text)
+
+    def test_first_prompt_intake_and_alignment_contract(self) -> None:
+        reference = FIRST_PROMPT_REFERENCE.read_text(encoding="utf-8")
+        skill = INTAKE_SKILL.read_text(encoding="utf-8")
+        method = INSTRUCTION_METHOD.read_text(encoding="utf-8")
+        agents = AGENTS.read_text(encoding="utf-8")
+        aliases = LEGACY_ALIASES.read_text(encoding="utf-8")
+        for required in (
+            "DIRECTION_ANCHOR",
+            "TASK_AND_SUCCESS",
+            "CONTEXT_AND_SOURCES",
+            "CONSTRAINTS_AND_PROTECTED_SCOPE",
+            "OUTPUT_AND_VALIDATION",
+            "OPTIONAL_RESPONSE_DIVERSIFICATION",
+            "프롬프트 가장 앞",
+            "앞에 배치했다고 상위 권한이 되지 않는다",
+            "정석안",
+            "파격안",
+            "통합안",
+            "conflict scan",
+        ):
+            with self.subTest(reference=required):
+                self.assertIn(required, reference)
+        for required in (
+            "`first-prompt`",
+            "first-prompt-direction-anchoring.md",
+            "Grill Me alignment gate",
+            "AWAITING_USER_CONFIRMATION",
+            "exact contract already approved",
+            "approval reference",
+        ):
+            with self.subTest(skill=required):
+                self.assertIn(required, skill)
+        for required in (
+            "First-prompt direction anchoring",
+            "direction anchor",
+            "instruction/context",
+            "Grill Me alignment gate",
+        ):
+            with self.subTest(method=required):
+                self.assertIn(required, method)
+        for required in (
+            "모든 L1 이상 지시문 작성",
+            "좋은 프롬프트 변환",
+            "Grill Me alignment gate",
+            "실행 전",
+        ):
+            with self.subTest(agents=required):
+                self.assertIn(required, agents)
+        for alias in ("[좋은 프롬프트]", "좋은 프롬프트", "퍼스트 프롬프트", "first prompt"):
+            with self.subTest(alias=alias):
+                self.assertIn(alias, aliases)
+        self.assertIn("`first-prompt` + `contract` + `clarify`", aliases)
 
     def test_ui_motion_contract_covers_authority_interruption_and_fallbacks(self) -> None:
         text = UI_MOTION.read_text(encoding="utf-8")

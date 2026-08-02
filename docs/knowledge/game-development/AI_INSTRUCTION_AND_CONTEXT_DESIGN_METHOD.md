@@ -8,7 +8,7 @@ AI 지시문과 Context Pack을 무조건 길고 구체적으로 만드는 대�
 
 담당 실행:
 
-- 요청·작업 계약: `managing-project-intake-and-work-contract`
+- 요청·작업 계약·first-prompt·Grill Me 정합성: `managing-project-intake-and-work-contract`
 - Skill 본문 점진적 공개: `simplifying-skill-bodies`
 - 모델·추론·비용: `optimizing-ai-model-and-prompt-costs`
 - UI 설계·모션: `auditing-and-refining-ui-art`
@@ -101,7 +101,91 @@ validation:
 - 실패·중단·미검증은 어떻게 표시하는가
 - 무엇으로 결과를 검증하는가
 
-## 4. Example as Fixture / Golden Set
+## 4. First-prompt direction anchoring
+
+`direction anchor`는 Prompt의 첫 지시 섹션에 놓는 1~2문장이다. 핵심 행동, 의도한 결과, 가장 중요한 판단 기준을 먼저 고정해 뒤의 Context와 세부 조건이 같은 방향으로 해석되도록 돕는다.
+
+```text
+DIRECTION_ANCHOR
+→ TASK_AND_SUCCESS
+→ CONTEXT_AND_SOURCES
+→ CONSTRAINTS_AND_PROTECTED_SCOPE
+→ OUTPUT_AND_VALIDATION
+→ OPTIONAL_RESPONSE_DIVERSIFICATION
+```
+
+### 배치 원칙
+
+- 핵심 문장은 장황한 역할 설명·배경·예시보다 먼저 둔다.
+- 순서는 주목도를 높이지만 권위를 높이지 않는다. 시스템·사용자 최신 지시·프로젝트 정본·`HARD_CONSTRAINT`와 충돌하면 anchor를 수정한다.
+- “항상”, “절대”, “오직”, “반드시”는 실제 권한 근거가 있을 때만 사용한다.
+- 첫 문장만 강하고 뒤의 범위·출력·검증이 비어 있으면 좋은 Prompt가 아니다.
+- 방향 문장을 뒤의 계약에서 재정의하지 말고 같은 용어·범위·성공 기준을 유지한다.
+
+### instruction/context 분리
+
+지시와 자료를 명시적인 delimiter 또는 heading으로 구분한다.
+
+```text
+### Direction anchor
+[핵심 행동 + 결과 + 지배 기준]
+
+### Instruction
+[Task / success / permissions]
+
+### Context and Source
+[정본 / 실제 파일 / 참고 / 충돌]
+
+### Constraints
+[보호 대상 / 비목표 / HARD_CONSTRAINT]
+
+### Output and Validation
+[산출물 / 상태 / 테스트 / 미검증]
+```
+
+Task, Context, Source, Constraints, Output, Validation은 고정 문구를 채우는 양식이 아니라 누락을 검사하는 인터페이스다. 작업에 필요 없는 빈 섹션은 만들지 않되, 필요한 의미를 다른 이름으로 숨기지 않는다.
+
+### 첫 답변 다변화
+
+설계·전략·기획 결정에서 하나의 관성적 초안이 전체 방향을 고정할 위험이 있으면 다음을 조건부로 요청한다.
+
+```text
+정석안: 검증된 기본 구조
+파격안: 핵심 가정을 바꾸는 차별화 구조
+통합안: 장점을 결합하고 복잡성을 통제한 구조
+```
+
+세 안은 같은 평가 기준·제약·반증 자료로 비교하고 하나를 추천한다. 오탈자·번역·정형 변환·승인 구현처럼 기계적이거나 이미 결정된 작업에는 억지 선택지를 만들지 않는다.
+
+### conflict scan
+
+```yaml
+anchor_matches_task:
+anchor_matches_output:
+source_authority_preserved:
+hard_constraints_preserved:
+later_instruction_conflict:
+protected_scope_visible:
+user_decisions_visible:
+counterevidence_preserved:
+unverified_claims_labeled:
+```
+
+첫 문장이 뒤의 범위보다 넓거나 좁거나, Context의 문장이 Instruction처럼 보이거나, 예시가 정본을 대체하면 Prompt를 실행하지 않고 다시 작성한다.
+
+### Grill Me alignment gate
+
+모든 L1 이상 지시문은 intake Skill에서 `first-prompt → contract`를 거친 뒤 실행 전 `Grill Me alignment gate`로 사용자 의도와 기획 정합성을 확인한다.
+
+- 중대한 모호성이 있으면 가장 영향이 큰 질문 하나씩 닫는다.
+- 계약이 완전하지만 승인되지 않았으면 direction anchor와 핵심 계약을 한 번 확인받는다.
+- 동일한 exact contract의 유효한 승인 근거가 있으면 재질문하지 않고 재사용한다.
+- 승인 또는 재사용 가능한 승인 근거가 없으면 `AWAITING_USER_CONFIRMATION`이며 구현·위임·제품 변경을 시작하지 않는다.
+- L0 오탈자·명백한 형식 수정·동일 검사 재실행은 인터뷰 예외다.
+
+실행 reference: `skills/managing-project-intake-and-work-contract/references/first-prompt-direction-anchoring.md`.
+
+## 5. Example as Fixture / Golden Set
 
 예시는 삭제 대상이 아니라 검증 자산이다. 다만 인터페이스와 정본보다 높은 권위를 갖지 않는다.
 
@@ -121,7 +205,7 @@ validation:
 
 예시를 제거해 정상·실패·경계 행동을 검증할 수 없게 되면 간소화가 아니라 회귀다.
 
-## 5. 결정 질문 중심 Context 큐레이션
+## 6. 결정 질문 중심 Context 큐레이션
 
 Context는 자료량이 아니라 현재 바꿀 결정과 권위로 선별한다.
 
@@ -179,7 +263,7 @@ refresh_trigger:
 
 Context budget은 임의 token 상한이 아니라 결정에 필요한 최소 권위와 검증 가능성을 유지하는 경계다.
 
-## 6. 자료 유형별 표현
+## 7. 자료 유형별 표현
 
 같은 내용을 무조건 장문 글로 변환하지 않는다.
 
@@ -194,7 +278,7 @@ Context budget은 임의 token 상한이 아니라 결정에 필요한 최소 �
 
 표를 산문으로 풀어 쓰거나 산문을 억지로 표로 만들지 않는다. 표현 방식은 정보의 관계와 검증 방법에 맞춘다.
 
-## 7. Artifact-first 전달과 주장 상한
+## 8. Artifact-first 전달과 주장 상한
 
 설명만으로 원하는 결과를 전달하기 어렵다면 작업에 맞는 Artifact를 우선한다.
 
@@ -215,7 +299,7 @@ Prompt → 입출력 계약·Eval Fixture
 
 실행하지 않은 렌더·런타임·사람 검증·billing은 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 남긴다.
 
-## 8. Memory와 정본
+## 9. Memory와 정본
 
 AI Memory·대화 기억·요약은 다음을 돕는다.
 
@@ -233,11 +317,14 @@ AI Memory·대화 기억·요약은 다음을 돕는다.
 
 새 작업은 저장소 정본과 실제 상태를 다시 확인한다. 기억과 정본이 다르면 `CANON_CONFLICT`로 보고하고 자동으로 기억을 진실로 가정하지 않는다.
 
-## 9. 검증 매트릭스
+## 10. 검증 매트릭스
 
 ```yaml
 authority_check:
+first_prompt_anchor_alignment:
+instruction_context_separation:
 interface_completeness:
+grill_me_alignment:
 fixture_coverage:
 context_relevance:
 counterevidence_preserved:
@@ -251,17 +338,25 @@ result: PASS | PARTIAL | FAIL | NOT_RUN | BLOCKED
 검사한다.
 
 - 강제 안전 규칙이 판단 공간으로 이동하지 않았는가
+- direction anchor가 전체 Task·범위·출력과 일치하는가
+- 앞 배치를 권한 상승으로 오해하지 않았는가
+- Instruction과 Context가 구분되는가
 - 사용자 결정이 기술 기본값으로 숨겨지지 않았는가
+- 실행 전 Grill Me 확인 또는 유효한 승인 재사용이 있는가
 - Example·Golden Set이 삭제되어 회귀 검출력이 사라지지 않았는가
 - Context 큐레이션이 반대 근거를 제거하지 않았는가
 - 중복 정본·과거 대화가 현재 권위를 차지하지 않는가
 - Artifact가 실제 검증 범위를 과장하지 않는가
 - 새로운 사실·버전·실패가 생겼을 때 refresh trigger가 있는가
 
-## 10. 실패 조건
+## 11. 실패 조건
 
 - 강한 규칙을 줄인다는 이유로 보안·권한·무결성 경계를 삭제함
 - 프로젝트 코어·중요 UX를 `JUDGMENT_SPACE`로 위임함
+- direction anchor가 뒤의 범위·제약·출력과 충돌함
+- 앞 배치를 이유로 상위 권한을 무시함
+- L1 이상 지시문을 Grill Me 확인 또는 유효한 승인 없이 실행함
+- 기계적 작업에 불필요한 정석안·파격안·통합안을 강제함
 - 입력·출력 계약 없이 예시만 늘림
 - Example을 삭제하고 Fixture 검증을 대체하지 않음
 - 관련 자료를 많이 넣는 것을 Context 품질로 오해함

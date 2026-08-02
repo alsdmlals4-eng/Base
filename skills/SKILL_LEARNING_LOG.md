@@ -1,5 +1,15 @@
 # Base Skill Learning Log
 
+## 2026-08-02 — First-prompt 방향 고정과 intake 승인 게이트
+
+- **상태:** `OBSERVATION`
+- **호출 트리거:** 프롬프트 전체 방향에 큰 영향을 주는 핵심 문장을 가장 앞에 배치하고, 모든 지시문을 intake Skill의 좋은 프롬프트 변환과 Grill Me 확인 뒤 실행하라는 사용자 결정.
+- **Finding:** 기존 `Interface-first Prompt`는 입력·출력·권위·검증을 정의했지만, 핵심 방향 문장의 초두 배치와 지시문 작성 후 의도·기획 정합성 승인 게이트를 하나의 실행 흐름으로 고정하지 않았다. 또한 새 독립 테스트만 추가하면 현재 명시적 CI 목록에서 실행되지 않아 거짓 GREEN이 될 수 있었다.
+- **Decision:** 새 광역 Skill을 만들지 않고 `managing-project-intake-and-work-contract`에 `first-prompt` Mode와 전용 reference를 추가한다. 모든 L1 이상 지시문 작성은 `route → first-prompt → contract → clarify/Grill Me alignment gate → CONFIRMED 또는 REUSED_APPROVAL → execution` 순서를 사용한다. Direction anchor는 핵심 행동·의도한 결과·지배 기준을 앞에 두지만 순서만으로 상위 권한이 되지 않는다. Task·Context·Source·Constraints·Output·Validation을 연결하고, 정석안·파격안·통합안은 실제 설계 탐색 가치가 있을 때만 같은 기준으로 비교한다.
+- **Evidence:** Draft PR #143에서 먼저 standalone 회귀를 작성했으나 기존 Workflow가 이를 실행하지 않는 누락을 발견했다. 기존 `test_base_v9_4_ai_operations_contract.py`에 계약을 연결한 exact RED `be5be21a57442934d06df358b249be1c7a9a1240`에서 105개 중 새 reference 누락만 1 failure·1 error로 재현됐고, 구현 뒤 집중 v9 회귀는 통과했다. Canonical reference freshness가 Learning Log와 기존 통합 회귀 동기화를 추가로 요구해 소비자 누락을 차단했다.
+- **Boundary:** 프롬프트 초두 배치가 모든 모델에서 품질을 높인다는 보장은 하지 않는다. 실제 모델별 방향 유지율, 재작업 감소, 사용자 이해도와 반복 질문 감소는 `NOT_RUN`이며, L0 오탈자·명백한 형식 수정·동일 검사 재실행은 인터뷰 예외다. 기존 exact contract의 유효한 approval reference가 있으면 중복 Grill Me 질문을 하지 않는다.
+- **다음 검토 트리거:** 서로 다른 프로젝트와 모델에서 direction anchor 전후 결과를 비교할 때, Grill Me가 단순 작업을 과도하게 막을 때, 앞 문장이 뒤 제약을 왜곡할 때, 승인 재사용이 stale 계약을 통과시킬 때, 또는 새 테스트가 필수 CI에서 다시 누락될 때.
+
 ## 2026-08-01 — Repository governance files are not repository-setting evidence
 
 - **Trigger:** the public Base repository had reusable operating materials and dependency-review CI but no License, Security policy, CODEOWNERS, or Dependabot configuration.

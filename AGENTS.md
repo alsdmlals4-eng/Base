@@ -56,6 +56,10 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - 현재 단계에 주 Work Mode `PLAN / BUILD / REVIEW` 하나와 주 책임 분야 하나를 둔다.
 - Registry의 `automatic-trigger-match`로 필요한 최소 Skill·Skill Mode만 선택한다. `load_by_default=false`는 자동 선택 금지가 아니라 비관련 기본 로드 금지다.
 - 오탈자, 명확한 단일 파일 기계 수정, 입력이 같은 검사 재실행 외에는 저장소 사실을 조사하고 범위·제외·보호 대상·완료 기준·검증·롤백을 확정한다.
+- 모든 L1 이상 지시문 작성은 intake Skill의 `first-prompt → contract → clarify` 순서를 사용한다.
+- 좋은 프롬프트 변환에서는 핵심 행동·결과·지배 기준을 방향 문장으로 압축해 지시문 가장 앞에 두고, Task·Context·Source·Constraints·Output·Validation 및 뒤쪽 제약과 충돌하지 않는지 검사한다. 앞 순서는 상위 권한을 만들지 않는다.
+- 지시문 작성 뒤 실행 전 `Grill Me alignment gate`로 사용자 의도와 기획 정합성을 확인한다. 중대한 모호성이 있으면 질문 하나씩 닫고, 완전한 계약은 한 번 승인받으며, 동일한 계약의 유효한 승인 근거가 있으면 중복 질문 없이 재사용한다.
+- `Grill Me alignment gate` 또는 유효한 기존 승인 근거가 없으면 `AWAITING_USER_CONFIRMATION`을 유지하고 구현·Codex 인계·외부 AI 위임·제품 변경으로 진행하지 않는다.
 - 프로젝트 코어, 플레이어 경험, 주요 UX, 콘텐츠 의미, 비용·범위를 바꾸는 충돌만 사용자 결정으로 올린다. 저장소·정본·테스트로 판단 가능한 오류나 누락을 사용자에게 전가하지 않는다.
 - 사용자 확인 전 실행 계약을 확정하거나 구현하지 않는다. 사용자가 승인한 범위에서는 단계별 구현·검증·적대적 재검토를 끝까지 수행한다.
 - 상세 라우팅·권한 전환·리뷰·GPT→Codex·병합 절차는 `docs/WORK_MODE_AND_SKILL_ROUTING.md`를 따른다.
@@ -65,6 +69,8 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - 사용자에게 Skill·Skill Mode 선택 전가
 - 전체 Skill 자동 로드, trigger 없는 호출, 주 책임 분야 Skill 중복
 - Skill 파일을 읽은 사실을 실제 Skill 실행으로 보고
+- L1 이상 지시문을 intake·좋은 프롬프트 변환·Grill Me 확인 없이 바로 실행
+- 방향 문장의 앞 배치를 이유로 사용자 지시·정본·`HARD_CONSTRAINT`를 무시
 - 사용자 확인 전 범위 확대·대량 병렬화
 - 같은 파일·Schema·자산의 소유 경계 없이 병렬 작업
 - 검증·발행·Handoff 조기 실행
