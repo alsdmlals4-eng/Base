@@ -1,21 +1,23 @@
 ---
 name: analyzing-and-refining-game-concepts
-description: Use when defining or revising game concept, pointed fun, systems, difficulty, combat AI, benchmarks, playtests, PoC, or production direction.
+description: Use when defining or revising game concept, pointed fun, systems, difficulty, combat AI, tutorials, onboarding, first-session learning, benchmarks, playtests, PoC, or production direction.
 ---
 
 # Analyzing and Refining Game Concepts
 
 ## Core principle
 
-기능을 늘리는 것이 아니라 플레이어가 반복할 **뾰족한 재미**와 핵심 선택을 선명하게 만들고, 게임 시스템·난이도·전투 AI를 플레이어 경험 목표와 공정성·가독성·대응 가능성에 연결한 뒤 외부 사례·사용자 반응·행동 증거·PoC로 가장 위험한 가설을 검증한다.
+기능을 늘리는 것이 아니라 플레이어가 반복할 **뾰족한 재미**와 핵심 선택을 선명하게 만들고, 게임 시스템·난이도·전투 AI·튜토리얼을 플레이어 경험 목표와 공정성·가독성·대응 가능성·독립 수행에 연결한 뒤 외부 사례·사용자 반응·행동 증거·PoC로 가장 위험한 가설을 검증한다.
 
 프로젝트 코어의 사실 판정·승인은 코어 Skill, 11영역 Games User Research 구조의 설치·누락 감사는 `governing-game-user-research-coverage`, 기획 책임 원본 작성·발행은 `managing-design-documents`, 실제 변경 검증은 `reviewing-and-validating-project-changes`가 책임진다.
 
 ## Modes and state
 
-`frame` → `constrain` → `sharpen` → `structure` → 필요한 경우 `system-design` → 필요한 경우 `difficulty-and-combat-ai` → `benchmark-and-player-research` → `analyze` → `playtest-and-experiment` → `poc-contract` → `recalibrate` → `production-gate`
+`frame` → `constrain` → `sharpen` → `structure` → 필요한 경우 `tutorial-and-onboarding-design` → 필요한 경우 `system-design` → 필요한 경우 `difficulty-and-combat-ai` → `benchmark-and-player-research` → `analyze` → `playtest-and-experiment` → `poc-contract` → `recalibrate` → `production-gate`
 
-`CONCEPT_SEED → CONSTRAINTS_CHECKED → POINTED_FUN_HYPOTHESIS → CONCEPT_STRUCTURED → SYSTEM_AND_DIFFICULTY_CONTRACTED → POC_BUILD_AND_TEST → CONCEPT_RECALIBRATION → PRODUCTION_READY | REPEAT_POC | HOLD | STOP`
+`CONCEPT_SEED → CONSTRAINTS_CHECKED → POINTED_FUN_HYPOTHESIS → CONCEPT_STRUCTURED → TUTORIAL_AND_ONBOARDING_CONTRACTED | SYSTEM_AND_DIFFICULTY_CONTRACTED → POC_BUILD_AND_TEST → CONCEPT_RECALIBRATION → PRODUCTION_READY | REPEAT_POC | HOLD | STOP`
+
+`tutorial-and-onboarding-design`은 독립 Skill이 아니라 첫 세션·신규 플레이어·복귀 플레이어가 현재 프로젝트의 핵심 규칙과 성장·도구·판단을 실제 플레이로 배우도록 하는 조건부 mode다. 튜토리얼 이해도 연구 Coverage 설치·누락 감사는 `governing-game-user-research-coverage`가 계속 소유한다.
 
 ## Required inputs
 
@@ -25,6 +27,10 @@ target_player_and_play_context:
 player_experience_goal:
 core_loop_and_game_elements:
 current_system_and_combat_rules:
+current_tutorial_onboarding_and_first_session:
+prerequisite_knowledge_and_learning_goals:
+growth_or_capability_change_to_teach:
+help_skip_replay_returning_player_paths:
 difficulty_barriers_and_assists:
 enemy_roles_ai_and_encounter_pacing:
 constraints_and_production_capacity:
@@ -39,29 +45,39 @@ risks_unknowns_and_decision_to_make:
 - `SWOT`은 설명에서 끝내지 않고 `SO / WO / ST / WT` 행동으로 변환한다.
 - `MDA / DDE / DDD`, 3C, 루프, 동기, 차별화, 제작성을 교차 확인한다.
 - Base에서 `DDD`는 `Digital Dopamine Design`이며 첫 의미 있는 보상, 행동-피드백 지연, 보상 명료성·밀도, Micro→Session→Meta 사다리, 피로·인플레이션을 본다. 외부 동명 약어는 정의 확인 전 **임의 해석하지 않는다**.
+- `tutorial-and-onboarding-design`은 **프로젝트 선감사 → RULE → NEED → DISCOVER → FEEL → PROVE → TRANSFER → 플레이테스트·텔레메트리 → 적대적 검토**를 추적한다.
 - `system-design`은 **플레이어 경험 목표 → 시스템 경계 → 입력·행동·상태·규칙 → 피드백·결과 → Evidence**를 추적한다.
 - `difficulty-and-combat-ai`는 적의 지능과 압박량을 분리하고 **공정성·가독성·대응 가능성**, 공격 예산, 위협 예산, 긴장도 페이싱, 동적 난이도 조절을 설계한다.
 
-세부 컨셉·제약·뾰족한 재미·PoC 게이트는 `references/concept-evidence-and-gates.md`를 읽는다. 벤치마크·사용자 반응·플레이테스트의 전체 증거 필드는 `references/benchmark-player-evidence-and-playtests.md`, DDD의 경계와 축약 계약은 `references/benchmark-playtest-and-ddd.md`를 해당 mode에서만 읽는다. 게임 시스템·난이도·전투 AI는 `references/game-system-difficulty-and-combat-ai.md`를 `system-design` 또는 `difficulty-and-combat-ai`에서만 읽고, 외부 근거를 확인할 때는 `references/game-system-difficulty-evidence-sources.md`를 함께 읽으며, `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md`를 프로젝트 책임 원본 작성 틀로 사용한다.
+세부 컨셉·제약·뾰족한 재미·PoC 게이트는 `references/concept-evidence-and-gates.md`를 읽는다. 벤치마크·사용자 반응·플레이테스트의 전체 증거 필드는 `references/benchmark-player-evidence-and-playtests.md`, DDD의 경계와 축약 계약은 `references/benchmark-playtest-and-ddd.md`를 해당 mode에서만 읽는다. 튜토리얼·온보딩·첫 세션 학습은 `docs/knowledge/game-development/TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md`를 `tutorial-and-onboarding-design`에서만 읽고 `templates/planning/TUTORIAL_AND_ONBOARDING_DESIGN_CONTRACT.md`를 프로젝트 산출물 틀로 사용한다. 게임 시스템·난이도·전투 AI는 `references/game-system-difficulty-and-combat-ai.md`를 `system-design` 또는 `difficulty-and-combat-ai`에서만 읽고, 외부 근거를 확인할 때는 `references/game-system-difficulty-evidence-sources.md`를 함께 읽으며, `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md`를 프로젝트 책임 원본 작성 틀로 사용한다.
 
 ## Workflow
 
 1. 대상 플레이어, 핵심 행동·선택, 감정·판타지, 차별 원리를 한 문장으로 고정한다.
 2. 플레이·제작·기술·콘텐츠·표현·시장 제약을 확인한다.
 3. 요소를 `AMPLIFY / SUPPORT / NEUTRAL / CONFLICT / UNPROVEN`으로 정렬한다.
-4. 시스템 설계가 필요하면 책임·입력·출력·비책임·정본·실패·검증을 나누고 행동·선택·결과 계약으로 연결한다.
-5. 난이도·전투 AI가 필요하면 난이도 장벽 프로필과 공정성 안전 규칙을 먼저 고정하고, 개별 적 판단·전투 조율자·난이도/페이싱 디렉터를 분리한다.
-6. 공격·위협 예산, 반응시간·예고·회복, `Build Up → Sustain Peak → Peak Fade → Relax`, 고정 난이도별 조절 변수를 설계한다.
-7. 적응형 난이도는 장기 실력과 단기 스트레스를 분리하고 히스테리시스·변경 쿨다운·안전한 적용 시점을 정하며 성공을 즉시 상쇄하지 않는다.
-8. 결정을 바꿀 질문만 벤치마킹하고 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 결론낸다.
-9. 빌드·표본·과제·관찰·이벤트·퍼널·지표가 있는 플레이테스트·실험을 설계한다.
-10. 가장 위험한 가설을 최소 PoC로 검증하고 `KEEP / AMPLIFY / CHANGE / REMOVE / DEFER / RETEST`를 결정한다.
+4. 튜토리얼·온보딩이 필요하면 프로젝트 정본·Google Sheets·실제 코드·데이터·Scene·Resource·UI·입력·테스트·동일 Goal PR을 먼저 감사하고, 확인하지 못한 사실을 `BLOCKED_UNVERIFIED`로 분리한다.
+5. 학습 목표를 팝업 확인이 아니라 플레이어 행동·필요 정보·시스템 반응·성공·실패·복구·독립 수행·전이로 정의한다.
+6. 기본 규칙 수행(`RULE`) 뒤 필요·결핍을 인식(`NEED`)시키고, 해결 방법을 발견·적용(`DISCOVER`)하게 한 다음 성장 전후 행동 차이(`FEEL`)를 비교한다.
+7. 하이라이트·강제 입력·정답 고정을 줄여 안내 없는 독립 수행(`PROVE`)을 확인하고 다른 적·상황·조합·세션에서 재사용(`TRANSFER`)하게 한다.
+8. Skip·복습·복귀 경로와 음성·색·시간 제한·입력에 대한 접근성 대체 채널을 설계하고, 완료율 외에 힌트·재시도·독립 수행·전이 행동을 측정한다.
+9. 시스템 설계가 필요하면 책임·입력·출력·비책임·정본·실패·검증을 나누고 행동·선택·결과 계약으로 연결한다.
+10. 난이도·전투 AI가 필요하면 난이도 장벽 프로필과 공정성 안전 규칙을 먼저 고정하고, 개별 적 판단·전투 조율자·난이도/페이싱 디렉터를 분리한다.
+11. 공격·위협 예산, 반응시간·예고·회복, `Build Up → Sustain Peak → Peak Fade → Relax`, 고정 난이도별 조절 변수를 설계한다.
+12. 적응형 난이도는 장기 실력과 단기 스트레스를 분리하고 히스테리시스·변경 쿨다운·안전한 적용 시점을 정하며 성공을 즉시 상쇄하지 않는다.
+13. 결정을 바꿀 질문만 벤치마킹하고 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 결론낸다.
+14. 빌드·표본·과제·관찰·이벤트·퍼널·지표가 있는 플레이테스트·실험을 설계한다.
+15. 가장 위험한 가설을 최소 PoC로 검증하고 `KEEP / AMPLIFY / CHANGE / REMOVE / DEFER / RETEST`를 결정한다.
 
 ## Output contract
 
 ```md
 ## 핵심 컨셉·대상 플레이어·뾰족한 재미
 ## 제약과 코어 정렬
+## 튜토리얼·온보딩·첫 세션 현황 감사
+## RULE–NEED–DISCOVER–FEEL–PROVE–TRANSFER 학습 계약
+## 안내 감소·독립 수행·전이·Skip·복습·복귀·접근성
+## 성장 전후 비교·튜토리얼 플레이테스트·텔레메트리
 ## 플레이어 경험 목표·시스템 경계·행동/선택/결과
 ## 난이도 장벽 프로필·공정성 안전 규칙
 ## 개별 적 판단·전투 조율자·난이도/페이싱 디렉터
@@ -77,6 +93,8 @@ risks_unknowns_and_decision_to_make:
 ## Quality gate
 
 기능 복사, 리뷰 표본 편향, 자기보고와 행동 혼동, 여러 변수 동시 실험, PoC 범위 팽창, DDD의 무의미한 자극화, 결과를 본 뒤 성공 기준 변경을 금지한다.
+
+튜토리얼·온보딩에서는 프로젝트 정본·실제 구현 선감사 누락, 정적 조작표를 학습 완료로 판정, 문제 인식 전 해결책 광고, 상점·과금을 위한 강제 패배, 숨은 규칙으로 만든 가짜 결핍, 숫자·연출만 바뀌는 가짜 성장, 안내 없는 독립 수행 누락, 다른 상황 전이 검사 누락, 여러 개념 동시 교육, 완료율 단독 판정, Skip·복습·복귀·접근성 대체 채널 누락을 금지한다.
 
 난이도·전투 AI에서는 보이지 않는 정보로 처벌, 플레이어 입력 직접 읽기, 카메라 밖 즉사, 연속 기절·회피 불가능 조합, 체력 스펀지로 선택 대체, 성공 직후 성장 무효화, 현재 전투 중 노골적인 수치 조작, 히스테리시스 없는 난이도 진동, 텔레메트리만으로 감정·원인 확정을 금지한다.
 
