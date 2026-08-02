@@ -113,6 +113,12 @@ class BaseV942CompatibilityReleaseTests(unittest.TestCase):
         self.assertIn("tests.test_base_v9_4_2_compatibility_release", workflow)
         self.assertIn("python tools/check_base_v9_4_2_release.py", workflow)
 
+    def test_required_workflow_resolves_current_base_branch_history(self) -> None:
+        workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
+        self.assertIn('git rev-parse "origin/$GITHUB_BASE_REF"', workflow)
+        self.assertIn('TRUSTED_HISTORY_COMMIT="$GITHUB_SHA"', workflow)
+        self.assertNotIn("github.event.pull_request.base.sha", workflow)
+
 
 if __name__ == "__main__":
     unittest.main()
