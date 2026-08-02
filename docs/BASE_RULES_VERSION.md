@@ -16,7 +16,7 @@
 | Field | Authority |
 | --- | --- |
 | Immutable rules baseline | `v9.0.0` and `base.lock.json` at its trusted release history |
-| Latest released compatible line | `v9.4.1` and `base-v9.4.1.lock.json` |
+| Latest released compatible line | `v9.4.2` and `base-v9.4.2.lock.json` |
 | Current routing authority | `skills/SKILL_REGISTRY.json` plus each active Skill's frontmatter |
 | Frozen v9.0 release derivatives | `.codex-plugin/plugin.json`, `base.lock.json`, `skills/BASE_V9_SKILL_SNAPSHOT.json` |
 
@@ -95,6 +95,7 @@ evidence, or pin-finalization PR.
 - [Base v9.3 release contract](operations/BASE_V9_3_RELEASE_CONTRACT.md)
 - [Base v9.4 release contract](operations/BASE_V9_4_RELEASE_CONTRACT.md)
 - [Base v9.4.1 compatibility release contract](operations/BASE_V9_4_1_RELEASE_CONTRACT.md)
+- [Base v9.4.2 compatibility release contract](operations/BASE_V9_4_2_RELEASE_CONTRACT.md)
 
 ## Base v9.4 released compatible line
 
@@ -119,3 +120,15 @@ Its machine identity is recorded in `../base-v9.4.1.lock.json`:
 - Registry SHA-256: `693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59`
 
 Project adoption is a separate post-release wave and must pin this exact payload/evidence pair before claiming v9.4.1 validator adoption. Actual external model routing and real project external-AI worktree execution remain `NOT_RUN` until separately executed.
+
+## Base v9.4.2 released compatible line
+
+Base v9.4.2 is the released planning-first and Grill Me decision-batch compatibility line over v9.4.1. It preserves the v9.4.1 Registry bytes while adding the L1 planning-first Gate, GPT-recommended reversible numeric defaults, user-approved planning conflicts, maximum-ten Decision batches with early checkpoints, exact-head adversarial merge gates, and merged-main/Sheet readback states.
+
+Its machine identity is recorded in `../base-v9.4.2.lock.json`:
+
+- payload commit: `dd705d7f48a7919187bc0507610ba5fc5b43a658`
+- trusted evidence commit: `0c6cdd128bf1f5782e96b3a6240c9585f8d1ef6d`
+- Registry SHA-256: `693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59`
+
+Project adoption is a separate post-release wave and must pin this exact payload/evidence pair before claiming v9.4.2 planning-first governance adoption. Real project Grill Me batch execution, external model behavior, and human process usability remain `NOT_RUN` until separately piloted.
