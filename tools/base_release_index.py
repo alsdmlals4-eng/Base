@@ -14,6 +14,7 @@ RELEASE_LOCK_PATHS = {
     "9.4.0": Path("base-v9.4.lock.json"),
     "9.4.1": Path("base-v9.4.1.lock.json"),
     "9.4.2": Path("base-v9.4.2.lock.json"),
+    "9.4.3": Path("base-v9.4.3.lock.json"),
 }
 
 
