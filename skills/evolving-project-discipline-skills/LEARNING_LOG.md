@@ -1,0 +1,12 @@
+# Evolving Project Discipline Skills — Focused Learning Log
+
+## 2026-08-02 — Complete behavior coverage is not actual model behavior evidence
+
+- **Trigger:** the active-Skill audit found strong Registry, fixture, reference-freshness, and CI contracts, but `MODEL_RUN_STATUS: NOT_RUN` remained true and several active Skills had no primary behavior-evaluation case.
+- **Finding:** a valid evaluation schema could pass while an active Skill was never selected as the primary owner or never exercised as a wrong non-selection. A result file could also be scored without exact commit, Registry, evaluation-set, or independent reviewer identity. Repository tests and tools were distributed across the tree without one conservative per-Skill evidence view.
+- **Decision:** keep behavior evaluation inside the existing `evolving-project-discipline-skills` Skill. Require every active Skill to have `primary behavior coverage >= 1` and `non-selection behavior coverage >= 1`; validate actual result artifacts against the exact commit and source SHA-256 values; require an independent reviewer context; and generate a deterministic evidence matrix from an explicit evidence index.
+- **Evidence:** focused RED→GREEN temporary-repository tests for missing primary coverage, missing non-selection coverage, stale Registry hash, stale evaluation hash, same-context review, missing evidence-index entries, and deterministic evidence generation. Repository-level exact-HEAD CI remains required before claiming integration PASS.
+- **Classification boundary:** `EXECUTABLE_EVIDENCE` means a Test, Tool, Workflow, or Script path is linked and exists. `CONTRACT_EVIDENCE` means only a contract/documentation path is linked. Neither means the evidence passed on the current commit.
+- **Truthful limit:** `MODEL_RUN_STATUS: NOT_RUN` remains unchanged until an external model produces a schema-valid complete result artifact tied to the current exact commit, Registry SHA-256, evaluation-set SHA-256, and independent reviewer metadata.
+- **Non-goals:** no new broad Skill, no external paid model call from CI, no Registry byte change, no release-lock change, and no claim of project Pilot, engine Runtime, device, accessibility, or human comprehension validation.
+- **Next trigger:** run the complete behavior set with an external model and independent reviewer; add targeted executable evidence for any Skill that remains `CONTRACT_EVIDENCE`; and recalibrate cases when real routing failures, over-routing, or missed non-selection boundaries are observed.
