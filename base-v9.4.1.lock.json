@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "artifact_role": "BASE_V9_4_1_COMPATIBILITY_RELEASE_LOCK",
+  "release_line": "v9.4.1",
+  "release_state": "TRUSTED_EVIDENCE_PENDING",
+  "repository": "alsdmlals4-eng/Base",
+  "release_issue": 139,
+  "source_pr": 138,
+  "predecessor": {
+    "path": "base-v9.4.lock.json",
+    "release_line": "v9.4.0",
+    "release_commit": "a728712cb776ec98f4875914a580fcf7d0156593",
+    "release_evidence_commit": "ef1fba11167e4da0b298123b0c85ebd268191a42"
+  },
+  "candidate_release_commit": "3f2c4a624d302b704c1b5322eb5c9f34ad55abb9",
+  "candidate_release_evidence_commit": null,
+  "candidate_registry": {
+    "path": "skills/SKILL_REGISTRY.json",
+    "sha256": "693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59",
+    "hash_definition": "RAW_FILE_BYTES_SHA256"
+  },
+  "released_validator_paths": [
+    "tools/check_skill_behavior_evals.py",
+    "tools/build_skill_implementation_evidence.py",
+    "tools/check_external_ai_worktree_contract.py"
+  ]
+}
