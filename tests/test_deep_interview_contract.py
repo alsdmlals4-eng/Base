@@ -131,6 +131,41 @@ class DeepInterviewContractTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
 
+    def test_planning_first_grill_me_batch_contract(self) -> None:
+        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        grill = (ROOT / "skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md").read_text(encoding="utf-8")
+        sync = (ROOT / "docs/CONFIRMED_DECISION_SYNC_POLICY.md").read_text(encoding="utf-8")
+        lifecycle = (ROOT / "docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md").read_text(encoding="utf-8")
+        template = (ROOT / "templates/project-operations/GRILL_ME_DECISION_RECORD.md").read_text(encoding="utf-8")
+
+        for text in (intake, grill, sync):
+            self.assertIn("기획 우선 원칙", text)
+            self.assertIn("DETAILED_NUMERIC_DEFAULT", text)
+            self.assertIn("PLANNING_CONFLICT", text)
+            self.assertIn("GRILL_ME_REQUIRED", text)
+
+        for text in (grill, sync, lifecycle):
+            self.assertIn("MAX_APPROVED_DECISIONS_PER_BATCH: 10", text)
+            self.assertIn("GM-BATCH-YYYY-MM-DD-NN", text)
+            self.assertIn("조기 체크포인트", text)
+            self.assertIn("APPROVED_PENDING_MERGE", text)
+            self.assertIn("SYNCED_TO_MAIN", text)
+            self.assertIn("exact-head", text)
+            self.assertIn("attack → validate-critique → regression-recheck → decision-report", text)
+
+        self.assertIn("11번째 질문", grill)
+        self.assertIn("병합·재동기화 전", grill)
+        for term in (
+            "grill_me_batch_id",
+            "max_approved_decisions_per_batch: 10",
+            "approved_decision_count",
+            "checkpoint_reason",
+            "batch_exact_head",
+            "adversarial_review",
+            "merge_commit",
+        ):
+            self.assertIn(term, template)
+
     def test_grill_me_decision_template_has_required_contract(self) -> None:
         text = (ROOT / "templates/project-operations/GRILL_ME_DECISION_RECORD.md").read_text(encoding="utf-8")
         for term in (
