@@ -50,6 +50,30 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
         for tag in ("planning-visualization", "intermediate-visual-checkpoint", "final-visual-candidate", "visual-qa-and-approval", "image-mockup", "image-approval"):
             self.assertIn(tag, entry["trigger_tags"])
 
+    def test_project_adaptive_ingame_art_prompt_requires_project_first_approval(self) -> None:
+        prompt = (ROOT / "templates/prompts/PROJECT_ADAPTIVE_INGAME_ART_CHECKPOINT_PROMPT.md").read_text(encoding="utf-8")
+        for token in (
+            "PROJECT_ADAPTIVE_INGAME_ART_CHECKPOINT",
+            "PROJECT_FIRST",
+            "PR_CHECK_REQUIRED",
+            "SCENE_SET_APPROVAL_REQUIRED",
+            "GRILL_ME_REQUIRED",
+            "IMAGE_GENERATION_PROHIBITED_BEFORE_APPROVAL",
+            "TWO_BOARD_DEFAULT_WHEN_DENSITY_RISK",
+            "FINAL_USER_OUTPUT_IMAGE_ONLY",
+            "DRAFT_VISUAL",
+            "VISUAL_CANONICAL_CONFLICT",
+            "attack",
+            "validate-critique",
+            "decision-report",
+            "regression-recheck",
+        ):
+            self.assertIn(token, prompt)
+        self.assertIn("모든 프로젝트에 고정 화면 세트를 강제하지 않는다", prompt)
+        self.assertIn("열린 PR", prompt)
+        self.assertIn("최근 병합 PR", prompt)
+        self.assertIn("사용자가 검토 기록을 요청", prompt)
+
     def test_active_entrypoints_reference_v9_not_v7(self) -> None:
         for path in ("START_HERE.md", "docs/DOCUMENTATION_MAP.md", "templates/project-operations/README.md"):
             text = (ROOT / path).read_text(encoding="utf-8")
