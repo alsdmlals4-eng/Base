@@ -34,6 +34,7 @@
 |---|---|---|
 | 외부 근거를 어떻게 찾고 판정·적용하는가? | `EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md` | Evidence Pack·개선 판정·검증 계획 |
 | 게임 코어·플레이어 경험·게임 필·보상·난이도를 어떻게 설계하는가? | `GAME_DESIGN_AND_PLAYER_EXPERIENCE_GUIDE.md` | 플레이어 약속·MDE 추적표·플레이테스트 계약 |
+| 튜토리얼·온보딩·첫 세션에서 규칙·필요·성장·독립 수행을 어떻게 가르치는가? | `TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md` | `RULE–NEED–DISCOVER–FEEL–PROVE–TRANSFER` 학습 계약·측정·적대적 검토 |
 | 그림체·비주얼·캐릭터·환경·UI·애니메이션·에셋을 어떻게 기획하는가? | `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md` | Visual Pillar·Art Bible·Asset Specification |
 | ChatGPT·Codex·외부 AI를 어떻게 안전하고 검증 가능하게 협업시키는가? | `AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md` | Prompt 계약·Context Pack·Evals·독립 검수 |
 | Godot·플랫폼·성능·제작 파이프라인·출시를 어떻게 기획에 연결하는가? | `TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md` | 기술 계약·성능 예산·반복 제작성·출시 증거 |
@@ -41,12 +42,15 @@
 | 작은 표본·저충실도 사람 세션을 어떻게 과장 없이 설계하는가? | `docs/knowledge/game-development/HUMAN_VALIDATION_ARTIFACT_GOVERNANCE.md` | 사람 세션 패킷·claim ceiling·미검증 분리 |
 | 실제 테스터가 없을 때 AI 가상 페르소나로 무엇을 검토할 수 있는가? | `docs/knowledge/game-development/SYNTHETIC_TESTER_SIMULATION_GOVERNANCE.md` | 프로젝트 구조 분석·T6 합성 위험 검토·TEST 게이트 |
 
+`TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md`는 실행 권한을 소유하지 않는다. 실제 작업은 `analyzing-and-refining-game-concepts: tutorial-and-onboarding-design`이 주 책임이며, 튜토리얼 이해도 연구 Coverage 설치·누락 감사는 `governing-game-user-research-coverage`가 담당한다.
+
 ## 4. 기존 Skill 라우팅
 
 | 작업 | 실행 책임 Skill | 이 허브에서 읽을 내용 |
 |---|---|---|
 | 요청 해석·범위·완료 기준·실행 순서 | `managing-project-intake-and-work-contract` | Method의 결정 질문·Coverage·Evidence Pack 계약 |
 | 코어 컨셉·DDD·벤치마킹·플레이테스트 | `analyzing-and-refining-game-concepts` | 게임 기획 Guide·Reference Catalog |
+| 튜토리얼·온보딩·첫 세션 학습·성장 체감 | `analyzing-and-refining-game-concepts: tutorial-and-onboarding-design` | 튜토리얼 Guide·프로젝트 Contract·공식 접근성 근거 |
 | Games User Research 누락 감사 | `governing-game-user-research-coverage` | 연구 관련 Coverage와 Evidence 상태 |
 | 아트 방향·프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` | 아트 Guide·원출처·권리·승인 상태 |
 | 대표 경험·품질·제작 파이프라인 | `designing-vertical-slices` | 기획·아트·기술 Guide의 Quality Bar |
@@ -64,6 +68,7 @@
 - 사람 검증 세션 패킷: `templates/research/HUMAN_VALIDATION_SESSION_PACKET.md`
 - 합성 테스터 시뮬레이션: `templates/research/SYNTHETIC_TESTER_SIMULATION_PACKET.md`
 - 게임 벤치마크·플레이어 근거: `templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md`
+- 튜토리얼·온보딩 설계: `templates/planning/TUTORIAL_AND_ONBOARDING_DESIGN_CONTRACT.md`
 
 프로젝트는 Base 문서를 복제하지 않는다. 프로젝트 저장소에는 결정 질문, 선택한 Coverage, Evidence ID, 개선 판정, 실제 기획 반영, 검증 결과와 프로젝트 고유 Case만 둔다.
 
@@ -81,4 +86,4 @@
 
 이 허브를 읽거나 문서를 작성한 것만으로 기획·구현·접근성·성능·출시가 검증된 것은 아니다. 합성 테스터 결과도 실제 사람 행동·재미·선호·조작감·접근성·성능을 검증하지 않는다. 완료는 선택한 기존 Skill의 Output Contract와 실제 프로젝트 증거를 따른다.
 
-계약·라우팅·중복 Skill 방지·Learning Log 연결은 `tests/test_evidence_based_game_development_knowledge.py`, `tests/test_evidence_knowledge_workflow_contract.py`, `tests/test_human_validation_artifact_governance.py`, `tests/test_synthetic_tester_simulation_governance.py`, `.github/workflows/validate-evidence-knowledge.yml`의 전용 GitHub Actions에서 검증한다. Workflow 파일 존재와 실제 실행 성공을 분리해 확인한다.
+계약·라우팅·중복 Skill 방지·Learning Log 연결은 `tests/test_evidence_based_game_development_knowledge.py`, `tests/test_evidence_knowledge_workflow_contract.py`, `tests/test_human_validation_artifact_governance.py`, `tests/test_synthetic_tester_simulation_governance.py`, `tests/test_tutorial_and_onboarding_design_contract.py`, `.github/workflows/validate-evidence-knowledge.yml`의 전용 GitHub Actions에서 검증한다. Workflow 파일 존재와 실제 실행 성공을 분리해 확인한다.
