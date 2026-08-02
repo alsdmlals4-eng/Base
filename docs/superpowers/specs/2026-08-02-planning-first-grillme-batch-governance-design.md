@@ -19,8 +19,9 @@ Base 작업 순서에 다음 세 계약을 하나의 상태 흐름으로 통합�
 - `AGENTS.md`: 항상 적용되는 기획 우선·결정권·10건 상한의 불변 규칙과 상세 정책 경로
 - `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`: 상태 전이, 분류, 조기 체크포인트, PR·적대적 검토·Sheet 계약의 단일 상세 원본
 - `templates/project-operations/GRILL_ME_BATCH_CHECKPOINT.md`: 프로젝트 실행 기록 Template
-- `tests/test_deep_interview_contract.py`: 기존 Required CI가 실행하는 연결 회귀
-- `tests/test_planning_first_grillme_batch_governance.py`: focused 전체 계약 회귀
+- `tests/test_deep_interview_contract.py`: 기존 Required CI가 실제 실행하는 단일 회귀
+
+별도 standalone 테스트를 두지 않는다. 저장소에 존재하지만 Required CI가 실행하지 않는 검증 파일이 생기는 것을 피하고, Deep Interview 계약이 정책·Template 발견성과 핵심 상태를 함께 소유한다.
 
 이 정책은 기존 즉시 동기화를 폐기하지 않는다. Grill Me 승인에서 “즉시”는 활성 배치 Branch와 GitHub 추적 surface에 내구 기록한다는 의미이며, main 통합 완료는 배치 PR 병합 뒤에만 확정한다.
 
@@ -79,8 +80,8 @@ Base 작업 순서에 다음 세 계약을 하나의 상태 흐름으로 통합�
 ## Verification
 
 - `AGENTS.md`가 단일 상세 정책과 Template을 발견 가능하게 연결한다.
-- focused contract test가 기획 우선, 분류, 10건 상한, 조기 체크포인트, exact-head, 적대적 검토, merged-main Sheet 승격을 검사한다.
-- 기존 CI가 실행하는 deep-interview 회귀가 새 정책 파일과 Template의 핵심 계약을 확인한다.
+- 기존 CI가 실행하는 Deep Interview 회귀가 기획 우선, 분류, 10건 상한, 조기 체크포인트, exact-head, 적대적 검토, merged-main Sheet 승격을 확인한다.
+- Base v9 운영 계약과 adversarial gate가 Registry·release-lock 무결성을 계속 검증한다.
 - Registry와 v9.4.1 release lock bytes는 변경하지 않는다.
 
 ## Benchmark interpretation
@@ -96,4 +97,5 @@ Base 작업 순서에 다음 세 계약을 하나의 상태 흐름으로 통합�
 - 모든 수치를 사용자에게 질문
 - 승인 Decision을 10건 동안 메모리에만 보류
 - 기존 장문 운영 문서에 같은 상세 절차 복제
+- Required CI가 실행하지 않는 중복 테스트 파일 추가
 - 실제 외부 모델·사람·기기 검증을 자동 완료로 승격
