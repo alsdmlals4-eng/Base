@@ -1,5 +1,15 @@
 # Base Skill Learning Log
 
+## 2026-08-02 — 튜토리얼·온보딩은 기존 게임 기획 Skill의 조건부 mode로 통합
+
+- **Trigger:** 기본 규칙 → 필요·결핍 → 방법 발견 → 성장 체감의 튜토리얼 가이드를 Base에 공용화하라는 승인 요청.
+- **Finding:** 새 튜토리얼 Skill을 만들면 `analyzing-and-refining-game-concepts`의 시스템·DDD·벤치마크·플레이테스트 책임과 중복된다. 반대로 튜토리얼 전용 입력·출력을 공유 계약에 직접 넣으면 무관한 컨셉 작업까지 부담시킨다.
+- **Decision:** 새 광역 Skill과 Registry 변경 없이 기존 Skill에 `tutorial-and-onboarding-design` 조건부 mode를 추가한다. 상세 방법은 지식 Guide, 프로젝트 산출물은 Template로 분리하고 `RULE → NEED → DISCOVER → FEEL → PROVE → TRANSFER`를 프로젝트 선감사·플레이테스트·텔레메트리·적대적 검토에 연결한다.
+- **Evidence:** Apple의 게임 온보딩 공식 가이드와 Microsoft XAG 109·116을 원리·접근성 근거로 사용했고, 전용 계약 테스트의 RED 4건, GitHub Actions 지식 계약, 참조 최신성 검사를 사용한다. 외부 근거는 프로젝트 정본을 대체하지 않는다.
+- **Boundary:** 강제 패배·가짜 결핍·표현만 바뀌는 가짜 성장·정적 조작표 완료 판정을 금지한다. 프로젝트별 튜토리얼 구현, 사람 이해·쾌감·피로, 엔진 런타임, 대상 기기 접근성은 `NOT_RUN`이다. Base 자체는 프로젝트 Google Sheets 동기화 대상이 아니다.
+- **Learning state:** 공용 구조와 실패 경계는 `HYPOTHESIS`; 서로 다른 프로젝트에서 독립 수행·전이·이탈·재작업 감소를 확인하기 전 효과를 `VERIFIED`로 승격하지 않는다.
+- **Next trigger:** 실제 프로젝트 두 곳 이상에 적용해 안내 의존, 독립 수행, 전이 성공, 성장 전후 행동 변화, 접근성 막힘을 비교하거나 조건부 mode가 일반 컨셉 작업을 오염하는 회귀가 발생할 때 재검토한다.
+
 ## 2026-08-01 — Repository governance files are not repository-setting evidence
 
 - **Trigger:** the public Base repository had reusable operating materials and dependency-review CI but no License, Security policy, CODEOWNERS, or Dependabot configuration.

@@ -242,5 +242,25 @@ class BaseV95SkillOperatingRefinementTests(unittest.TestCase):
         self.assertIn("AGENT_MERGE_REQUIRED", coverage)
 
 
+    def test_tutorial_onboarding_is_a_conditional_existing_skill_mode(self) -> None:
+        skill = read("skills/analyzing-and-refining-game-concepts/SKILL.md")
+        start = read("START_HERE.md")
+        learning = read("skills/SKILL_LEARNING_LOG.md")
+
+        self.assertIn("tutorial-and-onboarding-design", skill)
+        self.assertIn("이 입력은 해당 mode가 선택될 때만 요구한다", skill)
+        self.assertIn("해당 mode를 사용한 경우에만 다음 산출물을 추가한다", skill)
+        self.assertIn("TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md", skill)
+        self.assertIn("TUTORIAL_AND_ONBOARDING_DESIGN_CONTRACT.md", skill)
+        self.assertIn("튜토리얼·온보딩·첫 세션 학습·성장 체감", start)
+        self.assertIn("새 광역 Skill과 Registry 변경 없이", learning)
+
+        registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+        self.assertNotIn(
+            "tutorial-and-onboarding-design",
+            {entry["skill_id"] for entry in registry["skills"]},
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
