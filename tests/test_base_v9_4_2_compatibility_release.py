@@ -14,12 +14,14 @@ LOCK_SCHEMA_PATH = ROOT / "schemas/base-v9-4-2-release-lock-v1.schema.json"
 EVIDENCE_PATH = ROOT / "docs/operations/BASE_V9_4_2_RELEASE_EVIDENCE.json"
 EVIDENCE_SCHEMA_PATH = ROOT / "schemas/base-v9-4-2-release-evidence-v1.schema.json"
 RELEASE_CONTRACT_PATH = ROOT / "docs/operations/BASE_V9_4_2_RELEASE_CONTRACT.md"
+VERSION_PATH = ROOT / "docs/BASE_RULES_VERSION.md"
 RELEASE_INDEX_PATH = ROOT / "tools/base_release_index.py"
 RELEASE_CHECKER_PATH = ROOT / "tools/check_base_v9_4_2_release.py"
 WORKFLOW_PATH = ROOT / ".github/workflows/validate-base-v9-rc.yml"
 PREDECESSOR_LOCK_PATH = ROOT / "base-v9.4.1.lock.json"
 
 PAYLOAD_COMMIT = "dd705d7f48a7919187bc0507610ba5fc5b43a658"
+EVIDENCE_COMMIT = "0c6cdd128bf1f5782e96b3a6240c9585f8d1ef6d"
 REGISTRY_SHA256 = "693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59"
 PREDECESSOR_PAYLOAD = "3f2c4a624d302b704c1b5322eb5c9f34ad55abb9"
 PREDECESSOR_EVIDENCE = "ff117d24d5bdb121314e109a6aa9b4f552e0fdc1"
@@ -37,6 +39,7 @@ class BaseV942CompatibilityReleaseTests(unittest.TestCase):
             EVIDENCE_PATH,
             EVIDENCE_SCHEMA_PATH,
             RELEASE_CONTRACT_PATH,
+            VERSION_PATH,
             RELEASE_INDEX_PATH,
             RELEASE_CHECKER_PATH,
         ):
@@ -46,7 +49,7 @@ class BaseV942CompatibilityReleaseTests(unittest.TestCase):
         self.assertEqual([], list(Draft202012Validator(load_json(LOCK_SCHEMA_PATH)).iter_errors(lock)))
         self.assertEqual([], list(Draft202012Validator(load_json(EVIDENCE_SCHEMA_PATH)).iter_errors(evidence)))
 
-    def test_pending_identity_preserves_v941_and_binds_payload(self) -> None:
+    def test_released_identity_preserves_v941_and_binds_payload(self) -> None:
         predecessor = load_json(PREDECESSOR_LOCK_PATH)
         self.assertEqual("v9.4.1", predecessor["release_line"])
         self.assertEqual(PREDECESSOR_PAYLOAD, predecessor["candidate_release_commit"])
@@ -56,14 +59,21 @@ class BaseV942CompatibilityReleaseTests(unittest.TestCase):
         lock = load_json(LOCK_PATH)
         evidence = load_json(EVIDENCE_PATH)
         self.assertEqual("v9.4.2", lock["release_line"])
-        self.assertEqual("TRUSTED_EVIDENCE_PENDING", lock["release_state"])
-        self.assertIsNone(lock["candidate_release_evidence_commit"])
+        self.assertEqual("BASE_RELEASED", lock["release_state"])
+        self.assertEqual(EVIDENCE_COMMIT, lock["candidate_release_evidence_commit"])
         self.assertEqual(PAYLOAD_COMMIT, lock["candidate_release_commit"])
         self.assertEqual(REGISTRY_SHA256, lock["candidate_registry"]["sha256"])
         self.assertEqual(PAYLOAD_COMMIT, evidence["payload_commit"])
         self.assertEqual(REGISTRY_SHA256, evidence["registry_sha256"])
         self.assertEqual(144, lock["release_issue"])
         self.assertEqual(142, lock["source_pr"])
+
+    def test_version_document_declares_latest_compatible_release(self) -> None:
+        text = VERSION_PATH.read_text(encoding="utf-8")
+        self.assertIn("Latest released compatible line | `v9.4.2`", text)
+        self.assertIn(PAYLOAD_COMMIT, text)
+        self.assertIn(EVIDENCE_COMMIT, text)
+        self.assertIn("base-v9.4.2.lock.json", text)
 
     def test_release_index_installs_v942(self) -> None:
         result = subprocess.run(
@@ -86,7 +96,7 @@ class BaseV942CompatibilityReleaseTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertEqual("base-v9.4.2.lock.json", result.stdout.strip())
 
-    def test_release_checker_accepts_pending_trusted_history(self) -> None:
+    def test_release_checker_accepts_current_trusted_history(self) -> None:
         result = subprocess.run(
             ["python", str(RELEASE_CHECKER_PATH), "--trusted-history-commit", "HEAD"],
             cwd=ROOT,
