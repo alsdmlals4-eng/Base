@@ -61,18 +61,31 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
             "IMAGE_GENERATION_PROHIBITED_BEFORE_APPROVAL",
             "TWO_BOARD_DEFAULT_WHEN_DENSITY_RISK",
             "FINAL_USER_OUTPUT_IMAGE_ONLY",
-            "DRAFT_VISUAL",
+            "CURRENT",
+            "INFERRED",
+            "PROPOSED",
+            "PLACEHOLDER",
+            "MISSING_CANON",
+            "CANON_CONFLICT",
             "VISUAL_CANONICAL_CONFLICT",
+            "BLOCKED_UNVERIFIED",
+            "DRAFT_VISUAL",
             "attack",
             "validate-critique",
             "decision-report",
             "regression-recheck",
         ):
             self.assertIn(token, prompt)
-        self.assertIn("모든 프로젝트에 고정 화면 세트를 강제하지 않는다", prompt)
-        self.assertIn("열린 PR", prompt)
-        self.assertIn("최근 병합 PR", prompt)
-        self.assertIn("사용자가 검토 기록을 요청", prompt)
+        for statement in (
+            "모든 프로젝트에 고정 화면 세트를 강제하지 않는다",
+            "열린 PR",
+            "최근 병합 PR",
+            "개별 장면",
+            "합",
+            "절초",
+            "사용자가 검토 기록을 요청",
+        ):
+            self.assertIn(statement, prompt)
 
     def test_active_entrypoints_reference_v9_not_v7(self) -> None:
         for path in ("START_HERE.md", "docs/DOCUMENTATION_MAP.md", "templates/project-operations/README.md"):
