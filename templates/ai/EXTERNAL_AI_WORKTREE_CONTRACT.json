@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "artifact_role": "EXTERNAL_AI_WORKTREE_CONTRACT",
+  "repository": "owner/project",
+  "base_branch": "main",
+  "start_commit": "0000000000000000000000000000000000000000",
+  "worktree_path": ".worktrees/deepseek-topic",
+  "task_branch": "ai/deepseek-topic",
+  "allowlist": {
+    "read": [
+      "docs/**",
+      "skills/**"
+    ],
+    "write": [
+      "drafts/external-ai/topic/**"
+    ]
+  },
+  "protected_paths": [
+    "project.godot",
+    "CURRENT_CONFIRMED_DECISIONS.md",
+    "docs/**/CURRENT*.md",
+    "data/**",
+    "scenes/**",
+    "scripts/**"
+  ],
+  "result_state": "REVIEW_PENDING",
+  "integration_state": "NOT_INTEGRATED",
+  "cleanup_requested": false
+}
