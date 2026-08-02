@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "artifact_role": "BASE_V9_4_3_RELEASE_EVIDENCE",
+  "release_line": "v9.4.3",
+  "evidence_status": "CANDIDATE_VALIDATED_BEFORE_TRUSTED_EVIDENCE_PIN",
+  "repository": "alsdmlals4-eng/Base",
+  "release_issue": 148,
+  "source_pr": 143,
+  "payload_commit": "7dd1a4f80388bc5faca767ff74a3eb32dc9d0ac8",
+  "registry_sha256": "693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59",
+  "verification": {
+    "source_exact_head": "b2cd0f99827e8e2b34c42204de54a2bf5b447225",
+    "source_merge_commit": "7dd1a4f80388bc5faca767ff74a3eb32dc9d0ac8",
+    "required_workflows": [
+      "Validate Base v9 Operating Contracts",
+      "Validate Game Project Operating System",
+      "Validate Evidence-Based Game Development Knowledge",
+      "Validate BCA Visual and Sheet Workflow",
+      "Validate Integrated Vertical Slice Prompt",
+      "Validate Game UX UI System"
+    ],
+    "unresolved_review_threads": 0
+  },
+  "limitations": {
+    "cross_model_behavior": "NOT_RUN",
+    "prompt_rework_reduction": "NOT_RUN",
+    "human_comprehension": "NOT_RUN",
+    "real_project_adapter_execution": "NOT_RUN",
+    "runtime_device_accessibility": "NOT_APPLICABLE"
+  }
+}
