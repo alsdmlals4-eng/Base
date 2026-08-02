@@ -70,6 +70,16 @@ def validate_evidence_index(root: Path = ROOT) -> list[str]:
     except (OSError, json.JSONDecodeError) as error:
         return [f"evidence input unavailable or invalid: {error}"]
 
+    if index.get("schema_version") != 1:
+        errors.append("evidence index schema_version must be 1")
+    if index.get("artifact_role") != "BASE_SKILL_IMPLEMENTATION_EVIDENCE_INDEX":
+        errors.append(
+            "evidence index artifact_role must be BASE_SKILL_IMPLEMENTATION_EVIDENCE_INDEX"
+        )
+    if not isinstance(index.get("entries"), list):
+        errors.append("evidence index entries must be a list")
+        return errors
+
     active = [
         entry
         for entry in registry.get("skills", [])
