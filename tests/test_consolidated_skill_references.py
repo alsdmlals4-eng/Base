@@ -213,6 +213,33 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         ):
             self.assertTrue((ROOT / path).is_file(), path)
 
+    def test_first_prompt_aliases_and_alignment_are_integrated_modes(self) -> None:
+        registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
+        aliases = (ROOT / "skills/LEGACY_SKILL_ALIASES.md").read_text(encoding="utf-8")
+        intake = skill_package_text("managing-project-intake-and-work-contract")
+        method = (ROOT / "docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md").read_text(encoding="utf-8")
+        reference_path = ROOT / "skills/managing-project-intake-and-work-contract/references/first-prompt-direction-anchoring.md"
+
+        self.assertTrue(reference_path.is_file())
+        for term in (
+            "`first-prompt`",
+            "DIRECTION_ANCHOR",
+            "TASK_AND_SUCCESS",
+            "CONTEXT_AND_SOURCES",
+            "CONSTRAINTS_AND_PROTECTED_SCOPE",
+            "OUTPUT_AND_VALIDATION",
+            "Grill Me alignment gate",
+            "exact contract already approved",
+            "approval reference",
+        ):
+            self.assertIn(term, intake)
+        for alias in ("[좋은 프롬프트]", "좋은 프롬프트", "퍼스트 프롬프트", "first prompt"):
+            self.assertIn(alias, aliases)
+        self.assertIn("`first-prompt` + `contract` + `clarify`", aliases)
+        self.assertIn("First-prompt direction anchoring", method)
+        self.assertIn("instruction/context", method)
+        self.assertNotIn('"skill_id":"first-prompt"', registry.replace(" ", ""))
+
     def test_official_evidence_sources_are_recorded(self) -> None:
         benchmark = (ROOT / "skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md").read_text(encoding="utf-8")
         sequence = (ROOT / "skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md").read_text(encoding="utf-8")
@@ -230,7 +257,6 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
             self.assertIn(source, sequence)
         for source in ("learn.microsoft.com/en-us/xbox/accessibility", "dev.epicgames.com/documentation", "docs.unity3d.com"):
             self.assertIn(source, quality)
-
 
     def test_confirmed_decision_sync_and_post_merge_review_contract(self) -> None:
         policy = (ROOT / "docs/CONFIRMED_DECISION_SYNC_POLICY.md").read_text(encoding="utf-8")
@@ -312,6 +338,7 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         self.assertIn("repository-wide-audit", doc_map)
         self.assertIn("repository-wide-audit", prompt)
         self.assertNotIn('"skill_id":"repository-wide-adversarial-audit"', registry)
+
 
 if __name__ == "__main__":
     unittest.main()
