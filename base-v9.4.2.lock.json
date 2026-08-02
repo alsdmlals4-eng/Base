@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "artifact_role": "BASE_V9_4_2_COMPATIBILITY_RELEASE_LOCK",
+  "release_line": "v9.4.2",
+  "release_state": "TRUSTED_EVIDENCE_PENDING",
+  "repository": "alsdmlals4-eng/Base",
+  "release_issue": 144,
+  "source_pr": 142,
+  "predecessor": {
+    "path": "base-v9.4.1.lock.json",
+    "release_line": "v9.4.1",
+    "release_commit": "3f2c4a624d302b704c1b5322eb5c9f34ad55abb9",
+    "release_evidence_commit": "ff117d24d5bdb121314e109a6aa9b4f552e0fdc1"
+  },
+  "candidate_release_commit": "dd705d7f48a7919187bc0507610ba5fc5b43a658",
+  "candidate_release_evidence_commit": null,
+  "candidate_registry": {
+    "path": "skills/SKILL_REGISTRY.json",
+    "sha256": "693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59",
+    "hash_definition": "RAW_FILE_BYTES_SHA256"
+  },
+  "released_validator_paths": [
+    "tests/test_deep_interview_contract.py",
+    "docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md",
+    "templates/project-operations/GRILL_ME_BATCH_CHECKPOINT.md"
+  ]
+}
