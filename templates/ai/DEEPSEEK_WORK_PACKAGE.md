@@ -10,6 +10,24 @@
 - 작업 브랜치:
 - 책임 검수자:
 
+### 1.1 기계 검증 Sidecar
+
+이 문서와 함께 `templates/ai/EXTERNAL_AI_WORKTREE_CONTRACT.json`을 복사해 실제 값으로 채운다.
+
+```text
+drafts/external-ai/<topic>/worktree-contract.json
+```
+
+외부 AI 작업 전과 결과 회수 후 아래 검사를 실행한다.
+
+```bash
+python tools/check_external_ai_worktree_contract.py \
+  --root . \
+  --contract drafts/external-ai/<topic>/worktree-contract.json
+```
+
+검사는 `.worktrees/` 무시 상태, 전용 `ai/deepseek-*` 브랜치, 시작 커밋 계보, 변경 경로 allowlist, 보호 경로, `REVIEW_PENDING` 상태, 정리 조건을 실제 Git 상태와 대조한다.
+
 ## 2. 목적과 사용자 가치
 
 - 해결할 문제:
@@ -98,14 +116,20 @@
 }
 ```
 
+모든 외부 AI 결과는 Sidecar의 `result_state: REVIEW_PENDING`을 유지한다. 실제 diff·근거·테스트를 책임 검수자가 확인하기 전에는 `APPROVED`, `VERIFIED`, `IMPLEMENTED`로 승격하지 않는다.
+
 ## 9. 자체 검수
 
+- [ ] `.worktrees/`가 Git에서 무시된다.
+- [ ] worktree와 `ai/deepseek-*` 전용 브랜치가 기준 브랜치와 분리됐다.
 - [ ] allowlist 밖 파일을 사용하지 않았다.
+- [ ] 보호 경로를 수정하지 않았다.
 - [ ] 사실·가정·제안을 구분했다.
 - [ ] 기존 원본을 새 파일로 중복하지 않았다.
 - [ ] 가짜 경로·ID·명령을 만들지 않았다.
 - [ ] 결과가 출력 계약을 따른다.
 - [ ] 완료를 주장하지 않고 검수 포인트를 남겼다.
+- [ ] `check_external_ai_worktree_contract.py`가 `PASS`하고 `RESULT_STATE: REVIEW_PENDING`을 출력했다.
 
 ## 10. Codex 인계
 
@@ -115,3 +139,5 @@
 - 전체 검사가 필요한 항목:
 - 폐기해도 되는 초안:
 - worktree 정리 조건:
+
+worktree 정리는 Sidecar의 `integration_state`가 `APPROVED_INTEGRATED`이고 작업 트리가 clean인 경우에만 요청한다. dirty 상태나 미통합 결과가 있으면 `cleanup_requested: false`로 보존한다.
