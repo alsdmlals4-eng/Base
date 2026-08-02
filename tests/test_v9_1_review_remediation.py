@@ -157,10 +157,9 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
         self.assertIn(install, workflow)
         self.assertLess(workflow.index(install), workflow.index("python tools/build_base_v9_artifacts.py --check"))
         self.assertIn("fetch-depth: 0", workflow)
-        self.assertIn(
-            "TRUSTED_HISTORY_COMMIT: ${{ github.event.pull_request.base.sha || github.sha }}",
-            workflow,
-        )
+        self.assertIn('git rev-parse "origin/$GITHUB_BASE_REF"', workflow)
+        self.assertIn('TRUSTED_HISTORY_COMMIT="$GITHUB_SHA"', workflow)
+        self.assertNotIn("github.event.pull_request.base.sha", workflow)
         self.assertIn('--trusted-history-commit "$TRUSTED_HISTORY_COMMIT"', workflow)
 
     def test_dependency_review_covers_common_manifest_and_lock_formats(self) -> None:
