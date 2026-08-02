@@ -9,6 +9,10 @@ description: Use when a work product, repository, PR, or merged decision must be
 
 적대적 검토는 승인 거부 증거를 찾는 공격 단계다. 그러나 **비판도 오류·취향·과잉 요구**일 수 있으므로 공격과 검증을 분리하고, 검증된 문제만 최소 수정한다.
 
+사용자안과 AI 최초안은 같은 평가 기준으로 공격·검증한다. 검토 목적은 이견 생산이 아니라 실패 가능성 감소다. 사용자안이 반례·위험 검토를 통과해 가장 강한 결론이면 근거와 함께 동의할 수 있다.
+
+Registry의 `칭찬·균형 평가만 요청` 비사용 조건은 결정·권장안이 없는 설명형 칭찬·균형 요약에만 적용한다. L1 이상 기능·설계·아키텍처·정책·방향 결정이나 중요 권장안이 포함된 균형 비교는 적대 검토 대상이다.
+
 실제 diff·정적·런타임·접근성·성능 증거는 `reviewing-and-validating-project-changes`, 프로젝트 코어 판정·확정은 관련 코어 Skill이 책임진다. 승인 결정·GitHub·Google Sheets 동기화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`를 따른다. 구형본의 archive·compatibility·삭제는 `governing-legacy-retention-and-archives`, 정본·경로·ID·Template·Test 전파는 `auditing-canonical-reference-freshness`가 책임진다.
 
 ## Skill Modes
@@ -22,6 +26,8 @@ description: Use when a work product, repository, PR, or merged decision must be
 - `repository-wide-audit`: 저장소 전체의 권한 지도, 중복·stale·고아 파일, 구형 계약, untouched 소비자, Prompt·파생본 drift를 공격하고 전문 Skill로 처리를 라우팅한다.
 
 일반 작업은 `attack → validate-critique → refine-approved-findings → regression-recheck → decision-report`를 사용한다. 저장소 전체 감사는 `references/repository-wide-audit-protocol.md`, 세부 Finding·회귀 판정은 `references/finding-and-regression-protocol.md`를 필요할 때만 읽는다.
+
+구현 전 PLAN 사전판정은 아직 수정할 작업물이 없으므로 `attack → validate-critique → decision-report`까지만 실행한다. 승인 finding은 `refine-approved-findings`에서 주 책임 분야 Skill이 한 번만 구현·수정하며, 이 Skill은 분야 작성 책임을 빼앗거나 이미 구현된 finding을 다시 수정하지 않는다. 그 뒤 `regression-recheck → decision-report`로 복귀해야 전체 루프가 완료된다.
 
 기본 Work Mode는 `REVIEW → 필요한 경우 BUILD → REVIEW`다. 같은 수행자가 맡아도 단계별 입력과 출력을 섞지 않는다.
 
@@ -101,6 +107,9 @@ repository_audit:
 
 1. `attack`은 실패·모순·악용·누락·경계 조건을 최대한 찾는다.
 2. `validate-critique`는 사실성, 발생 가능성, 영향, 범위, 수정 비용을 재판정한다.
+- 사용자안과 AI 최초안을 동일한 사실성·영향·비용·코어·호환성 기준으로 비교한다.
+- 사용자가 동의를 요구했다는 이유로 비판을 생략하지 않고, 적대 검토를 반대를 위한 반대로 오용하지 않는다.
+- 장점과 정상 경로도 보존하며 유효한 비판이 없으면 `REJECTED_CRITIQUE` 또는 근거 있는 동의로 판정한다.
 3. `refine-approved-findings`는 `MUST_FIX`와 승인된 `SHOULD_FIX`만 최소 수정한다.
 4. 기획 방향을 바꾸는 finding은 몰래 수정하지 않고 `USER_DECISION_REQUIRED`로 분리한다.
 5. `regression-recheck`는 기존 장점·정상 경로·코어·범위와 새 결함을 다시 공격한다.

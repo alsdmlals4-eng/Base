@@ -159,6 +159,28 @@ rollback_constraints:
 → 미검증·보류
 ```
 
+### 3.5 Apply the neutral-recommendation-gate
+
+권장안·판정·설계 선택이 있으면 사용자안과 AI 최초안을 같은 기준으로 비교한다.
+
+```yaml
+evaluation_criteria: []
+alternatives: []
+counterevidence: []
+benefits_costs_and_risks: []
+reversibility:
+unknowns_and_evidence_limits: []
+recommended_conclusion:
+agreement_or_disagreement_reason:
+```
+
+- 사용자안이 검토를 통과하면 근거와 함께 동의한다.
+- 다른 안이 더 강하면 차이를 만드는 증거와 함께 권장한다.
+- 반대를 위한 반대를 만들지 않는다.
+- 증거 부족은 `BLOCKED_UNVERIFIED`로 남긴다.
+- L1 이상 기능·설계·아키텍처·정책·방향 결정은 `running-adversarial-review-and-refinement`의 `attack → validate-critique → decision-report`를 PLAN 사전판정 지원 Skill로 실행한다.
+- 이 판정의 승인 finding은 `refine-approved-findings`에서 주 책임 분야 Skill BUILD로 한 번만 구현·수정하고, `regression-recheck → decision-report`로 복귀한다.
+
 ### 4. Ask only material user decisions
 
 결과를 바꾸는 가장 큰 의사결정 하나씩만 묻는다. 기존 Decision이 유효하면 다시 묻지 않는다. 프로젝트 방향을 바꾸지 않는 기술 세부·초기 수치는 `RECOMMENDED_DEFAULT`, 코어·중요 기획·방향성·정본 충돌은 `USER_DECISION_REQUIRED`로 분류한다. 상세 요청은 처음부터 다시 인터뷰하지 않고 현재 이해를 반증 가능한 문장으로 재진술한 뒤 틀리거나 빠진 부분만 확인한다.
@@ -314,6 +336,7 @@ remaining_unknowns: []
 - 같은 요청의 수준·분야·범위를 여러 Skill에서 다시 판정하지 않았다.
 - 저장소 사실과 사용자 판단이 구분됐다.
 - 범위·제외·보호·완료·검증이 추적된다.
+- 권장안이 있으면 사용자안과 AI 최초안에 동일한 평가 기준·대안·반증·위험·되돌리기 난이도를 적용했다.
 - 필요한 사용자 확인 전에는 구현 계약이나 실행 순서를 확정하지 않았다.
 - 큰 작업은 독립 검증 가능한 결과·의존성·병렬 묶음·게이트로 분해됐다.
 - 실제 사용한 Work Mode·Skill·Skill Mode의 이유와 결과·증거를 보고했다.
@@ -336,6 +359,8 @@ remaining_unknowns: []
 - 의존성·같은 파일 충돌·검증·롤백 없이 모든 작업을 병렬화함
 - 실제로 사용하지 않은 Skill을 사용했다고 보고함
 - 사용 이유·결과·증거 없이 Skill ID만 나열함
+- 사용자의 선호나 AI 최초안에 근거 없이 동의함
+- 적대적 검토를 반대를 위한 반대로 오용함
 
 ## Legacy aliases
 
