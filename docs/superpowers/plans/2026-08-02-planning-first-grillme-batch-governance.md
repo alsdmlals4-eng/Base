@@ -4,7 +4,7 @@
 
 **Goal:** Enforce planning-first execution, GPT-recommended reversible numeric defaults, Grill Me approval for planning conflicts, and maximum-ten-decision PR checkpoints with exact-head adversarial validation.
 
-**Architecture:** Keep `AGENTS.md` as the always-on authority and add one detailed canonical policy, `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`. Avoid copying the whole state machine into every operating document. Provide one execution Template and two regressions: an existing CI-discovered Deep Interview test and a focused complete-policy test. Preserve Registry and v9.4.1 release-lock bytes.
+**Architecture:** Keep `AGENTS.md` as the always-on authority and add one detailed canonical policy, `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`. Avoid copying the whole state machine into every operating document. Provide one execution Template and extend the existing `tests/test_deep_interview_contract.py`, which is already executed by Required CI. Preserve Registry and v9.4.1 release-lock bytes.
 
 **Tech Stack:** Markdown contracts, Python `unittest`, existing Base GitHub Actions.
 
@@ -24,12 +24,11 @@
 ### Task 1: Establish RED coverage
 
 **Files:**
-- Create: `tests/test_planning_first_grillme_batch_governance.py`
 - Modify: `tests/test_deep_interview_contract.py`
 
-- [x] Add a focused contract test for planning-first authority, decision classification, max-ten batching, early checkpoints, immediate Branch recording, exact-head review, and merged-main Sheet finalization.
-- [x] Connect the same minimum contract to the existing Deep Interview suite executed by Base contract CI.
+- [x] Connect planning-first authority, decision classification, max-ten batching, early checkpoints, immediate Branch recording, exact-head review, and merged-main Sheet finalization to the existing Deep Interview suite executed by Base contract CI.
 - [x] Verify RED on PR #142: all existing contract tests passed except the new planning-first batch assertion.
+- [x] Remove the temporary standalone test after its contract was consolidated into the CI-owned suite, preventing a non-executed duplicate.
 
 ### Task 2: Add always-on authority and one detailed policy
 
@@ -54,23 +53,21 @@
 - [x] Add planning-first, numeric-default, immediate-recording, adversarial-review, merge, and post-merge readback checklists.
 - [x] Keep actual project batch execution, external-model behavior, and human usability evidence separate and defaulted to `NOT_RUN`.
 
-### Task 4: Align design and executable regressions
+### Task 4: Align design and executable regression
 
 **Files:**
 - Modify: `docs/superpowers/specs/2026-08-02-planning-first-grillme-batch-governance-design.md`
 - Modify: `docs/superpowers/plans/2026-08-02-planning-first-grillme-batch-governance.md`
-- Modify: `tests/test_planning_first_grillme_batch_governance.py`
 - Modify: `tests/test_deep_interview_contract.py`
 
 - [x] Align the design with the single-policy authority model.
-- [x] Update the focused test to inspect `AGENTS.md`, the canonical policy, and the checkpoint Template.
-- [x] Update the existing CI regression to discover and validate the same surfaces.
-- [ ] Run exact-head CI and repair only evidence-backed failures.
+- [x] Update the existing CI regression to discover and validate `AGENTS.md`, the canonical policy, and the checkpoint Template.
+- [x] Remove temporary application Workflows from the final diff.
+- [ ] Run latest exact-head CI and repair only evidence-backed failures.
 
 ### Task 5: Adversarial review and completion
 
-- [ ] Confirm no temporary Workflow remains in the final diff.
-- [ ] Confirm Registry and v9.4.1 lock bytes remain unchanged.
+- [ ] Confirm Registry and v9.4.1 lock bytes remain unchanged through Base v9 contract CI.
 - [ ] Attack waterfall risk, hidden planning conflicts, oversized batches, lost approvals, premature Sheet sync, duplicate active PRs, manufactured opposition, and stale exact-head evidence.
 - [ ] Verify PR changed files and unresolved review threads.
 - [ ] Require the canonical `ci-gate` and all selected checks to succeed on the final PR HEAD.
