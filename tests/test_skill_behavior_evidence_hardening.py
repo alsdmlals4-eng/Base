@@ -58,11 +58,16 @@ def active_skill(skill_id: str) -> dict:
     }
 
 
-def behavior_case(case_id: str, primary: str, forbidden: list[str]) -> dict:
+def behavior_case(
+    case_id: str,
+    primary: str,
+    forbidden: list[str],
+    case_type: str,
+) -> dict:
     return {
         "case_id": case_id,
-        "case_type": "positive",
-        "prompt": f"Concrete request for {case_id} without routing labels.",
+        "case_type": case_type,
+        "prompt": f"Concrete request number {case_id[-3:]} without routing labels.",
         "expected_work_mode": "PLAN",
         "expected_primary_skill": primary,
         "expected_supporting_skills": [],
@@ -72,6 +77,23 @@ def behavior_case(case_id: str, primary: str, forbidden: list[str]) -> dict:
         "expected_user_decision_state": "NOT_REQUIRED",
         "rationale": "Focused test fixture.",
     }
+
+
+def complete_cases() -> list[dict]:
+    case_types = ["positive", "negative", "boundary", "cross-skill"]
+    cases: list[dict] = []
+    for index in range(8):
+        primary = "alpha-skill" if index % 2 == 0 else "beta-skill"
+        forbidden = ["beta-skill"] if primary == "alpha-skill" else ["alpha-skill"]
+        cases.append(
+            behavior_case(
+                f"CASE-{index + 1:03d}",
+                primary,
+                forbidden,
+                case_types[index % len(case_types)],
+            )
+        )
+    return cases
 
 
 class SkillBehaviorCoverageTests(unittest.TestCase):
@@ -108,7 +130,11 @@ class SkillBehaviorCoverageTests(unittest.TestCase):
         return directory, root
 
     def test_contract_rejects_active_skill_without_primary_case(self) -> None:
-        directory, root = self.build_root([behavior_case("CASE-001", "alpha-skill", ["beta-skill"])])
+        cases = complete_cases()
+        for case in cases:
+            case["expected_primary_skill"] = "alpha-skill"
+            case["forbidden_skills"] = ["beta-skill"]
+        directory, root = self.build_root(cases)
         self.addCleanup(directory.cleanup)
 
         errors = self.checker.validate_contract(root)
@@ -116,10 +142,12 @@ class SkillBehaviorCoverageTests(unittest.TestCase):
         self.assertIn("beta-skill: missing primary behavior coverage", errors)
 
     def test_contract_rejects_active_skill_without_non_selection_case(self) -> None:
-        directory, root = self.build_root([
-            behavior_case("CASE-001", "alpha-skill", ["beta-skill"]),
-            behavior_case("CASE-002", "beta-skill", []),
-        ])
+        cases = complete_cases()
+        for case in cases:
+            case["forbidden_skills"] = [
+                skill_id for skill_id in case["forbidden_skills"] if skill_id != "alpha-skill"
+            ]
+        directory, root = self.build_root(cases)
         self.addCleanup(directory.cleanup)
 
         errors = self.checker.validate_contract(root)
@@ -127,10 +155,7 @@ class SkillBehaviorCoverageTests(unittest.TestCase):
         self.assertIn("alpha-skill: missing non-selection behavior coverage", errors)
 
     def test_complete_primary_and_non_selection_coverage_passes(self) -> None:
-        directory, root = self.build_root([
-            behavior_case("CASE-001", "alpha-skill", ["beta-skill"]),
-            behavior_case("CASE-002", "beta-skill", ["alpha-skill"]),
-        ])
+        directory, root = self.build_root(complete_cases())
         self.addCleanup(directory.cleanup)
 
         errors = self.checker.validate_contract(root)
