@@ -16,6 +16,7 @@ from jsonschema import Draft202012Validator
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = Path("skills/SKILL_REGISTRY.json")
 EVAL_PATH = Path("skills/SKILL_BEHAVIOR_EVALS.json")
+COVERAGE_EVAL_PATH = Path("skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json")
 SCHEMA_PATH = Path("schemas/skill-behavior-eval-v1.schema.json")
 
 
@@ -23,11 +24,44 @@ def load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def load_eval_set(root: Path = ROOT) -> dict[str, Any]:
+    core = load_json(root / EVAL_PATH)
+    cases = list(core.get("cases", []))
+    coverage_path = root / COVERAGE_EVAL_PATH
+    if coverage_path.is_file():
+        coverage = load_json(coverage_path)
+        cases.extend(coverage.get("cases", []))
+    merged = dict(core)
+    merged["cases"] = cases
+    return merged
+
+
+def behavior_coverage(
+    entries: dict[str, dict[str, Any]],
+    cases: list[dict[str, Any]],
+) -> dict[str, dict[str, int]]:
+    coverage = {
+        skill_id: {"primary": 0, "supporting": 0, "forbidden": 0}
+        for skill_id in entries
+    }
+    for case in cases:
+        primary = case.get("expected_primary_skill")
+        if primary in coverage:
+            coverage[primary]["primary"] += 1
+        for skill_id in case.get("expected_supporting_skills", []):
+            if skill_id in coverage:
+                coverage[skill_id]["supporting"] += 1
+        for skill_id in case.get("forbidden_skills", []):
+            if skill_id in coverage:
+                coverage[skill_id]["forbidden"] += 1
+    return coverage
+
+
 def validate_contract(root: Path = ROOT) -> list[str]:
     errors: list[str] = []
     try:
         registry = load_json(root / REGISTRY_PATH)
-        evals = load_json(root / EVAL_PATH)
+        evals = load_eval_set(root)
         schema = load_json(root / SCHEMA_PATH)
     except (OSError, json.JSONDecodeError) as error:
         return [f"contract file unavailable or invalid: {error}"]
@@ -36,11 +70,16 @@ def validate_contract(root: Path = ROOT) -> list[str]:
         location = ".".join(str(part) for part in error.path) or "<root>"
         errors.append(f"schema {location}: {error.message}")
 
-    entries = {entry["skill_id"]: entry for entry in registry.get("skills", []) if entry.get("status") == "ACTIVE"}
+    entries = {
+        entry["skill_id"]: entry
+        for entry in registry.get("skills", [])
+        if entry.get("status") == "ACTIVE"
+    }
     case_ids: set[str] = set()
     prompts: set[str] = set()
     case_types: set[str] = set()
-    for case in evals.get("cases", []):
+    cases = evals.get("cases", [])
+    for case in cases:
         case_id = case.get("case_id", "<unknown>")
         prompt = case.get("prompt", "")
         if case_id in case_ids:
@@ -82,6 +121,13 @@ def validate_contract(root: Path = ROOT) -> list[str]:
         errors.append(f"case type coverage must equal {sorted(required_types)}; got {sorted(case_types)}")
     if len(case_ids) < 8:
         errors.append("at least eight behavior evaluation cases are required")
+
+    coverage = behavior_coverage(entries, cases)
+    for skill_id, counts in sorted(coverage.items()):
+        if counts["primary"] == 0:
+            errors.append(f"{skill_id}: missing primary behavior coverage")
+        if counts["forbidden"] == 0:
+            errors.append(f"{skill_id}: missing non-selection behavior coverage")
     return errors
 
 
@@ -116,7 +162,7 @@ def score_results(root: Path, results_path: Path) -> list[str]:
     if errors:
         return errors
     try:
-        evals = load_json(root / EVAL_PATH)
+        evals = load_eval_set(root)
         results = load_json(results_path)
     except (OSError, json.JSONDecodeError) as error:
         return [f"result file unavailable or invalid: {error}"]
@@ -145,7 +191,12 @@ def score_results(root: Path, results_path: Path) -> list[str]:
         if not isinstance(primary, str):
             primary = None
 
-        supporting = _string_list(result.get("supporting_skills", []), case_id, "supporting_skills", errors)
+        supporting = _string_list(
+            result.get("supporting_skills", []),
+            case_id,
+            "supporting_skills",
+            errors,
+        )
         if set(supporting) != set(case["expected_supporting_skills"]):
             errors.append(f"{case_id}: supporting Skills differ from the expected set")
         selected = {primary, *supporting}
@@ -160,7 +211,11 @@ def score_results(root: Path, results_path: Path) -> list[str]:
 
         evidence = _string_list(result.get("evidence", []), case_id, "evidence", errors)
         evidence_text = "\n".join(evidence)
-        missing_evidence = [token for token in case["required_evidence"] if token.casefold() not in evidence_text.casefold()]
+        missing_evidence = [
+            token
+            for token in case["required_evidence"]
+            if token.casefold() not in evidence_text.casefold()
+        ]
         if missing_evidence:
             errors.append(f"{case_id}: missing required evidence: {missing_evidence}")
         if result.get("user_decision_state") != case["expected_user_decision_state"]:
@@ -183,7 +238,19 @@ def main() -> int:
             print(f"- {error}")
         return 1
 
+    registry = load_json(root / REGISTRY_PATH)
+    evals = load_eval_set(root)
+    entries = {
+        entry["skill_id"]: entry
+        for entry in registry.get("skills", [])
+        if entry.get("status") == "ACTIVE"
+    }
+    coverage = behavior_coverage(entries, evals.get("cases", []))
     print("CONTRACT_STATUS: PASS")
+    print(
+        f"ACTIVE_SKILL_COVERAGE: {len(coverage)}/{len(entries)} primary, "
+        f"{len(coverage)}/{len(entries)} non-selection"
+    )
     if arguments.results is None:
         print("MODEL_RUN_STATUS: NOT_RUN")
         print("Behavior fixtures are valid; no external model result file was scored.")
