@@ -4,6 +4,10 @@ import json
 import unittest
 from pathlib import Path
 
+from tests.test_godot_live_editor_contract import (
+    GodotLiveEditorContractTests as _GodotLiveEditorContractTests,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
