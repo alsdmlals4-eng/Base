@@ -3,7 +3,7 @@
 - 작성일: 2026-08-05
 - 기준 저장소: `alsdmlals4-eng/Base`
 - 기준 main: `0b7c94f38d959efc0fc9442274c60b2e268a3c97` (`Base v9.4.3`)
-- 상태: `DESIGN_APPROVED_IMPLEMENTATION_NOT_STARTED`
+- 상태: `APPROVED_DIRECTION_SPEC_REVIEW_PENDING`
 - 사용자 승인: 2026-08-05 권장안 A 승인
 - 이번 문서 범위: Base 공용 작업 구조·Skill 경계·검증 계약 설계
 - 범위 밖: 실제 Godot 프로젝트 설치, HiGodot/Godot AI PoC, 자체 MCP 서버 구현, 프로젝트 코드·Scene·Resource 변경
@@ -128,20 +128,26 @@ MCP Client
 
 `evaluating-godot-assets-and-plugins-before-creation`
 
-추가할 조건부 Skill Mode 후보:
+기존 Skill Mode 생명주기는 그대로 유지한다.
+
+```text
+frame-need → search → evaluate → trial-plan → adoption-decision → revalidate
+```
+
+Godot 에이전트 자동화 요청에는 다음 조건부 평가 프로필과 reference를 적용한다.
 
 ```text
 agentic-editor-automation
 ```
 
-이 Mode는 다음 요청을 책임진다.
+이 프로필은 새 Skill Mode가 아니다. 기존 각 Skill Mode에서 필요한 입력·평가표·보안·검증을 강화하며 다음 요청을 책임진다.
 
 - Godot MCP·에디터 자동화·AI 에이전트 제어 계층 평가
 - 기존 도구 채택과 자체 구현 비교
 - 로컬 서버·EditorPlugin·실행 게임 브리지의 보안·권한 평가
 - 격리 PoC·도입·제거 계획
 
-기존 `frame-need → search → evaluate → trial-plan → adoption-decision → revalidate` 생명주기를 유지하며, `agentic-editor-automation`은 별도 생명주기가 아니라 입력·평가표·검증을 강화하는 조건부 Mode다.
+이 구조는 Skill Mode의 절차 의미를 보존하면서 특정 도구군의 전문 기준만 조건부로 로드한다.
 
 ### 4.2 보조 책임
 
@@ -165,7 +171,7 @@ agentic-editor-automation
 1. 일반 Godot 플러그인 평가와 다른 독립 입력이 있다.
 2. 별도의 산출물·Quality Gate·테스트·승인 경계가 있다.
 3. 최소 두 프로젝트 이상에서 같은 책임이 반복된다.
-4. 기존 Skill Mode와 reference로는 행동 평가를 명확히 분리할 수 없다.
+4. 기존 Skill Mode와 조건부 reference 프로필로는 행동 평가를 명확히 분리할 수 없다.
 5. 실제 PoC 또는 Runtime 근거가 있다.
 
 ## 5. 제안 아키텍처
@@ -467,7 +473,7 @@ tests/test_reference_freshness.py
 - 특정 프로젝트의 exact version·경로가 없으면 `UNVERIFIED` 또는 `TRIAL` 유지
 - 임의 실행을 기본 허용하지 않음
 - 실제 Runtime 검증 없이 Editor 조작 성공을 프로젝트 완료로 보고하지 않음
-- 일반 에셋 검색 요청에 agent automation Mode를 과잉 호출하지 않음
+- 일반 에셋 검색 요청에 agent automation 프로필을 과잉 호출하지 않음
 
 ## 11. 충돌 방지 전략
 
@@ -533,7 +539,7 @@ evidence:
 ### Base 계약 검증
 
 - JSON schema 유효성
-- shared router와 Skill Mode·reference·template 연결
+- shared router와 Skill의 trigger·reference·template 연결
 - 기존 Godot asset 평가 경로 회귀 없음
 - agent automation Prompt의 정상·비선택 행동 fixture
 - reference freshness와 coupled-change 규칙
