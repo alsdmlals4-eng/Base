@@ -83,6 +83,7 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 | 사용자 학습 자료 | `creating-user-learning-notes` |
 | 프로젝트 HTML·상태 시각화 | `building-project-visual-dashboards` |
 | Godot·Unity 런타임 오류 | `diagnosing-game-engine-runtime-failures` |
+| Godot live Editor·CLI·Scene·Resource 자동화 | 프로젝트 Template `godot-live-editor-operations` → `templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md` |
 
 전체 원문 책임 매핑은 `docs/SKILL_COVERAGE_MAP.md`, 기계 검증은 `skills/SKILL_COVERAGE.json`을 사용한다.
 

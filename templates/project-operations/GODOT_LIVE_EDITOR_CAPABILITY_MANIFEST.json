@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "artifact_role": "GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST",
+  "configuration_state": "NOT_CONFIGURED",
+  "contract_version": "1.0.0",
+  "adapter_version": "1.0.0",
+  "project_identity": {
+    "normalized_project_path": null,
+    "project_godot_sha256": null,
+    "project_fingerprint": null
+  },
+  "engine_compatibility": {
+    "minimum_version": "4.3",
+    "maximum_exclusive_version": "5.0"
+  },
+  "transport": {
+    "kind": "DISABLED",
+    "enabled": false,
+    "bind_host": null,
+    "endpoint_identity": null
+  },
+  "catalog": {
+    "generated_at": null,
+    "sha256": null,
+    "freshness_state": "NOT_CONFIGURED"
+  },
+  "project_test_framework": {
+    "state": "NOT_CONFIGURED",
+    "runner_capability_id": null
+  },
+  "capabilities": [],
+  "validation": {
+    "contract_state": "CONTRACT_PASS",
+    "execution_state": "NOT_RUN",
+    "runtime_state": "NOT_RUN",
+    "physical_input_state": "NOT_RUN",
+    "human_state": "HUMAN_NOT_RUN"
+  }
+}
