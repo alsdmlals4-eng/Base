@@ -163,6 +163,52 @@ class GodotLiveEditorContractTests(unittest.TestCase):
         capability["retry_policy"]["automatic"] = True
         self.assertTrue(list(validator.iter_errors(unsafe_retry)))
 
+    def test_configured_manifest_requires_loopback_transport_and_capabilities(self) -> None:
+        validator = Draft202012Validator(load(CAPABILITY_SCHEMA))
+
+        external_bind = valid_manifest()
+        external_bind["transport"]["bind_host"] = "0.0.0.0"
+        self.assertTrue(list(validator.iter_errors(external_bind)))
+
+        no_capabilities = valid_manifest()
+        no_capabilities["capabilities"] = []
+        self.assertTrue(list(validator.iter_errors(no_capabilities)))
+
+        disabled_transport = valid_manifest()
+        disabled_transport["transport"] = {
+            "kind": "DISABLED",
+            "enabled": False,
+            "bind_host": None,
+            "endpoint_identity": None,
+        }
+        self.assertTrue(list(validator.iter_errors(disabled_transport)))
+
+    def test_mutation_and_task_capabilities_cannot_automatically_retry(self) -> None:
+        validator = Draft202012Validator(load(CAPABILITY_SCHEMA))
+
+        for operation_class in (
+            "APPROVAL_REQUIRED_MUTATION",
+            "NON_RETRYABLE_MUTATION",
+            "LONG_RUNNING_TASK",
+        ):
+            with self.subTest(operation_class=operation_class):
+                manifest = valid_manifest()
+                capability = manifest["capabilities"][0]
+                capability["operation_class"] = operation_class
+                capability["approval_required"] = operation_class != "LONG_RUNNING_TASK"
+                capability["retry_policy"]["automatic"] = True
+                if operation_class == "LONG_RUNNING_TASK":
+                    capability["retry_policy"]["requires_ledger"] = True
+                    capability["timeout_policy"]["unknown_outcome"] = "RESUME_BY_TASK_ID"
+                self.assertTrue(list(validator.iter_errors(manifest)))
+
+        idempotent_without_ledger = valid_manifest()
+        capability = idempotent_without_ledger["capabilities"][0]
+        capability["operation_class"] = "IDEMPOTENT_MUTATION"
+        capability["idempotency_key_required"] = True
+        capability["retry_policy"]["requires_ledger"] = False
+        self.assertTrue(list(validator.iter_errors(idempotent_without_ledger)))
+
     def test_operation_schema_binds_approval_and_long_running_results(self) -> None:
         validator = Draft202012Validator(load(OPERATION_SCHEMA))
         self.assertEqual([], list(validator.iter_errors(valid_operation())))
@@ -184,6 +230,18 @@ class GodotLiveEditorContractTests(unittest.TestCase):
             "result_binding": None,
         }
         self.assertTrue(list(validator.iter_errors(task_gap)))
+
+    def test_approval_operation_classes_cannot_claim_not_required(self) -> None:
+        validator = Draft202012Validator(load(OPERATION_SCHEMA))
+
+        for operation_class in (
+            "APPROVAL_REQUIRED_MUTATION",
+            "NON_RETRYABLE_MUTATION",
+        ):
+            with self.subTest(operation_class=operation_class):
+                envelope = valid_operation()
+                envelope["operation_class"] = operation_class
+                self.assertTrue(list(validator.iter_errors(envelope)))
 
     def test_contract_defines_bootstrap_identity_recovery_and_evidence_boundaries(self) -> None:
         combined = read(CONTRACT) + read(SECURITY)
