@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-import copy
+import importlib.util
 import json
 import unittest
 from pathlib import Path
+from types import ModuleType
 
 from jsonschema import Draft202012Validator
 
@@ -16,6 +17,7 @@ CONTRACT = ROOT / "docs/knowledge/godot/GODOT_LIVE_EDITOR_AUTOMATION_CONTRACT.md
 SECURITY = ROOT / "docs/knowledge/godot/GODOT_LIVE_EDITOR_SECURITY_AND_RECOVERY.md"
 ADAPTER = ROOT / "templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md"
 AGENTS_FRAGMENT = ROOT / "templates/project-operations/godot-live-editor/AGENTS_FRAGMENT.md"
+SEMANTIC_VALIDATOR = ROOT / "tools/validate_godot_live_editor_contract.py"
 
 
 def read(path: Path) -> str:
@@ -24,6 +26,63 @@ def read(path: Path) -> str:
 
 def load(path: Path) -> dict:
     return json.loads(read(path))
+
+
+def load_semantic_validator() -> ModuleType:
+    spec = importlib.util.spec_from_file_location("godot_live_editor_semantics", SEMANTIC_VALIDATOR)
+    if spec is None or spec.loader is None:
+        raise AssertionError("semantic validator module could not be loaded")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def scene_inspect_capability() -> dict:
+    return {
+        "capability_id": "scene.inspect",
+        "description": "Inspect a bounded scene summary.",
+        "execution_path": "EDITOR_PLUGIN",
+        "effect_class": "READ_ONLY",
+        "execution_mode": "SYNCHRONOUS",
+        "idempotency_key_required": False,
+        "approval_required": False,
+        "arguments_schema": {"type": "object", "additionalProperties": False},
+        "timeout_policy": {
+            "milliseconds": 10000,
+            "unknown_outcome": "RECONCILE_BEFORE_RETRY",
+        },
+        "retry_policy": {
+            "automatic": True,
+            "maximum_attempts": 2,
+            "requires_ledger": False,
+        },
+        "evidence_outputs": ["ENGINE_STATE"],
+        "unsupported_states": ["IMPORTING"],
+    }
+
+
+def project_test_capability() -> dict:
+    return {
+        "capability_id": "test.project",
+        "description": "Run the configured project test suite once and resume by task identity.",
+        "execution_path": "CLI_HEADLESS",
+        "effect_class": "READ_ONLY",
+        "execution_mode": "LONG_RUNNING_TASK",
+        "idempotency_key_required": False,
+        "approval_required": False,
+        "arguments_schema": {"type": "object", "additionalProperties": False},
+        "timeout_policy": {
+            "milliseconds": 600000,
+            "unknown_outcome": "RESUME_BY_TASK_ID",
+        },
+        "retry_policy": {
+            "automatic": False,
+            "maximum_attempts": 1,
+            "requires_ledger": True,
+        },
+        "evidence_outputs": ["TEST_RESULT", "LOG"],
+        "unsupported_states": ["IMPORTING"],
+    }
 
 
 def valid_manifest() -> dict:
@@ -39,8 +98,18 @@ def valid_manifest() -> dict:
             "project_fingerprint": "godot-project-a",
         },
         "engine_compatibility": {
-            "minimum_version": "4.3",
-            "maximum_exclusive_version": "5.0",
+            "detected_version": "4.6.2",
+            "minimum_version": "4.3.0",
+            "maximum_exclusive_version": "5.0.0",
+        },
+        "tool_adoption": {
+            "source_type": "OPEN_SOURCE",
+            "source_reference": "https://github.com/example/godot-live-editor",
+            "version_pin": "v1.2.3",
+            "telemetry_policy": "DISABLED",
+            "external_data_policy": "NO_EXTERNAL_TRANSFER",
+            "uninstall_reference": "docs/godot-live-editor.md#uninstall",
+            "rollback_reference": "git:baseline-before-adapter",
         },
         "transport": {
             "kind": "LOCAL_HTTP",
@@ -57,28 +126,7 @@ def valid_manifest() -> dict:
             "state": "CONFIGURED",
             "runner_capability_id": "test.project",
         },
-        "capabilities": [
-            {
-                "capability_id": "scene.inspect",
-                "description": "Inspect a bounded scene summary.",
-                "execution_path": "EDITOR_PLUGIN",
-                "operation_class": "READ_ONLY",
-                "idempotency_key_required": False,
-                "approval_required": False,
-                "arguments_schema": {"type": "object", "additionalProperties": False},
-                "timeout_policy": {
-                    "milliseconds": 10000,
-                    "unknown_outcome": "RECONCILE_BEFORE_RETRY",
-                },
-                "retry_policy": {
-                    "automatic": True,
-                    "maximum_attempts": 2,
-                    "requires_ledger": False,
-                },
-                "evidence_outputs": ["ENGINE_STATE"],
-                "unsupported_states": ["IMPORTING"],
-            }
-        ],
+        "capabilities": [scene_inspect_capability(), project_test_capability()],
         "validation": {
             "contract_state": "CONTRACT_PASS",
             "execution_state": "NOT_RUN",
@@ -96,7 +144,8 @@ def valid_operation() -> dict:
         "operation_id": "op-20260805-001",
         "project_fingerprint": "godot-project-a",
         "capability_id": "scene.inspect",
-        "operation_class": "READ_ONLY",
+        "effect_class": "READ_ONLY",
+        "execution_mode": "SYNCHRONOUS",
         "request_hash": "c" * 64,
         "approval": {
             "state": "NOT_REQUIRED",
@@ -113,6 +162,7 @@ def valid_operation() -> dict:
             "code": "OK",
             "message": "Inspection completed.",
             "data": {},
+            "result_hash": "d" * 64,
             "evidence": [
                 {
                     "kind": "ENGINE_STATE",
@@ -122,6 +172,45 @@ def valid_operation() -> dict:
             ],
         },
     }
+
+
+def valid_long_running_operation(
+    effect_class: str = "APPROVAL_REQUIRED_MUTATION",
+) -> dict:
+    envelope = valid_operation()
+    envelope["capability_id"] = "export.project"
+    envelope["effect_class"] = effect_class
+    envelope["execution_mode"] = "LONG_RUNNING_TASK"
+    envelope["approval"] = {
+        "state": "APPROVED",
+        "token_binding": {
+            "token_id": "approval-1",
+            "project_fingerprint": envelope["project_fingerprint"],
+            "capability_id": envelope["capability_id"],
+            "request_hash": envelope["request_hash"],
+            "effect_class": effect_class,
+        },
+        "expires_at": "2026-08-05T01:00:00Z",
+    }
+    envelope["task"] = {
+        "task_id": "task-1",
+        "state": "COMPLETED",
+        "result_binding": {
+            "project_fingerprint": envelope["project_fingerprint"],
+            "capability_id": envelope["capability_id"],
+            "operation_id": envelope["operation_id"],
+            "task_id": "task-1",
+            "result_hash": envelope["result"]["result_hash"],
+        },
+    }
+    envelope["result"]["evidence"] = [
+        {
+            "kind": "EXPORT",
+            "state": "EXECUTION_PASS",
+            "path": "artifacts/game.zip",
+        }
+    ]
+    return envelope
 
 
 class GodotLiveEditorContractTests(unittest.TestCase):
@@ -140,10 +229,27 @@ class GodotLiveEditorContractTests(unittest.TestCase):
         self.assertEqual([], [str(path.relative_to(ROOT)) for path in required if not path.is_file()])
 
     def test_template_manifest_and_representative_configured_manifest_validate(self) -> None:
-        schema = load(CAPABILITY_SCHEMA)
-        validator = Draft202012Validator(schema)
+        validator = Draft202012Validator(load(CAPABILITY_SCHEMA))
         self.assertEqual([], list(validator.iter_errors(load(MANIFEST))))
         self.assertEqual([], list(validator.iter_errors(valid_manifest())))
+
+    def test_effect_class_and_execution_mode_are_orthogonal(self) -> None:
+        capability_validator = Draft202012Validator(load(CAPABILITY_SCHEMA))
+        operation_validator = Draft202012Validator(load(OPERATION_SCHEMA))
+
+        for effect_class in (
+            "APPROVAL_REQUIRED_MUTATION",
+            "NON_RETRYABLE_MUTATION",
+        ):
+            with self.subTest(effect_class=effect_class):
+                manifest = valid_manifest()
+                capability = manifest["capabilities"][1]
+                capability["effect_class"] = effect_class
+                capability["approval_required"] = True
+                self.assertEqual([], list(capability_validator.iter_errors(manifest)))
+
+                envelope = valid_long_running_operation(effect_class)
+                self.assertEqual([], list(operation_validator.iter_errors(envelope)))
 
     def test_capability_schema_rejects_port_only_identity_and_unsafe_retry(self) -> None:
         validator = Draft202012Validator(load(CAPABILITY_SCHEMA))
@@ -158,7 +264,7 @@ class GodotLiveEditorContractTests(unittest.TestCase):
 
         unsafe_retry = valid_manifest()
         capability = unsafe_retry["capabilities"][0]
-        capability["operation_class"] = "NON_RETRYABLE_MUTATION"
+        capability["effect_class"] = "NON_RETRYABLE_MUTATION"
         capability["approval_required"] = True
         capability["retry_policy"]["automatic"] = True
         self.assertTrue(list(validator.iter_errors(unsafe_retry)))
@@ -183,71 +289,166 @@ class GodotLiveEditorContractTests(unittest.TestCase):
         }
         self.assertTrue(list(validator.iter_errors(disabled_transport)))
 
-    def test_mutation_and_task_capabilities_cannot_automatically_retry(self) -> None:
+    def test_configured_manifest_requires_engine_and_adoption_boundaries(self) -> None:
         validator = Draft202012Validator(load(CAPABILITY_SCHEMA))
 
-        for operation_class in (
+        for field in ("detected_version", "minimum_version", "maximum_exclusive_version"):
+            with self.subTest(engine_field=field):
+                manifest = valid_manifest()
+                manifest["engine_compatibility"][field] = None
+                self.assertTrue(list(validator.iter_errors(manifest)))
+
+        for field in (
+            "source_reference",
+            "version_pin",
+            "uninstall_reference",
+            "rollback_reference",
+        ):
+            with self.subTest(adoption_field=field):
+                manifest = valid_manifest()
+                manifest["tool_adoption"][field] = None
+                self.assertTrue(list(validator.iter_errors(manifest)))
+
+    def test_mutation_and_long_running_capabilities_cannot_automatically_retry(self) -> None:
+        validator = Draft202012Validator(load(CAPABILITY_SCHEMA))
+
+        for effect_class in (
             "APPROVAL_REQUIRED_MUTATION",
             "NON_RETRYABLE_MUTATION",
-            "LONG_RUNNING_TASK",
         ):
-            with self.subTest(operation_class=operation_class):
+            with self.subTest(effect_class=effect_class):
                 manifest = valid_manifest()
-                capability = manifest["capabilities"][0]
-                capability["operation_class"] = operation_class
-                capability["approval_required"] = operation_class != "LONG_RUNNING_TASK"
+                capability = manifest["capabilities"][1]
+                capability["effect_class"] = effect_class
+                capability["approval_required"] = True
                 capability["retry_policy"]["automatic"] = True
-                if operation_class == "LONG_RUNNING_TASK":
-                    capability["retry_policy"]["requires_ledger"] = True
-                    capability["timeout_policy"]["unknown_outcome"] = "RESUME_BY_TASK_ID"
                 self.assertTrue(list(validator.iter_errors(manifest)))
 
         idempotent_without_ledger = valid_manifest()
         capability = idempotent_without_ledger["capabilities"][0]
-        capability["operation_class"] = "IDEMPOTENT_MUTATION"
+        capability["effect_class"] = "IDEMPOTENT_MUTATION"
         capability["idempotency_key_required"] = True
         capability["retry_policy"]["requires_ledger"] = False
         self.assertTrue(list(validator.iter_errors(idempotent_without_ledger)))
 
-    def test_operation_schema_binds_approval_and_long_running_results(self) -> None:
+        long_running_without_ledger = valid_manifest()
+        capability = long_running_without_ledger["capabilities"][1]
+        capability["retry_policy"]["requires_ledger"] = False
+        self.assertTrue(list(validator.iter_errors(long_running_without_ledger)))
+
+    def test_operation_schema_binds_approval_shape_and_long_running_results(self) -> None:
         validator = Draft202012Validator(load(OPERATION_SCHEMA))
         self.assertEqual([], list(validator.iter_errors(valid_operation())))
 
-        approval_gap = valid_operation()
-        approval_gap["operation_class"] = "APPROVAL_REQUIRED_MUTATION"
-        approval_gap["approval"] = {
-            "state": "APPROVED",
-            "token_binding": None,
-            "expires_at": "2026-08-05T01:00:00Z",
-        }
+        approval_gap = valid_long_running_operation()
+        approval_gap["approval"]["token_binding"] = None
         self.assertTrue(list(validator.iter_errors(approval_gap)))
 
-        task_gap = valid_operation()
-        task_gap["operation_class"] = "LONG_RUNNING_TASK"
-        task_gap["task"] = {
-            "task_id": None,
-            "state": "COMPLETED",
-            "result_binding": None,
-        }
+        task_gap = valid_long_running_operation()
+        task_gap["task"]["task_id"] = None
+        task_gap["task"]["result_binding"] = None
         self.assertTrue(list(validator.iter_errors(task_gap)))
 
-    def test_approval_operation_classes_cannot_claim_not_required(self) -> None:
+    def test_approval_effect_classes_cannot_claim_not_required(self) -> None:
         validator = Draft202012Validator(load(OPERATION_SCHEMA))
 
-        for operation_class in (
+        for effect_class in (
             "APPROVAL_REQUIRED_MUTATION",
             "NON_RETRYABLE_MUTATION",
         ):
-            with self.subTest(operation_class=operation_class):
+            with self.subTest(effect_class=effect_class):
                 envelope = valid_operation()
-                envelope["operation_class"] = operation_class
+                envelope["effect_class"] = effect_class
                 self.assertTrue(list(validator.iter_errors(envelope)))
+
+    def test_semantic_validator_rejects_mismatched_approval_and_task_bindings(self) -> None:
+        self.assertTrue(SEMANTIC_VALIDATOR.is_file(), str(SEMANTIC_VALIDATOR.relative_to(ROOT)))
+        semantics = load_semantic_validator()
+
+        valid = valid_long_running_operation()
+        self.assertEqual([], semantics.validate_operation_semantics(valid))
+
+        approval_mismatch = valid_long_running_operation()
+        approval_mismatch["approval"]["token_binding"]["project_fingerprint"] = "other-project"
+        self.assertIn(
+            "APPROVAL_TOKEN_MISMATCH",
+            semantics.validate_operation_semantics(approval_mismatch),
+        )
+
+        task_mismatch = valid_long_running_operation()
+        task_mismatch["task"]["result_binding"]["operation_id"] = "other-operation"
+        self.assertIn(
+            "TASK_RESULT_STALE",
+            semantics.validate_operation_semantics(task_mismatch),
+        )
+
+        hash_mismatch = valid_long_running_operation()
+        hash_mismatch["task"]["result_binding"]["result_hash"] = "e" * 64
+        self.assertIn(
+            "TASK_RESULT_HASH_MISMATCH",
+            semantics.validate_operation_semantics(hash_mismatch),
+        )
+
+    def test_semantic_validator_rejects_duplicate_capabilities_and_invalid_test_runner(self) -> None:
+        self.assertTrue(SEMANTIC_VALIDATOR.is_file(), str(SEMANTIC_VALIDATOR.relative_to(ROOT)))
+        semantics = load_semantic_validator()
+        self.assertEqual([], semantics.validate_manifest_semantics(valid_manifest()))
+
+        duplicate = valid_manifest()
+        repeated = scene_inspect_capability()
+        repeated["description"] = "A second action with the same ID."
+        duplicate["capabilities"].append(repeated)
+        self.assertIn(
+            "DUPLICATE_CAPABILITY_ID",
+            semantics.validate_manifest_semantics(duplicate),
+        )
+
+        missing_runner = valid_manifest()
+        missing_runner["capabilities"] = [scene_inspect_capability()]
+        self.assertIn(
+            "PROJECT_TEST_RUNNER_NOT_DECLARED",
+            semantics.validate_manifest_semantics(missing_runner),
+        )
+
+        invalid_runner = valid_manifest()
+        invalid_runner["capabilities"][1]["evidence_outputs"] = ["LOG"]
+        self.assertIn(
+            "PROJECT_TEST_RUNNER_EVIDENCE_INVALID",
+            semantics.validate_manifest_semantics(invalid_runner),
+        )
+
+    def test_operation_schema_rejects_misleading_evidence_pairings(self) -> None:
+        validator = Draft202012Validator(load(OPERATION_SCHEMA))
+
+        human_contract = valid_operation()
+        human_contract["result"]["evidence"] = [
+            {"kind": "HUMAN", "state": "CONTRACT_PASS", "path": None}
+        ]
+        self.assertTrue(list(validator.iter_errors(human_contract)))
+
+        screenshot_physical = valid_operation()
+        screenshot_physical["result"]["evidence"] = [
+            {
+                "kind": "SCREENSHOT",
+                "state": "PHYSICAL_INPUT_PASS",
+                "path": "artifacts/frame.png",
+            }
+        ]
+        self.assertTrue(list(validator.iter_errors(screenshot_physical)))
+
+        human_valid = valid_operation()
+        human_valid["result"]["evidence"] = [
+            {"kind": "HUMAN", "state": "HUMAN_PASS", "path": "reviews/human.md"}
+        ]
+        self.assertEqual([], list(validator.iter_errors(human_valid)))
 
     def test_contract_defines_bootstrap_identity_recovery_and_evidence_boundaries(self) -> None:
         combined = read(CONTRACT) + read(SECURITY)
         for term in (
             "doctor → status → catalog --compact",
             "project.godot",
+            "effect_class",
+            "execution_mode",
             "PROJECT_IDENTITY_MISMATCH",
             "CAPABILITY_NOT_DECLARED",
             "CATALOG_STALE",
@@ -304,6 +505,8 @@ class GodotLiveEditorContractTests(unittest.TestCase):
             "NOT_CONFIGURED",
             "automatic approval",
             "unsafe retry",
+            "effect_class",
+            "execution_mode",
         ):
             self.assertIn(term, adapter + agents_fragment)
         self.assertIn("godot-live-editor-operations", start)
