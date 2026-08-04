@@ -5,9 +5,16 @@ description: Use in an installed Godot project when registered CLI, EditorPlugin
 
 # Godot Live Editor Operations
 
-## 책임
+## 책임과 정본 해석
 
-이 파일은 프로젝트에 설치되는 얇은 adapter다. 재사용 계약은 `docs/knowledge/godot/GODOT_LIVE_EDITOR_AUTOMATION_CONTRACT.md`, 보안·복구는 `docs/knowledge/godot/GODOT_LIVE_EDITOR_SECURITY_AND_RECOVERY.md`, 실제 capability는 `GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json`이 책임진다.
+이 파일은 프로젝트에 설치되는 얇은 adapter다. 먼저 `skills/PROJECT_BASE_ADAPTER.json`과 생성 snapshot을 프로젝트의 기존 validator로 검사한다. 검사를 통과한 **validated Base adapter**가 고정한 Base repository·commit에서 다음 **Base canonical contract**를 읽는다.
+
+- `docs/knowledge/godot/GODOT_LIVE_EDITOR_AUTOMATION_CONTRACT.md`
+- `docs/knowledge/godot/GODOT_LIVE_EDITOR_SECURITY_AND_RECOVERY.md`
+- `schemas/godot-live-editor-capability-manifest-v1.schema.json`
+- `schemas/godot-live-editor-operation-envelope-v1.schema.json`
+
+공용 본문과 Schema를 프로젝트 내부에 복제하지 않는다. 프로젝트가 소유하는 것은 `GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json`, 이 adapter, 실제 command/EditorPlugin/runtime bridge와 프로젝트 증거다. Base adapter 검증 또는 pin 해석이 실패하면 engine action 전에 중단한다.
 
 Base active Skill을 대체하거나 새 광역 책임을 만들지 않는다.
 
@@ -19,6 +26,7 @@ Base active Skill을 대체하거나 새 광역 책임을 만들지 않는다.
 
 다음 중 하나면 engine action 전에 중단한다.
 
+- `skills/PROJECT_BASE_ADAPTER.json` 또는 generated snapshot 검증 실패
 - Manifest 없음·JSON/Schema 오류
 - `configuration_state: NOT_CONFIGURED`
 - normalized project path, `project.godot` SHA-256 또는 project fingerprint 불일치
@@ -31,13 +39,14 @@ Base active Skill을 대체하거나 새 광역 책임을 만들지 않는다.
 
 ## Operation contract
 
-1. 한 개의 등록 capability와 arguments Schema를 선택한다.
-2. operation class를 확인한다.
-3. exact normalized request와 request hash를 만든다.
-4. approval·idempotency·ledger·timeout 조건을 확인한다.
-5. action을 한 번 시작한다.
-6. compact operation envelope와 evidence path를 기록한다.
-7. 변경 target만 재조회하고 error·regression을 확인한다.
+1. validated Base adapter에서 공용 계약·Schema를 해석한다.
+2. 한 개의 등록 capability와 arguments Schema를 선택한다.
+3. operation class를 확인한다.
+4. exact normalized request와 request hash를 만든다.
+5. approval·idempotency·ledger·timeout 조건을 확인한다.
+6. action을 한 번 시작한다.
+7. compact operation envelope와 evidence path를 기록한다.
+8. 변경 target만 재조회하고 error·regression을 확인한다.
 
 | class | 실행 |
 |---|---|
@@ -65,7 +74,7 @@ automatic approval은 금지한다. unsafe retry는 `UNSAFE_RETRY_BLOCKED`로 �
 
 ### `bootstrap`
 
-Manifest·Schema·project identity·engine version·transport·catalog를 검증한다. 하나라도 불일치하면 mutation으로 진행하지 않는다.
+Base adapter pin, Manifest·Schema·project identity·engine version·transport·catalog를 검증한다. 하나라도 불일치하면 mutation으로 진행하지 않는다.
 
 ### `observe`
 
@@ -91,6 +100,7 @@ identity, process, endpoint, catalog, ledger와 target state를 다시 관찰한
 
 ```yaml
 mode:
+base_adapter_commit:
 project_fingerprint:
 capability_id:
 operation_class:
@@ -106,6 +116,8 @@ unverified:
 
 ## Failure conditions
 
+- Base adapter 검증 없이 공용 계약·Schema를 프로젝트 상대경로로 추정
+- 공용 계약 본문을 프로젝트 adapter에 복제
 - port-only target selection
 - arbitrary script 또는 shell execution 기본 허용
 - automatic approval
