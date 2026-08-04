@@ -10,6 +10,9 @@ from tests.test_godot_live_editor_adapter_resolution import (
 from tests.test_godot_live_editor_contract import (
     GodotLiveEditorContractTests as _GodotLiveEditorContractTests,
 )
+from tests.test_godot_live_editor_idempotent_approval import (
+    GodotIdempotentApprovalSchemaTests as _GodotIdempotentApprovalSchemaTests,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
