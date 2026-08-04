@@ -2,262 +2,307 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:test-driven-development for implementation and superpowers:verification-before-completion before any completion claim. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a compact, machine-validatable Godot live-editor automation contract and project adapter that reuse existing Base Skill owners without changing released Registry bytes or v9.4.3 release locks.
+**Goal:** Add a compact, machine-validatable Godot live-editor automation contract and project adapter that reuse existing Base Skill owners while closing approval, task, capability-catalog, evidence, and external-tool adoption gaps.
 
-**Architecture:** Publish two canonical Godot knowledge documents, two strict JSON Schemas, and a project-local adapter template. Connect them through compact Base/project entrypoints. Use the already-required operating-system regression module for the first RED/GREEN cycle so exact-head GitHub Actions execute the tests without expanding CI topology.
+**Architecture:** Publish two canonical Godot knowledge documents, two strict JSON Schemas, one cross-field semantic validator, and a project-local adapter template. Structural constraints remain in JSON Schema; identity equality and catalog references are validated by the Python semantic validator. Required GitHub Actions execute the focused tests through existing CI discovery modules.
 
 **Tech Stack:** Markdown, JSON Schema Draft 2020-12, Python 3.12 `unittest`, existing Base GitHub Actions and canonical-reference checks.
 
-## Global constraints
+## Global Constraints
 
 - Keep `skills/SKILL_REGISTRY.json` byte-identical with SHA-256 `693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59`.
 - Keep `base-v9.4.3.lock.json`, predecessor release locks, and frozen release derivatives unchanged.
 - Do not add a new broad active Base Skill.
 - Do not copy Hera source, Unity APIs, C# handlers, UPM paths, or command syntax.
 - Do not claim a production Godot EditorPlugin, MCP server, project test runner, physical input, runtime success, or human validation.
-- Do not alter open PR #134, #136, or #137 branches or files.
-- Keep entrypoints short; canonical details live in the Godot contract and schema files.
-- Every timeout/retry/approval/task contract fails closed when identity or evidence is incomplete.
+- Do not alter game project repositories, Google Sheets, or unrelated open PR branches.
+- Keep entrypoints short; canonical details live in the Godot contract, schemas, and semantic validator.
+- Every timeout, retry, approval, task, evidence, and tool-adoption contract fails closed when identity or evidence is incomplete.
+- Represent side-effect risk with `effect_class` and execution lifetime with `execution_mode`; never combine both concerns into one enum.
 
 ---
 
-### Task 1: Commit approved design and implementation plan
+### Task 1: Preserve the approved architecture and conflict boundary
 
 **Files:**
-- Create: `docs/superpowers/specs/2026-08-05-godot-live-editor-automation-design.md`
-- Create: `docs/superpowers/plans/2026-08-05-godot-live-editor-automation.md`
-
-- [ ] **Step 1: Save the approved design**
-
-Record the three execution paths, existing owner matrix, identity/approval/retry/task/evidence boundaries, testing strategy, rollout, and rollback.
-
-- [ ] **Step 2: Self-review the spec**
-
-Search for `TBD`, `TODO`, placeholders, contradictory ownership, unbounded arbitrary execution, port-only identity, unqualified retry, and unsupported Godot test claims. Fix every confirmed issue before committing.
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add docs/superpowers/specs/2026-08-05-godot-live-editor-automation-design.md \
-  docs/superpowers/plans/2026-08-05-godot-live-editor-automation.md
-git commit -m "docs: design Godot live editor automation contract"
-```
-
-### Task 2: Add failing operating-contract tests
-
-**Files:**
-- Modify: `tests/test_game_project_operating_system_structure.py`
-- Create later: `docs/knowledge/godot/GODOT_LIVE_EDITOR_AUTOMATION_CONTRACT.md`
-- Create later: `docs/knowledge/godot/GODOT_LIVE_EDITOR_SECURITY_AND_RECOVERY.md`
-- Create later: `schemas/godot-live-editor-capability-manifest-v1.schema.json`
-- Create later: `schemas/godot-live-editor-operation-envelope-v1.schema.json`
-- Create later: `templates/project-operations/GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json`
-- Create later: `templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md`
-- Create later: `templates/project-operations/godot-live-editor/AGENTS_FRAGMENT.md`
+- Modify: `docs/superpowers/specs/2026-08-05-godot-live-editor-automation-design.md`
+- Modify: `docs/superpowers/plans/2026-08-05-godot-live-editor-automation.md`
 
 **Interfaces:**
-- `GameProjectOperatingSystemStructureTests` remains an existing required CI module.
-- Tests load both schemas with `Draft202012Validator` and validate the project manifest plus representative request/result envelopes.
+- Parent implementation PR: `#152`, branch `agent/godot-live-editor-automation`.
+- Stacked hardening PR: `#153`, branch `agent/godot-live-editor-contract-hardening`.
 
-- [ ] **Step 1: Add required-path expectations**
+- [x] **Step 1: Create the hardening branch from exact parent HEAD**
 
-Require the two knowledge documents, two schemas, manifest template, project-local adapter Skill, and AGENTS fragment.
+Create `agent/godot-live-editor-contract-hardening` from parent exact HEAD `94573d45682814a4721f55bf08be021f8da25409` so concurrent work on #152 is not overwritten.
 
-- [ ] **Step 2: Add failing contract tests**
+- [x] **Step 2: Open a Draft stacked PR**
 
-Assert the future artifacts contain and enforce:
+Target `agent/godot-live-editor-automation` rather than `main`. Keep the PR Draft and state that no PASS is claimed before a fresh GREEN exact head.
 
-- `doctor → status → catalog --compact`;
-- normalized project path, `project.godot` SHA-256, and project fingerprint identity;
-- typed capabilities and the five operation classes;
-- approval binding and single-use semantics;
-- no blind retry after unknown mutation outcomes;
-- `operation_id` and durable `task_id` resume behavior;
-- separate engine-input, physical-input, runtime, and human evidence states;
-- explicit `PROJECT_TEST_FRAMEWORK_NOT_CONFIGURED` behavior;
-- routing to existing active owners and no new Base Registry Skill.
+- [x] **Step 3: Update the design and plan**
 
-- [ ] **Step 3: Commit RED tests only**
+Record the four adversarial findings, orthogonal capability model, semantic validator, evidence-domain constraints, and exact engine/tool-adoption boundaries.
 
-```bash
-git add tests/test_game_project_operating_system_structure.py
-git commit -m "test: define Godot live editor safety contract"
-```
-
-- [ ] **Step 4: Open a Draft PR and observe exact-head RED**
-
-Use GitHub Actions as the execution environment because local checkout is blocked by DNS. Expected failure: missing Godot contract/template/schema paths and assertions. Record the exact failing head and failing test names; do not describe unrelated failures as TDD evidence.
-
-### Task 3: Add strict capability and operation schemas
+### Task 2: Establish the hardening RED
 
 **Files:**
-- Create: `schemas/godot-live-editor-capability-manifest-v1.schema.json`
-- Create: `schemas/godot-live-editor-operation-envelope-v1.schema.json`
-- Create: `templates/project-operations/GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json`
-- Test: `tests/test_game_project_operating_system_structure.py`
+- Modify: `tests/test_godot_live_editor_contract.py`
 
 **Interfaces:**
-- Capability schema uses Draft 2020-12 and validates a project-owned `NOT_CONFIGURED` or configured manifest.
-- Operation schema validates request/result identity, capability, risk class, request hash, approval, task state, result code, and evidence states.
+- Test module is already imported by existing required CI discovery in `tests/test_local_validation.py` and `tests/test_v9_machine_contracts.py`.
+- Fixtures expose the desired public schema before implementation.
 
-- [ ] **Step 1: Implement capability schema**
+- [x] **Step 1: Replace stale fixtures with the desired contract**
 
 Require:
 
-- `schema_version`, `artifact_role`, `configuration_state`, `contract_version`, `adapter_version`;
-- normalized project path placeholder, project file hash/fingerprint state, engine compatibility;
-- transport binding and loopback/default-off facts;
-- catalog freshness metadata;
-- unique typed capabilities with execution path, operation class, retry policy, timeout policy, and evidence outputs.
+```yaml
+effect_class: READ_ONLY | IDEMPOTENT_MUTATION | APPROVAL_REQUIRED_MUTATION | NON_RETRYABLE_MUTATION
+execution_mode: SYNCHRONOUS | LONG_RUNNING_TASK
+```
 
-Reject configured manifests with empty identity, unregistered operation classes, automatic retry for non-retryable mutations, or approval-required operations without approval declaration.
+Add exact engine compatibility, external-tool adoption, valid project-test runner, and result-hash fields.
 
-- [ ] **Step 2: Implement operation schema**
+- [x] **Step 2: Add failing adversarial tests**
 
-Require:
+Cover:
 
-- UUID-like or opaque non-empty operation identity;
-- project fingerprint and request hash;
-- stable operation class;
-- approval state and token binding fields when approved;
-- task identity/state for long-running work;
-- stable result code and explicitly typed evidence states.
+- long-running approval-required and non-retryable operations;
+- mismatched approval token bindings;
+- mismatched task and result-hash bindings;
+- duplicate capability IDs;
+- missing or invalid configured project-test runner;
+- misleading evidence kind/state pairs;
+- missing configured engine/tool-adoption facts.
 
-- [ ] **Step 3: Add the safe template manifest**
+- [x] **Step 3: Observe exact-head RED**
 
-Ship `configuration_state: NOT_CONFIGURED`, no capabilities, no transport endpoint, no claimed test framework, and explicit installation instructions. A valid template must not imply runtime readiness.
+Exact test-only head: `c02f81eaa4ad9e99c68dbc271b0a5f37054fbb71`.
 
-- [ ] **Step 4: Check schema behavior**
+Required `ubuntu-contract` ran 215 tests and failed with nine intended contract failures: missing `effect_class`/`execution_mode`, missing semantic validator, stale docs/adapter, and schemas that still accepted the old contract. Reference freshness passed before the focused regressions failed.
 
-The regression test must validate the template and representative valid envelopes, then assert rejection of port-only identity, unsafe retry, incomplete approval binding, and unbound task completion.
-
-### Task 4: Add canonical Godot contract and security guide
+### Task 3: Split capability risk from execution lifetime
 
 **Files:**
-- Create: `docs/knowledge/godot/GODOT_LIVE_EDITOR_AUTOMATION_CONTRACT.md`
-- Create: `docs/knowledge/godot/GODOT_LIVE_EDITOR_SECURITY_AND_RECOVERY.md`
-- Test: `tests/test_game_project_operating_system_structure.py`
-
-- [ ] **Step 1: Write the automation contract**
-
-Cover scope, architecture, bootstrap, identity, compact catalog, capability classes, command batching, bounded output, operation envelope, task lifecycle, validation loop, evidence states, installation, and failure reporting.
-
-- [ ] **Step 2: Write the security and recovery guide**
-
-Cover loopback/default-off transport, typed-action allowlists, path confinement, approval binding, request hashing, idempotency, operation ledger, unknown timeout reconciliation, process/endpoint/project distinctions, task result freshness, rollback limitations, and secret redaction.
-
-- [ ] **Step 3: Remove Unity-only assumptions**
-
-The canonical Godot documents must not instruct projects to use UnityEngine objects, UPM, C# Editor handlers, Unity domain reloads, EventSystem, or Hera commands. Comparative attribution may name Hera only as a benchmark.
-
-### Task 5: Add the compact project adapter and routing
-
-**Files:**
-- Create: `templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md`
-- Create: `templates/project-operations/godot-live-editor/AGENTS_FRAGMENT.md`
-- Modify: `START_HERE.md`
-- Modify: `templates/project-operations/.agents/skills/base-project-router/SKILL.md`
-- Modify: `tests/test_game_project_operating_system_structure.py`
+- Modify: `schemas/godot-live-editor-capability-manifest-v1.schema.json`
+- Modify: `schemas/godot-live-editor-operation-envelope-v1.schema.json`
+- Modify: `templates/project-operations/GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json`
+- Test: `tests/test_godot_live_editor_contract.py`
 
 **Interfaces:**
-- Adapter modes: `bootstrap`, `observe`, `mutate`, `validate`, `resume`, `recover`.
-- Adapter reads the project manifest and routes policy ownership to existing Base Skills.
+- Capability schema produces `effect_class` and `execution_mode`.
+- Operation envelope consumes the same exact names.
 
-- [ ] **Step 1: Write the project-local Skill**
+- [x] **Step 1: Replace `operation_class` in the capability schema**
 
-Keep the body compact. It must:
+Require orthogonal `effect_class` and `execution_mode` fields. Preserve:
 
-- fail closed when the manifest is absent, `NOT_CONFIGURED`, invalid, stale, or identity-mismatched;
-- select one registered capability only;
-- map operation classes to approval/retry behavior;
-- emit one operation envelope and bounded evidence;
-- route runtime diagnosis, change validation, UI evidence, long tasks, freshness, and installation to existing owners;
-- prohibit automatic approval and unsafe mutation retry.
+- approval requirement for approval/non-retryable mutations;
+- idempotency key and ledger requirement for idempotent mutations;
+- no automatic retry for approval/non-retryable mutations;
+- durable ledger, `RESUME_BY_TASK_ID`, and no automatic retry for long tasks.
 
-- [ ] **Step 2: Write the AGENTS fragment**
+- [x] **Step 2: Replace `operation_class` in the operation envelope**
 
-Provide only the discovery sequence, canonical manifest/Skill/contract paths, stop conditions, and report shape. Do not duplicate the full contract.
+Require the same two fields. Make task shape depend only on `execution_mode`; make approval state depend only on `effect_class`.
 
-- [ ] **Step 3: Add compact Base and project routes**
+- [x] **Step 3: Add terminal result hash**
 
-Add one auxiliary route in `START_HERE.md` and one project-router paragraph that reads the adapter only after Base adapter validation succeeds. Keep the Base router free of reusable engine workflow details.
+Require terminal task results to expose `result.result_hash` and a result binding containing the same identity fields.
 
-- [ ] **Step 4: Assert non-registration**
+- [x] **Step 4: Keep the template inert**
 
-Tests must prove `godot-live-editor-operations` is absent from `skills/SKILL_REGISTRY.json` and exists only as a project template adapter.
+Set `configuration_state: NOT_CONFIGURED`, null engine/tool values, disabled transport, empty catalog, no project-test runner, and no capability.
 
-### Task 6: Run GREEN validation and fix confirmed failures
+### Task 4: Add cross-field semantic validation
+
+**Files:**
+- Create: `tools/validate_godot_live_editor_contract.py`
+- Test: `tests/test_godot_live_editor_contract.py`
+
+**Interfaces:**
+
+```python
+def validate_manifest_semantics(manifest: Mapping[str, Any]) -> list[str]: ...
+def validate_operation_semantics(envelope: Mapping[str, Any]) -> list[str]: ...
+```
+
+- [x] **Step 1: Validate capability catalog identities**
+
+Return `DUPLICATE_CAPABILITY_ID` when one ID appears more than once.
+
+- [x] **Step 2: Validate configured project-test runner references**
+
+Require exactly one matching capability, a supported execution path, and `TEST_RESULT` evidence. Return stable codes rather than prose-only failures.
+
+- [x] **Step 3: Validate approval equality**
+
+For `APPROVED`, require token project, capability, request hash, and `effect_class` to equal top-level values. Return `APPROVAL_TOKEN_MISMATCH` on any difference.
+
+- [x] **Step 4: Validate terminal task equality**
+
+Require result-binding project, capability, operation, and task identity to equal the envelope. Require binding hash to equal `result.result_hash`.
+
+- [x] **Step 5: Add a CLI**
+
+Support `--manifest` and `--operation`, emit machine-readable JSON, and return non-zero on semantic failure.
+
+### Task 5: Constrain evidence truthfulness
+
+**Files:**
+- Modify: `schemas/godot-live-editor-operation-envelope-v1.schema.json`
+- Test: `tests/test_godot_live_editor_contract.py`
+
+- [x] **Step 1: Add kind-specific state families**
+
+Map:
+
+```text
+CONTRACT → CONTRACT_*
+ENGINE_STATE / SCREENSHOT / LOG / TEST_RESULT / EXPORT → EXECUTION_*
+RUNTIME → RUNTIME_*
+ENGINE_INPUT → ENGINE_INPUT_*
+PHYSICAL_INPUT → PHYSICAL_INPUT_*
+HUMAN → HUMAN_*
+```
+
+- [x] **Step 2: Reject misleading combinations**
+
+Reject `HUMAN + CONTRACT_PASS` and `SCREENSHOT + PHYSICAL_INPUT_PASS`.
+
+- [x] **Step 3: Require artifact paths for PASS**
+
+Passing evidence must name an artifact path. `NOT_RUN`, `NOT_CONFIGURED`, `BLOCKED_ENVIRONMENT`, and `HUMAN_NOT_RUN` must not fabricate one.
+
+### Task 6: Add exact engine and tool-adoption boundaries
+
+**Files:**
+- Modify: `schemas/godot-live-editor-capability-manifest-v1.schema.json`
+- Modify: `templates/project-operations/GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json`
+- Test: `tests/test_godot_live_editor_contract.py`
+
+- [x] **Step 1: Require exact configured engine facts**
+
+Configured manifests require `detected_version`, `minimum_version`, and `maximum_exclusive_version`.
+
+- [x] **Step 2: Require tool source and version pin**
+
+Configured manifests require `source_type`, source reference, and exact version pin.
+
+- [x] **Step 3: Require data and removal policy**
+
+Configured manifests require telemetry policy, external-data policy, uninstall reference, and rollback reference.
+
+- [x] **Step 4: Preserve NOT_CONFIGURED safety**
+
+The Base template keeps every adoption field null or `NOT_CONFIGURED` and claims no runtime readiness.
+
+### Task 7: Synchronize canonical documentation and project adapter
+
+**Files:**
+- Modify: `docs/knowledge/godot/GODOT_LIVE_EDITOR_AUTOMATION_CONTRACT.md`
+- Modify: `docs/knowledge/godot/GODOT_LIVE_EDITOR_SECURITY_AND_RECOVERY.md`
+- Modify: `templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md`
+- Modify: `templates/project-operations/godot-live-editor/AGENTS_FRAGMENT.md`
+- Test: `tests/test_godot_live_editor_contract.py`
+
+- [x] **Step 1: Update the canonical automation contract**
+
+Document the orthogonal fields, semantic validator, project-test runner integrity, result hash, evidence mapping, and tool-adoption boundary.
+
+- [x] **Step 2: Update security and recovery**
+
+Document long-running mutations retaining approval/retry risk, semantic binding checks, catalog uniqueness, telemetry/external transfer policy, and uninstall/rollback requirements.
+
+- [x] **Step 3: Update the project adapter**
+
+Fail closed when Schema or semantic validation fails. Report `effect_class` and `execution_mode`, not the obsolete combined class.
+
+- [x] **Step 4: Keep the AGENTS fragment compact**
+
+Add only discovery order, stop conditions, semantic validator, new fields, and report shape. Do not duplicate the long contract.
+
+### Task 8: Run fresh GREEN validation
 
 **Files:**
 - Verify all changed files.
 
-- [ ] **Step 1: Run focused tests where execution is available**
+- [ ] **Step 1: Inspect the current stacked PR exact head**
 
-```bash
-python -m unittest tests.test_game_project_operating_system_structure -v
-python -m unittest \
-  tests.test_reference_freshness \
-  tests.test_skill_routing_governance \
-  tests.test_skill_package_integrity \
-  tests.test_skill_system_coverage \
-  -v
-```
+Confirm #153 still targets `agent/godot-live-editor-automation` and identify any concurrent parent commits. If the parent advanced only in disjoint files, preserve the stacked structure; otherwise reconcile before claiming GREEN.
 
-Local execution remains `BLOCKED_ENVIRONMENT` if a checkout cannot be obtained. Do not convert static connector inspection into a local PASS.
+- [ ] **Step 2: Run exact-head GitHub Actions**
 
-- [ ] **Step 2: Inspect exact-head GitHub Actions**
+Require the current #153 head to execute:
 
-Require success for the Base operating contract, game-project operating-system validation, required CI gate, documentation/whitespace validation, and any other triggered workflow. Record skipped jobs as `SKIPPED_NOT_REQUIRED`, not PASS.
+- `Validate Base v9 Operating Contracts`;
+- `Validate Game Project Operating System`;
+- required `ci-gate` and its required jobs.
 
-- [ ] **Step 3: Verify protected identity and scope**
+Expected: zero test failures. Record Windows smoke as `SKIPPED_NOT_REQUIRED` when the workflow classifies it as unnecessary.
 
-```bash
-sha256sum skills/SKILL_REGISTRY.json
+- [ ] **Step 3: Inspect focused job logs**
 
-git diff --name-only main...HEAD
+Verify `tests.test_godot_live_editor_contract` actually ran and all new adversarial tests passed. A green workflow that skipped the focused module is not accepted.
 
-git diff --check main...HEAD
-```
+- [ ] **Step 4: Verify schema and semantic fixtures**
 
-Confirm no release lock, frozen derivative, unrelated prompt/tutorial file, or project repository changed.
+Confirm the valid configured manifest and operation pass, while all mismatched fixtures fail with the intended stable code.
 
-### Task 7: Adversarial review and regression recheck
+### Task 9: Adversarial regression and protected-scope review
 
 **Files:**
 - Modify only confirmed findings.
 
-- [ ] **Step 1: Attack the design**
+- [ ] **Step 1: Attack the hardened design**
 
-Test these failure hypotheses:
+Test these hypotheses:
 
-- port or process ID can override project identity;
-- stale catalog or adapter version can still execute;
-- arbitrary script execution is available by default;
-- approval can be reused with changed arguments;
-- a timeout can start a duplicate mutation/test/export;
-- a completed task result can be attached to a different project or operation;
-- engine input is reported as physical input;
-- Godot engine self-tests are reported as project tests;
-- file existence is reported as runtime or human success;
+- long-running mutation bypasses approval;
+- long-running non-retryable task can automatically retry;
+- approval token binds to a different project, capability, request, or effect;
+- terminal task result binds to a different project, capability, operation, task, or result hash;
+- duplicate capability IDs survive;
+- configured test runner is absent or lacks test evidence;
+- screenshot or human evidence claims another evidence domain;
+- configured engine/tool adoption values are blank;
 - project adapter becomes a duplicate Base active Skill;
-- long documentation is copied into entrypoints.
+- Registry or release locks changed.
 
-- [ ] **Step 2: Validate criticism**
+- [ ] **Step 2: Compare changed-file scope**
 
-Classify findings as `MUST_FIX`, `SHOULD_FIX`, `NICE_TO_HAVE`, or `REJECTED_CRITIQUE`. Fix only reproducible contract weaknesses; reject requests that add an unproven universal bridge or unrelated refactor.
+Compare #153 to its current base branch. Expected hardening files:
 
-- [ ] **Step 3: Regression recheck**
+```text
+docs/knowledge/godot/GODOT_LIVE_EDITOR_AUTOMATION_CONTRACT.md
+docs/knowledge/godot/GODOT_LIVE_EDITOR_SECURITY_AND_RECOVERY.md
+docs/superpowers/plans/2026-08-05-godot-live-editor-automation.md
+docs/superpowers/specs/2026-08-05-godot-live-editor-automation-design.md
+schemas/godot-live-editor-capability-manifest-v1.schema.json
+schemas/godot-live-editor-operation-envelope-v1.schema.json
+templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md
+templates/project-operations/GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json
+templates/project-operations/godot-live-editor/AGENTS_FRAGMENT.md
+tests/test_godot_live_editor_contract.py
+tools/validate_godot_live_editor_contract.py
+```
 
-Re-fetch the exact head, rerun required checks, compare changed-file scope, and verify unresolved review threads are zero before any readiness claim.
+No Registry, release lock, frozen derivative, unrelated prompt/tutorial file, or project repository may appear.
 
-### Task 8: Final Draft PR evidence
+- [ ] **Step 3: Recheck exact head and review threads**
+
+Re-fetch the exact head after any fix, rerun required checks, and verify unresolved review threads are zero before readiness wording.
+
+### Task 10: Final Draft PR evidence and parent handoff
 
 **Files:**
-- Update Draft PR body only; do not merge.
+- Update Draft PR #153 body.
+- Add one parent PR #152 comment.
 
-- [ ] **Step 1: Report exact scope**
+- [ ] **Step 1: Record RED and GREEN heads**
 
-List every changed file and distinguish design, contract, schema, template, routing, and test changes.
+State the test-only RED head and final reviewed GREEN head separately.
 
 - [ ] **Step 2: Report truthful evidence**
 
@@ -265,15 +310,20 @@ Separate:
 
 ```yaml
 contract_and_schema_validation:
+semantic_validation:
 exact_head_github_actions:
 local_checkout_and_tests:
 godot_cli_runtime:
 godot_editor_plugin_runtime:
-project_test_framework:
+project_test_framework_integration:
 physical_input:
 human_usability:
 ```
 
 - [ ] **Step 3: Keep Draft boundaries**
 
-Leave the PR Draft because a real Godot project pilot, EditorPlugin runtime, physical-input validation, and human validation are outside this Base contract PR. Merge requires a separate user request and exact-head review.
+Leave #153 and #152 Draft. Do not merge. Real Godot project pilot, EditorPlugin runtime, physical-input validation, and human validation remain outside this Base contract hardening.
+
+- [ ] **Step 4: Link the parent PR**
+
+Comment on #152 with the stacked PR, exact head, resolved findings, protected scope, and remaining runtime evidence limits.
