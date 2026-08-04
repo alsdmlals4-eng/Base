@@ -10,8 +10,18 @@
     "project_fingerprint": null
   },
   "engine_compatibility": {
-    "minimum_version": "4.3",
-    "maximum_exclusive_version": "5.0"
+    "detected_version": null,
+    "minimum_version": null,
+    "maximum_exclusive_version": null
+  },
+  "tool_adoption": {
+    "source_type": "NOT_CONFIGURED",
+    "source_reference": null,
+    "version_pin": null,
+    "telemetry_policy": "NOT_CONFIGURED",
+    "external_data_policy": "NOT_CONFIGURED",
+    "uninstall_reference": null,
+    "rollback_reference": null
   },
   "transport": {
     "kind": "DISABLED",
