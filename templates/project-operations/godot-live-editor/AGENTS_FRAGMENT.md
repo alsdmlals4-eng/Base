@@ -4,7 +4,7 @@
 
 - Project capability source: `GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json`
 - Project adapter: `.agents/skills/godot-live-editor-operations/SKILL.md`
-- Network-disabled addon: `addons/base_live_editor_adapter/`
+- Listener-free addon: `addons/base_live_editor_adapter/`
 - Base pin authority: `skills/PROJECT_BASE_ADAPTER.json`
 - Base v2 capability Schema: `schemas/godot-live-editor-capability-manifest-v2.schema.json`
 - Base v2 operation Schema: `schemas/godot-live-editor-operation-envelope-v2.schema.json`
@@ -25,7 +25,22 @@ validate PROJECT_BASE_ADAPTER.json and snapshot
 
 Base adapter 실패, Manifest 없음, `NOT_CONFIGURED`, stale, identity/snapshot mismatch, undeclared capability이면 engine action을 중단한다. automatic approval과 unsafe retry는 금지한다.
 
-PR B addon은 configured v2 Manifest와 `transport.kind: DISABLED`에서만 활성화된다. 이미 검증된 envelope를 in-process로만 받고 `scene.inspect`, `node.rename`(`KEEP_DIRTY | SAVE_CURRENT_SCENE`) 외 capability는 거부한다. 서버, MCP, socket, remote endpoint, background thread 또는 Autoload는 포함하지 않는다.
+PR B addon은 configured v2 Manifest의 정확한 listener-free local profile에서만 활성화된다.
+
+```yaml
+transport:
+  kind: PROJECT_DEFINED
+  enabled: true
+  bind_host: null
+  endpoint_identity: in-process-editor-plugin
+  access_control:
+    authentication_mode: NOT_APPLICABLE
+    origin_policy: NOT_APPLICABLE
+    session_binding: NOT_APPLICABLE
+    os_access_control: CURRENT_USER_ONLY
+```
+
+여기서 `enabled: true`는 in-process endpoint 선언이 활성 상태라는 뜻이며 network listener를 만들지 않는다. 이미 검증된 envelope를 in-process로만 받고 `scene.inspect`, `node.rename`(`KEEP_DIRTY | SAVE_CURRENT_SCENE`) 외 capability는 거부한다. 서버, MCP, socket, remote endpoint, background thread 또는 Autoload는 포함하지 않는다.
 
 mutation은 expected/observed revision·hash·dirty state·Scene path를 같은 Editor frame에서 다시 비교한다. 불일치는 `TARGET_STATE_CONFLICT`다. STARTED ledger 전에 engine mutation을 하지 않고, `EditorUndoRedoManager` transaction·save/filesystem update·physical byte hash·output/evidence·terminal ledger가 끝나기 전에는 성공을 보고하지 않는다.
 
