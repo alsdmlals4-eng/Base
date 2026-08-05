@@ -1,10 +1,13 @@
-# Project Adapter Fleet Audit — 2026-08-05
+# Project Adapter Fleet Audit — 2026-08-05 / 2026-08-06 Rollout Addendum
 
 ## Status
 
 ```yaml
 audit_id: BASE-AUD-2026-08-05-PROJECT-ADAPTER-FLEET
-base_pr: 175
+parent_decision: DEC-BASE-20260805-001
+base_contract_pr: 185
+trusted_base_validator: bfdc9e44d4a6920dc085eaa3f9d19d31b1acd2a1
+validator_pin_pr: 187
 scope:
   - alsdmlals4-eng/Ten-Paces-Hidden-Moves
   - alsdmlals4-eng/Blacksmith
@@ -12,199 +15,209 @@ scope:
   - alsdmlals4-eng/urban-legend
   - alsdmlals4-eng/GRIMOIRE-
   - alsdmlals4-eng/Switchy-Express-Cargo-Puzzle
-result: BASE_CONTRACT_HARDENED_PROJECT_ROLLOUT_BLOCKED
+result: FOUR_PROJECTS_MERGED_ONE_BLOCKED_ONE_SEPARATELY_MANAGED
+project_rollout: PARTIAL_COMPLETE
+completed_projects: 4
+blocked_projects: 1
+separately_managed_projects: 1
+google_sheets_sync: NOT_APPLICABLE_BASE_CONTRACT
 runtime_validation: NOT_RUN
-project_mutations: NOT_STARTED
+physical_device_validation: NOT_RUN
+human_validation: HUMAN_NOT_RUN
 ```
 
-This audit compares each repository's current `main` and canonical
-`skills/PROJECT_BASE_ADAPTER.json` against
-`schemas/project-base-adapter-v1.schema.json` and the Base project operating
-validator. It does not treat the presence of an adapter file as proof that the
-adapter is executable.
+The original audit identified fleet drift before Base contract hardening. This
+addendum records the later project-by-project outcome. It does not reinterpret
+repository-contract validation as gameplay, Runtime, device, human, Sheet, or
+release evidence.
 
-## Adversarial findings
+## Original adversarial findings and disposition
 
-### P1 — released project pins were not representable by the v1 Schema
+### P1 — released finalization pins were not representable or semantically bound
 
-The live project adapters use `base_release.finalization_commit`, while the
-canonical v1 Schema used `additionalProperties: false` and did not declare the
-field. Base PR #175 adds only this explicit release pin. The Schema remains
-strict; it is not widened to accept arbitrary project state.
+The strict v1 Schema did not model the already-used
+`base_release.finalization_commit`, and semantic validation did not reject an
+arbitrary 40-character value.
 
-A second RED test proved that structural validation alone was insufficient:
-an arbitrary 40-character SHA could pass because the semantic release-lock
-validator ignored the new field. The release index now binds v9.4.3 to the
-actual immutable finalization commit and rejects forged, absent, or
-non-descendant finalization identity.
+Disposition:
 
-### P1 — actual project adapters are absent from Base CI
+- resolved in Base PR #185;
+- strict `additionalProperties: false` retained;
+- supplied finalization identity is bound to Base's release index and ancestry;
+- project validator is pinned to immutable trusted merge
+  `bfdc9e44d4a6920dc085eaa3f9d19d31b1acd2a1` by merged PR #187.
 
-Base's focused tests validate the template and synthetic repositories. They do
-not validate the six remote canonical adapters. A green Base CI therefore did
-not prove fleet compatibility.
+### P1 — project validation floated or was absent
 
-Each project must install and require the canonical project validation
-workflow. The workflow must use an immutable full Base validator commit rather
-than floating `main`.
+The initial project repositories did not all run the canonical validator, and a
+floating Base reference could change results over time.
 
-### P1 — every inspected protected baseline is stale
+Disposition:
 
-All six project `main` branches advanced after their adapter baseline was
-recorded. The current validator intentionally requires exact equality between
-the adapter baseline and the trusted remote or PR base. Therefore a structurally
-valid adapter can still fail until its baseline and policy hash are refreshed.
+- resolved for the four merged project migrations through project-local caller
+  workflows pinned to the trusted Base merge;
+- unresolved for OMENWARD because its Actions job cannot obtain a runner and a
+  Base-owned external run cannot read the private repository;
+- OMENWARD remains `BLOCKED_ENVIRONMENT_RUNNER_AND_AUTHORIZATION`.
 
-Do not weaken this check silently. The operating policy must choose between:
+### P1 — stale exact baselines
 
-1. preserving exact equality and making baseline refresh a required, automated
-   part of every accepted project change; or
-2. allowing an ancestor baseline only when an independently computed protected
-   path diff proves that the policy and protected paths did not change.
+All audited projects had advanced beyond their recorded protected baseline.
+Option A exact trusted-base equality was approved.
 
-The current recommendation is option 1 because it is simpler to audit and fails
-closed. Automation should remove the repetitive manual work rather than weaken
-the authority boundary.
+Disposition:
 
-### P1 — three repositories use the adapter as a project-state database
+- the four completed PRs refreshed baseline and dependent hashes against their
+  exact PR base;
+- OMENWARD PR #148 proposes the narrow repair but has not produced trusted
+  generator and validator evidence;
+- no ancestor-baseline exception was introduced.
 
-Blacksmith, GRIMOIRE, and Switchy Express place planning state, evidence state,
-entrypoints, decision summaries, or custom validator objects in the canonical
-adapter. This conflicts with the thin-adapter ownership rule and with the
-strict v1 Schema.
+### P1 — adapters used as project-state databases
 
-Project operating state belongs in project health, decision, planning, or
-evidence artifacts. The canonical adapter should retain only release pins,
-routes, registries, project bindings, protected baseline, protected paths,
-validators, compatibility views, and narrowly scoped overrides.
+Blacksmith, Switchy Express, and GRIMOIRE mixed project operating state with the
+Base connection contract.
 
-## Compatibility matrix
+Disposition:
 
-| Project | Audited `main` | Adapter shape | Primary blockers | Verdict |
-|---|---|---|---|---|
-| Ten Paces: Hidden Moves | `4b5967dee99592de4a09a611068344994e1ee026` | Close to v1 | protected baseline is one commit behind; canonical Base validator workflow is not installed | `P1_MIGRATION_REQUIRED` |
-| Blacksmith | `b1dd945875568098b107815a03e88b0272d384e9` | v1 label, non-v1 payload | root project-state objects, invalid route status, invalid baseline authority/source types, null policy or registry evidence, stale baseline | `P1_REBUILD_THIN_ADAPTER` |
-| OMENWARD | `da382d52b4490acb8758a1683ea6c9e4f4bf388b` | Close to v1 | protected baseline is one commit behind; canonical Base validator workflow is not installed | `P1_MIGRATION_REQUIRED` |
-| urban-legend | `f7edb459938bb5f3e2533ad828c2fe55019cd14b` | Close to v1 | protected baseline is one commit behind; canonical Base validator workflow is not installed | `P1_MIGRATION_REQUIRED` |
-| GRIMOIRE | `2d80e4afcfc6b530b76912826f5984cdf1184678` | custom schema v2 | incompatible root shape, mixed project-state authority, missing v1 validator list and baseline contract, stale baseline | `P1_CANONICAL_MIGRATION_REQUIRED` |
-| Switchy Express | `0bdcdae2092460431f81d383b34b51f725a4ab08` | v1 label, non-v1 payload | string routes instead of route records, object validators instead of commands, invalid Sheet and baseline enums, stale baseline | `P1_REBUILD_THIN_ADAPTER` |
+- Blacksmith PR #112 preserved the broad previous adapter and health authority,
+  then restored a strict thin adapter;
+- Switchy Express PR #87 preserved the incompatible adapter and legacy authority,
+  separated project-only Registry ownership, then restored a strict thin adapter;
+- GRIMOIRE is `SEPARATELY_MANAGED` outside this rollout thread and is not claimed
+  complete here.
 
-## Applied Base corrections
+## Current compatibility and rollout matrix
 
-Base PR #175 currently provides the following backward-compatible corrections:
+| Project | Exact migration base | Implementation evidence | Current disposition |
+|---|---|---|---|
+| Ten-Paces-Hidden-Moves | `4b5967dee99592de4a09a611068344994e1ee026` | PR #95, merge `7083829d8eb627e46227c0ac98845adfc2c61bb4` | `MERGED_VALIDATED` |
+| urban-legend | `f7edb459938bb5f3e2533ad828c2fe55019cd14b` | PR #153, merge `1cda33f9eb238c9a32d0a8f4a3edfa5e203b0634` | `MERGED_VALIDATED` |
+| Blacksmith | `b1dd945875568098b107815a03e88b0272d384e9` | PR #112, merge `4dc4f3f8a6fc4d379c5eddce8b59fc8733e6a4ed` | `MERGED_VALIDATED_THIN_ADAPTER` |
+| Switchy-Express-Cargo-Puzzle | `8c6dd60c634019e64178e72aa4959a2a970708e1` | PR #87, merge `dc2a6696beced12c8e352fa154648cdb4e80796b` | `MERGED_VALIDATED_THIN_ADAPTER` |
+| OMENWARD | `f5e4bcee7f8459fcfeb492f1ebc19ff932a352f0` | Draft PR #148; trusted execution unavailable | `BLOCKED_ENVIRONMENT_RUNNER_AND_AUTHORIZATION` |
+| GRIMOIRE | project-owned | issue #66 and separate project workflow | `SEPARATELY_MANAGED` |
 
-1. model `base_release.finalization_commit` as an optional full SHA in the v1
-   Schema so older v9.1 adapters remain valid;
-2. include the field in the canonical adapter template;
-3. index the canonical v9.4.3 finalization commit outside the immutable released
-   lock and fail closed when a project supplies a forged or inconsistent pin;
-4. pin the copied project validation workflow to the immutable validator commit
-   that contains structural and semantic finalization validation;
-5. wire the focused fleet-hardening test into required Base contract CI.
+## Completed project evidence
 
-The project repositories are intentionally not mutated before this Base
-contract is reviewed. A project PR must not depend on an unreviewed floating
-Base branch. After merge, the workflow pin should be advanced once to the
-merged trusted validator commit before the six-project rollout.
+### Ten Paces — PR #95
 
-## Benchmark and collaboration decisions
+- baseline and policy/Registry identity refreshed from the exact PR base;
+- immutable Base validator workflow installed;
+- official Snapshot, Dashboard, router, and compatibility views regenerated;
+- seven-file adapter/generated scope;
+- all eight observed exact-head workflows passed;
+- product, gameplay canon, Runtime files, and Google Sheets unchanged.
 
-The audit used official platform guidance as an external check on the local
-contract rather than copying a framework wholesale.
+### urban-legend — PR #153
 
-### Applied now
+- baseline and hashes refreshed from the exact PR base;
+- immutable Base validator workflow installed;
+- official generated views refreshed;
+- seven-file adapter/generated scope;
+- all seven exact-head workflows passed;
+- canon, episode data, product files, Runtime files, and Google Sheets unchanged.
 
-- GitHub recommends full commit SHAs as the safest immutable reference for
-  third-party Actions and reusable automation. The project validator template
-  therefore pins both Actions and the Base validator repository by full SHA.
-- JSON Schema's closed-object pattern rejects undeclared properties. The Base v1
-  Schema retains `additionalProperties: false`; only the explicitly governed
-  `finalization_commit` field was added.
-- Workflow and contract changes must be protected by required checks and code
-  ownership. Base already owns `.github/` through CODEOWNERS; project rollout
-  PRs must make adapter validation required before merge.
-- Project changes are split into independent PRs so Base contract review,
-  project migration, product changes, and Google Sheets changes cannot silently
-  attest to each other.
+### Blacksmith — PR #112
 
-### Evaluated but deferred
+- previous broad adapter and rich health authority preserved before normalization;
+- project state moved out of the Base connection adapter;
+- strict Base v1 thin adapter and valid machine health installed;
+- official generated views refreshed;
+- all seven exact-head workflows passed;
+- no product, gameplay canon, Runtime, or Google Sheet mutation.
 
-GitHub reusable workflows can reduce duplicated CI across repositories. A
-cross-repository reusable validator is a reasonable later optimization, but it
-is deferred until repository visibility, caller permissions, failure reporting,
-and rollback are piloted. The first rollout keeps a small checked-in caller
-workflow pinned to one immutable Base validator commit. This is more repetitive
-but easier to audit and roll back while the contract is still stabilizing.
+A separately developed duplicate was closed as
+`SUPERSEDED_DUPLICATE_PR_113`; it must not be reopened or used as implementation
+authority.
 
-### Primary references
+### Switchy Express — PR #87
 
-- https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows
-- https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions
-- https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
-- https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets
-- https://json-schema.org/understanding-json-schema/reference/object#additional-properties
+- incompatible adapter and legacy authority preserved;
+- Base routes normalized to typed records;
+- project Registry narrowed to project-owned authority while retaining compatible
+  identity fields;
+- Sheet meaning preserved without a Sheet write;
+- official generated views and legacy consumers updated;
+- all seven exact-head workflows passed;
+- no product, Godot, Android/APK evidence, or Google Sheet mutation.
 
-## Rollout plan
+A separately developed duplicate was closed as
+`SUPERSEDED_DUPLICATE_PR_90`; it must not be reopened or used as implementation
+authority.
 
-### Wave A — narrow repair
+## OMENWARD fail-closed record
 
-- Ten-Paces-Hidden-Moves
-- omenward
-- urban-legend
+Draft PR #148 remains the only active OMENWARD migration proposal.
 
-For each repository:
+```yaml
+pull_request: 148
+project_head: cd8266f51f206bcd600f2e8e98604d1ee9d6ec2d
+exact_pr_base: f5e4bcee7f8459fcfeb492f1ebc19ff932a352f0
+repository_actions: BLOCKED_BEFORE_STEP_EXECUTION_RUNNER_ID_0
+external_base_run: 31052501249
+external_base_job: 92462657680
+external_checkout: BLOCKED_PRIVATE_REPOSITORY_AUTHORIZATION
+base_generator: NOT_RUN
+base_validator: NOT_RUN
+merge_status: BLOCKED_ENVIRONMENT_RUNNER_AND_AUTHORIZATION
+```
 
-1. refresh the adapter baseline against the exact PR base;
-2. recompute the baseline policy and project registry hashes;
-3. install the exact-SHA Base validator workflow;
-4. run the full project operating validator;
-5. verify that no project state was added to the adapter;
-6. open one isolated Draft PR.
+A trusted completion path must restore repository Actions or explicitly provide
+a read-capable GitHub App/PAT for isolated validation. Static diff review alone
+is insufficient.
 
-### Wave B — thin-adapter rebuild
+## GRIMOIRE separation boundary
 
-- Blacksmith
-- Switchy-Express-Cargo-Puzzle
+GRIMOIRE remains `SEPARATELY_MANAGED`. Its issue #66, project decisions,
+project-specific PRs, planning authority, and Google Sheet synchronization are
+outside this Base rollout status PR. This audit neither modifies nor attests to
+that project state.
 
-First preserve project-only state in canonical project health, decision, and
-evidence files. Then rebuild the adapter from the v1 contract without deleting
-or weakening project canon.
+## Benchmark and collaboration decisions retained
 
-### Wave C — schema-authority reconciliation
+Applied:
 
-- GRIMOIRE-
+- full commit SHA pinning for Actions and Base validation;
+- strict closed-object JSON Schema;
+- required checks and code-owner review;
+- isolated Base and project PRs;
+- exact trusted-base equality with automated refresh rather than a weaker
+  ancestor exception;
+- state preservation before rebuilding non-thin adapters.
 
-The custom schema-v2 file must not silently redefine Base's canonical adapter.
-Recommended disposition:
+Deferred:
 
-- restore `skills/PROJECT_BASE_ADAPTER.json` as the Base v1 thin adapter;
-- move the current schema-v2 project-state payload to a clearly named project
-  operating-state artifact;
-- retain a migration record and compatibility view if an active consumer still
-  requires the old shape.
+- a cross-repository reusable validator workflow requiring private-repository
+  permission, visibility, failure-reporting, and rollback design;
+- this deferral is validated by the OMENWARD private-checkout failure.
 
-This is a canonical authority change and requires an explicit project decision
-before migration.
+## Project PR review rules
 
-## PR review rules
+A project adapter PR is not ready unless all are true:
 
-A project adapter PR is not ready unless all of the following are true:
-
-- adapter validates against the exact pinned Base validator commit;
+- the adapter validates against the exact pinned Base validator commit;
 - adapter baseline equals the trusted PR base;
-- release, finalization, and registry pins resolve to immutable canonical content;
-- Base routes are records, not untyped strings;
-- validator entries are executable command strings;
+- release, finalization, policy, and Registry identities resolve to canonical
+  immutable content;
+- Base routes use typed records and validator entries are executable commands;
 - project state is not embedded in the adapter root;
-- existing project canon and protected paths are unchanged unless separately
-  approved;
-- exact-head CI is green;
-- unresolved review threads are zero;
-- unexecuted runtime or human checks remain explicitly `NOT_RUN`.
+- generated outputs are produced by the official Base generator;
+- protected product/canon paths remain unchanged unless separately approved;
+- exact-head CI is green and unresolved review threads are zero;
+- unexecuted Runtime, device, accessibility, and human checks remain `NOT_RUN`.
 
 ## Evidence limits
 
-This audit is repository-contract evidence. It does not prove Godot runtime,
-Google Sheets readback, human usability, project gameplay correctness, or
-release readiness. Those checks remain project-specific and must not be
-promoted by adapter validation alone.
+```yaml
+google_sheets_sync: NOT_APPLICABLE_BASE_CONTRACT
+runtime_validation: NOT_RUN
+physical_device_validation: NOT_RUN
+human_validation: HUMAN_NOT_RUN
+project_gameplay_correctness: NOT_PROVEN
+release_readiness: NOT_CLAIMED
+```
+
+The four merged project PRs prove repository adapter migration within their
+recorded scopes. OMENWARD remains blocked, and GRIMOIRE remains separately
+managed. This document does not promote any absent product or human evidence.
