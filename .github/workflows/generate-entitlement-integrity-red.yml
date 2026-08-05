@@ -1,0 +1,32 @@
+name: Generate Entitlement Integrity RED Contract
+
+on:
+  push:
+    branches:
+      - agent/implement-game-entitlement-integrity-drm-capability
+
+permissions:
+  contents: write
+
+jobs:
+  generate-red:
+    if: "${{ github.event.head_commit.message == 'chore: generate entitlement integrity RED tests' }}"
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out exact branch head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+          show-progress: false
+      - name: Configure commit identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Generate RED tests and remove temporary tooling
+        run: |
+          python tools/generate_entitlement_integrity_red.py
+          rm .github/workflows/generate-entitlement-integrity-red.yml
+          rm tools/generate_entitlement_integrity_red.py
+          git add -A
+          git commit -m "test: define game entitlement and integrity capability contract"
+          git push origin HEAD:agent/implement-game-entitlement-integrity-drm-capability
