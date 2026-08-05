@@ -1,0 +1,132 @@
+name: Temporary Rebase BCP-2026-006 Lifecycle
+
+on:
+  push:
+    branches:
+      - agent/game-youtube-devlog-implemented-state
+
+permissions:
+  contents: write
+
+jobs:
+  rebase-lifecycle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out lifecycle branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Merge latest main and preserve BCP-2026-006 state
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch='agent/game-youtube-devlog-implemented-state'
+          old_head='e099cb2bc465f9620ae8f4d9daaa39c4643cb679'
+          proposal='[수정제안서]/BCP-2026-006-game-youtube-devlog-marketing-workflow/PROPOSAL.md'
+          design='[수정제안서]/BCP-2026-006-game-youtube-devlog-marketing-workflow/DESIGN.md'
+          registry='[수정제안서]/PROPOSAL_REGISTRY.json'
+          test_path='tests/test_bcp006_implemented_state.py'
+          workflow='.github/workflows/temporary-rebase-bcp006-lifecycle.yml'
+
+          git fetch origin main
+          git merge --no-commit --no-ff origin/main || true
+
+          mkdir -p "$(dirname "$proposal")" "$(dirname "$test_path")"
+          git show "$old_head:$proposal" > "$proposal"
+          git show "$old_head:$design" > "$design"
+          git show "$old_head:$test_path" > "$test_path"
+
+          OLD_HEAD="$old_head" REGISTRY_PATH="$registry" python - <<'PY'
+          from __future__ import annotations
+
+          import copy
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+          from typing import Any
+
+          target = "BCP-2026-006-game-youtube-devlog-marketing-workflow"
+          path = Path(os.environ["REGISTRY_PATH"])
+          old_head = os.environ["OLD_HEAD"]
+
+          current = json.loads(
+              subprocess.check_output(
+                  ["git", "show", f"origin/main:{path.as_posix()}"],
+                  text=True,
+                  encoding="utf-8",
+              )
+          )
+          old = json.loads(
+              subprocess.check_output(
+                  ["git", "show", f"{old_head}:{path.as_posix()}"],
+                  text=True,
+                  encoding="utf-8",
+              )
+          )
+
+          def identity(value: Any) -> str | None:
+              if not isinstance(value, dict):
+                  return None
+              for key in ("proposal_id", "id", "bcp_id", "slug"):
+                  candidate = value.get(key)
+                  if isinstance(candidate, str):
+                      return candidate
+              return None
+
+          def find(value: Any) -> dict[str, Any] | None:
+              if isinstance(value, dict):
+                  if identity(value) == target:
+                      return value
+                  for child in value.values():
+                      found = find(child)
+                      if found is not None:
+                          return found
+              elif isinstance(value, list):
+                  for child in value:
+                      found = find(child)
+                      if found is not None:
+                          return found
+              return None
+
+          old_entry = find(old)
+          if old_entry is None:
+              raise SystemExit(f"Could not locate {target} in old Registry")
+
+          replacements = 0
+
+          def replace(value: Any) -> Any:
+              global replacements
+              if isinstance(value, dict):
+                  if identity(value) == target:
+                      replacements += 1
+                      return copy.deepcopy(old_entry)
+                  return {key: replace(child) for key, child in value.items()}
+              if isinstance(value, list):
+                  return [replace(child) for child in value]
+              return value
+
+          merged = replace(current)
+          if replacements != 1:
+              raise SystemExit(f"Expected one {target} entry in current Registry, found {replacements}")
+
+          path.write_text(
+              json.dumps(merged, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+          git rm -f "$workflow"
+          git add "$proposal" "$design" "$registry" "$test_path"
+
+          unresolved="$(git diff --name-only --diff-filter=U)"
+          if [[ -n "$unresolved" ]]; then
+            echo "Unresolved merge paths:" >&2
+            echo "$unresolved" >&2
+            exit 1
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'docs: align BCP-2026-006 lifecycle with latest main'
+          git push origin HEAD:"$branch"
