@@ -1,0 +1,45 @@
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def read(path: str) -> str:
+    return (ROOT / path).read_text(encoding="utf-8")
+
+
+def test_external_ui_gate_is_fail_closed_and_platform_aware() -> None:
+    reference = read(
+        "skills/auditing-and-refining-ui-art/references/"
+        "external-ui-procurement-and-anti-generic-quality.md"
+    )
+    for token in (
+        "registry_source",
+        "exact_version_or_commit",
+        "content_hash",
+        "license",
+        "dependencies",
+        "scripts",
+        "secrets",
+        "files_added_or_replaced",
+        "accessibility_review",
+        "runtime_review",
+        "rollback",
+        "BLOCKED_UNVERIFIED",
+        "ADOPT",
+        "ADAPT",
+        "REJECT",
+    ):
+        assert token in reference
+    assert "MCP 연결 성공" in reference
+    assert "설치 승인" in reference
+    assert "Godot" in reference
+    assert "Web" in reference
+    assert "Design Read" in reference
+    assert "실제 렌더" in reference
+
+
+def test_ui_skill_routes_procurement_only_when_external_code_is_requested() -> None:
+    skill = read("skills/auditing-and-refining-ui-art/SKILL.md")
+    assert "external-ui-procurement-and-anti-generic-quality.md" in skill
+    assert "외부 UI" in skill
+    assert "기본 설치" in skill
