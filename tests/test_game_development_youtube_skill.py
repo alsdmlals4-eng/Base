@@ -130,6 +130,13 @@ class GameDevelopmentYouTubeSkillTests(unittest.TestCase):
             )
         )
 
+    def test_repository_checks_do_not_claim_human_marketing_results(self) -> None:
+        text = self.read_required(SKILL_PATH)
+        self.assertIn("정적 테스트 통과를 `HUMAN_NOT_RUN` 해소로 보고한다", text)
+        self.assertIn("human_audience_validation: HUMAN_NOT_RUN", text)
+        self.assertIn("conversion_validation: CONVERSION_UNVERIFIED", text)
+        self.assertIn("production_marketing_effectiveness: NOT_PROVEN", text)
+
     def test_unadapted_base_skill_does_not_invent_shared_project_route(self) -> None:
         routes = json.loads(self.read_required(SHARED_ROUTES_PATH))
         serialized = json.dumps(routes, ensure_ascii=False)
