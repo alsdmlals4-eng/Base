@@ -1,0 +1,30 @@
+name: Temporary Apply BCP-2026-006 Implemented State
+
+on:
+  push:
+    branches:
+      - agent/game-youtube-devlog-implemented-state
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out lifecycle branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply implemented-state synchronization
+        run: |
+          base64 -d .tmp-bcp006/implemented.patch.xz.b64 > /tmp/bcp006.patch.xz
+          xz -dc /tmp/bcp006.patch.xz > /tmp/bcp006.patch
+          echo "d0fe009b56344b37394c93783b51daaf7f0bf361ba3ac5146416c51f882c9b9b  /tmp/bcp006.patch" | sha256sum -c -
+          git apply --index /tmp/bcp006.patch
+          git rm -r .tmp-bcp006
+          git rm .github/workflows/temporary-apply-bcp006-implemented-state.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "docs: mark BCP-2026-006 implemented"
+          git push origin HEAD:agent/game-youtube-devlog-implemented-state
