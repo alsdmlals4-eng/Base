@@ -52,8 +52,7 @@
       "properties": {
         "version": {"const": "4.7.1-stable"},
         "archive_sha256": {
-          "type": "string",
-          "pattern": "^[0-9a-f]{64}$"
+          "const": "c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba"
         }
       }
     },
