@@ -1,6 +1,7 @@
 {
   "artifact_role": "PROJECT_BASE_ADAPTER",
   "base_release": {
+    "finalization_commit": "0000000000000000000000000000000000000000",
     "release_commit": "0000000000000000000000000000000000000000",
     "release_evidence_commit": "0000000000000000000000000000000000000000",
     "repository": "alsdmlals4-eng/Base",

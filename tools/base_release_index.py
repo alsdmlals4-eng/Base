@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from types import ModuleType
+from typing import Any, Callable
 
 
 RELEASE_LOCK_PATHS = {
@@ -17,9 +18,73 @@ RELEASE_LOCK_PATHS = {
     "9.4.3": Path("base-v9.4.3.lock.json"),
 }
 
+# Historical release locks bind payload and evidence. Compatibility releases are
+# promoted by a later immutable finalization commit, which project adapters also
+# pin. Keep that post-lock identity in the release index rather than rewriting a
+# released lock file.
+RELEASE_FINALIZATION_COMMITS = {
+    "9.4.3": "0b7c94f38d959efc0fc9442274c60b2e268a3c97",
+}
+
+
+def _install_finalization_pin_validation(contract_module: ModuleType) -> None:
+    """Extend the legacy release validator with immutable finalization identity."""
+
+    if getattr(contract_module, "_base_finalization_validation_installed", False):
+        return
+
+    original: Callable[..., tuple[list[str], dict[str, Any] | None, bytes | None]] = (
+        contract_module._release_lock_contract
+    )
+
+    def release_lock_contract(
+        adapter: dict[str, Any], base_repository: Path
+    ) -> tuple[list[str], dict[str, Any] | None, bytes | None]:
+        errors, lock, pinned_registry = original(adapter, base_repository)
+        base_release = adapter.get("base_release", {})
+        if not isinstance(base_release, dict):
+            return errors, lock, pinned_registry
+        finalization_commit = base_release.get("finalization_commit")
+        if finalization_commit is None:
+            return errors, lock, pinned_registry
+
+        version = base_release.get("version")
+        if not isinstance(version, str):
+            return errors, lock, pinned_registry
+        expected = RELEASE_FINALIZATION_COMMITS.get(version)
+        if expected is None:
+            errors.append(
+                f"Adapter finalization_commit is unsupported for Base v{version}: "
+                "no canonical finalization identity is indexed"
+            )
+            return errors, lock, pinned_registry
+        if finalization_commit != expected:
+            errors.append(
+                f"Adapter finalization_commit does not match Base v{version} release index: "
+                f"expected {expected!r}, got {finalization_commit!r}"
+            )
+            return errors, lock, pinned_registry
+        if not contract_module._commit_exists(base_repository, expected):
+            errors.append(f"Base v{version} finalization commit is absent: {expected}")
+            return errors, lock, pinned_registry
+
+        evidence_commit = base_release.get("release_evidence_commit")
+        if (
+            isinstance(evidence_commit, str)
+            and contract_module._commit_exists(base_repository, evidence_commit)
+            and not contract_module._is_ancestor(base_repository, evidence_commit, expected)
+        ):
+            errors.append(
+                f"Base v{version} release evidence is not an ancestor of finalization commit"
+            )
+        return errors, lock, pinned_registry
+
+    contract_module._release_lock_contract = release_lock_contract
+    contract_module._base_finalization_validation_installed = True
+
 
 def install_release_lock_paths(contract_module: ModuleType) -> None:
-    """Install the canonical release map into the legacy contract module.
+    """Install canonical release identities into the legacy contract module.
 
     The project operating implementation predates the v9.4 release line. Keeping
     the evolving release index in this small module avoids rewriting that large,
@@ -28,3 +93,4 @@ def install_release_lock_paths(contract_module: ModuleType) -> None:
 
     contract_module.RELEASE_LOCK_PATHS.clear()
     contract_module.RELEASE_LOCK_PATHS.update(RELEASE_LOCK_PATHS)
+    _install_finalization_pin_validation(contract_module)
