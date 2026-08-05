@@ -597,3 +597,7 @@ Steam·STOVE·Google Play의 콘텐츠 등급·설문·target audience와 실제
 ## Google Play 테스트·공식 출처 재검증
 ## 출시 후 학습·미검증·롤백
 ```
+
+## Cloud Run 게임 백엔드·온라인 서비스 경로
+
+서버 필요성, API·상태 권위, WebSocket·재연결, 비동기 작업, IAM·비밀, AI proxy, 용량·비용·장애·provider exit 판단은 `docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`를 사용한다. `CLOUD_RUN_DEFAULT_CANDIDATE`는 조건부 기본 검토 후보이며 `CLOUD_RUN_REQUIRED`가 아니다. 프로젝트별 입력과 증거는 `templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md`에 기록한다.

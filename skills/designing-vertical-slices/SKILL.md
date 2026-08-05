@@ -216,3 +216,7 @@ References and template:
 - `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md`
 - `skills/reviewing-and-validating-project-changes/references/accessibility-and-performance-validation.md`
 - `templates/planning/VERTICAL_SLICE_PLAN.md`
+
+## Cloud Run backend runtime evidence
+
+`docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`를 소비하는 Vertical Slice는 실제 배포 흐름에서 persistence, reconnect, duplicate submission, dependency failure, rollback과 목표 환경을 검증한다. 정적 문서만으로 `RUNTIME_VERIFIED`를 선언하지 않는다.

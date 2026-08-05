@@ -142,6 +142,15 @@
         "STOVE",
         "Google Play"
       ]
+    },
+    {
+      "role": "GAME_BACKEND_SERVICE_CONTRACT",
+      "template": "templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md",
+      "project_owned": true,
+      "base_template_is_project_truth": false,
+      "decision_gate": "CLOUD_RUN_DEFAULT_CANDIDATE",
+      "unknown_required_fields": "BLOCKED_UNVERIFIED",
+      "runtime_evidence_required_for_production": true
     }
   ],
   "change_rules": [
