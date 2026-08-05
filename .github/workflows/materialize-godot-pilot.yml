@@ -1,0 +1,156 @@
+name: Materialize Godot pilot payload
+
+on:
+  push:
+    branches:
+      - agent/godot-live-editor-automation
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out payload commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+
+      - name: Reconstruct and verify payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .tmp/godot-pilot-payload/chunk-* > /tmp/godot-pilot-payload.b64
+          base64 --decode /tmp/godot-pilot-payload.b64 > /tmp/godot-pilot-payload.tar.gz
+          echo '16d8bdfb2af6d51c2431cdba8aaa70d533f5e69a4648291ef8287d062bc89ddc  /tmp/godot-pilot-payload.tar.gz' | sha256sum --check --strict
+          python - <<'PY'
+          from pathlib import PurePosixPath
+          import tarfile
+
+          expected = {
+              "docs/knowledge/godot/GODOT_PRODUCTION_ADAPTER_READINESS.md",
+              "docs/knowledge/godot/evidence/2026-08-05-godot-4-7-1-runtime-pilot.md",
+              "examples/godot-live-editor-pilot/.gitignore",
+              "examples/godot-live-editor-pilot/GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json",
+              "examples/godot-live-editor-pilot/RUNTIME_EVIDENCE.json",
+              "examples/godot-live-editor-pilot/addons/base_live_editor_pilot/plugin.cfg",
+              "examples/godot-live-editor-pilot/addons/base_live_editor_pilot/plugin.gd",
+              "examples/godot-live-editor-pilot/main.tscn",
+              "examples/godot-live-editor-pilot/project.godot",
+              "examples/godot-live-editor-pilot/scripts/pilot_main.gd",
+              "examples/godot-live-editor-pilot/tools/live_editor_cli.gd",
+              "schemas/godot-live-editor-capability-manifest-v1.schema.json",
+              "schemas/godot-live-editor-operation-envelope-v1.schema.json",
+              "tests/test_godot_live_editor_runtime_contract_hardening.py",
+              "tests/test_godot_live_editor_runtime_pilot.py",
+          }
+          archive = "/tmp/godot-pilot-payload.tar.gz"
+          with tarfile.open(archive, "r:gz") as payload:
+              members = payload.getmembers()
+              names = {member.name for member in members}
+              if names != expected:
+                  missing = sorted(expected - names)
+                  extra = sorted(names - expected)
+                  raise SystemExit(f"payload inventory mismatch: missing={missing} extra={extra}")
+              for member in members:
+                  path = PurePosixPath(member.name)
+                  if path.is_absolute() or ".." in path.parts:
+                      raise SystemExit(f"unsafe payload path: {member.name}")
+                  if not member.isfile():
+                      raise SystemExit(f"non-regular payload member: {member.name}")
+              payload.extractall(".", filter="data")
+          PY
+
+      - name: Connect focused tests to required CI modules
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          v9 = Path("tests/test_v9_machine_contracts.py")
+          v9_text = v9.read_text(encoding="utf-8")
+          v9_anchor = '''from tests.test_godot_live_editor_idempotent_approval import (
+              GodotIdempotentApprovalSchemaTests as _GodotIdempotentApprovalSchemaTests,
+          )
+          '''
+          v9_import = '''from tests.test_godot_live_editor_runtime_contract_hardening import (
+              GodotRuntimeContractHardeningTests as _GodotRuntimeContractHardeningTests,
+          )
+          '''
+          if v9_import not in v9_text:
+              if v9_anchor not in v9_text:
+                  raise SystemExit("v9 test import anchor missing")
+              v9.write_text(v9_text.replace(v9_anchor, v9_anchor + v9_import, 1), encoding="utf-8")
+
+          local = Path("tests/test_local_validation.py")
+          local_text = local.read_text(encoding="utf-8")
+          local_anchor = '''from tests.test_godot_live_editor_contract import (
+              GodotLiveEditorContractTests as _GodotLiveEditorContractTests,
+          )
+          '''
+          local_import = '''from tests.test_godot_live_editor_runtime_pilot import (
+              GodotLiveEditorRuntimePilotTests as _GodotLiveEditorRuntimePilotTests,
+          )
+          '''
+          if local_import not in local_text:
+              if local_anchor not in local_text:
+                  raise SystemExit("local validation import anchor missing")
+              local.write_text(local_text.replace(local_anchor, local_anchor + local_import, 1), encoding="utf-8")
+          PY
+
+      - name: Validate materialized source and evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          paths = (
+              Path("examples/godot-live-editor-pilot/GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json"),
+              Path("examples/godot-live-editor-pilot/RUNTIME_EVIDENCE.json"),
+              Path("schemas/godot-live-editor-capability-manifest-v1.schema.json"),
+              Path("schemas/godot-live-editor-operation-envelope-v1.schema.json"),
+          )
+          for path in paths:
+              json.loads(path.read_text(encoding="utf-8"))
+          PY
+          python -m py_compile \
+            tests/test_godot_live_editor_runtime_contract_hardening.py \
+            tests/test_godot_live_editor_runtime_pilot.py
+          python -m unittest \
+            tests.test_godot_live_editor_contract \
+            tests.test_godot_live_editor_idempotent_approval \
+            tests.test_godot_live_editor_runtime_contract_hardening \
+            tests.test_godot_live_editor_runtime_pilot \
+            -v
+          if grep -R --line-number --fixed-strings '/mnt/data/' \
+            docs/knowledge/godot/GODOT_PRODUCTION_ADAPTER_READINESS.md \
+            docs/knowledge/godot/evidence/2026-08-05-godot-4-7-1-runtime-pilot.md \
+            examples/godot-live-editor-pilot \
+            tests/test_godot_live_editor_runtime_contract_hardening.py \
+            tests/test_godot_live_editor_runtime_pilot.py; then
+            echo 'machine-local path leaked into committed pilot material' >&2
+            exit 1
+          fi
+          if find examples/godot-live-editor-pilot -type f \( -name '*.zip' -o -name 'Godot_*' -o -name '*.uid' \) -print -quit | grep -q .; then
+            echo 'generated or binary material leaked into fixture' >&2
+            exit 1
+          fi
+          git diff --check
+
+      - name: Remove bootstrap material and publish verified fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .tmp/godot-pilot-payload
+          test ! -e .tmp/godot-pilot-payload
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'feat: add verified Godot 4.7.1 runtime pilot'
+          git push origin HEAD:agent/godot-live-editor-automation
