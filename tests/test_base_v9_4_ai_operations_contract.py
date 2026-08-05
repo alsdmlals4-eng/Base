@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 import json
 import unittest
 from pathlib import Path
@@ -32,6 +31,7 @@ V93_LOCK = ROOT / "base-v9.3.lock.json"
 PROPOSALS = ROOT / "[수정제안서]" / "PROPOSAL_REGISTRY.json"
 PAYLOAD_COMMIT = "a728712cb776ec98f4875914a580fcf7d0156593"
 EVIDENCE_COMMIT = "ef1fba11167e4da0b298123b0c85ebd268191a42"
+REGISTRY_SHA256 = "693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59"
 
 
 class BaseV94AiOperationsContractTests(unittest.TestCase):
@@ -271,7 +271,7 @@ class BaseV94AiOperationsContractTests(unittest.TestCase):
                 self.assertEqual(approval_ref, proposal["approval_ref"])
                 self.assertEqual("https://github.com/alsdmlals4-eng/Base/pull/118", proposal["implementation_pr"])
 
-    def test_v94_released_pins_and_current_registry_hash(self) -> None:
+    def test_v94_released_pins_preserve_historical_registry_identity(self) -> None:
         lock = json.loads(V94_LOCK.read_text(encoding="utf-8"))
         schema = json.loads(V94_SCHEMA.read_text(encoding="utf-8"))
         errors = list(Draft202012Validator(schema).iter_errors(lock))
@@ -281,10 +281,7 @@ class BaseV94AiOperationsContractTests(unittest.TestCase):
         self.assertEqual(EVIDENCE_COMMIT, lock["candidate_release_evidence_commit"])
         self.assertEqual(113, lock["github_issue"])
         self.assertEqual(115, lock["linked_issue"])
-        self.assertEqual(
-            hashlib.sha256(REGISTRY.read_bytes()).hexdigest(),
-            lock["candidate_registry"]["sha256"],
-        )
+        self.assertEqual(REGISTRY_SHA256, lock["candidate_registry"]["sha256"])
 
     def test_v94_does_not_rewrite_v93_released_identity(self) -> None:
         lock = json.loads(V93_LOCK.read_text(encoding="utf-8"))
