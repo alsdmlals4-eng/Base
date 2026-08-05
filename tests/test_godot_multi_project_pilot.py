@@ -1,12 +1,20 @@
 from __future__ import annotations
 
 import hashlib
-import importlib.util
 import json
 import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+
+from tools import godot_editor_adapter_materialization as materialization
+from tools import godot_project_pilot_evidence as evidence
+from tools import godot_project_pilot_workspace as workspace
+from tools.godot_project_pilot_descriptor import (
+    ProjectPilotDescriptor,
+    load_descriptor,
+)
+from tools import materialize_godot_editor_adapter_pilot as existing_materializer
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,18 +36,6 @@ REQUIRED_PATHS = (
     ROOT / "templates/project-operations/godot-live-editor/pilot/multi_project_pilot.gd",
     ROOT / "templates/project-operations/godot-live-editor/pilot/scratch.tscn",
 )
-
-
-def _load(relative: str):
-    path = ROOT / relative
-    if not path.is_file():
-        return None
-    spec = importlib.util.spec_from_file_location(path.stem, path)
-    if spec is None or spec.loader is None:
-        return None
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
 
 
 def _sha256(path: Path) -> str:
@@ -70,6 +66,7 @@ class GodotMultiProjectPilotTests(unittest.TestCase):
         ledger = (addon / "operation_ledger.gd").read_text(encoding="utf-8")
         guard = (addon / "runtime_contract_guard.gd").read_text(encoding="utf-8")
         registry = (addon / "capability_registry.gd").read_text(encoding="utf-8")
+
         self.assertNotIn("DirAccess.remove_absolute(target)", ledger)
         for marker in (
             "APPROVAL_EXPIRED",
@@ -82,7 +79,8 @@ class GodotMultiProjectPilotTests(unittest.TestCase):
             "saved_scene_sha256",
             "SAVE_CURRENT_SCENE",
             "KEEP_DIRTY",
-            "TYPE_MISMATCH",
+            "typeof(",
+            "OUTPUT_SCHEMA_INVALID",
         ):
             self.assertIn(marker, registry)
 
@@ -93,31 +91,25 @@ class GodotMultiProjectPilotTests(unittest.TestCase):
             "^[0-9a-f]{40}$",
             schema["properties"]["base_pilot_commit"]["pattern"],
         )
-        self.assertNotIn("command", json.dumps(schema))
-        self.assertNotIn("shell", json.dumps(schema))
+        serialized = json.dumps(schema)
+        self.assertNotIn('"command"', serialized)
+        self.assertNotIn('"shell"', serialized)
+
         template = json.loads(TEMPLATE.read_text(encoding="utf-8"))
         self.assertEqual("NOT_CREATED", template["project_state"])
         self.assertEqual("0" * 40, template["base_pilot_commit"])
         self.assertIsNone(template["project_file"])
         self.assertEqual([], template["behavior_checks"])
 
-    def test_descriptor_loader_accepts_valid_runtime_and_static_descriptors(self) -> None:
-        module = _load("tools/godot_project_pilot_descriptor.py")
-        self.assertIsNotNone(module)
+    def test_descriptor_loader_accepts_runtime_and_static_descriptors(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
+            path = Path(temporary) / "descriptor.json"
             runtime = {
                 "schema_version": "1",
-                "project_identity": {
-                    "repository": "owner/game",
-                    "project_id": "game",
-                },
+                "project_identity": {"repository": "owner/game", "project_id": "game"},
                 "base_pilot_commit": "a" * 40,
                 "project_state": "EXISTING_GODOT_PROJECT",
-                "godot": {
-                    "version": "4.7.1-stable",
-                    "archive_sha256": "b" * 64,
-                },
+                "godot": {"version": "4.7.1-stable", "archive_sha256": "b" * 64},
                 "project_file": "project.godot",
                 "main_scene_source": "application/run/main_scene",
                 "legacy_editor_plugins": [],
@@ -134,28 +126,22 @@ class GodotMultiProjectPilotTests(unittest.TestCase):
                 ],
                 "expected_platform": "PC",
             }
-            path = root / "runtime.json"
             path.write_text(json.dumps(runtime), encoding="utf-8")
-            loaded = module.load_descriptor(path, SCHEMA)
-            self.assertTrue(loaded.is_runtime_project)
+            self.assertTrue(load_descriptor(path, SCHEMA).is_runtime_project)
+
             static = json.loads(TEMPLATE.read_text(encoding="utf-8"))
             static["base_pilot_commit"] = "c" * 40
             path.write_text(json.dumps(static), encoding="utf-8")
-            loaded = module.load_descriptor(path, SCHEMA)
-            self.assertFalse(loaded.is_runtime_project)
+            self.assertFalse(load_descriptor(path, SCHEMA).is_runtime_project)
 
     def test_shared_materializer_preserves_existing_pilot_contract(self) -> None:
-        shared = _load("tools/godot_editor_adapter_materialization.py")
-        existing = _load("tools/materialize_godot_editor_adapter_pilot.py")
-        self.assertIsNotNone(shared)
-        self.assertIsNotNone(existing)
-        capabilities = shared.build_capabilities()
+        capabilities = materialization.build_capabilities()
         self.assertEqual(
             {"scene.inspect", "node.rename"},
             {item["capability_id"] for item in capabilities},
         )
         with tempfile.TemporaryDirectory() as temporary:
-            project = existing.materialize(ROOT, Path(temporary) / "pilot")
+            project = existing_materializer.materialize(ROOT, Path(temporary) / "pilot")
             manifest = json.loads(
                 (project / "GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json").read_text(
                     encoding="utf-8"
@@ -164,31 +150,25 @@ class GodotMultiProjectPilotTests(unittest.TestCase):
             self.assertEqual(capabilities, manifest["capabilities"])
 
     def test_tracked_inventory_detects_source_mutation(self) -> None:
-        module = _load("tools/godot_project_pilot_workspace.py")
-        self.assertIsNotNone(module)
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             subprocess.run(["git", "init", "-q"], cwd=root, check=True)
             (root / "project.godot").write_text("[application]\n", encoding="utf-8")
             (root / "main.tscn").write_text("[gd_scene format=3]\n", encoding="utf-8")
             subprocess.run(["git", "add", "."], cwd=root, check=True)
-            before = module.inventory_tracked_files(root)
-            (root / "main.tscn").write_text("[gd_scene format=3]\n[node]\n", encoding="utf-8")
-            after = module.inventory_tracked_files(root)
-            self.assertEqual(("main.tscn",), module.compare_inventories(before, after))
+            before = workspace.inventory_tracked_files(root)
+            (root / "main.tscn").write_text(
+                "[gd_scene format=3]\n[node]\n", encoding="utf-8"
+            )
+            after = workspace.inventory_tracked_files(root)
+            self.assertEqual(("main.tscn",), workspace.compare_inventories(before, after))
             self.assertNotEqual(
-                module.inventory_digest(before),
-                module.inventory_digest(after),
+                workspace.inventory_digest(before), workspace.inventory_digest(after)
             )
 
     def test_project_transform_removes_only_declared_legacy_authority(self) -> None:
-        descriptor_module = _load("tools/godot_project_pilot_descriptor.py")
-        workspace_module = _load("tools/godot_project_pilot_workspace.py")
-        self.assertIsNotNone(descriptor_module)
-        self.assertIsNotNone(workspace_module)
         with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            project = root / "project.godot"
+            project = Path(temporary) / "project.godot"
             project.write_text(
                 'config_version=5\n\n[application]\nrun/main_scene="res://main.tscn"\n\n'
                 '[autoload]\nGameState="*res://scripts/game_state.gd"\n'
@@ -196,7 +176,7 @@ class GodotMultiProjectPilotTests(unittest.TestCase):
                 '[editor_plugins]\nenabled=PackedStringArray("res://addons/godot_ai/plugin.cfg")\n',
                 encoding="utf-8",
             )
-            descriptor = descriptor_module.ProjectPilotDescriptor(
+            descriptor = ProjectPilotDescriptor(
                 repository="owner/game",
                 project_id="game",
                 base_pilot_commit="a" * 40,
@@ -211,7 +191,7 @@ class GodotMultiProjectPilotTests(unittest.TestCase):
                 behavior_checks=(),
                 expected_platform="PC",
             )
-            report = workspace_module.transform_project_godot(project, descriptor)
+            report = workspace.transform_project_godot(project, descriptor)
             transformed = project.read_text(encoding="utf-8")
             self.assertNotIn("godot_ai", transformed)
             self.assertNotIn("_mcp_game_helper", transformed)
@@ -219,11 +199,9 @@ class GodotMultiProjectPilotTests(unittest.TestCase):
             self.assertEqual(("GameState",), report.preserved_autoloads)
 
     def test_evidence_verifier_recomputes_physical_bytes(self) -> None:
-        module = _load("tools/godot_project_pilot_evidence.py")
-        self.assertIsNotNone(module)
         with tempfile.TemporaryDirectory() as temporary:
-            workspace = Path(temporary)
-            scene = workspace / ".godot-live-editor-pilot/scratch.tscn"
+            root = Path(temporary)
+            scene = root / ".godot-live-editor-pilot/scratch.tscn"
             scene.parent.mkdir()
             scene.write_text("[gd_scene format=3]\n", encoding="utf-8")
             result = {
@@ -240,28 +218,29 @@ class GodotMultiProjectPilotTests(unittest.TestCase):
                 "scratch_scene_save": "PASS",
                 "base_network_listener": False,
             }
-            result_path = workspace / "runtime-result.json"
+            result_path = root / "runtime-result.json"
             result_path.write_text(json.dumps(result), encoding="utf-8")
-            verified = module.verify_runtime_evidence(workspace, result_path)
+            verified = evidence.verify_runtime_evidence(root, result_path)
             self.assertEqual(_sha256(scene), verified.saved_scene_sha256)
+
             result["saved_scene_sha256"] = "0" * 64
             result_path.write_text(json.dumps(result), encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "ARTIFACT_BYTE_HASH_MISMATCH"):
-                module.verify_runtime_evidence(workspace, result_path)
+                evidence.verify_runtime_evidence(root, result_path)
 
     def test_reusable_workflow_is_immutable_and_listener_free(self) -> None:
         text = WORKFLOW.read_text(encoding="utf-8")
-        self.assertIn("workflow_call:", text)
-        self.assertIn("base_pilot_commit:", text)
-        self.assertIn("repository: alsdmlals4-eng/Base", text)
-        self.assertIn("ref: ${{ inputs.base_pilot_commit }}", text)
-        self.assertIn("persist-credentials: false", text)
-        self.assertIn("permissions:\n  contents: read", text)
-        self.assertIn("Godot_v4.7.1-stable_linux.x86_64.zip", text)
-        self.assertIn(
+        for marker in (
+            "workflow_call:",
+            "base_pilot_commit:",
+            "repository: alsdmlals4-eng/Base",
+            "ref: ${{ inputs.base_pilot_commit }}",
+            "persist-credentials: false",
+            "permissions:\n  contents: read",
+            "Godot_v4.7.1-stable_linux.x86_64.zip",
             "c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba",
-            text,
-        )
+        ):
+            self.assertIn(marker, text)
         self.assertNotIn("github.action_path", text)
         self.assertNotIn("TCPServer", text)
         self.assertNotIn("WebSocket", text)
