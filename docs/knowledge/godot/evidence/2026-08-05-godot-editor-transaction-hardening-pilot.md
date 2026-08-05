@@ -7,7 +7,7 @@ This record covers the adversarial hardening layered on the merged PR #165 Edito
 ```yaml
 repository: alsdmlals4-eng/Base
 pull_request: 166
-runtime_reviewed_head: d88917d404958f8036d4e9e4f6b4f11e4092a096
+runtime_reviewed_head: 57805db4d4328cb48d13bd05c0931ccb0f5e0bed
 base_main: 48273f79ab261a1f064adfc7431c99a74a22c33a
 engine: 4.7.1.stable.official.a13da4feb
 mode: --editor --headless
@@ -75,7 +75,7 @@ Both Pilot variables were changed to explicit `String` declarations and covered 
 - replace atomic JSON records without unlinking the prior target first;
 - emit canonical `result_hash` and RFC 3339 evidence/ledger timestamps;
 - preserve one canonical JSON/hash implementation in the runtime guard;
-- add a stale-precondition negative Runtime case;
+- add stale-precondition, request-hash tamper, expired-approval and approval-binding negative Runtime cases;
 - add an actual 64-request bounded queue/throughput Runtime case.
 
 ## Actual Runtime GREEN
@@ -90,16 +90,23 @@ editor_undo: PASS
 node_rename_save_current_scene: PASS
 stale_state_block: PASS
 stale_code: TARGET_STATE_CONFLICT
+request_hash_tamper_block: PASS
+request_hash_code: REQUEST_HASH_MISMATCH
+expired_approval_block: PASS
+expired_approval_code: APPROVAL_EXPIRED
+approval_binding_tamper_block: PASS
+approval_binding_code: APPROVAL_BINDING_MISMATCH
 canonical_result_hash: PASS
 ledger_states: [COMPLETED, COMPLETED]
 queue_capacity_64: PASS
 request_65: QUEUE_FULL
 batch_64_completed: 64
+batch_64_elapsed_usec: 445159
 network_listener_enabled: false
 saved_scene_byte_sha256: PASS
 ```
 
-The stale request produced no mutation and no mutation ledger entry.
+All four adversarial requests were rejected without their requested mutation. The stale, expired-approval and approval-binding mutation requests produced no mutation ledger entry. The hash-tampered read-only request was rejected before queueing.
 
 ## Efficiency evidence
 
@@ -122,7 +129,7 @@ process_wall_ms:
   - 3756
 ```
 
-The throughput includes the deliberate one-request-per-Editor-frame policy and evidence generation in a minimal Scene. It is not a large-project benchmark. Scene observation hashes the active `.tscn`, so cost remains linear in Scene file size.
+The final run including request-hash and approval rejection cases also completed the 64-request batch in `445159` microseconds. The throughput includes the deliberate one-request-per-Editor-frame policy and evidence generation in a minimal Scene. It is not a large-project benchmark. Scene observation hashes the active `.tscn`, so cost remains linear in Scene file size.
 
 Two longer repeated-process loops stalled on their eighth clean Editor launch before project initialization and produced no Plugin stderr or result. A fresh standalone launch immediately passed. This is recorded as `EDITOR_PROCESS_SOAK_FLAKE: BLOCKED_ENVIRONMENT`, not as adapter PASS or adapter failure. Process-start soak reliability is therefore not proven by this evidence.
 
@@ -147,4 +154,4 @@ production_adapter_ready: NOT_READY
 
 ## Verdict
 
-The closed in-process adapter functions under the isolated Godot 4.7.1 Editor Pilot, rejects stale requests, preserves canonical hash and approval boundaries, enforces its queue ceiling, and completes the bounded 64-request batch consistently in completed runs. This supports PR B hardening readiness only; it does not satisfy production transport, real-project adoption, Windows, soak, or human usability gates.
+The closed in-process adapter functions under the isolated Godot 4.7.1 Editor Pilot, rejects stale and tampered requests, enforces approval expiry and exact binding, preserves canonical result hashes, enforces its queue ceiling, and completes the bounded 64-request batch consistently in completed runs. This supports PR B hardening readiness only; it does not satisfy production transport, real-project adoption, Windows, soak, or human usability gates.
