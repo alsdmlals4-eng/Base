@@ -18,6 +18,7 @@
 - Google Play production-first sequencing is conditional on current account and testing eligibility; STOVE fees and terms remain `VERIFY_CURRENT_OFFICIAL_SOURCE` unless an authoritative current contract is available.
 - Store fees, account gates, SDK/API rules, and review policies are checked-at facts, not permanent constants.
 - Same-day public launch is not required.
+- `docs/CHANGELOG.md` records completed Base changes, so this Draft implementation PR does not predeclare itself complete; the integrated change is recorded after merge.
 - No new active Skill, Skill Registry entry, release lock, project repository, Google Sheet, or platform account change is in scope.
 
 ---
@@ -31,19 +32,17 @@
 - Consumes: current Base discovery and knowledge-hub paths.
 - Produces: a focused contract that fails while the Guide, Template, and discovery links are absent.
 
-- [ ] **Step 1: Write the failing contract test**
+- [x] **Step 1: Write the failing contract test**
 
 Assert the specialized Guide and Template exist; require conditional eligibility, shared-core/platform-adapter boundaries, mobile UI/input/lifecycle defaults, staged release waves, current-fee/test-gate caveats, discovery links, and no new broad Skill.
 
-- [ ] **Step 2: Run the focused test on the test-only PR head**
+- [x] **Step 2: Run an isolated RED contract probe**
 
-Run through the repository's pull-request GitHub Actions path.
+Observed failure: the Guide and Template paths were both missing, and the probe exited with status 1 for that reason.
 
-Expected: `FAIL` because the Guide, Template, and routing references do not yet exist.
+- [x] **Step 3: Record the exact failing head and failure cause in the Draft PR**
 
-- [ ] **Step 3: Record the exact failing head and failure cause in the Draft PR**
-
-Expected evidence: failure is caused by missing production contract, not syntax or unrelated regressions.
+Draft PR #178 records test-only head `fcace296ac940acd7c8c9f6496c4fe08ce1648fd`. Pull-request Actions had not yet been created at that head, so no CI failure is claimed; the isolated RED probe is the available evidence.
 
 ### Task 2: Conditional Guide and Project Profile
 
@@ -74,7 +73,6 @@ Reject forced dual-target development, code-sharing percentage targets, same-day
 - Modify: `START_HERE.md`
 - Modify: `docs/knowledge/game-development/README.md`
 - Modify: `skills/analyzing-and-refining-game-concepts/SKILL.md`
-- Modify: `docs/CHANGELOG.md`
 
 **Interfaces:**
 - Consumes: the specialized Guide and Template.
@@ -82,15 +80,15 @@ Reject forced dual-target development, code-sharing percentage targets, same-day
 
 - [ ] **Step 1: Add minimal discovery links**
 
-Link the Guide from the root README, START_HERE request router, and knowledge-hub map without duplicating its detailed rules.
+Link the Guide and Profile from the root README, START_HERE request router, and knowledge-hub map without duplicating detailed rules.
 
 - [ ] **Step 2: Connect the existing Skill**
 
 During `constrain`, `poc-contract`, or `production-gate`, require the Guide/Profile only when Windows+Android dual targeting or staged STOVE·Google Play·Steam delivery materially affects the project.
 
-- [ ] **Step 3: Record the Base change**
+- [ ] **Step 3: Preserve completion-record authority**
 
-Add a concise Changelog entry with the conditional scope and evidence limits.
+Do not add a Draft-only entry to `docs/CHANGELOG.md`. Record the completed change after merge with the integrated commit and validation evidence.
 
 ### Task 4: Green Verification and PR Evidence
 
