@@ -12,11 +12,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "examples/godot-live-editor-v2-editor-pilot"
-ADDON = (
-    ROOT
-    / "templates/project-operations/godot-live-editor/addons/base_live_editor_adapter"
-)
+ADDON = ROOT / "templates/project-operations/godot-live-editor/addons/base_live_editor_adapter"
 MATERIALIZER = ROOT / "tools/materialize_godot_editor_adapter_pilot.py"
+PILOT_PLUGIN = FIXTURE / "addons/base_live_editor_adapter_pilot/plugin.gd"
 
 
 def _load_materializer():
@@ -42,7 +40,7 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
             FIXTURE / "main.tscn",
             FIXTURE / "GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json",
             FIXTURE / "addons/base_live_editor_adapter_pilot/plugin.cfg",
-            FIXTURE / "addons/base_live_editor_adapter_pilot/plugin.gd",
+            PILOT_PLUGIN,
             FIXTURE / ".gitignore",
             MATERIALIZER,
         ):
@@ -55,10 +53,7 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             project = module.materialize(ROOT, Path(temporary) / "pilot")
             copied = project / "addons/base_live_editor_adapter"
-            self.assertEqual(
-                (ADDON / "plugin.gd").read_bytes(),
-                (copied / "plugin.gd").read_bytes(),
-            )
+            self.assertEqual((ADDON / "plugin.gd").read_bytes(), (copied / "plugin.gd").read_bytes())
             self.assertFalse(list(project.rglob("*.uid")))
             manifest = json.loads(
                 (project / "GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json").read_text(
@@ -79,6 +74,20 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
                 {"scene.inspect", "node.rename"},
                 {item["capability_id"] for item in manifest["capabilities"]},
             )
+
+    def test_runtime_pilot_uses_canonical_request_hashes(self) -> None:
+        guard = (ADDON / "runtime_contract_guard.gd").read_text(encoding="utf-8")
+        pilot = PILOT_PLUGIN.read_text(encoding="utf-8")
+        for marker in (
+            "REQUEST_HASH_MISMATCH",
+            "operation_request_material",
+            "canonical_json_sha256",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, guard)
+        self.assertNotIn('"a".repeat(64)', pilot)
+        self.assertIn("_guard.operation_request_material", pilot)
+        self.assertIn("_guard.canonical_json_sha256", pilot)
 
     @unittest.skipUnless(
         os.environ.get("GODOT_BIN"),
@@ -129,10 +138,7 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
                 timeout=180,
                 env=environment,
             )
-            result_path = (
-                project
-                / "artifacts/godot-live-editor/editor_transaction_pilot_result.json"
-            )
+            result_path = project / "artifacts/godot-live-editor/editor_transaction_pilot_result.json"
             self.assertEqual(
                 0,
                 completed.returncode,
