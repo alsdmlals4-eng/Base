@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://base.local/schemas/godot-project-pilot-v1.schema.json",
+  "title": "Godot Project Pilot Descriptor v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "project_identity",
+    "base_pilot_commit",
+    "project_state",
+    "godot",
+    "project_file",
+    "main_scene_source",
+    "legacy_editor_plugins",
+    "legacy_autoloads",
+    "legacy_disable_mode",
+    "source_mutation_policy",
+    "scratch_scene_path",
+    "behavior_checks",
+    "expected_platform"
+  ],
+  "properties": {
+    "schema_version": {"const": "1"},
+    "project_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "project_id"],
+      "properties": {
+        "repository": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$",
+          "maxLength": 200
+        },
+        "project_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,62}$"
+        }
+      }
+    },
+    "base_pilot_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "project_state": {
+      "enum": ["EXISTING_GODOT_PROJECT", "NOT_CREATED"]
+    },
+    "godot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "archive_sha256"],
+      "properties": {
+        "version": {"const": "4.7.1-stable"},
+        "archive_sha256": {
+          "const": "c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba"
+        }
+      }
+    },
+    "project_file": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$",
+          "maxLength": 240
+        },
+        {"type": "null"}
+      ]
+    },
+    "main_scene_source": {
+      "enum": ["application/run/main_scene", "NOT_APPLICABLE"]
+    },
+    "legacy_editor_plugins": {
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 16,
+      "items": {
+        "type": "string",
+        "pattern": "^res://(?!.*\\.\\.)[A-Za-z0-9_./-]+/plugin\\.cfg$",
+        "maxLength": 240
+      }
+    },
+    "legacy_autoloads": {
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 32,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,63}$"
+      }
+    },
+    "legacy_disable_mode": {"const": "TEMPORARY_COPY_ONLY"},
+    "source_mutation_policy": {"const": "FORBIDDEN"},
+    "scratch_scene_path": {
+      "const": "res://.godot-live-editor-pilot/scratch.tscn"
+    },
+    "behavior_checks": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "target", "timeout_seconds"],
+        "properties": {
+          "kind": {
+            "enum": [
+              "PYTHON_UNITTEST_MODULE",
+              "PYTHON_PYTEST_PATH",
+              "GODOT_SCRIPT"
+            ]
+          },
+          "target": {"type": "string", "minLength": 1, "maxLength": 240},
+          "timeout_seconds": {"type": "integer", "minimum": 1, "maximum": 300}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"kind": {"const": "PYTHON_UNITTEST_MODULE"}}},
+            "then": {
+              "properties": {
+                "target": {
+                  "pattern": "^tests(?:\\.[A-Za-z_][A-Za-z0-9_]*)+$"
+                }
+              }
+            }
+          },
+          {
+            "if": {"properties": {"kind": {"const": "PYTHON_PYTEST_PATH"}}},
+            "then": {
+              "properties": {
+                "target": {
+                  "pattern": "^tests/[A-Za-z0-9_./-]+\\.py(?:::[A-Za-z_][A-Za-z0-9_]*)?$"
+                }
+              }
+            }
+          },
+          {
+            "if": {"properties": {"kind": {"const": "GODOT_SCRIPT"}}},
+            "then": {
+              "properties": {
+                "target": {
+                  "pattern": "^res://tests/[A-Za-z0-9_./-]+\\.gd$"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "expected_platform": {"enum": ["PC", "ANDROID", "NOT_CREATED"]}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"project_state": {"const": "NOT_CREATED"}}},
+      "then": {
+        "properties": {
+          "project_file": {"type": "null"},
+          "main_scene_source": {"const": "NOT_APPLICABLE"},
+          "legacy_editor_plugins": {"maxItems": 0},
+          "legacy_autoloads": {"maxItems": 0},
+          "behavior_checks": {"maxItems": 0},
+          "expected_platform": {"const": "NOT_CREATED"}
+        }
+      },
+      "else": {
+        "properties": {
+          "project_file": {"type": "string"},
+          "main_scene_source": {"const": "application/run/main_scene"},
+          "expected_platform": {"enum": ["PC", "ANDROID"]}
+        }
+      }
+    }
+  ]
+}

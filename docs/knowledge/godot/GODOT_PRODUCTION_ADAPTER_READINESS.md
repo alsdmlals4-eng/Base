@@ -99,6 +99,30 @@ network_listener_disabled: RUNTIME_PASS
 
 상세 근거와 한계는 `docs/knowledge/godot/evidence/2026-08-05-godot-editor-transaction-hardening-pilot.md`에 기록한다.
 
+## Base C0 multi-project Pilot runner
+
+Base C0는 실제 프로젝트 source checkout을 직접 변경하지 않고 disposable workspace에서만 legacy authority disable, main Scene read-only inspect, runner-owned scratch Scene rename·Undo·save와 physical byte hash 검증을 수행하는 재사용 runner를 제공한다.
+
+```yaml
+multi_project_pilot_runner: STATIC_PASS
+base_c0_descriptor_schema: STATIC_PASS
+base_c0_source_inventory: STATIC_PASS
+base_c0_disposable_workspace: STATIC_PASS
+base_c0_legacy_copy_transform: STATIC_PASS
+base_c0_scratch_only_editor_wrapper: STATIC_PASS
+base_c0_physical_evidence_verifier: STATIC_PASS
+base_c0_reusable_workflow: STATIC_PASS
+real_project_pilots: NOT_RUN
+production_transport: NOT_IMPLEMENTED
+runtime_debugger: NOT_IMPLEMENTED
+windows_production_operation: NOT_RUN
+physical_input_validation: NOT_RUN
+human_editor_usability: HUMAN_NOT_RUN
+production_adapter_ready: NOT_READY
+```
+
+`STATIC_PASS`는 Base C0 구현과 단위·계약 검증 상태이며 실제 게임 저장소 Runtime PASS가 아니다. 프로젝트별 증거는 Switchy Express clean Pilot 이후 독립 Draft PR과 post-merge push artifact에서 수집하고 Base C1에서 물리적으로 재검증한다.
+
 ## Production runtime gates
 
 ```yaml

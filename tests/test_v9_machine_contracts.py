@@ -13,6 +13,12 @@ from tests.test_godot_editor_transaction_adapter import (
 from tests.test_godot_editor_transaction_adapter_runtime import (
     GodotEditorTransactionAdapterRuntimeTests as _GodotEditorTransactionAdapterRuntimeTests,
 )
+from tests.test_godot_multi_project_pilot import (
+    GodotMultiProjectPilotTests as _GodotMultiProjectPilotTests,
+)
+from tests.test_godot_multi_project_pilot_adversarial import (
+    GodotMultiProjectPilotAdversarialTests as _GodotMultiProjectPilotAdversarialTests,
+)
 from tests.test_godot_live_editor_adapter_resolution import (
     GodotAdapterResolutionTests as _GodotAdapterResolutionTests,
 )
@@ -38,7 +44,6 @@ from tests.test_platform_review_asset_rights_reference_production import (
     PlatformReviewAssetRightsReferenceProductionTests
     as _PlatformReviewAssetRightsReferenceProductionTests,
 )
-
 from tests.test_game_entitlement_integrity_drm_capability import (
     GameEntitlementIntegrityDrmCapabilityTests
     as _GameEntitlementIntegrityDrmCapabilityTests,
@@ -125,6 +130,26 @@ class V9MachineContractTests(unittest.TestCase):
                 self.assertTrue(record["do_not_reassess"])
                 self.assertTrue(record["replacement_paths"])
                 self.assertTrue(record["verification_paths"])
+
+    def test_c0_reusable_workflow_invokes_runner_as_package_module(self) -> None:
+        workflow = read(".github/workflows/reusable-godot-project-pilot.yml")
+        self.assertIn("PYTHONPATH: ${{ github.workspace }}/_base_c0", workflow)
+        self.assertIn("python -m tools.godot_multi_project_pilot", workflow)
+        self.assertNotIn("python _base_c0/tools/godot_multi_project_pilot.py", workflow)
+
+    def test_c0_binds_archive_timeout_and_unicode_evidence_contracts(self) -> None:
+        schema = json.loads(read("schemas/godot-project-pilot-v1.schema.json"))
+        self.assertEqual(
+            "c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba",
+            schema["properties"]["godot"]["properties"]["archive_sha256"]["const"],
+        )
+        runner = read("tools/godot_multi_project_pilot.py")
+        self.assertIn("except subprocess.TimeoutExpired", runner)
+        self.assertIn("PROCESS_TIMEOUT", runner)
+        self.assertIn("return 5", runner)
+        evidence = read("tools/godot_project_pilot_evidence.py")
+        self.assertIn("class EvidenceVerificationError", evidence)
+        self.assertGreaterEqual(evidence.count("ensure_ascii=False"), 3)
 
 
 if __name__ == "__main__":
