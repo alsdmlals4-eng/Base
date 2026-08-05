@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
@@ -82,9 +83,12 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn("validate_for_enqueue", source)
         self.assertIn("validate_before_execute", source)
 
-    def test_guard_rechecks_full_approval_binding_and_expiry(self) -> None:
+    def test_guard_rechecks_hash_approval_binding_and_expiry(self) -> None:
         source = (ADDON / "runtime_contract_guard.gd").read_text(encoding="utf-8")
         for marker in (
+            "REQUEST_HASH_MISMATCH",
+            "operation_request_material",
+            "canonical_json_sha256",
             "token_binding",
             "_approval_binding",
             "APPROVAL_BINDING_MISMATCH",
@@ -152,6 +156,7 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertNotIn("character.is_valid_identifier()", ledger)
         for source in (ledger, evidence):
             self.assertIn("SAFE_NAME_CHARACTERS", source)
+            self.assertIn("MAX_SAFE_NAME_LENGTH", source)
             self.assertNotIn("DirAccess.remove_absolute(target_path)", source)
             self.assertIn("JSON.stringify(payload) +", source)
 
@@ -188,16 +193,11 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
 
     def test_executor_returns_canonical_result_hash_and_rfc3339_evidence(self) -> None:
         source = (ADDON / "editor_transaction_executor.gd").read_text(encoding="utf-8")
-        for marker in (
-            '"result_hash"',
-            "_canonical_json_sha256",
-            "_canonical_json",
-            "HashingContext.HASH_SHA256",
-            "get_datetime_string_from_system(true, false)",
-            '+ "Z"',
-        ):
-            with self.subTest(marker=marker):
-                self.assertIn(marker, source)
+        self.assertIn('"result_hash"', source)
+        self.assertIn("_guard.canonical_json_sha256(data)", source)
+        self.assertNotIn("func _canonical_json_sha256", source)
+        self.assertIn("get_datetime_string_from_system(true, false)", source)
+        self.assertIn('+ "Z"', source)
 
     def test_adapter_work_is_bounded_and_streamed(self) -> None:
         queue = (ADDON / "request_queue.gd").read_text(encoding="utf-8")
@@ -223,6 +223,33 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn('const IN_PROCESS_ENDPOINT := "in-process-editor-plugin"', source)
         self.assertIn('transport.get("endpoint_identity") != IN_PROCESS_ENDPOINT', source)
         self.assertIn('transport.get("bind_host") != null', source)
+
+    def test_active_docs_and_source_template_keep_transport_states_distinct(self) -> None:
+        active_paths = (
+            ADDON / "README.md",
+            ROOT / "templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md",
+            ROOT / "templates/project-operations/godot-live-editor/AGENTS_FRAGMENT.md",
+        )
+        for path in active_paths:
+            with self.subTest(path=path):
+                text = path.read_text(encoding="utf-8")
+                self.assertIn("PROJECT_DEFINED", text)
+                self.assertIn("in-process-editor-plugin", text)
+                self.assertIn("bind_host: null", text)
+                self.assertNotIn(
+                    "configured v2 Manifest and `transport.kind: DISABLED`",
+                    text,
+                )
+
+        source_manifest = json.loads(
+            (
+                ROOT
+                / "examples/godot-live-editor-v2-editor-pilot/GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual("NOT_CONFIGURED", source_manifest["configuration_state"])
+        self.assertEqual("DISABLED", source_manifest["transport"]["kind"])
+        self.assertFalse(source_manifest["transport"]["enabled"])
 
 
 if __name__ == "__main__":
