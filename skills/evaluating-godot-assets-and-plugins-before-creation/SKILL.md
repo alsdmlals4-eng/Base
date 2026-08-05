@@ -91,6 +91,32 @@ UNVERIFIED   필수 정보나 실행 증거가 없음
 9. 적합한 후보가 없거나 프로젝트 코어 차별화가 필요한 경우에만 `BUILD_CUSTOM`으로 전환한다.
 10. 채택 시 버전·출처·라이선스·변경 사항·검증·제거 절차를 프로젝트 기록에 남긴다.
 
+## Asset rights and reference-production route
+
+공용 기준은 `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`다. 후보는 제품에 직접 넣는지, 참조만 하는지, 새로 만드는지를 먼저 분리한다.
+
+```text
+ADOPT / ADAPT
+→ direct inclusion
+→ LICENSED_THIRD_PARTY 또는 OPEN_SOURCE
+→ commercial_use와 distribution_in_game_build 확인
+→ 필요한 attribution·NOTICE·source·조건 기록
+
+REFERENCE_ONLY
+→ REFERENCE_TO_ORIGINAL
+→ 원본을 build·marketing package에서 제외
+→ reference_brief와 forbidden_expression 작성
+→ 별도 final asset record와 similarity review
+
+BUILD_CUSTOM
+→ OWNED_ORIGINAL / COMMISSIONED_ORIGINAL / AI_GENERATED / MIXED_ROUTE
+→ 입력·모델·약관·계약·작업 파일 증빙
+```
+
+`distribution_in_game_build`와 `raw_source_redistribution`은 분리한다. 상업 사용 가능 문구만으로 게임 포함 배포를 추론하지 않고, 원본 재배포가 불필요하면 `NOT_REQUIRED`로 기록한다.
+
+필수 권리·출처·약관·계약·참조 유사성 증거가 없으면 채택 판정은 `RELEASE_BLOCKED_UNVERIFIED`다. “수정했다”, “AI로 다시 만들었다”, “영감을 받았다”는 독립 제작 증거가 아니다.
+
 ## Core-system rule
 
 프로젝트의 핵심 재미, 핵심 판정, 세이브 정본, 게임 데이터 소유권은 범용 플러그인에 무비판적으로 위임하지 않는다. 외부 도구는 가능한 한 adapter·wrapper 뒤에 두고 교체 가능한 경계를 유지한다.
@@ -103,10 +129,12 @@ UNVERIFIED   필수 정보나 실행 증거가 없음
 ## 검색한 공식·오픈소스·상용 소스
 ## 후보 비교표
 ## 라이선스·가격·유지보수·종속 위험
-## ADOPT·ADAPT·TRIAL·REJECT·BUILD_CUSTOM 판정
+## LICENSED_THIRD_PARTY·OPEN_SOURCE·REFERENCE_TO_ORIGINAL·BUILD_CUSTOM 판정
+## commercial_use·distribution_in_game_build·raw_source_redistribution
 ## 승인 필요한 구매·설치·계정·권한
 ## PoC·통합·제거·회귀 검증
 ## 직접 제작으로 남은 최소 범위
+## RELEASE_BLOCKED_UNVERIFIED 항목
 ```
 
 ## Quality gate
@@ -116,8 +144,10 @@ UNVERIFIED   필수 정보나 실행 증거가 없음
 - 가격이나 별점만으로 채택하지 않았다.
 - 구매와 설치를 조사와 혼동하지 않았다.
 - 프로젝트 코어와 외부 도구의 소유권 경계가 명확하다.
+- 직접 포함과 `REFERENCE_TO_ORIGINAL`이 분리돼 있다.
+- 게임 포함 배포와 원본 재배포 권리가 분리돼 있다.
 - 제거·롤백·저장 호환성 계획이 있다.
-- 실행하지 않은 플랫폼·성능·보안 검증을 통과로 보고하지 않았다.
+- 실행하지 않은 플랫폼·성능·보안·법률 검증을 통과로 보고하지 않았다.
 
 ## Do not use
 
