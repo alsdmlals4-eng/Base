@@ -20,6 +20,7 @@ from tools.godot_project_pilot_descriptor import (
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "schemas/godot-project-pilot-v1.schema.json"
+GODOT_ARCHIVE_SHA256 = "c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba"
 
 
 def _runtime_descriptor() -> dict[str, object]:
@@ -28,7 +29,10 @@ def _runtime_descriptor() -> dict[str, object]:
         "project_identity": {"repository": "owner/game", "project_id": "game"},
         "base_pilot_commit": "a" * 40,
         "project_state": "EXISTING_GODOT_PROJECT",
-        "godot": {"version": "4.7.1-stable", "archive_sha256": "b" * 64},
+        "godot": {
+            "version": "4.7.1-stable",
+            "archive_sha256": GODOT_ARCHIVE_SHA256,
+        },
         "project_file": "project.godot",
         "main_scene_source": "application/run/main_scene",
         "legacy_editor_plugins": [],
@@ -48,7 +52,7 @@ def _descriptor_with_legacy() -> ProjectPilotDescriptor:
         base_pilot_commit="a" * 40,
         project_state="EXISTING_GODOT_PROJECT",
         godot_version="4.7.1-stable",
-        godot_archive_sha256="b" * 64,
+        godot_archive_sha256=GODOT_ARCHIVE_SHA256,
         project_file="project.godot",
         main_scene_source="application/run/main_scene",
         legacy_editor_plugins=("res://addons/godot_ai/plugin.cfg",),
@@ -76,6 +80,15 @@ class GodotMultiProjectPilotAdversarialTests(unittest.TestCase):
                     path.write_text(json.dumps(payload), encoding="utf-8")
                     with self.assertRaisesRegex(ValueError, "DESCRIPTOR_SCHEMA_INVALID"):
                         load_descriptor(path, SCHEMA)
+
+    def test_descriptor_rejects_wrong_godot_archive(self) -> None:
+        payload = _runtime_descriptor()
+        payload["godot"]["archive_sha256"] = "b" * 64
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "descriptor.json"
+            path.write_text(json.dumps(payload), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "DESCRIPTOR_SCHEMA_INVALID"):
+                load_descriptor(path, SCHEMA)
 
     def test_descriptor_rejects_arbitrary_behavior_commands(self) -> None:
         payload = _runtime_descriptor()
@@ -146,6 +159,32 @@ class GodotMultiProjectPilotAdversarialTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "EVIDENCE_PATH_ESCAPE"):
                 evidence.verify_runtime_evidence(root, path)
 
+    def test_unicode_inventory_hash_matches_final_evidence(self) -> None:
+        inventory = {"괴이/기록.txt": "a" * 64}
+        with tempfile.TemporaryDirectory() as temporary:
+            path = evidence.write_final_evidence(
+                Path(temporary),
+                repository="owner/game",
+                source_commit="a" * 40,
+                base_pilot_commit="b" * 40,
+                project_state="NOT_CREATED",
+                result="NOT_APPLICABLE",
+                source_before=inventory,
+                source_after=inventory,
+                changed_paths=(),
+                runtime=None,
+                legacy_mutation_authority="NOT_APPLICABLE",
+            )
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            self.assertEqual(
+                workspace.inventory_digest(inventory),
+                payload["source_before_sha256"],
+            )
+            self.assertEqual(
+                workspace.inventory_digest(inventory),
+                payload["source_after_sha256"],
+            )
+
     def test_runner_uses_closed_argv_and_never_shell(self) -> None:
         check = BehaviorCheck(
             kind="PYTHON_UNITTEST_MODULE",
@@ -164,6 +203,16 @@ class GodotMultiProjectPilotAdversarialTests(unittest.TestCase):
         self.assertNotIn("os.system(", source)
         self.assertNotIn("eval(", source)
         self.assertNotIn("exec(", source)
+
+    def test_process_timeout_is_bounded_without_traceback(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            record = runner._run_process(
+                [sys.executable, "-c", "import time; time.sleep(2)"],
+                cwd=Path(temporary),
+                timeout_seconds=1,
+            )
+            self.assertEqual(124, record.returncode)
+            self.assertIn("PROCESS_TIMEOUT", record.stderr_excerpt)
 
     def test_behavior_process_does_not_leave_home_in_source(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
