@@ -263,3 +263,17 @@ L1 이상 완료 보고는 실제 사용한 Work Mode·Skill·Skill Mode와 이�
 | 지시 권위·Interface-first·Context 큐레이션·Artifact 주장 상한 | `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md` |
 | 게임 UI 모션·중단·반복·Reduced Motion | `skills/auditing-and-refining-ui-art/references/ui-motion-and-interaction-principles.md` |
 | Base v9.4 후보·evidence·pin 순서 | `docs/operations/BASE_V9_4_RELEASE_CONTRACT.md` |
+
+## Cloud Run 게임 백엔드 Capability Pack
+
+| 질문 | 책임 원본 |
+|---|---|
+| 서버 필요성·Cloud Run 적합성·상태·연결·비용·실패 경계 | `docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md` |
+| 프로젝트별 API·권위·저장·IAM·부하·비용·롤백 증거 | `templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md` |
+
+## 게임 권한·무결성 Capability Pack
+
+| 질문 | 책임 원본 |
+|---|---|
+| 플랫폼 권한·앱/요청 무결성·DRM·오프라인·오탐·서비스 종료 | `docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md` |
+| 프로젝트별 플랫폼 신호·서버 권위·복구·개인정보·sandbox 증거 | `templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md` |

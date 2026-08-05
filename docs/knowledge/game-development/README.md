@@ -86,3 +86,15 @@
 이 허브를 읽거나 문서를 작성한 것만으로 기획·구현·접근성·성능·출시가 검증된 것은 아니다. 합성 테스터 결과도 실제 사람 행동·재미·선호·조작감·접근성·성능을 검증하지 않는다. 등급·권리 Template도 법률 검토·플랫폼 제출·승인을 대신하지 않는다. 완료는 선택한 기존 Skill의 Output Contract와 실제 프로젝트 증거를 따른다.
 
 계약·라우팅·중복 Skill 방지·Learning Log 연결은 `tests/test_evidence_based_game_development_knowledge.py`, `tests/test_evidence_knowledge_workflow_contract.py`, `tests/test_platform_review_asset_rights_reference_production.py`, `tests/test_human_validation_artifact_governance.py`, `tests/test_synthetic_tester_simulation_governance.py`, `.github/workflows/validate-evidence-knowledge.yml`의 전용 GitHub Actions에서 검증한다. Workflow 파일 존재와 실제 실행 성공을 분리해 확인한다.
+
+## 8. Cloud Run 게임 백엔드 Capability Pack
+
+- 서버 필요가 발견되면 `docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`에서 `SERVER_FEATURE_DETECTED` → `CLOUD_RUN_DEFAULT_CANDIDATE` → `FIT_AND_RISK_ASSESSMENT`를 수행한다.
+- 실제 프로젝트 계약은 `templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md`가 소유하며 문서 존재만으로 배포·부하·비용·보안 준비를 주장하지 않는다.
+- 고주파 authoritative realtime, UDP, indefinite worker, instance-local durable authority는 기본 후보에서 제외한다.
+
+## 9. 게임 권한·무결성·DRM Capability Pack
+
+- 권한·앱/요청 무결성·DRM·오프라인 라이선스·고가치 서버 권위 질문은 `docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md`를 사용한다.
+- 프로젝트별 신호·복구·개인정보·서비스 종료 증거는 `templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md`가 소유한다.
+- `PLATFORM_NATIVE_FIRST`, `NO_CUSTOM_DRM_DEFAULT`, `PLAYER_HARM_REVIEW`를 유지하며 플랫폼별 미확인 기능은 `PLATFORM_CAPABILITY_UNVERIFIED`로 남긴다.

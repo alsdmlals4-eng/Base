@@ -307,5 +307,43 @@ class BaseV95SkillOperatingRefinementTests(unittest.TestCase):
         self.assertIn("AGENT_MERGE_REQUIRED", coverage)
 
 
+    def test_cloud_run_capability_routes_through_existing_owners_without_registry_change(self) -> None:
+        guide_path = (
+            "docs/knowledge/game-development/"
+            "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md"
+        )
+        expectations = {
+            "skills/analyzing-and-refining-game-concepts/SKILL.md": "SERVER_FEATURE_DETECTED",
+            "skills/managing-game-project-operating-system/SKILL.md": "PROJECT_OWNED_SERVICE_CONTRACT",
+            "skills/designing-vertical-slices/SKILL.md": "RUNTIME_VERIFIED",
+            "skills/reviewing-and-validating-project-changes/SKILL.md": "LOAD_AND_FAILURE_VERIFIED",
+            "skills/optimizing-ai-model-and-prompt-costs/SKILL.md": "bounded AI proxy",
+        }
+        for skill_path, token in expectations.items():
+            skill = read(skill_path)
+            self.assertIn(guide_path, skill, skill_path)
+            self.assertIn(token, skill, skill_path)
+        registry = REGISTRY.read_text(encoding="utf-8")
+        self.assertNotIn("GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md", registry)
+        self.assertNotIn("GAME_BACKEND_SERVICE_CONTRACT.md", registry)
+
+    def test_entitlement_integrity_routes_through_existing_owners_without_new_skill(self) -> None:
+        guide_path = (
+            "docs/knowledge/game-development/"
+            "GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md"
+        )
+        expectations = {
+            "skills/managing-game-project-operating-system/SKILL.md": "PROJECT_OWNED_ENTITLEMENT_INTEGRITY_RECORD",
+            "skills/designing-vertical-slices/SKILL.md": "PLATFORM_SANDBOX_VERIFIED",
+            "skills/reviewing-and-validating-project-changes/SKILL.md": "HUMAN_RECOVERY_VERIFIED",
+        }
+        for skill_path, token in expectations.items():
+            skill = read(skill_path)
+            self.assertIn(guide_path, skill, skill_path)
+            self.assertIn(token, skill, skill_path)
+        registry = REGISTRY.read_text(encoding="utf-8")
+        self.assertNotIn("GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md", registry)
+        self.assertNotIn("GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md", registry)
+
 if __name__ == "__main__":
     unittest.main()
