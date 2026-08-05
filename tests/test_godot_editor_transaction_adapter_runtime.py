@@ -88,6 +88,14 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
         self.assertNotIn('"a".repeat(64)', pilot)
         self.assertIn("_guard.operation_request_material", pilot)
         self.assertIn("_guard.canonical_json_sha256", pilot)
+        for marker in (
+            "stale_state_block_pass",
+            "TARGET_STATE_CONFLICT",
+            "result_hash_pass",
+            "elapsed_usec",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, pilot)
 
     @unittest.skipUnless(
         os.environ.get("GODOT_BIN"),
@@ -159,9 +167,12 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
                 "rename_keep_dirty_pass",
                 "undo_pass",
                 "rename_save_pass",
+                "stale_state_block_pass",
+                "result_hash_pass",
             ):
                 with self.subTest(key=key):
                     self.assertTrue(result[key])
+            self.assertGreater(result["elapsed_usec"], 0)
             self.assertFalse(result["network_listener_enabled"])
             self.assertEqual(["COMPLETED", "COMPLETED"], result["ledger_states"])
             self.assertEqual(
