@@ -31,6 +31,7 @@ jobs:
         run: |
           set -euo pipefail
           python - <<'PY'
+          import re
           from pathlib import Path
 
           root = Path(".")
@@ -120,31 +121,15 @@ jobs:
 
           checker_path = root / "tools/check_skill_system_coverage.py"
           checker = checker_path.read_text(encoding="utf-8")
-          old_contracts = '''    "skills/auditing-and-refining-ui-art/references/design-md-project-adapter.md": (
-              "GAME_UX_UI_SYSTEM",
-              "Theme",
-              "CSS",
-              "시각 토큰",
-          ),
-          "skills/auditing-and-refining-ui-art/references/external-ui-procurement-and-anti-generic-quality.md": (
-              "registry_source",
-              "exact_version_or_commit",
-              "content_hash",
-              "license",
-              "dependencies",
-              "scripts",
-              "secrets",
-              "files_added_or_replaced",
-              "accessibility_review",
-              "runtime_review",
-              "rollback",
-              "BLOCKED_UNVERIFIED",
-              "MCP 연결 성공",
-              "설치 승인",
-              "Design Read",
-              "실제 렌더",
-          ),
-          '''
+          pattern = re.compile(
+              r'    "skills/auditing-and-refining-ui-art/references/design-md-project-adapter\.md": \(\n'
+              r'.*?'
+              r'    \),\n'
+              r'    "skills/auditing-and-refining-ui-art/references/external-ui-procurement-and-anti-generic-quality\.md": \(\n'
+              r'.*?'
+              r'    \),\n',
+              re.DOTALL,
+          )
           new_contract = '''    "skills/auditing-and-refining-ui-art/references/ux-ui-design-system-method.md": (
               "### 6.1 Project DESIGN.md Adapter",
               "GAME_UX_UI_SYSTEM",
@@ -170,9 +155,10 @@ jobs:
               "실제 렌더",
           ),
           '''
-          if old_contracts not in checker:
-              raise SystemExit("expected BCP-008 contract blocks not found")
-          checker = checker.replace(old_contracts, new_contract, 1).replace(
+          checker, count = pattern.subn(new_contract, checker, count=1)
+          if count != 1:
+              raise SystemExit(f"expected one BCP-008 contract block pair, found {count}")
+          checker = checker.replace(
               '            "design-md-project-adapter.md",\n'
               '            "external-ui-procurement-and-anti-generic-quality.md",\n'
               '            "외부 Web UI",\n',
@@ -183,7 +169,7 @@ jobs:
           checker_path.write_text(checker, encoding="utf-8")
           PY
 
-          test -z "$(git grep -n -I -E 'design-md-project-adapter\.md|external-ui-procurement-and-anti-generic-quality\.md' -- . ':!docs/evidence/external-ui-procurement/BCP008_ADVERSARIAL_REVIEW.md' || true)"
+          test -z "$(git grep -n -I -E 'design-md-project-adapter\.md|external-ui-procurement-and-anti-generic-quality\.md' -- . ':!docs/evidence/external-ui-procurement/BCP008_ADVERSARIAL_REVIEW.md' ':!.github/workflows/bcp008-consolidate-ui-method.yml' || true)"
       - name: Verify consolidated contracts and repository coupling
         shell: bash
         run: |
