@@ -1,0 +1,71 @@
+name: Implement Entitlement Integrity Capability
+
+on:
+  push:
+    branches:
+      - agent/implement-game-entitlement-integrity-drm-capability
+
+permissions:
+  contents: write
+
+jobs:
+  implement-capability:
+    if: "${{ github.event.head_commit.message == 'chore: implement entitlement integrity capability' }}"
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out exact branch head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+          show-progress: false
+      - name: Configure commit identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Add Guide and project Record
+        run: |
+          python tools/apply_entitlement_integrity_capability.py package
+          git add \
+            docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md \
+            templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md
+          git commit -m "feat: add game entitlement and integrity capability pack"
+      - name: Route and harden capability
+        run: |
+          python tools/apply_entitlement_integrity_capability.py route-harden
+          git add \
+            docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md \
+            docs/knowledge/game-development/README.md \
+            docs/knowledge/game-development/TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md \
+            docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md \
+            docs/DOCUMENTATION_MAP.md \
+            START_HERE.md \
+            skills/managing-game-project-operating-system/SKILL.md \
+            skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md \
+            skills/designing-vertical-slices/SKILL.md \
+            skills/reviewing-and-validating-project-changes/SKILL.md \
+            templates/project-operations/GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK.md \
+            templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md \
+            templates/project-operations/github/documentation-governance.json \
+            tests/test_game_entitlement_integrity_drm_capability.py \
+            tests/test_platform_review_asset_rights_reference_production.py \
+            tests/test_base_v9_5_skill_operating_refinement.py \
+            .github/reference-freshness.json \
+            skills/managing-game-project-operating-system/LEARNING_LOG.md \
+            docs/CHANGELOG.md
+          git commit -m "test: harden entitlement and integrity player safeguards"
+      - name: Remove temporary implementation tooling
+        run: |
+          rm .github/workflows/implement-entitlement-integrity-capability.yml
+          rm tools/apply_entitlement_integrity_capability.py
+          git add -A
+          git commit -m "chore: remove temporary entitlement implementation tooling"
+      - name: Verify focused contracts and propagation
+        run: |
+          python -m unittest \
+            tests.test_game_entitlement_integrity_drm_capability \
+            tests.test_platform_review_asset_rights_reference_production.PlatformReviewAssetRightsReferenceProductionTests.test_entitlement_integrity_capability_remains_distinct_and_routed \
+            tests.test_base_v9_5_skill_operating_refinement.BaseV95SkillOperatingRefinementTests.test_entitlement_integrity_routes_through_existing_owners_without_new_skill -v
+          python tools/check_canonical_reference_freshness.py --base origin/main --head HEAD
+          python tools/check_base_change_proposals.py
+      - name: Push verified commits
+        run: git push origin HEAD:agent/implement-game-entitlement-integrity-drm-capability
