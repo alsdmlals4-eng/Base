@@ -44,7 +44,6 @@ from tests.test_platform_review_asset_rights_reference_production import (
     PlatformReviewAssetRightsReferenceProductionTests
     as _PlatformReviewAssetRightsReferenceProductionTests,
 )
-
 from tests.test_game_entitlement_integrity_drm_capability import (
     GameEntitlementIntegrityDrmCapabilityTests
     as _GameEntitlementIntegrityDrmCapabilityTests,
@@ -131,6 +130,12 @@ class V9MachineContractTests(unittest.TestCase):
                 self.assertTrue(record["do_not_reassess"])
                 self.assertTrue(record["replacement_paths"])
                 self.assertTrue(record["verification_paths"])
+
+    def test_c0_reusable_workflow_invokes_runner_as_package_module(self) -> None:
+        workflow = read(".github/workflows/reusable-godot-project-pilot.yml")
+        self.assertIn("PYTHONPATH: ${{ github.workspace }}/_base_c0", workflow)
+        self.assertIn("python -m tools.godot_multi_project_pilot", workflow)
+        self.assertNotIn("python _base_c0/tools/godot_multi_project_pilot.py", workflow)
 
 
 if __name__ == "__main__":
