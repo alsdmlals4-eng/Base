@@ -73,11 +73,11 @@
       "proposal_id": "BCP-2026-007-cloud-run-game-backend-and-entitlement-integrity",
       "title": "Cloud Run 게임 백엔드·플랫폼 권한·무결성 보호 계약",
       "path": "[수정제안서]/BCP-2026-007-cloud-run-game-backend-and-entitlement-integrity/PROPOSAL.md",
-      "status": "SUBMITTED",
+      "status": "APPROVED_FOR_IMPLEMENTATION",
       "source_project": "alsdmlals4-eng/Base",
-      "source_commit": "48273f79ab261a1f064adfc7431c99a74a22c33a",
+      "source_commit": "1b323b2e16cf1f1e27698a8e83496b767b6f06e3",
       "submitted_at": "2026-08-05",
-      "approval_ref": null,
+      "approval_ref": "https://github.com/alsdmlals4-eng/Base/pull/170#issuecomment-5192884554",
       "implementation_pr": null
     }
   ]
