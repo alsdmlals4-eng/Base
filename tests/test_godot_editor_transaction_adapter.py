@@ -189,7 +189,14 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn("network_listener_enabled", source)
         self.assertIn("ADAPTER_NOT_CONFIGURED", source)
         self.assertIn('transport.get("kind") != "PROJECT_DEFINED"', source)
-        self.assertIn('transport.get("endpoint_identity") != "in-process-editor-plugin"', source)
+        self.assertIn(
+            'const IN_PROCESS_ENDPOINT := "in-process-editor-plugin"',
+            source,
+        )
+        self.assertIn(
+            'transport.get("endpoint_identity") != IN_PROCESS_ENDPOINT',
+            source,
+        )
         self.assertIn("transport.get(\"bind_host\") != null", source)
 
 
