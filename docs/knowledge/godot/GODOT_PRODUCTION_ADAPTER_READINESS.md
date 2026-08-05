@@ -74,6 +74,31 @@ network_listener_disabled: RUNTIME_PASS
 
 상세 실행 근거는 `docs/knowledge/godot/evidence/2026-08-05-godot-4-7-editor-transaction-pilot.md`에 기록한다. 이 결과는 격리 Pilot이며 실제 게임 프로젝트 두 곳, Windows production operation, authenticated transport, runtime debugger, physical input 또는 human usability 증거가 아니다.
 
+## Post-merge adversarial hardening
+
+PR #166은 PR B 병합 뒤 실제 실행 경계를 다시 공격했다. 정적 CI만 통과한 첫 hardening Runtime은 Pilot script의 동적 타입 추론 오류로 Plugin을 로드하지 못했고, 이를 명시적 타입과 Runtime 회귀 테스트로 수정했다.
+
+강화된 격리 Godot 4.7.1 실행에서는 다음을 추가로 확인했다.
+
+```yaml
+canonical_request_hash_recompute: RUNTIME_PASS
+full_approval_binding_and_expiry: STATIC_AND_RUNTIME_PATH_PASS
+canonical_result_hash: RUNTIME_PASS
+stale_request_rejected_without_mutation: RUNTIME_PASS
+stale_request_ledger_absent: RUNTIME_PASS
+output_type_and_save_policy_validation: RUNTIME_PASS
+queue_capacity_64: RUNTIME_PASS
+request_65_queue_full: RUNTIME_PASS
+batch_64_completed: 64
+batch_64_elapsed_usec_median: 444301
+batch_64_throughput_ops_per_second_median: 144.0
+network_listener_disabled: RUNTIME_PASS
+```
+
+이 성능 수치는 minimal Scene, Linux x86_64, headless Editor, frame당 한 요청, evidence 생성을 포함한 격리 수치다. `.tscn` hash 비용은 파일 크기에 선형이므로 실제 대형 프로젝트 성능으로 일반화하지 않는다. 반복 process soak 중 Editor 초기화 전 stall도 관찰되어 process-start soak 안정성은 `BLOCKED_ENVIRONMENT`다.
+
+상세 근거와 한계는 `docs/knowledge/godot/evidence/2026-08-05-godot-editor-transaction-hardening-pilot.md`에 기록한다.
+
 ## Production runtime gates
 
 ```yaml
@@ -134,6 +159,7 @@ runtime debugger는 opt-in `EditorDebuggerPlugin` / `EditorDebuggerSession` / `E
 - runtime debugger control
 - 구조가 다른 실제 프로젝트 두 곳의 behavior tests
 - Windows production operation
+- process-start soak stability
 - physical input
 - human usability
 
