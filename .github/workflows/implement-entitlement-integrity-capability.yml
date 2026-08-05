@@ -25,6 +25,20 @@ jobs:
       - name: Add Guide and project Record
         run: |
           python tools/apply_entitlement_integrity_capability.py package
+          python - <<'PY'
+          from pathlib import Path
+          path = Path("docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md")
+          text = path.read_text(encoding="utf-8")
+          text = text.replace(
+              "It is `NOT_A_PIRACY_SOLUTION` and can be removable by a determined\nattacker.",
+              "It is `NOT_A_PIRACY_SOLUTION` and is removable by a determined attacker.",
+          )
+          text = text.replace(
+              "official SDK and account evidence\nrequired before capability claims.",
+              "official SDK and account evidence required before capability claims.",
+          )
+          path.write_text(text, encoding="utf-8")
+          PY
           git add \
             docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md \
             templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md
@@ -37,8 +51,7 @@ jobs:
             docs/knowledge/game-development/README.md \
             docs/knowledge/game-development/TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md \
             docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md \
-            docs/DOCUMENTATION_MAP.md \
-            START_HERE.md \
+            docs/DOCUMENTATION_MAP.md START_HERE.md \
             skills/managing-game-project-operating-system/SKILL.md \
             skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md \
             skills/designing-vertical-slices/SKILL.md \
