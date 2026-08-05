@@ -11,6 +11,9 @@ from pathlib import Path
 from tests.test_godot_live_editor_contract import (
     GodotLiveEditorContractTests as _GodotLiveEditorContractTests,
 )
+from tests.test_godot_live_editor_contract_v2 import (
+    GodotLiveEditorContractV2Tests as _GodotLiveEditorContractV2Tests,
+)
 from tests.test_godot_live_editor_runtime_pilot import (
     GodotLiveEditorRuntimePilotTests as _GodotLiveEditorRuntimePilotTests,
 )

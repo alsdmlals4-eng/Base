@@ -10,6 +10,9 @@ from tests.test_godot_live_editor_adapter_resolution import (
 from tests.test_godot_live_editor_contract import (
     GodotLiveEditorContractTests as _GodotLiveEditorContractTests,
 )
+from tests.test_godot_live_editor_contract_v2 import (
+    GodotLiveEditorContractV2Tests as _GodotLiveEditorContractV2Tests,
+)
 from tests.test_godot_live_editor_idempotent_approval import (
     GodotIdempotentApprovalSchemaTests as _GodotIdempotentApprovalSchemaTests,
 )
