@@ -1,29 +1,30 @@
 # Godot live-editor adapter
 
-프로젝트가 Godot live Editor 자동화를 실제로 구성한 경우에만 다음 경로를 사용한다.
+프로젝트가 Godot live Editor 자동화를 실제 구성한 경우에만 사용한다.
 
 - Project capability source: `GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json`
 - Project adapter: `.agents/skills/godot-live-editor-operations/SKILL.md`
-- Base pin and route authority: `skills/PROJECT_BASE_ADAPTER.json`
-- Base canonical contract: `docs/knowledge/godot/GODOT_LIVE_EDITOR_AUTOMATION_CONTRACT.md`
-- Base security and recovery contract: `docs/knowledge/godot/GODOT_LIVE_EDITOR_SECURITY_AND_RECOVERY.md`
+- Base pin authority: `skills/PROJECT_BASE_ADAPTER.json`
+- Base v2 capability Schema: `schemas/godot-live-editor-capability-manifest-v2.schema.json`
+- Base v2 operation Schema: `schemas/godot-live-editor-operation-envelope-v2.schema.json`
+- Base semantic validator: `tools/validate_godot_live_editor_contract_v2.py`
 
-공용 계약과 Schema는 프로젝트 상대경로로 추정하거나 복제하지 않는다. `skills/PROJECT_BASE_ADAPTER.json`과 generated snapshot을 먼저 검증하고, **validated Base adapter**가 고정한 Base repository·commit에서 **Base canonical contract**를 읽는다.
-
-작업 시작:
+공용 계약·Schema·validator를 프로젝트 상대경로로 추정하거나 복제하지 않는다. validated Base adapter가 고정한 repository·commit에서 읽는다.
 
 ```text
 validate PROJECT_BASE_ADAPTER.json and snapshot
 → doctor → status → catalog --compact
-→ normalized project path
-→ project.godot SHA-256
-→ project fingerprint
-→ adapter/contract/catalog freshness
+→ classify manifest version
+→ v1 authorization: MIGRATION_REQUIRED_V1
+→ v2 Schema and semantic validation
+→ exact project/service/Editor/runtime identity
+→ contract_snapshot and catalog freshness
+→ typed capability only
 ```
 
-Base adapter 검증 실패, Manifest 없음, `NOT_CONFIGURED`, stale, Schema-invalid, identity-mismatched이면 engine action을 중단한다. port만으로 프로젝트를 선택하지 않는다.
+Base adapter 실패, Manifest 없음, `NOT_CONFIGURED`, stale, identity/snapshot mismatch, undeclared capability이면 engine action을 중단한다. automatic approval과 unsafe retry는 금지한다.
 
-등록된 typed capability만 사용한다. automatic approval과 unsafe retry는 금지한다. mutation timeout 뒤에는 재전송하지 말고 `operation_id`·`task_id`·ledger와 변경 target을 reconcile한다.
+mutation은 expected/observed revision·hash·dirty state·Scene path를 비교한다. 불일치는 `TARGET_STATE_CONFLICT`다. output이 Schema에 맞지 않으면 `OUTPUT_SCHEMA_MISMATCH`이며 성공 evidence를 만들지 않는다.
 
 보고:
 

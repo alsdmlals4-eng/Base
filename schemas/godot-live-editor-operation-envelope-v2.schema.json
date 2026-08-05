@@ -1,0 +1,1090 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/godot-live-editor-operation-envelope-v2.schema.json",
+  "title": "Godot Live Editor Operation Envelope v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_role",
+    "operation_id",
+    "capability_id",
+    "project_identity",
+    "instance_identity",
+    "contract_snapshot",
+    "policy",
+    "request",
+    "request_hash",
+    "idempotency_key",
+    "preconditions",
+    "approval",
+    "task",
+    "result"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "artifact_role": {
+      "const": "GODOT_LIVE_EDITOR_OPERATION_ENVELOPE"
+    },
+    "operation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "capability_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_identity": {
+      "$ref": "#/$defs/projectIdentity"
+    },
+    "instance_identity": {
+      "$ref": "#/$defs/instanceIdentity"
+    },
+    "contract_snapshot": {
+      "$ref": "#/$defs/contractSnapshot"
+    },
+    "policy": {
+      "$ref": "#/$defs/policy"
+    },
+    "request": {
+      "$ref": "#/$defs/request"
+    },
+    "request_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "idempotency_key": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "preconditions": {
+      "$ref": "#/$defs/preconditions"
+    },
+    "approval": {
+      "$ref": "#/$defs/approval"
+    },
+    "task": {
+      "$ref": "#/$defs/task"
+    },
+    "result": {
+      "$ref": "#/$defs/result"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "projectIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "normalized_project_path",
+        "project_godot_sha256",
+        "project_fingerprint"
+      ],
+      "properties": {
+        "normalized_project_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_godot_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "project_fingerprint": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "instanceIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "automation_service_instance_id",
+        "editor_instance_id",
+        "runtime_session_id",
+        "runtime_session_state"
+      ],
+      "properties": {
+        "automation_service_instance_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "editor_instance_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "runtime_session_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "runtime_session_state": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "ACTIVE",
+            "INACTIVE"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "runtime_session_state": {
+                "const": "ACTIVE"
+              }
+            },
+            "required": [
+              "runtime_session_state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "runtime_session_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "runtime_session_state": {
+                "const": "NOT_APPLICABLE"
+              }
+            },
+            "required": [
+              "runtime_session_state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "runtime_session_id": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "contractSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "adapter_version",
+        "catalog_sha256",
+        "capability_input_schema_sha256",
+        "capability_output_schema_sha256",
+        "protocol_profile",
+        "protocol_version"
+      ],
+      "properties": {
+        "contract_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "adapter_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalog_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "capability_input_schema_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "capability_output_schema_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "protocol_profile": {
+          "enum": [
+            "GENERIC",
+            "MCP"
+          ]
+        },
+        "protocol_version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "effect_kind",
+        "idempotency",
+        "approval_policy",
+        "execution_mode",
+        "rollback_policy"
+      ],
+      "properties": {
+        "effect_kind": {
+          "enum": [
+            "READ_ONLY",
+            "MUTATION"
+          ]
+        },
+        "idempotency": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "IDEMPOTENT",
+            "NON_IDEMPOTENT"
+          ]
+        },
+        "approval_policy": {
+          "enum": [
+            "NOT_REQUIRED",
+            "REQUIRED"
+          ]
+        },
+        "execution_mode": {
+          "enum": [
+            "SYNCHRONOUS",
+            "LONG_RUNNING_TASK"
+          ]
+        },
+        "rollback_policy": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "EDITOR_UNDO_REDO",
+            "SNAPSHOT",
+            "MANUAL",
+            "IRREVERSIBLE"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "effect_kind": {
+                "const": "READ_ONLY"
+              }
+            },
+            "required": [
+              "effect_kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "idempotency": {
+                "const": "NOT_APPLICABLE"
+              },
+              "rollback_policy": {
+                "const": "NOT_APPLICABLE"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "effect_kind": {
+                "const": "MUTATION"
+              }
+            },
+            "required": [
+              "effect_kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "idempotency": {
+                "enum": [
+                  "IDEMPOTENT",
+                  "NON_IDEMPOTENT"
+                ]
+              },
+              "rollback_policy": {
+                "enum": [
+                  "EDITOR_UNDO_REDO",
+                  "SNAPSHOT",
+                  "MANUAL",
+                  "IRREVERSIBLE"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "rollback_policy": {
+                "const": "IRREVERSIBLE"
+              }
+            },
+            "required": [
+              "rollback_policy"
+            ]
+          },
+          "then": {
+            "properties": {
+              "approval_policy": {
+                "const": "REQUIRED"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "arguments"
+      ],
+      "properties": {
+        "arguments": {
+          "type": "object"
+        }
+      }
+    },
+    "preconditions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expected_target_revision",
+        "observed_target_revision",
+        "expected_target_content_sha256",
+        "observed_target_content_sha256",
+        "expected_dirty_state",
+        "observed_dirty_state",
+        "expected_scene_path",
+        "observed_scene_path",
+        "conflict_policy"
+      ],
+      "properties": {
+        "expected_target_revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "observed_target_revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "expected_target_content_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_target_content_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expected_dirty_state": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "CLEAN",
+            "DIRTY"
+          ]
+        },
+        "observed_dirty_state": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "CLEAN",
+            "DIRTY"
+          ]
+        },
+        "expected_scene_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "observed_scene_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "conflict_policy": {
+          "const": "FAIL_CLOSED"
+        }
+      }
+    },
+    "tokenBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation_id",
+        "capability_id",
+        "project_identity",
+        "instance_identity",
+        "contract_snapshot",
+        "policy",
+        "request_hash",
+        "preconditions"
+      ],
+      "properties": {
+        "operation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "capability_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_identity": {
+          "$ref": "#/$defs/projectIdentity"
+        },
+        "instance_identity": {
+          "$ref": "#/$defs/instanceIdentity"
+        },
+        "contract_snapshot": {
+          "$ref": "#/$defs/contractSnapshot"
+        },
+        "policy": {
+          "$ref": "#/$defs/policy"
+        },
+        "request_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "preconditions": {
+          "$ref": "#/$defs/preconditions"
+        }
+      }
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "token_id",
+        "token_binding",
+        "expires_at",
+        "consumed_by_operation_id"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "NOT_REQUIRED",
+            "REQUIRED",
+            "APPROVED",
+            "REJECTED",
+            "EXPIRED"
+          ]
+        },
+        "token_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "token_binding": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/tokenBinding"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expires_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "consumed_by_operation_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "NOT_REQUIRED"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "token_id": {
+                "type": "null"
+              },
+              "token_binding": {
+                "type": "null"
+              },
+              "expires_at": {
+                "type": "null"
+              },
+              "consumed_by_operation_id": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "APPROVED"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "token_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "token_binding": {
+                "$ref": "#/$defs/tokenBinding"
+              },
+              "expires_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "consumed_by_operation_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "taskResultBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation_id",
+        "project_identity",
+        "automation_service_instance_id",
+        "task_id",
+        "result_hash"
+      ],
+      "properties": {
+        "operation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_identity": {
+          "$ref": "#/$defs/projectIdentity"
+        },
+        "automation_service_instance_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "task_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "result_hash": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "state",
+        "created_at",
+        "last_updated_at",
+        "ttl_ms",
+        "poll_interval_ms",
+        "cancellation_policy",
+        "result_binding"
+      ],
+      "properties": {
+        "task_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "NOT_STARTED",
+            "QUEUED",
+            "RUNNING",
+            "INPUT_REQUIRED",
+            "PENDING",
+            "COMPLETED",
+            "FAILED",
+            "CANCELLED",
+            "STALE"
+          ]
+        },
+        "created_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "last_updated_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "ttl_ms": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "poll_interval_ms": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "cancellation_policy": {
+          "enum": [
+            "NOT_SUPPORTED",
+            "SAFE_BEFORE_COMMIT",
+            "SUPPORTED"
+          ]
+        },
+        "result_binding": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/taskResultBinding"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "NOT_APPLICABLE",
+                  "NOT_STARTED"
+                ]
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "task_id": {
+                "type": "null"
+              },
+              "result_binding": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "QUEUED",
+                  "RUNNING",
+                  "INPUT_REQUIRED",
+                  "PENDING",
+                  "COMPLETED",
+                  "FAILED",
+                  "CANCELLED",
+                  "STALE"
+                ]
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "COMPLETED",
+                  "FAILED",
+                  "CANCELLED",
+                  "STALE"
+                ]
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "result_binding": {
+                "$ref": "#/$defs/taskResultBinding"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "state",
+        "path",
+        "artifact_sha256",
+        "generated_at",
+        "producer"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "CONTRACT",
+            "ENGINE_STATE",
+            "RUNTIME_STATE",
+            "ENGINE_INPUT",
+            "PHYSICAL_INPUT",
+            "SCREENSHOT",
+            "TEST_RESULT",
+            "HUMAN",
+            "LOG"
+          ]
+        },
+        "state": {
+          "enum": [
+            "CONTRACT_PASS",
+            "CONTRACT_FAIL",
+            "EXECUTION_PASS",
+            "EXECUTION_FAIL",
+            "RUNTIME_PASS",
+            "RUNTIME_FAIL",
+            "ENGINE_INPUT_PASS",
+            "ENGINE_INPUT_FAIL",
+            "PHYSICAL_INPUT_PASS",
+            "PHYSICAL_INPUT_FAIL",
+            "SCREENSHOT_PASS",
+            "SCREENSHOT_FAIL",
+            "TEST_PASS",
+            "TEST_FAIL",
+            "HUMAN_PASS",
+            "HUMAN_FAIL",
+            "LOG_CAPTURED",
+            "NOT_RUN",
+            "NOT_CONFIGURED",
+            "BLOCKED_ENVIRONMENT"
+          ]
+        },
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "artifact_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "generated_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "producer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "CONTRACT_PASS",
+                  "EXECUTION_PASS",
+                  "RUNTIME_PASS",
+                  "ENGINE_INPUT_PASS",
+                  "PHYSICAL_INPUT_PASS",
+                  "SCREENSHOT_PASS",
+                  "TEST_PASS",
+                  "HUMAN_PASS",
+                  "LOG_CAPTURED"
+                ]
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "type": "string",
+                "pattern": "^artifacts/(?!.*\\.\\.)"
+              },
+              "artifact_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "generated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "producer": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "NOT_RUN",
+                  "NOT_CONFIGURED",
+                  "BLOCKED_ENVIRONMENT"
+                ]
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "type": "null"
+              },
+              "artifact_sha256": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "success",
+        "code",
+        "message",
+        "data",
+        "result_hash",
+        "evidence"
+      ],
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {},
+        "result_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {
+              "execution_mode": {
+                "const": "SYNCHRONOUS"
+              }
+            }
+          }
+        },
+        "required": [
+          "policy"
+        ]
+      },
+      "then": {
+        "properties": {
+          "task": {
+            "properties": {
+              "task_id": {
+                "type": "null"
+              },
+              "state": {
+                "const": "NOT_APPLICABLE"
+              },
+              "result_binding": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {
+              "execution_mode": {
+                "const": "LONG_RUNNING_TASK"
+              }
+            }
+          }
+        },
+        "required": [
+          "policy"
+        ]
+      },
+      "then": {
+        "properties": {
+          "task": {
+            "properties": {
+              "state": {
+                "not": {
+                  "const": "NOT_APPLICABLE"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {
+              "approval_policy": {
+                "const": "NOT_REQUIRED"
+              }
+            }
+          }
+        },
+        "required": [
+          "policy"
+        ]
+      },
+      "then": {
+        "properties": {
+          "approval": {
+            "properties": {
+              "state": {
+                "const": "NOT_REQUIRED"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {
+              "approval_policy": {
+                "const": "REQUIRED"
+              }
+            }
+          }
+        },
+        "required": [
+          "policy"
+        ]
+      },
+      "then": {
+        "properties": {
+          "approval": {
+            "properties": {
+              "state": {
+                "not": {
+                  "const": "NOT_REQUIRED"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

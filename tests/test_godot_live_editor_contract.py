@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 import json
 import unittest
 from pathlib import Path
@@ -11,7 +10,10 @@ from jsonschema import Draft202012Validator
 ROOT = Path(__file__).resolve().parents[1]
 CAPABILITY_SCHEMA = ROOT / "schemas/godot-live-editor-capability-manifest-v1.schema.json"
 OPERATION_SCHEMA = ROOT / "schemas/godot-live-editor-operation-envelope-v1.schema.json"
-MANIFEST = ROOT / "templates/project-operations/GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json"
+V1_PILOT_MANIFEST = (
+    ROOT / "examples/godot-live-editor-pilot/GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json"
+)
+TEMPLATE = ROOT / "templates/project-operations/GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json"
 CONTRACT = ROOT / "docs/knowledge/godot/GODOT_LIVE_EDITOR_AUTOMATION_CONTRACT.md"
 SECURITY = ROOT / "docs/knowledge/godot/GODOT_LIVE_EDITOR_SECURITY_AND_RECOVERY.md"
 ADAPTER = ROOT / "templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md"
@@ -133,21 +135,23 @@ class GodotLiveEditorContractTests(unittest.TestCase):
             SECURITY,
             CAPABILITY_SCHEMA,
             OPERATION_SCHEMA,
-            MANIFEST,
+            V1_PILOT_MANIFEST,
+            TEMPLATE,
             ADAPTER,
             AGENTS_FRAGMENT,
         )
-        self.assertEqual([], [str(path.relative_to(ROOT)) for path in required if not path.is_file()])
+        self.assertEqual(
+            [],
+            [str(path.relative_to(ROOT)) for path in required if not path.is_file()],
+        )
 
-    def test_template_manifest_and_representative_configured_manifest_validate(self) -> None:
-        schema = load(CAPABILITY_SCHEMA)
-        validator = Draft202012Validator(schema)
-        self.assertEqual([], list(validator.iter_errors(load(MANIFEST))))
+    def test_v1_pilot_manifest_and_representative_configured_manifest_validate(self) -> None:
+        validator = Draft202012Validator(load(CAPABILITY_SCHEMA))
+        self.assertEqual([], list(validator.iter_errors(load(V1_PILOT_MANIFEST))))
         self.assertEqual([], list(validator.iter_errors(valid_manifest())))
 
     def test_capability_schema_rejects_port_only_identity_and_unsafe_retry(self) -> None:
         validator = Draft202012Validator(load(CAPABILITY_SCHEMA))
-
         port_only = valid_manifest()
         port_only["project_identity"] = {
             "normalized_project_path": "",
@@ -155,7 +159,6 @@ class GodotLiveEditorContractTests(unittest.TestCase):
             "project_fingerprint": "",
         }
         self.assertTrue(list(validator.iter_errors(port_only)))
-
         unsafe_retry = valid_manifest()
         capability = unsafe_retry["capabilities"][0]
         capability["operation_class"] = "NON_RETRYABLE_MUTATION"
@@ -165,15 +168,12 @@ class GodotLiveEditorContractTests(unittest.TestCase):
 
     def test_configured_manifest_requires_loopback_transport_and_capabilities(self) -> None:
         validator = Draft202012Validator(load(CAPABILITY_SCHEMA))
-
         external_bind = valid_manifest()
         external_bind["transport"]["bind_host"] = "0.0.0.0"
         self.assertTrue(list(validator.iter_errors(external_bind)))
-
         no_capabilities = valid_manifest()
         no_capabilities["capabilities"] = []
         self.assertTrue(list(validator.iter_errors(no_capabilities)))
-
         disabled_transport = valid_manifest()
         disabled_transport["transport"] = {
             "kind": "DISABLED",
@@ -185,7 +185,6 @@ class GodotLiveEditorContractTests(unittest.TestCase):
 
     def test_mutation_and_task_capabilities_cannot_automatically_retry(self) -> None:
         validator = Draft202012Validator(load(CAPABILITY_SCHEMA))
-
         for operation_class in (
             "APPROVAL_REQUIRED_MUTATION",
             "NON_RETRYABLE_MUTATION",
@@ -201,7 +200,6 @@ class GodotLiveEditorContractTests(unittest.TestCase):
                     capability["retry_policy"]["requires_ledger"] = True
                     capability["timeout_policy"]["unknown_outcome"] = "RESUME_BY_TASK_ID"
                 self.assertTrue(list(validator.iter_errors(manifest)))
-
         idempotent_without_ledger = valid_manifest()
         capability = idempotent_without_ledger["capabilities"][0]
         capability["operation_class"] = "IDEMPOTENT_MUTATION"
@@ -212,7 +210,6 @@ class GodotLiveEditorContractTests(unittest.TestCase):
     def test_operation_schema_binds_approval_and_long_running_results(self) -> None:
         validator = Draft202012Validator(load(OPERATION_SCHEMA))
         self.assertEqual([], list(validator.iter_errors(valid_operation())))
-
         approval_gap = valid_operation()
         approval_gap["operation_class"] = "APPROVAL_REQUIRED_MUTATION"
         approval_gap["approval"] = {
@@ -221,7 +218,6 @@ class GodotLiveEditorContractTests(unittest.TestCase):
             "expires_at": "2026-08-05T01:00:00Z",
         }
         self.assertTrue(list(validator.iter_errors(approval_gap)))
-
         task_gap = valid_operation()
         task_gap["operation_class"] = "LONG_RUNNING_TASK"
         task_gap["task"] = {
@@ -233,7 +229,6 @@ class GodotLiveEditorContractTests(unittest.TestCase):
 
     def test_approval_operation_classes_cannot_claim_not_required(self) -> None:
         validator = Draft202012Validator(load(OPERATION_SCHEMA))
-
         for operation_class in (
             "APPROVAL_REQUIRED_MUTATION",
             "NON_RETRYABLE_MUTATION",
@@ -268,7 +263,6 @@ class GodotLiveEditorContractTests(unittest.TestCase):
             "BLOCKED_ENVIRONMENT",
         ):
             self.assertIn(term, combined)
-
         for unity_only in (
             "UnityEngine.Object",
             "Unity Package Manager",
@@ -286,7 +280,6 @@ class GodotLiveEditorContractTests(unittest.TestCase):
             ROOT / "templates/project-operations/.agents/skills/base-project-router/SKILL.md"
         )
         registry = load(ROOT / "skills/SKILL_REGISTRY.json")
-
         for mode in ("bootstrap", "observe", "mutate", "validate", "resume", "recover"):
             self.assertIn(f"`{mode}`", adapter)
         for owner in (
@@ -314,7 +307,7 @@ class GodotLiveEditorContractTests(unittest.TestCase):
         )
 
     def test_evidence_states_cannot_be_promoted_by_contract_file_existence(self) -> None:
-        template = load(MANIFEST)
+        template = load(TEMPLATE)
         validation = template["validation"]
         self.assertEqual("CONTRACT_PASS", validation["contract_state"])
         self.assertEqual("NOT_RUN", validation["execution_state"])

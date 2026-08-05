@@ -1,23 +1,40 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "artifact_role": "GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST",
   "configuration_state": "NOT_CONFIGURED",
-  "contract_version": "1.0.0",
-  "adapter_version": "1.0.0",
+  "contract_version": "2.0.0",
+  "adapter_version": "2.0.0",
   "project_identity": {
     "normalized_project_path": null,
     "project_godot_sha256": null,
     "project_fingerprint": null
   },
   "engine_compatibility": {
+    "detected_version": null,
     "minimum_version": "4.3",
     "maximum_exclusive_version": "5.0"
+  },
+  "tool_adoption": {
+    "source": null,
+    "exact_version": null,
+    "telemetry_policy": "DISABLED",
+    "external_data_policy": "DENY_BY_DEFAULT",
+    "uninstall_procedure": null,
+    "rollback_reference": null
   },
   "transport": {
     "kind": "DISABLED",
     "enabled": false,
     "bind_host": null,
-    "endpoint_identity": null
+    "endpoint_identity": null,
+    "protocol_profile": "GENERIC",
+    "protocol_version": null,
+    "access_control": {
+      "authentication_mode": "NOT_APPLICABLE",
+      "origin_policy": "NOT_APPLICABLE",
+      "session_binding": "NOT_APPLICABLE",
+      "os_access_control": "CURRENT_USER_ONLY"
+    }
   },
   "catalog": {
     "generated_at": null,
