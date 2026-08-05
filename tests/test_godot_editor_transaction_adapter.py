@@ -5,10 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-ADDON = (
-    ROOT
-    / "templates/project-operations/godot-live-editor/addons/base_live_editor_adapter"
-)
+ADDON = ROOT / "templates/project-operations/godot-live-editor/addons/base_live_editor_adapter"
 
 REQUIRED = {
     "plugin.cfg",
@@ -27,16 +24,11 @@ REQUIRED = {
 class GodotEditorTransactionAdapterTests(unittest.TestCase):
     def test_editor_transaction_adapter_files_exist(self) -> None:
         self.assertTrue(ADDON.is_dir(), "missing canonical editor adapter directory")
-        self.assertEqual(
-            REQUIRED,
-            {path.name for path in ADDON.iterdir() if path.is_file()},
-        )
+        self.assertEqual(REQUIRED, {path.name for path in ADDON.iterdir() if path.is_file()})
 
     def test_adapter_has_required_editor_transaction_markers(self) -> None:
         self.assertTrue(ADDON.is_dir(), "missing canonical editor adapter directory")
-        source = "\n".join(
-            path.read_text(encoding="utf-8") for path in ADDON.glob("*.gd")
-        )
+        source = "\n".join(path.read_text(encoding="utf-8") for path in ADDON.glob("*.gd"))
         for required in (
             "EditorPlugin",
             "get_undo_redo()",
@@ -51,7 +43,6 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         ):
             with self.subTest(required=required):
                 self.assertIn(required, source)
-
         for forbidden in (
             "TCPServer",
             "WebSocketPeer",
@@ -66,9 +57,7 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
                 self.assertNotIn(forbidden, source)
 
     def test_queue_is_bounded_and_rejects_duplicates(self) -> None:
-        path = ADDON / "request_queue.gd"
-        self.assertTrue(path.is_file(), "missing request_queue.gd")
-        source = path.read_text(encoding="utf-8")
+        source = (ADDON / "request_queue.gd").read_text(encoding="utf-8")
         self.assertIn("const MAX_PENDING := 64", source)
         self.assertIn("QUEUE_FULL", source)
         self.assertIn("DUPLICATE_OPERATION_ID", source)
@@ -76,9 +65,7 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn("envelope.duplicate(true)", source)
 
     def test_guard_rechecks_exact_v2_bindings(self) -> None:
-        path = ADDON / "runtime_contract_guard.gd"
-        self.assertTrue(path.is_file(), "missing runtime_contract_guard.gd")
-        source = path.read_text(encoding="utf-8")
+        source = (ADDON / "runtime_contract_guard.gd").read_text(encoding="utf-8")
         for marker in (
             "schema_version",
             "project_fingerprint",
@@ -95,10 +82,20 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn("validate_for_enqueue", source)
         self.assertIn("validate_before_execute", source)
 
+    def test_guard_rechecks_full_approval_binding_and_expiry(self) -> None:
+        source = (ADDON / "runtime_contract_guard.gd").read_text(encoding="utf-8")
+        for marker in (
+            "token_binding",
+            "_approval_binding",
+            "APPROVAL_BINDING_MISMATCH",
+            "APPROVAL_EXPIRED",
+            "get_unix_time_from_datetime_string",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, source)
+
     def test_state_probe_uses_editor_owned_state(self) -> None:
-        path = ADDON / "editor_state_probe.gd"
-        self.assertTrue(path.is_file(), "missing editor_state_probe.gd")
-        source = path.read_text(encoding="utf-8")
+        source = (ADDON / "editor_state_probe.gd").read_text(encoding="utf-8")
         for marker in (
             "EditorInterface.get_unsaved_scenes()",
             "get_object_history_id",
@@ -111,9 +108,7 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
                 self.assertIn(marker, source)
 
     def test_registry_allows_only_inspect_and_rename(self) -> None:
-        path = ADDON / "capability_registry.gd"
-        self.assertTrue(path.is_file(), "missing capability_registry.gd")
-        source = path.read_text(encoding="utf-8")
+        source = (ADDON / "capability_registry.gd").read_text(encoding="utf-8")
         self.assertIn('"scene.inspect"', source)
         self.assertIn('"node.rename"', source)
         self.assertIn("UNKNOWN_CAPABILITY", source)
@@ -122,13 +117,22 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn("INVALID_NODE_NAME", source)
         self.assertNotIn("set_indexed", source)
 
+    def test_registry_validates_output_types_and_cross_field_semantics(self) -> None:
+        source = (ADDON / "capability_registry.gd").read_text(encoding="utf-8")
+        for marker in (
+            "_validate_inspect_output",
+            "_validate_rename_output",
+            "TYPE_INT",
+            "SAVE_CURRENT_SCENE",
+            "saved_scene_sha256",
+            "OUTPUT_SCHEMA_INVALID",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, source)
+
     def test_ledger_and_evidence_are_atomic_and_confined(self) -> None:
-        ledger_path = ADDON / "operation_ledger.gd"
-        evidence_path = ADDON / "evidence_writer.gd"
-        self.assertTrue(ledger_path.is_file(), "missing operation_ledger.gd")
-        self.assertTrue(evidence_path.is_file(), "missing evidence_writer.gd")
-        ledger = ledger_path.read_text(encoding="utf-8")
-        evidence = evidence_path.read_text(encoding="utf-8")
+        ledger = (ADDON / "operation_ledger.gd").read_text(encoding="utf-8")
+        evidence = (ADDON / "evidence_writer.gd").read_text(encoding="utf-8")
         for source in (ledger, evidence):
             self.assertIn("ProjectSettings.globalize_path", source)
             self.assertIn(".tmp", source)
@@ -139,10 +143,17 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn("COMPLETED", ledger)
         self.assertIn("FAILED", ledger)
 
+    def test_operation_ids_with_digits_are_safe_and_replace_is_atomic(self) -> None:
+        ledger = (ADDON / "operation_ledger.gd").read_text(encoding="utf-8")
+        evidence = (ADDON / "evidence_writer.gd").read_text(encoding="utf-8")
+        self.assertNotIn("character.is_valid_identifier()", ledger)
+        for source in (ledger, evidence):
+            self.assertIn("SAFE_NAME_CHARACTERS", source)
+            self.assertNotIn("DirAccess.remove_absolute(target_path)", source)
+            self.assertIn("JSON.stringify(payload) +", source)
+
     def test_executor_orders_precondition_ledger_undo_save_and_terminal_state(self) -> None:
-        path = ADDON / "editor_transaction_executor.gd"
-        self.assertTrue(path.is_file(), "missing editor_transaction_executor.gd")
-        source = path.read_text(encoding="utf-8")
+        source = (ADDON / "editor_transaction_executor.gd").read_text(encoding="utf-8")
         markers = [
             "validate_before_execute",
             "record_started",
@@ -160,9 +171,7 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertEqual(sorted(positions), positions)
 
     def test_executor_has_stable_failure_codes(self) -> None:
-        path = ADDON / "editor_transaction_executor.gd"
-        self.assertTrue(path.is_file(), "missing editor_transaction_executor.gd")
-        source = path.read_text(encoding="utf-8")
+        source = (ADDON / "editor_transaction_executor.gd").read_text(encoding="utf-8")
         for code in (
             "TARGET_STATE_CONFLICT",
             "LEDGER_START_FAILED",
@@ -174,30 +183,30 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
             with self.subTest(code=code):
                 self.assertIn(code, source)
 
+    def test_adapter_work_is_bounded_and_streamed(self) -> None:
+        queue = (ADDON / "request_queue.gd").read_text(encoding="utf-8")
+        plugin = (ADDON / "plugin.gd").read_text(encoding="utf-8")
+        probe = (ADDON / "editor_state_probe.gd").read_text(encoding="utf-8")
+        evidence = (ADDON / "evidence_writer.gd").read_text(encoding="utf-8")
+        self.assertIn("const MAX_PENDING := 64", queue)
+        self.assertIn("const MAX_COMPLETED_RESULTS := 64", plugin)
+        self.assertEqual(1, plugin.count("_queue.pop_next()"))
+        self.assertIn("65536", probe)
+        self.assertIn("65536", evidence)
+
     def test_plugin_is_composition_only_and_network_disabled(self) -> None:
-        path = ADDON / "plugin.gd"
-        self.assertTrue(path.is_file(), "missing plugin.gd")
-        source = path.read_text(encoding="utf-8")
+        source = (ADDON / "plugin.gd").read_text(encoding="utf-8")
         self.assertIn("extends EditorPlugin", source)
-        self.assertIn(
-            "func submit_validated_operation(envelope: Dictionary) -> Dictionary:",
-            source,
-        )
+        self.assertIn("func submit_validated_operation(envelope: Dictionary) -> Dictionary:", source)
         self.assertIn("func _process(_delta: float) -> void:", source)
         self.assertIn("execute(envelope)", source)
         self.assertIn("_queue.clear()", source)
         self.assertIn("network_listener_enabled", source)
         self.assertIn("ADAPTER_NOT_CONFIGURED", source)
         self.assertIn('transport.get("kind") != "PROJECT_DEFINED"', source)
-        self.assertIn(
-            'const IN_PROCESS_ENDPOINT := "in-process-editor-plugin"',
-            source,
-        )
-        self.assertIn(
-            'transport.get("endpoint_identity") != IN_PROCESS_ENDPOINT',
-            source,
-        )
-        self.assertIn("transport.get(\"bind_host\") != null", source)
+        self.assertIn('const IN_PROCESS_ENDPOINT := "in-process-editor-plugin"', source)
+        self.assertIn('transport.get("endpoint_identity") != IN_PROCESS_ENDPOINT', source)
+        self.assertIn('transport.get("bind_host") != null', source)
 
 
 if __name__ == "__main__":
