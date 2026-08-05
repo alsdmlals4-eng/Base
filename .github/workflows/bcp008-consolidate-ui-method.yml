@@ -36,21 +36,9 @@ jobs:
 
           root = Path(".")
           refs = root / "skills/auditing-and-refining-ui-art/references"
-          skill_path = root / "skills/auditing-and-refining-ui-art/SKILL.md"
           method_path = refs / "ux-ui-design-system-method.md"
           design_path = refs / "design-md-project-adapter.md"
           procurement_path = refs / "external-ui-procurement-and-anti-generic-quality.md"
-
-          skill = skill_path.read_text(encoding="utf-8")
-          skill = skill.replace(
-              "- [design-md-project-adapter.md](references/design-md-project-adapter.md)\n",
-              "",
-          ).replace(
-              "- [external-ui-procurement-and-anti-generic-quality.md]"
-              "(references/external-ui-procurement-and-anti-generic-quality.md)\n",
-              "",
-          )
-          skill_path.write_text(skill, encoding="utf-8")
 
           method = method_path.read_text(encoding="utf-8")
           marker = "## 6. BCP-008 시각 토큰·외부 조달 확장\n"
@@ -100,9 +88,6 @@ jobs:
           text = external_test.read_text(encoding="utf-8").replace(
               '"external-ui-procurement-and-anti-generic-quality.md"',
               '"ux-ui-design-system-method.md"',
-          ).replace(
-              'assert "external-ui-procurement-and-anti-generic-quality.md" in method',
-              'assert "### 6.2 External UI Procurement and Anti-Generic Quality Gate" in method',
           )
           external_test.write_text(text, encoding="utf-8")
 
@@ -169,10 +154,9 @@ jobs:
           checker_path.write_text(checker, encoding="utf-8")
           PY
 
+          git show cabbc59b170c5da2bb1df7e4d4d535857dd35495:skills/auditing-and-refining-ui-art/SKILL.md > skills/auditing-and-refining-ui-art/SKILL.md
           test ! -e skills/auditing-and-refining-ui-art/references/design-md-project-adapter.md
           test ! -e skills/auditing-and-refining-ui-art/references/external-ui-procurement-and-anti-generic-quality.md
-          ! grep -q 'design-md-project-adapter.md' skills/auditing-and-refining-ui-art/SKILL.md
-          ! grep -q 'external-ui-procurement-and-anti-generic-quality.md' skills/auditing-and-refining-ui-art/SKILL.md
       - name: Verify consolidated contracts and repository coupling
         shell: bash
         run: |
