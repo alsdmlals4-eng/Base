@@ -22,6 +22,10 @@ from tests.test_godot_multi_project_pilot_adversarial import (
 from tests.test_godot_pilot_artifact_bundle import (
     GodotPilotArtifactBundleTests as _GodotPilotArtifactBundleTests,
 )
+from tests.test_godot_pilot_workspace_behavior_order import (
+    GodotPilotWorkspaceBehaviorOrderTests
+    as _GodotPilotWorkspaceBehaviorOrderTests,
+)
 from tests.test_godot_live_editor_adapter_resolution import (
     GodotAdapterResolutionTests as _GodotAdapterResolutionTests,
 )
