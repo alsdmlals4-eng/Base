@@ -121,9 +121,12 @@ class ProjectAdapterFleetHardeningTests(unittest.TestCase):
         ):
             self.assertIn(marker, workflow)
 
+        executable_workflow = "\n".join(
+            line for line in workflow.splitlines() if not line.lstrip().startswith("#")
+        )
         self.assertNotIn(
             '--protected-base "$PR_BASE_SHA"',
-            workflow,
+            executable_workflow,
             "Every unrelated PR must not be forced to rewrite the historical adapter baseline.",
         )
         self.assertIn(
