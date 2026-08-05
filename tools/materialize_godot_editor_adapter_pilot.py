@@ -17,6 +17,7 @@ ADDON_RELATIVE = Path(
     "templates/project-operations/godot-live-editor/addons/base_live_editor_adapter"
 )
 MANIFEST_NAME = "GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json"
+IN_PROCESS_ENDPOINT_IDENTITY = "in-process-editor-plugin"
 
 
 def _sha256_file(path: Path) -> str:
@@ -193,10 +194,10 @@ def _manifest(destination: Path, project_godot_sha256: str) -> dict[str, Any]:
             "rollback_reference": "addons/base_live_editor_adapter/README.md",
         },
         "transport": {
-            "kind": "DISABLED",
-            "enabled": False,
+            "kind": "PROJECT_DEFINED",
+            "enabled": True,
             "bind_host": None,
-            "endpoint_identity": None,
+            "endpoint_identity": IN_PROCESS_ENDPOINT_IDENTITY,
             "protocol_profile": "GENERIC",
             "protocol_version": "in-process-1.0",
             "access_control": {
