@@ -119,11 +119,46 @@ func _approval_binding(envelope: Dictionary) -> Dictionary:
 
 
 func _approval_expired(approval: Dictionary) -> bool:
-    var expires_at := str(approval.get("expires_at", ""))
-    if expires_at.is_empty():
-        return true
-    var expires_unix := Time.get_unix_time_from_datetime_string(expires_at)
-    return expires_unix <= 0 or expires_unix <= Time.get_unix_time_from_system()
+    var expires_unix = _unix_time_from_rfc3339(str(approval.get("expires_at", "")))
+    return expires_unix == null or float(expires_unix) <= Time.get_unix_time_from_system()
+
+
+func _unix_time_from_rfc3339(value: String) -> Variant:
+    var normalized := value.strip_edges()
+    if normalized.is_empty():
+        return null
+
+    var offset_seconds := 0
+    if normalized.ends_with("Z"):
+        normalized = normalized.trim_suffix("Z")
+    else:
+        var time_index := normalized.find("T")
+        if time_index < 0:
+            return null
+        var offset_index := maxi(normalized.rfind("+"), normalized.rfind("-"))
+        if offset_index <= time_index:
+            return null
+        var offset_text := normalized.substr(offset_index)
+        if offset_text.length() != 6 or offset_text.substr(3, 1) != ":":
+            return null
+        var hours_text := offset_text.substr(1, 2)
+        var minutes_text := offset_text.substr(4, 2)
+        if not hours_text.is_valid_int() or not minutes_text.is_valid_int():
+            return null
+        var hours := int(hours_text)
+        var minutes := int(minutes_text)
+        if hours > 23 or minutes > 59:
+            return null
+        var sign := 1 if offset_text.begins_with("+") else -1
+        offset_seconds = sign * ((hours * 60 + minutes) * 60)
+        normalized = normalized.substr(0, offset_index)
+
+    var fraction_index := normalized.find(".")
+    if fraction_index >= 0:
+        normalized = normalized.substr(0, fraction_index)
+    if normalized.length() != 19:
+        return null
+    return Time.get_unix_time_from_datetime_string(normalized) - offset_seconds
 
 
 func _contract_snapshot(capability: Dictionary) -> Dictionary:
