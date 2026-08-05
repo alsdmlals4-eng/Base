@@ -591,3 +591,15 @@
 - 안전 경계: 정리 대상은 현재 실행이 만든 정확한 세션 하나뿐이며 일반 `tmp*`, 사용자 파일, `.venv`, 캐시는 삭제하지 않는다. `.gitignore`도 `.tmp/`와 `.venv/`만 숨긴다.
 - 지식 상태: Base 한 저장소의 성공만으로 외부 프로젝트 전체에 적용할 범용 의무를 확정하지 않는다. 서로 다른 프로젝트와 Windows/Linux 실제 발행 환경에서 재현될 때 `PATTERN` 승격을 검토한다.
 - 다음 검토 트리거: 준비된 CI에서 생성 검사가 skip되거나 실패하는 경우, 임시 파일 잔존 재발, 외부 프로젝트 어댑터 적용 결과.
+
+## 2026-08-05 — 게임 개발 YouTube 제작 Skill 독립 경계
+
+- 상태: `OBSERVATION`
+- BCP: `BCP-2026-006-game-youtube-devlog-marketing-workflow`
+- 승인 근거: `https://github.com/alsdmlals4-eng/Base/pull/167#issuecomment-5192600204`
+- 결정: `producing-game-development-youtube-videos`를 선택형 독립 전문 Skill로 등록한다. 실제 빌드에서 영상의 시청자 약속·대본·샷·제목·썸네일 패키지·게시 Gate·표본 제한 Analytics까지 반복되는 고유 입력·산출물·도구·실패 조건이 있어 게임 기획이나 아트 Skill에 흡수하지 않는다.
+- 책임 경계: 게임 코어와 밸런스는 `analyzing-and-refining-game-concepts`, 대표 빌드 품질은 `designing-vertical-slices`, 썸네일 이미지 생성은 `designing-art-prompts-and-technique-cards`, 권리·등급·provenance는 기존 플랫폼 심사·에셋 권리 Workflow, 최종 변경 검증은 `reviewing-and-validating-project-changes`가 유지한다.
+- Route 결정: 프로젝트 Adapter가 없으므로 `skills/BASE_SHARED_SKILL_ROUTES.json`에는 추가하지 않는다. Base Registry 선택과 프로젝트 정본의 실제 Episode Packet으로 연결한다.
+- 검증 경계: Repository 계약·라우팅·회귀는 구현 증거일 뿐 실제 영상 품질·시청 유지·클릭·데모·위시리스트·후원·구매 전환의 사람 검증이 아니다. `HUMAN_NOT_RUN`, `CONVERSION_UNVERIFIED`, `INSUFFICIENT_SAMPLE`, `NOT_PROVEN`을 증거가 생길 때까지 유지한다.
+- 롤백: 활성 Skill, Episode Packet Template, Registry·entrypoint·행동 평가·구현 증거·전용 Test를 구현 PR 하나로 되돌린다. 프로젝트가 채운 Packet과 실제 Analytics는 프로젝트 증거로 보존한다.
+- 다음 검토 트리거: 실제 프로젝트 Pilot, 제목·썸네일 약속 불일치, 권리·스포일러·보안 누출, 작은 표본 과잉 해석, 영상 제작의 핵심 개발 잠식, 프로젝트 Adapter 필요가 반복 확인되는 경우.

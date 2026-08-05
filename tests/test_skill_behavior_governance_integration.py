@@ -57,6 +57,22 @@ class SkillBehaviorGovernanceIntegrationTests(unittest.TestCase):
         ):
             self.assertIn(path, rule["require_all_changed"])
 
+    def test_youtube_skill_coupled_change_and_entrypoint_contract_is_explicit(self) -> None:
+        config = json.loads((ROOT / ".github/reference-freshness.json").read_text(encoding="utf-8"))
+        rules = {rule["name"]: rule for rule in config["coupled_change_rules"]}
+        self.assertIn(
+            "tests/test_game_development_youtube_skill.py",
+            rules["local-skill-contract-learning-test-sync"]["require_any_changed"],
+        )
+        self.assertIn(
+            "tests/test_game_development_youtube_skill.py",
+            rules["registry-structure-test-sync"]["require_any_changed"],
+        )
+        operating = (ROOT / "docs/OPERATING_MODEL.md").read_text(encoding="utf-8")
+        self.assertIn("producing-game-development-youtube-videos", operating)
+        self.assertIn("HUMAN_NOT_RUN", operating)
+        self.assertIn("프로젝트 Adapter가 없으므로 Base shared route를 만들지 않는다", operating)
+
     def test_skill_body_change_uses_focused_learning_companions(self) -> None:
         config = json.loads((ROOT / ".github/reference-freshness.json").read_text(encoding="utf-8"))
         rules = {rule["name"]: rule for rule in config["coupled_change_rules"]}

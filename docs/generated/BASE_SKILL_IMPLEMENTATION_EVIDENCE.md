@@ -1,7 +1,7 @@
 # Base Skill Implementation Evidence
 
 > Generated from `skills/SKILL_REGISTRY.json`, behavior evaluation sets, and `skills/SKILL_IMPLEMENTATION_EVIDENCE.json`. Do not edit this derivative.
-> Active Skill count: `28`
+> Active Skill count: `29`
 > External model behavior run: `NOT_RUN`
 
 `EXECUTABLE_EVIDENCE` means a repository test, tool, workflow, or package script is linked. It does not mean that evidence passed on the current commit. `CONTRACT_EVIDENCE` means only a contract or documentation consumer is linked. Actual model, runtime, device, and human validation remain separate.
@@ -15,6 +15,7 @@
 | `maintaining-project-context-and-handoff` | project-operations | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_gpt_codex_workflow_contract.py` |
 | `analyzing-and-refining-game-concepts` | game-design-strategy | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_game_design_difficulty_workflow.py` |
 | `designing-vertical-slices` | game-design-production | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_vertical_slice_v9_contract.py` |
+| `producing-game-development-youtube-videos` | game-marketing-content-production | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_game_development_youtube_skill.py`<br>CONTRACT: `skills/producing-game-development-youtube-videos/SKILL.md`<br>CONTRACT: `templates/game-development-youtube/EPISODE_PACKET.md` |
 | `orchestrating-deepseek-worktrees` | external-ai-operations | PASS | PASS | EXECUTABLE_EVIDENCE | TOOL: `tools/check_external_ai_worktree_contract.py`<br>TEST: `tests/test_external_ai_worktree_contract.py` |
 | `reviewing-and-validating-project-changes` | integrated-review | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_consolidated_skill_references.py` |
 | `auditing-canonical-reference-freshness` | integrated-review-knowledge-governance | PASS | PASS | EXECUTABLE_EVIDENCE | TOOL: `tools/check_canonical_reference_freshness.py`<br>TEST: `tests/test_reference_freshness.py` |

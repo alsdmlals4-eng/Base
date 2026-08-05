@@ -75,7 +75,9 @@ def is_timezone_aware_rfc3339(value: Any) -> bool:
     return parsed.tzinfo is not None
 
 
-def validate_result_identity(root: Path, results: dict[str, Any]) -> list[str]:
+def validate_result_identity(root: Path, results: Any) -> list[str]:
+    if not isinstance(results, dict):
+        return ["result document must be an object"]
     errors: list[str] = []
     try:
         schema = load_json(root / RESULT_SCHEMA_PATH)

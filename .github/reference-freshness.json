@@ -176,7 +176,8 @@
         "tests/test_project_gdd_google_sheets_contract.py",
         "tests/test_game_design_difficulty_workflow.py",
         "tests/test_base_v9_5_skill_operating_refinement.py",
-        "tests/test_neutral_adversarial_feature_lifecycle.py"
+        "tests/test_neutral_adversarial_feature_lifecycle.py",
+        "tests/test_game_development_youtube_skill.py"
       ],
       "ignore_frontmatter_only_keys": [
         "description"
@@ -342,7 +343,9 @@
         "tests/test_bca_visual_sheet_workflow.py",
         "tests/test_project_gdd_google_sheets_contract.py",
         "tests/test_game_ux_ui_system.py",
-        "tests/test_game_design_difficulty_workflow.py"
+        "tests/test_game_design_difficulty_workflow.py",
+        "tests/test_skill_package_integrity.py",
+        "tests/test_game_development_youtube_skill.py"
       ]
     },
     {

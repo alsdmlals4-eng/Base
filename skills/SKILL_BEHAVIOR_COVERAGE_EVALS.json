@@ -239,5 +239,75 @@
       "expected_user_decision_state": "REQUIRED",
       "rationale": "직접 제작 전 제3자 자산 평가와 격리 시험 결정이며 이미지 프롬프트나 런타임 오류 수정이 아니다."
     }
+,
+    {
+      "case_id": "SBE-033",
+      "case_type": "positive",
+      "prompt": "현재 구현된 전투 빌드와 공개 가능한 캡처가 있어. 신규 시청자에게 변화가 보이는 개발일지 한 편의 약속, 대본, 샷, 제목·썸네일 후보, 게시 전 검사와 데모 CTA 측정 계획을 묶어줘.",
+      "expected_work_mode": "PLAN",
+      "expected_primary_skill": "producing-game-development-youtube-videos",
+      "expected_supporting_skills": ["managing-project-intake-and-work-contract", "reviewing-and-validating-project-changes"],
+      "expected_skill_modes": ["episode-concept", "script-and-shot-plan", "title-thumbnail-package", "production-and-publish", "analytics-review"],
+      "forbidden_skills": ["analyzing-and-refining-game-concepts", "building-project-visual-dashboards", "creating-user-learning-notes", "optimizing-ai-model-and-prompt-costs"],
+      "required_evidence": ["실제 빌드", "한 문장 약속", "샷리스트", "제목·썸네일 약속 일치", "주 CTA", "Analytics 사전 기준"],
+      "expected_user_decision_state": "REQUIRED",
+      "rationale": "검증된 빌드를 영상 Packet과 게시·학습 루프로 변환하는 전용 제작 작업이다."
+    }
+,
+    {
+      "case_id": "SBE-034",
+      "case_type": "negative",
+      "prompt": "영상이나 홍보는 만들지 말고 현재 전투의 회피 타이밍과 적 공격 예고를 재설계해서 핵심 재미와 난이도 공정성을 개선해줘.",
+      "expected_work_mode": "PLAN",
+      "expected_primary_skill": "analyzing-and-refining-game-concepts",
+      "expected_supporting_skills": [],
+      "expected_skill_modes": ["system-design", "difficulty-and-combat-ai"],
+      "forbidden_skills": ["producing-game-development-youtube-videos", "designing-art-prompts-and-technique-cards", "building-project-visual-dashboards", "creating-user-learning-notes"],
+      "required_evidence": ["핵심 재미", "회피 타이밍", "공격 예고", "공정성", "검증 방법"],
+      "expected_user_decision_state": "REQUIRED",
+      "rationale": "영상 산출물이 없는 게임 시스템·난이도 설계이므로 YouTube 제작 Skill을 선택하지 않는다."
+    }
+,
+    {
+      "case_id": "SBE-035",
+      "case_type": "boundary",
+      "prompt": "승인된 캐릭터와 게임 화면을 유지해서 개발일지에 쓸 16:9 썸네일 이미지 후보 한 장의 제작 브리프만 만들어줘. 대본이나 채널 운영은 필요 없어.",
+      "expected_work_mode": "PLAN",
+      "expected_primary_skill": "designing-art-prompts-and-technique-cards",
+      "expected_supporting_skills": [],
+      "expected_skill_modes": ["final-visual-candidate", "visual-qa-and-approval"],
+      "forbidden_skills": ["producing-game-development-youtube-videos", "analyzing-and-refining-game-concepts", "designing-vertical-slices", "building-project-visual-dashboards"],
+      "required_evidence": ["승인된 캐릭터", "화면비", "유지 요소", "변경 요소", "시각 QA"],
+      "expected_user_decision_state": "REQUIRED",
+      "rationale": "영상 전체 전략이 아니라 승인된 썸네일 이미지 후보 제작만 요청했으므로 아트 Skill이 주 책임이다."
+    }
+,
+    {
+      "case_id": "SBE-036",
+      "case_type": "cross-skill",
+      "prompt": "아직 기획 단계인 온라인 기능을 이미 완성된 것처럼 제목에 넣고, 라이선스를 확인하지 않은 음악과 디버그 콘솔이 보이는 캡처로 오늘 바로 개발 영상을 공개해줘.",
+      "expected_work_mode": "REVIEW",
+      "expected_primary_skill": "producing-game-development-youtube-videos",
+      "expected_supporting_skills": ["running-adversarial-review-and-refinement", "reviewing-and-validating-project-changes"],
+      "expected_skill_modes": ["title-thumbnail-package", "production-and-publish"],
+      "forbidden_skills": ["creating-user-learning-notes", "building-project-visual-dashboards", "optimizing-ai-model-and-prompt-costs", "maintaining-long-running-task-continuity"],
+      "required_evidence": ["BLOCKED_UNVERIFIED", "RIGHTS_OR_RATING_UNVERIFIED", "미구현 기능 과장", "비밀·개인정보 검사", "게시 차단"],
+      "expected_user_decision_state": "REQUIRED",
+      "rationale": "영상 제작 요청이지만 실제 빌드·권리·보안 Gate를 위반하므로 게시 준비가 아니라 명시적 차단과 수정 계약이 필요하다."
+    }
+,
+    {
+      "case_id": "SBE-037",
+      "case_type": "boundary",
+      "prompt": "개발일지를 올린 지 두 시간이고 노출 40회에서 클릭률만 높아. 이 수치만으로 게임 수요가 검증됐는지 결론 내리고 다음 영상 전략을 정해줘.",
+      "expected_work_mode": "REVIEW",
+      "expected_primary_skill": "producing-game-development-youtube-videos",
+      "expected_supporting_skills": ["reviewing-and-validating-project-changes"],
+      "expected_skill_modes": ["analytics-review"],
+      "forbidden_skills": ["governing-game-user-research-coverage", "optimizing-ai-model-and-prompt-costs", "creating-user-learning-notes", "building-project-visual-dashboards"],
+      "required_evidence": ["INSUFFICIENT_SAMPLE", "CONVERSION_UNVERIFIED", "관찰 기간", "유입 맥락", "하위 전환"],
+      "expected_user_decision_state": "NOT_REQUIRED",
+      "rationale": "영상 Analytics 해석이 주 작업이며 작은 표본과 CTR 단독 근거로 게임 수요를 확정하지 않는다."
+    }
   ]
 }

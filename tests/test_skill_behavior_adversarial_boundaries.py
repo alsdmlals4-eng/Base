@@ -216,6 +216,19 @@ class SkillBehaviorAdversarialBoundaryTests(unittest.TestCase):
 
         self.assertTrue(any("generated_at" in error for error in errors), errors)
 
+    def test_current_youtube_adversarial_cases_block_overclaim_and_small_sample(self) -> None:
+        coverage = json.loads(
+            (ROOT / "skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json").read_text(encoding="utf-8")
+        )
+        cases = {case["case_id"]: case for case in coverage["cases"]}
+        publication = cases["SBE-036"]
+        self.assertEqual("producing-game-development-youtube-videos", publication["expected_primary_skill"] )
+        self.assertIn("BLOCKED_UNVERIFIED", publication["required_evidence"] )
+        self.assertIn("RIGHTS_OR_RATING_UNVERIFIED", publication["required_evidence"] )
+        analytics = cases["SBE-037"]
+        self.assertIn("INSUFFICIENT_SAMPLE", analytics["required_evidence"] )
+        self.assertIn("CONVERSION_UNVERIFIED", analytics["required_evidence"] )
+
     def test_evidence_index_metadata_is_validated(self) -> None:
         write_json(
             self.root / "skills/SKILL_IMPLEMENTATION_EVIDENCE.json",
