@@ -1,71 +1,61 @@
 # Switchy Express Godot Project Pilot Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:test-driven-development` task by task and `superpowers:verification-before-completion` before any PASS or merge claim.
 
-**Goal:** Adopt the merged Base C0 Pilot workflow in Switchy Express as the first clean real-project proof, without changing product files or enabling a permanent Base editor addon.
+**Goal:** Adopt the merged Base C0 workflow in Switchy Express as the first clean real-project proof without modifying product files or permanently installing the Base addon.
 
-**Architecture:** The project PR adds only one closed descriptor, one adoption document, one focused Python contract test, and one caller workflow pinned to the exact Base C0 merge SHA. The reusable Base workflow copies the project to a disposable workspace, loads the real main Scene read-only, mutates only the runner-owned scratch Scene, and uploads evidence; the source checkout remains unchanged.
+**Architecture:** The project PR adds four adoption surfaces only. A caller workflow pinned to the Program A ledger's exact `BASE_C0_SHA` runs on PRs and again after merge to `main`. The Base workflow copies the project, opens the configured main Scene read-only, mutates only its own scratch Scene, verifies Undo/save/physical bytes/source integrity, and uploads bounded evidence.
 
-**Tech Stack:** Godot 4.7.1 stable, GDScript, Python 3.12/pytest, GitHub Actions reusable workflow, existing `res://tests/run_tests.gd` product test runner.
+**Tech Stack:** Godot 4.7.1 stable, GDScript, Python 3.12/pytest, GitHub Actions reusable workflow, existing `res://tests/run_tests.gd`.
 
-## Global Constraints
+## Immutable authority
 
 - Repository: `alsdmlals4-eng/Switchy-Express-Cargo-Puzzle`.
-- Plan-creation audit baseline: `b2ecc7220f4cad546814bcce43e998a45fff5281`; execution starts from then-current `main`.
-- This is the first real-project Pilot and must pass before legacy-Godot-AI project Pilots proceed.
-- Existing main Scene: `res://game/main/main.tscn` read from `project.godot`.
-- Existing product test runner: `res://tests/run_tests.gd`.
-- Legacy Godot AI is absent; descriptor legacy plugin/autoload arrays are empty.
-- Allowed source changes are exactly:
-  - `.godot-live-editor/project-pilot.json`
-  - `docs/GODOT_LIVE_EDITOR_ADOPTION.md`
-  - `tests/test_godot_live_editor_adoption.py`
-  - `.github/workflows/validate-godot-live-editor-pilot.yml`
-- Forbidden source changes include `project.godot`, `game/`, `scenes/`, `data/`, `addons/`, `export_presets.cfg`, product tests, and Google Sheets.
-- The workflow pins one exact merged Base C0 SHA in both `uses:` and `with.base_pilot_commit`.
-- No merge occurs without exact-head CI, zero unresolved threads, source-scope proof, and explicit user approval.
+- Plan audit baseline: `b2ecc7220f4cad546814bcce43e998a45fff5281`; execution starts from then-current project `main`.
+- `BASE_C0_SHA` comes only from the Program A execution ledger written immediately after Base C0 merges.
+- Do **not** resolve `BASE_C0_SHA` from later Base `main`.
+- Verify the recorded commit contains:
+  - `.github/workflows/reusable-godot-project-pilot.yml`;
+  - `schemas/godot-project-pilot-v1.schema.json`;
+  - `tools/godot_multi_project_pilot.py`.
+- Main Scene is `res://game/main/main.tscn` and remains read-only.
+- Legacy Godot AI is absent.
 
----
+## Allowed source changes
 
-## File Responsibility Map
-
-- `.godot-live-editor/project-pilot.json`: immutable project identity and clean-Pilot contract.
-- `docs/GODOT_LIVE_EDITOR_ADOPTION.md`: explains temporary-copy execution, evidence, exclusions, and rollback.
-- `tests/test_godot_live_editor_adoption.py`: validates the descriptor, immutable Base pin, allowed workflow shape, and forbidden product changes.
-- `.github/workflows/validate-godot-live-editor-pilot.yml`: runs the local contract test, then calls the exact Base C0 reusable workflow.
-
----
-
-### Task 1: Freeze the current project and Base C0 SHAs
-
-**Files:**
-- No writes.
-
-**Interfaces:**
-- Consumes: merged Base C0 and current Switchy `main`.
-- Produces: `BASE_C0_SHA` and `PROJECT_BASELINE_SHA` for all generated files and PR evidence.
-
-- [ ] **Step 1: Read exact refs**
-
-```bash
-export BASE_C0_SHA="$(git ls-remote https://github.com/alsdmlals4-eng/Base refs/heads/main | cut -f1)"
-export PROJECT_BASELINE_SHA="$(git ls-remote https://github.com/alsdmlals4-eng/Switchy-Express-Cargo-Puzzle refs/heads/main | cut -f1)"
-printf 'BASE_C0_SHA=%s\nPROJECT_BASELINE_SHA=%s\n' "$BASE_C0_SHA" "$PROJECT_BASELINE_SHA"
+```text
+.godot-live-editor/project-pilot.json
+docs/GODOT_LIVE_EDITOR_ADOPTION.md
+tests/test_godot_live_editor_adoption.py
+.github/workflows/validate-godot-live-editor-pilot.yml
 ```
 
-- [ ] **Step 2: Verify Base C0 content exists at that SHA**
+Forbidden: `project.godot`, `game/`, `scenes/`, `data/`, `addons/`, `export_presets.cfg`, existing product tests, saves, inputs, and Google Sheets.
+
+---
+
+### Task 1: Freeze the project baseline and exact C0 ledger value
+
+- [ ] Set the reviewed C0 value explicitly:
 
 ```bash
+export BASE_C0_SHA="<exact merge SHA recorded by Base C0 execution ledger>"
+test "${#BASE_C0_SHA}" -eq 40
+```
+
+- [ ] Verify it is a commit and contains the C0 contract:
+
+```bash
+gh api "repos/alsdmlals4-eng/Base/commits/$BASE_C0_SHA" >/dev/null
 gh api "repos/alsdmlals4-eng/Base/contents/.github/workflows/reusable-godot-project-pilot.yml?ref=$BASE_C0_SHA" >/dev/null
 gh api "repos/alsdmlals4-eng/Base/contents/schemas/godot-project-pilot-v1.schema.json?ref=$BASE_C0_SHA" >/dev/null
 ```
 
-Expected: both requests succeed. Do not continue if Base C0 is only an open PR or the files are absent.
-
-- [ ] **Step 3: Create a branch from exact current project main**
+- [ ] Create a branch from exact current project `main`:
 
 ```bash
 git fetch origin main
+export PROJECT_BASELINE_SHA="$(git rev-parse origin/main)"
 git switch -c agent/adopt-base-godot-project-pilot "$PROJECT_BASELINE_SHA"
 ```
 
@@ -73,271 +63,122 @@ git switch -c agent/adopt-base-godot-project-pilot "$PROJECT_BASELINE_SHA"
 
 ### Task 2: Write the local adoption contract test first
 
-**Files:**
-- Create: `tests/test_godot_live_editor_adoption.py`
+**Create:** `tests/test_godot_live_editor_adoption.py`
 
-**Interfaces:**
-- Consumes: the four planned project files.
-- Produces: RED until descriptor, documentation, and workflow exist with the exact Base SHA.
+- [ ] RED tests require:
+  - exact repository/project ID;
+  - lowercase 40-hex Base pin;
+  - `project_state: EXISTING_GODOT_PROJECT`;
+  - empty legacy plugin/Autoload arrays;
+  - `source_mutation_policy: FORBIDDEN`;
+  - scratch path `res://.godot-live-editor-pilot/scratch.tscn`;
+  - one behavior check:
 
-- [ ] **Step 1: Create the failing test**
-
-```python
-from __future__ import annotations
-
-import json
-import re
-import subprocess
-from pathlib import Path
-
-ROOT = Path(__file__).resolve().parents[1]
-DESCRIPTOR = ROOT / ".godot-live-editor/project-pilot.json"
-WORKFLOW = ROOT / ".github/workflows/validate-godot-live-editor-pilot.yml"
-DOC = ROOT / "docs/GODOT_LIVE_EDITOR_ADOPTION.md"
-ALLOWED = {
-    ".godot-live-editor/project-pilot.json",
-    "docs/GODOT_LIVE_EDITOR_ADOPTION.md",
-    "tests/test_godot_live_editor_adoption.py",
-    ".github/workflows/validate-godot-live-editor-pilot.yml",
+```json
+{
+  "kind": "GODOT_SCRIPT",
+  "target": "res://tests/run_tests.gd",
+  "timeout_seconds": 120
 }
-
-
-def test_switchy_descriptor_is_clean_and_exactly_pinned() -> None:
-    document = json.loads(DESCRIPTOR.read_text(encoding="utf-8"))
-    assert document["schema_version"] == "1"
-    assert document["project_identity"] == {
-        "repository": "alsdmlals4-eng/Switchy-Express-Cargo-Puzzle",
-        "project_id": "switchy-express-cargo-puzzle",
-    }
-    assert re.fullmatch(r"[0-9a-f]{40}", document["base_pilot_commit"])
-    assert document["project_state"] == "EXISTING_GODOT_PROJECT"
-    assert document["project_file"] == "project.godot"
-    assert document["legacy_editor_plugins"] == []
-    assert document["legacy_autoloads"] == []
-    assert document["source_mutation_policy"] == "FORBIDDEN"
-    assert document["scratch_scene_path"] == "res://.godot-live-editor-pilot/scratch.tscn"
-    assert document["behavior_checks"] == [
-        {
-            "kind": "GODOT_SCRIPT",
-            "target": "res://tests/run_tests.gd",
-            "timeout_seconds": 120,
-        }
-    ]
-
-
-def test_workflow_uses_the_same_immutable_base_sha() -> None:
-    document = json.loads(DESCRIPTOR.read_text(encoding="utf-8"))
-    sha = document["base_pilot_commit"]
-    text = WORKFLOW.read_text(encoding="utf-8")
-    assert f"alsdmlals4-eng/Base/.github/workflows/reusable-godot-project-pilot.yml@{sha}" in text
-    assert f"base_pilot_commit: {sha}" in text
-    assert "@main" not in text
-    assert "pull_request:" in text
-    assert "contents: read" in text
-
-
-def test_adoption_doc_preserves_product_and_readiness_boundaries() -> None:
-    text = DOC.read_text(encoding="utf-8")
-    for marker in (
-        "TEMPORARY_COPY_ONLY",
-        "MAIN_SCENE_READ_ONLY",
-        "SCRATCH_SCENE_MUTATION_ONLY",
-        "SOURCE_TREE_UNCHANGED",
-        "PRODUCTION_ADAPTER_READY: NOT_READY",
-        "PROGRAM_B_NOT_INCLUDED",
-        "PROGRAM_C_NOT_INCLUDED",
-    ):
-        assert marker in text
-
-
-def test_pr_changes_only_adoption_surfaces() -> None:
-    base = subprocess.check_output(["git", "merge-base", "HEAD", "origin/main"], text=True).strip()
-    changed = subprocess.check_output(["git", "diff", "--name-only", base, "HEAD"], text=True).splitlines()
-    assert set(changed) <= ALLOWED
 ```
 
-- [ ] **Step 2: Run the test to verify RED**
+  - workflow `uses:` and `with.base_pilot_commit` equal the descriptor SHA;
+  - workflow contains no `@main` Base reference;
+  - adoption document contains `TEMPORARY_COPY_ONLY`, `MAIN_SCENE_READ_ONLY`, `SCRATCH_SCENE_MUTATION_ONLY`, `SOURCE_TREE_UNCHANGED`, and `PRODUCTION_ADAPTER_READY: NOT_READY`;
+  - git diff contains only the four allowed paths.
+
+- [ ] Run RED:
 
 ```bash
 python -m pytest tests/test_godot_live_editor_adoption.py -q
 ```
 
-Expected: failures for the missing descriptor, workflow, and document. The scope test may already pass because only the test file exists.
+Expected: missing descriptor/document/workflow failures only.
 
-- [ ] **Step 3: Commit test-only RED**
-
-```bash
-git add tests/test_godot_live_editor_adoption.py
-git commit -m "test: require Switchy Godot project Pilot adoption"
-```
+- [ ] Commit test-only RED.
 
 ---
 
-### Task 3: Generate the exact clean-Pilot descriptor
+### Task 3: Add the descriptor and validate it through exact Base C0
 
-**Files:**
-- Create: `.godot-live-editor/project-pilot.json`
+**Create:** `.godot-live-editor/project-pilot.json`
 
-**Interfaces:**
-- Consumes: exported `BASE_C0_SHA`.
-- Produces: a Schema-valid descriptor used by the reusable workflow.
-
-- [ ] **Step 1: Generate the file from the exact SHA**
-
-```bash
-export BASE_C0_SHA
-python - <<'PY'
-import json
-import os
-from pathlib import Path
-
-sha = os.environ["BASE_C0_SHA"]
-if len(sha) != 40 or any(ch not in "0123456789abcdef" for ch in sha):
-    raise SystemExit("BASE_C0_SHA must be exact lowercase 40-hex")
-
-document = {
-    "schema_version": "1",
-    "project_identity": {
-        "repository": "alsdmlals4-eng/Switchy-Express-Cargo-Puzzle",
-        "project_id": "switchy-express-cargo-puzzle",
-    },
-    "base_pilot_commit": sha,
-    "project_state": "EXISTING_GODOT_PROJECT",
-    "godot": {
-        "version": "4.7.1-stable",
-        "archive_sha256": "c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba",
-    },
-    "project_file": "project.godot",
-    "main_scene_source": "application/run/main_scene",
-    "legacy_editor_plugins": [],
-    "legacy_autoloads": [],
-    "legacy_disable_mode": "TEMPORARY_COPY_ONLY",
-    "source_mutation_policy": "FORBIDDEN",
-    "scratch_scene_path": "res://.godot-live-editor-pilot/scratch.tscn",
-    "behavior_checks": [
-        {
-            "kind": "GODOT_SCRIPT",
-            "target": "res://tests/run_tests.gd",
-            "timeout_seconds": 120,
-        }
-    ],
-    "expected_platform": "ANDROID",
+```json
+{
+  "schema_version": "1",
+  "project_identity": {
+    "repository": "alsdmlals4-eng/Switchy-Express-Cargo-Puzzle",
+    "project_id": "switchy-express-cargo-puzzle"
+  },
+  "base_pilot_commit": "BASE_C0_SHA",
+  "project_state": "EXISTING_GODOT_PROJECT",
+  "godot": {
+    "version": "4.7.1-stable",
+    "archive_sha256": "c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba"
+  },
+  "project_file": "project.godot",
+  "main_scene_source": "application/run/main_scene",
+  "legacy_editor_plugins": [],
+  "legacy_autoloads": [],
+  "legacy_disable_mode": "TEMPORARY_COPY_ONLY",
+  "source_mutation_policy": "FORBIDDEN",
+  "scratch_scene_path": "res://.godot-live-editor-pilot/scratch.tscn",
+  "behavior_checks": [
+    {
+      "kind": "GODOT_SCRIPT",
+      "target": "res://tests/run_tests.gd",
+      "timeout_seconds": 120
+    }
+  ],
+  "expected_platform": "ANDROID"
 }
-path = Path(".godot-live-editor/project-pilot.json")
-path.parent.mkdir(parents=True, exist_ok=True)
-path.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-PY
 ```
 
-- [ ] **Step 2: Validate against the exact Base Schema**
-
-```bash
-rm -rf .tmp-base-c0
-git clone --filter=blob:none --no-checkout https://github.com/alsdmlals4-eng/Base .tmp-base-c0
-git -C .tmp-base-c0 checkout "$BASE_C0_SHA" -- schemas/godot-project-pilot-v1.schema.json tools/godot_project_pilot_descriptor.py
-python - <<'PY'
-from pathlib import Path
-import sys
-sys.path.insert(0, ".tmp-base-c0")
-from tools.godot_project_pilot_descriptor import load_descriptor
-print(load_descriptor(Path(".godot-live-editor/project-pilot.json")))
-PY
-rm -rf .tmp-base-c0
-```
-
-- [ ] **Step 3: Run focused tests and commit**
-
-```bash
-python -m pytest tests/test_godot_live_editor_adoption.py -q
-git add .godot-live-editor/project-pilot.json tests/test_godot_live_editor_adoption.py
-git commit -m "chore: describe Switchy isolated Godot Pilot"
-```
-
-Expected: descriptor test passes; workflow/document tests remain RED.
+- [ ] Generate the actual file programmatically, replacing the displayed token with `$BASE_C0_SHA`; never commit the literal token.
+- [ ] Check out Base at `$BASE_C0_SHA`, import `load_descriptor`, and require success.
+- [ ] Run the focused test; descriptor assertions should be GREEN while missing document/workflow remain RED.
+- [ ] Commit descriptor plus test state.
 
 ---
 
 ### Task 4: Add adoption documentation
 
-**Files:**
-- Create: `docs/GODOT_LIVE_EDITOR_ADOPTION.md`
+**Create:** `docs/GODOT_LIVE_EDITOR_ADOPTION.md`
 
-**Interfaces:**
-- Consumes: descriptor and approved Base design.
-- Produces: truthful operator guidance and recovery boundaries.
+Required sections:
 
-- [ ] **Step 1: Write the document with these exact sections**
-
-```markdown
-# Switchy Express Godot Live-Editor Pilot Adoption
-
-## Status
-
-- `PILOT_MODE: TEMPORARY_COPY_ONLY`
-- `MAIN_SCENE_READ_ONLY`
-- `SCRATCH_SCENE_MUTATION_ONLY`
-- `SOURCE_TREE_UNCHANGED`
-- `PRODUCTION_ADAPTER_READY: NOT_READY`
-
-## What the Pilot does
-
-The pinned Base workflow copies this repository to a disposable workspace, opens the configured main Scene only for `scene.inspect`, switches to a runner-owned scratch Scene, proves rename/Undo/save, verifies physical bytes and atomic ledger evidence, and discards the workspace.
-
-## What the Pilot does not do
-
-- no permanent addon installation;
-- no `project.godot`, `game/`, `scenes/`, `data/`, `export_presets.cfg`, save, input, or product test mutation;
-- no MCP, HTTP, WebSocket, remote endpoint, or runtime debugger;
-- no Android-device, physical-input, accessibility, performance, or human usability claim.
-
-## Evidence
-
-The workflow artifact must record project load, real main Scene inspect, scratch rename, Editor Undo, scratch save, physical SHA-256, unchanged source inventory, and `base_network_listener: false`.
-
-## Follow-up gates
-
-- `PROGRAM_B_NOT_INCLUDED`
-- `PROGRAM_C_NOT_INCLUDED`
-- Permanent adoption or migration requires a separate project Decision and PR.
-
-## Removal
-
-Delete the four adoption files in one revert. No product migration or save conversion is required.
+```text
+Status
+TEMPORARY_COPY_ONLY
+MAIN_SCENE_READ_ONLY
+SCRATCH_SCENE_MUTATION_ONLY
+SOURCE_TREE_UNCHANGED
+PRODUCTION_ADAPTER_READY: NOT_READY
+What the Pilot does
+What the Pilot does not do
+Evidence and physical hashes
+Program B/C exclusions
+Removal by reverting the four adoption files
 ```
 
-- [ ] **Step 2: Run the focused test and commit**
+The document must state there is no permanent addon installation and no product, Android-device, physical-input, accessibility, performance, or human-usability claim.
 
-```bash
-python -m pytest tests/test_godot_live_editor_adoption.py -q
-git add docs/GODOT_LIVE_EDITOR_ADOPTION.md tests/test_godot_live_editor_adoption.py
-git commit -m "docs: explain Switchy isolated Godot Pilot"
-```
-
-Expected: only workflow assertions remain RED.
+- [ ] Run the focused test; only workflow assertions should remain RED.
+- [ ] Commit documentation.
 
 ---
 
-### Task 5: Add the exact caller workflow
+### Task 5: Add the immutable caller workflow
 
-**Files:**
-- Create: `.github/workflows/validate-godot-live-editor-pilot.yml`
+**Create:** `.github/workflows/validate-godot-live-editor-pilot.yml`
 
-**Interfaces:**
-- Consumes: exact Base C0 SHA and descriptor.
-- Produces: local contract result plus reusable Base runtime artifact.
-
-- [ ] **Step 1: Generate the workflow from the same SHA**
-
-```bash
-export BASE_C0_SHA
-python - <<'PY'
-import os
-from pathlib import Path
-sha = os.environ["BASE_C0_SHA"]
-text = f'''name: Validate Godot Live-Editor Pilot
+```yaml
+name: Validate Godot Live-Editor Pilot
 
 on:
   pull_request:
+    branches: [main]
+  push:
     branches: [main]
   workflow_dispatch:
 
@@ -351,6 +192,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -359,81 +201,33 @@ jobs:
 
   project-pilot:
     needs: adoption-contract
-    uses: alsdmlals4-eng/Base/.github/workflows/reusable-godot-project-pilot.yml@{sha}
+    uses: alsdmlals4-eng/Base/.github/workflows/reusable-godot-project-pilot.yml@BASE_C0_SHA
     with:
-      base_pilot_commit: {sha}
+      base_pilot_commit: BASE_C0_SHA
       descriptor_path: .godot-live-editor/project-pilot.json
       artifact_retention_days: 14
-'''
-Path(".github/workflows/validate-godot-live-editor-pilot.yml").write_text(text, encoding="utf-8")
-PY
 ```
 
-- [ ] **Step 2: Run local contract GREEN**
-
-```bash
-python -m pytest tests/test_godot_live_editor_adoption.py -q
-git diff --check
-```
-
-Expected: all focused tests pass.
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add .github/workflows/validate-godot-live-editor-pilot.yml tests/test_godot_live_editor_adoption.py
-git commit -m "ci: run Switchy isolated Godot Pilot"
-```
+- [ ] Generate the workflow programmatically from `$BASE_C0_SHA`; never commit the literal token.
+- [ ] Run focused tests and `git diff --check`; all GREEN.
+- [ ] Commit workflow.
 
 ---
 
-### Task 6: Run the project PR and validate runtime evidence
+### Task 6: Review the PR and pre-merge evidence
 
-**Files:**
-- No additional product files.
-
-**Interfaces:**
-- Consumes: exact PR HEAD.
-- Produces: a Draft PR with one clean real-project evidence artifact.
-
-- [ ] **Step 1: Run local and existing project checks**
+- [ ] Run:
 
 ```bash
 python -m pytest tests/test_godot_live_editor_adoption.py -q
 python tools/validate_project_contract.py
 git diff --check
-```
-
-Run the existing Godot suite when a local 4.7.1 binary is available:
-
-```bash
-Godot_v4.7.1-stable_linux.x86_64 --headless --path . --script res://tests/run_tests.gd
-```
-
-- [ ] **Step 2: Confirm exact changed-file scope**
-
-```bash
 git diff --name-only "$(git merge-base HEAD origin/main)" HEAD
 ```
 
-Expected: exactly the four allowed adoption paths.
-
-- [ ] **Step 3: Open a Draft PR**
-
-The PR body records:
-
-```yaml
-base_c0_sha: exact 40-hex
-legacy_godot_ai: ABSENT
-source_product_files_changed: false
-real_project_runtime: PENDING
-production_adapter_ready: NOT_READY
-merge_authorization: NOT_GRANTED
-```
-
-- [ ] **Step 4: Inspect workflow artifact physically**
-
-Required final evidence:
+- [ ] Expected diff: exactly four allowed paths.
+- [ ] Open a Draft PR with exact project baseline, exact C0 SHA, `legacy_godot_ai: ABSENT`, no product files changed, and `production_adapter_ready: NOT_READY`.
+- [ ] PR workflow must prove:
 
 ```yaml
 project_load: PASS
@@ -447,8 +241,27 @@ legacy_mutation_authority: ABSENT
 base_network_listener: false
 ```
 
-Download the artifact, recompute `runtime-result.json`, saved scratch Scene, and evidence-file hashes, and record run ID plus artifact ID in the PR comment.
+- [ ] Download the PR artifact and recompute final evidence and saved scratch Scene hashes.
+- [ ] Require zero unresolved review threads and exact-head required checks.
+- [ ] Merge only after explicit user approval.
 
-- [ ] **Step 5: Merge only after explicit approval**
+---
 
-Before merge, refetch project main, exact PR head, checks, review threads, and changed files. Squash merge with expected head SHA. Record the resulting Switchy main SHA for Base C1.
+### Task 7: Capture post-merge evidence for Base C1
+
+- [ ] Wait for `Validate Godot Live-Editor Pilot` on the **merged main commit** triggered by `push`.
+- [ ] Verify the workflow source SHA equals the squash-merged Switchy commit.
+- [ ] Download and physically reverify the push artifact.
+- [ ] Record in the Program A evidence ledger:
+
+```yaml
+repository: alsdmlals4-eng/Switchy-Express-Cargo-Puzzle
+validated_pr_head_sha: exact PR head
+merged_commit_sha: exact squash merge
+postmerge_workflow_run_id: integer
+postmerge_artifact_id: integer
+base_c0_sha: exact ledger C0 SHA
+result: PASS
+```
+
+- [ ] These identifiers, not the later project `main`, are the Base C1 inputs.
