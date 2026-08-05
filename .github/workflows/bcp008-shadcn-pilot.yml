@@ -1,0 +1,76 @@
+name: BCP008 shadcn Procurement Pilot
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bcp008-shadcn-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  isolated-web-procurement:
+    if: github.head_ref == 'agent/implement-bcp-008-spec-design-ui'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Set up Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "24"
+      - name: Create disposable Vite project and procure button
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/bcp008-shadcn"
+          mkdir -p "$root"
+          cd "$root"
+          npx --yes shadcn@4.16.2 init \
+            --template vite \
+            --base radix \
+            --name bcp008-pilot \
+            --yes \
+            --silent
+          cd bcp008-pilot
+          npx --yes shadcn@4.16.2 add button --yes --silent
+          npm run build
+          button="$(find . -type f -path '*/components/ui/button.tsx' -print -quit)"
+          test -n "$button"
+          {
+            echo "cli_version=4.16.2"
+            echo "node_version=$(node --version)"
+            echo "button_path=$button"
+            echo "button_sha256=$(sha256sum "$button" | awk '{print $1}')"
+            echo "button_bytes=$(wc -c < "$button")"
+            echo "generated_imports_begin"
+            grep '^import ' "$button" || true
+            echo "generated_imports_end"
+            echo "package_json_begin"
+            cat package.json
+            echo "package_json_end"
+            echo "components_json_begin"
+            cat components.json
+            echo "components_json_end"
+            echo "generated_files_begin"
+            find . -path './node_modules' -prune -o -type f -print | sort
+            echo "generated_files_end"
+          } > "$RUNNER_TEMP/bcp008-shadcn-pilot.txt"
+          cp "$button" "$RUNNER_TEMP/generated-button.tsx"
+          cp package.json "$RUNNER_TEMP/generated-package.json"
+          cp components.json "$RUNNER_TEMP/generated-components.json"
+      - name: Upload isolated procurement evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: bcp008-shadcn-pilot-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/bcp008-shadcn-pilot.txt
+            ${{ runner.temp }}/generated-button.tsx
+            ${{ runner.temp }}/generated-package.json
+            ${{ runner.temp }}/generated-components.json
+          if-no-files-found: error
+          retention-days: 1
