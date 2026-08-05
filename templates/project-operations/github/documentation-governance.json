@@ -114,6 +114,36 @@
     "skills/**/LEARNING_LOG.md",
     "skills/**/SKILL_LEARNING_LOG.md"
   ],
+  "release_compliance_evidence_roles": [
+    {
+      "role": "ASSET_RIGHTS_AND_PROVENANCE_RECORD",
+      "template": "templates/project-operations/ASSET_RIGHTS_AND_PROVENANCE_RECORD.md",
+      "project_owned": true,
+      "base_template_is_project_truth": false,
+      "secure_original_location": "outside-public-github",
+      "unknown_required_fields": "RELEASE_BLOCKED_UNVERIFIED",
+      "public_repository_forbidden": [
+        "unredacted contracts",
+        "identity documents",
+        "signatures",
+        "payment details",
+        "personal data"
+      ]
+    },
+    {
+      "role": "GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK",
+      "template": "templates/project-operations/GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK.md",
+      "project_owned": true,
+      "base_template_is_project_truth": false,
+      "secure_original_location": "outside-public-github",
+      "unknown_required_fields": "RELEASE_BLOCKED_UNVERIFIED",
+      "platforms": [
+        "Steam",
+        "STOVE",
+        "Google Play"
+      ]
+    }
+  ],
   "change_rules": [
     {
       "name": "gameplay-or-data-change",
