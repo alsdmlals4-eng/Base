@@ -129,7 +129,8 @@ BUILD_CUSTOM
 ## 검색한 공식·오픈소스·상용 소스
 ## 후보 비교표
 ## 라이선스·가격·유지보수·종속 위험
-## LICENSED_THIRD_PARTY·OPEN_SOURCE·REFERENCE_TO_ORIGINAL·BUILD_CUSTOM 판정
+## ADOPT·ADAPT·TRIAL·REJECT·BUILD_CUSTOM 판정
+## LICENSED_THIRD_PARTY·OPEN_SOURCE·REFERENCE_TO_ORIGINAL·MIXED_ROUTE
 ## commercial_use·distribution_in_game_build·raw_source_redistribution
 ## 승인 필요한 구매·설치·계정·권한
 ## PoC·통합·제거·회귀 검증
@@ -157,4 +158,4 @@ BUILD_CUSTOM
 
 ## Learning Log
 
-채택·제외 이유, 버전 파손, 라이선스 변화, 성공한 wrapper, 제거 실패, 프로젝트별 재사용 가능성과 실제 검증 결과를 `skills/SKILL_LEARNING_LOG.md`에 기록한다.
+채택·제외 이유, 버전 파손, 라이선스 변화, 성공한 wrapper, 제거 실패, 프로젝트별 재사용 가능성과 실제 검증 결과를 `skills/evaluating-godot-assets-and-plugins-before-creation/LEARNING_LOG.md`에 기록한다.
