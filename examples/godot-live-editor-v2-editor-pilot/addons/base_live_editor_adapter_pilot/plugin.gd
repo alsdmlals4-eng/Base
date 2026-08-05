@@ -4,6 +4,7 @@ extends "res://addons/base_live_editor_adapter/plugin.gd"
 const RESULT_PATH := "res://artifacts/godot-live-editor/editor_transaction_pilot_result.json"
 const SCENE_PATH := "res://main.tscn"
 const SERVICE_INSTANCE_ID := "pilot-service-001"
+const BATCH_SIZE := 64
 
 var _manifest: Dictionary = {}
 
@@ -116,6 +117,59 @@ func _run_pilot() -> void:
         and _ledger_state("op-rename-stale-001") == null
     )
 
+    var batch_observation: Dictionary = _probe.observe(
+        get_editor_interface(),
+        get_undo_redo(),
+        NodePath("."),
+    )
+    var batch_ids: Array[String] = []
+    var queue_capacity_pass := true
+    var batch_started_usec := Time.get_ticks_usec()
+    for index in range(BATCH_SIZE):
+        var operation_id := "op-batch-%03d" % index
+        var submitted := submit_validated_operation(
+            _build_envelope(
+                "scene.inspect",
+                {},
+                batch_observation,
+                operation_id,
+            )
+        )
+        if not submitted.get("ok", false):
+            queue_capacity_pass = false
+        batch_ids.append(operation_id)
+    var overflow := submit_validated_operation(
+        _build_envelope(
+            "scene.inspect",
+            {},
+            batch_observation,
+            "op-batch-overflow",
+        )
+    )
+    queue_capacity_pass = (
+        queue_capacity_pass
+        and not overflow.get("ok", false)
+        and overflow.get("code") == "QUEUE_FULL"
+    )
+
+    var batch_64_completed := 0
+    var batch_64_pass := true
+    for _frame_index in range(BATCH_SIZE + 60):
+        await get_tree().process_frame
+        var pending := batch_ids.duplicate()
+        for operation_id in pending:
+            var batch_result := take_completed_result(operation_id)
+            if batch_result.is_empty():
+                continue
+            batch_ids.erase(operation_id)
+            batch_64_completed += 1
+            if not batch_result.get("success", false) or not _valid_result_hash(batch_result):
+                batch_64_pass = false
+        if batch_ids.is_empty():
+            break
+    var batch_64_elapsed_usec := Time.get_ticks_usec() - batch_started_usec
+    batch_64_pass = batch_64_pass and batch_ids.is_empty() and batch_64_completed == BATCH_SIZE
+
     var saved_hash = null
     if save_result.get("success", false):
         saved_hash = save_result.get("data", {}).get("saved_scene_sha256")
@@ -136,6 +190,8 @@ func _run_pilot() -> void:
         and save_result.get("success", false)
         and stale_state_block_pass
         and result_hash_pass
+        and queue_capacity_pass
+        and batch_64_pass
         and ledger_states == ["COMPLETED", "COMPLETED"]
         and saved_hash != null
         and saved_hash == _evidence.sha256_file(SCENE_PATH)
@@ -151,6 +207,10 @@ func _run_pilot() -> void:
         "rename_save_pass": save_result.get("success", false),
         "stale_state_block_pass": stale_state_block_pass,
         "result_hash_pass": result_hash_pass,
+        "queue_capacity_pass": queue_capacity_pass,
+        "batch_64_pass": batch_64_pass,
+        "batch_64_completed": batch_64_completed,
+        "batch_64_elapsed_usec": batch_64_elapsed_usec,
         "saved_scene_sha256": saved_hash,
         "ledger_states": ledger_states,
         "network_listener_enabled": network_listener_enabled,
