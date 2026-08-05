@@ -21,12 +21,12 @@ def load_validator():
 def test_behavior_eval_adds_positive_negative_and_boundary_pressure() -> None:
     evals = load_json("skills/SKILL_BEHAVIOR_EVALS.json")
     cases = {case["case_id"]: case for case in evals["cases"]}
-    required = {"SBE-015", "SBE-016", "SBE-017", "SBE-018"}
+    required = {"SBE-901", "SBE-902", "SBE-903", "SBE-904"}
     assert required <= cases.keys()
-    assert cases["SBE-015"]["expected_primary_skill"] == "managing-project-intake-and-work-contract"
-    assert cases["SBE-016"]["case_type"] == "negative"
-    assert "auditing-and-refining-ui-art" in cases["SBE-017"]["expected_supporting_skills"]
-    assert "auditing-and-refining-ui-art" in cases["SBE-018"]["forbidden_skills"]
+    assert cases["SBE-901"]["expected_primary_skill"] == "managing-project-intake-and-work-contract"
+    assert cases["SBE-902"]["case_type"] == "negative"
+    assert "auditing-and-refining-ui-art" in cases["SBE-903"]["expected_supporting_skills"]
+    assert "auditing-and-refining-ui-art" in cases["SBE-904"]["forbidden_skills"]
     assert evals["model_run_status"] == "NOT_RUN"
 
 
