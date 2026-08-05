@@ -64,6 +64,8 @@ func validate_for_enqueue(envelope: Dictionary) -> PackedStringArray:
     var request_hash := str(envelope.get("request_hash", ""))
     if request_hash.length() != 64 or not request_hash.is_valid_hex_number(false):
         _append_unique(errors, "REQUEST_HASH_REQUIRED")
+    elif request_hash != canonical_json_sha256(operation_request_material(envelope)):
+        _append_unique(errors, "REQUEST_HASH_MISMATCH")
 
     var approval: Dictionary = envelope.get("approval", {})
     if capability.get("approval_policy") == "REQUIRED":
@@ -103,6 +105,61 @@ func validate_before_execute(
             _append_unique(errors, "TARGET_STATE_CONFLICT")
             break
     return errors
+
+
+func operation_request_material(envelope: Dictionary) -> Dictionary:
+    var request: Dictionary = envelope.get("request", {})
+    return {
+        "capability_id": envelope.get("capability_id"),
+        "project_identity": envelope.get("project_identity"),
+        "instance_identity": envelope.get("instance_identity"),
+        "contract_snapshot": envelope.get("contract_snapshot"),
+        "policy": envelope.get("policy"),
+        "preconditions": envelope.get("preconditions"),
+        "arguments": request.get("arguments"),
+    }
+
+
+func canonical_json_sha256(value: Variant) -> String:
+    var context := HashingContext.new()
+    if context.start(HashingContext.HASH_SHA256) != OK:
+        return ""
+    context.update(_canonical_json(value).to_utf8_buffer())
+    return context.finish().hex_encode()
+
+
+func _canonical_json(value: Variant) -> String:
+    match typeof(value):
+        TYPE_NIL:
+            return "null"
+        TYPE_BOOL:
+            return "true" if value else "false"
+        TYPE_INT:
+            return str(value)
+        TYPE_FLOAT:
+            return JSON.stringify(value)
+        TYPE_STRING, TYPE_STRING_NAME:
+            return JSON.stringify(str(value))
+        TYPE_ARRAY:
+            var array_parts := PackedStringArray()
+            for item in value:
+                array_parts.append(_canonical_json(item))
+            return "[%s]" % ",".join(array_parts)
+        TYPE_DICTIONARY:
+            var dictionary: Dictionary = value
+            var keys: Array = dictionary.keys()
+            keys.sort()
+            var object_parts := PackedStringArray()
+            for key in keys:
+                object_parts.append(
+                    "%s:%s" % [
+                        JSON.stringify(str(key)),
+                        _canonical_json(dictionary[key]),
+                    ]
+                )
+            return "{%s}" % ",".join(object_parts)
+        _:
+            return JSON.stringify(value)
 
 
 func _approval_binding(envelope: Dictionary) -> Dictionary:
