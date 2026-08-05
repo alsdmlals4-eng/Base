@@ -75,7 +75,7 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
                 {item["capability_id"] for item in manifest["capabilities"]},
             )
 
-    def test_runtime_pilot_uses_canonical_request_hashes(self) -> None:
+    def test_runtime_pilot_exercises_adversarial_and_capacity_paths(self) -> None:
         guard = (ADDON / "runtime_contract_guard.gd").read_text(encoding="utf-8")
         pilot = PILOT_PLUGIN.read_text(encoding="utf-8")
         for marker in (
@@ -93,6 +93,12 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
         for marker in (
             "stale_state_block_pass",
             "TARGET_STATE_CONFLICT",
+            "request_hash_block_pass",
+            "REQUEST_HASH_MISMATCH",
+            "expired_approval_block_pass",
+            "APPROVAL_EXPIRED",
+            "approval_binding_block_pass",
+            "APPROVAL_BINDING_MISMATCH",
             "result_hash_pass",
             "elapsed_usec",
             "queue_capacity_pass",
@@ -174,12 +180,18 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
                 "undo_pass",
                 "rename_save_pass",
                 "stale_state_block_pass",
+                "request_hash_block_pass",
+                "expired_approval_block_pass",
+                "approval_binding_block_pass",
                 "result_hash_pass",
                 "queue_capacity_pass",
                 "batch_64_pass",
             ):
                 with self.subTest(key=key):
                     self.assertTrue(result[key])
+            self.assertEqual("REQUEST_HASH_MISMATCH", result["request_hash_code"])
+            self.assertEqual("APPROVAL_EXPIRED", result["expired_approval_code"])
+            self.assertEqual("APPROVAL_BINDING_MISMATCH", result["approval_binding_code"])
             self.assertGreater(result["elapsed_usec"], 0)
             self.assertGreater(result["batch_64_elapsed_usec"], 0)
             self.assertEqual(64, result["batch_64_completed"])
