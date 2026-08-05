@@ -122,6 +122,23 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn("INVALID_NODE_NAME", source)
         self.assertNotIn("set_indexed", source)
 
+    def test_ledger_and_evidence_are_atomic_and_confined(self) -> None:
+        ledger_path = ADDON / "operation_ledger.gd"
+        evidence_path = ADDON / "evidence_writer.gd"
+        self.assertTrue(ledger_path.is_file(), "missing operation_ledger.gd")
+        self.assertTrue(evidence_path.is_file(), "missing evidence_writer.gd")
+        ledger = ledger_path.read_text(encoding="utf-8")
+        evidence = evidence_path.read_text(encoding="utf-8")
+        for source in (ledger, evidence):
+            self.assertIn("ProjectSettings.globalize_path", source)
+            self.assertIn(".tmp", source)
+            self.assertIn("rename_absolute", source)
+        self.assertIn("HashingContext.HASH_SHA256", evidence)
+        self.assertIn("LEDGER_STATE_INVALID", ledger)
+        self.assertIn("STARTED", ledger)
+        self.assertIn("COMPLETED", ledger)
+        self.assertIn("FAILED", ledger)
+
 
 if __name__ == "__main__":
     unittest.main()
