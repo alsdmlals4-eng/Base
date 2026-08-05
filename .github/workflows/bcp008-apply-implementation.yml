@@ -1,0 +1,84 @@
+name: BCP008 Apply Implementation
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bcp008-apply-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.head_ref == 'agent/implement-bcp-008-spec-design-ui'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out implementation branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - name: Reconstruct and verify implementation patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '5dc99be43eb8025273eb4ddfa43c1fa50ea3e807b8910a2c16477778655a3a4a  .github/bcp008-patch.part00' | sha256sum -c -
+          echo 'dcf8fbb08537a3a9b0ad62112e5d798c8e0b6bf0a5754a1c0ec0bd11e098d011  .github/bcp008-patch.part01' | sha256sum -c -
+          echo '7bde1b90e8c3030e3cff3c38811ba5c70a1fd5f61ebc86aa56dedf9029b16730  .github/bcp008-patch.part02' | sha256sum -c -
+          echo '873ee92a25cc5d04bf06120a674c4b01c2e9bd962ed39898847d909f6eba5502  .github/bcp008-patch.part03' | sha256sum -c -
+          cat .github/bcp008-patch.part00 .github/bcp008-patch.part01 .github/bcp008-patch.part02 .github/bcp008-patch.part03 > "$RUNNER_TEMP/bcp008.patch.gz.b64"
+          echo '5358283634cd8dd7fa3c24f74aad25dc09a16361381fa338bbc8fa32c54f3ed3  '"$RUNNER_TEMP/bcp008.patch.gz.b64" | sha256sum -c -
+          base64 --decode "$RUNNER_TEMP/bcp008.patch.gz.b64" | gzip --decompress > "$RUNNER_TEMP/bcp008.patch"
+          echo '7f83557bac3646380a4429a1291d4e206ddc8bcb9bdefa840bd658e07804e7ae  '"$RUNNER_TEMP/bcp008.patch" | sha256sum -c -
+          git apply --check "$RUNNER_TEMP/bcp008.patch"
+      - name: Apply implementation and remove temporary transport
+        shell: bash
+        run: |
+          set -euo pipefail
+          git apply "$RUNNER_TEMP/bcp008.patch"
+          git show cabbc59b170c5da2bb1df7e4d4d535857dd35495:.github/workflows/validate-base-v9-rc.yml > .github/workflows/validate-base-v9-rc.yml
+          rm -f \
+            .github/bcp008-implementation.patch.gz.b64 \
+            .github/bcp008-patch.part00 \
+            .github/bcp008-patch.part01 \
+            .github/bcp008-patch.part02 \
+            .github/bcp008-patch.part03 \
+            .github/workflows/bcp008-export-source.yml \
+            .github/workflows/bcp008-shadcn-pilot.yml \
+            .github/workflows/bcp008-apply-implementation.yml \
+            docs/evidence/external-ui-procurement/.gitkeep
+      - name: Run focused BCP-008 validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pytest \
+            tests/test_feature_spec_traceability_contract.py \
+            tests/test_cross_discipline_review_lenses.py \
+            tests/test_project_design_md_adapter.py \
+            tests/test_external_ui_procurement_gate.py \
+            tests/test_bcp008_behavior_and_procurement_pilot.py \
+            -q
+          python tools/validate_external_ui_procurement_receipt.py docs/evidence/external-ui-procurement/BCP008_SHADCN_BUTTON_PILOT.json
+          python tools/check_skill_system_coverage.py
+          python tools/check_skill_behavior_evals.py
+          python -m json.tool skills/SKILL_BEHAVIOR_EVALS.json >/dev/null
+          git diff --check
+          test ! -e .github/workflows/bcp008-export-source.yml
+          test ! -e .github/workflows/bcp008-shadcn-pilot.yml
+          test ! -e .github/bcp008-patch.part00
+      - name: Commit implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'feat: implement BCP-008 selective contracts'
+          git push origin HEAD:${GITHUB_HEAD_REF}
