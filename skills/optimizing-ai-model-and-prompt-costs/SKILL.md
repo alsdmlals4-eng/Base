@@ -187,3 +187,7 @@ References:
 - `references/prompt-caching.md`
 
 Learning Log: `skills/SKILL_LEARNING_LOG.md`
+
+## Cloud Run bounded AI proxy handoff
+
+`docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`의 `bounded AI proxy`가 선택되면 모델·Prompt·cache·quota·rate limit·provider cost·budget fallback을 이 Skill이 검토한다. LLM 출력은 결제·보상·제재·영구 저장의 단독 권위가 아니다.
