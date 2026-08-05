@@ -220,7 +220,7 @@ func _success(
         "code": code,
         "message": message,
         "data": data,
-        "result_hash": _canonical_json_sha256(data),
+        "result_hash": _guard.canonical_json_sha256(data),
         "evidence": evidence,
     }
 
@@ -232,48 +232,6 @@ func _failure(code: String) -> Dictionary:
         "code": code,
         "message": code,
         "data": data,
-        "result_hash": _canonical_json_sha256(data),
+        "result_hash": _guard.canonical_json_sha256(data),
         "evidence": [],
     }
-
-
-func _canonical_json_sha256(value: Variant) -> String:
-    var context := HashingContext.new()
-    if context.start(HashingContext.HASH_SHA256) != OK:
-        return ""
-    context.update(_canonical_json(value).to_utf8_buffer())
-    return context.finish().hex_encode()
-
-
-func _canonical_json(value: Variant) -> String:
-    match typeof(value):
-        TYPE_NIL:
-            return "null"
-        TYPE_BOOL:
-            return "true" if value else "false"
-        TYPE_INT:
-            return str(value)
-        TYPE_FLOAT:
-            return JSON.stringify(value)
-        TYPE_STRING, TYPE_STRING_NAME:
-            return JSON.stringify(str(value))
-        TYPE_ARRAY:
-            var array_parts := PackedStringArray()
-            for item in value:
-                array_parts.append(_canonical_json(item))
-            return "[%s]" % ",".join(array_parts)
-        TYPE_DICTIONARY:
-            var dictionary: Dictionary = value
-            var keys: Array = dictionary.keys()
-            keys.sort()
-            var object_parts := PackedStringArray()
-            for key in keys:
-                object_parts.append(
-                    "%s:%s" % [
-                        JSON.stringify(str(key)),
-                        _canonical_json(dictionary[key]),
-                    ]
-                )
-            return "{%s}" % ",".join(object_parts)
-        _:
-            return JSON.stringify(value)
