@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   apply-patches:
-    if: "${{ github.event.head_commit.message == 'chore: apply Cloud Run route and hardening patches v2' }}"
+    if: "${{ github.event.head_commit.message == 'chore: apply Cloud Run route and hardening patches v3' }}"
     runs-on: ubuntu-24.04
     steps:
       - name: Check out exact branch head
@@ -42,14 +42,50 @@ jobs:
       - name: Add adversarial fixtures and propagation guards
         run: |
           python tools/apply_cloud_run_capability_patch.py harden
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("tests/test_base_v9_5_skill_operating_refinement.py")
+          text = path.read_text(encoding="utf-8")
+          method_name = "test_cloud_run_capability_routes_through_existing_owners_without_registry_change"
+          if method_name not in text:
+              method = '''
+              def test_cloud_run_capability_routes_through_existing_owners_without_registry_change(self) -> None:
+                  guide_path = (
+                      "docs/knowledge/game-development/"
+                      "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md"
+                  )
+                  expectations = {
+                      "skills/analyzing-and-refining-game-concepts/SKILL.md": "SERVER_FEATURE_DETECTED",
+                      "skills/managing-game-project-operating-system/SKILL.md": "PROJECT_OWNED_SERVICE_CONTRACT",
+                      "skills/designing-vertical-slices/SKILL.md": "RUNTIME_VERIFIED",
+                      "skills/reviewing-and-validating-project-changes/SKILL.md": "LOAD_AND_FAILURE_VERIFIED",
+                      "skills/optimizing-ai-model-and-prompt-costs/SKILL.md": "bounded AI proxy",
+                  }
+                  for skill_path, token in expectations.items():
+                      skill = read(skill_path)
+                      self.assertIn(guide_path, skill, skill_path)
+                      self.assertIn(token, skill, skill_path)
+                  registry = REGISTRY.read_text(encoding="utf-8")
+                  self.assertNotIn("GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md", registry)
+                  self.assertNotIn("GAME_BACKEND_SERVICE_CONTRACT.md", registry)
+          '''
+              marker = '\n\nif __name__ == "__main__":'
+              if marker not in text:
+                  raise RuntimeError("v9.5 test footer marker not found")
+              path.write_text(text.replace(marker, "\n" + method.rstrip() + marker), encoding="utf-8")
+          PY
           git add \
             docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md \
             tests/test_cloud_run_game_backend_capability.py \
+            tests/test_base_v9_5_skill_operating_refinement.py \
             .github/reference-freshness.json \
             skills/managing-game-project-operating-system/LEARNING_LOG.md \
             docs/CHANGELOG.md
           git commit -m "test: harden Cloud Run backend capability boundaries"
-          python -m unittest tests.test_cloud_run_game_backend_capability -v
+          python -m unittest \
+            tests.test_cloud_run_game_backend_capability \
+            tests.test_base_v9_5_skill_operating_refinement -v
           python tools/check_canonical_reference_freshness.py --base origin/main --head HEAD
       - name: Push generated commits
         run: git push origin HEAD:agent/implement-cloud-run-game-backend-capability
