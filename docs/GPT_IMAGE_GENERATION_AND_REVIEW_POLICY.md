@@ -106,6 +106,28 @@ PLANNED
 9. 원본·레퍼런스·모델·서비스·버전·프롬프트·생성일 기록
 10. 승인자·사용처·GitHub 경로·Sheet row·자산 원장 연결
 
+## 4.1 참조 기반 독립 제작
+
+공용 기준은 `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`다.
+
+발견 레퍼런스는 원본을 약간 바꾸거나 AI로 다시 생성하는 입력이 아니라, 기능·정보 위계·일반 제작 원리를 분석하기 위한 `REFERENCE_TO_ORIGINAL` 입력으로 분류한다.
+
+```yaml
+reference_sources:
+reference_brief:
+forbidden_expression:
+final_asset_record:
+reference_similarity_status:
+```
+
+- `reference_brief`에는 프로젝트 목적·정보 구조·일반 형태·재질·광원·가독성 원리만 남긴다.
+- `forbidden_expression`에는 식별 가능한 캐릭터, 실루엣·의상·소품 조합, 구도, 로고, UI skin, 특정 작가 스타일을 기록한다.
+- 참조 원본은 build·store·trailer·marketing package에 포함하지 않는다.
+- 최종 생성물은 별도 `final_asset_record`와 모델·서비스·버전·약관 날짜·입력 권리·프롬프트·후처리를 가진다.
+- `reference_similarity_status`가 `PASS`가 아니거나 입력 권리·약관이 미확인이면 `RELEASE_BLOCKED_UNVERIFIED`다.
+
+AI 재생성, image-to-image, 부분 편집 또는 overpaint는 원출처·입력 권리·유사성 검토를 면제하지 않는다.
+
 ## 5. 승인·정본·동기화
 
 승인된 이미지 Decision은 다음을 같은 승인 단위에서 갱신한다.
@@ -117,6 +139,8 @@ CURRENT_CONFIRMED_DECISIONS
 → 71_이미지기획_생성목록
 → 72_이미지검수_승인로그
 → Asset License Ledger·Asset Registry
+→ ASSET_RIGHTS_AND_PROVENANCE_RECORD
+→ GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK
 → 실제 적용 경로와 런타임 검증
 ```
 
@@ -132,6 +156,8 @@ Sheet가 `NOT_CONFIGURED`이면 GitHub 정본까지만 갱신하고 상태를 �
 - 세계관·핵심루프·인물·핵심시스템 탭이 비어 있거나 다른 탭에 중복 정본화됐는가
 - v7·구형 Prompt·구형 Sheet tab을 활성 경로가 계속 참조하는가
 - 원출처·라이선스·유사성 검토가 빠졌는가
+- 참조 원본이 제품 package에 남거나 `reference_brief`가 식별 가능한 표현을 유지하는가
+- AI 변환을 독립 제작 증거로 오해했는가
 - 실제 화면 검수 없이 예쁜 원화만 승인했는가
 
-차단 Finding은 `MUST_FIX`, 판정 불가는 `BLOCKED_UNVERIFIED`로 기록한다.
+차단 Finding은 `MUST_FIX`, 권리·출처·약관·유사성 판정 불가는 `RELEASE_BLOCKED_UNVERIFIED`로 기록한다.

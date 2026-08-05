@@ -41,6 +41,41 @@ class BaseSharedSkillRouteTests(unittest.TestCase):
             self.assertIsNotNone(match, skill_id)
             self.assertEqual(match.group(1).strip(), skill_id)
 
+    def test_godot_asset_route_exposes_rights_and_reference_production(self) -> None:
+        registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        item = next(
+            entry
+            for entry in registry["shared_skills"]
+            if entry["skill_id"]
+            == "evaluating-godot-assets-and-plugins-before-creation"
+        )
+
+        for tag in (
+            "asset-provenance",
+            "distribution-in-game-build",
+            "reference-to-original",
+            "asset-rights-evidence",
+        ):
+            self.assertIn(tag, item["trigger_tags"])
+
+        self.assertIn(
+            "docs/knowledge/game-development/"
+            "PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md",
+            item["references"],
+        )
+        self.assertIn(
+            "templates/project-operations/ASSET_RIGHTS_AND_PROVENANCE_RECORD.md",
+            item["templates"],
+        )
+        self.assertIn(
+            "templates/project-operations/GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK.md",
+            item["templates"],
+        )
+        self.assertEqual(
+            item["learning_log"],
+            "skills/evaluating-godot-assets-and-plugins-before-creation/LEARNING_LOG.md",
+        )
+
     def test_project_specific_skills_remain_local_only(self) -> None:
         registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
         policy = registry["project_skill_policy"]

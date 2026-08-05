@@ -2,6 +2,8 @@
 
 ## Unreleased — Base v9.5 focused maintenance candidate
 
+- Added `LOWEST_VIABLE_RATING` with `AVOID_ADULTS_ONLY`: projects avoid 청소년이용불가·18+ by default but choose the lowest honest rating that preserves the approved core experience instead of forcing all-ages or hiding content.
+- Added a platform review and asset-rights workflow for Steam, STOVE, and Google Play, including per-asset provenance, commercial/build-distribution rights, secure contract references, and 참조 기반 독립 제작 for images, audio, fonts, 3D, animation, plugins, open source, AI, outsourcing, voice, composition, and translation.
 - Added a neutral-adversarial recommendation Gate to the existing feature lifecycle: user proposals and AI first proposals now receive the same criteria, alternatives, counterevidence, risk, reversibility, and evidence-limit review; unsupported agreement and disagreement-for-its-own-sake are both rejected without adding a broad Skill or changing Registry bytes.
 - Clarified the immutable v9.0 baseline, released v9.4 compatible line, current routing authority, and frozen v9.0 release derivatives without changing released locks.
 - Reduced active Skill discovery metadata while preserving Registry bytes, Skill IDs, trigger contracts, and Skill bodies.
