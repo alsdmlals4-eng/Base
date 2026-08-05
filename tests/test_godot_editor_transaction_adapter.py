@@ -90,6 +90,9 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
             "APPROVAL_BINDING_MISMATCH",
             "APPROVAL_EXPIRED",
             "get_unix_time_from_datetime_string",
+            "_unix_time_from_rfc3339",
+            'ends_with("Z")',
+            "offset_seconds",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, source)
