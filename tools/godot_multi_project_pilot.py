@@ -1,4 +1,3 @@
-
 import argparse
 import hashlib
 import json
@@ -9,7 +8,7 @@ import sys
 import tempfile
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Mapping, Sequence
+from typing import Sequence
 
 from tools.godot_project_pilot_descriptor import (
     BehaviorCheck,
@@ -17,6 +16,7 @@ from tools.godot_project_pilot_descriptor import (
     load_descriptor,
 )
 from tools.godot_project_pilot_evidence import (
+    EvidenceVerificationError,
     VerifiedRuntimeEvidence,
     verify_runtime_evidence,
     write_final_evidence,
@@ -70,10 +70,18 @@ def _bounded_text(payload: bytes) -> tuple[str, bool]:
     return retained.decode("utf-8", errors="replace"), truncated
 
 
+def _as_bytes(value: bytes | str | None) -> bytes:
+    if value is None:
+        return b""
+    if isinstance(value, bytes):
+        return value
+    return value.encode("utf-8", errors="replace")
+
+
 def _bounded_environment(home: Path) -> dict[str, str]:
     home = Path(home).resolve()
     home.mkdir(parents=True, exist_ok=True)
-    result = {
+    return {
         "HOME": str(home),
         "TMPDIR": str(home),
         "TMP": str(home),
@@ -83,7 +91,26 @@ def _bounded_environment(home: Path) -> dict[str, str]:
         "PATH": os.environ.get("PATH", ""),
         "PYTHONPATH": os.environ.get("PYTHONPATH", ""),
     }
-    return result
+
+
+def _process_record(
+    argv: Sequence[str],
+    returncode: int,
+    stdout: bytes,
+    stderr: bytes,
+) -> ProcessRecord:
+    stdout_excerpt, stdout_truncated = _bounded_text(stdout)
+    stderr_excerpt, stderr_truncated = _bounded_text(stderr)
+    return ProcessRecord(
+        argv=tuple(str(value) for value in argv),
+        returncode=returncode,
+        stdout_sha256=hashlib.sha256(stdout).hexdigest(),
+        stderr_sha256=hashlib.sha256(stderr).hexdigest(),
+        stdout_excerpt=stdout_excerpt,
+        stderr_excerpt=stderr_excerpt,
+        stdout_truncated=stdout_truncated,
+        stderr_truncated=stderr_truncated,
+    )
 
 
 def _run_process(
@@ -93,26 +120,28 @@ def _run_process(
     timeout_seconds: int,
 ) -> ProcessRecord:
     with tempfile.TemporaryDirectory(prefix="base-c0-process-") as temporary:
-        completed = subprocess.run(
-            list(argv),
-            cwd=str(Path(cwd).resolve()),
-            env=_bounded_environment(Path(temporary)),
-            check=False,
-            capture_output=True,
-            shell=False,
-            timeout=timeout_seconds,
-        )
-    stdout_excerpt, stdout_truncated = _bounded_text(completed.stdout)
-    stderr_excerpt, stderr_truncated = _bounded_text(completed.stderr)
-    return ProcessRecord(
-        argv=tuple(str(value) for value in argv),
-        returncode=completed.returncode,
-        stdout_sha256=hashlib.sha256(completed.stdout).hexdigest(),
-        stderr_sha256=hashlib.sha256(completed.stderr).hexdigest(),
-        stdout_excerpt=stdout_excerpt,
-        stderr_excerpt=stderr_excerpt,
-        stdout_truncated=stdout_truncated,
-        stderr_truncated=stderr_truncated,
+        try:
+            completed = subprocess.run(
+                list(argv),
+                cwd=str(Path(cwd).resolve()),
+                env=_bounded_environment(Path(temporary)),
+                check=False,
+                capture_output=True,
+                shell=False,
+                timeout=timeout_seconds,
+            )
+        except subprocess.TimeoutExpired as exc:
+            return _process_record(
+                argv,
+                124,
+                _as_bytes(exc.stdout),
+                _as_bytes(exc.stderr) + b"\nPROCESS_TIMEOUT",
+            )
+    return _process_record(
+        argv,
+        completed.returncode,
+        completed.stdout,
+        completed.stderr,
     )
 
 
@@ -156,7 +185,11 @@ def _record_dict(record: ProcessRecord) -> dict[str, object]:
     return asdict(record)
 
 
-def _verify_base_pin(base_root: Path, expected: str, descriptor: ProjectPilotDescriptor) -> None:
+def _verify_base_pin(
+    base_root: Path,
+    expected: str,
+    descriptor: ProjectPilotDescriptor,
+) -> None:
     if not _SHA40_RE.fullmatch(expected):
         raise ValueError("BASE_PILOT_COMMIT_MISMATCH: invalid workflow input")
     actual = _git_text(base_root, "rev-parse", "HEAD")
@@ -164,6 +197,29 @@ def _verify_base_pin(base_root: Path, expected: str, descriptor: ProjectPilotDes
         raise ValueError(
             "BASE_PILOT_COMMIT_MISMATCH: workflow, descriptor, and checkout differ"
         )
+
+
+def _write_failure_marker(
+    output: Path,
+    descriptor: ProjectPilotDescriptor,
+    source_commit: str,
+    exc: BaseException,
+) -> None:
+    output.mkdir(parents=True, exist_ok=True)
+    (output / "failure.json").write_text(
+        json.dumps(
+            {
+                "code": str(exc),
+                "repository": descriptor.repository,
+                "source_commit": source_commit,
+                "base_pilot_commit": descriptor.base_pilot_commit,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
 
 
 def run_pilot(
@@ -185,7 +241,9 @@ def run_pilot(
     _verify_base_pin(base, expected_base_commit, descriptor)
     if _git_text(source, "rev-parse", "HEAD") != source_commit:
         raise ValueError("SOURCE_COMMIT_MISMATCH")
-    remote_repository = _repository_from_remote(_git_text(source, "config", "--get", "remote.origin.url"))
+    remote_repository = _repository_from_remote(
+        _git_text(source, "config", "--get", "remote.origin.url")
+    )
     if remote_repository != descriptor.repository:
         raise ValueError(
             f"REPOSITORY_IDENTITY_MISMATCH: {remote_repository} != {descriptor.repository}"
@@ -270,29 +328,15 @@ def run_pilot(
             runtime_path = workspace / "artifacts/godot-project-pilot/runtime-result.json"
             runtime = verify_runtime_evidence(workspace, runtime_path)
             if runtime.repository != descriptor.repository:
-                raise ValueError("RUNTIME_REPOSITORY_MISMATCH")
+                raise EvidenceVerificationError("RUNTIME_REPOSITORY_MISMATCH")
             if runtime.source_commit != source_commit:
-                raise ValueError("RUNTIME_SOURCE_COMMIT_MISMATCH")
+                raise EvidenceVerificationError("RUNTIME_SOURCE_COMMIT_MISMATCH")
             if runtime.base_pilot_commit != descriptor.base_pilot_commit:
-                raise ValueError("RUNTIME_BASE_COMMIT_MISMATCH")
-    except (OSError, subprocess.TimeoutExpired, ValueError) as exc:
+                raise EvidenceVerificationError("RUNTIME_BASE_COMMIT_MISMATCH")
+    except (OSError, ValueError) as exc:
         after = inventory_tracked_files(source)
         changed = compare_inventories(before, after)
-        output.mkdir(parents=True, exist_ok=True)
-        (output / "failure.json").write_text(
-            json.dumps(
-                {
-                    "code": str(exc),
-                    "repository": descriptor.repository,
-                    "source_commit": source_commit,
-                    "base_pilot_commit": descriptor.base_pilot_commit,
-                },
-                ensure_ascii=False,
-                indent=2,
-            )
-            + "\n",
-            encoding="utf-8",
-        )
+        _write_failure_marker(output, descriptor, source_commit, exc)
         write_final_evidence(
             output,
             repository=descriptor.repository,
@@ -308,7 +352,11 @@ def run_pilot(
             preserved_autoloads=preserved_autoloads,
             process_records=[_record_dict(value) for value in process_records],
         )
-        return 4 if changed else 3
+        if changed:
+            return 4
+        if isinstance(exc, EvidenceVerificationError):
+            return 5
+        return 3
 
     after = inventory_tracked_files(source)
     changed = compare_inventories(before, after)
@@ -331,7 +379,9 @@ def run_pilot(
 
 
 def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Run a bounded Base C0 Godot project Pilot")
+    parser = argparse.ArgumentParser(
+        description="Run a bounded Base C0 Godot project Pilot"
+    )
     parser.add_argument("--base-root", type=Path, required=True)
     parser.add_argument("--source-root", type=Path, required=True)
     parser.add_argument("--source-commit", required=True)
