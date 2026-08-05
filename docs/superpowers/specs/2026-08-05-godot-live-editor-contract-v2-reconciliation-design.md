@@ -3,12 +3,14 @@
 ## Status
 
 - Date: 2026-08-05
-- State: `WRITTEN_SPEC_REVIEW_PENDING`
+- State: `APPROVED`
+- Approved by user: 2026-08-05
 - Base: `main@83683eecaaeaf415bf629fe5a1231fc6cef575f3`
 - Predecessor: merged PR #152
 - Supersedes: divergent Draft PRs #153 and #154
 - Scope: static contract reconciliation only
 - Implementation: not started
+- Implementation plan: `docs/superpowers/plans/2026-08-05-godot-live-editor-contract-v2-reconciliation.md`
 
 ## Decision
 
@@ -16,7 +18,7 @@ Preserve the architecture merged in PR #152:
 
 ```text
 existing Base Skill owners
-→ reusable Godot safety contract and schemas
+→ reusable Godot safety contract and Schemas
 → project-local capability manifest and thin adapter
 → project-owned CLI / EditorPlugin / runtime-debugger implementation
 ```
@@ -37,7 +39,7 @@ NON_RETRYABLE_MUTATION
 LONG_RUNNING_TASK
 ```
 
-This cannot represent common operations without exceptions, including:
+They cannot represent common combinations without exceptions, including:
 
 - an idempotent mutation that still requires approval;
 - a long-running read-only inspection;
@@ -47,22 +49,22 @@ This cannot represent common operations without exceptions, including:
 
 PR #152 safely handles the tested Pilot, but production Editor and runtime adapters need a model that does not infer approval, retry, lifetime, or rollback from one overloaded enum.
 
-PR #153 additionally demonstrated that JSON Schema shape alone cannot prove equality between the active request and approval, task, ledger, and result bindings. PR #154 described a broader v2 model but was based on a pre-merge branch and duplicated the full #152 ancestry. This specification preserves their confirmed findings without merging either divergent branch.
+PR #153 also demonstrated that JSON Schema shape alone cannot prove equality between active request, approval, task, ledger, and result bindings. PR #154 described a broader v2 model but was based on a pre-merge branch and duplicated the #152 ancestry. This specification preserves their confirmed findings without merging either divergent branch.
 
 ## Goals
 
-- Separate side effects, idempotency, approval, lifetime, and rollback.
-- Bind every approved or durable operation to the exact project, service, Editor/runtime instance, contract snapshot, request, and precondition state.
+- Separate effect, idempotency, approval, execution lifetime, and rollback.
+- Bind approved and durable operations to exact project, service, Editor/runtime instance, contract snapshot, request, and precondition state.
 - Add semantic validation for equality and cross-field rules that JSON Schema cannot express.
 - Validate both capability input and output data.
 - Prevent stale observations from overwriting newer Editor or file state.
 - Keep local transport disabled until its security profile is fully declared.
-- Migrate without silently changing the meaning of v1 manifests or captured evidence.
+- Preserve v1 audit evidence without granting it v2 mutation authority.
 - Preserve Registry bytes, release locks, and existing Skill ownership.
 
 ## Non-goals
 
-- No real MCP server in the v2 reconciliation PR.
+- No real MCP server in static reconciliation PR A.
 - No production EditorPlugin or runtime debugger bridge.
 - No game-project installation.
 - No remote or wildcard network binding.
@@ -81,7 +83,7 @@ effect_kind: READ_ONLY | MUTATION
 ```
 
 - `READ_ONLY` cannot change project files, Editor state, runtime state, external systems, or durable operation state except bounded diagnostic access records.
-- `MUTATION` requires explicit idempotency, approval, rollback, retry, precondition, ledger, and evidence behavior.
+- `MUTATION` declares idempotency, approval, rollback, retry, precondition, ledger, and evidence behavior.
 
 ### Idempotency
 
@@ -91,9 +93,9 @@ idempotency: NOT_APPLICABLE | IDEMPOTENT | NON_IDEMPOTENT
 
 - `READ_ONLY` uses `NOT_APPLICABLE`.
 - `MUTATION` uses `IDEMPOTENT` or `NON_IDEMPOTENT`.
-- `IDEMPOTENT` requires an idempotency key and durable operation ledger.
+- `IDEMPOTENT` requires an idempotency key and durable ledger.
 - `NON_IDEMPOTENT` forbids automatic retry.
-- Idempotency never implies that approval is unnecessary.
+- Idempotency never removes an approval requirement.
 
 ### Approval policy
 
@@ -102,9 +104,9 @@ approval_policy: NOT_REQUIRED | REQUIRED
 ```
 
 - Approval is independent of idempotency and execution lifetime.
-- `REQUIRED` binds the exact normalized request, target identity, contract snapshot, policy axes, preconditions, and expiry.
+- `REQUIRED` binds normalized request, exact target identity, contract snapshot, policy axes, preconditions, and expiry.
 - Approval is single-use except for an exact replay of the same completed idempotent operation.
-- A changed argument, instance, catalog, Schema, precondition, or operation identity requires renewed approval.
+- Changed arguments, instance, catalog, Schema, precondition, or operation identity require renewed approval.
 
 ### Execution mode
 
@@ -113,8 +115,8 @@ execution_mode: SYNCHRONOUS | LONG_RUNNING_TASK
 ```
 
 - `SYNCHRONOUS` has no durable task ID.
-- `LONG_RUNNING_TASK` creates one receiver-generated durable task before the initial response and uses status/resume rather than duplicate start.
-- Execution lifetime does not weaken approval, retry, rollback, or evidence rules.
+- `LONG_RUNNING_TASK` creates one receiver-generated durable task before the initial response and uses status/resume instead of duplicate start.
+- Lifetime does not weaken approval, retry, rollback, or evidence rules.
 
 ### Rollback policy
 
@@ -124,13 +126,13 @@ rollback_policy:
 ```
 
 - `READ_ONLY` uses `NOT_APPLICABLE`.
-- `MUTATION` must select a non-null rollback policy.
+- `MUTATION` selects one non-null rollback policy.
 - `EDITOR_UNDO_REDO` requires one explicit `EditorUndoRedoManager` transaction boundary.
 - `SNAPSHOT` requires a named pre-change snapshot and tested restore path.
 - `MANUAL` requires an operator-readable recovery reference.
 - `IRREVERSIBLE` always requires approval and forbids automatic retry.
 
-## Valid representative combinations
+## Representative combinations
 
 ```text
 READ_ONLY + NOT_APPLICABLE + NOT_REQUIRED + SYNCHRONOUS + NOT_APPLICABLE
@@ -145,9 +147,7 @@ Invalid combinations fail before engine execution.
 
 ## Exact execution identity
 
-### Project identity
-
-Retain the v1 project identity:
+Retain project identity:
 
 ```yaml
 project_identity:
@@ -155,8 +155,6 @@ project_identity:
   project_godot_sha256:
   project_fingerprint:
 ```
-
-### Instance identity
 
 Add instance identity:
 
@@ -170,11 +168,11 @@ instance_identity:
 
 Rules:
 
-- A new automation-service process creates a new service instance ID.
-- Editor capabilities require the selected Editor instance ID.
-- Runtime capabilities require an active runtime session ID.
-- Port, PID, process name, window title, and folder substring remain non-authoritative hints.
-- Approval, ledger, task, and result bindings repeat all relevant identity fields.
+- every automation-service start creates a new service instance ID;
+- Editor capabilities require the selected Editor instance ID;
+- runtime capabilities require an active runtime session ID;
+- port, PID, process name, window title, and folder substring remain non-authoritative hints;
+- approval, ledger, task, and result bindings repeat all relevant identity fields.
 
 ## Contract snapshot binding
 
@@ -191,9 +189,9 @@ contract_snapshot:
   protocol_version:
 ```
 
-The canonical request hash includes normalized arguments, project and instance identity, contract snapshot, policy axes, and preconditions.
+The canonical request hash includes normalized arguments, project and instance identity, contract snapshot, policy axes, and expected/observed preconditions.
 
-Any snapshot change invalidates old approval and pending mutation authority. Semantic validation must prove equality between the top-level snapshot and approval, ledger, task, and terminal result bindings.
+Any snapshot change invalidates old approval and pending mutation authority. Semantic validation proves equality between top-level snapshot and approval, ledger, task, and terminal result bindings.
 
 ## Capability Manifest v2
 
@@ -212,7 +210,9 @@ rollback_policy:
 
 input_schema:
 output_schema:
-
+input_schema_sha256:
+output_schema_sha256:
+path_access:
 precondition_policy: NONE | OPTIONAL | REQUIRED
 retry_policy:
 timeout_policy:
@@ -220,15 +220,16 @@ evidence_outputs:
 unsupported_states:
 ```
 
-Additional manifest rules:
+Additional rules:
 
 - capability IDs are unique;
-- input and output Schemas are closed typed object Schemas;
+- input and output Schemas are closed typed objects;
+- Schema hashes match canonical Schema content;
 - undeclared capability execution is impossible;
 - project-test runner references resolve exactly once and declare `TEST_RESULT` evidence;
-- file paths stay within approved project or artifact roots;
+- read/write roots stay within normalized `res://` or `artifacts/` boundaries;
 - transport requirements match the selected execution path;
-- a configured manifest records detected/supported Godot versions, exact tool pin, telemetry policy, uninstall procedure, and rollback reference.
+- configured manifests record detected/supported Godot versions, exact tool pin, telemetry policy, uninstall procedure, and rollback reference.
 
 ## Operation Envelope v2
 
@@ -237,18 +238,12 @@ schema_version: 2
 artifact_role: GODOT_LIVE_EDITOR_OPERATION_ENVELOPE
 operation_id:
 capability_id:
-
 project_identity:
 instance_identity:
 contract_snapshot:
-
 policy:
-  effect_kind:
-  idempotency:
-  approval_policy:
-  execution_mode:
-  rollback_policy:
-
+request:
+  arguments:
 request_hash:
 idempotency_key:
 preconditions:
@@ -261,40 +256,47 @@ The envelope carries a declared capability and typed data, never an arbitrary ex
 
 ## Stale-state protection
 
-Mutations of Scene, Resource, Inspector, ProjectSettings, imported assets, or other human-editable state use observation-derived preconditions:
+Mutations of Scene, Resource, Inspector, ProjectSettings, imported assets, or other human-editable state carry expected and execution-time observed values:
 
 ```yaml
 preconditions:
-  target_revision:
-  target_content_sha256:
+  expected_target_revision:
+  observed_target_revision:
+  expected_target_content_sha256:
+  observed_target_content_sha256:
   expected_dirty_state: NOT_APPLICABLE | CLEAN | DIRTY
+  observed_dirty_state: NOT_APPLICABLE | CLEAN | DIRTY
   expected_scene_path:
+  observed_scene_path:
   conflict_policy: FAIL_CLOSED
 ```
 
-- A mismatch returns `TARGET_STATE_CONFLICT` before mutation.
+- Any expected/observed mismatch returns `TARGET_STATE_CONFLICT` before mutation.
 - The client re-observes and obtains renewed approval when required.
 - A dirty Scene is never silently saved or overwritten.
 - One approval or rollback boundary cannot hide unrelated batch mutations.
+- PR B must perform the final comparison and engine action on the Editor main thread without an unguarded interleaving window.
 
 ## Semantic validator
 
-JSON Schema validates structure. A separate deterministic validator enforces semantics.
+JSON Schema validates shape. A deterministic Python validator enforces semantics before engine action and before successful result promotion.
 
-The validator must reject:
+It rejects:
 
-- duplicate capability IDs;
+- duplicate or ambiguous capabilities;
 - invalid policy-axis combinations;
-- top-level/request/approval/ledger/task/result identity mismatch;
-- catalog or input/output Schema hash mismatch;
+- identity and contract-snapshot mismatch;
+- input/output Schema or Schema-hash mismatch;
+- request-hash mismatch;
+- missing or conflicting preconditions;
 - reused, expired, wrong-instance, or wrong-precondition approval;
 - terminal task results without exact operation and result-hash binding;
-- configured project-test runners that are missing, ambiguous, outside allowed roots, or lack `TEST_RESULT` evidence;
-- transport configurations that do not satisfy their transport-specific security profile;
-- PASS evidence without a confined artifact path and SHA-256;
+- missing, ambiguous, unsafe, or evidence-incomplete project-test runners;
+- transport configurations that violate their security profile;
+- PASS evidence without confined path and SHA-256;
 - output data that fails the capability output Schema.
 
-The validator runs before engine action and again before successful result promotion.
+History-sensitive approval reuse is checked against prior operation envelopes supplied to the validator.
 
 ## Transport profiles
 
@@ -312,7 +314,7 @@ transport.kind:
 - `STDIO_BRIDGE` requires current-process ownership and separates protocol stdout from diagnostics stderr.
 - `PROJECT_DEFINED` cannot weaken identity, approval, path, output, audit, or evidence rules.
 - Remote and wildcard bind remain unsupported by the Base default contract.
-- MCP is an optional protocol profile layered on a valid transport; it is not the Base execution core.
+- MCP is an optional protocol profile layered on a valid transport, not the Base execution core.
 
 ## Generic task lifecycle
 
@@ -322,12 +324,12 @@ task.state:
   PENDING | COMPLETED | FAILED | CANCELLED | STALE
 ```
 
-- The receiver generates the task ID.
-- Start is persisted once before the initial response.
-- An exact idempotent replay returns the same task.
-- Terminal states require exact result identity and result hash.
-- Cancellation support is declared, never assumed.
-- Task expiry does not imply rollback.
+- receiver generates task ID;
+- start is persisted once before initial response;
+- exact idempotent replay returns the same task;
+- terminal states require exact result identity and result hash;
+- cancellation support is declared, never assumed;
+- task expiry does not imply rollback;
 - `INPUT_REQUIRED` cannot continue without explicit new input.
 
 ## Evidence integrity
@@ -343,11 +345,11 @@ generated_at:
 producer:
 ```
 
-- Kind/state pairs are mechanically constrained.
-- File-backed PASS evidence requires a confined path and SHA-256.
-- `NOT_RUN`, `NOT_CONFIGURED`, and `BLOCKED_ENVIRONMENT` have no artifact path or hash.
-- Producer identifies the capability and exact tool version.
-- Contract, execution, runtime, engine input, physical input, screenshot, project test, and human evidence remain separate.
+- kind/state pairs are mechanically constrained;
+- file-backed PASS evidence requires a confined path and SHA-256;
+- `NOT_RUN`, `NOT_CONFIGURED`, and `BLOCKED_ENVIRONMENT` have no artifact path or hash;
+- producer identifies capability and exact tool version;
+- contract, execution, runtime, engine input, physical input, screenshot, project test, and human evidence remain separate.
 
 ## Godot recovery boundary
 
@@ -358,7 +360,7 @@ stop mutation
 → start Godot with --recovery-mode
 → disable or remove the project-local adapter
 → mark BLOCKED_RECOVERY
-→ restore the declared snapshot or manual recovery path
+→ restore declared snapshot or manual recovery path
 → verify normal Editor startup
 → issue new service and Editor instance IDs
 → require renewed approval
@@ -370,13 +372,13 @@ Recovery-mode startup is recovery evidence, not production runtime success.
 
 Do not rewrite v1 Schema meaning in place.
 
-- Add versioned v2 capability and operation Schemas.
-- Add the semantic validator alongside v2.
-- Keep v1 schemas and captured Pilot evidence readable for audit and regression.
-- Switch project templates to v2 only after v2 RED/GREEN tests and migration tests pass.
-- A v1 configured manifest may be inspected during migration but cannot authorize production Editor mutation through a v2 adapter.
-- The adapter reports an explicit migration-required state rather than guessing v1 intent.
-- Remove v1 only through a later release decision with consumer inventory and compatibility evidence.
+- add versioned v2 capability and operation Schemas;
+- add semantic validator alongside v2;
+- keep v1 Schemas and captured Pilot evidence readable for audit and regression;
+- switch project installation template to v2 only after v2 RED/GREEN and migration tests pass;
+- a v1 configured manifest may be inspected in `AUDIT` mode but cannot authorize v2 mutation;
+- the adapter reports `MIGRATION_REQUIRED_V1` rather than guessing v1 intent;
+- remove v1 only through a later release decision with consumer inventory and compatibility evidence.
 
 ## Delivery decomposition
 
@@ -412,39 +414,37 @@ Do not rewrite v1 Schema meaning in place.
 
 ## Testing strategy
 
-PR A uses TDD and must include:
+PR A uses TDD and includes:
 
-- Schema rejection tests for invalid axis combinations;
+- Schema rejection for invalid axis combinations;
 - semantic equality tests for approval, ledger, task, and result bindings;
 - duplicate capability and ambiguous test-runner rejection;
-- input/output Schema validation tests;
+- input/output Schema and hash validation;
 - stale-state conflict tests;
 - transport-profile security tests;
 - evidence kind/state/path/hash tests;
 - v1 audit-read compatibility and v1 mutation-authority rejection;
-- unchanged Registry blob and release locks;
+- unchanged Registry blob, release locks, v1 Schemas, and Pilot evidence;
 - exact-head required GitHub Actions and zero unresolved review threads.
 
 Runtime and human evidence remain `NOT_RUN` in PR A.
 
 ## Acceptance criteria
 
-- The written model represents all representative combinations without exception fields.
+- The model represents all representative combinations without exception fields.
 - Invalid combinations and binding mismatches fail before engine action.
+- Expected/observed stale-state mismatch fails closed.
 - v1 audit evidence remains readable while v1 cannot silently authorize v2 mutation.
-- Project templates and adapters do not switch until tests prove migration behavior.
+- Project templates and adapters switch only after migration tests pass.
 - No new Base active Skill, universal server, project adoption, Registry change, or release-lock change occurs.
 - Production adapter readiness remains `NOT_READY` after PR A.
 
 ## Relationship to PR #153 and PR #154
 
-After this design PR is opened:
-
-- close #153 as superseded, preserving its hardening findings in this specification;
-- close #154 as superseded, preserving its orthogonal-axis and identity/snapshot model here;
-- do not merge or rebase either divergent branch;
-- implementation begins only after the user approves this written specification and a separate TDD implementation plan is committed.
+- Both divergent Draft PRs are closed without merge.
+- Their confirmed hardening and v2-model findings are preserved in this approved specification and implementation plan.
+- Neither branch is rebased or merged into the current branch.
 
 ## Rollback
 
-Close the design PR and delete only its isolated branch. The merged v1 contract and Pilot on main remain unchanged. No project, Registry, release-lock, or Google Sheet rollback is required.
+Close PR #157 and delete only its isolated branch. The merged v1 contract and Pilot on main remain unchanged. No project, Registry, release-lock, or Google Sheet rollback is required.
