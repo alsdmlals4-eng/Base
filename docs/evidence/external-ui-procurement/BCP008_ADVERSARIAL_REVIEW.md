@@ -30,6 +30,7 @@
 - GREEN 적용 run: `31055246563`
 - 집중 BCP-008 테스트: `10 PASS`
 - 결합 소비자·거버넌스 검사: `73 PASS`
+- 통합 계약·패키지·최신성 검사: `90 PASS`
 - Skill behavior coverage: `29/29 primary`, `29/29 non-selection`
 - 독립 모델 실행: `NOT_RUN`
 - Registry·released lock 변경: `0`
@@ -82,13 +83,16 @@ adoption_decision: BLOCKED_UNVERIFIED
 
 ### MUST_FIX — 새 package reference가 소유 Skill에서 연결되지 않음
 
-- 수정: UI Skill의 상세 방법 목록에 reference 두 개를 링크함.
+- 초기 수정: UI Skill의 상세 방법 목록에 reference 두 개를 링크함.
+- 후속 판정: 링크만으로도 Skill 본문 변경과 Registry 재발행이 결합되는 과도한 비용이 확인됨.
+- 최종 수정: 두 계약을 기존 `ux-ui-design-system-method.md`의 `6.1`·`6.2`로 통합하고 별도 reference를 제거함.
 - 검증: package integrity·reference freshness·UI 계약 검사 통과.
 
-### SHOULD_FIX — UI Skill 본문이 광역 설명으로 팽창함
+### SHOULD_FIX — UI Skill 본문과 별도 reference가 책임을 과분할함
 
-- 수정: 새 책임의 상세 절차를 reference와 기존 `ux-ui-design-system-method`로 이동하고 Skill 본문은 선택 경로만 연결함.
-- 보호: Registry identity·ACTIVE Skill 수·released lock을 변경하지 않음.
+- 수정: 시각 토큰 Adapter와 외부 UI 조달 Gate를 기존 UI 디자인 시스템 방법론에 흡수함.
+- 결과: `auditing-and-refining-ui-art/SKILL.md`, `skills/SKILL_REGISTRY.json`, released lock은 기준 main과 동일함.
+- 보호: 기능 계약·테스트·조달 영수증·행동 fixture는 유지함.
 
 ### REJECTED_CRITIQUE — 별도 Spec Kit/BMAD/DESIGN/shadcn/taste Skill 필요
 
@@ -111,18 +115,21 @@ adoption_decision: BLOCKED_UNVERIFIED
 - Registry 접근, source admission, 설치 승인, build, 렌더, 접근성, 사람 품질을 서로 다른 Gate로 유지한다.
 - MCP 연결 성공을 설치·채택·품질 통과로 사용하지 않는다.
 - 외부 코드는 Base에 기본 설치하지 않는다.
+- UI Skill 본문과 Registry·released lock은 baseline과 동일하게 유지한다.
 
 ## 현재 판정
 
 ```yaml
 contract_and_routing_improvement: VERIFIED
 existing_skill_boundary_preservation: VERIFIED
+consolidated_contract_tests: PASS_90
 focused_and_governance_tests: PASS
 external_ui_source_acquisition: PASS
 external_ui_disposable_build: PASS
 external_ui_target_project_adoption: BLOCKED_UNVERIFIED
 independent_model_behavior_improvement: NOT_RUN
 human_ui_quality: HUMAN_NOT_RUN
+registry_and_release_lock_change: NONE
 merge_authorization: NOT_GRANTED
 ```
 
