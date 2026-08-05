@@ -44,7 +44,7 @@ blocking_or_escalation_factors:
 
 근거:
 
-- 
+-
 
 ## 3. Shared Core Contract
 
@@ -62,7 +62,7 @@ shared_core_contract:
 
 공용 코어가 소유하지 않는 책임:
 
-- 
+-
 
 ## 4. Platform Adapters
 
@@ -88,7 +88,7 @@ platform_adapters:
 
 플랫폼 SDK 없이도 실행 가능한 core/local fallback:
 
-- 
+-
 
 ## 5. Display and UI
 
@@ -166,7 +166,7 @@ semantic_actions:
 
 입력 대안·접근성:
 
-- 
+-
 
 ## 7. Save and Lifecycle
 
@@ -187,7 +187,7 @@ save_and_lifecycle:
 
 중단 시 금지되는 상태:
 
-- 
+-
 
 ## 8. Performance Budget
 
