@@ -6,7 +6,7 @@
 - 기준 커밋: `83683eecaaeaf415bf629fe5a1231fc6cef575f3`
 - 승인 설계 커밋: `ea0442ddb7fb9286d093cc96e523fdd74a841c22`
 - 제출일: `2026-08-05`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `패턴`
 - 승인 기록: `https://github.com/alsdmlals4-eng/Base/pull/154#issuecomment-5187157323`
 - 제출 병합: `https://github.com/alsdmlals4-eng/Base/pull/156`
@@ -101,10 +101,35 @@ Base의 Godot 자동화 안전 계약을 다음 원칙으로 정규화한다.
 
 - 승인 기록: `https://github.com/alsdmlals4-eng/Base/pull/154#issuecomment-5187157323`
 - 제출 PR: `https://github.com/alsdmlals4-eng/Base/pull/156`
-- 현재 BCP 단계: `APPROVED_FOR_IMPLEMENTATION`
-- 승인 범위: v2 정적 계약 구현 계획에 따라 별도 TDD 구현 PR을 준비하는 것
-- 구현 시작 조건: 이 승인 승격 PR 병합 후 사용자의 새로운 명시적 구현 승인
-- 구현 브랜치 조건: 그 시점의 최신 main에서 새 격리 브랜치/PR 생성; 설계·계획 PR #157에서 직접 구현하지 않음
-- 제외 범위: 자동 병합, 프로덕션 MCP readiness, user game project 적용, release/Registry 변경
-- 구현 PR: `없음`
-- 롤백: 승인 승격 PR과 후속 구현 PR을 닫고 main의 SUBMITTED 기록 또는 v1 계약 상태로 복귀한다. released Base 잠금과 Skill Registry는 변경하지 않는다.
+- 현재 BCP 단계: `IMPLEMENTED`
+- 기본 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/161`
+- 기본 구현 병합 SHA: `339a48be688e312b7894e1f2372aecfe0ee3f6f4`
+- v2 사후 하드닝 PR: `https://github.com/alsdmlals4-eng/Base/pull/162`
+- v2 사후 하드닝 병합 SHA: `5e23aaad85842505e009fa7f1872e70576ef59f0`
+- Editor transaction adapter PR: `https://github.com/alsdmlals4-eng/Base/pull/165`
+- Editor transaction adapter 병합 SHA: `48273f79ab261a1f064adfc7431c99a74a22c33a`
+- Editor transaction adapter 적대적 하드닝 PR: `https://github.com/alsdmlals4-eng/Base/pull/166`
+- Editor transaction adapter 적대적 하드닝 병합 SHA: `bd72e61722ebb4e29dd66b0885fba9428b1c14fb`
+- 재사용 가능한 다중 프로젝트 C0 Pilot PR: `https://github.com/alsdmlals4-eng/Base/pull/183`
+- 재사용 가능한 다중 프로젝트 C0 Pilot 병합 SHA: `0084d5a6dd546aa001ced46b8cc8e3db8f38035d`
+
+```yaml
+static_v2_contract: IMPLEMENTED
+v2_postmerge_hardening: IMPLEMENTED
+editor_transaction_adapter: IMPLEMENTED
+editor_transaction_hardening: IMPLEMENTED
+base_c0_multi_project_pilot: IMPLEMENTED
+isolated_godot_editor_runtime: PASS
+real_project_pilots: NOT_RUN
+production_transport: NOT_IMPLEMENTED
+mcp_profile: NOT_IMPLEMENTED
+runtime_debugger: NOT_IMPLEMENTED
+windows_production_operation: NOT_RUN
+physical_input: NOT_RUN
+human_editor_usability: HUMAN_NOT_RUN
+production_adapter_ready: NOT_READY
+```
+
+- 구현 완료 판정 범위: Base의 정적 v2 계약, 사후 의미 검증 하드닝, listener-free Editor transaction adapter, 격리된 C0 다중 프로젝트 Pilot 실행 기반까지다.
+- 미포함 범위: 실제 게임 프로젝트별 Pilot, 인증된 외부 transport, MCP profile, runtime debugger, Windows 프로덕션 운용, 물리 입력, 사람 사용성 및 프로덕션 준비 완료 판정이다.
+- 롤백: 이 생명주기 상태 전이 PR을 되돌려 Proposal·Registry를 `APPROVED_FOR_IMPLEMENTATION`으로 복구한다. 이미 병합된 구현·하드닝 PR과 released Base 잠금은 별도 명시적 결정 없이 변경하지 않는다.
