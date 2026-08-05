@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   apply-patches:
-    if: "${{ github.event.head_commit.message == 'chore: apply Cloud Run route and hardening patches v3' }}"
+    if: "${{ github.event.head_commit.message == 'chore: apply Cloud Run route and hardening patches v4' }}"
     runs-on: ubuntu-24.04
     steps:
       - name: Check out exact branch head
@@ -85,7 +85,7 @@ jobs:
           git commit -m "test: harden Cloud Run backend capability boundaries"
           python -m unittest \
             tests.test_cloud_run_game_backend_capability \
-            tests.test_base_v9_5_skill_operating_refinement -v
+            tests.test_base_v9_5_skill_operating_refinement.BaseV95SkillOperatingRefinementTests.test_cloud_run_capability_routes_through_existing_owners_without_registry_change -v
           python tools/check_canonical_reference_freshness.py --base origin/main --head HEAD
       - name: Push generated commits
         run: git push origin HEAD:agent/implement-cloud-run-game-backend-capability
