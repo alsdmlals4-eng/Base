@@ -43,9 +43,55 @@ jobs:
             docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md \
             templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md
           git commit -m "feat: add game entitlement and integrity capability pack"
-      - name: Route and harden capability
+      - name: Route and harden capability without changing shared-route owner
         run: |
           python tools/apply_entitlement_integrity_capability.py route-harden
+          git checkout origin/main -- skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md
+          python - <<'PY'
+          from pathlib import Path
+          import json
+
+          dedicated = Path("tests/test_game_entitlement_integrity_drm_capability.py")
+          text = dedicated.read_text(encoding="utf-8")
+          text = text.replace(
+              '''            "skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md": (\n                guide_path,\n                "PLATFORM_CAPABILITY_UNVERIFIED",\n            ),\n''',
+              "",
+          )
+          direct_anchor = '''        for path in (\n            "docs/knowledge/game-development/README.md",\n            "docs/knowledge/game-development/TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md",\n            "docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md",\n            "docs/DOCUMENTATION_MAP.md",\n            "START_HERE.md",\n        ):\n            self.assertIn(guide_path, read(path), path)\n'''
+          indirect = direct_anchor + '''\n        evaluator = read("skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md")\n        self.assertIn(\n            "PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md",\n            evaluator,\n        )\n'''
+          text = text.replace(direct_anchor, indirect)
+          dedicated.write_text(text, encoding="utf-8")
+
+          platform_test = Path("tests/test_platform_review_asset_rights_reference_production.py")
+          text = platform_test.read_text(encoding="utf-8")
+          text = text.replace(
+              '            "skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md",\n',
+              "",
+          )
+          platform_test.write_text(text, encoding="utf-8")
+
+          v95 = Path("tests/test_base_v9_5_skill_operating_refinement.py")
+          text = v95.read_text(encoding="utf-8")
+          text = text.replace(
+              '            "skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md": "PLATFORM_CAPABILITY_UNVERIFIED",\n',
+              "",
+          )
+          v95.write_text(text, encoding="utf-8")
+
+          freshness_path = Path(".github/reference-freshness.json")
+          data = json.loads(freshness_path.read_text(encoding="utf-8"))
+          for rule in data.get("canonical_reference_rules", []):
+              if rule.get("name") == "game-entitlement-integrity-capability-entrypoints":
+                  rule["required_consumers"] = [
+                      item
+                      for item in rule.get("required_consumers", [])
+                      if item != "skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md"
+                  ]
+          freshness_path.write_text(
+              json.dumps(data, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          PY
           git add \
             docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md \
             docs/knowledge/game-development/README.md \
@@ -53,7 +99,6 @@ jobs:
             docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md \
             docs/DOCUMENTATION_MAP.md START_HERE.md \
             skills/managing-game-project-operating-system/SKILL.md \
-            skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md \
             skills/designing-vertical-slices/SKILL.md \
             skills/reviewing-and-validating-project-changes/SKILL.md \
             templates/project-operations/GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK.md \
@@ -80,5 +125,7 @@ jobs:
             tests.test_base_v9_5_skill_operating_refinement.BaseV95SkillOperatingRefinementTests.test_entitlement_integrity_routes_through_existing_owners_without_new_skill -v
           python tools/check_canonical_reference_freshness.py --base origin/main --head HEAD
           python tools/check_base_change_proposals.py
+          git diff --quiet origin/main -- skills/SKILL_REGISTRY.json
+          git diff --quiet origin/main -- skills/BASE_SHARED_SKILL_ROUTES.json
       - name: Push verified commits
         run: git push origin HEAD:agent/implement-game-entitlement-integrity-drm-capability
