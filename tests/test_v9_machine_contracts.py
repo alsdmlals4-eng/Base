@@ -159,6 +159,17 @@ class V9MachineContractTests(unittest.TestCase):
             workspace,
         )
 
+    def test_c0_wrapper_explicitly_types_variant_file_hashes(self) -> None:
+        wrapper = read(
+            "templates/project-operations/godot-live-editor/pilot/multi_project_pilot.gd"
+        )
+        for marker in (
+            "var main_hash_before: Variant = _evidence.sha256_file(main_scene)",
+            "var main_hash_after_inspect: Variant = _evidence.sha256_file(main_scene)",
+            "var main_hash_after: Variant = _evidence.sha256_file(main_scene)",
+        ):
+            self.assertIn(marker, wrapper)
+
 
 if __name__ == "__main__":
     unittest.main()
