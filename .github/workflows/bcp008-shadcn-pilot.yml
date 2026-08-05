@@ -30,19 +30,23 @@ jobs:
           root="$RUNNER_TEMP/bcp008-shadcn"
           mkdir -p "$root"
           cd "$root"
-          npx --yes shadcn@4.16.2 init \
+          published_cli_version="$(npm view shadcn version)"
+          test -n "$published_cli_version"
+          npx --yes "shadcn@$published_cli_version" init \
             --template vite \
             --base radix \
             --name bcp008-pilot \
             --yes \
             --silent
           cd bcp008-pilot
-          npx --yes shadcn@4.16.2 add button --yes --silent
+          npx --yes "shadcn@$published_cli_version" add button --yes --silent
           npm run build
           button="$(find . -type f -path '*/components/ui/button.tsx' -print -quit)"
           test -n "$button"
           {
-            echo "cli_version=4.16.2"
+            echo "source_package_version=4.16.2"
+            echo "source_package_version_published=NO_ETARGET"
+            echo "published_cli_version=$published_cli_version"
             echo "node_version=$(node --version)"
             echo "button_path=$button"
             echo "button_sha256=$(sha256sum "$button" | awk '{print $1}')"
