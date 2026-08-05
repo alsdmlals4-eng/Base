@@ -11,6 +11,9 @@ from pathlib import Path
 from tests.test_godot_editor_transaction_adapter import (
     GodotEditorTransactionAdapterTests as _GodotEditorTransactionAdapterTests,
 )
+from tests.test_godot_editor_transaction_adapter_runtime import (
+    GodotEditorTransactionAdapterRuntimeTests as _GodotEditorTransactionAdapterRuntimeTests,
+)
 from tests.test_godot_live_editor_contract import (
     GodotLiveEditorContractTests as _GodotLiveEditorContractTests,
 )
