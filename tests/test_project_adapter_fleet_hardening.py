@@ -24,6 +24,7 @@ TEMPLATE = ROOT / "templates/project-operations/PROJECT_BASE_ADAPTER.json"
 WORKFLOW = ROOT / "templates/project-operations/github/validate-project-base-adapter.yml"
 DECISION = ROOT / "docs/operations/decisions/DEC-BASE-20260805-001.md"
 FINALIZATION_COMMIT = "0b7c94f38d959efc0fc9442274c60b2e268a3c97"
+TRUSTED_IMPLEMENTATION_MERGE = "bfdc9e44d4a6920dc085eaa3f9d19d31b1acd2a1"
 APPROVAL_REF = "https://github.com/alsdmlals4-eng/Base/pull/175#issuecomment-5197612170"
 
 
@@ -68,7 +69,7 @@ class ProjectAdapterFleetHardeningTests(unittest.TestCase):
         errors, _, _ = contract._release_lock_contract(adapter, ROOT)
         self.assertFalse(errors, "\n".join(errors))
 
-    def test_project_workflow_pins_the_base_validator_to_an_immutable_commit(self) -> None:
+    def test_project_workflow_pins_the_trusted_merged_base_validator(self) -> None:
         workflow = WORKFLOW.read_text(encoding="utf-8")
         marker = "repository: alsdmlals4-eng/Base"
         self.assertIn(marker, workflow)
@@ -80,7 +81,7 @@ class ProjectAdapterFleetHardeningTests(unittest.TestCase):
             "The Base validator checkout must pin an immutable full commit SHA instead of floating main.",
         )
         validator_commit = match.group(1)
-        self.assertNotEqual(validator_commit, "0" * 40)
+        self.assertEqual(TRUSTED_IMPLEMENTATION_MERGE, validator_commit)
 
         required_markers = {
             "schemas/project-base-adapter-v1.schema.json": '"finalization_commit"',
@@ -93,6 +94,7 @@ class ProjectAdapterFleetHardeningTests(unittest.TestCase):
                 text=True,
                 encoding="utf-8",
                 errors="replace",
+                timeout=10,
                 check=False,
             )
             self.assertEqual(
@@ -106,7 +108,7 @@ class ProjectAdapterFleetHardeningTests(unittest.TestCase):
                 f"Pinned validator commit lacks required fleet hardening in {path}",
             )
 
-    def test_decision_records_approval_and_clean_implementation_pr(self) -> None:
+    def test_decision_records_approval_and_trusted_merge_pin(self) -> None:
         text = DECISION.read_text(encoding="utf-8")
         for token in (
             "status: APPROVED",
@@ -115,7 +117,8 @@ class ProjectAdapterFleetHardeningTests(unittest.TestCase):
             APPROVAL_REF,
             "base_pr_source: 175",
             "implementation_pr: 185",
-            "after Base PR #185 passes current-main review and merges",
+            f"trusted_implementation_merge: {TRUSTED_IMPLEMENTATION_MERGE}",
+            "validator_pin_status: ADVANCED_TO_TRUSTED_MERGE",
             "project_mutation: AUTHORIZED_NOT_STARTED",
         ):
             self.assertIn(token, text)
