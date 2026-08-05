@@ -56,6 +56,23 @@ v1 Schema와 Pilot 증거는 `V1_AUDIT_ONLY`로만 읽는다. 과거 class 값�
 
 부트스트랩은 `doctor → status → catalog --compact` 순서다. port 또는 PID만으로 target을 선택하지 않는다.
 
+## PR B Editor transaction adapter
+
+프로젝트가 network-disabled Editor transaction adapter를 채택하면 다음 canonical addon을 복사한다.
+
+`godot-live-editor/addons/base_live_editor_adapter/`
+
+이 addon은 `transport.kind: DISABLED`, `enabled: false`인 configured v2 Manifest에서만 활성화되며 이미 Base v2 Schema·semantic validator를 통과한 envelope를 in-process `submit_validated_operation()`으로만 받는다. 서버, MCP, socket, HTTP/WebSocket, background thread 또는 Autoload를 제공하지 않는다.
+
+허용 capability는 다음 두 개뿐이다.
+
+- `scene.inspect`
+- `node.rename` + `KEEP_DIRTY | SAVE_CURRENT_SCENE`
+
+한 Editor frame에서 fresh precondition을 다시 확인하고, mutation은 STARTED ledger 뒤 한 번의 `EditorUndoRedoManager` transaction으로 실행한다. save·filesystem update·physical byte SHA-256·output/evidence·terminal ledger가 완료되기 전에는 성공을 보고하지 않는다.
+
+Manifest가 없거나 malformed, v1, `NOT_CONFIGURED`, transport-enabled이면 addon은 `ADAPTER_NOT_CONFIGURED`로 닫힌다. 시작 실패 시 Godot `--recovery-mode`로 addon을 비활성화하거나 제거하고 새 Editor instance ID와 승인을 발급한다.
+
 ## Policy axes
 
 각 capability는 다음을 독립 선언한다.
