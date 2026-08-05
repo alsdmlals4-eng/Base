@@ -186,6 +186,19 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
             with self.subTest(code=code):
                 self.assertIn(code, source)
 
+    def test_executor_returns_canonical_result_hash_and_rfc3339_evidence(self) -> None:
+        source = (ADDON / "editor_transaction_executor.gd").read_text(encoding="utf-8")
+        for marker in (
+            '"result_hash"',
+            "_canonical_json_sha256",
+            "_canonical_json",
+            "HashingContext.HASH_SHA256",
+            "get_datetime_string_from_system(true, false)",
+            '+ "Z"',
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, source)
+
     def test_adapter_work_is_bounded_and_streamed(self) -> None:
         queue = (ADDON / "request_queue.gd").read_text(encoding="utf-8")
         plugin = (ADDON / "plugin.gd").read_text(encoding="utf-8")
