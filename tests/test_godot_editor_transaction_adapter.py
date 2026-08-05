@@ -65,6 +65,32 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
             with self.subTest(forbidden=forbidden):
                 self.assertNotIn(forbidden, source)
 
+    def test_queue_is_bounded_and_rejects_duplicates(self) -> None:
+        source = (ADDON / "request_queue.gd").read_text(encoding="utf-8")
+        self.assertIn("const MAX_PENDING := 64", source)
+        self.assertIn("QUEUE_FULL", source)
+        self.assertIn("DUPLICATE_OPERATION_ID", source)
+        self.assertIn("OPERATION_ID_REQUIRED", source)
+        self.assertIn("envelope.duplicate(true)", source)
+
+    def test_guard_rechecks_exact_v2_bindings(self) -> None:
+        source = (ADDON / "runtime_contract_guard.gd").read_text(encoding="utf-8")
+        for marker in (
+            "schema_version",
+            "project_fingerprint",
+            "automation_service_instance_id",
+            "editor_instance_id",
+            "contract_snapshot",
+            "capability_id",
+            "approval",
+            "request_hash",
+            "TARGET_STATE_CONFLICT",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, source)
+        self.assertIn("validate_for_enqueue", source)
+        self.assertIn("validate_before_execute", source)
+
 
 if __name__ == "__main__":
     unittest.main()
