@@ -12,7 +12,7 @@ scope:
   - alsdmlals4-eng/urban-legend
   - alsdmlals4-eng/GRIMOIRE-
   - alsdmlals4-eng/Switchy-Express-Cargo-Puzzle
-result: PROJECT_ROLLOUT_BLOCKED_SCHEMA_AND_BASELINE_DRIFT
+result: BASE_CONTRACT_HARDENED_PROJECT_ROLLOUT_BLOCKED
 runtime_validation: NOT_RUN
 project_mutations: NOT_STARTED
 ```
@@ -31,6 +31,12 @@ The live project adapters use `base_release.finalization_commit`, while the
 canonical v1 Schema used `additionalProperties: false` and did not declare the
 field. Base PR #175 adds only this explicit release pin. The Schema remains
 strict; it is not widened to accept arbitrary project state.
+
+A second RED test proved that structural validation alone was insufficient:
+an arbitrary 40-character SHA could pass because the semantic release-lock
+validator ignored the new field. The release index now binds v9.4.3 to the
+actual immutable finalization commit and rejects forged, absent, or
+non-descendant finalization identity.
 
 ### P1 — actual project adapters are absent from Base CI
 
@@ -76,10 +82,10 @@ validators, compatibility views, and narrowly scoped overrides.
 
 | Project | Audited `main` | Adapter shape | Primary blockers | Verdict |
 |---|---|---|---|---|
-| Ten Paces: Hidden Moves | `4b5967dee99592de4a09a611068344994e1ee026` | Close to v1 | finalization pin was not declared; protected baseline is one commit behind; canonical Base validator workflow is not installed | `P1_MIGRATION_REQUIRED` |
+| Ten Paces: Hidden Moves | `4b5967dee99592de4a09a611068344994e1ee026` | Close to v1 | protected baseline is one commit behind; canonical Base validator workflow is not installed | `P1_MIGRATION_REQUIRED` |
 | Blacksmith | `b1dd945875568098b107815a03e88b0272d384e9` | v1 label, non-v1 payload | root project-state objects, invalid route status, invalid baseline authority/source types, null policy or registry evidence, stale baseline | `P1_REBUILD_THIN_ADAPTER` |
-| OMENWARD | `da382d52b4490acb8758a1683ea6c9e4f4bf388b` | Close to v1 | finalization pin was not declared; protected baseline is one commit behind; canonical Base validator workflow is not installed | `P1_MIGRATION_REQUIRED` |
-| urban-legend | `f7edb459938bb5f3e2533ad828c2fe55019cd14b` | Close to v1 | finalization pin was not declared; protected baseline is one commit behind; canonical Base validator workflow is not installed | `P1_MIGRATION_REQUIRED` |
+| OMENWARD | `da382d52b4490acb8758a1683ea6c9e4f4bf388b` | Close to v1 | protected baseline is one commit behind; canonical Base validator workflow is not installed | `P1_MIGRATION_REQUIRED` |
+| urban-legend | `f7edb459938bb5f3e2533ad828c2fe55019cd14b` | Close to v1 | protected baseline is one commit behind; canonical Base validator workflow is not installed | `P1_MIGRATION_REQUIRED` |
 | GRIMOIRE | `2d80e4afcfc6b530b76912826f5984cdf1184678` | custom schema v2 | incompatible root shape, mixed project-state authority, missing v1 validator list and baseline contract, stale baseline | `P1_CANONICAL_MIGRATION_REQUIRED` |
 | Switchy Express | `0bdcdae2092460431f81d383b34b51f725a4ab08` | v1 label, non-v1 payload | string routes instead of route records, object validators instead of commands, invalid Sheet and baseline enums, stale baseline | `P1_REBUILD_THIN_ADAPTER` |
 
@@ -90,13 +96,16 @@ Base PR #175 currently provides the following backward-compatible corrections:
 1. model `base_release.finalization_commit` as an optional full SHA in the v1
    Schema so older v9.1 adapters remain valid;
 2. include the field in the canonical adapter template;
-3. pin the copied project validation workflow to the immutable validator commit
-   that contains the Schema correction;
-4. wire the focused fleet-hardening test into required Base contract CI.
+3. index the canonical v9.4.3 finalization commit outside the immutable released
+   lock and fail closed when a project supplies a forged or inconsistent pin;
+4. pin the copied project validation workflow to the immutable validator commit
+   that contains structural and semantic finalization validation;
+5. wire the focused fleet-hardening test into required Base contract CI.
 
 The project repositories are intentionally not mutated before this Base
 contract is reviewed. A project PR must not depend on an unreviewed floating
-Base branch.
+Base branch. After merge, the workflow pin should be advanced once to the
+merged trusted validator commit before the six-project rollout.
 
 ## Rollout plan
 
@@ -146,7 +155,7 @@ A project adapter PR is not ready unless all of the following are true:
 
 - adapter validates against the exact pinned Base validator commit;
 - adapter baseline equals the trusted PR base;
-- release and registry pins resolve to immutable content;
+- release, finalization, and registry pins resolve to immutable canonical content;
 - Base routes are records, not untyped strings;
 - validator entries are executable command strings;
 - project state is not embedded in the adapter root;
