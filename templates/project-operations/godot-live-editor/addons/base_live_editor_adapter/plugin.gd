@@ -9,6 +9,7 @@ const OperationLedger = preload("operation_ledger.gd")
 const EvidenceWriter = preload("evidence_writer.gd")
 const EditorTransactionExecutor = preload("editor_transaction_executor.gd")
 const MANIFEST_PATH := "res://GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json"
+const IN_PROCESS_ENDPOINT_IDENTITY := "in-process-editor-plugin"
 const MAX_COMPLETED_RESULTS := 64
 
 var network_listener_enabled := false
@@ -138,16 +139,30 @@ func _manifest_is_usable(manifest: Dictionary) -> bool:
         return false
     if manifest.get("configuration_state") != "CONFIGURED":
         return false
-    var transport: Dictionary = manifest.get("transport", {})
-    if transport.get("kind") != "DISABLED":
-        return false
-    if transport.get("enabled") != false:
+    if not _transport_is_in_process(manifest.get("transport", {})):
         return false
     var project_identity: Dictionary = manifest.get("project_identity", {})
     if str(project_identity.get("project_fingerprint", "")).is_empty():
         return false
     var capabilities: Array = manifest.get("capabilities", [])
     return not capabilities.is_empty()
+
+
+func _transport_is_in_process(value: Variant) -> bool:
+    if not value is Dictionary:
+        return false
+    var transport: Dictionary = value
+    var access: Dictionary = transport.get("access_control", {})
+    return (
+        transport.get("kind") == "PROJECT_DEFINED"
+        and transport.get("enabled") == true
+        and transport.get("bind_host") == null
+        and transport.get("endpoint_identity") == IN_PROCESS_ENDPOINT_IDENTITY
+        and access.get("authentication_mode") == "NOT_APPLICABLE"
+        and access.get("origin_policy") == "NOT_APPLICABLE"
+        and access.get("session_binding") == "NOT_APPLICABLE"
+        and access.get("os_access_control") == "CURRENT_USER_ONLY"
+    )
 
 
 func _new_instance_id() -> String:
