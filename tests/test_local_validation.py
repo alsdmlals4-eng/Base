@@ -8,6 +8,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from tests.test_godot_live_editor_contract import (
+    GodotLiveEditorContractTests as _GodotLiveEditorContractTests,
+)
+from tests.test_godot_live_editor_runtime_pilot import (
+    GodotLiveEditorRuntimePilotTests as _GodotLiveEditorRuntimePilotTests,
+)
 from tools import run_local_validation as runner
 
 
