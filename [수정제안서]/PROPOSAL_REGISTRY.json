@@ -57,6 +57,17 @@
       "submitted_at": "2026-08-05",
       "approval_ref": "https://github.com/alsdmlals4-eng/Base/pull/154#issuecomment-5187157323",
       "implementation_pr": null
+    },
+    {
+      "proposal_id": "BCP-2026-007-cloud-run-game-backend-and-entitlement-integrity",
+      "title": "Cloud Run 게임 백엔드·플랫폼 권한·무결성 보호 계약",
+      "path": "[수정제안서]/BCP-2026-007-cloud-run-game-backend-and-entitlement-integrity/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "alsdmlals4-eng/Base",
+      "source_commit": "48273f79ab261a1f064adfc7431c99a74a22c33a",
+      "submitted_at": "2026-08-05",
+      "approval_ref": null,
+      "implementation_pr": null
     }
   ]
 }
