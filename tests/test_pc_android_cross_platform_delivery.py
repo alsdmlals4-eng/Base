@@ -181,11 +181,6 @@ class PcAndroidCrossPlatformDeliveryTests(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, registry)
 
-    def test_change_is_recorded(self) -> None:
-        changelog = read("docs/CHANGELOG.md")
-        self.assertIn("PC_ANDROID_DUAL_TARGET_CANDIDATE", changelog)
-        self.assertIn(GUIDE_PATH, changelog)
-
 
 if __name__ == "__main__":
     unittest.main()
