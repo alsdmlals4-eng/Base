@@ -107,6 +107,43 @@ contract is reviewed. A project PR must not depend on an unreviewed floating
 Base branch. After merge, the workflow pin should be advanced once to the
 merged trusted validator commit before the six-project rollout.
 
+## Benchmark and collaboration decisions
+
+The audit used official platform guidance as an external check on the local
+contract rather than copying a framework wholesale.
+
+### Applied now
+
+- GitHub recommends full commit SHAs as the safest immutable reference for
+  third-party Actions and reusable automation. The project validator template
+  therefore pins both Actions and the Base validator repository by full SHA.
+- JSON Schema's closed-object pattern rejects undeclared properties. The Base v1
+  Schema retains `additionalProperties: false`; only the explicitly governed
+  `finalization_commit` field was added.
+- Workflow and contract changes must be protected by required checks and code
+  ownership. Base already owns `.github/` through CODEOWNERS; project rollout
+  PRs must make adapter validation required before merge.
+- Project changes are split into independent PRs so Base contract review,
+  project migration, product changes, and Google Sheets changes cannot silently
+  attest to each other.
+
+### Evaluated but deferred
+
+GitHub reusable workflows can reduce duplicated CI across repositories. A
+cross-repository reusable validator is a reasonable later optimization, but it
+is deferred until repository visibility, caller permissions, failure reporting,
+and rollback are piloted. The first rollout keeps a small checked-in caller
+workflow pinned to one immutable Base validator commit. This is more repetitive
+but easier to audit and roll back while the contract is still stabilizing.
+
+### Primary references
+
+- https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows
+- https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions
+- https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+- https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets
+- https://json-schema.org/understanding-json-schema/reference/object#additional-properties
+
 ## Rollout plan
 
 ### Wave A — narrow repair
