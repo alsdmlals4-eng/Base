@@ -1,0 +1,270 @@
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+GUIDE = "docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md"
+CONTRACT = "templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md"
+TEST = "tests/test_cloud_run_game_backend_capability.py"
+
+
+def append_block(path: str, marker: str, block: str) -> None:
+    target = Path(path)
+    text = target.read_text(encoding="utf-8")
+    if marker in text:
+        return
+    target.write_text(text.rstrip() + "\n\n" + block.strip() + "\n", encoding="utf-8")
+
+
+def route() -> None:
+    append_block(
+        "docs/knowledge/game-development/README.md",
+        "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md",
+        f"""
+## 8. Cloud Run 게임 백엔드 Capability Pack
+
+- 서버 필요가 발견되면 `{GUIDE}`에서 `SERVER_FEATURE_DETECTED` → `CLOUD_RUN_DEFAULT_CANDIDATE` → `FIT_AND_RISK_ASSESSMENT`를 수행한다.
+- 실제 프로젝트 계약은 `{CONTRACT}`가 소유하며 문서 존재만으로 배포·부하·비용·보안 준비를 주장하지 않는다.
+- 고주파 authoritative realtime, UDP, indefinite worker, instance-local durable authority는 기본 후보에서 제외한다.
+""",
+    )
+    append_block(
+        "docs/knowledge/game-development/TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md",
+        "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md",
+        f"""
+## Cloud Run 게임 백엔드·온라인 서비스 경로
+
+서버 필요성, API·상태 권위, WebSocket·재연결, 비동기 작업, IAM·비밀, AI proxy, 용량·비용·장애·provider exit 판단은 `{GUIDE}`를 사용한다. `CLOUD_RUN_DEFAULT_CANDIDATE`는 조건부 기본 검토 후보이며 `CLOUD_RUN_REQUIRED`가 아니다. 프로젝트별 입력과 증거는 `{CONTRACT}`에 기록한다.
+""",
+    )
+    append_block(
+        "docs/DOCUMENTATION_MAP.md",
+        "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md",
+        f"""
+## Cloud Run 게임 백엔드 Capability Pack
+
+| 질문 | 책임 원본 |
+|---|---|
+| 서버 필요성·Cloud Run 적합성·상태·연결·비용·실패 경계 | `{GUIDE}` |
+| 프로젝트별 API·권위·저장·IAM·부하·비용·롤백 증거 | `{CONTRACT}` |
+""",
+    )
+    append_block(
+        "START_HERE.md",
+        "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md",
+        f"""
+## Cloud Run 게임 백엔드 진입
+
+서버 기능이 감지되면 `{GUIDE}`를 읽고 `SERVER_FEATURE_DETECTED`에서 적합성 Gate를 시작한다. 선택 뒤 프로젝트 정본은 `{CONTRACT}`에 두며 실제 배포·부하·장애·비용 검증 전에는 `PRODUCTION_READY`를 선언하지 않는다.
+""",
+    )
+    append_block(
+        "skills/analyzing-and-refining-game-concepts/SKILL.md",
+        "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md",
+        f"""
+## Cloud Run backend capability handoff
+
+게임 기능 분석 중 `SERVER_FEATURE_DETECTED`가 확인되면 플레이어 가치와 서버 필요성을 먼저 판정하고 `{GUIDE}`의 fit Gate로 넘긴다. 공급자 선택은 서버 필요성보다 앞서지 않는다.
+""",
+    )
+    append_block(
+        "skills/managing-game-project-operating-system/SKILL.md",
+        "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md",
+        f"""
+## Cloud Run backend capability handoff
+
+`{GUIDE}`가 선택된 프로젝트는 `{CONTRACT}`를 프로젝트 책임 원본으로 설치한다. 상태는 `PROJECT_OWNED_SERVICE_CONTRACT`이며 실제 identity provider, datastore, region, traffic, budget, platform IDs와 runtime evidence는 프로젝트가 소유한다.
+""",
+    )
+    append_block(
+        "skills/designing-vertical-slices/SKILL.md",
+        "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md",
+        f"""
+## Cloud Run backend runtime evidence
+
+`{GUIDE}`를 소비하는 Vertical Slice는 실제 배포 흐름에서 persistence, reconnect, duplicate submission, dependency failure, rollback과 목표 환경을 검증한다. 정적 문서만으로 `RUNTIME_VERIFIED`를 선언하지 않는다.
+""",
+    )
+    append_block(
+        "skills/reviewing-and-validating-project-changes/SKILL.md",
+        "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md",
+        f"""
+## Cloud Run backend validation route
+
+`{GUIDE}`와 `{CONTRACT}`의 계약·정적·runtime·load·failure·cost·security evidence를 분리해 검증한다. `LOAD_AND_FAILURE_VERIFIED`는 프로젝트별 실제 부하·연결 폭주·의존성 장애·복구 증거가 있을 때만 허용한다.
+""",
+    )
+    append_block(
+        "skills/optimizing-ai-model-and-prompt-costs/SKILL.md",
+        "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md",
+        f"""
+## Cloud Run bounded AI proxy handoff
+
+`{GUIDE}`의 `bounded AI proxy`가 선택되면 모델·Prompt·cache·quota·rate limit·provider cost·budget fallback을 이 Skill이 검토한다. LLM 출력은 결제·보상·제재·영구 저장의 단독 권위가 아니다.
+""",
+    )
+    append_block(
+        "templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md",
+        "GAME_BACKEND_SERVICE_CONTRACT.md",
+        f"""
+## 19. Cloud Run 게임 백엔드 특화 증빙
+
+- 공용 판단 Guide: `{GUIDE}`
+- 프로젝트 계약: `{CONTRACT}`
+- 서버 필요성·적합성·권위·상태·idempotency·replay·IAM·비밀·WebSocket·비용·장애·rollback을 연결한다.
+- 실제 deployment·runtime·load·failure·cost·security가 없으면 해당 상태를 `NOT_RUN`으로 유지한다.
+""",
+    )
+
+    path = Path("templates/project-operations/github/documentation-governance.json")
+    data = json.loads(path.read_text(encoding="utf-8"))
+    roles = data.setdefault("release_compliance_evidence_roles", [])
+    if not any(item.get("role") == "GAME_BACKEND_SERVICE_CONTRACT" for item in roles):
+        roles.append(
+            {
+                "role": "GAME_BACKEND_SERVICE_CONTRACT",
+                "template": CONTRACT,
+                "project_owned": True,
+                "base_template_is_project_truth": False,
+                "decision_gate": "CLOUD_RUN_DEFAULT_CANDIDATE",
+                "unknown_required_fields": "BLOCKED_UNVERIFIED",
+                "runtime_evidence_required_for_production": True,
+            }
+        )
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def harden() -> None:
+    append_block(
+        GUIDE,
+        "## Adversarial decision fixtures",
+        """
+## Adversarial decision fixtures
+
+```text
+async leaderboard API -> CLOUD_RUN_RECOMMENDED
+turn-based asynchronous battle -> CLOUD_RUN_RECOMMENDED
+WebSocket lobby and presence -> CLOUD_RUN_CONDITIONAL
+60 Hz authoritative action battle / UDP -> ALTERNATIVE_ARCHITECTURE_REQUIRED
+offline-only feature with no shared state -> SERVER_NOT_REQUIRED
+retrying reward mutation without idempotency -> BLOCKED_UNVERIFIED
+provider key in client or repository -> BLOCKED_UNVERIFIED
+unlimited AI proxy without quota/cost -> BLOCKED_UNVERIFIED
+instance-local durable save -> BLOCKED_UNVERIFIED
+static documents presented as runtime/load/cost proof -> BLOCKED_UNVERIFIED
+```
+""",
+    )
+
+    test_path = Path(TEST)
+    text = test_path.read_text(encoding="utf-8")
+    if "def test_adversarial_decision_fixtures" not in text:
+        method = '''
+    def test_adversarial_decision_fixtures(self) -> None:
+        guide = read(GUIDE)
+        fixtures = {
+            "async leaderboard API": "CLOUD_RUN_RECOMMENDED",
+            "turn-based asynchronous battle": "CLOUD_RUN_RECOMMENDED",
+            "WebSocket lobby and presence": "CLOUD_RUN_CONDITIONAL",
+            "60 Hz authoritative action battle / UDP": "ALTERNATIVE_ARCHITECTURE_REQUIRED",
+            "offline-only feature with no shared state": "SERVER_NOT_REQUIRED",
+            "retrying reward mutation without idempotency": "BLOCKED_UNVERIFIED",
+            "provider key in client or repository": "BLOCKED_UNVERIFIED",
+            "unlimited AI proxy without quota/cost": "BLOCKED_UNVERIFIED",
+            "instance-local durable save": "BLOCKED_UNVERIFIED",
+            "static documents presented as runtime/load/cost proof": "BLOCKED_UNVERIFIED",
+        }
+        for scenario, decision in fixtures.items():
+            self.assertIn(f"{scenario} -> {decision}", guide)
+'''
+        marker = '\n\nif __name__ == "__main__":'
+        if marker not in text:
+            raise RuntimeError("test module footer marker not found")
+        test_path.write_text(text.replace(marker, "\n" + method.rstrip() + marker), encoding="utf-8")
+
+    freshness_path = Path(".github/reference-freshness.json")
+    freshness = json.loads(freshness_path.read_text(encoding="utf-8"))
+    rules = freshness.setdefault("canonical_reference_rules", [])
+    if not any(rule.get("name") == "cloud-run-game-backend-capability-entrypoints" for rule in rules):
+        rules.append(
+            {
+                "name": "cloud-run-game-backend-capability-entrypoints",
+                "canonical_path": GUIDE,
+                "reference_tokens": [GUIDE, "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md"],
+                "required_consumers": [
+                    "START_HERE.md",
+                    "docs/DOCUMENTATION_MAP.md",
+                    "docs/knowledge/game-development/README.md",
+                    "docs/knowledge/game-development/TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md",
+                    "skills/analyzing-and-refining-game-concepts/SKILL.md",
+                    "skills/managing-game-project-operating-system/SKILL.md",
+                    "skills/designing-vertical-slices/SKILL.md",
+                    "skills/reviewing-and-validating-project-changes/SKILL.md",
+                    "skills/optimizing-ai-model-and-prompt-costs/SKILL.md",
+                ],
+            }
+        )
+    coupled = freshness.setdefault("coupled_change_rules", [])
+    if not any(rule.get("name") == "cloud-run-game-backend-capability-sync" for rule in coupled):
+        coupled.append(
+            {
+                "name": "cloud-run-game-backend-capability-sync",
+                "when_changed": [GUIDE, CONTRACT],
+                "exclude_when_changed": [],
+                "require_all_changed": [
+                    TEST,
+                    "skills/managing-game-project-operating-system/LEARNING_LOG.md",
+                    "docs/CHANGELOG.md",
+                ],
+                "require_any_changed": [
+                    "docs/knowledge/game-development/README.md",
+                    "templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md",
+                ],
+            }
+        )
+    freshness_path.write_text(json.dumps(freshness, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    append_block(
+        "skills/managing-game-project-operating-system/LEARNING_LOG.md",
+        "## 2026-08-05 — Cloud Run 게임 백엔드 Capability Pack",
+        """
+## 2026-08-05 — Cloud Run 게임 백엔드 Capability Pack
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** 여러 게임 프로젝트에서 로그인·클라우드 저장·리더보드·비동기 결과·AI proxy 등 서버 기능이 필요할 때 Cloud Run을 무조건 채택하지 않고 재사용 가능한 적합성·운영·검증 계약으로 판단하려는 승인된 요청.
+- **Decision:** 새 활성 Skill과 `BASE_SHARED_SKILL_ROUTES.json` 항목을 추가하지 않았다. 기존 게임 개념·프로젝트 운영·Vertical Slice·AI 비용·통합 검증 owner에 Guide와 프로젝트 Contract를 연결했다.
+- **Boundary:** `CLOUD_RUN_DEFAULT_CANDIDATE`는 조건부 기본 검토 후보다. high-frequency authoritative realtime, UDP, indefinite worker, instance-local durable authority는 별도 아키텍처가 필요하다.
+- **Evidence:** RED에서는 신규 Guide·Contract·라우팅 부재만 실패했고 기존 회귀는 통과했다. 정적 GREEN은 파일·계약·경로·반례만 증명한다.
+- **Not run:** 실제 deployment, runtime persistence, load, connection storm, dependency failure, cost, security, production readiness는 `NOT_RUN`이다.
+- **Next trigger:** 실제 프로젝트 Pilot에서 기존 owner 라우팅이 반복 실패하거나 독립 도구·승인·검증 경계가 입증될 때만 별도 Skill을 재검토한다.
+""",
+    )
+    append_block(
+        "docs/CHANGELOG.md",
+        "## 2026-08-05 - Cloud Run 게임 백엔드 Capability Pack PR A",
+        """
+## 2026-08-05 - Cloud Run 게임 백엔드 Capability Pack PR A
+
+- `GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`와 프로젝트 소유 `GAME_BACKEND_SERVICE_CONTRACT.md`를 추가했다.
+- `CLOUD_RUN_DEFAULT_CANDIDATE` 적합성 Gate와 recommended·conditional·alternative·server-not-required·blocked 판정을 추가했다.
+- 상태·identity·authorization·idempotency·replay·transaction·WebSocket·비밀·AI proxy·용량·비용·failure·rollback·provider exit 계약을 기존 owner에 연결했다.
+- 새 활성 Skill과 공용 프로젝트 route는 추가하지 않았다.
+- 정적 CI는 deployment·runtime·load·failure·cost·security·production readiness를 증명하지 않으며 해당 상태는 `NOT_RUN`이다.
+""",
+    )
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("phase", choices=("route", "harden"))
+    args = parser.parse_args()
+    if args.phase == "route":
+        route()
+    else:
+        harden()
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
