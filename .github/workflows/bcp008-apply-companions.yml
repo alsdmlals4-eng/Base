@@ -82,10 +82,12 @@ jobs:
             'base-v*.lock.json'
           test ! -e .github/workflows/bcp008-export-companions.yml
           test ! -e .github/bcp008-companion.part00
-      - name: Commit companion sync
+      - name: Commit companion sync without existing workflow mutation
         shell: bash
         run: |
           set -euo pipefail
+          git show 6b40465fba52bb1e3fbe25a5b3af1d67c50b85b1:.github/workflows/validate-game-ux-ui-system.yml \
+            > .github/workflows/validate-game-ux-ui-system.yml
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
