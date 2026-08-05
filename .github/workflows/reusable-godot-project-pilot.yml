@@ -61,8 +61,10 @@ jobs:
           chmod +x Godot_v4.7.1-stable_linux.x86_64
           ./Godot_v4.7.1-stable_linux.x86_64 --version
       - name: Run bounded project Pilot
+        env:
+          PYTHONPATH: ${{ github.workspace }}/_base_c0
         run: |
-          python _base_c0/tools/godot_multi_project_pilot.py \
+          python -m tools.godot_multi_project_pilot \
             --base-root "$GITHUB_WORKSPACE/_base_c0" \
             --source-root "$GITHUB_WORKSPACE" \
             --source-commit "$GITHUB_SHA" \
