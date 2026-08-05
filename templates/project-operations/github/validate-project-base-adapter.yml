@@ -36,11 +36,21 @@ jobs:
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           set -euo pipefail
-          PROTECTED_BASE_SHA="$(
-            python .base-contract/tools/select_project_adapter_protected_base.py \
-              --project-root . \
-              --pull-request-base "$PR_BASE_SHA"
-          )"
+          ADAPTER_PATH="skills/PROJECT_BASE_ADAPTER.json"
+          ADAPTER_CHANGES="$(git diff --name-only "$PR_BASE_SHA"...HEAD -- "$ADAPTER_PATH")"
+          if printf '%s\n' "$ADAPTER_CHANGES" | grep -Fxq "$ADAPTER_PATH"; then
+            # Adapter migration PR: trust the immutable pull-request base as the new protected baseline.
+            PROTECTED_BASE_SHA="$PR_BASE_SHA"
+          else
+            # Normal PR: trust the baseline recorded by the adapter at the immutable pull-request base.
+            PROTECTED_BASE_SHA="$(
+              git show "$PR_BASE_SHA:$ADAPTER_PATH" |
+                python -c 'import json, sys; payload = json.load(sys.stdin); print(payload["protected_baseline"]["commit"])'
+            )"
+          fi
+          python -c 'import re, sys; value = sys.argv[1]; raise SystemExit(0 if re.fullmatch(r"[0-9a-f]{40}", value) else 1)' "$PROTECTED_BASE_SHA"
+          git cat-file -e "$PROTECTED_BASE_SHA^{commit}"
+          git merge-base --is-ancestor "$PROTECTED_BASE_SHA" "$PR_BASE_SHA"
           printf 'PROTECTED_BASE_SHA=%s\n' "$PROTECTED_BASE_SHA" >> "$GITHUB_ENV"
 
       - name: Validate adapter against the trusted protected baseline
