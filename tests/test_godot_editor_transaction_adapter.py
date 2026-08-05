@@ -139,6 +139,41 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn("COMPLETED", ledger)
         self.assertIn("FAILED", ledger)
 
+    def test_executor_orders_precondition_ledger_undo_save_and_terminal_state(self) -> None:
+        path = ADDON / "editor_transaction_executor.gd"
+        self.assertTrue(path.is_file(), "missing editor_transaction_executor.gd")
+        source = path.read_text(encoding="utf-8")
+        markers = [
+            "validate_before_execute",
+            "record_started",
+            "create_action",
+            "add_do_property",
+            "add_undo_property",
+            "commit_action",
+            "mark_scene_as_unsaved",
+            "save_scene",
+            "update_file",
+            "sha256_file",
+            "record_terminal",
+        ]
+        positions = [source.index(marker) for marker in markers]
+        self.assertEqual(sorted(positions), positions)
+
+    def test_executor_has_stable_failure_codes(self) -> None:
+        path = ADDON / "editor_transaction_executor.gd"
+        self.assertTrue(path.is_file(), "missing editor_transaction_executor.gd")
+        source = path.read_text(encoding="utf-8")
+        for code in (
+            "TARGET_STATE_CONFLICT",
+            "LEDGER_START_FAILED",
+            "UNDO_REDO_BUSY",
+            "SAVE_FAILED",
+            "OUTPUT_SCHEMA_INVALID",
+            "EVIDENCE_WRITE_FAILED",
+        ):
+            with self.subTest(code=code):
+                self.assertIn(code, source)
+
 
 if __name__ == "__main__":
     unittest.main()
