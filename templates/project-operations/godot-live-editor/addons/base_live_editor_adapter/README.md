@@ -1,12 +1,29 @@
 # Base Live Editor Adapter
 
-Project-local, network-disabled Godot 4.7 Editor transaction adapter for the Base live-editor v2 contract.
+Project-local, listener-free Godot 4.7 Editor transaction adapter for the Base live-editor v2 contract.
 
 ## Boundary
 
 This addon contains no MCP server, socket, HTTP/WebSocket listener, remote endpoint, background thread, Autoload, arbitrary GDScript, expression, shell command, or unrestricted property mutation.
 
-It accepts only an already validated v2 operation envelope through the in-process `submit_validated_operation()` method. The active Manifest must be `CONFIGURED`, version 2, and use `transport.kind: DISABLED` with `enabled: false`.
+It accepts only an already validated v2 operation envelope through the in-process `submit_validated_operation()` method. A configured Manifest must use the exact safe local profile below because v2 reserves `DISABLED` for `NOT_CONFIGURED` manifests.
+
+```yaml
+transport:
+  kind: PROJECT_DEFINED
+  enabled: true
+  bind_host: null
+  endpoint_identity: in-process-editor-plugin
+  protocol_profile: GENERIC
+  protocol_version: in-process-1.0
+  access_control:
+    authentication_mode: NOT_APPLICABLE
+    origin_policy: NOT_APPLICABLE
+    session_binding: NOT_APPLICABLE
+    os_access_control: CURRENT_USER_ONLY
+```
+
+`enabled: true` means that the declared in-process endpoint is available; it does **not** enable a network listener. The addon keeps `network_listener_enabled: false`.
 
 Supported capabilities:
 
@@ -16,12 +33,12 @@ Supported capabilities:
 ## Installation
 
 1. Copy `base_live_editor_adapter/` into `res://addons/`.
-2. Configure `res://GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json` with exact project identity, catalog hashes, closed input/output Schemas, and the two declared EditorPlugin capabilities.
+2. Configure `res://GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json` with exact project identity, catalog hashes, closed input/output Schemas, the safe in-process profile, and the two declared EditorPlugin capabilities.
 3. Validate the Manifest and every operation with the pinned Base v2 Schema and semantic validator.
 4. Enable `Base Live Editor Adapter` in Godot Project Settings → Plugins.
 5. Submit only prevalidated envelopes from project-owned in-process tooling.
 
-The addon remains unavailable with `ADAPTER_NOT_CONFIGURED` for a missing, malformed, v1, `NOT_CONFIGURED`, transport-enabled, identity-incomplete, or capability-empty Manifest.
+The addon remains unavailable with `ADAPTER_NOT_CONFIGURED` for a missing, malformed, v1, `NOT_CONFIGURED`, wrong transport profile, externally bound, identity-incomplete, or capability-empty Manifest.
 
 ## Execution and evidence
 
@@ -43,4 +60,4 @@ Removing this addon does not remove operation/evidence records under `res://arti
 
 ## Readiness
 
-This addon proves only PR B's in-process Editor transaction boundary. Authenticated transport, optional MCP mapping, runtime debugger, two structurally different real-project pilots, Windows production operation, physical input, and human usability remain separate gates. `PRODUCTION_ADAPTER_READY` remains `NOT_READY`.
+This addon proves only PR B's in-process Editor transaction boundary. Authenticated external transport, optional MCP mapping, runtime debugger, two structurally different real-project pilots, Windows production operation, physical input, and human usability remain separate gates. `PRODUCTION_ADAPTER_READY` remains `NOT_READY`.
