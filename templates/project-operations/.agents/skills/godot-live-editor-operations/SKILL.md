@@ -25,8 +25,6 @@ Base active Skill을 대체하거나 새 광역 책임을 만들지 않는다.
 
 ## v2 gate
 
-다음 순서를 고정한다.
-
 ```text
 validate Base adapter pin and snapshot
 → classify manifest version
@@ -58,11 +56,11 @@ v1 Schema와 Pilot 증거는 `V1_AUDIT_ONLY`로만 읽는다. 과거 class 값�
 
 ## PR B Editor transaction adapter
 
-프로젝트가 listener-free Editor transaction adapter를 채택하면 다음 canonical addon을 복사한다.
+프로젝트가 network-disabled Editor transaction adapter를 채택하면 다음 canonical addon을 복사한다.
 
 `godot-live-editor/addons/base_live_editor_adapter/`
 
-configured v2 Manifest는 v2 Schema에 맞는 정확한 in-process profile을 사용한다.
+이 addon은 configured v2 Manifest의 exact in-process profile에서만 활성화된다.
 
 ```yaml
 transport:
@@ -70,8 +68,6 @@ transport:
   enabled: true
   bind_host: null
   endpoint_identity: in-process-editor-plugin
-  protocol_profile: GENERIC
-  protocol_version: in-process-1.0
   access_control:
     authentication_mode: NOT_APPLICABLE
     origin_policy: NOT_APPLICABLE
@@ -79,16 +75,26 @@ transport:
     os_access_control: CURRENT_USER_ONLY
 ```
 
-`enabled: true`는 선언된 in-process endpoint가 활성 상태라는 뜻이며 network listener를 만들지 않는다. addon은 이미 Base v2 Schema·semantic validator를 통과한 envelope를 in-process `submit_validated_operation()`으로만 받는다. 서버, MCP, socket, HTTP/WebSocket, background thread 또는 Autoload를 제공하지 않는다.
+`enabled: true`는 project-owned in-process 실행 채널이 활성화됐다는 뜻이며 네트워크 listener를 뜻하지 않는다. addon의 `network_listener_enabled`는 계속 `false`다. 이미 Base v2 Schema·semantic validator를 통과한 envelope를 in-process `submit_validated_operation()`으로만 받으며 서버, MCP, socket, HTTP/WebSocket, background thread 또는 Autoload를 제공하지 않는다.
 
 허용 capability는 다음 두 개뿐이다.
 
 - `scene.inspect`
 - `node.rename` + `KEEP_DIRTY | SAVE_CURRENT_SCENE`
 
-한 Editor frame에서 fresh precondition을 다시 확인하고, mutation은 STARTED ledger 뒤 한 번의 `EditorUndoRedoManager` transaction으로 실행한다. save·filesystem update·physical byte SHA-256·output/evidence·terminal ledger가 완료되기 전에는 성공을 보고하지 않는다.
+한 Editor frame에서 fresh precondition, full approval token binding과 expiry를 다시 확인한다. mutation은 STARTED ledger 뒤 한 번의 `EditorUndoRedoManager` transaction으로 실행한다. save·filesystem update·physical byte SHA-256·typed output/evidence·terminal ledger가 완료되기 전에는 성공을 보고하지 않는다.
 
-Manifest가 없거나 malformed, v1, `NOT_CONFIGURED`, endpoint identity 불일치, bind 설정 존재, identity 불완전 또는 capability 없음이면 addon은 `ADAPTER_NOT_CONFIGURED`로 닫힌다. 시작 실패 시 Godot `--recovery-mode`로 addon을 비활성화하거나 제거하고 새 Editor instance ID와 승인을 발급한다.
+Manifest가 없거나 malformed, v1, `NOT_CONFIGURED`, network-bound, identity-incomplete, capability-empty 또는 exact in-process profile과 다르면 addon은 `ADAPTER_NOT_CONFIGURED`로 닫힌다. 시작 실패 시 Godot `--recovery-mode`로 addon을 비활성화하거나 제거하고 새 Editor instance ID와 승인을 발급한다.
+
+### Efficiency boundary
+
+- request queue와 completed result 보관량은 각각 64개로 제한한다.
+- Editor frame당 요청 하나만 실행한다.
+- ledger/evidence 이름은 최대 128자의 ASCII-safe 식별자다.
+- 파일 SHA-256은 64 KiB chunk로 읽는다.
+- Scene disk hash 비용은 Scene 파일 크기에 선형이므로 실제 프로젝트 Pilot에서 측정한다.
+
+정적 source marker만으로 처리량·지연시간 PASS를 주장하지 않는다.
 
 ## Policy axes
 
@@ -102,7 +108,7 @@ execution_mode:
 rollback_policy:
 ```
 
-`effect_kind: READ_ONLY`는 side effect가 없어야 한다. mutation은 ledger, retry, precondition, rollback과 evidence를 명시한다. `approval_policy: REQUIRED`는 exact identity, `contract_snapshot`, request hash와 preconditions에 묶인 승인이 필요하다. `execution_mode: LONG_RUNNING_TASK`는 receiver-generated durable task ID로 start-once·resume한다.
+`effect_kind: READ_ONLY`는 side effect가 없어야 한다. mutation은 ledger, retry, precondition, rollback과 evidence를 명시한다. `approval_policy: REQUIRED`는 exact identity, `contract_snapshot`, request hash와 preconditions에 묶인 승인과 미만료 expiry가 필요하다. `execution_mode: LONG_RUNNING_TASK`는 receiver-generated durable task ID로 start-once·resume한다.
 
 automatic approval은 금지한다. unsafe retry는 `UNSAFE_RETRY_BLOCKED`로 끝내고 `recover`에서 현재 상태를 reconcile한다.
 
@@ -134,7 +140,7 @@ expected/observed 값이 다르면 `TARGET_STATE_CONFLICT`다. 승인된 typed a
 
 ### `validate`
 
-입력은 action 전에, output은 성공 승격 전에 검사한다. 불일치는 `OUTPUT_SCHEMA_MISMATCH`다. `CONTRACT_PASS`, `EXECUTION_PASS`, `RUNTIME_PASS`, `ENGINE_INPUT_PASS`, `PHYSICAL_INPUT_PASS`, `HUMAN_PASS`를 분리한다.
+입력은 action 전에, output은 성공 승격 전에 타입과 cross-field policy까지 검사한다. 불일치는 `OUTPUT_SCHEMA_MISMATCH` 또는 adapter의 안정적 output 오류 코드다. `CONTRACT_PASS`, `EXECUTION_PASS`, `RUNTIME_PASS`, `ENGINE_INPUT_PASS`, `PHYSICAL_INPUT_PASS`, `HUMAN_PASS`를 분리한다.
 
 ### `resume`
 
@@ -171,10 +177,11 @@ unverified:
 - port-only target selection
 - arbitrary script 또는 shell 기본 허용
 - automatic approval
+- expiry 또는 full token binding 미검증 승인
 - unsafe retry
 - stale target 위 mutation
 - task pending 중 duplicate start
-- output Schema 실패를 성공으로 승격
+- output 타입·cross-field 검증 실패를 성공으로 승격
 - engine input을 physical input으로 보고
 - test framework 미등록 상태를 PASS로 보고
 - contract 파일 존재를 runtime·human PASS로 보고
