@@ -95,6 +95,10 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
             "TARGET_STATE_CONFLICT",
             "result_hash_pass",
             "elapsed_usec",
+            "queue_capacity_pass",
+            "batch_64_pass",
+            "batch_64_elapsed_usec",
+            "QUEUE_FULL",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, pilot)
@@ -171,10 +175,14 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
                 "rename_save_pass",
                 "stale_state_block_pass",
                 "result_hash_pass",
+                "queue_capacity_pass",
+                "batch_64_pass",
             ):
                 with self.subTest(key=key):
                     self.assertTrue(result[key])
             self.assertGreater(result["elapsed_usec"], 0)
+            self.assertGreater(result["batch_64_elapsed_usec"], 0)
+            self.assertEqual(64, result["batch_64_completed"])
             self.assertFalse(result["network_listener_enabled"])
             self.assertEqual(["COMPLETED", "COMPLETED"], result["ledger_states"])
             self.assertEqual(
