@@ -88,6 +88,8 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
         self.assertNotIn('"a".repeat(64)', pilot)
         self.assertIn("_guard.operation_request_material", pilot)
         self.assertIn("_guard.canonical_json_sha256", pilot)
+        self.assertIn("var request_hash: String =", pilot)
+        self.assertIn("var expected: String =", pilot)
         for marker in (
             "stale_state_block_pass",
             "TARGET_STATE_CONFLICT",
