@@ -5,14 +5,15 @@
 - 출처 프로젝트: `alsdmlals4-eng/Base`
 - 기준 커밋: `ecbd93f16b65a1527269bfd8fef9facad6b2f40b`
 - 제출일: `2026-08-05`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `패턴`
 - 사용자 방향 승인: `2026-08-05 — 독립 전문 Skill + BCP 분리 생명주기`
 - 최종 제안 승인 근거: `https://github.com/alsdmlals4-eng/Base/pull/167#issuecomment-5192600204`
 - 구현 계획: `docs/superpowers/plans/2026-08-05-game-development-youtube-skill.md`
-- 구현 PR: `없음`
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/174`
+- 구현 병합 SHA: `5c8f2f8845a9f0e4dbaf644529c5e3cdbf5ebbd8`
 
-제안 등록 PR #167이 exact-head CI 통과 후 병합됐으며, 사용자 승인 근거가 안정적인 GitHub 댓글로 기록됐다. 이 상태 전이는 활성 구현을 허용하지만 구현 완료를 의미하지 않는다. 활성 Skill 구현은 별도 Branch와 별도 PR에서 TDD로 진행한다.
+제안 등록 PR #167과 승인·계획 PR #171이 병합된 뒤, 활성 Skill 구현 PR #174가 exact-head 필수 Workflow 7개 성공 후 병합됐다. 이 문서는 구현 완료와 구현 PR을 추적하지만 실제 영상·사람 시청자·전환 성과를 검증된 것으로 승격하지 않는다.
 
 ## 관찰과 증거
 
@@ -47,7 +48,7 @@
 - 표본은 특정 시점의 관찰이며 채널 성장의 인과를 증명하지 않는다.
 - 조회수·구독자 규모에는 언어, 장르, 출시 상태, 기존 팬덤, 업로드 역사와 외부 노출이 함께 작용한다.
 - 특정 채널의 식별 가능한 문구·썸네일·편집 표현을 복제하지 않는다.
-- Base Skill 구현, 실제 영상 Pilot, 사람 시청자 유지·클릭·전환 검증은 아직 실행하지 않았다.
+- Base Skill 구현과 정적·행동·회귀 검증은 PR #174에서 완료됐지만, 실제 영상 Pilot과 사람 시청자 유지·클릭·전환 검증은 아직 실행하지 않았다.
 
 ## 일반화 후보
 
@@ -189,13 +190,15 @@ tests/test_skill_behavior_adversarial_boundaries.py
 
 `BASE_SHARED_SKILL_ROUTES.json`은 프로젝트 Adapter가 존재할 때만 사용하는 선택 경로이므로 이번 Base 공용 Skill 구현에서는 수정하지 않는다. `SKILL_BEHAVIOR_EVALS.json`은 외부 모델 실행 결과용으로 유지하고, 정적 활성·비활성 경계 사례는 `SKILL_BEHAVIOR_COVERAGE_EVALS.json`에 둔다.
 
+구현 중 현재 Registry 확장이 과거 v9.4.1~v9.4.3 릴리스 Registry 바이트와 영구적으로 같아야 한다는 기존 과결합을 드러냈다. PR #174는 과거 릴리스 payload·evidence·lock·Registry blob의 해시는 계속 고정 검증하면서 현재 활성 Registry는 확장 가능하도록 checker와 회귀 테스트를 함께 수정했다.
+
 구현 계획:
 
 ```text
 docs/superpowers/plans/2026-08-05-game-development-youtube-skill.md
 ```
 
-활성 Skill 구현 전에 다음을 테스트 우선으로 고정한다.
+활성 Skill 구현 PR #174에서 다음을 테스트 우선으로 고정하고 검증했다.
 
 - 기본 개발일지 Packet 생성
 - 검색형·Shorts·출시 공지 변형
@@ -210,10 +213,10 @@ docs/superpowers/plans/2026-08-05-game-development-youtube-skill.md
 - Registry·학습 로그·행동 Eval·문서 소비자 동기화
 - 제안 PR과 구현 PR의 분리 및 approval_ref 추적
 
-실제 영상·시청자·전환 검증이 없으면 다음 상태를 유지한다.
+구현 병합 후에도 실제 영상·시청자·전환 검증이 없으므로 다음 상태를 유지한다.
 
 ```yaml
-active_skill_implementation: NOT_STARTED
+active_skill_implementation: IMPLEMENTED
 model_behavior_evaluation: NOT_RUN
 real_project_video_pilot: NOT_RUN
 human_audience_validation: HUMAN_NOT_RUN
@@ -239,8 +242,8 @@ https://github.com/alsdmlals4-eng/Base/pull/167#issuecomment-5192600204
 현재 생명주기:
 
 1. 제안 등록 PR #167 병합 완료.
-2. 상태를 `APPROVED_FOR_IMPLEMENTATION`으로 전이하고 `approval_ref`를 Registry에 기록.
-3. TDD 구현 계획을 `docs/superpowers/plans/2026-08-05-game-development-youtube-skill.md`에 기록.
-4. 활성 Skill·Template·Registry·Eval·Test 변경은 별도 구현 PR에만 둔다.
-5. 구현·회귀·행동 Eval·문서 동기화가 통과한 뒤 별도 상태 전이에서 `IMPLEMENTED`와 구현 PR을 연결한다.
-6. 실제 시청자·전환 검증 전에는 실전 성과를 확정하지 않는다.
+2. 승인·TDD 계획 PR #171 병합 완료.
+3. 활성 Skill·Template·Registry·행동 증거·회귀 검증을 구현 PR #174에서 완료.
+4. 구현 PR #174의 exact-head 필수 Workflow 7개 성공과 278개 운영 계약 테스트 통과 확인.
+5. 상태를 `IMPLEMENTED`로 전이하고 `approval_ref`와 `implementation_pr`을 Registry에 연결.
+6. 실제 영상 Pilot·사람 시청자·전환 검증 전에는 실전 성과를 확정하지 않는다.

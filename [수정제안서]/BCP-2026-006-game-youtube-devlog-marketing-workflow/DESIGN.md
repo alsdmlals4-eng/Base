@@ -1,11 +1,11 @@
 # 게임 개발 YouTube 개발일지·마케팅 Skill 설계
 
-- 상태: `APPROVED_DESIGN`
+- 상태: `IMPLEMENTED`
 - 사용자 승인 근거: `https://github.com/alsdmlals4-eng/Base/pull/167#issuecomment-5192600204`
-- 기준 Base main: `48273f79ab261a1f064adfc7431c99a74a22c33a`
+- 구현 병합 Base main: `5c8f2f8845a9f0e4dbaf644529c5e3cdbf5ebbd8`
 - Work Mode: `PLAN`
 - BCP: `BCP-2026-006-game-youtube-devlog-marketing-workflow`
-- 활성 구현: `NOT_STARTED`
+- 활성 구현: `IMPLEMENTED — https://github.com/alsdmlals4-eng/Base/pull/174`
 - 실제 영상 Pilot: `NOT_RUN`
 - 사람 시청자 검증: `HUMAN_NOT_RUN`
 
@@ -374,12 +374,15 @@ docs/OPERATING_MODEL.md 또는 최소 책임 소비자
 
 ## 10. 완료 조건
 
-정적 완료:
+정적 완료 — PR #174에서 달성:
 
-- Skill·Template·Registry·Route·학습 로그·행동 Eval·문서 소비자가 동기화됨
+- Skill·Template·Registry·학습 로그·행동 Eval·문서 소비자가 동기화됨
+- 프로젝트 Adapter가 없어 shared route를 추가하지 않는 경계 검증
 - 기준·대표·변형·반례·회귀 테스트 통과
-- 제안·승인·구현 PR 연결 완료
+- exact-head 필수 Workflow 7개 성공, 운영 계약 테스트 278개 통과(환경 의존 15개 skip)
+- 제안 PR #167·승인/계획 PR #171·구현 PR #174 연결 완료
 - rollback 단위와 미검증 상태 명시
+- 과거 v9.4.x Registry 릴리스 pin 보존과 현재 Registry 확장 가능성 회귀 검증
 
 별도 실전 Gate:
 
