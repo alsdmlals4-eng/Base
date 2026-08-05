@@ -45,6 +45,6 @@ def test_ui_method_routes_procurement_only_when_external_code_is_requested() -> 
         "ux-ui-design-system-method.md"
     )
     assert "ux-ui-design-system-method.md" in skill
-    assert "external-ui-procurement-and-anti-generic-quality.md" in method
+    assert "### 6.2 External UI Procurement and Anti-Generic Quality Gate" in method
     assert "외부 Web UI" in method
     assert "기본 설치" not in skill
