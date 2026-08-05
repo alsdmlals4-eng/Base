@@ -1,0 +1,1179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/godot-live-editor-capability-manifest-v2.schema.json",
+  "title": "Godot Live Editor Capability Manifest v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_role",
+    "configuration_state",
+    "contract_version",
+    "adapter_version",
+    "project_identity",
+    "engine_compatibility",
+    "tool_adoption",
+    "transport",
+    "catalog",
+    "project_test_framework",
+    "capabilities",
+    "validation"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "artifact_role": {
+      "const": "GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST"
+    },
+    "configuration_state": {
+      "enum": [
+        "NOT_CONFIGURED",
+        "CONFIGURED"
+      ]
+    },
+    "contract_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "adapter_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_identity": {
+      "$ref": "#/$defs/projectIdentityNullable"
+    },
+    "engine_compatibility": {
+      "$ref": "#/$defs/engineCompatibility"
+    },
+    "tool_adoption": {
+      "$ref": "#/$defs/toolAdoption"
+    },
+    "transport": {
+      "$ref": "#/$defs/transport"
+    },
+    "catalog": {
+      "$ref": "#/$defs/catalog"
+    },
+    "project_test_framework": {
+      "$ref": "#/$defs/projectTestFramework"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/capability"
+      }
+    },
+    "validation": {
+      "$ref": "#/$defs/validation"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nullableSha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "projectIdentityNullable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "normalized_project_path",
+        "project_godot_sha256",
+        "project_fingerprint"
+      ],
+      "properties": {
+        "normalized_project_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "project_godot_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "project_fingerprint": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "engineCompatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "detected_version",
+        "minimum_version",
+        "maximum_exclusive_version"
+      ],
+      "properties": {
+        "detected_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "minimum_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "maximum_exclusive_version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "toolAdoption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "exact_version",
+        "telemetry_policy",
+        "external_data_policy",
+        "uninstall_procedure",
+        "rollback_reference"
+      ],
+      "properties": {
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "exact_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "telemetry_policy": {
+          "enum": [
+            "DISABLED",
+            "LOCAL_ONLY",
+            "PROJECT_DEFINED"
+          ]
+        },
+        "external_data_policy": {
+          "enum": [
+            "DENY_BY_DEFAULT",
+            "PROJECT_ALLOWLIST"
+          ]
+        },
+        "uninstall_procedure": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rollback_reference": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "accessControl": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authentication_mode",
+        "origin_policy",
+        "session_binding",
+        "os_access_control"
+      ],
+      "properties": {
+        "authentication_mode": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "SESSION_TOKEN",
+            "OAUTH_2_1",
+            "OS_PEER_CREDENTIAL"
+          ]
+        },
+        "origin_policy": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "EXPLICIT_ALLOWLIST"
+          ]
+        },
+        "session_binding": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "PROJECT_CLIENT_SESSION"
+          ]
+        },
+        "os_access_control": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "CURRENT_USER_ONLY"
+          ]
+        }
+      }
+    },
+    "transport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "enabled",
+        "bind_host",
+        "endpoint_identity",
+        "protocol_profile",
+        "protocol_version",
+        "access_control"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "DISABLED",
+            "CLI",
+            "LOCAL_HTTP",
+            "NAMED_PIPE",
+            "STDIO_BRIDGE",
+            "PROJECT_DEFINED"
+          ]
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "bind_host": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "endpoint_identity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "protocol_profile": {
+          "enum": [
+            "GENERIC",
+            "MCP"
+          ]
+        },
+        "protocol_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "access_control": {
+          "$ref": "#/$defs/accessControl"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "DISABLED"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "enabled": {
+                "const": false
+              },
+              "bind_host": {
+                "type": "null"
+              },
+              "endpoint_identity": {
+                "type": "null"
+              },
+              "access_control": {
+                "properties": {
+                  "authentication_mode": {
+                    "const": "NOT_APPLICABLE"
+                  },
+                  "origin_policy": {
+                    "const": "NOT_APPLICABLE"
+                  },
+                  "session_binding": {
+                    "const": "NOT_APPLICABLE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "CLI"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "enabled": {
+                "const": true
+              },
+              "bind_host": {
+                "type": "null"
+              },
+              "access_control": {
+                "properties": {
+                  "authentication_mode": {
+                    "const": "NOT_APPLICABLE"
+                  },
+                  "origin_policy": {
+                    "const": "NOT_APPLICABLE"
+                  },
+                  "session_binding": {
+                    "const": "NOT_APPLICABLE"
+                  },
+                  "os_access_control": {
+                    "const": "CURRENT_USER_ONLY"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "LOCAL_HTTP"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "enabled": {
+                "const": true
+              },
+              "bind_host": {
+                "enum": [
+                  "127.0.0.1",
+                  "::1"
+                ]
+              },
+              "access_control": {
+                "properties": {
+                  "authentication_mode": {
+                    "enum": [
+                      "SESSION_TOKEN",
+                      "OAUTH_2_1"
+                    ]
+                  },
+                  "origin_policy": {
+                    "const": "EXPLICIT_ALLOWLIST"
+                  },
+                  "session_binding": {
+                    "const": "PROJECT_CLIENT_SESSION"
+                  },
+                  "os_access_control": {
+                    "const": "CURRENT_USER_ONLY"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "NAMED_PIPE"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "enabled": {
+                "const": true
+              },
+              "bind_host": {
+                "type": "null"
+              },
+              "access_control": {
+                "properties": {
+                  "authentication_mode": {
+                    "enum": [
+                      "OS_PEER_CREDENTIAL",
+                      "NOT_APPLICABLE"
+                    ]
+                  },
+                  "origin_policy": {
+                    "const": "NOT_APPLICABLE"
+                  },
+                  "session_binding": {
+                    "const": "NOT_APPLICABLE"
+                  },
+                  "os_access_control": {
+                    "const": "CURRENT_USER_ONLY"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "STDIO_BRIDGE"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "enabled": {
+                "const": true
+              },
+              "bind_host": {
+                "type": "null"
+              },
+              "access_control": {
+                "properties": {
+                  "origin_policy": {
+                    "const": "NOT_APPLICABLE"
+                  },
+                  "session_binding": {
+                    "const": "NOT_APPLICABLE"
+                  },
+                  "os_access_control": {
+                    "const": "CURRENT_USER_ONLY"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "catalog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generated_at",
+        "sha256",
+        "freshness_state"
+      ],
+      "properties": {
+        "generated_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "freshness_state": {
+          "enum": [
+            "NOT_CONFIGURED",
+            "FRESH",
+            "STALE",
+            "MISMATCH"
+          ]
+        }
+      }
+    },
+    "projectTestFramework": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "runner_capability_id"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "NOT_CONFIGURED",
+            "CONFIGURED"
+          ]
+        },
+        "runner_capability_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "NOT_CONFIGURED"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "runner_capability_id": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "CONFIGURED"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "runner_capability_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "jsonObjectSchema": {
+      "type": "object",
+      "required": [
+        "type",
+        "additionalProperties"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "type": {
+          "const": "object"
+        },
+        "properties": {
+          "type": "object"
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "additionalProperties": {
+          "const": false
+        },
+        "minProperties": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxProperties": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "patternProperties": {
+          "type": "object"
+        },
+        "propertyNames": {
+          "type": "object"
+        },
+        "allOf": {
+          "type": "array"
+        },
+        "anyOf": {
+          "type": "array"
+        },
+        "oneOf": {
+          "type": "array"
+        },
+        "not": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "pathAccess": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "read_roots",
+        "write_roots",
+        "artifact_root"
+      ],
+      "properties": {
+        "read_roots": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(res://|artifacts/)(?!.*\\.\\.)"
+          },
+          "uniqueItems": true
+        },
+        "write_roots": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(res://|artifacts/)(?!.*\\.\\.)"
+          },
+          "uniqueItems": true
+        },
+        "artifact_root": {
+          "type": "string",
+          "pattern": "^artifacts/(?!.*\\.\\.)"
+        }
+      }
+    },
+    "retryPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "automatic",
+        "maximum_attempts",
+        "requires_ledger"
+      ],
+      "properties": {
+        "automatic": {
+          "type": "boolean"
+        },
+        "maximum_attempts": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "requires_ledger": {
+          "type": "boolean"
+        }
+      }
+    },
+    "timeoutPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "milliseconds",
+        "unknown_outcome"
+      ],
+      "properties": {
+        "milliseconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "unknown_outcome": {
+          "enum": [
+            "SAFE_TO_RETRY",
+            "RECONCILE_BEFORE_RETRY",
+            "RESUME_BY_TASK_ID",
+            "FAIL_CLOSED"
+          ]
+        }
+      }
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "description",
+        "execution_path",
+        "effect_kind",
+        "idempotency",
+        "approval_policy",
+        "execution_mode",
+        "rollback_policy",
+        "input_schema",
+        "output_schema",
+        "input_schema_sha256",
+        "output_schema_sha256",
+        "path_access",
+        "precondition_policy",
+        "retry_policy",
+        "timeout_policy",
+        "evidence_outputs",
+        "unsupported_states"
+      ],
+      "properties": {
+        "capability_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "execution_path": {
+          "enum": [
+            "CLI_HEADLESS",
+            "EDITOR_PLUGIN",
+            "RUNTIME_DEBUGGER"
+          ]
+        },
+        "effect_kind": {
+          "enum": [
+            "READ_ONLY",
+            "MUTATION"
+          ]
+        },
+        "idempotency": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "IDEMPOTENT",
+            "NON_IDEMPOTENT"
+          ]
+        },
+        "approval_policy": {
+          "enum": [
+            "NOT_REQUIRED",
+            "REQUIRED"
+          ]
+        },
+        "execution_mode": {
+          "enum": [
+            "SYNCHRONOUS",
+            "LONG_RUNNING_TASK"
+          ]
+        },
+        "rollback_policy": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "EDITOR_UNDO_REDO",
+            "SNAPSHOT",
+            "MANUAL",
+            "IRREVERSIBLE"
+          ]
+        },
+        "input_schema": {
+          "$ref": "#/$defs/jsonObjectSchema"
+        },
+        "output_schema": {
+          "$ref": "#/$defs/jsonObjectSchema"
+        },
+        "input_schema_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "output_schema_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "path_access": {
+          "$ref": "#/$defs/pathAccess"
+        },
+        "precondition_policy": {
+          "enum": [
+            "NONE",
+            "OPTIONAL",
+            "REQUIRED"
+          ]
+        },
+        "retry_policy": {
+          "$ref": "#/$defs/retryPolicy"
+        },
+        "timeout_policy": {
+          "$ref": "#/$defs/timeoutPolicy"
+        },
+        "evidence_outputs": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "CONTRACT",
+              "ENGINE_STATE",
+              "RUNTIME_STATE",
+              "ENGINE_INPUT",
+              "PHYSICAL_INPUT",
+              "SCREENSHOT",
+              "TEST_RESULT",
+              "HUMAN",
+              "LOG"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "unsupported_states": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "effect_kind": {
+                "const": "READ_ONLY"
+              }
+            },
+            "required": [
+              "effect_kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "idempotency": {
+                "const": "NOT_APPLICABLE"
+              },
+              "rollback_policy": {
+                "const": "NOT_APPLICABLE"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "effect_kind": {
+                "const": "MUTATION"
+              }
+            },
+            "required": [
+              "effect_kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "idempotency": {
+                "enum": [
+                  "IDEMPOTENT",
+                  "NON_IDEMPOTENT"
+                ]
+              },
+              "rollback_policy": {
+                "enum": [
+                  "EDITOR_UNDO_REDO",
+                  "SNAPSHOT",
+                  "MANUAL",
+                  "IRREVERSIBLE"
+                ]
+              },
+              "retry_policy": {
+                "properties": {
+                  "requires_ledger": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "idempotency": {
+                "const": "NON_IDEMPOTENT"
+              }
+            },
+            "required": [
+              "idempotency"
+            ]
+          },
+          "then": {
+            "properties": {
+              "retry_policy": {
+                "properties": {
+                  "automatic": {
+                    "const": false
+                  },
+                  "maximum_attempts": {
+                    "const": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "rollback_policy": {
+                "const": "IRREVERSIBLE"
+              }
+            },
+            "required": [
+              "rollback_policy"
+            ]
+          },
+          "then": {
+            "properties": {
+              "approval_policy": {
+                "const": "REQUIRED"
+              },
+              "retry_policy": {
+                "properties": {
+                  "automatic": {
+                    "const": false
+                  },
+                  "maximum_attempts": {
+                    "const": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "execution_mode": {
+                "const": "LONG_RUNNING_TASK"
+              }
+            },
+            "required": [
+              "execution_mode"
+            ]
+          },
+          "then": {
+            "properties": {
+              "retry_policy": {
+                "properties": {
+                  "requires_ledger": {
+                    "const": true
+                  }
+                }
+              },
+              "timeout_policy": {
+                "properties": {
+                  "unknown_outcome": {
+                    "const": "RESUME_BY_TASK_ID"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_state",
+        "execution_state",
+        "runtime_state",
+        "physical_input_state",
+        "human_state"
+      ],
+      "properties": {
+        "contract_state": {
+          "enum": [
+            "CONTRACT_PASS",
+            "CONTRACT_FAIL"
+          ]
+        },
+        "execution_state": {
+          "enum": [
+            "NOT_RUN",
+            "EXECUTION_PASS",
+            "EXECUTION_FAIL",
+            "BLOCKED_ENVIRONMENT"
+          ]
+        },
+        "runtime_state": {
+          "enum": [
+            "NOT_RUN",
+            "RUNTIME_PASS",
+            "RUNTIME_FAIL",
+            "BLOCKED_ENVIRONMENT"
+          ]
+        },
+        "physical_input_state": {
+          "enum": [
+            "NOT_RUN",
+            "PHYSICAL_INPUT_PASS",
+            "PHYSICAL_INPUT_FAIL",
+            "BLOCKED_ENVIRONMENT"
+          ]
+        },
+        "human_state": {
+          "enum": [
+            "HUMAN_NOT_RUN",
+            "HUMAN_PASS",
+            "HUMAN_FAIL",
+            "BLOCKED_ENVIRONMENT"
+          ]
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "configuration_state": {
+            "const": "CONFIGURED"
+          }
+        },
+        "required": [
+          "configuration_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "project_identity": {
+            "properties": {
+              "normalized_project_path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "project_godot_sha256": {
+                "$ref": "#/$defs/sha256"
+              },
+              "project_fingerprint": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "tool_adoption": {
+            "properties": {
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "exact_version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uninstall_procedure": {
+                "type": "string",
+                "minLength": 1
+              },
+              "rollback_reference": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "transport": {
+            "properties": {
+              "kind": {
+                "not": {
+                  "const": "DISABLED"
+                }
+              },
+              "enabled": {
+                "const": true
+              }
+            }
+          },
+          "catalog": {
+            "properties": {
+              "generated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "sha256": {
+                "$ref": "#/$defs/sha256"
+              },
+              "freshness_state": {
+                "const": "FRESH"
+              }
+            }
+          },
+          "capabilities": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "configuration_state": {
+            "const": "NOT_CONFIGURED"
+          }
+        },
+        "required": [
+          "configuration_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "project_identity": {
+            "properties": {
+              "normalized_project_path": {
+                "type": "null"
+              },
+              "project_godot_sha256": {
+                "type": "null"
+              },
+              "project_fingerprint": {
+                "type": "null"
+              }
+            }
+          },
+          "transport": {
+            "properties": {
+              "kind": {
+                "const": "DISABLED"
+              },
+              "enabled": {
+                "const": false
+              }
+            }
+          },
+          "catalog": {
+            "properties": {
+              "generated_at": {
+                "type": "null"
+              },
+              "sha256": {
+                "type": "null"
+              },
+              "freshness_state": {
+                "const": "NOT_CONFIGURED"
+              }
+            }
+          },
+          "capabilities": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ]
+}
