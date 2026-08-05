@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Baseline is exact `main@6788f40712f7182261a470bad0c1e5fb4717c632`.
+- Baseline was exact `main@6788f40712f7182261a470bad0c1e5fb4717c632`; the feature branch was subsequently synchronized with the newer main before final verification.
 - Default target pair is `WINDOWS_PC + ANDROID_MOBILE` only when the eligibility gate passes.
 - Shared gameplay rules, content/data, save schema, and deterministic state remain one core.
 - Input, layout, lifecycle, quality, and store services use replaceable platform adapters.
@@ -40,7 +40,7 @@ Assert the specialized Guide and Template exist; require conditional eligibility
 
 Observed failure: the Guide and Template paths were both missing, and the probe exited with status 1 for that reason.
 
-- [x] **Step 3: Record the exact failing head and failure cause in the Draft PR**
+- [x] **Step 3: Record the failing head and failure cause in the Draft PR**
 
 Draft PR #178 records test-only head `fcace296ac940acd7c8c9f6496c4fe08ce1648fd`. Pull-request Actions had not yet been created at that head, so no CI failure is claimed; the isolated RED probe is the available evidence.
 
@@ -54,17 +54,17 @@ Draft PR #178 records test-only head `fcace296ac940acd7c8c9f6496c4fe08ce1648fd`.
 - Consumes: Godot multiple-resolution guidance; Android touch, lifecycle, and device-test guidance; current Steam, Google Play, and STOVE official rules; representative PC-to-mobile adaptation cases.
 - Produces: `PC_ANDROID_DUAL_TARGET_CANDIDATE`, eligibility/opt-out rules, shared-core/platform-adapter contract, UI/input/lifecycle defaults, QA matrix, and release-wave decision fields.
 
-- [ ] **Step 1: Write the minimum Guide that satisfies the contract**
+- [x] **Step 1: Write the minimum Guide that satisfies the contract**
 
-Include evidence status, applicability, non-use conditions, one-core architecture, adaptive layout rules, semantic input actions, Android interruption recovery, target-device evidence, release sequencing, failure conditions, output contract, and revalidation date.
+Included evidence status, applicability, non-use conditions, one-core architecture, adaptive layout rules, semantic input actions, Android interruption recovery, target-device evidence, release sequencing, failure conditions, output contract, and revalidation date.
 
-- [ ] **Step 2: Write the project planning Template**
+- [x] **Step 2: Write the project planning Template**
 
-Include target stores, account/test readiness, screen/input profiles, shared and platform-specific responsibilities, physical-device evidence, performance budget, release waves, decision status, rollback, and unresolved evidence.
+Included target stores, account/test readiness, screen/input profiles, shared and platform-specific responsibilities, physical-device evidence, performance budget, release waves, decision status, rollback, and unresolved evidence.
 
-- [ ] **Step 3: Adversarially review the defaults**
+- [x] **Step 3: Adversarially review the defaults**
 
-Reject forced dual-target development, code-sharing percentage targets, same-day launch, emulator-only mobile validation, permanent store-price assumptions, hover-only interaction, and PC-UI shrinking.
+Rejected forced dual-target development, code-sharing percentage targets, same-day launch, emulator-only mobile validation, permanent store-price assumptions, hover-only interaction, and PC-UI shrinking.
 
 ### Task 3: Existing-Route Integration
 
@@ -73,22 +73,23 @@ Reject forced dual-target development, code-sharing percentage targets, same-day
 - Modify: `START_HERE.md`
 - Modify: `docs/knowledge/game-development/README.md`
 - Modify: `skills/analyzing-and-refining-game-concepts/SKILL.md`
+- Create: `skills/analyzing-and-refining-game-concepts/LEARNING_LOG.md`
 
 **Interfaces:**
 - Consumes: the specialized Guide and Template.
 - Produces: one-step discovery from Base entrypoints and conditional consumption by the existing concept/production lifecycle.
 
-- [ ] **Step 1: Add minimal discovery links**
+- [x] **Step 1: Add minimal discovery links**
 
-Link the Guide and Profile from the root README, START_HERE request router, and knowledge-hub map without duplicating detailed rules.
+Linked the Guide and Profile from the root README, START_HERE request router, and knowledge-hub map without duplicating detailed rules.
 
-- [ ] **Step 2: Connect the existing Skill**
+- [x] **Step 2: Connect the existing Skill**
 
-During `constrain`, `poc-contract`, or `production-gate`, require the Guide/Profile only when Windows+Android dual targeting or staged STOVE·Google Play·Steam delivery materially affects the project.
+During `constrain`, `poc-contract`, or `production-gate`, the Guide/Profile is required only when Windows+Android dual targeting or staged STOVE·Google Play·Steam delivery materially affects the project.
 
-- [ ] **Step 3: Preserve completion-record authority**
+- [x] **Step 3: Preserve completion-record authority**
 
-Do not add a Draft-only entry to `docs/CHANGELOG.md`. Record the completed change after merge with the integrated commit and validation evidence.
+No Draft-only entry was added to `docs/CHANGELOG.md`. The completed change is recorded after merge with the integrated commit and validation evidence.
 
 ### Task 4: Green Verification and PR Evidence
 
@@ -99,18 +100,18 @@ Do not add a Draft-only entry to `docs/CHANGELOG.md`. Record the completed chang
 - Consumes: the complete branch diff.
 - Produces: exact-head test, reference, and review evidence.
 
-- [ ] **Step 1: Run the focused and applicable repository validation through GitHub Actions**
+- [x] **Step 1: Run the focused and applicable repository validation through GitHub Actions**
 
-Expected: focused contract and required `ci-gate` report success on the exact PR head.
+The dedicated evidence-knowledge contract, Dependency Review, Game UX/UI, Base v9 operating contracts, and Game Project Operating System workflows all passed on the verified implementation head. The focused artifact reported 40 tests and `OK`. PR metadata owns the latest exact-head SHA after any documentation-only synchronization.
 
-- [ ] **Step 2: Inspect the complete PR diff**
+- [x] **Step 2: Inspect the complete PR diff**
 
-Confirm only planned files changed, no new Skill/Registry/release-lock/project/Sheet changes occurred, and no stale `workflow/` path was introduced.
+Confirmed only planned Base files changed, no new Skill/Registry/release-lock/project/Sheet changes occurred, and no stale `workflow/` path was introduced.
 
-- [ ] **Step 3: Re-check current official facts and evidence limits**
+- [x] **Step 3: Re-check current official facts and evidence limits**
 
-Confirm volatile fees, account gates, and policies remain dated and require implementation-time revalidation.
+Volatile fees, account gates, and policies remain dated and require implementation-time revalidation. STOVE cost remains `VERIFY_CURRENT_OFFICIAL_SOURCE`.
 
-- [ ] **Step 4: Leave the PR as Draft**
+- [x] **Step 4: Leave the PR as Draft**
 
-Report branch, exact head, changed files, RED/GREEN evidence, current CI state, and remaining project/device/human validation as unverified.
+PR #178 remains Draft and reports the branch, exact head, changed files, RED/GREEN evidence, CI state, and remaining project/device/human validation as unverified.
