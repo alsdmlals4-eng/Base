@@ -25,6 +25,10 @@ from tests.test_godot_live_editor_idempotent_approval import (
 from tests.test_godot_live_editor_runtime_contract_hardening import (
     GodotRuntimeContractHardeningTests as _GodotRuntimeContractHardeningTests,
 )
+from tests.test_platform_review_asset_rights_reference_production import (
+    PlatformReviewAssetRightsReferenceProductionTests
+    as _PlatformReviewAssetRightsReferenceProductionTests,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]

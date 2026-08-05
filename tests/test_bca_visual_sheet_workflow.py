@@ -44,6 +44,19 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
             self.assertIn(status, skill)
         self.assertIn("생성 결과는 자동 최종 자산이 아니다", skill)
 
+    def test_reference_visuals_are_recreated_not_surface_copied(self) -> None:
+        skill = (ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md").read_text(encoding="utf-8")
+        policy = (ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md").read_text(encoding="utf-8")
+        for text in (skill, policy):
+            self.assertIn(
+                "PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md",
+                text,
+            )
+            self.assertIn("reference_brief", text)
+            self.assertIn("forbidden_expression", text)
+            self.assertIn("reference_similarity_status", text)
+            self.assertIn("RELEASE_BLOCKED_UNVERIFIED", text)
+
     def test_registry_routes_existing_visual_work_without_a_duplicate_skill(self) -> None:
         registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
         entry = next(item for item in registry["skills"] if item["skill_id"] == "designing-art-prompts-and-technique-cards")

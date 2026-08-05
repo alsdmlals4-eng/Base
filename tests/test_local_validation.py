@@ -23,6 +23,10 @@ from tests.test_godot_live_editor_contract_v2_docs import (
 from tests.test_godot_live_editor_runtime_pilot import (
     GodotLiveEditorRuntimePilotTests as _GodotLiveEditorRuntimePilotTests,
 )
+from tests.test_platform_review_asset_rights_reference_production import (
+    PlatformReviewAssetRightsReferenceProductionTests
+    as _PlatformReviewAssetRightsReferenceProductionTests,
+)
 from tools import run_local_validation as runner
 
 
