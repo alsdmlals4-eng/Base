@@ -1,0 +1,22 @@
+{
+  "schema_version": "1",
+  "project_identity": {
+    "repository": "owner/project",
+    "project_id": "project"
+  },
+  "base_pilot_commit": "0000000000000000000000000000000000000000",
+  "project_state": "NOT_CREATED",
+  "godot": {
+    "version": "4.7.1-stable",
+    "archive_sha256": "c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba"
+  },
+  "project_file": null,
+  "main_scene_source": "NOT_APPLICABLE",
+  "legacy_editor_plugins": [],
+  "legacy_autoloads": [],
+  "legacy_disable_mode": "TEMPORARY_COPY_ONLY",
+  "source_mutation_policy": "FORBIDDEN",
+  "scratch_scene_path": "res://.godot-live-editor-pilot/scratch.tscn",
+  "behavior_checks": [],
+  "expected_platform": "NOT_CREATED"
+}
