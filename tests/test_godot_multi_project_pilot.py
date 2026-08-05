@@ -22,6 +22,7 @@ SCHEMA = ROOT / "schemas/godot-project-pilot-v1.schema.json"
 TEMPLATE = ROOT / "templates/project-operations/godot-live-editor/PROJECT_PILOT_DESCRIPTOR.json"
 WORKFLOW = ROOT / ".github/workflows/reusable-godot-project-pilot.yml"
 GUIDE = ROOT / "docs/knowledge/godot/GODOT_MULTI_PROJECT_PILOT_GUIDE.md"
+GODOT_ARCHIVE_SHA256 = "c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba"
 
 REQUIRED_PATHS = (
     SCHEMA,
@@ -91,6 +92,10 @@ class GodotMultiProjectPilotTests(unittest.TestCase):
             "^[0-9a-f]{40}$",
             schema["properties"]["base_pilot_commit"]["pattern"],
         )
+        self.assertEqual(
+            GODOT_ARCHIVE_SHA256,
+            schema["properties"]["godot"]["properties"]["archive_sha256"]["const"],
+        )
         serialized = json.dumps(schema)
         self.assertNotIn('"command"', serialized)
         self.assertNotIn('"shell"', serialized)
@@ -98,6 +103,7 @@ class GodotMultiProjectPilotTests(unittest.TestCase):
         template = json.loads(TEMPLATE.read_text(encoding="utf-8"))
         self.assertEqual("NOT_CREATED", template["project_state"])
         self.assertEqual("0" * 40, template["base_pilot_commit"])
+        self.assertEqual(GODOT_ARCHIVE_SHA256, template["godot"]["archive_sha256"])
         self.assertIsNone(template["project_file"])
         self.assertEqual([], template["behavior_checks"])
 
@@ -109,7 +115,10 @@ class GodotMultiProjectPilotTests(unittest.TestCase):
                 "project_identity": {"repository": "owner/game", "project_id": "game"},
                 "base_pilot_commit": "a" * 40,
                 "project_state": "EXISTING_GODOT_PROJECT",
-                "godot": {"version": "4.7.1-stable", "archive_sha256": "b" * 64},
+                "godot": {
+                    "version": "4.7.1-stable",
+                    "archive_sha256": GODOT_ARCHIVE_SHA256,
+                },
                 "project_file": "project.godot",
                 "main_scene_source": "application/run/main_scene",
                 "legacy_editor_plugins": [],
@@ -182,7 +191,7 @@ class GodotMultiProjectPilotTests(unittest.TestCase):
                 base_pilot_commit="a" * 40,
                 project_state="EXISTING_GODOT_PROJECT",
                 godot_version="4.7.1-stable",
-                godot_archive_sha256="b" * 64,
+                godot_archive_sha256=GODOT_ARCHIVE_SHA256,
                 project_file="project.godot",
                 main_scene_source="application/run/main_scene",
                 legacy_editor_plugins=("res://addons/godot_ai/plugin.cfg",),
@@ -238,12 +247,15 @@ class GodotMultiProjectPilotTests(unittest.TestCase):
             "persist-credentials: false",
             "permissions:\n  contents: read",
             "Godot_v4.7.1-stable_linux.x86_64.zip",
-            "c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba",
+            GODOT_ARCHIVE_SHA256,
+            "PYTHONPATH: ${{ github.workspace }}/_base_c0",
+            "python -m tools.godot_multi_project_pilot",
         ):
             self.assertIn(marker, text)
         self.assertNotIn("github.action_path", text)
         self.assertNotIn("TCPServer", text)
         self.assertNotIn("WebSocket", text)
+        self.assertNotIn("python _base_c0/tools/godot_multi_project_pilot.py", text)
 
     def test_readiness_docs_remain_truthful(self) -> None:
         guide = GUIDE.read_text(encoding="utf-8")
