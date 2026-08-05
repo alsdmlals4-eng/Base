@@ -3,6 +3,8 @@ extends RefCounted
 
 const DEFAULT_ROOT := "res://artifacts/godot-live-editor/ledger"
 const TERMINAL_STATES := ["COMPLETED", "FAILED"]
+const SAFE_NAME_CHARACTERS := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
+const MAX_SAFE_NAME_LENGTH := 128
 
 var _root_path := DEFAULT_ROOT
 
@@ -91,13 +93,9 @@ func _write_record(operation_id: String, payload: Dictionary) -> Dictionary:
     var file := FileAccess.open(temp_path, FileAccess.WRITE)
     if file == null:
         return {"ok": false, "code": "LEDGER_WRITE_FAILED"}
-    file.store_string(JSON.stringify(payload, "  ") + "\n")
+    file.store_string(JSON.stringify(payload) + "\n")
     file.flush()
     file.close()
-    if FileAccess.file_exists(target_path):
-        if DirAccess.remove_absolute(target_path) != OK:
-            DirAccess.remove_absolute(temp_path)
-            return {"ok": false, "code": "LEDGER_WRITE_FAILED"}
     if DirAccess.rename_absolute(temp_path, target_path) != OK:
         DirAccess.remove_absolute(temp_path)
         return {"ok": false, "code": "LEDGER_WRITE_FAILED"}
@@ -109,9 +107,9 @@ func _record_path(operation_id: String) -> String:
 
 
 func _safe_name(value: String) -> bool:
-    if value.is_empty() or value.contains("/") or value.contains("\\") or value.contains(".."):
+    if value.is_empty() or value.length() > MAX_SAFE_NAME_LENGTH:
         return false
     for character in value:
-        if not (character.is_valid_identifier() or character == "-"):
+        if not SAFE_NAME_CHARACTERS.contains(character):
             return false
     return true
