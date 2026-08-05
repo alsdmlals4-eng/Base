@@ -157,7 +157,6 @@ class PlatformReviewAssetRightsReferenceProductionTests(unittest.TestCase):
     def test_existing_skill_routes_consume_the_contract(self) -> None:
         files = (
             "skills/managing-game-project-operating-system/SKILL.md",
-            "skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md",
             "skills/designing-art-prompts-and-technique-cards/SKILL.md",
             "skills/designing-vertical-slices/SKILL.md",
             "skills/reviewing-and-validating-project-changes/SKILL.md",
@@ -261,6 +260,28 @@ class PlatformReviewAssetRightsReferenceProductionTests(unittest.TestCase):
         self.assertIn("새 광역 Skill을 추가하지 않음", learning)
         self.assertIn("자동 법률 판정기를 추가하지 않음", learning)
 
+
+    def test_entitlement_integrity_capability_remains_distinct_and_routed(self) -> None:
+        guide_path = (
+            "docs/knowledge/game-development/"
+            "GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md"
+        )
+        record_path = (
+            "templates/project-operations/"
+            "GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md"
+        )
+        for path in (
+            "docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md",
+            "skills/managing-game-project-operating-system/SKILL.md",
+            "skills/designing-vertical-slices/SKILL.md",
+            "skills/reviewing-and-validating-project-changes/SKILL.md",
+        ):
+            self.assertIn(guide_path, read(path), path)
+        release_pack = read(RELEASE_PACK)
+        self.assertIn(record_path, release_pack)
+        self.assertIn("PLATFORM_NATIVE_FIRST", release_pack)
+        self.assertNotIn("GAME_ENTITLEMENT_AND_INTEGRITY_RECORD", read("skills/SKILL_REGISTRY.json"))
+        self.assertNotIn("GAME_ENTITLEMENT_AND_INTEGRITY_RECORD", read("skills/BASE_SHARED_SKILL_ROUTES.json"))
 
 if __name__ == "__main__":
     unittest.main()

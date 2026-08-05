@@ -318,3 +318,7 @@ LEGAL_REVIEW_NOT_PERFORMED
 - 일반 조사 연결: `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`
 
 프로젝트 Template 인스턴스가 프로젝트 증거다. Base Template 자체는 프로젝트 권리·등급의 정본이 아니다.
+
+## Entitlement·integrity·DRM handoff
+
+등급·스토어 설문·자산 권리와 별도로 플랫폼 entitlement, app/build/request integrity, server authority, offline/outage와 false-positive remediation은 `docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md`가 소유한다. 출시 증거는 `templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md`를 링크하되 자산 권리 provenance와 합치지 않는다.

@@ -107,3 +107,7 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 ## Cloud Run 게임 백엔드 진입
 
 서버 기능이 감지되면 `docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`를 읽고 `SERVER_FEATURE_DETECTED`에서 적합성 Gate를 시작한다. 선택 뒤 프로젝트 정본은 `templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md`에 두며 실제 배포·부하·장애·비용 검증 전에는 `PRODUCTION_READY`를 선언하지 않는다.
+
+## 게임 권한·무결성·DRM 진입
+
+entitlement, Play Integrity, Steam DRM Wrapper, STOVE 기능, anti-tamper, offline license 또는 고가치 서버 권위 질문은 `docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md`에서 시작한다. 프로젝트 상태는 `templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md`에 두며 platform sandbox와 사람 복구 증거 전에는 `PRODUCTION_READY`를 선언하지 않는다.

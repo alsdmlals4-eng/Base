@@ -210,3 +210,19 @@ purpose, access boundary, and TTL. `RAW_SIGNAL_WITHOUT_PURPOSE_OR_TTL_BLOCKED`.
 Static CI verifies document structure, routes, and safeguards. It does not prove
 platform SDK integration, sandbox verdicts, false-positive recovery, legal
 clearance, platform approval, or production readiness.
+
+## Adversarial decision fixtures
+
+```text
+Steam single-player entitlement with graceful offline behavior -> PLATFORM_NATIVE_FIRST
+Google Play competitive score submit with request-bound backend verification -> REQUEST_BINDING_AND_REPLAY_CONTROL
+client-only currency or inventory mutation -> BLOCKED_UNVERIFIED
+one unavailable or negative integrity signal -> ONE_VERDICT_PERMANENT_PUNISHMENT_PROHIBITED
+repeated multi-signal abuse -> temporary restriction and review
+platform outage -> retry, degraded/read-only, or grace path required
+service sunset -> offline fallback or save/data export decision required
+raw device/integrity signal retained without purpose or TTL -> RAW_SIGNAL_WITHOUT_PURPOSE_OR_TTL_BLOCKED
+STOVE capability copied from Steam or Google without official evidence -> PLATFORM_CAPABILITY_UNVERIFIED
+Wrapper or obfuscation described as perfect anti-piracy -> BLOCKED_UNVERIFIED
+local single-player modding with no external harm -> excessive DRM challenged
+```

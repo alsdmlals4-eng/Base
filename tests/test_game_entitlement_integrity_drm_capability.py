@@ -247,15 +247,17 @@ class GameEntitlementIntegrityDrmCapabilityTests(unittest.TestCase):
         ):
             self.assertIn(guide_path, read(path), path)
 
+        evaluator = read("skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md")
+        self.assertIn(
+            "PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md",
+            evaluator,
+        )
+
         expectations = {
             "skills/managing-game-project-operating-system/SKILL.md": (
                 guide_path,
                 record_path,
                 "PROJECT_OWNED_ENTITLEMENT_INTEGRITY_RECORD",
-            ),
-            "skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md": (
-                guide_path,
-                "PLATFORM_CAPABILITY_UNVERIFIED",
             ),
             "skills/designing-vertical-slices/SKILL.md": (
                 guide_path,
@@ -316,6 +318,24 @@ class GameEntitlementIntegrityDrmCapabilityTests(unittest.TestCase):
         ):
             self.assertIn(term, guide)
 
+
+    def test_adversarial_platform_and_player_harm_fixtures(self) -> None:
+        guide = read(GUIDE)
+        expectations = {
+            "Steam single-player entitlement with graceful offline behavior": "PLATFORM_NATIVE_FIRST",
+            "Google Play competitive score submit with request-bound backend verification": "REQUEST_BINDING_AND_REPLAY_CONTROL",
+            "client-only currency or inventory mutation": "BLOCKED_UNVERIFIED",
+            "one unavailable or negative integrity signal": "ONE_VERDICT_PERMANENT_PUNISHMENT_PROHIBITED",
+            "repeated multi-signal abuse": "temporary restriction and review",
+            "platform outage": "retry, degraded/read-only, or grace path required",
+            "service sunset": "offline fallback or save/data export decision required",
+            "raw device/integrity signal retained without purpose or TTL": "RAW_SIGNAL_WITHOUT_PURPOSE_OR_TTL_BLOCKED",
+            "STOVE capability copied from Steam or Google without official evidence": "PLATFORM_CAPABILITY_UNVERIFIED",
+            "Wrapper or obfuscation described as perfect anti-piracy": "BLOCKED_UNVERIFIED",
+            "local single-player modding with no external harm": "excessive DRM challenged",
+        }
+        for scenario, decision in expectations.items():
+            self.assertIn(f"{scenario} -> {decision}", guide)
 
 if __name__ == "__main__":
     unittest.main()
