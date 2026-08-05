@@ -3,15 +3,16 @@
 ## 출처와 상태
 
 - 출처 프로젝트: `alsdmlals4-eng/Base`
-- 기준 커밋: `48273f79ab261a1f064adfc7431c99a74a22c33a`
+- 기준 커밋: `ecbd93f16b65a1527269bfd8fef9facad6b2f40b`
 - 제출일: `2026-08-05`
-- 상태: `SUBMITTED`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 지식 상태: `패턴`
 - 사용자 방향 승인: `2026-08-05 — 독립 전문 Skill + BCP 분리 생명주기`
 - 최종 제안 승인 근거: `https://github.com/alsdmlals4-eng/Base/pull/167#issuecomment-5192600204`
+- 구현 계획: `docs/superpowers/plans/2026-08-05-game-development-youtube-skill.md`
 - 구현 PR: `없음`
 
-이 제안 PR은 신규 제안의 최초 등록이므로 Registry 상태를 `SUBMITTED`로 유지한다. 병합 후 별도 상태 전이와 별도 구현 PR에서 `APPROVED_FOR_IMPLEMENTATION`을 기계적으로 확인한다.
+제안 등록 PR #167이 exact-head CI 통과 후 병합됐으며, 사용자 승인 근거가 안정적인 GitHub 댓글로 기록됐다. 이 상태 전이는 활성 구현을 허용하지만 구현 완료를 의미하지 않는다. 활성 Skill 구현은 별도 Branch와 별도 PR에서 TDD로 진행한다.
 
 ## 관찰과 증거
 
@@ -164,22 +165,37 @@ MUST_FIX 위험:
 
 ## 영향 범위와 검증
 
-승인 후 별도 구현 PR의 최소 후보:
+승인된 구현 계획의 최소 범위:
 
 ```text
 skills/producing-game-development-youtube-videos/SKILL.md
 templates/game-development-youtube/EPISODE_PACKET.md
 skills/SKILL_REGISTRY.json
 skills/SKILL_LEARNING_LOG.md
-skills/SKILL_BEHAVIOR_EVALS.json
-skills/BASE_SHARED_SKILL_ROUTES.json
+skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json
+skills/SKILL_IMPLEMENTATION_EVIDENCE.json
+docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md
+docs/generated/BASE_ACTIVE_SKILLS.md
+docs/OPERATING_MODEL.md
+.github/reference-freshness.json
 tests/test_game_development_youtube_skill.py
 tests/test_skill_package_integrity.py
-tests/test_skill_routing_governance.py
-docs/OPERATING_MODEL.md 또는 최소 책임 소비자
+tests/test_base_v9_5_skill_operating_refinement.py
+tests/test_skill_behavior_evidence_hardening.py
+tests/test_skill_implementation_evidence.py
+tests/test_skill_behavior_governance_integration.py
+tests/test_skill_behavior_adversarial_boundaries.py
 ```
 
-최신 `main`의 결합 변경 규칙과 실제 소비자를 다시 읽어 파일 범위를 줄이거나 조정한다. 활성 Skill 구현 전에 다음을 테스트 우선으로 고정한다.
+`BASE_SHARED_SKILL_ROUTES.json`은 프로젝트 Adapter가 존재할 때만 사용하는 선택 경로이므로 이번 Base 공용 Skill 구현에서는 수정하지 않는다. `SKILL_BEHAVIOR_EVALS.json`은 외부 모델 실행 결과용으로 유지하고, 정적 활성·비활성 경계 사례는 `SKILL_BEHAVIOR_COVERAGE_EVALS.json`에 둔다.
+
+구현 계획:
+
+```text
+docs/superpowers/plans/2026-08-05-game-development-youtube-skill.md
+```
+
+활성 Skill 구현 전에 다음을 테스트 우선으로 고정한다.
 
 - 기본 개발일지 Packet 생성
 - 검색형·Shorts·출시 공지 변형
@@ -206,7 +222,7 @@ conversion_validation: CONVERSION_UNVERIFIED
 
 롤백:
 
-- 새 Skill과 전용 Template·Registry·Route·Test·문서 소비자 변경을 하나의 구현 PR 단위로 되돌린다.
+- 새 Skill과 전용 Template·Registry·Eval·Test·문서 소비자 변경을 하나의 구현 PR 단위로 되돌린다.
 - 프로젝트별 실제 Episode Packet은 Base 롤백 대상이 아니며 프로젝트 책임 원본에 남긴다.
 - 이미 수집한 Analytics는 관찰 기록으로 보존하되 검증된 보편 규칙으로 승격하지 않는다.
 
@@ -220,11 +236,11 @@ conversion_validation: CONVERSION_UNVERIFIED
 https://github.com/alsdmlals4-eng/Base/pull/167#issuecomment-5192600204
 ```
 
-생명주기 경계:
+현재 생명주기:
 
-1. 이 제안 PR은 신규 제안 등록 규칙에 따라 `SUBMITTED`로 병합한다.
-2. 병합 후 별도 상태 전이에서 `APPROVED_FOR_IMPLEMENTATION`과 `approval_ref`를 기록한다.
-3. 최신 `main`에서 TDD 구현 계획을 작성한다.
-4. 활성 Skill·Template·Registry·Route·Test 변경은 별도 구현 PR에만 둔다.
-5. 구현·회귀·행동 Eval·문서 동기화가 통과한 뒤 `IMPLEMENTED`와 구현 PR을 연결한다.
+1. 제안 등록 PR #167 병합 완료.
+2. 상태를 `APPROVED_FOR_IMPLEMENTATION`으로 전이하고 `approval_ref`를 Registry에 기록.
+3. TDD 구현 계획을 `docs/superpowers/plans/2026-08-05-game-development-youtube-skill.md`에 기록.
+4. 활성 Skill·Template·Registry·Eval·Test 변경은 별도 구현 PR에만 둔다.
+5. 구현·회귀·행동 Eval·문서 동기화가 통과한 뒤 별도 상태 전이에서 `IMPLEMENTED`와 구현 PR을 연결한다.
 6. 실제 시청자·전환 검증 전에는 실전 성과를 확정하지 않는다.
