@@ -6,10 +6,10 @@
 - 최초 제안 기준 커밋: `48273f79ab261a1f064adfc7431c99a74a22c33a`
 - 제안 병합 커밋: `1b323b2e16cf1f1e27698a8e83496b767b6f06e3`
 - 제출일: `2026-08-05`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `패턴`
 - 사용자 승인 근거: `https://github.com/alsdmlals4-eng/Base/pull/170#issuecomment-5192884554`
-- 구현 PR: `없음`
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/179`, `https://github.com/alsdmlals4-eng/Base/pull/181`
 
 이 문서와 `[수정제안서]/PROPOSAL_REGISTRY.json`이 BCP 생명주기 상태를 소유한다. 상세 설계는 같은 디렉터리의 `DESIGN.md`가 책임진다.
 
@@ -170,10 +170,16 @@ MUST_FIX:
 - 사용자 승인 근거: `https://github.com/alsdmlals4-eng/Base/pull/170#issuecomment-5192884554`
 - 제안 병합 PR: `https://github.com/alsdmlals4-eng/Base/pull/173`
 - 제안 병합 커밋: `1b323b2e16cf1f1e27698a8e83496b767b6f06e3`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - Cloud Run 구현 계획: `docs/superpowers/plans/2026-08-05-cloud-run-game-backend-capability-pack.md`
 - 권한·무결성 구현 계획: `docs/superpowers/plans/2026-08-05-game-entitlement-integrity-drm-capability-pack.md`
-- 활성 구현: `NOT_STARTED`
+- Cloud Run 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/179`
+- Cloud Run 구현 병합 커밋: `dcc1a1bfa5f97a93351e2949e5aad04f06e9003d`
+- 권한·무결성 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/181`
+- 권한·무결성 구현 병합 커밋: `6ce0e5375f9ad1a0a56a337b7e4813f0296e3e0c`
+- Base 정적 구현 완료 범위: Guide·Template·기존 owner route·전용 계약/반례 test·reference freshness·Learning Log·Changelog
+- 생명주기 판정: `IMPLEMENTED`
+- 활성 구현: `IMPLEMENTED_IN_BASE_STATIC_CONTRACTS`
 - 실제 Cloud Run 배포: `NOT_RUN`
 - Steam·Google Play·STOVE 실제 통합: `NOT_RUN`
 - 부하·장애·비용·보안 검토: `NOT_RUN`
