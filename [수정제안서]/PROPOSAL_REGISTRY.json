@@ -46,6 +46,17 @@
       "submitted_at": "2026-08-01",
       "approval_ref": "https://github.com/alsdmlals4-eng/Base/issues/115",
       "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/118"
+    },
+    {
+      "proposal_id": "BCP-2026-005-godot-live-editor-contract-v2",
+      "title": "Godot Live Editor 안전 계약 v2 정규화",
+      "path": "[수정제안서]/BCP-2026-005-godot-live-editor-contract-v2/PROPOSAL.md",
+      "status": "APPROVED_FOR_IMPLEMENTATION",
+      "source_project": "alsdmlals4-eng/Base",
+      "source_commit": "83683eecaaeaf415bf629fe5a1231fc6cef575f3",
+      "submitted_at": "2026-08-05",
+      "approval_ref": "https://github.com/alsdmlals4-eng/Base/pull/154#issuecomment-5187157323",
+      "implementation_pr": null
     }
   ]
 }
