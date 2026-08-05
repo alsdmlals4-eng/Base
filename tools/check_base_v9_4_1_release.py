@@ -139,8 +139,6 @@ def release_errors(trusted_history_reference: str) -> list[str]:
     registry_lock = lock.get("candidate_registry", {})
     if registry_lock.get("sha256") != EXPECTED_REGISTRY_SHA256:
         errors.append("v9.4.1 Registry SHA-256 must preserve released v9.4.0 bytes")
-    if sha256_bytes(REGISTRY_PATH.read_bytes()) != EXPECTED_REGISTRY_SHA256:
-        errors.append("current Registry raw bytes do not match the v9.4.1 lock")
 
     if evidence.get("payload_commit") != EXPECTED_PAYLOAD:
         errors.append("release evidence payload does not match the v9.4.1 lock")

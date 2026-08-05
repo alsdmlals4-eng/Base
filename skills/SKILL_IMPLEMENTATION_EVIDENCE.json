@@ -175,5 +175,14 @@
         {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"}
       ]
     }
+,
+    {
+      "skill_id": "producing-game-development-youtube-videos",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_game_development_youtube_skill.py"},
+        {"kind": "CONTRACT", "path": "skills/producing-game-development-youtube-videos/SKILL.md"},
+        {"kind": "CONTRACT", "path": "templates/game-development-youtube/EPISODE_PACKET.md"}
+      ]
+    }
   ]
 }
