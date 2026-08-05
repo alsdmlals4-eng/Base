@@ -117,6 +117,70 @@ func _run_pilot() -> void:
         and _ledger_state("op-rename-stale-001") == null
     )
 
+    var hash_observation: Dictionary = _probe.observe(
+        get_editor_interface(),
+        get_undo_redo(),
+        NodePath("."),
+    )
+    var hash_envelope := _build_envelope(
+        "scene.inspect",
+        {},
+        hash_observation,
+        "op-hash-tamper-001",
+    )
+    hash_envelope["request"]["arguments"] = {"tampered": true}
+    var hash_submit := submit_validated_operation(hash_envelope)
+    var request_hash_block_pass: bool = (
+        not hash_submit.get("ok", false)
+        and hash_submit.get("code") == "REQUEST_HASH_MISMATCH"
+        and _ledger_state("op-hash-tamper-001") == null
+    )
+
+    var approval_observation: Dictionary = _probe.observe(
+        get_editor_interface(),
+        get_undo_redo(),
+        NodePath("RenamedSaved"),
+    )
+    var expired_envelope := _build_envelope(
+        "node.rename",
+        {
+            "node_path": "RenamedSaved",
+            "new_name": "ExpiredShouldNotApply",
+            "save_mode": "KEEP_DIRTY",
+        },
+        approval_observation,
+        "op-rename-expired-001",
+    )
+    expired_envelope["approval"]["expires_at"] = "2000-01-01T00:00:00Z"
+    var expired_submit := submit_validated_operation(expired_envelope)
+    var expired_approval_block_pass: bool = (
+        not expired_submit.get("ok", false)
+        and expired_submit.get("code") == "APPROVAL_EXPIRED"
+        and root.get_node_or_null("RenamedSaved") != null
+        and root.get_node_or_null("ExpiredShouldNotApply") == null
+        and _ledger_state("op-rename-expired-001") == null
+    )
+
+    var binding_envelope := _build_envelope(
+        "node.rename",
+        {
+            "node_path": "RenamedSaved",
+            "new_name": "BindingShouldNotApply",
+            "save_mode": "KEEP_DIRTY",
+        },
+        approval_observation,
+        "op-rename-binding-001",
+    )
+    binding_envelope["approval"]["token_binding"]["policy"]["rollback_policy"] = "MANUAL"
+    var binding_submit := submit_validated_operation(binding_envelope)
+    var approval_binding_block_pass: bool = (
+        not binding_submit.get("ok", false)
+        and binding_submit.get("code") == "APPROVAL_BINDING_MISMATCH"
+        and root.get_node_or_null("RenamedSaved") != null
+        and root.get_node_or_null("BindingShouldNotApply") == null
+        and _ledger_state("op-rename-binding-001") == null
+    )
+
     var batch_observation: Dictionary = _probe.observe(
         get_editor_interface(),
         get_undo_redo(),
@@ -189,6 +253,9 @@ func _run_pilot() -> void:
         and undo_pass
         and save_result.get("success", false)
         and stale_state_block_pass
+        and request_hash_block_pass
+        and expired_approval_block_pass
+        and approval_binding_block_pass
         and result_hash_pass
         and queue_capacity_pass
         and batch_64_pass
@@ -206,6 +273,9 @@ func _run_pilot() -> void:
         "undo_pass": undo_pass,
         "rename_save_pass": save_result.get("success", false),
         "stale_state_block_pass": stale_state_block_pass,
+        "request_hash_block_pass": request_hash_block_pass,
+        "expired_approval_block_pass": expired_approval_block_pass,
+        "approval_binding_block_pass": approval_binding_block_pass,
         "result_hash_pass": result_hash_pass,
         "queue_capacity_pass": queue_capacity_pass,
         "batch_64_pass": batch_64_pass,
@@ -219,6 +289,9 @@ func _run_pilot() -> void:
         "rename_keep_dirty_code": dirty_result.get("code"),
         "rename_save_code": save_result.get("code"),
         "stale_code": stale_result.get("code"),
+        "request_hash_code": hash_submit.get("code"),
+        "expired_approval_code": expired_submit.get("code"),
+        "approval_binding_code": binding_submit.get("code"),
     })
 
 
