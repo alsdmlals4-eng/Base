@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
@@ -138,6 +139,7 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn("STARTED", ledger)
         self.assertIn("COMPLETED", ledger)
         self.assertIn("FAILED", ledger)
+        self.assertIn("character.is_valid_int()", ledger)
 
     def test_executor_orders_precondition_ledger_undo_save_and_terminal_state(self) -> None:
         path = ADDON / "editor_transaction_executor.gd"
@@ -198,6 +200,34 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
             source,
         )
         self.assertIn("transport.get(\"bind_host\") != null", source)
+
+    def test_active_docs_and_source_template_keep_transport_states_distinct(self) -> None:
+        active_paths = (
+            ADDON / "README.md",
+            ROOT
+            / "templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md",
+            ROOT / "templates/project-operations/godot-live-editor/AGENTS_FRAGMENT.md",
+        )
+        for path in active_paths:
+            with self.subTest(path=path):
+                text = path.read_text(encoding="utf-8")
+                self.assertIn("PROJECT_DEFINED", text)
+                self.assertIn("in-process-editor-plugin", text)
+                self.assertIn("bind_host: null", text)
+                self.assertNotIn(
+                    "configured v2 Manifest and `transport.kind: DISABLED`",
+                    text,
+                )
+
+        source_manifest = json.loads(
+            (
+                ROOT
+                / "examples/godot-live-editor-v2-editor-pilot/GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual("NOT_CONFIGURED", source_manifest["configuration_state"])
+        self.assertEqual("DISABLED", source_manifest["transport"]["kind"])
+        self.assertFalse(source_manifest["transport"]["enabled"])
 
 
 if __name__ == "__main__":
