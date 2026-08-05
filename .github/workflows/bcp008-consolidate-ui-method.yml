@@ -1,0 +1,231 @@
+name: BCP008 Consolidate UI Method
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  consolidate:
+    if: github.head_ref == 'agent/implement-bcp-008-spec-design-ui'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+      - name: Install validation dependencies
+        run: |
+          python -m pip install --requirement .github/validation-requirements.txt
+          python -m pip install pytest==8.3.5
+      - name: Consolidate optional UI contracts into existing method
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          root = Path(".")
+          refs = root / "skills/auditing-and-refining-ui-art/references"
+          skill_path = root / "skills/auditing-and-refining-ui-art/SKILL.md"
+          method_path = refs / "ux-ui-design-system-method.md"
+          design_path = refs / "design-md-project-adapter.md"
+          procurement_path = refs / "external-ui-procurement-and-anti-generic-quality.md"
+
+          skill = skill_path.read_text(encoding="utf-8")
+          skill = skill.replace(
+              "- [design-md-project-adapter.md](references/design-md-project-adapter.md)\n",
+              "",
+          ).replace(
+              "- [external-ui-procurement-and-anti-generic-quality.md]"
+              "(references/external-ui-procurement-and-anti-generic-quality.md)\n",
+              "",
+          )
+          skill_path.write_text(skill, encoding="utf-8")
+
+          method = method_path.read_text(encoding="utf-8")
+          marker = "## 6. BCP-008 시각 토큰·외부 조달 확장\n"
+          if marker not in method:
+              raise SystemExit("BCP-008 method marker missing")
+
+          def body_without_h1(path: Path) -> str:
+              lines = path.read_text(encoding="utf-8").splitlines()
+              if not lines or not lines[0].startswith("# "):
+                  raise SystemExit(f"expected H1 in {path}")
+              return "\n".join(lines[2:]).strip()
+
+          design = body_without_h1(design_path).replace(
+              "`external-ui-procurement-and-anti-generic-quality.md` Gate",
+              "아래 `6.2 External UI Procurement and Anti-Generic Quality Gate`",
+          )
+          procurement = body_without_h1(procurement_path)
+          prefix = method.split(marker, 1)[0].rstrip()
+          consolidated = f"""{prefix}
+
+          ## 6. BCP-008 시각 토큰·외부 조달 확장
+
+          프로젝트 시각 토큰을 별도 파일로 기계 판독해야 할 때만 아래 `6.1` 계약과 `templates/planning/PROJECT_DESIGN_MD_TEMPLATE.md`를 사용한다. 외부 Web UI 코드·Registry·MCP를 검토할 때는 아래 `6.2` 계약을 사용한다.
+
+          두 확장은 선택 사항이며 기존 `GAME_UX_UI_SYSTEM`의 경험·행동·상태·접근성 권위를 대체하지 않는다. 소스 조회, 코드 채택, 설치, 실제 렌더 품질은 각각 독립 Gate로 판정한다.
+
+          ### 6.1 Project DESIGN.md Adapter
+
+          {design}
+
+          ### 6.2 External UI Procurement and Anti-Generic Quality Gate
+
+          {procurement}
+          """
+          method_path.write_text(consolidated.rstrip() + "\n", encoding="utf-8")
+          design_path.unlink()
+          procurement_path.unlink()
+
+          project_test = root / "tests/test_project_design_md_adapter.py"
+          text = project_test.read_text(encoding="utf-8").replace(
+              "skills/auditing-and-refining-ui-art/references/design-md-project-adapter.md",
+              "skills/auditing-and-refining-ui-art/references/ux-ui-design-system-method.md",
+          )
+          project_test.write_text(text, encoding="utf-8")
+
+          external_test = root / "tests/test_external_ui_procurement_gate.py"
+          text = external_test.read_text(encoding="utf-8").replace(
+              '"external-ui-procurement-and-anti-generic-quality.md"',
+              '"ux-ui-design-system-method.md"',
+          ).replace(
+              'assert "external-ui-procurement-and-anti-generic-quality.md" in method',
+              'assert "### 6.2 External UI Procurement and Anti-Generic Quality Gate" in method',
+          )
+          external_test.write_text(text, encoding="utf-8")
+
+          game_test = root / "tests/test_game_ux_ui_system.py"
+          text = game_test.read_text(encoding="utf-8").replace(
+              '            REFERENCE_ROOT / "design-md-project-adapter.md",\n'
+              '            REFERENCE_ROOT / "external-ui-procurement-and-anti-generic-quality.md",\n',
+              "",
+          ).replace(
+              '            "design-md-project-adapter.md",\n'
+              '            "external-ui-procurement-and-anti-generic-quality.md",\n',
+              '            "### 6.1 Project DESIGN.md Adapter",\n'
+              '            "### 6.2 External UI Procurement and Anti-Generic Quality Gate",\n',
+          )
+          game_test.write_text(text, encoding="utf-8")
+
+          checker_path = root / "tools/check_skill_system_coverage.py"
+          checker = checker_path.read_text(encoding="utf-8")
+          old_contracts = '''    "skills/auditing-and-refining-ui-art/references/design-md-project-adapter.md": (
+              "GAME_UX_UI_SYSTEM",
+              "Theme",
+              "CSS",
+              "시각 토큰",
+          ),
+          "skills/auditing-and-refining-ui-art/references/external-ui-procurement-and-anti-generic-quality.md": (
+              "registry_source",
+              "exact_version_or_commit",
+              "content_hash",
+              "license",
+              "dependencies",
+              "scripts",
+              "secrets",
+              "files_added_or_replaced",
+              "accessibility_review",
+              "runtime_review",
+              "rollback",
+              "BLOCKED_UNVERIFIED",
+              "MCP 연결 성공",
+              "설치 승인",
+              "Design Read",
+              "실제 렌더",
+          ),
+          '''
+          new_contract = '''    "skills/auditing-and-refining-ui-art/references/ux-ui-design-system-method.md": (
+              "### 6.1 Project DESIGN.md Adapter",
+              "GAME_UX_UI_SYSTEM",
+              "Theme",
+              "CSS",
+              "시각 토큰",
+              "### 6.2 External UI Procurement and Anti-Generic Quality Gate",
+              "registry_source",
+              "exact_version_or_commit",
+              "content_hash",
+              "license",
+              "dependencies",
+              "scripts",
+              "secrets",
+              "files_added_or_replaced",
+              "accessibility_review",
+              "runtime_review",
+              "rollback",
+              "BLOCKED_UNVERIFIED",
+              "MCP 연결 성공",
+              "설치 승인",
+              "Design Read",
+              "실제 렌더",
+          ),
+          '''
+          if old_contracts not in checker:
+              raise SystemExit("expected BCP-008 contract blocks not found")
+          checker = checker.replace(old_contracts, new_contract, 1).replace(
+              '            "design-md-project-adapter.md",\n'
+              '            "external-ui-procurement-and-anti-generic-quality.md",\n'
+              '            "외부 Web UI",\n',
+              '            "### 6.1 Project DESIGN.md Adapter",\n'
+              '            "### 6.2 External UI Procurement and Anti-Generic Quality Gate",\n'
+              '            "외부 Web UI",\n',
+          )
+          checker_path.write_text(checker, encoding="utf-8")
+          PY
+
+          test -z "$(git grep -n -I -E 'design-md-project-adapter\.md|external-ui-procurement-and-anti-generic-quality\.md' -- . ':!docs/evidence/external-ui-procurement/BCP008_ADVERSARIAL_REVIEW.md' || true)"
+      - name: Verify consolidated contracts and repository coupling
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pytest \
+            tests/test_feature_spec_traceability_contract.py \
+            tests/test_cross_discipline_review_lenses.py \
+            tests/test_project_design_md_adapter.py \
+            tests/test_external_ui_procurement_gate.py \
+            tests/test_bcp008_behavior_and_procurement_pilot.py \
+            tests/test_game_ux_ui_system.py \
+            tests/test_skill_system_coverage.py \
+            tests/test_skill_behavior_evidence_hardening.py \
+            tests/test_skill_implementation_evidence.py \
+            tests/test_skill_behavior_governance_integration.py \
+            tests/test_skill_behavior_adversarial_boundaries.py \
+            tests/test_skill_package_integrity.py \
+            tests/test_reference_freshness.py \
+            -q
+          python tools/validate_external_ui_procurement_receipt.py \
+            docs/evidence/external-ui-procurement/BCP008_SHADCN_BUTTON_PILOT.json
+          python tools/check_skill_system_coverage.py
+          python tools/check_skill_behavior_evals.py
+          python tools/build_skill_implementation_evidence.py --check
+          python tools/check_canonical_reference_freshness.py \
+            --config .github/reference-freshness.json \
+            --base cabbc59b170c5da2bb1df7e4d4d535857dd35495 \
+            --head HEAD
+          git diff --check
+          git diff --exit-code cabbc59b170c5da2bb1df7e4d4d535857dd35495 -- \
+            skills/auditing-and-refining-ui-art/SKILL.md \
+            skills/SKILL_REGISTRY.json \
+            base.lock.json \
+            'base-v*.lock.json'
+      - name: Commit consolidation
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/bcp008-consolidate-ui-method.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'refactor: consolidate BCP-008 UI contracts'
+          git push origin HEAD:${GITHUB_HEAD_REF}
