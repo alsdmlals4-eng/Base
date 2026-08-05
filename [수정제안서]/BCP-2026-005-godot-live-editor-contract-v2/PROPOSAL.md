@@ -6,9 +6,10 @@
 - 기준 커밋: `83683eecaaeaf415bf629fe5a1231fc6cef575f3`
 - 승인 설계 커밋: `ea0442ddb7fb9286d093cc96e523fdd74a841c22`
 - 제출일: `2026-08-05`
-- 상태: `SUBMITTED`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 지식 상태: `패턴`
-- 사전 설계 승인 기록: `https://github.com/alsdmlals4-eng/Base/pull/154#issuecomment-5187157323`
+- 승인 기록: `https://github.com/alsdmlals4-eng/Base/pull/154#issuecomment-5187157323`
+- 제출 병합: `https://github.com/alsdmlals4-eng/Base/pull/156`
 
 ## 관찰과 증거
 
@@ -98,10 +99,12 @@ Base의 Godot 자동화 안전 계약을 다음 원칙으로 정규화한다.
 
 ## 승인과 구현
 
-- 사전 설계 승인 기록: `https://github.com/alsdmlals4-eng/Base/pull/154#issuecomment-5187157323`
-- 현재 BCP 단계: `SUBMITTED`
-- 다음 생명주기 단계: 이 제출 PR이 main에 병합된 뒤, 별도 proposal-only PR에서 승인 기록을 근거로 `APPROVED_FOR_IMPLEMENTATION`으로 승격
-- 구현 시작 조건: BCP 승인 승격 PR 병합과 새로운 명시적 구현 승인
-- 제외 범위: 병합, 프로덕션 MCP readiness, user game project 적용, release/Registry 변경
+- 승인 기록: `https://github.com/alsdmlals4-eng/Base/pull/154#issuecomment-5187157323`
+- 제출 PR: `https://github.com/alsdmlals4-eng/Base/pull/156`
+- 현재 BCP 단계: `APPROVED_FOR_IMPLEMENTATION`
+- 승인 범위: v2 정적 계약 구현 계획에 따라 별도 TDD 구현 PR을 준비하는 것
+- 구현 시작 조건: 이 승인 승격 PR 병합 후 사용자의 새로운 명시적 구현 승인
+- 구현 브랜치 조건: 그 시점의 최신 main에서 새 격리 브랜치/PR 생성; 설계·계획 PR #157에서 직접 구현하지 않음
+- 제외 범위: 자동 병합, 프로덕션 MCP readiness, user game project 적용, release/Registry 변경
 - 구현 PR: `없음`
-- 롤백: 제출/승격/구현 PR을 닫고 main의 v1 계약 `83683eecaaeaf415bf629fe5a1231fc6cef575f3`으로 복귀한다. released Base 잠금과 Skill Registry는 변경하지 않는다.
+- 롤백: 승인 승격 PR과 후속 구현 PR을 닫고 main의 SUBMITTED 기록 또는 v1 계약 상태로 복귀한다. released Base 잠금과 Skill Registry는 변경하지 않는다.
