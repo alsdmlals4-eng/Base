@@ -2,6 +2,8 @@
 extends RefCounted
 
 const DEFAULT_ROOT := "res://artifacts/godot-live-editor/evidence"
+const SAFE_NAME_CHARACTERS := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
+const MAX_SAFE_NAME_LENGTH := 128
 
 var _root_path := DEFAULT_ROOT
 
@@ -24,13 +26,9 @@ func write_json(name: String, payload: Dictionary) -> Dictionary:
     var file := FileAccess.open(temp_path, FileAccess.WRITE)
     if file == null:
         return {"ok": false, "code": "EVIDENCE_WRITE_FAILED"}
-    file.store_string(JSON.stringify(payload, "  ") + "\n")
+    file.store_string(JSON.stringify(payload) + "\n")
     file.flush()
     file.close()
-    if FileAccess.file_exists(target_path):
-        if DirAccess.remove_absolute(target_path) != OK:
-            DirAccess.remove_absolute(temp_path)
-            return {"ok": false, "code": "EVIDENCE_WRITE_FAILED"}
     if DirAccess.rename_absolute(temp_path, target_path) != OK:
         DirAccess.remove_absolute(temp_path)
         return {"ok": false, "code": "EVIDENCE_WRITE_FAILED"}
@@ -62,9 +60,9 @@ func sha256_file(res_path: String) -> Variant:
 
 
 func _safe_name(value: String) -> bool:
-    return (
-        not value.is_empty()
-        and not value.contains("/")
-        and not value.contains("\\")
-        and not value.contains("..")
-    )
+    if value.is_empty() or value.length() > MAX_SAFE_NAME_LENGTH:
+        return false
+    for character in value:
+        if not SAFE_NAME_CHARACTERS.contains(character):
+            return false
+    return true

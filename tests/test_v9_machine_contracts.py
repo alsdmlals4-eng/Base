@@ -39,6 +39,11 @@ from tests.test_platform_review_asset_rights_reference_production import (
     as _PlatformReviewAssetRightsReferenceProductionTests,
 )
 
+from tests.test_game_entitlement_integrity_drm_capability import (
+    GameEntitlementIntegrityDrmCapabilityTests
+    as _GameEntitlementIntegrityDrmCapabilityTests,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 

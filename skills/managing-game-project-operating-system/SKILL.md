@@ -286,3 +286,7 @@ Related:
 ## Cloud Run backend capability handoff
 
 `docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`가 선택된 프로젝트는 `templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md`를 프로젝트 책임 원본으로 설치한다. 상태는 `PROJECT_OWNED_SERVICE_CONTRACT`이며 실제 identity provider, datastore, region, traffic, budget, platform IDs와 runtime evidence는 프로젝트가 소유한다.
+
+## Entitlement and integrity capability handoff
+
+`docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md`가 선택된 프로젝트는 `templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md`를 `PROJECT_OWNED_ENTITLEMENT_INTEGRITY_RECORD`로 설치한다. 실제 platform account, product/package ID, SDK, signing, backend, privacy, recovery와 sandbox evidence는 프로젝트가 소유한다.

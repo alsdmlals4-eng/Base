@@ -12,11 +12,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "examples/godot-live-editor-v2-editor-pilot"
-ADDON = (
-    ROOT
-    / "templates/project-operations/godot-live-editor/addons/base_live_editor_adapter"
-)
+ADDON = ROOT / "templates/project-operations/godot-live-editor/addons/base_live_editor_adapter"
 MATERIALIZER = ROOT / "tools/materialize_godot_editor_adapter_pilot.py"
+PILOT_PLUGIN = FIXTURE / "addons/base_live_editor_adapter_pilot/plugin.gd"
 
 
 def _load_materializer():
@@ -42,7 +40,7 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
             FIXTURE / "main.tscn",
             FIXTURE / "GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json",
             FIXTURE / "addons/base_live_editor_adapter_pilot/plugin.cfg",
-            FIXTURE / "addons/base_live_editor_adapter_pilot/plugin.gd",
+            PILOT_PLUGIN,
             FIXTURE / ".gitignore",
             MATERIALIZER,
         ):
@@ -55,10 +53,7 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             project = module.materialize(ROOT, Path(temporary) / "pilot")
             copied = project / "addons/base_live_editor_adapter"
-            self.assertEqual(
-                (ADDON / "plugin.gd").read_bytes(),
-                (copied / "plugin.gd").read_bytes(),
-            )
+            self.assertEqual((ADDON / "plugin.gd").read_bytes(), (copied / "plugin.gd").read_bytes())
             self.assertFalse(list(project.rglob("*.uid")))
             manifest = json.loads(
                 (project / "GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json").read_text(
@@ -79,6 +74,40 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
                 {"scene.inspect", "node.rename"},
                 {item["capability_id"] for item in manifest["capabilities"]},
             )
+
+    def test_runtime_pilot_exercises_adversarial_and_capacity_paths(self) -> None:
+        guard = (ADDON / "runtime_contract_guard.gd").read_text(encoding="utf-8")
+        pilot = PILOT_PLUGIN.read_text(encoding="utf-8")
+        for marker in (
+            "REQUEST_HASH_MISMATCH",
+            "operation_request_material",
+            "canonical_json_sha256",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, guard)
+        self.assertNotIn('"a".repeat(64)', pilot)
+        self.assertIn("_guard.operation_request_material", pilot)
+        self.assertIn("_guard.canonical_json_sha256", pilot)
+        self.assertIn("var request_hash: String =", pilot)
+        self.assertIn("var expected: String =", pilot)
+        for marker in (
+            "stale_state_block_pass",
+            "TARGET_STATE_CONFLICT",
+            "request_hash_block_pass",
+            "REQUEST_HASH_MISMATCH",
+            "expired_approval_block_pass",
+            "APPROVAL_EXPIRED",
+            "approval_binding_block_pass",
+            "APPROVAL_BINDING_MISMATCH",
+            "result_hash_pass",
+            "elapsed_usec",
+            "queue_capacity_pass",
+            "batch_64_pass",
+            "batch_64_elapsed_usec",
+            "QUEUE_FULL",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, pilot)
 
     @unittest.skipUnless(
         os.environ.get("GODOT_BIN"),
@@ -129,10 +158,7 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
                 timeout=180,
                 env=environment,
             )
-            result_path = (
-                project
-                / "artifacts/godot-live-editor/editor_transaction_pilot_result.json"
-            )
+            result_path = project / "artifacts/godot-live-editor/editor_transaction_pilot_result.json"
             self.assertEqual(
                 0,
                 completed.returncode,
@@ -153,9 +179,22 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
                 "rename_keep_dirty_pass",
                 "undo_pass",
                 "rename_save_pass",
+                "stale_state_block_pass",
+                "request_hash_block_pass",
+                "expired_approval_block_pass",
+                "approval_binding_block_pass",
+                "result_hash_pass",
+                "queue_capacity_pass",
+                "batch_64_pass",
             ):
                 with self.subTest(key=key):
                     self.assertTrue(result[key])
+            self.assertEqual("REQUEST_HASH_MISMATCH", result["request_hash_code"])
+            self.assertEqual("APPROVAL_EXPIRED", result["expired_approval_code"])
+            self.assertEqual("APPROVAL_BINDING_MISMATCH", result["approval_binding_code"])
+            self.assertGreater(result["elapsed_usec"], 0)
+            self.assertGreater(result["batch_64_elapsed_usec"], 0)
+            self.assertEqual(64, result["batch_64_completed"])
             self.assertFalse(result["network_listener_enabled"])
             self.assertEqual(["COMPLETED", "COMPLETED"], result["ledger_states"])
             self.assertEqual(

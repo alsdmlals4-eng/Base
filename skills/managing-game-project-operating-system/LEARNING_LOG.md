@@ -23,3 +23,11 @@
 - **Evidence:** RED에서는 신규 Guide·Contract·라우팅 부재만 실패했고 기존 회귀는 통과했다. 정적 GREEN은 파일·계약·경로·반례만 증명한다.
 - **Not run:** 실제 deployment, runtime persistence, load, connection storm, dependency failure, cost, security, production readiness는 `NOT_RUN`이다.
 - **Next trigger:** 실제 프로젝트 Pilot에서 기존 owner 라우팅이 반복 실패하거나 독립 도구·승인·검증 경계가 입증될 때만 별도 Skill을 재검토한다.
+
+## 2026-08-05 — 게임 entitlement·integrity·DRM Capability Pack
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Decision:** 새 활성 Skill과 shared route를 추가하지 않고 기존 운영·플랫폼 도입 평가·Vertical Slice·통합 검증 owner에 Guide와 프로젝트 Record를 연결했다.
+- **Boundary:** `PLATFORM_NATIVE_FIRST`, `NO_CUSTOM_DRM_DEFAULT`, 플랫폼별 의미 보존, 단일 신호 영구 제재 금지, offline/outage·지원/이의제기·save access·sunset·privacy 결정이 필수다.
+- **Evidence:** 정적 테스트는 계약·라우팅·반례만 증명한다. Steam/Google Play/STOVE sandbox, 사람 오탐 복구, 법률 검토, 플랫폼 승인과 production readiness는 실행하지 않았다.
+- **Not run:** platform SDK integration `NOT_RUN`, human false-positive recovery `HUMAN_NOT_RUN`, legal/platform approval `NOT_PERFORMED`.

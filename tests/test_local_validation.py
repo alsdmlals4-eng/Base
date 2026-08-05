@@ -36,6 +36,10 @@ from tests.test_platform_review_asset_rights_reference_production import (
     PlatformReviewAssetRightsReferenceProductionTests
     as _PlatformReviewAssetRightsReferenceProductionTests,
 )
+from tests.test_game_entitlement_integrity_drm_capability import (
+    GameEntitlementIntegrityDrmCapabilityTests
+    as _GameEntitlementIntegrityDrmCapabilityTests,
+)
 from tools import run_local_validation as runner
 
 
