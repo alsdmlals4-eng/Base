@@ -1,3 +1,4 @@
+
 import argparse
 import hashlib
 import json
@@ -69,10 +70,10 @@ def _bounded_text(payload: bytes) -> tuple[str, bool]:
     return retained.decode("utf-8", errors="replace"), truncated
 
 
-def _bounded_environment(project_root: Path) -> dict[str, str]:
-    home = Path(project_root).resolve() / ".godot-live-editor-pilot-home"
+def _bounded_environment(home: Path) -> dict[str, str]:
+    home = Path(home).resolve()
     home.mkdir(parents=True, exist_ok=True)
-    return {
+    result = {
         "HOME": str(home),
         "TMPDIR": str(home),
         "TMP": str(home),
@@ -82,6 +83,7 @@ def _bounded_environment(project_root: Path) -> dict[str, str]:
         "PATH": os.environ.get("PATH", ""),
         "PYTHONPATH": os.environ.get("PYTHONPATH", ""),
     }
+    return result
 
 
 def _run_process(
@@ -90,15 +92,16 @@ def _run_process(
     cwd: Path,
     timeout_seconds: int,
 ) -> ProcessRecord:
-    completed = subprocess.run(
-        list(argv),
-        cwd=str(Path(cwd).resolve()),
-        env=_bounded_environment(Path(cwd)),
-        check=False,
-        capture_output=True,
-        shell=False,
-        timeout=timeout_seconds,
-    )
+    with tempfile.TemporaryDirectory(prefix="base-c0-process-") as temporary:
+        completed = subprocess.run(
+            list(argv),
+            cwd=str(Path(cwd).resolve()),
+            env=_bounded_environment(Path(temporary)),
+            check=False,
+            capture_output=True,
+            shell=False,
+            timeout=timeout_seconds,
+        )
     stdout_excerpt, stdout_truncated = _bounded_text(completed.stdout)
     stderr_excerpt, stderr_truncated = _bounded_text(completed.stderr)
     return ProcessRecord(
@@ -182,9 +185,7 @@ def run_pilot(
     _verify_base_pin(base, expected_base_commit, descriptor)
     if _git_text(source, "rev-parse", "HEAD") != source_commit:
         raise ValueError("SOURCE_COMMIT_MISMATCH")
-    remote_repository = _repository_from_remote(
-        _git_text(source, "config", "--get", "remote.origin.url")
-    )
+    remote_repository = _repository_from_remote(_git_text(source, "config", "--get", "remote.origin.url"))
     if remote_repository != descriptor.repository:
         raise ValueError(
             f"REPOSITORY_IDENTITY_MISMATCH: {remote_repository} != {descriptor.repository}"
