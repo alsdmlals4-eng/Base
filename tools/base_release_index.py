@@ -42,11 +42,15 @@ def _install_finalization_pin_validation(contract_module: ModuleType) -> None:
     ) -> tuple[list[str], dict[str, Any] | None, bytes | None]:
         errors, lock, pinned_registry = original(adapter, base_repository)
         base_release = adapter.get("base_release", {})
+        if not isinstance(base_release, dict):
+            return errors, lock, pinned_registry
         finalization_commit = base_release.get("finalization_commit")
         if finalization_commit is None:
             return errors, lock, pinned_registry
 
         version = base_release.get("version")
+        if not isinstance(version, str):
+            return errors, lock, pinned_registry
         expected = RELEASE_FINALIZATION_COMMITS.get(version)
         if expected is None:
             errors.append(
