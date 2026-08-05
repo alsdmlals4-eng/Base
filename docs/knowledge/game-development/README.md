@@ -37,6 +37,7 @@
 | 그림체·비주얼·캐릭터·환경·UI·애니메이션·에셋을 어떻게 기획하는가? | `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md` | Visual Pillar·Art Bible·Asset Specification |
 | ChatGPT·Codex·외부 AI를 어떻게 안전하고 검증 가능하게 협업시키는가? | `AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md` | Prompt 계약·Context Pack·Evals·독립 검수 |
 | Godot·플랫폼·성능·제작 파이프라인·출시를 어떻게 기획에 연결하는가? | `TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md` | 기술 계약·성능 예산·반복 제작성·출시 증거 |
+| Windows+Android를 처음부터 함께 설계하고 STOVE·Google Play·Steam 출시 wave를 어떻게 나누는가? | `docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md` | 적합성 판정·공용 코어/플랫폼 어댑터·기기 QA·출시 Profile |
 | Steam·STOVE·Google Play 등급·설문·자산 권리·참조 독립 제작을 어떻게 관리하는가? | `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md` | 등급 전략·자산 권리 Record·출시 Compliance Pack |
 | 어떤 공식·학술·현업 자료를 우선 참조하는가? | `REFERENCE_SOURCE_CATALOG.md` | 출처 메타데이터·사용 범위·재검증 조건 |
 | 작은 표본·저충실도 사람 세션을 어떻게 과장 없이 설계하는가? | `docs/knowledge/game-development/HUMAN_VALIDATION_ARTIFACT_GOVERNANCE.md` | 사람 세션 패킷·claim ceiling·미검증 분리 |
@@ -48,6 +49,7 @@
 |---|---|---|
 | 요청 해석·범위·완료 기준·실행 순서 | `managing-project-intake-and-work-contract` | Method의 결정 질문·Coverage·Evidence Pack 계약 |
 | 코어 컨셉·DDD·벤치마킹·플레이테스트 | `analyzing-and-refining-game-concepts` | 게임 기획 Guide·Reference Catalog |
+| Windows+Android 적합성·공용 코어·입력/UI/lifecycle·출시 wave | `analyzing-and-refining-game-concepts` + 기존 기술·Vertical Slice·검증 Skill | PC·Android Delivery Guide·`templates/planning/PC_ANDROID_DELIVERY_PROFILE.md` |
 | Games User Research 누락 감사 | `governing-game-user-research-coverage` | 연구 관련 Coverage와 Evidence 상태 |
 | 아트 방향·프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` | 아트 Guide·원출처·권리·승인 상태 |
 | 자산·플러그인 직접 채택과 참조 독립 제작 선택 | `evaluating-godot-assets-and-plugins-before-creation` | 플랫폼·자산 권리 Guide의 제작·도입 경로 |
@@ -63,6 +65,7 @@
 
 - 통합 조사 기록: `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`
 - 성공·실패·혼합 사례: `templates/research/GAME_DEVELOPMENT_CASE_CARD.md`
+- PC·Android 공용 코어·플랫폼 적응·출시 wave: `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md`
 - 자산별 권리·출처·참조 독립 제작: `templates/project-operations/ASSET_RIGHTS_AND_PROVENANCE_RECORD.md`
 - 플랫폼 출시 등급·설문·권리 Coverage: `templates/project-operations/GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK.md`
 - 사람 검증 세션 패킷: `templates/research/HUMAN_VALIDATION_SESSION_PACKET.md`
@@ -83,6 +86,6 @@
 
 ## 7. 완료 판정
 
-이 허브를 읽거나 문서를 작성한 것만으로 기획·구현·접근성·성능·출시가 검증된 것은 아니다. 합성 테스터 결과도 실제 사람 행동·재미·선호·조작감·접근성·성능을 검증하지 않는다. 등급·권리 Template도 법률 검토·플랫폼 제출·승인을 대신하지 않는다. 완료는 선택한 기존 Skill의 Output Contract와 실제 프로젝트 증거를 따른다.
+이 허브를 읽거나 문서를 작성한 것만으로 기획·구현·접근성·성능·출시가 검증된 것은 아니다. 합성 테스터 결과도 실제 사람 행동·재미·선호·조작감·접근성·성능을 검증하지 않는다. 등급·권리 Template도 법률 검토·플랫폼 제출·승인을 대신하지 않는다. PC·Android Profile도 실제 Windows build, Android 실기기, 모바일 UI·입력·중단 복구, 성능·발열, 상점 계정·테스트·심사 증거를 대신하지 않는다. 완료는 선택한 기존 Skill의 Output Contract와 실제 프로젝트 증거를 따른다.
 
-계약·라우팅·중복 Skill 방지·Learning Log 연결은 `tests/test_evidence_based_game_development_knowledge.py`, `tests/test_evidence_knowledge_workflow_contract.py`, `tests/test_platform_review_asset_rights_reference_production.py`, `tests/test_human_validation_artifact_governance.py`, `tests/test_synthetic_tester_simulation_governance.py`, `.github/workflows/validate-evidence-knowledge.yml`의 전용 GitHub Actions에서 검증한다. Workflow 파일 존재와 실제 실행 성공을 분리해 확인한다.
+계약·라우팅·중복 Skill 방지·Learning Log 연결은 `tests/test_evidence_based_game_development_knowledge.py`, `tests/test_evidence_knowledge_workflow_contract.py`, `tests/test_pc_android_cross_platform_delivery.py`, `tests/test_platform_review_asset_rights_reference_production.py`, `tests/test_human_validation_artifact_governance.py`, `tests/test_synthetic_tester_simulation_governance.py`, `.github/workflows/validate-evidence-knowledge.yml`의 전용 GitHub Actions에서 검증한다. Workflow 파일 존재와 실제 실행 성공을 분리해 확인한다.
