@@ -157,7 +157,17 @@ jobs:
           git show cabbc59b170c5da2bb1df7e4d4d535857dd35495:skills/auditing-and-refining-ui-art/SKILL.md > skills/auditing-and-refining-ui-art/SKILL.md
           test ! -e skills/auditing-and-refining-ui-art/references/design-md-project-adapter.md
           test ! -e skills/auditing-and-refining-ui-art/references/external-ui-procurement-and-anti-generic-quality.md
-      - name: Verify consolidated contracts and repository coupling
+      - name: Create local candidate commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/bcp008-consolidate-ui-method.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'refactor: consolidate BCP-008 UI contracts'
+      - name: Verify candidate commit and repository coupling
         shell: bash
         run: |
           set -euo pipefail
@@ -191,14 +201,6 @@ jobs:
             skills/SKILL_REGISTRY.json \
             base.lock.json \
             'base-v*.lock.json'
-      - name: Commit consolidation
+      - name: Push verified consolidation
         shell: bash
-        run: |
-          set -euo pipefail
-          rm -f .github/workflows/bcp008-consolidate-ui-method.yml
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
-          git diff --cached --check
-          git commit -m 'refactor: consolidate BCP-008 UI contracts'
-          git push origin HEAD:${GITHUB_HEAD_REF}
+        run: git push origin HEAD:${GITHUB_HEAD_REF}
