@@ -22,7 +22,9 @@ from base_release_index import install_release_lock_paths
 SCHEMA = ROOT / "schemas/project-base-adapter-v1.schema.json"
 TEMPLATE = ROOT / "templates/project-operations/PROJECT_BASE_ADAPTER.json"
 WORKFLOW = ROOT / "templates/project-operations/github/validate-project-base-adapter.yml"
+DECISION = ROOT / "docs/operations/decisions/DEC-BASE-20260805-001.md"
 FINALIZATION_COMMIT = "0b7c94f38d959efc0fc9442274c60b2e268a3c97"
+APPROVAL_REF = "https://github.com/alsdmlals4-eng/Base/pull/175#issuecomment-5197612170"
 
 
 class ProjectAdapterFleetHardeningTests(unittest.TestCase):
@@ -103,6 +105,17 @@ class ProjectAdapterFleetHardeningTests(unittest.TestCase):
                 result.stdout,
                 f"Pinned validator commit lacks required fleet hardening in {path}",
             )
+
+    def test_decision_records_the_approved_recommended_options(self) -> None:
+        text = DECISION.read_text(encoding="utf-8")
+        for token in (
+            "status: APPROVED",
+            "protected_baseline_policy: OPTION_A_EXACT_TRUSTED_BASE_EQUALITY",
+            "grimoire_adapter_authority: OPTION_A_RESTORE_BASE_V1_THIN_ADAPTER",
+            APPROVAL_REF,
+            "project_mutation: AUTHORIZED_NOT_STARTED",
+        ):
+            self.assertIn(token, text)
 
 
 if __name__ == "__main__":
