@@ -1,8 +1,8 @@
 # Current Active Base Skills
 
 > Generated from `skills/SKILL_REGISTRY.json`. Do not edit this derivative.
-> Registry SHA-256: `693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59`
-> Current active Skill count: `28`
+> Registry SHA-256: `2778191cb26124002fe61b61d4b0a911dc4567c40b9306b1ae43506e4b9a3d00`
+> Current active Skill count: `29`
 
 | Skill ID | Owner | Positive trigger | Negative trigger |
 | --- | --- | --- | --- |
@@ -13,6 +13,7 @@
 | `maintaining-project-context-and-handoff` | project-operations | handoff; active-context-change; phase-boundary; new-chat; implementation-package-handoff; codex-plan-review; godot-package-handoff; resume-implementation; agent-merge; verified-pr-merge | 저장소 상태가 바뀌지 않은 단순 대화이거나 프로젝트 코어·통합 설계·패키지 범위가 승인되지 않은 상태에서 구현부터 시작하려는 경우다. |
 | `analyzing-and-refining-game-concepts` | game-design-strategy | core-concept; pointed-fun; game-direction; benchmark-research; competitor-analysis; player-reviews; user-sentiment; playtest-design; telemetry-events; funnel-analysis; ab-testing; swot; mda; dde; digital-dopamine-design; rapid-reward; instant-feedback; reward-latency; poc; concept-recalibration; production-direction; evidence-pack; professional-official-evidence; game-system-design; system-boundary; difficulty-design; combat-ai-design; adaptive-difficulty; dynamic-difficulty-adjustment; attack-budget; threat-budget; tension-pacing; enemy-ai-fairness | 확정된 기획서의 단순 문장 편집, 단일 기능 구현, 출처 없는 인기 목록 수집, 이미 정의된 Vertical Slice 제작만 필요한 경우다. |
 | `designing-vertical-slices` | game-design-production | vertical-slice; first-playable; production-proof; quality-bar; pipeline-proof; playtest-evidence; external-playtest; accessibility-target; performance-budget; demo-first; polished-demo; vertical-slice-playtest; technical-spike | 단일 기능 구현, 핵심 가설만 보는 작은 Prototype, 전체 MVP를 단순 나열하는 작업이다. |
+| `producing-game-development-youtube-videos` | game-marketing-content-production | game-devlog; youtube-development-video; game-development-shorts; feature-reveal-video; release-marketing-video; channel-portfolio; episode-concept; script-shot-plan; title-thumbnail-package; youtube-analytics-review | 게임 자체의 코어·시스템·밸런스 설계, 썸네일 이미지 한 장의 생성, 플랫폼 심사·에셋 권리 원장 작성, 단순 인코딩·업로드, 또는 프로젝트 정본·실제 빌드·공개 범위가 없는 작업이다. |
 | `orchestrating-deepseek-worktrees` | external-ai-operations | external-ai; large-draft; isolated-worktree | 작은 작업이거나 외부 AI가 필요하지 않다. |
 | `reviewing-and-validating-project-changes` | integrated-review | change-review; contract-check; external-ai-result; diff-review; reference-freshness; static-validation; runtime-validation; accessibility-review; input-barrier; performance-profile; target-platform; frame-time; memory-budget; ci-cost-optimization; github-actions-cost; ci-gate; regression; evidence-report; project-operating-integrity; fail-closed-operating-gate | 변경이 없는 아이디어 비교, 전문 UI 시각 감사만 필요한 경우, 적용되지 않는 비기능 검사를 모든 L0 작업에 강제하는 경우, 같은 입력의 단순 검사 재실행이다. |
 | `auditing-canonical-reference-freshness` | integrated-review-knowledge-governance | canonical-source-change; stale-reference; rename; path-migration; schema-change; skill-id-change; document-id-change; generator-change; publication-stale; propagation-gap | 외부 참조가 없는 L0 오탈자 또는 동일 입력 검사 재실행이다. |

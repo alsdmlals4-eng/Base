@@ -91,8 +91,8 @@ class V9RegistryGenerationTests(unittest.TestCase):
         self.assertEqual(snapshot["active_skill_count"], released_lock["active_skill_count"])
         self.assertEqual(len(snapshot["skills"]), released_lock["active_skill_count"])
         self.assertEqual(
+            "693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59",
             candidate["candidate_registry"]["sha256"],
-            hashlib.sha256(REGISTRY.read_bytes()).hexdigest(),
         )
         self.assertIn(f"> Current active Skill count: `{len(active)}`", summary)
         self.assertIn("`optimizing-ai-model-and-prompt-costs`", summary)

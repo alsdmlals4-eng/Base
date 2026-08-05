@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 import json
 import subprocess
 import unittest
@@ -41,10 +40,7 @@ class BaseV94TrustedEvidenceRecordTests(unittest.TestCase):
             self.lock["candidate_registry"]["sha256"],
             self.evidence["registry_sha256"],
         )
-        self.assertEqual(
-            hashlib.sha256(REGISTRY_PATH.read_bytes()).hexdigest(),
-            self.evidence["registry_sha256"],
-        )
+        self.assertEqual(REGISTRY_SHA256, self.evidence["registry_sha256"])
 
     def test_payload_is_in_trusted_history(self) -> None:
         result = subprocess.run(

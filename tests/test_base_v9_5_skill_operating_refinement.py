@@ -35,10 +35,62 @@ def frontmatter_description(path: Path) -> str:
     return match.group(1).strip().strip("'\"")
 
 
+def evaluation_paths() -> list[Path]:
+    paths = [EVALS]
+    coverage = ROOT / "skills" / "SKILL_BEHAVIOR_COVERAGE_EVALS.json"
+    if coverage.is_file():
+        paths.append(coverage)
+    return paths
+
+
+def evaluation_sha256(paths: list[Path]) -> str:
+    hasher = hashlib.sha256()
+    for path in paths:
+        relative = path.relative_to(ROOT).as_posix()
+        hasher.update(relative.encode("utf-8"))
+        hasher.update(b"\0")
+        hasher.update(path.read_bytes())
+        hasher.update(b"\0")
+    return hasher.hexdigest()
+
+
 def valid_model_results() -> dict:
-    evals = json.loads(EVALS.read_text(encoding="utf-8"))
+    paths = evaluation_paths()
+    cases = []
+    for path in paths:
+        cases.extend(json.loads(path.read_text(encoding="utf-8"))["cases"])
+    commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        check=True,
+        text=True,
+        encoding="utf-8",
+        capture_output=True,
+    ).stdout.strip()
     return {
         "schema_version": 1,
+        "artifact_role": "BASE_SKILL_BEHAVIOR_RESULTS",
+        "run_status": "COMPLETED",
+        "repository": "alsdmlals4-eng/Base",
+        "commit_sha": commit,
+        "generated_at": "2026-08-05T00:00:00+00:00",
+        "model": {
+            "provider": "test-provider",
+            "model": "test-model",
+            "version": "test-version",
+        },
+        "source_identity": {
+            "registry_path": "skills/SKILL_REGISTRY.json",
+            "registry_sha256": hashlib.sha256(REGISTRY.read_bytes()).hexdigest(),
+            "evaluation_paths": [path.relative_to(ROOT).as_posix() for path in paths],
+            "evaluation_sha256": evaluation_sha256(paths),
+        },
+        "review": {
+            "author_context_id": "test-author",
+            "reviewer_context_id": "test-reviewer",
+            "independent": True,
+            "author_summary_visible": True,
+        },
         "results": [
             {
                 "case_id": case["case_id"],
@@ -49,7 +101,7 @@ def valid_model_results() -> dict:
                 "evidence": list(case["required_evidence"]),
                 "user_decision_state": case["expected_user_decision_state"],
             }
-            for case in evals["cases"]
+            for case in cases
         ],
     }
 
@@ -71,11 +123,23 @@ def run_checker(results: dict | list, *, root: Path = ROOT) -> subprocess.Comple
 class BaseV95SkillOperatingRefinementTests(unittest.TestCase):
     maxDiff = None
 
-    def test_released_v94_registry_identity_is_unchanged(self) -> None:
-        self.assertEqual(EXPECTED_V94_REGISTRY_SHA256, hashlib.sha256(REGISTRY.read_bytes()).hexdigest())
+    def test_released_v94_registry_identity_is_unchanged_while_current_registry_can_evolve(self) -> None:
         lock = json.loads((ROOT / "base-v9.4.lock.json").read_text(encoding="utf-8"))
         self.assertEqual("BASE_RELEASED", lock["release_state"])
         self.assertEqual(EXPECTED_V94_REGISTRY_SHA256, lock["candidate_registry"]["sha256"])
+        current = json.loads(REGISTRY.read_text(encoding="utf-8"))
+        current_ids = {entry["skill_id"] for entry in current["skills"]}
+        self.assertIn("producing-game-development-youtube-videos", current_ids)
+        self.assertNotEqual(EXPECTED_V94_REGISTRY_SHA256, hashlib.sha256(REGISTRY.read_bytes()).hexdigest())
+
+    def test_youtube_skill_discovery_is_distinct_from_game_design_and_art(self) -> None:
+        entries = {entry["skill_id"]: entry for entry in active_skill_entries()}
+        youtube = entries["producing-game-development-youtube-videos"]
+        self.assertIn("actual build", frontmatter_description(ROOT / youtube["path"]).lower())
+        self.assertIn("youtube", frontmatter_description(ROOT / youtube["path"]).lower())
+        self.assertIn("썸네일 이미지 한 장의 생성", youtube["do_not_use_when"][0])
+        self.assertNotIn("game-devlog", entries["analyzing-and-refining-game-concepts"]["trigger_tags"])
+        self.assertNotIn("youtube-development-video", entries["designing-art-prompts-and-technique-cards"]["trigger_tags"])
 
     def test_active_skill_discovery_metadata_fits_the_shared_budget(self) -> None:
         total = 0
@@ -131,7 +195,8 @@ class BaseV95SkillOperatingRefinementTests(unittest.TestCase):
                 results["results"][0][field] = [{}]
                 result = run_checker(results)
                 self.assertNotEqual(0, result.returncode)
-                self.assertIn(f"{field} must contain only strings", result.stdout)
+                self.assertIn(f"results.0.{field}.0", result.stdout)
+                self.assertIn("is not of type 'string'", result.stdout)
                 self.assertNotIn("Traceback", result.stderr)
 
     def test_behavior_eval_fixture_cannot_claim_a_model_pass(self) -> None:
@@ -164,7 +229,7 @@ class BaseV95SkillOperatingRefinementTests(unittest.TestCase):
             "wrong Work Mode": lambda item: item.update(work_mode="BUILD"),
             "wrong primary Skill": lambda item: item.update(primary_skill="creating-user-learning-notes"),
             "forbidden Skills selected": lambda item: item["supporting_skills"].append(first["forbidden_skills"][0]),
-            "missing required evidence": lambda item: item.update(evidence=[]),
+            "result schema results.0.evidence": lambda item: item.update(evidence=[]),
         }
         for expected_error, mutate in mutations.items():
             with self.subTest(expected_error=expected_error):

@@ -143,6 +143,19 @@ class SkillPackageIntegrityTests(unittest.TestCase):
             "Packaged references/scripts are not linked from SKILL.md:\n" + "\n".join(orphaned),
         )
 
+    def test_project_shared_routes_are_optional_and_reference_registered_skills(self) -> None:
+        registry_ids = {item["skill_id"] for item in load_registry()["skills"]}
+        route_path = ROOT / "skills/BASE_SHARED_SKILL_ROUTES.json"
+        routes = json.loads(route_path.read_text(encoding="utf-8"))
+        self.assertTrue(routes["routing_policy"]["project_adapter_required"])
+        routed_ids = {item["skill_id"] for item in routes["shared_skills"]}
+        self.assertTrue(routed_ids.issubset(registry_ids))
+        self.assertNotIn(
+            "producing-game-development-youtube-videos",
+            routed_ids,
+            "A Base specialist without a project adapter must not invent a shared route",
+        )
+
     def test_every_active_skill_is_discoverable_from_current_entrypoints(self) -> None:
         registry = load_registry()
         entrypoints = (
