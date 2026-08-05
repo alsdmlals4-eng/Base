@@ -151,6 +151,25 @@ class V9MachineContractTests(unittest.TestCase):
         self.assertIn("class EvidenceVerificationError", evidence)
         self.assertGreaterEqual(evidence.count("ensure_ascii=False"), 3)
 
+    def test_c0_generated_plugin_cfg_uses_addon_relative_script_path(self) -> None:
+        workspace = read("tools/godot_project_pilot_workspace.py")
+        self.assertIn('script="plugin.gd"', workspace)
+        self.assertNotIn(
+            'script="res://addons/base_multi_project_pilot/plugin.gd"',
+            workspace,
+        )
+
+    def test_c0_wrapper_explicitly_types_variant_file_hashes(self) -> None:
+        wrapper = read(
+            "templates/project-operations/godot-live-editor/pilot/multi_project_pilot.gd"
+        )
+        for marker in (
+            "var main_hash_before: Variant = _evidence.sha256_file(main_scene)",
+            "var main_hash_after_inspect: Variant = _evidence.sha256_file(main_scene)",
+            "var main_hash_after: Variant = _evidence.sha256_file(main_scene)",
+        ):
+            self.assertIn(marker, wrapper)
+
 
 if __name__ == "__main__":
     unittest.main()
