@@ -1,26 +1,27 @@
 # GAME_BACKEND_SERVICE_CONTRACT
 
-- Capability Pack: `GAME_BACKEND_CLOUD_RUN`
-- Project-owned artifact: yes
-- Base Guide: `docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`
-- Current state: `CANDIDATE`
-- Static document evidence must not be promoted to runtime or production evidence.
+Capability Pack: `GAME_BACKEND_CLOUD_RUN`
+Project-owned artifact: yes
+Base Guide: `docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`
+Current state: `CANDIDATE`
+Static document evidence must not be promoted to runtime or production evidence.
 
 ## Lifecycle
 
 ```text
 NOT_REQUIRED
-→ CANDIDATE
-→ SELECTED
-→ CONFIGURED
-→ STATIC_VERIFIED
-→ RUNTIME_VERIFIED
-→ LOAD_AND_FAILURE_VERIFIED
-→ PRODUCTION_READY
+-> CANDIDATE
+-> SELECTED
+-> CONFIGURED
+-> STATIC_VERIFIED
+-> RUNTIME_VERIFIED
+-> LOAD_AND_FAILURE_VERIFIED
+-> PRODUCTION_READY
 ```
 
-단계를 건너뛰지 않는다. 미실행 증거는 `NOT_RUN`으로 남긴다.
-`PRODUCTION_READY`는 프로젝트별 배포·런타임·부하·실패·비용·보안 증거가 있을 때만 선언한다.
+Do not skip stages. Record unexecuted evidence as `NOT_RUN`.
+`PRODUCTION_READY` requires project deployment, runtime, load, failure, cost,
+and security evidence.
 
 ## Player value and server feature
 
@@ -83,14 +84,8 @@ sensitive_log_redaction:
 ```
 
 ```text
-authenticate
-→ authorize
-→ validate
-→ bind actor/version/precondition
-→ check idempotency/replay
-→ transaction
-→ durable result
-→ stable response
+authenticate -> authorize -> validate -> bind actor/version/precondition
+-> check idempotency/replay -> transaction -> durable result -> stable response
 ```
 
 ## Identity and authorization
@@ -188,7 +183,7 @@ budget_fallback:
 non_ai_degraded_mode:
 ```
 
-LLM 출력만으로 결제·보상·제재·영구 저장을 확정하지 않는다.
+LLM output alone must not authorize payment, reward, sanction, or permanent save.
 
 ## Secrets and service identity
 
@@ -205,7 +200,7 @@ iam_roles:
 least_privilege_evidence:
 ```
 
-실제 secret 값이나 unredacted credential을 이 파일에 기록하지 않는다.
+Do not place real secret values or unredacted credentials in this file.
 
 ## Privacy, retention, and region
 
@@ -304,4 +299,4 @@ rollback_owner:
 last_verified_commit:
 ```
 
-완료 보고에는 문서 상태와 실제 프로젝트 증거를 분리한다.
+Completion reports must separate document status from project runtime evidence.
