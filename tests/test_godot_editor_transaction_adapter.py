@@ -95,6 +95,33 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn("validate_for_enqueue", source)
         self.assertIn("validate_before_execute", source)
 
+    def test_state_probe_uses_editor_owned_state(self) -> None:
+        path = ADDON / "editor_state_probe.gd"
+        self.assertTrue(path.is_file(), "missing editor_state_probe.gd")
+        source = path.read_text(encoding="utf-8")
+        for marker in (
+            "EditorInterface.get_unsaved_scenes()",
+            "get_object_history_id",
+            "get_history_undo_redo",
+            "get_version()",
+            "HashingContext.HASH_SHA256",
+            "ProjectSettings.globalize_path",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, source)
+
+    def test_registry_allows_only_inspect_and_rename(self) -> None:
+        path = ADDON / "capability_registry.gd"
+        self.assertTrue(path.is_file(), "missing capability_registry.gd")
+        source = path.read_text(encoding="utf-8")
+        self.assertIn('"scene.inspect"', source)
+        self.assertIn('"node.rename"', source)
+        self.assertIn("UNKNOWN_CAPABILITY", source)
+        self.assertIn("ABSOLUTE_NODE_PATH_FORBIDDEN", source)
+        self.assertIn("NODE_OUTSIDE_EDITED_SCENE", source)
+        self.assertIn("INVALID_NODE_NAME", source)
+        self.assertNotIn("set_indexed", source)
+
 
 if __name__ == "__main__":
     unittest.main()
