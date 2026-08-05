@@ -151,6 +151,25 @@
         "skills/reviewing-and-validating-project-changes/SKILL.md",
         "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md"
       ]
+    },
+    {
+      "name": "cloud-run-game-backend-capability-entrypoints",
+      "canonical_path": "docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md",
+      "reference_tokens": [
+        "docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md",
+        "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md"
+      ],
+      "required_consumers": [
+        "START_HERE.md",
+        "docs/DOCUMENTATION_MAP.md",
+        "docs/knowledge/game-development/README.md",
+        "docs/knowledge/game-development/TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md",
+        "skills/analyzing-and-refining-game-concepts/SKILL.md",
+        "skills/managing-game-project-operating-system/SKILL.md",
+        "skills/designing-vertical-slices/SKILL.md",
+        "skills/reviewing-and-validating-project-changes/SKILL.md",
+        "skills/optimizing-ai-model-and-prompt-costs/SKILL.md"
+      ]
     }
   ],
   "coupled_change_rules": [
@@ -439,6 +458,23 @@
         "tests/test_skill_behavior_adversarial_boundaries.py"
       ],
       "require_any_changed": []
+    },
+    {
+      "name": "cloud-run-game-backend-capability-sync",
+      "when_changed": [
+        "docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md",
+        "templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md"
+      ],
+      "exclude_when_changed": [],
+      "require_all_changed": [
+        "tests/test_cloud_run_game_backend_capability.py",
+        "skills/managing-game-project-operating-system/LEARNING_LOG.md",
+        "docs/CHANGELOG.md"
+      ],
+      "require_any_changed": [
+        "docs/knowledge/game-development/README.md",
+        "templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md"
+      ]
     }
   ]
 }

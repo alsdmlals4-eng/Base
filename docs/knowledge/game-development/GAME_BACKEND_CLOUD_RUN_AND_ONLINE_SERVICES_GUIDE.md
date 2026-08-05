@@ -169,3 +169,18 @@ Re-check current official documentation before implementation:
 - https://docs.cloud.google.com/run/docs/configuring/session-affinity
 - https://docs.cloud.google.com/run/docs/authenticating/service-to-service
 - https://docs.cloud.google.com/run/docs/configuring/services/secrets
+
+## Adversarial decision fixtures
+
+```text
+async leaderboard API -> CLOUD_RUN_RECOMMENDED
+turn-based asynchronous battle -> CLOUD_RUN_RECOMMENDED
+WebSocket lobby and presence -> CLOUD_RUN_CONDITIONAL
+60 Hz authoritative action battle / UDP -> ALTERNATIVE_ARCHITECTURE_REQUIRED
+offline-only feature with no shared state -> SERVER_NOT_REQUIRED
+retrying reward mutation without idempotency -> BLOCKED_UNVERIFIED
+provider key in client or repository -> BLOCKED_UNVERIFIED
+unlimited AI proxy without quota/cost -> BLOCKED_UNVERIFIED
+instance-local durable save -> BLOCKED_UNVERIFIED
+static documents presented as runtime/load/cost proof -> BLOCKED_UNVERIFIED
+```
