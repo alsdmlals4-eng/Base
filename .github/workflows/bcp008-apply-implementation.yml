@@ -57,16 +57,16 @@ jobs:
           behavior_path = Path("skills/SKILL_BEHAVIOR_EVALS.json")
           payload = json.loads(behavior_path.read_text(encoding="utf-8"))
           id_map = {
-              "SBE-BCP008-TRACE-L2": "SBE-015",
-              "SBE-BCP008-TRACE-L1-NEGATIVE": "SBE-016",
-              "SBE-BCP008-UI-WEB-PROCUREMENT": "SBE-017",
-              "SBE-BCP008-UI-GODOT-NEGATIVE": "SBE-018",
+              "SBE-BCP008-TRACE-L2": "SBE-901",
+              "SBE-BCP008-TRACE-L1-NEGATIVE": "SBE-902",
+              "SBE-BCP008-UI-WEB-PROCUREMENT": "SBE-903",
+              "SBE-BCP008-UI-GODOT-NEGATIVE": "SBE-904",
           }
           for case in payload["cases"]:
               case["case_id"] = id_map.get(case["case_id"], case["case_id"])
-              if case["case_id"] == "SBE-015":
+              if case["case_id"] == "SBE-901":
                   case["expected_user_decision_state"] = "NOT_REQUIRED"
-              if case["case_id"] == "SBE-016":
+              if case["case_id"] == "SBE-902":
                   case["case_type"] = "negative"
           behavior_path.write_text(
               json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
