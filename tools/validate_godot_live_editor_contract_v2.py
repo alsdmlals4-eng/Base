@@ -21,6 +21,11 @@ V1_CAPABILITY_SCHEMA = ROOT / "schemas/godot-live-editor-capability-manifest-v1.
 CAPABILITY_SCHEMA_V2 = ROOT / "schemas/godot-live-editor-capability-manifest-v2.schema.json"
 OPERATION_SCHEMA_V2 = ROOT / "schemas/godot-live-editor-operation-envelope-v2.schema.json"
 _TERMINAL_TASK_STATES = {"COMPLETED", "FAILED", "CANCELLED", "STALE"}
+_NON_FILE_EVIDENCE_STATES = {
+    "NOT_RUN",
+    "NOT_CONFIGURED",
+    "BLOCKED_ENVIRONMENT",
+}
 
 canonical_json_sha256 = core.canonical_json_sha256
 classify_contract_document = core.classify_contract_document
@@ -57,8 +62,67 @@ if not hasattr(core, "_original_transport_is_safe"):
 core._transport_is_safe = _transport_is_safe
 
 
+def _contains_schema_reference(value: Any) -> bool:
+    if isinstance(value, Mapping):
+        if "$ref" in value or "$dynamicRef" in value:
+            return True
+        return any(_contains_schema_reference(item) for item in value.values())
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
+        return any(_contains_schema_reference(item) for item in value)
+    return False
+
+
+def _capability_matches(
+    manifest: Mapping[str, Any], capability_id: Any
+) -> list[Mapping[str, Any]]:
+    capabilities = manifest.get("capabilities")
+    if not isinstance(capabilities, list) or not isinstance(capability_id, str):
+        return []
+    return [
+        capability
+        for capability in capabilities
+        if isinstance(capability, Mapping)
+        and capability.get("capability_id") == capability_id
+    ]
+
+
+def _preconditions_conflict(preconditions: Any) -> bool:
+    if not isinstance(preconditions, Mapping):
+        return True
+    pairs = (
+        ("expected_target_revision", "observed_target_revision"),
+        ("expected_target_content_sha256", "observed_target_content_sha256"),
+        ("expected_dirty_state", "observed_dirty_state"),
+        ("expected_scene_path", "observed_scene_path"),
+    )
+    return any(
+        preconditions.get(expected) != preconditions.get(observed)
+        for expected, observed in pairs
+    )
+
+
+def _path_is_within_declared_root(path: Any, root: Any) -> bool:
+    if not isinstance(path, str) or not isinstance(root, str):
+        return False
+    normalized_path = path.replace("\\", "/")
+    normalized_root = root.replace("\\", "/").rstrip("/")
+    if not normalized_root or ".." in normalized_path.split("/"):
+        return False
+    return normalized_path.startswith(normalized_root + "/")
+
+
 def validate_manifest_semantics(manifest: Mapping[str, Any]) -> list[str]:
-    return core.validate_manifest_semantics(manifest)
+    errors = core.validate_manifest_semantics(manifest)
+    capabilities = manifest.get("capabilities")
+    if isinstance(capabilities, list):
+        for capability in capabilities:
+            if not isinstance(capability, Mapping):
+                continue
+            if _contains_schema_reference(
+                capability.get("input_schema")
+            ) or _contains_schema_reference(capability.get("output_schema")):
+                errors.append("CAPABILITY_SCHEMA_REFERENCE_UNSUPPORTED")
+    return _unique(errors)
 
 
 def validate_operation_semantics(
@@ -68,6 +132,16 @@ def validate_operation_semantics(
     prior_operations: Sequence[Mapping[str, Any]] = (),
     now: datetime | None = None,
 ) -> list[str]:
+    matches = _capability_matches(manifest, envelope.get("capability_id"))
+    if len(matches) == 1:
+        capability = matches[0]
+        if _contains_schema_reference(
+            capability.get("input_schema")
+        ) or _contains_schema_reference(capability.get("output_schema")):
+            return ["CAPABILITY_SCHEMA_REFERENCE_UNSUPPORTED"]
+    else:
+        capability = None
+
     errors = core.validate_operation_semantics(
         manifest,
         envelope,
@@ -75,7 +149,28 @@ def validate_operation_semantics(
         now=now,
     )
 
+    if capability is None:
+        return _unique(errors)
+
+    precondition_policy = capability.get("precondition_policy")
+    preconditions = envelope.get("preconditions")
+    if (
+        precondition_policy == "OPTIONAL"
+        and isinstance(preconditions, Mapping)
+        and _preconditions_conflict(preconditions)
+    ):
+        errors.append("TARGET_STATE_CONFLICT")
+
     task = envelope.get("task")
+    if capability.get("execution_mode") == "LONG_RUNNING_TASK":
+        if (
+            not isinstance(task, Mapping)
+            or not isinstance(task.get("task_id"), str)
+            or not task.get("task_id")
+            or task.get("state") in {"NOT_APPLICABLE", "NOT_STARTED"}
+        ):
+            errors.append("TASK_ID_REQUIRED")
+
     result = envelope.get("result")
     instance = envelope.get("instance_identity")
     if (
@@ -99,6 +194,26 @@ def validate_operation_semantics(
         if identity_matches and binding.get("result_hash") != result.get("result_hash"):
             errors = [error for error in errors if error != "TASK_RESULT_STALE"]
             errors.append("TASK_RESULT_HASH_MISMATCH")
+
+    evidence_outputs = capability.get("evidence_outputs")
+    declared_evidence = (
+        set(evidence_outputs) if isinstance(evidence_outputs, list) else set()
+    )
+    path_access = capability.get("path_access")
+    artifact_root = (
+        path_access.get("artifact_root") if isinstance(path_access, Mapping) else None
+    )
+    evidence_items = result.get("evidence") if isinstance(result, Mapping) else None
+    if isinstance(evidence_items, list):
+        for evidence in evidence_items:
+            if not isinstance(evidence, Mapping):
+                continue
+            if evidence.get("kind") not in declared_evidence:
+                errors.append("EVIDENCE_KIND_NOT_DECLARED")
+            if evidence.get("state") not in _NON_FILE_EVIDENCE_STATES and not (
+                _path_is_within_declared_root(evidence.get("path"), artifact_root)
+            ):
+                errors.append("EVIDENCE_PATH_OUTSIDE_DECLARED_ROOT")
 
     return _unique(errors)
 
@@ -146,7 +261,7 @@ def validate_contract_pair(
             "OPERATION_SCHEMA_INVALID",
         )
         errors.extend(operation_schema_errors)
-        if not operation_schema_errors:
+        if not errors and not operation_schema_errors:
             errors.extend(
                 validate_operation_semantics(
                     manifest,
