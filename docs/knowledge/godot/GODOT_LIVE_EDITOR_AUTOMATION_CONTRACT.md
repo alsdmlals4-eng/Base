@@ -87,6 +87,8 @@ rollback_policy: NOT_APPLICABLE | EDITOR_UNDO_REDO | SNAPSHOT | MANUAL | IRREVER
 
 또한 `input_schema`, `output_schema`, `capability_input_schema_sha256`, `capability_output_schema_sha256`, path roots, precondition, retry, timeout, evidence와 unsupported state를 선언한다. 읽기·mutation·승인·수명·rollback 의미를 한 enum으로 합치지 않는다.
 
+Capability의 입력·출력 Schema는 Manifest 안에서 완결된 닫힌 객체여야 하며 `$ref` 또는 `$dynamicRef`로 외부·간접 Schema를 해석하지 않는다. 참조가 발견되면 `CAPABILITY_SCHEMA_REFERENCE_UNSUPPORTED`로 engine action 전에 중단한다.
+
 ## Operation Envelope v2
 
 ```yaml
@@ -129,7 +131,7 @@ observed_scene_path:
 conflict_policy: FAIL_CLOSED
 ```
 
-한 값이라도 다르면 `TARGET_STATE_CONFLICT`다. dirty Scene을 자동 저장·폐기하거나 새 관찰 없이 재승인하지 않는다.
+한 값이라도 다르면 `TARGET_STATE_CONFLICT`다. `precondition_policy: OPTIONAL`이라도 값을 제출한 순간 같은 비교 규칙을 적용한다. dirty Scene을 자동 저장·폐기하거나 새 관찰 없이 재승인하지 않는다.
 
 ## 승인·retry·task
 
@@ -137,11 +139,11 @@ conflict_policy: FAIL_CLOSED
 
 idempotent mutation도 ledger와 exact replay 증거가 없으면 재전송하지 않는다. unknown outcome을 맹목적으로 다시 실행하면 `UNSAFE_RETRY_BLOCKED`다.
 
-장기 작업은 receiver-generated durable `task_id`를 한 번 만들고 `TASK_PENDING` 동안 duplicate start를 금지한다. terminal result가 다른 operation/service/task에 묶이면 `TASK_RESULT_STALE`다.
+장기 작업은 초기 응답 전에 receiver-generated durable `task_id`를 한 번 만들고 `TASK_PENDING` 동안 duplicate start를 금지한다. `task_id` 없이 `NOT_STARTED`를 반환하면 `TASK_ID_REQUIRED`다. terminal result가 다른 operation/service/task에 묶이면 `TASK_RESULT_STALE`다.
 
 ## 입력·출력·증거
 
-입력은 action 전에 `input_schema`로, 결과 data는 성공 승격 전에 `output_schema`로 검사한다. 출력 불일치는 `OUTPUT_SCHEMA_MISMATCH`다. file-backed PASS evidence는 `artifacts/` 아래 confined path, SHA-256, timestamp와 producer 선언을 요구한다.
+입력은 action 전에 `input_schema`로, 결과 data는 성공 승격 전에 `output_schema`로 검사한다. 출력 불일치는 `OUTPUT_SCHEMA_MISMATCH`다. file-backed PASS evidence는 capability가 `evidence_outputs`에 선언한 kind여야 하고, 해당 capability의 `artifact_root` 아래 confined path, SHA-256, timestamp와 producer 선언을 요구한다. 선언하지 않은 kind는 `EVIDENCE_KIND_NOT_DECLARED`, 지정 root를 벗어나면 `EVIDENCE_PATH_OUTSIDE_DECLARED_ROOT`다.
 
 정적 validator는 evidence의 kind/state/path/hash **형식과 binding**만 검사한다. `artifact_sha256`이 실제 파일 bytes와 일치하는지는 승인된 artifact root를 읽을 수 있는 project/runtime validator가 별도로 검증해야 하며, 정적 JSON 검사만으로 physical artifact proof를 주장하지 않는다.
 
