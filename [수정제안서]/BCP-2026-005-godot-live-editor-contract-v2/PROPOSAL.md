@@ -6,9 +6,9 @@
 - 기준 커밋: `83683eecaaeaf415bf629fe5a1231fc6cef575f3`
 - 승인 설계 커밋: `ea0442ddb7fb9286d093cc96e523fdd74a841c22`
 - 제출일: `2026-08-05`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `SUBMITTED`
 - 지식 상태: `패턴`
-- 승인 근거: `https://github.com/alsdmlals4-eng/Base/pull/154#issuecomment-5187157323`
+- 사전 설계 승인 기록: `https://github.com/alsdmlals4-eng/Base/pull/154#issuecomment-5187157323`
 
 ## 관찰과 증거
 
@@ -66,7 +66,7 @@ Base의 Godot 자동화 안전 계약을 다음 원칙으로 정규화한다.
 - v1과 v2를 동시에 active로 유지하면 선택 권위가 이중화된다.
 - runtime Pilot을 같은 static reconciliation change set에 포함하면 계약 증거와 engine behavior 증거가 혼합될 수 있다.
 
-따라서 v1은 미출시 Draft 이력으로만 보존하고 active v2 파일로 교체하며, runtime Pilot 재구현은 static v2 GREEN 후 별도 단계로 둔다.
+따라서 v1은 호환 이력으로만 제한하고 active v2 파일로 전환하며, runtime Pilot 재구현은 static v2 GREEN 후 별도 단계로 둔다.
 
 ## 영향 범위와 검증
 
@@ -98,8 +98,10 @@ Base의 Godot 자동화 안전 계약을 다음 원칙으로 정규화한다.
 
 ## 승인과 구현
 
-- 사용자 승인 근거: `https://github.com/alsdmlals4-eng/Base/pull/154#issuecomment-5187157323`
-- 승인 범위: v2 구현 계획 작성과 별도 구현 PR의 TDD 실행
+- 사전 설계 승인 기록: `https://github.com/alsdmlals4-eng/Base/pull/154#issuecomment-5187157323`
+- 현재 BCP 단계: `SUBMITTED`
+- 다음 생명주기 단계: 이 제출 PR이 main에 병합된 뒤, 별도 proposal-only PR에서 승인 기록을 근거로 `APPROVED_FOR_IMPLEMENTATION`으로 승격
+- 구현 시작 조건: BCP 승인 승격 PR 병합과 새로운 명시적 구현 승인
 - 제외 범위: 병합, 프로덕션 MCP readiness, user game project 적용, release/Registry 변경
-- 구현 PR: `계획 PR 생성 후 연결`
-- 롤백: v2 구현 branch/PR을 닫고 main의 v1 계약 `83683eecaaeaf415bf629fe5a1231fc6cef575f3`으로 복귀한다. released Base 잠금과 Registry는 변경하지 않는다.
+- 구현 PR: `없음`
+- 롤백: 제출/승격/구현 PR을 닫고 main의 v1 계약 `83683eecaaeaf415bf629fe5a1231fc6cef575f3`으로 복귀한다. released Base 잠금과 Skill Registry는 변경하지 않는다.
