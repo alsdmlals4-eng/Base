@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -43,6 +44,67 @@ class ProcessRecord:
     stderr_excerpt: str
     stdout_truncated: bool
     stderr_truncated: bool
+
+
+@dataclass(frozen=True)
+class ExportedRuntimeEvidenceBundle:
+    runtime_result: Path
+    saved_scene: Path
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for block in iter(lambda: handle.read(65536), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def export_runtime_evidence_bundle(
+    workspace: Path,
+    runtime_result_path: Path,
+    output_dir: Path,
+    verified: VerifiedRuntimeEvidence,
+) -> ExportedRuntimeEvidenceBundle:
+    root = Path(workspace).resolve()
+    runtime_source = Path(runtime_result_path).resolve()
+    try:
+        runtime_source.relative_to(root)
+    except ValueError as exc:
+        raise ValueError("EVIDENCE_PATH_ESCAPE: runtime result") from exc
+
+    declared = verified.saved_scene_path
+    if not declared.startswith("res://"):
+        raise ValueError("EVIDENCE_PATH_ESCAPE: saved scene")
+    relative_scene = Path(declared.removeprefix("res://"))
+    if relative_scene.is_absolute() or ".." in relative_scene.parts:
+        raise ValueError("EVIDENCE_PATH_ESCAPE: saved scene")
+    scene_source = (root / relative_scene).resolve()
+    try:
+        scene_source.relative_to(root)
+    except ValueError as exc:
+        raise ValueError("EVIDENCE_PATH_ESCAPE: saved scene") from exc
+
+    if _sha256_file(runtime_source) != verified.runtime_result_sha256:
+        raise ValueError("ARTIFACT_BYTE_HASH_MISMATCH: runtime result")
+    if _sha256_file(scene_source) != verified.saved_scene_sha256:
+        raise ValueError("ARTIFACT_BYTE_HASH_MISMATCH: saved scene")
+
+    output = Path(output_dir).resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    runtime_destination = output / "runtime-result.json"
+    scene_destination = output / "scratch.tscn"
+    shutil.copyfile(runtime_source, runtime_destination)
+    shutil.copyfile(scene_source, scene_destination)
+
+    if _sha256_file(runtime_destination) != verified.runtime_result_sha256:
+        raise ValueError("ARTIFACT_BYTE_HASH_MISMATCH: exported runtime result")
+    if _sha256_file(scene_destination) != verified.saved_scene_sha256:
+        raise ValueError("ARTIFACT_BYTE_HASH_MISMATCH: exported saved scene")
+    return ExportedRuntimeEvidenceBundle(
+        runtime_result=runtime_destination,
+        saved_scene=scene_destination,
+    )
 
 
 def argv_for_check(check: BehaviorCheck, godot_bin: Path) -> list[str]:
@@ -333,6 +395,7 @@ def run_pilot(
                 raise EvidenceVerificationError("RUNTIME_SOURCE_COMMIT_MISMATCH")
             if runtime.base_pilot_commit != descriptor.base_pilot_commit:
                 raise EvidenceVerificationError("RUNTIME_BASE_COMMIT_MISMATCH")
+            export_runtime_evidence_bundle(workspace, runtime_path, output, runtime)
     except (OSError, ValueError) as exc:
         after = inventory_tracked_files(source)
         changed = compare_inventories(before, after)

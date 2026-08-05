@@ -19,6 +19,9 @@ from tests.test_godot_multi_project_pilot import (
 from tests.test_godot_multi_project_pilot_adversarial import (
     GodotMultiProjectPilotAdversarialTests as _GodotMultiProjectPilotAdversarialTests,
 )
+from tests.test_godot_pilot_artifact_bundle import (
+    GodotPilotArtifactBundleTests as _GodotPilotArtifactBundleTests,
+)
 from tests.test_godot_live_editor_adapter_resolution import (
     GodotAdapterResolutionTests as _GodotAdapterResolutionTests,
 )
