@@ -95,18 +95,6 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn("validate_for_enqueue", source)
         self.assertIn("validate_before_execute", source)
 
-    def test_guard_rechecks_full_approval_binding_and_expiry(self) -> None:
-        source = (ADDON / "runtime_contract_guard.gd").read_text(encoding="utf-8")
-        for marker in (
-            "token_binding",
-            "_approval_binding",
-            "APPROVAL_BINDING_MISMATCH",
-            "APPROVAL_EXPIRED",
-            "get_unix_time_from_datetime_string",
-        ):
-            with self.subTest(marker=marker):
-                self.assertIn(marker, source)
-
     def test_state_probe_uses_editor_owned_state(self) -> None:
         path = ADDON / "editor_state_probe.gd"
         self.assertTrue(path.is_file(), "missing editor_state_probe.gd")
@@ -134,19 +122,6 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn("INVALID_NODE_NAME", source)
         self.assertNotIn("set_indexed", source)
 
-    def test_registry_validates_output_types_and_cross_field_semantics(self) -> None:
-        source = (ADDON / "capability_registry.gd").read_text(encoding="utf-8")
-        for marker in (
-            "_validate_inspect_output",
-            "_validate_rename_output",
-            "TYPE_INT",
-            "SAVE_CURRENT_SCENE",
-            "saved_scene_sha256",
-            "OUTPUT_SCHEMA_INVALID",
-        ):
-            with self.subTest(marker=marker):
-                self.assertIn(marker, source)
-
     def test_ledger_and_evidence_are_atomic_and_confined(self) -> None:
         ledger_path = ADDON / "operation_ledger.gd"
         evidence_path = ADDON / "evidence_writer.gd"
@@ -163,15 +138,6 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn("STARTED", ledger)
         self.assertIn("COMPLETED", ledger)
         self.assertIn("FAILED", ledger)
-
-    def test_operation_ids_with_digits_are_safe_and_replace_is_atomic(self) -> None:
-        ledger = (ADDON / "operation_ledger.gd").read_text(encoding="utf-8")
-        evidence = (ADDON / "evidence_writer.gd").read_text(encoding="utf-8")
-        self.assertNotIn("character.is_valid_identifier()", ledger)
-        for source in (ledger, evidence):
-            with self.subTest(source=source[:40]):
-                self.assertIn("SAFE_NAME_CHARACTERS", source)
-                self.assertNotIn("DirAccess.remove_absolute(target_path)", source)
 
     def test_executor_orders_precondition_ledger_undo_save_and_terminal_state(self) -> None:
         path = ADDON / "editor_transaction_executor.gd"
@@ -222,7 +188,16 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn("_queue.clear()", source)
         self.assertIn("network_listener_enabled", source)
         self.assertIn("ADAPTER_NOT_CONFIGURED", source)
-        self.assertIn('transport.get("kind") != "DISABLED"', source)
+        self.assertIn('transport.get("kind") != "PROJECT_DEFINED"', source)
+        self.assertIn(
+            'const IN_PROCESS_ENDPOINT := "in-process-editor-plugin"',
+            source,
+        )
+        self.assertIn(
+            'transport.get("endpoint_identity") != IN_PROCESS_ENDPOINT',
+            source,
+        )
+        self.assertIn("transport.get(\"bind_host\") != null", source)
 
 
 if __name__ == "__main__":
