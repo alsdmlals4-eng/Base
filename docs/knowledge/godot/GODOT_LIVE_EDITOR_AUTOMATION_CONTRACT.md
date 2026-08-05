@@ -141,7 +141,9 @@ idempotent mutation도 ledger와 exact replay 증거가 없으면 재전송하�
 
 ## 입력·출력·증거
 
-입력은 action 전에 `input_schema`로, 결과 data는 성공 승격 전에 `output_schema`로 검사한다. 출력 불일치는 `OUTPUT_SCHEMA_MISMATCH`다. file-backed PASS evidence는 `artifacts/` 아래 confined path, SHA-256, timestamp와 producer를 요구한다.
+입력은 action 전에 `input_schema`로, 결과 data는 성공 승격 전에 `output_schema`로 검사한다. 출력 불일치는 `OUTPUT_SCHEMA_MISMATCH`다. file-backed PASS evidence는 `artifacts/` 아래 confined path, SHA-256, timestamp와 producer 선언을 요구한다.
+
+정적 validator는 evidence의 kind/state/path/hash **형식과 binding**만 검사한다. `artifact_sha256`이 실제 파일 bytes와 일치하는지는 승인된 artifact root를 읽을 수 있는 project/runtime validator가 별도로 검증해야 하며, 정적 JSON 검사만으로 physical artifact proof를 주장하지 않는다.
 
 증거 상태를 합치지 않는다.
 
