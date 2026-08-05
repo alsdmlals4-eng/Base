@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 import sys
 import unittest
 from pathlib import Path
@@ -76,7 +77,32 @@ class ProjectAdapterFleetHardeningTests(unittest.TestCase):
             match,
             "The Base validator checkout must pin an immutable full commit SHA instead of floating main.",
         )
-        self.assertNotEqual(match.group(1), "0" * 40)
+        validator_commit = match.group(1)
+        self.assertNotEqual(validator_commit, "0" * 40)
+
+        required_markers = {
+            "schemas/project-base-adapter-v1.schema.json": '"finalization_commit"',
+            "tools/base_release_index.py": "RELEASE_FINALIZATION_COMMITS",
+        }
+        for path, required_marker in required_markers.items():
+            result = subprocess.run(
+                ["git", "-C", str(ROOT), "show", f"{validator_commit}:{path}"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                check=False,
+            )
+            self.assertEqual(
+                0,
+                result.returncode,
+                f"Pinned validator commit cannot provide {path}: {result.stderr}",
+            )
+            self.assertIn(
+                required_marker,
+                result.stdout,
+                f"Pinned validator commit lacks required fleet hardening in {path}",
+            )
 
 
 if __name__ == "__main__":
