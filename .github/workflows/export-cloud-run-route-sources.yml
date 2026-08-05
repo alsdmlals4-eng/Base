@@ -1,0 +1,39 @@
+name: Export Cloud Run Route Sources
+
+on:
+  push:
+    branches:
+      - agent/implement-cloud-run-game-backend-capability
+
+permissions:
+  contents: read
+
+jobs:
+  export-route-sources:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out exact branch head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          show-progress: false
+      - name: Upload selected UTF-8 source files
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cloud-run-route-sources-${{ github.sha }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            docs/knowledge/game-development/README.md
+            docs/knowledge/game-development/TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md
+            docs/DOCUMENTATION_MAP.md
+            START_HERE.md
+            skills/analyzing-and-refining-game-concepts/SKILL.md
+            skills/managing-game-project-operating-system/SKILL.md
+            skills/designing-vertical-slices/SKILL.md
+            skills/reviewing-and-validating-project-changes/SKILL.md
+            skills/optimizing-ai-model-and-prompt-costs/SKILL.md
+            templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md
+            templates/project-operations/github/documentation-governance.json
+            .github/reference-freshness.json
+            skills/managing-game-project-operating-system/LEARNING_LOG.md
+            docs/CHANGELOG.md
