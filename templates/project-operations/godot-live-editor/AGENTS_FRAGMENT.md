@@ -4,6 +4,7 @@
 
 - Project capability source: `GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json`
 - Project adapter: `.agents/skills/godot-live-editor-operations/SKILL.md`
+- Network-disabled addon: `addons/base_live_editor_adapter/`
 - Base pin authority: `skills/PROJECT_BASE_ADAPTER.json`
 - Base v2 capability Schema: `schemas/godot-live-editor-capability-manifest-v2.schema.json`
 - Base v2 operation Schema: `schemas/godot-live-editor-operation-envelope-v2.schema.json`
@@ -24,7 +25,11 @@ validate PROJECT_BASE_ADAPTER.json and snapshot
 
 Base adapter 실패, Manifest 없음, `NOT_CONFIGURED`, stale, identity/snapshot mismatch, undeclared capability이면 engine action을 중단한다. automatic approval과 unsafe retry는 금지한다.
 
-mutation은 expected/observed revision·hash·dirty state·Scene path를 비교한다. 불일치는 `TARGET_STATE_CONFLICT`다. output이 Schema에 맞지 않으면 `OUTPUT_SCHEMA_MISMATCH`이며 성공 evidence를 만들지 않는다.
+PR B addon은 configured v2 Manifest와 `transport.kind: DISABLED`에서만 활성화된다. 이미 검증된 envelope를 in-process로만 받고 `scene.inspect`, `node.rename`(`KEEP_DIRTY | SAVE_CURRENT_SCENE`) 외 capability는 거부한다. 서버, MCP, socket, remote endpoint, background thread 또는 Autoload는 포함하지 않는다.
+
+mutation은 expected/observed revision·hash·dirty state·Scene path를 같은 Editor frame에서 다시 비교한다. 불일치는 `TARGET_STATE_CONFLICT`다. STARTED ledger 전에 engine mutation을 하지 않고, `EditorUndoRedoManager` transaction·save/filesystem update·physical byte hash·output/evidence·terminal ledger가 끝나기 전에는 성공을 보고하지 않는다.
+
+addon 시작 문제가 있으면 Godot `--recovery-mode`로 비활성화하거나 제거하고 새 Editor instance ID와 필요한 승인을 발급한다. 이 addon만으로 `PRODUCTION_ADAPTER_READY`를 주장하지 않는다.
 
 보고:
 
