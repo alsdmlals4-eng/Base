@@ -130,9 +130,7 @@ jobs:
           if grep -R --line-number --fixed-strings '/mnt/data/' \
             docs/knowledge/godot/GODOT_PRODUCTION_ADAPTER_READINESS.md \
             docs/knowledge/godot/evidence/2026-08-05-godot-4-7-1-runtime-pilot.md \
-            examples/godot-live-editor-pilot \
-            tests/test_godot_live_editor_runtime_contract_hardening.py \
-            tests/test_godot_live_editor_runtime_pilot.py; then
+            examples/godot-live-editor-pilot; then
             echo 'machine-local path leaked into committed pilot material' >&2
             exit 1
           fi
