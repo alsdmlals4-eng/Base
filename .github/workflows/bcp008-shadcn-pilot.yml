@@ -37,6 +37,7 @@ jobs:
             --base radix \
             --name bcp008-pilot \
             --yes \
+            --no-monorepo \
             --silent
           cd bcp008-pilot
           npx --yes "shadcn@$published_cli_version" add button --yes --silent
