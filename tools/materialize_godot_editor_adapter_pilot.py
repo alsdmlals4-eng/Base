@@ -1,0 +1,264 @@
+from __future__ import annotations
+
+import hashlib
+import json
+import shutil
+from pathlib import Path
+from typing import Any
+
+from tools.validate_godot_live_editor_contract_v2 import (
+    canonical_json_sha256,
+    validate_contract_pair,
+)
+
+
+FIXTURE_RELATIVE = Path("examples/godot-live-editor-v2-editor-pilot")
+ADDON_RELATIVE = Path(
+    "templates/project-operations/godot-live-editor/addons/base_live_editor_adapter"
+)
+MANIFEST_NAME = "GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json"
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(65536), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _closed_schema(
+    properties: dict[str, Any],
+    required: list[str],
+) -> dict[str, Any]:
+    return {
+        "type": "object",
+        "properties": properties,
+        "required": required,
+        "additionalProperties": False,
+    }
+
+
+def _capabilities() -> list[dict[str, Any]]:
+    inspect_input = _closed_schema({}, [])
+    inspect_output = _closed_schema(
+        {
+            "scene_path": {"type": "string", "pattern": "^res://"},
+            "root_name": {"type": "string", "minLength": 1},
+            "child_count": {"type": "integer", "minimum": 0},
+            "dirty_state": {"enum": ["CLEAN", "DIRTY"]},
+            "target_revision": {"type": "string", "minLength": 1},
+            "target_content_sha256": {
+                "anyOf": [
+                    {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                    {"type": "null"},
+                ]
+            },
+        },
+        [
+            "scene_path",
+            "root_name",
+            "child_count",
+            "dirty_state",
+            "target_revision",
+            "target_content_sha256",
+        ],
+    )
+    rename_input = _closed_schema(
+        {
+            "node_path": {"type": "string", "minLength": 1},
+            "new_name": {"type": "string", "minLength": 1, "maxLength": 128},
+            "save_mode": {"enum": ["KEEP_DIRTY", "SAVE_CURRENT_SCENE"]},
+        },
+        ["node_path", "new_name", "save_mode"],
+    )
+    rename_output = _closed_schema(
+        {
+            "scene_path": {"type": "string", "pattern": "^res://"},
+            "node_path": {"type": "string", "minLength": 1},
+            "old_name": {"type": "string", "minLength": 1},
+            "new_name": {"type": "string", "minLength": 1},
+            "save_mode": {"enum": ["KEEP_DIRTY", "SAVE_CURRENT_SCENE"]},
+            "dirty_state": {"enum": ["CLEAN", "DIRTY"]},
+            "saved_scene_sha256": {
+                "anyOf": [
+                    {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                    {"type": "null"},
+                ]
+            },
+        },
+        [
+            "scene_path",
+            "node_path",
+            "old_name",
+            "new_name",
+            "save_mode",
+            "dirty_state",
+            "saved_scene_sha256",
+        ],
+    )
+    inspect = {
+        "capability_id": "scene.inspect",
+        "description": "Inspect the active edited scene without mutation.",
+        "execution_path": "EDITOR_PLUGIN",
+        "effect_kind": "READ_ONLY",
+        "idempotency": "NOT_APPLICABLE",
+        "approval_policy": "NOT_REQUIRED",
+        "execution_mode": "SYNCHRONOUS",
+        "rollback_policy": "NOT_APPLICABLE",
+        "input_schema": inspect_input,
+        "output_schema": inspect_output,
+        "input_schema_sha256": canonical_json_sha256(inspect_input),
+        "output_schema_sha256": canonical_json_sha256(inspect_output),
+        "path_access": {
+            "read_roots": ["res://"],
+            "write_roots": [],
+            "artifact_root": "artifacts/",
+        },
+        "precondition_policy": "REQUIRED",
+        "retry_policy": {
+            "automatic": True,
+            "maximum_attempts": 2,
+            "requires_ledger": False,
+        },
+        "timeout_policy": {
+            "milliseconds": 10000,
+            "unknown_outcome": "SAFE_TO_RETRY",
+        },
+        "evidence_outputs": ["ENGINE_STATE"],
+        "unsupported_states": ["IMPORTING", "NO_EDITED_SCENE"],
+    }
+    rename = {
+        "capability_id": "node.rename",
+        "description": "Rename one node under the active edited scene root.",
+        "execution_path": "EDITOR_PLUGIN",
+        "effect_kind": "MUTATION",
+        "idempotency": "IDEMPOTENT",
+        "approval_policy": "REQUIRED",
+        "execution_mode": "SYNCHRONOUS",
+        "rollback_policy": "EDITOR_UNDO_REDO",
+        "input_schema": rename_input,
+        "output_schema": rename_output,
+        "input_schema_sha256": canonical_json_sha256(rename_input),
+        "output_schema_sha256": canonical_json_sha256(rename_output),
+        "path_access": {
+            "read_roots": ["res://"],
+            "write_roots": ["res://"],
+            "artifact_root": "artifacts/",
+        },
+        "precondition_policy": "REQUIRED",
+        "retry_policy": {
+            "automatic": False,
+            "maximum_attempts": 1,
+            "requires_ledger": True,
+        },
+        "timeout_policy": {
+            "milliseconds": 10000,
+            "unknown_outcome": "RECONCILE_BEFORE_RETRY",
+        },
+        "evidence_outputs": ["ENGINE_STATE", "LOG"],
+        "unsupported_states": ["IMPORTING", "NO_EDITED_SCENE"],
+    }
+    return [inspect, rename]
+
+
+def _manifest(destination: Path, project_godot_sha256: str) -> dict[str, Any]:
+    normalized_project_path = destination.resolve().as_posix()
+    fingerprint = hashlib.sha256(
+        f"{normalized_project_path}\n{project_godot_sha256}".encode("utf-8")
+    ).hexdigest()
+    capabilities = _capabilities()
+    return {
+        "schema_version": 2,
+        "artifact_role": "GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST",
+        "configuration_state": "CONFIGURED",
+        "contract_version": "2.0.0",
+        "adapter_version": "2.0.0",
+        "project_identity": {
+            "normalized_project_path": normalized_project_path,
+            "project_godot_sha256": project_godot_sha256,
+            "project_fingerprint": fingerprint,
+        },
+        "engine_compatibility": {
+            "detected_version": "4.7.1.stable.official.a13da4feb",
+            "minimum_version": "4.7.0",
+            "maximum_exclusive_version": "4.8.0",
+        },
+        "tool_adoption": {
+            "source": "base-project-local",
+            "exact_version": "2.0.0",
+            "telemetry_policy": "DISABLED",
+            "external_data_policy": "DENY_BY_DEFAULT",
+            "uninstall_procedure": "addons/base_live_editor_adapter/README.md",
+            "rollback_reference": "addons/base_live_editor_adapter/README.md",
+        },
+        "transport": {
+            "kind": "PROJECT_DEFINED",
+            "enabled": True,
+            "bind_host": None,
+            "endpoint_identity": "in-process-editor-plugin",
+            "protocol_profile": "GENERIC",
+            "protocol_version": "in-process-1.0",
+            "access_control": {
+                "authentication_mode": "NOT_APPLICABLE",
+                "origin_policy": "NOT_APPLICABLE",
+                "session_binding": "NOT_APPLICABLE",
+                "os_access_control": "CURRENT_USER_ONLY",
+            },
+        },
+        "catalog": {
+            "generated_at": "2026-08-05T00:00:00Z",
+            "sha256": canonical_json_sha256(capabilities),
+            "freshness_state": "FRESH",
+        },
+        "project_test_framework": {
+            "state": "NOT_CONFIGURED",
+            "runner_capability_id": None,
+        },
+        "capabilities": capabilities,
+        "validation": {
+            "contract_state": "CONTRACT_PASS",
+            "execution_state": "NOT_RUN",
+            "runtime_state": "NOT_RUN",
+            "physical_input_state": "NOT_RUN",
+            "human_state": "HUMAN_NOT_RUN",
+        },
+    }
+
+
+def materialize(source_root: Path, destination: Path) -> Path:
+    source_root = source_root.resolve()
+    destination = destination.resolve()
+    fixture = source_root / FIXTURE_RELATIVE
+    addon = source_root / ADDON_RELATIVE
+    if not fixture.is_dir():
+        raise FileNotFoundError(f"missing Pilot fixture: {fixture}")
+    if not addon.is_dir():
+        raise FileNotFoundError(f"missing canonical addon: {addon}")
+    if destination.exists():
+        raise FileExistsError(f"destination already exists: {destination}")
+
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(
+        fixture,
+        destination,
+        ignore=shutil.ignore_patterns(".godot", "artifacts", "*.uid"),
+    )
+    shutil.copytree(addon, destination / "addons/base_live_editor_adapter")
+    for generated in destination.rglob("*.uid"):
+        generated.unlink()
+
+    project_file = destination / "project.godot"
+    manifest = _manifest(destination, _sha256_file(project_file))
+    errors = validate_contract_pair(manifest, mode="AUTHORIZE")
+    if errors:
+        shutil.rmtree(destination)
+        raise ValueError(f"materialized manifest invalid: {errors}")
+    (destination / MANIFEST_NAME).write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    return destination
+
+
+__all__ = ["materialize"]

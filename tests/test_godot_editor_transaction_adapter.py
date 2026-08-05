@@ -1,0 +1,234 @@
+from __future__ import annotations
+
+import json
+import unittest
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+ADDON = (
+    ROOT
+    / "templates/project-operations/godot-live-editor/addons/base_live_editor_adapter"
+)
+
+REQUIRED = {
+    "plugin.cfg",
+    "plugin.gd",
+    "request_queue.gd",
+    "runtime_contract_guard.gd",
+    "editor_state_probe.gd",
+    "capability_registry.gd",
+    "operation_ledger.gd",
+    "evidence_writer.gd",
+    "editor_transaction_executor.gd",
+    "README.md",
+}
+
+
+class GodotEditorTransactionAdapterTests(unittest.TestCase):
+    def test_editor_transaction_adapter_files_exist(self) -> None:
+        self.assertTrue(ADDON.is_dir(), "missing canonical editor adapter directory")
+        self.assertEqual(
+            REQUIRED,
+            {path.name for path in ADDON.iterdir() if path.is_file()},
+        )
+
+    def test_adapter_has_required_editor_transaction_markers(self) -> None:
+        self.assertTrue(ADDON.is_dir(), "missing canonical editor adapter directory")
+        source = "\n".join(
+            path.read_text(encoding="utf-8") for path in ADDON.glob("*.gd")
+        )
+        for required in (
+            "EditorPlugin",
+            "get_undo_redo()",
+            "EditorInterface.get_unsaved_scenes()",
+            "EditorInterface.save_scene()",
+            "get_resource_filesystem().update_file",
+            "TARGET_STATE_CONFLICT",
+            "STARTED",
+            "COMPLETED",
+            "FAILED",
+            "MAX_PENDING",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, source)
+
+        for forbidden in (
+            "TCPServer",
+            "WebSocketPeer",
+            "HTTPServer",
+            "PacketPeerUDP",
+            "Thread.new",
+            "OS.execute",
+            "GDScript.new",
+            "Expression.new",
+        ):
+            with self.subTest(forbidden=forbidden):
+                self.assertNotIn(forbidden, source)
+
+    def test_queue_is_bounded_and_rejects_duplicates(self) -> None:
+        path = ADDON / "request_queue.gd"
+        self.assertTrue(path.is_file(), "missing request_queue.gd")
+        source = path.read_text(encoding="utf-8")
+        self.assertIn("const MAX_PENDING := 64", source)
+        self.assertIn("QUEUE_FULL", source)
+        self.assertIn("DUPLICATE_OPERATION_ID", source)
+        self.assertIn("OPERATION_ID_REQUIRED", source)
+        self.assertIn("envelope.duplicate(true)", source)
+
+    def test_guard_rechecks_exact_v2_bindings(self) -> None:
+        path = ADDON / "runtime_contract_guard.gd"
+        self.assertTrue(path.is_file(), "missing runtime_contract_guard.gd")
+        source = path.read_text(encoding="utf-8")
+        for marker in (
+            "schema_version",
+            "project_fingerprint",
+            "automation_service_instance_id",
+            "editor_instance_id",
+            "contract_snapshot",
+            "capability_id",
+            "approval",
+            "request_hash",
+            "TARGET_STATE_CONFLICT",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, source)
+        self.assertIn("validate_for_enqueue", source)
+        self.assertIn("validate_before_execute", source)
+
+    def test_state_probe_uses_editor_owned_state(self) -> None:
+        path = ADDON / "editor_state_probe.gd"
+        self.assertTrue(path.is_file(), "missing editor_state_probe.gd")
+        source = path.read_text(encoding="utf-8")
+        for marker in (
+            "EditorInterface.get_unsaved_scenes()",
+            "get_object_history_id",
+            "get_history_undo_redo",
+            "get_version()",
+            "HashingContext.HASH_SHA256",
+            "ProjectSettings.globalize_path",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, source)
+
+    def test_registry_allows_only_inspect_and_rename(self) -> None:
+        path = ADDON / "capability_registry.gd"
+        self.assertTrue(path.is_file(), "missing capability_registry.gd")
+        source = path.read_text(encoding="utf-8")
+        self.assertIn('"scene.inspect"', source)
+        self.assertIn('"node.rename"', source)
+        self.assertIn("UNKNOWN_CAPABILITY", source)
+        self.assertIn("ABSOLUTE_NODE_PATH_FORBIDDEN", source)
+        self.assertIn("NODE_OUTSIDE_EDITED_SCENE", source)
+        self.assertIn("INVALID_NODE_NAME", source)
+        self.assertNotIn("set_indexed", source)
+
+    def test_ledger_and_evidence_are_atomic_and_confined(self) -> None:
+        ledger_path = ADDON / "operation_ledger.gd"
+        evidence_path = ADDON / "evidence_writer.gd"
+        self.assertTrue(ledger_path.is_file(), "missing operation_ledger.gd")
+        self.assertTrue(evidence_path.is_file(), "missing evidence_writer.gd")
+        ledger = ledger_path.read_text(encoding="utf-8")
+        evidence = evidence_path.read_text(encoding="utf-8")
+        for source in (ledger, evidence):
+            self.assertIn("ProjectSettings.globalize_path", source)
+            self.assertIn(".tmp", source)
+            self.assertIn("rename_absolute", source)
+        self.assertIn("HashingContext.HASH_SHA256", evidence)
+        self.assertIn("LEDGER_STATE_INVALID", ledger)
+        self.assertIn("STARTED", ledger)
+        self.assertIn("COMPLETED", ledger)
+        self.assertIn("FAILED", ledger)
+        self.assertIn("character.is_valid_int()", ledger)
+
+    def test_executor_orders_precondition_ledger_undo_save_and_terminal_state(self) -> None:
+        path = ADDON / "editor_transaction_executor.gd"
+        self.assertTrue(path.is_file(), "missing editor_transaction_executor.gd")
+        source = path.read_text(encoding="utf-8")
+        markers = [
+            "validate_before_execute",
+            "record_started",
+            "create_action",
+            "add_do_property",
+            "add_undo_property",
+            "commit_action",
+            "mark_scene_as_unsaved",
+            "save_scene",
+            "update_file",
+            "sha256_file",
+            "record_terminal",
+        ]
+        positions = [source.index(marker) for marker in markers]
+        self.assertEqual(sorted(positions), positions)
+
+    def test_executor_has_stable_failure_codes(self) -> None:
+        path = ADDON / "editor_transaction_executor.gd"
+        self.assertTrue(path.is_file(), "missing editor_transaction_executor.gd")
+        source = path.read_text(encoding="utf-8")
+        for code in (
+            "TARGET_STATE_CONFLICT",
+            "LEDGER_START_FAILED",
+            "UNDO_REDO_BUSY",
+            "SAVE_FAILED",
+            "OUTPUT_SCHEMA_INVALID",
+            "EVIDENCE_WRITE_FAILED",
+        ):
+            with self.subTest(code=code):
+                self.assertIn(code, source)
+
+    def test_plugin_is_composition_only_and_network_disabled(self) -> None:
+        path = ADDON / "plugin.gd"
+        self.assertTrue(path.is_file(), "missing plugin.gd")
+        source = path.read_text(encoding="utf-8")
+        self.assertIn("extends EditorPlugin", source)
+        self.assertIn(
+            "func submit_validated_operation(envelope: Dictionary) -> Dictionary:",
+            source,
+        )
+        self.assertIn("func _process(_delta: float) -> void:", source)
+        self.assertIn("execute(envelope)", source)
+        self.assertIn("_queue.clear()", source)
+        self.assertIn("network_listener_enabled", source)
+        self.assertIn("ADAPTER_NOT_CONFIGURED", source)
+        self.assertIn('transport.get("kind") != "PROJECT_DEFINED"', source)
+        self.assertIn(
+            'const IN_PROCESS_ENDPOINT := "in-process-editor-plugin"',
+            source,
+        )
+        self.assertIn(
+            'transport.get("endpoint_identity") != IN_PROCESS_ENDPOINT',
+            source,
+        )
+        self.assertIn("transport.get(\"bind_host\") != null", source)
+
+    def test_active_docs_and_source_template_keep_transport_states_distinct(self) -> None:
+        active_paths = (
+            ADDON / "README.md",
+            ROOT
+            / "templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md",
+            ROOT / "templates/project-operations/godot-live-editor/AGENTS_FRAGMENT.md",
+        )
+        for path in active_paths:
+            with self.subTest(path=path):
+                text = path.read_text(encoding="utf-8")
+                self.assertIn("PROJECT_DEFINED", text)
+                self.assertIn("in-process-editor-plugin", text)
+                self.assertIn("bind_host: null", text)
+                self.assertNotIn(
+                    "configured v2 Manifest and `transport.kind: DISABLED`",
+                    text,
+                )
+
+        source_manifest = json.loads(
+            (
+                ROOT
+                / "examples/godot-live-editor-v2-editor-pilot/GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual("NOT_CONFIGURED", source_manifest["configuration_state"])
+        self.assertEqual("DISABLED", source_manifest["transport"]["kind"])
+        self.assertFalse(source_manifest["transport"]["enabled"])
+
+
+if __name__ == "__main__":
+    unittest.main()
