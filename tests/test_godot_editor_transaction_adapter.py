@@ -66,7 +66,9 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
                 self.assertNotIn(forbidden, source)
 
     def test_queue_is_bounded_and_rejects_duplicates(self) -> None:
-        source = (ADDON / "request_queue.gd").read_text(encoding="utf-8")
+        path = ADDON / "request_queue.gd"
+        self.assertTrue(path.is_file(), "missing request_queue.gd")
+        source = path.read_text(encoding="utf-8")
         self.assertIn("const MAX_PENDING := 64", source)
         self.assertIn("QUEUE_FULL", source)
         self.assertIn("DUPLICATE_OPERATION_ID", source)
@@ -74,7 +76,9 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn("envelope.duplicate(true)", source)
 
     def test_guard_rechecks_exact_v2_bindings(self) -> None:
-        source = (ADDON / "runtime_contract_guard.gd").read_text(encoding="utf-8")
+        path = ADDON / "runtime_contract_guard.gd"
+        self.assertTrue(path.is_file(), "missing runtime_contract_guard.gd")
+        source = path.read_text(encoding="utf-8")
         for marker in (
             "schema_version",
             "project_fingerprint",
