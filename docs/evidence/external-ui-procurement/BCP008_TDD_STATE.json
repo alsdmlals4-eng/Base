@@ -1,0 +1,9 @@
+{
+  "phase": "RED_EXPECTED",
+  "baseline": "cabbc59b170c5da2bb1df7e4d4d535857dd35495",
+  "branch": "agent/implement-bcp-008-spec-design-ui",
+  "focused_tests": 5,
+  "production_implementation": "NOT_STARTED",
+  "exact_head_ci": "NOT_RUN",
+  "merge_authorization": "NOT_GRANTED"
+}
