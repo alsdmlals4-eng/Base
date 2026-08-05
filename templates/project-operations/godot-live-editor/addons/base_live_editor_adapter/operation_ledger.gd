@@ -26,10 +26,7 @@ func record_started(
     var request_hash := str(envelope.get("request_hash", ""))
     var existing := read_record(operation_id)
     if not existing.is_empty():
-        if (
-            existing.get("state") == "COMPLETED"
-            and existing.get("request_hash") == request_hash
-        ):
+        if existing.get("state") == "COMPLETED" and existing.get("request_hash") == request_hash:
             return {
                 "ok": true,
                 "code": "IDEMPOTENT_REPLAY",
@@ -44,7 +41,7 @@ func record_started(
         "state": "STARTED",
         "observation": observation.duplicate(true),
         "result": null,
-        "updated_at": Time.get_datetime_string_from_system(true, true),
+        "updated_at": _rfc3339_now(),
     }
     var write_result := _write_record(operation_id, payload)
     if not write_result.get("ok", false):
@@ -64,7 +61,7 @@ func record_terminal(
         return {"ok": false, "code": "LEDGER_STATE_INVALID"}
     existing["state"] = state
     existing["result"] = result.duplicate(true)
-    existing["updated_at"] = Time.get_datetime_string_from_system(true, true)
+    existing["updated_at"] = _rfc3339_now()
     var write_result := _write_record(operation_id, existing)
     if not write_result.get("ok", false):
         return write_result
@@ -74,8 +71,10 @@ func record_terminal(
 func read_record(operation_id: String) -> Dictionary:
     if not _safe_name(operation_id):
         return {}
-    var path := _record_path(operation_id)
-    var file := FileAccess.open(ProjectSettings.globalize_path(path), FileAccess.READ)
+    var file := FileAccess.open(
+        ProjectSettings.globalize_path(_record_path(operation_id)),
+        FileAccess.READ,
+    )
     if file == null:
         return {}
     var parsed = JSON.parse_string(file.get_as_text())
@@ -87,8 +86,7 @@ func _write_record(operation_id: String, payload: Dictionary) -> Dictionary:
         return {"ok": false, "code": "OPERATION_ID_INVALID"}
     var target_path := ProjectSettings.globalize_path(_record_path(operation_id))
     var temp_path := target_path + ".tmp"
-    var directory := target_path.get_base_dir()
-    if DirAccess.make_dir_recursive_absolute(directory) != OK:
+    if DirAccess.make_dir_recursive_absolute(target_path.get_base_dir()) != OK:
         return {"ok": false, "code": "LEDGER_WRITE_FAILED"}
     var file := FileAccess.open(temp_path, FileAccess.WRITE)
     if file == null:
@@ -104,6 +102,10 @@ func _write_record(operation_id: String, payload: Dictionary) -> Dictionary:
 
 func _record_path(operation_id: String) -> String:
     return "%s/%s.json" % [_root_path, operation_id]
+
+
+func _rfc3339_now() -> String:
+    return Time.get_datetime_string_from_system(true, false) + "Z"
 
 
 func _safe_name(value: String) -> bool:
