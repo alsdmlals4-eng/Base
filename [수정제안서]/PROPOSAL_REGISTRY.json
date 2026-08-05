@@ -62,12 +62,12 @@
       "proposal_id": "BCP-2026-006-game-youtube-devlog-marketing-workflow",
       "title": "게임 개발 YouTube 개발일지·마케팅 제작 Workflow",
       "path": "[수정제안서]/BCP-2026-006-game-youtube-devlog-marketing-workflow/PROPOSAL.md",
-      "status": "APPROVED_FOR_IMPLEMENTATION",
+      "status": "IMPLEMENTED",
       "source_project": "alsdmlals4-eng/Base",
       "source_commit": "ecbd93f16b65a1527269bfd8fef9facad6b2f40b",
       "submitted_at": "2026-08-05",
       "approval_ref": "https://github.com/alsdmlals4-eng/Base/pull/167#issuecomment-5192600204",
-      "implementation_pr": null
+      "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/174"
     },
     {
       "proposal_id": "BCP-2026-007-cloud-run-game-backend-and-entitlement-integrity",
