@@ -174,6 +174,22 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
             with self.subTest(code=code):
                 self.assertIn(code, source)
 
+    def test_plugin_is_composition_only_and_network_disabled(self) -> None:
+        path = ADDON / "plugin.gd"
+        self.assertTrue(path.is_file(), "missing plugin.gd")
+        source = path.read_text(encoding="utf-8")
+        self.assertIn("extends EditorPlugin", source)
+        self.assertIn(
+            "func submit_validated_operation(envelope: Dictionary) -> Dictionary:",
+            source,
+        )
+        self.assertIn("func _process(_delta: float) -> void:", source)
+        self.assertIn("execute(envelope)", source)
+        self.assertIn("_queue.clear()", source)
+        self.assertIn("network_listener_enabled", source)
+        self.assertIn("ADAPTER_NOT_CONFIGURED", source)
+        self.assertIn('transport.get("kind") != "DISABLED"', source)
+
 
 if __name__ == "__main__":
     unittest.main()
