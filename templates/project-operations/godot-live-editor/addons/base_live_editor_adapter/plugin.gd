@@ -10,6 +10,7 @@ const EvidenceWriter = preload("evidence_writer.gd")
 const EditorTransactionExecutor = preload("editor_transaction_executor.gd")
 const MANIFEST_PATH := "res://GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json"
 const MAX_COMPLETED_RESULTS := 64
+const IN_PROCESS_ENDPOINT := "in-process-editor-plugin"
 
 var network_listener_enabled := false
 var _available := false
@@ -139,9 +140,22 @@ func _manifest_is_usable(manifest: Dictionary) -> bool:
     if manifest.get("configuration_state") != "CONFIGURED":
         return false
     var transport: Dictionary = manifest.get("transport", {})
-    if transport.get("kind") != "DISABLED":
+    if transport.get("kind") != "PROJECT_DEFINED":
         return false
-    if transport.get("enabled") != false:
+    if transport.get("enabled") != true:
+        return false
+    if transport.get("bind_host") != null:
+        return false
+    if transport.get("endpoint_identity") != IN_PROCESS_ENDPOINT:
+        return false
+    var access: Dictionary = transport.get("access_control", {})
+    if access.get("authentication_mode") != "NOT_APPLICABLE":
+        return false
+    if access.get("origin_policy") != "NOT_APPLICABLE":
+        return false
+    if access.get("session_binding") != "NOT_APPLICABLE":
+        return false
+    if access.get("os_access_control") != "CURRENT_USER_ONLY":
         return false
     var project_identity: Dictionary = manifest.get("project_identity", {})
     if str(project_identity.get("project_fingerprint", "")).is_empty():
