@@ -1,0 +1,56 @@
+{
+  "schema_version": 2,
+  "artifact_role": "GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST",
+  "configuration_state": "NOT_CONFIGURED",
+  "contract_version": "2.0.0",
+  "adapter_version": "2.0.0",
+  "project_identity": {
+    "normalized_project_path": null,
+    "project_godot_sha256": null,
+    "project_fingerprint": null
+  },
+  "engine_compatibility": {
+    "detected_version": null,
+    "minimum_version": "4.7.0",
+    "maximum_exclusive_version": "4.8.0"
+  },
+  "tool_adoption": {
+    "source": null,
+    "exact_version": null,
+    "telemetry_policy": "DISABLED",
+    "external_data_policy": "DENY_BY_DEFAULT",
+    "uninstall_procedure": null,
+    "rollback_reference": null
+  },
+  "transport": {
+    "kind": "DISABLED",
+    "enabled": false,
+    "bind_host": null,
+    "endpoint_identity": null,
+    "protocol_profile": "GENERIC",
+    "protocol_version": null,
+    "access_control": {
+      "authentication_mode": "NOT_APPLICABLE",
+      "origin_policy": "NOT_APPLICABLE",
+      "session_binding": "NOT_APPLICABLE",
+      "os_access_control": "CURRENT_USER_ONLY"
+    }
+  },
+  "catalog": {
+    "generated_at": null,
+    "sha256": null,
+    "freshness_state": "NOT_CONFIGURED"
+  },
+  "project_test_framework": {
+    "state": "NOT_CONFIGURED",
+    "runner_capability_id": null
+  },
+  "capabilities": [],
+  "validation": {
+    "contract_state": "CONTRACT_PASS",
+    "execution_state": "NOT_RUN",
+    "runtime_state": "NOT_RUN",
+    "physical_input_state": "NOT_RUN",
+    "human_state": "HUMAN_NOT_RUN"
+  }
+}
