@@ -32,7 +32,7 @@ def test_design_md_template_is_visual_only_and_version_pinned() -> None:
 def test_game_ux_ui_remains_behavior_owner() -> None:
     ux = read("templates/planning/GAME_UX_UI_SYSTEM.md")
     adapter = read(
-        "skills/auditing-and-refining-ui-art/references/design-md-project-adapter.md"
+        "skills/auditing-and-refining-ui-art/references/ux-ui-design-system-method.md"
     )
     assert "DESIGN.md" in ux
     assert "시각 토큰" in ux

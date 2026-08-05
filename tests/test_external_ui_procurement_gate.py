@@ -10,7 +10,7 @@ def read(path: str) -> str:
 def test_external_ui_gate_is_fail_closed_and_platform_aware() -> None:
     reference = read(
         "skills/auditing-and-refining-ui-art/references/"
-        "external-ui-procurement-and-anti-generic-quality.md"
+        "ux-ui-design-system-method.md"
     )
     for token in (
         "registry_source",

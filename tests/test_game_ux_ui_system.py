@@ -25,8 +25,6 @@ class GameUxUiSystemContractTests(unittest.TestCase):
             REFERENCE_ROOT / "godot-ui-implementation-contract.md",
             REFERENCE_ROOT / "project-adapter-contract.md",
             REFERENCE_ROOT / "ui-polishing-method.md",
-            REFERENCE_ROOT / "design-md-project-adapter.md",
-            REFERENCE_ROOT / "external-ui-procurement-and-anti-generic-quality.md",
             ROOT / "templates/planning/PROJECT_DESIGN_MD_TEMPLATE.md",
             PLANNING_TEMPLATE,
             REFERENCE_CARD,
@@ -298,8 +296,8 @@ class GameUxUiSystemContractTests(unittest.TestCase):
     def test_bcp008_visual_token_and_procurement_extensions_are_routed(self) -> None:
         method = (REFERENCE_ROOT / "ux-ui-design-system-method.md").read_text(encoding="utf-8")
         for required in (
-            "design-md-project-adapter.md",
-            "external-ui-procurement-and-anti-generic-quality.md",
+            "### 6.1 Project DESIGN.md Adapter",
+            "### 6.2 External UI Procurement and Anti-Generic Quality Gate",
             "외부 Web UI",
         ):
             self.assertIn(required, method)
