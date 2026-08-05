@@ -25,6 +25,12 @@ RELEASE_PACK = (
     / "project-operations"
     / "GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK.md"
 )
+LEARNING_LOG = (
+    ROOT
+    / "skills"
+    / "managing-game-project-operating-system"
+    / "LEARNING_LOG.md"
+)
 
 
 def read(path: Path | str) -> str:
@@ -36,7 +42,7 @@ class PlatformReviewAssetRightsReferenceProductionTests(unittest.TestCase):
     maxDiff = None
 
     def test_required_artifacts_exist(self) -> None:
-        required = (GUIDE, ASSET_RECORD, RELEASE_PACK)
+        required = (GUIDE, ASSET_RECORD, RELEASE_PACK, LEARNING_LOG)
         missing = [
             str(path.relative_to(ROOT))
             for path in required
@@ -249,7 +255,7 @@ class PlatformReviewAssetRightsReferenceProductionTests(unittest.TestCase):
             self.assertIn(term, guide)
 
         changelog = read("docs/CHANGELOG.md")
-        learning = read("skills/SKILL_LEARNING_LOG.md")
+        learning = read(LEARNING_LOG)
         self.assertIn("LOWEST_VIABLE_RATING", changelog)
         self.assertIn("참조 기반 독립 제작", changelog)
         self.assertIn("새 광역 Skill을 추가하지 않음", learning)
