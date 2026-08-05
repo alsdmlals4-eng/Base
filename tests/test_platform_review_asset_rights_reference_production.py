@@ -157,6 +157,7 @@ class PlatformReviewAssetRightsReferenceProductionTests(unittest.TestCase):
     def test_existing_skill_routes_consume_the_contract(self) -> None:
         files = (
             "skills/managing-game-project-operating-system/SKILL.md",
+            "skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md",
             "skills/designing-art-prompts-and-technique-cards/SKILL.md",
             "skills/designing-vertical-slices/SKILL.md",
             "skills/reviewing-and-validating-project-changes/SKILL.md",
