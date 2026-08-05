@@ -63,9 +63,12 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 | Vertical Slice 품질·플레이·제작 파이프라인 | `designing-vertical-slices` | `skills/designing-vertical-slices/SKILL.md` |
 | 아트 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` | `skills/designing-art-prompts-and-technique-cards/SKILL.md` |
 | Godot 에셋·플러그인 제작 전 조사·라이선스·구매 판단 | `evaluating-godot-assets-and-plugins-before-creation` | `skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md` |
+| Steam·STOVE·Google Play 등급·설문·자산 권리·참조 독립 제작 | 기존 프로젝트 운영·에셋 평가·아트·Vertical Slice·검증 Skill 조합 | `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md` |
 | 게임 UX/UI 설계·폴리싱·구현 결과 감사 | `auditing-and-refining-ui-art` | `skills/auditing-and-refining-ui-art/SKILL.md` |
 | 외부 AI 작업 공간 운용 | `orchestrating-deepseek-worktrees` | `skills/orchestrating-deepseek-worktrees/SKILL.md` |
 | AI 모델·추론 effort·Prompt cache·실측 비용 최적화 | `optimizing-ai-model-and-prompt-costs` | `skills/optimizing-ai-model-and-prompt-costs/SKILL.md` |
+
+플랫폼·자산 Guide는 새 광역 Skill이 아니다. 프로젝트의 `ASSET_RIGHTS_AND_PROVENANCE_RECORD`와 `GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK`을 기존 책임 경로가 생산·검증하며, 필수 증거가 없으면 `RELEASE_BLOCKED_UNVERIFIED`다.
 
 활성 Skill의 trigger·비사용 조건·입력·출력·실패·검증은 `skills/SKILL_REGISTRY.json`과 해당 `SKILL.md`가 책임진다. Skill 이름을 사용자에게 고르게 하거나 전체 Skill을 기본 로드하지 않는다.
 
