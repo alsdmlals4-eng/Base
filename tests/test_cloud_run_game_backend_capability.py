@@ -1,0 +1,284 @@
+from __future__ import annotations
+
+import json
+import unittest
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+GUIDE = (
+    ROOT
+    / "docs"
+    / "knowledge"
+    / "game-development"
+    / "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md"
+)
+CONTRACT = (
+    ROOT
+    / "templates"
+    / "project-operations"
+    / "GAME_BACKEND_SERVICE_CONTRACT.md"
+)
+REGISTRY = ROOT / "skills" / "SKILL_REGISTRY.json"
+SHARED_ROUTES = ROOT / "skills" / "BASE_SHARED_SKILL_ROUTES.json"
+
+
+def read(path: Path | str) -> str:
+    target = path if isinstance(path, Path) else ROOT / path
+    return target.read_text(encoding="utf-8")
+
+
+class CloudRunGameBackendCapabilityTests(unittest.TestCase):
+    maxDiff = None
+
+    def test_required_artifacts_exist(self) -> None:
+        required = (GUIDE, CONTRACT)
+        missing = [
+            str(path.relative_to(ROOT))
+            for path in required
+            if not path.is_file()
+        ]
+        self.assertEqual([], missing)
+
+    def test_cloud_run_fit_lifecycle_is_conditional(self) -> None:
+        guide = read(GUIDE)
+        for term in (
+            "SERVER_FEATURE_DETECTED",
+            "CLOUD_RUN_DEFAULT_CANDIDATE",
+            "FIT_AND_RISK_ASSESSMENT",
+            "PROJECT_OWNED_SERVICE_CONTRACT",
+            "CLOUD_RUN_RECOMMENDED",
+            "CLOUD_RUN_CONDITIONAL",
+            "ALTERNATIVE_ARCHITECTURE_REQUIRED",
+            "SERVER_NOT_REQUIRED",
+            "BLOCKED_UNVERIFIED",
+        ):
+            self.assertIn(term, guide)
+        self.assertNotIn("CLOUD_RUN_REQUIRED", guide)
+
+    def test_unsuitable_realtime_and_state_assumptions_are_rejected(self) -> None:
+        guide = read(GUIDE)
+        for term in (
+            "high-frequency authoritative realtime",
+            "UDP",
+            "indefinite worker",
+            "instance-local durable authority",
+            "external persistent datastore",
+            "modular monolith",
+            "scale-to-zero",
+        ):
+            self.assertIn(term, guide)
+
+    def test_api_mutation_and_identity_contract(self) -> None:
+        guide = read(GUIDE)
+        for field in (
+            "operation_id:",
+            "actor_identity:",
+            "authorization_scope:",
+            "request_schema:",
+            "request_version:",
+            "resource_version_or_precondition:",
+            "idempotency_key:",
+            "rate_limit_class:",
+            "timeout_budget:",
+            "error_codes:",
+            "retry_policy:",
+            "audit_fields:",
+            "sensitive_log_redaction:",
+        ):
+            self.assertIn(field, guide)
+        for term in (
+            "service identity",
+            "end-user identity",
+            "domain authorization",
+            "authenticate",
+            "authorize",
+            "idempotency",
+            "replay",
+            "transaction",
+            "durable result",
+        ):
+            self.assertIn(term, guide)
+
+    def test_secrets_and_privileged_routes_stay_server_side(self) -> None:
+        guide = read(GUIDE)
+        for term in (
+            "Secret Manager",
+            "service account",
+            "least privilege",
+            "administrator route",
+            "client export",
+            "repository",
+            "sensitive log redaction",
+        ):
+            self.assertIn(term, guide)
+
+    def test_websocket_contract_requires_recovery_and_cost_evidence(self) -> None:
+        guide = read(GUIDE)
+        for term in (
+            "request timeout",
+            "client reconnect",
+            "external state",
+            "duplicate",
+            "out-of-order",
+            "BEST_EFFORT_ONLY",
+            "degraded mode",
+            "connection cost",
+        ):
+            self.assertIn(term, guide)
+
+    def test_capacity_cost_and_provider_exit_are_explicit(self) -> None:
+        guide = read(GUIDE)
+        for field in (
+            "minimum_instances:",
+            "maximum_instances:",
+            "concurrency:",
+            "database_connections:",
+            "quota:",
+            "budget_alert:",
+            "load_test_result:",
+            "cost_per_active_user_or_match:",
+            "provider_exit:",
+        ):
+            self.assertIn(field, guide)
+
+    def test_ai_proxy_is_bounded_and_not_domain_authority(self) -> None:
+        guide = read(GUIDE)
+        for term in (
+            "bounded game intent",
+            "quota",
+            "output validation",
+            "privacy",
+            "provider failure",
+            "safety filter",
+            "budget fallback",
+            "LLM_ONLY_PAYMENT_AUTHORITY",
+            "LLM_ONLY_REWARD_AUTHORITY",
+            "LLM_ONLY_SANCTION_AUTHORITY",
+            "LLM_ONLY_PERMANENT_SAVE_AUTHORITY",
+        ):
+            self.assertIn(term, guide)
+
+    def test_project_contract_has_required_sections_and_fields(self) -> None:
+        contract = read(CONTRACT)
+        for heading in (
+            "## Player value and server feature",
+            "## Fit decision and rejected alternatives",
+            "## Authority and persistent state",
+            "## API and request lifecycle",
+            "## Identity and authorization",
+            "## Data model and migration",
+            "## Idempotency, replay, transaction, and retry",
+            "## Realtime and connection model",
+            "## Async tasks and events",
+            "## AI proxy and provider limits",
+            "## Secrets and service identity",
+            "## Privacy, retention, and region",
+            "## Capacity, cost, quota, and alerts",
+            "## Failure, degradation, backup, and rollback",
+            "## Runtime, load, failure, and cost evidence",
+            "## Current readiness and remaining gates",
+        ):
+            self.assertIn(heading, contract)
+        for term in (
+            "NOT_REQUIRED",
+            "CANDIDATE",
+            "SELECTED",
+            "CONFIGURED",
+            "STATIC_VERIFIED",
+            "RUNTIME_VERIFIED",
+            "LOAD_AND_FAILURE_VERIFIED",
+            "PRODUCTION_READY",
+            "NOT_RUN",
+        ):
+            self.assertIn(term, contract)
+
+    def test_official_sources_and_evidence_ceiling_are_explicit(self) -> None:
+        guide = read(GUIDE)
+        for domain in (
+            "cloud.google.com/run/docs",
+            "docs.cloud.google.com/run/docs",
+        ):
+            self.assertIn(domain, guide)
+        for term in (
+            "deployment: NOT_RUN",
+            "runtime: NOT_RUN",
+            "load: NOT_RUN",
+            "failure: NOT_RUN",
+            "cost: NOT_RUN",
+            "security: NOT_RUN",
+            "PRODUCTION_READY is project evidence only",
+        ):
+            self.assertIn(term, guide)
+
+    def test_existing_owners_and_discovery_surfaces_route_the_capability(self) -> None:
+        guide_path = (
+            "docs/knowledge/game-development/"
+            "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md"
+        )
+        contract_path = "templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md"
+
+        for path in (
+            "docs/knowledge/game-development/README.md",
+            "docs/knowledge/game-development/TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md",
+            "docs/DOCUMENTATION_MAP.md",
+            "START_HERE.md",
+        ):
+            self.assertIn(guide_path, read(path), path)
+
+        owner_expectations = {
+            "skills/analyzing-and-refining-game-concepts/SKILL.md": (
+                guide_path,
+                "SERVER_FEATURE_DETECTED",
+            ),
+            "skills/managing-game-project-operating-system/SKILL.md": (
+                guide_path,
+                contract_path,
+                "PROJECT_OWNED_SERVICE_CONTRACT",
+            ),
+            "skills/designing-vertical-slices/SKILL.md": (
+                guide_path,
+                "RUNTIME_VERIFIED",
+            ),
+            "skills/reviewing-and-validating-project-changes/SKILL.md": (
+                guide_path,
+                "LOAD_AND_FAILURE_VERIFIED",
+            ),
+            "skills/optimizing-ai-model-and-prompt-costs/SKILL.md": (
+                guide_path,
+                "bounded AI proxy",
+            ),
+        }
+        for path, terms in owner_expectations.items():
+            text = read(path)
+            for term in terms:
+                self.assertIn(term, text, path)
+
+        evidence = read("templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md")
+        self.assertIn(contract_path, evidence)
+        governance = json.loads(
+            read("templates/project-operations/github/documentation-governance.json")
+        )
+        serialized = json.dumps(governance, ensure_ascii=False, sort_keys=True)
+        for term in (
+            "GAME_BACKEND_SERVICE_CONTRACT",
+            "CLOUD_RUN_DEFAULT_CANDIDATE",
+            "BLOCKED_UNVERIFIED",
+        ):
+            self.assertIn(term, serialized)
+
+    def test_no_active_skill_or_shared_project_route_is_added(self) -> None:
+        registry = read(REGISTRY)
+        shared_routes = read(SHARED_ROUTES)
+        for token in (
+            "cloud-run-game-backend",
+            "game-backend-cloud-run",
+            "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md",
+            "GAME_BACKEND_SERVICE_CONTRACT.md",
+        ):
+            self.assertNotIn(token, registry)
+            self.assertNotIn(token, shared_routes)
+
+
+if __name__ == "__main__":
+    unittest.main()
