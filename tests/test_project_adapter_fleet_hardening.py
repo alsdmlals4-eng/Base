@@ -106,13 +106,16 @@ class ProjectAdapterFleetHardeningTests(unittest.TestCase):
                 f"Pinned validator commit lacks required fleet hardening in {path}",
             )
 
-    def test_decision_records_the_approved_recommended_options(self) -> None:
+    def test_decision_records_approval_and_clean_implementation_pr(self) -> None:
         text = DECISION.read_text(encoding="utf-8")
         for token in (
             "status: APPROVED",
             "protected_baseline_policy: OPTION_A_EXACT_TRUSTED_BASE_EQUALITY",
             "grimoire_adapter_authority: OPTION_A_RESTORE_BASE_V1_THIN_ADAPTER",
             APPROVAL_REF,
+            "base_pr_source: 175",
+            "implementation_pr: 185",
+            "after Base PR #185 passes current-main review and merges",
             "project_mutation: AUTHORIZED_NOT_STARTED",
         ):
             self.assertIn(token, text)
