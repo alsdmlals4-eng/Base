@@ -1,13 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
-
-TEST_PATH = Path("tests/test_game_entitlement_integrity_drm_capability.py")
-LOCAL_VALIDATION = Path("tests/test_local_validation.py")
-V9_MACHINE = Path("tests/test_v9_machine_contracts.py")
-
-TEST_CONTENT = r'''from __future__ import annotations
-
 import json
 import unittest
 from pathlib import Path
@@ -327,30 +319,3 @@ class GameEntitlementIntegrityDrmCapabilityTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-'''
-
-IMPORT_BLOCK = '''from tests.test_game_entitlement_integrity_drm_capability import (
-    GameEntitlementIntegrityDrmCapabilityTests
-    as _GameEntitlementIntegrityDrmCapabilityTests,
-)
-'''
-
-
-def insert_before(path: Path, marker: str, block: str) -> None:
-    text = path.read_text(encoding="utf-8")
-    if "test_game_entitlement_integrity_drm_capability" in text:
-        return
-    if marker not in text:
-        raise RuntimeError(f"marker not found in {path}: {marker}")
-    path.write_text(text.replace(marker, block + marker, 1), encoding="utf-8")
-
-
-def main() -> int:
-    TEST_PATH.write_text(TEST_CONTENT, encoding="utf-8")
-    insert_before(LOCAL_VALIDATION, "from tools import run_local_validation as runner\n", IMPORT_BLOCK)
-    insert_before(V9_MACHINE, "\n\nROOT = Path(__file__).resolve().parents[1]\n", "\n" + IMPORT_BLOCK)
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
