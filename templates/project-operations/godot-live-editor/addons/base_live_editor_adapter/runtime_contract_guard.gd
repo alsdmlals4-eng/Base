@@ -69,8 +69,14 @@ func validate_for_enqueue(envelope: Dictionary) -> PackedStringArray:
     if capability.get("approval_policy") == "REQUIRED":
         if approval.get("state") != "APPROVED":
             _append_unique(errors, "APPROVAL_REQUIRED")
+        elif str(approval.get("token_id", "")).is_empty():
+            _append_unique(errors, "APPROVAL_BINDING_MISMATCH")
         elif approval.get("consumed_by_operation_id") != envelope.get("operation_id"):
             _append_unique(errors, "APPROVAL_BINDING_MISMATCH")
+        elif approval.get("token_binding", {}) != _approval_binding(envelope):
+            _append_unique(errors, "APPROVAL_BINDING_MISMATCH")
+        elif _approval_expired(approval):
+            _append_unique(errors, "APPROVAL_EXPIRED")
     elif approval.get("state") != "NOT_REQUIRED":
         _append_unique(errors, "APPROVAL_STATE_INVALID")
 
@@ -97,6 +103,27 @@ func validate_before_execute(
             _append_unique(errors, "TARGET_STATE_CONFLICT")
             break
     return errors
+
+
+func _approval_binding(envelope: Dictionary) -> Dictionary:
+    return {
+        "operation_id": envelope.get("operation_id"),
+        "capability_id": envelope.get("capability_id"),
+        "project_identity": envelope.get("project_identity", {}).duplicate(true),
+        "instance_identity": envelope.get("instance_identity", {}).duplicate(true),
+        "contract_snapshot": envelope.get("contract_snapshot", {}).duplicate(true),
+        "policy": envelope.get("policy", {}).duplicate(true),
+        "request_hash": envelope.get("request_hash"),
+        "preconditions": envelope.get("preconditions", {}).duplicate(true),
+    }
+
+
+func _approval_expired(approval: Dictionary) -> bool:
+    var expires_at := str(approval.get("expires_at", ""))
+    if expires_at.is_empty():
+        return true
+    var expires_unix := Time.get_unix_time_from_datetime_string(expires_at)
+    return expires_unix <= 0 or expires_unix <= Time.get_unix_time_from_system()
 
 
 func _contract_snapshot(capability: Dictionary) -> Dictionary:
