@@ -66,8 +66,15 @@ class GodotEditorTransactionAdapterRuntimeTests(unittest.TestCase):
                 )
             )
             self.assertEqual("CONFIGURED", manifest["configuration_state"])
-            self.assertEqual("DISABLED", manifest["transport"]["kind"])
-            self.assertFalse(manifest["transport"]["enabled"])
+            transport = manifest["transport"]
+            self.assertEqual("PROJECT_DEFINED", transport["kind"])
+            self.assertTrue(transport["enabled"])
+            self.assertIsNone(transport["bind_host"])
+            self.assertEqual("in-process-editor-plugin", transport["endpoint_identity"])
+            self.assertEqual(
+                "CURRENT_USER_ONLY",
+                transport["access_control"]["os_access_control"],
+            )
             self.assertEqual(
                 {"scene.inspect", "node.rename"},
                 {item["capability_id"] for item in manifest["capabilities"]},
