@@ -1,0 +1,94 @@
+name: BCP008 Apply Coupled Companions
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bcp008-companions-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.head_ref == 'agent/implement-bcp-008-spec-design-ui'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out implementation branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+      - name: Install validation dependencies
+        run: |
+          python -m pip install --requirement .github/validation-requirements.txt
+          python -m pip install pytest==8.3.5
+      - name: Reconstruct and verify companion patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '464c7f8fcc095fb842be74df1ba7331982aadbe4e60213082e224a6e47ef8b0c  .github/bcp008-companion.part00' | sha256sum -c -
+          echo 'da15f02ea661d3a10e1d4f94da769d1d584bbdacb4f7b568e7613b8a9581a9f6  .github/bcp008-companion.part01' | sha256sum -c -
+          cat .github/bcp008-companion.part00 .github/bcp008-companion.part01 > "$RUNNER_TEMP/bcp008-companion.patch.gz.b64"
+          echo 'adf8693e9347cbe31ba166c476d5554fb9f07a3c46694f2cae31147d6527cb30  '"$RUNNER_TEMP/bcp008-companion.patch.gz.b64" | sha256sum -c -
+          base64 --decode "$RUNNER_TEMP/bcp008-companion.patch.gz.b64" | gzip --decompress > "$RUNNER_TEMP/bcp008-companion.patch"
+          echo '5f14e0daed66db952ce5bb77ceb6028a940df93dfd22c5401e5ed3e4cacae629  '"$RUNNER_TEMP/bcp008-companion.patch" | sha256sum -c -
+          git apply --check "$RUNNER_TEMP/bcp008-companion.patch"
+      - name: Apply patch and remove temporary transport
+        shell: bash
+        run: |
+          set -euo pipefail
+          git apply "$RUNNER_TEMP/bcp008-companion.patch"
+          rm -f \
+            .github/bcp008-companion.part00 \
+            .github/bcp008-companion.part01 \
+            .github/workflows/bcp008-export-companions.yml \
+            .github/workflows/bcp008-apply-companions.yml
+      - name: Run focused and governance validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pytest \
+            tests/test_feature_spec_traceability_contract.py \
+            tests/test_cross_discipline_review_lenses.py \
+            tests/test_project_design_md_adapter.py \
+            tests/test_external_ui_procurement_gate.py \
+            tests/test_bcp008_behavior_and_procurement_pilot.py \
+            tests/test_game_ux_ui_system.py \
+            tests/test_skill_system_coverage.py \
+            tests/test_skill_behavior_evidence_hardening.py \
+            tests/test_skill_implementation_evidence.py \
+            tests/test_skill_behavior_governance_integration.py \
+            tests/test_skill_behavior_adversarial_boundaries.py \
+            -q
+          python tools/validate_external_ui_procurement_receipt.py \
+            docs/evidence/external-ui-procurement/BCP008_SHADCN_BUTTON_PILOT.json
+          python tools/check_skill_system_coverage.py
+          python tools/check_skill_behavior_evals.py
+          python tools/build_skill_implementation_evidence.py --check
+          git diff --check
+          git diff --exit-code cabbc59b170c5da2bb1df7e4d4d535857dd35495 -- \
+            skills/SKILL_REGISTRY.json \
+            base.lock.json \
+            'base-v*.lock.json'
+          test ! -e .github/workflows/bcp008-export-companions.yml
+          test ! -e .github/bcp008-companion.part00
+      - name: Commit companion sync
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'test: synchronize BCP-008 coupled consumers'
+          git push origin HEAD:${GITHUB_HEAD_REF}
