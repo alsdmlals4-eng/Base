@@ -6,6 +6,11 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+DELIVERY_GUIDE = (
+    "docs/knowledge/game-development/"
+    "PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md"
+)
+DELIVERY_PROFILE = "templates/planning/PC_ANDROID_DELIVERY_PROFILE.md"
 
 
 def read(path: str) -> str:
@@ -26,6 +31,18 @@ class GameDesignDifficultyWorkflowTests(unittest.TestCase):
             "공격 예산",
             "긴장도 페이싱",
             "동적 난이도 조절",
+        ):
+            self.assertIn(term, skill)
+
+    def test_pc_android_delivery_route_is_conditional(self) -> None:
+        skill = read("skills/analyzing-and-refining-game-concepts/SKILL.md")
+
+        for term in (
+            DELIVERY_GUIDE,
+            DELIVERY_PROFILE,
+            "Windows+Android 동시 목표",
+            "모든 프로젝트에 이 프로필을 강제",
+            "같은 날 공개",
         ):
             self.assertIn(term, skill)
 

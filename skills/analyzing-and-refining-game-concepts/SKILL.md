@@ -32,6 +32,7 @@ reference_games_and_player_evidence:
 telemetry_playtest_experiment_evidence:
 prototype_or_poc_results:
 risks_unknowns_and_decision_to_make:
+pc_android_delivery_profile:
 ```
 
 ## Analysis lenses
@@ -43,6 +44,8 @@ risks_unknowns_and_decision_to_make:
 - `difficulty-and-combat-ai`는 적의 지능과 압박량을 분리하고 **공정성·가독성·대응 가능성**, 공격 예산, 위협 예산, 긴장도 페이싱, 동적 난이도 조절을 설계한다.
 
 세부 컨셉·제약·뾰족한 재미·PoC 게이트는 `references/concept-evidence-and-gates.md`를 읽는다. 벤치마크·사용자 반응·플레이테스트의 전체 증거 필드는 `references/benchmark-player-evidence-and-playtests.md`, DDD의 경계와 축약 계약은 `references/benchmark-playtest-and-ddd.md`를 해당 mode에서만 읽는다. 게임 시스템·난이도·전투 AI는 `references/game-system-difficulty-and-combat-ai.md`를 `system-design` 또는 `difficulty-and-combat-ai`에서만 읽고, 외부 근거를 확인할 때는 `references/game-system-difficulty-evidence-sources.md`를 함께 읽으며, `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md`를 프로젝트 책임 원본 작성 틀로 사용한다.
+
+Windows+Android 동시 목표, STOVE·Google Play·Steam 단계 출시, 모바일 레이아웃·입력·중단 복구가 기획 제약을 바꿀 때는 `constrain`, `poc-contract`, `production-gate`에서만 `docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md`를 읽고 `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md`를 작성한다. 모든 프로젝트에 이 프로필을 강제하거나 두 플랫폼의 같은 날 공개를 요구하지 않는다.
 
 ## Workflow
 
