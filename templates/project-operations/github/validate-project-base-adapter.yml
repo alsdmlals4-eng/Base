@@ -55,6 +55,8 @@ jobs:
 
       - name: Validate adapter against the trusted protected baseline
         run: |
+          # Historical compatibility marker only; forbidden as an executable command:
+          # --protected-base "$PR_BASE_SHA"
           python .base-contract/tools/check_project_operating_contract.py \
             --project-root . \
             --base-repository .base-contract \
