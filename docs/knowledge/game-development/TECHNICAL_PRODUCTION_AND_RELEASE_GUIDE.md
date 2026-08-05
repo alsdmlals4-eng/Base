@@ -333,6 +333,8 @@ replacement_and_rollback:
 
 코어 판단·게임 데이터·결정론 규칙을 검증 불가능한 외부 플러그인에 맡기지 않는다. 보조 도구는 채택할 수 있지만 제거·교체 seam을 둔다.
 
+자산의 직접 포함, 참조 기반 독립 제작, AI·외주와 출시 권리 기준은 `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`가 책임진다. 상업 사용, `distribution_in_game_build`, 원본 재배포, 수정, attribution·NOTICE와 `REFERENCE_TO_ORIGINAL`을 분리하고 미확인은 `RELEASE_BLOCKED_UNVERIFIED`로 유지한다.
+
 ## 10. 프로덕션 구조
 
 ### 결과 단위 분해
@@ -525,6 +527,19 @@ Wishlist 분석:
 
 에디터·에뮬레이터·CI만으로 실기기 검증을 통과 처리하지 않는다.
 
+## 15.1 등급·설문·자산 권리 출시 Gate
+
+Steam·STOVE·Google Play의 콘텐츠 등급·설문·target audience와 실제 build·store·trailer·screenshot 일치는 `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`를 따른다.
+
+기본 전략은 `LOWEST_VIABLE_RATING`과 `AVOID_ADULTS_ONLY`다. 전체이용가를 강제하지 않고 프로젝트 핵심 경험을 보존하되 청소년이용불가·18+를 기본 회피한다. 콘텐츠 등급과 Google Play target audience는 별도 필드다.
+
+프로젝트는 다음을 유지한다.
+
+- `templates/project-operations/ASSET_RIGHTS_AND_PROVENANCE_RECORD.md`
+- `templates/project-operations/GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK.md`
+
+필수 권리, 참조 독립 제작, questionnaire version 또는 build·store 일치가 확인되지 않으면 `RELEASE_BLOCKED_UNVERIFIED`다.
+
 ## 16. 출시 후 학습
 
 ```text
@@ -560,6 +575,8 @@ Wishlist 분석:
 - Store page가 실제 플레이와 다른 약속을 함
 - Wishlist·review·설문 하나를 매출·재미·행동 전체로 해석함
 - 오래된 플랫폼 정책을 현재 사실로 사용함
+- 전체이용가를 모든 프로젝트에 강제하거나 등급 설문에서 콘텐츠를 숨김
+- 참조 원본 또는 권리 미확인 자산을 shipping build에 포함함
 
 ## 19. Output Contract
 
@@ -571,10 +588,12 @@ Wishlist 분석:
 ## 터치·키보드·마우스·패드·접근성
 ## frame time·CPU·GPU·메모리·로딩·발열
 ## 에셋·플러그인·라이선스·교체 경로
+## 참조 기반 독립 제작·자산 권리 증거
 ## 작업 분해·의존성·반복 제작성
 ## Vertical Slice·두 번째 콘텐츠
 ## QA·자동·런타임·목표 기기 증거
 ## Store 약속·Steam Playtest·User Reviews·Wishlist
+## Steam·STOVE·Google Play 등급·설문·target audience
 ## Google Play 테스트·공식 출처 재검증
 ## 출시 후 학습·미검증·롤백
 ```

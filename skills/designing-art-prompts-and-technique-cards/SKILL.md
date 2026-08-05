@@ -107,6 +107,24 @@ PLANNED
 
 이미지 모델이 한글을 생성하더라도 최종 제품 텍스트는 편집 가능한 UI·그래픽 레이어로 교체한다. 이미지 안의 타이포그래피는 레이아웃 프로토타입 또는 키비주얼 시안으로 취급한다.
 
+## Reference-to-original visual production
+
+공용 기준은 `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`다. 외부 이미지를 직접 채택하는 작업과 참조해 새로 만드는 작업을 분리한다.
+
+```yaml
+reference_sources:
+reference_brief:
+forbidden_expression:
+final_asset_record:
+reference_similarity_status: PASS | REVISION_REQUIRED | BLOCKED_UNVERIFIED | NOT_APPLICABLE
+```
+
+`reference_brief`에는 화면 목적, 정보 위계, 기능적 형태·재질·광원 원리와 프로젝트 정본만 남긴다. `forbidden_expression`에는 식별 가능한 캐릭터 디자인, 실루엣·의상·소품 조합, 구도, 로고, UI skin, 아이콘 세트, 서명적 형태 조합과 특정 작가 스타일 모사를 적는다.
+
+외부 원본은 제품 build·store package에서 제외하고 별도 reference-only Record로 관리한다. 생성 결과는 별도 `final_asset_record`를 가지며 여러 참조와 프로젝트 고유 정본을 기준으로 similarity review를 수행한다. AI 변환·image-to-image·부분 편집은 입력 권리와 유사성 검토를 면제하지 않는다.
+
+`reference_similarity_status`가 `PASS`가 아니거나 입력 권리·모델 약관·출처가 미확인이면 `RELEASE_BLOCKED_UNVERIFIED`다.
+
 ## Visual QA contract
 
 - 기획·세계관·캐릭터·시스템 정본과 일치하는가.
@@ -118,6 +136,7 @@ PLANNED
 - 손·관절·무기·문자·로고·원근·광원 오류가 없는가.
 - 특정 상업 IP·작가 스타일과 과도하게 유사하지 않은가.
 - 원본·레퍼런스·모델·버전·프롬프트·생성일이 기록됐는가.
+- `reference_brief`, `forbidden_expression`, `final_asset_record`, `reference_similarity_status`가 연결됐는가.
 - 승인자·사용처·GitHub·Sheet·Asset Ledger가 연결됐는가.
 
 ## Technique card fields
@@ -140,11 +159,13 @@ PLANNED
 - 최종 시각 후보 또는 생성 불가 시 제작 브리프.
 - 기본 생성 프롬프트.
 - 원본 이미지 편집 프롬프트.
+- 참조 기반 독립 제작 `reference_brief`와 `forbidden_expression`.
 - 실패 수정 프롬프트.
 - 상태·표정·포즈 변형 표.
 - 실제 화면 QA 체크리스트.
 - 모델별 검증 상태.
 - 이미지 기획·검수·승인 기록.
+- `RELEASE_BLOCKED_UNVERIFIED` 항목.
 
 ## Failure conditions
 
@@ -156,6 +177,7 @@ PLANNED
 - 포스터 정보 슬롯이 캐릭터와 핵심 실루엣을 가린다.
 - 실제 화면 크롭·현지화·편집 가능성을 검증하지 않는다.
 - 원출처·라이선스·유사성 검토를 생략한다.
+- AI 재생성을 원본과 독립됐다는 증거로 사용한다.
 - 한 번 성공한 프롬프트를 검증된 공용 스킬로 표시한다.
 - Sheet가 `NOT_CONFIGURED`인데 `SHEET_SYNCED`로 보고한다.
 
@@ -166,6 +188,7 @@ PLANNED
 3. AU46 편집은 원본 인물과 스타일을 유지하면서 한쪽 눈만 자연스럽게 닫히는지 비교한다.
 4. 캐릭터 포스터는 키 컬러와 이름을 바꿔도 정보 위계와 인셋 구조가 재사용되는지 확인한다.
 5. 한국어 글자가 깨지면 이미지 전체를 재생성하지 않고 텍스트 없는 마스터와 편집 레이어로 분리한다.
+6. 참조 기반 후보가 원본의 식별 가능한 표현을 보존하면 `REVISION_REQUIRED` 또는 `BLOCKED_UNVERIFIED`로 되돌린다.
 
 ## Quality gate
 
@@ -173,6 +196,7 @@ PLANNED
 - 생성·검수·승인·적용이 서로 다른 증거로 분리돼 있다.
 - 프로젝트 정본과 실제 화면 기준으로 검수됐다.
 - 권리·출처·모델·프롬프트·수정 이력이 기록됐다.
+- 참조 전용 입력과 최종 자산이 별도 Record다.
 - 승인 결과가 필요한 소비처에 전파됐다.
 
 ## Learning Log

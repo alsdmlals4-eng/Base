@@ -260,6 +260,17 @@ KEEP_UNRESOLVED
 - 설치·정리·마이그레이션 뒤 `verify`를 생략함
 - 사용한 이유와 결과 없이 Skill 실행만 주장함
 
+## 플랫폼 심사·자산 권리 설치와 감사
+
+공용 기준은 `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`다. 새 Skill Mode를 추가하지 않고 기존 `install / audit / migrate / verify`에 통합한다.
+
+- `install`: 프로젝트가 채택한 등가 정본 또는 `ASSET_RIGHTS_AND_PROVENANCE_RECORD.md`, `GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK.md` 인스턴스를 등록한다.
+- `audit`: 음악·효과음, 폰트, 캐릭터·일러스트, 3D·애니메이션, 플러그인·에셋, 오픈소스, AI, 외주, 성우·작곡·번역 계약 Coverage를 확인한다.
+- `migrate`: 기존 Asset Ledger와 계약 기록을 덮어쓰지 않고 새 필드와 연결하며 미확인은 보존한다.
+- `verify`: `content_rating_target`과 `target_audience`, Steam·STOVE·Google Play 설문, build·store·trailer 일치, 자산별 권리와 secure evidence를 분리 검증한다.
+
+필수 권리·등급·출처·계약·참조 유사성 증거가 없으면 `RELEASE_BLOCKED_UNVERIFIED`다. Template 존재는 실제 권리나 플랫폼 승인 증거가 아니다.
+
 ## Legacy aliases
 
 - `installing-game-project-operating-system` → `install`
