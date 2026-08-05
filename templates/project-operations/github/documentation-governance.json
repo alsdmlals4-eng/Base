@@ -142,6 +142,24 @@
         "STOVE",
         "Google Play"
       ]
+    },
+    {
+      "role": "GAME_BACKEND_SERVICE_CONTRACT",
+      "template": "templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md",
+      "project_owned": true,
+      "base_template_is_project_truth": false,
+      "decision_gate": "CLOUD_RUN_DEFAULT_CANDIDATE",
+      "unknown_required_fields": "BLOCKED_UNVERIFIED",
+      "runtime_evidence_required_for_production": true
+    },
+    {
+      "role": "GAME_ENTITLEMENT_AND_INTEGRITY_RECORD",
+      "template": "templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md",
+      "project_owned": true,
+      "base_template_is_project_truth": false,
+      "default_policy": "PLATFORM_NATIVE_FIRST",
+      "unknown_platform_state": "PLATFORM_CAPABILITY_UNVERIFIED",
+      "human_recovery_required_for_production": true
     }
   ],
   "change_rules": [

@@ -188,3 +188,18 @@
 새 채팅, 새 GPT와 새 Codex가 Base URL 하나에서 동일한 시작 규칙을 찾고, 대상 게임 프로젝트에 분야별 본책·이미지 책임 원본·GitHub 검사를 분화해 설치할 수 있는 공용 저장소 운영체계를 추가했다.
 
 변경:
+
+## 2026-08-05 - Cloud Run 게임 백엔드 Capability Pack PR A
+
+- `GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`와 프로젝트 소유 `GAME_BACKEND_SERVICE_CONTRACT.md`를 추가했다.
+- `CLOUD_RUN_DEFAULT_CANDIDATE` 적합성 Gate와 recommended·conditional·alternative·server-not-required·blocked 판정을 추가했다.
+- 상태·identity·authorization·idempotency·replay·transaction·WebSocket·비밀·AI proxy·용량·비용·failure·rollback·provider exit 계약을 기존 owner에 연결했다.
+- 새 활성 Skill과 공용 프로젝트 route는 추가하지 않았다.
+- 정적 CI는 deployment·runtime·load·failure·cost·security·production readiness를 증명하지 않으며 해당 상태는 `NOT_RUN`이다.
+
+## 2026-08-05 - 게임 entitlement·integrity·DRM Capability Pack PR B
+
+- 플랫폼 entitlement·app/build/request integrity·server authority·offline/outage·오탐 복구·privacy·service sunset Guide와 프로젝트 Record를 추가했다.
+- Steam Wrapper의 한계, Google Play request-bound backend verification, STOVE 미확인 상태를 플랫폼별로 분리했다.
+- 단일 신호 영구 제재, false platform parity, client-authoritative high-value state, replay/double spend, outage lockout, 무기한 raw-signal 보존과 no-sunset 설계를 차단했다.
+- 새 활성 Skill·shared route·플랫폼 계정·SDK credential·signing key·secret은 추가하지 않았다.

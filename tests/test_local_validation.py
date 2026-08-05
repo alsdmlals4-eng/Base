@@ -8,6 +8,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from tests.test_cloud_run_game_backend_capability import (
+    CloudRunGameBackendCapabilityTests as _CloudRunGameBackendCapabilityTests,
+)
 from tests.test_godot_editor_transaction_adapter import (
     GodotEditorTransactionAdapterTests as _GodotEditorTransactionAdapterTests,
 )
@@ -32,6 +35,10 @@ from tests.test_godot_live_editor_runtime_pilot import (
 from tests.test_platform_review_asset_rights_reference_production import (
     PlatformReviewAssetRightsReferenceProductionTests
     as _PlatformReviewAssetRightsReferenceProductionTests,
+)
+from tests.test_game_entitlement_integrity_drm_capability import (
+    GameEntitlementIntegrityDrmCapabilityTests
+    as _GameEntitlementIntegrityDrmCapabilityTests,
 )
 from tools import run_local_validation as runner
 
