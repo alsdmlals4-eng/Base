@@ -169,7 +169,10 @@ jobs:
           checker_path.write_text(checker, encoding="utf-8")
           PY
 
-          test -z "$(git grep -n -I -E 'design-md-project-adapter\.md|external-ui-procurement-and-anti-generic-quality\.md' -- . ':!docs/evidence/external-ui-procurement/BCP008_ADVERSARIAL_REVIEW.md' ':!.github/workflows/bcp008-consolidate-ui-method.yml' || true)"
+          test ! -e skills/auditing-and-refining-ui-art/references/design-md-project-adapter.md
+          test ! -e skills/auditing-and-refining-ui-art/references/external-ui-procurement-and-anti-generic-quality.md
+          ! grep -q 'design-md-project-adapter.md' skills/auditing-and-refining-ui-art/SKILL.md
+          ! grep -q 'external-ui-procurement-and-anti-generic-quality.md' skills/auditing-and-refining-ui-art/SKILL.md
       - name: Verify consolidated contracts and repository coupling
         shell: bash
         run: |
