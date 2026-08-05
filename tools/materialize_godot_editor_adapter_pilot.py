@@ -193,10 +193,10 @@ def _manifest(destination: Path, project_godot_sha256: str) -> dict[str, Any]:
             "rollback_reference": "addons/base_live_editor_adapter/README.md",
         },
         "transport": {
-            "kind": "DISABLED",
-            "enabled": False,
+            "kind": "PROJECT_DEFINED",
+            "enabled": True,
             "bind_host": None,
-            "endpoint_identity": None,
+            "endpoint_identity": "in-process-editor-plugin",
             "protocol_profile": "GENERIC",
             "protocol_version": "in-process-1.0",
             "access_control": {
