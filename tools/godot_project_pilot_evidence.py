@@ -5,6 +5,10 @@ from pathlib import Path
 from typing import Mapping, Sequence
 
 
+class EvidenceVerificationError(ValueError):
+    """Raised when runtime evidence cannot be physically trusted."""
+
+
 @dataclass(frozen=True)
 class VerifiedRuntimeEvidence:
     repository: str
@@ -27,15 +31,15 @@ def sha256_file(path: Path) -> str:
 def _confined_path(workspace: Path, declared: str) -> Path:
     root = Path(workspace).resolve()
     if not declared.startswith("res://"):
-        raise ValueError("EVIDENCE_PATH_ESCAPE: path must use res://")
+        raise EvidenceVerificationError("EVIDENCE_PATH_ESCAPE: path must use res://")
     relative = Path(declared.removeprefix("res://"))
     if relative.is_absolute() or ".." in relative.parts:
-        raise ValueError("EVIDENCE_PATH_ESCAPE")
+        raise EvidenceVerificationError("EVIDENCE_PATH_ESCAPE")
     candidate = (root / relative).resolve(strict=False)
     try:
         candidate.relative_to(root)
     except ValueError as exc:
-        raise ValueError("EVIDENCE_PATH_ESCAPE") from exc
+        raise EvidenceVerificationError("EVIDENCE_PATH_ESCAPE") from exc
     current = root
     for part in relative.parts:
         current = current / part
@@ -44,14 +48,14 @@ def _confined_path(workspace: Path, declared: str) -> Path:
             try:
                 target.relative_to(root)
             except ValueError as exc:
-                raise ValueError("EVIDENCE_PATH_ESCAPE") from exc
+                raise EvidenceVerificationError("EVIDENCE_PATH_ESCAPE") from exc
     return candidate
 
 
 def _require_string(payload: Mapping[str, object], key: str) -> str:
     value = payload.get(key)
     if not isinstance(value, str) or not value:
-        raise ValueError(f"RUNTIME_EVIDENCE_INVALID: {key}")
+        raise EvidenceVerificationError(f"RUNTIME_EVIDENCE_INVALID: {key}")
     return value
 
 
@@ -64,15 +68,17 @@ def verify_runtime_evidence(
     try:
         result_path.relative_to(root)
     except ValueError as exc:
-        raise ValueError("EVIDENCE_PATH_ESCAPE: runtime result") from exc
+        raise EvidenceVerificationError("EVIDENCE_PATH_ESCAPE: runtime result") from exc
     try:
         payload = json.loads(result_path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
-        raise ValueError(f"RUNTIME_EVIDENCE_INVALID: {exc}") from exc
+        raise EvidenceVerificationError(f"RUNTIME_EVIDENCE_INVALID: {exc}") from exc
     if not isinstance(payload, dict):
-        raise ValueError("RUNTIME_EVIDENCE_INVALID: root")
+        raise EvidenceVerificationError("RUNTIME_EVIDENCE_INVALID: root")
     if payload.get("status") != "PASS":
-        raise ValueError(f"RUNTIME_EVIDENCE_FAILED: {payload.get('status')}")
+        raise EvidenceVerificationError(
+            f"RUNTIME_EVIDENCE_FAILED: {payload.get('status')}"
+        )
     for key in (
         "main_scene_inspect",
         "scratch_scene_rename",
@@ -80,21 +86,21 @@ def verify_runtime_evidence(
         "scratch_scene_save",
     ):
         if payload.get(key) != "PASS":
-            raise ValueError(f"RUNTIME_EVIDENCE_INVALID: {key}")
+            raise EvidenceVerificationError(f"RUNTIME_EVIDENCE_INVALID: {key}")
     if payload.get("base_network_listener") is not False:
-        raise ValueError("NETWORK_LISTENER_FORBIDDEN")
+        raise EvidenceVerificationError("NETWORK_LISTENER_FORBIDDEN")
 
     ledger = payload.get("ledger_states")
     if ledger != ["COMPLETED", "COMPLETED"]:
-        raise ValueError("LEDGER_EVIDENCE_INVALID")
+        raise EvidenceVerificationError("LEDGER_EVIDENCE_INVALID")
     declared_path = _require_string(payload, "saved_scene_path")
     saved_scene = _confined_path(root, declared_path)
     if not saved_scene.is_file():
-        raise ValueError("EVIDENCE_FILE_MISSING: saved scene")
+        raise EvidenceVerificationError("EVIDENCE_FILE_MISSING: saved scene")
     declared_hash = _require_string(payload, "saved_scene_sha256")
     actual_hash = sha256_file(saved_scene)
     if declared_hash != actual_hash:
-        raise ValueError("ARTIFACT_BYTE_HASH_MISMATCH: saved scene")
+        raise EvidenceVerificationError("ARTIFACT_BYTE_HASH_MISMATCH: saved scene")
 
     return VerifiedRuntimeEvidence(
         repository=_require_string(payload, "repository"),
@@ -127,10 +133,12 @@ def write_final_evidence(
     destination.mkdir(parents=True, exist_ok=True)
     canonical_before = json.dumps(
         {key: source_before[key] for key in sorted(source_before)},
+        ensure_ascii=False,
         separators=(",", ":"),
     ).encode("utf-8")
     canonical_after = json.dumps(
         {key: source_after[key] for key in sorted(source_after)},
+        ensure_ascii=False,
         separators=(",", ":"),
     ).encode("utf-8")
     payload: dict[str, object] = {
@@ -167,6 +175,7 @@ def write_final_evidence(
 
 
 __all__ = [
+    "EvidenceVerificationError",
     "VerifiedRuntimeEvidence",
     "sha256_file",
     "verify_runtime_evidence",
