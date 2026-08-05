@@ -246,6 +246,28 @@ baseline 반복 측정
 7. CI 최적화가 필요한 검증을 누락하거나 Required Check를 영구 대기 상태로 만들지 않는지 확인한다.
 8. 접근성·성능 개선이 핵심 규칙·가독성·아트·입력 약속을 훼손하지 않는지 확인한다.
 
+### 8A. Platform review and asset rights validation
+
+공용 기준은 `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`다.
+
+다음 증거를 분리한다.
+
+```text
+STATIC_EVIDENCE_CHECKED
+RUNTIME_ASSET_USE_CHECKED
+BUILD_STORE_CONSISTENCY_CHECKED
+PLATFORM_SUBMISSION_NOT_RUN
+LEGAL_REVIEW_NOT_PERFORMED
+```
+
+- 자산별 source·license·contract·terms version과 `commercial_use`, `distribution_in_game_build`, `raw_source_redistribution`을 확인한다.
+- `REFERENCE_TO_ORIGINAL`은 원본이 runtime·shipping package에 없는지, `reference_brief`, `final_asset_record`, `reference_similarity_status`가 연결됐는지 검사한다.
+- Steam·STOVE·Google Play의 target rating, target audience, questionnaire version, build·store·trailer·screenshot·AI·UGC·ads 일치를 비교한다.
+- open-source NOTICE·attribution·source, AI input rights·terms, 외주·성우·작곡·번역 계약 범위를 확인한다.
+- 공개 저장소의 unredacted 계약·개인정보와 `secure_original_location` 경계를 검사한다.
+
+필수 항목이 미확인되면 `RELEASE_BLOCKED_UNVERIFIED`다. 정적 Template 검사만으로 법률 검토, 실제 등급, 플랫폼 제출과 승인을 통과 처리하지 않는다.
+
 ### 9. Decision
 
 - `ACCEPT`: 계약과 적용 검증을 충족하고 참조 최신성 누락이 없다.
@@ -266,6 +288,8 @@ baseline 반복 측정
 ## 정본·참조 최신성·변경 전파
 ## 정적 검사
 ## 런타임·렌더·빌드 검증
+## 플랫폼 등급·설문·build/store 일치
+## 자산 권리·출처·참조 독립 제작 검증
 ## 접근성 장벽·대안·심각도
 ## 성능 예산·baseline·profile·변경 후 비교
 ## Simplify·Style Guide·Domain Review·Security/Safety/Trust Boundary
@@ -288,6 +312,7 @@ baseline 반복 측정
 - 가능한 정적·런타임·회귀 검증을 실제 실행했다.
 - 적용되는 경우 핵심 정보·입력·UI·시간·난이도·모션 장벽을 실제 경로에서 확인했다.
 - 적용되는 경우 목표 플랫폼·대표·최악 장면에서 성능 예산과 baseline을 같은 조건으로 비교했다.
+- 적용되는 경우 등급·설문·자산 권리 검증 층을 분리했다.
 - 실행하지 못한 검증을 성공으로 표시하지 않았다.
 - 판정과 증거, 남은 위험, 롤백을 연결했다.
 - 외부 산출물은 독립 검수 없이 정본에 반영하지 않았다.
@@ -311,6 +336,7 @@ baseline 반복 측정
 - 평균 FPS 하나나 에디터의 빈 장면만으로 성능 통과를 주장한다.
 - baseline·장면·빌드·하드웨어 조건이 다른 수치를 직접 비교한다.
 - 측정 없이 추측으로 최적화하고 기능·가독성·품질 회귀를 생략한다.
+- `RELEASE_BLOCKED_UNVERIFIED`를 플랫폼 승인 또는 법률 검토 없이 해제한다.
 
 ## Related skills
 
