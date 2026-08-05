@@ -1,0 +1,547 @@
+{
+  "schema_version": 1,
+  "artifact_role": "GODOT_4_7_1_RUNTIME_PILOT_EVIDENCE",
+  "captured_at": "2026-08-05T09:16:36+09:00",
+  "engine": {
+    "version": "4.7.1.stable.official.a13da4feb",
+    "archive_sha256": "c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba",
+    "executable_sha256": "32f8d7596c4b41185512b1c49d69f2da3be018fd784a53e349fa92a98a97bcde",
+    "archive_integrity_state": "EXECUTION_PASS"
+  },
+  "pilot": {
+    "project_path": "examples/godot-live-editor-pilot",
+    "project_godot_sha256": "1a87b12d28831f0ca28846324fd9f3743551e52b67fc634ccb89259afa6e61e6",
+    "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+    "catalog_sha256": "f364c08e811c77c311bb977695cde7f8a5a56f0316e559c5f4d09b0da074ed31",
+    "catalog_runtime_verification": "RUNTIME_PASS",
+    "closed_request_schema_state": "RUNTIME_PASS",
+    "approval_expiration_and_single_use_state": "RUNTIME_PASS",
+    "atomic_ledger_state": "RUNTIME_PASS",
+    "cli_headless_state": "RUNTIME_PASS",
+    "editor_plugin_state": "RUNTIME_PASS",
+    "editor_plugin_marker": {
+      "engine_version": "4.7.1-stable (official)",
+      "network_listener_enabled": false,
+      "plugin_id": "base_live_editor_pilot",
+      "project_path": "examples/godot-live-editor-pilot",
+      "state": "LOADED"
+    },
+    "editor_command": "$GODOT_BIN --headless --editor --path $PILOT --quit-after 5",
+    "editor_returncode": 0,
+    "captured_operation_count": 18,
+    "result_code_sequence": [
+      "OK",
+      "OK",
+      "OK",
+      "OK",
+      "CATALOG_STALE",
+      "APPROVAL_REQUIRED",
+      "OK",
+      "IDEMPOTENT_REPLAY",
+      "APPROVAL_EXPIRED",
+      "OK",
+      "APPROVAL_TOKEN_REUSED",
+      "REQUEST_SCHEMA_INVALID",
+      "REQUEST_INVALID",
+      "APPROVAL_REQUIRED",
+      "TASK_PENDING",
+      "TASK_PENDING",
+      "TASK_RESULT_STALE",
+      "OK"
+    ],
+    "operation_envelope_sha256": [
+      "f5ac11354a5fb84427054adff7c65ade2dcb18c5edf1eb679f3239bde8e7b681",
+      "224ee7d25f48aea48ab941ac63384e02fff8202c9b13f6f3698390b92f820cea",
+      "72e36f04254e811d2a893ce5864e77e23f4077fa2ac996ccc47116c8f5f5cdee",
+      "14fa79ca165e461ecb750020913f3e4651b2d16da39bbd7e00e38c8823f17d82",
+      "2afdc7ebe44ab09430a9dc3e36db60f33dda79c3da7fdf31d42cf5e86b79acd3",
+      "17b22229c28545d1edaa3c6037c8eef9aa69b32e4671dabe718e1a85bda35473",
+      "aee54a241a28d007977088c2151cada419b74ab42ba4a7ce0067bd38d13d45d3",
+      "2433eaf2a649d3e5445eb3108bf3a452ad6cba46de70c733c2cdd5569002ea3e",
+      "80b905accc8307b55a82e5f6a9f71f1cdbdc1abd82cc64028909ffde928d1f4f",
+      "822df83d2d1bc7ea966c7617f212607b25c55aa037e6c0794bac6365ae10fe9f",
+      "4801c2b2800c6b01cb3ddf407ab8bfb4a773734b37e30d366f736819607a58b8",
+      "9cef442cee0d142394dd33db46aafff98002cce3e51961c33940160bf8ac7ee4",
+      "edf1dd799ff1dfaadad86567cb7aca2d60857519bc47f88c2e6fae95c6b85b5b",
+      "dad376cbded38e5da716f1d0843efca53e0c32e921f904ff8776d94daaf32f8a",
+      "20fedc1de8f272431d4abb23afa8e872f0376da81359c95fa872c388c22b79ea",
+      "815c5e3ff9ea1260efb06eb687a4648e11afc311420c1cdbfcec16723ded2003",
+      "5a23bf8ee1ab975989cc1b2824e1035c32ac2645421f1f7a14872267fe63857f",
+      "1bec6d72e06dc567bfc75989e5603735500a3df3b26e236de44afee6f7589daa"
+    ],
+    "representative_operations": [
+      {
+        "command": "$GODOT_BIN --headless --path $PILOT --script res://tools/live_editor_cli.gd -- doctor",
+        "returncode": 0,
+        "envelope": {
+          "approval": {
+            "expires_at": null,
+            "state": "NOT_REQUIRED",
+            "token_binding": null
+          },
+          "artifact_role": "GODOT_LIVE_EDITOR_OPERATION_ENVELOPE",
+          "capability_id": "doctor",
+          "operation_class": "READ_ONLY",
+          "operation_id": "pilot-doctor",
+          "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+          "request_hash": "72f4be89d6ebab1496e21e38bcd7c8ca0a68928af3081ad7dff87e772eb350c2",
+          "result": {
+            "code": "OK",
+            "data": {
+              "capability_count": 7,
+              "configuration_state": "CONFIGURED",
+              "engine_version": "4.7.1-stable (official)",
+              "identity": {
+                "normalized_project_path": "examples/godot-live-editor-pilot",
+                "ok": true,
+                "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+                "project_godot_sha256": "1a87b12d28831f0ca28846324fd9f3743551e52b67fc634ccb89259afa6e61e6",
+                "project_path": "examples/godot-live-editor-pilot"
+              },
+              "transport_kind": "CLI"
+            },
+            "evidence": [
+              {
+                "kind": "CONTRACT",
+                "path": "res://GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json",
+                "state": "EXECUTION_PASS"
+              }
+            ],
+            "message": "OK",
+            "success": true
+          },
+          "schema_version": 1,
+          "task": {
+            "result_binding": null,
+            "state": "NOT_APPLICABLE",
+            "task_id": null
+          }
+        }
+      },
+      {
+        "command": "$GODOT_BIN --headless --path $PILOT --script res://tools/live_editor_cli.gd -- doctor",
+        "returncode": 2,
+        "envelope": {
+          "approval": {
+            "expires_at": null,
+            "state": "NOT_REQUIRED",
+            "token_binding": null
+          },
+          "artifact_role": "GODOT_LIVE_EDITOR_OPERATION_ENVELOPE",
+          "capability_id": "doctor",
+          "operation_class": "READ_ONLY",
+          "operation_id": "pilot-doctor",
+          "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+          "request_hash": "72f4be89d6ebab1496e21e38bcd7c8ca0a68928af3081ad7dff87e772eb350c2",
+          "result": {
+            "code": "CATALOG_STALE",
+            "data": {
+              "actual_sha256": "31fe70470d643e7b6c4485e5633be3f6613a0f80108a308293d12e94d2c2feca",
+              "expected_sha256": "f364c08e811c77c311bb977695cde7f8a5a56f0316e559c5f4d09b0da074ed31",
+              "freshness_state": "FRESH",
+              "ok": false
+            },
+            "evidence": [
+              {
+                "kind": "CONTRACT",
+                "path": "res://GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json",
+                "state": "CONTRACT_FAIL"
+              }
+            ],
+            "message": "CATALOG_STALE",
+            "success": false
+          },
+          "schema_version": 1,
+          "task": {
+            "result_binding": null,
+            "state": "NOT_APPLICABLE",
+            "task_id": null
+          }
+        }
+      },
+      {
+        "command": "$GODOT_BIN --headless --path $PILOT --script res://tools/live_editor_cli.gd -- state.write_marker res://artifacts/mutation-approved.json",
+        "returncode": 0,
+        "envelope": {
+          "approval": {
+            "expires_at": "2099-01-01T00:00:00Z",
+            "state": "APPROVED",
+            "token_binding": {
+              "capability_id": "state.write_marker",
+              "operation_class": "IDEMPOTENT_MUTATION",
+              "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+              "request_hash": "f858fa1e212fb698e03218a8497e0f63c9c8d6cc761da29be2b64b9725c1ab3d",
+              "token_id": "approval-marker-001"
+            }
+          },
+          "artifact_role": "GODOT_LIVE_EDITOR_OPERATION_ENVELOPE",
+          "capability_id": "state.write_marker",
+          "operation_class": "IDEMPOTENT_MUTATION",
+          "operation_id": "op-marker-001",
+          "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+          "request_hash": "f858fa1e212fb698e03218a8497e0f63c9c8d6cc761da29be2b64b9725c1ab3d",
+          "result": {
+            "code": "OK",
+            "data": {
+              "idempotency_key": "marker-key-001",
+              "marker": "runtime-pilot-green",
+              "operation_id": "op-marker-001",
+              "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+              "request_hash": "f858fa1e212fb698e03218a8497e0f63c9c8d6cc761da29be2b64b9725c1ab3d"
+            },
+            "evidence": [
+              {
+                "kind": "ENGINE_STATE",
+                "path": "res://artifacts/pilot_state.json",
+                "state": "EXECUTION_PASS"
+              },
+              {
+                "kind": "LOG",
+                "path": "res://artifacts/operation_ledger.json",
+                "state": "EXECUTION_PASS"
+              }
+            ],
+            "message": "OK",
+            "success": true
+          },
+          "schema_version": 1,
+          "task": {
+            "result_binding": null,
+            "state": "NOT_APPLICABLE",
+            "task_id": null
+          }
+        }
+      },
+      {
+        "command": "$GODOT_BIN --headless --path $PILOT --script res://tools/live_editor_cli.gd -- state.write_marker res://artifacts/mutation-expired.json",
+        "returncode": 2,
+        "envelope": {
+          "approval": {
+            "expires_at": null,
+            "state": "EXPIRED",
+            "token_binding": null
+          },
+          "artifact_role": "GODOT_LIVE_EDITOR_OPERATION_ENVELOPE",
+          "capability_id": "state.write_marker",
+          "operation_class": "IDEMPOTENT_MUTATION",
+          "operation_id": "op-expired",
+          "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+          "request_hash": "aef314078c34b2f1c28d226bd5e4352509c86f3ad7d40cd1db92e46f6fdcb22b",
+          "result": {
+            "code": "APPROVAL_EXPIRED",
+            "data": {},
+            "evidence": [],
+            "message": "APPROVAL_EXPIRED",
+            "success": false
+          },
+          "schema_version": 1,
+          "task": {
+            "result_binding": null,
+            "state": "NOT_APPLICABLE",
+            "task_id": null
+          }
+        }
+      },
+      {
+        "command": "$GODOT_BIN --headless --path $PILOT --script res://tools/live_editor_cli.gd -- state.write_marker res://artifacts/mutation-token-reused.json",
+        "returncode": 2,
+        "envelope": {
+          "approval": {
+            "expires_at": null,
+            "state": "REJECTED",
+            "token_binding": null
+          },
+          "artifact_role": "GODOT_LIVE_EDITOR_OPERATION_ENVELOPE",
+          "capability_id": "state.write_marker",
+          "operation_class": "IDEMPOTENT_MUTATION",
+          "operation_id": "op-token-second",
+          "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+          "request_hash": "8c69310a514057390ad8f1bccd5fe5a0857efd90aac0e4b3e03c9ed6ccda37c0",
+          "result": {
+            "code": "APPROVAL_TOKEN_REUSED",
+            "data": {},
+            "evidence": [],
+            "message": "APPROVAL_TOKEN_REUSED",
+            "success": false
+          },
+          "schema_version": 1,
+          "task": {
+            "result_binding": null,
+            "state": "NOT_APPLICABLE",
+            "task_id": null
+          }
+        }
+      },
+      {
+        "command": "$GODOT_BIN --headless --path $PILOT --script res://tools/live_editor_cli.gd -- state.write_marker res://artifacts/mutation-schema-invalid.json",
+        "returncode": 2,
+        "envelope": {
+          "approval": {
+            "expires_at": "2099-01-01T00:00:00Z",
+            "state": "APPROVED",
+            "token_binding": {
+              "capability_id": "state.write_marker",
+              "operation_class": "IDEMPOTENT_MUTATION",
+              "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+              "request_hash": "f8504943f6a0f0eb55d48c8dd81928f888069202092bf3d304cbd5c390497617",
+              "token_id": "schema-token"
+            }
+          },
+          "artifact_role": "GODOT_LIVE_EDITOR_OPERATION_ENVELOPE",
+          "capability_id": "state.write_marker",
+          "operation_class": "IDEMPOTENT_MUTATION",
+          "operation_id": "op-schema",
+          "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+          "request_hash": "f8504943f6a0f0eb55d48c8dd81928f888069202092bf3d304cbd5c390497617",
+          "result": {
+            "code": "REQUEST_SCHEMA_INVALID",
+            "data": {},
+            "evidence": [],
+            "message": "REQUEST_SCHEMA_INVALID",
+            "success": false
+          },
+          "schema_version": 1,
+          "task": {
+            "result_binding": null,
+            "state": "NOT_APPLICABLE",
+            "task_id": null
+          }
+        }
+      },
+      {
+        "command": "$GODOT_BIN --headless --path $PILOT --script res://tools/live_editor_cli.gd -- task.start",
+        "returncode": 2,
+        "envelope": {
+          "approval": {
+            "expires_at": null,
+            "state": "REQUIRED",
+            "token_binding": null
+          },
+          "artifact_role": "GODOT_LIVE_EDITOR_OPERATION_ENVELOPE",
+          "capability_id": "task.start",
+          "operation_class": "LONG_RUNNING_TASK",
+          "operation_id": "pilot-task-start-invalid",
+          "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+          "request_hash": "6476986ce8b5099a9f64892453a402842d03d7839ed3a984697205d47d902f8c",
+          "result": {
+            "code": "REQUEST_INVALID",
+            "data": {
+              "task_started": false
+            },
+            "evidence": [],
+            "message": "REQUEST_INVALID",
+            "success": false
+          },
+          "schema_version": 1,
+          "task": {
+            "result_binding": null,
+            "state": "NOT_STARTED",
+            "task_id": null
+          }
+        }
+      },
+      {
+        "command": "$GODOT_BIN --headless --path $PILOT --script res://tools/live_editor_cli.gd -- task.start res://artifacts/task-start.json",
+        "returncode": 0,
+        "envelope": {
+          "approval": {
+            "expires_at": "2099-01-01T00:00:00Z",
+            "state": "APPROVED",
+            "token_binding": {
+              "capability_id": "task.start",
+              "operation_class": "LONG_RUNNING_TASK",
+              "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+              "request_hash": "aaed7a86c3f9849d28223caf6aeda94b1e3f1a113ec147eaa5496bec4cf3b29e",
+              "token_id": "approval-task.start"
+            }
+          },
+          "artifact_role": "GODOT_LIVE_EDITOR_OPERATION_ENVELOPE",
+          "capability_id": "task.start",
+          "operation_class": "LONG_RUNNING_TASK",
+          "operation_id": "op-task-001",
+          "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+          "request_hash": "aaed7a86c3f9849d28223caf6aeda94b1e3f1a113ec147eaa5496bec4cf3b29e",
+          "result": {
+            "code": "TASK_PENDING",
+            "data": {
+              "reused_existing_task": false
+            },
+            "evidence": [
+              {
+                "kind": "LOG",
+                "path": "res://artifacts/operation_ledger.json",
+                "state": "EXECUTION_PASS"
+              }
+            ],
+            "message": "TASK_PENDING",
+            "success": true
+          },
+          "schema_version": 1,
+          "task": {
+            "result_binding": null,
+            "state": "PENDING",
+            "task_id": "task-27fca0c1d3421134"
+          }
+        }
+      },
+      {
+        "command": "$GODOT_BIN --headless --path $PILOT --script res://tools/live_editor_cli.gd -- task.resume res://artifacts/task-resume-stale.json",
+        "returncode": 2,
+        "envelope": {
+          "approval": {
+            "expires_at": "2099-01-01T00:00:00Z",
+            "state": "APPROVED",
+            "token_binding": {
+              "capability_id": "task.resume",
+              "operation_class": "LONG_RUNNING_TASK",
+              "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+              "request_hash": "eaf9b95c1c37f0296c3328cce0e99b5068a0e1079ef89e09d864cc01e862fa8b",
+              "token_id": "approval-task.resume"
+            }
+          },
+          "artifact_role": "GODOT_LIVE_EDITOR_OPERATION_ENVELOPE",
+          "capability_id": "task.resume",
+          "operation_class": "LONG_RUNNING_TASK",
+          "operation_id": "op-task-001",
+          "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+          "request_hash": "eaf9b95c1c37f0296c3328cce0e99b5068a0e1079ef89e09d864cc01e862fa8b",
+          "result": {
+            "code": "TASK_RESULT_STALE",
+            "data": {
+              "failure_bound": true
+            },
+            "evidence": [],
+            "message": "TASK_RESULT_STALE",
+            "success": false
+          },
+          "schema_version": 1,
+          "task": {
+            "result_binding": {
+              "capability_id": "task.resume",
+              "operation_id": "op-task-001",
+              "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+              "result_hash": "fc55d793b538928925f7d045f0e156d1b899f64439a9167b4c010a9ac3b517b0",
+              "task_id": "task-wrong-0001"
+            },
+            "state": "STALE",
+            "task_id": "task-wrong-0001"
+          }
+        }
+      },
+      {
+        "command": "$GODOT_BIN --headless --path $PILOT --script res://tools/live_editor_cli.gd -- task.resume res://artifacts/task-resume.json",
+        "returncode": 0,
+        "envelope": {
+          "approval": {
+            "expires_at": "2099-01-01T00:00:00Z",
+            "state": "APPROVED",
+            "token_binding": {
+              "capability_id": "task.resume",
+              "operation_class": "LONG_RUNNING_TASK",
+              "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+              "request_hash": "ed7ceb1432f05df94433f30b9448a0537a3061bd53fa1b0ec537cddb0b5ae33c",
+              "token_id": "approval-task.resume"
+            }
+          },
+          "artifact_role": "GODOT_LIVE_EDITOR_OPERATION_ENVELOPE",
+          "capability_id": "task.resume",
+          "operation_class": "LONG_RUNNING_TASK",
+          "operation_id": "op-task-001",
+          "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+          "request_hash": "ed7ceb1432f05df94433f30b9448a0537a3061bd53fa1b0ec537cddb0b5ae33c",
+          "result": {
+            "code": "OK",
+            "data": {
+              "resumed_existing_task": true
+            },
+            "evidence": [
+              {
+                "kind": "LOG",
+                "path": "res://artifacts/operation_ledger.json",
+                "state": "EXECUTION_PASS"
+              }
+            ],
+            "message": "OK",
+            "success": true
+          },
+          "schema_version": 1,
+          "task": {
+            "result_binding": {
+              "capability_id": "task.resume",
+              "operation_id": "op-task-001",
+              "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221",
+              "result_hash": "09e58cb1be8fb199e5ffd144fe65780f644337cf3770b88c7151a614dcb1ddd4",
+              "task_id": "task-27fca0c1d3421134"
+            },
+            "state": "COMPLETED",
+            "task_id": "task-27fca0c1d3421134"
+          }
+        }
+      }
+    ]
+  },
+  "uploaded_project_configs": [
+    {
+      "project_name": "Blacksmith",
+      "source_sha256": "d60e5f98299f75a32455124a6665cc6905fe2bc52c1a96a86ed937aa19f1fcc4",
+      "configuration_parse_state": "EXECUTION_PASS",
+      "recovery_mode_exit_code": 0,
+      "command": "$GODOT_BIN --headless --editor --recovery-mode --path $CONFIG_SAMPLE/blacksmith --quit-after 5",
+      "dependency_state": "NO_MISSING_DEPENDENCY_REPORTED",
+      "missing_references_observed": [],
+      "runtime_state": "NOT_RUN",
+      "reason_runtime_not_run": "Referenced scenes, scripts, addons, and resources were not supplied as a complete project."
+    },
+    {
+      "project_name": "urban-legend",
+      "source_sha256": "efb0b9f595d142cca20d92a0555ecb793a1e440decd72dd24dbdb77c23319322",
+      "configuration_parse_state": "EXECUTION_PASS",
+      "recovery_mode_exit_code": 0,
+      "command": "$GODOT_BIN --headless --editor --recovery-mode --path $CONFIG_SAMPLE/urban-legend --quit-after 5",
+      "dependency_state": "NOT_PROVIDED",
+      "missing_references_observed": [
+        "res://scripts/core/game_state.gd",
+        "res://scripts/core/urban_legend_state.gd"
+      ],
+      "runtime_state": "NOT_RUN",
+      "reason_runtime_not_run": "Referenced scenes, scripts, addons, and resources were not supplied as a complete project."
+    },
+    {
+      "project_name": "새 게임 프로젝트",
+      "source_sha256": "e93eb65107aa63bf1a8602459a79fec74dbf381c6e02d7d7dcdd558cb8c513fa",
+      "configuration_parse_state": "EXECUTION_PASS",
+      "recovery_mode_exit_code": 0,
+      "command": "$GODOT_BIN --headless --editor --recovery-mode --path $CONFIG_SAMPLE/new-game-project --quit-after 5",
+      "dependency_state": "NO_MISSING_DEPENDENCY_REPORTED",
+      "missing_references_observed": [],
+      "runtime_state": "NOT_RUN",
+      "reason_runtime_not_run": "Referenced scenes, scripts, addons, and resources were not supplied as a complete project."
+    },
+    {
+      "project_name": "십보강호: 전투 POC",
+      "source_sha256": "f1061e65d87e24dc679fae5da538537086852b155ea7d6a114088e385de21801",
+      "configuration_parse_state": "EXECUTION_PASS",
+      "recovery_mode_exit_code": 0,
+      "command": "$GODOT_BIN --headless --editor --recovery-mode --path $CONFIG_SAMPLE/ten-paces-combat-poc --quit-after 5",
+      "dependency_state": "NOT_PROVIDED",
+      "missing_references_observed": [
+        "res://addons/godot_ai/plugin.cfg",
+        "res://addons/godot_ai/runtime/game_helper.gd"
+      ],
+      "runtime_state": "NOT_RUN",
+      "reason_runtime_not_run": "Referenced scenes, scripts, addons, and resources were not supplied as a complete project."
+    }
+  ],
+  "boundaries": {
+    "original_project_scenes_and_scripts": "NOT_PROVIDED",
+    "original_projects_runtime": "NOT_RUN",
+    "network_mcp_transport": "NOT_IMPLEMENTED",
+    "editor_main_thread_mutation": "NOT_IMPLEMENTED",
+    "editor_undo_redo_transaction": "NOT_IMPLEMENTED",
+    "runtime_debugger_bridge": "NOT_IMPLEMENTED",
+    "project_test_framework": "NOT_CONFIGURED",
+    "physical_input_validation": "NOT_RUN",
+    "human_editor_usability": "HUMAN_NOT_RUN",
+    "production_adapter_ready": "NOT_READY"
+  }
+}

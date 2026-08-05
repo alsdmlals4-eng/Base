@@ -13,6 +13,9 @@ from tests.test_godot_live_editor_contract import (
 from tests.test_godot_live_editor_idempotent_approval import (
     GodotIdempotentApprovalSchemaTests as _GodotIdempotentApprovalSchemaTests,
 )
+from tests.test_godot_live_editor_runtime_contract_hardening import (
+    GodotRuntimeContractHardeningTests as _GodotRuntimeContractHardeningTests,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]

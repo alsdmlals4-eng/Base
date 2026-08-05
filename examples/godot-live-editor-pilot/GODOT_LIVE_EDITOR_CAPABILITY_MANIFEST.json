@@ -1,0 +1,397 @@
+{
+  "schema_version": 1,
+  "artifact_role": "GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST",
+  "configuration_state": "CONFIGURED",
+  "contract_version": "1.0.0",
+  "adapter_version": "1.0.0",
+  "project_identity": {
+    "normalized_project_path": "examples/godot-live-editor-pilot",
+    "project_godot_sha256": "1a87b12d28831f0ca28846324fd9f3743551e52b67fc634ccb89259afa6e61e6",
+    "project_fingerprint": "fadbb98bd91210be3b1c0eacb173558732f49a8c75aa9f935c74d5d5a6d57221"
+  },
+  "engine_compatibility": {
+    "minimum_version": "4.7.1",
+    "maximum_exclusive_version": "4.8.0"
+  },
+  "transport": {
+    "kind": "CLI",
+    "enabled": true,
+    "bind_host": null,
+    "endpoint_identity": "res://tools/live_editor_cli.gd"
+  },
+  "catalog": {
+    "generated_at": "2026-08-05T00:00:00Z",
+    "sha256": "f364c08e811c77c311bb977695cde7f8a5a56f0316e559c5f4d09b0da074ed31",
+    "freshness_state": "FRESH"
+  },
+  "project_test_framework": {
+    "state": "NOT_CONFIGURED",
+    "runner_capability_id": null
+  },
+  "capabilities": [
+    {
+      "capability_id": "doctor",
+      "description": "Validate the fixture engine, project identity, manifest, and catalog.",
+      "execution_path": "CLI_HEADLESS",
+      "operation_class": "READ_ONLY",
+      "idempotency_key_required": false,
+      "approval_required": false,
+      "arguments_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "maxProperties": 0
+      },
+      "timeout_policy": {
+        "milliseconds": 10000,
+        "unknown_outcome": "SAFE_TO_RETRY"
+      },
+      "retry_policy": {
+        "automatic": true,
+        "maximum_attempts": 2,
+        "requires_ledger": false
+      },
+      "evidence_outputs": [
+        "ENGINE_STATE"
+      ],
+      "unsupported_states": [
+        "PROJECT_IDENTITY_MISMATCH",
+        "CATALOG_STALE"
+      ]
+    },
+    {
+      "capability_id": "status",
+      "description": "Return bounded project and engine state.",
+      "execution_path": "CLI_HEADLESS",
+      "operation_class": "READ_ONLY",
+      "idempotency_key_required": false,
+      "approval_required": false,
+      "arguments_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "maxProperties": 0
+      },
+      "timeout_policy": {
+        "milliseconds": 10000,
+        "unknown_outcome": "SAFE_TO_RETRY"
+      },
+      "retry_policy": {
+        "automatic": true,
+        "maximum_attempts": 2,
+        "requires_ledger": false
+      },
+      "evidence_outputs": [
+        "ENGINE_STATE"
+      ],
+      "unsupported_states": [
+        "PROJECT_IDENTITY_MISMATCH",
+        "CATALOG_STALE"
+      ]
+    },
+    {
+      "capability_id": "catalog.compact",
+      "description": "Return the registered capability IDs and operation classes.",
+      "execution_path": "CLI_HEADLESS",
+      "operation_class": "READ_ONLY",
+      "idempotency_key_required": false,
+      "approval_required": false,
+      "arguments_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "maxProperties": 0
+      },
+      "timeout_policy": {
+        "milliseconds": 10000,
+        "unknown_outcome": "SAFE_TO_RETRY"
+      },
+      "retry_policy": {
+        "automatic": true,
+        "maximum_attempts": 2,
+        "requires_ledger": false
+      },
+      "evidence_outputs": [
+        "ENGINE_STATE"
+      ],
+      "unsupported_states": [
+        "PROJECT_IDENTITY_MISMATCH",
+        "CATALOG_STALE"
+      ]
+    },
+    {
+      "capability_id": "scene.inspect",
+      "description": "Load the configured main scene and return a bounded root summary.",
+      "execution_path": "CLI_HEADLESS",
+      "operation_class": "READ_ONLY",
+      "idempotency_key_required": false,
+      "approval_required": false,
+      "arguments_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "maxProperties": 0
+      },
+      "timeout_policy": {
+        "milliseconds": 10000,
+        "unknown_outcome": "SAFE_TO_RETRY"
+      },
+      "retry_policy": {
+        "automatic": true,
+        "maximum_attempts": 2,
+        "requires_ledger": false
+      },
+      "evidence_outputs": [
+        "ENGINE_STATE"
+      ],
+      "unsupported_states": [
+        "PROJECT_IDENTITY_MISMATCH",
+        "CATALOG_STALE"
+      ]
+    },
+    {
+      "capability_id": "state.write_marker",
+      "description": "Write one approved marker under the fixture artifact directory.",
+      "execution_path": "CLI_HEADLESS",
+      "operation_class": "IDEMPOTENT_MUTATION",
+      "idempotency_key_required": true,
+      "approval_required": true,
+      "arguments_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation_id",
+          "marker",
+          "idempotency_key",
+          "request_hash",
+          "approval"
+        ],
+        "properties": {
+          "operation_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "marker": {
+            "type": "string",
+            "minLength": 1
+          },
+          "idempotency_key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "request_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$"
+          },
+          "approval": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "state",
+              "token_binding",
+              "expires_at"
+            ],
+            "properties": {
+              "state": {
+                "enum": [
+                  "REQUIRED",
+                  "APPROVED"
+                ]
+              },
+              "token_binding": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "expires_at": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "timeout_policy": {
+        "milliseconds": 10000,
+        "unknown_outcome": "RECONCILE_BEFORE_RETRY"
+      },
+      "retry_policy": {
+        "automatic": false,
+        "maximum_attempts": 1,
+        "requires_ledger": true
+      },
+      "evidence_outputs": [
+        "ENGINE_STATE",
+        "LOG"
+      ],
+      "unsupported_states": [
+        "PROJECT_IDENTITY_MISMATCH",
+        "CATALOG_STALE"
+      ]
+    },
+    {
+      "capability_id": "task.start",
+      "description": "Start one durable simulated task and return TASK_PENDING.",
+      "execution_path": "CLI_HEADLESS",
+      "operation_class": "LONG_RUNNING_TASK",
+      "idempotency_key_required": false,
+      "approval_required": true,
+      "arguments_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation_id",
+          "request_hash",
+          "approval"
+        ],
+        "properties": {
+          "operation_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "request_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$"
+          },
+          "approval": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "state",
+              "token_binding",
+              "expires_at"
+            ],
+            "properties": {
+              "state": {
+                "enum": [
+                  "REQUIRED",
+                  "APPROVED"
+                ]
+              },
+              "token_binding": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "expires_at": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "timeout_policy": {
+        "milliseconds": 10000,
+        "unknown_outcome": "RESUME_BY_TASK_ID"
+      },
+      "retry_policy": {
+        "automatic": false,
+        "maximum_attempts": 1,
+        "requires_ledger": true
+      },
+      "evidence_outputs": [
+        "ENGINE_STATE",
+        "LOG"
+      ],
+      "unsupported_states": [
+        "PROJECT_IDENTITY_MISMATCH",
+        "CATALOG_STALE"
+      ]
+    },
+    {
+      "capability_id": "task.resume",
+      "description": "Resume the matching durable simulated task and bind its result.",
+      "execution_path": "CLI_HEADLESS",
+      "operation_class": "LONG_RUNNING_TASK",
+      "idempotency_key_required": false,
+      "approval_required": true,
+      "arguments_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation_id",
+          "task_id",
+          "request_hash",
+          "approval"
+        ],
+        "properties": {
+          "operation_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "task_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "request_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$"
+          },
+          "approval": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "state",
+              "token_binding",
+              "expires_at"
+            ],
+            "properties": {
+              "state": {
+                "enum": [
+                  "REQUIRED",
+                  "APPROVED"
+                ]
+              },
+              "token_binding": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "expires_at": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "timeout_policy": {
+        "milliseconds": 10000,
+        "unknown_outcome": "RESUME_BY_TASK_ID"
+      },
+      "retry_policy": {
+        "automatic": false,
+        "maximum_attempts": 1,
+        "requires_ledger": true
+      },
+      "evidence_outputs": [
+        "ENGINE_STATE",
+        "LOG"
+      ],
+      "unsupported_states": [
+        "PROJECT_IDENTITY_MISMATCH",
+        "CATALOG_STALE"
+      ]
+    }
+  ],
+  "validation": {
+    "contract_state": "CONTRACT_PASS",
+    "execution_state": "EXECUTION_PASS",
+    "runtime_state": "RUNTIME_PASS",
+    "physical_input_state": "NOT_RUN",
+    "human_state": "HUMAN_NOT_RUN"
+  }
+}
