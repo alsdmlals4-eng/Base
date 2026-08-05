@@ -116,6 +116,19 @@ Steam Playtest 같은 분리된 테스트 배포를 사용할 수 있지만, 테
 - `HOLD`: 외부 의존성·환경·비용 때문에 판정을 보류한다.
 - `STOP`: 핵심 재미·제작성·제품 약속이 함께 성립하지 않는다.
 
+## Platform and asset proof gate
+
+공용 기준은 `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`다. Vertical Slice는 대표 콘텐츠와 대표 자산을 포함하므로 목표 등급·권리·참조 독립성의 조기 증거도 제공해야 한다.
+
+- `content_rating_target`과 `target_audience`를 분리한다.
+- 청소년이용불가·18+를 피하기 위해 대표 공포·전투·언어·온라인·AI 콘텐츠를 숨기지 않는다.
+- shipping·store·trailer에 사용하는 대표 자산은 `ASSET_RIGHTS_AND_PROVENANCE_RECORD`와 연결한다.
+- 직접 포함 자산의 `distribution_in_game_build`가 확인돼야 한다.
+- `REFERENCE_TO_ORIGINAL`은 원본이 build에 없고 `reference_brief`, `final_asset_record`, `reference_similarity_status`가 있어야 한다.
+- open-source NOTICE·attribution·source, AI terms·input rights, 외주·음성 계약 범위를 확인한다.
+
+대표 자산이 `UNKNOWN`, 참조 원본이 build에 존재하거나 목표 등급이 콘텐츠 은폐에 의존하면 `pipeline-proof`와 Production proof는 `RELEASE_BLOCKED_UNVERIFIED`다. 이 상태에서는 `EXPAND`를 선택하지 않는다.
+
 ## Output contract
 
 - 검증 목적과 핵심 가설
@@ -126,6 +139,8 @@ Steam Playtest 같은 분리된 테스트 배포를 사용할 수 있지만, 테
 - 조작·정보·아트·UI·사운드·접근성·성능 품질 기준
 - 제작 파이프라인·병목·반복 생산 비용
 - 기술·콘텐츠·플랫폼 위험
+- 목표 등급·타깃 연령·대표 콘텐츠 위험
+- 대표 자산 권리·출처·참조 독립 제작 증거
 - 테스터 집단·빌드·과제·피드백 채널
 - 이벤트·퍼널·행동·자기보고 결과
 - 성공·실패·중단 기준
@@ -140,6 +155,8 @@ Steam Playtest 같은 분리된 테스트 배포를 사용할 수 있지만, 테
 - 핵심 정보·입력·시간·난이도에서 주요 접근성 장벽을 확인했다.
 - 목표 플랫폼의 대표·최악 장면 성능을 예산과 비교했다.
 - 실제 제작 파이프라인을 통과하고 다음 콘텐츠 반복 가능성을 확인했다.
+- 대표 자산의 제품 포함 권리와 참조 독립 제작 상태가 확인됐다.
+- 등급 전략이 대표 콘텐츠를 숨기지 않고 프로젝트 코어와 맞는다.
 - 내부·외부 플레이테스트의 빌드·표본·행동·자기보고가 분리 기록됐다.
 - 결과가 다음 개발 결정으로 연결됐다.
 
@@ -155,6 +172,8 @@ Steam Playtest 같은 분리된 테스트 배포를 사용할 수 있지만, 테
 - 빌드·버전·표본·피드백 채널 없이 리뷰·감상을 모음
 - 자기보고만으로 실제 행동을, 퍼널만으로 감정·원인을 단정함
 - 평균 FPS나 옵션 존재만으로 성능·접근성 통과를 주장함
+- 참조 원본이 build에 포함되거나 필수 권리가 `UNKNOWN`인데 Production proof를 주장함
+- 등급 설문에서 대표 콘텐츠를 숨겨 낮은 등급을 목표로 함
 
 ## Validation scenarios
 
@@ -162,6 +181,7 @@ Steam Playtest 같은 분리된 테스트 배포를 사용할 수 있지만, 테
 2. 조사 게임은 사건 진입→관찰→규칙 추론→위험 선택→기록·회수 결과까지 연결한다.
 3. Prototype 결과가 좋더라도 아트·UI·사운드·접근성·성능·파이프라인이 검증되지 않으면 Vertical Slice 완료로 표시하지 않는다.
 4. 상위 능력·특수 장면·보너스 결말이 선택적 하이라이트라면 보유·미보유 양쪽 경로가 최종 구간에 진입하고 정상 완료되는지 검증한다.
+5. 대표 자산의 권리·출처·참조 독립 제작이 미확인되면 `RELEASE_BLOCKED_UNVERIFIED`로 남긴다.
 
 ## Applied case — 선택적 하이라이트와 정상 완주 경로
 

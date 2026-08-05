@@ -109,7 +109,12 @@
         "github-addon",
         "reuse-before-build",
         "third-party-license",
-        "build-custom-decision"
+        "build-custom-decision",
+        "asset-provenance",
+        "distribution-in-game-build",
+        "reference-to-original",
+        "reference-only-asset",
+        "asset-rights-evidence"
       ],
       "skill_modes": [
         "frame-need",
@@ -120,7 +125,7 @@
         "revalidate"
       ],
       "use_when": [
-        "Godot 기능·도구·에셋·통합을 새로 만들기 전에 기본 기능, 공식 Store, 기존 Asset Library, GitHub, itch.io와 상용 후보를 조사·평가해야 한다."
+        "Godot 기능·도구·에셋·통합을 새로 만들기 전에 기본 기능, 공식 Store, 기존 Asset Library, GitHub, itch.io와 상용 후보를 조사·평가하거나 직접 포함과 참조 기반 독립 제작을 판정해야 한다."
       ],
       "do_not_use_when": [
         "외부 자산과 무관한 오탈자·단일 수치 수정이거나 이미 승인된 동일 버전 자산을 단순 재사용한다."
@@ -136,13 +141,22 @@
         "protected_paths",
         "validators",
         "third_party_inventory",
-        "license_record"
+        "license_record",
+        "asset_rights_records",
+        "release_compliance_evidence",
+        "reference_only_roots",
+        "secure_evidence_locations"
       ],
       "references": [
-        "skills/evaluating-godot-assets-and-plugins-before-creation/references/source-catalog.md"
+        "skills/evaluating-godot-assets-and-plugins-before-creation/references/source-catalog.md",
+        "docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md"
       ],
-      "learning_log": "skills/SKILL_LEARNING_LOG.md",
-      "knowledge_state": "PATTERN"
+      "templates": [
+        "templates/project-operations/ASSET_RIGHTS_AND_PROVENANCE_RECORD.md",
+        "templates/project-operations/GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK.md"
+      ],
+      "learning_log": "skills/evaluating-godot-assets-and-plugins-before-creation/LEARNING_LOG.md",
+      "knowledge_state": "PATTERN_CANDIDATE"
     }
   ]
 }

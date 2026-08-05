@@ -87,6 +87,19 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - 기존 승인 이미지가 있으면 별도 지시 없이 새 시안을 만들거나 제거·교체하지 않는다. UI 설계·폴리싱·구현 결과 감사는 `auditing-and-refining-ui-art`로 라우팅하고, 사용자 승인 finding만 실제 렌더로 재검수한다.
 - 접근성·성능·플레이테스트·벤치마크 결과는 실제 적용된 경우만 보고하며 법적 인증이나 제품 구현 사실로 과장하지 않는다.
 
+## 4.1 플랫폼 심사·자산 권리 불변 규칙
+
+공용 기준은 `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`다.
+
+- 기본 플랫폼 검토는 Steam·STOVE·Google Play다.
+- 등급 전략은 프로젝트 핵심 경험을 보존하는 `LOWEST_VIABLE_RATING`이며 청소년이용불가·18+를 기본 회피한다. 전체이용가를 모든 프로젝트에 강제하지 않는다.
+- `content_rating_target`과 `target_audience`를 분리하고 설문·build·store·trailer·screenshot·AI·UGC·ads 일치를 확인한다.
+- 이미지·사운드·폰트·3D·애니메이션·플러그인·오픈소스·AI·외주·성우·작곡·번역 자료는 직접 포함과 `REFERENCE_TO_ORIGINAL`을 분리한다.
+- 참조 자료는 구조·기능·일반 제작 원리만 추출한 `reference_brief`로 새 자산을 만들며, 원본·고유 표현을 그대로 또는 약간 변형해 사용하지 않는다.
+- 필수 상업 사용·게임 포함 배포·출처·약관·계약·유사성·등급 증거가 없으면 `RELEASE_BLOCKED_UNVERIFIED`다.
+- 공개 저장소에 unredacted 계약서, 신분증, 서명, 주소, 결제·세금·개인정보를 넣지 않는다. 최소 metadata·hash·검토 결과와 `secure_original_location`만 둔다.
+- Template·정적 검사 통과는 법률 검토, 등급 확정, 플랫폼 제출·승인 증거가 아니다.
+
 ## 5. 기존 자료와 Base 변경 안전
 
 - 기존 프로젝트 감사·정리는 `managing-game-project-operating-system`의 현재 mode를 사용한다.

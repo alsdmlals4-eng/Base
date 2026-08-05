@@ -327,3 +327,12 @@ proposal_status: NOT_PROPOSED | DRAFT | SUBMITTED | DEFERRED
 ```
 
 한 번의 성공이나 미검증 외부 사례를 공용 강제 규칙으로 승격하지 않는다.
+
+## 18. 자산 권리·플랫폼 출시 특화 증빙
+
+- 자산별 기록: `templates/project-operations/ASSET_RIGHTS_AND_PROVENANCE_RECORD.md`
+- 프로젝트 출시 Pack: `templates/project-operations/GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK.md`
+- 공용 방법: `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`
+- `REFERENCE_TO_ORIGINAL` 참조 입력과 최종 자산은 별도 Record로 연결한다.
+- 필수 권리·등급·설문·빌드 일치가 미확인되면 `RELEASE_BLOCKED_UNVERIFIED`다.
+- 이 Evidence Pack은 조사와 결정 근거를 연결하고, 두 특화 Template은 실제 자산·출시 상태를 기록한다. 어느 파일도 법률 검토나 플랫폼 승인을 대신하지 않는다.

@@ -22,7 +22,10 @@ START_HERE.md
 - [문서·스킬 역할표](docs/DOCUMENTATION_MAP.md)
 - [기획 작업순서·근거 정책](docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md)
 - [근거 기반 게임 개발 지식 허브](docs/knowledge/game-development/README.md)
+- [플랫폼 심사·자산 권리·참조 독립 제작 Guide](docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md)
 - [게임 개발 Evidence Pack](templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md)
+- [자산 권리·출처 Record](templates/project-operations/ASSET_RIGHTS_AND_PROVENANCE_RECORD.md)
+- [게임 출시 Compliance Evidence Pack](templates/project-operations/GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK.md)
 - [게임 개발 Case Card](templates/research/GAME_DEVELOPMENT_CASE_CARD.md)
 - [통합 Vertical Slice 실행문 v9](templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md)
 - [GPT 이미지 생성·검수 및 Sheet 정책](docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md)
@@ -44,6 +47,8 @@ START_HERE.md
 
 게임 기획·아트 기획·개발·AI 활용·벤치마킹·유저리서치·출시 판단을 외부 공식·현업·개발자·플레이어 근거로 개선할 때는 `docs/knowledge/game-development/README.md`에서 관련 Guide만 선택하고, `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`와 `templates/research/GAME_DEVELOPMENT_CASE_CARD.md`로 결정 질문·근거·성공/실패 사례·적용 판정·검증을 연결합니다. 이 허브는 새 Skill이 아니며 기존 Skill의 실행 책임을 대체하지 않습니다.
 
+Steam·STOVE·Google Play의 등급·설문, 자산 상업 사용·게임 포함 배포, 오픈소스·AI·외주 계약과 이미지·사운드 등의 참조 기반 독립 제작은 `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`를 사용합니다. 프로젝트별 증거는 두 project-operations Template에 기록하고, 미확인은 `RELEASE_BLOCKED_UNVERIFIED`로 유지합니다.
+
 기존 정본 복원·작업 시작 인터뷰·Demo-First Vertical Slice·GPT→Codex·프로젝트 Sheet·중간 시각화 점검을 파일 하나로 실행하려면 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 사용합니다. 프로젝트 Sheet는 정확한 URL이 확인된 개별 프로젝트에서만 연결하며 Base 자체는 `BASE_EXCLUDED`입니다.
 
 작업에 필요한 실행 파일·라이브러리·폰트·입력 파일·인증·권한이 없으면 필요한 이유, 설치·적용 방법, 확인 명령과 최소 권한을 안내합니다. 실행하지 않은 조사·검사·권한·도구는 통과로 보고하지 않습니다.
@@ -58,6 +63,7 @@ START_HERE.md
 → 기획 방향·GPT 시각화·이미지 검수 또는 구현·제작
 → Demo-First Vertical Slice·플레이테스트·AI Eval
 → 정본·정적·런타임·접근성·성능·회귀 검증
+→ 플랫폼 등급·설문·자산 권리·참조 독립 제작 검증
 → 책임 원본·Sheet·자산 원장·현재 상태 동기화
 → 인수인계·학습·필요 시 Base 승격
 ```
@@ -105,10 +111,11 @@ START_HERE.md      새 채팅·새 AI 최초 라우터
 AGENTS.md          항상 적용되는 공용 실행 규칙
 README.md          저장소 개요
 docs/OPERATING_MODEL.md  공용 작업 구조 단일 설명 원본
-docs/knowledge/game-development/  기획·아트·개발·AI·근거 공용 Guide
+docs/knowledge/game-development/  기획·아트·개발·AI·근거·플랫폼·자산 권리 공용 Guide
 docs/              Method·Research·Case·체크리스트
 skills/            실행 Skill·Registry·Learning Log·상세 reference
 templates/research/ 근거 조사·사례 기록 템플릿
+templates/project-operations/ 프로젝트 운영·자산 권리·출시 증빙 Template
 templates/         프로젝트 분화·조사·실행·검증 템플릿
 tools/             DOCX/PDF·다이어그램 생성기·Governance checker
 tests/             운영체계·발행·라우팅·정본 최신성 회귀 테스트
@@ -119,7 +126,7 @@ tests/             운영체계·발행·라우팅·정본 최신성 회귀 테�
 
 Base 자체는 [MIT License](LICENSE)로 배포됩니다. 저장소가 참조하거나 별도 고지한 제3자 코드·문서·자산의 라이선스는 해당 원출처와 고지를 따릅니다.
 
-민감한 취약점은 공개 Issue에 내용을 남기지 말고 [Security Policy](SECURITY.md)의 지원 범위와 비공개 신고 경로를 따릅니다.
+민감한 취약점은 공개 Issue에 내용을 남기지 말고 [Security Policy](SECURITY.md)의 지원 범위와 비공개 신고 경로를 따릅니다. 공개 저장소에는 unredacted 계약서·신분증·서명·개인정보를 올리지 않고 `secure_original_location`과 최소 증빙만 기록합니다.
 
 ## 개발 게이트
 
