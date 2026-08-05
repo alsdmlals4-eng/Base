@@ -92,3 +92,9 @@
 - 서버 필요가 발견되면 `docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`에서 `SERVER_FEATURE_DETECTED` → `CLOUD_RUN_DEFAULT_CANDIDATE` → `FIT_AND_RISK_ASSESSMENT`를 수행한다.
 - 실제 프로젝트 계약은 `templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md`가 소유하며 문서 존재만으로 배포·부하·비용·보안 준비를 주장하지 않는다.
 - 고주파 authoritative realtime, UDP, indefinite worker, instance-local durable authority는 기본 후보에서 제외한다.
+
+## 9. 게임 권한·무결성·DRM Capability Pack
+
+- 권한·앱/요청 무결성·DRM·오프라인 라이선스·고가치 서버 권위 질문은 `docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md`를 사용한다.
+- 프로젝트별 신호·복구·개인정보·서비스 종료 증거는 `templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md`가 소유한다.
+- `PLATFORM_NATIVE_FIRST`, `NO_CUSTOM_DRM_DEFAULT`, `PLAYER_HARM_REVIEW`를 유지하며 플랫폼별 미확인 기능은 `PLATFORM_CAPABILITY_UNVERIFIED`로 남긴다.

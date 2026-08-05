@@ -343,3 +343,9 @@ proposal_status: NOT_PROPOSED | DRAFT | SUBMITTED | DEFERRED
 - 프로젝트 계약: `templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md`
 - 서버 필요성·적합성·권위·상태·idempotency·replay·IAM·비밀·WebSocket·비용·장애·rollback을 연결한다.
 - 실제 deployment·runtime·load·failure·cost·security가 없으면 해당 상태를 `NOT_RUN`으로 유지한다.
+
+## 20. Entitlement·integrity·DRM 특화 증빙
+
+- 공용 Guide: `docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md`
+- 프로젝트 Record: `templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md`
+- 플랫폼별 entitlement·integrity 신호, server authority, request binding/replay, offline/outage, false-positive, privacy와 sunset 증거를 연결한다.

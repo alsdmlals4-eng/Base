@@ -196,3 +196,10 @@
 - 상태·identity·authorization·idempotency·replay·transaction·WebSocket·비밀·AI proxy·용량·비용·failure·rollback·provider exit 계약을 기존 owner에 연결했다.
 - 새 활성 Skill과 공용 프로젝트 route는 추가하지 않았다.
 - 정적 CI는 deployment·runtime·load·failure·cost·security·production readiness를 증명하지 않으며 해당 상태는 `NOT_RUN`이다.
+
+## 2026-08-05 - 게임 entitlement·integrity·DRM Capability Pack PR B
+
+- 플랫폼 entitlement·app/build/request integrity·server authority·offline/outage·오탐 복구·privacy·service sunset Guide와 프로젝트 Record를 추가했다.
+- Steam Wrapper의 한계, Google Play request-bound backend verification, STOVE 미확인 상태를 플랫폼별로 분리했다.
+- 단일 신호 영구 제재, false platform parity, client-authoritative high-value state, replay/double spend, outage lockout, 무기한 raw-signal 보존과 no-sunset 설계를 차단했다.
+- 새 활성 Skill·shared route·플랫폼 계정·SDK credential·signing key·secret은 추가하지 않았다.
