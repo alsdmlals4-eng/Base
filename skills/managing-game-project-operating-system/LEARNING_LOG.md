@@ -13,3 +13,13 @@
 - **Evidence:** PR #163의 focused RED에서 기존 167개 테스트 중 새 Guide·Template·라우팅 부재만 실패했다. 구현 뒤 exact-head GREEN, 전체 회귀, 참조 최신성, 독립 검토는 별도 완료 증거로 기록한다.
 - **Boundary:** 실제 프로젝트 자산 감사, runtime 사용, store·build 비교, 법률 검토, 등급 제출과 플랫폼 승인은 `NOT_RUN`이며 Template·정적 테스트로 대체하지 않는다.
 - **Next trigger:** 여러 프로젝트에서 동일한 누락 패턴이 반복되고 구조화 입력으로 안전하게 검사 가능한 항목이 확인될 때만 전용 자동 validator 또는 별도 Skill 책임을 재검토한다.
+
+## 2026-08-05 — Cloud Run 게임 백엔드 Capability Pack
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** 여러 게임 프로젝트에서 로그인·클라우드 저장·리더보드·비동기 결과·AI proxy 등 서버 기능이 필요할 때 Cloud Run을 무조건 채택하지 않고 재사용 가능한 적합성·운영·검증 계약으로 판단하려는 승인된 요청.
+- **Decision:** 새 활성 Skill과 `BASE_SHARED_SKILL_ROUTES.json` 항목을 추가하지 않았다. 기존 게임 개념·프로젝트 운영·Vertical Slice·AI 비용·통합 검증 owner에 Guide와 프로젝트 Contract를 연결했다.
+- **Boundary:** `CLOUD_RUN_DEFAULT_CANDIDATE`는 조건부 기본 검토 후보다. high-frequency authoritative realtime, UDP, indefinite worker, instance-local durable authority는 별도 아키텍처가 필요하다.
+- **Evidence:** RED에서는 신규 Guide·Contract·라우팅 부재만 실패했고 기존 회귀는 통과했다. 정적 GREEN은 파일·계약·경로·반례만 증명한다.
+- **Not run:** 실제 deployment, runtime persistence, load, connection storm, dependency failure, cost, security, production readiness는 `NOT_RUN`이다.
+- **Next trigger:** 실제 프로젝트 Pilot에서 기존 owner 라우팅이 반복 실패하거나 독립 도구·승인·검증 경계가 입증될 때만 별도 Skill을 재검토한다.

@@ -84,3 +84,7 @@ Windows+Android 동시 목표, STOVE·Google Play·Steam 단계 출시, 모바�
 난이도·전투 AI에서는 보이지 않는 정보로 처벌, 플레이어 입력 직접 읽기, 카메라 밖 즉사, 연속 기절·회피 불가능 조합, 체력 스펀지로 선택 대체, 성공 직후 성장 무효화, 현재 전투 중 노골적인 수치 조작, 히스테리시스 없는 난이도 진동, 텔레메트리만으로 감정·원인 확정을 금지한다.
 
 Learning Log: `skills/SKILL_LEARNING_LOG.md`
+
+## Cloud Run backend capability handoff
+
+게임 기능 분석 중 `SERVER_FEATURE_DETECTED`가 확인되면 플레이어 가치와 서버 필요성을 먼저 판정하고 `docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`의 fit Gate로 넘긴다. 공급자 선택은 서버 필요성보다 앞서지 않는다.

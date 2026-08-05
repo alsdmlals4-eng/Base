@@ -106,3 +106,7 @@ PC·Android Delivery Guide도 새 광역 Skill이 아니다. `analyzing-and-refi
 ```
 
 변경 후 `DOCUMENT_UPDATE_MATRIX.md`로 영향 범위를 확인한다. 과거 Skill ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 현재 Skill·mode로 해석하며, 새 문서와 Registry에는 현행 ID만 사용한다.
+
+## Cloud Run 게임 백엔드 진입
+
+서버 기능이 감지되면 `docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`를 읽고 `SERVER_FEATURE_DETECTED`에서 적합성 Gate를 시작한다. 선택 뒤 프로젝트 정본은 `templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md`에 두며 실제 배포·부하·장애·비용 검증 전에는 `PRODUCTION_READY`를 선언하지 않는다.
