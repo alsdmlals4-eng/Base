@@ -180,6 +180,23 @@ class SkillImplementationEvidenceTests(unittest.TestCase):
 
         self.assertEqual(generated, checked_in)
 
+    def test_bcp008_existing_owners_have_executable_repository_evidence(self) -> None:
+        builder = load_builder()
+        self.assertEqual([], builder.validate_evidence_index(ROOT))
+        markdown = builder.build_evidence_markdown(ROOT)
+        expected = {
+            "managing-project-intake-and-work-contract": "tests/test_feature_spec_traceability_contract.py",
+            "managing-design-documents": "tests/test_feature_spec_traceability_contract.py",
+            "reviewing-and-validating-project-changes": "tests/test_feature_spec_traceability_contract.py",
+            "running-adversarial-review-and-refinement": "tests/test_cross_discipline_review_lenses.py",
+            "auditing-and-refining-ui-art": "tests/test_bcp008_behavior_and_procurement_pilot.py",
+        }
+        for skill_id, path in expected.items():
+            row = next(line for line in markdown.splitlines() if line.startswith(f"| `{skill_id}`"))
+            self.assertIn("EXECUTABLE_EVIDENCE", row)
+            self.assertIn(path, row)
+
+
 
 if __name__ == "__main__":
     unittest.main()

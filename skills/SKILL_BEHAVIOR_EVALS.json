@@ -477,7 +477,9 @@
         "content_hash",
         "license",
         "dependencies",
-        "rollback"
+        "rollback",
+        "external UI procurement receipt",
+        "BLOCKED_UNVERIFIED"
       ],
       "expected_user_decision_state": "REQUIRED",
       "rationale": "Web 외부 UI 조달은 source admission, 설치 승인, 런타임·접근성·렌더 품질을 분리하며 MCP 연결을 승인으로 오인하지 않는다."

@@ -95,6 +95,16 @@ class SkillBehaviorGovernanceIntegrationTests(unittest.TestCase):
         ):
             self.assertIn(path, focused["require_all_changed"])
 
+    def test_bcp008_behavior_contract_preserves_truthful_evidence_limits(self) -> None:
+        evals = json.loads((ROOT / "skills/SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8"))
+        self.assertEqual("NOT_RUN", evals["model_run_status"])
+        case_ids = {case["case_id"] for case in evals["cases"]}
+        self.assertTrue({"SBE-901", "SBE-902", "SBE-903", "SBE-904"}.issubset(case_ids))
+        generated = (ROOT / "docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md").read_text(encoding="utf-8")
+        self.assertIn("External model behavior run: `NOT_RUN`", generated)
+        self.assertIn("tests/test_bcp008_behavior_and_procurement_pilot.py", generated)
+
+
 
 if __name__ == "__main__":
     unittest.main()

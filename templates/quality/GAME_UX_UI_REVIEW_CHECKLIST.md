@@ -43,6 +43,18 @@
 - [ ] 전후 Artifact가 같은 build·상태·해상도·입력·locale·접근성 설정을 사용한다.
 - [ ] 폴리싱이 미확정 코어·정보 구조·도메인 규칙 문제를 가리지 않는다.
 
+## 4A. 외부 UI 조달·시각 품질 Gate
+
+- [ ] 현재 프로젝트가 Godot 전용인지 Web UI 코드가 실제로 필요한지 먼저 판정했다.
+- [ ] Registry/MCP의 공식 출처, exact version/commit, item, source hash와 license 근거를 기록했다.
+- [ ] dependency·script/postinstall·secret·network·추가/교체 파일을 설치 전에 검토했다.
+- [ ] MCP 연결 성공이나 Registry 조회 성공을 설치 승인으로 해석하지 않았다.
+- [ ] 일회성 격리 fixture의 조달·빌드 결과와 실제 프로젝트 설치 결과를 분리했다.
+- [ ] 실제 프로젝트 Theme·컴포넌트·상태 책임과의 중복·충돌을 확인했다.
+- [ ] `Design Read`와 프로젝트 시각 토큰을 기준으로 generic card grid, AI-purple glow, 무목적 glass·gradient·motion 반복을 실제 렌더에서 검사했다.
+- [ ] keyboard/focus, disabled/error/loading, reduced motion, 긴 한국어, 최소 해상도와 접근성을 실제 렌더·입력으로 확인했다.
+- [ ] rollback 경로가 있고, 미검증이면 `BLOCKED_UNVERIFIED`로 유지했다.
+
 ## 5. 접근성
 
 - [ ] 중요한 의미가 색 하나에만 의존하지 않는다.

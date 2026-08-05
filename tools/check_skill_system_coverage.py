@@ -141,9 +141,12 @@ def _validate_bcp008(errors: list[str]) -> None:
             "L2 이상",
         ),
         "skills/auditing-and-refining-ui-art/SKILL.md": (
+            "ux-ui-design-system-method.md",
+        ),
+        "skills/auditing-and-refining-ui-art/references/ux-ui-design-system-method.md": (
             "design-md-project-adapter.md",
             "external-ui-procurement-and-anti-generic-quality.md",
-            "기본 설치",
+            "외부 Web UI",
         ),
         "templates/planning/GAME_UX_UI_SYSTEM.md": (
             "DESIGN.md",
