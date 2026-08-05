@@ -273,7 +273,7 @@ func _build_envelope(
 
 
 func _refresh_request_security(envelope: Dictionary, capability: Dictionary) -> void:
-    var request_hash := _guard.canonical_json_sha256(
+    var request_hash: String = _guard.canonical_json_sha256(
         _guard.operation_request_material(envelope)
     )
     envelope["request_hash"] = request_hash
@@ -297,7 +297,7 @@ func _refresh_request_security(envelope: Dictionary, capability: Dictionary) -> 
 
 
 func _valid_result_hash(result: Dictionary) -> bool:
-    var expected := _guard.canonical_json_sha256(result.get("data", {}))
+    var expected: String = _guard.canonical_json_sha256(result.get("data", {}))
     return str(result.get("result_hash", "")) == expected and expected.length() == 64
 
 
