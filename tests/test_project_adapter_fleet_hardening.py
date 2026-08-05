@@ -108,6 +108,33 @@ class ProjectAdapterFleetHardeningTests(unittest.TestCase):
                 f"Pinned validator commit lacks required fleet hardening in {path}",
             )
 
+    def test_project_workflow_uses_a_trusted_historical_baseline_for_normal_prs(self) -> None:
+        workflow = WORKFLOW.read_text(encoding="utf-8")
+
+        for marker in (
+            'ADAPTER_PATH="skills/PROJECT_BASE_ADAPTER.json"',
+            'git diff --name-only "$PR_BASE_SHA"...HEAD -- "$ADAPTER_PATH"',
+            'PROTECTED_BASE_SHA="$PR_BASE_SHA"',
+            'git show "$PR_BASE_SHA:$ADAPTER_PATH"',
+            'payload["protected_baseline"]["commit"]',
+            '--protected-base "$PROTECTED_BASE_SHA"',
+        ):
+            self.assertIn(marker, workflow)
+
+        self.assertNotIn(
+            '--protected-base "$PR_BASE_SHA"',
+            workflow,
+            "Every unrelated PR must not be forced to rewrite the historical adapter baseline.",
+        )
+        self.assertIn(
+            "Adapter migration PR: trust the immutable pull-request base as the new protected baseline",
+            workflow,
+        )
+        self.assertIn(
+            "Normal PR: trust the baseline recorded by the adapter at the immutable pull-request base",
+            workflow,
+        )
+
     def test_decision_records_approval_and_trusted_merge_pin(self) -> None:
         text = DECISION.read_text(encoding="utf-8")
         for token in (
