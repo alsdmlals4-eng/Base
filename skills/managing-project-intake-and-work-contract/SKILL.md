@@ -441,3 +441,21 @@ L1 이상 Prompt 계약에서 강한 지시를 추가하기 전에 `HARD_CONSTRA
 입력·출력·불변조건·실패조건·검증을 예시보다 먼저 정의하는 Interface-first 계약을 사용한다. 예시는 정상·실패·경계·회귀 Fixture 또는 Golden Set으로 보존한다.
 
 Direction anchor와 first-prompt 순서화는 `references/first-prompt-direction-anchoring.md`를 따른다. Context 큐레이션은 현재 `decision_question`을 고정한 뒤 권위·freshness·representation·deduplication·known conflicts·반대 근거·`progressive_load_trigger`·`refresh_trigger`를 기록한다. 상세 Method: `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`.
+
+## BCP-008 L2+ 명세 추적성
+
+`L2 이상` 작업에서 승인된 요구가 여러 Task·파일·검증으로 분산되면 `templates/planning/FEATURE_SPEC_TRACEABILITY_PACKET.md`를 사용한다. 이 Packet은 **별도 책임 원본이 아니다**. intake는 Decision·Requirement·Acceptance ID와 범위를 연결하고, 분야 정본·실제 구현·검증의 내용을 복제하지 않는다.
+
+```text
+Decision
+→ Requirement
+→ Acceptance Criteria
+→ Task
+→ Implementation Path
+→ Verification Evidence
+```
+
+- `L0·L1`에는 기본 적용하지 않는다. 다만 실제 영향이 여러 시스템·파일로 확장되면 작업 수준을 다시 판정한다.
+- Packet 생성 자체를 완료로 보지 않고 `coverage_status`, `unmapped_items`, `BLOCKED_UNVERIFIED`를 기록한다.
+- 문서 정본 연결은 `managing-design-documents`, 실제 diff·테스트 증거 대조는 `reviewing-and-validating-project-changes`가 소유한다.
+- 같은 ID를 새 문서마다 재정의하거나 별도 Spec 정본을 만들지 않는다.

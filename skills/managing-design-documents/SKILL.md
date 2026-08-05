@@ -294,3 +294,12 @@ Tools:
 - `tools/design_document_diagrams.py`
 - `tools/check_publication_environment.py`
 - `templates/project-operations/github/check_design_document_publications.py`
+
+## BCP-008 명세 추적성 문서 경계
+
+`templates/planning/FEATURE_SPEC_TRACEABILITY_PACKET.md`은 L2 이상 작업의 Decision·Requirement·Acceptance·Task·구현·검증 연결을 표시하는 비정본 파생 Packet이다. **상세 책임 원본**의 규칙·예외·수치·상태를 복제하지 않고 `canonical_source`와 정확한 Section·ID만 연결한다.
+
+- 승인 Decision은 기존 방식대로 `CURRENT_CONFIRMED_DECISIONS.md`와 분야 책임 원본에 즉시 반영한다.
+- Packet의 `coverage_status=CONVERGED`는 문서가 많다는 뜻이 아니라 모든 승인 Requirement가 실제 경로와 검증 증거에 연결됐다는 뜻이다.
+- 상세 정본과 Packet이 충돌하면 상세 정본을 기준으로 Packet을 `GAP` 또는 `BLOCKED_UNVERIFIED`로 낮춘다.
+- 작은 L0·L1 문서 수정에는 Packet을 만들지 않는다.

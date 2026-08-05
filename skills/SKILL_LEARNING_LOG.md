@@ -603,3 +603,12 @@
 - 검증 경계: Repository 계약·라우팅·회귀는 구현 증거일 뿐 실제 영상 품질·시청 유지·클릭·데모·위시리스트·후원·구매 전환의 사람 검증이 아니다. `HUMAN_NOT_RUN`, `CONVERSION_UNVERIFIED`, `INSUFFICIENT_SAMPLE`, `NOT_PROVEN`을 증거가 생길 때까지 유지한다.
 - 롤백: 활성 Skill, Episode Packet Template, Registry·entrypoint·행동 평가·구현 증거·전용 Test를 구현 PR 하나로 되돌린다. 프로젝트가 채운 Packet과 실제 Analytics는 프로젝트 증거로 보존한다.
 - 다음 검토 트리거: 실제 프로젝트 Pilot, 제목·썸네일 약속 불일치, 권리·스포일러·보안 누출, 작은 표본 과잉 해석, 영상 제작의 핵심 개발 잠식, 프로젝트 Adapter 필요가 반복 확인되는 경우.
+
+## 2026-08-06 — BCP-008 선택형 명세·디자인·UI 조달 통합
+
+- 관찰: Base는 요구·문서·검증 생명주기를 이미 소유했지만 L2 이상 Requirement의 구현·검증 연결 ID, 선택형 시각 토큰 정본, 외부 UI 소스 admission과 설치/품질 Gate 분리가 약했다.
+- 결정: 새 ACTIVE Skill을 만들지 않고 기존 owner Skill에 Traceability Packet, 교차 분야 Lens, DESIGN.md Adapter, 외부 UI 조달·anti-generic Gate를 조건부로 통합한다.
+- 보호: `skills/SKILL_REGISTRY.json`, released lock, 단일 주 책임 Skill, `GAME_UX_UI_SYSTEM`의 경험·행동 권위, Godot 중심 구조를 유지한다.
+- 행동 압력: L2 추적성 선택, L1 비선택, Web 조달 선택, Godot shadcn 직접 설치 비선택 fixture를 추가한다.
+- 실제 조달: shadcn-ui/ui exact commit의 source·package metadata·MIT license를 확인했다. source의 미배포 버전 `4.16.2`는 npm `ETARGET`으로 실패했으며, 배포된 CLI `4.16.1`을 사용한 격리 Vite fixture에서는 button 조달과 TypeScript/Vite build가 통과했다. Base·실제 프로젝트에는 설치하지 않았다.
+- 증거 상한: 계약·fixture·source receipt와 격리 Web build는 실제 독립 모델 행동 향상, 목표 프로젝트 설치, 브라우저 상호작용, 접근성, 사람 미감 통과를 증명하지 않는다. `MODEL_RUN_STATUS: NOT_RUN`, target installation `NOT_RUN`, `HUMAN_NOT_RUN`을 유지한다.

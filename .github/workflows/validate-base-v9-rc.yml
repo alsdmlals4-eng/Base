@@ -92,24 +92,6 @@ jobs:
             tests.test_base_v9_4_2_compatibility_release \
             tests.test_base_v9_4_3_compatibility_release \
             -v
-      - name: Export bounded BCP-008 editing sources
-        if: github.event_name == 'pull_request' && github.head_ref == 'agent/implement-bcp-008-spec-design-ui'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: bcp008-source-${{ github.event.pull_request.head.sha }}
-          path: |
-            skills/managing-project-intake-and-work-contract/SKILL.md
-            skills/managing-design-documents/SKILL.md
-            skills/reviewing-and-validating-project-changes/SKILL.md
-            skills/running-adversarial-review-and-refinement/SKILL.md
-            skills/auditing-and-refining-ui-art/SKILL.md
-            skills/auditing-and-refining-ui-art/references/ux-ui-design-system-method.md
-            templates/planning/GAME_UX_UI_SYSTEM.md
-            skills/SKILL_BEHAVIOR_EVALS.json
-            docs/DOCUMENTATION_MAP.md
-            skills/SKILL_LEARNING_LOG.md
-          if-no-files-found: error
-          retention-days: 1
 
   adversarial-gate:
     name: adversarial-gate

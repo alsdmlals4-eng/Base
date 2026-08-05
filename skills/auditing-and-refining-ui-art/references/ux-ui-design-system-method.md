@@ -205,3 +205,9 @@ P0 BLOCKER
 ## 3.12 UI 모션·상호작용
 
 모션이 상태 변화·입력 접수·공간 관계·결과 위치를 설명해야 하는 경우 `ui-motion-and-interaction-principles.md`를 사용한다. 모션 목적, 중단, 즉시 완료, 빠른 반복, 재진입, Reduced Motion, mute, haptic-off, 성능과 도메인 상태 권위를 검증한다. 프로젝트별 timing·easing 값은 실제 입력 빈도와 목표 플랫폼 증거로 정하며 Base 상수로 고정하지 않는다.
+
+## 6. BCP-008 시각 토큰·외부 조달 확장
+
+프로젝트 시각 토큰을 별도 파일로 기계 판독해야 할 때만 `design-md-project-adapter.md`와 `templates/planning/PROJECT_DESIGN_MD_TEMPLATE.md`를 사용한다. 외부 Web UI 코드·Registry·MCP를 검토할 때는 `external-ui-procurement-and-anti-generic-quality.md`를 사용한다.
+
+두 확장은 선택 사항이며 기존 `GAME_UX_UI_SYSTEM`의 경험·행동·상태·접근성 권위를 대체하지 않는다. 소스 조회, 코드 채택, 설치, 실제 렌더 품질은 각각 독립 Gate로 판정한다.

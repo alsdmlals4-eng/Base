@@ -174,3 +174,23 @@ status
 모션·상호작용 작업에서는 `references/ui-motion-and-interaction-principles.md`를 읽는다. 정보 구조와 상태 소유권이 준비된 뒤 모션 목적·staging·입력 접수/처리 중/결과·중단·즉시 완료·빠른 반복·재진입·Reduced Motion·mute·haptic-off·성능을 설계한다.
 
 `AnimationPlayer`와 `Tween`은 표현을 담당하며 구매·보상·저장·진행의 도메인 상태 권위를 소유하지 않는다. 모션이 중단되거나 즉시 완료돼도 결과는 한 번만 발생해야 한다.
+
+## BCP-008 DESIGN.md·외부 UI 조달
+
+프로젝트가 기계 판독 가능한 시각 언어가 필요하면 `references/design-md-project-adapter.md`와 `templates/planning/PROJECT_DESIGN_MD_TEMPLATE.md`를 사용한다. `DESIGN.md`는 색·타이포그래피·간격·형태·컴포넌트 시각 토큰만 소유하며, 플레이어 경험·화면 흐름·상태 소유권·접근성 행동은 `GAME_UX_UI_SYSTEM`이 계속 소유한다.
+
+외부 UI Registry·MCP·컴포넌트 코드를 찾거나 가져오라는 요청에서는 `references/external-ui-procurement-and-anti-generic-quality.md`를 사용한다.
+
+```text
+source acquisition
+→ provenance·license·hash·dependency·script·secret·overwrite 검사
+→ install approval
+→ accessibility·runtime·actual render
+→ anti-generic quality review
+→ ADOPT / ADAPT / REJECT / BLOCKED_UNVERIFIED
+```
+
+- MCP 연결 성공은 설치 승인이나 품질 통과가 아니다.
+- shadcn/ui 같은 Web 코드를 Godot 프로젝트에 기본 설치하지 않는다.
+- 외부 UI 조달 요청이 없으면 이 경로를 기본 실행하거나 외부 패키지를 기본 설치하지 않는다.
+- 실제 렌더·입력·접근성 증거 없이 미감 규칙만으로 완료를 선언하지 않는다.

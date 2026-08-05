@@ -367,3 +367,13 @@ References and templates:
 ## Entitlement and integrity validation route
 
 `docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md`와 `templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md`의 platform signal, request binding, server authority, replay/double spend, privacy, outage, false positive와 sunset 증거를 분리해 검증한다. 사람의 실제 복구 세션이 없으면 `HUMAN_RECOVERY_VERIFIED`를 선언하지 않는다.
+
+## BCP-008 Traceability convergence 검증
+
+L2 이상 구현·문서 변경에 `templates/planning/FEATURE_SPEC_TRACEABILITY_PACKET.md`가 있으면 실제 diff와 실행 증거를 기준으로 `coverage_status`를 재계산한다.
+
+- `CONVERGED`: 승인된 모든 `requirement_id`가 `acceptance_criteria_ids`, `task_ids`, 실제 `implementation_paths`, 실행된 `verification_ids`에 연결되고 `unmapped_items`가 없다.
+- `GAP`: 하나 이상의 승인 Requirement·경로·검증 연결이 빠졌거나 구현이 정본을 벗어났다.
+- `BLOCKED_UNVERIFIED`: 정본·환경·권한·실행 결과가 없어 대조할 수 없다.
+
+문서의 체크 표시, 파일 존재, 테스트 정의만으로 `CONVERGED`를 선언하지 않는다. 실제로 실행하지 않은 테스트·렌더·런타임·사람 검증은 해당 `verification_id`의 통과 증거가 아니다.

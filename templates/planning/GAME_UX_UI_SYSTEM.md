@@ -270,6 +270,24 @@ disabled / locked / loading / warning / error / new
 - 다음 게이트:
 - 롤백:
 
+
+## 선택형 프로젝트 DESIGN.md 연결
+
+> `DESIGN.md`는 시각 토큰 정본이며 이 문서의 플레이어 경험·화면 흐름·상태·접근성·Godot 소유권을 대체하지 않는다.
+
+| 항목 | 값 |
+|---|---|
+| 사용 여부 | NOT_USED / DRAFT / ACTIVE / SUPERSEDED |
+| 경로 | `DESIGN.md` 또는 프로젝트가 등록한 경로 |
+| 형식·버전 | `google-design-md / alpha` 또는 승인된 프로젝트 형식 |
+| source commit/release | |
+| 시각 토큰 범위 | 색·타이포그래피·간격·형태·깊이·컴포넌트 표현 |
+| Godot Theme mapping | |
+| Web token mapping | |
+| 검증 상태 | NOT_RUN / PARTIAL / PASSED / FAILED / BLOCKED |
+
+게임 규칙, 도메인 상태, 입력 결과, 보상·저장·진행은 `DESIGN.md`가 소유하지 않는다. 외부 브랜드·getdesign 계열 자료는 `reference_provenance`와 변환 축을 기록하고 고유 자산·상표 표현을 복제하지 않는다.
+
 ## UI 모션·상호작용 계약
 
 ```yaml

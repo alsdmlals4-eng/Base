@@ -220,3 +220,12 @@ GitHub와 Sheets가 다르면 최신 사용자 승인, Decision ID, Commit SHA�
 - archive·compatibility·삭제 처리를 전문 Skill로 라우팅했다.
 
 Learning Log: `skills/SKILL_LEARNING_LOG.md`
+
+## BCP-008 교차 분야 검토 Lens
+
+L2 이상 다분야 결정, 저장소 전체 감사, 외부 코드·디자인 조달에서는 `references/cross-discipline-review-lenses.md`에서 현재 위험과 직접 관련된 Lens만 선택한다. Lens는 BMAD식 관점 확장을 제공하지만 **주 책임 Skill의 결정을 소유하지 않는다**.
+
+- 관련 없는 Lens는 억지 Finding을 만들지 않고 `NOT_APPLICABLE`과 이유를 기록한다.
+- 각 Finding은 `lens`, `evidence`, `affected_requirement`, `severity`, `owner_skill`, `status`를 포함한다.
+- Lens 간 결론이 충돌하면 사실·영향·비용·코어·되돌리기 난이도로 `validate-critique`하고, 중요 방향 차이는 `USER_DECISION_REQUIRED`로 보낸다.
+- Named Agent별 별도 정본·PRD·Architecture 복제본을 만들지 않는다.

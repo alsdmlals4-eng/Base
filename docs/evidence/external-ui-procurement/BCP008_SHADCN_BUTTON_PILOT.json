@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "pilot_id": "BCP008-SHADCN-BUTTON-20260806",
+  "checked_at": "2026-08-06",
+  "source_repo": "shadcn-ui/ui",
+  "source_commit": "b1c580c637f4666890b25c69cdc315c93a892c5d",
+  "registry_source": "official-github-source-registry",
+  "registry_item": "button",
+  "registry_path": "apps/v4/registry.json",
+  "registry_blob_sha": "d76f278deca4b0ac7fae4ba679baffe01f538f08",
+  "component_path": "apps/v4/registry/new-york-v4/ui/button.tsx",
+  "component_blob_sha": "4d38506cee5430d95a59ec6a2a0cef2b79217e7a",
+  "component_sha256": "cc36af0f8b5019c33cc039fbf03bb952a513072b15b55b53c592b78af3e5f4c4",
+  "component_bytes": 2392,
+  "license": "MIT",
+  "declared_dependencies": [
+    "@radix-ui/react-slot"
+  ],
+  "observed_import_packages": [
+    "react",
+    "class-variance-authority",
+    "radix-ui",
+    "@/lib/utils"
+  ],
+  "scripts": [],
+  "secrets": [],
+  "files_added_or_replaced": [],
+  "source_acquisition": "PASS",
+  "installation": "NOT_RUN",
+  "security_review": "PARTIAL_SOURCE_ONLY",
+  "accessibility_review": "NOT_RUN",
+  "runtime_review": "BUILD_PASS_DISPOSABLE_FIXTURE_ONLY",
+  "decision": "BLOCKED_UNVERIFIED",
+  "reason_codes": [
+    "SOURCE_PACKAGE_VERSION_NOT_PUBLISHED",
+    "SOURCE_TO_PUBLISHED_CLI_IDENTITY_DIFFERS",
+    "TARGET_PROJECT_NOT_SUPPLIED",
+    "ACCESSIBILITY_NOT_RUN",
+    "ACTUAL_RENDER_NOT_REVIEWED"
+  ],
+  "rollback": "The disposable fixture was destroyed with the CI workspace. No Base or target-project UI files were installed; remove only this receipt and its validation references.",
+  "evidence_limits": [
+    "Official source registry, component source, package metadata, and MIT license were read at exact commit.",
+    "Published shadcn CLI 4.16.1 created an isolated Vite project, added button, and passed TypeScript/Vite build.",
+    "Source commit declares package version 4.16.2, which was not published to npm at pilot time; the successful CLI pilot therefore does not prove byte-for-byte reproducibility from that source commit.",
+    "No actual target-project installation, browser interaction, accessibility audit, screenshot review, or human anti-generic quality review was run."
+  ],
+  "license_path": "LICENSE.md",
+  "license_blob_sha": "fad4d887a681dd49233e5ed01ee2c7a1513089a0",
+  "license_sha256": "1564074e13439397221ffd522e2e504d56561994a23d371aa5e3ad43e4f5423f",
+  "source_package_path": "packages/shadcn/package.json",
+  "source_package_blob_sha": "8148b8e2885538a7844caaffe75d7492a1a92a41",
+  "source_package_declared_version": "4.16.2",
+  "source_package_published_status": "NOT_PUBLISHED_ETARGET",
+  "published_cli_version": "4.16.1",
+  "published_cli_resolution": "npm view shadcn version",
+  "disposable_fixture": {
+    "framework": "Vite React TypeScript",
+    "base": "radix",
+    "preset": "nova",
+    "node_version": "v24.18.0",
+    "procurement": "PASS",
+    "build": "PASS",
+    "generated_component_path": "src/components/ui/button.tsx",
+    "generated_component_sha256": "9ce417985b97956fbb3a73c84b0eb60230fd0a9844c5111df92e061731440a3f",
+    "generated_component_bytes": 3385,
+    "generated_import_packages": [
+      "react",
+      "class-variance-authority",
+      "radix-ui",
+      "@/lib/utils"
+    ],
+    "generated_dependencies": {
+      "class-variance-authority": "^0.7.1",
+      "radix-ui": "^1.6.7",
+      "react": "^19.2.6",
+      "shadcn": "^4.16.1"
+    },
+    "workflow_run_id": 31054026548,
+    "artifact_id": 8949548316,
+    "artifact_digest": "sha256:9d51bf8f6fc1a6c44c0e51fb213cfec81cc38a4db81d330c51a0e7c1aa1e9e2f"
+  },
+  "procurement_execution": "PASS_DISPOSABLE_WEB_FIXTURE",
+  "target_project_installation": "NOT_RUN",
+  "actual_render_review": "NOT_RUN"
+}
