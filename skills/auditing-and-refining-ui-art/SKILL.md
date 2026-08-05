@@ -86,6 +86,8 @@ description: Use when planning, polishing, or auditing game UX, UI structure, in
 상세 방법은 필요할 때만 읽는다.
 
 - [ux-ui-design-system-method.md](references/ux-ui-design-system-method.md)
+- [design-md-project-adapter.md](references/design-md-project-adapter.md)
+- [external-ui-procurement-and-anti-generic-quality.md](references/external-ui-procurement-and-anti-generic-quality.md)
 - [game-ux-pattern-library.md](references/game-ux-pattern-library.md)
 - [ux-ui-reference-library.md](references/ux-ui-reference-library.md)
 - [godot-ui-implementation-contract.md](references/godot-ui-implementation-contract.md)
