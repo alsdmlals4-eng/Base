@@ -14,6 +14,7 @@ func _enter_tree() -> void:
 
 
 func _run_pilot() -> void:
+    var pilot_started_usec := Time.get_ticks_usec()
     await get_tree().process_frame
     var adapter_state := availability()
     if not adapter_state.get("available", false):
@@ -88,6 +89,33 @@ func _run_pilot() -> void:
         )
     )
 
+    root = EditorInterface.get_edited_scene_root()
+    var stale_observation: Dictionary = _probe.observe(
+        get_editor_interface(),
+        get_undo_redo(),
+        NodePath("RenamedSaved"),
+    )
+    var stale_envelope := _build_envelope(
+        "node.rename",
+        {
+            "node_path": "RenamedSaved",
+            "new_name": "ShouldNotApply",
+            "save_mode": "KEEP_DIRTY",
+        },
+        stale_observation,
+        "op-rename-stale-001",
+    )
+    stale_envelope["preconditions"]["expected_target_revision"] = "stale-revision"
+    _refresh_request_security(stale_envelope, _capability("node.rename"))
+    var stale_result: Dictionary = await _submit_and_wait(stale_envelope)
+    var stale_state_block_pass: bool = (
+        not stale_result.get("success", false)
+        and stale_result.get("code") == "TARGET_STATE_CONFLICT"
+        and root.get_node_or_null("RenamedSaved") != null
+        and root.get_node_or_null("ShouldNotApply") == null
+        and _ledger_state("op-rename-stale-001") == null
+    )
+
     var saved_hash = null
     if save_result.get("success", false):
         saved_hash = save_result.get("data", {}).get("saved_scene_sha256")
@@ -95,11 +123,19 @@ func _run_pilot() -> void:
         _ledger_state("op-rename-dirty-001"),
         _ledger_state("op-rename-save-001"),
     ]
+    var result_hash_pass: bool = (
+        _valid_result_hash(inspect_result)
+        and _valid_result_hash(dirty_result)
+        and _valid_result_hash(save_result)
+        and _valid_result_hash(stale_result)
+    )
     var passed: bool = (
         inspect_result.get("success", false)
         and dirty_result.get("success", false)
         and undo_pass
         and save_result.get("success", false)
+        and stale_state_block_pass
+        and result_hash_pass
         and ledger_states == ["COMPLETED", "COMPLETED"]
         and saved_hash != null
         and saved_hash == _evidence.sha256_file(SCENE_PATH)
@@ -113,12 +149,16 @@ func _run_pilot() -> void:
         "rename_keep_dirty_pass": dirty_result.get("success", false),
         "undo_pass": undo_pass,
         "rename_save_pass": save_result.get("success", false),
+        "stale_state_block_pass": stale_state_block_pass,
+        "result_hash_pass": result_hash_pass,
         "saved_scene_sha256": saved_hash,
         "ledger_states": ledger_states,
         "network_listener_enabled": network_listener_enabled,
+        "elapsed_usec": Time.get_ticks_usec() - pilot_started_usec,
         "inspect_code": inspect_result.get("code"),
         "rename_keep_dirty_code": dirty_result.get("code"),
         "rename_save_code": save_result.get("code"),
+        "stale_code": stale_result.get("code"),
     })
 
 
@@ -128,6 +168,10 @@ func _submit_and_wait(envelope: Dictionary) -> Dictionary:
         return {
             "success": false,
             "code": submitted.get("code", "SUBMIT_FAILED"),
+            "message": submitted.get("code", "SUBMIT_FAILED"),
+            "data": {},
+            "result_hash": _guard.canonical_json_sha256({}),
+            "evidence": [],
         }
     var operation_id := str(envelope["operation_id"])
     for _index in range(120):
@@ -135,7 +179,14 @@ func _submit_and_wait(envelope: Dictionary) -> Dictionary:
         var result := take_completed_result(operation_id)
         if not result.is_empty():
             return result
-    return {"success": false, "code": "PILOT_RESULT_TIMEOUT"}
+    return {
+        "success": false,
+        "code": "PILOT_RESULT_TIMEOUT",
+        "message": "PILOT_RESULT_TIMEOUT",
+        "data": {},
+        "result_hash": _guard.canonical_json_sha256({}),
+        "evidence": [],
+    }
 
 
 func _build_envelope(
@@ -145,7 +196,6 @@ func _build_envelope(
     operation_id: String,
 ) -> Dictionary:
     var capability := _capability(capability_id)
-    var request_hash := "a".repeat(64)
     var preconditions := {
         "expected_target_revision": observation.get("target_revision"),
         "observed_target_revision": observation.get("target_revision"),
@@ -189,7 +239,7 @@ func _build_envelope(
         "contract_snapshot": snapshot,
         "policy": policy,
         "request": {"arguments": arguments.duplicate(true)},
-        "request_hash": request_hash,
+        "request_hash": "",
         "idempotency_key": operation_id if capability_id == "node.rename" else null,
         "preconditions": preconditions,
         "approval": {
@@ -214,28 +264,41 @@ func _build_envelope(
             "code": "NOT_RUN",
             "message": "Not executed.",
             "data": {},
-            "result_hash": "b".repeat(64),
+            "result_hash": _guard.canonical_json_sha256({}),
             "evidence": [],
         },
     }
+    _refresh_request_security(envelope, capability)
+    return envelope
+
+
+func _refresh_request_security(envelope: Dictionary, capability: Dictionary) -> void:
+    var request_hash := _guard.canonical_json_sha256(
+        _guard.operation_request_material(envelope)
+    )
+    envelope["request_hash"] = request_hash
     if capability.get("approval_policy") == "REQUIRED":
         envelope["approval"] = {
             "state": "APPROVED",
-            "token_id": "token-%s" % operation_id,
+            "token_id": "token-%s" % envelope["operation_id"],
             "token_binding": {
-                "operation_id": operation_id,
-                "capability_id": capability_id,
+                "operation_id": envelope["operation_id"],
+                "capability_id": envelope["capability_id"],
                 "project_identity": envelope["project_identity"].duplicate(true),
-                "instance_identity": instance_identity.duplicate(true),
-                "contract_snapshot": snapshot.duplicate(true),
-                "policy": policy.duplicate(true),
+                "instance_identity": envelope["instance_identity"].duplicate(true),
+                "contract_snapshot": envelope["contract_snapshot"].duplicate(true),
+                "policy": envelope["policy"].duplicate(true),
                 "request_hash": request_hash,
-                "preconditions": preconditions.duplicate(true),
+                "preconditions": envelope["preconditions"].duplicate(true),
             },
             "expires_at": "2099-01-01T00:00:00Z",
-            "consumed_by_operation_id": operation_id,
+            "consumed_by_operation_id": envelope["operation_id"],
         }
-    return envelope
+
+
+func _valid_result_hash(result: Dictionary) -> bool:
+    var expected := _guard.canonical_json_sha256(result.get("data", {}))
+    return str(result.get("result_hash", "")) == expected and expected.length() == 64
 
 
 func _capability(capability_id: String) -> Dictionary:
