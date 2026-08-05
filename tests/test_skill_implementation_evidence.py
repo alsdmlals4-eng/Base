@@ -158,6 +158,18 @@ class SkillImplementationEvidenceTests(unittest.TestCase):
         self.assertEqual(1, markdown.count("`alpha-skill`"))
         self.assertEqual(1, markdown.count("`beta-skill`"))
 
+    def test_youtube_skill_has_executable_repository_evidence(self) -> None:
+        builder = load_builder()
+        self.assertEqual([], builder.validate_evidence_index(ROOT))
+        markdown = builder.build_evidence_markdown(ROOT)
+        row = next(
+            line for line in markdown.splitlines()
+            if line.startswith("| `producing-game-development-youtube-videos`")
+        )
+        self.assertIn("PASS", row)
+        self.assertIn("EXECUTABLE_EVIDENCE", row)
+        self.assertIn("tests/test_game_development_youtube_skill.py", row)
+
     def test_checked_in_evidence_is_current(self) -> None:
         if not BUILDER_PATH.is_file() or not GENERATED_PATH.is_file():
             self.skipTest("builder not implemented yet")

@@ -345,6 +345,20 @@ class SkillBehaviorCoverageTests(unittest.TestCase):
 
         self.assertIn("result evaluation SHA-256 does not match current source", errors)
 
+    def test_current_youtube_skill_has_primary_and_non_selection_coverage(self) -> None:
+        evals = self.checker.load_eval_set(ROOT)
+        primary = [
+            case for case in evals["cases"]
+            if case["expected_primary_skill"] == "producing-game-development-youtube-videos"
+        ]
+        forbidden = [
+            case for case in evals["cases"]
+            if "producing-game-development-youtube-videos" in case["forbidden_skills"]
+        ]
+        self.assertGreaterEqual(len(primary), 3)
+        self.assertGreaterEqual(len(forbidden), 2)
+        self.assertEqual([], self.checker.validate_contract(ROOT))
+
     def test_result_rejects_non_independent_review_context(self) -> None:
         cases = complete_cases()
         directory, root = self.build_root(cases)

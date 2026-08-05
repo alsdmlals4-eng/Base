@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 import json
 import unittest
 from pathlib import Path
@@ -183,11 +182,13 @@ class NeutralAdversarialFeatureLifecycleTests(unittest.TestCase):
             rule["require_any_changed"],
         )
 
-    def test_released_registry_identity_remains_unchanged(self) -> None:
-        self.assertEqual(EXPECTED_REGISTRY_SHA256, hashlib.sha256(REGISTRY.read_bytes()).hexdigest())
+    def test_released_registry_identity_remains_pinned_while_current_registry_can_evolve(self) -> None:
         lock = json.loads((ROOT / "base-v9.4.lock.json").read_text(encoding="utf-8"))
         self.assertEqual("BASE_RELEASED", lock["release_state"])
         self.assertEqual(EXPECTED_REGISTRY_SHA256, lock["candidate_registry"]["sha256"])
+        current = json.loads(REGISTRY.read_text(encoding="utf-8"))
+        current_ids = {entry["skill_id"] for entry in current["skills"]}
+        self.assertIn("running-adversarial-review-and-refinement", current_ids)
 
 
 if __name__ == "__main__":
