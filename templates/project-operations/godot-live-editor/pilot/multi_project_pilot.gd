@@ -29,7 +29,7 @@ func _run_project_pilot() -> void:
         _finish({"status": "FAIL", "code": "PILOT_CONTEXT_INVALID"})
         return
 
-    var main_hash_before := _evidence.sha256_file(main_scene)
+    var main_hash_before: Variant = _evidence.sha256_file(main_scene)
     EditorInterface.open_scene_from_path(main_scene)
     await get_tree().process_frame
     await get_tree().process_frame
@@ -50,7 +50,7 @@ func _run_project_pilot() -> void:
             "op-project-inspect-001",
         )
     )
-    var main_hash_after_inspect := _evidence.sha256_file(main_scene)
+    var main_hash_after_inspect: Variant = _evidence.sha256_file(main_scene)
     if not inspect_result.get("success", false) or main_hash_before != main_hash_after_inspect:
         _finish({"status": "FAIL", "code": "MAIN_SCENE_READ_ONLY_VIOLATION"})
         return
@@ -114,7 +114,7 @@ func _run_project_pilot() -> void:
         _ledger.read_record("op-project-rename-dirty-001").get("state"),
         _ledger.read_record("op-project-rename-save-001").get("state"),
     ]
-    var main_hash_after := _evidence.sha256_file(main_scene)
+    var main_hash_after: Variant = _evidence.sha256_file(main_scene)
     var passed: bool = (
         inspect_result.get("success", false)
         and dirty_result.get("success", false)
