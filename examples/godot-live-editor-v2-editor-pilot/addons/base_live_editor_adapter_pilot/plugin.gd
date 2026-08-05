@@ -95,7 +95,7 @@ func _run_pilot() -> void:
         _ledger_state("op-rename-dirty-001"),
         _ledger_state("op-rename-save-001"),
     ]
-    var passed := (
+    var passed: bool = (
         inspect_result.get("success", false)
         and dirty_result.get("success", false)
         and undo_pass
