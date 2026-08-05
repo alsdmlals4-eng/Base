@@ -19,6 +19,7 @@ on:
       - "templates/planning/ART_TECHNIQUE_CARD.md"
       - "templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md"
       - "templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md"
+      - "templates/planning/PC_ANDROID_DELIVERY_PROFILE.md"
       - "README.md"
       - "docs/DOCUMENTATION_MAP.md"
       - "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md"
@@ -30,6 +31,7 @@ on:
       - "tests/test_human_validation_artifact_governance.py"
       - "tests/test_synthetic_tester_simulation_governance.py"
       - "tests/test_prompt_recipe_reference_contract.py"
+      - "tests/test_pc_android_cross_platform_delivery.py"
       - ".github/workflows/validate-evidence-knowledge.yml"
   workflow_dispatch:
 
@@ -65,7 +67,8 @@ jobs:
               tests/test_evidence_knowledge_workflow_contract.py \
               tests/test_human_validation_artifact_governance.py \
               tests/test_synthetic_tester_simulation_governance.py \
-              tests/test_prompt_recipe_reference_contract.py
+              tests/test_prompt_recipe_reference_contract.py \
+              tests/test_pc_android_cross_platform_delivery.py
             python -m unittest \
               tests/test_game_design_difficulty_workflow.py \
               tests/test_evidence_based_game_development_knowledge.py \
@@ -73,6 +76,7 @@ jobs:
               tests/test_human_validation_artifact_governance.py \
               tests/test_synthetic_tester_simulation_governance.py \
               tests/test_prompt_recipe_reference_contract.py \
+              tests/test_pc_android_cross_platform_delivery.py \
               -v
           } > evidence-knowledge-results.txt 2>&1
           status=$?
@@ -86,10 +90,12 @@ jobs:
           name: evidence-knowledge-validation
           path: |
             evidence-knowledge-results.txt
+            docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md
             docs/knowledge/research/PROMPT_RECIPE_SOURCE_AUDIT.md
             docs/superpowers/plans/2026-07-29-prompt-recipe-reference-integration.md
             docs/superpowers/specs/2026-07-29-prompt-recipe-reference-integration-design.md
             templates/planning/ART_TECHNIQUE_CARD.md
+            templates/planning/PC_ANDROID_DELIVERY_PROFILE.md
             templates/research/AI_IMAGE_PROMPT_RECIPE_CARD.md
             tests/test_game_design_difficulty_workflow.py
             tests/test_evidence_based_game_development_knowledge.py
@@ -97,4 +103,5 @@ jobs:
             tests/test_human_validation_artifact_governance.py
             tests/test_synthetic_tester_simulation_governance.py
             tests/test_prompt_recipe_reference_contract.py
+            tests/test_pc_android_cross_platform_delivery.py
           if-no-files-found: error

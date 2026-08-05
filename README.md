@@ -22,6 +22,8 @@ START_HERE.md
 - [문서·스킬 역할표](docs/DOCUMENTATION_MAP.md)
 - [기획 작업순서·근거 정책](docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md)
 - [근거 기반 게임 개발 지식 허브](docs/knowledge/game-development/README.md)
+- [PC·Android 공용 코어·플랫폼 적응·단계 출시 Guide](docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md)
+- [PC·Android Delivery Profile Template](templates/planning/PC_ANDROID_DELIVERY_PROFILE.md)
 - [플랫폼 심사·자산 권리·참조 독립 제작 Guide](docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md)
 - [게임 개발 Evidence Pack](templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md)
 - [자산 권리·출처 Record](templates/project-operations/ASSET_RIGHTS_AND_PROVENANCE_RECORD.md)
@@ -46,6 +48,8 @@ START_HERE.md
 `전부 살펴본다`는 모든 파일과 스킬을 무작정 읽는다는 뜻이 아닙니다. Registry와 Documentation Map에서 현재 요청에 필요한 책임 원본과 최소 스킬만 선택합니다.
 
 게임 기획·아트 기획·개발·AI 활용·벤치마킹·유저리서치·출시 판단을 외부 공식·현업·개발자·플레이어 근거로 개선할 때는 `docs/knowledge/game-development/README.md`에서 관련 Guide만 선택하고, `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`와 `templates/research/GAME_DEVELOPMENT_CASE_CARD.md`로 결정 질문·근거·성공/실패 사례·적용 판정·검증을 연결합니다. 이 허브는 새 Skill이 아니며 기존 Skill의 실행 책임을 대체하지 않습니다.
+
+Windows PC와 Android 모바일을 처음부터 함께 고려하거나 STOVE·Google Play·Steam 출시 순서를 설계할 때는 `docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md`와 `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md`를 사용합니다. 공용 게임 코어는 하나로 유지하되 입력·레이아웃·lifecycle·품질·상점 서비스는 플랫폼 어댑터로 분리하고, 실제 Android 기기·계정·테스터·지원 역량이 확인되지 않으면 동시 목표나 같은 날 공개를 강제하지 않습니다.
 
 Steam·STOVE·Google Play의 등급·설문, 자산 상업 사용·게임 포함 배포, 오픈소스·AI·외주 계약과 이미지·사운드 등의 참조 기반 독립 제작은 `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`를 사용합니다. 프로젝트별 증거는 두 project-operations Template에 기록하고, 미확인은 `RELEASE_BLOCKED_UNVERIFIED`로 유지합니다.
 

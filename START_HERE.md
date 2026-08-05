@@ -50,6 +50,7 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 | 기존 프로젝트 구조 감사·마이그레이션 | `managing-game-project-operating-system: audit / reconcile-legacy / migrate / verify` | `skills/managing-game-project-operating-system/SKILL.md` |
 | 구형 자료 분류·보존·Archive·승인 삭제 | `governing-legacy-retention-and-archives` | `skills/governing-legacy-retention-and-archives/SKILL.md` |
 | 핵심 컨셉·DDD·벤치마크·플레이테스트·PoC | `analyzing-and-refining-game-concepts` | `skills/analyzing-and-refining-game-concepts/SKILL.md` |
+| Windows+Android 동시 목표·공용 코어·입력/UI/lifecycle·STOVE·Google Play·Steam 출시 wave | `analyzing-and-refining-game-concepts` + 기존 기술·Vertical Slice·검증 Skill | `docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md` + `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md` |
 | 게임 시스템·난이도·전투 AI | `analyzing-and-refining-game-concepts: system-design / difficulty-and-combat-ai` | `skills/analyzing-and-refining-game-concepts/SKILL.md` |
 | 기존 프로젝트 코어 판정 | `identifying-project-core` | `skills/identifying-project-core/SKILL.md` |
 | 기획 단계 프로젝트 코어 확정 | `establishing-project-core` | `skills/establishing-project-core/SKILL.md` |
@@ -69,6 +70,8 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 | AI 모델·추론 effort·Prompt cache·실측 비용 최적화 | `optimizing-ai-model-and-prompt-costs` | `skills/optimizing-ai-model-and-prompt-costs/SKILL.md` |
 
 플랫폼·자산 Guide는 새 광역 Skill이 아니다. 프로젝트의 `ASSET_RIGHTS_AND_PROVENANCE_RECORD`와 `GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK`을 기존 책임 경로가 생산·검증하며, 필수 증거가 없으면 `RELEASE_BLOCKED_UNVERIFIED`다.
+
+PC·Android Delivery Guide도 새 광역 Skill이 아니다. `analyzing-and-refining-game-concepts`의 `constrain / poc-contract / production-gate`와 기존 기술·Vertical Slice·검증 책임이 `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md`를 생산·검증하며, 실제 Windows build·Android 실기기·모바일 UI/입력/lifecycle·성능·계정 Gate가 없으면 `DUAL_TARGET_CONDITIONAL` 또는 `BLOCKED_UNVERIFIED`다.
 
 활성 Skill의 trigger·비사용 조건·입력·출력·실패·검증은 `skills/SKILL_REGISTRY.json`과 해당 `SKILL.md`가 책임진다. Skill 이름을 사용자에게 고르게 하거나 전체 Skill을 기본 로드하지 않는다.
 
