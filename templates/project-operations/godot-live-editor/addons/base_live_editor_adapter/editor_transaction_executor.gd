@@ -204,7 +204,7 @@ func _evidence_entry(
         "state": "EXECUTION_PASS",
         "path": evidence_result.get("path"),
         "artifact_sha256": evidence_result.get("artifact_sha256"),
-        "generated_at": Time.get_datetime_string_from_system(true, true),
+        "generated_at": Time.get_datetime_string_from_system(true, false) + "Z",
         "producer": "%s@2.0.0" % capability_id,
     }
 
@@ -220,15 +220,18 @@ func _success(
         "code": code,
         "message": message,
         "data": data,
+        "result_hash": _guard.canonical_json_sha256(data),
         "evidence": evidence,
     }
 
 
 func _failure(code: String) -> Dictionary:
+    var data := {}
     return {
         "success": false,
         "code": code,
         "message": code,
-        "data": {},
+        "data": data,
+        "result_hash": _guard.canonical_json_sha256(data),
         "evidence": [],
     }

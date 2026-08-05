@@ -5,6 +5,7 @@ const INSPECT_CAPABILITY := "scene.inspect"
 const RENAME_CAPABILITY := "node.rename"
 const SAVE_MODES := ["KEEP_DIRTY", "SAVE_CURRENT_SCENE"]
 const INVALID_NAME_CHARACTERS := [".", ":", "@", "/", "\"", "%"]
+const DIRTY_STATES := ["CLEAN", "DIRTY"]
 
 
 func validate_arguments(
@@ -26,36 +27,13 @@ func validate_output(
     capability_id: String,
     output: Dictionary,
 ) -> PackedStringArray:
-    var expected := PackedStringArray()
     match capability_id:
         INSPECT_CAPABILITY:
-            expected = PackedStringArray([
-                "scene_path",
-                "root_name",
-                "child_count",
-                "dirty_state",
-                "target_revision",
-                "target_content_sha256",
-            ])
+            return _validate_inspect_output(output)
         RENAME_CAPABILITY:
-            expected = PackedStringArray([
-                "scene_path",
-                "node_path",
-                "old_name",
-                "new_name",
-                "save_mode",
-                "dirty_state",
-                "saved_scene_sha256",
-            ])
+            return _validate_rename_output(output)
         _:
             return PackedStringArray(["UNKNOWN_CAPABILITY"])
-
-    if output.size() != expected.size():
-        return PackedStringArray(["OUTPUT_SCHEMA_INVALID"])
-    for key in expected:
-        if not output.has(key):
-            return PackedStringArray(["OUTPUT_SCHEMA_INVALID"])
-    return PackedStringArray()
 
 
 func inspect_scene(
@@ -118,3 +96,78 @@ func _validate_rename_arguments(arguments: Dictionary) -> PackedStringArray:
     if not SAVE_MODES.has(str(arguments["save_mode"])):
         return PackedStringArray(["SAVE_MODE_INVALID"])
     return PackedStringArray()
+
+
+func _validate_inspect_output(output: Dictionary) -> PackedStringArray:
+    var expected := [
+        "scene_path",
+        "root_name",
+        "child_count",
+        "dirty_state",
+        "target_revision",
+        "target_content_sha256",
+    ]
+    if not _has_exact_keys(output, expected):
+        return PackedStringArray(["OUTPUT_SCHEMA_INVALID"])
+    if typeof(output["scene_path"]) != TYPE_STRING or not str(output["scene_path"]).begins_with("res://"):
+        return PackedStringArray(["OUTPUT_SCHEMA_INVALID"])
+    if typeof(output["root_name"]) != TYPE_STRING or str(output["root_name"]).is_empty():
+        return PackedStringArray(["OUTPUT_SCHEMA_INVALID"])
+    if typeof(output["child_count"]) != TYPE_INT or int(output["child_count"]) < 0:
+        return PackedStringArray(["OUTPUT_SCHEMA_INVALID"])
+    if not DIRTY_STATES.has(str(output["dirty_state"])):
+        return PackedStringArray(["OUTPUT_SCHEMA_INVALID"])
+    if typeof(output["target_revision"]) != TYPE_STRING or str(output["target_revision"]).is_empty():
+        return PackedStringArray(["OUTPUT_SCHEMA_INVALID"])
+    if not _is_sha256_or_null(output["target_content_sha256"]):
+        return PackedStringArray(["OUTPUT_SCHEMA_INVALID"])
+    return PackedStringArray()
+
+
+func _validate_rename_output(output: Dictionary) -> PackedStringArray:
+    var expected := [
+        "scene_path",
+        "node_path",
+        "old_name",
+        "new_name",
+        "save_mode",
+        "dirty_state",
+        "saved_scene_sha256",
+    ]
+    if not _has_exact_keys(output, expected):
+        return PackedStringArray(["OUTPUT_SCHEMA_INVALID"])
+    for key in ["scene_path", "node_path", "old_name", "new_name", "save_mode", "dirty_state"]:
+        if typeof(output[key]) != TYPE_STRING or str(output[key]).is_empty():
+            return PackedStringArray(["OUTPUT_SCHEMA_INVALID"])
+    if not str(output["scene_path"]).begins_with("res://"):
+        return PackedStringArray(["OUTPUT_SCHEMA_INVALID"])
+    var save_mode := str(output["save_mode"])
+    if not SAVE_MODES.has(save_mode):
+        return PackedStringArray(["OUTPUT_SCHEMA_INVALID"])
+    if save_mode == "KEEP_DIRTY":
+        if output["dirty_state"] != "DIRTY" or output["saved_scene_sha256"] != null:
+            return PackedStringArray(["OUTPUT_SCHEMA_INVALID"])
+    elif output["dirty_state"] != "CLEAN" or not _is_sha256(output["saved_scene_sha256"]):
+        return PackedStringArray(["OUTPUT_SCHEMA_INVALID"])
+    return PackedStringArray()
+
+
+func _has_exact_keys(value: Dictionary, expected: Array) -> bool:
+    if value.size() != expected.size():
+        return false
+    for key in expected:
+        if not value.has(key):
+            return false
+    return true
+
+
+func _is_sha256_or_null(value: Variant) -> bool:
+    return value == null or _is_sha256(value)
+
+
+func _is_sha256(value: Variant) -> bool:
+    return (
+        typeof(value) == TYPE_STRING
+        and str(value).length() == 64
+        and str(value).is_valid_hex_number(false)
+    )

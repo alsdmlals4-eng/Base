@@ -3,6 +3,8 @@ extends RefCounted
 
 const DEFAULT_ROOT := "res://artifacts/godot-live-editor/ledger"
 const TERMINAL_STATES := ["COMPLETED", "FAILED"]
+const SAFE_NAME_CHARACTERS := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
+const MAX_SAFE_NAME_LENGTH := 128
 
 var _root_path := DEFAULT_ROOT
 
@@ -24,10 +26,7 @@ func record_started(
     var request_hash := str(envelope.get("request_hash", ""))
     var existing := read_record(operation_id)
     if not existing.is_empty():
-        if (
-            existing.get("state") == "COMPLETED"
-            and existing.get("request_hash") == request_hash
-        ):
+        if existing.get("state") == "COMPLETED" and existing.get("request_hash") == request_hash:
             return {
                 "ok": true,
                 "code": "IDEMPOTENT_REPLAY",
@@ -42,7 +41,7 @@ func record_started(
         "state": "STARTED",
         "observation": observation.duplicate(true),
         "result": null,
-        "updated_at": Time.get_datetime_string_from_system(true, true),
+        "updated_at": _rfc3339_now(),
     }
     var write_result := _write_record(operation_id, payload)
     if not write_result.get("ok", false):
@@ -62,7 +61,7 @@ func record_terminal(
         return {"ok": false, "code": "LEDGER_STATE_INVALID"}
     existing["state"] = state
     existing["result"] = result.duplicate(true)
-    existing["updated_at"] = Time.get_datetime_string_from_system(true, true)
+    existing["updated_at"] = _rfc3339_now()
     var write_result := _write_record(operation_id, existing)
     if not write_result.get("ok", false):
         return write_result
@@ -72,8 +71,10 @@ func record_terminal(
 func read_record(operation_id: String) -> Dictionary:
     if not _safe_name(operation_id):
         return {}
-    var path := _record_path(operation_id)
-    var file := FileAccess.open(ProjectSettings.globalize_path(path), FileAccess.READ)
+    var file := FileAccess.open(
+        ProjectSettings.globalize_path(_record_path(operation_id)),
+        FileAccess.READ,
+    )
     if file == null:
         return {}
     var parsed = JSON.parse_string(file.get_as_text())
@@ -85,19 +86,14 @@ func _write_record(operation_id: String, payload: Dictionary) -> Dictionary:
         return {"ok": false, "code": "OPERATION_ID_INVALID"}
     var target_path := ProjectSettings.globalize_path(_record_path(operation_id))
     var temp_path := target_path + ".tmp"
-    var directory := target_path.get_base_dir()
-    if DirAccess.make_dir_recursive_absolute(directory) != OK:
+    if DirAccess.make_dir_recursive_absolute(target_path.get_base_dir()) != OK:
         return {"ok": false, "code": "LEDGER_WRITE_FAILED"}
     var file := FileAccess.open(temp_path, FileAccess.WRITE)
     if file == null:
         return {"ok": false, "code": "LEDGER_WRITE_FAILED"}
-    file.store_string(JSON.stringify(payload, "  ") + "\n")
+    file.store_string(JSON.stringify(payload) + "\n")
     file.flush()
     file.close()
-    if FileAccess.file_exists(target_path):
-        if DirAccess.remove_absolute(target_path) != OK:
-            DirAccess.remove_absolute(temp_path)
-            return {"ok": false, "code": "LEDGER_WRITE_FAILED"}
     if DirAccess.rename_absolute(temp_path, target_path) != OK:
         DirAccess.remove_absolute(temp_path)
         return {"ok": false, "code": "LEDGER_WRITE_FAILED"}
@@ -108,14 +104,14 @@ func _record_path(operation_id: String) -> String:
     return "%s/%s.json" % [_root_path, operation_id]
 
 
+func _rfc3339_now() -> String:
+    return Time.get_datetime_string_from_system(true, false) + "Z"
+
+
 func _safe_name(value: String) -> bool:
-    if value.is_empty() or value.contains("/") or value.contains("\\") or value.contains(".."):
+    if value.is_empty() or value.length() > MAX_SAFE_NAME_LENGTH:
         return false
     for character in value:
-        if not (
-            character.is_valid_identifier()
-            or character.is_valid_int()
-            or character == "-"
-        ):
+        if not SAFE_NAME_CHARACTERS.contains(character):
             return false
     return true
