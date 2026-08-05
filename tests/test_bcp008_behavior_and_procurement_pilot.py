@@ -34,7 +34,7 @@ def test_behavior_eval_adds_positive_negative_and_boundary_pressure() -> None:
     assert evals["model_run_status"] == "NOT_RUN"
 
 
-def test_actual_shadcn_source_procurement_receipt_is_fail_closed() -> None:
+def test_actual_shadcn_procurement_receipt_is_evidence_backed_and_fail_closed() -> None:
     receipt = load_json(
         "docs/evidence/external-ui-procurement/BCP008_SHADCN_BUTTON_PILOT.json"
     )
@@ -42,9 +42,20 @@ def test_actual_shadcn_source_procurement_receipt_is_fail_closed() -> None:
     assert receipt["source_commit"] == "b1c580c637f4666890b25c69cdc315c93a892c5d"
     assert receipt["registry_item"] == "button"
     assert receipt["source_acquisition"] == "PASS"
+    assert receipt["license"] == "MIT"
+    assert receipt["license_blob_sha"] == "fad4d887a681dd49233e5ed01ee2c7a1513089a0"
+    assert receipt["source_package_declared_version"] == "4.16.2"
+    assert receipt["source_package_published_status"] == "NOT_PUBLISHED_ETARGET"
+    assert receipt["published_cli_version"] == "4.16.1"
+    assert receipt["procurement_execution"] == "PASS_DISPOSABLE_WEB_FIXTURE"
+    assert receipt["disposable_fixture"]["procurement"] == "PASS"
+    assert receipt["disposable_fixture"]["build"] == "PASS"
+    assert receipt["disposable_fixture"]["generated_component_sha256"] == "9ce417985b97956fbb3a73c84b0eb60230fd0a9844c5111df92e061731440a3f"
     assert receipt["installation"] == "NOT_RUN"
+    assert receipt["target_project_installation"] == "NOT_RUN"
+    assert receipt["actual_render_review"] == "NOT_RUN"
     assert receipt["decision"] == "BLOCKED_UNVERIFIED"
-    assert "DEPENDENCY_DECLARATION_IMPORT_MISMATCH" in receipt["reason_codes"]
+    assert "SOURCE_PACKAGE_VERSION_NOT_PUBLISHED" in receipt["reason_codes"]
     assert receipt["component_sha256"] == "cc36af0f8b5019c33cc039fbf03bb952a513072b15b55b53c592b78af3e5f4c4"
 
     validator = load_validator()
