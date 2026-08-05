@@ -327,7 +327,7 @@ def materialize_runtime_workspace(
     shutil.copy2(template_root / "multi_project_pilot.gd", pilot_addon / "plugin.gd")
     (pilot_addon / "plugin.cfg").write_text(
         '[plugin]\nname="Base Multi-Project Pilot"\ndescription="Scratch-only Base C0 validation"\n'
-        'author="Base"\nversion="1.0.0"\nscript="res://addons/base_multi_project_pilot/plugin.gd"\n',
+        'author="Base"\nversion="1.0.0"\nscript="plugin.gd"\n',
         encoding="utf-8",
     )
     context = {

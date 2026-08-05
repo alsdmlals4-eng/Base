@@ -151,6 +151,14 @@ class V9MachineContractTests(unittest.TestCase):
         self.assertIn("class EvidenceVerificationError", evidence)
         self.assertGreaterEqual(evidence.count("ensure_ascii=False"), 3)
 
+    def test_c0_generated_plugin_cfg_uses_addon_relative_script_path(self) -> None:
+        workspace = read("tools/godot_project_pilot_workspace.py")
+        self.assertIn('script="plugin.gd"', workspace)
+        self.assertNotIn(
+            'script="res://addons/base_multi_project_pilot/plugin.gd"',
+            workspace,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
