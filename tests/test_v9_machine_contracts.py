@@ -4,6 +4,9 @@ import json
 import unittest
 from pathlib import Path
 
+from tests.test_godot_editor_transaction_adapter import (
+    GodotEditorTransactionAdapterTests as _GodotEditorTransactionAdapterTests,
+)
 from tests.test_godot_live_editor_adapter_resolution import (
     GodotAdapterResolutionTests as _GodotAdapterResolutionTests,
 )
