@@ -112,6 +112,10 @@ func _safe_name(value: String) -> bool:
     if value.is_empty() or value.contains("/") or value.contains("\\") or value.contains(".."):
         return false
     for character in value:
-        if not (character.is_valid_identifier() or character == "-"):
+        if not (
+            character.is_valid_identifier()
+            or character.is_valid_int()
+            or character == "-"
+        ):
             return false
     return true
