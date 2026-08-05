@@ -113,6 +113,22 @@ UX/UI design, 폴리싱, and runtime-result audit use `auditing-and-refining-ui-
 
 벤치마크는 인기 기능 복사가 아니라 현재 결정을 바꿀 질문, 비교 차원, 제품 사실, 플레이어 반응, 행동 근거와 표본 한계를 구분하는 절차다. PoC는 가장 위험한 가설을 빠르게 틀릴 수 있게 만드는 최소 검증이다. Vertical Slice는 대표 경험의 목표 품질, 실제 플레이 증거와 제작 파이프라인까지 증명한다.
 
+### 게임 개발 YouTube 제작 루프
+
+`producing-game-development-youtube-videos`는 프로젝트 정본과 실제 빌드가 확인된 경우에만 개발일지·Shorts·기능 공개·출시 홍보 영상의 채널 구조, 에피소드 약속, 대본·샷, 제목·썸네일 패키지, 공개 전 Gate와 게시 후 제한적 Analytics 학습을 소유한다.
+
+```text
+프로젝트 정본·실제 빌드·공개 범위
+→ 주 시청자·Episode Job·한 문장 약속·주 CTA
+→ 실제 빌드 증거가 있는 대본·샷·편집 비트
+→ 제목·썸네일과 첫 30초 약속 일치
+→ 권리·등급·스포일러·개인정보·보안 Gate
+→ 게시 기록
+→ 표본·전환·제작시간 한계를 포함한 KEEP / CHANGE / STOP / INSUFFICIENT_SAMPLE
+```
+
+게임 자체 기획, Vertical Slice, 썸네일 이미지 생성, 플랫폼 심사·에셋 권리 원장과 최종 검증은 기존 소유자가 유지한다. 실제 Episode Packet은 `templates/game-development-youtube/EPISODE_PACKET.md`를 복사해 프로젝트 책임 원본에 두며 Base에 프로젝트별 브랜딩·CTA·KPI 절대값을 고정하지 않는다. 프로젝트 Adapter가 없으므로 Base shared route를 만들지 않는다. Repository Test는 구현 증거이며 사람 시청·전환 검증은 `HUMAN_NOT_RUN` 또는 `CONVERSION_UNVERIFIED`로 남긴다.
+
 ### 실행 순서 루프
 
 ```text
@@ -136,6 +152,7 @@ UX/UI design, 폴리싱, and runtime-result audit use `auditing-and-refining-ui-
 | 현재 상태·다음 작업·위험 압축 | `maintaining-project-context-and-handoff` |
 | 핵심 컨셉·DDD·벤치마크·플레이어 반응·플레이테스트·PoC·재조정 | `analyzing-and-refining-game-concepts` |
 | 대표 플레이 구간·목표 품질·실제 플레이·제작 파이프라인 검증 | `designing-vertical-slices` |
+| 게임 개발일지·Shorts·기능 공개·출시 홍보 영상의 실제 빌드 기반 대본·샷·패키징·게시 Gate·제한적 Analytics | `producing-game-development-youtube-videos` |
 | 외부 AI 작업 공간 운용 | `orchestrating-deepseek-worktrees` |
 | 변경의 계약·참조·정적·런타임·접근성·성능·회귀 검증 | `reviewing-and-validating-project-changes` |
 | 정본 변경의 오래된 참조·내용 drift·파생본·전파 누락 감사 | `auditing-canonical-reference-freshness` |

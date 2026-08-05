@@ -359,3 +359,11 @@ References and templates:
 - `templates/quality/PROJECT_CHANGE_VALIDATION.md`
 - `templates/quality/CANONICAL_REFERENCE_FRESHNESS_AUDIT.md`
 - `templates/ai/EXTERNAL_AI_DRAFT_REVIEW.md` (legacy-compatible input)
+
+## Cloud Run backend validation route
+
+`docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`와 `templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md`의 계약·정적·runtime·load·failure·cost·security evidence를 분리해 검증한다. `LOAD_AND_FAILURE_VERIFIED`는 프로젝트별 실제 부하·연결 폭주·의존성 장애·복구 증거가 있을 때만 허용한다.
+
+## Entitlement and integrity validation route
+
+`docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md`와 `templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md`의 platform signal, request binding, server authority, replay/double spend, privacy, outage, false positive와 sunset 증거를 분리해 검증한다. 사람의 실제 복구 세션이 없으면 `HUMAN_RECOVERY_VERIFIED`를 선언하지 않는다.

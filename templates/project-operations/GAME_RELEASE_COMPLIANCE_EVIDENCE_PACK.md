@@ -201,3 +201,9 @@ LEGAL_REVIEW_NOT_PERFORMED
 ```
 
 Template 작성이나 자동 테스트 통과만으로 `APPROVED`를 주장하지 않는다.
+
+## Entitlement and integrity release evidence
+
+- 프로젝트 Record: `templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md`
+- `PLATFORM_NATIVE_FIRST`, platform-specific signal meaning, offline/outage, support/appeal, privacy, save access와 service sunset 상태를 링크한다.
+- 자산 권리 provenance와 합치지 않으며 sandbox·사람 복구·법률·플랫폼 승인 미실행 상태를 보존한다.
