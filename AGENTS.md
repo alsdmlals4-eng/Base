@@ -22,6 +22,8 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 ## 2. 작업 진입 게이트
 
 - L1 이상 작업은 최신 main, 현재 결정, 분야 정본, 같은 Goal의 열린·최근 병합 PR, 실제 구현을 비교해 중복·누락·충돌·구형 참조·미반영을 먼저 판정한다.
+- **Existing Solution First Gate:** 신규 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층은 현재 사용 도구·connected MCP·enabled addon·dependency·같은 Goal의 열린/최근 병합 PR·유지되는 외부 대안을 먼저 조사하고 `REUSE / ABSORB / REFACTOR / ARCHIVE / BUILD_NEW` 판정을 기록하기 전에는 설계·구현하지 않는다. Godot 관련 정본은 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`이며, 직접 제작 판단은 `evaluating-godot-assets-and-plugins-before-creation`이 소유한다.
+- `BUILD_NEW`는 기존 대안의 핵심 기능·보안·라이선스·유지·Godot/OS/클라이언트 적합성 결함을 설정·격리·bounded patch로 해결할 수 없다는 증거와 사용자 승인이 있어야 한다. “직접 만들면 더 엄격하다”는 단독 근거가 아니다.
 - 새 정책·Template·Skill·경로·ID는 파일 존재가 아니라 README·`START_HERE.md`·운영 정본·Registry·프로젝트 Template·활성 소비자·Test 연결을 확인한다.
 - 필요한 실행 파일, 라이브러리, 폰트, 입력, 인증, 저장소·브랜치 권한을 작업과 검증 전에 확인한다.
 - 누락 환경은 `필요 항목 / 이유 / 설치·설정 / 적용 / 확인 명령 / 최소 권한`으로 안내한다. 사용자 승인 없이 시스템 전역 설치, 계정·보안 설정, 권한 확대, Branch protection 변경을 수행하지 않는다.
