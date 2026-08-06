@@ -33,9 +33,13 @@ func _run_project_pilot() -> void:
 
     var main_hash_before: Variant = _evidence.sha256_file(main_scene)
     EditorInterface.open_scene_from_path(main_scene)
-    var root = await _wait_for_stable_scene(main_scene, NodePath("."))
+    var main_wait = await _wait_for_stable_scene(main_scene, NodePath("."))
+    var root = main_wait.get("root")
     if root == null:
-        _finish({"status": "FAIL", "code": "MAIN_SCENE_OPEN_FAILED"})
+        _finish({
+            "status": "FAIL",
+            "code": main_wait.get("code", "MAIN_SCENE_OPEN_FAILED"),
+        })
         return
     var inspect_observation: Dictionary = _probe.observe(
         get_editor_interface(),
@@ -56,9 +60,13 @@ func _run_project_pilot() -> void:
         return
 
     EditorInterface.open_scene_from_path(scratch_scene)
-    root = await _wait_for_stable_scene(scratch_scene, NodePath("Target"))
+    var scratch_wait = await _wait_for_stable_scene(scratch_scene, NodePath("Target"))
+    root = scratch_wait.get("root")
     if root == null:
-        _finish({"status": "FAIL", "code": "SCRATCH_SCENE_OPEN_FAILED"})
+        _finish({
+            "status": "FAIL",
+            "code": scratch_wait.get("code", "SCRATCH_SCENE_OPEN_FAILED"),
+        })
         return
 
     var dirty_observation: Dictionary = _probe.observe(
@@ -86,27 +94,33 @@ func _run_project_pilot() -> void:
         var history := get_undo_redo().get_history_undo_redo(history_id)
         if history != null:
             history.undo()
-        root = await _wait_for_stable_scene(scratch_scene, NodePath("Target"))
+        var undo_wait = await _wait_for_stable_scene(scratch_scene, NodePath("Target"))
+        root = undo_wait.get("root")
         undo_pass = root != null and root.get_node_or_null("Target") != null
 
-    root = await _wait_for_stable_scene(scratch_scene, NodePath("Target"))
-    var save_observation: Dictionary = _probe.observe(
-        get_editor_interface(),
-        get_undo_redo(),
-        NodePath("Target"),
-    )
-    var save_result: Dictionary = await _submit_and_wait(
-        _build_envelope(
-            "node.rename",
-            {
-                "node_path": "Target",
-                "new_name": "RenamedSaved",
-                "save_mode": "SAVE_CURRENT_SCENE",
-            },
-            save_observation,
-            "op-project-rename-save-001",
+    var save_wait = await _wait_for_stable_scene(scratch_scene, NodePath("Target"))
+    root = save_wait.get("root")
+    var save_result: Dictionary = {}
+    if root == null:
+        save_result = _failure_result(str(save_wait.get("code", "SCRATCH_SCENE_OPEN_FAILED")))
+    else:
+        var save_observation: Dictionary = _probe.observe(
+            get_editor_interface(),
+            get_undo_redo(),
+            NodePath("Target"),
         )
-    )
+        save_result = await _submit_and_wait(
+            _build_envelope(
+                "node.rename",
+                {
+                    "node_path": "Target",
+                    "new_name": "RenamedSaved",
+                    "save_mode": "SAVE_CURRENT_SCENE",
+                },
+                save_observation,
+                "op-project-rename-save-001",
+            )
+        )
 
     var saved_hash = null
     if save_result.get("success", false):
@@ -153,24 +167,38 @@ func _run_project_pilot() -> void:
     })
 
 
-func _wait_for_stable_scene(scene_path: String, target_path: NodePath) -> Node:
+func _wait_for_stable_scene(scene_path: String, target_path: NodePath) -> Dictionary:
     var stable_frames := 0
+    var last_code := "SCENE_NOT_OPEN"
     for _index in range(MAX_SCENE_STABILIZATION_FRAMES):
         await get_tree().process_frame
+        var open_scenes := EditorInterface.get_open_scenes()
+        if scene_path not in open_scenes:
+            stable_frames = 0
+            last_code = "SCENE_NOT_OPEN"
+            continue
         var root := EditorInterface.get_edited_scene_root()
         if root == null:
             stable_frames = 0
+            last_code = "NO_EDITED_SCENE"
             continue
-        if str(root.scene_file_path) != scene_path:
+        var current_path := str(root.scene_file_path)
+        if current_path.is_empty():
             stable_frames = 0
+            last_code = "EDITED_SCENE_PATH_EMPTY"
+            continue
+        if current_path != scene_path:
+            stable_frames = 0
+            last_code = "EDITED_SCENE_NOT_ACTIVE"
             continue
         if target_path != NodePath(".") and root.get_node_or_null(target_path) == null:
             stable_frames = 0
+            last_code = "TARGET_NODE_NOT_FOUND"
             continue
         stable_frames += 1
         if stable_frames >= REQUIRED_STABLE_SCENE_FRAMES:
-            return root
-    return null
+            return {"root": root, "code": "PASS"}
+    return {"root": null, "code": last_code}
 
 
 func _first_failure_code(
@@ -190,31 +218,28 @@ func _first_failure_code(
     return "PILOT_POSTCONDITION_FAILED"
 
 
+func _failure_result(code: String) -> Dictionary:
+    return {
+        "success": false,
+        "code": code,
+        "message": code,
+        "data": {},
+        "result_hash": _guard.canonical_json_sha256({}),
+        "evidence": [],
+    }
+
+
 func _submit_and_wait(envelope: Dictionary) -> Dictionary:
     var submitted := submit_validated_operation(envelope)
     if not submitted.get("ok", false):
-        return {
-            "success": false,
-            "code": submitted.get("code", "SUBMIT_FAILED"),
-            "message": submitted.get("code", "SUBMIT_FAILED"),
-            "data": {},
-            "result_hash": _guard.canonical_json_sha256({}),
-            "evidence": [],
-        }
+        return _failure_result(str(submitted.get("code", "SUBMIT_FAILED")))
     var operation_id := str(envelope["operation_id"])
     for _index in range(180):
         await get_tree().process_frame
         var result := take_completed_result(operation_id)
         if not result.is_empty():
             return result
-    return {
-        "success": false,
-        "code": "PILOT_RESULT_TIMEOUT",
-        "message": "PILOT_RESULT_TIMEOUT",
-        "data": {},
-        "result_hash": _guard.canonical_json_sha256({}),
-        "evidence": [],
-    }
+    return _failure_result("PILOT_RESULT_TIMEOUT")
 
 
 func _build_envelope(
