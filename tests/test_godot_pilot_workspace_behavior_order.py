@@ -119,30 +119,27 @@ class GodotPilotWorkspaceBehaviorOrderTests(unittest.TestCase):
         ):
             self.assertIn(marker, text)
 
-    def test_open_scene_root_is_activated_before_scene_wait_retries(self) -> None:
+    def test_main_scene_is_closed_before_scratch_scene_is_opened(self) -> None:
         text = PILOT.read_text(encoding="utf-8")
         for marker in (
-            "func _find_open_scene_root(",
-            "var open_roots := EditorInterface.get_open_scene_roots()",
-            "if open_scenes.size() != open_roots.size():",
-            "var scene_index := open_scenes.find(scene_path)",
-            "return open_roots[scene_index]",
-            "var requested_root := _find_open_scene_root(scene_path)",
-            'last_code = "OPEN_SCENE_ROOT_NOT_FOUND"',
-            "var requested_target := requested_root",
-            "requested_target = requested_root.get_node_or_null(target_path)",
-            "EditorInterface.edit_node(requested_target)",
-            'last_code = "EDITED_SCENE_ACTIVATION_PENDING"',
+            "var close_main_result := EditorInterface.close_scene()",
+            "if close_main_result != OK:",
+            '"code": "MAIN_SCENE_CLOSE_FAILED"',
+            "var main_close_wait = await _wait_for_scene_closed(main_scene)",
+            "func _wait_for_scene_closed(",
+            "if scene_path not in EditorInterface.get_open_scenes():",
+            'return {"closed": true, "code": "PASS"}',
+            'return {"closed": false, "code": "SCENE_CLOSE_TIMEOUT"}',
         ):
             self.assertIn(marker, text)
 
-        activation = text.index("EditorInterface.edit_node(requested_target)")
-        scene_open_check = text.index("if scene_path not in open_scenes:")
-        root_lookup = text.index("var requested_root := _find_open_scene_root(scene_path)")
-        target_lookup = text.index("requested_target = requested_root.get_node_or_null(target_path)")
-        self.assertLess(scene_open_check, root_lookup)
-        self.assertLess(root_lookup, target_lookup)
-        self.assertLess(target_lookup, activation)
+        close_call = text.index("var close_main_result := EditorInterface.close_scene()")
+        close_wait = text.index("var main_close_wait = await _wait_for_scene_closed(main_scene)")
+        scratch_open = text.index("EditorInterface.open_scene_from_path(scratch_scene)")
+        self.assertLess(close_call, close_wait)
+        self.assertLess(close_wait, scratch_open)
+        self.assertNotIn("EditorInterface.edit_node(", text)
+        self.assertNotIn("func _find_open_scene_root(", text)
 
 
 if __name__ == "__main__":
