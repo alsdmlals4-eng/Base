@@ -87,6 +87,24 @@ class GodotPilotWorkspaceBehaviorOrderTests(unittest.TestCase):
         ):
             self.assertIn(marker, text)
 
+    def test_pilot_waits_for_stable_scene_identity_before_operations(self) -> None:
+        text = PILOT.read_text(encoding="utf-8")
+        for marker in (
+            "const REQUIRED_STABLE_SCENE_FRAMES := 3",
+            "func _wait_for_stable_scene(",
+            "root = await _wait_for_stable_scene(main_scene, NodePath(\".\"))",
+            "root = await _wait_for_stable_scene(scratch_scene, NodePath(\"Target\"))",
+            "root = await _wait_for_stable_scene(scratch_scene, NodePath(\"Target\"))",
+            "if str(root.scene_file_path) != scene_path:",
+            "stable_frames += 1",
+            "if stable_frames >= REQUIRED_STABLE_SCENE_FRAMES:",
+        ):
+            self.assertIn(marker, text)
+        self.assertNotIn(
+            'EditorInterface.open_scene_from_path(scratch_scene)\n    await get_tree().process_frame\n    await get_tree().process_frame',
+            text,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
