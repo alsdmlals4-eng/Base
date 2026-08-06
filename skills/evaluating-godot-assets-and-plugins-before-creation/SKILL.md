@@ -1,6 +1,6 @@
 ---
 name: evaluating-godot-assets-and-plugins-before-creation
-description: Use when a Godot feature, tool, pipeline, UI, integration, asset, shader, template, addon, MCP, CLI, framework, Skill, Mode, or subsystem may be reusable before custom creation.
+description: Use when a Godot feature, tool, pipeline, UI, integration, asset, shader, template, or subsystem may be reusable before custom creation.
 ---
 
 # Evaluating Godot Assets and Plugins Before Creation
