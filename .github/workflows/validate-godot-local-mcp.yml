@@ -42,4 +42,8 @@ jobs:
           jsonschema==4.26.0
 
       - name: Run Godot MCP contract tests
-        run: python -m unittest tests.test_godot_local_mcp_server -v
+        run: >-
+          python -m unittest
+          tests.test_godot_local_mcp_server
+          tests.test_godot_local_mcp_profile_store
+          -v
