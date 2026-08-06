@@ -47,7 +47,10 @@ class CanonicalReferenceFreshnessTests(unittest.TestCase):
             "coupled_change_rules": [{
                 "name": "local-skill-sync",
                 "when_changed": ["skills/**/SKILL.md"],
-                "exclude_when_changed": ["skills/shared-skill/SKILL.md"],
+                "exclude_when_changed": [
+                    "skills/shared-skill/SKILL.md",
+                    "skills/provider-evaluation/SKILL.md",
+                ],
                 "ignore_frontmatter_only_keys": ["description"],
                 "require_all_changed": ["skills/SKILL_LEARNING_LOG.md"],
                 "require_any_changed": ["tests/test_local_skill.py"],
