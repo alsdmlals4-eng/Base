@@ -134,6 +134,10 @@ REMOVAL_PENDING
 REMOVED
 ```
 
+동일한 역할·데이터 권위·실행 책임을 가진 애드온을 둘 이상 `ADOPTED_ACTIVE`로 유지하지 않는다. 서로 다른 하위 책임을 조합해야 한다면 `owner_boundary`를 겹치지 않게 정의하고 충돌·회귀 검증으로 공존을 증명한다.
+
+`ADOPTED_DISABLED`는 이전 exact pin을 제한된 rollback 또는 호환성 보존 기간 동안 비활성 상태로 유지하는 경우에만 사용한다. 재활성화 조건이나 제거 조건과 보존 종료 시점을 기록해야 하며, 조건 없이 계속 설치돼 있으면 `INSTALLED_UNUSED`로 전환한다.
+
 최소 프로젝트 기록:
 
 ```yaml
@@ -261,6 +265,7 @@ BUILD_CUSTOM
 - 구매와 설치를 조사와 혼동하지 않았다.
 - 프로젝트 코어와 외부 도구의 소유권 경계가 명확하다.
 - 채택된 애드온에 실제 `consumption_path`가 있고 `INSTALLED_UNUSED`를 완료로 보고하지 않았다.
+- 동일 역할·권위 애드온이 중복 활성화되지 않았고, `ADOPTED_DISABLED`는 제한된 rollback·호환성 보존 조건을 가진다.
 - 제거·rollback·저장 호환성 계획이 있다.
 - 실행하지 않은 플랫폼·성능·보안·법률 검증을 통과로 보고하지 않았다.
 
