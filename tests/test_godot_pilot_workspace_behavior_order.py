@@ -92,10 +92,8 @@ class GodotPilotWorkspaceBehaviorOrderTests(unittest.TestCase):
         for marker in (
             "const REQUIRED_STABLE_SCENE_FRAMES := 3",
             "func _wait_for_stable_scene(",
-            "root = await _wait_for_stable_scene(main_scene, NodePath(\".\"))",
-            "root = await _wait_for_stable_scene(scratch_scene, NodePath(\"Target\"))",
-            "root = await _wait_for_stable_scene(scratch_scene, NodePath(\"Target\"))",
-            "if str(root.scene_file_path) != scene_path:",
+            "main_wait = await _wait_for_stable_scene(main_scene, NodePath(\".\"))",
+            "scratch_wait = await _wait_for_stable_scene(scratch_scene, NodePath(\"Target\"))",
             "stable_frames += 1",
             "if stable_frames >= REQUIRED_STABLE_SCENE_FRAMES:",
         ):
@@ -104,6 +102,22 @@ class GodotPilotWorkspaceBehaviorOrderTests(unittest.TestCase):
             'EditorInterface.open_scene_from_path(scratch_scene)\n    await get_tree().process_frame\n    await get_tree().process_frame',
             text,
         )
+
+    def test_scene_wait_failure_codes_distinguish_editor_states(self) -> None:
+        text = PILOT.read_text(encoding="utf-8")
+        for marker in (
+            "var open_scenes := EditorInterface.get_open_scenes()",
+            'last_code = "SCENE_NOT_OPEN"',
+            'last_code = "NO_EDITED_SCENE"',
+            'last_code = "EDITED_SCENE_PATH_EMPTY"',
+            'last_code = "EDITED_SCENE_NOT_ACTIVE"',
+            'last_code = "TARGET_NODE_NOT_FOUND"',
+            'return {"root": root, "code": "PASS"}',
+            'return {"root": null, "code": last_code}',
+            '"code": main_wait.get("code", "MAIN_SCENE_OPEN_FAILED")',
+            '"code": scratch_wait.get("code", "SCRATCH_SCENE_OPEN_FAILED")',
+        ):
+            self.assertIn(marker, text)
 
 
 if __name__ == "__main__":
