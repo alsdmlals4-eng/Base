@@ -1,0 +1,26 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+
+[mcp_servers.godot_local]
+command = "python"
+args = ["-m", "base_godot_mcp"]
+cwd = "<ABSOLUTE_PROJECT_ROOT>"
+enabled = true
+required = true
+startup_timeout_sec = 10
+tool_timeout_sec = 30
+enabled_tools = [
+  "godot_doctor",
+  "godot_status",
+  "godot_catalog",
+  "godot_scene_inspect",
+  "godot_node_rename",
+  "godot_task_status",
+]
+default_tools_approval_mode = "prompt"
+
+[mcp_servers.godot_local.env]
+PYTHONPATH = "<ABSOLUTE_GATEWAY_SRC>"
+BASE_GODOT_MCP_PROFILE_ID = "codex"
+BASE_GODOT_MCP_CONFIG_DIR = "<ABSOLUTE_CONFIG_DIR>"
+BASE_GODOT_PROJECT_ROOT = "<ABSOLUTE_PROJECT_ROOT>"
+BASE_GODOT_MCP_BRIDGE_DESCRIPTOR = "<ABSOLUTE_DESCRIPTOR_PATH>"

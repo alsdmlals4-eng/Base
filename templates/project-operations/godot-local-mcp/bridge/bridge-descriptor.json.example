@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "protocol": "BASE_GODOT_BRIDGE_V1",
+  "host": "127.0.0.1",
+  "port": 43567,
+  "bridge_instance_id": "bridge-example-1",
+  "descriptor_nonce": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+  "profile_id": "codex",
+  "project_fingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "expires_at": "2099-01-01T00:00:00Z"
+}

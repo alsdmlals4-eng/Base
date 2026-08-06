@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "profile_id": "codex",
+  "enabled": true,
+  "credential_secret": "<REPLACE_WITH_RANDOM_SECRET_AT_LEAST_32_CHARACTERS>",
+  "allowed_project_fingerprints": [
+    "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+  ],
+  "allowed_capabilities": [
+    "editor.status",
+    "capabilities.list",
+    "scene.inspect",
+    "node.rename",
+    "task.status"
+  ],
+  "expires_at": "2099-01-01T00:00:00Z"
+}

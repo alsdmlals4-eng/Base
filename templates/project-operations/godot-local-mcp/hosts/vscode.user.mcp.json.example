@@ -1,0 +1,17 @@
+{
+  "servers": {
+    "godotLocal": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["-m", "base_godot_mcp"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${env:BASE_GODOT_MCP_GATEWAY_SRC}",
+        "BASE_GODOT_MCP_PROFILE_ID": "gpt-vscode",
+        "BASE_GODOT_MCP_CONFIG_DIR": "${env:BASE_GODOT_MCP_CONFIG_DIR}",
+        "BASE_GODOT_PROJECT_ROOT": "${workspaceFolder}",
+        "BASE_GODOT_MCP_BRIDGE_DESCRIPTOR": "${env:BASE_GODOT_MCP_BRIDGE_DESCRIPTOR}"
+      }
+    }
+  }
+}
