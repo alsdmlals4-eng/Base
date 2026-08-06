@@ -224,13 +224,12 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
         self.assertIn('transport.get("endpoint_identity") != IN_PROCESS_ENDPOINT', source)
         self.assertIn('transport.get("bind_host") != null', source)
 
-    def test_active_docs_and_source_template_keep_transport_states_distinct(self) -> None:
-        active_paths = (
+    def test_historical_adapter_docs_keep_transport_states_distinct(self) -> None:
+        historical_paths = (
             ADDON / "README.md",
-            ROOT / "templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md",
             ROOT / "templates/project-operations/godot-live-editor/AGENTS_FRAGMENT.md",
         )
-        for path in active_paths:
+        for path in historical_paths:
             with self.subTest(path=path):
                 text = path.read_text(encoding="utf-8")
                 self.assertIn("PROJECT_DEFINED", text)
@@ -240,6 +239,14 @@ class GodotEditorTransactionAdapterTests(unittest.TestCase):
                     "configured v2 Manifest and `transport.kind: DISABLED`",
                     text,
                 )
+
+        project_skill = (
+            ROOT / "templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("HiGodot", project_skill)
+        self.assertIn("SOLE_GODOT_EXECUTION_AUTHORITY", project_skill)
+        self.assertIn("LOOPBACK_ONLY", project_skill)
+        self.assertNotIn("base_live_editor_adapter/", project_skill)
 
         source_manifest = json.loads(
             (

@@ -92,6 +92,7 @@ jobs:
             tests.test_base_v9_4_1_compatibility_release \
             tests.test_base_v9_4_2_compatibility_release \
             tests.test_base_v9_4_3_compatibility_release \
+            tests.test_higodot_single_authority_policy \
             -v
 
   adversarial-gate:
