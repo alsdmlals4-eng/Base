@@ -59,6 +59,32 @@ def _require_string(payload: Mapping[str, object], key: str) -> str:
     return value
 
 
+def _bounded_string(value: object, limit: int) -> str | None:
+    if value is None:
+        return None
+    return str(value)[:limit]
+
+
+def _bounded_failure_diagnostics(payload: Mapping[str, object]) -> dict[str, object]:
+    ledger = payload.get("ledger_states")
+    bounded_ledger = (
+        [_bounded_string(value, 64) for value in ledger[:4]]
+        if isinstance(ledger, list)
+        else []
+    )
+    listener = payload.get("base_network_listener")
+    return {
+        "status": _bounded_string(payload.get("status"), 64),
+        "code": _bounded_string(payload.get("code"), 128),
+        "main_scene_inspect": _bounded_string(payload.get("main_scene_inspect"), 64),
+        "scratch_scene_rename": _bounded_string(payload.get("scratch_scene_rename"), 64),
+        "editor_undo": _bounded_string(payload.get("editor_undo"), 64),
+        "scratch_scene_save": _bounded_string(payload.get("scratch_scene_save"), 64),
+        "ledger_states": bounded_ledger,
+        "base_network_listener": listener if isinstance(listener, bool) else None,
+    }
+
+
 def verify_runtime_evidence(
     workspace: Path,
     runtime_result_path: Path,
@@ -76,9 +102,13 @@ def verify_runtime_evidence(
     if not isinstance(payload, dict):
         raise EvidenceVerificationError("RUNTIME_EVIDENCE_INVALID: root")
     if payload.get("status") != "PASS":
-        raise EvidenceVerificationError(
-            f"RUNTIME_EVIDENCE_FAILED: {payload.get('status')}"
+        diagnostics = json.dumps(
+            _bounded_failure_diagnostics(payload),
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
         )
+        raise EvidenceVerificationError(f"RUNTIME_EVIDENCE_FAILED: {diagnostics}")
     for key in (
         "main_scene_inspect",
         "scratch_scene_rename",
