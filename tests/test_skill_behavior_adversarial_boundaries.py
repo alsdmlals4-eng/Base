@@ -259,6 +259,17 @@ class SkillBehaviorAdversarialBoundaryTests(unittest.TestCase):
             errors,
         )
 
+    def test_bcp008_procurement_cases_block_platform_mismatch_and_overclaim(self) -> None:
+        evals = json.loads((ROOT / "skills/SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8"))
+        cases = {case["case_id"]: case for case in evals["cases"]}
+        web = cases["SBE-903"]
+        self.assertIn("BLOCKED_UNVERIFIED", web["required_evidence"])
+        self.assertIn("external UI procurement receipt", web["required_evidence"])
+        godot = cases["SBE-904"]
+        self.assertIn("auditing-and-refining-ui-art", godot["forbidden_skills"])
+        self.assertIn("Godot", godot["prompt"])
+
+
 
 if __name__ == "__main__":
     unittest.main()

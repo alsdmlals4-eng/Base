@@ -277,3 +277,15 @@ L1 이상 완료 보고는 실제 사용한 Work Mode·Skill·Skill Mode와 이�
 |---|---|
 | 플랫폼 권한·앱/요청 무결성·DRM·오프라인·오탐·서비스 종료 | `docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md` |
 | 프로젝트별 플랫폼 신호·서버 권위·복구·개인정보·sandbox 증거 | `templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md` |
+
+## BCP-008 선택형 명세·디자인·UI 조달 계약
+
+| 질문 | 책임 원본 |
+|---|---|
+| L2 이상 Decision→Requirement→구현→검증 연결 | `templates/planning/FEATURE_SPEC_TRACEABILITY_PACKET.md` |
+| 다분야 공격 관점과 Finding 소유권 | `skills/running-adversarial-review-and-refinement/references/cross-discipline-review-lenses.md` |
+| 프로젝트 시각 토큰 `DESIGN.md` 적용 경계 | `skills/auditing-and-refining-ui-art/references/design-md-project-adapter.md` |
+| 외부 UI Registry·MCP·코드 조달·anti-generic Gate | `skills/auditing-and-refining-ui-art/references/external-ui-procurement-and-anti-generic-quality.md` |
+| 읽기 전용 실제 조달 증거 | `docs/evidence/external-ui-procurement/` |
+
+이 계약은 새 ACTIVE Skill을 추가하지 않고 기존 intake·문서·검증·적대 검토·UI Skill의 조건부 mode/reference로 실행한다.

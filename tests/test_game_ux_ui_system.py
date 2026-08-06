@@ -25,6 +25,7 @@ class GameUxUiSystemContractTests(unittest.TestCase):
             REFERENCE_ROOT / "godot-ui-implementation-contract.md",
             REFERENCE_ROOT / "project-adapter-contract.md",
             REFERENCE_ROOT / "ui-polishing-method.md",
+            ROOT / "templates/planning/PROJECT_DESIGN_MD_TEMPLATE.md",
             PLANNING_TEMPLATE,
             REFERENCE_CARD,
             REVIEW_CHECKLIST,
@@ -291,6 +292,30 @@ class GameUxUiSystemContractTests(unittest.TestCase):
             with self.subTest(trigger=trigger):
                 self.assertIn(trigger, ui["trigger_tags"])
         self.assertNotIn("designing-ui-motion", by_id)
+
+    def test_bcp008_visual_token_and_procurement_extensions_are_routed(self) -> None:
+        method = (REFERENCE_ROOT / "ux-ui-design-system-method.md").read_text(encoding="utf-8")
+        for required in (
+            "### 6.1 Project DESIGN.md Adapter",
+            "### 6.2 External UI Procurement and Anti-Generic Quality Gate",
+            "외부 Web UI",
+        ):
+            self.assertIn(required, method)
+        self.assertIn("external_ui_procurement", REFERENCE_CARD.read_text(encoding="utf-8"))
+        checklist = REVIEW_CHECKLIST.read_text(encoding="utf-8")
+        for required in ("exact version/commit", "MCP 연결 성공", "Design Read", "BLOCKED_UNVERIFIED"):
+            self.assertIn(required, checklist)
+
+    def test_bcp008_ui_workflow_runs_contract_and_procurement_regressions(self) -> None:
+        text = UX_UI_WORKFLOW.read_text(encoding="utf-8")
+        for required in (
+            "tests/test_project_design_md_adapter.py",
+            "tests/test_external_ui_procurement_gate.py",
+            "tests/test_bcp008_behavior_and_procurement_pilot.py",
+            "tools/validate_external_ui_procurement_receipt.py",
+        ):
+            self.assertIn(required, text)
+
 
 
 if __name__ == "__main__":

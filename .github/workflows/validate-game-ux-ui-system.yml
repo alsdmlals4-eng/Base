@@ -15,9 +15,15 @@ on:
       - "docs/superpowers/plans/2026-07-29-ui-polishing-system.md"
       - ".github/reference-freshness.json"
       - "templates/planning/GAME_UX_UI_SYSTEM.md"
+      - "templates/planning/PROJECT_DESIGN_MD_TEMPLATE.md"
       - "templates/research/UX_UI_REFERENCE_CARD.md"
       - "templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md"
       - "tests/test_game_ux_ui_system.py"
+      - "tests/test_project_design_md_adapter.py"
+      - "tests/test_external_ui_procurement_gate.py"
+      - "tests/test_bcp008_behavior_and_procurement_pilot.py"
+      - "tools/validate_external_ui_procurement_receipt.py"
+      - "docs/evidence/external-ui-procurement/**"
       - "tests/test_base_v9_4_ai_operations_contract.py"
       - "tests/test_ui_art_audit.py"
       - ".github/workflows/validate-game-ux-ui-system.yml"
@@ -37,9 +43,15 @@ on:
       - "docs/superpowers/plans/2026-07-29-ui-polishing-system.md"
       - ".github/reference-freshness.json"
       - "templates/planning/GAME_UX_UI_SYSTEM.md"
+      - "templates/planning/PROJECT_DESIGN_MD_TEMPLATE.md"
       - "templates/research/UX_UI_REFERENCE_CARD.md"
       - "templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md"
       - "tests/test_game_ux_ui_system.py"
+      - "tests/test_project_design_md_adapter.py"
+      - "tests/test_external_ui_procurement_gate.py"
+      - "tests/test_bcp008_behavior_and_procurement_pilot.py"
+      - "tools/validate_external_ui_procurement_receipt.py"
+      - "docs/evidence/external-ui-procurement/**"
       - "tests/test_base_v9_4_ai_operations_contract.py"
       - "tests/test_ui_art_audit.py"
       - ".github/workflows/validate-game-ux-ui-system.yml"
@@ -70,6 +82,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements-publication.txt
+          python -m pip install pytest==8.3.5
 
       - name: Run UX UI system and audit regression tests
         run: |
@@ -79,3 +92,10 @@ jobs:
             tests/test_base_v9_4_ai_operations_contract.py \
             tests/test_ui_art_audit.py \
             -v
+          python -m pytest \
+            tests/test_project_design_md_adapter.py \
+            tests/test_external_ui_procurement_gate.py \
+            tests/test_bcp008_behavior_and_procurement_pilot.py \
+            -q
+          python tools/validate_external_ui_procurement_receipt.py \
+            docs/evidence/external-ui-procurement/BCP008_SHADCN_BUTTON_PILOT.json

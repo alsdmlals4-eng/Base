@@ -142,6 +142,22 @@ class SkillSystemCoverageTests(unittest.TestCase):
         self.assertNotIn("designing-ai-instructions", by_id)
         self.assertNotIn("designing-ui-motion", by_id)
 
+    def test_bcp008_uses_existing_owners_without_new_active_skill(self) -> None:
+        registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
+        by_id = {item["skill_id"]: item for item in registry["skills"]}
+        self.assertNotIn("managing-feature-traceability", by_id)
+        self.assertNotIn("procuring-external-ui", by_id)
+        for skill_id in (
+            "managing-project-intake-and-work-contract",
+            "managing-design-documents",
+            "reviewing-and-validating-project-changes",
+            "running-adversarial-review-and-refinement",
+            "auditing-and-refining-ui-art",
+        ):
+            self.assertEqual("ACTIVE", by_id[skill_id]["status"])
+        self.assertEqual([], checker.validate())
+
+
 
 class LegacyRetentionArchiveGovernanceTests(unittest.TestCase):
     def test_archive_contract_files_exist(self) -> None:

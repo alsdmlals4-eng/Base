@@ -205,3 +205,172 @@ P0 BLOCKER
 ## 3.12 UI 모션·상호작용
 
 모션이 상태 변화·입력 접수·공간 관계·결과 위치를 설명해야 하는 경우 `ui-motion-and-interaction-principles.md`를 사용한다. 모션 목적, 중단, 즉시 완료, 빠른 반복, 재진입, Reduced Motion, mute, haptic-off, 성능과 도메인 상태 권위를 검증한다. 프로젝트별 timing·easing 값은 실제 입력 빈도와 목표 플랫폼 증거로 정하며 Base 상수로 고정하지 않는다.
+
+## 6. BCP-008 시각 토큰·외부 조달 확장
+
+프로젝트 시각 토큰을 별도 파일로 기계 판독해야 할 때만 아래 `6.1` 계약과 `templates/planning/PROJECT_DESIGN_MD_TEMPLATE.md`를 사용한다. 외부 Web UI 코드·Registry·MCP를 검토할 때는 아래 `6.2` 계약을 사용한다.
+
+두 확장은 선택 사항이며 기존 `GAME_UX_UI_SYSTEM`의 경험·행동·상태·접근성 권위를 대체하지 않는다. 소스 조회, 코드 채택, 설치, 실제 렌더 품질은 각각 독립 Gate로 판정한다.
+
+### 6.1 Project DESIGN.md Adapter
+
+## 목적
+
+프로젝트의 색·타이포그래피·간격·형태·깊이·컴포넌트 표현을 AI와 도구가 읽을 수 있는 시각 토큰 정본으로 관리한다. `GAME_UX_UI_SYSTEM`은 플레이어 경험·화면 흐름·정보 계층·상태·입력·접근성·Godot 소유권의 상위 행동 정본으로 유지한다.
+
+## 적용 조건
+
+- 여러 화면·구현자·도구에서 반복되는 시각 토큰이 있다.
+- Godot Theme 또는 Web CSS/token으로 변환할 명시적 값이 필요하다.
+- 외부 브랜드·getdesign 계열 참고를 프로젝트 고유 원칙으로 변환해 출처와 차이를 기록해야 한다.
+
+작은 단일 화면이나 시각 방향이 아직 미확정이면 새 `DESIGN.md`를 만들지 않는다.
+
+## 권한 경계
+
+`DESIGN.md`가 소유:
+- 색, typography, spacing, radius, border, elevation
+- 컴포넌트의 시각적 variant와 Do/Don't
+- Godot `Theme`·`StyleBox`·Font·Color·Constant mapping
+- Web CSS variable·DTCG·Tailwind mapping
+
+`GAME_UX_UI_SYSTEM`이 소유:
+- 플레이어 경험, 화면 질문, journey, information hierarchy
+- 상태 의미·도메인 소유권·입력 결과
+- 접근성 행동·복구·오류·피드백 계약
+
+게임 규칙·보상·저장·진행은 어느 시각 토큰 파일도 소유하지 않는다.
+
+## 형식·버전 고정
+
+```yaml
+format: google-design-md | project-design-md
+format_version: alpha | <approved-version>
+source_commit_or_release:
+last_verified_at:
+canonical_scope: visual-language-only
+```
+
+외부 형식이 alpha이면 자동 갱신하지 않고 exact source identity를 고정한다. 형식 변경은 diff·migration·rollback을 거친다.
+
+## 플랫폼 mapping
+
+### Godot
+- token을 `Theme`, `StyleBox`, Font, Color, Constant와 재사용 Scene에 매핑한다.
+- CSS·React 컴포넌트를 Godot 구현으로 간주하지 않는다.
+- Theme 적용 뒤 실제 최소/목표 해상도와 입력 장치에서 렌더한다.
+
+### Web
+- token을 CSS custom property·DTCG·Tailwind config 중 승인된 형식에 매핑한다.
+- 외부 UI 코드는 아래 `6.2 External UI Procurement and Anti-Generic Quality Gate`를 별도로 통과한다.
+
+## 검증
+
+- 토큰 ID 중복·순환 참조·누락 mapping
+- 긴 한국어·최소 해상도·색 대비·포커스·Reduced Motion
+- 같은 상태가 Godot Theme와 Web CSS에서 다른 의미가 되지 않는지
+- 실제 렌더 전후와 프로젝트 고유 방향
+
+자동 lint는 사람 이해·브랜드 적합성·접근성 준수를 자동 증명하지 않는다.
+
+### 6.2 External UI Procurement and Anti-Generic Quality Gate
+
+## 목적
+
+shadcn/ui Registry·MCP 등 외부 UI 코드와 디자인 참고 자료를 프로젝트에 넣기 전에 출처·공급망·플랫폼 적합성·실제 품질을 분리해 판정한다.
+
+## Gate 분리
+
+```text
+1. Source acquisition
+2. Code admission
+3. Installation approval
+4. Runtime·accessibility validation
+5. Actual render anti-generic review
+```
+
+`MCP 연결 성공`은 검색 통로가 열렸다는 뜻일 뿐 `설치 승인`, 코드 안전, 접근성, 실제 렌더 품질 통과가 아니다.
+
+## Procurement receipt
+
+```yaml
+registry_source:
+exact_version_or_commit:
+registry_item:
+source_paths: []
+content_hash:
+license:
+dependencies: []
+registry_dependencies: []
+scripts: []
+secrets: []
+files_added_or_replaced: []
+existing_system_overlap: []
+security_review:
+accessibility_review:
+runtime_review:
+actual_render:
+rollback:
+decision: ADOPT | ADAPT | REJECT | BLOCKED_UNVERIFIED
+reason_codes: []
+```
+
+다음 중 하나라도 확인되지 않으면 fail closed한다.
+
+- exact source identity와 content hash
+- license와 프로젝트 배포 조건
+- declared dependency와 실제 import·생성 결과
+- install script·postinstall·network·secret 요구
+- 기존 파일 덮어쓰기·상태 소유권·rollback
+
+문서·Registry·source 간 의존성 선언이 다르면 즉시 결함으로 단정하지 않고 CLI 변환·생성 결과를 확인할 때까지 `BLOCKED_UNVERIFIED`로 둔다.
+
+## 플랫폼 판정
+
+### Web
+
+프로젝트가 React·Web 표면이고 기존 디자인 시스템과 충돌하지 않으면 `ADOPT` 또는 `ADAPT` 후보가 될 수 있다. 소스 소유형 배포라도 upstream provenance와 update 책임은 남는다.
+
+### Godot
+
+React·CSS·Tailwind 컴포넌트는 Godot `Control`·`Theme`·Scene 구현이 아니다. Web 관리 도구가 별도 범위로 승인되지 않은 한 Godot 프로젝트에 기본 설치하지 않고 `REJECT` 또는 `BLOCKED_UNVERIFIED`로 판정한다.
+
+## Anti-generic quality
+
+설치 뒤 다음을 실제 렌더에서 검토한다.
+
+```yaml
+Design Read:
+page_or_screen_kind:
+audience:
+project_vibe:
+visual_variance:
+motion_intensity:
+information_density:
+repeated_default_patterns: []
+intentional_exceptions: []
+actual_render:
+before_after:
+```
+
+- 흔한 AI 기본값을 후보로 찾되 gradient, card, glass, serif 등 표현을 무조건 금지하지 않는다.
+- 계층·가독성·상태·입력·복구·접근성을 장식보다 먼저 해결한다.
+- 프로젝트의 DESIGN.md·GAME_UX_UI_SYSTEM·실제 목적에 맞는 의도적 표현은 보존한다.
+- 실제 렌더 없이 “AI 티가 제거됐다”고 주장하지 않는다.
+
+## 판정
+
+- `ADOPT`: source·license·dependency·overwrite·runtime·accessibility·render가 검증됐고 최소 수정으로 적합하다.
+- `ADAPT`: 원리는 적합하지만 프로젝트 token·상태·입력·플랫폼에 맞는 변환이 필요하다.
+- `REJECT`: 플랫폼·코어·보안·라이선스·상태 소유권과 충돌한다.
+- `BLOCKED_UNVERIFIED`: 필요한 source·CLI 변환·build·runtime·접근성·렌더 증거가 없다.
+
+## 적대적 검토
+
+- “공식 Registry”라는 이유로 코드를 무검토 설치했는가.
+- source 조회 성공을 설치·빌드·품질 성공으로 승격했는가.
+- dependency 선언과 실제 import·lockfile이 일치하는가.
+- MCP 또는 설치 도구가 secret·network·shell·overwrite 범위를 넓혔는가.
+- 외부 컴포넌트가 도메인 상태를 소유하거나 기존 시스템을 이중화하는가.
+- default styling을 그대로 배치해 프로젝트 고유 방향과 접근성을 잃었는가.
+- rollback이 source receipt와 실제 변경 파일을 복원할 수 있는가.

@@ -1,0 +1,18 @@
+{
+  "phase": "GREEN_CANDIDATE",
+  "baseline": "cabbc59b170c5da2bb1df7e4d4d535857dd35495",
+  "branch": "agent/implement-bcp-008-spec-design-ui",
+  "red_head": "181f11c055ee89128891734d682be5c49e586711",
+  "red_run_id": 31052965191,
+  "red_result": "333_PASS_1_EXPECTED_FAILURE_15_CONFIGURED_SKIPS",
+  "implementation_head": "2c6f8fb7bcb20ce56417437dba2664461d4c8e62",
+  "green_apply_run_id": 31055246563,
+  "focused_tests": 10,
+  "focused_result": "PASS",
+  "procurement_receipt": "PASS_FAIL_CLOSED",
+  "skill_coverage": "PASS",
+  "behavior_contract": "PASS_MODEL_RUN_NOT_RUN",
+  "production_implementation": "IMPLEMENTED_ON_DRAFT_BRANCH",
+  "exact_head_ci": "PENDING",
+  "merge_authorization": "NOT_GRANTED"
+}

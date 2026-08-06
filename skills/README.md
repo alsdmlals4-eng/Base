@@ -75,3 +75,13 @@ skills/<skill-id>/agents/        지원 플랫폼용 발견 metadata
 - 게임 UI 모션·중단·반복·Reduced Motion·도메인 상태 권위: `auditing-and-refining-ui-art` → `references/ui-motion-and-interaction-principles.md`
 
 Luna / Terra / Sol은 논리적 작업 등급이며 실제 provider 옵션의 존재를 보장하지 않는다. BCP-2026-004는 새 활성 Skill을 만들지 않고 기존 intake·simplifying·UI Skill의 책임으로 유지한다.
+## BCP-008 선택형 확장
+
+새 활성 Skill을 만들지 않고 기존 책임 안에서만 다음을 선택적으로 사용한다.
+
+- L2 이상 기능은 `FEATURE_SPEC_TRACEABILITY_PACKET.md`로 Decision·Requirement·Acceptance·Task·구현·검증 ID를 연결한다. L0·L1에는 강제하지 않는다.
+- 복합 변경의 적대 검토는 `cross-discipline-review-lenses.md`를 필요한 관점만 선택해 사용하며, Lens는 결정을 소유하지 않는다.
+- 프로젝트 `DESIGN.md`는 시각 토큰만 소유하고 플레이어 경험·행동·접근성 권위는 `GAME_UX_UI_SYSTEM.md`에 남긴다.
+- 외부 Web UI Registry·MCP·컴포넌트 코드는 연결 성공과 조달 승인, 설치, 빌드, 렌더, 접근성, 프로젝트 채택을 분리해 fail-closed로 검증한다.
+
+실제 독립 모델 행동 결과가 없으면 행동 성능은 `NOT_RUN`, 실제 프로젝트 설치·렌더·사람 검증이 없으면 조달 채택은 `BLOCKED_UNVERIFIED`다.

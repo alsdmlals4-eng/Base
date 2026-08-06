@@ -37,6 +37,24 @@ polishing_evidence:
   motion_audio_haptic_dependency:
   reduced_motion_mute_haptic_off_path:
   before_after_validation:
+external_ui_procurement:
+  registry_source:
+  source_repository:
+  exact_version_or_commit:
+  registry_item:
+  content_hash:
+  license_source_and_hash:
+  dependencies:
+  scripts_and_postinstall:
+  secrets_and_network_access:
+  files_added_or_replaced:
+  disposable_fixture_result: NOT_RUN | PASS | FAIL | BLOCKED
+  target_project_installation: NOT_RUN | PASS | FAIL | BLOCKED
+  runtime_build: NOT_RUN | PASS | FAIL | BLOCKED
+  actual_render_review: NOT_RUN | PASS | FAIL | BLOCKED
+  accessibility_review: NOT_RUN | PARTIAL | PASS | FAIL | BLOCKED
+  rollback:
+  admission_decision: ADOPT | ADAPT | TEST | REJECT | BLOCKED_UNVERIFIED
 motion_interaction_evidence:
   motion_purpose: ORIENT | CONFIRM | PROGRESS | RESULT | WARN | REWARD | DECORATE | NOT_APPLICABLE
   staging_and_first_attention:
@@ -94,3 +112,5 @@ review_status: DRAFT | REVIEWED | APPLIED | REJECTED | SUPERSEDED
 
 11. UI 모션 자료는 staging·입력 접수/처리 중/결과·중단·즉시 완료·빠른 반복·재진입·Reduced Motion·mute·haptic-off·도메인 상태 권위를 함께 검토한다.
 12. AnimationPlayer·Tween 표현이 구매·보상·저장·진행의 실제 결과를 소유하는 사례는 `AVOID`한다.
+13. MCP 연결·Registry 조회·소스 획득·설치·빌드·실제 렌더·접근성·프로젝트 채택을 서로 다른 증거로 기록한다.
+14. 공식 브랜드 문서가 아닌 커뮤니티 분석은 `independent_analysis: true`, `official_brand_source: false`로 표시하고 고유 자산·표현을 복제하지 않는다.

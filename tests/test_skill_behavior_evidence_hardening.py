@@ -373,6 +373,21 @@ class SkillBehaviorCoverageTests(unittest.TestCase):
 
         self.assertIn("result review context is not independent", errors)
 
+    def test_bcp008_cases_add_positive_negative_and_fail_closed_pressure(self) -> None:
+        evals = self.checker.load_eval_set(ROOT)
+        cases = {case["case_id"]: case for case in evals["cases"]}
+        self.assertTrue({"SBE-901", "SBE-902", "SBE-903", "SBE-904"}.issubset(cases))
+        self.assertEqual(
+            "managing-project-intake-and-work-contract",
+            cases["SBE-901"]["expected_primary_skill"],
+        )
+        self.assertEqual("negative", cases["SBE-902"]["case_type"])
+        self.assertIn("auditing-and-refining-ui-art", cases["SBE-903"]["expected_supporting_skills"])
+        self.assertIn("auditing-and-refining-ui-art", cases["SBE-904"]["forbidden_skills"])
+        self.assertEqual("NOT_RUN", evals["model_run_status"])
+        self.assertEqual([], self.checker.validate_contract(ROOT))
+
+
 
 if __name__ == "__main__":
     unittest.main()
