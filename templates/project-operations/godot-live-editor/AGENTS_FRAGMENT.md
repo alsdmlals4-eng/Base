@@ -38,7 +38,7 @@ validate PROJECT_BASE_ADAPTER.json and snapshot
 → typed capability only
 ```
 
-validated Base adapter가 고정한 repository·commit에서 과거 공용 계약·Schema·validator를 읽는다. 이 경로는 현재 HiGodot 작업을 우회하는 fallback이 아니다.
+validated Base adapter가 고정한 repository·commit에서 과거 공용 계약·Schema·validator를 읽는다. 이 경로는 현재 HiGodot 작업을 우회하는 fallback이 아니다. 과거 Pilot에서도 automatic approval과 unsafe retry는 금지됐다.
 
 과거 PR B addon은 configured v2 Manifest의 exact project-owned in-process Pilot profile에서만 사용됐다.
 
