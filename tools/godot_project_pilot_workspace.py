@@ -43,6 +43,15 @@ class ProjectTransformReport:
 
 
 @dataclass(frozen=True)
+class StagedRuntimeWorkspace:
+    root: Path
+    main_scene: str
+    project_file: Path
+    wrapper_script: Path
+    transform_report: ProjectTransformReport
+
+
+@dataclass(frozen=True)
 class MaterializedWorkspace:
     root: Path
     main_scene: str
@@ -273,7 +282,13 @@ def _activate_pilot_plugin(project_file: Path) -> None:
     sections = _sections(lines)
     bounds = sections.get("editor_plugins")
     if bounds is None:
-        lines.extend(["", "[editor_plugins]", f"enabled=PackedStringArray({json.dumps(_BASE_PLUGIN)})"])
+        lines.extend(
+            [
+                "",
+                "[editor_plugins]",
+                f"enabled=PackedStringArray({json.dumps(_BASE_PLUGIN)})",
+            ]
+        )
     else:
         enabled_index: int | None = None
         values: list[str] = []
@@ -311,13 +326,13 @@ def prepare_runtime_workspace(
     return report
 
 
-def materialize_runtime_workspace(
+def stage_runtime_workspace(
     base_root: Path,
     workspace_root: Path,
     descriptor: ProjectPilotDescriptor,
     source_commit: str,
     transform_report: ProjectTransformReport | None = None,
-) -> MaterializedWorkspace:
+) -> StagedRuntimeWorkspace:
     root = Path(workspace_root).resolve()
     if not descriptor.is_runtime_project or descriptor.project_file is None:
         raise ValueError("RUNTIME_PROJECT_REQUIRED")
@@ -330,13 +345,17 @@ def materialize_runtime_workspace(
         raise ValueError(f"MAIN_SCENE_INVALID: {report.main_scene}")
 
     copy_canonical_addon(base_root, root)
-    template_root = Path(base_root).resolve() / "templates/project-operations/godot-live-editor/pilot"
+    template_root = (
+        Path(base_root).resolve()
+        / "templates/project-operations/godot-live-editor/pilot"
+    )
     pilot_dir = root / ".godot-live-editor-pilot"
     pilot_dir.mkdir(parents=True, exist_ok=True)
     shutil.copy2(template_root / "scratch.tscn", pilot_dir / "scratch.tscn")
     pilot_addon = root / "addons/base_multi_project_pilot"
     pilot_addon.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(template_root / "multi_project_pilot.gd", pilot_addon / "plugin.gd")
+    wrapper_script = pilot_addon / "plugin.gd"
+    shutil.copy2(template_root / "multi_project_pilot.gd", wrapper_script)
     (pilot_addon / "plugin.cfg").write_text(
         '[plugin]\nname="Base Multi-Project Pilot"\ndescription="Scratch-only Base C0 validation"\n'
         'author="Base"\nversion="1.0.0"\nscript="plugin.gd"\n',
@@ -353,6 +372,26 @@ def materialize_runtime_workspace(
         json.dumps(context, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
+    return StagedRuntimeWorkspace(
+        root=root,
+        main_scene=report.main_scene,
+        project_file=project_file,
+        wrapper_script=wrapper_script,
+        transform_report=report,
+    )
+
+
+def activate_staged_runtime_workspace(
+    staged: StagedRuntimeWorkspace,
+) -> MaterializedWorkspace:
+    root = Path(staged.root).resolve()
+    project_file = Path(staged.project_file).resolve()
+    wrapper_script = Path(staged.wrapper_script).resolve()
+    if not _is_within(project_file, root) or not project_file.is_file():
+        raise ValueError("STAGED_PROJECT_FILE_INVALID")
+    if not _is_within(wrapper_script, root) or not wrapper_script.is_file():
+        raise ValueError("STAGED_WRAPPER_SCRIPT_INVALID")
+
     _activate_pilot_plugin(project_file)
     manifest = build_configured_manifest(root, sha256_file(project_file))
     manifest_path = root / "GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json"
@@ -362,16 +401,35 @@ def materialize_runtime_workspace(
     )
     return MaterializedWorkspace(
         root=root,
-        main_scene=report.main_scene,
+        main_scene=staged.main_scene,
         manifest_path=manifest_path,
-        wrapper_script=pilot_addon / "plugin.gd",
-        transform_report=report,
+        wrapper_script=wrapper_script,
+        transform_report=staged.transform_report,
     )
+
+
+def materialize_runtime_workspace(
+    base_root: Path,
+    workspace_root: Path,
+    descriptor: ProjectPilotDescriptor,
+    source_commit: str,
+    transform_report: ProjectTransformReport | None = None,
+) -> MaterializedWorkspace:
+    staged = stage_runtime_workspace(
+        base_root,
+        workspace_root,
+        descriptor,
+        source_commit,
+        transform_report=transform_report,
+    )
+    return activate_staged_runtime_workspace(staged)
 
 
 __all__ = [
     "MaterializedWorkspace",
     "ProjectTransformReport",
+    "StagedRuntimeWorkspace",
+    "activate_staged_runtime_workspace",
     "compare_inventories",
     "copy_to_workspace",
     "inventory_digest",
@@ -379,5 +437,6 @@ __all__ = [
     "list_tracked_paths",
     "materialize_runtime_workspace",
     "prepare_runtime_workspace",
+    "stage_runtime_workspace",
     "transform_project_godot",
 ]
