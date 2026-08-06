@@ -99,6 +99,66 @@ def reconcile_contract_errors(
     return remaining
 
 
+def _generated_artifact_errors(project_root: Path, base_repository: Path) -> list[str]:
+    try:
+        artifacts = contract.build_artifacts(project_root, base_repository, prevalidated=True)
+    except contract.ContractError as error:
+        return [str(error)]
+    mismatches = [
+        path
+        for path, content in artifacts.items()
+        if not path.is_file() or path.read_bytes() != content
+    ]
+    if not mismatches:
+        return []
+    names = ", ".join(path.relative_to(project_root).as_posix() for path in mismatches)
+    return [f"Generated view manual modification or stale output detected: {names}"]
+
+
+def validate_project_contract(
+    *,
+    project_root: Path,
+    base_repository: Path,
+    protected_base: str,
+    approval_document: dict[str, Any] | None,
+    externally_approved: bool,
+    check_generated: bool,
+) -> list[str]:
+    errors = contract.validation_errors(
+        project_root,
+        base_repository,
+        protected_base=protected_base,
+        check_generated=False,
+    )
+    if approval_document is not None:
+        protected_errors = [error for error in errors if _protected_error_paths(error) is not None]
+        if len(protected_errors) != 1:
+            errors.append(
+                "Protected change approval requires exactly one detected protected-path error"
+            )
+        else:
+            changed_paths = _protected_error_paths(protected_errors[0]) or []
+            approval_errors = validate_approval_document(
+                approval_document,
+                protected_base=protected_base,
+                changed_paths=changed_paths,
+                externally_approved=externally_approved,
+            )
+            if approval_errors:
+                errors.extend(approval_errors)
+            else:
+                errors = reconcile_contract_errors(
+                    errors,
+                    approved_paths=approval_document["approved_paths"],
+                )
+    elif externally_approved:
+        errors.append("External approval metadata cannot be used without an approval manifest")
+
+    if not errors and check_generated:
+        errors.extend(_generated_artifact_errors(project_root, base_repository))
+    return errors
+
+
 def _load_approval(project_root: Path, value: str) -> dict[str, Any]:
     relative = Path(value)
     if relative.is_absolute() or ".." in relative.parts:
@@ -132,41 +192,22 @@ def main() -> int:
 
     project_root = options.project_root.resolve()
     base_repository = options.base_repository.resolve()
-    errors = contract.validation_errors(
-        project_root,
-        base_repository,
+    approval_document: dict[str, Any] | None = None
+    load_errors: list[str] = []
+    if options.approval:
+        try:
+            approval_document = _load_approval(project_root, options.approval)
+        except (OSError, ValueError, json.JSONDecodeError) as error:
+            load_errors.append(str(error))
+
+    errors = load_errors or validate_project_contract(
+        project_root=project_root,
+        base_repository=base_repository,
         protected_base=options.protected_base,
+        approval_document=approval_document,
+        externally_approved=options.external_approval == "true",
         check_generated=options.check,
     )
-
-    if options.approval:
-        protected_errors = [error for error in errors if _protected_error_paths(error) is not None]
-        if len(protected_errors) != 1:
-            errors.append(
-                "Protected change approval requires exactly one detected protected-path error"
-            )
-        else:
-            changed_paths = _protected_error_paths(protected_errors[0]) or []
-            try:
-                document = _load_approval(project_root, options.approval)
-            except (OSError, ValueError, json.JSONDecodeError) as error:
-                errors.append(str(error))
-            else:
-                approval_errors = validate_approval_document(
-                    document,
-                    protected_base=options.protected_base,
-                    changed_paths=changed_paths,
-                    externally_approved=options.external_approval == "true",
-                )
-                if approval_errors:
-                    errors.extend(approval_errors)
-                else:
-                    errors = reconcile_contract_errors(
-                        errors,
-                        approved_paths=document["approved_paths"],
-                    )
-    elif options.external_approval == "true":
-        errors.append("External approval metadata cannot be used without an approval manifest")
 
     if errors:
         print("Approved project operating contract validation failed:", file=sys.stderr)
