@@ -76,6 +76,47 @@ class BaseSharedSkillRouteTests(unittest.TestCase):
             "skills/evaluating-godot-assets-and-plugins-before-creation/LEARNING_LOG.md",
         )
 
+    def test_godot_provider_route_exposes_reuse_first_and_higodot_contracts(self) -> None:
+        registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        item = next(
+            entry
+            for entry in registry["shared_skills"]
+            if entry["skill_id"]
+            == "evaluating-godot-assets-and-plugins-before-creation"
+        )
+
+        for tag in (
+            "existing-solution-first",
+            "current-environment-inventory",
+            "connected-mcp",
+            "higodot",
+            "godot-ai",
+            "reuse-absorb-refactor-archive-build-new",
+        ):
+            self.assertIn(tag, item["trigger_tags"])
+
+        for mode in ("inventory-current-environment", "disposition"):
+            self.assertIn(mode, item["skill_modes"])
+
+        for role in (
+            "mcp_host_inventory",
+            "enabled_godot_addons",
+            "dependency_manifests",
+            "related_open_and_recent_prs",
+            "existing_solution_disposition",
+            "higodot_adoption_record",
+        ):
+            self.assertIn(role, item["project_adapter_roles"])
+
+        self.assertIn(
+            "docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md",
+            item["references"],
+        )
+        self.assertIn(
+            "templates/project-operations/HIGODOT_ADOPTION_RECORD.json",
+            item["templates"],
+        )
+
     def test_project_specific_skills_remain_local_only(self) -> None:
         registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
         policy = registry["project_skill_policy"]
