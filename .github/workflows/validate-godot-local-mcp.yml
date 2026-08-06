@@ -47,4 +47,6 @@ jobs:
           tests.test_godot_local_mcp_server
           tests.test_godot_local_mcp_profile_store
           tests.test_godot_local_mcp_stdio
+          tests.test_godot_local_mcp_framing
+          tests.test_godot_local_mcp_bridge_client
           -v
