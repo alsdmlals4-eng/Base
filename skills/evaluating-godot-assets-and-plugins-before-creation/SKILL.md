@@ -38,6 +38,9 @@ third_party_inventory
 license_record
 mcp_host_inventory
 related_open_and_recent_prs
+addon_adoption_state
+addon_consumption_path
+addon_removal_or_rollback
 ```
 
 프로젝트에는 검색 정책과 Skill 본문을 복사하지 않는다. 프로젝트 어댑터는 실제 버전·경로·플랫폼·검증기와 프로젝트 고유 제약만 제공한다.
@@ -113,6 +116,78 @@ BUILD_NEW: BUILD_CUSTOM
 
 `BUILD_NEW`는 필수 핵심 기능 부재, 설정·격리·bounded patch로 해결 불가능한 차단 결함, 라이선스 충돌, 유지 중단, Godot·OS·클라이언트·성능 미충족 중 하나를 증거로 확인하고 사용자가 비교 결과를 승인해야 한다. “직접 만들면 더 엄격하다”는 단독 근거가 아니다.
 
+## Selective addon utilization
+
+평가가 `REUSE` 또는 사용자 승인된 `REFACTOR`이고 현재 작업에 실제 효용이 있으면 직접 중복 구현보다 애드온 활용을 우선한다. 발견했거나 유명하다는 이유만으로 설치하지 않으며 모든 프로젝트에 같은 애드온을 일괄 복사하지 않는다.
+
+프로젝트별 채택 상태는 다음 중 하나다.
+
+```text
+CANDIDATE
+TRIAL_APPROVED
+ADOPTED_ACTIVE
+ADOPTED_DISABLED
+DEFERRED
+REJECTED
+INSTALLED_UNUSED
+REMOVAL_PENDING
+REMOVED
+```
+
+최소 프로젝트 기록:
+
+```yaml
+addon_name:
+role:
+exact_version:
+source:
+license:
+godot_compatibility:
+platform_scope:
+adoption_state:
+consumption_path:
+owner_boundary:
+validation:
+rollback_or_removal:
+unverified:
+```
+
+`consumption_path`는 다음 중 하나 이상을 실제로 가리킨다.
+
+- 프로젝트 테스트 명령 또는 CI
+- 편집기 작업 흐름
+- 런타임 기능
+- 플랫폼 빌드·서비스 연결
+- 콘텐츠 제작 파이프라인
+
+설치됐지만 소비 경로가 없으면 `INSTALLED_UNUSED`다. 제거하거나 필요가 생길 때까지 `DEFERRED`로 되돌리며, 단순 폴더 존재를 채택 완료로 보고하지 않는다.
+
+### 단계별 기본 라우팅
+
+#### 테스트 프레임워크
+
+- 테스트 가능한 제품 코드, 저장, 경제, 전투, 퍼즐, 분기 또는 반복 가능한 상태 규칙 구현이 시작되면 우선 검토한다.
+- 기획 전용 저장소 또는 실행 가능한 제품 코드가 없는 단계에서는 `DEFERRED`다.
+- 실제 테스트 파일·실행 명령 또는 CI 소비 경로와 exact version을 기록한다.
+
+#### 대화·서사 프레임워크
+
+- 분기·조건·화자·현지화·저장 복구·콘텐츠 편집 요구가 기존 JSON·Resource·Scene 구조보다 복잡해질 때 검토한다.
+- 기존 사건·대화 정본을 평가 없이 교체하지 않는다.
+- 대표 대화 흐름을 격리 시험하고 마이그레이션·제거·저장 호환성을 기록한다.
+
+#### 플랫폼 서비스 애드온
+
+- 결제·업적·클라우드 저장 등 해당 플랫폼 기능이 승인된 출시 범위에 포함되고 실제 통합 작업을 시작할 때만 채택한다.
+- 미래 후보 플랫폼이라는 이유만으로 PC·Android·Steam 계열 플러그인을 선설치하지 않는다.
+- 자격 증명은 공개 저장소에 넣지 않고, 플랫폼별 빌드·테스트 트랙·실패 시 게임 코어의 독립 실행을 검증한다.
+
+#### 개발 편의·카메라·아이콘 애드온
+
+- 실제 반복 작업을 줄이거나 승인된 UX·카메라 요구를 명확히 충족할 때만 사용한다.
+- Godot 기본 노드·Resource·Editor 기능으로 충분하면 추가하지 않는다.
+- 빌드 포함 여부, 런타임 의존성, 제거 뒤 Scene 복구 가능성을 확인한다.
+
 ## Workflow
 
 1. 요구를 `목표 / 플레이어 가치 / 범위 / 제외 / 완료 기준 / 테스트`로 변환한다.
@@ -123,9 +198,10 @@ BUILD_NEW: BUILD_CUSTOM
 6. 무료·유료를 가격만으로 우열화하지 않고 총 도입·유지·제거 비용을 비교한다.
 7. `REUSE / ABSORB / REFACTOR / ARCHIVE / BUILD_NEW` disposition과 반대 측 공격을 적대적으로 검토한다.
 8. 구매·계정 연결·프로젝트 설치·네이티브 SDK 추가는 사용자 승인 전 수행하지 않는다.
-9. `TRIAL`은 별도 브랜치나 샘플 프로젝트에서 수행하고 핵심 Scene·세이브에 바로 결합하지 않는다.
+9. `TRIAL_APPROVED`는 별도 브랜치나 샘플 프로젝트에서 수행하고 핵심 Scene·세이브에 바로 결합하지 않는다.
 10. `BUILD_NEW`는 Gate 증거와 사용자 승인 뒤 최소 범위로만 전환한다.
-11. 채택 시 버전·출처·라이선스·변경 사항·검증·제거 절차를 프로젝트 기록에 남긴다.
+11. 채택 시 exact version·출처·라이선스·채택 상태·소비 경로·권위 경계·검증·제거 절차를 프로젝트 기록에 남긴다.
+12. 설치 후 소비 경로가 사라지면 `INSTALLED_UNUSED` 또는 `REMOVAL_PENDING`으로 전환하고 제거·연기·대체를 판정한다.
 
 ## Asset rights and reference-production route
 
@@ -167,6 +243,7 @@ BUILD_CUSTOM
 ## 후보 비교표
 ## 라이선스·가격·유지보수·종속 위험
 ## REUSE·ABSORB·REFACTOR·ARCHIVE·BUILD_NEW 판정
+## 애드온 채택 상태·consumption_path·owner boundary
 ## 판정 반대 측 공격과 완화 가능성
 ## 승인 필요한 구매·설치·계정·권한
 ## PoC·통합·제거·회귀 검증
@@ -183,6 +260,7 @@ BUILD_CUSTOM
 - 가격이나 별점만으로 채택하지 않았다.
 - 구매와 설치를 조사와 혼동하지 않았다.
 - 프로젝트 코어와 외부 도구의 소유권 경계가 명확하다.
+- 채택된 애드온에 실제 `consumption_path`가 있고 `INSTALLED_UNUSED`를 완료로 보고하지 않았다.
 - 제거·rollback·저장 호환성 계획이 있다.
 - 실행하지 않은 플랫폼·성능·보안·법률 검증을 통과로 보고하지 않았다.
 
