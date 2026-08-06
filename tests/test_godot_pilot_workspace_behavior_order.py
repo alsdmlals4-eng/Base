@@ -119,6 +119,31 @@ class GodotPilotWorkspaceBehaviorOrderTests(unittest.TestCase):
         ):
             self.assertIn(marker, text)
 
+    def test_open_scene_root_is_activated_before_scene_wait_retries(self) -> None:
+        text = PILOT.read_text(encoding="utf-8")
+        for marker in (
+            "func _find_open_scene_root(",
+            "var open_roots := EditorInterface.get_open_scene_roots()",
+            "if open_scenes.size() != open_roots.size():",
+            "var scene_index := open_scenes.find(scene_path)",
+            "return open_roots[scene_index]",
+            "var requested_root := _find_open_scene_root(scene_path)",
+            'last_code = "OPEN_SCENE_ROOT_NOT_FOUND"',
+            "var requested_target := requested_root",
+            "requested_target = requested_root.get_node_or_null(target_path)",
+            "EditorInterface.edit_node(requested_target)",
+            'last_code = "EDITED_SCENE_ACTIVATION_PENDING"',
+        ):
+            self.assertIn(marker, text)
+
+        activation = text.index("EditorInterface.edit_node(requested_target)")
+        scene_open_check = text.index("if scene_path not in open_scenes:")
+        root_lookup = text.index("var requested_root := _find_open_scene_root(scene_path)")
+        target_lookup = text.index("requested_target = requested_root.get_node_or_null(target_path)")
+        self.assertLess(scene_open_check, root_lookup)
+        self.assertLess(root_lookup, target_lookup)
+        self.assertLess(target_lookup, activation)
+
 
 if __name__ == "__main__":
     unittest.main()
