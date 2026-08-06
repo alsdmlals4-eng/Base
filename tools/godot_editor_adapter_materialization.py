@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import inspect
 import shutil
 from pathlib import Path
 from typing import Any
@@ -14,6 +15,30 @@ from tools.validate_godot_live_editor_contract_v2 import (
 ADDON_RELATIVE = Path(
     "templates/project-operations/godot-live-editor/addons/base_live_editor_adapter"
 )
+HISTORICAL_PILOT_ONLY = "HISTORICAL_BASE_ADAPTER_PILOT_ONLY"
+_ACTIVE_ADOPTION_ERROR = "BASE_ADAPTER_ACTIVE_ADOPTION_FORBIDDEN"
+_ALLOWED_HISTORICAL_CALLERS = frozenset(
+    {
+        "materialize_godot_editor_adapter_pilot.py",
+        "godot_project_pilot_workspace.py",
+    }
+)
+
+
+def _require_historical_pilot_caller() -> None:
+    """Fail closed outside the retained historical Pilot harnesses.
+
+    This is an accidental-adoption guard, not an authentication boundary. Current
+    projects route Godot authoring through HiGodot; these helpers remain only so
+    previously recorded Base adapter evidence can still be reproduced.
+    """
+
+    callers = {
+        Path(frame.filename).name
+        for frame in inspect.stack()[2:8]
+    }
+    if callers.isdisjoint(_ALLOWED_HISTORICAL_CALLERS):
+        raise RuntimeError(f"{_ACTIVE_ADOPTION_ERROR}: {HISTORICAL_PILOT_ONLY}")
 
 
 def sha256_file(path: Path) -> str:
@@ -94,7 +119,7 @@ def build_capabilities() -> list[dict[str, Any]]:
             "saved_scene_sha256",
         ],
     )
-    inspect = {
+    inspect_capability = {
         "capability_id": "scene.inspect",
         "description": "Inspect the active edited scene without mutation.",
         "execution_path": "EDITOR_PLUGIN",
@@ -156,13 +181,14 @@ def build_capabilities() -> list[dict[str, Any]]:
         "evidence_outputs": ["ENGINE_STATE", "LOG"],
         "unsupported_states": ["IMPORTING", "NO_EDITED_SCENE"],
     }
-    return [inspect, rename]
+    return [inspect_capability, rename]
 
 
 def build_configured_manifest(
     destination: Path,
     project_godot_sha256: str,
 ) -> dict[str, Any]:
+    _require_historical_pilot_caller()
     normalized_project_path = Path(destination).resolve().as_posix()
     fingerprint = hashlib.sha256(
         f"{normalized_project_path}\n{project_godot_sha256}".encode("utf-8")
@@ -185,7 +211,7 @@ def build_configured_manifest(
             "maximum_exclusive_version": "4.8.0",
         },
         "tool_adoption": {
-            "source": "base-project-local",
+            "source": "base-project-local-historical-pilot",
             "exact_version": "2.0.0",
             "telemetry_policy": "DISABLED",
             "external_data_policy": "DENY_BY_DEFAULT",
@@ -231,6 +257,7 @@ def build_configured_manifest(
 
 
 def copy_canonical_addon(base_root: Path, destination_project: Path) -> Path:
+    _require_historical_pilot_caller()
     source = Path(base_root).resolve() / ADDON_RELATIVE
     destination = (
         Path(destination_project).resolve()
@@ -248,6 +275,7 @@ def copy_canonical_addon(base_root: Path, destination_project: Path) -> Path:
 
 
 __all__ = [
+    "HISTORICAL_PILOT_ONLY",
     "build_capabilities",
     "build_configured_manifest",
     "copy_canonical_addon",
