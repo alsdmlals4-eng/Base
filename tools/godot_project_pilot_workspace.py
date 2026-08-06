@@ -241,10 +241,7 @@ def transform_project_godot(
             raise ValueError(f"DECLARED_LEGACY_PLUGIN_NOT_FOUND: {plugin}")
         removed_plugins.append(plugin)
 
-    remove_indexes = {
-        autoload_line_indexes[name]
-        for name in descriptor.legacy_autoloads
-    }
+    remove_indexes = {autoload_line_indexes[name] for name in descriptor.legacy_autoloads}
     output: list[str] = []
     for index, line in enumerate(lines):
         if index in remove_indexes:
@@ -297,12 +294,10 @@ def _activate_pilot_plugin(project_file: Path) -> None:
     project_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def materialize_runtime_workspace(
-    base_root: Path,
+def prepare_runtime_workspace(
     workspace_root: Path,
     descriptor: ProjectPilotDescriptor,
-    source_commit: str,
-) -> MaterializedWorkspace:
+) -> ProjectTransformReport:
     root = Path(workspace_root).resolve()
     if not descriptor.is_runtime_project or descriptor.project_file is None:
         raise ValueError("RUNTIME_PROJECT_REQUIRED")
@@ -313,12 +308,29 @@ def materialize_runtime_workspace(
     main_scene_file = root / report.main_scene.removeprefix("res://")
     if not main_scene_file.is_file():
         raise ValueError(f"MAIN_SCENE_INVALID: {report.main_scene}")
+    return report
+
+
+def materialize_runtime_workspace(
+    base_root: Path,
+    workspace_root: Path,
+    descriptor: ProjectPilotDescriptor,
+    source_commit: str,
+    transform_report: ProjectTransformReport | None = None,
+) -> MaterializedWorkspace:
+    root = Path(workspace_root).resolve()
+    if not descriptor.is_runtime_project or descriptor.project_file is None:
+        raise ValueError("RUNTIME_PROJECT_REQUIRED")
+    project_file = root / descriptor.project_file
+    if not project_file.is_file():
+        raise FileNotFoundError(f"missing project file: {project_file}")
+    report = transform_report or prepare_runtime_workspace(root, descriptor)
+    main_scene_file = root / report.main_scene.removeprefix("res://")
+    if not main_scene_file.is_file():
+        raise ValueError(f"MAIN_SCENE_INVALID: {report.main_scene}")
 
     copy_canonical_addon(base_root, root)
-    template_root = (
-        Path(base_root).resolve()
-        / "templates/project-operations/godot-live-editor/pilot"
-    )
+    template_root = Path(base_root).resolve() / "templates/project-operations/godot-live-editor/pilot"
     pilot_dir = root / ".godot-live-editor-pilot"
     pilot_dir.mkdir(parents=True, exist_ok=True)
     shutil.copy2(template_root / "scratch.tscn", pilot_dir / "scratch.tscn")
@@ -366,5 +378,6 @@ __all__ = [
     "inventory_tracked_files",
     "list_tracked_paths",
     "materialize_runtime_workspace",
+    "prepare_runtime_workspace",
     "transform_project_godot",
 ]

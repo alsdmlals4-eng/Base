@@ -27,6 +27,7 @@ from tools.godot_project_pilot_workspace import (
     copy_to_workspace,
     inventory_tracked_files,
     materialize_runtime_workspace,
+    prepare_runtime_workspace,
 )
 
 
@@ -313,27 +314,6 @@ def run_pilot(
 
     before = inventory_tracked_files(source)
     process_records: list[ProcessRecord] = []
-    for check in descriptor.behavior_checks:
-        record = run_behavior_check(check, source, godot_bin)
-        process_records.append(record)
-        if record.returncode != 0:
-            after = inventory_tracked_files(source)
-            write_final_evidence(
-                output,
-                repository=descriptor.repository,
-                source_commit=source_commit,
-                base_pilot_commit=descriptor.base_pilot_commit,
-                project_state=descriptor.project_state,
-                result="FAIL",
-                source_before=before,
-                source_after=after,
-                changed_paths=compare_inventories(before, after),
-                runtime=None,
-                legacy_mutation_authority="NOT_RUN",
-                process_records=[_record_dict(value) for value in process_records],
-            )
-            return 3
-
     if not descriptor.is_runtime_project:
         after = inventory_tracked_files(source)
         changed = compare_inventories(before, after)
@@ -349,7 +329,7 @@ def run_pilot(
             changed_paths=changed,
             runtime=None,
             legacy_mutation_authority="NOT_APPLICABLE",
-            process_records=[_record_dict(value) for value in process_records],
+            process_records=process_records,
         )
         return 0 if not changed else 4
 
@@ -364,11 +344,37 @@ def run_pilot(
         with tempfile.TemporaryDirectory(prefix="base-godot-project-pilot-") as temporary:
             workspace = Path(temporary) / "project"
             copy_to_workspace(source, workspace)
+            prepared = prepare_runtime_workspace(workspace, descriptor)
+            preserved_autoloads = prepared.preserved_autoloads
+
+            import_record = _run_process(
+                [
+                    str(Path(godot_bin).resolve()),
+                    "--editor",
+                    "--headless",
+                    "--path",
+                    str(workspace),
+                    "--quit",
+                ],
+                cwd=workspace,
+                timeout_seconds=180,
+            )
+            process_records.append(import_record)
+            if import_record.returncode != 0:
+                raise ValueError("GODOT_PROJECT_IMPORT_FAILED")
+
+            for check in descriptor.behavior_checks:
+                record = run_behavior_check(check, workspace, godot_bin)
+                process_records.append(record)
+                if record.returncode != 0:
+                    raise ValueError("PROJECT_BEHAVIOR_CHECK_FAILED")
+
             materialized = materialize_runtime_workspace(
                 base,
                 workspace,
                 descriptor,
                 source_commit,
+                transform_report=prepared,
             )
             preserved_autoloads = materialized.transform_report.preserved_autoloads
             godot_record = _run_process(
