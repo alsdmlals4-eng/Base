@@ -170,6 +170,7 @@ floating latest와 자동 무검토 업데이트는 금지한다. connection 성
 - UI·screenshot·engine/physical input 구분: `auditing-and-refining-ui-art`
 - pending task·checkpoint·resume: `maintaining-long-running-task-continuity`
 - 외부 계약·Schema·catalog freshness: `auditing-canonical-reference-freshness`
+- 반복 증거 기반 Skill 승격 판정: `evolving-project-discipline-skills`
 
 현재 주 책임 owner가 작업 범위와 승인 경계를 정하고, 이 Skill은 HiGodot 실행·검증 증거를 묶는다.
 
