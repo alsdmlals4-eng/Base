@@ -6,7 +6,8 @@ import sys
 from collections.abc import Mapping
 from pathlib import Path
 
-from .bridge_client import DisconnectedBridge
+from .bridge_client import AuthenticatedBridge, DisconnectedBridge
+from .bridge_descriptor import BridgeDescriptorError, load_bridge_descriptor
 from .profile_store import ProfileError, load_profile
 from .project_identity import ProjectIdentity, ProjectIdentityError
 from .server import GatewayDependencies, build_server
@@ -37,11 +38,25 @@ def build_server_from_environment(environment: Mapping[str, str] | None = None):
     project = ProjectIdentity.from_root(
         Path(_required_environment(values, "BASE_GODOT_PROJECT_ROOT"))
     )
+    descriptor_path = values.get("BASE_GODOT_MCP_BRIDGE_DESCRIPTOR")
+    if descriptor_path:
+        descriptor = load_bridge_descriptor(
+            Path(descriptor_path),
+            profile=profile,
+            project=project,
+        )
+        bridge = AuthenticatedBridge(
+            profile=profile,
+            project=project,
+            descriptor=descriptor,
+        )
+    else:
+        bridge = DisconnectedBridge()
     return build_server(
         GatewayDependencies(
             profile=profile,
             project=project,
-            bridge=DisconnectedBridge(),
+            bridge=bridge,
         )
     )
 
@@ -49,7 +64,7 @@ def build_server_from_environment(environment: Mapping[str, str] | None = None):
 def main() -> int:
     try:
         server = build_server_from_environment()
-    except (OSError, ValueError, ProfileError, ProjectIdentityError) as exc:
+    except (OSError, ValueError, ProfileError, ProjectIdentityError, BridgeDescriptorError) as exc:
         logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
         logging.error("%s", exc)
         return 2
