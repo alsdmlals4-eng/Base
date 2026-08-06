@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "artifact_role": "PROJECT_PROTECTED_CHANGE_APPROVAL",
+  "status": "APPROVED",
+  "protected_base_commit": "0000000000000000000000000000000000000000",
+  "decision_ids": [
+    "REPLACE_WITH_APPROVED_DECISION_ID"
+  ],
+  "approved_paths": [
+    "project.godot"
+  ],
+  "approval_source": "REPLACE_WITH_EXTERNAL_APPROVAL_REFERENCE",
+  "approval_time": "2026-01-01T00:00:00Z",
+  "scope_summary": "Replace with the exact approved protected-path change scope."
+}
