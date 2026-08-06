@@ -98,10 +98,6 @@ class GodotPilotWorkspaceBehaviorOrderTests(unittest.TestCase):
             "if stable_frames >= REQUIRED_STABLE_SCENE_FRAMES:",
         ):
             self.assertIn(marker, text)
-        self.assertNotIn(
-            'EditorInterface.open_scene_from_path(scratch_scene)\n    await get_tree().process_frame\n    await get_tree().process_frame',
-            text,
-        )
 
     def test_scene_wait_failure_codes_distinguish_editor_states(self) -> None:
         text = PILOT.read_text(encoding="utf-8")
@@ -114,32 +110,41 @@ class GodotPilotWorkspaceBehaviorOrderTests(unittest.TestCase):
             'last_code = "TARGET_NODE_NOT_FOUND"',
             'return {"root": root, "code": "PASS"}',
             'return {"root": null, "code": last_code}',
-            '"code": main_wait.get("code", "MAIN_SCENE_OPEN_FAILED")',
-            '"code": scratch_wait.get("code", "SCRATCH_SCENE_OPEN_FAILED")',
         ):
             self.assertIn(marker, text)
 
-    def test_main_scene_is_closed_before_scratch_scene_is_opened(self) -> None:
-        text = PILOT.read_text(encoding="utf-8")
+    def test_main_inspect_and_scratch_mutation_use_separate_editor_processes(self) -> None:
+        runner = RUNNER.read_text(encoding="utf-8")
         for marker in (
-            "var close_main_result := EditorInterface.close_scene()",
-            "if close_main_result != OK:",
-            '"code": "MAIN_SCENE_CLOSE_FAILED"',
-            "var main_close_wait = await _wait_for_scene_closed(main_scene)",
-            "func _wait_for_scene_closed(",
-            "if scene_path not in EditorInterface.get_open_scenes():",
-            'return {"closed": true, "code": "PASS"}',
-            'return {"closed": false, "code": "SCENE_CLOSE_TIMEOUT"}',
+            '"--base-pilot-phase=MAIN_INSPECT"',
+            '"--base-pilot-phase=SCRATCH_MUTATE"',
+            "materialized.main_scene,",
+            "descriptor.scratch_scene_path,",
+            "verify_main_inspect_evidence(workspace, main_result_path)",
+            'raise ValueError("GODOT_MAIN_INSPECT_FAILED")',
+            'raise ValueError("GODOT_SCRATCH_MUTATION_FAILED")',
         ):
-            self.assertIn(marker, text)
+            self.assertIn(marker, runner)
+        main_phase = runner.index('"--base-pilot-phase=MAIN_INSPECT"')
+        main_verify = runner.index("verify_main_inspect_evidence(workspace, main_result_path)")
+        scratch_phase = runner.index('"--base-pilot-phase=SCRATCH_MUTATE"')
+        self.assertLess(main_phase, main_verify)
+        self.assertLess(main_verify, scratch_phase)
 
-        close_call = text.index("var close_main_result := EditorInterface.close_scene()")
-        close_wait = text.index("var main_close_wait = await _wait_for_scene_closed(main_scene)")
-        scratch_open = text.index("EditorInterface.open_scene_from_path(scratch_scene)")
-        self.assertLess(close_call, close_wait)
-        self.assertLess(close_wait, scratch_open)
-        self.assertNotIn("EditorInterface.edit_node(", text)
-        self.assertNotIn("func _find_open_scene_root(", text)
+        pilot = PILOT.read_text(encoding="utf-8")
+        for marker in (
+            'const MAIN_INSPECT_RESULT_PATH := "res://artifacts/godot-project-pilot/main-inspect-result.json"',
+            "func _pilot_phase() -> String:",
+            '"MAIN_INSPECT":',
+            "await _run_main_inspect()",
+            '"SCRATCH_MUTATE":',
+            "await _run_scratch_mutation()",
+            "func _run_main_inspect() -> void:",
+            "func _run_scratch_mutation() -> void:",
+        ):
+            self.assertIn(marker, pilot)
+        self.assertNotIn("EditorInterface.close_scene()", pilot)
+        self.assertNotIn("EditorInterface.edit_node(", pilot)
 
 
 if __name__ == "__main__":
