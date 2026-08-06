@@ -4,6 +4,8 @@ extends "res://addons/base_live_editor_adapter/plugin.gd"
 const RESULT_PATH := "res://artifacts/godot-project-pilot/runtime-result.json"
 const CONTEXT_PATH := "res://.godot-live-editor-pilot/context.json"
 const SERVICE_INSTANCE_ID := "base-c0-project-pilot"
+const REQUIRED_STABLE_SCENE_FRAMES := 3
+const MAX_SCENE_STABILIZATION_FRAMES := 180
 
 var _manifest: Dictionary = {}
 var _context: Dictionary = {}
@@ -31,10 +33,8 @@ func _run_project_pilot() -> void:
 
     var main_hash_before: Variant = _evidence.sha256_file(main_scene)
     EditorInterface.open_scene_from_path(main_scene)
-    await get_tree().process_frame
-    await get_tree().process_frame
-    var main_root := EditorInterface.get_edited_scene_root()
-    if main_root == null:
+    var root = await _wait_for_stable_scene(main_scene, NodePath("."))
+    if root == null:
         _finish({"status": "FAIL", "code": "MAIN_SCENE_OPEN_FAILED"})
         return
     var inspect_observation: Dictionary = _probe.observe(
@@ -56,10 +56,8 @@ func _run_project_pilot() -> void:
         return
 
     EditorInterface.open_scene_from_path(scratch_scene)
-    await get_tree().process_frame
-    await get_tree().process_frame
-    var root := EditorInterface.get_edited_scene_root()
-    if root == null or root.get_node_or_null("Target") == null:
+    root = await _wait_for_stable_scene(scratch_scene, NodePath("Target"))
+    if root == null:
         _finish({"status": "FAIL", "code": "SCRATCH_SCENE_OPEN_FAILED"})
         return
 
@@ -82,13 +80,16 @@ func _run_project_pilot() -> void:
     )
 
     root = EditorInterface.get_edited_scene_root()
-    var history_id := get_undo_redo().get_object_history_id(root)
-    var history := get_undo_redo().get_history_undo_redo(history_id)
-    if history != null:
-        history.undo()
-    await get_tree().process_frame
-    var undo_pass := root.get_node_or_null("Target") != null
+    var undo_pass := false
+    if dirty_result.get("success", false) and root != null:
+        var history_id := get_undo_redo().get_object_history_id(root)
+        var history := get_undo_redo().get_history_undo_redo(history_id)
+        if history != null:
+            history.undo()
+        root = await _wait_for_stable_scene(scratch_scene, NodePath("Target"))
+        undo_pass = root != null and root.get_node_or_null("Target") != null
 
+    root = await _wait_for_stable_scene(scratch_scene, NodePath("Target"))
     var save_observation: Dictionary = _probe.observe(
         get_editor_interface(),
         get_undo_redo(),
@@ -150,6 +151,26 @@ func _run_project_pilot() -> void:
         "scratch_scene_save": "PASS" if saved_hash != null else "FAIL",
         "base_network_listener": network_listener_enabled,
     })
+
+
+func _wait_for_stable_scene(scene_path: String, target_path: NodePath) -> Node:
+    var stable_frames := 0
+    for _index in range(MAX_SCENE_STABILIZATION_FRAMES):
+        await get_tree().process_frame
+        var root := EditorInterface.get_edited_scene_root()
+        if root == null:
+            stable_frames = 0
+            continue
+        if str(root.scene_file_path) != scene_path:
+            stable_frames = 0
+            continue
+        if target_path != NodePath(".") and root.get_node_or_null(target_path) == null:
+            stable_frames = 0
+            continue
+        stable_frames += 1
+        if stable_frames >= REQUIRED_STABLE_SCENE_FRAMES:
+            return root
+    return null
 
 
 func _first_failure_code(
