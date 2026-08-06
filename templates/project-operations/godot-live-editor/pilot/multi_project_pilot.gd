@@ -59,6 +59,18 @@ func _run_project_pilot() -> void:
         _finish({"status": "FAIL", "code": "MAIN_SCENE_READ_ONLY_VIOLATION"})
         return
 
+    var close_main_result := EditorInterface.close_scene()
+    if close_main_result != OK:
+        _finish({"status": "FAIL", "code": "MAIN_SCENE_CLOSE_FAILED"})
+        return
+    var main_close_wait = await _wait_for_scene_closed(main_scene)
+    if not main_close_wait.get("closed", false):
+        _finish({
+            "status": "FAIL",
+            "code": main_close_wait.get("code", "MAIN_SCENE_CLOSE_FAILED"),
+        })
+        return
+
     EditorInterface.open_scene_from_path(scratch_scene)
     var scratch_wait = await _wait_for_stable_scene(scratch_scene, NodePath("Target"))
     root = scratch_wait.get("root")
@@ -167,15 +179,12 @@ func _run_project_pilot() -> void:
     })
 
 
-func _find_open_scene_root(scene_path: String) -> Node:
-    var open_scenes := EditorInterface.get_open_scenes()
-    var open_roots := EditorInterface.get_open_scene_roots()
-    if open_scenes.size() != open_roots.size():
-        return null
-    var scene_index := open_scenes.find(scene_path)
-    if scene_index < 0 or scene_index >= open_roots.size():
-        return null
-    return open_roots[scene_index]
+func _wait_for_scene_closed(scene_path: String) -> Dictionary:
+    for _index in range(MAX_SCENE_STABILIZATION_FRAMES):
+        await get_tree().process_frame
+        if scene_path not in EditorInterface.get_open_scenes():
+            return {"closed": true, "code": "PASS"}
+    return {"closed": false, "code": "SCENE_CLOSE_TIMEOUT"}
 
 
 func _wait_for_stable_scene(scene_path: String, target_path: NodePath) -> Dictionary:
@@ -188,39 +197,19 @@ func _wait_for_stable_scene(scene_path: String, target_path: NodePath) -> Dictio
             stable_frames = 0
             last_code = "SCENE_NOT_OPEN"
             continue
-
-        var requested_root := _find_open_scene_root(scene_path)
-        if requested_root == null:
-            stable_frames = 0
-            last_code = "OPEN_SCENE_ROOT_NOT_FOUND"
-            continue
-        var requested_target := requested_root
-        if target_path != NodePath("."):
-            requested_target = requested_root.get_node_or_null(target_path)
-            if requested_target == null:
-                stable_frames = 0
-                last_code = "TARGET_NODE_NOT_FOUND"
-                continue
-
         var root := EditorInterface.get_edited_scene_root()
         if root == null:
             stable_frames = 0
             last_code = "NO_EDITED_SCENE"
-            EditorInterface.edit_node(requested_target)
-            last_code = "EDITED_SCENE_ACTIVATION_PENDING"
             continue
         var current_path := str(root.scene_file_path)
         if current_path.is_empty():
             stable_frames = 0
             last_code = "EDITED_SCENE_PATH_EMPTY"
-            EditorInterface.edit_node(requested_target)
-            last_code = "EDITED_SCENE_ACTIVATION_PENDING"
             continue
         if current_path != scene_path:
             stable_frames = 0
             last_code = "EDITED_SCENE_NOT_ACTIVE"
-            EditorInterface.edit_node(requested_target)
-            last_code = "EDITED_SCENE_ACTIVATION_PENDING"
             continue
         if target_path != NodePath(".") and root.get_node_or_null(target_path) == null:
             stable_frames = 0
