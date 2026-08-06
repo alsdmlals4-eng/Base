@@ -93,7 +93,7 @@ PC·Android Delivery Guide도 새 광역 Skill이 아니다. `analyzing-and-refi
 | 사용자 학습 자료 | `creating-user-learning-notes` |
 | 프로젝트 HTML·상태 시각화 | `building-project-visual-dashboards` |
 | Godot·Unity 런타임 오류 | `diagnosing-game-engine-runtime-failures` |
-| Godot live Editor·MCP·addon·Scene·Resource 자동화 | HiGodot 단일 권위 정책 → 프로젝트 Template `godot-live-editor-operations` | 
+| Godot live Editor·MCP·addon·Scene·Resource 자동화 | HiGodot 단일 권위 정책 → 프로젝트 Template `godot-live-editor-operations` |
 
 Godot 자동화는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`와 `templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md`를 함께 읽는다.
 
