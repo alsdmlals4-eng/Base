@@ -13,6 +13,8 @@ description: Use when routing a project request, closing material ambiguity, def
 
 모든 L1 이상 지시문 작성은 이 Skill에서 좋은 프롬프트 변환을 수행한 뒤 `Grill Me alignment gate`로 의도·기획·범위가 맞는지 확인한다. 유효한 승인 없이 제품·프로젝트 작업으로 진행하지 않는다.
 
+새 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층 요청은 일반 설계보다 먼저 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`와 `evaluating-godot-assets-and-plugins-before-creation: inventory-current-environment / disposition`으로 라우팅한다. `existing_solution_disposition`과 비교 증거·사용자 승인 상태 없이 `BUILD_NEW` 계약을 만들지 않는다.
+
 ## Terminology
 
 - `Work Mode`: AI의 현재 작업 자세·권한·증거 기준. `PLAN / BUILD / REVIEW` 중 한 시점에 하나를 주로 사용한다.
@@ -68,6 +70,7 @@ description: Use when routing a project request, closing material ambiguity, def
 - 새 범위·실패·정본 변경이 생기면 Work Mode와 Skill 라우팅을 다시 계산한다.
 - Skill 파일을 읽은 것과 Skill 절차를 실제 실행한 것을 구분한다.
 - L1 이상 작업을 다른 에이전트·Codex·외부 AI에 넘기는 지시문도 먼저 이 Skill의 `first-prompt → contract → clarify`를 거친다.
+- 신규 실행 기술 제작 압력이 감지되면 설계 Skill보다 기존 대안 평가 Skill을 먼저 호출하고 `existing_solution_disposition`을 계약 입력으로 요구한다.
 
 ## Use when
 
@@ -78,6 +81,7 @@ description: Use when routing a project request, closing material ambiguity, def
 - GPT·Codex·외부 AI용 작업 지시문을 작성하거나 개선한다.
 - 큰 작업을 단계·의존성·병렬 묶음·게이트로 분해한다.
 - 범위가 바뀌어 분야·Skill·검증·실행 순서를 다시 계산한다.
+- 새 MCP·addon·CLI·framework·Skill·Mode 또는 기존 실행 권위와 겹칠 수 있는 도구를 제안한다.
 
 ## Do not use when
 
@@ -111,6 +115,10 @@ milestone_or_deadline:
 validation_environment:
 rollback_constraints:
 approval_reference:
+existing_solution_inventory:
+existing_solution_disposition:
+existing_solution_evidence:
+existing_solution_user_approval:
 ```
 
 ## Read first
@@ -121,11 +129,12 @@ approval_reference:
 4. `docs/WORK_MODE_AND_SKILL_ROUTING.md`
 5. 현재 Issue·Plan·책임 원본과 실제 파일
 6. `SKILL_REGISTRY.json`
-7. L1 이상 지시문 작성 시 `references/first-prompt-direction-anchoring.md`
-8. 필요한 경우 `references/question-and-source-model.md`
-9. 종료 판정이 필요한 경우 `references/ambiguity-and-closure.md`
-10. Grill Me 정합성 확인과 핵심 결정 인터뷰가 필요한 경우 `references/grill-me-protocol.md`
-11. 작업 분해·순서화가 필요한 경우 `references/work-decomposition-and-sequencing.md`
+7. 신규 MCP·addon·CLI·framework·Skill·Mode이면 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`와 Godot 평가 Skill
+8. L1 이상 지시문 작성 시 `references/first-prompt-direction-anchoring.md`
+9. 필요한 경우 `references/question-and-source-model.md`
+10. 종료 판정이 필요한 경우 `references/ambiguity-and-closure.md`
+11. Grill Me 정합성 확인과 핵심 결정 인터뷰가 필요한 경우 `references/grill-me-protocol.md`
+12. 작업 분해·순서화가 필요한 경우 `references/work-decomposition-and-sequencing.md`
 
 ## Workflow
 
@@ -148,6 +157,22 @@ approval_reference:
 ```
 
 발행·검증·Handoff Skill은 해당 단계에 도달할 때까지 `deferred_skills`에 둔다.
+
+### 1.5 Existing Solution First Gate
+
+신규 MCP·addon·CLI·framework·Skill·Mode·execution layer 요청이면 다음을 `PLAN`의 첫 blocker로 둔다.
+
+```text
+current environment inventory
+→ connected MCP·enabled addon·dependency·existing implementation
+→ open/recent PR
+→ maintained external solution
+→ REUSE / ABSORB / REFACTOR / ARCHIVE / BUILD_NEW
+→ adversarial review
+→ user-visible approval state
+```
+
+`existing_solution_disposition`이 없으면 `AWAITING_EXISTING_SOLUTION_REVIEW`다. `BUILD_NEW`는 대안으로 해결할 수 없는 차단 결함과 사용자 승인이 모두 있어야 하며, 없으면 custom design·code·PR을 만들지 않는다.
 
 ### 2. Inspect repository facts
 
@@ -241,6 +266,7 @@ agreement_or_disagreement_reason:
 ## Work Mode
 ## 맥락·정본·실제 근거
 ## 목표 사용자·플레이어 경험
+## Existing Solution Inventory and Disposition
 ## 작업 범위
 ## 제약·제외·보호 범위
 ## 자동 선택 Skill·Skill Mode
@@ -327,7 +353,7 @@ status: PASS/PARTIAL/FAIL/UNVERIFIED
 ```text
 RECEIVED
 → ROUTED
-→ PROMPT_DRAFTED
+→ AWAITING_EXISTING_SOLUTION_REVIEW | PROMPT_DRAFTED
 → READY | AWAITING_USER_CONFIRMATION
 → CONFIRMED | REUSED_APPROVAL
 → CONTRACT_READY
@@ -350,6 +376,10 @@ discipline_skills: []
 deferred_skills: []
 read_first: []
 actual_paths: []
+existing_solution_inventory: []
+existing_solution_disposition:
+existing_solution_evidence: []
+existing_solution_user_approval:
 direction_anchor:
 prompt_contract:
 prompt_conflict_scan:
@@ -364,15 +394,7 @@ dependencies: []
 parallel_batches: []
 gates: []
 validation: []
-skill_execution_report:
-  - work_mode:
-    skill_id:
-    skill_mode:
-    selection:
-    trigger_and_reason:
-    result:
-    evidence:
-    status:
+skill_execution_report: []
 remaining_unknowns: []
 ```
 
@@ -381,6 +403,8 @@ remaining_unknowns: []
 - 사용자가 Skill을 선언하지 않아도 trigger 기반으로 Work Mode·최소 Skill·Skill Mode를 자동 선택했다.
 - 같은 요청의 수준·분야·범위를 여러 Skill에서 다시 판정하지 않았다.
 - 저장소 사실과 사용자 판단이 구분됐다.
+- 신규 실행 기술이면 current environment와 external alternative를 조사하고 `existing_solution_disposition`을 기록했다.
+- `BUILD_NEW`이면 대안으로 해결 불가능한 결함과 사용자 승인이 있다.
 - 모든 L1 이상 지시문 작성에서 `first-prompt → contract → clarify`가 실행됐다.
 - direction anchor가 지시문 가장 앞에 있고 전체 범위·제약·산출물과 일치한다.
 - Task·Context·Source·Constraints·Output·Validation이 추적된다.
@@ -399,6 +423,8 @@ remaining_unknowns: []
 - Work Mode와 Skill Mode를 같은 개념으로 혼용함
 - 전체 skills 폴더를 기본 로드함
 - trigger 없이 임의로 Skill을 호출함
+- 현재 사용 도구·connected MCP·addon·관련 PR 조사 없이 custom MCP/addon/Skill/framework 설계 시작
+- `existing_solution_disposition` 또는 사용자 승인 없이 `BUILD_NEW`
 - L1 이상 지시문을 intake·좋은 프롬프트 변환 없이 바로 작성하거나 실행함
 - 핵심 방향 문장을 뒤쪽에 숨기거나 전체 계약과 다르게 작성함
 - 앞 문장의 순서를 근거로 `HARD_CONSTRAINT`·정본·상위 지시를 덮어씀
