@@ -10,6 +10,16 @@ class EvidenceVerificationError(ValueError):
 
 
 @dataclass(frozen=True)
+class VerifiedMainInspectEvidence:
+    repository: str
+    source_commit: str
+    base_pilot_commit: str
+    main_scene_path: str
+    main_scene_sha256: str
+    result_sha256: str
+
+
+@dataclass(frozen=True)
 class VerifiedRuntimeEvidence:
     repository: str
     source_commit: str
@@ -85,22 +95,69 @@ def _bounded_failure_diagnostics(payload: Mapping[str, object]) -> dict[str, obj
     }
 
 
+def _load_evidence_payload(workspace: Path, result_path: Path) -> dict[str, object]:
+    root = Path(workspace).resolve()
+    path = Path(result_path).resolve()
+    try:
+        path.relative_to(root)
+    except ValueError as exc:
+        raise EvidenceVerificationError("EVIDENCE_PATH_ESCAPE: result") from exc
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise EvidenceVerificationError(f"RUNTIME_EVIDENCE_INVALID: {exc}") from exc
+    if not isinstance(payload, dict):
+        raise EvidenceVerificationError("RUNTIME_EVIDENCE_INVALID: root")
+    return payload
+
+
+def verify_main_inspect_evidence(
+    workspace: Path,
+    main_result_path: Path,
+) -> VerifiedMainInspectEvidence:
+    root = Path(workspace).resolve()
+    result_path = Path(main_result_path).resolve()
+    payload = _load_evidence_payload(root, result_path)
+    if payload.get("status") != "PASS":
+        diagnostics = json.dumps(
+            _bounded_failure_diagnostics(payload),
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        raise EvidenceVerificationError(f"MAIN_INSPECT_EVIDENCE_FAILED: {diagnostics}")
+    if payload.get("main_scene_inspect") != "PASS":
+        raise EvidenceVerificationError("MAIN_INSPECT_EVIDENCE_INVALID")
+    if payload.get("base_network_listener") is not False:
+        raise EvidenceVerificationError("NETWORK_LISTENER_FORBIDDEN")
+
+    declared_path = _require_string(payload, "main_scene_path")
+    main_scene = _confined_path(root, declared_path)
+    if not main_scene.is_file():
+        raise EvidenceVerificationError("EVIDENCE_FILE_MISSING: main scene")
+    before_hash = _require_string(payload, "main_scene_sha256_before")
+    after_hash = _require_string(payload, "main_scene_sha256_after")
+    actual_hash = sha256_file(main_scene)
+    if before_hash != after_hash or after_hash != actual_hash:
+        raise EvidenceVerificationError("ARTIFACT_BYTE_HASH_MISMATCH: main scene")
+
+    return VerifiedMainInspectEvidence(
+        repository=_require_string(payload, "repository"),
+        source_commit=_require_string(payload, "source_commit"),
+        base_pilot_commit=_require_string(payload, "base_pilot_commit"),
+        main_scene_path=declared_path,
+        main_scene_sha256=actual_hash,
+        result_sha256=sha256_file(result_path),
+    )
+
+
 def verify_runtime_evidence(
     workspace: Path,
     runtime_result_path: Path,
 ) -> VerifiedRuntimeEvidence:
     result_path = Path(runtime_result_path).resolve()
     root = Path(workspace).resolve()
-    try:
-        result_path.relative_to(root)
-    except ValueError as exc:
-        raise EvidenceVerificationError("EVIDENCE_PATH_ESCAPE: runtime result") from exc
-    try:
-        payload = json.loads(result_path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
-        raise EvidenceVerificationError(f"RUNTIME_EVIDENCE_INVALID: {exc}") from exc
-    if not isinstance(payload, dict):
-        raise EvidenceVerificationError("RUNTIME_EVIDENCE_INVALID: root")
+    payload = _load_evidence_payload(root, result_path)
     if payload.get("status") != "PASS":
         diagnostics = json.dumps(
             _bounded_failure_diagnostics(payload),
@@ -206,8 +263,10 @@ def write_final_evidence(
 
 __all__ = [
     "EvidenceVerificationError",
+    "VerifiedMainInspectEvidence",
     "VerifiedRuntimeEvidence",
     "sha256_file",
+    "verify_main_inspect_evidence",
     "verify_runtime_evidence",
     "write_final_evidence",
 ]
