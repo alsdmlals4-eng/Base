@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RUNNER = ROOT / "tools/godot_multi_project_pilot.py"
 WORKSPACE = ROOT / "tools/godot_project_pilot_workspace.py"
+PILOT = ROOT / "templates/project-operations/godot-live-editor/pilot/multi_project_pilot.gd"
 
 
 class GodotPilotWorkspaceBehaviorOrderTests(unittest.TestCase):
@@ -73,6 +74,18 @@ class GodotPilotWorkspaceBehaviorOrderTests(unittest.TestCase):
         self.assertNotIn('legacy_mutation_authority="NOT_RUN"', text)
         self.assertIn("legacy_mutation_authority=legacy_state", text)
         self.assertIn("preserved_autoloads=preserved_autoloads", text)
+
+    def test_pilot_failure_code_is_bound_to_first_failed_operation(self) -> None:
+        text = PILOT.read_text(encoding="utf-8")
+        self.assertIn("func _first_failure_code(", text)
+        for marker in (
+            'return str(inspect_result.get("code", "MAIN_SCENE_INSPECT_FAILED"))',
+            'return str(dirty_result.get("code", "SCRATCH_RENAME_DIRTY_FAILED"))',
+            'return "EDITOR_UNDO_FAILED"',
+            'return str(save_result.get("code", "SCRATCH_RENAME_SAVE_FAILED"))',
+            '"code": "PASS" if passed else _first_failure_code(',
+        ):
+            self.assertIn(marker, text)
 
 
 if __name__ == "__main__":
