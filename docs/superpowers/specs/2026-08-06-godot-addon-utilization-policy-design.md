@@ -131,6 +131,10 @@ REMOVAL_PENDING
 REMOVED
 ```
 
+동일한 역할·데이터 권위·실행 책임을 가진 애드온은 둘 이상 `ADOPTED_ACTIVE`로 유지하지 않는다. 조합이 필요하면 겹치지 않는 `owner_boundary`와 충돌·회귀 검증을 요구한다.
+
+`ADOPTED_DISABLED`는 이전 exact pin을 제한된 rollback 또는 호환성 보존 기간 동안 유지하는 상태다. 재활성화·제거 조건과 보존 종료 시점이 없으면 `INSTALLED_UNUSED`로 전환한다.
+
 최소 기록 필드는 다음과 같다.
 
 ```yaml
