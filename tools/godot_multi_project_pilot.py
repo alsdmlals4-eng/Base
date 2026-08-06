@@ -19,6 +19,7 @@ from tools.godot_project_pilot_descriptor import (
 from tools.godot_project_pilot_evidence import (
     EvidenceVerificationError,
     VerifiedRuntimeEvidence,
+    verify_main_inspect_evidence,
     verify_runtime_evidence,
     write_final_evidence,
 )
@@ -379,7 +380,8 @@ def run_pilot(
 
             materialized = activate_staged_runtime_workspace(staged)
             preserved_autoloads = materialized.transform_report.preserved_autoloads
-            godot_record = _run_process(
+
+            main_record = _run_process(
                 [
                     str(Path(godot_bin).resolve()),
                     "--editor",
@@ -388,13 +390,50 @@ def run_pilot(
                     str(workspace),
                     "--quit-after",
                     "600",
+                    materialized.main_scene,
+                    "--",
+                    "--base-pilot-phase=MAIN_INSPECT",
                 ],
                 cwd=workspace,
                 timeout_seconds=180,
             )
-            process_records.append(godot_record)
-            if godot_record.returncode != 0:
-                raise ValueError("GODOT_PROJECT_PILOT_FAILED")
+            process_records.append(main_record)
+            if main_record.returncode != 0:
+                raise ValueError("GODOT_MAIN_INSPECT_FAILED")
+            main_result_path = (
+                workspace
+                / "artifacts/godot-project-pilot/main-inspect-result.json"
+            )
+            main_evidence = verify_main_inspect_evidence(workspace, main_result_path)
+            if main_evidence.repository != descriptor.repository:
+                raise EvidenceVerificationError("MAIN_INSPECT_REPOSITORY_MISMATCH")
+            if main_evidence.source_commit != source_commit:
+                raise EvidenceVerificationError("MAIN_INSPECT_SOURCE_COMMIT_MISMATCH")
+            if main_evidence.base_pilot_commit != descriptor.base_pilot_commit:
+                raise EvidenceVerificationError("MAIN_INSPECT_BASE_COMMIT_MISMATCH")
+            if main_evidence.main_scene_path != materialized.main_scene:
+                raise EvidenceVerificationError("MAIN_INSPECT_SCENE_MISMATCH")
+
+            scratch_record = _run_process(
+                [
+                    str(Path(godot_bin).resolve()),
+                    "--editor",
+                    "--headless",
+                    "--path",
+                    str(workspace),
+                    "--quit-after",
+                    "600",
+                    descriptor.scratch_scene_path,
+                    "--",
+                    "--base-pilot-phase=SCRATCH_MUTATE",
+                ],
+                cwd=workspace,
+                timeout_seconds=180,
+            )
+            process_records.append(scratch_record)
+            if scratch_record.returncode != 0:
+                raise ValueError("GODOT_SCRATCH_MUTATION_FAILED")
+
             runtime_path = workspace / "artifacts/godot-project-pilot/runtime-result.json"
             runtime = verify_runtime_evidence(workspace, runtime_path)
             if runtime.repository != descriptor.repository:
