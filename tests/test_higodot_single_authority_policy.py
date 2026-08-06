@@ -16,7 +16,6 @@ POLICY_RELATIVE = "docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERAT
 OWNER_PATHS = (
     ROOT / "skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md",
     ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md",
-    ROOT / "skills/evolving-project-discipline-skills/SKILL.md",
     ROOT / "skills/managing-game-project-operating-system/SKILL.md",
 )
 
@@ -25,6 +24,9 @@ class HiGodotSingleAuthorityPolicyTests(unittest.TestCase):
     def test_global_entrypoints_require_existing_solution_first(self) -> None:
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
         start = (ROOT / "START_HERE.md").read_text(encoding="utf-8")
+        documentation_map = (ROOT / "docs/DOCUMENTATION_MAP.md").read_text(
+            encoding="utf-8"
+        )
         for marker in (
             "Existing Solution First Gate",
             "REUSE / ABSORB / REFACTOR / ARCHIVE / BUILD_NEW",
@@ -33,6 +35,7 @@ class HiGodotSingleAuthorityPolicyTests(unittest.TestCase):
             self.assertIn(marker, agents)
         self.assertIn("신규 MCP·addon·CLI·framework·Skill·Mode", start)
         self.assertIn(POLICY_RELATIVE, start)
+        self.assertIn(POLICY_RELATIVE, documentation_map)
 
     def test_canonical_policy_names_one_provider_and_keeps_destructive_features(self) -> None:
         self.assertTrue(POLICY_PATH.is_file())
@@ -94,11 +97,7 @@ class HiGodotSingleAuthorityPolicyTests(unittest.TestCase):
         self.assertIn("existing_solution_disposition", intake)
         self.assertIn("BUILD_NEW", intake)
 
-        evolution = OWNER_PATHS[2].read_text(encoding="utf-8")
-        self.assertIn("external solution", evolution)
-        self.assertIn("BUILD_NEW", evolution)
-
-        operating = OWNER_PATHS[3].read_text(encoding="utf-8")
+        operating = OWNER_PATHS[2].read_text(encoding="utf-8")
         for marker in ("HiGodot", "exact pin", "canary", "rollback"):
             self.assertIn(marker, operating)
 
