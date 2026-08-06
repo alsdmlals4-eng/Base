@@ -290,6 +290,50 @@ class CanonicalReferenceFreshnessTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("skills/shared-skill/LEARNING_LOG.md", result.stdout)
 
+    def test_provider_evaluation_change_requires_route_log_and_test(self) -> None:
+        self.config["coupled_change_rules"].append({
+            "name": "provider-evaluation-sync",
+            "when_changed": ["skills/provider-evaluation/SKILL.md"],
+            "exclude_when_changed": [],
+            "require_all_changed": [
+                "skills/BASE_SHARED_SKILL_ROUTES.json",
+                "skills/provider-evaluation/LEARNING_LOG.md",
+            ],
+            "require_any_changed": ["tests/test_provider_evaluation.py"],
+        })
+        provider = self.root / "skills/provider-evaluation"
+        provider.mkdir(parents=True)
+        skill = provider / "SKILL.md"
+        log = provider / "LEARNING_LOG.md"
+        routes = self.root / "skills/BASE_SHARED_SKILL_ROUTES.json"
+        test = self.root / "tests/test_provider_evaluation.py"
+        skill.write_text("# Provider evaluation\n", encoding="utf-8")
+        log.write_text("# Learning\n", encoding="utf-8")
+        routes.write_text("{}\n", encoding="utf-8")
+        test.write_text("# contract test\n", encoding="utf-8")
+        self._write_config()
+        base = self._init_git()
+
+        skill.write_text("# Provider evaluation with inventory\n", encoding="utf-8")
+        self._git("add", "skills/provider-evaluation/SKILL.md")
+        self._git("commit", "-m", "change provider owner without companions")
+        failed = self._run(base, self._git("rev-parse", "HEAD"))
+        self.assertNotEqual(failed.returncode, 0)
+        self.assertIn("provider-evaluation-sync", failed.stdout)
+
+        log.write_text("# Learning\n\nInventory before build.\n", encoding="utf-8")
+        routes.write_text('{"provider": "updated"}\n', encoding="utf-8")
+        test.write_text("# provider inventory contract\n", encoding="utf-8")
+        self._git(
+            "add",
+            "skills/provider-evaluation/LEARNING_LOG.md",
+            "skills/BASE_SHARED_SKILL_ROUTES.json",
+            "tests/test_provider_evaluation.py",
+        )
+        self._git("commit", "-m", "add provider evaluation companions")
+        passed = self._run(base, self._git("rev-parse", "HEAD"))
+        self.assertEqual(passed.returncode, 0, passed.stdout + passed.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()
