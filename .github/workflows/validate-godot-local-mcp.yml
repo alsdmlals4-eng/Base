@@ -50,4 +50,5 @@ jobs:
           tests.test_godot_local_mcp_framing
           tests.test_godot_local_mcp_bridge_client
           tests.test_godot_local_mcp_authenticated_stdio
+          tests.test_godot_local_mcp_host_configs
           -v
