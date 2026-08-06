@@ -138,7 +138,7 @@ class ProjectAdapterFleetHardeningTests(unittest.TestCase):
             workflow,
         )
 
-    def test_decision_records_approval_and_trusted_merge_pin(self) -> None:
+    def test_decision_records_approval_trusted_pin_and_current_rollout_state(self) -> None:
         text = DECISION.read_text(encoding="utf-8")
         for token in (
             "status: APPROVED",
@@ -149,9 +149,13 @@ class ProjectAdapterFleetHardeningTests(unittest.TestCase):
             "implementation_pr: 185",
             f"trusted_implementation_merge: {TRUSTED_IMPLEMENTATION_MERGE}",
             "validator_pin_status: ADVANCED_TO_TRUSTED_MERGE",
-            "project_mutation: AUTHORIZED_NOT_STARTED",
+            "project_rollout: PARTIAL_COMPLETE",
+            "completed_projects: 4",
+            "blocked_projects: 1",
+            "separately_managed_projects: 1",
         ):
             self.assertIn(token, text)
+        self.assertNotIn("project_mutation: AUTHORIZED_NOT_STARTED", text)
 
 
 if __name__ == "__main__":
