@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import json
+import tempfile
 import unittest
 from pathlib import Path
+
+from tools.godot_editor_adapter_materialization import copy_canonical_addon
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -11,6 +14,9 @@ ADOPTION_PATH = ROOT / "templates/project-operations/HIGODOT_ADOPTION_RECORD.jso
 GODOT_SKILL_PATH = (
     ROOT
     / "templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md"
+)
+HISTORICAL_FRAGMENT_PATH = (
+    ROOT / "templates/project-operations/godot-live-editor/AGENTS_FRAGMENT.md"
 )
 POLICY_RELATIVE = "docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md"
 OWNER_PATHS = (
@@ -121,6 +127,23 @@ class HiGodotSingleAuthorityPolicyTests(unittest.TestCase):
             self.assertIn(marker, skill)
         self.assertNotIn("canonical addon을 복사", skill)
         self.assertNotIn("base_live_editor_adapter/", skill)
+
+    def test_historical_base_adapter_cannot_be_adopted_directly(self) -> None:
+        fragment = HISTORICAL_FRAGMENT_PATH.read_text(encoding="utf-8")
+        for marker in (
+            "HISTORICAL_BASE_ADAPTER_PILOT_ONLY",
+            "active_project_authority: false",
+            "BASE_ADAPTER_ACTIVE_ADOPTION_FORBIDDEN",
+            "hi-godot/godot-ai",
+        ):
+            self.assertIn(marker, fragment)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "BASE_ADAPTER_ACTIVE_ADOPTION_FORBIDDEN",
+            ):
+                copy_canonical_addon(ROOT, Path(temporary) / "active-project")
 
     def test_adoption_record_is_exact_pinned_and_fail_closed(self) -> None:
         self.assertTrue(ADOPTION_PATH.is_file())
