@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import importlib.util
+import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -110,6 +112,34 @@ class ApprovedProtectedChangeGateTests(unittest.TestCase):
             ["Protected-path changes detected: project.godot, src/other.gd"],
             untouched,
         )
+
+    def test_generated_artifact_check_is_replayed_after_approval(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            project = Path(temporary) / "Project"
+            base = Path(temporary) / "Base"
+            project.mkdir()
+            base.mkdir()
+            stale = project / "generated.txt"
+            stale.write_text("stale\n", encoding="utf-8")
+            protected_error = "Protected-path changes detected: project.godot, src/combat.gd"
+            with (
+                mock.patch.object(self.gate.contract, "validation_errors", return_value=[protected_error]),
+                mock.patch.object(
+                    self.gate.contract,
+                    "build_artifacts",
+                    return_value={stale: b"expected\n"},
+                ) as build,
+            ):
+                errors = self.gate.validate_project_contract(
+                    project_root=project,
+                    base_repository=base,
+                    protected_base="a" * 40,
+                    approval_document=self.valid_document(),
+                    externally_approved=True,
+                    check_generated=True,
+                )
+            self.assertTrue(any("generated" in error.lower() for error in errors), errors)
+            build.assert_called_once_with(project, base, prevalidated=True)
 
 
 if __name__ == "__main__":
