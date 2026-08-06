@@ -25,6 +25,8 @@
 
 ## 전달 흐름
 
+실행 요약: `Fetch origin → Pull origin → 로컬 HEAD 확인 → Project Play`
+
 ```text
 승인된 구현·자동 검증
 → 작업 Branch에 commit·push
