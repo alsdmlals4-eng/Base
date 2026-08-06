@@ -167,6 +167,17 @@ func _run_project_pilot() -> void:
     })
 
 
+func _find_open_scene_root(scene_path: String) -> Node:
+    var open_scenes := EditorInterface.get_open_scenes()
+    var open_roots := EditorInterface.get_open_scene_roots()
+    if open_scenes.size() != open_roots.size():
+        return null
+    var scene_index := open_scenes.find(scene_path)
+    if scene_index < 0 or scene_index >= open_roots.size():
+        return null
+    return open_roots[scene_index]
+
+
 func _wait_for_stable_scene(scene_path: String, target_path: NodePath) -> Dictionary:
     var stable_frames := 0
     var last_code := "SCENE_NOT_OPEN"
@@ -177,19 +188,39 @@ func _wait_for_stable_scene(scene_path: String, target_path: NodePath) -> Dictio
             stable_frames = 0
             last_code = "SCENE_NOT_OPEN"
             continue
+
+        var requested_root := _find_open_scene_root(scene_path)
+        if requested_root == null:
+            stable_frames = 0
+            last_code = "OPEN_SCENE_ROOT_NOT_FOUND"
+            continue
+        var requested_target := requested_root
+        if target_path != NodePath("."):
+            requested_target = requested_root.get_node_or_null(target_path)
+            if requested_target == null:
+                stable_frames = 0
+                last_code = "TARGET_NODE_NOT_FOUND"
+                continue
+
         var root := EditorInterface.get_edited_scene_root()
         if root == null:
             stable_frames = 0
             last_code = "NO_EDITED_SCENE"
+            EditorInterface.edit_node(requested_target)
+            last_code = "EDITED_SCENE_ACTIVATION_PENDING"
             continue
         var current_path := str(root.scene_file_path)
         if current_path.is_empty():
             stable_frames = 0
             last_code = "EDITED_SCENE_PATH_EMPTY"
+            EditorInterface.edit_node(requested_target)
+            last_code = "EDITED_SCENE_ACTIVATION_PENDING"
             continue
         if current_path != scene_path:
             stable_frames = 0
             last_code = "EDITED_SCENE_NOT_ACTIVE"
+            EditorInterface.edit_node(requested_target)
+            last_code = "EDITED_SCENE_ACTIVATION_PENDING"
             continue
         if target_path != NodePath(".") and root.get_node_or_null(target_path) == null:
             stable_frames = 0
