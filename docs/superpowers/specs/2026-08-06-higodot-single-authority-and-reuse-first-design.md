@@ -272,10 +272,11 @@ A connection handshake, tool listing, or single successful mutation does not est
 
 ## Base integration
 
-Do not create three new broad Skills. Integrate the policy into existing owners:
+Do not create new broad Skills for this policy. Extend existing owners:
 
-- `managing-project-intake-and-work-contract`: enforce the Existing Solution First Gate before new construction;
-- `evolving-project-discipline-skills`: require consolidation and external-solution comparison before new Skill or Mode creation;
+- `evaluating-godot-assets-and-plugins-before-creation`: primary owner of current-environment inventory, internal/external alternative research, comparison, and `REUSE / ABSORB / REFACTOR / ARCHIVE / BUILD_NEW` disposition;
+- `managing-project-intake-and-work-contract`: detect new-construction pressure and block design/build until the evaluation Skill returns a disposition and approval state;
+- `evolving-project-discipline-skills`: require consolidation and existing external-solution comparison before new Skill or Mode creation;
 - `managing-game-project-operating-system`: own third-party provider adoption, exact pins, project evidence, canary upgrade, and rollback;
 - project template `godot-live-editor-operations`: route Godot execution to HiGodot and apply L0–L3 operation gates;
 - `reviewing-and-validating-project-changes`: retain diff, regression, evidence, and unverified-gate review responsibilities.
@@ -311,7 +312,7 @@ The implementation must add focused static contract tests proving:
 5. network use is loopback-only with LAN, public URL, forwarding, and tunnel modes forbidden;
 6. exact pin, canary, regression, and rollback are required;
 7. the Godot project Skill routes to HiGodot and does not retain Base custom addon authority;
-8. intake, operating-system, and Skill-evolution owners link to the canonical policy;
+8. the Godot evaluation, intake, operating-system, and Skill-evolution owners link to the canonical policy;
 9. no active workspace `.vscode/mcp.json` or second addon is introduced;
 10. custom MCP PRs remain unmerged references until the policy extraction is reviewed.
 
