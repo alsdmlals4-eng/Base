@@ -8,6 +8,7 @@ from mcp.server import MCPServer
 
 from .profile_store import ClientProfile
 from .project_identity import ProjectIdentity
+from .result_mapper import normalize_bridge_result
 
 
 _MAX_PATH_CHARS = 512
@@ -77,9 +78,12 @@ def build_server(dependencies: GatewayDependencies) -> MCPServer:
             **payload,
         }
         result = await dependencies.bridge.request(method, request_payload)
-        if not isinstance(result, dict):
-            raise ValueError("BRIDGE_RESULT_INVALID")
-        return result
+        return normalize_bridge_result(
+            method,
+            result,
+            project=dependencies.project,
+            allowed_capabilities=dependencies.profile.allowed_capabilities,
+        )
 
     @mcp.tool()
     async def godot_doctor() -> dict[str, Any]:
