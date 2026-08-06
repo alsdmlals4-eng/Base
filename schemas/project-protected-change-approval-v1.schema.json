@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/project-protected-change-approval-v1.schema.json",
+  "title": "Project Protected Change Approval",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_role",
+    "status",
+    "protected_base_commit",
+    "decision_ids",
+    "approved_paths",
+    "approval_source",
+    "approval_time",
+    "scope_summary"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "PROJECT_PROTECTED_CHANGE_APPROVAL"},
+    "status": {"const": "APPROVED"},
+    "protected_base_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "decision_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "approved_paths": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*[\\*\\?\\[\\]])[^\\\\]+$"
+      }
+    },
+    "approval_source": {"type": "string", "minLength": 1},
+    "approval_time": {"type": "string", "format": "date-time"},
+    "scope_summary": {"type": "string", "minLength": 1}
+  }
+}
