@@ -128,6 +128,12 @@ func _run_project_pilot() -> void:
     )
     _finish({
         "status": "PASS" if passed else "FAIL",
+        "code": "PASS" if passed else _first_failure_code(
+            inspect_result,
+            dirty_result,
+            undo_pass,
+            save_result,
+        ),
         "repository": _context.get("repository"),
         "source_commit": _context.get("source_commit"),
         "base_pilot_commit": _context.get("base_pilot_commit"),
@@ -144,6 +150,23 @@ func _run_project_pilot() -> void:
         "scratch_scene_save": "PASS" if saved_hash != null else "FAIL",
         "base_network_listener": network_listener_enabled,
     })
+
+
+func _first_failure_code(
+    inspect_result: Dictionary,
+    dirty_result: Dictionary,
+    undo_pass: bool,
+    save_result: Dictionary,
+) -> String:
+    if not inspect_result.get("success", false):
+        return str(inspect_result.get("code", "MAIN_SCENE_INSPECT_FAILED"))
+    if not dirty_result.get("success", false):
+        return str(dirty_result.get("code", "SCRATCH_RENAME_DIRTY_FAILED"))
+    if not undo_pass:
+        return "EDITOR_UNDO_FAILED"
+    if not save_result.get("success", false):
+        return str(save_result.get("code", "SCRATCH_RENAME_SAVE_FAILED"))
+    return "PILOT_POSTCONDITION_FAILED"
 
 
 func _submit_and_wait(envelope: Dictionary) -> Dictionary:
