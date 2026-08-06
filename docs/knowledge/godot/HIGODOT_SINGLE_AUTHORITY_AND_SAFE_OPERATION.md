@@ -21,6 +21,12 @@ production_readiness: false
 - 한 프로젝트에 HiGodot과 기능이 겹치는 두 번째 MCP, HTTP/WebSocket Bridge, EditorPlugin 또는 CLI mutation authority를 동시에 두지 않는다.
 - 과거 Base live-editor Adapter·Schema·Pilot·테스트는 보안·rollback·evidence 학습 자료와 역사적 실행 증거로 보존하지만, HiGodot 채택 프로젝트의 현재 실행 경로가 아니다.
 
+### 저작 권위와 비저작 애드온의 경계
+
+HiGodot의 단일 권위는 Godot 저작·편집 자동화와 mutation 실행 경로에 한정된다. 동일 저작 권위를 가진 두 번째 MCP·EditorPlugin·Bridge·CLI mutation authority는 금지한다.
+
+테스트 프레임워크, 대화·서사 도구, 플랫폼 서비스, 카메라, 아이콘, 자산 제작 보조처럼 역할이 다른 비저작 애드온은 `evaluating-godot-assets-and-plugins-before-creation`의 평가와 프로젝트별 채택 기록을 통과하면 공존할 수 있다. 공존 가능성은 자동 채택을 뜻하지 않으며, 실제 필요·정확한 버전·라이선스·소비 경로·검증·제거 절차가 없으면 설치하지 않는다.
+
 ## 3. Existing Solution First Gate
 
 새 MCP·addon·CLI·framework·SDK wrapper·automation server·tool registry·Skill·Skill Mode·공용 실행 계층을 설계하거나 구현하기 전에 다음을 완료한다.
@@ -259,6 +265,8 @@ Base_PR_202:
 - floating latest 또는 자동 무검토 업데이트
 - connection 성공을 runtime·regression·production readiness로 승격
 - 과거 Base Adapter·MCP 파일 존재를 현재 실행 권위로 해석
+- HiGodot 단일 권위를 비저작 애드온 전면 금지로 오해해 검증된 테스트·대화·플랫폼 도구까지 배제
+- 역할이 다른 애드온이라는 이유만으로 평가·소비 경로·rollback 없이 일괄 설치
 
 ## 12. 실행 보고
 
