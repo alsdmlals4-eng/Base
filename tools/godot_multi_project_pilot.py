@@ -23,11 +23,12 @@ from tools.godot_project_pilot_evidence import (
     write_final_evidence,
 )
 from tools.godot_project_pilot_workspace import (
+    activate_staged_runtime_workspace,
     compare_inventories,
     copy_to_workspace,
     inventory_tracked_files,
-    materialize_runtime_workspace,
     prepare_runtime_workspace,
+    stage_runtime_workspace,
 )
 
 
@@ -345,7 +346,14 @@ def run_pilot(
             workspace = Path(temporary) / "project"
             copy_to_workspace(source, workspace)
             prepared = prepare_runtime_workspace(workspace, descriptor)
-            preserved_autoloads = prepared.preserved_autoloads
+            staged = stage_runtime_workspace(
+                base,
+                workspace,
+                descriptor,
+                source_commit,
+                transform_report=prepared,
+            )
+            preserved_autoloads = staged.transform_report.preserved_autoloads
 
             import_record = _run_process(
                 [
@@ -369,13 +377,7 @@ def run_pilot(
                 if record.returncode != 0:
                     raise ValueError("PROJECT_BEHAVIOR_CHECK_FAILED")
 
-            materialized = materialize_runtime_workspace(
-                base,
-                workspace,
-                descriptor,
-                source_commit,
-                transform_report=prepared,
-            )
+            materialized = activate_staged_runtime_workspace(staged)
             preserved_autoloads = materialized.transform_report.preserved_autoloads
             godot_record = _run_process(
                 [
