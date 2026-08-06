@@ -11,23 +11,25 @@ Base v9.1 projects use the focused [project adapter and routing contract](refere
 
 신규 설치, 기존 구조 감사, 구형 파일 정리, 승인된 마이그레이션과 운영체계 검수는 같은 책임 원본·참조·복구 계약을 공유한다. `Work Mode`와 `Skill Mode`를 구분하며, 읽기 전용 조사와 승인된 쓰기 작업을 혼동하지 않는다. 프로젝트 GDD Google Sheets 설치·감사·검증은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 따른다.
 
+Godot MCP/addon 공급자 도입·업데이트는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`를 따른다. HiGodot (`hi-godot/godot-ai`)만 실행 권위이며 프로젝트는 `HIGODOT_ADOPTION_RECORD.json`에 exact pin, Godot 버전, host client, canary, regression, rollback과 미검증을 기록한다.
+
 - `Work Mode`: `PLAN / BUILD / REVIEW`
 - 이 문서의 `mode`: 운영체계 Skill 내부의 **Skill Mode**
 
 ## Skill Modes
 
-- `install`: 신규 또는 내용이 거의 없는 프로젝트에 운영체계를 설치한다.
-- `audit`: 기존 프로젝트를 변경 없이 조사하고 현재 구조·위험·보존표를 만든다.
+- `install`: 신규 또는 내용이 거의 없는 프로젝트에 운영체계와 승인된 third-party provider record를 설치한다.
+- `audit`: 기존 프로젝트를 변경 없이 조사하고 현재 구조·위험·보존표·addon/MCP provider inventory를 만든다.
 - `reconcile-legacy`: 구형·중복·버전명 파일과 파생본을 현행 정본에 맞춰 갱신·통합·호환 보존·아카이브·승인 삭제한다.
 - `migrate`: 사용자가 승인한 처리표 범위만 새 책임 구조로 재배치한다.
-- `verify`: 설치·정리·마이그레이션·대규모 변경 뒤 전체 연결을 증거로 검수한다.
+- `verify`: 설치·정리·마이그레이션·provider upgrade·대규모 변경 뒤 전체 연결을 증거로 검수한다.
 
 ```text
 신규·내용 거의 없음 → install
 기존 운영 프로젝트 → audit
 v2·final·latest·복제본·구형 파생본 존재 → audit → reconcile-legacy
 승인된 구조 이동표 있음 → migrate
-설치·정리·마이그레이션·주요 게이트 후 → verify
+설치·정리·마이그레이션·주요 게이트·HiGodot upgrade 후 → verify
 ```
 
 `reconcile-legacy`는 별도 신규 Skill이 아니다. 기존 프로젝트의 책임 원본·참조·보존·삭제 권한을 다루는 같은 생명주기이므로 이 Skill의 전문 Skill Mode로 유지한다.
@@ -60,6 +62,12 @@ approved_legacy_reconciliation_table:
 known_versioned_duplicates_and_aliases:
 governance_and_workflow_state:
 rollback_ref:
+third_party_provider_inventory:
+higodot_adoption_record:
+higodot_exact_pin:
+higodot_previous_rollback_pin:
+higodot_canary_evidence:
+higodot_project_regression_evidence:
 ```
 
 ## Shared read order
@@ -72,6 +80,7 @@ rollback_ref:
 → CURRENT_CONFIRMED_DECISIONS.md·동일 Goal의 열린·최근 병합 PR·프로젝트 Google Sheets
 → Design Document Registry·Skill Registry
 → 관련 책임 원본·Skill·Learning Log
+→ provider inventory·HIGODOT_ADOPTION_RECORD.json
 → DOCX/PDF·다이어그램·승인 이미지·Manifest
 → 실제 코드·데이터·자산·테스트
 → Issue·Plan·PR·Workflow·최근 변경
@@ -95,6 +104,56 @@ rollback_ref:
 
 정확한 Sheet URL·권한이 확인된 프로젝트는 `USER_FACING_GDD_WORKSPACE`로 설치한다. 기존 값·수식·이미지·사용자 편집을 먼저 감사하고, Sheet-only 수정은 `PROPOSED_SHEET_CHANGE`로 보존한다. `install / audit / verify`는 GitHub 정본·실제 구현·Sheet의 Decision ID·Commit·수정 시각·동기화 상태를 비교한다.
 
+## HiGodot provider adoption contract
+
+```yaml
+provider: hi-godot/godot-ai
+authority: SOLE_GODOT_EXECUTION_AUTHORITY
+exact pin: required
+floating_latest: forbidden
+automatic_unreviewed_update: forbidden
+network_mode: LOOPBACK_ONLY
+deepseek: FORBIDDEN
+rollback: required
+```
+
+### Install
+
+1. `evaluating-godot-assets-and-plugins-before-creation`의 disposition이 `REUSE` 또는 승인된 `REFACTOR`인지 확인한다.
+2. exact release 또는 exact commit, package/source origin, license, Godot 버전과 host client를 기록한다.
+3. 개인 Codex·GPT profile에만 MCP를 등록하고 DeepSeek Analysis에는 등록·credential을 두지 않는다.
+4. 프로젝트에 활성 `.vscode/mcp.json`이나 `.codex/config.toml`을 공용 commit하지 않는다.
+5. `templates/project-operations/HIGODOT_ADOPTION_RECORD.json`을 프로젝트 record로 설치하고 실제 값을 채운다.
+6. connection, runtime, regression, production readiness를 독립 상태로 유지한다.
+
+### Upgrade
+
+```text
+new release identified
+→ release note·dependency·tool schema·transport·security diff
+→ compatibility and adversarial review
+→ isolated fixture
+→ Godot import and plugin startup
+→ read canary
+→ destructive canary and exact restore
+→ representative project canary
+→ full affected project regression
+→ staged adoption
+→ previous exact pin and rollback package retained
+```
+
+`destructive canary`는 최소한 Node 삭제/복원, file write·move·delete/복원, project settings 또는 autoload 변경/복원을 실제로 검증하되 source fixture를 최종적으로 exact restore한다. 실행하지 못한 OS·device·Editor UI·human flow는 `NOT_RUN`이다.
+
+### Verify
+
+- 실제 installed version이 adoption record의 exact pin과 일치하는가
+- HiGodot 외 두 번째 Godot mutation addon/MCP/Bridge가 활성화되지 않았는가
+- network가 loopback only이고 LAN/public URL/forwarding/tunnel이 없는가
+- Codex·GPT profile과 DeepSeek 금지 경계가 유지되는가
+- enabled domain의 read·L1·L2 canary와 project regression evidence가 있는가
+- rollback pin·package·절차가 실제로 존재하는가
+- 단순 connection 또는 tools/list를 production readiness로 승격하지 않았는가
+
 ## Skill Mode: install
 
 1. 신규·빈 프로젝트인지 확인한다. 고유 문서·자산·이력이 있으면 `audit`로 전환한다.
@@ -106,7 +165,8 @@ rollback_ref:
 7. Foundation·분야 Skill Registry와 Learning Log를 설치한다.
 8. Visual Source·Asset Manifest와 승인 상태를 연결한다.
 9. Governance 검사·Actions·Required Check 준비 상태를 구분한다.
-10. `verify`로 콜드 스타트와 결정 복원·동기화 파이프라인을 확인한다.
+10. 승인된 HiGodot 사용 프로젝트이면 provider adoption contract와 exact pin record를 설치한다.
+11. `verify`로 콜드 스타트와 결정 복원·동기화·provider 경계를 확인한다.
 
 ## Skill Mode: audit
 
@@ -118,6 +178,7 @@ rollback_ref:
 산출물:
 
 - 현재 책임 문서·Skill·자산·파생본 지도
+- enabled addon·connected MCP·provider pin·host profile inventory
 - `CURRENT_CONFIRMED_DECISIONS.md`·분야 정본·GitHub `main`·프로젝트 Google Sheets의 Decision·Commit·대체 관계 대조
 - 중복·충돌·누락·구형 참조 목록
 - 목표 Registry와 책임 원본 구조
@@ -135,6 +196,7 @@ rollback_ref:
 - 새 경로로 대체됐지만 활성 파일이 계속 참조하는 구형 경로·ID·Schema
 - 원본보다 오래된 생성물·Manifest·해시
 - 삭제된 Skill·명령·파일을 실행 경로가 참조함
+- HiGodot과 겹치는 과거 Base MCP·Bridge·Hera 또는 다른 mutation addon이 활성 경로에 남음
 
 파일별로 하나를 판정한다.
 
@@ -202,8 +264,9 @@ KEEP_UNRESOLVED
 7. Skill Registry·최소 라우팅·Learning Log
 8. Development Gates·Roadmap·결정 추적성
 9. Visual Source·Asset Manifest
-10. Governance checker·회귀 테스트·GitHub Actions·브랜치 보호
-11. 과거 대화 없이 현재 Decision을 복원하는 콜드 스타트
+10. HiGodot exact pin·단일 권위·host isolation·canary·regression·rollback
+11. Governance checker·회귀 테스트·GitHub Actions·브랜치 보호
+12. 과거 대화 없이 현재 Decision을 복원하는 콜드 스타트
 
 ```text
 결정
@@ -222,6 +285,8 @@ KEEP_UNRESOLVED
 ## Work Mode와 Skill Mode
 ## 자동 선택 이유
 ## 현재 구조·증거
+## Third-party provider와 HiGodot exact pin
+## Canary·project regression·rollback
 ## 구형 파일·파생본 처리표
 ## 실제 갱신·통합·아카이브·삭제
 ## 제안만 한 변경
@@ -243,7 +308,8 @@ KEEP_UNRESOLVED
 - 기존 프로젝트는 `audit`와 승인 없이 대규모 변경하지 않았다.
 - 구형 파일은 고유 정보·참조·파생본·복구·승인에 따라 판정됐다.
 - 삭제·통합 뒤 활성 stale reference와 untouched 소비자가 없다.
-- 신규·정리·마이그레이션 결과는 `verify` 증거를 가진다.
+- HiGodot project이면 exact pin, DeepSeek 금지, loopback, canary, regression, rollback 상태가 기록됐다.
+- 신규·정리·마이그레이션·provider update 결과는 `verify` 증거를 가진다.
 - 실행하지 않은 검사와 권한은 `NOT_RUN` 또는 `[미검증]`이다.
 - 사용한 Skill Mode의 이유와 얻은 결과를 보고했다.
 
@@ -257,6 +323,11 @@ KEEP_UNRESOLVED
 - Git 이력만 있다는 이유로 활성 참조·복구 검증 없이 삭제함
 - 호환성이 필요한 외부 경로를 stub 없이 제거함
 - PDF·DOCX를 독립 책임 원본으로 수정함
+- HiGodot floating latest 또는 automatic update 사용
+- DeepSeek profile에 HiGodot 등록
+- 두 번째 Godot mutation authority 활성화
+- canary·project regression·rollback 없이 provider update 완료 보고
+- connection 성공을 production readiness로 보고
 - 설치·정리·마이그레이션 뒤 `verify`를 생략함
 - 사용한 이유와 결과 없이 Skill 실행만 주장함
 
@@ -282,6 +353,7 @@ Related:
 - `docs/WORK_MODE_AND_SKILL_ROUTING.md`
 - `docs/knowledge/methods/DEVELOPMENT_GATES_METHOD.md`
 - `docs/knowledge/methods/DISCIPLINE_PDF_PUBLICATION_METHOD.md`
+- `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`
 
 ## Cloud Run backend capability handoff
 
