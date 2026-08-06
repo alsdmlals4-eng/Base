@@ -117,6 +117,34 @@ class BaseSharedSkillRouteTests(unittest.TestCase):
             item["templates"],
         )
 
+    def test_godot_addon_route_exposes_selective_adoption_contract(self) -> None:
+        registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        item = next(
+            entry
+            for entry in registry["shared_skills"]
+            if entry["skill_id"]
+            == "evaluating-godot-assets-and-plugins-before-creation"
+        )
+
+        for tag in (
+            "selective-addon-utilization",
+            "installed-unused",
+            "addon-consumption-path",
+        ):
+            self.assertIn(tag, item["trigger_tags"])
+
+        for role in (
+            "addon_adoption_state",
+            "addon_consumption_path",
+            "addon_removal_or_rollback",
+        ):
+            self.assertIn(role, item["project_adapter_roles"])
+
+        use_when = " ".join(item["use_when"])
+        self.assertIn("채택 상태", use_when)
+        self.assertIn("소비 경로", use_when)
+        self.assertIn("제거 절차", use_when)
+
     def test_project_specific_skills_remain_local_only(self) -> None:
         registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
         policy = registry["project_skill_policy"]
