@@ -21,3 +21,14 @@
 - **Operational boundary:** HiGodot의 Node 삭제·file write·project settings·autoload 기능은 허용하며 L2/L3 rollback·diff·import·test Gate로 통제한다. DeepSeek는 host profile에서 MCP 등록과 credential을 모두 제거하고 network는 loopback only로 제한한다.
 - **Verification state:** test-only RED와 reference-freshness 실패를 확인함. exact-head GREEN, 실제 HiGodot 설치·Windows·Codex/GPT E2E·project runtime은 아직 `NOT_RUN`이다.
 - **Next trigger:** HiGodot exact release 변경, tool schema·transport·security 변경, 새 공급자 제안 또는 custom build 요구가 발생하면 current-environment inventory와 disposition을 다시 수행한다.
+
+## 2026-08-06 — Selective addon utilization requires a consumption path
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** 여러 Godot 프로젝트에 유용한 addon 후보를 정리하는 과정에서 “검증된 addon은 활용하라”는 원칙과 “모든 프로젝트에 미리 설치하지 말라”는 원칙을 함께 고정할 필요가 생김.
+- **Finding:** 기존 평가 절차는 채택·직접 제작 판정은 했지만, 설치 뒤 실제 editor·runtime·test·platform·content pipeline에서 사용하는지와 불필요해진 addon을 제거하는 상태를 충분히 강제하지 않았다. 이 공백은 blanket installation과 폴더만 존재하는 미사용 의존성을 만들 수 있다.
+- **Decision:** 새 Skill이나 중앙 addon registry를 만들지 않는다. 기존 Skill에 Selective addon utilization 수명주기와 `consumption_path`를 추가하고, 소비 경로가 없는 설치는 `INSTALLED_UNUSED`로 판정해 제거하거나 `DEFERRED`로 되돌린다.
+- **Evidence contract:** 프로젝트가 exact version, source, license, Godot·platform 호환성, adoption state, consumption path, owner boundary, validation, rollback 또는 removal을 소유한다. Base에는 프로젝트별 고정 설치표를 두지 않는다.
+- **Boundary:** HiGodot 단일 권위는 저작·편집 mutation authority에 한정된다. 테스트·대화·플랫폼·카메라·아이콘처럼 역할이 다른 addon도 자동 허용하지 않고 같은 평가와 소비 경로 Gate를 통과한다.
+- **Verification state:** blanket installation 금지, `INSTALLED_UNUSED`, consumption path, stage routing을 요구하는 focused RED를 확인했다. 실제 프로젝트 addon 설치·runtime·device·platform service·human 검증은 `NOT_RUN`이다.
+- **Next trigger:** 프로젝트에서 새 addon 도입·비활성화·교체·업데이트·제거 또는 사용 경로 소멸이 발생하면 adoption state와 consumption path를 재평가한다.
