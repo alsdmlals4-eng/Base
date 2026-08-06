@@ -1,0 +1,39 @@
+name: Validate Godot Local MCP Editor Bridge
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/validate-godot-local-mcp-editor-bridge.yml"
+      - "templates/project-operations/godot-local-mcp/addons/base_godot_mcp_bridge/**"
+      - "templates/project-operations/godot-local-mcp/GODOT_LOCAL_MCP_ADOPTION_MANIFEST.example.json"
+      - "tests/test_godot_local_mcp_editor_bridge*.py"
+      - "docs/superpowers/specs/2026-08-06-godot-local-mcp-editor-bridge-*.md"
+  push:
+    branches:
+      - "agent/godot-local-mcp-editor-bridge"
+    paths:
+      - ".github/workflows/validate-godot-local-mcp-editor-bridge.yml"
+      - "templates/project-operations/godot-local-mcp/addons/base_godot_mcp_bridge/**"
+      - "templates/project-operations/godot-local-mcp/GODOT_LOCAL_MCP_ADOPTION_MANIFEST.example.json"
+      - "tests/test_godot_local_mcp_editor_bridge*.py"
+      - "docs/superpowers/specs/2026-08-06-godot-local-mcp-editor-bridge-*.md"
+
+permissions:
+  contents: read
+
+jobs:
+  bridge-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+          check-latest: false
+
+      - name: Run Editor Bridge contract tests
+        run: python -m unittest tests.test_godot_local_mcp_editor_bridge -v
