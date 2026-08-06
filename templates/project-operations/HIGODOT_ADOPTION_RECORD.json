@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "artifact_role": "HIGODOT_ADOPTION_RECORD",
+  "provider": "hi-godot/godot-ai",
+  "exact_release_or_commit": "NOT_CONFIGURED",
+  "godot_version": "NOT_CONFIGURED",
+  "host_clients": {
+    "codex": "NOT_CONFIGURED",
+    "gpt_vscode": "NOT_CONFIGURED",
+    "deepseek": "FORBIDDEN"
+  },
+  "network_mode": "LOOPBACK_ONLY",
+  "enabled_domains": [],
+  "unverified_domains": [],
+  "last_verified_at": null,
+  "verification_evidence": [],
+  "rollback_release_or_commit": "NOT_CONFIGURED",
+  "connection_status": "NOT_RUN",
+  "runtime_status": "NOT_RUN",
+  "regression_status": "NOT_RUN",
+  "production_readiness": false
+}
