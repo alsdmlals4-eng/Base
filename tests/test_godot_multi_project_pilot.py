@@ -237,6 +237,46 @@ class GodotMultiProjectPilotTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "ARTIFACT_BYTE_HASH_MISMATCH"):
                 evidence.verify_runtime_evidence(root, result_path)
 
+    def test_failed_runtime_reports_only_bounded_verification_fields(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            result_path = root / "runtime-result.json"
+            result_path.write_text(
+                json.dumps(
+                    {
+                        "status": "FAIL",
+                        "code": "ADAPTER_NOT_CONFIGURED",
+                        "main_scene_inspect": "NOT_RUN",
+                        "scratch_scene_rename": "NOT_RUN",
+                        "editor_undo": "NOT_RUN",
+                        "scratch_scene_save": "NOT_RUN",
+                        "ledger_states": [],
+                        "base_network_listener": False,
+                        "untrusted_free_text": "must-not-be-copied",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            with self.assertRaises(evidence.EvidenceVerificationError) as raised:
+                evidence.verify_runtime_evidence(root, result_path)
+
+            message = str(raised.exception)
+            for marker in (
+                "RUNTIME_EVIDENCE_FAILED",
+                '"status":"FAIL"',
+                '"code":"ADAPTER_NOT_CONFIGURED"',
+                '"main_scene_inspect":"NOT_RUN"',
+                '"scratch_scene_rename":"NOT_RUN"',
+                '"editor_undo":"NOT_RUN"',
+                '"scratch_scene_save":"NOT_RUN"',
+                '"ledger_states":[]',
+                '"base_network_listener":false',
+            ):
+                self.assertIn(marker, message)
+            self.assertNotIn("untrusted_free_text", message)
+            self.assertNotIn("must-not-be-copied", message)
+
     def test_reusable_workflow_is_immutable_and_listener_free(self) -> None:
         text = WORKFLOW.read_text(encoding="utf-8")
         for marker in (
