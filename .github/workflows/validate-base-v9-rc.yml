@@ -83,6 +83,7 @@ jobs:
             tests.test_v9_1_review_remediation \
             tests.test_v9_1_skill_pressure_contracts \
             tests.test_project_adapter_fleet_hardening \
+            tests.test_project_adapter_fleet_rollout_status \
             tests.test_project_gdd_google_sheets_contract \
             tests.test_vertical_slice_v9_contract \
             tests.test_base_v9_4_ai_operations_contract \

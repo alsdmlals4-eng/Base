@@ -108,7 +108,37 @@ class ProjectAdapterFleetHardeningTests(unittest.TestCase):
                 f"Pinned validator commit lacks required fleet hardening in {path}",
             )
 
-    def test_decision_records_approval_and_trusted_merge_pin(self) -> None:
+    def test_project_workflow_uses_a_trusted_historical_baseline_for_normal_prs(self) -> None:
+        workflow = WORKFLOW.read_text(encoding="utf-8")
+
+        for marker in (
+            'ADAPTER_PATH="skills/PROJECT_BASE_ADAPTER.json"',
+            'git diff --name-only "$PR_BASE_SHA"...HEAD -- "$ADAPTER_PATH"',
+            'PROTECTED_BASE_SHA="$PR_BASE_SHA"',
+            'git show "$PR_BASE_SHA:$ADAPTER_PATH"',
+            'payload["protected_baseline"]["commit"]',
+            '--protected-base "$PROTECTED_BASE_SHA"',
+        ):
+            self.assertIn(marker, workflow)
+
+        executable_workflow = "\n".join(
+            line for line in workflow.splitlines() if not line.lstrip().startswith("#")
+        )
+        self.assertNotIn(
+            '--protected-base "$PR_BASE_SHA"',
+            executable_workflow,
+            "Every unrelated PR must not be forced to rewrite the historical adapter baseline.",
+        )
+        self.assertIn(
+            "Adapter migration PR: trust the immutable pull-request base as the new protected baseline",
+            workflow,
+        )
+        self.assertIn(
+            "Normal PR: trust the baseline recorded by the adapter at the immutable pull-request base",
+            workflow,
+        )
+
+    def test_decision_records_approval_trusted_pin_and_current_rollout_state(self) -> None:
         text = DECISION.read_text(encoding="utf-8")
         for token in (
             "status: APPROVED",
@@ -119,9 +149,13 @@ class ProjectAdapterFleetHardeningTests(unittest.TestCase):
             "implementation_pr: 185",
             f"trusted_implementation_merge: {TRUSTED_IMPLEMENTATION_MERGE}",
             "validator_pin_status: ADVANCED_TO_TRUSTED_MERGE",
-            "project_mutation: AUTHORIZED_NOT_STARTED",
+            "project_rollout: PARTIAL_COMPLETE",
+            "completed_projects: 4",
+            "blocked_projects: 1",
+            "separately_managed_projects: 1",
         ):
             self.assertIn(token, text)
+        self.assertNotIn("project_mutation: AUTHORIZED_NOT_STARTED", text)
 
 
 if __name__ == "__main__":
