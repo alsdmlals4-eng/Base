@@ -94,7 +94,7 @@ PC·Android Delivery Guide도 새 광역 Skill이 아니다. `analyzing-and-refi
 | 구조 단순화·동작 보존 리팩터링 | `simplifying-skill-bodies` / `refactoring-with-contract-preservation` |
 | 불필요 자료 판정 | `pruning-stale-and-nonfunctional-material` |
 | 게임 사용자 연구 11영역 | `governing-game-user-research-coverage` |
-| 사용자 학습 노트 | `creating-user-learning-notes` |
+| 사용자 학습 자료 | `creating-user-learning-notes` |
 | 프로젝트 HTML·상태 시각화 | `building-project-visual-dashboards` |
 | Godot·Unity 런타임 오류 | `diagnosing-game-engine-runtime-failures` |
 | Godot live Editor·MCP·addon·Scene·Resource 자동화 | HiGodot persistent authoring → GUT deterministic GDScript test → Hera live QA (`LIVE_QA_AND_OBSERVABILITY_ONLY`) |
