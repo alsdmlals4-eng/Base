@@ -34,6 +34,11 @@ highest_risk_fun_technical_production_hypotheses:
 current_system_asset_and_pipeline_state:
 target_platform_quality_time_and_team_constraints:
 representative_and_worst_case_play_flow:
+visual_requirement_gate:
+  selected_requirement_ids:
+  p0_p1_required:
+  p2_needed_for_consistency:
+  deferred_p3:
 accessibility_and_performance_targets:
 playtest_contract:
   build_and_version:
@@ -54,8 +59,11 @@ playtest_contract:
 2. 진입→행동→판단→반응→결과→기록·복귀가 연결되는 대표 구간을 고른다.
 3. 핵심 세일즈포인트와 일반 플레이를 함께 보여주는지 확인한다.
 4. 포함 시스템·콘텐츠·아트·UI·사운드·데이터를 최소화한다.
-5. 전체 분량, 모든 캐릭터, 장기 경제 등 제외 범위를 고정한다.
-6. 성공·실패·미검증 시 다음 개발 결정을 미리 정의한다.
+5. `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate`에서 이 구간에 필요한 시각 requirement를 고른다. 기본적으로 핵심 흐름을 막는 `P0 BLOCKER`, 이해·세일즈포인트에 필요한 `P1 CLARITY`, 반복 제작성을 증명하는 데 필요한 일부 `P2 CONSISTENCY`만 포함하고, P0~P2를 증명하기 전 `P3 DELIGHT` 대량 제작은 보류한다.
+6. 전체 분량, 모든 캐릭터, 장기 경제 등 제외 범위를 고정한다.
+7. 성공·실패·미검증 시 다음 개발 결정을 미리 정의한다.
+
+`Visual Requirement Gate`는 Slice 자산 목록의 새 권위를 만들지 않는다. 선정된 `requirement_id`를 기존 Art/UX 문서와 자산 제작·검수 경로가 소비한다.
 
 ### 2. Quality bar
 
@@ -79,6 +87,7 @@ save_resume_error_recovery:
 
 - 각 단계의 입력·출력·소유자·도구·검증·재작업 원인을 기록한다.
 - 대표 자산과 일반 반복 자산을 모두 포함한다.
+- 포함된 자산은 연결 `requirement_id`, 역할, 우선순위, disposition과 모순되지 않아야 한다.
 - 임시 자산만으로 목표 품질을 증명하지 않는다.
 - 제작 시간보다 병목·대기·반복 가능성·자동화 후보를 우선 기록한다.
 - 같은 유형의 두 번째 콘텐츠를 만들 수 없는 구조라면 Production 준비로 판정하지 않는다.
@@ -135,6 +144,7 @@ Steam Playtest 같은 분리된 테스트 배포를 사용할 수 있지만, 테
 - 목표 플레이어 경험
 - 대표 플레이 흐름과 예상 시간
 - 포함·제외 범위
+- `Visual Requirement Gate`의 Slice용 `requirement_id`·P0/P1·필요 P2·보류 P3
 - 시스템·콘텐츠·자산 목록
 - 조작·정보·아트·UI·사운드·접근성·성능 품질 기준
 - 제작 파이프라인·병목·반복 생산 비용
@@ -163,6 +173,8 @@ Steam Playtest 같은 분리된 테스트 배포를 사용할 수 있지만, 테
 ## Failure conditions
 
 - 기능 목록만 있고 처음부터 끝까지 플레이할 수 없음
+- `Visual Requirement Gate` 없이 “보여주면 좋을 것”인 자산을 Slice 범위에 누적함
+- P0/P1 미검증 상태에서 P3 장식 제작을 우선함
 - 특수 보스전처럼 일반 제작성을 대표하지 않는 구간
 - 임시 자산만 사용해 목표 품질을 검증할 수 없음
 - 전체 게임 분량을 슬라이스에 포함
