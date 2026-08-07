@@ -74,6 +74,7 @@ Base 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 �
 | 재사용 Capability 조합 | `docs/CAPABILITY_COMPOSITION_MAP.md` | 허용 context·조합·금지 경계·필요 증거 |
 | 이미지 생성·검수·Sheet 구조 | `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md` | 기획 시각화, 이미지 QA·승인 원장·의미 구조 |
 | 근거 기반 게임 개발 허브 | `docs/knowledge/game-development/README.md` | 기획·아트·개발·AI·연구·출시 Method·Guide·Case 라우팅 |
+| 게임 빌드 용량·자산 최적화 | `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` | 다운로드·설치·런타임·패치 분리 측정, font/texture/audio·중복 자산·플랫폼 전달 최적화, 품질·성능·delivery 회귀 Gate |
 | HiGodot 단일 persistent 저작 권위·GUT/Hera 검증 공존·기존 대안 선조사 | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` | Existing Solution First Gate, HiGodot 단일 persistent authoring, GUT deterministic GDScript test, Hera `LIVE_QA_AND_OBSERVABILITY_ONLY`, source-delta guard, L0–L3 변경 수준, DeepSeek·network 격리, exact pin·canary·regression·rollback |
 | 플랫폼 심사·자산 권리·참조 독립 제작 | `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md` | Steam·STOVE·Google Play 등급·설문, 상업·배포 권리, AI·외주·오픈소스, 참조→독립 제작, 출시 차단 |
 | CI 실행·비용 | `docs/CI_EXECUTION_COST_POLICY.md` | 변경 등급별 검증·concurrency·Windows·비용 Gate |
@@ -137,7 +138,7 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 }
 ```
 
-- `PLAN`: 요구·근거·설계·정본·실행 순서
+- `PLAN`: 요구·근거·설계·실행 순서
 - `BUILD`: 승인 범위의 구현·제작·갱신
 - `REVIEW`: 적대적 검토·반례·검증·판정
 - `clarify` + Grill Me: 사용자만 결정할 수 있는 중요 충돌
@@ -161,6 +162,7 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 | 게임 시스템·난이도·전투 AI (`system-design` / `difficulty-and-combat-ai`) | `skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-and-combat-ai.md` | `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md` |
 | 벤치마크·플레이어 근거·실험 | `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md` | `templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md` |
 | 게임 기획·아트·개발·AI·출시 근거 | `docs/knowledge/game-development/README.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`, `templates/research/GAME_DEVELOPMENT_CASE_CARD.md` |
+| 게임 build/package/download/install/patch·font/texture/audio 자산 용량 최적화 | `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` | `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md`의 `build_size_and_asset_optimization` |
 | Steam·STOVE·Google Play 등급·설문·자산 권리·참조 독립 제작 | `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md` | `templates/project-operations/ASSET_RIGHTS_AND_PROVENANCE_RECORD.md`, `templates/project-operations/GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK.md` |
 | UI 설계·폴리싱·런타임 감사 | `skills/auditing-and-refining-ui-art/SKILL.md` | `templates/planning/GAME_UX_UI_SYSTEM.md`, `templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md` |
 | 접근성·성능 | `skills/reviewing-and-validating-project-changes/references/accessibility-and-performance-validation.md` | `templates/quality/PROJECT_CHANGE_VALIDATION.md` |
