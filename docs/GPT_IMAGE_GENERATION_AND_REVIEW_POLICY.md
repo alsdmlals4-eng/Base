@@ -49,6 +49,19 @@
 
 ## 3. C — GPT 이미지 생성 실행 흐름
 
+### 3.0 Visual Requirement Gate
+
+프로젝트용 이미지·목업을 생성 목록에 넣기 전에 `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate`에서 필요성·Delete Test·재사용 후보·역할·우선순위·제작 방식을 먼저 **선정**한다.
+
+- 프로젝트 자산 후보는 가능한 한 `requirement_id`를 가진다. `GENERATE_EXPLORATION` 또는 승인된 `CREATE_CUSTOM` 판정을 이미지 생성 입력으로 사용한다.
+- 프로젝트 전체·화면군·캐릭터군처럼 여러 자산을 일괄 생성할 때는 선정되지 않은 후보를 “있으면 좋을 것”이라는 이유만으로 자동 추가하지 않는다.
+- Delete Test에서 관찰 가능한 손실이 없거나 기존 텍스트·컴포넌트·프로젝트 자산으로 충분하면 `DEFER/CUT/REUSE`를 우선하고 이미지 생성을 기본값으로 삼지 않는다.
+- 사용자가 현재 대화에서 특정 이미지 한 장의 생성·편집을 명시적으로 요청한 경우 그 요청 자체를 **현재 작업의 임시 requirement**로 처리할 수 있다. 다만 그 결과를 프로젝트의 지속 자산 목록·`ASSET_MANIFEST.yml`·승인 상태에 자동 승격하지 않는다.
+- `REFERENCE_ONLY`나 `GENERATE_EXPLORATION` 결과는 방향 비교·정보 위계 검토용이며 제품 자산 승인과 분리한다.
+- 선정된 `requirement_id`는 이미지 기획·검수 기록, 로컬 vault 후보, 최종 승인·promotion 이후 `ASSET_MANIFEST.yml` 연결까지 추적 가능하게 유지한다.
+
+이 Gate는 “무엇을 생성할 것인가”를 결정하며 실제 파일 존재·승인 자산 권위를 새로 소유하지 않는다.
+
 ### 3.1 기획 중 시각화
 
 목적은 텍스트 기획의 방향·가독성·구현 가능성을 빠르게 비교하는 것이다.
@@ -132,6 +145,7 @@ GENERATED_EXPLORATION / IN_REVIEW / APPROVED_CANDIDATE
 8. 특정 상업 IP·작가 스타일과의 과도한 유사성
 9. 원본·레퍼런스·모델·서비스·버전·프롬프트·생성일 기록
 10. 승인자·사용처·GitHub 경로·Sheet row·자산 원장 연결
+11. 프로젝트 자산 후보라면 연결 `requirement_id`와 선정 근거가 존재하는지 확인
 
 ## 4.1 참조 기반 독립 제작
 
@@ -179,6 +193,7 @@ Sheet가 `NOT_CONFIGURED`이면 GitHub 정본까지만 갱신하고 상태를 �
 
 각 단계 종료 시 `running-adversarial-review-and-refinement: repository-wide-audit`로 다음을 공격한다.
 
+- Visual Requirement Gate에서 선정되지 않은 프로젝트 자산을 관성적으로 대량 생성했는가
 - 승인 전 생성 이미지가 최종 자산처럼 사용됐는가
 - 승인 전 vault 후보가 tracked Repo 자산으로 자동 승격됐는가
 - tracked Scene/Resource가 `assets/_vault_local/`을 참조하는가
