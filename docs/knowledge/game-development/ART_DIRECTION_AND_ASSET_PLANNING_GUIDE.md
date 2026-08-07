@@ -43,6 +43,121 @@ approval_decision:
 
 키워드만 있는 “귀엽고 아름다운 판타지”는 Art Direction 계약이 아니다.
 
+## 2.1 Visual Requirement Gate
+
+프로젝트에서 이미지·아이콘·일러스트·UI 컴포넌트·VFX·마케팅 시각물을 후보로 떠올렸다는 이유만으로 바로 제작하지 않는다. 먼저 **무엇을 왜 만들어야 하는지**를 같은 기준으로 판정한다.
+
+표준 순서는 다음과 같다.
+
+```text
+플레이어·사용자의 판단/행동
+→ 필요한 정보·감정·피드백
+→ 기존 텍스트·표준 컴포넌트로 충분한가
+→ 기존 프로젝트·디자인 시스템 자산으로 재사용 가능한가
+→ Delete Test
+→ 역할 분류
+→ P0~P3 우선순위
+→ 제작·조달 disposition
+→ 실제 소비처·검증 조건
+```
+
+### Delete Test
+
+후보를 완전히 제거했을 때 **핵심 흐름, 정보 이해, 플레이어 감정·정체성, 접근성, 플랫폼 제출, 마케팅 전달 중 무엇이 실제로 실패하거나 유의미하게 약해지는지** 설명한다.
+
+- 제거해도 관찰 가능한 손실이 없으면 기본값은 `DEFER` 또는 `CUT`이다.
+- 장식이라는 이유만으로 자동 삭제하지 않는다. 프로젝트 코어 감정·브랜드 기억점·세계관 전달에 관찰 가능한 가치가 있으면 근거에 따라 우선순위를 올릴 수 있다.
+- 이미 존재하는 표준 컴포넌트·Theme·프로젝트 자산으로 같은 역할을 충족하면 신규 제작보다 재사용을 우선한다.
+- 플랫폼이 현재 공식 규격으로 요구하는 자산은 `PLATFORM_REQUIRED`로 분류하되 규격·수량·날짜는 제출 시점의 공식 문서를 다시 확인한다.
+
+### 역할 분류
+
+| role | 판정 질문 | 예 |
+|---|---|---|
+| `FUNCTIONAL` | 행동을 시작·완료·취소하는 데 필요한가 | 버튼, 슬롯, 선택 카드 |
+| `INFORMATIONAL` | 판단에 필요한 상태·차이·위험을 더 빠르고 정확하게 전달하는가 | 상태 아이콘, 지도 기호 |
+| `FEEDBACK` | 입력 접수·처리·성공·실패를 전달하는가 | 피격, 선택됨, 잠김 |
+| `EXPLANATORY` | 텍스트만으로는 어려운 구조·규칙·공간 관계 이해를 개선하는가 | 튜토리얼 그림, 시스템 다이어그램 |
+| `IDENTITY` | 캐릭터·진영·세계·제품의 식별성과 기억점을 소유하는가 | 캐릭터, 문장, 핵심 환경 |
+| `EMOTIONAL` | 감정·판타지·분위기 자체가 제품 가치인가 | 대표 장면, 이벤트 일러스트 |
+| `DECORATIVE` | 기능·정보보다 장식·마감이 주 역할인가 | 테두리, 배경 장식 |
+| `PLATFORM_REQUIRED` | 현재 플랫폼 제출·배포에 필수인가 | store capsule, app icon |
+| `REFERENCE_ONLY` | 비교·방향 탐색용이며 제품 자산이 아닌가 | mood board, concept reference |
+
+### 우선순위
+
+기존 UX/UI와 같은 네 단계 언어를 사용해 가짜 정밀 점수제를 만들지 않는다.
+
+| priority | 기준 |
+|---|---|
+| `P0 BLOCKER` | 없으면 핵심 흐름·접근성·기술 계약·플랫폼 제출이 실패한다 |
+| `P1 CLARITY` | 없으면 핵심 경험·규칙·판단·세일즈포인트 이해가 크게 약해진다 |
+| `P2 CONSISTENCY` | 재사용성·일관성·학습 비용·반복 제작 효율을 유의미하게 개선한다 |
+| `P3 DELIGHT` | 감정·연출·브랜드·폴리싱을 강화하지만 P0~P2를 대체하지 않는다 |
+
+P0~P2가 미해결이면 P3 대량 제작을 기본적으로 보류한다.
+
+### 제작·조달 disposition
+
+```text
+REUSE_SYSTEM         Godot·OS·플랫폼·디자인 시스템의 기존 요소 사용
+REUSE_PROJECT        현재 프로젝트의 기존 컴포넌트·자산 재사용
+ADAPT_EXISTING       현행 요소를 bounded 변형해 사용
+SOURCE_EXISTING      Asset Store·오픈소스·상용 패키지 등 기존 대안 조사
+GENERATE_EXPLORATION GPT/생성 도구로 방향·정보 위계를 탐색, 제품 자산 아님
+CREATE_CUSTOM        프로젝트 고유 요구를 신규 제작
+DEFER                가치는 있으나 현재 단계에서 만들지 않음
+CUT                  가치보다 비용·복잡도·혼란이 커 범위에서 제거
+```
+
+`SOURCE_EXISTING`은 `evaluating-godot-assets-and-plugins-before-creation`의 기존 대안 평가로 넘긴다. `GENERATE_EXPLORATION`과 승인된 `CREATE_CUSTOM` 이미지 제작은 `designing-art-prompts-and-technique-cards`가 이어받는다. UI 컴포넌트의 상태·입력·정보 구조는 `auditing-and-refining-ui-art`가 상세화하고, Vertical Slice는 해당 구간을 증명하는 최소 requirement 집합만 소비한다.
+
+### 프로젝트 기록
+
+프로젝트에는 공용 판단 규칙을 복제하지 않고, 실제 요구사항과 판정만 기록한다.
+
+```yaml
+requirement_id:
+surface_or_flow:
+player_question:
+element_type:
+role:
+why_needed:
+delete_test:
+consumer:
+priority: P0_BLOCKER | P1_CLARITY | P2_CONSISTENCY | P3_DELIGHT
+reuse_candidate:
+disposition:
+required_states:
+accessibility_equivalent:
+platform_and_input:
+localization:
+production_cost: LOW | MEDIUM | HIGH
+performance_risk:
+rights_or_provenance:
+validation:
+handoff:
+```
+
+Concept 단계는 방향을 가르는 소수 requirement만 기록하고, PoC는 핵심 가설을 증명하는 최소 요소에 집중한다. Vertical Slice에서는 대표 경험과 반복 제작성을 증명하는 P0/P1 및 필요한 P2를 목표 품질에 가깝게 검증한다. Production에서 반복 세트·상태 변형·현지화·성능·권리를 확장하고, Release에서는 현재 공식 플랫폼 규격을 다시 조회해 `PLATFORM_REQUIRED`를 갱신한다.
+
+### 권위 경계
+
+`Visual Requirement Gate`는 **필요성·역할·우선순위·제작 방식 판단**을 소유한다. 실제 생성된 파일이나 승인된 제품 자산의 존재를 새로 소유하지 않는다.
+
+```text
+Visual Requirement Gate
+→ 무엇이 왜 필요한가
+
+ASSET_MANIFEST.yml
+→ 실제 승인 자산의 의미·사용처·승인·권리 연결
+
+docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md
+→ 승인 전 로컬 후보와 실제 파일 보존·동기화·promotion 경계
+```
+
+따라서 requirement row, `ASSET_MANIFEST.yml`, 로컬 Asset Vault를 하나의 중복 원장으로 합치지 않는다. 승인 전 후보는 requirement와 로컬 작업면에서 관리하고, `PROJECT_ASSET_APPROVED` 뒤에만 기존 Manifest·promotion 흐름으로 승격한다.
+
 ## 3. Visual Pillar
 
 Visual Pillar는 3~5개로 제한하고 서로 다른 책임을 가진다.
@@ -446,11 +561,14 @@ Brief
 - 승인 이미지가 있는데 별도 지시 없이 교체함
 - 용량 절감을 이유로 HERO/GAMEPLAY_CRITICAL 품질 저하를 증거 없이 승인함
 - PC와 Android에 동일 texture import profile을 무조건 강제함
+- Delete Test 없이 “있으면 좋아 보인다”는 이유만으로 P3 시각물을 대량 제작함
+- 기존 컴포넌트·프로젝트 자산을 조사하지 않고 동일 역할을 신규 제작함
 
 ## 15. Output Contract
 
 ```md
 ## 플레이어 경험·정보 역할·시장 첫인상
+## Visual Requirement Gate·Delete Test·role·priority·disposition
 ## Visual Pillar·포함·금지 예시
 ## Shape Language·실루엣·Color·Value·Composition
 ## 시각적 위계·마스코트·상징

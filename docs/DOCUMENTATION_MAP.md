@@ -73,6 +73,7 @@ Base 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 �
 | 시각 협업 도구 | `docs/VISUAL_COLLABORATION_TOOL_POLICY.md` | Figma·Whimsical의 GDD/외부 협업 역할·Artifact·정본 경계 |
 | 재사용 Capability 조합 | `docs/CAPABILITY_COMPOSITION_MAP.md` | 허용 context·조합·금지 경계·필요 증거 |
 | 이미지 생성·검수·Sheet 구조 | `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md` | 기획 시각화, 이미지 QA·승인 원장·의미 구조 |
+| 시각 자산·컴포넌트 선정 Gate | `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate` | 필요성·Delete Test·역할·P0~P3·재사용·제작 disposition을 판정; 실제 승인 자산·파일 권위는 소유하지 않음 |
 | 프로젝트 로컬 이미지 보존소 | `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md` | GPT/수동 이미지의 프로젝트별 local authority, Godot-visible gitignored 작업면, 삭제 tombstone, `PROJECT_ASSET_APPROVED` 이후 명시적 promotion, 외부 Asset Browser 경계 |
 | 근거 기반 게임 개발 허브 | `docs/knowledge/game-development/README.md` | 기획·아트·개발·AI·연구·출시 Method·Guide·Case 라우팅 |
 | 게임 빌드 용량·자산 최적화 | `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` | 다운로드·설치·런타임·패치 분리 측정, font/texture/audio·중복 자산·플랫폼 전달 최적화, 품질·성능·delivery 회귀 Gate |
@@ -164,6 +165,7 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 | 게임 시스템·난이도·전투 AI (`system-design` / `difficulty-and-combat-ai`) | `skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-and-combat-ai.md` | `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md` |
 | 벤치마크·플레이어 근거·실험 | `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md` | `templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md` |
 | 게임 기획·아트·개발·AI·출시 근거 | `docs/knowledge/game-development/README.md` | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`, `templates/research/GAME_DEVELOPMENT_CASE_CARD.md` |
+| 프로젝트별 필요 이미지·시각 자산·UI 컴포넌트 선정 | `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate` | `templates/planning/ART_DIRECTION_BRIEF.md`, `templates/planning/GAME_UX_UI_SYSTEM.md` |
 | 게임 build/package/download/install/patch·font/texture/audio 자산 용량 최적화 | `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` | `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md`의 `build_size_and_asset_optimization` |
 | Steam·STOVE·Google Play 등급·설문·자산 권리·참조 독립 제작 | `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md` | `templates/project-operations/ASSET_RIGHTS_AND_PROVENANCE_RECORD.md`, `templates/project-operations/GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK.md` |
 | UI 설계·폴리싱·런타임 감사 | `skills/auditing-and-refining-ui-art/SKILL.md` | `templates/planning/GAME_UX_UI_SYSTEM.md`, `templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md` |

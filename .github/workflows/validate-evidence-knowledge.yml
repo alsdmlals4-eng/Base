@@ -32,6 +32,7 @@ on:
       - "tests/test_synthetic_tester_simulation_governance.py"
       - "tests/test_prompt_recipe_reference_contract.py"
       - "tests/test_pc_android_cross_platform_delivery.py"
+      - "tests/test_visual_requirement_gate.py"
       - ".github/workflows/validate-evidence-knowledge.yml"
   workflow_dispatch:
 
@@ -68,7 +69,8 @@ jobs:
               tests/test_human_validation_artifact_governance.py \
               tests/test_synthetic_tester_simulation_governance.py \
               tests/test_prompt_recipe_reference_contract.py \
-              tests/test_pc_android_cross_platform_delivery.py
+              tests/test_pc_android_cross_platform_delivery.py \
+              tests/test_visual_requirement_gate.py
             python -m unittest \
               tests/test_game_design_difficulty_workflow.py \
               tests/test_evidence_based_game_development_knowledge.py \
@@ -77,6 +79,7 @@ jobs:
               tests/test_synthetic_tester_simulation_governance.py \
               tests/test_prompt_recipe_reference_contract.py \
               tests/test_pc_android_cross_platform_delivery.py \
+              tests/test_visual_requirement_gate.py \
               -v
           } > evidence-knowledge-results.txt 2>&1
           status=$?
@@ -104,4 +107,5 @@ jobs:
             tests/test_synthetic_tester_simulation_governance.py
             tests/test_prompt_recipe_reference_contract.py
             tests/test_pc_android_cross_platform_delivery.py
+            tests/test_visual_requirement_gate.py
           if-no-files-found: error

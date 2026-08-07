@@ -34,6 +34,7 @@
 |---|---|---|
 | 외부 근거를 어떻게 찾고 판정·적용하는가? | `EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md` | Evidence Pack·개선 판정·검증 계획 |
 | 게임 코어·플레이어 경험·게임 필·보상·난이도를 어떻게 설계하는가? | `GAME_DESIGN_AND_PLAYER_EXPERIENCE_GUIDE.md` | 플레이어 약속·MDE 추적표·플레이테스트 계약 |
+| 프로젝트마다 어떤 이미지·시각 자산·UI 컴포넌트를 정말 만들어야 하는가? | `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate` | `requirement_id`·Delete Test·role·P0~P3·disposition·검증 |
 | 그림체·비주얼·캐릭터·환경·UI·애니메이션·에셋을 어떻게 기획하는가? | `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md` | Visual Pillar·Art Bible·Asset Specification |
 | 게임 다운로드·설치·런타임·패치 용량을 화질·음질·성능 저하 없이 어떻게 줄이는가? | `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` | 용량 breakdown·품질 등급·font/texture/audio profile·patch/delivery 증거 |
 | ChatGPT·Codex·외부 AI를 어떻게 안전하고 검증 가능하게 협업시키는가? | `AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md` | Prompt 계약·Context Pack·Evals·독립 검수 |
@@ -53,6 +54,7 @@
 | Windows+Android 적합성·공용 코어·입력/UI/lifecycle·출시 wave | `analyzing-and-refining-game-concepts` + 기존 기술·Vertical Slice·검증 Skill | PC·Android Delivery Guide·`templates/planning/PC_ANDROID_DELIVERY_PROFILE.md` |
 | 게임 build/package/download/patch·font/texture/audio 자산 최적화 | 기존 기획·아트·Vertical Slice·검증 Skill 조합 | `GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` + 프로젝트 Delivery Profile |
 | Games User Research 누락 감사 | `governing-game-user-research-coverage` | 연구 관련 Coverage와 Evidence 상태 |
+| 이미지·시각 자산·UI 컴포넌트 필요성·우선순위·제작 방식 선정 | 기존 Art/UX/asset evaluation Skill 조합 | Art Guide의 `Visual Requirement Gate`; 새 광역 Skill을 만들지 않음 |
 | 아트 방향·프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` | 아트 Guide·원출처·권리·승인 상태 |
 | 자산·플러그인 직접 채택과 참조 독립 제작 선택 | `evaluating-godot-assets-and-plugins-before-creation` | 플랫폼·자산 권리 Guide의 제작·도입 경로 |
 | 대표 경험·품질·제작 파이프라인 | `designing-vertical-slices` | 기획·아트·기술 Guide의 Quality Bar |
@@ -61,12 +63,14 @@
 | Skill 중복·과분할·학습 | `evolving-project-discipline-skills` | 반복 실패·Case·새 책임 경계 증거 |
 | 프로젝트 교훈의 Base 승격 | `managing-base-change-proposals` | 공용 원리와 프로젝트 고유값 분리 |
 
-합성 테스터 작업과 게임 용량 최적화 작업은 별도 광역 Skill을 만들지 않는다. 프로젝트 Registry가 선택한 기존 게임 디자인·아트·Vertical Slice·검증 책임을 조합한다.
+합성 테스터 작업, 게임 용량 최적화 작업, Visual Requirement Gate는 별도 광역 Skill을 만들지 않는다. 프로젝트 Registry가 선택한 기존 게임 디자인·아트·UX·자산 평가·Vertical Slice·검증 책임을 조합한다.
 
 ## 5. Template
 
 - 통합 조사 기록: `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`
 - 성공·실패·혼합 사례: `templates/research/GAME_DEVELOPMENT_CASE_CARD.md`
+- 시각 요구 선정·아트 방향: `templates/planning/ART_DIRECTION_BRIEF.md`
+- UX/UI requirement 소비·상태 계약: `templates/planning/GAME_UX_UI_SYSTEM.md`
 - PC·Android 공용 코어·플랫폼 적응·출시 wave·build size evidence: `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md`
 - 자산별 권리·출처·참조 독립 제작: `templates/project-operations/ASSET_RIGHTS_AND_PROVENANCE_RECORD.md`
 - 플랫폼 출시 등급·설문·권리 Coverage: `templates/project-operations/GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK.md`
@@ -90,7 +94,7 @@
 
 이 허브를 읽거나 문서를 작성한 것만으로 기획·구현·접근성·성능·출시가 검증된 것은 아니다. 합성 테스터 결과도 실제 사람 행동·재미·선호·조작감·접근성·성능을 검증하지 않는다. 등급·권리 Template도 법률 검토·플랫폼 제출·승인을 대신하지 않는다. PC·Android Profile도 실제 Windows build, Android 실기기, 모바일 UI·입력·중단 복구, 성능·발열, 상점 계정·테스트·심사 증거를 대신하지 않는다. 빌드 용량 Guide도 실제 프로젝트 build, store-served size, Steam patch preview, Android device, 사람의 시각·청각 품질 검증을 대신하지 않는다. 완료는 선택한 기존 Skill의 Output Contract와 실제 프로젝트 증거를 따른다.
 
-계약·라우팅·중복 Skill 방지·Learning Log 연결은 `tests/test_evidence_based_game_development_knowledge.py`, `tests/test_evidence_knowledge_workflow_contract.py`, `tests/test_pc_android_cross_platform_delivery.py`, `tests/test_game_build_size_asset_optimization.py`, `tests/test_platform_review_asset_rights_reference_production.py`, `tests/test_human_validation_artifact_governance.py`, `tests/test_synthetic_tester_simulation_governance.py`, `.github/workflows/validate-evidence-knowledge.yml`의 전용 GitHub Actions에서 검증한다. Workflow 파일 존재와 실제 실행 성공을 분리해 확인한다.
+계약·라우팅·중복 Skill 방지·Learning Log 연결은 `tests/test_evidence_based_game_development_knowledge.py`, `tests/test_evidence_knowledge_workflow_contract.py`, `tests/test_visual_requirement_gate.py`, `tests/test_pc_android_cross_platform_delivery.py`, `tests/test_game_build_size_asset_optimization.py`, `tests/test_platform_review_asset_rights_reference_production.py`, `tests/test_human_validation_artifact_governance.py`, `tests/test_synthetic_tester_simulation_governance.py`, `.github/workflows/validate-evidence-knowledge.yml`의 전용 GitHub Actions에서 검증한다. Workflow 파일 존재와 실제 실행 성공을 분리해 확인한다.
 
 ## 8. Cloud Run 게임 백엔드 Capability Pack
 

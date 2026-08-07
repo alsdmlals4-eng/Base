@@ -7,6 +7,8 @@ description: Use when designing art or UI image prompts, generating planning or 
 
 이 스킬은 생성·편집 전 프롬프트, GPT 이미지·목업 생성 단계, 기술 카드와 승인 전 시각 검수를 책임진다. 이미 구현된 Godot/Web UI의 실제 시각 품질 감사와 승인된 개선은 `auditing-and-refining-ui-art`를 사용한다.
 
+프로젝트용 이미지 후보의 **필요성·우선순위·재사용·제작 방식 선정**은 이 스킬이 새로 판단하지 않는다. `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate`가 먼저 소유하고, 이 스킬은 선정된 requirement를 실제 생성·편집·검수 계약으로 변환한다.
+
 ## Skill modes
 
 - `technique-card`: 재사용 가능한 아트·UI 기술과 프롬프트 패턴을 기록한다.
@@ -21,6 +23,7 @@ description: Use when designing art or UI image prompts, generating planning or 
 
 ## Required inputs
 
+- 프로젝트 자산 후보라면 `Visual Requirement Gate`의 `requirement_id`, role, priority, disposition, Delete Test, consumer, validation.
 - 자산의 사용 화면과 사용자·플레이어 경험.
 - 관련 세계관·핵심루프·인물·시스템·아트·UI 책임 원본과 Decision ID.
 - 원본 이미지 또는 캐릭터 디자인 카드.
@@ -30,16 +33,19 @@ description: Use when designing art or UI image prompts, generating planning or 
 - 사용할 모델·서비스·버전과 실제 확인 가능한 기능.
 - 프로젝트 Sheet 상태와 `71_이미지기획_생성목록`, `72_이미지검수_승인로그` 연결.
 
+사용자가 현재 대화에서 특정 이미지 한 장의 생성·편집을 명시적으로 요청했다면 그 요청을 현재 작업의 임시 requirement로 사용할 수 있다. 이 예외는 프로젝트 전체 자산 목록의 선정·승인이나 `ASSET_MANIFEST.yml` 승격을 자동으로 만들지 않는다.
+
 ## Process
 
-1. `planning-visualization`, `intermediate-visual-checkpoint`, `final-visual-candidate` 중 필요한 mode를 정한다.
-2. 결과물이 쓰일 화면과 가장 먼저 전달할 정보를 정한다.
-3. 원본에서 유지할 요소와 변경할 요소를 분리한다.
-4. Pinterest를 포함한 발견 레퍼런스는 원작자·원출처·라이선스·유사성을 확인하고 표면 복제를 금지한다.
-5. 프롬프트를 다음 모듈로 작성한다.
+1. 프로젝트 자산 작업이면 `Visual Requirement Gate`의 선정 결과를 확인한다. `DEFER/CUT/REUSE_SYSTEM/REUSE_PROJECT`를 이미지 생성으로 임의 변환하지 않고, 다량의 미선정 후보를 자동 추가하지 않는다.
+2. `planning-visualization`, `intermediate-visual-checkpoint`, `final-visual-candidate` 중 필요한 mode를 정한다.
+3. 결과물이 쓰일 화면과 가장 먼저 전달할 정보를 정한다.
+4. 원본에서 유지할 요소와 변경할 요소를 분리한다.
+5. Pinterest를 포함한 발견 레퍼런스는 원작자·원출처·라이선스·유사성을 확인하고 표면 복제를 금지한다.
+6. 프롬프트를 다음 모듈로 작성한다.
 
 ```text
-목적과 자산 역할
+requirement_id·목적과 자산 역할
 → 관련 정본·Decision·프로젝트 정체성 고정
 → 변경할 표정·포즈·상태
 → 구도와 정보 위계
@@ -50,13 +56,13 @@ description: Use when designing art or UI image prompts, generating planning or 
 → QA와 재생성 기준
 ```
 
-6. 짧은 제어어가 필요한 경우 자연어 설명 뒤에 코드·태그를 보조 어휘로 넣는다.
-7. 표정 편집은 FACS AU를 참고할 수 있지만 모델의 공식 명령 체계로 가정하지 않는다.
-8. 포스터는 일러스트, 정보 슬롯, 실제 타이포그래피를 분리해 수정 가능하게 만든다.
-9. 성공 사례뿐 아니라 실패 조건과 수정 프롬프트를 기록한다.
-10. 생성 뒤 `visual-qa-and-approval`을 실행하고 `templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md`에 기록한다.
-11. 승인된 Decision만 정본·GitHub·Sheet·Asset Ledger에 동기화한다.
-12. 모델·버전·입력 이미지·확인일이 달라지면 재검증한다.
+7. 짧은 제어어가 필요한 경우 자연어 설명 뒤에 코드·태그를 보조 어휘로 넣는다.
+8. 표정 편집은 FACS AU를 참고할 수 있지만 모델의 공식 명령 체계로 가정하지 않는다.
+9. 포스터는 일러스트, 정보 슬롯, 실제 타이포그래피를 분리해 수정 가능하게 만든다.
+10. 성공 사례뿐 아니라 실패 조건과 수정 프롬프트를 기록한다.
+11. 생성 뒤 `visual-qa-and-approval`을 실행하고 `templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md`에 기록한다.
+12. 승인된 Decision만 정본·GitHub·Sheet·Asset Ledger에 동기화한다.
+13. 모델·버전·입력 이미지·확인일이 달라지면 재검증한다.
 
 ## Intermediate visual checkpoint
 
@@ -127,6 +133,7 @@ reference_similarity_status: PASS | REVISION_REQUIRED | BLOCKED_UNVERIFIED | NOT
 
 ## Visual QA contract
 
+- 연결 `requirement_id`가 있다면 생성물의 역할·priority·consumer·validation이 선정 계약과 일치하는가.
 - 기획·세계관·캐릭터·시스템 정본과 일치하는가.
 - 핵심 경험과 세일즈포인트가 한눈에 전달되는가.
 - 실제 화면 크기, HUD·VFX·배경 위에서 읽히는가.
@@ -154,6 +161,7 @@ reference_similarity_status: PASS | REVISION_REQUIRED | BLOCKED_UNVERIFIED | NOT
 
 ## Output contract
 
+- 연결된 프로젝트 자산이면 `requirement_id`와 선정 근거.
 - 아트 기술 카드.
 - 기획 시각화 이미지·목업 또는 생성 불가 시 제작 브리프.
 - 최종 시각 후보 또는 생성 불가 시 제작 브리프.
@@ -169,6 +177,8 @@ reference_similarity_status: PASS | REVISION_REQUIRED | BLOCKED_UNVERIFIED | NOT
 
 ## Failure conditions
 
+- 프로젝트 자산 후보를 `Visual Requirement Gate` 선정 없이 관성적으로 대량 생성한다.
+- `DEFER/CUT/REUSE` 판정을 새 이미지 생성으로 임의 변경한다.
 - 작가명이나 작품명만으로 스타일을 지시한다.
 - 원본 정체성과 변경 범위를 분리하지 않는다.
 - 생성 이미지를 자동 최종 자산으로 사용한다.
@@ -189,6 +199,7 @@ reference_similarity_status: PASS | REVISION_REQUIRED | BLOCKED_UNVERIFIED | NOT
 4. 캐릭터 포스터는 키 컬러와 이름을 바꿔도 정보 위계와 인셋 구조가 재사용되는지 확인한다.
 5. 한국어 글자가 깨지면 이미지 전체를 재생성하지 않고 텍스트 없는 마스터와 편집 레이어로 분리한다.
 6. 참조 기반 후보가 원본의 식별 가능한 표현을 보존하면 `REVISION_REQUIRED` 또는 `BLOCKED_UNVERIFIED`로 되돌린다.
+7. 프로젝트의 장식 이미지 후보가 Delete Test를 통과하지 못하면 이미지 생성 대신 `DEFER/CUT`으로 유지한다.
 
 ## Quality gate
 

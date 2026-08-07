@@ -2,6 +2,7 @@
 
 > 책임: 플레이어 경험·화면 흐름·정보 구조·상호작용·상태·접근성·Godot UI 계약
 > 공용 기준: Base `auditing-and-refining-ui-art`
+> 시각 요소 선정 기준: `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate`
 > 상태: `DRAFT | APPROVED | IMPLEMENTED | VALIDATED | SUPERSEDED`
 
 ## 1. 프로젝트 UX 약속
@@ -128,6 +129,21 @@ validation:
 ```
 
 ## 9. 컴포넌트와 상태
+
+### Visual Requirement Gate
+
+새 컴포넌트·아이콘·장식·이미지 슬롯을 추가하기 전에 Art Guide의 `Visual Requirement Gate`를 통과한다. UI 문서는 전역 자산 필요성 규칙을 복제하지 않고, 화면에서 실제로 소비하는 requirement의 상태·입력·정보 책임만 상세화한다.
+
+| requirement_id | 컴포넌트/시각요소 | why_needed | delete_test | reuse_candidate | priority | disposition | 소비 화면·행동 | 검증 |
+|---|---|---|---|---|---|---|---|---|
+| | | | | | P0/P1/P2/P3 | REUSE/ADAPT/SOURCE/GENERATE/CREATE/DEFER/CUT | | |
+
+- `delete_test`가 핵심 흐름·판단·접근성 손실을 설명하지 못하면 신규 UI 추가보다 `DEFER/CUT`을 우선 검토한다.
+- `reuse_candidate`는 현재 Theme·Control·Container·재사용 Scene·프로젝트 컴포넌트를 먼저 확인한다.
+- `priority`는 기존 `P0 BLOCKER / P1 CLARITY / P2 CONSISTENCY / P3 DELIGHT`와 동일한 언어를 사용한다.
+- `disposition`이 `SOURCE_EXISTING`이면 기존 자산/플러그인 평가 경로, 이미지 `GENERATE_EXPLORATION`이면 아트 생성 경로로 넘긴다.
+
+### 컴포넌트 계약
 
 | 컴포넌트 | 데이터 입력 | 사용자 의도 출력 | 상태 | Theme variation | 포커스/입력 | 폴백 |
 |---|---|---|---|---|---|---|
