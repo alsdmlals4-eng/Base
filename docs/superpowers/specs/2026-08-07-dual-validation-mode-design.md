@@ -1,7 +1,7 @@
 # Dual CI Validation Mode Design
 
-**Status:** APPROVED FOR IMPLEMENTATION  
-**Date:** 2026-08-07  
+**Status:** APPROVED FOR IMPLEMENTATION
+**Date:** 2026-08-07
 **Baseline:** `main@4f98f968a377f7b6a11aafa4fc94d11bddbebedc`
 
 ## Goal
@@ -17,6 +17,7 @@ Base와 Base를 적용한 공개 프로젝트에서 검증 신뢰도를 낮추�
 
 - `REUSE`: `.github/workflows/validate-game-project-operating-system.yml`의 단일 `ci-gate` Required Check.
 - `REUSE`: `tools/run_local_validation.py`의 전체 로컬 검증 계약과 owned temporary-directory 안전장치.
+- `REUSE`: `tests/test_local_validation.py`의 기존 회귀 집계 경로. 새 fallback 테스트를 이 집계기에 흡수하면 canonical workflow 수정 없이 `ubuntu-contract`가 실행한다.
 - `ABSORB`: `skills/reviewing-and-validating-project-changes`의 `ci-cost-optimization` 모드에 두 실행 모드와 fallback 판정 절차를 흡수한다.
 - `REFACTOR`: `docs/CI_EXECUTION_COST_POLICY.md`의 “Actions 사용 불가 = 항상 UNVERIFIED” 계약을, 동등한 로컬 증거를 만들 수 있는 제한적 fallback과 그렇지 못한 blocked 상태로 분리한다.
 - `NO NEW BROAD SKILL`: 새 광역 Skill/Mode는 만들지 않는다.
@@ -107,9 +108,9 @@ python tools/run_local_ci_fallback.py \
 - `docs/GITHUB_PRO_OPERATING_POLICY.md`
 - `templates/project-operations/github/GITHUB_USAGE_BUDGET.md`
 - `skills/reviewing-and-validating-project-changes/SKILL.md`
-- `.github/workflows/validate-game-project-operating-system.yml`의 새 tool/test 자기검증 목록
+- `tests/test_local_validation.py`의 기존 CI 회귀 집계 경로
 
-`templates/project-operations/github/rulesets/solo-main-safety.json`과 실제 Base Ruleset은 `ci-gate`를 그대로 유지하므로 변경하지 않는다.
+`.github/workflows/validate-game-project-operating-system.yml`은 이미 generic `tools/*`·`tests/*`를 코드 변경으로 분류하고 `tests/test_local_validation.py`를 `ubuntu-contract`에서 실행하므로 구조 변경하지 않는다. `templates/project-operations/github/rulesets/solo-main-safety.json`과 실제 Base Ruleset도 `ci-gate`를 그대로 유지하므로 변경하지 않는다.
 
 열린 PR #200의 one-click handoff(`Fetch origin → Pull origin → reopen/play`)는 중복 구현하지 않는다. 이 변경은 PR 검증/병합 경로만 보강하며, #200의 사용자 인계 흐름과 충돌하지 않아야 한다.
 
@@ -121,6 +122,7 @@ python tools/run_local_ci_fallback.py \
 - dirty/stale/SHA-mismatch/test-failure/API-failure에서 fail-closed 한다.
 - local validation 성공 후 exact SHA에만 `ci-gate=success`를 발행한다.
 - Ruleset 이름과 Required Check 이름은 변경하지 않는다.
+- canonical workflow topology와 `ci-gate` job은 변경하지 않는다.
 - 새 broad Skill/Mode/Schema는 추가하지 않는다.
 - 테스트는 TDD로 먼저 실패를 관찰하고 최소 구현 후 통과시킨다.
 - PR에서 실제 GitHub Actions 결과와 Required Check 상태를 확인한다.
