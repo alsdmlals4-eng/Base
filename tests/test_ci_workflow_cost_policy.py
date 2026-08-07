@@ -41,10 +41,16 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
         ):
             self.assertIn(term, self.text)
 
-    def test_workflow_cancels_stale_pr_runs(self) -> None:
+    def test_workflow_cancels_stale_pr_and_main_push_runs(self) -> None:
         self.assertIn("concurrency:", self.text)
-        self.assertIn("github.event.pull_request.number || github.ref", self.text)
-        self.assertIn("cancel-in-progress:", self.text)
+        self.assertIn(
+            "group: ci-${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}",
+            self.text,
+        )
+        self.assertIn(
+            "cancel-in-progress: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}",
+            self.text,
+        )
 
     def test_workflow_classifies_change_risk(self) -> None:
         for term in (
@@ -74,6 +80,23 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
         )
         self.assertIsNotNone(windows_match)
         self.assertIn("if: needs.classify-changes.outputs.run_windows == 'true'", windows_match.group("body"))
+
+    def test_publication_validation_is_bounded_and_install_steps_are_diagnostic(self) -> None:
+        publication_match = re.search(
+            r"publication-validation:\n(?P<body>.*?)(?=\n  [a-zA-Z0-9_-]+:|\Z)",
+            self.text,
+            flags=re.DOTALL,
+        )
+        self.assertIsNotNone(publication_match)
+        body = publication_match.group("body")
+        self.assertIn("timeout-minutes: 15", body)
+        for step_name in (
+            "Install system publication dependencies",
+            "Install Python publication dependencies",
+            "Install Node publication dependencies",
+        ):
+            self.assertIn(step_name, body)
+        self.assertNotIn("- name: Install publication dependencies", body)
 
     def test_runtime_readiness_and_local_runner_are_validated_at_their_risk_tiers(self) -> None:
         publication_risk = re.search(
