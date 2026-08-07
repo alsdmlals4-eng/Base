@@ -6,7 +6,7 @@
 
 **Original baseline:** `main@4f98f968a377f7b6a11aafa4fc94d11bddbebedc`
 
-**Final verification base:** `main@8a1b868346b5d1cbe50d458e975fca277e42b2a5`
+**Final verification base:** `main@8cb2dd1375dea6bc252eb9f21fde40d389dc2d81`
 
 **Branch:** `agent/dual-validation-gate`
 
@@ -24,7 +24,7 @@
 - Reuse `tools/run_local_validation.py`; do not duplicate its validation matrix.
 - Base default fallback eligibility is documentation and limited canonical contract files. `CODE_OR_ENGINE` and `CI_TOOLCHAIN_HIGH_RISK` require remote CI unless a repository-specific equivalent local contract exists.
 - No new broad Skill, Mode, Schema, Ruleset, Required Check identity, or canonical workflow topology.
-- PR #200 one-click operator handoff is now merged on latest main and is a current compatible consumer; do not duplicate or regress it.
+- Existing one-click operator handoff and HiGodot/GUT/Hera contracts on latest main are compatible consumers; do not duplicate or regress them.
 
 ---
 
@@ -87,7 +87,7 @@
 - [x] Import `LocalCiFallbackTests` into `tests/test_local_validation.py` so the existing canonical path executes the new suite.
 - [x] Keep `.github/workflows/validate-game-project-operating-system.yml` unchanged.
 - [x] Keep final job name and Required Check topology unchanged: `ci-gate`.
-- [x] Re-read latest `main@8a1b868346b5d1cbe50d458e975fca277e42b2a5`; PR #200/#210 added operator-handoff validation to the canonical workflow without changing the final `ci-gate` topology, so the aggregator strategy remains compatible.
+- [x] Re-read current main through `main@8cb2dd1375dea6bc252eb9f21fde40d389dc2d81`; newer operator-handoff and HiGodot/GUT/Hera work did not change this PR's `ci-gate` topology.
 
 This is an Existing Solution First refinement over the initial plan. Editing workflow YAML merely to enumerate the new test would duplicate a capability the existing aggregator already provides.
 
@@ -126,21 +126,44 @@ This is an Existing Solution First refinement over the initial plan. Editing wor
 - [x] **Ruleset drift:** no Ruleset/Required Check change is part of this PR.
 - [x] **Duplicate Skill/validator:** no new broad Skill; existing local validator reused.
 - [x] **Public/private billing drift:** active current project policy/template now treats current repositories as public, while historical plans/logs remain historical evidence.
-- [x] **Concurrent main drift:** latest main advanced to `8a1b868346b5d1cbe50d458e975fca277e42b2a5` with PR #200/#210; re-read affected workflow/tests and found no content overlap in the 12 files changed by this work.
+- [x] **Runtime temp pollution:** Windows Mermaid wrapper is generated only under ignored `.tmp/mermaid-runtime/`; `.gitignore` owns `.tmp/`.
+- [x] **Windows Chrome profile collision:** discovered by real `REMOTE_CI` instead of being bypassed. Each Windows Mermaid render now receives `headless: true` plus a unique `userDataDir` through `--puppeteerConfigFile`.
+- [x] **Concurrent main drift:** latest main advanced to `8cb2dd1375dea6bc252eb9f21fde40d389dc2d81`; no direct content overlap is present in the current diff, but final branch synchronization is still required.
 
-## Task 6 — Final exact-head verification
+## Task 6 — Windows regression TDD and repair
 
-- [x] Detect that main advanced during the task and invalidate the older exact-head verification attempt.
-- [ ] Integrate `main@8a1b868346b5d1cbe50d458e975fca277e42b2a5` into the work branch while preserving only this work's 12-file diff.
+**Files:**
+
+- `tools/publication_v3.py`
+- `tests/test_design_document_generation.py`
+
+- [x] Observe real Windows failure in `platform-smoke-windows`: Mermaid SVG→PNG second render hit `The browser is already running ... Use a different userDataDir`.
+- [x] Refuse `LOCAL_FALLBACK`; failed remote validation must remain blocking.
+- [x] Add RED regression contract before production repair: run `31184301403`.
+- [x] Reuse the existing Mermaid CLI and Chrome instead of changing dependencies or disabling Windows smoke.
+- [x] On Windows only, wrap the existing mmdc command with repository-owned runtime helper under `.tmp/mermaid-runtime/`.
+- [x] Preserve `--version` passthrough for publication readiness probes.
+- [x] For render invocations, create Puppeteer config with `headless: true`, exact configured Chrome executable, and an isolated temporary `userDataDir`.
+- [x] Keep non-Windows mmdc path unchanged.
+- [x] Verify the real Windows Mermaid integration test and static wrapper contract pass in canonical run `31185856245`.
+- [x] Verify the same run passes `docs-validation`, `ubuntu-contract`, `publication-validation`, `platform-smoke-windows`, and final `ci-gate`.
+
+## Task 7 — Final exact-head verification
+
+- [x] Detect repeated main advances during the task and invalidate older exact-head claims.
+- [ ] Integrate latest `main@8cb2dd1375dea6bc252eb9f21fde40d389dc2d81` into the work branch while preserving only this work's intended diff.
+- [ ] Recheck latest main immediately before final synchronization in case it advanced again.
 - [ ] Wait for the refreshed PR head's canonical public GitHub Actions run.
 - [ ] Verify reference freshness passes.
 - [ ] Verify docs-validation passes.
 - [ ] Verify ubuntu-contract passes, including all fallback tests.
-- [ ] Verify required publication/Windows smoke for this high-risk tool change passes.
+- [ ] Verify publication-validation passes.
+- [ ] Verify Windows smoke passes, including the real Mermaid SVG→PNG render.
 - [ ] Verify final `ci-gate` passes on the exact final validation target.
 - [ ] Compare latest main to final branch and inspect every changed file for unexpected scope.
 - [ ] Re-run repository-wide active-reference searches for `ci-gate`, `BLOCKED_BY_GITHUB_ACTIONS`, Actions unavailable, and stale public/private assumptions.
-- [ ] Update Draft PR #208 body with RED/GREEN evidence, residual risks, rollback, latest-main refresh, and merged PR #200 compatibility.
+- [ ] Recheck review threads/reviews.
+- [ ] Update Draft PR #208 body with RED/GREEN evidence, residual risks, rollback, latest-main refresh, and compatible merged contracts.
 - [ ] Keep PR #208 Draft and do not merge without separate authorization.
 
 ## Rollback
@@ -149,5 +172,6 @@ Rollback is code-only and does not require Ruleset changes:
 
 1. remove `tools/run_local_ci_fallback.py` and its tests/aggregator import;
 2. restore the previous CI policy/Skill/budget language;
-3. retain the existing `ci-gate` Required Check and canonical workflow;
-4. return Actions-unavailable state to `BLOCKED_BY_GITHUB_ACTIONS / UNVERIFIED`.
+3. remove the Windows Mermaid runtime wrapper if reverting the independently discovered publication fix;
+4. retain the existing `ci-gate` Required Check and canonical workflow;
+5. return Actions-unavailable state to `BLOCKED_BY_GITHUB_ACTIONS / UNVERIFIED`.
