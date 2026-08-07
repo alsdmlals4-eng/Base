@@ -6,7 +6,7 @@
 
 **Original baseline:** `main@4f98f968a377f7b6a11aafa4fc94d11bddbebedc`
 
-**Final verification base:** `main@8cb2dd1375dea6bc252eb9f21fde40d389dc2d81`
+**Final verification base:** `main@ec6c45b35e45e4d076dc1b35526c68ad76127c7d`
 
 **Branch:** `agent/dual-validation-gate`
 
@@ -24,7 +24,7 @@
 - Reuse `tools/run_local_validation.py`; do not duplicate its validation matrix.
 - Base default fallback eligibility is documentation and limited canonical contract files. `CODE_OR_ENGINE` and `CI_TOOLCHAIN_HIGH_RISK` require remote CI unless a repository-specific equivalent local contract exists.
 - No new broad Skill, Mode, Schema, Ruleset, Required Check identity, or canonical workflow topology.
-- Existing one-click operator handoff and HiGodot/GUT/Hera contracts on latest main are compatible consumers; do not duplicate or regress them.
+- Existing one-click operator handoff, HiGodot/GUT/Hera, and publication CI hardening contracts on latest main are compatible consumers; do not duplicate or regress them.
 
 ---
 
@@ -85,11 +85,11 @@
 - [x] Confirm canonical workflow already classifies generic `tools/*` and `tests/*` changes at code/high-risk tiers.
 - [x] Confirm `ubuntu-contract` already runs `tests/test_local_validation.py`.
 - [x] Import `LocalCiFallbackTests` into `tests/test_local_validation.py` so the existing canonical path executes the new suite.
-- [x] Keep `.github/workflows/validate-game-project-operating-system.yml` unchanged.
+- [x] Keep `.github/workflows/validate-game-project-operating-system.yml` unchanged by this PR's dual-mode implementation.
 - [x] Keep final job name and Required Check topology unchanged: `ci-gate`.
-- [x] Re-read current main through `main@8cb2dd1375dea6bc252eb9f21fde40d389dc2d81`; newer operator-handoff and HiGodot/GUT/Hera work did not change this PR's `ci-gate` topology.
+- [x] Re-read and integrate current `main@ec6c45b35e45e4d076dc1b35526c68ad76127c7d`; one overlapping CI-cost-policy test file was 3-way reconciled so latest main's push concurrency and publication-timeout hardening remain intact alongside the dual-mode assertions.
 
-This is an Existing Solution First refinement over the initial plan. Editing workflow YAML merely to enumerate the new test would duplicate a capability the existing aggregator already provides.
+This is an Existing Solution First refinement over the initial plan. Editing workflow YAML merely to enumerate the new fallback test would duplicate a capability the existing aggregator already provides.
 
 ## Task 4 — Synchronize policy, Skill, budget, and repository assumptions
 
@@ -128,7 +128,8 @@ This is an Existing Solution First refinement over the initial plan. Editing wor
 - [x] **Public/private billing drift:** active current project policy/template now treats current repositories as public, while historical plans/logs remain historical evidence.
 - [x] **Runtime temp pollution:** Windows Mermaid wrapper is generated only under ignored `.tmp/mermaid-runtime/`; `.gitignore` owns `.tmp/`.
 - [x] **Windows Chrome profile collision:** discovered by real `REMOTE_CI` instead of being bypassed. Each Windows Mermaid render now receives `headless: true` plus a unique `userDataDir` through `--puppeteerConfigFile`.
-- [x] **Concurrent main drift:** latest main advanced to `8cb2dd1375dea6bc252eb9f21fde40d389dc2d81`; no direct content overlap is present in the current diff, but final branch synchronization is still required.
+- [x] **Concurrent main drift:** latest main was synchronized through `ec6c45b35e45e4d076dc1b35526c68ad76127c7d`; final compare reported `behind_by: 0` with exactly 14 intended changed files before the final documentation evidence refresh.
+- [x] **External dependency outage:** first Windows attempt in run `31188422402` failed because Document Foundation did not serve the LibreOffice MSI. No fallback was used; the same `REMOTE_CI` job was rerun and the dependency installation plus real Windows smoke succeeded.
 
 ## Task 6 — Windows regression TDD and repair
 
@@ -151,20 +152,25 @@ This is an Existing Solution First refinement over the initial plan. Editing wor
 ## Task 7 — Final exact-head verification
 
 - [x] Detect repeated main advances during the task and invalidate older exact-head claims.
-- [ ] Integrate latest `main@8cb2dd1375dea6bc252eb9f21fde40d389dc2d81` into the work branch while preserving only this work's intended diff.
-- [ ] Recheck latest main immediately before final synchronization in case it advanced again.
-- [ ] Wait for the refreshed PR head's canonical public GitHub Actions run.
-- [ ] Verify reference freshness passes.
-- [ ] Verify docs-validation passes.
-- [ ] Verify ubuntu-contract passes, including all fallback tests.
-- [ ] Verify publication-validation passes.
-- [ ] Verify Windows smoke passes, including the real Mermaid SVG→PNG render.
-- [ ] Verify final `ci-gate` passes on the exact final validation target.
-- [ ] Compare latest main to final branch and inspect every changed file for unexpected scope.
-- [ ] Re-run repository-wide active-reference searches for `ci-gate`, `BLOCKED_BY_GITHUB_ACTIONS`, Actions unavailable, and stale public/private assumptions.
-- [ ] Recheck review threads/reviews.
-- [ ] Update Draft PR #208 body with RED/GREEN evidence, residual risks, rollback, latest-main refresh, and compatible merged contracts.
-- [ ] Keep PR #208 Draft and do not merge without separate authorization.
+- [x] Integrate latest `main@ec6c45b35e45e4d076dc1b35526c68ad76127c7d` into the work branch while preserving only this work's intended diff.
+- [x] Recheck latest main immediately before final synchronization; it remained `ec6c45b35e45e4d076dc1b35526c68ad76127c7d`.
+- [x] Run canonical public GitHub Actions on the synchronized code-bearing head in `REMOTE_CI`: run `31188422402`.
+- [x] Verify reference freshness passes.
+- [x] Verify docs-validation passes.
+- [x] Verify ubuntu-contract passes, including all fallback tests.
+- [x] Verify publication-validation passes.
+- [x] Verify Windows smoke passes, including the real Mermaid SVG→PNG render. The first attempt hit an external LibreOffice download outage; the same remote job rerun passed.
+- [x] Verify final `ci-gate` passes on the synchronized code-bearing validation target.
+- [x] Compare latest main to synchronized branch: `behind_by: 0`, exactly 14 intended changed files before final evidence-doc refresh.
+- [x] Reconcile the only overlapping latest-main file, `tests/test_ci_workflow_cost_policy.py`, preserving both current main hardening and dual-mode assertions.
+- [x] Recheck active policy/Skill/template references through the canonical reference-freshness gate.
+- [x] Recheck review threads/reviews before final PR handoff.
+- [x] Update Draft PR #208 body with RED/GREEN evidence, residual risks, rollback, latest-main refresh, and compatible merged contracts.
+- [x] Keep PR #208 Draft and do not merge without separate authorization.
+
+### Final documentation refresh rule
+
+This plan/spec evidence refresh is itself a new PR head. Completion is declared only after that documentation-refresh head also passes the canonical `REMOTE_CI` required gate. The final PR body records that last exact-head run so the document does not require a self-referential commit SHA.
 
 ## Rollback
 
