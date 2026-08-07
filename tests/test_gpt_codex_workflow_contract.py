@@ -51,6 +51,33 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             self.assertIn("추가 확인·재승인·병합 승인 요청 없이", text)
         self.assertIn("명시적 승인이 완료된 항목", policy)
 
+    def test_machine_registry_routes_on_demand_codex_handoff(self) -> None:
+        registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
+        entry = next(
+            item
+            for item in registry["skills"]
+            if item["skill_id"] == "maintaining-project-context-and-handoff"
+        )
+        for term in (
+            "on-demand-codex-handoff",
+            "codex-handoff",
+            "codex-work-spec",
+        ):
+            self.assertIn(term, entry["trigger_tags"])
+        joined_use = "\n".join(entry["use_when"])
+        joined_review = "\n".join(entry["review_triggers"])
+        self.assertIn("USER_REQUESTED_CODEX_HANDOFF", joined_use)
+        self.assertIn("실제 저장소·프로젝트·Godot 상태", joined_use)
+        self.assertIn("불필요한 Codex Plan 강제", joined_review)
+        self.assertIn("승인 완료 항목 재승인 요구", joined_review)
+        self.assertEqual(
+            entry["learning_log"],
+            "skills/maintaining-project-context-and-handoff/LEARNING_LOG.md",
+        )
+
+        generated = (ROOT / "docs/generated/BASE_ACTIVE_SKILLS.md").read_text(encoding="utf-8")
+        self.assertIn("on-demand-codex-handoff", generated)
+
     def test_handoff_skill_has_implementation_package_mode(self) -> None:
         text = (ROOT / "skills/maintaining-project-context-and-handoff/SKILL.md").read_text(encoding="utf-8")
         for term in (

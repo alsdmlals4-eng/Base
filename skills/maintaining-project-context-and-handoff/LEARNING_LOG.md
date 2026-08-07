@@ -29,3 +29,9 @@
 ### Reuse boundary
 
 새 Skill은 독립 입력·산출물·승인 권한이 생기고 기존 Handoff 책임에 넣을 때 경계가 무너지는 경우에만 검토한다. 현재는 같은 인계 생명주기의 mode 차이이므로 기존 Skill 흡수가 더 적합하다.
+
+## 2026-08-08 — Machine routing sync
+
+- Post-merge audit found that the machine Registry still described the superseded mandatory Codex Plan flow.
+- Registry triggers now discover on-demand Codex handoff and the generated active-skill view is rebuilt from the same machine source.
+- This closes the policy → Skill → Registry → generated-view propagation gap.
