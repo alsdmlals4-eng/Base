@@ -17,6 +17,11 @@ from tests.test_vertical_slice_v6_contract import VerticalSliceV6ContractTests
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github/workflows/validate-game-project-operating-system.yml"
 PROMPT_WORKFLOW = ROOT / ".github/workflows/validate-integrated-vertical-slice-prompt.yml"
+CI_POLICY = ROOT / "docs/CI_EXECUTION_COST_POLICY.md"
+GITHUB_POLICY = ROOT / "docs/GITHUB_PRO_OPERATING_POLICY.md"
+USAGE_BUDGET = ROOT / "templates/project-operations/github/GITHUB_USAGE_BUDGET.md"
+VALIDATION_SKILL = ROOT / "skills/reviewing-and-validating-project-changes/SKILL.md"
+LOCAL_VALIDATION_TEST = ROOT / "tests/test_local_validation.py"
 
 
 class CiWorkflowCostPolicyTests(unittest.TestCase):
@@ -24,6 +29,11 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.text = WORKFLOW.read_text(encoding="utf-8")
         cls.prompt_text = PROMPT_WORKFLOW.read_text(encoding="utf-8")
+        cls.ci_policy = CI_POLICY.read_text(encoding="utf-8")
+        cls.github_policy = GITHUB_POLICY.read_text(encoding="utf-8")
+        cls.usage_budget = USAGE_BUDGET.read_text(encoding="utf-8")
+        cls.validation_skill = VALIDATION_SKILL.read_text(encoding="utf-8")
+        cls.local_validation_test = LOCAL_VALIDATION_TEST.read_text(encoding="utf-8")
         cls.gate_evaluator = (
             ROOT / "tools/evaluate_ci_required_gate.py"
         ).read_text(encoding="utf-8")
@@ -122,13 +132,28 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
             r"if \(\$LASTEXITCODE -ne 0\) \{ exit \$LASTEXITCODE \}",
         )
 
-    def test_local_ci_fallback_is_part_of_ci_contract(self) -> None:
-        for term in (
-            "tools/run_local_ci_fallback.py",
-            "tests/test_local_ci_fallback.py",
-            "tests.test_local_ci_fallback",
-        ):
-            self.assertIn(term, self.text)
+    def test_local_ci_fallback_is_aggregated_into_existing_ci_contract(self) -> None:
+        self.assertIn("tests/test_local_validation.py", self.text)
+        self.assertIn("from tests.test_local_ci_fallback import", self.local_validation_test)
+        self.assertIn("LocalCiFallbackTests as _LocalCiFallbackTests", self.local_validation_test)
+
+    def test_dual_mode_policy_is_fail_closed(self) -> None:
+        for text in (self.ci_policy, self.validation_skill):
+            self.assertIn("REMOTE_CI", text)
+            self.assertIn("LOCAL_FALLBACK", text)
+            self.assertIn("ci-gate Check Run", text)
+            self.assertIn("tools/run_local_ci_fallback.py", text)
+        self.assertIn("테스트 실패", self.ci_policy)
+        self.assertIn("fallback으로 전환하지 않는다", self.ci_policy)
+        self.assertIn("BLOCKED_BY_GITHUB_ACTIONS", self.ci_policy)
+        self.assertIn("UNVERIFIED", self.ci_policy)
+
+    def test_public_repository_budget_does_not_select_fallback(self) -> None:
+        for text in (self.github_policy, self.usage_budget):
+            self.assertIn("public", text.lower())
+            self.assertIn("standard GitHub-hosted", text)
+            self.assertIn("LOCAL_FALLBACK", text)
+        self.assertNotIn("| omenward | private |", self.usage_budget)
 
     def test_docs_job_does_not_install_heavy_dependencies(self) -> None:
         docs_match = re.search(
