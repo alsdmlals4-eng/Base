@@ -92,6 +92,9 @@ class LocalCiFallbackTests(unittest.TestCase):
             "if '/pulls/' in path and method == 'GET':\n"
             "    print(json.dumps(scenario['pr']))\n"
             "    raise SystemExit(0)\n"
+            "if '/actions/workflows/' in path and '/runs?' in path and method == 'GET':\n"
+            "    print(json.dumps({'workflow_runs': scenario.get('workflow_runs', [])}))\n"
+            "    raise SystemExit(0)\n"
             "if path.endswith('/check-runs') and method == 'GET':\n"
             "    sha = path.split('/commits/', 1)[1].split('/check-runs', 1)[0]\n"
             "    state = json.loads(state_path.read_text(encoding='utf-8')) if state_path.exists() else {}\n"
@@ -117,6 +120,7 @@ class LocalCiFallbackTests(unittest.TestCase):
         base_ref: str = "main",
         checks: dict[str, list[dict[str, object]]] | None = None,
         race_sha: str | None = None,
+        workflow_runs: list[dict[str, object]] | None = None,
     ) -> None:
         payload = {
             "pr": {
@@ -126,6 +130,7 @@ class LocalCiFallbackTests(unittest.TestCase):
                 "merge_commit_sha": self.merge_sha,
             },
             "checks": checks or {},
+            "workflow_runs": workflow_runs or [],
         }
         if race_sha is not None:
             payload["race_sha"] = race_sha
@@ -148,13 +153,18 @@ class LocalCiFallbackTests(unittest.TestCase):
         env.update(extra)
         return env
 
-    def run_fallback(self, **env_overrides: str) -> int:
+    def run_fallback(
+        self,
+        *,
+        trusted_history_commit: str | None = None,
+        **env_overrides: str,
+    ) -> int:
         return fallback.run_local_fallback(
             self.work,
             "alsdmlals4-eng/Base",
             1,
             "main",
-            self.base_sha,
+            trusted_history_commit or self.base_sha,
             sys.executable,
             environment=self.environment(**env_overrides),
             gh_command=(sys.executable, str(self.fake_gh)),
@@ -203,6 +213,21 @@ class LocalCiFallbackTests(unittest.TestCase):
         self.write_scenario(checks={self.merge_sha: [{"name": "ci-gate", "status": "queued", "conclusion": None}]})
         with self.assertRaisesRegex(RuntimeError, "ci-gate Check Run already exists"):
             self.run_fallback()
+        self.assert_no_status_post()
+
+    def test_refuses_when_remote_ci_workflow_run_exists(self) -> None:
+        self.write_scenario(
+            workflow_runs=[
+                {"id": 11, "status": "in_progress", "conclusion": None}
+            ]
+        )
+        with self.assertRaisesRegex(RuntimeError, "REMOTE_CI workflow run already exists"):
+            self.run_fallback()
+        self.assert_no_status_post()
+
+    def test_refuses_untrusted_history_commit_that_is_not_current_base(self) -> None:
+        with self.assertRaisesRegex(RuntimeError, "trusted history commit must equal origin/main"):
+            self.run_fallback(trusted_history_commit="0" * 40)
         self.assert_no_status_post()
 
     def test_validation_failure_never_publishes_success_status(self) -> None:
