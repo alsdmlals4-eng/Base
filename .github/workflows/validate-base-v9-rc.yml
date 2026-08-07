@@ -95,6 +95,7 @@ jobs:
             tests.test_base_v9_4_3_compatibility_release \
             tests.test_higodot_single_authority_policy \
             tests.test_godot_addon_utilization_policy \
+            tests.test_godot_higodot_gut_hera_toolchain \
             tests.test_base_shared_skill_routes \
             -v
 
