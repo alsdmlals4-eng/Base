@@ -88,7 +88,7 @@ Base START_HERE
 → 실행 증거·Learning Log
 ```
 
-새 광역 Skill을 만들지 않는다. 상위 흐름은 `managing-project-intake-and-work-contract`, 분야 구현은 trigger가 일치하는 주 책임 Skill 하나, 비판 검증은 `running-adversarial-review-and-refinement`, 실제 변경 증거는 `reviewing-and-validating-project-changes`가 책임진다.
+새 Skill은 기존 owner의 Skill Mode·reference로 책임을 보존할 수 있으면 만들지 않는다. **독립 입력·산출물·권한·검증 경계**가 분명하고 기존 owner에 흡수하면 책임이 깨질 때만 Existing Solution First와 승인 절차를 거쳐 **새 Skill을 만들 수 있다**. 상위 흐름은 `managing-project-intake-and-work-contract`, 분야 구현은 trigger가 일치하는 주 책임 Skill 하나, 비판 검증은 `running-adversarial-review-and-refinement`, 실제 변경 증거는 `reviewing-and-validating-project-changes`가 책임진다.
 
 ### 5. Active Skill Registry View
 
@@ -149,7 +149,7 @@ UX/UI design, 폴리싱, and runtime-result audit use `auditing-and-refining-ui-
 | 운영체계 신규 설치·기존 감사·구형본 정리·승인된 마이그레이션·Health Review | `managing-game-project-operating-system` |
 | 기획 책임 원본 작성·구조 변경·발행·검수 | `managing-design-documents` |
 | 프로젝트 스킬 생성·통합·학습 | `evolving-project-discipline-skills` |
-| 현재 상태·다음 작업·위험 압축 | `maintaining-project-context-and-handoff` |
+| 현재 상태·다음 작업·위험 압축·사용자 요청 기반 Codex 실행 명세 | `maintaining-project-context-and-handoff` |
 | 핵심 컨셉·DDD·벤치마크·플레이어 반응·플레이테스트·PoC·재조정 | `analyzing-and-refining-game-concepts` |
 | 대표 플레이 구간·목표 품질·실제 플레이·제작 파이프라인 검증 | `designing-vertical-slices` |
 | 게임 개발일지·Shorts·기능 공개·출시 홍보 영상의 실제 빌드 기반 대본·샷·패키징·게시 Gate·제한적 Analytics | `producing-game-development-youtube-videos` |
