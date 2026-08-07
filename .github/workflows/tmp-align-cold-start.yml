@@ -1,0 +1,69 @@
+name: Temporary Align Cold Start
+
+on:
+  push:
+    branches:
+      - agent/align-cold-start-on-demand-handoff
+
+permissions:
+  contents: write
+
+jobs:
+  align:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/align-cold-start-on-demand-handoff
+
+      - name: Align cold-start documentation
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          start = Path('START_HERE.md')
+          text = start.read_text(encoding='utf-8')
+          anchor = '| 현재 상태·다음 작업·Handoff | `maintaining-project-context-and-handoff` | `skills/maintaining-project-context-and-handoff/SKILL.md` |'
+          addition = anchor + '\n| Codex 작업 명세·전환 | `maintaining-project-context-and-handoff: on-demand-codex-handoff` | `docs/GPT_CODEX_WORKFLOW_POLICY.md` + `skills/maintaining-project-context-and-handoff/SKILL.md` |'
+          if anchor not in text:
+              raise SystemExit('START_HERE anchor missing')
+          if 'Codex 작업 명세·전환' not in text:
+              text = text.replace(anchor, addition, 1)
+          start.write_text(text, encoding='utf-8')
+
+          docs_map = Path('docs/DOCUMENTATION_MAP.md')
+          text = docs_map.read_text(encoding='utf-8')
+          old = '| GPT–Codex 역할·인계 | `docs/GPT_CODEX_WORKFLOW_POLICY.md` | GPT 비-Godot 완료, Codex Plan 검토, 단계별 Godot 구현·PR Gate |'
+          new = '| GPT–Codex 역할·인계 | `docs/GPT_CODEX_WORKFLOW_POLICY.md` | GPT 기획·구현·POC 누적 → `USER_REQUESTED_CODEX_HANDOFF`; Codex는 실제 저장소·프로젝트·Godot을 재검증하고 `CODEX_PREFLIGHT_OPTIONAL`은 고위험·불확실 작업에서만 사용; 단계별 Godot 구현·PR Gate |'
+          if old not in text:
+              raise SystemExit('DOCUMENTATION_MAP responsibility anchor missing')
+          text = text.replace(old, new, 1)
+          docs_map.write_text(text, encoding='utf-8')
+
+          operating = Path('docs/OPERATING_MODEL.md')
+          text = operating.read_text(encoding='utf-8')
+          old = '새 광역 Skill을 만들지 않는다. 상위 흐름은 `managing-project-intake-and-work-contract`, 분야 구현은 trigger가 일치하는 주 책임 Skill 하나, 비판 검증은 `running-adversarial-review-and-refinement`, 실제 변경 증거는 `reviewing-and-validating-project-changes`가 책임진다.'
+          new = '새 Skill은 기존 owner의 Skill Mode·reference로 책임을 보존할 수 있으면 만들지 않는다. **독립 입력·산출물·권한·검증 경계**가 분명하고 기존 owner에 흡수하면 책임이 깨질 때만 Existing Solution First와 승인 절차를 거쳐 **새 Skill을 만들 수 있다**. 상위 흐름은 `managing-project-intake-and-work-contract`, 분야 구현은 trigger가 일치하는 주 책임 Skill 하나, 비판 검증은 `running-adversarial-review-and-refinement`, 실제 변경 증거는 `reviewing-and-validating-project-changes`가 책임진다.'
+          if old not in text:
+              raise SystemExit('OPERATING_MODEL skill-growth anchor missing')
+          text = text.replace(old, new, 1)
+          old_row = '| 현재 상태·다음 작업·위험 압축 | `maintaining-project-context-and-handoff` |'
+          new_row = '| 현재 상태·다음 작업·위험 압축·사용자 요청 기반 Codex 실행 명세 | `maintaining-project-context-and-handoff` |'
+          if old_row in text:
+              text = text.replace(old_row, new_row, 1)
+          operating.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit aligned docs
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add START_HERE.md docs/DOCUMENTATION_MAP.md docs/OPERATING_MODEL.md
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "docs: align cold-start Codex and Skill growth routing"
+          git push origin HEAD:agent/align-cold-start-on-demand-handoff
