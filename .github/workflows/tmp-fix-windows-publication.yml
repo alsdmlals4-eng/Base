@@ -1,0 +1,112 @@
+name: Temporary Fix Windows Publication
+
+on:
+  push:
+    branches:
+      - fix/bound-windows-publication-smoke
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: fix/bound-windows-publication-smoke
+
+      - name: Bound and split Windows publication smoke
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('.github/workflows/validate-game-project-operating-system.yml')
+          text = path.read_text(encoding='utf-8')
+          job_start = text.index('  platform-smoke-windows:\n')
+          job_end = text.index('\n  ci-gate:\n', job_start)
+          job = text[job_start:job_end]
+
+          if 'timeout-minutes: 15' not in job:
+              job = job.replace(
+                  '    runs-on: windows-latest\n',
+                  '    runs-on: windows-latest\n    timeout-minutes: 15\n',
+                  1,
+              )
+
+          start_marker = '      - name: Install Windows publication dependencies\n'
+          end_marker = '      - name: Run Windows publication smoke tests\n'
+          step_start = job.index(start_marker)
+          step_end = job.index(end_marker, step_start)
+          old_step = job[step_start:step_end]
+
+          run_marker = '        run: |\n'
+          run_start = old_step.index(run_marker) + len(run_marker)
+          commands = old_step[run_start:]
+          command_lines = commands.splitlines()
+
+          def find_index(prefix: str) -> int:
+              for idx, line in enumerate(command_lines):
+                  if line.strip().startswith(prefix):
+                      return idx
+              raise SystemExit(f'missing Windows install command: {prefix}')
+
+          choco_idx = find_index('choco install libreoffice-fresh')
+          python_idx = find_index('python -m pip install --upgrade pip')
+          pnpm_idx = find_index('pnpm install --frozen-lockfile')
+          if not (0 < choco_idx < python_idx < pnpm_idx):
+              raise SystemExit('unexpected Windows dependency command order')
+
+          node_prelude = command_lines[:choco_idx]
+          system_lines = command_lines[choco_idx:python_idx]
+          python_lines = command_lines[python_idx:pnpm_idx]
+          node_lines = node_prelude + command_lines[pnpm_idx:]
+
+          def with_native_checks(lines: list[str]) -> list[str]:
+              result: list[str] = []
+              for line in lines:
+                  result.append(line)
+                  stripped = line.strip()
+                  if (
+                      stripped.startswith('corepack ')
+                      or stripped.startswith('choco ')
+                      or stripped.startswith('python -m pip ')
+                      or stripped.startswith('pnpm ')
+                  ):
+                      indent = line[: len(line) - len(line.lstrip())]
+                      result.append(indent + 'if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }')
+              return result
+
+          def render_step(name: str, lines: list[str]) -> str:
+              body = '\n'.join(with_native_checks(lines)).rstrip() + '\n'
+              return (
+                  f'      - name: {name}\n'
+                  '        shell: pwsh\n'
+                  '        run: |\n'
+                  f'{body}\n'
+              )
+
+          new_steps = (
+              render_step('Install Windows system publication dependencies', system_lines)
+              + render_step('Install Windows Python publication dependencies', python_lines)
+              + render_step('Install Windows Node publication dependencies', node_lines)
+          )
+
+          job = job[:step_start] + new_steps + job[step_end:]
+          text = text[:job_start] + job + text[job_end:]
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit workflow hardening
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/validate-game-project-operating-system.yml
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "fix: bound Windows publication dependency stalls"
+          git push origin HEAD:fix/bound-windows-publication-smoke
