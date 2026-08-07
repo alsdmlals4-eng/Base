@@ -21,6 +21,8 @@ BLOCKED_UNVERIFIED
 
 이 Guide는 Windows와 Android를 지원하거나 STOVE·Google Play·Steam 출시 순서를 검토하는 프로젝트에서만 사용한다. 콘솔·iOS·Web은 별도 목표 플랫폼으로 추가 검토한다.
 
+게임 빌드 용량·폰트·텍스처·오디오·패키징·패치 최적화가 범위에 포함되면 상세 규칙을 이 문서에 복제하지 않고 `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md`를 함께 읽는다.
+
 ## 2. 결론
 
 권장 기본 전략은 다음과 같다.
@@ -110,7 +112,7 @@ platform_service_adapter:
 - `input_adapter`: mouse·keyboard·touch·back·controller를 게임의 의미 행동으로 변환한다.
 - `layout_profile`: 같은 정보 모델을 PC·모바일에 맞게 배치한다.
 - `lifecycle_adapter`: pause·background·foreground·suspend·resume·process recreation을 처리한다.
-- `quality_profile`: 해상도·그림자·파티클·후처리·텍스처·프레임 목표를 기기별로 조정한다.
+- `quality_profile`: 해상도·그림자·파티클·후처리·텍스처·프레임 목표를 기기별로 조정한다. 원본 품질 의도는 공유하되 실제 texture format·packaged resolution·asset delivery는 플랫폼별로 분리할 수 있으며 세부 계약은 `GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md`가 책임진다.
 - `platform_service_adapter`: 업적·클라우드 저장·소유권·결제·통계·오버레이·로그인을 플랫폼 API 뒤에 둔다.
 
 코드 공유율이나 LOC 비율을 목표로 삼지 않는다. 공용화가 잘됐는지는 **중복 줄 수**가 아니라 규칙 정본이 하나인지, 플랫폼 교체가 코어를 오염시키지 않는지, 양쪽 빌드가 같은 테스트를 통과하는지로 판정한다.
@@ -221,6 +223,15 @@ package_and_download_size:
 quality_tiers:
 ```
 
+`package_and_download_size`는 기존 호환 요약 필드다. 용량 최적화가 실제 작업 범위이면 `GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md`와 `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md`의 `build_size_and_asset_optimization`에서 다음을 분리 측정한다.
+
+```text
+Windows: compressed download / installed / patch / patch temporary disk / runtime memory
+Android: Play-served download / installed / first-launch / first-session / typical / optional / runtime memory
+```
+
+품질 정책은 공유하되 Windows와 Android의 texture format·max delivered resolution·asset partition을 동일하게 강제하지 않는다. 폰트는 family/역할과 Theme 사용을 통일하되 CJK·emoji·다국어 fallback을 손상시키는 단일 파일 강제 규칙을 두지 않는다.
+
 검증은 평균 FPS뿐 아니라 hitch, 95/99 percentile, peak memory, Scene 전환, 장시간 발열과 thermal throttling을 포함한다. Android 공식 도구인 Perfetto·AGI·APT·Memory Advice·ADPF 등은 필요와 엔진 호환성에 따라 사용한다.
 
 에디터나 에뮬레이터 성공은 실제 Android 기기 통과가 아니다.
@@ -235,6 +246,7 @@ quality_tiers:
 - mouse + keyboard
 - save path·업데이트·재설치·오프라인
 - STOVE 또는 Steam adapter가 꺼진 순수 로컬 실행
+- 용량 최적화가 범위이면 clean install과 이전 public-like build 대비 patch/update 크기 및 임시 disk 요구량
 
 ### Android
 
@@ -245,6 +257,7 @@ quality_tiers:
 - touch·Android back·pause·background·foreground·process recreation
 - 설치·업데이트·저장 마이그레이션·오프라인
 - 메모리·로딩·발열·배터리·긴 세션
+- 용량 최적화가 범위이면 실제 served/install/first-session size와 optional delivery 실패·재시도 경로
 
 출시 후보에서는 한 대 성공을 전체 Android 지원으로 일반화하지 않는다. 기기 범위는 실제 타깃과 지원 비용에 맞게 선언한다.
 
@@ -325,6 +338,8 @@ Steam의 100달러 비용보다 Google Play의 테스터·계정 운영 위험�
 - Steam 비용이 있으므로 Google Play가 항상 먼저다.
 - 현재 비용·테스터 요건·SDK 정책이 앞으로도 그대로다.
 - 한 대의 고사양 휴대폰 성공으로 Android 전체를 지원할 수 있다.
+- 한 개의 package/download 숫자만 줄이면 용량 최적화가 끝난다.
+- 폰트·텍스처·오디오를 플랫폼 구분 없이 하나의 설정으로 강제하면 항상 최적이다.
 
 ## 13. 프로젝트 판정
 
@@ -334,6 +349,7 @@ architecture_status:
 windows_runtime_status:
 android_runtime_status:
 physical_device_status:
+build_size_and_asset_optimization_status:
 google_play_account_and_test_status:
 stove_contract_and_sdk_status:
 steam_budget_and_readiness_status:
@@ -341,7 +357,7 @@ release_wave_decision:
 rollback:
 ```
 
-`DUAL_TARGET_APPROVED`는 문서 작성만으로 부여하지 않는다. 최소한 공용 코어 경계, 양 플랫폼 export/run, 실제 Android 기기, 모바일 UI·입력·복귀, 대표 성능 예산의 증거가 필요하다.
+`DUAL_TARGET_APPROVED`는 문서 작성만으로 부여하지 않는다. 최소한 공용 코어 경계, 양 플랫폼 export/run, 실제 Android 기기, 모바일 UI·입력·복귀, 대표 성능 예산의 증거가 필요하다. 용량 최적화를 완료 상태로 주장하려면 별도로 실제 build/served/patch와 품질 회귀 증거가 필요하다.
 
 ## 14. Evidence 상태
 
@@ -353,6 +369,7 @@ base_contract: PROPOSED_IN_DRAFT_PR
 actual_project_pilot: NOT_RUN
 physical_android_device: DEVICE_NOT_RUN
 human_usability: HUMAN_NOT_RUN
+build_size_project_measurement: NOT_RUN
 stove_submission: NOT_RUN
 google_play_submission: NOT_RUN
 steam_submission: NOT_RUN
@@ -372,6 +389,7 @@ steam_submission: NOT_RUN
 ## background·foreground·process recreation·중복 지급 방지
 ## Windows·실제 Android 기기 QA Matrix
 ## 성능·메모리·로딩·발열·배터리 예산
+## download/install/runtime/patch 용량·자산 breakdown·품질 회귀
 ## STOVE·Google Play·Steam 계정·비용·테스트·출시 wave
 ## 공식 정책 확인일·미확인·재검증 조건
 ## 결정·롤백·다음 Pilot
@@ -391,6 +409,8 @@ steam_submission: NOT_RUN
 - Google Play Testing Requirements for New Personal Accounts: https://support.google.com/googleplay/android-developer/answer/14151465
 - STOVE SDK Development Environment: https://studio-docs.onstove.com/pc/GettingStarted/requisition.html
 - STOVE BASIC Release: https://studio-docs.onstove.com/pc/StudioGuide/basicrelease.html
+
+빌드 용량·asset import·Steam patch·Google Play asset delivery의 상세 공식 근거는 `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md`와 `REFERENCE_SOURCE_CATALOG.md`가 책임진다.
 
 ### 대표 제작·출시 사례
 
