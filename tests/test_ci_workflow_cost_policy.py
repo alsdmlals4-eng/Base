@@ -122,6 +122,14 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
             r"if \(\$LASTEXITCODE -ne 0\) \{ exit \$LASTEXITCODE \}",
         )
 
+    def test_local_ci_fallback_is_part_of_ci_contract(self) -> None:
+        for term in (
+            "tools/run_local_ci_fallback.py",
+            "tests/test_local_ci_fallback.py",
+            "tests.test_local_ci_fallback",
+        ):
+            self.assertIn(term, self.text)
+
     def test_docs_job_does_not_install_heavy_dependencies(self) -> None:
         docs_match = re.search(
             r"docs-validation:\n(?P<body>.*?)(?=\n  [a-zA-Z0-9_-]+:|\Z)",
