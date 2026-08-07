@@ -44,6 +44,20 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
             self.assertIn(status, skill)
         self.assertIn("생성 결과는 자동 최종 자산이 아니다", skill)
 
+    def test_visual_requirement_gate_is_consumed_without_duplicate_skill(self) -> None:
+        guide = (ROOT / "docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md").read_text(encoding="utf-8")
+        art_skill = (ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md").read_text(encoding="utf-8")
+        slice_skill = (ROOT / "skills/designing-vertical-slices/SKILL.md").read_text(encoding="utf-8")
+        policy = (ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md").read_text(encoding="utf-8")
+        for text in (guide, art_skill, slice_skill, policy):
+            self.assertIn("Visual Requirement Gate", text)
+        self.assertIn("Delete Test", guide)
+        self.assertIn("requirement_id", art_skill)
+        self.assertIn("requirement_id", slice_skill)
+        self.assertIn("선정되지 않은 프로젝트 자산", policy)
+        registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
+        self.assertNotIn("selecting-project-visual-assets", registry)
+
     def test_reference_visuals_are_recreated_not_surface_copied(self) -> None:
         skill = (ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md").read_text(encoding="utf-8")
         policy = (ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md").read_text(encoding="utf-8")
