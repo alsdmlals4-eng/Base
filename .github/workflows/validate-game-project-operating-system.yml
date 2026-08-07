@@ -455,6 +455,7 @@ jobs:
     needs: classify-changes
     if: needs.classify-changes.outputs.run_windows == 'true'
     runs-on: windows-latest
+    timeout-minutes: 15
     steps:
       - name: Check out repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -474,12 +475,11 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Install Windows publication dependencies
+      - name: Install Windows system publication dependencies
         shell: pwsh
         run: |
-          corepack enable
-          corepack prepare pnpm@11.9.0 --activate
           choco install libreoffice-fresh -y --no-progress
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           $popplerVersion = "24.08.0-0"
           $popplerUrl = "https://github.com/oschwartz10612/poppler-windows/releases/download/v$popplerVersion/Release-$popplerVersion.zip"
           $popplerZip = Join-Path $env:RUNNER_TEMP "poppler-$popplerVersion.zip"
@@ -491,9 +491,24 @@ jobs:
             throw "Poppler archive SHA-256 mismatch: expected $expectedHash, got $actualHash"
           }
           Expand-Archive -LiteralPath $popplerZip -DestinationPath $popplerRoot
+
+      - name: Install Windows Python publication dependencies
+        shell: pwsh
+        run: |
           python -m pip install --upgrade pip
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python -m pip install -r requirements-publication.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Install Windows Node publication dependencies
+        shell: pwsh
+        run: |
+          corepack enable
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          corepack prepare pnpm@11.9.0 --activate
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           pnpm install --frozen-lockfile
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Run Windows publication smoke tests
         shell: pwsh
