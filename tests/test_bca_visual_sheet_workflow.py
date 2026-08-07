@@ -74,6 +74,18 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
         for term in ("NOT_CONFIGURED", "새 Sheet를 추정 생성", "자동 최종 자산", "repository-wide-audit", "71_이미지기획_생성목록", "72_이미지검수_승인로그"):
             self.assertIn(term, policy)
 
+    def test_image_policy_routes_local_candidates_through_explicit_promotion(self) -> None:
+        policy = (ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md").read_text(encoding="utf-8")
+        for term in (
+            "docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md",
+            "assets/_vault_local/",
+            "PROJECT_ASSET_APPROVED",
+            "promote",
+            "VAULT_LOCAL_STATE_UNVERIFIED",
+        ):
+            self.assertIn(term, policy)
+        self.assertIn("tracked 제품 자산으로 자동 생성하지 않는다", policy)
+
     def test_visual_workspace_policy_supports_gdd_and_external_contexts(self) -> None:
         policy = (ROOT / "docs/VISUAL_COLLABORATION_TOOL_POLICY.md").read_text(encoding="utf-8")
         for context in ("GDD", "EXTERNAL_COLLABORATION", "BOTH"):

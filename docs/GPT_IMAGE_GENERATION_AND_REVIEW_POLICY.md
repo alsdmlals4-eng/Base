@@ -91,6 +91,33 @@ PLANNED
    → APPLIED_AND_RUNTIME_VERIFIED
 ```
 
+### 3.4 프로젝트 로컬 보존소와 자산 승격
+
+프로젝트별 로컬 이미지 보존·Godot 연결의 공용 책임 원본은 `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`다.
+
+보존소가 구성된 프로젝트에서는 다음 경계를 사용한다.
+
+```text
+GENERATED_EXPLORATION / IN_REVIEW / APPROVED_CANDIDATE
+→ .asset-vault/library/                    # local authority
+→ sync
+→ assets/_vault_local/                     # local only, gitignored, Godot-visible
+→ PROJECT_ASSET_APPROVED
+→ promote
+→ assets/<approved-path>/                  # tracked
+→ ASSET_MANIFEST.yml·권리/출처·정본 갱신
+→ tracked Scene/Resource 연결
+→ APPLIED_AND_RUNTIME_VERIFIED
+```
+
+- 승인 전 이미지는 `.asset-vault/`와 `assets/_vault_local/`에서 보존·비교·Godot preview할 수 있지만 tracked 제품 자산으로 자동 생성하지 않는다.
+- `PROJECT_ASSET_APPROVED`가 된 후보만 `python tools/project_asset_vault.py promote ...`로 Repo 자산에 승격한다.
+- 승격 시 `vault_source_key`, tracked path, 권리·출처, 승인 상태와 사용처를 `ASSET_MANIFEST.yml` 및 관련 provenance 기록에 연결한다.
+- tracked Scene/Resource는 `res://assets/_vault_local/...`를 장기 참조하지 않는다. commit/PR 전 `python tools/project_asset_vault.py check --project-root .`로 검사한다.
+- 사용자가 로컬 후보를 삭제하면 이후 AI 작업·preview 후보 집합에서 제외하고 자동 부활시키지 않는다. 이미 `PROJECT_ASSET_APPROVED` 후 promote된 tracked 자산은 별도 제품 자산이므로 로컬 후보 삭제만으로 자동 폐기하지 않는다.
+- 로컬 vault를 볼 수 없는 원격 작업자는 `VAULT_LOCAL_STATE_UNVERIFIED`를 유지한다.
+- ChatGPT 웹 사용은 브라우저 다운로드 + 로컬 watcher가 기본 브리지다. 브라우저 다운로드까지 제거한 zero-click 보존은 로컬 생성/API 프로세스가 vault에 직접 쓰는 경우에만 주장한다.
+
 ## 4. 이미지 검수 계약
 
 모든 이미지·목업은 다음을 검사한다.
@@ -144,6 +171,8 @@ CURRENT_CONFIRMED_DECISIONS
 → 실제 적용 경로와 런타임 검증
 ```
 
+보존소가 활성화된 프로젝트에서는 `PROJECT_ASSET_APPROVED → promote → tracked path → ASSET_MANIFEST.yml` 연결도 같은 승인 단위에 포함한다.
+
 Sheet가 `NOT_CONFIGURED`이면 GitHub 정본까지만 갱신하고 상태를 거짓으로 `SHEET_SYNCED` 처리하지 않는다.
 
 ## 6. 적대적 검토
@@ -151,6 +180,9 @@ Sheet가 `NOT_CONFIGURED`이면 GitHub 정본까지만 갱신하고 상태를 �
 각 단계 종료 시 `running-adversarial-review-and-refinement: repository-wide-audit`로 다음을 공격한다.
 
 - 승인 전 생성 이미지가 최종 자산처럼 사용됐는가
+- 승인 전 vault 후보가 tracked Repo 자산으로 자동 승격됐는가
+- tracked Scene/Resource가 `assets/_vault_local/`을 참조하는가
+- 사용자가 제거한 후보를 stale 다운로드/문맥이 다시 살렸는가
 - 기획 변경 뒤 이미지·목업이 stale 상태인가
 - 이미지 Decision이 문서·Sheet·자산 원장 중 일부에만 있는가
 - 세계관·핵심루프·인물·핵심시스템 탭이 비어 있거나 다른 탭에 중복 정본화됐는가
