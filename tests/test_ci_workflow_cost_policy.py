@@ -108,6 +108,33 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
             self.assertIn(step_name, body)
         self.assertNotIn("- name: Install publication dependencies", body)
 
+    def test_windows_publication_smoke_is_bounded_and_install_steps_are_diagnostic(self) -> None:
+        windows_match = re.search(
+            r"platform-smoke-windows:\n(?P<body>.*?)(?=\n  [a-zA-Z0-9_-]+:|\Z)",
+            self.text,
+            flags=re.DOTALL,
+        )
+        self.assertIsNotNone(windows_match)
+        body = windows_match.group("body")
+        self.assertIn("timeout-minutes: 15", body)
+        for step_name in (
+            "Install Windows system publication dependencies",
+            "Install Windows Python publication dependencies",
+            "Install Windows Node publication dependencies",
+        ):
+            self.assertIn(step_name, body)
+        self.assertNotIn("- name: Install Windows publication dependencies", body)
+        self.assertRegex(
+            body,
+            r"choco install libreoffice-fresh -y --no-progress\s+"
+            r"if \(\$LASTEXITCODE -ne 0\) \{ exit \$LASTEXITCODE \}",
+        )
+        self.assertRegex(
+            body,
+            r"pnpm install --frozen-lockfile\s+"
+            r"if \(\$LASTEXITCODE -ne 0\) \{ exit \$LASTEXITCODE \}",
+        )
+
     def test_runtime_readiness_and_local_runner_are_validated_at_their_risk_tiers(self) -> None:
         publication_risk = re.search(
             r"case \"\$path\" in(?P<body>.*?)has_code=true\n\s+platform_smoke=true",
