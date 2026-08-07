@@ -1,11 +1,12 @@
 # GitHub Pro 저장소 운영 정책
 
-이 문서는 Base와 Base를 적용한 프로젝트에서 GitHub Pro의 branch protection, branch/tag ruleset, auto-merge, Actions 사용량과 저장소 확산 순서를 관리하는 공용 정본이다.
+이 문서는 Base와 Base를 적용한 프로젝트에서 branch protection, branch/tag ruleset, auto-merge, Actions 사용량과 저장소 확산 순서를 관리하는 공용 정본이다.
 
 ## 1. 적용 원칙
 
-- 현재 Base와 활성 게임 저장소는 공개 저장소로 운영하며, standard GitHub-hosted Actions는 공개 저장소 계약에 따라 `REMOTE_CI` 기본 경로로 사용한다.
-- 미래에 비공개 저장소를 만들 경우 GitHub Pro가 제공하는 protected branch와 branch/tag ruleset, 포함 사용량을 별도로 검토한다.
+- 현재 Base와 활성 게임 저장소는 public 저장소로 운영하며, standard GitHub-hosted Actions는 `REMOTE_CI` 기본 경로로 사용한다.
+- 비용 0은 공개 저장소의 standard GitHub-hosted runner를 우회하는 이유가 아니다.
+- 미래에 private 저장소를 만들거나 larger/GPU runner를 사용할 경우 현재 GitHub billing 조건을 별도로 검토한다.
 - 비공개 Push ruleset은 GitHub Team 이상 기능이므로 Pro 공용 Template에 포함하지 않는다.
 - 저장소 설정은 Base에서 정책과 importable Template을 제공하고 각 프로젝트에서 실제 visibility, Required Check 이름과 기본 Branch를 확인한 뒤 적용한다.
 - 모든 프로젝트를 동시에 잠그지 않는다. Base에서 검증한 뒤 활성 프로젝트에 하나씩 순차 확산한다.
@@ -16,7 +17,7 @@ Official references:
 - https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/managing-rulesets-for-a-repository
 - https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
 - https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/automatically-merging-a-pull-request
-- https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-auto-merge-for-pull-requests-in-your-repository
+- https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/committing-changes-to-your-project/about-status-checks
 
 ## 1.1 Repository health baseline
 
@@ -29,9 +30,9 @@ Base의 공개 저장소 표면은 다음 네 파일이 책임진다.
 | 변경 소유 | `.github/CODEOWNERS` | 실제 write owner와 `.github/` 자체 소유 |
 | 의존성 갱신 | `.github/dependabot.yml` | 지원되는 실제 manifest 기반 주간 제안; 자동 병합 권한 없음 |
 
-파일 존재와 Repository setting은 다른 증거다. `SECURITY.md`는 private vulnerability reporting을 활성화하지 않고, `CODEOWNERS`는 승인 필수 Ruleset을 활성화하지 않으며, `dependabot.yml`은 Dependabot alerts나 dependency graph 설정을 활성화하지 않는다. 실제 설정이나 첫 GitHub 실행을 확인하기 전에는 각각 `UNVERIFIED_REPOSITORY_SETTING` 또는 `NOT_RUN`으로 기록한다.
+파일 존재와 Repository setting은 다른 증거다. 실제 설정이나 첫 GitHub 실행을 확인하기 전에는 `UNVERIFIED_REPOSITORY_SETTING` 또는 `NOT_RUN`으로 기록한다.
 
-Base의 현재 의존성 생태계는 루트 `package.json`·`pnpm-lock.yaml`의 `npm`(pnpm), `requirements-publication.txt`의 `pip`, `.github/workflows/`의 `github-actions` 세 가지다. 그러나 저장소는 `pnpm@11.9.0`을 선언하고 현재 GitHub 공식 지원표는 pnpm v7-v10만 명시하므로, `npm` entry는 `DEPENDABOT_DEFERRED_PNPM_11`로 보류한다. package manager를 이 작업에서 임의 하향하지 않으며 공식 지원과 실제 update run을 확인한 뒤 별도 활성화한다. 활성화된 `pip`·`github-actions`의 minor/patch는 생태계별로 묶을 수 있지만 major 변경은 별도 PR·exact-head CI·리뷰를 거친다. Dependabot PR도 일반 Required Check와 병합 금지 조건을 우회하지 않는다.
+Base의 현재 의존성 생태계와 package-manager 지원 범위는 실제 manifest와 GitHub 지원 문서를 기준으로 확인한다. Dependabot PR도 일반 Required Check와 병합 금지 조건을 우회하지 않는다.
 
 ## 2. Repository Governance Profile
 
@@ -52,7 +53,7 @@ rollout_stage: BASE | PILOT | ACTIVE | DEFERRED
 
 확인하지 못한 설정은 `unverified`로 둔다.
 
-Repository Governance Profile은 rename·transfer·visibility·기본 Branch·Required Check 같은 현재 상태를 갱신하는 가변 정본이다. 반대로 `base*.lock.json`은 발행 당시의 동결된 역사적 identity이므로 현재 CODEOWNERS나 보안 경로를 유도하는 입력으로 사용하지 않는다. 현재 profile의 identity가 바뀌면 `.github/CODEOWNERS`, 보안 경로, Workflow와 회귀 검사를 같은 변경에서 대조한다.
+Repository Governance Profile은 rename·transfer·visibility·기본 Branch·Required Check 같은 현재 상태를 갱신하는 가변 정본이다. 반대로 `base*.lock.json`은 발행 당시의 동결된 역사적 identity이므로 현재 설정을 유도하는 입력으로 사용하지 않는다.
 
 Base의 Required Check `ci-gate` 소유자는 `.github/workflows/validate-game-project-operating-system.yml` 하나다. 다른 Workflow는 고유한 Job 이름을 사용하며, Repository Ruleset에서 선택된 `ci-gate`가 이 소유자의 check run인지 실제 PR로 확인한다.
 
@@ -104,7 +105,7 @@ AUTO_MERGE_AFTER_REQUIRED_CHECKS
 - `AUTO_MERGE_BLOCKED`: 기획 결정·검증·Repository 설정으로 차단됨
 - `UNVERIFIED_REPOSITORY_SETTING`: Repository 설정을 실제 확인하지 못함
 
-`AGENT_MERGE_REQUIRED`에 따라 조건을 충족한 PR은 담당 에이전트가 즉시 병합한다. `Allow auto-merge`가 활성화되면 예약하고, 그렇지 않으면 저장소가 허용한 직접 병합을 실행한다. 별도 사용자 병합 승인은 필요하지 않다. 다만 `USER_REVIEW_REQUIRED`와 `CHANGE_PROPOSAL`은 병합 승인이 아니라 구현 전 사용자 결정을 요구한다.
+`AGENT_MERGE_REQUIRED`에 따라 조건을 충족한 PR은 담당 에이전트가 정책에 따라 병합할 수 있다. 다만 현재 작업처럼 사용자가 Draft 유지 또는 별도 병합 승인을 요구한 경우 그 작업 계약을 우선한다. `USER_REVIEW_REQUIRED`와 `CHANGE_PROPOSAL`은 구현 전 사용자 결정을 요구한다.
 
 ## 5. Auto-merge Repository 설정
 
@@ -121,14 +122,32 @@ Auto-merge는 PR이 즉시 병합 가능한 상태에서는 UI에 표시되지 �
 
 ## 6. Actions 사용량과 두 검증 모드
 
-- Base와 현재 활성 프로젝트처럼 public 저장소인 경우 standard GitHub-hosted runner를 `REMOTE_CI` 기본 경로로 사용한다. 비용 0을 이유로 이 경로를 우회하지 않는다.
+### `REMOTE_CI`
+
+- Base와 현재 활성 프로젝트처럼 public 저장소인 경우 standard GitHub-hosted runner를 기본 경로로 사용한다.
 - 공개 저장소의 비용 최적화는 paid minutes 회피보다 피드백 속도, runner 낭비, 외부 의존성 실패, 중복 matrix 감소를 목적으로 유지한다.
 - larger/GPU runner 및 미래 private repository는 현재 GitHub billing 조건을 확인한 뒤 별도 예산을 적용한다.
-- Budget은 `templates/project-operations/github/GITHUB_USAGE_BUDGET.md`에 기록한다.
-- Actions가 현재 검증 대상에 Required Check의 `ci-gate` Check Run 자체를 만들지 못한 인프라 장애에서만 `LOCAL_FALLBACK`을 검토한다.
-- `ci-gate` Check Run이 이미 생성되어 실패·취소·대기·실행 중이라면 fallback으로 덮지 않는다. 원격 CI 실패를 수정하거나 실행을 재개한다.
-- `LOCAL_FALLBACK`은 `tools/run_local_ci_fallback.py`가 exact head, clean worktree, current base ancestry, head/test-merge의 Check Run 부재를 검증 전후 확인하고 기존 `tools/run_local_validation.py`가 성공한 경우에만 같은 `ci-gate` 문맥의 success status를 발행할 수 있다.
-- fallback 조건 또는 필수 로컬 증거를 충족할 수 없으면 `BLOCKED_BY_GITHUB_ACTIONS / UNVERIFIED`이며 자동 병합하지 않는다.
+- 현재 head에 canonical `REMOTE_CI workflow run`이 하나라도 존재하면 final `ci-gate` Check Run이 아직 생성되지 않았더라도 `REMOTE_CI`가 해당 SHA를 소유한다.
+- `ci-gate` Check Run 또는 기존 `ci-gate` commit status가 있으면 local fallback으로 덮지 않는다.
+
+### `LOCAL_FALLBACK`
+
+`LOCAL_FALLBACK`은 Actions 인프라·권한·서비스 문제로 canonical `REMOTE_CI workflow run` 자체가 현재 head에 없고, head/test-merge의 `ci-gate` Check Run과 기존 status도 없을 때만 검토한다.
+
+`tools/run_local_ci_fallback.py`는 다음을 모두 확인해야 한다.
+
+- exact PR/local head
+- clean worktree
+- freshly fetched current `origin/<base>` ancestry와 exact trusted-history SHA
+- locally reproducible 변경 경계
+- 검증 전후 canonical remote run / `ci-gate` Check Run / 기존 status 부재
+- 기존 `tools/run_local_validation.py` 성공
+- 검증 후 SHA·base·worktree 불변
+- exact head에만 `ci-gate=success` status 발행
+
+현재 Base 공용 계약에서는 문서와 제한적 정본/템플릿만 locally reproducible 기본 범위로 취급한다. `CODE_OR_ENGINE`, `CI_TOOLCHAIN_HIGH_RISK`, workflow·tool·test·Godot·package/lockfile 변경은 별도 동등 로컬 검증 계약이 없으면 `BLOCKED_BY_GITHUB_ACTIONS / UNVERIFIED`다.
+
+`ci-gate` Check Run이 실패·취소·대기·실행 중이거나 canonical remote run이 존재하는 상태는 fallback 사유가 아니다. 원격 CI 실패를 수정하거나 실행을 재개한다.
 
 세부 계약은 `docs/CI_EXECUTION_COST_POLICY.md`가 책임진다.
 
@@ -173,7 +192,7 @@ Godot GUI 플레이테스트·아트·오디오 주 작업 환경으로 강제�
 - Ruleset 가져오기
 - 실제 Required Check 확인
 - standard GitHub-hosted `REMOTE_CI` 확인
-- 필요한 경우에만 fallback 도구 적용 가능성 검증
+- 필요한 경우에만 프로젝트별 locally reproducible fallback 범위 검증
 - 차단·롤백 기록
 
 ### Stage 3 — 순차 확산
@@ -198,7 +217,8 @@ Pilot 성공 후 다음 활성 프로젝트에 하나씩 적용한다.
 - 저장 호환성 파괴
 - Repository setting 미확인
 - Required Check 이름 미확인
-- `LOCAL_FALLBACK` preflight 또는 exact-SHA 재검증 실패
+- canonical `REMOTE_CI workflow run`이 존재하는데 local fallback을 시도함
+- `LOCAL_FALLBACK` preflight, locally reproducible 경계 또는 exact-SHA 재검증 실패
 
 ## 10. 롤백
 
@@ -219,7 +239,7 @@ Fallback 도구 오작동 시에는 Ruleset을 변경하지 않는다. `tools/ru
 - `solo-main-safety` Ruleset이 active다.
 - `ci-gate`가 Required Check다.
 - public standard GitHub-hosted `REMOTE_CI`가 기본이다.
-- `LOCAL_FALLBACK`은 Check Run 부재와 exact-SHA 안전조건을 모두 만족할 때만 사용할 수 있다.
-- `Allow auto-merge`가 활성화됐다.
+- `LOCAL_FALLBACK`은 canonical remote run·기존 gate evidence가 없고 locally reproducible exact-SHA 안전조건을 모두 만족할 때만 사용할 수 있다.
+- `Allow auto-merge` 상태가 확인됐다.
 - 자동 병합 허용·차단 상태가 PR에 기록된다.
 - 실제 Required Check PR 증거가 있다.
