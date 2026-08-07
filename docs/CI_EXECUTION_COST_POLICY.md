@@ -1,6 +1,6 @@
 # CI 실행·비용 최적화 정책
 
-이 문서는 Base와 Base를 적용한 프로젝트에서 GitHub Actions 사용량을 변경 위험에 맞게 배분하고, 같은 변경에 전체 검증이 중복 실행되는 것을 막는 공용 정본이다.
+이 문서는 Base와 Base를 적용한 프로젝트에서 GitHub Actions 사용량을 변경 위험에 맞게 배분하고, 검증 신뢰도를 보존하면서 원격 CI와 제한적 로컬 fallback의 책임을 분리하는 공용 정본이다.
 
 ## 1. 목표
 
@@ -8,8 +8,9 @@
 - 코드·도구·Schema·워크플로 변경에는 통합 신뢰도를 유지하는 충분한 검증을 실행한다.
 - `main` 병합, nightly, release 후보에서는 지원 운영체제·런타임 전체 계약을 확인한다.
 - 새 커밋이 올라온 PR의 오래된 실행을 자동 취소한다.
-- 공개 저장소의 표준 GitHub-hosted runner는 기본 `REMOTE_CI`로 사용하고, Actions 인프라가 Required Check 자체를 만들지 못한 경우에만 엄격한 `LOCAL_FALLBACK`을 검토한다.
-- 실행하지 못했거나 동등하게 재현할 수 없는 검증을 통과로 보고하지 않고, 재개 조건과 정확한 보류 작업을 남긴다.
+- 공개 저장소의 standard GitHub-hosted runner는 기본 `REMOTE_CI`로 사용한다.
+- Actions 인프라가 실제로 검증 실행을 소유하지 못한 경우에만 엄격한 `LOCAL_FALLBACK`을 검토한다.
+- 실행하지 못했거나 locally reproducible 하지 않은 검증을 통과로 보고하지 않는다.
 
 ## 2. 적용 범위
 
@@ -28,15 +29,17 @@
 1. **변경 위험에 비례한 검증**: 모든 PR에 가장 비싼 검증을 실행하지 않는다.
 2. **증거 손실 금지**: 비용 절감은 필요한 테스트 삭제가 아니라 실행 시점과 대상을 계층화하는 작업이다.
 3. **한 SHA당 한 목적의 실행**: PR 검증과 모든 브랜치 push 검증이 같은 커밋에서 중복되지 않게 한다.
-4. **안정된 통합 게이트**: Branch protection은 조건부 세부 Job 여러 개보다 항상 종료되는 단일 `ci-gate`를 우선 Required Check로 사용한다.
-5. **두 실행 모드**: `REMOTE_CI`가 기본이며, `LOCAL_FALLBACK`은 Actions가 현재 검증 대상에 `ci-gate` Check Run을 생성하지 못한 인프라 장애에만 허용한다.
-6. **실패 우회 금지**: `ci-gate` Check Run이 실패·취소·대기·실행 중이거나 테스트 실패가 관찰되면 `LOCAL_FALLBACK`으로 전환하지 않는다.
-7. **보류와 통과 분리**: fallback으로 필요한 증거를 동등하게 재현할 수 없으면 `BLOCKED_BY_GITHUB_ACTIONS / UNVERIFIED`다.
-8. **프로젝트 지원 범위가 정본**: 지원하지 않는 운영체제·Python 버전을 관성적으로 matrix에 추가하지 않는다.
+4. **안정된 통합 게이트**: Branch protection은 항상 종료되는 단일 `ci-gate`를 우선 Required Check로 사용한다.
+5. **두 실행 모드**: `REMOTE_CI`와 `LOCAL_FALLBACK`만 존재하며 기본은 `REMOTE_CI`다. 라우터는 세 번째 모드가 아니다.
+6. **원격 소유권 우선**: 현재 PR head에 canonical `REMOTE_CI workflow run`이 하나라도 있으면 final `ci-gate` Check Run이 아직 생기지 않았더라도 원격 CI가 해당 SHA를 소유한다.
+7. **실패 우회 금지**: `ci-gate` Check Run·commit status가 이미 있거나 테스트·workflow가 실패·취소·대기·실행 중이면 `LOCAL_FALLBACK`으로 덮지 않는다.
+8. **등가 증거만 허용**: fallback은 현재 로컬 검증 계약으로 locally reproducible 한 변경만 성공 처리한다.
+9. **보류와 통과 분리**: 필요한 증거가 로컬에서 동등하게 재현되지 않으면 `BLOCKED_BY_GITHUB_ACTIONS / UNVERIFIED`다.
+10. **프로젝트 지원 범위가 정본**: 지원하지 않는 운영체제·Python 버전을 관성적으로 matrix에 추가하지 않는다.
 
 저장소 전체에서 `name: ci-gate`를 노출하는 Job은 하나뿐이어야 한다. 그 Job을 소유한 Workflow의 `pull_request` 이벤트에는 Workflow-level `paths`·`paths-ignore`를 두지 않고 내부 분류 Job에서 비용 계층을 선택한다. 집중 Workflow는 path filter를 사용할 수 있지만 `ci-gate` 이름을 재사용하지 않는다.
 
-GitHub Actions의 정상 `ci-gate`는 Check Run이고, 제한적 로컬 fallback은 같은 Required Check 문맥의 commit status를 사용할 수 있다. 같은 이름의 Check와 status가 동시에 생기면 병합 조건이 중첩될 수 있으므로, `LOCAL_FALLBACK`은 현재 PR head와 현재 test merge SHA 어디에도 `ci-gate` Check Run이 없음을 검증 전후에 확인해야 한다.
+GitHub Actions의 정상 `ci-gate`는 Check Run이고, 제한적 로컬 fallback은 같은 Required Check 문맥의 commit status를 사용할 수 있다. 같은 이름의 Check와 status가 동시에 존재하면 병합 조건이 중첩될 수 있으므로 local fallback은 원격 workflow run, Check Run, 기존 commit status의 부재를 검증 전후 모두 확인한다.
 
 ## 4. 변경 분류
 
@@ -44,15 +47,7 @@ GitHub Actions의 정상 `ci-gate`는 Check Run이고, 제한적 로컬 fallback
 
 ### 4.1 `DOCS_ONLY`
 
-사람이 읽는 Markdown·문구·주석·정적 설명만 변경되고 다음 항목은 바뀌지 않은 경우다.
-
-- 실행 코드·도구·테스트
-- `AGENTS.md`, `START_HERE.md`, Registry, Schema, 정책·계약 문서
-- Skill 실행 계약·Template
-- package·lockfile·requirements
-- `.github/workflows/**`
-- Godot script·scene·resource·project 설정
-- 생성기 입력·출력·Manifest
+사람이 읽는 Markdown·문구·정적 설명만 변경되고 실행 코드·도구·테스트·Schema·Skill 실행 계약·package·lockfile·workflow·Godot runtime 파일이 바뀌지 않은 경우다.
 
 권장 검증:
 
@@ -81,7 +76,7 @@ Ubuntu 1개
 × 전체 계약·Registry·Schema·reference-freshness 회귀
 ```
 
-문서 형식이더라도 실행 계약을 바꾸므로 단순 `DOCS_ONLY`로 축소하지 않는다. 다만 Windows publication과 전체 Python matrix는 기본 PR 경로에서 제외한다.
+문서 형식이더라도 실행 계약을 바꾸므로 단순 `DOCS_ONLY`로 축소하지 않는다. 다만 Windows publication과 전체 Python matrix가 결과에 영향을 주지 않으면 기본 PR 경로에서 제외한다.
 
 ### 4.3 `CODE_OR_ENGINE`
 
@@ -102,7 +97,7 @@ Ubuntu 1개
 × 적용 시 Godot headless·import·런타임 검증
 ```
 
-모든 코드 PR에 Windows 전체 matrix를 강제하지 않는다. 플랫폼 경로·인코딩·발행 동작을 바꾼 경우에만 PR 단계 Windows smoke를 추가한다.
+`CODE_OR_ENGINE`은 현재 Base의 일반 `LOCAL_FALLBACK`에서 기본적으로 locally reproducible 로 간주하지 않는다. 별도 프로젝트가 동등한 로컬 엔진·플랫폼 검증 계약을 명시적으로 추가하기 전에는 Actions 불가 시 `BLOCKED_BY_GITHUB_ACTIONS / UNVERIFIED`다.
 
 ### 4.4 `CI_TOOLCHAIN_HIGH_RISK`
 
@@ -120,9 +115,11 @@ Ubuntu 1개
 - YAML·정적 정책 테스트
 - Ubuntu 전체 계약
 - 영향받는 플랫폼의 선택적 smoke
-- 사용 가능할 때 `workflow_dispatch` 실제 실행
+- 사용 가능할 때 실제 Actions 실행
 - Required Check 이름과 `ci-gate` 종료 상태 확인
-- fallback 도구 변경 시 dirty/stale/SHA drift/Check Run race/status target 회귀
+- fallback 도구 변경 시 dirty/stale/SHA drift/workflow-run race/Check Run race/existing status/status target 회귀
+
+`CI_TOOLCHAIN_HIGH_RISK` 역시 자신의 대체 검증기를 자기 자신만으로 승인할 수 없으므로 현재 일반 fallback 성공 대상이 아니다.
 
 ### 4.5 `FULL_MATRIX`
 
@@ -152,7 +149,7 @@ Ubuntu 1개
 - `schedule`: nightly 전체 matrix를 실행한다.
 - `workflow_dispatch`: `auto / docs / contract / code / full` 입력을 제공할 수 있다.
 
-`paths`만으로 복잡한 위험 분류를 완결하려 하지 않는다. 저비용 `classify-changes` Job이 diff를 읽고 다음 출력을 만든 뒤 각 Job의 `if`에서 사용한다.
+저비용 `classify-changes` Job이 diff를 읽고 다음 출력을 만든 뒤 각 Job의 `if`에서 사용한다.
 
 ```yaml
 docs_only: true | false
@@ -222,21 +219,22 @@ Branch protection은 조건부 Job 이름을 모두 Required Check로 묶지 않
 
 ### 9.1 `REMOTE_CI` — 기본 모드
 
-- 공개 저장소에서 표준 GitHub-hosted runner를 사용할 수 있으면 비용 예산과 무관하게 `REMOTE_CI`를 기본으로 사용한다.
+- 공개 저장소에서 standard GitHub-hosted runner를 사용할 수 있으면 비용 예산과 무관하게 `REMOTE_CI`를 기본으로 사용한다.
 - 기존 변경 분류, 조건부 publication/Windows smoke, evaluator, Required Check `ci-gate`를 그대로 사용한다.
 - larger/GPU runner나 미래의 private repository처럼 과금 가능성이 있는 실행은 별도 예산·승인 정책을 따른다.
-- 현재 SHA에 `ci-gate` Check Run이 생성되었다면 결론이 무엇이든 해당 검증은 `REMOTE_CI` 소유다.
+- 현재 head에 canonical `REMOTE_CI workflow run`이 존재하면 final `ci-gate` Check Run이 아직 생성되지 않았더라도 해당 SHA는 `REMOTE_CI` 소유다.
+- `ci-gate` Check Run 또는 commit status가 이미 존재하면 local fallback은 기존 증거를 덮지 않는다.
 - `ci-gate`가 실패·취소·queued·in progress이면 원인을 수정하거나 원격 실행을 재개한다. 테스트 실패나 workflow 실패를 이유로 fallback으로 전환하지 않는다.
 
 ### 9.2 `LOCAL_FALLBACK` — 인프라 전용 대체 모드
 
-Actions 서비스·권한·조직 정책·runner 가용성 등으로 현재 PR에 `ci-gate` Check Run 자체가 생성되지 못한 경우에만 다음 도구를 사용할 수 있다.
+Actions 서비스·권한·조직 정책·runner 가용성 등으로 현재 PR head에 canonical `REMOTE_CI workflow run` 자체가 만들어지지 않았고, 같은 head/test-merge에 `ci-gate` Check Run 또는 기존 `ci-gate` commit status도 없는 경우에만 검토한다.
 
 ```text
 python tools/run_local_ci_fallback.py \
   --repo <owner/repo> \
   --pr <number> \
-  --trusted-history-commit <trusted-sha> \
+  --trusted-history-commit <current-origin-base-sha> \
   --base main
 ```
 
@@ -247,16 +245,42 @@ python tools/run_local_ci_fallback.py \
 3. local `HEAD`가 PR `head.sha`와 정확히 같다.
 4. worktree가 검증 전 깨끗하다.
 5. `git fetch origin <base>` 후 최신 `origin/<base>`가 `HEAD`의 ancestor다.
-6. PR head SHA에 `ci-gate` Check Run이 없다.
-7. 현재 `merge_commit_sha`가 있으면 그 SHA에도 `ci-gate` Check Run이 없다.
-8. 기존 `tools/run_local_validation.py --trusted-history-commit <sha>`가 성공한다.
-9. 검증 후 local HEAD·worktree·PR head가 변하지 않았다.
-10. status 발행 직전에 head와 최신 test merge SHA의 `ci-gate` Check Run 부재를 다시 확인한다.
-11. 위 조건이 모두 통과한 exact head SHA에만 commit status `context=ci-gate`, `state=success`를 발행한다.
+6. 사용자가 전달한 `--trusted-history-commit`이 방금 fetch한 정확한 `origin/<base>` SHA와 같다.
+7. 변경 파일이 현재 fallback 계약으로 locally reproducible 하다.
+8. current head에 canonical `REMOTE_CI workflow run`이 없다.
+9. PR head와 current test merge SHA에 `ci-gate` Check Run이 없다.
+10. PR head와 current test merge SHA에 기존 `ci-gate` commit status가 없다.
+11. 기존 `tools/run_local_validation.py --trusted-history-commit <current-origin-base-sha>`가 성공한다.
+12. 검증 후 local HEAD·worktree·PR head가 변하지 않았다.
+13. 재-fetch한 `origin/<base>` SHA가 검증 시작 때와 같다.
+14. locally reproducible 변경 경계가 그대로 유지된다.
+15. status 발행 직전에 canonical `REMOTE_CI workflow run`, head/test-merge의 `ci-gate` Check Run·commit status 부재를 다시 확인한다.
+16. 위 조건이 모두 통과한 exact head SHA에만 commit status `context=ci-gate`, `state=success`를 발행한다.
 
-`LOCAL_FALLBACK`은 Actions 실패를 성공으로 덮는 우회가 아니다. 검증 중 Actions가 복구되어 `ci-gate` Check Run이 생기면 status를 발행하지 않고 `REMOTE_CI`에 소유권을 돌린다.
+### 9.3 Locally reproducible 기본 경계
 
-### 9.3 fallback이 불가능한 경우
+Base의 공용 fallback은 의도적으로 보수적이다.
+
+기본 허용:
+
+- `.md`, `.txt` 문서
+- `docs/`, `skills/`, `templates/`, `schemas/`, `references/` 아래의 검증 가능한 `.json`, `.yaml`, `.yml` 정본/템플릿
+- 위 파일들만으로 구성되고 `run_local_validation.py`가 필요한 계약 검사를 재현할 수 있는 `DOCS_ONLY` 또는 제한적 `CANONICAL_CONTRACT`
+
+기본 차단:
+
+- `.github/workflows/**`
+- `tools/**`, `tests/**`, `scripts/**`, `addons/**`
+- Python/GDScript/JS/TS/shell/binary/native library
+- Godot scene/resource/project 설정
+- package/requirements/lockfile
+- `CODE_OR_ENGINE`
+- `CI_TOOLCHAIN_HIGH_RISK`
+- 기타 명시적으로 locally reproducible 하다고 증명되지 않은 파일
+
+프로젝트가 실제 Godot headless, Windows, publication 등 원격 CI 증거와 동등한 로컬 계약을 별도로 구현·테스트한 뒤에는 프로젝트 정본에서 범위를 확대할 수 있다. 그 계약이 없으면 차단을 유지한다.
+
+### 9.4 fallback이 불가능한 경우
 
 다음 중 하나라도 해당하면 기존 blocked 상태를 유지한다.
 
@@ -265,11 +289,13 @@ BLOCKED_BY_GITHUB_ACTIONS
 판정: UNVERIFIED
 ```
 
+- canonical `REMOTE_CI workflow run` 또는 기존 `ci-gate` Check Run/status가 존재한다.
+- 테스트·evaluator·workflow 자체가 실패했다.
 - 로컬 환경에서 Required Check의 필수 증거를 재현할 수 없다.
+- 변경이 locally reproducible 기본 경계를 벗어난다.
 - exact head, clean worktree, current base ancestry를 증명할 수 없다.
 - GitHub API 또는 인증 상태를 검증할 수 없다.
 - 필요한 platform/runtime/Godot/publication 증거가 로컬에서 실행 불가능하다.
-- 현재 또는 검증 중 `ci-gate` Check Run이 발견된다.
 
 작업 보고와 Issue·PR에는 다음을 남긴다.
 
@@ -290,9 +316,11 @@ rollback_path:
 
 - workflow 파일이 존재한다는 이유로 실행 통과를 주장한다.
 - 테스트 실패·evaluator 실패·workflow 오류를 `LOCAL_FALLBACK`으로 덮는다.
-- `ci-gate` Check Run이 있는데 같은 이름의 local status로 결과를 대체한다.
+- canonical `REMOTE_CI workflow run`이 있는데 final `ci-gate` Check Run이 아직 없다는 이유로 fallback을 시작한다.
+- 기존 `ci-gate` Check Run 또는 commit status를 local status로 덮는다.
 - 검증한 SHA와 다른 commit에 success status를 발행한다.
 - stale base나 dirty worktree에서 success status를 발행한다.
+- locally reproducible 하지 않은 변경을 local validator만으로 승인한다.
 - 보류된 전체 matrix를 `ACCEPT` 근거로 사용한다.
 
 재개 절차:
@@ -325,14 +353,16 @@ CI 최적화는 다음을 모두 만족해야 완료다.
 
 - 변경 분류 규칙과 안전한 fallback이 있다.
 - 실행 모드는 `REMOTE_CI`와 `LOCAL_FALLBACK` 두 개이며 기본은 `REMOTE_CI`다.
-- 공개 저장소의 표준 GitHub-hosted runner를 비용 0이라는 이유만으로 우회하지 않는다.
+- 공개 저장소의 standard GitHub-hosted runner를 비용 0이라는 이유만으로 우회하지 않는다.
 - 문서 전용 PR에서 고비용 전체 검증이 실행되지 않는다.
-- 코드·계약 변경은 Ubuntu 기준 전체 검증을 건너뛰지 않는다.
+- 코드·계약 변경은 필요한 Ubuntu 기준 검증을 건너뛰지 않는다.
 - main·nightly·release에서 선언된 전체 matrix가 실행된다.
 - `concurrency.cancel-in-progress`가 PR의 오래된 실행을 취소한다.
 - PR과 feature branch push가 같은 SHA에서 전체 검증을 중복하지 않는다.
 - 조건부 Job이 있어도 `ci-gate`가 Required Check 계약을 안정적으로 종료한다.
-- `ci-gate` Check Run이 존재하면 `LOCAL_FALLBACK`이 성공 status를 발행하지 못한다.
+- canonical `REMOTE_CI workflow run`, `ci-gate` Check Run 또는 기존 status가 존재하면 `LOCAL_FALLBACK`이 성공 status를 발행하지 못한다.
+- fallback은 locally reproducible 변경에서만 exact head/current base/clean tree를 검증하고 성공 status를 발행한다.
+- `CODE_OR_ENGINE`·`CI_TOOLCHAIN_HIGH_RISK`는 별도 동등 로컬 계약이 없으면 fallback 성공 대상이 아니다.
 - fallback을 실행할 수 없는 상태의 보류 Job·재개 조건·위험이 명시된다.
 - 실행한 정적 검사와 실제 Actions 결과가 분리되어 보고된다.
 - 기존 검증 증거를 단순 삭제해 비용을 줄이지 않았다.
