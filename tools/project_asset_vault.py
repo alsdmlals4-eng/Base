@@ -162,6 +162,32 @@ def _asset_files(library: Path, extensions: set[str]) -> Iterable[Path]:
     return sorted(result, key=lambda item: item.relative_to(library).as_posix().casefold())
 
 
+def _safe_managed_target(managed_root: Path, relative: Path) -> Path:
+    target = managed_root / relative
+    managed_resolved = managed_root.resolve(strict=False)
+    target_resolved = target.resolve(strict=False)
+    if target_resolved == managed_resolved or not target_resolved.is_relative_to(managed_resolved):
+        raise VaultError(f"Managed asset path escapes through a symlink/reparse point: {target}")
+    current = managed_root
+    for part in relative.parts[:-1]:
+        current = current / part
+        if current.is_symlink():
+            raise VaultError(f"Managed asset path traverses a symlink/reparse point: {current}")
+    if target.is_symlink():
+        raise VaultError(f"Managed asset target is a symlink/reparse point: {target}")
+    return target
+
+
+def _paths_overlap(left: Path, right: Path) -> bool:
+    left_resolved = left.resolve(strict=False)
+    right_resolved = right.resolve(strict=False)
+    return (
+        left_resolved == right_resolved
+        or left_resolved.is_relative_to(right_resolved)
+        or right_resolved.is_relative_to(left_resolved)
+    )
+
+
 def _safe_managed_candidate(project: Path, managed_root: Path, relative_text: str) -> Path | None:
     try:
         relative = _safe_relative(relative_text, "managed_path")
@@ -206,7 +232,7 @@ def sync_project(project_root: Path) -> dict[str, int]:
 
     for source in _asset_files(p["library"], extensions):
         relative = source.relative_to(p["library"])
-        target = p["managed"] / relative
+        target = _safe_managed_target(p["managed"], relative)
         target.parent.mkdir(parents=True, exist_ok=True)
         source_hash = sha256_file(source)
         should_copy = not target.is_file() or sha256_file(target) != source_hash
@@ -296,6 +322,10 @@ def pull_downloads(project_root: Path, sources: list[Path], include_existing: bo
 
     for source_arg in sources:
         source = source_arg.expanduser().resolve()
+        if _paths_overlap(source, p["library"]) or _paths_overlap(source, p["managed"]):
+            raise VaultError(
+                f"Download source overlaps the active vault library or managed output and could recurse: {source}"
+            )
         source_key = str(source)
         candidates = _iter_download_candidates(source, extensions)
         first_scan = source_key not in source_state
