@@ -9,9 +9,10 @@ approved_by_user: true
 approved_at: 2026-08-07
 base_main: 4f98f968a377f7b6a11aafa4fc94d11bddbebedc
 branch: agent/godot-higodot-gut-hera-toolchain-implementation
-implementation: IN_PROGRESS
+implementation: BASE_IMPLEMENTATION_COMPLETE
 project_installation: NOT_STARTED
-merge_authorization: NOT_GRANTED
+merge_authorization: GRANTED
+merge_authorized_at: 2026-08-07
 ```
 
 ## 1. Goal
@@ -635,5 +636,5 @@ gut_gdscript_test_authority_when_adopted: 1
 hera_persistent_authoring_authority: 0
 hera_live_qa_role: defined
 external_vendor_claims_separated_from_base_evidence: true
-implementation: IN_PROGRESS
+implementation: BASE_IMPLEMENTATION_COMPLETE
 ```

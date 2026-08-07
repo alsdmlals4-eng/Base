@@ -143,11 +143,12 @@ class GodotHiGodotGutHeraToolchainTests(unittest.TestCase):
             self.assertIn(marker, start)
             self.assertIn(marker, documentation_map)
 
-    def test_approved_design_advances_without_granting_merge_or_project_installation(self) -> None:
+    def test_approved_design_records_merge_authorization_without_project_installation(self) -> None:
         text = DESIGN.read_text(encoding="utf-8")
         self.assertIn("status: APPROVED_FOR_IMPLEMENTATION", text)
+        self.assertIn("implementation: BASE_IMPLEMENTATION_COMPLETE", text)
         self.assertIn("project_installation: NOT_STARTED", text)
-        self.assertIn("merge_authorization: NOT_GRANTED", text)
+        self.assertIn("merge_authorization: GRANTED", text)
 
 
 if __name__ == "__main__":
