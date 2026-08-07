@@ -165,13 +165,68 @@ def safe_executable_command(
     return [command_processor, "/d", "/s", "/c", "call", str(wrapper), *values]
 
 
+def _write_windows_mermaid_wrapper(repository_root: Path, executable: str) -> str:
+    """Create an ignored Windows wrapper that gives every Mermaid launch an isolated Chrome profile."""
+    runtime_dir = repository_root / ".tmp" / "mermaid-runtime"
+    runtime_dir.mkdir(parents=True, exist_ok=True)
+    launcher = runtime_dir / "mmdc_wrapper.py"
+    wrapper = runtime_dir / "mmdc.cmd"
+    launcher.write_text(
+        """from __future__ import annotations
+
+import json
+import os
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+
+def main() -> int:
+    executable = sys.argv[1]
+    arguments = sys.argv[2:]
+    command_processor = os.environ.get(\"COMSPEC\") or \"cmd.exe\"
+    base_command = [command_processor, \"/d\", \"/s\", \"/c\", \"call\", executable]
+    if any(argument in {\"--version\", \"-V\"} for argument in arguments):
+        return subprocess.call([*base_command, *arguments])
+    chrome_executable = os.environ.get(\"PUPPETEER_EXECUTABLE_PATH\", \"\").strip()
+    with tempfile.TemporaryDirectory(prefix=\"base-mermaid-\") as temp_name:
+        temp_root = Path(temp_name)
+        config = {
+            \"headless\": True,
+            \"userDataDir\": str(temp_root / \"profile\"),
+        }
+        if chrome_executable:
+            config[\"executablePath\"] = chrome_executable
+        config_path = temp_root / \"puppeteer-config.json\"
+        config_path.write_text(json.dumps(config), encoding=\"utf-8\")
+        return subprocess.call(
+            [*base_command, \"--puppeteerConfigFile\", str(config_path), *arguments]
+        )
+
+
+if __name__ == \"__main__\":
+    raise SystemExit(main())
+""",
+        encoding="utf-8",
+    )
+    wrapper.write_text(
+        f'@echo off\r\n"{sys.executable}" "{launcher}" "{executable}" %*\r\n',
+        encoding="utf-8",
+    )
+    return str(wrapper.resolve())
+
+
 def mermaid_cli_path(repository_root: Path) -> str | None:
     suffix = ".cmd" if os.name == "nt" else ""
-    return find_executable(
+    executable = find_executable(
         "BASE_MERMAID_CLI",
         ("mmdc",),
         (str(repository_root / "node_modules" / ".bin" / f"mmdc{suffix}"),),
     )
+    if not executable or os.name != "nt":
+        return executable
+    return _write_windows_mermaid_wrapper(repository_root, executable)
 
 
 def chrome_path() -> str | None:

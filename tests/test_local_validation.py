@@ -46,6 +46,9 @@ from tests.test_game_entitlement_integrity_drm_capability import (
     GameEntitlementIntegrityDrmCapabilityTests
     as _GameEntitlementIntegrityDrmCapabilityTests,
 )
+from tests.test_local_ci_fallback import (
+    LocalCiFallbackTests as _LocalCiFallbackTests,
+)
 from tools import run_local_validation as runner
 
 
