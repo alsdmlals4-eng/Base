@@ -43,7 +43,10 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
 
     def test_workflow_cancels_stale_pr_and_main_push_runs(self) -> None:
         self.assertIn("concurrency:", self.text)
-        self.assertIn("github.event.pull_request.number || github.ref", self.text)
+        self.assertIn(
+            "group: ci-${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}",
+            self.text,
+        )
         self.assertIn(
             "cancel-in-progress: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}",
             self.text,
