@@ -4,6 +4,29 @@
 - 목적: Godot 기능·에셋·플러그인을 직접 제작하기 전에 검색할 원본과 검증 순서를 제공한다.
 - 주의: 가격, 라이선스, Godot 호환 버전, 판매 상태는 바뀔 수 있으므로 채택 시점에 다시 확인한다.
 
+## 0. 현재 사용자 PC의 로컬 참고 라이브러리
+
+외부 검색 전에 현재 프로젝트·Base 현행 상태를 먼저 확인하고, 관련성이 있으면 다음 로컬 참고 라이브러리를 확인한다.
+
+```text
+C:\Users\user\Documents\GitHub\Godot_Reference
+```
+
+역할은 `LOCAL_TEMPLATE_AND_OFFICIAL_DEMO_REFERENCE_LIBRARY`이며 세부 경계는 `docs/knowledge/godot/LOCAL_GODOT_REFERENCE_LIBRARY.md`가 책임진다.
+
+```text
+현재 프로젝트·Base 현행 구현
+→ Local Godot Reference Library
+→ Godot 공식 문서·Store·Asset Library·upstream 원본
+```
+
+- 이 경로는 현재 사용자 Windows PC 전용이며 다른 PC·CI·원격 agent의 필수 경로가 아니다.
+- 경로가 없거나 접근할 수 없으면 `UNAVAILABLE_LOCAL_REFERENCE`로 두고 정상 외부 검색을 계속한다.
+- 템플릿·공식 데모·플러그인 원본은 기본 `REFERENCE_ONLY`다. 다운로드 또는 폴더 존재만으로 프로젝트 채택을 선언하지 않는다.
+- 실제 채택 전에는 exact version, Godot 호환성, 원본 source, 라이선스, 현재 유지보수 상태, consumption path, 제거·rollback을 다시 확인한다.
+- 템플릿 전체 복사보다 현재 프로젝트에 필요한 패턴·컴포넌트의 선택적 `REUSE / ABSORB / REFACTOR`를 우선 검토한다.
+- 로컬 참고 라이브러리 전체를 Base 또는 게임 프로젝트 저장소에 복제하지 않는다.
+
 ## 1. 필수 검색 소스
 
 | 우선 | 소스 | 주소 | 주 용도 | 검증 포인트 |
