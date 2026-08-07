@@ -75,15 +75,15 @@ class VisualRequirementGateTests(unittest.TestCase):
         ):
             self.assertIn(term, ui_template)
 
-    def test_existing_skills_consume_gate_without_new_broad_skill(self) -> None:
+    def test_existing_consumers_use_gate_without_new_broad_skill(self) -> None:
         for path in (
             "skills/designing-art-prompts-and-technique-cards/SKILL.md",
-            "skills/auditing-and-refining-ui-art/SKILL.md",
             "skills/designing-vertical-slices/SKILL.md",
         ):
             self.assertIn("Visual Requirement Gate", read(path), path)
 
         image_policy = read("docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md")
+        self.assertIn("Visual Requirement Gate", image_policy)
         self.assertIn("requirement_id", image_policy)
         self.assertIn("선정", image_policy)
 
