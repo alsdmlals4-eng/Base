@@ -1,44 +1,86 @@
 # GPT–Codex 역할·구현 인계 정책
 
-이 문서는 Base를 사용하는 게임 프로젝트에서 GPT와 Codex의 책임, 기획 승인, Plan 재검수, Godot 구현 패키지, GitHub 게시와 병합 자동화 경계를 정의하는 공용 정본이다.
+이 문서는 Base를 사용하는 게임 프로젝트에서 GPT와 Codex의 책임, 사용자 요청 기반 인계, 선택적 Plan preflight, Godot 구현 패키지, GitHub 게시와 병합 자동화 경계를 정의하는 공용 정본이다.
 
 ## 1. 기본 원칙
 
 ```text
-GPT에서 결정·설계·비-Godot 작업을 완료
-→ Codex Plan에서 최신 저장소를 읽기 전용 재검수
-→ GPT가 기술 개선·기획 변경을 판정하고 계약 최신화
-→ Codex가 지정 Branch에서 Godot 구현
-→ GPT가 diff·테스트·기획 일치를 검수
+GPT 평상시 작업
+→ 기획·조사·설계·구현 보조·Godot POC/사전 제작 누적
+→ USER_REQUESTED_CODEX_HANDOFF
+→ GPT가 현재 의도·실제 상태·보호 범위·Acceptance Criteria를 실행 명세로 압축
+→ Codex가 실제 GitHub 저장소·프로젝트 파일·Godot 상태를 직접 재조사
+→ 필요할 때만 CODEX_PREFLIGHT_OPTIONAL 읽기 전용 Plan
+→ Codex Build가 지정 Branch에서 구현·테스트·Commit·Push
+→ GPT가 diff·테스트·기획 일치를 적대적으로 검수
 → 필수 게이트 통과 시 담당 에이전트가 허용된 방식으로 즉시 병합
 ```
 
-Codex는 GPT의 하위 단순 실행기가 아니다. 실제 Godot 저장소를 다시 조사하고 더 안전하거나 효율적인 구현안을 제안한다. 다만 프로젝트 코어와 플레이어 계약을 독자적으로 변경하지 않는다.
+이 기본 흐름의 상태 이름은 `ON_DEMAND_CODEX_HANDOFF`다. Codex 사용은 모든 작업의 의무 단계가 아니라 사용자가 “Codex로 넘기자”, “Codex 작업 명세 만들어줘”, “Codex에서 점검·개선하자”처럼 전환을 요청한 시점의 집중 구현·통합·검증 단계다.
 
-기본 병합 정책은 `AUTO_MERGE_AFTER_REQUIRED_CHECKS`와 `AGENT_MERGE_REQUIRED`다. 별도 사용자 병합 승인은 필요하지 않으며, 담당 에이전트는 모든 게이트가 통과한 PR을 GitHub auto-merge 또는 저장소가 허용한 직접 병합으로 처리한다. 사용자 체감·프로젝트 코어·MVP·호환성 판단은 병합 승인이 아니라 구현 전의 `USER_REVIEW_REQUIRED` 또는 `CHANGE_PROPOSAL` 결정으로 사용자에게 반환한다.
+`GPT_GODOT_PREPRODUCTION_ALLOWED`: GPT는 기획만 담당하는 문서 전용 역할로 제한되지 않는다. 현재 도구와 승인 범위 안에서 Scene·Node·Resource/Data 구조 설계, GDScript 초안·구현 보조, HiGodot 기반 국소 구현, POC와 직접 플레이를 통한 재설계까지 진행할 수 있다. 다만 실제로 실행하지 않은 Godot 런타임·렌더·빌드·테스트를 완료로 보고하지 않는다.
+
+Codex는 GPT의 하위 단순 실행기가 아니다. 인계 명세는 의도와 예상 상태를 전달하지만 **실제 구현 사실의 source of truth는 현재 GitHub 저장소, 프로젝트 파일, Godot 프로젝트 상태와 실행 증거**다. 명세와 실제가 충돌하면 Codex는 임의로 덮어쓰지 않고 원인·영향·가장 안전한 개선안을 보고한다.
+
+기본 병합 정책은 `AUTO_MERGE_AFTER_REQUIRED_CHECKS`와 `AGENT_MERGE_REQUIRED`다. 별도 사용자 병합 승인은 필요하지 않는다.
+
+`APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`: 사용자의 **명시적 승인이 완료된 항목**은 그 승인 범위의 구현·검증·PR에 병합 권한도 함께 부여된 것으로 간주한다. 이후 동일 범위에 대해 추가 확인·재승인·병합 승인 요청 없이 exact HEAD, Required Check, unresolved thread, 차단 상태를 확인한 뒤 즉시 병합한다. 단, 새 `USER_REVIEW_REQUIRED`, `CHANGE_PROPOSAL`, P0/P1, 범위 확대 또는 승인 이후 생긴 새로운 사용자 결정은 기존 승인으로 덮지 않는다.
 
 ## 2. GPT 책임
 
-GPT는 Codex 인계 전에 가능한 비-Godot 작업을 완료한다.
+GPT는 평상시 작업과 Codex 인계 준비를 담당한다.
 
 - 현재 대화·저장소·책임 원본·Issue·Branch·PR 감사
 - Grill Me 의사결정 인터뷰와 결정 원장
 - WHY / HOW / WHAT, 프로젝트 코어, Core Loop, MVP, PoC, Vertical Slice
 - 벤치마킹, 시장·플레이어 근거, SWOT·VRIO
 - 시스템 규칙, 데이터 계약, UI·UX 흐름, 콘텐츠 제작 문법
+- Scene·Node·Resource/Data·Signal·상태 구조 설계와 GDScript 초안·구현 보조
+- 승인 범위 안의 Godot POC·사전 제작과 직접 실행 가능한 경우의 재설계
 - `AGENTS.md`, Skill, Registry, Documentation Map, Schema, Template
 - HTML·Python 기반 기획·검증·발행 도구
 - GitHub Actions, 정적 검사, PDF·Manifest
-- 기획 Branch·Issue·PR와 마스터 구현계획
-- 패키지별 Codex Plan 요청, Plan 보고서 검수와 구현 계약 갱신
+- 기획 Branch·Issue·PR와 필요 시 마스터 구현계획
+- `USER_REQUESTED_CODEX_HANDOFF` 시 Codex 실행 명세 작성
+- 선택적 Codex Plan 결과 검수와 구현 계약 갱신
 - Codex 구현 결과의 기획 일치·회귀·증거 검수
 - 자동 병합 적격성 판정과 Repository 설정 검증
 
-GPT는 실제로 실행하지 않은 Godot 런타임·렌더·빌드·테스트를 완료로 보고하지 않는다.
+Codex 실행 명세에는 최소한 다음을 포함한다.
 
-## 3. Codex Plan 책임
+```yaml
+handoff_mode: ON_DEMAND_CODEX_HANDOFF
+trigger: USER_REQUESTED_CODEX_HANDOFF
+intent_and_current_behavior:
+actual_state_verification_required: true
+repositories_and_paths_to_inspect: []
+godot_scenes_scripts_resources_to_inspect: []
+known_problems_and_improvement_goals: []
+protected_behavior_and_data_contracts: []
+priority_order: []
+acceptance_criteria: []
+required_tests_and_runtime_checks: []
+performance_size_structure_checks: []
+forbidden_or_high_risk_changes: []
+completion_report_required:
+  - changed_files_and_reasons
+  - tests_run_failed_not_run
+  - remaining_risks
+```
 
-Codex Plan은 읽기 전용이다.
+## 3. Codex Plan 책임 — 선택적 preflight
+
+`CODEX_PREFLIGHT_OPTIONAL`: Codex Plan은 모든 인계의 의무 단계가 아니다. 다음처럼 실제 구현 전 별도 재검수가 비용 대비 가치가 큰 경우에만 사용한다.
+
+- 저장·Schema·마이그레이션·플랫폼 설정처럼 되돌리기 어려운 고위험 변경
+- GPT 명세와 실제 저장소가 크게 어긋날 가능성이 높음
+- 여러 패키지·Scene·공용 Resource가 얽혀 경쟁 수정 위험이 큼
+- 구현 전에 기술 대안 비교나 별도 `CHANGE_PROPOSAL` 분리가 필요함
+- 사용자가 명시적으로 Codex Plan 검토를 요청함
+
+낮은 위험의 명확한 구현 패키지는 실행 명세가 충분하고 실제 저장소 선조사가 가능하면 Codex Build에서 바로 조사→구현으로 진행할 수 있다.
+
+Codex Plan을 사용하는 경우에는 읽기 전용이다.
 
 ### 수행
 
@@ -69,7 +111,7 @@ Codex Plan은 읽기 전용이다.
 
 ## 4. Codex Build 책임
 
-Codex Build는 지정된 구현 패키지의 Godot 런타임 구현을 담당한다.
+Codex Build는 지정된 구현 범위의 실제 저장소·프로젝트·Godot 상태를 먼저 조사한 뒤 구현한다. 별도 Codex Plan을 생략했더라도 이 runtime-truth 조사 의무는 생략되지 않는다.
 
 ### 허용 파일
 
@@ -105,7 +147,7 @@ Codex Build는 지정된 구현 패키지의 Godot 런타임 구현을 담당한
 - 오류 처리·방어 코드
 - 승인 결과를 더 정확히 구현하는 내부 세부 변경
 
-기술 변경은 Plan과 구현 보고에 이유·영향·검증을 기록한다.
+기술 변경은 구현 보고에 이유·영향·검증을 기록한다. 선택적 Codex Plan을 사용했다면 Plan에도 기록한다.
 
 ### `CHANGE_PROPOSAL` 필수
 
@@ -119,11 +161,11 @@ Codex Build는 지정된 구현 패키지의 Godot 런타임 구현을 담당한
 - 저장 호환성을 깨는 Schema 변경
 - 제작 범위·일정·의존성의 중대한 변경
 
-`CHANGE_PROPOSAL`은 구현과 분리한다. 사용자 또는 GPT가 승인 계약을 갱신하기 전에는 관련 구현을 시작하지 않는다.
+`CHANGE_PROPOSAL`은 구현과 분리한다. 승인 계약을 갱신하기 전에는 관련 구현을 시작하지 않는다.
 
-## 6. 단계별 구현 패키지
+## 6. 구현 패키지
 
-전체 기획은 하나의 통합 설계 명세와 마스터 구현계획으로 유지한다. Codex에는 검증 가능한 결과 단위로 순차 인계한다.
+대규모 작업은 하나의 통합 설계 명세와 마스터 구현계획을 유지하고 검증 가능한 결과 단위로 분해한다. 소규모·국소 작업에는 불필요한 패키지 문서를 강제하지 않는다.
 
 기본 예시:
 
@@ -139,18 +181,18 @@ PKG-07 Vertical Slice 통합
 PKG-08 회귀·성능·접근성·마감
 ```
 
-패키지 수와 이름은 프로젝트 특성에 맞게 조정한다. 파일 수나 분야명이 아니라 다음 조건으로 나눈다.
+패키지는 파일 수가 아니라 다음 조건으로 나눈다.
 
 - 독립된 플레이 가능 결과 또는 검증 가능한 기반
 - 명확한 입력·출력·선행 조건
 - 독립 테스트·검수·롤백 가능
 - 같은 파일·Schema·Scene의 경쟁 수정 최소화
 
-## 7. 마스터 구현계획과 패키지 Plan
+## 7. 마스터 구현계획과 선택적 패키지 Plan
 
 ### 마스터 구현계획
 
-GPT가 관리한다.
+L2 이상 또는 다중 패키지 작업에서 GPT가 관리한다.
 
 - 전체 구현 목표와 플레이어 가치
 - 승인된 프로젝트 코어와 불변 조건
@@ -163,7 +205,7 @@ GPT가 관리한다.
 
 ### 패키지 Plan
 
-Codex가 최신 저장소를 읽기 전용 재검수하고 GPT가 문서에 반영한다.
+`CODEX_PREFLIGHT_OPTIONAL`이 선택된 경우 Codex가 최신 저장소를 읽기 전용 재검수하고 GPT가 문서에 반영한다.
 
 - 기준 Branch·Commit
 - 현재 구현 상태
@@ -196,9 +238,9 @@ GPT는 기술 구현과 승인 명세가 일치하고 자동·Godot 검증이 �
 
 기본 정책이다.
 
-`AGENT_MERGE_REQUIRED`: 자동 병합 설정이 있으면 이를 활성화하고, 없으면
-저장소가 허용한 직접 병합을 실행한다. 모든 게이트를 통과한 PR을 별도 사용자
-승인 대기로 남기지 않는다.
+`AGENT_MERGE_REQUIRED`: 자동 병합 설정이 있으면 이를 활성화하고, 없으면 저장소가 허용한 직접 병합을 실행한다. 모든 게이트를 통과한 PR을 별도 사용자 승인 대기로 남기지 않는다.
+
+`APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`: 이미 명시적으로 승인된 항목은 동일 승인 범위의 구현 PR이 검증을 통과하면 추가 확인·재승인·병합 승인 요청 없이 병합한다.
 
 자동 병합 허용 조건:
 
@@ -226,6 +268,8 @@ GPT는 기술 구현과 승인 명세가 일치하고 자동·Godot 검증이 �
 
 ## 10. GitHub 구조
 
+L2 이상 다중 패키지 작업의 기본 구조:
+
 ```text
 상위 구현 Issue
 ├─ 패키지 0 Branch / PR
@@ -234,7 +278,6 @@ GPT는 기술 구현과 승인 명세가 일치하고 자동·Godot 검증이 �
 └─ Vertical Slice 통합 Branch / PR
 ```
 
-- 전체 구현은 상위 Issue 하나에서 추적한다.
 - 패키지마다 독립 Branch와 PR을 사용한다.
 - 기본은 순차 진행이다.
 - GPT가 Issue·Branch 이름·PR 계약과 체크리스트를 관리한다.
@@ -277,9 +320,11 @@ GPT는 기술 구현과 승인 명세가 일치하고 자동·Godot 검증이 �
 
 ## 13. 완료 조건
 
-- GPT 단계에서 기획과 비-Godot 작업이 완료됐다.
-- Codex Plan 보고서가 최신 실제 저장소를 근거로 한다.
-- 패키지 구현이 지정 Branch와 범위에 한정됐다.
+- GPT 평상시 단계에서 필요한 기획·설계·POC가 현재 범위에 맞게 진행됐다.
+- `USER_REQUESTED_CODEX_HANDOFF`이면 실행 명세가 현재 의도·보호 범위·Acceptance Criteria를 전달한다.
+- Codex가 실제 저장소·프로젝트·Godot 상태를 직접 확인했다.
+- `CODEX_PREFLIGHT_OPTIONAL`을 사용한 경우 Plan 보고서가 최신 실제 저장소를 근거로 한다.
+- 구현이 지정 Branch와 승인 범위에 한정됐다.
 - 기술 개선과 기획 변경이 구분됐다.
 - 필수 Godot·회귀 검증 결과가 있다.
 - GPT가 승인 명세와 diff를 대조했다.

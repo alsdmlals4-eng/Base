@@ -68,7 +68,7 @@ Reference: `skills/managing-project-intake-and-work-contract/references/grill-me
 - 같은 책임을 여러 Skill로 중복 실행하지 않는다.
 - 새 사실·실패·범위 변경·정본 변경이 생기면 다시 라우팅한다.
 - Skill 파일을 읽은 것과 실제 절차를 실행한 것을 구분한다.
-- 새 독립 Skill보다 기존 통합 Skill의 Skill Mode·reference로 책임을 보존할 수 있는지 먼저 확인한다.
+- 새 독립 Skill보다 기존 통합 Skill의 Skill Mode·reference로 책임을 보존할 수 있는지 먼저 확인한다. 독립 입력·산출물·승인 권한이 새로 생기고 기존 owner에 넣으면 책임 경계가 무너지는 경우에만 새 Skill을 만든다.
 
 ### 경량 중립성 Gate와 전체 적대 검토 경계
 
@@ -136,41 +136,45 @@ review-scope-map
 
 공용 정본: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
 
-```text
-GPT PLAN
-→ 저장소·대화 감사
-→ Grill Me 핵심 결정
-→ 기획·벤치마킹·시스템·데이터·UX 확정
-→ 비-Godot 파일·GitHub 계약·마스터 구현계획 완료
+기본 라우팅은 `ON_DEMAND_CODEX_HANDOFF`다.
 
-Codex PLAN
-→ 최신 main·실제 Godot 파일 읽기 전용 재검수
+```text
+GPT 평상시 작업
+→ 기획·조사·설계
+→ 필요한 범위의 Godot 구현 보조·POC·직접 플레이
+→ 문제 발견 시 GPT에서 재설계
+→ 기획·구현·POC 누적
+
+USER_REQUESTED_CODEX_HANDOFF
+→ GPT가 현재 의도·실제 상태·보호 범위·Acceptance Criteria를 Codex 실행 명세로 압축
+→ Codex가 실제 GitHub + 프로젝트 파일 + Godot 상태를 직접 조사
+
+CODEX_PREFLIGHT_OPTIONAL
+→ 고위험·불확실·다중 의존성일 때만 읽기 전용 Codex Plan
 → 기술 개선·CHANGE_PROPOSAL·사용자 결정 보고
 
-GPT PLAN/BUILD
-→ 보고서 검수
-→ 기술 개선 승인
-→ 패키지 Plan·Issue·체크리스트 최신화
-→ READY_FOR_BUILD 판정
-
 Codex BUILD
-→ 지정 패키지 Branch의 Godot 구현·테스트·Commit·Push
+→ 지정 Branch에서 실제 구현·리팩터링·테스트·Godot 오류 확인·Commit·Push
 
 GPT REVIEW
-→ diff·Commit·테스트·기획 일치 검수
+→ diff·Commit·테스트·기획 일치·과설계·성능·용량·회귀 적대 검수
 → 패키지 게이트 판정
 
-사용자
-→ 체감·기획 변경 최종 결정 (병합은 `AGENT_MERGE_REQUIRED`)
+담당 에이전트
+→ 필수 게이트 통과 시 AGENT_MERGE_REQUIRED 실행
 ```
 
 ### GPT 권한
 
 - 기획·조사·설계·비-Godot 파일·GitHub 계약
-- 마스터 구현계획과 패키지 Plan 문서
-- Codex Plan 결과 반영과 구현 결과 검수
+- 승인 범위의 Godot 사전 제작·POC·코드 초안·구현 보조
+- L2 이상이면 마스터 구현계획과 패키지 계약
+- `USER_REQUESTED_CODEX_HANDOFF` 시 실행 명세 작성
+- 선택적 Codex Plan 결과 반영과 구현 결과 검수
 
 ### Codex Plan 권한
+
+`CODEX_PREFLIGHT_OPTIONAL`이 선택된 경우에만 별도 단계로 사용한다.
 
 - 최신 저장소 읽기·분석·제안
 - 파일·Commit·Push·PR·Issue 수정 금지
@@ -178,6 +182,7 @@ GPT REVIEW
 ### Codex Build 권한
 
 - 지정 Branch의 Godot 런타임 파일
+- 별도 Plan을 생략했어도 구현 전 실제 저장소·프로젝트·Godot 상태 선조사 필수
 - 독립 Commit과 지정 Branch Push
 - `main` 직접 Push, force push, amend, PR 생성·병합 금지
 
@@ -187,7 +192,7 @@ GPT REVIEW
 
 ## 6. 구현 패키지와 승인 게이트
 
-전체 설계는 마스터 구현계획 하나로 유지하고 구현은 검증 가능한 결과 단위의 패키지로 순차 진행한다.
+L2 이상·다중 의존성 작업은 전체 설계를 마스터 구현계획 하나로 유지하고 구현을 검증 가능한 결과 단위의 패키지로 순차 진행한다. 작은 국소 작업에는 패키지 체계를 형식적으로 강제하지 않는다.
 
 ```text
 상위 구현 Issue
@@ -207,11 +212,9 @@ GPT REVIEW
 - `BLOCKED`
 - `UNVERIFIED`
 
-기본 병합 정책은 `AUTO_MERGE_AFTER_REQUIRED_CHECKS`와
-`AGENT_MERGE_REQUIRED`다. 별도 사용자 병합 승인은 필요하지 않다. 담당
-에이전트는 동일 HEAD, 필수 검사·독립 검토 통과, unresolved thread 0,
-`USER_REVIEW_REQUIRED`·`CHANGE_PROPOSAL`·P0/P1 없음이 확인되면 저장소의
-허용된 방식으로 병합한다.
+기본 병합 정책은 `AUTO_MERGE_AFTER_REQUIRED_CHECKS`와 `AGENT_MERGE_REQUIRED`다. 별도 사용자 병합 승인은 필요하지 않다.
+
+`APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`: 사용자의 명시적 승인이 완료된 항목은 동일 승인 범위의 구현·검증·PR에 병합 권한도 상속된다. 동일 범위에 대해 추가 확인·재승인·병합 승인 요청 없이, 동일 HEAD·필수 검사·독립 검토 통과, unresolved thread 0, `USER_REVIEW_REQUIRED`·`CHANGE_PROPOSAL`·P0/P1 없음이 확인되면 저장소의 허용된 방식으로 병합한다.
 
 담당 Skill: `maintaining-project-context-and-handoff`의 `implementation-package-handoff`.
 
@@ -247,9 +250,11 @@ status: PASS | PARTIAL | FAIL | UNVERIFIED
 
 ```text
 Prompt: 전투 결과 저장 기능을 구현해줘.
-GPT PLAN: 저장 책임·Schema·호환성·패키지 계약 확정
-Codex PLAN: 실제 Godot 저장 구조·파일·테스트 읽기 전용 재검수
-GPT: Plan 보고 반영·READY_FOR_BUILD
+GPT PLAN/BUILD: 저장 책임·Schema·호환성 설계, 필요한 POC와 실행 명세 준비
+사용자: Codex 전환 요청
+GPT: USER_REQUESTED_CODEX_HANDOFF 실행 명세 작성
+Codex: 실제 Godot 저장 구조·파일·테스트 조사
+CODEX_PREFLIGHT_OPTIONAL: 저장 마이그레이션 위험이 크면 읽기 전용 Plan 추가
 Codex BUILD: 지정 Branch 구현·테스트·Commit·Push
 GPT REVIEW: 저장·불러오기·경계·회귀·기획 일치 검수
 담당 에이전트: 필수 게이트 통과 후 병합
