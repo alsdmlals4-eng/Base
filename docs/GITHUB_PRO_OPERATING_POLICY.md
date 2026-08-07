@@ -4,11 +4,11 @@
 
 ## 1. 적용 원칙
 
-- 공개 저장소의 표준 GitHub-hosted Actions는 공개 저장소 계약에 따라 사용하고, Pro의 포함 사용량은 주로 비공개 저장소에 배분한다.
-- 비공개 저장소에서는 GitHub Pro가 제공하는 protected branch와 branch/tag ruleset을 사용한다.
+- 현재 Base와 활성 게임 저장소는 공개 저장소로 운영하며, standard GitHub-hosted Actions는 공개 저장소 계약에 따라 `REMOTE_CI` 기본 경로로 사용한다.
+- 미래에 비공개 저장소를 만들 경우 GitHub Pro가 제공하는 protected branch와 branch/tag ruleset, 포함 사용량을 별도로 검토한다.
 - 비공개 Push ruleset은 GitHub Team 이상 기능이므로 Pro 공용 Template에 포함하지 않는다.
-- 저장소 설정은 Base에서 정책과 importable Template을 제공하고 각 프로젝트에서 실제 Required Check 이름과 기본 Branch를 확인한 뒤 적용한다.
-- 모든 프로젝트를 동시에 잠그지 않는다. Base → 비공개 `omenward` → 다른 활성 프로젝트 순으로 확산한다.
+- 저장소 설정은 Base에서 정책과 importable Template을 제공하고 각 프로젝트에서 실제 visibility, Required Check 이름과 기본 Branch를 확인한 뒤 적용한다.
+- 모든 프로젝트를 동시에 잠그지 않는다. Base에서 검증한 뒤 활성 프로젝트에 하나씩 순차 확산한다.
 
 Official references:
 
@@ -119,12 +119,18 @@ Settings
 
 Auto-merge는 PR이 즉시 병합 가능한 상태에서는 UI에 표시되지 않을 수 있다. Required Check 또는 다른 병합 요구조건을 기다리는 PR에서 활성화한다.
 
-## 6. Actions 사용량
+## 6. Actions 사용량과 두 검증 모드
 
-- Base처럼 공개 저장소인 경우 비용 최적화는 Pro 포함 분을 아끼기 위한 목적보다 피드백 속도·runner 낭비·외부 의존성 실패 감소를 목적으로 유지한다.
-- `omenward` 같은 비공개 저장소는 Pro 포함 Actions 사용량에 직접 영향을 주므로 변경 위험별 CI 계층을 필수 적용한다.
+- Base와 현재 활성 프로젝트처럼 public 저장소인 경우 standard GitHub-hosted runner를 `REMOTE_CI` 기본 경로로 사용한다. 비용 0을 이유로 이 경로를 우회하지 않는다.
+- 공개 저장소의 비용 최적화는 paid minutes 회피보다 피드백 속도, runner 낭비, 외부 의존성 실패, 중복 matrix 감소를 목적으로 유지한다.
+- larger/GPU runner 및 미래 private repository는 현재 GitHub billing 조건을 확인한 뒤 별도 예산을 적용한다.
 - Budget은 `templates/project-operations/github/GITHUB_USAGE_BUDGET.md`에 기록한다.
-- 사용량 한도·추가 과금·runner 장애로 필수 검증을 실행하지 못하면 `UNVERIFIED`이며 자동 병합하지 않는다.
+- Actions가 현재 검증 대상에 Required Check의 `ci-gate` Check Run 자체를 만들지 못한 인프라 장애에서만 `LOCAL_FALLBACK`을 검토한다.
+- `ci-gate` Check Run이 이미 생성되어 실패·취소·대기·실행 중이라면 fallback으로 덮지 않는다. 원격 CI 실패를 수정하거나 실행을 재개한다.
+- `LOCAL_FALLBACK`은 `tools/run_local_ci_fallback.py`가 exact head, clean worktree, current base ancestry, head/test-merge의 Check Run 부재를 검증 전후 확인하고 기존 `tools/run_local_validation.py`가 성공한 경우에만 같은 `ci-gate` 문맥의 success status를 발행할 수 있다.
+- fallback 조건 또는 필수 로컬 증거를 충족할 수 없으면 `BLOCKED_BY_GITHUB_ACTIONS / UNVERIFIED`이며 자동 병합하지 않는다.
+
+세부 계약은 `docs/CI_EXECUTION_COST_POLICY.md`가 책임진다.
 
 ## 7. Packages와 Codespaces
 
@@ -156,16 +162,18 @@ Godot GUI 플레이테스트·아트·오디오 주 작업 환경으로 강제�
 
 - 정책·Template·회귀 테스트 병합
 - `ci-gate` Required Check 기준 고정
+- `REMOTE_CI` 정상 경로 검증
+- 제한적 `LOCAL_FALLBACK`의 fail-closed 계약 검증
 - `Allow auto-merge` 설정 확인
-- 정책 PR에서 실제 auto-merge 검증
+- 정책 PR에서 실제 Required Check 검증
 
-### Stage 2 — `omenward` Pilot
+### Stage 2 — Public project pilot
 
-- Repository Profile 작성
+- `omenward` 같은 활성 public 프로젝트의 Repository Profile 작성 또는 현행 확인
 - Ruleset 가져오기
 - 실제 Required Check 확인
-- Auto-merge 활성화
-- 한 개 PR에서 자동 병합 검증
+- standard GitHub-hosted `REMOTE_CI` 확인
+- 필요한 경우에만 fallback 도구 적용 가능성 검증
 - 차단·롤백 기록
 
 ### Stage 3 — 순차 확산
@@ -176,6 +184,8 @@ Pilot 성공 후 다음 활성 프로젝트에 하나씩 적용한다.
 - urban-legend
 - Ten-Paces-Hidden-Moves
 - 그 외 활성 Godot 프로젝트
+
+각 저장소의 현재 visibility와 Required Check를 실제 확인한 뒤 적용하며, Base의 과거 상태를 그대로 복사하지 않는다.
 
 ## 9. 자동 병합 금지
 
@@ -188,6 +198,7 @@ Pilot 성공 후 다음 활성 프로젝트에 하나씩 적용한다.
 - 저장 호환성 파괴
 - Repository setting 미확인
 - Required Check 이름 미확인
+- `LOCAL_FALLBACK` preflight 또는 exact-SHA 재검증 실패
 
 ## 10. 롤백
 
@@ -200,11 +211,15 @@ Ruleset 오작동 시:
 5. 직접 Push로 우회하지 않고 설정을 수정한다.
 6. 원인과 재개 조건을 Issue에 기록한다.
 
+Fallback 도구 오작동 시에는 Ruleset을 변경하지 않는다. `tools/run_local_ci_fallback.py` 사용을 중단하고 `REMOTE_CI` 또는 `BLOCKED_BY_GITHUB_ACTIONS / UNVERIFIED` 상태로 복귀한다.
+
 ## 11. 완료 조건
 
 - Repository Profile이 현재 설정을 반영한다.
 - `solo-main-safety` Ruleset이 active다.
 - `ci-gate`가 Required Check다.
+- public standard GitHub-hosted `REMOTE_CI`가 기본이다.
+- `LOCAL_FALLBACK`은 Check Run 부재와 exact-SHA 안전조건을 모두 만족할 때만 사용할 수 있다.
 - `Allow auto-merge`가 활성화됐다.
 - 자동 병합 허용·차단 상태가 PR에 기록된다.
-- 실제 자동 병합 PR 증거가 있다.
+- 실제 Required Check PR 증거가 있다.
