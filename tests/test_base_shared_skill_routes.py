@@ -145,6 +145,36 @@ class BaseSharedSkillRouteTests(unittest.TestCase):
         self.assertIn("소비 경로", use_when)
         self.assertIn("제거 절차", use_when)
 
+    def test_godot_toolchain_route_exposes_gut_and_hera_roles(self) -> None:
+        registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        item = next(
+            entry
+            for entry in registry["shared_skills"]
+            if entry["skill_id"]
+            == "evaluating-godot-assets-and-plugins-before-creation"
+        )
+
+        for tag in (
+            "gut",
+            "gdscript-test-framework",
+            "hera-agent",
+            "live-runtime-qa",
+            "source-delta-guard",
+        ):
+            self.assertIn(tag, item["trigger_tags"])
+
+        for role in (
+            "godot_test_framework",
+            "gut_exact_version",
+            "gut_test_consumption_path",
+            "hera_cli_addon_pair",
+            "hera_live_qa_consumption_path",
+            "hera_source_delta_guard",
+        ):
+            self.assertIn(role, item["project_adapter_roles"])
+
+        self.assertEqual(len(registry["shared_skills"]), 2)
+
     def test_project_specific_skills_remain_local_only(self) -> None:
         registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
         policy = registry["project_skill_policy"]

@@ -11,7 +11,7 @@ Base v9.1 projects use the focused [project adapter and routing contract](refere
 
 신규 설치, 기존 구조 감사, 구형 파일 정리, 승인된 마이그레이션과 운영체계 검수는 같은 책임 원본·참조·복구 계약을 공유한다. `Work Mode`와 `Skill Mode`를 구분하며, 읽기 전용 조사와 승인된 쓰기 작업을 혼동하지 않는다. 프로젝트 GDD Google Sheets 설치·감사·검증은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 따른다.
 
-Godot MCP/addon 공급자 도입·업데이트는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`를 따른다. HiGodot (`hi-godot/godot-ai`)만 실행 권위이며 프로젝트는 `HIGODOT_ADOPTION_RECORD.json`에 exact pin, Godot 버전, host client, canary, regression, rollback과 미검증을 기록한다.
+Godot MCP/addon/CLI 공급자 도입·업데이트는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`를 따른다. HiGodot (`hi-godot/godot-ai`)만 persistent Godot authoring 실행 권위이며 프로젝트는 `HIGODOT_ADOPTION_RECORD.json`에 exact pin, Godot 버전, host client, canary, regression, rollback과 미검증을 기록한다. GUT과 Hera Agent Godot은 프로젝트가 실제 필요에 따라 채택하는 별도 **third-party 검증 도구**이며, GUT은 deterministic GDScript tests, Hera는 `LIVE_QA_AND_OBSERVABILITY_ONLY`로만 공존한다.
 
 - `Work Mode`: `PLAN / BUILD / REVIEW`
 - 이 문서의 `mode`: 운영체계 Skill 내부의 **Skill Mode**
@@ -19,7 +19,7 @@ Godot MCP/addon 공급자 도입·업데이트는 `docs/knowledge/godot/HIGODOT_
 ## Skill Modes
 
 - `install`: 신규 또는 내용이 거의 없는 프로젝트에 운영체계와 승인된 third-party provider record를 설치한다.
-- `audit`: 기존 프로젝트를 변경 없이 조사하고 현재 구조·위험·보존표·addon/MCP provider inventory를 만든다.
+- `audit`: 기존 프로젝트를 변경 없이 조사하고 현재 구조·위험·보존표·addon/MCP/CLI provider inventory를 만든다.
 - `reconcile-legacy`: 구형·중복·버전명 파일과 파생본을 현행 정본에 맞춰 갱신·통합·호환 보존·아카이브·승인 삭제한다.
 - `migrate`: 사용자가 승인한 처리표 범위만 새 책임 구조로 재배치한다.
 - `verify`: 설치·정리·마이그레이션·provider upgrade·대규모 변경 뒤 전체 연결을 증거로 검수한다.
@@ -29,7 +29,7 @@ Godot MCP/addon 공급자 도입·업데이트는 `docs/knowledge/godot/HIGODOT_
 기존 운영 프로젝트 → audit
 v2·final·latest·복제본·구형 파생본 존재 → audit → reconcile-legacy
 승인된 구조 이동표 있음 → migrate
-설치·정리·마이그레이션·주요 게이트·HiGodot upgrade 후 → verify
+설치·정리·마이그레이션·주요 게이트·HiGodot/GUT/Hera upgrade 후 → verify
 ```
 
 `reconcile-legacy`는 별도 신규 Skill이 아니다. 기존 프로젝트의 책임 원본·참조·보존·삭제 권한을 다루는 같은 생명주기이므로 이 Skill의 전문 Skill Mode로 유지한다.
@@ -68,6 +68,12 @@ higodot_exact_pin:
 higodot_previous_rollback_pin:
 higodot_canary_evidence:
 higodot_project_regression_evidence:
+godot_test_framework:
+gut_exact_version:
+gut_test_consumption_path:
+hera_cli_addon_pair:
+hera_live_qa_consumption_path:
+hera_source_delta_guard:
 ```
 
 ## Shared read order
@@ -80,7 +86,7 @@ higodot_project_regression_evidence:
 → CURRENT_CONFIRMED_DECISIONS.md·동일 Goal의 열린·최근 병합 PR·프로젝트 Google Sheets
 → Design Document Registry·Skill Registry
 → 관련 책임 원본·Skill·Learning Log
-→ provider inventory·HIGODOT_ADOPTION_RECORD.json
+→ third-party provider inventory·HIGODOT_ADOPTION_RECORD.json·GUT/Hera adoption state
 → DOCX/PDF·다이어그램·승인 이미지·Manifest
 → 실제 코드·데이터·자산·테스트
 → Issue·Plan·PR·Workflow·최근 변경
@@ -109,6 +115,7 @@ higodot_project_regression_evidence:
 ```yaml
 provider: hi-godot/godot-ai
 authority: SOLE_GODOT_EXECUTION_AUTHORITY
+persistent_authoring_authority: SOLE_PERSISTENT_GODOT_AUTHORING_AUTHORITY
 exact pin: required
 floating_latest: forbidden
 automatic_unreviewed_update: forbidden
@@ -147,12 +154,49 @@ new release identified
 ### Verify
 
 - 실제 installed version이 adoption record의 exact pin과 일치하는가
-- HiGodot 외 두 번째 Godot mutation addon/MCP/Bridge가 활성화되지 않았는가
+- HiGodot 외 두 번째 Godot **persistent mutation authority**가 활성화되지 않았는가
 - network가 loopback only이고 LAN/public URL/forwarding/tunnel이 없는가
 - Codex·GPT profile과 DeepSeek 금지 경계가 유지되는가
 - enabled domain의 read·L1·L2 canary와 project regression evidence가 있는가
 - rollback pin·package·절차가 실제로 존재하는가
 - 단순 connection 또는 tools/list를 production readiness로 승격하지 않았는가
+
+## Godot deterministic-test and live-QA adoption contract
+
+GUT과 Hera는 HiGodot `HIGODOT_ADOPTION_RECORD.json`에 억지로 합치지 않는다. 프로젝트의 기존 `third-party` provider/addon inventory에 exact version, source, license, Godot compatibility, adoption state, consumption path, owner boundary, validation, rollback/removal을 기록한다.
+
+### GUT
+
+```yaml
+role: DETERMINISTIC_GDSCRIPT_TEST_AUTHORITY_WHEN_ADOPTED
+gut_exact_version: required
+godot_compatibility_match: required
+gut_test_consumption_path: required_when_adopted
+floating_latest: forbidden
+```
+
+- 테스트 가능한 GDScript 제품 코드와 반복 가능한 상태 규칙이 있을 때만 채택한다.
+- Godot 버전별 공식 compatibility matrix를 확인하고 exact version을 고정한다.
+- GUT 채택 이후 같은 GDScript test case를 HiGodot `McpTestSuite`와 두 canonical suite로 유지하지 않는다. 기존 `McpTestSuite` case는 migration input으로 보존한다.
+- C#/.NET·native SDK·platform sandbox·build/package test authority를 강제 대체하지 않는다.
+- 설치돼 있지만 실제 test/CI 소비가 없으면 `INSTALLED_UNUSED`; 필요가 아직 없으면 `DEFERRED`다.
+
+### Hera Agent Godot
+
+```yaml
+role_restriction: LIVE_QA_AND_OBSERVABILITY_ONLY
+hera_cli_addon_pair: exact_match_required
+hera_live_qa_consumption_path: required_when_adopted
+hera_source_delta_guard: required_for_acceptance
+persistent mutation authority: forbidden
+floating_latest: forbidden
+```
+
+- Hera restricted live QA는 HiGodot과 공존할 수 있다. **persistent mutation authority** 또는 unrestricted editor writer로 활성화되면 blocking duplicate authority다.
+- Base 채택은 localhost + shared token을 사용하고 token 원문을 저장소·prompt·log·evidence에 기록하지 않는다.
+- acceptance QA 전후 tracked source를 비교해 Hera-phase delta `NONE`을 요구한다.
+- `game set` 또는 state-changing runtime `call`은 `DIAGNOSTIC_ONLY`이며 acceptance evidence가 아니다. restore 또는 restart 후 정상 경로를 다시 검증한다.
+- 설치돼 있지만 live-QA consumption이 없으면 `INSTALLED_UNUSED`; 실행 가능한 game/live-QA 요구가 없으면 `DEFERRED`다.
 
 ## Skill Mode: install
 
@@ -166,7 +210,8 @@ new release identified
 8. Visual Source·Asset Manifest와 승인 상태를 연결한다.
 9. Governance 검사·Actions·Required Check 준비 상태를 구분한다.
 10. 승인된 HiGodot 사용 프로젝트이면 provider adoption contract와 exact pin record를 설치한다.
-11. `verify`로 콜드 스타트와 결정 복원·동기화·provider 경계를 확인한다.
+11. GUT 또는 Hera가 현재 프로젝트에서 실제 필요하고 평가 결과가 `REUSE` 또는 승인된 `REFACTOR`일 때만 기존 third-party inventory에 project-specific adoption을 기록한다. 모든 프로젝트에 일괄 설치하지 않는다.
+12. `verify`로 콜드 스타트와 결정 복원·동기화·provider 경계를 확인한다.
 
 ## Skill Mode: audit
 
@@ -178,7 +223,8 @@ new release identified
 산출물:
 
 - 현재 책임 문서·Skill·자산·파생본 지도
-- enabled addon·connected MCP·provider pin·host profile inventory
+- enabled addon·connected MCP·CLI·provider pin·host profile inventory
+- GUT/Hera exact pin·consumption·owner boundary·source-delta guard 상태
 - `CURRENT_CONFIRMED_DECISIONS.md`·분야 정본·GitHub `main`·프로젝트 Google Sheets의 Decision·Commit·대체 관계 대조
 - 중복·충돌·누락·구형 참조 목록
 - 목표 Registry와 책임 원본 구조
@@ -196,7 +242,9 @@ new release identified
 - 새 경로로 대체됐지만 활성 파일이 계속 참조하는 구형 경로·ID·Schema
 - 원본보다 오래된 생성물·Manifest·해시
 - 삭제된 Skill·명령·파일을 실행 경로가 참조함
-- HiGodot과 겹치는 과거 Base MCP·Bridge·Hera 또는 다른 mutation addon이 활성 경로에 남음
+- HiGodot과 겹치는 과거 Base MCP·Bridge, unrestricted Hera writer 또는 다른 persistent mutation addon이 활성 경로에 남음
+
+Hera가 존재한다는 사실만으로 legacy conflict로 판정하지 않는다. `LIVE_QA_AND_OBSERVABILITY_ONLY`로 제한되고 exact pair·consumption·source-delta guard가 검증된 Hera는 허용된 검증 도구다.
 
 파일별로 하나를 판정한다.
 
@@ -264,9 +312,11 @@ KEEP_UNRESOLVED
 7. Skill Registry·최소 라우팅·Learning Log
 8. Development Gates·Roadmap·결정 추적성
 9. Visual Source·Asset Manifest
-10. HiGodot exact pin·단일 권위·host isolation·canary·regression·rollback
-11. Governance checker·회귀 테스트·GitHub Actions·브랜치 보호
-12. 과거 대화 없이 현재 Decision을 복원하는 콜드 스타트
+10. HiGodot exact pin·단일 persistent authoring 권위·host isolation·canary·regression·rollback
+11. adopted GUT exact compatible pin·GDScript test consumption·duplicate canonical case 부재
+12. adopted Hera exact CLI/addon pair·`LIVE_QA_AND_OBSERVABILITY_ONLY`·localhost/shared-token·live-QA consumption·source-delta `NONE`
+13. Governance checker·회귀 테스트·GitHub Actions·브랜치 보호
+14. 과거 대화 없이 현재 Decision을 복원하는 콜드 스타트
 
 ```text
 결정
@@ -286,6 +336,7 @@ KEEP_UNRESOLVED
 ## 자동 선택 이유
 ## 현재 구조·증거
 ## Third-party provider와 HiGodot exact pin
+## GUT/Hera adoption·consumption·owner boundary
 ## Canary·project regression·rollback
 ## 구형 파일·파생본 처리표
 ## 실제 갱신·통합·아카이브·삭제
@@ -309,6 +360,7 @@ KEEP_UNRESOLVED
 - 구형 파일은 고유 정보·참조·파생본·복구·승인에 따라 판정됐다.
 - 삭제·통합 뒤 활성 stale reference와 untouched 소비자가 없다.
 - HiGodot project이면 exact pin, DeepSeek 금지, loopback, canary, regression, rollback 상태가 기록됐다.
+- GUT/Hera adopted project이면 exact pin/pair, 실제 consumption, owner boundary, rollback/removal과 Hera source-delta guard가 기록됐다.
 - 신규·정리·마이그레이션·provider update 결과는 `verify` 증거를 가진다.
 - 실행하지 않은 검사와 권한은 `NOT_RUN` 또는 `[미검증]`이다.
 - 사용한 Skill Mode의 이유와 얻은 결과를 보고했다.
@@ -323,9 +375,13 @@ KEEP_UNRESOLVED
 - Git 이력만 있다는 이유로 활성 참조·복구 검증 없이 삭제함
 - 호환성이 필요한 외부 경로를 stub 없이 제거함
 - PDF·DOCX를 독립 책임 원본으로 수정함
-- HiGodot floating latest 또는 automatic update 사용
+- HiGodot/GUT/Hera floating latest 또는 automatic unreviewed update 사용
 - DeepSeek profile에 HiGodot 등록
-- 두 번째 Godot mutation authority 활성화
+- 두 번째 Godot persistent mutation authority 활성화
+- Hera restricted live-QA 도입을 mere presence만으로 legacy conflict 처리
+- Hera persistent writer·source-delta failure·diagnostic mutation을 acceptance evidence로 허용
+- GUT이 C#/.NET·native·platform test authority를 강제 대체
+- consumption이 없는 addon/CLI를 `ADOPTED_ACTIVE` 완료로 보고
 - canary·project regression·rollback 없이 provider update 완료 보고
 - connection 성공을 production readiness로 보고
 - 설치·정리·마이그레이션 뒤 `verify`를 생략함

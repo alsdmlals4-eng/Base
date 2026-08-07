@@ -60,11 +60,11 @@ class GodotAddonUtilizationPolicyTests(unittest.TestCase):
         ):
             self.assertIn(marker, text)
 
-    def test_higodot_authority_scope_allows_non_authoring_addons(self) -> None:
+    def test_higodot_authority_scope_allows_non_authoring_validation_tools(self) -> None:
         text = HIGODOT_POLICY.read_text(encoding="utf-8")
         for marker in (
             "저작·편집 자동화",
-            "비저작 애드온",
+            "비저작 검증 도구",
             "테스트",
             "대화",
             "플랫폼 서비스",
