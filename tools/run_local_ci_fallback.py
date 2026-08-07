@@ -15,6 +15,54 @@ REQUIRED_CONTEXT = "ci-gate"
 CANONICAL_WORKFLOW = "validate-game-project-operating-system.yml"
 DEFAULT_GH_COMMAND: tuple[str, ...] = ("gh",)
 
+LOCALLY_REPRODUCIBLE_TEXT_SUFFIXES = {".md", ".txt"}
+LOCALLY_REPRODUCIBLE_STRUCTURED_SUFFIXES = {".json", ".yaml", ".yml"}
+LOCALLY_REPRODUCIBLE_STRUCTURED_ROOTS = (
+    "docs/",
+    "skills/",
+    "templates/",
+    "schemas/",
+    "references/",
+)
+NONLOCAL_EVIDENCE_PREFIXES = (
+    ".github/workflows/",
+    "tools/",
+    "tests/",
+    "addons/",
+    "scripts/",
+)
+NONLOCAL_EVIDENCE_NAMES = {
+    "package.json",
+    "pnpm-lock.yaml",
+    "requirements.txt",
+    "requirements-dev.txt",
+    "requirements-publication.txt",
+    "project.godot",
+}
+NONLOCAL_EVIDENCE_SUFFIXES = {
+    ".py",
+    ".gd",
+    ".tscn",
+    ".tres",
+    ".godot",
+    ".gdextension",
+    ".js",
+    ".mjs",
+    ".cjs",
+    ".ts",
+    ".tsx",
+    ".jsx",
+    ".sh",
+    ".ps1",
+    ".bat",
+    ".cmd",
+    ".exe",
+    ".dll",
+    ".so",
+    ".dylib",
+    ".lock",
+}
+
 
 @dataclass(frozen=True)
 class PullRequestState:
@@ -148,6 +196,32 @@ def ci_gate_check_exists(
     )
 
 
+def ci_gate_status_exists(
+    repo: str,
+    sha: str,
+    *,
+    environment: Mapping[str, str] | None = None,
+    gh_command: Sequence[str] = DEFAULT_GH_COMMAND,
+) -> bool:
+    result = _require_success(
+        _run(
+            _gh_args(gh_command, "api", f"repos/{repo}/commits/{sha}/statuses"),
+            environment=environment,
+        ),
+        f"GitHub commit-status lookup for {sha}",
+    )
+    try:
+        statuses = json.loads(result.stdout)
+    except json.JSONDecodeError as error:
+        raise RuntimeError("GitHub commit-status response is invalid") from error
+    if not isinstance(statuses, list):
+        raise RuntimeError("GitHub commit-status response is invalid")
+    return any(
+        isinstance(status, dict) and status.get("context") == REQUIRED_CONTEXT
+        for status in statuses
+    )
+
+
 def _git_output(
     root: Path,
     *args: str,
@@ -196,6 +270,61 @@ def assert_base_is_ancestor(
     return _git_output(root, "rev-parse", f"origin/{base}", environment=environment)
 
 
+def changed_paths(
+    root: Path,
+    base: str,
+    *,
+    environment: Mapping[str, str] | None = None,
+) -> tuple[str, ...]:
+    output = _git_output(
+        root,
+        "diff",
+        "--name-only",
+        "--diff-filter=ACMRT",
+        f"origin/{base}...HEAD",
+        environment=environment,
+    )
+    return tuple(line.strip().replace("\\", "/") for line in output.splitlines() if line.strip())
+
+
+def _is_locally_reproducible_path(path: str) -> bool:
+    normalized = path.replace("\\", "/")
+    lower = normalized.lower()
+    name = Path(normalized).name.lower()
+    suffix = Path(normalized).suffix.lower()
+
+    if lower.startswith(NONLOCAL_EVIDENCE_PREFIXES):
+        return False
+    if name in NONLOCAL_EVIDENCE_NAMES or suffix in NONLOCAL_EVIDENCE_SUFFIXES:
+        return False
+    if suffix in LOCALLY_REPRODUCIBLE_TEXT_SUFFIXES:
+        return True
+    if suffix in LOCALLY_REPRODUCIBLE_STRUCTURED_SUFFIXES:
+        return lower.startswith(LOCALLY_REPRODUCIBLE_STRUCTURED_ROOTS)
+    return False
+
+
+def assert_locally_reproducible_changes(
+    root: Path,
+    base: str,
+    *,
+    environment: Mapping[str, str] | None = None,
+) -> tuple[str, ...]:
+    paths = changed_paths(root, base, environment=environment)
+    if not paths:
+        raise RuntimeError("change set is empty; fallback evidence target is ambiguous")
+    blocked = [path for path in paths if not _is_locally_reproducible_path(path)]
+    if blocked:
+        preview = ", ".join(blocked[:8])
+        if len(blocked) > 8:
+            preview += f", ... (+{len(blocked) - 8} more)"
+        raise RuntimeError(
+            "change set is not locally reproducible with the current fallback contract: "
+            f"{preview}"
+        )
+    return paths
+
+
 def _assert_remote_ci_absent(
     repo: str,
     head_sha: str,
@@ -215,7 +344,9 @@ def _assert_remote_ci_absent(
             "LOCAL_FALLBACK cannot take ownership"
         )
     for sha in (head_sha, merge_sha):
-        if sha and ci_gate_check_exists(
+        if not sha:
+            continue
+        if ci_gate_check_exists(
             repo,
             sha,
             environment=environment,
@@ -224,6 +355,16 @@ def _assert_remote_ci_absent(
             raise RuntimeError(
                 f"{REQUIRED_CONTEXT} Check Run already exists for {sha}; "
                 "LOCAL_FALLBACK cannot replace REMOTE_CI"
+            )
+        if ci_gate_status_exists(
+            repo,
+            sha,
+            environment=environment,
+            gh_command=gh_command,
+        ):
+            raise RuntimeError(
+                f"{REQUIRED_CONTEXT} commit status already exists for {sha}; "
+                "LOCAL_FALLBACK will not overwrite existing gate evidence"
             )
 
 
@@ -292,6 +433,7 @@ def run_local_fallback(
         raise RuntimeError(
             f"trusted history commit must equal origin/{base} {current_base_sha}"
         )
+    assert_locally_reproducible_changes(repository_root, base, environment=env)
     _assert_remote_ci_absent(
         repo,
         original_head,
@@ -322,6 +464,7 @@ def run_local_fallback(
     )
     if post_validation_base_sha != current_base_sha:
         raise RuntimeError("origin/base changed during local validation")
+    assert_locally_reproducible_changes(repository_root, base, environment=env)
 
     current_pr = read_pull_request(
         repo,
