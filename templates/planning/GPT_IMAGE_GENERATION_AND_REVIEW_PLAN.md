@@ -14,14 +14,23 @@ target_screen_or_use:
 platform_resolution_camera:
 existing_approved_assets:
 project_sheet_status: PROJECT_SHEET_CONFIGURED | NOT_CONFIGURED
+asset_vault_status: ENABLED | NOT_CONFIGURED | VAULT_LOCAL_STATE_UNVERIFIED
+vault_source_key:
+workspace_path:
+promotion_target:
+promoted_path:
 ```
+
+보존소가 `ENABLED`이면 `GENERATED_EXPLORATION / IN_REVIEW / APPROVED_CANDIDATE`는 기본적으로 `.asset-vault/library/`와 `assets/_vault_local/`의 local-only 후보로 유지한다. `PROJECT_ASSET_APPROVED` 뒤에만 `promotion_target`을 확정하고 `promote`를 실행하여 `promoted_path`를 만든다.
 
 ## 2. Image backlog
 
-| Image ID | 분류 | 목적·사용처 | 관련 정본 | 핵심 전달 | 비율·해상도 | 유지 요소 | 변경 축 | 레퍼런스 | 우선순위 | 구현 난이도 | 재사용성 | 상태 |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Image ID | 분류 | 목적·사용처 | 관련 정본 | 핵심 전달 | 비율·해상도 | 유지 요소 | 변경 축 | 레퍼런스 | vault_source_key | promotion_target | promoted_path | 우선순위 | 구현 난이도 | 재사용성 | 상태 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 
 우선순위: `S / A / B`. 상태는 `PLANNED / GENERATED_EXPLORATION / IN_REVIEW / REVISION_REQUIRED / REJECTED / APPROVED_CANDIDATE / PROJECT_ASSET_APPROVED / APPLIED_AND_RUNTIME_VERIFIED`.
+
+`vault_source_key`는 local vault의 현재 후보를 가리키며 Repo 정본 경로가 아니다. `promoted_path`는 `PROJECT_ASSET_APPROVED` 후 실제 tracked 자산이 생성된 경우에만 채운다.
 
 ## 3. Prompt contract
 
@@ -51,5 +60,9 @@ project_sheet_status: PROJECT_SHEET_CONFIGURED | NOT_CONFIGURED
 - [ ] `71_이미지기획_생성목록` 반영 또는 `NOT_CONFIGURED`
 - [ ] `72_이미지검수_승인로그` 반영 또는 `NOT_CONFIGURED`
 - [ ] Asset License Ledger·Asset Registry 반영
+- [ ] 보존소 사용 시 `vault_source_key` 현재 상태 확인 또는 `VAULT_LOCAL_STATE_UNVERIFIED` 기록
+- [ ] `APPROVED_CANDIDATE`까지 local-only 유지; tracked 자산 자동 생성 금지
+- [ ] `PROJECT_ASSET_APPROVED` 후 `promotion_target` 확정·`promote` 실행·`promoted_path` 기록
+- [ ] tracked Scene/Resource가 `assets/_vault_local/`을 참조하지 않는지 `project_asset_vault.py check` 실행
 - [ ] 실제 적용·런타임 검증 상태 기록
 - [ ] `repository-wide-audit` 재실행
