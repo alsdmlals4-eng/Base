@@ -69,6 +69,7 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 | Codex 작업 명세·전환 | `maintaining-project-context-and-handoff: on-demand-codex-handoff` | `docs/GPT_CODEX_WORKFLOW_POLICY.md` + `skills/maintaining-project-context-and-handoff/SKILL.md` |
 | 프로젝트 교훈의 Base 제안·승인 구현 | `managing-base-change-proposals` | `skills/managing-base-change-proposals/SKILL.md` |
 | Vertical Slice 품질·플레이·제작 파이프라인 | `designing-vertical-slices` | `skills/designing-vertical-slices/SKILL.md` |
+| 프로젝트별 필요 이미지·시각 자산·UI 컴포넌트 선정·우선순위·제작 방식 | 기존 아트·UX·자산 평가 Skill 조합 | `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate` |
 | 아트 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` | `skills/designing-art-prompts-and-technique-cards/SKILL.md` |
 | Godot 에셋·플러그인 제작 전 조사·라이선스·구매 판단 | `evaluating-godot-assets-and-plugins-before-creation` | `skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md` |
 | Steam·STOVE·Google Play 등급·설문·자산 권리·참조 독립 제작 | 기존 프로젝트 운영·에셋 평가·아트·Vertical Slice·검증 Skill 조합 | `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md` |
