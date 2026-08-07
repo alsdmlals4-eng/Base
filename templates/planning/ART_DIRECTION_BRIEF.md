@@ -2,6 +2,7 @@
 
 > 작성 방법: `docs/knowledge/methods/ART_DIRECTION_METHOD.md`  
 > 생성·편집 기술: `docs/knowledge/methods/AI_ART_PROMPT_TECHNIQUE_METHOD.md`
+> 공용 선정 기준: `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate`
 
 ## 1. 한 줄 시각 약속
 
@@ -63,7 +64,47 @@
 - 필수 표정·상태:
 - 다른 대상과 겹치면 안 되는 요소:
 
-## 6. 자산 티어
+## 6. Visual Requirement Gate — 자산·컴포넌트 선정
+
+후보를 바로 제작 목록으로 올리지 않는다. 먼저 `필요성 → Delete Test → 재사용 → 역할 → P0~P3 → disposition → 검증`을 기록한다. 공용 규칙은 Art Guide가 소유하고 이 프로젝트 문서에는 실제 판정만 남긴다.
+
+### 6.1 Requirement record
+
+```yaml
+requirement_id:
+surface_or_flow:
+player_question:
+element_type:
+role:
+why_needed:
+delete_test:
+consumer:
+priority: P0_BLOCKER | P1_CLARITY | P2_CONSISTENCY | P3_DELIGHT
+reuse_candidate:
+disposition: REUSE_SYSTEM | REUSE_PROJECT | ADAPT_EXISTING | SOURCE_EXISTING | GENERATE_EXPLORATION | CREATE_CUSTOM | DEFER | CUT
+required_states:
+accessibility_equivalent:
+platform_and_input:
+localization:
+production_cost: LOW | MEDIUM | HIGH
+performance_risk:
+rights_or_provenance:
+validation:
+handoff:
+```
+
+| requirement_id | surface_or_flow | player_question | element_type | role | why_needed | delete_test | consumer | priority | reuse_candidate | disposition | validation |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| | | | | | | | | | | | |
+
+- `delete_test`가 관찰 가능한 손실을 설명하지 못하면 기본값은 `DEFER` 또는 `CUT`이다.
+- `reuse_candidate`가 있으면 신규 제작 전에 재사용·bounded 변형을 먼저 검토한다.
+- `DECORATIVE`는 자동 삭제가 아니라 기본 P3다. 코어 감정·브랜드 기억점에 증명 가능한 기여가 있으면 승격 근거를 기록한다.
+- 플랫폼 요구 자산은 `PLATFORM_REQUIRED`로 분류하고 제출 시점의 공식 규격을 다시 확인한다.
+
+### 6.2 기존 자산 티어
+
+선정 Gate를 통과한 항목에만 프로젝트 기존 티어를 적용한다. 티어는 필요성 판정을 대체하지 않는다.
 
 | 티어 | 자산 | 용도 | 제작 방식 | 폴백 |
 |---|---|---|---|---|
@@ -151,6 +192,7 @@
 
 ## 11. 생성형 이미지 운영
 
+- 연결 `requirement_id`:
 - 사용 모델·서비스·버전:
 - 원본 이미지 역할:
 - 프롬프트 핵심:
@@ -208,6 +250,8 @@
 - [ ] 이미지와 의미 텍스트가 분리돼 수정·현지화 가능하다.
 - [ ] 기술 카드에 모델·버전·검증 상태가 기록된다.
 - [ ] 실패 프롬프트와 수정 경로가 남아 있다.
+- [ ] 신규 자산·컴포넌트가 연결 `requirement_id`와 Delete Test를 가진다.
+
 ## GPT 이미지 생성·검수 연결
 
 - 이미지 단계: `PLANNING_VISUALIZATION / FINAL_VISUAL_CANDIDATE`
