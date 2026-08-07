@@ -2,7 +2,8 @@
 
 **Status:** APPROVED FOR IMPLEMENTATION
 **Date:** 2026-08-07
-**Baseline:** `main@4f98f968a377f7b6a11aafa4fc94d11bddbebedc`
+**Original baseline:** `main@4f98f968a377f7b6a11aafa4fc94d11bddbebedc`
+**Final verification base:** `main@8a1b868346b5d1cbe50d458e975fca277e42b2a5`
 
 ## Goal
 
@@ -138,7 +139,7 @@ python tools/run_local_ci_fallback.py \
 
 `.github/workflows/validate-game-project-operating-system.yml`은 이미 generic `tools/*`·`tests/*`를 코드 변경으로 분류하고 `tests/test_local_validation.py`를 `ubuntu-contract`에서 실행하므로 구조 변경하지 않는다. `templates/project-operations/github/rulesets/solo-main-safety.json`과 실제 Base Ruleset도 `ci-gate`를 그대로 유지한다.
 
-열린 PR #200의 one-click handoff(`Fetch origin → Pull origin → reopen/play`)는 중복 구현하지 않는다. 이 변경은 PR 검증/병합 경로만 보강한다.
+작업 중 PR #200이 `main@8a1b868346b5d1cbe50d458e975fca277e42b2a5`에 병합되어 one-click operator handoff(`Fetch origin → Pull origin → reopen/play`)가 현행 Base 계약이 되었다. 이 변경은 해당 인계 흐름을 중복 구현하지 않고 PR 검증/병합 경로만 보강하며, 최신 main의 operator-handoff 검사와 함께 재검증한다.
 
 ## Acceptance criteria
 
@@ -149,6 +150,7 @@ python tools/run_local_ci_fallback.py \
 - local validation 성공 후 exact SHA에만 `ci-gate=success`를 발행한다.
 - `CODE_OR_ENGINE`·`CI_TOOLCHAIN_HIGH_RISK`는 별도 동등 로컬 계약 없이는 fallback 성공 대상이 아니다.
 - Ruleset 이름, Required Check 이름, canonical workflow topology, `ci-gate` job은 변경하지 않는다.
+- 최신 main에 병합된 PR #200/#210의 operator-handoff 관련 계약과 충돌하지 않는다.
 - 새 broad Skill/Mode/Schema는 추가하지 않는다.
 - 테스트는 TDD로 먼저 실패를 관찰하고 최소 구현 후 통과시킨다.
 - PR에서 실제 GitHub Actions 결과와 Required Check 상태를 확인한다.
