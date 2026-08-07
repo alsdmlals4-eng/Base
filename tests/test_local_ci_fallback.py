@@ -66,6 +66,16 @@ class LocalCiFallbackTests(unittest.TestCase):
             text=True,
         ).stdout.strip()
 
+    def commit_feature_file(self, path: str, content: str) -> None:
+        target = self.work / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(content, encoding="utf-8")
+        self.git("add", path)
+        self.git("commit", "-m", f"change {path}")
+        self.git("push", "origin", "feature")
+        self.head_sha = self.git_output("rev-parse", "HEAD")
+        self.write_scenario()
+
     def write_fake_gh(self) -> None:
         self.fake_gh.write_text(
             "from __future__ import annotations\n"
@@ -106,6 +116,10 @@ class LocalCiFallbackTests(unittest.TestCase):
             "        checks = [{'name': 'ci-gate', 'status': 'queued', 'conclusion': None}]\n"
             "    print(json.dumps({'check_runs': checks}))\n"
             "    raise SystemExit(0)\n"
+            "if path.endswith('/statuses') and method == 'GET':\n"
+            "    sha = path.split('/commits/', 1)[1].split('/statuses', 1)[0]\n"
+            "    print(json.dumps(scenario.get('statuses', {}).get(sha, [])))\n"
+            "    raise SystemExit(0)\n"
             "if '/statuses/' in path and method == 'POST':\n"
             "    print(json.dumps({'created': True}))\n"
             "    raise SystemExit(0)\n"
@@ -119,6 +133,7 @@ class LocalCiFallbackTests(unittest.TestCase):
         head_sha: str | None = None,
         base_ref: str = "main",
         checks: dict[str, list[dict[str, object]]] | None = None,
+        statuses: dict[str, list[dict[str, object]]] | None = None,
         race_sha: str | None = None,
         workflow_runs: list[dict[str, object]] | None = None,
     ) -> None:
@@ -130,6 +145,7 @@ class LocalCiFallbackTests(unittest.TestCase):
                 "merge_commit_sha": self.merge_sha,
             },
             "checks": checks or {},
+            "statuses": statuses or {},
             "workflow_runs": workflow_runs or [],
         }
         if race_sha is not None:
@@ -215,6 +231,12 @@ class LocalCiFallbackTests(unittest.TestCase):
             self.run_fallback()
         self.assert_no_status_post()
 
+    def test_refuses_when_ci_gate_commit_status_already_exists(self) -> None:
+        self.write_scenario(statuses={self.head_sha: [{"context": "ci-gate", "state": "failure"}]})
+        with self.assertRaisesRegex(RuntimeError, "ci-gate commit status already exists"):
+            self.run_fallback()
+        self.assert_no_status_post()
+
     def test_refuses_when_remote_ci_workflow_run_exists(self) -> None:
         self.write_scenario(
             workflow_runs=[
@@ -228,6 +250,12 @@ class LocalCiFallbackTests(unittest.TestCase):
     def test_refuses_untrusted_history_commit_that_is_not_current_base(self) -> None:
         with self.assertRaisesRegex(RuntimeError, "trusted history commit must equal origin/main"):
             self.run_fallback(trusted_history_commit="0" * 40)
+        self.assert_no_status_post()
+
+    def test_refuses_code_or_ci_change_that_needs_nonlocal_evidence(self) -> None:
+        self.commit_feature_file("game.py", "print('runtime change')\n")
+        with self.assertRaisesRegex(RuntimeError, "not locally reproducible"):
+            self.run_fallback()
         self.assert_no_status_post()
 
     def test_validation_failure_never_publishes_success_status(self) -> None:
