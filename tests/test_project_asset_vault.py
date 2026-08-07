@@ -204,7 +204,7 @@ class ProjectAssetVaultTests(unittest.TestCase):
             asset.parent.mkdir(parents=True)
             asset.write_bytes(b"button")
             workspace = project / "assets/_vault_local"
-            workspace.mkdir(parents=True)
+            workspace.mkdir(parents=True, exist_ok=True)
             try:
                 (workspace / "ui").symlink_to(outside, target_is_directory=True)
             except OSError as error:
