@@ -75,7 +75,7 @@ Base 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 �
 | 이미지 생성·검수·Sheet 구조 | `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md` | 기획 시각화, 이미지 QA·승인 원장·의미 구조 |
 | 근거 기반 게임 개발 허브 | `docs/knowledge/game-development/README.md` | 기획·아트·개발·AI·연구·출시 Method·Guide·Case 라우팅 |
 | 게임 빌드 용량·자산 최적화 | `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` | 다운로드·설치·런타임·패치 분리 측정, font/texture/audio·중복 자산·플랫폼 전달 최적화, 품질·성능·delivery 회귀 Gate |
-| HiGodot 단일 Godot 실행 권위·기존 대안 선조사 | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` | Existing Solution First Gate, HiGodot 단일 실행 권위, L0–L3 변경 수준, 도구 Context, DeepSeek·network 격리, exact pin·canary·regression·rollback |
+| HiGodot 단일 persistent 저작 권위·GUT/Hera 검증 공존·기존 대안 선조사 | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` | Existing Solution First Gate, HiGodot 단일 persistent authoring, GUT deterministic GDScript test, Hera `LIVE_QA_AND_OBSERVABILITY_ONLY`, source-delta guard, L0–L3 변경 수준, DeepSeek·network 격리, exact pin·canary·regression·rollback |
 | 로컬 Godot 템플릿·공식 데모 참고 라이브러리 | `docs/knowledge/godot/LOCAL_GODOT_REFERENCE_LIBRARY.md` | 현재 사용자 PC의 `C:\Users\user\Documents\GitHub\Godot_Reference`를 `REFERENCE_ONLY` 로컬 검색 선반으로 사용; 비정본·비의존성·경로 부재 시 정상 외부 검색 계속 |
 | 플랫폼 심사·자산 권리·참조 독립 제작 | `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md` | Steam·STOVE·Google Play 등급·설문, 상업·배포 권리, AI·외주·오픈소스, 참조→독립 제작, 출시 차단 |
 | CI 실행·비용 | `docs/CI_EXECUTION_COST_POLICY.md` | 변경 등급별 검증·concurrency·Windows·비용 Gate |

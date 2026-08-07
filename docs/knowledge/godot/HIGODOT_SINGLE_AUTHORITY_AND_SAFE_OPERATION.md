@@ -6,26 +6,52 @@
 policy_state: APPROVED_FOR_IMPLEMENTATION
 provider: hi-godot/godot-ai
 execution_authority: SOLE_GODOT_EXECUTION_AUTHORITY
+persistent_authoring_authority: SOLE_PERSISTENT_GODOT_AUTHORING_AUTHORITY
 authority_count: 1
 production_readiness: false
 ```
 
-이 문서는 Base와 이를 채택한 Godot 프로젝트에서 MCP·EditorPlugin·자동화 공급자 선택, HiGodot 작업 위험도, 클라이언트 격리, 로컬 전송, 버전 고정, canary, project regression, rollback의 단일 공용 정본이다. 프로젝트는 이 규칙을 복제하지 않고 `templates/project-operations/HIGODOT_ADOPTION_RECORD.json`에서 실제 버전·Godot 버전·호스트·검증 증거만 기록한다.
+이 문서는 Base와 이를 채택한 Godot 프로젝트에서 MCP·EditorPlugin·CLI·테스트·live QA 공급자의 역할 경계, HiGodot 작업 위험도, 클라이언트 격리, 로컬 전송, 버전 고정, canary, project regression, rollback의 단일 공용 정본이다. `SOLE_GODOT_EXECUTION_AUTHORITY`는 **persistent Godot 저작·편집 mutation 실행 권위**를 뜻한다. 역할이 다른 검증 도구의 공존까지 금지하는 표현이 아니다.
 
-## 2. 실행 권위
+프로젝트는 이 규칙을 복제하지 않는다. HiGodot의 실제 버전·Godot 버전·호스트·검증 증거는 `templates/project-operations/HIGODOT_ADOPTION_RECORD.json`에 기록하고, GUT·Hera 같은 별도 검증 도구의 exact pin·소비 경로·rollback은 프로젝트의 기존 third-party/addon inventory가 소유한다.
 
-- `hi-godot/godot-ai`의 Godot AI addon과 MCP 서버만 실제 Godot 편집·실행 요청의 권위다.
+## 2. 실행 권위와 검증 역할
+
+```yaml
+HiGodot:
+  provider: hi-godot/godot-ai
+  role: SOLE_PERSISTENT_GODOT_AUTHORING_AUTHORITY
+  authority_count: 1
+  persistent_mutation: allowed_under_L0_L3
+
+GUT:
+  provider: bitwes/Gut
+  role: DETERMINISTIC_GDSCRIPT_TEST_AUTHORITY_WHEN_ADOPTED
+  persistent_authoring: false
+
+Hera_Agent_Godot:
+  provider: NotNull92/hera-agent-godot
+  disposition: REUSE
+  role_restriction: LIVE_QA_AND_OBSERVABILITY_ONLY
+  persistent_source_mutation: forbidden
+
+final_repository_change_truth:
+  provider: Git
+```
+
+- `hi-godot/godot-ai`의 Godot AI addon과 MCP 서버만 persistent Scene·Node·Script·Resource·project setting·filesystem 저작 변경의 실행 권위다.
 - Base custom MCP는 `ARCHIVED_REFERENCE_AFTER_POLICY_EXTRACTION`이며 실행 권위가 아니다.
 - Base custom MCP Bridge와 추가 Godot mutation addon은 `STOP_AND_ARCHIVE`다.
-- Hera Agent Godot은 설치·활성화하지 않으며 `BENCHMARK_REFERENCE_ONLY`다.
-- 한 프로젝트에 HiGodot과 기능이 겹치는 두 번째 MCP, HTTP/WebSocket Bridge, EditorPlugin 또는 CLI mutation authority를 동시에 두지 않는다.
-- 과거 Base live-editor Adapter·Schema·Pilot·테스트는 보안·rollback·evidence 학습 자료와 역사적 실행 증거로 보존하지만, HiGodot 채택 프로젝트의 현재 실행 경로가 아니다.
+- 한 프로젝트에 HiGodot과 기능이 겹치는 두 번째 MCP, HTTP/WebSocket Bridge, EditorPlugin 또는 CLI **persistent mutation authority**를 동시에 두지 않는다.
+- GUT은 채택된 프로젝트의 반복 가능한 GDScript 테스트를 담당할 수 있으며 저작 권위가 아니다.
+- Hera Agent Godot은 `REUSE`할 수 있지만 `LIVE_QA_AND_OBSERVABILITY_ONLY`로 제한한다. Hera의 persistent editor/source write 기능은 활성 Base QA 경로에서 사용하지 않는다.
+- 과거 Base live-editor Adapter·Schema·Pilot·테스트는 보안·rollback·evidence 학습 자료와 역사적 실행 증거로 보존하지만, HiGodot 채택 프로젝트의 현재 persistent 실행 경로가 아니다.
 
-### 저작 권위와 비저작 애드온의 경계
+### 저작 권위와 비저작 검증 도구의 경계
 
-HiGodot의 단일 권위는 Godot 저작·편집 자동화와 mutation 실행 경로에 한정된다. 동일 저작 권위를 가진 두 번째 MCP·EditorPlugin·Bridge·CLI mutation authority는 금지한다.
+HiGodot의 단일 권위는 Godot 저작·편집 자동화와 persistent mutation 실행 경로에 한정된다. 동일 저작 권위를 가진 두 번째 MCP·EditorPlugin·Bridge·CLI mutation authority는 금지한다.
 
-테스트 프레임워크, 대화·서사 도구, 플랫폼 서비스, 카메라, 아이콘, 자산 제작 보조처럼 역할이 다른 비저작 애드온은 `evaluating-godot-assets-and-plugins-before-creation`의 평가와 프로젝트별 채택 기록을 통과하면 공존할 수 있다. 공존 가능성은 자동 채택을 뜻하지 않으며, 실제 필요·정확한 버전·라이선스·소비 경로·검증·제거 절차가 없으면 설치하지 않는다.
+테스트 프레임워크, live runtime QA, 대화·서사 도구, 플랫폼 서비스, 카메라, 아이콘, 자산 제작 보조처럼 역할이 다른 도구는 `evaluating-godot-assets-and-plugins-before-creation`의 평가와 프로젝트별 채택 기록을 통과하면 공존할 수 있다. 공존 가능성은 자동 채택을 뜻하지 않는다. 실제 필요·정확한 버전·라이선스·소비 경로·검증·제거 절차가 없으면 설치하지 않는다.
 
 ## 3. Existing Solution First Gate
 
@@ -58,7 +84,7 @@ current environment inventory
 ### 판정
 
 ```yaml
-REUSE: 기존 구현을 주 실행 권위로 사용
+REUSE: 기존 구현을 주 실행 권위 또는 제한된 역할로 사용
 ABSORB: 정책·테스트·패턴만 현행 권위에 흡수
 REFACTOR: 기존 구현을 제한적으로 수정해 사용
 ARCHIVE: 중복되거나 위험한 구현의 활성 권위 제거
@@ -75,7 +101,7 @@ BUILD_NEW: 대안으로 충족할 수 없는 최소 범위만 신규 제작
 
 “직접 만들면 더 엄격할 수 있다”는 단독 근거로는 `BUILD_NEW`를 허용하지 않는다.
 
-## 4. 작업 위험도
+## 4. HiGodot 작업 위험도
 
 HiGodot의 넓은 기능을 삭제하거나 숨기는 대신 요청 범위, Git 복구, diff, import, test, runtime 증거로 통제한다.
 
@@ -98,7 +124,7 @@ Node 생성·이름 변경, property 변경, script attach, 일반 Scene·Resour
 
 ### L2_DESTRUCTIVE_OR_STRUCTURAL_WRITE
 
-다음 기능을 **허용한다**.
+다음 기능을 **HiGodot에서 허용한다**.
 
 - Node deletion
 - file creation, modification, move, or deletion
@@ -132,7 +158,121 @@ Node 생성·이름 변경, property 변경, script attach, 일반 Scene·Resour
 
 을 모두 요구한다.
 
-## 5. 도구 선택과 Context 제어
+## 5. GUT deterministic GDScript test contract
+
+GUT은 `ADOPTED_ACTIVE`인 프로젝트에서 반복 가능한 **GDScript** 테스트 suite의 기본 정본이 될 수 있다. 대상은 게임 규칙, 상태 전이, 저장·불러오기, 경제·전투·퍼즐, 데이터 변환, regression 가능한 UI/domain logic이다.
+
+2026-08-07 공식 compatibility matrix를 기준으로 확인한 exact version 후보는 다음과 같다.
+
+| Godot | GUT exact version candidate |
+|---|---|
+| 4.7.x | 9.7.1 |
+| 4.6.x | 9.6.1 |
+| 4.5.x | 9.5.0 |
+| 4.3.x–4.4.x | 9.4.0 |
+| 4.2.x | 9.3.0 |
+
+이 표는 영구 상수가 아니다. Godot 또는 GUT upgrade 시 `bitwes/Gut`의 official compatibility matrix를 다시 확인하고 exact version을 재고정한다.
+
+```yaml
+gut_exact_version: required
+godot_compatibility_match: required
+actual_test_consumption_path: required
+floating_latest: forbidden
+upgrade_review: required
+focused_test_after_upgrade: required
+regression_after_upgrade: required
+rollback_or_removal: required
+```
+
+HiGodot의 `McpTestSuite`와 GUT이 같은 GDScript test case의 두 canonical suite가 되지 않는다. GUT 채택 전에 존재하던 `McpTestSuite` 테스트는 자동 삭제하지 않고 migration input으로 보존해 이전·대체·유지 여부를 프로젝트별로 판정한다.
+
+C#/.NET 테스트, native SDK 테스트, platform sandbox 테스트, build·packaging 테스트, 실제 device와 human validation은 GUT으로 강제 대체하지 않는다.
+
+## 6. Hera live QA and observability contract
+
+Hera는 실제 Editor와 running game의 상태를 읽고 플레이 경로를 실행·검증하는 데 사용한다. persistent product authoring 도구로 사용하지 않는다.
+
+### 허용되는 acceptance QA 범위
+
+- Editor/instance readiness와 status
+- read-only Scene·Node·Resource·Theme inspection
+- game run / stop
+- runtime tree와 runtime UI inspection
+- input injection, semantic click, input-log
+- state assertion
+- output와 diagnostics
+- screenshot capture와 local screenshot diff
+- smoke와 `game qa diagnose`
+- 위 허용 operation만 포함하는 bounded batch
+
+Screenshot diff threshold는 anti-aliasing 등 기계적 흔들림을 줄이기 위한 허용치다. 디자인 품질·구도·가독성의 human approval을 대체하지 않는다.
+
+### 금지되는 persistent authoring 범위
+
+- Scene/Node persistent add/remove/set
+- script create/edit
+- project file/folder mutation
+- Resource persistent write
+- `theme set`
+- main Scene 변경
+- persistent filesystem mutation
+- editor state를 변경하는 `eval`
+- HiGodot과 같은 결과를 만드는 다른 persistent authoring operation
+
+### Runtime mutation diagnostic exception
+
+`game set` 또는 state-changing runtime `call`은 persistent source mutation은 아니지만 정상 플레이 경로를 우회할 수 있다. 따라서 일반 acceptance evidence에는 사용하지 않는다.
+
+```yaml
+hera_runtime_mutation_exception:
+  mode: DIAGNOSTIC_ONLY
+  acceptance_evidence: false
+  reason_required: true
+  restore_or_restart_required: true
+```
+
+### Hera exact pair, transport, and source-delta gate
+
+```yaml
+hera_cli_addon_pair: EXACT_MATCH_REQUIRED
+transport: LOCALHOST_ONLY
+shared_token: REQUIRED_FOR_BASE_ADOPTION
+secret_recording: FORBIDDEN
+persistent_editor_write: FORBIDDEN
+acceptance_source_delta: NONE
+floating_latest: forbidden
+full_editor_restart_after_upgrade: required
+live_qa_canary: required
+rollback_or_removal: required
+```
+
+shared token 원문은 저장소·prompt·log·evidence에 기록하지 않는다. Base 채택에서는 LAN, public exposure, port forwarding, remote tunnel을 금지한다.
+
+Hera acceptance QA 직전에 tracked source 상태를 fingerprint 또는 Git diff 기준으로 기록하고 QA 직후 다시 비교한다. **Hera-phase delta는 `NONE`이어야 한다.** 새 tracked source delta가 생기면 Hera가 제품 변경을 만든 것으로 승인하지 않고 실패로 처리해 원인을 조사한다.
+
+## 7. 표준 author → test → live-QA 흐름
+
+```text
+요구와 승인 범위
+→ HiGodot L0 observe
+→ HiGodot L1/L2/L3 persistent authoring
+→ target 재관찰
+→ Git diff
+→ Godot import / parse
+→ adopted GUT focused GDScript tests
+→ package gate의 affected/full GUT regression
+→ tracked source pre-Hera snapshot
+→ adopted Hera live run / input / inspect / assert / diagnostics / screenshot
+→ tracked source post-Hera snapshot
+→ Hera-phase delta NONE
+→ 전체 Git diff
+→ adversarial review
+```
+
+GUT 또는 Hera가 현재 단계에 필요하지 않거나 채택되지 않았다면 강제 설치하지 않는다. `DEFERRED` 또는 `NOT_CONFIGURED`로 기록하며 해당 도구가 필요한 acceptance criteria만 `NOT_RUN`으로 남긴다.
+
+## 8. HiGodot 도구 선택과 Context 제어
 
 HiGodot 도구가 많다는 이유로 전체 schema를 기본 로드하지 않는다.
 
@@ -153,7 +293,7 @@ HiGodot 도구가 많다는 이유로 전체 schema를 기본 로드하지 않�
 - 반환된 session, operation ID, Node reference를 사용하고 경로를 추측하지 않는다.
 - 전체 Scene tree·log·tool catalog를 Context에 그대로 넣지 않고 필요한 부분만 요약한다.
 
-## 6. 클라이언트 격리
+## 9. 클라이언트 격리
 
 HiGodot 서버가 같은 VS Code host 뒤의 실제 모델을 신뢰성 있게 구분한다고 가정하지 않는다.
 
@@ -178,7 +318,9 @@ DeepSeek Analysis:
 - 프로젝트 공용 `.vscode/mcp.json`이나 `.codex/config.toml`을 활성 권위로 commit하지 않는다.
 - 개인 host 설정과 credential은 프로젝트 정본·공개 저장소·evidence에 복사하지 않는다.
 
-## 7. 로컬 전송 경계
+## 10. 로컬 전송 경계
+
+HiGodot은 다음 경계를 유지한다.
 
 ```yaml
 network_mode: LOOPBACK_ONLY
@@ -195,7 +337,9 @@ shared_or_public_pc: FORBIDDEN
 - 필요하지 않을 때 Godot addon과 MCP server를 종료하거나 비활성화한다.
 - 인증 강화를 위해 두 번째 Base Bridge나 fork를 즉시 만들지 않는다. upstream 개선 또는 bounded patch도 Existing Solution First Gate와 버전 검토를 통과해야 한다.
 
-## 8. 도입 기록
+Hera는 제6절의 `LOCALHOST_ONLY`와 shared-token 경계를 추가로 따른다. GUT은 테스트 runner이며 별도 network authority를 갖지 않는다.
+
+## 11. 도입 기록
 
 프로젝트별 `HIGODOT_ADOPTION_RECORD.json`은 다음을 소유한다.
 
@@ -209,11 +353,30 @@ shared_or_public_pc: FORBIDDEN
 - rollback release or commit
 - production readiness
 
-`NOT_CONFIGURED`, `NOT_RUN`, `PARTIAL`, `PASS`, `FAIL`을 구분한다. 연결 성공, tools/list 또는 한 번의 mutation은 production readiness 증거가 아니다.
+GUT·Hera는 기존 project third-party/addon inventory에서 다음 공통 필드를 기록한다.
 
-## 9. 업데이트와 Rollback
+```yaml
+addon_or_tool_name:
+role:
+exact_version_or_pair:
+source:
+license:
+godot_compatibility:
+adoption_state:
+consumption_path:
+owner_boundary:
+validation:
+rollback_or_removal:
+unverified:
+```
+
+`NOT_CONFIGURED`, `NOT_RUN`, `PARTIAL`, `PASS`, `FAIL`을 구분한다. 연결 성공, tools/list, test discovery 또는 한 번의 live QA 성공은 production readiness 증거가 아니다. 설치됐지만 소비 경로가 없으면 `INSTALLED_UNUSED`로 판정해 제거하거나 필요 시점까지 `DEFERRED`로 되돌린다.
+
+## 12. 업데이트와 Rollback
 
 자동 무검토 업데이트는 금지한다.
+
+### HiGodot
 
 ```text
 새 release 확인
@@ -233,9 +396,18 @@ shared_or_public_pc: FORBIDDEN
 - 새 버전의 destructive canary는 삭제·파일 쓰기·project settings 변경 후 원복까지 검증한다.
 - 최소 한 대표 프로젝트의 project regression 전에는 전체 프로젝트에 확산하지 않는다.
 - rollback package와 이전 pin을 보존한다.
-- Windows·Android·실제 Editor UI·사람 사용성처럼 실행하지 않은 환경은 `NOT_RUN`이다.
 
-## 10. 기존 자체 구현 처리
+### GUT
+
+Godot engine 또는 GUT 버전이 바뀌면 official compatibility matrix를 다시 확인하고, focused test와 regression을 실행한 뒤 새 exact version을 채택한다. 제거·rollback 경로를 유지한다.
+
+### Hera
+
+CLI와 addon을 같은 exact version pair로 갱신하고 Godot Editor를 완전히 재시작한다. status smoke, live-QA canary, source-delta `NONE`을 확인한 뒤 채택한다. 이전 pair 또는 제거 절차를 rollback으로 유지한다.
+
+Windows·Android·실제 Editor UI·사람 사용성처럼 실행하지 않은 환경은 `NOT_RUN`이다.
+
+## 13. 기존 자체 구현 처리
 
 ```yaml
 Base_PR_198:
@@ -253,22 +425,28 @@ Base_PR_202:
 
 이 정책이 검토되고 필요한 교훈이 보존되기 전에는 PR을 삭제하지 않는다. PR을 닫거나 branch를 삭제하거나 merge하는 행위는 별도 사용자 결정이다.
 
-## 11. 실패 조건
+## 14. 실패 조건
 
-- 현재 사용 도구·addon·MCP·관련 PR을 확인하지 않고 신규 구현 시작
+- 현재 사용 도구·addon·MCP·CLI·관련 PR을 확인하지 않고 신규 구현 시작
 - disposition·비교 근거·사용자 승인 없이 `BUILD_NEW`
-- HiGodot과 겹치는 두 번째 활성 mutation authority
-- 사용자가 허용한 Node 삭제·파일 쓰기·project settings 기능을 일괄 금지
+- HiGodot과 겹치는 두 번째 활성 persistent mutation authority
+- Hera를 unrestricted editor/source writer로 사용
+- Hera `DIAGNOSTIC_ONLY` runtime mutation 결과를 acceptance evidence로 사용
+- Hera acceptance QA 전후 tracked source delta 검사를 생략하거나 delta가 있는데 통과 처리
+- Hera shared token 원문을 저장소·prompt·log·evidence에 기록
+- GUT과 HiGodot `McpTestSuite`에 같은 GDScript case를 두 canonical test로 유지
+- GUT으로 C#/.NET·native·platform test authority를 강제 대체
+- Godot/GUT 호환성 또는 Hera CLI/addon exact pair를 확인하지 않고 floating latest 사용
+- 사용자가 허용한 HiGodot Node 삭제·파일 쓰기·project settings 기능을 일괄 금지
 - L2/L3 작업에서 rollback·diff·import·test 누락
 - DeepSeek profile에 HiGodot 등록 또는 credential 제공
 - LAN·public URL·port forwarding·remote tunnel 사용
-- floating latest 또는 자동 무검토 업데이트
 - connection 성공을 runtime·regression·production readiness로 승격
 - 과거 Base Adapter·MCP 파일 존재를 현재 실행 권위로 해석
-- HiGodot 단일 권위를 비저작 애드온 전면 금지로 오해해 검증된 테스트·대화·플랫폼 도구까지 배제
-- 역할이 다른 애드온이라는 이유만으로 평가·소비 경로·rollback 없이 일괄 설치
+- HiGodot 단일 권위를 비저작 검증 도구 전면 금지로 오해
+- 역할이 다른 도구라는 이유만으로 평가·소비 경로·rollback 없이 일괄 설치
 
-## 12. 실행 보고
+## 15. 실행 보고
 
 ```yaml
 provider: hi-godot/godot-ai
@@ -282,6 +460,16 @@ changed_targets:
 git_checkpoint:
 rollback:
 import_and_parse:
+gut:
+  adoption_state:
+  exact_version:
+  focused_tests:
+  regression:
+hera:
+  adoption_state:
+  cli_addon_pair:
+  live_qa:
+  source_delta:
 tests:
 runtime:
 human:

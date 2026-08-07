@@ -214,7 +214,8 @@
         "tests/test_game_design_difficulty_workflow.py",
         "tests/test_base_v9_5_skill_operating_refinement.py",
         "tests/test_neutral_adversarial_feature_lifecycle.py",
-        "tests/test_game_development_youtube_skill.py"
+        "tests/test_game_development_youtube_skill.py",
+        "tests/test_godot_higodot_gut_hera_toolchain.py"
       ],
       "ignore_frontmatter_only_keys": [
         "description"

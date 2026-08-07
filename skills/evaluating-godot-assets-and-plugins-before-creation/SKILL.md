@@ -41,6 +41,12 @@ related_open_and_recent_prs
 addon_adoption_state
 addon_consumption_path
 addon_removal_or_rollback
+godot_test_framework
+gut_exact_version
+gut_test_consumption_path
+hera_cli_addon_pair
+hera_live_qa_consumption_path
+hera_source_delta_guard
 ```
 
 프로젝트에는 검색 정책과 Skill 본문을 복사하지 않는다. 프로젝트 어댑터는 실제 버전·경로·플랫폼·검증기와 프로젝트 고유 제약만 제공한다.
@@ -97,7 +103,7 @@ credential 원문과 개인 설정 전체를 공개 저장소나 evidence에 복
 ## Disposition states
 
 ```text
-REUSE       기존 구현을 주 권위로 거의 그대로 사용
+REUSE       기존 구현을 주 권위 또는 승인된 제한 역할로 거의 그대로 사용
 ABSORB      정책·테스트·패턴만 현행 권위에 흡수
 REFACTOR    기존 구현을 bounded 수정해 사용
 ARCHIVE     중복·위험 구현의 활성 권위를 제거하고 기록 보존
@@ -166,12 +172,39 @@ unverified:
 
 설치됐지만 소비 경로가 없으면 `INSTALLED_UNUSED`다. 제거하거나 필요가 생길 때까지 `DEFERRED`로 되돌리며, 단순 폴더 존재를 채택 완료로 보고하지 않는다.
 
-### 단계별 기본 라우팅
+### Godot authoring · GDScript test · live QA 조합
 
-#### 테스트 프레임워크
+세 역할을 같은 권위로 보지 않는다. 공용 정본은 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`다.
 
-- 테스트 가능한 제품 코드, 저장, 경제, 전투, 퍼즐, 분기 또는 반복 가능한 상태 규칙 구현이 시작되면 우선 검토한다.
-- 기획 전용 저장소 또는 실행 가능한 제품 코드가 없는 단계에서는 `DEFERRED`다.
+```text
+persistent authoring -> HiGodot only
+deterministic GDScript tests -> GUT when adopted
+live runtime QA / observation -> Hera when adopted with role restriction
+```
+
+#### GUT
+
+- 테스트 가능한 GDScript 제품 코드, 저장, 경제, 전투, 퍼즐, 분기 또는 반복 가능한 상태 규칙 구현이 시작되면 우선 검토한다.
+- 프로젝트의 exact Godot version에 맞는 `gut_exact_version`을 official compatibility matrix에서 확인한다.
+- 실제 테스트 파일·실행 명령 또는 CI를 `gut_test_consumption_path`로 기록한다.
+- HiGodot `McpTestSuite`에 이미 같은 GDScript test case가 있으면 두 canonical suite로 유지하지 않는다. 기존 case는 삭제부터 하지 않고 migration input으로 보존한다.
+- C#/.NET·native SDK·platform sandbox·build/package test authority를 GUT으로 강제 대체하지 않는다.
+- 기획 전용 저장소 또는 실행 가능한 GDScript 제품 코드가 없는 단계에서는 `DEFERRED`다.
+
+#### Hera Agent Godot
+
+- disposition은 `REUSE`이고 `role_restriction: LIVE_QA_AND_OBSERVABILITY_ONLY`로 사용한다.
+- `hera_cli_addon_pair`는 같은 exact version pair여야 하고 floating latest를 사용하지 않는다.
+- `hera_live_qa_consumption_path`는 runtime inspect/input/assert/diagnostics/screenshot/smoke 같은 실제 QA 경로를 가리켜야 한다.
+- Base 채택에서는 localhost와 shared token을 사용하고 token 원문을 저장소·prompt·log·evidence에 기록하지 않는다.
+- `hera_source_delta_guard`는 acceptance QA 전후 tracked source delta가 `NONE`임을 증명해야 한다.
+- Scene·Node·Script·project·Resource·filesystem persistent write나 editor state-changing eval은 HiGodot과 겹치는 두 번째 mutation authority이므로 active QA 경로에서 금지한다.
+- `game set` 또는 state-changing runtime `call`은 `DIAGNOSTIC_ONLY`이며 acceptance evidence가 아니다. 사용 뒤 restore 또는 restart가 필요하다.
+- 실행 가능한 game이나 live QA 요구가 없는 단계에서는 `DEFERRED`다.
+
+#### 테스트 프레임워크 일반
+
+- GUT 외 테스트 도구도 같은 평가표를 사용한다. 프로젝트 언어·플랫폼·기존 test authority에 더 적합한 도구가 있으면 그 도구를 무시하고 GUT을 강제하지 않는다.
 - 실제 테스트 파일·실행 명령 또는 CI 소비 경로와 exact version을 기록한다.
 
 #### 대화·서사 프레임워크
@@ -266,6 +299,8 @@ BUILD_CUSTOM
 - 프로젝트 코어와 외부 도구의 소유권 경계가 명확하다.
 - 채택된 애드온에 실제 `consumption_path`가 있고 `INSTALLED_UNUSED`를 완료로 보고하지 않았다.
 - 동일 역할·권위 애드온이 중복 활성화되지 않았고, `ADOPTED_DISABLED`는 제한된 rollback·호환성 보존 조건을 가진다.
+- GUT/Hera가 채택된 경우 exact pin, owner boundary, 실제 consumption, rollback/removal이 기록됐다.
+- Hera acceptance QA가 persistent authoring 경계를 넘지 않고 source-delta guard를 통과한다.
 - 제거·rollback·저장 호환성 계획이 있다.
 - 실행하지 않은 플랫폼·성능·보안·법률 검증을 통과로 보고하지 않았다.
 

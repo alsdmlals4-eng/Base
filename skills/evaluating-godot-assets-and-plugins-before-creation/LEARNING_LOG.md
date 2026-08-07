@@ -32,3 +32,14 @@
 - **Boundary:** HiGodot 단일 권위는 저작·편집 mutation authority에 한정된다. 테스트·대화·플랫폼·카메라·아이콘처럼 역할이 다른 addon도 자동 허용하지 않고 같은 평가와 소비 경로 Gate를 통과한다.
 - **Verification state:** blanket installation 금지, `INSTALLED_UNUSED`, consumption path, stage routing을 요구하는 focused RED를 확인했다. 실제 프로젝트 addon 설치·runtime·device·platform service·human 검증은 `NOT_RUN`이다.
 - **Next trigger:** 프로젝트에서 새 addon 도입·비활성화·교체·업데이트·제거 또는 사용 경로 소멸이 발생하면 adoption state와 consumption path를 재평가한다.
+
+## 2026-08-07 — Separate persistent authoring, deterministic tests, and live QA
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** Godot 작업에서 이미 채택된 HiGodot에 GUT과 Hera Agent Godot CLI를 함께 활용하되 권위 중복 없이 실제 구현·테스트·실행 QA를 한 흐름으로 만들라는 승인된 요청.
+- **Finding:** HiGodot의 넓은 editor authoring surface, GUT의 반복 가능한 GDScript test suite, Hera의 low-context CLI live QA를 같은 “Godot 자동화 도구”로만 보면 두 번째 mutation authority와 두 테스트 정본이 쉽게 생긴다. 반대로 Hera를 도구 전체로 금지하면 runtime input·assert·diagnostics·screenshot 검증 가치를 잃는다.
+- **Decision:** 새 광역 Skill이나 중앙 addon registry를 추가하지 않는다. `HiGodot = SOLE_PERSISTENT_GODOT_AUTHORING_AUTHORITY`, `GUT = DETERMINISTIC_GDSCRIPT_TEST_AUTHORITY_WHEN_ADOPTED`, `Hera = REUSE + LIVE_QA_AND_OBSERVABILITY_ONLY`로 역할을 분리한다.
+- **Evidence contract:** GUT은 exact Godot-compatible version과 실제 test/CI consumption을 요구하고 같은 GDScript case를 HiGodot `McpTestSuite`와 두 canonical suite로 유지하지 않는다. Hera는 exact CLI/addon pair, localhost, shared token, 실제 live-QA consumption, acceptance 전후 tracked source delta `NONE`을 요구한다.
+- **Boundary:** GUT은 C#/.NET·native·platform test authority를 강제 대체하지 않는다. Hera persistent editor/source mutation은 금지하며 `game set` 또는 state-changing runtime `call`은 `DIAGNOSTIC_ONLY`, acceptance evidence false, restore/restart required다. 모든 프로젝트 일괄 설치는 금지하고 소비 경로가 없으면 `INSTALLED_UNUSED` 또는 `DEFERRED`다.
+- **Verification state:** GitHub Actions RED에서 Base 생성물·무결성 단계는 PASS했고 새 focused contract 단계가 의도대로 실패했다. Base static GREEN과 project runtime E2E는 후속 단계이며 실제 프로젝트 addon 설치·Hera runtime QA·human validation은 아직 `NOT_RUN`이다.
+- **Next trigger:** Godot/GUT/Hera version change, project adoption, Hera command surface change, McpTestSuite migration, or real project live-QA evidence가 생기면 exact pin·authority boundary·source-delta guard를 재검증한다.

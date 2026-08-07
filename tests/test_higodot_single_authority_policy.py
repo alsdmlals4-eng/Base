@@ -43,12 +43,13 @@ class HiGodotSingleAuthorityPolicyTests(unittest.TestCase):
         self.assertIn(POLICY_RELATIVE, start)
         self.assertIn(POLICY_RELATIVE, documentation_map)
 
-    def test_canonical_policy_names_one_provider_and_keeps_destructive_features(self) -> None:
+    def test_canonical_policy_names_one_authoring_provider_and_keeps_destructive_features(self) -> None:
         self.assertTrue(POLICY_PATH.is_file())
         policy = POLICY_PATH.read_text(encoding="utf-8")
         for marker in (
             "hi-godot/godot-ai",
             "SOLE_GODOT_EXECUTION_AUTHORITY",
+            "SOLE_PERSISTENT_GODOT_AUTHORING_AUTHORITY",
             "authority_count: 1",
             "Node deletion",
             "file creation, modification, move, or deletion",
@@ -61,7 +62,8 @@ class HiGodotSingleAuthorityPolicyTests(unittest.TestCase):
         self.assertIn("Base custom MCP", policy)
         self.assertIn("STOP_AND_ARCHIVE", policy)
         self.assertIn("Hera", policy)
-        self.assertIn("BENCHMARK_REFERENCE_ONLY", policy)
+        self.assertIn("LIVE_QA_AND_OBSERVABILITY_ONLY", policy)
+        self.assertIn("persistent_source_mutation: forbidden", policy)
 
     def test_policy_mitigates_tool_context_identity_transport_and_update_risks(self) -> None:
         policy = POLICY_PATH.read_text(encoding="utf-8")
@@ -107,7 +109,7 @@ class HiGodotSingleAuthorityPolicyTests(unittest.TestCase):
         for marker in ("HiGodot", "exact pin", "canary", "rollback"):
             self.assertIn(marker, operating)
 
-    def test_project_godot_skill_routes_only_to_higodot(self) -> None:
+    def test_project_godot_skill_keeps_higodot_authoring_and_bounded_validation_roles(self) -> None:
         self.assertTrue(GODOT_SKILL_PATH.is_file())
         skill = GODOT_SKILL_PATH.read_text(encoding="utf-8")
         for marker in (
@@ -123,6 +125,10 @@ class HiGodotSingleAuthorityPolicyTests(unittest.TestCase):
             "autoload",
             "DeepSeek",
             "LOOPBACK_ONLY",
+            "GUT",
+            "Hera",
+            "LIVE_QA_AND_OBSERVABILITY_ONLY",
+            "persistent mutation authority",
         ):
             self.assertIn(marker, skill)
         self.assertNotIn("canonical addon을 복사", skill)
