@@ -12,6 +12,7 @@ from pathlib import Path
 
 
 REQUIRED_CONTEXT = "ci-gate"
+CANONICAL_WORKFLOW = "validate-game-project-operating-system.yml"
 DEFAULT_GH_COMMAND: tuple[str, ...] = ("gh",)
 
 
@@ -95,6 +96,31 @@ def read_pull_request(
     return PullRequestState(head_sha, base_ref, merge_commit_sha)
 
 
+def remote_ci_workflow_run_exists(
+    repo: str,
+    sha: str,
+    *,
+    environment: Mapping[str, str] | None = None,
+    gh_command: Sequence[str] = DEFAULT_GH_COMMAND,
+) -> bool:
+    path = (
+        f"repos/{repo}/actions/workflows/{CANONICAL_WORKFLOW}/runs"
+        f"?event=pull_request&head_sha={sha}&per_page=1"
+    )
+    result = _require_success(
+        _run(_gh_args(gh_command, "api", path), environment=environment),
+        f"GitHub REMOTE_CI workflow lookup for {sha}",
+    )
+    try:
+        payload = json.loads(result.stdout)
+        workflow_runs = payload["workflow_runs"]
+    except (KeyError, TypeError, json.JSONDecodeError) as error:
+        raise RuntimeError("GitHub workflow-run response is incomplete") from error
+    if not isinstance(workflow_runs, list):
+        raise RuntimeError("GitHub workflow-run response is invalid")
+    return bool(workflow_runs)
+
+
 def ci_gate_check_exists(
     repo: str,
     sha: str,
@@ -155,7 +181,7 @@ def assert_base_is_ancestor(
     base: str,
     *,
     environment: Mapping[str, str] | None = None,
-) -> None:
+) -> str:
     _require_success(
         _run(("git", "fetch", "origin", base), cwd=root, environment=environment),
         f"git fetch origin {base}",
@@ -167,25 +193,38 @@ def assert_base_is_ancestor(
     )
     if result.returncode != 0:
         raise RuntimeError(f"local HEAD is not up to date with origin/{base}")
+    return _git_output(root, "rev-parse", f"origin/{base}", environment=environment)
 
 
-def _assert_no_ci_gate_check(
+def _assert_remote_ci_absent(
     repo: str,
-    sha: str | None,
+    head_sha: str,
+    merge_sha: str | None,
     *,
     environment: Mapping[str, str] | None = None,
     gh_command: Sequence[str] = DEFAULT_GH_COMMAND,
 ) -> None:
-    if sha and ci_gate_check_exists(
+    if remote_ci_workflow_run_exists(
         repo,
-        sha,
+        head_sha,
         environment=environment,
         gh_command=gh_command,
     ):
         raise RuntimeError(
-            f"{REQUIRED_CONTEXT} Check Run already exists for {sha}; "
-            "LOCAL_FALLBACK cannot replace REMOTE_CI"
+            f"REMOTE_CI workflow run already exists for {head_sha}; "
+            "LOCAL_FALLBACK cannot take ownership"
         )
+    for sha in (head_sha, merge_sha):
+        if sha and ci_gate_check_exists(
+            repo,
+            sha,
+            environment=environment,
+            gh_command=gh_command,
+        ):
+            raise RuntimeError(
+                f"{REQUIRED_CONTEXT} Check Run already exists for {sha}; "
+                "LOCAL_FALLBACK cannot replace REMOTE_CI"
+            )
 
 
 def publish_success_status(
@@ -248,15 +287,14 @@ def run_local_fallback(
 
     original_head = initial_pr.head_sha
     assert_clean_exact_head(repository_root, original_head, environment=env)
-    assert_base_is_ancestor(repository_root, base, environment=env)
-    _assert_no_ci_gate_check(
+    current_base_sha = assert_base_is_ancestor(repository_root, base, environment=env)
+    if trusted_history_commit != current_base_sha:
+        raise RuntimeError(
+            f"trusted history commit must equal origin/{base} {current_base_sha}"
+        )
+    _assert_remote_ci_absent(
         repo,
         original_head,
-        environment=env,
-        gh_command=gh_command,
-    )
-    _assert_no_ci_gate_check(
-        repo,
         initial_pr.merge_commit_sha,
         environment=env,
         gh_command=gh_command,
@@ -267,7 +305,7 @@ def run_local_fallback(
             python,
             "tools/run_local_validation.py",
             "--trusted-history-commit",
-            trusted_history_commit,
+            current_base_sha,
         ),
         cwd=repository_root,
         environment=env,
@@ -277,6 +315,14 @@ def run_local_fallback(
         return validation.returncode
 
     assert_clean_exact_head(repository_root, original_head, environment=env)
+    post_validation_base_sha = assert_base_is_ancestor(
+        repository_root,
+        base,
+        environment=env,
+    )
+    if post_validation_base_sha != current_base_sha:
+        raise RuntimeError("origin/base changed during local validation")
+
     current_pr = read_pull_request(
         repo,
         pr,
@@ -288,14 +334,9 @@ def run_local_fallback(
     if current_pr.head_sha != original_head:
         raise RuntimeError("PR head changed during local validation")
 
-    _assert_no_ci_gate_check(
+    _assert_remote_ci_absent(
         repo,
         original_head,
-        environment=env,
-        gh_command=gh_command,
-    )
-    _assert_no_ci_gate_check(
-        repo,
         current_pr.merge_commit_sha,
         environment=env,
         gh_command=gh_command,
@@ -310,6 +351,7 @@ def run_local_fallback(
     print("LOCAL FALLBACK CI GATE: PASS")
     print("mode: LOCAL_FALLBACK")
     print(f"head_sha: {original_head}")
+    print(f"base_sha: {current_base_sha}")
     print(f"required_context: {REQUIRED_CONTEXT}")
     return 0
 
