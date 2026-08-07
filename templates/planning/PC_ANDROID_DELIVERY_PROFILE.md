@@ -1,6 +1,6 @@
 # PC·Android Delivery Profile
 
-`docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md`를 읽고 프로젝트별 값과 증거를 기록한다. 이 Template는 설계·계정·QA·출시 결정을 연결하지만 실제 build, 기기 실행, 플랫폼 승인 또는 사람 사용성을 대신하지 않는다.
+`docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md`를 읽고 프로젝트별 값과 증거를 기록한다. 게임 빌드 용량·자산 최적화가 범위에 포함되면 `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md`를 함께 읽는다. 이 Template는 설계·계정·QA·출시 결정을 연결하지만 실제 build, 기기 실행, 플랫폼 승인 또는 사람 사용성을 대신하지 않는다.
 
 ## 1. Profile Identity
 
@@ -210,6 +210,67 @@ performance_budget:
   measurement_tools:
 ```
 
+기존 `package_and_download_size`는 호환 필드로 유지한다. 구체적인 다운로드·설치·런타임·패치 용량과 자산별 기여도는 아래 계약에서 분리한다.
+
+### 8.1 Build Size and Asset Optimization
+
+프로젝트별 목표 MB·texture max resolution·bitrate·font family/weight 수는 Base에서 상속하지 않고 실제 baseline·장르·아트·기기·스토어 조건으로 결정한다. 측정하지 않은 값은 `ESTIMATE`와 실제 측정값을 구분한다.
+
+```yaml
+build_size_and_asset_optimization:
+  baseline_build:
+  target_budget_status:
+  windows_size_budget:
+    download_compressed_bytes:
+    installed_bytes:
+    first_launch_additional_download_bytes:
+    typical_patch_download_bytes:
+    worst_expected_patch_download_bytes:
+    patch_temporary_disk_bytes:
+    runtime_peak_memory_bytes:
+  android_size_budget:
+    play_served_download_bytes:
+    installed_bytes_before_first_launch:
+    first_launch_additional_download_bytes:
+    first_session_total_download_bytes:
+    typical_player_content_bytes:
+    full_optional_content_bytes:
+    runtime_peak_memory_bytes:
+  asset_size_breakdown:
+    executable_and_engine:
+    font:
+    ui_texture:
+    world_texture:
+    sprite_and_2d_art:
+    mesh:
+    animation:
+    audio_sfx:
+    audio_music:
+    audio_voice:
+    video:
+    shader_and_generated_data:
+    localization:
+    platform_sdk:
+    optional_content:
+    duplicate_or_unused:
+    other:
+  top_contributors:
+  font_profile:
+  texture_profiles:
+  audio_profiles:
+  delivery_partition:
+  duplicate_unused_audit:
+  accepted_optimizations:
+  rejected_optimizations:
+  visual_quality_evidence:
+  audio_quality_evidence:
+  runtime_evidence:
+  patch_evidence:
+  unresolved:
+```
+
+각 실측 기록에는 최소 `source_build`, `platform`, `device_or_store_configuration`, `measured_at`, `tool`, `measured_value`, `state: ESTIMATE | LOCAL_BUILD_MEASURED | DEVICE_MEASURED | STORE_SERVED_MEASURED`를 남긴다.
+
 ## 9. Test Matrix
 
 ```yaml
@@ -353,6 +414,7 @@ physical_android_device:
 mobile_ui_and_input:
 background_foreground_recovery:
 performance_budget:
+build_size_and_asset_optimization:
 stove_readiness:
 google_play_readiness:
 steam_readiness:
