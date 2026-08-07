@@ -99,14 +99,17 @@ jobs:
           path.write_text(text, encoding='utf-8')
           PY
 
-      - name: Commit workflow hardening
+      - name: Publish transformed workflow blob as ordinary repository file
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .github/workflows/validate-game-project-operating-system.yml
+          mkdir -p tmp
+          cp .github/workflows/validate-game-project-operating-system.yml tmp/validate-game-project-operating-system.modified.yml
+          git restore .github/workflows/validate-game-project-operating-system.yml
+          git add tmp/validate-game-project-operating-system.modified.yml
           if git diff --cached --quiet; then
             exit 0
           fi
-          git commit -m "fix: bound Windows publication dependency stalls"
+          git commit -m "chore: stage transformed Windows workflow blob"
           git push origin HEAD:fix/bound-windows-publication-smoke
