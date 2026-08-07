@@ -109,6 +109,33 @@ class ProjectAssetVaultTests(unittest.TestCase):
             imported = project / ".asset-vault/library/gpt-imports"
             self.assertFalse(imported.exists() and any(imported.rglob("*")))
 
+    def test_sync_rejects_managed_symlink_escape(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as outside_tmp:
+            project = Path(tmp)
+            outside = Path(outside_tmp)
+            self.assertEqual(run_tool("init", "--project-root", str(project)).returncode, 0)
+            asset = project / ".asset-vault/library/ui/button.png"
+            asset.parent.mkdir(parents=True)
+            asset.write_bytes(b"button")
+            managed = project / "assets/_managed"
+            managed.mkdir(parents=True)
+            try:
+                (managed / "ui").symlink_to(outside, target_is_directory=True)
+            except OSError as error:
+                self.skipTest(f"symlink unavailable: {error}")
+            result = run_tool("sync", "--project-root", str(project))
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse((outside / "button.png").exists())
+
+    def test_download_source_must_not_overlap_library_or_managed_output(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            self.assertEqual(run_tool("init", "--project-root", str(project)).returncode, 0)
+            library = project / ".asset-vault/library"
+            result = run_tool("pull-downloads", "--project-root", str(project), "--source", str(library))
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("overlaps", result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()
