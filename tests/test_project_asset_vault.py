@@ -35,6 +35,45 @@ class ProjectAssetVaultTests(unittest.TestCase):
             self.assertIn(".asset-vault/", gitignore)
             self.assertIn("assets/_vault_local/", gitignore)
 
+    def test_v2_contract_docs_route_local_candidates_to_explicit_promotion(self) -> None:
+        config = json.loads(
+            (ROOT / "templates/project-operations/PROJECT_ASSET_VAULT.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(config["schema_version"], 2)
+        self.assertEqual(config["workspace_root"], "assets/_vault_local")
+        self.assertEqual(config["sync_manifest"], ".asset-vault/sync.json")
+        self.assertEqual(config["promotion_root"], "assets")
+        self.assertNotIn("managed_root", config)
+
+        policy = (ROOT / "docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md").read_text(encoding="utf-8")
+        for token in (
+            "assets/_vault_local/",
+            "PROJECT_ASSET_APPROVED",
+            "promote",
+            "Global Asset Manager",
+            "REUSE/TRIAL",
+            ".gdignore",
+            "VAULT_LOCAL_STATE_UNVERIFIED",
+        ):
+            self.assertIn(token, policy)
+
+        documentation_map = (ROOT / "docs/DOCUMENTATION_MAP.md").read_text(encoding="utf-8")
+        self.assertIn("docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md", documentation_map)
+
+        image_policy = (ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md").read_text(encoding="utf-8")
+        self.assertIn("docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md", image_policy)
+        self.assertIn("assets/_vault_local/", image_policy)
+        self.assertIn("promote", image_policy)
+
+        image_plan = (ROOT / "templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md").read_text(encoding="utf-8")
+        for token in ("vault_source_key", "promotion_target", "promoted_path"):
+            self.assertIn(token, image_plan)
+
+        asset_manifest = (ROOT / "templates/project-operations/ASSET_MANIFEST.yml").read_text(encoding="utf-8")
+        self.assertIn('workspace_root: "assets/_vault_local"', asset_manifest)
+        self.assertIn('sync_manifest: ".asset-vault/sync.json"', asset_manifest)
+        self.assertIn('promotion_root: "assets"', asset_manifest)
+
     def test_sync_mirrors_library_to_local_godot_workspace_and_removes_only_previous_copies(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             project = Path(tmp)
