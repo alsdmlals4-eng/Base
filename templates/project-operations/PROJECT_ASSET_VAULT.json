@@ -1,11 +1,12 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "vault_root": ".asset-vault",
   "library_dir": "library",
   "archive_dir": "archive",
   "inbox_dir": "inbox",
-  "managed_root": "assets/_managed",
-  "sync_manifest": "assets/ASSET_VAULT_SYNC.json",
+  "workspace_root": "assets/_vault_local",
+  "sync_manifest": ".asset-vault/sync.json",
+  "promotion_root": "assets",
   "supported_extensions": [
     ".png",
     ".jpg",
