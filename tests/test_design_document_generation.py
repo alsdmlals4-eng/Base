@@ -29,12 +29,13 @@ def digest(path: Path) -> str:
 
 
 class MermaidPuppeteerLaunchContractTests(unittest.TestCase):
-    def test_regular_chrome_uses_modern_headless_puppeteer_config(self) -> None:
-        source = GENERATOR.read_text(encoding="utf-8")
-        self.assertIn("def write_mermaid_puppeteer_config", source)
-        self.assertIn('"headless": True', source)
-        self.assertIn('"executablePath": chrome_executable', source)
-        self.assertIn('"--puppeteerConfigFile"', source)
+    def test_regular_chrome_uses_isolated_modern_headless_wrapper(self) -> None:
+        source = SUPPORT.read_text(encoding="utf-8")
+        self.assertIn("def _write_windows_mermaid_wrapper", source)
+        self.assertIn('\\"headless\\": True', source)
+        self.assertIn('\\"userDataDir\\"', source)
+        self.assertIn('\\"executablePath\\"', source)
+        self.assertIn('\\"--puppeteerConfigFile\\"', source)
 
 
 @unittest.skipUnless(
