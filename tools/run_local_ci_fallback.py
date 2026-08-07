@@ -12,6 +12,7 @@ from pathlib import Path
 
 
 REQUIRED_CONTEXT = "ci-gate"
+DEFAULT_GH_COMMAND: tuple[str, ...] = ("gh",)
 
 
 @dataclass(frozen=True)
@@ -56,15 +57,22 @@ def _require_success(
     raise RuntimeError(f"{description} failed{suffix}")
 
 
+def _gh_args(gh_command: Sequence[str], *args: str) -> tuple[str, ...]:
+    if not gh_command:
+        raise RuntimeError("GitHub CLI command must not be empty")
+    return (*gh_command, *args)
+
+
 def read_pull_request(
     repo: str,
     pr: int,
     *,
     environment: Mapping[str, str] | None = None,
+    gh_command: Sequence[str] = DEFAULT_GH_COMMAND,
 ) -> PullRequestState:
     result = _require_success(
         _run(
-            ("gh", "api", f"repos/{repo}/pulls/{pr}"),
+            _gh_args(gh_command, "api", f"repos/{repo}/pulls/{pr}"),
             environment=environment,
         ),
         "GitHub pull request lookup",
@@ -92,10 +100,11 @@ def ci_gate_check_exists(
     sha: str,
     *,
     environment: Mapping[str, str] | None = None,
+    gh_command: Sequence[str] = DEFAULT_GH_COMMAND,
 ) -> bool:
     result = _require_success(
         _run(
-            ("gh", "api", f"repos/{repo}/commits/{sha}/check-runs"),
+            _gh_args(gh_command, "api", f"repos/{repo}/commits/{sha}/check-runs"),
             environment=environment,
         ),
         f"GitHub Check Run lookup for {sha}",
@@ -165,8 +174,14 @@ def _assert_no_ci_gate_check(
     sha: str | None,
     *,
     environment: Mapping[str, str] | None = None,
+    gh_command: Sequence[str] = DEFAULT_GH_COMMAND,
 ) -> None:
-    if sha and ci_gate_check_exists(repo, sha, environment=environment):
+    if sha and ci_gate_check_exists(
+        repo,
+        sha,
+        environment=environment,
+        gh_command=gh_command,
+    ):
         raise RuntimeError(
             f"{REQUIRED_CONTEXT} Check Run already exists for {sha}; "
             "LOCAL_FALLBACK cannot replace REMOTE_CI"
@@ -178,11 +193,12 @@ def publish_success_status(
     sha: str,
     *,
     environment: Mapping[str, str] | None = None,
+    gh_command: Sequence[str] = DEFAULT_GH_COMMAND,
 ) -> None:
     _require_success(
         _run(
-            (
-                "gh",
+            _gh_args(
+                gh_command,
                 "api",
                 "--method",
                 "POST",
@@ -209,16 +225,22 @@ def run_local_fallback(
     python: str,
     *,
     environment: Mapping[str, str] | None = None,
+    gh_command: Sequence[str] = DEFAULT_GH_COMMAND,
 ) -> int:
     repository_root = root.resolve()
     env = _environment(environment)
 
     _require_success(
-        _run(("gh", "auth", "status"), environment=env),
+        _run(_gh_args(gh_command, "auth", "status"), environment=env),
         "GitHub authentication check",
     )
 
-    initial_pr = read_pull_request(repo, pr, environment=env)
+    initial_pr = read_pull_request(
+        repo,
+        pr,
+        environment=env,
+        gh_command=gh_command,
+    )
     if initial_pr.base_ref != base:
         raise RuntimeError(
             f"PR base {initial_pr.base_ref} does not match expected base {base}"
@@ -227,8 +249,18 @@ def run_local_fallback(
     original_head = initial_pr.head_sha
     assert_clean_exact_head(repository_root, original_head, environment=env)
     assert_base_is_ancestor(repository_root, base, environment=env)
-    _assert_no_ci_gate_check(repo, original_head, environment=env)
-    _assert_no_ci_gate_check(repo, initial_pr.merge_commit_sha, environment=env)
+    _assert_no_ci_gate_check(
+        repo,
+        original_head,
+        environment=env,
+        gh_command=gh_command,
+    )
+    _assert_no_ci_gate_check(
+        repo,
+        initial_pr.merge_commit_sha,
+        environment=env,
+        gh_command=gh_command,
+    )
 
     validation = _run(
         (
@@ -245,15 +277,35 @@ def run_local_fallback(
         return validation.returncode
 
     assert_clean_exact_head(repository_root, original_head, environment=env)
-    current_pr = read_pull_request(repo, pr, environment=env)
+    current_pr = read_pull_request(
+        repo,
+        pr,
+        environment=env,
+        gh_command=gh_command,
+    )
     if current_pr.base_ref != base:
         raise RuntimeError("PR base changed during local validation")
     if current_pr.head_sha != original_head:
         raise RuntimeError("PR head changed during local validation")
 
-    _assert_no_ci_gate_check(repo, original_head, environment=env)
-    _assert_no_ci_gate_check(repo, current_pr.merge_commit_sha, environment=env)
-    publish_success_status(repo, original_head, environment=env)
+    _assert_no_ci_gate_check(
+        repo,
+        original_head,
+        environment=env,
+        gh_command=gh_command,
+    )
+    _assert_no_ci_gate_check(
+        repo,
+        current_pr.merge_commit_sha,
+        environment=env,
+        gh_command=gh_command,
+    )
+    publish_success_status(
+        repo,
+        original_head,
+        environment=env,
+        gh_command=gh_command,
+    )
 
     print("LOCAL FALLBACK CI GATE: PASS")
     print("mode: LOCAL_FALLBACK")
