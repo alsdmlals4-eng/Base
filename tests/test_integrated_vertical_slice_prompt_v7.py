@@ -162,6 +162,51 @@ class IntegratedVerticalSlicePromptV7Tests(unittest.TestCase):
         self.assertIn("835EAEEC6205DD3D0BB5D9CE49A8B4940ED07A108E15F6C1B04299446FD5868F", coverage)
         self.assertIn("39AF1CAFE1C8D132667F68AC731AB970615E7B55A09AEA93CFB56141803D0506", coverage)
 
+    def test_godot_live_editor_contract_requires_user_runnable_project_entrypoint(self) -> None:
+        skill_path = (
+            ROOT
+            / "templates"
+            / "project-operations"
+            / ".agents"
+            / "skills"
+            / "godot-live-editor-operations"
+            / "SKILL.md"
+        )
+        reference_path = (
+            skill_path.parent
+            / "references"
+            / "runnable-by-user-project-entrypoint.md"
+        )
+        skill = read(skill_path)
+
+        for term in (
+            "RUNNABLE_BY_USER",
+            "references/runnable-by-user-project-entrypoint.md",
+            "F5 / Run Project",
+            "USER_RUNNABLE_READY",
+        ):
+            self.assertIn(term, skill)
+
+        self.assertTrue(reference_path.is_file(), str(reference_path))
+        reference = read(reference_path)
+        for term in (
+            "application/run/main_scene",
+            "project.godot",
+            "MainMenu",
+            "App Router",
+            "Run Current Scene",
+            "F5 / Run Project",
+            "L2_DESTRUCTIVE_OR_STRUCTURAL_WRITE",
+            "필요한 최소 통합 변경",
+            "무관한 Project Settings",
+            "Prototype/Test Scene",
+            "사용자가 기존 Main Scene을 유지하라고 명시",
+            "rollback",
+            "USER_RUNNABLE_READY",
+            "HUMAN_VERIFIED",
+        ):
+            self.assertIn(term, reference)
+
 
 if __name__ == "__main__":
     unittest.main()
