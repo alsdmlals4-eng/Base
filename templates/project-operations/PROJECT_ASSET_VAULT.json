@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "vault_root": ".asset-vault",
+  "library_dir": "library",
+  "archive_dir": "archive",
+  "inbox_dir": "inbox",
+  "managed_root": "assets/_managed",
+  "sync_manifest": "assets/ASSET_VAULT_SYNC.json",
+  "supported_extensions": [
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp",
+    ".svg"
+  ]
+}
