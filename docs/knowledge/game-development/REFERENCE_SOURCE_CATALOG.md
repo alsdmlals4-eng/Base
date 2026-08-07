@@ -2,7 +2,7 @@
 
 ```yaml
 catalog_role: evidence-based-game-development-reference-index
-checked_at: 2026-07-29
+checked_at: 2026-08-07
 owner_method: docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md
 ```
 
@@ -35,7 +35,7 @@ organization_or_author:
 url:
 source_tier:
 published_or_version:
-checked_at: 2026-07-29
+checked_at: 2026-08-07
 topics: []
 use_for:
 사용_한계:
@@ -306,6 +306,54 @@ use_for: 논리 해상도·비율·2D scaling·viewport 전략을 설계한다.
 재검증_조건: Godot version·renderer·target platform·orientation 변경 시.
 ```
 
+### GODOT-ASSET-IMAGE-001
+
+```yaml
+source_id: GODOT-ASSET-IMAGE-001
+title: Importing images
+organization_or_author: Godot Engine documentation
+url: https://docs.godotengine.org/en/stable/tutorials/assets_pipeline/importing_images.html
+source_tier: T1_PRIMARY_OFFICIAL
+published_or_version: stable documentation checked 2026-08-07
+checked_at: 2026-08-07
+topics: [texture import, VRAM compression, S3TC, BPTC, ETC2, ASTC, mipmaps, pixel art]
+use_for: texture의 disk·VRAM·품질 trade-off와 desktop/mobile import profile을 설계한다.
+사용_한계: renderer·Godot version·texture role에 따라 가능한 포맷과 품질이 다르므로 모든 자산에 같은 설정을 강제하지 않는다.
+재검증_조건: Godot version·renderer·target GPU·texture pipeline 변경 시.
+```
+
+### GODOT-ASSET-AUDIO-001
+
+```yaml
+source_id: GODOT-ASSET-AUDIO-001
+title: Importing audio samples
+organization_or_author: Godot Engine documentation
+url: https://docs.godotengine.org/en/stable/tutorials/assets_pipeline/importing_audio_samples.html
+source_tier: T1_PRIMARY_OFFICIAL
+published_or_version: stable documentation checked 2026-08-07
+checked_at: 2026-08-07
+topics: [WAV, Ogg Vorbis, MP3, file size, CPU decoding, simultaneous voices]
+use_for: SFX·music·voice의 파일 크기와 재생 CPU 비용을 함께 비교한다.
+사용_한계: 실제 encoder 설정·동시 재생량·기기 CPU·청취 품질에 따라 결과가 달라진다.
+재검증_조건: Godot audio importer·target device·동시 voice 수·오디오 파이프라인 변경 시.
+```
+
+### GODOT-FONT-001
+
+```yaml
+source_id: GODOT-FONT-001
+title: Using Fonts
+organization_or_author: Godot Engine documentation
+url: https://docs.godotengine.org/en/stable/tutorials/ui/gui_using_fonts.html
+source_tier: T1_PRIMARY_OFFICIAL
+published_or_version: stable documentation checked 2026-08-07
+checked_at: 2026-08-07
+topics: [font resources, font size, fallback, variable fonts, UI typography]
+use_for: 동일 font file의 크기별 복제를 피하고 Theme·fallback·variation을 용량·가독성 정책과 연결한다.
+사용_한계: CJK·emoji·언어별 glyph coverage와 라이선스는 실제 폰트 파일로 별도 확인한다.
+재검증_조건: 지원 언어·font family·Godot text rendering 설정 변경 시.
+```
+
 ### ANDROID-PERF-001
 
 ```yaml
@@ -336,6 +384,54 @@ topics: [performance mode, battery mode, OEM interventions]
 use_for: 모바일 성능·배터리 설정과 사용자 선택을 고려한다.
 사용_한계: 선택 기기·OEM 지원과 게임 구현 방식에 따라 달라진다.
 재검증_조건: 실제 Android 출시와 지원 기기 정책 확정 전.
+```
+
+### ANDROID-SIZE-001
+
+```yaml
+source_id: ANDROID-SIZE-001
+title: Reduce game size
+organization_or_author: Android Developers
+url: https://developer.android.com/games/optimize/game-size
+source_tier: T1_PRIMARY_OFFICIAL
+published_or_version: current page checked 2026-08-07
+checked_at: 2026-08-07
+topics: [game size, Android App Bundle, Play Asset Delivery, baseline size, asset analysis, textures]
+use_for: Android 게임 용량을 optimized delivery → baseline/structure → large assets → texture optimization 순서로 조사한다.
+사용_한계: 공개된 평균 절감률이나 install-conversion 관계를 개별 프로젝트의 보장 수치로 사용하지 않는다.
+재검증_조건: Google Play download limit·App Bundle·PAD 정책 또는 프로젝트 delivery 구조 변경 시.
+```
+
+### ANDROID-TCF-001
+
+```yaml
+source_id: ANDROID-TCF-001
+title: Target texture compression formats in Android App Bundles
+organization_or_author: Android Developers
+url: https://developer.android.com/guide/playcore/asset-delivery/texture-compression
+source_tier: T1_PRIMARY_OFFICIAL
+published_or_version: current page checked 2026-08-07
+checked_at: 2026-08-07
+topics: [texture compression format targeting, App Bundle, ETC2, ASTC, device targeting]
+use_for: 기기별 지원 texture compression set을 전달해 불필요한 texture variant download를 줄이는 후보를 평가한다.
+사용_한계: 실제 Godot export·Gradle/App Bundle 구성·기기 지원 범위를 확인하지 않고 강제하지 않는다.
+재검증_조건: Android Gradle Plugin·Play delivery·Godot Android export pipeline 변경 시.
+```
+
+### ANDROID-PAD-001
+
+```yaml
+source_id: ANDROID-PAD-001
+title: Play Asset Delivery
+organization_or_author: Android Developers
+url: https://developer.android.com/guide/playcore/asset-delivery
+source_tier: T1_PRIMARY_OFFICIAL
+published_or_version: current page checked 2026-08-07
+checked_at: 2026-08-07
+topics: [install-time, fast-follow, on-demand, asset packs, App Bundle]
+use_for: 첫 세션 필수 asset과 optional/후반 콘텐츠의 전달 경계를 설계한다.
+사용_한계: 초기 다운로드를 줄이기 위해 첫 실행 필수 asset을 무리하게 분리하지 않고 network/offline UX를 함께 검증한다.
+재검증_조건: Google Play PAD 정책·asset pack limit·프로젝트 offline requirement 변경 시.
 ```
 
 ## 8. Steam·출시
@@ -402,6 +498,22 @@ topics: [store page, audience building, minimum public period]
 use_for: 공개 가능한 gameplay·branding·description 준비와 release 의존성을 계획한다.
 사용_한계: 최소 기간·review 절차·release rule은 실제 적용 시 공식 페이지로 재확인한다.
 재검증_조건: Steam release 계획·store review 제출 직전.
+```
+
+### STEAM-PIPE-001
+
+```yaml
+source_id: STEAM-PIPE-001
+title: Uploading to Steam / SteamPipe Content System
+organization_or_author: Valve Steamworks
+url: https://partner.steamgames.com/doc/sdk/uploading
+source_tier: T1_PRIMARY_OFFICIAL
+published_or_version: current documentation checked 2026-08-07
+checked_at: 2026-08-07
+topics: [SteamPipe, chunks, patch size, pack files, compression, update disk, depots]
+use_for: 설치 크기와 patch 크기를 분리하고 pack locality·asset ordering·compression boundary·temporary disk trade-off를 검증한다.
+사용_한계: 문서의 pack-size 예시나 Unreal-specific 설정을 Godot/모든 프로젝트의 고정 수치로 복사하지 않는다.
+재검증_조건: SteamPipe packaging·depot·project pack structure 또는 Valve 권장사항 변경 시.
 ```
 
 ## 9. AI 위험·Evals·검수
@@ -552,3 +664,6 @@ bias_and_limitations:
 - 라이선스·상업 사용·출처·서비스 약관
 - 접근성 guideline version
 - 프로젝트 실제 플랫폼·기기·해상도·입력·성능
+- Godot asset importer·renderer·texture/audio/font behavior
+- Google Play App Bundle·Play Asset Delivery·texture targeting 정책
+- SteamPipe packaging·chunking·patch/update 권장사항

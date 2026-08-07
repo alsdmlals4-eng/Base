@@ -267,10 +267,15 @@ frames_and_states:
 export_format:
 import_settings:
 performance_budget:
+size_quality_class:
+platform_import_profile:
+quality_validation:
 accessibility_role:
 approval_status:
 validation_scene_and_capture:
 ```
+
+`size_quality_class`, `platform_import_profile`, `quality_validation`은 용량 최적화가 해당 자산에 적용될 때만 구체화한다. byte·압축·전달·패치 trade-off의 공용 방법은 `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md`가 책임지고, 이 문서는 시각 의도·가독성·실제 인게임 품질을 계속 소유한다.
 
 Art Bible이 “어떤 방향인가”를, Asset Specification이 “정확히 무엇을 어떻게 납품하는가”를 책임진다.
 
@@ -335,6 +340,8 @@ VFX가 넓은 게임 디자인 개념을 시각 언어로 전달할 수 있다�
 - 목표 플랫폼 화면 크기
 - 접근성 옵션 적용 전후
 - 성능 capture
+- 용량 최적화 전후 동일 장면 비교(해당 시)
+- texture compression·resolution·font fallback 변경의 artifact/가독성 확인(해당 시)
 
 상태 예:
 
@@ -348,7 +355,7 @@ CONCEPT_EXPLORATION
 → RUNTIME_ASSET_APPROVED
 ```
 
-`Runtime Asset Approval`은 실제 인게임 캡처·성능·가독성 검수 뒤에만 사용한다.
+`Runtime Asset Approval`은 실제 인게임 캡처·성능·가독성 검수 뒤에만 사용한다. 용량 최적화가 적용된 자산은 byte 절감만으로 승인하지 않고 변경 후 동일 quality bar를 다시 확인한다.
 
 ## 11. 생산 파이프라인
 
@@ -423,6 +430,8 @@ Brief
 - 실제 frame time·GPU·메모리·로딩 예산을 아트 목표와 연결한다.
 - 모바일은 발열·배터리·해상도·텍스처 메모리를 고려한다.
 - 접근성 옵션이 visual identity를 파괴하지 않도록 초기부터 설계한다.
+- 용량 최적화는 `size_quality_class`와 실제 screen coverage를 사용하며 모든 자산에 동일 resolution·compression을 강제하지 않는다.
+- 폰트·texture·animation 압축으로 용량을 줄였으면 실제 장면에서 visual identity·가독성·silhouette·contact timing을 다시 검증한다.
 
 ## 14. 실패 조건
 
@@ -435,6 +444,8 @@ Brief
 - 첫 자산 하나만 만들고 반복 제작 가능성을 통과 처리함
 - 성능·접근성·플랫폼 제약을 구현 후반으로 미룸
 - 승인 이미지가 있는데 별도 지시 없이 교체함
+- 용량 절감을 이유로 HERO/GAMEPLAY_CRITICAL 품질 저하를 증거 없이 승인함
+- PC와 Android에 동일 texture import profile을 무조건 강제함
 
 ## 15. Output Contract
 
@@ -445,9 +456,9 @@ Brief
 ## 시각적 위계·마스코트·상징
 ## Concept Exploration 후보 비교
 ## Art Bible 결정
-## Asset Specification·경로·규격·Import
+## Asset Specification·경로·규격·Import·size quality profile
 ## 캐릭터·환경·UI·VFX·Animation 연결
-## 실제 인게임 캡처·Runtime Asset Approval
+## 실제 인게임 캡처·최적화 전후 품질·Runtime Asset Approval
 ## 원출처·라이선스·유사성·승인 원장
 ## 반복 생산성·두 번째 같은 유형의 자산
 ## 접근성·성능·미검증·다음 결정

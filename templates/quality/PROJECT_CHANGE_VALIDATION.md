@@ -1,5 +1,7 @@
 # 프로젝트 변경 검증
 
+공용 기본 실행·Handoff 기준: `docs/ONE_CLICK_PLAY_HANDOFF_POLICY.md`
+
 ## 1. 판정
 
 - 결과: `ACCEPT / ACCEPT_WITH_FOLLOWUP / REVISE / REJECT / UNVERIFIED`
@@ -54,9 +56,20 @@ evidence_decision: KEEP / REVISE / REDUCE / REMOVE / RETEST
 
 ## 5. 런타임·렌더·빌드 검증
 
+사용자의 기본 실행 시작점에서 먼저 재현한다. 대표 Vertical Slice·Demo 인계는 별도 Scene 선택·편집기 수동 설정 없이 `Project Play`만으로 기대 첫 화면과 실제 gameplay surface에 진입해야 한다.
+
 | 시작점·환경 | 실행 절차 | 기대 결과 | 실제 결과 | 판정 |
 |---|---|---|---|---|
+| 기본 Project Play | 프로젝트 열기 → Project Play | 기대 첫 화면 → 실제 플레이 → 성공·실패·복귀 | | `PASS / FAIL · RETEST_REQUIRED / NOT_RUN / BLOCKED` |
 | | | | | |
+
+- 기본 entrypoint 자동 boot 테스트:
+- gameplay HUD·도구·입력 visible/enabled 테스트:
+- 성공·실패·재시도·수정·복귀 테스트:
+- 플랫폼·validation 전용 entrypoint 회귀:
+- 실제 화면·음향·물리 입력 검수:
+
+패키징·export·해시·headless PASS만으로 실제 런타임 PASS를 주장하지 않는다. 사용자가 화면 누락이나 조작 불가를 확인하면 판정은 `FAIL · RETEST_REQUIRED`다.
 
 ## 6. Golden Path·Edge·반례·Regression
 
