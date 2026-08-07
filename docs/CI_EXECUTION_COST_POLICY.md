@@ -8,7 +8,8 @@
 - 코드·도구·Schema·워크플로 변경에는 통합 신뢰도를 유지하는 충분한 검증을 실행한다.
 - `main` 병합, nightly, release 후보에서는 지원 운영체제·런타임 전체 계약을 확인한다.
 - 새 커밋이 올라온 PR의 오래된 실행을 자동 취소한다.
-- GitHub Actions를 사용할 수 없는 동안 실행하지 못한 검증을 통과로 보고하지 않고, 재개 조건과 정확한 보류 작업을 남긴다.
+- 공개 저장소의 표준 GitHub-hosted runner는 기본 `REMOTE_CI`로 사용하고, Actions 인프라가 Required Check 자체를 만들지 못한 경우에만 엄격한 `LOCAL_FALLBACK`을 검토한다.
+- 실행하지 못했거나 동등하게 재현할 수 없는 검증을 통과로 보고하지 않고, 재개 조건과 정확한 보류 작업을 남긴다.
 
 ## 2. 적용 범위
 
@@ -28,10 +29,14 @@
 2. **증거 손실 금지**: 비용 절감은 필요한 테스트 삭제가 아니라 실행 시점과 대상을 계층화하는 작업이다.
 3. **한 SHA당 한 목적의 실행**: PR 검증과 모든 브랜치 push 검증이 같은 커밋에서 중복되지 않게 한다.
 4. **안정된 통합 게이트**: Branch protection은 조건부 세부 Job 여러 개보다 항상 종료되는 단일 `ci-gate`를 우선 Required Check로 사용한다.
-5. **보류와 통과 분리**: Actions 미사용·권한 제한·결제 제한·runner 장애는 `UNVERIFIED`이며 성공이 아니다.
-6. **프로젝트 지원 범위가 정본**: 지원하지 않는 운영체제·Python 버전을 관성적으로 matrix에 추가하지 않는다.
+5. **두 실행 모드**: `REMOTE_CI`가 기본이며, `LOCAL_FALLBACK`은 Actions가 현재 검증 대상에 `ci-gate` Check Run을 생성하지 못한 인프라 장애에만 허용한다.
+6. **실패 우회 금지**: `ci-gate` Check Run이 실패·취소·대기·실행 중이거나 테스트 실패가 관찰되면 `LOCAL_FALLBACK`으로 전환하지 않는다.
+7. **보류와 통과 분리**: fallback으로 필요한 증거를 동등하게 재현할 수 없으면 `BLOCKED_BY_GITHUB_ACTIONS / UNVERIFIED`다.
+8. **프로젝트 지원 범위가 정본**: 지원하지 않는 운영체제·Python 버전을 관성적으로 matrix에 추가하지 않는다.
 
 저장소 전체에서 `name: ci-gate`를 노출하는 Job은 하나뿐이어야 한다. 그 Job을 소유한 Workflow의 `pull_request` 이벤트에는 Workflow-level `paths`·`paths-ignore`를 두지 않고 내부 분류 Job에서 비용 계층을 선택한다. 집중 Workflow는 path filter를 사용할 수 있지만 `ci-gate` 이름을 재사용하지 않는다.
+
+GitHub Actions의 정상 `ci-gate`는 Check Run이고, 제한적 로컬 fallback은 같은 Required Check 문맥의 commit status를 사용할 수 있다. 같은 이름의 Check와 status가 동시에 생기면 병합 조건이 중첩될 수 있으므로, `LOCAL_FALLBACK`은 현재 PR head와 현재 test merge SHA 어디에도 `ci-gate` Check Run이 없음을 검증 전후에 확인해야 한다.
 
 ## 4. 변경 분류
 
@@ -108,6 +113,7 @@ Ubuntu 1개
 - runner·권한·cache·artifact·dependency 설치
 - 지원 OS·Python·Godot matrix
 - Branch protection Required Check 계약
+- `tools/run_local_ci_fallback.py`처럼 Required Check 증거를 발행하는 대체 검증 도구
 
 권장 검증:
 
@@ -116,6 +122,7 @@ Ubuntu 1개
 - 영향받는 플랫폼의 선택적 smoke
 - 사용 가능할 때 `workflow_dispatch` 실제 실행
 - Required Check 이름과 `ci-gate` 종료 상태 확인
+- fallback 도구 변경 시 dirty/stale/SHA drift/Check Run race/status target 회귀
 
 ### 4.5 `FULL_MATRIX`
 
@@ -211,28 +218,70 @@ Branch protection은 조건부 Job 이름을 모두 Required Check로 묶지 않
 - 동일 Job 안에서 같은 의존성 설치·같은 전체 테스트를 두 번 실행하지 않는다.
 - matrix 각 축의 목적을 설명하지 못하면 축을 제거하거나 nightly로 이동한다.
 
-## 9. GitHub Actions 사용 불가 계약
+## 9. `REMOTE_CI` / `LOCAL_FALLBACK` 계약
 
-결제·사용량·권한·조직 정책·runner 장애로 Actions를 실행할 수 없으면 다음 상태를 사용한다.
+### 9.1 `REMOTE_CI` — 기본 모드
+
+- 공개 저장소에서 표준 GitHub-hosted runner를 사용할 수 있으면 비용 예산과 무관하게 `REMOTE_CI`를 기본으로 사용한다.
+- 기존 변경 분류, 조건부 publication/Windows smoke, evaluator, Required Check `ci-gate`를 그대로 사용한다.
+- larger/GPU runner나 미래의 private repository처럼 과금 가능성이 있는 실행은 별도 예산·승인 정책을 따른다.
+- 현재 SHA에 `ci-gate` Check Run이 생성되었다면 결론이 무엇이든 해당 검증은 `REMOTE_CI` 소유다.
+- `ci-gate`가 실패·취소·queued·in progress이면 원인을 수정하거나 원격 실행을 재개한다. 테스트 실패나 workflow 실패를 이유로 fallback으로 전환하지 않는다.
+
+### 9.2 `LOCAL_FALLBACK` — 인프라 전용 대체 모드
+
+Actions 서비스·권한·조직 정책·runner 가용성 등으로 현재 PR에 `ci-gate` Check Run 자체가 생성되지 못한 경우에만 다음 도구를 사용할 수 있다.
+
+```text
+python tools/run_local_ci_fallback.py \
+  --repo <owner/repo> \
+  --pr <number> \
+  --trusted-history-commit <trusted-sha> \
+  --base main
+```
+
+도구는 다음을 모두 fail-closed로 확인한다.
+
+1. `gh auth status`와 GitHub API 접근이 성공한다.
+2. PR이 열려 있고 기대 base branch와 일치한다.
+3. local `HEAD`가 PR `head.sha`와 정확히 같다.
+4. worktree가 검증 전 깨끗하다.
+5. `git fetch origin <base>` 후 최신 `origin/<base>`가 `HEAD`의 ancestor다.
+6. PR head SHA에 `ci-gate` Check Run이 없다.
+7. 현재 `merge_commit_sha`가 있으면 그 SHA에도 `ci-gate` Check Run이 없다.
+8. 기존 `tools/run_local_validation.py --trusted-history-commit <sha>`가 성공한다.
+9. 검증 후 local HEAD·worktree·PR head가 변하지 않았다.
+10. status 발행 직전에 head와 최신 test merge SHA의 `ci-gate` Check Run 부재를 다시 확인한다.
+11. 위 조건이 모두 통과한 exact head SHA에만 commit status `context=ci-gate`, `state=success`를 발행한다.
+
+`LOCAL_FALLBACK`은 Actions 실패를 성공으로 덮는 우회가 아니다. 검증 중 Actions가 복구되어 `ci-gate` Check Run이 생기면 status를 발행하지 않고 `REMOTE_CI`에 소유권을 돌린다.
+
+### 9.3 fallback이 불가능한 경우
+
+다음 중 하나라도 해당하면 기존 blocked 상태를 유지한다.
 
 ```text
 BLOCKED_BY_GITHUB_ACTIONS
 판정: UNVERIFIED
 ```
 
+- 로컬 환경에서 Required Check의 필수 증거를 재현할 수 없다.
+- exact head, clean worktree, current base ancestry를 증명할 수 없다.
+- GitHub API 또는 인증 상태를 검증할 수 없다.
+- 필요한 platform/runtime/Godot/publication 증거가 로컬에서 실행 불가능하다.
+- 현재 또는 검증 중 `ci-gate` Check Run이 발견된다.
+
 작업 보고와 Issue·PR에는 다음을 남긴다.
 
 ```yaml
-actions_availability: unavailable
-completed_without_actions:
-  - 실제 수행한 로컬·정적 검사
-pending_actions_validation:
-  - workflow 파일
-  - event 또는 workflow_dispatch 입력
-  - 실행해야 할 Job
-  - 기대하는 Required Check
-  - 확인할 artifact·log·결과
-resume_condition: 사용자가 GitHub Actions 사용 가능 상태를 알림
+validation_mode: REMOTE_CI | LOCAL_FALLBACK
+actions_availability: available | infrastructure_unavailable
+head_sha:
+base_sha:
+completed_validation:
+pending_validation:
+required_check: ci-gate
+resume_condition:
 risk_until_resumed:
 rollback_path:
 ```
@@ -240,18 +289,20 @@ rollback_path:
 금지:
 
 - workflow 파일이 존재한다는 이유로 실행 통과를 주장한다.
-- Actions 사용량이 복구되지 않았는데 반복 재실행한다.
+- 테스트 실패·evaluator 실패·workflow 오류를 `LOCAL_FALLBACK`으로 덮는다.
+- `ci-gate` Check Run이 있는데 같은 이름의 local status로 결과를 대체한다.
+- 검증한 SHA와 다른 commit에 success status를 발행한다.
+- stale base나 dirty worktree에서 success status를 발행한다.
 - 보류된 전체 matrix를 `ACCEPT` 근거로 사용한다.
-- 사용 가능해졌다는 사용자 알림 뒤 기준 branch·SHA를 갱신하지 않고 오래된 결과를 실행한다.
 
 재개 절차:
 
 ```text
-사용 가능 알림
+Actions 사용 가능 상태 확인
 → 대상 branch·최신 SHA·workflow diff 재확인
-→ 보류 목록에서 아직 필요한 검증만 선택
-→ workflow_dispatch 또는 해당 이벤트 실행
+→ REMOTE_CI 실행 또는 기존 실행 재개
 → Job·log·artifact·Required Check 확인
+→ LOCAL_FALLBACK status가 있었더라도 새 Check Run 결과를 우선 확인
 → UNVERIFIED 판정 갱신
 ```
 
@@ -273,13 +324,16 @@ rollback_path:
 CI 최적화는 다음을 모두 만족해야 완료다.
 
 - 변경 분류 규칙과 안전한 fallback이 있다.
+- 실행 모드는 `REMOTE_CI`와 `LOCAL_FALLBACK` 두 개이며 기본은 `REMOTE_CI`다.
+- 공개 저장소의 표준 GitHub-hosted runner를 비용 0이라는 이유만으로 우회하지 않는다.
 - 문서 전용 PR에서 고비용 전체 검증이 실행되지 않는다.
 - 코드·계약 변경은 Ubuntu 기준 전체 검증을 건너뛰지 않는다.
 - main·nightly·release에서 선언된 전체 matrix가 실행된다.
 - `concurrency.cancel-in-progress`가 PR의 오래된 실행을 취소한다.
 - PR과 feature branch push가 같은 SHA에서 전체 검증을 중복하지 않는다.
 - 조건부 Job이 있어도 `ci-gate`가 Required Check 계약을 안정적으로 종료한다.
-- Actions 미사용 상태의 보류 Job·재개 조건·위험이 명시된다.
+- `ci-gate` Check Run이 존재하면 `LOCAL_FALLBACK`이 성공 status를 발행하지 못한다.
+- fallback을 실행할 수 없는 상태의 보류 Job·재개 조건·위험이 명시된다.
 - 실행한 정적 검사와 실제 Actions 결과가 분리되어 보고된다.
 - 기존 검증 증거를 단순 삭제해 비용을 줄이지 않았다.
 
