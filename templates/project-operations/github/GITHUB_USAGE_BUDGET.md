@@ -50,17 +50,19 @@ limits:
 
 ## Two-mode response
 
-- `REMOTE_CI` is the default whenever GitHub Actions can create the repository's Required Check.
-- A zero paid budget does not select `LOCAL_FALLBACK` for a public repository using standard GitHub-hosted runners.
-- `LOCAL_FALLBACK` is infrastructure-only: it may be attempted only when Actions cannot create any `ci-gate` Check Run for the current validation target and every exact-SHA safeguard in `docs/CI_EXECUTION_COST_POLICY.md` passes.
-- If a `ci-gate` Check Run exists but is failed, cancelled, queued, or in progress, stay in `REMOTE_CI`; do not replace that result with a local status.
+- `REMOTE_CI` is the default for public repositories using standard GitHub-hosted runners. A zero paid budget does not select `LOCAL_FALLBACK`.
+- A canonical `REMOTE_CI workflow run` on the current PR head owns validation even if the final `ci-gate` Check Run has not been created yet.
+- Existing `ci-gate` Check Runs or commit statuses also block fallback ownership.
+- `LOCAL_FALLBACK` is infrastructure-only and may be attempted only when the canonical remote run and existing gate evidence are absent, the change is locally reproducible, and every exact-SHA safeguard in `docs/CI_EXECUTION_COST_POLICY.md` passes.
+- The Base default fallback boundary is conservative: documentation and limited canonical contract files may qualify; `CODE_OR_ENGINE` and `CI_TOOLCHAIN_HIGH_RISK` do not qualify without a repository-specific equivalent local validation contract.
+- If a remote run/check exists but is failed, cancelled, queued, or in progress, stay in `REMOTE_CI`; do not replace that result with a local status.
 - If fallback preconditions or required local evidence cannot be satisfied, record `BLOCKED_BY_GITHUB_ACTIONS / UNVERIFIED`; do not auto-merge.
 
 ## Alert Response
 
 - 70%: identify top workflows and repeated matrix axes for billing-sensitive usage.
 - 85%: move non-blocking full matrix to nightly/manual and shorten artifact retention where evidence is preserved.
-- 100% or budget stop on billing-sensitive usage: determine whether standard public `REMOTE_CI` remains available. If the Required Check cannot be created, apply the infrastructure-only fallback contract; otherwise continue `REMOTE_CI`.
+- 100% or budget stop on billing-sensitive usage: determine whether standard public `REMOTE_CI` remains available. If remote ownership evidence is absent and the change is locally reproducible, apply the infrastructure-only fallback contract; otherwise continue `REMOTE_CI` or remain `UNVERIFIED`.
 
 ## Monthly Evidence
 
