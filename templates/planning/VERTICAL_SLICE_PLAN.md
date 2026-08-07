@@ -7,6 +7,7 @@
 - 4단계 Gate·PC/모바일 통합 데모: `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md`
 - Skill 오케스트레이션·Grill Me·적대적 검토·완전성 증거: `docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md`
 - 에셋·UI·UX·사운드·마스코트·수치 조정: `docs/knowledge/vertical-slice/ASSET_MASCOT_AND_TUNING.md`
+- 기본 실행·GitHub Handoff: `docs/ONE_CLICK_PLAY_HANDOFF_POLICY.md`
 
 ## 0. 상태와 실행 계약
 
@@ -19,6 +20,23 @@
 - 책임 원본:
 - 보호할 결정·자산:
 - `BLOCKED_UNVERIFIED`:
+
+## 0.1 One-click Project Play 계약
+
+- 기본 프로젝트 파일:
+- 기본 entrypoint:
+- 실행 동작: `Project Play`
+- 기대 첫 화면:
+- 실제 gameplay surface:
+- 대표 성공·실패·복귀 흐름:
+- 핵심 HUD·도구·입력 표면:
+- 별도 Scene 선택 필요 여부: `없음`이어야 함
+- 편집기 수동 설정 필요 여부: `없음`이어야 함
+- validation·debug 전용 entrypoint:
+- 기본 실행 자동 boot·flow 테스트:
+- 실제 로컬 실행 상태: `NOT_RUN / PASS / FAIL · RETEST_REQUIRED / BLOCKED`
+
+최종 인계 상태에서는 사용자가 별도 Scene 선택이나 editor 설정 없이 프로젝트를 열고 **Project Play**만 눌러 대표 데모의 첫 화면부터 실제 플레이, 성공·실패·복귀까지 진행할 수 있어야 한다. 테스트 Scene 전용 실행은 개발 중간 증거로 사용할 수 있지만 최종 사용자 검수 경로를 대체하지 않는다.
 
 ## 1. Gate 1 입력
 
@@ -269,6 +287,7 @@ PC 프로젝트에서만 작성한다.
 ### Requirement Coverage
 
 - [ ] 사용자 최신 요구와 승인 결정이 모두 추적됨
+- [ ] 기본 Project Play에서 대표 플레이의 시작·성공·실패·복귀까지 연결됨
 
 ### Skill Coverage
 
