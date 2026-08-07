@@ -1,6 +1,6 @@
 # Godot Asset·Plugin Source Catalog
 
-- 기준 확인일: `2026-07-25`
+- 기준 확인일: `2026-08-08`
 - 목적: Godot 기능·에셋·플러그인을 직접 제작하기 전에 검색할 원본과 검증 순서를 제공한다.
 - 주의: 가격, 라이선스, Godot 호환 버전, 판매 상태는 바뀔 수 있으므로 채택 시점에 다시 확인한다.
 
@@ -20,6 +20,8 @@ C:\Users\user\Documents\GitHub\Godot_Reference
 → Godot 공식 문서·Store·Asset Library·upstream 원본
 ```
 
+- 현재 등록된 공식 데모 참고 코퍼스에 `godot-demo-projects-master`가 포함된다. upstream은 `godotengine/godot-demo-projects`이며 기본 상태는 `REFERENCE_ONLY`다.
+- `godot-demo-projects-master`의 예제는 엔진 네이티브 구현 패턴 탐색에 활용하되, 로컬 폴더명의 `master`를 exact upstream version으로 간주하지 않는다. 실제 채택 시 commit/tag와 현재 Godot 버전 호환성을 다시 검증한다.
 - 이 경로는 현재 사용자 Windows PC 전용이며 다른 PC·CI·원격 agent의 필수 경로가 아니다.
 - 경로가 없거나 접근할 수 없으면 `UNAVAILABLE_LOCAL_REFERENCE`로 두고 정상 외부 검색을 계속한다.
 - 템플릿·공식 데모·플러그인 원본은 기본 `REFERENCE_ONLY`다. 다운로드 또는 폴더 존재만으로 프로젝트 채택을 선언하지 않는다.
