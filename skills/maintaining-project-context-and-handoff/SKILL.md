@@ -1,6 +1,6 @@
 ---
 name: maintaining-project-context-and-handoff
-description: Use when project state must be resumed, handed between agents, or current GPT work must become an on-demand Codex implementation handoff.
+description: Use when project state must be resumed or approved planning must become a staged GPT-to-Codex Godot implementation handoff.
 ---
 
 # Maintaining Project Context and Handoff
