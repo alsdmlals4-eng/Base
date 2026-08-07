@@ -49,6 +49,9 @@ from tests.test_game_entitlement_integrity_drm_capability import (
 from tests.test_local_ci_fallback import (
     LocalCiFallbackTests as _LocalCiFallbackTests,
 )
+from tests.test_local_godot_reference_library import (
+    LocalGodotReferenceLibraryTests as _LocalGodotReferenceLibraryTests,
+)
 from tests.test_project_asset_vault import (
     ProjectAssetVaultTests as _ProjectAssetVaultTests,
 )
