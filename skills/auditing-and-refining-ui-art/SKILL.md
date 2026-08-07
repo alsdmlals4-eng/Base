@@ -13,7 +13,6 @@ description: Use when planning, polishing, or auditing game UX, UI structure, in
 - 피해·보상·저장·진행 등 **도메인 규칙**을 UI에서 재계산하거나 새 상태 책임 원본으로 소유하지 않는다.
 - 게임 코어·벤치마크·플레이어 반응은 `analyzing-and-refining-game-concepts`, 문서 발행은 `managing-design-documents`, 공격 검토는 `running-adversarial-review-and-refinement`, 통합 증거는 `reviewing-and-validating-project-changes`가 책임진다.
 - 최종 이미지 생성·아트 기술 카드는 `designing-art-prompts-and-technique-cards`가 책임진다.
-- 새 이미지·아이콘·컴포넌트가 **필요한지와 우선순위·제작 방식을 고르는 공용 판단**은 `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate`가 소유한다. 이 Skill은 선정된 UI requirement의 정보 구조·상태·입력·접근성·Godot 계약을 상세화한다.
 
 ## Skill Modes
 
@@ -62,7 +61,6 @@ description: Use when planning, polishing, or auditing game UX, UI structure, in
 프로젝트 코어·현재 정본·실제 UI 조사
 → experience-contract
 → flow-and-information-architecture
-→ Visual Requirement Gate로 새 시각 요소 필요성·재사용·우선순위 확인
 → pattern-selection
 → design-system-contract
 → godot-ui-contract
@@ -74,12 +72,12 @@ description: Use when planning, polishing, or auditing game UX, UI structure, in
 
 1. 화면마다 플레이어의 중심 질문과 가장 중요한 행동을 하나씩 정한다.
 2. 상시 정보, 선택 시 상세, 실행 전 예상, 실행 후 결과·복기를 분리한다.
-3. 새 기능·컴포넌트·아이콘·이미지 추가 전에 `REMOVE → REDUCE → MERGE → CLARIFY → FEEDBACK 강화 → ADD` 순으로 검토한다. 새 시각 요소라면 이 검토를 `Visual Requirement Gate`의 Delete Test와 재사용 판정에 연결한다.
+3. 새 기능 추가 전에 `REMOVE → REDUCE → MERGE → CLARIFY → FEEDBACK 강화 → ADD` 순으로 검토한다.
 4. 정상·hover·focused·pressed·selected·disabled·locked·loading·error·new 중 필요한 상태를 선언한다.
 5. 상태는 색·소리·모션 하나에만 의존하지 않고 텍스트·형태·아이콘·로그 등 동등 신호를 둔다.
 6. 취소·되돌리기·파괴적 행동·오류·빈 상태·누락 자산의 복구 경로를 정의한다.
 7. 프로젝트의 최소/목표 해상도, 긴 한국어, 안전 영역, 선언된 입력 장치를 검증 조건에 넣는다.
-8. 기존 Theme·레이아웃·상태·편집 시스템을 조사한 뒤 가장 작은 재사용 단위를 정한다. 기존 컴포넌트가 같은 플레이어 문제를 해결하면 신규 컴포넌트를 기본값으로 만들지 않는다.
+8. 기존 Theme·레이아웃·상태·편집 시스템을 조사한 뒤 가장 작은 재사용 단위를 정한다.
 9. 폴리싱은 `P0 BLOCKER → P1 CLARITY → P2 CONSISTENCY → P3 DELIGHT` 순서로 진행하고, P0~P2가 남아 있으면 장식 효과를 보류한다.
 10. 자주 반복되는 행동은 낮은 피드백 강도를 사용하고 모션·음향·햅틱을 끈 동등 경로를 둔다.
 11. 빠른 반복 입력, 중복 입력, 애니메이션 중단·재진입, modal 재진입에서 결과 중복과 시각 drift를 검사한다.
@@ -122,13 +120,6 @@ first_attention:
 journey_and_flow:
 information_layers:
 selected_patterns:
-visual_requirements:
-  requirement_id:
-  why_needed:
-  delete_test:
-  reuse_candidate:
-  priority:
-  disposition:
 state_source:
 component_states:
 feedback_channels:
@@ -168,7 +159,6 @@ status
 ## 품질 게이트
 
 - 기능 목록보다 플레이어가 보고·판단하고·행동하고·확인하는 흐름이 먼저다.
-- 새 시각 요소는 `Visual Requirement Gate`의 필요성·Delete Test·재사용·P0~P3와 모순되지 않는다.
 - 외부 레퍼런스는 변환 축과 차별화 근거로만 사용하고 화면·자산·브랜드 표현을 복제하지 않는다.
 - 비활성·잠금·오류 상태는 원인과 가능한 다음 행동을 제공한다.
 - UI 폴리싱은 구조·가독성·상태·피드백을 먼저 해결하고 장식은 마지막에 적용한다.
