@@ -218,6 +218,21 @@ class ProjectAssetVaultTests(unittest.TestCase):
             self.assertIn("local-only workspace", result.stderr)
             self.assertIn("scenes/main.tscn", result.stderr)
 
+    def test_check_rejects_untracked_scene_reference_inside_git_repo(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            subprocess.run(["git", "init", "-q"], cwd=project, check=True)
+            self.assertEqual(run_tool("init", "--project-root", str(project)).returncode, 0)
+            scene = project / "scenes/new_untracked_scene.tscn"
+            scene.parent.mkdir(parents=True)
+            scene.write_text(
+                '[gd_scene load_steps=2 format=3]\n[ext_resource path="res://assets/_vault_local/ui/button.png" type="Texture2D" id="1"]\n',
+                encoding="utf-8",
+            )
+            result = run_tool("check", "--project-root", str(project))
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("new_untracked_scene.tscn", result.stderr)
+
     def test_pull_downloads_ignores_non_images_and_partial_downloads(self) -> None:
         with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as downloads_tmp:
             project = Path(tmp)
