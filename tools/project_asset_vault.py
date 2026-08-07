@@ -498,22 +498,28 @@ def promote_asset(project_root: Path, source_key_text: str, target_text: str) ->
     }
 
 
+def _git_path_list(project: Path, *args: str) -> list[str]:
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(project), *args, "-z"],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+    except OSError as error:
+        raise VaultError(f"Cannot inspect project files with git: {error}") from error
+    if result.returncode != 0:
+        raise VaultError(f"Cannot inspect project files with git: {result.stderr.strip()}")
+    return [item for item in result.stdout.split("\0") if item]
+
+
 def _project_reference_candidates(p: dict[str, Path]) -> list[Path]:
     project = p["project"]
     git_marker = project / ".git"
     if git_marker.exists():
-        try:
-            result = subprocess.run(
-                ["git", "-C", str(project), "ls-files", "-z"],
-                text=True,
-                capture_output=True,
-                check=False,
-            )
-        except OSError as error:
-            raise VaultError(f"Cannot inspect tracked project files with git: {error}") from error
-        if result.returncode != 0:
-            raise VaultError(f"Cannot inspect tracked project files with git: {result.stderr.strip()}")
-        candidates = [project / item for item in result.stdout.split("\0") if item]
+        tracked = _git_path_list(project, "ls-files")
+        untracked = _git_path_list(project, "ls-files", "--others", "--exclude-standard")
+        candidates = [project / item for item in sorted(set(tracked + untracked))]
     else:
         candidates = [item for item in project.rglob("*") if item.is_file()]
 
@@ -542,7 +548,7 @@ def check_repo_references(project_root: Path) -> list[str]:
     if violations:
         joined = ", ".join(sorted(violations))
         raise VaultError(
-            f"Tracked/project Godot files reference the local-only workspace {workspace_ref}: {joined}. "
+            f"Project Godot files reference the local-only workspace {workspace_ref}: {joined}. "
             "Promote the asset first and reference the promoted path."
         )
     return violations
@@ -589,7 +595,7 @@ def _parser() -> argparse.ArgumentParser:
     promote.add_argument("--source-key", required=True, help="Path relative to .asset-vault/library")
     promote.add_argument("--target", required=True, help="Path relative to promotion_root (default: assets)")
 
-    check = sub.add_parser("check", help="Reject tracked/project Godot references to the local-only workspace")
+    check = sub.add_parser("check", help="Reject project Godot references to the local-only workspace")
     check.add_argument("--project-root", type=Path, required=True)
     return parser
 
