@@ -43,7 +43,7 @@ Hera Agent Godot CLI
 → adversarial review
 ```
 
-이 설계는 2026-08-06에 병합된 HiGodot 단일 저작 권위와 선택적 Godot addon 활용 정책을 폐기하지 않는다. 오히려 테스트와 live QA를 별도 책임으로 분리하여 단일 저작 권위를 유지한 채 검증 폭을 확장한다.
+이 설계는 2026-08-06에 병합된 HiGodot 단일 저작 권위와 선택적 Godot addon 활용 정책을 폐기하지 않는다. 테스트와 live QA를 별도 책임으로 분리하여 단일 저작 권위를 유지한 채 검증 폭을 확장한다.
 
 ## 2. Current Base authority and conflict
 
@@ -114,7 +114,7 @@ role: DETERMINISTIC_GDSCRIPT_TEST_AUTHORITY_WHEN_ADOPTED
 
 ### 3.3 Hera Agent Godot
 
-Official source:
+Official sources:
 
 - https://store.godotengine.org/asset/notnull92/hera-agent-godot/
 - https://github.com/NotNull92/hera-agent-godot
@@ -137,9 +137,8 @@ Base disposition:
 
 ```yaml
 provider: NotNull92/hera-agent-godot
-disposition: REUSE_WITH_ROLE_RESTRICTION
-normalized_base_disposition: REUSE
-role: LIVE_QA_AND_OBSERVABILITY
+disposition: REUSE
+role_restriction: LIVE_QA_AND_OBSERVABILITY_ONLY
 persistent_editor_mutation_authority: false
 ```
 
@@ -150,7 +149,7 @@ persistent_godot_authoring:
   provider: HiGodot
   authority_count: 1
 
-project_test_definition_and_result:
+gdscript_project_tests:
   provider: GUT
   authority_count: 1
   condition: GUT_ADOPTED
@@ -177,9 +176,9 @@ HiGodot이 담당한다.
 
 기존 Base L0–L3 operation gate와 rollback·diff·import·test 요구는 유지한다.
 
-### 4.2 GUT owns deterministic project tests
+### 4.2 GUT owns deterministic GDScript project tests
 
-GUT이 채택된 프로젝트에서는 반복 가능한 프로젝트 테스트 suite의 기본 정본을 GUT으로 둔다.
+GUT이 채택된 프로젝트에서는 반복 가능한 GDScript 기반 프로젝트 테스트 suite의 기본 정본을 GUT으로 둔다.
 
 대상 예:
 
@@ -194,10 +193,12 @@ HiGodot의 `McpTestSuite`는 GUT과 같은 요구를 중복 구현하는 두 번
 
 ```yaml
 when_gut_is_adopted:
-  new_canonical_project_tests: GUT
+  new_canonical_gdscript_project_tests: GUT
   duplicate_same_case_in_mcp_test_suite: forbidden
   existing_mcp_test_suite_tests: PRESERVE_UNTIL_PROJECT_DECISION
 ```
+
+C#/.NET 테스트, 네이티브 SDK 테스트, 플랫폼 sandbox 테스트, 빌드·패키징 테스트처럼 GUT의 책임 밖인 검증 체계는 이 규칙으로 대체하지 않는다.
 
 GUT이 필요 없는 기획 전용 또는 실행 코드가 없는 프로젝트에는 설치하지 않는다.
 
@@ -244,6 +245,8 @@ hera_runtime_mutation_exception:
   restore_or_restart_required: true
 ```
 
+Screenshot diff의 threshold는 anti-aliasing 흔들림을 줄이는 기계적 허용치일 뿐 디자인 품질 승인 기준이 아니다. 시각적 스타일·구도·가독성처럼 사람 판단이 필요한 항목은 별도 human review 상태를 유지한다.
+
 ## 5. Selective adoption, not blanket installation
 
 Base에 세 도구의 역할 계약을 추가한다고 해서 모든 Godot 저장소에 세 addon을 자동 복사하지 않는다.
@@ -254,7 +257,7 @@ Base에 세 도구의 역할 계약을 추가한다고 해서 모든 Godot 저�
 AI authoring 필요
 → HiGodot 평가·exact pin·canary
 
-테스트 가능한 제품 코드 존재
+테스트 가능한 GDScript 제품 코드 존재
 → GUT 평가·Godot 호환 pin·실제 test consumption path
 
 실행 가능한 game과 live QA 필요
@@ -495,7 +498,7 @@ production_readiness: false
 - HiGodot의 단일 **persistent authoring** 권위 유지
 - Hera `BENCHMARK_REFERENCE_ONLY` 고정 금지를 제거
 - Hera를 restricted live-QA/observation provider로 정의
-- GUT canonical deterministic testing boundary 연결
+- GUT canonical deterministic GDScript testing boundary 연결
 - Hera editor mutation 금지와 pre/post source-delta guard 추가
 
 ### Godot evaluation owner
@@ -544,13 +547,14 @@ HiGodot author
 1. HiGodot만 persistent Godot authoring authority다.
 2. Hera persistent editor/source mutation은 활성 QA 경로에서 금지된다.
 3. GUT adoption은 exact Godot-compatible pin과 실제 test consumption을 요구한다.
-4. GUT 채택 프로젝트에서 동일 test case를 McpTestSuite와 두 canonical suite로 유지하지 않는다.
-5. Hera CLI/addon pair exact pin과 localhost boundary가 있다.
-6. Hera acceptance QA는 pre/post tracked source delta가 없어야 한다.
-7. `game set/call` 진단 예외는 acceptance evidence가 아니다.
-8. 세 도구를 모든 프로젝트에 일괄 설치하지 않는다.
-9. installed-unused state는 제거 또는 defer된다.
-10. 신규 ACTIVE Skill 수는 증가하지 않는다.
+4. GUT 채택 프로젝트에서 동일 GDScript test case를 McpTestSuite와 두 canonical suite로 유지하지 않는다.
+5. C#/.NET·native·platform test authority는 GUT으로 강제 대체하지 않는다.
+6. Hera CLI/addon pair exact pin과 localhost boundary가 있다.
+7. Hera acceptance QA는 pre/post tracked source delta가 없어야 한다.
+8. `game set/call` 진단 예외는 acceptance evidence가 아니다.
+9. 세 도구를 모든 프로젝트에 일괄 설치하지 않는다.
+10. installed-unused state는 제거 또는 defer된다.
+11. 신규 ACTIVE Skill 수는 증가하지 않는다.
 
 ## 12. Adversarial pre-review
 
@@ -559,19 +563,21 @@ HiGodot author
 | Finding | Resolution |
 |---|---|
 | HiGodot와 Hera가 동시에 editor write를 하면 authoring authority가 2개가 됨 | Hera persistent write 금지, HiGodot 단일 authoring 유지 |
-| GUT과 HiGodot McpTestSuite가 같은 테스트의 두 정본이 될 수 있음 | GUT adopted 시 새 canonical project tests는 GUT, 기존 McpTestSuite는 migration input |
+| GUT과 HiGodot McpTestSuite가 같은 테스트의 두 정본이 될 수 있음 | GUT adopted 시 새 canonical GDScript project tests는 GUT, 기존 McpTestSuite는 migration input |
+| GUT을 모든 test authority로 해석하면 C#/.NET·플랫폼 검증을 침범함 | GUT 권위를 GDScript 반복 테스트로 한정 |
 | Hera runtime mutation으로 실제 플레이 경로를 우회할 수 있음 | `DIAGNOSTIC_ONLY`, acceptance evidence 금지 |
 | Hera QA가 실수로 source를 변경할 수 있음 | pre/post tracked-diff fingerprint, Hera-phase delta `NONE` 요구 |
 | Godot/GUT 버전 불일치 | official compatibility matrix 기반 exact pin |
 | Hera CLI와 addon 버전 drift | exact pair match + full Editor restart + smoke |
 | localhost addon이 다른 local process에 노출될 수 있음 | Base adoption에서 shared token 요구, secret 비기록 |
 | provider marketing token 수치를 사실로 확정할 위험 | 독립 실측 전 vendor claim으로만 취급 |
+| 비표준 disposition 이름이 Base 상태 모델을 흐릴 수 있음 | `disposition: REUSE` + 별도 `role_restriction`으로 정규화 |
 
 ### REJECTED_CRITIQUE
 
 - `Hera가 write 기능을 갖고 있으므로 도구 전체를 금지해야 한다`: 역할 제한과 source-delta 검증으로 live QA 가치를 보존할 수 있으므로 과잉 제한이다.
 - `세 도구를 쓰려면 새 Godot orchestration Skill이 필요하다`: 기존 evaluation, operating-system, installed operation owner로 책임을 보존할 수 있어 새 broad Skill은 중복이다.
-- `HiGodot McpTestSuite가 있으므로 GUT은 필요 없다`: GUT은 독립 test framework, CLI exit contract, JUnit, mature test utilities를 제공하며 사용자 요구와 반복 가능한 project test authority에 부합한다. 단 프로젝트별 실제 필요가 없으면 설치하지 않는다.
+- `HiGodot McpTestSuite가 있으므로 GUT은 필요 없다`: GUT은 독립 test framework, CLI exit contract, JUnit, mature test utilities를 제공하며 사용자 요구와 반복 가능한 GDScript project test authority에 부합한다. 단 프로젝트별 실제 필요가 없으면 설치하지 않는다.
 
 ## 13. Non-goals
 
@@ -584,6 +590,7 @@ HiGodot author
 - Hera persistent editor authoring 허용
 - HiGodot 제거 또는 authoring authority 축소
 - 기존 프로젝트 테스트의 자동 GUT migration
+- C#/.NET·native·platform test framework 대체
 - 새로운 Base MCP, Bridge, CLI wrapper 또는 broad Skill 제작
 - CI 비용을 늘리는 새 workflow를 근거 없이 추가
 - 실제 Windows/Android/device/human production readiness 주장
@@ -598,23 +605,33 @@ HiGodot author
 - HiGodot single-authority regression이 계속 통과한다.
 - GUT exact compatible pin과 consumption-path 계약이 테스트된다.
 - Hera exact pair, localhost/shared-token, persistent-write prohibition, source-delta guard가 테스트된다.
-- 동일 테스트 이중 정본 방지 규칙이 있다.
+- 동일 GDScript 테스트 이중 정본 방지 규칙이 있다.
+- C#/.NET·native·platform 검증 책임을 침범하지 않는다.
 - 신규 ACTIVE Skill이 없다.
 - project-specific forced installation이 없다.
 - implementation exact head에서 focused contract tests와 기존 관련 aggregate suite가 통과한다.
 - adversarial review의 unresolved P0/P1이 0이다.
 - 실제 project/runtime 실행을 하지 않았다면 `NOT_RUN`으로 남긴다.
 
-## 15. Written-spec self-review checklist
+## 15. Written-spec self-review
+
+자체검토에서 다음 두 모호성을 발견했고 같은 문서에서 수정했다.
+
+1. Hera disposition에 Base enum 밖의 이름을 쓰던 표현을 `REUSE + role_restriction`으로 정규화했다.
+2. GUT 권위를 모든 project test가 아닌 GDScript 기반 반복 테스트로 한정해 C#/.NET·native·platform test 책임을 보존했다.
+
+최종 체크:
 
 ```yaml
 placeholder_TODO: 0
 placeholder_TBD: 0
 internal_authority_conflict: 0
+base_disposition_enum_valid: true
+non_gdscript_test_scope_preserved: true
 new_broad_skill: false
 blanket_project_installation: false
 higodot_authoring_authority_count: 1
-gut_test_authority_when_adopted: 1
+gut_gdscript_test_authority_when_adopted: 1
 hera_persistent_authoring_authority: 0
 hera_live_qa_role: defined
 external_vendor_claims_separated_from_base_evidence: true
