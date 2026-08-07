@@ -1,0 +1,527 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
+from pathlib import Path
+
+
+REQUIRED_CONTEXT = "ci-gate"
+CANONICAL_WORKFLOW = "validate-game-project-operating-system.yml"
+DEFAULT_GH_COMMAND: tuple[str, ...] = ("gh",)
+
+LOCALLY_REPRODUCIBLE_TEXT_SUFFIXES = {".md", ".txt"}
+LOCALLY_REPRODUCIBLE_STRUCTURED_SUFFIXES = {".json", ".yaml", ".yml"}
+LOCALLY_REPRODUCIBLE_STRUCTURED_ROOTS = (
+    "docs/",
+    "skills/",
+    "templates/",
+    "schemas/",
+    "references/",
+)
+NONLOCAL_EVIDENCE_PREFIXES = (
+    ".github/workflows/",
+    "tools/",
+    "tests/",
+    "addons/",
+    "scripts/",
+)
+NONLOCAL_EVIDENCE_NAMES = {
+    "package.json",
+    "pnpm-lock.yaml",
+    "requirements.txt",
+    "requirements-dev.txt",
+    "requirements-publication.txt",
+    "project.godot",
+}
+NONLOCAL_EVIDENCE_SUFFIXES = {
+    ".py",
+    ".gd",
+    ".tscn",
+    ".tres",
+    ".godot",
+    ".gdextension",
+    ".js",
+    ".mjs",
+    ".cjs",
+    ".ts",
+    ".tsx",
+    ".jsx",
+    ".sh",
+    ".ps1",
+    ".bat",
+    ".cmd",
+    ".exe",
+    ".dll",
+    ".so",
+    ".dylib",
+    ".lock",
+}
+
+
+@dataclass(frozen=True)
+class PullRequestState:
+    head_sha: str
+    base_ref: str
+    merge_commit_sha: str | None
+
+
+def _environment(environment: Mapping[str, str] | None) -> dict[str, str]:
+    if environment is None:
+        return dict(os.environ)
+    return dict(environment)
+
+
+def _run(
+    command: Sequence[str],
+    *,
+    cwd: Path | None = None,
+    environment: Mapping[str, str] | None = None,
+    capture_output: bool = True,
+) -> subprocess.CompletedProcess[str]:
+    values = [str(value) for value in command]
+    return subprocess.run(
+        values,
+        cwd=cwd,
+        env=_environment(environment),
+        capture_output=capture_output,
+        text=True,
+        check=False,
+    )
+
+
+def _require_success(
+    result: subprocess.CompletedProcess[str],
+    description: str,
+) -> subprocess.CompletedProcess[str]:
+    if result.returncode == 0:
+        return result
+    detail = (result.stderr or result.stdout or "").strip()
+    suffix = f": {detail}" if detail else ""
+    raise RuntimeError(f"{description} failed{suffix}")
+
+
+def _gh_args(gh_command: Sequence[str], *args: str) -> tuple[str, ...]:
+    if not gh_command:
+        raise RuntimeError("GitHub CLI command must not be empty")
+    return (*gh_command, *args)
+
+
+def read_pull_request(
+    repo: str,
+    pr: int,
+    *,
+    environment: Mapping[str, str] | None = None,
+    gh_command: Sequence[str] = DEFAULT_GH_COMMAND,
+) -> PullRequestState:
+    result = _require_success(
+        _run(
+            _gh_args(gh_command, "api", f"repos/{repo}/pulls/{pr}"),
+            environment=environment,
+        ),
+        "GitHub pull request lookup",
+    )
+    try:
+        payload = json.loads(result.stdout)
+        if payload.get("state") != "open":
+            raise RuntimeError("pull request must be open")
+        head_sha = payload["head"]["sha"]
+        base_ref = payload["base"]["ref"]
+        merge_commit_sha = payload.get("merge_commit_sha")
+    except (KeyError, TypeError, json.JSONDecodeError) as error:
+        raise RuntimeError("GitHub pull request response is incomplete") from error
+    if not isinstance(head_sha, str) or not head_sha:
+        raise RuntimeError("GitHub pull request head SHA is missing")
+    if not isinstance(base_ref, str) or not base_ref:
+        raise RuntimeError("GitHub pull request base ref is missing")
+    if merge_commit_sha is not None and not isinstance(merge_commit_sha, str):
+        raise RuntimeError("GitHub pull request merge SHA is invalid")
+    return PullRequestState(head_sha, base_ref, merge_commit_sha)
+
+
+def remote_ci_workflow_run_exists(
+    repo: str,
+    sha: str,
+    *,
+    environment: Mapping[str, str] | None = None,
+    gh_command: Sequence[str] = DEFAULT_GH_COMMAND,
+) -> bool:
+    path = (
+        f"repos/{repo}/actions/workflows/{CANONICAL_WORKFLOW}/runs"
+        f"?event=pull_request&head_sha={sha}&per_page=1"
+    )
+    result = _require_success(
+        _run(_gh_args(gh_command, "api", path), environment=environment),
+        f"GitHub REMOTE_CI workflow lookup for {sha}",
+    )
+    try:
+        payload = json.loads(result.stdout)
+        workflow_runs = payload["workflow_runs"]
+    except (KeyError, TypeError, json.JSONDecodeError) as error:
+        raise RuntimeError("GitHub workflow-run response is incomplete") from error
+    if not isinstance(workflow_runs, list):
+        raise RuntimeError("GitHub workflow-run response is invalid")
+    return bool(workflow_runs)
+
+
+def ci_gate_check_exists(
+    repo: str,
+    sha: str,
+    *,
+    environment: Mapping[str, str] | None = None,
+    gh_command: Sequence[str] = DEFAULT_GH_COMMAND,
+) -> bool:
+    result = _require_success(
+        _run(
+            _gh_args(gh_command, "api", f"repos/{repo}/commits/{sha}/check-runs"),
+            environment=environment,
+        ),
+        f"GitHub Check Run lookup for {sha}",
+    )
+    try:
+        payload = json.loads(result.stdout)
+        check_runs = payload["check_runs"]
+    except (KeyError, TypeError, json.JSONDecodeError) as error:
+        raise RuntimeError("GitHub Check Run response is incomplete") from error
+    if not isinstance(check_runs, list):
+        raise RuntimeError("GitHub Check Run response is invalid")
+    return any(
+        isinstance(check, dict) and check.get("name") == REQUIRED_CONTEXT
+        for check in check_runs
+    )
+
+
+def ci_gate_status_exists(
+    repo: str,
+    sha: str,
+    *,
+    environment: Mapping[str, str] | None = None,
+    gh_command: Sequence[str] = DEFAULT_GH_COMMAND,
+) -> bool:
+    result = _require_success(
+        _run(
+            _gh_args(gh_command, "api", f"repos/{repo}/commits/{sha}/statuses"),
+            environment=environment,
+        ),
+        f"GitHub commit-status lookup for {sha}",
+    )
+    try:
+        statuses = json.loads(result.stdout)
+    except json.JSONDecodeError as error:
+        raise RuntimeError("GitHub commit-status response is invalid") from error
+    if not isinstance(statuses, list):
+        raise RuntimeError("GitHub commit-status response is invalid")
+    return any(
+        isinstance(status, dict) and status.get("context") == REQUIRED_CONTEXT
+        for status in statuses
+    )
+
+
+def _git_output(
+    root: Path,
+    *args: str,
+    environment: Mapping[str, str] | None = None,
+) -> str:
+    result = _require_success(
+        _run(("git", *args), cwd=root, environment=environment),
+        f"git {' '.join(args)}",
+    )
+    return result.stdout.strip()
+
+
+def assert_clean_exact_head(
+    root: Path,
+    expected_head: str,
+    *,
+    environment: Mapping[str, str] | None = None,
+) -> None:
+    actual_head = _git_output(root, "rev-parse", "HEAD", environment=environment)
+    if actual_head != expected_head:
+        raise RuntimeError(
+            f"local HEAD {actual_head} does not match PR head {expected_head}"
+        )
+    status = _git_output(root, "status", "--porcelain", environment=environment)
+    if status:
+        raise RuntimeError("worktree must be clean before publishing fallback evidence")
+
+
+def assert_base_is_ancestor(
+    root: Path,
+    base: str,
+    *,
+    environment: Mapping[str, str] | None = None,
+) -> str:
+    _require_success(
+        _run(("git", "fetch", "origin", base), cwd=root, environment=environment),
+        f"git fetch origin {base}",
+    )
+    result = _run(
+        ("git", "merge-base", "--is-ancestor", f"origin/{base}", "HEAD"),
+        cwd=root,
+        environment=environment,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(f"local HEAD is not up to date with origin/{base}")
+    return _git_output(root, "rev-parse", f"origin/{base}", environment=environment)
+
+
+def changed_paths(
+    root: Path,
+    base: str,
+    *,
+    environment: Mapping[str, str] | None = None,
+) -> tuple[str, ...]:
+    output = _git_output(
+        root,
+        "diff",
+        "--name-only",
+        "--diff-filter=ACMRT",
+        f"origin/{base}...HEAD",
+        environment=environment,
+    )
+    return tuple(line.strip().replace("\\", "/") for line in output.splitlines() if line.strip())
+
+
+def _is_locally_reproducible_path(path: str) -> bool:
+    normalized = path.replace("\\", "/")
+    lower = normalized.lower()
+    name = Path(normalized).name.lower()
+    suffix = Path(normalized).suffix.lower()
+
+    if lower.startswith(NONLOCAL_EVIDENCE_PREFIXES):
+        return False
+    if name in NONLOCAL_EVIDENCE_NAMES or suffix in NONLOCAL_EVIDENCE_SUFFIXES:
+        return False
+    if suffix in LOCALLY_REPRODUCIBLE_TEXT_SUFFIXES:
+        return True
+    if suffix in LOCALLY_REPRODUCIBLE_STRUCTURED_SUFFIXES:
+        return lower.startswith(LOCALLY_REPRODUCIBLE_STRUCTURED_ROOTS)
+    return False
+
+
+def assert_locally_reproducible_changes(
+    root: Path,
+    base: str,
+    *,
+    environment: Mapping[str, str] | None = None,
+) -> tuple[str, ...]:
+    paths = changed_paths(root, base, environment=environment)
+    if not paths:
+        raise RuntimeError("change set is empty; fallback evidence target is ambiguous")
+    blocked = [path for path in paths if not _is_locally_reproducible_path(path)]
+    if blocked:
+        preview = ", ".join(blocked[:8])
+        if len(blocked) > 8:
+            preview += f", ... (+{len(blocked) - 8} more)"
+        raise RuntimeError(
+            "change set is not locally reproducible with the current fallback contract: "
+            f"{preview}"
+        )
+    return paths
+
+
+def _assert_remote_ci_absent(
+    repo: str,
+    head_sha: str,
+    merge_sha: str | None,
+    *,
+    environment: Mapping[str, str] | None = None,
+    gh_command: Sequence[str] = DEFAULT_GH_COMMAND,
+) -> None:
+    if remote_ci_workflow_run_exists(
+        repo,
+        head_sha,
+        environment=environment,
+        gh_command=gh_command,
+    ):
+        raise RuntimeError(
+            f"REMOTE_CI workflow run already exists for {head_sha}; "
+            "LOCAL_FALLBACK cannot take ownership"
+        )
+    for sha in (head_sha, merge_sha):
+        if not sha:
+            continue
+        if ci_gate_check_exists(
+            repo,
+            sha,
+            environment=environment,
+            gh_command=gh_command,
+        ):
+            raise RuntimeError(
+                f"{REQUIRED_CONTEXT} Check Run already exists for {sha}; "
+                "LOCAL_FALLBACK cannot replace REMOTE_CI"
+            )
+        if ci_gate_status_exists(
+            repo,
+            sha,
+            environment=environment,
+            gh_command=gh_command,
+        ):
+            raise RuntimeError(
+                f"{REQUIRED_CONTEXT} commit status already exists for {sha}; "
+                "LOCAL_FALLBACK will not overwrite existing gate evidence"
+            )
+
+
+def publish_success_status(
+    repo: str,
+    sha: str,
+    *,
+    environment: Mapping[str, str] | None = None,
+    gh_command: Sequence[str] = DEFAULT_GH_COMMAND,
+) -> None:
+    _require_success(
+        _run(
+            _gh_args(
+                gh_command,
+                "api",
+                "--method",
+                "POST",
+                f"repos/{repo}/statuses/{sha}",
+                "-f",
+                "state=success",
+                "-f",
+                f"context={REQUIRED_CONTEXT}",
+                "-f",
+                "description=LOCAL_FALLBACK validated exact head SHA",
+            ),
+            environment=environment,
+        ),
+        "GitHub commit status publish",
+    )
+
+
+def run_local_fallback(
+    root: Path,
+    repo: str,
+    pr: int,
+    base: str,
+    trusted_history_commit: str,
+    python: str,
+    *,
+    environment: Mapping[str, str] | None = None,
+    gh_command: Sequence[str] = DEFAULT_GH_COMMAND,
+) -> int:
+    repository_root = root.resolve()
+    env = _environment(environment)
+
+    _require_success(
+        _run(_gh_args(gh_command, "auth", "status"), environment=env),
+        "GitHub authentication check",
+    )
+
+    initial_pr = read_pull_request(
+        repo,
+        pr,
+        environment=env,
+        gh_command=gh_command,
+    )
+    if initial_pr.base_ref != base:
+        raise RuntimeError(
+            f"PR base {initial_pr.base_ref} does not match expected base {base}"
+        )
+
+    original_head = initial_pr.head_sha
+    assert_clean_exact_head(repository_root, original_head, environment=env)
+    current_base_sha = assert_base_is_ancestor(repository_root, base, environment=env)
+    if trusted_history_commit != current_base_sha:
+        raise RuntimeError(
+            f"trusted history commit must equal origin/{base} {current_base_sha}"
+        )
+    assert_locally_reproducible_changes(repository_root, base, environment=env)
+    _assert_remote_ci_absent(
+        repo,
+        original_head,
+        initial_pr.merge_commit_sha,
+        environment=env,
+        gh_command=gh_command,
+    )
+
+    validation = _run(
+        (
+            python,
+            "tools/run_local_validation.py",
+            "--trusted-history-commit",
+            current_base_sha,
+        ),
+        cwd=repository_root,
+        environment=env,
+        capture_output=False,
+    )
+    if validation.returncode != 0:
+        return validation.returncode
+
+    assert_clean_exact_head(repository_root, original_head, environment=env)
+    post_validation_base_sha = assert_base_is_ancestor(
+        repository_root,
+        base,
+        environment=env,
+    )
+    if post_validation_base_sha != current_base_sha:
+        raise RuntimeError("origin/base changed during local validation")
+    assert_locally_reproducible_changes(repository_root, base, environment=env)
+
+    current_pr = read_pull_request(
+        repo,
+        pr,
+        environment=env,
+        gh_command=gh_command,
+    )
+    if current_pr.base_ref != base:
+        raise RuntimeError("PR base changed during local validation")
+    if current_pr.head_sha != original_head:
+        raise RuntimeError("PR head changed during local validation")
+
+    _assert_remote_ci_absent(
+        repo,
+        original_head,
+        current_pr.merge_commit_sha,
+        environment=env,
+        gh_command=gh_command,
+    )
+    publish_success_status(
+        repo,
+        original_head,
+        environment=env,
+        gh_command=gh_command,
+    )
+
+    print("LOCAL FALLBACK CI GATE: PASS")
+    print("mode: LOCAL_FALLBACK")
+    print(f"head_sha: {original_head}")
+    print(f"base_sha: {current_base_sha}")
+    print(f"required_context: {REQUIRED_CONTEXT}")
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--repo", required=True)
+    parser.add_argument("--pr", required=True, type=int)
+    parser.add_argument("--trusted-history-commit", required=True)
+    parser.add_argument("--base", default="main")
+    parser.add_argument("--python", default=sys.executable)
+    args = parser.parse_args()
+
+    repository_root = Path(__file__).resolve().parents[1]
+    try:
+        return run_local_fallback(
+            repository_root,
+            args.repo,
+            args.pr,
+            args.base,
+            args.trusted_history_commit,
+            args.python,
+        )
+    except RuntimeError as error:
+        print(f"LOCAL FALLBACK CI GATE: BLOCKED: {error}", file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

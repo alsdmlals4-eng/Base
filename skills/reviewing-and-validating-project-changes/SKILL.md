@@ -25,7 +25,7 @@ For a Base v9.1 project, record a separate `PROJECT_OPERATING_INTEGRITY` verdict
 - `regression`: 대표 정상·경계·반례·기존 기능 회귀를 확인한다.
 - `evidence-report`: 통과·실패·미실행·위험·롤백을 증거와 함께 보고한다.
 
-`ci-cost-optimization`은 CI 사용량 증가, 문서 변경의 전체 matrix 중복 실행, workflow·runner·cache·artifact·Required Check 변경, GitHub Actions 사용 불가 상태가 요청이나 diff에 포함될 때 사용한다. 비용 절감을 이유로 필요한 검증을 삭제하지 않고 PR·main·nightly·release의 실행 시점과 위험 계층을 재배치한다.
+`ci-cost-optimization`은 CI 사용량 증가, 문서 변경의 전체 matrix 중복 실행, workflow·runner·cache·artifact·Required Check 변경, GitHub Actions 사용 불가 상태가 요청이나 diff에 포함될 때 사용한다. 비용 절감을 이유로 필요한 검증을 삭제하지 않고 PR·main·nightly·release의 실행 시점과 위험 계층을 재배치한다. 공개 저장소에서는 standard GitHub-hosted runner의 `REMOTE_CI`를 기본으로 유지하며, `LOCAL_FALLBACK`은 canonical 원격 workflow가 현재 SHA를 소유하지 않고 현재 로컬 계약으로 locally reproducible 한 변경에서만 사용한다.
 
 `reference-freshness`는 파일·경로·Skill ID·문서 ID·Schema·정책·생성기·공개 인터페이스가 추가·이동·통합·삭제·교체되었거나, 영향 파일 누락 가능성이 있는 모든 변경에서 실행한다. 전문 절차는 `auditing-canonical-reference-freshness`를 호출한다.
 
@@ -149,15 +149,33 @@ concurrency:
 
 6. 조건부 Job을 Branch protection에 직접 여러 개 요구하기보다, 선택된 Job의 성공·실패·취소·누락을 판정하는 안정된 `ci-gate`를 둔다.
 7. LibreOffice·Poppler·브라우저·Node·Godot·Windows runner처럼 고비용인 의존성과 플랫폼은 실제 필요 Job에서만 설치·실행한다.
-8. GitHub Actions를 사용할 수 없으면 로컬·정적 검사만 실제 결과로 기록하고 다음 상태를 사용한다.
+8. 검증 실행 모드는 정확히 두 개다. 공개 저장소의 standard GitHub-hosted runner를 사용하는 `REMOTE_CI`가 기본이며 비용 0은 `LOCAL_FALLBACK` 선택 조건이 아니다.
+9. 현재 PR head에 canonical `REMOTE_CI workflow run`이 하나라도 있으면 final `ci-gate` Check Run이 아직 생성되지 않았더라도 원격 검증 소유권을 유지한다.
+10. head 또는 current test merge SHA에 `ci-gate` Check Run이나 기존 `ci-gate` commit status가 하나라도 존재하면 local fallback으로 덮지 않는다. 실패·취소·queued·in progress 역시 `REMOTE_CI`에서 수정·재개한다.
+11. Actions 인프라·권한·서비스 문제로 canonical `REMOTE_CI workflow run` 자체가 없고 Required Check/기존 status도 없을 때만 다음 도구를 검토한다.
+
+```text
+python tools/run_local_ci_fallback.py \
+  --repo <owner/repo> \
+  --pr <number> \
+  --trusted-history-commit <current-origin-base-sha> \
+  --base main
+```
+
+12. `LOCAL_FALLBACK`은 exact local/PR head, clean worktree, 최신 `origin/<base>` ancestry와 exact base SHA를 확인한다. 전달된 trusted history SHA가 방금 fetch한 `origin/<base>`와 다르면 차단한다.
+13. 변경은 현재 fallback 계약으로 locally reproducible 해야 한다. 기본적으로 문서와 검증 가능한 제한적 정본/템플릿만 허용하며 `CODE_OR_ENGINE`, `CI_TOOLCHAIN_HIGH_RISK`, workflow·tool·test·Godot·package/lockfile 변경은 별도 동등 로컬 계약이 없으면 차단한다.
+14. 기존 `tools/run_local_validation.py`가 성공한 뒤 exact head·clean worktree·base SHA·PR head·locally reproducible 경계를 다시 확인한다.
+15. status 발행 직전에 canonical `REMOTE_CI workflow run`, head/test-merge의 `ci-gate` Check Run과 기존 commit status 부재를 다시 확인한다. 검증 중 Actions가 복구되거나 원격 증거가 생기면 fail-closed한다.
+16. 위 조건을 모두 통과한 exact head SHA에만 `context=ci-gate`, `state=success` commit status를 발행한다.
+17. fallback precondition 또는 필요한 로컬·플랫폼·runtime 증거를 재현할 수 없으면 다음 상태를 유지한다.
 
 ```text
 BLOCKED_BY_GITHUB_ACTIONS
 판정: UNVERIFIED
 ```
 
-9. 보류 보고에는 workflow, event 또는 dispatch 입력, 실행할 Job, 기대 Required Check, 확인할 log·artifact, 재개 조건, 미검증 위험을 남긴다.
-10. 사용자가 Actions 사용 가능 상태를 알리면 최신 branch·SHA·workflow diff를 다시 확인하고 아직 필요한 보류 Job만 실행한다.
+18. blocked 보고에는 workflow, event 또는 dispatch 입력, 현재 mode, head/base SHA, 기대 Required Check, 확인할 log·artifact, 재개 조건, 미검증 위험을 남긴다.
+19. Actions 사용 가능 상태가 복구되면 최신 branch·SHA·workflow diff를 다시 확인하고 `REMOTE_CI`의 아직 필요한 검증을 실행한다.
 
 ### 3. Reference freshness
 
@@ -306,7 +324,9 @@ LEGAL_REVIEW_NOT_PERFORMED
 - 승인된 계약과 실제 변경 범위를 대조했다.
 - 변경된 책임과 참조 경로를 확인했다.
 - CI 최적화가 적용되면 변경 분류, PR·main·nightly 실행 계층, concurrency, `ci-gate`, Required Check 계약을 확인했다.
-- GitHub Actions 사용 불가 시 `BLOCKED_BY_GITHUB_ACTIONS / UNVERIFIED`, 보류 Job, 재개 조건과 위험을 남겼다.
+- `REMOTE_CI`가 기본인지, `LOCAL_FALLBACK`이 infrastructure-only인지 확인했다.
+- `LOCAL_FALLBACK`을 사용했다면 canonical `REMOTE_CI workflow run`, 기존 `ci-gate` Check Run/status의 부재와 exact head, clean worktree, current base ancestry, locally reproducible 변경 경계를 검증 전후 확인했다.
+- GitHub Actions 사용 불가이고 fallback 조건을 충족하지 못하면 `BLOCKED_BY_GITHUB_ACTIONS / UNVERIFIED`, 보류 Job, 재개 조건과 위험을 남겼다.
 - 정본·경로·ID·Schema 변경이 있으면 영향 지도와 reference freshness 결과가 있다.
 - 변경됐어야 하지만 untouched인 파일의 갱신 필요 여부를 판정했다.
 - 가능한 정적·런타임·회귀 검증을 실제 실행했다.
@@ -330,7 +350,11 @@ LEGAL_REVIEW_NOT_PERFORMED
 - 비용 절감을 이유로 검증 Job을 삭제하고 동일한 증거를 다른 계층에서 보존하지 않는다.
 - 문서 전용 변경에 전체 OS·Python·Godot matrix를 관성적으로 실행한다.
 - 조건부 Job을 Required Check로 묶어 영구 대기 상태를 만들거나 `ci-gate`가 필요한 실패를 숨긴다.
-- Actions가 사용 불가한데 workflow 존재만으로 통과를 주장하거나 반복 재실행한다.
+- canonical `REMOTE_CI workflow run`이 있는데 final `ci-gate` Check Run이 아직 없다는 이유로 `LOCAL_FALLBACK`을 시작한다.
+- 기존 `ci-gate` Check Run 또는 commit status를 `LOCAL_FALLBACK` status로 덮는다.
+- locally reproducible 하지 않은 `CODE_OR_ENGINE`·`CI_TOOLCHAIN_HIGH_RISK` 변경을 local validator만으로 승인한다.
+- 검증한 SHA와 다른 commit에 fallback success status를 발행한다.
+- Actions가 사용 불가한데 workflow 파일 존재만으로 통과를 주장하거나 fallback 조건 검증 없이 성공 처리한다.
 - 접근성을 자막·색약 모드 하나로 축소하거나 옵션 존재만 확인한다.
 - 접근성 검수를 법적 준수 인증처럼 보고한다.
 - 평균 FPS 하나나 에디터의 빈 장면만으로 성능 통과를 주장한다.
