@@ -7,8 +7,10 @@ asset_vault:
   enabled: false
   authority: local-vault-filesystem
   project_contract: "docs/PROJECT_ASSET_VAULT.md"
-  sync_manifest: "assets/ASSET_VAULT_SYNC.json"
-  note: "자동 파일 동기화 원장과 승인·의미 원장을 분리한다. 로컬 접근 가능 시 vault library 현재 상태가 파일 존재 권위다."
+  workspace_root: "assets/_vault_local"
+  sync_manifest: ".asset-vault/sync.json"
+  promotion_root: "assets"
+  note: "로컬 sync 상태와 tracked 승인·의미 원장을 분리한다. vault candidate는 PROJECT_ASSET_APPROVED 후 promote되기 전까지 Repo 자산이 아니다. 로컬 접근 가능 시 library 현재 상태가 후보 파일 존재 권위다."
 
 status_definitions:
   - REFERENCE
