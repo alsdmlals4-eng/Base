@@ -122,7 +122,10 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
     def test_github_pro_policy_declares_safe_rollout_and_blocking_states(self) -> None:
         text = (ROOT / "docs/GITHUB_PRO_OPERATING_POLICY.md").read_text(encoding="utf-8")
         for term in (
-            "Base → 비공개 `omenward` → 다른 활성 프로젝트",
+            "Public project pilot",
+            "standard GitHub-hosted",
+            "REMOTE_CI",
+            "LOCAL_FALLBACK",
             "AUTO_MERGE_AFTER_REQUIRED_CHECKS",
             "승인 리뷰 수 `0`",
             "AUTO_MERGE_BLOCKED",
@@ -132,6 +135,7 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             "비공개 Push ruleset",
         ):
             self.assertIn(term, text)
+        self.assertNotIn("Base → 비공개 `omenward` → 다른 활성 프로젝트", text)
 
     def test_solo_main_ruleset_is_importable_and_requires_ci_gate(self) -> None:
         path = ROOT / "templates/project-operations/github/rulesets/solo-main-safety.json"
