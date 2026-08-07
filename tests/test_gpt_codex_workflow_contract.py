@@ -30,6 +30,27 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             self.assertIn(term, text)
         self.assertNotIn("사용자의 명시적 승인 전에는 PR을 병합하지 않는다", text)
 
+    def test_on_demand_handoff_allows_gpt_preproduction_and_optional_codex_preflight(self) -> None:
+        policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
+        routing = (ROOT / "docs/WORK_MODE_AND_SKILL_ROUTING.md").read_text(encoding="utf-8")
+        handoff = (ROOT / "skills/maintaining-project-context-and-handoff/SKILL.md").read_text(encoding="utf-8")
+        for text in (policy, routing, handoff):
+            self.assertIn("ON_DEMAND_CODEX_HANDOFF", text)
+            self.assertIn("USER_REQUESTED_CODEX_HANDOFF", text)
+            self.assertIn("CODEX_PREFLIGHT_OPTIONAL", text)
+        self.assertIn("GPT_GODOT_PREPRODUCTION_ALLOWED", policy)
+        self.assertIn("기획·구현·POC 누적", routing)
+        self.assertIn("실제 저장소·프로젝트·Godot 상태", handoff)
+
+    def test_explicit_approval_inherits_merge_authority_without_reapproval(self) -> None:
+        policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
+        routing = (ROOT / "docs/WORK_MODE_AND_SKILL_ROUTING.md").read_text(encoding="utf-8")
+        handoff = (ROOT / "skills/maintaining-project-context-and-handoff/SKILL.md").read_text(encoding="utf-8")
+        for text in (policy, routing, handoff):
+            self.assertIn("APPROVED_ITEM_INHERITS_MERGE_AUTHORITY", text)
+            self.assertIn("추가 확인·재승인·병합 승인 요청 없이", text)
+        self.assertIn("명시적 승인이 완료된 항목", policy)
+
     def test_handoff_skill_has_implementation_package_mode(self) -> None:
         text = (ROOT / "skills/maintaining-project-context-and-handoff/SKILL.md").read_text(encoding="utf-8")
         for term in (
