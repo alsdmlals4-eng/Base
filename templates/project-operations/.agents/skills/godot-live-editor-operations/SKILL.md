@@ -174,6 +174,18 @@ floating latest와 자동 무검토 업데이트는 금지한다. connection 성
 
 현재 주 책임 owner가 작업 범위와 승인 경계를 정하고, 이 Skill은 HiGodot 실행·검증 증거를 묶는다.
 
+## RUNNABLE_BY_USER 완료 Gate
+
+승인된 목표가 “사용자가 Godot 프로젝트를 직접 실행해 새 기능을 확인할 수 있어야 함”, 실제 앱 시작 경로, MainMenu/App Router, Vertical Slice의 처음부터 끝까지 플레이 가능한 흐름을 포함하면 `references/runnable-by-user-project-entrypoint.md`를 읽고 적용한다.
+
+- 이 경우 `Run Current Scene` 성공만으로 완료 처리하지 않는다.
+- 실제 프로젝트 진입점 검증에는 `F5 / Run Project`를 사용하고 예상 Main Scene과 대상 기능까지의 실제 흐름을 확인한다.
+- Task의 주 구현 폴더가 제한되어 있어도 사용자 실검증에 필요한 최소 `project.godot`·Main Scene·Router 연결은 승인된 integration edge로 취급할 수 있다.
+- 단, 이 예외는 L2/L3 Gate, rollback, diff, import/parse, test, regression을 우회하지 않는다.
+- 실검증과 관계없는 Project Settings 정리·대규모 구조 변경은 범위 확대이며 별도 승인이 필요하다.
+- 독립 Prototype/Test Scene 또는 사용자가 기존 Main Scene 보존을 명시한 경우에는 실제 진입점 전환을 자동 강제하지 않는다.
+- 구현과 진입점 연결 및 수행 가능한 검증이 끝나면 `USER_RUNNABLE_READY`로 기록할 수 있지만, 실제 사람 검증 증거가 없으면 human은 `NOT_RUN`으로 유지한다.
+
 ## Mode Rules
 
 ### `bootstrap`
@@ -190,7 +202,7 @@ L1/L2/L3를 분류하고 해당 Gate를 충족한 operation만 실행한다. sta
 
 ### `validate`
 
-HiGodot 응답만 신뢰하지 않고 Git diff, Godot 재관찰, import/parse, 관련 test, 가능한 runtime 결과를 교차 검증한다.
+HiGodot 응답만 신뢰하지 않고 Git diff, Godot 재관찰, import/parse, 관련 test, 가능한 runtime 결과를 교차 검증한다. `RUNNABLE_BY_USER`가 적용되면 reference의 Main Scene·`F5 / Run Project`·실제 사용자 흐름·회귀 기준까지 함께 검증한다.
 
 ### `resume`
 
@@ -220,6 +232,12 @@ import_and_parse:
 tests:
 runtime:
 human:
+user_runnable_gate:
+entrypoint_decision:
+main_scene_before:
+main_scene_after:
+run_project_f5:
+user_runnable_status:
 unverified:
 production_readiness: false
 ```
@@ -235,4 +253,6 @@ production_readiness: false
 - 사용자 범위를 넘는 Node deletion·file write·project settings·autoload 변경
 - L2에서 diff·rollback·import/test 누락
 - L3에서 계획·명시 승인·full regression 누락
+- `RUNNABLE_BY_USER`가 적용되는데 격리 Scene만 만들고 실제 프로젝트 진입점 검증 없이 완료 처리
+- `USER_RUNNABLE_READY`를 실제 사용자 확인 완료로 오인해 human PASS로 승격
 - connection·정적 파일 존재를 runtime·human·production PASS로 보고
