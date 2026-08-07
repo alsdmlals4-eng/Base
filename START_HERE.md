@@ -52,6 +52,7 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 | 기존 프로젝트 구조 감사·마이그레이션 | `managing-game-project-operating-system: audit / reconcile-legacy / migrate / verify` | `skills/managing-game-project-operating-system/SKILL.md` |
 | 신규 MCP·addon·CLI·framework·Skill·Mode 제작 전 현재 환경·기존 대안 조사 | `evaluating-godot-assets-and-plugins-before-creation: inventory-current-environment / disposition` | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` + `skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md` |
 | HiGodot 도입·exact pin·canary·업데이트·rollback | `managing-game-project-operating-system: install / verify` + Godot 평가 Skill | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` + `templates/project-operations/HIGODOT_ADOPTION_RECORD.json` |
+| Godot 구현·GDScript 테스트·실행 QA | HiGodot persistent authoring → adopted GUT deterministic test → adopted Hera `LIVE_QA_AND_OBSERVABILITY_ONLY` | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` + `templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md` |
 | 구형 자료 분류·보존·Archive·승인 삭제 | `governing-legacy-retention-and-archives` | `skills/governing-legacy-retention-and-archives/SKILL.md` |
 | 핵심 컨셉·DDD·벤치마크·플레이테스트·PoC | `analyzing-and-refining-game-concepts` | `skills/analyzing-and-refining-game-concepts/SKILL.md` |
 | Windows+Android 동시 목표·공용 코어·입력/UI/lifecycle·STOVE·Google Play·Steam 출시 wave | `analyzing-and-refining-game-concepts` + 기존 기술·Vertical Slice·검증 Skill | `docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md` + `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md` |
@@ -93,9 +94,9 @@ PC·Android Delivery Guide도 새 광역 Skill이 아니다. `analyzing-and-refi
 | 사용자 학습 자료 | `creating-user-learning-notes` |
 | 프로젝트 HTML·상태 시각화 | `building-project-visual-dashboards` |
 | Godot·Unity 런타임 오류 | `diagnosing-game-engine-runtime-failures` |
-| Godot live Editor·MCP·addon·Scene·Resource 자동화 | HiGodot 단일 권위 정책 → 프로젝트 Template `godot-live-editor-operations` |
+| Godot live Editor·MCP·addon·Scene·Resource 자동화 | HiGodot persistent authoring → GUT deterministic GDScript test → Hera live QA (`LIVE_QA_AND_OBSERVABILITY_ONLY`) |
 
-Godot 자동화는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`와 `templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md`를 함께 읽는다.
+Godot 자동화는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`와 `templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md`를 함께 읽는다. 세 도구를 모든 프로젝트에 일괄 설치하지 않으며, GUT과 Hera는 프로젝트가 실제 소비 경로를 갖춘 경우에만 선택적으로 채택한다.
 
 전체 원문 책임 매핑은 `docs/SKILL_COVERAGE_MAP.md`, 기계 검증은 `skills/SKILL_COVERAGE.json`을 사용한다.
 
