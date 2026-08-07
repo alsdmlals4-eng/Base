@@ -200,6 +200,41 @@ class RepositoryGovernanceBaselineTests(unittest.TestCase):
             2,
         )
 
+    def test_one_click_play_handoff_contract_is_explicit_and_project_consumable(self) -> None:
+        policy = read("docs/ONE_CLICK_PLAY_HANDOFF_POLICY.md")
+        slice_plan = read("templates/planning/VERTICAL_SLICE_PLAN.md")
+        validation = read("templates/quality/PROJECT_CHANGE_VALIDATION.md")
+        handoff = read("templates/project-operations/HANDOFF.md")
+
+        for term in (
+            "Project Play",
+            "별도 Scene 선택",
+            "성공·실패·복귀",
+            "Fetch origin → Pull origin",
+            "로컬 HEAD",
+            "FAIL · RETEST_REQUIRED",
+            "application/run/main_scene",
+            "필요한 최소 통합 변경",
+            "Task의 주 구현 폴더",
+            "Prototype/Test Scene",
+            "사용자가 기존 Main Scene을 유지하라고 명시",
+        ):
+            self.assertIn(term, policy)
+
+        for term in ("Project Play", "별도 Scene 선택", "성공·실패·복귀"):
+            self.assertIn(term, slice_plan)
+        for term in ("사용자의 기본 실행 시작점", "FAIL · RETEST_REQUIRED"):
+            self.assertIn(term, validation)
+        for term in (
+            "repository",
+            "branch",
+            "commit SHA",
+            "Fetch origin → Pull origin",
+            "기대 첫 화면",
+            "Project Play",
+        ):
+            self.assertIn(term, handoff)
+
 
 if __name__ == "__main__":
     unittest.main()
