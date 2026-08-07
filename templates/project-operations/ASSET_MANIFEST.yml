@@ -3,6 +3,13 @@ project: ""
 last_reviewed: ""
 source_commit: ""
 
+asset_vault:
+  enabled: false
+  authority: local-vault-filesystem
+  project_contract: "docs/PROJECT_ASSET_VAULT.md"
+  sync_manifest: "assets/ASSET_VAULT_SYNC.json"
+  note: "자동 파일 동기화 원장과 승인·의미 원장을 분리한다. 로컬 접근 가능 시 vault library 현재 상태가 파일 존재 권위다."
+
 status_definitions:
   - REFERENCE
   - DIRECTION_APPROVED
@@ -40,6 +47,7 @@ assets:
       - integrated-review
     statuses:
       - REFERENCE
+    vault_source_key: ""
     canonical_path: ""
     source_path: ""
     runtime_path: ""
