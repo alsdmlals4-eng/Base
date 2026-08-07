@@ -56,6 +56,7 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 | 구형 자료 분류·보존·Archive·승인 삭제 | `governing-legacy-retention-and-archives` | `skills/governing-legacy-retention-and-archives/SKILL.md` |
 | 핵심 컨셉·DDD·벤치마크·플레이테스트·PoC | `analyzing-and-refining-game-concepts` | `skills/analyzing-and-refining-game-concepts/SKILL.md` |
 | Windows+Android 동시 목표·공용 코어·입력/UI/lifecycle·STOVE·Google Play·Steam 출시 wave | `analyzing-and-refining-game-concepts` + 기존 기술·Vertical Slice·검증 Skill | `docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md` + `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md` |
+| 게임 build/package/download/install/patch·font/texture/audio 자산 용량 최적화 | 기존 기획·아트·Vertical Slice·검증 Skill 조합 | `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` + `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md` |
 | 게임 시스템·난이도·전투 AI | `analyzing-and-refining-game-concepts: system-design / difficulty-and-combat-ai` | `skills/analyzing-and-refining-game-concepts/SKILL.md` |
 | 기존 프로젝트 코어 판정 | `identifying-project-core` | `skills/identifying-project-core/SKILL.md` |
 | 기획 단계 프로젝트 코어 확정 | `establishing-project-core` | `skills/establishing-project-core/SKILL.md` |
@@ -78,6 +79,8 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 
 PC·Android Delivery Guide도 새 광역 Skill이 아니다. `analyzing-and-refining-game-concepts`의 `constrain / poc-contract / production-gate`와 기존 기술·Vertical Slice·검증 책임이 `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md`를 생산·검증하며, 실제 Windows build·Android 실기기·모바일 UI/입력/lifecycle·성능·계정 Gate가 없으면 `DUAL_TARGET_CONDITIONAL` 또는 `BLOCKED_UNVERIFIED`다.
 
+게임 빌드 용량·자산 최적화 Guide도 새 광역 Skill이 아니다. 프로젝트 단계에 따라 기존 기획·아트·Vertical Slice·검증 책임이 `GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md`를 사용하고 `PC_ANDROID_DELIVERY_PROFILE.md`의 프로젝트별 실측값을 생산·검증한다. 실제 build·store-served size·Steam patch·Android device·사람 품질 증거가 없으면 해당 항목은 `NOT_RUN`, `DEVICE_NOT_RUN`, `STORE_NOT_RUN`, `HUMAN_NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 유지한다.
+
 활성 Skill의 trigger·비사용 조건·입력·출력·실패·검증은 `skills/SKILL_REGISTRY.json`과 해당 `SKILL.md`가 책임진다. Skill 이름을 사용자에게 고르게 하거나 전체 Skill을 기본 로드하지 않는다.
 
 작성 산출물 Template은 소유 Skill이 `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md`로 연결한다.
@@ -91,7 +94,7 @@ PC·Android Delivery Guide도 새 광역 Skill이 아니다. `analyzing-and-refi
 | 구조 단순화·동작 보존 리팩터링 | `simplifying-skill-bodies` / `refactoring-with-contract-preservation` |
 | 불필요 자료 판정 | `pruning-stale-and-nonfunctional-material` |
 | 게임 사용자 연구 11영역 | `governing-game-user-research-coverage` |
-| 사용자 학습 자료 | `creating-user-learning-notes` |
+| 사용자 학습 노트 | `creating-user-learning-notes` |
 | 프로젝트 HTML·상태 시각화 | `building-project-visual-dashboards` |
 | Godot·Unity 런타임 오류 | `diagnosing-game-engine-runtime-failures` |
 | Godot live Editor·MCP·addon·Scene·Resource 자동화 | HiGodot persistent authoring → GUT deterministic GDScript test → Hera live QA (`LIVE_QA_AND_OBSERVABILITY_ONLY`) |
