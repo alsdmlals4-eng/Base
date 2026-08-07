@@ -213,6 +213,19 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             ["strict_required_status_checks_policy"]
         )
 
+    def test_cold_start_docs_match_on_demand_handoff_and_skill_growth_policy(self) -> None:
+        start = (ROOT / "START_HERE.md").read_text(encoding="utf-8")
+        docs_map = (ROOT / "docs/DOCUMENTATION_MAP.md").read_text(encoding="utf-8")
+        operating = (ROOT / "docs/OPERATING_MODEL.md").read_text(encoding="utf-8")
+
+        self.assertIn("Codex 작업 명세·전환", start)
+        self.assertIn("on-demand-codex-handoff", start)
+        self.assertIn("USER_REQUESTED_CODEX_HANDOFF", docs_map)
+        self.assertIn("CODEX_PREFLIGHT_OPTIONAL", docs_map)
+        self.assertIn("독립 입력·산출물·권한·검증 경계", operating)
+        self.assertIn("새 Skill을 만들 수 있다", operating)
+        self.assertNotIn("새 광역 Skill을 만들지 않는다.", operating)
+
     def test_documentation_map_routes_without_new_duplicate_skill(self) -> None:
         text = (ROOT / "docs/DOCUMENTATION_MAP.md").read_text(encoding="utf-8")
         for term in (
