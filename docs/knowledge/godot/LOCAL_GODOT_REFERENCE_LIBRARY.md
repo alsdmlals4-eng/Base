@@ -51,6 +51,24 @@ Godot_Reference\
 
 폴더 구조는 로컬 정리 규칙이며 프로젝트의 표준 디렉터리 계약이 아니다.
 
+## Registered official demo corpus
+
+현재 Local Godot Reference Library의 공식 데모 참고 항목에는 `godot-demo-projects-master`가 포함되어 있다고 기록한다.
+
+```yaml
+reference_name: godot-demo-projects-master
+category: Official_Demos
+upstream: https://github.com/godotengine/godot-demo-projects
+state: REFERENCE_ONLY
+production_authority: false
+project_dependency: false
+auto_adopt: false
+```
+
+`godot-demo-projects-master`는 Godot 엔진의 공식 데모 구현 패턴·Scene·Resource·GDScript 사용 예를 탐색하기 위한 **로컬 참고 코퍼스**다. 데모에 구현되어 있다는 사실만으로 현재 프로젝트에 그대로 채택하지 않으며, 실제 재사용 전에는 현재 프로젝트의 Godot 버전과 upstream 원본의 exact commit/tag, 라이선스, 관련 공식 문서를 다시 확인한다.
+
+로컬 폴더명의 `master`는 upstream의 exact version을 고정한다는 뜻이 아니다. 원격 agent나 CI는 로컬 파일 존재를 가정하지 않고, 접근할 수 없으면 기존 외부 검색 순서로 계속 진행한다.
+
 ## Usage order
 
 Godot 기능·템플릿·애드온·구현 예시를 찾을 때 관련성이 있으면 다음 순서를 사용한다.
