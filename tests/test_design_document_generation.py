@@ -28,6 +28,15 @@ def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+class MermaidPuppeteerLaunchContractTests(unittest.TestCase):
+    def test_regular_chrome_uses_modern_headless_puppeteer_config(self) -> None:
+        source = GENERATOR.read_text(encoding="utf-8")
+        self.assertIn("def write_mermaid_puppeteer_config", source)
+        self.assertIn('"headless": True', source)
+        self.assertIn('"executablePath": chrome_executable', source)
+        self.assertIn('"--puppeteerConfigFile"', source)
+
+
 @unittest.skipUnless(
     PUBLICATION_READINESS.ready,
     PUBLICATION_READINESS.skip_reason,
