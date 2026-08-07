@@ -141,12 +141,19 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
         for text in (self.ci_policy, self.validation_skill):
             self.assertIn("REMOTE_CI", text)
             self.assertIn("LOCAL_FALLBACK", text)
-            self.assertIn("ci-gate Check Run", text)
+            self.assertIn("`ci-gate` Check Run", text)
             self.assertIn("tools/run_local_ci_fallback.py", text)
         self.assertIn("테스트 실패", self.ci_policy)
         self.assertIn("fallback으로 전환하지 않는다", self.ci_policy)
         self.assertIn("BLOCKED_BY_GITHUB_ACTIONS", self.ci_policy)
         self.assertIn("UNVERIFIED", self.ci_policy)
+
+    def test_fallback_contract_requires_remote_run_absence_and_local_reproducibility(self) -> None:
+        for text in (self.ci_policy, self.validation_skill):
+            self.assertIn("REMOTE_CI workflow run", text)
+            self.assertIn("locally reproducible", text)
+        self.assertIn("CODE_OR_ENGINE", self.ci_policy)
+        self.assertIn("CI_TOOLCHAIN_HIGH_RISK", self.ci_policy)
 
     def test_public_repository_budget_does_not_select_fallback(self) -> None:
         for text in (self.github_policy, self.usage_budget):
