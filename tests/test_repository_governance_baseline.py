@@ -213,6 +213,11 @@ class RepositoryGovernanceBaselineTests(unittest.TestCase):
             "Fetch origin → Pull origin",
             "로컬 HEAD",
             "FAIL · RETEST_REQUIRED",
+            "application/run/main_scene",
+            "필요한 최소 통합 변경",
+            "Task의 주 구현 폴더",
+            "Prototype/Test Scene",
+            "사용자가 기존 Main Scene을 유지하라고 명시",
         ):
             self.assertIn(term, policy)
 
