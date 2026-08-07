@@ -43,7 +43,7 @@ permissions:
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
 
 jobs:
   classify-changes:
@@ -390,6 +390,7 @@ jobs:
     needs: classify-changes
     if: needs.classify-changes.outputs.run_publication == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Check out repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -409,12 +410,18 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Install publication dependencies
+      - name: Install system publication dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends libreoffice-writer fonts-nanum poppler-utils
+
+      - name: Install Python publication dependencies
+        run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements-publication.txt
+
+      - name: Install Node publication dependencies
+        run: |
           corepack enable
           corepack prepare pnpm@11.9.0 --activate
           pnpm install --frozen-lockfile
