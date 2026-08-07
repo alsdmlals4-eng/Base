@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-import stat
 import subprocess
 import sys
 import tempfile
@@ -18,8 +17,7 @@ class LocalCiFallbackTests(unittest.TestCase):
         self.root = Path(self.temporary.name)
         self.remote = self.root / "remote.git"
         self.work = self.root / "work"
-        self.bin = self.root / "bin"
-        self.bin.mkdir()
+        self.fake_gh = self.root / "fake_gh.py"
         self.scenario = self.root / "scenario.json"
         self.gh_log = self.root / "gh-log.jsonl"
         self.gh_state = self.root / "gh-state.json"
@@ -69,9 +67,7 @@ class LocalCiFallbackTests(unittest.TestCase):
         ).stdout.strip()
 
     def write_fake_gh(self) -> None:
-        script = self.bin / "gh"
-        script.write_text(
-            f"#!{sys.executable}\n"
+        self.fake_gh.write_text(
             "from __future__ import annotations\n"
             "import json\n"
             "import os\n"
@@ -113,7 +109,6 @@ class LocalCiFallbackTests(unittest.TestCase):
             "raise SystemExit(91)\n",
             encoding="utf-8",
         )
-        script.chmod(script.stat().st_mode | stat.S_IXUSR)
 
     def write_scenario(
         self,
@@ -144,7 +139,6 @@ class LocalCiFallbackTests(unittest.TestCase):
         env = dict(os.environ)
         env.update(
             {
-                "PATH": f"{self.bin}{os.pathsep}{env.get('PATH', '')}",
                 "FAKE_GH_SCENARIO": str(self.scenario),
                 "FAKE_GH_LOG": str(self.gh_log),
                 "FAKE_GH_STATE": str(self.gh_state),
@@ -163,6 +157,7 @@ class LocalCiFallbackTests(unittest.TestCase):
             self.base_sha,
             sys.executable,
             environment=self.environment(**env_overrides),
+            gh_command=(sys.executable, str(self.fake_gh)),
         )
 
     def logged_gh_calls(self) -> list[list[str]]:
