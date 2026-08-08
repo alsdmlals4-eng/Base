@@ -13,7 +13,7 @@ description: Use when routing a project request, closing material ambiguity, def
 
 모든 L1 이상 지시문 작성은 이 Skill에서 좋은 프롬프트 변환을 수행한 뒤 `Grill Me alignment gate`로 의도·기획·범위가 맞는지 확인한다. 유효한 승인 없이 제품·프로젝트 작업으로 진행하지 않는다.
 
-사용자가 `[연속작업] 진행해`라고 명시하면 `references/continuous-work-execution.md`에 따라 현재 승인된 작업 계약의 남은 범위에 `CONTINUOUS_WORK_ACTIVE` 실행 상태를 적용한다. 이는 `PLAN / BUILD / REVIEW`를 대체하지 않으며, 사용자 전용 결정·미검증 차단·고위험 외부 행위의 확인 Gate를 제거하지 않는다.
+사용자가 `[연속작업] 진행해`라고 명시하면 `references/continuous-work-execution.md`에 따라 현재 승인된 작업 계약의 남은 범위에 `CONTINUOUS_WORK_ACTIVE` 실행 상태를 적용한다. 이는 `PLAN / BUILD / REVIEW`를 대체하지 않으며, 사용자 전용 결정·미검증 차단·고위험 외부 행위의 확인 Gate를 제거하지 않는다. blocker가 생기면 즉시 전역 종료하지 않고 `recover → local defer → independent ready work → global stop last` 순서로 처리한다.
 
 새 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층 요청은 일반 설계보다 먼저 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`와 `evaluating-godot-assets-and-plugins-before-creation: inventory-current-environment / disposition`으로 라우팅한다. `existing_solution_disposition`과 비교 증거·사용자 승인 상태 없이 `BUILD_NEW` 계약을 만들지 않는다.
 
@@ -32,7 +32,7 @@ description: Use when routing a project request, closing material ambiguity, def
 
 프로젝트 GDD Google Sheets 역할·편집·시각화·수치화: `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`
 
-연속작업 활성화·자동 승인·종료 경계: `references/continuous-work-execution.md`
+연속작업 활성화·자동 승인·blocker recovery·종료 경계: `references/continuous-work-execution.md`
 
 ## Skill Modes
 
@@ -275,17 +275,20 @@ agreement_or_disagreement_reason:
 
 ```text
 현재 승인된 작업 계약
-→ 다음 미완료 작업
+→ ready task 선택
 → BUILD
 → REVIEW attack → validate-critique
 → 범위 안의 기술적 단일 최소 안전 권장안이면 자동 승인 간주
 → BUILD 최소 반영
 → REVIEW regression-recheck
-→ 다음 미완료 작업
-→ 완료 또는 종료 조건까지 반복
+→ blocker가 있으면 recovery ladder
+→ 당장 해결 불가한 국소 task는 defer
+→ 독립 ready task 계속
+→ 상태 변화 뒤 deferred task 재평가
+→ 완료 또는 GLOBAL_TERMINAL_BLOCKER까지 반복
 ```
 
-`USER_DECISION_REQUIRED`, `BLOCKED_UNVERIFIED`, 범위 확대, 고위험 외부 행위, 사용자 중지·범위 변경에서는 자동 승인하지 않고 루프를 종료한다. 트리거가 없는 요청은 `CONTINUOUS_WORK_INACTIVE`다.
+`USER_DECISION_REQUIRED`, `BLOCKED_UNVERIFIED`, 범위 확대, 고위험 외부 행위는 자동 승인하지 않는다. 그러나 그 상태가 국소적이거나 복구 가능하면 전체 루프를 즉시 종료하지 않는다. `RECOVERABLE_VERIFICATION_BLOCKER`와 `RECOVERABLE_EXECUTION_ROUTE_BLOCKER`는 재조회·대체 증거·authorized alternate executor를 먼저 시도하고, 당장 풀리지 않으면 해당 task만 defer한다. `GLOBAL_TERMINAL_BLOCKER`는 recovery path를 소진하고 실행 가능한 독립 task가 없을 때만 사용한다. 트리거가 없는 요청은 `CONTINUOUS_WORK_INACTIVE`다.
 
 ### 6. Produce the executable contract
 
@@ -371,7 +374,7 @@ status: PASS/PARTIAL/FAIL/UNVERIFIED
 → 얻은 결과·증거
 ```
 
-`CONTINUOUS_WORK_ACTIVE`였다면 완료한 작업, 적대 검토 finding, 자동 승인해 반영한 기술 권장안, 검증 증거, 종료 상태를 최종 보고에 함께 남긴다.
+`CONTINUOUS_WORK_ACTIVE`였다면 완료한 작업, deferred 작업, blocker recovery, 적대 검토 finding, 자동 승인해 반영한 기술 권장안, 검증 증거, 종료 상태를 최종 보고에 함께 남긴다.
 
 중요 후보를 사용하지 않았으면 `trigger 불일치 / 비사용 조건 / 현재 단계 아님 / 도구·입력 없음` 중 하나로 이유를 기록한다. 모든 Registry 항목을 나열하지 않는다.
 
@@ -402,8 +405,10 @@ RECEIVED
 CONTINUOUS_WORK_INACTIVE
 → ([연속작업] 진행해 + CONFIRMED/REUSED_APPROVAL)
 → CONTINUOUS_WORK_ACTIVE
-→ COMPLETE | STOPPED_USER_DECISION | BLOCKED_UNVERIFIED | STOPPED_BY_USER
+→ COMPLETE | STOPPED_USER_DECISION | GLOBAL_TERMINAL_BLOCKER | STOPPED_BY_USER
 ```
+
+`BLOCKED_UNVERIFIED`, `EVIDENCE_TRANSPORT_INCOMPLETE`, `DEFERRED_EXTERNAL_EXECUTOR`는 개별 task/evidence 상태가 될 수 있으며 자동으로 전역 종료 상태가 되지 않는다.
 
 ## Output contract
 
@@ -458,7 +463,8 @@ remaining_unknowns: []
 - Grill Me alignment gate 또는 유효한 approval reference가 실행 전에 확인됐다.
 - 기존 승인 계약에는 중복 질문하지 않았다.
 - `[연속작업] 진행해`가 있을 때만 `CONTINUOUS_WORK_ACTIVE`를 사용했고, 승인된 계약 밖으로 범위를 넓히지 않았다.
-- 연속작업 중 `USER_DECISION_REQUIRED`, `BLOCKED_UNVERIFIED`, 고위험 외부 행위와 사용자 중지는 자동 승인하지 않았다.
+- 연속작업 중 사용자 결정·고위험 행위는 자동 승인하지 않았고, recoverable/local blocker는 recovery ladder와 independent-ready-task scan 없이 전역 종료하지 않았다.
+- 승인된 동일 범위의 구현·검증 방법과 병합에는 기존 approval reference와 `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`를 재사용했다.
 - 큰 작업은 독립 검증 가능한 결과·의존성·병렬 묶음·게이트로 분해됐다.
 - 실제 사용한 Work Mode·Skill·Skill Mode의 이유와 결과·증거를 보고했다.
 - 새 작업자가 같은 입력에서 동등한 계약·라우팅·실행 보고를 복원할 수 있다.
@@ -482,8 +488,10 @@ remaining_unknowns: []
 - exact contract already approved인데 approval reference를 무시하고 중복 질문함
 - Grill Me alignment gate 또는 유효 승인 없이 실행 계약·BUILD·위임으로 이동함
 - `[연속작업] 진행해` 없이 일반 요청을 연속작업 자동 승인으로 처리함
-- 연속작업을 이유로 `USER_DECISION_REQUIRED`, `BLOCKED_UNVERIFIED`, 범위 확대 또는 고위험 외부 행위를 자동 승인함
+- 연속작업을 이유로 진짜 `USER_DECISION_REQUIRED`, 범위 확대 또는 고위험 외부 행위를 자동 승인함
+- recoverable verification·현재 세션 tool 부재·국소 blocker를 recovery/defer/independent-task scan 없이 전역 종료함
 - 연속작업을 scheduler·webhook·백그라운드 실행이나 다른 채팅 자동 메시지 전달로 오해함
+- 실제로 호출할 수 없는 Codex/agent/executor를 실행했다고 주장함
 - 원 요청의 산출물을 문서로 임의 축소함
 - 제외·보호·보류·미검증을 손실함
 - 측정 불가능한 완료 기준만 작성함
