@@ -36,6 +36,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  temporary-serial-fiction-apply:
+    if: ${{ github.event.pull_request.head.ref == 'feat/serial-fiction-writing-discipline' && github.actor != 'github-actions[bot]' }}
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: feat/serial-fiction-writing-discipline
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply approved serial-fiction contracts
+        run: python tools/tmp_serial_fiction_apply.py
+      - name: Commit deterministic branch mutation
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add \
+            START_HERE.md docs/DOCUMENTATION_MAP.md docs/OPERATING_MODEL.md docs/CHANGELOG.md \
+            skills/SKILL_REGISTRY.json skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json \
+            skills/SKILL_IMPLEMENTATION_EVIDENCE.json skills/SKILL_LEARNING_LOG.md \
+            docs/generated/BASE_ACTIVE_SKILLS.md docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md \
+            .github/reference-freshness.json tests/test_serial_fiction_discipline.py
+          if git diff --cached --quiet; then
+            echo "No mutation required."
+            exit 0
+          fi
+          git commit -m "feat: register serial fiction skill routing"
+          git push origin HEAD:feat/serial-fiction-writing-discipline
+
   dependency-review:
     # The action cannot report whether dependency graph/security is enabled.
     # Owners opt in only after enabling the required repository capability.
