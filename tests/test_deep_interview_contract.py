@@ -114,10 +114,22 @@ class DeepInterviewContractTests(unittest.TestCase):
             "attack → validate-critique",
             "regression-recheck",
             "백그라운드",
+            "RECOVERABLE_VERIFICATION_BLOCKER",
+            "RECOVERABLE_EXECUTION_ROUTE_BLOCKER",
+            "LOCAL_TASK_BLOCKER",
+            "GLOBAL_TERMINAL_BLOCKER",
+            "EVIDENCE_TRANSPORT_INCOMPLETE",
+            "ready_tasks",
+            "deferred_tasks",
+            "APPROVED_ITEM_INHERITS_MERGE_AUTHORITY",
+            "10,000-seed",
+            "alternate executor",
+            "DEFERRED_EXTERNAL_EXECUTOR",
         ):
             self.assertIn(term, reference)
         self.assertIn("continuous-work-execution.md", intake)
         self.assertIn("[연속작업] 진행해", intake)
+        self.assertIn("GLOBAL_TERMINAL_BLOCKER", intake)
 
     def test_mandatory_triggers_and_mechanical_exceptions(self) -> None:
         for change_type in ("feature", "game-experience", "art-direction", "architecture", "workflow", "base-change-proposal"):
