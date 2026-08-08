@@ -156,7 +156,7 @@ expected exact HEAD SHA 고정
 2. 허용된 recovery ladder 경로를 모두 소진했다.
 3. 실행 가능한 독립 `ready_tasks`가 없다.
 4. 자동 승인, 기존 approval reference, `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`, authorized alternate executor로 해결할 수 없다.
-5. 사용자 결정 또는 실제 high-risk 확인 없이는 더 진행할 수 없다.
+5. 사용자 결정·실제 high-risk 확인·외부 실행환경/권한/필수 증거의 변화 중 하나가 생기기 전에는 더 진행할 수 없다.
 
 `BLOCKED_UNVERIFIED`는 개별 task/evidence 상태일 수 있으며 자동으로 `GLOBAL_TERMINAL_BLOCKER`가 되지 않는다.
 
