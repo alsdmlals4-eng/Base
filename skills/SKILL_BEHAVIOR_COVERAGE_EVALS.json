@@ -12,22 +12,9 @@
       "expected_work_mode": "PLAN",
       "expected_primary_skill": "maintaining-project-context-and-handoff",
       "expected_supporting_skills": [],
-      "expected_skill_modes": [
-        "context-refresh",
-        "implementation-package-handoff"
-      ],
-      "forbidden_skills": [
-        "building-project-visual-dashboards",
-        "creating-user-learning-notes",
-        "diagnosing-game-engine-runtime-failures",
-        "optimizing-ai-model-and-prompt-costs"
-      ],
-      "required_evidence": [
-        "기준 브랜치",
-        "패키지",
-        "보호 범위",
-        "검증"
-      ],
+      "expected_skill_modes": ["context-refresh", "implementation-package-handoff"],
+      "forbidden_skills": ["building-project-visual-dashboards", "creating-user-learning-notes", "diagnosing-game-engine-runtime-failures", "optimizing-ai-model-and-prompt-costs"],
+      "required_evidence": ["기준 브랜치", "패키지", "보호 범위", "검증"],
       "expected_user_decision_state": "NOT_REQUIRED",
       "rationale": "승인된 설계를 Codex 구현 계약으로 넘기는 인계 작업이며 대시보드나 학습 노트 작성 단계가 아니다."
     },
@@ -38,25 +25,9 @@
       "expected_work_mode": "PLAN",
       "expected_primary_skill": "designing-vertical-slices",
       "expected_supporting_skills": [],
-      "expected_skill_modes": [
-        "slice-contract",
-        "quality-bar",
-        "pipeline-proof",
-        "playtest-evidence",
-        "decision-gate"
-      ],
-      "forbidden_skills": [
-        "analyzing-and-refining-game-concepts",
-        "identifying-project-core",
-        "establishing-project-core",
-        "governing-legacy-retention-and-archives"
-      ],
-      "required_evidence": [
-        "대표 구간",
-        "품질 기준",
-        "파이프라인",
-        "플레이테스트"
-      ],
+      "expected_skill_modes": ["slice-contract", "quality-bar", "pipeline-proof", "playtest-evidence", "decision-gate"],
+      "forbidden_skills": ["analyzing-and-refining-game-concepts", "identifying-project-core", "establishing-project-core", "governing-legacy-retention-and-archives"],
+      "required_evidence": ["대표 구간", "품질 기준", "파이프라인", "플레이테스트"],
       "expected_user_decision_state": "NOT_REQUIRED",
       "rationale": "핵심 가설 탐색을 다시 여는 작업이 아니라 이미 정해진 경험을 제작 가능한 대표 구간으로 증명하는 단계다."
     },
@@ -66,24 +37,10 @@
       "prompt": "긴 문서 80개에서 같은 기준으로 중복 후보와 통합 초안을 만들되, 별도 브랜치와 격리 작업 공간에서 처리하고 결과는 실제 diff 검수 전까지 초안으로만 회수해줘.",
       "expected_work_mode": "BUILD",
       "expected_primary_skill": "orchestrating-deepseek-worktrees",
-      "expected_supporting_skills": [
-        "reviewing-and-validating-project-changes"
-      ],
-      "expected_skill_modes": [
-        "external-source-review"
-      ],
-      "forbidden_skills": [
-        "optimizing-ai-model-and-prompt-costs",
-        "creating-user-learning-notes",
-        "building-project-visual-dashboards",
-        "identifying-project-core"
-      ],
-      "required_evidence": [
-        "worktree",
-        "allowlist",
-        "초안",
-        "독립 검수"
-      ],
+      "expected_supporting_skills": ["reviewing-and-validating-project-changes"],
+      "expected_skill_modes": ["external-source-review"],
+      "forbidden_skills": ["optimizing-ai-model-and-prompt-costs", "creating-user-learning-notes", "building-project-visual-dashboards", "identifying-project-core"],
+      "required_evidence": ["worktree", "allowlist", "초안", "독립 검수"],
       "expected_user_decision_state": "NOT_REQUIRED",
       "rationale": "대량 외부 AI 초안을 격리하고 독립 검수하는 작업이며 모델 비용 추천이나 프로젝트 코어 판정이 주목적이 아니다."
     },
@@ -94,25 +51,9 @@
       "expected_work_mode": "REVIEW",
       "expected_primary_skill": "reviewing-and-validating-project-changes",
       "expected_supporting_skills": [],
-      "expected_skill_modes": [
-        "contract-check",
-        "multi-lens-review",
-        "static-validation",
-        "regression",
-        "evidence-report"
-      ],
-      "forbidden_skills": [
-        "managing-project-intake-and-work-contract",
-        "managing-design-documents",
-        "maintaining-project-context-and-handoff",
-        "creating-user-learning-notes"
-      ],
-      "required_evidence": [
-        "실제 diff",
-        "범위",
-        "회귀",
-        "미실행"
-      ],
+      "expected_skill_modes": ["contract-check", "multi-lens-review", "static-validation", "regression", "evidence-report"],
+      "forbidden_skills": ["managing-project-intake-and-work-contract", "managing-design-documents", "maintaining-project-context-and-handoff", "creating-user-learning-notes"],
+      "required_evidence": ["실제 diff", "범위", "회귀", "미실행"],
       "expected_user_decision_state": "NOT_REQUIRED",
       "rationale": "요구와 변경이 이미 확정된 상태의 통합 검증이며 새 계약 작성이나 학습 자료 생성이 아니다."
     },
@@ -122,27 +63,10 @@
       "prompt": "공용 절차의 ID와 경로를 바꾼 뒤 시작 문서, 템플릿, 테스트, 생성물과 변경되지 않은 소비자까지 이전 이름을 계속 쓰는 곳이 없는지 검사해줘.",
       "expected_work_mode": "REVIEW",
       "expected_primary_skill": "auditing-canonical-reference-freshness",
-      "expected_supporting_skills": [
-        "reviewing-and-validating-project-changes"
-      ],
-      "expected_skill_modes": [
-        "impact-map",
-        "reference-scan",
-        "propagation-gap",
-        "closure-report"
-      ],
-      "forbidden_skills": [
-        "building-project-visual-dashboards",
-        "optimizing-ai-model-and-prompt-costs",
-        "diagnosing-game-engine-runtime-failures",
-        "governing-game-user-research-coverage"
-      ],
-      "required_evidence": [
-        "영향 지도",
-        "오래된 참조",
-        "untouched",
-        "파생본"
-      ],
+      "expected_supporting_skills": ["reviewing-and-validating-project-changes"],
+      "expected_skill_modes": ["impact-map", "reference-scan", "propagation-gap", "closure-report"],
+      "forbidden_skills": ["building-project-visual-dashboards", "optimizing-ai-model-and-prompt-costs", "diagnosing-game-engine-runtime-failures", "governing-game-user-research-coverage"],
+      "required_evidence": ["영향 지도", "오래된 참조", "untouched", "파생본"],
       "expected_user_decision_state": "NOT_REQUIRED",
       "rationale": "정본 변경의 소비자 전파와 stale 참조가 주 책임이며 런타임 디버깅이나 연구 coverage 작업이 아니다."
     },
@@ -153,23 +77,9 @@
       "expected_work_mode": "PLAN",
       "expected_primary_skill": "designing-art-prompts-and-technique-cards",
       "expected_supporting_skills": [],
-      "expected_skill_modes": [
-        "intermediate-visual-checkpoint",
-        "visual-qa-and-approval"
-      ],
-      "forbidden_skills": [
-        "auditing-and-refining-ui-art",
-        "evaluating-godot-assets-and-plugins-before-creation",
-        "governing-game-user-research-coverage",
-        "orchestrating-deepseek-worktrees",
-        "reviewing-and-validating-project-changes"
-      ],
-      "required_evidence": [
-        "정본",
-        "화면비",
-        "가독성",
-        "DRAFT_VISUAL"
-      ],
+      "expected_skill_modes": ["intermediate-visual-checkpoint", "visual-qa-and-approval"],
+      "forbidden_skills": ["auditing-and-refining-ui-art", "evaluating-godot-assets-and-plugins-before-creation", "governing-game-user-research-coverage", "orchestrating-deepseek-worktrees", "reviewing-and-validating-project-changes"],
+      "required_evidence": ["정본", "화면비", "가독성", "DRAFT_VISUAL"],
       "expected_user_decision_state": "REQUIRED",
       "rationale": "구현 전 시각 후보와 승인 검수이며 실제 런타임 UI 감사나 플러그인 조사 단계가 아니다."
     },
@@ -179,28 +89,10 @@
       "prompt": "서로 다른 두 프로젝트에서 반복 확인된 작업 원리를 프로젝트 고유 값과 분리해 공용 개선 제안으로 등록하고, 반례와 승인 근거를 검토해줘.",
       "expected_work_mode": "PLAN",
       "expected_primary_skill": "managing-base-change-proposals",
-      "expected_supporting_skills": [
-        "running-adversarial-review-and-refinement"
-      ],
-      "expected_skill_modes": [
-        "extract",
-        "submit",
-        "review",
-        "attack",
-        "validate-critique"
-      ],
-      "forbidden_skills": [
-        "designing-vertical-slices",
-        "synchronizing-local-and-github-state",
-        "diagnosing-game-engine-runtime-failures",
-        "refactoring-with-contract-preservation"
-      ],
-      "required_evidence": [
-        "공용 원리",
-        "프로젝트 전용",
-        "반례",
-        "승인 근거"
-      ],
+      "expected_supporting_skills": ["running-adversarial-review-and-refinement"],
+      "expected_skill_modes": ["extract", "submit", "review", "attack", "validate-critique"],
+      "forbidden_skills": ["designing-vertical-slices", "synchronizing-local-and-github-state", "diagnosing-game-engine-runtime-failures", "refactoring-with-contract-preservation"],
+      "required_evidence": ["공용 원리", "프로젝트 전용", "반례", "승인 근거"],
       "expected_user_decision_state": "REQUIRED",
       "rationale": "프로젝트 교훈을 Base 제안 생명주기로 넘기는 작업이며 제품 슬라이스나 Git 동기화가 주 책임이 아니다."
     },
@@ -210,29 +102,10 @@
       "prompt": "기존 게임에서 어떤 요소를 제거하거나 본질적으로 바꾸면 같은 프로젝트가 아니게 되는지 실제 문서·코드·루프 근거로 읽기 전용 분류해줘.",
       "expected_work_mode": "REVIEW",
       "expected_primary_skill": "identifying-project-core",
-      "expected_supporting_skills": [
-        "running-adversarial-review-and-refinement"
-      ],
-      "expected_skill_modes": [
-        "inventory",
-        "extract-candidates",
-        "dependency-map",
-        "removal-and-change-test",
-        "classify",
-        "core-report"
-      ],
-      "forbidden_skills": [
-        "establishing-project-core",
-        "maintaining-project-context-and-handoff",
-        "designing-vertical-slices",
-        "designing-art-prompts-and-technique-cards"
-      ],
-      "required_evidence": [
-        "제거 테스트",
-        "의존 관계",
-        "코어",
-        "읽기 전용"
-      ],
+      "expected_supporting_skills": ["running-adversarial-review-and-refinement"],
+      "expected_skill_modes": ["inventory", "extract-candidates", "dependency-map", "removal-and-change-test", "classify", "core-report"],
+      "forbidden_skills": ["establishing-project-core", "maintaining-project-context-and-handoff", "designing-vertical-slices", "designing-art-prompts-and-technique-cards"],
+      "required_evidence": ["제거 테스트", "의존 관계", "코어", "읽기 전용"],
       "expected_user_decision_state": "DEFERRED",
       "rationale": "기존 프로젝트의 사실 분류이며 새 코어를 사용자 승인으로 확정하거나 구현 인계하는 작업이 아니다."
     },
@@ -242,31 +115,10 @@
       "prompt": "새 게임의 플레이어 약속과 최소 불변 조건을 후보로 만들고 제거·대체·실패 반례를 검토한 뒤, 사용자가 승인한 항목만 코어로 기록해줘.",
       "expected_work_mode": "PLAN",
       "expected_primary_skill": "establishing-project-core",
-      "expected_supporting_skills": [
-        "managing-project-intake-and-work-contract",
-        "running-adversarial-review-and-refinement"
-      ],
-      "expected_skill_modes": [
-        "propose",
-        "stress-test",
-        "confirm",
-        "lock",
-        "route",
-        "attack",
-        "validate-critique"
-      ],
-      "forbidden_skills": [
-        "identifying-project-core",
-        "diagnosing-game-engine-runtime-failures",
-        "synchronizing-local-and-github-state",
-        "pruning-stale-and-nonfunctional-material"
-      ],
-      "required_evidence": [
-        "플레이어 약속",
-        "불변 조건",
-        "반례",
-        "사용자 승인"
-      ],
+      "expected_supporting_skills": ["managing-project-intake-and-work-contract", "running-adversarial-review-and-refinement"],
+      "expected_skill_modes": ["propose", "stress-test", "confirm", "lock", "route", "attack", "validate-critique"],
+      "forbidden_skills": ["identifying-project-core", "diagnosing-game-engine-runtime-failures", "synchronizing-local-and-github-state", "pruning-stale-and-nonfunctional-material"],
+      "required_evidence": ["플레이어 약속", "불변 조건", "반례", "사용자 승인"],
       "expected_user_decision_state": "REQUIRED",
       "rationale": "새 프로젝트 코어의 제안과 승인 작업이며 기존 코어 사실 분류나 저장소 정리가 아니다."
     },
@@ -276,27 +128,10 @@
       "prompt": "완성된 변경안이 실패했다고 가정해 모순과 경계 실패를 공격하고, 비판의 사실성과 비용을 다시 검증한 뒤 승인된 문제만 최소 수정 대상으로 분류해줘.",
       "expected_work_mode": "REVIEW",
       "expected_primary_skill": "running-adversarial-review-and-refinement",
-      "expected_supporting_skills": [
-        "reviewing-and-validating-project-changes"
-      ],
-      "expected_skill_modes": [
-        "attack",
-        "validate-critique",
-        "regression-recheck",
-        "decision-report"
-      ],
-      "forbidden_skills": [
-        "managing-project-intake-and-work-contract",
-        "creating-user-learning-notes",
-        "building-project-visual-dashboards",
-        "optimizing-ai-model-and-prompt-costs"
-      ],
-      "required_evidence": [
-        "실패 가정",
-        "비판 검증",
-        "MUST_FIX",
-        "기각"
-      ],
+      "expected_supporting_skills": ["reviewing-and-validating-project-changes"],
+      "expected_skill_modes": ["attack", "validate-critique", "regression-recheck", "decision-report"],
+      "forbidden_skills": ["managing-project-intake-and-work-contract", "creating-user-learning-notes", "building-project-visual-dashboards", "optimizing-ai-model-and-prompt-costs"],
+      "required_evidence": ["실패 가정", "비판 검증", "MUST_FIX", "기각"],
       "expected_user_decision_state": "DEFERRED",
       "rationale": "완성된 작업물의 공격과 비판 재검증이 주 책임이며 새 요구 계약이나 비용 추천이 아니다."
     },
@@ -306,28 +141,10 @@
       "prompt": "공개 인터페이스와 출력, 데이터 스키마와 정상·실패 동작을 고정한 상태에서 중복과 강결합만 줄이고 동작이 바뀌지 않았는지 회귀로 증명해줘.",
       "expected_work_mode": "BUILD",
       "expected_primary_skill": "refactoring-with-contract-preservation",
-      "expected_supporting_skills": [
-        "reviewing-and-validating-project-changes"
-      ],
-      "expected_skill_modes": [
-        "baseline-contract",
-        "smell-audit",
-        "refactor",
-        "regression-validate",
-        "report"
-      ],
-      "forbidden_skills": [
-        "pruning-stale-and-nonfunctional-material",
-        "simplifying-skill-bodies",
-        "managing-base-change-proposals",
-        "establishing-project-core"
-      ],
-      "required_evidence": [
-        "baseline",
-        "인터페이스",
-        "동작 보존",
-        "회귀"
-      ],
+      "expected_supporting_skills": ["reviewing-and-validating-project-changes"],
+      "expected_skill_modes": ["baseline-contract", "smell-audit", "refactor", "regression-validate", "report"],
+      "forbidden_skills": ["pruning-stale-and-nonfunctional-material", "simplifying-skill-bodies", "managing-base-change-proposals", "establishing-project-core"],
+      "required_evidence": ["baseline", "인터페이스", "동작 보존", "회귀"],
       "expected_user_decision_state": "NOT_REQUIRED",
       "rationale": "승인 동작을 보존하는 구조 개선이며 죽은 자료 삭제나 Skill 본문 단순화와는 다른 책임이다."
     },
@@ -337,31 +154,10 @@
       "prompt": "공용 작업 절차 본문이 너무 길어졌어. 항상 필요한 계약은 남기고 조건부 체크리스트와 예시는 한 단계에서 찾을 수 있는 참조로 옮긴 뒤 기능 보존을 검증해줘.",
       "expected_work_mode": "BUILD",
       "expected_primary_skill": "simplifying-skill-bodies",
-      "expected_supporting_skills": [
-        "evolving-project-discipline-skills",
-        "reviewing-and-validating-project-changes"
-      ],
-      "expected_skill_modes": [
-        "inventory",
-        "classify-always-vs-conditional",
-        "extract-references",
-        "rewrite-router",
-        "validate-disclosure",
-        "behavior-eval",
-        "regression"
-      ],
-      "forbidden_skills": [
-        "pruning-stale-and-nonfunctional-material",
-        "refactoring-with-contract-preservation",
-        "managing-design-documents",
-        "building-project-visual-dashboards"
-      ],
-      "required_evidence": [
-        "필수 계약",
-        "참조",
-        "발견성",
-        "기능 보존"
-      ],
+      "expected_supporting_skills": ["evolving-project-discipline-skills", "reviewing-and-validating-project-changes"],
+      "expected_skill_modes": ["inventory", "classify-always-vs-conditional", "extract-references", "rewrite-router", "validate-disclosure", "behavior-eval", "regression"],
+      "forbidden_skills": ["pruning-stale-and-nonfunctional-material", "refactoring-with-contract-preservation", "managing-design-documents", "building-project-visual-dashboards"],
+      "required_evidence": ["필수 계약", "참조", "발견성", "기능 보존"],
       "expected_user_decision_state": "NOT_REQUIRED",
       "rationale": "Skill 점진 공개가 주 책임이며 일반 문서 발행이나 파일 삭제를 수행하는 작업이 아니다."
     },
@@ -371,29 +167,10 @@
       "prompt": "도달하지 않는 중복 자료와 고아 참조를 찾되 고유 기능과 근거, 호환 소비자를 먼저 보존하고 승인된 항목만 병합·이동·삭제 후보로 처리해줘.",
       "expected_work_mode": "REVIEW",
       "expected_primary_skill": "pruning-stale-and-nonfunctional-material",
-      "expected_supporting_skills": [
-        "auditing-canonical-reference-freshness"
-      ],
-      "expected_skill_modes": [
-        "inventory",
-        "classify",
-        "preserve-unique",
-        "prune-approved",
-        "verify-no-loss",
-        "reference-scan"
-      ],
-      "forbidden_skills": [
-        "simplifying-skill-bodies",
-        "evolving-project-discipline-skills",
-        "building-project-visual-dashboards",
-        "optimizing-ai-model-and-prompt-costs"
-      ],
-      "required_evidence": [
-        "고유 기능",
-        "소비자",
-        "승인",
-        "롤백"
-      ],
+      "expected_supporting_skills": ["auditing-canonical-reference-freshness"],
+      "expected_skill_modes": ["inventory", "classify", "preserve-unique", "prune-approved", "verify-no-loss", "reference-scan"],
+      "forbidden_skills": ["simplifying-skill-bodies", "evolving-project-discipline-skills", "building-project-visual-dashboards", "optimizing-ai-model-and-prompt-costs"],
+      "required_evidence": ["고유 기능", "소비자", "승인", "롤백"],
       "expected_user_decision_state": "REQUIRED",
       "rationale": "죽은 자료의 무손실 가지치기이며 Skill 구조 생성이나 대시보드 제작이 아니다."
     },
@@ -404,23 +181,9 @@
       "expected_work_mode": "REVIEW",
       "expected_primary_skill": "synchronizing-local-and-github-state",
       "expected_supporting_skills": [],
-      "expected_skill_modes": [
-        "inspect",
-        "reconcile",
-        "verify-sync"
-      ],
-      "forbidden_skills": [
-        "evolving-project-discipline-skills",
-        "managing-design-documents",
-        "creating-user-learning-notes",
-        "maintaining-long-running-task-continuity"
-      ],
-      "required_evidence": [
-        "로컬 HEAD",
-        "원격 HEAD",
-        "dirty",
-        "동등성"
-      ],
+      "expected_skill_modes": ["inspect", "reconcile", "verify-sync"],
+      "forbidden_skills": ["evolving-project-discipline-skills", "managing-design-documents", "creating-user-learning-notes", "maintaining-long-running-task-continuity"],
+      "required_evidence": ["로컬 HEAD", "원격 HEAD", "dirty", "동등성"],
       "expected_user_decision_state": "DEFERRED",
       "rationale": "Git 상태 비교와 안전한 동기화가 주 책임이며 문서 생명주기나 장기 작업 checkpoint가 아니다."
     },
@@ -431,25 +194,9 @@
       "expected_work_mode": "BUILD",
       "expected_primary_skill": "maintaining-long-running-task-continuity",
       "expected_supporting_skills": [],
-      "expected_skill_modes": [
-        "initialize",
-        "checkpoint",
-        "partial-delivery",
-        "resume",
-        "close"
-      ],
-      "forbidden_skills": [
-        "maintaining-project-context-and-handoff",
-        "building-project-visual-dashboards",
-        "governing-game-user-research-coverage",
-        "optimizing-ai-model-and-prompt-costs"
-      ],
-      "required_evidence": [
-        "checkpoint",
-        "완료 결과",
-        "차단 원인",
-        "다음 행동"
-      ],
+      "expected_skill_modes": ["initialize", "checkpoint", "partial-delivery", "resume", "close"],
+      "forbidden_skills": ["maintaining-project-context-and-handoff", "building-project-visual-dashboards", "governing-game-user-research-coverage", "optimizing-ai-model-and-prompt-costs"],
+      "required_evidence": ["checkpoint", "완료 결과", "차단 원인", "다음 행동"],
       "expected_user_decision_state": "NOT_REQUIRED",
       "rationale": "현재 실행 중인 장기 작업의 연속성 관리이며 프로젝트 단계 인수인계나 연구 coverage가 아니다."
     },
@@ -460,24 +207,9 @@
       "expected_work_mode": "PLAN",
       "expected_primary_skill": "governing-game-user-research-coverage",
       "expected_supporting_skills": [],
-      "expected_skill_modes": [
-        "install",
-        "audit",
-        "plan-evidence",
-        "verify-coverage"
-      ],
-      "forbidden_skills": [
-        "creating-user-learning-notes",
-        "building-project-visual-dashboards",
-        "designing-art-prompts-and-technique-cards",
-        "evaluating-godot-assets-and-plugins-before-creation"
-      ],
-      "required_evidence": [
-        "11영역",
-        "증거 상태",
-        "누락",
-        "다음 연구"
-      ],
+      "expected_skill_modes": ["install", "audit", "plan-evidence", "verify-coverage"],
+      "forbidden_skills": ["creating-user-learning-notes", "building-project-visual-dashboards", "designing-art-prompts-and-technique-cards", "evaluating-godot-assets-and-plugins-before-creation"],
+      "required_evidence": ["11영역", "증거 상태", "누락", "다음 연구"],
       "expected_user_decision_state": "NOT_REQUIRED",
       "rationale": "연구 영역의 구조와 증거 계획을 감사하는 작업이며 결과를 임의로 채우거나 시각 자산을 만드는 작업이 아니다."
     },
@@ -487,28 +219,10 @@
       "prompt": "프로젝트의 시스템 관계, 진행 상태, 위험과 다음 작업을 정본 경로와 갱신 시점을 표시한 편집 가능한 단일 HTML 현황판으로 만들어줘.",
       "expected_work_mode": "BUILD",
       "expected_primary_skill": "building-project-visual-dashboards",
-      "expected_supporting_skills": [
-        "reviewing-and-validating-project-changes"
-      ],
-      "expected_skill_modes": [
-        "frame",
-        "map-sources",
-        "build",
-        "bind-status",
-        "validate"
-      ],
-      "forbidden_skills": [
-        "auditing-canonical-reference-freshness",
-        "maintaining-long-running-task-continuity",
-        "managing-game-project-operating-system",
-        "managing-design-documents"
-      ],
-      "required_evidence": [
-        "정본 경로",
-        "상태",
-        "위험",
-        "편집"
-      ],
+      "expected_supporting_skills": ["reviewing-and-validating-project-changes"],
+      "expected_skill_modes": ["frame", "map-sources", "build", "bind-status", "validate"],
+      "forbidden_skills": ["auditing-canonical-reference-freshness", "maintaining-long-running-task-continuity", "managing-game-project-operating-system", "managing-design-documents"],
+      "required_evidence": ["정본 경로", "상태", "위험", "편집"],
       "expected_user_decision_state": "NOT_REQUIRED",
       "rationale": "정본을 대체하지 않는 시각 작업 공간 제작이며 운영체계 설치나 문서 발행이 주 책임이 아니다."
     },
@@ -518,65 +232,28 @@
       "prompt": "새 Godot 기능을 직접 만들기 전에 기본 기능과 공식 스토어, 제작자 GitHub 후보를 찾아 정확한 엔진 버전·라이선스·데이터 소유권·제거 가능성을 비교하고 격리 시험안을 제안해줘.",
       "expected_work_mode": "PLAN",
       "expected_primary_skill": "evaluating-godot-assets-and-plugins-before-creation",
-      "expected_supporting_skills": [
-        "reviewing-and-validating-project-changes"
-      ],
-      "expected_skill_modes": [
-        "frame-need",
-        "search",
-        "evaluate",
-        "trial-plan",
-        "adoption-decision"
-      ],
-      "forbidden_skills": [
-        "designing-art-prompts-and-technique-cards",
-        "orchestrating-deepseek-worktrees",
-        "optimizing-ai-model-and-prompt-costs",
-        "diagnosing-game-engine-runtime-failures"
-      ],
-      "required_evidence": [
-        "Godot 버전",
-        "라이선스",
-        "제거",
-        "TRIAL"
-      ],
+      "expected_supporting_skills": ["reviewing-and-validating-project-changes"],
+      "expected_skill_modes": ["frame-need", "search", "evaluate", "trial-plan", "adoption-decision"],
+      "forbidden_skills": ["designing-art-prompts-and-technique-cards", "orchestrating-deepseek-worktrees", "optimizing-ai-model-and-prompt-costs", "diagnosing-game-engine-runtime-failures"],
+      "required_evidence": ["Godot 버전", "라이선스", "제거", "TRIAL"],
       "expected_user_decision_state": "REQUIRED",
       "rationale": "직접 제작 전 제3자 자산 평가와 격리 시험 결정이며 이미지 프롬프트나 런타임 오류 수정이 아니다."
-    },
+    }
+,
     {
       "case_id": "SBE-033",
       "case_type": "positive",
       "prompt": "현재 구현된 전투 빌드와 공개 가능한 캡처가 있어. 신규 시청자에게 변화가 보이는 개발일지 한 편의 약속, 대본, 샷, 제목·썸네일 후보, 게시 전 검사와 데모 CTA 측정 계획을 묶어줘.",
       "expected_work_mode": "PLAN",
       "expected_primary_skill": "producing-game-development-youtube-videos",
-      "expected_supporting_skills": [
-        "managing-project-intake-and-work-contract",
-        "reviewing-and-validating-project-changes"
-      ],
-      "expected_skill_modes": [
-        "episode-concept",
-        "script-and-shot-plan",
-        "title-thumbnail-package",
-        "production-and-publish",
-        "analytics-review"
-      ],
-      "forbidden_skills": [
-        "analyzing-and-refining-game-concepts",
-        "building-project-visual-dashboards",
-        "creating-user-learning-notes",
-        "optimizing-ai-model-and-prompt-costs"
-      ],
-      "required_evidence": [
-        "실제 빌드",
-        "한 문장 약속",
-        "샷리스트",
-        "제목·썸네일 약속 일치",
-        "주 CTA",
-        "Analytics 사전 기준"
-      ],
+      "expected_supporting_skills": ["managing-project-intake-and-work-contract", "reviewing-and-validating-project-changes"],
+      "expected_skill_modes": ["episode-concept", "script-and-shot-plan", "title-thumbnail-package", "production-and-publish", "analytics-review"],
+      "forbidden_skills": ["analyzing-and-refining-game-concepts", "building-project-visual-dashboards", "creating-user-learning-notes", "optimizing-ai-model-and-prompt-costs"],
+      "required_evidence": ["실제 빌드", "한 문장 약속", "샷리스트", "제목·썸네일 약속 일치", "주 CTA", "Analytics 사전 기준"],
       "expected_user_decision_state": "REQUIRED",
       "rationale": "검증된 빌드를 영상 Packet과 게시·학습 루프로 변환하는 전용 제작 작업이다."
-    },
+    }
+,
     {
       "case_id": "SBE-034",
       "case_type": "negative",
@@ -584,26 +261,13 @@
       "expected_work_mode": "PLAN",
       "expected_primary_skill": "analyzing-and-refining-game-concepts",
       "expected_supporting_skills": [],
-      "expected_skill_modes": [
-        "system-design",
-        "difficulty-and-combat-ai"
-      ],
-      "forbidden_skills": [
-        "producing-game-development-youtube-videos",
-        "designing-art-prompts-and-technique-cards",
-        "building-project-visual-dashboards",
-        "creating-user-learning-notes"
-      ],
-      "required_evidence": [
-        "핵심 재미",
-        "회피 타이밍",
-        "공격 예고",
-        "공정성",
-        "검증 방법"
-      ],
+      "expected_skill_modes": ["system-design", "difficulty-and-combat-ai"],
+      "forbidden_skills": ["producing-game-development-youtube-videos", "designing-art-prompts-and-technique-cards", "building-project-visual-dashboards", "creating-user-learning-notes"],
+      "required_evidence": ["핵심 재미", "회피 타이밍", "공격 예고", "공정성", "검증 방법"],
       "expected_user_decision_state": "REQUIRED",
       "rationale": "영상 산출물이 없는 게임 시스템·난이도 설계이므로 YouTube 제작 Skill을 선택하지 않는다."
-    },
+    }
+,
     {
       "case_id": "SBE-035",
       "case_type": "boundary",
@@ -611,81 +275,37 @@
       "expected_work_mode": "PLAN",
       "expected_primary_skill": "designing-art-prompts-and-technique-cards",
       "expected_supporting_skills": [],
-      "expected_skill_modes": [
-        "final-visual-candidate",
-        "visual-qa-and-approval"
-      ],
-      "forbidden_skills": [
-        "producing-game-development-youtube-videos",
-        "analyzing-and-refining-game-concepts",
-        "designing-vertical-slices",
-        "building-project-visual-dashboards"
-      ],
-      "required_evidence": [
-        "승인된 캐릭터",
-        "화면비",
-        "유지 요소",
-        "변경 요소",
-        "시각 QA"
-      ],
+      "expected_skill_modes": ["final-visual-candidate", "visual-qa-and-approval"],
+      "forbidden_skills": ["producing-game-development-youtube-videos", "analyzing-and-refining-game-concepts", "designing-vertical-slices", "building-project-visual-dashboards"],
+      "required_evidence": ["승인된 캐릭터", "화면비", "유지 요소", "변경 요소", "시각 QA"],
       "expected_user_decision_state": "REQUIRED",
       "rationale": "영상 전체 전략이 아니라 승인된 썸네일 이미지 후보 제작만 요청했으므로 아트 Skill이 주 책임이다."
-    },
+    }
+,
     {
       "case_id": "SBE-036",
       "case_type": "cross-skill",
       "prompt": "아직 기획 단계인 온라인 기능을 이미 완성된 것처럼 제목에 넣고, 라이선스를 확인하지 않은 음악과 디버그 콘솔이 보이는 캡처로 오늘 바로 개발 영상을 공개해줘.",
       "expected_work_mode": "REVIEW",
       "expected_primary_skill": "producing-game-development-youtube-videos",
-      "expected_supporting_skills": [
-        "running-adversarial-review-and-refinement",
-        "reviewing-and-validating-project-changes"
-      ],
-      "expected_skill_modes": [
-        "title-thumbnail-package",
-        "production-and-publish"
-      ],
-      "forbidden_skills": [
-        "creating-user-learning-notes",
-        "building-project-visual-dashboards",
-        "optimizing-ai-model-and-prompt-costs",
-        "maintaining-long-running-task-continuity"
-      ],
-      "required_evidence": [
-        "BLOCKED_UNVERIFIED",
-        "RIGHTS_OR_RATING_UNVERIFIED",
-        "미구현 기능 과장",
-        "비밀·개인정보 검사",
-        "게시 차단"
-      ],
+      "expected_supporting_skills": ["running-adversarial-review-and-refinement", "reviewing-and-validating-project-changes"],
+      "expected_skill_modes": ["title-thumbnail-package", "production-and-publish"],
+      "forbidden_skills": ["creating-user-learning-notes", "building-project-visual-dashboards", "optimizing-ai-model-and-prompt-costs", "maintaining-long-running-task-continuity"],
+      "required_evidence": ["BLOCKED_UNVERIFIED", "RIGHTS_OR_RATING_UNVERIFIED", "미구현 기능 과장", "비밀·개인정보 검사", "게시 차단"],
       "expected_user_decision_state": "REQUIRED",
       "rationale": "영상 제작 요청이지만 실제 빌드·권리·보안 Gate를 위반하므로 게시 준비가 아니라 명시적 차단과 수정 계약이 필요하다."
-    },
+    }
+,
     {
       "case_id": "SBE-037",
       "case_type": "boundary",
       "prompt": "개발일지를 올린 지 두 시간이고 노출 40회에서 클릭률만 높아. 이 수치만으로 게임 수요가 검증됐는지 결론 내리고 다음 영상 전략을 정해줘.",
       "expected_work_mode": "REVIEW",
       "expected_primary_skill": "producing-game-development-youtube-videos",
-      "expected_supporting_skills": [
-        "reviewing-and-validating-project-changes"
-      ],
-      "expected_skill_modes": [
-        "analytics-review"
-      ],
-      "forbidden_skills": [
-        "governing-game-user-research-coverage",
-        "optimizing-ai-model-and-prompt-costs",
-        "creating-user-learning-notes",
-        "building-project-visual-dashboards"
-      ],
-      "required_evidence": [
-        "INSUFFICIENT_SAMPLE",
-        "CONVERSION_UNVERIFIED",
-        "관찰 기간",
-        "유입 맥락",
-        "하위 전환"
-      ],
+      "expected_supporting_skills": ["reviewing-and-validating-project-changes"],
+      "expected_skill_modes": ["analytics-review"],
+      "forbidden_skills": ["governing-game-user-research-coverage", "optimizing-ai-model-and-prompt-costs", "creating-user-learning-notes", "building-project-visual-dashboards"],
+      "required_evidence": ["INSUFFICIENT_SAMPLE", "CONVERSION_UNVERIFIED", "관찰 기간", "유입 맥락", "하위 전환"],
       "expected_user_decision_state": "NOT_REQUIRED",
       "rationale": "영상 Analytics 해석이 주 작업이며 작은 표본과 CTR 단독 근거로 게임 수요를 확정하지 않는다."
     },
