@@ -1,13 +1,13 @@
 # GPT–Codex 역할·구현 인계 정책
 
-이 문서는 Base를 사용하는 게임 프로젝트에서 GPT와 Codex의 책임, 사용자 요청 기반 인계, 선택적 Plan preflight, Godot 구현 패키지, GitHub 게시와 병합 자동화 경계를 정의하는 공용 정본이다.
+이 문서는 Base를 사용하는 게임 프로젝트에서 GPT와 Codex의 책임, 사용자 요청 기반 인계, `[연속작업]`의 동일 승인 범위 executor handoff, 선택적 Plan preflight, Godot 구현 패키지, GitHub 게시와 병합 자동화 경계를 정의하는 공용 정본이다.
 
 ## 1. 기본 원칙
 
 ```text
 GPT 평상시 작업
 → 기획·조사·설계·구현 보조·Godot POC/사전 제작 누적
-→ USER_REQUESTED_CODEX_HANDOFF
+→ USER_REQUESTED_CODEX_HANDOFF | CONTINUOUS_WORK_EXECUTOR_HANDOFF
 → GPT가 현재 의도·실제 상태·보호 범위·Acceptance Criteria를 실행 명세로 압축
 → Codex가 실제 GitHub 저장소·프로젝트 파일·Godot 상태를 직접 재조사
 → 필요할 때만 CODEX_PREFLIGHT_OPTIONAL 읽기 전용 Plan
@@ -16,9 +16,15 @@ GPT 평상시 작업
 → 필수 게이트 통과 시 담당 에이전트가 허용된 방식으로 즉시 병합
 ```
 
-이 기본 흐름의 상태 이름은 `ON_DEMAND_CODEX_HANDOFF`다. Codex 사용은 모든 작업의 의무 단계가 아니라 사용자가 “Codex로 넘기자”, “Codex 작업 명세 만들어줘”, “Codex에서 점검·개선하자”처럼 전환을 요청한 시점의 집중 구현·통합·검증 단계다.
+기본 흐름의 상태 이름은 `ON_DEMAND_CODEX_HANDOFF`다. 일반 요청에서 Codex 사용은 모든 작업의 의무 단계가 아니며 사용자가 “Codex로 넘기자”, “Codex 작업 명세 만들어줘”, “Codex에서 점검·개선하자”처럼 전환을 요청한 시점의 집중 구현·통합·검증 단계다.
+
+예외적으로 `CONTINUOUS_WORK_ACTIVE`에서 **현재 승인된 task를 완료하는 데 필요한 실행 권위를 현재 worker가 갖고 있지 않고, 동일 권위·보호 범위를 지키는 callable executor가 존재하면** `[연속작업] 진행해`를 그 동일 승인 범위의 `CONTINUOUS_WORK_EXECUTOR_HANDOFF` 요청으로 재사용한다. 이 경우 `Codex로 넘길까요?` 같은 재승인 질문을 만들지 않는다. 이는 새 제품 범위나 새 사용자 결정을 승인하는 규칙이 아니라 이미 승인된 결과를 수행하기 위한 executor 선택이다.
+
+실제 Codex/agent/executor 호출 경로가 현재 환경에 없으면 호출했다고 주장하지 않는다. executor-ready handoff/checkpoint를 준비하고 해당 task만 `DEFERRED_EXTERNAL_EXECUTOR`로 두며, 승인 범위 안의 다른 독립 `ready_tasks`가 있으면 계속 수행한다.
 
 `GPT_GODOT_PREPRODUCTION_ALLOWED`: GPT는 기획만 담당하는 문서 전용 역할로 제한되지 않는다. 현재 도구와 승인 범위 안에서 Scene·Node·Resource/Data 구조 설계, GDScript 초안·구현 보조, HiGodot 기반 국소 구현, POC와 직접 플레이를 통한 재설계까지 진행할 수 있다. 다만 실제로 실행하지 않은 Godot 런타임·렌더·빌드·테스트를 완료로 보고하지 않는다.
+
+프로젝트가 HiGodot를 persistent Godot authoring의 단일 권위로 선언했다면 executor handoff도 그 권위를 보존해야 한다. 현재 ChatGPT 세션에 HiGodot가 없다는 이유로 GitHub API나 일반 텍스트 편집을 authoring 우회 경로로 사용하지 않는다. Codex가 호출 가능하더라도 프로젝트의 HiGodot 권위 계약을 따를 수 없는 방식이면 그 authoring task를 수행할 권한이 없다.
 
 Codex는 GPT의 하위 단순 실행기가 아니다. 인계 명세는 의도와 예상 상태를 전달하지만 **실제 구현 사실의 source of truth는 현재 GitHub 저장소, 프로젝트 파일, Godot 프로젝트 상태와 실행 증거**다. 명세와 실제가 충돌하면 Codex는 임의로 덮어쓰지 않고 원인·영향·가장 안전한 개선안을 보고한다.
 
@@ -41,7 +47,7 @@ GPT는 평상시 작업과 Codex 인계 준비를 담당한다.
 - HTML·Python 기반 기획·검증·발행 도구
 - GitHub Actions, 정적 검사, PDF·Manifest
 - 기획 Branch·Issue·PR와 필요 시 마스터 구현계획
-- `USER_REQUESTED_CODEX_HANDOFF` 시 Codex 실행 명세 작성
+- `USER_REQUESTED_CODEX_HANDOFF` 또는 `CONTINUOUS_WORK_EXECUTOR_HANDOFF` 시 Codex 실행 명세 작성
 - 선택적 Codex Plan 결과 검수와 구현 계약 갱신
 - Codex 구현 결과의 기획 일치·회귀·증거 검수
 - 자동 병합 적격성 판정과 Repository 설정 검증
@@ -50,7 +56,7 @@ Codex 실행 명세에는 최소한 다음을 포함한다.
 
 ```yaml
 handoff_mode: ON_DEMAND_CODEX_HANDOFF
-trigger: USER_REQUESTED_CODEX_HANDOFF
+trigger: USER_REQUESTED_CODEX_HANDOFF | CONTINUOUS_WORK_EXECUTOR_HANDOFF
 intent_and_current_behavior:
 actual_state_verification_required: true
 repositories_and_paths_to_inspect: []
@@ -230,7 +236,7 @@ L2 이상 또는 다중 패키지 작업에서 GPT가 관리한다.
 - `BLOCKED`: 권한·환경·선행 조건 차단
 - `UNVERIFIED`: 필수 증거 미확보
 
-GPT는 기술 구현과 승인 명세가 일치하고 자동·Godot 검증이 통과한 경우 다음 패키지를 준비할 수 있다. 사용자 체감·취향·코어·범위 판단은 사용자에게 반환한다.
+GPT는 기술 구현과 승인 명세가 일치하고 자동·Godot 검증이 통과한 경우 다음 패키지를 준비할 수 있다. 사용자 체감·취향·코어·범위 판단은 사용자에게 반환한다. `CONTINUOUS_WORK_ACTIVE`에서는 `BLOCKED`/`UNVERIFIED`가 국소 task 상태인지 먼저 분류하고 recovery/defer/continue 절차를 적용한 뒤 전역 중단 여부를 결정한다.
 
 ## 9. 병합 정책
 
@@ -309,7 +315,7 @@ L2 이상 다중 패키지 작업의 기본 구조:
 
 ## 12. 작업 중단과 반환
 
-다음은 구현을 중단하고 GPT 기획 단계로 반환한다.
+다음 상태가 발견되면 **즉시 전체 작업을 종료하는 대신 먼저 blocker recovery와 실행 경로 재평가**를 수행한다.
 
 - 실제 저장소가 승인 계약의 핵심 전제와 다름
 - 데이터·저장 호환성을 유지할 수 없음
@@ -318,11 +324,16 @@ L2 이상 다중 패키지 작업의 기본 구조:
 - 패키지 독립 검증이 불가능함
 - 사용자 기존 변경과 충돌하며 안전한 보존 경로가 없음
 
+`CONTINUOUS_WORK_ACTIVE`이면 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`에 따라 recoverable verification, alternate evidence, authorized executor, local defer, independent ready task 순으로 처리한다. 현재 worker에 필요한 실행 권위가 없지만 callable authorized executor가 있으면 `CONTINUOUS_WORK_EXECUTOR_HANDOFF`를 사용한다. executor가 실제로 호출 불가능하면 handoff를 준비한 뒤 해당 task만 defer한다.
+
+프로젝트 코어·플레이 규칙·저장 호환성처럼 승인된 결과 자체를 바꿔야 하고 다른 독립 작업도 남지 않은 경우에만 GPT 기획 단계의 실제 사용자 결정으로 반환한다.
+
 ## 13. 완료 조건
 
 - GPT 평상시 단계에서 필요한 기획·설계·POC가 현재 범위에 맞게 진행됐다.
-- `USER_REQUESTED_CODEX_HANDOFF`이면 실행 명세가 현재 의도·보호 범위·Acceptance Criteria를 전달한다.
-- Codex가 실제 저장소·프로젝트·Godot 상태를 직접 확인했다.
+- `USER_REQUESTED_CODEX_HANDOFF` 또는 `CONTINUOUS_WORK_EXECUTOR_HANDOFF`이면 실행 명세가 현재 의도·보호 범위·Acceptance Criteria를 전달한다.
+- 실제 Codex/executor 호출이 수행된 경우에만 실행 완료로 보고했다.
+- Codex가 실행된 경우 실제 저장소·프로젝트·Godot 상태를 직접 확인했다.
 - `CODEX_PREFLIGHT_OPTIONAL`을 사용한 경우 Plan 보고서가 최신 실제 저장소를 근거로 한다.
 - 구현이 지정 Branch와 승인 범위에 한정됐다.
 - 기술 개선과 기획 변경이 구분됐다.

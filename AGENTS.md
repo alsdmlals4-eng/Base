@@ -67,7 +67,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - `Grill Me alignment gate` 또는 유효한 기존 승인 근거가 없으면 `AWAITING_USER_CONFIRMATION`을 유지하고 구현·Codex 인계·외부 AI 위임·제품 변경으로 진행하지 않는다.
 - 프로젝트 코어, 플레이어 경험, 주요 UX, 콘텐츠 의미, 비용·범위를 바꾸는 충돌만 사용자 결정으로 올린다. 저장소·정본·테스트로 판단 가능한 오류나 누락을 사용자에게 전가하지 않는다.
 - 사용자 확인 전 실행 계약을 확정하거나 구현하지 않는다. 사용자가 승인한 범위에서는 단계별 구현·검증·적대적 재검토를 끝까지 수행한다.
-- 사용자가 `[연속작업] 진행해`라고 명시하면 현재 승인된 작업 계약 안에서 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`를 적용한다. `작업 → 적대적 검토 → 범위 안의 기술적 권장안 자동 승인 → 최소 반영·회귀 검증 → 다음 미완료 작업`을 반복하되 `USER_DECISION_REQUIRED`, `BLOCKED_UNVERIFIED`, 범위 확대, 고위험 외부 행위, 사용자 중지에서는 자동 승인하지 않는다. 트리거가 없으면 기존 승인 흐름을 유지한다.
+- 사용자가 `[연속작업] 진행해`라고 명시하면 현재 승인된 작업 계약 안에서 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`를 적용한다. `작업 → 적대적 검토 → 범위 안의 기술적 권장안 자동 승인 → 최소 반영·회귀 검증 → blocker recovery → 다음 ready task`를 반복한다. `BLOCKED_UNVERIFIED`·현재 세션 도구 부재·일시적 증거 전송 실패는 그 자체로 전역 종료가 아니며, **recover first → defer locally → continue independent work → stop globally last** 순서로 처리한다. 진짜 `USER_DECISION_REQUIRED`, 고위험 외부 행위, 범위 확대는 자동 승인하지 않되 독립 작업이 남아 있으면 해당 task만 보류한다. 트리거가 없으면 기존 승인 흐름을 유지한다.
 - 상세 라우팅·권한 전환·리뷰·GPT→Codex·병합 절차는 `docs/WORK_MODE_AND_SKILL_ROUTING.md`를 따른다.
 
 금지:

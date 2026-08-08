@@ -96,19 +96,21 @@ Base START_HERE
 
 ```text
 현재 승인된 작업 계약
-→ 다음 미완료 작업
+→ ready task 수행
 → BUILD
 → REVIEW: attack → validate-critique
-→ 범위 안의 기술적 단일 최소 안전 권장안
-→ 자동 승인 간주
+→ 범위 안의 기술적 단일 최소 안전 권장안은 자동 승인 간주
 → BUILD 최소 반영
 → REVIEW: regression-recheck
-→ 다음 미완료 작업
-→ 반복
-→ 전체 완료 후 최종 보고
+→ blocker면 recovery ladder
+→ 당장 못 풀리는 국소 task는 defer
+→ 독립 ready task 계속
+→ 상태 변화 뒤 deferred task 재평가
+→ 완료 또는 GLOBAL_TERMINAL_BLOCKER까지 반복
+→ 최종 보고
 ```
 
-트리거가 없으면 `CONTINUOUS_WORK_INACTIVE`이며 기존 승인·Grill Me 흐름을 유지한다. `USER_DECISION_REQUIRED`, `BLOCKED_UNVERIFIED`, 범위 확대, 결제·계정 삭제·보안/권한 확대 등 고위험 외부 행위, 사용자 중지·범위 변경에서는 자동 승인하지 않고 루프를 중지한다. 이 계약은 현재 응답·실행 세션 안의 orchestration이며 scheduler·webhook·백그라운드 실행이나 다른 채팅 자동 메시지 전달을 의미하지 않는다.
+트리거가 없으면 `CONTINUOUS_WORK_INACTIVE`이며 기존 승인·Grill Me 흐름을 유지한다. `BLOCKED_UNVERIFIED`, 현재 세션의 도구 부재, 일시적 evidence transport failure는 그 자체로 전체 루프를 중지하지 않는다. 먼저 재조회·대체 authoritative evidence·authorized alternate executor를 시도하고, 당장 해결되지 않으면 해당 task만 defer한 뒤 독립 작업을 계속한다. 진짜 `USER_DECISION_REQUIRED`, 범위 확대, 결제·계정 삭제·보안/권한 확대 등 고위험 외부 행위는 자동 승인하지 않지만 다른 독립 작업이 남아 있으면 해당 task만 보류한다. recovery path를 소진했고 실행 가능한 독립 task가 없을 때만 `GLOBAL_TERMINAL_BLOCKER`로 전역 중지한다. 이 계약은 현재 응답·실행 세션 안의 orchestration이며 scheduler·webhook·백그라운드 실행이나 다른 채팅 자동 메시지 전달을 의미하지 않는다.
 
 ### 5. Active Skill Registry View
 
