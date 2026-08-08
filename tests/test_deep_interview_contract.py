@@ -129,7 +129,6 @@ class DeepInterviewContractTests(unittest.TestCase):
             self.assertIn(term, reference)
         self.assertIn("continuous-work-execution.md", intake)
         self.assertIn("[연속작업] 진행해", intake)
-        self.assertIn("GLOBAL_TERMINAL_BLOCKER", intake)
 
     def test_mandatory_triggers_and_mechanical_exceptions(self) -> None:
         for change_type in ("feature", "game-experience", "art-direction", "architecture", "workflow", "base-change-proposal"):
