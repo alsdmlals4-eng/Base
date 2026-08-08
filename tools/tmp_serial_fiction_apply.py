@@ -1,0 +1,257 @@
+from __future__ import annotations
+
+import importlib.util
+import json
+import subprocess
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SKILL_ID = "developing-and-revising-serial-fiction"
+TEST_PATH = "tests/test_serial_fiction_discipline.py"
+
+
+def read(path: str) -> str:
+    return (ROOT / path).read_text(encoding="utf-8")
+
+
+def write(path: str, text: str) -> None:
+    (ROOT / path).write_text(text, encoding="utf-8")
+
+
+def append_once(path: str, marker: str, block: str) -> None:
+    text = read(path)
+    if marker not in text:
+        if not text.endswith("\n"):
+            text += "\n"
+        text += "\n" + block.strip() + "\n"
+        write(path, text)
+
+
+def main() -> None:
+    # Align the RED test with Base's real merged behavior-eval schema.
+    test_path = ROOT / TEST_PATH
+    test = test_path.read_text(encoding="utf-8")
+    old = '''        self.assertTrue(\n            any(\n                case.get("target_skill") == SKILL_ID\n                and case.get("expected_selected") is False\n                for case in coverage["cases"]\n            )\n        )'''
+    new = '''        combined_cases = primary["cases"] + coverage["cases"]\n        self.assertTrue(\n            any(SKILL_ID in case.get("forbidden_skills", []) for case in combined_cases)\n        )'''
+    if old in test:
+        test = test.replace(old, new)
+    test_path.write_text(test, encoding="utf-8")
+
+    registry_path = ROOT / "skills/SKILL_REGISTRY.json"
+    registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    if not any(item.get("skill_id") == SKILL_ID for item in registry["skills"]):
+        registry["skills"].append(
+            {
+                "skill_id": SKILL_ID,
+                "layer": "specialist",
+                "discipline": "serial-fiction-writing-and-revision",
+                "path": f"skills/{SKILL_ID}/SKILL.md",
+                "status": "ACTIVE",
+                "load_by_default": False,
+                "trigger_tags": [
+                    "serial-fiction",
+                    "webnovel",
+                    "novel-writing",
+                    "fiction-revision",
+                    "adaptation",
+                    "pov",
+                    "character-voice",
+                    "episode-pacing",
+                    "setup-payoff",
+                    "reader-feedback",
+                ],
+                "use_when": [
+                    "serial-fiction 또는 webnovel의 정본·각색 경계, 아크·회차 설계, POV·character voice, 장면 원고, episode pacing·payoff, setup-payoff debt, reader-feedback 기반 퇴고가 품질에 직접 영향을 줄 때 사용한다."
+                ],
+                "do_not_use_when": [
+                    "proofreading-only 짧은 교정, game-system-design, marketing-copy, 단순 요약·번역, 또는 다른 작가의 식별 가능한 style-imitation이 주 작업이다."
+                ],
+                "learning_log": f"skills/{SKILL_ID}/LEARNING_LOG.md",
+                "review_triggers": [
+                    "정본 결과 변경",
+                    "POV 정보 경계 붕괴",
+                    "회차 분량만 증량",
+                    "local payoff 누락",
+                    "미스터리와 불가독성 혼동",
+                    "반복 구조 무변주",
+                    "후폭풍 초기화",
+                    "setup-payoff 부채 방치",
+                    "댓글을 정본으로 승격",
+                    "현역 작가 표현 모사",
+                    "framework overfit",
+                    "stale platform character-count assumption",
+                ],
+                "last_reviewed_at": "2026-08-08",
+                "last_reviewed_commit": "eee98a930219065e30b4d7d14d99d5ac7db44c60",
+                "knowledge_state": "HYPOTHESIS",
+            }
+        )
+    registry_path.write_text(
+        json.dumps(registry, ensure_ascii=False, separators=(",", ":")) + "\n",
+        encoding="utf-8",
+    )
+
+    coverage_path = ROOT / "skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json"
+    coverage = json.loads(coverage_path.read_text(encoding="utf-8"))
+    ids = {case.get("case_id") for case in coverage["cases"]}
+    if "SBE-950" not in ids:
+        coverage["cases"].append(
+            {
+                "case_id": "SBE-950",
+                "case_type": "positive",
+                "prompt": "원본 TRPG 사건 결과는 보존하면서 이 웹소설 회차를 2차 퇴고해줘. POV 목소리, 회차 보상, 복선 회수와 다음 화 흡입력도 같이 점검해줘.",
+                "expected_work_mode": "BUILD",
+                "expected_primary_skill": SKILL_ID,
+                "expected_supporting_skills": [],
+                "expected_skill_modes": [
+                    "canon-and-continuity",
+                    "pov-and-character-voice",
+                    "draft-and-prose",
+                    "serial-pacing-and-payoff",
+                ],
+                "forbidden_skills": [
+                    "analyzing-and-refining-game-concepts",
+                    "producing-game-development-youtube-videos",
+                    "designing-art-prompts-and-technique-cards",
+                ],
+                "required_evidence": ["정본", "POV", "Episode Value", "복선"],
+                "expected_user_decision_state": "NOT_REQUIRED",
+                "rationale": "보호된 원작 결과를 유지하면서 연재소설 고유의 POV·장면·회차 payoff·복선 부채를 퇴고하는 specialist 작업이다.",
+            }
+        )
+    if "SBE-951" not in ids:
+        coverage["cases"].append(
+            {
+                "case_id": "SBE-951",
+                "case_type": "boundary",
+                "prompt": "이 전투 시스템의 DPS와 적 AI 난이도를 설계하고 공격 예고와 위협 예산이 공정한지 검증해줘.",
+                "expected_work_mode": "PLAN",
+                "expected_primary_skill": "analyzing-and-refining-game-concepts",
+                "expected_supporting_skills": [],
+                "expected_skill_modes": ["system-design", "difficulty-and-combat-ai"],
+                "forbidden_skills": [SKILL_ID, "producing-game-development-youtube-videos"],
+                "required_evidence": ["DPS", "AI", "공정성", "위협"],
+                "expected_user_decision_state": "DEFERRED",
+                "rationale": "게임 시스템·난이도·전투 AI가 주 책임이며 소설 집필·퇴고 Skill을 선택하면 안 된다.",
+            }
+        )
+    coverage_path.write_text(
+        json.dumps(coverage, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+
+    evidence_path = ROOT / "skills/SKILL_IMPLEMENTATION_EVIDENCE.json"
+    evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+    if not any(item.get("skill_id") == SKILL_ID for item in evidence["entries"]):
+        evidence["entries"].append(
+            {
+                "skill_id": SKILL_ID,
+                "evidence": [
+                    {"kind": "TEST", "path": TEST_PATH},
+                    {"kind": "CONTRACT", "path": f"skills/{SKILL_ID}/SKILL.md"},
+                    {
+                        "kind": "CONTRACT",
+                        "path": "docs/knowledge/serial-fiction/SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md",
+                    },
+                ],
+            }
+        )
+    evidence_path.write_text(
+        json.dumps(evidence, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+
+    freshness_path = ROOT / ".github/reference-freshness.json"
+    freshness = json.loads(freshness_path.read_text(encoding="utf-8"))
+    for rule in freshness.get("coupled_change_rules", []):
+        if rule.get("name") in {
+            "local-skill-contract-learning-test-sync",
+            "skill-identity-registry-sync",
+            "skill-description-learning-test-sync",
+        }:
+            options = rule.setdefault("require_any_changed", [])
+            if TEST_PATH not in options:
+                options.append(TEST_PATH)
+    freshness_path.write_text(
+        json.dumps(freshness, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+
+    start_path = ROOT / "START_HERE.md"
+    start = start_path.read_text(encoding="utf-8")
+    route = "| 소설·웹소설·연재소설 기획·각색·원고 퇴고·POV·회차 pacing·독자 반응 진단 | `developing-and-revising-serial-fiction` | `skills/developing-and-revising-serial-fiction/SKILL.md` + `docs/knowledge/serial-fiction/README.md` |"
+    marker = "| 핵심 컨셉·DDD·벤치마크·플레이테스트·PoC | `analyzing-and-refining-game-concepts` | `skills/analyzing-and-refining-game-concepts/SKILL.md` |"
+    if SKILL_ID not in start:
+        if marker not in start:
+            raise RuntimeError("START_HERE route marker not found")
+        start = start.replace(marker, marker + "\n" + route, 1)
+        start_path.write_text(start, encoding="utf-8")
+
+    operating_path = ROOT / "docs/OPERATING_MODEL.md"
+    operating = operating_path.read_text(encoding="utf-8")
+    row = "| 연재소설·웹소설 정본·아크·회차·POV·문체·집필·퇴고·복선·독자 반응 Evidence | `developing-and-revising-serial-fiction` |"
+    marker = "| 핵심 컨셉·DDD·벤치마크·플레이어 반응·플레이테스트·PoC·재조정 | `analyzing-and-refining-game-concepts` |"
+    if SKILL_ID not in operating:
+        if marker not in operating:
+            raise RuntimeError("OPERATING_MODEL responsibility marker not found")
+        operating = operating.replace(marker, marker + "\n" + row, 1)
+        operating_path.write_text(operating, encoding="utf-8")
+
+    append_once(
+        "docs/DOCUMENTATION_MAP.md",
+        "## 연재소설 공용 책임",
+        """## 연재소설 공용 책임
+
+| 구분 | 파일 | 책임 |
+|---|---|---|
+| 연재소설 Knowledge Hub | `docs/knowledge/serial-fiction/README.md` | 웹소설·연재소설 공용 작법·회차·독자 Evidence Guide 라우팅; 프로젝트 고유 정본·고정 POV 수·장르 비율·플랫폼별 생산 목표는 소유하지 않음 |
+| 연재소설 실행 Skill | `skills/developing-and-revising-serial-fiction/SKILL.md` | 정본·각색 경계, 아크·회차, POV·voice, 장면 집필·퇴고, pacing·payoff, setup-payoff debt, reader-feedback revision |
+
+플랫폼 글자 수·과금·연재 규칙은 가변 외부 사실이므로 적용 시 공식 원본을 재검증하며, 오래된 숫자를 Base universal 규칙으로 고정하지 않는다.""",
+    )
+
+    append_once(
+        "docs/CHANGELOG.md",
+        "BCP-2026-009 serial-fiction discipline implementation",
+        """## 2026-08-08 — BCP-2026-009 serial-fiction discipline implementation
+
+- `developing-and-revising-serial-fiction` specialist를 추가해 연재소설의 정본·아크·회차·POV·장면 집필·퇴고·pacing/payoff·reader-feedback diagnosis를 독립 책임으로 등록했다.
+- `docs/knowledge/serial-fiction/`에 공용 작법, 회차 pacing/payoff, benchmark/reader-feedback Evidence Guide를 추가했다.
+- 인기작의 공통 문체, universal 글자 수, 모든 장면 동일 공식, 댓글-as-canon을 기각하고 Reader Promise, Episode Value, Local Payoff + Open Loop, Information Legibility, Pattern Variation, Consequence Memory, Setup–Payoff Debt를 공용 Gate로 채택했다.
+- released v9.0 lock/snapshot/plugin payload는 변경하지 않는다.
+- 실제 프로젝트 독자 품질은 `PROJECT_PILOT_NOT_RUN` / `HUMAN_NOT_RUN` 상태로 남긴다.
+
+<!-- BCP-2026-009 serial-fiction discipline implementation -->""",
+    )
+
+    append_once(
+        "skills/SKILL_LEARNING_LOG.md",
+        "BCP-2026-009 — developing-and-revising-serial-fiction",
+        """## 2026-08-08 — BCP-2026-009 — developing-and-revising-serial-fiction
+
+- 새 specialist가 필요한 이유: 게임 기획과 benchmark 활동은 일부 공유하지만 소설은 정본·POV·voice·회차 payoff·setup-payoff·원고 diff라는 독립 입력·산출물·Quality Bar를 가진다.
+- 통합하지 않은 책임: 적대적 검토, 정본 발행, 게임 시스템 기획, 단순 proofreading, 마케팅 카피.
+- 반례 학습: 성공작끼리 문체·정보량·속도·개그 강도가 상반되므로 인기작 표면 스타일을 Base 규칙으로 만들지 않는다.
+- 증거 상한: Skill/Registry/behavior 계약은 검증 가능하지만 실제 독자 만족·판매 개선은 `PROJECT_PILOT_NOT_RUN`, `HUMAN_NOT_RUN`, `NOT_RUN`이다.
+""",
+    )
+
+    # Rebuild only current derivatives; released v9.0 outputs remain untouched.
+    spec = importlib.util.spec_from_file_location(
+        "base_builder", ROOT / "tools/build_base_v9_artifacts.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    _, skills = module.load_active_skills()
+    registry_hash = module.sha256_normalized_text_file(registry_path)
+    (ROOT / "docs/generated/BASE_ACTIVE_SKILLS.md").write_text(
+        module.generated_summary(skills, registry_hash), encoding="utf-8"
+    )
+
+    subprocess.run(
+        ["python", "tools/build_skill_implementation_evidence.py"],
+        cwd=ROOT,
+        check=True,
+    )
+
+
+if __name__ == "__main__":
+    main()
