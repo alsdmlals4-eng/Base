@@ -4,13 +4,15 @@
 
 - 제안 ID: `BCP-2026-009-serial-fiction-writing-and-revision-discipline`
 - 출처 프로젝트: 《폭풍의 눈》 TRPG 로그 기반 한국어 웹소설 각색
-- Base 기준 커밋: `fa69a77a14f923a756064f6ae151d34cadb374f7`
+- Base 최초 제안 기준 커밋: `fa69a77a14f923a756064f6ae151d34cadb374f7`
+- 제안 병합 커밋: `3a60faf8905e83b48b0cdbd48fa6c2f876a24187`
 - 제출일: `2026-08-08`
-- 상태: `SUBMITTED`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 지식 상태: `HYPOTHESIS_TO_PATTERN_CANDIDATE`
 - 설계: `DESIGN.md`
 - 벤치마크·적대 검토: `evidence/BENCHMARK_AND_ADVERSARIAL_REVIEW.md`
-- 구현 PR: `null` — 제안 PR과 분리한다.
+- 승인 근거: 이 문서의 `승인과 구현` 절에 보존한 2026-08-08 사용자 지시
+- 구현 PR: `null` — 별도 구현 PR에서 연결한다.
 
 `BCP-2026-008`은 현재 main Registry에는 없지만 과거 미병합 PR #190에서 사용된 식별자이므로 이력을 재사용하지 않고 009를 사용한다.
 
@@ -141,7 +143,7 @@ Story Grid, Save the Cat, Story Circle 등은 진단 Lens로 유용하지만 휴
 
 ## 영향 범위와 검증
 
-승인 후보 구현 범위:
+승인된 구현 범위:
 
 1. 새 ACTIVE Skill `developing-and-revising-serial-fiction` 1개
 2. 최소 Knowledge Hub 4개 파일
@@ -185,12 +187,14 @@ Base 정적 구현만으로 실제 판매 증가, 독자 만족도 향상, 사�
 
 ## 승인과 구현
 
-사용자는 2026-08-08 현재 대화에서 직전 제안된 `소설 전담 Skill 1개 + Knowledge/검수 기준 + BCP` 방향에 대해 다음과 같이 명시했다.
+2026-08-08 사용자 지시:
 
 > “좋아 지금 작법서 학습을 먼저 진행하자. … 참고해서 적대적 검토루프로 학습을 진행한 후에 네가 말한대로 스킬 추가,BCP설계,작법 기준 작성을 진행해”
 
-이 문구는 구현 방향에 대한 사용자 승인 의사 증거로 보존한다. 다만 Base의 proposal checker는 **신규 제안이 반드시 `SUBMITTED`에서 시작**하도록 강제하므로 이 제안 PR에서는 상태를 승격하지 않는다. 제안 병합 뒤 별도 lifecycle 변경에서 `APPROVED_FOR_IMPLEMENTATION`과 재현 가능한 `approval_ref`를 기록한 뒤 구현한다.
+이 문구는 직전 제안된 `소설 전담 Skill 1개 + Knowledge/검수 기준 + BCP` 구현 방향을 명시적으로 승인한 근거다. 제안 PR #223이 `SUBMITTED` 상태로 먼저 병합된 뒤, 이 lifecycle 변경에서 상태를 `APPROVED_FOR_IMPLEMENTATION`으로 승격한다.
+
+Registry의 `approval_ref`는 이 문서의 `#승인과-구현` 앵커를 사용해 사용자의 승인 문구가 저장소에서 재현 가능하도록 한다. 이는 외부 GitHub 댓글을 가장하는 값이 아니라, 프로젝트 대화에서 받은 승인 지시를 BCP 자체에 보존한 내부 approval evidence다.
 
 동일 승인 범위는 `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`를 따르되 새 범위·새 사용자 결정·P0/P1·검증 실패는 자동 승인으로 간주하지 않는다.
 
-롤백은 제안 단계에서 이 BCP 디렉터리와 Registry 항목만 되돌리면 된다. 실제 Skill 구현은 별도 PR에서 독립적으로 롤백 가능해야 한다.
+구현은 이 lifecycle 변경이 병합된 뒤 최신 `main`에서 별도 PR로 시작한다. 롤백은 BCP 상태와 Registry의 approval_ref를 함께 `SUBMITTED/null`로 되돌리면 된다.
