@@ -5,10 +5,12 @@
 - 제안 ID: `BCP-2026-010-continuous-work-execution-trigger`
 - 출처 프로젝트: `alsdmlals4-eng/Base`
 - Base 기준 커밋: `a912cc001ff4d4e3415fb4b4931723c49eb08d9a`
+- 제안 병합 커밋: `960e5991b85f9553d43a9c0516c91e83286a9c5f`
 - 제출일: `2026-08-08`
-- 상태: `SUBMITTED`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 기존 해법 판정: `ABSORB`
-- 구현 PR: 구현 승인 뒤 별도 기록
+- 승인 근거: 이 문서의 `승인과 구현` 절에 보존한 2026-08-08 사용자 지시
+- 구현 PR: 구현 후 기록
 
 ## 관찰과 증거
 
@@ -133,7 +135,7 @@ Base에는 이미 다음 책임이 있다.
 
 ## 승인과 구현
 
-2026-08-08 사용자는 다음 흐름을 Base에 넣는 의사를 명시했다.
+2026-08-08 사용자는 다음 흐름을 Base에 넣는 것을 명시적으로 승인했다.
 
 > 작업 완료 → 적대적 검토 → 권장안 결정 → 자동 승인 처리 → 다음 작업 → … → 최종 보고
 
@@ -141,4 +143,4 @@ Base에는 이미 다음 책임이 있다.
 
 > 내가 해당 채팅에서 `[연속작업] 진행해` 라고 하면 연속작업 실행루프가 진행되게 하는걸로 만들어줘
 
-이 사용자 지시는 후속 승인 단계의 근거로 보존한다. BCP 생명주기 규칙에 따라 신규 제안 PR 자체는 `SUBMITTED`로 시작하며, 제안 병합 뒤 별도 승인 PR에서 `APPROVED_FOR_IMPLEMENTATION`과 `approval_ref`를 기록한다.
+이 사용자 지시는 본 BCP의 구현 승인 근거다. 따라서 상태를 `APPROVED_FOR_IMPLEMENTATION`으로 전환하며, 승인된 범위의 구현·검증·PR은 `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`에 따라 추가 재승인 없이 진행한다.
