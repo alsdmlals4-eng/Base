@@ -51,7 +51,7 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             self.assertIn("DEFERRED_EXTERNAL_EXECUTOR", text)
         for term in (
             "Codex로 넘길까요?",
-            "현재 세션",
+            "현재 ChatGPT 세션",
             "HiGodot",
             "실제로",
         ):
