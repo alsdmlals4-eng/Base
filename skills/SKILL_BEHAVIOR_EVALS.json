@@ -512,6 +512,33 @@
       ],
       "expected_user_decision_state": "DEFERRED",
       "rationale": "Web 소스 코드를 Godot에 직접 설치하는 요청은 UI 미감 작업이 아니라 외부 코드·플러그인 적합성 Gate가 먼저이며 기본 설치를 거부한다."
+    },
+    {
+      "case_id": "SBE-950",
+      "case_type": "positive",
+      "prompt": "원본 TRPG 사건 결과는 보존하면서 이 웹소설 회차를 2차 퇴고해줘. POV 목소리, 회차 보상, 복선 회수와 다음 화 흡입력도 같이 점검해줘.",
+      "expected_work_mode": "BUILD",
+      "expected_primary_skill": "developing-and-revising-serial-fiction",
+      "expected_supporting_skills": [],
+      "expected_skill_modes": [
+        "canon-and-continuity",
+        "pov-and-character-voice",
+        "draft-and-prose",
+        "serial-pacing-and-payoff"
+      ],
+      "forbidden_skills": [
+        "analyzing-and-refining-game-concepts",
+        "producing-game-development-youtube-videos",
+        "designing-art-prompts-and-technique-cards"
+      ],
+      "required_evidence": [
+        "정본",
+        "POV",
+        "Episode Value",
+        "복선"
+      ],
+      "expected_user_decision_state": "NOT_REQUIRED",
+      "rationale": "보호된 원작 결과를 유지하면서 연재소설 고유의 POV·장면·회차 payoff·복선 부채를 퇴고하는 specialist 작업이다."
     }
   ]
 }
