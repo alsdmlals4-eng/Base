@@ -104,12 +104,9 @@ class SerialFictionDisciplineContractTests(unittest.TestCase):
         self.assertTrue(
             any(case.get("expected_primary_skill") == SKILL_ID for case in primary["cases"])
         )
+        combined_cases = primary["cases"] + coverage["cases"]
         self.assertTrue(
-            any(
-                case.get("target_skill") == SKILL_ID
-                and case.get("expected_selected") is False
-                for case in coverage["cases"]
-            )
+            any(SKILL_ID in case.get("forbidden_skills", []) for case in combined_cases)
         )
 
     def test_frozen_v9_release_artifacts_remain_frozen(self) -> None:

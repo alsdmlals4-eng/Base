@@ -1,7 +1,7 @@
 # Base Skill Implementation Evidence
 
 > Generated from `skills/SKILL_REGISTRY.json`, behavior evaluation sets, and `skills/SKILL_IMPLEMENTATION_EVIDENCE.json`. Do not edit this derivative.
-> Active Skill count: `29`
+> Active Skill count: `30`
 > External model behavior run: `NOT_RUN`
 
 `EXECUTABLE_EVIDENCE` means a repository test, tool, workflow, or package script is linked. It does not mean that evidence passed on the current commit. `CONTRACT_EVIDENCE` means only a contract or documentation consumer is linked. Actual model, runtime, device, and human validation remain separate.
@@ -37,3 +37,4 @@
 | `governing-legacy-retention-and-archives` | knowledge-governance-and-archives | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_skill_system_coverage.py`<br>TOOL: `templates/project-operations/github/check_archive_governance.py` |
 | `evaluating-godot-assets-and-plugins-before-creation` | godot-asset-and-plugin-evaluation | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_base_shared_skill_routes.py` |
 | `optimizing-ai-model-and-prompt-costs` | ai-model-cost-operations | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_skill_system_coverage.py` |
+| `developing-and-revising-serial-fiction` | serial-fiction-writing-and-revision | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_serial_fiction_discipline.py`<br>CONTRACT: `skills/developing-and-revising-serial-fiction/SKILL.md`<br>CONTRACT: `docs/knowledge/serial-fiction/SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md` |

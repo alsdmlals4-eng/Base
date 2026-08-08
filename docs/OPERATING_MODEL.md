@@ -151,6 +151,7 @@ UX/UI design, 폴리싱, and runtime-result audit use `auditing-and-refining-ui-
 | 프로젝트 스킬 생성·통합·학습 | `evolving-project-discipline-skills` |
 | 현재 상태·다음 작업·위험 압축·사용자 요청 기반 Codex 실행 명세 | `maintaining-project-context-and-handoff` |
 | 핵심 컨셉·DDD·벤치마크·플레이어 반응·플레이테스트·PoC·재조정 | `analyzing-and-refining-game-concepts` |
+| 연재소설·웹소설 정본·아크·회차·POV·문체·집필·퇴고·복선·독자 반응 Evidence | `developing-and-revising-serial-fiction` |
 | 대표 플레이 구간·목표 품질·실제 플레이·제작 파이프라인 검증 | `designing-vertical-slices` |
 | 게임 개발일지·Shorts·기능 공개·출시 홍보 영상의 실제 빌드 기반 대본·샷·패키징·게시 Gate·제한적 Analytics | `producing-game-development-youtube-videos` |
 | 외부 AI 작업 공간 운용 | `orchestrating-deepseek-worktrees` |

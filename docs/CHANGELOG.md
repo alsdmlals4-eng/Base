@@ -204,3 +204,13 @@
 - Steam Wrapper의 한계, Google Play request-bound backend verification, STOVE 미확인 상태를 플랫폼별로 분리했다.
 - 단일 신호 영구 제재, false platform parity, client-authoritative high-value state, replay/double spend, outage lockout, 무기한 raw-signal 보존과 no-sunset 설계를 차단했다.
 - 새 활성 Skill·shared route·플랫폼 계정·SDK credential·signing key·secret은 추가하지 않았다.
+
+## 2026-08-08 — BCP-2026-009 serial-fiction discipline implementation
+
+- `developing-and-revising-serial-fiction` specialist를 추가해 연재소설의 정본·아크·회차·POV·장면 집필·퇴고·pacing/payoff·reader-feedback diagnosis를 독립 책임으로 등록했다.
+- `docs/knowledge/serial-fiction/`에 공용 작법, 회차 pacing/payoff, benchmark/reader-feedback Evidence Guide를 추가했다.
+- 인기작의 공통 문체, universal 글자 수, 모든 장면 동일 공식, 댓글-as-canon을 기각하고 Reader Promise, Episode Value, Local Payoff + Open Loop, Information Legibility, Pattern Variation, Consequence Memory, Setup–Payoff Debt를 공용 Gate로 채택했다.
+- released v9.0 lock/snapshot/plugin payload는 변경하지 않는다.
+- 실제 프로젝트 독자 품질은 `PROJECT_PILOT_NOT_RUN` / `HUMAN_NOT_RUN` 상태로 남긴다.
+
+<!-- BCP-2026-009 serial-fiction discipline implementation -->

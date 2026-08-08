@@ -296,3 +296,12 @@ L1 이상 완료 보고는 실제 사용한 Work Mode·Skill·Skill Mode와 이�
 | 읽기 전용 실제 조달 증거 | `docs/evidence/external-ui-procurement/` |
 
 이 계약은 새 ACTIVE Skill을 추가하지 않고 기존 intake·문서·검증·적대 검토·UI Skill의 조건부 mode/reference로 실행한다.
+
+## 연재소설 공용 책임
+
+| 구분 | 파일 | 책임 |
+|---|---|---|
+| 연재소설 Knowledge Hub | `docs/knowledge/serial-fiction/README.md` | 웹소설·연재소설 공용 작법·회차·독자 Evidence Guide 라우팅; 프로젝트 고유 정본·고정 POV 수·장르 비율·플랫폼별 생산 목표는 소유하지 않음 |
+| 연재소설 실행 Skill | `skills/developing-and-revising-serial-fiction/SKILL.md` | 정본·각색 경계, 아크·회차, POV·voice, 장면 집필·퇴고, pacing·payoff, setup-payoff debt, reader-feedback revision |
+
+플랫폼 글자 수·과금·연재 규칙은 가변 외부 사실이므로 적용 시 공식 원본을 재검증하며, 오래된 숫자를 Base universal 규칙으로 고정하지 않는다.
