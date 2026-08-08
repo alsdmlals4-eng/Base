@@ -78,6 +78,74 @@ class ContinuousWorkExecutionContractTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
 
+    def test_recoverable_blockers_do_not_immediately_stop_global_loop(self) -> None:
+        text = REFERENCE.read_text(encoding="utf-8")
+        for term in (
+            "RECOVERABLE_VERIFICATION_BLOCKER",
+            "RECOVERABLE_EXECUTION_ROUTE_BLOCKER",
+            "LOCAL_TASK_BLOCKER",
+            "GLOBAL_TERMINAL_BLOCKER",
+            "ready_tasks",
+            "deferred_tasks",
+            "completed_tasks",
+            "recovery ladder",
+        ):
+            self.assertIn(term, text)
+        self.assertIn("실행 가능한 독립 task", text)
+        self.assertIn("전체 루프를 즉시 종료하지 않는다", text)
+
+    def test_evidence_transport_failure_requeries_exact_head_before_blocking(self) -> None:
+        text = REFERENCE.read_text(encoding="utf-8")
+        for term in (
+            "EVIDENCE_TRANSPORT_INCOMPLETE",
+            "tool-output truncation",
+            "exact HEAD",
+            "재조회",
+            "동일 SHA",
+            "workflow",
+            "job",
+        ):
+            self.assertIn(term, text)
+        self.assertIn("FAIL이 아니다", text)
+
+    def test_approved_execution_method_does_not_create_new_user_decision(self) -> None:
+        text = REFERENCE.read_text(encoding="utf-8")
+        for term in (
+            "dedicated execution package",
+            "10,000-seed",
+            "실행 방법",
+            "같은 승인 목표",
+            "별도 사용자 승인",
+        ):
+            self.assertIn(term, text)
+        self.assertIn("USER_DECISION_REQUIRED가 아니다", text)
+
+    def test_current_session_tool_absence_uses_authorized_alternate_executor_or_defers_locally(self) -> None:
+        text = REFERENCE.read_text(encoding="utf-8")
+        for term in (
+            "현재 세션",
+            "alternate executor",
+            "DEFERRED_EXTERNAL_EXECUTOR",
+            "HiGodot",
+            "권위",
+            "독립 작업",
+        ):
+            self.assertIn(term, text)
+        self.assertIn("전체 실행 경로 부재", text)
+        self.assertIn("우회", text)
+
+    def test_continuous_work_consumes_inherited_merge_authority(self) -> None:
+        text = REFERENCE.read_text(encoding="utf-8")
+        for term in (
+            "APPROVED_ITEM_INHERITS_MERGE_AUTHORITY",
+            "exact HEAD",
+            "required checks",
+            "unresolved thread 0",
+            "별도 병합 승인",
+        ):
+            self.assertIn(term, text)
+        self.assertIn("즉시 병합", text)
+
 
 if __name__ == "__main__":
     unittest.main()
