@@ -84,12 +84,12 @@
       "proposal_id": "BCP-2026-009-serial-fiction-writing-and-revision-discipline",
       "title": "연재소설 집필·퇴고 공용 Discipline",
       "path": "[수정제안서]/BCP-2026-009-serial-fiction-writing-and-revision-discipline/PROPOSAL.md",
-      "status": "APPROVED_FOR_IMPLEMENTATION",
+      "status": "IMPLEMENTED",
       "source_project": "Coc 폭풍의 눈(주안편)",
       "source_commit": "fa69a77a14f923a756064f6ae151d34cadb374f7",
       "submitted_at": "2026-08-08",
       "approval_ref": "[수정제안서]/BCP-2026-009-serial-fiction-writing-and-revision-discipline/PROPOSAL.md#승인과-구현",
-      "implementation_pr": null
+      "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/225"
     }
   ]
 }
