@@ -1,7 +1,7 @@
 # Current Active Base Skills
 
 > Generated from `skills/SKILL_REGISTRY.json`. Do not edit this derivative.
-> Registry SHA-256: `33e3ec4b8bdbc63ea3eba8f6e7c504afa55bf6a6590088c452b526018c7d75e8`
+> Registry SHA-256: `6229f34f761257b693738c72d5d988315787dfe5e18122787f577c81ca6a5127`
 > Current active Skill count: `30`
 
 | Skill ID | Owner | Positive trigger | Negative trigger |

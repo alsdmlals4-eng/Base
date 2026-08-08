@@ -91,6 +91,10 @@ class SerialFictionDisciplineContractTests(unittest.TestCase):
         operating = (ROOT / "docs" / "OPERATING_MODEL.md").read_text(encoding="utf-8")
         for text in (start, docs, operating):
             self.assertIn(SKILL_ID, text)
+        self.assertIn("연재소설", operating)
+        self.assertIn("연재소설", docs)
+        self.assertNotIn("Base는 게임 프로젝트가", operating)
+        self.assertNotIn("Base는 여러 게임 프로젝트가", docs)
 
     def test_behavior_evals_cover_primary_and_non_selection(self) -> None:
         primary = json.loads(
