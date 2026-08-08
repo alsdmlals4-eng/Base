@@ -95,11 +95,11 @@
       "proposal_id": "BCP-2026-010-continuous-work-execution-trigger",
       "title": "`[연속작업] 진행해` 연속작업 실행 루프",
       "path": "[수정제안서]/BCP-2026-010-continuous-work-execution-trigger/PROPOSAL.md",
-      "status": "SUBMITTED",
+      "status": "APPROVED_FOR_IMPLEMENTATION",
       "source_project": "alsdmlals4-eng/Base",
       "source_commit": "a912cc001ff4d4e3415fb4b4931723c49eb08d9a",
       "submitted_at": "2026-08-08",
-      "approval_ref": null,
+      "approval_ref": "[수정제안서]/BCP-2026-010-continuous-work-execution-trigger/PROPOSAL.md#승인과-구현",
       "implementation_pr": null
     }
   ]
