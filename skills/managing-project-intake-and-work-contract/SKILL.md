@@ -13,6 +13,8 @@ description: Use when routing a project request, closing material ambiguity, def
 
 모든 L1 이상 지시문 작성은 이 Skill에서 좋은 프롬프트 변환을 수행한 뒤 `Grill Me alignment gate`로 의도·기획·범위가 맞는지 확인한다. 유효한 승인 없이 제품·프로젝트 작업으로 진행하지 않는다.
 
+사용자가 `[연속작업] 진행해`라고 명시하면 `references/continuous-work-execution.md`에 따라 현재 승인된 작업 계약의 남은 범위에 `CONTINUOUS_WORK_ACTIVE` 실행 상태를 적용한다. 이는 `PLAN / BUILD / REVIEW`를 대체하지 않으며, 사용자 전용 결정·미검증 차단·고위험 외부 행위의 확인 Gate를 제거하지 않는다.
+
 새 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층 요청은 일반 설계보다 먼저 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`와 `evaluating-godot-assets-and-plugins-before-creation: inventory-current-environment / disposition`으로 라우팅한다. `existing_solution_disposition`과 비교 증거·사용자 승인 상태 없이 `BUILD_NEW` 계약을 만들지 않는다.
 
 ## Terminology
@@ -22,6 +24,7 @@ description: Use when routing a project request, closing material ambiguity, def
 - `Skill Mode`: 한 Skill 안에서 선택하는 세부 절차. 이 문서의 `route`, `first-prompt`, `clarify` 등이 해당한다.
 - `Prompt`: 사용자의 현재 목표·제약·산출물. Skill 선언문이 아니다.
 - `Direction anchor`: 지시문 가장 앞에서 핵심 행동·결과·지배 기준을 고정하는 1~2문장. 배치 순서는 권한을 만들지 않는다.
+- `Continuous Work`: `[연속작업] 진행해`가 있을 때만 활성화되는 `CONTINUOUS_WORK_ACTIVE / CONTINUOUS_WORK_INACTIVE` 실행 상태. Work Mode가 아니라 승인된 계약 안에서 다음 미완료 작업으로 계속 이동하는 orchestration flag다.
 
 상세 계약: `docs/WORK_MODE_AND_SKILL_ROUTING.md`
 
@@ -29,16 +32,18 @@ description: Use when routing a project request, closing material ambiguity, def
 
 프로젝트 GDD Google Sheets 역할·편집·시각화·수치화: `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`
 
+연속작업 활성화·자동 승인·종료 경계: `references/continuous-work-execution.md`
+
 ## Skill Modes
 
-- `route`: 요청 의도·현재 단계·위험을 파악하고 Work Mode, 작업 수준, 변경 유형, 주 책임 분야와 최소 Skill 집합을 자동 판정한다.
+- `route`: 요청 의도·현재 단계·위험을 파악하고 Work Mode, 작업 수준, 변경 유형, 주 책임 분야와 최소 Skill 집합을 자동 판정한다. `[연속작업] 진행해`가 있으면 연속작업 opt-in도 함께 감지한다.
 - `first-prompt`: 핵심 방향 문장을 지시문 가장 앞에 배치하고 Task·Context·Source·Constraints·Output·Validation을 순서화한 뒤 전체 계약과 충돌하지 않는지 검사한다. 상세 절차는 `references/first-prompt-direction-anchoring.md`를 사용한다.
-- `contract`: 확정된 요구를 범위·제외·보호·완료·검증이 있는 실행 계약으로 변환한다.
+- `contract`: 확정된 요구를 범위·제외·보호·완료·검증이 있는 실행 계약으로 변환하고, opt-in이 있으면 현재 승인 범위에 `continuous_work_state`를 결합한다.
 - `clarify`: 저장소에서 확인할 사실을 먼저 조사하고 사용자만 결정할 수 있는 모호성을 닫는다. 모든 L1 이상 지시문은 실행 전 `Grill Me alignment gate`를 거치며, 프로젝트 방향을 바꾸는 핵심 결정은 `references/grill-me-protocol.md`를 사용한다.
 - `decompose-and-sequence`: 승인된 계약을 검증 가능한 결과 단위로 나누고 의존성·병렬화·게이트·롤백 순서를 정한다.
 - `execution-report`: 실제 실행한 Work Mode·Skill·Skill Mode, 선택 이유, 수행 내용, 결과·증거·미검증을 보고한다.
 
-하나의 호출에서 필요한 Skill Mode만 순서대로 실행한다. L1 이상 지시문 작성의 기본 순서는 `route → first-prompt → contract → clarify`다. 이미 exact contract already approved 상태이고 유효한 approval reference가 있으면 `clarify`는 승인 재사용을 기록하고 중복 질문하지 않는다. `decompose-and-sequence`는 `CONFIRMED` 이후에만 실행한다. L1 이상 작업 종료 시 `execution-report`를 실행하되 짧은 작업에서는 최종 답변의 한 섹션으로 압축할 수 있다.
+하나의 호출에서 필요한 Skill Mode만 순서대로 실행한다. L1 이상 지시문 작성의 기본 순서는 `route → first-prompt → contract → clarify`다. 이미 exact contract already approved 상태이고 유효한 approval reference가 있으면 `clarify`는 승인 재사용을 기록하고 중복 질문하지 않는다. `[연속작업] 진행해`는 미승인 계약을 임의 승인하지 않으며, `CONFIRMED` 또는 `REUSED_APPROVAL` 이후 현재 승인 범위에 연속 실행 상태를 적용한다. `decompose-and-sequence`는 `CONFIRMED` 이후에만 실행한다. L1 이상 작업 종료 시 `execution-report`를 실행하되 짧은 작업에서는 최종 답변의 한 섹션으로 압축할 수 있다.
 
 ## Work Mode selection
 
@@ -57,7 +62,7 @@ description: Use when routing a project request, closing material ambiguity, def
 - 결과를 적대적으로 검토하고 반례·회귀·증거를 찾는다.
 - 기본 읽기 전용이다. 수정까지 요청되거나 승인된 finding이 있으면 `BUILD`로 전환해 최소 수정하고 다시 `REVIEW`로 검증한다.
 
-복합 작업은 `PLAN → BUILD → REVIEW`로 전환할 수 있지만 한 시점의 주 Work Mode는 하나다.
+복합 작업은 `PLAN → BUILD → REVIEW`로 전환할 수 있지만 한 시점의 주 Work Mode는 하나다. `CONTINUOUS_WORK_ACTIVE`에서도 이 규칙은 동일하다.
 
 ## Automatic selection policy
 
@@ -71,6 +76,7 @@ description: Use when routing a project request, closing material ambiguity, def
 - Skill 파일을 읽은 것과 Skill 절차를 실제 실행한 것을 구분한다.
 - L1 이상 작업을 다른 에이전트·Codex·외부 AI에 넘기는 지시문도 먼저 이 Skill의 `first-prompt → contract → clarify`를 거친다.
 - 신규 실행 기술 제작 압력이 감지되면 설계 Skill보다 기존 대안 평가 Skill을 먼저 호출하고 `existing_solution_disposition`을 계약 입력으로 요구한다.
+- `[연속작업] 진행해`가 없으면 `CONTINUOUS_WORK_INACTIVE`로 유지하고 기존 승인·Grill Me 흐름을 바꾸지 않는다.
 
 ## Use when
 
@@ -82,6 +88,7 @@ description: Use when routing a project request, closing material ambiguity, def
 - 큰 작업을 단계·의존성·병렬 묶음·게이트로 분해한다.
 - 범위가 바뀌어 분야·Skill·검증·실행 순서를 다시 계산한다.
 - 새 MCP·addon·CLI·framework·Skill·Mode 또는 기존 실행 권위와 겹칠 수 있는 도구를 제안한다.
+- 사용자가 `[연속작업] 진행해`로 현재 승인된 계약의 연속 실행을 명시적으로 요청한다.
 
 ## Do not use when
 
@@ -115,6 +122,8 @@ milestone_or_deadline:
 validation_environment:
 rollback_constraints:
 approval_reference:
+continuous_work_trigger:
+continuous_work_state: CONTINUOUS_WORK_ACTIVE | CONTINUOUS_WORK_INACTIVE
 existing_solution_inventory:
 existing_solution_disposition:
 existing_solution_evidence:
@@ -134,7 +143,8 @@ existing_solution_user_approval:
 9. 필요한 경우 `references/question-and-source-model.md`
 10. 종료 판정이 필요한 경우 `references/ambiguity-and-closure.md`
 11. Grill Me 정합성 확인과 핵심 결정 인터뷰가 필요한 경우 `references/grill-me-protocol.md`
-12. 작업 분해·순서화가 필요한 경우 `references/work-decomposition-and-sequencing.md`
+12. `[연속작업] 진행해`가 있으면 `references/continuous-work-execution.md`
+13. 작업 분해·순서화가 필요한 경우 `references/work-decomposition-and-sequencing.md`
 
 ## Workflow
 
@@ -154,9 +164,11 @@ existing_solution_user_approval:
 → Registry trigger·do_not_use_when
 → 최소 Skill 집합
 → 각 Skill의 필요한 Skill Mode
+→ [연속작업] 진행해 존재 여부
+→ CONTINUOUS_WORK_ACTIVE | CONTINUOUS_WORK_INACTIVE 후보
 ```
 
-발행·검증·Handoff Skill은 해당 단계에 도달할 때까지 `deferred_skills`에 둔다.
+발행·검증·Handoff Skill은 해당 단계에 도달할 때까지 `deferred_skills`에 둔다. 연속작업 후보는 승인 상태가 확인되기 전 실행 권한이 아니다.
 
 ### 1.5 Existing Solution First Gate
 
@@ -257,6 +269,24 @@ agreement_or_disagreement_reason:
 
 확인 결과는 `CONFIRMED` 또는 `REUSED_APPROVAL`과 approval reference로 기록한다.
 
+### 5.5 Activate bounded continuous work when explicitly requested
+
+`[연속작업] 진행해`가 있고 현재 계약이 `CONFIRMED` 또는 `REUSED_APPROVAL`이면 `references/continuous-work-execution.md`를 적용해 `CONTINUOUS_WORK_ACTIVE`로 전환한다.
+
+```text
+현재 승인된 작업 계약
+→ 다음 미완료 작업
+→ BUILD
+→ REVIEW attack → validate-critique
+→ 범위 안의 기술적 단일 최소 안전 권장안이면 자동 승인 간주
+→ BUILD 최소 반영
+→ REVIEW regression-recheck
+→ 다음 미완료 작업
+→ 완료 또는 종료 조건까지 반복
+```
+
+`USER_DECISION_REQUIRED`, `BLOCKED_UNVERIFIED`, 범위 확대, 고위험 외부 행위, 사용자 중지·범위 변경에서는 자동 승인하지 않고 루프를 종료한다. 트리거가 없는 요청은 `CONTINUOUS_WORK_INACTIVE`다.
+
 ### 6. Produce the executable contract
 
 ```md
@@ -264,6 +294,7 @@ agreement_or_disagreement_reason:
 ## Direction Anchor
 ## 목적
 ## Work Mode
+## Continuous Work State
 ## 맥락·정본·실제 근거
 ## 목표 사용자·플레이어 경험
 ## Existing Solution Inventory and Disposition
@@ -314,7 +345,7 @@ rollback:
 → 사용자 체감 검수·통합·인수인계
 ```
 
-순서는 의존성 해소, 위험 감소, 사용자 가치, 피드백 속도, 되돌리기 난이도, 자원 충돌로 결정한다. 일정 숫자를 근거 없이 발명하지 않는다. 병렬화는 입력·출력 경계가 고정되고 같은 파일·Schema·자산을 경쟁적으로 수정하지 않으며 독립 검증이 가능할 때만 허용한다.
+순서는 의존성 해소, 위험 감소, 사용자 가치, 피드백 속도, 되돌리기 난이도, 자원 충돌로 결정한다. 일정 숫자를 근거 없이 발명하지 않는다. 병렬화는 입력·출력 경계가 고정되고 같은 파일·Schema·자산을 경쟁적으로 수정하지 않으며 독립 검증이 가능할 때만 허용한다. `CONTINUOUS_WORK_ACTIVE`에서는 이 순서에서 다음 미완료 결과를 자동 선택하되 승인 범위를 넘어 새 결과를 추가하지 않는다.
 
 ### 8. Report execution
 
@@ -340,6 +371,8 @@ status: PASS/PARTIAL/FAIL/UNVERIFIED
 → 얻은 결과·증거
 ```
 
+`CONTINUOUS_WORK_ACTIVE`였다면 완료한 작업, 적대 검토 finding, 자동 승인해 반영한 기술 권장안, 검증 증거, 종료 상태를 최종 보고에 함께 남긴다.
+
 중요 후보를 사용하지 않았으면 `trigger 불일치 / 비사용 조건 / 현재 단계 아님 / 도구·입력 없음` 중 하나로 이유를 기록한다. 모든 Registry 항목을 나열하지 않는다.
 
 템플릿: `templates/project-operations/SKILL_EXECUTION_REPORT.md`
@@ -361,6 +394,15 @@ RECEIVED
 → EXECUTED
 → REPORTED
 → SUPERSEDED | ABANDONED
+```
+
+연속작업은 위 상태 머신을 대체하지 않는 직교 실행 flag다.
+
+```text
+CONTINUOUS_WORK_INACTIVE
+→ ([연속작업] 진행해 + CONFIRMED/REUSED_APPROVAL)
+→ CONTINUOUS_WORK_ACTIVE
+→ COMPLETE | STOPPED_USER_DECISION | BLOCKED_UNVERIFIED | STOPPED_BY_USER
 ```
 
 ## Output contract
@@ -387,6 +429,8 @@ requirement_status:
 approval_state:
 approval_reference:
 user_confirmation_ref:
+continuous_work_trigger:
+continuous_work_state: CONTINUOUS_WORK_ACTIVE | CONTINUOUS_WORK_INACTIVE
 work_contract_path:
 execution_sequence_path:
 steps: []
@@ -413,6 +457,8 @@ remaining_unknowns: []
 - 필요한 사용자 확인 전에는 구현 계약이나 실행 순서를 확정하지 않았다.
 - Grill Me alignment gate 또는 유효한 approval reference가 실행 전에 확인됐다.
 - 기존 승인 계약에는 중복 질문하지 않았다.
+- `[연속작업] 진행해`가 있을 때만 `CONTINUOUS_WORK_ACTIVE`를 사용했고, 승인된 계약 밖으로 범위를 넓히지 않았다.
+- 연속작업 중 `USER_DECISION_REQUIRED`, `BLOCKED_UNVERIFIED`, 고위험 외부 행위와 사용자 중지는 자동 승인하지 않았다.
 - 큰 작업은 독립 검증 가능한 결과·의존성·병렬 묶음·게이트로 분해됐다.
 - 실제 사용한 Work Mode·Skill·Skill Mode의 이유와 결과·증거를 보고했다.
 - 새 작업자가 같은 입력에서 동등한 계약·라우팅·실행 보고를 복원할 수 있다.
@@ -435,6 +481,9 @@ remaining_unknowns: []
 - 상세 요청을 무시하고 포괄 질문을 반복함
 - exact contract already approved인데 approval reference를 무시하고 중복 질문함
 - Grill Me alignment gate 또는 유효 승인 없이 실행 계약·BUILD·위임으로 이동함
+- `[연속작업] 진행해` 없이 일반 요청을 연속작업 자동 승인으로 처리함
+- 연속작업을 이유로 `USER_DECISION_REQUIRED`, `BLOCKED_UNVERIFIED`, 범위 확대 또는 고위험 외부 행위를 자동 승인함
+- 연속작업을 scheduler·webhook·백그라운드 실행이나 다른 채팅 자동 메시지 전달로 오해함
 - 원 요청의 산출물을 문서로 임의 축소함
 - 제외·보호·보류·미검증을 손실함
 - 측정 불가능한 완료 기준만 작성함
@@ -452,6 +501,7 @@ remaining_unknowns: []
 - `grill-me`, `grillme`, `Grill Me` → `clarify` + `references/grill-me-protocol.md`
 - `transforming-requests-into-prompts` → `first-prompt` + `contract` + `clarify`
 - `[좋은 프롬프트]`, `좋은 프롬프트`, `퍼스트 프롬프트`, `first prompt` → `first-prompt` + `contract` + `clarify`
+- `[연속작업] 진행해` → 현재 승인된 계약 + `references/continuous-work-execution.md`
 
 Templates:
 
