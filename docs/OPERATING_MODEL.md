@@ -90,6 +90,26 @@ Base START_HERE
 
 새 Skill은 기존 owner의 Skill Mode·reference로 책임을 보존할 수 있으면 만들지 않는다. **독립 입력·산출물·권한·검증 경계**가 분명하고 기존 owner에 흡수하면 책임이 깨질 때만 Existing Solution First와 승인 절차를 거쳐 **새 Skill을 만들 수 있다**. 상위 흐름은 `managing-project-intake-and-work-contract`, 분야 구현은 trigger가 일치하는 주 책임 Skill 하나, 비판 검증은 `running-adversarial-review-and-refinement`, 실제 변경 증거는 `reviewing-and-validating-project-changes`가 책임진다.
 
+### 연속작업 실행 루프
+
+사용자가 현재 채팅에서 `[연속작업] 진행해`라고 명시한 경우에만 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`를 적용한다. 이는 별도 Skill이나 Work Mode가 아니라 현재 승인된 작업 계약에 얹는 `CONTINUOUS_WORK_ACTIVE` 실행 상태다.
+
+```text
+현재 승인된 작업 계약
+→ 다음 미완료 작업
+→ BUILD
+→ REVIEW: attack → validate-critique
+→ 범위 안의 기술적 단일 최소 안전 권장안
+→ 자동 승인 간주
+→ BUILD 최소 반영
+→ REVIEW: regression-recheck
+→ 다음 미완료 작업
+→ 반복
+→ 전체 완료 후 최종 보고
+```
+
+트리거가 없으면 `CONTINUOUS_WORK_INACTIVE`이며 기존 승인·Grill Me 흐름을 유지한다. `USER_DECISION_REQUIRED`, `BLOCKED_UNVERIFIED`, 범위 확대, 결제·계정 삭제·보안/권한 확대 등 고위험 외부 행위, 사용자 중지·범위 변경에서는 자동 승인하지 않고 루프를 중지한다. 이 계약은 현재 응답·실행 세션 안의 orchestration이며 scheduler·webhook·백그라운드 실행이나 다른 채팅 자동 메시지 전달을 의미하지 않는다.
+
 ### 5. Active Skill Registry View
 
 The current active-Skill count, list, and status are generated from `skills/SKILL_REGISTRY.json` into `docs/generated/BASE_ACTIVE_SKILLS.md`. Human-facing documents do not duplicate the list.

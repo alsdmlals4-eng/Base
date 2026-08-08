@@ -44,6 +44,16 @@ Reference: `skills/managing-project-intake-and-work-contract/references/grill-me
 
 현재 사용자가 원하는 구체적인 목표·제약·산출물이다. Prompt가 Work Mode·Skill·Skill Mode를 직접 선언할 필요는 없다.
 
+### Continuous Work
+
+`[연속작업] 진행해`는 현재 승인된 작업 계약의 남은 범위를 중간 승인 대기로 끊지 않고 연속 수행하라는 **명시적 opt-in 실행 flag**다.
+
+- 상태: `CONTINUOUS_WORK_ACTIVE | CONTINUOUS_WORK_INACTIVE`
+- Work Mode를 대체하지 않는다. 각 단계는 계속 `PLAN / BUILD / REVIEW` 중 하나를 사용한다.
+- 새 Skill이나 장기 권한이 아니다.
+- 트리거가 없는 요청은 `CONTINUOUS_WORK_INACTIVE`이며 기존 승인·Grill Me 흐름을 유지한다.
+- 상세 계약: `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`
+
 ## 2. 자동 실행 순서
 
 ```text
@@ -53,7 +63,9 @@ Reference: `skills/managing-project-intake-and-work-contract/references/grill-me
 → Skill Registry trigger 대조
 → 필요한 최소 Skill 자동 선택
 → 각 Skill의 Skill Mode 자동 선택
+→ [연속작업] 진행해 존재 여부와 승인 범위 확인
 → 실행·검증·필요 시 Work Mode 전환
+→ CONTINUOUS_WORK_ACTIVE이면 승인 범위 안의 다음 미완료 작업으로 반복
 → 사용 이유·얻은 결과·증거 보고
 ```
 
@@ -69,6 +81,7 @@ Reference: `skills/managing-project-intake-and-work-contract/references/grill-me
 - 새 사실·실패·범위 변경·정본 변경이 생기면 다시 라우팅한다.
 - Skill 파일을 읽은 것과 실제 절차를 실행한 것을 구분한다.
 - 새 독립 Skill보다 기존 통합 Skill의 Skill Mode·reference로 책임을 보존할 수 있는지 먼저 확인한다. 독립 입력·산출물·승인 권한이 새로 생기고 기존 owner에 넣으면 책임 경계가 무너지는 경우에만 새 Skill을 만든다.
+- `[연속작업] 진행해`는 사용자 승인 자체를 새로 만드는 문구가 아니다. 현재 계약의 `CONFIRMED` 또는 `REUSED_APPROVAL` 범위 안에서만 `CONTINUOUS_WORK_ACTIVE`를 부여한다.
 
 ### 경량 중립성 Gate와 전체 적대 검토 경계
 
@@ -131,6 +144,39 @@ review-scope-map
 - 공격·비판 검증·finding 분류·기획 충돌 큐: `running-adversarial-review-and-refinement`
 - 실제 diff·정적·런타임·접근성·성능·회귀 증거: `reviewing-and-validating-project-changes`
 - 사용자 결정 인터뷰: `managing-project-intake-and-work-contract: clarify`와 Grill Me 프로토콜
+
+### 4.1 `[연속작업] 진행해` 권한 전환 루프
+
+`CONTINUOUS_WORK_ACTIVE`에서는 현재 승인된 작업 계약의 실행 순서에서 다음 미완료 결과를 자동 선택한다.
+
+```text
+현재 승인된 작업 계약
+→ 다음 미완료 작업
+→ BUILD
+→ REVIEW attack → validate-critique
+→ finding 분류
+   ├─ 범위 안의 기술적 단일 최소 안전 권장안
+   │  → 권장안 자동 승인 간주
+   │  → BUILD 최소 반영
+   │  → REVIEW regression-recheck → decision-report
+   │  → 다음 미완료 작업
+   ├─ USER_DECISION_REQUIRED
+   │  → STOPPED_USER_DECISION
+   └─ BLOCKED_UNVERIFIED
+      → BLOCKED_UNVERIFIED
+→ 완료 기준 충족까지 반복
+→ 최종 보고
+```
+
+자동 승인 조건은 **현재 승인 범위 + 적대 검토로 유효성이 확인된 기술적 단일 최소 안전안 + 되돌리기 가능한 범위**다. 다음은 자동 승인하지 않는다.
+
+- 프로젝트 코어·플레이어 경험·주요 UX·콘텐츠 의미·비용/범위 우선순위를 새로 바꾸는 결정
+- 기존 계약을 넘어서는 새 Goal이나 범위 확대
+- 결제, 계정 삭제, 보안·권한 확대 또는 별도 사용자 자격 확인이 필요한 외부 고위험 행위
+- `USER_DECISION_REQUIRED`, `BLOCKED_UNVERIFIED`
+- 사용자의 중지·범위 변경
+
+짧은 진행 업데이트는 허용하지만 승인 질문으로 사용하지 않는다. `CONTINUOUS_WORK_ACTIVE`는 현재 응답·에이전트 실행 세션의 orchestration이며 scheduler, webhook, 백그라운드 실행 또는 다른 채팅 자동 메시지 전달을 뜻하지 않는다. 상세 기준은 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`가 책임진다.
 
 ## 5. GPT → Codex 구현 라우팅
 
@@ -216,6 +262,8 @@ L2 이상·다중 의존성 작업은 전체 설계를 마스터 구현계획 �
 
 `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`: 사용자의 명시적 승인이 완료된 항목은 동일 승인 범위의 구현·검증·PR에 병합 권한도 상속된다. 동일 범위에 대해 추가 확인·재승인·병합 승인 요청 없이, 동일 HEAD·필수 검사·독립 검토 통과, unresolved thread 0, `USER_REVIEW_REQUIRED`·`CHANGE_PROPOSAL`·P0/P1 없음이 확인되면 저장소의 허용된 방식으로 병합한다.
 
+`CONTINUOUS_WORK_ACTIVE`는 이 병합 Gate를 삭제하지 않는다. 연속작업 중 다음 패키지로 이동할 수 있어도 각 PR은 기존 exact-head·필수 검사·독립 검토·thread·P0/P1 조건을 그대로 충족해야 한다.
+
 담당 Skill: `maintaining-project-context-and-handoff`의 `implementation-package-handoff`.
 
 ## 7. 필수 실행 보고
@@ -242,6 +290,8 @@ status: PASS | PARTIAL | FAIL | UNVERIFIED
 → 얻은 결과·증거
 ```
 
+`CONTINUOUS_WORK_ACTIVE`였다면 완료한 작업, 적대 검토 finding, 자동 승인해 반영한 기술 권장안, 회귀 검증, 최종 종료 상태를 함께 보고한다.
+
 중요 후보를 사용하지 않았으면 `trigger 불일치 / 비사용 조건 / 현재 단계 아님 / 도구·입력 없음`을 기록한다. 모든 Skill을 나열하지 않는다.
 
 ## 8. 예시
@@ -258,6 +308,19 @@ CODEX_PREFLIGHT_OPTIONAL: 저장 마이그레이션 위험이 크면 읽기 전�
 Codex BUILD: 지정 Branch 구현·테스트·Commit·Push
 GPT REVIEW: 저장·불러오기·경계·회귀·기획 일치 검수
 담당 에이전트: 필수 게이트 통과 후 병합
+```
+
+### 연속작업
+
+```text
+Prompt: [연속작업] 진행해
+intake: 현재 승인된 계약과 남은 완료 기준 복원 → CONTINUOUS_WORK_ACTIVE
+BUILD: 다음 미완료 작업 수행
+REVIEW: attack → validate-critique
+기술적 단일 최소 안전 finding: 권장안 자동 승인 간주 → BUILD 최소 수정
+REVIEW: regression-recheck → 다음 미완료 작업
+USER_DECISION_REQUIRED 또는 BLOCKED_UNVERIFIED: 중지
+전체 완료: 최종 보고
 ```
 
 ### 구형 파일 정리

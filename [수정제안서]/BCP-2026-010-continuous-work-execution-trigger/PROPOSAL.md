@@ -7,10 +7,10 @@
 - Base 기준 커밋: `a912cc001ff4d4e3415fb4b4931723c49eb08d9a`
 - 제안 병합 커밋: `960e5991b85f9553d43a9c0516c91e83286a9c5f`
 - 제출일: `2026-08-08`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - 기존 해법 판정: `ABSORB`
 - 승인 근거: 이 문서의 `승인과 구현` 절에 보존한 2026-08-08 사용자 지시
-- 구현 PR: 구현 후 기록
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/228`
 
 ## 관찰과 증거
 
@@ -22,9 +22,11 @@ Base에는 이미 다음 책임이 있다.
 - 사용자가 명시적으로 승인한 항목의 병합 권한 상속
 - `모두 권장안대로` 입력 시 남은 동등 유형 Grill Me 결정을 권장안으로 확정하는 규칙
 
-그러나 사용자가 한 채팅에서 장시간 작업을 맡길 때, 각 단계가 끝날 때마다 `진행할까요?`, `승인할까요?`, `다음 단계로 넘어갈까요?` 같은 승인 대기로 멈추지 않고 다음 작업까지 계속 수행하라는 명시적 공용 트리거가 없다.
+그러나 사용자가 한 채팅에서 장시간 작업을 맡길 때, 각 단계가 끝날 때마다 `진행할까요?`, `승인할까요?`, `다음 단계로 넘어갈까요?` 같은 승인 대기로 멈추지 않고 다음 작업까지 계속 수행하라는 명시적 공용 트리거가 없었다.
 
-동일 Goal의 열린·최근 PR을 조사했으며, 과거 PR #7의 `continuous learning`은 Skill 학습·라우팅 지속성을 다루고 이번 승인 연속 실행 권한과는 책임이 다르다. 새 독립 Skill이나 외부 자동화 도구를 만들 필요는 없으므로 Existing Solution First 판정은 `ABSORB`다.
+동일 Goal의 열린·최근 PR을 조사했으며, 과거 PR #7의 `continuous learning`은 Skill 학습·라우팅 지속성을 다루고 이번 승인 연속 실행 권한과는 책임이 다르다. 새 독립 Skill이나 외부 자동화 도구를 만들 필요가 없어 Existing Solution First 판정은 `ABSORB`로 확정했다.
+
+구현은 `managing-project-intake-and-work-contract`에 실행 flag와 전용 reference를 흡수하고 `AGENTS.md`, `docs/OPERATING_MODEL.md`, `docs/WORK_MODE_AND_SKILL_ROUTING.md`, CI 소비 테스트와 Learning Log를 연결했다.
 
 ## 일반화 후보
 
@@ -42,7 +44,7 @@ Base에는 이미 다음 책임이 있다.
 → 전체 범위 완료 후 최종 보고
 ```
 
-새 Skill은 만들지 않는다. 기존 `managing-project-intake-and-work-contract`, `running-adversarial-review-and-refinement`, `reviewing-and-validating-project-changes`, `maintaining-project-context-and-handoff`의 입력·산출물·권한을 유지하고, intake/Work Mode 라우팅 계약에 `CONTINUOUS_WORK` 실행 상태를 흡수한다.
+새 Skill은 만들지 않는다. 기존 `managing-project-intake-and-work-contract`, `running-adversarial-review-and-refinement`, `reviewing-and-validating-project-changes`, `maintaining-project-context-and-handoff`의 입력·산출물·권한을 유지하고, intake/Work Mode 라우팅 계약에 `CONTINUOUS_WORK_ACTIVE / CONTINUOUS_WORK_INACTIVE` 실행 상태를 흡수한다.
 
 활성화 문구는 다음으로 고정한다.
 
@@ -50,7 +52,7 @@ Base에는 이미 다음 책임이 있다.
 [연속작업] 진행해
 ```
 
-동일 메시지에 작업 범위가 함께 있으면 그 범위에 즉시 적용하고, 기존 진행 중인 작업에서 입력되면 현재 승인된 작업 계약의 남은 범위에 적용한다. 트리거가 없는 일반 요청에는 연속작업 자동 승인 규칙을 적용하지 않는다.
+동일 메시지에 작업 범위가 함께 있으면 intake 계약을 먼저 닫고 승인된 범위에 적용한다. 기존 진행 중인 작업에서 입력되면 현재 승인된 작업 계약의 남은 범위에 적용한다. 트리거가 없는 일반 요청에는 연속작업 자동 승인 규칙을 적용하지 않는다.
 
 ## 적용 조건과 비사용 조건
 
@@ -58,6 +60,7 @@ Base에는 이미 다음 책임이 있다.
 
 - 이미 승인된 작업 계약 범위 안이다.
 - 정본·테스트·명시적 요구·표준으로 기술적으로 단일 최소 안전안이 결정된다.
+- 적대 검토에서 finding의 유효성이 확인됐다.
 - 프로젝트 코어·주요 UX·콘텐츠 의미·비용/범위 우선순위를 새로 바꾸지 않는다.
 - 되돌리기 어려운 외부 고위험 행위가 아니다.
 
@@ -84,7 +87,7 @@ Base에는 이미 다음 책임이 있다.
 
 ### MUST_FIX — 일반 요청까지 자동 승인되는 위험
 
-트리거 없는 요청에 적용하면 기존 Grill Me와 승인 Gate를 무력화한다. 따라서 `[연속작업] 진행해`를 명시적 opt-in으로 제한한다.
+트리거 없는 요청에 적용하면 기존 Grill Me와 승인 Gate를 무력화한다. 따라서 `[연속작업] 진행해`를 명시적 opt-in으로 제한했다.
 
 ### MUST_FIX — 자동 승인으로 기획 결정을 은폐하는 위험
 
@@ -102,17 +105,21 @@ Base에는 이미 다음 책임이 있다.
 
 사용자만 결정할 수 있는 방향 변경과 고위험 외부 행위까지 자동화하면 권한 경계가 깨진다. 연속성은 유지하되 기존 안전·기획 Gate는 보존한다.
 
+### MUST_FIX — 독립 테스트 파일만 추가하면 CI가 소비하지 않을 수 있음
+
+TDD RED 과정에서 새 standalone 테스트가 일부 명시적 CI 목록에서 실행되지 않는 것을 확인했다. 기존 CI가 소비하는 `tests/test_deep_interview_contract.py`와 reference-freshness가 인정하는 `tests/test_neutral_adversarial_feature_lifecycle.py`에도 계약을 연결해 거짓 GREEN을 차단했다.
+
 ## 영향 범위와 검증
 
-예상 구현 범위:
+구현 범위:
 
 1. `AGENTS.md` — 공용 불변 트리거·권한 경계 요약
 2. `docs/OPERATING_MODEL.md` — 연속작업 실행 생명주기
 3. `docs/WORK_MODE_AND_SKILL_ROUTING.md` — 활성화·자동 승인·중단 조건 상세 계약
 4. `skills/managing-project-intake-and-work-contract/SKILL.md` — route/contract에서 트리거 감지와 연속 실행 상태 전달
-5. `skills/managing-project-intake-and-work-contract/references/` — 세부 실행 프로토콜
-6. `tests/` — 트리거, 비트리거, 사용자 결정 예외, 종료 조건 회귀 계약
-7. `docs/CHANGELOG.md`, Learning Log 등 실제 활성 소비자
+5. `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md` — 세부 실행 프로토콜
+6. `tests/test_continuous_work_execution_contract.py`, `tests/test_deep_interview_contract.py`, `tests/test_neutral_adversarial_feature_lifecycle.py` — 트리거, 비트리거, 사용자 결정 예외, 종료·비동기 경계 회귀 계약
+7. `skills/managing-project-intake-and-work-contract/LEARNING_LOG.md` — 구현 중 발견한 CI 소비자·범위 경계 학습
 
 보호 범위:
 
@@ -122,16 +129,11 @@ Base에는 이미 다음 책임이 있다.
 - 기존 병합/CI/리뷰 Gate
 - 프로젝트별 고유 결정과 정본
 
-구현 검증:
+검증 증거:
 
-- 트리거 문구가 활성 계약에 존재한다.
-- 트리거가 없는 일반 요청은 기존 승인 Gate를 유지한다.
-- `USER_DECISION_REQUIRED`와 `BLOCKED_UNVERIFIED`는 자동 승인되지 않는다.
-- 자동 승인 대상은 승인 범위 안의 기술적 권장안으로 제한된다.
-- 적대 검토 후 검증된 finding만 수정한다.
-- 다음 작업 선택이 기존 계약 범위를 넘어가지 않는다.
-- 완료/차단/사용자 중지 조건에서 루프가 종료된다.
-- 기존 Skill routing, Grill Me, 병합 권한 상속 계약이 회귀하지 않는다.
+- TDD RED: GitHub Actions run `31256943151`, job `93101653170`에서 새 reference 부재만 실패하고 기존 계약 380개는 통과했다.
+- 구현 뒤 reference-freshness가 intake Skill 변경에 필요한 인정된 회귀 테스트와 Learning Log 동기화 누락을 추가로 탐지했고 두 소비자를 연결했다.
+- 최종 구현 PR의 required CI·exact-head·review/thread 검증은 PR #228에서 완료 후 병합한다.
 
 ## 승인과 구현
 
@@ -143,4 +145,4 @@ Base에는 이미 다음 책임이 있다.
 
 > 내가 해당 채팅에서 `[연속작업] 진행해` 라고 하면 연속작업 실행루프가 진행되게 하는걸로 만들어줘
 
-이 사용자 지시는 본 BCP의 구현 승인 근거다. 따라서 상태를 `APPROVED_FOR_IMPLEMENTATION`으로 전환하며, 승인된 범위의 구현·검증·PR은 `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`에 따라 추가 재승인 없이 진행한다.
+이 사용자 지시는 본 BCP의 구현 승인 근거다. 승인된 범위의 구현·검증·PR은 `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`에 따라 추가 재승인 없이 진행했다. 구현은 PR #228에 연결했으며, 최종 required check와 exact-head 검증을 통과한 병합 결과가 Base 활성 계약이 된다.

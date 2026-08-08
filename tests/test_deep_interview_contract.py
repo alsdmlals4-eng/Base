@@ -100,6 +100,25 @@ class DeepInterviewContractTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
 
+    def test_unified_intake_links_bounded_continuous_work_execution(self) -> None:
+        reference_path = ROOT / "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"
+        self.assertTrue(reference_path.is_file(), "continuous work execution reference must exist")
+        reference = reference_path.read_text(encoding="utf-8")
+        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        for term in (
+            "[연속작업] 진행해",
+            "CONTINUOUS_WORK_ACTIVE",
+            "CONTINUOUS_WORK_INACTIVE",
+            "USER_DECISION_REQUIRED",
+            "BLOCKED_UNVERIFIED",
+            "attack → validate-critique",
+            "regression-recheck",
+            "백그라운드",
+        ):
+            self.assertIn(term, reference)
+        self.assertIn("continuous-work-execution.md", intake)
+        self.assertIn("[연속작업] 진행해", intake)
+
     def test_mandatory_triggers_and_mechanical_exceptions(self) -> None:
         for change_type in ("feature", "game-experience", "art-direction", "architecture", "workflow", "base-change-proposal"):
             with self.subTest(change_type=change_type):

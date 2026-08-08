@@ -50,6 +50,37 @@ class NeutralAdversarialFeatureLifecycleTests(unittest.TestCase):
         ):
             self.assertIn(term, routing)
 
+    def test_continuous_work_reuses_adversarial_lifecycle_without_bypassing_user_gates(self) -> None:
+        intake = read("skills/managing-project-intake-and-work-contract/SKILL.md")
+        reference = read("skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md")
+        routing = read("docs/WORK_MODE_AND_SKILL_ROUTING.md")
+        operating = read("docs/OPERATING_MODEL.md")
+        agents = read("AGENTS.md")
+
+        for text in (intake, reference, routing, operating, agents):
+            self.assertIn("[연속작업] 진행해", text)
+            self.assertIn("USER_DECISION_REQUIRED", text)
+            self.assertIn("BLOCKED_UNVERIFIED", text)
+
+        for term in (
+            "CONTINUOUS_WORK_ACTIVE",
+            "CONTINUOUS_WORK_INACTIVE",
+            "attack → validate-critique",
+            "regression-recheck",
+            "현재 승인된 작업 계약",
+            "범위 확대",
+            "백그라운드",
+        ):
+            self.assertIn(term, reference)
+
+        self.assertIn("Work Mode를 대체하지 않는다", reference)
+        self.assertIn("scheduler", reference)
+        self.assertIn("webhook", reference)
+        self.assertIn("자동 메시지 전달", reference)
+        self.assertIn("기존 승인·Grill Me", reference)
+        self.assertIn("트리거가 없는", reference)
+        self.assertIn("권장안 자동 승인 간주", routing)
+
     def test_registry_balanced_only_exclusion_is_narrow_and_full_loop_resumes(self) -> None:
         registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
         adversarial_entry = next(
