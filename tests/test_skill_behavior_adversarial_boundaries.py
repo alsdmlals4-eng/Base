@@ -270,6 +270,18 @@ class SkillBehaviorAdversarialBoundaryTests(unittest.TestCase):
         self.assertIn("Godot", godot["prompt"])
 
 
+    def test_serial_fiction_cases_preserve_nonselection_and_evidence_boundaries(self) -> None:
+        coverage = json.loads(
+            (ROOT / "skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json").read_text(encoding="utf-8")
+        )
+        cases = {case["case_id"]: case for case in coverage["cases"]}
+        fiction = cases["SBE-950"]
+        self.assertEqual("developing-and-revising-serial-fiction", fiction["expected_primary_skill"])
+        self.assertIn("Episode Value", fiction["required_evidence"])
+        game = cases["SBE-951"]
+        self.assertEqual("analyzing-and-refining-game-concepts", game["expected_primary_skill"])
+        self.assertIn("developing-and-revising-serial-fiction", game["forbidden_skills"])
+
 
 if __name__ == "__main__":
     unittest.main()

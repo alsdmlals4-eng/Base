@@ -386,7 +386,8 @@
         "tests/test_game_ux_ui_system.py",
         "tests/test_game_design_difficulty_workflow.py",
         "tests/test_skill_package_integrity.py",
-        "tests/test_game_development_youtube_skill.py"
+        "tests/test_game_development_youtube_skill.py",
+        "tests/test_serial_fiction_discipline.py"
       ]
     },
     {

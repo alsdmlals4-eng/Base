@@ -105,6 +105,21 @@ class SkillBehaviorGovernanceIntegrationTests(unittest.TestCase):
         self.assertIn("tests/test_bcp008_behavior_and_procurement_pilot.py", generated)
 
 
+    def test_serial_fiction_skill_coupled_change_and_entrypoint_contract_is_explicit(self) -> None:
+        config = json.loads((ROOT / ".github/reference-freshness.json").read_text(encoding="utf-8"))
+        rules = {rule["name"]: rule for rule in config["coupled_change_rules"]}
+        self.assertIn(
+            "tests/test_serial_fiction_discipline.py",
+            rules["local-skill-contract-learning-test-sync"]["require_any_changed"],
+        )
+        self.assertIn(
+            "tests/test_serial_fiction_discipline.py",
+            rules["registry-structure-test-sync"]["require_any_changed"],
+        )
+        operating = (ROOT / "docs/OPERATING_MODEL.md").read_text(encoding="utf-8")
+        self.assertIn("developing-and-revising-serial-fiction", operating)
+        self.assertIn("독자 반응 Evidence", operating)
+
 
 if __name__ == "__main__":
     unittest.main()
