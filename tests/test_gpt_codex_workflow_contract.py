@@ -42,6 +42,24 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         self.assertIn("기획·구현·POC 누적", routing)
         self.assertIn("실제 저장소·프로젝트·Godot 상태", handoff)
 
+    def test_continuous_work_can_handoff_same_approved_scope_without_reapproval(self) -> None:
+        policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
+        routing = (ROOT / "docs/WORK_MODE_AND_SKILL_ROUTING.md").read_text(encoding="utf-8")
+        reference = (ROOT / "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md").read_text(encoding="utf-8")
+        for text in (policy, routing, reference):
+            self.assertIn("CONTINUOUS_WORK_EXECUTOR_HANDOFF", text)
+            self.assertIn("DEFERRED_EXTERNAL_EXECUTOR", text)
+        for term in (
+            "Codex로 넘길까요?",
+            "현재 세션",
+            "HiGodot",
+            "실제로",
+        ):
+            self.assertIn(term, policy)
+        self.assertIn("현재 세션 부재와 전체 실행 경로 부재", routing)
+        self.assertIn("alternate executor", reference)
+        self.assertIn("우회", reference)
+
     def test_explicit_approval_inherits_merge_authority_without_reapproval(self) -> None:
         policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
         routing = (ROOT / "docs/WORK_MODE_AND_SKILL_ROUTING.md").read_text(encoding="utf-8")
