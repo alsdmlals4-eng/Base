@@ -388,6 +388,20 @@ class SkillBehaviorCoverageTests(unittest.TestCase):
         self.assertEqual([], self.checker.validate_contract(ROOT))
 
 
+    def test_serial_fiction_skill_has_primary_and_non_selection_coverage(self) -> None:
+        evals = self.checker.load_eval_set(ROOT)
+        primary = [
+            case for case in evals["cases"]
+            if case["expected_primary_skill"] == "developing-and-revising-serial-fiction"
+        ]
+        forbidden = [
+            case for case in evals["cases"]
+            if "developing-and-revising-serial-fiction" in case["forbidden_skills"]
+        ]
+        self.assertGreaterEqual(len(primary), 1)
+        self.assertGreaterEqual(len(forbidden), 1)
+        self.assertEqual([], self.checker.validate_contract(ROOT))
+
 
 if __name__ == "__main__":
     unittest.main()

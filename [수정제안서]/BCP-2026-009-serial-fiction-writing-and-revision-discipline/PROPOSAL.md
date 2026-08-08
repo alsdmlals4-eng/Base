@@ -7,12 +7,12 @@
 - Base 최초 제안 기준 커밋: `fa69a77a14f923a756064f6ae151d34cadb374f7`
 - 제안 병합 커밋: `3a60faf8905e83b48b0cdbd48fa6c2f876a24187`
 - 제출일: `2026-08-08`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `HYPOTHESIS_TO_PATTERN_CANDIDATE`
 - 설계: `DESIGN.md`
 - 벤치마크·적대 검토: `evidence/BENCHMARK_AND_ADVERSARIAL_REVIEW.md`
 - 승인 근거: 이 문서의 `승인과 구현` 절에 보존한 2026-08-08 사용자 지시
-- 구현 PR: `null` — 별도 구현 PR에서 연결한다.
+- 구현 PR: https://github.com/alsdmlals4-eng/Base/pull/225
 
 `BCP-2026-008`은 현재 main Registry에는 없지만 과거 미병합 PR #190에서 사용된 식별자이므로 이력을 재사용하지 않고 009를 사용한다.
 
@@ -197,4 +197,4 @@ Registry의 `approval_ref`는 이 문서의 `#승인과-구현` 앵커를 사용
 
 동일 승인 범위는 `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`를 따르되 새 범위·새 사용자 결정·P0/P1·검증 실패는 자동 승인으로 간주하지 않는다.
 
-구현은 이 lifecycle 변경이 병합된 뒤 최신 `main`에서 별도 PR로 시작한다. 롤백은 BCP 상태와 Registry의 approval_ref를 함께 `SUBMITTED/null`로 되돌리면 된다.
+구현은 https://github.com/alsdmlals4-eng/Base/pull/225에서 수행했다. 이 상태는 PR이 존재하고 전용 Skill·Knowledge·라우팅·behavior/evidence·계약 테스트가 구현된 것을 뜻하며, 실제 독자 만족도·상업 성과까지 검증했다는 뜻은 아니다. 롤백은 구현 PR의 변경을 되돌리고 BCP 상태를 `APPROVED_FOR_IMPLEMENTATION`으로 복원한다.

@@ -308,6 +308,30 @@
       "required_evidence": ["INSUFFICIENT_SAMPLE", "CONVERSION_UNVERIFIED", "관찰 기간", "유입 맥락", "하위 전환"],
       "expected_user_decision_state": "NOT_REQUIRED",
       "rationale": "영상 Analytics 해석이 주 작업이며 작은 표본과 CTR 단독 근거로 게임 수요를 확정하지 않는다."
+    },
+    {
+      "case_id": "SBE-951",
+      "case_type": "boundary",
+      "prompt": "이 전투 시스템의 DPS와 적 AI 난이도를 설계하고 공격 예고와 위협 예산이 공정한지 검증해줘.",
+      "expected_work_mode": "PLAN",
+      "expected_primary_skill": "analyzing-and-refining-game-concepts",
+      "expected_supporting_skills": [],
+      "expected_skill_modes": [
+        "system-design",
+        "difficulty-and-combat-ai"
+      ],
+      "forbidden_skills": [
+        "developing-and-revising-serial-fiction",
+        "producing-game-development-youtube-videos"
+      ],
+      "required_evidence": [
+        "DPS",
+        "AI",
+        "공정성",
+        "위협"
+      ],
+      "expected_user_decision_state": "DEFERRED",
+      "rationale": "게임 시스템·난이도·전투 AI가 주 책임이며 소설 집필·퇴고 Skill을 선택하면 안 된다."
     }
   ]
 }

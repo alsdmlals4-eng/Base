@@ -55,6 +55,9 @@ from tests.test_local_godot_reference_library import (
 from tests.test_project_asset_vault import (
     ProjectAssetVaultTests as _ProjectAssetVaultTests,
 )
+from tests.test_serial_fiction_discipline import (
+    SerialFictionDisciplineContractTests as _SerialFictionDisciplineContractTests,
+)
 from tools import run_local_validation as runner
 
 

@@ -612,3 +612,10 @@
 - 행동 압력: L2 추적성 선택, L1 비선택, Web 조달 선택, Godot shadcn 직접 설치 비선택 fixture를 추가한다.
 - 실제 조달: shadcn-ui/ui exact commit의 source·package metadata·MIT license를 확인했다. source의 미배포 버전 `4.16.2`는 npm `ETARGET`으로 실패했으며, 배포된 CLI `4.16.1`을 사용한 격리 Vite fixture에서는 button 조달과 TypeScript/Vite build가 통과했다. Base·실제 프로젝트에는 설치하지 않았다.
 - 증거 상한: 계약·fixture·source receipt와 격리 Web build는 실제 독립 모델 행동 향상, 목표 프로젝트 설치, 브라우저 상호작용, 접근성, 사람 미감 통과를 증명하지 않는다. `MODEL_RUN_STATUS: NOT_RUN`, target installation `NOT_RUN`, `HUMAN_NOT_RUN`을 유지한다.
+
+## 2026-08-08 — BCP-2026-009 — developing-and-revising-serial-fiction
+
+- 새 specialist가 필요한 이유: 게임 기획과 benchmark 활동은 일부 공유하지만 소설은 정본·POV·voice·회차 payoff·setup-payoff·원고 diff라는 독립 입력·산출물·Quality Bar를 가진다.
+- 통합하지 않은 책임: 적대적 검토, 정본 발행, 게임 시스템 기획, 단순 proofreading, 마케팅 카피.
+- 반례 학습: 성공작끼리 문체·정보량·속도·개그 강도가 상반되므로 인기작 표면 스타일을 Base 규칙으로 만들지 않는다.
+- 증거 상한: Skill/Registry/behavior 계약은 검증 가능하지만 실제 독자 만족·판매 개선은 `PROJECT_PILOT_NOT_RUN`, `HUMAN_NOT_RUN`, `NOT_RUN`이다.

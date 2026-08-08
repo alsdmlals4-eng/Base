@@ -4,7 +4,7 @@
 
 ## 1. 목적
 
-Base는 게임 프로젝트가 다음을 저장소만으로 지속하도록 돕는다.
+Base는 게임·연재소설 등 등록된 창작·개발 프로젝트가 공용 작업 구조를 지속해서 재사용하도록 돕는다.
 
 ```text
 사용자 Prompt·방향
@@ -18,7 +18,7 @@ Base는 게임 프로젝트가 다음을 저장소만으로 지속하도록 돕�
 → 반복 가능한 스킬 학습
 ```
 
-Base에는 여러 프로젝트에서 재사용 가능한 판단·절차·검증만 둔다. 프로젝트 고유 세계관·수치·경로·자산·구현 상태는 대상 프로젝트가 책임진다. 구성된 프로젝트 Google Sheets는 `USER_FACING_GDD_WORKSPACE`로 사용하며 상세 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 책임진다.
+Base에는 여러 프로젝트에서 재사용 가능한 판단·절차·검증만 둔다. 프로젝트 고유 세계관·원고·수치·경로·자산·구현 상태는 대상 프로젝트가 책임진다. 게임 프로젝트에 구성된 GDD Google Sheets는 `USER_FACING_GDD_WORKSPACE`로 사용하며 상세 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 책임진다. 연재소설 등 다른 분야의 프로젝트 문서·Sheet는 해당 프로젝트가 선언한 정본·문서 계약을 따른다.
 
 ## 2. 우선순위
 
@@ -151,6 +151,7 @@ UX/UI design, 폴리싱, and runtime-result audit use `auditing-and-refining-ui-
 | 프로젝트 스킬 생성·통합·학습 | `evolving-project-discipline-skills` |
 | 현재 상태·다음 작업·위험 압축·사용자 요청 기반 Codex 실행 명세 | `maintaining-project-context-and-handoff` |
 | 핵심 컨셉·DDD·벤치마크·플레이어 반응·플레이테스트·PoC·재조정 | `analyzing-and-refining-game-concepts` |
+| 연재소설·웹소설 정본·아크·회차·POV·문체·집필·퇴고·복선·독자 반응 Evidence | `developing-and-revising-serial-fiction` |
 | 대표 플레이 구간·목표 품질·실제 플레이·제작 파이프라인 검증 | `designing-vertical-slices` |
 | 게임 개발일지·Shorts·기능 공개·출시 홍보 영상의 실제 빌드 기반 대본·샷·패키징·게시 Gate·제한적 Analytics | `producing-game-development-youtube-videos` |
 | 외부 AI 작업 공간 운용 | `orchestrating-deepseek-worktrees` |

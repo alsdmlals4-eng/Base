@@ -191,6 +191,23 @@
         {"kind": "CONTRACT", "path": "skills/producing-game-development-youtube-videos/SKILL.md"},
         {"kind": "CONTRACT", "path": "templates/game-development-youtube/EPISODE_PACKET.md"}
       ]
+    },
+    {
+      "skill_id": "developing-and-revising-serial-fiction",
+      "evidence": [
+        {
+          "kind": "TEST",
+          "path": "tests/test_serial_fiction_discipline.py"
+        },
+        {
+          "kind": "CONTRACT",
+          "path": "skills/developing-and-revising-serial-fiction/SKILL.md"
+        },
+        {
+          "kind": "CONTRACT",
+          "path": "docs/knowledge/serial-fiction/SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md"
+        }
+      ]
     }
   ]
 }

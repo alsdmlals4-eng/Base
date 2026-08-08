@@ -55,6 +55,7 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 | Godot 구현·GDScript 테스트·실행 QA | HiGodot persistent authoring → adopted GUT deterministic test → adopted Hera `LIVE_QA_AND_OBSERVABILITY_ONLY` | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` + `templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md` |
 | 구형 자료 분류·보존·Archive·승인 삭제 | `governing-legacy-retention-and-archives` | `skills/governing-legacy-retention-and-archives/SKILL.md` |
 | 핵심 컨셉·DDD·벤치마크·플레이테스트·PoC | `analyzing-and-refining-game-concepts` | `skills/analyzing-and-refining-game-concepts/SKILL.md` |
+| 소설·웹소설·연재소설 기획·각색·원고 퇴고·POV·회차 pacing·독자 반응 진단 | `developing-and-revising-serial-fiction` | `skills/developing-and-revising-serial-fiction/SKILL.md` + `docs/knowledge/serial-fiction/README.md` |
 | Windows+Android 동시 목표·공용 코어·입력/UI/lifecycle·STOVE·Google Play·Steam 출시 wave | `analyzing-and-refining-game-concepts` + 기존 기술·Vertical Slice·검증 Skill | `docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md` + `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md` |
 | 게임 build/package/download/install/patch·font/texture/audio 자산 용량 최적화 | 기존 기획·아트·Vertical Slice·검증 Skill 조합 | `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` + `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md` |
 | 게임 시스템·난이도·전투 AI | `analyzing-and-refining-game-concepts: system-design / difficulty-and-combat-ai` | `skills/analyzing-and-refining-game-concepts/SKILL.md` |

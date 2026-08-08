@@ -1,6 +1,6 @@
 # Base 문서·스킬 역할표
 
-Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** 작업 원칙, Skill, Template, Test와 일반화된 Case를 관리한다. 프로젝트의 세계관·실제 수치·구현 상태·파일 경로·승인 자산·테스트 결과는 각 프로젝트 저장소가 책임진다.
+Base는 게임·연재소설 등 등록된 창작·개발 프로젝트가 공유하는 **[학습형] [공용]** 작업 원칙, Skill, Template, Test와 일반화된 Case를 관리한다. 프로젝트의 세계관·원고·실제 수치·구현 상태·파일 경로·승인 자산·테스트 결과는 각 프로젝트가 선언한 책임 원본이 소유한다.
 
 ## 1. 최소 시작 경로
 
@@ -296,3 +296,12 @@ L1 이상 완료 보고는 실제 사용한 Work Mode·Skill·Skill Mode와 이�
 | 읽기 전용 실제 조달 증거 | `docs/evidence/external-ui-procurement/` |
 
 이 계약은 새 ACTIVE Skill을 추가하지 않고 기존 intake·문서·검증·적대 검토·UI Skill의 조건부 mode/reference로 실행한다.
+
+## 연재소설 공용 책임
+
+| 구분 | 파일 | 책임 |
+|---|---|---|
+| 연재소설 Knowledge Hub | `docs/knowledge/serial-fiction/README.md` | 웹소설·연재소설 공용 작법·회차·독자 Evidence Guide 라우팅; 프로젝트 고유 정본·고정 POV 수·장르 비율·플랫폼별 생산 목표는 소유하지 않음 |
+| 연재소설 실행 Skill | `skills/developing-and-revising-serial-fiction/SKILL.md` | 정본·각색 경계, 아크·회차, POV·voice, 장면 집필·퇴고, pacing·payoff, setup-payoff debt, reader-feedback revision |
+
+플랫폼 글자 수·과금·연재 규칙은 가변 외부 사실이므로 적용 시 공식 원본을 재검증하며, 오래된 숫자를 Base universal 규칙으로 고정하지 않는다.

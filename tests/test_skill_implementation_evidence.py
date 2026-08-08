@@ -197,6 +197,18 @@ class SkillImplementationEvidenceTests(unittest.TestCase):
             self.assertIn(path, row)
 
 
+    def test_serial_fiction_skill_has_executable_repository_evidence(self) -> None:
+        builder = load_builder()
+        self.assertEqual([], builder.validate_evidence_index(ROOT))
+        markdown = builder.build_evidence_markdown(ROOT)
+        row = next(
+            line for line in markdown.splitlines()
+            if line.startswith("| `developing-and-revising-serial-fiction`")
+        )
+        self.assertIn("PASS", row)
+        self.assertIn("EXECUTABLE_EVIDENCE", row)
+        self.assertIn("tests/test_serial_fiction_discipline.py", row)
+
 
 if __name__ == "__main__":
     unittest.main()

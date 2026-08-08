@@ -1,8 +1,8 @@
 # Current Active Base Skills
 
 > Generated from `skills/SKILL_REGISTRY.json`. Do not edit this derivative.
-> Registry SHA-256: `ba36a0ae0a7f32ed84cfecaacdbd2357c133584e4944500e567cdb98355b8570`
-> Current active Skill count: `29`
+> Registry SHA-256: `6229f34f761257b693738c72d5d988315787dfe5e18122787f577c81ca6a5127`
+> Current active Skill count: `30`
 
 | Skill ID | Owner | Positive trigger | Negative trigger |
 | --- | --- | --- | --- |
@@ -35,3 +35,4 @@
 | `governing-legacy-retention-and-archives` | knowledge-governance-and-archives | legacy-retention; archive-governance; legacy-file; versioned-duplicate; stale-copy; canonical-merge; compatibility-stub; archive-history; delete-candidate; legacy-reconciliation | 레거시 수명주기와 무관한 단일 오탈자 수정이거나 프로젝트 운영체계 전체 설치·마이그레이션이다. |
 | `evaluating-godot-assets-and-plugins-before-creation` | godot-asset-and-plugin-evaluation | godot-asset-search; godot-plugin-search; commercial-plugin; asset-store; asset-library; itchio-asset; github-addon; reuse-before-build; third-party-license; build-custom-decision | 외부 자산과 무관한 오탈자·단일 수치 수정이거나 이미 승인된 동일 버전 자산을 단순 재사용한다. |
 | `optimizing-ai-model-and-prompt-costs` | ai-model-cost-operations | model-recommendation; model-effort-routing; luna-terra-sol; reasoning-effort; prompt-caching; cacheable-prefix; ai-cost-estimation; usage-measurement; provider-profile; cost-recalibration | 모델 선택권이 없거나 한 번뿐인 짧은 요청이거나, 검증 책임이 비용보다 우선하는 고위험 작업에서 하향 모델을 강제하려는 경우다. |
+| `developing-and-revising-serial-fiction` | serial-fiction-writing-and-revision | serial-fiction; webnovel; novel-writing; fiction-revision; adaptation; pov; character-voice; episode-pacing; setup-payoff; reader-feedback | proofreading-only 짧은 교정, game-system-design, marketing-copy, 단순 요약·번역, 또는 다른 작가의 식별 가능한 style-imitation이 주 작업이다. |
