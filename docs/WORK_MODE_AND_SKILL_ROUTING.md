@@ -52,7 +52,7 @@ Reference: `skills/managing-project-intake-and-work-contract/references/grill-me
 - Work Mode를 대체하지 않는다. 각 단계는 계속 `PLAN / BUILD / REVIEW` 중 하나를 사용한다.
 - 새 Skill이나 장기 권한이 아니다.
 - 트리거가 없는 요청은 `CONTINUOUS_WORK_INACTIVE`이며 기존 승인·Grill Me 흐름을 유지한다.
-- 상세 계약: `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`
+- blocker/종료 판정은 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`의 recovery ladder와 Global Progress Queue를 따른다.
 
 ## 2. 자동 실행 순서
 
@@ -65,7 +65,7 @@ Reference: `skills/managing-project-intake-and-work-contract/references/grill-me
 → 각 Skill의 Skill Mode 자동 선택
 → [연속작업] 진행해 존재 여부와 승인 범위 확인
 → 실행·검증·필요 시 Work Mode 전환
-→ CONTINUOUS_WORK_ACTIVE이면 승인 범위 안의 다음 미완료 작업으로 반복
+→ CONTINUOUS_WORK_ACTIVE이면 승인 범위 안에서 recover/defer/continue
 → 사용 이유·얻은 결과·증거 보고
 ```
 
@@ -147,34 +147,27 @@ review-scope-map
 
 ### 4.1 `[연속작업] 진행해` 권한 전환 루프
 
-`CONTINUOUS_WORK_ACTIVE`에서는 현재 승인된 작업 계약의 실행 순서에서 다음 미완료 결과를 자동 선택한다.
+`CONTINUOUS_WORK_ACTIVE`에서는 현재 승인된 작업 계약의 실행 순서를 Global Progress Queue로 관리한다.
 
 ```text
 현재 승인된 작업 계약
-→ 다음 미완료 작업
-→ BUILD
+→ ready task 수행
 → REVIEW attack → validate-critique
-→ finding 분류
-   ├─ 범위 안의 기술적 단일 최소 안전 권장안
-   │  → 권장안 자동 승인 간주
-   │  → BUILD 최소 반영
-   │  → REVIEW regression-recheck → decision-report
-   │  → 다음 미완료 작업
-   ├─ USER_DECISION_REQUIRED
-   │  → STOPPED_USER_DECISION
-   └─ BLOCKED_UNVERIFIED
-      → BLOCKED_UNVERIFIED
-→ 완료 기준 충족까지 반복
-→ 최종 보고
+→ 기술적 단일 최소 안전 finding이면 자동 승인 → 최소 반영 → regression-recheck
+→ blocker면 RECOVERABLE_VERIFICATION / RECOVERABLE_EXECUTION_ROUTE / LOCAL_TASK / USER_DECISION / HIGH_RISK로 분류
+→ recoverable이면 재조회·대체 증거·authorized alternate executor 시도
+→ 당장 못 풀리면 해당 task만 deferred
+→ 독립 ready task 계속
+→ 상태 변화 뒤 deferred 재평가
+→ 모든 완료 기준 충족 또는 GLOBAL_TERMINAL_BLOCKER까지 반복
 ```
 
-자동 승인 조건은 **현재 승인 범위 + 적대 검토로 유효성이 확인된 기술적 단일 최소 안전안 + 되돌리기 가능한 범위**다. 다음은 자동 승인하지 않는다.
-
-- 프로젝트 코어·플레이어 경험·주요 UX·콘텐츠 의미·비용/범위 우선순위를 새로 바꾸는 결정
-- 기존 계약을 넘어서는 새 Goal이나 범위 확대
-- 결제, 계정 삭제, 보안·권한 확대 또는 별도 사용자 자격 확인이 필요한 외부 고위험 행위
-- `USER_DECISION_REQUIRED`, `BLOCKED_UNVERIFIED`
-- 사용자의 중지·범위 변경
+- `BLOCKED_UNVERIFIED`는 task/evidence 상태일 수 있으며 그 자체로 전역 종료가 아니다.
+- `tool-output truncation`, queued/in-progress CI, 첫 exact-head 조회 실패는 `EVIDENCE_TRANSPORT_INCOMPLETE`로 재조회한다.
+- 현재 세션에 HiGodot 같은 권위 도구가 없으면 현재 세션 부재와 전체 실행 경로 부재를 구분하고, 같은 승인 범위에서 호출 가능한 authorized alternate executor를 탐색한다. `[연속작업] 진행해` 자체가 동일 승인 범위의 `CONTINUOUS_WORK_EXECUTOR_HANDOFF` 요청을 포함하므로 `Codex로 넘길까요?` 같은 재승인을 만들지 않는다. 실제 executor를 호출할 수 없으면 handoff/checkpoint만 준비하고 해당 task를 `DEFERRED_EXTERNAL_EXECUTOR`로 두며 다른 ready task를 계속한다.
+- 같은 승인 목표의 구현·검증 방법인 dedicated execution/test package, 테스트 규모 확대, 재조회·재실행, 동작 보존 최소 수정은 새 제품 결과·예산·권한을 만들지 않는 한 `USER_DECISION_REQUIRED`가 아니다.
+- 진짜 `USER_DECISION_REQUIRED`, 범위 확대, 고위험 외부 행위는 자동 승인하지 않지만 독립 작업이 남아 있으면 해당 task만 보류한다.
+- `GLOBAL_TERMINAL_BLOCKER`는 recovery path를 소진하고, 독립 ready task가 없고, 기존 approval/승인 상속/authorized executor로도 진행할 수 없을 때만 사용한다.
 
 짧은 진행 업데이트는 허용하지만 승인 질문으로 사용하지 않는다. `CONTINUOUS_WORK_ACTIVE`는 현재 응답·에이전트 실행 세션의 orchestration이며 scheduler, webhook, 백그라운드 실행 또는 다른 채팅 자동 메시지 전달을 뜻하지 않는다. 상세 기준은 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`가 책임진다.
 
@@ -182,7 +175,7 @@ review-scope-map
 
 공용 정본: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
 
-기본 라우팅은 `ON_DEMAND_CODEX_HANDOFF`다.
+기본 라우팅은 `ON_DEMAND_CODEX_HANDOFF`다. 단, `CONTINUOUS_WORK_ACTIVE`에서 승인된 task의 필수 executor가 현재 worker에 없으면 `[연속작업] 진행해`를 동일 승인 범위의 executor handoff 요청으로 재사용하고 별도 전환 승인을 요구하지 않는다.
 
 ```text
 GPT 평상시 작업
@@ -191,7 +184,7 @@ GPT 평상시 작업
 → 문제 발견 시 GPT에서 재설계
 → 기획·구현·POC 누적
 
-USER_REQUESTED_CODEX_HANDOFF
+USER_REQUESTED_CODEX_HANDOFF | CONTINUOUS_WORK_EXECUTOR_HANDOFF
 → GPT가 현재 의도·실제 상태·보호 범위·Acceptance Criteria를 Codex 실행 명세로 압축
 → Codex가 실제 GitHub + 프로젝트 파일 + Godot 상태를 직접 조사
 
@@ -215,7 +208,7 @@ GPT REVIEW
 - 기획·조사·설계·비-Godot 파일·GitHub 계약
 - 승인 범위의 Godot 사전 제작·POC·코드 초안·구현 보조
 - L2 이상이면 마스터 구현계획과 패키지 계약
-- `USER_REQUESTED_CODEX_HANDOFF` 시 실행 명세 작성
+- `USER_REQUESTED_CODEX_HANDOFF` 또는 `CONTINUOUS_WORK_EXECUTOR_HANDOFF` 시 실행 명세 작성
 - 선택적 Codex Plan 결과 반영과 구현 결과 검수
 
 ### Codex Plan 권한
@@ -262,7 +255,7 @@ L2 이상·다중 의존성 작업은 전체 설계를 마스터 구현계획 �
 
 `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`: 사용자의 명시적 승인이 완료된 항목은 동일 승인 범위의 구현·검증·PR에 병합 권한도 상속된다. 동일 범위에 대해 추가 확인·재승인·병합 승인 요청 없이, 동일 HEAD·필수 검사·독립 검토 통과, unresolved thread 0, `USER_REVIEW_REQUIRED`·`CHANGE_PROPOSAL`·P0/P1 없음이 확인되면 저장소의 허용된 방식으로 병합한다.
 
-`CONTINUOUS_WORK_ACTIVE`는 이 병합 Gate를 삭제하지 않는다. 연속작업 중 다음 패키지로 이동할 수 있어도 각 PR은 기존 exact-head·필수 검사·독립 검토·thread·P0/P1 조건을 그대로 충족해야 한다.
+`CONTINUOUS_WORK_ACTIVE`는 이 병합 Gate를 삭제하지 않는다. 연속작업 중 다음 패키지로 이동할 수 있어도 각 PR은 기존 exact-head·필수 검사·독립 검토·thread·P0/P1 조건을 그대로 충족해야 하며, 조건을 충족한 승인 범위 PR에 별도 병합 승인을 다시 묻지 않는다.
 
 담당 Skill: `maintaining-project-context-and-handoff`의 `implementation-package-handoff`.
 
@@ -290,7 +283,7 @@ status: PASS | PARTIAL | FAIL | UNVERIFIED
 → 얻은 결과·증거
 ```
 
-`CONTINUOUS_WORK_ACTIVE`였다면 완료한 작업, 적대 검토 finding, 자동 승인해 반영한 기술 권장안, 회귀 검증, 최종 종료 상태를 함께 보고한다.
+`CONTINUOUS_WORK_ACTIVE`였다면 완료한 작업, deferred 작업, blocker recovery, 적대 검토 finding, 자동 승인해 반영한 기술 권장안, 회귀 검증, 최종 종료 상태를 함께 보고한다.
 
 중요 후보를 사용하지 않았으면 `trigger 불일치 / 비사용 조건 / 현재 단계 아님 / 도구·입력 없음`을 기록한다. 모든 Skill을 나열하지 않는다.
 
@@ -315,11 +308,12 @@ GPT REVIEW: 저장·불러오기·경계·회귀·기획 일치 검수
 ```text
 Prompt: [연속작업] 진행해
 intake: 현재 승인된 계약과 남은 완료 기준 복원 → CONTINUOUS_WORK_ACTIVE
-BUILD: 다음 미완료 작업 수행
-REVIEW: attack → validate-critique
-기술적 단일 최소 안전 finding: 권장안 자동 승인 간주 → BUILD 최소 수정
-REVIEW: regression-recheck → 다음 미완료 작업
-USER_DECISION_REQUIRED 또는 BLOCKED_UNVERIFIED: 중지
+BUILD/REVIEW: ready task 수행 → attack → validate-critique → 최소 안전 finding 자동 반영 → regression-recheck
+CI 결과가 잘림: EVIDENCE_TRANSPORT_INCOMPLETE → exact-head run/job 재조회
+현재 세션에 권위 도구 없음: authorized alternate executor 탐색 → 가능하면 CONTINUOUS_WORK_EXECUTOR_HANDOFF, 불가능하면 해당 task defer
+다른 ready task가 있으면 계속
+승인 범위 PR: merge gate 통과 시 별도 병합 승인 없이 병합
+모든 recovery가 소진되고 ready task가 없을 때만 GLOBAL_TERMINAL_BLOCKER
 전체 완료: 최종 보고
 ```
 
