@@ -261,7 +261,7 @@ jobs:
 
       - name: Upload docs diagnostics on failure
         if: failure()
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: docs-validation-diagnostics
           path: |
@@ -376,7 +376,7 @@ jobs:
 
       - name: Upload contract diagnostics on failure
         if: failure()
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: operating-system-contract-diagnostics
           path: |
@@ -444,7 +444,7 @@ jobs:
 
       - name: Upload publication diagnostics on failure
         if: failure()
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: publication-diagnostics-ubuntu
           path: publication-test-results.txt
