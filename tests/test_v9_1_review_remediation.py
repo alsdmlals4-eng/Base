@@ -131,9 +131,9 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
     def test_ci_uses_exact_action_allowlist_and_installs_pinned_validation_requirements(self) -> None:
         allowed = {
             "actions/checkout": "08c6903cd8c0fde910a37f88322edcfb5dd907a8",
-            "actions/setup-python": "e797f83bcb11b83ae66e0230d6156d7c80228e7c",
+            "actions/setup-python": "5fda3b95a4ea91299a34e894583c3862153e4b97",
             "actions/setup-node": "a0853c24544627f65ddf259abe73b1d18a591444",
-            "actions/upload-artifact": "330a01c490aca151604b8cf639adc76d48f6c5d4",
+            "actions/upload-artifact": "043fb46d1a93c77aae656e7c1c64a875d1fc6a0a",
             "actions/dependency-review-action": "a1d282b36b6f3519aa1f3fc636f609c47dddb294",
         }
         seen: set[str] = set()
