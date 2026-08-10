@@ -7,7 +7,7 @@ description: Use when a verified actual build must become a truthful YouTube dev
 
 ## 목적과 권한 경계
 
-이 Skill은 게임 프로젝트의 실제 정본·현재 빌드·공개 가능 범위를 바탕으로 YouTube 개발일지, Shorts, 기능 공개, 출시 홍보 영상의 **채널 구조 → 에피소드 약속 → 대본·샷 → 제목·썸네일 패키지 → 공개 전 검증 → 게시 후 학습**을 설계한다.
+이 Skill은 게임 프로젝트의 실제 정본·현재 빌드·공개 가능 범위를 바탕으로 YouTube 개발일지, Shorts, 기능 공개, 출시 홍보 영상의 **채널 구조 → 에피소드 약속 → 대본·샷 → 편집·리뷰 → 제목·썸네일 패키지 → 공개 전 검증 → 게시 후 학습**을 설계한다.
 
 핵심 계약은 다음과 같다.
 
@@ -17,6 +17,8 @@ PROJECT_CANON_AND_ACTUAL_BUILD_FIRST
 → ONE_EPISODE_PROMISE
 → RESULT_OR_CONFLICT_FIRST
 → ACTUAL_BUILD_EVIDENCE
+→ STORY_EVIDENCE_EDIT_FIRST
+→ VERSIONED_REVIEW
 → TITLE_THUMBNAIL_PROMISE_MATCH
 → RIGHTS_RATING_SPOILER_SECURITY_REVIEW
 → ONE_PRIMARY_CTA
@@ -106,10 +108,13 @@ missing_human_viewing_data: HUMAN_NOT_RUN
 3. 공개 가능 범위·스포일러·비밀·개인정보 경계
 4. 음악·폰트·이미지·영상·게임 에셋의 권리·등급 기록
 5. `templates/game-development-youtube/EPISODE_PACKET.md`
-6. 필요 시 `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`
-7. 승인 제안과 설계:
+6. 최신 플랫폼·편집·creator Source 후보가 필요하면 `docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md`의 `YOUTUBE_AND_VIDEO_EDITING`
+7. 필요 시 `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`
+8. 승인 제안과 설계:
    - `[수정제안서]/BCP-2026-006-game-youtube-devlog-marketing-workflow/PROPOSAL.md`
    - `[수정제안서]/BCP-2026-006-game-youtube-devlog-marketing-workflow/DESIGN.md`
+
+Watchlist·creator blog·vendor benchmark는 정본이 아니다. YouTube metric 정의·Studio 기능은 현재 YouTube 공식 Help를 우선하고, 편집 도구 기능은 사용하는 NLE의 현재 공식 문서를 우선한다.
 
 ## Process
 
@@ -193,6 +198,43 @@ Episode Job:
 
 샷마다 빌드 버전·캡처 날짜·주장 상태·보호 범위를 연결한다. 필요한 장면이 없으면 대본의 확정 표현을 낮추거나 촬영 전 단계로 되돌린다.
 
+### 4.5 이야기·증거 우선 편집과 versioned review
+
+편집 효과를 쌓기 전에 rough cut이 한 편의 이야기와 실제 증거로 성립하는지 검증한다.
+
+기본 편집 Pass:
+
+```text
+STORY_AND_EVIDENCE_ROUGH_CUT
+→ CLARITY_AND_PACING_TRIM
+→ DIALOGUE_AND_AUDIO_CLEANUP
+→ GRAPHICS_CAPTIONS_AND_CONTEXT
+→ COLOR_VFX_AND_POLISH
+→ EXPORT_AND_PLAYBACK_QC
+```
+
+규칙:
+
+- rough cut에서 viewer job·promise·실제 빌드 근거가 전달되지 않으면 motion·VFX·color polish로 넘어가지 않는다.
+- dialogue·중요 game audio·정보 전달의 명료성이 효과음·음악·transition보다 우선한다.
+- 자막·그래픽은 새 사실을 만들지 않고 이미 검증된 내용을 읽기 쉽게 한다.
+- DaVinci Resolve 등 특정 NLE의 기능·단축키·codec 설정은 해당 도구의 현재 공식 Training/Manual을 사용하며 Base 전역 규칙으로 고정하지 않는다.
+- 리뷰는 `v1 / v2 / ...`처럼 버전을 구분하고, finding마다 `KEEP / CHANGE / REJECT / QUESTION`과 해결된 version을 남긴다.
+- reviewer 의견은 명령이 아니라 Evidence다. Episode promise·프로젝트 정본·권리·보안과 충돌하면 그대로 채택하지 않는다.
+
+최소 review record:
+
+```yaml
+edit_version:
+reviewer_or_source:
+finding:
+category: STORY | CLARITY | AUDIO | VISUAL | RIGHTS | SPOILER | FACT | CTA
+priority: P0 | P1 | P2 | P3
+decision: KEEP | CHANGE | REJECT | QUESTION
+resolved_in_version:
+verification:
+```
+
 ### 5. 제목·썸네일 약속을 초반 내용과 일치시킨다
 
 `TITLE_THUMBNAIL_PROMISE_MATCH` 검사:
@@ -263,14 +305,19 @@ verification_status: PASSED | PARTIAL | FAILED | NOT_RUN | BLOCKED
 
 `ANALYTICS_WITH_SAMPLE_LIMITS` 관찰값:
 
-- 노출 경로와 대상 시청자
-- 첫 30초 유지와 약속 일치
-- 이탈·재시청·공유 구간
-- 신규·일반·정기 시청자
+- 노출·traffic source와 대상 시청자
+- impressions·CTR·views·unique viewers처럼 Reach를 설명하는 지표
+- watch time·average view duration·key moments for audience retention
+- 첫 구간 이탈·재시청 구간과 약속 일치
+- new·casual·regular/returning viewer 구분
 - 프로젝트 재생목록·다음 영상 이동
 - 설명란·고정 댓글·엔드스크린 클릭
 - 데모·알림·후원·위시리스트·구매 등 하위 전환
 - 제작시간과 게임 개발 지연 비용
+
+YouTube Studio의 metric 이름·Audience segment 정의·화면 구조는 바뀔 수 있으므로 현재 공식 Help/Studio 설명을 우선한다. 제3자 creator/vendor benchmark는 `OBSERVATIONAL_DATA_OR_VENDOR_GUIDE`이며, 채널·niche·영상 길이·표본·기간을 기록하지 않으면 목표값으로 사용하지 않는다.
+
+Retention graph의 drop·spike·rewatch는 **무엇이 일어났는지**를 보여주는 관찰이다. 해당 장면이 원인이라고 자동 단정하지 않고 다음 영상의 가설·편집 변경으로 변환한다.
 
 사전 기록:
 
@@ -295,7 +342,7 @@ known_confounders:
 - `CONVERSION_UNVERIFIED`: 외부 행동을 측정하지 못했다.
 - `HUMAN_NOT_RUN`: 실제 사람 시청 데이터가 없다.
 
-조회수·CTR·Shorts 노출 하나만으로 게임 수요·구매 의사·채널 전략의 성공을 확정하지 않는다.
+조회수·CTR·Shorts 노출·retention benchmark 하나만으로 게임 수요·구매 의사·채널 전략의 성공을 확정하지 않는다.
 
 ## Output contract
 
@@ -311,6 +358,7 @@ primary_cta:
 hook_and_script:
 shot_list_and_capture_evidence:
 edit_beat_sheet:
+edit_review_rounds:
 title_thumbnail_packages:
 publication_review:
 publish_record:
@@ -333,7 +381,9 @@ verification_status: PASSED | PARTIAL | FAILED | NOT_RUN | BLOCKED
 - 성공 채널 표본을 인과·보편 법칙으로 오해하지 않았는가.
 - 특정 창작자의 식별 가능한 표현을 복제하지 않았는가.
 - 권리·등급·스포일러·개인정보·비밀 누출이 없는가.
-- Shorts 조회수·CTR을 게임 수요로 대체하지 않았는가.
+- Shorts 조회수·CTR·vendor retention benchmark를 게임 수요로 대체하지 않았는가.
+- retention drop·spike를 장면 원인으로 단정하지 않았는가.
+- story/evidence rough cut이 약한데 transition·VFX·motion·color polish로 가리고 있지 않은가.
 - 프로젝트별 KPI 절대값을 Base 공용 규칙으로 고정하지 않았는가.
 - 통합 채널을 검증 없이 분리하지 않았는가.
 - 제작시간이 게임 개발을 잠식하지 않는가.
@@ -355,7 +405,7 @@ verification_status: PASSED | PARTIAL | FAILED | NOT_RUN | BLOCKED
 
 ## Validation scenarios
 
-1. 실제 빌드와 공개 범위가 있는 개발일지에서 대본·샷·패키지·게시 Gate가 한 Packet으로 연결된다.
+1. 실제 빌드와 공개 범위가 있는 개발일지에서 대본·샷·편집 review·패키지·게시 Gate가 한 Packet으로 연결된다.
 2. 검색형·Shorts·출시 공지가 같은 서사 형식을 강제받지 않고 조건부 변형된다.
 3. 미구현 기능 과장 요청은 `BLOCKED_UNVERIFIED` 또는 수정된 주장으로 되돌아간다.
 4. 권리·등급·스포일러·보안 미확인은 게시 차단 상태를 유지한다.
@@ -363,6 +413,7 @@ verification_status: PASSED | PARTIAL | FAILED | NOT_RUN | BLOCKED
 6. 전투 밸런스·게임 코어만 요청하면 게임 기획 Skill이 주 책임이다.
 7. 작은 표본·CTR 단독 결과는 `INSUFFICIENT_SAMPLE` 또는 `CONVERSION_UNVERIFIED`다.
 8. 제작시간이 게임 개발 가치를 넘으면 축소·보류·`STOP`을 제안한다.
+9. vendor benchmark와 YouTube 공식 metric 정의가 충돌하면 공식 정의를 유지하고 vendor 수치는 context-limited 가설로 남긴다.
 
 ## Evidence boundary
 
