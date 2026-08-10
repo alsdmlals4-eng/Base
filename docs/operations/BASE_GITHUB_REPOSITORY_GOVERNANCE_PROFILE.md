@@ -13,7 +13,7 @@ repository:
   primary_branch: main
   rollout_stage: BASE
   last_verified_at: 2026-08-11
-  verified_by: GitHub repository metadata + Ruleset API + PR #274 exact-head CI
+  verified_by: "GitHub repository metadata + Ruleset API + PR #274 exact-head CI"
 ```
 
 ## Pull Request Policy
