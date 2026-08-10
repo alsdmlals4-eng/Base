@@ -471,7 +471,7 @@ SOURCE_SCAN_AUTO_MERGE_GATE:
   reviewed_head_sha:
   current_head_sha:
   base_main_sha:
-  strict up-to_date:
+  strict_up_to_date:
   required_check: ci-gate
   required_checks_passed:
   unresolved_review_threads:
