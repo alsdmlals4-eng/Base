@@ -24,12 +24,12 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Check out caller project
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
           persist-credentials: false
       - name: Check out exact Base C0
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           repository: alsdmlals4-eng/Base
           ref: ${{ inputs.base_pilot_commit }}
