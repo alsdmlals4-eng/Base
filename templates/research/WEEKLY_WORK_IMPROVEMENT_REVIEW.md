@@ -35,6 +35,10 @@
 report_week:
 checked_at:
 base_main_sha:
+connected_project_context_checked:
+  GitHub: []
+  Drive: []
+  Google_Sheets_or_other: []
 project_snapshots:
   - project:
     main_sha_or_canonical_revision:
@@ -55,6 +59,8 @@ source_coverage:
   static_reference_review: []
 unverified_scope: []
 ```
+
+연결된 GitHub/Drive/Google Sheets 등에서 현재 프로젝트 맥락을 읽을 수 있으면 함께 대조한다. 접근할 수 없는 연결면은 `unverified_scope`로 남기며, 과거 보고서의 프로젝트 상태를 현재 사실로 재사용하지 않는다.
 
 ### 중복 억제
 
@@ -93,6 +99,25 @@ candidate_disposition: ADOPT | ADAPT | TEST | AVOID | IGNORE | REFERENCE_ONLY
 ```
 
 원출처가 없는 뉴스·newsletter·DISCOVERY_FEED·vendor benchmark는 정본으로 올리지 않는다. 숫자는 표본·관찰 기간·수집 방법을 함께 보존하고 상관관계를 인과로 바꾸지 않는다.
+
+### Cross-domain improvement signal
+
+프롬프트 작성법·AI 도구·Agent/Skill 변화·주요 AI 이슈는 별도 **뉴스 모음**으로 나열하지 않는다. `PROMPT_AND_AGENT_WORKFLOW`, `SKILL_AUTHORING_AND_EVOLUTION`을 포함한 Watchlist domain에서 **현재 작업을 바꾸는 경우**에만 아래처럼 A/B/C/D의 실제 영향으로 연결한다.
+
+```yaml
+cross_domain_signal:
+  source_domain: PROMPT_AND_AGENT_WORKFLOW | SKILL_AUTHORING_AND_EVOLUTION | GAME_DEVELOPMENT | FICTION_AND_INTERACTIVE_NARRATIVE | YOUTUBE_AND_VIDEO_EDITING
+  topic: PROMPT_METHOD | AGENT_HARNESS | SKILL_EVOLUTION | AI_MAJOR_ISSUES | TOOL_OR_MODEL_CHANGE | SECURITY_OR_PERMISSION | COST_OR_CONTEXT | OTHER
+  source_and_original_backtrace:
+  current_project_or_base_overlap:
+  source_domain_to_report_impact: A | B | C | D
+  affected_workflow_or_consumer:
+  what_changes_if_true:
+  what_does_not_change:
+  disposition: ABSORB_EXISTING_OWNER | PROJECT_ONLY | TEST | EVIDENCE_ONLY | AVOID | NO_CHANGE
+```
+
+예를 들어 새 Agent 기능이 등장해도 새 agent 파일을 만드는 것이 목적이 아니다. 현재 작업에서 독립 tool/permission/context/handoff가 필요한지 먼저 확인하고, 단순 반복 산출 형식이면 Template, task-specific 절차면 Skill, 항상 필요한 짧은 규칙이면 instruction, 정확 반복 변환이면 deterministic tool 등 가장 작은 책임 단위를 선택한다.
 
 ## 3. 벤치마킹 선택 규칙
 
