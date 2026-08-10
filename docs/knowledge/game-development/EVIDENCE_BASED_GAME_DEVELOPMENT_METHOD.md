@@ -254,3 +254,105 @@ facilitation_or_test_context:
 ### 6.8 `PROJECT_CANON_UPDATE`
 
 사용자 승인 또는 기술적으로 확정 가능한 개선만 프로젝트 책임 원본·Issue·Plan·Sheet에 반영한다.
+
+- 외부 근거는 결정 근거다.
+- 프로젝트 책임 원본이 최종 기획 권한을 가진다.
+- 실제 코드·데이터·자산·테스트가 구현 사실을 가진다.
+
+### 6.9 `ADVERSARIAL_REVIEW`
+
+`running-adversarial-review-and-refinement`로 다음을 공격한다.
+
+- 결정 질문 없이 자료만 늘어났는가?
+- 특정 성공 게임의 표면 기능을 복사했는가?
+- 다른 팀 규모·플랫폼·장르를 일반화했는가?
+- 부정·혼합·실패 사례를 제외했는가?
+- AI 요약을 공식 사실처럼 사용했는가?
+- 접근성·성능·라이선스·보안·제작 비용을 숨겼는가?
+- 프로젝트 코어와 실제 구현을 확인했는가?
+- 새로운 Guide가 기존 Skill과 책임을 중복하는가?
+
+### 6.10 `PLAYTEST/EVAL/VALIDATION`
+
+판정에 맞는 검증을 선택한다.
+
+- `TEST`: PoC·플레이테스트·A/B·Contextual Eval
+- 아트: 동일 구도 비교·실제 인게임 캡처·가독성·반복 생산성
+- 기술: Godot import·런타임·저장·목표 기기 성능
+- AI: Golden Set·실패 유형·도구·예산·재시도·독립 리뷰
+- 출시: Store page·Demo·Playtest·트래픽·리뷰·Wishlist 변화
+
+실행하지 못한 검증은 `UNVERIFIED`로 남긴다.
+
+## 7. Work Mode
+
+### PLAN
+
+- 기준선과 결정 질문을 복원한다.
+- 조사·벤치마킹·현업·공식 근거를 수집한다.
+- 개선 후보와 검증 계약을 제안한다.
+- 승인 전 프로젝트 동작을 변경하지 않는다.
+
+### BUILD
+
+- 승인된 기획 문서·Template·Reference·Case를 갱신한다.
+- Codex에는 승인된 Godot 구현 패키지만 넘긴다.
+- 자산·AI 결과의 출처·도구·승인 상태를 기록한다.
+
+### REVIEW
+
+- 실패 가정·반례·회귀·근거 유효성을 검토한다.
+- 수정이 승인되면 BUILD로 최소 수정하고 다시 REVIEW한다.
+- 실행하지 않은 테스트·런타임·사람 플레이를 통과로 표시하지 않는다.
+
+## 8. Base와 프로젝트 경계
+
+### Base로 승격
+
+- 재사용 가능한 기획 순서와 판단 프레임
+- 조사·벤치마킹·플레이테스트 방법
+- Art Direction·Asset Planning 방법
+- AI Prompt·Context·Eval·검수 기준
+- 접근성·성능·플랫폼·출시 판단 기준
+- 공용 Template·Checklist·익명화 Case
+- 반복 검증된 실패 조건과 비사용 조건
+
+### 프로젝트에 유지
+
+- 세계관·캐릭터·기관·사건·장르 고유 표현
+- 밸런스 수치·ID·Schema·파일 경로
+- 승인 이미지·자산·프롬프트 원장
+- 실제 코드·Scene·데이터·저장 구조
+- 실제 플레이테스트·텔레메트리·매출·리뷰 결과
+- 특정 프로젝트의 ADOPT·ADAPT·TEST 결정
+
+프로젝트 교훈은 `managing-base-change-proposals`의 `extract → submit → review → 사용자 승인 → implement → verify`를 거친다.
+
+## 9. 실패 조건
+
+- 조사 질문 없이 자료를 대량 수집함
+- 외부 리뷰·벤치마크를 프로젝트 정본보다 우선함
+- 성공 사례만 보고 실패·혼합·표본 한계를 누락함
+- AI 추론을 원출처·실행 증거로 표시함
+- 새 Skill을 만들기 전에 기존 mode·reference를 검토하지 않음
+- 모든 Coverage를 형식적으로 `EVIDENCED` 처리함
+- 접근성·성능·권리·보안을 나중 문제로 미룸
+- 프로젝트 고유값을 Base 공용 규칙으로 복사함
+- 문서 작성만으로 플레이 재미·제작성·출시 준비를 검증했다고 주장함
+
+## 10. Output Contract
+
+```md
+## 현재 결정 질문·보호 대상
+## 선택한 Coverage와 상태
+## Source Plan·Evidence ID·근거 층·상태
+## 공식 사실·현업 사례·플레이어 행동·자기보고
+## 성공·실패·혼합 Case와 적용 조건
+## 상충 근거·한계·재검증 조건
+## ADOPT / ADAPT / TEST / AVOID / IGNORE / REFERENCE_ONLY
+## 프로젝트 정본 반영·비반영
+## 기술·아트·콘텐츠 제작성
+## 적대적 검토 Finding
+## 플레이테스트·Eval·검증 결과
+## Learning Log·Base 승격 후보·프로젝트 유지 요소
+```
