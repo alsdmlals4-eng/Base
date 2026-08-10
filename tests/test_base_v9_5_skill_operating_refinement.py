@@ -141,6 +141,20 @@ class BaseV95SkillOperatingRefinementTests(unittest.TestCase):
         self.assertNotIn("game-devlog", entries["analyzing-and-refining-game-concepts"]["trigger_tags"])
         self.assertNotIn("youtube-development-video", entries["designing-art-prompts-and-technique-cards"]["trigger_tags"])
 
+    def test_tutorial_mode_extends_the_existing_game_design_owner(self) -> None:
+        skill = read("skills/analyzing-and-refining-game-concepts/SKILL.md")
+        guide = read(
+            "docs/knowledge/game-development/"
+            "TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md"
+        )
+        contract = read("templates/planning/TUTORIAL_AND_ONBOARDING_DESIGN_CONTRACT.md")
+        entries = {entry["skill_id"]: entry for entry in active_skill_entries()}
+
+        self.assertIn("tutorial-and-onboarding-design", skill)
+        self.assertIn("RULE → NEED → DISCOVER → FEEL → PROVE → TRANSFER", guide)
+        self.assertIn("BLOCKED_UNVERIFIED", contract)
+        self.assertNotIn("tutorial-and-onboarding-design", entries)
+
     def test_active_skill_discovery_metadata_fits_the_shared_budget(self) -> None:
         total = 0
         for entry in active_skill_entries():
