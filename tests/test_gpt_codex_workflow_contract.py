@@ -100,12 +100,39 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         text = (ROOT / "skills/maintaining-project-context-and-handoff/SKILL.md").read_text(encoding="utf-8")
         for term in (
             "implementation-package-handoff",
+            "post-merge-reconcile",
+            "LIVE_CONTINUATION_STATE",
+            "PRE_MERGE_SNAPSHOT",
+            "OBSERVE_POST_MERGE_TRUTH",
             "PLAN_REVIEW_ONLY",
             "godot_runtime_files_only",
             "ALLOWED_BRANCH_ONLY",
             "PACKAGE_APPROVED",
             "CHANGE_PROPOSAL",
             "AGENT_MERGE_REQUIRED",
+        ):
+            self.assertIn(term, text)
+        for forbidden_automation in (
+            "자동 project-state writeback",
+            "자기 자신의 SHA를 다시 쓰는 loop",
+            "날짜가 찍힌 history의 현재화",
+        ):
+            self.assertIn(forbidden_automation, text)
+
+    def test_freshness_skill_inventories_consumers_without_weakening_real_protocols(self) -> None:
+        text = (ROOT / "skills/auditing-canonical-reference-freshness/SKILL.md").read_text(encoding="utf-8")
+        for term in (
+            "consumer inventory",
+            "CURRENT_MUTABLE",
+            "CANONICAL_LOCATOR",
+            "HISTORICAL_DISCOVERY",
+            "COMPATIBILITY_ANCHOR",
+            "SAFE_TO_DROP",
+            "semantic contract",
+            "literal protocol",
+            "exact-head",
+            "canonical owner 확인 전 제거·약화 금지",
+            "실제 protocol literal이면 assertion을 약화하지 않는다",
         ):
             self.assertIn(term, text)
 

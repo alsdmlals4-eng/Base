@@ -1,5 +1,13 @@
 # Base Skill Learning Log
 
+## 2026-08-10 — Handoff consumer inventory before compression
+
+- Sources: BCP-013, BCP-014, BCP-016, BCP-019, and the approved continuity design.
+- Finding: a compact handoff can accidentally break a machine consumer, while preserving every literal can fossilize an incidental representation.
+- Decision: `auditing-canonical-reference-freshness` inventories `CURRENT_MUTABLE`, `CANONICAL_LOCATOR`, `HISTORICAL_DISCOVERY`, `COMPATIBILITY_ANCHOR`, and `SAFE_TO_DROP`; semantic migration requires a canonical-owner check and cannot weaken a real `literal protocol`.
+- Boundary: this is review guidance, not an automatic document rewrite or a claim that all literal consumers are accidental.
+- Validation: `tests/test_gpt_codex_workflow_contract.py` and exact-head canonical-reference freshness audit.
+
 ## 2026-08-10 — 튜토리얼은 설명이 아니라 재사용 가능한 행동 학습
 
 - **상태:** `OBSERVATION`
