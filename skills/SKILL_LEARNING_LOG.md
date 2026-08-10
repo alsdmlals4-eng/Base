@@ -1,5 +1,14 @@
 # Base Skill Learning Log
 
+## 2026-08-10 — 튜토리얼은 설명이 아니라 재사용 가능한 행동 학습
+
+- **상태:** `OBSERVATION`
+- **Trigger:** 구형 튜토리얼·온보딩 제안의 재검토에서, 기본 규칙 → 필요·결핍 → 해결 방법 발견 → 성장 체감 → 독립 수행 → 다른 상황 전이의 학습 사다리를 기존 게임 기획 책임자에 재포팅했다.
+- **Decision:** 새 광역 Skill을 만들지 않고 `analyzing-and-refining-game-concepts`의 조건부 `tutorial-and-onboarding-design` mode와 공용 Guide·프로젝트 Contract로 흡수한다. 튜토리얼 이해도 연구 coverage는 계속 `governing-game-user-research-coverage`가 소유한다.
+- **Evidence:** 새 계약은 정적 조작표, 상점·과금을 위한 강제 패배, 가짜 결핍·가짜 성장, 완료율·한 번의 성공만으로 숙련 확정하는 실패 경계를 명시한다. RED/GREEN 계약 테스트와 기존 게임 기획 통합 회귀, 보호된 Registry 무변경 검사를 연결했다.
+- **Boundary:** 실제 프로젝트 빌드·사람 플레이테스트·접근성·성능·전이 성공률은 아직 검증하지 않았다. 특정 게임의 수치, 성장 내용, Scene, UI, 튜토리얼 대사와 순서는 Base 공용 규칙으로 승격하지 않는다.
+- **다음 검토 트리거:** 둘 이상의 실제 프로젝트에서 독립 수행·전이·복귀 경로가 관찰될 때, 강제 패배나 가짜 성장 경계가 지나치게 넓거나 좁을 때, 또는 공용 Contract가 프로젝트별 실제 의사결정을 막을 때.
+
 ## 2026-08-02 — First-prompt 방향 고정과 intake 승인 게이트
 
 - **상태:** `OBSERVATION`
