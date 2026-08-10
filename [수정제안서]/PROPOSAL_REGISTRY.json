@@ -123,6 +123,17 @@
       "submitted_at": "2026-08-10",
       "approval_ref": null,
       "implementation_pr": null
+    },
+    {
+      "proposal_id": "BCP-2026-013-post-merge-continuation-state-reconciliation",
+      "title": "Post-Merge Continuation-State Reconciliation",
+      "path": "[수정제안서]/BCP-2026-013-post-merge-continuation-state-reconciliation/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "alsdmlals4-eng/ninja-survival-godot",
+      "source_commit": "9b85cf65a3ca4278f7d8ec1a7e527ecc857cbad1",
+      "submitted_at": "2026-08-10",
+      "approval_ref": null,
+      "implementation_pr": null
     }
   ]
 }
