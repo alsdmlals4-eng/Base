@@ -2,7 +2,7 @@
 
 ## 범위
 
-- Base latest main 재대조: `0a7c4a4286b1107b1bfa03dc4b4e4ce88fbbd5b8`
+- Base latest main 재대조: `58d5f27a907e28e16d28763c567e6ab5b4377a28`
 - owner: `skills/auditing-and-refining-ui-art`
 - 기존 구조: UX/UI 설계 → pattern selection → design system → accessibility → polishing → runtime audit → human evidence
 - 신규 ACTIVE Skill: 금지
@@ -185,6 +185,14 @@
 - 전용 테스트와 workflow path filter도 새 canonical path로 이동한다.
 
 이 보정은 CI를 피하기 위한 우회가 아니라 Base의 패키지 무결성 경계와 progressive-disclosure 구조를 유지하면서 공용 지식과 Skill package artifact를 분리하는 구조 수정이다.
+
+### AR-17 — 동시 proposal-only main 전진으로 인한 BCP validator 오탐
+
+**공격:** 작업 도중 main에 `58d5f27`의 Switchy Express proposal-only 변경이 병합됐다. 이전 base SHA를 기준으로 PR merge ref를 검사하면 그 새 proposal과 본 PR의 active UI/UX 변경이 한 diff에 함께 잡혀 `new proposal PR changes active Base paths`로 오인될 수 있다.
+
+**판정:** `MUST_FIX`
+
+**보정:** 최신 main을 branch의 두 번째 parent로 다시 병합하고, UI/UX 10개 변경 blob만 최신 main tree 위에 재적용한다. proposal 파일은 main 그대로 보존하며 본 PR 변경 목록에는 포함하지 않는다. 이후 Base change-proposal validator를 새 exact HEAD에서 재실행한다.
 
 ---
 
