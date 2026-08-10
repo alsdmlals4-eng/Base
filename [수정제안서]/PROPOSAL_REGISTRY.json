@@ -75,7 +75,7 @@
       "path": "[수정제안서]/BCP-2026-007-cloud-run-game-backend-and-entitlement-integrity/PROPOSAL.md",
       "status": "IMPLEMENTED",
       "source_project": "alsdmlals4-eng/Base",
-      "source_commit": "1b323b2e16cf1f1e27698a8e83496b767b6f06e3",
+      "source_commit": "1b323b2e16b65a1527269bfd8fef9facad6b2f40b",
       "submitted_at": "2026-08-05",
       "approval_ref": "https://github.com/alsdmlals4-eng/Base/pull/170#issuecomment-5192884554",
       "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/181"
@@ -137,8 +137,8 @@
     },
     {
       "proposal_id": "BCP-2026-014-handoff-machine-consumer-compatibility-closeout",
-      "title": "Handoff Machine-Consumer Compatibility-Safe Closeout",
-      "path": "[수정제안서]/BCP-2026-014-handoff-machine-consumer-compatibility-closeout/PROPOSAL.md",
+      "title": "BCP - 괴이기록국(urban-legend)",
+      "path": "[수정제안서]/bcp-괴이기록국(urban-legend)/PROPOSAL.md",
       "status": "SUBMITTED",
       "source_project": "alsdmlals4-eng/urban-legend",
       "source_commit": "2b424906c4ecaa4a027719383d3400486b03c72e",
