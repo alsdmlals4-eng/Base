@@ -75,6 +75,7 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
         self.assertIn("적대적 검토", content)
         self.assertIn("스킬 추가나 owner 변경이 없어도", content)
         self.assertIn("억지 변경", content)
+        self.assertIn("실제 Base 변경은 별도 PR", content)
         self.assertIn("scheduler", content.lower())
         self.assertIn("Base는 scheduler", content)
         self.assertNotIn("DISCOVERY_FEED = T1_PRIMARY_OFFICIAL", content)
