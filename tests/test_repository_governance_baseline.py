@@ -266,6 +266,46 @@ class RepositoryGovernanceBaselineTests(unittest.TestCase):
         self.assertIn("canonical_design_spec_path", traceability)
         self.assertNotIn('"skill_id": "game-feature-design', skill_registry)
 
+    def test_base_profile_records_current_repository_governance_surfaces(self) -> None:
+        profile = read("docs/operations/BASE_GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md")
+        template = read(
+            "templates/project-operations/github/GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md"
+        )
+
+        for heading in (
+            "## Pull Request Policy",
+            "## Required Checks",
+            "## Ruleset",
+            "## Auto-merge Gate",
+            "## Actions Budget",
+            "## Rollback",
+            "## Evidence",
+        ):
+            with self.subTest(heading=heading):
+                self.assertIn(heading, template)
+                self.assertIn(heading, profile)
+
+        for token in (
+            "auto_merge: enabled",
+            "primary: ci-gate",
+            "strict_up_to_date: true",
+            "name: solo-main-safety",
+            "enforcement: active",
+            "behavior_verified: true",
+            "default_branch_targeted: true",
+            "pull_request_required: true",
+            "linear_history: true",
+            "force_push_blocked: true",
+            "deletion_blocked: true",
+            "required_check_context: ci-gate",
+            "Repository settings snapshot:",
+            "Ruleset URL or ID:",
+            "Required Check run:",
+            "Remaining unverified settings:",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, profile)
+
 
 if __name__ == "__main__":
     unittest.main()
