@@ -130,11 +130,11 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
 
     def test_ci_uses_exact_action_allowlist_and_installs_pinned_validation_requirements(self) -> None:
         allowed = {
-            "actions/checkout": "11bd71901bbe5b1630ceea73d27597364c9af683",
-            "actions/setup-python": "a26af69be951a213d495a4c3e4e4022e16d87065",
-            "actions/setup-node": "49933ea5288caeca8642d1e84afbd3f7d6820020",
-            "actions/upload-artifact": "ea165f8d65b6e75b540449e92b4886f43607fa02",
-            "actions/dependency-review-action": "da24556b548a50705dd671f47852072ea4c105d9",
+            "actions/checkout": "08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+            "actions/setup-python": "e797f83bcb11b83ae66e0230d6156d7c80228e7c",
+            "actions/setup-node": "a0853c24544627f65ddf259abe73b1d18a591444",
+            "actions/upload-artifact": "330a01c490aca151604b8cf639adc76d48f6c5d4",
+            "actions/dependency-review-action": "a1d282b36b6f3519aa1f3fc636f609c47dddb294",
         }
         seen: set[str] = set()
         for workflow in (ROOT / ".github/workflows").glob("*.yml"):
@@ -161,6 +161,24 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
         self.assertIn('TRUSTED_HISTORY_COMMIT="$GITHUB_SHA"', workflow)
         self.assertNotIn("github.event.pull_request.base.sha", workflow)
         self.assertIn('--trusted-history-commit "$TRUSTED_HISTORY_COMMIT"', workflow)
+
+        documentation_governance_template = (
+            ROOT / "templates/project-operations/github/documentation-governance.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+            documentation_governance_template,
+        )
+        self.assertIn(
+            "actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c",
+            documentation_governance_template,
+        )
+
+        publication_workflow = (
+            ROOT / ".github/workflows/validate-game-project-operating-system.yml"
+        ).read_text(encoding="utf-8")
+        self.assertEqual(publication_workflow.count("actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444"), 2)
+        self.assertEqual(publication_workflow.count("package-manager-cache: false"), 2)
 
     def test_dependency_review_covers_common_manifest_and_lock_formats(self) -> None:
         workflow = (ROOT / ".github/workflows/dependency-review.yml").read_text(encoding="utf-8")
