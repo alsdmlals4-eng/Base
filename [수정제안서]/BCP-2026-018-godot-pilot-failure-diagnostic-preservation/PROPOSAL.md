@@ -105,6 +105,22 @@ runtime 검증이 실패했고 terminal verification 이전 payload가 소실되
 
 artifact 자체 또는 source identity를 확인할 수 없어 실패 원인·재현성을 판단할 수 없는 상태.
 
+## 적용 조건과 비사용 조건
+
+### 적용 조건
+
+- 외부 runtime/pilot가 구조화된 result payload를 생성한 뒤 별도 terminal verifier에서 PASS/FAIL을 판정한다.
+- terminal verifier 실패가 후속 export 단계를 건너뛸 수 있다.
+- 재현되지 않는 transient failure를 원시 evidence로 분석해야 한다.
+- 실패 artifact가 project source mutation 없이 runner temp 또는 동등한 격리 공간에 보존될 수 있다.
+
+### 비사용 조건
+
+- verifier 이전에 raw failure payload가 이미 동일 attempt identity로 완전하게 artifact화되는 경로.
+- secret-safe 진단 bundle을 만들 수 없어 raw payload 보존 자체가 보안 위험을 만드는 경로.
+- runtime evidence가 없는 단순 문서/정적 validator 작업.
+- 실패 원인이 이미 결정론적으로 재현되고 별도의 evidence-preservation 공백이 없는 경우.
+
 ## 반례와 위험
 
 ### MUST_FIX — 진단 보존을 성공 판정으로 오인
@@ -153,7 +169,7 @@ Base 공용 계약으로 승격하지 않는다.
 7. PASS fixture의 기존 artifact/exit semantics는 회귀하지 않는다.
 8. retry attempt가 별도 evidence identity로 남는다.
 
-## 영향 범위와 비영향 범위
+## 영향 범위와 검증
 
 ### 이번 proposal 단계 영향
 
@@ -169,6 +185,20 @@ Base 공용 계약으로 승격하지 않는다.
 - Blacksmith 저장소 및 제품 파일
 - 자동 retry 정책
 - runtime FAIL 판정 기준
+
+### proposal 단계 검증
+
+- changed files가 `[수정제안서]/**`의 proposal + registry 두 파일뿐인지 검사한다.
+- `tools/check_base_change_proposals.py --base-ref <current-main>`을 통과해야 한다.
+- Proposal Registry의 ID/path/source/status가 proposal 본문과 일치해야 한다.
+- exact-head/test-merge required CI와 unresolved review thread 0을 확인한다.
+
+### 향후 구현 단계 검증
+
+- synthetic FAIL에서도 non-zero 유지 + sanitized failure bundle 존재.
+- PASS semantics 회귀 없음.
+- tracked project source delta 없음.
+- attempt별 evidence identity 분리.
 
 ## 필요한 도구·권한
 
