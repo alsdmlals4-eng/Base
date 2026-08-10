@@ -85,6 +85,51 @@ class SerialFictionDisciplineContractTests(unittest.TestCase):
         self.assertIn("not canon", text.lower())
         self.assertIn("REJECT_COPY", text)
 
+    def test_canon_migration_contract_distinguishes_enforcement_and_completion(self) -> None:
+        """Catch a migration contract that lets known legacy debt become completion."""
+        skill = SKILL_PATH.read_text(encoding="utf-8")
+        guide = (
+            GUIDE_ROOT / "SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md"
+        ).read_text(encoding="utf-8")
+        combined = skill + "\n" + guide
+        for token in (
+            "STRICT_NOW",
+            "FORBIDDEN_IN_NEW_OR_REVISED",
+            "BOUNDED_LEGACY_RECONCILIATION_DEBT",
+            "SCOPED_STRICT",
+            "actual_legacy_debt_consumers == declared_debt_consumers",
+            "PASS_WITH_KNOWN_DEBT",
+            "CANON_MIGRATION_COMPLETE",
+            "archive/reference-only",
+            "CANON_MIGRATION_DEBT_EXPANDED",
+            "CANON_MIGRATION_COMPLETION_OVERCLAIM",
+        ):
+            self.assertIn(token, combined)
+
+    def test_reconciliation_frontier_contract_blocks_false_continuity_and_promotion(self) -> None:
+        """Catch an unvalidated frontier that invents normal legacy continuity."""
+        skill = SKILL_PATH.read_text(encoding="utf-8")
+        guide = (
+            GUIDE_ROOT / "SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md"
+        ).read_text(encoding="utf-8")
+        freshness = (
+            ROOT / "skills" / "auditing-canonical-reference-freshness" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        combined = skill + "\n" + guide + "\n" + freshness
+        for token in (
+            "VERIFIED_PREFIX",
+            "DECLARED_MIGRATION_BOUNDARY",
+            "LEGACY_TAIL",
+            "FRONTIER_VERIFICATION_STATUS",
+            "candidate frontier",
+            "derived consumer",
+            "normal continuity",
+            "FRONTIER_PROMOTION_WITHOUT_VALIDATION",
+            "UNVERIFIED_MIGRATION_BOUNDARY_CONTINUITY",
+            "DUPLICATE_CURRENT_AUTHORITY",
+        ):
+            self.assertIn(token, combined)
+
     def test_cold_start_routes_to_serial_fiction_owner(self) -> None:
         start = (ROOT / "START_HERE.md").read_text(encoding="utf-8")
         docs = (ROOT / "docs" / "DOCUMENTATION_MAP.md").read_text(encoding="utf-8")

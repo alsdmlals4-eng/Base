@@ -19,6 +19,8 @@ description: Use when a canonical, path, ID, schema, generator, or release chang
 - 기존 파일과 최신 파일이 함께 남아 무엇이 현행인지 불명확하다.
 - 발행본·Manifest·자동 생성 파일이 원본보다 오래됐을 가능성이 있다.
 - PR·릴리스·마이그레이션 전에 갱신 누락과 오래된 참조를 찾아야 한다.
+- staged Canon migration에서 active consumer, declared debt set, derived consumer, 또는
+  검증 경계가 새 정본·파생본에 잘못 전파될 수 있다.
 - 새 채팅이나 작업자가 오래된 파일을 정본으로 선택하는 문제가 발생했다.
 
 ## Do not use when
@@ -112,6 +114,33 @@ repository_search_roots: []
 - consumer inventory에는 사람용 링크·문서와 code import·test fixture·parser·workflow·외부 계약을 함께 적는다.
 - literal consumer를 semantic contract로 옮기기 전, 그 literal이 canonical owner가 정의한 실제 `literal protocol`인지 확인한다. 실제 protocol literal이면 assertion을 약화하지 않는다.
 - 단지 문서의 우연한 줄 모양·공백·복제 문자열을 검사하는 consumer만 canonical 의미가 보존된 semantic contract로 migration할 수 있다.
+
+#### Staged Canon migration support boundary
+
+연재소설의 staged migration이면 다음을 impact map에 포함한다.
+
+```yaml
+active_consumers: []
+archive_or_reference_only_consumers: []
+declared_legacy_debt_consumers: []
+actual_legacy_debt_consumers: []
+verified_prefix:
+declared_migration_boundary:
+legacy_tail:
+candidate_frontier:
+declared_validation_gate:
+derived_consumers: []
+duplicate_current_authority_check:
+```
+
+이 Skill은 declared set과 actual set, candidate frontier와 verified state, canonical owner와
+derived consumer propagation evidence를 감사한다. 미검증 boundary를 `normal continuity`로
+연결한 파생본, validation 없이 verified prefix로 승격한 claim, duplicate current authority는
+각각 `MISSING_PROPAGATION` 또는 `CONFLICTING_SOURCE` finding으로 닫는다.
+
+다만 이 Skill은 fiction data field, chapter numbering, narrative event placement, 또는 어떤
+continuity가 사실인지 결정하지 않는다. 그 판단은
+`developing-and-revising-serial-fiction: canon-and-continuity`와 프로젝트 정본이 소유한다.
 
 ### 4. Scan stale and orphaned references
 

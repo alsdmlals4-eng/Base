@@ -8,6 +8,27 @@
 - Boundary: this is review guidance, not an automatic document rewrite or a claim that all literal consumers are accidental.
 - Validation: `tests/test_gpt_codex_workflow_contract.py` and exact-head canonical-reference freshness audit.
 
+## 2026-08-10 — staged Canon migration의 debt set·frontier 전파 감사
+
+- **Finding:** 새 Canon Decision의 즉시 권위와 과거 활성 DRAFT의 이관 완료를 같은
+  상태로 취급하면, 의미를 잃는 blind rewrite와 무제한 legacy 확산 사이에서 선택하게
+  된다. candidate frontier를 검증 전 verified prefix로 부르거나, derived consumer가
+  미검증 경계를 normal continuity로 연결하면 거짓 상태 전파가 생긴다.
+- **Decision:** 소설의 lifecycle과 narrative 판단은
+  `developing-and-revising-serial-fiction: canon-and-continuity`이 소유한다.
+  `auditing-canonical-reference-freshness`는 active/archive consumer inventory,
+  exact debt set, declared validation gate, derived-consumer propagation,
+  duplicate current authority를 감사만 하며 project field·chapter·사건 truth는 정하지
+  않는다.
+- **Evidence:** focused serial-fiction contract의 RED→GREEN, exact-head reference
+  freshness, protected-surface diff audit. 실제 두 번째 프로젝트 적용과 human usability는
+  `NOT_RUN`이다.
+- **Boundary:** Base는 특정 작품의 Canon ID, bundle 크기, chapter 번호, source 파일명,
+  index/reverse-outline schema를 강제하지 않는다. `PASS_WITH_KNOWN_DEBT`는
+  `CANON_MIGRATION_COMPLETE`가 아니다.
+- **Next trigger:** 다른 작품 적용, debt set 확산, candidate frontier 조기 승격,
+  derived consumer의 false continuity 또는 duplicate current authority 발견.
+
 ## 2026-08-10 — 튜토리얼은 설명이 아니라 재사용 가능한 행동 학습
 
 - **상태:** `OBSERVATION`
