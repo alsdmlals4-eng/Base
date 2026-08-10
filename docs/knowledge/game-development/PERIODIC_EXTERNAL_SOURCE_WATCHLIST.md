@@ -471,7 +471,7 @@ SOURCE_SCAN_AUTO_MERGE_GATE:
   reviewed_head_sha:
   current_head_sha:
   base_main_sha:
-  strict up-to-date:
+  strict up-to_date:
   required_check: ci-gate
   required_checks_passed:
   unresolved_review_threads:
@@ -517,6 +517,16 @@ SOURCE_SCAN_AUTO_MERGE_GATE:
 3. Source에서 파생된 변경이 실제 Base `main`에 병합됐을 때만 `last_base_contribution_at`·`last_base_contribution_ref`·counter를 갱신한다.
 4. `NO_CHANGE`는 truthful scan state만 남기며 contribution을 만들지 않는다.
 5. Ledger 업데이트 자체가 Source의 Evidence tier를 높이지 않는다.
+
+#### `SCAN_STATE_BATCH`
+
+운영 상태를 측정한다는 이유로 저장소를 매일 흔들지 않는다.
+
+- `NO_CHANGE만으로 매일 Ledger-only PR`을 만들지 않는다.
+- material change가 있어 Base 변경 PR을 만드는 날에는 해당 scan state를 그 PR 또는 바로 이어지는 bounded checkpoint에 함께 기록할 수 있다.
+- material change가 없는 scan state는 기본적으로 **주간 batch checkpoint**로 묶어 최신 실제 scan 사실만 반영한다.
+- 보안·정책 deadline처럼 freshness 자체가 즉시 의사결정을 바꾸는 경우에는 주간 batch를 기다리지 않고 별도 bounded checkpoint를 허용한다.
+- batch 때문에 실제로 확인하지 않은 Source를 확인한 것처럼 timestamp를 당기지 않는다.
 
 ### `BCP_OR_USER_DECISION`
 
