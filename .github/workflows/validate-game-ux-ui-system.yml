@@ -20,6 +20,7 @@ on:
       - "templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md"
       - "tests/test_game_ux_ui_system.py"
       - "tests/test_ui_ux_visual_design_rules.py"
+      - "tests/test_ux_laws_completeness_matrix.py"
       - "tests/test_project_design_md_adapter.py"
       - "tests/test_external_ui_procurement_gate.py"
       - "tests/test_bcp008_behavior_and_procurement_pilot.py"
@@ -49,6 +50,7 @@ on:
       - "templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md"
       - "tests/test_game_ux_ui_system.py"
       - "tests/test_ui_ux_visual_design_rules.py"
+      - "tests/test_ux_laws_completeness_matrix.py"
       - "tests/test_project_design_md_adapter.py"
       - "tests/test_external_ui_procurement_gate.py"
       - "tests/test_bcp008_behavior_and_procurement_pilot.py"
@@ -92,6 +94,7 @@ jobs:
           python -m unittest \
             tests/test_game_ux_ui_system.py \
             tests/test_ui_ux_visual_design_rules.py \
+            tests/test_ux_laws_completeness_matrix.py \
             tests/test_base_v9_4_ai_operations_contract.py \
             tests/test_ui_art_audit.py \
             -v
