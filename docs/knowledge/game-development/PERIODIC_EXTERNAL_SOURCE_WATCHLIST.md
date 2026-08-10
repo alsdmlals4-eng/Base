@@ -287,6 +287,23 @@ LAST_SUCCESSFUL_SCAN
 
 `NO_CHANGE`는 **새 규칙/BCP 후보, 기존 owner 흡수, evidence/reference 보강, 테스트/적대적 시나리오, source coverage, stale/freshness 수정이 모두 불필요할 때만** 사용한다.
 
+### 점진 개선 우선 `INCREMENTAL_IMPROVEMENT`
+
+각 scan은 새 Skill이나 큰 규칙 추가 여부만 보지 않는다. **스킬 추가나 owner 변경이 없어도** 검증 가능한 작은 개선을 우선 찾는다.
+
+우선순위 예시:
+
+```text
+기존 owner 흡수
+→ 테스트·반례·적대적 질문 보강
+→ reference/source coverage 보강
+→ stale/freshness·경로 정정
+→ checklist/template/evidence field 명확화
+→ 작은 문서·검증 계약 정리
+```
+
+이때 개선은 실제 누락·모호성·회귀 위험을 줄여야 한다. 표현만 바꾸기, 같은 규칙 복제, 파일 수 증가, 의미 없는 churn 같은 **억지 변경**은 금지한다. 외부 근거와 현재 Base를 대조했을 때 실질 개선이 없으면 `NO_CHANGE`를 허용하지만, 그 전에 PR 체크와 적대적 검토를 통해 위 점진 개선 후보를 누락 없이 확인한다.
+
 ### 기본 cadence
 
 - `daily-or-weekly`: Hada, OpenAI/Anthropic/Google/GitHub/Microsoft AI engineering updates, Godot release/blog, Steamworks, Android/Google Play policy/release, YouTube Help/Studio changes처럼 빠르게 변하는 면.
