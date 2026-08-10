@@ -45,6 +45,8 @@ pc_android_delivery_profile:
 
 세부 컨셉·제약·뾰족한 재미·PoC 게이트는 `references/concept-evidence-and-gates.md`를 읽는다. 벤치마크·사용자 반응·플레이테스트의 전체 증거 필드는 `references/benchmark-player-evidence-and-playtests.md`, DDD의 경계와 축약 계약은 `references/benchmark-playtest-and-ddd.md`를 해당 mode에서만 읽는다. 게임 시스템·난이도·전투 AI는 `references/game-system-difficulty-and-combat-ai.md`를 `system-design` 또는 `difficulty-and-combat-ai`에서만 읽고, 외부 근거를 확인할 때는 `references/game-system-difficulty-evidence-sources.md`를 함께 읽으며, `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md`를 프로젝트 책임 원본 작성 틀로 사용한다.
 
+PoC·benchmark·적대적 검토를 통과한 주요 기능이 production handoff 단계로 승격되면 기획 책임 원본 작성은 `managing-design-documents`에 넘기고 `templates/planning/GAME_FEATURE_DESIGN_SPEC.md`를 사용한다. 이 Skill은 상세 문서의 canonical ownership을 가져오지 않는다.
+
 Windows+Android 동시 목표, STOVE·Google Play·Steam 단계 출시, 모바일 레이아웃·입력·중단 복구가 기획 제약을 바꿀 때는 `constrain`, `poc-contract`, `production-gate`에서만 `docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md`를 읽고 `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md`를 작성한다. 모든 프로젝트에 이 프로필을 강제하거나 두 플랫폼의 같은 날 공개를 요구하지 않는다.
 
 ## Workflow
@@ -59,6 +61,7 @@ Windows+Android 동시 목표, STOVE·Google Play·Steam 단계 출시, 모바�
 8. 결정을 바꿀 질문만 벤치마킹하고 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 결론낸다.
 9. 빌드·표본·과제·관찰·이벤트·퍼널·지표가 있는 플레이테스트·실험을 설계한다.
 10. 가장 위험한 가설을 최소 PoC로 검증하고 `KEEP / AMPLIFY / CHANGE / REMOVE / DEFER / RETEST`를 결정한다.
+11. `KEEP / CHANGE / RETEST`로 살아남고 여러 직군의 production handoff가 필요한 **주요 L2 기능만** 상세 기획 후보로 승격한다. pre-PoC 아이디어, `REMOVE / DEFER`, L0·L1 단일 수정은 승격하지 않는다. 승격 시 `managing-design-documents`에 넘겨 `GAME_FEATURE_DESIGN_SPEC.md`를 작성·등록하고, 승인 뒤 기존 Traceability Packet으로 구현·검증 연결을 넘긴다.
 
 ## Output contract
 
@@ -73,6 +76,7 @@ Windows+Android 동시 목표, STOVE·Google Play·Steam 단계 출시, 모바�
 ## 벤치마크·사용자·행동 증거와 판정
 ## 텔레메트리·플레이테스트·실험·PoC 계약
 ## 유지·수정·삭제·보류 결정
+## L2 상세기획 승격 여부·근거·GAME_FEATURE_DESIGN_SPEC handoff
 ## Base 승격 후보·프로젝트 전용 유지
 ## Production gate·미검증·롤백·다음 검증
 ```
@@ -82,6 +86,8 @@ Windows+Android 동시 목표, STOVE·Google Play·Steam 단계 출시, 모바�
 기능 복사, 리뷰 표본 편향, 자기보고와 행동 혼동, 여러 변수 동시 실험, PoC 범위 팽창, DDD의 무의미한 자극화, 결과를 본 뒤 성공 기준 변경을 금지한다.
 
 난이도·전투 AI에서는 보이지 않는 정보로 처벌, 플레이어 입력 직접 읽기, 카메라 밖 즉사, 연속 기절·회피 불가능 조합, 체력 스펀지로 선택 대체, 성공 직후 성장 무효화, 현재 전투 중 노골적인 수치 조작, 히스테리시스 없는 난이도 진동, 텔레메트리만으로 감정·원인 확정을 금지한다.
+
+상세 기획 승격에서는 pre-PoC 아이디어를 문서 완성도로 정당화하거나, 전문 분야 정본을 범용 Spec으로 대체하거나, Feature Spec에 Task progress·PR 상태·executed verification을 복제하는 것을 금지한다.
 
 Learning Log: `skills/SKILL_LEARNING_LOG.md`
 

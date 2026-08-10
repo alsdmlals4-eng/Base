@@ -163,6 +163,25 @@ DOCX와 다이어그램은 Registry가 선언한 경우만 생성한다. `CURREN
 
 장기 작업에서는 checkpoint를 주기적으로 실행하되 기획 완료나 구현 승인을 의미하지 않는다.
 
+### 2C. Use the L2 feature-detail contract only after cheaper uncertainty is reduced
+
+PoC·benchmark·적대적 검토 뒤 `KEEP / CHANGE / RETEST`로 살아남고 production handoff가 필요한 **주요 L2 기능**은 `templates/planning/GAME_FEATURE_DESIGN_SPEC.md`를 사용해 상세 책임 원본을 작성하거나 기존 분야 원본에 같은 구조를 적용한다.
+
+```text
+L0 Project Direction
+→ L1 Feature Brief
+→ benchmark / PoC / adversarial review
+→ L2 GAME_FEATURE_DESIGN_SPEC
+→ approval
+→ L3 FEATURE_SPEC_TRACEABILITY_PACKET
+```
+
+- pre-PoC 아이디어, L0·L1 단순 변경, `REMOVE / DEFER` 항목에는 L2 Spec을 강제하지 않는다.
+- Feature Spec은 플레이어 문제·경험 의도·Player Verbs·Entry/Exit/Cancel/Re-entry·State & Rules·피드백·실패/복구·edge case·Data & Balance·Acceptance Criteria·Cut-down을 책임진다.
+- Feature Spec은 **Task progress, 구현 파일 완료 여부, PR 상태, executed verification 결과를 소유하지 않는다.** 이 상태는 승인 뒤 Traceability Packet과 실제 구현·테스트가 책임진다.
+- 전투 AI·UX/UI·아트·오디오·서사 등 전문 분야 정본이 같은 질문을 더 정확하게 소유하면 Feature Spec은 해당 정본의 ID·경로·Section을 reference/compose하고 전문을 복제하지 않는다.
+- 프로젝트 Google Sheets에는 Feature ID·Decision ID·핵심 상태·수치·canonical path를 요약하고 상세 전문을 복제하지 않는다.
+
 ### 3. Restructure safely when needed
 
 기존 문서·DOCX·PDF·이미지에만 남은 고유 Decision·표·예외·보류를 대조한다. 감사와 사용자 승인 전에는 책임 원본 형식·경로를 강제 변경하거나 기존 본책을 제거하지 않는다.
