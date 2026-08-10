@@ -8,10 +8,10 @@
 - 출처 Decision: `OMW-DEC-20260809-PLANNING-BARRACKS-ROLE-OUTPUT-RUNTIME-IMPLEMENTATION-PACKAGE-V1`
 - 출처 runtime head: `bde85549560fca90f7aa25fc4842bc0a3afb92e7`
 - 제출일: `2026-08-10`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `관찰`
 - Existing Solution Verdict: `MATERIAL_SCOPE_EXTENSION_NOT_DUPLICATE`
-- 활성 Base 구현 승인: `NOT_GRANTED_IN_THIS_STAGE`
+- 활성 Base 구현 상태: `IMPLEMENTED_BY_PR_266`
 
 이 제안은 OMENWARD 작업에서 확인된 **외부 Editor/MCP runtime session의 process·transport·server registry 상태가 서로 어긋날 때 같은 시점의 증거로 복구 상태를 판정하는 공용 계약**을 Base에 제안한다.
 
@@ -214,7 +214,7 @@ observation timestamp 주변 bounded server logs를 사용하고 다른 project 
 
 ## 영향 범위와 검증
 
-이번 단계는 proposal storage만 수행한다.
+초기 proposal storage 단계에서는 proposal·evidence·Registry만 기록했다. 아래 구현 closeout이 실제 활성 Base 반영과 검증 기록을 연결한다.
 
 - 새 canonical proposal `BCP-2026-015-external-runtime-session-same-snapshot-recovery`
 - OMENWARD project-specific evidence
@@ -256,9 +256,18 @@ Proposal 저장 단계:
 ## 승인과 구현
 
 - 기존 BCP-013 복구 및 별도 `BCP - OMENWARD` proposal storage: 사용자 지시로 승인됨
-- proposal status: `APPROVED_FOR_IMPLEMENTATION`
-- active Base implementation: `AUTHORIZED_MINIMAL_ABSORB_2026_08_10`
+- proposal status: `IMPLEMENTED`
 - approval_ref: `[수정제안서]/BCP-2026-015-external-runtime-session-same-snapshot-recovery/PROPOSAL.md#승인과-구현`
-- implementation PR: `null`
+- implementation PR: `https://github.com/alsdmlals4-eng/Base/pull/266`
+- implementation merge commit: `b6963c067f6dd1b1d969a68455077037415c5c99`
 
-사용자는 2026-08-10 KST 대화에서 `좋아 다 승인할게 [연속작업] 진행해`로 이 제안의 최소 기존-owner 흡수를 승인했다. 구현은 별도 PR에서 same-snapshot 분류·shared server 보호·stale identity 차단만 다루며, 외부 server 설치·restart·production 권한 확대는 제외한다.
+사용자는 2026-08-10 KST 대화에서 `좋아 다 승인할게 [연속작업] 진행해`로 이 제안의 최소 기존-owner 흡수를 승인했다. PR #266은 same-snapshot 분류·shared server 보호·stale identity 차단만 구현했다. 외부 server 설치·restart·production 권한 확대는 제외했다.
+
+### 구현 closeout — PR #266
+
+- 최종 상태: `IMPLEMENTED`
+- 실제 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/266`
+- 병합된 Base main: `b6963c067f6dd1b1d969a68455077037415c5c99`
+- 원격 CI: 필수 2개 성공, 리뷰·미해결 thread 0건
+- 구현 범위: 기존 Godot Live Editor recovery 정본의 same-snapshot 분류, project adapter의 외부-session 경계, Handoff의 stale PID/session fresh-read 경계와 focused 회귀
+- 검증 한계: 실제 Godot runtime·프로젝트 테스트·사람 QA·release/production readiness는 이 Base 문서 계약으로 PASS가 되지 않으며 별도 프로젝트 증거가 필요하다.
