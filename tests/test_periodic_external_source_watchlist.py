@@ -166,6 +166,13 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
         self.assertIn("실제로 확인한 Source만", content)
         self.assertIn("실제 병합된 뒤에만", content)
 
+    def test_scan_state_checkpoint_does_not_force_daily_no_change_prs(self) -> None:
+        content = WATCHLIST.read_text(encoding="utf-8")
+        self.assertIn("SCAN_STATE_BATCH", content)
+        self.assertIn("NO_CHANGE만으로 매일 Ledger-only PR", content)
+        self.assertIn("주간 batch checkpoint", content)
+        self.assertIn("material change", content)
+
     def test_recent_six_month_review_records_coverage_and_dispositions(self) -> None:
         self.assertTrue(RECENT_REVIEW.is_file())
         content = RECENT_REVIEW.read_text(encoding="utf-8")
