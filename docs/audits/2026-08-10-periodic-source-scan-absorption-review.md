@@ -1,6 +1,6 @@
 # 2026-08-10 Periodic Source Scan — Absorption Review
 
-Status: `IMPLEMENTED_ON_BRANCH / VALIDATION_PENDING`
+Status: `PR_GATED_AUDIT_RECORD`
 
 ## Scope and governing rule
 
@@ -20,7 +20,7 @@ latest main
 
 `ALREADY_COVERED` and `PARTIAL` do not mean discard. A candidate can still become `ABSORB_EXISTING_OWNER`, `EVIDENCE_ONLY_UPDATE`, `REFERENCE_ONLY`, or `LOW_RISK_BOUNDED_UPDATE` when it materially improves an existing trigger, condition, failure state, evidence boundary, source cross-check, adversarial question, or regression scenario.
 
-`NO_CHANGE` is valid only when no rule/BCP candidate, existing-owner absorption, evidence/reference retention, test/adversarial scenario, source-coverage improvement, or stale/freshness correction is useful.
+`NO_CHANGE` is valid only when no rule/BCP candidate, existing-owner absorption, evidence/reference retention, test/adversarial scenario, source-coverage improvement, stale/freshness correction, or bounded incremental improvement is useful.
 
 ## PR check
 
@@ -29,6 +29,7 @@ latest main
 - overlapping Draft PR #247: UI/UX/accessibility; those findings were deferred instead of duplicated
 - dependency PRs: outside this scan goal
 - recently merged PR #250 remains the canonical Watchlist implementation and owner structure
+- during implementation main advanced to `39eaea7b5bc5687970698c069d50823b73399954`; the branch was explicitly synchronized before the final validation cycle
 
 ## Primary evidence and disposition
 
@@ -62,6 +63,16 @@ Disposition:
 
 Added to the Watchlist beside DaVinci as a second official NLE change surface. Premiere-specific features are explicitly not universal editing rules.
 
+### Incremental improvement retention
+
+User direction clarified that future scans should continue improving Base even when a new Skill or owner change is not justified. The Watchlist therefore adds an `INCREMENTAL_IMPROVEMENT` layer for bounded test, adversarial-question, reference/source coverage, stale/freshness, checklist/template/evidence-field, and small validation-contract improvements.
+
+Disposition:
+
+`USER_APPROVED_BASE_BEHAVIOR_CLARIFICATION → LOW_RISK_BOUNDED_UPDATE`
+
+Guardrail: do not create meaningless churn, duplicate rules, or file-count inflation merely to avoid `NO_CHANGE`.
+
 ## Rejected or deferred
 
 - Hada rewrite-all-code claim: `CONFLICT / AVOID`
@@ -71,7 +82,7 @@ Added to the Watchlist beside DaVinci as a second official NLE change surface. P
 
 ## TDD evidence
 
-RED was observed on Draft PR #255, exact branch head `8f33a8e8e6429a3f40c2422d2f9a6f8e1a717938`:
+First RED was observed on Draft PR #255, exact branch head `8f33a8e8e6429a3f40c2422d2f9a6f8e1a717938`:
 
 - `Validate Evidence-Based Game Development Knowledge` run `31365123081`: `FAILURE`
 - focused contract produced exactly three intended failures:
@@ -79,7 +90,13 @@ RED was observed on Draft PR #255, exact branch head `8f33a8e8e6429a3f40c2422d2f
   - missing `consumer surface` / branch-state validation
   - missing `SELECTION_QUERY_READ_ONLY`
 
-Production owner changes were applied only after this RED evidence.
+A second RED was observed for the incremental-improvement clarification, exact branch head `b64049f0956070674e1cf324056c2866271ca894`:
+
+- `Validate Evidence-Based Game Development Knowledge` run `31365726190`: `FAILURE`
+- the focused suite had one intended failure: missing `INCREMENTAL_IMPROVEMENT`
+- the prior three focused findings were already GREEN at that head
+
+Production owner changes were applied only after their corresponding RED evidence.
 
 ## Adversarial review
 
@@ -90,6 +107,8 @@ Findings handled:
 3. **Vendor/tool overgeneralization:** Copilot, Yarn, and Premiere behavior is kept within exact product/tool scope; only narrow tool-neutral guardrails are absorbed.
 4. **Open PR duplication:** UI/UX findings remain deferred to PR #247.
 5. **New-Skill bias:** new ACTIVE Skill count remains zero.
+6. **Forced-change bias:** incremental improvement is required as a search/retention lens, not as a quota. Meaningless churn remains prohibited.
+7. **Self-staling audit status:** this audit no longer claims a future exact-head validation result. The PR/CI and eventual merge result own that evidence.
 
 ## Protected boundaries
 
@@ -100,6 +119,6 @@ Findings handled:
 - product/game/fiction/channel direction: unchanged
 - no tool-specific syntax/API promoted to Base-wide hard rule
 
-## Validation
+## Validation ownership
 
-Final exact-head CI and latest-main race check must be green before merge. Until then the result is `IMPLEMENTED_ON_BRANCH / VALIDATION_PENDING`.
+This document records RED evidence, design decisions, and adversarial findings. It does **not** self-certify the latest branch head or future merge. The authoritative GREEN/FAIL result is the exact-head GitHub PR CI plus the latest-main/open-PR race check performed immediately before merge. Unrun checks must not be reported as PASS.
