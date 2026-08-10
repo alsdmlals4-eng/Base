@@ -1,18 +1,35 @@
-# 주기적 게임 개발 외부 Source Watchlist
+# 주기적 Base 외부 Source Watchlist — 게임·AI 작업·서사·YouTube
 
 ```yaml
-watchlist_role: periodic-external-game-development-source-discovery
+watchlist_role: periodic-base-improvement-source-discovery
 owner_method: docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md
 initial_bootstrap_window: 2026-02-10..2026-08-10
 recommended_default_cadence: weekly
 scheduler_authority: EXTERNAL_TO_BASE
+source_domains:
+  - GAME_DEVELOPMENT
+  - PROMPT_AND_AGENT_WORKFLOW
+  - SKILL_AUTHORING_AND_EVOLUTION
+  - FICTION_AND_INTERACTIVE_NARRATIVE
+  - YOUTUBE_AND_VIDEO_EDITING
 ```
 
 ## 1. 목적
 
-이 Watchlist는 게임 기획·Godot 개발·UX·접근성·아트·프로덕션·플레이테스트·성능·출시·마케팅·AI 협업에 도움이 될 수 있는 외부 자료를 **주기적으로 발견**하기 위한 공용 Reference다.
+이 Watchlist는 Base와 Base를 적용한 프로젝트에 도움이 될 수 있는 외부 자료를 **주기적으로 발견·교차검증·선별**하기 위한 공용 Reference다.
+
+대상은 게임 기획·Godot 개발·UX·접근성·아트·프로덕션·플레이테스트·성능·출시뿐 아니라 다음까지 포함한다.
+
+- 프롬프트 작성과 instruction architecture
+- 장기 agent 작업·context·harness·eval·권한 구조
+- Skill 생성·통합·progressive disclosure·behavior evaluation
+- 소설·연재소설·캐릭터·장면·퇴고·연속성
+- 게임 스토리·분기·대화·interactive narrative
+- YouTube 기획·스크립트·촬영·편집·제목·썸네일·Analytics
 
 이 문서는 새 Skill이 아니며 외부 글을 Base 정본으로 만드는 권한도 없다. 실제 판정은 `EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md`의 Evidence tier와 `ADOPT / ADAPT / TEST / AVOID / IGNORE / REFERENCE_ONLY`, 현행 Base Work Mode·Skill·적대적 검토·BCP 경계를 따른다.
+
+파일은 기존 Evidence Knowledge 허브 아래에 있지만 **Base-wide discovery reference**다. 분야별 실행 권한은 각 owner가 유지한다.
 
 Base는 scheduler·webhook·백그라운드 실행기가 아니다. 실제 주기 실행은 ChatGPT Automation, GitHub Actions 또는 사용자가 선택한 외부 scheduler가 소유한다. 실행되지 않은 scan을 완료로 보고하지 않는다.
 
@@ -22,50 +39,147 @@ Base는 scheduler·webhook·백그라운드 실행기가 아니다. 실제 주�
 
 | source_role | 의미 | 기본 취급 |
 |---|---|---|
-| `AUTHORITY_TARGET` | 플랫폼·엔진·표준·공식 정책·공식 SDK/도구 | 해당 제품·플랫폼 사실에는 T1 후보. 다른 플랫폼의 보편 법칙으로 확대 금지 |
-| `PROFESSIONAL_PRACTICE` | 현업 발표·개발자 회고·전문 실무 가이드 | T2 후보. 팀 규모·장르·예산·도구 차이를 함께 기록 |
+| `AUTHORITY_TARGET` | 플랫폼·엔진·공식 제품·표준·공식 SDK/도구·원 연구 | 자기 제품·표준 사실에는 T1 후보. 다른 도구·플랫폼의 보편 법칙으로 확대 금지 |
+| `PROFESSIONAL_PRACTICE` | 현업 발표·개발자/작가/편집자 회고·전문 실무 가이드 | T2 후보. 팀 규모·장르·매체·예산·도구·상업 이해관계를 함께 기록 |
 | `DISCOVERY_FEED` | 여러 원문을 빠르게 발견하는 큐레이션·뉴스·뉴스레터 | 발견 역할만 기본. 원출처 역추적 전 T1/T2 권위 없음 |
-| `OBSERVATIONAL_DATA_OR_VENDOR_GUIDE` | 시장 관찰·벤치마크·분석 도구·벤더 실무 자료 | 표본·기간·방법·이해관계와 함께 사용. 공식 플랫폼 사실로 과장 금지 |
+| `OBSERVATIONAL_DATA_OR_VENDOR_GUIDE` | 시장/플랫폼 관찰·벤치마크·분석 도구·벤더 실무 자료 | 표본·기간·방법·이해관계와 함께 사용. 공식 플랫폼 사실·보편 성공 공식으로 과장 금지 |
 
-## 3. 핵심 Source Pool
+## 3. Domain별 Source Pool
 
-### 3.1 `AUTHORITY_TARGET`
+### 3.1 `GAME_DEVELOPMENT`
+
+#### `AUTHORITY_TARGET`
 
 | Source | scan surface | 주요 용도 | 한계·재검증 |
 |---|---|---|---|
 | **Godot Engine official docs / blog / releases** | `godotengine.org/blog`, release pages, migration docs | stable/RC/maintenance, breaking change, migration, editor/runtime 기능, 지원 정책 | 프로젝트 적용 전 exact Godot version·migration guide·known issue 재확인 |
-| **Valve Steamworks Documentation / Blog** | `partner.steamgames.com/doc`, Steamworks news | Demo, Wishlist, Visibility, Store, SteamPipe, release/marketing 기능 | 제3자 Steam 알고리즘 추정보다 우선. 문서 변경 가능하므로 출시 전 재확인 |
-| **Android Developers – Games** | `developer.android.com/games`, games release notes | Android performance, thermal/CPU/GPU, Play Games Services, SDK migration, controller, quality | 기기·Android version·SDK version에 따라 다름 |
-| **Google Play Developer Policy / Policy Deadlines** | Play Console Help policy/deadline pages | 정책 효력일, metadata, 기능/UX, 계정·배포 요건 | 법률 자문 아님. 효력일·지역·계정 조건 재확인 |
-| **Xbox Accessibility Guidelines** | Microsoft Game Dev accessibility guidelines | text, contrast, input, motion, objectives, audio, UI context, 접근성 검수 질문 | 접근성 아이디어·guardrail이며 법적 인증 체크리스트가 아님 |
-| **AMD GPUOpen** *(2026 bootstrap에서 추가)* | `gpuopen.com` articles/tools | GPU profiling, graphics performance, crash debugging, AMD toolchain | AMD 하드웨어·도구에 대한 공식성만 T1. 범용 엔진/타 GPU 법칙으로 확대 금지 |
+| **Valve Steamworks Documentation / Blog** | `partner.steamgames.com/doc`, Steamworks news | Demo, Wishlist, Visibility, Store, SteamPipe, release/marketing 기능 | 제3자 Steam 알고리즘 추정보다 우선. 출시 전 현재 문서 재확인 |
+| **Android Developers – Games** | `developer.android.com/games`, games release notes | Android performance, thermal/CPU/GPU, SDK migration, controller, quality | 기기·Android version·SDK version별 조건 기록 |
+| **Google Play Developer Policy / Policy Deadlines** | Play Console Help policy/deadline pages | 정책 효력일, metadata, 품질, 계정·배포 요건 | 법률 자문 아님. 효력일·지역·계정 조건 재확인 |
+| **Xbox Accessibility Guidelines** | Microsoft Game Dev accessibility guidelines | text, contrast, input, motion, objectives, audio, UI context | 접근성 설계·검토 source이며 법적 인증을 대신하지 않음 |
+| **AMD GPUOpen** | `gpuopen.com` articles/tools | GPU profiling, graphics performance, crash debugging, AMD toolchain | AMD 하드웨어·도구 사실에만 T1. 타 GPU·엔진에 자동 일반화 금지 |
 
-### 3.2 `PROFESSIONAL_PRACTICE`
+#### `PROFESSIONAL_PRACTICE`
 
-| Source | scan surface | 주요 용도 | 한계·재검증 |
+| Source | 주요 용도 | 한계 |
+|---|---|---|
+| **GDC Vault** | postmortem, design, production, performance, narrative, AI, accessibility | 발표 프로젝트의 규모·장르·조직 조건 보존 |
+| **Game Developer** | 개발자 인터뷰, 디자인 의도, 제작 문제, 마케팅/비즈니스 변화 | 기사와 원 발언 구분; 플랫폼 사실은 공식 source로 역추적 |
+| **Games User Research** | research question, 관찰, study timing, playtest maturity | 서비스/교육 이해관계와 방법론을 분리 |
+| **80 Level** | technical art, environment, asset pipeline, tooling friction | 개별 artist/studio 사례를 보편 pipeline으로 강제 금지 |
+| **The Level Design Book** | blockout, metrics, wayfinding, in-engine iteration | 장르·카메라·전투/탐색 비중에 따라 적용성 다름 |
+| **Game Accessibility Guidelines** | 접근성 아이디어·early feedback·검토 질문 | 공식 플랫폼 정책·법적 compliance 아님 |
+| **How To Market A Game** | indie Steam demo/Next Fest/wishlist/launch 사례·설문 | 자기선택 표본·시기 drift·상업 이해관계 기록 |
+| **Deconstructor of Fun** | mobile/F2P/liveops/business/AI operator 관점 | premium PC·소규모 게임에 직접 일반화 금지 |
+
+#### `DISCOVERY_FEED / OBSERVATIONAL_DATA_OR_VENDOR_GUIDE`
+
+| Source | role | 주요 용도 | 한계 |
 |---|---|---|---|
-| **GDC Vault** | 연도·category index, postmortem/design/production talks | 실제 프로젝트 설계·생산·성능·AI·접근성·postmortem | 발표자의 프로젝트 조건을 보존하고 AAA 관행을 소규모 팀에 그대로 강제하지 않음 |
-| **Game Developer** | design / production / marketing / business sections | 개발자 인터뷰, 디자인 의도, 제작 문제, 업계 변화 | 기사 요약과 개발자 원 발언 구분. 오래된 Steam 추정은 공식 Steamworks로 재검증 |
-| **Games User Research** | articles / Playtest Masterclass | research question, 관찰, study timing, playtest maturity | 상업 서비스 이해관계가 있으므로 방법 원리와 서비스 홍보를 분리 |
-| **80 Level** | gamedev / environment / technical-art interviews | technical art, asset pipeline, environment workflow, tool friction | 개별 artist/studio 사례가 많아 보편 규칙으로 승격 금지; sponsored 여부 기록 |
-| **The Level Design Book** | process / blockout / playtesting pages | blockout, metrics, wayfinding, 빠른 in-engine iteration | 업데이트 빈도가 낮은 종합 Reference. 프로젝트 장르에 따라 적용성 다름 |
-| **Game Accessibility Guidelines** | Basic/Intermediate/Advanced/full list | 접근성 아이디어, early feedback, 실무 체크 질문 | 공식 플랫폼 정책이나 법적 인증이 아님; 실제 장애 당사자 검증을 대신하지 않음 |
-| **How To Market A Game** *(2026 bootstrap에서 추가)* | recent posts / benchmark pages / Next Fest tracker | Steam Next Fest·wishlist·demo·launch 실측 벤치마크와 indie 사례 | 설문 표본·자기선택 편향·시기별 Steam 변화 명시. 숫자를 universal target으로 고정 금지 |
-| **Deconstructor of Fun** *(2026 bootstrap에서 추가)* | blog categories: AI, business, game mechanics, data | 모바일/라이브옵스/게임 비즈니스·AI 도입 사례, operator 관점 | mobile/F2P/컨설팅 관점이 강함. 1인 premium PC 게임에 직접 일반화 금지 |
+| **Hada GeekNews** | `DISCOVERY_FEED` | AI agent, 개발 생산성, UX, 도구, 보안, 새로운 원문 발견 | 요약 자체는 권위가 아님. `ORIGINAL_SOURCE_BACKTRACE` 필수 |
+| **GameDiscoverCo newsletter** | `DISCOVERY_FEED` | Steam/PC/console discovery, festival·시장 사례 후보 | 자체 추정·유료 데이터·sponsor 표시 |
+| **GameAnalytics** | `OBSERVATIONAL_DATA_OR_VENDOR_GUIDE` | retention, funnel, event-based cohort, analytics 질문 설계 | vendor/F2P/mobile 편향; benchmark를 universal target으로 금지 |
+| **SteamDB** | `OBSERVATIONAL_DATA_OR_VENDOR_GUIDE` | Steam 공개 데이터 관찰, release/pricing 변화 | Valve 공식 서비스가 아님; 원인·알고리즘 정본으로 금지 |
 
-### 3.3 `DISCOVERY_FEED`
+### 3.2 `PROMPT_AND_AGENT_WORKFLOW`
 
-| Source | scan surface | 주요 용도 | 한계·재검증 |
+| Source | role | scan surface / use_for | 한계·재검증 |
 |---|---|---|---|
-| **Hada GeekNews** | `news.hada.io` 최신/주제 | AI agent, 개발 생산성, UX, 도구, 보안, 새로운 원문 발견 | 큐레이션·요약 자체는 권위가 아님. 반드시 가능한 원출처로 `ORIGINAL_SOURCE_BACKTRACE` |
-| **GameDiscoverCo newsletter** | archive / individual posts | Steam/PC/console discovery, 시장·festival 관찰, 사례 후보 발견 | 일부 자체 추정·유료 데이터·sponsor가 존재. 공식 Valve 규칙과 분리하고 표본/추정 표시 |
+| **OpenAI official docs / Engineering / Academy** | `AUTHORITY_TARGET` | prompt/instruction design, agent workflow, evals, harness, long-running work, Work/Agents 운영 사례 | OpenAI 제품 사실에는 T1. 다른 모델/제품의 보편 법칙은 교차검증 |
+| **Anthropic Engineering / Docs** | `AUTHORITY_TARGET` | context engineering, long-running harness, evals, tool design, sandboxing, agent work patterns | Claude 제품 사실에는 T1; 일반 agent 원리는 독립 source와 교차검증 |
+| **GitHub Copilot Docs** | `AUTHORITY_TARGET` | custom instructions, prompt files, custom agents, subagents, Agent Skills, hooks, MCP, repository routing | 지원 surface·preview 상태가 자주 변하므로 적용 전 현재 compatibility 확인 |
+| **Google Developers Blog / Google Cloud AI & ADK** | `AUTHORITY_TARGET` | modular prompt architecture, context engineering, ADK, skills, agent lifecycle, evaluation | Google 제품 기능과 일반 architecture 주장을 분리 |
+| **Microsoft Learn** | `AUTHORITY_TARGET` | Agent Skills, Copilot Studio/Visual Studio instruction structure, test/preview guidance | preview/제품별 기능은 현재 version 재확인 |
+| **Hada GeekNews** | `DISCOVERY_FEED` | prompt engineering, agent harness, coding workflow, eval, security 원문 발견 | 반드시 원글/공식 문서로 역추적 |
 
-### 3.4 `OBSERVATIONAL_DATA_OR_VENDOR_GUIDE`
+#### Prompt/작업구조에서 우선 찾을 질문
 
-| Source | scan surface | 주요 용도 | 한계·재검증 |
+```text
+목표와 성공 기준이 명시적인가?
+→ 항상 필요한 context와 task-specific context가 분리됐는가?
+→ prompt / instruction / skill / tool / agent 중 가장 작은 책임 단위인가?
+→ 단일 거대 prompt가 독립적으로 테스트 가능한 concern을 섞고 있지 않은가?
+→ edge case와 실패·중단·handoff 조건이 있는가?
+→ tool 권한과 blast radius가 작업 가치에 맞는가?
+→ eval이 실제 harness·도구·budget·configuration을 반영하는가?
+→ 변경 후 회귀를 실제 대표 prompt에서 검증했는가?
+```
+
+### 3.3 `SKILL_AUTHORING_AND_EVOLUTION`
+
+Skill 자료는 **설치 가능한 Skill 자체를 무조건 채택하기 위해 수집하지 않는다.** Base의 `AI_SKILL_ADOPTION_GUIDE.md`와 `evolving-project-discipline-skills`의 consolidation-first 경계를 개선하는 데 사용한다.
+
+| Source | role | 주요 용도 | 한계 |
 |---|---|---|---|
-| **GameAnalytics** | blog / docs | retention, funnel, event-based cohort, analytics 질문 설계 | 벤더·F2P/mobile 사례 비중이 큼. `40/20/10` 같은 benchmark를 법칙으로 사용 금지 |
-| **SteamDB** | blog / stats / release data | Steam 공개 데이터 관찰, release volume, pricing-change 탐색 | Valve 공식 서비스가 아님. 플랫폼 규칙·원인·wishlist를 추정하는 정본으로 사용 금지 |
+| **GitHub Copilot Docs — Agent Skills / customization** | `AUTHORITY_TARGET` | always-on instruction vs prompt file vs custom agent vs task Skill의 역할 차이, 자동 발견, skill description routing | Copilot 구현 세부를 Base 표준 자체로 복사 금지 |
+| **Anthropic Engineering — Agent Skills** | `AUTHORITY_TARGET` | `SKILL.md` + references/scripts, progressive disclosure, code execution, skill iteration/security | Claude 전용 경로·기능과 일반 Skill 원리를 분리 |
+| **Google Developers Blog — ADK Agent Skills** | `AUTHORITY_TARGET` | on-demand loading, progressive disclosure, inline/file-based/generated skill pattern | runtime skill generation은 Base 자동승인 권한으로 해석 금지 |
+| **Microsoft Learn — Agent Skills** | `AUTHORITY_TARGET` | task description, steps, output format, constraints, edge cases, tools, preview test | preview 기능은 안정 API처럼 고정 금지 |
+| **OpenAI official workflow/eval guidance** | `AUTHORITY_TARGET` | repeatable workflow packaging, eval-driven refinement, smallest useful workflow, human review | 제품별 agent 기능과 Base Skill identity를 혼동하지 않음 |
+
+#### Skill 개선 판정
+
+```text
+기존 Skill의 trigger/mode/reference로 해결 가능 → ABSORB
+항상 모든 작업에 필요한 짧은 규칙 → global/repository instruction 후보
+특정 반복 작업의 절차·자료·script가 필요 → Skill 후보
+독립 tool/permission/persona/context가 필요한 specialist → agent 후보
+한 번 쓰는 요청 형식 → prompt/template 후보
+독립 입력·산출물·Quality Bar·검증·승인 경계 없음 → 새 Skill 금지
+```
+
+### 3.4 `FICTION_AND_INTERACTIVE_NARRATIVE`
+
+소설과 게임 스토리는 **공통 서사 원리**를 공유하지만 같은 매체가 아니다.
+
+공유 가능한 층:
+
+- 캐릭터 욕망·갈등·행동 논리
+- 장면 목적·전후 변화·긴장·정보 공개
+- 구조·pacing·setup/payoff
+- 연속성·인과·설정 일관성
+- 대사 voice와 관계 변화
+- developmental → line/copy → proof 단계형 퇴고
+
+게임에서 추가되는 층:
+
+- player agency·choice·state·replay
+- branching budget·합류·fail/recovery
+- UI·입력·시스템·퀘스트와 narrative 연결
+- localization·voice·runtime data
+
+따라서 소설용 조언을 게임에 가져올 때 `ADAPT`, 게임의 선택/상태 규칙을 선형 소설에 강제하지 않는다.
+
+| Source | role | 주요 용도 | 한계 |
+|---|---|---|---|
+| **Reedsy** | `PROFESSIONAL_PRACTICE` | story structure, character, developmental editing, copy editing, proofreading, writer/editor 실무 | marketplace/교육 상업 이해관계; 단일 구조 공식을 절대 규칙으로 금지 |
+| **inkle / ink** | `PROFESSIONAL_PRACTICE` | branching narrative, text-first scripting, write-and-play loop, choice/state patterns | ink 도구 문법은 해당 도구에만 공식; narrative pattern은 context-limited |
+| **Yarn Spinner** | `PROFESSIONAL_PRACTICE` | interactive dialogue, choices, variables, localization, Godot/Unity/Unreal integration, live validation | Yarn 문법·integration을 Base narrative 표준으로 강제 금지 |
+| **IGDA Game Writing** | `PROFESSIONAL_PRACTICE` | game writing 직무·narrative design 현업 커뮤니티·발표·패널 | 개별 발표는 발표자/프로젝트 조건 기록 |
+| **Emily Short’s Interactive Storytelling** | `PROFESSIONAL_PRACTICE` | interactive fiction, storylets, dialogue expressiveness, player knowledge/agency 사례 | 개인 전문가 archive; 최신성보다 사례 조건을 중시 |
+| **GDC Vault — narrative/game writing** | `PROFESSIONAL_PRACTICE` | shipped-game narrative postmortem, pipeline, collaboration, 실패 사례 | 대형팀/특정 장르 사례 일반화 금지 |
+
+### 3.5 `YOUTUBE_AND_VIDEO_EDITING`
+
+| Source | role | 주요 용도 | 한계·재검증 |
+|---|---|---|---|
+| **YouTube Analytics / YouTube Studio Help / YouTube Creators** | `AUTHORITY_TARGET` | Reach, impressions, CTR, watch time, audience retention, new/casual/regular viewers, format별 Analytics, 플랫폼 기능 | metric UI·정의·실험 기능은 변경 가능하므로 현재 Help 재확인 |
+| **Blackmagic Design DaVinci Resolve Training** | `AUTHORITY_TARGET` | rough cut, trim, multicam, audio/Fairlight, color, Fusion/VFX, delivery의 공식 tool workflow | DaVinci 기능은 tool-specific; 편집 미학의 유일한 정답 아님 |
+| **Frame.io Insider / Knowledge Center** | `PROFESSIONAL_PRACTICE` | post-production workflow, versioned review, approval, media metadata, collaboration | Adobe/Frame.io 제품 이해관계 표시; 기능 사실은 현재 docs 재확인 |
+| **vidIQ** | `OBSERVATIONAL_DATA_OR_VENDOR_GUIDE` | title/thumbnail/retention/channel benchmark 연구·creator 사례 | vendor/서비스 이해관계, 선정 표본 편향. 숫자를 universal success target으로 금지 |
+| **GDC / Game Developer marketing-video cases** | `PROFESSIONAL_PRACTICE` | devlog·trailer·launch communication을 실제 게임 marketing과 연결 | YouTube 일반 채널 성장 공식으로 과잉 확대 금지 |
+
+#### 영상 작업에서 우선 찾을 질문
+
+```text
+한 편의 viewer job과 약속이 하나인가?
+→ 실제 콘텐츠/빌드가 제목·썸네일 약속을 충족하는가?
+→ rough cut에서 이야기·증거가 성립한 뒤 장식 편집을 하는가?
+→ audio/dialogue intelligibility가 효과보다 먼저인가?
+→ review round와 feedback resolution이 version으로 추적되는가?
+→ retention drop/rewatch를 원인으로 단정하지 않고 장면 가설로 바꾸는가?
+→ CTR·views만으로 구매의도·게임 수요·채널 성공을 증명하지 않는가?
+```
 
 ## 4. 새 사이트 추가 Gate
 
@@ -73,12 +187,14 @@ Base는 scheduler·webhook·백그라운드 실행기가 아니다. 실제 주�
 
 ```yaml
 repeat_value_confirmed: true
-recent_relevant_material_found: true
+recent_relevant_material_found_or_durable_reference_value: true
+source_domain_declared: true
 source_role_declared: true
 evidence_tier_is_not_inferred_from_popularity: true
 current_pool_overlap_checked: true
 commercial_or_vendor_interest_recorded: true
 original_source_access_or_backtrace_value: true
+owner_or_consumer_candidate_identified: true
 ```
 
 다음이면 영구 Watchlist 추가를 보류한다.
@@ -87,16 +203,17 @@ original_source_access_or_backtrace_value: true
 - 다른 Source의 재게시만 함
 - SEO·affiliate·sponsor 목적과 독립 정보가 구분되지 않음
 - 원출처가 더 직접적이고 Watchlist에서 이미 발견 가능함
-- 현재 프로젝트와 관련 없는 대량 뉴스만 생산함
+- 현재/예상 프로젝트와 관련 없는 대량 뉴스만 생산함
+- 새로운 Source를 넣는 것 자체가 목표가 됨
 
 ## 5. `ORIGINAL_SOURCE_BACKTRACE`
 
-Hada·뉴스·뉴스레터·벤더 글에서 유용한 주장을 발견하면 다음 순서로 검증한다.
+Hada·뉴스·뉴스레터·벤더 글·개인 blog에서 유용한 주장을 발견하면 다음 순서로 검증한다.
 
 ```text
 발견 글/요약
-→ 링크된 원문·공식 문서·원 발표·원 데이터
-→ 게시/업데이트 날짜·버전·지역·플랫폼·표본 확인
+→ 링크된 원문·공식 문서·원 발표·원 데이터·원 연구
+→ 게시/업데이트 날짜·버전·지역·플랫폼·표본·매체 조건 확인
 → Base REFERENCE_SOURCE_CATALOG와 현행 정본 대조
 → 같은 Goal의 열린/최근 PR 대조
 → Evidence tier·상태 확정
@@ -108,6 +225,7 @@ Hada·뉴스·뉴스레터·벤더 글에서 유용한 주장을 발견하면 �
 
 ```yaml
 candidate_id:
+source_domain:
 discovered_from:
 original_url:
 title:
@@ -123,6 +241,7 @@ same_goal_open_or_recent_pr:
 why_it_might_change_a_decision:
 original_source_backtrace:
 sample_or_scope:
+medium_or_platform_scope:
 commercial_or_vendor_interest:
 license_or_copying_notes:
 ```
@@ -151,9 +270,10 @@ LAST_SUCCESSFUL_SCAN
 
 ### 기본 cadence
 
-- `weekly`: Hada, Godot release/blog, Steamworks, Android/Google Play release/policy, GameDiscoverCo, How To Market A Game, Game Developer, SteamDB blog처럼 빠르게 변하는 면.
-- `monthly-or-on-demand`: GDC Vault, Games User Research, 80 Level, GameAnalytics, Deconstructor of Fun, GPUOpen.
-- `quarterly-or-when-relevant`: The Level Design Book, Game Accessibility Guidelines처럼 상대적으로 정적인 Reference.
+- `daily-or-weekly`: Hada, OpenAI/Anthropic/Google/GitHub/Microsoft AI engineering updates, Godot release/blog, Steamworks, Android/Google Play policy/release, YouTube Help/Studio changes처럼 빠르게 변하는 면.
+- `weekly`: GameDiscoverCo, How To Market A Game, Game Developer, Reedsy recent learning, Frame.io Insider, vidIQ research/blog.
+- `monthly-or-on-demand`: GDC Vault, Games User Research, 80 Level, GameAnalytics, Deconstructor of Fun, GPUOpen, IGDA Game Writing, inkle/ink, Yarn Spinner.
+- `quarterly-or-when-relevant`: The Level Design Book, Game Accessibility Guidelines, Emily Short archive처럼 상대적으로 정적인 Reference.
 
 이는 권장 기본값이며 Base 불변 일정이 아니다.
 
@@ -166,15 +286,17 @@ LAST_SUCCESSFUL_SCAN
 → 2026-08-10T23:59:59+09:00
 ```
 
-Source의 공개 archive/index가 기간 전체 항목을 신뢰성 있게 노출하는 경우 `FULL_INDEX_REVIEW`를 사용할 수 있다. 검색 색인·paywall·무한 스크롤·대량 뉴스 때문에 기간 전체를 증명할 수 없으면 `PARTIAL_INDEX_REVIEW`로 둔다.
+Source의 공개 archive/index가 기간 전체 항목을 신뢰성 있게 노출하는 경우 `FULL_INDEX_REVIEW`를 사용할 수 있다. 검색 색인·paywall·무한 스크롤·대량 뉴스·영상/강의 본문 접근 제한 때문에 기간 전체를 증명할 수 없으면 `PARTIAL_INDEX_REVIEW`로 둔다.
 
-`PARTIAL_INDEX_REVIEW`를 `6개월치 전부 읽음`으로 표현하지 않는다. 대신 **현재 게임 작업과 연결되는 관련 항목을 기간 내 가능한 범위에서 전수 또는 고밀도로 검토**하고 미검증 범위를 남긴다.
+`PARTIAL_INDEX_REVIEW`를 `6개월치 전부 읽음`으로 표현하지 않는다. 대신 **각 source domain에서 현재와 예상 작업을 바꿀 수 있는 관련 항목을 기간 내 가능한 범위에서 전수 또는 고밀도로 검토**하고 미검증 범위를 남긴다.
+
+정적이고 오래됐지만 장기 가치가 큰 source는 `STATIC_REFERENCE_REVIEW`로 분리한다. 최근성은 Evidence 강도를 자동으로 높이지 않는다.
 
 이 bootstrap의 실제 결과는 `RECENT_EXTERNAL_EVIDENCE_REVIEW_2026-08-10.md`가 소유한다.
 
-## 9. 시장·벤치마크 숫자 Guardrail
+## 9. 숫자·벤치마크 Guardrail
 
-GameDiscoverCo·How To Market A Game·GameAnalytics·SteamDB 같은 자료에서 숫자를 사용할 때는 최소 다음을 같이 보존한다.
+GameDiscoverCo·How To Market A Game·GameAnalytics·SteamDB·vidIQ 같은 자료에서 숫자를 사용할 때는 최소 다음을 같이 보존한다.
 
 ```yaml
 observation_window:
@@ -190,17 +312,25 @@ known_bias:
 - 평균/중앙값/백분위를 universal 목표로 바꾸지 않는다.
 - 상관관계를 인과로 보고하지 않는다.
 - Steam visibility 원인은 Steamworks 공식 설명을 우선한다.
-- 특정 festival 한 회차의 변화는 다음 회차에도 유지된다고 가정하지 않는다.
+- YouTube algorithm 원인은 YouTube 공식 설명·실제 채널 experiment보다 vendor 추정을 낮은 권한으로 둔다.
+- 특정 festival·niche·channel cohort 한 번의 관찰을 다음 기간에도 유지된다고 가정하지 않는다.
 
 ## 10. 적대적 검토 Lens
 
 - 높은 추천 수·조회 수를 사실성 점수로 사용했는가?
 - 큐레이션 요약이 원문의 조건·반례·날짜를 잃었는가?
-- AAA/F2P/mobile/UGC 사례를 현재 프로젝트에 과잉 일반화했는가?
-- SteamDB 관찰값을 Valve 공식 사실로 썼는가?
+- AAA/F2P/mobile/UGC/대형 creator 사례를 현재 프로젝트에 과잉 일반화했는가?
+- SteamDB·vidIQ 같은 제3자 관찰값을 플랫폼 공식 사실로 썼는가?
 - vendor benchmark를 제품 목표로 고정했는가?
 - AI가 만든 통계·출처·요약을 원자료로 오인했는가?
-- 최신 6개월에 집중한 나머지 오래됐지만 유효한 표준·연구를 버렸는가?
+- 모델/제품별 prompt tip을 모든 모델의 영구 규칙으로 만들었는가?
+- 단일 거대 prompt를 파일로 쪼갰다는 이유만으로 architecture가 개선됐다고 가정했는가?
+- Skill 수가 늘어난 것을 능력 향상으로 오인했는가?
+- 소설의 선형 서사 규칙을 게임 agency·state에 그대로 강제했는가?
+- 게임 선택/분기 규칙을 소설 모든 장면에 강제했는가?
+- YouTube CTR/retention을 게임 판매·품질의 직접 인과로 오인했는가?
+- 편집 효과·motion·자막 장식이 이야기·증거·오디오 명료성보다 앞섰는가?
+- 최신 6개월에 집중한 나머지 오래됐지만 유효한 표준·연구·고전적 craft를 버렸는가?
 - 같은 원칙이 Base에 이미 있는데 새 Skill·Guide·Template를 만들었는가?
 - 열린 PR이 같은 책임을 이미 수정 중인데 병렬로 중복 변경했는가?
 
@@ -211,7 +341,7 @@ known_bias:
 현재 승인 범위 또는 현행 저위험 자동승인 계약 안에서 다음을 모두 만족할 때만 최소 반영한다.
 
 - 작은 가역 변경
-- 기존 owner의 Reference/Evidence 보강
+- 기존 owner의 Reference/Evidence/명백한 stale link 보강
 - Skill ID·owner·Schema·보안·권한·라이선스 의미 불변
 - 원출처와 현행 Base 비교 완료
 - 관련 테스트·적대적 재검토 실행 가능
@@ -220,13 +350,15 @@ known_bias:
 
 다음은 자동 확정하지 않는다.
 
-- 제품/게임 핵심 방향
+- 제품/게임/소설/채널 핵심 방향
 - Base 공용 정책의 의미 변경
 - ACTIVE Skill 추가·제거·ID·owner 변경
+- Skill behavior-result schema·eval identity 계약의 비호환 변경
 - GitHub Workflow write 권한·인증·보안 경계 변경
 - 라이선스·법적 판단
 - 대규모 구조 변경·migration
 - 미검증 트렌드를 Hard Rule로 승격
+- 특정 창작자의 문체·영상 표현·썸네일을 식별 가능하게 복제
 
 ## 12. 완료 보고
 
@@ -234,9 +366,11 @@ known_bias:
 
 ```yaml
 scan_window:
+source_domains_checked: []
 sources_checked:
 full_index_review: []
 partial_index_review: []
+static_reference_review: []
 new_sources_added: []
 material_candidates:
 no_change_count:
