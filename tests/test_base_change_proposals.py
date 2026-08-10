@@ -68,6 +68,8 @@ class BaseChangeProposalTests(unittest.TestCase):
             "BCP-2026-018-godot-pilot-failure-diagnostic-preservation": "https://github.com/alsdmlals4-eng/Base/pull/261",
             "BCP-2026-019-ten-paces-handoff-machine-consumer-compatibility": "https://github.com/alsdmlals4-eng/Base/pull/260",
             "BCP-2026-015-external-runtime-session-same-snapshot-recovery": "https://github.com/alsdmlals4-eng/Base/pull/266",
+            "BCP-2026-012-serial-fiction-canon-migration-debt": "https://github.com/alsdmlals4-eng/Base/pull/265",
+            "BCP-2026-017-serial-fiction-reconciliation-frontier-and-derived-continuity-guard": "https://github.com/alsdmlals4-eng/Base/pull/265",
         }
         for proposal_id, implementation_pr in implemented.items():
             self.assertEqual("IMPLEMENTED", entries[proposal_id]["status"])
@@ -75,13 +77,36 @@ class BaseChangeProposalTests(unittest.TestCase):
 
         approved = {
             "BCP-2026-001-base-skill-map-publication",
-            "BCP-2026-012-serial-fiction-canon-migration-debt",
-            "BCP-2026-017-serial-fiction-reconciliation-frontier-and-derived-continuity-guard",
         }
         for proposal_id in approved:
             self.assertEqual("APPROVED_FOR_IMPLEMENTATION", entries[proposal_id]["status"])
             self.assertTrue(entries[proposal_id]["approval_ref"])
             self.assertIsNone(entries[proposal_id]["implementation_pr"])
+
+    def test_implemented_serial_fiction_proposals_retain_closeout_records(self) -> None:
+        """Catch a registry closeout that leaves either proposal body stale."""
+        registry, errors = CHECKER.validate_repository(ROOT)
+        self.assertEqual([], errors)
+        entries = {item["proposal_id"]: item for item in registry["proposals"]}
+        expected = {
+            "BCP-2026-012-serial-fiction-canon-migration-debt": (
+                "https://github.com/alsdmlals4-eng/Base/pull/265",
+                "0d1cebdec0e1f3b660688ec194dcc27054dcfc2d",
+            ),
+            "BCP-2026-017-serial-fiction-reconciliation-frontier-and-derived-continuity-guard": (
+                "https://github.com/alsdmlals4-eng/Base/pull/265",
+                "0d1cebdec0e1f3b660688ec194dcc27054dcfc2d",
+            ),
+        }
+        for proposal_id, (implementation_pr, merge_commit) in expected.items():
+            with self.subTest(proposal_id=proposal_id):
+                self.assertEqual("IMPLEMENTED", entries[proposal_id]["status"])
+                self.assertEqual(implementation_pr, entries[proposal_id]["implementation_pr"])
+                proposal = (ROOT / entries[proposal_id]["path"]).read_text(encoding="utf-8")
+                self.assertIn("- 상태: `IMPLEMENTED`", proposal)
+                self.assertIn("### 구현 closeout — PR #265", proposal)
+                self.assertIn(implementation_pr, proposal)
+                self.assertIn(merge_commit, proposal)
 
     def test_new_proposal_pr_cannot_change_active_base(self) -> None:
         previous = {"proposals": []}
