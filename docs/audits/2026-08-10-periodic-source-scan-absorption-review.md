@@ -73,6 +73,16 @@ Disposition:
 
 Guardrail: do not create meaningless churn, duplicate rules, or file-count inflation merely to avoid `NO_CHANGE`.
 
+### PR-gated Base mutation
+
+The latest user direction also requires actual Base changes discovered by a scan to pass through PR review rather than treating low-risk authority as permission for direct `main` writes.
+
+Disposition:
+
+`USER_APPROVED_BASE_BEHAVIOR_CLARIFICATION → LOW_RISK_BOUNDED_UPDATE`
+
+Applied to the Watchlist as `branch → PR → adversarial review → related CI/exact-head validation → merge gate`, while preserving the existing BCP/user-decision boundaries for higher-risk changes.
+
 ## Rejected or deferred
 
 - Hada rewrite-all-code claim: `CONFLICT / AVOID`
@@ -96,6 +106,12 @@ A second RED was observed for the incremental-improvement clarification, exact b
 - the focused suite had one intended failure: missing `INCREMENTAL_IMPROVEMENT`
 - the prior three focused findings were already GREEN at that head
 
+A third RED was observed for the PR-gated mutation clarification, exact branch head `ce9da6680af8c91bd6401d6ce73c3a3d5e6b2905`:
+
+- `Validate Evidence-Based Game Development Knowledge` run `31366214247`: `FAILURE`
+- the focused suite had one intended failure: missing `실제 Base 변경은 별도 PR`
+- the other 59 tests in that suite passed at that head
+
 Production owner changes were applied only after their corresponding RED evidence.
 
 ## Adversarial review
@@ -109,6 +125,8 @@ Findings handled:
 5. **New-Skill bias:** new ACTIVE Skill count remains zero.
 6. **Forced-change bias:** incremental improvement is required as a search/retention lens, not as a quota. Meaningless churn remains prohibited.
 7. **Self-staling audit status:** this audit no longer claims a future exact-head validation result. The PR/CI and eventual merge result own that evidence.
+8. **Direct-main ambiguity:** low-risk absorption authority could otherwise be misread as permission to mutate `main` directly. The Watchlist now requires a PR path for actual Base changes.
+9. **Plan/spec drift:** late incremental-improvement and PR-gate instructions were synchronized back into both the implementation plan and design spec before final validation.
 
 ## Protected boundaries
 
