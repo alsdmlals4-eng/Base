@@ -6,8 +6,11 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest import mock
 
 from tools import godot_editor_adapter_materialization as materialization
+from tools import godot_multi_project_pilot as runner
 from tools import godot_project_pilot_evidence as evidence
 from tools import godot_project_pilot_workspace as workspace
 from tools.godot_project_pilot_descriptor import (
@@ -236,6 +239,122 @@ class GodotMultiProjectPilotTests(unittest.TestCase):
             result_path.write_text(json.dumps(result), encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "ARTIFACT_BYTE_HASH_MISMATCH"):
                 evidence.verify_runtime_evidence(root, result_path)
+
+    def test_failed_runtime_result_is_preserved_and_linked_before_runner_exits(self) -> None:
+        source_commit = "a" * 40
+        descriptor = ProjectPilotDescriptor(
+            repository="owner/game",
+            project_id="game",
+            base_pilot_commit="b" * 40,
+            project_state="EXISTING_GODOT_PROJECT",
+            godot_version="4.7.1-stable",
+            godot_archive_sha256=GODOT_ARCHIVE_SHA256,
+            project_file="project.godot",
+            main_scene_source="application/run/main_scene",
+            legacy_editor_plugins=(),
+            legacy_autoloads=(),
+            scratch_scene_path="res://.godot-live-editor-pilot/scratch.tscn",
+            behavior_checks=(),
+            expected_platform="PC",
+        )
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            base = root / "base"
+            source = root / "source"
+            output = root / "output"
+            base.mkdir()
+            source.mkdir()
+
+            def materialize_failed_runtime(
+                _base: Path,
+                temporary_workspace: Path,
+                _descriptor: ProjectPilotDescriptor,
+                _source_commit: str,
+                *,
+                transform_report: object,
+            ) -> SimpleNamespace:
+                runtime_result = (
+                    temporary_workspace
+                    / "artifacts/godot-project-pilot/runtime-result.json"
+                )
+                runtime_result.parent.mkdir(parents=True)
+                runtime_result.write_text(
+                    '{"status":"FAIL","token":"secret-value"}\n',
+                    encoding="utf-8",
+                )
+                return SimpleNamespace(transform_report=transform_report)
+
+            success_record = runner.ProcessRecord(
+                argv=("godot",),
+                returncode=0,
+                stdout_sha256="0" * 64,
+                stderr_sha256="0" * 64,
+                stdout_excerpt="",
+                stderr_excerpt="",
+                stdout_truncated=False,
+                stderr_truncated=False,
+            )
+            prepared = SimpleNamespace(preserved_autoloads=())
+            with (
+                mock.patch.object(runner, "load_descriptor", return_value=descriptor),
+                mock.patch.object(runner, "_verify_base_pin"),
+                mock.patch.object(
+                    runner,
+                    "_git_text",
+                    side_effect=lambda _root, *args: (
+                        "https://github.com/owner/game.git"
+                        if args == ("config", "--get", "remote.origin.url")
+                        else source_commit
+                    ),
+                ),
+                mock.patch.object(runner, "inventory_tracked_files", return_value={}),
+                mock.patch.object(
+                    runner,
+                    "copy_to_workspace",
+                    side_effect=lambda _source, destination: destination.mkdir(),
+                ),
+                mock.patch.object(runner, "prepare_runtime_workspace", return_value=prepared),
+                mock.patch.object(runner, "materialize_runtime_workspace", side_effect=materialize_failed_runtime),
+                mock.patch.object(runner, "_run_process", return_value=success_record),
+            ):
+                exit_code = runner.run_pilot(
+                    base,
+                    source,
+                    root / "descriptor.json",
+                    root / "godot",
+                    output,
+                    source_commit,
+                    descriptor.base_pilot_commit,
+                )
+                second_exit_code = runner.run_pilot(
+                    base,
+                    source,
+                    root / "descriptor.json",
+                    root / "godot",
+                    output,
+                    source_commit,
+                    descriptor.base_pilot_commit,
+                )
+
+            self.assertEqual(5, exit_code)
+            self.assertEqual(5, second_exit_code)
+            final_evidence = json.loads(
+                (output / "project-pilot-evidence.json").read_text(encoding="utf-8")
+            )
+            snapshot = output / final_evidence["failure_diagnostic_path"]
+            first_snapshot = (
+                output
+                / "diagnostics"
+                / f"{source_commit[:12]}-attempt-1"
+                / "runtime-result.sanitized.json"
+            )
+            self.assertNotEqual(first_snapshot, snapshot)
+            self.assertTrue(first_snapshot.is_file())
+            self.assertTrue(snapshot.is_file())
+            preserved = json.loads(snapshot.read_text(encoding="utf-8"))
+            self.assertEqual("FAIL", preserved["status"])
+            self.assertEqual("[REDACTED]", preserved["token"])
 
     def test_reusable_workflow_is_immutable_and_listener_free(self) -> None:
         text = WORKFLOW.read_text(encoding="utf-8")
