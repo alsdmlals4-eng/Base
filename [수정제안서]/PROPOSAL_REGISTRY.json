@@ -106,7 +106,7 @@
       "proposal_id": "BCP-2026-011-game-feature-design-spec-system",
       "title": "게임 기능 세부기획 Spec 계층 통합",
       "path": "[수정제안서]/BCP-2026-011-game-feature-design-spec-system/PROPOSAL.md",
-      "status": "APPROVED_FOR_IMPLEMENTATION",
+      "status": "IMPLEMENTED",
       "source_project": "alsdmlals4-eng/Base",
       "source_commit": "2a6ced23f6d6de1fb6e0a281c7138beb03f1a13b",
       "submitted_at": "2026-08-10",
