@@ -20,9 +20,12 @@ class PlayerExperienceValidationGateTests(unittest.TestCase):
             for item in registry["proposals"]
             if item["proposal_id"] == "BCP-2026-020-player-experience-validation-gates"
         )
-        self.assertEqual("APPROVED_FOR_IMPLEMENTATION", entry["status"])
+        self.assertEqual("IMPLEMENTED", entry["status"])
         self.assertTrue(entry["approval_ref"])
-        self.assertIsNone(entry["implementation_pr"])
+        self.assertEqual(
+            "https://github.com/alsdmlals4-eng/Base/pull/274",
+            entry["implementation_pr"],
+        )
         self.assertNotIn("player-experience-management", read("skills/SKILL_REGISTRY.json"))
 
     def test_evidence_layers_do_not_promote_technical_or_ui_checks_to_human_experience(self) -> None:

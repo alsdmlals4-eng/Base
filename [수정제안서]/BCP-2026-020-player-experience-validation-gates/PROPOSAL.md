@@ -6,7 +6,7 @@
 - 초기 관찰 Base 커밋: `eea83c7a2306265312588894f5f86fe8930e2f72`
 - 병합 전 재검증 Base 커밋: `810b01f98bfef9232f4810a3d0006b66e1d296f0`
 - 제출일: `2026-08-10`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED` (PR 병합 대기)
 - 지식 상태: `패턴 + 승인된 공용 운영 보완`
 - 제안 제출 승인: 사용자 지시 `진행해서 [수정제안서]에 추가해`
 - PR 생성·병합 승인: 사용자 지시 `만들고 병합까지 진행해`
@@ -288,9 +288,10 @@ SEPARATE_WRITING_TRACK: Coc-Fiction
 - 제안 제출 승인 근거: 2026-08-10 사용자 지시 `진행해서 [수정제안서]에 추가해`
 - PR 생성·병합 승인 근거: 2026-08-10 사용자 지시 `만들고 병합까지 진행해`
 - 구현 승인 근거: 2026-08-11 사용자 지시 `작업 진행하고 BCP-20 추가된것도 확인하고 base에 반영해주고`
-- 구현 PR: 구현 branch에서 검증 후 별도 PR로 연결
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/274`
 - 제안 등록 PR: `https://github.com/alsdmlals4-eng/Base/pull/273`
 - 현재 허용 범위: 기존 owner에 대한 최소 Guide·Template·검증·회귀 테스트 반영. 프로젝트 직접 반영은 계속 별도 승인이다.
 - 활성 Base Skill·Method·Template·Test 변경: BCP-020 구현 branch의 승인 범위에서만 허용
 - 프로젝트 직접 반영: `금지`; 위 표는 적용 후보와 위치 제안일 뿐 각 프로젝트 승인·Decision을 대체하지 않는다.
-- 롤백: 제안 PR을 revert하거나 Proposal 상태를 `DEFERRED / REJECTED`로 변경해 이력을 보존한다. 활성 Base와 프로젝트 파일은 이번 제안 등록으로 변경하지 않는다.
+- 구현 closeout: 공용 Guide·기존 Template·검증 Contract·회귀 테스트에만 반영했다. 사람 사용성·플레이어 경험 검증은 실행하지 않았으므로 해당 evidence는 `NOT_RUN`이며, 프로젝트 직접 반영은 계속 별도 승인이다.
+- 롤백: PR #274 또는 병합 커밋을 revert하고 Proposal 상태를 `DEFERRED / REJECTED`로 변경해 이력을 보존한다. 프로젝트 파일은 이번 구현에서 변경하지 않는다.
