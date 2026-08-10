@@ -71,12 +71,25 @@ Base는 공용 작법과 검수 방법만 소유한다. 작품 고유 인물·�
 
 ```yaml
 project_canon_and_priority:
+approved_canon_decision_and_superseded_history:
 source_material_and_adaptation_boundary:
 work_identity_and_reader_promise:
 arc_episode_or_scene_scope:
 current_draft:
 pov_and_character_voice_state:
 continuity_and_information_state:
+active_and_archive_consumer_inventory:
+staged_migration_state:
+  enforcement_class:
+  declared_legacy_debt_consumers: []
+  actual_legacy_debt_consumers: []
+  reconciliation_unit:
+  verified_prefix:
+  declared_migration_boundary:
+  legacy_tail:
+  frontier_verification_status:
+  declared_validation_gate:
+  duplicate_current_authority_check:
 setup_payoff_ledger:
 reader_feedback_evidence:
 platform_and_release_constraints:
@@ -119,6 +132,47 @@ known_conflicts:
 ```
 
 각색은 빈 인과·감정·행동을 보강할 수 있지만 보호된 결과를 편의상 바꾸지 않는다.
+
+### 1-A. 새 Canon Decision과 기존 DRAFT 이관을 별도 lifecycle으로 다룬다
+
+승인된 새 Canon/Decision은 즉시 현재 권위를 가진다. 그러나 그 이전에 작성된
+활성 DRAFT가 모두 이관됐다는 뜻은 아니다. staged migration이 필요한 경우에만
+active consumer와 `archive/reference-only` artifact를 먼저 분리하고, 각 규칙에
+다음 enforcement class 하나를 선택한다.
+
+- `STRICT_NOW`: 현재 활성 artifact 전체가 즉시 준수해야 한다.
+- `FORBIDDEN_IN_NEW_OR_REVISED`: 새로 쓰거나 실질적으로 재퇴고하는 원고에는 즉시
+  적용하지만 과거 DRAFT를 blind rewrite하지 않는다.
+- `BOUNDED_LEGACY_RECONCILIATION_DEBT`: 정확히 선언한 active consumer set만 legacy
+  debt로 남기고, source/Canon/continuity 대조를 거친 bounded revision으로 줄인다.
+- `SCOPED_STRICT`: 선언된 아크·시점·플랫폼·버전 범위 안에서만 strict하게 적용한다.
+
+`BOUNDED_LEGACY_RECONCILIATION_DEBT`의 fail-closed invariant는 다음과 같다.
+
+```text
+actual_legacy_debt_consumers == declared_debt_consumers
+```
+
+새 active consumer가 debt에 나타나거나, 정리된 consumer가 ledger에는 남아 있으면
+원인 대조 전 통과시키지 않는다. 정확한 일치는 `PASS_WITH_KNOWN_DEBT`일 수 있으나
+`CANON_MIGRATION_COMPLETE`가 아니다. 그 완료 표기는 debt가 0이고 선언된 검증을
+통과한 경우에만 사용한다.
+
+부분 이관에서 다음 topology도 함께 기록한다.
+
+```text
+VERIFIED_PREFIX
++ DECLARED_MIGRATION_BOUNDARY
++ LEGACY_TAIL
++ FRONTIER_VERIFICATION_STATUS
+```
+
+candidate frontier는 데이터가 저장됐다는 뜻일 뿐이다. declared validation gate가
+Green일 때만 verified prefix와 boundary를 전진시키며, 미검증 경계 양쪽은
+`normal continuity`로 추정하지 않는다. index·reverse outline·scene graph 같은
+derived consumer는 그 경계를 `unknown` 또는 project-local migration marker로
+보존해야 한다. migration debt가 있어도 한 artifact의 current authority가 둘이면
+fail-closed 한다.
 
 ### 2. Reader Promise와 현재 회차의 값을 한 문장으로 적는다
 
@@ -240,6 +294,11 @@ information_legibility_failure: INFORMATION_LEGIBILITY_FAILURE
 pattern_repetition_unvaried: PATTERN_REPETITION_UNVARIED
 consequence_memory_missing: CONSEQUENCE_MEMORY_MISSING
 setup_payoff_debt_untracked: SETUP_PAYOFF_DEBT_UNTRACKED
+canon_migration_debt_expanded: CANON_MIGRATION_DEBT_EXPANDED
+canon_migration_completion_overclaim: CANON_MIGRATION_COMPLETION_OVERCLAIM
+unverified_migration_boundary_continuity: UNVERIFIED_MIGRATION_BOUNDARY_CONTINUITY
+frontier_promotion_without_validation: FRONTIER_PROMOTION_WITHOUT_VALIDATION
+duplicate_current_authority: DUPLICATE_CURRENT_AUTHORITY
 comment_promoted_to_canon: COMMENT_AS_CANON
 identifiable_style_copy: STYLE_COPY_RISK
 framework_overfit: FRAMEWORK_OVERFIT
@@ -262,6 +321,12 @@ pov_information_boundary:
 local_payoff:
 open_loop:
 continuity_changes:
+canon_migration_enforcement_class:
+declared_and_actual_legacy_debt_consumers:
+reconciliation_unit_and_frontier_status:
+declared_validation_gate_and_result:
+derived_consumer_boundary_handling:
+duplicate_current_authority_check:
 setup_payoff_changes:
 reader_evidence_and_sample_limits:
 platform_constraint_status:
@@ -277,6 +342,8 @@ remaining_not_run:
 
 - 보호 정본과 각색 변경이 구분된다.
 - 선택한 Mode의 Quality Gate를 통과한다.
+- staged migration에서는 `PASS_WITH_KNOWN_DEBT`, candidate frontier, verified prefix,
+  `CANON_MIGRATION_COMPLETE`를 서로 바꾸어 주장하지 않는다.
 - 회차/장면에서 무엇이 달라졌는지 설명할 수 있다.
 - 설명량 증가를 완성도 향상으로 오인하지 않는다.
 - 외부 작품의 식별 가능한 문장을 복제하지 않는다.

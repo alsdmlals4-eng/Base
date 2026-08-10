@@ -71,3 +71,45 @@ human_reader_quality: HUMAN_NOT_RUN
 commercial_outcome: NOT_RUN
 platform_rules_future_stability: PLATFORM_REVERIFY_REQUIRED
 ```
+
+## 2026-08-10 — BCP-2026-012·017 Canon migration debt와 reconciliation frontier
+
+### 입력과 finding
+
+- 한 프로젝트의 승인된 Canon 변경 뒤 기존 활성 DRAFT가 남아, 새 Decision의 즉시
+  권위와 실제 원고 이관 완료를 한 상태로 처리하면 blind rewrite 또는 legacy 확산이
+  생겼다.
+- 이어진 reconciliation에서 candidate prefix 데이터가 저장돼도 declared validation
+  gate가 실패하면 verified prefix로 승격할 수 없고, 미검증 경계를 derived consumer가
+  normal continuity로 연결하면 사건 상태를 되감길 수 있었다.
+
+### Base 결정
+
+- 새 Skill·project schema·fixed work-unit을 만들지 않고 `canon-and-continuity`에
+  `STRICT_NOW`, `FORBIDDEN_IN_NEW_OR_REVISED`,
+  `BOUNDED_LEGACY_RECONCILIATION_DEBT`, `SCOPED_STRICT` lifecycle을 흡수한다.
+- `actual_legacy_debt_consumers == declared_debt_consumers`를 bounded debt의
+  fail-closed invariant로 두며, `PASS_WITH_KNOWN_DEBT`와
+  `CANON_MIGRATION_COMPLETE`를 분리한다.
+- `VERIFIED_PREFIX`, `DECLARED_MIGRATION_BOUNDARY`, `LEGACY_TAIL`,
+  `FRONTIER_VERIFICATION_STATUS`를 schema-neutral topology로 두고, declared
+  validation gate Green 전 candidate frontier를 verified로 부르지 않는다.
+- derived consumer의 경계 추론과 duplicate current authority는 실패 상태로 드러내되,
+  narrative event truth와 실제 field 이름은 프로젝트 정본이 소유한다.
+
+### 검증 상한
+
+```yaml
+base_contract: VERIFIABLE
+project_evidence: ONE_PROJECT_PATTERN_AND_COUNTEREXAMPLE
+second_project_pilot: NOT_RUN
+human_usability: HUMAN_NOT_RUN
+project_runtime_validation: PROJECT_LOCAL
+```
+
+### 다음 검토 트리거
+
+- 다른 연재소설 프로젝트에서 bounded debt 또는 frontier가 실제로 쓰일 때
+- declared debt set을 wildcard로 느슨하게 만들려는 요구가 나올 때
+- candidate frontier를 Green 전에 completion으로 보고하려는 경우
+- derived consumer의 adjacency가 duplicate authority 또는 거짓 continuity를 만드는 경우

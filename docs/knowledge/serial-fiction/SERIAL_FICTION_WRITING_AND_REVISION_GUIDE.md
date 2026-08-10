@@ -31,6 +31,62 @@ adaptable_gaps:
 
 원작·TRPG 로그·이전 승인본처럼 보호된 결과가 있더라도 **빈 감정, 빈 인과, 행동의 구체화, 장면 미장센, 대사와 내면**은 각색할 수 있다. 다만 결과를 만들기 위해 인물이 당시 알 수 없는 정보를 갑자기 알거나, 기존 능력·관계를 편의적으로 바꾸지 않는다.
 
+### 2-A. Canon 변경과 legacy 원고 이관은 다른 상태다
+
+새 Canon/Decision이 승인되면 현재 판단에는 즉시 적용한다. 하지만 승인 전에 이미
+작성된 활성 DRAFT가 모두 새 Canon을 준수한다는 뜻은 아니다. 의미·인과·관계가
+얽힌 원고를 단어 치환으로 blind rewrite하지 않기 위해 다음 enforcement class를
+구분한다.
+
+| Class | 적용 범위 | 완료 해석 |
+| --- | --- | --- |
+| `STRICT_NOW` | 현재 활성 artifact 전체 | 즉시 검증 또는 이미 끝난 안전 migration이 필요하다. |
+| `FORBIDDEN_IN_NEW_OR_REVISED` | 새 원고와 현재 실질적으로 고치는 원고 | 과거 DRAFT 전체의 자동 재작성은 요구하지 않는다. |
+| `BOUNDED_LEGACY_RECONCILIATION_DEBT` | 정확히 선언한 legacy active consumer | source/Canon/continuity 대조를 거쳐 묶음 단위로 줄인다. |
+| `SCOPED_STRICT` | 선언한 아크·시점·플랫폼·버전 | 범위 밖으로 전역화하지 않는다. |
+
+`BOUNDED_LEGACY_RECONCILIATION_DEBT`는 backlog 면허가 아니다. 다음 invariant가
+깨지면 새 legacy 확산 또는 오래된 ledger를 조사한다.
+
+```text
+actual_legacy_debt_consumers == declared_debt_consumers
+```
+
+정확한 일치는 `PASS_WITH_KNOWN_DEBT`일 수 있다. 이 상태는 새 원고로의 확산을
+막았다는 뜻이지 `CANON_MIGRATION_COMPLETE`가 아니다. `archive/reference-only`
+artifact는 active debt consumer로 등록하지 않는다.
+
+### 2-B. reconciliation frontier 밖의 연속성을 발명하지 않는다
+
+부분 이관에는 다음 네 상태가 필요할 수 있다.
+
+```text
+VERIFIED_PREFIX
++ DECLARED_MIGRATION_BOUNDARY
++ LEGACY_TAIL
++ FRONTIER_VERIFICATION_STATUS
+```
+
+`candidate frontier`는 다음 묶음의 원고 또는 파생 데이터가 저장된 상태일 수
+있다. declared validation gate가 Green이기 전에는 verified prefix를 늘리거나
+whole-manuscript reconciliation complete를 주장하지 않는다.
+
+미검증 migration boundary의 양쪽 artifact는 같은 번호나 파일명만으로 인과가
+이어진다고 볼 수 없다. derived consumer가 index, reverse outline, synopsis, graph
+등을 만들 때 그 사이를 `normal continuity`의 previous/next로 자동 연결하지
+않는다. project-local marker는 사용할 수 있지만 Base는 field 이름을 강제하지
+않는다.
+
+migration debt가 남아도 한 artifact의 current authority는 하나여야 한다.
+중복 current authority는 `DUPLICATE_CURRENT_AUTHORITY`로 fail-closed 한다.
+
+이 lifecycle은 다음에는 사용하지 않는다.
+
+- active legacy artifact가 없을 때
+- schema migration test가 보장한 안전한 단순 rename을 한 번에 끝낼 때
+- legacy artifact가 `archive/reference-only`일 때
+- 인접 continuity가 이미 source/Canon 대조로 검증됐을 때
+
 ## 3. Reader Promise
 
 Reader Promise는 작품이 독자에게 반복적으로 주는 핵심 경험이다. 장르 이름보다 구체적이어야 한다.
@@ -219,6 +275,8 @@ secondary_functions: []
 
 - 사건 결과, 정보 획득 시점, 인물 위치, 관계 상태
 - 앞뒤 회차와 모순
+- staged migration이면 enforcement class, exact debt set, verified prefix, unresolved
+  boundary, declared validation gate와 duplicate current authority를 먼저 대조
 
 ### Pass 2 — Episode Value / Structure
 
