@@ -201,6 +201,47 @@ class NeutralAdversarialFeatureLifecycleTests(unittest.TestCase):
         )
         self.assertEqual("NOT_REQUIRED", summary["expected_user_decision_state"])
 
+    def test_poc_survivors_promote_to_l2_detail_without_a_new_active_skill(self) -> None:
+        concepts = read("skills/analyzing-and-refining-game-concepts/SKILL.md")
+        documents = read("skills/managing-design-documents/SKILL.md")
+        template = read("templates/planning/GAME_FEATURE_DESIGN_SPEC.md")
+        traceability = read("templates/planning/FEATURE_SPEC_TRACEABILITY_PACKET.md")
+        registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+        skill_ids = {entry["skill_id"] for entry in registry["skills"]}
+
+        for term in (
+            "KEEP / CHANGE / RETEST",
+            "pre-PoC",
+            "REMOVE / DEFER",
+            "승격",
+            "GAME_FEATURE_DESIGN_SPEC.md",
+        ):
+            self.assertIn(term, concepts)
+        for term in (
+            "L0 Project Direction",
+            "L1 Feature Brief",
+            "L2 GAME_FEATURE_DESIGN_SPEC",
+            "L3 FEATURE_SPEC_TRACEABILITY_PACKET",
+            "Task progress",
+            "executed verification",
+            "reference/compose",
+        ):
+            self.assertIn(term, documents)
+        for term in (
+            "Player Problem",
+            "Player Verbs",
+            "Entry / Exit / Cancel / Re-entry",
+            "State & Rules",
+            "Acceptance Criteria",
+            "Cut-down / Rollback",
+            "USER_DECISION_REQUIRED",
+            "BLOCKED_UNVERIFIED",
+        ):
+            self.assertIn(term, template)
+        self.assertIn("design_spec_id", traceability)
+        self.assertIn("canonical_design_spec_path", traceability)
+        self.assertNotIn("game-feature-design", skill_ids)
+
     def test_reference_freshness_recognizes_the_focused_contract_test(self) -> None:
         config = json.loads((ROOT / ".github" / "reference-freshness.json").read_text(encoding="utf-8"))
         rule = next(
