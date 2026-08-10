@@ -47,7 +47,6 @@ class BaseChangeProposalTests(unittest.TestCase):
             "BCP-2026-016-live-source-handoff-semantic-consumer-reconciliation": "https://github.com/alsdmlals4-eng/Base/pull/260",
             "BCP-2026-018-godot-pilot-failure-diagnostic-preservation": "https://github.com/alsdmlals4-eng/Base/pull/261",
             "BCP-2026-019-ten-paces-handoff-machine-consumer-compatibility": "https://github.com/alsdmlals4-eng/Base/pull/260",
-            "BCP-2026-015-external-runtime-session-same-snapshot-recovery": "https://github.com/alsdmlals4-eng/Base/pull/266",
         }
         for proposal_id, item in approved.items():
             self.assertEqual("IMPLEMENTED", item["status"])
@@ -68,6 +67,7 @@ class BaseChangeProposalTests(unittest.TestCase):
             "BCP-2026-016-live-source-handoff-semantic-consumer-reconciliation": "https://github.com/alsdmlals4-eng/Base/pull/260",
             "BCP-2026-018-godot-pilot-failure-diagnostic-preservation": "https://github.com/alsdmlals4-eng/Base/pull/261",
             "BCP-2026-019-ten-paces-handoff-machine-consumer-compatibility": "https://github.com/alsdmlals4-eng/Base/pull/260",
+            "BCP-2026-015-external-runtime-session-same-snapshot-recovery": "https://github.com/alsdmlals4-eng/Base/pull/266",
         }
         for proposal_id, implementation_pr in implemented.items():
             self.assertEqual("IMPLEMENTED", entries[proposal_id]["status"])
