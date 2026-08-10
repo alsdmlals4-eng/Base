@@ -13,6 +13,35 @@
 
 방향, 수치, 용어, 범위, 구현 상태, 우선순위 또는 작업 절차가 바뀌면 같은 작업 안에서 영향받는 책임 원본을 갱신한다.
 
+## 0A. 기획 해상도 계층
+
+모든 아이디어를 처음부터 같은 깊이로 문서화하지 않는다. **불확실성이 싼 검증에서 살아남을수록 문서 해상도를 높인다.**
+
+```text
+L0 Project Direction
+게임 비전·Pillar·Core Loop·Resource Flow
+
+→ L1 Feature Brief
+플레이어 문제·경험 약속·범위·가장 큰 위험
+
+→ Benchmark / PoC / Adversarial Review
+결정을 바꿀 가설을 먼저 싸게 검증
+
+→ L2 GAME_FEATURE_DESIGN_SPEC
+살아남은 주요 기능의 행동·규칙·상태·피드백·예외·데이터·제작 입력·Acceptance
+
+→ Approval
+
+→ L3 Feature Spec Traceability Packet
+승인된 Decision·Requirement·Acceptance를 Task·Implementation·Verification에 연결
+```
+
+- `templates/planning/GAME_FEATURE_DESIGN_SPEC.md`는 PoC·benchmark·adversarial review 뒤 production handoff가 필요한 주요 L2 기능에 사용한다.
+- pre-PoC 아이디어, L0·L1 단순 변경, `REMOVE / DEFER` 항목에는 L2 상세 Spec을 강제하지 않는다.
+- 전문 분야 정본이 같은 질문을 더 정확히 소유하면 L2 Spec은 해당 정본을 reference/compose하고 전문을 복제하지 않는다.
+- `templates/planning/FEATURE_SPEC_TRACEABILITY_PACKET.md`은 승인 뒤 구현·검증 연결을 책임하며 L2 상세 설계의 별도 정본이 아니다.
+- 프로젝트 Google Sheets에는 ID·요약·핵심 수치·상태·canonical path를 노출하되 L2 상세 전문을 복제하지 않는다.
+
 ## 1. 프로젝트 약속
 
 - 프로젝트:
