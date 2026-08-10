@@ -235,6 +235,37 @@ class RepositoryGovernanceBaselineTests(unittest.TestCase):
         ):
             self.assertIn(term, handoff)
 
+    def test_game_feature_design_spec_contract_is_integrated_without_new_skill(self) -> None:
+        template_path = ROOT / "templates/planning/GAME_FEATURE_DESIGN_SPEC.md"
+        self.assertTrue(template_path.is_file(), "missing L2 GAME_FEATURE_DESIGN_SPEC template")
+        template = template_path.read_text(encoding="utf-8")
+        docs = read("skills/managing-design-documents/SKILL.md")
+        concepts = read("skills/analyzing-and-refining-game-concepts/SKILL.md")
+        document_system = read("templates/planning/DESIGN_DOCUMENT_SYSTEM.md")
+        traceability = read("templates/planning/FEATURE_SPEC_TRACEABILITY_PACKET.md")
+        skill_registry = read("skills/SKILL_REGISTRY.json")
+
+        for token in (
+            "Player Problem",
+            "Experience Intent",
+            "Player Verbs",
+            "State & Rules",
+            "Acceptance Criteria",
+            "Cut-down / Rollback",
+            "USER_DECISION_REQUIRED",
+            "BLOCKED_UNVERIFIED",
+        ):
+            self.assertIn(token, template)
+        self.assertIn("GAME_FEATURE_DESIGN_SPEC.md", docs)
+        self.assertIn("GAME_FEATURE_DESIGN_SPEC.md", concepts)
+        self.assertIn("PoC", concepts)
+        self.assertIn("승격", concepts)
+        for token in ("L0", "L1", "L2", "L3", "GAME_FEATURE_DESIGN_SPEC"):
+            self.assertIn(token, document_system)
+        self.assertIn("design_spec_id", traceability)
+        self.assertIn("canonical_design_spec_path", traceability)
+        self.assertNotIn('"skill_id": "game-feature-design', skill_registry)
+
 
 if __name__ == "__main__":
     unittest.main()
