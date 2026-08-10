@@ -173,6 +173,42 @@ class RepositoryGovernanceBaselineTests(unittest.TestCase):
                 self.assertIn('update-types: ["minor", "patch"]', block)
                 self.assertNotIn('"major"', block)
 
+    def test_reviewed_actions_v7_pins_are_propagated_to_active_consumers(self) -> None:
+        retired = {
+            "checkout": "08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+            "setup-node": "a0853c24544627f65ddf259abe73b1d18a591444",
+        }
+        reviewed = {
+            "checkout": "3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "setup-node": "820762786026740c76f36085b0efc47a31fe5020",
+        }
+
+        active_files = sorted((ROOT / ".github/workflows").glob("*.yml"))
+        active_files += [
+            ROOT / "templates/project-operations/github/documentation-governance.yml",
+            ROOT / "templates/project-operations/github/validate-project-base-adapter.yml",
+            ROOT / "tools/check_ci_required_gate_topology.py",
+            ROOT / "tests/test_ci_required_gate_topology.py",
+            ROOT / "tests/test_v9_1_review_remediation.py",
+        ]
+        corpus = "\n".join(path.read_text(encoding="utf-8") for path in active_files)
+
+        for action, retired_sha in retired.items():
+            with self.subTest(action=action, state="retired"):
+                self.assertNotIn(retired_sha, corpus)
+        for action, reviewed_sha in reviewed.items():
+            with self.subTest(action=action, state="reviewed"):
+                self.assertIn(reviewed_sha, corpus)
+
+        publication_workflow = read(".github/workflows/validate-game-project-operating-system.yml")
+        self.assertEqual(
+            publication_workflow.count(
+                "actions/setup-node@820762786026740c76f36085b0efc47a31fe5020"
+            ),
+            2,
+        )
+        self.assertEqual(publication_workflow.count("package-manager-cache: false"), 2)
+
     def test_docs_only_governance_changes_execute_this_regression(self) -> None:
         workflow = read(".github/workflows/validate-game-project-operating-system.yml")
         docs_job = workflow_job(workflow, "docs-validation", "ubuntu-contract")

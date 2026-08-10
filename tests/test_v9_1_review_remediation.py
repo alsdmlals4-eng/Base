@@ -130,9 +130,9 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
 
     def test_ci_uses_exact_action_allowlist_and_installs_pinned_validation_requirements(self) -> None:
         allowed = {
-            "actions/checkout": "08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+            "actions/checkout": "3d3c42e5aac5ba805825da76410c181273ba90b1",
             "actions/setup-python": "5fda3b95a4ea91299a34e894583c3862153e4b97",
-            "actions/setup-node": "a0853c24544627f65ddf259abe73b1d18a591444",
+            "actions/setup-node": "820762786026740c76f36085b0efc47a31fe5020",
             "actions/upload-artifact": "043fb46d1a93c77aae656e7c1c64a875d1fc6a0a",
             "actions/dependency-review-action": "a1d282b36b6f3519aa1f3fc636f609c47dddb294",
         }
@@ -166,7 +166,7 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
             ROOT / "templates/project-operations/github/documentation-governance.yml"
         ).read_text(encoding="utf-8")
         self.assertIn(
-            "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+            "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
             documentation_governance_template,
         )
         self.assertIn(
@@ -185,7 +185,7 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
         publication_workflow = (
             ROOT / ".github/workflows/validate-game-project-operating-system.yml"
         ).read_text(encoding="utf-8")
-        self.assertEqual(publication_workflow.count("actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444"), 2)
+        self.assertEqual(publication_workflow.count("actions/setup-node@820762786026740c76f36085b0efc47a31fe5020"), 2)
         self.assertEqual(publication_workflow.count("package-manager-cache: false"), 2)
 
     def test_dependency_review_covers_common_manifest_and_lock_formats(self) -> None:
