@@ -33,6 +33,7 @@
 | 질문 | 먼저 읽을 문서 | 주요 산출물 |
 |---|---|---|
 | 외부 근거를 어떻게 찾고 판정·적용하는가? | `EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md` | Evidence Pack·개선 판정·검증 계획 |
+| 어떤 외부 사이트를 주기적으로 확인하고 발견 글을 어떻게 원출처로 역추적하는가? | `PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md` | Source Pool·scan checkpoint·원출처 역추적·freshness·적용 판정 |
 | 게임 코어·플레이어 경험·게임 필·보상·난이도를 어떻게 설계하는가? | `GAME_DESIGN_AND_PLAYER_EXPERIENCE_GUIDE.md` | 플레이어 약속·MDE 추적표·플레이테스트 계약 |
 | 프로젝트마다 어떤 이미지·시각 자산·UI 컴포넌트를 정말 만들어야 하는가? | `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate` | `requirement_id`·Delete Test·role·P0~P3·disposition·검증 |
 | 그림체·비주얼·캐릭터·환경·UI·애니메이션·에셋을 어떻게 기획하는가? | `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md` | Visual Pillar·Art Bible·Asset Specification |
@@ -44,6 +45,8 @@
 | 어떤 공식·학술·현업 자료를 우선 참조하는가? | `REFERENCE_SOURCE_CATALOG.md` | 출처 메타데이터·사용 범위·재검증 조건 |
 | 작은 표본·저충실도 사람 세션을 어떻게 과장 없이 설계하는가? | `docs/knowledge/game-development/HUMAN_VALIDATION_ARTIFACT_GOVERNANCE.md` | 사람 세션 패킷·claim ceiling·미검증 분리 |
 | 실제 테스터가 없을 때 AI 가상 페르소나로 무엇을 검토할 수 있는가? | `docs/knowledge/game-development/SYNTHETIC_TESTER_SIMULATION_GOVERNANCE.md` | 프로젝트 구조 분석·T6 합성 위험 검토·TEST 게이트 |
+
+`PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md`는 새 실행 Skill이나 Evidence 권위가 아니다. 주기적으로 어디를 훑고 어떻게 후보를 원출처로 되돌릴지만 책임지며, 실제 Evidence tier·상태·적용 판정은 `EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md`가 계속 소유한다.
 
 ## 4. 기존 Skill 라우팅
 
@@ -63,7 +66,7 @@
 | Skill 중복·과분할·학습 | `evolving-project-discipline-skills` | 반복 실패·Case·새 책임 경계 증거 |
 | 프로젝트 교훈의 Base 승격 | `managing-base-change-proposals` | 공용 원리와 프로젝트 고유값 분리 |
 
-합성 테스터 작업, 게임 용량 최적화 작업, Visual Requirement Gate는 별도 광역 Skill을 만들지 않는다. 프로젝트 Registry가 선택한 기존 게임 디자인·아트·UX·자산 평가·Vertical Slice·검증 책임을 조합한다.
+합성 테스터 작업, 게임 용량 최적화 작업, Visual Requirement Gate, 주기 외부 Source 발견은 별도 광역 Skill을 만들지 않는다. 프로젝트 Registry가 선택한 기존 게임 디자인·아트·UX·자산 평가·Vertical Slice·검증 책임을 조합한다.
 
 ## 5. Template
 
@@ -94,7 +97,7 @@
 
 이 허브를 읽거나 문서를 작성한 것만으로 기획·구현·접근성·성능·출시가 검증된 것은 아니다. 합성 테스터 결과도 실제 사람 행동·재미·선호·조작감·접근성·성능을 검증하지 않는다. 등급·권리 Template도 법률 검토·플랫폼 제출·승인을 대신하지 않는다. PC·Android Profile도 실제 Windows build, Android 실기기, 모바일 UI·입력·중단 복구, 성능·발열, 상점 계정·테스트·심사 증거를 대신하지 않는다. 빌드 용량 Guide도 실제 프로젝트 build, store-served size, Steam patch preview, Android device, 사람의 시각·청각 품질 검증을 대신하지 않는다. 완료는 선택한 기존 Skill의 Output Contract와 실제 프로젝트 증거를 따른다.
 
-계약·라우팅·중복 Skill 방지·Learning Log 연결은 `tests/test_evidence_based_game_development_knowledge.py`, `tests/test_evidence_knowledge_workflow_contract.py`, `tests/test_visual_requirement_gate.py`, `tests/test_pc_android_cross_platform_delivery.py`, `tests/test_game_build_size_asset_optimization.py`, `tests/test_platform_review_asset_rights_reference_production.py`, `tests/test_human_validation_artifact_governance.py`, `tests/test_synthetic_tester_simulation_governance.py`, `.github/workflows/validate-evidence-knowledge.yml`의 전용 GitHub Actions에서 검증한다. Workflow 파일 존재와 실제 실행 성공을 분리해 확인한다.
+계약·라우팅·중복 Skill 방지·Learning Log 연결은 `tests/test_evidence_based_game_development_knowledge.py`, `tests/test_evidence_knowledge_workflow_contract.py`, `tests/test_visual_requirement_gate.py`, `tests/test_pc_android_cross_platform_delivery.py`, `tests/test_game_build_size_asset_optimization.py`, `tests/test_platform_review_asset_rights_reference_production.py`, `tests/test_human_validation_artifact_governance.py`, `tests/test_synthetic_tester_simulation_governance.py`, `tests/test_periodic_external_source_watchlist.py`, `.github/workflows/validate-evidence-knowledge.yml`의 전용 GitHub Actions에서 검증한다. Workflow 파일 존재와 실제 실행 성공을 분리해 확인한다.
 
 ## 8. Cloud Run 게임 백엔드 Capability Pack
 
