@@ -179,6 +179,8 @@ Decision·Requirement·Acceptance를 Task·Implementation·Verification에 연�
 
 이 불일치는 이번 기능 세부기획 구조와 독립된 기존 Governance 문제이므로 proposal 범위에서 자동 수정하지 않는다. 별도 repository-wide audit에서 `ALLOWED_LEGACY / MISSING_REGISTRY_HISTORY / REPAIR_REQUIRED`를 판정해야 한다.
 
+또한 `managing-base-change-proposals`의 서술형 lifecycle은 `IMPLEMENTING` 단계를 정의하지만 현행 `base-change-proposal-registry-v1` Schema의 status enum에는 `IMPLEMENTING`이 없다. 구현 PR #231에서는 Schema를 범위 밖에서 변경하지 않고 `APPROVED_FOR_IMPLEMENTATION` 상태를 유지한 채 `implementation_pr`만 연결한다. 이 문서/Schema 불일치도 별도 governance audit 대상으로 남긴다.
+
 ## 영향 범위와 검증
 
 승인 후 구현 후보:
@@ -218,5 +220,5 @@ Decision·Requirement·Acceptance를 Task·Implementation·Verification에 연�
 - 승인 참조: `[수정제안서]/BCP-2026-011-game-feature-design-spec-system/PROPOSAL.md#승인과-구현`
 - 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 구현 계획: `[수정제안서]/BCP-2026-011-game-feature-design-spec-system/IMPLEMENTATION_PLAN.md`
-- 구현 PR: `등록 전`
-- 롤백: 구현 PR을 닫고 이 상태전이 커밋을 되돌리면 활성 Base 기능 변경 없이 `SUBMITTED`로 복귀할 수 있다.
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/231`
+- 롤백: 구현 PR을 닫거나 구현 변경을 되돌리면 활성 기능 변경을 제거할 수 있으며, 승인된 제안 상태는 별도 lifecycle 결정 전까지 유지한다.
