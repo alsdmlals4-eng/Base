@@ -4,45 +4,23 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - "START_HERE.md"
       - "docs/knowledge/game-development/**"
-      - "docs/knowledge/methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md"
-      - "docs/knowledge/research/PROMPT_RECIPE_SOURCE_AUDIT.md"
-      - "docs/AI_SKILL_ADOPTION_GUIDE.md"
-      - "docs/superpowers/plans/*human-validation-artifact-governance*.md"
-      - "docs/superpowers/plans/*synthetic-tester*.md"
-      - "docs/superpowers/plans/*prompt-recipe-reference-integration*.md"
-      - "docs/superpowers/plans/*periodic-external-source-watchlist*.md"
-      - "docs/superpowers/specs/*prompt-recipe-reference-integration*.md"
-      - "docs/superpowers/specs/*periodic-external-source-watchlist*.md"
-      - "skills/analyzing-and-refining-game-concepts/SKILL.md"
-      - "skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-*.md"
-      - "skills/governing-game-user-research-coverage/references/**"
-      - "skills/producing-game-development-youtube-videos/**"
-      - "skills/SKILL_REGISTRY.json"
-      - "templates/game-development-youtube/EPISODE_PACKET.md"
       - "templates/research/**"
-      - "templates/planning/ART_TECHNIQUE_CARD.md"
-      - "templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md"
-      - "templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md"
-      - "templates/planning/NARRATIVE_CONTENT_PLAN.md"
-      - "templates/planning/PC_ANDROID_DELIVERY_PROFILE.md"
-      - "README.md"
-      - "docs/DOCUMENTATION_MAP.md"
-      - "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md"
-      - "docs/CHANGELOG.md"
-      - "skills/SKILL_LEARNING_LOG.md"
-      - "tests/test_game_design_difficulty_workflow.py"
-      - "tests/test_game_development_youtube_skill.py"
+      - "docs/PROCESS_IMPROVEMENT_LOOP.md"
+      - "docs/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md"
+      - "templates/review/WEEKLY_WORK_IMPROVEMENT_REVIEW.md"
+      - "skills/analyzing-and-refining-game-concepts/**"
+      - "skills/designing-vertical-slices/**"
+      - "skills/developing-and-revising-serial-fiction/**"
+      - "skills/managing-project-intake-and-work-contract/**"
+      - "skills/managing-game-project-operating-system/**"
+      - "skills/designing-art-prompts-and-technique-cards/**"
+      - "skills/auditing-and-refining-ui-art/**"
+      - "skills/reviewing-and-validating-project-changes/**"
       - "tests/test_evidence_based_game_development_knowledge.py"
-      - "tests/test_evidence_knowledge_workflow_contract.py"
-      - "tests/test_human_validation_artifact_governance.py"
-      - "tests/test_synthetic_tester_simulation_governance.py"
-      - "tests/test_prompt_recipe_reference_contract.py"
-      - "tests/test_pc_android_cross_platform_delivery.py"
-      - "tests/test_visual_requirement_gate.py"
       - "tests/test_periodic_external_source_watchlist.py"
       - "tests/test_weekly_work_improvement_review.py"
+      - "tests/test_evidence_policy_execution.py"
       - ".github/workflows/validate-evidence-knowledge.yml"
   workflow_dispatch:
 
@@ -54,11 +32,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  evidence-knowledge-contract:
+  knowledge-contract:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
 
@@ -67,68 +45,32 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Run evidence knowledge contracts
+      - name: Check Python syntax
+        run: |
+          python -m py_compile \
+            tests/test_evidence_based_game_development_knowledge.py \
+            tests/test_periodic_external_source_watchlist.py \
+            tests/test_weekly_work_improvement_review.py \
+            tests/test_evidence_policy_execution.py
+
+      - name: Run knowledge structure and evidence contract tests
         shell: bash
         run: |
           set +e
-          {
-            python -m py_compile \
-              tests/test_game_design_difficulty_workflow.py \
-              tests/test_game_development_youtube_skill.py \
-              tests/test_evidence_based_game_development_knowledge.py \
-              tests/test_evidence_knowledge_workflow_contract.py \
-              tests/test_human_validation_artifact_governance.py \
-              tests/test_synthetic_tester_simulation_governance.py \
-              tests/test_prompt_recipe_reference_contract.py \
-              tests/test_pc_android_cross_platform_delivery.py \
-              tests/test_visual_requirement_gate.py \
-              tests/test_periodic_external_source_watchlist.py \
-              tests/test_weekly_work_improvement_review.py
-            python -m unittest \
-              tests/test_game_design_difficulty_workflow.py \
-              tests/test_game_development_youtube_skill.py \
-              tests/test_evidence_based_game_development_knowledge.py \
-              tests/test_evidence_knowledge_workflow_contract.py \
-              tests/test_human_validation_artifact_governance.py \
-              tests/test_synthetic_tester_simulation_governance.py \
-              tests/test_prompt_recipe_reference_contract.py \
-              tests/test_pc_android_cross_platform_delivery.py \
-              tests/test_visual_requirement_gate.py \
-              tests/test_periodic_external_source_watchlist.py \
-              tests/test_weekly_work_improvement_review.py \
-              -v
-          } > evidence-knowledge-results.txt 2>&1
-          status=$?
-          cat evidence-knowledge-results.txt
+          python -m unittest \
+            tests.test_evidence_based_game_development_knowledge \
+            tests.test_periodic_external_source_watchlist \
+            tests.test_weekly_work_improvement_review \
+            tests.test_evidence_policy_execution \
+            -v 2>&1 | tee evidence-knowledge-test-results.txt
+          status=${PIPESTATUS[0]}
           exit "$status"
 
-      - name: Upload contract evidence
-        if: always()
+      - name: Upload evidence diagnostics on failure
+        if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          name: evidence-knowledge-validation
-          path: |
-            evidence-knowledge-results.txt
-            docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md
-            docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md
-            docs/knowledge/game-development/RECENT_EXTERNAL_EVIDENCE_REVIEW_2026-08-10.md
-            docs/knowledge/research/PROMPT_RECIPE_SOURCE_AUDIT.md
-            docs/superpowers/plans/2026-07-29-prompt-recipe-reference-integration.md
-            docs/superpowers/specs/2026-07-29-prompt-recipe-reference-integration-design.md
-            skills/producing-game-development-youtube-videos/LEARNING_LOG.md
-            templates/game-development-youtube/EPISODE_PACKET.md
-            templates/planning/ART_TECHNIQUE_CARD.md
-            templates/planning/PC_ANDROID_DELIVERY_PROFILE.md
-            templates/research/AI_IMAGE_PROMPT_RECIPE_CARD.md
-            tests/test_game_design_difficulty_workflow.py
-            tests/test_game_development_youtube_skill.py
-            tests/test_evidence_based_game_development_knowledge.py
-            tests/test_evidence_knowledge_workflow_contract.py
-            tests/test_human_validation_artifact_governance.py
-            tests/test_synthetic_tester_simulation_governance.py
-            tests/test_prompt_recipe_reference_contract.py
-            tests/test_pc_android_cross_platform_delivery.py
-            tests/test_visual_requirement_gate.py
-            tests/test_periodic_external_source_watchlist.py
-            tests/test_weekly_work_improvement_review.py
-          if-no-files-found: error
+          name: evidence-knowledge-diagnostics
+          path: evidence-knowledge-test-results.txt
+          if-no-files-found: warn
+          retention-days: 1

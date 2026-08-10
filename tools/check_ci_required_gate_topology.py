@@ -26,7 +26,7 @@ REQUIRED_GATE_ENV = {
 }
 TOPOLOGY_COMMAND = "python tools/check_ci_required_gate_topology.py"
 EVALUATOR_COMMAND = "python tools/evaluate_ci_required_gate.py"
-CHECKOUT_ACTION = "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8"
+CHECKOUT_ACTION = "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
 
 
 class AmbiguousYaml(ValueError):

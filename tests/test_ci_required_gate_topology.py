@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
       - name: Evaluate required validation jobs
         env:
@@ -136,7 +136,7 @@ jobs:
     def test_canonical_gate_must_checkout_before_evaluation(self) -> None:
         missing_checkout = VALID_CANONICAL.replace(
             "      - name: Check out repository\n"
-            "        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8\n\n",
+            "        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1\n\n",
             "",
         )
         result = self._run({
@@ -147,7 +147,7 @@ jobs:
 
     def test_canonical_gate_checkout_must_use_the_pinned_action(self) -> None:
         wrong_pin = VALID_CANONICAL.replace(
-            "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+            "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
             "actions/checkout@main",
             1,
         )
@@ -165,8 +165,8 @@ jobs:
         for declaration in variants:
             with self.subTest(declaration=declaration.strip()):
                 mutated = VALID_CANONICAL.replace(
-                    "        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8\n",
-                    "        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8\n"
+                    "        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1\n",
+                    "        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1\n"
                     + declaration,
                     1,
                 )
@@ -179,7 +179,7 @@ jobs:
     def test_canonical_gate_checkout_must_precede_evaluator(self) -> None:
         checkout = (
             "      - name: Check out repository\n"
-            "        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8\n\n"
+            "        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1\n\n"
         )
         reordered = VALID_CANONICAL.replace(checkout, "").replace(
             "        run: python tools/evaluate_ci_required_gate.py\n",
