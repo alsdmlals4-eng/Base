@@ -144,6 +144,7 @@ Base 판정:
 ## 8. 통합 UI/UX·비주얼 Rulebook
 
 - 공용 실행 규칙: [ui-ux-visual-design-rulebook.md](ui-ux-visual-design-rulebook.md)
+- 사용자 제공 Laws of UX 31개 완전성 대조: [ux-laws-completeness-matrix.md](ux-laws-completeness-matrix.md)
 - 확인일: 2026-08-10
 - 입력 근거: WCAG 2.2, Apple HIG, Android accessibility, Xbox Accessibility Guidelines, Laws of UX, Anthony Hobday visual-design heuristics, Adham Dannaway UI tips, 사용자 제공 GUI 기본 요소 요약.
 
