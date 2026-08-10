@@ -2,7 +2,7 @@
 
 ## 출처와 상태
 
-- Proposal ID: `BCP-2026-017-godot-pilot-failure-diagnostic-preservation`
+- Proposal ID: `BCP-2026-018-godot-pilot-failure-diagnostic-preservation`
 - 사용자 표시명: `bcp-Blacksmith`
 - 출처 프로젝트: `alsdmlals4-eng/Blacksmith`
 - 출처 main: `68540e6cd288aff138b1ea4c5b1feeb9e0653947`
@@ -43,6 +43,7 @@ Blacksmith PR #141은 운영 handoff/current-state 정합화만 수행했고 제
 - `BCP-2026-014-handoff-machine-consumer-compatibility-closeout`은 handoff의 machine-consumer 호환성 폐쇄를 소유한다. 이 또한 이번 제안의 대상이 아니다.
 - `BCP-2026-015-external-runtime-session-same-snapshot-recovery`는 외부 Editor/MCP process·transport·server registry의 same-snapshot 복구 판정을 소유한다. 현재 제안은 session classification이 아니라 **검증 실패 payload의 artifact 보존 순서**를 다루므로 책임이 다르다.
 - `BCP-2026-016-live-source-handoff-semantic-consumer-reconciliation`은 live source와 handoff semantic consumer 정합화를 소유한다. failure artifact payload 보존은 대상이 아니다.
+- `BCP-2026-017-serial-fiction-reconciliation-frontier-and-derived-continuity-guard`는 연재소설 reconciliation frontier를 소유한다. Godot runtime failure diagnostics와 무관하다.
 - 기존 Godot Live Editor 안전 계약은 fail-closed 실행과 source mutation 보호를 제공한다. 이번 제안은 그 판정을 약화하지 않고 실패 관찰성만 보강하는 bounded extension이다.
 
 따라서 새 broad Skill은 만들지 않고 기존 Godot pilot evidence/diagnostic owner가 흡수할 수 있는 proposal로만 등록한다.
@@ -156,7 +157,7 @@ Base 공용 계약으로 승격하지 않는다.
 
 ### 이번 proposal 단계 영향
 
-- 새 proposal `BCP-2026-017-godot-pilot-failure-diagnostic-preservation`
+- 새 proposal `BCP-2026-018-godot-pilot-failure-diagnostic-preservation`
 - Proposal Registry entry
 
 ### 이번 proposal 단계 비영향
