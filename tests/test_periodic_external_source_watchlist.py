@@ -44,6 +44,7 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
             "FICTION_AND_INTERACTIVE_NARRATIVE",
             "YouTube Analytics",
             "Blackmagic Design DaVinci Resolve",
+            "Adobe Premiere official release notes",
             "Frame.io Insider",
             "vidIQ",
             "YOUTUBE_AND_VIDEO_EDITING",
@@ -58,6 +59,8 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
             "AVOID",
             "IGNORE",
             "REFERENCE_ONLY",
+            "ABSORB_EXISTING_OWNER",
+            "RULE_OR_BCP_CANDIDATE",
             "2026-02-10",
             "2026-08-10",
             "FULL_INDEX_REVIEW",
@@ -66,6 +69,9 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
         ):
             self.assertIn(required, content)
 
+        self.assertIn("새 규칙이 없다는 이유만으로", content)
+        self.assertIn("같은 Goal의 열린·최근 병합 PR", content)
+        self.assertIn("적대적 검토", content)
         self.assertIn("scheduler", content.lower())
         self.assertIn("Base는 scheduler", content)
         self.assertNotIn("DISCOVERY_FEED = T1_PRIMARY_OFFICIAL", content)
@@ -123,6 +129,9 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
             "unverified_or_missing_input_behavior:",
             "Skill 수, agent 수, prompt 파일 수는 능력 지표가 아니다",
             "harness·tool·permission·budget·configuration",
+            "consumer surface",
+            "지원 여부가 surface마다 다를 수 있다",
+            "head branch",
         ):
             self.assertIn(required, content)
 
@@ -143,6 +152,8 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
             "COPY_AND_PROOF",
             "CROSS_RANGE_RECONCILIATION",
             "게임 스토리에는 ADAPT",
+            "SELECTION_QUERY_READ_ONLY",
+            "STATE_COMMIT_AFTER_SELECTION",
         ):
             self.assertIn(required, content)
 
