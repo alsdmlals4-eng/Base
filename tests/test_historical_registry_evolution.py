@@ -20,7 +20,7 @@ class HistoricalRegistryEvolutionTests(unittest.TestCase):
                 self.assertNotIn("current Registry raw bytes do not match", text)
                 self.assertNotIn("current Registry bytes do not match", text)
                 self.assertIn("Registry blob at", text)
-                self.assertIn("released SHA-256", text)
+                self.assertIn("wrong SHA-256", text)
 
 
 if __name__ == "__main__":

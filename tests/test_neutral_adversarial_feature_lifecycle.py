@@ -79,7 +79,7 @@ class NeutralAdversarialFeatureLifecycleTests(unittest.TestCase):
         self.assertIn("자동 메시지 전달", reference)
         self.assertIn("기존 승인·Grill Me", reference)
         self.assertIn("트리거가 없는", reference)
-        self.assertIn("권장안 자동 승인 간주", routing)
+        self.assertIn("기술적 단일 최소 안전 finding이면 자동 승인", routing)
 
     def test_registry_balanced_only_exclusion_is_narrow_and_full_loop_resumes(self) -> None:
         registry = json.loads(REGISTRY.read_text(encoding="utf-8"))

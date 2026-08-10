@@ -134,7 +134,9 @@ class EntrypointOwnershipTests(unittest.TestCase):
     def test_every_skill_package_path_declared_in_start_matches_the_registry(self) -> None:
         registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
         registered_paths = {item["path"] for item in registry["skills"]}
-        declared_paths = set(re.findall(r"skills/[a-z0-9-]+/SKILL\.md", self.start))
+        declared_paths = set(
+            re.findall(r"(?<!\.agents/)skills/[a-z0-9-]+/SKILL\.md", self.start)
+        )
         self.assertTrue(declared_paths)
         self.assertEqual(set(), declared_paths - registered_paths)
 
