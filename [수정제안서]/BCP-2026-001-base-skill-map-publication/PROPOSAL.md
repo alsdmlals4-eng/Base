@@ -4,7 +4,7 @@
 
 - 출처 프로젝트: `alsdmlals4-eng/Base`
 - 기준 커밋: `bc0eadca1c5c73ee4d5afd907d620953dbe02590`
-- 상태: `SUBMITTED`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 지식 상태: `관찰`
 
 ## 관찰과 증거
@@ -33,5 +33,7 @@ Base Registry에서 사람이 보는 선택 Markdown 또는 PDF Map을 결정적
 
 ## 승인과 구현
 
-- 사용자 승인 근거: `미승인`
-- 구현 PR: `없음`
+- 사용자 승인 근거: 2026-08-10 KST 대화 지시 `좋아 다 승인할게 [연속작업] 진행해`
+- 안정적 승인 참조: `[수정제안서]/BCP-2026-001-base-skill-map-publication/PROPOSAL.md#승인과-구현`
+- 승인된 최소 구현: Registry를 유일한 정본으로 유지하는 결정적 Markdown Map 생성·검증·Documentation Map 연결. PDF·DOCX·수동 편집 Map·새 ACTIVE Skill은 제외한다.
+- 구현 PR: `null` (별도 구현 PR이 병합될 때까지 기록하지 않음)

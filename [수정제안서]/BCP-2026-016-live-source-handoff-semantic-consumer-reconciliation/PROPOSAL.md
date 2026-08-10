@@ -10,7 +10,7 @@
 - 관련 프로젝트 PR: `#137`, `#138`
 - 이전 Base evidence PR: `#245`
 - 제출일: `2026-08-10`
-- 상태: `SUBMITTED`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `PROJECT_VALIDATED_PATTERN`
 - Existing Solution Verdict: `ABSORB_EXISTING_OWNERS`
 - 관련 기존 proposal: `BCP-2026-013-post-merge-continuation-state-reconciliation`, `BCP-2026-014-handoff-machine-consumer-compatibility-closeout`
@@ -259,12 +259,13 @@ Expected: physical runtime, Android device, connected editor, human comprehensio
 ## 승인과 구현
 
 ```yaml
-proposal_status: APPROVED_FOR_IMPLEMENTATION
+proposal_status: IMPLEMENTED
 proposal_storage_and_merge_authority: USER_DIRECTED_2026_08_10
 approval_ref: docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md
-implementation_pr: null
-active_base_behavior_changed: false
+implementation_pr: https://github.com/alsdmlals4-eng/Base/pull/260
+implementation_merge_sha: d45a80c6b12a2c790bf1f5ba2338a1a53e5c165e
+active_base_behavior_changed: true
 active_base_implementation_authorized: true
 ```
 
-제안 등록 당시 사용자의 지시는 **프로젝트 출처형 proposal 작성·Registry 등록·proposal-only PR 검증·병합**까지만 승인했다. 현재는 위 `approval_ref`의 별도 승인으로 BCP-014 및 기존 handoff/freshness owner에 흡수하는 실제 구현 PR을 진행할 수 있다. 이 승인 기록 PR 자체는 관련 Skill·Method·Test·Workflow를 변경하지 않는다.
+PR #260에서 BCP-014와 함께 기존 handoff/freshness owner에 흡수했다. Switchy 전용 live source와 handoff 값은 공용 규칙으로 복사하지 않았다.

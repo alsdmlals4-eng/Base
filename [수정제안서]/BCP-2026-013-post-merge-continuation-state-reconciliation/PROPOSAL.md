@@ -7,7 +7,7 @@
 - 출처 프로젝트 기준 main: `9b85cf65a3ca4278f7d8ec1a7e527ecc857cbad1`
 - 관련 프로젝트 PR: `#5`
 - 제출일: `2026-08-10`
-- 상태: `SUBMITTED`
+- 상태: `IMPLEMENTED`
 - Knowledge Level: `Pattern`
 - Existing Solution Verdict: `ABSORB`
 
@@ -233,10 +233,11 @@ Expected:
 ## 승인과 구현
 
 ```yaml
-proposal_status: APPROVED_FOR_IMPLEMENTATION
+proposal_status: IMPLEMENTED
 approval_ref: docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md
-implementation_pr: null
-active_base_behavior_changed: false
+implementation_pr: https://github.com/alsdmlals4-eng/Base/pull/260
+implementation_merge_sha: d45a80c6b12a2c790bf1f5ba2338a1a53e5c165e
+active_base_behavior_changed: true
 ```
 
-이전 proposal PR의 Base main 병합은 **제안 기록 등록**만 의미했다. 현재는 위 `approval_ref`의 별도 승인으로 실제 `maintaining-project-context-and-handoff` 동작 변경을 별도 구현 PR에서 수행할 수 있으며, 그 PR이 병합되기 전까지 `active_base_behavior_changed`는 `false`다.
+구현 PR #260은 live continuation state 재조정과 historical snapshot 보존을 기존 handoff/freshness owner에 반영했다. 제품·프로젝트 runtime 상태를 자동 PASS로 승격하지 않는다.
