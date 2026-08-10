@@ -60,12 +60,15 @@ Each entry records:
   "last_material_candidate_at": null,
   "last_base_contribution_at": null,
   "last_base_contribution_ref": null,
-  "contribution_count": 0,
+  "material_candidate_count_since_tracking_start": 0,
+  "base_contribution_count_since_tracking_start": 0,
   "status": "ACTIVE"
 }
 ```
 
-Unknown historical values remain `null`; they are not backfilled by inference. Future scans update a timestamp only when that source was actually checked.
+Unknown historical values remain `null`; they are not backfilled by inference. A source timestamp advances only when that source was actually checked.
+
+To avoid repository churn, scan-only state does not force a PR every day. When a material Base change is retained, the observed source state can travel with that change or its immediate bounded checkpoint. Otherwise truthful `NO_CHANGE` scan state is accumulated into a weekly `SCAN_STATE_BATCH`; freshness-sensitive policy/security deadlines may justify an earlier bounded checkpoint.
 
 ### 2. Context extraction packet
 
@@ -171,7 +174,7 @@ Do not remove a source solely for low contribution count. Static or high-authori
 - current main moved during PR validation → synchronize with current main and rerun exact-head checks
 - CI not run or missing → `NOT_RUN`, never PASS
 - merge API blocked by Ruleset → preserve the PR and resolve the real gate; never bypass main protection
-- no meaningful delta → update only truthful scan state; `NO_CHANGE` remains valid
+- no meaningful delta → preserve truthful scan state for the next weekly batch checkpoint; `NO_CHANGE` remains valid
 
 ## Testing
 
@@ -183,7 +186,8 @@ Extend `tests/test_periodic_external_source_watchlist.py` to verify:
 4. auto-merge is limited to the three low-risk work dispositions;
 5. protected semantic changes and unverified states block auto-merge;
 6. strict-main freshness, exact-head CI, `ci-gate`, adversarial review, PR conflict check, and zero unresolved threads are required;
-7. no new ACTIVE Skill is introduced for this orchestration.
+7. scan-only `NO_CHANGE` state is batched rather than forcing daily Ledger-only PRs;
+8. no new ACTIVE Skill is introduced for this orchestration.
 
 ## Scope
 
