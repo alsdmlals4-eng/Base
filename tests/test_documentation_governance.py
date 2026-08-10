@@ -199,6 +199,26 @@ class DocumentationGovernanceTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("human_visual_review=PASSED", result.stdout)
 
+    def test_external_process_overlay_is_execution_only_and_fail_closed(self) -> None:
+        capability_map = (
+            REPOSITORY_ROOT / "docs/CAPABILITY_COMPOSITION_MAP.md"
+        ).read_text(encoding="utf-8")
+        for token in (
+            "EXTERNAL_PROCESS_OVERLAY",
+            "EXECUTION_PROCESS_ONLY",
+            "REUSED_APPROVAL",
+            "OVERLAY_CONFLICT",
+            "프로젝트 정본·CURRENT_CONFIRMED_DECISIONS를 소유하거나 덮어쓰지 않는다",
+            "Base 안전·증거·보호 Gate를 약화하지 않는다",
+            "동일 승인 범위를 재승인받지 않는다",
+            "overlay_name_or_source",
+            "applied_process_skills_or_gates",
+            "approval_reference",
+            "extra_evidence",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, capability_map)
+
 
 if __name__ == "__main__":
     unittest.main()
