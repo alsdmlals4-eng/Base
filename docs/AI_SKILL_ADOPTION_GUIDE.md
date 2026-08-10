@@ -2,6 +2,8 @@
 
 외부 또는 내부 AI Skill을 채택·작성·검증할 때 사용하는 공용 기준이다. Skill은 도구 이름이 아니라 반복 가능한 판단과 작업 계약이다.
 
+최신 프롬프트·Agent·Skill·작업구조 후보를 찾을 때는 `docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md`의 `PROMPT_AND_AGENT_WORKFLOW`·`SKILL_AUTHORING_AND_EVOLUTION` Source Pool을 발견용으로 사용할 수 있다. 외부 제품의 기능·예시는 Base 정본이 아니며, 가능한 경우 공식 원출처와 실제 대표 작업 Eval로 다시 확인한다.
+
 ## 1. 우선순위
 
 Skill과 외부 모델은 다음을 덮어쓸 수 없다.
@@ -99,6 +101,75 @@ Method·Checklist·Template에 같은 실행 절차를 장문 복제하지 않�
 - `templates/`: 복사할 출력 형식
 - `scripts/`: 자동 검사·변환
 
+## 5A. Prompt / Instruction / Skill / Agent / Tool 배치 결정
+
+프롬프트 품질 문제를 모두 “프롬프트를 더 길게 쓴다”로 해결하지 않는다. 반복 지식과 실행 권한을 다음의 가장 작은 책임 단위에 둔다.
+
+| 반복되는 필요 | 기본 배치 후보 | 사용 이유 |
+|---|---|---|
+| 거의 모든 요청에 적용되는 짧고 안정적인 규칙 | repository/global instruction | 항상 필요한 최소 context |
+| 특정 경로·파일 종류에만 적용되는 규칙 | path/domain-specific instruction | unrelated context 오염 방지 |
+| 입력값만 바뀌는 반복 요청 형식 | prompt/template | 재사용 가능한 요청 구조이며 독립 실행 책임이 없음 |
+| 특정 작업의 절차·판단·reference·script를 필요할 때만 로드 | Skill | task-specific 전문성을 progressive disclosure로 제공 |
+| 독립 persona·tool set·권한·context·handoff가 필요한 specialist | agent | 별도 실행 경계와 책임이 존재 |
+| 정확히 반복돼야 하는 계산·검사·변환 | deterministic script/tool | 자연어 추론보다 재현성과 실패 가시성이 중요 |
+
+### 배치 Gate
+
+```text
+이 정보가 거의 모든 요청에 필요한가?
+→ YES: 짧은 global/repository instruction 후보
+→ NO
+
+특정 task에서 반복 호출하지만 독립 tool/permission 경계는 없는가?
+→ YES: prompt/template 또는 Skill 후보
+
+절차·reference·script·edge case를 on-demand로 묶어야 하는가?
+→ YES: Skill 후보
+
+독립 tool set·권한·persona·context isolation·handoff가 필요한가?
+→ YES: agent 후보
+
+정확히 같은 변환·검사가 반복되는가?
+→ YES: deterministic script/tool 후보
+```
+
+### 프롬프트 작성 최소 계약
+
+재사용 프롬프트는 장식적인 역할극보다 다음 연결을 먼저 가진다.
+
+```yaml
+goal:
+source_of_truth:
+required_inputs:
+protected_constraints:
+changeable_scope:
+process_or_decision_steps:
+output_contract:
+edge_cases:
+stop_or_handoff_conditions:
+validation:
+unverified_or_missing_input_behavior:
+```
+
+규칙:
+
+- 목표·완료 기준·정본·보호 대상·출력 형식을 분명히 한다.
+- 긴 문서에서 행동 가능한 절차를 추출할 때는 각 단계가 구체적인 행동 또는 산출물과 연결되게 한다.
+- 예외·입력 누락·실패·중단·사용자 결정 필요 조건을 정상 경로와 함께 쓴다.
+- 항상 필요한 context와 task-specific context를 분리하고, 후자는 필요할 때만 로드한다.
+- 프롬프트를 파일 여러 개로 쪼갰다는 사실만으로 modular architecture가 된 것은 아니다. **독립적으로 변경·테스트·라우팅할 책임**이 있을 때만 분리한다.
+- 반대로 서로 다른 책임·정책·tool 선택·검증이 한 거대 system prompt에 얽혀 부분 수정의 회귀 위험이 커지면 module·Skill·agent 경계를 검토한다.
+- 특정 모델의 “잘 먹히는 문구”는 `PATTERN` 또는 `TEST`이며 모델·버전·도구·harness가 바뀌면 재검증한다.
+
+### Agent / Skill 과분할 방지
+
+- 하나의 agent가 명확한 tools와 instructions로 안정적으로 처리할 수 있으면 먼저 단일 agent를 강화한다.
+- multi-agent는 복잡한 논리·충돌하는 context·겹치는 tool 선택·독립 reviewer처럼 **분리로 검증 가능성이 실제 개선될 때** 검토한다.
+- Skill 수, agent 수, prompt 파일 수는 능력 지표가 아니다.
+- 동일 책임을 instruction·prompt·Skill·agent에 동시에 복제하지 않는다. 한 owner를 두고 다른 surface는 링크·라우팅한다.
+- runtime에서 자동 생성된 Skill이나 외부 Skill을 발견했다고 Base ACTIVE Skill로 자동 승격하지 않는다.
+
 ## 6. 검증
 
 새 Skill과 큰 수정은 다음을 검증한다.
@@ -111,6 +182,16 @@ Method·Checklist·Template에 같은 실행 절차를 장문 복제하지 않�
 6. 실제 프로젝트에서 사용한 뒤 지식 상태를 갱신한다.
 
 문서 존재는 적용 성공의 증거가 아니다.
+
+### Prompt·Agent 구조 검증
+
+- 대표 prompt에서 변경 전·후 목표 성공과 실패 유형을 비교하는가?
+- system/repository instruction만 바꾼 경우 unrelated task 회귀를 함께 검사하는가?
+- Skill description 변경은 선택돼야 할 Prompt와 **선택되면 안 되는 Prompt**를 모두 검사하는가?
+- agent 분할 전후에 tool 선택 오류·handoff 손실·context 충돌·비용/시간을 비교하는가?
+- eval은 모델 이름만이 아니라 실제 harness·tool·permission·budget·configuration을 가능한 범위에서 고정·기록하는가?
+- 평가 환경이나 product harness 변화가 모델 품질 변화처럼 보일 수 있음을 공격하는가?
+- 사람의 목표·도메인 판단과 agent의 실행 결정을 구분하고, 사람이 넘기지 않은 제품 방향 권한을 agent에게 암묵적으로 주지 않는가?
 
 ### 작업 분해·순서 mode
 
