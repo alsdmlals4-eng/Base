@@ -1,6 +1,6 @@
 # 서사·대화·관계 기획서 템플릿
 
-> 문서 위치: `templates/planning/NARRATIVE_CONTENT_PLAN.md` | 작성 방법: `docs/planning/NARRATIVE_CONTENT_METHOD.md`
+> 문서 위치: `templates/planning/NARRATIVE_CONTENT_PLAN.md` | 작성 방법: `docs/knowledge/methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md`
 
 ## 1. 콘텐츠 목표
 

@@ -190,6 +190,10 @@ BASELINE_RECOVERY
 | 적용 | 우리 프로젝트와 같은 점·다른 점은 무엇인가? |
 | 검증 | 무엇을 직접 시험해야 하는가? |
 
+최신 외부 후보가 필요한 L1 이상 조사에서는 `PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md`를 **발견용 Reference**로 사용할 수 있다. Watchlist는 Evidence 권위가 아니라 Source Pool·freshness·`ORIGINAL_SOURCE_BACKTRACE`만 책임진다. 발견 글은 현재 결정과 관련성이 있을 때만 수집하고, 가능한 경우 공식 문서·원 발표·원 데이터로 되돌아간 뒤 이 Method의 Evidence tier를 부여한다.
+
+주기 scan의 결과가 `NO_CHANGE`여도 정상이다. 새 글이 있다는 이유만으로 기존 Base·프로젝트 결정을 바꾸지 않는다.
+
 ### 6.5 `EVIDENCE_COLLECTION`
 
 `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`에 다음을 기록한다.
@@ -204,6 +208,19 @@ BASELINE_RECOVERY
 - 관련 Case Card
 
 원문 전체를 복제하거나 긴 인용문을 저장하지 않는다.
+
+`playtest`를 Evidence로 기록할 때는 이름만으로 증거 강도를 추정하지 않는다. 최소한 다음을 함께 기록해 QA·동료 피드백·구조화된 사용자 연구·행동 관찰·자기보고를 구분한다.
+
+```yaml
+playtest_purpose:
+participant_source:
+build_or_task_scope:
+observed_behavior:
+self_report:
+facilitation_or_test_context:
+```
+
+관찰과 자기보고가 모두 있으면 각각의 Evidence 성격을 분리하고, 친구·팀 내부 세션을 타깃 플레이어 대표 표본으로 자동 일반화하지 않는다.
 
 ### 6.6 `SOURCE_VALIDATION`
 

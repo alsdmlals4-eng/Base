@@ -2,7 +2,7 @@
 
 이 문서는 Base와 Base를 적용한 프로젝트에서 기획 작업을 어떤 순서로 묶고, 무엇을 먼저 비교하며, 어떤 근거로 승인하고, 새 정책·Template·Skill을 어디까지 전파 검증할지 정하는 공용 책임 원본이다.
 
-승인 결정의 즉시 정본화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`, 작업 분해의 상세 의존성은 `skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md`, 외부 근거의 판정은 `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md`, 분야 횡단 게임 개발 근거·Guide·Case는 `docs/knowledge/game-development/README.md`, 데모 제작 Gate는 `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md`, 프로젝트 Sheet와 GPT 이미지 생성·검수는 `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`가 책임진다. 프로젝트 GDD Google Sheets의 사용자 작업면·편집·동기화·시각화·수치화 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 책임진다.
+승인 결정의 즉시 정본화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`, 작업 분해의 상세 의존성은 `skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md`, 외부 근거의 판정은 `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md`, 분야 횡단 게임 개발 근거·Guide·Case는 `docs/knowledge/game-development/README.md`, 주기적인 최신 외부 Source 후보 발견은 `docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md`, 데모 제작 Gate는 `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md`, 프로젝트 Sheet와 GPT 이미지 생성·검수는 `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`가 책임진다. 프로젝트 GDD Google Sheets의 사용자 작업면·편집·동기화·시각화·수치화 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 책임진다.
 
 공통 조사 기록은 `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`, 성공·실패·혼합 사례는 `templates/research/GAME_DEVELOPMENT_CASE_CARD.md`를 사용한다. 이 Template은 외부 자료를 프로젝트 정본으로 승격하지 않고 결정 질문·Evidence ID·적용 판정·검증을 연결한다.
 
@@ -85,7 +85,7 @@
 2. `PLAYER_RESPONSE_EVIDENCE`: 긍정·부정·혼합 리뷰, 커뮤니티, 플레이테스트, 행동 데이터.
 3. `PROFESSIONAL_OFFICIAL_EVIDENCE`: 현업 발표·사후 분석·공식 플랫폼·엔진·접근성·운영 권장사항.
 
-분야 횡단 결정에서는 `docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md`의 12영역 Coverage 중 현재 결정에 필요한 영역만 선택한다.
+분야 횡단 결정에서는 `docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md`의 12영역 Coverage 중 현재 결정에 필요한 영역만 선택한다. 최신 후보가 필요한 경우 `docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md`에서 관련 Source만 확인하되, Watchlist·뉴스·뉴스레터는 정본이 아니며 가능한 경우 원출처로 역추적한 뒤 Evidence tier·상태를 부여한다.
 
 ```text
 프로젝트 코어·게임 기획

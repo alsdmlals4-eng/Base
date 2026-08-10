@@ -44,6 +44,8 @@ class GameDevelopmentYouTubeSkillTests(unittest.TestCase):
             "ONE_VIEWER_JOB",
             "ONE_EPISODE_PROMISE",
             "ACTUAL_BUILD_EVIDENCE",
+            "STORY_EVIDENCE_EDIT_FIRST",
+            "VERSIONED_REVIEW",
             "TITLE_THUMBNAIL_PROMISE_MATCH",
             "RIGHTS_RATING_SPOILER_SECURITY_REVIEW",
             "ONE_PRIMARY_CTA",
@@ -79,6 +81,32 @@ class GameDevelopmentYouTubeSkillTests(unittest.TestCase):
         ):
             self.assertIn(boundary, text)
 
+    def test_skill_defines_story_first_edit_and_versioned_review(self) -> None:
+        text = self.read_required(SKILL_PATH)
+        for token in (
+            "STORY_AND_EVIDENCE_ROUGH_CUT",
+            "CLARITY_AND_PACING_TRIM",
+            "DIALOGUE_AND_AUDIO_CLEANUP",
+            "GRAPHICS_CAPTIONS_AND_CONTEXT",
+            "COLOR_VFX_AND_POLISH",
+            "EXPORT_AND_PLAYBACK_QC",
+            "KEEP | CHANGE | REJECT | QUESTION",
+            "YOUTUBE_AND_VIDEO_EDITING",
+        ):
+            self.assertIn(token, text)
+
+    def test_skill_treats_retention_as_observation_not_causality(self) -> None:
+        text = self.read_required(SKILL_PATH)
+        for token in (
+            "impressions·CTR·views·unique viewers",
+            "watch time·average view duration·key moments for audience retention",
+            "new·casual·regular/returning viewer",
+            "drop·spike·rewatch",
+            "원인이라고 자동 단정하지 않고",
+            "OBSERVATIONAL_DATA_OR_VENDOR_GUIDE",
+        ):
+            self.assertIn(token, text)
+
     def test_episode_packet_contains_complete_evidence_loop(self) -> None:
         text = self.read_required(PACKET_PATH)
         for heading in (
@@ -92,6 +120,8 @@ class GameDevelopmentYouTubeSkillTests(unittest.TestCase):
             "Script",
             "Shot list and capture evidence",
             "Edit beat sheet",
+            "Story-and-evidence edit passes",
+            "Versioned edit review rounds",
             "Title and thumbnail packages",
             "Description, chapters, pinned comment, playlist, and end screen",
             "Shorts derivatives",
@@ -103,6 +133,17 @@ class GameDevelopmentYouTubeSkillTests(unittest.TestCase):
             "Learning and next experiment",
         ):
             self.assertIn(f"## {heading}", text)
+
+        for token in (
+            "traffic_sources",
+            "impressions_ctr",
+            "unique_viewers",
+            "average_view_duration",
+            "key_moments_for_audience_retention",
+            "benchmark_sample_and_context",
+            "Retention drops, spikes, and rewatches are observations",
+        ):
+            self.assertIn(token, text)
 
     def test_registry_behavior_and_evidence_surfaces_are_synchronized(self) -> None:
         registry = json.loads(self.read_required(REGISTRY_PATH))

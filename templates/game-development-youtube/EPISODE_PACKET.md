@@ -112,6 +112,27 @@ For every material claim, attach build evidence or mark it as planned, experimen
 | --- | --- | --- | --- | --- | --- |
 | 00:00 |  |  |  |  |  |
 
+## Story-and-evidence edit passes
+
+```text
+STORY_AND_EVIDENCE_ROUGH_CUT
+→ CLARITY_AND_PACING_TRIM
+→ DIALOGUE_AND_AUDIO_CLEANUP
+→ GRAPHICS_CAPTIONS_AND_CONTEXT
+→ COLOR_VFX_AND_POLISH
+→ EXPORT_AND_PLAYBACK_QC
+```
+
+Do not use transitions, motion, VFX, music, or color polish to hide an unclear episode promise, missing build evidence, or unintelligible dialogue.
+
+## Versioned edit review rounds
+
+| Version | Reviewer/source | Finding | Category | Priority | Decision | Resolved in | Verification |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| v1 |  |  | STORY / CLARITY / AUDIO / VISUAL / RIGHTS / SPOILER / FACT / CTA | P0 / P1 / P2 / P3 | KEEP / CHANGE / REJECT / QUESTION |  |  |
+
+Reviewer feedback is evidence, not automatic authority. Resolve against the episode promise, project canon, actual build, rights, spoiler, and security boundaries.
+
 ## Title and thumbnail packages
 
 | Package | Title | Thumbnail concept | Viewer question | Actual evidence | First-30-second match | Spoiler/misleading risk | Status |
@@ -150,6 +171,8 @@ spoiler_boundary_approved:
 no_secret_or_private_data:
 primary_cta_live:
 creator_expression_independent:
+story_and_evidence_rough_cut_verified:
+edit_review_blockers_resolved:
 production_time_budget_respected:
 publication_decision: PASS | REVISION_REQUIRED | BLOCKED_UNVERIFIED
 must_fix:
@@ -197,17 +220,29 @@ known_confounders:
 
 ```yaml
 observation_window:
-impressions_and_sources:
+traffic_sources:
+impressions:
+impressions_ctr:
+views:
+unique_viewers:
+watch_time:
+average_view_duration:
+key_moments_for_audience_retention:
 first_30_second_retention:
 drop_rewatch_share_segments:
-new_casual_regular_viewers:
+new_casual_regular_or_returning_viewers:
 playlist_or_next_video_movement:
 description_pinned_end_screen_clicks:
 external_conversion:
 production_cost_and_delay:
+benchmark_source_if_any:
+benchmark_sample_and_context:
+known_confounders:
 sample_limit:
 status: MEASURED | INSUFFICIENT_SAMPLE | CONVERSION_UNVERIFIED | HUMAN_NOT_RUN
 ```
+
+Retention drops, spikes, and rewatches are observations. Do not claim a scene caused them without a follow-up comparison or experiment. Vendor benchmarks must retain niche, format, duration, sample, and observation-window context.
 
 ## KEEP / CHANGE / STOP / INSUFFICIENT_SAMPLE
 
@@ -219,7 +254,7 @@ change_axis:
 stop_reason:
 ```
 
-Views, CTR, or Shorts exposure alone do not prove game demand, purchase intent, channel strategy success, or marketing return.
+Views, CTR, retention, or Shorts exposure alone do not prove game demand, purchase intent, channel strategy success, or marketing return.
 
 ## Learning and next experiment
 
