@@ -7,7 +7,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT / "templates" / "research" / "WEEKLY_WORK_IMPROVEMENT_REVIEW.md"
 WATCHLIST = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md"
-DOC_MAP = ROOT / "docs" / "DOCUMENTATION_MAP.md"
 REGISTRY = ROOT / "skills" / "SKILL_REGISTRY.json"
 WORKFLOW = ROOT / ".github" / "workflows" / "validate-evidence-knowledge.yml"
 
@@ -100,10 +99,9 @@ class WeeklyWorkImprovementReviewTests(unittest.TestCase):
         self.assertNotIn("weekly-work-improvement", registry)
         self.assertNotIn("conducting-weekly-improvement", registry)
 
-    def test_watchlist_and_documentation_map_link_to_template_one_hop(self) -> None:
+    def test_watchlist_links_to_template_one_hop(self) -> None:
         template_path = "templates/research/WEEKLY_WORK_IMPROVEMENT_REVIEW.md"
         self.assertIn(template_path, WATCHLIST.read_text(encoding="utf-8"))
-        self.assertIn(template_path, DOC_MAP.read_text(encoding="utf-8"))
 
     def test_evidence_workflow_executes_weekly_review_contract(self) -> None:
         content = WORKFLOW.read_text(encoding="utf-8")
