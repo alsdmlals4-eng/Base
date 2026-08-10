@@ -404,6 +404,8 @@ known_bias:
 
 각 scan은 최소 다음을 보고한다.
 
+주간 또는 여러 프로젝트를 가로지르는 종합 개선 보고가 필요하면 `templates/research/WEEKLY_WORK_IMPROVEMENT_REVIEW.md`를 출력 틀로 사용한다. 이 Template은 Watchlist의 source scan·Evidence 판정·분야별 owner를 대체하지 않고, 이미 검증·판정된 근거와 최신 프로젝트 상태를 `A. 메인게임 / B. 미니게임 / C. 글쓰기 / D. 종합 반영안`으로 합성한다. 지난 보고서와 같은 작품·권고는 새 근거나 새 비교 차원이 있을 때만 반복하고, 프로젝트 전용 반영은 대상 프로젝트·consumer를 명시한다.
+
 ```yaml
 scan_window:
 source_domains_checked: []
