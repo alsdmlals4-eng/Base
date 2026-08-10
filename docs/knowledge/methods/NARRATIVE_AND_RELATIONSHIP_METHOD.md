@@ -360,3 +360,21 @@ CANON_AND_CONTINUITY
 - [ ] 소설이라면 시점·연속성·문장 리듬과 장기 arc가 정본에 맞는다.
 - [ ] 구조·연속성 검수 전에 문장 polish만으로 완료 처리하지 않는다.
 - [ ] 피해와 후유증을 가벼운 농담으로 소비하지 않는다.
+
+## 17. 동적 서사 선택의 query / commit 경계
+
+게임 스토리에서 후보 대사·storylet·장면을 **조회하는 것**과 실제로 **선택·실행해 상태를 소비하는 것**을 분리한다. 특정 narrative tool의 API를 Base 표준으로 강제하지 않고 다음 의미 경계만 공용으로 사용한다.
+
+```text
+SELECTION_QUERY_READ_ONLY
+→ eligible candidate 계산·미리보기·UI 표시·우선순위 비교
+→ irreversible state mutation 금지
+→ 실제 실행 후보 확정
+→ STATE_COMMIT_AFTER_SELECTION
+→ once/seen/recency/relationship/quest/reward 등 실제 소비 상태 갱신
+```
+
+- 후보 조회가 여러 번 호출돼도 `once`, 최근 노출 횟수, 선택 기억, 보상, 퀘스트 진척이 소모되지 않아야 한다.
+- 조회 결과는 실제 실행을 보장하지 않는다. UI 취소, 더 높은 우선순위 이벤트, save/load, scene transition 때문에 후보가 실행되지 않을 수 있다.
+- 상태 변화는 실제 선택/실행이 확정된 한 지점에서 commit하고, 실패·중단 시 중복 소비 여부를 회귀 테스트한다.
+- 단순 선형 소설에는 이 runtime 경계를 강제하지 않는다. 게임의 동적 선택·분기 시스템에만 `ADAPT / TEST`한다.
