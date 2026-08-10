@@ -99,7 +99,19 @@ repository_search_roots: []
 → 시작 문서·템플릿·Handoff
 ```
 
-각 소비자를 `must-update / inspect / history-only / unrelated`로 분류한다.
+각 소비자를 `must-update / inspect / history-only / unrelated`로 분류한다. Handoff·상태 압축·경로 제거처럼 사람이 읽는 문서와 machine consumer가 함께 영향을 받는 변경에서는 삭제·압축 전에 다음 consumer inventory를 추가한다.
+
+| 분류 | 의미 | 기본 처리 |
+| --- | --- | --- |
+| `CURRENT_MUTABLE` | 다음 세션·자동화가 현재 판단에 사용하는 live state | current canonical truth와 대조 후 필요 시 갱신 |
+| `CANONICAL_LOCATOR` | 다음 작업자가 책임 원본을 찾는 안정 진입점 | 정본 경로·ID를 유지하거나 명시 migration |
+| `HISTORICAL_DISCOVERY` | 날짜·merge·당시 CI를 설명하는 이력 | history로 보존, 현재 값으로 덮어쓰지 않음 |
+| `COMPATIBILITY_ANCHOR` | 실제 소비자가 의존하는 공개 형식·토큰·경로 | canonical owner 확인 전 제거·약화 금지 |
+| `SAFE_TO_DROP` | active consumer와 history/compatibility 의미가 모두 없는 표현 | inventory 근거와 exact-head 검증 뒤 제거 가능 |
+
+- consumer inventory에는 사람용 링크·문서와 code import·test fixture·parser·workflow·외부 계약을 함께 적는다.
+- literal consumer를 semantic contract로 옮기기 전, 그 literal이 canonical owner가 정의한 실제 `literal protocol`인지 확인한다. 실제 protocol literal이면 assertion을 약화하지 않는다.
+- 단지 문서의 우연한 줄 모양·공백·복제 문자열을 검사하는 consumer만 canonical 의미가 보존된 semantic contract로 migration할 수 있다.
 
 ### 4. Scan stale and orphaned references
 
@@ -143,6 +155,8 @@ reason_each_consumer_should_or_should_not_change:
 ```
 
 `untouched`가 곧 결함은 아니다. 새 정본과 이미 일치하거나 참조하지 않는다는 근거가 있으면 통과한다.
+
+consumer inventory에서 `CURRENT_MUTABLE`, `CANONICAL_LOCATOR`, `COMPATIBILITY_ANCHOR`가 `SAFE_TO_DROP`로 바뀌면 canonical owner·실제 consumer·migration 결과를 모두 검토한다. 이 변경은 exact-head diff와 대상 테스트로 검증하며, history-only 표현을 현재 사실로 바꾸는 근거가 되지 않는다.
 
 ### 8. Run automated checks
 
@@ -206,6 +220,7 @@ python tools/check_canonical_reference_freshness.py \
 - [ ] 변경되지 않은 영향 파일마다 갱신 필요 여부를 판정했다.
 - [ ] 정본·파생본·Manifest·테스트·템플릿의 상태가 연결됐다.
 - [ ] 허용된 역사 참조와 활성 stale reference를 구분했다.
+- [ ] handoff surface를 압축·제거했다면 consumer inventory와 `literal protocol` 판정을 남겼다.
 - [ ] 실행하지 못한 검증을 통과로 표시하지 않았다.
 - [ ] 최종 보고가 실제 수정·미수정·후속 작업을 설명한다.
 
@@ -218,6 +233,7 @@ python tools/check_canonical_reference_freshness.py \
 - Manifest·해시가 있는데 실제 원본·생성기와 대조하지 않는다.
 - 경로 존재만으로 활성·정본·최신 상태를 통과 처리한다.
 - 자동 검사 오탐을 검증 없이 모두 수정한다.
+- accidental literal-shape consumer와 실제 `literal protocol`을 구분하지 않고 assertion을 약화한다.
 
 ## Relationship with other skills
 

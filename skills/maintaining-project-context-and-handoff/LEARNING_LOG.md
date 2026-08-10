@@ -35,3 +35,10 @@
 - Post-merge audit found that the machine Registry still described the superseded mandatory Codex Plan flow.
 - Registry triggers now discover on-demand Codex handoff and the generated active-skill view is rebuilt from the same machine source.
 - This closes the policy → Skill → Registry → generated-view propagation gap.
+
+## 2026-08-10 — Post-merge live-state reconciliation is conditional
+
+- Sources: BCP-013, BCP-014, BCP-016, BCP-019, and the approved continuity design.
+- A merge can stale a live continuation router even when its pre-merge snapshot remains valid history.
+- Reuse boundary: run `post-merge-reconcile` only for `LIVE_CONTINUATION_STATE`; retain `PRE_MERGE_SNAPSHOT`, never create automatic writeback or self-SHA loops.
+- Validation: `tests/test_gpt_codex_workflow_contract.py` plus the handoff and freshness contract suites.

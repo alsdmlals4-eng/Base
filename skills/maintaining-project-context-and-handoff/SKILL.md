@@ -22,6 +22,7 @@ Canonical policy: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
 - `on-demand-codex-handoff`: `USER_REQUESTED_CODEX_HANDOFF` 시 GPT의 누적 기획·구현·POC와 실제 저장소 확인 요구를 Codex 실행 명세로 압축한다.
 - `implementation-package-handoff`: L2 이상·다중 의존성 구현을 마스터 구현계획과 단계별 패키지로 인계하고 선택적 Codex Plan·Build·GPT 검수·병합 게이트를 관리한다.
 - `resume`: 최신 Branch·Commit·실제 파일을 다시 확인하고 중단된 패키지나 세션을 안전하게 재개한다.
+- `post-merge-reconcile`: 병합으로 stale해질 수 있는 live continuation router만 새 main의 관측 사실과 재조정한다.
 
 필요한 Mode만 실행한다. 단순 상태 갱신에서 구현 패키지 계약을 만들지 않고, 작은 Codex 인계에 대형 마스터 계획을 강제하지 않는다.
 
@@ -37,6 +38,7 @@ Canonical policy: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
 - 전체 구현을 상위 Issue와 패키지별 Branch·PR로 나눠야 한다.
 - 고위험 패키지에서 선택적 Codex Plan 보고서를 마스터 계약과 대조해야 한다.
 - 구현 패키지 결과를 검수하고 다음 패키지·사용자 검수·기획 반환을 결정한다.
+- 병합 직후 다음 세션이 읽을 live continuation state가 merge 전 기준을 가리킬 위험이 있다.
 
 ## Do not use when
 
@@ -158,6 +160,26 @@ Codex 인계에서는 다음 문장을 계약으로 고정한다.
 ```
 
 과거 대화 전체, 도구 호출 로그, 이미 본책에 반영된 전문은 포함하지 않는다.
+
+### 5.1 `post-merge-reconcile`
+
+이 mode는 `LIVE_CONTINUATION_STATE`에만 조건부로 적용한다. 날짜·commit·당시 CI를 설명하는 `PRE_MERGE_SNAPSHOT`과 Change Log·승인 기록은 유효한 historical snapshot이므로 현재 상태로 덮어쓰거나 자동 수정하지 않는다.
+
+```text
+merge
+→ OBSERVE_POST_MERGE_TRUTH (최신 main·정확한 merge SHA·원격 CI·열린 후속 PR)
+→ live router가 stale인지 판정
+→ 필요한 최소 reconciliation을 IN_PROGRESS로 기록
+→ PRE_MERGE_SNAPSHOT 보존
+→ 실제 post-merge CI 상태 기록
+→ 검증
+→ close
+```
+
+- `OBSERVE_POST_MERGE_TRUTH`는 merge 직후와 resume 시점의 실제 원격 상태를 다시 읽는 절차다. merge 전 예상 SHA나 PR 본문을 현재 사실로 재사용하지 않는다.
+- live router가 없거나 다음 세션의 판단에 영향을 주지 않으면 이 mode를 호출하지 않는다.
+- 자동 project-state writeback, 자기 자신의 SHA를 다시 쓰는 loop, 날짜가 찍힌 history의 현재화는 금지한다.
+- reconciliation이 필요하지만 같은 PR에서 안전하게 갱신할 수 없으면 `IN_PROGRESS`와 다음 확인 행동만 남기고 별도 범위로 추적한다.
 
 ### 6. `on-demand-codex-handoff`
 
@@ -383,6 +405,7 @@ rollback:
 - [ ] 구현 패키지의 Branch·Commit·Plan 사용 여부·검증·승인 상태가 추적된다.
 - [ ] 기술 개선·기획 변경·사용자 판단이 구분됐다.
 - [ ] 인수인계 실패나 누락을 Learning Log에 기록했다.
+- [ ] `LIVE_CONTINUATION_STATE`와 `PRE_MERGE_SNAPSHOT`을 구분했고, post-merge truth 재관측 여부를 판정했다.
 
 ## Validation
 
@@ -395,6 +418,7 @@ rollback:
 - Codex Build가 실제 상태를 재조사하고 지정 Branch와 Godot 범위만 수정했는가?
 - Commit SHA·원격 HEAD·테스트 결과를 실제 확인했는가?
 - `AGENT_MERGE_REQUIRED`와 `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY` 조건을 실제 확인했는가?
+- live router가 있다면 `OBSERVE_POST_MERGE_TRUTH` 뒤에만 reconciliation을 판단했는가?
 
 ## Failure conditions
 
@@ -410,6 +434,7 @@ rollback:
 - Codex가 비-Godot 책임 원본을 수정함
 - 지정 Branch 밖 Push·force push·amend
 - 이미 승인된 동일 범위에 대해 추가 확인·재승인·병합 승인 요청을 반복함
+- historical snapshot을 live router처럼 덮어쓰거나, post-merge reconciliation으로 자동 writeback/self-SHA loop를 만듦
 - 게이트 미통과, P0/P1 잔존 또는 허용되지 않은 방식의 PR 병합
 
 ## Learning contract
