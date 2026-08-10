@@ -5,7 +5,7 @@
 - 출처 프로젝트: `alsdmlals4-eng/Base`
 - 기준 커밋: `2a6ced23f6d6de1fb6e0a281c7138beb03f1a13b`
 - 제출일: `2026-08-10`
-- 상태: `SUBMITTED`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 지식 상태: `패턴 + 구현 전 가설`
 
 ## 관찰과 증거
@@ -214,8 +214,9 @@ Decision·Requirement·Acceptance를 Task·Implementation·Verification에 연�
 
 ## 승인과 구현
 
-- 사용자 승인 근거: `2026-08-10 현재 대화에서 "진행해"로 written spec 검토 및 구현 진행 의사 확인.`
-- 상태전이 메모: `새 proposal PR은 Base validator 규칙상 SUBMITTED로 병합한 뒤, 별도 구현 PR에서 APPROVED_FOR_IMPLEMENTATION → IMPLEMENTING으로 승격한다.`
+- 사용자 승인 근거: `2026-08-10 현재 대화에서 "진행해"로 written spec 검토 및 구현 진행 승인.`
+- 승인 참조: `[수정제안서]/BCP-2026-011-game-feature-design-spec-system/PROPOSAL.md#승인과-구현`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 구현 계획: `[수정제안서]/BCP-2026-011-game-feature-design-spec-system/IMPLEMENTATION_PLAN.md`
-- 구현 PR: `없음`
-- 롤백: proposal PR을 닫거나 proposal-only 변경을 되돌리면 활성 Base 동작은 변하지 않는다.
+- 구현 PR: `등록 전`
+- 롤백: 구현 PR을 닫고 이 상태전이 커밋을 되돌리면 활성 Base 기능 변경 없이 `SUBMITTED`로 복귀할 수 있다.
