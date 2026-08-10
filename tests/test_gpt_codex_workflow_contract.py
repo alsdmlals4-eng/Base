@@ -119,6 +119,19 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         ):
             self.assertIn(forbidden_automation, text)
 
+    def test_handoff_resume_requires_fresh_runtime_session_identity(self) -> None:
+        text = (ROOT / "skills/maintaining-project-context-and-handoff/SKILL.md").read_text(encoding="utf-8")
+
+        for term in (
+            "stale PID/session",
+            "historical evidence",
+            "fresh-read",
+            "current process, transport ownership, server registration, exact target session",
+            "BLOCKED_UNVERIFIED",
+            "외부 transport 복구 진단 절차를 중복 소유하지 않는다",
+        ):
+            self.assertIn(term, text)
+
     def test_freshness_skill_inventories_consumers_without_weakening_real_protocols(self) -> None:
         text = (ROOT / "skills/auditing-canonical-reference-freshness/SKILL.md").read_text(encoding="utf-8")
         for term in (

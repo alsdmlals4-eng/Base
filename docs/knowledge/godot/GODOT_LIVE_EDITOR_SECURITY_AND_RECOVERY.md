@@ -123,6 +123,65 @@ mutation stop
 
 `--recovery-mode` 시작 자체는 production runtime PASS가 아니다. 복구 뒤 예전 service·Editor approval은 무효다.
 
+## External runtime session same-snapshot recovery
+
+외부 Editor/MCP runtime session이 registry에서 사라졌거나 process·transport·registry 관측이 충돌하면, 가능한 한 짧은 하나의 관측창에서 다음 네 증거를 함께 읽는다.
+
+```text
+TARGET_PROCESS_IDENTITY
++ TARGET_TRANSPORT_OWNERSHIP
++ SERVER_HANDSHAKE_AND_SESSION_LOGS
++ IMMEDIATE_SESSION_REGISTRY_READ
+= RECOVERY_CLASSIFICATION
+```
+
+- `TARGET_PROCESS_IDENTITY`: 현재 process 존재, executable/version, project root 또는 동등한 target identity, command line 같은 현재 식별값을 확인한다.
+- `TARGET_TRANSPORT_OWNERSHIP`: 기대 transport가 현재 exact target process에서 실제로 소유되고 live인지 확인한다.
+- `SERVER_HANDSHAKE_AND_SESSION_LOGS`: current 관측창에 묶이는 connection, handshake, authentication, reconnect, session registration의 bounded server-side log를 확보한다.
+- `IMMEDIATE_SESSION_REGISTRY_READ`: 위 관측 직후 exact target session이 registry/list에 존재하는지 읽는다.
+
+분류는 다음 네 상태로 제한한다.
+
+- `EXACT_SESSION_RECOVERED`: current exact target process, 그 process의 expected live transport, exact target registry session이 모두 존재할 때만 사용한다. 이 경우에만 승인된 target-specific runtime work를 재개할 수 있다.
+- `SAME_SERVER_HANDSHAKE_REGISTRATION_BLOCKER`: current exact target process와 해당 process의 expected live transport가 있고, immediate registry read가 exact target을 누락하며, bounded server log가 같은 관측창에 속할 때만 사용한다. 이 상태에서는 process restart나 executor/session-selection patch보다 handshake/registration 원인을 먼저 진단한다.
+- `PROCESS_OR_TRANSPORT_BLOCKER`: current exact target process가 없거나 expected transport가 현재 소유·live 상태가 아닐 때 사용한다. registry omission만으로 handshake 문제를 확정하지 않는다.
+- `BLOCKED_UNVERIFIED`: 동일 관측창을 만들지 못했거나 필수 증거 하나라도 없을 때 사용한다. 시간차가 큰 process, socket, registry 증거를 하나의 원인으로 묶지 않는다.
+
+이전에 보였던 process가 현재 보이지 않으면 다음 표현만 사용한다.
+
+```text
+PROCESS_EXITED_OR_NO_LONGER_RUNNING
+REASON = UNVERIFIED
+```
+
+별도 증거 없이 crash, kill, timeout 또는 정상 종료를 확정하지 않는다.
+
+### Shared server and stale identity boundary
+
+```text
+ONE_TARGET_SESSION_MISSING
+!= SHARED_SERVER_SAFE_TO_RESTART
+
+PAST_PID != CURRENT_TARGET
+PAST_WS_CONNECTION != CURRENT_TRANSPORT_PROOF
+PAST_SESSION_ID != CURRENT_REGISTRY_PROOF
+```
+
+- target 하나의 session omission만으로 shared automation server나 unrelated Editor를 종료하지 않는다.
+- target root가 다른 session을 대신 선택하거나, exact target registration 전 다른 project session에 mutation을 보내지 않는다.
+- root-cause evidence 전에는 executor/session matching logic을 patch하지 않는다.
+- server restart가 필요하면 영향을 받는 session inventory와 안전 근거를 먼저 확보한다.
+- 과거 PID, WebSocket connection, session ID는 historical evidence로만 보존하며 새 실행의 current identity로 쓰기 전에 fresh-read한다.
+
+```text
+SESSION_RECOVERY_GREEN
+→ exact target verified
+→ approved runtime work may resume
+→ project tests/runtime validation remain separate
+```
+
+`SESSION_RECOVERY_GREEN`은 제품 기능, GUT/import/smoke, human QA, release readiness 또는 `PRODUCTION_ADAPTER_READY`를 PASS로 승격하지 않는다.
+
 ## 입력·테스트·사람 경계
 
 Godot 내부 dispatch는 `ENGINE_INPUT_PASS`일 수 있지만 OS mouse·keyboard·window focus를 증명하지 않는다. 별도 경로가 없으면 `PHYSICAL_INPUT_EVIDENCE_BLOCKED`다. test runner가 미등록이면 `PROJECT_TEST_FRAMEWORK_NOT_CONFIGURED`; 사람 검증이 없으면 `HUMAN_NOT_RUN`이다.

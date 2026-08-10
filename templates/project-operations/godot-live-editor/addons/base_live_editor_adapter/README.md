@@ -66,6 +66,10 @@ On plugin startup failure:
 
 Removing this addon does not remove operation/evidence records under `res://artifacts/godot-live-editor/`; archive or delete them only through the project retention policy.
 
+## External-session boundary
+
+This network-disabled in-process addon does not diagnose an external MCP or automation-server session registry. If a project adopts a separate external transport and its target session is absent or conflicts with process/transport observations, stop target-specific submission and follow the canonical same-snapshot procedure in `docs/knowledge/godot/GODOT_LIVE_EDITOR_SECURITY_AND_RECOVERY.md`. Confirm current target process identity, current transport ownership, bounded server handshake/registration logs, and an immediate registry read before resuming. An absent target alone does not authorize restarting a shared server, selecting another project session, or treating a historical PID/session ID as current authority.
+
 ## Readiness
 
 This addon proves only PR B's in-process Editor transaction boundary after actual Runtime execution. Authenticated transport, optional MCP mapping, runtime debugger, two structurally different real-project pilots, Windows production operation, physical input, and human usability remain separate gates. `PRODUCTION_ADAPTER_READY` remains `NOT_READY`.
