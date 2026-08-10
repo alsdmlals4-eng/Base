@@ -212,6 +212,17 @@
       "submitted_at": "2026-08-10",
       "approval_ref": "docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md",
       "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/260"
+    },
+    {
+      "proposal_id": "BCP-2026-020-player-experience-validation-gates",
+      "title": "플레이어 경험 증거·첫 10분·결정 화면·미니게임 서사 Gate",
+      "path": "[수정제안서]/BCP-2026-020-player-experience-validation-gates/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "alsdmlals4-eng/Base",
+      "source_commit": "810b01f98bfef9232f4810a3d0006b66e1d296f0",
+      "submitted_at": "2026-08-10",
+      "approval_ref": null,
+      "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/273"
     }
   ]
 }
