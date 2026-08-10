@@ -259,12 +259,12 @@ Expected: physical runtime, Android device, connected editor, human comprehensio
 ## 승인과 구현
 
 ```yaml
-proposal_status: SUBMITTED
+proposal_status: APPROVED_FOR_IMPLEMENTATION
 proposal_storage_and_merge_authority: USER_DIRECTED_2026_08_10
-approval_ref: null
+approval_ref: docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md
 implementation_pr: null
 active_base_behavior_changed: false
-active_base_implementation_authorized: false
+active_base_implementation_authorized: true
 ```
 
-사용자의 이번 지시는 **프로젝트 출처형 proposal 작성·Registry 등록·proposal-only PR 검증·병합**까지 승인한다. 이는 BCP-013/014 또는 관련 Skill/Method/Test/Workflow의 실제 활성 구현 승인이 아니다.
+제안 등록 당시 사용자의 지시는 **프로젝트 출처형 proposal 작성·Registry 등록·proposal-only PR 검증·병합**까지만 승인했다. 현재는 위 `approval_ref`의 별도 승인으로 BCP-014 및 기존 handoff/freshness owner에 흡수하는 실제 구현 PR을 진행할 수 있다. 이 승인 기록 PR 자체는 관련 Skill·Method·Test·Workflow를 변경하지 않는다.

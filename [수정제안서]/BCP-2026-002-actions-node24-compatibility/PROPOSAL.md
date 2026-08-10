@@ -42,5 +42,7 @@ GitHub 공식 Action을 Node.js 24 호환 major로 전환하고, Action major·r
 
 ## 승인과 구현
 
-- 사용자 승인 근거: `미승인`
-- 구현 PR: `없음`
+- 사용자 승인 근거: `docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md`
+- 제안 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 구현 PR: `null` (별도 구현 PR이 병합될 때까지 기록하지 않음)
+- 이 승인 기록 PR에서는 workflow·action pin·공식 release evidence를 변경하지 않는다.

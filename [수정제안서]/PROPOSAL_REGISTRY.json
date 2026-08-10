@@ -18,11 +18,11 @@
       "proposal_id": "BCP-2026-002-actions-node24-compatibility",
       "title": "GitHub Actions Node 24 호환 버전 전환",
       "path": "[수정제안서]/BCP-2026-002-actions-node24-compatibility/PROPOSAL.md",
-      "status": "SUBMITTED",
+      "status": "APPROVED_FOR_IMPLEMENTATION",
       "source_project": "alsdmlals4-eng/Base",
       "source_commit": "c85e40855400a7595bf8b1350cba53a0e3c7e94d",
       "submitted_at": "2026-07-19",
-      "approval_ref": null,
+      "approval_ref": "docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md",
       "implementation_pr": null
     },
     {
@@ -128,22 +128,22 @@
       "proposal_id": "BCP-2026-013-post-merge-continuation-state-reconciliation",
       "title": "Post-Merge Continuation-State Reconciliation",
       "path": "[수정제안서]/BCP-2026-013-post-merge-continuation-state-reconciliation/PROPOSAL.md",
-      "status": "SUBMITTED",
+      "status": "APPROVED_FOR_IMPLEMENTATION",
       "source_project": "alsdmlals4-eng/ninja-survival-godot",
       "source_commit": "9b85cf65a3ca4278f7d8ec1a7e527ecc857cbad1",
       "submitted_at": "2026-08-10",
-      "approval_ref": null,
+      "approval_ref": "docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md",
       "implementation_pr": null
     },
     {
       "proposal_id": "BCP-2026-014-handoff-machine-consumer-compatibility-closeout",
       "title": "BCP - 괴이기록국(urban-legend)",
       "path": "[수정제안서]/BCP-2026-014-handoff-machine-consumer-compatibility-closeout/PROPOSAL.md",
-      "status": "SUBMITTED",
+      "status": "APPROVED_FOR_IMPLEMENTATION",
       "source_project": "alsdmlals4-eng/urban-legend",
       "source_commit": "2b424906c4ecaa4a027719383d3400486b03c72e",
       "submitted_at": "2026-08-10",
-      "approval_ref": null,
+      "approval_ref": "docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md",
       "implementation_pr": null
     },
     {
@@ -161,11 +161,11 @@
       "proposal_id": "BCP-2026-016-live-source-handoff-semantic-consumer-reconciliation",
       "title": "BCP - Switchy Express: Cargo Puzzle",
       "path": "[수정제안서]/BCP-2026-016-live-source-handoff-semantic-consumer-reconciliation/PROPOSAL.md",
-      "status": "SUBMITTED",
+      "status": "APPROVED_FOR_IMPLEMENTATION",
       "source_project": "alsdmlals4-eng/Switchy-Express-Cargo-Puzzle",
       "source_commit": "eb07dcc39b9675a54c675694236f507a8e50e78a",
       "submitted_at": "2026-08-10",
-      "approval_ref": null,
+      "approval_ref": "docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md",
       "implementation_pr": null
     },
     {
@@ -183,22 +183,22 @@
       "proposal_id": "BCP-2026-018-godot-pilot-failure-diagnostic-preservation",
       "title": "bcp-Blacksmith",
       "path": "[수정제안서]/BCP-2026-018-godot-pilot-failure-diagnostic-preservation/PROPOSAL.md",
-      "status": "SUBMITTED",
+      "status": "APPROVED_FOR_IMPLEMENTATION",
       "source_project": "alsdmlals4-eng/Blacksmith",
       "source_commit": "68540e6cd288aff138b1ea4c5b1feeb9e0653947",
       "submitted_at": "2026-08-10",
-      "approval_ref": null,
+      "approval_ref": "docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md",
       "implementation_pr": null
     },
     {
       "proposal_id": "BCP-2026-019-ten-paces-handoff-machine-consumer-compatibility",
       "title": "BCP - Ten-Paces-Hidden-Moves",
       "path": "[수정제안서]/BCP-2026-019-ten-paces-handoff-machine-consumer-compatibility/PROPOSAL.md",
-      "status": "SUBMITTED",
+      "status": "APPROVED_FOR_IMPLEMENTATION",
       "source_project": "alsdmlals4-eng/Ten-Paces-Hidden-Moves",
       "source_commit": "dc95883873ccd8718f6aa5cb11f936ef39db42c7",
       "submitted_at": "2026-08-10",
-      "approval_ref": null,
+      "approval_ref": "docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md",
       "implementation_pr": null
     }
   ]

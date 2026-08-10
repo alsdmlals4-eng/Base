@@ -214,10 +214,10 @@ Proposal 저장 단계:
 ## 승인과 구현
 
 - `BCP - Ten-Paces-Hidden-Moves` proposal storage: 사용자의 현재 지시로 진행 승인됨
-- proposal status: `SUBMITTED`
-- active Base implementation: `NOT_AUTHORIZED_IN_THIS_STAGE`
-- approval_ref: `null`
+- proposal status: `APPROVED_FOR_IMPLEMENTATION`
+- active Base implementation: BCP-014 및 기존 handoff owner에 흡수하는 별도 최소 구현 PR 범위로 승인됨
+- approval_ref: `docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md`
 - implementation PR: `null`
-- intended implementation owner if later approved: `BCP-2026-014` / existing handoff owner reuse
+- intended implementation owner: `BCP-2026-014` / existing handoff owner reuse
 
-이 proposal의 병합은 Ten Paces에서 확인된 재사용 가능한 handoff machine-consumer failure mode를 **프로젝트 이름의 독립 수정제안서로 저장**하는 것만 의미한다. Base 활성 동작 변경은 별도 승인과 별도 implementation 작업을 요구한다.
+이전 proposal 병합은 Ten Paces에서 확인된 재사용 가능한 handoff machine-consumer failure mode를 **프로젝트 이름의 독립 수정제안서로 저장**하는 것만 의미했다. 현재는 위 `approval_ref`의 별도 승인으로 BCP-014 및 기존 handoff owner에 흡수하는 별도 implementation PR을 진행할 수 있으며, 이 승인 기록 PR은 그 동작을 아직 바꾸지 않는다.
