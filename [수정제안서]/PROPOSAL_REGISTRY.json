@@ -7,12 +7,12 @@
       "proposal_id": "BCP-2026-001-base-skill-map-publication",
       "title": "Base 공용 Skill Registry의 선택적 사람용 Map 발행",
       "path": "[수정제안서]/BCP-2026-001-base-skill-map-publication/PROPOSAL.md",
-      "status": "APPROVED_FOR_IMPLEMENTATION",
+      "status": "IMPLEMENTED",
       "source_project": "alsdmlals4-eng/Base",
       "source_commit": "bc0eadca1c5c73ee4d5afd907d620953dbe02590",
       "submitted_at": "2026-07-19",
       "approval_ref": "[수정제안서]/BCP-2026-001-base-skill-map-publication/PROPOSAL.md#승인과-구현",
-      "implementation_pr": null
+      "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/264"
     },
     {
       "proposal_id": "BCP-2026-002-actions-node24-compatibility",
@@ -79,6 +79,18 @@
       "submitted_at": "2026-08-05",
       "approval_ref": "https://github.com/alsdmlals4-eng/Base/pull/170#issuecomment-5192884554",
       "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/181"
+    },
+    {
+      "proposal_id": "BCP-2026-008-agentic-spec-design-ui-procurement-integration",
+      "title": "에이전트 명세·디자인·외부 UI 조달 책임의 선택적 통합",
+      "path": "[수정제안서]/BCP-2026-008-agentic-spec-design-ui-procurement-integration/PROPOSAL.md",
+      "status": "IMPLEMENTED",
+      "source_project": "alsdmlals4-eng/Base",
+      "source_commit": "c7e678c928d08e736694319184f090ee87009efc",
+      "submitted_at": "2026-08-06",
+      "approval_ref": "https://github.com/alsdmlals4-eng/Base/pull/190#issuecomment-5198050799",
+      "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/192",
+      "historical_reconciliation": true
     },
     {
       "proposal_id": "BCP-2026-009-serial-fiction-writing-and-revision-discipline",

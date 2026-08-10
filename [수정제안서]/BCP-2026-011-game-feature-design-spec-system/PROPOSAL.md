@@ -5,7 +5,7 @@
 - 출처 프로젝트: `alsdmlals4-eng/Base`
 - 기준 커밋: `2a6ced23f6d6de1fb6e0a281c7138beb03f1a13b`
 - 제출일: `2026-08-10`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `패턴 + 구현 전 가설`
 
 ## 관찰과 증거
@@ -175,9 +175,9 @@ Decision·Requirement·Acceptance를 Task·Implementation·Verification에 연�
 
 ### PRE_EXISTING_GOVERNANCE_FINDING
 
-현재 main의 `PROPOSAL_REGISTRY.json`에는 `BCP-2026-008`이 없지만 PR #190의 proposal과 병합된 구현 PR #192에서 해당 ID가 역사적으로 사용됐다. 새 제안은 ID 재사용을 피하기 위해 `BCP-2026-011`을 사용한다.
+PR #231 당시 `PROPOSAL_REGISTRY.json`에는 `BCP-2026-008`이 없었지만, PR #190의 proposal과 병합된 구현 PR #192에서 해당 ID가 역사적으로 사용됐다. BCP-011은 ID 재사용을 피했다.
 
-이 불일치는 이번 기능 세부기획 구조와 독립된 기존 Governance 문제이므로 proposal 범위에서 자동 수정하지 않는다. 별도 repository-wide audit에서 `ALLOWED_LEGACY / MISSING_REGISTRY_HISTORY / REPAIR_REQUIRED`를 판정해야 한다.
+이 기록 누락은 2026-08-10 BCP-001~019 repository-wide lifecycle audit에서 `MISSING_REGISTRY_HISTORY`로 검증되어, BCP-008의 명시적 historical reconciliation record로 복구됐다. BCP-011의 기능 범위와 구현 결과는 바꾸지 않는다.
 
 또한 `managing-base-change-proposals`의 서술형 lifecycle은 `IMPLEMENTING` 단계를 정의하지만 현행 `base-change-proposal-registry-v1` Schema의 status enum에는 `IMPLEMENTING`이 없다. 구현 PR #231에서는 Schema를 범위 밖에서 변경하지 않고 `APPROVED_FOR_IMPLEMENTATION` 상태를 유지한 채 `implementation_pr`만 연결한다. 이 문서/Schema 불일치도 별도 governance audit 대상으로 남긴다.
 
@@ -218,7 +218,14 @@ Decision·Requirement·Acceptance를 Task·Implementation·Verification에 연�
 
 - 사용자 승인 근거: `2026-08-10 현재 대화에서 "진행해"로 written spec 검토 및 구현 진행 승인.`
 - 승인 참조: `[수정제안서]/BCP-2026-011-game-feature-design-spec-system/PROPOSAL.md#승인과-구현`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - 구현 계획: `[수정제안서]/BCP-2026-011-game-feature-design-spec-system/IMPLEMENTATION_PLAN.md`
 - 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/231`
-- 롤백: 구현 PR을 닫거나 구현 변경을 되돌리면 활성 기능 변경을 제거할 수 있으며, 승인된 제안 상태는 별도 lifecycle 결정 전까지 유지한다.
+- 롤백: 구현 변경을 되돌리면 활성 기능 변경을 제거할 수 있으며, 이 lifecycle closeout은 과거 승인·구현·검증 근거를 보존한다.
+
+### 구현 closeout — PR #231
+
+- 병합 커밋: `b37c9def027ecf474be9e5210ba4b5a583591f2a`
+- 실제 반영: `GAME_FEATURE_DESIGN_SPEC` Template과 기존 Skill·Traceability Packet의 책임 경계·reference freshness·contract tests를 추가했다.
+- 검증 근거: PR #231의 Base validation과 focused contract tests가 성공했다.
+- 검증 한계: 실제 프로젝트 Pilot의 사람 이해도·구현 품질·Google Sheets 운영 증거는 이 Base closeout만으로 통과 처리하지 않는다.

@@ -4,7 +4,7 @@
 
 - 출처 프로젝트: `alsdmlals4-eng/Base`
 - 기준 커밋: `bc0eadca1c5c73ee4d5afd907d620953dbe02590`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `관찰`
 
 ## 관찰과 증거
@@ -36,4 +36,11 @@ Base Registry에서 사람이 보는 선택 Markdown 또는 PDF Map을 결정적
 - 사용자 승인 근거: 2026-08-10 KST 대화 지시 `좋아 다 승인할게 [연속작업] 진행해`
 - 안정적 승인 참조: `[수정제안서]/BCP-2026-001-base-skill-map-publication/PROPOSAL.md#승인과-구현`
 - 승인된 최소 구현: Registry를 유일한 정본으로 유지하는 결정적 Markdown Map 생성·검증·Documentation Map 연결. PDF·DOCX·수동 편집 Map·새 ACTIVE Skill은 제외한다.
-- 구현 PR: `null` (별도 구현 PR이 병합될 때까지 기록하지 않음)
+- 구현 PR: [#264](https://github.com/alsdmlals4-eng/Base/pull/264)
+
+### 구현 closeout — PR #264
+
+- 병합 커밋: `381b66bc3619caf7994b0073108fdcba23b30e96`
+- 실제 반영: Registry를 유일한 라우팅 정본으로 유지하는 결정적 Markdown Skill Map 생성·검증, README·Documentation Map 연결, 생성기 회귀 검사를 반영했다.
+- 검증 근거: PR #264의 focused registry generator tests, `python tools/build_base_v9_artifacts.py --check`, canonical reference freshness가 성공했다.
+- 검증 한계: 실제 프로젝트별 Skill 선택 품질·사람 사용성·런타임 설치 검증은 이 Base 문서 closeout의 범위가 아니다.
