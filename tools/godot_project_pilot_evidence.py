@@ -1,5 +1,6 @@
 import hashlib
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Mapping, Sequence
@@ -7,6 +8,14 @@ from typing import Mapping, Sequence
 
 class EvidenceVerificationError(ValueError):
     """Raised when runtime evidence cannot be physically trusted."""
+
+
+_MAX_FAILURE_DIAGNOSTIC_BYTES = 1024 * 1024
+_MAX_FAILURE_DIAGNOSTIC_DEPTH = 128
+_DIAGNOSTIC_ATTEMPT_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+_SENSITIVE_KEY = re.compile(
+    r"token|secret|password|credential|authorization", re.IGNORECASE
+)
 
 
 @dataclass(frozen=True)
@@ -57,6 +66,88 @@ def _require_string(payload: Mapping[str, object], key: str) -> str:
     if not isinstance(value, str) or not value:
         raise EvidenceVerificationError(f"RUNTIME_EVIDENCE_INVALID: {key}")
     return value
+
+
+def _redact_sensitive_values(value: object, *, depth: int = 0) -> object:
+    if depth > _MAX_FAILURE_DIAGNOSTIC_DEPTH:
+        raise EvidenceVerificationError("RUNTIME_DIAGNOSTIC_INVALID: nested")
+    if isinstance(value, dict):
+        return {
+            key: "[REDACTED]"
+            if _SENSITIVE_KEY.search(key)
+            else _redact_sensitive_values(item, depth=depth + 1)
+            for key, item in value.items()
+        }
+    if isinstance(value, list):
+        return [_redact_sensitive_values(item, depth=depth + 1) for item in value]
+    return value
+
+
+def preserve_runtime_failure_diagnostics(
+    workspace: Path,
+    runtime_result_path: Path,
+    output_dir: Path,
+    *,
+    attempt_id: str,
+) -> Path:
+    """Persist one bounded, redacted failure snapshot without trusting it as PASS."""
+    if not _DIAGNOSTIC_ATTEMPT_ID.fullmatch(attempt_id):
+        raise EvidenceVerificationError("RUNTIME_DIAGNOSTIC_INVALID: attempt id")
+
+    root = Path(workspace).resolve()
+    runtime_path = Path(runtime_result_path).resolve()
+    try:
+        runtime_path.relative_to(root)
+    except ValueError as exc:
+        raise EvidenceVerificationError("EVIDENCE_PATH_ESCAPE: runtime result") from exc
+
+    try:
+        raw = runtime_path.read_bytes()
+    except OSError as exc:
+        raise EvidenceVerificationError(f"RUNTIME_DIAGNOSTIC_INVALID: {exc}") from exc
+    if len(raw) > _MAX_FAILURE_DIAGNOSTIC_BYTES:
+        raise EvidenceVerificationError("RUNTIME_DIAGNOSTIC_INVALID: oversized")
+    try:
+        payload = json.loads(raw)
+    except (RecursionError, UnicodeError, json.JSONDecodeError) as exc:
+        raise EvidenceVerificationError(f"RUNTIME_DIAGNOSTIC_INVALID: {exc}") from exc
+    if not isinstance(payload, dict):
+        raise EvidenceVerificationError("RUNTIME_DIAGNOSTIC_INVALID: root")
+
+    try:
+        sanitized = _redact_sensitive_values(payload)
+        assert isinstance(sanitized, dict)
+        sanitized["diagnostic_attempt_id"] = attempt_id
+        serialized = (
+            json.dumps(
+                sanitized,
+                ensure_ascii=False,
+                separators=(",", ":"),
+                sort_keys=True,
+            )
+            + "\n"
+        ).encode("utf-8")
+    except (RecursionError, TypeError, ValueError) as exc:
+        raise EvidenceVerificationError(f"RUNTIME_DIAGNOSTIC_INVALID: nested: {exc}") from exc
+    if len(serialized) > _MAX_FAILURE_DIAGNOSTIC_BYTES:
+        raise EvidenceVerificationError("RUNTIME_DIAGNOSTIC_INVALID: oversized")
+
+    destination = Path(output_dir).resolve()
+    destination.mkdir(parents=True, exist_ok=True)
+    diagnostics_root = destination / "diagnostics"
+    attempt_dir = diagnostics_root / attempt_id
+    try:
+        attempt_dir.resolve(strict=False).relative_to(destination)
+    except ValueError as exc:
+        raise EvidenceVerificationError("EVIDENCE_PATH_ESCAPE: diagnostics output") from exc
+    attempt_dir.mkdir(parents=True, exist_ok=True)
+    snapshot = attempt_dir / "runtime-result.sanitized.json"
+    try:
+        with snapshot.open("xb") as handle:
+            handle.write(serialized)
+    except FileExistsError as exc:
+        raise EvidenceVerificationError("RUNTIME_DIAGNOSTIC_EXISTS") from exc
+    return snapshot
 
 
 def verify_runtime_evidence(
@@ -128,6 +219,7 @@ def write_final_evidence(
     legacy_mutation_authority: str,
     preserved_autoloads: Sequence[str] = (),
     process_records: Sequence[Mapping[str, object]] = (),
+    failure_diagnostic_path: str | None = None,
 ) -> Path:
     destination = Path(output_dir).resolve()
     destination.mkdir(parents=True, exist_ok=True)
@@ -165,6 +257,7 @@ def write_final_evidence(
         "runtime_result_sha256": runtime.runtime_result_sha256 if runtime else None,
         "saved_scene_sha256": runtime.saved_scene_sha256 if runtime else None,
         "saved_scene_path": runtime.saved_scene_path if runtime else None,
+        "failure_diagnostic_path": failure_diagnostic_path,
     }
     path = destination / "project-pilot-evidence.json"
     path.write_text(
@@ -178,6 +271,7 @@ __all__ = [
     "EvidenceVerificationError",
     "VerifiedRuntimeEvidence",
     "sha256_file",
+    "preserve_runtime_failure_diagnostics",
     "verify_runtime_evidence",
     "write_final_evidence",
 ]

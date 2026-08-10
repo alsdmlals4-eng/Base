@@ -19,6 +19,7 @@ from tools.godot_project_pilot_descriptor import (
 from tools.godot_project_pilot_evidence import (
     EvidenceVerificationError,
     VerifiedRuntimeEvidence,
+    preserve_runtime_failure_diagnostics,
     verify_runtime_evidence,
     write_final_evidence,
 )
@@ -285,6 +286,15 @@ def _write_failure_marker(
     )
 
 
+def _next_failure_diagnostic_attempt_id(output: Path, source_commit: str) -> str:
+    prefix = f"{source_commit[:12]}-attempt-"
+    diagnostics = Path(output).resolve() / "diagnostics"
+    attempt = 1
+    while (diagnostics / f"{prefix}{attempt}" / "runtime-result.sanitized.json").exists():
+        attempt += 1
+    return f"{prefix}{attempt}"
+
+
 def run_pilot(
     base_root: Path,
     source_root: Path,
@@ -334,6 +344,7 @@ def run_pilot(
         return 0 if not changed else 4
 
     runtime: VerifiedRuntimeEvidence | None = None
+    failure_diagnostic_path: str | None = None
     preserved_autoloads: tuple[str, ...] = ()
     legacy_state = (
         "ABSENT"
@@ -394,6 +405,13 @@ def run_pilot(
             if godot_record.returncode != 0:
                 raise ValueError("GODOT_PROJECT_PILOT_FAILED")
             runtime_path = workspace / "artifacts/godot-project-pilot/runtime-result.json"
+            preserved_failure = preserve_runtime_failure_diagnostics(
+                workspace,
+                runtime_path,
+                output,
+                attempt_id=_next_failure_diagnostic_attempt_id(output, source_commit),
+            )
+            failure_diagnostic_path = preserved_failure.relative_to(output).as_posix()
             runtime = verify_runtime_evidence(workspace, runtime_path)
             if runtime.repository != descriptor.repository:
                 raise EvidenceVerificationError("RUNTIME_REPOSITORY_MISMATCH")
@@ -420,6 +438,7 @@ def run_pilot(
             legacy_mutation_authority=legacy_state,
             preserved_autoloads=preserved_autoloads,
             process_records=[_record_dict(value) for value in process_records],
+            failure_diagnostic_path=failure_diagnostic_path,
         )
         if changed:
             return 4
@@ -443,6 +462,7 @@ def run_pilot(
         legacy_mutation_authority=legacy_state,
         preserved_autoloads=preserved_autoloads,
         process_records=[_record_dict(value) for value in process_records],
+        failure_diagnostic_path=None,
     )
     return 0 if not changed else 4
 
