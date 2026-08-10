@@ -189,6 +189,17 @@
       "submitted_at": "2026-08-10",
       "approval_ref": null,
       "implementation_pr": null
+    },
+    {
+      "proposal_id": "BCP-2026-019-ten-paces-handoff-machine-consumer-compatibility",
+      "title": "BCP - Ten-Paces-Hidden-Moves",
+      "path": "[수정제안서]/BCP-2026-019-ten-paces-handoff-machine-consumer-compatibility/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "alsdmlals4-eng/Ten-Paces-Hidden-Moves",
+      "source_commit": "dc95883873ccd8718f6aa5cb11f936ef39db42c7",
+      "submitted_at": "2026-08-10",
+      "approval_ref": null,
+      "implementation_pr": null
     }
   ]
 }
