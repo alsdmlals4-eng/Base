@@ -94,8 +94,8 @@ Base 공용 규칙으로 복사하지 않는다.
 
 ## 승인과 구현
 
-- 사용자 승인 근거: 본 proposal storage 및 프로젝트명 기반 표시명 적용 승인
-- 제안 상태: `SUBMITTED`
-- 활성 Base 구현 승인: `미승인`
-- 구현 PR: `없음`
+- 사용자 승인 근거: `docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md`
+- 제안 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 활성 Base 구현 승인: 별도 최소 구현 PR 범위로 승인됨
+- 구현 PR: `null` (별도 구현 PR이 병합될 때까지 기록하지 않음)
 - 롤백: 이 proposal 문서와 Registry 표시명 변경을 이전 상태로 되돌리면 되며 활성 Base 동작에는 영향이 없다.

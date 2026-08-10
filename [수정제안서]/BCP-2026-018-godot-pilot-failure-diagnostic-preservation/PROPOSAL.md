@@ -217,9 +217,9 @@ Proposal 저장 단계:
 ## 승인과 구현
 
 - `bcp-Blacksmith` proposal storage: 사용자의 현재 지시로 진행 승인됨
-- proposal status: `SUBMITTED`
-- active Base implementation: `NOT_AUTHORIZED_IN_THIS_STAGE`
-- approval_ref: `null`
+- proposal status: `APPROVED_FOR_IMPLEMENTATION`
+- active Base implementation: 별도 최소 구현 PR 범위로 승인됨
+- approval_ref: `docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md`
 - implementation PR: `null`
 
-이 proposal의 병합은 Blacksmith에서 관찰된 재사용 가능한 실패 진단 보존 후보를 Base proposal registry에 저장하는 것만 의미한다. Base 활성 구현은 별도 승인과 별도 implementation PR을 요구한다.
+이전 proposal 병합은 Blacksmith에서 관찰된 재사용 가능한 실패 진단 보존 후보를 Base proposal registry에 저장하는 것만 의미했다. 현재는 위 `approval_ref`의 별도 승인으로 Base 활성 구현을 별도 implementation PR에서 진행할 수 있으며, 이 승인 기록 PR은 그 동작을 아직 바꾸지 않는다.

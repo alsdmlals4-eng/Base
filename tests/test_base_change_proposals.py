@@ -23,6 +23,31 @@ class BaseChangeProposalTests(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertEqual(registry["proposal_root"], "[수정제안서]")
 
+    def test_approved_continuity_and_diagnostic_proposals_have_recorded_user_approval(self) -> None:
+        registry, errors = CHECKER.validate_repository(ROOT)
+        self.assertEqual(errors, [])
+        proposal_ids = {
+            "BCP-2026-002-actions-node24-compatibility",
+            "BCP-2026-013-post-merge-continuation-state-reconciliation",
+            "BCP-2026-014-handoff-machine-consumer-compatibility-closeout",
+            "BCP-2026-016-live-source-handoff-semantic-consumer-reconciliation",
+            "BCP-2026-018-godot-pilot-failure-diagnostic-preservation",
+            "BCP-2026-019-ten-paces-handoff-machine-consumer-compatibility",
+        }
+        approved = {
+            item["proposal_id"]: item
+            for item in registry["proposals"]
+            if item["proposal_id"] in proposal_ids
+        }
+        self.assertEqual(proposal_ids, set(approved))
+        for item in approved.values():
+            self.assertEqual("APPROVED_FOR_IMPLEMENTATION", item["status"])
+            self.assertEqual(
+                "docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md",
+                item["approval_ref"],
+            )
+            self.assertIsNone(item["implementation_pr"])
+
     def test_new_proposal_pr_cannot_change_active_base(self) -> None:
         previous = {"proposals": []}
         current = {

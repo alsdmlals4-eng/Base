@@ -233,10 +233,10 @@ Expected:
 ## 승인과 구현
 
 ```yaml
-proposal_status: SUBMITTED
-approval_ref: null
+proposal_status: APPROVED_FOR_IMPLEMENTATION
+approval_ref: docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md
 implementation_pr: null
 active_base_behavior_changed: false
 ```
 
-이 proposal PR의 Base main 병합은 **제안 기록 등록**만 의미한다. 실제 `maintaining-project-context-and-handoff` 동작 변경은 별도 구현 승인과 구현 PR에서 수행한다.
+이전 proposal PR의 Base main 병합은 **제안 기록 등록**만 의미했다. 현재는 위 `approval_ref`의 별도 승인으로 실제 `maintaining-project-context-and-handoff` 동작 변경을 별도 구현 PR에서 수행할 수 있으며, 그 PR이 병합되기 전까지 `active_base_behavior_changed`는 `false`다.
