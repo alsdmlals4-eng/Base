@@ -138,11 +138,14 @@ def load_active_skills() -> tuple[dict[str, Any], list[dict[str, Any]]]:
 
 def generated_summary(skills: list[dict[str, Any]], registry_hash: str) -> str:
     lines = [
-        "# Current Active Base Skills",
+        "# Base Skill Map (Current Active Skills)",
         "",
+        "> Artifact role: Registry-derived human navigation map; `skills/SKILL_REGISTRY.json` remains the sole routing authority.",
         "> Generated from `skills/SKILL_REGISTRY.json`. Do not edit this derivative.",
         f"> Registry SHA-256: `{registry_hash}`",
         f"> Current active Skill count: `{len(skills)}`",
+        "> Regenerate: `python tools/build_base_v9_artifacts.py --write`",
+        "> Verify: `python tools/build_base_v9_artifacts.py --check`",
         "",
         "| Skill ID | Owner | Positive trigger | Negative trigger |",
         "| --- | --- | --- | --- |",
@@ -190,7 +193,16 @@ def build_artifacts() -> dict[Path, bytes]:
                     "Released Base v9.0.0 artifact is missing: "
                     + ", ".join(path.relative_to(ROOT).as_posix() for path in missing)
                 )
-            return {path: path.read_bytes() for path in OUTPUTS.values()}
+            registry, skills = load_active_skills()
+            registry_hash = sha256_normalized_text_file(REGISTRY_PATH)
+            return {
+                path: (
+                    generated_summary(skills, registry_hash).encode("utf-8")
+                    if path == OUTPUTS["summary"]
+                    else path.read_bytes()
+                )
+                for path in OUTPUTS.values()
+            }
 
     registry, skills = load_active_skills()
     registry_hash = sha256_normalized_text_file(REGISTRY_PATH)

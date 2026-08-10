@@ -96,6 +96,18 @@ class V9RegistryGenerationTests(unittest.TestCase):
         )
         self.assertIn(f"> Current active Skill count: `{len(active)}`", summary)
         self.assertIn("`optimizing-ai-model-and-prompt-costs`", summary)
+        self.assertIn(
+            "> Artifact role: Registry-derived human navigation map; `skills/SKILL_REGISTRY.json` remains the sole routing authority.",
+            summary,
+        )
+        self.assertIn(
+            "> Regenerate: `python tools/build_base_v9_artifacts.py --write`",
+            summary,
+        )
+        self.assertIn(
+            "> Verify: `python tools/build_base_v9_artifacts.py --check`",
+            summary,
+        )
 
         for item in snapshot["skills"]:
             self.assertEqual(

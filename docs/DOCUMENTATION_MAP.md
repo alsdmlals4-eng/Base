@@ -82,7 +82,7 @@ Base 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 �
 | 플랫폼 심사·자산 권리·참조 독립 제작 | `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md` | Steam·STOVE·Google Play 등급·설문, 상업·배포 권리, AI·외주·오픈소스, 참조→독립 제작, 출시 차단 |
 | CI 실행·비용 | `docs/CI_EXECUTION_COST_POLICY.md` | 변경 등급별 검증·concurrency·Windows·비용 Gate |
 | 활성 Skill 기계 원본 | `skills/SKILL_REGISTRY.json` | trigger·상태·경로·Skill Mode 라우팅 |
-| 활성 Skill 생성 뷰 | `docs/generated/BASE_ACTIVE_SKILLS.md` | Registry에서 생성한 사람용 목록; 직접 편집 금지 |
+| 활성 Skill 생성 Map | `docs/generated/BASE_ACTIVE_SKILLS.md` | Registry에서 생성한 사람용 탐색 Map; 직접 편집 금지 |
 | 이전 Skill 별칭 | `skills/LEGACY_SKILL_ALIASES.md` | 통합 전 ID를 현행 Skill·Mode로 연결 |
 | Skill 실행 학습 | `skills/SKILL_LEARNING_LOG.md` | 실패·결정·검증·갱신 판정 |
 | Skill 행동 평가 | `skills/SKILL_BEHAVIOR_EVALS.json` | 실제 Prompt의 예상 Work Mode·Skill·Mode·금지 라우팅·필수 증거 |
@@ -119,7 +119,7 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 ## 5. Active Skill Registry View
 
 - `skills/SKILL_REGISTRY.json`: 기계 권한
-- `docs/generated/BASE_ACTIVE_SKILLS.md`: 생성된 현재 목록·책임·trigger
+- `docs/generated/BASE_ACTIVE_SKILLS.md`: Registry 기반 생성 Skill Map(현재 목록·책임·trigger)
 - `skills/BASE_V9_SKILL_SNAPSHOT.json`: frozen v9.0 release contract projection; 현재 라우팅 권한 아님
 - `skills/LEGACY_SKILL_ALIASES.md`: 이전 ID 호환 경로
 - `skills/SKILL_BEHAVIOR_EVALS.json`: 정상·비사용·경계·교차 Skill 행동 fixture
@@ -237,7 +237,7 @@ DOCX·다이어그램은 선언한 경우만 생성한다. `CURRENT`, 자동 렌
 - [Release Contract](operations/BASE_V9_RELEASE_CONTRACT.md)
 - [Integrity Audit](operations/BASE_V9_INTEGRITY_AUDIT.md)
 - [Adversarial Review Report](operations/BASE_V9_ADVERSARIAL_REVIEW_REPORT.md)
-- [Current Active Base Skills](generated/BASE_ACTIVE_SKILLS.md)
+- [Base Skill Map](generated/BASE_ACTIVE_SKILLS.md)
 - [Open-Source Godot UI Reference Catalog](knowledge/OPEN_SOURCE_GODOT_UI_REFERENCE_CATALOG.md)
 - [Held Common Project Adoption Work Order](../templates/prompts/BASE_V9_COMMON_PROJECT_ADOPTION_WORK_ORDER.md)
 - [Base v9.1 Release Contract](operations/BASE_V9_1_RELEASE_CONTRACT.md)
