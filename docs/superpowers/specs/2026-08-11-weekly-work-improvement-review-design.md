@@ -2,7 +2,7 @@
 
 ## Problem
 
-Base already owns periodic external-source discovery, game/player-experience evidence, serial-fiction craft, prompt/Skill placement, and adversarial review. BCP-2026-020 also extracted durable player-experience gates from the 2026-08-10 weekly report. What is still missing is a reusable, non-canonical synthesis surface that turns those existing owners into a consistent weekly A/B/C/D improvement review without copying the same rules into a new broad Skill.
+Base already owns periodic external-source discovery, game/player-experience evidence, serial-fiction craft, prompt/Skill placement, and adversarial review. BCP-2026-020 also extracted durable player-experience gates from the 2026-08-10 weekly report. The remaining gap is a reusable, non-canonical synthesis surface that turns those existing owners into a consistent weekly A/B/C/D improvement review without copying the same rules into a new broad Skill.
 
 ## Existing Solution First
 
@@ -10,7 +10,7 @@ Disposition: `ABSORB_EXISTING_OWNER / LOW_RISK_BOUNDED_UPDATE`.
 
 Keep current owners:
 
-- source discovery and evidence authority: `docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md`
+- source discovery/evidence: `docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md`
 - game benchmark/player evidence: `analyzing-and-refining-game-concepts`
 - fiction/serial revision: `developing-and-revising-serial-fiction`
 - prompt/Skill placement: `docs/AI_SKILL_ADOPTION_GUIDE.md` + `evolving-project-discipline-skills`
@@ -26,34 +26,36 @@ Create `templates/research/WEEKLY_WORK_IMPROVEMENT_REVIEW.md` as a reusable repo
 
 The template:
 
-1. starts with current Base/project truth and previous-report delta, not news collection;
+1. starts with current Base/project truth, connected GitHub/Drive context when available, same-goal PRs, and previous-report delta rather than a news dump;
 2. separates source facts, player/reader evidence, professional guidance, model inference, and project recommendation;
 3. uses the Watchlist and original-source backtrace instead of treating newsletters/vendor benchmarks as canon;
-4. preserves the requested four-part structure:
-   - A. 메인게임
-   - B. 미니게임
-   - C. 글쓰기
-   - D. 종합 반영안
-5. requires direct competitor + adjacent genre + outside-genre reference only when they change a decision, and includes failure/mixed-response evidence when available;
-6. prevents repeated works from reappearing unless there is new evidence or a new comparison dimension;
-7. makes every recommendation choose `BASE_PROMOTION_CANDIDATE`, `PROJECT_ONLY`, `EVIDENCE_ONLY`, `TEST`, `AVOID`, or `NO_CHANGE` and names the concrete consumer/project;
-8. turns small experiments into `research question → method → evidence type → success criterion`, because observation/interview/analytics/survey answer different questions;
-9. emits copy-ready GitHub Issue / Codex Goal / test-checklist wording only for retained findings;
-10. preserves `NO_CHANGE` when no real improvement survives PR check and adversarial review, while still looking for owner absorption, stale references, tests, counterexamples, and small validation-contract improvements first.
+4. maps `PROMPT_AND_AGENT_WORKFLOW`, `SKILL_AUTHORING_AND_EVOLUTION`, and material AI-tool changes into A/B/C/D impact rather than adding a separate AI-news list;
+5. preserves the requested four-part structure: A. 메인게임, B. 미니게임, C. 글쓰기, D. 종합 반영안;
+6. uses direct competitor, adjacent genre, outside-genre, and failure/mixed-response evidence only when it changes a decision;
+7. prevents repeated works from reappearing unless there is new evidence or a new comparison dimension;
+8. routes retained findings to Base promotion, existing-owner absorption, project-only action, evidence-only update, test, avoid, or no-change with a concrete target;
+9. turns small experiments into `research question → method → evidence type → success criterion`;
+10. emits copy-ready GitHub Issue, Codex Goal, and test-checklist wording for retained findings;
+11. preserves `NO_CHANGE` when no real improvement survives PR check and adversarial review, after checking smaller owner/test/reference/freshness improvements first.
+
+## External benchmark implications
+
+Current official and practitioner material supports this shape rather than a new broad Skill: customization systems separate always-on instructions, reusable prompts, task Skills and specialist agents; agent-first engineering benefits from repository-visible rules, tests, PR feedback and small continuous cleanup; game-user research chooses observation/interview/analytics/survey from the research question; professional editing separates developmental structure work from later copy/proof work. These are architecture inputs, not universal product rules.
 
 ## Adversarial boundaries
 
 - Do not turn the fixed 17-item report shape into 51 mandatory paragraphs when an item is not material; use concise `N/A — reason` entries.
-- Do not require three benchmark works merely to fill quotas; comparison selection is decision-driven.
+- Do not require benchmark works merely to fill quotas.
 - Do not promote project-specific characters, numeric values, story canon, UI layout, or channel strategy to Base.
 - Do not infer sales, retention, CTR, ratings, or review sentiment causally without method/context.
-- Do not claim `HUMAN_USABILITY_EVIDENCE` or `PLAYER_EXPERIENCE_EVIDENCE` from AI analysis, CI, screenshots, or author self-review.
+- Do not claim human-usability or player-experience evidence from AI analysis, CI, screenshots, or author self-review.
 - Do not create a new Skill merely because the report spans multiple domains.
 - Do not force repository churn every week.
+- Do not duplicate BCP-2026-020’s durable player-experience rules inside the report Template.
 
 ## Discoverability and validation
 
-- Link the template from the Watchlist completion-report section.
-- Add the template to `docs/DOCUMENTATION_MAP.md` as a reusable research/report surface, not a new canon owner.
+- Link the Template from the Watchlist completion-report section as the single one-hop discovery route.
+- Do not add a second high-level Documentation Map entry merely for an output template; the Template itself lists the existing owners it orchestrates.
 - Add a focused contract test and run it from the existing Evidence Knowledge workflow.
-- No Registry, ACTIVE Skill identity, security permission, schema, or release-lock change.
+- No Registry or ACTIVE Skill identity change.
