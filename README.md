@@ -76,7 +76,7 @@ Steam·STOVE·Google Play의 등급·설문, 자산 상업 사용·게임 포함
 
 ## Active Skill Registry View
 
-The current active-Skill count, list, owner, and positive/negative triggers are generated from [Current Active Base Skills](docs/generated/BASE_ACTIVE_SKILLS.md). This entrypoint does not maintain a second Skill list.
+The current active-Skill count, list, owner, and positive/negative triggers are generated from the [Base Skill Map](docs/generated/BASE_ACTIVE_SKILLS.md). This entrypoint does not maintain a second Skill list.
 
 - Machine authority: `skills/SKILL_REGISTRY.json` and each `SKILL.md` frontmatter
 - Current human view: `docs/generated/BASE_ACTIVE_SKILLS.md`
