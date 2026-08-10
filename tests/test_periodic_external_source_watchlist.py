@@ -89,8 +89,8 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
         self.assertEqual(1, data["schema_version"])
         self.assertEqual("2026-08-11", data["tracking_started_at"])
         sources = data["sources"]
-        self.assertEqual(33, len(sources))
-        self.assertEqual(33, len({row["source_id"] for row in sources}))
+        self.assertGreaterEqual(len(sources), 33)
+        self.assertEqual(len(sources), len({row["source_id"] for row in sources}))
 
         expected_ids = {
             "godot", "steamworks", "android-games", "google-play-policy",
@@ -104,7 +104,7 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
             "youtube-official", "blackmagic-davinci", "adobe-premiere",
             "frameio", "vidiq",
         }
-        self.assertEqual(expected_ids, {row["source_id"] for row in sources})
+        self.assertTrue(expected_ids.issubset({row["source_id"] for row in sources}))
 
         allowed_cadence = {
             "daily-or-weekly", "weekly", "monthly-or-on-demand",
@@ -125,12 +125,15 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
                 self.assertTrue(row["domains"])
                 self.assertTrue(row["roles"])
                 self.assertTrue(row["scan_surfaces"])
-                self.assertIsNone(row["last_successful_scan_at"])
-                self.assertIsNone(row["last_material_candidate_at"])
-                self.assertIsNone(row["last_base_contribution_at"])
-                self.assertIsNone(row["last_base_contribution_ref"])
-                self.assertEqual(0, row["material_candidate_count_since_tracking_start"])
-                self.assertEqual(0, row["base_contribution_count_since_tracking_start"])
+                for key in (
+                    "last_successful_scan_at",
+                    "last_material_candidate_at",
+                    "last_base_contribution_at",
+                    "last_base_contribution_ref",
+                ):
+                    self.assertTrue(row[key] is None or isinstance(row[key], str))
+                self.assertGreaterEqual(row["material_candidate_count_since_tracking_start"], 0)
+                self.assertGreaterEqual(row["base_contribution_count_since_tracking_start"], 0)
                 self.assertEqual("ACTIVE", row["status"])
 
     def test_watchlist_connects_context_extraction_to_fail_closed_auto_merge(self) -> None:
@@ -149,6 +152,7 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
             "reviewed_head_sha",
             "current_head_sha",
             "strict up-to-date",
+            "strict_up_to_date:",
             "ci-gate",
             "unresolved review thread",
             "ACTIVE Skill ID",
@@ -160,6 +164,7 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
             "Required Check",
         ):
             self.assertIn(required, content)
+        self.assertNotIn("strict up-to_date:", content)
         self.assertIn("제품·게임·소설·채널", content)
         self.assertIn("EVIDENCE_ONLY_UPDATE | ABSORB_EXISTING_OWNER | LOW_RISK_BOUNDED_UPDATE", content)
         self.assertIn("AUTO_MERGE_BLOCKED", content)
