@@ -165,6 +165,7 @@ Skill 자료는 **설치 가능한 Skill 자체를 무조건 채택하기 위해
 |---|---|---|---|
 | **YouTube Analytics / YouTube Studio Help / YouTube Creators** | `AUTHORITY_TARGET` | Reach, impressions, CTR, watch time, audience retention, new/casual/regular viewers, format별 Analytics, 플랫폼 기능 | metric UI·정의·실험 기능은 변경 가능하므로 현재 Help 재확인 |
 | **Blackmagic Design DaVinci Resolve Training** | `AUTHORITY_TARGET` | rough cut, trim, multicam, audio/Fairlight, color, Fusion/VFX, delivery의 공식 tool workflow | DaVinci 기능은 tool-specific; 편집 미학의 유일한 정답 아님 |
+| **Adobe Premiere official release notes** | `AUTHORITY_TARGET` | current NLE release/change surface, timeline navigation, media relink, audio/review, export/security changes | Premiere 기능은 tool-specific. DaVinci와 교차검증하되 특정 기능을 공용 편집 미학이나 필수 workflow로 승격하지 않음 |
 | **Frame.io Insider / Knowledge Center** | `PROFESSIONAL_PRACTICE` | post-production workflow, versioned review, approval, media metadata, collaboration | Adobe/Frame.io 제품 이해관계 표시; 기능 사실은 현재 docs 재확인 |
 | **vidIQ** | `OBSERVATIONAL_DATA_OR_VENDOR_GUIDE` | title/thumbnail/retention/channel benchmark 연구·creator 사례 | vendor/서비스 이해관계, 선정 표본 편향. 숫자를 universal success target으로 금지 |
 | **GDC / Game Developer marketing-video cases** | `PROFESSIONAL_PRACTICE` | devlog·trailer·launch communication을 실제 게임 marketing과 연결 | YouTube 일반 채널 성장 공식으로 과잉 확대 금지 |
@@ -255,6 +256,7 @@ LAST_SUCCESSFUL_SCAN
 → SOURCE_INDEX_REFRESH
 → NEW_OR_CHANGED_CANDIDATES
 → DUPLICATE_AND_CURRENT_BASE_CHECK
+→ 같은 Goal의 열린·최근 병합 PR CHECK
 → ORIGINAL_SOURCE_BACKTRACE
 → SOURCE_ROLE_AND_EVIDENCE_TIER
 → FRESHNESS_AND_SCOPE_CHECK
@@ -263,15 +265,32 @@ LAST_SUCCESSFUL_SCAN
 → ADVERSARIAL_ATTACK
 → CRITIQUE_VALIDATION
 → ADOPT | ADAPT | TEST | AVOID | IGNORE | REFERENCE_ONLY
-→ NO_CHANGE | EVIDENCE_ONLY_UPDATE | LOW_RISK_BOUNDED_UPDATE | BCP_OR_USER_DECISION
+→ REFERENCE_ONLY | EVIDENCE_ONLY_UPDATE | ABSORB_EXISTING_OWNER | LOW_RISK_BOUNDED_UPDATE | RULE_OR_BCP_CANDIDATE
+→ NO_CHANGE only if none of the retained outcomes apply
 → REGRESSION_RECHECK
 → SCAN_CHECKPOINT
 ```
 
+### 흡수 우선 Retention Gate
+
+`ALREADY_COVERED` 또는 `PARTIAL`은 버림 판정이 아니다. 새 규칙이 없다는 이유만으로 유용한 근거를 버리지 않는다.
+
+다음 중 하나라도 기존 owner를 실질적으로 더 명확하게 만들면 `ABSORB_EXISTING_OWNER` 또는 `LOW_RISK_BOUNDED_UPDATE`를 우선 검토한다.
+
+- trigger·mode·reference·checklist·template의 누락 보강
+- 적용 조건·반례·실패 상태·freshness check 추가
+- evidence field·source cross-check·regression scenario 추가
+- stale reference 수정
+- 적대적 검토 질문 추가
+
+반대로 독립 책임·권한·입출력·실패·검증 경계가 기존 owner로 흡수되지 않을 때만 `RULE_OR_BCP_CANDIDATE`를 검토한다. 같은 내용을 표현만 바꿔 중복시키거나 파일 수만 늘리는 것은 개선이 아니다.
+
+`NO_CHANGE`는 **새 규칙/BCP 후보, 기존 owner 흡수, evidence/reference 보강, 테스트/적대적 시나리오, source coverage, stale/freshness 수정이 모두 불필요할 때만** 사용한다.
+
 ### 기본 cadence
 
 - `daily-or-weekly`: Hada, OpenAI/Anthropic/Google/GitHub/Microsoft AI engineering updates, Godot release/blog, Steamworks, Android/Google Play policy/release, YouTube Help/Studio changes처럼 빠르게 변하는 면.
-- `weekly`: GameDiscoverCo, How To Market A Game, Game Developer, Reedsy recent learning, Frame.io Insider, vidIQ research/blog.
+- `weekly`: GameDiscoverCo, How To Market A Game, Game Developer, Reedsy recent learning, Adobe Premiere official release notes, Frame.io Insider, vidIQ research/blog.
 - `monthly-or-on-demand`: GDC Vault, Games User Research, 80 Level, GameAnalytics, Deconstructor of Fun, GPUOpen, IGDA Game Writing, inkle/ink, Yarn Spinner.
 - `quarterly-or-when-relevant`: The Level Design Book, Game Accessibility Guidelines, Emily Short archive처럼 상대적으로 정적인 Reference.
 
@@ -333,6 +352,8 @@ known_bias:
 - 최신 6개월에 집중한 나머지 오래됐지만 유효한 표준·연구·고전적 craft를 버렸는가?
 - 같은 원칙이 Base에 이미 있는데 새 Skill·Guide·Template를 만들었는가?
 - 열린 PR이 같은 책임을 이미 수정 중인데 병렬로 중복 변경했는가?
+- `새 규칙 없음`을 `유용한 흡수점 없음`으로 잘못 해석했는가?
+- 기존 owner에 작은 보강이 가능한데 `ALREADY_COVERED`라는 이유만으로 폐기했는가?
 
 ## 11. 변경 권한
 
@@ -373,6 +394,7 @@ partial_index_review: []
 static_reference_review: []
 new_sources_added: []
 material_candidates:
+absorbed_improvements:
 no_change_count:
 evidence_only_updates:
 low_risk_updates:
