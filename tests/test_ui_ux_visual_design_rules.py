@@ -7,10 +7,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RULEBOOK = (
     ROOT
-    / "skills"
-    / "auditing-and-refining-ui-art"
-    / "references"
-    / "ui-ux-visual-design-rulebook.md"
+    / "docs"
+    / "knowledge"
+    / "game-development"
+    / "UI_UX_VISUAL_DESIGN_RULEBOOK.md"
 )
 REFERENCE_LIBRARY = (
     ROOT
@@ -27,7 +27,7 @@ class UiUxVisualDesignRuleContractTests(unittest.TestCase):
     def test_rulebook_exists_and_is_routed_from_existing_owner_reference(self) -> None:
         self.assertTrue(RULEBOOK.is_file())
         library = REFERENCE_LIBRARY.read_text(encoding="utf-8")
-        self.assertIn("ui-ux-visual-design-rulebook.md", library)
+        self.assertIn("UI_UX_VISUAL_DESIGN_RULEBOOK.md", library)
         self.assertIn("2026-08-10", library)
 
     def test_rulebook_separates_rule_strength_and_evidence_types(self) -> None:
