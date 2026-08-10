@@ -2,7 +2,7 @@
 
 ## 범위
 
-- Base current main: `59aadec796260ae200e776af35954174fc5bda46`
+- Base latest main 재대조: `0a7c4a4286b1107b1bfa03dc4b4e4ce88fbbd5b8`
 - owner: `skills/auditing-and-refining-ui-art`
 - 기존 구조: UX/UI 설계 → pattern selection → design system → accessibility → polishing → runtime audit → human evidence
 - 신규 ACTIVE Skill: 금지
@@ -12,7 +12,7 @@
 
 ### 사용자 제공
 
-- Laws of UX 30+ 원칙 요약
+- Laws of UX 31개 원칙 요약
 - Anthony Hobday visual design safe rules 요약
 - Adham Dannaway UI tips 요약
 - GUI 기본 요소(버튼·폼·메뉴·링크·대화상자·알림·아이콘·선택 컨트롤·탭·검색)와 창/스크롤·포인터 지침 요약
@@ -39,7 +39,7 @@
 - P0 BLOCKER → P3 DELIGHT 폴리싱
 - 실제 렌더/입력/사람 이해 증거
 
-따라서 별도 `laws-of-ux`, `visual-design-rules`, `ui-best-practices` ACTIVE Skill을 추가하면 owner 중복·라우팅 분산·규칙 충돌이 생긴다. 결론은 `ABSORB`이며 기존 owner의 reference/template/checklist/test에만 흡수한다.
+따라서 별도 `laws-of-ux`, `visual-design-rules`, `ui-best-practices` ACTIVE Skill을 추가하면 owner 중복·라우팅 분산·규칙 충돌이 생긴다. 결론은 `ABSORB`다. 기존 owner가 이미 직접 연결하는 `references/ux-ui-reference-library.md`가 공용 knowledge 문서를 라우팅하고, template/checklist/test/workflow가 실행 계약을 검증한다.
 
 ---
 
@@ -171,25 +171,44 @@
 
 **보정:** 기존 Base의 `HUMAN_NOT_RUN`, runtime evidence, accessibility user validation 분리를 유지한다.
 
+### AR-16 — 새 reference를 Skill package 내부에 고아로 추가
+
+**공격:** 최초 구현에서 새 Rulebook·완전성 매트릭스를 `skills/auditing-and-refining-ui-art/references/`에 추가하고 `ux-ui-reference-library.md`에서만 연결했다. Base package integrity 계약은 `references/`의 모든 packaged source를 owner `SKILL.md`에서 직접 발견 가능하게 요구하므로 광역 governance CI가 실패했다.
+
+**판정:** `MUST_FIX`
+
+**보정:**
+- 신규 ACTIVE Skill을 만들지 않는다.
+- `SKILL.md`를 변경해 특수 `game-ux-ui-skill-sync`의 Registry/README/learning-log 등 대규모 coupling을 불필요하게 유발하지 않는다.
+- 새 규칙 문서는 공용 knowledge인 `docs/knowledge/game-development/UI_UX_VISUAL_DESIGN_RULEBOOK.md`와 `UX_LAWS_COMPLETENESS_MATRIX.md`로 이동한다.
+- owner가 이미 직접 연결하는 `references/ux-ui-reference-library.md`에서 두 공용 knowledge 문서를 라우팅한다.
+- 전용 테스트와 workflow path filter도 새 canonical path로 이동한다.
+
+이 보정은 CI를 피하기 위한 우회가 아니라 Base의 패키지 무결성 경계와 progressive-disclosure 구조를 유지하면서 공용 지식과 Skill package artifact를 분리하는 구조 수정이다.
+
 ---
 
 ## 반영 결과
 
-1. `ui-ux-visual-design-rulebook.md`
+1. `docs/knowledge/game-development/UI_UX_VISUAL_DESIGN_RULEBOOK.md`
    - `MUST / SHOULD / STYLE_DEFAULT / TEST_REQUIRED`
    - 규범 표준 / 플랫폼 권고 / 인지·사용성 휴리스틱 / 시각 스타일 휴리스틱 분리
    - GUI 의미 문법 + Laws of UX + visual rules + 게임 접근성 통합
    - dark pattern/false progress/deliberate delay/7±2 오용 방지
-2. `ux-ui-reference-library.md`
-   - 새 rulebook을 기존 owner의 공식 reference route로 흡수
-3. `GAME_UX_UI_SYSTEM.md`
+2. `docs/knowledge/game-development/UX_LAWS_COMPLETENESS_MATRIX.md`
+   - 사용자 제공 31개 원칙 `31/31 MAPPED`
+   - #26 Primacy-Recency를 #16 Serial Position Effect와 중복 정규화
+   - Cognitive Bias, Paradox of the Active User를 명시적으로 포함
+3. `skills/auditing-and-refining-ui-art/references/ux-ui-reference-library.md`
+   - 두 공용 knowledge 문서를 기존 owner의 reference route로 흡수
+4. `templates/planning/GAME_UX_UI_SYSTEM.md`
    - 프로젝트별 rule profile, tier, platform, 예외 사유, 동등 경로, 검증 증거 기록
-4. `GAME_UX_UI_REVIEW_CHECKLIST.md`
+5. `templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md`
    - GUI semantics, 플랫폼 수치, 심리 윤리, STYLE_DEFAULT gate 추가
-5. `tests/test_ui_ux_visual_design_rules.py`
-   - 핵심 계약 회귀 테스트
-6. `.github/workflows/validate-game-ux-ui-system.yml`
-   - 새 테스트를 UX/UI 필수 workflow에 연결
+6. `tests/test_ui_ux_visual_design_rules.py`, `tests/test_ux_laws_completeness_matrix.py`
+   - 핵심 계약 및 31개 완전성 회귀 테스트
+7. `.github/workflows/validate-game-ux-ui-system.yml`
+   - 두 공용 knowledge path와 새 테스트를 UX/UI 필수 workflow에 연결
 
 ## 보호 범위 재검토
 
