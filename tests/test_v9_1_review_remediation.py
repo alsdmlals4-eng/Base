@@ -170,8 +170,16 @@ class BaseV91ReviewRemediationTests(unittest.TestCase):
             documentation_governance_template,
         )
         self.assertIn(
-            "actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c",
+            "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
             documentation_governance_template,
+        )
+
+        adapter_validation_template = (
+            ROOT / "templates/project-operations/github/validate-project-base-adapter.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            adapter_validation_template,
         )
 
         publication_workflow = (

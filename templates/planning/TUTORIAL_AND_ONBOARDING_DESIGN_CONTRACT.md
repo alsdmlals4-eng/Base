@@ -46,6 +46,20 @@ blocked_or_unverified:
 | PROVE | 안내 없는 독립 수행 |  |  |  |  |  |  |
 | TRANSFER | 다른 상황에서 재사용 |  |  |  |  |  |  |
 
+### FIRST_10_MINUTES_CONTRACT
+
+첫 10분은 장르·세션 길이에 맞춰 조정 가능한 기본값이며, 전체 시스템 설명 목표가 아니다. 대표 경험이 한 번 완결되는지 기록한다.
+
+| 흐름 | 첫 세션에서 확인할 내용 | 관찰 방법 | 근거 상태 |
+|---|---|---|---|
+| 대표 문제 | 지금 해결할 문제를 설명할 수 있는가 |  | NOT_RUN / PARTIAL / PASSED / FAILED |
+| 대표 행동 | 핵심 행동을 안내 없이 찾는가 |  |  |
+| 첫 선택 | 선택 이유와 포기하는 것을 말할 수 있는가 |  |  |
+| 첫 결과 | 결과의 원인을 설명할 수 있는가 |  |  |
+| 다음 질문 | 다음 시도에서 바꿀 행동을 말하는가 |  |  |
+
+의도적 미스터리·느린 도입은 시간값을 `PROJECT_ADAPTED`로 바꿀 수 있지만, 행동 목적까지 불명확하게 만드는 근거가 되지 않는다.
+
 ## 4. 성장 체감·접근성·근거
 
 ```yaml
@@ -65,6 +79,11 @@ benchmark_decision: ADOPT | ADAPT | AVOID | TEST | IGNORE
 
 ```yaml
 target_group_and_prior_exposure:
+evidence_layers:
+  TECH_EVIDENCE: NOT_RUN
+  UI_EVIDENCE: NOT_RUN
+  HUMAN_USABILITY_EVIDENCE: NOT_RUN
+  PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN
 player_task:
 primary_metric:
 guardrails:

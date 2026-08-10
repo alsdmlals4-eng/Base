@@ -99,6 +99,29 @@ evidence_ids: []
 
 기능이 핵심 경험과 직접 연결되지 않으면 `optional / support / remove-candidate` 중 하나로 분류한다.
 
+### Planned evidence & first-session contract
+
+이 Section은 **설계 단계에서 필요한 증거 질문과 관찰 계획**만 정한다. `PASS`·`FAILED` 같은 실제 실행 결과는 L3 Traceability와 변경 검증 원본에 기록한다.
+
+```yaml
+planned_evidence_layers:
+  TECH_EVIDENCE:
+  UI_EVIDENCE:
+  HUMAN_USABILITY_EVIDENCE:
+  PLAYER_EXPERIENCE_EVIDENCE:
+first_session_contract:
+  representative_problem:
+  representative_action:
+  first_meaningful_choice:
+  first_observable_result:
+  next_question_created:
+time_window: FIRST_10_MINUTES_DEFAULT | PROJECT_ADAPTED
+```
+
+- `TECH_EVIDENCE` 또는 `UI_EVIDENCE`가 있어도 사람 이해·경험 증거를 대신하지 않는다.
+- 첫 세션은 전체 기능 설명이 아니라 대표 문제 → 행동 → 선택 → 결과 → 다음 질문의 축소판인지 설계한다.
+- 프로젝트 코어가 아닌 별도 미니게임 후보는 `MINIGAME_NARRATIVE_FUNCTION_GATE`의 본편 정보·의미 있는 결과·실패 학습·재사용성·제작비를 해당 전문 정본에 연결한다.
+
 ---
 
 ## 3. Scope / Non-goals
@@ -308,6 +331,19 @@ export_or_build_step:
 - keyboard/controller/touch 지원:
 - cancel/back 동작:
 - destructive action 확인:
+
+### Decision screen check
+
+핵심 화면은 장식이나 기능 목록보다 현재 결정이 먼저 읽혀야 한다. 다음 네 질문을 같은 화면 또는 명확히 연결된 상세 흐름에서 답할 수 있는지 확인한다.
+
+```text
+현재 상황은 무엇인가
+무엇을 선택할 수 있는가
+선택에 필요한 정보는 무엇인가
+선택하면 어떤 비용·위험·결과가 예상되는가
+```
+
+의도적으로 숨기는 정보가 있어도 행동 목적·선택 가능성·숨김의 결과를 혼동시키지 않는다.
 
 ### Accessibility
 

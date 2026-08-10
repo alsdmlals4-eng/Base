@@ -71,6 +71,19 @@ evidence_decision: KEEP / REVISE / REDUCE / REMOVE / RETEST
 
 패키징·export·해시·headless PASS만으로 실제 런타임 PASS를 주장하지 않는다. 사용자가 화면 누락이나 조작 불가를 확인하면 판정은 `FAIL · RETEST_REQUIRED`다.
 
+### 5.1 플레이어 경험 증거 단계와 claim ceiling
+
+| evidence layer | 현재 상태 | 근거·실행 조건 | 이 상태만으로 말할 수 없는 것 |
+|---|---|---|---|
+| `TECH_EVIDENCE` | PASS / FAIL / NOT_RUN | 코드·데이터·Schema·엔진 실행 | 사용성·재미·몰입 |
+| `UI_EVIDENCE` | PASS / FAIL / NOT_RUN | 렌더·입력·포커스·해상도 | 신규 플레이어 이해·기억 |
+| `HUMAN_USABILITY_EVIDENCE` | PASS / FAIL / NOT_RUN | 처음 보는 사람의 조작·정보·다음 행동 관찰 | 의도한 감정·보상·기억 |
+| `PLAYER_EXPERIENCE_EVIDENCE` | PASS / FAIL / NOT_RUN | 고민·선택·결과·다음 시도 의도의 실제 관찰 | 유지율·판매·장기 시장성 |
+
+- 앞 단계의 `PASS`는 뒤 단계의 `PASS`를 의미하지 않는다.
+- 사람 테스트가 실행되지 않았으면 두 사람 증거 상태를 `NOT_RUN`으로 유지한다.
+- 작은 내부 테스트도 테스터 조건, 과제·질문, 행동·답변, 표본 한계를 증거에 남긴다.
+
 ## 6. Golden Path·Edge·반례·Regression
 
 | 유형 | 시나리오 | 결과 | 증거 |

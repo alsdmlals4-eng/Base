@@ -10,6 +10,10 @@ import sys
 from pathlib import Path
 from typing import Any
 
+TOOLS_ROOT = Path(__file__).resolve().parent
+if str(TOOLS_ROOT) not in sys.path:
+    sys.path.insert(0, str(TOOLS_ROOT))
+
 from jsonschema import Draft202012Validator, FormatChecker
 
 import project_operating_contract as contract
