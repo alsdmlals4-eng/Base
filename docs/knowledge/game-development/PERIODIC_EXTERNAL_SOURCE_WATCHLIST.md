@@ -44,6 +44,31 @@ Base는 scheduler·webhook·백그라운드 실행기가 아니다. 실제 주�
 | `DISCOVERY_FEED` | 여러 원문을 빠르게 발견하는 큐레이션·뉴스·뉴스레터 | 발견 역할만 기본. 원출처 역추적 전 T1/T2 권위 없음 |
 | `OBSERVATIONAL_DATA_OR_VENDOR_GUIDE` | 시장/플랫폼 관찰·벤치마크·분석 도구·벤더 실무 자료 | 표본·기간·방법·이해관계와 함께 사용. 공식 플랫폼 사실·보편 성공 공식으로 과장 금지 |
 
+### 2.1 Source 운영 상태의 책임 경계
+
+세 파일은 같은 정보를 중복 소유하지 않는다.
+
+```text
+PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md
+= Source pool / source role / 조사·판정 정책
+
+REFERENCE_SOURCE_CATALOG.md
+= article·claim 단위 Evidence와 재검증 조건
+
+PERIODIC_SOURCE_OPERATIONS_LEDGER.json
+= 고유 Source의 cadence와 실제 scan·material candidate·Base contribution 관측 상태
+```
+
+이 문서에서 `SOURCE_OPERATIONS_LEDGER`라고 부르는 운영 Ledger는 **권위 점수나 Evidence 정본이 아니다**. 여러 domain에서 같은 Source를 사용해도 고유 Source family 하나로 추적하며, Source가 실제로 얼마나 자주 유용한 판단을 만들었는지와 scan freshness를 관찰하기 위한 상태 기록이다.
+
+- `last_successful_scan_at`은 **실제로 확인한 Source만** 갱신한다.
+- 과거 scan·기여 이력을 추정해 backfill하지 않는다. 직접 증거가 없으면 `null`이다.
+- `NO_CHANGE`도 실제 Source를 확인했다면 scan timestamp는 갱신할 수 있지만 material/base contribution을 만들지는 않는다.
+- `last_base_contribution_at`·ref·counter는 해당 Source에서 파생된 Base 변경이 **실제 병합된 뒤에만** 갱신한다.
+- 정적이거나 권위가 높은 Source는 contribution count가 낮다는 이유만으로 제거하지 않는다.
+
+운영 파일: `docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json`
+
 ## 3. Domain별 Source Pool
 
 ### 3.1 `GAME_DEVELOPMENT`
@@ -249,11 +274,43 @@ license_or_copying_notes:
 
 원문 전체를 Base에 복제하지 않는다. 제목·URL·날짜·핵심 사실의 짧은 요약·적용 조건·판정만 기록한다.
 
+### 6.1 `CONTEXT_EXTRACTION` / `SOURCE_CONTEXT_PACKET`
+
+후보를 Base 변경으로 연결하기 전에 원문의 주장과 적용 조건을 다음 packet으로 축약한다. 컨텍스트 추출은 요약을 더 자신 있게 말하기 위한 단계가 아니라 **원문이 실제로 지지하는 범위와 Base에서 달라질 결정을 보존**하는 단계다.
+
+```yaml
+SOURCE_CONTEXT_PACKET:
+  source_id:
+  source_domain:
+  source_role:
+  source_url_or_surface:
+  original_source_backtrace:
+  published_or_updated_at:
+  checked_at:
+  source_fact:
+  context_conditions:
+  freshness:
+  scope:
+  sample_or_method:
+  platform_or_medium:
+  commercial_or_vendor_interest:
+  license_or_copying_notes:
+  base_overlap: NONE | PARTIAL | ALREADY_COVERED | CONFLICT
+  existing_owner:
+  decision_delta:
+  smallest_change_candidate:
+  disposition: ADOPT | ADAPT | TEST | AVOID | IGNORE | REFERENCE_ONLY
+  work_disposition: NO_CHANGE | EVIDENCE_ONLY_UPDATE | ABSORB_EXISTING_OWNER | LOW_RISK_BOUNDED_UPDATE | RULE_OR_BCP_CANDIDATE | BCP_OR_USER_DECISION
+```
+
+`CONTEXT_TO_CHANGE`는 항상 Existing Solution First로 시작한다. `ALREADY_COVERED`여도 누락된 적용 조건·반례·freshness·source cross-check·checklist·template·test·adversarial question을 기존 owner에 흡수할 수 있는지 먼저 본다. 독립 입력·산출물·권한·실패·검증 경계가 없으면 새 Skill이나 agent를 만들지 않는다.
+
 ## 7. 주기 Scan 실행 계약
 
 ```text
 LAST_SUCCESSFUL_SCAN
 → SOURCE_INDEX_REFRESH
+→ SOURCE_OPERATIONS_LEDGER
 → NEW_OR_CHANGED_CANDIDATES
 → DUPLICATE_AND_CURRENT_BASE_CHECK
 → 같은 Goal의 열린·최근 병합 PR CHECK
@@ -261,12 +318,18 @@ LAST_SUCCESSFUL_SCAN
 → SOURCE_ROLE_AND_EVIDENCE_TIER
 → FRESHNESS_AND_SCOPE_CHECK
 → DECISION_RELEVANCE_FILTER
+→ CONTEXT_EXTRACTION / SOURCE_CONTEXT_PACKET
+→ CURRENT_BASE_AND_PR_OVERLAP
+→ CONTEXT_TO_CHANGE / EXISTING_OWNER_FIRST
 → EVIDENCE_PACK
 → ADVERSARIAL_ATTACK
 → CRITIQUE_VALIDATION
 → ADOPT | ADAPT | TEST | AVOID | IGNORE | REFERENCE_ONLY
-→ REFERENCE_ONLY | EVIDENCE_ONLY_UPDATE | ABSORB_EXISTING_OWNER | LOW_RISK_BOUNDED_UPDATE | RULE_OR_BCP_CANDIDATE
-→ NO_CHANGE only if none of the retained outcomes apply
+→ NO_CHANGE | EVIDENCE_ONLY_UPDATE | ABSORB_EXISTING_OWNER | LOW_RISK_BOUNDED_UPDATE | RULE_OR_BCP_CANDIDATE | BCP_OR_USER_DECISION
+→ PR when a repository change is retained
+→ EXACT_HEAD_VALIDATION
+→ SOURCE_SCAN_AUTO_MERGE_GATE
+→ MERGED | BLOCKED | USER_DECISION_REQUIRED
 → REGRESSION_RECHECK
 → SCAN_CHECKPOINT
 ```
@@ -307,11 +370,11 @@ LAST_SUCCESSFUL_SCAN
 ### 기본 cadence
 
 - `daily-or-weekly`: Hada, OpenAI/Anthropic/Google/GitHub/Microsoft AI engineering updates, Godot release/blog, Steamworks, Android/Google Play policy/release, YouTube Help/Studio changes처럼 빠르게 변하는 면.
-- `weekly`: GameDiscoverCo, How To Market A Game, Game Developer, Reedsy recent learning, Adobe Premiere official release notes, Frame.io Insider, vidIQ research/blog.
+- `weekly`: GameDiscoverCo, How To Market A Game, Game Developer, Reedsy recent learning, Adobe Premiere official release notes, Frame.io Insider, vidIQ research/blog, SteamDB 공개 관찰, Blackmagic/DaVinci 공식 training·release workflow surface.
 - `monthly-or-on-demand`: GDC Vault, Games User Research, 80 Level, GameAnalytics, Deconstructor of Fun, GPUOpen, IGDA Game Writing, inkle/ink, Yarn Spinner.
-- `quarterly-or-when-relevant`: The Level Design Book, Game Accessibility Guidelines, Emily Short archive처럼 상대적으로 정적인 Reference.
+- `quarterly-or-when-relevant`: The Level Design Book, Game Accessibility Guidelines, Emily Short archive, Xbox Accessibility Guidelines처럼 상대적으로 정적이거나 필요 시 재검증 가치가 큰 Reference.
 
-이는 권장 기본값이며 Base 불변 일정이 아니다.
+이는 권장 기본값이며 Base 불변 일정이 아니다. 고유 Source별 현재 cadence와 실제 관측 상태는 `PERIODIC_SOURCE_OPERATIONS_LEDGER.json`에서 확인한다.
 
 ## 8. 최근 6개월 Bootstrap 계약
 
@@ -371,6 +434,9 @@ known_bias:
 - 열린 PR이 같은 책임을 이미 수정 중인데 병렬로 중복 변경했는가?
 - `새 규칙 없음`을 `유용한 흡수점 없음`으로 잘못 해석했는가?
 - 기존 owner에 작은 보강이 가능한데 `ALREADY_COVERED`라는 이유만으로 폐기했는가?
+- `SOURCE_CONTEXT_PACKET`이 원문의 한계·조건을 떨어뜨리고 결론만 과장했는가?
+- contribution count가 낮다는 이유로 정적·고권위 Source를 제거하려 했는가?
+- 자동병합을 이유로 보호된 의미 변경을 `LOW_RISK_BOUNDED_UPDATE`로 축소 분류했는가?
 
 ## 11. 변경 권한
 
@@ -385,6 +451,82 @@ known_bias:
 - 관련 테스트·적대적 재검토 실행 가능
 
 **실제 Base 변경은 별도 PR**에서 수행한다. 저위험 자동반영도 `branch → PR → 적대적 검토 → 관련 CI/exact-head 검증 → merge gate`를 거치며, scan 결과를 이유로 `main`에 직접 쓰지 않는다. 같은 Goal의 열린 PR이 있으면 중복 구현보다 해당 owner/PR에 흡수·defer할 수 있는지 먼저 확인한다.
+
+### `SOURCE_SCAN_AUTO_MERGE_GATE`
+
+Source 조사에서 유지된 변경 중 다음 work disposition만 자동병합 후보가 될 수 있다.
+
+```text
+EVIDENCE_ONLY_UPDATE | ABSORB_EXISTING_OWNER | LOW_RISK_BOUNDED_UPDATE
+```
+
+```yaml
+SOURCE_SCAN_AUTO_MERGE_GATE:
+  work_disposition:
+  approval_scope: REUSED_APPROVAL | NEW_APPROVAL | BLOCKED
+  original_source_verified:
+  existing_owner_confirmed:
+  same_goal_pr_conflict: NONE | PARTIAL | CONFLICT
+  adversarial_blockers: []
+  reviewed_head_sha:
+  current_head_sha:
+  base_main_sha:
+  strict_up_to_date:
+  required_check: ci-gate
+  required_checks_passed:
+  unresolved_review_threads:
+  protected_semantic_change:
+  result: AUTO_MERGE_ELIGIBLE | AUTO_MERGE_ENABLED | AUTO_MERGE_BLOCKED
+```
+
+`AUTO_MERGE_ELIGIBLE`은 다음이 모두 참일 때만 가능하다.
+
+- 현재 승인 범위 안의 가역적 저위험 변경이다.
+- 원출처 검증이 추가하려는 claim 수준에 충분하다.
+- 동일 Goal의 열린·최근 병합 PR을 확인했고 unresolved overlap/conflict가 없다.
+- 기존 Base owner 또는 승인된 destination이 확인됐다.
+- 적대적 검토의 왜곡·충돌·누락·과잉 일반화·중복·stale-reference·scope-expansion blocker가 0이다.
+- `reviewed_head_sha == current_head_sha`다.
+- 최신 `main`을 포함해 **strict up-to-date** 상태이며 main이 이동했다면 동기화 후 exact-head 검증을 다시 실행했다.
+- 해당 변경에 필요한 모든 Required Check가 성공했고 최종 `ci-gate`가 성공했다.
+- `unresolved review thread`가 0이다.
+- 현행 Ruleset과 허용된 squash merge 경로가 확인됐다.
+- `USER_REVIEW_REQUIRED`, `CHANGE_PROPOSAL`, `BCP_OR_USER_DECISION`, `BLOCKED_UNVERIFIED`, `REVISE`, `UNVERIFIED`가 남아 있지 않다.
+
+조건을 충족하면 담당 agent/scheduler는 현행 Repository 정책에 따라 auto-merge를 활성화하거나 승인된 squash merge 경로를 실행할 수 있다. Required Check나 Ruleset을 우회해 `main`에 직접 쓰지 않는다.
+
+다음 보호 의미는 `protected_semantic_change: true`로 보고 `AUTO_MERGE_BLOCKED`한다.
+
+- repository/global policy 의미 또는 `AGENTS.md` authority·approval semantics
+- ACTIVE Skill ID·owner·trigger identity·`behavior schema`
+- `security`·`permission`·secret·`license`·dependency trust policy
+- Repository `Ruleset`·`Required Check`·workflow authority/permission
+- 제품·게임·소설·채널 핵심 방향
+- 의미 있는 save/data compatibility 또는 runtime behavior blast radius
+- 새 ACTIVE Skill 또는 새 specialist agent
+- 약하거나 상충하거나 충분히 검증되지 않은 외부 claim
+
+기존 `SKILL.md`의 reference/checklist/evidence/freshness guardrail처럼 작은 보강은 Skill identity·owner·trigger·permission·approval·behavior schema를 바꾸지 않는다고 적대적 검토에서 확인된 경우에만 저위험 후보가 될 수 있다. 경계가 모호하면 자동병합하지 않고 `AUTO_MERGE_BLOCKED`한다.
+
+### Source 운영 상태 갱신
+
+각 scan checkpoint에서:
+
+1. 실제로 읽거나 조회해 확인한 Source만 `last_successful_scan_at`을 갱신한다.
+2. Base 결정을 바꿀 수 있어 유지한 material candidate만 `last_material_candidate_at`과 counter를 갱신한다.
+3. Source에서 파생된 변경이 실제 Base `main`에 병합됐을 때만 `last_base_contribution_at`·`last_base_contribution_ref`·counter를 갱신한다.
+4. `NO_CHANGE`는 truthful scan state만 남기며 contribution을 만들지 않는다.
+5. Ledger 업데이트 자체가 Source의 Evidence tier를 높이지 않는다.
+
+#### `SCAN_STATE_BATCH`
+
+운영 상태를 측정한다는 이유로 저장소를 매일 흔들지 않는다.
+
+- `NO_CHANGE만으로 매일 Ledger-only PR`을 만들지 않는다.
+- material change가 있어 Base 변경 PR을 만드는 날에는 해당 scan state를 그 PR 또는 바로 이어지는 bounded checkpoint에 함께 기록할 수 있다.
+- material change가 없는 scan state는 기본적으로 **주간 batch checkpoint**로 묶어 최신 실제 scan 사실만 반영한다.
+- 보안·정책 deadline처럼 freshness 자체가 즉시 의사결정을 바꾸는 경우에는 주간 batch를 기다리지 않고 별도 bounded checkpoint를 허용한다.
+- batch 때문에 실제로 확인하지 않은 Source를 확인한 것처럼 timestamp를 당기지 않는다.
 
 ### `BCP_OR_USER_DECISION`
 
@@ -410,6 +552,8 @@ known_bias:
 scan_window:
 source_domains_checked: []
 sources_checked:
+source_operations_ledger_updates:
+context_packets_retained:
 full_index_review: []
 partial_index_review: []
 static_reference_review: []
@@ -419,6 +563,7 @@ absorbed_improvements:
 no_change_count:
 evidence_only_updates:
 low_risk_updates:
+source_auto_merge_results:
 bcp_or_user_decisions:
 rejected_overgeneralizations:
 open_pr_conflicts_or_deferrals:

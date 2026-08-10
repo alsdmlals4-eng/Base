@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 WATCHLIST = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md"
+LEDGER = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_SOURCE_OPERATIONS_LEDGER.json"
 RECENT_REVIEW = ROOT / "docs" / "knowledge" / "game-development" / "RECENT_EXTERNAL_EVIDENCE_REVIEW_2026-08-10.md"
 HUB = ROOT / "docs" / "knowledge" / "game-development" / "README.md"
 METHOD = ROOT / "docs" / "knowledge" / "game-development" / "EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md"
@@ -80,6 +82,101 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
         self.assertIn("Base는 scheduler", content)
         self.assertNotIn("DISCOVERY_FEED = T1_PRIMARY_OFFICIAL", content)
         self.assertNotIn("DISCOVERY_FEED = T2_PROFESSIONAL_PRACTICE", content)
+
+    def test_source_operations_ledger_is_unique_machine_readable_state(self) -> None:
+        self.assertTrue(LEDGER.is_file())
+        data = json.loads(LEDGER.read_text(encoding="utf-8"))
+        self.assertEqual(1, data["schema_version"])
+        self.assertEqual("2026-08-11", data["tracking_started_at"])
+        sources = data["sources"]
+        self.assertGreaterEqual(len(sources), 33)
+        self.assertEqual(len(sources), len({row["source_id"] for row in sources}))
+
+        expected_ids = {
+            "godot", "steamworks", "android-games", "google-play-policy",
+            "xbox-accessibility", "gpuopen", "gdc-vault", "game-developer",
+            "games-user-research", "80-level", "level-design-book",
+            "game-accessibility-guidelines", "how-to-market-a-game",
+            "deconstructor-of-fun", "hada-geeknews", "gamediscoverco",
+            "gameanalytics", "steamdb", "openai", "anthropic",
+            "github-copilot", "google-ai-adk", "microsoft-learn", "reedsy",
+            "inkle-ink", "yarn-spinner", "igda-game-writing", "emily-short",
+            "youtube-official", "blackmagic-davinci", "adobe-premiere",
+            "frameio", "vidiq",
+        }
+        self.assertTrue(expected_ids.issubset({row["source_id"] for row in sources}))
+
+        allowed_cadence = {
+            "daily-or-weekly", "weekly", "monthly-or-on-demand",
+            "quarterly-or-when-relevant",
+        }
+        required_keys = {
+            "source_id", "name", "domains", "roles", "recommended_cadence",
+            "scan_surfaces", "last_successful_scan_at",
+            "last_material_candidate_at", "last_base_contribution_at",
+            "last_base_contribution_ref",
+            "material_candidate_count_since_tracking_start",
+            "base_contribution_count_since_tracking_start", "status",
+        }
+        for row in sources:
+            with self.subTest(source_id=row["source_id"]):
+                self.assertTrue(required_keys.issubset(row))
+                self.assertIn(row["recommended_cadence"], allowed_cadence)
+                self.assertTrue(row["domains"])
+                self.assertTrue(row["roles"])
+                self.assertTrue(row["scan_surfaces"])
+                for key in (
+                    "last_successful_scan_at",
+                    "last_material_candidate_at",
+                    "last_base_contribution_at",
+                    "last_base_contribution_ref",
+                ):
+                    self.assertTrue(row[key] is None or isinstance(row[key], str))
+                self.assertGreaterEqual(row["material_candidate_count_since_tracking_start"], 0)
+                self.assertGreaterEqual(row["base_contribution_count_since_tracking_start"], 0)
+                self.assertEqual("ACTIVE", row["status"])
+
+    def test_watchlist_connects_context_extraction_to_fail_closed_auto_merge(self) -> None:
+        content = WATCHLIST.read_text(encoding="utf-8")
+        for required in (
+            "SOURCE_OPERATIONS_LEDGER",
+            "SOURCE_CONTEXT_PACKET",
+            "CONTEXT_EXTRACTION",
+            "CONTEXT_TO_CHANGE",
+            "SOURCE_SCAN_AUTO_MERGE_GATE",
+            "EVIDENCE_ONLY_UPDATE",
+            "ABSORB_EXISTING_OWNER",
+            "LOW_RISK_BOUNDED_UPDATE",
+            "RULE_OR_BCP_CANDIDATE",
+            "BCP_OR_USER_DECISION",
+            "reviewed_head_sha",
+            "current_head_sha",
+            "strict up-to-date",
+            "strict_up_to_date:",
+            "ci-gate",
+            "unresolved review thread",
+            "ACTIVE Skill ID",
+            "behavior schema",
+            "security",
+            "permission",
+            "license",
+            "Ruleset",
+            "Required Check",
+        ):
+            self.assertIn(required, content)
+        self.assertNotIn("strict up-to_date:", content)
+        self.assertIn("제품·게임·소설·채널", content)
+        self.assertIn("EVIDENCE_ONLY_UPDATE | ABSORB_EXISTING_OWNER | LOW_RISK_BOUNDED_UPDATE", content)
+        self.assertIn("AUTO_MERGE_BLOCKED", content)
+        self.assertIn("실제로 확인한 Source만", content)
+        self.assertIn("실제 병합된 뒤에만", content)
+
+    def test_scan_state_checkpoint_does_not_force_daily_no_change_prs(self) -> None:
+        content = WATCHLIST.read_text(encoding="utf-8")
+        self.assertIn("SCAN_STATE_BATCH", content)
+        self.assertIn("NO_CHANGE만으로 매일 Ledger-only PR", content)
+        self.assertIn("주간 batch checkpoint", content)
+        self.assertIn("material change", content)
 
     def test_recent_six_month_review_records_coverage_and_dispositions(self) -> None:
         self.assertTrue(RECENT_REVIEW.is_file())
