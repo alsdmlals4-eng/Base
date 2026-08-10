@@ -11,6 +11,8 @@ DELIVERY_GUIDE = (
     "PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md"
 )
 DELIVERY_PROFILE = "templates/planning/PC_ANDROID_DELIVERY_PROFILE.md"
+TUTORIAL_GUIDE = "docs/knowledge/game-development/TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md"
+TUTORIAL_CONTRACT = "templates/planning/TUTORIAL_AND_ONBOARDING_DESIGN_CONTRACT.md"
 
 
 def read(path: str) -> str:
@@ -33,6 +35,25 @@ class GameDesignDifficultyWorkflowTests(unittest.TestCase):
             "동적 난이도 조절",
         ):
             self.assertIn(term, skill)
+
+    def test_tutorial_mode_stays_with_the_existing_game_concept_owner(self) -> None:
+        skill = read("skills/analyzing-and-refining-game-concepts/SKILL.md")
+        guide = read(TUTORIAL_GUIDE)
+        contract = read(TUTORIAL_CONTRACT)
+        registry = json.loads(read("skills/SKILL_REGISTRY.json"))
+
+        for term in (
+            "tutorial-and-onboarding-design",
+            TUTORIAL_GUIDE,
+            TUTORIAL_CONTRACT,
+            "RULE → NEED → DISCOVER → FEEL → PROVE → TRANSFER",
+            "안내 없는 독립 수행",
+            "접근성 대체 채널",
+        ):
+            self.assertIn(term, skill + guide + contract)
+
+        skill_ids = {item["skill_id"] for item in registry["skills"]}
+        self.assertNotIn("tutorial-and-onboarding-design", skill_ids)
 
     def test_pc_android_delivery_route_is_conditional(self) -> None:
         skill = read("skills/analyzing-and-refining-game-concepts/SKILL.md")
