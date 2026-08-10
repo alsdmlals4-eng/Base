@@ -4,7 +4,7 @@
 
 **Goal:** Base의 기존 `auditing-and-refining-ui-art` 책임을 유지하면서 심리학·GUI 관례·접근성·게임 UI·비주얼 디자인 원칙을 증거 강도별로 통합하고, 프로젝트별 예외와 검증을 강제한다.
 
-**Architecture:** 신규 ACTIVE Skill을 만들지 않는다. 기존 owner가 이미 읽는 `references/ux-ui-reference-library.md`에서 새 통합 rulebook을 라우팅하고, `GAME_UX_UI_SYSTEM`이 프로젝트별 적용 강도·예외·검증을 기록하며, `GAME_UX_UI_REVIEW_CHECKLIST`와 전용 회귀 테스트가 오용을 차단한다. 규범 표준·플랫폼 권고·인지/사용성 휴리스틱·시각 스타일 기본값을 분리한다.
+**Architecture:** 신규 ACTIVE Skill을 만들지 않는다. 기존 owner가 이미 읽는 `references/ux-ui-reference-library.md`에서 `docs/knowledge/game-development/`의 공용 rulebook·완전성 매트릭스를 라우팅하고, `GAME_UX_UI_SYSTEM`이 프로젝트별 적용 강도·예외·검증을 기록하며, `GAME_UX_UI_REVIEW_CHECKLIST`와 전용 회귀 테스트가 오용을 차단한다. 규범 표준·플랫폼 권고·인지/사용성 휴리스틱·시각 스타일 기본값을 분리한다.
 
 **Tech Stack:** Markdown contracts, Python `unittest`, GitHub Actions, Base reference-freshness/UX UI validation workflow.
 
@@ -36,16 +36,18 @@
 ### Task 2: 통합 Rulebook 작성
 
 **Files:**
-- Create: `skills/auditing-and-refining-ui-art/references/ui-ux-visual-design-rulebook.md`
+- Create: `docs/knowledge/game-development/UI_UX_VISUAL_DESIGN_RULEBOOK.md`
+- Create: `docs/knowledge/game-development/UX_LAWS_COMPLETENESS_MATRIX.md`
 - Modify: `skills/auditing-and-refining-ui-art/references/ux-ui-reference-library.md`
 
 **Interfaces:**
 - Consumes: W3C WCAG 2.2, Apple HIG, Android accessibility guidance, Xbox Accessibility Guidelines, Laws of UX, Anthony Hobday visual rules, Adham Dannaway UI tips, 사용자 제공 GUI 원칙 자료.
-- Produces: `MUST / SHOULD / STYLE_DEFAULT / TEST_REQUIRED` 규칙 계층과 플랫폼별 수치·예외·검증 계약.
+- Produces: `MUST / SHOULD / STYLE_DEFAULT / TEST_REQUIRED` 규칙 계층, 사용자 제공 Laws of UX 31개 완전성 매핑, 플랫폼별 수치·예외·검증 계약.
 
 - [ ] 규범 표준과 휴리스틱을 분리한다.
 - [ ] 버튼/링크/폼/메뉴/대화상자/알림/아이콘/선택 컨트롤/탭/검색의 의미 문법을 통합한다.
 - [ ] Hick/Fitts/Jakob/cognitive load/working memory/Gestalt/flow/goal-gradient/Zeigarnik/Peak-End/Tesler/Postel/Occam/Pareto/Parkinson 등을 적용 조건·오용 방지와 함께 통합한다.
+- [ ] 사용자 제공 Laws of UX 31개를 누락 없이 1:1 대조하고 중복 원칙은 명시적으로 정규화한다.
 - [ ] 접근성 수치는 Web 24 CSS px, Apple 44×44 pt, Android 48×48 dp처럼 출처 단위를 보존한다.
 - [ ] 게임 UI의 controller focus, remapping, subtitles/captions, TV 거리, motion/FOV/camera options를 보강한다.
 - [ ] 순수 black/white 회피, 8 기반 scale, 12-column, 16px body, 70자 line length, shadow/brightness/radius 등은 스타일 기본값 또는 웹 한정 휴리스틱으로 낮춘다.
