@@ -1,5 +1,27 @@
 # Maintaining Project Context and Handoff Learning Log
 
+## 2026-08-10 — External runtime session resume needs current evidence
+
+### Context
+
+An external Editor/MCP runtime target can be absent from a session registry while an earlier process or transport observation still exists. A handoff that presents those historical values as current authority can select the wrong target or resume unsafe work.
+
+### Finding
+
+- A past PID, WebSocket connection, or session ID does not prove current target identity, transport ownership, or registry registration.
+- A missing target session does not prove process failure and does not authorize a shared-server restart or another project's session selection.
+- Recovery of the automation session only reopens approved runtime work; it does not prove product tests, runtime behavior, human QA, release readiness, or production readiness.
+
+### Decision
+
+- Keep full same-snapshot external-session diagnosis in the Godot Live Editor security/recovery authority.
+- In a Handoff, label stale PID/session values as historical evidence and require fresh current reads before target selection or mutation.
+- Retain `BLOCKED_UNVERIFIED` when process, transport, bounded server logs, and immediate registry evidence cannot be tied to the same observation window.
+
+### Boundary and validation
+
+This does not add an external transport, MCP server, process-control implementation, or project runtime proof. Focused same-snapshot recovery contract tests verify the owner/consumer boundary; actual external runtime reproduction remains `NOT_RUN` until a project provides an isolated harness.
+
 ## 2026-08-08 — On-demand Codex handoff and inherited merge authority
 
 ### Context

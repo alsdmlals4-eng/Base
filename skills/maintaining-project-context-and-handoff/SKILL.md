@@ -307,6 +307,8 @@ GPT는 Commit·원격 HEAD·diff·테스트 증거를 확인하고 다음으로 
 
 최신 `main`, 패키지 Branch, 원격 HEAD, 마지막 승인 Commit, 실행 명세와 실제 파일을 다시 대조한다. 오래된 Plan이나 과거 대화만 그대로 실행하지 않는다.
 
+외부 Editor/MCP runtime session을 다루는 인계에서 stale PID/session 값은 historical evidence일 뿐 current authority가 아니다. 새 실행에서 target 선택이나 mutation을 하기 전 current process, transport ownership, server registration, exact target session을 fresh-read한다. 같은 관측창의 증거가 없으면 원인을 확정하지 않고 `BLOCKED_UNVERIFIED`로 남기며, 이 Handoff는 외부 transport 복구 진단 절차를 중복 소유하지 않는다.
+
 ### 14. 콜드 스타트 검수
 
 새 작업자가 10분 안에 다음을 찾는지 확인한다.
