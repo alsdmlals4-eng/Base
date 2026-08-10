@@ -13,7 +13,7 @@
 - Existing Solution Verdict: `ABSORB`
 - 사용자 표시명 규칙: `BCP - 프로젝트 이름`
 
-이 파일은 사용자 지정 명명 규칙에 따라 `bcp-괴이기록국(urban-legend)` 경로를 canonical proposal surface로 사용한다. 기계 추적용 Proposal ID는 기존 `BCP-2026-014-handoff-machine-consumer-compatibility-closeout`를 유지한다.
+사용자에게 보이는 제안명은 `BCP - 괴이기록국(urban-legend)`로 유지한다. 다만 현재 Base proposal validator가 Proposal ID와 canonical path의 일치를 기계적으로 요구하므로 실제 Registry/canonical 경로는 `[수정제안서]/BCP-2026-014-handoff-machine-consumer-compatibility-closeout/PROPOSAL.md`를 유지한다. `bcp-프로젝트이름`은 이 제안의 Registry canonical path로 사용하지 않는다.
 
 ## 관찰과 증거
 
@@ -94,8 +94,8 @@ Base 공용 규칙으로 복사하지 않는다.
 
 ## 승인과 구현
 
-- 사용자 승인 근거: 본 proposal storage 및 프로젝트명 기반 명명 규칙 적용 승인
+- 사용자 승인 근거: 본 proposal storage 및 프로젝트명 기반 표시명 적용 승인
 - 제안 상태: `SUBMITTED`
 - 활성 Base 구현 승인: `미승인`
 - 구현 PR: `없음`
-- 롤백: 이 canonical proposal path와 Registry entry를 이전 상태로 되돌리면 되며 활성 Base 동작에는 영향이 없다.
+- 롤백: 이 proposal 문서와 Registry 표시명 변경을 이전 상태로 되돌리면 되며 활성 Base 동작에는 영향이 없다.
