@@ -384,6 +384,8 @@ known_bias:
 - 원출처와 현행 Base 비교 완료
 - 관련 테스트·적대적 재검토 실행 가능
 
+**실제 Base 변경은 별도 PR**에서 수행한다. 저위험 자동반영도 `branch → PR → 적대적 검토 → 관련 CI/exact-head 검증 → merge gate`를 거치며, scan 결과를 이유로 `main`에 직접 쓰지 않는다. 같은 Goal의 열린 PR이 있으면 중복 구현보다 해당 owner/PR에 흡수·defer할 수 있는지 먼저 확인한다.
+
 ### `BCP_OR_USER_DECISION`
 
 다음은 자동 확정하지 않는다.
