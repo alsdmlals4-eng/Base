@@ -150,12 +150,12 @@
       "proposal_id": "BCP-2026-015-external-runtime-session-same-snapshot-recovery",
       "title": "BCP - OMENWARD",
       "path": "[수정제안서]/BCP-2026-015-external-runtime-session-same-snapshot-recovery/PROPOSAL.md",
-      "status": "APPROVED_FOR_IMPLEMENTATION",
+      "status": "IMPLEMENTED",
       "source_project": "alsdmlals4-eng/omenward",
       "source_commit": "bde85549560fca90f7aa25fc4842bc0a3afb92e7",
       "submitted_at": "2026-08-10",
       "approval_ref": "[수정제안서]/BCP-2026-015-external-runtime-session-same-snapshot-recovery/PROPOSAL.md#승인과-구현",
-      "implementation_pr": null
+      "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/266"
     },
     {
       "proposal_id": "BCP-2026-016-live-source-handoff-semantic-consumer-reconciliation",
