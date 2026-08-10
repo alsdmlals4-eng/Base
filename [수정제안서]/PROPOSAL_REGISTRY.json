@@ -112,6 +112,17 @@
       "submitted_at": "2026-08-10",
       "approval_ref": "[수정제안서]/BCP-2026-011-game-feature-design-spec-system/PROPOSAL.md#승인과-구현",
       "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/231"
+    },
+    {
+      "proposal_id": "BCP-2026-012-serial-fiction-canon-migration-debt",
+      "title": "연재소설 Canon Migration Debt lifecycle",
+      "path": "[수정제안서]/BCP-2026-012-serial-fiction-canon-migration-debt/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "alsdmlals4-eng/Coc-Fiction",
+      "source_commit": "c9c4fa647c833470759ada2514e45d1b2abb1e8b",
+      "submitted_at": "2026-08-10",
+      "approval_ref": null,
+      "implementation_pr": null
     }
   ]
 }
