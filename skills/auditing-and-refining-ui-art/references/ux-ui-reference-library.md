@@ -1,6 +1,6 @@
 # UX/UI 공식 레퍼런스 라이브러리
 
-> 최종 확인: 2026-07-29
+> 최종 확인: 2026-08-10
 
 외부 자료는 프로젝트 요구사항이나 구현 사실의 정본이 아니다. 문제·플랫폼·플레이어 위험이 일치하는 원리만 채택하고 브랜드 외형·자산·문구를 복제하지 않는다.
 
@@ -141,7 +141,24 @@ Base 판정:
 - Tween·AnimationPlayer는 표시를 책임하며 도메인 결과를 소유하지 않는다.
 - 중단·즉시 완료·재진입·입력 장치 전환에서도 선택과 포커스가 보존되는지 테스트한다.
 
-## 8. 레퍼런스 사용 절차
+## 8. 통합 UI/UX·비주얼 Rulebook
+
+- 공용 실행 규칙: [ui-ux-visual-design-rulebook.md](ui-ux-visual-design-rulebook.md)
+- 확인일: 2026-08-10
+- 입력 근거: WCAG 2.2, Apple HIG, Android accessibility, Xbox Accessibility Guidelines, Laws of UX, Anthony Hobday visual-design heuristics, Adham Dannaway UI tips, 사용자 제공 GUI 기본 요소 요약.
+
+### Base 판정
+
+- `ADOPT`: 버튼/링크/선택 컨트롤의 의미 문법, 색상 단독 상태 금지, focus/복구, 오류의 원인+다음 행동, 실제 입력 완결성.
+- `ADAPT`: Web/Apple/Android/Xbox의 target size·text·contrast 수치를 각 플랫폼 단위와 사용 거리로 보존해 적용.
+- `TEST`: Flow, Goal-Gradient, Zeigarnik, Peak-End, Von Restorff, Doherty 같은 행동·인지 효과와 모든 시각 스타일 수치.
+- `AVOID`: Miller `7±2`를 메뉴 개수 제한으로 사용, 허위 진행, 근거 없는 의도적 지연, 심리 원칙의 다크 패턴화, 12-column·16px·70자·shadow/brightness 수치를 게임 전역 상수로 승격.
+
+### 증거 강도
+
+Rulebook은 외부 지침을 `MUST / SHOULD / STYLE_DEFAULT / TEST_REQUIRED`로 분리한다. 규범 표준·플랫폼 권고·인지/사용성 휴리스틱·시각 스타일 휴리스틱을 서로 다른 증거 유형으로 유지하고, 접근성·semantic/focus/read order가 스타일보다 우선한다.
+
+## 9. 레퍼런스 사용 절차
 
 ```text
 현재 플레이어 문제와 증거
@@ -155,10 +172,11 @@ Base 판정:
 
 각 참고는 `templates/research/UX_UI_REFERENCE_CARD.md`로 기록한다.
 
-## 9. 금지
+## 10. 금지
 
 - 출처 제목만 보고 원문을 읽지 않은 채 규칙 생성.
 - 최신 확인일·플랫폼·버전 없이 영구 표준으로 고정.
 - 다른 제품의 화면, 아이콘, 문구, 고유 상호작용을 복제.
 - 공식 지침을 사용자의 최신 결정이나 프로젝트 정본보다 높은 권한으로 사용.
 - 자동 검사·전문가 검토·실제 사용자 검증을 같은 증거로 합침.
+- 규범 표준·플랫폼 권고·인지/사용성 휴리스틱·시각 스타일 휴리스틱의 증거 강도를 섞음.
