@@ -42,6 +42,7 @@ on:
       - "tests/test_pc_android_cross_platform_delivery.py"
       - "tests/test_visual_requirement_gate.py"
       - "tests/test_periodic_external_source_watchlist.py"
+      - "tests/test_weekly_work_improvement_review.py"
       - ".github/workflows/validate-evidence-knowledge.yml"
   workflow_dispatch:
 
@@ -81,7 +82,8 @@ jobs:
               tests/test_prompt_recipe_reference_contract.py \
               tests/test_pc_android_cross_platform_delivery.py \
               tests/test_visual_requirement_gate.py \
-              tests/test_periodic_external_source_watchlist.py
+              tests/test_periodic_external_source_watchlist.py \
+              tests/test_weekly_work_improvement_review.py
             python -m unittest \
               tests/test_game_design_difficulty_workflow.py \
               tests/test_game_development_youtube_skill.py \
@@ -93,6 +95,7 @@ jobs:
               tests/test_pc_android_cross_platform_delivery.py \
               tests/test_visual_requirement_gate.py \
               tests/test_periodic_external_source_watchlist.py \
+              tests/test_weekly_work_improvement_review.py \
               -v
           } > evidence-knowledge-results.txt 2>&1
           status=$?
@@ -127,4 +130,5 @@ jobs:
             tests/test_pc_android_cross_platform_delivery.py
             tests/test_visual_requirement_gate.py
             tests/test_periodic_external_source_watchlist.py
+            tests/test_weekly_work_improvement_review.py
           if-no-files-found: error
