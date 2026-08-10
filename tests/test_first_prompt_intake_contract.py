@@ -92,7 +92,7 @@ class FirstPromptIntakeContractTests(unittest.TestCase):
             "중복 질문",
             "L0",
             "오탈자",
-            "동일한 검사 재실행",
+            "입력과 판정 기준이 동일한 검사를 재실행",
         ):
             with self.subTest(required=required):
                 self.assertIn(required, skill)

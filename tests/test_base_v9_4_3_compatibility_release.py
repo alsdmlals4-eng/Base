@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 import unittest
 from pathlib import Path
 
@@ -80,7 +81,7 @@ class BaseV943CompatibilityReleaseTests(unittest.TestCase):
     def test_release_index_installs_v943(self) -> None:
         result = subprocess.run(
             [
-                "python",
+                sys.executable,
                 "-c",
                 (
                     "import sys; sys.path.insert(0, 'tools'); "
@@ -100,7 +101,7 @@ class BaseV943CompatibilityReleaseTests(unittest.TestCase):
 
     def test_release_checker_accepts_released_candidate(self) -> None:
         result = subprocess.run(
-            ["python", str(RELEASE_CHECKER_PATH), "--trusted-history-commit", "HEAD"],
+            [sys.executable, str(RELEASE_CHECKER_PATH), "--trusted-history-commit", "HEAD"],
             cwd=ROOT,
             capture_output=True,
             text=True,
