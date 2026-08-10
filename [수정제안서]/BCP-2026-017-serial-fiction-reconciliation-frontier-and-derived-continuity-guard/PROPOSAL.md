@@ -7,10 +7,10 @@
 - 출처 프로젝트: `alsdmlals4-eng/Coc-Fiction`
 - 출처 프로젝트 관측 main: `e829fecf7e52d2b2aefaa13d0b1e1e689f69dac0`
 - 제출일: `2026-08-10`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `Pattern + Counterexample`
 - Existing Solution Verdict: `MATERIAL_SCOPE_EXTENSION_NOT_DUPLICATE`
-- 활성 Base 구현 승인: `NOT_GRANTED_IN_THIS_STAGE`
+- 활성 Base 구현 승인: `GRANTED_2026_08_10; IMPLEMENTED_VIA_PR_265`
 
 이 제안은 Coc-Fiction의 최신 외부 원고와 GitHub legacy 장편 원고를 실제로 묶음 단위 reconciliation하는 과정에서 확인된 **이동하는 reconciliation frontier와 미검증 경계의 파생 연속성 보호 계약**을 Base에 제안한다.
 
@@ -352,3 +352,12 @@ then and only then may whole-artifact migration complete be claimed.
 - approval_ref: `[수정제안서]/BCP-2026-017-serial-fiction-reconciliation-frontier-and-derived-continuity-guard/PROPOSAL.md#승인과-구현`
 - BCP-013 active implementation 승인으로 해석하지 않음
 - 사용자는 2026-08-10 KST 대화에서 `좋아 다 승인할게 [연속작업] 진행해`로 BCP-012와 결합한 기존 serial-fiction/freshness owner 최소 흡수를 승인했다. 프로젝트별 work-unit 수, Canon, 파일 경로, 원고 내용은 제외한다.
+
+### 구현 closeout — PR #265
+
+- 최종 상태: `IMPLEMENTED`
+- 실제 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/265`
+- 병합된 Base main: `0d1cebdec0e1f3b660688ec194dcc27054dcfc2d`
+- 구현 범위: reconciliation frontier·candidate-versus-verified 분리·derived consumer의 false continuity 차단·duplicate current authority fail-closed를 기존 serial-fiction/freshness owner에 흡수하고 focused 회귀로 보호했다.
+- 보호 범위: 새 broad Skill·프로젝트 전용 work-unit/schema·Coc-Fiction 원고·동결 산출물은 구현 PR에서 변경하지 않았다.
+- 검증 한계: 두 번째 serial-fiction project pilot, 사람 사용성, Coc-Fiction 런타임/원고 품질 검증은 이 Base 계약의 통과로 주장하지 않으며 별도 프로젝트 증거가 필요하다.

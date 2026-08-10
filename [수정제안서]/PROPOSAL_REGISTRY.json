@@ -117,12 +117,12 @@
       "proposal_id": "BCP-2026-012-serial-fiction-canon-migration-debt",
       "title": "연재소설 Canon Migration Debt lifecycle",
       "path": "[수정제안서]/BCP-2026-012-serial-fiction-canon-migration-debt/PROPOSAL.md",
-      "status": "APPROVED_FOR_IMPLEMENTATION",
+      "status": "IMPLEMENTED",
       "source_project": "alsdmlals4-eng/Coc-Fiction",
       "source_commit": "c9c4fa647c833470759ada2514e45d1b2abb1e8b",
       "submitted_at": "2026-08-10",
       "approval_ref": "[수정제안서]/BCP-2026-012-serial-fiction-canon-migration-debt/PROPOSAL.md#승인과-구현",
-      "implementation_pr": null
+      "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/265"
     },
     {
       "proposal_id": "BCP-2026-013-post-merge-continuation-state-reconciliation",
@@ -172,12 +172,12 @@
       "proposal_id": "BCP-2026-017-serial-fiction-reconciliation-frontier-and-derived-continuity-guard",
       "title": "BCP - Coc-Fiction",
       "path": "[수정제안서]/BCP-2026-017-serial-fiction-reconciliation-frontier-and-derived-continuity-guard/PROPOSAL.md",
-      "status": "APPROVED_FOR_IMPLEMENTATION",
+      "status": "IMPLEMENTED",
       "source_project": "alsdmlals4-eng/Coc-Fiction",
       "source_commit": "e829fecf7e52d2b2aefaa13d0b1e1e689f69dac0",
       "submitted_at": "2026-08-10",
       "approval_ref": "[수정제안서]/BCP-2026-017-serial-fiction-reconciliation-frontier-and-derived-continuity-guard/PROPOSAL.md#승인과-구현",
-      "implementation_pr": null
+      "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/265"
     },
     {
       "proposal_id": "BCP-2026-018-godot-pilot-failure-diagnostic-preservation",

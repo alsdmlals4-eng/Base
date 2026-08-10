@@ -17,7 +17,7 @@
   - `docs/coordination/2026-08-10_COC_FICTION_INTEGRATION_ADVERSARIAL_REVIEW.md`
   - `docs/coordination/2026-08-10_CANON_SYNC_ADVERSARIAL_REVIEW.md`
 - 제출일: `2026-08-10`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - Knowledge Level: `Pattern`
 - Existing Solution Verdict: `ABSORB`
 
@@ -321,10 +321,10 @@ Coc-Fiction에서 사용한 field 이름과 exact path는 구현 사례일 뿐 �
 ## 승인과 구현
 
 ```yaml
-proposal_status: APPROVED_FOR_IMPLEMENTATION
+proposal_status: IMPLEMENTED
 user_approval_for_active_base_implementation: GRANTED_2026_08_10
 approval_ref: "[수정제안서]/BCP-2026-012-serial-fiction-canon-migration-debt/PROPOSAL.md#승인과-구현"
-active_base_skill_change: NOT_STARTED
+active_base_skill_change: IMPLEMENTED_VIA_PR_265
 project_evidence: PASS
 second_project_pilot: NOT_RUN
 human_usability: HUMAN_NOT_RUN
@@ -346,3 +346,12 @@ SUBMITTED
 → adversarial review
 → post-merge verification
 ```
+
+### 구현 closeout — PR #265
+
+- 최종 상태: `IMPLEMENTED`
+- 실제 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/265`
+- 병합된 Base main: `0d1cebdec0e1f3b660688ec194dcc27054dcfc2d`
+- 구현 범위: 기존 serial-fiction canon/continuity owner의 enforcement class·bounded debt lifecycle과 supporting reference-freshness 계약·focused 회귀
+- 보호 범위: 새 ACTIVE Skill·프로젝트 전용 Canon/schema·Coc-Fiction 원고·Registry 외 동결 산출물은 구현 PR에서 변경하지 않았다.
+- 검증 한계: 두 번째 serial-fiction project pilot, 사람 사용성, Coc-Fiction 런타임/원고 품질 검증은 이 Base 계약의 통과로 주장하지 않으며 별도 프로젝트 증거가 필요하다.
