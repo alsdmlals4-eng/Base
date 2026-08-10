@@ -61,6 +61,7 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
             "REFERENCE_ONLY",
             "ABSORB_EXISTING_OWNER",
             "RULE_OR_BCP_CANDIDATE",
+            "INCREMENTAL_IMPROVEMENT",
             "2026-02-10",
             "2026-08-10",
             "FULL_INDEX_REVIEW",
@@ -72,6 +73,8 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
         self.assertIn("새 규칙이 없다는 이유만으로", content)
         self.assertIn("같은 Goal의 열린·최근 병합 PR", content)
         self.assertIn("적대적 검토", content)
+        self.assertIn("스킬 추가나 owner 변경이 없어도", content)
+        self.assertIn("억지 변경", content)
         self.assertIn("scheduler", content.lower())
         self.assertIn("Base는 scheduler", content)
         self.assertNotIn("DISCOVERY_FEED = T1_PRIMARY_OFFICIAL", content)
