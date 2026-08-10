@@ -2,84 +2,94 @@
 
 ## Goal
 
-Base에 Hada GeekNews를 포함한 게임 제작 관련 외부 정보원을 **주기적으로 발견·교차검증·선별**하는 공용 Source Watchlist 계약을 추가한다. 이 계약은 외부 글을 Base 정본으로 직접 승격하지 않고, 기존 Evidence tier·Existing Solution First·적대적 검토·Base 변경 승인 경계를 재사용한다.
+Base가 외부 변화와 현업 지식을 정기적으로 발견하되 트렌드를 정본으로 오인하지 않도록, **Base-wide Source Watchlist → 원출처 역추적 → Existing Solution First → 적대적 검토 → 기존 owner 흡수/BCP** 구조를 만든다.
 
-이번 승인 범위에는 초기 bootstrap으로 **2026-02-10 ~ 2026-08-10 최근 6개월**의 관련 글·업데이트를 가능한 범위에서 역추적해 반복되는 공용 개선 요소를 추출하는 작업도 포함한다. 조사 중 더 가치 있는 사이트가 발견되면 같은 평가 기준을 통과하는 경우 Watchlist에 추가할 수 있다.
+초기 bootstrap은 2026-02-10 ~ 2026-08-10의 공개 자료를 가능한 범위에서 검토한다. 공개 index/archive가 기간 전체를 입증하지 못하면 `PARTIAL_INDEX_REVIEW`로 명시하며 “6개월치 전부 읽음”이라고 주장하지 않는다.
+
+## Source domains
+
+```text
+GAME_DEVELOPMENT
+PROMPT_AND_AGENT_WORKFLOW
+SKILL_AUTHORING_AND_EVOLUTION
+FICTION_AND_INTERACTIVE_NARRATIVE
+YOUTUBE_AND_VIDEO_EDITING
+```
+
+각 domain은 Source를 직접 실행 권위로 만들지 않는다. 기존 Base owner가 실행과 적용을 소유한다.
 
 ## Existing Solution First
 
-판정: `ABSORB`.
+판정: `ABSORB` 중심.
 
 - 새 ACTIVE Skill: `0`
 - 새 Work Mode: `0`
-- 새 독립 BCP: `0` — 사용자가 이번 Base 변경을 직접 승인했으므로 현행 Base 계약상 별도 제안서 없이 작업 계약으로 처리한다.
-- 소유 경계:
-  - 외부 근거 판정: `docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md`
-  - 출처 메타데이터·용도·재검증 조건: `docs/knowledge/game-development/REFERENCE_SOURCE_CATALOG.md`
-  - 허브 발견성: `docs/knowledge/game-development/README.md`
-  - 공용 기획 Evidence 흐름: `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md`
-  - 실패 가정·과잉 일반화 공격: `running-adversarial-review-and-refinement`
-  - 실제 Base 정책/Skill 승격 필요 시: `managing-base-change-proposals`
+- 새 독립 scheduler: `0`
+- 새 BCP: `0` — 사용자가 이번 bounded Base 변경을 직접 승인함
+- 보호: `skills/SKILL_REGISTRY.json`, `[수정제안서]/PROPOSAL_REGISTRY.json`, release lock/frozen artifacts
 
-## Why a separate watchlist reference
+### Owner map
 
-`REFERENCE_SOURCE_CATALOG.md`는 실제 Evidence에 사용할 수 있는 개별 출처 레코드의 권위 있는 인덱스다. 반면 주기 수집에는 "무엇을 자주 훑을지", "발견용 출처와 권위 출처를 어떻게 구분할지", "기사에서 원출처로 어떻게 역추적할지"가 필요하다. 이 책임은 기존 Catalog와 겹치지 않도록 별도 Reference로 두되, 실행 권한은 기존 Method와 Skill이 유지한다.
-
-초기 6개월 조사는 일회성 보고서로 끝내지 않고 `최근 기간을 표본으로 Watchlist가 실제 Base 개선을 찾는지 검증하는 bootstrap evidence`로 취급한다.
+| Domain | 기존 owner / consumer |
+|---|---|
+| 게임 외부 Evidence | `docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md` |
+| 공용 기획 Evidence | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` |
+| Prompt/Instruction/Skill/Agent 배치 | `docs/AI_SKILL_ADOPTION_GUIDE.md` |
+| Skill 생성·통합·behavior eval | `skills/evolving-project-discipline-skills` |
+| 소설·게임 서사 공통 craft | `docs/knowledge/methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md` |
+| 게임 narrative 작업면 | `templates/planning/NARRATIVE_CONTENT_PLAN.md` |
+| YouTube 기획·편집·분석 | `skills/producing-game-development-youtube-videos` + `templates/game-development-youtube/EPISODE_PACKET.md` |
+| 실패 가정 공격 | `running-adversarial-review-and-refinement` |
+| 공용 정책/Skill 의미 승격 | `managing-base-change-proposals` |
 
 ## Source roles
 
-Watchlist의 `source_role`은 Evidence tier와 다르다. 역할은 **수집 단계의 취급 방식**을 정하고, Evidence tier는 실제 채택 후보의 근거 강도를 정한다.
+`source_role`은 수집 단계 역할이며 Evidence tier와 다르다.
 
-### AUTHORITY_TARGET
+- `AUTHORITY_TARGET`: 공식 제품·플랫폼·엔진·표준·원 연구. 자기 제품/표준 사실에만 높은 권위.
+- `PROFESSIONAL_PRACTICE`: 현업 발표·전문가·작가·편집자·개발자 사례. 맥락 제한 보존.
+- `DISCOVERY_FEED`: Hada 같은 원문 발견면. 직접 권위 아님.
+- `OBSERVATIONAL_DATA_OR_VENDOR_GUIDE`: 시장·creator·analytics vendor 관찰. 표본·이해관계 보존.
 
-공식 플랫폼·엔진·표준에서 직접 변경 사실과 제약을 확인한다.
+## Core source families
 
-- Godot official documentation / blog
-- Valve Steamworks documentation
-- Android Developers Games
-- Google Play developer policy / quality documentation
-- Xbox Accessibility Guidelines
+### Game
 
-### PROFESSIONAL_PRACTICE
+Godot, Steamworks, Android Developers Games, Google Play policy, Xbox Accessibility Guidelines, GDC Vault, Game Developer, Games User Research, GameDiscoverCo, GameAnalytics, 80 Level, The Level Design Book, Game Accessibility Guidelines, SteamDB, How To Market A Game, Deconstructor of Fun, GPUOpen, Hada GeekNews.
 
-현업 발표·개발자 회고·전문 실무 가이드에서 적용 조건과 실패 사례를 찾는다.
+### Prompt / agent / Skill
 
-- GDC Vault
-- Game Developer
-- Games User Research
-- 80 Level
-- The Level Design Book
-- Game Accessibility Guidelines
+OpenAI official docs/Engineering/Academy, Anthropic Engineering/Docs, GitHub Copilot Docs, Google Developers Blog/Google Cloud AI/ADK, Microsoft Learn, Hada GeekNews.
 
-### DISCOVERY_FEED
+### Fiction / interactive narrative
 
-좋은 후보를 빠르게 찾는 탐색면이다. 이 출처 자체를 T1/T2 권위로 취급하지 않는다.
+Reedsy, inkle/ink, Yarn Spinner, IGDA Game Writing, Emily Short, GDC narrative/game-writing sessions.
 
-- Hada GeekNews
-- GameDiscoverCo newsletter
+### YouTube / editing
 
-### OBSERVATIONAL_DATA_OR_VENDOR_GUIDE
-
-관찰 데이터나 도구/벤더 가이드를 가설과 측정 설계에 사용한다. 플랫폼 공식 사실·보편 규칙으로 과장하지 않는다.
-
-- GameAnalytics
-- SteamDB
+YouTube Analytics/Studio Help/Creators, Blackmagic DaVinci Resolve Training, Frame.io Insider/Knowledge Center, vidIQ, GDC/Game Developer video-marketing cases.
 
 ## Adding new sites
 
-조사 중 새 사이트가 발견되면 다음을 모두 확인한 뒤 Watchlist에 추가할 수 있다.
+조사 중 새 사이트 추가를 허용한다. 다음을 모두 요구한다.
 
-1. 현재 Source Pool과 **정보 역할이 중복되지 않거나**, 중복하더라도 원출처 접근성·현업 깊이·실패 사례·지역/플랫폼 Coverage를 실질적으로 보완한다.
-2. 최근 6개월 안에 현재 게임 작업과 연결되는 유효한 자료가 확인된다.
-3. 출처 역할과 예상 Evidence tier가 분리돼 기록된다.
-4. 광고·SEO·제휴·벤더 이해관계가 있으면 한계에 명시한다.
-5. 단일 인기 글만으로 영구 Watchlist에 넣지 않는다. 반복 가치 또는 독립적인 권위가 있어야 한다.
+```yaml
+repeat_value_confirmed: true
+recent_relevant_material_found_or_durable_reference_value: true
+source_domain_declared: true
+source_role_declared: true
+current_pool_overlap_checked: true
+commercial_or_vendor_interest_recorded: true
+original_source_access_or_backtrace_value: true
+owner_or_consumer_candidate_identified: true
+```
+
+단일 바이럴 글, 재게시 위주, SEO/affiliate 목적과 정보 가치가 분리되지 않는 Source, 기존 Source로 동일 원출처를 더 직접 확인할 수 있는 경우는 영구 Watchlist 추가를 보류한다.
 
 ## Processing pipeline
 
 ```text
-SCHEDULED_DISCOVERY
+SOURCE_INDEX_REFRESH
 → CANDIDATE_CAPTURE
 → DUPLICATE_AND_CURRENT_BASE_CHECK
 → ORIGINAL_SOURCE_BACKTRACE
@@ -92,132 +102,125 @@ SCHEDULED_DISCOVERY
 → ADOPT | ADAPT | TEST | AVOID | IGNORE | REFERENCE_ONLY
 → NO_CHANGE | EVIDENCE_ONLY_UPDATE | LOW_RISK_BOUNDED_UPDATE | BCP_OR_USER_DECISION
 → REGRESSION_RECHECK
+→ SCAN_CHECKPOINT
 ```
+
+## Domain-specific design decisions
+
+### Prompt / agent / Skill
+
+외부 자료에서 반복 확인되는 책임 배치 원리는 다음처럼 흡수한다.
+
+```text
+짧고 거의 항상 필요한 규칙 → global/repository instruction 후보
+입력만 바뀌는 반복 요청 구조 → prompt/template 후보
+특정 작업의 절차·reference·script를 on-demand로 로드 → Skill 후보
+독립 tool/permission/persona/context/handoff → agent 후보
+정확한 반복 검사·변환 → deterministic script/tool 후보
+```
+
+파일 수·Skill 수·agent 수 증가는 품질 지표가 아니다. 분리는 독립적으로 변경·테스트·라우팅 가능한 책임이 있을 때만 허용한다.
+
+Eval은 모델 이름뿐 아니라 가능한 범위에서 harness, prompt, context, tools, permission, budget, retry/stop configuration을 기록한다.
+
+### Fiction → game narrative
+
+공통 재사용:
+
+- character desire/conflict/action causality
+- scene purpose/change
+- setup/payoff
+- information release
+- voice/subtext/relationship
+- continuity
+- staged revision
+
+게임 전용 추가:
+
+- player agency/choice/state
+- branching budget/convergence/replay/save-load
+- system/quest/UI/input coupling
+- localization/VO/runtime IDs
+
+소설 craft는 게임 스토리에 `ADAPT` 후 실제 player/state context에서 `TEST`한다. 게임 branch/state 규칙을 선형 소설에 자동 강제하지 않는다.
+
+### YouTube / editing
+
+편집 순서는 기본적으로 다음을 따른다.
+
+```text
+STORY_AND_EVIDENCE_ROUGH_CUT
+→ CLARITY_AND_PACING_TRIM
+→ DIALOGUE_AND_AUDIO_CLEANUP
+→ GRAPHICS_CAPTIONS_AND_CONTEXT
+→ COLOR_VFX_AND_POLISH
+→ EXPORT_AND_PLAYBACK_QC
+```
+
+Review는 versioned finding으로 추적한다. Retention drop/spike/rewatch와 CTR은 관찰이며 단독 인과 증거가 아니다. YouTube metric 정의는 공식 Help를 우선하고 vendor benchmark는 context-limited로 둔다.
 
 ## Recent-six-month bootstrap
 
-초기 bootstrap 기간은 `2026-02-10T00:00:00+09:00`부터 `2026-08-10T23:59:59+09:00`까지다.
-
-목표는 글 개수 집계가 아니라 최근 자료에서 **반복되고 서로 독립적으로 확인되는 개선 패턴**을 찾는 것이다.
-
 ```text
-각 Source의 archive/blog/changelog/recent listing 확인
-→ 기간 내 관련 항목 inventory
-→ 제목·날짜·원 URL·주제·핵심 주장 최소 기록
-→ 중복 주장을 topic cluster로 묶음
-→ 발견 출처에서 원출처로 역추적
-→ Base 현행 규칙과 compare
-→ 이미 충분히 covered면 NO_CHANGE
-→ 부족한 Reference/Evidence만 최소 보강
-→ 정책 의미 변화는 BCP_OR_USER_DECISION
+2026-02-10T00:00:00+09:00
+→ 2026-08-10T23:59:59+09:00
 ```
 
-사이트 특성상 전체 archive를 기계적으로 열람할 수 없거나 paywall·검색 색인 한계가 있으면 `PARTIAL_INDEX_REVIEW`로 표시하고 "6개월치 전부 읽음"이라고 주장하지 않는다. 반대로 공식 changelog/archive가 기간 전체를 노출하면 그 범위를 `FULL_INDEX_REVIEW`로 기록할 수 있다.
+- `FULL_INDEX_REVIEW`: 명시한 공개 index/archive/changelog 전체를 해당 기간에 대해 확인함.
+- `PARTIAL_INDEX_REVIEW`: 검색/paywall/대량 콘텐츠/영상·강의 제한으로 기간 전체 corpus를 증명할 수 없음.
+- `STATIC_REFERENCE_REVIEW`: 기간 밖 또는 정적이지만 장기 가치가 있는 Reference.
+
+글 개수 집계보다 반복되고 서로 독립적으로 확인되는 공용 원리를 찾는다.
 
 ## Scheduler boundary
 
-Base는 scheduler·webhook·백그라운드 실행기가 아니다. 이 문서는 "주기적으로 실행될 때 무엇을 해야 하는지"만 정의한다.
+Base는 scheduler·webhook·background runner가 아니다. 실제 cadence는 ChatGPT Automation 또는 다른 외부 scheduler가 소유한다.
 
-- 실제 cadence는 ChatGPT Automation, GitHub Actions 또는 사용자가 선택한 외부 scheduler가 소유한다.
-- 권장 기본값은 **주 1회**지만 Base의 불변 규칙이 아니다.
-- 실행되지 않은 scan을 완료로 보고하지 않는다.
-- scheduler가 없어도 수동 scan에 같은 계약을 적용할 수 있다.
-- 주기 실행은 마지막 성공 scan 이후 새 항목을 우선하되, source policy/changelog가 크게 바뀌면 재검토 기간을 확장한다.
+- 변화가 빠른 AI/플랫폼/Hada: daily-or-weekly 후보
+- 게임 시장·creator·현업 blog: weekly 후보
+- GDC/전문 archive/tooling: monthly/on-demand 후보
+- 정적 craft/reference: quarterly/when-relevant 후보
 
-## Candidate capture
-
-후보마다 최소 다음을 기록한다.
-
-```yaml
-candidate_id:
-discovered_from:
-original_url:
-title:
-published_or_updated_at:
-checked_at:
-source_role:
-provisional_evidence_tier:
-topics: []
-base_owner_candidate:
-current_base_overlap:
-why_it_might_change_a_decision:
-original_source_backtrace:
-license_or_copying_notes:
-```
-
-본문 전체를 저장소에 복제하지 않는다. 제목·URL·날짜·요약·판정·필요한 짧은 사실 메타데이터만 보존한다.
-
-## Original-source backtrace rule
-
-Hada, 뉴스레터, 기사, 벤더 블로그, 커뮤니티에서 발견한 주장에는 가능한 한 다음 우선순위를 적용한다.
-
-```text
-발견 글
-→ 링크된 원문/공식 문서/원 발표/원 데이터
-→ 현재 버전·게시일·지역·플랫폼 조건 확인
-→ Base의 기존 Reference Catalog와 중복·충돌 확인
-```
-
-원출처를 확인하지 못하면 확정 정책으로 승격하지 않고 `REFERENCE_ONLY`, `TEST`, 또는 `BLOCKED_UNVERIFIED`로 남긴다.
-
-## Change authority
-
-### 자동 반영 가능한 후보
-
-현재 승인 범위 또는 현행 저위험 자동승인 계약 안에서 다음 조건을 **모두** 만족하는 경우에만 최소 반영할 수 있다.
-
-- 가역적이고 작은 변경
-- 기존 책임 경계·Skill ID·Schema·보안·권한·라이선스 의미를 바꾸지 않음
-- 정본을 새로 만들지 않고 기존 owner의 Reference/Evidence를 보강함
-- 원출처와 현재 Base를 대조해 중복·충돌이 없음
-- 관련 검증과 적대적 재검토를 실행할 수 있음
-
-### 자동 확정 금지
-
-다음은 사용자 결정 또는 현행 BCP lifecycle을 유지한다.
-
-- 제품/게임 방향과 핵심 플레이 경험
-- Base 공용 정책 의미 변경
-- ACTIVE Skill 추가·제거·ID·owner 변경
-- Workflow 실행 권한·write permission·보안·인증 변경
-- 라이선스·법적 판단
-- 대규모 구조 변경 또는 migration
-- 미검증 외부 주장을 Hard Rule로 승격
+주기 scan은 마지막 성공 scan 이후 delta를 우선한다. major policy/version/methodology 변화 시 범위를 확장한다.
 
 ## Adversarial lenses
 
-각 후보는 최소 다음 공격을 통과해야 한다.
+- popularity를 truth로 오인했는가?
+- 발견 글이 원출처 조건을 왜곡했는가?
+- AAA/F2P/mobile/대형 creator/대형 agent 사례를 소규모 프로젝트에 과잉 일반화했는가?
+- vendor benchmark를 공식 플랫폼 사실로 바꿨는가?
+- 특정 prompt wording을 모델 불문 영구 공식으로 만들었는가?
+- monolithic prompt를 파일로 나눈 것만으로 modularity를 주장했는가?
+- Skill/agent 수 증가를 능력 향상으로 오인했는가?
+- 소설의 선형 규칙과 게임 agency/state를 혼동했는가?
+- YouTube retention/CTR을 판매·품질의 인과로 오인했는가?
+- 최신 6개월에 집중해 오래된 유효한 원리·표준·craft를 버렸는가?
+- 열린 PR이 같은 owner를 수정 중인데 중복 구현했는가?
 
-- 인기 글 또는 높은 추천 수를 품질·진실의 증거로 오인했는가?
-- 기사 요약이 원출처의 조건·반례·버전을 왜곡했는가?
-- AAA·F2P·모바일·특정 장르 사례를 1인/소규모 PC 게임에 과잉 일반화했는가?
-- SteamDB 같은 제3자 관찰값을 Valve 공식 사실로 표현했는가?
-- GameAnalytics 벤치마크를 모든 장르의 목표값으로 고정했는가?
-- 80 Level의 개별 제작 사례를 보편 파이프라인으로 강제했는가?
-- 접근성 가이드를 실제 사용자 검증이나 플랫폼 인증으로 과장했는가?
-- 외부 자료 때문에 새 Skill/Template가 불필요하게 늘어났는가?
-- 기존 Base에 이미 같은 원칙이 있는데 이름만 바꿔 중복했는가?
-- 최근 6개월이라는 기간 때문에 장기적으로 검증된 원칙을 무시하거나 반대로 최신 유행을 과대평가했는가?
+## Change authority
+
+`LOW_RISK_BOUNDED_UPDATE`는 작은 가역 변경, 기존 owner의 Reference/Evidence/stale link 보강, 권한·Schema·Skill identity 불변, 원출처/현재 Base/열린 PR 비교, 실제 검증 가능 조건을 모두 만족할 때만 허용한다.
+
+다음은 `BCP_OR_USER_DECISION`이다.
+
+- 제품/게임/소설/채널 핵심 방향
+- Base 공용 정책 의미
+- ACTIVE Skill 추가·제거·ID·owner 변경
+- behavior-result schema/eval identity 비호환 변경
+- workflow write 권한·보안·인증
+- 라이선스·법적 판단
+- 대규모 migration
+- 특정 창작자 표현 복제
 
 ## Validation
 
-Repository contract는 다음을 검증한다.
+Repository contract는 최소 다음을 확인한다.
 
-- Watchlist Reference가 허브와 Evidence Method에서 한 단계로 발견된다.
-- Hada와 게임 제작 핵심 Source Pool이 명시돼 있다.
-- 조사 중 새 Source를 추가할 수 있는 조건이 명시돼 있다.
-- `DISCOVERY_FEED`는 직접 권위가 아님이 명시돼 있다.
-- 원출처 역추적·freshness·중복 검사·적대적 검토·disposition이 모두 존재한다.
-- 2026-02-10 ~ 2026-08-10 bootstrap 범위와 FULL/PARTIAL index review 구분이 존재한다.
-- Base가 scheduler 자체라고 주장하지 않는다.
-- 새 ACTIVE Skill을 추가하지 않는다.
-- 전용 테스트가 `validate-evidence-knowledge.yml`에서 실제 실행된다.
-
-## Protected boundaries
-
-- `[수정제안서]/PROPOSAL_REGISTRY.json` 변경 없음
-- `skills/SKILL_REGISTRY.json` 변경 없음
-- release lock / frozen snapshot 변경 없음
-- GitHub workflow 권한은 `contents: read` 유지
-- 외부 원문 전체 복제 금지
-- 실제 scan·적용·검증을 실행하지 않았는데 완료로 보고하지 않음
+- Watchlist와 recent review 존재.
+- 5개 domain과 핵심 Source가 존재.
+- Watchlist가 Hub/Method/Planning/AI Skill Guide/Narrative Method/YouTube Skill에서 one-hop 발견된다.
+- narrative template가 존재하지 않는 legacy method를 참조하지 않는다.
+- discovery feed가 권위로 승격되지 않는다.
+- original-source backtrace, FULL/PARTIAL/STATIC review, new-site gate, adversarial lenses, change authority가 존재한다.
+- 새 ACTIVE Skill은 추가되지 않는다.
+- CI는 read-only를 유지하고 전용 contract를 실행한다.
