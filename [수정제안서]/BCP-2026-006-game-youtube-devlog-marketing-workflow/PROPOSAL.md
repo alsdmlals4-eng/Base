@@ -221,6 +221,7 @@ model_behavior_evaluation: NOT_RUN
 real_project_video_pilot: NOT_RUN
 human_audience_validation: HUMAN_NOT_RUN
 conversion_validation: CONVERSION_UNVERIFIED
+production_marketing_effectiveness: NOT_PROVEN
 ```
 
 롤백:

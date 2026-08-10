@@ -12,6 +12,23 @@ from jsonschema import Draft202012Validator
 PROPOSAL_ROOT = "[수정제안서]"
 REGISTRY_PATH = f"{PROPOSAL_ROOT}/PROPOSAL_REGISTRY.json"
 APPROVED_STATES = {"APPROVED_FOR_IMPLEMENTATION", "IMPLEMENTED"}
+HISTORICAL_RECONCILIATION_SUPPORT_PATHS = {
+    "schemas/base-change-proposal-registry-v1.schema.json",
+    "tools/check_base_change_proposals.py",
+    "tests/test_base_change_proposals.py",
+}
+HISTORICAL_RECONCILIATION_ENTRY = {
+    "proposal_id": "BCP-2026-008-agentic-spec-design-ui-procurement-integration",
+    "title": "에이전트 명세·디자인·외부 UI 조달 책임의 선택적 통합",
+    "path": "[수정제안서]/BCP-2026-008-agentic-spec-design-ui-procurement-integration/PROPOSAL.md",
+    "status": "IMPLEMENTED",
+    "source_project": "alsdmlals4-eng/Base",
+    "source_commit": "c7e678c928d08e736694319184f090ee87009efc",
+    "submitted_at": "2026-08-06",
+    "approval_ref": "https://github.com/alsdmlals4-eng/Base/pull/190#issuecomment-5198050799",
+    "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/192",
+    "historical_reconciliation": True,
+}
 REQUIRED_HEADINGS = (
     "## 출처와 상태",
     "## 관찰과 증거",
@@ -45,6 +62,10 @@ def validate_repository(root: Path) -> tuple[dict, list[str]]:
         if proposal_id in seen:
             errors.append(f"duplicate proposal_id: {proposal_id}")
         seen.add(proposal_id)
+        if proposal.get("historical_reconciliation") is True and not is_allowed_historical_reconciliation(proposal):
+            errors.append(
+                "historical reconciliation is reserved for the audited BCP-2026-008 record with fixed evidence"
+            )
         path = root / proposal.get("path", "")
         expected = root / PROPOSAL_ROOT / proposal_id / "PROPOSAL.md"
         if path.resolve() != expected.resolve():
@@ -98,6 +119,11 @@ def registry_at_ref(root: Path, base_ref: str) -> dict | None:
     return json.loads(content)
 
 
+def is_allowed_historical_reconciliation(item: dict) -> bool:
+    """Permit only the audited BCP-008 record, with immutable source evidence."""
+    return all(item.get(key) == value for key, value in HISTORICAL_RECONCILIATION_ENTRY.items())
+
+
 def enforce_proposal_only_diff(current: dict, previous: dict | None, changed_files: list[str]) -> list[str]:
     if previous is None:
         return []  # Proposal-governance bootstrap PR.
@@ -106,10 +132,26 @@ def enforce_proposal_only_diff(current: dict, previous: dict | None, changed_fil
     if not new_items:
         return []
     errors: list[str] = []
+    historical_backfills: list[bool] = []
     for item in new_items:
-        if item["status"] != "SUBMITTED":
+        historical_backfill = is_allowed_historical_reconciliation(item)
+        historical_backfills.append(historical_backfill)
+        if item.get("historical_reconciliation") is True and not historical_backfill:
+            errors.append(
+                "historical reconciliation is reserved for the audited BCP-2026-008 record with fixed evidence"
+            )
+        if item["status"] != "SUBMITTED" and not historical_backfill:
             errors.append(f"new proposal must start as SUBMITTED: {item['proposal_id']}")
-    outside = [path for path in changed_files if not path.startswith(f"{PROPOSAL_ROOT}/")]
+    allowed_active_paths = (
+        HISTORICAL_RECONCILIATION_SUPPORT_PATHS
+        if historical_backfills and all(historical_backfills)
+        else set()
+    )
+    outside = [
+        path
+        for path in changed_files
+        if not path.startswith(f"{PROPOSAL_ROOT}/") and path not in allowed_active_paths
+    ]
     if outside:
         errors.append("new proposal PR changes active Base paths: " + ", ".join(outside))
     return errors
