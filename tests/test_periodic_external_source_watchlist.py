@@ -23,7 +23,6 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
         content = WATCHLIST.read_text(encoding="utf-8")
 
         for required in (
-            # game development
             "Hada GeekNews",
             "Godot",
             "Steamworks",
@@ -31,7 +30,6 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
             "Games User Research",
             "GameDiscoverCo",
             "SteamDB",
-            # prompt / agent workflow / skill evolution
             "OpenAI",
             "Anthropic Engineering",
             "GitHub Copilot Docs",
@@ -39,19 +37,16 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
             "Microsoft Learn",
             "PROMPT_AND_AGENT_WORKFLOW",
             "SKILL_AUTHORING_AND_EVOLUTION",
-            # fiction / game narrative
             "Reedsy",
             "inkle / ink",
             "Yarn Spinner",
             "IGDA Game Writing",
             "FICTION_AND_INTERACTIVE_NARRATIVE",
-            # YouTube / editing
             "YouTube Analytics",
             "Blackmagic Design DaVinci Resolve",
             "Frame.io Insider",
             "vidIQ",
             "YOUTUBE_AND_VIDEO_EDITING",
-            # governance
             "AUTHORITY_TARGET",
             "PROFESSIONAL_PRACTICE",
             "DISCOVERY_FEED",
@@ -111,6 +106,46 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
             content = path.read_text(encoding="utf-8")
             self.assertIn("PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md", content, str(path))
 
+    def test_prompt_instruction_skill_agent_placement_is_explicit(self) -> None:
+        content = AI_SKILL_GUIDE.read_text(encoding="utf-8")
+        for required in (
+            "Prompt / Instruction / Skill / Agent / Tool 배치 결정",
+            "repository/global instruction",
+            "path/domain-specific instruction",
+            "prompt/template",
+            "progressive disclosure",
+            "deterministic script/tool",
+            "goal:",
+            "source_of_truth:",
+            "protected_constraints:",
+            "edge_cases:",
+            "stop_or_handoff_conditions:",
+            "unverified_or_missing_input_behavior:",
+            "Skill 수, agent 수, prompt 파일 수는 능력 지표가 아니다",
+            "harness·tool·permission·budget·configuration",
+        ):
+            self.assertIn(required, content)
+
+    def test_fiction_to_game_narrative_transfer_preserves_medium_boundaries(self) -> None:
+        content = NARRATIVE_METHOD.read_text(encoding="utf-8")
+        for required in (
+            "소설 ↔ 게임 스토리 전이 경계",
+            "공통으로 재사용 가능한 것",
+            "소설에서 별도로 보호할 것",
+            "게임에서 추가할 것",
+            "플레이어 agency",
+            "branch budget",
+            "CANON_AND_CONTINUITY",
+            "DEVELOPMENTAL_STRUCTURE",
+            "SCENE_AND_CHARACTER",
+            "DIALOGUE_AND_INFORMATION",
+            "LINE_AND_PROSE",
+            "COPY_AND_PROOF",
+            "CROSS_RANGE_RECONCILIATION",
+            "게임 스토리에는 ADAPT",
+        ):
+            self.assertIn(required, content)
+
     def test_narrative_template_does_not_point_to_missing_legacy_method(self) -> None:
         content = NARRATIVE_TEMPLATE.read_text(encoding="utf-8")
         self.assertIn("docs/knowledge/methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md", content)
@@ -120,6 +155,7 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
         self.assertTrue(WORKFLOW.is_file())
         content = WORKFLOW.read_text(encoding="utf-8")
         self.assertGreaterEqual(content.count("tests/test_periodic_external_source_watchlist.py"), 4)
+        self.assertIn("tests/test_game_development_youtube_skill.py", content)
         self.assertIn("contents: read", content)
         self.assertNotIn("contents: write", content)
 
