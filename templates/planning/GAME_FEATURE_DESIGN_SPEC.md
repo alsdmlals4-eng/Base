@@ -105,11 +105,11 @@ evidence_ids: []
 
 ### In scope
 
-- 
+- 항목:
 
 ### Out of scope
 
-- 
+- 항목:
 
 ### Non-goals
 
@@ -170,9 +170,9 @@ Trigger
 
 ### Main flow
 
-1. 
-2. 
-3. 
+1. 단계 1:
+2. 단계 2:
+3. 단계 3:
 
 ### Alternate flows
 
