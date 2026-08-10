@@ -10,6 +10,10 @@ RECENT_REVIEW = ROOT / "docs" / "knowledge" / "game-development" / "RECENT_EXTER
 HUB = ROOT / "docs" / "knowledge" / "game-development" / "README.md"
 METHOD = ROOT / "docs" / "knowledge" / "game-development" / "EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md"
 PLANNING_POLICY = ROOT / "docs" / "PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md"
+AI_SKILL_GUIDE = ROOT / "docs" / "AI_SKILL_ADOPTION_GUIDE.md"
+NARRATIVE_METHOD = ROOT / "docs" / "knowledge" / "methods" / "NARRATIVE_AND_RELATIONSHIP_METHOD.md"
+NARRATIVE_TEMPLATE = ROOT / "templates" / "planning" / "NARRATIVE_CONTENT_PLAN.md"
+YOUTUBE_SKILL = ROOT / "skills" / "producing-game-development-youtube-videos" / "SKILL.md"
 WORKFLOW = ROOT / ".github" / "workflows" / "validate-evidence-knowledge.yml"
 
 
@@ -19,6 +23,7 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
         content = WATCHLIST.read_text(encoding="utf-8")
 
         for required in (
+            # game development
             "Hada GeekNews",
             "Godot",
             "Steamworks",
@@ -26,6 +31,27 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
             "Games User Research",
             "GameDiscoverCo",
             "SteamDB",
+            # prompt / agent workflow / skill evolution
+            "OpenAI",
+            "Anthropic Engineering",
+            "GitHub Copilot Docs",
+            "Google Developers Blog",
+            "Microsoft Learn",
+            "PROMPT_AND_AGENT_WORKFLOW",
+            "SKILL_AUTHORING_AND_EVOLUTION",
+            # fiction / game narrative
+            "Reedsy",
+            "inkle / ink",
+            "Yarn Spinner",
+            "IGDA Game Writing",
+            "FICTION_AND_INTERACTIVE_NARRATIVE",
+            # YouTube / editing
+            "YouTube Analytics",
+            "Blackmagic Design DaVinci Resolve",
+            "Frame.io Insider",
+            "vidIQ",
+            "YOUTUBE_AND_VIDEO_EDITING",
+            # governance
             "AUTHORITY_TARGET",
             "PROFESSIONAL_PRACTICE",
             "DISCOVERY_FEED",
@@ -65,14 +91,30 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
             "REJECTED_OVERGENERALIZATION",
             "원출처",
             "Base overlap",
+            "PROMPT_AND_AGENT_WORKFLOW",
+            "SKILL_AUTHORING_AND_EVOLUTION",
+            "FICTION_AND_INTERACTIVE_NARRATIVE",
+            "YOUTUBE_AND_VIDEO_EDITING",
+            "OpenAI",
+            "Anthropic",
+            "GitHub Copilot",
+            "Reedsy",
+            "Yarn Spinner",
+            "YouTube Analytics",
+            "DaVinci Resolve",
         ):
             self.assertIn(required, content)
 
     def test_existing_evidence_authorities_link_to_watchlist_one_hop(self) -> None:
-        for path in (HUB, METHOD, PLANNING_POLICY):
+        for path in (HUB, METHOD, PLANNING_POLICY, AI_SKILL_GUIDE, NARRATIVE_METHOD, YOUTUBE_SKILL):
             self.assertTrue(path.is_file())
             content = path.read_text(encoding="utf-8")
             self.assertIn("PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md", content, str(path))
+
+    def test_narrative_template_does_not_point_to_missing_legacy_method(self) -> None:
+        content = NARRATIVE_TEMPLATE.read_text(encoding="utf-8")
+        self.assertIn("docs/knowledge/methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md", content)
+        self.assertNotIn("docs/planning/NARRATIVE_CONTENT_METHOD.md", content)
 
     def test_dedicated_workflow_executes_watchlist_contract(self) -> None:
         self.assertTrue(WORKFLOW.is_file())
