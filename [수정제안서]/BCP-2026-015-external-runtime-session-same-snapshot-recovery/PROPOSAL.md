@@ -8,7 +8,7 @@
 - 출처 Decision: `OMW-DEC-20260809-PLANNING-BARRACKS-ROLE-OUTPUT-RUNTIME-IMPLEMENTATION-PACKAGE-V1`
 - 출처 runtime head: `bde85549560fca90f7aa25fc4842bc0a3afb92e7`
 - 제출일: `2026-08-10`
-- 상태: `SUBMITTED`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 지식 상태: `관찰`
 - Existing Solution Verdict: `MATERIAL_SCOPE_EXTENSION_NOT_DUPLICATE`
 - 활성 Base 구현 승인: `NOT_GRANTED_IN_THIS_STAGE`
@@ -256,9 +256,9 @@ Proposal 저장 단계:
 ## 승인과 구현
 
 - 기존 BCP-013 복구 및 별도 `BCP - OMENWARD` proposal storage: 사용자 지시로 승인됨
-- proposal status: `SUBMITTED`
-- active Base implementation: `NOT_AUTHORIZED_IN_THIS_STAGE`
-- approval_ref: `null`
+- proposal status: `APPROVED_FOR_IMPLEMENTATION`
+- active Base implementation: `AUTHORIZED_MINIMAL_ABSORB_2026_08_10`
+- approval_ref: `[수정제안서]/BCP-2026-015-external-runtime-session-same-snapshot-recovery/PROPOSAL.md#승인과-구현`
 - implementation PR: `null`
 
-이 제안의 병합은 공용 개선 후보를 독립 수정제안서로 저장하는 것만 의미한다. 실제 Base 활성 계약 반영은 별도 `APPROVED_FOR_IMPLEMENTATION` 결정과 구현 검증을 거쳐야 한다.
+사용자는 2026-08-10 KST 대화에서 `좋아 다 승인할게 [연속작업] 진행해`로 이 제안의 최소 기존-owner 흡수를 승인했다. 구현은 별도 PR에서 same-snapshot 분류·shared server 보호·stale identity 차단만 다루며, 외부 server 설치·restart·production 권한 확대는 제외한다.

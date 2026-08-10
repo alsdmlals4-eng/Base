@@ -4,7 +4,7 @@
 
 - 출처 프로젝트: `alsdmlals4-eng/Base`
 - 기준 커밋: `c85e40855400a7595bf8b1350cba53a0e3c7e94d`
-- 상태: `SUBMITTED`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `관찰`
 
 ## 관찰과 증거
@@ -43,6 +43,7 @@ GitHub 공식 Action을 Node.js 24 호환 major로 전환하고, Action major·r
 ## 승인과 구현
 
 - 사용자 승인 근거: `docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md`
-- 제안 상태: `APPROVED_FOR_IMPLEMENTATION`
-- 구현 PR: `null` (별도 구현 PR이 병합될 때까지 기록하지 않음)
-- 이 승인 기록 PR에서는 workflow·action pin·공식 release evidence를 변경하지 않는다.
+- 제안 상태: `IMPLEMENTED`
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/262`
+- 병합 커밋: `18640a9c5d17b74c64a617da3b980e2ca2cab563`
+- 구현은 공식 Node 24 호환 immutable pin과 허용 SHA 계약을 함께 갱신했으며, workflow 구조 변경은 포함하지 않았다.

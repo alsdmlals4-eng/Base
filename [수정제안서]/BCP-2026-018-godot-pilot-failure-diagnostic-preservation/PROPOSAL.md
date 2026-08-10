@@ -7,7 +7,7 @@
 - 출처 프로젝트: `alsdmlals4-eng/Blacksmith`
 - 출처 main: `68540e6cd288aff138b1ea4c5b1feeb9e0653947`
 - 제출일: `2026-08-10`
-- 상태: `SUBMITTED`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `관찰`
 - Existing Solution Verdict: `NEW_BOUNDED_DIAGNOSTIC_GAP_NOT_DUPLICATE`
 - 활성 Base 구현 승인: `NOT_GRANTED_IN_THIS_STAGE`
@@ -217,9 +217,10 @@ Proposal 저장 단계:
 ## 승인과 구현
 
 - `bcp-Blacksmith` proposal storage: 사용자의 현재 지시로 진행 승인됨
-- proposal status: `APPROVED_FOR_IMPLEMENTATION`
+- proposal status: `IMPLEMENTED`
 - active Base implementation: 별도 최소 구현 PR 범위로 승인됨
 - approval_ref: `docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md`
-- implementation PR: `null`
+- implementation PR: `https://github.com/alsdmlals4-eng/Base/pull/261`
+- implementation merge SHA: `e5b60f430b2a07b8cafc6562de1ea63ad12d7cb4`
 
-이전 proposal 병합은 Blacksmith에서 관찰된 재사용 가능한 실패 진단 보존 후보를 Base proposal registry에 저장하는 것만 의미했다. 현재는 위 `approval_ref`의 별도 승인으로 Base 활성 구현을 별도 implementation PR에서 진행할 수 있으며, 이 승인 기록 PR은 그 동작을 아직 바꾸지 않는다.
+PR #261은 실패 결과를 redaction·경로·깊이·크기 제한 아래 attempt별 보존했으며, 실패 exit code와 PASS 판정 경계를 변경하지 않았다.

@@ -8,7 +8,7 @@
 - 관련 프로젝트 PR: `urban-legend #187`
 - 관련 Base Proposal: `BCP-2026-013-post-merge-continuation-state-reconciliation`
 - 제출일: `2026-08-10`
-- 상태: `SUBMITTED`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `관찰`
 - Existing Solution Verdict: `ABSORB`
 - 사용자 표시명 규칙: `BCP - 프로젝트 이름`
@@ -95,7 +95,7 @@ Base 공용 규칙으로 복사하지 않는다.
 ## 승인과 구현
 
 - 사용자 승인 근거: `docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md`
-- 제안 상태: `APPROVED_FOR_IMPLEMENTATION`
-- 활성 Base 구현 승인: 별도 최소 구현 PR 범위로 승인됨
-- 구현 PR: `null` (별도 구현 PR이 병합될 때까지 기록하지 않음)
-- 롤백: 이 proposal 문서와 Registry 표시명 변경을 이전 상태로 되돌리면 되며 활성 Base 동작에는 영향이 없다.
+- 제안 상태: `IMPLEMENTED`
+- 활성 Base 구현: PR [#260](https://github.com/alsdmlals4-eng/Base/pull/260), merge `d45a80c6b12a2c790bf1f5ba2338a1a53e5c165e`
+- consumer inventory와 semantic/literal compatibility boundary는 기존 handoff·freshness owner에 흡수됐다.
+- 롤백: PR #260을 되돌리면 되며, historical proposal evidence는 보존한다.

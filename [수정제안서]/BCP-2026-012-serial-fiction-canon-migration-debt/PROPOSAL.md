@@ -17,7 +17,7 @@
   - `docs/coordination/2026-08-10_COC_FICTION_INTEGRATION_ADVERSARIAL_REVIEW.md`
   - `docs/coordination/2026-08-10_CANON_SYNC_ADVERSARIAL_REVIEW.md`
 - 제출일: `2026-08-10`
-- 상태: `SUBMITTED`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
 - Knowledge Level: `Pattern`
 - Existing Solution Verdict: `ABSORB`
 
@@ -321,8 +321,9 @@ Coc-Fiction에서 사용한 field 이름과 exact path는 구현 사례일 뿐 �
 ## 승인과 구현
 
 ```yaml
-proposal_status: SUBMITTED
-user_approval_for_active_base_implementation: NOT_GRANTED_BY_THIS_PROPOSAL
+proposal_status: APPROVED_FOR_IMPLEMENTATION
+user_approval_for_active_base_implementation: GRANTED_2026_08_10
+approval_ref: "[수정제안서]/BCP-2026-012-serial-fiction-canon-migration-debt/PROPOSAL.md#승인과-구현"
 active_base_skill_change: NOT_STARTED
 project_evidence: PASS
 second_project_pilot: NOT_RUN
@@ -331,7 +332,7 @@ knowledge_level: Pattern
 recommended_existing_solution_verdict: ABSORB
 ```
 
-승인 전에는 Base 활성 Skill·Guide·Test를 변경하지 않는다.
+사용자는 2026-08-10 KST 대화에서 `좋아 다 승인할게 [연속작업] 진행해`로 이 제안의 최소 `ABSORB` 구현을 승인했다. 구현은 별도 PR에서 진행하며, 새 ACTIVE Skill·프로젝트 전용 schema·작품별 Canon 값은 제외한다.
 
 다음 상태:
 

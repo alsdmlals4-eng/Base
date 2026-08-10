@@ -8,7 +8,7 @@
 - 출처 main: `dc95883873ccd8718f6aa5cb11f936ef39db42c7`
 - 관련 프로젝트 PR: `#135`, `#136`
 - 제출일: `2026-08-10`
-- 상태: `SUBMITTED`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `관찰 + 기존 공용 제안 보강`
 - Existing Solution Verdict: `ABSORB_INTO_BCP_2026_014`
 - 활성 Base 구현 승인: `NOT_GRANTED_IN_THIS_STAGE`
@@ -214,10 +214,11 @@ Proposal 저장 단계:
 ## 승인과 구현
 
 - `BCP - Ten-Paces-Hidden-Moves` proposal storage: 사용자의 현재 지시로 진행 승인됨
-- proposal status: `APPROVED_FOR_IMPLEMENTATION`
-- active Base implementation: BCP-014 및 기존 handoff owner에 흡수하는 별도 최소 구현 PR 범위로 승인됨
+- proposal status: `IMPLEMENTED`
+- active Base implementation: BCP-014 및 기존 handoff owner에 흡수됨
 - approval_ref: `docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md`
-- implementation PR: `null`
+- implementation PR: `https://github.com/alsdmlals4-eng/Base/pull/260`
+- implementation merge SHA: `d45a80c6b12a2c790bf1f5ba2338a1a53e5c165e`
 - intended implementation owner: `BCP-2026-014` / existing handoff owner reuse
 
-이전 proposal 병합은 Ten Paces에서 확인된 재사용 가능한 handoff machine-consumer failure mode를 **프로젝트 이름의 독립 수정제안서로 저장**하는 것만 의미했다. 현재는 위 `approval_ref`의 별도 승인으로 BCP-014 및 기존 handoff owner에 흡수하는 별도 implementation PR을 진행할 수 있으며, 이 승인 기록 PR은 그 동작을 아직 바꾸지 않는다.
+PR #260에서 BCP-014와 함께 handoff machine-consumer compatibility boundary로 흡수했다. Ten Paces의 실제 handoff 값·경로·제품 상태는 공용 규칙으로 올리지 않았다.

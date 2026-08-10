@@ -7,7 +7,7 @@
 - 출처 프로젝트: `alsdmlals4-eng/Coc-Fiction`
 - 출처 프로젝트 관측 main: `e829fecf7e52d2b2aefaa13d0b1e1e689f69dac0`
 - 제출일: `2026-08-10`
-- 상태: `SUBMITTED`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 지식 상태: `Pattern + Counterexample`
 - Existing Solution Verdict: `MATERIAL_SCOPE_EXTENSION_NOT_DUPLICATE`
 - 활성 Base 구현 승인: `NOT_GRANTED_IN_THIS_STAGE`
@@ -346,8 +346,9 @@ then and only then may whole-artifact migration complete be claimed.
 ## 승인과 구현
 
 - `BCP - Coc-Fiction` proposal storage와 `[수정제안서]` 병합: 사용자 직접 요청으로 승인됨
-- proposal status: `SUBMITTED`
+- proposal status: `APPROVED_FOR_IMPLEMENTATION`
 - Registry 등록: 이번 proposal storage 범위에 포함
-- active Base implementation: `NOT_AUTHORIZED_IN_THIS_STAGE`
-- BCP-012/013 active implementation 승인으로 해석하지 않음
-- 향후 구현은 별도 `APPROVED_FOR_IMPLEMENTATION` 결정과 구현 PR이 필요함
+- active Base implementation: `AUTHORIZED_WITH_BCP_012_MINIMAL_ABSORB_2026_08_10`
+- approval_ref: `[수정제안서]/BCP-2026-017-serial-fiction-reconciliation-frontier-and-derived-continuity-guard/PROPOSAL.md#승인과-구현`
+- BCP-013 active implementation 승인으로 해석하지 않음
+- 사용자는 2026-08-10 KST 대화에서 `좋아 다 승인할게 [연속작업] 진행해`로 BCP-012와 결합한 기존 serial-fiction/freshness owner 최소 흡수를 승인했다. 프로젝트별 work-unit 수, Canon, 파일 경로, 원고 내용은 제외한다.

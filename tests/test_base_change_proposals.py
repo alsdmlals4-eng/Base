@@ -23,7 +23,7 @@ class BaseChangeProposalTests(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertEqual(registry["proposal_root"], "[수정제안서]")
 
-    def test_approved_continuity_and_diagnostic_proposals_have_recorded_user_approval(self) -> None:
+    def test_merged_continuity_and_diagnostic_proposals_retain_approval_and_implementation_links(self) -> None:
         registry, errors = CHECKER.validate_repository(ROOT)
         self.assertEqual(errors, [])
         proposal_ids = {
@@ -40,13 +40,48 @@ class BaseChangeProposalTests(unittest.TestCase):
             if item["proposal_id"] in proposal_ids
         }
         self.assertEqual(proposal_ids, set(approved))
-        for item in approved.values():
-            self.assertEqual("APPROVED_FOR_IMPLEMENTATION", item["status"])
+        implementation_prs = {
+            "BCP-2026-002-actions-node24-compatibility": "https://github.com/alsdmlals4-eng/Base/pull/262",
+            "BCP-2026-013-post-merge-continuation-state-reconciliation": "https://github.com/alsdmlals4-eng/Base/pull/260",
+            "BCP-2026-014-handoff-machine-consumer-compatibility-closeout": "https://github.com/alsdmlals4-eng/Base/pull/260",
+            "BCP-2026-016-live-source-handoff-semantic-consumer-reconciliation": "https://github.com/alsdmlals4-eng/Base/pull/260",
+            "BCP-2026-018-godot-pilot-failure-diagnostic-preservation": "https://github.com/alsdmlals4-eng/Base/pull/261",
+            "BCP-2026-019-ten-paces-handoff-machine-consumer-compatibility": "https://github.com/alsdmlals4-eng/Base/pull/260",
+        }
+        for proposal_id, item in approved.items():
+            self.assertEqual("IMPLEMENTED", item["status"])
             self.assertEqual(
                 "docs/superpowers/specs/2026-08-10-approved-base-continuity-diagnostics-actions-design.md",
                 item["approval_ref"],
             )
-            self.assertIsNone(item["implementation_pr"])
+            self.assertEqual(implementation_prs[proposal_id], item["implementation_pr"])
+
+    def test_merged_and_newly_approved_proposals_have_distinct_lifecycle_states(self) -> None:
+        registry, errors = CHECKER.validate_repository(ROOT)
+        self.assertEqual([], errors)
+        entries = {item["proposal_id"]: item for item in registry["proposals"]}
+        implemented = {
+            "BCP-2026-002-actions-node24-compatibility": "https://github.com/alsdmlals4-eng/Base/pull/262",
+            "BCP-2026-013-post-merge-continuation-state-reconciliation": "https://github.com/alsdmlals4-eng/Base/pull/260",
+            "BCP-2026-014-handoff-machine-consumer-compatibility-closeout": "https://github.com/alsdmlals4-eng/Base/pull/260",
+            "BCP-2026-016-live-source-handoff-semantic-consumer-reconciliation": "https://github.com/alsdmlals4-eng/Base/pull/260",
+            "BCP-2026-018-godot-pilot-failure-diagnostic-preservation": "https://github.com/alsdmlals4-eng/Base/pull/261",
+            "BCP-2026-019-ten-paces-handoff-machine-consumer-compatibility": "https://github.com/alsdmlals4-eng/Base/pull/260",
+        }
+        for proposal_id, implementation_pr in implemented.items():
+            self.assertEqual("IMPLEMENTED", entries[proposal_id]["status"])
+            self.assertEqual(implementation_pr, entries[proposal_id]["implementation_pr"])
+
+        approved = {
+            "BCP-2026-001-base-skill-map-publication",
+            "BCP-2026-012-serial-fiction-canon-migration-debt",
+            "BCP-2026-015-external-runtime-session-same-snapshot-recovery",
+            "BCP-2026-017-serial-fiction-reconciliation-frontier-and-derived-continuity-guard",
+        }
+        for proposal_id in approved:
+            self.assertEqual("APPROVED_FOR_IMPLEMENTATION", entries[proposal_id]["status"])
+            self.assertTrue(entries[proposal_id]["approval_ref"])
+            self.assertIsNone(entries[proposal_id]["implementation_pr"])
 
     def test_new_proposal_pr_cannot_change_active_base(self) -> None:
         previous = {"proposals": []}
