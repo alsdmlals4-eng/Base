@@ -83,6 +83,22 @@ class WeeklyWorkImprovementReviewTests(unittest.TestCase):
         self.assertIn("같은 Goal의 열린·최근 병합 PR", content)
         self.assertIn("억지 변경", content)
 
+    def test_cross_domain_ai_and_project_context_signals_are_mapped_not_dumped_as_news(self) -> None:
+        content = TEMPLATE.read_text(encoding="utf-8")
+        for required in (
+            "PROMPT_AND_AGENT_WORKFLOW",
+            "SKILL_AUTHORING_AND_EVOLUTION",
+            "AI_MAJOR_ISSUES",
+            "connected_project_context_checked",
+            "GitHub",
+            "Drive",
+            "source_domain_to_report_impact",
+            "A | B | C | D",
+        ):
+            self.assertIn(required, content)
+        self.assertIn("뉴스 모음", content)
+        self.assertIn("현재 작업을 바꾸는 경우", content)
+
     def test_template_is_existing_owner_orchestration_not_a_new_active_skill(self) -> None:
         content = TEMPLATE.read_text(encoding="utf-8")
         for required in (
