@@ -247,3 +247,13 @@ unverified_or_missing_input_behavior:
 실패, 중요한 결정, 재사용 가능한 교훈, 실제 검증 결과가 있는 호출만 Learning Log에 기록한다.
 
 Skill 통합 전에는 고유 입력·산출물·실패 조건·검증·Learning Log·Registry 참조를 대조한다. 이전 버전은 Git 이력으로 보존하고, 과거 ID는 `LEGACY_SKILL_ALIASES.md`로 연결한다. 통합·이름 변경·경로 이동 뒤에는 `auditing-canonical-reference-freshness`로 이전 경로와 untouched 소비자를 검사한다.
+
+## 10. Consumer surface·branch-state 검증
+
+프롬프트·instruction·Skill·agent 기능은 제품 전체에 균일하게 지원된다고 가정하지 않는다. 같은 제품 안에서도 **consumer surface**(예: Chat, cloud agent, code review, IDE, CLI)별 지원 여부가 surface마다 다를 수 있다.
+
+- 채택 전 현재 공식 compatibility/support matrix에서 실제 소비 surface가 해당 customization을 읽는지 확인한다.
+- Preview 기능은 안정된 공용 계약처럼 고정하지 않고 version·surface와 함께 `TEST`로 둔다.
+- PR 기반 AI review처럼 branch 내용의 영향을 받는 surface는 어떤 branch의 instruction/Skill을 읽는지 확인한다. 공식 문서가 **head branch**를 읽는다고 명시한 surface라면 같은 PR에서 변경을 시험할 수 있지만, 다른 surface의 base/head 동작까지 자동 일반화하지 않는다.
+- 공식 문서끼리 branch semantics가 충돌하거나 시점 차이가 의심되면 현재 실제 surface에서 재현해 `PARTIALLY_VERIFIED` 또는 `UNVERIFIED`로 남긴다.
+- Eval 기록에는 model뿐 아니라 consumer surface·client/version·branch/ref·harness·tool·permission·budget·configuration을 가능한 범위에서 포함한다.
