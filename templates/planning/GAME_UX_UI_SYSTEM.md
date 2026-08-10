@@ -58,6 +58,33 @@
 | 안전 영역 | | |
 | 긴 한국어 | | |
 
+## 3A. UI/UX·비주얼 규칙 프로필
+
+> Base `ui-ux-visual-design-rulebook.md`의 규칙을 프로젝트에 그대로 복제하지 않는다. 규범 표준·플랫폼 권고·인지/사용성 휴리스틱·시각 스타일 휴리스틱을 구분하고, 실제 플랫폼·거리·입력·장르·아트 방향에 맞춰 판정한다.
+
+| rule_id | source_type | tier | platform | 프로젝트 판정 | 적용/예외 사유 | 동등 경로 | 검증 증거 | 상태 |
+|---|---|---|---|---|---|---|---|---|
+| | normative/platform/usability_heuristic/visual_heuristic | MUST/SHOULD/STYLE_DEFAULT/TEST_REQUIRED | | ADOPT/ADAPT/AVOID/TEST/IGNORE | | | | NOT_RUN/PARTIAL/PASSED/FAILED/BLOCKED |
+
+규칙 적용 순서:
+
+```text
+사용자 최신 지시·프로젝트 코어·보호 아트 방향
+→ 의미/상태/복구/안전
+→ 접근성·입력 완결성
+→ 화면 중심 질문·정보 위계
+→ 플랫폼 관례
+→ 인지·사용성 휴리스틱
+→ 시각 STYLE_DEFAULT
+→ 장식
+```
+
+- `MUST` 예외는 **예외 사유**, 동등한 접근/복구 경로, 검증 증거를 남긴다.
+- `SHOULD`는 장르·프로젝트 코어와 충돌하면 `ADAPT` 또는 `TEST`로 내린다.
+- `STYLE_DEFAULT`는 접근성·semantic/focus/read order나 승인 아트 방향보다 높은 권한을 갖지 않는다.
+- `TEST_REQUIRED`는 실제 렌더·입력·플레이 증거가 없으면 `PASSED`로 올리지 않는다.
+- Web 24×24 CSS px, Apple 44×44 pt, Android 48×48 dp처럼 단위와 적용 범위를 보존한다.
+
 ## 4. 사용자 여정과 화면 중심 질문
 
 | 단계/화면 | 진입 조건 | 중심 질문 | 첫 시선 | 핵심 행동 | 취소·복귀 | 결과·다음 행동 |

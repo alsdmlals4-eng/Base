@@ -27,6 +27,19 @@
 - [ ] 파괴적 행동은 되돌리기 가능성과 확인 강도를 구분한다.
 - [ ] 결과 인과가 연출을 건너뛰어도 로그·텍스트·수치로 남는다.
 
+## 3A. GUI 의미 문법
+
+- [ ] **버튼과 링크**를 섞지 않았다: 행동/상태 변경은 버튼, 목적지 이동은 링크·탐색 패턴을 우선한다.
+- [ ] 버튼·확인 UI가 `OK`, `Submit` 같은 추상어보다 결과 중심 문구를 사용한다.
+- [ ] placeholder가 지속 label을 대체하지 않는다.
+- [ ] 폼 오류가 문제 위치·원인·복구 행동을 알려주고 기존 입력을 보존한다.
+- [ ] **체크박스·라디오·토글**의 의미가 구분된다: 독립/복수 선택, 상호배타 단일 선택, 즉시 적용 설정.
+- [ ] modal은 실제 차단이 필요한 결정에만 쓰며, 되돌릴 수 있는 행동은 실행 취소를 먼저 검토했다.
+- [ ] icon-only control은 보편적으로 학습된 소수이거나 label/accessible name/tooltip을 제공한다.
+- [ ] tab을 순차 wizard나 비교해야 하는 데이터를 숨기는 용도로 쓰지 않았다.
+- [ ] 중요한 기능의 유일한 접근 수단이 hover가 아니다.
+- [ ] scroll hijacking, 숨은 focus, 장식 요소의 거짓 pointer affordance가 없다.
+
 ## 4. UI 폴리싱 게이트
 
 - [ ] 폴리싱 준비도에서 기능 흐름·정보 구조·상태 소유권·입력 baseline이 확인됐다.
@@ -66,6 +79,41 @@
 - [ ] 긴 한국어·최대 수치·확대 텍스트에서 핵심 정보가 잘리지 않는다.
 - [ ] 모션 감소·음향 끄기·자산 누락이 규칙 결과를 바꾸지 않는다.
 - [ ] 시간 제한·반복 입력·정밀 입력에는 필요한 대체 경로가 있다.
+
+## 5A. 플랫폼 수치·접근성 오용 방지
+
+- [ ] Web/WCAG 2.2를 목표로 하는 surface는 일반 텍스트 4.5:1, large text 3:1, 적용되는 비텍스트 UI 3:1 대비 기준을 확인했다.
+- [ ] Web pointer target의 **24×24 CSS px** 최소 기준과 예외를 플랫폼 범위 안에서 해석했다.
+- [ ] Apple touch surface는 **44×44 pt**, Android touch surface는 **48×48 dp** 권고를 각각의 단위로 검토했다.
+- [ ] 서로 다른 target size 기준을 하나의 전역 px 상수로 합치지 않았다.
+- [ ] Web 200% text resize 같은 웹 성공 기준을 게임 UI의 단일 font-size 상수로 오해하지 않았다.
+- [ ] controller focus가 항상 보이고 offscreen/hidden control로 이동하지 않는다.
+- [ ] 프로젝트가 지원하는 입력에서 remapping 또는 동등 경로가 필요한지 검토했다.
+- [ ] subtitles/captions가 중요한 audio cue의 동등 경로를 제공하고 크기·배경·opacity·위치 설정을 검토했다.
+- [ ] TV 거리, handheld 거리, desktop 거리의 글자·대비·HUD 판단을 같은 기준으로 합치지 않았다.
+- [ ] FOV, camera movement/shake, scrolling/blinking/auto-updating visual에 motion 장벽 완화 옵션이 필요한지 검토했다.
+
+## 5B. UX 심리 법칙 윤리·범위 Gate
+
+- [ ] Hick/Fitts/Jakob/Choice Overload/인지 부하/작업 기억을 문제 설명과 가설에 사용했으며 장르의 핵심 복잡성을 무조건 삭제하지 않았다.
+- [ ] **Miller의 7±2**를 메뉴 항목 수의 하드 제한으로 사용하지 않았다.
+- [ ] Goal-Gradient나 Zeigarnik을 **허위 진행**, 강박적 badge, 취소 방해에 사용하지 않았다.
+- [ ] Peak-End를 중간 구간의 지속적 불편을 감추는 근거로 사용하지 않았다.
+- [ ] Doherty/perceived performance를 **의도적 지연**의 일반 정당화로 사용하지 않았다.
+- [ ] Postel의 관대한 입력 처리가 보안·schema·결제·저장 포맷 경계를 침범하지 않는다.
+- [ ] 심리 원칙이 다크 패턴, 숨은 비용, 기만적 희소성, 강제 연속 사용으로 변질되지 않았다.
+
+## 5C. 비주얼 STYLE_DEFAULT Gate
+
+- [ ] near-black/near-white, tinted neutral, 8 기반 spacing scale 등은 승인 아트 방향과 접근성을 보조하는 `STYLE_DEFAULT`로만 사용했다.
+- [ ] **12-column**을 Web용 유용한 시작점 이상으로 해석해 HUD·mobile·TV·radial UI에 강제하지 않았다.
+- [ ] body **16px**를 게임 전체 font minimum으로 고정하지 않고 DPI·거리·locale·사용자 scale을 검증했다.
+- [ ] 장문 **70자** line length를 HUD·표·좁은 panel까지 기계적으로 강제하지 않았다.
+- [ ] shadow blur/offset, container brightness, nested radius의 경험적 수치를 물리 법칙이나 접근성 표준으로 승격하지 않았다.
+- [ ] optical alignment를 적용해도 semantic reading order와 keyboard/controller focus order가 깨지지 않는다.
+- [ ] visual weight 순서가 실제 행동 순서·접근성 순서보다 높은 권한을 갖지 않는다.
+- [ ] 색상·border·shadow·gradient·motion을 추가한 이유를 화면 중심 질문 또는 아트 방향으로 설명할 수 있다.
+- [ ] squint/blur test에서 primary action, critical status, 주요 content가 여전히 구분된다.
 
 ## 6. Godot 구현 경계
 
@@ -118,6 +166,7 @@
 - [ ] 기획 방향 변경은 `USER_DECISION_REQUIRED`로 분리했다.
 - [ ] 검증된 `MUST_FIX`와 승인된 `SHOULD_FIX`만 최소 수정했다.
 - [ ] 수정 뒤 코어·정상 경로·입력·폴백·새 결함을 다시 공격했다.
+- [ ] 규범 표준, 플랫폼 권고, 인지/사용성 휴리스틱, 시각 `STYLE_DEFAULT`의 증거 강도를 바꿔치기하지 않았다.
 
 ## 11. 최종 판정
 
