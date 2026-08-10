@@ -1,0 +1,86 @@
+from __future__ import annotations
+
+import unittest
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+WATCHLIST = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md"
+RECENT_REVIEW = ROOT / "docs" / "knowledge" / "game-development" / "RECENT_EXTERNAL_EVIDENCE_REVIEW_2026-08-10.md"
+HUB = ROOT / "docs" / "knowledge" / "game-development" / "README.md"
+METHOD = ROOT / "docs" / "knowledge" / "game-development" / "EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md"
+PLANNING_POLICY = ROOT / "docs" / "PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md"
+WORKFLOW = ROOT / ".github" / "workflows" / "validate-evidence-knowledge.yml"
+
+
+class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
+    def test_watchlist_contract_exists_and_preserves_source_authority(self) -> None:
+        self.assertTrue(WATCHLIST.is_file())
+        content = WATCHLIST.read_text(encoding="utf-8")
+
+        for required in (
+            "Hada GeekNews",
+            "Godot",
+            "Steamworks",
+            "GDC Vault",
+            "Games User Research",
+            "GameDiscoverCo",
+            "SteamDB",
+            "AUTHORITY_TARGET",
+            "PROFESSIONAL_PRACTICE",
+            "DISCOVERY_FEED",
+            "OBSERVATIONAL_DATA_OR_VENDOR_GUIDE",
+            "ORIGINAL_SOURCE_BACKTRACE",
+            "ADOPT",
+            "ADAPT",
+            "TEST",
+            "AVOID",
+            "IGNORE",
+            "REFERENCE_ONLY",
+            "2026-02-10",
+            "2026-08-10",
+            "FULL_INDEX_REVIEW",
+            "PARTIAL_INDEX_REVIEW",
+            "BCP_OR_USER_DECISION",
+        ):
+            self.assertIn(required, content)
+
+        self.assertIn("scheduler", content.lower())
+        self.assertIn("Base는 scheduler", content)
+        self.assertNotIn("DISCOVERY_FEED = T1_PRIMARY_OFFICIAL", content)
+        self.assertNotIn("DISCOVERY_FEED = T2_PROFESSIONAL_PRACTICE", content)
+
+    def test_recent_six_month_review_records_coverage_and_dispositions(self) -> None:
+        self.assertTrue(RECENT_REVIEW.is_file())
+        content = RECENT_REVIEW.read_text(encoding="utf-8")
+
+        for required in (
+            "2026-02-10",
+            "2026-08-10",
+            "FULL_INDEX_REVIEW",
+            "PARTIAL_INDEX_REVIEW",
+            "NO_CHANGE",
+            "EVIDENCE_ONLY_UPDATE",
+            "LOW_RISK_BOUNDED_UPDATE",
+            "REJECTED_OVERGENERALIZATION",
+            "원출처",
+            "Base overlap",
+        ):
+            self.assertIn(required, content)
+
+    def test_existing_evidence_authorities_link_to_watchlist_one_hop(self) -> None:
+        for path in (HUB, METHOD, PLANNING_POLICY):
+            self.assertTrue(path.is_file())
+            content = path.read_text(encoding="utf-8")
+            self.assertIn("PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md", content, str(path))
+
+    def test_dedicated_workflow_executes_watchlist_contract(self) -> None:
+        self.assertTrue(WORKFLOW.is_file())
+        content = WORKFLOW.read_text(encoding="utf-8")
+        self.assertGreaterEqual(content.count("tests/test_periodic_external_source_watchlist.py"), 4)
+        self.assertIn("contents: read", content)
+        self.assertNotIn("contents: write", content)
+
+
+if __name__ == "__main__":
+    unittest.main()
