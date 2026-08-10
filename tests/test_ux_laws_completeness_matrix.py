@@ -7,10 +7,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 MATRIX = (
     ROOT
-    / "skills"
-    / "auditing-and-refining-ui-art"
-    / "references"
-    / "ux-laws-completeness-matrix.md"
+    / "docs"
+    / "knowledge"
+    / "game-development"
+    / "UX_LAWS_COMPLETENESS_MATRIX.md"
 )
 REFERENCE_LIBRARY = (
     ROOT
@@ -25,7 +25,7 @@ class UxLawsCompletenessMatrixTests(unittest.TestCase):
     def test_matrix_is_routed_from_reference_library(self) -> None:
         self.assertTrue(MATRIX.is_file())
         library = REFERENCE_LIBRARY.read_text(encoding="utf-8")
-        self.assertIn("ux-laws-completeness-matrix.md", library)
+        self.assertIn("UX_LAWS_COMPLETENESS_MATRIX.md", library)
 
     def test_all_user_supplied_laws_are_explicitly_mapped(self) -> None:
         text = MATRIX.read_text(encoding="utf-8")
