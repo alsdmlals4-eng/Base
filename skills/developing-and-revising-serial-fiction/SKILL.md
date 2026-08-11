@@ -82,6 +82,9 @@ current_draft:
 pov_and_character_voice_state:
 character_identity_cards:
 opponent_threat_ledger:
+character_choice_proof:
+reader_knowledge_matrix:
+highlight_proof:
 continuity_and_information_state:
 active_and_archive_consumer_inventory:
 staged_migration_state:
@@ -118,9 +121,10 @@ project_pilot: PROJECT_PILOT_NOT_RUN
 2. 현재 아크·회차·장면의 실제 원고와 앞뒤 continuity
 3. `docs/knowledge/serial-fiction/SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md`
 4. 회차 경계·hook·payoff 작업이면 `docs/knowledge/serial-fiction/SERIAL_EPISODE_PACING_AND_PAYOFF_GUIDE.md`
-5. 캐릭터 개성·강자·적대자·전투/대결 위상 작업이면 `references/character-distinctiveness-and-opponent-threat.md`
-6. benchmark·댓글·리뷰 작업이면 `docs/knowledge/serial-fiction/READER_FEEDBACK_AND_BENCHMARK_EVIDENCE_GUIDE.md`
-7. 필요 시 `references/episode-quality-gates.md`, `references/benchmark-and-reader-feedback.md`
+5. 정보 공개·캐릭터 선택 증명·대표 하이라이트·장기 복선/반전 작업이면 `docs/knowledge/serial-fiction/SERIAL_NARRATIVE_INFORMATION_AND_HIGHLIGHT_GUIDE.md`
+6. 캐릭터 개성·강자·적대자·전투/대결 위상 작업이면 `references/character-distinctiveness-and-opponent-threat.md`
+7. benchmark·댓글·리뷰 작업이면 `docs/knowledge/serial-fiction/READER_FEEDBACK_AND_BENCHMARK_EVIDENCE_GUIDE.md`
+8. 필요 시 `references/episode-quality-gates.md`, `references/benchmark-and-reader-feedback.md`
 
 ## Process
 
@@ -211,6 +215,12 @@ Reader Promise는 “독자가 이 작품/아크를 계속 읽으며 반복적�
 
 시점을 바꿔도 내면과 문장이 거의 같으면 voice 재검토 대상이다.
 
+### 3-A. 답을 숨길 때 맥락까지 숨기지 않는다
+
+중요 미스터리·배신·관계 오해는 `WITHHOLD_INFORMATION_NOT_CONTEXT`를 적용한다. 독자가 현재 목표·위험·선택·결과를 이해할 맥락은 주고, POV가 모르는 답이나 실제 인물 이유가 있는 민감 정보만 숨긴다. 필요하면 `READER_KNOWLEDGE_MATRIX`로 `POV가 아는 것 / 독자가 아는 것 / 지금 필요한 맥락 / 숨은 진실 / 공개 트리거`를 분리한다.
+
+POV가 자연스럽게 아는 사실을 독자만 속이려고 부자연스럽게 우회하면 `FALSE_SUSPENSE_BY_POV_SUPPRESSION`, 현재 맥락 자체를 미스터리처럼 숨기면 `CONTEXT_WITHHELD_AS_MYSTERY`다.
+
 ### 4. 사건 요약을 장면 체험으로 바꾼다
 
 장면은 설명문을 늘리는 방식으로 확장하지 않는다.
@@ -233,6 +243,14 @@ Reader Promise는 “독자가 이 작품/아크를 계속 읽으며 반복적�
 중요 상대는 최소 한 번 자신의 규칙을 주인공에게 강제하는 `own turn`을 가진다. 주인공의 승리는 상대가 갑자기 약하거나 멍청해졌기 때문이 아니라 **숙련(SKILL)·전술(TACTIC)·규칙 해석(RULE)·관계/협상(RELATION)** 중 인물에게 맞는 방식과 비용으로 설명되어야 한다.
 
 원작·로그·구초안을 각색하는 경우 새 전투를 발명하기 전에 원본에 있던 **강함·관계·위협 증명 기능**이 압축 과정에서 사라졌는지 대조하고 `KEEP / RESTORE / REWORK / NEW / REMOVE`로 판정한다. 상세 필드와 실패 기준은 `references/character-distinctiveness-and-opponent-threat.md`를 따른다.
+
+### 4-B. 캐릭터 변화와 대표 하이라이트를 선택으로 증명한다
+
+캐릭터 아크는 설정표의 성장 선언이 아니라 압박 속 선택의 변화인 `CHOICE_PROOF`로 확인한다. 후반의 큰 선택은 앞선 가치·상처·작은 행동을 다시 보면 가능성이 보이는 `SURPRISING_BUT_COHERENT`를 지향한다.
+
+대표 캐릭터 하이라이트는 `IDENTITY + COMPETENCE + COST + CHOICE + CONSEQUENCE`를 점수표가 아닌 감사 렌즈로 사용한다. 강한 장면이 해당 인물의 고유 판단과 실제 유능함을 증명하고, 대가와 결정권을 거쳐 이후 상태를 바꾸는지 본다.
+
+장기 복선·반전은 필요할 때 `SETUP → RECALL → RECONTEXTUALIZE → PARTIAL_PAYOFF → PAYOFF → AFTERMATH`로 추적한다. 모든 복선에 모든 단계를 강제하지 않지만, 중요한 reveal은 이전 경험을 새 의미로 묶고 이후 행동을 바꿔야 한다.
 
 ### 5. 회차에서 Local Payoff와 Open Loop를 함께 확인한다
 
@@ -266,6 +284,8 @@ Reader Promise는 “독자가 이 작품/아크를 계속 읽으며 반복적�
 장기 질문·복선만 다음 상태를 사용한다.
 
 `SETUP / RECALL / PARTIAL_PAYOFF / PAYOFF / RETIRED / DEFERRED`
+
+정보·반전·감정 구조를 정밀 감사할 때는 companion guide의 `RECONTEXTUALIZE / AFTERMATH`를 선택적으로 추가한다.
 
 장기 미회수 항목을 추적할 방법 자체가 없으면 `SETUP_PAYOFF_DEBT_UNTRACKED`다. 한 장면 안에서 즉시 닫히는 사소한 정보까지 ID화하지 않는다.
 
@@ -305,6 +325,13 @@ reader_promise_missing: READER_PROMISE_MISSING
 episode_value_missing: EPISODE_VALUE_MISSING
 local_payoff_missing: LOCAL_PAYOFF_MISSING
 information_legibility_failure: INFORMATION_LEGIBILITY_FAILURE
+context_withheld_as_mystery: CONTEXT_WITHHELD_AS_MYSTERY
+false_suspense_by_pov_suppression: FALSE_SUSPENSE_BY_POV_SUPPRESSION
+author_knowledge_leak: AUTHOR_KNOWLEDGE_LEAK
+arc_told_not_proven: ARC_TOLD_NOT_PROVEN
+unseeded_character_turn: UNSEEDED_CHARACTER_TURN
+highlight_without_cost_or_choice: HIGHLIGHT_WITHOUT_COST_OR_CHOICE
+spectacle_without_character: SPECTACLE_WITHOUT_CHARACTER
 character_identity_blur: CHARACTER_IDENTITY_BLUR
 role_homogenization: ROLE_HOMOGENIZATION
 opponent_threat_unproven: OPPONENT_THREAT_UNPROVEN
@@ -314,6 +341,7 @@ supporting_cast_steals_climax: SUPPORTING_CAST_STEALS_CLIMAX
 pattern_repetition_unvaried: PATTERN_REPETITION_UNVARIED
 consequence_memory_missing: CONSEQUENCE_MEMORY_MISSING
 setup_payoff_debt_untracked: SETUP_PAYOFF_DEBT_UNTRACKED
+payoff_without_aftermath: PAYOFF_WITHOUT_AFTERMATH
 canon_migration_debt_expanded: CANON_MIGRATION_DEBT_EXPANDED
 canon_migration_completion_overclaim: CANON_MIGRATION_COMPLETION_OVERCLAIM
 unverified_migration_boundary_continuity: UNVERIFIED_MIGRATION_BOUNDARY_CONTINUITY
@@ -338,7 +366,10 @@ protected_strengths:
 reader_promise:
 episode_value_before_after:
 pov_information_boundary:
+reader_knowledge_matrix:
+character_choice_proof:
 character_identity_matrix:
+highlight_proof:
 opponent_threat_ledger:
 source_function_reconciliation:
 local_payoff:
@@ -366,6 +397,10 @@ remaining_not_run:
 - 보호 정본과 각색 변경이 구분된다.
 - 선택한 Mode의 Quality Gate를 통과한다.
 - 주요 캐릭터의 고유 관찰·해결법·결점·대표 하이라이트가 교환 가능하지 않으며, 중요 상대의 위협과 강함이 화면 안에서 증명된다.
+- 주요 캐릭터의 변화가 설정 설명만이 아니라 압박 속 `CHOICE_PROOF`로 확인된다.
+- 중요한 미스터리에서 숨긴 답과 독자가 현재 이해해야 할 맥락이 분리되고, POV가 이미 아는 사실을 독자만 속이려고 부자연스럽게 감추지 않는다.
+- 대표 하이라이트가 스펙터클만 제공하지 않고 해당 인물의 정체성·유능함·대가·선택·후폭풍을 필요한 범위에서 증명한다.
+- 장기 복선의 핵심 payoff가 과거 장면을 재맥락화하고, 중요 reveal 뒤 인물·관계·행동의 `AFTERMATH`가 확인된다.
 - 주인공의 승리가 상대의 갑작스러운 무능화에 기대지 않고, 조연의 강함 증명이 주연의 핵심 선택·결말을 빼앗지 않는다.
 - staged migration에서는 `PASS_WITH_KNOWN_DEBT`, candidate frontier, verified prefix,
   `CANON_MIGRATION_COMPLETE`를 서로 바꾸어 주장하지 않는다.

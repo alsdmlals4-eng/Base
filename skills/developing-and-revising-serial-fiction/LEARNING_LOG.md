@@ -151,3 +151,52 @@ model_behavior_eval: NOT_RUN
 - 다른 연재소설 프로젝트에서 `설정상 강자지만 약해 보임` 또는 `주인공 때문에 적이 바보가 됨` 문제가 반복될 때
 - 캐릭터 식별 카드가 모든 인물에게 기계적으로 강제되어 관료화될 때
 - own turn 규칙이 모든 단역·잡몹까지 과적용될 때
+
+## 2026-08-11 — 정보·선택·하이라이트·복선 구조 재조사
+
+### 입력과 finding
+
+- Coc-Fiction의 전체 캐릭터 → 주요 사건/하이라이트 → 복선·정보 구조 감사를 시작하기 전에 현행 작법 계약을 최신 편집·작가 실무와 다시 대조했다.
+- 미스터리의 답을 숨기는 것과 독자가 현재 행동을 이해할 맥락을 숨기는 것은 다르며, POV가 자연스럽게 아는 사실을 독자만 속이려고 우회하면 false suspense가 된다.
+- 캐릭터 설정표의 성장 선언보다 압박 속 선택의 반복·회귀·변형이 실제 아크 증거다.
+- 대표 하이라이트는 화려함만이 아니라 캐릭터 고유성·실제 유능함·대가·결정권·후폭풍을 필요한 범위에서 화면 안에 남겨야 한다.
+- 장기 복선은 설치 개수보다 recall·recontextualization·payoff 이후 행동 변화가 중요하다.
+
+### Base 결정
+
+- 새 broad Skill을 만들지 않고 기존 `developing-and-revising-serial-fiction`의 조건부 companion guide `SERIAL_NARRATIVE_INFORMATION_AND_HIGHLIGHT_GUIDE.md`로 흡수한다.
+- 정보 공개 감사에 `WITHHOLD_INFORMATION_NOT_CONTEXT`와 `READER_KNOWLEDGE_MATRIX`를 추가한다.
+- 캐릭터 아크는 `CHOICE_PROOF`, 후반의 큰 선택은 `SURPRISING_BUT_COHERENT`로 감사한다.
+- 대표 캐릭터 하이라이트는 `IDENTITY + COMPETENCE + COST + CHOICE + CONSEQUENCE`를 점수표가 아닌 렌즈로 사용한다.
+- 장기 복선·반전은 필요할 때 `SETUP → RECALL → RECONTEXTUALIZE → PARTIAL_PAYOFF → PAYOFF → AFTERMATH`로 추적한다.
+
+### 외부 Evidence와 경계
+
+- working editor/developmental-editing guidance, author/editor craft guidance, 2025–2026 foreshadowing·character-arc 자료, 한국 웹소설 작가·PD 실무 신호를 교차 참고했다.
+- 이 자료들은 판매 인과의 실증 연구가 아니며, 특정 플랫폼의 일시적 취향·특정 작품의 반전 위치·클리프행어 빈도·특정 작가의 문체와 장면 배열은 Base universal rule로 승격하지 않는다.
+- 체크리스트를 만족시키려고 이미 잘 작동하는 장면을 복잡하게 만들지 않는다.
+
+### TDD evidence
+
+```yaml
+red_head: 58b55bf2a3d728521497781671a0d367ff13f26b
+workflow: Validate Game Project Operating System
+run_id: 31455877107
+job: ubuntu-contract
+job_id: 93669443479
+result: FAILED_AS_EXPECTED
+cause: companion guide absent
+```
+
+새 contract가 `SERIAL_NARRATIVE_INFORMATION_AND_HIGHLIGHT_GUIDE.md` 부재만 정확히 잡는 RED를 확인한 뒤 구현했다.
+
+### 검증 상한
+
+```yaml
+base_contract: VERIFIABLE
+source_project_application: IN_PROGRESS
+second_project_pilot: NOT_RUN
+human_reader_response: HUMAN_NOT_RUN
+commercial_effect: NOT_RUN
+platform_specific_fit: PLATFORM_REVERIFY_REQUIRED
+```

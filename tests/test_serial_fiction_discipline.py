@@ -18,6 +18,7 @@ class SerialFictionDisciplineContractTests(unittest.TestCase):
             "README.md",
             "SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md",
             "SERIAL_EPISODE_PACING_AND_PAYOFF_GUIDE.md",
+            "SERIAL_NARRATIVE_INFORMATION_AND_HIGHLIGHT_GUIDE.md",
             "READER_FEEDBACK_AND_BENCHMARK_EVIDENCE_GUIDE.md",
         ):
             self.assertTrue((GUIDE_ROOT / name).is_file(), name)
@@ -90,6 +91,24 @@ class SerialFictionDisciplineContractTests(unittest.TestCase):
             "RELATION",
         ):
             self.assertIn(token, combined)
+
+    def test_information_choice_highlight_and_foreshadow_contract_is_explicit(self) -> None:
+        guide = (
+            GUIDE_ROOT / "SERIAL_NARRATIVE_INFORMATION_AND_HIGHLIGHT_GUIDE.md"
+        ).read_text(encoding="utf-8")
+        for token in (
+            "WITHHOLD_INFORMATION_NOT_CONTEXT",
+            "CONTEXT_WITHHELD_AS_MYSTERY",
+            "CHOICE_PROOF",
+            "SURPRISING_BUT_COHERENT",
+            "IDENTITY + COMPETENCE + COST + CHOICE + CONSEQUENCE",
+            "HIGHLIGHT_WITHOUT_COST_OR_CHOICE",
+            "RECONTEXTUALIZE",
+            "AFTERMATH",
+            "READER_KNOWLEDGE_MATRIX",
+            "FALSE_SUSPENSE_BY_POV_SUPPRESSION",
+        ):
+            self.assertIn(token, guide)
 
     def test_reader_feedback_is_evidence_not_canon(self) -> None:
         text = (

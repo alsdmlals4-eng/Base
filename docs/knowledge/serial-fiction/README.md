@@ -18,6 +18,8 @@
   - Reader Promise, 장면 극화, POV·voice, 대사·내면, 느림과 정체, 퇴고 순서, originality 경계
 - `SERIAL_EPISODE_PACING_AND_PAYOFF_GUIDE.md`
   - Episode Value, 회차 경계, Local Payoff, Open Loop, Pattern Variation, Consequence Memory, Setup–Payoff Debt, 플랫폼 분량 검증
+- `SERIAL_NARRATIVE_INFORMATION_AND_HIGHLIGHT_GUIDE.md`
+  - 정보와 맥락의 분리, Reader Knowledge Matrix, 선택으로 증명하는 캐릭터 아크, 대표 하이라이트 proof, 복선의 recall·recontextualize·payoff·aftermath
 - `READER_FEEDBACK_AND_BENCHMARK_EVIDENCE_GUIDE.md`
   - 인기작·현업 자료·댓글·리뷰의 Evidence 분리, 반례, 표본 한계, transfer decision
 
