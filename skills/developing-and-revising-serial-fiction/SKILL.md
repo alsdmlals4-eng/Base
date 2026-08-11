@@ -1,6 +1,6 @@
 ---
 name: developing-and-revising-serial-fiction
-description: Use when planning, drafting, adapting, revising, or diagnosing a serial novel/webnovel where arc/episode structure, POV/voice, character distinctiveness, opponent threat, scene prose, continuity, pacing/payoff, setup-payoff debt, or reader-feedback evidence materially affects quality. Do not use for game-system design, generic marketing copy, simple proofreading-only edits, or imitation of another writer's style.
+description: Use when planning, drafting, adapting, revising, or diagnosing a serial novel/webnovel where arc/episode structure, POV/voice, scene prose, continuity, pacing/payoff, setup-payoff debt, or reader-feedback evidence materially affects quality. Do not use for game-system design, generic marketing copy, simple proofreading-only edits, or imitation of another writer's style.
 ---
 
 # 연재소설 집필·퇴고
