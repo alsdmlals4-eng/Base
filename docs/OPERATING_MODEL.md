@@ -90,6 +90,29 @@ Base START_HERE
 
 새 Skill은 기존 owner의 Skill Mode·reference로 책임을 보존할 수 있으면 만들지 않는다. **독립 입력·산출물·권한·검증 경계**가 분명하고 기존 owner에 흡수하면 책임이 깨질 때만 Existing Solution First와 승인 절차를 거쳐 **새 Skill을 만들 수 있다**. 상위 흐름은 `managing-project-intake-and-work-contract`, 분야 구현은 trigger가 일치하는 주 책임 Skill 하나, 비판 검증은 `running-adversarial-review-and-refinement`, 실제 변경 증거는 `reviewing-and-validating-project-changes`가 책임진다.
 
+#### `POST_CHANGE_MONITOR_LOOP`
+
+유지된 Base/project 변경은 통합·완료로 보고하기 전에 `running-adversarial-review-and-refinement`의 후속 감시 루프를 닫는다. 병합으로 repository 상태가 바뀐 경우 새 `main`에서도 같은 Goal·정본·consumer 상태를 다시 확인한다.
+
+```text
+retained-change-or-merge
+→ attack
+→ validate-critique
+→ same-goal-open-and-recent-pr-recheck
+→ untouched-consumer-and-derivative-recheck
+→ OMISSION | CONFLICT | COMPLEMENT_GAP | DUPLICATE_WORK | NO_MATERIAL_FOLLOWUP
+→ approved-minimal-fix-if-needed
+→ regression-recheck
+→ exact-head-validation
+→ merge-or-post-merge-main-readback
+→ post-merge-pr-and-canon-recheck
+→ completion-report
+```
+
+`OMISSION`은 필수 consumer·Test·Template·reference·파생본 전파 누락, `CONFLICT`는 정본·승인 Decision·diff·PR·병합 결과의 충돌, `COMPLEMENT_GAP`은 주 변경을 내구성 있게 만들기 위해 필요한 작은 보완, `DUPLICATE_WORK`는 동일 Goal의 중복 PR·후속 작업을 뜻한다. 실질적인 후속 변경이 필요하지 않으면 `NO_MATERIAL_FOLLOWUP`으로 닫고 억지 변경을 만들지 않는다.
+
+이 루프는 Base의 완료·검토 의미를 정의하며 scheduler·webhook·백그라운드 실행 자체를 의미하지 않는다. 반복 감시를 별도 자동화가 수행하더라도 발견사항은 동일한 authority·Evidence·PR·exact-head Gate를 거쳐야 한다.
+
 ### 연속작업 실행 루프
 
 사용자가 현재 채팅에서 `[연속작업] 진행해`라고 명시한 경우에만 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`를 적용한다. 이는 별도 Skill이나 Work Mode가 아니라 현재 승인된 작업 계약에 얹는 `CONTINUOUS_WORK_ACTIVE` 실행 상태다.
@@ -291,6 +314,7 @@ PLAN: audit only
 → 적용 시 accessibility-review
 → 적용 시 performance-profile
 → 대표·경계·반례·회귀
+→ POST_CHANGE_MONITOR_LOOP
 → 판정·미실행·위험·롤백 보고
 → Work Mode·Skill·Skill Mode의 이유·결과·증거 보고
 ```
