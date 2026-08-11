@@ -1,13 +1,13 @@
 ---
 name: developing-and-revising-serial-fiction
-description: Use when planning, drafting, adapting, revising, or diagnosing a serial novel/webnovel where arc/episode structure, POV/voice, scene prose, continuity, pacing/payoff, setup-payoff debt, or reader-feedback evidence materially affects quality. Do not use for game-system design, generic marketing copy, simple proofreading-only edits, or imitation of another writer's style.
+description: Use when planning, drafting, adapting, revising, or diagnosing a serial novel/webnovel where arc/episode structure, POV/voice, character distinctiveness, opponent threat, scene prose, continuity, pacing/payoff, setup-payoff debt, or reader-feedback evidence materially affects quality. Do not use for game-system design, generic marketing copy, simple proofreading-only edits, or imitation of another writer's style.
 ---
 
 # 연재소설 집필·퇴고
 
 ## 목적과 권한 경계
 
-이 Skill은 연재소설·웹소설의 **정본 보존 → 아크·회차 설계 → POV·캐릭터 voice → 장면 집필 → 회차 pacing·payoff → 독자 반응 기반 퇴고**를 소유한다.
+이 Skill은 연재소설·웹소설의 **정본 보존 → 아크·회차 설계 → POV·캐릭터 voice → 캐릭터 개성·상대 위상 → 장면 집필 → 회차 pacing·payoff → 독자 반응 기반 퇴고**를 소유한다.
 
 기본 계약:
 
@@ -16,6 +16,7 @@ CANON_AND_ADAPTATION_BOUNDARY_FIRST
 → READER_PROMISE
 → ARC_EPISODE_SCENE_SCOPE
 → POV_INFORMATION_AND_VALUE_FILTER
+→ CHARACTER_IDENTITY + OPPONENT_THREAT_INTEGRITY
 → EPISODE_VALUE
 → LOCAL_PAYOFF + OPEN_LOOP
 → INFORMATION_LEGIBILITY
@@ -43,6 +44,7 @@ Base는 공용 작법과 검수 방법만 소유한다. 작품 고유 인물·�
 - `canon-and-continuity`: 사용자 결정, 원작·로그·기존 정본의 우선순위와 각색 허용 영역을 복원하고 사건 결과·정보 시점·관계 연속성을 보호한다.
 - `arc-and-episode-design`: Reader Promise, 장기 목표, Episode Value, 상태 변화, 반복 구조 변주와 회차 경계를 설계한다.
 - `pov-and-character-voice`: POV가 아는 정보, 주의를 두는 대상, 가치 판단, 욕망, 자기기만과 문장 리듬을 분리한다.
+- `character-and-opponent-integrity`: 인물별 관찰·말투·해결법·결점·대표 하이라이트를 분리하고, 중요 상대가 화면 안에서 위협을 증명한 뒤 주인공 고유 방식으로 승패가 결정되는지 감사한다.
 - `draft-and-prose`: 사건 요약을 감각·행동·대사·판단이 있는 장면으로 극화하고 설명·중복·작가 해설을 줄인다.
 - `serial-pacing-and-payoff`: Local Payoff, Open Loop, 후폭풍, 느림과 정체, setup/payoff 부채와 플랫폼 production target을 점검한다.
 - `reader-feedback-and-revision`: 댓글·리뷰를 증상 신호로 묶고 실제 원고 증거와 대조해 최소 수정 가설을 만든다.
@@ -53,6 +55,7 @@ Base는 공용 작법과 검수 방법만 소유한다. 작품 고유 인물·�
 
 - 웹소설·연재소설·장편소설의 로그라인, 아크, 회차 또는 장면을 설계한다.
 - 기존 원고의 2차 이상 퇴고, 구조 개편, POV·voice·대사·내면·문단 리듬을 점검한다.
+- 주요 인물·조연·적대자의 개성이 흐려지거나, 설정상 강한 인물·적이 장면에서는 약하고 볼품없어 보이는 문제를 진단한다.
 - TRPG·게임 로그·실화·기존 원작을 각색하면서 정본 결과와 새 장면 완성도를 함께 지켜야 한다.
 - 회차 hook, payoff, 장기 복선, 반복 에피소드 피로를 진단한다.
 - 독자 댓글·리뷰·플랫폼 반응이 실제 원고의 어떤 문제를 가리키는지 분석한다.
@@ -77,6 +80,8 @@ work_identity_and_reader_promise:
 arc_episode_or_scene_scope:
 current_draft:
 pov_and_character_voice_state:
+character_identity_cards:
+opponent_threat_ledger:
 continuity_and_information_state:
 active_and_archive_consumer_inventory:
 staged_migration_state:
@@ -113,8 +118,9 @@ project_pilot: PROJECT_PILOT_NOT_RUN
 2. 현재 아크·회차·장면의 실제 원고와 앞뒤 continuity
 3. `docs/knowledge/serial-fiction/SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md`
 4. 회차 경계·hook·payoff 작업이면 `docs/knowledge/serial-fiction/SERIAL_EPISODE_PACING_AND_PAYOFF_GUIDE.md`
-5. benchmark·댓글·리뷰 작업이면 `docs/knowledge/serial-fiction/READER_FEEDBACK_AND_BENCHMARK_EVIDENCE_GUIDE.md`
-6. 필요 시 `references/episode-quality-gates.md`, `references/benchmark-and-reader-feedback.md`
+5. 캐릭터 개성·강자·적대자·전투/대결 위상 작업이면 `references/character-distinctiveness-and-opponent-threat.md`
+6. benchmark·댓글·리뷰 작업이면 `docs/knowledge/serial-fiction/READER_FEEDBACK_AND_BENCHMARK_EVIDENCE_GUIDE.md`
+7. 필요 시 `references/episode-quality-gates.md`, `references/benchmark-and-reader-feedback.md`
 
 ## Process
 
@@ -220,6 +226,14 @@ Reader Promise는 “독자가 이 작품/아크를 계속 읽으며 반복적�
 
 모든 장면에 이 순서를 기계적으로 강제하지 않는다. 프레임워크가 장면 목적보다 앞서면 `FRAMEWORK_OVERFIT`이다.
 
+### 4-A. 캐릭터 개성과 상대 위상을 함께 감사한다
+
+캐릭터의 매력과 강함을 설정문으로만 주장하지 않는다. 주요 인물은 **관찰 필터·말투/사고·문제 해결 방식·실제 강함 증명·인간적 매력·대가를 만드는 결점·대표 하이라이트**가 서로 구분되어야 한다.
+
+중요 상대는 최소 한 번 자신의 규칙을 주인공에게 강제하는 `own turn`을 가진다. 주인공의 승리는 상대가 갑자기 약하거나 멍청해졌기 때문이 아니라 **숙련(SKILL)·전술(TACTIC)·규칙 해석(RULE)·관계/협상(RELATION)** 중 인물에게 맞는 방식과 비용으로 설명되어야 한다.
+
+원작·로그·구초안을 각색하는 경우 새 전투를 발명하기 전에 원본에 있던 **강함·관계·위협 증명 기능**이 압축 과정에서 사라졌는지 대조하고 `KEEP / RESTORE / REWORK / NEW / REMOVE`로 판정한다. 상세 필드와 실패 기준은 `references/character-distinctiveness-and-opponent-threat.md`를 따른다.
+
 ### 5. 회차에서 Local Payoff와 Open Loop를 함께 확인한다
 
 이번 회차를 읽은 대가로 작은 질문의 답, 감정 결산, 관계 변화, 규칙 이해, 성공·실패 결과 중 하나는 제공한다. 없으면 `LOCAL_PAYOFF_MISSING`이다.
@@ -291,6 +305,12 @@ reader_promise_missing: READER_PROMISE_MISSING
 episode_value_missing: EPISODE_VALUE_MISSING
 local_payoff_missing: LOCAL_PAYOFF_MISSING
 information_legibility_failure: INFORMATION_LEGIBILITY_FAILURE
+character_identity_blur: CHARACTER_IDENTITY_BLUR
+role_homogenization: ROLE_HOMOGENIZATION
+opponent_threat_unproven: OPPONENT_THREAT_UNPROVEN
+offscreen_strength_only: OFFSCREEN_STRENGTH_ONLY
+victory_by_opponent_deflation: VICTORY_BY_OPPONENT_DEFLATION
+supporting_cast_steals_climax: SUPPORTING_CAST_STEALS_CLIMAX
 pattern_repetition_unvaried: PATTERN_REPETITION_UNVARIED
 consequence_memory_missing: CONSEQUENCE_MEMORY_MISSING
 setup_payoff_debt_untracked: SETUP_PAYOFF_DEBT_UNTRACKED
@@ -318,6 +338,9 @@ protected_strengths:
 reader_promise:
 episode_value_before_after:
 pov_information_boundary:
+character_identity_matrix:
+opponent_threat_ledger:
+source_function_reconciliation:
 local_payoff:
 open_loop:
 continuity_changes:
@@ -342,6 +365,8 @@ remaining_not_run:
 
 - 보호 정본과 각색 변경이 구분된다.
 - 선택한 Mode의 Quality Gate를 통과한다.
+- 주요 캐릭터의 고유 관찰·해결법·결점·대표 하이라이트가 교환 가능하지 않으며, 중요 상대의 위협과 강함이 화면 안에서 증명된다.
+- 주인공의 승리가 상대의 갑작스러운 무능화에 기대지 않고, 조연의 강함 증명이 주연의 핵심 선택·결말을 빼앗지 않는다.
 - staged migration에서는 `PASS_WITH_KNOWN_DEBT`, candidate frontier, verified prefix,
   `CANON_MIGRATION_COMPLETE`를 서로 바꾸어 주장하지 않는다.
 - 회차/장면에서 무엇이 달라졌는지 설명할 수 있다.
