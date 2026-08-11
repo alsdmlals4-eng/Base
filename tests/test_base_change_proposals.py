@@ -23,6 +23,32 @@ class BaseChangeProposalTests(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertEqual(registry["proposal_root"], "[수정제안서]")
 
+    def test_reallocated_bcp_lineage_keeps_distinct_sources_and_recovery_audit(self) -> None:
+        registry, errors = CHECKER.validate_repository(ROOT)
+        self.assertEqual([], errors)
+        entries = {item["proposal_id"]: item for item in registry["proposals"]}
+        retained_entry = entries["BCP-2026-023-local-executor-retained-instance-recovery"]
+        sandbox_entry = entries["BCP-2026-024-execution-sandbox-authority-split-recovery"]
+        retained = (ROOT / retained_entry["path"]).read_text(encoding="utf-8")
+        sandbox = (ROOT / sandbox_entry["path"]).read_text(encoding="utf-8")
+
+        self.assertEqual("alsdmlals4-eng/Ten-Paces-Hidden-Moves", retained_entry["source_project"])
+        self.assertEqual("alsdmlals4-eng/GRIMOIRE-", sandbox_entry["source_project"])
+        self.assertIn("출처 프로젝트: `alsdmlals4-eng/Ten-Paces-Hidden-Moves`", retained)
+        self.assertNotIn("source_project: alsdmlals4-eng/GRIMOIRE-", retained)
+        self.assertIn("source_project: alsdmlals4-eng/GRIMOIRE-", sandbox)
+        self.assertNotIn("alsdmlals4-eng/Ten-Paces-Hidden-Moves", sandbox)
+        self.assertIn("### 충돌 복원 감사", sandbox)
+        recovery_audit = sandbox.split("### 충돌 복원 감사", 1)[1].split("## 관찰과 증거", 1)[0]
+        self.assertIn("GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01", recovery_audit)
+        self.assertIn("HTTP 525", recovery_audit)
+        self.assertIn("Star Runtime", recovery_audit)
+        for pr_number in (293, 295, 296, 297):
+            self.assertIn(f"PR #{pr_number}", recovery_audit)
+        self.assertEqual("SUBMITTED", sandbox_entry["status"])
+        self.assertIsNone(sandbox_entry["approval_ref"])
+        self.assertIn("base_implementation_authority: NOT_GRANTED_IN_THIS_STAGE", sandbox)
+
     def test_merged_continuity_and_diagnostic_proposals_retain_approval_and_implementation_links(self) -> None:
         registry, errors = CHECKER.validate_repository(ROOT)
         self.assertEqual(errors, [])
