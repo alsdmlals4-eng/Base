@@ -1,7 +1,7 @@
 # Project-Dedicated Local Execution Environment Design
 
 **Date:** 2026-08-11 KST  
-**Status:** USER-APPROVED DESIGN / WRITTEN SPEC AWAITING USER REVIEW  
+**Status:** USER-APPROVED DESIGN / WRITTEN SPEC APPROVED FOR IMPLEMENTATION  
 **Shared Base owner:** `ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP`  
 **New shared invariant:** `PROJECT_DEDICATED_LOCAL_EXECUTION_ENVIRONMENT_FIRST`  
 **GRIMOIRE consuming Decision ID:** `GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01`  
@@ -19,6 +19,7 @@ For a Godot project, the required dedicated environment components are conceptua
 dedicated self-contained Godot
 → project-scoped HiGodot server/profile/ports
 → project-scoped CODEX_HOME
+→ project-adopted live-QA tool/profile when one exists
 ```
 
 The actual command execution always starts from a fresh PowerShell process:
@@ -29,8 +30,10 @@ fresh project-scoped PowerShell
 → reuse/start exact Godot
 → verify/start-or-attach exact project HiGodot profile/ports
 → set exact project CODEX_HOME
+→ verify project-adopted live-QA tool/profile when required
 → launch Codex -C <exact project/worktree>
 → obtain fresh project-authorized HiGodot receipt before persistent mutation
+→ run live-QA only under its project-approved non-authoring boundary
 ```
 
 This is an execution-orchestration rule. It does not create a second persistent Godot authoring authority.
@@ -53,7 +56,7 @@ The handoff must therefore be self-contained and must not depend on variables, a
 
 ### 2.2 Project-dedicated local execution environment
 
-A project-dedicated local execution environment is the smallest isolated host-side toolchain needed to execute the project's approved workflow without silently borrowing another project's editor, ports, Codex profile, or shell state.
+A project-dedicated local execution environment is the smallest isolated host-side toolchain needed to execute the project's approved workflow without silently borrowing another project's editor, ports, Codex profile, live-QA profile, or shell state.
 
 For Godot + HiGodot + Codex projects it includes:
 
@@ -61,7 +64,8 @@ For Godot + HiGodot + Codex projects it includes:
 2. a project-scoped HiGodot configuration, including project-specific server/port/profile identity where applicable;
 3. a project-scoped `CODEX_HOME`;
 4. exact project/worktree identity passed to Codex;
-5. a fresh PowerShell process for each user-executed local work session.
+5. a fresh PowerShell process for each user-executed local work session;
+6. any project-adopted live-QA tool/profile that the current task actually requires, under that tool's existing authority boundary.
 
 Already-running components may be reused only when their identity matches the requested project/worktree exactly.
 
@@ -84,12 +88,16 @@ LOCAL_WORK_REQUEST
      reuse/start exact project editor/runtime only
      → start/attach exact project-scoped live-authority service only
      → inject project-scoped executor profile/CODEX_HOME
+     → verify project-adopted live-QA profile if the task requires it
      → launch Codex in exact project/worktree
 → obtain fresh project-authorized session/version/readiness receipt inside Codex
+→ use any live-QA tool only within its already-approved non-authoring scope
 → only then persistent project work
 ```
 
 `BOOTSTRAP_MINIMUM_PREFLIGHT_ONLY` remains valid. The new invariant strengthens what must exist before bootstrap; it does not authorize broad pre-launch diagnostics.
+
+Base stays tool-neutral: it does not hard-code Hera or another project-specific live-QA product, version, port, token, or executable.
 
 ## 4. Environment creation/repair rule
 
@@ -97,14 +105,16 @@ If the project does not yet have a dedicated local execution environment, **envi
 
 The launcher must fail closed when a required project-local component is unavailable or ambiguous.
 
-Creation/repair may establish project-local directories, approved self-contained tool distributions, project-specific HiGodot configuration, and project-specific Codex profile state, but must not:
+Creation/repair may establish project-local directories, approved self-contained tool distributions, project-specific HiGodot configuration, project-specific Codex profile state, and approved project-scoped live-QA configuration, but must not:
 
 - reset, restore, clean, stage, rewrite, or otherwise destroy user repository work;
 - silently reuse another project's HiGodot ports/profile;
+- silently reuse another project's live-QA profile, token, port, or process;
 - silently use a global/default `CODEX_HOME` when a project-scoped profile is required;
 - install or replace global/system tooling when the approved model is self-contained/project-local;
 - kill unrelated editors/servers to free resources;
-- declare readiness solely because a process exists or a port is listening.
+- declare readiness solely because a process exists or a port is listening;
+- promote a live-QA tool into persistent source-authoring authority.
 
 If environment creation requires a new install location, credential, destructive migration, or unresolved port-policy decision that current authority does not determine, stop with `USER_DECISION_REQUIRED` rather than inventing a value.
 
@@ -122,13 +132,14 @@ Required response order:
    - reuse/start exact Godot
    - start/attach project-specific HiGodot profile/ports
    - set exact project CODEX_HOME
+   - verify project-adopted live-QA profile when required
    - launch Codex -C <exact project/worktree>
 3. After Codex opens, paste the Codex task prompt.
 ```
 
 The PowerShell block must be executable from a fresh shell. It must not say or imply “use the PowerShell from earlier”, “keep the previous shell open”, or depend on variables defined in a previous message.
 
-Project-specific literals remain in the consuming project's canon or execution packet. Base owns the invariant, not GRIMOIRE-specific paths, ports, versions, branches, or worktree names.
+Project-specific literals remain in the consuming project's canon or execution packet. Base owns the invariant, not GRIMOIRE-specific paths, ports, versions, branches, worktree names, Hera values, or other live-QA literals.
 
 ## 6. Adversarial launcher review
 
@@ -143,6 +154,9 @@ OTHER_PROJECT_HIGODOT_PORT_OWNERSHIP
 PROJECT_PORT_COLLISION
 GLOBAL_CODEX_HOME_LEAKAGE
 MISSING_CODEX_HOME
+OTHER_PROJECT_LIVE_QA_PROFILE
+LIVE_QA_TOKEN_OR_PORT_COLLISION
+LIVE_QA_ACCIDENTAL_SOURCE_MUTATION
 FRESH_SHELL_ENV_LOSS
 PATH_WITH_SPACES_OR_QUOTING_FAILURE
 PROCESS_EXISTS_BUT_NOT_READY
@@ -165,12 +179,13 @@ The launcher proves orchestration only. It does **not** prove:
 - active project/session identity;
 - readiness;
 - successful persistent authoring;
+- live-QA acceptance;
 - test success;
 - product correctness.
 
 Those claims require fresh project-authorized receipts after Codex starts.
 
-For projects where HiGodot is the sole persistent Godot authoring authority, `.gd/.tscn/.tres/.res/project.godot` persistent authoring remains under HiGodot. PowerShell/Codex bootstrap does not weaken that boundary.
+For projects where HiGodot is the sole persistent Godot authoring authority, `.gd/.tscn/.tres/.res/project.godot` persistent authoring remains under HiGodot. PowerShell/Codex bootstrap does not weaken that boundary. A live-QA tool remains non-authoring unless the project separately and explicitly changes its authority model.
 
 ## 8. GRIMOIRE concrete consumer
 
@@ -190,13 +205,17 @@ fresh PowerShell process
 → exact requested GRIMOIRE project/worktree
 → project-scoped HiGodot 3.1.4 profile/server using GRIMOIRE-assigned ports
 → $HOME\.codex-grimoire
+→ Hera 1.0.0 exact CLI/addon pair when live QA is required
 → codex.cmd -C <exact GRIMOIRE worktree> <requested sandbox/approval mode>
 → fresh godot-ai exact-project/server/plugin/readiness receipt
+→ Hera live QA/observability only with `HERA_SOURCE_DELTA: NONE`
 ```
 
-The current GRIMOIRE HiGodot port convention is project-local authority and must be fresh-read before each execution packet rather than copied permanently into Base.
+The current GRIMOIRE HiGodot port convention and Hera localhost/shared-token configuration are project-local authority and must be fresh-read before each execution packet rather than copied permanently into Base.
 
 For every GRIMOIRE local-task response, the one-block PowerShell bootstrap appears **before** the Codex continuation prompt because the user may close PowerShell after every work session.
+
+Hera is part of the GRIMOIRE local QA environment, not a Godot authoring fallback. It may inspect/run the project only under `LIVE_QA_AND_OBSERVABILITY_ONLY`, and acceptance must preserve `HERA_SOURCE_DELTA: NONE`.
 
 ## 9. GRIMOIRE environment-absence behavior
 
@@ -209,7 +228,8 @@ The creation/repair gate establishes or verifies, as applicable:
 - project-scoped HiGodot profile and GRIMOIRE port ownership;
 - project-scoped `CODEX_HOME`;
 - exact Git worktree target;
-- Codex executable availability.
+- Codex executable availability;
+- Hera 1.0.0 exact CLI/addon pair and approved localhost/shared-token profile when the task requires live QA.
 
 After creation/repair, a fresh one-block bootstrap is still required. Environment creation does not imply that a prior shell remains open.
 
@@ -233,7 +253,8 @@ Add focused RED→GREEN contract coverage proving that the shared owner requires
 - `ASSUME_PREVIOUS_POWERSHELL_CLOSED` semantics;
 - create/repair-before-product-work when the dedicated environment is absent;
 - one copy/paste launcher before the Codex prompt;
-- no project-specific GRIMOIRE literals in Base shared policy/template;
+- an optional project-adopted live-QA slot that does not become persistent authoring authority;
+- no project-specific GRIMOIRE/Hera literals in Base shared policy/template;
 - no weakening of HiGodot sole-authority boundaries;
 - adversarial launcher review before handoff.
 
@@ -245,8 +266,9 @@ Update planning/operations canon under `GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01
 
 - PowerShell bootstrap precedes Codex prompt in the documented local flow;
 - fresh-shell assumption is explicit;
-- self-contained Godot → project HiGodot → project `CODEX_HOME` → Codex order is explicit inside the fresh PowerShell launcher;
+- self-contained Godot → project HiGodot → project `CODEX_HOME` → Hera-if-required → Codex order is explicit inside the fresh PowerShell launcher;
 - absent environment routes to creation/repair first;
+- Hera remains `LIVE_QA_AND_OBSERVABILITY_ONLY` and acceptance requires `HERA_SOURCE_DELTA: NONE`;
 - no Task8 product source mutation is included in this operating-policy work unit;
 - Google Sheet readback carries the same Decision ID.
 
@@ -268,7 +290,7 @@ attack
 → post-merge PR/canon recheck
 ```
 
-Important consumers include Base GPT/Codex workflow policy, Godot live-editor operations template, project adapters/templates inheriting the bootstrap, GRIMOIRE development gates/current decisions/sync record, and the Google Sheet tool-authority row.
+Important consumers include Base GPT/Codex workflow policy, Godot live-editor operations template, project adapters/templates inheriting the bootstrap, GRIMOIRE development gates/current decisions/sync record, Hera authority consumers, and the Google Sheet tool-authority row.
 
 ## 13. Explicit non-goals
 
@@ -277,9 +299,10 @@ This change does not:
 - create a new broad Base Skill;
 - require a separately installed PowerShell binary;
 - require PowerShell to remain open between work sessions;
-- define one universal Godot path, HiGodot port, or `CODEX_HOME` for all projects;
+- define one universal Godot path, HiGodot port, `CODEX_HOME`, or live-QA product for all projects;
 - equate process/port existence with readiness;
 - move product authoring authority away from HiGodot;
+- grant Hera persistent source-mutation authority;
 - change Task8 gameplay/product behavior;
 - require Task9/root-navigation work;
 - authorize destructive repository cleanup.
