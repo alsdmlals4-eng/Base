@@ -267,6 +267,17 @@
       "submitted_at": "2026-08-12",
       "approval_ref": null,
       "implementation_pr": null
+    },
+    {
+      "proposal_id": "BCP-2026-025-disposable-exact-source-runtime-isolation",
+      "title": "BCP - OMENWARD: Disposable Exact-Source Runtime Isolation",
+      "path": "[수정제안서]/BCP-2026-025-disposable-exact-source-runtime-isolation/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "alsdmlals4-eng/omenward",
+      "source_commit": "b51bb29471ab802c6241d72a9af1226209934887",
+      "submitted_at": "2026-08-12",
+      "approval_ref": null,
+      "implementation_pr": null
     }
   ]
 }
