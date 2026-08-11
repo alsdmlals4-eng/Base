@@ -175,6 +175,27 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
         for source_id in expected_ids:
             self.assertIn("CODE_ENGINEERING", by_id[source_id]["domains"], source_id)
 
+    def test_source_context_packet_preserves_change_lifecycle_and_action_window(self) -> None:
+        content = WATCHLIST.read_text(encoding="utf-8")
+        for required in (
+            "change_signal_type:",
+            "availability_or_policy_state:",
+            "effective_or_deadline_at:",
+            "affected_versions_or_surfaces:",
+            "action_window:",
+            "POLICY_DEADLINE",
+            "SECURITY_ADVISORY",
+            "OBSERVATIONAL_BENCHMARK",
+            "STABLE | GA | PREVIEW | BETA | RC | DEV | PROPOSED | DEPRECATED | RETIRED | POLICY_EFFECTIVE | UNKNOWN",
+            "NOW | BEFORE_DEADLINE | WHEN_ADOPTING | MONITOR_ONLY | REVERIFY_BEFORE_USE",
+        ):
+            self.assertIn(required, content)
+
+        self.assertIn("preview·beta·RC·dev·proposal", content)
+        self.assertIn("stable/GA 사실로 승격", content)
+        self.assertIn("deadline", content.lower())
+        self.assertIn("행동 시점", content)
+
     def test_watchlist_connects_context_extraction_to_fail_closed_auto_merge(self) -> None:
         content = WATCHLIST.read_text(encoding="utf-8")
         for required in (
