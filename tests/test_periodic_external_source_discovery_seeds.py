@@ -7,6 +7,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SEEDS = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_DISCOVERY_SEEDS.md"
 WATCHLIST = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md"
+ART_GUIDE = ROOT / "docs" / "knowledge" / "game-development" / "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md"
+SIZE_GUIDE = ROOT / "docs" / "knowledge" / "game-development" / "GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md"
 
 
 class PeriodicExternalSourceDiscoverySeedTests(unittest.TestCase):
@@ -47,6 +49,40 @@ class PeriodicExternalSourceDiscoverySeedTests(unittest.TestCase):
         self.assertIn("같은 format", content)
         self.assertNotIn("stars = authority", content.lower())
         self.assertNotIn("views = authority", content.lower())
+
+    def test_pixel_art_sources_route_to_existing_art_and_size_owners(self) -> None:
+        seeds = SEEDS.read_text(encoding="utf-8")
+        art_guide = ART_GUIDE.read_text(encoding="utf-8")
+        size_guide = SIZE_GUIDE.read_text(encoding="utf-8")
+
+        for required in (
+            "Aseprite",
+            "https://www.aseprite.org/docs/",
+            "https://github.com/aseprite/aseprite",
+            "Saint11",
+            "https://saint11.org/blog/pixel-art-tutorials/",
+            "Lospec",
+            "https://lospec.com/",
+            "PixelJoint",
+            "https://pixeljoint.com/",
+            "AUTHORITY_TARGET",
+            "PROFESSIONAL_PRACTICE",
+            "DISCOVERY_FEED",
+            "integer scaling",
+            "nearest",
+            "pixel clusters",
+            "banding",
+            "palette",
+            "sprite sheet",
+            "BLOCKED_UNVERIFIED",
+        ):
+            self.assertIn(required, seeds)
+
+        self.assertIn("PERIODIC_EXTERNAL_SOURCE_DISCOVERY_SEEDS.md", art_guide)
+        self.assertIn("pixel art", art_guide.lower())
+        self.assertIn("Base-wide default", art_guide)
+        self.assertIn("pixel art does not automatically prove a smaller shipped build", size_guide.lower())
+        self.assertIn("actual build", size_guide.lower())
 
 
 if __name__ == "__main__":
