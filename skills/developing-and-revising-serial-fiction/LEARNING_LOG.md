@@ -113,3 +113,41 @@ project_runtime_validation: PROJECT_LOCAL
 - declared debt set을 wildcard로 느슨하게 만들려는 요구가 나올 때
 - candidate frontier를 Green 전에 completion으로 보고하려는 경우
 - derived consumer의 adjacency가 duplicate authority 또는 거짓 continuity를 만드는 경우
+
+## 2026-08-11 — 캐릭터 개성·상대 위상 무결성
+
+### 입력과 finding
+
+- 연재소설 각색 과정에서 설정상 강한 조연이 전투 결과·소문으로만 강하다고 설명되고, 원본에 있던 실제 대련·전투 기능이 압축본에서 빠진 사례가 확인됐다.
+- 반대로 주인공을 강하게 보이게 하려고 적대자의 판단·훈련·위험성을 낮추면 승자까지 약해 보이는 문제가 반복됐다.
+- 동일 작품 안에서도 강자들이 모두 같은 방식으로 강하면 캐릭터 구분과 전투 기억점이 함께 흐려졌다.
+
+### Base 결정
+
+- 새 독립 ACTIVE Skill을 추가하지 않고 기존 `developing-and-revising-serial-fiction`에 `character-and-opponent-integrity` mode와 조건부 reference를 흡수한다.
+- 인물 식별은 `관찰 필터 / voice·사고 / 문제 해결 / 화면 안 강함 증명 / 인간적 매력 / 대가를 만드는 결점 / 대표 하이라이트`로 분리한다.
+- 중요 상대는 최소 한 번 자기 규칙을 강제하는 `own turn`을 갖고, 승리·생존은 `SKILL / TACTIC / RULE / RELATION` 중 인물 고유 방식과 비용으로 설명한다.
+- 원작·로그·구초안 각색은 신규 장면 발명 전 `SOURCE FUNCTION → CURRENT REPRESENTATION → KEEP/RESTORE/REWORK/NEW/REMOVE`를 대조한다.
+- 설정상 강한 주요 인물의 위상을 화면 밖 보고만으로 끝내는 것과 주인공 승리를 위한 상대 약체화를 별도 실패 상태로 둔다.
+
+### 경계
+
+- Base는 작품별 캐릭터 이름·전투력·누가 누구를 좋아하는지·고정 전투 횟수를 소유하지 않는다.
+- 전투가 없는 인물에게 강제 전투를 붙이지 않는다. **전투 강자라고 정본상 주장하는 중요 인물**의 증명 부채가 있을 때만 화면 안 증명을 요구한다.
+- 조연의 위상 증명은 주연의 중앙 선택·결말을 대신하면 실패다.
+
+### 검증 상한
+
+```yaml
+base_contract: DOCUMENTED
+source_project_evidence: ONE_SERIAL_FICTION_PROJECT
+second_project_pilot: NOT_RUN
+human_reader_quality: NOT_RUN
+model_behavior_eval: NOT_RUN
+```
+
+### 다음 검토 트리거
+
+- 다른 연재소설 프로젝트에서 `설정상 강자지만 약해 보임` 또는 `주인공 때문에 적이 바보가 됨` 문제가 반복될 때
+- 캐릭터 식별 카드가 모든 인물에게 기계적으로 강제되어 관료화될 때
+- own turn 규칙이 모든 단역·잡몹까지 과적용될 때
