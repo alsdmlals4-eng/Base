@@ -107,6 +107,31 @@ class GameDevelopmentYouTubeSkillTests(unittest.TestCase):
         ):
             self.assertIn(token, text)
 
+    def test_title_thumbnail_package_can_record_platform_ab_experiment(self) -> None:
+        skill = self.read_required(SKILL_PATH)
+        packet = self.read_required(PACKET_PATH)
+        for text in (skill, packet):
+            for token in (
+                "youtube_package_experiment:",
+                "feature_support_checked_at:",
+                "eligibility_status: AVAILABLE | UNAVAILABLE | BLOCKED_UNVERIFIED",
+                "tested_packages:",
+                "test_started_at:",
+                "test_ended_at:",
+                "platform_result:",
+                "watch_time_result:",
+                "ctr_context:",
+                "confounders:",
+                "KEEP | CHANGE | INSUFFICIENT_SAMPLE | NOT_RUN",
+            ):
+                self.assertIn(token, text)
+
+        self.assertIn("watch time", skill.lower())
+        self.assertIn("CTR 단독", skill)
+        self.assertIn("게임 수요", skill)
+        self.assertIn("지원·자격", skill)
+        self.assertIn("선택 사항", skill)
+
     def test_episode_packet_contains_complete_evidence_loop(self) -> None:
         text = self.read_required(PACKET_PATH)
         for heading in (

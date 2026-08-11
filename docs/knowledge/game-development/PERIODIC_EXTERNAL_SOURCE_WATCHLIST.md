@@ -330,6 +330,11 @@ SOURCE_CONTEXT_PACKET:
   source_fact:
   context_conditions:
   freshness:
+  change_signal_type: RELEASE | MAINTENANCE | PREVIEW | PROPOSAL | DEPRECATION | POLICY_DEADLINE | SECURITY_ADVISORY | PRACTICE_GUIDANCE | OBSERVATIONAL_BENCHMARK | OTHER
+  availability_or_policy_state: STABLE | GA | PREVIEW | BETA | RC | DEV | PROPOSED | DEPRECATED | RETIRED | POLICY_EFFECTIVE | UNKNOWN
+  effective_or_deadline_at:
+  affected_versions_or_surfaces: []
+  action_window: NOW | BEFORE_DEADLINE | WHEN_ADOPTING | MONITOR_ONLY | REVERIFY_BEFORE_USE
   scope:
   sample_or_method:
   platform_or_medium:
@@ -342,6 +347,8 @@ SOURCE_CONTEXT_PACKET:
   disposition: ADOPT | ADAPT | TEST | AVOID | IGNORE | REFERENCE_ONLY
   work_disposition: NO_CHANGE | EVIDENCE_ONLY_UPDATE | ABSORB_EXISTING_OWNER | LOW_RISK_BOUNDED_UPDATE | RULE_OR_BCP_CANDIDATE | BCP_OR_USER_DECISION
 ```
+
+`change_signal_type`과 lifecycle/actionability 필드는 Evidence tier를 높이거나 owner 권한을 바꾸는 필드가 아니다. 최근 글이라는 이유만으로 preview·beta·RC·dev·proposal을 stable/GA 사실로 승격하지 않는다. 정책·이벤트·지원 종료처럼 deadline이 있는 Source는 게시일과 별개로 `effective_or_deadline_at`과 실제 **행동 시점**을 보존한다. 정확한 상태를 확인할 수 없으면 `UNKNOWN`과 `REVERIFY_BEFORE_USE`를 사용한다.
 
 `CONTEXT_TO_CHANGE`는 항상 Existing Solution First로 시작한다. `ALREADY_COVERED`여도 누락된 적용 조건·반례·freshness·source cross-check·checklist·template·test·adversarial question을 기존 owner에 흡수할 수 있는지 먼저 본다. 독립 입력·산출물·권한·실패·검증 경계가 없으면 새 Skill이나 agent를 만들지 않는다.
 
@@ -475,6 +482,8 @@ known_bias:
 - `새 규칙 없음`을 `유용한 흡수점 없음`으로 잘못 해석했는가?
 - 기존 owner에 작은 보강이 가능한데 `ALREADY_COVERED`라는 이유만으로 폐기했는가?
 - `SOURCE_CONTEXT_PACKET`이 원문의 한계·조건을 떨어뜨리고 결론만 과장했는가?
+- 최근 문서라는 이유로 preview·beta·RC·dev·proposal을 stable/GA 사실로 승격했는가?
+- 정책·이벤트·지원 종료의 deadline과 행동 시점을 일반 `freshness` 문장 속에 잃었는가?
 - contribution count가 낮다는 이유로 정적·고권위 Source를 제거하려 했는가?
 - 자동병합을 이유로 보호된 의미 변경을 `LOW_RISK_BOUNDED_UPDATE`로 축소 분류했는가?
 - Godot proposal·open issue·open PR을 이미 release된 engine behavior로 보고했는가?

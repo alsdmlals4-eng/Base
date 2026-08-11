@@ -44,7 +44,7 @@ Base는 공용 방법론과 Template만 소유한다. 실제 Episode Packet과 �
 - `channel-portfolio`: 스튜디오 통합 채널, 프로젝트별 재생목록·홈 섹션, 장문·Shorts·트레일러 역할과 채널 분리 Gate를 설계한다.
 - `episode-concept`: 주 시청자, Episode Job, 한 문장 약속, 핵심 갈등·변화·결과, 주 CTA를 하나씩 우선한다.
 - `script-and-shot-plan`: 실제 빌드 증거에 연결된 Hook, 대본, 샷리스트, 비교 장면과 편집 비트시트를 작성한다.
-- `title-thumbnail-package`: 실제 영상과 일치하는 제목·썸네일 후보, 첫 30초 약속 충족 장면, 오해·스포일러 위험을 검토한다.
+- `title-thumbnail-package`: 실제 영상과 일치하는 제목·썸네일 후보, 첫 30초 약속 충족 장면, 오해·스포일러 위험을 검토하고, 현재 YouTube Studio의 지원·자격을 확인할 수 있으면 선택 사항으로 native package experiment evidence를 기록한다.
 - `production-and-publish`: 캡처·편집·설명란·챕터·고정 댓글·재생목록·엔드스크린과 공개 전 Gate를 관리한다.
 - `analytics-review`: 시청·이동·하위 전환·제작시간을 목적과 표본 한계에 맞춰 해석하고 다음 실험을 정한다.
 
@@ -260,6 +260,24 @@ status: PASS | REVISION_REQUIRED | BLOCKED_UNVERIFIED
 - 특정 창작자의 식별 가능한 문구·구도·캐릭터 배치·편집 표현을 복제하지 않는다.
 - 플랫폼 기능이 실제 지원될 때만 충분히 다른 후보를 실험한다.
 
+현재 YouTube Studio의 native 제목·썸네일 A/B 기능을 사용할 때도 먼저 현재 **지원·자격**을 확인한다. 이 실험은 `title-thumbnail-package`의 **선택 사항**이며 Shorts·계정 상태·영상 형식 등 현재 제한 때문에 사용할 수 없으면 `NOT_RUN` 또는 `UNAVAILABLE`로 남긴다.
+
+```yaml
+youtube_package_experiment:
+  feature_support_checked_at:
+  eligibility_status: AVAILABLE | UNAVAILABLE | BLOCKED_UNVERIFIED
+  tested_packages:
+  test_started_at:
+  test_ended_at:
+  platform_result:
+  watch_time_result:
+  ctr_context:
+  confounders:
+  decision: KEEP | CHANGE | INSUFFICIENT_SAMPLE | NOT_RUN
+```
+
+현재 공식 Help 기준 native 테스트의 판정은 watch time 성과를 사용한다. 따라서 플랫폼 결과와 `watch_time_result`를 보존하고 `ctr_context`는 별도 맥락으로 기록한다. **CTR 단독**으로 winner를 재해석하지 않는다. `Winner / Performed Same / Inconclusive` 같은 플랫폼 결과는 패키지에 대한 관찰 Evidence일 뿐이며, 게임 수요·구매 의도·전체 마케팅 효과를 직접 증명하지 않는다. 현재 지원 surface·자격·판정 방식은 실행 직전에 다시 확인한다.
+
 ### 6. 공개 전 권리·등급·스포일러·보안을 검증한다
 
 `RIGHTS_RATING_SPOILER_SECURITY_REVIEW`는 다음을 확인한다.
@@ -360,6 +378,7 @@ shot_list_and_capture_evidence:
 edit_beat_sheet:
 edit_review_rounds:
 title_thumbnail_packages:
+youtube_package_experiment:
 publication_review:
 publish_record:
 analytics_precommit:
@@ -382,6 +401,7 @@ verification_status: PASSED | PARTIAL | FAILED | NOT_RUN | BLOCKED
 - 특정 창작자의 식별 가능한 표현을 복제하지 않았는가.
 - 권리·등급·스포일러·개인정보·비밀 누출이 없는가.
 - Shorts 조회수·CTR·vendor retention benchmark를 게임 수요로 대체하지 않았는가.
+- native 제목·썸네일 실험의 watch time winner를 게임 수요·구매 의도나 CTR 보편 공식으로 바꾸지 않았는가.
 - retention drop·spike를 장면 원인으로 단정하지 않았는가.
 - story/evidence rough cut이 약한데 transition·VFX·motion·color polish로 가리고 있지 않은가.
 - 프로젝트별 KPI 절대값을 Base 공용 규칙으로 고정하지 않았는가.
@@ -414,6 +434,7 @@ verification_status: PASSED | PARTIAL | FAILED | NOT_RUN | BLOCKED
 7. 작은 표본·CTR 단독 결과는 `INSUFFICIENT_SAMPLE` 또는 `CONVERSION_UNVERIFIED`다.
 8. 제작시간이 게임 개발 가치를 넘으면 축소·보류·`STOP`을 제안한다.
 9. vendor benchmark와 YouTube 공식 metric 정의가 충돌하면 공식 정의를 유지하고 vendor 수치는 context-limited 가설로 남긴다.
+10. native package A/B 기능이 지원되지 않거나 자격을 확인하지 못하면 기능 사용을 강제하지 않고 `UNAVAILABLE`, `BLOCKED_UNVERIFIED`, 또는 `NOT_RUN`을 유지한다.
 
 ## Evidence boundary
 

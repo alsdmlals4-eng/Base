@@ -343,6 +343,15 @@ google_play:
   production_access_status:
   privacy_data_safety_billing_status:
 
+google_play_target_api:
+  checked_at:
+  new_app_or_update_required_target_api:
+  existing_app_discoverability_target_api:
+  effective_at:
+  extension_if_available:
+  project_target_sdk:
+  status: VERIFIED_CURRENT | UPDATE_REQUIRED | EXTENSION_REQUIRED | BLOCKED_UNVERIFIED
+
 steam:
   steamworks_partner_status:
   direct_fee_budget_status:
@@ -350,6 +359,8 @@ steam:
   playtest_or_demo_status:
   sdk_features_required:
 ```
+
+`google_play_target_api`는 프로젝트의 실제 `target SDK`와 현재 Google Play 정책을 대조하는 가변 Gate다. Base의 기록값을 영구 상수로 간주하지 않고 출시·업데이트 제출 직전에 공식 원문과 Play Console에서 다시 확인한다.
 
 ## 11. Release Waves
 

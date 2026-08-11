@@ -83,11 +83,30 @@ class WeeklyWorkImprovementReviewTests(unittest.TestCase):
         self.assertIn("같은 Goal의 열린·최근 병합 PR", content)
         self.assertIn("억지 변경", content)
 
+    def test_evidence_cards_preserve_lifecycle_and_actionability(self) -> None:
+        content = TEMPLATE.read_text(encoding="utf-8")
+        for required in (
+            "change_signal_type:",
+            "availability_or_policy_state:",
+            "effective_or_deadline_at:",
+            "affected_versions_or_surfaces:",
+            "action_window:",
+            "POLICY_DEADLINE",
+            "PREVIEW",
+            "RC",
+            "BEFORE_DEADLINE",
+            "REVERIFY_BEFORE_USE",
+        ):
+            self.assertIn(required, content)
+        self.assertIn("출시·정책 상태", content)
+        self.assertIn("행동 시점", content)
+
     def test_cross_domain_ai_and_project_context_signals_are_mapped_not_dumped_as_news(self) -> None:
         content = TEMPLATE.read_text(encoding="utf-8")
         for required in (
             "PROMPT_AND_AGENT_WORKFLOW",
             "SKILL_AUTHORING_AND_EVOLUTION",
+            "CODE_ENGINEERING",
             "AI_MAJOR_ISSUES",
             "connected_project_context_checked",
             "GitHub",

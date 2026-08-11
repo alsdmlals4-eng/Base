@@ -40,3 +40,40 @@ production_marketing_effectiveness: NOT_PROVEN
 - A real project pilot exposes repeatable edit/review failures not covered by the current packet.
 - Multiple real episodes provide enough evidence to refine review categories or production-cost gates.
 - A new editing tool is adopted and needs tool-specific implementation guidance without changing the Base-wide storytelling contract.
+
+## 2026-08-11 — Native title/thumbnail package experiment evidence
+
+### Trigger
+
+The 2026-05-11..2026-08-11 source refresh rechecked current YouTube official Help against the existing `title-thumbnail-package` mode. The Skill already generated three truthful package candidates and warned against CTR-only causal claims, but it did not preserve the setup/result of YouTube's native title-and-thumbnail experiment when that feature is actually available.
+
+### What changed
+
+- Kept the existing `title-thumbnail-package` mode and added an optional `youtube_package_experiment` evidence record rather than a new mode or Skill.
+- Added current feature-support/eligibility verification before use.
+- Preserved tested packages, experiment dates, platform result, watch-time result, CTR context, confounders, and `KEEP | CHANGE | INSUFFICIENT_SAMPLE | NOT_RUN`.
+- Synchronized the reusable `EPISODE_PACKET.md` and contract test.
+
+### Adversarial findings
+
+- Native experiment availability can vary by current YouTube surface, account, and video format, so the feature is not mandatory.
+- The platform's watch-time-based result must not be rewritten as a CTR-only optimization law.
+- A winning title/thumbnail package is evidence about package performance on that experiment; it does not prove game demand, purchase intent, or overall marketing return.
+- `UNAVAILABLE`, `BLOCKED_UNVERIFIED`, and `NOT_RUN` are valid outcomes when support, eligibility, or sample evidence is insufficient.
+
+### Knowledge state
+
+```yaml
+repository_contract: EXECUTABLE_EVIDENCE
+native_platform_experiment_pilot: NOT_RUN
+real_project_video_pilot: NOT_RUN
+human_audience_validation: HUMAN_NOT_RUN
+conversion_validation: CONVERSION_UNVERIFIED
+production_marketing_effectiveness: NOT_PROVEN
+```
+
+### Revisit triggers
+
+- YouTube changes title/thumbnail experiment eligibility, tested elements, winner criteria, or result semantics.
+- A real project runs the native experiment and exposes repeatable fields or confounders missing from the current packet.
+- Multiple episodes show that the package experiment should be simplified, expanded, or removed.
