@@ -245,6 +245,17 @@
       "submitted_at": "2026-08-12",
       "approval_ref": null,
       "implementation_pr": null
+    },
+    {
+      "proposal_id": "BCP-2026-024-execution-sandbox-authority-split-recovery",
+      "title": "Execution Sandbox Remote-Authority Split Recovery",
+      "path": "[수정제안서]/BCP-2026-024-execution-sandbox-authority-split-recovery/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "alsdmlals4-eng/GRIMOIRE-",
+      "source_commit": "d277a2f5cd4a57947d176e3c49ae7f8f6db97230",
+      "submitted_at": "2026-08-12",
+      "approval_ref": null,
+      "implementation_pr": null
     }
   ]
 }
