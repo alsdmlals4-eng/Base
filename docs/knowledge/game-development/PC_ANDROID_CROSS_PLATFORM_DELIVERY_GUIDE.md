@@ -289,6 +289,30 @@ same_day_launch_required: false
 
 비용·테스터·심사·계정 Gate는 변경될 수 있으므로 실제 출시 직전에 계정 화면과 공식 원문으로 다시 확인한다.
 
+### 10.2.1 Google Play Target API Gate
+
+정책 확인일: **2026-08-11**. 이 절의 숫자는 Google Play의 현재 제출·가용성 정책을 기록한 **가변 정책 Evidence**이며 Base 영구 상수가 아니다.
+
+- **2026-08-31**부터 일반 Android 모바일의 새 앱과 앱 업데이트는 Google Play에 제출하려면 **Android 16 / API 36** 이상을 target SDK로 사용해야 한다.
+- 같은 날짜부터 기존 일반 Android 앱은 신규 사용자가 더 높은 Android OS 기기에서 계속 찾을 수 있으려면 **Android 15 / API 35** 이상을 target해야 한다.
+- 영향을 받는 앱이 업데이트에 시간이 더 필요하면 Play Console에서 **2026-11-01**까지의 연장을 요청할 수 있다고 현재 공식 도움말이 안내한다. 연장 가능 여부와 실제 양식 제공 상태는 앱·계정별로 다시 확인한다.
+- Wear OS, Android Automotive OS, Android TV, Android XR은 별도 target API 예외가 있으므로 일반 모바일 값을 그대로 적용하지 않는다.
+
+프로젝트 Gate:
+
+```yaml
+google_play_target_api:
+  checked_at: 2026-08-11
+  new_app_or_update_required_target_api: Android 16 / API 36
+  existing_app_discoverability_target_api: Android 15 / API 35
+  effective_at: 2026-08-31
+  extension_if_available: 2026-11-01
+  project_target_sdk:
+  status: VERIFIED_CURRENT | UPDATE_REQUIRED | EXTENSION_REQUIRED | BLOCKED_UNVERIFIED
+```
+
+`VERIFIED_CURRENT`는 문서에 API 숫자를 적었다는 뜻이 아니라 실제 프로젝트 manifest/build 설정의 target SDK를 확인했다는 뜻이다. **출시·업데이트 제출 직전** `developer.android.com/google/play/requirements/target-sdk`, `support.google.com/googleplay/android-developer/answer/11926878`, 그리고 Play Console 계정 알림을 다시 확인한다.
+
 ### 10.3 Wave 1 승인 조건
 
 STOVE + Google Play를 첫 공개 wave로 묶으려면:
@@ -296,6 +320,7 @@ STOVE + Google Play를 첫 공개 wave로 묶으려면:
 - Windows와 Android의 동일 콘텐츠 milestone이 준비됨
 - 각 플랫폼의 빌드·저장·입력·레이아웃·성능 Gate가 통과됨
 - Google Play 계정 유형과 closed test requirement가 확인됨
+- Google Play target SDK가 제출 시점의 current requirement를 충족하거나 승인된 extension 경로가 확인됨
 - tester_capacity가 현재 요구치를 충족함
 - STOVE 계약·심사·SDK·정산 조건이 확인됨
 - 두 플랫폼의 지원·패치·개인정보·결제 책임자가 정해짐
@@ -337,6 +362,7 @@ Steam의 100달러 비용보다 Google Play의 테스터·계정 운영 위험�
 - 두 플랫폼을 구현했으므로 같은 날 출시해야 한다.
 - Steam 비용이 있으므로 Google Play가 항상 먼저다.
 - 현재 비용·테스터 요건·SDK 정책이 앞으로도 그대로다.
+- 2026-08-11에 확인한 Google Play target API 숫자를 출시·업데이트 제출 직전 재검증 없이 영구 규칙으로 사용한다.
 - 한 대의 고사양 휴대폰 성공으로 Android 전체를 지원할 수 있다.
 - 한 개의 package/download 숫자만 줄이면 용량 최적화가 끝난다.
 - 폰트·텍스처·오디오를 플랫폼 구분 없이 하나의 설정으로 강제하면 항상 최적이다.
@@ -351,6 +377,7 @@ android_runtime_status:
 physical_device_status:
 build_size_and_asset_optimization_status:
 google_play_account_and_test_status:
+google_play_target_api_status:
 stove_contract_and_sdk_status:
 steam_budget_and_readiness_status:
 release_wave_decision:
@@ -364,7 +391,7 @@ rollback:
 Base 공용 Guide 작성 시점:
 
 ```yaml
-research_and_official_source_review: COMPLETE_AS_OF_2026_08_05
+research_and_official_source_review: COMPLETE_AS_OF_2026_08_11
 base_contract: PROPOSED_IN_DRAFT_PR
 actual_project_pilot: NOT_RUN
 physical_android_device: DEVICE_NOT_RUN
@@ -390,7 +417,7 @@ steam_submission: NOT_RUN
 ## Windows·실제 Android 기기 QA Matrix
 ## 성능·메모리·로딩·발열·배터리 예산
 ## download/install/runtime/patch 용량·자산 breakdown·품질 회귀
-## STOVE·Google Play·Steam 계정·비용·테스트·출시 wave
+## STOVE·Google Play·Steam 계정·비용·테스트·target API·출시 wave
 ## 공식 정책 확인일·미확인·재검증 조건
 ## 결정·롤백·다음 Pilot
 ```
@@ -404,6 +431,8 @@ steam_submission: NOT_RUN
 - Android Activity Lifecycle: https://developer.android.com/guide/components/activities/activity-lifecycle.html
 - Android Saving UI States: https://developer.android.com/topic/libraries/architecture/saving-states
 - Android Game Optimization: https://developer.android.com/games/optimize/overview
+- Google Play Target API Requirements: https://developer.android.com/google/play/requirements/target-sdk
+- Google Play Target API Console Help / Extension: https://support.google.com/googleplay/android-developer/answer/11926878
 - Steamworks Partner Program / Direct Fee: https://partner.steamgames.com/steamdirect/
 - Google Play Registration and Access Conditions: https://support.google.com/googleplay/android-developer/answer/14659200
 - Google Play Testing Requirements for New Personal Accounts: https://support.google.com/googleplay/android-developer/answer/14151465
