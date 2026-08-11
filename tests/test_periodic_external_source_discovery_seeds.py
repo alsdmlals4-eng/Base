@@ -74,15 +74,21 @@ class PeriodicExternalSourceDiscoverySeedTests(unittest.TestCase):
             "banding",
             "palette",
             "sprite sheet",
+            "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md",
+            "GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md",
+            "designing-art-prompts-and-technique-cards",
             "BLOCKED_UNVERIFIED",
         ):
             self.assertIn(required, seeds)
 
-        self.assertIn("PERIODIC_EXTERNAL_SOURCE_DISCOVERY_SEEDS.md", art_guide)
-        self.assertIn("pixel art", art_guide.lower())
-        self.assertIn("Base-wide default", art_guide)
-        self.assertIn("pixel art does not automatically prove a smaller shipped build", size_guide.lower())
-        self.assertIn("actual build", size_guide.lower())
+        self.assertIn("Visual Requirement Gate", art_guide)
+        self.assertIn("2D·pixel art 보호", size_guide)
+        for measurement_type in ("DOWNLOAD", "INSTALLED", "RUNTIME", "PATCH"):
+            self.assertIn(measurement_type, size_guide)
+        self.assertIn("pixel art", seeds.lower())
+        self.assertIn("base-wide default", seeds.lower())
+        self.assertIn("smaller shipped build", seeds.lower())
+        self.assertIn("actual build", seeds.lower())
 
 
 if __name__ == "__main__":
