@@ -223,6 +223,17 @@
       "submitted_at": "2026-08-10",
       "approval_ref": "[수정제안서]/BCP-2026-020-player-experience-validation-gates/PROPOSAL.md#승인과-구현 (2026-08-11 current Codex session user instruction)",
       "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/274"
+    },
+    {
+      "proposal_id": "BCP-2026-021-local-executor-content-identity-dirty-gate",
+      "title": "Local executor content-identity vs stat-only dirty gate",
+      "path": "[수정제안서]/BCP-2026-021-local-executor-content-identity-dirty-gate/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "alsdmlals4-eng/urban-legend",
+      "source_commit": "f46258233246be04f0efbef637e95710af6f5af5",
+      "submitted_at": "2026-08-12",
+      "approval_ref": null,
+      "implementation_pr": null
     }
   ]
 }
