@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SKILL_ID = "developing-and-revising-serial-fiction"
 SKILL_PATH = ROOT / "skills" / SKILL_ID / "SKILL.md"
 GUIDE_ROOT = ROOT / "docs" / "knowledge" / "serial-fiction"
+REFERENCE_ROOT = ROOT / "skills" / SKILL_ID / "references"
 
 
 class SerialFictionDisciplineContractTests(unittest.TestCase):
@@ -67,6 +68,28 @@ class SerialFictionDisciplineContractTests(unittest.TestCase):
             self.assertIn(token, combined)
         self.assertIn("universal", combined.lower())
         self.assertIn("production target", combined.lower())
+
+    def test_character_and_opponent_integrity_is_a_real_contract_surface(self) -> None:
+        skill = SKILL_PATH.read_text(encoding="utf-8")
+        reference_path = REFERENCE_ROOT / "character-distinctiveness-and-opponent-threat.md"
+        self.assertTrue(reference_path.is_file())
+        reference = reference_path.read_text(encoding="utf-8")
+        combined = skill + "\n" + reference
+        for token in (
+            "character-and-opponent-integrity",
+            "CHARACTER_IDENTITY_BLUR",
+            "OPPONENT_THREAT_UNPROVEN",
+            "OFFSCREEN_STRENGTH_ONLY",
+            "VICTORY_BY_OPPONENT_DEFLATION",
+            "SUPPORTING_CAST_STEALS_CLIMAX",
+            "own turn",
+            "KEEP / RESTORE / REWORK / NEW / REMOVE",
+            "SKILL",
+            "TACTIC",
+            "RULE",
+            "RELATION",
+        ):
+            self.assertIn(token, combined)
 
     def test_reader_feedback_is_evidence_not_canon(self) -> None:
         text = (
