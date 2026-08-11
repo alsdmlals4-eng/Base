@@ -6,13 +6,15 @@ Add durable, role-separated reference sources for pixel art and low-resolution 2
 
 ## Existing Solution First
 
-Reuse these current owners:
+Reuse these current owners without duplicating their policy text:
 
-- `docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md` for durable source roles and evidence ceilings.
-- `docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_DISCOVERY_SEEDS.md` for immediately useful but not-yet-promoted discovery sources.
+- `docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md` for source roles and evidence ceilings.
+- `docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_DISCOVERY_SEEDS.md` for immediately useful discovery sources and explicit consumer routing.
 - `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md` for art-direction and production decisions.
-- `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` for texture/import/build-size constraints.
+- `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` for pixel-art texture protection and measured build-size claims.
 - `skills/designing-art-prompts-and-technique-cards/SKILL.md` for technique-card production and visual QA.
+
+The current Art Guide already owns visual direction/production trade-offs, and the current Build Size Guide already contains a `2D·pixel art 보호` section plus measured download/install/runtime/patch evidence. Therefore the smallest change is to add pixel-art sources and name these existing consumers from the discovery-seed contract rather than duplicating the same rules into multiple canonical files.
 
 No new ACTIVE Skill, registry identity, source domain, workflow authority, Ruleset, or Required Check topology is needed.
 
@@ -27,7 +29,7 @@ No new ACTIVE Skill, registry identity, source domain, workflow authority, Rules
 
 ### Godot official docs — pixel-art rendering surfaces
 
-This is not a new source family. Expand the existing Godot official source consumer to explicitly include:
+This is not a new source family. Reuse the existing Godot official authority and explicitly scan:
 
 - multiple resolutions for pixel art,
 - viewport stretch and integer scaling,
@@ -58,6 +60,26 @@ Use current stable/versioned docs and preserve exact Godot version. Do not turn 
 - Use for: visual vocabulary, readability comparisons, cluster/style examples, anti-examples, critique questions.
 - Ceiling: ratings, favorites, featured status, or community popularity are not quality authority or market evidence. Never copy identifiable artwork or a specific artist's signature style.
 
+## Explicit consumers
+
+The discovery seed must route pixel-art findings to existing owners:
+
+```text
+art direction / visual-system fit
+→ ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md
+
+pixel technique card / prompt / visual QA
+→ designing-art-prompts-and-technique-cards
+
+Godot render/import/version behavior
+→ existing Godot source owner + project implementation owner
+
+build-size motivation
+→ GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md
+```
+
+The art Guide remains responsible for whether pixel art is appropriate for a project. A project may declare pixel art as its preferred visual direction, but Base itself does not force pixel art onto unrelated projects.
+
 ## Pixel-art technique routing
 
 The sources should support these technique questions without creating a new owner:
@@ -70,13 +92,11 @@ canvas/base resolution
 → dithering/AA/banding decisions
 → tile/grid reuse
 → frame count/timing/animation readability
-→ sprite-sheet/tag/slice export
-→ Godot nearest/integer-scale/render/import settings
+→ sprite sheet/tag/slice export
+→ Godot nearest/integer scaling/render/import settings
 → build-size/runtime validation
 → rights/provenance and similarity QA
 ```
-
-The art Guide remains responsible for whether pixel art is appropriate for a project. A project may declare pixel art as its preferred visual direction, but Base itself does not force pixel art onto unrelated projects.
 
 ## Evidence and adversarial boundaries
 
@@ -92,17 +112,17 @@ Reject these overgeneralizations:
 - a low base resolution is always better,
 - copying a tutorial/gallery example is acceptable because it is educational/reference material.
 
-When size is a motivation, require actual build/runtime measurements. Existing `GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` remains the owner of byte-saving claims.
+When size is a motivation, route to the existing Build Size owner and require its actual measurement model. Existing measured evidence, not pixel-art aesthetics alone, owns byte-saving claims.
 
 ## Testing
 
-Add a focused regression that requires:
+Extend the already-wired discovery-seed regression to require:
 
-- Aseprite, Godot pixel-art surfaces, Saint11, Lospec, and PixelJoint to be discoverable from the periodic source system;
-- source roles and claim ceilings to remain explicit;
-- pixel art preference not to become a universal hard rule;
-- size claims to remain measurement-gated;
-- the Evidence Knowledge workflow to execute the new regression.
+- Aseprite, Godot pixel-art surfaces, Saint11, Lospec, and PixelJoint;
+- source roles and claim ceilings;
+- explicit routing to the existing Art Guide, Build Size Guide, and art technique Skill;
+- the existing Art Guide's Visual Requirement ownership and the existing Build Size Guide's `2D·pixel art 보호`/measurement contract;
+- no universal pixel-art default or unmeasured size claim.
 
 ## Automation consumer
 
