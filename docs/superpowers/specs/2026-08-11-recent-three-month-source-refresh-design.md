@@ -1,7 +1,7 @@
 # Recent Three-Month Source Refresh — Design
 
-**Date:** 2026-08-11  
-**Research window:** 2026-05-11..2026-08-11  
+**Date:** 2026-08-11
+**Research window:** 2026-05-11..2026-08-11
 **Base baseline:** `8e7d85b1b1272002a8086c502a41073888cb3318`
 
 ## Goal
