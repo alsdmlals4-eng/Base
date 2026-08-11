@@ -97,6 +97,7 @@ jobs:
             tests.test_godot_addon_utilization_policy \
             tests.test_godot_higodot_gut_hera_toolchain \
             tests.test_base_shared_skill_routes \
+            tests.test_neutral_adversarial_feature_lifecycle \
             -v
 
   adversarial-gate:

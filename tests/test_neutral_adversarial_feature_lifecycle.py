@@ -133,6 +133,33 @@ class NeutralAdversarialFeatureLifecycleTests(unittest.TestCase):
         ):
             self.assertIn(term, adversarial)
 
+    def test_post_change_monitor_loop_rechecks_prs_omissions_conflicts_and_complements(self) -> None:
+        adversarial = read("skills/running-adversarial-review-and-refinement/SKILL.md")
+        operating = read("docs/OPERATING_MODEL.md")
+
+        for text in (adversarial, operating):
+            for term in (
+                "POST_CHANGE_MONITOR_LOOP",
+                "same-goal-open-and-recent-pr-recheck",
+                "untouched-consumer-and-derivative-recheck",
+                "OMISSION",
+                "CONFLICT",
+                "COMPLEMENT_GAP",
+                "DUPLICATE_WORK",
+                "NO_MATERIAL_FOLLOWUP",
+                "exact-head-validation",
+                "post-merge-main-readback",
+            ):
+                self.assertIn(term, text)
+
+        for term in (
+            "변경을 완료로 보고하기 전",
+            "병합 뒤",
+            "새 변경을 만들지 않는다",
+            "백그라운드 실행을 의미하지 않는다",
+        ):
+            self.assertIn(term, adversarial)
+
     def test_behavior_fixture_covers_sycophancy_boundary(self) -> None:
         data = json.loads((ROOT / "skills" / "SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8"))
         case = next(item for item in data["cases"] if item["case_id"] == "SBE-011")

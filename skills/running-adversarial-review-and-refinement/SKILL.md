@@ -59,6 +59,37 @@ repository-scope-map
 → repository-audit-report
 ```
 
+### `POST_CHANGE_MONITOR_LOOP`
+
+모든 유지된 repository/project 변경은 **변경을 완료로 보고하기 전** 이 루프를 닫는다. 병합이 있는 경우 같은 Goal의 PR·정본·파생 상태가 바뀔 수 있으므로 **병합 뒤** 새 `main`에서도 다시 확인한다.
+
+```text
+retained-change-or-merge
+→ attack
+→ validate-critique
+→ same-goal-open-and-recent-pr-recheck
+→ untouched-consumer-and-derivative-recheck
+→ omission-conflict-complement-gap-classification
+→ approved-minimal-fix-if-needed
+→ regression-recheck
+→ exact-head-validation
+→ merge-or-post-merge-main-readback
+→ post-merge-pr-and-canon-recheck
+→ completion-report
+```
+
+후속 finding은 다음처럼 분류한다.
+
+- `OMISSION`: 바뀌어야 할 책임 원본·활성 consumer·Template·Test·reference·파생본이 누락됐다.
+- `CONFLICT`: 현행 정본·사용자 승인 Decision·실제 diff·열린/최근 병합 PR·병합 결과가 서로 충돌한다.
+- `COMPLEMENT_GAP`: 주 변경은 맞지만 내구성을 위해 작은 Test·reference·checklist·freshness·consumer 보완이 실질적으로 필요하다.
+- `DUPLICATE_WORK`: 동일 Goal을 다른 열린·최근 PR 또는 후속 작업이 이미 소유한다.
+- `NO_MATERIAL_FOLLOWUP`: 누락·충돌·중복·실질 보완 필요가 없어 추가 repository 변경이 정당화되지 않는다.
+
+`OMISSION`, `CONFLICT`, `COMPLEMENT_GAP`, `DUPLICATE_WORK`는 기존 `MUST_FIX / SHOULD_FIX / USER_DECISION_REQUIRED / DEFER / REJECTED_CRITIQUE / BLOCKED_UNVERIFIED` 심각도·처리 판정과 별개인 **후속 원인 분류**다. 해결은 Existing Solution First로 기존 owner에 흡수하고, 보호된 의미 변경은 기존 사용자/BCP Gate를 그대로 따른다.
+
+`NO_MATERIAL_FOLLOWUP`이면 루프를 채우기 위해 **새 변경을 만들지 않는다**. 이 계약은 현재 작업·검토의 완료 조건이며 scheduler·webhook·**백그라운드 실행을 의미하지 않는다**. 실제 반복 감시가 별도 자동화로 실행되더라도 그 결과는 같은 evidence ceiling·authority·PR·exact-head Gate를 다시 따른다.
+
 ## Required inputs
 
 ```yaml
@@ -121,6 +152,7 @@ repository_audit:
 11. 파일명·버전·날짜만으로 구형 파일을 삭제하지 않고 권한·고유 정보·활성 소비자·복구 가능성을 판정한다.
 12. 변경된 파일뿐 아니라 변경됐어야 할 untouched 소비자·Template·Test·파생본을 공격한다.
 13. 새 광역 Skill을 만들기 전에 이 mode와 reference-freshness·legacy-governance 조합으로 해결 가능한지 확인한다.
+14. 유지된 변경은 `POST_CHANGE_MONITOR_LOOP`의 PR·consumer·회귀·exact-head 검사를 닫기 전 완료로 보고하지 않는다.
 
 ## Repository-wide attack lenses
 
