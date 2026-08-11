@@ -187,7 +187,189 @@ popularity_is_not_authority: true
 - 실제 개발 project/source를 확인할 수 없음
 - creator 수를 늘리는 것 자체가 목표가 됨
 
-## 5. Seed scan 결과
+## 5. Pixel Art / low-resolution 2D game art
+
+픽셀아트·도트·저해상도 2D를 프로젝트가 선택한 경우, 단순 이미지 레퍼런스뿐 아니라 **제작 기법 → 도구/내보내기 → Godot 표시/임포트 → 실제 용량·가독성 검증**까지 한 흐름으로 조사한다. Pixel art is not a Base-wide default. 실제 프로젝트의 아트 방향은 기존 `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`가 계속 소유한다.
+
+```yaml
+seed_group: pixel-art-low-resolution-2d
+status: ACTIVE_DISCOVERY_SEED
+domains:
+  - GAME_DEVELOPMENT
+  - CODE_ENGINEERING
+recommended_cadence: weekly-or-when-art-direction-active
+existing_consumers:
+  art_direction_and_project_fit: docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md
+  technique_cards_and_visual_qa: skills/designing-art-prompts-and-technique-cards/SKILL.md
+  godot_render_import_behavior: existing Godot AUTHORITY_TARGET + target project implementation owner
+  size_and_delivery_claims: docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md
+```
+
+### 5.1 Aseprite — 공식 도구·production workflow
+
+```yaml
+seed_id: aseprite-official
+name: Aseprite official docs + official repository
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+urls:
+  docs: https://www.aseprite.org/docs/
+  repository: https://github.com/aseprite/aseprite
+scan_surfaces:
+  - animation, frames, cels, layers and tags
+  - tilemap and tileset workflows
+  - indexed color and palette workflows
+  - sprite sheet export and metadata
+  - slices and reusable export structure
+  - CLI and scripting/automation
+  - releases and source repository
+```
+
+Aseprite는 **Aseprite 자체 기능·동작·workflow**에 대해서만 `AUTHORITY_TARGET`이다. Aseprite에서 가능한 방식이 모든 픽셀아트의 보편 법칙이라는 뜻은 아니다.
+
+- 실제 사용 version과 문서/release 상태를 확인한다.
+- source repository와 배포 binary의 라이선스·사용 조건을 혼동하지 않는다.
+- Aseprite가 편리하다는 이유로 모든 프로젝트의 필수 도구로 강제하지 않는다.
+- stars, forks, community popularity는 Evidence 권위를 올리지 않는다.
+
+### 5.2 Godot — 기존 공식 authority의 pixel-art surface 재사용
+
+Godot은 새 Source family를 만들지 않고 기존 Watchlist의 `Godot Engine official docs / blog / releases` `AUTHORITY_TARGET`을 재사용한다. pixel-art 작업에서는 현재 stable/versioned 문서에서 다음을 우선 확인한다.
+
+```text
+multiple resolutions for pixel art
+→ viewport stretch
+→ integer scaling
+→ nearest texture filtering
+→ 2D texture import / compression / mipmap behavior
+→ Sprite2D / atlas / sprite sheet integration
+→ TileSet / TileMap integration
+```
+
+- `nearest`는 픽셀 경계를 보존해야 하는 대상의 후보이지 모든 2D texture에 자동 적용하는 규칙이 아니다.
+- `integer scaling`과 viewport/base resolution은 목표 화면비·카메라·UI·플랫폼을 함께 본다.
+- 특정 문서의 예시 base resolution을 Base-wide 고정값으로 승격하지 않는다.
+- stable/RC/dev와 exact Godot version을 구분하고, 미출시 문서를 현재 shipped behavior처럼 쓰지 않는다.
+
+### 5.3 Saint11 / Pedro Medeiros — 픽셀 제작 기법
+
+```yaml
+seed_id: saint11-pixel-art-techniques
+name: Saint11 / Pedro Medeiros Pixel Art Tutorials
+status: ACTIVE_DISCOVERY_SEED
+source_role: PROFESSIONAL_PRACTICE
+url: https://saint11.org/blog/pixel-art-tutorials/
+scan_surfaces:
+  - beginner series and compact tutorials
+  - pixel clusters and cluster economy
+  - shading and value grouping
+  - anti-aliasing, dithering and banding
+  - line work and shape readability
+  - color and palette decisions
+  - animation and motion readability
+  - export habits and production examples
+  - original tutorial repository when provenance is useful
+```
+
+Saint11 자료는 원저자의 교육·실무 기법을 이해하는 `PROFESSIONAL_PRACTICE`다. 한 튜토리얼을 필수 제작 법칙으로 만들지 않고, 프로젝트의 sprite size·시점·장르·팔레트·animation budget에 맞게 `ADAPT` 또는 `TEST`한다. 완성 예시나 식별 가능한 디자인·특정 작가의 signature style을 그대로 복제하지 않는다.
+
+### 5.4 Lospec — palette·tutorial·tool discovery
+
+```yaml
+seed_id: lospec-pixel-art-discovery
+name: Lospec
+status: ACTIVE_DISCOVERY_SEED
+source_roles:
+  - DISCOVERY_FEED
+  - PROFESSIONAL_PRACTICE_WHEN_LOSPEC_AUTHORED
+url: https://lospec.com/
+scan_surfaces:
+  - tutorial index and original-author links
+  - palette list
+  - pixel-art software/tool list
+  - pixel editor and restrictive-art utilities
+  - scaler / rotator and related tools
+```
+
+Lospec은 여러 튜토리얼·팔레트·도구를 찾는 데 유용하지만, aggregation 자체가 원저자 권위를 대체하지 않는다. 제3자 tutorial은 가능한 경우 `ORIGINAL_SOURCE_BACKTRACE`한다.
+
+- palette 인기·좋아요·노출은 프로젝트 적합성 증거가 아니다.
+- palette page에 있다는 이유만으로 제품 사용 권리·라이선스가 자동 확인된 것으로 보지 않는다.
+- 도구 출력이 pixel-art readability·identity·성능을 자동 증명하지 않는다.
+
+### 5.5 PixelJoint — community visual reference
+
+```yaml
+seed_id: pixeljoint-community-reference
+name: PixelJoint
+status: ACTIVE_DISCOVERY_SEED
+source_role: DISCOVERY_FEED
+observational_role: COMMUNITY_VISUAL_REFERENCE
+url: https://pixeljoint.com/
+scan_surfaces:
+  - gallery and artist pages
+  - weekly challenges
+  - forums and critique comments
+  - cluster, palette, animation and readability comparisons
+```
+
+PixelJoint는 시각 어휘·비교·반례·critique 질문을 발견하는 community reference다. ratings, favorites, featured 여부, 조회 반응은 품질 권위나 시장 성과 증거가 아니다. 특정 작품의 실루엣·캐릭터·구도·palette 조합·signature style을 복제하지 않는다.
+
+### 5.6 Pixel-art technique scan route
+
+실제 프로젝트의 pixel-art 관련 의사결정이 있을 때 다음 질문을 우선 조사한다.
+
+```text
+canvas / base resolution
+→ sprite scale + viewing distance + silhouette
+→ pixel clusters + line economy
+→ palette + value grouping
+→ shading + dithering + anti-aliasing + banding
+→ tile/grid reuse + seam/variation
+→ frame count + timing + animation readability
+→ layer/tag/slice + sprite sheet export
+→ Godot nearest + integer scaling + render/import settings
+→ actual build / installed / runtime evidence
+→ rights + provenance + similarity QA
+```
+
+소스별 결과는 기존 owner로 보낸다.
+
+```text
+아트 방향·가독성·제작성 적합성
+→ ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md
+
+기법 정리·프롬프트·후보 제작·visual QA
+→ designing-art-prompts-and-technique-cards
+
+Godot filtering·scaling·import·TileMap 구현 사실
+→ 기존 Godot AUTHORITY_TARGET + 프로젝트 구현 owner
+
+용량·메모리·전달 효과
+→ GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md
+```
+
+### 5.7 픽셀아트 과장 방지 Gate
+
+다음은 이번 source 추가만으로 사실이 되지 않는다.
+
+```text
+pixel art does not automatically prove a smaller shipped build
+fewer colors do not automatically prove better readability
+nearest is not correct for every 2D texture
+one low base resolution is not universally optimal
+Aseprite is not mandatory for pixel-art production
+Lospec palette availability does not prove project fit or product-use rights
+PixelJoint popularity does not prove quality or market demand
+one Saint11 technique is not a universal hard rule
+tutorial/gallery reference does not grant permission to copy identifiable artwork or a creator's signature style
+```
+
+특히 용량 절감이 선택 이유에 포함되면 `GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md`의 기존 측정 계약으로 **actual build**를 비교한다. `sprite_and_2d_art` bytes, 필요한 경우 DOWNLOAD / INSTALLED / RUNTIME / PATCH 영향, atlas/import 설정, 중복 variant, 품질·가독성 회귀를 확인하기 전에는 용량 이득을 `BLOCKED_UNVERIFIED`로 둔다.
+
+낮은 source resolution, 제한 palette, indexed authoring이 일부 source/texture data를 줄일 가능성은 **가설**일 수 있으나, engine resource·atlas padding·lossless compression·import 설정·audio/video·package 구조가 전체 용량을 지배할 수 있으므로 실제 빌드 측정 없이 성과로 승격하지 않는다.
+
+## 6. Seed scan 결과
 
 각 scan은 seed마다 다음 중 하나로 닫는다.
 
