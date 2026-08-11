@@ -41,6 +41,8 @@ class OneShotLocalExecutorBootstrapContractTests(unittest.TestCase):
         self.assertIn("live-QA", combined)
         self.assertIn("non-authoring", combined)
         self.assertIn("adversarial", combined.lower())
+        self.assertIn("Hera", godot_template)
+        self.assertIn("LIVE_QA_AND_OBSERVABILITY_ONLY", godot_template)
 
     def test_base_contract_stays_project_neutral_and_fail_closed(self) -> None:
         policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
@@ -59,8 +61,7 @@ class OneShotLocalExecutorBootstrapContractTests(unittest.TestCase):
             "9501",
             ".codex-grimoire",
             "task8-spell-use-screen-v2",
-            "Hera",
-            "HERA_SOURCE_DELTA",
+            "Hera 1.0.0",
         ):
             self.assertNotIn(forbidden_project_literal, combined)
 
