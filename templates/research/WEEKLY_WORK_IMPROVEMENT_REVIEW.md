@@ -88,6 +88,11 @@ discovered_from:
 ORIGINAL_SOURCE_BACKTRACE:
 published_or_updated_at:
 freshness:
+change_signal_type: RELEASE | MAINTENANCE | PREVIEW | PROPOSAL | DEPRECATION | POLICY_DEADLINE | SECURITY_ADVISORY | PRACTICE_GUIDANCE | OBSERVATIONAL_BENCHMARK | OTHER
+availability_or_policy_state: STABLE | GA | PREVIEW | BETA | RC | DEV | PROPOSED | DEPRECATED | RETIRED | POLICY_EFFECTIVE | UNKNOWN
+effective_or_deadline_at:
+affected_versions_or_surfaces: []
+action_window: NOW | BEFORE_DEADLINE | WHEN_ADOPTING | MONITOR_ONLY | REVERIFY_BEFORE_USE
 scope:
 platform_or_medium:
 sample_or_method:
@@ -98,15 +103,17 @@ base_overlap: NONE | PARTIAL | ALREADY_COVERED | CONFLICT
 candidate_disposition: ADOPT | ADAPT | TEST | AVOID | IGNORE | REFERENCE_ONLY
 ```
 
+`freshness`만으로 최신성을 해석하지 않는다. **출시·정책 상태**와 실제 **행동 시점**을 별도로 보존하고, 최신이라는 이유만으로 `PREVIEW`·`BETA`·`RC`·proposal을 stable/GA 사실로 승격하지 않는다. 정책·이벤트·지원 종료처럼 deadline이 있으면 게시일과 `effective_or_deadline_at`을 구분하고 `BEFORE_DEADLINE` 같은 action window를 명시한다. 상태가 불명확하면 `REVERIFY_BEFORE_USE`를 사용한다.
+
 원출처가 없는 뉴스·newsletter·DISCOVERY_FEED·vendor benchmark는 정본으로 올리지 않는다. 숫자는 표본·관찰 기간·수집 방법을 함께 보존하고 상관관계를 인과로 바꾸지 않는다.
 
 ### Cross-domain improvement signal
 
-프롬프트 작성법·AI 도구·Agent/Skill 변화·주요 AI 이슈는 별도 **뉴스 모음**으로 나열하지 않는다. `PROMPT_AND_AGENT_WORKFLOW`, `SKILL_AUTHORING_AND_EVOLUTION`을 포함한 Watchlist domain에서 **현재 작업을 바꾸는 경우**에만 아래처럼 A/B/C/D의 실제 영향으로 연결한다.
+프롬프트 작성법·AI 도구·Agent/Skill 변화·주요 AI 이슈·코드/엔진/CI 변화는 별도 **뉴스 모음**으로 나열하지 않는다. `PROMPT_AND_AGENT_WORKFLOW`, `SKILL_AUTHORING_AND_EVOLUTION`, `CODE_ENGINEERING`을 포함한 Watchlist domain에서 **현재 작업을 바꾸는 경우**에만 아래처럼 A/B/C/D의 실제 영향으로 연결한다.
 
 ```yaml
 cross_domain_signal:
-  source_domain: PROMPT_AND_AGENT_WORKFLOW | SKILL_AUTHORING_AND_EVOLUTION | GAME_DEVELOPMENT | FICTION_AND_INTERACTIVE_NARRATIVE | YOUTUBE_AND_VIDEO_EDITING
+  source_domain: PROMPT_AND_AGENT_WORKFLOW | SKILL_AUTHORING_AND_EVOLUTION | CODE_ENGINEERING | GAME_DEVELOPMENT | FICTION_AND_INTERACTIVE_NARRATIVE | YOUTUBE_AND_VIDEO_EDITING
   topic: PROMPT_METHOD | AGENT_HARNESS | SKILL_EVOLUTION | AI_MAJOR_ISSUES | TOOL_OR_MODEL_CHANGE | SECURITY_OR_PERMISSION | COST_OR_CONTEXT | OTHER
   source_and_original_backtrace:
   current_project_or_base_overlap:
@@ -117,7 +124,7 @@ cross_domain_signal:
   disposition: ABSORB_EXISTING_OWNER | PROJECT_ONLY | TEST | EVIDENCE_ONLY | AVOID | NO_CHANGE
 ```
 
-예를 들어 새 Agent 기능이 등장해도 새 agent 파일을 만드는 것이 목적이 아니다. 현재 작업에서 독립 tool/permission/context/handoff가 필요한지 먼저 확인하고, 단순 반복 산출 형식이면 Template, task-specific 절차면 Skill, 항상 필요한 짧은 규칙이면 instruction, 정확 반복 변환이면 deterministic tool 등 가장 작은 책임 단위를 선택한다.
+예를 들어 새 Agent 기능이나 새 엔진/CI 기능이 등장해도 새 agent·Skill·규칙 파일을 만드는 것이 목적이 아니다. 현재 작업에서 독립 tool/permission/context/handoff가 필요한지 먼저 확인하고, 단순 반복 산출 형식이면 Template, task-specific 절차면 Skill, 항상 필요한 짧은 규칙이면 instruction, 정확 반복 변환이면 deterministic tool 등 가장 작은 책임 단위를 선택한다.
 
 ## 3. 벤치마킹 선택 규칙
 
@@ -551,6 +558,8 @@ follow_up_decision:
 - vendor/creator/newsletter 수치를 공식 플랫폼 사실로 썼는가?
 - CTR/retention/views/review score를 구매·품질·재미의 직접 인과로 해석했는가?
 - AI/CI/screenshot/작성자 self-review를 `HUMAN_USABILITY_EVIDENCE` 또는 `PLAYER_EXPERIENCE_EVIDENCE`로 승격했는가?
+- 최신이라는 이유만으로 preview·beta·RC·proposal을 stable/GA로 승격했는가?
+- 정책·이벤트·지원 종료의 deadline과 행동 시점을 누락했는가?
 - 소설 craft를 player agency/state/branch/runtime에 그대로 강제했는가?
 - 프로젝트 전용 설정을 Base 공용 규칙으로 올렸는가?
 - 기존 owner에 흡수할 수 있는데 새 Skill/Guide를 만들었는가?
