@@ -143,6 +143,26 @@ Reviewer feedback is evidence, not automatic authority. Resolve against the epis
 
 Do not copy an identifiable creator’s wording, composition, character placement, or editing expression. Structural benchmarking must be translated into original project expression.
 
+### Optional YouTube package experiment
+
+Run this only when current YouTube Studio support and account/video eligibility are verified. It is optional and does not replace the package promise-match review.
+
+```yaml
+youtube_package_experiment:
+  feature_support_checked_at:
+  eligibility_status: AVAILABLE | UNAVAILABLE | BLOCKED_UNVERIFIED
+  tested_packages:
+  test_started_at:
+  test_ended_at:
+  platform_result:
+  watch_time_result:
+  ctr_context:
+  confounders:
+  decision: KEEP | CHANGE | INSUFFICIENT_SAMPLE | NOT_RUN
+```
+
+YouTube's native result is platform experiment evidence. Record watch-time result and CTR context separately, and do not treat a package winner as proof of game demand, purchase intent, or overall marketing return.
+
 ## Description, chapters, pinned comment, playlist, and end screen
 
 ```yaml
