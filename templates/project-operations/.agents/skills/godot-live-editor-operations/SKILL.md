@@ -73,6 +73,22 @@ validate Base adapter pin and generated snapshot
 → load minimum exact operation schema
 ```
 
+`ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP`: 사용자가 local shell + Godot editor + Codex를 직접 시작해야 하는 handoff에서는 가능한 경우 one copy/paste bootstrap block을 우선한다.
+
+`BOOTSTRAP_MINIMUM_PREFLIGHT_ONLY`:
+
+```text
+exact project/worktree identity
+→ reuse matching editor when already running
+→ otherwise start the required editor
+→ run only minimum startup checks needed to avoid the wrong target
+→ launch Codex in the exact project/worktree
+→ obtain a fresh HiGodot project/session/version/readiness receipt inside Codex
+  before persistent mutation
+```
+
+matching editor 재사용은 duplicate editor startup보다 우선한다. launcher는 orchestration일 뿐 persistent Godot edit를 수행하지 않는다. process/port/editor 존재 자체는 readiness evidence가 아니며, Codex 시작 뒤 fresh HiGodot receipt를 다시 읽는다. bootstrap 단계에서 broad Git diff, repository-wide scan, 이미 분류된 line-ending/stat/index noise를 매번 재출력하지 않는다. `reset`, `restore`, `clean`, stage, rewrite로 사용자 작업을 변경하지 않고 unrelated editor/server를 kill/restart하지 않는다.
+
 다음이면 관련 stage 실행 전에 중단한다.
 
 - HiGodot authoring이 필요한데 exact pin이 없거나 실제 설치와 불일치
@@ -331,7 +347,7 @@ floating latest와 자동 무검토 업데이트는 금지한다. connection 성
 
 ### `bootstrap`
 
-HiGodot provider pin, addon 활성 상태, MCP host, project·Editor/session, client profile, network mode와 domain readiness를 검증한다. adopted GUT/Hera가 현재 요청에 필요한 경우 해당 exact pin/pair와 consumption/security/source-delta gate도 검증한다.
+HiGodot provider pin, addon 활성 상태, MCP host, project·Editor/session, client profile, network mode와 domain readiness를 검증한다. adopted GUT/Hera가 현재 요청에 필요한 경우 해당 exact pin/pair와 consumption/security/source-delta gate도 검증한다. local user startup이 필요한 경우 `ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP`과 `BOOTSTRAP_MINIMUM_PREFLIGHT_ONLY`를 적용해 matching editor reuse-or-start → exact project/worktree Codex launch → fresh HiGodot receipt 순서를 유지한다.
 
 ### `observe`
 
