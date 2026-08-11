@@ -32,6 +32,28 @@ Codex는 GPT의 하위 단순 실행기가 아니다. 인계 명세는 의도와
 
 `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`: 사용자의 **명시적 승인이 완료된 항목**은 그 승인 범위의 구현·검증·PR에 병합 권한도 함께 부여된 것으로 간주한다. 이후 동일 범위에 대해 추가 확인·재승인·병합 승인 요청 없이 exact HEAD, Required Check, unresolved thread, 차단 상태를 확인한 뒤 즉시 병합한다. 단, 새 `USER_REVIEW_REQUIRED`, `CHANGE_PROPOSAL`, P0/P1, 범위 확대 또는 승인 이후 생긴 새로운 사용자 결정은 기존 승인으로 덮지 않는다.
 
+### ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP
+
+로컬 executor handoff에서 사용자가 shell, engine/editor, Codex를 직접 시작해야 한다면 세 개의 독립 수동 절차 대신 **one copy/paste** launcher block을 우선 제공한다. 이 규칙은 실행 편의 규칙이며 persistent authoring 권위를 새로 만들지 않는다.
+
+`BOOTSTRAP_MINIMUM_PREFLIGHT_ONLY`:
+
+```text
+resolve exact approved project/worktree inputs
+→ reuse exact matching editor when already running
+→ otherwise start the required editor
+→ perform only minimum startup checks needed to avoid the wrong target
+→ launch Codex in the exact project/worktree
+→ obtain fresh project-authorized runtime/session/readiness evidence inside Codex
+  before persistent mutation
+```
+
+launcher 자체는 readiness evidence가 아니다. editor process 시작, port listen, Codex 화면 진입만으로 live tool/session readiness나 제품 검증을 PASS로 승격하지 않는다. Codex가 시작된 뒤 프로젝트가 승인한 live authority로 fresh project/session/version/readiness를 다시 읽는다.
+
+bootstrap을 열기 위해 broad Git diff, repository-wide scan, 이미 분류된 line-ending/stat/index noise, 장문의 진단 dump를 선행 강제하지 않는다. wrong target을 막는 최소 identity/state 검사만 앞에 둔다. bootstrap 과정에서 사용자 작업을 `reset`, `restore`, `clean`, stage, rewrite하지 않고 unrelated editor/server를 kill/restart하지 않는다. exact matching editor가 이미 실행 중이면 중복 시작보다 재사용을 우선한다.
+
+project path, worktree, executable, port, version, host profile, CODEX_HOME, sandbox mode 같은 구체 값은 각 consuming project 또는 현재 execution packet의 입력이다. Base 공용 정본에는 프로젝트별 literal을 고정하지 않는다.
+
 ## 2. GPT 책임
 
 GPT는 평상시 작업과 Codex 인계 준비를 담당한다.

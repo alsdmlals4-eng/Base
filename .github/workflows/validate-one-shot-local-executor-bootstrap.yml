@@ -1,0 +1,28 @@
+name: Validate One-Shot Local Executor Bootstrap
+
+on:
+  pull_request:
+    paths:
+      - "docs/GPT_CODEX_WORKFLOW_POLICY.md"
+      - "templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md"
+      - "docs/superpowers/specs/*one-shot-local-executor-bootstrap*.md"
+      - "docs/superpowers/plans/*one-shot-local-executor-bootstrap*.md"
+      - "tests/test_one_shot_local_executor_bootstrap_contract.py"
+      - ".github/workflows/validate-one-shot-local-executor-bootstrap.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+      - name: Run one-shot bootstrap contract
+        run: python -m unittest tests.test_one_shot_local_executor_bootstrap_contract -v
