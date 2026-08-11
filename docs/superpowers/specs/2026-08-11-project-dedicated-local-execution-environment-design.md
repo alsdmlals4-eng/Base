@@ -1,10 +1,10 @@
 # Project-Dedicated Local Execution Environment Design
 
-**Date:** 2026-08-11 KST  
-**Status:** USER-APPROVED DESIGN / IMPLEMENTATION ACTIVE  
-**Shared Base owner:** `ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP`  
-**New shared invariant:** `PROJECT_DEDICATED_LOCAL_EXECUTION_ENVIRONMENT_FIRST`  
-**GRIMOIRE consuming Decision ID:** `GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01`  
+**Date:** 2026-08-11 KST
+**Status:** USER-APPROVED DESIGN / IMPLEMENTATION ACTIVE
+**Shared Base owner:** `ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP`
+**New shared invariant:** `PROJECT_DEDICATED_LOCAL_EXECUTION_ENVIRONMENT_FIRST`
+**GRIMOIRE consuming Decision ID:** `GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01`
 **Product decision change:** `false`
 
 ## Goal
