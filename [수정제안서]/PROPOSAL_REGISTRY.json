@@ -256,6 +256,17 @@
       "submitted_at": "2026-08-12",
       "approval_ref": null,
       "implementation_pr": null
+    },
+    {
+      "proposal_id": "BCP-2026-023-local-executor-retained-instance-recovery",
+      "title": "Local executor retained-instance recovery",
+      "path": "[수정제안서]/BCP-2026-023-local-executor-retained-instance-recovery/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "alsdmlals4-eng/Ten-Paces-Hidden-Moves",
+      "source_commit": "78acceab5a0689767aec9ce816e1225aa7d1f573",
+      "submitted_at": "2026-08-12",
+      "approval_ref": null,
+      "implementation_pr": null
     }
   ]
 }
