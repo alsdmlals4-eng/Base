@@ -1,7 +1,7 @@
 # Project-Dedicated Local Execution Environment Design
 
 **Date:** 2026-08-11 KST  
-**Status:** USER-APPROVED DESIGN, PRE-IMPLEMENTATION SPEC REVIEW  
+**Status:** USER-APPROVED DESIGN / WRITTEN SPEC AWAITING USER REVIEW  
 **Shared Base owner:** `ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP`  
 **New shared invariant:** `PROJECT_DEDICATED_LOCAL_EXECUTION_ENVIRONMENT_FIRST`  
 **GRIMOIRE consuming Decision ID:** `GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01`  
@@ -9,19 +9,28 @@
 
 ## 1. Goal
 
-When a project requires local PowerShell/Codex execution, the user should never have to reconstruct a project-specific toolchain manually or be assumed to still have a previous PowerShell session open.
+When a project requires local PowerShell/Codex execution, the handoff must never assume that a previous PowerShell window, environment variable, current directory, or executor session is still alive.
 
-Before local work begins, the handoff must establish or reuse the project's dedicated local execution environment and then provide **one copy/paste PowerShell block** that launches the exact environment and Codex target.
+Before product work begins, establish or reuse the project's dedicated local execution environment and provide **one complete copy/paste PowerShell block** that starts the exact local toolchain and Codex target.
 
-For a Godot project, the dedicated environment is:
+For a Godot project, the required dedicated environment components are conceptually:
 
 ```text
 dedicated self-contained Godot
 → project-scoped HiGodot server/profile/ports
 → project-scoped CODEX_HOME
-→ fresh project-scoped PowerShell process
-→ Codex launched with -C <exact project/worktree>
-→ fresh project-authorized HiGodot receipt before persistent mutation
+```
+
+The actual command execution always starts from a fresh PowerShell process:
+
+```text
+fresh project-scoped PowerShell
+→ verify/create-or-repair dedicated Godot
+→ reuse/start exact Godot
+→ verify/start-or-attach exact project HiGodot profile/ports
+→ set exact project CODEX_HOME
+→ launch Codex -C <exact project/worktree>
+→ obtain fresh project-authorized HiGodot receipt before persistent mutation
 ```
 
 This is an execution-orchestration rule. It does not create a second persistent Godot authoring authority.
@@ -32,33 +41,33 @@ This is an execution-orchestration rule. It does not create a second persistent 
 
 `dedicated PowerShell` does **not** mean a separately installed PowerShell binary.
 
-It means a newly opened PowerShell process for the current local work request, with the target project's local environment injected into that process, including the correct project/worktree, Godot executable, HiGodot project profile/ports, `CODEX_HOME`, and Codex working directory.
+It means a newly opened PowerShell process for the current local work request, with the target project's environment injected into that process.
 
-Every new local work request starts from this assumption:
+Every local work request begins from:
 
 ```text
 ASSUME_PREVIOUS_POWERSHELL_CLOSED
 ```
 
-The handoff must not depend on environment variables, current directory, aliases, process handles, or shell state from a previous user session.
+The handoff must therefore be self-contained and must not depend on variables, aliases, current directory, process handles, or shell state from an earlier user session.
 
 ### 2.2 Project-dedicated local execution environment
 
-A project-dedicated local execution environment is the smallest isolated host-side toolchain required to execute the project's approved local workflow without silently borrowing another project's editor, ports, Codex profile, or shell state.
+A project-dedicated local execution environment is the smallest isolated host-side toolchain needed to execute the project's approved workflow without silently borrowing another project's editor, ports, Codex profile, or shell state.
 
-For Godot + HiGodot + Codex projects this includes:
+For Godot + HiGodot + Codex projects it includes:
 
 1. a dedicated/self-contained Godot distribution approved by the project;
-2. a project-scoped HiGodot configuration, including project-specific server/port/profile identity where the project uses those concepts;
+2. a project-scoped HiGodot configuration, including project-specific server/port/profile identity where applicable;
 3. a project-scoped `CODEX_HOME`;
-4. a fresh PowerShell process configured for that project;
-5. exact project/worktree identity passed to Codex.
+4. exact project/worktree identity passed to Codex;
+5. a fresh PowerShell process for each user-executed local work session.
 
-The environment may reuse already-running components only when their identity matches the requested project/worktree exactly.
+Already-running components may be reused only when their identity matches the requested project/worktree exactly.
 
 ## 3. Shared Base contract
 
-Extend the existing `ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP` owner rather than creating a competing broad Skill or second bootstrap policy.
+Extend the existing `ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP` owner instead of creating a competing broad Skill or second bootstrap policy.
 
 The shared sequence becomes:
 
@@ -70,11 +79,12 @@ LOCAL_WORK_REQUEST
 → if required environment is absent/incomplete:
      CREATE_OR_REPAIR_DEDICATED_LOCAL_ENVIRONMENT_FIRST
 → adversarially review the launcher
-→ provide ONE copy/paste PowerShell block
-→ start/reuse exact project editor/runtime only
-→ start/attach exact project-scoped live-authority service only
-→ inject project-scoped executor profile/CODEX_HOME
-→ launch Codex in exact project/worktree
+→ provide ONE complete copy/paste PowerShell block
+→ inside the fresh PowerShell:
+     reuse/start exact project editor/runtime only
+     → start/attach exact project-scoped live-authority service only
+     → inject project-scoped executor profile/CODEX_HOME
+     → launch Codex in exact project/worktree
 → obtain fresh project-authorized session/version/readiness receipt inside Codex
 → only then persistent project work
 ```
@@ -87,42 +97,42 @@ If the project does not yet have a dedicated local execution environment, **envi
 
 The launcher must fail closed when a required project-local component is unavailable or ambiguous.
 
-Creation/repair may establish project-local directories, approved tool distributions, project-specific HiGodot configuration, and project-specific Codex profile state, but must not:
+Creation/repair may establish project-local directories, approved self-contained tool distributions, project-specific HiGodot configuration, and project-specific Codex profile state, but must not:
 
 - reset, restore, clean, stage, rewrite, or otherwise destroy user repository work;
 - silently reuse another project's HiGodot ports/profile;
 - silently use a global/default `CODEX_HOME` when a project-scoped profile is required;
-- install or replace global/system tooling when a self-contained/project-local option is the approved model;
+- install or replace global/system tooling when the approved model is self-contained/project-local;
 - kill unrelated editors/servers to free resources;
-- declare the environment ready solely because a process exists or a port is listening.
+- declare readiness solely because a process exists or a port is listening.
 
-If environment creation itself needs a user decision such as a new install location, credential, destructive migration, or conflicting port policy that cannot be resolved from current authority, stop with `USER_DECISION_REQUIRED` instead of inventing a value.
+If environment creation requires a new install location, credential, destructive migration, or unresolved port-policy decision that current authority does not determine, stop with `USER_DECISION_REQUIRED` rather than inventing a value.
 
 ## 5. One-block PowerShell handoff
 
-Whenever the user must perform the local step manually, the response must place the bootstrap before the Codex task prompt.
+Whenever the user must perform a local step manually, the response must put the bootstrap **before** the Codex task prompt.
 
 Required response order:
 
 ```text
-1. Open PowerShell
-2. Paste one complete PowerShell block
-   - resolve exact project/worktree
+1. Open a new PowerShell window.
+2. Paste one complete PowerShell block.
+   - define exact project/worktree and project-local tool paths/profile inputs
    - validate/create-or-repair dedicated environment as authorized
    - reuse/start exact Godot
    - start/attach project-specific HiGodot profile/ports
    - set exact project CODEX_HOME
    - launch Codex -C <exact project/worktree>
-3. After Codex opens, paste the Codex task prompt
+3. After Codex opens, paste the Codex task prompt.
 ```
 
-The PowerShell block must be self-contained for a fresh shell. It must not say or imply “use the PowerShell from earlier”, “keep the previous shell open”, or depend on variables defined in an earlier message.
+The PowerShell block must be executable from a fresh shell. It must not say or imply “use the PowerShell from earlier”, “keep the previous shell open”, or depend on variables defined in a previous message.
 
-Project-specific literals stay in the consuming project's execution packet or canon. Base owns the invariant, not a GRIMOIRE-specific path/port/version.
+Project-specific literals remain in the consuming project's canon or execution packet. Base owns the invariant, not GRIMOIRE-specific paths, ports, versions, branches, or worktree names.
 
 ## 6. Adversarial launcher review
 
-Before presenting a local launcher, attack the command against at least these failure modes:
+Before presenting a local launcher, attack it against at least these failure modes:
 
 ```text
 WRONG_WORKTREE
@@ -145,28 +155,26 @@ BROAD_PRE_CODEX_DIAGNOSTIC_DUMP
 
 A launcher with a validated conflict must be corrected before it is handed to the user.
 
-The launcher should prefer explicit variables near the top of the block for project/worktree/executable/profile values, bounded identity checks, and fail-closed errors with enough text to identify the mismatch.
+Prefer explicit project/worktree/executable/profile variables near the top of the block, bounded identity checks, and fail-closed errors that name the mismatch.
 
 ## 7. Evidence boundary
 
-The launcher proves only that orchestration was attempted successfully enough to start the requested tools.
-
-It does **not** prove:
+The launcher proves orchestration only. It does **not** prove:
 
 - HiGodot server/plugin version;
 - active project/session identity;
 - readiness;
-- successful Godot authoring;
-- successful tests;
+- successful persistent authoring;
+- test success;
 - product correctness.
 
 Those claims require fresh project-authorized receipts after Codex starts.
 
-For projects where HiGodot is the sole persistent Godot authoring authority, all `.gd/.tscn/.tres/.res/project.godot` persistent authoring remains under HiGodot. PowerShell and Codex bootstrap do not weaken that boundary.
+For projects where HiGodot is the sole persistent Godot authoring authority, `.gd/.tscn/.tres/.res/project.godot` persistent authoring remains under HiGodot. PowerShell/Codex bootstrap does not weaken that boundary.
 
 ## 8. GRIMOIRE concrete consumer
 
-GRIMOIRE binds this shared rule under the existing Decision ID:
+GRIMOIRE binds this rule under the existing Decision ID:
 
 ```text
 GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01
@@ -186,15 +194,15 @@ fresh PowerShell process
 → fresh godot-ai exact-project/server/plugin/readiness receipt
 ```
 
-The current GRIMOIRE HiGodot port convention is project-local authority and must be fresh-read before each execution packet rather than permanently copied into Base.
+The current GRIMOIRE HiGodot port convention is project-local authority and must be fresh-read before each execution packet rather than copied permanently into Base.
 
-For GRIMOIRE local-task responses, the PowerShell bootstrap must always appear **before** the Codex continuation prompt because the user may close PowerShell after every work session.
+For every GRIMOIRE local-task response, the one-block PowerShell bootstrap appears **before** the Codex continuation prompt because the user may close PowerShell after every work session.
 
 ## 9. GRIMOIRE environment-absence behavior
 
-If the GRIMOIRE dedicated local environment cannot be found, the next instruction must create or repair that environment first rather than sending a product implementation prompt that assumes it exists.
+If the GRIMOIRE dedicated local environment cannot be found, the next instruction creates or repairs that environment first rather than sending a product implementation prompt that assumes it exists.
 
-The creation/repair gate must establish or verify, as applicable:
+The creation/repair gate establishes or verifies, as applicable:
 
 - self-contained GRIMOIRE Godot distribution;
 - exact approved Godot version/path;
@@ -203,7 +211,7 @@ The creation/repair gate must establish or verify, as applicable:
 - exact Git worktree target;
 - Codex executable availability.
 
-After creation/repair, a fresh one-block bootstrap is still required; creation alone is not a persistent ready shell.
+After creation/repair, a fresh one-block bootstrap is still required. Environment creation does not imply that a prior shell remains open.
 
 ## 10. GitHub / Sheet synchronization
 
@@ -211,9 +219,9 @@ The shared Base change and GRIMOIRE consumer are one approved operating-flow imp
 
 Base owns the generic invariant. GRIMOIRE owns concrete values.
 
-GRIMOIRE GitHub canon and Google Sheet must use the same existing Decision ID `GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01` for the project consumer sync. A fresh Sync ID must be selected immediately before the write after confirming no collision.
+GRIMOIRE GitHub canon and Google Sheet use the same existing Decision ID `GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01` for the project consumer sync. Select a fresh Sync ID immediately before writing after confirming no collision.
 
-Sheet synchronization must not falsely promote Task8 product completion. It may record only the operating-flow improvement and current verified local-tool evidence.
+Sheet synchronization must not falsely promote Task8 product completion. It records only the operating-flow improvement and independently verified current local-tool evidence.
 
 ## 11. Testing and acceptance
 
@@ -223,21 +231,21 @@ Add focused RED→GREEN contract coverage proving that the shared owner requires
 
 - `PROJECT_DEDICATED_LOCAL_EXECUTION_ENVIRONMENT_FIRST`;
 - `ASSUME_PREVIOUS_POWERSHELL_CLOSED` semantics;
-- create/repair-before-product-work when dedicated environment is absent;
-- one copy/paste launcher before Codex prompt;
+- create/repair-before-product-work when the dedicated environment is absent;
+- one copy/paste launcher before the Codex prompt;
 - no project-specific GRIMOIRE literals in Base shared policy/template;
 - no weakening of HiGodot sole-authority boundaries;
-- adversarial launcher review requirement.
+- adversarial launcher review before handoff.
 
-Run the existing Base operating-contract and Game Project OS consumers unchanged.
+Run existing Base operating-contract and Game Project OS consumers unchanged.
 
 ### GRIMOIRE consumer acceptance
 
-Add/update planning/operations canon under `GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01` and verify:
+Update planning/operations canon under `GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01` and verify:
 
 - PowerShell bootstrap precedes Codex prompt in the documented local flow;
-- fresh shell assumption is explicit;
-- self-contained Godot → project HiGodot → project `CODEX_HOME` → Codex order is explicit;
+- fresh-shell assumption is explicit;
+- self-contained Godot → project HiGodot → project `CODEX_HOME` → Codex order is explicit inside the fresh PowerShell launcher;
 - absent environment routes to creation/repair first;
 - no Task8 product source mutation is included in this operating-policy work unit;
 - Google Sheet readback carries the same Decision ID.
@@ -260,7 +268,7 @@ attack
 → post-merge PR/canon recheck
 ```
 
-Important consumers include Base GPT/Codex workflow policy, Godot live-editor operations template, project adapters/templates that inherit the bootstrap, GRIMOIRE development gates/current decisions/sync record, and the Google Sheet tool-authority row.
+Important consumers include Base GPT/Codex workflow policy, Godot live-editor operations template, project adapters/templates inheriting the bootstrap, GRIMOIRE development gates/current decisions/sync record, and the Google Sheet tool-authority row.
 
 ## 13. Explicit non-goals
 
@@ -268,9 +276,9 @@ This change does not:
 
 - create a new broad Base Skill;
 - require a separately installed PowerShell binary;
-- require PowerShell to remain open between user work sessions;
+- require PowerShell to remain open between work sessions;
 - define one universal Godot path, HiGodot port, or `CODEX_HOME` for all projects;
-- make process/port existence equivalent to readiness;
+- equate process/port existence with readiness;
 - move product authoring authority away from HiGodot;
 - change Task8 gameplay/product behavior;
 - require Task9/root-navigation work;
