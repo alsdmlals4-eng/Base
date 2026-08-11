@@ -106,6 +106,7 @@ class WeeklyWorkImprovementReviewTests(unittest.TestCase):
         for required in (
             "PROMPT_AND_AGENT_WORKFLOW",
             "SKILL_AUTHORING_AND_EVOLUTION",
+            "CODE_ENGINEERING",
             "AI_MAJOR_ISSUES",
             "connected_project_context_checked",
             "GitHub",
