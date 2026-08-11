@@ -236,9 +236,9 @@
       "implementation_pr": null
     },
     {
-      "proposal_id": "BCP-2026-023-local-executor-content-identity-dirty-gate",
+      "proposal_id": "BCP-2026-022-local-executor-content-identity-dirty-gate",
       "title": "Local executor content-identity vs stat-only dirty gate",
-      "path": "[수정제안서]/BCP-2026-023-local-executor-content-identity-dirty-gate/PROPOSAL.md",
+      "path": "[수정제안서]/BCP-2026-022-local-executor-content-identity-dirty-gate/PROPOSAL.md",
       "status": "SUBMITTED",
       "source_project": "alsdmlals4-eng/urban-legend",
       "source_commit": "f46258233246be04f0efbef637e95710af6f5af5",
