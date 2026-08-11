@@ -75,19 +75,30 @@ validate Base adapter pin and generated snapshot
 
 `ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP`: 사용자가 local shell + Godot editor + Codex를 직접 시작해야 하는 handoff에서는 가능한 경우 one copy/paste bootstrap block을 우선한다.
 
+`PROJECT_DEDICATED_LOCAL_EXECUTION_ENVIRONMENT_FIRST`: local handoff는 프로젝트 전용 self-contained Godot/editor, project-scoped HiGodot profile/ports, project-scoped executor profile/CODEX_HOME, 그리고 현재 acceptance에 필요한 adopted live-QA profile을 다른 프로젝트와 섞이지 않게 먼저 확립한다. 사용자가 직전 작업 뒤 PowerShell을 닫았다고 가정하는 `ASSUME_PREVIOUS_POWERSHELL_CLOSED`가 기본이다.
+
+필수 구성요소가 없거나 identity가 불명확하면 `CREATE_OR_REPAIR_DEDICATED_LOCAL_ENVIRONMENT_FIRST`로 분류하고 제품 authoring보다 환경 생성/복구를 먼저 수행한다. 이미 실행 중인 component는 exact project/worktree/profile identity가 일치할 때만 재사용한다.
+
 `BOOTSTRAP_MINIMUM_PREFLIGHT_ONLY`:
 
 ```text
-exact project/worktree identity
+ASSUME_PREVIOUS_POWERSHELL_CLOSED
+→ exact project/worktree identity
+→ verify/create-or-repair dedicated self-contained Godot/editor
 → reuse matching editor when already running
 → otherwise start the required editor
+→ verify/start-or-attach the exact project-scoped HiGodot profile/ports
+→ inject the exact project-scoped executor profile/CODEX_HOME
+→ if Hera or another adopted live-QA tool is required: verify its exact project-approved profile/pair and non-authoring boundary
 → run only minimum startup checks needed to avoid the wrong target
 → launch Codex in the exact project/worktree
 → obtain a fresh HiGodot project/session/version/readiness receipt inside Codex
   before persistent mutation
 ```
 
-matching editor 재사용은 duplicate editor startup보다 우선한다. launcher는 orchestration일 뿐 persistent Godot edit를 수행하지 않는다. process/port/editor 존재 자체는 readiness evidence가 아니며, Codex 시작 뒤 fresh HiGodot receipt를 다시 읽는다. bootstrap 단계에서 broad Git diff, repository-wide scan, 이미 분류된 line-ending/stat/index noise를 매번 재출력하지 않는다. `reset`, `restore`, `clean`, stage, rewrite로 사용자 작업을 변경하지 않고 unrelated editor/server를 kill/restart하지 않는다.
+사용자에게는 Codex task prompt보다 먼저 fresh shell에서 독립 실행 가능한 one-block launcher를 제공한다. matching editor 재사용은 duplicate editor startup보다 우선한다. launcher는 orchestration일 뿐 persistent Godot edit를 수행하지 않는다. process/port/editor 존재 자체는 readiness evidence가 아니며, Codex 시작 뒤 fresh HiGodot receipt를 다시 읽는다. bootstrap 단계에서 broad Git diff, repository-wide scan, 이미 분류된 line-ending/stat/index noise를 매번 재출력하지 않는다. `reset`, `restore`, `clean`, stage, rewrite로 사용자 작업을 변경하지 않고 unrelated editor/server를 kill/restart하지 않는다.
+
+launcher handoff 전 adversarial review에서 wrong worktree/branch, 다른 프로젝트 Godot false match, duplicate editor, 다른 프로젝트 HiGodot port/profile ownership, port collision, global executor-profile leakage, fresh-shell env loss, path quoting, process-exists-but-not-ready, unrelated process kill, destructive Git side effect를 공격한다. adopted Hera/live-QA가 필요한 경우 다른 프로젝트 profile/token/port 혼입과 persistent source mutation 가능성도 함께 검증한다. validated conflict가 있으면 launcher부터 고친 뒤 handoff한다.
 
 다음이면 관련 stage 실행 전에 중단한다.
 
@@ -347,7 +358,7 @@ floating latest와 자동 무검토 업데이트는 금지한다. connection 성
 
 ### `bootstrap`
 
-HiGodot provider pin, addon 활성 상태, MCP host, project·Editor/session, client profile, network mode와 domain readiness를 검증한다. adopted GUT/Hera가 현재 요청에 필요한 경우 해당 exact pin/pair와 consumption/security/source-delta gate도 검증한다. local user startup이 필요한 경우 `ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP`과 `BOOTSTRAP_MINIMUM_PREFLIGHT_ONLY`를 적용해 matching editor reuse-or-start → exact project/worktree Codex launch → fresh HiGodot receipt 순서를 유지한다.
+HiGodot provider pin, addon 활성 상태, MCP host, project·Editor/session, client profile, network mode와 domain readiness를 검증한다. adopted GUT/Hera가 현재 요청에 필요한 경우 해당 exact pin/pair와 consumption/security/source-delta gate도 검증한다. local user startup이 필요한 경우 `PROJECT_DEDICATED_LOCAL_EXECUTION_ENVIRONMENT_FIRST`와 `ASSUME_PREVIOUS_POWERSHELL_CLOSED`를 적용한다. 필요한 dedicated component가 없으면 `CREATE_OR_REPAIR_DEDICATED_LOCAL_ENVIRONMENT_FIRST`로 제품 작업보다 먼저 복구하고, fresh PowerShell one-block launcher → exact matching editor reuse/start → project-scoped HiGodot → project-scoped executor profile/CODEX_HOME → adopted Hera/live-QA profile when required → exact project/worktree Codex launch → fresh HiGodot receipt 순서를 유지한다.
 
 ### `observe`
 

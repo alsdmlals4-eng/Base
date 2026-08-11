@@ -36,12 +36,24 @@ Codex는 GPT의 하위 단순 실행기가 아니다. 인계 명세는 의도와
 
 로컬 executor handoff에서 사용자가 shell, engine/editor, Codex를 직접 시작해야 한다면 세 개의 독립 수동 절차 대신 **one copy/paste** launcher block을 우선 제공한다. 이 규칙은 실행 편의 규칙이며 persistent authoring 권위를 새로 만들지 않는다.
 
+`PROJECT_DEDICATED_LOCAL_EXECUTION_ENVIRONMENT_FIRST`: 로컬 작업은 프로젝트 전용 실행환경을 먼저 확립한다. 사용자가 이전 작업 뒤 shell을 종료했을 수 있으므로 항상 `ASSUME_PREVIOUS_POWERSHELL_CLOSED`에서 시작하고, 이전 shell의 환경 변수·현재 디렉터리·process handle·alias를 재사용 전제로 삼지 않는다.
+
+전용 환경의 필수 구성요소가 없거나 프로젝트 identity가 모호하면 `CREATE_OR_REPAIR_DEDICATED_LOCAL_ENVIRONMENT_FIRST`로 분류하고 제품 구현보다 환경 생성·복구를 먼저 수행한다. 프로젝트가 채택한 live-QA 도구가 현재 acceptance에 필요하면 그 프로젝트 전용 profile도 같은 환경 경계에서 검증하되, live-QA는 별도 권위 결정 없이는 **non-authoring** 검증 도구다.
+
 `BOOTSTRAP_MINIMUM_PREFLIGHT_ONLY`:
 
 ```text
-resolve exact approved project/worktree inputs
+ASSUME_PREVIOUS_POWERSHELL_CLOSED
+→ resolve exact approved project/worktree inputs
+→ verify project-dedicated editor/runtime, live-authority service, and executor profile
+→ if required local component is absent: CREATE_OR_REPAIR_DEDICATED_LOCAL_ENVIRONMENT_FIRST
+→ adversarially validate the launcher against wrong target/profile/process collisions
+→ provide one complete copy/paste launcher before the Codex task prompt
 → reuse exact matching editor when already running
 → otherwise start the required editor
+→ verify/start-or-attach the exact project-scoped live-authority service
+→ inject the project-scoped executor profile/CODEX_HOME
+→ verify any project-adopted live-QA profile only when current acceptance requires it
 → perform only minimum startup checks needed to avoid the wrong target
 → launch Codex in the exact project/worktree
 → obtain fresh project-authorized runtime/session/readiness evidence inside Codex
@@ -52,7 +64,9 @@ launcher 자체는 readiness evidence가 아니다. editor process 시작, port 
 
 bootstrap을 열기 위해 broad Git diff, repository-wide scan, 이미 분류된 line-ending/stat/index noise, 장문의 진단 dump를 선행 강제하지 않는다. wrong target을 막는 최소 identity/state 검사만 앞에 둔다. bootstrap 과정에서 사용자 작업을 `reset`, `restore`, `clean`, stage, rewrite하지 않고 unrelated editor/server를 kill/restart하지 않는다. exact matching editor가 이미 실행 중이면 중복 시작보다 재사용을 우선한다.
 
-project path, worktree, executable, port, version, host profile, CODEX_HOME, sandbox mode 같은 구체 값은 각 consuming project 또는 현재 execution packet의 입력이다. Base 공용 정본에는 프로젝트별 literal을 고정하지 않는다.
+launcher를 사용자에게 주기 전 adversarial review로 wrong worktree/branch, 다른 프로젝트 editor나 live-authority profile, port/profile collision, global executor-profile leakage, path quoting, fresh-shell environment loss, process-exists-but-not-ready, unrelated process kill, destructive Git side effect를 공격한다. 프로젝트가 채택한 live-QA가 있으면 다른 프로젝트 profile/token/port 혼입과 persistent source mutation 가능성도 함께 검사한다. 검증된 충돌이 있으면 launcher부터 수정하고 handoff한다.
+
+project path, worktree, executable, port, version, host profile, CODEX_HOME, sandbox mode, live-QA product/profile 같은 구체 값은 각 consuming project 또는 현재 execution packet의 입력이다. Base 공용 정본에는 프로젝트별 literal을 고정하지 않는다.
 
 ## 2. GPT 책임
 
