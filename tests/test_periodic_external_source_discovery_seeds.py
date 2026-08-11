@@ -7,6 +7,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SEEDS = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_DISCOVERY_SEEDS.md"
 WATCHLIST = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md"
+ART_GUIDE = ROOT / "docs" / "knowledge" / "game-development" / "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md"
+SIZE_GUIDE = ROOT / "docs" / "knowledge" / "game-development" / "GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md"
 
 
 class PeriodicExternalSourceDiscoverySeedTests(unittest.TestCase):
@@ -47,6 +49,46 @@ class PeriodicExternalSourceDiscoverySeedTests(unittest.TestCase):
         self.assertIn("같은 format", content)
         self.assertNotIn("stars = authority", content.lower())
         self.assertNotIn("views = authority", content.lower())
+
+    def test_pixel_art_sources_route_to_existing_art_and_size_owners(self) -> None:
+        seeds = SEEDS.read_text(encoding="utf-8")
+        art_guide = ART_GUIDE.read_text(encoding="utf-8")
+        size_guide = SIZE_GUIDE.read_text(encoding="utf-8")
+
+        for required in (
+            "Aseprite",
+            "https://www.aseprite.org/docs/",
+            "https://github.com/aseprite/aseprite",
+            "Saint11",
+            "https://saint11.org/blog/pixel-art-tutorials/",
+            "Lospec",
+            "https://lospec.com/",
+            "PixelJoint",
+            "https://pixeljoint.com/",
+            "AUTHORITY_TARGET",
+            "PROFESSIONAL_PRACTICE",
+            "DISCOVERY_FEED",
+            "integer scaling",
+            "nearest",
+            "pixel clusters",
+            "banding",
+            "palette",
+            "sprite sheet",
+            "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md",
+            "GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md",
+            "designing-art-prompts-and-technique-cards",
+            "BLOCKED_UNVERIFIED",
+        ):
+            self.assertIn(required, seeds)
+
+        self.assertIn("Visual Requirement Gate", art_guide)
+        self.assertIn("2D·pixel art 보호", size_guide)
+        for measurement_type in ("DOWNLOAD", "INSTALLED", "RUNTIME", "PATCH"):
+            self.assertIn(measurement_type, size_guide)
+        self.assertIn("pixel art", seeds.lower())
+        self.assertIn("base-wide default", seeds.lower())
+        self.assertIn("smaller shipped build", seeds.lower())
+        self.assertIn("actual build", seeds.lower())
 
 
 if __name__ == "__main__":
