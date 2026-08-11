@@ -130,6 +130,35 @@ class PcAndroidCrossPlatformDeliveryTests(unittest.TestCase):
         ):
             self.assertIn(term, profile)
 
+    def test_google_play_target_api_deadline_is_explicit_and_reverified(self) -> None:
+        guide = read(GUIDE)
+        profile = read(PROFILE)
+        for term in (
+            "Google Play Target API Gate",
+            "2026-08-11",
+            "2026-08-31",
+            "Android 16 / API 36",
+            "Android 15 / API 35",
+            "2026-11-01",
+            "target SDK",
+            "출시·업데이트 제출 직전",
+            "developer.android.com/google/play/requirements/target-sdk",
+            "support.google.com/googleplay/android-developer/answer/11926878",
+        ):
+            self.assertIn(term, guide)
+
+        for term in (
+            "google_play_target_api:",
+            "checked_at:",
+            "new_app_or_update_required_target_api:",
+            "existing_app_discoverability_target_api:",
+            "effective_at:",
+            "extension_if_available:",
+            "project_target_sdk:",
+            "VERIFIED_CURRENT | UPDATE_REQUIRED | EXTENSION_REQUIRED | BLOCKED_UNVERIFIED",
+        ):
+            self.assertIn(term, profile)
+
     def test_benchmark_and_evidence_limits_are_explicit(self) -> None:
         guide = read(GUIDE)
         for term in (
