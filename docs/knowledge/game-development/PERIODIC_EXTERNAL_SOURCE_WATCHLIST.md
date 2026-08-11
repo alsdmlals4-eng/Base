@@ -1,4 +1,4 @@
-# 주기적 Base 외부 Source Watchlist — 게임·AI 작업·서사·YouTube
+# 주기적 Base 외부 Source Watchlist — 게임·코딩·AI 작업·서사·YouTube
 
 ```yaml
 watchlist_role: periodic-base-improvement-source-discovery
@@ -8,6 +8,7 @@ recommended_default_cadence: weekly
 scheduler_authority: EXTERNAL_TO_BASE
 source_domains:
   - GAME_DEVELOPMENT
+  - CODE_ENGINEERING
   - PROMPT_AND_AGENT_WORKFLOW
   - SKILL_AUTHORING_AND_EVOLUTION
   - FICTION_AND_INTERACTIVE_NARRATIVE
@@ -20,6 +21,8 @@ source_domains:
 
 대상은 게임 기획·Godot 개발·UX·접근성·아트·프로덕션·플레이테스트·성능·출시뿐 아니라 다음까지 포함한다.
 
+- Godot 엔진 구현·회귀·proposal·공식 demo·addon discovery
+- 코딩 품질·테스트·버전 호환성·CI·코드리뷰·보안·dependency provenance
 - 프롬프트 작성과 instruction architecture
 - 장기 agent 작업·context·harness·eval·권한 구조
 - Skill 생성·통합·progressive disclosure·behavior evaluation
@@ -77,7 +80,7 @@ PERIODIC_SOURCE_OPERATIONS_LEDGER.json
 
 | Source | scan surface | 주요 용도 | 한계·재검증 |
 |---|---|---|---|
-| **Godot Engine official docs / blog / releases** | `godotengine.org/blog`, release pages, migration docs | stable/RC/maintenance, breaking change, migration, editor/runtime 기능, 지원 정책 | 프로젝트 적용 전 exact Godot version·migration guide·known issue 재확인 |
+| **Godot Engine official docs / blog / releases** | `godotengine.org` docs/blog/releases, `godotengine/godot` source repository·issues/PRs·changelog, `contributing.godotengine.org` | stable/RC/maintenance, breaking change, migration, editor/runtime 기능, GDScript/C#/GDExtension, 회귀·known issue, contributor implementation context | exact Godot version·branch·merge/release 상태를 구분. open issue/PR은 shipped behavior가 아님 |
 | **Valve Steamworks Documentation / Blog** | `partner.steamgames.com/doc`, Steamworks news | Demo, Wishlist, Visibility, Store, SteamPipe, release/marketing 기능 | 제3자 Steam 알고리즘 추정보다 우선. 출시 전 현재 문서 재확인 |
 | **Android Developers – Games** | `developer.android.com/games`, games release notes | Android performance, thermal/CPU/GPU, SDK migration, controller, quality | 기기·Android version·SDK version별 조건 기록 |
 | **Google Play Developer Policy / Policy Deadlines** | Play Console Help policy/deadline pages | 정책 효력일, metadata, 품질, 계정·배포 요건 | 법률 자문 아님. 효력일·지역·계정 조건 재확인 |
@@ -205,6 +208,43 @@ Skill 자료는 **설치 가능한 Skill 자체를 무조건 채택하기 위해
 → review round와 feedback resolution이 version으로 추적되는가?
 → retention drop/rewatch를 원인으로 단정하지 않고 장면 가설로 바꾸는가?
 → CTR·views만으로 구매의도·게임 수요·채널 성공을 증명하지 않는가?
+```
+
+### 3.6 `CODE_ENGINEERING`
+
+이 domain은 **Godot 구현 안정성 + Base/프로젝트의 일반 코드 품질·테스트·CI·보안**을 조사한다. 특정 언어·플랫폼·조직의 지침을 Base 전체 Hard Rule로 바로 승격하지 않는다.
+
+#### Godot implementation / proposal / example surfaces
+
+| Source | role | 주요 용도 | 한계·재검증 |
+|---|---|---|---|
+| **Godot Engine source / issues / PRs / contributing docs** | `AUTHORITY_TARGET` | 실제 구현, regression/known issue, merged PR, contributor best practice, compatibility 논의 | 현재 branch/tag/release와 merge 상태를 확인. open issue/PR은 shipped fact가 아님 |
+| **Godot Improvement Proposals** | `AUTHORITY_TARGET` | 향후 엔진 API/UX/기능 방향, accepted/rejected/discussed proposal, workaround/addon/GDExtension 가능성 | **proposal은 shipped behavior가 아니다**. proposal 상태와 실제 engine release를 반드시 분리 |
+| **Godot Demo Projects** | `AUTHORITY_TARGET` | 공식 GDScript/C#/2D/3D/networking/UI/physics/example implementation, 버전별 API 사용 확인 | **공식 demo는 보편 architecture 정본이 아니다**. 예제 목적·Godot 버전·성능/제품 요구에 맞게 ADAPT |
+| **Godot Asset Library** | `DISCOVERY_FEED` | addon·plugin·script·tool 후보 발견, 기존 솔루션 탐색 | **Asset Library는 vetted dependency 목록이 아니다**. linked source repository·maintenance·engine compatibility·permission·license·security를 별도 확인 |
+
+#### General code engineering
+
+| Source | role | 주요 용도 | 한계·재검증 |
+|---|---|---|---|
+| **Python official docs / What's New / PEPs** | `AUTHORITY_TARGET` | Python runtime/library behavior, typing, unittest, deprecation, migration/backward compatibility | exact Python version과 accepted/final PEP 상태 확인. draft proposal을 현행 runtime 사실로 사용 금지 |
+| **GitHub Actions / Code Security Docs** | `AUTHORITY_TARGET` | Actions syntax/permissions, secure use, dependency review, CodeQL/code scanning, Rulesets·status checks | GitHub 기능·플랜·preview·repository 설정을 현재 상태와 재확인. 일반 코드 설계 정본으로 확대 금지 |
+| **Git official documentation** | `AUTHORITY_TARGET` | worktree, bisect, merge/rebase, hooks, refs, repository recovery/diagnostics | exact Git version·command semantics 확인. 팀 merge policy는 repository policy가 우선 |
+| **OWASP Cheat Sheet Series / ASVS** | `AUTHORITY_TARGET` | secure coding, input/secret/error handling, supply chain, CI/CD, AI-assisted coding security 질문·검증 기준 | 보안 guidance/verification reference이며 프로젝트 보안·법적 compliance PASS를 자동 증명하지 않음 |
+| **Google Engineering Practices** | `PROFESSIONAL_PRACTICE` | code review, change authoring, readability, complexity, tests, documentation review lens | Google 조직 맥락의 professional practice. Base 공용 Hard Rule로 자동 승격하지 않음 |
+
+#### 코딩 조사에서 우선 찾을 질문
+
+```text
+현재 프로젝트의 exact engine/runtime/tool version과 일치하는가?
+→ shipped release / merged commit / proposal / open issue / open PR / demo를 구분했는가?
+→ 재현 가능한 bug·regression이면 minimal reproduction과 관련 test가 있는가?
+→ 공식 API/문서와 실제 source implementation이 충돌하면 version/branch 차이를 먼저 확인했는가?
+→ community addon을 쓰기 전에 공식 기능·기존 project solution·source repository를 확인했는가?
+→ dependency의 maintenance·compatibility·permission·license·security provenance를 확인했는가?
+→ 변경은 가장 작은 testable unit이며 실패·rollback 경계가 있는가?
+→ CI·static analysis·security scan 결과를 runtime/player/human evidence로 과장하지 않았는가?
+→ 한 조직의 code review 관행을 현재 Base/project constraints에 맞게 ADAPT했는가?
 ```
 
 ## 4. 새 사이트 추가 Gate
@@ -369,10 +409,10 @@ LAST_SUCCESSFUL_SCAN
 
 ### 기본 cadence
 
-- `daily-or-weekly`: Hada, OpenAI/Anthropic/Google/GitHub/Microsoft AI engineering updates, Godot release/blog, Steamworks, Android/Google Play policy/release, YouTube Help/Studio changes처럼 빠르게 변하는 면.
-- `weekly`: GameDiscoverCo, How To Market A Game, Game Developer, Reedsy recent learning, Adobe Premiere official release notes, Frame.io Insider, vidIQ research/blog, SteamDB 공개 관찰, Blackmagic/DaVinci 공식 training·release workflow surface.
-- `monthly-or-on-demand`: GDC Vault, Games User Research, 80 Level, GameAnalytics, Deconstructor of Fun, GPUOpen, IGDA Game Writing, inkle/ink, Yarn Spinner.
-- `quarterly-or-when-relevant`: The Level Design Book, Game Accessibility Guidelines, Emily Short archive, Xbox Accessibility Guidelines처럼 상대적으로 정적이거나 필요 시 재검증 가치가 큰 Reference.
+- `daily-or-weekly`: Hada, OpenAI/Anthropic/Google/GitHub/Microsoft AI engineering updates, Godot release/blog/source·issue/PR surface, GitHub Actions/Code Security, Steamworks, Android/Google Play policy/release, YouTube Help/Studio changes처럼 빠르게 변하는 면.
+- `weekly`: Godot Improvement Proposals, Python official docs/What's New/PEPs, OWASP updates, GameDiscoverCo, How To Market A Game, Game Developer, Reedsy recent learning, Adobe Premiere official release notes, Frame.io Insider, vidIQ research/blog, SteamDB 공개 관찰, Blackmagic/DaVinci 공식 training·release workflow surface.
+- `monthly-or-on-demand`: Godot Demo Projects, Godot Asset Library, Git official documentation, GDC Vault, Games User Research, 80 Level, GameAnalytics, Deconstructor of Fun, GPUOpen, IGDA Game Writing, inkle/ink, Yarn Spinner.
+- `quarterly-or-when-relevant`: Google Engineering Practices, The Level Design Book, Game Accessibility Guidelines, Emily Short archive, Xbox Accessibility Guidelines처럼 상대적으로 정적이거나 필요 시 재검증 가치가 큰 Reference.
 
 이는 권장 기본값이며 Base 불변 일정이 아니다. 고유 Source별 현재 cadence와 실제 관측 상태는 `PERIODIC_SOURCE_OPERATIONS_LEDGER.json`에서 확인한다.
 
@@ -437,6 +477,12 @@ known_bias:
 - `SOURCE_CONTEXT_PACKET`이 원문의 한계·조건을 떨어뜨리고 결론만 과장했는가?
 - contribution count가 낮다는 이유로 정적·고권위 Source를 제거하려 했는가?
 - 자동병합을 이유로 보호된 의미 변경을 `LOW_RISK_BOUNDED_UPDATE`로 축소 분류했는가?
+- Godot proposal·open issue·open PR을 이미 release된 engine behavior로 보고했는가?
+- 공식 Godot demo를 현재 프로젝트의 보편 architecture 정답으로 복사했는가?
+- Godot Asset Library 등록 사실을 dependency의 품질·보안·라이선스 검증으로 오인했는가?
+- draft PEP·미출시 GitHub/Godot 기능을 stable runtime/platform fact로 사용했는가?
+- OWASP guidance나 static/code scan 성공을 실제 security compliance 증명으로 과장했는가?
+- Google Engineering Practices 같은 조직별 관행을 Base 공용 Hard Rule로 강제했는가?
 
 ## 11. 변경 권한
 

@@ -136,6 +136,45 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
                 self.assertGreaterEqual(row["base_contribution_count_since_tracking_start"], 0)
                 self.assertEqual("ACTIVE", row["status"])
 
+    def test_godot_and_code_engineering_sources_preserve_evidence_boundaries(self) -> None:
+        content = WATCHLIST.read_text(encoding="utf-8")
+        for required in (
+            "CODE_ENGINEERING",
+            "Godot Improvement Proposals",
+            "Godot Demo Projects",
+            "Godot Asset Library",
+            "Python official docs / What's New / PEPs",
+            "GitHub Actions / Code Security Docs",
+            "Git official documentation",
+            "OWASP Cheat Sheet Series / ASVS",
+            "Google Engineering Practices",
+            "proposal은 shipped behavior가 아니다",
+            "공식 demo는 보편 architecture 정본이 아니다",
+            "Asset Library는 vetted dependency 목록이 아니다",
+        ):
+            self.assertIn(required, content)
+
+        data = json.loads(LEDGER.read_text(encoding="utf-8"))
+        by_id = {row["source_id"]: row for row in data["sources"]}
+        expected_ids = {
+            "godot-proposals",
+            "godot-demo-projects",
+            "godot-asset-library",
+            "python-official",
+            "github-platform-engineering",
+            "git-scm",
+            "owasp",
+            "google-engineering-practices",
+        }
+        self.assertTrue(expected_ids.issubset(by_id))
+        self.assertIn("CODE_ENGINEERING", by_id["godot"]["domains"])
+        self.assertIn("source repository", by_id["godot"]["scan_surfaces"])
+        self.assertIn("AUTHORITY_TARGET", by_id["godot-proposals"]["roles"])
+        self.assertIn("AUTHORITY_TARGET", by_id["godot-demo-projects"]["roles"])
+        self.assertIn("DISCOVERY_FEED", by_id["godot-asset-library"]["roles"])
+        for source_id in expected_ids:
+            self.assertIn("CODE_ENGINEERING", by_id[source_id]["domains"], source_id)
+
     def test_watchlist_connects_context_extraction_to_fail_closed_auto_merge(self) -> None:
         content = WATCHLIST.read_text(encoding="utf-8")
         for required in (
