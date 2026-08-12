@@ -61,6 +61,8 @@ At `APPROVED_VISUAL_REFERENCE` or later, record a responsible document, Decision
 
 이미지·시각 자료 작업에서는 접근 가능한 최신 프로젝트 정본과 Decision을 먼저 확인한 뒤, Visual Artifact Registry에서 연결된 Figma와 `APPROVED_VISUAL_REFERENCE`를 찾고 실제 frame/node를 읽을 수 있을 때만 그 내용을 기준으로 사용한다. 승인 레퍼런스에서 `Keep / Avoid / Do Not Drift`를 추출해 새 생성·편집 계약에 고정하고, 새 결과는 기본적으로 WIP/review 후보로 두며 기존 승인본과 스타일·비율·색·형태·카메라·UI 계층을 비교한다.
 
+프로젝트 Figma가 `CONFIGURED`이고 쓰기 권한이 있으면 새 이미지·UI·시각 자료는 생성·편집 직후 실제 Figma `02_WIP`에 업로드하거나 배치하고 Visual Artifact Registry의 file/page/frame/node와 `DRAFT_VISUAL` 또는 `REVIEW_CANDIDATE` 상태를 연결한다. 쓰기 권한이 없거나 연결에 실패하면 결과물을 잃지 않도록 현재 작업 위치에 보존하고 `READ_ONLY`, `AUTH_REQUIRED`, `ACCESS_DENIED`, `LINK_UNVERIFIED` 또는 `SYNC_PENDING`을 기록한다. 이 경우 Figma에 동기화됐다고 보고하지 않는다.
+
 사용자 승인 뒤에만 Figma의 Approved/Final 위치와 Registry 상태를 갱신한다. 실제 이미지 bytes의 후보·제품 승격 권위는 `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`와 tracked asset 계약이 계속 소유하며, `PROJECT_ASSET_APPROVED → promote`를 우회하지 않는다.
 
 Figma 링크나 frame/node를 읽을 수 없으면 과거 대화·파일명·스크린샷 추정으로 내용을 확인했다고 보고하지 않는다. `LINK_UNVERIFIED`, `AUTH_REQUIRED`, `ACCESS_DENIED`, `READ_ONLY` 또는 `UNVERIFIED`를 기록하고 Markdown·text wireframe·로컬 승인 자산 등 현재 접근 가능한 근거로 fallback한다.
