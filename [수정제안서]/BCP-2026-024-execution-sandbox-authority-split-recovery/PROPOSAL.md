@@ -18,9 +18,16 @@ approval_ref: null
 implementation_pr: null
 ```
 
-Project Application은 완료되었다. GRIMOIRE PR #134에서 `GR-SYNC-20260812-21-TASK8-HANDOFF-BCP`, 기존 continuation owner, focused current-state regression에 remote/local receipt 분리를 반영했고 exact reviewed head `71d0a814043275b9453c9bdb218eac1be9ae31fa`의 적용 가능한 CI를 통과한 뒤 `d277a2f5cd4a57947d176e3c49ae7f8f6db97230`으로 병합·new-main readback했다.
+Project Application은 완료되었다. GRIMOIRE PR #134에서 `GR-SYNC-20260812-21-TASK8-HANDOFF-BCP`, 기존 continuation owner, focused current-state regression에 remote/local receipt 분리를 반영했고 exact reviewed head `71d0a814043275b9453c9bdb218eac1be9ae31fa`의 적용 가능한 CI를 통과했다. 일시적 external HTTP 525였던 Star Runtime POC도 동일 exact head 재실행에서 성공한 뒤 `d277a2f5cd4a57947d176e3c49ae7f8f6db97230`으로 병합·new-main readback했다.
 
 동시성 provenance도 보존한다. GRIMOIRE proposal PR #293/#295/#296은 각각 final race에서 ID 충돌 또는 Base advancement를 발견해 미병합 종료했다. 다른 프로젝트 branch/PR/Registry entry를 수정하지 않고, 최신 Base main `be2435bc5ebb9f55c49c0b37284a122a3689e583`의 BCP-021/022를 그대로 보존한 뒤 이 제안만 BCP-024로 재구성했다.
+
+### 충돌 복원 감사
+
+- PR #293의 초기 BCP-022에는 `GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01`과 일시적 external HTTP 525 뒤 동일 exact-head Star Runtime POC 재성공 기록이 모두 있었다.
+- PR #295의 BCP-023과 PR #296의 BCP-024에는 Decision ID가 남았지만 HTTP 525/Star Runtime 기록은 이미 빠져 있었다.
+- PR #297의 최종 BCP-024에서는 Decision ID도 빠졌다.
+- 현재 수정은 이 서로 다른 두 손실 시점을 명시하고 provenance만 복원한다. BCP-024의 active Base 구현 승인이나 구현 상태를 변경하지 않는다.
 
 ## 관찰과 증거
 
@@ -110,7 +117,7 @@ Base에 올리지 않는 GRIMOIRE 전용 값:
 - Task8 worktree/branch/head와 exact 9-path product allowlist.
 - Godot 4.7.1, HiGodot 3.1.4, Hera 1.0.0, GUT 9.7.1, project-scoped ports/CODEX_HOME/Hera profile.
 - Task8 GUT/Hera counts, acceptance evidence ceilings, Stage3/gameplay authority.
-- `GM-SPELL-WORKFLOW-UI-V2-01`.
+- `GM-SPELL-WORKFLOW-UI-V2-01`, `GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01`.
 - 사용자 workflow preference `CURRENT_DEDICATED_CODEX_REUSE_ALLOWED_FOR_CODEX_ONLY_CONTINUATION`.
 
 모든 프로젝트가 connector와 local executor를 동시에 갖는다고 가정하지 않는다.
