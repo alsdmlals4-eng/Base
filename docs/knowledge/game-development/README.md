@@ -68,7 +68,7 @@
 | 이미지·시각 자산·UI 컴포넌트 필요성·우선순위·제작 방식 선정 | 기존 Art/UX/asset evaluation Skill 조합 | Art Guide의 `Visual Requirement Gate`; 새 광역 Skill을 만들지 않음 |
 | 아트 방향·프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` | 아트 Guide·원출처·권리·승인 상태 |
 | 자산·플러그인 직접 채택과 참조 독립 제작 선택 | `evaluating-godot-assets-and-plugins-before-creation` | 플랫폼·자산 권리 Guide의 제작·도입 경로 |
-| 대표 경험·품질·제작성 파이프라인 | `designing-vertical-slices` | 기획·아트·기술 Guide의 Quality Bar |
+| 대표 경험·품질·제작 파이프라인 | `designing-vertical-slices` | 기획·아트·기술 Guide의 Quality Bar |
 | 변경·외부 AI 결과·접근성·성능 검증 | `reviewing-and-validating-project-changes` | Evidence 상태·AI 독립 검수·플랫폼 증거 |
 | 실패 가정·반례·과잉 일반화 공격 | `running-adversarial-review-and-refinement` | Evidence Pack·Case Card의 한계·비복제 요소 |
 | Skill 중복·과분할·학습 | `evolving-project-discipline-skills` | 반복 실패·Case·새 책임 경계 증거 |
