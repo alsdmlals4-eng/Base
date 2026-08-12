@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sprite Animation Studio</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div><strong>Sprite Animation Studio</strong><span>· Base 공용 도구</span></div>
+      <span id="run-status" class="status">준비됨</span>
+    </header>
+    <main class="workspace">
+      <aside class="request-panel" aria-label="생성 요청">
+        <h1>애니메이션 생성</h1>
+        <p class="muted">이미지는 프로젝트 경로에 남고, 이 도구는 승인 앵커부터 내보내기까지의 흐름을 기록합니다.</p>
+        <form id="request-form">
+          <label>프로젝트 ID<input name="project_id" value="demo" required></label>
+          <label>에셋 ID<input name="asset_id" value="knight" required></label>
+          <label>에셋 종류<select name="asset_kind"><option value="character">캐릭터</option><option value="effect">이펙트</option></select></label>
+          <label>원본 이미지 경로<input name="source_path" value="art/source/idle.png" required></label>
+          <label>Figma 노드 URL<input name="figma_node_url" type="url" value="https://www.figma.com/design/demo?node-id=1-2" required></label>
+          <label>동작 이름<input name="action_name" value="attack" required></label>
+          <label>방향<select name="direction"><option value="left">왼쪽</option><option value="right">오른쪽</option><option value="up">위</option><option value="down">아래</option><option value="none">없음</option></select></label>
+          <div class="two-column">
+            <label>프레임 수<input name="frame_count" type="number" value="4" min="1" max="16" required></label>
+            <label>FPS<input name="fps" type="number" value="8" min="1" max="60" required></label>
+          </div>
+          <label>반복<select name="loop_mode"><option value="none">반복 안 함</option><option value="linear">반복</option><option value="pingpong">핑퐁</option></select></label>
+          <label>동작 설명<textarea name="prompt" rows="5" required>왼쪽을 바라보는 캐릭터가 힘있게 검을 내리친다.</textarea></label>
+          <button class="primary" type="submit">승인 앵커로 후보 만들기</button>
+        </form>
+        <section class="control-group" aria-label="선택 프레임 조정">
+          <h2>선택 프레임 조정</h2>
+          <div class="two-column">
+            <label>X 이동<input id="transform-x" type="number" value="0"></label>
+            <label>Y 이동<input id="transform-y" type="number" value="0"></label>
+          </div>
+          <label>크기<input id="transform-scale" type="number" value="1" min="0.1" max="4" step="0.1"></label>
+          <button id="apply-transform" type="button">현재 프레임에 적용</button>
+          <label class="checkbox"><input id="toggle-guides" type="checkbox" checked> 가로/세로 가이드 표시</label>
+        </section>
+      </aside>
+
+      <section class="studio" aria-live="polite">
+        <ol class="lineage" aria-label="시각 계보">
+          <li>원본 이미지</li><li>승인 앵커</li><li>동작 후보</li><li>채택 프레임</li><li>최종 시트</li>
+        </ol>
+        <section class="source-row">
+          <article><h2>원본 이미지</h2><img id="source-image" class="source-preview" alt="승인 전 원본 이미지"><p id="source-path">아직 요청되지 않음</p></article>
+          <article><h2>승인 앵커</h2><p id="anchor-proof">Figma 노드 URL과 SHA-256은 생성 뒤 기록됩니다.</p></article>
+          <article><h2>생성 경고</h2><p id="warning-panel">실제 엔진 오류는 성공으로 대체하지 않습니다.</p></article>
+        </section>
+        <section class="candidate-section">
+          <div class="section-title"><div><h2>동작 후보</h2><p>프레임을 선택·제거·재정렬한 뒤 내보냅니다.</p></div><button id="select-all" type="button">전체 선택</button></div>
+          <div id="candidate-grid" class="frame-grid guide-grid" aria-label="생성 후보 프레임"></div>
+        </section>
+        <section class="sequence-section">
+          <div class="section-title"><div><h2>채택 프레임</h2><p id="selection-count">선택된 프레임 없음</p></div><button id="export-button" class="primary" type="button" disabled>시트·GIF·Godot 핸드오프 내보내기</button></div>
+          <div id="sequence" class="sequence" aria-label="채택 프레임 순서"></div>
+        </section>
+        <section class="preview-section">
+          <div class="section-title"><div><h2>애니메이션 미리보기</h2><p>선택된 순서와 FPS를 사용합니다.</p></div><button id="play-preview" type="button" disabled>재생 / 정지</button></div>
+          <div class="preview-canvas"><img id="preview-image" alt="선택 프레임 미리보기"></div>
+        </section>
+      </section>
+    </main>
+    <template id="frame-actions-template">
+      <div class="frame-actions">
+        <button type="button" data-action="previous" aria-label="프레임 순서 앞으로">앞으로</button>
+        <button type="button" data-action="next" aria-label="프레임 순서 뒤로">뒤로</button>
+        <button type="button" data-action="remove" aria-label="선택 프레임에서 제거">제거</button>
+      </div>
+    </template>
+    <script src="/app.js"></script>
+  </body>
+</html>
