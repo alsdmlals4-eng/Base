@@ -164,6 +164,24 @@ class VisualCollaborationCapabilityContractTests(unittest.TestCase):
         self.assertIn("INTERPRETATION_RECORD", item["artifact_type"])
         self.assertIn("COMPARE_BOARD", item["artifact_type"])
 
+    def test_figma_workspace_profile_teaches_practical_reusable_workflow(self):
+        profile = (
+            ROOT / "templates/project-operations/FIGMA_WORKSPACE_STRUCTURE_PROFILE.md"
+        ).read_text(encoding="utf-8")
+        for token in (
+            "Auto Layout",
+            "Shift+A",
+            "Variants",
+            "Variables",
+            "interactive components",
+            "FigJam",
+            "Dev Mode",
+            "prototype",
+            "runtime proof",
+            "componentizing one-off decoration",
+        ):
+            self.assertIn(token, profile)
+
 
 if __name__ == "__main__":
     unittest.main()
