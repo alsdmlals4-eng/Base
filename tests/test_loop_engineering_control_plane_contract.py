@@ -148,6 +148,18 @@ class LoopEngineeringControlPlaneContractTests(unittest.TestCase):
             schema["properties"]["source_main_sha"]["pattern"],
         )
 
+        planning_required = set(schema["$defs"]["planning_gate"]["required"])
+        self.assertTrue({"objective", "allowed_changes", "acceptance_criteria", "protected_behavior", "exclusions"}.issubset(planning_required))
+
+        justification_required = set(schema["$defs"]["task"]["properties"]["justification"]["required"])
+        self.assertIn("risk_if_ignored", justification_required)
+
+        lease_required = set(schema["$defs"]["lease"]["required"])
+        self.assertTrue({"lease_id", "acquired_at", "expires_at", "semantic_resource_locks"}.issubset(lease_required))
+
+        blocker_classes = set(schema["$defs"]["blocker"]["properties"]["classification"]["enum"])
+        self.assertTrue({"NO_PROGRESS", "BUDGET_EXCEEDED", "RETRY_LIMIT", "STALE_BASE_SHA", "RESOURCE_COLLISION", "PROTECTED_SURFACE"}.issubset(blocker_classes))
+
     def test_project_profile_defaults_to_isolated_execution_and_no_auto_merge(self) -> None:
         profile = read("templates/project-operations/LOOP_ENGINEERING_PROFILE.md")
 
