@@ -80,10 +80,12 @@
 
 실제 Figma·Whimsical·기타 시각 Artifact가 있을 때만 설치한다. 이 tab은 GDD 전용이 아니며 GDD 안·밖의 시각 작업면을 같은 계약으로 연결한다.
 
-| Artifact ID | 도구 | 사용 맥락 `GDD|EXTERNAL_COLLABORATION|BOTH` | 목적·Artifact 유형 | GDD Module ID·Decision ID | 책임 정본 경로 | 링크·Board/Page/Frame | Snapshot | 시각 상태 | 대상 플랫폼·해상도·입력 | 구현·제외 범위 | 검증·다음 Gate |
-|---|---|---|---|---|---|---|---|---|---|---|---|
+| Artifact ID | Screen/Flow ID | 도구 | 사용 맥락 `GDD|EXTERNAL_COLLABORATION|BOTH` | 목적·Artifact 유형 | GDD Module ID·Decision ID | 책임 정본 경로 | 링크·Board/Page/Frame | Snapshot | 시각 상태 | 해석 요약 | Runtime 비교 상태 | 대상 플랫폼·해상도·입력 | 구현·제외 범위 | 검증·다음 Gate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 
-보드·Frame 전문, 게임 규칙, 구현 완료 주장을 복사하지 않는다. `VISUAL_ARTIFACT_REGISTRY.json` 및 `docs/VISUAL_COLLABORATION_TOOL_POLICY.md`와 동일 Artifact ID를 사용한다.
+`해석 요약`은 `CONFIRMED / DISCOVERED_IDEA / AI_ASSUMPTION / MISSING_CANON / VISUAL_CANONICAL_CONFLICT` 중 현재 확인에 필요한 짧은 상태만 적는다. GPT/사람의 `INTERPRETATION_RECORD` 전문은 Figma의 편집 가능한 패널·annotation 또는 책임 GitHub 기록에 두며 이 Sheet에 전문을 복사하지 않는다.
+
+보드·Frame 전문, 게임 규칙, 구현 완료 주장을 복사하지 않는다. `VISUAL_ARTIFACT_REGISTRY.json` 및 `docs/VISUAL_COLLABORATION_TOOL_POLICY.md`와 동일 Artifact ID를 사용한다. `Runtime 비교 상태`는 `NOT_RUN / MATCHED / INTENDED_DIFFERENCE / IMPLEMENTATION_GAP / PLANNING_CHANGE_REQUIRED / AI_MOCKUP_ERROR / VISUAL_CANONICAL_CONFLICT / BLOCKED_UNVERIFIED` 중 실제 증거에 맞게 기록하며 Prototype만으로 `MATCHED`를 주장하지 않는다.
 
 ## 5. `01_작업순서`
 
@@ -127,7 +129,7 @@ Sheet에만 있는 수정은 `PROPOSED_SHEET_CHANGE`로 기록한다.
 
 ### `14_조연_세력_관계`
 
-| Entity ID | 이름 | 유형 | 소속·세력 | 주요인물 관계 | 기능 | 갈등·비밀 | 등장·정보 공개 시점 | 관련 콘텐츠 | 관계도·이미지 | 책임 정본 | 이미지 상태 |
+| Entity ID | 이름 | 유형 | 소속·세력 | 주요인물 관계 | 기능 | 갈등·비밀 | 등장·정보 공개 시점 | 관련 콘텐츠 | 관계도·이미지 | 책임 정본 | 상태 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 
 ### `15_조작_게임규칙`
