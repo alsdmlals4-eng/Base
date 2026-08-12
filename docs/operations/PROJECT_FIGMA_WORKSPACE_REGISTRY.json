@@ -1,11 +1,11 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "registry_role": "user-approved-project-figma-workspace-pointer-index",
   "authority": "POINTER_ONLY_NOT_CANON",
   "authorization": {
     "source": "explicit_user_instruction",
     "approved_at": "2026-08-12",
-    "scope": "Store project display names, Figma file keys, and Figma URLs in Base for workspace discovery only. Do not copy project design decisions, secrets, tokens, or Figma canvas content into Base."
+    "scope": "Store project display names, Figma file keys, Figma URLs, workspace profile, and verified setup status in Base for workspace discovery only. Do not copy project design decisions, secrets, tokens, or Figma canvas content into Base."
   },
   "security_boundary": {
     "repository_visibility_note": "Base is a public repository; entries in this file are public pointers.",
@@ -14,8 +14,11 @@
       "display_name",
       "figma_file_key",
       "figma_url",
+      "workspace_profile",
       "access_status",
       "visual_bible_setup_status",
+      "page_count",
+      "duplicate_page_name_count",
       "last_verified_at"
     ],
     "forbidden": [
@@ -26,24 +29,84 @@
       "unapproved_design_decisions"
     ]
   },
-  "standard_visual_bible_pages": [
-    "00_DIRECTION",
-    "01_APPROVED_REFERENCE",
-    "02_WIP",
-    "03_REJECTED",
-    "04_FINAL"
-  ],
-  "standard_optional_sections": [
-    "00.8_VISUAL_FLOW_HUB",
-    "02.5_FLOW_PROTOTYPE",
-    "02.6_GPT_INTERPRETATION",
-    "04.2_IMPLEMENTATION_COMPARE"
-  ],
+  "workspace_profiles": {
+    "PROFESSIONAL_SINGLE_FILE_GAME": {
+      "purpose": "Compact one-project-one-Figma-file profile for game projects when the user has already created one design file per project.",
+      "pages": [
+        "00_START_HERE",
+        "01_DIRECTION",
+        "02_APPROVED_REFERENCE",
+        "10_ART_SOURCE",
+        "11_ART_WORKBENCH",
+        "12_ART_LIBRARY",
+        "13_EXPORT_READY",
+        "20_UI_FOUNDATIONS",
+        "21_UI_COMPONENTS",
+        "22_UI_SCREENS",
+        "23_UI_FLOWS",
+        "24_PROTOTYPES",
+        "30_GPT_INTERPRETATION",
+        "31_REVIEW",
+        "32_REJECTED",
+        "40_IMPLEMENTATION_COMPARE",
+        "90_DEV_HANDOFF",
+        "99_ARCHIVE"
+      ],
+      "lifecycle_mapping": {
+        "direction": "01_DIRECTION",
+        "approved_visual_reference": "02_APPROVED_REFERENCE",
+        "wip": [
+          "11_ART_WORKBENCH",
+          "22_UI_SCREENS",
+          "23_UI_FLOWS",
+          "24_PROTOTYPES"
+        ],
+        "gpt_interpretation": "30_GPT_INTERPRETATION",
+        "review": "31_REVIEW",
+        "rejected": "32_REJECTED",
+        "implementation_compare": "40_IMPLEMENTATION_COMPARE",
+        "handoff": "90_DEV_HANDOFF",
+        "archive": "99_ARCHIVE"
+      }
+    },
+    "PROFESSIONAL_SINGLE_FILE_FICTION": {
+      "purpose": "Compact one-project-one-Figma-file profile for visual development of fiction projects.",
+      "pages": [
+        "00_START_HERE",
+        "01_DIRECTION",
+        "02_APPROVED_REFERENCE",
+        "10_CHARACTERS",
+        "11_LOCATIONS",
+        "12_OBJECTS_SYMBOLS",
+        "20_SCENE_VISUALS",
+        "21_COVERS_MARKETING",
+        "30_AI_WORKBENCH",
+        "31_GPT_INTERPRETATION",
+        "32_REVIEW",
+        "33_REJECTED",
+        "90_HANDOFF",
+        "99_ARCHIVE"
+      ],
+      "lifecycle_mapping": {
+        "direction": "01_DIRECTION",
+        "approved_visual_reference": "02_APPROVED_REFERENCE",
+        "wip": "30_AI_WORKBENCH",
+        "gpt_interpretation": "31_GPT_INTERPRETATION",
+        "review": "32_REVIEW",
+        "rejected": "33_REJECTED",
+        "handoff": "90_HANDOFF",
+        "archive": "99_ARCHIVE"
+      }
+    }
+  },
   "figma_setup_run": {
     "requested_at": "2026-08-12T22:29:00+09:00",
-    "status": "BLOCKED_RATE_LIMIT",
-    "evidence": "All eight provided Figma file keys were reachable by top-level metadata reads. Detailed root-page inspection succeeded for seven files; the Figma MCP Starter-plan tool-call limit was reached while inspecting OMENWARD. No Figma write operation was performed in this run.",
-    "next_action": "When Figma MCP quota is available, create or normalize the standard Visual Bible pages in each file without deleting existing content, then update visual_bible_setup_status and last_verified_at."
+    "completed_at": "2026-08-12T22:44:00+09:00",
+    "status": "STANDARDIZED_PRO_FULL",
+    "access_evidence": "Figma whoami reported tier=pro and seat=Full before the standardization writes.",
+    "evidence": "All eight supplied Figma files were standardized non-destructively. Seven game files use the 18-page game profile; coc 소설 uses the 14-page fiction profile. Final read-only validation found zero duplicate page names in all eight files.",
+    "collision_handling": "Concurrent Figma work in another chat was stopped by the user. Existing empty pages created by both chats were renamed/reused and reordered instead of deleted; no project visual content was removed.",
+    "next_action": "Populate START_HERE, approved-reference, GPT interpretation, flow/prototype, and handoff pages as project work produces real visual artifacts."
   },
   "projects": [
     {
@@ -51,72 +114,96 @@
       "display_name": "coc 소설",
       "figma_file_key": "PEa5zDbPHll3eHiNKX0e1k",
       "figma_url": "https://www.figma.com/design/PEa5zDbPHll3eHiNKX0e1k/coc-%EC%86%8C%EC%84%A4?node-id=0-1&p=f&t=QfZ5BbY8hKfuoVPZ-0",
-      "access_status": "METADATA_READ_OK",
-      "visual_bible_setup_status": "PENDING_STANDARDIZATION",
-      "last_verified_at": "2026-08-12T22:29:00+09:00"
+      "workspace_profile": "PROFESSIONAL_SINGLE_FILE_FICTION",
+      "access_status": "READ_WRITE_CONFIRMED",
+      "visual_bible_setup_status": "STANDARDIZED",
+      "page_count": 14,
+      "duplicate_page_name_count": 0,
+      "last_verified_at": "2026-08-12T22:44:00+09:00"
     },
     {
       "project_id": "ten-paces-hidden-moves",
       "display_name": "십보강호: 숨은 수의 비무 (Ten Paces: Hidden Moves)",
       "figma_file_key": "pVQ2e6aK45iL8BLBJWDSw4",
       "figma_url": "https://www.figma.com/design/pVQ2e6aK45iL8BLBJWDSw4/%EC%8B%AD%EB%B3%B4%EA%B0%95%ED%98%B8--%EC%88%A8%EC%9D%80-%EC%88%98%EC%9D%98-%EB%B9%84%EB%AC%B4-Ten-Paces--Hidden-Moves-?timeline=keyframe&timeline-playback-time=1284000&node-id=0-1&p=f&t=aoc8QP4LIhXSkV8w-0",
-      "access_status": "METADATA_READ_OK",
-      "visual_bible_setup_status": "PENDING_STANDARDIZATION",
-      "last_verified_at": "2026-08-12T22:29:00+09:00"
+      "workspace_profile": "PROFESSIONAL_SINGLE_FILE_GAME",
+      "access_status": "READ_WRITE_CONFIRMED",
+      "visual_bible_setup_status": "STANDARDIZED",
+      "page_count": 18,
+      "duplicate_page_name_count": 0,
+      "last_verified_at": "2026-08-12T22:44:00+09:00"
     },
     {
       "project_id": "ninja-survival-god-of-ninja",
       "display_name": "닌자 서바이벌 (닌자의 신)",
       "figma_file_key": "xNm1xbYPftEaAE2jOENlvt",
       "figma_url": "https://www.figma.com/design/xNm1xbYPftEaAE2jOENlvt/%EB%8B%8C%EC%9E%90-%EC%84%9C%EB%B0%94%EC%9D%B4%EB%B2%8C-%EB%8B%8C%EC%9E%90%EC%9D%98-%EC%8B%A0-?node-id=0-1&p=f&t=LHDcKSjU9OlXEWlW-0",
-      "access_status": "METADATA_READ_OK",
-      "visual_bible_setup_status": "PENDING_STANDARDIZATION",
-      "last_verified_at": "2026-08-12T22:29:00+09:00"
+      "workspace_profile": "PROFESSIONAL_SINGLE_FILE_GAME",
+      "access_status": "READ_WRITE_CONFIRMED",
+      "visual_bible_setup_status": "STANDARDIZED",
+      "page_count": 18,
+      "duplicate_page_name_count": 0,
+      "last_verified_at": "2026-08-12T22:44:00+09:00"
     },
     {
       "project_id": "switchy-express-cargo-puzzle",
       "display_name": "Switchy Express: Cargo Puzzle",
       "figma_file_key": "QMbylbdAi96PGSdHIT3AGa",
       "figma_url": "https://www.figma.com/design/QMbylbdAi96PGSdHIT3AGa/Switchy-Express--Cargo-Puzzle?node-id=0-1&p=f&t=8FFcDVJzvDDW1yUw-0",
-      "access_status": "METADATA_READ_OK",
-      "visual_bible_setup_status": "PENDING_STANDARDIZATION",
-      "last_verified_at": "2026-08-12T22:29:00+09:00"
+      "workspace_profile": "PROFESSIONAL_SINGLE_FILE_GAME",
+      "access_status": "READ_WRITE_CONFIRMED",
+      "visual_bible_setup_status": "STANDARDIZED",
+      "page_count": 18,
+      "duplicate_page_name_count": 0,
+      "last_verified_at": "2026-08-12T22:44:00+09:00"
     },
     {
       "project_id": "urban-legend",
       "display_name": "괴이기록국 (urban-legend)",
       "figma_file_key": "Z7J3eLeavEytKN20H4HfoP",
       "figma_url": "https://www.figma.com/design/Z7J3eLeavEytKN20H4HfoP/%EA%B4%B4%EC%9D%B4%EA%B8%B0%EB%A1%9D%EA%B5%AD-urban-legend-?node-id=0-1&p=f&t=qqXX8Eihd4i70pHg-0",
-      "access_status": "METADATA_READ_OK",
-      "visual_bible_setup_status": "PENDING_STANDARDIZATION",
-      "last_verified_at": "2026-08-12T22:29:00+09:00"
+      "workspace_profile": "PROFESSIONAL_SINGLE_FILE_GAME",
+      "access_status": "READ_WRITE_CONFIRMED",
+      "visual_bible_setup_status": "STANDARDIZED",
+      "page_count": 18,
+      "duplicate_page_name_count": 0,
+      "last_verified_at": "2026-08-12T22:44:00+09:00"
     },
     {
       "project_id": "grimoire",
       "display_name": "GRIMOIRE: 세계를 다시 쓰는 법 (How to Rewrite the World)",
       "figma_file_key": "AdOGNMp61AZSMMvBVxsVBd",
       "figma_url": "https://www.figma.com/design/AdOGNMp61AZSMMvBVxsVBd/GRIMOIRE--%EC%84%B8%EA%B3%84%EB%A5%BC-%EB%8B%A4%EC%8B%9C-%EC%93%B0%EB%8A%94-%EB%B2%95-How-to-Rewrite-the-World-?node-id=0-1&p=f&t=OKgrTQB8DejVFwYH-0",
-      "access_status": "METADATA_READ_OK",
-      "visual_bible_setup_status": "PENDING_STANDARDIZATION",
-      "last_verified_at": "2026-08-12T22:29:00+09:00"
+      "workspace_profile": "PROFESSIONAL_SINGLE_FILE_GAME",
+      "access_status": "READ_WRITE_CONFIRMED",
+      "visual_bible_setup_status": "STANDARDIZED",
+      "page_count": 18,
+      "duplicate_page_name_count": 0,
+      "last_verified_at": "2026-08-12T22:44:00+09:00"
     },
     {
       "project_id": "blacksmith",
       "display_name": "블랙스미스 (Blacksmith)",
       "figma_file_key": "xy6W4ga6ldkF3TvP0eRmtN",
       "figma_url": "https://www.figma.com/design/xy6W4ga6ldkF3TvP0eRmtN/%EB%B8%94%EB%9E%99%EC%8A%A4%EB%AF%B8%EC%8A%A4-Blacksmith-?node-id=0-1&p=f&t=urJg3GJKebOLXIhq-0",
-      "access_status": "METADATA_READ_OK",
-      "visual_bible_setup_status": "PENDING_STANDARDIZATION",
-      "last_verified_at": "2026-08-12T22:29:00+09:00"
+      "workspace_profile": "PROFESSIONAL_SINGLE_FILE_GAME",
+      "access_status": "READ_WRITE_CONFIRMED",
+      "visual_bible_setup_status": "STANDARDIZED",
+      "page_count": 18,
+      "duplicate_page_name_count": 0,
+      "last_verified_at": "2026-08-12T22:44:00+09:00"
     },
     {
       "project_id": "omenward",
       "display_name": "오멘워드 (OMENWARD)",
       "figma_file_key": "IhxUJaS6ik6MpBzdxt6o8D",
       "figma_url": "https://www.figma.com/design/IhxUJaS6ik6MpBzdxt6o8D/%EC%98%A4%EB%A9%98%EC%9B%8C%EB%93%9C-OMENWARD-?node-id=0-1&p=f&t=Y7TYHS2ncuTCS9Qa-0",
-      "access_status": "METADATA_READ_OK",
-      "visual_bible_setup_status": "PENDING_STANDARDIZATION",
-      "last_verified_at": "2026-08-12T22:29:00+09:00"
+      "workspace_profile": "PROFESSIONAL_SINGLE_FILE_GAME",
+      "access_status": "READ_WRITE_CONFIRMED",
+      "visual_bible_setup_status": "STANDARDIZED",
+      "page_count": 18,
+      "duplicate_page_name_count": 0,
+      "last_verified_at": "2026-08-12T22:44:00+09:00"
     }
   ]
 }
