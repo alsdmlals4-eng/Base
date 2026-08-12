@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "contract_role": "loop-engineering-run",
+  "run_id": "loop-example-001",
+  "goal_id": "approved-feature-package-001",
+  "project_id": "PROJECT_ADAPTER_VALUE",
+  "planning_gate": {
+    "status": "PLANNING_LOCKED",
+    "loop_ready": true,
+    "user_review_complete": true,
+    "adversarial_review_complete": true,
+    "planning_sources": [
+      "[기획서]/approved-feature-contract.md"
+    ],
+    "objective": "Implement the user-reviewed feature package without changing its approved WHAT/WHY.",
+    "allowed_changes": [
+      "Technical implementation structure inside the approved package",
+      "Tests and validation needed to prove the approved acceptance criteria"
+    ],
+    "acceptance_criteria": [
+      "Implement the already approved feature behavior without changing its player-facing meaning.",
+      "Pass the project-declared static, automated, and applicable runtime validation."
+    ],
+    "protected_behavior": [
+      "Approved player experience and major UX meaning remain unchanged."
+    ],
+    "exclusions": [
+      "No new feature scope, project-core change, security/permission expansion, or release action."
+    ]
+  },
+  "autonomy_tier": "A2_EXECUTE_ISOLATED",
+  "source_main_sha": "0000000000000000000000000000000000000000",
+  "expected_head_sha": null,
+  "loop_state": "DECOMPOSE",
+  "task_queues": {
+    "ready_tasks": [
+      {
+        "task_id": "T01",
+        "objective": "Implement the first approved technical package in an isolated branch/worktree.",
+        "status": "READY",
+        "depends_on": [],
+        "resource_domains": [
+          "APPROVED_FEATURE_RUNTIME"
+        ],
+        "justification": {
+          "problem": "The approved feature package is not implemented yet.",
+          "evidence": "Planning contract marks implementation_status as NOT_STARTED.",
+          "player_or_user_value": "Delivers the already reviewed feature without asking the user to choose technical HOW details.",
+          "risk_if_ignored": "The locked acceptance criteria remain incomplete and the project cannot advance through the approved implementation package.",
+          "expected_outcome": "A reviewable isolated implementation with project-declared validation evidence."
+        },
+        "verification": [
+          "Compare actual diff with locked acceptance criteria.",
+          "Run project-declared automated tests and applicable runtime checks.",
+          "Run independent adversarial review before integration."
+        ]
+      }
+    ],
+    "deferred_tasks": [],
+    "completed_tasks": []
+  },
+  "leases": [],
+  "budget": {
+    "max_agents": 2,
+    "max_parallel_agents": 1,
+    "max_model_calls": 24,
+    "max_repair_cycles": 3,
+    "max_ci_runs": 4,
+    "used_model_calls": 0,
+    "used_repair_cycles": 0,
+    "used_ci_runs": 0
+  },
+  "evidence": [
+    {
+      "evidence_id": "E0-LOCK",
+      "level": "E0_CONTRACT",
+      "status": "PASS",
+      "subject": "Planning gate",
+      "source": "User-reviewed planning contract"
+    },
+    {
+      "evidence_id": "E3-RUNTIME",
+      "level": "E3_RUNTIME",
+      "status": "NOT_RUN",
+      "subject": "Runtime behavior",
+      "source": "Pending isolated implementation"
+    }
+  ],
+  "findings": [],
+  "design_drift_status": "NOT_CHECKED",
+  "approval_refs": [
+    "USER_APPROVED_PLANNING_LOCK"
+  ],
+  "blockers": [],
+  "improvement_candidates": [],
+  "next_action": "Acquire TASK_LEASE and RESOURCE_LOCK for T01 after exact source SHA freshness recheck."
+}

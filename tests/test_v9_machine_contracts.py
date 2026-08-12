@@ -55,6 +55,10 @@ from tests.test_game_entitlement_integrity_drm_capability import (
     GameEntitlementIntegrityDrmCapabilityTests
     as _GameEntitlementIntegrityDrmCapabilityTests,
 )
+from tests.test_loop_engineering_control_plane_contract import (
+    LoopEngineeringControlPlaneContractTests
+    as _LoopEngineeringControlPlaneContractTests,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
