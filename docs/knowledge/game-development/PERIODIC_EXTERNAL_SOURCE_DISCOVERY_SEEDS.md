@@ -369,7 +369,453 @@ tutorial/gallery reference does not grant permission to copy identifiable artwor
 
 낮은 source resolution, 제한 palette, indexed authoring이 일부 source/texture data를 줄일 가능성은 **가설**일 수 있으나, engine resource·atlas padding·lossless compression·import 설정·audio/video·package 구조가 전체 용량을 지배할 수 있으므로 실제 빌드 측정 없이 성과로 승격하지 않는다.
 
-## 6. Seed scan 결과
+## 6. Backend / API engineering
+
+백엔드·API를 실제 구현할 때는 framework 하나를 정답으로 고정하지 않고 **계약 → 상태/트랜잭션 → 인증/인가 → 보안 → 운영/관측 → 프로젝트 테스트** 순으로 조사한다. 설계·배포 판정의 기존 owner는 `GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`다.
+
+```yaml
+seed_group: backend-api-engineering
+status: ACTIVE_DISCOVERY_SEED
+domains:
+  - CODE_ENGINEERING
+  - GAME_DEVELOPMENT
+recommended_cadence: weekly-or-when-backend-active
+existing_consumers:
+  backend_architecture_and_deployment: docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md
+  implementation_and_tests: target project backend implementation owner
+```
+
+### 6.1 OpenAPI Specification — API 계약 표준
+
+```yaml
+seed_id: openapi-specification
+name: OpenAPI Specification
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+url: https://spec.openapis.org/oas/latest.html
+scan_surfaces:
+  - paths and operations
+  - request and response schemas
+  - components and reusable schemas
+  - security schemes
+  - versioned specification releases
+```
+
+OpenAPI Specification은 OAS 자체의 구조·의미에 대한 authority다. API 문서가 존재한다는 사실만으로 실제 서버 구현, 인증, 호환성, 성능 또는 보안이 검증됐다고 보지 않는다.
+
+### 6.2 FastAPI official — Python API framework behavior
+
+```yaml
+seed_id: fastapi-official
+name: FastAPI official documentation
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+url: https://fastapi.tiangolo.com/
+scan_surfaces:
+  - OpenAPI and JSON Schema generation
+  - validation and dependency injection
+  - authentication and security helpers
+  - async and WebSocket behavior
+  - testing and deployment guidance
+  - release and migration notes when relevant
+```
+
+FastAPI official 문서는 FastAPI 자체 동작과 지원 workflow에 대해서만 authority다. **FastAPI official** 자료가 유용하더라도 FastAPI를 모든 Base 프로젝트의 mandatory backend framework로 만들지 않는다.
+
+### 6.3 PostgreSQL / Redis official — durable state와 조건부 data services
+
+```yaml
+seed_id: postgresql-official
+name: PostgreSQL official documentation
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+url: https://www.postgresql.org/docs/current/
+scan_surfaces:
+  - transactions and isolation
+  - indexing and query behavior
+  - constraints and concurrency
+  - backup / restore and operations
+  - supported-version release notes
+
+seed_id: redis-official
+name: Redis official documentation
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET_WHEN_SELECTED
+url: https://redis.io/docs/latest/
+scan_surfaces:
+  - data types
+  - persistence
+  - caching and expiration
+  - streams / queues when selected
+  - clustering and operations when selected
+```
+
+**PostgreSQL official**과 Redis official은 각 제품 동작의 authority일 뿐, 둘을 함께 쓰거나 특정 data architecture를 채택해야 한다는 뜻이 아니다. 실제 schema, transaction, cache, queue 선택은 프로젝트 요구·복잡도·운영비·복구 요구로 판단한다.
+
+### 6.4 OWASP API Security — 공격 surface와 검토 질문
+
+```yaml
+seed_id: owasp-api-security
+name: OWASP API Security Project
+status: ACTIVE_DISCOVERY_SEED
+source_role: PROFESSIONAL_SECURITY_GUIDANCE
+url: https://owasp.org/API-Security/
+scan_surfaces:
+  - API Security Top 10
+  - authorization and authentication risks
+  - resource consumption and rate-limit risks
+  - inventory and version management
+  - unsafe third-party API consumption
+```
+
+**OWASP API Security**는 위협과 검토 질문을 제공하지만 checklist를 읽거나 static scan이 통과했다는 사실은 security/compliance PASS가 아니다. 실제 프로젝트에서는 threat model, authz tests, abuse/rate-limit tests, secret handling, dependency 상태와 runtime evidence를 별도로 확인한다.
+
+FastAPI / PostgreSQL / Redis는 후보 stack이지 Base-wide 필수 조합이 아니다.
+
+## 7. AI coding / coding agents
+
+AI 코딩 Source는 기능 discovery와 tool-specific authority를 제공하지만 모델 이름·vendor marketing·leaderboard가 프로젝트 품질을 대신하지 않는다. 기존 owner는 `AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md`이며 실제 merge 판단은 repository diff·테스트·보안·review evidence가 담당한다.
+
+```yaml
+seed_group: ai-coding-agents
+status: ACTIVE_DISCOVERY_SEED
+domains:
+  - CODE_ENGINEERING
+  - PROMPT_AND_AGENT_WORKFLOW
+  - SKILL_AUTHORING_AND_EVOLUTION
+recommended_cadence: weekly-or-when-tool-selection-active
+existing_consumers:
+  ai_work_package_and_evals: docs/knowledge/game-development/AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md
+  repository_validation: target project tests + review + exact-head CI
+```
+
+### 7.1 Vendor official coding-agent sources
+
+```yaml
+seed_id: openai-codex-official
+name: OpenAI Developers / Codex official documentation
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+url: https://developers.openai.com/
+
+seed_id: anthropic-claude-code-official
+name: Anthropic Claude Code official documentation
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+url: https://docs.anthropic.com/en/docs/claude-code/overview
+
+seed_id: google-gemini-coding-official
+name: Gemini CLI / Gemini Code Assist official documentation
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+urls:
+  gemini_cli: https://geminicli.com/docs/
+  gemini_code_assist: https://developers.google.com/gemini-code-assist/docs
+```
+
+`OpenAI Developers / Codex`, `Claude Code`, `Gemini CLI`/Gemini Code Assist 자료는 각 제품의 현재 기능·설정·권한·workflow·제한에 대해서만 authority다. 기존 Watchlist의 GitHub Copilot Docs `AUTHORITY_TARGET`은 그대로 재사용하며 새 중복 family를 만들지 않는다.
+
+### 7.2 aider — open-source terminal workflow reference
+
+```yaml
+seed_id: aider-official
+name: aider official docs + repository
+status: ACTIVE_DISCOVERY_SEED
+source_roles:
+  - PROFESSIONAL_PRACTICE
+  - DISCOVERY_FEED
+urls:
+  docs: https://aider.chat/docs/
+  repository: https://github.com/Aider-AI/aider
+scan_surfaces:
+  - repository mapping and context
+  - git integration
+  - lint / test workflow
+  - model/provider support
+  - release and compatibility notes
+```
+
+`aider`에서 유용한 workflow가 발견돼도 현재 Base/Codex 권한 모델을 자동 대체하지 않고 Existing Solution First로 ADAPT/TEST한다.
+
+### 7.3 SWE-bench — benchmark evidence ceiling
+
+```yaml
+seed_id: swe-bench
+name: SWE-bench official benchmark / leaderboard / papers
+status: ACTIVE_DISCOVERY_SEED
+source_role: OBSERVATIONAL_BENCHMARK
+url: https://www.swebench.com/
+scan_surfaces:
+  - benchmark definitions and variants
+  - verified task sets
+  - evaluation harness
+  - leaderboard and paper methodology
+```
+
+SWE-bench는 coding-agent 성능 비교를 위한 benchmark/discovery evidence다. **benchmark score does not prove project correctness**. leaderboard 순위나 vendor 발표만으로 생산성·보안·유지보수성·현재 Base 적합성·merge readiness를 확정하지 않는다. 실제 프로젝트의 Golden Set, representative task, diff review, focused/regression tests, security checks와 exact-head CI를 우선한다.
+
+모델·제품 기능·가격·quota·preview/GA 상태는 변동 가능성이 높으므로 도입 시점의 공식 문서를 다시 확인한다.
+
+## 8. Deployment / WAS / cloud runtime
+
+배포 provider는 단일 순위로 고르지 않는다. 현재 Base의 backend owner가 이미 Cloud Run을 적합한 stateless HTTPS/container workload의 기본 후보로 다루므로 이를 유지하고, workload가 달라질 때의 비교 Source를 추가한다. **Cloud Run is not universally better**.
+
+```yaml
+seed_group: deployment-was-cloud-runtime
+status: ACTIVE_DISCOVERY_SEED
+domains:
+  - CODE_ENGINEERING
+  - GAME_DEVELOPMENT
+recommended_cadence: weekly-or-before-provider-decision
+existing_consumers:
+  architecture_and_provider_fit: docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md
+```
+
+### 8.1 Google Cloud Run — 기존 owner 기본 후보 유지
+
+Google Cloud Run 공식 docs는 기존 `GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`의 source authority를 재사용한다. service/job/worker-pool, container runtime, IAM, scaling, request timeout, WebSocket, secrets, observability와 비용 관련 current behavior를 구현 전에 재확인한다.
+
+### 8.2 Cloudflare Workers — edge/serverless 후보
+
+```yaml
+seed_id: cloudflare-workers-official
+name: Cloudflare Workers official documentation
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+url: https://developers.cloudflare.com/workers/
+scan_surfaces:
+  - Workers runtime and limits
+  - bindings
+  - Durable Objects
+  - KV / D1 / R2 integration when relevant
+  - Queues / Workflows / scheduled work
+  - observability and deployment
+```
+
+**Cloudflare Workers**는 edge/global request handling이나 Cloudflare-native bindings가 중요한 경우 비교 후보지만, 모든 container workload의 drop-in replacement라고 가정하지 않는다.
+
+### 8.3 Fly.io Machines — lower-level VM/runtime control 후보
+
+```yaml
+seed_id: fly-machines-official
+name: Fly.io Machines official documentation
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+url: https://fly.io/docs/machines/
+scan_surfaces:
+  - Machines lifecycle
+  - regions and placement
+  - volumes and persistent cases
+  - networking
+  - scaling and API control
+```
+
+**Fly.io Machines**는 region placement, VM lifecycle, lower-level runtime control이나 조건부 persistent volume이 필요한 경우 비교한다. 운영 책임과 복구/업데이트 복잡도가 증가할 수 있으므로 실제 workload로 판단한다.
+
+### 8.4 Railway / Render — simple PaaS 비교 후보
+
+```yaml
+seed_id: railway-official
+name: Railway official documentation
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+url: https://docs.railway.com/
+scan_surfaces:
+  - services and deployments
+  - GitHub / Docker deployment
+  - variables and environments
+  - scheduled jobs
+  - volumes / databases when selected
+  - observability and rollback
+
+seed_id: render-official
+name: Render official documentation
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+url: https://render.com/docs
+scan_surfaces:
+  - web and private services
+  - background workers and cron jobs
+  - Docker / Git deployment
+  - managed datastores when selected
+  - health checks and operations
+```
+
+**Railway**와 **Render**는 작은 팀의 배포 편의·managed service 운영비를 줄일 가능성이 있는 비교 후보지만, vendor convenience 자체가 성능·가용성·가격 우월성을 증명하지 않는다.
+
+### 8.5 Provider comparison Gate
+
+```text
+workload shape + protocol
+→ durable state / consistency
+→ latency + region placement
+→ request / connection / background lifetime
+→ scaling + cold start
+→ operational burden + observability
+→ quotas + abuse/failure behavior
+→ portability + provider lock-in + exit path
+→ measured cost
+→ project runtime/load/failure evidence
+```
+
+Cloud Run, Workers, Fly.io, Railway, Render 가운데 어느 것도 글로벌 winner로 두지 않는다. 실제 provider 채택은 기존 backend owner의 `CLOUD_RUN_RECOMMENDED | CLOUD_RUN_CONDITIONAL | ALTERNATIVE_ARCHITECTURE_REQUIRED | SERVER_NOT_REQUIRED | BLOCKED_UNVERIFIED` 판정을 따른다.
+
+## 9. PC capture and AI-assisted media editing
+
+게임 플레이·개발 화면 촬영과 편집 Source는 **capture → local processing → story/evidence edit → image/thumbnail edit → export/QC**로 조사한다. 영상 제작 owner는 `producing-game-development-youtube-videos`, 이미지·썸네일 후보는 `designing-art-prompts-and-technique-cards`와 art-direction owner에 연결한다.
+
+```yaml
+seed_group: pc-capture-ai-media-editing
+status: ACTIVE_DISCOVERY_SEED
+domains:
+  - YOUTUBE_AND_VIDEO_EDITING
+  - GAME_DEVELOPMENT
+recommended_cadence: weekly-or-when-video-production-active
+existing_consumers:
+  video_story_capture_edit_publish: skills/producing-game-development-youtube-videos/SKILL.md
+  image_thumbnail_and_visual_qa: skills/designing-art-prompts-and-technique-cards/SKILL.md + art-direction owner
+```
+
+### 9.1 OBS Studio / FFmpeg — capture와 local media pipeline
+
+```yaml
+seed_id: obs-studio-official
+name: OBS Studio official Knowledge Base
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+url: https://obsproject.com/kb
+scan_surfaces:
+  - Game Capture / Window Capture / Display Capture
+  - recording settings and encoders
+  - multiple audio tracks and application audio
+  - troubleshooting and performance guidance
+
+seed_id: ffmpeg-official
+name: FFmpeg official documentation
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+url: https://ffmpeg.org/documentation.html
+scan_surfaces:
+  - capture inputs
+  - codecs and containers
+  - filters
+  - transcode / remux / proxy generation
+  - automation and metadata
+```
+
+**OBS Studio**와 **FFmpeg**는 각 도구의 기능 authority다. 지원 기능이 있다는 사실만으로 실제 게임과 동시에 녹화했을 때의 frame pacing, audio sync, encoder overhead, dropped frames, 저장장치 부하, 파일 크기 또는 시각 품질이 적합하다고 확정하지 않는다. 해당 PC와 실제 build에서 **actual PC capture measurement**를 수행한다.
+
+### 9.2 Windows / NVIDIA low-friction capture 후보
+
+```yaml
+seed_id: windows-game-capture-official
+name: Microsoft Xbox Game Bar / Snipping Tool official support
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+url: https://support.microsoft.com/windows
+
+seed_id: nvidia-shadowplay-official
+name: NVIDIA App / ShadowPlay official documentation
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET_WHEN_HARDWARE_APPLICABLE
+url: https://www.nvidia.com/en-us/software/nvidia-app/
+```
+
+**Xbox Game Bar**는 빠른 Windows 캡처의 fallback 후보이며, **NVIDIA App / ShadowPlay**는 해당 NVIDIA hardware/driver 조건에서 비교한다. 편의성이 OBS의 scene/audio/automation 제어를 자동 대체하지 않는다.
+
+### 9.3 DaVinci Resolve — desktop NLE / color / audio / VFX
+
+```yaml
+seed_id: davinci-resolve-official
+name: DaVinci Resolve official documentation
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+url: https://www.blackmagicdesign.com/products/davinciresolve
+scan_surfaces:
+  - edit and delivery
+  - Fairlight audio
+  - color
+  - Fusion VFX / motion
+  - current Neural Engine / AI-assisted features
+  - supported formats and system requirements
+```
+
+**DaVinci Resolve**의 AI/Neural Engine 기능도 제품 기능 authority일 뿐, 해당 기능이 항상 편집시간을 줄이거나 결과 품질을 높인다는 뜻은 아니다.
+
+### 9.4 Adobe Premiere / Photoshop / Firefly — video + image AI editing
+
+```yaml
+seed_id: adobe-media-ai-official
+name: Adobe Premiere / Photoshop / Firefly official documentation
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+urls:
+  premiere: https://helpx.adobe.com/premiere-pro/
+  photoshop: https://helpx.adobe.com/photoshop/
+  firefly: https://www.adobe.com/products/firefly.html
+scan_surfaces:
+  - text-based video editing and search
+  - audio cleanup and caption workflows
+  - generative extend / video features when currently available
+  - Generative Fill / image retouching
+  - Firefly image/video editing surfaces
+  - availability, credits, model and plan requirements
+```
+
+**Adobe Premiere / Photoshop / Firefly**의 vendor feature claim은 Adobe 제품 동작 확인에만 사용한다. pricing, credits, commercial terms, model availability와 beta/GA 상태는 사용 시점에 다시 확인한다.
+
+### 9.5 Runway — generative/editing workflow discovery
+
+```yaml
+seed_id: runway-media-editing-official
+name: Runway official help / editing documentation
+status: ACTIVE_DISCOVERY_SEED
+source_role: AUTHORITY_TARGET
+url: https://help.runwayml.com/hc/en-us
+scan_surfaces:
+  - current video editing / transformation tools
+  - image editing tools
+  - model availability and deprecations
+  - upload/export constraints
+  - plan / credit requirements when adoption is considered
+```
+
+**Runway**는 현재 제공되는 생성·편집 기능의 authority다. 빠르게 바뀌는 model/tool/deprecation 상태를 과거 튜토리얼로 추정하지 않는다.
+
+### 9.6 Media evidence and rights Gate
+
+```text
+actual game/build + public boundary
+→ capture method + encoder + resolution/FPS/audio tracks
+→ actual PC capture measurement
+→ rough cut / story evidence
+→ AI-assisted edit only where it solves a defined task
+→ output comparison + time/cost measurement
+→ rights + provenance + similarity
+→ export/playback QC
+→ publish gate
+```
+
+AI 영상·이미지 편집 기능의 존재는 source asset 사용권이나 생성 결과의 제품 사용 가능성을 자동 보장하지 않는다. 음악·폰트·게임 asset·외부 footage·업로드 이미지의 권리와 vendor 약관을 확인하고, 식별 가능한 third-party work 또는 creator signature style 유사성은 기존 art/reference QA에서 재검토한다.
+
+OBS/FFmpeg/DaVinci/Adobe/Runway 기능 설명이나 vendor demo만으로 실제 제작시간 절감, 품질 개선, 저비용, 저오버헤드 또는 수익 개선을 성과로 기록하지 않는다. 실제 프로젝트의 capture/edit 시간, dropped frames, file size, export time, correction 횟수와 human viewing evidence가 필요하다.
+
+## 10. 공통 과장 방지와 freshness Gate
+
+다음은 모든 신규 source group에 적용한다.
+
+```text
+framework availability != mandatory architecture
+security guidance or static scan != security/compliance PASS
+AI coding benchmark or vendor demo != project correctness / productivity / merge readiness
+cloud provider feature list != workload fit / reliability / lowest cost
+capture feature support != acceptable recording performance
+AI edit feature availability != rights clearance or output quality
+```
+
+vendor pricing, quota, region, model, plan, preview/GA/deprecation 상태는 변동 가능성이 높다. 실제 채택 직전에 current official source를 다시 읽고 `SOURCE_CONTEXT_PACKET`의 `checked_at`, `availability_or_policy_state`, `affected_versions_or_surfaces`, `action_window`을 채운다.
+
+## 11. Seed scan 결과
 
 각 scan은 seed마다 다음 중 하나로 닫는다.
 
