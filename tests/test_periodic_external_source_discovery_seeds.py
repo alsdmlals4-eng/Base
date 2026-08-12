@@ -136,6 +136,13 @@ class PeriodicExternalSourceDiscoverySeedTests(unittest.TestCase):
         combined = seeds + "\n" + benchmark
 
         for required in (
+            "Figma practical design workflow",
+            "help.figma.com",
+            "Auto Layout",
+            "Variants",
+            "Variables",
+            "FigJam",
+            "Dev Mode",
             "SteamDB",
             "GameDiscoverCo",
             "Sensor Tower",
