@@ -1,5 +1,61 @@
 # Designing Art Prompts and Technique Cards Learning Log
 
+## 2026-08-12 — 프로젝트 Figma는 승인 시각 레퍼런스와 Flow 해석 작업면으로 소비한다
+
+### Trigger
+
+프로젝트마다 이미지·UI·시각 자료를 Figma에 축적하고, 이후 생성·편집에서 승인된 시각 자료를 다시 확인하여 캐릭터 비율·실루엣·색·카메라·UI 계층의 drift를 줄이려는 반복 운영 요구가 확인됐다. 여기에 AI로 만든 게임 화면을 한 보드에 연결하고 GPT의 해석 기록까지 화면 옆에 남겨 기획 오해·누락·새 아이디어를 구분하려는 요구가 추가됐다.
+
+### Existing solution reviewed
+
+- `docs/VISUAL_COLLABORATION_TOOL_POLICY.md`의 Figma/Whimsical 권위와 Artifact lifecycle
+- `templates/project-operations/VISUAL_ARTIFACT_REGISTRY.json`의 file/page/frame/node·Decision·snapshot 추적
+- 이 Skill의 기존 생성·QA 책임과 `Screen Interpretation Review`
+- `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`의 실제 이미지 bytes 후보·제품 승격 권위
+- Figma 공식 Pages, Sections, Components/Styles/Libraries, Prototype, annotation, naming, version history/branch 운영 가이드
+
+### Lesson
+
+- 별도 `figma-*` Skill을 만드는 것보다 기존 Art Skill이 승인된 Figma Artifact를 **조건부 입력**으로 소비하는 편이 책임 중복이 적다.
+- Figma는 게임 규칙의 두 번째 canon이나 이미지 bytes 원본 저장소가 아니라 **Visual Bible / 승인 시각 레퍼런스 / Visual Flow 작업면**으로 두는 것이 안전하다.
+- `00_DIRECTION / 01_APPROVED_REFERENCE / 02_WIP / 03_REJECTED / 04_FINAL`은 사람·AI가 탐색하는 Figma 조직 규칙이며 Base의 Artifact lifecycle을 대체하지 않는다.
+- `04_FINAL`은 시각적으로 확정된 표현을 모으는 위치일 뿐 `PROJECT_ASSET_APPROVED`, tracked asset, Godot runtime proof를 자동 의미하지 않는다.
+- 이미지 생성 전에는 최신 canon·Decision을 먼저 확인하고, 실제로 읽을 수 있는 `APPROVED_VISUAL_REFERENCE`만 `Keep / Avoid / Do Not Drift` 계약으로 추출한다.
+- AI 화면 생성 뒤에는 `CONFIRMED / DISCOVERED_IDEA / AI_ASSUMPTION / MISSING_CANON / VISUAL_CANONICAL_CONFLICT`를 분리한 `INTERPRETATION_RECORD`를 편집 가능한 Figma text/annotation으로 남길 수 있다. 미승인 아이디어와 AI 가정은 다음 작업의 요구사항으로 자동 재사용하지 않는다.
+- 여러 화면이 연결되면 `FLOW_MAP`에 `screen_id / flow_id`와 진입·복귀 경로를 남기고, 실제 클릭 검토가 필요할 때만 `PROTOTYPE_FLOW`를 추가한다.
+- Prototype은 runtime proof가 아니며, 실제 구현 비교는 `RUNTIME_CAPTURE`와 `COMPARE_BOARD`를 별도 증거로 사용한다.
+- Figma 접근 실패는 과거 대화나 파일명으로 메우지 않고 `LINK_UNVERIFIED / AUTH_REQUIRED / ACCESS_DENIED / BLOCKED_UNVERIFIED`처럼 fail closed한다.
+
+### Base change
+
+- 기존 `VISUAL_COLLABORATION_TOOL_POLICY`에 Project Figma Visual Bible과 `Project Visual Flow Workspace` 경계를 흡수했다.
+- 프로젝트 로컬 `FIGMA_VISUAL_BIBLE_PROFILE.md` Template에 Visual Flow Hub, GPT interpretation card, runtime compare card를 추가했다.
+- 기존 Art Skill 아래 `figma-visual-bible-continuity-gate.md` reference를 추가하고 Skill 본문에서 명시 소비한다.
+- `GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md`에 Figma 승인 reference·WIP·해석·Flow·runtime compare 상태를 연결했다.
+- `VISUAL_ARTIFACT_REGISTRY.json`에 `screen_id / flow_id / interpretation_status / runtime_compare_status`를 추가했다.
+- 신규 Figma Skill은 추가하지 않았다.
+
+### Guardrail
+
+Figma가 없는 프로젝트에 Figma 도입을 강제하지 않는다. 프로젝트의 최신 정본과 Figma가 충돌하면 Figma를 자동 갱신하거나 기획을 덮어쓰지 않고 `VISUAL_CANONICAL_CONFLICT`로 분리한다. 실제 제품 자산 승격은 기존 asset-vault·provenance·runtime 검증 절차를 그대로 따른다. `DISCOVERED_IDEA`와 `AI_ASSUMPTION`은 사용자 Decision 없이 확정 기획으로 승격하지 않는다.
+
+### Validation state
+
+```yaml
+figma_visual_bible_profile: IMPLEMENTED_ON_FEATURE_BRANCH
+visual_flow_workspace: IMPLEMENTED_ON_FEATURE_BRANCH
+interpretation_record_contract: IMPLEMENTED_ON_FEATURE_BRANCH
+art_skill_continuity_gate: IMPLEMENTED_ON_FEATURE_BRANCH
+visual_contract_tests: IMPLEMENTED_ON_FEATURE_BRANCH
+project_specific_figma_pilot: NOT_RUN
+figma_live_file_write_and_read_validation: NOT_RUN
+runtime_asset_validation: NOT_RUN
+```
+
+실제 프로젝트별 Figma file/page/frame 구조와 레퍼런스·Flow 운영 품질은 각 프로젝트에서 pilot 후 조정한다.
+
+---
+
 ## 2026-08-08 — 프로젝트 시각물은 생성 전에 필요성부터 선정한다
 
 ### Trigger
