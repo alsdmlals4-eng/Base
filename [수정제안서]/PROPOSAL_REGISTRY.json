@@ -278,6 +278,17 @@
       "submitted_at": "2026-08-12",
       "approval_ref": null,
       "implementation_pr": null
+    },
+    {
+      "proposal_id": "BCP-2026-026-project-creation-delivery-orchestration",
+      "title": "Project Creation & Delivery Orchestration",
+      "path": "[수정제안서]/BCP-2026-026-project-creation-delivery-orchestration/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "base 업뎃 / PROJECT_TOTAL_PLANNING_IMPLEMENTATION_AND_DELIVERY_INSTRUCTION_v4.6.md",
+      "source_commit": "sha256:6875473193259cfb126cc5d8b9e682decb7c47d57fdadda510e0e34c182e65a7",
+      "submitted_at": "2026-08-12",
+      "approval_ref": null,
+      "implementation_pr": null
     }
   ]
 }
