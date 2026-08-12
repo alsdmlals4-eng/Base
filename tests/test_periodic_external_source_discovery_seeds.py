@@ -90,6 +90,45 @@ class PeriodicExternalSourceDiscoverySeedTests(unittest.TestCase):
         self.assertIn("smaller shipped build", seeds.lower())
         self.assertIn("actual build", seeds.lower())
 
+    def test_backend_ai_deploy_and_media_sources_route_to_existing_owners(self) -> None:
+        seeds = SEEDS.read_text(encoding="utf-8")
+
+        for required in (
+            "Backend / API engineering",
+            "OpenAPI Specification",
+            "FastAPI official",
+            "PostgreSQL official",
+            "OWASP API Security",
+            "AI coding / coding agents",
+            "OpenAI Developers / Codex",
+            "Claude Code",
+            "Gemini CLI",
+            "aider",
+            "SWE-bench",
+            "Deployment / WAS / cloud runtime",
+            "Cloudflare Workers",
+            "Fly.io Machines",
+            "Railway",
+            "Render",
+            "PC capture and AI-assisted media editing",
+            "OBS Studio",
+            "FFmpeg",
+            "Xbox Game Bar",
+            "NVIDIA App / ShadowPlay",
+            "DaVinci Resolve",
+            "Adobe Premiere / Photoshop / Firefly",
+            "Runway",
+            "GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md",
+            "AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md",
+            "producing-game-development-youtube-videos",
+            "designing-art-prompts-and-technique-cards",
+            "Cloud Run is not universally better",
+            "benchmark score does not prove project correctness",
+            "actual PC capture measurement",
+            "rights + provenance + similarity",
+        ):
+            self.assertIn(required, seeds)
+
 
 if __name__ == "__main__":
     unittest.main()
