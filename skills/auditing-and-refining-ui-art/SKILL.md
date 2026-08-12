@@ -83,6 +83,22 @@ description: Use when planning, polishing, or auditing game UX, UI structure, in
 11. 빠른 반복 입력, 중복 입력, 애니메이션 중단·재진입, modal 재진입에서 결과 중복과 시각 drift를 검사한다.
 12. 자동 검사와 사람 이해 증거를 분리하고 실행하지 않은 항목은 `NOT_RUN` 또는 `UNVERIFIED`로 둔다.
 
+## Project Visual Flow Workspace 검토
+
+프로젝트가 Figma 또는 동등한 `Project Visual Flow Workspace`를 쓰는 경우, `flow-and-information-architecture`는 `PROTOTYPE_FLOW`를 사용해 화면 전환·진입·취소·복귀·오류 복구·선택 피드백을 구현 전에 검토할 수 있다. Prototype은 UX 가설 증거이며 실제 Godot 런타임·저장·경제·보상 규칙·성능·물리 입력·접근성 완료 증거가 아니다.
+
+`APPROVED_VISUAL_REFERENCE`가 구현 기준으로 고정된 뒤에는 실제 `RUNTIME_CAPTURE`와 나란히 `COMPARE_BOARD`를 만들거나 동등한 비교 기록을 남긴다. 차이는 화면별로 다음 중 하나를 사용한다.
+
+- `MATCHED`: 승인 의도와 구현이 의미상 일치한다.
+- `INTENDED_DIFFERENCE`: 승인된 후속 Decision 또는 확인된 기술 제약에 따라 의도적으로 다르다.
+- `IMPLEMENTATION_GAP`: 승인 범위가 실제 구현에서 누락·오표현됐다.
+- `PLANNING_CHANGE_REQUIRED`: 구현 과정에서 기획 자체의 재결정이 필요하다.
+- `AI_MOCKUP_ERROR`: 초기 AI 목업의 근거 없는 기능·상태·구성이 문제였다.
+- `VISUAL_CANONICAL_CONFLICT`: 승인 시각 참조가 현재 정본과 충돌한다.
+- `BLOCKED_UNVERIFIED`: 실제 캡처·commit·해상도·입력 등 비교 증거가 부족하다.
+
+비교 시 `source_commit`, 화면/Flow ID, 플랫폼·해상도·입력, 관련 Decision ID를 고정한다. `PROTOTYPE_FLOW`만 존재하고 `RUNTIME_CAPTURE`가 없으면 runtime 비교는 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`다. `IMPLEMENTATION_GAP`은 승인 범위 안에서 수정 후보로 올리고, `PLANNING_CHANGE_REQUIRED`와 `VISUAL_CANONICAL_CONFLICT`는 사용자 Decision/정본 정리 전 임의 구현하지 않는다.
+
 상세 방법은 필요할 때만 읽는다.
 
 - [ux-ui-design-system-method.md](references/ux-ui-design-system-method.md)
