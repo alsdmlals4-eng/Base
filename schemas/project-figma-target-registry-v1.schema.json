@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/project-figma-target-registry-v1.schema.json",
+  "title": "Base Project Figma Target Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "default_delivery_page", "default_generation_area", "entries"],
+  "properties": {
+    "version": {"const": 1},
+    "purpose": {"type": "string", "minLength": 1},
+    "default_delivery_page": {"type": "string", "minLength": 1},
+    "default_generation_area": {"type": "string", "minLength": 1},
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/entry"}
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["project_id", "display_name", "figma_file_key", "figma_url", "delivery_status"],
+      "properties": {
+        "project_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "display_name": {"type": "string", "minLength": 1},
+        "figma_file_key": {"type": "string", "pattern": "^[A-Za-z0-9]+$"},
+        "figma_url": {"type": "string", "format": "uri", "pattern": "^https://www\\.figma\\.com/design/"},
+        "delivery_status": {"enum": ["REGISTERED_NO_MUTATION", "READY_FOR_DELIVERY", "ARCHIVED"]},
+        "delivery_page_node_id": {"type": ["string", "null"], "pattern": "^[0-9]+:[0-9]+$"},
+        "generation_area_node_id": {"type": ["string", "null"], "pattern": "^[0-9]+:[0-9]+$"}
+      }
+    }
+  }
+}

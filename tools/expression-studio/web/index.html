@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Expression Studio</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">LOCAL REVIEW TOOL</p>
+        <h1>Expression Studio</h1>
+        <p>승인된 원본 캐릭터를 유지한 채 표정 후보를 검토합니다. 실제 Figma 배치는 같은 프로젝트 GPT 작업공간에서만 수행됩니다.</p>
+      </header>
+
+      <form id="expression-form">
+        <section>
+          <h2>원본과 프로젝트</h2>
+          <label>프로젝트 ID <input id="project-id" readonly required pattern="[A-Za-z0-9_-]+"></label>
+          <label>에셋 ID <input id="asset-id" value="hero" required pattern="[A-Za-z0-9_-]+"></label>
+          <label>원본 이미지 경로 <input id="source-path" value="art/source/hero.png" required></label>
+          <label>원본 Figma 노드 URL <input id="figma-url" type="url" placeholder="https://www.figma.com/design/..." required></label>
+          <label>후보 수 <input id="candidate-count" type="number" min="1" max="8" value="4" required></label>
+        </section>
+
+        <section>
+          <h2>얼굴 제어</h2>
+          <p>최대 4개를 조합합니다. AU 코드는 모델 명령 보장이 아니라, 아래처럼 구체적 움직임으로 변환됩니다.</p>
+          <div id="control-rows"></div>
+        </section>
+
+        <section class="two-column">
+          <div>
+            <h2>시선</h2>
+            <select id="gaze">
+              <option value="center">정면</option><option value="left">왼쪽</option><option value="right">오른쪽</option><option value="up">위</option><option value="down">아래</option>
+            </select>
+          </div>
+          <div>
+            <h2>머리 방향</h2>
+            <select id="head-pose">
+              <option value="neutral">중립</option><option value="turn_left">왼쪽 회전</option><option value="turn_right">오른쪽 회전</option><option value="up">위</option><option value="down">아래</option><option value="tilt_left">왼쪽 기울임</option><option value="tilt_right">오른쪽 기울임</option><option value="forward">앞으로</option><option value="back">뒤로</option>
+            </select>
+          </div>
+        </section>
+
+        <section>
+          <h2>게임 프리셋</h2>
+          <p>프리셋을 선택하면 직접 얼굴 제어 대신 검토 가능한 제어 조합으로 해석됩니다.</p>
+          <select id="preset">
+            <option value="">직접 제어 사용</option><option value="idle_neutral">무표정</option><option value="alert">경계</option><option value="determined">결의</option><option value="hurt">피격</option><option value="surprised">놀람</option><option value="joy">기쁨</option><option value="anger">분노</option><option value="fear">공포</option><option value="blink">깜박임</option><option value="wink">윙크</option>
+          </select>
+        </section>
+
+        <button type="submit">후보 생성 준비</button>
+      </form>
+
+      <section id="run-result" hidden>
+        <h2>검토 결과</h2>
+        <p id="resolved-prompt"></p>
+        <p id="review-metadata"></p>
+        <div id="candidate-grid"></div>
+        <button id="export-button" type="button" disabled>선택 후보 내보내기</button>
+        <button id="delivery-button" type="button" disabled>프로젝트 GPT 전송 준비</button>
+        <pre id="packet"></pre>
+      </section>
+
+      <p id="status" role="status"></p>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

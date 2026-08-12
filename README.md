@@ -37,6 +37,8 @@ START_HERE.md
 - [공용 스킬 Registry](skills/SKILL_REGISTRY.json)
 - [공용 어댑터 Skill Route](skills/BASE_SHARED_SKILL_ROUTES.json)
 - [프로젝트 어댑터 계약](docs/BASE_SHARED_SKILL_ADAPTER_CONTRACT.md)
+- [PROJECT_BASE_ADAPTER v2 명시적 마이그레이션](docs/operations/PROJECT_BASE_ADAPTER_V2_MIGRATION.md)
+- [로컬 Tool 공용 계약](tools/base-tool-contracts/README.md)
 - [이전 Skill ID 별칭](skills/LEGACY_SKILL_ALIASES.md)
 - [공용 스킬 학습 기록](skills/SKILL_LEARNING_LOG.md)
 - [Base 수정제안서]([수정제안서]/README.md)
