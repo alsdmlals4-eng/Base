@@ -12,6 +12,11 @@
     "planning_sources": [
       "[기획서]/approved-feature-contract.md"
     ],
+    "objective": "Implement the user-reviewed feature package without changing its approved WHAT/WHY.",
+    "allowed_changes": [
+      "Technical implementation structure inside the approved package",
+      "Tests and validation needed to prove the approved acceptance criteria"
+    ],
     "acceptance_criteria": [
       "Implement the already approved feature behavior without changing its player-facing meaning.",
       "Pass the project-declared static, automated, and applicable runtime validation."
@@ -41,6 +46,7 @@
           "problem": "The approved feature package is not implemented yet.",
           "evidence": "Planning contract marks implementation_status as NOT_STARTED.",
           "player_or_user_value": "Delivers the already reviewed feature without asking the user to choose technical HOW details.",
+          "risk_if_ignored": "The locked acceptance criteria remain incomplete and the project cannot advance through the approved implementation package.",
           "expected_outcome": "A reviewable isolated implementation with project-declared validation evidence."
         },
         "verification": [
