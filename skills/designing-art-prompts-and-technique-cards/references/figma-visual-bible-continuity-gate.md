@@ -1,6 +1,6 @@
 # Figma Visual Bible Continuity Gate
 
-이 reference는 `designing-art-prompts-and-technique-cards`의 이미지·UI 시각 자료 생성/편집/검수에서 프로젝트별 Figma Visual Bible을 **승인 시각 레퍼런스 작업면**으로 소비하는 절차를 정의한다.
+이 reference는 `designing-art-prompts-and-technique-cards`의 이미지·UI 시각 자료 생성/편집/검수에서 프로젝트별 Figma Visual Bible을 **승인 시각 레퍼런스 작업면**으로 소비하고, 화면 시각화의 해석·흐름을 다시 Figma에 연결하는 절차를 정의한다.
 
 ## Trigger
 
@@ -10,7 +10,7 @@
 - UI/HUD/icon/VFX/environment/character/battlefield/marketing visual을 새로 만든다.
 - 기존 시각 자료와의 일관성 유지가 완료 기준이다.
 - 프로젝트 Visual Artifact Registry가 Figma Artifact를 가리킨다.
-- 사용자가 Figma를 시각 레퍼런스 보관소로 사용한다고 선언했다.
+- 사용자가 Figma를 시각 레퍼런스 보관소 또는 화면 Flow 작업면으로 사용한다고 선언했다.
 
 단, 이미지 생성 자체의 필요성은 상위 `Visual Requirement Gate`가 먼저 판정한다.
 
@@ -47,6 +47,9 @@ keep: []
 avoid: []
 do_not_drift: []
 wip_target:
+screen_id:
+flow_id:
+interpretation_record_id:
 ```
 
 프로젝트에 Figma가 구성되지 않았다면 `NOT_CONFIGURED`는 정상 상태다.
@@ -127,6 +130,29 @@ forbidden drift
 
 사용자 Decision 전에는 `01_APPROVED_REFERENCE`, `04_FINAL`, `PROJECT_ASSET_APPROVED`로 자동 승격하지 않는다.
 
+Figma가 `CONFIGURED`이고 쓰기 가능하면 새 결과를 `02_WIP`에 배치하고 frame/node ID를 기록한다. 화면 시각화라면 다음 `INTERPRETATION_RECORD`도 화면 옆의 편집 가능한 text/annotation으로 남길 수 있다.
+
+```yaml
+screen_id:
+flow_id:
+visual_artifact_id:
+related_decision_ids: []
+source_commit:
+confirmed: []
+discovered_idea: []
+ai_assumption: []
+missing_canon: []
+visual_canonical_conflict: []
+rejected_expression: []
+next_gate:
+```
+
+- `CONFIRMED`: 최신 정본과 일치.
+- `DISCOVERED_IDEA`: 시각화가 제안한 미승인 아이디어.
+- `AI_ASSUMPTION`: 정본 근거 없이 모델이 채워 넣은 요소.
+
+`DISCOVERED_IDEA`와 `AI_ASSUMPTION`은 사용자 Decision 전에는 다음 프롬프트의 확정 조건이나 구현 요구로 자동 재사용하지 않는다.
+
 ### 7. Compare against approved references
 
 최소 비교 항목:
@@ -151,7 +177,21 @@ VISUAL_CANONICAL_CONFLICT
 BLOCKED_UNVERIFIED
 ```
 
-### 8. Approval sync
+### 8. Update visual flow when screens connect
+
+한 작업이 다른 화면으로의 진입·전환·복귀를 만들면 `FLOW_MAP`에서 `screen_id / flow_id`와 화살표 연결을 갱신한다. 실제 클릭 검토가 필요할 때만 `PROTOTYPE_FLOW`를 추가한다.
+
+최소 흐름 점검:
+
+- [ ] 진입점이 명확하다.
+- [ ] primary path가 연결된다.
+- [ ] 취소/뒤로가기 목적지가 정해져 있다.
+- [ ] 실패·오류 뒤 복구 경로가 있다.
+- [ ] 동일 기능을 불필요하게 여러 화면에서 왕복하지 않는다.
+
+Prototype은 실제 Godot runtime proof가 아니다.
+
+### 9. Approval sync
 
 사용자 승인 뒤에만 수행한다.
 
@@ -174,15 +214,32 @@ PROJECT_ASSET_APPROVED
 → runtime validation
 ```
 
+### 10. Compare implementation when runtime evidence exists
+
+`IMPLEMENTATION_PINNED` 화면의 실제 `RUNTIME_CAPTURE`가 확보되면 승인 시각 참조와 `COMPARE_BOARD`에서 비교한다.
+
+```text
+MATCHED
+INTENDED_DIFFERENCE
+IMPLEMENTATION_GAP
+PLANNING_CHANGE_REQUIRED
+AI_MOCKUP_ERROR
+VISUAL_CANONICAL_CONFLICT
+BLOCKED_UNVERIFIED
+```
+
+실제 runtime 캡처가 없으면 `MATCHED`로 표시하지 않는다.
+
 ## Figma organization mapping
 
 | Figma | Workflow meaning |
 |---|---|
-| `00_DIRECTION` | 방향·금지 drift 확인 |
+| `00_DIRECTION / 00.8_VISUAL_FLOW_HUB` | 방향·금지 drift·대표 `FLOW_MAP` 확인 |
 | `01_APPROVED_REFERENCE` | 승인 비교 기준 |
-| `02_WIP` | 생성·수정·비교 중 |
+| `02_WIP / 02.5_FLOW_PROTOTYPE` | 생성·수정·Prototype 비교 중 |
+| `02_WIP / 02.6_GPT_INTERPRETATION` | `INTERPRETATION_RECORD` 편집·검토 |
 | `03_REJECTED` | 불채택 및 이유 보존 |
-| `04_FINAL` | 시각적 확정 표현; 제품 승인과 별개 |
+| `04_FINAL / 04.2_IMPLEMENTATION_COMPARE` | 시각적 확정 표현과 runtime 비교; 제품 승인과 별개 |
 
 프로젝트 세부 구조는 `templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md`를 따른다.
 
@@ -197,6 +254,9 @@ PROJECT_ASSET_APPROVED
 5. 새 결과가 기존 캐릭터/UI/환경 visual grammar를 이유 없이 바꿨는가.
 6. 일관성 유지를 핑계로 새로운 요구의 의도까지 억제했는가.
 7. Figma만 갱신하고 Registry/Decision 연결을 잊었는가.
+8. `DISCOVERED_IDEA`나 `AI_ASSUMPTION`을 승인 없이 다음 요구로 굳혔는가.
+9. Prototype을 runtime proof로 과장했는가.
+10. 실제 구현 drift를 초기 AI 목업과 비교하면서 현재 정본·Decision을 건너뛰었는가.
 
 P0/P1 충돌이 남으면 승인 승격을 멈춘다.
 
@@ -208,11 +268,14 @@ P0/P1 충돌이 남으면 승인 승격을 멈춘다.
 figma_reference_checked:
 reference_ids: []
 continuity_pass:
+interpretation_record_status:
+flow_map_status:
 changes_made:
 protected_elements:
 known_drift_or_conflicts: []
 figma_sync_status:
 asset_promotion_status:
+runtime_compare_status:
 validation_status:
 unverified: []
 ```
