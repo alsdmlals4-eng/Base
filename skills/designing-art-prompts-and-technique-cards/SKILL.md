@@ -70,6 +70,8 @@ requirement_id·목적과 자산 역할
 
 생성 직후 `Screen Interpretation Review`에 정본과 일치한 요소, `MISSING_CANON`, `VISUAL_CANONICAL_CONFLICT`, `TECHNICAL_REVIEW_PROPOSAL`, 버린 표현을 기록한다. 이 mode의 결과는 `DRAFT_VISUAL`이며 최종 리소스·라이선스 승인·Figma 구현 명세·Godot 구현·런타임/사람 검증을 뜻하지 않는다. 사용자 Decision 없이 정본이나 Visual Artifact Registry의 승인 상태로 올리지 않는다.
 
+프로젝트가 `Project Visual Flow Workspace`를 사용하면 같은 검토를 화면 옆 편집 가능한 `INTERPRETATION_RECORD`로 동기화할 수 있다. 정본에 이미 있는 표현은 `CONFIRMED`, 시각화 과정에서 새로 발견했지만 아직 승인되지 않은 제안은 `DISCOVERED_IDEA`, 근거 없이 모델이 추가한 기능·재화·레이아웃·상태는 `AI_ASSUMPTION`으로 분리한다. `DISCOVERED_IDEA`와 `AI_ASSUMPTION`은 사용자 Decision 없이 정본·구현 요구로 승격하지 않는다. 시각 작업면 쓰기가 불가능하면 GitHub/Sheet 기록을 우선하고 `SYNC_PENDING` 또는 `UNVERIFIED`로 둔다.
+
 ## Status lifecycle
 
 ```text
