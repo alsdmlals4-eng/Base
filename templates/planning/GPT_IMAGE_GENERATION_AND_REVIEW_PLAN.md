@@ -11,6 +11,8 @@ related_decisions:
 canonical_sources:
 player_experience:
 target_screen_or_use:
+screen_id:
+flow_id:
 platform_resolution_camera:
 existing_approved_assets:
 figma_visual_bible_status: CONFIGURED | NOT_CONFIGURED | AUTH_REQUIRED | ACCESS_DENIED | READ_ONLY | LINK_UNVERIFIED | UNVERIFIED
@@ -18,7 +20,12 @@ figma_file_url:
 figma_approved_reference_ids: []
 figma_approved_frame_or_node_ids: []
 figma_wip_target:
-figma_sync_status: NOT_APPLICABLE | UNVERIFIED | WIP_SYNCED | APPROVED_REFERENCE_SYNCED | FINAL_VISUAL_SYNCED
+figma_interpretation_record_id:
+figma_sync_status: NOT_APPLICABLE | UNVERIFIED | WIP_SYNCED | INTERPRETATION_SYNCED | FLOW_SYNCED | APPROVED_REFERENCE_SYNCED | FINAL_VISUAL_SYNCED
+interpretation_status: CONFIRMED | DISCOVERED_IDEA | AI_ASSUMPTION | MIXED | UNVERIFIED
+runtime_compare_required: YES | NO
+runtime_capture_path:
+drift_status: NOT_RUN | MATCHED | INTENDED_DIFFERENCE | IMPLEMENTATION_GAP | PLANNING_CHANGE_REQUIRED | AI_MOCKUP_ERROR | VISUAL_CANONICAL_CONFLICT | BLOCKED_UNVERIFIED
 project_sheet_status: PROJECT_SHEET_CONFIGURED | NOT_CONFIGURED
 asset_vault_status: ENABLED | NOT_CONFIGURED | VAULT_LOCAL_STATE_UNVERIFIED
 vault_source_key:
@@ -33,8 +40,8 @@ Figma Visual Bible이 `CONFIGURED`이면 이미지 생성·편집 전에 Visual 
 
 ## 2. Image backlog
 
-| Image ID | 분류 | 목적·사용처 | 관련 정본 | 핵심 전달 | 비율·해상도 | 유지 요소 | 변경 축 | Figma 승인 Reference | 레퍼런스 | vault_source_key | promotion_target | promoted_path | 우선순위 | 구현 난이도 | 재사용성 | 상태 |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Image ID | Screen/Flow ID | 분류 | 목적·사용처 | 관련 정본 | 핵심 전달 | 비율·해상도 | 유지 요소 | 변경 축 | Figma 승인 Reference | 해석 상태 | Runtime 비교 | 레퍼런스 | vault_source_key | promotion_target | promoted_path | 우선순위 | 구현 난이도 | 재사용성 | 상태 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 
 우선순위: `S / A / B`. 상태는 `PLANNED / GENERATED_EXPLORATION / IN_REVIEW / REVISION_REQUIRED / REJECTED / APPROVED_CANDIDATE / PROJECT_ASSET_APPROVED / APPLIED_AND_RUNTIME_VERIFIED`.
 
@@ -63,6 +70,28 @@ Figma Visual Bible이 `CONFIGURED`이면 이미지 생성·편집 전에 Visual 
 
 Figma 일관성은 비율·실루엣·palette·line/texture/material·lighting·camera/composition·UI hierarchy·icon/VFX visual grammar를 최소 비교한다. 정본과 Figma가 충돌하면 `VISUAL_CANONICAL_CONFLICT`, Figma를 확인할 수 없으면 `BLOCKED_UNVERIFIED` 또는 정확한 접근 상태로 분리한다.
 
+### 4A. Screen Interpretation Review
+
+중요한 AI 생성 화면은 이미지 자체와 별개로 해석 기록을 남긴다. Figma가 쓰기 가능하면 화면 옆 편집 가능한 text/annotation `INTERPRETATION_RECORD`로 동기화하고, 불가능하면 책임 GitHub 기록 또는 프로젝트 Sheet에 남긴 뒤 실제 접근 상태를 유지한다.
+
+| Review ID | Screen ID | Flow ID | Figma Interpretation ID | 관련 Decision | `CONFIRMED` | `DISCOVERED_IDEA` | `AI_ASSUMPTION` | `MISSING_CANON` | `VISUAL_CANONICAL_CONFLICT` | 버린 표현 | 다음 Gate |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+
+`DISCOVERED_IDEA`와 `AI_ASSUMPTION`은 사용자 Decision 없이 정본·구현 요구로 승격하지 않는다.
+
+### 4B. Flow registration
+
+여러 화면이 연결되면 `FLOW_MAP`에 `screen_id / flow_id`, 진입점, primary path, 취소·복귀, 실패 복구를 연결한다. 실제 클릭·전환 검토가 필요한 경우에만 `PROTOTYPE_FLOW`를 추가한다. Prototype은 Godot runtime proof가 아니다.
+
+### 4C. Runtime compare
+
+`runtime_compare_required: YES`인 화면은 승인 시각 참조와 실제 구현 캡처를 비교한다.
+
+| Compare ID | Screen ID | Approved Artifact | runtime_capture_path | source commit | drift_status | 관찰 차이 | 후속 Decision/Finding |
+|---|---|---|---|---|---|---|---|
+
+`drift_status`: `MATCHED / INTENDED_DIFFERENCE / IMPLEMENTATION_GAP / PLANNING_CHANGE_REQUIRED / AI_MOCKUP_ERROR / VISUAL_CANONICAL_CONFLICT / BLOCKED_UNVERIFIED`. 실제 runtime 캡처가 없으면 Prototype만으로 `MATCHED`를 주장하지 않는다.
+
 ## 5. Approval sync
 
 - [ ] `CURRENT_CONFIRMED_DECISIONS` 반영
@@ -73,7 +102,9 @@ Figma 일관성은 비율·실루엣·palette·line/texture/material·lighting·
 - [ ] Asset License Ledger·Asset Registry 반영
 - [ ] Figma가 구성된 경우 실제 `APPROVED_VISUAL_REFERENCE` frame/node를 확인했거나 정확한 접근 실패 상태를 기록
 - [ ] 신규 결과를 먼저 `02_WIP`/review candidate로 두고 사용자 승인 전 `01_APPROVED_REFERENCE`·`04_FINAL` 자동 승격 금지
-- [ ] 승인 시 Visual Artifact Registry의 file/page/frame/node·Decision·status·snapshot 관계와 Figma 위치를 동기화
+- [ ] 중요 AI 화면은 필요 시 `INTERPRETATION_RECORD`와 `screen_id / flow_id`를 연결
+- [ ] 연결된 화면은 `FLOW_MAP`을 갱신하고 필요한 경우에만 `PROTOTYPE_FLOW` 사용
+- [ ] 승인 시 Visual Artifact Registry의 file/page/frame/node·Decision·status·snapshot·interpretation/runtime compare 관계와 Figma 위치를 동기화
 - [ ] Figma `04_FINAL`을 `PROJECT_ASSET_APPROVED`·tracked asset·Godot runtime proof로 간주하지 않음
 - [ ] 보존소 사용 시 `vault_source_key` 현재 상태 확인 또는 `VAULT_LOCAL_STATE_UNVERIFIED` 기록
 - [ ] `APPROVED_CANDIDATE`까지 local-only 유지; tracked 자산 자동 생성 금지
