@@ -7,7 +7,9 @@
       "tool": "FIGMA|WHIMSICAL|OTHER",
       "usage_context": "GDD|EXTERNAL_COLLABORATION|BOTH",
       "purpose": "",
-      "artifact_type": "",
+      "artifact_type": "FLOW_MAP|SCREEN_CONCEPT|SCREEN_WIREFRAME|PROTOTYPE_FLOW|RUNTIME_CAPTURE|COMPARE_BOARD|INTERPRETATION_RECORD|OTHER",
+      "screen_id": "",
+      "flow_id": "",
       "responsible_document_id": "",
       "related_decision_ids": [],
       "url": "",
@@ -24,6 +26,8 @@
       "input_method": "",
       "implementation_scope": "",
       "excluded_scope": "",
+      "interpretation_status": "UNVERIFIED",
+      "runtime_compare_status": "NOT_RUN",
       "supersedes": "",
       "sync_status": "UNVERIFIED"
     }
