@@ -44,6 +44,22 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
             self.assertIn(status, skill)
         self.assertIn("생성 결과는 자동 최종 자산이 아니다", skill)
 
+    def test_art_skill_consumes_figma_visual_bible_without_new_skill(self) -> None:
+        art_skill = (ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md").read_text(encoding="utf-8")
+        gate = (
+            ROOT
+            / "skills/designing-art-prompts-and-technique-cards/references/figma-visual-bible-continuity-gate.md"
+        ).read_text(encoding="utf-8")
+        profile = (ROOT / "templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md").read_text(encoding="utf-8")
+        registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
+
+        self.assertIn("references/figma-visual-bible-continuity-gate.md", art_skill)
+        for token in ("APPROVED_VISUAL_REFERENCE", "Keep / Avoid / Do Not Drift", "VISUAL_CANONICAL_CONFLICT"):
+            self.assertIn(token, gate)
+        for page in ("00_DIRECTION", "01_APPROVED_REFERENCE", "02_WIP", "03_REJECTED", "04_FINAL"):
+            self.assertIn(page, profile)
+        self.assertNotIn('"skill_id": "figma-', registry)
+
     def test_visual_requirement_gate_is_consumed_without_duplicate_skill(self) -> None:
         guide = (ROOT / "docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md").read_text(encoding="utf-8")
         art_skill = (ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md").read_text(encoding="utf-8")
