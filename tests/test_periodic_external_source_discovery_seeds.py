@@ -9,6 +9,7 @@ SEEDS = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SO
 WATCHLIST = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md"
 ART_GUIDE = ROOT / "docs" / "knowledge" / "game-development" / "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md"
 SIZE_GUIDE = ROOT / "docs" / "knowledge" / "game-development" / "GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md"
+BENCHMARK = ROOT / "skills" / "analyzing-and-refining-game-concepts" / "references" / "benchmark-player-evidence-and-playtests.md"
 
 
 class PeriodicExternalSourceDiscoverySeedTests(unittest.TestCase):
@@ -128,6 +129,44 @@ class PeriodicExternalSourceDiscoverySeedTests(unittest.TestCase):
             "rights + provenance + similarity",
         ):
             self.assertIn(required, seeds)
+
+    def test_figma_market_success_and_kick_sources_preserve_metric_boundaries(self) -> None:
+        seeds = SEEDS.read_text(encoding="utf-8")
+        benchmark = BENCHMARK.read_text(encoding="utf-8")
+        combined = seeds + "\n" + benchmark
+
+        for required in (
+            "Figma practical design workflow",
+            "help.figma.com",
+            "Auto Layout",
+            "Variants",
+            "Variables",
+            "FigJam",
+            "Dev Mode",
+            "SteamDB",
+            "GameDiscoverCo",
+            "Sensor Tower",
+            "VERIFIED_100K_DOWNLOAD_INSTALL",
+            "VERIFIED_100K_SALES",
+            "ESTIMATED_100K_PLUS",
+            "Shattered Pixel Dungeon",
+            "Mindustry",
+            "Slice & Dice",
+            "Sledding Game",
+            "God Of Weapons",
+            "Astrea: Six-Sided Oracles",
+            "PLAYER_NOTICEABLE",
+            "LOOP_RELEVANT",
+            "MARKET_LEGIBLE",
+            "PRODUCTION_FIT",
+            "NON_DERIVATIVE",
+        ):
+            self.assertIn(required, combined)
+
+        self.assertIn("downloads", combined.lower())
+        self.assertIn("sales", combined.lower())
+        self.assertIn("estimate", combined.lower())
+        self.assertIn("causal", combined.lower())
 
 
 if __name__ == "__main__":
