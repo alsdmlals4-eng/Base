@@ -35,6 +35,38 @@ Auxiliary states are `AUTH_REQUIRED`, `ACCESS_DENIED`, `READ_ONLY`, `LINK_UNVERI
 
 At `APPROVED_VISUAL_REFERENCE` or later, record a responsible document, Decision ID, scope/exclusion, last verification, replacement relation, and snapshot path or explicit reason. At `IMPLEMENTATION_PINNED`, also record page/board/frame/node, checked time, source commit, target platform/resolution/input, Godot handoff, and validation predicate.
 
+## Project Figma Visual Bible
+
+프로젝트가 Figma를 사용하는 경우 Figma 파일은 **게임 규칙의 두 번째 정본이나 제품 자산 파일 저장소가 아니라, 승인된 시각 방향·화면·컴포넌트·레퍼런스를 지속적으로 비교하는 Visual Bible**로 운영할 수 있다. 프로젝트별 상세 구조는 `templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md`를 복제·최적화한다.
+
+권장 최소 페이지:
+
+```text
+00_DIRECTION
+01_APPROVED_REFERENCE
+02_WIP
+03_REJECTED
+04_FINAL
+```
+
+이 페이지 이름은 Figma 안에서 사람과 AI가 탐색하기 위한 **조직 규칙**이며 Artifact lifecycle을 새로 만들지 않는다.
+
+| Figma page | 의미 | Artifact/asset 경계 |
+| --- | --- | --- |
+| `00_DIRECTION` | mood, palette, shape language, camera, UI direction, `Do Not Drift` | 방향 참고면이며 단독 Decision canon 아님 |
+| `01_APPROVED_REFERENCE` | 이후 시각 작업에서 우선 비교할 승인 레퍼런스 | 연결 Artifact는 최소 `APPROVED_VISUAL_REFERENCE`여야 함 |
+| `02_WIP` | 탐색·수정·검토 중 후보 | `DRAFT_VISUAL` 또는 `REVIEW_CANDIDATE`; 다음 작업의 승인 기준으로 자동 사용 금지 |
+| `03_REJECTED` | 불채택 시안과 제외 이유 | 승인 레퍼런스로 재사용 금지; 재도입은 새 검토 필요 |
+| `04_FINAL` | 시각적으로 사용 확정된 표현을 모으는 페이지 | `PROJECT_ASSET_APPROVED`, tracked asset, Godot runtime proof를 자동 의미하지 않음 |
+
+이미지·시각 자료 작업에서는 접근 가능한 최신 프로젝트 정본과 Decision을 먼저 확인한 뒤, Visual Artifact Registry에서 연결된 Figma와 `APPROVED_VISUAL_REFERENCE`를 찾고 실제 frame/node를 읽을 수 있을 때만 그 내용을 기준으로 사용한다. 승인 레퍼런스에서 `Keep / Avoid / Do Not Drift`를 추출해 새 생성·편집 계약에 고정하고, 새 결과는 기본적으로 WIP/review 후보로 두며 기존 승인본과 스타일·비율·색·형태·카메라·UI 계층을 비교한다.
+
+사용자 승인 뒤에만 Figma의 Approved/Final 위치와 Registry 상태를 갱신한다. 실제 이미지 bytes의 후보·제품 승격 권위는 `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`와 tracked asset 계약이 계속 소유하며, `PROJECT_ASSET_APPROVED → promote`를 우회하지 않는다.
+
+Figma 링크나 frame/node를 읽을 수 없으면 과거 대화·파일명·스크린샷 추정으로 내용을 확인했다고 보고하지 않는다. `LINK_UNVERIFIED`, `AUTH_REQUIRED`, `ACCESS_DENIED`, `READ_ONLY` 또는 `UNVERIFIED`를 기록하고 Markdown·text wireframe·로컬 승인 자산 등 현재 접근 가능한 근거로 fallback한다.
+
+Figma의 Pages/Sections는 단계·milestone·협업 구역을 나누는 데 사용하고, 반복되는 UI 요소가 충분히 안정화된 프로젝트는 Components/Styles를 사용해 일관성을 높일 수 있다. 팀 Library 발행은 요금제·권한과 실제 재사용 필요가 확인된 경우에만 선택적으로 사용하며 Base가 강제하지 않는다. 큰 변경 전에는 Figma version history 또는 사용 가능한 branch/checkpoint를 활용해 복구 가능성을 확보한다.
+
 ## Access, safety and fallback
 
 Never publish a private board, change ownership, or place secrets, credentials, private data, or internal keys in a visual workspace. Record public/private access and ownership separately. A link that cannot be read is not evidence of its contents.
