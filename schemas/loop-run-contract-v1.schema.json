@@ -116,6 +116,8 @@
         "user_review_complete",
         "adversarial_review_complete",
         "planning_sources",
+        "objective",
+        "allowed_changes",
         "acceptance_criteria",
         "protected_behavior",
         "exclusions"
@@ -126,6 +128,13 @@
         "user_review_complete": {"const": true},
         "adversarial_review_complete": {"const": true},
         "planning_sources": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "objective": {"type": "string", "minLength": 1},
+        "allowed_changes": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
@@ -177,11 +186,18 @@
         "justification": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["problem", "evidence", "player_or_user_value", "expected_outcome"],
+          "required": [
+            "problem",
+            "evidence",
+            "player_or_user_value",
+            "risk_if_ignored",
+            "expected_outcome"
+          ],
           "properties": {
             "problem": {"type": "string", "minLength": 1},
             "evidence": {"type": "string", "minLength": 1},
             "player_or_user_value": {"type": "string", "minLength": 1},
+            "risk_if_ignored": {"type": "string", "minLength": 1},
             "expected_outcome": {"type": "string", "minLength": 1}
           }
         },
@@ -206,6 +222,7 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
+        "lease_id",
         "task_id",
         "owner_agent",
         "source_main_sha",
@@ -213,9 +230,12 @@
         "worktree",
         "path_locks",
         "semantic_resource_locks",
+        "acquired_at",
+        "expires_at",
         "status"
       ],
       "properties": {
+        "lease_id": {"type": "string", "minLength": 1},
         "task_id": {"type": "string", "minLength": 1},
         "owner_agent": {"type": "string", "minLength": 1},
         "source_main_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
@@ -231,6 +251,8 @@
           "uniqueItems": true,
           "items": {"type": "string", "minLength": 1}
         },
+        "acquired_at": {"type": "string", "format": "date-time"},
+        "expires_at": {"type": "string", "format": "date-time"},
         "status": {"enum": ["ACTIVE", "RELEASED", "WAITING_RESOURCE", "EXPIRED"]}
       }
     },
@@ -295,8 +317,11 @@
             "EVIDENCE_TRANSPORT_FAILURE",
             "FLAKY_SUSPECTED",
             "NO_PROGRESS",
+            "BUDGET_EXCEEDED",
+            "RETRY_LIMIT",
             "STALE_BASE_SHA",
             "RESOURCE_COLLISION",
+            "PROTECTED_SURFACE",
             "USER_DECISION_REQUIRED",
             "HIGH_RISK_CONFIRMATION_REQUIRED"
           ]
