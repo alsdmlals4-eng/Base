@@ -69,6 +69,55 @@ Figma 링크나 frame/node를 읽을 수 없으면 과거 대화·파일명·스
 
 Figma의 Pages/Sections는 단계·milestone·협업 구역을 나누는 데 사용하고, 반복되는 UI 요소가 충분히 안정화된 프로젝트는 Components/Styles를 사용해 일관성을 높일 수 있다. 팀 Library 발행은 요금제·권한과 실제 재사용 필요가 확인된 경우에만 선택적으로 사용하며 Base가 강제하지 않는다. 큰 변경 전에는 Figma version history 또는 사용 가능한 branch/checkpoint를 활용해 복구 가능성을 확보한다.
 
+### Project Visual Flow Workspace
+
+Visual Bible 안에서 화면 흐름을 관리할 때는 단순 이미지 저장이 아니라 `Project Visual Flow Workspace`로 운영한다. 대표 화면을 `screen_id`, 흐름을 `flow_id`로 묶고 화살표·Prototype 연결을 사용해 진입·전환·취소·복귀·실패 복구를 한눈에 확인한다.
+
+권장 Artifact 유형:
+
+- `FLOW_MAP`: 여러 화면의 이동 관계를 한 보드에서 보여주는 지도.
+- `SCREEN_CONCEPT`: AI 생성 또는 수동 제작한 화면 개념 시안.
+- `PROTOTYPE_FLOW`: 클릭·전환·복귀·상태 변화 검토용 Prototype.
+- `INTERPRETATION_RECORD`: GPT/사람이 화면을 어떻게 해석했는지 남기는 편집 가능한 기록.
+- `RUNTIME_CAPTURE`: 실제 Godot/Web 구현 캡처.
+- `COMPARE_BOARD`: 승인 시각 참조와 실제 구현의 차이 비교.
+
+대표 흐름:
+
+```text
+canonical planning
+→ Screen Brief
+→ AI planning visualization
+→ Screen Interpretation Review
+→ FLOW_MAP / Project Visual Flow Workspace
+→ PROTOTYPE_FLOW when useful
+→ user approval
+→ IMPLEMENTATION_PINNED
+→ Godot/Web implementation
+→ RUNTIME_CAPTURE
+→ COMPARE_BOARD
+→ drift classification
+→ VALIDATED or follow-up Decision
+```
+
+Prototype은 화면 흐름·정보 위계·피드백 가설을 검토하는 증거다. 실제 Godot 런타임, 저장·경제·보상 규칙, 성능, 물리 입력, 접근성 완료 증거가 아니다.
+
+### GPT interpretation record
+
+GPT가 Figma 쓰기 권한을 가진 경우 화면 옆 **편집 가능한 텍스트 패널·annotation 또는 동등한 Figma 객체**로 `INTERPRETATION_RECORD`를 남길 수 있다. 최소 기록은 `screen_id`, `flow_id`, `visual_artifact_id`, 관련 Decision ID, `source_commit`, 검토 시각, 화면 목적·첫 시선·주요 행동, 다음 Gate다.
+
+관찰 내용은 다음처럼 분리한다.
+
+- `CONFIRMED`: 현재 정본과 일치하는 표현.
+- `DISCOVERED_IDEA`: 시각화 과정에서 새로 발견한 제안으로, 검토 가치는 있지만 아직 승인되지 않음.
+- `AI_ASSUMPTION`: 정본 근거 없이 AI가 추가한 기능·재화·상태·구성.
+- `MISSING_CANON`: 판정에 필요한 정본이 불충분함.
+- `VISUAL_CANONICAL_CONFLICT`: 시각 자료가 현재 정본과 충돌함.
+
+`DISCOVERED_IDEA`와 `AI_ASSUMPTION`은 보기 좋거나 구현 가능하다는 이유만으로 기획 요구로 승격하지 않는다. 사용자 Decision 뒤에만 정본·구현 계약에 반영한다. Figma 쓰기가 불가능하면 같은 기록을 책임 GitHub 문서나 프로젝트 Sheet에 남기고 실제 상태를 `SYNC_PENDING`, `READ_ONLY`, `AUTH_REQUIRED`, `ACCESS_DENIED` 또는 `UNVERIFIED`로 기록한다.
+
+승인 시각 참조와 실제 구현 비교는 `MATCHED / INTENDED_DIFFERENCE / IMPLEMENTATION_GAP / PLANNING_CHANGE_REQUIRED / AI_MOCKUP_ERROR / VISUAL_CANONICAL_CONFLICT / BLOCKED_UNVERIFIED` 중 하나로 판정한다. 실제 `RUNTIME_CAPTURE`가 없으면 Prototype만으로 `MATCHED`를 주장하지 않는다.
+
 ## Access, safety and fallback
 
 Never publish a private board, change ownership, or place secrets, credentials, private data, or internal keys in a visual workspace. Record public/private access and ownership separately. A link that cannot be read is not evidence of its contents.
@@ -87,4 +136,4 @@ Use image generation only when it is available and authorized. Otherwise use the
 
 ## Adversarial review
 
-Reject a change if it makes a visual tool a second canon, forces both tools, duplicates full content across tools, pins a live file without a snapshot, treats a prototype as runtime proof, silently bypasses access failure, or mixes project URL/token/design decisions into Base.
+Reject a change if it makes a visual tool a second canon, forces both tools, duplicates full content across tools, pins a live file without a snapshot, treats a prototype as runtime proof, silently bypasses access failure, auto-promotes `DISCOVERED_IDEA` or `AI_ASSUMPTION`, or mixes project URL/token/design decisions into Base.
