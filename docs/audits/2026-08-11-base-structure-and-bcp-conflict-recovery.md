@@ -19,9 +19,9 @@ Both facts were restored to current BCP-024. A regression test now checks recipr
 
 ## Repository inventory
 
-| Surface | Current count or size | Audit interpretation |
+| Surface | Baseline / reviewed-head count or size | Audit interpretation |
 |---|---:|---|
-| Tracked files | 851 | Large enough to require owner/consumer routing rather than load-all review. |
+| Tracked files | 851 / 854 | The three added audit/design/plan records account for the reviewed-head increase; both inventories require owner/consumer routing rather than load-all review. |
 | ACTIVE Skill packages | 30 | Registry-backed, trigger-selected; no count target was imposed. |
 | Tracked files under `tests/` | 128 | Broad executable contract surface. |
 | Tracked files under `tools/` | 41 | Deterministic validation and artifact generation are separated from prose rules. |
@@ -33,7 +33,7 @@ Both facts were restored to current BCP-024. A regression test now checks recipr
 | Symlinks / tracked files over 500 KiB | 0 / 0 | No hidden link escape or unexpectedly large tracked artifact was found. |
 | Exact duplicate non-empty file groups | 1 | The two self-contained Godot pilot examples intentionally carry the same `.gitignore`; this is an allowed example boundary, not duplicate authority. |
 
-The phrase “review all of Base” was executed as a repository-wide owner/consumer audit: canonical entrypoints, Registry, Skill packages, documentation map, generated consumers, tools, tests, workflows, BCPs, and recent Git/PR history were mapped. It was not interpreted as injecting all 851 files into one model context.
+The phrase “review all of Base” was executed as a repository-wide owner/consumer audit: canonical entrypoints, Registry, Skill packages, documentation map, generated consumers, tools, tests, workflows, BCPs, and recent Git/PR history were mapped. It was not interpreted as injecting all 854 reviewed-head files into one model context.
 
 ## Canonical work structure
 
@@ -71,7 +71,7 @@ The Registry has 30 ACTIVE Skills. The important structural property is not the 
 - `evolving-project-discipline-skills` owns consolidation-first Skill evolution and behavior coverage.
 - `managing-base-change-proposals` owns BCP extract/submit/review/implement/verify.
 
-No new BCP-concurrency Skill was added. No persisted independent behavior-evaluation result demonstrates a routing failure, and the responsibility already belongs to `managing-base-change-proposals` plus final PR validation. Session-only exploratory controls informed brainstorming but were not captured as formal model-evaluation evidence, so this audit classifies them as `MODEL_RUN_STATUS: NOT_RUN` rather than a formal PASS. Adding guidance without a reproducible gap would increase context cost and violate Base's consolidation-first boundary.
+No new BCP-concurrency Skill was added. No persisted independent behavior-evaluation result demonstrates a routing failure, and the responsibility already belongs to `managing-base-change-proposals` plus final PR validation. Session-only exploratory controls informed brainstorming but were not registered as formal model-evaluation evidence, so this audit classifies their evidence artifact as `MODEL_RESULT_REGISTRATION: NOT_REGISTERED` rather than a formal PASS. Adding guidance without a reproducible gap would increase context cost and violate Base's consolidation-first boundary.
 
 ## External benchmark comparison
 
@@ -141,7 +141,7 @@ This repair does not approve or implement the substantive BCP-024 proposal. Its 
 |---|---|---|
 | Numeric ID alone can point to different proposal lineages during a race. | P1 | Tests and audit use source project + slug + PR/commit lineage, never numeric slot alone. |
 | Adding recovered GRIMOIRE text to current BCP-023 would contaminate Ten Paces evidence. | P1 | Current BCP-023 is asserted to contain Ten Paces and exclude GRIMOIRE. |
-| Broad Skill edits could be justified by the incident without persisted behavior evidence. | P1 | No registered failing behavior result and no independent owner boundary; no Skill change. Session-only exploration is `NOT_RUN`, not PASS. |
+| Broad Skill edits could be justified by the incident without persisted behavior evidence. | P1 | No registered failing behavior result and no independent owner boundary; no Skill change. Session-only exploration has `MODEL_RESULT_REGISTRATION: NOT_REGISTERED`, not PASS. |
 | A hardcoded full-document hash could make harmless edits painful. | P2 | The regression asserts semantic provenance markers and project separation; the audit records hashes as evidence only. |
 | Merge queue adoption could be over-prescribed from one burst of proposal traffic. | P2 | Deferred as repository governance; current rebuild/final-race contract worked. |
 | Historical rewritten PR refs may be unavailable after force-push/rebuild. | P2 | Evidence limits are recorded; unavailable blobs remain UNVERIFIED. |
@@ -180,12 +180,14 @@ The 35 baseline skips were environment/capability layers such as unavailable God
 - GREEN: focused lineage regression passed after restoration.
 - HARDENING RED: deleting the Decision ID only from the collision-recovery audit made the strengthened focused test fail.
 - HARDENING GREEN: restoring the exact audit marker made the strengthened focused test pass.
-- All BCP tests: 13 passed.
+- REVIEW HARDENING RED: reassigning PR #293/BCP-022 to PR #295/BCP-023 and removing `same exact-head` made the chronology test fail.
+- POLICY-BOUNDARY RED: inserting the GRIMOIRE Decision ID into active `START_HERE.md` made the active-policy non-promotion test fail.
+- REVIEW HARDENING GREEN: restoring both controlled mutations made the two focused tests and all 14 BCP tests pass.
 - BCP validator: 25 proposals validated against baseline `ee8227d...`.
 
 ### Final validation after repair
 
-- Local validation: 1,194 tests, `OK`, 35 skips.
+- Local validation: 1,195 tests, `OK`, 35 skips.
 - Local fallback CI gate: PASS.
 - Required CI gate topology: PASS.
 - Base v9 generated artifacts: current.
@@ -194,22 +196,24 @@ The 35 baseline skips were environment/capability layers such as unavailable God
 - `git diff --check`: PASS.
 - `git fsck --strict`: PASS.
 
-The added lineage regression accounts for the increase from 1,193 to 1,194 tests. The same 35 environment/capability skips remain explicit.
+The original lineage regression increased the baseline from 1,193 to 1,194 tests; independent-review remediation added the active-policy non-promotion regression, producing 1,195 tests. The same 35 environment/capability skips remain explicit.
 
 ## PR check status
 
-At the final fresh-read snapshot:
+At the post-publication fresh-read snapshot before independent-review remediation:
 
 - remote `main`: `ee8227d1aeae8e159ea2f9c4ba71bb0ff9e4349a`;
-- open Base PRs: 0;
+- open Base PRs: PR #300 only; no duplicate same-Goal PR;
 - local audited base vs fetched `origin/main`: behind 0, ahead 0 before any local commit;
 - PR #291, #294, #297, #298, and #299: merged;
 - PR #292, #293, #295, and #296: closed unmerged;
-- current work: local branch only, with no commit, push, or PR mutation performed.
-- current local branch has no remote PR, so mergeability, review-thread count, and remote required-check status are `NOT_APPLICABLE_YET`;
-- the connector returned no legacy status contexts or PR-triggered workflow runs for the already merged `main` SHA, so this audit does not fabricate a remote CI PASS from an empty response.
+- current work: Draft PR #300, exact remote head `8092866d072b996667e45493ae3c70a5281ebf17`, with remote/local tree SHA `6460a923a27060c613efbdfed440685a0eecba55`;
+- PR #300 was `mergeable=true` with 0 unresolved review threads;
+- PR-triggered workflow runs `31547416060` and `31547416067` completed successfully at that exact head; their applicable jobs included `base-v9-contract`, `adversarial-gate`, `docs-validation`, `publication-validation`, `ubuntu-contract`, and `ci-gate`;
+- the legacy combined-status response was empty, so it was not promoted to PASS; the successful workflow runs and jobs are the remote CI evidence;
+- branch-ruleset enforcement was not directly read and remains `UNVERIFIED_REPOSITORY_SETTING`, while repository merge methods and auto-merge capability were separately observable.
 
-A final fresh read is still mandatory before any authorized push or PR creation. Local green evidence cannot prove future remote identity or mergeability.
+Independent review found that the original token-level lineage guard was weaker than the provenance claim. The remediation strengthens chronology, same-exact-head recovery, full-body BCP-023 exclusion, and active-policy non-promotion across repository documentation and every ACTIVE Skill package. Only the exact historical audit/plan/spec records plus archive/evidence roots are excluded from that policy scan. Because remediation changes the PR head, another exact-head workflow, mergeability, thread, duplicate-PR, and `main` read is mandatory before Draft removal or merge.
 
 ## Final decisions
 

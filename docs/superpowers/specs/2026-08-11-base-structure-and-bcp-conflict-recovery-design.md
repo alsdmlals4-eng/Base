@@ -3,7 +3,7 @@
 ## Approval and scope
 
 - Approval source: the user's current request, including permission to adjust skills or work order after adversarial review.
-- Work class: repository-wide read-only audit plus one evidence-preserving BCP documentation repair.
+- Work class: repository-wide audit with a bounded five-file mutation surface: one evidence-preserving BCP documentation repair, one executable regression-test update, and three audit/design/plan records.
 - Protected boundaries: do not invent missing BCP content, do not mix unrelated proposal lineages, do not add a Skill without an independent responsibility boundary, and do not commit, push, or create a PR without explicit GitHub mutation authorization.
 
 ## Findings that shape the design

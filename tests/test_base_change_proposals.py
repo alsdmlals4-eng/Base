@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import subprocess
 import tempfile
 import unittest
@@ -35,19 +36,65 @@ class BaseChangeProposalTests(unittest.TestCase):
         self.assertEqual("alsdmlals4-eng/Ten-Paces-Hidden-Moves", retained_entry["source_project"])
         self.assertEqual("alsdmlals4-eng/GRIMOIRE-", sandbox_entry["source_project"])
         self.assertIn("출처 프로젝트: `alsdmlals4-eng/Ten-Paces-Hidden-Moves`", retained)
-        self.assertNotIn("source_project: alsdmlals4-eng/GRIMOIRE-", retained)
         self.assertIn("source_project: alsdmlals4-eng/GRIMOIRE-", sandbox)
         self.assertNotIn("alsdmlals4-eng/Ten-Paces-Hidden-Moves", sandbox)
+        for project_only_marker in (
+            "alsdmlals4-eng/GRIMOIRE-",
+            "GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01",
+            "HTTP 525",
+            "Star Runtime",
+        ):
+            self.assertNotIn(project_only_marker, retained)
+
         self.assertIn("### 충돌 복원 감사", sandbox)
         recovery_audit = sandbox.split("### 충돌 복원 감사", 1)[1].split("## 관찰과 증거", 1)[0]
-        self.assertIn("GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01", recovery_audit)
-        self.assertIn("HTTP 525", recovery_audit)
-        self.assertIn("Star Runtime", recovery_audit)
-        for pr_number in (293, 295, 296, 297):
-            self.assertIn(f"PR #{pr_number}", recovery_audit)
+        chronology = (
+            "- PR #293의 초기 BCP-022에는 `GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01`과 "
+            "일시적 external HTTP 525 뒤 동일 exact-head Star Runtime POC 재성공 기록이 모두 있었다.",
+            "- PR #295의 BCP-023과 PR #296의 BCP-024에는 Decision ID가 남았지만 "
+            "HTTP 525/Star Runtime 기록은 이미 빠져 있었다.",
+            "- PR #297의 최종 BCP-024에서는 Decision ID도 빠졌다.",
+        )
+        for chronology_statement in chronology:
+            self.assertIn(chronology_statement, recovery_audit)
+        self.assertLess(recovery_audit.index(chronology[0]), recovery_audit.index(chronology[1]))
+        self.assertLess(recovery_audit.index(chronology[1]), recovery_audit.index(chronology[2]))
         self.assertEqual("SUBMITTED", sandbox_entry["status"])
         self.assertIsNone(sandbox_entry["approval_ref"])
         self.assertIn("base_implementation_authority: NOT_GRANTED_IN_THIS_STAGE", sandbox)
+
+    def test_grimoire_recovery_evidence_is_not_active_base_policy(self) -> None:
+        skill_registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
+        active_policy_paths = {
+            ROOT / "AGENTS.md",
+            ROOT / "START_HERE.md",
+        }
+        allowed_historical_records = {
+            ROOT / "docs/audits/2026-08-11-base-structure-and-bcp-conflict-recovery.md",
+            ROOT / "docs/superpowers/plans/2026-08-11-base-structure-and-bcp-conflict-recovery.md",
+            ROOT / "docs/superpowers/specs/2026-08-11-base-structure-and-bcp-conflict-recovery-design.md",
+            ROOT / "docs/superpowers/plans/2026-08-11-one-shot-local-executor-bootstrap.md",
+            ROOT / "docs/superpowers/specs/2026-08-11-one-shot-local-executor-bootstrap-design.md",
+        }
+        non_policy_roots = (ROOT / "docs/archive", ROOT / "docs/evidence")
+        for path in (ROOT / "docs").rglob("*.md"):
+            if path in allowed_historical_records:
+                continue
+            if any(path.is_relative_to(non_policy_root) for non_policy_root in non_policy_roots):
+                continue
+            active_policy_paths.add(path)
+        for entry in skill_registry["skills"]:
+            if entry["status"] != "ACTIVE":
+                continue
+            skill_root = (ROOT / entry["path"]).parent
+            active_policy_paths.update(skill_root.rglob("*.md"))
+
+        for path in sorted(active_policy_paths):
+            policy_text = path.read_text(encoding="utf-8")
+            with self.subTest(path=path.relative_to(ROOT)):
+                self.assertNotIn("GM-GODOT-AUTHORING-GUT-TEST-AUTHORITY-01", policy_text)
+                self.assertNotIn("HTTP 525", policy_text)
+                self.assertNotIn("Star Runtime", policy_text)
 
     def test_merged_continuity_and_diagnostic_proposals_retain_approval_and_implementation_links(self) -> None:
         registry, errors = CHECKER.validate_repository(ROOT)
