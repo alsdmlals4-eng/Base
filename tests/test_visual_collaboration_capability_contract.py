@@ -39,6 +39,9 @@ class VisualCollaborationCapabilityContractTests(unittest.TestCase):
         ):
             self.assertIn(token, policy)
 
+        self.assertIn("생성·편집 직후 실제 Figma `02_WIP`", policy)
+        self.assertIn("SYNC_PENDING", policy)
+
         for token in (
             "VISUAL_CANONICAL_CONFLICT",
             "visual_status",
