@@ -4,6 +4,8 @@ import json
 import unittest
 from pathlib import Path
 
+from jsonschema import Draft202012Validator
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -169,8 +171,14 @@ class LoopEngineeringControlPlaneContractTests(unittest.TestCase):
             self.assertIn(token, profile)
 
     def test_example_run_is_a2_locked_bounded_and_explicitly_unverified(self) -> None:
+        schema = json.loads(read("schemas/loop-run-contract-v1.schema.json"))
         data = json.loads(read("templates/project-operations/LOOP_RUN_CONTRACT.example.json"))
+        errors = sorted(
+            Draft202012Validator(schema).iter_errors(data),
+            key=lambda error: list(error.path),
+        )
 
+        self.assertEqual(errors, [], [error.message for error in errors])
         self.assertEqual(1, data["schema_version"])
         self.assertEqual("loop-engineering-run", data["contract_role"])
         self.assertEqual("PLANNING_LOCKED", data["planning_gate"]["status"])
