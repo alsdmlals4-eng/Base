@@ -71,8 +71,19 @@ The production commits created by `github-actions[bot]` with `GITHUB_TOKEN` did 
 - Implementation PR: `https://github.com/alsdmlals4-eng/Base/pull/319`
 - Closeout production commit: `eaa992313265da292a9ce3775cb17b0235e58fc5`
 - Closeout mutation run: `31698751719` — lifecycle and focused regressions, proposal checker, reference-freshness and whitespace all passed; temporary workflow and script were removed before push.
-- Final exact-head workflows after closeout: triggered by the user-authored commit containing this record; authoritative run IDs and independent review are recorded on PR #319 without changing the reviewed tree.
 - Rollback: revert the eventual PR #319 squash merge commit; no product code/data or PR #312/#316 path is affected.
+
+## Adversarial document-consistency correction
+
+A full final diff review found two stale historical claims that would have undermined the Gate itself:
+
+1. the proposal closeout still contained `구현 PR: 아직 없음` below its implemented status;
+2. the design and plan still cited abandoned PR #317 RED identifiers instead of canonical PR #319 evidence.
+
+- Correction production commit: `7b97572ccd05daffb08a893e44f3eccf6b9887f5`
+- Temporary correction run: `31699079157` — lifecycle and focused regressions, proposal checker, reference-freshness and whitespace all passed; temporary workflow and script were removed before push.
+- Regression: the BCP lifecycle test now rejects the stale implementation-PR phrase and the superseded PR #317 RED identifiers, while requiring canonical RED head `bf0890439cbef96777171cc00a0229c65e852af8` in both plan and design.
+- Final exact-head workflows are triggered by the user-authored commit containing this record; run IDs and the independent review are recorded on PR #319 without another tree change.
 
 ## Integration
 
