@@ -17,6 +17,7 @@ concurrency:
 jobs:
   update-review-queue:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Check out default branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -54,6 +55,7 @@ jobs:
           issue_number="$(
             gh issue list \
               --state open \
+              --search 'in:title "[Periodic Source Scan Queue]"' \
               --limit 100 \
               --json number,title \
               --jq '.[] | select(.title == "[Periodic Source Scan Queue]") | .number' \
