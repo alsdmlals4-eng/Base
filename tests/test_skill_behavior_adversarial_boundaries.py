@@ -287,5 +287,19 @@ class SkillBehaviorAdversarialBoundaryTests(unittest.TestCase):
         self.assertIn("developing-and-revising-serial-fiction", game["forbidden_skills"])
 
 
+class ClaimIntentAdversarialBoundaryTests(unittest.TestCase):
+    def test_sbe_038_rejects_search_producer_and_stale_sha_shortcuts(self) -> None:
+        evals = json.loads((ROOT / "skills/SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8"))
+        case = next(case for case in evals["cases"] if case["case_id"] == "SBE-038")
+        prompt = case["prompt"]
+        required = chr(10).join(case["required_evidence"])
+        for token in ("검색 결과", "작업자 설명", "merge SHA", "main readback"):
+            self.assertIn(token, prompt + chr(10) + required)
+        for token in ("exact-ref", "exact HEAD", "CLAIM_UNVERIFIED", "IMPLEMENTATION_UNVERIFIED"):
+            self.assertIn(token, required)
+        self.assertEqual("NOT_REQUIRED", case["expected_user_decision_state"])
+        self.assertTrue(case["forbidden_skills"])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -340,5 +340,38 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         self.assertNotIn('"skill_id":"repository-wide-adversarial-audit"', registry)
 
 
+class ClaimIntentConsolidatedReferenceTests(unittest.TestCase):
+    def test_claim_intent_gate_is_integrated_without_a_duplicate_skill(self) -> None:
+        import json
+
+        registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
+        active = [entry for entry in registry["skills"] if entry["status"] == "ACTIVE"]
+        self.assertEqual(30, len(active))
+        owners = [entry for entry in active if entry["skill_id"] == "reviewing-and-validating-project-changes"]
+        self.assertEqual(1, len(owners))
+        owner = owners[0]
+        for trigger in ("completion-claim", "claim-evidence", "intent-conformance", "hallucination-audit"):
+            self.assertIn(trigger, owner["trigger_tags"])
+
+        skill = (ROOT / owner["path"]).read_text(encoding="utf-8")
+        reference_path = ROOT / "skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md"
+        template = (ROOT / "templates/quality/PROJECT_CHANGE_VALIDATION.md").read_text(encoding="utf-8")
+        operating = (ROOT / "docs/OPERATING_MODEL.md").read_text(encoding="utf-8")
+        routing = (ROOT / "docs/WORK_MODE_AND_SKILL_ROUTING.md").read_text(encoding="utf-8")
+        self.assertTrue(reference_path.is_file())
+        for token in (
+            "`claim-and-intent-verification`",
+            "MATERIAL_CLAIM_LEDGER",
+            "INTENT_IMPLEMENTATION_FIDELITY_MATRIX",
+            "COMPLETION_CLAIM_GATE",
+        ):
+            self.assertIn(token, skill)
+        for token in ("Material Claim Ledger", "Intent–Implementation Fidelity Matrix", "Completion Claim Gate"):
+            self.assertIn(token, template)
+        for text in (operating, routing):
+            self.assertIn("CLAIM_AND_INTENT_VERIFICATION_GATE", text)
+            self.assertIn("BLOCKED_UNVERIFIED", text)
+
+
 if __name__ == "__main__":
     unittest.main()
