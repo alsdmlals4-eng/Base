@@ -1,0 +1,79 @@
+name: Periodic Source Scan Queue
+
+on:
+  schedule:
+    - cron: "17 10 * * 1"
+      timezone: "Asia/Seoul"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: periodic-source-scan-queue
+  cancel-in-progress: false
+
+jobs:
+  update-review-queue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out default branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+
+      - name: Verify queue renderer contract
+        run: |
+          python -m py_compile \
+            tools/periodic_source_scan_queue.py \
+            tests/test_periodic_source_scan_queue.py
+          python -m unittest tests/test_periodic_source_scan_queue.py -v
+
+      - name: Render review queue
+        shell: bash
+        run: |
+          queue_date="$(python -c 'from datetime import datetime; from zoneinfo import ZoneInfo; print(datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat())')"
+          python tools/periodic_source_scan_queue.py \
+            --ledger docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json \
+            --date "$queue_date" \
+            --output periodic-source-scan-queue.md
+
+      - name: Create or update the single open queue issue
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          ISSUE_TITLE: "[Periodic Source Scan Queue]"
+        run: |
+          issue_number="$(
+            gh issue list \
+              --state open \
+              --limit 100 \
+              --json number,title \
+              --jq '.[] | select(.title == "[Periodic Source Scan Queue]") | .number' \
+              | head -n 1
+          )"
+
+          if [[ -n "$issue_number" ]]; then
+            gh issue edit "$issue_number" \
+              --title "$ISSUE_TITLE" \
+              --body-file periodic-source-scan-queue.md
+          else
+            gh issue create \
+              --title "$ISSUE_TITLE" \
+              --body-file periodic-source-scan-queue.md
+          fi
+
+      - name: Upload rendered queue evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: periodic-source-scan-queue
+          path: periodic-source-scan-queue.md
+          if-no-files-found: error
