@@ -4,7 +4,7 @@
 
 **Goal:** Make BCP-2026-027 completion claims executable and fail-closed without adding another ACTIVE Skill.
 
-**Architecture:** A task record describes approved claims, scope, Acceptance mappings, and reviewed commands. A canonical Python tool resolves exact Git state, runs approved commands, applies Evidence ceiling, and emits a machine-readable result. Existing post-merge verification remains separate.
+**Architecture:** A task record describes approved claims, scope, Acceptance mappings, and reviewed commands. A canonical Python tool resolves exact Git state, runs approved commands, applies Evidence ceiling, verifies that the commands did not alter the reviewed repository state, and emits a machine-readable result. Existing post-merge verification remains separate.
 
 **Tech stack:** Python 3.12+, standard library, `jsonschema==4.26.0`, Git, unittest, GitHub Actions.
 
@@ -21,7 +21,7 @@
 **Files:**
 
 - Test: `tests/test_claim_evidence_binding.py`
-- Test consumer: `tests/test_skill_implementation_evidence.py`
+- Required-CI consumer: `tests/test_skill_implementation_evidence.py`
 
 - [x] Add positive and adversarial behavior cases.
 - [x] Run the initial PR checks.
@@ -41,31 +41,34 @@ Observed initial failure: the new packaged script was not linked from its owning
 
 - [x] Validate input and generated result Schemas.
 - [x] Resolve exact base SHA, HEAD, ancestry, clean worktree, and actual diff.
-- [x] Enforce allowed/protected paths and Acceptance implementation paths.
+- [x] Enforce slash-aware allowed/protected paths and Acceptance implementation paths.
 - [x] Execute only reviewed argv with `shell=False`, timeout, allowlist, exit-code, and marker checks.
+- [x] Recheck base SHA, HEAD, changed-file set, and clean worktree after command execution.
 - [x] Apply default TEST ceiling and explicit per-check RUNTIME/RENDER approval.
 - [x] Keep integration `BLOCKED_UNVERIFIED` pre-merge.
 
-### Task 3 — Connect the existing owner and generated evidence
+### Task 3 — Connect the existing owner without registry churn
 
 **Files:**
 
 - Modify: `skills/reviewing-and-validating-project-changes/SKILL.md`
-- Modify: `skills/SKILL_IMPLEMENTATION_EVIDENCE.json`
-- Regenerate: `docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md`
+- Modify: `skills/reviewing-and-validating-project-changes/LEARNING_LOG.md`
+- Modify: `.github/reference-freshness.json`
 
 - [x] Link the canonical tool, schemas, template, and compatibility entrypoint.
-- [x] Register TOOL and TEST evidence under the existing Skill owner.
-- [x] Regenerate the human-readable evidence matrix.
-- [x] Preserve ACTIVE Skill count.
+- [x] Register the new tests as valid Skill-change companions.
+- [x] Evaluate implementation-evidence index changes and revert them as unnecessary broad churn.
+- [x] Preserve ACTIVE Skill count and the existing generated evidence view.
 
 ### Task 4 — Validate and adversarially review
 
-- [x] Run Base v9 operating contracts on exact head.
-- [x] Run Skill Behavior Evidence on exact head.
-- [ ] Run Game Project Operating System to completion on the final exact head.
+- [x] Run Base v9 operating contracts on intermediate exact heads.
+- [x] Run Skill Behavior Evidence and observe canonical RED for slash-crossing `*`.
+- [x] Fix slash-aware glob semantics.
+- [x] Add and fix post-command repository mutation detection.
+- [ ] Run all required workflows to completion on the final exact head.
 - [ ] Confirm current main and open-PR path overlap again.
-- [ ] Inspect final PR diff for P0/P1 findings.
+- [ ] Inspect final PR diff for unresolved P0/P1 findings.
 - [ ] Resolve all blocking findings and rerun required checks.
 
 Attack cases:
@@ -74,7 +77,9 @@ Attack cases:
 - test definition without execution;
 - stale/no-op base or dirty worktree;
 - hidden path drift and protected changes;
+- single-star scope widening across directories;
 - zero exit without success marker;
+- command-generated repository mutation after a success marker;
 - arbitrary executable;
 - Evidence-level inflation;
 - pre-merge integration overclaim;
@@ -82,6 +87,7 @@ Attack cases:
 
 ### Task 5 — Integrate and read back
 
+- [ ] Add exact-head pre-merge evidence document.
 - [ ] Update PR #330 description with exact final evidence and truthful boundaries.
 - [ ] Mark PR ready only after exact-head checks are green.
 - [ ] Squash merge with expected head SHA.
@@ -93,6 +99,8 @@ Attack cases:
 ## Completion criteria
 
 - Material implementation/verification claims are checked against actual diff and fresh execution.
+- Scope globs do not silently widen a single-directory allowance into nested directories.
+- A check cannot retain PASS after changing the reviewed repository state.
 - `NOT_RUN`, `CLAIM_UNVERIFIED`, and `BLOCKED_UNVERIFIED` remain fail-closed.
 - The existing Skill owner and topology are preserved.
 - All final exact-head required checks pass.
