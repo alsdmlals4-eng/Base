@@ -12,6 +12,19 @@
 → 필요 시 running-adversarial-review-and-refinement
 ```
 
+세계관·캐릭터·장르·현실 고증·표현·현지화·추리 단서·중국 무협·서브컬처 밈의 외부 Source가 필요하면 다음 경로를 추가한다.
+
+```text
+현재 작품의 구체적 질문·실패 증상
+→ docs/knowledge/game-development/NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md
+→ 공식·원자료 / 학술·현업 / 발견 자료 / 실제 독자 evidence 분리
+→ developing-and-revising-serial-fiction 및 관련 기존 owner
+→ 프로젝트 정본·원고·관계/연속성 artifact
+→ 독자·플레이어 검증·폐기 조건
+```
+
+이 Source Radar는 작품 설정을 자동 생성하거나 확정하는 owner가 아니다. 유용한 후보 수에는 상한을 두지 않지만, 현재 작품 consumer·원출처·매체/시대/지역 경계·반례·권리/표현 위험·검증·폐기 조건 없는 후보는 채택하지 않는다.
+
 ## Guides
 
 - `SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md`
@@ -32,5 +45,6 @@
 - 특정 플랫폼의 영구 고정 글자 수
 - 개별 댓글·리뷰의 해결책
 - 프로젝트의 실제 독자 반응·판매 성과
+- 외부 Archive·Wiki·밈 DB·작법 강의·성격 유형표의 해석
 
 플랫폼 정책·과금·분량 조건은 실제 적용 시 현재 공식 원본을 다시 확인한다. 오래된 표본만 있으면 `PLATFORM_REVERIFY_REQUIRED`다.

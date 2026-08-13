@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 WATCHLIST = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md"
 RADAR = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_SPECIALTY_SOURCE_RADAR.md"
+NARRATIVE_RADAR = ROOT / "docs" / "knowledge" / "game-development" / "NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md"
 LEDGER = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_SOURCE_OPERATIONS_LEDGER.json"
 RECENT_REVIEW = ROOT / "docs" / "knowledge" / "game-development" / "RECENT_EXTERNAL_EVIDENCE_REVIEW_2026-08-10.md"
 HUB = ROOT / "docs" / "knowledge" / "game-development" / "README.md"
@@ -394,6 +395,49 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
 
         self.assertIn("이 문서는 두 번째 Watchlist가 아니다", content)
         self.assertIn("새 사이트 수, Skill 수, 문서량, Issue 수, PR 수 자체는 개선 지표가 아니다", content)
+
+    def test_narrative_world_character_radar_preserves_authority_and_unlimited_candidate_policy(self) -> None:
+        self.assertTrue(NARRATIVE_RADAR.is_file())
+        content = NARRATIVE_RADAR.read_text(encoding="utf-8")
+        hub = HUB.read_text(encoding="utf-8")
+
+        self.assertIn("NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md", hub)
+        for required in (
+            "parent_radar: docs/knowledge/game-development/PERIODIC_SPECIALTY_SOURCE_RADAR.md",
+            "owner_policy: docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md",
+            "evidence_owner: docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md",
+            "scheduler_authority: EXTERNAL_TO_BASE",
+            "new_active_skill: false",
+            "independent_ledger: false",
+            "candidate_count_limit: NONE",
+            "capture_all_material_candidates: true",
+            "minimum_candidate_quota: NONE",
+            "forced_filler_candidates: false",
+            "WORLD_LORE_AND_SETTING_RESEARCH",
+            "CHARACTER_CAST_AND_RELATIONSHIP_DESIGN",
+            "STORY_ARCHITECTURE_GENRE_AND_SERIALIZATION",
+            "REAL_WORLD_DOMAIN_RESEARCH_AND_FACT_CHECKING",
+            "CULTURE_REPRESENTATION_AND_SENSITIVITY",
+            "LANGUAGE_NAMING_LOCALIZATION_AND_CULTURALIZATION",
+            "MYSTERY_CLUE_AND_FAIRNESS_RESEARCH",
+            "MARTIAL_ARTS_WUXIA_AND_JIANGHU_RESEARCH",
+            "SUBCULTURE_MEME_AND_FANDOM_RESEARCH",
+            "clue logic != clue discoverability",
+            "fair != easy",
+            "author self-test != unknown-player evidence",
+            "modern competition rules != historical combat",
+            "wuxia film choreography != safe real technique",
+            "community wiki != canon",
+            "trend interest != positive sentiment or sales",
+            "viral != durable",
+            "PROJECT_ONLY",
+            "BLOCKED_UNVERIFIED",
+        ):
+            self.assertIn(required, content)
+
+        self.assertIn("두 번째 Watchlist가 아니다", content)
+        self.assertIn("후보가 없으면 억지로", content)
+        self.assertIn("프로젝트 정본", content)
 
 
 if __name__ == "__main__":

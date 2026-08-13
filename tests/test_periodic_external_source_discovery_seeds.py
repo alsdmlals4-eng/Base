@@ -8,6 +8,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SEEDS = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_DISCOVERY_SEEDS.md"
 WATCHLIST = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md"
 RADAR = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_SPECIALTY_SOURCE_RADAR.md"
+NARRATIVE_RADAR = ROOT / "docs" / "knowledge" / "game-development" / "NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md"
+SERIAL_HUB = ROOT / "docs" / "knowledge" / "serial-fiction" / "README.md"
 ART_GUIDE = ROOT / "docs" / "knowledge" / "game-development" / "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md"
 SIZE_GUIDE = ROOT / "docs" / "knowledge" / "game-development" / "GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md"
 BENCHMARK = ROOT / "skills" / "analyzing-and-refining-game-concepts" / "references" / "benchmark-player-evidence-and-playtests.md"
@@ -239,6 +241,51 @@ class PeriodicExternalSourceDiscoverySeedTests(unittest.TestCase):
             "Store listing != vetted dependency",
         ):
             self.assertIn(required, radar)
+
+    def test_narrative_world_character_sources_route_to_existing_owners(self) -> None:
+        self.assertTrue(NARRATIVE_RADAR.is_file())
+        radar = NARRATIVE_RADAR.read_text(encoding="utf-8")
+        serial_hub = SERIAL_HUB.read_text(encoding="utf-8")
+
+        self.assertIn("NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md", serial_hub)
+        for required in (
+            "developing-and-revising-serial-fiction",
+            "NARRATIVE_AND_RELATIONSHIP_METHOD.md",
+            "CHARACTER_AND_NARRATIVE_ART_METHOD.md",
+            "analyzing-and-refining-game-concepts",
+            "CONTENT_DESIGN_METHOD.md",
+            "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md",
+            "managing-design-documents",
+            "reviewing-and-validating-project-changes",
+            "running-adversarial-review-and-refinement",
+            "Library of Congress",
+            "Smithsonian Open Access",
+            "UNESCO Intangible Cultural Heritage",
+            "Writers Guild Foundation Library",
+            "NIMH",
+            "O*NET",
+            "Unicode CLDR",
+            "W3C Internationalization",
+            "Game Developer — The Case of the Golden Idol",
+            "Game Developer — Return of the Obra Dinn",
+            "Martial Arts Studies",
+            "International Wushu Federation",
+            "Chinese Text Project",
+            "China Biographical Database",
+            "China Historical GIS",
+            "Hong Kong Film Archive",
+            "Fanlore",
+            "Transformative Works and Cultures",
+            "Know Your Meme",
+            "Google Trends",
+            "new_active_skill: false",
+            "independent_ledger: false",
+            "candidate_count_limit: NONE",
+        ):
+            self.assertIn(required, radar)
+
+        self.assertNotIn("새 ACTIVE Skill을 만든다", radar)
+        self.assertNotIn("프로젝트 Canon으로 자동 승격", radar)
 
 
 if __name__ == "__main__":
