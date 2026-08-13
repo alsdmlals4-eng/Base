@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BUILDER_PATH = ROOT / "tools/build_skill_implementation_evidence.py"
 GENERATED_PATH = ROOT / "docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md"
 REVIEW_OWNER = ROOT / "skills/reviewing-and-validating-project-changes"
-REVIEW_SCRIPT = REVIEW_OWNER / "scripts/verify_evidence.py"
+REVIEW_SCRIPT = ROOT / "tools/check_review_evidence.py"
 REVIEW_RECORD_SCHEMA = REVIEW_OWNER / "contracts/review-record.schema.json"
 REVIEW_RESULT_SCHEMA = REVIEW_OWNER / "contracts/review-result.schema.json"
 REVIEW_TEMPLATE = ROOT / "templates/quality/REVIEW_EVIDENCE_RECORD.json"
@@ -29,7 +29,7 @@ def load_builder():
 
 
 def load_review_checker():
-    spec = importlib.util.spec_from_file_location("verify_review_evidence", REVIEW_SCRIPT)
+    spec = importlib.util.spec_from_file_location("check_review_evidence", REVIEW_SCRIPT)
     module = importlib.util.module_from_spec(spec)
     assert spec.loader is not None
     spec.loader.exec_module(module)
