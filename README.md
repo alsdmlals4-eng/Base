@@ -37,9 +37,17 @@ START_HERE.md
 - [공용 스킬 Registry](skills/SKILL_REGISTRY.json)
 - [공용 어댑터 Skill Route](skills/BASE_SHARED_SKILL_ROUTES.json)
 - [프로젝트 어댑터 계약](docs/BASE_SHARED_SKILL_ADAPTER_CONTRACT.md)
+- [PROJECT_BASE_ADAPTER v2 명시적 마이그레이션](docs/operations/PROJECT_BASE_ADAPTER_V2_MIGRATION.md)
+- [로컬 Tool 공용 계약](tools/base-tool-contracts/README.md)
+- [Base Tool Hub](tools/tool-hub/README.md)
+- [PC 우선 QA Evidence Studio](tools/qa-evidence-studio/README.md)
+- [무추가비용 Expression Studio](tools/expression-studio/README.md)
+- [무추가비용 Sprite Animation Studio](tools/sprite-animation-studio/README.md)
 - [이전 Skill ID 별칭](skills/LEGACY_SKILL_ALIASES.md)
 - [공용 스킬 학습 기록](skills/SKILL_LEARNING_LOG.md)
 - [Base 수정제안서]([수정제안서]/README.md)
+
+Tool Hub의 현재 실제 실행 세로 단면은 이미지·UX 배치 후 개발자 본인이 PC 증거 검토를 수행하는 `QA Evidence Studio`다. Android 검증은 PC 구현 종료 후 출시 준비 직전 Gate까지 `DEFERRED_NOT_CONNECTED`로 유지한다. Expression/Sprite Studio는 registry에 등록되지만 Hub 실행 연결 전까지 기존 독립 실행법을 유지한다.
 
 ## 사용자가 기억할 최소 요청
 

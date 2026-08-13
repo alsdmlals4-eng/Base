@@ -2,7 +2,15 @@
 
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
+
+
+SpriteAnimationMode = Literal[
+    "expression_variation",
+    "pose_sequence",
+    "effect_stages",
+    "sprite_action",
+]
 
 
 class Anchor(BaseModel):
@@ -29,16 +37,20 @@ class SpriteAnimationRequest(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    project_id: str = Field(pattern=r"^[A-Za-z0-9_-]+$")
+    project_id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     asset_id: str = Field(pattern=r"^[A-Za-z0-9_-]+$")
     asset_kind: Literal["character", "effect"]
+    mode: SpriteAnimationMode = "sprite_action"
     anchor: Anchor
     action: Action
-    output_root: str = Field(min_length=1)
 
-    @field_validator("output_root")
-    @classmethod
-    def output_root_must_be_relative(cls, value: str) -> str:
-        if value.startswith("/") or ".." in value.replace("\\", "/").split("/"):
-            raise ValueError("output_root must be relative to project_root")
-        return value
+    @model_validator(mode="after")
+    def mode_must_match_asset_kind(self) -> "SpriteAnimationRequest":
+        required_asset_kind = {
+            "expression_variation": "character",
+            "pose_sequence": "character",
+            "effect_stages": "effect",
+        }.get(self.mode)
+        if required_asset_kind and self.asset_kind != required_asset_kind:
+            raise ValueError(f"mode {self.mode} requires asset_kind {required_asset_kind}")
+        return self

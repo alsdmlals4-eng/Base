@@ -539,6 +539,36 @@
       ],
       "expected_user_decision_state": "NOT_REQUIRED",
       "rationale": "보호된 원작 결과를 유지하면서 연재소설 고유의 POV·장면·회차 payoff·복선 부채를 퇴고하는 specialist 작업이다."
+    },
+    {
+      "case_id": "SBE-038",
+      "case_type": "cross-skill",
+      "prompt": "외부 AI가 작업을 완료하고 병합했다고 보고했지만 검색 결과와 작업자 설명만 있고 저장소 exact-ref readback, 실제 diff, 현재 HEAD 실행 결과, merge SHA와 새 main readback이 없습니다. 승인한 의도와 구현이 일치하는지도 검증해줘.",
+      "expected_work_mode": "REVIEW",
+      "expected_primary_skill": "reviewing-and-validating-project-changes",
+      "expected_supporting_skills": [
+        "running-adversarial-review-and-refinement"
+      ],
+      "expected_skill_modes": [
+        "claim-and-intent-verification",
+        "external-source-review",
+        "contract-check",
+        "evidence-report"
+      ],
+      "forbidden_skills": [
+        "creating-user-learning-notes",
+        "building-project-visual-dashboards"
+      ],
+      "required_evidence": [
+        "검색 결과와 생산자 설명을 저장소 사실의 단독 증거로 사용하지 않는다.",
+        "대상 branch 또는 commit의 exact-ref file readback을 요구한다.",
+        "승인 Acceptance와 실제 diff·implementation path를 항목별로 연결한다.",
+        "현재 exact HEAD에서 실행된 명령·환경·결과·실패·skip 수를 요구한다.",
+        "필요한 증거가 없으면 CLAIM_UNVERIFIED 또는 IMPLEMENTATION_UNVERIFIED로 미검증 상태를 유지한다.",
+        "병합 완료는 merged PR, merge SHA, post-merge main readback과 post-merge 검사를 요구한다."
+      ],
+      "expected_user_decision_state": "NOT_REQUIRED",
+      "rationale": "완료·의도·병합 주장의 독립 검증이 주 책임이며 생산자 설명이나 검색 snippet을 Evidence로 승격하지 않는다."
     }
   ]
 }

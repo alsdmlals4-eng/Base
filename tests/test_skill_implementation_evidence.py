@@ -210,5 +210,20 @@ class SkillImplementationEvidenceTests(unittest.TestCase):
         self.assertIn("tests/test_serial_fiction_discipline.py", row)
 
 
+class ClaimIntentImplementationEvidenceIntegrationTests(unittest.TestCase):
+    def test_claim_intent_contract_is_linked_without_claiming_a_model_run(self) -> None:
+        index = json.loads((ROOT / "skills/SKILL_IMPLEMENTATION_EVIDENCE.json").read_text(encoding="utf-8"))
+        owner = next(entry for entry in index["entries"] if entry["skill_id"] == "reviewing-and-validating-project-changes")
+        self.assertIn(
+            {"kind": "TEST", "path": "tests/test_claim_and_intent_verification_contract.py"},
+            owner["evidence"],
+        )
+        markdown = load_builder().build_evidence_markdown(ROOT)
+        self.assertIn("External model behavior run: `NOT_RUN`", markdown)
+        owner_line = next(line for line in markdown.splitlines() if line.startswith("| `reviewing-and-validating-project-changes`"))
+        self.assertIn("EXECUTABLE_EVIDENCE", owner_line)
+        self.assertIn("tests/test_claim_and_intent_verification_contract.py", owner_line)
+
+
 if __name__ == "__main__":
     unittest.main()

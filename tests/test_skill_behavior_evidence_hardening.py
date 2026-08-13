@@ -403,5 +403,23 @@ class SkillBehaviorCoverageTests(unittest.TestCase):
         self.assertEqual([], self.checker.validate_contract(ROOT))
 
 
+class ClaimIntentBehaviorEvidenceHardeningTests(unittest.TestCase):
+    def test_sbe_038_is_unique_fail_closed_and_not_model_run(self) -> None:
+        documents = [
+            json.loads((ROOT / "skills/SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8")),
+            json.loads((ROOT / "skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json").read_text(encoding="utf-8")),
+        ]
+        cases = [case for document in documents for case in document["cases"] if case["case_id"] == "SBE-038"]
+        self.assertEqual(1, len(cases))
+        case = cases[0]
+        self.assertEqual("REVIEW", case["expected_work_mode"])
+        self.assertEqual("reviewing-and-validating-project-changes", case["expected_primary_skill"])
+        self.assertIn("claim-and-intent-verification", case["expected_skill_modes"])
+        required = chr(10).join(case["required_evidence"])
+        for token in ("exact-ref", "실제 diff", "미검증", "main readback"):
+            self.assertIn(token, required)
+        self.assertEqual("NOT_RUN", documents[0]["model_run_status"])
+
+
 if __name__ == "__main__":
     unittest.main()

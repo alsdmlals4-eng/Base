@@ -5,10 +5,11 @@
 - 출처 프로젝트: `alsdmlals4-eng/Base`
 - 관찰 기준 Base 커밋: `453f790821a108a1d4f6e1f4e45f6931c2396ee0`
 - 제출일: `2026-08-13`
-- Registry 상태: `SUBMITTED`
+- Registry 상태: `IMPLEMENTED`
 - 지식 상태: `반복 관찰 + 외부 1차 출처 비교 + 승인된 공용 운영 보완`
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/319`
 - 사용자 구현 승인 증거: 2026-08-13 현재 ChatGPT 세션 지시 — “할루시네이션 현상방지, 우리가 의도한대로 제대로 구현이 되었는지 확인하는 스킬을 Base에 추가하고 작업구조에도 반영” 및 병합까지 수행 요청
-- 상태 설명: 신규 제안은 검사 규칙에 따라 `SUBMITTED`로 시작한다. `approval_ref`는 위 명시적 사용자 승인 증거의 위치를 가리키며, 구현 완료 상태와 `implementation_pr`은 별도 구현 PR의 검증·병합 단계에서 전환한다.
+- 상태 설명: 제안은 `SUBMITTED`에서 시작해 사용자 승인과 별도 구현 PR의 exact-head GREEN을 거쳐 `IMPLEMENTED`로 전환했다. 병합 완료는 PR merged 상태, merge SHA, 새 `main` readback과 post-merge 검사가 확인된 뒤에만 별도로 주장한다.
 
 ## 관찰과 증거
 
@@ -267,7 +268,22 @@ GREEN:
 ## 승인과 구현
 
 - 사용자 구현 승인 증거: 2026-08-13 현재 ChatGPT 세션의 직접 요청과 병합 지시
-- 신규 제안 Registry 상태: `SUBMITTED`
+- 최종 Registry 상태: `IMPLEMENTED`
 - 승인된 구현 범위: 이 문서의 영향 경로·보호 대상·검증 계약
 - 구현 방식: 제안 PR 병합 뒤 fresh `main`에서 별도 구현 PR
-- 구현 PR: 아직 없음
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/319`
+
+### 구현 closeout — PR #319
+
+- 구현 owner: `reviewing-and-validating-project-changes`
+- 구현 방식: 새 ACTIVE Skill이 아닌 `claim-and-intent-verification` Skill Mode·reference·기존 Registry owner 확장
+- 첫 완전 GREEN exact head: `eef62df811ae64ff92fa6692a3e91edb8a5e343b`
+- Base v9 workflow: `31698327204` — success; 328 tests passed, 1 Godot exact-engine test skipped as not configured; adversarial gate success
+- Game Project Operating System workflow: `31698327106` — success; proposal validation, reference-freshness, 410 tests passed with 15 environment-bound skips, publication validation and `ci-gate` success
+- 관련 workflow: evidence knowledge `31698327100`, visual/sheet `31698327110`, Skill behavior evidence `31698327112`, integrated vertical slice `31698327128`, game UX/UI `31698327132` — all success
+- 행동 평가: `SBE-038` 계약·라우팅 회귀 PASS; 외부 model behavior run은 실행하지 않았으므로 `NOT_RUN`
+- 동시 변경 preflight: current `main@e2c1d0c4b6fd0a7ce7874d200176d267a7d614d5`, PR #312와 changed-path intersection 0, implementation branch `behind_by=0`
+- 보호 결과: ACTIVE Skill 30개와 `PLAN / BUILD / REVIEW` 유지; PR #312·#316 소유 경로 비변경
+- 증거 원본: `docs/evidence/2026-08-13-claim-and-intent-verification-gate.md`
+- 롤백: PR #319의 단일 squash merge commit을 revert한다. Registry metadata, generated views, Skill Mode/reference, Template·운영 문서, behavior fixture, learning/evidence records와 tests를 함께 되돌린다.
+- 통합 경계: 이 closeout은 구현·exact-head 검증 완료를 기록한다. 실제 병합 완료는 merge SHA와 post-merge `main` readback 없이는 주장하지 않는다.

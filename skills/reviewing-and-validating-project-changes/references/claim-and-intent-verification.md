@@ -1,0 +1,185 @@
+# Claim and Intent Verification
+
+`claim-and-intent-verification`은 새 ACTIVE Skill이 아니라
+`reviewing-and-validating-project-changes`의 fail-closed Skill Mode다.
+AI·Agent·작업자의 설명을 신뢰 점수로 승인하지 않고 material claim과 승인 Intent를
+exact repository·execution Evidence에 연결한다.
+
+## 적용 조건
+
+- 구현·테스트·검증·병합이 완료됐다는 주장
+- 외부 AI·Agent·병렬 작업자의 저장소 사실 또는 현재 상태 주장
+- 승인된 WHAT/WHY·Acceptance Criteria와 실제 diff의 일치 판정
+- 외부 사실·인용·버전·정책을 현재 사실로 승격하는 작업
+- L2 이상 복합 변경의 요구사항 추적성·통합 상태 판정
+
+L0 오탈자나 동일 입력의 단순 재실행에는 전체 원장을 강제하지 않는다.
+순수 창작 문장과 중요하지 않은 중간 메모를 원장에 복제하지 않는다.
+
+## 기본 원칙
+
+1. **deterministic-first**: exact-ref 파일, 실제 diff, Schema·정적 검사, 실행 로그,
+   런타임·렌더, merged PR와 main readback을 먼저 사용한다.
+2. **생산자 설명은 lead**: Builder·Agent·모델의 보고는 확인 대상을 알려 줄 뿐
+   독립 Evidence가 아니다.
+3. **Evidence ceiling**: 낮은 층의 PASS를 높은 층의 PASS로 승격하지 않는다.
+   테스트 PASS는 UX·재미·시장성 PASS가 아니다.
+4. **미확인은 실패와 구분**: 반증이 없다는 이유로 통과시키지 않고
+   `CLAIM_UNVERIFIED` 또는 `IMPLEMENTATION_UNVERIFIED`를 유지한다.
+5. **현재성 고정**: branch·commit·날짜·버전이 없는 자료는 현재 상태 증거가 아니다.
+6. **병합 후 재검증**: exact HEAD 검증과 post-merge main readback은 서로 대체하지 않는다.
+
+## 권한 순서
+
+```text
+최신 사용자 지시·승인된 작업 계약
+→ exact SHA의 실제 저장소·등록 정본
+→ 해당 SHA에서 실행된 정적·테스트·런타임 결과
+→ 날짜·버전이 확인된 공식 외부 1차 출처
+→ 명시적 추론
+→ 작업자·Builder·모델 설명
+```
+
+같은 층의 증거가 충돌하면 더 최신이고 대상에 직접 연결된 증거를 우선한다.
+충돌을 해소하지 못하면 PASS가 아니라 미검증이다.
+
+## MATERIAL_CLAIM_LEDGER
+
+결정·구현·검증·병합 상태를 바꾸는 주장만 원자화한다.
+
+```yaml
+MATERIAL_CLAIM_LEDGER:
+  - claim_id:
+    claim_type: REPOSITORY_FACT | EXTERNAL_FACT | INFERENCE | IMPLEMENTATION | VERIFICATION | INTEGRATION
+    claim_text:
+    authority_source:
+    evidence_locator:
+    freshness:
+      observed_at:
+      branch_or_version:
+      commit_sha:
+    counterevidence:
+    status: CLAIM_VERIFIED | CLAIM_CONTRADICTED | CLAIM_UNVERIFIED | NOT_APPLICABLE
+```
+
+### 판정
+
+- `CLAIM_VERIFIED`: authority와 freshness가 맞고 직접 증거가 주장을 지지하며
+  material counterevidence가 없다.
+- `CLAIM_CONTRADICTED`: 더 높은 권한 또는 더 최신 직접 증거가 주장을 반박한다.
+- `CLAIM_UNVERIFIED`: 필요한 파일·SHA·실행·현재성·권한 증거가 없거나 충돌이 해소되지 않았다.
+- `NOT_APPLICABLE`: 결과 판정에 영향을 주지 않는 주장이다.
+
+### 저장소 사실 반례
+
+```text
+검색 결과·검색 snippet·작업자 설명
++ exact-ref file readback 없음
+→ CLAIM_UNVERIFIED
+→ 정본·감사 finding·완료 보고로 승격 금지
+```
+
+`검색 결과`는 탐색용 lead다. 저장소 사실은 대상 branch 또는 commit의
+`exact-ref file readback`, 실제 tree/diff, 필요 시 소비자 재조회로 확인한다.
+
+## INTENT_IMPLEMENTATION_FIDELITY_MATRIX
+
+승인 의도와 구현의 연결을 Acceptance 단위로 기록한다.
+
+```yaml
+INTENT_IMPLEMENTATION_FIDELITY_MATRIX:
+  - intent_id:
+    approved_intent_or_acceptance:
+    protected_and_excluded_scope:
+    implementation_paths:
+    observed_behavior:
+    verification_evidence:
+    evidence_ceiling:
+    drift_status: INTENT_CONFORMANT | MINOR_TECHNICAL_DRIFT | PLANNING_CONFLICT | IMPLEMENTATION_UNVERIFIED
+```
+
+- `INTENT_CONFORMANT`: 승인된 결과·보호 동작과 실제 구현·관찰 결과가 일치한다.
+- `MINOR_TECHNICAL_DRIFT`: HOW만 달라졌고 WHAT/WHY·제품 의미·보호 동작은 동일하다.
+- `PLANNING_CONFLICT`: 플레이어 경험, 주요 UX, 콘텐츠 의미, 범위 또는 우선순위가
+  승인 내용과 충돌한다. 구현을 멈추고 재승인한다.
+- `IMPLEMENTATION_UNVERIFIED`: 필요한 diff, runtime, render, test 또는 사람 Evidence가 없다.
+
+Acceptance 하나라도 unmapped이면 전체 의도 적합성을 PASS로 선언하지 않는다.
+
+## COMPLETION_CLAIM_GATE
+
+```yaml
+COMPLETION_CLAIM_GATE:
+  implementation:
+    required: actual_diff + requirement_to_implementation_paths + out_of_scope_absence
+    status: PASS | FAIL | BLOCKED_UNVERIFIED
+  verification:
+    required: command + environment + exact_HEAD + result + failure_count
+    status: PASS | FAIL | NOT_RUN | BLOCKED_UNVERIFIED
+  intent:
+    required: acceptance_by_acceptance_observation + required_evidence_level
+    status: PASS | PLANNING_CONFLICT | IMPLEMENTATION_UNVERIFIED
+  integration:
+    required: merged_PR_state + merge_SHA + post-merge_main_readback + post-merge_checks
+    status: PASS | FAIL | BLOCKED_UNVERIFIED
+```
+
+| 완료 주장 | 최소 Evidence |
+|---|---|
+| 구현 완료 | 실제 diff, 요구사항별 `implementation_paths`, 보호·범위 밖 변경 부재 |
+| 테스트·검증 완료 | 실행 명령, 환경, exact HEAD, 결과, 실패·skip 수 |
+| 의도대로 동작 | Acceptance별 관찰 결과와 필요한 Evidence level |
+| 병합 완료 | PR merged 상태, merge SHA, 새 main readback, post-merge 필수 검사 |
+
+파일 존재는 실행 증거가 아니다. 다른 SHA의 PASS는 현재 HEAD의 PASS가 아니다.
+CI가 queued·cancelled·skipped이면 성공으로 바꾸지 않는다.
+
+## 실행 순서
+
+```text
+승인 Intent·Acceptance·Protected Scope 고정
+→ material claim 원자화
+→ authority·freshness·counterevidence 검사
+→ 실제 diff·consumer·implementation path 연결
+→ deterministic static/test/runtime evidence 실행
+→ Evidence ceiling 적용
+→ 독립 VERIFIER/CRITIC 검토
+→ exact HEAD 판정
+→ merge 뒤 main readback
+→ claim / intent / verification / integration 최종 보고
+```
+
+## 최소 출력
+
+```md
+## Claim and Intent Verification
+- 기준 branch·exact HEAD:
+- 승인 Intent·Acceptance:
+- Material Claim Ledger:
+- Intent–Implementation Fidelity Matrix:
+- Completion Claim Gate:
+- counterevidence·충돌:
+- 실행한 검증·결과·실패·skip:
+- 미실행·미검증:
+- merge SHA·post-merge main readback:
+- 최종 판정: PASS / REVISE / PLANNING_CONFLICT / BLOCKED_UNVERIFIED
+```
+
+## 실패 조건
+
+- exact-ref 파일을 읽지 않고 저장소 사실을 확정한다.
+- 검색 결과나 과거 대화를 현재 정본보다 우선한다.
+- 테스트 파일 존재를 실행 결과로 보고한다.
+- Builder·모델 자기평가만으로 완료를 선언한다.
+- 하나의 Acceptance 또는 보호 경로가 unmapped인데 전체 구현을 완료 처리한다.
+- 정적 PASS를 runtime·render·사용성·재미 PASS로 승격한다.
+- stale branch의 검증을 current main 후보에 재사용한다.
+- merged 상태·merge SHA·main readback 없이 병합 완료를 주장한다.
+- 필요한 증거가 없는데 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED`,
+  `BLOCKED_UNVERIFIED`를 해제한다.
+
+## 도구 사용 경계
+
+외부 Eval SaaS나 LLM judge는 선택적 보조 수단이다. deterministic evidence와 정본 대조를
+대체하지 않으며, judge 결과에도 dataset·rubric·version·실행 환경·반례가 필요하다.
+공급자 도구가 없더라도 이 Gate의 저장소·diff·실행·readback 계약은 동작해야 한다.

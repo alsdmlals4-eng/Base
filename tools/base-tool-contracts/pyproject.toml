@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "base-tool-contracts"
+version = "0.1.0"
+description = "Shared fail-closed contracts for Base localhost tools"
+requires-python = ">=3.10"
+dependencies = ["pydantic>=2.7,<3"]
+
+[project.optional-dependencies]
+dev = ["jsonschema>=4.22,<5", "pytest>=8,<10"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

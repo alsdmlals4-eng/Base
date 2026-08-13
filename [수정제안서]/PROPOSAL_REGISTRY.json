@@ -294,12 +294,12 @@
       "proposal_id": "BCP-2026-027-claim-and-intent-verification-gate",
       "title": "Claim and Intent Verification Gate",
       "path": "[수정제안서]/BCP-2026-027-claim-and-intent-verification-gate/PROPOSAL.md",
-      "status": "SUBMITTED",
+      "status": "IMPLEMENTED",
       "source_project": "alsdmlals4-eng/Base",
       "source_commit": "453f790821a108a1d4f6e1f4e45f6931c2396ee0",
       "submitted_at": "2026-08-13",
       "approval_ref": "[수정제안서]/BCP-2026-027-claim-and-intent-verification-gate/PROPOSAL.md#승인과-구현",
-      "implementation_pr": null
+      "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/319"
     }
   ]
 }

@@ -71,6 +71,11 @@ Base 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 �
 | 기획 순서·근거·Demo-First | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | 누락·충돌 선감사, Evidence Pack, Approval Bundle, Vertical Slice |
 | 프로젝트 GDD Google Sheets | `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` | `USER_FACING_GDD_WORKSPACE`, 단일 결정·GDD Module·선택적 시각 Artifact 색인, Sheet 제안·GitHub 동기화 |
 | 시각 협업 도구 | `docs/VISUAL_COLLABORATION_TOOL_POLICY.md` | Figma·Whimsical의 GDD/외부 협업 역할·Artifact·정본 경계 |
+| Tool Hub 프로젝트 식별자 전환 | `docs/operations/PROJECT_BASE_ADAPTER_V2_MIGRATION.md` | v1 audit 호환, v2 명시적 `project.project_id`, 비덮어쓰기 migration·rollback |
+| 로컬 Tool 공용 런타임 계약 | `tools/base-tool-contracts/README.md`, `schemas/project-figma-target-registry-v1.schema.json`, `schemas/project-approved-anchor-registry-v1.schema.json` | 단일 Figma parser, project-owned anchor evidence, gitignored vault confinement |
+| 로컬 Tool Registry·Hub | `tools/TOOL_REGISTRY.json`, `schemas/base-tool-registry-v1.schema.json`, `tools/tool-hub/README.md` | 검토된 사용자 도구 발견, v2 프로젝트 바인딩, typed localhost 실행 경계 |
+| PC 우선 QA 증거 검토 | `tools/qa-evidence-studio/README.md` | 이미지·UX 배치 후 개발자 단독 PC 체크, 증거 hash·packet, Android 출시 전 연기 Gate |
+| PC 우선 도구 현업 벤치마크 | `docs/research/2026-08-13-pc-first-tooling-benchmark.md` | Backstage·Kiwi TCMS·Allure·Playwright·GitHub Issue Forms 비교, 1인·무비용 단계 채택/연기/제외 근거 |
 | 재사용 Capability 조합 | `docs/CAPABILITY_COMPOSITION_MAP.md` | 허용 context·조합·금지 경계·필요 증거 |
 | 이미지 생성·검수·Sheet 구조 | `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md` | 기획 시각화, 이미지 QA·승인 원장·의미 구조 |
 | 시각 자산·컴포넌트 선정 Gate | `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate` | 필요성·Delete Test·역할·P0~P3·재사용·제작 disposition을 판정; 실제 승인 자산·파일 권위는 소유하지 않음 |
