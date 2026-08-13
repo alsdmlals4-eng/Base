@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "eval_role": "skill-mode-behavior-contract",
+  "owner_skill": "reviewing-and-validating-project-changes",
+  "cases": [
+    {
+      "case_id": "SBE-038",
+      "name": "unsupported completion claim and intent drift stay fail-closed",
+      "prompt": "외부 AI가 작업을 완료하고 병합했다고 보고했습니다. 검색 결과와 작업자 설명은 있지만 저장소 exact-ref readback, 실제 diff, 현재 HEAD의 실행 결과, merge SHA와 새 main readback은 없습니다. 승인한 의도와 구현이 일치하는지도 확인해 주세요.",
+      "expected_work_mode": "REVIEW",
+      "expected_primary_skill": "reviewing-and-validating-project-changes",
+      "expected_skill_modes": [
+        "external-source-review",
+        "contract-check",
+        "evidence-report",
+        "claim-and-intent-verification"
+      ],
+      "existing_registry_trigger_match": [
+        "external-ai-result",
+        "contract-check",
+        "evidence-report"
+      ],
+      "required_evidence": [
+        "검색 결과와 생산자 설명을 저장소 사실의 단독 증거로 사용하지 않는다.",
+        "대상 branch 또는 commit의 exact-ref file readback을 요구한다.",
+        "승인 Acceptance와 실제 diff·implementation path를 항목별로 연결한다.",
+        "현재 exact HEAD에서 실행된 명령·환경·결과·실패·skip 수를 요구한다.",
+        "필요한 증거가 없으면 CLAIM_UNVERIFIED 또는 IMPLEMENTATION_UNVERIFIED를 유지한다.",
+        "병합 완료는 merged PR, merge SHA, post-merge main readback과 post-merge 검사를 요구한다."
+      ],
+      "forbidden_shortcuts": [
+        "검색 snippet을 현재 저장소 사실로 승격",
+        "테스트 파일 존재를 테스트 실행 결과로 승격",
+        "다른 SHA의 CI PASS를 현재 HEAD에 재사용",
+        "Builder 또는 모델 자기보고만으로 완료 판정",
+        "정적 PASS를 UX·재미·시장성 PASS로 승격",
+        "merge SHA와 main readback 없이 병합 완료 판정"
+      ],
+      "expected_final_state_without_missing_evidence": "BLOCKED_UNVERIFIED"
+    }
+  ]
+}
