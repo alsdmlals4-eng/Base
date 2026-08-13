@@ -130,6 +130,71 @@ class LoopShadowKernelAdversarialTests(unittest.TestCase):
         self.assertIn("UNSAFE_STATE_ROOT", {finding.code.value for finding in outcome.findings})
         self.assertFalse(outside.exists())
 
+    def test_status_and_leases_reject_path_like_identifiers(self) -> None:
+        api = self._api()
+        temporary, root = self._root()
+        self.addCleanup(temporary.cleanup)
+        kernel = api.ShadowKernel(root, root / ".loop-engineering", now="2026-08-14T00:00:00Z")
+        for method, arguments in (
+            (kernel.status, ("../../OTHER", "RUN_ADV_001")),
+            (kernel.status, ("EXAMPLE_GAME", "../../RUN")),
+            (kernel.leases, ("../../OTHER",)),
+        ):
+            with self.subTest(method=method.__name__, arguments=arguments):
+                with self.assertRaises(ValueError):
+                    method(*arguments)
+
+    def test_corrupt_prior_receipt_fails_closed(self) -> None:
+        api = self._api()
+        temporary, root = self._root()
+        self.addCleanup(temporary.cleanup)
+        kernel = api.ShadowKernel(root, root / ".loop-engineering", now="2026-08-14T00:00:00Z")
+        self.assertEqual(kernel.shadow(self._request()).state.value, "SHADOW_COMPLETE")
+        receipt_path = root / ".loop-engineering/projects/EXAMPLE_GAME/runs/RUN_ADV_001/receipt.json"
+        receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+        receipt["state"] = "TAMPERED"
+        receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+        request = self._request()
+        request["run_id"] = "RUN_ADV_002"
+
+        outcome = kernel.shadow(request)
+
+        self.assertEqual(outcome.state.value, "BLOCKED_INVALID_CONTRACT")
+        self.assertIn("RECEIPT_CORRUPT", {finding.code.value for finding in outcome.findings})
+
+    def test_internal_state_symlink_is_rejected(self) -> None:
+        api = self._api()
+        temporary, root = self._root()
+        self.addCleanup(temporary.cleanup)
+        outside = root.parent / f"{root.name}-state-outside"
+        outside.mkdir(exist_ok=True)
+        self.addCleanup(lambda: outside.rmdir() if outside.exists() and not any(outside.iterdir()) else None)
+        state_root = root / ".loop-engineering"
+        state_root.mkdir()
+        try:
+            (state_root / "projects").symlink_to(outside, target_is_directory=True)
+        except (OSError, NotImplementedError):
+            self.skipTest("symlink creation is unavailable")
+
+        outcome = api.ShadowKernel(root, state_root, now="2026-08-14T00:00:00Z").shadow(self._request())
+
+        self.assertEqual(outcome.state.value, "BLOCKED_PROJECT_ISOLATION")
+        self.assertIn("UNSAFE_STATE_ROOT", {finding.code.value for finding in outcome.findings})
+        self.assertFalse(any(outside.iterdir()))
+
+    def test_busy_lease_guard_fails_closed(self) -> None:
+        api = self._api()
+        temporary, root = self._root()
+        self.addCleanup(temporary.cleanup)
+        lock = root / ".loop-engineering/projects/EXAMPLE_GAME/leases.lock"
+        lock.parent.mkdir(parents=True)
+        lock.write_text("OTHER_RUN\n", encoding="utf-8")
+
+        outcome = api.ShadowKernel(root, root / ".loop-engineering", now="2026-08-14T00:00:00Z").shadow(self._request())
+
+        self.assertEqual(outcome.state.value, "BLOCKED_LEASE_CONFLICT")
+        self.assertIn("LEASE_CONFLICT", {finding.code.value for finding in outcome.findings})
+
     def test_a3_scheduler_and_autonomy_are_fail_closed_constants(self) -> None:
         api = self._api()
         cases = []
