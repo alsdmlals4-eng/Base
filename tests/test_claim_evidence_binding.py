@@ -9,13 +9,13 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPT = ROOT / "skills/reviewing-and-validating-project-changes/scripts/verify_evidence.py"
+SCRIPT = ROOT / "tools/check_review_evidence.py"
 RECORD_SCHEMA = ROOT / "skills/reviewing-and-validating-project-changes/contracts/review-record.schema.json"
 RESULT_SCHEMA = ROOT / "skills/reviewing-and-validating-project-changes/contracts/review-result.schema.json"
 
 
 def load_checker():
-    spec = importlib.util.spec_from_file_location("verify_evidence", SCRIPT)
+    spec = importlib.util.spec_from_file_location("check_review_evidence", SCRIPT)
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -168,9 +168,7 @@ class ReviewRecordBehaviorTests(unittest.TestCase):
     def test_failed_check_overrides_confident_claim(self) -> None:
         result, errors = self.check(feature="wrong\n")
         self.assertEqual("FAIL", result["gates"]["verification"]["status"])
-        self.assertNotEqual(
-            0, result["gates"]["verification"]["checks"][0]["exit_code"]
-        )
+        self.assertNotEqual(0, result["gates"]["verification"]["checks"][0]["exit_code"])
         self.assertTrue(any("failed with exit code" in item for item in errors), errors)
 
     def test_evidence_ceiling_blocks_runtime_claim(self) -> None:
@@ -243,10 +241,7 @@ class ReviewRecordBehaviorTests(unittest.TestCase):
         result, errors = self.check(record, approvals={"CHECK-001": "RUNTIME"})
         self.assertEqual([], errors)
         self.assertEqual("PASS", result["final_status"])
-        self.assertEqual(
-            "RUNTIME",
-            result["gates"]["verification"]["checks"][0]["observed_level"],
-        )
+        self.assertEqual("RUNTIME", result["gates"]["verification"]["checks"][0]["observed_level"])
 
     def test_undeclared_changed_path_fails(self) -> None:
         self.commit()
@@ -287,9 +282,7 @@ class ReviewRecordBehaviorTests(unittest.TestCase):
         record = self.record()
         record["scope"]["allowed_changed_paths"].append("[proposal]/**")
         record["acceptance"][0]["implementation_paths"] = ["[proposal]/note.md"]
-        self.record_path.write_text(
-            json.dumps(record, indent=2) + "\n", encoding="utf-8"
-        )
+        self.record_path.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
         (self.root / "[proposal]/note.md").write_text("new\n", encoding="utf-8")
         git(self.root, "add", ".")
         git(self.root, "commit", "-m", "bracket change")
@@ -301,10 +294,7 @@ class ReviewRecordBehaviorTests(unittest.TestCase):
             allowed_programs=(),
             approved_levels={},
         )
-        self.assertFalse(
-            any("outside allowed scope: [proposal]/note.md" in item for item in errors),
-            errors,
-        )
+        self.assertFalse(any("outside allowed scope: [proposal]/note.md" in item for item in errors), errors)
         self.assertEqual("PASS", result["gates"]["implementation"]["status"])
 
 
