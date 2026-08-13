@@ -2,6 +2,8 @@
 
 공용 기본 실행·Handoff 기준: `docs/ONE_CLICK_PLAY_HANDOFF_POLICY.md`
 
+Claim·Intent 세부 절차: `skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md`
+
 ## 1. 판정
 
 - 결과: `ACCEPT / ACCEPT_WITH_FOLLOWUP / REVISE / REJECT / UNVERIFIED`
@@ -22,6 +24,33 @@
 | 책임 | 원본·파일 | 확인 결과 |
 |---|---|---|
 | | | |
+
+## 3.1 Material Claim Ledger
+
+결정·구현·검증·병합 상태를 바꾸는 material claim만 기록한다. 검색 결과·작업자 설명은 lead이며 exact-ref 파일·diff·실행 결과를 대신하지 않는다.
+
+| claim_id | claim_type | claim_text | authority_source | evidence_locator | freshness | counterevidence | status |
+|---|---|---|---|---|---|---|---|
+| | `REPOSITORY_FACT / EXTERNAL_FACT / INFERENCE / IMPLEMENTATION / VERIFICATION / INTEGRATION` | | | | branch·version·exact SHA·관찰일 | | `CLAIM_VERIFIED / CLAIM_CONTRADICTED / CLAIM_UNVERIFIED / NOT_APPLICABLE` |
+
+## 3.2 Intent–Implementation Fidelity Matrix
+
+| intent_id | approved_intent_or_acceptance | protected_and_excluded_scope | implementation_paths | observed_behavior | verification_evidence | evidence_ceiling | drift_status |
+|---|---|---|---|---|---|---|---|
+| | | | | | | | `INTENT_CONFORMANT / MINOR_TECHNICAL_DRIFT / PLANNING_CONFLICT / IMPLEMENTATION_UNVERIFIED` |
+
+Acceptance 하나라도 unmapped이거나 필요한 runtime·render·사람 Evidence가 없으면 전체 의도 적합성을 PASS로 선언하지 않는다.
+
+## 3.3 Completion Claim Gate
+
+| Gate | 최소 Evidence | 현재 상태 | 판정 |
+|---|---|---|---|
+| 구현 완료 | 실제 diff + 요구사항별 implementation path + 범위 밖 변경 부재 | | `PASS / FAIL / BLOCKED_UNVERIFIED` |
+| 테스트·검증 완료 | 실행 명령·환경 + exact HEAD + 결과 + 실패·skip 수 | | `PASS / FAIL / NOT_RUN / BLOCKED_UNVERIFIED` |
+| 의도대로 동작 | Acceptance별 관찰 결과 + 필요한 Evidence level | | `PASS / PLANNING_CONFLICT / IMPLEMENTATION_UNVERIFIED` |
+| 병합 완료 | merged PR 상태 + merge SHA + post-merge main readback + post-merge 검사 | | `PASS / FAIL / BLOCKED_UNVERIFIED` |
+
+파일 존재, 다른 SHA의 PASS, Builder·모델의 자기보고만으로 Gate를 통과시키지 않는다.
 
 ## 4. 정적 검사
 
@@ -108,6 +137,9 @@ evidence_decision: KEEP / REVISE / REDUCE / REMOVE / RETEST
 - 실행하지 못한 검사와 이유:
 - 남은 위험:
 - 차단 여부:
+- `CLAIM_UNVERIFIED` 항목:
+- `IMPLEMENTATION_UNVERIFIED` 항목:
+- `BLOCKED_UNVERIFIED` Gate:
 
 ## 9. 필요한 최소 수정
 
@@ -127,6 +159,9 @@ evidence_decision: KEEP / REVISE / REDUCE / REMOVE / RETEST
 - 로그·리포트:
 - 캡처·렌더:
 - 관련 Issue·PR:
+- exact HEAD:
+- merge SHA:
+- post-merge main readback:
 
 ## 12. 회고·재사용 경계
 
