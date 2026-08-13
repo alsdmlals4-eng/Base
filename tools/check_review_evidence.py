@@ -4,9 +4,9 @@
 from __future__ import annotations
 
 import argparse
-import fnmatch
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -28,7 +28,11 @@ def read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def run_git(root: Path, *args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
+def run_git(
+    root: Path,
+    *args: str,
+    check: bool = True,
+) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         ["git", *args],
         cwd=root,
@@ -60,7 +64,11 @@ def normalize_path(
 ) -> str | None:
     normalized = value.replace("\\", "/")
     path = Path(normalized)
-    if path.is_absolute() or ".." in path.parts:
+    if (
+        path.is_absolute()
+        or ".." in path.parts
+        or re.match(r"^[A-Za-z]:/", normalized) is not None
+    ):
         errors.append(f"{field} must stay repository-relative: {value}")
         return None
     while normalized.startswith("./"):
@@ -76,21 +84,37 @@ def normalize_path(
     return normalized
 
 
-def escape_brackets(pattern: str) -> str:
-    parts: list[str] = []
-    for character in pattern:
-        if character == "[":
-            parts.append("[[]")
-        elif character == "]":
-            parts.append("[]]")
+def glob_pattern_to_regex(pattern: str) -> re.Pattern[str]:
+    """Compile repository globs where `*` never crosses `/` and brackets are literal."""
+
+    normalized = pattern.replace("\\", "/")
+    pieces = ["^"]
+    index = 0
+    while index < len(normalized):
+        if normalized.startswith("**/", index):
+            pieces.append("(?:.*/)?")
+            index += 3
+            continue
+        if normalized.startswith("**", index):
+            pieces.append(".*")
+            index += 2
+            continue
+        character = normalized[index]
+        if character == "*":
+            pieces.append("[^/]*")
+        elif character == "?":
+            pieces.append("[^/]")
         else:
-            parts.append(character)
-    return "".join(parts)
+            pieces.append(re.escape(character))
+        index += 1
+    pieces.append("$")
+    return re.compile("".join(pieces))
 
 
 def matches(path: str, patterns: Iterable[str]) -> bool:
+    normalized = path.replace("\\", "/")
     return any(
-        fnmatch.fnmatchcase(path, escape_brackets(pattern))
+        glob_pattern_to_regex(pattern).fullmatch(normalized) is not None
         for pattern in patterns
     )
 
@@ -258,19 +282,30 @@ def run_checks(
                 errors="replace",
                 timeout=check["timeout_seconds"],
             )
-            result["duration_ms"] = max(0, int((time.monotonic() - started) * 1000))
+            result["duration_ms"] = max(
+                0,
+                int((time.monotonic() - started) * 1000),
+            )
             result["exit_code"] = completed.returncode
             result["stdout_tail"] = tail(completed.stdout)
             result["stderr_tail"] = tail(completed.stderr)
             combined = f"{completed.stdout}\n{completed.stderr}"
-            missing = [marker for marker in check["markers"] if marker not in combined]
+            missing = [
+                marker
+                for marker in check["markers"]
+                if marker not in combined
+            ]
             if completed.returncode != 0:
                 result["status"] = "FAIL"
-                errors.append(f"check {check_id} failed with exit code {completed.returncode}")
+                errors.append(
+                    f"check {check_id} failed with exit code {completed.returncode}"
+                )
             elif missing:
                 result["status"] = "FAIL"
                 for marker in missing:
-                    errors.append(f"check {check_id} missing required marker: {marker}")
+                    errors.append(
+                        f"check {check_id} missing required marker: {marker}"
+                    )
             else:
                 result["status"] = "PASS"
                 result["observed_level"] = observed_level(
@@ -278,18 +313,28 @@ def run_checks(
                     approved_levels.get(check_id),
                 )
         except subprocess.TimeoutExpired as error:
-            result["duration_ms"] = max(0, int((time.monotonic() - started) * 1000))
+            result["duration_ms"] = max(
+                0,
+                int((time.monotonic() - started) * 1000),
+            )
             result["status"] = "FAIL"
             result["stdout_tail"] = tail(error.stdout or "")
             result["stderr_tail"] = tail(error.stderr or "")
-            errors.append(f"check {check_id} timed out after {check['timeout_seconds']} seconds")
+            errors.append(
+                f"check {check_id} timed out after {check['timeout_seconds']} seconds"
+            )
         except OSError as error:
-            result["duration_ms"] = max(0, int((time.monotonic() - started) * 1000))
+            result["duration_ms"] = max(
+                0,
+                int((time.monotonic() - started) * 1000),
+            )
             result["status"] = "FAIL"
             result["stderr_tail"] = str(error)
             errors.append(f"check {check_id} could not start: {error}")
     if not execute_checks:
-        errors.append("declared checks were not executed; rerun with --execute-checks")
+        errors.append(
+            "declared checks were not executed; rerun with --execute-checks"
+        )
     return results, errors
 
 
@@ -302,17 +347,36 @@ def repository_state(root: Path, base_ref: str) -> tuple[dict[str, Any], list[st
         "changed_files": [],
     }
     try:
-        top = Path(run_git(root, "rev-parse", "--show-toplevel").stdout.strip()).resolve()
+        top = Path(
+            run_git(root, "rev-parse", "--show-toplevel").stdout.strip()
+        ).resolve()
         if top != root.resolve():
             errors.append("root is not the repository top-level")
-        base_sha = run_git(root, "rev-parse", "--verify", f"{base_ref}^{{commit}}").stdout.strip()
+        base_sha = run_git(
+            root,
+            "rev-parse",
+            "--verify",
+            f"{base_ref}^{{commit}}",
+        ).stdout.strip()
         head_sha = run_git(root, "rev-parse", "HEAD").stdout.strip()
         subject["base_sha"] = base_sha
         subject["head_sha"] = head_sha
-        ancestor = run_git(root, "merge-base", "--is-ancestor", base_sha, head_sha, check=False)
+        ancestor = run_git(
+            root,
+            "merge-base",
+            "--is-ancestor",
+            base_sha,
+            head_sha,
+            check=False,
+        )
         if ancestor.returncode != 0:
             errors.append("trusted base is not an ancestor of current HEAD")
-        dirty = run_git(root, "status", "--porcelain=v1", "--untracked-files=all").stdout.splitlines()
+        dirty = run_git(
+            root,
+            "status",
+            "--porcelain=v1",
+            "--untracked-files=all",
+        ).stdout.splitlines()
         if dirty:
             errors.append("worktree must be clean before review record checking")
         changed = sorted(
@@ -330,10 +394,31 @@ def repository_state(root: Path, base_ref: str) -> tuple[dict[str, Any], list[st
         )
         subject["changed_files"] = changed
         if not changed:
-            errors.append("no changed files exist between trusted base and current HEAD")
+            errors.append(
+                "no changed files exist between trusted base and current HEAD"
+            )
     except (OSError, subprocess.CalledProcessError) as error:
         errors.append(f"repository state unavailable: {error}")
     return subject, errors
+
+
+def repository_state_changed(
+    before: Mapping[str, Any],
+    after: Mapping[str, Any],
+    after_errors: Sequence[str],
+) -> list[str]:
+    details: list[str] = []
+    if after_errors:
+        details.extend(f"post-check: {error}" for error in after_errors)
+    for field in ("base_sha", "head_sha", "changed_files"):
+        if before.get(field) != after.get(field):
+            details.append(
+                f"post-check {field} changed: "
+                f"expected {before.get(field)!r}, observed {after.get(field)!r}"
+            )
+    if details:
+        return ["repository state changed during checks", *details]
+    return []
 
 
 def check_record(
@@ -350,11 +435,15 @@ def check_record(
     if not record_path.is_absolute():
         record_path = root / record_path
     record_path = record_path.resolve()
+    if record_path != root and root not in record_path.parents:
+        result = empty_result(record_path, base_ref)
+        errors = ["review record must stay inside the repository"]
+        result["errors"] = errors
+        return result, errors
+
     result = empty_result(record_path, base_ref)
     contract_errors: list[str] = []
-    git_errors: list[str] = []
     implementation_errors: list[str] = []
-    check_errors: list[str] = []
     intent_errors: list[str] = []
     claim_errors: list[str] = []
 
@@ -367,7 +456,9 @@ def check_record(
         result["errors"] = errors
         return result, errors
 
-    contract_errors.extend(schema_errors(record, record_schema, "review record"))
+    contract_errors.extend(
+        schema_errors(record, record_schema, "review record")
+    )
     if contract_errors:
         result["errors"] = contract_errors
         return result, contract_errors
@@ -376,29 +467,42 @@ def check_record(
     acceptance: list[dict[str, Any]] = record["acceptance"]
     checks: list[dict[str, Any]] = record["checks"]
     unique_ids(claims, "claim_id", "claim_id", contract_errors)
-    acceptance_ids = unique_ids(acceptance, "intent_id", "intent_id", contract_errors)
+    acceptance_ids = unique_ids(
+        acceptance,
+        "intent_id",
+        "intent_id",
+        contract_errors,
+    )
     check_ids = unique_ids(checks, "check_id", "check_id", contract_errors)
+
     for check_id, level in approved_levels.items():
         if check_id not in check_ids:
-            contract_errors.append(f"level approval references unknown check: {check_id}")
+            contract_errors.append(
+                f"level approval references unknown check: {check_id}"
+            )
         if level not in {"RUNTIME", "RENDER"}:
-            contract_errors.append(f"level approval for {check_id} must be RUNTIME or RENDER: {level}")
+            contract_errors.append(
+                f"level approval for {check_id} must be RUNTIME or RENDER: {level}"
+            )
     for claim in claims:
         for intent_id in claim["acceptance_ids"]:
             if intent_id not in acceptance_ids:
                 contract_errors.append(
-                    f"claim {claim['claim_id']} references unknown acceptance: {intent_id}"
+                    f"claim {claim['claim_id']} references unknown acceptance: "
+                    f"{intent_id}"
                 )
         for check_id in claim["check_ids"]:
             if check_id not in check_ids:
                 contract_errors.append(
-                    f"claim {claim['claim_id']} references unknown check: {check_id}"
+                    f"claim {claim['claim_id']} references unknown check: "
+                    f"{check_id}"
                 )
     for check in checks:
         for intent_id in check["acceptance_ids"]:
             if intent_id not in acceptance_ids:
                 contract_errors.append(
-                    f"check {check['check_id']} covers unknown acceptance: {intent_id}"
+                    f"check {check['check_id']} covers unknown acceptance: "
+                    f"{intent_id}"
                 )
     if contract_errors:
         result["errors"] = contract_errors
@@ -411,16 +515,27 @@ def check_record(
     allowed_patterns: list[str] = []
     protected_patterns: list[str] = []
     for field, values, target in (
-        ("scope.allowed_changed_paths", record["scope"]["allowed_changed_paths"], allowed_patterns),
-        ("scope.protected_paths", record["scope"]["protected_paths"], protected_patterns),
+        (
+            "scope.allowed_changed_paths",
+            record["scope"]["allowed_changed_paths"],
+            allowed_patterns,
+        ),
+        (
+            "scope.protected_paths",
+            record["scope"]["protected_paths"],
+            protected_patterns,
+        ),
     ):
         for value in values:
             normalized = normalize_path(value, field, implementation_errors)
             if normalized is not None:
                 target.append(normalized)
+
     for path in changed_files:
         if not matches(path, allowed_patterns):
-            implementation_errors.append(f"changed path is outside allowed scope: {path}")
+            implementation_errors.append(
+                f"changed path is outside allowed scope: {path}"
+            )
         if matches(path, protected_patterns):
             implementation_errors.append(f"protected path changed: {path}")
 
@@ -428,7 +543,7 @@ def check_record(
     mapped_ids: list[str] = []
     for item in acceptance:
         intent_id = item["intent_id"]
-        before = len(implementation_errors)
+        before_error_count = len(implementation_errors)
         for value in item["implementation_paths"]:
             normalized = normalize_path(
                 value,
@@ -439,19 +554,23 @@ def check_record(
                 continue
             if normalized not in changed_files:
                 implementation_errors.append(
-                    f"acceptance {intent_id} implementation path is not changed: {normalized}"
+                    f"acceptance {intent_id} implementation path is not changed: "
+                    f"{normalized}"
                 )
             elif not (root / normalized).is_file():
                 implementation_errors.append(
-                    f"acceptance {intent_id} implementation path is not a file at HEAD: {normalized}"
+                    f"acceptance {intent_id} implementation path is not a file "
+                    f"at HEAD: {normalized}"
                 )
-        if len(implementation_errors) == before:
+        if len(implementation_errors) == before_error_count:
             acceptance_path_state[intent_id] = "PASS"
             mapped_ids.append(intent_id)
         else:
             acceptance_path_state[intent_id] = "FAIL"
 
-    implementation_status = "PASS" if not git_errors and not implementation_errors else "FAIL"
+    implementation_status = (
+        "PASS" if not git_errors and not implementation_errors else "FAIL"
+    )
     result["gates"]["implementation"] = {
         "status": implementation_status,
         "mapped_acceptance_ids": mapped_ids,
@@ -465,13 +584,24 @@ def check_record(
         allowed_programs=allowed_programs,
         approved_levels=approved_levels,
     )
+    if execute_checks:
+        post_subject, post_errors = repository_state(root, base_ref)
+        check_errors.extend(
+            repository_state_changed(subject, post_subject, post_errors)
+        )
+
     if not execute_checks:
         check_status = "NOT_RUN"
-    elif check_errors or any(item["status"] != "PASS" for item in check_results):
+    elif check_errors or any(
+        item["status"] != "PASS" for item in check_results
+    ):
         check_status = "FAIL"
     else:
         check_status = "PASS"
-    result["gates"]["verification"] = {"status": check_status, "checks": check_results}
+    result["gates"]["verification"] = {
+        "status": check_status,
+        "checks": check_results,
+    }
 
     check_by_id = {item["check_id"]: item for item in check_results}
     acceptance_results: list[dict[str, Any]] = []
@@ -485,14 +615,21 @@ def check_record(
             and intent_id in check["acceptance_ids"]
         ]
         required = item["required_level"]
-        observed = max(successful_levels, key=LEVELS.__getitem__) if successful_levels else None
-        if observed is None:
+        observed = (
+            max(successful_levels, key=LEVELS.__getitem__)
+            if successful_levels
+            else None
+        )
+        if check_status != "PASS" or observed is None:
             status = "BLOCKED_UNVERIFIED"
-            intent_errors.append(f"acceptance {intent_id} has no successful check evidence")
+            intent_errors.append(
+                f"acceptance {intent_id} has no stable successful check evidence"
+            )
         elif LEVELS[observed] < LEVELS[required]:
             status = "FAIL"
             intent_errors.append(
-                f"acceptance {intent_id} evidence ceiling violation: required {required}, observed {observed}"
+                f"acceptance {intent_id} evidence ceiling violation: "
+                f"required {required}, observed {observed}"
             )
         else:
             status = "PASS"
@@ -504,6 +641,7 @@ def check_record(
                 "status": status,
             }
         )
+
     if all(item["status"] == "PASS" for item in acceptance_results):
         intent_status = "PASS"
     elif any(item["status"] == "FAIL" for item in acceptance_results):
@@ -515,7 +653,9 @@ def check_record(
         "acceptance_results": acceptance_results,
     }
 
-    acceptance_by_id = {item["intent_id"]: item for item in acceptance_results}
+    acceptance_by_id = {
+        item["intent_id"]: item for item in acceptance_results
+    }
     claim_results: list[dict[str, Any]] = []
     for claim in claims:
         acceptance_ok = all(
@@ -528,17 +668,34 @@ def check_record(
             for check_id in claim["check_ids"]
         )
         if claim["claim_type"] == "IMPLEMENTATION":
-            verified = acceptance_ok and checks_ok and bool(claim["acceptance_ids"])
+            verified = (
+                implementation_status == "PASS"
+                and check_status == "PASS"
+                and intent_status == "PASS"
+                and acceptance_ok
+                and checks_ok
+                and bool(claim["acceptance_ids"])
+                and bool(claim["check_ids"])
+            )
         else:
-            verified = checks_ok and bool(claim["check_ids"])
+            verified = (
+                check_status == "PASS"
+                and checks_ok
+                and bool(claim["check_ids"])
+            )
         status = "CLAIM_VERIFIED" if verified else "CLAIM_UNVERIFIED"
         if not verified:
-            claim_errors.append(f"material claim {claim['claim_id']} remains {status}")
+            claim_errors.append(
+                f"material claim {claim['claim_id']} remains {status}"
+            )
         claim_results.append(
             {
                 "claim_id": claim["claim_id"],
                 "status": status,
-                "evidence_ids": [*claim["acceptance_ids"], *claim["check_ids"]],
+                "evidence_ids": [
+                    *claim["acceptance_ids"],
+                    *claim["check_ids"],
+                ],
             }
         )
     result["claims"] = claim_results
@@ -560,7 +717,12 @@ def check_record(
         else "FAIL"
     )
     result["errors"] = all_errors
-    generated_errors = schema_errors(result, result_schema, "review result")
+
+    generated_errors = schema_errors(
+        result,
+        result_schema,
+        "review result",
+    )
     if generated_errors:
         all_errors.extend(generated_errors)
         result["errors"] = all_errors
@@ -583,12 +745,20 @@ def main() -> int:
     )
     parser.add_argument("--output", type=Path)
     arguments = parser.parse_args()
+
     approvals: dict[str, str] = {}
     for value in arguments.approve_level:
         check_id, separator, level = value.partition("=")
-        if not separator or not check_id or level not in {"RUNTIME", "RENDER"}:
-            parser.error("--approve-level must use CHECK_ID=RUNTIME or CHECK_ID=RENDER")
+        if (
+            not separator
+            or not check_id
+            or level not in {"RUNTIME", "RENDER"}
+        ):
+            parser.error(
+                "--approve-level must use CHECK_ID=RUNTIME or CHECK_ID=RENDER"
+            )
         approvals[check_id] = level
+
     root = arguments.root.resolve()
     record_path = arguments.record
     if not record_path.is_absolute():
@@ -601,6 +771,7 @@ def main() -> int:
         allowed_programs=tuple(arguments.allow_program),
         approved_levels=approvals,
     )
+
     if arguments.output is not None:
         output = arguments.output
         if not output.is_absolute():
@@ -610,6 +781,7 @@ def main() -> int:
             json.dumps(result, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
         )
+
     print(f"REVIEW_EVIDENCE_STATUS: {result['final_status']}")
     print(f"BASE_SHA: {result['subject']['base_sha'] or 'UNRESOLVED'}")
     print(f"HEAD_SHA: {result['subject']['head_sha'] or 'UNRESOLVED'}")
