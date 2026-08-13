@@ -8,6 +8,10 @@ import re
 import unittest
 from pathlib import Path
 
+from tests.test_claim_and_intent_verification_contract import (
+    ClaimAndIntentVerificationContractTests,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
