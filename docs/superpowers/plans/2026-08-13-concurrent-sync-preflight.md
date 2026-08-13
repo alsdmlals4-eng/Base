@@ -4,7 +4,7 @@
 
 **Goal:** Add a fail-closed concurrent-change preflight to the existing Git synchronization Skill so parallel chats and agents do not overwrite, duplicate, self-conflict, or merge against stale Base work.
 
-**Architecture:** Keep `synchronizing-local-and-github-state` as the sole owner. Add identity-bound and phase-bound SHA evidence to its `inspect` contract, place operational detail in the existing safe-sync reference, wire a dedicated contract test into focused Base v9 CI, and document the repository-wide adversarial audit. No new ACTIVE Skill, Work Mode, workflow, dependency, schema, generated artifact, lock service, or repository setting is introduced.
+**Architecture:** Keep `synchronizing-local-and-github-state` as the sole owner. Add identity-bound and phase-bound SHA evidence to its `inspect` contract, place operational detail in the existing safe-sync reference, wire a dedicated contract test into focused Base v9 CI, connect the established GPT/Codex workflow test and a Skill-local Learning Log, and document the repository-wide adversarial audit. No new ACTIVE Skill, Work Mode, workflow, dependency, schema, generated artifact, lock service, or repository setting is introduced.
 
 **Tech Stack:** Markdown Skill contracts, Python 3.12 `unittest`, GitHub Actions, GitHub branch/PR APIs.
 
@@ -17,6 +17,7 @@
 - Exclude the current Task/PR itself from same-goal and overlap comparison.
 - Before the first write, use the observed isolated-branch HEAD as `write_parent_sha` and `expected_head_sha: PENDING_FIRST_WRITE`.
 - After each write, bind the returned commit SHA as exact `expected_head_sha`; reread it before using it as the next `write_parent_sha`.
+- A Skill body change must satisfy the repository's existing canonical-reference freshness companions rather than weakening the checker or relying only on a new standalone test.
 - Use an isolated branch and squash merge only after exact-head CI, current-main recheck, and zero unresolved review threads.
 - Preserve existing DIRTY/REMOTE_AHEAD/LOCAL_AHEAD/DIVERGED behavior.
 
@@ -83,10 +84,12 @@ The draft PR preserved this exact RED checkpoint before production implementatio
 **Files:**
 - Modify: `skills/synchronizing-local-and-github-state/SKILL.md`
 - Modify: `skills/synchronizing-local-and-github-state/references/safe-sync-protocol.md`
+- Create: `skills/synchronizing-local-and-github-state/LEARNING_LOG.md`
+- Modify: `tests/test_gpt_codex_workflow_contract.py`
 
 **Interfaces:**
-- Consumes: the dedicated test plus existing Loop Engineering `TASK_LEASE` and path/semantic resource concepts.
-- Produces: an inspect-time `CONCURRENT_CHANGE_PREFLIGHT` and ordered coordination procedure.
+- Consumes: the dedicated test, the established GPT/Codex workflow integration test, canonical-reference freshness coupling, and existing Loop Engineering `TASK_LEASE` and path/semantic resource concepts.
+- Produces: an inspect-time `CONCURRENT_CHANGE_PREFLIGHT`, ordered coordination procedure, reusable learning record, and existing-suite integration evidence.
 
 - [x] **Step 1: Add the base preflight contract**
 
@@ -164,7 +167,35 @@ Rules:
 6. A moved Branch HEAD blocks overwrite.
 7. PR review, CI, and merge bind to the exact reviewed `expected_head_sha`.
 
-- [ ] **Step 6: Verify final GREEN on the exact final head**
+- [x] **Step 6: Treat canonical-reference freshness failure as a third RED**
+
+The first integration candidate proved the core contract but exposed a real repository consumer omission:
+
+```text
+head: 617778650deb644e0b549fc675ed942c786a6389
+workflow: Validate Base v9 Operating Contracts
+result: PASS, 327 tests, 1 configured Godot skip
+workflow: Validate Game Project Operating System
+run: 31654405601
+job: 94305570328
+result: FAIL at Check canonical reference freshness
+```
+
+Exact failure classes:
+
+1. `local-skill-contract-learning-test-sync`: the new standalone test was not sufficient; an established integrated test companion had to change.
+2. `local-skill-contract-learning-sync`: the Skill body change required a central or Skill-local Learning Log update.
+
+Do not weaken `.github/reference-freshness.json` or touch an unrelated test merely to satisfy the gate.
+
+- [x] **Step 7: Repair the missing consumers**
+
+- Create `skills/synchronizing-local-and-github-state/LEARNING_LOG.md` with finding, decision, RED evidence, boundary, and next trigger.
+- Modify `tests/test_gpt_codex_workflow_contract.py`, which already owns GPT/Codex handoff, Git authority, exact-head, and merge contracts.
+- Assert the Skill, safe-sync protocol, and Learning Log together.
+- Keep the dedicated focused test as the precise owner regression; use the established workflow test as integration evidence.
+
+- [ ] **Step 8: Verify final GREEN on the exact final head**
 
 GitHub Actions must execute:
 
@@ -195,9 +226,9 @@ python -m unittest \
   -v
 ```
 
-Expected: all applicable focused tests pass; configured runtime skips remain explicit.
+Expected: all applicable focused tests pass; configured runtime skips remain explicit. The Game Project Operating System workflow must also pass its syntax, proposal, canonical-reference freshness, operating-system, docs, publication, and concluding gates.
 
-- [ ] **Step 7: Run or truthfully substitute full local validation**
+- [ ] **Step 9: Run or truthfully substitute full local validation**
 
 Preferred local command when a checkout is available:
 
@@ -215,7 +246,7 @@ This connector-only session has no local checkout. Use all triggered GitHub Acti
 - Review: every PR diff path and concurrent PR #312 changed paths
 
 **Interfaces:**
-- Consumes: Base canon/Registry/generated map, open/recent PR inventory, external primary-source benchmarks, both RED checkpoints, final GREEN evidence, and exact-head CI.
+- Consumes: Base canon/Registry/generated map, open/recent PR inventory, external primary-source benchmarks, all three RED checkpoints, final GREEN evidence, and exact-head CI.
 - Produces: classified findings, before/after behavior, deferred risks, rollback, and post-merge readback.
 
 - [x] **Step 1: Write the repository audit**
@@ -226,6 +257,7 @@ Record:
 - verified conflict: README hardcoded 27 vs Registry-derived 30, coordinated through PR #312 rather than overlapping edit;
 - verified omission: general sync Skill lacked concurrent PR/path/semantic preflight;
 - verified adversarial ambiguity: current-PR self-conflict and first-write SHA phase confusion;
+- verified integration omission: Skill body changed without an established test companion and Learning Log;
 - rejected critique: a new broad Skill or lock service would duplicate the recent Loop Control Plane;
 - `BLOCKED_UNVERIFIED`: connector-only session cannot claim a local byte-for-byte full tracked-file audit;
 - benchmark decisions, source dates, exact changed/protected paths, validation, rollback, and expected effects.
@@ -243,7 +275,8 @@ Attack:
 7. Can a moved work Branch be overwritten?
 8. Did any path overlap PR #312?
 9. Is the dedicated test actually consumed by focused CI?
-10. Did main or the open PR set change after preflight?
+10. Does an established integration test and Learning Log consume the Skill change?
+11. Did main or the open PR set change after preflight?
 
 Fix only verified in-scope findings and rerun exact-head checks.
 
@@ -284,8 +317,8 @@ unresolved review threads == 0
 Verify on the merged default Branch:
 
 1. new main SHA and squash commit identity;
-2. all seven changed paths;
-3. key Skill/reference/test tokens;
+2. all nine changed paths;
+3. key Skill/reference/dedicated-test/integration-test/Learning-Log tokens;
 4. no new Skill, Work Mode, workflow, schema, dependency, Registry, or generated-artifact change;
 5. no same-goal residual PR or stale canonical consumer created by this merge;
 6. post-merge Actions results when triggered.
