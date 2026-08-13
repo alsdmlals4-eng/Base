@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 WATCHLIST = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md"
+SOURCE_PACK = ROOT / "docs" / "knowledge" / "game-development" / "PROMPT_PLANNING_WRITING_SOURCE_PACK.md"
 LEDGER = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_SOURCE_OPERATIONS_LEDGER.json"
 RECENT_REVIEW = ROOT / "docs" / "knowledge" / "game-development" / "RECENT_EXTERNAL_EVIDENCE_REVIEW_2026-08-10.md"
 HUB = ROOT / "docs" / "knowledge" / "game-development" / "README.md"
@@ -82,6 +83,71 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
         self.assertIn("Base는 scheduler", content)
         self.assertNotIn("DISCOVERY_FEED = T1_PRIMARY_OFFICIAL", content)
         self.assertNotIn("DISCOVERY_FEED = T2_PROFESSIONAL_PRACTICE", content)
+
+    def test_prompt_planning_writing_source_pack_routes_without_new_authority(self) -> None:
+        self.assertTrue(SOURCE_PACK.is_file())
+        content = SOURCE_PACK.read_text(encoding="utf-8")
+        hub = HUB.read_text(encoding="utf-8")
+
+        self.assertIn("PROMPT_PLANNING_WRITING_SOURCE_PACK.md", hub)
+        for required in (
+            "owner_policy: docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md",
+            "evidence_owner: docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md",
+            "scheduler_authority: EXTERNAL_TO_BASE",
+            "new_active_skill: false",
+            "PROMPT_AND_AGENT_WORKFLOW",
+            "PLANNING_AND_DESIGN_METHODS",
+            "WRITING_AND_REVISION_CRAFT",
+            "AUTHORITY_TARGET",
+            "PROFESSIONAL_PRACTICE",
+            "DISCOVERY_FEED",
+            "OBSERVATIONAL_DATA_OR_VENDOR_GUIDE",
+            "OpenAI Developers",
+            "Agent Skills Specification",
+            "obra/superpowers",
+            "promptfoo",
+            "exact_product_model_surface_or_version",
+            "prompt / instruction / skill / tool / agent",
+            "REPRESENTATIVE_GOLDEN_SET",
+            "ACTUAL_HARNESS_EVAL",
+            "Diátaxis",
+            "Architecture Decision Records",
+            "C4 model",
+            "Double Diamond",
+            "Shape Up",
+            "DORA",
+            "player_or_user_problem",
+            "decision_delta",
+            "current_project_consumer",
+            "validation_artifact",
+            "rollback_or_discard_condition",
+            "국립국어원",
+            "Purdue OWL",
+            "Writing Excuses",
+            "Scriptnotes",
+            "CANON_AND_CONTINUITY",
+            "DEVELOPMENTAL_STRUCTURE",
+            "SCENE_AND_CHARACTER",
+            "DIALOGUE_AND_INFORMATION",
+            "LINE_AND_PROSE",
+            "COPY_AND_PROOF",
+            "READER_OR_PLAYER_EVIDENCE",
+            "한국어 규범·용례 authority이지 창작 미학의 authority가 아니다",
+            "선형 소설",
+            "interactive narrative",
+            "식별 가능한 문체",
+            "executable_surface:",
+            "pinned_release_or_commit:",
+            "sandbox_result:",
+            "uninstall_or_rollback_path:",
+        ):
+            self.assertIn(required, content)
+
+        self.assertIn("두 번째 Watchlist가 아니다", content)
+        self.assertIn("독립 ledger를 만들지 않는다", content)
+        self.assertIn("magic phrase", content)
+        self.assertIn("문서량·Issue 수·PR 수", content)
+        self.assertIn("댓글·좋아요·조회·판매량", content)
 
     def test_source_operations_ledger_is_unique_machine_readable_state(self) -> None:
         self.assertTrue(LEDGER.is_file())
