@@ -8,7 +8,7 @@
 - Registry 상태: `SUBMITTED`
 - 지식 상태: `반복 관찰 + 외부 1차 출처 비교 + 승인된 공용 운영 보완`
 - 사용자 구현 승인 증거: 2026-08-13 현재 ChatGPT 세션 지시 — “할루시네이션 현상방지, 우리가 의도한대로 제대로 구현이 되었는지 확인하는 스킬을 Base에 추가하고 작업구조에도 반영” 및 병합까지 수행 요청
-- 상태 설명: 신규 제안 PR은 Base 검사 규칙에 따라 반드시 `SUBMITTED`로 시작한다. 제안 병합 뒤 별도 구현 PR에서 위 사용자 승인 증거를 `approval_ref`로 사용하고, 검증·병합 시 `IMPLEMENTED`로 전환한다.
+- 상태 설명: 신규 제안 PR은 Base 검사 규칙에 따라 반드시 `SUBMITTED`로 시작한다. 제안 병합 뒤 별도 구현 PR에서 위 사용자 승인 증거를 `approval_ref`로 연결하고, 검증·병합 시 `IMPLEMENTED`로 전환한다.
 
 ## 관찰과 증거
 
@@ -40,13 +40,18 @@ Base에는 이미 다음 안전 장치가 있다.
 
 판정: `ABSORB`
 
-새 ACTIVE Skill을 추가하지 않는다. 현재 30개 ACTIVE Skill 수를 유지하고 기존 owner인 `reviewing-and-validating-project-changes`에 `claim-and-intent-verification` Skill Mode와 전용 reference를 흡수한다.
+새 ACTIVE Skill을 추가하지 않는다. 현재 30개 ACTIVE Skill과 세 Work Mode를 유지하면서 기존 owner인 `reviewing-and-validating-project-changes`에 다음을 흡수한다.
+
+- `claim-and-intent-verification` Skill Mode와 전용 reference
+- 기존 Registry 항목의 좁은 trigger/use_when 보강
+- 프로젝트 변경 검증 Template의 원자 주장·의도 충실도·완료 주장 Gate
+- `SBE-038` 행동 fixture와 계약 회귀
 
 | 선택지 | 장점 | 위험 | 결론 |
 |---|---|---|---|
 | 새 광역 Skill `verifying-ai-truth` 추가 | 이름이 눈에 띔 | 외부 산출물 검수·계약 대조·회귀·증거 보고 owner와 중복, 라우팅 비용 증가 | 제외 |
-| 기존 Skill에 Mode·reference·Template·행동 평가 흡수 | 기존 권한·입출력·판정과 일치, active Skill 수 불변 | 본문 과밀 가능 | 채택; 상세 절차는 reference로 분리 |
-| Template 문구만 추가 | 변경량이 작음 | 자동 라우팅·실패 조건·완료 Gate가 없어 쉽게 생략 | 제외 |
+| 기존 Skill에 Mode·reference·Registry trigger·Template·평가 흡수 | 기존 권한·입출력·판정과 일치, active Skill 수 불변, 자동 호출 경로 명시 | Registry 파생 요약 재생성 필요 | 채택 |
+| Skill 본문과 Template만 추가하고 Registry bytes 유지 | 변경량이 작음 | `model_run_status: NOT_RUN` 상태에서 사용자 표현의 실제 자동 라우팅을 증명하지 못함 | 제외 |
 | 외부 Eval SaaS를 Base 필수 의존성으로 채택 | 실험 추적·대시보드 편리 | 공급자 종속, 비용·보안·설정 부담, 비게임 문서 작업에 과잉 | 제외; 프로젝트 선택 도구로만 허용 |
 
 ### 외부 1차 출처·현업 비교
@@ -66,7 +71,7 @@ NASA는 요구사항에 고유 식별자와 출처를 부여하고, 요구사항
 
 #### OpenAI SimpleQA
 
-SimpleQA는 긴 응답을 짧고 원자적으로 검증 가능한 주장으로 다루고 정답·오답·미응답을 구분한다. Base는 이를 결과 문장 전체의 모호한 신뢰 점수 대신 중요한 원자 주장별 판정으로 변형한다.
+SimpleQA는 긴 completion 안의 많은 주장을 신뢰성 있게 채점하기 어렵다는 문제를 피하기 위해 짧고 사실적인 질문으로 범위를 좁히고 `correct / incorrect / not attempted`를 구분한다. Base는 이 문제의식을 결과 전체의 단일 신뢰 점수 대신 중요한 material claim별 명시적 상태 판정으로 변형한다.
 
 - https://openai.com/index/introducing-simpleqa/
 
@@ -87,6 +92,15 @@ Arize Phoenix, LangSmith, Braintrust, Promptfoo의 공식 문서는 대체로 �
 | 채택 | 원자 주장, authority source, 반증 탐색, deterministic-first, 요구사항 추적성, Evidence ceiling, 회귀·지속 readback |
 | 변형 | 범용 지식 정답보다 저장소 정본·실제 diff·도구 출력·실행 결과를 우선; LLM judge는 보조 Evidence로만 사용 |
 | 제외 | 단일 모델 self-evaluation을 진실 판정으로 사용, 모든 문장을 원장화, 외부 SaaS 의무화, 테스트 정의만으로 PASS 처리 |
+
+### 제안 PR 적대적 검토 반영
+
+| Finding | 판정 | 반영 |
+|---|---|---|
+| `SBE-015`가 기존 coverage eval과 충돌 | P1 유효 | 다음 사용 가능 ID인 `SBE-038`로 변경 |
+| Registry 고정 시 자동 호출 증거 부족 | P1 유효 | 기존 Skill의 `completion-claim`, `claim-evidence`, `intent-conformance`, `hallucination-audit` 계열 trigger와 use_when을 좁게 보강하고 파생 요약 재생성 |
+| SimpleQA를 원자 분해 기법으로 과장 | P2 유효 | 짧은 factual question으로 범위를 제한하는 공식 설명에 맞게 교정 |
+| `SUBMITTED`인데 Registry `approval_ref` 선기입 | P2 유효 | 제안 본문에 사용자 승인 증거를 보존하되 Registry 필드는 구현 전환 커밋까지 `null` 유지 |
 
 ## 일반화 후보
 
@@ -196,7 +210,8 @@ drift_status: INTENT_CONFORMANT | MINOR_TECHNICAL_DRIFT | PLANNING_CONFLICT | IM
 | LLM judge가 또 hallucination | 의미 판정 도구도 오류 가능 | deterministic-first, judge는 보조, 반증과 미검증 허용 |
 | 구현은 맞지만 UX·재미까지 과장 | Evidence 층 불일치 | 기존 E0–E6 ceiling 및 BCP-020 사람 Evidence 유지 |
 | 병합 직전 main 변경으로 검증 노후화 | stale base 위험 | exact-head, current-main freshness, post-merge readback 유지 |
-| 기존 검증 Skill과 책임 중복 | 새 Skill 생성 시 owner 충돌 | Mode·reference로 흡수, Registry 불변 |
+| 기존 검증 Skill과 책임 중복 | 새 Skill 생성 시 owner 충돌 | Mode·reference로 흡수, active Skill ID·count 불변 |
+| Registry trigger만 추가하고 행동 증거 없음 | 명시 경로와 실제 결과는 다름 | deterministic routing contract + `SBE-038`; 실제 live model run은 별도 Evidence 상태로 보고 |
 
 대표 반례:
 
@@ -213,6 +228,8 @@ drift_status: INTENT_CONFORMANT | MINOR_TECHNICAL_DRIFT | PLANNING_CONFLICT | IM
 
 - `skills/reviewing-and-validating-project-changes/SKILL.md`
 - `skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md`
+- `skills/SKILL_REGISTRY.json`
+- `docs/generated/BASE_ACTIVE_SKILLS.md`
 - `templates/quality/PROJECT_CHANGE_VALIDATION.md`
 - `docs/WORK_MODE_AND_SKILL_ROUTING.md`
 - `docs/OPERATING_MODEL.md`
@@ -224,36 +241,45 @@ drift_status: INTENT_CONFORMANT | MINOR_TECHNICAL_DRIFT | PLANNING_CONFLICT | IM
 
 ### 보호 대상
 
-- ACTIVE Skill 수와 `skills/SKILL_REGISTRY.json` bytes
+- ACTIVE Skill ID 집합과 전체 수 `30`
 - `PLAN / BUILD / REVIEW` 세 Work Mode
-- 이미 릴리스된 Base lock·pin·generated artifact
+- 이미 릴리스된 Base lock·pin·immutable generated artifact
+- 기존 Skill owner와 responsibility boundary
 - 프로젝트별 수치·세계관·구현 경로
 - 기존 Evidence E0–E6 의미
 - BCP-008 Traceability와 BCP-020 Player Experience Evidence owner
+
+### 의도적 변경
+
+- `reviewing-and-validating-project-changes`의 trigger/use_when/review trigger metadata
+- 위 Registry 변경에서 파생되는 `docs/generated/BASE_ACTIVE_SKILLS.md`의 Registry hash와 해당 Skill row
+- `SBE-038` fixture 및 계약 테스트
 
 ### RED→GREEN 검증
 
 RED:
 
-- 전용 계약 테스트가 새 reference·Mode·Template·행동 평가를 요구하도록 먼저 추가한다.
+- 전용 계약 테스트와 `SBE-038` fixture가 새 reference·Mode·Registry trigger·Template·작업 구조를 요구하도록 먼저 추가한다.
 - 생산 계약이 없는 exact HEAD에서 GitHub Actions 실패를 관찰한다.
 
 GREEN:
 
 - focused unittest PASS
 - Base v9 contract·integrity PASS
-- Registry active Skill 수와 bytes 불필요 변경 없음
-- 새 행동 fixture `SBE-015`가 REVIEW의 기존 owner로 라우팅
+- active Skill ID 집합과 수 `30` 유지
+- `python tools/build_base_v9_artifacts.py --check` PASS
+- `SBE-038`이 REVIEW의 기존 owner와 `claim-and-intent-verification` Mode를 요구
+- live model behavior execution은 실행되지 않으면 `NOT_RUN`으로 정직하게 보고
 - PR diff가 승인된 영향 경로 안에 있음
-- 가능한 독립 reviewer finding 검토
+- 독립 reviewer finding 검토
 - unresolved review thread 0
 - merge SHA와 post-merge `main` readback
 
 ### 롤백
 
-문서·Skill Mode·reference·Template·behavior fixture·test만 추가·수정한다. 제품 데이터·런타임·릴리스 pin은 바꾸지 않는다.
+문서·기존 Skill Mode·reference·좁은 Registry metadata·파생 요약·Template·behavior fixture·test만 추가·수정한다. 제품 데이터·런타임·릴리스 pin은 바꾸지 않는다.
 
-문제가 생기면 구현 PR의 merge commit을 revert한다. 새 reference와 Mode 연결, Template 섹션, fixture·test를 함께 되돌려 부분 활성 상태를 남기지 않는다. BCP 제안 기록은 역사로 유지하고 Registry 상태를 후속 판정으로 갱신한다.
+문제가 생기면 구현 PR의 squash merge commit을 revert한다. Registry metadata와 파생 요약, reference와 Mode 연결, Template 섹션, fixture·test를 함께 되돌려 부분 활성 상태를 남기지 않는다. BCP 제안 기록은 역사로 유지하고 Registry 상태를 후속 판정으로 갱신한다.
 
 ## 승인과 구현
 
