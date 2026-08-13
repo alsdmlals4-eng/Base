@@ -1,1 +1,113 @@
-{}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_role", "record_path", "subject", "gates", "claims", "final_status", "errors"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "REVIEW_EVIDENCE_RESULT"},
+    "record_path": {"type": "string"},
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base_ref", "base_sha", "head_sha", "changed_files"],
+      "properties": {
+        "base_ref": {"type": "string"},
+        "base_sha": {"type": ["string", "null"]},
+        "head_sha": {"type": ["string", "null"]},
+        "changed_files": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+      }
+    },
+    "gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["implementation", "verification", "intent", "integration"],
+      "properties": {
+        "implementation": {"$ref": "#/$defs/simpleGate"},
+        "verification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "checks"],
+          "properties": {
+            "status": {"enum": ["PASS", "FAIL", "NOT_RUN"]},
+            "checks": {"type": "array", "items": {"$ref": "#/$defs/checkResult"}}
+          }
+        },
+        "intent": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "acceptance_results"],
+          "properties": {
+            "status": {"enum": ["PASS", "FAIL", "BLOCKED_UNVERIFIED"]},
+            "acceptance_results": {"type": "array", "items": {"$ref": "#/$defs/acceptanceResult"}}
+          }
+        },
+        "integration": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "reason"],
+          "properties": {
+            "status": {"const": "BLOCKED_UNVERIFIED"},
+            "reason": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claim_id", "status", "evidence_ids"],
+        "properties": {
+          "claim_id": {"type": "string"},
+          "status": {"enum": ["CLAIM_VERIFIED", "CLAIM_UNVERIFIED"]},
+          "evidence_ids": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "final_status": {"enum": ["PASS", "FAIL"]},
+    "errors": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {
+    "simpleGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "mapped_acceptance_ids", "actual_changed_paths"],
+      "properties": {
+        "status": {"enum": ["PASS", "FAIL"]},
+        "mapped_acceptance_ids": {"type": "array", "items": {"type": "string"}},
+        "actual_changed_paths": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "checkResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["check_id", "argv", "working_directory", "declared_level", "observed_level", "status", "exit_code", "duration_ms", "stdout_tail", "stderr_tail", "acceptance_ids"],
+      "properties": {
+        "check_id": {"type": "string"},
+        "argv": {"type": "array", "items": {"type": "string"}},
+        "working_directory": {"type": "string"},
+        "declared_level": {"type": "string"},
+        "observed_level": {"type": ["string", "null"]},
+        "status": {"enum": ["PASS", "FAIL", "NOT_RUN"]},
+        "exit_code": {"type": ["integer", "null"]},
+        "duration_ms": {"type": "integer", "minimum": 0},
+        "stdout_tail": {"type": "string"},
+        "stderr_tail": {"type": "string"},
+        "acceptance_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "acceptanceResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intent_id", "required_level", "observed_level", "status"],
+      "properties": {
+        "intent_id": {"type": "string"},
+        "required_level": {"type": "string"},
+        "observed_level": {"type": ["string", "null"]},
+        "status": {"enum": ["PASS", "FAIL", "BLOCKED_UNVERIFIED"]}
+      }
+    }
+  }
+}
