@@ -5,8 +5,9 @@
 - 출처 프로젝트: `alsdmlals4-eng/Base`
 - 관찰 기준 Base 커밋: `453f790821a108a1d4f6e1f4e45f6931c2396ee0`
 - 제출일: `2026-08-13`
-- Registry 상태: `SUBMITTED`
+- Registry 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 지식 상태: `반복 관찰 + 외부 1차 출처 비교 + 승인된 공용 운영 보완`
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/319`
 - 사용자 구현 승인 증거: 2026-08-13 현재 ChatGPT 세션 지시 — “할루시네이션 현상방지, 우리가 의도한대로 제대로 구현이 되었는지 확인하는 스킬을 Base에 추가하고 작업구조에도 반영” 및 병합까지 수행 요청
 - 상태 설명: 신규 제안은 검사 규칙에 따라 `SUBMITTED`로 시작한다. `approval_ref`는 위 명시적 사용자 승인 증거의 위치를 가리키며, 구현 완료 상태와 `implementation_pr`은 별도 구현 PR의 검증·병합 단계에서 전환한다.
 

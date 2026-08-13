@@ -1,9 +1,9 @@
 # Claim and Intent Verification Gate — Implementation Plan
 
-> Proposal: `BCP-2026-027-claim-and-intent-verification-gate`  
-> Owner: `reviewing-and-validating-project-changes`  
-> Work Mode: `REVIEW`  
-> Branch: `feat/claim-intent-verification-gate-20260813`
+> Proposal: `BCP-2026-027-claim-and-intent-verification-gate`
+> Owner: `reviewing-and-validating-project-changes`
+> Work Mode: `REVIEW`
+> Branch: `feat/claim-intent-verification-gate-final`
 
 ## Work contract
 
@@ -40,7 +40,7 @@ AI·Agent·작업자의 사실·완료 주장과 승인 의도가 실제 저장�
 
 ### Rollback
 
-PR #317 squash commit을 revert하고 Registry 파생본을 재생성한다. 신규 파일만 제거한 뒤 기존 owner·template·docs·eval·BCP state additions를 함께 되돌린다.
+PR #319 squash commit을 revert하고 Registry 파생본을 재생성한다. 신규 파일만 제거한 뒤 기존 owner·template·docs·eval·BCP state additions를 함께 되돌린다.
 
 ## Task 1 — Concurrent-change preflight
 
@@ -214,7 +214,7 @@ Remove draft only after blocker-free exact-head review.
 - Registry routing is explicit and active count remains 30.
 - Operating docs route material completion claims through REVIEW.
 - `SBE-038` and regression run in canonical CI.
-- BCP lifecycle points to PR #317.
+- BCP lifecycle points to PR #319.
 - Exact-head workflows and independent review pass.
 - Expected-head squash merge succeeds.
 - Merge SHA and new main readback are recorded.

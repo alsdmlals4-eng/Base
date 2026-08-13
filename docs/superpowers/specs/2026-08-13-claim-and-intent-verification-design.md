@@ -181,7 +181,7 @@ Compatibility:
 
 Rollback:
 
-1. PR #317의 squash commit을 revert한다.
+1. PR #319의 squash commit을 revert한다.
 2. 신규 reference·design·plan·test·eval을 제거한다.
 3. 기존 owner의 mode/trigger/template/docs additions를 되돌린다.
 4. Registry 파생본을 generator로 재생성한다.
