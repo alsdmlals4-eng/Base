@@ -17,9 +17,12 @@ class ConcurrentGitSyncPreflightContractTests(unittest.TestCase):
 
         for token in (
             "CONCURRENT_CHANGE_PREFLIGHT",
+            "current_task_or_pr_identity",
             "source_main_sha",
             "current_main_sha",
+            "write_parent_sha",
             "expected_head_sha",
+            "PENDING_FIRST_WRITE",
             "intended_paths",
             "semantic_resource_locks",
             "same_goal_open_and_recent_prs",
@@ -42,6 +45,10 @@ class ConcurrentGitSyncPreflightContractTests(unittest.TestCase):
             "PR creation",
             "merge",
             "post-merge main readback",
+            "current_task_or_pr_identity",
+            "write_parent_sha",
+            "PENDING_FIRST_WRITE",
+            "exclude the current task or PR itself",
             "PATH_OVERLAP",
             "SEMANTIC_OVERLAP",
             "SAME_GOAL",
