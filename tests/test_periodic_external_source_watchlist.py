@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 WATCHLIST = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md"
+RADAR = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_SPECIALTY_SOURCE_RADAR.md"
 LEDGER = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_SOURCE_OPERATIONS_LEDGER.json"
 RECENT_REVIEW = ROOT / "docs" / "knowledge" / "game-development" / "RECENT_EXTERNAL_EVIDENCE_REVIEW_2026-08-10.md"
 HUB = ROOT / "docs" / "knowledge" / "game-development" / "README.md"
@@ -330,6 +331,69 @@ class PeriodicExternalSourceWatchlistTests(unittest.TestCase):
         self.assertIn("tests/test_game_development_youtube_skill.py", content)
         self.assertIn("contents: read", content)
         self.assertNotIn("contents: write", content)
+
+    def test_prompt_planning_writing_and_executable_source_lenses_preserve_evidence_boundaries(self) -> None:
+        self.assertTrue(RADAR.is_file())
+        content = RADAR.read_text(encoding="utf-8")
+
+        for required in (
+            "owner_policy: docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md",
+            "evidence_owner: docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md",
+            "scheduler_authority: EXTERNAL_TO_BASE",
+            "new_active_skill: false",
+            "independent_ledger: false",
+            "PROMPT_AND_AGENT_WORKFLOW",
+            "REPRESENTATIVE_GOLDEN_SET",
+            "ACTUAL_HARNESS_EVAL",
+            "prompt injection",
+            "quality·cost·latency·context·blast radius",
+            "PLANNING_AND_DESIGN_METHODS",
+            "player_or_user_problem",
+            "decision_delta",
+            "validation_artifact",
+            "rollback_or_discard_condition",
+            "framework != universal design law",
+            "simulation != playtest",
+            "WRITING_AND_REVISION_CRAFT",
+            "CANON_AND_CONTINUITY",
+            "DEVELOPMENTAL_STRUCTURE",
+            "SCENE_AND_CHARACTER",
+            "DIALOGUE_AND_INFORMATION",
+            "LINE_AND_PROSE",
+            "COPY_AND_PROOF",
+            "READER_OR_PLAYER_EVIDENCE",
+            "한국어 규범·용례 authority이지 창작 미학의 authority가 아니다",
+            "author popularity != permission to copy voice or style",
+            "EXECUTABLE_SOURCE_AND_SUPPLY_CHAIN",
+            "executable_surface:",
+            "GODOT_ADDON",
+            "GDEXTENSION",
+            "AGENT_SKILL",
+            "MCP_SERVER",
+            "INSTALL_COMMAND",
+            "trust_state:",
+            "QUARANTINED",
+            "SOURCE_REVIEWED",
+            "SANDBOX_TESTED",
+            "APPROVED_PINNED",
+            "upstream_repository:",
+            "pinned_release_or_commit:",
+            "scripts_and_hooks_reviewed:",
+            "secret_or_environment_access:",
+            "requested_permissions: []",
+            "sandbox_result:",
+            "uninstall_or_rollback_path:",
+            "security/compliance PASS",
+            "GODOT_ASSET_AND_PRODUCTION_SOURCES",
+            "Godot Asset Store",
+            "Godot Asset Library — legacy discovery",
+            "Store listing != vetted dependency",
+            "이번 등록은 durable Watchlist/Ledger 승격이 아니다",
+        ):
+            self.assertIn(required, content)
+
+        self.assertIn("이 문서는 두 번째 Watchlist가 아니다", content)
+        self.assertIn("새 사이트 수, Skill 수, 문서량, Issue 수, PR 수 자체는 개선 지표가 아니다", content)
 
 
 if __name__ == "__main__":
