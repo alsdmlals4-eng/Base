@@ -1,1 +1,2 @@
-VALUE = False
+def check_record() -> bool:
+    return False
