@@ -298,7 +298,7 @@
       "source_project": "alsdmlals4-eng/Base",
       "source_commit": "453f790821a108a1d4f6e1f4e45f6931c2396ee0",
       "submitted_at": "2026-08-13",
-      "approval_ref": null,
+      "approval_ref": "[수정제안서]/BCP-2026-027-claim-and-intent-verification-gate/PROPOSAL.md#승인과-구현",
       "implementation_pr": null
     }
   ]
