@@ -7,6 +7,10 @@ from pathlib import Path
 from tests.test_cloud_run_game_backend_capability import (
     CloudRunGameBackendCapabilityTests as _CloudRunGameBackendCapabilityTests,
 )
+from tests.test_concurrent_git_sync_preflight_contract import (
+    ConcurrentGitSyncPreflightContractTests
+    as _ConcurrentGitSyncPreflightContractTests,
+)
 from tests.test_godot_editor_transaction_adapter import (
     GodotEditorTransactionAdapterTests as _GodotEditorTransactionAdapterTests,
 )
