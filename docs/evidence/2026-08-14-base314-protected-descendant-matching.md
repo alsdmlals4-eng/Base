@@ -4,7 +4,8 @@
 
 - Issue: `#314`
 - PR: `#332`
-- Source main: `3e3f59b1b835f9675f0b8dbc4543a6c69a526c36`
+- Original source main: `3e3f59b1b835f9675f0b8dbc4543a6c69a526c36`
+- Approved design main: `ec0880cbda0517e62c9c404d17d9409cbc0cfa02`
 - Protected owner: `tools/project_operating_contract.py::_protected_match`
 
 ## RED
@@ -30,6 +31,13 @@ The approval reconciler was not modified because the RED proved its exact-set be
 ## Temporary execution boundary
 
 The two temporary mutation workflows and two temporary scripts were removed before final exact-head validation. They are not part of the final PR surface.
+
+## Current-main reconciliation
+
+- Universal Loop Engineering design PR #322 merged as `ec0880cbda0517e62c9c404d17d9409cbc0cfa02`.
+- PR #332 was reconciled with that exact main in commit `96c93f964cdf8a4ba465ece4a4fb7626ad2da26a`.
+- Final changed-file inventory remains exactly five paths.
+- PR #332 is Ready for Review; the user-authored evidence commit containing this section triggers the definitive ready-state exact-head workflows.
 
 ## Final verification target
 
