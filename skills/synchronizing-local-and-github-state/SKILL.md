@@ -42,9 +42,11 @@ allowed_generated_files_and_secrets_policy:
 첫 persistent write, PR 생성 또는 merge를 수행할 때 추가로 필요한 입력:
 
 ```yaml
+current_task_or_pr_identity:
 source_main_sha:
 current_main_sha:
-expected_head_sha:
+write_parent_sha:
+expected_head_sha: PENDING_FIRST_WRITE | <exact-sha>
 intended_paths: []
 semantic_resource_locks: []
 same_goal_open_and_recent_prs: []
@@ -52,7 +54,13 @@ open_pr_changed_paths: {}
 protected_concurrent_paths: []
 ```
 
-`source_main_sha`는 조사·분기 기준, `current_main_sha`는 판정 시점의 실제 기본 Branch, `expected_head_sha`는 검토·검사·병합하려는 정확한 변경 HEAD다. 열린 PR 목록, changed paths, 현재 main 또는 권한 정책을 읽지 못하면 충돌 없음으로 추정하지 않는다.
+- `current_task_or_pr_identity`는 현재 작업을 다른 Task·Branch·PR과 구별하는 안정적 식별자다. same-goal·path 비교에서는 이 작업 자신을 제외한다.
+- `source_main_sha`는 조사·분기 기준, `current_main_sha`는 판정 시점의 실제 기본 Branch다.
+- `write_parent_sha`는 **다음 persistent write가 적용될 것으로 기대하는 현재 작업 Branch의 exact HEAD**다. 실제 Branch HEAD와 다르면 write를 중단하고 다시 읽는다.
+- 첫 write 전 최종 변경 HEAD는 아직 존재하지 않으므로 `expected_head_sha: PENDING_FIRST_WRITE`다. 첫 write가 반환한 commit SHA부터 exact `expected_head_sha`로 갱신하고, 다음 write 전에는 그 값을 새 `write_parent_sha`로 승격한다.
+- PR 검토·CI·merge 단계의 `expected_head_sha`는 검토·검사·병합하려는 정확한 변경 HEAD다.
+
+열린 PR 목록, changed paths, 현재 main, 현재 작업 identity, Branch HEAD 또는 권한 정책을 읽지 못하면 충돌 없음으로 추정하지 않는다.
 
 안전한 명령·충돌·조정 절차는 `references/safe-sync-protocol.md`를 필요할 때만 읽는다.
 
@@ -60,9 +68,11 @@ protected_concurrent_paths: []
 
 ```yaml
 CONCURRENT_CHANGE_PREFLIGHT:
+  current_task_or_pr_identity:
   source_main_sha:
   current_main_sha:
-  expected_head_sha:
+  write_parent_sha:
+  expected_head_sha: PENDING_FIRST_WRITE | <exact-sha>
   intended_paths: []
   semantic_resource_locks: []
   same_goal_open_and_recent_prs: []
@@ -72,15 +82,15 @@ CONCURRENT_CHANGE_PREFLIGHT:
   coordination_action:
 ```
 
-- `CLEAR`: 필요한 증거를 실제로 읽었고 `source_main_sha == current_main_sha`이며, 동일 Goal의 활성·대체 작업과 path/semantic writer 충돌이 없다.
+- `CLEAR`: 필요한 증거를 실제로 읽었고 `source_main_sha == current_main_sha`이며, 현재 작업 자신을 제외한 동일 Goal의 활성·대체 작업과 path/semantic writer 충돌이 없고 관찰한 Branch HEAD가 `write_parent_sha`와 일치한다.
 - `STALE_BASE_SHA`: 기준을 고정한 뒤 main이 이동했다. 최신 main에 reconcile하고 영향 검증과 preflight를 다시 수행한다.
 - `WAITING_RESOURCE`: 다른 활성 PR·Task가 겹치는 경로 또는 의미 자원을 소유한다. 비중첩 경로로 축소하거나 소유 PR에서 조정·인계하고, 해제 전에는 경쟁 write를 만들지 않는다.
-- `DUPLICATE_WORK`: 같은 Goal과 기대 결과를 다른 열린·최근 대체 PR이 이미 소유한다. 새 구현을 만들지 않고 기존 작업을 검토·보완한다.
-- `BLOCKED_UNVERIFIED`: main, PR, changed-path, semantic ownership, policy 또는 exact-head 증거를 읽지 못했다. 이 상태를 `CLEAR`로 낮추지 않는다.
+- `DUPLICATE_WORK`: 현재 작업 자신이 아닌 다른 열린·최근 대체 PR이 같은 Goal과 기대 결과를 이미 소유한다. 새 구현을 만들지 않고 기존 작업을 검토·보완한다.
+- `BLOCKED_UNVERIFIED`: main, Branch head, current identity, PR, changed-path, semantic ownership, policy 또는 exact-head 증거를 읽지 못했다. 이 상태를 `CLEAR`로 낮추지 않는다.
 
 `PATH_OVERLAP`은 텍스트 merge conflict가 확정됐다는 뜻이 아니다. 반대로 파일이 달라도 같은 정본·Schema·생성물·save/runtime·Scene·자산 계열을 바꾸면 `SEMANTIC_OVERLAP`일 수 있다. overlap 분류 뒤 실제 소유권·source/derivative 관계·의도한 변경 범위를 검증해 disposition을 정한다.
 
-preflight는 첫 persistent write 전, 최종 `intended_paths`가 확정된 PR 생성 전, exact reviewed HEAD 병합 전, main·열린 PR·resource owner가 바뀐 뒤에 다시 실행한다. merge 뒤에는 새 main을 read back하고 같은 Goal의 PR·정본·소비자 상태를 재검사한다.
+preflight는 첫 persistent write 전, 각 후속 write의 parent 확인 전, 최종 `intended_paths`가 확정된 PR 생성 전, exact reviewed HEAD 병합 전, main·열린 PR·resource owner가 바뀐 뒤에 다시 실행한다. merge 뒤에는 새 main을 read back하고 같은 Goal의 PR·정본·소비자 상태를 재검사한다.
 
 ## Rules
 
@@ -89,6 +99,8 @@ preflight는 첫 persistent write 전, 최종 `intended_paths`가 확정된 PR �
 - `LOCAL_AHEAD`: diff·검증·커밋 범위를 확인한 뒤 push·PR한다.
 - `DIVERGED`: 자동 force push·hard reset을 금지하고 병합·rebase·새 branch 중 하나를 명시적으로 선택한다.
 - `STALE_BASE_SHA`, `WAITING_RESOURCE`, `DUPLICATE_WORK`, `BLOCKED_UNVERIFIED`에서는 persistent write·새 경쟁 PR·merge를 자동 진행하지 않는다.
+- 실제 작업 Branch HEAD가 `write_parent_sha`와 다르면 concurrent branch update로 보고 write를 중단한다.
+- same-goal·path 목록에 현재 Task/PR 자신을 포함해 self-conflict를 만들지 않는다.
 - path가 비중첩이어도 semantic resource가 같으면 동시 writer를 허용하지 않는다.
 - 비밀·대용량 생성물·승인되지 않은 파일은 자동 커밋하지 않는다.
 - 기존 PR에 조정 comment를 남기거나 명시적 handoff를 받았다는 사실과 실제 resource 해제는 구분한다.
@@ -99,6 +111,7 @@ preflight는 첫 persistent write 전, 최종 `intended_paths`가 확정된 PR �
 ```md
 ## 로컬·원격 HEAD와 상태
 ## CONCURRENT_CHANGE_PREFLIGHT 증거·분류·disposition
+## current task/PR identity·write parent·exact expected HEAD
 ## 동일 Goal PR·경로 중첩·semantic resource와 조정 결과
 ## 차이 파일·커밋·미추적 항목
 ## 선택한 reconcile 방식과 이유
@@ -110,6 +123,6 @@ preflight는 첫 persistent write 전, 최종 `intended_paths`가 확정된 PR �
 
 ## Quality gate
 
-로컬 작업 유실, 무검토 자동 커밋, force push, 인증 실패 은폐, pull 성공을 기능 검증으로 오인, 열린 PR·changed paths를 보지 않고 `CLEAR` 판정, path만 보고 semantic 충돌을 무시, stale base 또는 다른 HEAD의 CI를 병합 증거로 사용하면 실패다.
+로컬 작업 유실, 무검토 자동 커밋, force push, 인증 실패 은폐, pull 성공을 기능 검증으로 오인, 열린 PR·changed paths를 보지 않고 `CLEAR` 판정, 현재 PR을 자기 중복으로 판정, stale `write_parent_sha` 위에 write, path만 보고 semantic 충돌을 무시, stale base 또는 다른 HEAD의 CI를 병합 증거로 사용하면 실패다.
 
 Learning Log: `skills/SKILL_LEARNING_LOG.md`
