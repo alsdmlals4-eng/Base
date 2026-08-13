@@ -1,32 +1,214 @@
-{"schema_version":1,"artifact_role":"BASE_SKILL_IMPLEMENTATION_EVIDENCE_INDEX","entries":[
-{"skill_id":"managing-project-intake-and-work-contract","evidence":[{"kind":"TEST","path":"tests/test_neutral_adversarial_feature_lifecycle.py"},{"kind":"TEST","path":"tests/test_consolidated_skill_references.py"},{"kind":"TEST","path":"tests/test_feature_spec_traceability_contract.py"},{"kind":"TEST","path":"tests/test_skill_system_coverage.py"}]},
-{"skill_id":"managing-game-project-operating-system","evidence":[{"kind":"TEST","path":"tests/test_game_project_operating_system_structure.py"}]},
-{"skill_id":"evolving-project-discipline-skills","evidence":[{"kind":"TEST","path":"tests/test_skill_system_coverage.py"},{"kind":"TEST","path":"tests/test_skill_behavior_evidence_hardening.py"}]},
-{"skill_id":"managing-design-documents","evidence":[{"kind":"TEST","path":"tests/test_consolidated_skill_references.py"},{"kind":"TEST","path":"tests/test_feature_spec_traceability_contract.py"}]},
-{"skill_id":"maintaining-project-context-and-handoff","evidence":[{"kind":"TEST","path":"tests/test_gpt_codex_workflow_contract.py"}]},
-{"skill_id":"analyzing-and-refining-game-concepts","evidence":[{"kind":"TEST","path":"tests/test_game_design_difficulty_workflow.py"}]},
-{"skill_id":"designing-vertical-slices","evidence":[{"kind":"TEST","path":"tests/test_vertical_slice_v9_contract.py"}]},
-{"skill_id":"orchestrating-deepseek-worktrees","evidence":[{"kind":"TOOL","path":"tools/check_external_ai_worktree_contract.py"},{"kind":"TEST","path":"tests/test_external_ai_worktree_contract.py"}]},
-{"skill_id":"reviewing-and-validating-project-changes","evidence":[{"kind":"TOOL","path":"tools/check_review_evidence.py"},{"kind":"TEST","path":"tests/test_consolidated_skill_references.py"},{"kind":"TEST","path":"tests/test_feature_spec_traceability_contract.py"},{"kind":"TEST","path":"tests/test_claim_and_intent_verification_contract.py"},{"kind":"TEST","path":"tests/test_claim_evidence_binding.py"}]},
-{"skill_id":"auditing-canonical-reference-freshness","evidence":[{"kind":"TOOL","path":"tools/check_canonical_reference_freshness.py"},{"kind":"TEST","path":"tests/test_reference_freshness.py"}]},
-{"skill_id":"designing-art-prompts-and-technique-cards","evidence":[{"kind":"TEST","path":"tests/test_bca_visual_sheet_workflow.py"}]},
-{"skill_id":"auditing-and-refining-ui-art","evidence":[{"kind":"TEST","path":"tests/test_game_ux_ui_system.py"},{"kind":"TEST","path":"tests/test_project_design_md_adapter.py"},{"kind":"TEST","path":"tests/test_external_ui_procurement_gate.py"},{"kind":"TEST","path":"tests/test_bcp008_behavior_and_procurement_pilot.py"}]},
-{"skill_id":"managing-base-change-proposals","evidence":[{"kind":"TEST","path":"tests/test_consolidated_skill_references.py"}]},
-{"skill_id":"identifying-project-core","evidence":[{"kind":"TEST","path":"tests/test_skill_system_coverage.py"}]},
-{"skill_id":"establishing-project-core","evidence":[{"kind":"TEST","path":"tests/test_skill_system_coverage.py"}]},
-{"skill_id":"running-adversarial-review-and-refinement","evidence":[{"kind":"TEST","path":"tests/test_neutral_adversarial_feature_lifecycle.py"},{"kind":"TEST","path":"tests/test_cross_discipline_review_lenses.py"}]},
-{"skill_id":"refactoring-with-contract-preservation","evidence":[{"kind":"TEST","path":"tests/test_skill_system_coverage.py"}]},
-{"skill_id":"simplifying-skill-bodies","evidence":[{"kind":"TEST","path":"tests/test_skill_system_coverage.py"}]},
-{"skill_id":"pruning-stale-and-nonfunctional-material","evidence":[{"kind":"TEST","path":"tests/test_skill_system_coverage.py"}]},
-{"skill_id":"synchronizing-local-and-github-state","evidence":[{"kind":"TEST","path":"tests/test_skill_system_coverage.py"}]},
-{"skill_id":"maintaining-long-running-task-continuity","evidence":[{"kind":"TEST","path":"tests/test_skill_system_coverage.py"}]},
-{"skill_id":"governing-game-user-research-coverage","evidence":[{"kind":"TEST","path":"tests/test_skill_system_coverage.py"}]},
-{"skill_id":"creating-user-learning-notes","evidence":[{"kind":"TEST","path":"tests/test_skill_system_coverage.py"}]},
-{"skill_id":"building-project-visual-dashboards","evidence":[{"kind":"TEST","path":"tests/test_skill_system_coverage.py"}]},
-{"skill_id":"diagnosing-game-engine-runtime-failures","evidence":[{"kind":"TEST","path":"tests/test_skill_system_coverage.py"}]},
-{"skill_id":"governing-legacy-retention-and-archives","evidence":[{"kind":"TEST","path":"tests/test_skill_system_coverage.py"},{"kind":"TOOL","path":"templates/project-operations/github/check_archive_governance.py"}]},
-{"skill_id":"evaluating-godot-assets-and-plugins-before-creation","evidence":[{"kind":"TEST","path":"tests/test_base_shared_skill_routes.py"}]},
-{"skill_id":"optimizing-ai-model-and-prompt-costs","evidence":[{"kind":"TEST","path":"tests/test_skill_system_coverage.py"}]},
-{"skill_id":"producing-game-development-youtube-videos","evidence":[{"kind":"TEST","path":"tests/test_game_development_youtube_skill.py"},{"kind":"CONTRACT","path":"skills/producing-game-development-youtube-videos/SKILL.md"},{"kind":"CONTRACT","path":"templates/game-development-youtube/EPISODE_PACKET.md"}]},
-{"skill_id":"developing-and-revising-serial-fiction","evidence":[{"kind":"TEST","path":"tests/test_serial_fiction_discipline.py"},{"kind":"CONTRACT","path":"skills/developing-and-revising-serial-fiction/SKILL.md"},{"kind":"CONTRACT","path":"docs/knowledge/serial-fiction/SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md"}]}
-]}
+{
+  "schema_version": 1,
+  "artifact_role": "BASE_SKILL_IMPLEMENTATION_EVIDENCE_INDEX",
+  "entries": [
+    {
+      "skill_id": "managing-project-intake-and-work-contract",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_neutral_adversarial_feature_lifecycle.py"},
+        {"kind": "TEST", "path": "tests/test_consolidated_skill_references.py"},
+        {"kind": "TEST", "path": "tests/test_feature_spec_traceability_contract.py"},
+        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"}
+      ]
+    },
+    {
+      "skill_id": "managing-game-project-operating-system",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_game_project_operating_system_structure.py"}
+      ]
+    },
+    {
+      "skill_id": "evolving-project-discipline-skills",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"},
+        {"kind": "TEST", "path": "tests/test_skill_behavior_evidence_hardening.py"}
+      ]
+    },
+    {
+      "skill_id": "managing-design-documents",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_consolidated_skill_references.py"},
+        {"kind": "TEST", "path": "tests/test_feature_spec_traceability_contract.py"}
+      ]
+    },
+    {
+      "skill_id": "maintaining-project-context-and-handoff",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_gpt_codex_workflow_contract.py"}
+      ]
+    },
+    {
+      "skill_id": "analyzing-and-refining-game-concepts",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_game_design_difficulty_workflow.py"}
+      ]
+    },
+    {
+      "skill_id": "designing-vertical-slices",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_vertical_slice_v9_contract.py"}
+      ]
+    },
+    {
+      "skill_id": "orchestrating-deepseek-worktrees",
+      "evidence": [
+        {"kind": "TOOL", "path": "tools/check_external_ai_worktree_contract.py"},
+        {"kind": "TEST", "path": "tests/test_external_ai_worktree_contract.py"}
+      ]
+    },
+    {
+      "skill_id": "reviewing-and-validating-project-changes",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_consolidated_skill_references.py"},
+        {"kind": "TEST", "path": "tests/test_feature_spec_traceability_contract.py"},
+        {"kind": "TEST", "path": "tests/test_claim_and_intent_verification_contract.py"}
+      ]
+    },
+    {
+      "skill_id": "auditing-canonical-reference-freshness",
+      "evidence": [
+        {"kind": "TOOL", "path": "tools/check_canonical_reference_freshness.py"},
+        {"kind": "TEST", "path": "tests/test_reference_freshness.py"}
+      ]
+    },
+    {
+      "skill_id": "designing-art-prompts-and-technique-cards",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_bca_visual_sheet_workflow.py"}
+      ]
+    },
+    {
+      "skill_id": "auditing-and-refining-ui-art",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_game_ux_ui_system.py"},
+        {"kind": "TEST", "path": "tests/test_project_design_md_adapter.py"},
+        {"kind": "TEST", "path": "tests/test_external_ui_procurement_gate.py"},
+        {"kind": "TEST", "path": "tests/test_bcp008_behavior_and_procurement_pilot.py"}
+      ]
+    },
+    {
+      "skill_id": "managing-base-change-proposals",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_consolidated_skill_references.py"}
+      ]
+    },
+    {
+      "skill_id": "identifying-project-core",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"}
+      ]
+    },
+    {
+      "skill_id": "establishing-project-core",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"}
+      ]
+    },
+    {
+      "skill_id": "running-adversarial-review-and-refinement",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_neutral_adversarial_feature_lifecycle.py"},
+        {"kind": "TEST", "path": "tests/test_cross_discipline_review_lenses.py"}
+      ]
+    },
+    {
+      "skill_id": "refactoring-with-contract-preservation",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"}
+      ]
+    },
+    {
+      "skill_id": "simplifying-skill-bodies",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"}
+      ]
+    },
+    {
+      "skill_id": "pruning-stale-and-nonfunctional-material",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"}
+      ]
+    },
+    {
+      "skill_id": "synchronizing-local-and-github-state",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"}
+      ]
+    },
+    {
+      "skill_id": "maintaining-long-running-task-continuity",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"}
+      ]
+    },
+    {
+      "skill_id": "governing-game-user-research-coverage",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"}
+      ]
+    },
+    {
+      "skill_id": "creating-user-learning-notes",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"}
+      ]
+    },
+    {
+      "skill_id": "building-project-visual-dashboards",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"}
+      ]
+    },
+    {
+      "skill_id": "diagnosing-game-engine-runtime-failures",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"}
+      ]
+    },
+    {
+      "skill_id": "governing-legacy-retention-and-archives",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"},
+        {"kind": "TOOL", "path": "templates/project-operations/github/check_archive_governance.py"}
+      ]
+    },
+    {
+      "skill_id": "evaluating-godot-assets-and-plugins-before-creation",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_base_shared_skill_routes.py"}
+      ]
+    },
+    {
+      "skill_id": "optimizing-ai-model-and-prompt-costs",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"}
+      ]
+    }
+,
+    {
+      "skill_id": "producing-game-development-youtube-videos",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_game_development_youtube_skill.py"},
+        {"kind": "CONTRACT", "path": "skills/producing-game-development-youtube-videos/SKILL.md"},
+        {"kind": "CONTRACT", "path": "templates/game-development-youtube/EPISODE_PACKET.md"}
+      ]
+    },
+    {
+      "skill_id": "developing-and-revising-serial-fiction",
+      "evidence": [
+        {
+          "kind": "TEST",
+          "path": "tests/test_serial_fiction_discipline.py"
+        },
+        {
+          "kind": "CONTRACT",
+          "path": "skills/developing-and-revising-serial-fiction/SKILL.md"
+        },
+        {
+          "kind": "CONTRACT",
+          "path": "docs/knowledge/serial-fiction/SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md"
+        }
+      ]
+    }
+  ]
+}
