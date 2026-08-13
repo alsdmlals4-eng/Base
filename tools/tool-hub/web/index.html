@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Base Tool Hub</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">BASE · LOCAL TOOL CONTROL</p>
+      <h1>Tool Hub</h1>
+      <p>프로젝트를 먼저 연결하고, 검토된 도구를 정확한 프로젝트에만 실행합니다.</p>
+    </header>
+
+    <section class="panel">
+      <h2>프로젝트 연결</h2>
+      <form id="project-registration">
+        <label>프로젝트 Git 루트<input id="project-root" required placeholder="C:\Users\user\Documents\GitHub\Project"></label>
+        <button type="submit">프로젝트 검증 및 연결</button>
+      </form>
+      <div id="project-list"></div>
+    </section>
+
+    <section class="panel">
+      <h2>도구</h2>
+      <div id="tool-catalog">
+        <article class="tool-card"><h3>QA Evidence Studio</h3><p>이미지·UX 배치 후 개발자 PC 검토와 증거 패킷을 기록합니다.</p></article>
+      </div>
+    </section>
+    <output id="status" role="status">Tool Hub를 준비하는 중입니다.</output>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

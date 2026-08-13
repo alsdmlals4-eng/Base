@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/base-tool-registry-v1.schema.json",
+  "title": "Base reviewed interactive tool registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "tools"],
+  "properties": {
+    "$schema": {"type": "string", "minLength": 1},
+    "schema_version": {"const": 1},
+    "tools": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/tool"}
+    }
+  },
+  "$defs": {
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool_id",
+        "display_name",
+        "audience",
+        "owner_path",
+        "launch_adapter",
+        "health_path",
+        "project_scoped",
+        "capabilities",
+        "production_engine_required_for_delivery"
+      ],
+      "properties": {
+        "tool_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "display_name": {"type": "string", "minLength": 1},
+        "audience": {"const": "HUMAN_INTERACTIVE"},
+        "owner_path": {"type": "string", "pattern": "^tools/[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "launch_adapter": {
+          "enum": ["expression_studio", "qa_evidence_studio", "sprite_animation_studio"]
+        },
+        "health_path": {"const": "/api/status"},
+        "project_scoped": {"const": true},
+        "capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z0-9]+(?:_[a-z0-9]+)*$"}
+        },
+        "production_engine_required_for_delivery": {"type": "boolean"}
+      }
+    }
+  }
+}
