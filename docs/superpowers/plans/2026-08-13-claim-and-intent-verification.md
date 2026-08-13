@@ -61,13 +61,13 @@ PR #319 squash commit을 revert하고 Registry 파생본을 재생성한다. 신
 3. 실행 목록 누락 시 이미 docs·contract suite가 실행하는 기존 aggregator에 전용 test case를 연결한다.
 4. exact RED head에서 기존 계약은 통과하고 새 계약만 실패하는지 확인한다.
 
-**Recorded RED**
+**Recorded RED — canonical PR #319**
 
-- initial test commit: `9a4a6e688e993114466e3f25831555b23fcf5912`
-- canonical aggregation commit: `8a161eca8d129584aecb3898e8d5622dcfc89efb`
-- Game Project OS run: `31656590653`
-- docs-validation job: `94312314139`
-- result: 113 tests, exactly 6 new-contract failures; existing listed contracts passed before those failures
+- exact RED head: `bf0890439cbef96777171cc00a0229c65e852af8`
+- Game Project Operating System run: `31657742630`
+- result: existing contracts reached the dedicated suite and exactly 6 new Claim/Intent assertions failed because the production Mode, reference, Registry routing, Template/workflow integration, `SBE-038`, and central learning record were absent
+- additional finding: 3 trailing-whitespace defects in this plan were detected and removed before GREEN
+- superseded evidence: PR #317 was closed unmerged and its earlier RED identifiers are not implementation authority for PR #319
 
 **Complete when**
 

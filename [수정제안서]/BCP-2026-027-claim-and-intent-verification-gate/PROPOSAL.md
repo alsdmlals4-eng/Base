@@ -271,7 +271,7 @@ GREEN:
 - 신규 제안 Registry 상태: `SUBMITTED`
 - 승인된 구현 범위: 이 문서의 영향 경로·보호 대상·검증 계약
 - 구현 방식: 제안 PR 병합 뒤 fresh `main`에서 별도 구현 PR
-- 구현 PR: 아직 없음
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/319`
 
 ### 구현 closeout — PR #319
 

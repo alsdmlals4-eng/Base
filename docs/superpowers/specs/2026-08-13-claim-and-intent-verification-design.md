@@ -156,9 +156,9 @@ Fail-closed 상태는 증거가 채워질 때만 해제한다.
 
 ### RED
 
-`tests/test_claim_and_intent_verification_contract.py`를 먼저 추가하고, 기존 CI가 새 파일을 실행하지 않는 문제를 발견했다. 이미 docs·contract suite에서 실행되는 `tests/test_repository_governance_baseline.py`에 전용 test case를 import해 canonical suites에 연결했다.
+`tests/test_claim_and_intent_verification_contract.py`를 production 변경보다 먼저 배치하고, 기존 always-run governance suite가 전용 test case를 실행하도록 연결했다. 폐기된 PR #317의 초기 test-discovery 실험은 구현 권한으로 재사용하지 않았다.
 
-Exact RED head `8a161eca8d129584aecb3898e8d5622dcfc89efb`의 docs-validation은 기존 계약을 통과한 뒤 새 Gate 계약 6개만 실패했다.
+Canonical PR #319의 exact RED head `bf0890439cbef96777171cc00a0229c65e852af8`와 Game Project Operating System run `31657742630`은 기존 계약을 거쳐 전용 suite에 도달한 뒤, production Mode·reference·Registry routing·Template/workflow integration·`SBE-038`·중앙 Learning Log가 없다는 6개 계약만 의도대로 실패했다. 같은 run에서 plan의 trailing whitespace 3건도 별도 형식 결함으로 검출했다.
 
 ### GREEN target
 
