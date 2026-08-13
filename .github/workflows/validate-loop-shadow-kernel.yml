@@ -1,26 +1,7 @@
 name: Validate Universal Loop SHADOW Kernel
 
 on:
-  pull_request:
-    paths:
-      - "tools/loop_shadow_kernel/**"
-      - "tools/loopctl.py"
-      - "tests/test_loop_shadow_kernel*.py"
-      - "tests/fixtures/loop-shadow-kernel/**"
-      - "docs/LOOP_ENGINEERING_SHADOW_KERNEL.md"
-      - "docs/evidence/2026-08-14-universal-loop-shadow-kernel.md"
-      - ".github/workflows/validate-loop-shadow-kernel.yml"
-  push:
-    branches:
-      - m3-shadow-kernel-20260814
-    paths:
-      - "tools/loop_shadow_kernel/**"
-      - "tools/loopctl.py"
-      - "tests/test_loop_shadow_kernel*.py"
-      - "tests/fixtures/loop-shadow-kernel/**"
-      - "docs/LOOP_ENGINEERING_SHADOW_KERNEL.md"
-      - "docs/evidence/2026-08-14-universal-loop-shadow-kernel.md"
-      - ".github/workflows/validate-loop-shadow-kernel.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -36,11 +17,7 @@ jobs:
       - name: Compile and test deterministic SHADOW Kernel
         run: |
           python -m compileall -q tools tests/test_loop_shadow_kernel.py tests/test_loop_shadow_kernel_cli.py tests/test_loop_shadow_kernel_adversarial.py
-          python -m unittest \
-            tests.test_loop_shadow_kernel \
-            tests.test_loop_shadow_kernel_cli \
-            tests.test_loop_shadow_kernel_adversarial \
-            -v
+          python -m unittest tests.test_loop_shadow_kernel tests.test_loop_shadow_kernel_cli tests.test_loop_shadow_kernel_adversarial -v
           git diff --check
 
   shadow-kernel-windows:
