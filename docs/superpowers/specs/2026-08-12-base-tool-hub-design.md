@@ -36,13 +36,13 @@ Figma
 
 ### Work Mode와 범위
 
-- Work Mode: `PLAN`
+- Work Mode: `BUILD_APPROVED / IMPLEMENTATION_IN_PROGRESS`
 - 작업 수준: `L4`, 여러 프로젝트가 재사용하는 공용 실행 계층
-- 현재 산출물: 벤치마킹, disposition, 설계, 위협 모델, 구현 acceptance criteria
-- 현재 제외: Tool Hub 코드, 기존 Studio 대량 이동, 원격 호스팅, Figma 자동 mutation, 외부 도구 자동 설치
+- 현재 산출물: Phase 0/0.5 Studio·공용 계약 구현, production engine dependency 구현, Tool Hub Phase 1 설계·흡수 판정
+- 현재 제외: 기존 Studio 대량 이동, 원격 호스팅, Figma 자동 mutation, 외부 도구 자동 설치
 - 보호 대상: 기존 두 Studio의 프로젝트 격리, Figma registry, 프로젝트 로컬 자산 권위, API key 비기록, 기존 dirty worktree 변경
 
-사용자의 “다시 검토한 뒤 최선이면 그걸로 하자”는 대안 검토와 권장안 선정을 승인한 것으로 기록한다. 독립 검토에서 Base 고유 차단 조건이 발견됐으므로 L4 BUILD 승인은 아직 `AWAITING_USER_CONFIRMATION`이다. 이 설계의 Phase 0/0.5 범위와 검증 계약을 사용자가 명시적으로 승인한 뒤에만 별도 implementation plan과 테스트 우선 구현으로 진행한다.
+사용자는 2026-08-13 이 설계의 L4 BUILD와 Phase 0/0.5 진행을 명시적으로 승인했다. 승인은 구현 시작 권한이며 실제 production generation, Windows 동시 실행, Figma placement 또는 Hub acceptance 증거를 대신하지 않는다.
 
 ## 3. Base 현행 구조 분석
 
@@ -133,6 +133,29 @@ remote_hosted_saas: DEFER
 ```
 
 조건부 판정은 **`REUSE + REFACTOR + BUILD_NEW_MINIMAL`**이다. Base에 이미 사용자용 도구가 두 개 있지만 이를 안전하게 발견·동시 실행하는 owner는 없다. 외부 범용 launcher를 설치하면 임의 script 실행, 별도 패키지 관리, 프로젝트/Figma registry 이중화가 생긴다. 따라서 기존 Studio와 registry data는 재사용하고, 중복된 Figma parser·delivery contract를 먼저 단일 owner로 합친 뒤, Base registry에 고정된 도구만 실행하는 얇은 launcher만 신규 제작한다.
+
+### 2026-08-13 중복 채팅 Tool Radar 후보 흡수 판정
+
+사용자가 제공한 `Game Development Tool Radar` 정적 ZIP과 채팅 기록을 현재 Base·PR 상태와 대조했다. 정적 파일의 JavaScript 문법과 localhost HTTP 제공은 재현됐지만, 채팅이 주장한 canonical `catalog.json`, generator, schema, tests와 browser-smoke evidence는 ZIP에 없었다. ZIP의 `data.js`에는 28개 unique tool entry가 있으나 Hub 자체를 `base.external_game_development_tool_hub`와 `base.game_development_tool_radar` 두 ID로 중복 등록한다. GitHub same-goal 검색에서는 현재 PR #312 외 별도 Tool Radar/External HTML PR은 확인되지 않았다.
+
+| 후보 요소 | 판정 | 흡수 방식 |
+|---|---|---|
+| 검색·카테고리·상태 필터·즐겨찾기 UI | `ADAPT` | `tools/tool-hub/`의 catalog 탭으로 흡수 |
+| sprite splitter, image resize, JSON/SHA/diff 등 browser-local utility | `ADAPT_AFTER_TEST` | network·shell 없이 작동하는 capability로 개별 등록·테스트 |
+| 브라우저 `localStorage` 후보 저장 | `ADAPT` | `UNVERIFIED_LOCAL_DRAFT`만 허용하고 registry 자동 승격 금지 |
+| 외부 도구·discovery source 카드 | `DERIVED_VIEW_ONLY` | 기존 periodic source owner의 읽기 전용 projection으로 표시 |
+| `data.js`의 도구 상태·명령·evidence | `EVIDENCE_ONLY` | Base current owner와 실제 smoke로 다시 생성; 정본으로 import 금지 |
+| 두 Hub ID와 별도 external HTML owner | `REJECT_DUPLICATE_OWNER` | Base Tool Hub 하나로 통합하고 두 candidate ID는 채택하지 않음 |
+| static `python -m http.server` process owner | `REJECT_AS_RUNTIME_OWNER` | Hub FastAPI가 같은-origin 정적 UI와 typed launcher를 함께 제공 |
+| ZIP의 `READY/PASS/ACTIVE` 주장 | `BLOCKED_UNVERIFIED` | bundled browser harness·source generator 부재로 재검증 전 승격 금지 |
+
+통합 후 한 화면은 세 종류를 명확히 분리한다.
+
+1. `RUNNABLE`: reviewed `tools/TOOL_REGISTRY.json` entry와 typed adapter·health contract가 있는 도구.
+2. `REFERENCE`: 외부 도구 또는 discovery source의 읽기 전용 카드. 실행·설치·승격 권위가 없다.
+3. `UNVERIFIED_LOCAL_DRAFT`: 현재 브라우저 프로필의 임시 후보. Base 또는 프로젝트 파일을 수정하지 않는다.
+
+`file://` 페이지와 별도 포트의 두 번째 허브는 유지하지 않는다. Hub의 authenticated localhost origin에서 catalog와 launcher를 함께 제공하되, catalog UI는 process argv·environment·project path를 만들 수 없고 launcher는 고정 typed adapter만 소비한다.
 
 ## 5. 대안 비교
 
@@ -424,7 +447,7 @@ registry의 `READY_FOR_DELIVERY`는 local routing configuration 이름이지 liv
 ### 별도 production dependency — Hub 범위와 독립
 
 - `docs/superpowers/specs/2026-08-13-openai-visual-generation-engine-design.md`의 별도 승인·구현 계약에 따라 Expression과 Sprite production adapters를 채택한다.
-- 현재 Expression CLI는 `FakeExpressionEngine`만 연결하므로 이 dependency가 없더라도 Hub launcher 개발·격리 smoke는 가능하지만 실제 표정 생성 제품은 합격할 수 없다.
+- Expression CLI에는 explicit `simulated|openai` 선택과 reviewed snapshot adapter가 구현됐다. 단위·service 계약은 통과했으나 2026-08-13 실제 샘플 호출은 provider의 `credit_balance_exhausted / insufficient_quota`로 후보 0개·blocked였으므로 실제 표정 생성 제품은 아직 합격할 수 없다. Sprite의 OpenAI production adapter도 별도 미구현 상태다.
 - Hub는 production adapter를 구현하거나 provider request를 소유하지 않는다. adapter가 없으면 `BLOCKED_ENGINE`, simulated이면 `DELIVERY_BLOCKED`를 표시한다.
 - production provenance, anchor와 byte-different output, exact count/containment/readability, provider 비용·오류 처리와 실제 샘플 검증을 해당 Studio owner가 통과해야 `GENERATION_PRODUCT_READY` 후보가 된다.
 
@@ -437,6 +460,10 @@ registry의 `READY_FOR_DELIVERY`는 local routing configuration 이름이지 liv
 - clean environment builder와 confined `shell=False` argv launcher
 - machine/child locks, atomic port allocation, authenticated identity health check, OS별 process-tree start/open/stop
 - project/tool readiness and simulated/production 표시
+- 제공된 Tool Radar의 검색·필터·즐겨찾기·candidate draft UX를 단일 Hub catalog 탭으로 재구현
+- executable registry, periodic source의 derived reference projection, browser-local draft를 서로 다른 schema/state로 표시
+- browser-local image/JSON/SHA/diff utilities는 capability별 bounded input·output·security tests를 통과한 항목만 등록
+- candidate ZIP의 `data.js`, self-declared `PASS/ACTIVE`, raw command와 duplicate Hub ID는 import하지 않음
 - 두 프로젝트 동시 실행 smoke test
 - README·START_HERE·Documentation Map·schema migration·active consumer·compatibility test route
 
@@ -497,6 +524,8 @@ registry의 `READY_FOR_DELIVERY`는 local routing configuration 이름이지 liv
 
 - 각 독립 package에서 별도 pytest를 실행하고 각각의 JS syntax를 검사한다. root에서 두 suite를 한 pytest process로 합치지 않는다.
 - Tool Hub tests와 process failure tests.
+- catalog 화면에서 `RUNNABLE`, `REFERENCE`, `UNVERIFIED_LOCAL_DRAFT`가 혼합·자동 승격되지 않는 회귀 테스트.
+- Tool Radar 후보의 두 Hub ID, raw command, self-declared status를 canonical registry로 import하려 하면 차단하는 테스트.
 - `git diff --check`.
 - 정확한 trusted main SHA에 대한 Base local validation.
 - Windows PowerShell 실제 launcher/process-tree/path-with-spaces smoke.
@@ -562,4 +591,4 @@ registry의 `READY_FOR_DELIVERY`는 local routing configuration 이름이지 liv
 
 현재 비교에서 공용 도구 코드의 최선 후보 위치는 **Base repository의 `tools/` 아래**이며, 실행 형태의 최선 후보는 **localhost Tool Hub + tracked allowlist registry + machine-local locator + canonical project adapter identity + project-bound child processes**다.
 
-이를 “모든 도구를 한 앱으로 재작성”하거나 “Figma 안에서 생성”으로 확장하지 않는다. 현행 두 Studio를 재사용하되, 먼저 알려진 안전·identity·routing·vault·동시 실행 차단 결함을 고친 뒤 최소 Hub를 TDD로 구현한다. 이 Gate와 사용자 L4 BUILD 승인이 닫히기 전 최종 상태는 `CONDITIONALLY_RECOMMENDED / AWAITING_USER_CONFIRMATION / BLOCKED_UNVERIFIED`다.
+이를 “모든 도구를 한 앱으로 재작성”하거나 “Figma 안에서 생성”으로 확장하지 않는다. 현행 두 Studio를 재사용하되, 먼저 알려진 안전·identity·routing·vault·동시 실행 차단 결함을 고친 뒤 최소 Hub를 TDD로 구현한다. 사용자 L4 BUILD 승인은 닫혔고 Tool Radar 후보는 UI·utility 아이디어만 기존 Hub owner에 흡수한다. 실제 Windows 네 process smoke, provider 생성, live Figma placement 전 최종 상태는 `IMPLEMENTATION_IN_PROGRESS / BLOCKED_UNVERIFIED`다.

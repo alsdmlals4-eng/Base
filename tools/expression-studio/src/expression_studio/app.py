@@ -12,7 +12,7 @@ from base_tool_contracts import ApprovedAnchorRegistry
 from pydantic import BaseModel, ConfigDict, Field
 
 from .delivery import DeliveryBlockedError, ProjectFigmaRegistry
-from .engine import FakeExpressionEngine, ExpressionEngine
+from .engine import EngineContractError, FakeExpressionEngine, OpenAIExpressionEngine, ExpressionEngine
 from .models import ExpressionRequest
 from .service import ExpressionStudioService, RunBlockedError, RunNotFoundError
 from .security import StudioSecurity, install_security
@@ -120,14 +120,23 @@ def main() -> None:
     parser.add_argument("--figma-target-registry", type=Path)
     parser.add_argument("--project-id", required=True)
     parser.add_argument("--approved-anchor-registry", type=Path)
+    parser.add_argument("--engine", choices=("simulated", "openai"), default="simulated")
     parser.add_argument("--port", type=int, default=8766)
     parser.add_argument("--launch-nonce")
     args = parser.parse_args()
     registry = ProjectFigmaRegistry.load(args.figma_target_registry) if args.figma_target_registry else None
     anchor_registry = ApprovedAnchorRegistry.load(args.approved_anchor_registry) if args.approved_anchor_registry else None
+    try:
+        engine: ExpressionEngine = (
+            OpenAIExpressionEngine()
+            if args.engine == "openai"
+            else FakeExpressionEngine(args.project_root)
+        )
+    except EngineContractError as error:
+        parser.error(str(error))
     app = create_app(
         args.project_root,
-        FakeExpressionEngine(args.project_root),
+        engine,
         registry=registry,
         project_id=args.project_id,
         launch_nonce=args.launch_nonce,

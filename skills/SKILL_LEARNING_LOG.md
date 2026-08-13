@@ -1,5 +1,16 @@
 # Base Skill Learning Log
 
+## 2026-08-13 — BCP-2026-027 Claim and Intent Verification Gate
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** AI·Agent·작업자의 사실·완료 주장과 승인한 의도가 실제 저장소·실행·병합 결과에 연결됐는지 fail-closed로 확인할 공용 절차가 필요했다.
+- **Observed regression:** PR #313 감사에서 `README.md` drift 가설이 검색 결과만으로 저장소 사실에 과승격됐고, PR #316의 exact-SHA readback이 이를 `INVALIDATED_FINDING`으로 교정했다.
+- **Decision:** 새 ACTIVE Skill을 만들지 않고 `reviewing-and-validating-project-changes`에 `claim-and-intent-verification` Mode와 전용 reference를 흡수한다. 기존 Registry owner에 좁은 trigger를 추가하고 Material Claim Ledger, Intent–Implementation Fidelity Matrix, Completion Claim Gate를 validation Template·REVIEW 운영 문서·`SBE-038`에 연결한다.
+- **Fail-closed boundary:** 검색 결과·snippet·생산자 설명·모델 자신감은 lead일 뿐 Evidence가 아니다. exact-ref file readback, 실제 diff, exact HEAD 실행 결과, merge SHA와 post-merge main readback이 없으면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED` 또는 `BLOCKED_UNVERIFIED`를 유지한다.
+- **TDD evidence:** PR #319 exact RED head `bf0890439cbef96777171cc00a0229c65e852af8`의 required workflow에서 기존 계약 뒤 신규 Gate 계약 6개가 예상대로 실패했다. 별도 whitespace 3건도 함께 검출돼 구현 변경에서 제거한다.
+- **Evidence ceiling:** 정적·테스트 PASS를 runtime·render·사용성·재미·시장성 PASS로 승격하지 않는다. model behavior run은 실제 실행 전 `NOT_RUN`이다.
+- **Next trigger:** 서로 다른 프로젝트에서 완료 오판·의도 drift·검색 사실 과승격이 재발하거나, 새 trigger가 과도하게 route할 때 경계를 재검토한다.
+
 ## 2026-08-10 — Handoff consumer inventory before compression
 
 - Sources: BCP-013, BCP-014, BCP-016, BCP-019, and the approved continuity design.

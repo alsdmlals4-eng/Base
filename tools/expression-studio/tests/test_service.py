@@ -8,7 +8,7 @@ from PIL import Image
 
 from expression_studio.catalog import ExpressionConflictError
 from expression_studio.delivery import ProjectFigmaRegistry
-from expression_studio.engine import EngineResult, FakeExpressionEngine
+from expression_studio.engine import EngineContractError, EngineResult, FakeExpressionEngine, OpenAIExpressionEngine
 from expression_studio.models import ExpressionRequest
 from expression_studio.service import ExpressionStudioService, RunBlockedError
 from tests.test_delivery import write_registry
@@ -54,6 +54,47 @@ def service_for(project_root: Path, *, project_id: str | None = "demo") -> Expre
         registry=ProjectFigmaRegistry.load(write_registry(project_root)),
         project_id=project_id,
     )
+
+
+def test_service_rejects_a_non_image_source_before_staging_or_engine_use(tmp_path: Path) -> None:
+    source = tmp_path / "art" / "source" / "hero.png"
+    source.parent.mkdir(parents=True)
+    source.write_text("OPENAI_API_KEY=must-not-leave-project", encoding="utf-8")
+    initialize_vault(tmp_path)
+    service = ExpressionStudioService(tmp_path, FakeExpressionEngine(tmp_path), project_id="demo")
+
+    with pytest.raises(ValueError, match="supported PNG, JPEG, or WebP image"):
+        service.create_run(ExpressionRequest.model_validate(valid_payload()))
+
+    assert not (tmp_path / ".asset-vault" / "library" / "generated" / "expression-studio" / "hero").exists()
+
+
+def test_service_rejects_a_source_symlink_before_reading_it(tmp_path: Path) -> None:
+    secret = tmp_path / "art" / "secret.png"
+    secret.parent.mkdir(parents=True)
+    Image.new("RGBA", (8, 8), (1, 2, 3, 255)).save(secret)
+    source = tmp_path / "art" / "source" / "hero.png"
+    source.parent.mkdir(parents=True)
+    source.symlink_to(secret)
+    initialize_vault(tmp_path)
+    service = ExpressionStudioService(tmp_path, FakeExpressionEngine(tmp_path), project_id="demo")
+
+    with pytest.raises(ValueError, match="regular file|link"):
+        service.create_run(ExpressionRequest.model_validate(valid_payload()))
+
+
+def test_openai_engine_requires_project_owned_anchor_evidence_before_generation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    source = tmp_path / "art" / "source" / "hero.png"
+    source.parent.mkdir(parents=True)
+    Image.new("RGBA", (8, 8), (255, 255, 255, 255)).save(source)
+    initialize_vault(tmp_path)
+    monkeypatch.setenv("OPENAI_API_KEY", "test-only-key")
+    service = ExpressionStudioService(tmp_path, OpenAIExpressionEngine(), project_id="demo")
+
+    with pytest.raises(ValueError, match="project-owned approved-anchor evidence"):
+        service.create_run(ExpressionRequest.model_validate(valid_payload()))
 
 
 def generated_service_run(project_root: Path) -> tuple[ExpressionStudioService, str]:
@@ -241,6 +282,46 @@ def test_service_blocks_wrong_count_or_invalid_engine_candidate(
     assert run.status == "blocked"
     assert run.result is None
     assert any("engine" in warning for warning in run.warnings)
+
+
+def test_delivery_eligible_engine_rejects_pixel_duplicate_candidates(tmp_path: Path) -> None:
+    candidates_dir = tmp_path / "candidates"
+    candidates_dir.mkdir()
+    anchor = tmp_path / "anchor.png"
+    Image.new("RGBA", (8, 8), (255, 255, 255, 255)).save(anchor)
+    first = candidates_dir / "candidate-000.png"
+    second = candidates_dir / "candidate-001.png"
+    Image.new("RGBA", (8, 8), (20, 30, 40, 255)).save(first)
+    second.write_bytes(first.read_bytes())
+
+    with pytest.raises(EngineContractError, match="pixel-duplicate"):
+        ExpressionStudioService._validate_engine_result(
+            EngineResult(candidates=[first, second], generation_instruction="test"),
+            2,
+            candidates_dir,
+            anchor.read_bytes(),
+            delivery_eligible=True,
+        )
+
+
+def test_delivery_eligible_engine_rejects_any_candidate_identical_to_anchor(tmp_path: Path) -> None:
+    candidates_dir = tmp_path / "candidates"
+    candidates_dir.mkdir()
+    anchor = tmp_path / "anchor.png"
+    Image.new("RGBA", (8, 8), (255, 255, 255, 255)).save(anchor)
+    unchanged = candidates_dir / "candidate-000.png"
+    changed = candidates_dir / "candidate-001.png"
+    unchanged.write_bytes(anchor.read_bytes())
+    Image.new("RGBA", (8, 8), (20, 30, 40, 255)).save(changed)
+
+    with pytest.raises(EngineContractError, match="each visibly differ"):
+        ExpressionStudioService._validate_engine_result(
+            EngineResult(candidates=[unchanged, changed], generation_instruction="test"),
+            2,
+            candidates_dir,
+            anchor.read_bytes(),
+            delivery_eligible=True,
+        )
 
 
 def test_engine_candidate_handle_prevents_leaf_symlink_swap_escape(tmp_path: Path) -> None:

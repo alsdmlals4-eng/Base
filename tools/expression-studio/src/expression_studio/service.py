@@ -2,9 +2,12 @@
 
 from dataclasses import dataclass, field
 import hashlib
+from io import BytesIO
 import json
+import os
 from pathlib import Path
 import re
+import stat
 from uuid import uuid4
 
 from PIL import Image, UnidentifiedImageError
@@ -26,6 +29,75 @@ class RunNotFoundError(KeyError):
 
 class RunBlockedError(RuntimeError):
     pass
+
+
+_MAX_ANCHOR_BYTES = 25 * 1024 * 1024
+_MAX_ANCHOR_DIMENSION = 4096
+_ALLOWED_ANCHOR_FORMATS = {"PNG", "JPEG", "WEBP"}
+
+
+def _read_project_image(
+    project_root: Path,
+    source_path: str,
+    *,
+    expected_sha256: str | None = None,
+) -> bytes:
+    """Read one project image through a no-follow descriptor chain and validate its bytes."""
+    relative = Path(source_path)
+    if relative.is_absolute() or not relative.parts or any(part in {"", ".", ".."} for part in relative.parts):
+        raise ValueError("approved anchor source_path must be a confined project image")
+    directory_descriptor = -1
+    descriptor = -1
+    try:
+        directory_descriptor = os.open(
+            project_root,
+            os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0),
+        )
+        directory_flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
+        for component in relative.parts[:-1]:
+            next_descriptor = os.open(component, directory_flags, dir_fd=directory_descriptor)
+            os.close(directory_descriptor)
+            directory_descriptor = next_descriptor
+        descriptor = os.open(
+            relative.parts[-1],
+            os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0),
+            dir_fd=directory_descriptor,
+        )
+        attributes = os.fstat(descriptor)
+        if not stat.S_ISREG(attributes.st_mode):
+            raise ValueError("approved anchor source must be a regular file, not a link")
+        if attributes.st_size > _MAX_ANCHOR_BYTES:
+            raise ValueError("approved anchor image exceeds the 25 MiB safety limit")
+        chunks: list[bytes] = []
+        total = 0
+        while True:
+            chunk = os.read(descriptor, min(1024 * 1024, _MAX_ANCHOR_BYTES + 1 - total))
+            if not chunk:
+                break
+            chunks.append(chunk)
+            total += len(chunk)
+            if total > _MAX_ANCHOR_BYTES:
+                raise ValueError("approved anchor image exceeds the 25 MiB safety limit")
+        data = b"".join(chunks)
+    except OSError as error:
+        raise ValueError("approved anchor source must be a readable regular file without links") from error
+    finally:
+        if descriptor >= 0:
+            os.close(descriptor)
+        if directory_descriptor >= 0:
+            os.close(directory_descriptor)
+    if expected_sha256 is not None and hashlib.sha256(data).hexdigest() != expected_sha256:
+        raise ValueError("approved anchor source SHA-256 does not match project-owned evidence")
+    try:
+        with Image.open(BytesIO(data)) as image:
+            if image.format not in _ALLOWED_ANCHOR_FORMATS:
+                raise ValueError("approved anchor must be a supported PNG, JPEG, or WebP image")
+            if max(image.size) > _MAX_ANCHOR_DIMENSION or min(image.size) < 1:
+                raise ValueError("approved anchor image dimensions are outside the supported range")
+            image.load()
+    except (UnidentifiedImageError, OSError, Image.DecompressionBombError) as error:
+        raise ValueError("approved anchor must be a supported PNG, JPEG, or WebP image") from error
+    return data
 
 
 @dataclass
@@ -107,13 +179,27 @@ class ExpressionStudioService:
             except DeliveryBlockedError as error:
                 raise ValueError(str(error)) from error
         anchor = resolve_project_path(self._project_root, request.anchor.source_path)
-        if not anchor.is_file():
-            raise ValueError("approved anchor source_path must point to an existing project image")
+        if self._engine_policy.delivery_eligible and self._anchor_registry is None:
+            raise ValueError("OpenAI generation requires project-owned approved-anchor evidence")
+        expected_anchor_sha256: str | None = None
+        if self._anchor_registry is not None:
+            try:
+                expected_anchor_sha256 = self._anchor_registry.expected_source_sha256(
+                    project_id=request.project_id,
+                    source_path=request.anchor.source_path,
+                    figma_node_url=str(request.anchor.figma_node_url),
+                )
+            except AnchorEvidenceError as error:
+                raise ValueError(str(error)) from error
+        anchor_bytes = _read_project_image(
+            self._project_root,
+            request.anchor.source_path,
+            expected_sha256=expected_anchor_sha256,
+        )
         resolved = resolve_expression(request)
         run_id = uuid4().hex
         paths = create_run_paths(self._project_root, request.asset_id, run_id)
         revalidate_run_paths(self._project_root, paths)
-        anchor_bytes = anchor.read_bytes()
         anchor_verification = "ANCHOR_ROUTE_SYNTAX_VALID" if self._registry is not None else "ANCHOR_UNVERIFIED"
         anchor_evidence: dict[str, str] = {}
         if self._anchor_registry is not None:
@@ -131,7 +217,12 @@ class ExpressionStudioService:
             with stable_run_tree(self._project_root, paths) as stable:
                 stable_run = stable.run_dir
                 stable_candidates = stable.open_directory("candidates", expected_identity=paths.candidates_identity)
-                engine_anchor = safe_staging_write_bytes(stable_run, f"approved-anchor{anchor.suffix.lower() or '.png'}", anchor_bytes)
+                anchor_sha256 = hashlib.sha256(anchor_bytes).hexdigest()
+                engine_anchor = safe_staging_write_bytes(
+                    stable_run,
+                    f"approved-anchor-{anchor_sha256}{anchor.suffix.lower() or '.png'}",
+                    anchor_bytes,
+                )
                 engine_request = request.model_copy(update={"anchor": request.anchor.model_copy(update={"source_path": str(engine_anchor)})})
                 lineage = write_lineage(request, resolved, anchor_bytes, stable_run, anchor_verification=anchor_verification, anchor_evidence=anchor_evidence).resolve()
                 record = RunRecord(run_id=run_id, request=request, resolved=resolved, paths=paths, lineage=lineage, anchor_bytes=anchor_bytes, engine_policy=self._engine_policy, anchor_verification=anchor_verification, anchor_evidence=anchor_evidence, status="blocked")
@@ -163,8 +254,12 @@ class ExpressionStudioService:
             record.result = None
             return record
         try:
-            anchor_unchanged = anchor.read_bytes() == anchor_bytes
-        except OSError:
+            anchor_unchanged = _read_project_image(
+                self._project_root,
+                request.anchor.source_path,
+                expected_sha256=hashlib.sha256(anchor_bytes).hexdigest(),
+            ) == anchor_bytes
+        except ValueError:
             anchor_unchanged = False
         if not anchor_unchanged:
             record.warnings.append("approved anchor changed during generation; the run was blocked without overwriting the source")
@@ -407,5 +502,7 @@ class ExpressionStudioService:
                         candidate_visuals.append(hashlib.sha256(image.convert("RGBA").tobytes()).hexdigest())
             except (OSError, UnidentifiedImageError) as error:
                 raise EngineContractError("engine output visual hashes could not be verified") from error
-            if all(value == anchor_visual for value in candidate_visuals):
-                raise EngineContractError("delivery-eligible expression candidates must visibly differ from the anchor")
+            if len(candidate_visuals) != len(set(candidate_visuals)):
+                raise EngineContractError("delivery-eligible expression candidates must not be pixel-duplicates")
+            if any(value == anchor_visual for value in candidate_visuals):
+                raise EngineContractError("delivery-eligible expression candidates must each visibly differ from the anchor")

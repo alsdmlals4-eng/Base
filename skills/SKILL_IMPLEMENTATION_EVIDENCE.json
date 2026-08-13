@@ -60,7 +60,8 @@
       "skill_id": "reviewing-and-validating-project-changes",
       "evidence": [
         {"kind": "TEST", "path": "tests/test_consolidated_skill_references.py"},
-        {"kind": "TEST", "path": "tests/test_feature_spec_traceability_contract.py"}
+        {"kind": "TEST", "path": "tests/test_feature_spec_traceability_contract.py"},
+        {"kind": "TEST", "path": "tests/test_claim_and_intent_verification_contract.py"}
       ]
     },
     {

@@ -106,6 +106,15 @@ class ApprovedAnchorRegistry:
             "checked_at": entry.evidence.checked_at,
         }
 
+    def expected_source_sha256(self, *, project_id: str, source_path: str, figma_node_url: str) -> str:
+        """Return the committed source digest before any project file is read."""
+        entry = self._entries.get((project_id, source_path))
+        if entry is None:
+            raise AnchorEvidenceError("approved-anchor evidence is missing for the project source")
+        if str(entry.figma_node_url) != figma_node_url:
+            raise AnchorEvidenceError("approved-anchor Figma node URL does not match pinned evidence")
+        return entry.source_sha256
+
     def verify(self, *, project_id: str, source_path: str, figma_node_url: str, source_bytes: bytes) -> str:
         entry = self._entries.get((project_id, source_path))
         if entry is None:

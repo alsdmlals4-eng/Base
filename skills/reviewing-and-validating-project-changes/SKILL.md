@@ -16,6 +16,7 @@ For a Base v9.1 project, record a separate `PROJECT_OPERATING_INTEGRITY` verdict
 - `contract-check`: 승인 목표, 범위, 보호 대상과 실제 변경을 대조한다.
 - `multi-lens-review`: 복합 변경을 Simplify, Style Guide, Domain Review, Security/Safety/Trust Boundary 관점에서 검토하고 제외 이유를 기록한다.
 - `external-source-review`: 외부 AI·병렬 작업자의 초안과 주장을 독립 검수한다.
+- `claim-and-intent-verification`: AI·Agent·작업자의 material claim과 승인 Intent를 actual diff·exact HEAD·실행 Evidence·post-merge main readback에 연결하고 `MATERIAL_CLAIM_LEDGER`, `INTENT_IMPLEMENTATION_FIDELITY_MATRIX`, `COMPLETION_CLAIM_GATE`로 판정한다. 증거가 없으면 `CLAIM_UNVERIFIED` 또는 `IMPLEMENTATION_UNVERIFIED`를 유지한다.
 - `ci-cost-optimization`: 변경 위험에 따라 GitHub Actions 실행 계층을 분리하고 중복 실행·불필요한 matrix·고비용 설치를 줄이면서 Required Check 증거를 보존한다.
 - `reference-freshness`: 변경된 정본·경로·ID·Schema가 활성 참조·템플릿·테스트·파생본에 전파됐는지 감사한다.
 - `static-validation`: 코드·데이터·문서·자산·참조·Schema를 정적 검사한다.
@@ -42,6 +43,9 @@ canonical_sources_and_consumers:
 known_renames_aliases_and_replacements:
 allowed_and_protected_scope:
 acceptance_criteria:
+material_claims:
+approved_intent_and_acceptance:
+claim_authority_freshness_and_counterevidence:
 validation_commands_and_tools:
 ci_scope:
   workflow_files:
@@ -176,6 +180,21 @@ BLOCKED_BY_GITHUB_ACTIONS
 
 18. blocked 보고에는 workflow, event 또는 dispatch 입력, 현재 mode, head/base SHA, 기대 Required Check, 확인할 log·artifact, 재개 조건, 미검증 위험을 남긴다.
 19. Actions 사용 가능 상태가 복구되면 최신 branch·SHA·workflow diff를 다시 확인하고 `REMOTE_CI`의 아직 필요한 검증을 실행한다.
+
+### 2C. Claim and intent verification
+
+완료·검증·병합 주장 또는 승인 의도와 실제 구현의 일치 판정이 포함되면
+`references/claim-and-intent-verification.md`를 적용한다.
+
+1. 결과 판정을 바꾸는 주장만 `MATERIAL_CLAIM_LEDGER`에 원자화한다.
+2. 각 주장의 authority source, freshness, exact-ref file readback과 counterevidence를 확인한다.
+3. 승인된 Intent·Acceptance를 실제 diff·implementation path·관찰 결과에 연결해
+   `INTENT_IMPLEMENTATION_FIDELITY_MATRIX`를 작성한다.
+4. 구현·검증·의도·통합 주장을 `COMPLETION_CLAIM_GATE`의 서로 다른 Evidence 층으로 판정한다.
+5. 검색 결과, Builder 보고, 모델 자신감, 테스트 정의, 다른 SHA의 PASS는 직접 Evidence로 승격하지 않는다.
+6. 필요한 Evidence가 없으면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED` 또는
+   `BLOCKED_UNVERIFIED`를 유지한다.
+7. 병합 완료는 merged 상태, merge SHA, post-merge main readback과 post-merge 검사를 모두 요구한다.
 
 ### 3. Reference freshness
 
@@ -337,9 +356,15 @@ LEGAL_REVIEW_NOT_PERFORMED
 - 판정과 증거, 남은 위험, 롤백을 연결했다.
 - 외부 산출물은 독립 검수 없이 정본에 반영하지 않았다.
 
+- 완료·검증·병합을 주장할 때 material claim, 승인 Intent, 실제 diff, exact HEAD 실행 결과와 필요한 post-merge Evidence를 연결했다.
+- 한 Acceptance라도 unmapped이거나 필요한 Evidence 층이 없으면 완료 상태를 `IMPLEMENTATION_UNVERIFIED` 또는 `BLOCKED_UNVERIFIED`로 유지했다.
+
 ## Failure conditions
 
 - 실제 파일을 읽지 않고 완료를 주장한다.
+- 검색 결과·snippet·작업자 설명을 exact-ref file readback 없이 저장소 사실로 승격한다.
+- 테스트 정의나 파일 존재를 해당 exact HEAD의 실행 결과로 승격한다.
+- merge SHA와 post-merge main readback 없이 병합 완료를 주장한다.
 - 원래 증상을 재현하지 못한 테스트만으로 수정 완료를 주장한다.
 - 사용자 승인 없이 범위 밖 구조 변경·삭제·마이그레이션을 수행한다.
 - 테스트 없이 저장 형식·공개 인터페이스를 바꾼다.
@@ -380,6 +405,7 @@ References and templates:
 
 - `docs/CI_EXECUTION_COST_POLICY.md`
 - `references/accessibility-and-performance-validation.md`
+- `references/claim-and-intent-verification.md`
 - `templates/quality/PROJECT_CHANGE_VALIDATION.md`
 - `templates/quality/CANONICAL_REFERENCE_FRESHNESS_AUDIT.md`
 - `templates/ai/EXTERNAL_AI_DRAFT_REVIEW.md` (legacy-compatible input)

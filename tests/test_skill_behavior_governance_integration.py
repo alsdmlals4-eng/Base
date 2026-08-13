@@ -121,5 +121,19 @@ class SkillBehaviorGovernanceIntegrationTests(unittest.TestCase):
         self.assertIn("독자 반응 Evidence", operating)
 
 
+class ClaimIntentBehaviorGovernanceIntegrationTests(unittest.TestCase):
+    def test_claim_intent_fixture_reference_and_generated_evidence_are_connected(self) -> None:
+        evals = json.loads((ROOT / "skills/SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8"))
+        case = next(case for case in evals["cases"] if case["case_id"] == "SBE-038")
+        self.assertEqual("reviewing-and-validating-project-changes", case["expected_primary_skill"])
+        self.assertIn("claim-and-intent-verification", case["expected_skill_modes"])
+        reference = (ROOT / "skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md").read_text(encoding="utf-8")
+        for token in ("CLAIM_UNVERIFIED", "IMPLEMENTATION_UNVERIFIED", "post-merge main readback"):
+            self.assertIn(token, reference)
+        generated = (ROOT / "docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md").read_text(encoding="utf-8")
+        self.assertIn("External model behavior run: `NOT_RUN`", generated)
+        self.assertIn("tests/test_claim_and_intent_verification_contract.py", generated)
+
+
 if __name__ == "__main__":
     unittest.main()

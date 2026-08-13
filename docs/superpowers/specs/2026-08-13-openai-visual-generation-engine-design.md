@@ -31,8 +31,8 @@ Future tools follow the same rule: use an external/local tool for asset generati
 
 ### Expression Studio
 
-- Use the OpenAI Image API edit endpoint with the run-local approved-anchor copy.
-- Default production model: `gpt-image-2`, `input_fidelity=high`, PNG output.
+- Use the OpenAI Image API edit endpoint only after committed project-owned anchor evidence pins the exact source path, Figma URL and SHA-256. Read the source through a no-follow descriptor chain, validate bounded PNG/JPEG/WebP bytes, and send only that run-local approved-anchor copy.
+- Default production model: the reviewed `gpt-image-2-2026-04-21` snapshot with PNG output. Do not send `input_fidelity`: the current official GPT Image 2 guide says the model always processes image inputs at high fidelity and does not allow that setting to be changed.
 - Generate exactly the requested candidate count and store each response only in the run candidate directory.
 - Carry provider/model provenance, the resolved FACS instruction, and the anchor SHA-256 into lineage.
 - Reject empty, unreadable, duplicate, out-of-directory, or wrong-count outputs.
@@ -83,7 +83,7 @@ Use the supplied portrait as a smoke-test anchor only; it is not automatically a
 6. Prepare the exact-project Figma packet only after explicit selection/export.
 7. Use the matching project GPT's Figma connector to place selected results; then read back the exact node and visually inspect it before claiming Figma implementation.
 
-Because the current Codex workspace cannot read the operator's Windows process environment, the final paid smoke calls run from the same Windows PowerShell session where `OPENAI_API_KEY=present`. Local mock tests and all non-network validations run in Codex first.
+The production key is loaded from an ignored repository-local `.env.local` into the Studio process environment; the browser, Git, lineage, manifests and packets never receive it. A redacted session attestation recorded that, on 2026-08-13, the supplied portrait request reached the pinned official OpenAI API endpoint through the Expression adapter, but the provider returned HTTP 429 with `credit_balance_exhausted / insufficient_quota`. The service retained zero candidates and returned `blocked`. This is operator-session evidence of request routing and fail-closed error handling, not independently replayable provider proof or image-generation quality evidence. The smoke preceded the later mandatory committed-anchor gate; current runs additionally require that gate before any provider transfer. A funded API project and project-owned approved-anchor record are required before repeating the paid smoke. The redacted machine-readable result is pinned in [`docs/evidence/openai-expression-sample-smoke-2026-08-13.json`](../../evidence/openai-expression-sample-smoke-2026-08-13.json).
 
 ## Error handling
 
@@ -102,6 +102,18 @@ Because the current Codex workspace cannot read the operator's Windows process e
 6. The attached sample completes all three paid smoke paths, with results reported as PASS, FAIL, or BLOCKED_UNVERIFIED using file and visual evidence.
 7. Figma placement is claimed only after the matching connector writes and re-reads the actual nodes.
 8. Focused suites, Base local validation, JavaScript syntax checks, diff checks, adversarial review, and PR checks pass before merge.
+
+## Current implementation evidence — 2026-08-13
+
+| Gate | State | Evidence ceiling |
+| --- | --- | --- |
+| Expression explicit production adapter | `IMPLEMENTED_CONTRACT_TESTED` | Reviewed snapshot request, exact count, PNG validation, safe staging, provider-error redaction and exact-type policy are covered by tests. |
+| Expression supplied-image paid smoke | `BLOCKED_PROVIDER_CREDIT` | Session-attested provider reach; HTTP 429 `credit_balance_exhausted / insufficient_quota`; zero outputs retained; current committed-anchor gate was added afterward and has not been paid-smoke replayed. |
+| Sprite pose/action OpenAI adapter | `NOT_IMPLEMENTED` | Existing pinned sprite-gen path remains separately isolated and blocked without its OS runner. |
+| Sprite effect-stage OpenAI adapter | `NOT_IMPLEMENTED` | No transparency-capable reviewed model/configuration or paid sample evidence yet. |
+| Figma placement | `NOT_RUN` | Registry remains `REGISTERED_NO_MUTATION`; packet is not upload evidence. |
+
+No state in this table is `GENERATION_PRODUCT_READY`.
 
 ## Rollback
 
