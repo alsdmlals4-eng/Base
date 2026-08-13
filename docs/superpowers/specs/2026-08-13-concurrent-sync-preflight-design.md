@@ -21,8 +21,20 @@ Base는 `LOOP_ENGINEERING_CONTROL_PLANE`에서 `TASK_LEASE`, path lock, semantic
 6. 현재 작업 identity가 없으면 pre-merge 검사에서 자기 PR을 same-goal duplicate로 오인한다.
 7. 첫 write 전에는 최종 change HEAD가 아직 없는데 하나의 `expected_head_sha` 의미만 사용하면 write parent와 reviewed head를 혼동한다.
 8. Skill 본문을 바꾸면서 기존 통합 consumer test와 Learning Log를 갱신하지 않으면 standalone GREEN과 실제 운영체계 GREEN이 분리된다.
+9. 검색 snippet이나 색인 결과를 exact ref의 실제 파일 readback 없이 verified finding으로 승격하면 감사 기록 자체가 잘못된 정본이 된다.
 
-현재 사례에서는 열린 PR #312가 `README.md`, `START_HERE.md`, `docs/DOCUMENTATION_MAP.md` 등을 수정 중이다. `README.md`의 활성 Skill 수가 생성 정본과 불일치하지만, 별도 작업이 직접 수정하면 동시작업 충돌을 키운다. 따라서 해당 PR에 조정 요청을 남기고 이 변경은 비중첩 경로만 사용한다.
+현재 동시작업 사례에서는 열린 PR #312가 `README.md`, `START_HERE.md`, `docs/DOCUMENTATION_MAP.md`와 visual/Figma/shared-tool 경로를 수정 중이었다. 이 작업은 해당 경로를 보호하고 changed-path 교집합 0을 확인한 뒤 비중첩 경로만 사용했다.
+
+## Evidence correction
+
+- `INVALIDATED_FINDING`: 검색 결과만으로 README의 ACTIVE Skill 표시가 생성 Map과 어긋났다고 판단한 초기 가설은 사실이 아니었다.
+- exact-SHA readback 대상:
+  - `main@453f790821a108a1d4f6e1f4e45f6931c2396ee0`
+  - 병합 후 `main@190511e3b7dcc368f45eb61348b23d2b5a93f3c2`
+  - PR #312 HEAD
+- 세 ref의 README는 모두 `docs/generated/BASE_ACTIVE_SKILLS.md`로 위임하고 별도 Skill 수·목록을 유지하지 않았다.
+- 따라서 검증된 동시작업 증거는 README drift가 아니라 **PR #312의 소유 경로와 PR #313의 intended paths가 비중첩이었다는 사실**이다.
+- 검색·code-search 결과는 후보 위치를 찾는 탐색 도구이며, repository fact는 exact ref의 파일·commit·PR changed paths를 다시 읽은 뒤에만 확정한다.
 
 ## Goal
 
@@ -124,6 +136,7 @@ Path overlap is a warning, not proof of a textual merge conflict. The decision d
 4. Before merge using the exact reviewed head SHA and current main.
 5. After any observed change to main, the work Branch, the open PR set, or resource ownership.
 6. After merge, read the new main and recheck same-goal PR/canon state while excluding the completed PR itself.
+7. When a search-derived hypothesis becomes a finding, exact-SHA readback the cited file and record the ref before any coordination action.
 
 ## Files
 
@@ -131,11 +144,11 @@ Path overlap is a warning, not proof of a textual merge conflict. The decision d
 | --- | --- |
 | `skills/synchronizing-local-and-github-state/SKILL.md` | Active owner and fail-closed preflight contract |
 | `skills/synchronizing-local-and-github-state/references/safe-sync-protocol.md` | Step-by-step execution and coordination choices |
-| `skills/synchronizing-local-and-github-state/LEARNING_LOG.md` | Reusable finding, evidence boundary, and future escalation trigger |
-| `tests/test_concurrent_git_sync_preflight_contract.py` | Dedicated regression contract for identity, phase-bound SHAs, required evidence, dispositions, and recheck points |
+| `skills/synchronizing-local-and-github-state/LEARNING_LOG.md` | Reusable finding, invalidated hypothesis, evidence boundary, and future escalation trigger |
+| `tests/test_concurrent_git_sync_preflight_contract.py` | Dedicated regression contract for identity, phase-bound SHAs, evidence correction, dispositions, and recheck points |
 | `tests/test_v9_machine_contracts.py` | Wires the dedicated contract test into focused Base v9 CI |
 | `tests/test_gpt_codex_workflow_contract.py` | Existing integrated consumer for parallel GPT/Codex handoff, Git authority, exact-head, and merge behavior |
-| `docs/audits/2026-08-13-base-work-structure-adversarial-audit.md` | Repository structure audit, benchmark comparison, findings, and before/after report |
+| `docs/audits/2026-08-13-base-work-structure-adversarial-audit.md` | Repository structure audit, benchmark comparison, findings, correction, and before/after report |
 
 ## Acceptance criteria
 
@@ -147,7 +160,7 @@ Path overlap is a warning, not proof of a textual merge conflict. The decision d
 6. First write, subsequent write, PR, merge, and post-merge recheck points are explicit.
 7. The dedicated test is consumed by focused Base v9 CI, and the established GPT/Codex workflow suite consumes the Skill/reference/Learning Log together.
 8. Canonical-reference freshness accepts the Skill change only when the established integrated test companion and Skill Learning Log change with it.
-9. PR #312 paths remain untouched; its README drift is handled by a coordination comment.
+9. PR #312 paths remain untouched, changed-path 교집합은 0이며 검색 기반 README 가설은 `INVALIDATED_FINDING`으로 정정되고 exact-SHA readback 근거가 기록된다.
 10. Exact-head CI passes before merge, then new-main readback confirms the merged contract.
 
 ## Rollback

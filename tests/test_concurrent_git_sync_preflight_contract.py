@@ -57,6 +57,36 @@ class ConcurrentGitSyncPreflightContractTests(unittest.TestCase):
         ):
             self.assertIn(token, protocol)
 
+    def test_audit_invalidates_search_only_readme_drift_hypothesis(self) -> None:
+        readme = read("README.md")
+        audit = read(
+            "docs/audits/2026-08-13-base-work-structure-adversarial-audit.md"
+        )
+        design = read(
+            "docs/superpowers/specs/2026-08-13-concurrent-sync-preflight-design.md"
+        )
+        plan = read(
+            "docs/superpowers/plans/2026-08-13-concurrent-sync-preflight.md"
+        )
+        learning = read("skills/synchronizing-local-and-github-state/LEARNING_LOG.md")
+
+        self.assertIn(
+            "This entrypoint does not maintain a second Skill list.",
+            readme,
+        )
+        for text in (audit, design, plan, learning):
+            self.assertIn("INVALIDATED_FINDING", text)
+            self.assertIn("exact-SHA readback", text)
+
+        for false_claim in (
+            "README는 `27`",
+            "README의 `27`",
+            "README hardcoded 27",
+            "README `27` vs",
+        ):
+            for text in (audit, design, plan, learning):
+                self.assertNotIn(false_claim, text)
+
 
 if __name__ == "__main__":
     unittest.main()
