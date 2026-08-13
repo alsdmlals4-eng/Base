@@ -175,9 +175,20 @@ def _normalized_path(value: str) -> str:
     return unicodedata.normalize("NFC", value.replace("\\", "/")).casefold()
 
 
+def _matches_normalized_protected_pattern(path: str, pattern: str) -> bool:
+    candidate = path.rstrip("/")
+    if pattern.endswith("/"):
+        directory = pattern.rstrip("/")
+        return candidate == directory or candidate.startswith(f"{directory}/")
+    return fnmatch.fnmatchcase(candidate, pattern)
+
+
 def _protected_match(path: str, patterns: list[str]) -> bool:
     normalized = _normalized_path(path)
-    return any(fnmatch.fnmatchcase(normalized, _normalized_path(pattern)) for pattern in patterns)
+    return any(
+        _matches_normalized_protected_pattern(normalized, _normalized_path(pattern))
+        for pattern in patterns
+    )
 
 
 def _extract_protected_paths(raw: bytes, pointer: str, label: str) -> list[str]:
