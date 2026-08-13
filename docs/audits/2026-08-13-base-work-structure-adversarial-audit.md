@@ -3,15 +3,16 @@
 ## 0. 판정 요약
 
 - 감사일: 2026-08-13
-- 고정 기준: `main@453f790821a108a1d4f6e1f4e45f6931c2396ee0`
+- 최초 고정 기준: `main@453f790821a108a1d4f6e1f4e45f6931c2396ee0`
+- 핵심 기능 병합: PR #313 → `main@190511e3b7dcc368f45eb61348b23d2b5a93f3c2`
 - Work Mode: `PLAN → BUILD → REVIEW`
 - Existing Solution First: `ABSORB`
 - 적용 책임: intake/work-contract, Git sync, adversarial review, change validation
 - 적용 Superpowers: brainstorming, writing-plans, isolated-branch substitute, TDD, executing-plans, systematic-debugging, verification-before-completion, review/integration gate
-- 결론: 새 Skill·Work Mode·lock service를 만들지 않고 기존 `synchronizing-local-and-github-state`에 identity-bound·phase-bound `CONCURRENT_CHANGE_PREFLIGHT`를 흡수한다.
-- 동시작업 보호: PR #312가 소유한 파일은 수정하지 않았다. README의 stale ACTIVE Skill 표기는 #312 comment로 전달했다.
+- 핵심 결론: 새 Skill·Work Mode·lock service를 만들지 않고 기존 `synchronizing-local-and-github-state`에 identity-bound·phase-bound `CONCURRENT_CHANGE_PREFLIGHT`를 흡수했다.
+- 동시작업 보호: PR #312와 PR #313의 changed-path 교집합은 0이었다. PR #315도 proposal-only 경로로 교집합이 없었다.
+- 증거 정정: README Skill 표시가 어긋났다는 초기 가설은 `INVALIDATED_FINDING`이다. baseline, 병합 후 main, PR #312 HEAD를 exact-SHA readback한 결과 모두 생성 Skill Map에 위임하고 있었다.
 - 증거 한계: connector 기반 GitHub 정본·PR·Actions를 사용했다. 로컬 checkout, 전체 tracked byte inventory, `git fsck`, 로컬 full validation, Godot runtime/render는 `BLOCKED_UNVERIFIED`다.
-- 최종 판정 방식: PR #313 exact reviewed HEAD의 모든 적용 workflow와 post-merge main readback에 결합한다. 이 문서가 자기 자신의 최종 commit SHA를 고정값으로 주장하지 않는다.
 
 ## 1. 현행 Base 구조
 
@@ -50,7 +51,7 @@ BUILD  → 승인 범위 최소 구현·단계 검증
 REVIEW → 독립 공격·비판 검증·회귀·판정
 ```
 
-Registry-derived ACTIVE Skill 관찰값은 `30`개다. 수는 설계 목표나 상한이 아니며 trigger가 맞는 최소 Skill만 지연 로딩한다. 이번 변경은 네 번째 Work Mode나 31번째 ACTIVE Skill을 만들지 않는다.
+Registry-derived ACTIVE Skill 관찰값은 `30`개다. 수는 설계 목표나 상한이 아니며 trigger가 맞는 최소 Skill만 지연 로딩한다. 이번 변경은 네 번째 Work Mode나 31번째 ACTIVE Skill을 만들지 않았다.
 
 ### 1.3 구조 강점
 
@@ -71,7 +72,7 @@ Registry-derived ACTIVE Skill 관찰값은 `30`개다. 수는 설계 목표나 �
 | GitHub Copilot Agent Skills | 관련 Skill을 선택한 뒤 body를 필요할 때 context에 로드 | 새 broad Skill 대신 기존 sync owner에 흡수 |
 | Claude Code | Skill on-demand loading, 병렬 세션은 worktree로 파일 편집 격리 | remote branch 격리와 PR/path/semantic preflight 결합 |
 | GitHub strict checks / merge queue | 최신 base와 결합된 상태에서 required checks를 검증 | merge 직전 current main + exact reviewed HEAD 재검사 |
-| Google Cloud DORA | 작고 독립적이며 testable한 batch와 짧은 Branch가 피드백·복구를 지원 | PR #312와 비중첩인 최소 책임 변경 유지 |
+| Google Cloud DORA | 작고 독립적이며 testable한 batch와 짧은 Branch가 피드백·복구를 지원 | 동시 PR과 비중첩인 최소 책임 변경 유지 |
 
 Primary references:
 
@@ -86,14 +87,18 @@ Primary references:
 
 ## 3. 적대적 finding
 
-### F-01 — README ACTIVE Skill drift
+### F-01 — 검색 기반 README drift 가설
 
-- 분류: `CONFLICTING_SOURCE / STALE_CONSUMER`
-- 증거: generated Registry view는 ACTIVE Skill `30`, README는 `27`과 수동 목록을 유지한다.
-- 위험: cold start와 감사에서 오래된 목록이 정본처럼 보인다.
-- 충돌 검토: README는 열린 PR #312의 변경 경로다. 이 PR에서 바로 고치면 병렬 writer가 된다.
-- 조치: #312에 생성 Map 연결 또는 정합성 갱신을 요청했다.
-- 상태: `WAITING_RESOURCE`; PR #313은 README를 수정하지 않는다.
+- 분류: `INVALIDATED_FINDING / EVIDENCE_ROUTING_ERROR`
+- 최초 가설: 검색·snippet 결과를 보고 README가 생성 Skill Map과 다른 표시를 유지한다고 판단했다.
+- exact-SHA readback:
+  - `main@453f790821a108a1d4f6e1f4e45f6931c2396ee0`
+  - 병합 후 `main@190511e3b7dcc368f45eb61348b23d2b5a93f3c2`
+  - PR #312 HEAD
+- 확인 결과: 세 ref의 README는 모두 `docs/generated/BASE_ACTIVE_SKILLS.md`로 위임하며 별도 Skill 수·목록을 유지하지 않았다.
+- 정정: 초기 가설은 repository fact가 아니다. 이를 근거로 PR #312에 남긴 조정 요청은 철회하고 추가 수정 책임을 부과하지 않는다.
+- 검증된 동시작업 사실: PR #312가 visual/Figma/shared-tool 및 일부 cold-start 문서 경로를 소유했고, PR #313은 그 경로를 수정하지 않아 changed-path 교집합이 0이었다.
+- 재발 방지: search/code-search는 후보 위치를 찾는 탐색 증거로만 사용한다. finding·coordination action·병합 판정은 exact ref의 실제 파일·commit·changed paths를 다시 읽은 뒤 확정한다.
 
 ### F-02 — 일반 Git sync가 Loop resource 정보를 소비하지 않음
 
@@ -166,6 +171,7 @@ Primary references:
 | 중복 구현 | 명시 상태 없음 | `SAME_GOAL → DUPLICATE_WORK` |
 | main 이동 | merge 전 contract 불명확 | `STALE_BASE_SHA`, reconcile 뒤 재검사 |
 | 증거 부재 | 동시작업 ceiling 불명확 | `UNKNOWN + BLOCKED_UNVERIFIED` |
+| repository 사실 판정 | 검색 결과가 finding으로 과승격될 수 있음 | exact-SHA readback 전에는 가설로 유지 |
 | 조정 | 충돌 뒤 merge/rebase | write 전 비중첩 축소·owner PR coordination·handoff/release |
 | 병합 증거 | Required Checks 중심 | exact reviewed HEAD + current main + PR/resource 재검사 |
 | 병합 후 | HEAD 대조 | main readback + same-goal/canon/consumer 감사 |
@@ -214,19 +220,39 @@ failing step: Check canonical reference freshness
 
 실패 원인은 established test companion과 Learning Log 누락이었다. 구현 의미를 약화하지 않고 두 소비자를 추가했다.
 
-### 최종 GREEN Gate
+### GREEN — 핵심 기능 병합 전
 
-- PR #313 final exact head의 모든 적용 workflow 성공
-- Base v9 focused suite와 generated/integrity gate 성공
-- Game Project Operating System의 canonical-reference freshness 포함 전체 gate 성공
-- PR #312와 changed-path 교집합 0
-- unresolved review thread 0
-- current main freshness와 mergeability 재확인
-- squash merge 뒤 new-main readback 및 post-merge Actions 확인
+```text
+exact reviewed head: 2780ee076c03f1257f0d28be1b541bb6877b6ad0
+Validate Base v9 Operating Contracts: SUCCESS
+focused tests: 327 PASS
+configured Godot runtime skip: 1
+adversarial gate: SUCCESS
+Validate Game Project Operating System: SUCCESS
+canonical-reference freshness: SUCCESS
+docs/publication/concluding gates: SUCCESS
+reviews: 0
+unresolved threads: 0
+```
+
+PR #313은 exact-head precondition으로 squash merge되어 `main@190511e3b7dcc368f45eb61348b23d2b5a93f3c2`가 되었다.
+
+### RED 4 — 검색 단서의 finding 과승격
+
+```text
+correction PR: #316
+exact RED head: cb0ce1e6b9a0bf5936a8a024d23e8ab9b4b1d4cc
+focused tests: 328
+expected failures: 1
+existing contracts passed: 327
+configured Godot runtime skip: 1
+```
+
+새 회귀는 audit·design·plan·Learning Log가 잘못된 가설을 `INVALIDATED_FINDING`으로 정정하고 exact-SHA readback 근거를 남기도록 요구한다.
 
 ## 6. 변경·보호 범위
 
-### 변경 경로 9개
+### 핵심 기능 PR #313 변경 경로 9개
 
 ```text
 docs/audits/2026-08-13-base-work-structure-adversarial-audit.md
@@ -238,6 +264,16 @@ skills/synchronizing-local-and-github-state/references/safe-sync-protocol.md
 tests/test_concurrent_git_sync_preflight_contract.py
 tests/test_gpt_codex_workflow_contract.py
 tests/test_v9_machine_contracts.py
+```
+
+### 사실 정정 PR #316 변경 경로 5개
+
+```text
+docs/audits/2026-08-13-base-work-structure-adversarial-audit.md
+docs/superpowers/plans/2026-08-13-concurrent-sync-preflight.md
+docs/superpowers/specs/2026-08-13-concurrent-sync-preflight-design.md
+skills/synchronizing-local-and-github-state/LEARNING_LOG.md
+tests/test_concurrent_git_sync_preflight_contract.py
 ```
 
 ### 보호 경로
@@ -254,6 +290,7 @@ docs/generated/**
 schemas/**
 base*.lock.json
 PR #312의 visual/Figma/shared-tool 경로
+PR #315의 [수정제안서] 경로
 ```
 
 ## 7. 기대 효과·비용·남은 위험
@@ -265,6 +302,7 @@ PR #312의 visual/Figma/shared-tool 경로
 - 현재 PR self-conflict 없이 실제 same-goal 경쟁 PR을 차단한다.
 - stale work Branch, stale main, 이전 HEAD의 CI 재사용을 차단한다.
 - 증거를 읽지 못한 상태를 안전한 상태로 포장하지 않는다.
+- 검색 단서를 repository fact로 과승격하는 오류를 회귀 테스트로 차단한다.
 - 전용 회귀, 기존 통합 회귀, Learning Log가 같은 계약을 소비한다.
 - 기존 3 Work Modes·30 ACTIVE Skills·Registry routing을 유지한다.
 
@@ -273,13 +311,13 @@ PR #312의 visual/Figma/shared-tool 경로
 - write/PR/merge 전 GitHub 조회와 coordination 단계가 늘어난다.
 - cooperative 계약이므로 이를 무시하는 외부 도구를 강제로 막지는 못한다.
 - semantic resource 선언 품질이 낮으면 false positive/negative가 생길 수 있다.
-- README drift 해결은 PR #312의 반영·병합에 의존한다.
 - repository ruleset/merge queue 설정 강제화는 이번 범위가 아니다.
+- 로컬·Godot runtime 계층은 connector-only 세션에서 직접 검증하지 못했다.
 
 ## 8. Rollback
 
-PR #313의 squash merge commit 하나를 revert한다.
-
+- 핵심 계약 회귀가 확인되면 PR #313 squash commit `190511e3b7dcc368f45eb61348b23d2b5a93f3c2`를 revert한다.
+- 사실 정정 회귀가 확인되면 PR #316의 단일 squash commit만 revert한다.
 - 데이터·Schema migration 없음
 - Registry·generated artifact 변경 없음
 - dependency·workflow·repository setting 변경 없음
@@ -287,6 +325,7 @@ PR #313의 squash merge commit 하나를 revert한다.
 
 ## 9. Base 승격 판정
 
-- 공용 교훈: `동시 AI 작업은 current work identity + exact write parent + Git topology + open PR paths + semantic resources + same Goal + current main freshness를 persistent write 전에 함께 판정한다.`
+- 공용 교훈 1: `동시 AI 작업은 current work identity + exact write parent + Git topology + open PR paths + semantic resources + same Goal + current main freshness를 persistent write 전에 함께 판정한다.`
+- 공용 교훈 2: `search/code-search 결과는 탐색 단서다. repository fact·조정 요청·병합 판정은 exact-SHA readback 뒤에만 확정한다.`
 - 프로젝트 고유 내용: 없음
 - 후속 후보: 실제 충돌/false-positive 기록이 누적될 때 semantic resource naming fixture 또는 machine-enforced lease를 별도 BCP로 검토한다.

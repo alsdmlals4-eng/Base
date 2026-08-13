@@ -18,6 +18,7 @@
 - Before the first write, use the observed isolated-branch HEAD as `write_parent_sha` and `expected_head_sha: PENDING_FIRST_WRITE`.
 - After each write, bind the returned commit SHA as exact `expected_head_sha`; reread it before using it as the next `write_parent_sha`.
 - A Skill body change must satisfy the repository's existing canonical-reference freshness companions rather than weakening the checker or relying only on a new standalone test.
+- Search/code-search output is discovery evidence only. A repository fact must be confirmed by exact-SHA readback of the cited file or commit before it becomes a finding or coordination request.
 - Use an isolated branch and squash merge only after exact-head CI, current-main recheck, and zero unresolved review threads.
 - Preserve existing DIRTY/REMOTE_AHEAD/LOCAL_AHEAD/DIVERGED behavior.
 
@@ -195,40 +196,22 @@ Do not weaken `.github/reference-freshness.json` or touch an unrelated test mere
 - Assert the Skill, safe-sync protocol, and Learning Log together.
 - Keep the dedicated focused test as the precise owner regression; use the established workflow test as integration evidence.
 
-- [ ] **Step 8: Verify final GREEN on the exact final head**
+- [x] **Step 8: Verify final GREEN on the exact reviewed head**
 
-GitHub Actions must execute:
+Exact head `2780ee076c03f1257f0d28be1b541bb6877b6ad0` passed both repository workflows.
 
-```bash
-python -m unittest \
-  tests.test_v9_machine_contracts \
-  tests.test_v9_registry_generation \
-  tests.test_v9_governance_documents \
-  tests.test_v9_1_project_operating_contract \
-  tests.test_v9_1_review_remediation \
-  tests.test_v9_1_skill_pressure_contracts \
-  tests.test_project_adapter_fleet_hardening \
-  tests.test_project_adapter_fleet_rollout_status \
-  tests.test_approved_protected_change_gate \
-  tests.test_project_gdd_google_sheets_contract \
-  tests.test_vertical_slice_v9_contract \
-  tests.test_base_v9_4_ai_operations_contract \
-  tests.test_base_v9_4_release_evidence_contract \
-  tests.test_base_v9_4_trusted_evidence_record \
-  tests.test_base_v9_4_1_compatibility_release \
-  tests.test_base_v9_4_2_compatibility_release \
-  tests.test_base_v9_4_3_compatibility_release \
-  tests.test_higodot_single_authority_policy \
-  tests.test_godot_addon_utilization_policy \
-  tests.test_godot_higodot_gut_hera_toolchain \
-  tests.test_base_shared_skill_routes \
-  tests.test_neutral_adversarial_feature_lifecycle \
-  -v
+```text
+Validate Base v9 Operating Contracts: SUCCESS
+focused suite: 327 passed
+configured Godot runtime skip: 1
+adversarial gate: SUCCESS
+
+Validate Game Project Operating System: SUCCESS
+canonical-reference freshness: SUCCESS
+docs/publication/concluding gates: SUCCESS
 ```
 
-Expected: all applicable focused tests pass; configured runtime skips remain explicit. The Game Project Operating System workflow must also pass its syntax, proposal, canonical-reference freshness, operating-system, docs, publication, and concluding gates.
-
-- [ ] **Step 9: Run or truthfully substitute full local validation**
+- [x] **Step 9: Truthfully substitute connector evidence for unavailable local validation**
 
 Preferred local command when a checkout is available:
 
@@ -237,7 +220,7 @@ python tools/run_local_validation.py \
   --trusted-history-commit 453f790821a108a1d4f6e1f4e45f6931c2396ee0
 ```
 
-This connector-only session has no local checkout. Use all triggered GitHub Actions checks on the exact final PR head and report local execution as unavailable rather than inferred.
+This connector-only session had no local checkout. Exact-head GitHub Actions and post-merge push workflows were used, while local `tools/run_local_validation.py`, full tracked-byte inventory, `git fsck`, Godot runtime, and render checks remained explicitly unverified.
 
 ### Task 3: Record adversarial audit, review, and integrate
 
@@ -246,7 +229,7 @@ This connector-only session has no local checkout. Use all triggered GitHub Acti
 - Review: every PR diff path and concurrent PR #312 changed paths
 
 **Interfaces:**
-- Consumes: Base canon/Registry/generated map, open/recent PR inventory, external primary-source benchmarks, all three RED checkpoints, final GREEN evidence, and exact-head CI.
+- Consumes: Base canon/Registry/generated map, open/recent PR inventory, external primary-source benchmarks, all RED checkpoints, final GREEN evidence, and exact-head CI.
 - Produces: classified findings, before/after behavior, deferred risks, rollback, and post-merge readback.
 
 - [x] **Step 1: Write the repository audit**
@@ -254,10 +237,11 @@ This connector-only session has no local checkout. Use all triggered GitHub Acti
 Record:
 
 - current authority map, three Work Modes, and 30 Registry-derived ACTIVE Skills;
-- verified conflict: README hardcoded 27 vs Registry-derived 30, coordinated through PR #312 rather than overlapping edit;
 - verified omission: general sync Skill lacked concurrent PR/path/semantic preflight;
 - verified adversarial ambiguity: current-PR self-conflict and first-write SHA phase confusion;
 - verified integration omission: Skill body changed without an established test companion and Learning Log;
+- concurrent PR #312 path ownership and zero changed-path intersection;
+- `INVALIDATED_FINDING`: a search-only README drift hypothesis was disproved by exact-SHA readback and must not be presented as repository fact;
 - rejected critique: a new broad Skill or lock service would duplicate the recent Loop Control Plane;
 - `BLOCKED_UNVERIFIED`: connector-only session cannot claim a local byte-for-byte full tracked-file audit;
 - benchmark decisions, source dates, exact changed/protected paths, validation, rollback, and expected effects.
@@ -276,53 +260,93 @@ Attack:
 8. Did any path overlap PR #312?
 9. Is the dedicated test actually consumed by focused CI?
 10. Does an established integration test and Learning Log consume the Skill change?
-11. Did main or the open PR set change after preflight?
+11. Was every repository factual claim confirmed on an exact ref rather than inferred from a search result?
+12. Did main or the open PR set change after preflight?
 
 Fix only verified in-scope findings and rerun exact-head checks.
 
-- [ ] **Step 3: Verify exact PR head and review state**
+- [x] **Step 3: Verify exact PR head and review state**
 
-Require all applicable GitHub Actions checks to complete successfully on the exact final head. Confirm unresolved review threads are zero and compare the reviewed head SHA to the merge target.
+- reviewed HEAD: `2780ee076c03f1257f0d28be1b541bb6877b6ad0`
+- applicable workflows: success
+- unresolved inline review threads: 0
+- mergeability: verified before merge
 
-- [ ] **Step 4: Recheck current main and concurrent work**
+- [x] **Step 4: Recheck current main and concurrent work**
 
-Re-read:
-
-```text
-current main SHA
-open/recent same-goal PRs
-PR #312 changed paths
-PR #313 final changed paths
-path and semantic resource intersection
-mergeability and required checks
-```
-
-If main or the PR set changed, reconcile without force push and rerun relevant checks. A new overlap becomes `WAITING_RESOURCE` or `DUPLICATE_WORK`, not an assumed safe merge.
-
-- [ ] **Step 5: Squash merge the reviewed exact head**
-
-Merge only after:
+Immediately before merge:
 
 ```text
-reviewed HEAD == expected_head_sha
-all required exact-head checks pass
-main freshness is verified
-current PR is excluded from duplicate comparison
-other active path/semantic overlap is absent
-unresolved review threads == 0
+current main: 453f790821a108a1d4f6e1f4e45f6931c2396ee0
+PR #312 changed-path intersection: 0
+PR #315 changed-path intersection: 0
+same-goal competing PR: none
 ```
 
-- [ ] **Step 6: Read back new main**
+- [x] **Step 5: Squash merge the reviewed exact head**
 
-Verify on the merged default Branch:
+PR #313 was squash merged with the exact-head precondition. Resulting main commit:
 
-1. new main SHA and squash commit identity;
-2. all nine changed paths;
-3. key Skill/reference/dedicated-test/integration-test/Learning-Log tokens;
-4. no new Skill, Work Mode, workflow, schema, dependency, Registry, or generated-artifact change;
-5. no same-goal residual PR or stale canonical consumer created by this merge;
-6. post-merge Actions results when triggered.
+```text
+190511e3b7dcc368f45eb61348b23d2b5a93f3c2
+```
+
+- [x] **Step 6: Read back new main**
+
+Verified on `main@190511e3b7dcc368f45eb61348b23d2b5a93f3c2`:
+
+1. nine intended changed paths are present;
+2. Skill/reference/dedicated-test/integration-test/Learning-Log tokens are present;
+3. Work Modes remain three and Registry-derived ACTIVE Skills remain 30;
+4. no new workflow, schema, dependency, Registry, or generated-artifact change was introduced;
+5. open PRs #312 and #315 are not same-goal duplicates;
+6. post-merge Base v9 push workflow succeeded and the Game Project Operating System push workflow entered its full validation topology.
 
 - [ ] **Step 7: Rollback if a post-merge regression is verified**
 
 Revert the single squash merge. No data/schema migration, generated-artifact restoration, dependency rollback, or project-specific synchronization is required.
+
+### Task 4: Correct the search-only repository finding
+
+**Files:**
+- Modify: `docs/audits/2026-08-13-base-work-structure-adversarial-audit.md`
+- Modify: `docs/superpowers/specs/2026-08-13-concurrent-sync-preflight-design.md`
+- Modify: `docs/superpowers/plans/2026-08-13-concurrent-sync-preflight.md`
+- Modify: `skills/synchronizing-local-and-github-state/LEARNING_LOG.md`
+- Modify: `tests/test_concurrent_git_sync_preflight_contract.py`
+
+- [x] **Step 1: Reproduce the documentation error with a regression test**
+
+Exact RED head:
+
+```text
+cb0ce1e6b9a0bf5936a8a024d23e8ab9b4b1d4cc
+```
+
+Focused suite result:
+
+```text
+328 tests run
+1 expected failure: missing INVALIDATED_FINDING correction
+327 existing contracts passed
+1 configured Godot runtime skip
+```
+
+- [x] **Step 2: Establish exact repository truth**
+
+Exact-SHA readback of the baseline, merged main, and PR #312 HEAD confirmed that README delegates the ACTIVE Skill view to `docs/generated/BASE_ACTIVE_SKILLS.md` and does not maintain a second Skill count/list.
+
+- [x] **Step 3: Correct the durable record**
+
+- Mark the hypothesis `INVALIDATED_FINDING` in audit, design, plan, and Learning Log.
+- Preserve the real concurrency finding: PR #312 owned protected paths and PR #313 used a zero-intersection path set.
+- Withdraw the incorrect coordination burden from PR #312.
+- Keep the core sync-preflight implementation unchanged.
+
+- [ ] **Step 4: Final correction gate**
+
+The correction PR must pass both workflows on one exact head, recheck current main/open PR overlap, squash merge, and read back the corrected records on new main. Dynamic SHA and workflow evidence belong in the PR/Actions record rather than a self-referential final edit to this plan.
+
+## Completion criterion
+
+The work is complete only when the core preflight remains green, the search-only hypothesis is explicitly invalidated on main, the correction test passes, concurrent PR paths remain non-overlapping, and no unverified local/runtime claim is presented as executed.
