@@ -35,7 +35,7 @@ jobs:
         run: python -m pip install -r requirements-publication.txt
 
       - name: Reconcile registered consumers
-        run: python tools/tmp_reconcile_claim_intent_consumers.py
+        run: python tools/tmp_reconcile_claim_intent_consumers_v2.py
 
       - name: Regenerate Skill implementation evidence
         run: python tools/build_skill_implementation_evidence.py
@@ -59,6 +59,7 @@ jobs:
           set -euo pipefail
           rm .github/workflows/tmp-claim-intent-consumer-reconciliation.yml
           rm tools/tmp_reconcile_claim_intent_consumers.py
+          rm tools/tmp_reconcile_claim_intent_consumers_v2.py
           git diff --check
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
