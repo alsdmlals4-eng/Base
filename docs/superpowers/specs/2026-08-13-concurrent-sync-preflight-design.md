@@ -20,6 +20,7 @@ Base는 `LOOP_ENGINEERING_CONTROL_PLANE`에서 `TASK_LEASE`, path lock, semantic
 5. 열린 PR 목록이나 changed-path 증거를 읽지 못했는데도 충돌 없음으로 보고한다.
 6. 현재 작업 identity가 없으면 pre-merge 검사에서 자기 PR을 same-goal duplicate로 오인한다.
 7. 첫 write 전에는 최종 change HEAD가 아직 없는데 하나의 `expected_head_sha` 의미만 사용하면 write parent와 reviewed head를 혼동한다.
+8. Skill 본문을 바꾸면서 기존 통합 consumer test와 Learning Log를 갱신하지 않으면 standalone GREEN과 실제 운영체계 GREEN이 분리된다.
 
 현재 사례에서는 열린 PR #312가 `README.md`, `START_HERE.md`, `docs/DOCUMENTATION_MAP.md` 등을 수정 중이다. `README.md`의 활성 Skill 수가 생성 정본과 불일치하지만, 별도 작업이 직접 수정하면 동시작업 충돌을 키운다. 따라서 해당 PR에 조정 요청을 남기고 이 변경은 비중첩 경로만 사용한다.
 
@@ -130,8 +131,10 @@ Path overlap is a warning, not proof of a textual merge conflict. The decision d
 | --- | --- |
 | `skills/synchronizing-local-and-github-state/SKILL.md` | Active owner and fail-closed preflight contract |
 | `skills/synchronizing-local-and-github-state/references/safe-sync-protocol.md` | Step-by-step execution and coordination choices |
-| `tests/test_concurrent_git_sync_preflight_contract.py` | Regression contract for identity, phase-bound SHAs, required evidence, dispositions, and recheck points |
+| `skills/synchronizing-local-and-github-state/LEARNING_LOG.md` | Reusable finding, evidence boundary, and future escalation trigger |
+| `tests/test_concurrent_git_sync_preflight_contract.py` | Dedicated regression contract for identity, phase-bound SHAs, required evidence, dispositions, and recheck points |
 | `tests/test_v9_machine_contracts.py` | Wires the dedicated contract test into focused Base v9 CI |
+| `tests/test_gpt_codex_workflow_contract.py` | Existing integrated consumer for parallel GPT/Codex handoff, Git authority, exact-head, and merge behavior |
 | `docs/audits/2026-08-13-base-work-structure-adversarial-audit.md` | Repository structure audit, benchmark comparison, findings, and before/after report |
 
 ## Acceptance criteria
@@ -142,9 +145,10 @@ Path overlap is a warning, not proof of a textual merge conflict. The decision d
 4. First write uses `PENDING_FIRST_WRITE`; each later write and merge uses exact parent/head evidence.
 5. `CLEAR`, `STALE_BASE_SHA`, `WAITING_RESOURCE`, `DUPLICATE_WORK`, and `BLOCKED_UNVERIFIED` are defined fail-closed.
 6. First write, subsequent write, PR, merge, and post-merge recheck points are explicit.
-7. The test is consumed by the focused Base v9 test topology.
-8. PR #312 paths remain untouched; its README drift is handled by a coordination comment.
-9. Exact-head CI passes before merge, then new-main readback confirms the merged contract.
+7. The dedicated test is consumed by focused Base v9 CI, and the established GPT/Codex workflow suite consumes the Skill/reference/Learning Log together.
+8. Canonical-reference freshness accepts the Skill change only when the established integrated test companion and Skill Learning Log change with it.
+9. PR #312 paths remain untouched; its README drift is handled by a coordination comment.
+10. Exact-head CI passes before merge, then new-main readback confirms the merged contract.
 
 ## Rollback
 
