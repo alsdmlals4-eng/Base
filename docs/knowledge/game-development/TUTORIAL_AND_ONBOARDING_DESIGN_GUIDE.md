@@ -64,13 +64,35 @@ research_coverage_owner: governing-game-user-research-coverage
 
 접근성 옵션의 존재만으로 통과를 선언하지 않는다. 실제 대상 플레이어·입력·플랫폼에서 장벽과 **접근성 대체 채널**을 검증한다.
 
+## 플레이 경험·숙련도 Segmentation
+
+같은 튜토리얼이라도 일반 게임 숙련도에 따라 탐색·완료·실험·즐거움과 막힘이 달라질 수 있다. 완료율 평균만으로 초보자와 숙련자의 경험 차이를 지우지 않는다.
+
+```yaml
+prior_game_expertise:
+expertise_measure:
+novice_expert_segment:
+expertise_by_onboarding_interaction:
+```
+
+`prior_game_expertise`는 플레이 시간 하나로 고정하지 않는다. 프로젝트에 맞게 장르 경험, 입력 장치 경험, 유사 규칙 경험, 주당 플레이 시간, 누적 연수, 자기보고와 관찰 행동을 구분한다. `expertise_measure`의 한계와 self-report bias를 기록한다.
+
+```text
+novice average != expert average
+more completed levels != learned core principle
+exploratory tinkering != random input by default
+one commercial puzzle game study != universal onboarding law
+```
+
+외부 연구는 `ADAPT` 또는 `TEST` 입력이다. 실제 프로젝트에서는 최소 novice/expert segment별 첫 의미 행동, 힌트 의존, 탐색, 독립 수행, 전이, 이탈을 비교하고 `expertise_by_onboarding_interaction`이 재현되는지 검증한다. 차이가 없거나 다른 변수가 더 강하면 공용 규칙으로 승격하지 않는다.
+
 ## 근거·검증·적대적 검토
 
 벤치마크는 기능·화면·대사 복사가 아니라 현재 결정 질문을 검증하는 도구다. 출처·버전·관찰 사실·작동 원리·실패 조건·프로젝트 적합성을 기록하고 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 판정한다. 공식 접근성 가이드와 현업 사례는 프로젝트 정본이나 실제 구현 사실을 대체하지 않는다.
 
-완료율만으로 이해·숙련·성장 체감·접근성을 판정하지 않는다. 첫 의미 있는 행동, 단계 진입·실패·재시도, 힌트·도움말 재열람·Skip, 독립 수행·전이 성공, 이탈을 **텔레메트리**와 관찰·인터뷰로 분리해 수집한다. 성공·중단 기준은 결과 전에 선언하며, 실제 빌드·대상 집단·과제·관찰 없이 사람 검증을 완료로 보고하지 않는다.
+완료율만으로 이해·숙련·성장 체감·접근성을 판정하지 않는다. 일반 게임 숙련도·장르 경험·입력 경험을 segment로 분리하고 평균이 novice/expert의 반대 문제를 숨기지 않는지 확인한다. 첫 의미 있는 행동, 단계 진입·실패·재시도, 힌트·도움말 재열람·Skip, 독립 수행·전이 성공, 이탈을 **텔레메트리**와 관찰·인터뷰로 분리해 수집한다. 성공·중단 기준은 결과 전에 선언하며, 실제 빌드·대상 집단·과제·관찰 없이 사람 검증을 완료로 보고하지 않는다.
 
-적대적 검토에서는 본편과 다른 튜토리얼 규칙, 정적 조작표 오판, 문제 인식 전 해결책 광고, 강제 패배·가짜 결핍·가짜 성장, 여러 개념 동시 교육, 완료율·한 번의 성공만으로 숙련 확정, 독립 수행·전이·Skip·복습·복귀·접근성 대체 채널 누락, 벤치마크를 정본처럼 복제하는 행위를 공격한다. 검증된 finding만 `MUST_FIX`, `SHOULD_FIX`, `DEFER`, `REJECTED_CRITIQUE`, `BLOCKED_UNVERIFIED`로 판정한다.
+적대적 검토에서는 본편과 다른 튜토리얼 규칙, 정적 조작표 오판, 문제 인식 전 해결책 광고, 강제 패배·가짜 결핍·가짜 성장, 여러 개념 동시 교육, 완료율·한 번의 성공만으로 숙련 확정, novice/expert 차이와 expertise-by-onboarding interaction 누락, 독립 수행·전이·Skip·복습·복귀·접근성 대체 채널 누락, 벤치마크를 정본처럼 복제하는 행위를 공격한다. 검증된 finding만 `MUST_FIX`, `SHOULD_FIX`, `DEFER`, `REJECTED_CRITIQUE`, `BLOCKED_UNVERIFIED`로 판정한다.
 
 ## 완료 Gate
 

@@ -197,15 +197,36 @@ setup·recall·recontextualize·payoff·aftermath
 
 Source는 기존 `Reedsy`, `Writing Excuses`, `Scriptnotes`, GDC narrative, IGDA Game Writing, Emily Short, ink, Yarn Spinner와 **Writers Guild Foundation Library**를 함께 사용한다.
 
+| Source | role | use | claim ceiling |
+|---|---|---|---|
+| **DiGRA Digital Library** | `PROFESSIONAL_PRACTICE` | `https://dl.digra.org/` — 게임 연구 Proceedings·Whitepaper와 최근 player expertise·onboarding·systemic/fragmented narrative 연구 | conference paper 하나를 보편 설계 법칙, 실제 프로젝트 검증, 시장 성과로 만들지 않음 |
+| **Game Studies** | `PROFESSIONAL_PRACTICE` | `https://gamestudies.org/` — 게임의 미학·문화·소통·서사·플레이어 해석에 관한 peer-reviewed open-access 논문과 Archive | 이론·비평을 실제 플레이어 행동·인과·상업 성과·구현 증거로 과장하지 않음 |
+
+### Holarchic Fragment Packet
+
+선택적·파편화 서사는 조각 수나 숨김 정도가 아니라 각 조각의 자체 이해 가능성과 공유 storyworld 기여를 함께 검증한다.
+
+```yaml
+story_holon_local_coherence:
+shared_storyworld_contribution:
+fragment_inference_burden:
+optional_fragment_redundancy_and_recovery:
+```
+
 ```text
 three-act / hero's journey / beat sheet / 장르 공식
 != 모든 작품과 매체의 필수 구조
 
 회차 조회·댓글·판매 성과
 != 특정 장면·구조 선택의 단독 인과
+
+fragmented != automatically deep or mysterious
+self-contained fragment != isolated lore dump
+interpretive labour != missing causal information
+optional clue != mandatory truth with no recovery path
 ```
 
-실제 consumer는 프로젝트 원고·게임 빌드·독자/플레이어 evidence다. 구조 프레임워크는 `ADAPT` 또는 `TEST`로만 들어간다.
+실제 consumer는 프로젝트 원고·게임 빌드·독자/플레이어 evidence다. 구조 프레임워크는 `ADAPT` 또는 `TEST`로만 들어간다. 파편 조각은 unknown-player가 조각 자체를 이해할 수 있는지, 전체 storyworld와 어떤 관계를 만드는지, 추론 부담과 누락 복구가 적정한지 별도 검증한다.
 
 ## 6. `REAL_WORLD_DOMAIN_RESEARCH_AND_FACT_CHECKING`
 
@@ -376,6 +397,7 @@ red herring != 무관한 거짓 정보
 | **China Biographical Database** | `AUTHORITY_TARGET` | `https://cbdb.hsites.harvard.edu/` — 역사 인물·관직·친족·사회관계·지명 연결 | 데이터 Coverage와 시대·신분 편향을 기록 |
 | **China Historical GIS** | `AUTHORITY_TARGET` | `https://gis.harvard.edu/china-historical-gis` — 역사 지명·행정·이동·공간 맥락 | 지도 데이터가 실제 여행 시간·지형·사회적 접근성을 모두 증명하지 않음 |
 | **Hong Kong Film Archive** | `AUTHORITY_TARGET` + `PROFESSIONAL_PRACTICE` | `https://www.filmarchive.gov.hk/` — 무협·검술영화의 작품·제작·복원·영화사 자료 | wuxia film choreography != safe real technique |
+| **MCLC Resource Center** | `PROFESSIONAL_PRACTICE` + `DISCOVERY_FEED` | `https://u.osu.edu/mclc/` — 현대·당대 중국 문학·영화/미디어·시각예술·대중문화·서지·전문가 강의와 최신 리뷰 탐색 | 현대 중국 문화 연구 != 중국 전체·모든 시대·무협/선협/수련물의 단일 Canon; 원출처·시대·지역·번역 경계 재확인 |
 | **박물관·고고학·무기·의복·건축 원자료** | `AUTHORITY_TARGET` | 무기·복식·교통·도시·사찰·문서·생활 도구 | 시대·지역·계층을 혼합하지 않음 |
 
 ### Wuxia Research Packet
@@ -388,7 +410,10 @@ lineage_teacher_student_and_family:
 economy_labor_travel_and_logistics:
 weapon_clothing_architecture_and_material_culture:
 martial_practice_layer: HISTORICAL | LIVING_HERITAGE | MODERN_SPORT | PERFORMANCE | FICTIONAL
+wuxia_xianxia_cultivation_boundary: WUXIA | XIANXIA | CULTIVATION | MARTIAL_ARTS_FANTASY | MIXED
 wuxia_literary_convention:
+cosmology_and_technical_practice:
+translation_and_cross_cultural_boundary:
 film_choreography_and_editing_convention:
 project_fictionalization:
 safety_boundary:
@@ -404,6 +429,8 @@ living heritage != fixed ancient form
 wuxia film choreography != safe real technique
 historical record != genre convention
 genre convention != historical fact
+wuxia != xianxia != cultivation by default
+cosmology named in prose != mechanic implemented in play
 무공 이름의 고전 한자 != 역사적 실재 증거
 한 시대·지역·계층 != 단일한 중국·무림 문화
 ```
@@ -422,6 +449,8 @@ genre convention != historical fact
 | **Transformative Works and Cultures** | `PROFESSIONAL_PRACTICE` | `https://www.transformativeworks.org/our-projects/twc/` — 팬 연구·플랫폼·정체성·참여문화의 peer-reviewed 연구 발견 | 학술 분석 != 전체 팬덤의 현재 합의 |
 | **Know Your Meme** | `DISCOVERY_FEED` | `https://knowyourmeme.com/` — 밈 명칭·기원 주장·확산 사례·변형 후보 발견 | 항목의 기원·작성·출처·현재 의미를 독립 확인 |
 | **Google Trends** | `OBSERVATIONAL_DATA_OR_VENDOR_GUIDE` | `https://trends.google.com/trends/` — 검색 관심의 시기·지역·비교 신호 | trend interest != positive sentiment or sales; 검색 관심은 절대 인구·전체 플랫폼 사용량이 아님 |
+| **Library of Congress Web Cultures Web Archive** | `AUTHORITY_TARGET` + `DISCOVERY_FEED` | `https://www.loc.gov/collections/web-cultures-web-archive/` — meme·reaction GIF·emoji·fan fiction·creepypasta·digital vernacular의 보존 capture와 dataset 탐색 | archive capture != 현재 의미·현재 호감·현재 유행 강도; capture lag·접근 제한·권리와 과거 platform context 기록 |
+| **Data & Society** | `PROFESSIONAL_PRACTICE` | `https://datasociety.net/` — 플랫폼·정보 시스템의 사회·정치·경제 incentive, media manipulation, governance와 sociotechnical harm 연구 | 미국 정책·정치·극단주의 맥락의 연구를 모든 팬덤·밈·지역의 의미로 일반화하지 않음 |
 | **대상 플랫폼 공식 정책·공개 게시물·커뮤니티 표본** | `AUTHORITY_TARGET` + `T4 project evidence` | 현재 의미·허용 범위·사용 맥락·반응 확인 | 비공개 커뮤니티 무단 수집·개인 식별 발언 재배포 금지 |
 
 ### Meme Context Packet
@@ -431,6 +460,8 @@ term_meme_or_trope:
 earliest_trace_and_confidence:
 source_community:
 platform_region_language_and_date:
+platform_commercialization_and_governance_stage:
+native_symbol_system_and_recontextualization:
 literal_and_current_meaning:
 ironic_inversion_or_layered_use:
 positive_neutral_negative_or_hostile_use:
@@ -520,9 +551,12 @@ BLOCKED_UNVERIFIED
 - 소수 관점·시대·지역·계층 차이가 지워졌는가?
 - 작가가 해답을 아는 상태의 자체 테스트만으로 추리 공정성을 주장했는가?
 - 단서 논리와 발견 가능성, 힌트와 정답 대행, Red herring과 무관한 거짓 정보를 혼동했는가?
+- 선택적·파편화 서사의 각 조각이 자체 이해 가능성과 공유 storyworld 기여를 모두 가지는가, 아니면 누락된 인과를 플레이어 탓으로 돌렸는가?
 - 현대 경기무술·살아 있는 전승·역사 전투·무협문학·영화 안무를 한 층으로 섞었는가?
+- 무협·선협·수련물의 장르 논리와 우주론·기술 실천·게임 시스템을 구분했는가?
 - 중국의 여러 시대·지역·계층을 하나의 고정된 무림으로 만들었는가?
 - 밈의 기원·현재 의미·아이러니·유해 신호·권리를 분리했는가?
+- 플랫폼 상업화·거버넌스 단계와 플랫폼 고유 기호의 재맥락화를 무시했는가?
 - Community Wiki·Google Trends·조회수를 Canon·호감·수요·판매 인과로 과장했는가?
 - 특정 작품·작가·캐릭터·팬덤의 식별 가능한 실행을 복제했는가?
 - 후보 수를 늘리는 일이 실제 프로젝트 가치보다 앞섰는가?
