@@ -83,7 +83,13 @@ A full final diff review found two stale historical claims that would have under
 - Correction production commit: `7b97572ccd05daffb08a893e44f3eccf6b9887f5`
 - Temporary correction run: `31699079157` — lifecycle and focused regressions, proposal checker, reference-freshness and whitespace all passed; temporary workflow and script were removed before push.
 - Regression: the BCP lifecycle test now rejects the stale implementation-PR phrase and the superseded PR #317 RED identifiers, while requiring canonical RED head `bf0890439cbef96777171cc00a0229c65e852af8` in both plan and design.
-- Final exact-head workflows are triggered by the user-authored commit containing this record; run IDs and the independent review are recorded on PR #319 without another tree change.
+
+A subsequent full proposal readback found one more active-state contradiction: the approval section still said `신규 제안 Registry 상태: SUBMITTED` below the implemented Registry and closeout.
+
+- Final wording production commit: `a255442133ed31b602f5895f51d94f8c4fd54573`
+- Temporary wording run: `31699245466` — lifecycle regressions, proposal checker, reference-freshness and whitespace all passed; temporary workflow and script were removed before push.
+- Regression: the lifecycle test now rejects the stale submitted-status sentence and requires `최종 Registry 상태: IMPLEMENTED`.
+- Definitive exact-head workflows are triggered by the user-authored commit containing this record; run IDs and the independent review are recorded on PR #319 without another tree change.
 
 ## Integration
 
