@@ -35,7 +35,7 @@ jobs:
         run: python tools/tmp_apply_claim_intent_gate.py
 
       - name: Regenerate Base v9 derivatives
-        run: python tools/build_base_v9_artifacts.py
+        run: python tools/build_base_v9_artifacts.py --write
 
       - name: Verify focused claim and intent contract
         run: python -m unittest tests/test_claim_and_intent_verification_contract.py -v
