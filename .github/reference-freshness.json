@@ -216,7 +216,9 @@
         "tests/test_neutral_adversarial_feature_lifecycle.py",
         "tests/test_game_development_youtube_skill.py",
         "tests/test_godot_higodot_gut_hera_toolchain.py",
-        "tests/test_serial_fiction_discipline.py"
+        "tests/test_serial_fiction_discipline.py",
+        "tests/test_claim_evidence_binding.py",
+        "tests/test_skill_implementation_evidence.py"
       ],
       "ignore_frontmatter_only_keys": [
         "description"

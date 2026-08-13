@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "artifact_role": "REVIEW_EVIDENCE_RECORD",
+  "scope": {
+    "allowed_changed_paths": [
+      "records/review.json",
+      "src/approved_change.py",
+      "tests/test_target.py"
+    ],
+    "protected_paths": ["docs/canon/**"]
+  },
+  "claims": [
+    {
+      "claim_id": "CLAIM-001",
+      "claim_type": "IMPLEMENTATION",
+      "claim_text": "Approved behavior is implemented.",
+      "acceptance_ids": ["AC-001"],
+      "check_ids": ["CHECK-001"]
+    }
+  ],
+  "acceptance": [
+    {
+      "intent_id": "AC-001",
+      "approved_intent": "Replace with one approved observable result.",
+      "implementation_paths": ["src/approved_change.py"],
+      "required_level": "TEST"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "CHECK-001",
+      "argv": ["{python}", "-m", "unittest", "tests.test_target", "-v"],
+      "working_directory": ".",
+      "timeout_seconds": 300,
+      "declared_level": "TEST",
+      "acceptance_ids": ["AC-001"],
+      "markers": ["OK"]
+    }
+  ]
+}
