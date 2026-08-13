@@ -184,7 +184,7 @@ Do not reuse a PASS after head or main changes.
 Before implementation merge:
 
 - update BCP-2026-027 proposal/Registry to the lifecycle state accepted by repository governance
-- set implementation PR to `https://github.com/alsdmlals4-eng/Base/pull/317` when marking `IMPLEMENTED`
+- set implementation PR to `https://github.com/alsdmlals4-eng/Base/pull/319` when marking `IMPLEMENTED`
 - preserve proposal history and approval evidence
 
 Update PR body with:
