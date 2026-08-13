@@ -1,0 +1,66 @@
+name: Temporary BCP-027 Status Line Fix
+
+on:
+  push:
+    branches:
+      - feat/claim-intent-verification-gate-final
+    paths:
+      - ".github/workflows/tmp-fix-bcp027-status-line.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: temporary-bcp027-status-line-fix
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    if: github.actor == 'alsdmlals4-eng'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out exact branch head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/claim-intent-verification-gate-final
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+
+      - name: Install contract dependencies
+        run: python -m pip install -r requirements-publication.txt
+
+      - name: Apply status consistency fix
+        run: python tools/tmp_fix_bcp027_status_line.py
+
+      - name: Run lifecycle regressions
+        run: |
+          python -m unittest tests/test_base_change_proposals.py -v
+          python tools/check_base_change_proposals.py
+
+      - name: Remove temporary machinery and commit
+        run: |
+          set -euo pipefail
+          rm .github/workflows/tmp-fix-bcp027-status-line.yml
+          rm tools/tmp_fix_bcp027_status_line.py
+          git diff --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "docs: finalize BCP-027 lifecycle wording"
+
+      - name: Validate reference freshness on committed tree
+        run: |
+          BASE_SHA="$(git rev-parse origin/main)"
+          python tools/check_canonical_reference_freshness.py \
+            --config .github/reference-freshness.json \
+            --base "$BASE_SHA" \
+            --head HEAD
+          git diff --check "$BASE_SHA...HEAD"
+
+      - name: Push consistent production tree
+        run: git push origin HEAD:feat/claim-intent-verification-gate-final
