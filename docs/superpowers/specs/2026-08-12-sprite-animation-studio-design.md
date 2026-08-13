@@ -25,12 +25,12 @@ The tool must make visual drift visible and correctable. It must not promise tha
 
 | Candidate | Evidence | Decision |
 |---|---|---|
-| `aldegad/sprite-gen` | Component-row generation, anchor ownership, chroma cleanup, frame extraction, non-destructive curation, atlas and manifest export; Apache-2.0. | **REUSE** as a pinned execution engine. Do not fork or vendor in MVP. |
+| `aldegad/sprite-gen` | Component-row generation, anchor ownership, chroma cleanup, frame extraction, non-destructive curation, atlas and manifest export; Apache-2.0. | **CONDITIONAL_REUSE** behind an OS-isolated workspace runner. Do not fork or vendor; remain fail-closed until isolation and provider smoke pass. |
 | Whole-sheet, one-shot image generation | Cannot reliably prevent identity drift, overlapping poses, unstable pivots, or uncurated raw output. | **REJECT** as the production route. |
 | New independent generation/extraction engine | Duplicates maintained functionality without a demonstrated blocker. | **REJECT**. |
 | New local browser workflow and Base adapter | The upstream engine does not provide this project's Korean workflow, Figma visual-lineage record, project handoff structure, or Base contracts. | **BUILD_NEW**, bounded to the adapter and UI. |
 
-The engine dependency must be pinned by immutable release/version and verified at installation. If future requirements demand source modification, the derivative work must retain Apache-2.0 notices and carry prominent change notices.
+The engine dependency must be pinned by immutable release/version and verified at installation. Pinning alone is not execution isolation: the bridge must also prevent same-user path replacement from redirecting upstream writes. Until an OS-isolated runner satisfies that contract, the production bridge is not delivery eligible. If future requirements demand source modification, the derivative work must retain Apache-2.0 notices and carry prominent change notices.
 
 ## 4. System boundary
 
@@ -93,7 +93,7 @@ Local browser UI
 |---|---|
 | `local_server` | Serves the browser UI only on localhost and provides validated job endpoints. |
 | `request_model` | Validates action, direction, frame count, FPS, loop mode, reference source, and project output path. |
-| `engine_bridge` | Creates an isolated run, invokes the pinned engine, captures reports, and fails closed on missing provider/output/expected frame count. |
+| `engine_bridge` | Verifies the pinned engine and invokes it only through an OS-isolated workspace runner; otherwise fails closed before subprocess execution. |
 | `curation` | Stores selection, order, transforms, and explicit rejection reasons in a non-destructive sidecar. |
 | `exporters` | Produces frame PNGs, GIF preview, atlas, manifest, and a Godot handoff record. |
 | `lineage` | Writes Figma/source/anchor/output hashes and approval states without copying source art into Base. |

@@ -13,12 +13,14 @@
     </header>
     <main class="workspace">
       <aside class="request-panel" aria-label="생성 요청">
-        <h1>애니메이션 생성</h1>
+        <h1 id="mode-title">실행 모드 확인 중</h1>
+        <section class="cost-banner"><strong id="cost-title">비용 경계 확인 중</strong><p id="cost-detail">서버가 고정한 실행 모드와 비용 경계를 불러옵니다.</p></section>
         <p class="muted">이미지는 프로젝트 경로에 남고, 이 도구는 승인 앵커부터 내보내기까지의 흐름을 기록합니다.</p>
         <form id="request-form">
-          <label>프로젝트 ID<input name="project_id" value="demo" required></label>
+          <label>프로젝트 ID<input name="project_id" readonly required></label>
           <label>에셋 ID<input name="asset_id" value="knight" required></label>
           <label>에셋 종류<select name="asset_kind"><option value="character">캐릭터</option><option value="effect">이펙트</option></select></label>
+          <label>작업 모드<select name="mode"><option value="sprite_action">스프라이트 액션</option><option value="expression_variation">표정 변화</option><option value="pose_sequence">포즈 시퀀스</option><option value="effect_stages">단계별 이펙트</option></select></label>
           <label>원본 이미지 경로<input name="source_path" value="art/source/idle.png" required></label>
           <label>Figma 노드 URL<input name="figma_node_url" type="url" value="https://www.figma.com/design/demo?node-id=1-2" required></label>
           <label>동작 이름<input name="action_name" value="attack" required></label>
@@ -29,7 +31,14 @@
           </div>
           <label>반복<select name="loop_mode"><option value="none">반복 안 함</option><option value="linear">반복</option><option value="pingpong">핑퐁</option></select></label>
           <label>동작 설명<textarea name="prompt" rows="5" required>왼쪽을 바라보는 캐릭터가 힘있게 검을 내리친다.</textarea></label>
-          <button class="primary" type="submit">승인 앵커로 후보 만들기</button>
+          <div id="import-controls">
+            <label>이미지 출처<select id="declared-source"><option value="CHATGPT_INCLUDED">ChatGPT 구독 포함 생성</option><option value="FIGMA_INCLUDED">Figma 구독 포함 생성</option><option value="LOCAL_GENERATOR">로컬 생성기</option><option value="OTHER_USER_SUPPLIED">기타 사용자 제공</option></select></label>
+            <p class="muted">출처 선택은 구독·라이선스 증명이 아닙니다. 사용 권한과 생성 경로는 프로젝트에서 별도로 확인하세요.</p>
+            <label>프레임 이미지<input id="frame-files" name="frames" type="file" accept="image/png,image/jpeg,image/webp" multiple required></label>
+            <p class="muted">아래 업로드 순서가 애니메이션의 최초 프레임 순서입니다.</p>
+            <div id="import-queue" class="import-queue" aria-label="업로드 순서"></div>
+          </div>
+          <button id="submit-button" class="primary" type="submit">실행 모드 확인 중</button>
         </form>
         <section class="control-group" aria-label="선택 프레임 조정">
           <h2>선택 프레임 조정</h2>
@@ -57,8 +66,12 @@
           <div id="candidate-grid" class="frame-grid guide-grid" aria-label="생성 후보 프레임"></div>
         </section>
         <section class="sequence-section">
-          <div class="section-title"><div><h2>채택 프레임</h2><p id="selection-count">선택된 프레임 없음</p></div><button id="export-button" class="primary" type="button" disabled>시트·GIF·Godot 핸드오프 내보내기</button></div>
+          <div class="section-title"><div><h2>채택 프레임</h2><p id="selection-count">선택된 프레임 없음</p></div><button id="export-button" class="primary" type="button" disabled>프로젝트 출력 준비</button></div>
           <div id="sequence" class="sequence" aria-label="채택 프레임 순서"></div>
+        </section>
+        <section class="delivery-section" aria-live="polite">
+          <div class="section-title"><div><h2>프로젝트 Figma 전달</h2><p>같은 프로젝트 GPT 작업공간에서만 Figma 도구를 사용해 배치합니다.</p></div><button id="figma-delivery-button" type="button" disabled>프로젝트 GPT 전송 준비</button></div>
+          <p id="figma-delivery-status" class="muted">출력 준비 뒤, 등록된 프로젝트 대상과 보호 상태를 확인합니다. 이 브라우저는 Figma에 직접 업로드하지 않습니다.</p>
         </section>
         <section class="preview-section">
           <div class="section-title"><div><h2>애니메이션 미리보기</h2><p>선택된 순서와 FPS를 사용합니다.</p></div><button id="play-preview" type="button" disabled>재생 / 정지</button></div>

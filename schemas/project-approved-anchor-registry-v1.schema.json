@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/project-approved-anchor-registry-v1.schema.json",
+  "title": "Project Approved Visual Anchors v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "entries"],
+  "properties": {
+    "version": {"const": 1},
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["project_id", "source_path", "figma_node_url", "source_sha256", "approval_state", "evidence"],
+        "properties": {
+          "project_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+          "source_path": {"type": "string", "minLength": 1},
+          "figma_node_url": {"type": "string", "format": "uri", "pattern": "^https://www\\.figma\\.com/design/"},
+          "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "approval_state": {"const": "APPROVED"},
+          "evidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "ref", "checked_at"],
+            "properties": {
+              "kind": {"enum": ["EXPORTED_SNAPSHOT", "FIGMA_CONNECTOR"]},
+              "ref": {"type": "string", "minLength": 1},
+              "checked_at": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

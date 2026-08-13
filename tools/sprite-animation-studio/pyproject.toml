@@ -8,9 +8,11 @@ version = "0.1.0"
 description = "Local, fail-closed sprite animation curation and export tool"
 requires-python = ">=3.10"
 dependencies = [
+  "base-tool-contracts>=0.1,<0.2",
   "fastapi>=0.115,<1",
   "pillow>=10,<12",
   "pydantic>=2.7,<3",
+  "python-multipart==0.0.32",
   "uvicorn>=0.30,<1",
 ]
 

@@ -10,6 +10,7 @@ import json
 import re
 import subprocess
 import unicodedata
+from copy import deepcopy
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -18,6 +19,7 @@ from jsonschema import Draft202012Validator
 
 BASE_ROOT = Path(__file__).resolve().parents[1]
 ADAPTER_SCHEMA = BASE_ROOT / "schemas/project-base-adapter-v1.schema.json"
+ADAPTER_V2_SCHEMA = BASE_ROOT / "schemas/project-base-adapter-v2.schema.json"
 SNAPSHOT_SCHEMA = BASE_ROOT / "schemas/project-skill-snapshot-v1.schema.json"
 HEALTH_SCHEMA = BASE_ROOT / "schemas/project-operating-health-v1.schema.json"
 CANONICAL_ADAPTER = Path("skills/PROJECT_BASE_ADAPTER.json")
@@ -38,6 +40,50 @@ COMPATIBILITY_VIEWS = (
 
 class ContractError(ValueError):
     """A fail-closed project operating-contract violation."""
+
+
+PROJECT_ID_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+
+
+def adapter_schema(adapter: dict[str, Any]) -> tuple[Path, str]:
+    """Dispatch canonical adapter validation by its immutable schema version."""
+    version = adapter.get("schema_version")
+    if version == 1:
+        return ADAPTER_SCHEMA, "PROJECT_BASE_ADAPTER_V1"
+    if version == 2:
+        return ADAPTER_V2_SCHEMA, "PROJECT_BASE_ADAPTER_V2"
+    raise ContractError(f"Unsupported project adapter schema_version: {version!r}")
+
+
+def hub_identity_state(adapter: dict[str, Any]) -> str:
+    """Classify project identity without inferring it from paths or repository names."""
+    if adapter.get("schema_version") != 2:
+        return "IDENTITY_MIGRATION_REQUIRED"
+    project = adapter.get("project")
+    project_id = project.get("project_id") if isinstance(project, dict) else None
+    if not isinstance(project_id, str) or not PROJECT_ID_PATTERN.fullmatch(project_id):
+        return "PROJECT_IDENTITY_UNVERIFIED"
+    if validate_schema(adapter, ADAPTER_V2_SCHEMA, "PROJECT_BASE_ADAPTER_V2"):
+        return "PROJECT_IDENTITY_UNVERIFIED"
+    return "IDENTITY_VERIFIED"
+
+
+def migrate_adapter_v1_to_v2(adapter: dict[str, Any], *, project_id: str) -> dict[str, Any]:
+    """Return a deterministic v2 copy; callers must supply the approved canonical ID."""
+    if adapter.get("schema_version") != 1:
+        raise ContractError("Project adapter v2 migration requires an explicit v1 source")
+    if not isinstance(project_id, str) or not PROJECT_ID_PATTERN.fullmatch(project_id):
+        raise ContractError("Explicit project_id must use canonical kebab-case")
+    source_errors = validate_schema(adapter, ADAPTER_SCHEMA, "PROJECT_BASE_ADAPTER_V1")
+    if source_errors:
+        raise ContractError("\n".join(source_errors))
+    migrated = deepcopy(adapter)
+    migrated["schema_version"] = 2
+    migrated["project"]["project_id"] = project_id
+    target_errors = validate_schema(migrated, ADAPTER_V2_SCHEMA, "PROJECT_BASE_ADAPTER_V2")
+    if target_errors:
+        raise ContractError("\n".join(target_errors))
+    return migrated
 
 
 def release_lock_path(version: str) -> Path:
@@ -828,7 +874,8 @@ def build_artifacts(
             raise ContractError("\n".join(errors))
     adapter_path = safe_repository_path(project_root, CANONICAL_ADAPTER, "canonical adapter")
     adapter = load_object(adapter_path)
-    schema_errors = validate_schema(adapter, ADAPTER_SCHEMA, "PROJECT_BASE_ADAPTER")
+    schema_path, schema_label = adapter_schema(adapter)
+    schema_errors = validate_schema(adapter, schema_path, schema_label)
     if schema_errors:
         raise ContractError("\n".join(schema_errors))
     health_path = safe_repository_path(project_root, HEALTH_PATH, "operating health")
@@ -903,7 +950,11 @@ def validation_errors(
         adapter = load_object(adapter_path)
     except ContractError as error:
         return [str(error)]
-    errors.extend(validate_schema(adapter, ADAPTER_SCHEMA, "PROJECT_BASE_ADAPTER"))
+    try:
+        schema_path, schema_label = adapter_schema(adapter)
+    except ContractError as error:
+        return [str(error)]
+    errors.extend(validate_schema(adapter, schema_path, schema_label))
     if errors:
         return errors
 
@@ -1143,6 +1194,7 @@ def migrated_adapter(
     protected_authority_kind: str,
     protected_authority_ref: str,
     base_version: str = "",
+    project_id: str = "",
 ) -> dict[str, Any]:
     if not release_commit or not release_evidence_commit:
         raise ContractError("Explicit v9.1 release and release-evidence pins are required for migration")
@@ -1310,7 +1362,7 @@ def migrated_adapter(
             gdd_sheet["declared_sync_status"] = declared_status
     else:
         gdd_sheet = {"role": "USER_FACING_GDD_WORKSPACE", "sync_status": "NOT_CONFIGURED"}
-    return {
+    adapter = {
         "schema_version": 1,
         "artifact_role": "PROJECT_BASE_ADAPTER",
         "base_release": {
@@ -1354,3 +1406,4 @@ def migrated_adapter(
             "legacy_inputs": {},
         },
     }
+    return migrate_adapter_v1_to_v2(adapter, project_id=project_id) if project_id else adapter
