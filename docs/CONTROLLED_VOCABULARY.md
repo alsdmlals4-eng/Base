@@ -23,6 +23,14 @@
 
 새 용어는 기존 용어와 **범위, 산출물, 필요한 Evidence, 다음 Gate** 중 하나 이상이 실제로 다를 때만 추가한다.
 
+### 권한 분리
+
+이 문서는 `BASE_SHARED`의 **교차 분야 압축명과 용어 간 차이**를 소유한다. 연결된 Skill·reference는 각 용어의 상세 절차·입력·산출물·판정을 계속 소유한다.
+
+- `skills/designing-vertical-slices/SKILL.md`는 Vertical Slice 실행 절차를 소유하지만 MVP·Demo·Release Candidate 전체의 공용 명명 규칙을 소유하지 않는다.
+- `skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md`는 완료 주장 검증 절차를 소유하고, 이 문서는 그 기존 계약을 부르는 `Implementation Reality Gate` 압축명을 소유한다.
+- 프로젝트가 다른 뜻을 채택해야 하면 Base 정의를 조용히 덮어쓰지 않고 `PROJECT_SHARED` Context와 번역 규칙을 기록한다.
+
 ## 운영·권한
 
 | 용어 | Kind | 압축 정의 | 사용하지 않을 의미 | Canonical owner |
@@ -106,7 +114,7 @@ MATERIAL_CLAIM_LEDGER
 + COMPLETION_CLAIM_GATE
 ```
 
-Canonical owner: `skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md`
+실행 계약 owner: `skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md`
 
 ```text
 승인 Intent·Acceptance
