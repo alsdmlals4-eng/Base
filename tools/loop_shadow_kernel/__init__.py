@@ -1,4 +1,4 @@
-from .kernel import ShadowKernel
+from .hardening import ShadowKernel
 from .models import Finding, FindingCode, RunState, ShadowOutcome
 from .state_machine import IllegalTransition, StateMachine
 
