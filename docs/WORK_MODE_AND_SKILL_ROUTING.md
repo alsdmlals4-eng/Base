@@ -347,3 +347,23 @@ PLAN: 저장소·대화 조사
 → 답변을 결정 원장·책임 원본에 반영
 → 차단 질문이 없으면 종료
 ```
+
+## CLAIM_AND_INTENT_VERIFICATION_GATE
+
+완료·검증·병합 주장 또는 승인 의도와 실제 구현의 일치 판정은 `REVIEW`에서
+`reviewing-and-validating-project-changes: claim-and-intent-verification`으로 라우팅한다.
+
+```text
+material claim 원자화
+→ authority·freshness·counterevidence
+→ 승인 Intent·Acceptance와 실제 diff 연결
+→ exact HEAD 실행 Evidence
+→ Completion Claim Gate
+→ merge 뒤 post-merge main readback
+```
+
+검색 결과·생산자 설명·모델 자신감·테스트 정의·다른 SHA의 PASS는 직접 Evidence가 아니다.
+필수 Evidence가 없으면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED` 또는
+`BLOCKED_UNVERIFIED`를 유지한다.
+
+Reference: `skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md`

@@ -306,5 +306,35 @@ class BaseChangeProposalTests(unittest.TestCase):
             self.assertEqual(paths, ["[수정제안서]/BCP-2026-999-example/PROPOSAL.md"])
 
 
+class ClaimIntentProposalLifecycleTests(unittest.TestCase):
+    def test_bcp_027_closeout_binds_green_evidence_and_implementation_pr(self) -> None:
+        registry, errors = CHECKER.validate_repository(ROOT)
+        self.assertEqual([], errors)
+        entry = next(
+            item
+            for item in registry["proposals"]
+            if item["proposal_id"] == "BCP-2026-027-claim-and-intent-verification-gate"
+        )
+        self.assertEqual("IMPLEMENTED", entry["status"])
+        self.assertEqual("https://github.com/alsdmlals4-eng/Base/pull/319", entry["implementation_pr"])
+        proposal = (ROOT / entry["path"]).read_text(encoding="utf-8")
+        evidence = (ROOT / "docs/evidence/2026-08-13-claim-and-intent-verification-gate.md").read_text(encoding="utf-8")
+        plan = (ROOT / "docs/superpowers/plans/2026-08-13-claim-and-intent-verification.md").read_text(encoding="utf-8")
+        design = (ROOT / "docs/superpowers/specs/2026-08-13-claim-and-intent-verification-design.md").read_text(encoding="utf-8")
+        self.assertNotIn("구현 PR: 아직 없음", proposal)
+        self.assertNotIn("신규 제안 Registry 상태: `SUBMITTED`", proposal)
+        self.assertIn("최종 Registry 상태: `IMPLEMENTED`", proposal)
+        self.assertIn("bf0890439cbef96777171cc00a0229c65e852af8", plan + "\n" + design)
+        for stale in ('9a4a6e688e993114466e3f25831555b23fcf5912', '8a161eca8d129584aecb3898e8d5622dcfc89efb', '31656590653', '94312314139'):
+            self.assertNotIn(stale, plan + "\n" + design)
+        for token in (
+            "### 구현 closeout — PR #319",
+            "eef62df811ae64ff92fa6692a3e91edb8a5e343b",
+            "External model behavior run: `NOT_RUN`",
+            "post-merge `main` readback",
+        ):
+            self.assertIn(token, proposal + "\n" + evidence)
+
+
 if __name__ == "__main__":
     unittest.main()
