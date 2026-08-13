@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SEEDS = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_DISCOVERY_SEEDS.md"
 WATCHLIST = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md"
+RADAR = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_SPECIALTY_SOURCE_RADAR.md"
 ART_GUIDE = ROOT / "docs" / "knowledge" / "game-development" / "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md"
 SIZE_GUIDE = ROOT / "docs" / "knowledge" / "game-development" / "GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md"
 BENCHMARK = ROOT / "skills" / "analyzing-and-refining-game-concepts" / "references" / "benchmark-player-evidence-and-playtests.md"
@@ -169,49 +170,40 @@ class PeriodicExternalSourceDiscoverySeedTests(unittest.TestCase):
         self.assertIn("causal", combined.lower())
 
     def test_prompt_planning_writing_work_structure_executable_and_asset_sources_route_to_existing_owners(self) -> None:
-        seeds = SEEDS.read_text(encoding="utf-8")
+        self.assertTrue(RADAR.is_file())
+        radar = RADAR.read_text(encoding="utf-8")
 
         for required in (
-            "Prompt engineering / evaluation / security",
+            "OpenAI Developers",
+            "Anthropic Docs / Engineering",
+            "GitHub Copilot Docs",
+            "Google Gemini / Google Cloud AI / ADK official guidance",
+            "Microsoft Learn",
+            "Agent Skills Specification",
             "DSPy official docs + repository",
-            "https://dspy.ai/",
             "promptfoo official docs + repository",
-            "https://www.promptfoo.dev/docs/",
             "OWASP GenAI Security Project",
-            "https://genai.owasp.org/",
             "DAIR.AI Prompt Engineering Guide",
-            "https://github.com/dair-ai/Prompt-Engineering-Guide",
-            "OpenAI official prompting / evals / instruction hierarchy",
-            "Anthropic prompt engineering / evals",
-            "Gemini prompt design strategies",
-            "Game design / planning research and system modeling",
+            "Learn Prompting",
             "DiGRA Digital Library",
-            "https://dl.digra.org/",
             "Game Studies",
-            "https://gamestudies.org/",
-            "MDA: A Formal Approach to Game Design and Game Research",
+            "MDA 원문",
             "Game Design Patterns",
             "Game Design Workshop",
             "Machinations docs + original modeling research",
-            "https://machinations.io/docs",
-            "Writing craft / Korean prose / story industry",
-            "국립국어원",
-            "https://www.korean.go.kr/",
-            "한국콘텐츠진흥원 / Storyum",
-            "https://www.storyum.kr/",
-            "Writing Excuses",
-            "https://writingexcuses.com/",
-            "Brandon Sanderson BYU writing class",
-            "Jane Friedman",
-            "Writer's Digest",
-            "Writer Beware",
-            "Work structure / documentation / decision methods",
             "Diátaxis",
             "Architecture Decision Records",
             "C4 model",
             "DORA",
-            "Skill / addon / executable source discovery and quarantine",
-            "Agent Skills specification",
+            "국립국어원",
+            "Purdue OWL",
+            "한국콘텐츠진흥원 / Storyum",
+            "Reedsy",
+            "Writing Excuses",
+            "Brandon Sanderson BYU writing class",
+            "Scriptnotes / John August",
+            "Jane Friedman / Writer's Digest",
+            "SFWA / Writer Beware",
             "anthropics/skills",
             "obra/superpowers",
             "skills.sh",
@@ -219,16 +211,12 @@ class PeriodicExternalSourceDiscoverySeedTests(unittest.TestCase):
             "OSV / OSV-Scanner",
             "deps.dev",
             "SLSA",
-            "Godot Asset Store / reusable production assets",
-            "Godot Asset Store",
-            "Godot Asset Library",
             "godotengine/awesome-godot",
             "GDQuest",
-            "Kenney",
-            "Poly Haven",
-            "Freesound",
-            "OpenGameArt",
+            "Kenney / Poly Haven",
+            "Freesound / OpenGameArt",
             "Godot Shaders",
+            "AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md",
             "AI_WORKFLOW_AND_PROMPT_SOURCE_NOTES.md",
             "AI_SKILL_ADOPTION_GUIDE.md",
             "analyzing-and-refining-game-concepts",
@@ -237,20 +225,20 @@ class PeriodicExternalSourceDiscoverySeedTests(unittest.TestCase):
             "developing-and-revising-serial-fiction",
             "NARRATIVE_AND_RELATIONSHIP_METHOD.md",
             "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md",
+            "evaluating-godot-assets-and-plugins-before-creation",
             "GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md",
+            "PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md",
             "prompt popularity != authority",
             "optimizer score != project correctness",
             "red-team tool pass != security/compliance PASS",
             "framework != universal design law",
             "simulation != playtest",
             "어문 규범 준수 != 문학적 완성도",
-            "creator advice != universal craft law",
             "author popularity != permission to copy voice or style",
             "listing != vetted dependency",
-            "discovery-only",
-            "이번 등록은 durable Watchlist/Ledger 승격이 아니다",
+            "Store listing != vetted dependency",
         ):
-            self.assertIn(required, seeds)
+            self.assertIn(required, radar)
 
 
 if __name__ == "__main__":
