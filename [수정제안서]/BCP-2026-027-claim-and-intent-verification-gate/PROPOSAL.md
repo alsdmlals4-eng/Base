@@ -5,94 +5,80 @@
 - 출처 프로젝트: `alsdmlals4-eng/Base`
 - 관찰 기준 Base 커밋: `453f790821a108a1d4f6e1f4e45f6931c2396ee0`
 - 제출일: `2026-08-13`
-- Registry 상태: `SUBMITTED`
-- 지식 상태: `반복 관찰 + 외부 1차 출처 비교 + 승인된 공용 운영 보완`
-- 사용자 구현 승인 증거: 2026-08-13 현재 ChatGPT 세션 지시 — “할루시네이션 현상방지, 우리가 의도한대로 제대로 구현이 되었는지 확인하는 스킬을 Base에 추가하고 작업구조에도 반영” 및 병합까지 수행 요청
-- 상태 설명: 신규 제안은 검사 규칙에 따라 `SUBMITTED`로 시작한다. `approval_ref`는 위 명시적 사용자 승인 증거의 위치를 가리키며, 구현 완료 상태와 `implementation_pr`은 별도 구현 PR의 검증·병합 단계에서 전환한다.
+- Registry 상태: `IMPLEMENTED`
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/317`
+- 지식 상태: `PATTERN_CANDIDATE`
+- 사용자 구현 승인 증거: 2026-08-13 ChatGPT 세션에서 할루시네이션 방지, 승인 의도대로 구현됐는지 확인하는 공용 절차, 작업 구조 반영과 검증 후 병합을 명시적으로 요청했다.
 
 ## 관찰과 증거
 
-Base에는 이미 다음 안전 장치가 있다.
+Base에는 이미 다음 책임이 있었다.
 
-- 실제 파일·diff·실행 결과를 설명보다 우선하는 `reviewing-and-validating-project-changes`
-- 요구사항→수용 기준→Task→구현 경로→검증 증거를 잇는 `FEATURE_SPEC_TRACEABILITY_PACKET`
-- 사용자안과 AI 최초안을 같은 기준으로 공격·비판 검증하는 `running-adversarial-review-and-refinement`
-- 낮은 Evidence가 높은 Evidence를 대신하지 못하게 하는 Evidence ceiling
-- exact HEAD, 독립 검토, post-merge main readback, untouched consumer 재검사
+- `reviewing-and-validating-project-changes`: 실제 파일·diff·실행 결과 우선, 외부 AI 산출물 독립 검수, 정적·런타임·회귀·Evidence 보고
+- `FEATURE_SPEC_TRACEABILITY_PACKET`: Requirement→Acceptance→Task→implementation path→verification evidence 연결
+- `running-adversarial-review-and-refinement`: 공격→비판 검증→승인된 최소 개선→회귀 재검사
+- Evidence ceiling, exact HEAD, untouched consumer, post-merge main readback
 
-그러나 이 규칙은 여러 문서에 분산돼 있어 다음 네 질문을 한 번에 닫는 실행 Gate가 부족하다.
+그러나 다음 질문을 한 번에 닫는 재사용 Gate가 없었다.
 
-1. AI·Agent·작업자가 보고한 사실과 완료 주장은 실제 근거가 있는가?
-2. 승인된 WHAT/WHY·Acceptance Criteria가 실제 구현 경로와 관찰 동작에 연결되는가?
-3. 테스트 파일의 존재가 아니라 해당 exact HEAD에서 검증이 실제 실행됐는가?
-4. 병합 주장이 실제 merge SHA와 새 `main` readback까지 확인됐는가?
+1. AI·Agent·작업자의 사실·완료 주장에 직접 Evidence가 있는가?
+2. 승인한 WHAT/WHY·Acceptance가 실제 diff·관찰 동작에 연결되는가?
+3. 테스트 정의가 아니라 해당 exact HEAD에서 검증이 실행됐는가?
+4. 병합 주장이 merge SHA와 새 main readback까지 확인됐는가?
 
-반복 실패 형태:
+### 실제 회귀
 
-- 존재하는 파일·명령·테스트를 실행한 것으로 과장
-- 구현 경로 일부만 보고 전체 요구사항을 충족했다고 결론
-- HOW 변경이 승인된 플레이어 경험·제품 의미를 바꾼 사실을 놓침
-- 오래된 branch·문서·웹 정보를 현재 사실처럼 사용
-- Builder 설명이나 모델 자신감을 독립 Evidence로 사용
-- 테스트 PASS를 사람 사용성·재미·시장성 PASS로 승격
+PR #313 감사 문서는 `README.md`가 활성 Skill 수를 하드코딩한다는 검색 관찰을 exact-SHA file readback 없이 verified finding으로 과승격했다. PR #316은 baseline·merged main·관련 PR의 exact-SHA readback으로 이 finding을 `INVALIDATED_FINDING`으로 교정했다.
 
-### Existing Solution First
+따라서 다음 반례를 공용 회귀로 채택했다.
 
-판정: `ABSORB`
-
-새 ACTIVE Skill을 만들지 않는다. 현재 30개 ACTIVE Skill과 세 Work Mode를 유지하면서 기존 owner `reviewing-and-validating-project-changes`에 다음을 흡수한다.
-
-- `claim-and-intent-verification` Skill Mode와 전용 reference
-- 기존 Registry 항목의 좁은 trigger/use_when 보강
-- 원자 주장·의도 충실도·완료 주장 Gate Template
-- `SBE-038` 행동 fixture와 계약 회귀
-
-| 선택지 | 장점 | 위험 | 결론 |
-|---|---|---|---|
-| 새 광역 Skill 생성 | 발견이 쉬움 | 기존 통합 검증 owner와 중복, 라우팅 비용 증가 | 제외 |
-| 기존 Skill에 Mode·reference·Registry metadata·Template·평가 흡수 | owner·입출력·Evidence 구조 재사용, Skill 수 불변 | 파생 요약 재생성 필요 | 채택 |
-| Skill 본문과 Template만 변경하고 Registry 고정 | 변경량이 작음 | `model_run_status: NOT_RUN`에서 자동 호출 경로를 증명하지 못함 | 제외 |
-| 외부 Eval SaaS 필수화 | 추적 대시보드 제공 | 공급자 종속, 비용·보안·설정 부담 | 제외; 프로젝트 선택 도구로만 허용 |
+```text
+검색 결과·snippet·작업자 설명
++ exact-ref file readback 없음
+→ CLAIM_UNVERIFIED
+→ 정본·감사 finding·완료 보고로 승격 금지
+```
 
 ### 외부 1차 출처·현업 비교
 
-- NIST AI 600-1은 confabulation을 거짓·오류, prompt 불일치, 응답 내부 모순까지 포함해 다루고, 알려진 정답 기반 평가, 사람·자동 평가 병행, 사실·인용 확인, 적대 테스트와 지속 모니터링을 권고한다.
-  - https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf
-  - https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence
-- NASA Requirements Verification Matrix는 요구사항에 ID·출처·검증 방법·결과를 연결한다.
-  - https://www.nasa.gov/reference/appendix-d-requirements-verification-matrix/
-- OpenAI SimpleQA는 긴 completion의 다수 주장을 신뢰성 있게 채점하기 어려워 짧은 factual question으로 범위를 제한하고 `correct / incorrect / not attempted`를 구분한다.
-  - https://openai.com/index/introducing-simpleqa/
-- Phoenix, LangSmith, Braintrust, Promptfoo의 공식 Eval 문서는 고정 dataset·reference 또는 snapshot, deterministic evaluator, 보조 rubric/judge, CI 회귀와 production feedback 분리를 공통적으로 사용한다.
-  - https://arize.com/docs/phoenix/evaluation/how-to-evals/running-pre-tested-evals/faithfulness
-  - https://docs.smith.langchain.com/evaluation
-  - https://www.braintrust.dev/docs/guides/evals
-  - https://www.promptfoo.dev/docs/configuration/expected-outputs/model-graded/factuality/
-  - https://www.promptfoo.dev/docs/red-team/plugins/hallucination/
+- NIST AI 600-1: confabulation, prompt 불일치, 응답 내부 모순, 사실·인용 확인, 적대 테스트와 지속 모니터링
+- NASA Requirements Verification Matrix: 요구사항 ID·출처·검증 방법·결과 연결
+- OpenAI SimpleQA: 긴 completion의 다수 주장 대신 짧은 사실 질문과 `correct / incorrect / not attempted` 구분
+- Phoenix·LangSmith·Braintrust·Promptfoo: 고정 dataset·snapshot, deterministic evaluator, 보조 rubric/judge, CI 회귀와 production feedback 분리
+- Agent Skills·Superpowers: 좁은 trigger, progressive disclosure, 반례 기반 behavior eval, RED→GREEN→회귀
 
-### 채택·변형·제외
+참조 URL은 구현 Design에 보존한다.
 
-| 구분 | 결정 |
+### Existing Solution First — 최종 disposition
+
+초기안은 기존 owner에 Mode·reference·Registry metadata·Template·중앙 eval을 모두 삽입하는 방식이었다. 구현 전 적대적 재검토에서 다음 중복이 확인됐다.
+
+- Registry는 이미 `external-ai-result`, `contract-check`, `evidence-report`로 같은 owner를 route한다.
+- review Skill 본문은 이미 실제 diff 우선, 외부 독립 검수, BCP-008 traceability, fail-closed Evidence를 소유한다.
+- 전체 절차를 25KB Skill 본문에 다시 넣으면 progressive disclosure 원칙을 위반하고 컨텍스트 비용을 늘린다.
+
+최종 판정은 `ABSORB_BY_PROGRESSIVE_DISCLOSURE`다.
+
+```text
+existing Registry triggers
+→ REVIEW
+→ reviewing-and-validating-project-changes
+→ PROJECT_CHANGE_VALIDATION.md
+→ references/claim-and-intent-verification.md
+```
+
+| 선택 | 최종 판정 |
 |---|---|
-| 채택 | material claim, authority, freshness, counterevidence, deterministic-first, 요구사항 추적성, Evidence ceiling, 회귀·readback |
-| 변형 | 범용 정답보다 저장소 정본·실제 diff·실행 결과 우선; LLM judge는 보조 Evidence |
-| 제외 | 단일 self-evaluation을 진실 판정으로 사용, 모든 문장 원장화, 외부 SaaS 의무화, 테스트 정의만으로 PASS |
-
-### 제안 PR 적대적 검토 재검증
-
-| Finding | 재검증 | 최종 반영 |
-|---|---|---|
-| `SBE-015` 충돌 | 유효 P1 | 다음 사용 가능 ID `SBE-038` 사용 |
-| Registry 고정 시 자동 호출 증거 부족 | 유효 P1 | 기존 owner의 `completion-claim`, `claim-evidence`, `intent-conformance`, `hallucination-audit` trigger/use_when 보강 |
-| SimpleQA 표현 과장 | 유효 P2 | short factual question의 공식 범위로 교정 |
-| `SUBMITTED`의 `approval_ref` 선기입 | P2 권고이나 사용자 구현 승인은 이미 존재하며 CI 실제 동작도 재검증 필요 | 상태는 `SUBMITTED`로 유지하고 `approval_ref`는 명시적 승인 증거 locator로 보존; 구현 완료와 혼동하지 않음 |
-| Skill body 변경의 Learning Log 누락 가능성 | 유효 P1 | 중앙 `skills/SKILL_LEARNING_LOG.md` 갱신을 영향 경로에 추가 |
+| 31번째 ACTIVE Skill | 제외 — owner 중복 |
+| 네 번째 Work Mode | 제외 |
+| 유사 Registry trigger 추가 | 보류 — 실제 model-run 오라우팅 반복 증거가 생길 때 재검토 |
+| 25KB SKILL.md 전체 절차 삽입 | 제외 — 본문 팽창·중복 |
+| 기존 Template→전용 reference | 채택 |
+| 외부 Eval SaaS 필수화 | 제외 — 선택적 보조 도구로만 허용 |
 
 ## 일반화 후보
 
 ### `MATERIAL_CLAIM_LEDGER`
-
-결정·구현·검증·병합 상태를 바꾸는 material claim만 원자화한다.
 
 ```yaml
 claim_id:
@@ -101,19 +87,11 @@ claim_text:
 authority_source:
 evidence_locator:
 freshness:
+  observed_at:
+  branch_or_version:
+  commit_sha:
 counterevidence:
 status: CLAIM_VERIFIED | CLAIM_CONTRADICTED | CLAIM_UNVERIFIED | NOT_APPLICABLE
-```
-
-권한 순서:
-
-```text
-최신 사용자 지시·승인 계약
-→ exact SHA의 실제 저장소·등록 정본
-→ 해당 SHA에서 실행된 도구·테스트·런타임 결과
-→ 날짜·버전이 확인된 공식 외부 1차 출처
-→ 명시적 추론
-→ 작업자·Builder·모델 설명(검증할 lead일 뿐 Evidence 아님)
 ```
 
 ### `INTENT_IMPLEMENTATION_FIDELITY_MATRIX`
@@ -129,145 +107,103 @@ evidence_ceiling:
 drift_status: INTENT_CONFORMANT | MINOR_TECHNICAL_DRIFT | PLANNING_CONFLICT | IMPLEMENTATION_UNVERIFIED
 ```
 
-- `INTENT_CONFORMANT`: 승인 결과·보호 동작과 관찰 결과가 일치한다.
-- `MINOR_TECHNICAL_DRIFT`: HOW만 달라졌고 WHAT/WHY·제품 의미·보호 동작은 동일하다.
-- `PLANNING_CONFLICT`: 플레이어 경험·주요 UX·콘텐츠 의미·범위·우선순위가 승인 내용과 충돌한다.
-- `IMPLEMENTATION_UNVERIFIED`: 필요한 diff·runtime·test·render·사람 Evidence가 없다.
-
 ### `COMPLETION_CLAIM_GATE`
 
 | 주장 | 최소 Evidence |
 |---|---|
-| 구현 완료 | 실제 diff + 요구사항별 `implementation_paths` + 범위 밖 변경 부재 |
-| 테스트/검증 완료 | 실행 명령·환경·결과 + exact HEAD + 실패 수 |
+| 구현 완료 | 실제 diff + 요구사항별 implementation path + 범위 밖 변경 부재 |
+| 테스트·검증 완료 | 실행 명령·환경·exact HEAD·결과·실패·skip 수 |
 | 의도대로 동작 | Acceptance별 관찰 결과 + 필요한 Evidence level |
-| 병합 완료 | PR merged 상태 + merge SHA + 새 `main` readback + post-merge 필수 검사 |
+| 병합 완료 | merged PR + merge SHA + post-merge main readback + post-merge 검사 |
 
-필수 Evidence가 없으면 `BLOCKED_UNVERIFIED` 또는 `IMPLEMENTATION_UNVERIFIED`를 유지한다. 파일 존재, Builder 보고, 모델 자신감은 PASS 근거가 아니다.
-
-### 작업 구조
-
-```text
-승인 Intent·Acceptance·Protected Scope
-→ material claim 원자화
-→ authority·freshness·counterevidence 검사
-→ 실제 diff·consumer·implementation path 연결
-→ deterministic static/test/runtime evidence 실행
-→ Evidence ceiling 적용
-→ 독립 VERIFIER/CRITIC 검토
-→ exact-head 판정
-→ merge 뒤 main readback
-→ CLAIM / INTENT / VERIFICATION 최종 보고
-```
+필수 Evidence가 없으면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED`, `BLOCKED_UNVERIFIED`를 유지한다.
 
 ## 적용 조건과 비사용 조건
 
 적용:
 
-- L1 이상 AI/Agent 완료 보고
-- 외부 사실·인용·현재 버전 주장
+- L1 이상 AI·Agent 완료 보고
+- 저장소 사실·외부 사실·현재 버전 주장
 - 승인 의도와 실제 구현의 일치 판정
 - 테스트·검증·병합 완료 주장
-- L2 이상 복합 변경의 Traceability Packet 검증
+- L2 이상 복합 변경의 traceability 검증
 
-비사용 또는 경량화:
+비사용·경량화:
 
-- L0 오탈자·동일 입력 재검사는 전체 원장을 강제하지 않는다.
-- 순수 창작에서 사실·정본·완료 상태를 주장하지 않는 문장은 원장화하지 않는다.
-- 프로젝트 정본 전체를 ledger에 복제하지 않는다.
-- 외부 SaaS·LLM judge를 필수 조건으로 만들지 않는다.
-- 낮은 Evidence에서 높은 Evidence를 추론하지 않는다.
+- L0 오탈자·동일 입력 재검사
+- 사실·정본·완료 상태를 주장하지 않는 순수 창작
+- 프로젝트 정본 전체를 ledger에 복제하는 작업
+- 외부 SaaS·LLM judge를 필수화하는 설계
 
 프로젝트 전용:
 
-- 게임별 플레이어 경험·UX·수치·세계관·Acceptance
-- 실제 Godot scene·script·data·asset 경로
-- 프로젝트별 테스트 명령과 플랫폼·device 조건
+- 플레이어 경험·UX·수치·세계관·Acceptance
+- 실제 Godot scene·script·data·asset path
+- 프로젝트별 테스트 명령·플랫폼·device 조건
 - 선택한 외부 Eval 도구와 dataset
 
 ## 반례와 위험
 
-| 공격 | 검증 | 최소 대응 |
-|---|---|---|
-| 모든 문장을 원장화 | 비용 폭증 | material claim만 기록, L0 경량화 |
-| 출처는 있으나 stale·충돌 | URL만으로 현재성 불충분 | 날짜·버전·exact SHA·counterevidence 요구 |
-| 테스트 파일을 실행 결과로 오인 | 정의와 실행은 다름 | 명령·환경·HEAD·결과 요구 |
-| Builder 자기확증 | 생산자 설명은 독립 Evidence 아님 | VERIFIER/CRITIC 역할 분리 |
-| LLM judge 환각 | judge도 오류 가능 | deterministic-first, judge 보조, 미검증 허용 |
-| 테스트 PASS로 UX·재미 과장 | Evidence 층 불일치 | E0–E6 ceiling과 사람 Evidence 유지 |
-| 병합 직전 main 이동 | stale 검증 | exact-head/current-main/post-merge readback |
-| 기존 owner와 중복 | 새 Skill 생성 시 충돌 | Mode/reference로 흡수 |
-| trigger만 있고 live model 결과 없음 | 명시 경로와 실제 행동은 다름 | deterministic contract + `SBE-038`; live model은 미실행 시 `NOT_RUN` |
-
-대표 반례:
-
-1. 테스트 정의만 존재 → `CLAIM_UNVERIFIED`.
-2. 다른 SHA에서 PASS → `CLAIM_UNVERIFIED`.
-3. Acceptance 하나가 unmapped → `IMPLEMENTATION_UNVERIFIED`.
-4. 기술 구조는 작동하지만 승인 UX 의미가 다름 → `PLANNING_CONFLICT`.
-5. 공식 문서지만 버전·날짜가 결정과 불일치 → stale/contradictory.
-6. merged 상태만 있고 main readback이 없음 → integration claim 미완료.
+| 공격 | 차단 방식 |
+|---|---|
+| 모든 문장 원장화 | material claim만 기록, L0 경량화 |
+| URL은 있으나 stale·충돌 | 날짜·버전·exact SHA·counterevidence 요구 |
+| 테스트 파일을 실행 결과로 오인 | 명령·환경·HEAD·결과 요구 |
+| Builder 자기확증 | 생산자 설명은 lead, 독립 Evidence 아님 |
+| LLM judge 환각 | deterministic-first, judge는 보조 |
+| 테스트 PASS로 UX·재미 과장 | Evidence ceiling 적용 |
+| 병합 직전 main 이동 | exact-head/current-main/post-merge readback 분리 |
+| 새 Skill·trigger 과증식 | 기존 owner·trigger 재사용 |
+| 새 test 파일이 CI에서 미실행 | canonical aggregator 연결과 실행 회귀 |
 
 ## 영향 범위와 검증
 
-### 구현 대상
+### 구현 경로
 
-- `skills/reviewing-and-validating-project-changes/SKILL.md`
 - `skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md`
-- `skills/SKILL_REGISTRY.json`
-- `docs/generated/BASE_ACTIVE_SKILLS.md`
+- `skills/reviewing-and-validating-project-changes/evals/claim-and-intent-verification.json`
+- `skills/reviewing-and-validating-project-changes/LEARNING_LOG.md`
 - `templates/quality/PROJECT_CHANGE_VALIDATION.md`
-- `docs/WORK_MODE_AND_SKILL_ROUTING.md`
-- `docs/OPERATING_MODEL.md`
-- `skills/SKILL_BEHAVIOR_EVALS.json`
-- `skills/SKILL_LEARNING_LOG.md`
-- `tests/test_neutral_adversarial_feature_lifecycle.py`
+- `tests/test_claim_and_intent_verification_contract.py`
+- `tests/test_repository_governance_baseline.py`
 - `docs/superpowers/specs/2026-08-13-claim-and-intent-verification-design.md`
 - `docs/superpowers/plans/2026-08-13-claim-and-intent-verification.md`
+- 이 제안서와 `PROPOSAL_REGISTRY.json`
 
-### 보호 대상
+### 보호 경로
 
-- ACTIVE Skill ID 집합과 전체 수 `30`
-- `PLAN / BUILD / REVIEW` 세 Work Mode
-- 릴리스된 Base lock·pin·immutable artifact
-- 기존 owner와 responsibility boundary
-- 프로젝트별 수치·세계관·구현 경로
-- 기존 Evidence E0–E6 의미
-- BCP-008 Traceability와 BCP-020 Player Experience Evidence owner
+- `skills/SKILL_REGISTRY.json`과 generated active Skill map
+- `skills/reviewing-and-validating-project-changes/SKILL.md`
+- Work Mode 구조
+- PR #312·#316 소유 경로
+- CI workflow 구조
 
-### 의도적 변경
+### TDD 증거
 
-- 기존 reviewer Skill의 trigger/use_when/review trigger metadata
-- Registry 변경에서 파생되는 `docs/generated/BASE_ACTIVE_SKILLS.md` hash와 해당 row
-- `SBE-038` fixture, 중앙 Learning Log, 계약 테스트
+- initial test commit: `9a4a6e688e993114466e3f25831555b23fcf5912`
+- canonical RED head: `8a161eca8d129584aecb3898e8d5622dcfc89efb`
+- run: `31656590653`
+- docs-validation job: `94312314139`
+- 결과: 113 tests에서 기존 목록 계약 통과 후 새 Gate 계약 6개만 예상대로 실패
 
-### RED→GREEN 검증
+첫 run이 통과한 이유는 기능이 이미 있어서가 아니라 새 테스트 파일이 explicit workflow 목록에 없었기 때문이다. 기존 docs·contract suite가 실행하는 aggregator에 전용 test case를 연결해 거짓 GREEN을 제거했다.
 
-RED:
+### 완료 검증 계약
 
-- 전용 계약 테스트와 `SBE-038`가 새 reference·Mode·Registry trigger·Template·작업 구조를 요구하도록 먼저 추가한다.
-- 생산 계약이 없는 exact HEAD에서 GitHub Actions 실패를 관찰한다.
-
-GREEN:
-
-- focused unittest PASS
-- Base v9 contract·integrity PASS
-- active Skill ID 집합과 수 `30` 유지
-- `python tools/build_base_v9_artifacts.py --check` PASS
-- `SBE-038`이 REVIEW의 기존 owner와 새 Mode를 요구
-- live model behavior는 실행되지 않으면 `NOT_RUN`으로 보고
-- diff가 승인 영향 경로 안에 있음
-- 독립 reviewer finding 검토, unresolved thread 0
-- merge SHA와 post-merge `main` readback
-
-### 롤백
-
-구현 PR의 squash commit을 revert한다. Registry metadata·파생 요약·reference·Mode·Template·fixture·Learning Log·test를 함께 되돌려 부분 활성 상태를 남기지 않는다. 제품 데이터·런타임·릴리스 pin은 바꾸지 않는다.
+- exact PR head의 두 repository workflow 성공
+- dedicated six-test contract 실행 확인
+- active Skill count 30, Work Mode 3 유지
+- Registry·generated active map·SKILL.md 보호 확인
+- 독립 적대 검토 blocker 0
+- expected-head merge
+- merge SHA와 새 main readback
+- post-merge required workflow 성공
 
 ## 승인과 구현
 
-- 사용자 구현 승인 증거: 2026-08-13 현재 ChatGPT 세션의 직접 요청과 병합 지시
-- 신규 제안 Registry 상태: `SUBMITTED`
-- 승인된 구현 범위: 이 문서의 영향 경로·보호 대상·검증 계약
-- 구현 방식: 제안 PR 병합 뒤 fresh `main`에서 별도 구현 PR
-- 구현 PR: 아직 없음
+- 사용자 승인: 2026-08-13 현재 세션의 구현·검증·병합 요청
+- 제안 PR: `https://github.com/alsdmlals4-eng/Base/pull/315`
+- 제안 merge SHA: `a96864a84ac2513e488f20cba304c252dea3045d`
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/317`
+- 구현 상태: `IMPLEMENTED` record를 구현 PR에 포함했다. 최종 완료 주장은 PR #317 exact-head workflow, expected-head merge, merge SHA, post-merge main readback과 post-merge workflow가 모두 확인된 뒤 보고한다.
+- 롤백: PR #317 squash commit을 revert하고 validation Template·owner Learning Log를 복구하며 신규 reference·eval·design·plan·test를 제거한다.
