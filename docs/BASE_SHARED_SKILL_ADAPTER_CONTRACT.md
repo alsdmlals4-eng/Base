@@ -3,6 +3,8 @@
 ## Base v9.1 canonical authority
 
 The canonical project integration file is `skills/PROJECT_BASE_ADAPTER.json`.
+
+For Tool Hub identity, schema v2 requires the independently project-owned `project.project_id`; v1 remains audit-compatible but is `IDENTITY_MIGRATION_REQUIRED` for Hub use. See `docs/operations/PROJECT_BASE_ADAPTER_V2_MIGRATION.md`. Free-form `validators` strings are compatibility metadata and are never executed by Tool Hub or `base-tool-contracts`; executable validation remains a fixed reviewed Base adapter with typed arguments and `shell=False`.
 `skills/PROJECT_BASE_SKILL_ADAPTER.json`, `skills/BASE_V9_ADAPTER.json`, and
 `skills/PROJECT_PATH_ADAPTER.json` remain for one compatibility cycle only as
 deterministic `GENERATED_COMPATIBILITY_VIEW` outputs. Never hand-edit them.

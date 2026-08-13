@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "artifact_role": "OPENAI_EXPRESSION_SAMPLE_SMOKE_EVIDENCE",
+  "observed_at_utc": "2026-08-13T12:13:28Z",
+  "evidence_level": "SESSION_ATTESTED_REDACTED_RUNTIME_RESULT",
+  "runner": {
+    "python": "3.12",
+    "openai_sdk": "3.0.0",
+    "platform": "Linux",
+    "invocation": "ExpressionStudioService.create_run with OpenAIExpressionEngine",
+    "provider_request_id_recorded": false
+  },
+  "source": {
+    "role": "USER_SUPPLIED_SMOKE_FIXTURE",
+    "sha256": "bd30ee2758aa9088142adeece4eedac7b5cca4c372383f461ba75b7d2602b9fb",
+    "committed_to_base": false,
+    "project_approval_claimed": false
+  },
+  "request": {
+    "tool": "expression-studio",
+    "engine_adapter_id": "expression.openai-images-edit.v1",
+    "engine_config_sha256": "cb41d9f51dc053ca3cd916d1d03090c3069cc5f0024e9e098f82f9aaef429be8",
+    "endpoint": "https://api.openai.com/v1",
+    "model": "gpt-image-2-2026-04-21",
+    "quality": "medium",
+    "size": "auto",
+    "output_format": "png",
+    "candidate_count": 2,
+    "expression": "AU46 character-anatomical left wink, moderate intensity"
+  },
+  "result": {
+    "run_status": "blocked",
+    "provider_exception_class": "RateLimitError",
+    "provider_error_code": "credit_balance_exhausted",
+    "provider_error_type": "insufficient_quota",
+    "http_status": 429,
+    "retained_candidate_count": 0,
+    "secret_or_raw_provider_message_recorded": false
+  },
+  "verdict": {
+    "request_reached_provider": "SESSION_ATTESTED_FROM_HTTP_429_RESPONSE",
+    "fail_closed_behavior": "PASS",
+    "actual_image_generation": "BLOCKED_PROVIDER_CREDIT",
+    "visual_quality": "NOT_RUN",
+    "export": "NOT_RUN",
+    "figma_placement": "NOT_RUN",
+    "generation_product_ready": false,
+    "current_replay_state": "NOT_REPLAYED_AFTER_MANDATORY_COMMITTED_ANCHOR_GATE"
+  }
+}

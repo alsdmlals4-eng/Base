@@ -3,6 +3,7 @@
 from dataclasses import asdict, dataclass, field
 import json
 from pathlib import Path
+from base_tool_contracts import safe_staging_write_text
 
 
 @dataclass(frozen=True)
@@ -31,6 +32,4 @@ def save_curation(run_dir: Path, curation: CurationState) -> Path:
         "selected": curation.selected,
         "transforms": {str(index): asdict(transform) for index, transform in sorted(curation.transforms.items())},
     }
-    target = run_dir / "curation.json"
-    target.write_text(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    return target
+    return safe_staging_write_text(run_dir, "curation.json", json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n")

@@ -45,6 +45,7 @@
 |---|---|
 | `PROJECT_OPERATING_SYSTEM_INSTALLATION_PLAN.md` | 신규 설치 계획 |
 | `PROJECT_BASE_ADAPTER.json` | Base v9.1 canonical project integration authority; install as `skills/PROJECT_BASE_ADAPTER.json` |
+| `PROJECT_BASE_ADAPTER_V2.json` | Hub-capable candidate with explicit canonical `project.project_id`; migrate and review without overwriting v1 |
 | `github/validate-project-base-adapter.yml` | Pull-request validator template that supplies the exact GitHub PR base SHA as trusted external baseline input |
 | `PROJECT_OPERATING_HEALTH.json` | Independent OM/PE axes and explicit critical-gate state; install under `docs/` |
 | `VERTICAL_SLICE_PROJECT_APPLICATION_v9.md` | Project-only v9 binding, protected boundary, local skills and default visual checkpoint |
