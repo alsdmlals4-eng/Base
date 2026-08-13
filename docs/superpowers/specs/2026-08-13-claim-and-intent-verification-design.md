@@ -4,11 +4,11 @@
 - Proposal: `BCP-2026-027-claim-and-intent-verification-gate`
 - Work Mode: `REVIEW`
 - Owner: `reviewing-and-validating-project-changes`
-- Integration choice: `ABSORB`
+- Integration: `ABSORB_BY_PROGRESSIVE_DISCLOSURE`
 
 ## 1. Problem
 
-Base는 이미 계약 검토, 실제 diff 우선, reference freshness, 정적·런타임·접근성·성능·회귀 검증, exact HEAD와 post-merge readback을 보유한다. 그러나 이 규칙이 분산돼 있어 다음 실패가 하나의 차단 Gate로 닫히지 않았다.
+Base는 이미 계약 검토, 실제 diff 우선, 정적·런타임·회귀 검증, BCP-008 traceability, exact HEAD와 post-merge readback을 보유한다. 그러나 다음 실패를 하나의 완료 주장 Gate로 판정하는 재사용 계약이 없었다.
 
 1. 검색 snippet이나 작업자 설명을 저장소 사실로 과승격한다.
 2. 테스트 정의를 실행 결과로 오인한다.
@@ -17,44 +17,46 @@ Base는 이미 계약 검토, 실제 diff 우선, reference freshness, 정적·�
 5. merged 상태·merge SHA·main readback 없이 병합 완료를 주장한다.
 6. 기술 PASS를 UX·재미·시장성 PASS로 승격한다.
 
-PR #316의 교정은 실제 회귀를 제공한다. PR #313 감사 문서의 README drift finding은 exact-SHA readback 없이 검색 관찰을 확정 사실로 승격해 잘못 기록됐다. 이 사례는 별도 신규 Skill보다 기존 통합 검증 owner 내부의 fail-closed claim gate가 필요함을 보여 준다.
+PR #316의 교정은 실제 회귀다. PR #313 감사 문서의 README drift finding은 exact-SHA readback 없이 검색 관찰을 확정 사실로 승격했다. 별도 신규 Skill보다 기존 통합 검증 owner 안의 fail-closed 계약이 필요하다.
 
 ## 2. Goals
 
 - material claim을 authority·freshness·counterevidence에 연결한다.
 - 승인 Intent·Acceptance와 실제 diff·관찰 결과를 항목별로 연결한다.
 - 구현·검증·의도·통합 완료 주장을 서로 다른 Evidence 계약으로 판정한다.
-- exact HEAD와 post-merge main readback을 분리해 stale evidence를 막는다.
-- 사용자 표현인 완료 주장, 승인 의도, 실제 diff, 할루시네이션 감사를 기존 REVIEW owner로 좁게 라우팅한다.
+- exact HEAD와 post-merge main readback을 분리한다.
 - 30 ACTIVE Skills와 `PLAN / BUILD / REVIEW`를 유지한다.
+- 기존 owner와 기존 Registry trigger를 재사용한다.
 
 ## 3. Non-goals
 
 - 모든 문장을 claim ledger에 기록하지 않는다.
-- 새 광역 ACTIVE Skill이나 네 번째 Work Mode를 만들지 않는다.
+- 새 ACTIVE Skill이나 네 번째 Work Mode를 만들지 않는다.
 - 외부 Eval SaaS 또는 LLM judge를 필수화하지 않는다.
-- 모델의 자기평가를 진실 판정으로 사용하지 않는다.
-- 정적 테스트로 실제 UX·재미·시장성·법률 검토를 통과 처리하지 않는다.
-- PR #312의 Figma·시각 도구 경로나 PR #316의 교정 경로를 수정하지 않는다.
+- 모델 자기평가를 진실 판정으로 사용하지 않는다.
+- 정적 테스트로 UX·재미·시장성·법률 검토를 통과 처리하지 않는다.
+- PR #312·#316 소유 경로를 수정하지 않는다.
 
-## 4. Existing Solution First
+## 4. Existing-solution-first decision
 
 | 선택 | 장점 | 위험 | 판정 |
 |---|---|---|---|
-| 신규 ACTIVE Skill | 이름 발견성 | 기존 review owner와 중복, 라우팅·컨텍스트 비용 증가 | 제외 |
-| 기존 owner에 Mode·reference·trigger·template·eval 흡수 | 입력·출력·Evidence·회귀 구조 재사용 | 파생본·소비자 갱신 필요 | 채택 |
-| 문서만 추가하고 Registry 불변 | 작은 diff | 실제 자동 라우팅 경로가 약함 | 제외 |
-| 외부 Eval 플랫폼 의무화 | 대시보드·dataset 관리 | 공급자 종속, 비용·보안·설정 부담 | 제외 |
+| 신규 ACTIVE Skill | 이름 발견성 | 기존 owner 중복, 컨텍스트·오라우팅 증가 | 제외 |
+| Registry에 유사 trigger 추가 | 사용자 문구 노출 | 기존 `external-ai-result`, `contract-check`, `evidence-report`와 중복 | 보류 |
+| 기존 owner 본문에 전체 절차 삽입 | 한 파일에서 보임 | 25KB 본문 팽창, 상세 계약 중복 | 제외 |
+| 기존 validation Template에서 전용 reference로 progressive disclosure | 기존 route·산출물 재사용, 본문 크기 보존 | Template 소비 경로 검증 필요 | 채택 |
+
+기존 Registry의 `external-ai-result`, `contract-check`, `evidence-report`는 이 요청을 기존 REVIEW owner로 보낼 수 있다. 실제 model-run 오라우팅이 반복 증거로 확인되기 전에는 유사 trigger를 추가하지 않는다.
 
 ## 5. Benchmark synthesis
 
-외부 사례의 공통 패턴을 Base 문맥으로 변형한다.
+외부 사례의 공통 구조를 Base에 맞게 변형한다.
 
 - NIST GenAI Profile: confabulation·prompt 불일치·내부 모순을 위험으로 보고 사실·인용 확인, 적대 테스트, 지속 모니터링을 결합한다.
 - NASA Requirements Verification Matrix: 요구사항 ID, 출처, 검증 방법, 결과를 연결한다.
 - OpenAI SimpleQA: 긴 응답의 다수 주장을 한 번에 신뢰성 있게 채점하기 어려워 짧은 사실 질문과 `correct / incorrect / not attempted` 구분을 사용한다.
-- Phoenix, LangSmith, Braintrust, Promptfoo: 고정 dataset·snapshot, deterministic evaluator, 보조 rubric/judge, CI 회귀와 production feedback 분리를 사용한다.
-- Agent Skills·Superpowers 계열: 좁은 trigger, progressive disclosure, 반례 기반 behavior eval, RED→GREEN→회귀를 강조한다.
+- Phoenix·LangSmith·Braintrust·Promptfoo: 고정 dataset·snapshot, deterministic evaluator, 보조 rubric/judge, CI 회귀와 production feedback 분리를 사용한다.
+- Agent Skills·Superpowers: 좁은 trigger, progressive disclosure, 반례 기반 behavior eval, RED→GREEN→회귀를 강조한다.
 
 Base 채택 결과:
 
@@ -71,27 +73,25 @@ material claim 원자화
 
 ```text
 reviewing-and-validating-project-changes
-├─ existing modes
-├─ claim-and-intent-verification
-│  └─ references/claim-and-intent-verification.md
+├─ existing Registry route: external-ai-result / contract-check / evidence-report
+├─ existing SKILL.md: actual diff + external review + BCP-008 traceability
 ├─ templates/quality/PROJECT_CHANGE_VALIDATION.md
-├─ skills/SKILL_REGISTRY.json routing metadata
-├─ skills/SKILL_BEHAVIOR_EVALS.json SBE-038
+│  └─ references/claim-and-intent-verification.md
+├─ evals/claim-and-intent-verification.json (SBE-038)
+├─ LEARNING_LOG.md
 └─ tests/test_claim_and_intent_verification_contract.py
 ```
 
-The new Mode owns three contracts.
+The Gate owns three contracts.
 
 ### 6.1 `MATERIAL_CLAIM_LEDGER`
 
-- Scope: decision-, implementation-, verification-, integration-changing claims only.
 - Required: claim type, authority source, evidence locator, freshness, counterevidence, status.
 - Status: `CLAIM_VERIFIED / CLAIM_CONTRADICTED / CLAIM_UNVERIFIED / NOT_APPLICABLE`.
 
 ### 6.2 `INTENT_IMPLEMENTATION_FIDELITY_MATRIX`
 
-- Scope: each approved Intent or Acceptance.
-- Required: protected scope, implementation paths, observed behavior, verification evidence, evidence ceiling.
+- Required: approved intent, protected scope, implementation paths, observed behavior, verification evidence, evidence ceiling.
 - Status: `INTENT_CONFORMANT / MINOR_TECHNICAL_DRIFT / PLANNING_CONFLICT / IMPLEMENTATION_UNVERIFIED`.
 
 ### 6.3 `COMPLETION_CLAIM_GATE`
@@ -105,31 +105,7 @@ Separate gates:
 
 A PASS in one gate cannot satisfy another.
 
-## 7. Routing
-
-Primary owner remains `reviewing-and-validating-project-changes` in `REVIEW`.
-
-Narrow trigger additions:
-
-- `completion-claim`
-- `claim-evidence`
-- `intent-conformance`
-- `hallucination-audit`
-
-Positive examples:
-
-- “AI가 완료했다고 했는데 실제 diff와 exact HEAD 실행 증거가 맞는지 확인해.”
-- “승인한 의도와 구현 결과가 항목별로 일치하는지 검증해.”
-- “테스트·병합 완료 주장이 사실인지 main readback까지 확인해.”
-
-Negative examples:
-
-- 순수 창작 문장 개선
-- L0 오탈자 수정
-- 구현 전 아이디어 발산만 수행하는 PLAN 요청
-- 엔진 크래시의 원인 격리만 필요한 런타임 디버깅
-
-## 8. Evidence hierarchy
+## 7. Evidence hierarchy
 
 ```text
 latest user approval
@@ -142,58 +118,74 @@ latest user approval
 
 `producer/model narrative`는 검증 lead이며 단독 PASS 증거가 아니다.
 
+## 8. Routing contract
+
+Positive prompts:
+
+- “외부 AI가 완료했다고 했는데 실제 diff와 exact HEAD 실행 증거가 맞는지 확인해.”
+- “승인한 의도와 구현 결과가 항목별로 일치하는지 검증해.”
+- “테스트·병합 완료 주장이 사실인지 main readback까지 확인해.”
+
+Expected route:
+
+```text
+Work Mode: REVIEW
+Primary Skill: reviewing-and-validating-project-changes
+Existing triggers: external-ai-result + contract-check + evidence-report
+Progressive disclosure: PROJECT_CHANGE_VALIDATION.md → claim-and-intent-verification.md
+```
+
+Do not use the full Gate for pure creative prose, L0 typo fixes, PLAN-only ideation, or isolated engine-crash root-cause diagnosis.
+
 ## 9. Failure behavior
 
 - missing authority/freshness → `CLAIM_UNVERIFIED`
 - direct contradiction → `CLAIM_CONTRADICTED`
-- unmapped Acceptance or missing runtime layer → `IMPLEMENTATION_UNVERIFIED`
+- unmapped Acceptance or missing required evidence layer → `IMPLEMENTATION_UNVERIFIED`
 - product/player meaning drift → `PLANNING_CONFLICT`
 - missing merge SHA/readback → integration `BLOCKED_UNVERIFIED`
 
-Fail-closed 상태는 증거가 채워질 때만 해제한다.
+Fail-closed states are released only by the missing evidence.
 
 ## 10. TDD and evaluation
 
 ### RED
 
-`tests/test_claim_and_intent_verification_contract.py`를 먼저 추가하고, 기존 CI가 새 파일을 실행하지 않는 문제를 발견했다. 이미 docs·contract suite에서 실행되는 `tests/test_repository_governance_baseline.py`에 전용 test case를 import해 canonical suites에 연결했다.
+A dedicated test was written first. The first run exposed a separate test-discovery gap: the new test file was not in the explicit workflow list. The test was connected to the existing docs·contract aggregator before production changes.
 
-Exact RED head `8a161eca8d129584aecb3898e8d5622dcfc89efb`의 docs-validation은 기존 계약을 통과한 뒤 새 Gate 계약 6개만 실패했다.
+- initial test commit: `9a4a6e688e993114466e3f25831555b23fcf5912`
+- canonical RED head: `8a161eca8d129584aecb3898e8d5622dcfc89efb`
+- run: `31656590653`
+- job: `94312314139`
+- result: 113 tests; the six new Gate contracts failed while existing listed contracts passed before them
 
-### GREEN target
+### Behavior fixture
 
-- reference, design, plan, Skill mode, routing, template, operating docs, behavior eval, learning record가 모두 존재한다.
-- 30 ACTIVE Skills 유지.
-- SBE ID는 기존 `SBE-015` 충돌을 피한 `SBE-038`.
-- full exact-head workflows pass.
-
-### Behavior eval
-
-`SBE-038`은 검색 결과 또는 생산자 설명만 있는 저장소 사실을 PASS로 승격하지 않고, exact-ref readback·실제 diff·실행 증거·미검증 표시·post-merge main readback을 요구해야 한다.
+`SBE-038` requires exact-ref readback, actual diff, exact-head execution evidence, explicit unverified states, and post-merge main readback. It rejects search snippet or producer narrative as sole evidence.
 
 ## 11. Compatibility and rollback
 
 Compatibility:
 
-- 기존 Skill ID·Work Mode·Template path 유지.
-- 신규 field는 Markdown contract이며 기존 소비자가 무시해도 동작한다.
-- 기존 review modes는 삭제·이름 변경하지 않는다.
+- no Skill ID, Work Mode, existing Registry entry, or existing SKILL.md mode is renamed.
+- the existing validation Template remains at the same path and gains optional sections.
+- external tools remain optional.
 
 Rollback:
 
-1. PR #317의 squash commit을 revert한다.
-2. 신규 reference·design·plan·test·eval을 제거한다.
-3. 기존 owner의 mode/trigger/template/docs additions를 되돌린다.
-4. Registry 파생본을 generator로 재생성한다.
-5. BCP-2026-027 상태를 `SUBMITTED` 또는 별도 withdrawn 기록으로 복구한다.
+1. revert PR #317 squash commit.
+2. remove reference, eval, design, plan, and regression.
+3. restore the validation Template.
+4. restore the owner Learning Log entry.
+5. restore the proposal lifecycle state if closeout was included.
 
 ## 12. Acceptance criteria
 
-- [ ] 기존 review owner가 `claim-and-intent-verification` Mode를 명시한다.
-- [ ] 전용 reference에 세 계약과 fail-closed 상태가 있다.
-- [ ] Registry는 30 ACTIVE Skills를 유지하면서 네 trigger와 좁은 use_when을 제공한다.
-- [ ] validation template과 REVIEW 운영 문서가 Gate를 노출한다.
-- [ ] `SBE-038`과 전용 regression이 canonical CI에서 실행된다.
-- [ ] exact HEAD의 두 repository workflows가 성공한다.
-- [ ] 독립 적대 검토에서 blocker가 없다.
-- [ ] expected-head merge 뒤 merge SHA와 새 main readback을 확인한다.
+- [ ] existing owner routes through existing Registry triggers.
+- [ ] validation Template links the dedicated reference.
+- [ ] reference defines the three fail-closed contracts.
+- [ ] active Skill count remains 30 and Work Modes remain three.
+- [ ] `SBE-038` and executable regression run in canonical CI.
+- [ ] exact-head repository workflows pass.
+- [ ] independent adversarial review has no blocker.
+- [ ] expected-head merge and post-merge main readback are verified.
