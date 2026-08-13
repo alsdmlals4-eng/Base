@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 QUEUE_WORKFLOW = ROOT / ".github" / "workflows" / "periodic-source-scan-queue.yml"
 EVIDENCE_WORKFLOW = ROOT / ".github" / "workflows" / "validate-evidence-knowledge.yml"
 WATCHLIST = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md"
+QUEUE_GUIDE = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_SOURCE_SCAN_QUEUE.md"
 RADAR = ROOT / "docs" / "knowledge" / "game-development" / "NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md"
 TUTORIAL = ROOT / "docs" / "knowledge" / "game-development" / "TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md"
 CHECKPOINT = ROOT / "docs" / "knowledge" / "game-development" / "SOURCE_SCAN_CHECKPOINT_2026-08-14.md"
@@ -186,7 +187,7 @@ class PeriodicSourceScanQueueTests(unittest.TestCase):
         radar = RADAR.read_text(encoding="utf-8")
         tutorial = TUTORIAL.read_text(encoding="utf-8")
         checkpoint = CHECKPOINT.read_text(encoding="utf-8")
-        watchlist = WATCHLIST.read_text(encoding="utf-8")
+        queue_guide = QUEUE_GUIDE.read_text(encoding="utf-8")
 
         for source_name in (
             "DiGRA Digital Library",
@@ -229,7 +230,7 @@ class PeriodicSourceScanQueueTests(unittest.TestCase):
             "자동 Canon",
             "자동 PR",
         ):
-            self.assertIn(required, watchlist)
+            self.assertIn(required, queue_guide)
 
     def test_evidence_workflow_executes_and_archives_queue_contract(self) -> None:
         workflow = EVIDENCE_WORKFLOW.read_text(encoding="utf-8")
@@ -240,6 +241,7 @@ class PeriodicSourceScanQueueTests(unittest.TestCase):
             "tools/periodic_source_scan_queue.py",
             "tests/test_periodic_source_scan_queue.py",
             "docs/knowledge/game-development/SOURCE_SCAN_CHECKPOINT_2026-08-14.md",
+            "docs/knowledge/game-development/PERIODIC_SOURCE_SCAN_QUEUE.md",
         ):
             self.assertIn(required, workflow)
 
