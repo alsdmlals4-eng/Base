@@ -125,4 +125,6 @@ preflight는 첫 persistent write 전, 각 후속 write의 parent 확인 전, �
 
 로컬 작업 유실, 무검토 자동 커밋, force push, 인증 실패 은폐, pull 성공을 기능 검증으로 오인, 열린 PR·changed paths를 보지 않고 `CLEAR` 판정, 현재 PR을 자기 중복으로 판정, stale `write_parent_sha` 위에 write, path만 보고 semantic 충돌을 무시, stale base 또는 다른 HEAD의 CI를 병합 증거로 사용하면 실패다.
 
-Learning Log: `skills/SKILL_LEARNING_LOG.md`
+Canonical Learning Log: `skills/SKILL_LEARNING_LOG.md`
+
+Change Learning Record: `skills/synchronizing-local-and-github-state/LEARNING_LOG.md`
