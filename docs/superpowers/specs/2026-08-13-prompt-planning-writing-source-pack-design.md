@@ -1,245 +1,131 @@
-# 주기적 Source Radar — 프롬프트·기획·작법·실행 Source 확장 설계
+# 주기적 전문 Source Radar — 프롬프트·기획·작법·실행 Source 설계
 
 ```yaml
-status: USER_APPROVED
+status: IMPLEMENTED_PENDING_MERGE
 approved_at: 2026-08-13
 baseline_main_sha: f08a78b33aa1d458376da8f783553fe9ce7aa9cd
 change_class: ABSORB_EXISTING_OWNER
+source_policy_owner: docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md
+evidence_owner: docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md
+specialty_radar: docs/knowledge/game-development/PERIODIC_SPECIALTY_SOURCE_RADAR.md
 new_active_skill: false
 new_authority_owner: false
 scheduler_authority: EXTERNAL_TO_BASE
+independent_ledger: false
 ```
 
-## 1. 목표
+## 1. 문제
 
-기존 주기적 외부 Source 구조가 다음 자료를 반복적으로 발견·검증·흡수하도록 확장한다.
+Base에는 durable Source Pool·Evidence 판정·scan 상태·Ledger가 이미 있다. 하지만 프롬프트 평가, 게임 기획 연구, 글쓰기 작법, 문서·결정 방법, 외부 Skill·addon·script, Godot 재사용 자산을 한 번에 찾고 기존 owner로 보내는 전문 discovery surface가 부족했다.
 
-- 프롬프트·instruction·context·evaluation 설계
-- 게임 기획·플레이어 경험·시스템 모델링
-- 소설·연재소설·글쓰기 작법과 한국어 규범
-- 문서·결정·아키텍처·작업구조 방법
-- 외부 Skill·addon·script·MCP·binary 같은 실행 Source
-- Godot 재사용 자산·addon·art·audio·shader Source
+모든 항목을 `PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md`나 `PERIODIC_EXTERNAL_SOURCE_DISCOVERY_SEEDS.md`에 직접 누적하면 두 대형 문서가 비대해지고 Source 정책·후보 목록·분야별 적용 절차가 섞인다. 반대로 분야별 새 Skill을 만들면 기존 prompt·game-design·fiction·asset owner와 충돌한다.
 
-외부 자료를 많이 모으는 것이 목적이 아니다. 현재 결정과 플레이어·독자·개발자 경험을 바꿀 수 있고, 기존 owner와 검증·rollback 경로가 있는 자료만 유지한다.
-
-## 2. 현행 구조와 Gap
+## 2. 채택 구조
 
 ```text
 PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md
-= durable Source pool·권위·조사·승격 정책
+= Source role·Evidence·scan·승격 정책 owner
 
-PERIODIC_EXTERNAL_SOURCE_DISCOVERY_SEEDS.md
-= 반복 가치가 아직 확정되지 않은 active candidate
+EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md
+= claim별 Evidence tier·상태·적용 판정 owner
 
-REFERENCE_SOURCE_CATALOG.md
-= article·claim Evidence와 재검증 조건
+PERIODIC_SPECIALTY_SOURCE_RADAR.md
+= 전문 Source 후보·consumer route·실행 위험·validation·rollback
 
-PERIODIC_SOURCE_OPERATIONS_LEDGER.json
-= 실제 scan·material candidate·Base 기여 관측 상태
+기존 Skill·Method·Guide
+= 실제 작업 실행과 프로젝트 적용 owner
 ```
 
-새 광역 Skill이나 별도 Source Pack은 필요하지 않다. Gap은 다음 두 가지다.
+Radar는 두 번째 Watchlist가 아니다. 별도 Source 승격 권한, scheduler, Ledger, 자동 설치기, 실행 권한을 갖지 않는다. 반복 material value와 기존 새 사이트 Gate를 통과한 후보만 Watchlist·Ledger family로 승격한다.
 
-1. Discovery Seeds에 프롬프트 평가, 게임디자인 연구, 작법, 작업구조, 실행 Source 격리와 Godot 자산 경로가 충분히 구체적이지 않다.
-2. Watchlist의 Evidence 권위와 별개로, 후보가 code·tool·file·secret·network에 접근할 수 있는지 추적하는 실행 위험 축이 부족하다.
+## 3. 포함 분야
 
-따라서 새 파일·Skill보다 기존 Watchlist와 Discovery Seeds에 직접 흡수한다.
+### `PROMPT_AND_AGENT_WORKFLOW`
 
-## 3. 설계 결정
+- 공식 제품·표준: OpenAI, Anthropic, GitHub Copilot, Google Gemini/ADK, Microsoft Learn, Agent Skills Specification.
+- 평가·보안·발견: DSPy, promptfoo, OWASP GenAI, DAIR.AI, Learn Prompting, ACL/arXiv.
+- 검증: exact model/product/surface/version, prompt/instruction/skill/tool/agent 배치, representative Golden Set, actual harness eval, quality·cost·latency·context·blast radius, rollback.
 
-### 3.1 기존 owner 유지
+제품별 prompt tip, magic phrase, 단일 좋은 출력, vendor benchmark, LLM judge, optimizer score, prompt 길이, Skill·agent 수는 품질 증거가 아니다.
 
-| Source group | 기존 consumer |
-|---|---|
-| Prompt / instruction / context / eval | `AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`, `AI_SKILL_ADOPTION_GUIDE.md`, intake·validation owner |
-| 게임 기획 / 플레이어 경험 | `analyzing-and-refining-game-concepts`, feature spec, benchmark·playtest owner |
-| 소설 / 연재소설 작법 | `developing-and-revising-serial-fiction`, serial-fiction knowledge, narrative method |
-| 문서 / 결정 / architecture | 현행 document·decision·project-operating owner |
-| Skill / addon / executable source | AI Skill adoption, dependency/security review, target project tests |
-| Godot 자산 / 제작 Source | art direction, Godot implementation, build-size, rights/provenance owner |
+### `PLANNING_AND_DESIGN_METHODS`
 
-새 ACTIVE Skill, Skill Registry entry, Work Mode, specialist agent, 독립 scheduler 또는 Source canon을 추가하지 않는다.
+- 게임 기획·연구: GDC, Game Developer, Games User Research, DiGRA, Game Studies, MDA, Game Design Patterns, Game Design Workshop, Machinations.
+- 작업구조·문서·결정: Diátaxis, ADR, C4, DORA.
+- 검증: player/user problem, decision delta, production cost, current project consumer, playable/provable artifact, playtest·interview·telemetry, rollback/discard condition.
 
-### 3.2 Evidence 권위와 실행 위험 분리
+framework·pattern·논문·simulation은 질문과 가설을 개선하지만 실제 player evidence를 대체하지 않는다. 문서량·Issue·PR·diagram·ADR·metric 수는 플레이어 가치나 진척 증거가 아니다.
 
-기존 Source role은 유지한다.
+### `WRITING_AND_REVISION_CRAFT`
 
-```text
-AUTHORITY_TARGET
-PROFESSIONAL_PRACTICE
-DISCOVERY_FEED
-OBSERVATIONAL_DATA_OR_VENDOR_GUIDE
-```
+- 한국어 규범·산업: 국립국어원, KOCCA/Storyum.
+- 편집·작법: Purdue OWL, Reedsy, Writing Excuses, Brandon Sanderson BYU, Scriptnotes/John August, Jane Friedman/Writer's Digest, Writer Beware.
+- 게임 서사: 기존 IGDA Game Writing, GDC narrative, Emily Short, ink, Yarn Spinner.
+- 단계: `CANON_AND_CONTINUITY → DEVELOPMENTAL_STRUCTURE → SCENE_AND_CHARACTER → DIALOGUE_AND_INFORMATION → LINE_AND_PROSE → COPY_AND_PROOF → READER_OR_PLAYER_EVIDENCE`.
 
-실행 가능한 후보에는 별도 축을 추가한다.
+언어 규범 authority와 창작 품질을 분리한다. 인기·수상·판매 성과는 특정 작가의 식별 가능한 voice/style·장면·대사를 복제할 권한이 아니다. 선형 소설과 interactive narrative의 agency·state·branch budget 경계를 보존한다.
+
+### `EXECUTABLE_SOURCE_AND_SUPPLY_CHAIN`
+
+- Agent Skills Specification, `anthropics/skills`, `obra/superpowers`, skills.sh.
+- OpenSSF Scorecard, OSV/OSV-Scanner, deps.dev, SLSA.
+- 실행 위험 축:
 
 ```yaml
 executable_surface: NONE | COPYABLE_SNIPPET | SCRIPT | GODOT_ADDON | GDEXTENSION | AGENT_SKILL | HOOK | MCP_SERVER | BINARY | INSTALL_COMMAND
 trust_state: DISCOVERED | QUARANTINED | SOURCE_REVIEWED | SANDBOX_TESTED | APPROVED_PINNED | REJECTED
 ```
 
-높은 권위의 Source도 현재 프로젝트와 비호환일 수 있다. 인기 있는 community Source도 위험할 수 있다. Source role·별점·설치 수만으로 `trust_state`를 올리지 않는다.
+upstream, exact pin, checksum, license, install command, scripts/hooks, network·secret·filesystem·permission, sandbox, representative behavior, uninstall/rollback을 확인한다. marketplace listing, stars, installs, Scorecard, scanner, schema validation은 vetted dependency나 전체 security/compliance PASS가 아니다.
 
-### 3.3 발견 후 승격
+### `GODOT_ASSET_AND_PRODUCTION_SOURCES`
 
-이번에 추가하는 사이트는 기본적으로 `ACTIVE_DISCOVERY_SEED`다. 반복 material value와 Watchlist의 새 사이트 추가 Gate를 통과하기 전 `PERIODIC_SOURCE_OPERATIONS_LEDGER.json`의 durable Source family로 승격하지 않는다. 과거 scan이나 기여 counter를 추정해 기록하지 않는다.
+- Godot Asset Store, legacy Asset Library, `godotengine/awesome-godot`, GDQuest.
+- Kenney, Poly Haven, Freesound, OpenGameArt, Godot Shaders.
+- 항목별 원 page·repository·version·license·attribution·redistribution·Godot compatibility·import·native code·실제 build size/performance/readability·rights manifest·pin·rollback을 확인한다.
 
-## 4. Source group
+Store·curated list·CC0 표시·인기·별점만으로 dependency 품질, 전체 권리, 용량·가독성·시장성을 증명하지 않는다.
 
-### 4.1 프롬프트·instruction·context·eval
+## 4. 기존 consumer
 
-OpenAI, Anthropic, Google Gemini, GitHub, Microsoft의 공식 guidance를 제품 사실의 authority로 유지한다. DSPy, promptfoo, OWASP GenAI, DAIR.AI Prompt Engineering Guide는 역할을 구분해 discovery·evaluation·security 질문에 사용한다.
+- Prompt/Agent: `AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md`, `AI_WORKFLOW_AND_PROMPT_SOURCE_NOTES.md`, `AI_SKILL_ADOPTION_GUIDE.md`, intake·Skill evolution·validation owner.
+- Game planning: `analyzing-and-refining-game-concepts`, `GAME_FEATURE_DESIGN_SPEC.md`, vertical slice·document·adversarial review owner.
+- Writing: `developing-and-revising-serial-fiction`, `NARRATIVE_AND_RELATIONSHIP_METHOD.md`, serial-fiction Guides.
+- Assets: art direction, `evaluating-godot-assets-and-plugins-before-creation`, build-size, rights/provenance, target project Godot owner and tests.
 
-```text
-현재 task와 실패 증상
-→ source of truth·보호 constraint
-→ baseline prompt / workflow
-→ representative Golden Set·failure set·adversarial set
-→ model·version·configuration·tool·permission
-→ 한 번에 하나의 controlled change
-→ 독립 expected behavior·rubric
-→ quality·cost·latency·context·blast radius
-→ 실제 consumer·human review
-→ version·rollback
-```
+프로젝트 고유 세계관·수치·UI·story direction·실제 dependency pin은 프로젝트 정본이 소유한다.
 
-한두 개 좋은 출력, optimizer score, LLM judge, red-team 도구 PASS는 프로젝트 정확성·사용자 의도·security/compliance를 증명하지 않는다. 제품별 prompt tip을 모델 불변 Hard Rule로 만들지 않는다.
+## 5. Hub·테스트·완료
 
-### 4.2 게임 기획·플레이어 경험
+`docs/knowledge/game-development/README.md`는 Radar를 한 단계로 연결하고, 새 광역 Skill이 아니라 기존 Skill 조합으로 실행한다고 명시한다.
 
-DiGRA, Game Studies, MDA 원문, Game Design Patterns, Game Design Workshop, Machinations와 기존 GDC·Games User Research Source를 질문·가설·PoC 설계에 사용한다.
+기존 Evidence Knowledge 테스트 두 개를 확장한다.
 
-```text
-플레이어 job·감정·판타지
-→ 의미 있는 선택·고민·포기
-→ feedback·보상·기억·결과
-→ 첫인상·시장 가독성
-→ 제작 범위·콘텐츠·QA 비용
-→ 가장 작은 playable PoC
-→ playtest·관찰·인터뷰·telemetry
-```
+- `tests/test_periodic_external_source_watchlist.py`: Watchlist·Evidence owner 경계, 분야별 검증·실행 위험·과장 방지.
+- `tests/test_periodic_external_source_discovery_seeds.py`: Source coverage와 기존 owner routing.
 
-framework 이름이나 simulation 결과는 보편 기획 법칙이나 player evidence가 아니다. 장르·플랫폼·대상·팀 규모·예산·실패/혼합 사례를 보존한다.
+완료는 다음을 모두 요구한다.
 
-### 4.3 글쓰기·연재소설·한국어
+- 기존 Watchlist·Ledger·ACTIVE Skill·Work Mode 권위 불변.
+- 신규 Radar·Hub route·두 계약 테스트 존재.
+- focused contract, 관련 전체 unittest, workflow exact-head 성공.
+- 같은 Goal의 열린 PR path/owner 충돌 0.
+- 적대적 검토 blocker 0, unresolved review thread 0.
+- merge 후 새 `main`에서 Radar·Hub·tests readback.
 
-국립국어원, KOCCA/Storyum, Reedsy, Writing Excuses, Brandon Sanderson BYU 강의, Jane Friedman, Writer's Digest, Writer Beware와 기존 interactive narrative Source를 역할별로 구분한다.
+## 6. 적대적 검토
 
-```text
-독자 promise·genre·medium
-→ character desire·agency·cost
-→ scene purpose·state change
-→ POV·voice·dialogue·information
-→ pacing·setup·payoff·aftermath
-→ developmental·scene·line·copy·proof pass
-→ editor·reader·platform evidence
-```
+- Radar가 두 번째 Watchlist·Source canon·실행 owner가 되었는가?
+- 분야별 목록이 decision relevance 없는 링크 dump가 되었는가?
+- vendor/model/creator 조언을 전역 Hard Rule로 만들었는가?
+- framework·simulation·benchmark를 player evidence로 위장했는가?
+- 언어 authority와 문학적 완성도를 혼동했는가?
+- 식별 가능한 creator style·게임 구조·asset을 복제하려는가?
+- listing·score·scanner·format 준수를 vetting으로 오인했는가?
+- 실행 후보가 quarantine·pin·rollback을 우회했는가?
+- 프로젝트 고유 canon과 실제 dependency 상태를 Base로 승격했는가?
+- Source 수·Skill 수·문서량 증가 자체를 개선으로 오인했는가?
 
-국립국어원은 한국어 규범·사전·공식 용례 authority이지 문학성·장르 적합성·독자 선호의 authority가 아니다. 작가 인기도·수상·판매 성과는 특정 voice·plot·장면을 복제할 권한이 아니다. 특정 현존 창작자의 식별 가능한 문체·표현은 `AVOID`한다.
+## 7. 롤백
 
-### 4.4 작업구조·문서·결정
-
-Diátaxis, Architecture Decision Records, C4 model, DORA를 관찰된 문제에만 적용한다.
-
-- Diátaxis: tutorial·how-to·reference·explanation 사용자 필요 구분.
-- ADR: 되돌리기 비싼 중요 결정의 context·대안·결과·supersession.
-- C4: 가장 작은 유용한 zoom; 소규모 프로젝트는 context·container로 충분할 수 있다.
-- DORA: application/service delivery 경향과 개선 가설; 개인 생산성 순위가 아니다.
-
-문서 분류·ADR 수·diagram 완성도·DORA metric 자체는 작업 품질의 증거가 아니다. 기존 Base owner가 책임을 소유하면 새 형식을 만들지 않고 그 owner를 최소 보강한다.
-
-### 4.5 Skill·addon·실행 Source
-
-Agent Skills specification, `anthropics/skills`, `obra/superpowers`, `skills.sh`, OpenSSF Scorecard, OSV/OSV-Scanner, deps.dev, SLSA를 역할별로 사용한다.
-
-```text
-discovery
-→ official upstream / third-party / fork / archive
-→ exact release·tag·commit·checksum
-→ license·maintenance·compatibility·provenance
-→ install command·scripts·hooks·binary·MCP
-→ network·secret/environment·filesystem·permission
-→ QUARANTINED disposable workspace
-→ source review·sandbox·representative behavior
-→ uninstall·rollback
-→ APPROVED_PINNED | REJECTED | BLOCKED_UNVERIFIED
-```
-
-marketplace·directory listing, stars, installs, Scorecard, vulnerability scan이나 형식 준수는 vetted dependency·malware 부재·프로젝트 적합성 증거가 아니다.
-
-### 4.6 Godot 자산·재사용 제작 Source
-
-Godot Asset Store, legacy Asset Library, `godotengine/awesome-godot`, GDQuest, Kenney, Poly Haven, Freesound, OpenGameArt, Godot Shaders를 역할별로 조사한다.
-
-```text
-플레이어가 볼 필요·프로젝트 art/audio/code 방향
-→ 원 source page·exact item/repository/version
-→ 항목별 license·귀속·재배포
-→ Godot version·import·permission·native code
-→ 실행 addon/GDExtension 격리
-→ 실제 build size·memory·performance·readability·identity QA
-→ 프로젝트 rights manifest·pin·rollback
-```
-
-Store·curated list 등록은 검증 완료가 아니다. 플랫폼 전체에 하나의 라이선스를 가정하지 않으며, 실제 asset ID·파일·license copy·import 설정·승인 상태는 프로젝트 정본이 소유한다.
-
-## 5. Data flow와 실패 상태
-
-```text
-Source seed
-→ ORIGINAL_SOURCE_BACKTRACE
-→ Source role·Evidence tier
-→ executable_surface·trust_state
-→ freshness·scope·version·medium·commercial interest
-→ 기존 Base/project owner overlap
-→ smallest decision delta
-→ 적대적 공격·비판 검증
-→ ADOPT | ADAPT | TEST | AVOID | IGNORE | REFERENCE_ONLY
-→ 기존 owner 또는 project-only destination
-→ exact-head validation
-```
-
-- 실행 행동이 불명확하면 `QUARANTINED`다.
-- 원출처가 없으면 `PARTIALLY_VERIFIED | CONTEXT_LIMITED | UNVERIFIED`다.
-- status가 충돌하면 `UNKNOWN | REVERIFY_BEFORE_USE`를 쓴다.
-- 외부 article·prompt·prose·asset 전체를 Base에 복제하지 않는다.
-- 외부 조언은 프로젝트 canon·승인된 플레이어 경험·story direction·author voice를 덮어쓰지 않는다.
-
-## 6. 검증·적대적 검토
-
-계약 테스트는 baseline에서 실패하고 구현 뒤 다음을 검증한다.
-
-- 여섯 Source group과 대표 원출처.
-- 기존 owner 라우팅.
-- `executable_surface`, `trust_state`, pin·sandbox·rollback.
-- discovery-only·non-vetting 경계.
-- framework·popularity·security tool·style copy의 claim ceiling.
-- Watchlist와 Discovery Seeds 권위 분리.
-
-전체 diff에서 다음을 공격한다.
-
-- 새 Skill·owner·Source canon 중복.
-- 결정 relevance 없는 링크 목록 비대화.
-- vendor/model prompt 조언의 전역 규칙화.
-- framework·simulation을 player evidence로 오인.
-- 작가 popularity나 예시를 voice/style 복제 근거로 사용.
-- listing·marketplace를 vetting으로 오인.
-- 보안 도구 성공을 전체 security PASS로 과장.
-- 실행 후보가 quarantine을 우회.
-- Ledger 이력·contribution의 추정 기록.
-- 열린 PR과 경로·책임 충돌.
-
-## 7. 제외·롤백·완료
-
-제외:
-
-- crawler·background scheduler·자동 설치/실행.
-- 새 ACTIVE Skill·specialist agent.
-- project-specific game/story/UI/art/numeric canon.
-- 검증 없는 Ledger 승격.
-- 특정 prompt·game-design·writing formula의 universal rule화.
-
-롤백은 이 PR의 squash merge commit을 revert한다. Watchlist 필드, Discovery Seed group, 계약 테스트와 이 설계·계획이 함께 되돌아가며 runtime·data Schema·Skill Registry migration은 없다.
-
-완료는 RED→GREEN, 관련 전체 CI, exact-head와 최신 main 동기화, unresolved 중요 finding 0, 병합 SHA와 post-merge readback을 요구한다. 실행하지 않은 검사는 `NOT_RUN`으로 보고한다.
+이 PR의 squash merge commit을 revert한다. Radar, Hub route, 두 테스트와 spec·plan이 함께 되돌아가며 runtime, save/data Schema, Skill Registry, project canon migration은 없다.
