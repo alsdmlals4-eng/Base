@@ -228,6 +228,9 @@ class SkillImplementationEvidenceTests(unittest.TestCase):
 class ReviewEvidenceExecutionIntegrationTests(unittest.TestCase):
     def test_review_checker_runs_against_exact_git_state_and_refuses_not_run(self) -> None:
         checker = load_review_checker()
+        self.assertTrue(checker.matches("src/file.py", ["src/*.py"]))
+        self.assertFalse(checker.matches("src/nested/file.py", ["src/*.py"]))
+
         record_schema = json.loads(REVIEW_RECORD_SCHEMA.read_text(encoding="utf-8"))
         result_schema = json.loads(REVIEW_RESULT_SCHEMA.read_text(encoding="utf-8"))
         template = json.loads(REVIEW_TEMPLATE.read_text(encoding="utf-8"))
@@ -353,6 +356,32 @@ class ReviewEvidenceExecutionIntegrationTests(unittest.TestCase):
         self.assertTrue(
             any("not executed" in message for message in not_run_errors),
             not_run_errors,
+        )
+
+        record["checks"][0]["argv"] = [
+            "{python}",
+            "-c",
+            (
+                "from pathlib import Path; "
+                "Path('src/feature.txt').write_text('mutated\\n', encoding='utf-8'); "
+                "print('REVIEW_CHECK: PASS')"
+            ),
+        ]
+        write_json(record_path, record)
+        git("add", "records/review.json")
+        git("commit", "-m", "mutation check")
+        mutated, mutation_errors = checker.check_record(
+            root,
+            record_path,
+            base_sha,
+            execute_checks=True,
+            allowed_programs=(),
+            approved_levels={},
+        )
+        self.assertEqual("FAIL", mutated["final_status"])
+        self.assertTrue(
+            any("repository state changed during checks" in message for message in mutation_errors),
+            mutation_errors,
         )
 
 
