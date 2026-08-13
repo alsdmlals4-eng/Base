@@ -149,6 +149,52 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
 
+    def test_concurrent_git_sync_preflight_binds_parallel_work_identity_and_exact_heads(self) -> None:
+        skill = (ROOT / "skills/synchronizing-local-and-github-state/SKILL.md").read_text(encoding="utf-8")
+        protocol = (
+            ROOT
+            / "skills/synchronizing-local-and-github-state/references/safe-sync-protocol.md"
+        ).read_text(encoding="utf-8")
+        learning = (
+            ROOT / "skills/synchronizing-local-and-github-state/LEARNING_LOG.md"
+        ).read_text(encoding="utf-8")
+
+        for term in (
+            "CONCURRENT_CHANGE_PREFLIGHT",
+            "current_task_or_pr_identity",
+            "source_main_sha",
+            "current_main_sha",
+            "write_parent_sha",
+            "expected_head_sha: PENDING_FIRST_WRITE | <exact-sha>",
+            "same_goal_open_and_recent_prs",
+            "semantic_resource_locks",
+            "STALE_BASE_SHA",
+            "WAITING_RESOURCE",
+            "DUPLICATE_WORK",
+            "BLOCKED_UNVERIFIED",
+        ):
+            self.assertIn(term, skill)
+
+        for term in (
+            "exclude the current task or PR itself",
+            "first persistent write",
+            "PR creation",
+            "post-merge main readback",
+            "PATH_OVERLAP",
+            "SEMANTIC_OVERLAP",
+            "cooperative",
+        ):
+            self.assertIn(term, protocol)
+
+        for term in (
+            "Status:** `PATTERN`",
+            "PR #312",
+            "current Task/PR",
+            "canonical-reference freshness",
+            "GitHub가 강제하는 mutex",
+        ):
+            self.assertIn(term, learning)
+
     def test_handoff_reference_requires_latest_main_and_read_only_plan(self) -> None:
         text = (ROOT / "skills/maintaining-project-context-and-handoff/references/gpt-codex-implementation-handoff.md").read_text(encoding="utf-8")
         for term in (
