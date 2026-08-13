@@ -43,6 +43,33 @@ def test_export_manifest_preserves_selected_order_fps_and_loop(tmp_path: Path) -
     assert result.atlas.is_file()
 
 
+def test_export_hashes_verified_output_bytes_without_reopening_final_paths(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    request = SpriteAnimationRequest.model_validate(valid_payload())
+    run_dir = run_with_four_frames(tmp_path)
+    expected = frame_hashes(run_dir / "frames")
+    exports = run_dir / "exports"
+    selected = exports / "frames" / request.action.name
+    godot = exports / "godot"
+    selected.mkdir(parents=True)
+    godot.mkdir(parents=True)
+    monkeypatch.setattr(Path, "read_bytes", lambda self: (_ for _ in ()).throw(AssertionError(f"lexical output read: {self}")))
+
+    result = export_run(
+        run_dir,
+        run_dir / "frames",
+        exports,
+        selected,
+        godot,
+        request,
+        CurationState(selected=[0, 1, 2, 3]),
+        frame_sha256=expected,
+        engine={"provenance": "test"},
+        anchor_sha256="0" * 64,
+    )
+
+    assert result.manifest.is_file()
+
+
 def test_export_handoff_uses_logical_paths_across_independent_directory_handles(tmp_path: Path) -> None:
     request = SpriteAnimationRequest.model_validate(valid_payload())
     run_dir = run_with_four_frames(tmp_path)

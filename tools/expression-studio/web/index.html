@@ -14,6 +14,11 @@
         <p>승인된 원본 캐릭터를 유지한 채 표정 후보를 검토합니다. 실제 Figma 배치는 같은 프로젝트 GPT 작업공간에서만 수행됩니다.</p>
       </header>
 
+      <section class="cost-banner">
+        <h2 id="cost-title">실행 모드 확인 중</h2>
+        <p id="cost-detail">서버가 고정한 실행 모드와 비용 경계를 불러옵니다.</p>
+      </section>
+
       <form id="expression-form">
         <section>
           <h2>원본과 프로젝트</h2>
@@ -22,6 +27,21 @@
           <label>원본 이미지 경로 <input id="source-path" value="art/source/hero.png" required></label>
           <label>원본 Figma 노드 URL <input id="figma-url" type="url" placeholder="https://www.figma.com/design/..." required></label>
           <label>후보 수 <input id="candidate-count" type="number" min="1" max="8" value="4" required></label>
+          <div id="import-controls">
+            <label>이미지 출처
+              <select id="declared-source">
+                <option value="CHATGPT_INCLUDED">ChatGPT 구독 포함 생성</option>
+                <option value="FIGMA_INCLUDED">Figma 구독 포함 생성</option>
+                <option value="LOCAL_GENERATOR">로컬 생성기</option>
+                <option value="OTHER_USER_SUPPLIED">기타 사용자 제공</option>
+              </select>
+            </label>
+            <p class="muted">출처 선택은 구독·라이선스 증명이 아닙니다. 사용 권한과 생성 경로는 프로젝트에서 별도로 확인하세요.</p>
+            <label>표정 후보 이미지
+              <input id="candidate-files" name="candidates" type="file" accept="image/png,image/jpeg,image/webp" multiple required>
+            </label>
+            <p id="file-count">선택한 후보 없음</p>
+          </div>
         </section>
 
         <section>
@@ -53,7 +73,7 @@
           </select>
         </section>
 
-        <button type="submit">후보 생성 준비</button>
+        <button id="submit-button" type="submit">실행 모드 확인 중</button>
       </form>
 
       <section id="run-result" hidden>

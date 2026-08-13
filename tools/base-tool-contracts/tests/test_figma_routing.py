@@ -237,6 +237,24 @@ def test_staging_read_rejects_final_symlink_and_sha_mismatch(tmp_path: Path) -> 
         staging_read_bytes(output, "frame.png", expected_sha256="0" * 64)
 
 
+def test_confined_staging_read_rejects_an_intermediate_symlink_swap(tmp_path: Path) -> None:
+    from base_tool_contracts import StagingViolation, confined_staging_read_bytes
+
+    run = tmp_path / "vault" / "run"
+    frames = run / "frames"
+    frames.mkdir(parents=True)
+    (frames / "frame.png").write_bytes(b"inside")
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    (outside / "frame.png").write_bytes(b"outside")
+    original = run.with_name("run-original")
+    run.rename(original)
+    run.symlink_to(outside, target_is_directory=True)
+
+    with pytest.raises(StagingViolation, match="link|regular"):
+        confined_staging_read_bytes(tmp_path, run / "frame.png")
+
+
 def test_staging_write_detects_destination_swap_while_holding_the_original_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     import os
     from base_tool_contracts import StagingViolation, safe_staging_write_bytes

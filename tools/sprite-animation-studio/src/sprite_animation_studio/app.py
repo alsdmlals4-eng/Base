@@ -5,19 +5,22 @@ import hashlib
 from pathlib import Path
 from typing import Annotated
 
-from fastapi import FastAPI, HTTPException, Response
+from fastapi import FastAPI, File, Form, HTTPException, Response, UploadFile
 from fastapi.responses import JSONResponse
-from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
-from base_tool_contracts import ApprovedAnchorRegistry
+from base_tool_contracts import ApprovedAnchorRegistry, BoundedRequestBodyMiddleware
 
 from .curation import CurationState, FrameTransform
 from .delivery import DeliveryBlockedError, ProjectFigmaRegistry
 from .engine import FakeSpriteEngine, PinnedSpriteGenEngine, SpriteEngine
+from .imports import DECLARED_SOURCES, DeclaredSource, read_upload_limited, validate_imported_image
 from .models import SpriteAnimationRequest
 from .service import RunBlockedError, RunNotFoundError, SpriteAnimationService
 from .security import StudioSecurity, install_security
+
+
+_MAX_REQUEST_BODY_BYTES = 402 * 1024 * 1024
 
 
 class CurationPayload(CurationState):
@@ -38,10 +41,12 @@ def create_app(
     bind_origin: str = "http://127.0.0.1:8765",
     test_mode: bool = False,
     anchor_registry: ApprovedAnchorRegistry | None = None,
+    run_mode: str = "subscription_handoff_import",
 ) -> FastAPI:
     """Create the API bound by the CLI to loopback only."""
-    service = SpriteAnimationService(project_root, engine, registry=registry, project_id=project_id, anchor_registry=anchor_registry)
+    service = SpriteAnimationService(project_root, engine, registry=registry, project_id=project_id, anchor_registry=anchor_registry, run_mode=run_mode)
     app = FastAPI(title="Sprite Animation Studio", docs_url=None, redoc_url=None)
+    app.add_middleware(BoundedRequestBodyMiddleware, max_body_bytes=_MAX_REQUEST_BODY_BYTES, path="/api/import-runs")
     config_identity = service.config()
     security = StudioSecurity(
         "sprite-animation-studio",
@@ -68,6 +73,31 @@ def create_app(
     def create_run(request: SpriteAnimationRequest) -> dict[str, object]:
         try:
             return service.create_run(request).public_view()
+        except RunBlockedError as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
+        except ValueError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+
+    @app.post("/api/import-runs", status_code=201)
+    async def create_import_run(
+        request_json: str = Form(...),
+        declared_source: str = Form(...),
+        frames: list[UploadFile] = File(...),
+    ) -> dict[str, object]:
+        try:
+            if declared_source not in DECLARED_SOURCES:
+                raise ValueError("declared_source is not supported")
+            request = SpriteAnimationRequest.model_validate_json(request_json)
+            if len(frames) != request.action.frame_count:
+                raise ValueError(f"import returned {len(frames)} frames; expected {request.action.frame_count}")
+            source: DeclaredSource = declared_source  # type: ignore[assignment]
+            imported = []
+            for index, upload in enumerate(frames):
+                data = await read_upload_limited(upload)
+                imported.append(validate_imported_image(data, declared_source=source, order=index))
+            return service.create_import_run(request, tuple(imported), source).public_view()
+        except RunBlockedError as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
         except ValueError as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
 
@@ -79,18 +109,18 @@ def create_app(
             raise HTTPException(status_code=404, detail="run not found") from error
 
     @app.get("/api/runs/{run_id}/frames/{frame_index}")
-    def get_candidate_frame(run_id: str, frame_index: int) -> FileResponse:
+    def get_candidate_frame(run_id: str, frame_index: int) -> Response:
         try:
-            return FileResponse(service.candidate_frame(run_id, frame_index), media_type="image/png")
+            return Response(content=service.candidate_frame(run_id, frame_index), media_type="image/png")
         except RunNotFoundError as error:
             raise HTTPException(status_code=404, detail="run not found") from error
         except (RunBlockedError, ValueError) as error:
             raise HTTPException(status_code=409, detail=str(error)) from error
 
     @app.get("/api/runs/{run_id}/anchor")
-    def get_approved_anchor(run_id: str) -> FileResponse:
+    def get_approved_anchor(run_id: str) -> Response:
         try:
-            return FileResponse(service.approved_anchor(run_id), media_type="image/png")
+            return Response(content=service.approved_anchor(run_id), media_type="image/png")
         except RunNotFoundError as error:
             raise HTTPException(status_code=404, detail="run not found") from error
         except (RunBlockedError, ValueError) as error:
@@ -147,6 +177,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--project-id", required=True, help="Canonical project ID bound immutably to this Studio instance.")
     parser.add_argument("--approved-anchor-registry", type=Path)
     parser.add_argument("--fake-engine", action="store_true", help="Use deterministic fixtures only; never generates art.")
+    parser.add_argument("--run-mode", choices=("subscription_handoff_import", "simulated", "pinned_sprite_gen"), default="subscription_handoff_import")
     parser.add_argument("--launch-nonce")
     parser.add_argument("--port", type=_port, default=8765)
     return parser
@@ -155,7 +186,9 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
-    if args.fake_engine:
+    if args.run_mode == "subscription_handoff_import":
+        engine = FakeSpriteEngine()
+    elif args.fake_engine or args.run_mode == "simulated":
         engine: SpriteEngine = FakeSpriteEngine()
     elif args.sprite_gen_executable and args.sprite_gen_repository:
         engine = PinnedSpriteGenEngine(args.sprite_gen_executable, args.project_root, sprite_gen_repository=args.sprite_gen_repository)
@@ -175,6 +208,7 @@ def main() -> None:
             launch_nonce=args.launch_nonce,
             bind_origin=f"http://127.0.0.1:{args.port}",
             anchor_registry=anchor_registry,
+            run_mode=args.run_mode,
         ),
         host="127.0.0.1",
         port=args.port,

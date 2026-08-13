@@ -8,7 +8,7 @@ from base_tool_contracts import safe_staging_write_text
 from .models import SpriteAnimationRequest
 
 
-def write_lineage(request: SpriteAnimationRequest, anchor_bytes: bytes, output_dir: Path, *, engine: dict[str, object], anchor_verification: str = "ANCHOR_UNVERIFIED", anchor_evidence: dict[str, str] | None = None) -> Path:
+def write_lineage(request: SpriteAnimationRequest, anchor_bytes: bytes, output_dir: Path, *, engine: dict[str, object], anchor_verification: str = "ANCHOR_UNVERIFIED", anchor_evidence: dict[str, str] | None = None, imported_images: list[dict[str, object]] | None = None, run_mode: str = "simulated") -> Path:
     """Write a stable record tying an accepted anchor to its Figma source."""
     output_dir.mkdir(parents=True, exist_ok=True)
     record = {
@@ -24,6 +24,8 @@ def write_lineage(request: SpriteAnimationRequest, anchor_bytes: bytes, output_d
         "asset_id": request.asset_id,
         "asset_kind": request.asset_kind,
         "engine": engine,
+        "imports": imported_images or [],
+        "run_mode": run_mode,
         "mode": request.mode,
         "staging_root": ".asset-vault/library/generated/sprite-animation-studio",
         "project_id": request.project_id,

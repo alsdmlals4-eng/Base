@@ -4,18 +4,22 @@ import argparse
 import hashlib
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Response
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi import FastAPI, File, Form, HTTPException, Response, UploadFile
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
-from base_tool_contracts import ApprovedAnchorRegistry
+from base_tool_contracts import ApprovedAnchorRegistry, BoundedRequestBodyMiddleware
 from pydantic import BaseModel, ConfigDict, Field
 
 from .delivery import DeliveryBlockedError, ProjectFigmaRegistry
 from .engine import EngineContractError, FakeExpressionEngine, OpenAIExpressionEngine, ExpressionEngine
+from .imports import DECLARED_SOURCES, DeclaredSource, read_upload_limited, validate_imported_image
 from .models import ExpressionRequest
 from .service import ExpressionStudioService, RunBlockedError, RunNotFoundError
 from .security import StudioSecurity, install_security
+
+
+_MAX_REQUEST_BODY_BYTES = 202 * 1024 * 1024
 
 
 class SelectionPayload(BaseModel):
@@ -33,10 +37,12 @@ def create_app(
     bind_origin: str = "http://127.0.0.1:8766",
     test_mode: bool = False,
     anchor_registry: ApprovedAnchorRegistry | None = None,
+    run_mode: str = "subscription_handoff_import",
 ) -> FastAPI:
     """Create an API bound by the CLI to loopback only."""
-    service = ExpressionStudioService(project_root, engine, registry=registry, project_id=project_id, anchor_registry=anchor_registry)
+    service = ExpressionStudioService(project_root, engine, registry=registry, project_id=project_id, anchor_registry=anchor_registry, run_mode=run_mode)
     app = FastAPI(title="Expression Studio", docs_url=None, redoc_url=None)
+    app.add_middleware(BoundedRequestBodyMiddleware, max_body_bytes=_MAX_REQUEST_BODY_BYTES, path="/api/import-runs")
     config_identity = service.config()
     security = StudioSecurity(
         "expression-studio",
@@ -63,6 +69,31 @@ def create_app(
     def create_run(request: ExpressionRequest) -> dict[str, object]:
         try:
             return service.create_run(request).public_view()
+        except RunBlockedError as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
+        except ValueError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+
+    @app.post("/api/import-runs", status_code=201)
+    async def create_import_run(
+        request_json: str = Form(...),
+        declared_source: str = Form(...),
+        candidates: list[UploadFile] = File(...),
+    ) -> dict[str, object]:
+        try:
+            if declared_source not in DECLARED_SOURCES:
+                raise ValueError("declared_source is not supported")
+            request = ExpressionRequest.model_validate_json(request_json)
+            if len(candidates) != request.candidate_count:
+                raise ValueError(f"import returned {len(candidates)} candidates; expected {request.candidate_count}")
+            source: DeclaredSource = declared_source  # type: ignore[assignment]
+            imported = []
+            for index, upload in enumerate(candidates):
+                data = await read_upload_limited(upload)
+                imported.append(validate_imported_image(data, declared_source=source, order=index))
+            return service.create_import_run(request, tuple(imported), source).public_view()
+        except RunBlockedError as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
         except ValueError as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
 
@@ -74,18 +105,18 @@ def create_app(
             raise HTTPException(status_code=404, detail="run not found") from error
 
     @app.get("/api/runs/{run_id}/candidates/{candidate_index}")
-    def candidate(run_id: str, candidate_index: int) -> FileResponse:
+    def candidate(run_id: str, candidate_index: int) -> Response:
         try:
-            return FileResponse(service.candidate(run_id, candidate_index), media_type="image/png")
+            return Response(content=service.candidate(run_id, candidate_index), media_type="image/png")
         except RunNotFoundError as error:
             raise HTTPException(status_code=404, detail="run not found") from error
         except (RunBlockedError, ValueError) as error:
             raise HTTPException(status_code=409, detail=str(error)) from error
 
     @app.get("/api/runs/{run_id}/anchor")
-    def anchor(run_id: str) -> FileResponse:
+    def anchor(run_id: str) -> Response:
         try:
-            return FileResponse(service.approved_anchor(run_id), media_type="image/png")
+            return Response(content=service.approved_anchor(run_id), media_type="image/png")
         except RunNotFoundError as error:
             raise HTTPException(status_code=404, detail="run not found") from error
         except (RunBlockedError, ValueError) as error:
@@ -120,7 +151,7 @@ def main() -> None:
     parser.add_argument("--figma-target-registry", type=Path)
     parser.add_argument("--project-id", required=True)
     parser.add_argument("--approved-anchor-registry", type=Path)
-    parser.add_argument("--engine", choices=("simulated", "openai"), default="simulated")
+    parser.add_argument("--run-mode", choices=("subscription_handoff_import", "simulated", "openai"), default="subscription_handoff_import")
     parser.add_argument("--port", type=int, default=8766)
     parser.add_argument("--launch-nonce")
     args = parser.parse_args()
@@ -129,7 +160,7 @@ def main() -> None:
     try:
         engine: ExpressionEngine = (
             OpenAIExpressionEngine()
-            if args.engine == "openai"
+            if args.run_mode == "openai"
             else FakeExpressionEngine(args.project_root)
         )
     except EngineContractError as error:
@@ -142,6 +173,7 @@ def main() -> None:
         launch_nonce=args.launch_nonce,
         bind_origin=f"http://127.0.0.1:{args.port}",
         anchor_registry=anchor_registry,
+        run_mode=args.run_mode,
     )
     uvicorn.run(app, host="127.0.0.1", port=args.port)
 

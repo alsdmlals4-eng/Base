@@ -9,7 +9,7 @@
 - 강도는 검토 가능한 자연어로 항상 함께 해석합니다: `A` 매우 미세함, `B` 미세함, `C` 보통, `D` 강함, `E` 최대로 읽히는 강도. 이는 모델별 수치 보장이 아니라 수정 범위의 의도를 뜻합니다.
 - 원본의 얼굴 형태·머리카락·의상·팔레트·구도·조명·화풍은 변경 금지 제약으로 계보와 생성 지시에 기록합니다. 엔진에는 실행별 사본만 전달하고, 원본 해시가 바뀌면 사용자·외부 편집을 덮어쓰지 않은 채 실행을 차단합니다. 자동 복구는 하지 않으므로 사용자가 변경 원인을 확인해야 합니다.
 - 로컬 도구는 Figma에 직접 업로드하지 않습니다; it **does not upload** anything. `ready_for_project_gpt` 패킷을 받은 **matching project GPT workspace**가 Figma 연결 도구로 배치합니다.
-- 기본 `simulated` 모드는 외부로 이미지나 키를 전송하지 않습니다. 명시적으로 `--engine openai`를 선택해도 Git에 커밋된 project-owned 승인 앵커 증거가 먼저 exact source path·Figma URL·SHA-256을 고정해야 합니다. 그 뒤 no-follow descriptor로 한 번 읽고 검증한 PNG/JPEG/WebP 실행별 사본과 생성 지시만 OpenAI Images API로 전송되며 API 사용료가 발생합니다. 키 원문은 실행 산출물·로그·Figma 패킷에 기록하지 않습니다.
+- 기본 `subscription_handoff_import` 모드는 ChatGPT·Figma 구독 또는 로컬 도구에서 이미 만든 PNG/JPEG/WebP 후보를 가져오며 외부 provider를 호출하지 않습니다. 명시적으로 `--run-mode openai`를 선택할 때만 OpenAI API 사용료가 발생합니다.
 - 멀티프레임 스프라이트시트·GIF·Godot 핸드오프는 `Sprite Animation Studio`의 책임입니다.
 
 ## 실행
@@ -27,7 +27,7 @@ PYTHONPATH=src .venv/bin/python -m expression_studio.app \
   --approved-anchor-registry /absolute/path/to/project/docs/APPROVED_VISUAL_ANCHORS.json
 ```
 
-위 명령은 안전한 기본값인 `simulated` 엔진으로 실행됩니다. 실제 후보를 생성하려면 프로젝트 로컬 환경에 `OPENAI_API_KEY`를 설정한 뒤 production 엔진을 명시합니다.
+위 명령은 추가 API 과금 없는 기본 가져오기 모드로 실행됩니다. 브라우저에서 보유 중인 ChatGPT/Figma 구독 또는 로컬 생성기로 만든 후보 1–8장을 선택하고, 후보 수와 파일 수를 일치시킵니다. 모든 파일은 25 MiB 이하, 최대 변 4096px인 PNG/JPEG/WebP여야 하며 요청 전체는 202 MiB 이하입니다.
 
 ```bash
 set -a
@@ -37,7 +37,7 @@ set +a
 PYTHONPATH=src .venv/bin/python -m expression_studio.app \
   --project-root /absolute/path/to/project \
   --project-id coc-fiction \
-  --engine openai \
+  --run-mode openai \
   --figma-target-registry /absolute/path/to/Base/docs/operations/PROJECT_FIGMA_TARGET_REGISTRY.json \
   --approved-anchor-registry /absolute/path/to/project/docs/APPROVED_VISUAL_ANCHORS.json
 ```
@@ -54,7 +54,7 @@ Windows PowerShell에서는 `.venv\Scripts\python -m pip install -e '.[dev]'`를
 
 브라우저의 `approval_status` 문자열은 승인 증거가 아닙니다. production 생성·export·Figma 전달에는 project-owned `--approved-anchor-registry`가 Git에 커밋된 현재 blob과 정확히 일치하고, exact source path, Figma node URL, source SHA-256, `APPROVED`, evidence와 checked-at을 검증해야 합니다. production 실행에서 이 증거가 없거나 작업트리에서만 수정된 경우 provider 호출 전에 차단됩니다. simulated 실행은 `ANCHOR_ROUTE_SYNTAX_VALID` 또는 `ANCHOR_UNVERIFIED`로 로컬 검토만 할 수 있습니다.
 
-현재 기본 엔진은 원본 훼손·경로·후보 선택 계약을 검증하는 `FakeExpressionEngine`입니다. 화면과 API에 `SIMULATED / DELIVERY_BLOCKED`로 표시되며 후보 검토만 가능하고 export와 Figma 전달은 서비스에서 차단됩니다. `--engine openai`를 명시하면 검토된 OpenAI Images edit 어댑터를 사용하지만, export와 Figma 전달에는 별도로 project-owned 승인 앵커 증거와 준비된 Figma routing이 모두 필요합니다. provider 응답·비용·모델 품질은 실행 환경에서 실증하기 전까지 완료로 주장하지 않습니다.
+`--run-mode simulated`은 테스트용 `FakeExpressionEngine`이며 화면과 API에 `SIMULATED / DELIVERY_BLOCKED`로 표시되고 export와 Figma 전달이 차단됩니다. `--run-mode openai`는 검토된 OpenAI Images edit 어댑터지만 별도 API 크레딧이 필요합니다. 기본 import 결과도 export에는 project-owned 승인 앵커 증거가 필요하고, Figma 전달에는 준비된 exact-project routing이 추가로 필요합니다.
 
 서버는 loopback Host와 Origin만 허용하고 mutation 요청에 same-site session과 `X-Studio-CSRF`를 요구합니다. `/api/status`는 Hub가 비교할 tool/project/engine/launch nonce/config hash를 반환하지만, 상태 응답 자체가 이미지 생성이나 Figma 배치 증거는 아닙니다.
 

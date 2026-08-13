@@ -65,6 +65,10 @@ INTENSITY_PHRASES = {
 class EngineContractError(RuntimeError):
     """Raised when a local engine cannot satisfy the reviewed request contract."""
 
+    def __init__(self, message: str, *, provider_call_made: bool = False) -> None:
+        super().__init__(message)
+        self.provider_call_made = provider_call_made
+
 
 @dataclass(frozen=True)
 class EngineResult:
@@ -72,6 +76,7 @@ class EngineResult:
     generation_instruction: str
     provenance: str = "unverified"
     delivery_eligible: bool = False
+    provider_call_made: bool = False
 
 
 @dataclass(frozen=True)
@@ -249,11 +254,11 @@ class OpenAIExpressionEngine:
                 "inspect provider billing, limits, model access, and connectivity"
             )
         if provider_failure is not None:
-            raise EngineContractError(provider_failure)
+            raise EngineContractError(provider_failure, provider_call_made=True)
 
         data = getattr(response, "data", None)
         if not isinstance(data, list) or len(data) != request.candidate_count:
-            raise EngineContractError("OpenAI image edit returned the wrong image count")
+            raise EngineContractError("OpenAI image edit returned the wrong image count", provider_call_made=True)
         decoded: list[bytes] = []
         try:
             for item in data:
@@ -275,7 +280,7 @@ class OpenAIExpressionEngine:
                 decoded.append(image_bytes)
         except (ValueError, binascii.Error, OSError, UnidentifiedImageError) as error:
             message = "OpenAI image edit exceeded the reviewed size limit" if "exceed" in str(error) else "OpenAI image edit returned an unreadable PNG"
-            raise EngineContractError(message) from error
+            raise EngineContractError(message, provider_call_made=True) from None
 
         candidates = [
             safe_staging_write_bytes(candidates_dir, f"candidate-{index:03d}.png", image_bytes)
@@ -286,6 +291,7 @@ class OpenAIExpressionEngine:
             generation_instruction=instruction,
             provenance=self.provenance,
             delivery_eligible=self.delivery_eligible,
+            provider_call_made=True,
         )
 
 

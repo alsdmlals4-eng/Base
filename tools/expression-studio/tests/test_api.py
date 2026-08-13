@@ -11,7 +11,13 @@ from tests.test_delivery import write_registry
 from tests.test_models import valid_payload
 
 
-def client_for(project_root: Path, *, initialize_vault: bool = True, bootstrap_security: bool = True) -> TestClient:
+def client_for(
+    project_root: Path,
+    *,
+    initialize_vault: bool = True,
+    bootstrap_security: bool = True,
+    run_mode: str = "simulated",
+) -> TestClient:
     anchor = project_root / "art" / "source" / "hero.png"
     anchor.parent.mkdir(parents=True, exist_ok=True)
     Image.new("RGBA", (8, 8), (255, 255, 255, 255)).save(anchor)
@@ -27,6 +33,7 @@ def client_for(project_root: Path, *, initialize_vault: bool = True, bootstrap_s
             project_id="demo",
             bind_origin="http://testserver",
             test_mode=True,
+            run_mode=run_mode,
         )
     )
     client.headers["Origin"] = "http://testserver"
@@ -57,6 +64,21 @@ def test_config_exposes_bound_project_and_simulated_state(tmp_path: Path) -> Non
     assert payload["delivery_eligible"] is False
     assert payload["routing_state"] == "ROUTING_CONFIGURED"
     assert len(payload["csrf_token"]) >= 32
+
+
+def test_app_defaults_to_subscription_handoff_import_mode(tmp_path: Path) -> None:
+    app = create_app(
+        tmp_path,
+        FakeExpressionEngine(tmp_path),
+        project_id="demo",
+        bind_origin="http://testserver",
+        test_mode=True,
+    )
+
+    payload = TestClient(app).get("/api/config").json()
+
+    assert payload["run_mode"] == "subscription_handoff_import"
+    assert payload["engine_provenance"] == "subscription_handoff_import"
 
 
 def test_status_exposes_immutable_child_identity(tmp_path: Path) -> None:

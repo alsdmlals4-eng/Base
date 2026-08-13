@@ -13,7 +13,8 @@
     </header>
     <main class="workspace">
       <aside class="request-panel" aria-label="생성 요청">
-        <h1>애니메이션 생성</h1>
+        <h1 id="mode-title">실행 모드 확인 중</h1>
+        <section class="cost-banner"><strong id="cost-title">비용 경계 확인 중</strong><p id="cost-detail">서버가 고정한 실행 모드와 비용 경계를 불러옵니다.</p></section>
         <p class="muted">이미지는 프로젝트 경로에 남고, 이 도구는 승인 앵커부터 내보내기까지의 흐름을 기록합니다.</p>
         <form id="request-form">
           <label>프로젝트 ID<input name="project_id" readonly required></label>
@@ -30,7 +31,14 @@
           </div>
           <label>반복<select name="loop_mode"><option value="none">반복 안 함</option><option value="linear">반복</option><option value="pingpong">핑퐁</option></select></label>
           <label>동작 설명<textarea name="prompt" rows="5" required>왼쪽을 바라보는 캐릭터가 힘있게 검을 내리친다.</textarea></label>
-          <button class="primary" type="submit">승인 앵커로 후보 만들기</button>
+          <div id="import-controls">
+            <label>이미지 출처<select id="declared-source"><option value="CHATGPT_INCLUDED">ChatGPT 구독 포함 생성</option><option value="FIGMA_INCLUDED">Figma 구독 포함 생성</option><option value="LOCAL_GENERATOR">로컬 생성기</option><option value="OTHER_USER_SUPPLIED">기타 사용자 제공</option></select></label>
+            <p class="muted">출처 선택은 구독·라이선스 증명이 아닙니다. 사용 권한과 생성 경로는 프로젝트에서 별도로 확인하세요.</p>
+            <label>프레임 이미지<input id="frame-files" name="frames" type="file" accept="image/png,image/jpeg,image/webp" multiple required></label>
+            <p class="muted">아래 업로드 순서가 애니메이션의 최초 프레임 순서입니다.</p>
+            <div id="import-queue" class="import-queue" aria-label="업로드 순서"></div>
+          </div>
+          <button id="submit-button" class="primary" type="submit">실행 모드 확인 중</button>
         </form>
         <section class="control-group" aria-label="선택 프레임 조정">
           <h2>선택 프레임 조정</h2>

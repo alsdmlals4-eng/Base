@@ -67,6 +67,50 @@ def staging_read_bytes(directory: Path, filename: str, *, expected_sha256: str |
             os.close(directory_descriptor)
 
 
+def confined_staging_read_bytes(project_root: Path, path: Path, *, expected_sha256: str | None = None) -> bytes:
+    """Read one project-staged regular file through a no-follow component chain."""
+    try:
+        relative = path.relative_to(project_root)
+    except ValueError as error:
+        raise StagingViolation("staging input must remain under the project root") from error
+    if not relative.parts or any(part in {"", ".", ".."} for part in relative.parts):
+        raise StagingViolation("staging input path is invalid")
+    directory_descriptor = -1
+    descriptor = -1
+    try:
+        directory_flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
+        directory_descriptor = os.open(project_root, directory_flags)
+        for component in relative.parts[:-1]:
+            next_descriptor = os.open(component, directory_flags, dir_fd=directory_descriptor)
+            os.close(directory_descriptor)
+            directory_descriptor = next_descriptor
+        descriptor = os.open(
+            relative.parts[-1],
+            os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0),
+            dir_fd=directory_descriptor,
+        )
+        attributes = os.fstat(descriptor)
+        if not stat.S_ISREG(attributes.st_mode):
+            raise StagingViolation("staging input must be a regular file without links")
+        chunks: list[bytes] = []
+        while True:
+            chunk = os.read(descriptor, 1024 * 1024)
+            if not chunk:
+                break
+            chunks.append(chunk)
+        data = b"".join(chunks)
+        if expected_sha256 is not None and hashlib.sha256(data).hexdigest() != expected_sha256:
+            raise StagingViolation("staging input SHA-256 does not match the generated evidence")
+        return data
+    except OSError as error:
+        raise StagingViolation("staging input path contains a link or unreadable component") from error
+    finally:
+        if descriptor >= 0:
+            os.close(descriptor)
+        if directory_descriptor >= 0:
+            os.close(directory_descriptor)
+
+
 def safe_staging_write_bytes(directory: Path, filename: str, data: bytes) -> Path:
     """Publish a fresh regular-file inode and never write through an existing entry."""
     if not _FILENAME.fullmatch(filename) or filename in {".", ".."}:

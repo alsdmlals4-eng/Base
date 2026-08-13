@@ -1,4 +1,6 @@
 from pathlib import Path
+from dataclasses import replace
+from io import BytesIO
 import json
 import os
 import subprocess
@@ -8,9 +10,10 @@ from PIL import Image
 
 from expression_studio.catalog import ExpressionConflictError
 from expression_studio.delivery import ProjectFigmaRegistry
-from expression_studio.engine import EngineContractError, EngineResult, FakeExpressionEngine, OpenAIExpressionEngine
+from expression_studio.engine import EngineContractError, EnginePolicy, EngineResult, FakeExpressionEngine, OpenAIExpressionEngine
 from expression_studio.models import ExpressionRequest
-from expression_studio.service import ExpressionStudioService, RunBlockedError
+from expression_studio.imports import validate_imported_image
+from expression_studio.service import ExpressionStudioService, RunBlockedError, RunRecord
 from tests.test_delivery import write_registry
 from tests.test_models import valid_payload
 
@@ -19,6 +22,30 @@ def initialize_vault(project_root: Path) -> None:
     subprocess.run(["git", "init", "-q", str(project_root)], check=True)
     (project_root / ".asset-vault" / "library").mkdir(parents=True, exist_ok=True)
     (project_root / ".gitignore").write_text(".asset-vault/\n", encoding="utf-8")
+
+
+def _expression_png(color: tuple[int, int, int, int]) -> bytes:
+    output = BytesIO()
+    Image.new("RGBA", (8, 8), color).save(output, format="PNG")
+    return output.getvalue()
+
+
+def test_import_service_rejects_forged_candidate_metadata(tmp_path: Path) -> None:
+    source = tmp_path / "art" / "source" / "hero.png"
+    source.parent.mkdir(parents=True)
+    Image.new("RGBA", (8, 8), (255, 255, 255, 255)).save(source)
+    initialize_vault(tmp_path)
+    service = ExpressionStudioService(tmp_path, FakeExpressionEngine(tmp_path), project_id="demo")
+    first = validate_imported_image(_expression_png((255, 0, 0, 255)), declared_source="LOCAL_GENERATOR", order=0)
+    second = validate_imported_image(_expression_png((0, 0, 255, 255)), declared_source="LOCAL_GENERATOR", order=1)
+    forged = replace(first, sha256="0" * 64, detected_format="JPEG", width=9, has_alpha=False)
+
+    with pytest.raises(ValueError, match="metadata does not match validated bytes"):
+        service.create_import_run(
+            ExpressionRequest.model_validate(valid_payload()),
+            (forged, second),
+            "LOCAL_GENERATOR",
+        )
 
 
 def test_run_path_rejects_asset_symlink_and_gitignore_negation(tmp_path: Path) -> None:
@@ -31,7 +58,7 @@ def test_run_path_rejects_asset_symlink_and_gitignore_negation(tmp_path: Path) -
     tool_root = tmp_path / ".asset-vault" / "library" / "generated" / "expression-studio"
     tool_root.mkdir(parents=True)
     (tool_root / "hero").symlink_to(outside, target_is_directory=True)
-    service = ExpressionStudioService(tmp_path, FakeExpressionEngine(tmp_path), project_id="demo")
+    service = ExpressionStudioService(tmp_path, FakeExpressionEngine(tmp_path), project_id="demo", run_mode="simulated")
 
     with pytest.raises(ValueError, match="symlink|vault"):
         service.create_run(ExpressionRequest.model_validate(valid_payload()))
@@ -53,7 +80,55 @@ def service_for(project_root: Path, *, project_id: str | None = "demo") -> Expre
         FakeExpressionEngine(project_root),
         registry=ProjectFigmaRegistry.load(write_registry(project_root)),
         project_id=project_id,
+        run_mode="simulated",
     )
+
+
+def test_service_rejects_run_mode_that_does_not_match_the_configured_engine(tmp_path: Path) -> None:
+    initialize_vault(tmp_path)
+
+    with pytest.raises(ValueError, match="run mode does not match"):
+        ExpressionStudioService(tmp_path, FakeExpressionEngine(tmp_path), project_id="demo", run_mode="openai")
+
+
+def test_service_defaults_to_subscription_handoff_import_mode(tmp_path: Path) -> None:
+    service = ExpressionStudioService(tmp_path, FakeExpressionEngine(tmp_path), project_id="demo")
+
+    assert service.config()["run_mode"] == "subscription_handoff_import"
+
+
+def test_openai_engine_evidence_records_that_a_provider_call_was_made(tmp_path: Path) -> None:
+    service = ExpressionStudioService(
+        tmp_path,
+        FakeExpressionEngine(tmp_path),
+        project_id="demo",
+        run_mode="simulated",
+    )
+    policy = EnginePolicy("expression.openai.test", "openai", True, "a" * 64)
+
+    evidence = service._engine_evidence(policy=policy)
+
+    assert evidence["provider_call_made"] is True
+
+
+def test_blocked_openai_run_does_not_infer_a_provider_call_from_mode(tmp_path: Path) -> None:
+    record = object.__new__(RunRecord)
+    record.run_mode = "openai"
+    record.provider_call_made = False
+    record.imported_images = ()
+    record.result = None
+    record.status = "blocked"
+    record.run_id = "blocked"
+    record.selected_candidate = None
+    record.warnings = ["blocked before provider"]
+    record.lineage = Path("lineage.json")
+    record.anchor_bytes = b"anchor"
+    record.anchor_verification = "ANCHOR_UNVERIFIED"
+    record.engine_policy = EnginePolicy("expression.openai.test", "openai", True, "a" * 64)
+    record.request = ExpressionRequest.model_validate(valid_payload())
+    record.resolved = __import__("expression_studio.catalog", fromlist=["resolve_expression"]).resolve_expression(record.request)
+
+    assert record.public_view()["provider_call_made"] is False
 
 
 def test_service_rejects_a_non_image_source_before_staging_or_engine_use(tmp_path: Path) -> None:
@@ -61,7 +136,7 @@ def test_service_rejects_a_non_image_source_before_staging_or_engine_use(tmp_pat
     source.parent.mkdir(parents=True)
     source.write_text("OPENAI_API_KEY=must-not-leave-project", encoding="utf-8")
     initialize_vault(tmp_path)
-    service = ExpressionStudioService(tmp_path, FakeExpressionEngine(tmp_path), project_id="demo")
+    service = ExpressionStudioService(tmp_path, FakeExpressionEngine(tmp_path), project_id="demo", run_mode="simulated")
 
     with pytest.raises(ValueError, match="supported PNG, JPEG, or WebP image"):
         service.create_run(ExpressionRequest.model_validate(valid_payload()))
@@ -77,7 +152,7 @@ def test_service_rejects_a_source_symlink_before_reading_it(tmp_path: Path) -> N
     source.parent.mkdir(parents=True)
     source.symlink_to(secret)
     initialize_vault(tmp_path)
-    service = ExpressionStudioService(tmp_path, FakeExpressionEngine(tmp_path), project_id="demo")
+    service = ExpressionStudioService(tmp_path, FakeExpressionEngine(tmp_path), project_id="demo", run_mode="simulated")
 
     with pytest.raises(ValueError, match="regular file|link"):
         service.create_run(ExpressionRequest.model_validate(valid_payload()))
@@ -91,7 +166,7 @@ def test_openai_engine_requires_project_owned_anchor_evidence_before_generation(
     Image.new("RGBA", (8, 8), (255, 255, 255, 255)).save(source)
     initialize_vault(tmp_path)
     monkeypatch.setenv("OPENAI_API_KEY", "test-only-key")
-    service = ExpressionStudioService(tmp_path, OpenAIExpressionEngine(), project_id="demo")
+    service = ExpressionStudioService(tmp_path, OpenAIExpressionEngine(), project_id="demo", run_mode="openai")
 
     with pytest.raises(ValueError, match="project-owned approved-anchor evidence"):
         service.create_run(ExpressionRequest.model_validate(valid_payload()))
@@ -153,6 +228,7 @@ def test_fake_subclass_cannot_self_attest_delivery_eligibility(tmp_path: Path) -
         EligibleEngine(tmp_path),
         registry=ProjectFigmaRegistry.load(write_registry(tmp_path)),
         project_id="demo",
+        run_mode="simulated",
     )
     record = service.create_run(ExpressionRequest.model_validate(valid_payload()))
 
@@ -208,7 +284,7 @@ def test_engine_receives_a_run_local_anchor_copy_instead_of_the_approved_source(
             Image.new("RGBA", (8, 8), (255, 255, 255, 255)).save(candidate)
             return type("Result", (), {"candidates": [candidate], "generation_instruction": "test"})()
 
-    service = ExpressionStudioService(tmp_path, AnchorMutatingEngine(), project_id="demo")
+    service = ExpressionStudioService(tmp_path, AnchorMutatingEngine(), project_id="demo", run_mode="simulated")
     request = ExpressionRequest.model_validate(valid_payload(candidate_count=1))
 
     run = service.create_run(request)
@@ -229,7 +305,7 @@ def test_service_blocks_without_overwriting_when_original_anchor_changes(tmp_pat
             Image.new("RGBA", (8, 8), (255, 255, 255, 255)).save(candidate)
             return EngineResult(candidates=[candidate], generation_instruction="test")
 
-    service = ExpressionStudioService(tmp_path, OriginalMutatingEngine(), project_id="demo")
+    service = ExpressionStudioService(tmp_path, OriginalMutatingEngine(), project_id="demo", run_mode="simulated")
 
     run = service.create_run(ExpressionRequest.model_validate(valid_payload(candidate_count=1)))
 
@@ -250,7 +326,7 @@ def test_service_blocks_engine_candidates_outside_the_run_candidate_directory(tm
         def generate(self, _request: ExpressionRequest, _resolved: object, _run_dir: Path) -> EngineResult:
             return EngineResult(candidates=[outside], generation_instruction="test")
 
-    service = ExpressionStudioService(tmp_path, OutsideCandidateEngine(), project_id="demo")
+    service = ExpressionStudioService(tmp_path, OutsideCandidateEngine(), project_id="demo", run_mode="simulated")
 
     run = service.create_run(ExpressionRequest.model_validate(valid_payload(candidate_count=1)))
 
@@ -276,7 +352,7 @@ def test_service_blocks_wrong_count_or_invalid_engine_candidate(
             candidate.write_bytes(candidate_bytes or b"")
             return EngineResult(candidates=[candidate], generation_instruction="test")
 
-    service = ExpressionStudioService(tmp_path, InvalidCandidateEngine(), project_id="demo")
+    service = ExpressionStudioService(tmp_path, InvalidCandidateEngine(), project_id="demo", run_mode="simulated")
     run = service.create_run(ExpressionRequest.model_validate(valid_payload(candidate_count=1)))
 
     assert run.status == "blocked"
@@ -301,6 +377,7 @@ def test_delivery_eligible_engine_rejects_pixel_duplicate_candidates(tmp_path: P
             candidates_dir,
             anchor.read_bytes(),
             delivery_eligible=True,
+            project_root=tmp_path,
         )
 
 
@@ -321,6 +398,7 @@ def test_delivery_eligible_engine_rejects_any_candidate_identical_to_anchor(tmp_
             candidates_dir,
             anchor.read_bytes(),
             delivery_eligible=True,
+            project_root=tmp_path,
         )
 
 
@@ -342,7 +420,7 @@ def test_engine_candidate_handle_prevents_leaf_symlink_swap_escape(tmp_path: Pat
             Image.new("RGBA", (8, 8), (255, 0, 0, 255)).save(candidate)
             return EngineResult(candidates=[candidate], generation_instruction="test")
 
-    service = ExpressionStudioService(tmp_path, LeafSwappingEngine(), project_id="demo")
+    service = ExpressionStudioService(tmp_path, LeafSwappingEngine(), project_id="demo", run_mode="simulated")
     run = service.create_run(ExpressionRequest.model_validate(valid_payload(candidate_count=1)))
 
     original_candidates = run.paths.run_dir / "candidates-original"

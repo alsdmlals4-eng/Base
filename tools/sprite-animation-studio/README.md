@@ -26,17 +26,20 @@ Windows PowerShell에서는 `.venv\Scripts\python -m pip install -e '.[dev]'`를
 
 ## 실행
 
-테스트/화면 점검만 할 때는 실제 그림을 만들지 않는 가짜 엔진을 명시적으로 사용합니다.
+기본 실행은 추가 API 과금 없는 가져오기 모드입니다. ChatGPT·Figma 구독 또는 로컬 생성기로 만든 1–16개 프레임을 브라우저에서 순서대로 넣습니다.
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m sprite_animation_studio.app \
   --project-root /절대/경로/프로젝트 \
-  --fake-engine \
   --port 8765 \
   --project-id coc-fiction \
   --figma-target-registry /절대/경로/Base/docs/operations/PROJECT_FIGMA_TARGET_REGISTRY.json \
   --approved-anchor-registry /절대/경로/프로젝트/docs/APPROVED_VISUAL_ANCHORS.json
 ```
+
+파일마다 25 MiB 이하, 최대 변 4096px인 PNG/JPEG/WebP만 받고 요청 전체는 402 MiB 이하입니다. 제출 전 업로드 순서를 앞/뒤로 바꾸거나 제거할 수 있습니다. 서버는 프레임 수, 동일 크기, 비어 있지 않은 픽셀, 중복 여부를 검사하며 행동·포즈·표정·단계별 이펙트 모두 같은 경계를 사용합니다. 이펙트 프레임에 알파 채널이 없으면 차단 대신 배경 정리 경고를 냅니다.
+
+실제 그림을 만들지 않는 테스트 엔진은 `--run-mode simulated --fake-engine`으로만 선택합니다.
 
 아래 인자는 정확한 `sprite-gen` 커밋 `88f2ea17cac2ef066536beee7e3f40b2f8d29c87`을 검증하기 위한 예약된 production 설정입니다. 현재 구현은 같은 사용자 프로세스가 실행 중 하위 출력 경로를 바꾸는 공격까지 격리할 OS sandbox runner가 없으므로 실제 `prepare → gen → extract` 실행과 export/Figma 전달을 명시적으로 차단합니다. 이 명령은 production 실행법이 아니라 fail-closed 설정 확인용입니다.
 
@@ -45,6 +48,7 @@ PYTHONPATH=src .venv/bin/python -m sprite_animation_studio.app \
   --project-root /절대/경로/프로젝트 \
   --sprite-gen-executable /절대/경로/sprite-gen/.venv/bin/sprite-gen \
   --sprite-gen-repository /절대/경로/sprite-gen \
+  --run-mode pinned_sprite_gen \
   --project-id coc-fiction \
   --figma-target-registry /절대/경로/Base/docs/operations/PROJECT_FIGMA_TARGET_REGISTRY.json \
   --approved-anchor-registry /절대/경로/프로젝트/docs/APPROVED_VISUAL_ANCHORS.json

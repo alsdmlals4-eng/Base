@@ -18,6 +18,37 @@ const candidateGrid = document.querySelector("#candidate-grid");
 const exportButton = document.querySelector("#export-button");
 const deliveryButton = document.querySelector("#delivery-button");
 
+function resetRunState() {
+  currentRunId = null;
+  selectedCandidate = null;
+  currentRunDeliveryEligible = false;
+  candidateGrid.replaceChildren();
+  exportButton.disabled = true;
+  deliveryButton.disabled = true;
+  document.querySelector("#run-result").hidden = true;
+  document.querySelector("#packet").textContent = "";
+  document.querySelector("#resolved-prompt").textContent = "";
+  document.querySelector("#review-metadata").textContent = "";
+}
+
+function applyRunModeUi() {
+  const importMode = studioConfig.run_mode === "subscription_handoff_import";
+  const openaiMode = studioConfig.run_mode === "openai";
+  document.querySelector("#import-controls").hidden = !importMode;
+  document.querySelector("#candidate-files").required = importMode;
+  document.querySelector("#candidate-files").disabled = !importMode;
+  document.querySelector("#declared-source").disabled = !importMode;
+  document.querySelector("#cost-title").textContent = importMode
+    ? "추가 비용 없는 가져오기"
+    : openaiMode ? "OpenAI API 별도 과금 모드" : "시뮬레이션 검토 모드";
+  document.querySelector("#cost-detail").textContent = importMode
+    ? "ChatGPT·Figma 구독 또는 로컬 도구에서 만든 이미지를 검증하며, 이 도구는 유료 API를 호출하지 않습니다."
+    : openaiMode
+      ? "ChatGPT 구독과 별개인 OpenAI API 크레딧을 사용합니다. 요청 실행 시 비용이 발생할 수 있습니다."
+      : "테스트 후보만 만들며 provider를 호출하지 않고 내보내기와 Figma 전달을 차단합니다.";
+  document.querySelector("#submit-button").textContent = importMode ? "후보 가져오기 및 검증" : "표정 후보 생성";
+}
+
 function option(value, label) {
   const element = document.createElement("option");
   element.value = value;
@@ -118,16 +149,26 @@ function renderCandidates(run) {
 
 document.querySelector("#expression-form").addEventListener("submit", async (event) => {
   event.preventDefault();
+  resetRunState();
   try {
-    status.textContent = "표정 제어를 검증하고 후보를 준비하는 중입니다…";
-    const run = await request("/api/runs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(requestPayload()) });
+    status.textContent = studioConfig.run_mode === "subscription_handoff_import"
+      ? "표정 후보 파일을 검증하고 가져오는 중입니다…"
+      : "표정 후보를 생성하는 중입니다…";
+    const payload = requestPayload();
+    let run;
+    if (studioConfig.run_mode === "subscription_handoff_import") {
+      const files = [...document.querySelector("#candidate-files").files];
+      if (files.length !== payload.candidate_count) throw new Error(`후보 수 ${payload.candidate_count}개와 선택 파일 ${files.length}개가 같아야 합니다.`);
+      const body = new FormData();
+      body.append("request_json", JSON.stringify(payload));
+      body.append("declared_source", document.querySelector("#declared-source").value);
+      files.forEach((file) => body.append("candidates", file));
+      run = await request("/api/import-runs", { method: "POST", body });
+    } else {
+      run = await request("/api/runs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
+    }
     if (run.status === "blocked") {
-      currentRunId = null;
-      selectedCandidate = null;
-      candidateGrid.replaceChildren();
-      exportButton.disabled = true;
-      deliveryButton.disabled = true;
-      document.querySelector("#run-result").hidden = true;
+      resetRunState();
       status.textContent = `생성 차단됨 · ${(run.warnings || []).join(" ") || "엔진 결과를 검증할 수 없습니다."}`;
       return;
     }
@@ -144,9 +185,11 @@ document.querySelector("#expression-form").addEventListener("submit", async (eve
     exportButton.disabled = true;
     deliveryButton.disabled = true;
     renderCandidates(run);
-    status.textContent = currentRunDeliveryEligible
-      ? "후보를 비교하고 하나를 선택하세요."
-      : `${studioConfig.engine_provenance.toUpperCase()} / DELIVERY_BLOCKED · 후보 검토만 가능하며 내보내기와 Figma 전달은 차단됩니다.`;
+    status.textContent = run.run_mode === "subscription_handoff_import"
+      ? `${run.cost.cost_route} · provider_call_made=false · 후보를 비교하고 하나를 선택하세요.`
+      : currentRunDeliveryEligible
+        ? "후보를 비교하고 하나를 선택하세요."
+        : `${studioConfig.engine_provenance.toUpperCase()} / DELIVERY_BLOCKED · 후보 검토만 가능하며 내보내기와 Figma 전달은 차단됩니다.`;
   } catch (error) { status.textContent = error.message; }
 });
 
@@ -170,6 +213,7 @@ async function bootstrap() {
   try {
     studioConfig = await request("/api/config");
     document.querySelector("#project-id").value = studioConfig.project_id || "";
+    applyRunModeUi();
     if (!studioConfig.delivery_eligible) {
       status.textContent = `${studioConfig.engine_provenance.toUpperCase()} / DELIVERY_BLOCKED · 실제 생성 엔진이 아닙니다.`;
     }
@@ -179,4 +223,7 @@ async function bootstrap() {
 }
 
 buildControlRows();
+document.querySelector("#candidate-files").addEventListener("change", (event) => {
+  document.querySelector("#file-count").textContent = `선택한 후보 ${event.target.files.length}개`;
+});
 bootstrap();

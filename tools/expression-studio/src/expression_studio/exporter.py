@@ -3,7 +3,6 @@
 from dataclasses import dataclass
 import json
 from pathlib import Path
-import shutil
 import hashlib
 from io import BytesIO
 
@@ -54,6 +53,8 @@ def export_selected_candidate(
     anchor_sha256: str,
     anchor_verification: str,
     anchor_evidence: dict[str, str],
+    imported_images: list[dict[str, object]] | None = None,
+    run_mode: str = "simulated",
 ) -> ExportResult:
     """Create review outputs after validating one existing candidate index."""
     if selected_candidate < 0 or selected_candidate >= len(candidates):
@@ -64,8 +65,10 @@ def export_selected_candidate(
         staging_read_bytes(candidate.parent, candidate.name, expected_sha256=candidate_sha256[index])
         for index, candidate in enumerate(candidates)
     ]
-    selected = safe_staging_write_bytes(exports_dir, "selected.png", verified[selected_candidate])
-    contact_sheet = safe_staging_write_bytes(exports_dir, "contact_sheet.png", _contact_sheet(verified))
+    selected_bytes = verified[selected_candidate]
+    contact_sheet_bytes = _contact_sheet(verified)
+    selected = safe_staging_write_bytes(exports_dir, "selected.png", selected_bytes)
+    contact_sheet = safe_staging_write_bytes(exports_dir, "contact_sheet.png", contact_sheet_bytes)
     manifest_payload = json.dumps(
             {
                 "candidate_count": len(candidates),
@@ -73,11 +76,13 @@ def export_selected_candidate(
                 "anchor_verification": anchor_verification,
                 "anchor_evidence": anchor_evidence,
                 "engine": engine,
+                "imports": imported_images or [],
+                "run_mode": run_mode,
                 "generation_instruction": generation_instruction,
                 "selected_candidate": selected_candidate,
                 "selected_file": selected.name,
-                "selected_sha256": hashlib.sha256(selected.read_bytes()).hexdigest(),
-                "contact_sheet_sha256": hashlib.sha256(contact_sheet.read_bytes()).hexdigest(),
+                "selected_sha256": hashlib.sha256(selected_bytes).hexdigest(),
+                "contact_sheet_sha256": hashlib.sha256(contact_sheet_bytes).hexdigest(),
             },
             ensure_ascii=False,
             indent=2,

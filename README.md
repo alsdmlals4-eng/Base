@@ -39,6 +39,8 @@ START_HERE.md
 - [프로젝트 어댑터 계약](docs/BASE_SHARED_SKILL_ADAPTER_CONTRACT.md)
 - [PROJECT_BASE_ADAPTER v2 명시적 마이그레이션](docs/operations/PROJECT_BASE_ADAPTER_V2_MIGRATION.md)
 - [로컬 Tool 공용 계약](tools/base-tool-contracts/README.md)
+- [무추가비용 Expression Studio](tools/expression-studio/README.md)
+- [무추가비용 Sprite Animation Studio](tools/sprite-animation-studio/README.md)
 - [이전 Skill ID 별칭](skills/LEGACY_SKILL_ALIASES.md)
 - [공용 스킬 학습 기록](skills/SKILL_LEARNING_LOG.md)
 - [Base 수정제안서]([수정제안서]/README.md)

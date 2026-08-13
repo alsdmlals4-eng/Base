@@ -1,10 +1,48 @@
-const state = { runId: null, request: null, frameCount: 0, selected: [], active: null, transforms: {}, timer: null, exported: false, runDeliveryEligible: false, config: { project_id: null, delivery_eligible: false, engine_provenance: "unavailable" } };
+const state = { runId: null, request: null, frameCount: 0, selected: [], active: null, transforms: {}, timer: null, exported: false, runDeliveryEligible: false, uploadQueue: [], config: { project_id: null, delivery_eligible: false, engine_provenance: "unavailable" } };
 const $ = (selector) => document.querySelector(selector);
 
 function setStatus(text, blocked = false) {
   const badge = $("#run-status");
   badge.textContent = text;
   badge.classList.toggle("blocked", blocked);
+}
+
+function resetRunState() {
+  if (state.timer) clearInterval(state.timer);
+  state.runId = null;
+  state.request = null;
+  state.frameCount = 0;
+  state.selected = [];
+  state.active = null;
+  state.transforms = {};
+  state.timer = null;
+  state.runDeliveryEligible = false;
+  state.exported = false;
+  $("#source-image").removeAttribute("src");
+  $("#source-path").textContent = "";
+  $("#anchor-proof").textContent = "";
+  $("#figma-delivery-status").textContent = "";
+  $("#warning-panel").textContent = "";
+  renderAll();
+}
+
+function applyRunModeUi() {
+  const importMode = state.config.run_mode === "subscription_handoff_import";
+  const pinnedMode = state.config.run_mode === "pinned_sprite_gen";
+  $("#import-controls").hidden = !importMode;
+  $("#frame-files").required = importMode;
+  $("#frame-files").disabled = !importMode;
+  $("#declared-source").disabled = !importMode;
+  $("#mode-title").textContent = importMode ? "애니메이션 가져오기" : "애니메이션 후보 생성";
+  $("#cost-title").textContent = importMode
+    ? "추가 비용 없는 가져오기"
+    : pinnedMode ? "고정 sprite-gen 실행 모드" : "시뮬레이션 검토 모드";
+  $("#cost-detail").textContent = importMode
+    ? "ChatGPT·Figma 구독 또는 로컬 도구에서 만든 프레임을 검증하며, 이 도구는 유료 API를 호출하지 않습니다."
+    : pinnedMode
+      ? "검증된 고정 sprite-gen 어댑터를 실행합니다. 연결된 생성기의 비용·라이선스는 해당 구성에 따릅니다."
+      : "테스트 프레임만 만들며 외부 provider를 호출하지 않고 내보내기와 Figma 전달을 차단합니다.";
+  $("#submit-button").textContent = importMode ? "프레임 가져오기 및 검증" : "애니메이션 후보 생성";
 }
 
 function frameUrl(index) { return `/api/runs/${state.runId}/frames/${index}`; }
@@ -15,6 +53,36 @@ function curationPayload() {
 
 function mutationHeaders() {
   return { "Content-Type": "application/json", "X-Studio-CSRF": state.config.csrf_token };
+}
+
+function moveUpload(position, offset) {
+  const target = position + offset;
+  if (target < 0 || target >= state.uploadQueue.length) return;
+  [state.uploadQueue[position], state.uploadQueue[target]] = [state.uploadQueue[target], state.uploadQueue[position]];
+  renderImportQueue();
+}
+
+function renderImportQueue() {
+  const root = $("#import-queue");
+  root.replaceChildren();
+  state.uploadQueue.forEach((entry, position) => {
+    const row = document.createElement("div");
+    row.className = "import-file";
+    row.dataset.uploadId = entry.id;
+    const label = document.createElement("span");
+    label.textContent = `${position + 1}. ${entry.file.name}`;
+    const previous = document.createElement("button");
+    previous.type = "button"; previous.textContent = "앞"; previous.disabled = position === 0;
+    previous.addEventListener("click", () => moveUpload(position, -1));
+    const next = document.createElement("button");
+    next.type = "button"; next.textContent = "뒤"; next.disabled = position === state.uploadQueue.length - 1;
+    next.addEventListener("click", () => moveUpload(position, 1));
+    const remove = document.createElement("button");
+    remove.type = "button"; remove.textContent = "제거";
+    remove.addEventListener("click", () => { state.uploadQueue = state.uploadQueue.filter((item) => item.id !== entry.id); renderImportQueue(); });
+    row.append(label, previous, next, remove);
+    root.append(row);
+  });
 }
 
 function renderCandidates() {
@@ -85,19 +153,33 @@ function renderAll() {
 
 $("#request-form").addEventListener("submit", async (event) => {
   event.preventDefault();
+  resetRunState();
   const form = new FormData(event.currentTarget);
   const request = {
     project_id: form.get("project_id"), asset_id: form.get("asset_id"), asset_kind: form.get("asset_kind"), mode: form.get("mode"),
     anchor: { source_path: form.get("source_path"), figma_node_url: form.get("figma_node_url"), approval_status: "approved" },
     action: { name: form.get("action_name"), direction: form.get("direction"), frame_count: Number(form.get("frame_count")), fps: Number(form.get("fps")), loop_mode: form.get("loop_mode"), prompt: form.get("prompt") }
   };
-  setStatus("후보 생성 중…");
-  const response = await fetch("/api/runs", { method: "POST", headers: mutationHeaders(), body: JSON.stringify(request) });
+  let response;
+  if (state.config.run_mode === "subscription_handoff_import") {
+    if (state.uploadQueue.length !== request.action.frame_count) {
+      $("#warning-panel").textContent = `프레임 수 ${request.action.frame_count}개와 업로드 ${state.uploadQueue.length}개가 같아야 합니다.`;
+      setStatus("가져오기 차단됨", true);
+      return;
+    }
+    setStatus("프레임 가져오기 및 검증 중…");
+    const body = new FormData();
+    body.append("request_json", JSON.stringify(request));
+    body.append("declared_source", $("#declared-source").value);
+    state.uploadQueue.forEach((entry) => body.append("frames", entry.file));
+    response = await fetch("/api/import-runs", { method: "POST", headers: { "X-Studio-CSRF": state.config.csrf_token }, body });
+  } else {
+    setStatus("후보 생성 중…");
+    response = await fetch("/api/runs", { method: "POST", headers: mutationHeaders(), body: JSON.stringify(request) });
+  }
   const result = await response.json();
   if (!response.ok || result.status === "blocked") {
-    if (state.timer) clearInterval(state.timer);
-    state.runId = null; state.request = null; state.frameCount = 0; state.selected = []; state.active = null; state.transforms = {}; state.timer = null; state.runDeliveryEligible = false; state.exported = false;
-    $("#source-image").removeAttribute("src"); $("#source-path").textContent = ""; $("#anchor-proof").textContent = ""; $("#figma-delivery-status").textContent = "";
+    resetRunState();
     $("#warning-panel").textContent = result.detail || result.warnings?.join(" ") || "생성이 차단되었습니다."; setStatus("차단됨", true); renderAll(); return;
   }
   state.runId = result.run_id; state.request = request; state.frameCount = result.frame_count; state.selected = [...Array(result.frame_count).keys()]; state.active = 0; state.transforms = {}; state.exported = false;
@@ -105,7 +187,10 @@ $("#request-form").addEventListener("submit", async (event) => {
   $("#source-path").textContent = request.anchor.source_path;
   $("#source-image").src = `/api/runs/${state.runId}/anchor`;
   $("#anchor-proof").textContent = `${result.anchor_verification} · ${request.anchor.figma_node_url}`;
-  if (result.engine.delivery_eligible) {
+  if (result.run_mode === "subscription_handoff_import") {
+    $("#warning-panel").textContent = `${result.cost.cost_route} · provider_call_made=false · ${result.warnings.join(" ") || "프레임 가져오기 완료. 채택 순서를 검토하세요."}`;
+    setStatus("가져오기 완료");
+  } else if (result.engine.delivery_eligible) {
     $("#warning-panel").textContent = "후보 생성 완료. 채택 순서를 검토하세요.";
     setStatus("후보 생성됨");
   } else {
@@ -113,6 +198,11 @@ $("#request-form").addEventListener("submit", async (event) => {
     setStatus("검토 전용", true);
   }
   renderAll();
+});
+
+$("#frame-files").addEventListener("change", (event) => {
+  state.uploadQueue = [...event.target.files].map((file) => ({ id: crypto.randomUUID(), file }));
+  renderImportQueue();
 });
 
 $("#select-all").addEventListener("click", () => { state.selected = [...Array(state.frameCount).keys()]; state.active ??= 0; renderAll(); });
@@ -129,6 +219,7 @@ async function bootstrap() {
     if (!response.ok) throw new Error(config.detail || "도구 설정을 불러올 수 없습니다.");
     state.config = config;
     $("[name=project_id]").value = config.project_id || "";
+    applyRunModeUi();
     if (!config.delivery_eligible) {
       $("#warning-panel").textContent = `${config.engine_provenance.toUpperCase()} / DELIVERY_BLOCKED · 실제 생성 엔진이 아닙니다.`;
       setStatus("검토 전용", true);

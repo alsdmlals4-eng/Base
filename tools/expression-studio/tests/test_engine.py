@@ -130,7 +130,7 @@ def test_openai_engine_rejects_malformed_response_before_writing_any_candidate(t
         update={"anchor": wink_request().anchor.model_copy(update={"source_path": str(anchor)})}
     )
 
-    with pytest.raises(EngineContractError, match="wrong image count"):
+    with pytest.raises(EngineContractError, match="wrong image count") as caught:
         OpenAIExpressionEngine(client=_RecordingClient(images)).generate(
             request,
             resolve_expression(request),
@@ -138,6 +138,7 @@ def test_openai_engine_rejects_malformed_response_before_writing_any_candidate(t
         )
 
     assert list(candidates_dir.iterdir()) == []
+    assert caught.value.provider_call_made is True
 
 
 def test_openai_engine_rejects_oversized_provider_output_before_writing(
@@ -152,7 +153,7 @@ def test_openai_engine_rejects_oversized_provider_output_before_writing(
         update={"anchor": wink_request().anchor.model_copy(update={"source_path": str(anchor)})}
     )
 
-    with pytest.raises(EngineContractError, match="size limit"):
+    with pytest.raises(EngineContractError, match="size limit") as caught:
         OpenAIExpressionEngine(client=_RecordingClient(images)).generate(
             request,
             resolve_expression(request),
@@ -160,6 +161,7 @@ def test_openai_engine_rejects_oversized_provider_output_before_writing(
         )
 
     assert list(candidates_dir.iterdir()) == []
+    assert caught.value.provider_call_made is True
 
 
 def test_openai_engine_sanitizes_provider_errors(tmp_path: Path) -> None:
@@ -171,8 +173,9 @@ def test_openai_engine_sanitizes_provider_errors(tmp_path: Path) -> None:
         update={"anchor": wink_request().anchor.model_copy(update={"source_path": str(anchor)})}
     )
 
+    engine = OpenAIExpressionEngine(client=_RecordingClient(images))
     with pytest.raises(EngineContractError) as caught:
-        OpenAIExpressionEngine(client=_RecordingClient(images)).generate(
+        engine.generate(
             request,
             resolve_expression(request),
             candidates_dir,
@@ -184,6 +187,7 @@ def test_openai_engine_sanitizes_provider_errors(tmp_path: Path) -> None:
     rendered = "".join(traceback.format_exception(caught.type, caught.value, caught.tb))
     assert "sk-secret" not in rendered
     assert list(candidates_dir.iterdir()) == []
+    assert caught.value.provider_call_made is True
 
 
 def test_openai_engine_preserves_only_a_safe_provider_error_code(tmp_path: Path) -> None:

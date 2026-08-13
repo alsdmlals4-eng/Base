@@ -1,4 +1,6 @@
 from pathlib import Path
+from dataclasses import replace
+from io import BytesIO
 import os
 import subprocess
 
@@ -8,7 +10,10 @@ import pytest
 
 from sprite_animation_studio.app import create_app
 from sprite_animation_studio.delivery import ProjectFigmaRegistry
-from sprite_animation_studio.engine import EngineResult, FakeSpriteEngine, SpriteEngine
+from sprite_animation_studio.engine import EnginePolicy, EngineResult, FakeSpriteEngine, PinnedSpriteGenEngine, SpriteEngine
+from sprite_animation_studio.service import SpriteAnimationService
+from sprite_animation_studio.imports import validate_imported_image
+from sprite_animation_studio.models import SpriteAnimationRequest
 from tests.test_models import valid_payload
 from tests.test_delivery import write_registry
 
@@ -19,6 +24,38 @@ class EligibleSpriteEngine(FakeSpriteEngine):
         return EngineResult(frames=result.frames, provenance="pinned_sprite_gen", delivery_eligible=True)
 
 
+def _sprite_png(color: tuple[int, int, int, int], *, size: tuple[int, int] = (8, 8)) -> bytes:
+    output = BytesIO()
+    Image.new("RGBA", size, color).save(output, format="PNG")
+    return output.getvalue()
+
+
+def test_import_service_rejects_forged_frame_metadata_and_dimension_bypass(tmp_path: Path) -> None:
+    source = tmp_path / "art" / "source"
+    source.mkdir(parents=True)
+    Image.new("RGBA", (8, 8), (255, 255, 255, 255)).save(source / "idle.png")
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    (tmp_path / ".asset-vault" / "library").mkdir(parents=True)
+    (tmp_path / ".gitignore").write_text(".asset-vault/\n", encoding="utf-8")
+    service = SpriteAnimationService(tmp_path, FakeSpriteEngine(), project_id="demo")
+    frames = tuple(
+        validate_imported_image(
+            _sprite_png((index * 40, 10, 20, 255), size=(8 + index, 8)),
+            declared_source="LOCAL_GENERATOR",
+            order=index,
+        )
+        for index in range(4)
+    )
+    forged = tuple(replace(frame, sha256="0" * 64, width=8, height=8) for frame in frames)
+
+    with pytest.raises(ValueError, match="metadata does not match validated bytes"):
+        service.create_import_run(
+            SpriteAnimationRequest.model_validate(valid_payload()),
+            forged,
+            "LOCAL_GENERATOR",
+        )
+
+
 def client_for(
     project_root: Path,
     registry: ProjectFigmaRegistry | None = None,
@@ -26,6 +63,7 @@ def client_for(
     engine: SpriteEngine | None = None,
     initialize_vault: bool = True,
     bootstrap_security: bool = True,
+    run_mode: str = "simulated",
 ) -> TestClient:
     source = project_root / "art" / "source"
     source.mkdir(parents=True, exist_ok=True)
@@ -34,7 +72,7 @@ def client_for(
         subprocess.run(["git", "init", "-q", str(project_root)], check=True)
         (project_root / ".asset-vault" / "library").mkdir(parents=True, exist_ok=True)
         (project_root / ".gitignore").write_text(".asset-vault/\n", encoding="utf-8")
-    client = TestClient(create_app(project_root, engine or FakeSpriteEngine(), registry=registry, project_id=project_id, bind_origin="http://testserver", test_mode=True))
+    client = TestClient(create_app(project_root, engine or FakeSpriteEngine(), registry=registry, project_id=project_id, bind_origin="http://testserver", test_mode=True, run_mode=run_mode))
     client.headers["Origin"] = "http://testserver"
     if bootstrap_security:
         config = client.get("/api/config").json()
@@ -63,6 +101,59 @@ def test_config_exposes_bound_project_and_simulated_state(tmp_path: Path) -> Non
     assert payload["delivery_eligible"] is False
     assert payload["routing_state"] == "ROUTING_CONFIGURED"
     assert len(payload["csrf_token"]) >= 32
+
+
+def test_app_and_service_default_to_subscription_handoff_import_mode(tmp_path: Path) -> None:
+    app = create_app(
+        tmp_path,
+        FakeSpriteEngine(),
+        project_id="demo",
+        bind_origin="http://testserver",
+        test_mode=True,
+    )
+    service = SpriteAnimationService(tmp_path, FakeSpriteEngine(), project_id="demo")
+
+    payload = TestClient(app).get("/api/config").json()
+
+    assert payload["run_mode"] == "subscription_handoff_import"
+    assert payload["engine_provenance"] == "subscription_handoff_import"
+    assert service.config()["run_mode"] == "subscription_handoff_import"
+
+
+def test_pinned_engine_evidence_records_that_a_provider_call_was_made(tmp_path: Path) -> None:
+    service = SpriteAnimationService(
+        tmp_path,
+        FakeSpriteEngine(),
+        project_id="demo",
+        run_mode="simulated",
+    )
+    policy = EnginePolicy("sprite.pinned.test", "pinned_sprite_gen", True, "b" * 64)
+
+    evidence = service._engine_evidence((), policy=policy)
+
+    assert evidence["provider_call_made"] is True
+
+
+def test_blocked_pinned_run_does_not_claim_a_provider_call(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    repository = tmp_path / "sprite-gen"
+    repository.mkdir()
+    executable = repository / "sprite-gen"
+    executable.write_text("stub", encoding="utf-8")
+    monkeypatch.setattr(PinnedSpriteGenEngine, "_verify_repository_pin", lambda _self: True)
+    engine = PinnedSpriteGenEngine(executable, tmp_path, sprite_gen_repository=repository)
+    client = client_for(tmp_path, engine=engine, run_mode="pinned_sprite_gen")
+
+    run = client.post("/api/runs", json=valid_payload()).json()
+
+    assert run["status"] == "blocked"
+    assert run["provider_call_made"] is False
+
+
+def test_app_rejects_run_mode_that_does_not_match_the_configured_engine(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="run mode does not match"):
+        create_app(tmp_path, FakeSpriteEngine(), project_id="demo", run_mode="pinned_sprite_gen")
 
 
 def test_status_exposes_immutable_child_identity(tmp_path: Path) -> None:

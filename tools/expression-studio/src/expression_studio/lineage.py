@@ -19,6 +19,8 @@ def write_lineage(
     engine: dict[str, object] | None = None,
     anchor_verification: str = "ANCHOR_UNVERIFIED",
     anchor_evidence: dict[str, str] | None = None,
+    imported_images: list[dict[str, object]] | None = None,
+    run_mode: str = "simulated",
 ) -> Path:
     """Write request and resolved-expression evidence before candidate generation."""
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -32,6 +34,8 @@ def write_lineage(
             "source_path": request.anchor.source_path,
         },
         "asset_id": request.asset_id,
+        "imports": imported_images or [],
+        "run_mode": run_mode,
         "engine": engine or {"validation_state": "NOT_RUN"},
         "generation_instruction": generation_instruction,
         "project_id": request.project_id,
