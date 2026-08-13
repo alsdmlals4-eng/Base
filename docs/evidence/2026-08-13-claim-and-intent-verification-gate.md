@@ -93,7 +93,15 @@ A subsequent full proposal readback found one more active-state contradiction: t
 
 ## Integration
 
-- Independent adversarial review: `PENDING_FINAL_EXACT_HEAD`
-- Merge SHA: `PENDING`
-- Post-merge main readback: `PENDING`
-- Post-merge workflow: `PENDING`
+- Independent adversarial review: `READY_TO_MERGE` on exact head `c9e85cad9f663b214a370cf873cc1bfa2a3a1947`; `P0 0 / P1 0 / unresolved P2 0`; unresolved review threads `0`.
+- PR: `https://github.com/alsdmlals4-eng/Base/pull/319`
+- Merge method: `squash`
+- Merged at: `2026-08-13T12:23:49Z`
+- Merge SHA: `f08a78b33aa1d458376da8f783553fe9ce7aa9cd`
+- Post-merge main readback: `main@f08a78b33aa1d458376da8f783553fe9ce7aa9cd`; PR `merged=true`; the canonical Skill, dedicated reference, Registry-derived active map, behavior fixture, BCP proposal, and this evidence record were read back from that SHA.
+- Post-merge workflows:
+  - Base v9 Operating Contracts: `31699823282` — `success`
+  - Game UX UI System: `31699823298` — `success`
+  - Game Project Operating System: `31699823241` — `success`; Windows publication smoke, publication validation, and final `ci-gate` passed.
+- External model behavior run: `NOT_RUN`; no model-behavior success is claimed.
+- Final integration verdict: `MERGED_VERIFIED`
