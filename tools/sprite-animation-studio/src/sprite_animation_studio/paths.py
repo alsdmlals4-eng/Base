@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from base_tool_contracts import StagingViolation, assert_verified_staging_path, create_verified_run_directories, stable_staging_path, staging_identity
+from base_tool_contracts import StagingViolation, assert_verified_staging_path, create_verified_run_directories, stable_staging_tree, staging_identity
 
 
 class PathViolation(ValueError):
@@ -16,6 +16,8 @@ class RunPaths:
     frames_dir: Path
     exports_dir: Path
     identity: tuple[int, int]
+    frames_identity: tuple[int, int]
+    exports_identity: tuple[int, int]
 
 
 def resolve_project_path(project_root: Path, candidate: str) -> Path:
@@ -35,11 +37,18 @@ def create_run_paths(project_root: Path, asset_id: str, action_name: str, run_id
         )
     except StagingViolation as error:
         raise PathViolation(str(error)) from error
-    return RunPaths(run_dir=run_dir, frames_dir=leaves[0], exports_dir=leaves[1], identity=staging_identity(run_dir))
+    return RunPaths(
+        run_dir=run_dir,
+        frames_dir=leaves[0],
+        exports_dir=leaves[1],
+        identity=staging_identity(run_dir),
+        frames_identity=staging_identity(leaves[0]),
+        exports_identity=staging_identity(leaves[1]),
+    )
 
 
-def stable_run_path(project_root: Path, paths: RunPaths):
-    return stable_staging_path(project_root, paths.run_dir, paths.identity)
+def stable_run_tree(project_root: Path, paths: RunPaths):
+    return stable_staging_tree(project_root, paths.run_dir, paths.identity)
 
 
 def revalidate_run_paths(project_root: Path, paths: RunPaths) -> None:

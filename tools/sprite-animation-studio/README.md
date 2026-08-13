@@ -38,7 +38,7 @@ PYTHONPATH=src .venv/bin/python -m sprite_animation_studio.app \
   --approved-anchor-registry /절대/경로/프로젝트/docs/APPROVED_VISUAL_ANCHORS.json
 ```
 
-실제 생성에는 정확한 `sprite-gen` 커밋 `88f2ea17cac2ef066536beee7e3f40b2f8d29c87`에서 설치한 실행 파일을 직접 지정합니다. 도구는 `prepare → gen --provider codex → extract` 컴포넌트-행 파이프라인을 실행한 뒤, 추출 프레임 수를 다시 검증합니다.
+아래 인자는 정확한 `sprite-gen` 커밋 `88f2ea17cac2ef066536beee7e3f40b2f8d29c87`을 검증하기 위한 예약된 production 설정입니다. 현재 구현은 같은 사용자 프로세스가 실행 중 하위 출력 경로를 바꾸는 공격까지 격리할 OS sandbox runner가 없으므로 실제 `prepare → gen → extract` 실행과 export/Figma 전달을 명시적으로 차단합니다. 이 명령은 production 실행법이 아니라 fail-closed 설정 확인용입니다.
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m sprite_animation_studio.app \
@@ -49,6 +49,8 @@ PYTHONPATH=src .venv/bin/python -m sprite_animation_studio.app \
   --figma-target-registry /절대/경로/Base/docs/operations/PROJECT_FIGMA_TARGET_REGISTRY.json \
   --approved-anchor-registry /절대/경로/프로젝트/docs/APPROVED_VISUAL_ANCHORS.json
 ```
+
+`sprite-gen execution is blocked until an OS-isolated workspace adapter is configured`가 현재의 정상적인 보호 결과입니다. 실제 생성이 가능하다고 판단하려면 별도 sandbox runner 구현, 경로 교체 공격 회귀 테스트, 실제 provider smoke가 모두 필요합니다.
 
 `--figma-target-registry`를 사용하는 실행은 반드시 `--project-id`로 작업공간의 정식 프로젝트 ID를 고정합니다. 요청의 프로젝트 ID가 다르면 후보 생성 단계에서 차단되므로, 한 프로젝트 작업공간에서 다른 프로젝트 Figma 대상으로 라우팅할 수 없습니다.
 

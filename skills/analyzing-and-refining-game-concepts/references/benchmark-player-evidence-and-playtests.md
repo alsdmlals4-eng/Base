@@ -179,3 +179,188 @@ success_failure_stop:
 - Unity Analytics — Events: https://docs.unity.com/en-us/analytics/events/events
 - Unity Analytics — Funnels: https://docs.unity.com/en-us/analytics/funnels/funnels
 - Unity Game Overrides — A/B testing: https://docs.unity.com/en-us/game-overrides/ab-testing
+
+---
+
+## 9. 시장조사 Source와 숫자 해석
+
+시장조사의 목표는 “인기 게임 목록”을 만드는 것이 아니라 **우리 결정에 필요한 비교 차원, 시장의 기본 기대(table-stakes), 실패 패턴, 빠르게 읽히는 차별화 후보를 찾는 것**이다.
+
+### 9.1 Source hierarchy
+
+```text
+공식 store / platform / developer·publisher first-party statement
+→ 명시된 product fact와 metric에 한해 VERIFIED 후보
+
+SteamDB / GameDiscoverCo / Sensor Tower Game IQ / Video Game Insights(VGI)
+→ market intelligence / discovery / estimate evidence
+
+기사 / creator / community 해석
+→ context·hypothesis 후보
+```
+
+- **SteamDB**는 Steam application/package update, player chart, price/history 등을 조사하는 독립 정보면이다. Steam/Valve의 공식 서비스가 아니며 data accuracy를 보증하지 않는다.
+- **GameDiscoverCo**는 PC/console discovery와 market-data 비교를 위한 전문 Source 후보다. 자체 estimator나 affinity/player estimate는 공식 판매 숫자가 아니다.
+- **Sensor Tower Game IQ**는 mobile sub-genre, theme, art style, monetization, meta feature와 downloads/revenue 비교에 유용한 전문 market-intelligence Source다. Sensor Tower가 제공하는 추정치는 first-party store/developer 공개값과 구분한다.
+- **Video Game Insights(VGI)**는 Steam unit-sales estimate 방법과 정확도 표본을 공개하지만 결과는 여전히 model estimate다. `ESTIMATED_100K_PLUS`를 `VERIFIED_100K_SALES`로 바꾸지 않는다.
+
+시장 Source는 다음을 한 숫자로 합치지 않는다.
+
+```text
+downloads / installs
+paid sales / copies sold
+revenue / gross / IAP revenue
+wishlists
+reviews
+followers
+CCU / peak concurrent players
+MAU / active users
+estimated owners / estimated units
+```
+
+## 10. 10만+ 성공 사례 qualification
+
+사용자 승인 기준에 따라 10만+는 **download/install과 paid sales를 별도 성공 라벨로 인정**하며 서로 대체하지 않는다.
+
+```text
+VERIFIED_100K_DOWNLOAD_INSTALL
+VERIFIED_100K_SALES
+ESTIMATED_100K_PLUS
+NOT_100K_VERIFIED
+```
+
+### `VERIFIED_100K_DOWNLOAD_INSTALL`
+
+공식/public store가 download/install bucket을 공개하거나 개발사·플랫폼 first-party 발표가 downloads >= 100,000을 명시한 경우에만 사용한다.
+
+### `VERIFIED_100K_SALES`
+
+개발사·배급사·플랫폼의 first-party 발표가 paid copies/units sold >= 100,000을 명시한 경우에만 사용한다.
+
+### `ESTIMATED_100K_PLUS`
+
+SteamDB, VGI, Sensor Tower 등 제3자 model이 100,000+를 추정했지만 first-party units/downloads 발표가 없는 경우다. estimate methodology, checked_at, platform, confidence/range를 함께 기록한다.
+
+### `NOT_100K_VERIFIED`
+
+wishlists/reviews/CCU/revenue/rank 같은 다른 지표는 높더라도 download/install 또는 paid sales 100K가 확인되지 않은 상태다.
+
+**100K downloads != 100K paid sales**이며, revenue·wishlists·reviews·followers·CCU 역시 어느 쪽의 대체 지표도 아니다.
+
+## 11. 검증된 10만+ seed examples
+
+아래 사례는 **threshold membership을 확인하는 seed**다. 해당 게임의 특정 기능이 성공을 만들었다는 causal proof가 아니다.
+
+| Game | Platform/source | checked_at | 확인된 threshold | label |
+|---|---|---:|---:|---|
+| Shattered Pixel Dungeon | Google Play public store | 2026-08-12 | 5M+ downloads | `VERIFIED_100K_DOWNLOAD_INSTALL` |
+| Mindustry | Google Play public store | 2026-08-12 | 5M+ downloads | `VERIFIED_100K_DOWNLOAD_INSTALL` |
+| Slice & Dice | Google Play public store | 2026-08-12 | 1M+ downloads | `VERIFIED_100K_DOWNLOAD_INSTALL` |
+| Sledding Game | Steam developer community announcement | 2026-08-12 | 100,000 copies sold in 5 days | `VERIFIED_100K_SALES` |
+| God Of Weapons | Steam developer community announcement | 2026-08-12 | over 100,000 copies sold in 2 weeks | `VERIFIED_100K_SALES` |
+| Astrea: Six-Sided Oracles | Steam developer community announcement | 2026-08-12 | over 100,000 copies sold within 4 months | `VERIFIED_100K_SALES` |
+
+이 표에서 확인한 것은 **공개된 숫자와 metric 종류**뿐이다. 그 숫자의 원인을 설명하려면 별도의 플레이어 반응·제품 비교·현업/개발자 설명·실패/혼합 사례가 필요하다.
+
+## 12. Success / comparison card
+
+성공작·경쟁작·인접작은 기능 목록이 아니라 다음 카드로 비교한다.
+
+```yaml
+game:
+source_and_checked_at:
+success_evidence_label: VERIFIED_100K_DOWNLOAD_INSTALL | VERIFIED_100K_SALES | ESTIMATED_100K_PLUS | NOT_100K_VERIFIED
+threshold_evidence:
+target_player:
+core_action:
+standard_genre_promise:
+observable_twist:
+why_player_notices_it_in_30_seconds:
+repeated_decision_changed:
+store_capsule_or_trailer_legibility:
+player_positive_negative_mixed_evidence:
+production_cost:
+copy_risk:
+our_transferable_principle:
+do_not_copy:
+project_kick_candidate:
+validation:
+```
+
+성공작을 조사할 때도 기존 비교 구성의 **실패·혼합 반응 사례**를 제거하지 않는다. survivorship bias를 줄이기 위해 같은 장르의 실패/혼합 사례에서 “같은 표현이 왜 먹히지 않았는가”를 함께 본다.
+
+## 13. 개성(킥) 추출법
+
+여기서 **킥(kick)**은 단순히 특이한 기능 하나가 아니라, 플레이어가 빠르게 알아차리고 반복 행동·기대에 영향을 주며 store/trailer/demo에서도 설명 가능한 **뾰족한 차별화 가설**이다.
+
+### 13.1 Kick ladder
+
+```text
+market table-stakes
+→ 플레이어가 반복하는 core action
+→ 그 행동에서 기대하는 tension / power fantasy / mastery
+→ 한눈에 보이는 observable twist
+→ 한 문장 / 한 GIF / 한 screenshot으로 설명 가능한가
+→ 반복 decision을 실제로 바꾸는가
+→ 1인/소규모 제작 범위에서 감당 가능한가
+→ prototype 또는 store-page comprehension test
+```
+
+좋은 후보는 아래 다섯 축 중 최소 세 축에서 근거가 있어야 한다.
+
+- `PLAYER_NOTICEABLE` — 디자인 설명 없이도 플레이어가 빠르게 알아챈다.
+- `LOOP_RELEVANT` — lore/cosmetic만이 아니라 반복 플레이의 행동·판단에 영향을 준다.
+- `MARKET_LEGIBLE` — capsule, screenshot, trailer, GIF, 짧은 pitch에서 전달된다.
+- `PRODUCTION_FIT` — 현재 인력·기간·플랫폼·콘텐츠 예산으로 유지 가능하다.
+- `NON_DERIVATIVE` — 경쟁작의 식별 가능한 UI/art/캐릭터/문구/구현을 복제하지 않고 원리를 변형한다.
+
+### 13.2 Table-stakes와 킥을 분리한다
+
+```text
+장르 기본 기대를 충족하는 기능
+→ TABLE_STAKES
+
+기본 기대를 깨거나 재조합해 반복 선택을 달라지게 하는 표현
+→ KICK_CANDIDATE
+```
+
+“다른 성공작에도 있다”는 이유만으로 킥이 아니다. 반대로 너무 독특해서 설명·제작·반복 플레이에 연결되지 않으면 market gimmick에 그칠 수 있다.
+
+### 13.3 검증
+
+킥 후보는 다음 중 가장 작은 증거로 시작한다.
+
+```text
+one-sentence comprehension
+→ 1 screenshot / GIF comparison
+→ Figma/FigJam concept board when visual comparison helps
+→ paper prototype / rule simulation
+→ playable PoC
+→ store-page or trailer comprehension
+→ player behavior + self-report
+```
+
+성공작의 milestone은 **causal attribution**을 제공하지 않는다. `100K+ 성공작이 이 기능을 가졌다 → 이 기능이 성공 원인이다`라는 추론은 금지한다. 우리 프로젝트에서는 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 변환하고, 가능하면 작은 PoC와 실제 플레이어 증거로 반증한다.
+
+## 14. 시장조사 적대적 검토
+
+다음을 발견하면 결론을 낮추거나 다시 조사한다.
+
+- downloads와 paid sales를 합쳐 “다운로드”로 보고함.
+- estimated owners/units를 verified sales로 표현함.
+- revenue, wishlists, reviews, followers, CCU를 unit sales로 변환함.
+- 성공작만 모으고 failure/mixed comparison을 제거함.
+- 판매 milestone 이후 기능을 보며 post-hoc causal story를 만듦.
+- review 수·평점·viral popularity를 품질 authority로 사용함.
+- 경쟁작의 식별 가능한 UI/art/signature execution을 복제함.
+- market-data provider의 추정치를 source date/method 없이 영구 사실로 고정함.
+- 시장 trend가 현재 프로젝트의 core fun보다 우선함.
+
+## 추가 시장조사 출발점
+
+- SteamDB FAQ: https://steamdb.info/faq/
+- GameDiscoverCo: https://gamediscover.co/
+- Sensor Tower Game IQ: https://sensortower.com/product/mobile-app/game-iq
+- Video Game Insights sales methodology: https://app.sensortower.com/vgi/insights/article/steam-sales-estimation-methodology-and-accuracy/
+- Google Play public store pages: https://play.google.com/store/games
+- Steam community announcements: https://store.steampowered.com/news/

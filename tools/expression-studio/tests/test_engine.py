@@ -20,7 +20,9 @@ def test_fake_engine_creates_the_requested_number_of_valid_candidate_pngs(tmp_pa
     Image.new("RGBA", (9, 7), (255, 255, 255, 255)).save(anchor)
     request = wink_request()
 
-    result = FakeExpressionEngine(project_root).generate(request, resolve_expression(request), tmp_path / "run")
+    candidates_dir = tmp_path / "candidates"
+    candidates_dir.mkdir()
+    result = FakeExpressionEngine(project_root).generate(request, resolve_expression(request), candidates_dir)
 
     assert [candidate.name for candidate in result.candidates] == ["candidate-000.png", "candidate-001.png"]
     assert all(candidate.is_file() for candidate in result.candidates)
@@ -35,7 +37,9 @@ def test_fake_engine_keeps_the_anchor_bytes_unchanged_and_resolves_identity_prom
     initial_hash = hashlib.sha256(anchor.read_bytes()).hexdigest()
     request = wink_request()
 
-    result = FakeExpressionEngine(project_root).generate(request, resolve_expression(request), tmp_path / "run")
+    candidates_dir = tmp_path / "candidates"
+    candidates_dir.mkdir()
+    result = FakeExpressionEngine(project_root).generate(request, resolve_expression(request), candidates_dir)
 
     assert hashlib.sha256(anchor.read_bytes()).hexdigest() == initial_hash
     assert IDENTITY_PREFIX in result.generation_instruction

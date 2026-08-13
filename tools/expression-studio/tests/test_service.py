@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import os
 import subprocess
 
 import pytest
@@ -159,10 +160,10 @@ def test_engine_receives_a_run_local_anchor_copy_instead_of_the_approved_source(
     original_bytes = source.read_bytes()
 
     class AnchorMutatingEngine:
-        def generate(self, request: ExpressionRequest, _resolved: object, run_dir: Path) -> object:
+        def generate(self, request: ExpressionRequest, _resolved: object, candidates_dir: Path) -> object:
             supplied_anchor = tmp_path / request.anchor.source_path
             supplied_anchor.write_bytes(b"engine-mutated-anchor")
-            candidate = run_dir / "candidates" / "candidate-000.png"
+            candidate = candidates_dir / "candidate-000.png"
             Image.new("RGBA", (8, 8), (255, 255, 255, 255)).save(candidate)
             return type("Result", (), {"candidates": [candidate], "generation_instruction": "test"})()
 
@@ -181,9 +182,9 @@ def test_service_blocks_without_overwriting_when_original_anchor_changes(tmp_pat
     Image.new("RGBA", (8, 8), (255, 255, 255, 255)).save(source)
     initialize_vault(tmp_path)
     class OriginalMutatingEngine:
-        def generate(self, _request: ExpressionRequest, _resolved: object, run_dir: Path) -> EngineResult:
+        def generate(self, _request: ExpressionRequest, _resolved: object, candidates_dir: Path) -> EngineResult:
             source.write_bytes(b"malicious-original-overwrite")
-            candidate = run_dir / "candidates" / "candidate-000.png"
+            candidate = candidates_dir / "candidate-000.png"
             Image.new("RGBA", (8, 8), (255, 255, 255, 255)).save(candidate)
             return EngineResult(candidates=[candidate], generation_instruction="test")
 
@@ -227,9 +228,7 @@ def test_service_blocks_wrong_count_or_invalid_engine_candidate(
     initialize_vault(tmp_path)
 
     class InvalidCandidateEngine:
-        def generate(self, _request: ExpressionRequest, _resolved: object, run_dir: Path) -> EngineResult:
-            candidates_dir = run_dir / "candidates"
-            candidates_dir.mkdir(exist_ok=True)
+        def generate(self, _request: ExpressionRequest, _resolved: object, candidates_dir: Path) -> EngineResult:
             if candidate_count == 0:
                 return EngineResult(candidates=[], generation_instruction="test")
             candidate = candidates_dir / "candidate-000.png"
@@ -242,3 +241,30 @@ def test_service_blocks_wrong_count_or_invalid_engine_candidate(
     assert run.status == "blocked"
     assert run.result is None
     assert any("engine" in warning for warning in run.warnings)
+
+
+def test_engine_candidate_handle_prevents_leaf_symlink_swap_escape(tmp_path: Path) -> None:
+    source = tmp_path / "art" / "source" / "hero.png"
+    source.parent.mkdir(parents=True)
+    Image.new("RGBA", (8, 8), (255, 255, 255, 255)).save(source)
+    initialize_vault(tmp_path)
+    outside = tmp_path.parent / f"{tmp_path.name}-expression-leaf-outside"
+    outside.mkdir()
+
+    class LeafSwappingEngine:
+        def generate(self, _request: ExpressionRequest, _resolved: object, candidates_dir: Path) -> EngineResult:
+            lexical_candidates = Path(os.readlink(candidates_dir))
+            original_candidates = lexical_candidates.with_name("candidates-original")
+            lexical_candidates.rename(original_candidates)
+            lexical_candidates.symlink_to(outside, target_is_directory=True)
+            candidate = candidates_dir / "candidate-000.png"
+            Image.new("RGBA", (8, 8), (255, 0, 0, 255)).save(candidate)
+            return EngineResult(candidates=[candidate], generation_instruction="test")
+
+    service = ExpressionStudioService(tmp_path, LeafSwappingEngine(), project_id="demo")
+    run = service.create_run(ExpressionRequest.model_validate(valid_payload(candidate_count=1)))
+
+    original_candidates = run.paths.run_dir / "candidates-original"
+    assert (original_candidates / "candidate-000.png").is_file()
+    assert not (outside / "candidate-000.png").exists()
+    assert run.status == "blocked"

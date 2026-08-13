@@ -9,6 +9,8 @@ description: Use when designing art or UI image prompts, generating planning or 
 
 프로젝트용 이미지 후보의 **필요성·우선순위·재사용·제작 방식 선정**은 이 스킬이 새로 판단하지 않는다. `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate`가 먼저 소유하고, 이 스킬은 선정된 requirement를 실제 생성·편집·검수 계약으로 변환한다.
 
+프로젝트가 Figma Visual Bible을 구성했거나 Visual Artifact Registry가 Figma Artifact를 가리키면 `references/figma-visual-bible-continuity-gate.md`를 적용한다. 이 gate는 최신 프로젝트 정본·Decision보다 우선하지 않으며, 승인된 Figma frame/node를 실제로 읽을 수 있을 때만 시각 일관성 근거로 사용한다.
+
 ## Skill modes
 
 - `technique-card`: 재사용 가능한 아트·UI 기술과 프롬프트 패턴을 기록한다.
@@ -32,21 +34,24 @@ description: Use when designing art or UI image prompts, generating planning or 
 - 출력 비율·해상도·크롭·알파·텍스트 처리 방식.
 - 사용할 모델·서비스·버전과 실제 확인 가능한 기능.
 - 프로젝트 Sheet 상태와 `71_이미지기획_생성목록`, `72_이미지검수_승인로그` 연결.
+- 구성된 프로젝트라면 Figma Visual Bible 상태, 연결된 `APPROVED_VISUAL_REFERENCE` ID와 frame/node ID, `Keep / Avoid / Do Not Drift`.
 
 사용자가 현재 대화에서 특정 이미지 한 장의 생성·편집을 명시적으로 요청했다면 그 요청을 현재 작업의 임시 requirement로 사용할 수 있다. 이 예외는 프로젝트 전체 자산 목록의 선정·승인이나 `ASSET_MANIFEST.yml` 승격을 자동으로 만들지 않는다.
 
 ## Process
 
 1. 프로젝트 자산 작업이면 `Visual Requirement Gate`의 선정 결과를 확인한다. `DEFER/CUT/REUSE_SYSTEM/REUSE_PROJECT`를 이미지 생성으로 임의 변환하지 않고, 다량의 미선정 후보를 자동 추가하지 않는다.
-2. `planning-visualization`, `intermediate-visual-checkpoint`, `final-visual-candidate` 중 필요한 mode를 정한다.
-3. 결과물이 쓰일 화면과 가장 먼저 전달할 정보를 정한다.
-4. 원본에서 유지할 요소와 변경할 요소를 분리한다.
-5. Pinterest를 포함한 발견 레퍼런스는 원작자·원출처·라이선스·유사성을 확인하고 표면 복제를 금지한다.
-6. 프롬프트를 다음 모듈로 작성한다.
+2. 프로젝트가 Figma Visual Bible을 구성했거나 Registry가 Figma Artifact를 가리키면 `references/figma-visual-bible-continuity-gate.md`로 승인 reference를 확인한다. 실제 frame/node 접근이 실패하면 `LINK_UNVERIFIED / AUTH_REQUIRED / ACCESS_DENIED / BLOCKED_UNVERIFIED`를 기록하고 WIP·Rejected·과거 대화를 승인 기준으로 추정 사용하지 않는다.
+3. `planning-visualization`, `intermediate-visual-checkpoint`, `final-visual-candidate` 중 필요한 mode를 정한다.
+4. 결과물이 쓰일 화면과 가장 먼저 전달할 정보를 정한다.
+5. 원본에서 유지할 요소와 변경할 요소를 분리한다. Figma 승인 reference가 있으면 `Keep / Avoid / Do Not Drift`를 이 계약에 병합한다.
+6. Pinterest를 포함한 발견 레퍼런스는 원작자·원출처·라이선스·유사성을 확인하고 표면 복제를 금지한다.
+7. 프롬프트를 다음 모듈로 작성한다.
 
 ```text
 requirement_id·목적과 자산 역할
 → 관련 정본·Decision·프로젝트 정체성 고정
+→ 승인된 Figma reference ID·Keep/Avoid/Do Not Drift (구성된 경우)
 → 변경할 표정·포즈·상태
 → 구도와 정보 위계
 → 형태·색·재질·광원
@@ -56,13 +61,13 @@ requirement_id·목적과 자산 역할
 → QA와 재생성 기준
 ```
 
-7. 짧은 제어어가 필요한 경우 자연어 설명 뒤에 코드·태그를 보조 어휘로 넣는다.
-8. 표정 편집은 FACS AU를 참고할 수 있지만 모델의 공식 명령 체계로 가정하지 않는다.
-9. 포스터는 일러스트, 정보 슬롯, 실제 타이포그래피를 분리해 수정 가능하게 만든다.
-10. 성공 사례뿐 아니라 실패 조건과 수정 프롬프트를 기록한다.
-11. 생성 뒤 `visual-qa-and-approval`을 실행하고 `templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md`에 기록한다.
-12. 승인된 Decision만 정본·GitHub·Sheet·Asset Ledger에 동기화한다.
-13. 모델·버전·입력 이미지·확인일이 달라지면 재검증한다.
+8. 짧은 제어어가 필요한 경우 자연어 설명 뒤에 코드·태그를 보조 어휘로 넣는다.
+9. 표정 편집은 FACS AU를 참고할 수 있지만 모델의 공식 명령 체계로 가정하지 않는다.
+10. 포스터는 일러스트, 정보 슬롯, 실제 타이포그래피를 분리해 수정 가능하게 만든다.
+11. 성공 사례뿐 아니라 실패 조건과 수정 프롬프트를 기록한다.
+12. 생성 뒤 `visual-qa-and-approval`을 실행하고 `templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md`에 기록한다. Figma를 쓰는 프로젝트에서는 새 결과를 기본 WIP/review 후보로 두고 승인 reference와 일관성을 비교한다.
+13. 승인된 Decision만 정본·GitHub·Sheet·Asset Ledger와 Visual Artifact Registry에 동기화한다. 사용자 승인 전 Figma `01_APPROVED_REFERENCE` 또는 `04_FINAL`로 자동 승격하지 않는다.
+14. 모델·버전·입력 이미지·확인일 또는 Figma 승인 reference가 달라지면 재검증한다.
 
 ## Intermediate visual checkpoint
 
@@ -139,6 +144,7 @@ reference_similarity_status: PASS | REVISION_REQUIRED | BLOCKED_UNVERIFIED | NOT
 - 실제 화면 크기, HUD·VFX·배경 위에서 읽히는가.
 - 구현 난이도·제작 비용·기술 규격이 현실적인가.
 - 다른 자산과 형태·색·재질·광원이 일관적인가.
+- Figma Visual Bible을 쓰는 프로젝트라면 실제로 확인한 `APPROVED_VISUAL_REFERENCE`와 비율·실루엣·palette·재질·광원·camera·UI hierarchy가 일관적인가.
 - 재사용·편집·현지화가 가능한가.
 - 손·관절·무기·문자·로고·원근·광원 오류가 없는가.
 - 특정 상업 IP·작가 스타일과 과도하게 유사하지 않은가.
@@ -171,6 +177,7 @@ reference_similarity_status: PASS | REVISION_REQUIRED | BLOCKED_UNVERIFIED | NOT
 - 실패 수정 프롬프트.
 - 상태·표정·포즈 변형 표.
 - 실제 화면 QA 체크리스트.
+- Figma Visual Bible 적용 시 확인한 승인 reference ID·일관성 판정·미검증 상태.
 - 모델별 검증 상태.
 - 이미지 기획·검수·승인 기록.
 - `RELEASE_BLOCKED_UNVERIFIED` 항목.
@@ -179,6 +186,9 @@ reference_similarity_status: PASS | REVISION_REQUIRED | BLOCKED_UNVERIFIED | NOT
 
 - 프로젝트 자산 후보를 `Visual Requirement Gate` 선정 없이 관성적으로 대량 생성한다.
 - `DEFER/CUT/REUSE` 판정을 새 이미지 생성으로 임의 변경한다.
+- Figma Visual Bible이 구성됐는데 연결된 승인 reference를 확인하지 않고 과거 대화나 WIP를 기준으로 삼는다.
+- 읽을 수 없는 Figma frame/node를 확인했다고 보고한다.
+- Figma `04_FINAL`을 `PROJECT_ASSET_APPROVED`나 Godot runtime proof로 간주한다.
 - 작가명이나 작품명만으로 스타일을 지시한다.
 - 원본 정체성과 변경 범위를 분리하지 않는다.
 - 생성 이미지를 자동 최종 자산으로 사용한다.
@@ -200,12 +210,14 @@ reference_similarity_status: PASS | REVISION_REQUIRED | BLOCKED_UNVERIFIED | NOT
 5. 한국어 글자가 깨지면 이미지 전체를 재생성하지 않고 텍스트 없는 마스터와 편집 레이어로 분리한다.
 6. 참조 기반 후보가 원본의 식별 가능한 표현을 보존하면 `REVISION_REQUIRED` 또는 `BLOCKED_UNVERIFIED`로 되돌린다.
 7. 프로젝트의 장식 이미지 후보가 Delete Test를 통과하지 못하면 이미지 생성 대신 `DEFER/CUT`으로 유지한다.
+8. Figma 승인 reference가 있는 프로젝트의 새 이미지가 `Keep / Avoid / Do Not Drift`에서 벗어나면 `REVISION_REQUIRED`로 돌리고, 최신 정본과 Figma가 충돌하면 `VISUAL_CANONICAL_CONFLICT`로 분리한다.
 
 ## Quality gate
 
 - 이미지 단계와 상태가 명시돼 있다.
 - 생성·검수·승인·적용이 서로 다른 증거로 분리돼 있다.
 - 프로젝트 정본과 실제 화면 기준으로 검수됐다.
+- Figma가 구성된 프로젝트는 승인 reference 확인·접근 상태·일관성 판정이 기록됐다.
 - 권리·출처·모델·프롬프트·수정 이력이 기록됐다.
 - 참조 전용 입력과 최종 자산이 별도 Record다.
 - 승인 결과가 필요한 소비처에 전파됐다.
@@ -220,3 +232,4 @@ Templates:
 - `templates/planning/EXPRESSION_CONTROL_CARD.md`
 - `templates/planning/CHARACTER_PROMO_POSTER_BRIEF.md`
 - `templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md`
+- `templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md`

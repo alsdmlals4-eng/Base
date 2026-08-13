@@ -13,10 +13,11 @@ from .delivery import DeliveryBlockedError, FigmaDeliveryPacket, ProjectFigmaReg
 from .engine import EngineContractError, EnginePolicy, EngineResult, SpriteEngine, trusted_engine_policy
 from PIL import Image, UnidentifiedImageError
 from base_tool_contracts import AnchorEvidenceError, ApprovedAnchorRegistry
+from base_tool_contracts import safe_staging_write_bytes
 from .exporter import ExportResult, export_run
 from .lineage import write_lineage
 from .models import SpriteAnimationRequest
-from .paths import RunPaths, resolve_project_path, create_run_paths, revalidate_run_paths, stable_run_path
+from .paths import RunPaths, resolve_project_path, create_run_paths, revalidate_run_paths, stable_run_tree
 
 
 class RunNotFoundError(KeyError):
@@ -102,14 +103,16 @@ class SpriteAnimationService:
             except AnchorEvidenceError as error:
                 raise ValueError(str(error)) from error
         try:
-            with stable_run_path(self._project_root, paths) as stable_run:
-                engine_anchor = stable_run / f"anchor{anchor_path.suffix.lower() or '.png'}"
-                engine_anchor.write_bytes(anchor_bytes)
+            with stable_run_tree(self._project_root, paths) as stable:
+                stable_run = stable.run_dir
+                stable_frames = stable.open_directory("frames", expected_identity=paths.frames_identity)
+                stable_engine_run = stable.open_directory("sprite-gen-run", create=True)
+                engine_anchor = safe_staging_write_bytes(stable_run, f"anchor{anchor_path.suffix.lower() or '.png'}", anchor_bytes)
                 engine_request = request.model_copy(update={"anchor": request.anchor.model_copy(update={"source_path": str(engine_anchor)})})
                 lineage = write_lineage(request, anchor_bytes, stable_run, engine={"validation_state": "NOT_RUN"}, anchor_verification=anchor_verification, anchor_evidence=anchor_evidence).resolve()
                 record = RunRecord(run_id=run_id, request=request, paths=paths, lineage=lineage, status="blocked", anchor_bytes=anchor_bytes, engine_policy=self._engine_policy, anchor_verification=anchor_verification, anchor_evidence=anchor_evidence)
                 self._runs[run_id] = record
-                generated = self._engine.generate(engine_request, stable_run)
+                generated = self._engine.generate(engine_request, stable_frames, stable_engine_run)
                 result = EngineResult(frames=tuple(path.resolve() for path in generated.frames), provenance=generated.provenance, delivery_eligible=generated.delivery_eligible, stdout=generated.stdout, stderr=generated.stderr)
         except (EngineContractError, ValueError) as error:
             record = self._runs.get(run_id)
@@ -139,8 +142,8 @@ class SpriteAnimationService:
             return record
         record.generation_output_sha256 = tuple(hashlib.sha256(path.read_bytes()).hexdigest() for path in result.frames)
         record.result = result
-        with stable_run_path(self._project_root, paths) as stable_run:
-            record.lineage = write_lineage(request, anchor_bytes, stable_run, engine=self._engine_evidence(record.generation_output_sha256), anchor_verification=anchor_verification, anchor_evidence=anchor_evidence).resolve()
+        with stable_run_tree(self._project_root, paths) as stable:
+            record.lineage = write_lineage(request, anchor_bytes, stable.run_dir, engine=self._engine_evidence(record.generation_output_sha256), anchor_verification=anchor_verification, anchor_evidence=anchor_evidence).resolve()
         record.status = "generated"
         record.frame_count = len(result.frames)
         return record
@@ -170,7 +173,9 @@ class SpriteAnimationService:
         record = self.get_run(run_id)
         if record.status == "blocked":
             raise RunBlockedError("blocked runs cannot be curated")
-        save_curation(record.paths.run_dir, curation)
+        with stable_run_tree(self._project_root, record.paths) as stable:
+            save_curation(stable.run_dir, curation)
+        revalidate_run_paths(self._project_root, record.paths)
         record.curation = curation
         record.status = "curated"
         return record
@@ -210,10 +215,14 @@ class SpriteAnimationService:
             record.status = "blocked"
             record.warnings.append("all requested frames must be selected before export")
             raise RunBlockedError("all requested frames must be selected before export")
-        with stable_run_path(self._project_root, record.paths) as stable_run:
-            exported = export_run(stable_run, record.request, curation, engine=self._engine_evidence(record.generation_output_sha256), anchor_sha256=hashlib.sha256(record.anchor_bytes).hexdigest(), anchor_verification=record.anchor_verification, anchor_evidence=record.anchor_evidence)
+        with stable_run_tree(self._project_root, record.paths) as stable:
+            stable_frames = stable.open_directory("frames", expected_identity=record.paths.frames_identity)
+            stable_exports = stable.open_directory("exports", expected_identity=record.paths.exports_identity)
+            stable_selected = stable.open_directory(f"exports/frames/{record.request.action.name}", create=True)
+            stable_godot = stable.open_directory("exports/godot", create=True)
+            exported = export_run(stable.run_dir, stable_frames, stable_exports, stable_selected, stable_godot, record.request, curation, frame_sha256=record.generation_output_sha256, engine=self._engine_evidence(record.generation_output_sha256), anchor_sha256=hashlib.sha256(record.anchor_bytes).hexdigest(), anchor_verification=record.anchor_verification, anchor_evidence=record.anchor_evidence)
             record.export = ExportResult(exported.frames_dir.resolve(), exported.atlas.resolve(), exported.contact_sheet.resolve(), exported.gif.resolve(), exported.manifest.resolve(), exported.godot_handoff.resolve())
-            record.lineage = write_lineage(record.request, record.anchor_bytes, stable_run, engine=self._engine_evidence(record.generation_output_sha256), anchor_verification=record.anchor_verification, anchor_evidence=record.anchor_evidence).resolve()
+            record.lineage = write_lineage(record.request, record.anchor_bytes, stable.run_dir, engine=self._engine_evidence(record.generation_output_sha256), anchor_verification=record.anchor_verification, anchor_evidence=record.anchor_evidence).resolve()
         try:
             revalidate_run_paths(self._project_root, record.paths)
         except ValueError as error:

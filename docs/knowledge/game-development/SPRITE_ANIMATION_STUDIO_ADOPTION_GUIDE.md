@@ -56,4 +56,4 @@ Figma 원본 → 승인 앵커 → 동작 후보 → 채택 프레임 → 최종
 - 로컬 어댑터 실패, PNG 검사 실패, 프레임 수 불일치, 경로 탈출은 성공으로 대체하지 않습니다.
 - 실패한 출력은 프로젝트의 해당 실행 폴더만 제거하거나 이전 승인 실행으로 되돌립니다. Base 코드 변경은 PR revert로 복구합니다.
 - API 키, 세션 토큰, 원본 아트, 생성 결과물은 Base PR에 추가하지 않습니다.
-- `sprite-gen` 버전을 바꿀 때는 정확한 commit·라이선스·테스트 결과를 기록하고, 문제 시 기존 pin으로 되돌립니다. 실제 생성 경로는 `prepare → gen --provider codex → extract`이며, 다른 제공자로 자동 전환하지 않습니다.
+- `sprite-gen` 버전을 바꿀 때는 정확한 commit·라이선스·테스트 결과를 기록하고, 문제 시 기존 pin으로 되돌립니다. 계획된 생성 경로는 `prepare → gen --provider codex → extract`이지만, 현재는 OS-isolated workspace runner가 없어 subprocess 실행 전에 차단됩니다. 다른 제공자로 자동 전환하거나 이를 실제 생성 성공으로 보고하지 않습니다.

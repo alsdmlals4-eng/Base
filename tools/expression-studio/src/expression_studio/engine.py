@@ -2,11 +2,13 @@
 
 from dataclasses import dataclass
 import hashlib
+from io import BytesIO
 import json
 from pathlib import Path
 from typing import Protocol
 
 from PIL import Image, UnidentifiedImageError
+from base_tool_contracts import safe_staging_write_bytes
 
 from .catalog import ResolvedExpression
 from .models import ExpressionRequest
@@ -49,7 +51,7 @@ class ExpressionEngine(Protocol):
     provenance: str
     delivery_eligible: bool
 
-    def generate(self, request: ExpressionRequest, resolved: ResolvedExpression, run_dir: Path) -> EngineResult:
+    def generate(self, request: ExpressionRequest, resolved: ResolvedExpression, candidates_dir: Path) -> EngineResult:
         """Generate local candidate PNGs without mutating the approved anchor."""
 
 
@@ -75,7 +77,7 @@ class FakeExpressionEngine:
     def __init__(self, project_root: Path) -> None:
         self._project_root = project_root.resolve()
 
-    def generate(self, request: ExpressionRequest, resolved: ResolvedExpression, run_dir: Path) -> EngineResult:
+    def generate(self, request: ExpressionRequest, resolved: ResolvedExpression, candidates_dir: Path) -> EngineResult:
         anchor_reference = self._project_root / request.anchor.source_path
         anchor = anchor_reference.resolve()
         if self._project_root not in anchor.parents or not anchor.is_file():
@@ -86,12 +88,11 @@ class FakeExpressionEngine:
         except (OSError, UnidentifiedImageError) as error:
             raise EngineContractError("approved anchor source_path must be a readable image") from error
 
-        candidates_dir = run_dir / "candidates"
-        candidates_dir.mkdir(parents=True, exist_ok=True)
         candidates: list[Path] = []
         for index in range(request.candidate_count):
-            candidate = candidates_dir / f"candidate-{index:03d}.png"
-            source_rgba.save(candidate)
+            encoded = BytesIO()
+            source_rgba.save(encoded, format="PNG")
+            candidate = safe_staging_write_bytes(candidates_dir, f"candidate-{index:03d}.png", encoded.getvalue())
             candidates.append(candidate)
         return EngineResult(
             candidates=candidates,

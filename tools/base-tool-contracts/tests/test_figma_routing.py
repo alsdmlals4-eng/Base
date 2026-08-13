@@ -165,3 +165,115 @@ def test_staging_revalidation_rejects_a_post_create_symlink_swap(tmp_path: Path)
 
     with pytest.raises(StagingViolation, match="symlink"):
         assert_verified_staging_path(tmp_path, run_dir)
+
+
+def test_stable_staging_tree_pins_mutable_leaf_and_nested_directories(tmp_path: Path) -> None:
+    """A same-user name swap must not redirect writes outside the opened directory handles."""
+    from base_tool_contracts import create_verified_run_directories, stable_staging_tree, staging_identity
+
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    (tmp_path / ".gitignore").write_text(".asset-vault/\n", encoding="utf-8")
+    (tmp_path / ".asset-vault" / "library").mkdir(parents=True)
+    run_dir, _ = create_verified_run_directories(
+        tmp_path,
+        dynamic_components=("generated", "tool", "asset", "run"),
+        leaf_directories=("frames", "exports"),
+    )
+    outside = tmp_path.parent / f"{tmp_path.name}-leaf-outside"
+    outside.mkdir()
+
+    with stable_staging_tree(tmp_path, run_dir, staging_identity(run_dir)) as stable:
+        stable_frames = stable.open_directory("frames")
+        stable_selected = stable.open_directory("exports/frames/attack", create=True)
+
+        original_frames = run_dir / "frames-original"
+        (run_dir / "frames").rename(original_frames)
+        (run_dir / "frames").symlink_to(outside, target_is_directory=True)
+
+        original_selected = run_dir / "exports" / "frames" / "attack-original"
+        (run_dir / "exports" / "frames" / "attack").rename(original_selected)
+        (run_dir / "exports" / "frames" / "attack").symlink_to(outside, target_is_directory=True)
+
+        (stable_frames / "frame.png").write_bytes(b"frame")
+        (stable_selected / "selected.png").write_bytes(b"selected")
+
+    assert (original_frames / "frame.png").read_bytes() == b"frame"
+    assert (original_selected / "selected.png").read_bytes() == b"selected"
+    assert not (outside / "frame.png").exists()
+    assert not (outside / "selected.png").exists()
+
+
+def test_staging_write_rejects_a_file_symlink_without_following_it(tmp_path: Path) -> None:
+    from base_tool_contracts import StagingViolation, safe_staging_write_bytes
+
+    output = tmp_path / "output"
+    output.mkdir()
+    outside = tmp_path / "outside.txt"
+    outside.write_bytes(b"protected")
+    (output / "manifest.json").symlink_to(outside)
+
+    with pytest.raises(StagingViolation, match="regular file"):
+        safe_staging_write_bytes(output, "manifest.json", b"safe")
+
+    assert outside.read_bytes() == b"protected"
+    assert (output / "manifest.json").is_symlink()
+
+
+def test_staging_read_rejects_final_symlink_and_sha_mismatch(tmp_path: Path) -> None:
+    from base_tool_contracts import StagingViolation, staging_read_bytes
+
+    output = tmp_path / "output"
+    output.mkdir()
+    outside = tmp_path / "outside.png"
+    outside.write_bytes(b"outside")
+    (output / "frame.png").symlink_to(outside)
+
+    with pytest.raises(StagingViolation, match="regular file"):
+        staging_read_bytes(output, "frame.png")
+
+    (output / "frame.png").unlink()
+    (output / "frame.png").write_bytes(b"inside")
+    with pytest.raises(StagingViolation, match="SHA-256"):
+        staging_read_bytes(output, "frame.png", expected_sha256="0" * 64)
+
+
+def test_staging_write_detects_destination_swap_while_holding_the_original_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    import os
+    from base_tool_contracts import StagingViolation, safe_staging_write_bytes
+
+    output = tmp_path / "output"
+    output.mkdir()
+    target = output / "manifest.json"
+    target.write_bytes(b"old")
+    outside = tmp_path / "outside.txt"
+    outside.write_bytes(b"protected")
+    original_fsync = os.fsync
+
+    def replace_destination(descriptor: int) -> None:
+        original_fsync(descriptor)
+        target.rename(output / "manifest-original.json")
+        target.symlink_to(outside)
+
+    monkeypatch.setattr(os, "fsync", replace_destination)
+
+    with pytest.raises(StagingViolation, match="identity changed"):
+        safe_staging_write_bytes(output, "manifest.json", b"safe")
+    assert outside.read_bytes() == b"protected"
+    assert (output / "manifest-original.json").read_bytes() == b"safe"
+
+
+def test_staging_write_replaces_a_hard_link_without_overwriting_its_external_inode(tmp_path: Path) -> None:
+    from base_tool_contracts import safe_staging_write_bytes
+
+    output = tmp_path / "output"
+    output.mkdir()
+    outside = tmp_path / "protected.txt"
+    outside.write_bytes(b"protected")
+    target = output / "manifest.json"
+    target.hardlink_to(outside)
+
+    safe_staging_write_bytes(output, "manifest.json", b"safe")
+
+    assert outside.read_bytes() == b"protected"
+    assert target.read_bytes() == b"safe"
+    assert target.stat().st_ino != outside.stat().st_ino

@@ -9,6 +9,7 @@ from uuid import uuid4
 
 from PIL import Image, UnidentifiedImageError
 from base_tool_contracts import AnchorEvidenceError, ApprovedAnchorRegistry
+from base_tool_contracts import safe_staging_write_bytes
 
 from .catalog import ResolvedExpression, resolve_expression
 from .delivery import DeliveryBlockedError, FigmaDeliveryPacket, ProjectFigmaRegistry
@@ -16,7 +17,7 @@ from .engine import EngineContractError, EnginePolicy, EngineResult, ExpressionE
 from .exporter import ExportResult, export_selected_candidate
 from .lineage import write_lineage
 from .models import ExpressionRequest
-from .paths import RunPaths, create_run_paths, resolve_project_path, revalidate_run_paths, stable_run_path
+from .paths import RunPaths, create_run_paths, resolve_project_path, revalidate_run_paths, stable_run_tree
 
 
 class RunNotFoundError(KeyError):
@@ -127,14 +128,15 @@ class ExpressionStudioService:
             except AnchorEvidenceError as error:
                 raise ValueError(str(error)) from error
         try:
-            with stable_run_path(self._project_root, paths) as stable_run:
-                engine_anchor = stable_run / f"approved-anchor{anchor.suffix.lower() or '.png'}"
-                engine_anchor.write_bytes(anchor_bytes)
+            with stable_run_tree(self._project_root, paths) as stable:
+                stable_run = stable.run_dir
+                stable_candidates = stable.open_directory("candidates", expected_identity=paths.candidates_identity)
+                engine_anchor = safe_staging_write_bytes(stable_run, f"approved-anchor{anchor.suffix.lower() or '.png'}", anchor_bytes)
                 engine_request = request.model_copy(update={"anchor": request.anchor.model_copy(update={"source_path": str(engine_anchor)})})
                 lineage = write_lineage(request, resolved, anchor_bytes, stable_run, anchor_verification=anchor_verification, anchor_evidence=anchor_evidence).resolve()
                 record = RunRecord(run_id=run_id, request=request, resolved=resolved, paths=paths, lineage=lineage, anchor_bytes=anchor_bytes, engine_policy=self._engine_policy, anchor_verification=anchor_verification, anchor_evidence=anchor_evidence, status="blocked")
                 self._runs[run_id] = record
-                result = self._engine.generate(engine_request, resolved, stable_run)
+                result = self._engine.generate(engine_request, resolved, stable_candidates)
                 record.result = EngineResult(
                     candidates=[path.resolve() for path in result.candidates],
                     generation_instruction=result.generation_instruction,
@@ -181,8 +183,8 @@ class ExpressionStudioService:
             record.result = None
             return record
         record.generation_output_sha256 = tuple(hashlib.sha256(path.read_bytes()).hexdigest() for path in record.result.candidates)
-        with stable_run_path(self._project_root, paths) as stable_run:
-            record.lineage = write_lineage(request, resolved, anchor_bytes, stable_run, generation_instruction=record.result.generation_instruction, engine=self._engine_evidence(record.generation_output_sha256), anchor_verification=record.anchor_verification, anchor_evidence=record.anchor_evidence).resolve()
+        with stable_run_tree(self._project_root, paths) as stable:
+            record.lineage = write_lineage(request, resolved, anchor_bytes, stable.run_dir, generation_instruction=record.result.generation_instruction, engine=self._engine_evidence(record.generation_output_sha256), anchor_verification=record.anchor_verification, anchor_evidence=record.anchor_evidence).resolve()
         record.status = "generated"
         return record
 
@@ -240,12 +242,14 @@ class ExpressionStudioService:
         except EngineContractError as error:
             raise RunBlockedError(str(error)) from error
         self.candidate(run_id, selected_candidate)
-        with stable_run_path(self._project_root, record.paths) as stable_run:
-            stable_candidates = [stable_run / path.relative_to(record.paths.run_dir) for path in record.result.candidates]
-            exported = export_selected_candidate(stable_run / "exports", stable_candidates, selected_candidate, record.result.generation_instruction, engine=self._engine_evidence(record.generation_output_sha256), anchor_sha256=hashlib.sha256(record.anchor_bytes).hexdigest(), anchor_verification=record.anchor_verification, anchor_evidence=record.anchor_evidence)
+        with stable_run_tree(self._project_root, record.paths) as stable:
+            stable_candidates_dir = stable.open_directory("candidates", expected_identity=record.paths.candidates_identity)
+            stable_exports = stable.open_directory("exports", expected_identity=record.paths.exports_identity)
+            stable_candidates = [stable_candidates_dir / path.name for path in record.result.candidates]
+            exported = export_selected_candidate(stable_exports, stable_candidates, selected_candidate, record.result.generation_instruction, candidate_sha256=record.generation_output_sha256, engine=self._engine_evidence(record.generation_output_sha256), anchor_sha256=hashlib.sha256(record.anchor_bytes).hexdigest(), anchor_verification=record.anchor_verification, anchor_evidence=record.anchor_evidence)
             record.export = ExportResult(exported.selected.resolve(), exported.contact_sheet.resolve(), exported.manifest.resolve())
             record.selected_candidate = selected_candidate
-            record.lineage = write_lineage(record.request, record.resolved, record.anchor_bytes, stable_run, generation_instruction=record.result.generation_instruction, selected_candidate=selected_candidate, engine=self._engine_evidence(record.generation_output_sha256), anchor_verification=record.anchor_verification, anchor_evidence=record.anchor_evidence).resolve()
+            record.lineage = write_lineage(record.request, record.resolved, record.anchor_bytes, stable.run_dir, generation_instruction=record.result.generation_instruction, selected_candidate=selected_candidate, engine=self._engine_evidence(record.generation_output_sha256), anchor_verification=record.anchor_verification, anchor_evidence=record.anchor_evidence).resolve()
         try:
             revalidate_run_paths(self._project_root, record.paths)
         except ValueError as error:

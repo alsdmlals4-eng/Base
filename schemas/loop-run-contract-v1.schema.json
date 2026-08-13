@@ -1,0 +1,345 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/loop-run-contract-v1.schema.json",
+  "title": "Loop Engineering Run Contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "contract_role",
+    "run_id",
+    "goal_id",
+    "project_id",
+    "planning_gate",
+    "autonomy_tier",
+    "source_main_sha",
+    "loop_state",
+    "task_queues",
+    "leases",
+    "budget",
+    "evidence",
+    "findings",
+    "design_drift_status",
+    "approval_refs",
+    "blockers",
+    "improvement_candidates",
+    "next_action"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "contract_role": {"const": "loop-engineering-run"},
+    "run_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"},
+    "goal_id": {"type": "string", "minLength": 1},
+    "project_id": {"type": "string", "minLength": 1},
+    "planning_gate": {"$ref": "#/$defs/planning_gate"},
+    "autonomy_tier": {
+      "enum": [
+        "A0_OBSERVE",
+        "A1_PROPOSE",
+        "A2_EXECUTE_ISOLATED",
+        "A3_BOUNDED_AUTO_MERGE",
+        "A4_HUMAN_ONLY"
+      ]
+    },
+    "source_main_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "expected_head_sha": {
+      "anyOf": [
+        {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        {"type": "null"}
+      ]
+    },
+    "loop_state": {
+      "enum": [
+        "TRIGGER",
+        "DISCOVER",
+        "TRIAGE",
+        "CONTRACT",
+        "CONTEXT_SYNC",
+        "DECOMPOSE",
+        "ROUTE",
+        "ISOLATE",
+        "EXECUTE",
+        "VERIFY",
+        "ADVERSARIAL_REVIEW",
+        "REPAIR",
+        "DEFERRED",
+        "USER_DECISION_REQUIRED",
+        "INTEGRATION_GATE",
+        "MERGE_GATE",
+        "MAIN_READBACK",
+        "LEARN",
+        "NEXT_WORK",
+        "COMPLETE",
+        "QUARANTINED",
+        "STOPPED"
+      ]
+    },
+    "task_queues": {"$ref": "#/$defs/task_queues"},
+    "leases": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/lease"}
+    },
+    "budget": {"$ref": "#/$defs/budget"},
+    "evidence": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/evidence"}
+    },
+    "findings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/finding"}
+    },
+    "design_drift_status": {
+      "enum": ["NOT_CHECKED", "NO_DRIFT", "MINOR_TECHNICAL_DRIFT", "PLANNING_CONFLICT"]
+    },
+    "approval_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "blockers": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/blocker"}
+    },
+    "improvement_candidates": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/improvement_candidate"}
+    },
+    "next_action": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "planning_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "loop_ready",
+        "user_review_complete",
+        "adversarial_review_complete",
+        "planning_sources",
+        "objective",
+        "allowed_changes",
+        "acceptance_criteria",
+        "protected_behavior",
+        "exclusions"
+      ],
+      "properties": {
+        "status": {"const": "PLANNING_LOCKED"},
+        "loop_ready": {"const": true},
+        "user_review_complete": {"const": true},
+        "adversarial_review_complete": {"const": true},
+        "planning_sources": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "objective": {"type": "string", "minLength": 1},
+        "allowed_changes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "acceptance_criteria": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "protected_behavior": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "objective",
+        "status",
+        "depends_on",
+        "resource_domains",
+        "justification",
+        "verification"
+      ],
+      "properties": {
+        "task_id": {"type": "string", "minLength": 1},
+        "objective": {"type": "string", "minLength": 1},
+        "status": {
+          "enum": ["READY", "LEASED", "DEFERRED", "COMPLETED", "BLOCKED", "QUARANTINED"]
+        },
+        "depends_on": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "resource_domains": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "justification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "problem",
+            "evidence",
+            "player_or_user_value",
+            "risk_if_ignored",
+            "expected_outcome"
+          ],
+          "properties": {
+            "problem": {"type": "string", "minLength": 1},
+            "evidence": {"type": "string", "minLength": 1},
+            "player_or_user_value": {"type": "string", "minLength": 1},
+            "risk_if_ignored": {"type": "string", "minLength": 1},
+            "expected_outcome": {"type": "string", "minLength": 1}
+          }
+        },
+        "verification": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "task_queues": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ready_tasks", "deferred_tasks", "completed_tasks"],
+      "properties": {
+        "ready_tasks": {"type": "array", "items": {"$ref": "#/$defs/task"}},
+        "deferred_tasks": {"type": "array", "items": {"$ref": "#/$defs/task"}},
+        "completed_tasks": {"type": "array", "items": {"$ref": "#/$defs/task"}}
+      }
+    },
+    "lease": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lease_id",
+        "task_id",
+        "owner_agent",
+        "source_main_sha",
+        "branch",
+        "worktree",
+        "path_locks",
+        "semantic_resource_locks",
+        "acquired_at",
+        "expires_at",
+        "status"
+      ],
+      "properties": {
+        "lease_id": {"type": "string", "minLength": 1},
+        "task_id": {"type": "string", "minLength": 1},
+        "owner_agent": {"type": "string", "minLength": 1},
+        "source_main_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "branch": {"type": "string", "minLength": 1},
+        "worktree": {"type": "string", "minLength": 1},
+        "path_locks": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "semantic_resource_locks": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "acquired_at": {"type": "string", "format": "date-time"},
+        "expires_at": {"type": "string", "format": "date-time"},
+        "status": {"enum": ["ACTIVE", "RELEASED", "WAITING_RESOURCE", "EXPIRED"]}
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_agents",
+        "max_parallel_agents",
+        "max_model_calls",
+        "max_repair_cycles",
+        "max_ci_runs",
+        "used_model_calls",
+        "used_repair_cycles",
+        "used_ci_runs"
+      ],
+      "properties": {
+        "max_agents": {"type": "integer", "minimum": 1},
+        "max_parallel_agents": {"type": "integer", "minimum": 1},
+        "max_model_calls": {"type": "integer", "minimum": 1},
+        "max_repair_cycles": {"type": "integer", "minimum": 1},
+        "max_ci_runs": {"type": "integer", "minimum": 1},
+        "used_model_calls": {"type": "integer", "minimum": 0},
+        "used_repair_cycles": {"type": "integer", "minimum": 0},
+        "used_ci_runs": {"type": "integer", "minimum": 0}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_id", "level", "status", "subject", "source"],
+      "properties": {
+        "evidence_id": {"type": "string", "minLength": 1},
+        "level": {"enum": ["E0_CONTRACT", "E1_STATIC", "E2_TEST", "E3_RUNTIME", "E4_VISUAL", "E5_PLAY", "E6_HUMAN_PLAYTEST"]},
+        "status": {"enum": ["PASS", "FAIL", "PARTIAL", "NOT_RUN", "BLOCKED_UNVERIFIED"]},
+        "subject": {"type": "string", "minLength": 1},
+        "source": {"type": "string", "minLength": 1}
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finding_id", "severity", "summary", "status"],
+      "properties": {
+        "finding_id": {"type": "string", "minLength": 1},
+        "severity": {"enum": ["MUST_FIX", "SHOULD_FIX", "USER_DECISION_REQUIRED", "DEFER", "REJECTED_CRITIQUE", "BLOCKED_UNVERIFIED"]},
+        "summary": {"type": "string", "minLength": 1},
+        "status": {"enum": ["OPEN", "RESOLVED", "DEFERRED", "REJECTED"]}
+      }
+    },
+    "blocker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["blocker_id", "classification", "summary", "status"],
+      "properties": {
+        "blocker_id": {"type": "string", "minLength": 1},
+        "classification": {
+          "enum": [
+            "PRODUCT_FAILURE",
+            "TEST_FAILURE",
+            "INFRA_FAILURE",
+            "EVIDENCE_TRANSPORT_FAILURE",
+            "FLAKY_SUSPECTED",
+            "NO_PROGRESS",
+            "BUDGET_EXCEEDED",
+            "RETRY_LIMIT",
+            "STALE_BASE_SHA",
+            "RESOURCE_COLLISION",
+            "PROTECTED_SURFACE",
+            "USER_DECISION_REQUIRED",
+            "HIGH_RISK_CONFIRMATION_REQUIRED"
+          ]
+        },
+        "summary": {"type": "string", "minLength": 1},
+        "status": {"enum": ["OPEN", "RECOVERING", "DEFERRED", "RESOLVED", "QUARANTINED"]}
+      }
+    },
+    "improvement_candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "idea", "player_or_user_value", "current_loop_action"],
+      "properties": {
+        "candidate_id": {"type": "string", "minLength": 1},
+        "idea": {"type": "string", "minLength": 1},
+        "player_or_user_value": {"type": "string", "minLength": 1},
+        "current_loop_action": {"const": "DEFER"}
+      }
+    }
+  }
+}

@@ -3,6 +3,7 @@
 import hashlib
 import json
 from pathlib import Path
+from base_tool_contracts import safe_staging_write_text
 
 from .catalog import ResolvedExpression
 from .models import ExpressionRequest
@@ -53,6 +54,4 @@ def write_lineage(
         "selection": {"selected_candidate": selected_candidate},
         "tool_version": "0.1.0",
     }
-    target = output_dir / "lineage.json"
-    target.write_text(json.dumps(record, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    return target
+    return safe_staging_write_text(output_dir, "lineage.json", json.dumps(record, ensure_ascii=False, indent=2, sort_keys=True) + "\n")

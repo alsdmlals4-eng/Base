@@ -3,6 +3,7 @@
 import hashlib
 import json
 from pathlib import Path
+from base_tool_contracts import safe_staging_write_text
 
 from .models import SpriteAnimationRequest
 
@@ -27,6 +28,4 @@ def write_lineage(request: SpriteAnimationRequest, anchor_bytes: bytes, output_d
         "staging_root": ".asset-vault/library/generated/sprite-animation-studio",
         "project_id": request.project_id,
     }
-    target = output_dir / "lineage.json"
-    target.write_text(json.dumps(record, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    return target
+    return safe_staging_write_text(output_dir, "lineage.json", json.dumps(record, ensure_ascii=False, indent=2, sort_keys=True) + "\n")

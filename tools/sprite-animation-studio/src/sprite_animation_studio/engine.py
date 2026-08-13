@@ -3,12 +3,14 @@
 from dataclasses import dataclass
 import hashlib
 import json
+from io import BytesIO
 from pathlib import Path
 import shutil
 import subprocess
 from typing import Protocol
 
 from PIL import Image
+from base_tool_contracts import safe_staging_write_bytes
 
 from .models import SpriteAnimationRequest
 
@@ -20,6 +22,25 @@ MODE_GUIDANCE = {
     "sprite_action": "Preserve the approved anchor identity, silhouette, palette, and pixel-art style across the complete action row.",
 }
 PINNED_SPRITE_GEN_COMMIT = "88f2ea17cac2ef066536beee7e3f40b2f8d29c87"
+
+
+def build_sprite_gen_request(request: SpriteAnimationRequest) -> dict[str, object]:
+    """Build the reviewed, mode-specific upstream request without executing it."""
+    generation_prompt = f"{MODE_GUIDANCE[request.mode]}\n\nRequested action: {request.action.prompt}"
+    return {
+        "version": 1,
+        "kind": "sprite-gen-request",
+        "engine": "component-row",
+        "character": {"id": request.asset_id, "description": generation_prompt},
+        "states": {
+            request.action.name: {
+                "frames": request.action.frame_count,
+                "fps": request.action.fps,
+                "loop": request.action.loop_mode != "none",
+                "action": generation_prompt,
+            }
+        },
+    }
 
 
 class EngineContractError(RuntimeError):
@@ -47,7 +68,7 @@ class SpriteEngine(Protocol):
     provenance: str
     delivery_eligible: bool
 
-    def generate(self, request: SpriteAnimationRequest, run_dir: Path) -> EngineResult:
+    def generate(self, request: SpriteAnimationRequest, frames_dir: Path, engine_run_dir: Path) -> EngineResult:
         """Generate exactly the requested count of candidate PNG frames."""
 
 
@@ -73,12 +94,12 @@ class FakeSpriteEngine:
     def __init__(self, frame_count: int | None = None) -> None:
         self._frame_count = frame_count
 
-    def generate(self, request: SpriteAnimationRequest, run_dir: Path) -> EngineResult:
-        frames_dir = run_dir / "frames"
-        frames_dir.mkdir(parents=True, exist_ok=True)
+    def generate(self, request: SpriteAnimationRequest, frames_dir: Path, _engine_run_dir: Path) -> EngineResult:
         frame_count = self._frame_count if self._frame_count is not None else request.action.frame_count
         for index in range(frame_count):
-            Image.new("RGBA", (32, 32), (0, 0, 0, 0)).save(frames_dir / f"frame-{index:03d}.png")
+            encoded = BytesIO()
+            Image.new("RGBA", (32, 32), (0, 0, 0, 0)).save(encoded, format="PNG")
+            safe_staging_write_bytes(frames_dir, f"frame-{index:03d}.png", encoded.getvalue())
         return EngineResult(
             frames=_verify_frames(frames_dir, request.action.frame_count),
             provenance="simulated",
@@ -90,7 +111,7 @@ class PinnedSpriteGenEngine:
     """Invoke the pinned upstream ``sprite-gen`` component-row pipeline."""
 
     provenance = "pinned_sprite_gen"
-    delivery_eligible = True
+    workspace_isolated = False
 
     def __init__(self, sprite_gen_executable: Path, project_root: Path, provider: str = "codex", sprite_gen_repository: Path | None = None) -> None:
         self._executable = sprite_gen_executable
@@ -102,7 +123,7 @@ class PinnedSpriteGenEngine:
 
     @property
     def delivery_eligible(self) -> bool:
-        return self._pin_verified
+        return self._pin_verified and self.workspace_isolated
 
     def _hash_executable(self) -> str:
         try:
@@ -131,35 +152,24 @@ class PinnedSpriteGenEngine:
             and committed.stdout == executable.read_bytes()
         )
 
-    def generate(self, request: SpriteAnimationRequest, run_dir: Path) -> EngineResult:
+    def generate(self, request: SpriteAnimationRequest, frames_dir: Path, engine_run_dir: Path) -> EngineResult:
+        if not self.workspace_isolated:
+            raise EngineContractError(
+                "sprite-gen execution is blocked until an OS-isolated workspace adapter is configured"
+            )
         if not self._verify_repository_pin():
             raise EngineContractError("sprite-gen repository/executable is not verified at the required pinned commit")
         if self._hash_executable() != self._executable_sha256:
             raise EngineContractError("configured sprite-gen executable changed after adapter verification")
 
-        run_dir.mkdir(parents=True, exist_ok=True)
-        engine_run_dir = run_dir / "sprite-gen-run"
         anchor_reference = self._project_root / request.anchor.source_path
         anchor_path = anchor_reference.resolve()
         if anchor_path != self._project_root and self._project_root not in anchor_path.parents:
             raise EngineContractError("approved anchor escapes project root")
         if not anchor_path.is_file():
             raise EngineContractError("approved anchor file is unavailable")
-        generation_prompt = f"{MODE_GUIDANCE[request.mode]}\n\nRequested action: {request.action.prompt}"
-        engine_request = {
-            "version": 1,
-            "kind": "sprite-gen-request",
-            "engine": "component-row",
-            "character": {"id": request.asset_id, "description": generation_prompt},
-            "states": {
-                request.action.name: {
-                    "frames": request.action.frame_count,
-                    "fps": request.action.fps,
-                    "loop": request.action.loop_mode != "none",
-                    "action": generation_prompt,
-                }
-            },
-        }
+        engine_request = build_sprite_gen_request(request)
+        generation_prompt = str(engine_request["character"]["description"])
         request_json = json.dumps(engine_request, ensure_ascii=False, sort_keys=True)
         commands = [
             [str(self._executable), "prepare", "--out-dir", str(engine_run_dir), "--character-id", request.asset_id,
@@ -172,7 +182,7 @@ class PinnedSpriteGenEngine:
         ]
         output: list[str] = []
         inherited: set[int] = set()
-        for path in (run_dir, Path(request.anchor.source_path)):
+        for path in (frames_dir, engine_run_dir, Path(request.anchor.source_path)):
             if len(path.parts) >= 5 and path.parts[:4] == ("/", "proc", "self", "fd"):
                 inherited.add(int(path.parts[4]))
         inherited_fds = tuple(sorted(inherited))
@@ -186,10 +196,8 @@ class PinnedSpriteGenEngine:
         extracted = tuple(sorted((engine_run_dir / "frames").rglob("*.png")))
         if len(extracted) != request.action.frame_count:
             raise EngineContractError(f"expected {request.action.frame_count} frames, received {len(extracted)}")
-        frames_dir = run_dir / "frames"
-        frames_dir.mkdir(parents=True, exist_ok=True)
         for index, frame in enumerate(extracted):
-            shutil.copy2(frame, frames_dir / f"frame-{index:03d}.png")
+            safe_staging_write_bytes(frames_dir, f"frame-{index:03d}.png", frame.read_bytes())
         frames = _verify_frames(frames_dir, request.action.frame_count)
         if not self._verify_repository_pin() or self._hash_executable() != self._executable_sha256:
             raise EngineContractError("configured sprite-gen repository or executable changed during generation")
@@ -207,13 +215,14 @@ def trusted_engine_policy(engine: SpriteEngine) -> EnginePolicy:
         adapter_id, provenance, eligible = "sprite.fake.v1", "simulated", False
         adapter_config = {"frame_count": engine._frame_count}
     elif type(engine) is PinnedSpriteGenEngine:
-        eligible = engine._verify_repository_pin() and engine._hash_executable() == engine._executable_sha256
+        eligible = engine.delivery_eligible and engine._verify_repository_pin() and engine._hash_executable() == engine._executable_sha256
         adapter_id, provenance = "sprite.sprite-gen.pinned.v1", "pinned_sprite_gen"
         adapter_config = {
             "executable": str(engine._executable.resolve()),
             "executable_sha256": engine._executable_sha256,
             "repository_commit": PINNED_SPRITE_GEN_COMMIT if engine._pin_verified else "UNVERIFIED",
             "provider": engine._provider,
+            "workspace_isolated": engine.workspace_isolated,
         }
     else:
         adapter_id, provenance, eligible = "sprite.unverified", "unverified", False

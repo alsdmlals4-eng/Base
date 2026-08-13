@@ -50,7 +50,7 @@ Future tools follow the same rule: use an external/local tool for asset generati
 Every engine result declares provenance and delivery eligibility.
 
 - `openai`: real provider response; eligible for user review, export, and later Figma placement.
-- `pinned_sprite_gen`: real configured upstream provider response; eligible after validation.
+- `pinned_sprite_gen`: real configured upstream provider response; eligible only after immutable repository validation **and** an OS-isolated workspace runner. The current adapter remains blocked because the isolation runner is not implemented.
 - `simulated`: deterministic test fixture; visible only as a test result and blocked from export/Figma delivery.
 
 The browser shows the provenance prominently. It must never label an unchanged copied anchor or transparent fixture as a completed expression, action, or effect.

@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 import subprocess
 
 from fastapi.testclient import TestClient
@@ -13,8 +14,8 @@ from tests.test_delivery import write_registry
 
 
 class EligibleSpriteEngine(FakeSpriteEngine):
-    def generate(self, request: object, run_dir: Path) -> EngineResult:
-        result = super().generate(request, run_dir)
+    def generate(self, request: object, frames_dir: Path, engine_dir: Path) -> EngineResult:
+        result = super().generate(request, frames_dir, engine_dir)
         return EngineResult(frames=result.frames, provenance="pinned_sprite_gen", delivery_eligible=True)
 
 
@@ -204,12 +205,12 @@ def test_sprite_engine_cannot_mutate_the_original_anchor(tmp_path: Path) -> None
     original: bytes = b""
 
     class MutatingEngine:
-        def generate(self, request: object, run_dir: Path) -> EngineResult:
+        def generate(self, request: object, frames_dir: Path, _engine_dir: Path) -> EngineResult:
             source = tmp_path / "art" / "source" / "idle.png"
             source.write_bytes(b"mutated")
             frames = []
             for index in range(4):
-                frame = run_dir / "frames" / f"frame-{index:03d}.png"
+                frame = frames_dir / f"frame-{index:03d}.png"
                 Image.new("RGBA", (8, 8), (255, 0, 0, 255)).save(frame)
                 frames.append(frame)
             return EngineResult(frames=tuple(frames))
@@ -238,3 +239,31 @@ def test_registry_backed_sprite_service_requires_a_canonical_project_id(tmp_path
 
     with pytest.raises(ValueError, match="canonical project_id"):
         client_for(tmp_path, registry, project_id=None)
+
+
+def test_engine_frame_handle_prevents_leaf_symlink_swap_escape(tmp_path: Path) -> None:
+    outside = tmp_path.parent / f"{tmp_path.name}-sprite-leaf-outside"
+    outside.mkdir()
+
+    class LeafSwappingEngine:
+        def generate(self, request: object, frames_dir: Path, _engine_dir: Path) -> EngineResult:
+            lexical_frames = Path(os.readlink(frames_dir))
+            original_frames = lexical_frames.with_name("frames-original")
+            lexical_frames.rename(original_frames)
+            lexical_frames.symlink_to(outside, target_is_directory=True)
+            frames = []
+            for index in range(request.action.frame_count):
+                frame = frames_dir / f"frame-{index:03d}.png"
+                Image.new("RGBA", (8, 8), (255, 0, 0, 255)).save(frame)
+                frames.append(frame)
+            return EngineResult(frames=tuple(frames))
+
+    client = client_for(tmp_path, engine=LeafSwappingEngine())
+    run = client.post("/api/runs", json=valid_payload()).json()
+    original_frames = next(
+        (tmp_path / ".asset-vault" / "library" / "generated" / "sprite-animation-studio").rglob("frames-original")
+    )
+
+    assert (original_frames / "frame-000.png").is_file()
+    assert not (outside / "frame-000.png").exists()
+    assert run["status"] == "blocked"

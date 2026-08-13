@@ -830,3 +830,131 @@ BLOCKED_UNVERIFIED
 `PROMOTION_CANDIDATE`는 자동 승격이 아니다. 기존 Watchlist의 new-site Gate, Existing Solution First, 적대적 검토, owner/consumer 연결, 실제 PR/exact-head 검증을 통과해야 한다.
 
 실질적인 개선이 없으면 `NO_CHANGE`로 닫고, seed를 추가했다는 이유만으로 새 Skill·규칙·문서 변경을 계속 만들지 않는다.
+
+## 12. Figma practical design workflow
+
+Figma의 실전 사용법·팁·노하우는 일반 creator 영상보다 **현재 Figma Help / Learn 공식 문서**를 먼저 확인한다. 이 seed는 Figma 기능의 현재 동작과 availability에 한해 `AUTHORITY_TARGET`이며, Figma가 프로젝트 기획·Godot 구현의 canon이라는 뜻이 아니다.
+
+```yaml
+seed_group: figma-practical-design-workflow
+status: ACTIVE_DISCOVERY_SEED
+domains:
+  - GAME_DEVELOPMENT
+  - PROMPT_AND_AGENT_WORKFLOW
+recommended_cadence: monthly-or-when-figma-workflow-active
+existing_consumers:
+  authority_and_visual_lifecycle: docs/VISUAL_COLLABORATION_TOOL_POLICY.md
+  workspace_practice: templates/project-operations/FIGMA_WORKSPACE_STRUCTURE_PROFILE.md
+  visual_bible: templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md
+source_role: AUTHORITY_TARGET_FOR_FIGMA_BEHAVIOR
+urls:
+  auto_layout: https://help.figma.com/hc/en-us/articles/360040451373-Guide-to-auto-layout
+  components_variants: https://help.figma.com/hc/en-us/articles/39636737843735-Components-collection-Variants-and-component-set-fundamentals
+  interactive_components: https://help.figma.com/hc/en-us/articles/360061175334-Create-interactive-components-with-variants
+  variables: https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma
+  prototyping: https://help.figma.com/hc/en-us/articles/360040314193-Guide-to-prototyping-in-Figma
+  dev_mode: https://help.figma.com/hc/en-us/articles/15023124644247-Guide-to-Dev-Mode
+  sections: https://help.figma.com/hc/en-us/articles/9771500257687-Organize-your-canvas-with-sections
+  figjam: https://help.figma.com/hc/en-us/articles/1500004362321-Guide-to-FigJam
+scan_surfaces:
+  - Auto Layout, sizing, padding, gap, wrap and responsive behavior
+  - Components, Variants, component properties and interactive components
+  - Variables, collections, modes and prototype state
+  - prototype flows and interaction behavior
+  - Sections and review / handoff organization
+  - FigJam research, diagramming, affinity and critique workflows
+  - Dev Mode, Ready for dev, annotations, inspection and version comparison
+  - plan / seat / availability changes when adoption depends on them
+```
+
+Figma source 결과는 `FIGMA_WORKSPACE_STRUCTURE_PROFILE.md`의 실전 workflow에 흡수하고, 기능명이 생겼다는 이유로 새 `figma-*` Skill을 만들지 않는다.
+
+과장 방지:
+
+```text
+Figma feature availability != mandatory project workflow
+Auto Layout != correct for every visual object
+Component != every repeated-looking layer must be componentized
+Variables != every raw number should become a design token
+Prototype != Godot runtime proof
+Dev Mode snippet != production correctness
+FigJam note != confirmed Decision canon
+```
+
+## 13. Game market intelligence + verified success cases
+
+시장조사는 인기순위 수집이 아니라 **비교 차원 → table-stakes → failure/mixed cases → 검증 가능한 성과 → transferable principle → project kick candidate**로 이어진다. 상세 판정 owner는 `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md`다.
+
+```yaml
+seed_group: game-market-intelligence-verified-success
+status: ACTIVE_DISCOVERY_SEED
+domains:
+  - GAME_DEVELOPMENT
+recommended_cadence: weekly-or-before-market-positioning-decision
+existing_consumers:
+  benchmark_and_kick_method: skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md
+source_roles:
+  first_party_product_fact:
+    - Steam / Steamworks official store and community announcements
+    - Google Play public store pages
+    - developer / publisher official milestone statements
+  professional_market_intelligence:
+    - SteamDB
+    - GameDiscoverCo
+    - Sensor Tower Game IQ
+    - Video Game Insights / VGI
+urls:
+  steam_store: https://store.steampowered.com/
+  steamworks: https://partner.steamgames.com/doc/home
+  google_play_games: https://play.google.com/store/games
+  steamdb: https://steamdb.info/
+  gamediscoverco: https://gamediscover.co/
+  sensor_tower_game_iq: https://sensortower.com/product/mobile-app/game-iq
+  vgi: https://app.sensortower.com/vgi/
+scan_surfaces:
+  - release, price, platform and store positioning
+  - public install / download buckets when the official store exposes them
+  - first-party paid sales milestones
+  - review, follower, wishlist, CCU and player-context signals without metric laundering
+  - estimated owners / units / downloads / revenue with methodology and confidence retained
+  - direct competitors, adjacent mechanic references and failure / mixed cases
+  - genre table-stakes and observable differentiation
+  - one-sentence / screenshot / GIF / trailer legibility of kick candidates
+  - production cost and project fit
+```
+
+10만+ 성공 사례는 다음 네 상태를 구분한다.
+
+```text
+VERIFIED_100K_DOWNLOAD_INSTALL
+VERIFIED_100K_SALES
+ESTIMATED_100K_PLUS
+NOT_100K_VERIFIED
+```
+
+현재 seed examples는 `checked_at: 2026-08-12` 기준으로 다음과 같이 사용할 수 있다.
+
+```text
+Shattered Pixel Dungeon — Google Play 5M+ downloads — VERIFIED_100K_DOWNLOAD_INSTALL
+Mindustry — Google Play 5M+ downloads — VERIFIED_100K_DOWNLOAD_INSTALL
+Slice & Dice — Google Play 1M+ downloads — VERIFIED_100K_DOWNLOAD_INSTALL
+Sledding Game — developer Steam announcement, 100,000 copies in 5 days — VERIFIED_100K_SALES
+God Of Weapons — developer Steam announcement, over 100,000 copies in 2 weeks — VERIFIED_100K_SALES
+Astrea: Six-Sided Oracles — developer Steam announcement, over 100,000 copies within 4 months — VERIFIED_100K_SALES
+```
+
+이 사례들은 **threshold evidence**일 뿐 성공 원인의 causal proof가 아니다. success case만 보고 결론내지 않고 기존 benchmark owner의 direct competitors + adjacent mechanics + failure/mixed case 구성을 유지한다.
+
+공통 claim ceiling:
+
+```text
+100K downloads != 100K paid sales
+estimated owners / units != verified sales
+revenue / gross != unit sales
+wishlists / reviews / followers / CCU != downloads or sales
+success milestone != causal proof of a mechanic
+popularity != design-quality authority
+competitor UI / art popularity != permission to copy identifiable execution
+```
+
+시장자료와 성공사례는 `PLAYER_NOTICEABLE / LOOP_RELEVANT / MARKET_LEGIBLE / PRODUCTION_FIT / NON_DERIVATIVE` 중 실제 근거가 있는 축으로 project kick candidate를 만들고, 최종 채택은 `ADOPT / ADAPT / AVOID / TEST / IGNORE`와 프로젝트 PoC/플레이어 evidence로 결정한다.
