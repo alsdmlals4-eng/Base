@@ -16,7 +16,7 @@ For a Base v9.1 project, record a separate `PROJECT_OPERATING_INTEGRITY` verdict
 - `contract-check`: 승인 목표, 범위, 보호 대상과 실제 변경을 대조한다.
 - `multi-lens-review`: 복합 변경을 Simplify, Style Guide, Domain Review, Security/Safety/Trust Boundary 관점에서 검토하고 제외 이유를 기록한다.
 - `external-source-review`: 외부 AI·병렬 작업자의 초안과 주장을 독립 검수한다.
-- `claim-and-intent-verification`: AI·Agent·작업자의 material claim과 승인 Intent를 actual diff·exact HEAD·실행 Evidence·post-merge main readback에 연결하고 `MATERIAL_CLAIM_LEDGER`, `INTENT_IMPLEMENTATION_FIDELITY_MATRIX`, `COMPLETION_CLAIM_GATE`로 판정한다. 증거가 없으면 `CLAIM_UNVERIFIED` 또는 `IMPLEMENTATION_UNVERIFIED`를 유지한다.
+- `claim-and-intent-verification`: AI·Agent·작업자의 material claim과 승인 Intent를 actual diff·exact HEAD·실행 Evidence·post-merge main readback에 연결하고 `MATERIAL_CLAIM_LEDGER`, `INTENT_IMPLEMENTATION_FIDELITY_MATRIX`, `COMPLETION_CLAIM_GATE`로 판정한다. 증거가 없으면 `CLAIM_UNVERIFIED` 또는 `IMPLEMENTATION_UNVERIFIED`를 유지한다. 재현 가능한 저장소 변경은 `tools/check_review_evidence.py`를 정본 실행기로 사용하며, `scripts/verify_evidence.py`는 기존 호출자를 위한 Skill 패키지 호환 진입점이다.
 - `ci-cost-optimization`: 변경 위험에 따라 GitHub Actions 실행 계층을 분리하고 중복 실행·불필요한 matrix·고비용 설치를 줄이면서 Required Check 증거를 보존한다.
 - `reference-freshness`: 변경된 정본·경로·ID·Schema가 활성 참조·템플릿·테스트·파생본에 전파됐는지 감사한다.
 - `static-validation`: 코드·데이터·문서·자산·참조·Schema를 정적 검사한다.
@@ -195,6 +195,17 @@ BLOCKED_BY_GITHUB_ACTIONS
 6. 필요한 Evidence가 없으면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED` 또는
    `BLOCKED_UNVERIFIED`를 유지한다.
 7. 병합 완료는 merged 상태, merge SHA, post-merge main readback과 post-merge 검사를 모두 요구한다.
+8. 저장소와 재현 명령을 사용할 수 있는 L2 이상 변경은 `templates/quality/REVIEW_EVIDENCE_RECORD.json`을 작업별 record로 복사하고 다음처럼 실행한다.
+
+```text
+python tools/check_review_evidence.py \
+  --record <task-review-record.json> \
+  --base-ref <trusted-base-sha> \
+  --execute-checks \
+  --output <generated-review-result.json>
+```
+
+기본 허용 program은 현재 Python뿐이다. 다른 program은 검수자가 `--allow-program`으로 정확히 승인한다. `RUNTIME`·`RENDER` 승격은 해당 check ID에 `--approve-level CHECK_ID=RUNTIME|RENDER`가 있을 때만 허용하며 `HUMAN` Evidence를 자동 생성하지 않는다. 입력·출력 계약은 `contracts/review-record.schema.json`, `contracts/review-result.schema.json`을 따른다.
 
 ### 3. Reference freshness
 
@@ -406,6 +417,10 @@ References and templates:
 - `docs/CI_EXECUTION_COST_POLICY.md`
 - `references/accessibility-and-performance-validation.md`
 - `references/claim-and-intent-verification.md`
+- `contracts/review-record.schema.json`
+- `contracts/review-result.schema.json`
+- `scripts/verify_evidence.py` (compatibility entrypoint; canonical implementation: `tools/check_review_evidence.py`)
+- `templates/quality/REVIEW_EVIDENCE_RECORD.json`
 - `templates/quality/PROJECT_CHANGE_VALIDATION.md`
 - `templates/quality/CANONICAL_REFERENCE_FRESHNESS_AUDIT.md`
 - `templates/ai/EXTERNAL_AI_DRAFT_REVIEW.md` (legacy-compatible input)
