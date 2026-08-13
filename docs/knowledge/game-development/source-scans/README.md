@@ -1,6 +1,6 @@
 # Daily Source Scan Records
 
-이 디렉터리는 일간 외부 Source 조사에서 생성된 **불변 Evidence Record**를 보관한다.
+이 디렉터리는 일간 외부 Source 조사에서 생성된 **불변(immutable) Evidence Record**를 보관한다.
 
 ```yaml
 record_role: daily-source-context-analysis
