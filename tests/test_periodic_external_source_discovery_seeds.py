@@ -168,6 +168,59 @@ class PeriodicExternalSourceDiscoverySeedTests(unittest.TestCase):
         self.assertIn("estimate", combined.lower())
         self.assertIn("causal", combined.lower())
 
+    def test_uncapped_candidate_retention_and_prompt_planning_writing_sources(self) -> None:
+        seeds = SEEDS.read_text(encoding="utf-8")
+
+        for required in (
+            "fixed_candidate_minimum: NONE",
+            "fixed_candidate_maximum: NONE",
+            "retain_all_material_candidates: true",
+            "execution_capacity_is_separate: true",
+            "RETAINED_READY",
+            "RETAINED_QUEUED",
+            "RETAINED_MONITOR",
+            "REJECTED_WITH_REASON",
+            "Prompt research and prompt design",
+            "Prompt Engineering Guide / DAIR.AI",
+            "https://www.promptingguide.ai/",
+            "Learn Prompting",
+            "https://learnprompting.org/",
+            "ACL Anthology",
+            "https://aclanthology.org/",
+            "arXiv cs.CL / cs.AI",
+            "https://arxiv.org/list/cs.CL/recent",
+            "Game planning and design research",
+            "DiGRA Digital Library",
+            "https://dl.digra.org/",
+            "Game Studies",
+            "https://gamestudies.org/",
+            "Game Maker's Toolkit",
+            "https://gamemakerstoolkit.com/",
+            "Machinations",
+            "https://machinations.io/",
+            "Writing craft, editing, and publishing",
+            "Writer's Digest",
+            "https://www.writersdigest.com/",
+            "Helping Writers Become Authors",
+            "https://www.helpingwritersbecomeauthors.com/",
+            "Jane Friedman",
+            "https://janefriedman.com/",
+            "SFWA / Writer Beware",
+            "https://sfwa.org/other-resources/writer-beware/",
+            "Purdue OWL",
+            "https://owl.purdue.edu/owl",
+            "The Chicago Manual of Style",
+            "https://www.chicagomanualofstyle.org/",
+        ):
+            self.assertIn(required, seeds)
+
+        self.assertIn("후보 수 때문에 폐기하지 않는다", seeds)
+        self.assertIn("실행 용량", seeds)
+        self.assertIn("model/version/harness", seeds)
+        self.assertIn("actual player evidence", seeds.lower())
+        self.assertIn("single-author framework", seeds.lower())
+        self.assertIn("식별 가능한 style imitation", seeds)
+
 
 if __name__ == "__main__":
     unittest.main()
