@@ -28,9 +28,24 @@
   - temporary workflow and mutator script removed before commit
 - Production contract commit: `7a6fbc13938d2945293da914af9b7c0494397541`
 
+## Registered consumer reconciliation
+
+The first normal exact-head run on user commit `1e8947258e3d72d206c5e4f404c45d1c312ff04e` showed that the feature contracts and publication jobs passed, while canonical reference-freshness correctly required registered consumers for the changed Skill body, Registry metadata, behavior fixture, and generated implementation-evidence surface.
+
+- Reconciliation input head: `0a363bd5f94308d886ad94c477aef686f5958ba3`
+- Temporary reconciliation run: `31698256705`
+- Result: success
+  - focused Claim/Intent contract and all five coupled consumer regression modules passed
+  - behavior-eval checker passed
+  - `docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md` regenerated
+  - canonical reference-freshness passed on the committed local tree
+  - `git diff --check` passed
+  - temporary workflow and both reconciliation scripts were removed before push
+- Consumer reconciliation production commit: `9c4d0c833f2548b8d56a8b4a83043075b8a44b05`
+
 ## Evidence boundary
 
-The production commit was created by `github-actions[bot]` with `GITHUB_TOKEN`; GitHub consequently created PR check suites with `action_required` and no jobs. Those runs are not accepted as validation PASS. This user-authored evidence commit exists to trigger normal exact-head PR workflows. Final GREEN, merge, and post-merge sections must be filled only from later exact-head results.
+The two production commits were created by `github-actions[bot]` with `GITHUB_TOKEN`; GitHub did not treat their push-triggered check suites as usable exact-head validation. Those `action_required` or non-recursive runs are not accepted as PASS. This user-authored evidence commit exists only to trigger normal PR workflows on the complete production tree. Final GREEN, merge, and post-merge sections must be filled only from later exact-head results.
 
 ## Final GREEN
 
