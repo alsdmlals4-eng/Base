@@ -8,6 +8,22 @@
 
 **Tech Stack:** Markdown contracts, Python `unittest`, GitHub Actions, GitHub branch/PR workflow.
 
+```yaml
+implementation_status: IMPLEMENTED_PENDING_MERGE
+intentional_red_head: 53287618f0674daaf4cd4b7361e715d10a7e335b
+pre_closeout_green_head: 341d747fcf73c2762fe3317b06cc3e04608d52a4
+current_tested_main: 1e5f8c1ce297898597d1afc52776d9592a790051
+pull_request: 326
+red_run: 31711830578
+pre_closeout_green_runs:
+  evidence_knowledge: 31712823287
+  base_v9: 31712823244
+  game_project_os: 31712823267
+local_validation: BLOCKED_ENVIRONMENT_DNS
+adversarial_review: READY_TO_MERGE
+unresolved_review_threads: 0
+```
+
 ## Global Constraints
 
 - 기준 `main`: `23e418ec2e4a801c90aff85611f10a5ab062d53c`.
@@ -34,7 +50,7 @@
 - Consumes: 기존 Watchlist/Radar authority contract와 기존 Workflow의 unittest 목록.
 - Produces: 하위 Radar·Hub route·9개 Domain·후보 수 무제한·claim ceiling·기존 owner routing을 요구하는 실패 계약.
 
-- [ ] **Step 1: Watchlist 계약에 하위 Radar 요구 추가**
+- [x] **Step 1: Watchlist 계약에 하위 Radar 요구 추가**
 
 `NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md` 경로와 다음 요구를 검사한다.
 
@@ -52,7 +68,7 @@ forced_filler_candidates: false
 추리·무협·밈 claim ceiling
 ```
 
-- [ ] **Step 2: Discovery 계약에 기존 consumer route 요구 추가**
+- [x] **Step 2: Discovery 계약에 기존 consumer route 요구 추가**
 
 ```text
 developing-and-revising-serial-fiction
@@ -65,17 +81,9 @@ reviewing-and-validating-project-changes
 running-adversarial-review-and-refinement
 ```
 
-- [ ] **Step 3: Intentional RED PR 생성**
+- [x] **Step 3: Intentional RED PR 생성**
 
-Branch `docs-source-radar-20260813-b`에서 PR을 열고 Evidence Knowledge Workflow를 확인한다.
-
-Expected:
-
-```text
-기존 계약은 통과
-새 계약은 하위 Radar·Hub route 부재 때문에 실패
-Python syntax error나 기존 회귀 실패가 아님
-```
+Branch `docs-source-radar-20260813-b`에서 PR #326을 열었다. RED head `53287618f0674daaf4cd4b7361e715d10a7e335b`, Evidence Knowledge run `31711830578`에서 83개 계약 중 기존 81개는 통과하고 새 하위 Radar·Hub route 부재를 요구한 2개 계약만 실패했다. Python 문법 오류나 기존 회귀 실패는 없었다.
 
 ### Task 2: 하위 Radar 구현
 
@@ -86,7 +94,7 @@ Python syntax error나 기존 회귀 실패가 아님
 - Consumes: parent Radar metadata, Watchlist Source roles, Evidence Method dispositions.
 - Produces: 9개 Domain과 공통 candidate packet, Source table, claim ceiling, validation flow, cadence, completion states, adversarial questions.
 
-- [ ] **Step 1: 권위·후보 수 정책 작성**
+- [x] **Step 1: 권위·후보 수 정책 작성**
 
 ```yaml
 candidate_count_limit: NONE
@@ -95,27 +103,27 @@ minimum_candidate_quota: NONE
 forced_filler_candidates: false
 ```
 
-- [ ] **Step 2: 세계관·캐릭터·장르·현실 고증 Domain 작성**
+- [x] **Step 2: 세계관·캐릭터·장르·현실 고증 Domain 작성**
 
-Archive·박물관·도서관·UNESCO·직업·정신건강·대본 Archive·실제 project evidence를 역할별로 분리한다.
+Archive·박물관·도서관·UNESCO·직업·정신건강·대본 Archive·실제 project evidence를 역할별로 분리했다.
 
-- [ ] **Step 3: 표현·언어·현지화 Domain 작성**
+- [x] **Step 3: 표현·언어·현지화 Domain 작성**
 
-Unicode CLDR·W3C와 공식·당사자·전문가 Source를 사용하며 이름·호칭·문자 방향·문화 편향·표현 위험을 구분한다.
+Unicode CLDR·W3C와 공식·당사자·전문가 Source를 사용하며 이름·호칭·문자 방향·문화 편향·표현 위험을 구분했다.
 
-- [ ] **Step 4: 추리·단서 공정성 Domain 작성**
+- [x] **Step 4: 추리·단서 공정성 Domain 작성**
 
 Truth model, clue inventory, discoverability, alternative hypotheses, red herring causality, hint ladder, recovery, uniqueness와 unknown-player test를 요구한다.
 
-- [ ] **Step 5: 무술·무림·중국 무협 Domain 작성**
+- [x] **Step 5: 무술·무림·중국 무협 Domain 작성**
 
-Martial Arts Studies, IWUF, UNESCO Taijiquan, Chinese Text Project, CBDB, CHGIS, Hong Kong Film Archive를 역사·현대 경기·living heritage·원문·사회관계·지리·영화 문법으로 분리한다.
+Martial Arts Studies, IWUF, UNESCO Taijiquan, Chinese Text Project, CBDB, CHGIS, Hong Kong Film Archive를 역사·현대 경기·living heritage·원문·사회관계·지리·영화 문법으로 분리했다.
 
-- [ ] **Step 6: 서브컬처·밈·팬덤 Domain 작성**
+- [x] **Step 6: 서브컬처·밈·팬덤 Domain 작성**
 
-Fanlore/TWC, Know Your Meme, Google Trends, platform/community discovery를 기원·확산·현재 의미·아이러니·혐오 신호·권리·표본 한계로 분리한다.
+Fanlore/TWC, Know Your Meme, Google Trends, platform/community discovery를 기원·확산·현재 의미·아이러니·혐오 신호·권리·표본 한계로 분리했다.
 
-- [ ] **Step 7: 검증·상태·적대적 질문 작성**
+- [x] **Step 7: 검증·상태·적대적 질문 작성**
 
 ```text
 NO_CHANGE
@@ -139,43 +147,43 @@ BLOCKED_UNVERIFIED
 - Consumes: 하위 Radar path와 기존 owner matrix.
 - Produces: 게임 개발 지식 허브와 Serial Fiction Hub에서 한 단계 접근.
 
-- [ ] **Step 1: Game Development Hub 문서 지도 추가**
+- [x] **Step 1: Game Development Hub 문서 지도 추가**
 
-하위 Radar가 두 번째 Watchlist·Skill·scheduler가 아니며 기존 owner 조합으로 실행된다고 명시한다.
+하위 Radar가 두 번째 Watchlist·Skill·scheduler가 아니며 기존 owner 조합으로 실행된다고 명시했다.
 
-- [ ] **Step 2: Serial Fiction Hub 외부 조사 route 추가**
+- [x] **Step 2: Serial Fiction Hub 외부 조사 route 추가**
 
-세계관·캐릭터·장르·고증·표현·현지화·추리·무협·밈 조사 시 하위 Radar를 읽고 작품별 Canon은 프로젝트에 둔다고 명시한다.
+세계관·캐릭터·장르·고증·표현·현지화·추리·무협·밈 조사 시 하위 Radar를 읽고 작품별 Canon은 프로젝트에 둔다고 명시했다.
 
 ### Task 4: GREEN과 회귀 검증
 
-- [ ] PR exact head에서 `Validate Evidence-Based Game Development Knowledge` 성공 확인.
-- [ ] PR exact head에서 `Validate Base v9 Operating Contracts` 성공 확인.
-- [ ] PR exact head에서 `Validate Game Project Operating System` 최종 `ci-gate` 성공 확인.
-- [ ] Active Skill map 30과 `PLAN / BUILD / REVIEW` readback.
-- [ ] 변경 파일과 PR #312·#322 exact path intersection 0 확인.
-- [ ] 로컬 테스트는 `BLOCKED_ENVIRONMENT_DNS`로 별도 보고.
+- [x] PR pre-closeout head에서 `Validate Evidence-Based Game Development Knowledge` 성공 확인 — run `31712823287`, 83/83.
+- [x] PR pre-closeout head에서 `Validate Base v9 Operating Contracts` 성공 확인 — run `31712823244`, adversarial gate 포함.
+- [x] PR pre-closeout head에서 `Validate Game Project Operating System` 최종 `ci-gate` 성공 확인 — run `31712823267`.
+- [x] Active Skill map 30과 `PLAN / BUILD / REVIEW` readback.
+- [x] 변경 파일과 PR #312·#322 exact path intersection 0 확인. PR #312 병합 후 `main@1e5f8c1ce297898597d1afc52776d9592a790051` 결합 Merge Ref에서 재검증했다.
+- [x] 로컬 테스트는 `BLOCKED_ENVIRONMENT_DNS`로 별도 보고. GitHub Actions를 로컬 실행으로 표현하지 않는다.
 
 ### Task 5: 적대적 검토
 
-- [ ] 두 번째 Watchlist·Skill·Ledger·scheduler 생성 여부.
-- [ ] 링크 dump와 현재 consumer 없는 후보.
-- [ ] 성격 유형·진단·문화 고정관념.
-- [ ] 작가 self-test만으로 추리 공정성 주장.
-- [ ] clue logic와 discoverability 혼동.
-- [ ] 현대 경기·역사 실전·영화 안무·무협 관습 혼동.
-- [ ] 중국 시대·지역·계층의 단일화.
-- [ ] 밈의 기원·현재 의미·아이러니·혐오·권리 혼동.
-- [ ] Community Wiki·Trend를 Canon·호감·판매 인과로 과장.
-- [ ] 프로젝트 고유 Canon의 Base 승격.
+- [x] 두 번째 Watchlist·Skill·Ledger·scheduler 생성 여부.
+- [x] 링크 dump와 현재 consumer 없는 후보.
+- [x] 성격 유형·진단·문화 고정관념.
+- [x] 작가 self-test만으로 추리 공정성 주장.
+- [x] clue logic와 discoverability 혼동.
+- [x] 현대 경기·역사 실전·영화 안무·무협 관습 혼동.
+- [x] 중국 시대·지역·계층의 단일화.
+- [x] 밈의 기원·현재 의미·아이러니·혐오·권리 혼동.
+- [x] Community Wiki·Trend를 Canon·호감·판매 인과로 과장.
+- [x] 프로젝트 고유 Canon의 Base 승격.
 
-검증 가능한 affected consumer와 failure mode가 없는 취향 finding은 blocker로 유지하지 않는다.
+검증 가능한 affected consumer와 failure mode가 없는 취향 finding은 blocker로 유지하지 않는다. Exact head `341d747fcf73c2762fe3317b06cc3e04608d52a4` 기준 `P0 0 / P1 0 / unresolved P2 0`, review thread 0으로 판정했다.
 
 ### Task 6: PR·병합·post-merge
 
-- [ ] final exact head와 current main 재확인.
-- [ ] unresolved review thread 0과 P0/P1 0 확인.
-- [ ] repository 정책이 허용하면 squash merge.
+- [x] pre-closeout exact head와 current main 재확인.
+- [x] unresolved review thread 0과 P0/P1 0 확인.
+- [ ] closeout commit exact-head Required Checks 재실행 및 squash merge.
 - [ ] merge SHA와 새 `main`에서 하위 Radar·Hub·tests readback.
 - [ ] post-merge main Actions의 Evidence Knowledge, Base v9, Game Project OS/`ci-gate` 성공 확인.
 
