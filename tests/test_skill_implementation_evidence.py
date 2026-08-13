@@ -2,18 +2,34 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+
+from jsonschema import Draft202012Validator
 
 
 ROOT = Path(__file__).resolve().parents[1]
 BUILDER_PATH = ROOT / "tools/build_skill_implementation_evidence.py"
 GENERATED_PATH = ROOT / "docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md"
+REVIEW_OWNER = ROOT / "skills/reviewing-and-validating-project-changes"
+REVIEW_SCRIPT = ROOT / "tools/check_review_evidence.py"
+REVIEW_RECORD_SCHEMA = REVIEW_OWNER / "contracts/review-record.schema.json"
+REVIEW_RESULT_SCHEMA = REVIEW_OWNER / "contracts/review-result.schema.json"
+REVIEW_TEMPLATE = ROOT / "templates/quality/REVIEW_EVIDENCE_RECORD.json"
 
 
 def load_builder():
     spec = importlib.util.spec_from_file_location("build_skill_implementation_evidence", BUILDER_PATH)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_review_checker():
+    spec = importlib.util.spec_from_file_location("check_review_evidence", REVIEW_SCRIPT)
     module = importlib.util.module_from_spec(spec)
     assert spec.loader is not None
     spec.loader.exec_module(module)
@@ -196,7 +212,6 @@ class SkillImplementationEvidenceTests(unittest.TestCase):
             self.assertIn("EXECUTABLE_EVIDENCE", row)
             self.assertIn(path, row)
 
-
     def test_serial_fiction_skill_has_executable_repository_evidence(self) -> None:
         builder = load_builder()
         self.assertEqual([], builder.validate_evidence_index(ROOT))
@@ -208,6 +223,166 @@ class SkillImplementationEvidenceTests(unittest.TestCase):
         self.assertIn("PASS", row)
         self.assertIn("EXECUTABLE_EVIDENCE", row)
         self.assertIn("tests/test_serial_fiction_discipline.py", row)
+
+
+class ReviewEvidenceExecutionIntegrationTests(unittest.TestCase):
+    def test_review_checker_runs_against_exact_git_state_and_refuses_not_run(self) -> None:
+        checker = load_review_checker()
+        self.assertTrue(checker.matches("src/file.py", ["src/*.py"]))
+        self.assertFalse(checker.matches("src/nested/file.py", ["src/*.py"]))
+
+        record_schema = json.loads(REVIEW_RECORD_SCHEMA.read_text(encoding="utf-8"))
+        result_schema = json.loads(REVIEW_RESULT_SCHEMA.read_text(encoding="utf-8"))
+        template = json.loads(REVIEW_TEMPLATE.read_text(encoding="utf-8"))
+        Draft202012Validator.check_schema(record_schema)
+        Draft202012Validator.check_schema(result_schema)
+        Draft202012Validator(record_schema).validate(template)
+
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        root = Path(directory.name)
+
+        def git(*arguments: str) -> str:
+            completed = subprocess.run(
+                ["git", *arguments],
+                cwd=root,
+                check=False,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+            )
+            self.assertEqual(0, completed.returncode, completed.stdout + completed.stderr)
+            return completed.stdout.strip()
+
+        git("init", "-b", "main")
+        git("config", "user.email", "review@example.invalid")
+        git("config", "user.name", "Review Evidence Test")
+        contract_root = root / "skills/reviewing-and-validating-project-changes/contracts"
+        contract_root.mkdir(parents=True)
+        (contract_root / "review-record.schema.json").write_text(
+            REVIEW_RECORD_SCHEMA.read_text(encoding="utf-8"), encoding="utf-8"
+        )
+        (contract_root / "review-result.schema.json").write_text(
+            REVIEW_RESULT_SCHEMA.read_text(encoding="utf-8"), encoding="utf-8"
+        )
+        (root / "src").mkdir()
+        (root / "src/feature.txt").write_text("old\n", encoding="utf-8")
+        git("add", ".")
+        git("commit", "-m", "baseline")
+        base_sha = git("rev-parse", "HEAD")
+
+        record = {
+            "schema_version": 1,
+            "artifact_role": "REVIEW_EVIDENCE_RECORD",
+            "scope": {
+                "allowed_changed_paths": ["records/review.json", "src/feature.txt"],
+                "protected_paths": [],
+            },
+            "claims": [
+                {
+                    "claim_id": "CLAIM-001",
+                    "claim_type": "IMPLEMENTATION",
+                    "claim_text": "The approved feature is implemented.",
+                    "acceptance_ids": ["AC-001"],
+                    "check_ids": ["CHECK-001"],
+                }
+            ],
+            "acceptance": [
+                {
+                    "intent_id": "AC-001",
+                    "approved_intent": "The implemented marker is present.",
+                    "implementation_paths": ["src/feature.txt"],
+                    "required_level": "TEST",
+                }
+            ],
+            "checks": [
+                {
+                    "check_id": "CHECK-001",
+                    "argv": [
+                        "{python}",
+                        "-c",
+                        (
+                            "from pathlib import Path; "
+                            "assert Path('src/feature.txt').read_text(encoding='utf-8') "
+                            "== 'implemented\\n'; print('REVIEW_CHECK: PASS')"
+                        ),
+                    ],
+                    "working_directory": ".",
+                    "timeout_seconds": 30,
+                    "declared_level": "TEST",
+                    "acceptance_ids": ["AC-001"],
+                    "markers": ["REVIEW_CHECK: PASS"],
+                }
+            ],
+        }
+        record_path = root / "records/review.json"
+        write_json(record_path, record)
+        (root / "src/feature.txt").write_text("implemented\n", encoding="utf-8")
+        git("add", ".")
+        git("commit", "-m", "feature")
+        head_sha = git("rev-parse", "HEAD")
+
+        result, errors = checker.check_record(
+            root,
+            record_path,
+            base_sha,
+            execute_checks=True,
+            allowed_programs=(),
+            approved_levels={},
+        )
+        self.assertEqual([], errors)
+        self.assertEqual("PASS", result["final_status"])
+        self.assertEqual(base_sha, result["subject"]["base_sha"])
+        self.assertEqual(head_sha, result["subject"]["head_sha"])
+        self.assertEqual("PASS", result["gates"]["implementation"]["status"])
+        self.assertEqual("PASS", result["gates"]["verification"]["status"])
+        self.assertEqual("PASS", result["gates"]["intent"]["status"])
+        self.assertEqual(
+            "BLOCKED_UNVERIFIED",
+            result["gates"]["integration"]["status"],
+        )
+
+        not_run, not_run_errors = checker.check_record(
+            root,
+            record_path,
+            base_sha,
+            execute_checks=False,
+            allowed_programs=(),
+            approved_levels={},
+        )
+        self.assertEqual("FAIL", not_run["final_status"])
+        self.assertEqual("NOT_RUN", not_run["gates"]["verification"]["status"])
+        self.assertTrue(
+            any("not executed" in message for message in not_run_errors),
+            not_run_errors,
+        )
+
+        record["checks"][0]["argv"] = [
+            "{python}",
+            "-c",
+            (
+                "from pathlib import Path; "
+                "Path('src/feature.txt').write_text('mutated\\n', encoding='utf-8'); "
+                "print('REVIEW_CHECK: PASS')"
+            ),
+        ]
+        write_json(record_path, record)
+        git("add", "records/review.json")
+        git("commit", "-m", "mutation check")
+        mutated, mutation_errors = checker.check_record(
+            root,
+            record_path,
+            base_sha,
+            execute_checks=True,
+            allowed_programs=(),
+            approved_levels={},
+        )
+        self.assertEqual("FAIL", mutated["final_status"])
+        self.assertTrue(
+            any("repository state changed during checks" in message for message in mutation_errors),
+            mutation_errors,
+        )
 
 
 class ClaimIntentImplementationEvidenceIntegrationTests(unittest.TestCase):
