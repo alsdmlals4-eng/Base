@@ -35,6 +35,7 @@
 | 외부 근거를 어떻게 찾고 판정·적용하는가? | `EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md` | Evidence Pack·개선 판정·검증 계획 |
 | 어떤 외부 사이트를 주기적으로 확인하고 발견 글을 어떻게 원출처로 역추적하는가? | `PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md` | Source Pool·scan checkpoint·원출처 역추적·freshness·적용 판정 |
 | 프롬프트·기획·글쓰기 작법·작업구조·외부 Skill·Godot 자산 후보를 분야별로 어디서 찾고 어떻게 검증하는가? | `PERIODIC_SPECIALTY_SOURCE_RADAR.md` | 전문 Source 후보·기존 owner route·실행 위험·validation·rollback |
+| 세계관·캐릭터·장르·현실 고증·표현·현지화·추리 단서·중국 무협·서브컬처 밈을 어디서 조사하고 어떻게 검증하는가? | `NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md` | 후보 수 무제한 Source capture·매체/시대/지역 경계·기존 owner route·프로젝트 검증·폐기 조건 |
 | 게임 코어·플레이어 경험·게임 필·보상·난이도를 어떻게 설계하는가? | `GAME_DESIGN_AND_PLAYER_EXPERIENCE_GUIDE.md` | 플레이어 약속·MDE 추적표·플레이테스트 계약 |
 | 튜토리얼·온보딩·첫 세션에서 규칙·필요·성장·독립 수행을 어떻게 가르치는가? | `TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md` | `RULE–NEED–DISCOVER–FEEL–PROVE–TRANSFER` 학습 계약·측정·적대적 검토 |
 | 프로젝트마다 어떤 이미지·시각 자산·UI 컴포넌트를 정말 만들어야 하는가? | `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate` | `requirement_id`·Delete Test·role·P0~P3·disposition·검증 |
@@ -52,6 +53,8 @@
 
 `PERIODIC_SPECIALTY_SOURCE_RADAR.md`는 Watchlist에 종속된 전문 discovery extension이다. 두 번째 Watchlist·실행 Skill·scheduler·Ledger가 아니며, 후보는 기존 owner와 프로젝트 검증·rollback 경로로 보낸다.
 
+`NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md`는 상위 전문 Radar에 종속된 서사·세계관·캐릭터 하위 Reference다. 후보 수에는 최소·최대 상한을 두지 않지만, 관련성·원출처·현재 consumer·반례·권리/표현 위험·검증·폐기 조건 없는 후보를 채택하지 않는다. 프로젝트 고유 설정과 실제 정본은 각 프로젝트가 소유한다.
+
 `TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md`는 실행 권한을 소유하지 않는다. 실제 작업은 `analyzing-and-refining-game-concepts: tutorial-and-onboarding-design`이 주 책임이며, 튜토리얼 이해도 연구 coverage 설치·누락 감사는 `governing-game-user-research-coverage`가 담당한다.
 
 ## 4. 기존 Skill 라우팅
@@ -61,6 +64,7 @@
 | 요청 해석·범위·완료 기준·실행 순서 | `managing-project-intake-and-work-contract` | Method의 결정 질문·Coverage·Evidence Pack 계약 |
 | 코어 컨셉·DDD·벤치마킹·플레이테스트 | `analyzing-and-refining-game-concepts` | 게임 기획 Guide·Reference Catalog |
 | 프롬프트·기획·작법·작업구조·외부 Skill·Godot 자산 Source 조사 | 기존 intake·game design·fiction·Skill evolution·asset evaluation·validation Skill 조합 | `PERIODIC_SPECIALTY_SOURCE_RADAR.md`; 새 광역 Skill을 만들지 않음 |
+| 세계관·캐릭터·장르·현실 고증·표현·현지화·추리·중국 무협·밈 Source 조사 | 기존 fiction·game design·narrative·character-art·documentation·validation Skill 조합 | `NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md`; 프로젝트 정본·원고·데이터·플레이테스트가 최종 consumer |
 | 튜토리얼·온보딩·첫 세션 학습·성장 체감 | `analyzing-and-refining-game-concepts: tutorial-and-onboarding-design` | 튜토리얼 Guide·프로젝트 Contract·공식 접근성 근거 |
 | Windows+Android 적합성·공용 코어·입력/UI/lifecycle·출시 wave | `analyzing-and-refining-game-concepts` + 기존 기술·Vertical Slice·검증 Skill | PC·Android Delivery Guide·`templates/planning/PC_ANDROID_DELIVERY_PROFILE.md` |
 | 게임 build/package/download/patch·font/texture/audio 자산 최적화 | 기존 기획·아트·Vertical Slice·검증 Skill 조합 | `GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` + 프로젝트 Delivery Profile |
