@@ -249,7 +249,8 @@ class PeriodicSourceScanQueueTests(unittest.TestCase):
         self.assertTrue(LEDGER.is_file())
         watchlist = WATCHLIST.read_text(encoding="utf-8")
         queue_workflow = QUEUE_WORKFLOW.read_text(encoding="utf-8")
-        self.assertIn("unique machine-readable operational state", watchlist)
+        self.assertIn("고유 Source family 하나로 추적", watchlist)
+        self.assertIn("PERIODIC_SOURCE_OPERATIONS_LEDGER.json", watchlist)
         self.assertIn("PERIODIC_SOURCE_OPERATIONS_LEDGER.json", queue_workflow)
         self.assertNotIn("last_successful_scan_at", queue_workflow)
 
