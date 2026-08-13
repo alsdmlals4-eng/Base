@@ -78,8 +78,8 @@ def validate_state_root(project_root: Path, state_root: Path) -> Path:
     root = project_root.resolve(strict=True)
     candidate = state_root.resolve(strict=False)
     reserved = root / ".loop-engineering"
-    if candidate != reserved and reserved not in candidate.parents:
-        raise UnsafePath("state root must be inside project-local .loop-engineering")
+    if candidate != reserved:
+        raise UnsafePath("state root must equal project-local .loop-engineering")
 
     relative = candidate.relative_to(root)
     current = root
