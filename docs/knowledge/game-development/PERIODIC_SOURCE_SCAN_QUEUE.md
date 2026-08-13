@@ -5,6 +5,7 @@ document_role: scheduled-source-review-queue-adapter
 source_policy_owner: docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md
 evidence_owner: docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md
 operational_state_owner: docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json
+specialty_source_owner: docs/knowledge/game-development/NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md
 scheduler_runtime: GITHUB_ACTIONS
 new_active_skill: false
 independent_ledger: false
@@ -55,6 +56,8 @@ Queue는 due Source가 없어도 다음 두 작업을 모두 요구한다.
 
 ### 기존 Source의 새 글·수정 글 확인
 
+- Ledger의 due Source뿐 아니라 현재 Watchlist·Specialty Radar에 등록된 Source 표도 확인한다.
+- 최근 추가된 Source가 아직 Ledger의 개별 cadence 상태를 갖지 않으면 Radar Source 표와 최신 `SOURCE_SCAN_CHECKPOINT_*.md`를 통해 재검토한다.
 - last successful scan 또는 tracking start 이후의 새 글·수정 글을 구분한다.
 - official recent/latest/archive/release surface와 원출처를 확인한다.
 - 제목·snippet에서 멈추지 않고 `original source backtrace`를 수행한다.
@@ -69,6 +72,15 @@ Queue는 due Source가 없어도 다음 두 작업을 모두 요구한다.
 - 기존 Watchlist·Radar·Reference와 중복되는지, 더 권위 있는 원출처가 있는지 확인한다.
 - 신규 사이트 수를 목표로 후보를 억지로 채우지 않는다.
 - 지속적 material value가 불명확하면 `REFERENCE_ONLY` 또는 `BLOCKED_UNVERIFIED`로 닫는다.
+
+## Scheduler 지속성
+
+GitHub schedule은 기본 브랜치의 최신 Workflow에서 실행되지만 플랫폼 지연이나 비활성 저장소의 자동 비활성화가 발생할 수 있다. 따라서 schedule 존재만으로 지속 실행을 주장하지 않는다.
+
+- `workflow_dispatch`를 수동 복구 경로로 유지한다.
+- 월간 운영 검토에서 Workflow enabled 상태와 최근 성공 run을 확인한다.
+- 예상 주기를 넘겨 성공 run이 없으면 `SCHEDULE_DRIFT`로 기록하고 수동 실행·원인 확인·재활성화를 수행한다.
+- 예약 실행 시각이 지연되어도 같은 열린 Issue를 갱신하며 중복 Issue를 만들지 않는다.
 
 ## Evidence 경계
 
