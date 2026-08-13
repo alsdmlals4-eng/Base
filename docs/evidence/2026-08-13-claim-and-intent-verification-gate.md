@@ -47,16 +47,35 @@ The first normal exact-head run on user commit `1e8947258e3d72d206c5e4f404c45d1c
 
 The two production commits were created by `github-actions[bot]` with `GITHUB_TOKEN`; GitHub did not treat their push-triggered check suites as usable exact-head validation. Those `action_required` or non-recursive runs are not accepted as PASS. This user-authored evidence commit exists only to trigger normal PR workflows on the complete production tree. Final GREEN, merge, and post-merge sections must be filled only from later exact-head results.
 
-## Final GREEN
+## First complete exact-head GREEN
 
-- Exact head: `PENDING`
-- Required workflow runs: `PENDING`
-- Dedicated contract execution: `PENDING`
-- Active Skill count and generated map: `PENDING`
-- Independent adversarial review: `PENDING`
+- Exact head: `eef62df811ae64ff92fa6692a3e91edb8a5e343b`
+- Required workflows: all success
+  - Evidence-Based Game Development Knowledge: `31698327100`
+  - BCA Visual and Sheet Workflow: `31698327110`
+  - Skill Behavior Evidence: `31698327112`
+  - Integrated Vertical Slice Prompt: `31698327128`
+  - Game UX UI System: `31698327132`
+  - Base v9 Operating Contracts: `31698327204`
+  - Game Project Operating System: `31698327106`
+- Base v9 contract evidence: generated artifacts current; integrity and v9.4.1/.2/.3 checks passed; 328 tests passed; 1 Godot exact-engine test skipped because the executable was not configured; adversarial gate passed.
+- Game Project OS evidence: proposal validation passed for 27 proposals; reference-freshness passed across 749 scanned files and 23 changed files; 410 tests passed with 15 environment-bound skips; publication validation and `ci-gate` passed.
+- Dedicated Claim/Intent contract: `6/6 PASS`.
+- Registered consumer regressions and Skill behavior-evidence workflow: PASS.
+- Active Skill count: 30; Work Modes: `PLAN / BUILD / REVIEW`; generated active map current.
+- External model behavior run: `NOT_RUN`; no model-run success is claimed.
+- Independent adversarial review: must be recorded as a PR review on the final exact head after this closeout commit.
 
 ## Integration
 
 - Merge SHA: `PENDING`
 - Post-merge main readback: `PENDING`
 - Post-merge workflow: `PENDING`
+
+## BCP lifecycle closeout
+
+- Registry transition: `APPROVED_FOR_IMPLEMENTATION → IMPLEMENTED`
+- Implementation PR: `https://github.com/alsdmlals4-eng/Base/pull/319`
+- Closeout production commit: `PENDING_USER_TRIGGER`
+- Final exact-head workflows after closeout: `PENDING`
+- Rollback: revert the eventual PR #319 squash merge commit; no product code/data or PR #312/#316 path is affected.

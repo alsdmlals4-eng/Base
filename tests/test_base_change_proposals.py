@@ -306,5 +306,27 @@ class BaseChangeProposalTests(unittest.TestCase):
             self.assertEqual(paths, ["[수정제안서]/BCP-2026-999-example/PROPOSAL.md"])
 
 
+class ClaimIntentProposalLifecycleTests(unittest.TestCase):
+    def test_bcp_027_closeout_binds_green_evidence_and_implementation_pr(self) -> None:
+        registry, errors = CHECKER.validate_repository(ROOT)
+        self.assertEqual([], errors)
+        entry = next(
+            item
+            for item in registry["proposals"]
+            if item["proposal_id"] == "BCP-2026-027-claim-and-intent-verification-gate"
+        )
+        self.assertEqual("IMPLEMENTED", entry["status"])
+        self.assertEqual("https://github.com/alsdmlals4-eng/Base/pull/319", entry["implementation_pr"])
+        proposal = (ROOT / entry["path"]).read_text(encoding="utf-8")
+        evidence = (ROOT / "docs/evidence/2026-08-13-claim-and-intent-verification-gate.md").read_text(encoding="utf-8")
+        for token in (
+            "### 구현 closeout — PR #319",
+            "eef62df811ae64ff92fa6692a3e91edb8a5e343b",
+            "External model behavior run: `NOT_RUN`",
+            "post-merge `main` readback",
+        ):
+            self.assertIn(token, proposal + "\n" + evidence)
+
+
 if __name__ == "__main__":
     unittest.main()
