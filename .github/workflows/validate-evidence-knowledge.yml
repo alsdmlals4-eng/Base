@@ -127,6 +127,8 @@ jobs:
             docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md
             docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md
             docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_DISCOVERY_SEEDS.md
+            docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json
+            docs/knowledge/game-development/PERIODIC_SOURCE_SCAN_QUEUE.md
             docs/knowledge/game-development/RECENT_EXTERNAL_EVIDENCE_REVIEW_2026-08-10.md
             docs/knowledge/game-development/SOURCE_SCAN_CHECKPOINT_2026-08-14.md
             docs/knowledge/game-development/TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md
