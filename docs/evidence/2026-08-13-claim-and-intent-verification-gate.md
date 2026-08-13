@@ -45,7 +45,7 @@ The first normal exact-head run on user commit `1e8947258e3d72d206c5e4f404c45d1c
 
 ## Evidence boundary
 
-The two production commits were created by `github-actions[bot]` with `GITHUB_TOKEN`; GitHub did not treat their push-triggered check suites as usable exact-head validation. Those `action_required` or non-recursive runs are not accepted as PASS. This user-authored evidence commit exists only to trigger normal PR workflows on the complete production tree. Final GREEN, merge, and post-merge sections must be filled only from later exact-head results.
+The production commits created by `github-actions[bot]` with `GITHUB_TOKEN` did not produce reusable recursive exact-head validation. Their `action_required` or absent push runs are not accepted as PASS. User-authored evidence commits trigger normal PR workflows on the complete production tree. Merge and post-merge sections remain pending until their direct evidence exists.
 
 ## First complete exact-head GREEN
 
@@ -64,18 +64,19 @@ The two production commits were created by `github-actions[bot]` with `GITHUB_TO
 - Registered consumer regressions and Skill behavior-evidence workflow: PASS.
 - Active Skill count: 30; Work Modes: `PLAN / BUILD / REVIEW`; generated active map current.
 - External model behavior run: `NOT_RUN`; no model-run success is claimed.
-- Independent adversarial review: must be recorded as a PR review on the final exact head after this closeout commit.
-
-## Integration
-
-- Merge SHA: `PENDING`
-- Post-merge main readback: `PENDING`
-- Post-merge workflow: `PENDING`
 
 ## BCP lifecycle closeout
 
 - Registry transition: `APPROVED_FOR_IMPLEMENTATION → IMPLEMENTED`
 - Implementation PR: `https://github.com/alsdmlals4-eng/Base/pull/319`
-- Closeout production commit: `PENDING_USER_TRIGGER`
-- Final exact-head workflows after closeout: `PENDING`
+- Closeout production commit: `eaa992313265da292a9ce3775cb17b0235e58fc5`
+- Closeout mutation run: `31698751719` — lifecycle and focused regressions, proposal checker, reference-freshness and whitespace all passed; temporary workflow and script were removed before push.
+- Final exact-head workflows after closeout: triggered by the user-authored commit containing this record; authoritative run IDs and independent review are recorded on PR #319 without changing the reviewed tree.
 - Rollback: revert the eventual PR #319 squash merge commit; no product code/data or PR #312/#316 path is affected.
+
+## Integration
+
+- Independent adversarial review: `PENDING_FINAL_EXACT_HEAD`
+- Merge SHA: `PENDING`
+- Post-merge main readback: `PENDING`
+- Post-merge workflow: `PENDING`
