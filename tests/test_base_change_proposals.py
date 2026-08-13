@@ -322,6 +322,8 @@ class ClaimIntentProposalLifecycleTests(unittest.TestCase):
         plan = (ROOT / "docs/superpowers/plans/2026-08-13-claim-and-intent-verification.md").read_text(encoding="utf-8")
         design = (ROOT / "docs/superpowers/specs/2026-08-13-claim-and-intent-verification-design.md").read_text(encoding="utf-8")
         self.assertNotIn("구현 PR: 아직 없음", proposal)
+        self.assertNotIn("신규 제안 Registry 상태: `SUBMITTED`", proposal)
+        self.assertIn("최종 Registry 상태: `IMPLEMENTED`", proposal)
         self.assertIn("bf0890439cbef96777171cc00a0229c65e852af8", plan + "\n" + design)
         for stale in ('9a4a6e688e993114466e3f25831555b23fcf5912', '8a161eca8d129584aecb3898e8d5622dcfc89efb', '31656590653', '94312314139'):
             self.assertNotIn(stale, plan + "\n" + design)
