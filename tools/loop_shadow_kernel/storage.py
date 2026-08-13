@@ -31,6 +31,10 @@ class LeaseLedgerBusyError(RuntimeError):
     pass
 
 
+class LeaseLedgerCorruptError(ValueError):
+    pass
+
+
 def _validate_identifier(value: str, label: str) -> str:
     if not isinstance(value, str) or _IDENTIFIER.fullmatch(value) is None:
         raise ValueError(f"{label} is not a safe identifier")
@@ -207,6 +211,7 @@ class StateStorage:
         if not isinstance(value, list):
             raise UnsafeStateTreeError(f"lease ledger is not a list: {path}")
         leases: list[dict[str, str]] = []
+        seen_resources: set[str] = set()
         for item in value:
             if not isinstance(item, dict):
                 raise UnsafeStateTreeError(f"lease ledger item is invalid: {path}")
@@ -215,6 +220,12 @@ class StateStorage:
             if not isinstance(resource, str) or not resource or not isinstance(run_id, str):
                 raise UnsafeStateTreeError(f"lease ledger item is incomplete: {path}")
             _validate_identifier(run_id, "lease run_id")
+            resource_key = resource.casefold()
+            if resource_key in seen_resources:
+                raise LeaseLedgerCorruptError(
+                    f"duplicate normalized lease resource: {resource}"
+                )
+            seen_resources.add(resource_key)
             leases.append({"resource": resource, "run_id": run_id})
         return sorted(leases, key=lambda item: (item["resource"].casefold(), item["run_id"]))
 
