@@ -1,0 +1,6 @@
+{
+  "authority": "UNVERIFIED_DISCOVERY_ONLY",
+  "candidates": [],
+  "ledger_role": "periodic-unverified-source-candidates",
+  "schema_version": 1
+}
