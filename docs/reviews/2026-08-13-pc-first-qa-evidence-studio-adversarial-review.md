@@ -2,7 +2,10 @@
 
 ## Review scope
 
-- Exact base: `1e5f8c1ce297898597d1afc52776d9592a790051`
+- Initial inspected base: `1e5f8c1ce297898597d1afc52776d9592a790051`
+- Final rebased main parent: `c5dff35af099647937233ed0f2cfa3269e70db75`
+- Reviewed PR head: `255e502470369e1779ad34716e12cbe31c2f293a`
+- Squash merge: `07ca8366e6007f13ecb6ae945abfb4564fa2e4d7` via PR `#328`
 - Product slice: reviewed Tool Registry, machine-local project binding, typed QA child launch, developer-only PC evidence workflow
 - Explicit exclusion: Android connection, external tester recruitment, product image/UX quality approval, Expression/Sprite Hub launch
 
@@ -29,6 +32,13 @@
 - `USER_DECISION_REQUIRED`: none inside the approved PC-first slice.
 - `DEFER`: Android device connection and external-user usability testing.
 - `BLOCKED_UNVERIFIED`: real project image/UX quality, browser pixel/render inspection (Chromium unavailable in the verification environment), Windows PowerShell execution, long-running child supervision, Expression/Sprite Hub launch.
+
+## Integration evidence
+
+- PR exact-head workflows: Dependency Review, Game UX/UI, Evidence Knowledge, Base v9, and Game Project Operating System all `SUCCESS`.
+- Post-merge main workflows: Game UX/UI run `31717421783`, Base v9 run `31717421828`, and Game Project Operating System/`ci-gate` run `31717421892` all `SUCCESS`.
+- Merge SHA readback confirmed `tools/TOOL_REGISTRY.json`, `tools/tool-hub/README.md`, and `tools/qa-evidence-studio/README.md` on `main`.
+- The Windows CI result is a publication smoke only; it does not promote the unexecuted real Windows multi-project Tool Hub runtime to verified.
 
 ## Rollback
 
