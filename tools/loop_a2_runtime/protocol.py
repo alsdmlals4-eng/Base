@@ -60,7 +60,9 @@ def normalize_contract_path(value: Any, field: str) -> str:
 
 def _path_tuple(value: Any, field: str, *, allow_empty: bool = False) -> tuple[str, ...]:
     if not isinstance(value, list) or (not allow_empty and not value):
-        raise ProtocolError(f"{field} must be a {'possibly empty' if allow_empty else 'non-empty'} list")
+        raise ProtocolError(
+            f"{field} must be a {'possibly empty' if allow_empty else 'non-empty'} list"
+        )
     if len(value) > 256:
         raise ProtocolError(f"{field} exceeds 256 entries")
     result = tuple(normalize_contract_path(item, f"{field}[]") for item in value)
@@ -71,7 +73,9 @@ def _path_tuple(value: Any, field: str, *, allow_empty: bool = False) -> tuple[s
 
 def _id_tuple(value: Any, field: str, *, allow_empty: bool = False) -> tuple[str, ...]:
     if not isinstance(value, list) or (not allow_empty and not value):
-        raise ProtocolError(f"{field} must be a {'possibly empty' if allow_empty else 'non-empty'} list")
+        raise ProtocolError(
+            f"{field} must be a {'possibly empty' if allow_empty else 'non-empty'} list"
+        )
     if len(value) > 256:
         raise ProtocolError(f"{field} exceeds 256 entries")
     result = tuple(_identifier(item, f"{field}[]") for item in value)
@@ -90,14 +94,28 @@ class Budgets:
     def from_dict(cls, value: Any) -> "Budgets":
         if not isinstance(value, dict):
             raise ProtocolError("budgets must be an object")
-        _exact_keys(value, {"max_turns", "max_repair_cycles", "timeout_seconds"}, "budgets")
+        _exact_keys(
+            value,
+            {"max_turns", "max_repair_cycles", "timeout_seconds"},
+            "budgets",
+        )
         if not isinstance(value["max_turns"], int) or not 1 <= value["max_turns"] <= 50:
             raise ProtocolError("max_turns must be 1..50")
-        if not isinstance(value["max_repair_cycles"], int) or not 0 <= value["max_repair_cycles"] <= 5:
+        if (
+            not isinstance(value["max_repair_cycles"], int)
+            or not 0 <= value["max_repair_cycles"] <= 5
+        ):
             raise ProtocolError("max_repair_cycles must be 0..5")
-        if not isinstance(value["timeout_seconds"], int) or not 1 <= value["timeout_seconds"] <= 3600:
+        if (
+            not isinstance(value["timeout_seconds"], int)
+            or not 1 <= value["timeout_seconds"] <= 3600
+        ):
             raise ProtocolError("timeout_seconds must be 1..3600")
-        return cls(value["max_turns"], value["max_repair_cycles"], value["timeout_seconds"])
+        return cls(
+            value["max_turns"],
+            value["max_repair_cycles"],
+            value["timeout_seconds"],
+        )
 
 
 @dataclass(frozen=True)
@@ -118,9 +136,20 @@ class RunRequest:
     provider_mode: str
 
     _KEYS = {
-        "schema_version", "contract_role", "project_id", "run_id", "package_id",
-        "expected_main_sha", "capsule_path", "package_path", "allowed_paths",
-        "forbidden_paths", "resource_locks", "requirement_ids", "budgets", "provider_mode",
+        "schema_version",
+        "contract_role",
+        "project_id",
+        "run_id",
+        "package_id",
+        "expected_main_sha",
+        "capsule_path",
+        "package_path",
+        "allowed_paths",
+        "forbidden_paths",
+        "resource_locks",
+        "requirement_ids",
+        "budgets",
+        "provider_mode",
     }
 
     @classmethod
@@ -128,9 +157,16 @@ class RunRequest:
         if not isinstance(value, dict):
             raise ProtocolError("run request must be an object")
         _exact_keys(value, cls._KEYS, "run request")
-        if value["schema_version"] != 1 or value["contract_role"] != "LOOP_A2_RUN_REQUEST":
+        if (
+            value["schema_version"] != 1
+            or value["contract_role"] != "LOOP_A2_RUN_REQUEST"
+        ):
             raise ProtocolError("unsupported run request contract")
-        provider_mode = _string(value["provider_mode"], "provider_mode", max_length=8)
+        provider_mode = _string(
+            value["provider_mode"],
+            "provider_mode",
+            max_length=8,
+        )
         if provider_mode not in {"FAKE", "REAL"}:
             raise ProtocolError("provider_mode must be FAKE or REAL")
         return cls(
@@ -143,7 +179,11 @@ class RunRequest:
             normalize_contract_path(value["capsule_path"], "capsule_path"),
             normalize_contract_path(value["package_path"], "package_path"),
             _path_tuple(value["allowed_paths"], "allowed_paths"),
-            _path_tuple(value["forbidden_paths"], "forbidden_paths", allow_empty=True),
+            _path_tuple(
+                value["forbidden_paths"],
+                "forbidden_paths",
+                allow_empty=True,
+            ),
             _id_tuple(value["resource_locks"], "resource_locks"),
             _id_tuple(value["requirement_ids"], "requirement_ids"),
             Budgets.from_dict(value["budgets"]),
@@ -185,7 +225,11 @@ class WorkerError:
         _exact_keys(value, {"code", "message"}, "worker error")
         return cls(
             _identifier(value["code"], "error.code"),
-            _string(value["message"], "error.message", max_length=2048),
+            _string(
+                value["message"],
+                "error.message",
+                max_length=2048,
+            ),
         )
 
 
@@ -205,8 +249,18 @@ class WorkerResult:
     errors: tuple[WorkerError, ...]
 
     _KEYS = {
-        "schema_version", "contract_role", "project_id", "run_id", "package_id",
-        "expected_main_sha", "role", "status", "changed_paths", "summary", "usage", "errors",
+        "schema_version",
+        "contract_role",
+        "project_id",
+        "run_id",
+        "package_id",
+        "expected_main_sha",
+        "role",
+        "status",
+        "changed_paths",
+        "summary",
+        "usage",
+        "errors",
     }
 
     @classmethod
@@ -214,7 +268,10 @@ class WorkerResult:
         if not isinstance(value, dict):
             raise ProtocolError("worker result must be an object")
         _exact_keys(value, cls._KEYS, "worker result")
-        if value["schema_version"] != 1 or value["contract_role"] != "LOOP_A2_WORKER_RESULT":
+        if (
+            value["schema_version"] != 1
+            or value["contract_role"] != "LOOP_A2_WORKER_RESULT"
+        ):
             raise ProtocolError("unsupported worker result contract")
         if value["role"] != "BUILDER":
             raise ProtocolError("worker role must be BUILDER")
@@ -225,16 +282,25 @@ class WorkerResult:
         if not isinstance(usage, dict):
             raise ProtocolError("usage must be an object")
         _exact_keys(usage, {"turns"}, "usage")
-        if not isinstance(usage["turns"], int) or not 0 <= usage["turns"] <= 50:
+        if (
+            not isinstance(usage["turns"], int)
+            or not 0 <= usage["turns"] <= 50
+        ):
             raise ProtocolError("usage.turns must be 0..50")
         raw_errors = value["errors"]
         if not isinstance(raw_errors, list) or len(raw_errors) > 64:
-            raise ProtocolError("errors must be a list with at most 64 entries")
+            raise ProtocolError(
+                "errors must be a list with at most 64 entries"
+            )
         errors = tuple(WorkerError.from_dict(item) for item in raw_errors)
         if status == "COMPLETED" and errors:
-            raise ProtocolError("COMPLETED worker result cannot contain errors")
+            raise ProtocolError(
+                "COMPLETED worker result cannot contain errors"
+            )
         if status in {"FAILED", "BLOCKED"} and not errors:
-            raise ProtocolError(f"{status} worker result must contain at least one error")
+            raise ProtocolError(
+                f"{status} worker result must contain at least one error"
+            )
         return cls(
             1,
             "LOOP_A2_WORKER_RESULT",
@@ -244,7 +310,11 @@ class WorkerResult:
             _sha(value["expected_main_sha"], "expected_main_sha"),
             "BUILDER",
             status,
-            _path_tuple(value["changed_paths"], "changed_paths", allow_empty=True),
+            _path_tuple(
+                value["changed_paths"],
+                "changed_paths",
+                allow_empty=True,
+            ),
             _string(value["summary"], "summary", max_length=2048),
             {"turns": usage["turns"]},
             errors,
@@ -263,16 +333,36 @@ class ReviewFinding:
     def from_dict(cls, value: Any) -> "ReviewFinding":
         if not isinstance(value, dict):
             raise ProtocolError("review finding must be an object")
-        _exact_keys(value, {"code", "severity", "message", "paths", "requirement_ids"}, "review finding")
-        severity = _string(value["severity"], "finding.severity", max_length=2)
+        _exact_keys(
+            value,
+            {"code", "severity", "message", "paths", "requirement_ids"},
+            "review finding",
+        )
+        severity = _string(
+            value["severity"],
+            "finding.severity",
+            max_length=2,
+        )
         if severity not in {"P0", "P1", "P2"}:
             raise ProtocolError("finding severity must be P0, P1, or P2")
         return cls(
             _identifier(value["code"], "finding.code"),
             severity,
-            _string(value["message"], "finding.message", max_length=2048),
-            _path_tuple(value["paths"], "finding.paths", allow_empty=True),
-            _id_tuple(value["requirement_ids"], "finding.requirement_ids", allow_empty=True),
+            _string(
+                value["message"],
+                "finding.message",
+                max_length=2048,
+            ),
+            _path_tuple(
+                value["paths"],
+                "finding.paths",
+                allow_empty=True,
+            ),
+            _id_tuple(
+                value["requirement_ids"],
+                "finding.requirement_ids",
+                allow_empty=True,
+            ),
         )
 
 
@@ -290,8 +380,16 @@ class ReviewResult:
     checked_requirement_ids: tuple[str, ...]
 
     _KEYS = {
-        "schema_version", "contract_role", "project_id", "run_id", "package_id",
-        "expected_main_sha", "role", "verdict", "findings", "checked_requirement_ids",
+        "schema_version",
+        "contract_role",
+        "project_id",
+        "run_id",
+        "package_id",
+        "expected_main_sha",
+        "role",
+        "verdict",
+        "findings",
+        "checked_requirement_ids",
     }
 
     @classmethod
@@ -299,16 +397,35 @@ class ReviewResult:
         if not isinstance(value, dict):
             raise ProtocolError("review result must be an object")
         _exact_keys(value, cls._KEYS, "review result")
-        if value["schema_version"] != 1 or value["contract_role"] != "LOOP_A2_REVIEW_RESULT":
+        if (
+            value["schema_version"] != 1
+            or value["contract_role"] != "LOOP_A2_REVIEW_RESULT"
+        ):
             raise ProtocolError("unsupported review result contract")
         if value["role"] != "CRITIC":
             raise ProtocolError("review role must be CRITIC")
         verdict = _string(value["verdict"], "verdict", max_length=32)
-        if verdict not in {"PASS", "MUST_FIX", "USER_DECISION_REQUIRED", "BLOCKED_UNVERIFIED"}:
+        if verdict not in {
+            "PASS",
+            "MUST_FIX",
+            "USER_DECISION_REQUIRED",
+            "BLOCKED_UNVERIFIED",
+        }:
             raise ProtocolError("unsupported review verdict")
         raw_findings = value["findings"]
         if not isinstance(raw_findings, list) or len(raw_findings) > 128:
-            raise ProtocolError("findings must be a list with at most 128 entries")
+            raise ProtocolError(
+                "findings must be a list with at most 128 entries"
+            )
+        findings = tuple(
+            ReviewFinding.from_dict(item) for item in raw_findings
+        )
+        if verdict == "PASS" and findings:
+            raise ProtocolError("PASS review result cannot contain findings")
+        if verdict != "PASS" and not findings:
+            raise ProtocolError(
+                f"{verdict} review result must contain at least one finding"
+            )
         return cls(
             1,
             "LOOP_A2_REVIEW_RESULT",
@@ -318,6 +435,10 @@ class ReviewResult:
             _sha(value["expected_main_sha"], "expected_main_sha"),
             "CRITIC",
             verdict,
-            tuple(ReviewFinding.from_dict(item) for item in raw_findings),
-            _id_tuple(value["checked_requirement_ids"], "checked_requirement_ids", allow_empty=True),
+            findings,
+            _id_tuple(
+                value["checked_requirement_ids"],
+                "checked_requirement_ids",
+                allow_empty=True,
+            ),
         )
