@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import hashlib
 import hmac
 import json
@@ -87,6 +87,8 @@ class FigmaDeliveryService:
         self._clock = clock
         self._pairings: dict[str, _PairingRecord] = {}
         self._sessions: dict[str, BridgeSession] = {}
+        self._jobs: dict[str, DeliveryJob] = {}
+        self._job_roots: dict[str, Path] = {}
 
     def create_pairing(self, project_id: str) -> PairingView:
         try:
@@ -193,7 +195,91 @@ class FigmaDeliveryService:
             )
         except OSError as error:
             raise DeliveryError("DELIVERY_QUEUE_WRITE_FAILED") from error
+        self._jobs[delivery_id] = job
+        self._job_roots[delivery_id] = delivery_root
         return job
+
+    def claim_next(self, token: str) -> DeliveryJob | None:
+        session = self._require_session(token)
+        self._assert_session_route(session)
+        candidates = sorted(
+            (job for job in self._jobs.values() if job.project_id == session.project_id and job.state == "QUEUED"),
+            key=lambda item: (item.created_at, item.delivery_id),
+        )
+        for job in candidates:
+            if float(self._clock()) > job.expires_at:
+                self._set_state(job, "EXPIRED")
+                continue
+            self._verify_content(job)
+            return self._set_state(job, "CLAIMED")
+        return None
+
+    def content(self, token: str, delivery_id: str) -> bytes:
+        session = self._require_session(token)
+        job = self._job_for_session(session, delivery_id)
+        if job.state != "CLAIMED":
+            raise DeliveryError("DELIVERY_NOT_CLAIMED")
+        return self._verify_content(job)
+
+    def release(self, token: str, delivery_id: str) -> DeliveryJob:
+        session = self._require_session(token)
+        job = self._job_for_session(session, delivery_id)
+        if job.state != "CLAIMED":
+            raise DeliveryError("DELIVERY_NOT_CLAIMED")
+        self._verify_content(job)
+        return self._set_state(job, "QUEUED")
+
+    def _require_session(self, token: str) -> BridgeSession:
+        session = self._sessions.get(token)
+        if session is None:
+            raise DeliveryError("BRIDGE_AUTH_REQUIRED")
+        return session
+
+    def _assert_session_route(self, session: BridgeSession) -> None:
+        try:
+            self._locator.resolve(session.project_id)
+            target = self._registry.resolve_ready_target(session.project_id)
+            self._registry.assert_unchanged()
+        except (ProjectBindingError, DeliveryBlockedError) as error:
+            raise DeliveryError("DELIVERY_PROJECT_ROUTE_UNAVAILABLE") from error
+        if target.figma_file_key != session.figma_file_key:
+            raise DeliveryError("FIGMA_ROUTE_MISMATCH")
+
+    def _job_for_session(self, session: BridgeSession, delivery_id: str) -> DeliveryJob:
+        self._assert_session_route(session)
+        job = self._jobs.get(delivery_id)
+        if job is None:
+            raise DeliveryError("DELIVERY_NOT_FOUND")
+        if job.project_id != session.project_id or job.figma_file_key != session.figma_file_key:
+            raise DeliveryError("DELIVERY_SCOPE_MISMATCH")
+        return job
+
+    def _verify_content(self, job: DeliveryJob) -> bytes:
+        root = self._job_roots.get(job.delivery_id)
+        if root is None:
+            raise DeliveryError("DELIVERY_NOT_FOUND")
+        try:
+            data = (root / "content.bin").read_bytes()
+        except OSError as error:
+            raise DeliveryError("DELIVERY_CONTENT_UNAVAILABLE") from error
+        if len(data) != job.byte_length or not hmac.compare_digest(hashlib.sha256(data).hexdigest(), job.content_sha256):
+            raise DeliveryError("DELIVERY_CONTENT_CHANGED")
+        return data
+
+    def _set_state(self, job: DeliveryJob, state: str) -> DeliveryJob:
+        updated = replace(job, state=state)
+        root = self._job_roots.get(job.delivery_id)
+        if root is None:
+            raise DeliveryError("DELIVERY_NOT_FOUND")
+        try:
+            self._atomic_write_text(
+                root / "JOB.json",
+                json.dumps(self._job_document(updated), ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            )
+        except OSError as error:
+            raise DeliveryError("DELIVERY_QUEUE_WRITE_FAILED") from error
+        self._jobs[job.delivery_id] = updated
+        return updated
 
     @classmethod
     def _validate_raster(cls, image_bytes: bytes, media_type: str) -> tuple[int, int]:
