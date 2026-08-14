@@ -122,14 +122,50 @@ class DockerNoneDeniedNetworkBoundaryTests(BoundaryTestCase):
         with self.assertRaises(ValueError):
             DockerNoneDeniedNetworkBoundary(image_id="sha256:abc")
 
-    def test_non_linux_and_read_only_approved_remain_fail_closed(self) -> None:
+    def test_unsupported_host_and_read_only_approved_remain_fail_closed(self) -> None:
         boundary = DockerNoneDeniedNetworkBoundary(image_id=IMAGE_ID)
-        with patch("tools.loop_a2_runtime.network_boundary.platform.system", return_value="Windows"), patch("tools.loop_a2_runtime.network_boundary.subprocess.run") as run:
+        with patch("tools.loop_a2_runtime.network_boundary.platform.system", return_value="Darwin"), patch("tools.loop_a2_runtime.network_boundary.subprocess.run") as run:
             self.assertIsNone(boundary.prepare(policy="DENIED", argv=("python", "-V"), cwd=Path.cwd(), environment=self.environment()))
         run.assert_not_called()
         with patch("tools.loop_a2_runtime.network_boundary.platform.system", return_value="Linux"), patch("tools.loop_a2_runtime.network_boundary.subprocess.run") as run:
             self.assertIsNone(boundary.prepare(policy="READ_ONLY_APPROVED", argv=("python", "-V"), cwd=Path.cwd(), environment=self.environment()))
         run.assert_not_called()
+
+    def test_windows_host_constructs_same_docker_none_boundary_plan(self) -> None:
+        boundary = DockerNoneDeniedNetworkBoundary(
+            image_id=IMAGE_ID,
+            docker_executable=sys.executable,
+        )
+        environment = self.environment()
+        with tempfile.TemporaryDirectory() as temporary:
+            cwd = Path(temporary).resolve()
+            with patch("tools.loop_a2_runtime.network_boundary.platform.system", return_value="Windows"), patch("tools.loop_a2_runtime.network_boundary.subprocess.run", return_value=_Completed(returncode=0, stdout=IMAGE_ID + "\n")) as run:
+                plan = boundary.prepare(
+                    policy="DENIED",
+                    argv=("python", "-c", "print('windows-host')"),
+                    cwd=cwd,
+                    environment=environment,
+                )
+        self.assertIsInstance(plan, NetworkExecutionPlan)
+        assert plan is not None
+        self.assertEqual(plan.boundary_id, "DOCKER_NONE_DENIED_V1")
+        args = list(plan.argv)
+        self.assertEqual(args[0], str(Path(sys.executable).resolve(strict=True)))
+        self.assertIn("--pull", args)
+        self.assertEqual(args[args.index("--pull") + 1], "never")
+        self.assertIn("--network", args)
+        self.assertEqual(args[args.index("--network") + 1], "none")
+        self.assertIn("--read-only", args)
+        self.assertIn("--cap-drop", args)
+        self.assertEqual(args[args.index("--cap-drop") + 1], "ALL")
+        self.assertIn("no-new-privileges", args)
+        mount = args[args.index("--mount") + 1]
+        self.assertIn(f"src={cwd}", mount)
+        self.assertIn("dst=/workspace", mount)
+        self.assertIn("readonly", mount)
+        inspect = run.call_args.args[0]
+        self.assertEqual(inspect[:3], [str(Path(sys.executable).resolve(strict=True)), "image", "inspect"])
+        self.assertEqual(inspect[-1], IMAGE_ID)
 
     def test_missing_docker_or_missing_exact_image_fail_closed(self) -> None:
         boundary = DockerNoneDeniedNetworkBoundary(image_id=IMAGE_ID)
