@@ -50,6 +50,7 @@ class _RegistryEntry(BaseModel):
 
     project_id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     display_name: str = Field(min_length=1)
+    repository_url: HttpUrl
     figma_file_key: str = Field(pattern=r"^[A-Za-z0-9]+$")
     figma_url: HttpUrl
     delivery_status: DeliveryStatus
@@ -79,6 +80,15 @@ class ProjectFigmaTarget:
     generation_area_node_id: str
 
 
+@dataclass(frozen=True)
+class ProjectRepositoryPointer:
+    project_id: str
+    display_name: str
+    repository_url: str
+    repository_name: str
+    routing_state: str
+
+
 class ProjectFigmaRegistry:
     """A routing registry, never a credential store or mutation client."""
 
@@ -87,6 +97,20 @@ class ProjectFigmaRegistry:
         if len(project_ids) != len(set(project_ids)):
             raise ValueError("duplicate project_id in Figma target registry")
         for entry in document.entries:
+            repository = urlsplit(str(entry.repository_url))
+            if (
+                repository.scheme != "https"
+                or repository.hostname != "github.com"
+                or repository.username
+                or repository.password
+                or repository.port
+                or repository.query
+                or repository.fragment
+                or not re.fullmatch(r"/[^/]+/[^/]+\.git", repository.path)
+            ):
+                raise ValueError(
+                    f"GitHub repository URL for project_id {entry.project_id!r} is invalid"
+                )
             if entry.figma_url.scheme != "https" or entry.figma_url.host != "www.figma.com":
                 raise ValueError(f"Figma URL for project_id {entry.project_id!r} must use https://www.figma.com")
             parts = entry.figma_url.path.split("/")
@@ -104,6 +128,9 @@ class ProjectFigmaRegistry:
                     raise ValueError(f"Figma delivery page and generation area node IDs must differ for project_id {entry.project_id!r}")
         self._document = document
         self._entries = {entry.project_id: entry for entry in document.entries}
+        repository_urls = [str(entry.repository_url).casefold() for entry in document.entries]
+        if len(repository_urls) != len(set(repository_urls)):
+            raise ValueError("duplicate repository_url in Figma target registry")
         self.config_sha256 = config_sha256
         self.source_path = source_path
 
@@ -186,11 +213,25 @@ class ProjectFigmaRegistry:
             {
                 "project_id": entry.project_id,
                 "display_name": entry.display_name,
+                "repository_name": Path(urlsplit(str(entry.repository_url)).path).stem,
                 "routing_state": self.registration_state(entry.project_id),
             }
             for entry in self._document.entries
             if entry.delivery_status != "ARCHIVED"
         ]
+
+    def repository_pointer(self, project_id: str) -> ProjectRepositoryPointer:
+        entry = self._entries.get(project_id)
+        if entry is None or entry.delivery_status == "ARCHIVED":
+            raise DeliveryBlockedError("project repository pointer is unavailable")
+        repository_url = str(entry.repository_url)
+        return ProjectRepositoryPointer(
+            project_id=entry.project_id,
+            display_name=entry.display_name,
+            repository_url=repository_url,
+            repository_name=Path(urlsplit(repository_url).path).stem,
+            routing_state=self.registration_state(project_id),
+        )
 
     def resolve_ready_target(self, project_id: str) -> ProjectFigmaTarget:
         entry = self._entries.get(project_id)

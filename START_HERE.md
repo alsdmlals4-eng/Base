@@ -35,7 +35,7 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 - `templates/project-operations/`: 대상 프로젝트에 설치할 Template이며 Base의 활성 상태가 아니다.
 - 확정된 운영 계약: `AGENTS.md`, `START_HERE.md`, `docs/OPERATING_MODEL.md`, `docs/DOCUMENTATION_MAP.md`
 - Tool Hub 프로젝트 식별자 전환: `docs/operations/PROJECT_BASE_ADAPTER_V2_MIGRATION.md` (v1은 audit-compatible, Hub에는 `IDENTITY_MIGRATION_REQUIRED`)
-- 로컬 Tool Hub와 프로젝트 연결: `tools/tool-hub/README.md`
+- 로컬 Tool Hub와 프로젝트 자동 탐색·검토된 GitHub clone·PowerShell 없는 Windows 바탕화면 실행: `tools/tool-hub/README.md`
 - 이미지·UX 배치 후 개발자 PC 증거 검토: `tools/qa-evidence-studio/README.md`
 - 무추가비용 후보 가져오기·표정 export: `tools/expression-studio/README.md`
 - 무추가비용 action/effect frame 가져오기·export: `tools/sprite-animation-studio/README.md`

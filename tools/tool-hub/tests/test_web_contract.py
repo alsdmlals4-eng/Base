@@ -26,8 +26,11 @@ def test_hub_browser_is_project_first_and_has_no_raw_command_surface(tmp_path: P
     html = response.text
     assert 'id="project-registration"' in html
     assert 'id="known-project"' in html
+    assert 'id="known-project-list"' in html
     assert 'id="registered-project-list"' in html
     assert 'id="tool-catalog"' in html
+    assert 'id="windows-launcher-install"' in html
+    assert 'id="hub-shutdown"' in html
     assert "프로젝트를 먼저 연결" in html
     assert "QA Evidence Studio" in html
     assert "Expression Studio" in html
@@ -45,6 +48,7 @@ def test_hub_browser_is_project_first_and_has_no_raw_command_surface(tmp_path: P
     assert "balance" not in html.lower()
     assert "C:\\" not in html
     assert "/home/" not in html
+    assert 'id="project-root"' not in html
 
 
 def test_catalog_marks_all_three_reviewed_child_adapters_runnable(tmp_path: Path) -> None:
@@ -79,9 +83,22 @@ def test_browser_submits_the_selected_known_project_and_keeps_registered_project
 
     assert 'const knownProjects = document.querySelector("#known-project")' in script
     assert "project.project_id" in script
-    assert 'project_id: document.querySelector("#known-project").value' in script
+    assert 'api(`/api/projects/${project.project_id}/onboard`' in script
     assert 'document.querySelector("#registered-project-list")' in script
-    assert "project_root" not in script.split("function renderRegisteredProjects", 1)[-1].split("function ", 1)[0]
+    assert "project_root" not in script
+    assert "repository_url" not in script
+    assert 'project.local_state = "ONBOARDING"' in script
+
+
+def test_browser_installs_the_desktop_launcher_and_shuts_down_without_paths_or_pids() -> None:
+    script = web_source("app.js")
+
+    assert 'api("/api/windows-launcher/install", { method: "POST", body: JSON.stringify({}) })' in script
+    assert 'api("/api/shutdown", { method: "POST", body: JSON.stringify({}) })' in script
+    assert "windows_launcher_state" in script
+    assert "confirm(" in script
+    assert "process_id" not in script
+    assert "pythonw" not in script
 
 
 def test_browser_opens_only_the_authenticated_loopback_url_returned_by_launch() -> None:

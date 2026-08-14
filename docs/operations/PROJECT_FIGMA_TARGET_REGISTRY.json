@@ -7,6 +7,7 @@
     {
       "project_id": "coc-fiction",
       "display_name": "coc소설",
+      "repository_url": "https://github.com/alsdmlals4-eng/Coc-Fiction.git",
       "figma_file_key": "PEa5zDbPHll3eHiNKX0e1k",
       "figma_url": "https://www.figma.com/design/PEa5zDbPHll3eHiNKX0e1k/coc-%EC%86%8C%EC%84%A4?node-id=0-1",
       "delivery_status": "REGISTERED_NO_MUTATION",
@@ -16,6 +17,7 @@
     {
       "project_id": "ten-paces-hidden-moves",
       "display_name": "십보강호: 숨은 수의 비무",
+      "repository_url": "https://github.com/alsdmlals4-eng/Ten-Paces-Hidden-Moves.git",
       "figma_file_key": "pVQ2e6aK45iL8BLBJWDSw4",
       "figma_url": "https://www.figma.com/design/pVQ2e6aK45iL8BLBJWDSw4/%EC%8B%AD%EB%B3%B4%EA%B0%95%ED%98%B8--%EC%88%A8%EC%9D%80-%EC%88%98%EC%9D%98-%EB%B9%84%EB%AC%B4-Ten-Paces--Hidden-Moves-?node-id=0-1",
       "delivery_status": "REGISTERED_NO_MUTATION",
@@ -25,6 +27,7 @@
     {
       "project_id": "ninja-survival",
       "display_name": "닌자 서바이벌(닌자의 신)",
+      "repository_url": "https://github.com/alsdmlals4-eng/ninja-survival-godot.git",
       "figma_file_key": "xNm1xbYPftEaAE2jOENlvt",
       "figma_url": "https://www.figma.com/design/xNm1xbYPftEaAE2jOENlvt/%EB%8B%8C%EC%9E%90-%EC%84%9C%EB%B0%94%EC%9D%B4%EB%B2%8C-%EB%8B%8C%EC%9E%90%EC%9D%98-%EC%8B%A0-?node-id=0-1",
       "delivery_status": "REGISTERED_NO_MUTATION",
@@ -34,6 +37,7 @@
     {
       "project_id": "switchy-express-cargo-puzzle",
       "display_name": "Switchy Express: Cargo Puzzle",
+      "repository_url": "https://github.com/alsdmlals4-eng/Switchy-Express-Cargo-Puzzle.git",
       "figma_file_key": "QMbylbdAi96PGSdHIT3AGa",
       "figma_url": "https://www.figma.com/design/QMbylbdAi96PGSdHIT3AGa/Switchy-Express--Cargo-Puzzle?node-id=0-1",
       "delivery_status": "REGISTERED_NO_MUTATION",
@@ -43,6 +47,7 @@
     {
       "project_id": "urban-legend",
       "display_name": "괴이기록국(urban-legend)",
+      "repository_url": "https://github.com/alsdmlals4-eng/urban-legend.git",
       "figma_file_key": "Z7J3eLeavEytKN20H4HfoP",
       "figma_url": "https://www.figma.com/design/Z7J3eLeavEytKN20H4HfoP/%EA%B4%B4%EC%9D%B4%EA%B8%B0%EB%A1%9D%EA%B5%AD-urban-legend-?node-id=0-1",
       "delivery_status": "REGISTERED_NO_MUTATION",
@@ -52,6 +57,7 @@
     {
       "project_id": "grimoire-how-to-rewrite-the-world",
       "display_name": "GRIMOIRE: 세계를 다시 쓰는 법",
+      "repository_url": "https://github.com/alsdmlals4-eng/GRIMOIRE-.git",
       "figma_file_key": "AdOGNMp61AZSMMvBVxsVBd",
       "figma_url": "https://www.figma.com/design/AdOGNMp61AZSMMvBVxsVBd/GRIMOIRE--%EC%84%B8%EA%B3%84%EB%A5%BC-%EB%8B%A4%EC%8B%9C-%EC%93%B0%EB%8A%94-%EB%B2%95-How-to-Rewrite-the-World-?node-id=0-1",
       "delivery_status": "REGISTERED_NO_MUTATION",
@@ -61,6 +67,7 @@
     {
       "project_id": "blacksmith",
       "display_name": "블랙스미스(Blacksmith)",
+      "repository_url": "https://github.com/alsdmlals4-eng/Blacksmith.git",
       "figma_file_key": "xy6W4ga6ldkF3TvP0eRmtN",
       "figma_url": "https://www.figma.com/design/xy6W4ga6ldkF3TvP0eRmtN/%EB%B8%94%EB%9E%99%EC%8A%A4%EB%AF%B8%EC%8A%A4-Blacksmith-?node-id=0-1",
       "delivery_status": "REGISTERED_NO_MUTATION",
@@ -70,6 +77,7 @@
     {
       "project_id": "omenward",
       "display_name": "오멘워드(OMENWARD)",
+      "repository_url": "https://github.com/alsdmlals4-eng/omenward.git",
       "figma_file_key": "IhxUJaS6ik6MpBzdxt6o8D",
       "figma_url": "https://www.figma.com/design/IhxUJaS6ik6MpBzdxt6o8D/%EC%98%A4%EB%A9%98%EC%9B%8C%EB%93%9C-OMENWARD-?node-id=0-1",
       "delivery_status": "REGISTERED_NO_MUTATION",

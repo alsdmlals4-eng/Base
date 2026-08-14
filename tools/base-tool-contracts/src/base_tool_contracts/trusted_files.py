@@ -238,8 +238,33 @@ def run_portable_git(root: Path, *arguments: str) -> subprocess.CompletedProcess
     )
 
 
+def _trusted_git_search_path(
+    environment: dict[str, str] | os._Environ[str],
+    *,
+    platform: str,
+) -> str:
+    separator = ";" if platform == "nt" else os.pathsep
+    if platform != "nt":
+        return os.defpath
+    directories: list[str] = []
+    for variable, suffix in (
+        ("ProgramFiles", ("Git", "cmd")),
+        ("ProgramFiles(x86)", ("Git", "cmd")),
+        ("LOCALAPPDATA", ("Programs", "Git", "cmd")),
+    ):
+        if base := environment.get(variable):
+            directories.append(str(Path(base).joinpath(*suffix)))
+    directories.extend(
+        item
+        for item in environment.get("PATH", "").split(separator)
+        if item and Path(item).is_absolute()
+    )
+    return separator.join(dict.fromkeys(directories))
+
+
 def trusted_git_executable() -> Path:
-    candidate = shutil.which("git", path=os.defpath)
+    search_path = _trusted_git_search_path(os.environ, platform=os.name)
+    candidate = shutil.which("git.exe" if os.name == "nt" else "git", path=search_path)
     if not candidate:
         raise TrustedFileError("trusted Git executable is unavailable")
     path = Path(candidate).absolute()

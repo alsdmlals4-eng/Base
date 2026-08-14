@@ -21,6 +21,7 @@ def write_registry(tmp_path: Path, *, file_key: str = "abc123") -> Path:
             {
                 "project_id": "demo",
                 "display_name": "Demo",
+                "repository_url": "https://github.com/example/demo.git",
                 "figma_file_key": file_key,
                 "figma_url": f"https://www.figma.com/design/{file_key}/demo?node-id=0-1",
                 "delivery_status": "READY_FOR_DELIVERY",
@@ -133,11 +134,30 @@ def test_public_project_catalog_exposes_names_without_figma_targets(tmp_path: Pa
         {
             "project_id": "demo",
             "display_name": "Demo",
+            "repository_name": "demo",
             "routing_state": "ROUTING_CONFIGURED",
         }
     ]
     assert "abc123" not in json.dumps(registry.public_projects())
     assert "figma.com" not in json.dumps(registry.public_projects())
+
+
+def test_registry_exposes_only_a_reviewed_github_repository_pointer(tmp_path: Path) -> None:
+    module = routing_module()
+    registry = module.ProjectFigmaRegistry.load(write_registry(tmp_path))
+
+    pointer = registry.repository_pointer("demo")
+
+    assert pointer.project_id == "demo"
+    assert pointer.repository_url == "https://github.com/example/demo.git"
+    assert pointer.repository_name == "demo"
+
+    path = write_registry(tmp_path)
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload["entries"][0]["repository_url"] = "https://token@github.com/example/demo.git"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="GitHub repository URL"):
+        module.ProjectFigmaRegistry.load(path)
 
 
 def test_public_project_catalog_excludes_archived_entries(tmp_path: Path) -> None:

@@ -20,6 +20,7 @@ def write_registry(tmp_path: Path, *, status: str = "READY_FOR_DELIVERY") -> Pat
             {
                 "project_id": "demo",
                 "display_name": "Demo",
+                "repository_url": "https://github.com/example/demo.git",
                 "figma_file_key": "abc123",
                 "figma_url": "https://www.figma.com/design/abc123/demo?node-id=0-1",
                 "delivery_status": status,

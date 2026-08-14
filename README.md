@@ -39,7 +39,7 @@ START_HERE.md
 - [프로젝트 어댑터 계약](docs/BASE_SHARED_SKILL_ADAPTER_CONTRACT.md)
 - [PROJECT_BASE_ADAPTER v2 명시적 마이그레이션](docs/operations/PROJECT_BASE_ADAPTER_V2_MIGRATION.md)
 - [로컬 Tool 공용 계약](tools/base-tool-contracts/README.md)
-- [Base Tool Hub](tools/tool-hub/README.md)
+- [Base Tool Hub](tools/tool-hub/README.md) — 검토된 프로젝트 자동 탐색/clone과 Windows 바탕화면 no-console 실행
 - [PC 우선 QA Evidence Studio](tools/qa-evidence-studio/README.md)
 - [무추가비용 Expression Studio](tools/expression-studio/README.md)
 - [무추가비용 Sprite Animation Studio](tools/sprite-animation-studio/README.md)
