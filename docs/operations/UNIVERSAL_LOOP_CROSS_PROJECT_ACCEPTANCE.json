@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "checkpoint_role": "UNIVERSAL_LOOP_CROSS_PROJECT_ACCEPTANCE",
+  "base_kernel_main_sha": "8e7238a1bb9f49bd6e2403a2a6cb20d7aee863c7",
+  "status": "PORTABILITY_CONFIRMED_PROVIDER_PENDING",
+  "validated_projects": [
+    {
+      "project_id": "BLACKSMITH",
+      "repository": "alsdmlals4-eng/Blacksmith",
+      "main_sha": "5267f542ef6ce99f98b3b407e42b146b5672335b",
+      "project_shape": "GODOT_PRODUCT_SAVE_UID",
+      "capsule_portability": "PASS",
+      "unmodified_base_m2_m3_shadow": "NOT_RUN",
+      "native_postmerge_validation": "PASS",
+      "evidence": {
+        "capsule_pr": 165,
+        "active_run_pointer_fix_pr": 167,
+        "full_validation_run": 31788438786,
+        "live_editor_pilot_run": 31788439264
+      }
+    },
+    {
+      "project_id": "COC_FICTION",
+      "repository": "alsdmlals4-eng/Coc-Fiction",
+      "main_sha": "b096a29afeecdc3129690229c9d4d110797e40e4",
+      "project_shape": "NARRATIVE_DATA_CANON",
+      "capsule_portability": "PASS",
+      "unmodified_base_m2_m3_shadow": "PASS",
+      "native_postmerge_validation": "PASS",
+      "evidence": {
+        "pilot_pr": 27,
+        "postmerge_shadow_run": 31787666732
+      }
+    },
+    {
+      "project_id": "GRIMOIRE",
+      "repository": "alsdmlals4-eng/GRIMOIRE-",
+      "main_sha": "ca5d004b42e19f775163188da18020de4d5aa2e7",
+      "project_shape": "GODOT_VISUAL_UI",
+      "capsule_portability": "PASS",
+      "unmodified_base_m2_m3_shadow": "PASS_UBUNTU_WINDOWS",
+      "native_postmerge_validation": "PASS",
+      "visual_lock_provider": "GITHUB_ART_BIBLE",
+      "evidence": {
+        "pilot_pr": 137,
+        "postmerge_shadow_run": 31788652715
+      }
+    }
+  ],
+  "acceptance": {
+    "project_capsule_projects": 3,
+    "structurally_different_projects": true,
+    "unmodified_base_m2_m3_runtime_projects": 2,
+    "kernel_forks_for_pilots": 0,
+    "project_specific_agent_implementations": 0,
+    "planning_drift_escape": 0,
+    "visual_drift_escape": 0,
+    "unauthorized_product_path_changes": 0,
+    "cross_project_context_import": 0
+  },
+  "runtime_foundation": {
+    "m2_capsule": "MERGED",
+    "m3_shadow_kernel": "MERGED",
+    "m2_to_m3_adapter": "MERGED",
+    "a2_foundation": "MERGED",
+    "git_worktree_diff_attestation": "MERGED",
+    "project_test_executor": "MERGED",
+    "pr_handoff_postmerge_closure": "MERGED",
+    "durable_worktree_resume": "MERGED"
+  },
+  "remaining_external_gate": {
+    "real_codex_builder_transport": "NOT_IMPLEMENTED",
+    "real_gpt_critic_transport": "NOT_IMPLEMENTED",
+    "real_openai_api": "NOT_RUN_USER_CREDENTIAL_DECISION_REQUIRED",
+    "real_a2_burnin_runs": 0
+  },
+  "preserved_limits": {
+    "a3_auto_merge": "DISABLED",
+    "scheduler": "NOT_CONFIGURED",
+    "automatic_product_scope_selection": "FORBIDDEN"
+  }
+}
