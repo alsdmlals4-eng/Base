@@ -104,6 +104,22 @@ class GhControlPlane:
     def preflight(self) -> None:
         completed = self._run((self.gh_executable, "auth", "status", "--hostname", "github.com"))
         self._bounded_stdout(completed, failure_code="GH_AUTH_REQUIRED")
+        completed = self._run(
+            (
+                self.gh_executable,
+                "label",
+                "create",
+                self.required_label,
+                "--repo",
+                self.control_repository,
+                "--color",
+                "5319E7",
+                "--description",
+                "Bounded unattended Loop A2 local execution job",
+                "--force",
+            )
+        )
+        self._bounded_stdout(completed, failure_code="GH_QUEUE_LABEL_SETUP_FAILED")
 
     def list_open_jobs(self) -> tuple[dict[str, object], ...]:
         completed = self._run(
