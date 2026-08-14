@@ -11,6 +11,7 @@ from tools.periodic_source_scan_queue import select_due_source_batch
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github" / "workflows" / "periodic-source-scan-queue.yml"
+BASE_V9_WORKFLOW = ROOT / ".github" / "workflows" / "validate-base-v9-rc.yml"
 RUNNER = ROOT / "tools" / "run_periodic_source_scan_queue.sh"
 TEMPORARY_PATCH_FILES = (
     ROOT / ".github" / "workflows" / "tmp-export-source-rotation.yml",
@@ -54,28 +55,31 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
         self.assertTrue(callable(run_analysis))
         self.assertIn("select_due_source_batch", inspect.getsource(run_analysis))
 
-    def test_equal_priority_sources_rotate_across_daily_batches(self) -> None:
+    def test_equal_priority_sources_rotate_in_non_overlapping_daily_batches(self) -> None:
         ledger = payload([f"source-{index}" for index in range(6)])
         start = date(2026, 8, 14)
-        batches = [
-            [
-                row["source_id"]
+        first_cycle = [
+            {
+                str(row["source_id"])
                 for row in select_due_source_batch(
                     ledger,
                     start + timedelta(days=offset),
                     batch_size=2,
                 )
-            ]
-            for offset in range(6)
+            }
+            for offset in range(3)
         ]
-        self.assertNotEqual(batches[0], batches[1])
+        self.assertTrue(first_cycle[0].isdisjoint(first_cycle[1]))
+        self.assertTrue(first_cycle[0].isdisjoint(first_cycle[2]))
+        self.assertTrue(first_cycle[1].isdisjoint(first_cycle[2]))
         self.assertEqual(
             {f"source-{index}" for index in range(6)},
-            {source_id for batch in batches for source_id in batch},
+            set().union(*first_cycle),
         )
 
-    def test_workflow_delegates_to_a_bounded_verified_runner_without_recursion(self) -> None:
+    def test_workflow_delegates_to_all_exact_head_validators_without_recursion(self) -> None:
         workflow = WORKFLOW.read_text(encoding="utf-8")
+        base_v9_workflow = BASE_V9_WORKFLOW.read_text(encoding="utf-8")
         runner = RUNNER.read_text(encoding="utf-8")
         contract = workflow + "\n" + runner
         for required in (
@@ -86,6 +90,7 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
             "automation/source-scan-",
             "gh pr create",
             "gh workflow run validate-evidence-knowledge.yml",
+            "gh workflow run validate-base-v9-rc.yml",
             "gh workflow run validate-game-project-operating-system.yml",
             "validation_level=full",
             "gh run watch",
@@ -98,6 +103,7 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
             "No material candidate survived the Evidence gate.",
         ):
             self.assertIn(required, contract)
+        self.assertIn("workflow_dispatch:", base_v9_workflow)
         for forbidden in (
             "timeout-minutes",
             "pull_request_target",
