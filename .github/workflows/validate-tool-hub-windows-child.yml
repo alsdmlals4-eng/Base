@@ -7,7 +7,10 @@ on:
       - "tools/tool-hub/src/tool_hub/windows_process_owner.py"
       - "tools/tool-hub/src/tool_hub/adapters.py"
       - "tools/tool-hub/src/tool_hub/environment.py"
+      - "tools/tool-hub/src/tool_hub/runtime_trust.py"
+      - "tools/tool-hub/src/tool_hub/registry.py"
       - "tools/tool-hub/tests/test_windows_process_owner.py"
+      - "tools/tool-hub/tests/test_windows_reviewed_launch.py"
       - "tools/tool-hub/tests/test_supervisor.py"
       - "tools/tool-hub/tests/test_adapters.py"
       - "tools/tool-hub/tests/test_environment.py"
@@ -19,7 +22,10 @@ on:
       - "tools/tool-hub/src/tool_hub/windows_process_owner.py"
       - "tools/tool-hub/src/tool_hub/adapters.py"
       - "tools/tool-hub/src/tool_hub/environment.py"
+      - "tools/tool-hub/src/tool_hub/runtime_trust.py"
+      - "tools/tool-hub/src/tool_hub/registry.py"
       - "tools/tool-hub/tests/test_windows_process_owner.py"
+      - "tools/tool-hub/tests/test_windows_reviewed_launch.py"
       - ".github/workflows/validate-tool-hub-windows-child.yml"
   workflow_dispatch:
 
@@ -33,7 +39,7 @@ concurrency:
 jobs:
   windows-real-process-tree:
     runs-on: windows-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -42,15 +48,25 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
         with:
           python-version: "3.12"
-      - name: Install Tool Hub test dependencies
+      - name: Install test dependencies and reviewed Base venv
         shell: pwsh
         run: |
           python -m pip install -e '.\tools\base-tool-contracts' -e '.\tools\tool-hub[dev]'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-      - name: Run real Windows ownership contract
+          python -m venv .venv
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          .\.venv\Scripts\python.exe -m pip install `
+            -e '.\tools\base-tool-contracts' `
+            -e '.\tools\qa-evidence-studio' `
+            -e '.\tools\expression-studio' `
+            -e '.\tools\sprite-animation-studio'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Run real Windows ownership and reviewed launch contracts
         shell: pwsh
         run: |
-          python -m pytest -q tools/tool-hub/tests/test_windows_process_owner.py
+          python -m pytest -q `
+            tools/tool-hub/tests/test_windows_process_owner.py `
+            tools/tool-hub/tests/test_windows_reviewed_launch.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
   linux-supervisor-regression:
