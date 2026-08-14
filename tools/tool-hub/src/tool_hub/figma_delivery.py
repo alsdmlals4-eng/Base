@@ -8,6 +8,7 @@ import hmac
 import json
 import os
 from pathlib import Path
+import re
 import secrets
 import struct
 import tempfile
@@ -32,10 +33,13 @@ class DeliveryJob:
     content_sha256: str
     byte_length: int
     media_type: str
+    width: int
+    height: int
     figma_file_key: str
     figma_url: str
     delivery_page_node_id: str
     generation_area_node_id: str
+    node_name: str
     state: str
     created_at: float
     expires_at: float
@@ -55,6 +59,35 @@ class BridgeSession:
     project_id: str
     figma_file_key: str
     bridge_version: str
+
+
+@dataclass(frozen=True)
+class BridgeReceipt:
+    created_node_id: str
+    created_node_name: str
+    target_node_id: str
+    content_sha256: str
+    bridge_version: str
+    image_hash: str
+
+
+@dataclass(frozen=True)
+class DeliveryReceipt:
+    delivery_id: str
+    tool_id: str
+    project_id: str
+    run_id: str
+    content_sha256: str
+    byte_length: int
+    media_type: str
+    figma_file_key: str
+    target_node_id: str
+    created_node_id: str
+    created_node_name: str
+    bridge_version: str
+    image_hash: str
+    verified_at: float
+    state: str = "DELIVERED_VERIFIED"
 
 
 @dataclass(frozen=True)
@@ -145,7 +178,7 @@ class FigmaDeliveryService:
             raise DeliveryError("DELIVERY_IDENTITY_REQUIRED")
         if not isinstance(image_bytes, bytes) or not image_bytes:
             raise DeliveryError("DELIVERY_CONTENT_REQUIRED")
-        self._validate_raster(image_bytes, media_type)
+        width, height = self._validate_raster(image_bytes, media_type)
         try:
             binding = self._locator.resolve(project_id)
             target = self._registry.resolve_ready_target(project_id)
@@ -171,6 +204,7 @@ class FigmaDeliveryService:
 
         now = float(self._clock())
         content_sha256 = hashlib.sha256(image_bytes).hexdigest()
+        node_name = self._node_name(tool_id, run_id, delivery_id)
         job = DeliveryJob(
             delivery_id=delivery_id,
             tool_id=tool_id,
@@ -179,10 +213,13 @@ class FigmaDeliveryService:
             content_sha256=content_sha256,
             byte_length=len(image_bytes),
             media_type=media_type,
+            width=width,
+            height=height,
             figma_file_key=target.figma_file_key,
             figma_url=target.figma_url,
             delivery_page_node_id=target.delivery_page_node_id,
             generation_area_node_id=target.generation_area_node_id,
+            node_name=node_name,
             state="QUEUED",
             created_at=now,
             expires_at=now + self.JOB_TTL_SECONDS,
@@ -219,6 +256,9 @@ class FigmaDeliveryService:
         job = self._job_for_session(session, delivery_id)
         if job.state != "CLAIMED":
             raise DeliveryError("DELIVERY_NOT_CLAIMED")
+        if float(self._clock()) > job.expires_at:
+            self._set_state(job, "EXPIRED")
+            raise DeliveryError("DELIVERY_EXPIRED")
         return self._verify_content(job)
 
     def release(self, token: str, delivery_id: str) -> DeliveryJob:
@@ -226,8 +266,84 @@ class FigmaDeliveryService:
         job = self._job_for_session(session, delivery_id)
         if job.state != "CLAIMED":
             raise DeliveryError("DELIVERY_NOT_CLAIMED")
+        if float(self._clock()) > job.expires_at:
+            return self._set_state(job, "EXPIRED")
         self._verify_content(job)
         return self._set_state(job, "QUEUED")
+
+    def job_view(self, project_id: str, delivery_id: str) -> DeliveryJob:
+        job = self._jobs.get(delivery_id)
+        if job is None:
+            raise DeliveryError("DELIVERY_NOT_FOUND")
+        if job.project_id != project_id:
+            raise DeliveryError("DELIVERY_SCOPE_MISMATCH")
+        if job.state in {"QUEUED", "CLAIMED"} and float(self._clock()) > job.expires_at:
+            return self._set_state(job, "EXPIRED")
+        return job
+
+    def finalize(self, token: str, delivery_id: str, receipt: BridgeReceipt) -> DeliveryReceipt:
+        session = self._require_session(token)
+        job = self._job_for_session(session, delivery_id)
+        if job.state == "DELIVERED_VERIFIED":
+            raise DeliveryError("DELIVERY_ALREADY_VERIFIED")
+        if job.state != "CLAIMED":
+            raise DeliveryError("DELIVERY_NOT_CLAIMED")
+        if float(self._clock()) > job.expires_at:
+            self._set_state(job, "EXPIRED")
+            raise DeliveryError("DELIVERY_EXPIRED")
+        self._verify_content(job)
+        if receipt.target_node_id != job.generation_area_node_id:
+            raise DeliveryError("FIGMA_TARGET_MISMATCH")
+        if not hmac.compare_digest(receipt.content_sha256, job.content_sha256):
+            raise DeliveryError("DELIVERY_HASH_MISMATCH")
+        if receipt.created_node_name != job.node_name:
+            raise DeliveryError("FIGMA_NODE_IDENTITY_MISMATCH")
+        if not re.fullmatch(r"\d+[:-]\d+", receipt.created_node_id):
+            raise DeliveryError("FIGMA_NODE_IDENTITY_MISMATCH")
+        if not receipt.image_hash:
+            raise DeliveryError("FIGMA_IMAGE_HASH_REQUIRED")
+        if receipt.bridge_version != session.bridge_version:
+            raise DeliveryError("BRIDGE_VERSION_MISMATCH")
+
+        verified = DeliveryReceipt(
+            delivery_id=job.delivery_id,
+            tool_id=job.tool_id,
+            project_id=job.project_id,
+            run_id=job.run_id,
+            content_sha256=job.content_sha256,
+            byte_length=job.byte_length,
+            media_type=job.media_type,
+            figma_file_key=job.figma_file_key,
+            target_node_id=job.generation_area_node_id,
+            created_node_id=receipt.created_node_id,
+            created_node_name=receipt.created_node_name,
+            bridge_version=receipt.bridge_version,
+            image_hash=receipt.image_hash,
+            verified_at=float(self._clock()),
+        )
+        root = self._job_roots.get(job.delivery_id)
+        if root is None:
+            raise DeliveryError("DELIVERY_NOT_FOUND")
+        evidence_path = root / "FIGMA_DELIVERY_RECEIPT.json"
+        try:
+            self._atomic_write_text(
+                evidence_path,
+                json.dumps(self._receipt_document(verified), ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            )
+            self._set_state(job, "DELIVERED_VERIFIED")
+        except OSError as error:
+            try:
+                evidence_path.unlink(missing_ok=True)
+            except OSError:
+                pass
+            raise DeliveryError("DELIVERY_RECEIPT_WRITE_FAILED") from error
+        except DeliveryError:
+            try:
+                evidence_path.unlink(missing_ok=True)
+            except OSError:
+                pass
+            raise
+        return verified
 
     def _require_session(self, token: str) -> BridgeSession:
         session = self._sessions.get(token)
@@ -300,6 +416,12 @@ class FigmaDeliveryService:
         return width, height
 
     @staticmethod
+    def _node_name(tool_id: str, run_id: str, delivery_id: str) -> str:
+        safe_tool = re.sub(r"[^A-Za-z0-9_-]+", "-", tool_id).strip("-")[:32] or "tool"
+        safe_run = re.sub(r"[^A-Za-z0-9_-]+", "-", run_id).strip("-")[:48] or "run"
+        return f"BaseToolHub__{safe_tool}__{safe_run}__{delivery_id[:12]}"
+
+    @staticmethod
     def _atomic_write_bytes(path: Path, data: bytes) -> None:
         descriptor, temporary = tempfile.mkstemp(prefix=f".{path.name}-", dir=path.parent)
         try:
@@ -329,10 +451,34 @@ class FigmaDeliveryService:
             "content_sha256": job.content_sha256,
             "byte_length": job.byte_length,
             "media_type": job.media_type,
+            "width": job.width,
+            "height": job.height,
             "figma_file_key": job.figma_file_key,
             "delivery_page_node_id": job.delivery_page_node_id,
             "generation_area_node_id": job.generation_area_node_id,
+            "node_name": job.node_name,
             "state": job.state,
             "created_at": job.created_at,
             "expires_at": job.expires_at,
+        }
+
+    @staticmethod
+    def _receipt_document(receipt: DeliveryReceipt) -> dict[str, object]:
+        return {
+            "schema_version": 1,
+            "delivery_id": receipt.delivery_id,
+            "tool_id": receipt.tool_id,
+            "project_id": receipt.project_id,
+            "run_id": receipt.run_id,
+            "content_sha256": receipt.content_sha256,
+            "byte_length": receipt.byte_length,
+            "media_type": receipt.media_type,
+            "figma_file_key": receipt.figma_file_key,
+            "target_node_id": receipt.target_node_id,
+            "created_node_id": receipt.created_node_id,
+            "created_node_name": receipt.created_node_name,
+            "bridge_version": receipt.bridge_version,
+            "image_hash": receipt.image_hash,
+            "verified_at": receipt.verified_at,
+            "state": receipt.state,
         }
