@@ -19,6 +19,7 @@ def test_real_child_reports_exact_project_and_nonce(tmp_path: Path) -> None:
         assert child.url.startswith("http://127.0.0.1:")
         assert child.status["launch_nonce"] == child.launch_nonce
         assert child.status["project_id"] == "demo-game"
+        assert child.public_view()["status"] == "RUNNING"
     finally:
         launcher.stop_all()
 

@@ -132,6 +132,29 @@ Schema·URL 검증
 
 Required Check·Ruleset을 우회하지 않고 `main`에 직접 쓰거나 강제 push하지 않는다.
 
+## 운영 진입점과 인증 실패 경계
+
+신뢰된 Runner는 저장소 루트에서 다음 모듈 진입점을 사용한다.
+
+```text
+python -m tools.periodic_source_analysis
+```
+
+`python tools/periodic_source_analysis.py`처럼 Package 내부 파일을 직접 실행하면 저장소 루트의 `tools` Package를 찾지 못할 수 있으므로 사용하지 않는다. 이 차이는 `tests/test_periodic_source_analysis_runner.py`가 회귀 검사한다.
+
+`OPENAI_API_KEY`가 없거나 사용할 수 없으면 외부 조사를 수행하지 않고 다음으로 fail-closed한다.
+
+```text
+state: BLOCKED_MODEL_AUTH
+repository_change: none
+external_research_claim: NOT_RUN
+queue_issue_update: required
+artifact_upload: required
+workflow_result: successful blocked-state recording
+```
+
+인증 차단은 분석 성공이나 `NO_CHANGE`가 아니다. Secret을 로그에 출력하거나 direct-main·무검증 대체 경로로 우회하지 않는다.
+
 ## Queue Issue와 완료 경계
 
 열린 `[Periodic Source Scan Queue]` Issue는 하나만 유지하고 Run URL·선택 Source·분석 상태·PR·검증·통합 결과를 갱신한다.

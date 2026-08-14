@@ -4,11 +4,20 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
-import subprocess
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl
 from typing import Literal
+
+from .trusted_files import (
+    TrustedFileError,
+    normalized_line_endings,
+    open_directory_nofollow,
+    read_regular_at,
+    read_regular_nofollow,
+    run_trusted_git,
+)
 
 
 class AnchorEvidenceError(ValueError):
@@ -39,6 +48,8 @@ class _Document(BaseModel):
 
 
 class ApprovedAnchorRegistry:
+    CANONICAL_RELATIVE_PATH = Path("docs/APPROVED_VISUAL_ANCHORS.json")
+
     def __init__(self, document: _Document, *, config_sha256: str, source_path: Path) -> None:
         keys = [(entry.project_id, entry.source_path) for entry in document.entries]
         if len(keys) != len(set(keys)):
@@ -50,41 +61,49 @@ class ApprovedAnchorRegistry:
     @classmethod
     def load(cls, path: Path) -> "ApprovedAnchorRegistry":
         try:
-            raw = path.read_bytes()
+            raw, _ = read_regular_nofollow(path)
             payload = json.loads(raw.decode("utf-8"))
             document = _Document.model_validate(payload)
         except Exception as error:
-            raise AnchorEvidenceError(f"approved-anchor registry is invalid: {path}") from error
-        resolved = path.resolve()
-        if path.is_symlink():
-            raise AnchorEvidenceError("approved-anchor registry must not be a symlink")
-        return cls(document, config_sha256=hashlib.sha256(raw).hexdigest(), source_path=resolved)
+            raise AnchorEvidenceError("approved-anchor registry is invalid or crosses a symlink") from error
+        return cls(
+            document,
+            config_sha256=hashlib.sha256(raw).hexdigest(),
+            source_path=Path(os.path.abspath(path)),
+        )
 
     def assert_project_owned(self, project_root: Path) -> None:
-        root = project_root.resolve()
-        if self.source_path != root and root not in self.source_path.parents:
+        root = Path(os.path.abspath(project_root))
+        try:
+            relative = self.source_path.relative_to(root)
+        except ValueError as error:
+            raise AnchorEvidenceError("approved-anchor registry must be stored inside the project workspace") from error
+        if not relative.parts:
             raise AnchorEvidenceError("approved-anchor registry must be stored inside the project workspace")
-        relative = self.source_path.relative_to(root).as_posix()
-        tracked = subprocess.run(
-            ["git", "-C", str(root), "ls-files", "--error-unmatch", "--", relative],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+        if relative != self.CANONICAL_RELATIVE_PATH:
+            raise AnchorEvidenceError("approved-anchor registry must use the canonical project path")
+        try:
+            root_fd = open_directory_nofollow(root)
+            try:
+                current, _ = read_regular_at(root_fd, relative)
+                tracked = run_trusted_git(root_fd, "ls-files", "--error-unmatch", "--", relative.as_posix())
+                committed = run_trusted_git(root_fd, "show", f"HEAD:{relative.as_posix()}")
+            finally:
+                os.close(root_fd)
+        except TrustedFileError as error:
+            raise AnchorEvidenceError("approved-anchor registry ownership proof is unavailable") from error
         if tracked.returncode != 0:
             raise AnchorEvidenceError("approved-anchor registry must be a tracked project-owned artifact")
-        committed = subprocess.run(
-            ["git", "-C", str(root), "show", f"HEAD:{relative}"],
-            capture_output=True,
-            check=False,
-        )
-        if committed.returncode != 0 or committed.stdout != self.source_path.read_bytes():
+        if committed.returncode != 0 or normalized_line_endings(committed.stdout) != normalized_line_endings(current):
             raise AnchorEvidenceError("approved-anchor registry must exactly match its committed project blob")
+        if hashlib.sha256(current).hexdigest() != self.config_sha256:
+            raise AnchorEvidenceError("approved-anchor registry changed after loading")
 
     def assert_unchanged(self) -> None:
         try:
-            current = hashlib.sha256(self.source_path.read_bytes()).hexdigest()
-        except OSError as error:
+            raw, _ = read_regular_nofollow(self.source_path)
+            current = hashlib.sha256(raw).hexdigest()
+        except (OSError, TrustedFileError) as error:
             raise AnchorEvidenceError("approved-anchor registry is unavailable during revalidation") from error
         if current != self.config_sha256:
             raise AnchorEvidenceError("approved-anchor registry changed after Studio startup")

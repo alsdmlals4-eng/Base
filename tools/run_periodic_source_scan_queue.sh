@@ -89,7 +89,7 @@ block() {
   exit 0
 }
 
-python tools/periodic_source_analysis.py \
+python -m tools.periodic_source_analysis \
   --operations-ledger docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json \
   --candidate-ledger docs/knowledge/game-development/PERIODIC_SOURCE_CANDIDATE_LEDGER.json \
   --output-root docs/knowledge/game-development/source-scans \

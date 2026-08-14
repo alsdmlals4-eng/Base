@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import hashlib
+import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -11,6 +12,18 @@ from typing import Literal
 from urllib.parse import parse_qs, urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl
+
+from .trusted_files import (
+    TrustedFileError,
+    normalized_line_endings,
+    open_directory_nofollow,
+    read_regular_at,
+    read_regular_nofollow,
+    run_trusted_git,
+)
+
+
+_CANONICAL_REGISTRY = Path("docs/operations/PROJECT_FIGMA_TARGET_REGISTRY.json")
 
 
 class DeliveryBlockedError(RuntimeError):
@@ -85,20 +98,45 @@ class ProjectFigmaRegistry:
     @classmethod
     def load(cls, path: Path) -> "ProjectFigmaRegistry":
         try:
-            raw = path.read_bytes()
+            raw, _ = read_regular_nofollow(path)
             payload = json.loads(raw.decode("utf-8"))
-        except OSError as error:
-            raise ValueError(f"Figma target registry is unavailable: {path}") from error
+        except (OSError, TrustedFileError) as error:
+            raise ValueError("Figma target registry is unavailable or crosses a symlink") from error
         except (UnicodeDecodeError, json.JSONDecodeError) as error:
-            raise ValueError(f"Figma target registry is invalid JSON: {path}") from error
-        if path.is_symlink():
-            raise ValueError("Figma target registry must not be a symlink")
-        return cls(_RegistryDocument.model_validate(payload), config_sha256=hashlib.sha256(raw).hexdigest(), source_path=path.resolve())
+            raise ValueError("Figma target registry is invalid JSON") from error
+        return cls(
+            _RegistryDocument.model_validate(payload),
+            config_sha256=hashlib.sha256(raw).hexdigest(),
+            source_path=Path(os.path.abspath(path)),
+        )
+
+    def assert_canonical(self, base_root: Path) -> None:
+        """Prove this is Base's exact committed Figma routing authority."""
+        root = Path(os.path.abspath(base_root))
+        expected = root / _CANONICAL_REGISTRY
+        if self.source_path != expected:
+            raise DeliveryBlockedError("Figma target registry is not the canonical Base registry")
+        try:
+            root_fd = open_directory_nofollow(root)
+        except TrustedFileError as error:
+            raise DeliveryBlockedError("canonical Figma registry root is unavailable") from error
+        try:
+            current, _ = read_regular_at(root_fd, _CANONICAL_REGISTRY)
+            committed = run_trusted_git(root_fd, "show", f"HEAD:{_CANONICAL_REGISTRY.as_posix()}")
+        except TrustedFileError as error:
+            raise DeliveryBlockedError("canonical Figma registry proof is unavailable") from error
+        finally:
+            os.close(root_fd)
+        if committed.returncode != 0 or normalized_line_endings(current) != normalized_line_endings(committed.stdout):
+            raise DeliveryBlockedError("canonical Figma registry must match its committed Base blob")
+        if hashlib.sha256(current).hexdigest() != self.config_sha256:
+            raise DeliveryBlockedError("canonical Figma registry changed after loading")
 
     def assert_unchanged(self) -> None:
         try:
-            current = hashlib.sha256(self.source_path.read_bytes()).hexdigest()
-        except OSError as error:
+            raw, _ = read_regular_nofollow(self.source_path)
+            current = hashlib.sha256(raw).hexdigest()
+        except (OSError, TrustedFileError) as error:
             raise DeliveryBlockedError("Figma target registry is unavailable during delivery revalidation") from error
         if current != self.config_sha256:
             raise DeliveryBlockedError("Figma target registry changed after Studio startup")
@@ -107,11 +145,26 @@ class ProjectFigmaRegistry:
         entry = self._entries.get(project_id)
         if entry is None:
             return "ROUTING_UNAVAILABLE"
+        if entry.delivery_status == "ARCHIVED":
+            return "ROUTING_ARCHIVED"
         if entry.delivery_status != "READY_FOR_DELIVERY":
             return "ROUTING_BLOCKED"
         if not entry.delivery_page_node_id or not entry.generation_area_node_id:
             return "ROUTING_BLOCKED"
         return "ROUTING_CONFIGURED"
+
+    def registration_state(self, project_id: str) -> str:
+        """Report routing registration without implying delivery readiness."""
+        entry = self._entries.get(project_id)
+        if entry is None:
+            return "ROUTING_UNAVAILABLE"
+        if entry.delivery_status == "ARCHIVED":
+            return "ROUTING_ARCHIVED"
+        if entry.delivery_status == "REGISTERED_NO_MUTATION":
+            return "ROUTING_REGISTERED"
+        if entry.delivery_page_node_id and entry.generation_area_node_id:
+            return "ROUTING_CONFIGURED"
+        return "ROUTING_BLOCKED"
 
     def resolve_ready_target(self, project_id: str) -> ProjectFigmaTarget:
         entry = self._entries.get(project_id)

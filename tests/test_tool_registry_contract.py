@@ -25,7 +25,7 @@ def _entry(**overrides: object) -> dict[str, object]:
         "launch_adapter": "qa_evidence_studio",
         "health_path": "/api/status",
         "project_scoped": True,
-        "capabilities": ["developer_pc_review", "image_evidence"],
+        "capabilities": ["developer_pc_review", "image_evidence", "qa_evidence_packet"],
         "production_engine_required_for_delivery": False,
     }
     entry.update(overrides)
@@ -40,6 +40,31 @@ def test_current_reviewed_registry_loads_only_human_interactive_tools() -> None:
         "qa-evidence-studio",
         "sprite-animation-studio",
     ]
+
+
+def test_current_registry_has_only_the_fixed_owner_adapter_capability_tuples() -> None:
+    tools = load_registry(ROOT, ROOT / "tools" / "TOOL_REGISTRY.json")
+
+    assert {
+        item["tool_id"]: (item["owner_path"], item["launch_adapter"], tuple(item["capabilities"]))
+        for item in tools
+    } == {
+        "expression-studio": (
+            "tools/expression-studio",
+            "expression_studio",
+            ("expression_variation", "image_import", "figma_delivery_packet"),
+        ),
+        "qa-evidence-studio": (
+            "tools/qa-evidence-studio",
+            "qa_evidence_studio",
+            ("developer_pc_review", "image_evidence", "qa_evidence_packet"),
+        ),
+        "sprite-animation-studio": (
+            "tools/sprite-animation-studio",
+            "sprite_animation_studio",
+            ("sprite_action", "expression_variation", "pose_sequence", "effect_stages"),
+        ),
+    }
 
 
 def test_current_registry_conforms_to_its_single_schema_owner() -> None:
@@ -69,3 +94,24 @@ def test_registry_rejects_unreviewed_execution_surfaces(
 def test_registry_rejects_duplicate_tool_ids(tmp_path: Path) -> None:
     with pytest.raises(RegistryError, match="duplicate"):
         load_registry(ROOT, _registry(tmp_path, [_entry(), _entry()]))
+
+
+def test_registry_rejects_a_reviewed_but_cross_wired_owner_adapter_tuple(tmp_path: Path) -> None:
+    """A valid-looking reviewed name must not launch a different Studio owner."""
+    with pytest.raises(RegistryError, match="fixed reviewed tuple"):
+        load_registry(
+            ROOT,
+            _registry(
+                tmp_path,
+                [
+                    _entry(
+                        tool_id="expression-studio",
+                        display_name="Expression Studio",
+                        owner_path="tools/expression-studio",
+                        launch_adapter="sprite_animation_studio",
+                        capabilities=["expression_variation", "image_import", "figma_delivery_packet"],
+                        production_engine_required_for_delivery=True,
+                    )
+                ],
+            ),
+        )

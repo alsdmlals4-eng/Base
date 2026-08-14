@@ -74,7 +74,7 @@ Base 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 �
 | 시각 협업 도구 | `docs/VISUAL_COLLABORATION_TOOL_POLICY.md` | Figma·Whimsical의 GDD/외부 협업 역할·Artifact·정본 경계 |
 | Tool Hub 프로젝트 식별자 전환 | `docs/operations/PROJECT_BASE_ADAPTER_V2_MIGRATION.md` | v1 audit 호환, v2 명시적 `project.project_id`, 비덮어쓰기 migration·rollback |
 | 로컬 Tool 공용 런타임 계약 | `tools/base-tool-contracts/README.md`, `schemas/project-figma-target-registry-v1.schema.json`, `schemas/project-approved-anchor-registry-v1.schema.json` | 단일 Figma parser, project-owned anchor evidence, gitignored vault confinement |
-| 로컬 Tool Registry·Hub | `tools/TOOL_REGISTRY.json`, `schemas/base-tool-registry-v1.schema.json`, `tools/tool-hub/README.md` | 검토된 사용자 도구 발견, v2 프로젝트 바인딩, typed localhost 실행 경계 |
+| 로컬 Tool Registry·단일 Hub | `tools/TOOL_REGISTRY.json`, `schemas/base-tool-registry-v1.schema.json`, `tools/tool-hub/README.md` | PR #328/#329 baseline을 흡수한 QA/Expression/Sprite catalog, v2 프로젝트 바인딩, authenticated localhost child, Linux 네 child import smoke와 Windows·Android·Figma·provider 증거 상한; 다음 독립 `Balance & Scenario Lab`은 미구현 |
 | PC 우선 QA 증거 검토 | `tools/qa-evidence-studio/README.md` | 이미지·UX 배치 후 개발자 단독 PC 체크, 증거 hash·packet, Android 출시 전 연기 Gate |
 | PC 우선 도구 현업 벤치마크 | `docs/research/2026-08-13-pc-first-tooling-benchmark.md` | Backstage·Kiwi TCMS·Allure·Playwright·GitHub Issue Forms 비교, 1인·무비용 단계 채택/연기/제외 근거 |
 | 재사용 Capability 조합 | `docs/CAPABILITY_COMPOSITION_MAP.md` | 허용 context·조합·금지 경계·필요 증거 |
