@@ -1,0 +1,73 @@
+name: Validate Tool Hub Figma Bridge
+
+on:
+  pull_request:
+    paths:
+      - "tools/tool-hub/**"
+      - "tools/figma-bridge/**"
+      - "docs/superpowers/specs/2026-08-14-tool-hub-figma-bridge-design.md"
+      - "docs/superpowers/plans/2026-08-14-tool-hub-figma-bridge.md"
+      - ".github/workflows/validate-tool-hub-figma-bridge.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "tools/tool-hub/**"
+      - "tools/figma-bridge/**"
+      - ".github/workflows/validate-tool-hub-figma-bridge.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tool-hub-figma-bridge-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  figma-bridge-contract:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+
+      - name: Install reviewed dependencies
+        shell: bash
+        if: runner.os != 'Windows'
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e './tools/base-tool-contracts' -e './tools/tool-hub[dev]'
+
+      - name: Install reviewed dependencies (Windows)
+        shell: pwsh
+        if: runner.os == 'Windows'
+        run: |
+          python -m pip install --upgrade pip
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -m pip install -e '.\tools\base-tool-contracts' -e '.\tools\tool-hub[dev]'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Run Figma bridge domain contracts
+        shell: bash
+        if: runner.os != 'Windows'
+        run: python -m pytest -q tools/tool-hub/tests/test_figma_bridge.py
+
+      - name: Run Figma bridge domain contracts (Windows)
+        shell: pwsh
+        if: runner.os == 'Windows'
+        run: |
+          python -m pytest -q tools/tool-hub/tests/test_figma_bridge.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
