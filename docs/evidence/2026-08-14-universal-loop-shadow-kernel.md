@@ -5,9 +5,11 @@
 - Program issue: `#321`
 - M3 implementation issue: `#335`
 - M3 PR: `#337`
-- Source main: `39936ff6a83410b4169878c1335de9eb3e4c25cf`
+- Original TDD source main: `39936ff6a83410b4169878c1335de9eb3e4c25cf`
+- Final integration refresh source main: `b8481e5e9a2e7f0def7dc9fd4487f440e24fc83b`
 - Isolated branch: `m3-shadow-kernel-20260814`
-- M2 dependency owned by another workstream: PR `#333`
+- Pre-refresh branch preserved as: `backup-m3-shadow-kernel-pre-refresh-20260814`
+- M2 dependency: PR `#333`, merged as `b1317f2c1b83e57f016ce4efd4e169bf7c0acd90`
 
 ## Path ownership
 
@@ -23,7 +25,7 @@ docs/evidence/2026-08-14-universal-loop-shadow-kernel.md
 .github/workflows/validate-loop-shadow-kernel.yml
 ```
 
-It does not modify M2 Schema, Template, Capsule validator, Capsule test, or Base-v9 workflow paths.
+It does not modify M2 Schema, Template, Capsule validator, Capsule test, Base-v9 workflow, A2 Runtime, Project Adapter v2, Tool Hub, or project-product paths.
 
 ## Initial TDD RED
 
@@ -37,51 +39,25 @@ It does not modify M2 Schema, Template, Capsule validator, Capsule test, or Base
 
 ## Minimal GREEN and adversarial loop
 
-The first minimum implementation passed the original `17` tests locally. Independent adversarial inspection then introduced four new failing regressions before remediation:
+The first minimum implementation passed the original `17` tests locally. Independent adversarial inspection then introduced new failing regressions before remediation, including:
 
 1. path-like `project_id` or `run_id` values could escape status/lease namespaces;
 2. a corrupt historical receipt could be skipped instead of blocking the run;
 3. an internal `.loop-engineering/projects` symlink could redirect trusted state;
-4. the mutable lease ledger lacked an exclusive concurrent-update guard.
+4. the mutable lease ledger lacked an exclusive concurrent-update guard;
+5. missing authority references were not yet exercised by the hardening suite;
+6. nested state roots could produce ambiguous state placement;
+7. duplicate normalized lease entries needed explicit fail-closed handling.
 
-The minimum remediation added:
+The remediation added:
 
 - closed identifier validation for state lookup paths;
 - physical and lexical state-tree confinement;
 - receipt digest verification and corruption blocking;
 - exclusive receipt publication without overwrite;
 - bounded exclusive lease guard and atomic lease replacement;
-- stable blocked outcomes for busy or unsafe state.
-
-## Fresh local verification
-
-On the production source used for the final branch upload:
-
-```text
-python -m compileall -q tools \
-  tests/test_loop_shadow_kernel.py \
-  tests/test_loop_shadow_kernel_cli.py \
-  tests/test_loop_shadow_kernel_adversarial.py
-
-python -m unittest \
-  tests.test_loop_shadow_kernel \
-  tests.test_loop_shadow_kernel_cli \
-  tests.test_loop_shadow_kernel_adversarial \
-  -v
-```
-
-Result:
-
-```text
-Ran 21 tests
-OK
-```
-
-A separate deterministic replay created two independent project workspaces with the same normalized request and fixed timestamp. Both generated the same immutable receipt digest:
-
-```text
-7e65e426293c49b96fc1f853f365b0a7ece95e7f6e5917c18835112f16148b98
-```
+- missing-reference and duplicate-lease regressions;
+- stable blocked outcomes for busy, corrupt, or unsafe state.
 
 ## Covered adversarial injections
 
@@ -96,9 +72,10 @@ A separate deterministic replay created two independent project workspaces with 
 - missing Requirement Coverage;
 - incomplete Coverage and missing Evidence;
 - unapproved output;
+- missing authority reference;
 - Planning conflict and unverified drift;
 - new visual design without human Visual Lock;
-- semantic lease conflict and busy lease guard;
+- semantic lease conflict, corrupt ledger, and busy lease guard;
 - duplicate successful input;
 - repeated failure and `NO_PROGRESS`;
 - immutable receipt overwrite;
@@ -127,22 +104,25 @@ A separate deterministic replay created two independent project workspaces with 
 - No pull request is created or merged by the Kernel itself.
 - A3 auto-merge remains disabled.
 - Scheduler remains `NOT_CONFIGURED`.
-- M2 PR #333 is not modified or completed by this work.
+- M2 PR #333 is consumed only as a merged prerequisite and is not modified by M3.
+- M4/A2 Runtime paths are not modified by this work.
 - No project migration or real A2 Builder/Critic runtime is claimed.
 
 ## Final integration gate
 
-Before PR #337 can leave Draft or merge:
+Before PR #337 can merge:
 
 1. dedicated exact-head Ubuntu and Windows jobs must pass;
 2. all repository-required jobs for the exact head must pass;
 3. open-PR changed-path overlap must be zero;
 4. unresolved review threads must be zero;
 5. independent review must report P0/P1 `0`;
-6. M2 dependency #333 must be merged or a separately reviewed proof must show M3 can integrate without it.
+6. current `main` must remain compatible at merge time;
+7. squash merge must use expected-head protection;
+8. postmerge `main` readback and push workflows must pass.
 
-Final exact-head run IDs and merge evidence are recorded in the PR and issue after those external gates complete.
+Final exact-head run IDs and merge evidence are recorded in the PR after those external gates complete.
 
 ## Rollback
 
-Revert PR #337. M3 does not migrate product data; test and pilot state under disposable `.loop-engineering/` directories may be deleted after evidence export.
+Revert PR #337. M3 does not migrate product data; disposable SHADOW state may be deleted only after evidence export and only outside trusted project Canon.
