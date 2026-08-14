@@ -31,10 +31,13 @@
 - [x] Observe RED in focused workflow run `31818432974`: missing `base_tool_contracts.subscription_handoff`.
 - [x] Implement network-free packet builder.
 - [x] Fix truth fields: `GPT_PRO_HANDOFF_READY`, `CHATGPT_PRO_SUBSCRIPTION`, `image/png`, `provider_call_made=false`, `requires_additional_payment=false`.
-- [x] Reject invalid project/tool/run identities, private path-shaped source filenames, invalid SHA-256, secret-like instruction content, unbounded count/dimensions/checklist, and workflow/tool cross-wiring.
+- [x] Make all fixed truth fields non-overridable constructor fields with `init=False`.
+- [x] Reject invalid project/tool/run identities, Windows-special/path-shaped source filenames, invalid SHA-256, secret/token-like instruction content, non-integer/unbounded count/dimensions, malformed checklist values, and workflow/tool cross-wiring.
 - [x] Prove initial GREEN in run `31818614093` on Ubuntu and Windows.
 - [x] Adversarial RED in run `31819013278` for missing subscription-surface/output fields.
 - [x] Prove refined GREEN in run `31819211022` on Ubuntu and Windows.
+- [x] Truth/type hardening RED in run `31819588625`: `11 failed, 21 passed`, with failures limited to intended hardening gaps.
+- [x] Truth/type hardening GREEN in run `31819831239` on Ubuntu and Windows.
 
 ## Task 2 — Canonical tool-specific Figma route registry — COMPLETE
 
@@ -50,9 +53,10 @@
 - [x] Cross-check each route against the project registry's file key and generation-area parent.
 - [x] Add canonical committed-byte and unchanged-after-load proof.
 - [x] Keep sprite/effect destination routes absent until reviewed nodes exist.
-- [x] Adversarially pin exact project-marker node IDs and expected `FRAME` type for parent/destination/marker.
+- [x] Pin exact project-marker node IDs and expected `FRAME` type for parent/destination/marker.
 - [x] Reject duplicate pairs, same parent/destination, reused marker node, malformed IDs, non-FRAME types, project/file/parent cross-wiring.
 - [x] Prove refined GREEN in run `31819211022` on Ubuntu and Windows.
+- [x] Reconfirm route contracts as part of final hardening GREEN `31819831239` on Ubuntu and Windows.
 
 ## Task 3 — Repository production-boundary regression — COMPLETE
 
@@ -64,25 +68,28 @@
 - [x] Assert Expression/Sprite parser defaults remain subscription handoff/import.
 - [x] Assert Tool Hub adapter does not introduce `OPENAI_API_KEY`.
 - [x] Assert shared subscription contract imports no OpenAI/network/browser-automation client.
+- [x] Assert fixed truth fields use `init=False`.
 - [x] Assert all eight registered projects have exactly one reviewed Character/Expression route.
 - [x] Assert no unreviewed sprite/effect node ID is invented.
 - [x] Keep the focused workflow as a permanent narrow regression surface with Ubuntu and Windows matrix.
 - [x] Prove repository-boundary GREEN in run `31818787891` on Ubuntu and Windows.
 - [x] Prove refined package + repository GREEN in run `31819211022` on Ubuntu and Windows.
+- [x] Prove final hardening package + repository GREEN in run `31819831239` on Ubuntu and Windows.
 
-## Task 4 — Adversarial review, exact-head CI, PR and merge — IN PROGRESS
+## Task 4 — Adversarial review, exact-head CI, PR and merge — PRE-MERGE IN PROGRESS
 
 **PR:** #394, Issue #393 independent slice.
 
 - [x] Open draft PR without touching #373/#376/#386.
 - [x] Attack paid-provider ambiguity; refinement added fixed ChatGPT Pro surface and PNG output.
+- [x] Attack constructor truth-field spoofing and weak runtime typing; hardening made truth fields `init=False` and rejects invalid runtime types consistently.
 - [x] Attack Figma cross-file/stale-name ambiguity; refinement added exact marker IDs and expected FRAME types.
 - [x] Attack route invention; sprite/effect routes remain absent and fail closed.
 - [x] Attack canonical drift; committed-byte proof and repository regression cover the route file.
 - [x] Attack secret/private-path leakage; packet input constraints and static no-client test cover the current surface.
-- [ ] Fetch final PR patch and verify changed files do not overlap open PR #373/#376/#386.
-- [ ] Confirm final exact-head focused workflow, Base v9, Game Project Operating System, and Dependency Review are successful.
-- [ ] Confirm unresolved review threads = 0 and P0/P1 = 0.
+- [x] Fetch PR changed files and verify zero changed-file overlap with open PR #373/#376/#386.
+- [ ] Confirm final document-head focused workflow, Base v9, Game Project Operating System, and Dependency Review are successful.
+- [ ] Confirm unresolved review threads = 0 and final P0/P1 = 0.
 - [ ] Update PR body from TDD-RED wording to final verified slice and mark ready.
 - [ ] Squash merge exact reviewed head.
 - [ ] Re-read merged `main` files and inspect post-merge workflow runs.
