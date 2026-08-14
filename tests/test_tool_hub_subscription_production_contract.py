@@ -18,16 +18,20 @@ class ToolHubSubscriptionProductionContractTests(unittest.TestCase):
         self.assertIn('"--run-mode",\n                "subscription_handoff_import"', adapter)
         self.assertNotIn("OPENAI_API_KEY", adapter)
 
-        expression = read("tools/expression-studio/src/expression_studio/app.py")
-        sprite = read("tools/sprite-animation-studio/src/sprite_animation_studio/app.py")
-        for source in (expression, sprite):
-            with self.subTest(source="expression" if source is expression else "sprite"):
+        studios = {
+            "expression": read("tools/expression-studio/src/expression_studio/app.py"),
+            "sprite": read("tools/sprite-animation-studio/src/sprite_animation_studio/app.py"),
+        }
+        for name, source in studios.items():
+            with self.subTest(source=name):
                 self.assertIn('default="subscription_handoff_import"', source)
 
     def test_subscription_handoff_contract_is_truthful_and_network_free(self) -> None:
         source = read("tools/base-tool-contracts/src/base_tool_contracts/subscription_handoff.py")
         for token in (
             'state: str = "GPT_PRO_HANDOFF_READY"',
+            'generation_surface: str = "CHATGPT_PRO_SUBSCRIPTION"',
+            'output_media_type: str = "image/png"',
             "provider_call_made: bool = False",
             "requires_additional_payment: bool = False",
             "This function deliberately performs no provider call",
@@ -60,10 +64,7 @@ class ToolHubSubscriptionProductionContractTests(unittest.TestCase):
 
         self.assertEqual(8, len(projects))
         self.assertEqual(8, len(routes))
-        self.assertEqual(
-            set(projects),
-            {entry["project_id"] for entry in routes},
-        )
+        self.assertEqual(set(projects), {entry["project_id"] for entry in routes})
         self.assertEqual(
             {"character_expression_runs"},
             {entry["tool_route_id"] for entry in routes},
@@ -74,8 +75,15 @@ class ToolHubSubscriptionProductionContractTests(unittest.TestCase):
             with self.subTest(project_id=route["project_id"]):
                 self.assertEqual(project["figma_file_key"], route["figma_file_key"])
                 self.assertEqual(project["generation_area_node_id"], route["parent_node_id"])
+                self.assertEqual("FRAME", route["parent_node_type"])
+                self.assertEqual("FRAME", route["destination_node_type"])
+                self.assertEqual("FRAME", route["project_marker_node_type"])
                 self.assertEqual("Expression Runs", route["destination_name"])
                 self.assertNotEqual(route["parent_node_id"], route["destination_node_id"])
+                self.assertNotIn(
+                    route["project_marker_node_id"],
+                    {route["parent_node_id"], route["destination_node_id"]},
+                )
                 self.assertEqual(
                     f"Base Tool Hub Route · {route['project_id']}",
                     route["project_marker_name"],
