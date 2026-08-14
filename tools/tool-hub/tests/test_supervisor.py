@@ -81,6 +81,14 @@ if mode == "symlink-startup":
         json.dump(identity, stream)
     os.symlink(outside, startup)
     server.serve_forever()
+if mode == "linked-startup":
+    temporary = startup + ".temporary"
+    with open(temporary, "x", encoding="utf-8") as stream:
+        json.dump(identity, stream)
+    os.link(temporary, startup)
+    time.sleep(0.2)
+    os.unlink(temporary)
+    server.serve_forever()
 with open(startup, "x", encoding="utf-8") as stream:
     json.dump(identity, stream)
 server.serve_forever()
@@ -306,6 +314,18 @@ def test_startup_identity_read_rejects_a_child_published_symlink(tmp_path: Path)
     try:
         with pytest.raises(LaunchError, match="startup identity"):
             owner.start("expression-studio", "demo-game")
+    finally:
+        owner.stop_all()
+
+
+def test_startup_identity_waits_for_atomic_hardlink_publication(tmp_path: Path) -> None:
+    specs = ChildSpecs()
+    specs.modes[("expression-studio", "demo-game")] = "linked-startup"
+    owner = supervisor(tmp_path, specs)
+    try:
+        child = owner.start("expression-studio", "demo-game")
+
+        assert child.state == "RUNNING"
     finally:
         owner.stop_all()
 

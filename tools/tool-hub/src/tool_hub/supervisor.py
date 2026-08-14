@@ -299,10 +299,16 @@ class ProcessSupervisor:
             if (
                 not stat.S_ISREG(metadata.st_mode)
                 or metadata.st_uid != os.geteuid()
-                or metadata.st_nlink != 1
                 or metadata.st_size > _MAX_STATUS_BYTES
             ):
                 raise ValueError("unsafe")
+            while metadata.st_nlink == 2 and time.monotonic() < deadline:
+                if child.process.poll() is not None:
+                    raise LaunchError("child exited before startup identity report")
+                time.sleep(self.poll_interval)
+                metadata = os.fstat(descriptor)
+            if metadata.st_nlink != 1:
+                raise ValueError("unsafe link count")
             raw = os.read(descriptor, _MAX_STATUS_BYTES + 1)
             if len(raw) > _MAX_STATUS_BYTES or len(raw) != metadata.st_size:
                 raise ValueError("oversized or changed")

@@ -188,8 +188,13 @@ def test_linux_four_process_import_workflows_are_project_isolated(tmp_path: Path
     process_ids: list[int] = []
     with hub:
         try:
-            assert hub.post("/api/projects", json={"project_root": str(left)}).status_code == 201
-            assert hub.post("/api/projects", json={"project_root": str(right)}).status_code == 201
+            assert hub.post(
+                "/api/projects", json={"project_id": "coc-fiction", "project_root": str(left)}
+            ).status_code == 201
+            assert hub.post(
+                "/api/projects",
+                json={"project_id": "ten-paces-hidden-moves", "project_root": str(right)},
+            ).status_code == 201
             launches: dict[tuple[str, str], dict[str, object]] = {}
             for project_id in ("coc-fiction", "ten-paces-hidden-moves"):
                 for tool_id in ("expression-studio", "sprite-animation-studio"):

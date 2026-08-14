@@ -86,8 +86,12 @@ class ProjectLocator:
             evidence.validator_sha256,
         )
 
-    def register(self, project_root: Path) -> ProjectBinding:
-        binding = self._inspect(project_root)
+    def register(
+        self,
+        project_root: Path,
+        expected_project_id: str,
+    ) -> ProjectBinding:
+        binding = self._inspect(project_root, expected_project_id)
         config = self._read_config()
         projects: dict[str, Any] = config["projects"]
         projects[binding.project_id] = {

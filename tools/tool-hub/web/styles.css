@@ -9,8 +9,13 @@ h2 { margin: 0; }
 .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
 .section-heading .eyebrow { margin: 0 0 6px; }
 .selection-note { color: #a9b5c8; margin: 0; text-align: right; }
+form { display: grid; gap: 12px; }
 label { display: grid; gap: 8px; font-weight: 800; }
-input { background: #0d111c; border: 1px solid #4a556d; border-radius: 10px; color: white; font: inherit; padding: 12px; }
+input, select { background: #0d111c; border: 1px solid #4a556d; border-radius: 10px; color: white; font: inherit; padding: 12px; width: 100%; }
+small, .empty-state { color: #a9b5c8; line-height: 1.45; }
+.project-help { margin: 10px 0 18px; text-align: left; }
+.registered-projects { border-top: 1px solid #344057; margin-top: 20px; padding-top: 18px; }
+.registered-projects h3 { margin: 0 0 4px; }
 button { background: #214d50; border: 1px solid #3d8b85; border-radius: 10px; color: white; padding: 10px 14px; margin: 8px 8px 0 0; font-weight: 800; cursor: pointer; }
 button.selected { outline: 3px solid #76d8cc; }
 button:disabled { opacity: .5; cursor: not-allowed; }

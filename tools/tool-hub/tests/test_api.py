@@ -50,10 +50,13 @@ def test_platform_without_descriptor_runtime_starts_in_catalog_only_mode(tmp_pat
 
 
 def test_catalog_lists_reviewed_tools_and_redacts_registered_root(tmp_path: Path) -> None:
-    project = make_project(tmp_path / "Project With Spaces")
+    project = make_project(tmp_path / "Project With Spaces", "coc-fiction")
     client = client_for(tmp_path)
 
-    created = client.post("/api/projects", json={"project_root": str(project)})
+    created = client.post(
+        "/api/projects",
+        json={"project_id": "coc-fiction", "project_root": str(project)},
+    )
     catalog = client.get("/api/catalog").json()
 
     assert created.status_code == 201
@@ -62,8 +65,57 @@ def test_catalog_lists_reviewed_tools_and_redacts_registered_root(tmp_path: Path
         "qa-evidence-studio",
         "sprite-animation-studio",
     ]
-    assert catalog["projects"][0]["project_id"] == "demo-game"
+    assert catalog["projects"][0]["project_id"] == "coc-fiction"
+    assert catalog["projects"][0]["display_name"] == "coc소설"
     assert str(project.resolve()) not in str(catalog)
+
+
+def test_catalog_lists_known_projects_separately_from_machine_registrations(tmp_path: Path) -> None:
+    catalog = client_for(tmp_path).get("/api/catalog").json()
+
+    assert catalog["projects"] == []
+    assert [project["project_id"] for project in catalog["known_projects"]] == [
+        "coc-fiction",
+        "ten-paces-hidden-moves",
+        "ninja-survival",
+        "switchy-express-cargo-puzzle",
+        "urban-legend",
+        "grimoire-how-to-rewrite-the-world",
+        "blacksmith",
+        "omenward",
+    ]
+    assert catalog["known_projects"][0] == {
+        "project_id": "coc-fiction",
+        "display_name": "coc소설",
+        "routing_state": "ROUTING_REGISTERED",
+    }
+    assert "figma_file_key" not in str(catalog)
+    assert "figma_url" not in str(catalog)
+
+
+def test_registration_requires_catalog_id_to_match_the_project_adapter(tmp_path: Path) -> None:
+    project = make_project(tmp_path / "Project With Spaces", "coc-fiction")
+    client = client_for(tmp_path)
+
+    mismatch = client.post(
+        "/api/projects",
+        json={"project_id": "omenward", "project_root": str(project)},
+    )
+    unknown = client.post(
+        "/api/projects",
+        json={"project_id": "demo-game", "project_root": str(project)},
+    )
+    accepted = client.post(
+        "/api/projects",
+        json={"project_id": "coc-fiction", "project_root": str(project)},
+    )
+
+    assert mismatch.status_code == 422
+    assert mismatch.json()["detail"] == "PROJECT_IDENTITY_MISMATCH"
+    assert unknown.status_code == 422
+    assert unknown.json()["detail"] == "PROJECT_CATALOG_ENTRY_REQUIRED"
+    assert accepted.status_code == 201
+    assert accepted.json()["project_id"] == "coc-fiction"
 
 
 def test_mutation_requires_exact_origin_session_and_csrf(tmp_path: Path) -> None:
@@ -87,7 +139,8 @@ def test_mutation_requires_exact_origin_session_and_csrf(tmp_path: Path) -> None
 
 def test_project_registration_error_is_bounded(tmp_path: Path) -> None:
     response = client_for(tmp_path).post(
-        "/api/projects", json={"project_root": str(tmp_path / "secret-path")}
+        "/api/projects",
+        json={"project_id": "coc-fiction", "project_root": str(tmp_path / "secret-path")},
     )
 
     assert response.status_code == 422
@@ -113,7 +166,10 @@ def test_visual_studios_launch_only_for_a_registered_verified_project(tmp_path: 
         )
         assert missing.status_code == 409
 
-        assert client.post("/api/projects", json={"project_root": str(project)}).status_code == 201
+        assert client.post(
+            "/api/projects",
+            json={"project_id": "coc-fiction", "project_root": str(project)},
+        ).status_code == 201
         expression = client.post(
             "/api/launch", json={"tool_id": "expression-studio", "project_id": "coc-fiction"}
         )
@@ -130,24 +186,29 @@ def test_visual_studios_launch_only_for_a_registered_verified_project(tmp_path: 
 
 
 def test_blocked_visual_start_cannot_affect_qa_or_another_project(tmp_path: Path) -> None:
-    qa_project = make_project(tmp_path / "qa-project", "demo-game")
+    qa_project = make_project(tmp_path / "qa-project", "omenward")
     visual_project = make_visual_project(tmp_path / "visual-project", "ten-paces-hidden-moves")
     client = client_for(tmp_path)
     with client:
-        assert client.post("/api/projects", json={"project_root": str(qa_project)}).status_code == 201
-        assert client.post("/api/projects", json={"project_root": str(visual_project)}).status_code == 201
+        assert client.post(
+            "/api/projects", json={"project_id": "omenward", "project_root": str(qa_project)}
+        ).status_code == 201
+        assert client.post(
+            "/api/projects",
+            json={"project_id": "ten-paces-hidden-moves", "project_root": str(visual_project)},
+        ).status_code == 201
         qa = client.post(
-            "/api/launch", json={"tool_id": "qa-evidence-studio", "project_id": "demo-game"}
+            "/api/launch", json={"tool_id": "qa-evidence-studio", "project_id": "omenward"}
         )
         blocked = client.post(
-            "/api/launch", json={"tool_id": "expression-studio", "project_id": "demo-game"}
+            "/api/launch", json={"tool_id": "expression-studio", "project_id": "omenward"}
         )
         other = client.post(
             "/api/launch",
             json={"tool_id": "sprite-animation-studio", "project_id": "ten-paces-hidden-moves"},
         )
         repeated_qa = client.post(
-            "/api/launch", json={"tool_id": "qa-evidence-studio", "project_id": "demo-game"}
+            "/api/launch", json={"tool_id": "qa-evidence-studio", "project_id": "omenward"}
         )
 
         assert qa.status_code == 200

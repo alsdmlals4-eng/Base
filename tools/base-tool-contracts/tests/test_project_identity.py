@@ -8,9 +8,19 @@ import sys
 import pytest
 
 from base_tool_contracts import ProjectIdentityError, validate_project_identity
+from base_tool_contracts.windows_project_identity import (
+    WindowsProjectIdentityError,
+    validate_windows_project_identity,
+)
 
 
 BASE_ROOT = Path(__file__).resolve().parents[3]
+
+
+def test_package_exports_the_windows_project_identity_validator() -> None:
+    from base_tool_contracts import validate_windows_project_identity as public_validator
+
+    assert public_validator is validate_windows_project_identity
 
 
 def test_package_import_succeeds_when_posix_fcntl_is_unavailable() -> None:
@@ -118,6 +128,60 @@ def test_shared_identity_returns_the_committed_project_snapshot(tmp_path: Path) 
     assert evidence.project_id == "demo-game"
     assert evidence.repository == "owner/demo-game"
     assert evidence.engine == "Godot 4.7"
+    assert evidence.root == project
+
+
+def test_windows_identity_accepts_a_matching_project_with_spaces(tmp_path: Path) -> None:
+    project = make_identity_project(tmp_path / "Project With Spaces", "coc-fiction")
+
+    evidence = validate_windows_project_identity(project, "coc-fiction", BASE_ROOT)
+
+    assert evidence.project_id == "coc-fiction"
+    assert evidence.root == project
+    assert evidence.repository == "owner/coc-fiction"
+    assert evidence.engine == "Godot 4.7"
+    assert len(evidence.adapter_sha256) == 64
+
+
+def test_windows_identity_accepts_a_clean_crlf_adapter_checkout(tmp_path: Path) -> None:
+    project = make_identity_project(tmp_path / "Project With Spaces", "coc-fiction")
+    adapter = project / "skills" / "PROJECT_BASE_ADAPTER.json"
+    adapter.write_bytes(adapter.read_bytes().replace(b"\n", b"\r\n"))
+
+    evidence = validate_windows_project_identity(project, "coc-fiction", BASE_ROOT)
+
+    assert evidence.project_id == "coc-fiction"
+
+
+def test_windows_identity_rejects_selected_project_id_mismatch(tmp_path: Path) -> None:
+    project = make_identity_project(tmp_path / "project", "coc-fiction")
+
+    with pytest.raises(WindowsProjectIdentityError, match="PROJECT_IDENTITY_MISMATCH"):
+        validate_windows_project_identity(project, "omenward", BASE_ROOT)
+
+
+def test_windows_identity_rejects_a_linked_project_component(tmp_path: Path) -> None:
+    project = make_identity_project(tmp_path / "project", "coc-fiction")
+    alias = tmp_path / "alias"
+    alias.symlink_to(tmp_path, target_is_directory=True)
+
+    with pytest.raises(WindowsProjectIdentityError, match="PROJECT_IDENTITY_PATH_BLOCKED"):
+        validate_windows_project_identity(alias / project.name, "coc-fiction", BASE_ROOT)
+
+
+def test_shared_identity_dispatches_to_the_windows_validator(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import base_tool_contracts.project_identity as identity_module
+
+    project = make_identity_project(tmp_path / "Windows Project", "coc-fiction")
+    monkeypatch.setattr(identity_module, "_runtime_platform", lambda: "win32", raising=False)
+    monkeypatch.setattr(identity_module, "fcntl", None)
+
+    evidence = identity_module.validate_project_identity(project, "coc-fiction", BASE_ROOT)
+
+    assert evidence.project_id == "coc-fiction"
     assert evidence.root == project
 
 

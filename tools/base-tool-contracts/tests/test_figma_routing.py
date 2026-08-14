@@ -82,6 +82,19 @@ def test_figma_registry_requires_the_committed_canonical_base_path(tmp_path: Pat
         copied.assert_canonical(ROOT)
 
 
+def test_figma_registry_uses_the_portable_committed_reader_without_posix_descriptors(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    module = routing_module()
+    monkeypatch.setattr(module, "_descriptor_reads_supported", lambda: False)
+
+    canonical = module.ProjectFigmaRegistry.load(
+        ROOT / "docs" / "operations" / "PROJECT_FIGMA_TARGET_REGISTRY.json"
+    )
+
+    canonical.assert_canonical(ROOT)
+
+
 def test_archived_figma_route_never_collapses_to_a_registered_route(tmp_path: Path) -> None:
     module = routing_module()
     path = write_registry(tmp_path)
@@ -110,6 +123,33 @@ def test_registered_no_mutation_is_distinct_from_ready_delivery(tmp_path: Path) 
 
     assert registry.registration_state("demo") == "ROUTING_REGISTERED"
     assert registry.routing_state("demo") == "ROUTING_BLOCKED"
+
+
+def test_public_project_catalog_exposes_names_without_figma_targets(tmp_path: Path) -> None:
+    module = routing_module()
+    registry = module.ProjectFigmaRegistry.load(write_registry(tmp_path))
+
+    assert registry.public_projects() == [
+        {
+            "project_id": "demo",
+            "display_name": "Demo",
+            "routing_state": "ROUTING_CONFIGURED",
+        }
+    ]
+    assert "abc123" not in json.dumps(registry.public_projects())
+    assert "figma.com" not in json.dumps(registry.public_projects())
+
+
+def test_public_project_catalog_excludes_archived_entries(tmp_path: Path) -> None:
+    module = routing_module()
+    path = write_registry(tmp_path)
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload["entries"][0]["delivery_status"] = "ARCHIVED"
+    payload["entries"][0]["delivery_page_node_id"] = None
+    payload["entries"][0]["generation_area_node_id"] = None
+    path.write_text(json.dumps(payload), encoding="utf-8")
+
+    assert module.ProjectFigmaRegistry.load(path).public_projects() == []
 
 
 def test_anchor_validation_binds_file_key_and_normalizes_node_id(tmp_path: Path) -> None:

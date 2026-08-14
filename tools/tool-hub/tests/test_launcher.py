@@ -7,7 +7,7 @@ from test_projects import make_project
 
 def test_real_child_reports_exact_project_and_nonce(tmp_path: Path) -> None:
     project = make_project(tmp_path / "Project With Spaces", "demo-game")
-    binding = ProjectLocator(tmp_path / "projects.json").register(project)
+    binding = ProjectLocator(tmp_path / "projects.json").register(project, "demo-game")
     launcher = QaEvidenceLauncher(tmp_path / "runtime")
     try:
         child = launcher.start(binding)
@@ -26,10 +26,12 @@ def test_real_child_reports_exact_project_and_nonce(tmp_path: Path) -> None:
 
 def test_repeat_start_is_idempotent_and_two_projects_are_isolated(tmp_path: Path) -> None:
     left = ProjectLocator(tmp_path / "left.json").register(
-        make_project(tmp_path / "left", "left-game")
+        make_project(tmp_path / "left", "left-game"),
+        "left-game",
     )
     right = ProjectLocator(tmp_path / "right.json").register(
-        make_project(tmp_path / "right", "right-game")
+        make_project(tmp_path / "right", "right-game"),
+        "right-game",
     )
     launcher = QaEvidenceLauncher(tmp_path / "runtime")
     try:
@@ -48,7 +50,8 @@ def test_repeat_start_is_idempotent_and_two_projects_are_isolated(tmp_path: Path
 
 def test_child_environment_does_not_inherit_provider_secrets(tmp_path: Path, monkeypatch) -> None:
     binding = ProjectLocator(tmp_path / "projects.json").register(
-        make_project(tmp_path / "project", "demo-game")
+        make_project(tmp_path / "project", "demo-game"),
+        "demo-game",
     )
     monkeypatch.setenv("OPENAI_API_KEY", "must-not-cross")
     monkeypatch.setenv("CODEX_HOME", "/must/not/cross")
