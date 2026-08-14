@@ -2,7 +2,7 @@
 
 > Artifact role: Registry-derived human navigation map; `skills/SKILL_REGISTRY.json` remains the sole routing authority.
 > Generated from `skills/SKILL_REGISTRY.json`. Do not edit this derivative.
-> Registry SHA-256: `d2a304dd8e492dd0efcdb61ec910fb69eb553696986352f78483ae957029ad0e`
+> Registry SHA-256: `d3327399f742f72ed1a1cc118ba7b24c470364d0920abbecbe5f5a7fb1666e19`
 > Current active Skill count: `30`
 > Regenerate: `python tools/build_base_v9_artifacts.py --write`
 > Verify: `python tools/build_base_v9_artifacts.py --check`
@@ -29,7 +29,7 @@
 | `refactoring-with-contract-preservation` | structure-maintenance | refactor; code-smell; complexity-reduction; duplicate-removal; behavior-preservation; structural-improvement | 기능·정책·Schema 변경이 주목적이거나 baseline과 회귀 검증 없이 구조를 바꾸려는 경우다. |
 | `simplifying-skill-bodies` | skill-context-optimization | skill-body-simplification; progressive-disclosure; context-reduction; reference-extraction; compact-skill; completeness-first; no-size-ceiling; instruction-budget; example-as-fixture; golden-set-preservation | 단순 문장 교정이거나 안전 규칙·핵심 절차를 숨기는 축약을 하려는 경우다. |
 | `pruning-stale-and-nonfunctional-material` | repository-pruning | pruning; dead-material; stale-content; duplicate-content; orphan-reference; obsolete-artifact; repository-bloat | 사용·소비자·승인·롤백을 확인하지 못했거나 단순히 파일 수를 줄이려는 경우다. |
-| `synchronizing-local-and-github-state` | git-operations | git-sync; local-remote-drift; pull; push; branch-divergence; working-tree; github-sync | 저장소와 무관한 작업이거나 dirty/diverged 상태를 자동 force·reset으로 덮으려는 경우다. |
+| `synchronizing-local-and-github-state` | git-operations | git-sync; local-remote-drift; pull; push; branch-divergence; working-tree; github-sync; github-cli-missing; gh-auth-missing; github-connector-fallback | 저장소와 무관한 작업이거나 dirty/diverged 상태를 자동 force·reset으로 덮으려는 경우다. |
 | `maintaining-long-running-task-continuity` | execution-continuity | long-running-task; checkpoint; resume-work; partial-delivery; context-limit; tool-session-boundary | 10초 이내 단순 작업이거나 백그라운드·미래 완료를 약속하려는 경우다. |
 | `governing-game-user-research-coverage` | games-user-research-governance | games-user-research; research-coverage; eleven-domains; tutorial-comprehension; ux-research; telemetry; balance-data; research-evidence | 단일 벤치마크 질문만 있거나 근거 없는 연구 결과를 채우려는 경우다. |
 | `creating-user-learning-notes` | user-learning | learning-note; study-note; explain-workflow; user-education; concept-summary; practice-exercise | AI 실행 지침을 그대로 복사하거나 단순 작업 보고만 필요한 경우다. |
