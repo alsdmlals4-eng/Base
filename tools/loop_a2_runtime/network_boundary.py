@@ -247,7 +247,7 @@ class DockerNoneDeniedNetworkBoundary:
         cwd: Path,
         environment: Mapping[str, str],
     ) -> NetworkExecutionPlan | None:
-        if policy != "DENIED" or platform.system() != "Linux":
+        if policy != "DENIED" or platform.system() not in {"Linux", "Windows"}:
             return None
         if not argv or any(not isinstance(item, str) or not item for item in argv):
             return None
