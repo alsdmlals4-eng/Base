@@ -33,10 +33,13 @@ signature_highlight: 이 인물을 한 장면으로 설명할 대표 하이라�
 
 ```text
 CHARACTER_X_CHARACTER | CHARACTER_X_WORLD | CHARACTER_X_ABILITY
+→ 필요 시 ABILITY_X_ABILITY 보조 Lens
 → 현재 조합에서 생기는 압력
 → 새 선택 / 갈등·협력 / 대사·행동 / 결과 중 관찰 가능한 차이
 → 기존 정본·욕망·판단과의 정합성
 ```
+
+`ABILITY_X_ABILITY`는 능력끼리의 결합이 실제 장면을 바꿀 때만 사용한다. 모든 능력 쌍의 조합표를 만들지 않는다.
 
 `DECORATIVE_SYNERGY`, `FORCED_CHEMISTRY`, `CROSS_PRODUCT_OVERDESIGN`이 보이면 설정을 더 붙이기보다 현재 장면에 필요한 최소 조합만 남긴다.
 
