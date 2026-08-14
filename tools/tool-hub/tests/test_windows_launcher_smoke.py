@@ -12,6 +12,7 @@ from urllib.request import HTTPCookieProcessor, Request, build_opener
 import pytest
 
 from tool_hub.windows_launcher import WindowsLauncherInstaller
+from tool_hub import windows_launcher as launcher_module
 
 
 BASE_ROOT = Path(__file__).resolve().parents[3]
@@ -35,9 +36,11 @@ def temporary_real_pyw_association(pythonw: Path):
 
     with winreg.CreateKey(winreg.HKEY_CURRENT_USER, extension_key) as key:
         winreg.SetValueEx(key, "", 0, winreg.REG_SZ, program_id)
+    with winreg.CreateKey(winreg.HKEY_CURRENT_USER, rf"Software\Classes\{program_id}") as key:
+        winreg.SetValueEx(key, "", 0, winreg.REG_SZ, "Base Tool Hub Python no-console smoke")
     with winreg.CreateKey(winreg.HKEY_CURRENT_USER, command_key) as key:
         winreg.SetValueEx(key, "", 0, winreg.REG_SZ, f'"{pythonw}" "%1" %*')
-    ctypes.windll.shell32.SHChangeNotify(0x08000000, 0, None, None)
+    ctypes.windll.shell32.SHChangeNotify(0x08000000, 0x1000, None, None)
     try:
         yield
     finally:
@@ -57,7 +60,7 @@ def temporary_real_pyw_association(pythonw: Path):
                     pass
             else:
                 winreg.SetValueEx(key, "", 0, previous[1], previous[0])
-        ctypes.windll.shell32.SHChangeNotify(0x08000000, 0, None, None)
+        ctypes.windll.shell32.SHChangeNotify(0x08000000, 0x1000, None, None)
 
 
 @pytest.mark.skipif(sys.platform != "win32", reason="real Windows pythonw smoke")
@@ -76,6 +79,11 @@ def test_pythonw_launcher_starts_reuses_and_shuts_down_exact_hub(
         desktop=desktop,
     )
     with temporary_real_pyw_association(installer.pythonw):
+        effective = launcher_module._effective_pyw_executable()
+        assert effective is not None, "Windows Shell did not resolve the temporary real .pyw handler"
+        assert launcher_module._default_association_checker(installer.pythonw), (
+            f"Windows Shell resolved an unexpected .pyw executable: {effective}"
+        )
         installer.install()
         config_path = local / "BaseToolHub" / "launcher" / "launcher-config.json"
         config = json.loads(config_path.read_text(encoding="utf-8"))

@@ -78,7 +78,11 @@ def test_windows_process_starts_and_serves_blocked_catalog(tmp_path: Path) -> No
                 output = process.stdout.read() if process.stdout is not None else ""
                 pytest.fail(f"Tool Hub exited before Windows catalog smoke: {output[-2000:]}")
             try:
-                with opener.open(f"http://127.0.0.1:{port}/api/catalog", timeout=1) as response:
+                # Once the server accepts the request, let the single reviewed
+                # project scan complete.  A one-second timeout created another
+                # expensive scan on every retry and could starve the Windows
+                # thread pool even though a real browser issues only one fetch.
+                with opener.open(f"http://127.0.0.1:{port}/api/catalog", timeout=30) as response:
                     payload = json.load(response)
                 break
             except OSError:
