@@ -5,18 +5,39 @@ import hashlib
 import json
 from typing import Any, Mapping
 
-_SENSITIVE = {
-    "authorization", "api_key", "openai_api_key", "token", "secret", "password",
-    "cookie", "set-cookie", "proxy-authorization", "access_token", "refresh_token",
-    "client_secret", "github_token", "bearer_token",
+_SENSITIVE_KEYS = {
+    "authorization",
+    "apikey",
+    "openaiapikey",
+    "token",
+    "secret",
+    "password",
+    "cookie",
+    "setcookie",
+    "proxyauthorization",
+    "accesstoken",
+    "refreshtoken",
+    "clientsecret",
+    "githubtoken",
+    "bearertoken",
 }
+_SENSITIVE_SUFFIXES = ("apikey", "token", "secret", "password")
+
+
+def _normalized_key(value: object) -> str:
+    return "".join(character for character in str(value).casefold() if character.isalnum())
+
+
+def _is_sensitive_key(value: object) -> bool:
+    normalized = _normalized_key(value)
+    return normalized in _SENSITIVE_KEYS or normalized.endswith(_SENSITIVE_SUFFIXES)
 
 
 def redact_sensitive(value: Any) -> Any:
     if isinstance(value, Mapping):
         result: dict[str, Any] = {}
         for key, item in value.items():
-            if str(key).casefold().replace("-", "_") in {name.replace("-", "_") for name in _SENSITIVE}:
+            if _is_sensitive_key(key):
                 result[str(key)] = "[REDACTED]"
             else:
                 result[str(key)] = redact_sensitive(item)
@@ -28,5 +49,13 @@ def redact_sensitive(value: Any) -> Any:
 
 def canonical_receipt(payload: Mapping[str, Any]) -> dict[str, Any]:
     clean = redact_sensitive(dict(payload))
-    canonical = json.dumps(clean, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
-    return {**clean, "receipt_digest": hashlib.sha256(canonical).hexdigest()}
+    canonical = json.dumps(
+        clean,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return {
+        **clean,
+        "receipt_digest": hashlib.sha256(canonical).hexdigest(),
+    }
