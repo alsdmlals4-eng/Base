@@ -6,6 +6,9 @@ on:
       - "tools/loop_a2_runtime/workspace_registry.py"
       - "tools/loop_a2_runtime/worktree_adapter.py"
       - "tests/test_loop_a2_runtime_resume*.py"
+      - "tests/test_task_recovery_protocol.py"
+      - "skills/managing-project-intake-and-work-contract/references/task-recovery-protocol.md"
+      - "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"
       - "docs/evidence/2026-08-14-loop-a2-durable-resume.md"
       - ".github/workflows/validate-loop-a2-durable-resume.yml"
   push:
@@ -14,6 +17,9 @@ on:
       - "tools/loop_a2_runtime/workspace_registry.py"
       - "tools/loop_a2_runtime/worktree_adapter.py"
       - "tests/test_loop_a2_runtime_resume*.py"
+      - "tests/test_task_recovery_protocol.py"
+      - "skills/managing-project-intake-and-work-contract/references/task-recovery-protocol.md"
+      - "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"
       - ".github/workflows/validate-loop-a2-durable-resume.yml"
 
 permissions:
@@ -30,8 +36,8 @@ jobs:
           python-version: "3.12"
       - name: Compile and test durable A2 resume
         run: |
-          python -m py_compile tools/loop_a2_runtime/workspace_registry.py tools/loop_a2_runtime/worktree_adapter.py tests/test_loop_a2_runtime_resume.py tests/test_loop_a2_runtime_resume_adversarial.py
-          python -m unittest tests.test_loop_a2_runtime_resume tests.test_loop_a2_runtime_resume_adversarial -v
+          python -m py_compile tools/loop_a2_runtime/workspace_registry.py tools/loop_a2_runtime/worktree_adapter.py tests/test_loop_a2_runtime_resume.py tests/test_loop_a2_runtime_resume_adversarial.py tests/test_task_recovery_protocol.py
+          python -m unittest tests.test_loop_a2_runtime_resume tests.test_loop_a2_runtime_resume_adversarial tests.test_task_recovery_protocol -v
           git diff --check
 
   durable-resume-windows:
@@ -45,5 +51,5 @@ jobs:
       - name: Test durable A2 resume on Windows
         shell: pwsh
         run: |
-          python -m unittest tests.test_loop_a2_runtime_resume tests.test_loop_a2_runtime_resume_adversarial -v
+          python -m unittest tests.test_loop_a2_runtime_resume tests.test_loop_a2_runtime_resume_adversarial tests.test_task_recovery_protocol -v
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
