@@ -35,6 +35,10 @@ on:
       - "templates/planning/PC_ANDROID_DELIVERY_PROFILE.md"
       - "tools/periodic_source_scan_queue.py"
       - "tools/periodic_source_analysis.py"
+      - "tools/periodic_source_analysis_*.py"
+      - "tools/periodic_source_candidate_state.py"
+      - "tools/periodic_source_operations_state.py"
+      - "tools/run_periodic_source_scan_queue.sh"
       - "README.md"
       - "docs/DOCUMENTATION_MAP.md"
       - "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md"
@@ -53,6 +57,7 @@ on:
       - "tests/test_periodic_external_source_discovery_seeds.py"
       - "tests/test_periodic_source_scan_queue.py"
       - "tests/test_periodic_source_analysis_auto_merge.py"
+      - "tests/test_periodic_source_analysis_runner.py"
       - "tests/test_weekly_work_improvement_review.py"
       - ".github/workflows/periodic-source-scan-queue.yml"
       - ".github/workflows/validate-evidence-knowledge.yml"
@@ -86,6 +91,10 @@ jobs:
           {
             python -m py_compile \
               tools/periodic_source_scan_queue.py \
+              tools/periodic_source_analysis_contract.py \
+              tools/periodic_source_analysis_render.py \
+              tools/periodic_source_candidate_state.py \
+              tools/periodic_source_operations_state.py \
               tools/periodic_source_analysis.py \
               tests/test_game_design_difficulty_workflow.py \
               tests/test_game_development_youtube_skill.py \
@@ -100,7 +109,9 @@ jobs:
               tests/test_periodic_external_source_discovery_seeds.py \
               tests/test_periodic_source_scan_queue.py \
               tests/test_periodic_source_analysis_auto_merge.py \
+              tests/test_periodic_source_analysis_runner.py \
               tests/test_weekly_work_improvement_review.py
+            bash -n tools/run_periodic_source_scan_queue.sh
             python -m unittest \
               tests/test_game_design_difficulty_workflow.py \
               tests/test_game_development_youtube_skill.py \
@@ -115,6 +126,7 @@ jobs:
               tests/test_periodic_external_source_discovery_seeds.py \
               tests/test_periodic_source_scan_queue.py \
               tests/test_periodic_source_analysis_auto_merge.py \
+              tests/test_periodic_source_analysis_runner.py \
               tests/test_weekly_work_improvement_review.py \
               -v
           } > evidence-knowledge-results.txt 2>&1
@@ -154,7 +166,12 @@ jobs:
             templates/planning/PC_ANDROID_DELIVERY_PROFILE.md
             templates/research/AI_IMAGE_PROMPT_RECIPE_CARD.md
             tools/periodic_source_scan_queue.py
+            tools/periodic_source_analysis_contract.py
+            tools/periodic_source_analysis_render.py
+            tools/periodic_source_candidate_state.py
+            tools/periodic_source_operations_state.py
             tools/periodic_source_analysis.py
+            tools/run_periodic_source_scan_queue.sh
             tests/test_game_design_difficulty_workflow.py
             tests/test_game_development_youtube_skill.py
             tests/test_evidence_based_game_development_knowledge.py
@@ -168,5 +185,6 @@ jobs:
             tests/test_periodic_external_source_discovery_seeds.py
             tests/test_periodic_source_scan_queue.py
             tests/test_periodic_source_analysis_auto_merge.py
+            tests/test_periodic_source_analysis_runner.py
             tests/test_weekly_work_improvement_review.py
           if-no-files-found: error
