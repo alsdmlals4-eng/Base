@@ -16,6 +16,7 @@ import re
 import subprocess
 from typing import Any, Callable, Protocol
 
+from .authority_snapshot import AuthoritySnapshot
 from .integration import compute_worktree_diff_sha256
 from .protocol import ReviewResult, RunRequest, WorkerResult, normalize_contract_path
 from .provider_gate import real_provider_gate
@@ -221,8 +222,29 @@ def _authority_paths(root: Path, request: RunRequest) -> tuple[str, ...]:
     return tuple(dict.fromkeys(paths))
 
 
-def _trusted_contract_paths(root: Path, request: RunRequest) -> tuple[str, ...]:
-    return _authority_paths(root, request)
+def _snapshot_matches_request(snapshot: AuthoritySnapshot, request: RunRequest) -> bool:
+    return (
+        snapshot.project_id == request.project_id
+        and snapshot.package_id == request.package_id
+        and snapshot.source_main_sha == request.expected_main_sha
+        and snapshot.capsule_path == request.capsule_path
+        and request.package_path in snapshot.paths
+    )
+
+
+def _effective_authority_paths(
+    root: Path,
+    request: RunRequest,
+    authority_snapshot: AuthoritySnapshot | None,
+) -> tuple[str, ...]:
+    if authority_snapshot is None:
+        return _authority_paths(root, request)
+    if not _snapshot_matches_request(authority_snapshot, request):
+        raise OpenAITransportError(
+            "AUTHORITY_SNAPSHOT_IDENTITY_MISMATCH",
+            "authority snapshot differs from the active RunRequest",
+        )
+    return authority_snapshot.paths
 
 
 def _tracked_allowed_context(root: Path, request: RunRequest) -> tuple[str, ...]:
@@ -243,22 +265,40 @@ def _collect_context(
     *,
     max_bytes: int,
     max_files: int,
+    authority_snapshot: AuthoritySnapshot | None = None,
 ) -> list[dict[str, str]]:
-    candidates = list(_trusted_contract_paths(root, request))
-    candidates.extend(
-        path for path in _tracked_allowed_context(root, request) if path not in candidates
-    )
-    if len(candidates) > max_files:
-        raise OpenAITransportError("BUILDER_CONTEXT_LIMIT", "Builder context file count exceeded")
-    total = 0
     context: list[dict[str, str]] = []
-    for relative in candidates:
+    total = 0
+    authority_paths = _effective_authority_paths(root, request, authority_snapshot)
+
+    if authority_snapshot is not None:
+        for item in authority_snapshot.files:
+            text = _redact_prompt_text(item.content)
+            total += len(item.path.encode("utf-8")) + len(text.encode("utf-8"))
+            if total > max_bytes:
+                raise OpenAITransportError("BUILDER_CONTEXT_LIMIT", "Builder context byte budget exceeded")
+            context.append({"path": item.path, "content": text})
+    else:
+        for relative in authority_paths:
+            path = _closed_path(root, relative, must_exist=True)
+            text = _redact_prompt_text(_read_utf8(path, label=relative))
+            total += len(relative.encode("utf-8")) + len(text.encode("utf-8"))
+            if total > max_bytes:
+                raise OpenAITransportError("BUILDER_CONTEXT_LIMIT", "Builder context byte budget exceeded")
+            context.append({"path": relative, "content": text})
+
+    for relative in _tracked_allowed_context(root, request):
+        if relative in authority_paths:
+            continue
         path = _closed_path(root, relative, must_exist=True)
         text = _redact_prompt_text(_read_utf8(path, label=relative))
         total += len(relative.encode("utf-8")) + len(text.encode("utf-8"))
         if total > max_bytes:
             raise OpenAITransportError("BUILDER_CONTEXT_LIMIT", "Builder context byte budget exceeded")
         context.append({"path": relative, "content": text})
+
+    if len(context) > max_files:
+        raise OpenAITransportError("BUILDER_CONTEXT_LIMIT", "Builder context file count exceeded")
     return context
 
 
@@ -384,6 +424,7 @@ class OpenAIWorkspaceBuilder:
         max_total_write_bytes: int = _DEFAULT_TOTAL_WRITE_BYTES,
         max_response_bytes: int = _DEFAULT_RESPONSE_BYTES,
         repair_mailbox: RepairMailbox | None = None,
+        authority_snapshot: AuthoritySnapshot | None = None,
     ) -> None:
         if not isinstance(model, str) or not model.strip():
             raise ValueError("model must be explicitly selected")
@@ -406,6 +447,7 @@ class OpenAIWorkspaceBuilder:
         self.max_total_write_bytes = max_total_write_bytes
         self.max_response_bytes = max_response_bytes
         self.repair_mailbox = repair_mailbox
+        self.authority_snapshot = authority_snapshot
         self._usage = _UsageCounter(self.model)
 
     def usage_snapshot(self) -> dict[str, object]:
@@ -419,7 +461,9 @@ class OpenAIWorkspaceBuilder:
     ) -> list[tuple[str, Path, str]]:
         if not isinstance(writes, list) or len(writes) > 32:
             raise OpenAITransportError("BUILDER_WRITE_PLAN_INVALID", "writes must be a bounded list")
-        authority_paths = set(_authority_paths(root, request))
+        authority_paths = set(
+            _effective_authority_paths(root, request, self.authority_snapshot)
+        )
         result: list[tuple[str, Path, str]] = []
         seen: set[str] = set()
         total_bytes = 0
@@ -471,6 +515,12 @@ class OpenAIWorkspaceBuilder:
                 request,
                 max_bytes=self.max_context_bytes,
                 max_files=self.max_context_files,
+                authority_snapshot=self.authority_snapshot,
+            )
+            immutable_authority_paths = _effective_authority_paths(
+                root,
+                request,
+                self.authority_snapshot,
             )
         except OpenAITransportError as exc:
             code = "BUILDER_CONTEXT_LIMIT" if exc.code == "BUILDER_CONTEXT_LIMIT" else "BUILDER_CONTEXT_INVALID"
@@ -495,7 +545,7 @@ class OpenAIWorkspaceBuilder:
             "repair_feedback": repair_feedback,
             "allowed_paths": list(request.allowed_paths),
             "forbidden_paths": list(request.forbidden_paths),
-            "immutable_authority_paths": list(_authority_paths(root, request)),
+            "immutable_authority_paths": list(immutable_authority_paths),
             "resource_locks": list(request.resource_locks),
             "requirement_ids": list(request.requirement_ids),
             "context": context,
