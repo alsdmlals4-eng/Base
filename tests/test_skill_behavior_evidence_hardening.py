@@ -420,6 +420,26 @@ class ClaimIntentBehaviorEvidenceHardeningTests(unittest.TestCase):
             self.assertIn(token, required)
         self.assertEqual("NOT_RUN", documents[0]["model_run_status"])
 
+    def test_sbe_039_is_unique_capability_driven_and_not_model_run(self) -> None:
+        documents = [
+            json.loads((ROOT / "skills/SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8")),
+            json.loads((ROOT / "skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json").read_text(encoding="utf-8")),
+        ]
+        cases = [
+            case
+            for document in documents
+            for case in document["cases"]
+            if case["case_id"] == "SBE-039"
+        ]
+        self.assertEqual(1, len(cases))
+        case = cases[0]
+        self.assertEqual("synchronizing-local-and-github-state", case["expected_primary_skill"])
+        self.assertIn("GITHUB_CAPABILITY_FALLBACK", case["expected_skill_modes"])
+        required = chr(10).join(case["required_evidence"])
+        for token in ("CONCURRENT_CHANGE_PREFLIGHT", "expected HEAD", "force=false", "post-merge"):
+            self.assertIn(token, required)
+        self.assertEqual("NOT_RUN", documents[0]["model_run_status"])
+
 
 if __name__ == "__main__":
     unittest.main()

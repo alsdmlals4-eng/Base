@@ -300,6 +300,17 @@ class ClaimIntentAdversarialBoundaryTests(unittest.TestCase):
         self.assertEqual("NOT_REQUIRED", case["expected_user_decision_state"])
         self.assertTrue(case["forbidden_skills"])
 
+    def test_sbe_039_rejects_optional_cli_and_stale_sha_shortcuts(self) -> None:
+        evals = json.loads((ROOT / "skills/SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8"))
+        case = next(case for case in evals["cases"] if case["case_id"] == "SBE-039")
+        prompt = case["prompt"]
+        required = chr(10).join(case["required_evidence"])
+        for token in ("gh가 설치되어 있지", "재인증을 요구하지", "연결된 GitHub 플러그인"):
+            self.assertIn(token, prompt)
+        for token in ("CONCURRENT_CHANGE_PREFLIGHT", "exact write parent", "force=false", "Required Checks"):
+            self.assertIn(token, required)
+        self.assertEqual("NOT_REQUIRED", case["expected_user_decision_state"])
+
 
 if __name__ == "__main__":
     unittest.main()
