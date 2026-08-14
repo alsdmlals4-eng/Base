@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "evidence_id": "figma-live-delivery-routing-smoke-2026-08-14",
+  "verified_at_date": "2026-08-14",
+  "purpose": "Record live Figma routing evidence before promoting reviewed project routes to READY_FOR_DELIVERY.",
+  "method": {
+    "readback": "Figma metadata readback of the exact Generated Assets frame in each registered file.",
+    "write_smoke": "Create a temporary 32x32 frame inside Generated Assets, create a deterministic PNG image from Uint8Array bytes, assign it as an IMAGE fill, read the stored raw image back, then delete the temporary frame.",
+    "cleanup": "Each temporary smoke node was removed and its delivery area was checked for zero remaining nodes with the smoke name."
+  },
+  "projects": [
+    {
+      "project_id": "coc-fiction",
+      "figma_file_key": "PEa5zDbPHll3eHiNKX0e1k",
+      "delivery_page_node_id": "12:2",
+      "generation_area_node_id": "12:3",
+      "metadata_readback": "PASS",
+      "image_write_raw_readback": "PASS",
+      "cleanup": "PASS"
+    },
+    {
+      "project_id": "ten-paces-hidden-moves",
+      "figma_file_key": "pVQ2e6aK45iL8BLBJWDSw4",
+      "delivery_page_node_id": "22:2",
+      "generation_area_node_id": "22:3",
+      "metadata_readback": "PASS",
+      "image_write_raw_readback": "PASS",
+      "cleanup": "PASS"
+    },
+    {
+      "project_id": "ninja-survival",
+      "figma_file_key": "xNm1xbYPftEaAE2jOENlvt",
+      "delivery_page_node_id": "12:2",
+      "generation_area_node_id": "12:3",
+      "metadata_readback": "PASS",
+      "image_write_raw_readback": "PASS",
+      "cleanup": "PASS"
+    },
+    {
+      "project_id": "switchy-express-cargo-puzzle",
+      "figma_file_key": "QMbylbdAi96PGSdHIT3AGa",
+      "delivery_page_node_id": "11:2",
+      "generation_area_node_id": "11:3",
+      "metadata_readback": "PASS",
+      "image_write_raw_readback": "PASS",
+      "cleanup": "PASS"
+    },
+    {
+      "project_id": "urban-legend",
+      "figma_file_key": "Z7J3eLeavEytKN20H4HfoP",
+      "delivery_page_node_id": "11:2",
+      "generation_area_node_id": "11:3",
+      "metadata_readback": "PASS",
+      "image_write_raw_readback": "PASS",
+      "cleanup": "PASS"
+    },
+    {
+      "project_id": "grimoire-how-to-rewrite-the-world",
+      "figma_file_key": "AdOGNMp61AZSMMvBVxsVBd",
+      "delivery_page_node_id": "8:2",
+      "generation_area_node_id": "8:3",
+      "metadata_readback": "PASS",
+      "image_write_raw_readback": "PASS",
+      "cleanup": "PASS"
+    },
+    {
+      "project_id": "blacksmith",
+      "figma_file_key": "xy6W4ga6ldkF3TvP0eRmtN",
+      "delivery_page_node_id": "13:2",
+      "generation_area_node_id": "13:3",
+      "metadata_readback": "PASS",
+      "image_write_raw_readback": "PASS",
+      "cleanup": "PASS"
+    },
+    {
+      "project_id": "omenward",
+      "figma_file_key": "IhxUJaS6ik6MpBzdxt6o8D",
+      "delivery_page_node_id": "10:2",
+      "generation_area_node_id": "10:3",
+      "metadata_readback": "PASS",
+      "image_write_raw_readback": "PASS",
+      "cleanup": "PASS"
+    }
+  ],
+  "result": {
+    "registered_projects_verified": 8,
+    "metadata_readback_passed": 8,
+    "image_write_raw_readback_passed": 8,
+    "cleanup_passed": 8,
+    "routing_claim": "LIVE_FIGMA_DELIVERY_TARGET_VERIFIED"
+  },
+  "claim_ceiling": [
+    "This proves the registered Figma files and exact delivery nodes were readable and mutable through the connected Figma execution path on the verification date.",
+    "This proves a deterministic sample PNG could be written and read back in every registered project file without leaving the temporary smoke node behind.",
+    "This does not prove OpenAI/provider image generation quality or provider availability.",
+    "This does not prove that the local Tool Hub directly uploads to Figma without the connected project GPT/Figma execution layer.",
+    "This does not approve generated art for use in the game or prove in-game Godot integration."
+  ]
+}
