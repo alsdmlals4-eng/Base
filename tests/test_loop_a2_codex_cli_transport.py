@@ -76,15 +76,18 @@ class CodexCliTransportTests(unittest.TestCase):
 
         self.assertEqual(json.loads(result)["status"], "COMPLETED")
         argv, kwargs = runner.calls[0]
-        self.assertEqual(argv[:2], ("codex", "exec"))
-        for required in ("--ephemeral", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "--strict-config"):
-            self.assertIn(required, argv)
+        self.assertEqual(argv[0], "codex")
+        exec_index = argv.index("exec")
+        self.assertGreater(exec_index, 0)
+        self.assertIn("--strict-config", argv[:exec_index])
         config_pairs = [
             argv[index + 1]
-            for index, item in enumerate(argv[:-1])
+            for index, item in enumerate(argv[:exec_index])
             if item == "-c"
         ]
         self.assertIn("features.shell_tool=false", config_pairs)
+        for required in ("--ephemeral", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check"):
+            self.assertIn(required, argv[exec_index + 1 :])
         sandbox_index = argv.index("--sandbox")
         self.assertEqual(argv[sandbox_index + 1], "read-only")
         self.assertEqual(argv[-1], "-")
@@ -112,6 +115,7 @@ class CodexCliTransportTests(unittest.TestCase):
         model_index = argv.index("--model")
         self.assertEqual(argv[model_index + 1], "gpt-5-codex")
         self.assertNotIn("--api-key", argv)
+        self.assertNotIn("--dangerously-bypass-approvals-and-sandbox", argv)
 
     def test_nonzero_missing_output_timeout_and_oversize_fail_closed(self) -> None:
         from tools.loop_a2_runtime.codex_cli_transport import CodexCliProcess, CodexCliTransportError
