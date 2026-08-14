@@ -43,8 +43,6 @@ else
   issue_number="${issue_url##*/}"
 fi
 
-declare -a generated_cleanup_paths=()
-
 update_queue() {
   local final_state="$1"
   local detail="$2"
@@ -223,7 +221,7 @@ cat > source-scan-pr-body.md <<EOF
 
 ## Merge gate
 
-This PR is eligible only after exact-head Evidence Knowledge and full Game Project OS validation, current-main ancestry, zero unresolved review threads, and expected-head squash auto-merge.
+This PR is eligible only after exact-head Evidence Knowledge, Base v9, and full Game Project OS validation, current-main ancestry, zero unresolved review threads, and expected-head squash auto-merge.
 EOF
 
 if ! pr_url="$(gh pr create \
@@ -241,11 +239,23 @@ dispatch_and_wait() {
   local input_mode="${3:-}"
   local started
   started="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  if [[ "$input_mode" == "full" ]]; then
-    gh workflow run validate-game-project-operating-system.yml --ref "$branch" -f validation_level=full || return 40
-  else
-    gh workflow run validate-evidence-knowledge.yml --ref "$branch" || return 40
-  fi
+  case "$workflow" in
+    validate-evidence-knowledge.yml)
+      gh workflow run validate-evidence-knowledge.yml --ref "$branch" || return 40
+      ;;
+    validate-base-v9-rc.yml)
+      gh workflow run validate-base-v9-rc.yml --ref "$branch" || return 40
+      ;;
+    validate-game-project-operating-system.yml)
+      [[ "$input_mode" == "full" ]] || return 42
+      gh workflow run validate-game-project-operating-system.yml \
+        --ref "$branch" \
+        -f validation_level=full || return 40
+      ;;
+    *)
+      return 42
+      ;;
+  esac
   local validation_run=""
   while [[ -z "$validation_run" ]]; do
     validation_run="$(
@@ -269,6 +279,7 @@ dispatch_and_wait() {
 while true; do
   reviewed_head="$(git rev-parse HEAD)"
   dispatch_and_wait validate-evidence-knowledge.yml "$reviewed_head" || block "BLOCKED_ACTIONS_DISPATCH" "Evidence Knowledge dispatch or exact-head validation failed."
+  dispatch_and_wait validate-base-v9-rc.yml "$reviewed_head" || block "BLOCKED_VALIDATION" "Base v9 dispatch or exact-head validation failed."
   dispatch_and_wait validate-game-project-operating-system.yml "$reviewed_head" full || block "BLOCKED_VALIDATION" "Full Game Project OS validation failed."
   git fetch origin main
   if git merge-base --is-ancestor origin/main "$reviewed_head"; then
