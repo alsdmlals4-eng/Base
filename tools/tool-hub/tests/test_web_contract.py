@@ -113,6 +113,36 @@ def test_browser_opens_only_the_authenticated_loopback_url_returned_by_launch() 
     assert 'window.open(`http://' not in script
 
 
+def test_browser_has_project_scoped_figma_bridge_pairing_without_destination_inputs() -> None:
+    html = web_source("index.html")
+    script = web_source("app.js")
+
+    assert 'id="figma-bridge-panel"' in html
+    assert 'id="figma-bridge-state"' in html
+    assert 'id="figma-pairing-code"' in html
+    assert 'id="figma-pairing-create"' in html
+    assert 'id="figma-open"' in html
+    assert "Figma Bridge 연결" in html
+    assert "PAIRING_REQUIRED" in html
+    assert "FIGMA_DELIVERED_VERIFIED" in html
+    for forbidden in (
+        'id="figma-file-key"',
+        'id="figma-node-id"',
+        'id="figma-url-input"',
+        'id="project-root"',
+    ):
+        assert forbidden not in html
+
+    assert 'api(`/api/figma/pairing/${state.projectId}`' in script
+    assert 'api(`/api/figma/status/${state.projectId}`)' in script
+    assert "pairing_code" in script
+    assert "figma_url" in script
+    assert "figma_file_key" not in script
+    assert "generation_area_node_id" not in script
+    assert 'window.open(figmaUrl.href, "_blank", "noopener")' in script
+    assert "localStorage" not in script
+
+
 def test_missing_project_anchor_evidence_has_a_truthful_public_reason(tmp_path: Path) -> None:
     project = make_project(tmp_path / "visual-project", "coc-fiction")
     client = client_for(tmp_path)
