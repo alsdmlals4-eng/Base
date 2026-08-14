@@ -100,13 +100,13 @@ class SerialFictionDisciplineContractTests(unittest.TestCase):
         reference = (
             REFERENCE_ROOT / "character-distinctiveness-and-opponent-threat.md"
         ).read_text(encoding="utf-8")
-        combined_consumers = skill + "\n" + reference
 
         for token in (
             "RELATIONAL_APPEAL",
             "CHARACTER_X_CHARACTER",
             "CHARACTER_X_WORLD",
             "CHARACTER_X_ABILITY",
+            "ABILITY_X_ABILITY",
             "relational_appeal_proof",
             "DECORATIVE_SYNERGY",
             "FORCED_CHEMISTRY",
@@ -114,11 +114,12 @@ class SerialFictionDisciplineContractTests(unittest.TestCase):
         ):
             self.assertIn(token, common_method)
 
-        self.assertIn(
-            "docs/knowledge/methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md",
-            combined_consumers,
-        )
-        self.assertIn("RELATIONAL_APPEAL", combined_consumers)
+        for consumer in (skill, reference):
+            self.assertIn(
+                "docs/knowledge/methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md",
+                consumer,
+            )
+            self.assertIn("RELATIONAL_APPEAL", consumer)
 
     def test_information_choice_highlight_and_foreshadow_contract_is_explicit(self) -> None:
         guide = (
