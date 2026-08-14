@@ -9,6 +9,18 @@ SKILL_ID = "developing-and-revising-serial-fiction"
 SKILL_PATH = ROOT / "skills" / SKILL_ID / "SKILL.md"
 GUIDE_ROOT = ROOT / "docs" / "knowledge" / "serial-fiction"
 REFERENCE_ROOT = ROOT / "skills" / SKILL_ID / "references"
+METHOD_ROOT = ROOT / "docs" / "knowledge" / "methods"
+STORY_ORIGIN_METHOD_PATH = METHOD_ROOT / "STORY_ORIGIN_AND_GENERATION_METHOD.md"
+NARRATIVE_METHOD_PATH = METHOD_ROOT / "NARRATIVE_AND_RELATIONSHIP_METHOD.md"
+KNOWLEDGE_README_PATH = ROOT / "docs" / "knowledge" / "README.md"
+NARRATIVE_TEMPLATE_PATH = ROOT / "templates" / "planning" / "NARRATIVE_CONTENT_PLAN.md"
+SOURCE_RADAR_PATH = (
+    ROOT
+    / "docs"
+    / "knowledge"
+    / "game-development"
+    / "NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md"
+)
 
 
 class SerialFictionDisciplineContractTests(unittest.TestCase):
@@ -93,9 +105,7 @@ class SerialFictionDisciplineContractTests(unittest.TestCase):
             self.assertIn(token, combined)
 
     def test_relational_appeal_has_common_owner_and_serial_fiction_consumers(self) -> None:
-        common_method = (
-            ROOT / "docs" / "knowledge" / "methods" / "NARRATIVE_AND_RELATIONSHIP_METHOD.md"
-        ).read_text(encoding="utf-8")
+        common_method = NARRATIVE_METHOD_PATH.read_text(encoding="utf-8")
         skill = SKILL_PATH.read_text(encoding="utf-8")
         reference = (
             REFERENCE_ROOT / "character-distinctiveness-and-opponent-threat.md"
@@ -120,6 +130,105 @@ class SerialFictionDisciplineContractTests(unittest.TestCase):
                 consumer,
             )
             self.assertIn("RELATIONAL_APPEAL", consumer)
+
+    def test_story_origin_engine_common_owner_is_multi_entry_and_bounded(self) -> None:
+        self.assertTrue(STORY_ORIGIN_METHOD_PATH.is_file())
+        method = STORY_ORIGIN_METHOD_PATH.read_text(encoding="utf-8")
+
+        for token in (
+            "STORY_ORIGIN_ENGINE",
+            "AFFECTED_AGENT",
+            "PRESSURE",
+            "DESIRE / GOAL",
+            "RESISTANCE",
+            "CONSEQUENTIAL_CHOICE",
+            "CONSEQUENCE",
+            "STATE / VALUE / RELATIONSHIP_SHIFT",
+            "NEXT_PRESSURE",
+            "primary_seed_count: 1",
+            "secondary_seed_count: 0..2",
+            "all_seed_completion_required: false",
+            "CHARACTER",
+            "VALUE_BELIEF",
+            "RELATIONSHIP",
+            "WORLD_MILIEU",
+            "INSTITUTION",
+            "OCCUPATION_ROLE",
+            "ABILITY_RESOURCE_RULE",
+            "INQUIRY",
+            "EVENT",
+            "PREMISE",
+            "GENRE_READER_PROMISE",
+            "LORE_WITHOUT_AGENT",
+            "TRAIT_WITHOUT_TEST",
+            "VALUE_AS_SLOGAN",
+            "INSTITUTION_AS_LABEL",
+            "JOB_AS_COSTUME",
+            "EVENT_WITHOUT_DECISION",
+            "MYSTERY_WITHOUT_STAKES",
+            "FRAMEWORK_CHECKLIST_OVERFIT",
+            "PLAYER_BRANCH_REQUIRED",
+            "RELATIONAL_APPEAL",
+        ):
+            self.assertIn(token, method)
+
+        registry = (ROOT / "skills" / "SKILL_REGISTRY.json").read_text(
+            encoding="utf-8"
+        ).lower()
+        self.assertNotIn('"skill_id": "story-origin', registry)
+        self.assertNotIn('"skill_id": "story_origin', registry)
+
+    def test_story_origin_engine_is_discoverable_and_hands_off_to_scene_craft(self) -> None:
+        knowledge = KNOWLEDGE_README_PATH.read_text(encoding="utf-8")
+        narrative = NARRATIVE_METHOD_PATH.read_text(encoding="utf-8")
+        method_path = "methods/STORY_ORIGIN_AND_GENERATION_METHOD.md"
+
+        self.assertIn(method_path, knowledge)
+        self.assertIn("STORY_ORIGIN_AND_GENERATION_METHOD.md", narrative)
+        self.assertIn("STORY_ORIGIN_ENGINE", narrative)
+        self.assertIn("RELATIONAL_APPEAL", narrative)
+
+    def test_story_origin_engine_serial_fiction_consumers_are_optional(self) -> None:
+        skill = SKILL_PATH.read_text(encoding="utf-8")
+        guide = (
+            GUIDE_ROOT / "SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md"
+        ).read_text(encoding="utf-8")
+        learning = (ROOT / "skills" / SKILL_ID / "LEARNING_LOG.md").read_text(
+            encoding="utf-8"
+        )
+
+        for consumer in (skill, guide):
+            self.assertIn("STORY_ORIGIN_AND_GENERATION_METHOD.md", consumer)
+            self.assertIn("STORY_ORIGIN_ENGINE", consumer)
+
+        self.assertIn("arc-and-episode-design", skill)
+        self.assertIn("다중 진입", learning)
+        self.assertIn("STORY_ORIGIN_ENGINE", learning)
+
+    def test_story_origin_engine_game_template_and_source_evidence_are_linked(self) -> None:
+        template = NARRATIVE_TEMPLATE_PATH.read_text(encoding="utf-8")
+        radar = SOURCE_RADAR_PATH.read_text(encoding="utf-8")
+
+        for token in (
+            "STORY_ORIGIN_AND_GENERATION_METHOD.md",
+            "primary_seed",
+            "affected_agent",
+            "pressure",
+            "consequential_choice",
+            "next_pressure",
+        ):
+            self.assertIn(token, template)
+
+        for token in (
+            "STORY_ORIGIN_AND_GENERATION_METHOD.md",
+            "MICE",
+            "Snowflake",
+            "Story Genius",
+            "Truby",
+            "Institutionalized",
+            "Story Grid",
+        ):
+            self.assertIn(token, radar)
 
     def test_information_choice_highlight_and_foreshadow_contract_is_explicit(self) -> None:
         guide = (
