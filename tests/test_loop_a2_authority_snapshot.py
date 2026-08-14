@@ -6,7 +6,9 @@ import shutil
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 
+import tools.loop_a2_runtime.authority_snapshot as authority_snapshot
 from tools.loop_a2_runtime.authority_snapshot import (
     AuthoritySnapshotError,
     capture_authority_snapshot,
@@ -134,6 +136,34 @@ class AuthoritySnapshotTests(unittest.TestCase):
                 capsule_relative=CAPSULE,
                 request=self.request,
             )
+
+    def test_snapshot_rejects_schema_valid_authority_mutation_during_capture(self) -> None:
+        planning = self.repo / "docs/operations/loop/PLANNING_LOCK.json"
+        original_validate = authority_snapshot.validate_bundle
+
+        def validate_then_mutate(capsule_path: Path):
+            findings = original_validate(capsule_path)
+            value = json.loads(planning.read_text(encoding="utf-8"))
+            value["protected_meanings"].append(
+                "Concurrent editor mutation must not enter this snapshot."
+            )
+            planning.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+            return findings
+
+        with patch.object(
+            authority_snapshot,
+            "validate_bundle",
+            side_effect=validate_then_mutate,
+        ):
+            with self.assertRaisesRegex(
+                AuthoritySnapshotError,
+                "changed during capture",
+            ):
+                capture_authority_snapshot(
+                    project_root=self.repo,
+                    capsule_relative=CAPSULE,
+                    request=self.request,
+                )
 
 
 if __name__ == "__main__":
