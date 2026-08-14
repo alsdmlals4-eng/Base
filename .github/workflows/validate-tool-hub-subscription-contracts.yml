@@ -1,0 +1,44 @@
+name: Validate Tool Hub Subscription Contracts
+
+on:
+  pull_request:
+    paths:
+      - "tools/base-tool-contracts/**"
+      - "docs/operations/PROJECT_FIGMA_TARGET_REGISTRY.json"
+      - "schemas/project-figma-target-registry-v1.schema.json"
+      - "docs/superpowers/specs/2026-08-15-tool-hub-subscription-only-routing-design.md"
+      - "docs/superpowers/plans/2026-08-15-tool-hub-subscription-only-routing.md"
+      - ".github/workflows/validate-tool-hub-subscription-contracts.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tool-hub-subscription-contracts-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contracts:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          show-progress: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+      - name: Install contract package
+        run: python -m pip install -e './tools/base-tool-contracts[dev]'
+      - name: Run focused subscription and routing contracts
+        run: >-
+          python -m pytest -q
+          tools/base-tool-contracts/tests/test_subscription_handoff.py
+          tools/base-tool-contracts/tests/test_tool_specific_figma_routing.py
+          tools/base-tool-contracts/tests/test_figma_routing.py
