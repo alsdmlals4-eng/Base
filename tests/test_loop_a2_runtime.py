@@ -160,16 +160,42 @@ class RuntimeAdversarialIdentityTests(unittest.TestCase):
         self.assertIn("CRITIC_IDENTITY_MISMATCH", result.finding_codes)
 
     def test_pass_with_findings_is_blocked(self) -> None:
+        class MalformedPassCritic:
+            calls = 0
+
+            def review(self, request: RunRequest, worker_result):
+                from tools.loop_a2_runtime.protocol import ReviewFinding, ReviewResult
+
+                self.calls += 1
+                return ReviewResult(
+                    schema_version=1,
+                    contract_role="LOOP_A2_REVIEW_RESULT",
+                    project_id=request.project_id,
+                    run_id=request.run_id,
+                    package_id=request.package_id,
+                    expected_main_sha=request.expected_main_sha,
+                    role="CRITIC",
+                    verdict="PASS",
+                    findings=(
+                        ReviewFinding(
+                            code="SUSPICIOUS_PASS",
+                            severity="P1",
+                            message="Malformed provider output bypassed protocol parsing.",
+                            paths=worker_result.changed_paths,
+                            requirement_ids=request.requirement_ids,
+                        ),
+                    ),
+                    checked_requirement_ids=request.requirement_ids,
+                )
+
+        critic = MalformedPassCritic()
         result = A2Runtime(
             builder=FakeBuilder(changed_paths=("scripts/feature/a.gd",)),
-            critic=FakeCritic(
-                verdict="PASS",
-                finding_codes=("SUSPICIOUS_PASS",),
-                checked_requirement_ids=("REQ_001",),
-            ),
+            critic=critic,
         ).run(self.request(), observed_main_sha=self.request().expected_main_sha)
         self.assertEqual(result.state, "BLOCKED_UNVERIFIED")
         self.assertIn("CRITIC_PASS_WITH_FINDINGS", result.finding_codes)
+        self.assertEqual(critic.calls, 1)
 
     def test_repair_user_decision_stops_without_more_repairs(self) -> None:
         class SequencedCritic:
