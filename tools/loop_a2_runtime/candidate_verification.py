@@ -138,6 +138,53 @@ class ProjectTestCandidateVerifier:
             and worker.status == "COMPLETED"
         )
 
+    def preflight(self, request: RunRequest) -> bool:
+        """Prove the configured network boundary can prepare every approved test command.
+
+        This runs before Builder model usage. It may resolve/probe the boundary (for
+        example, inspect the pinned local Docker image) but it never executes a
+        project test command or creates the Builder worktree.
+        """
+        if not self._snapshot_matches(request):
+            return False
+        try:
+            adapter = self.authority_snapshot.parsed_object(
+                self.authority_snapshot.runtime_adapter_path
+            )
+        except AuthoritySnapshotError:
+            return False
+        if adapter.get("project_id") != request.project_id:
+            return False
+        commands = adapter.get("test_commands")
+        if not isinstance(commands, list) or not commands:
+            return False
+        environment = {
+            "CI": "1",
+            "PYTHONIOENCODING": "utf-8",
+            "PYTHONUNBUFFERED": "1",
+        }
+        for command in commands:
+            if not isinstance(command, dict):
+                return False
+            raw_argv = command.get("argv")
+            policy = command.get("network")
+            if (
+                not isinstance(raw_argv, list)
+                or not raw_argv
+                or any(not isinstance(item, str) or not item for item in raw_argv)
+                or not isinstance(policy, str)
+            ):
+                return False
+            plan = self.executor.network_boundary.prepare(
+                policy=policy,
+                argv=tuple(raw_argv),
+                cwd=self.repo_root,
+                environment=environment,
+            )
+            if plan is None:
+                return False
+        return True
+
     def verify(
         self,
         request: RunRequest,
