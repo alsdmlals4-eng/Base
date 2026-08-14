@@ -35,10 +35,14 @@ class A2Runtime:
         builder: BuilderProvider,
         critic: CriticProvider,
         clock: Callable[[], float] = monotonic,
+        provider_mode: str = "FAKE",
     ) -> None:
+        if provider_mode not in {"FAKE", "REAL"}:
+            raise ValueError("provider_mode must be FAKE or REAL")
         self.builder = builder
         self.critic = critic
         self.clock = clock
+        self.provider_mode = provider_mode
 
     def _outcome(
         self,
@@ -267,6 +271,14 @@ class A2Runtime:
         return None
 
     def run(self, request: RunRequest, *, observed_main_sha: str) -> RunOutcome:
+        if request.provider_mode != self.provider_mode:
+            return self._outcome(
+                request,
+                "QUARANTINED",
+                finding_codes=("PROVIDER_MODE_MISMATCH",),
+                extra={"runtime_provider_mode": self.provider_mode},
+            )
+
         started_at = self.clock()
         if observed_main_sha != request.expected_main_sha:
             return self._outcome(
