@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
-from typing import Any
+from time import monotonic
+from typing import Any, Callable
 
 from .evidence import canonical_receipt
 from .protocol import ReviewResult, RunRequest, WorkerResult
@@ -28,9 +29,16 @@ def _review_signature(review: ReviewResult) -> tuple[tuple[str, tuple[str, ...],
 
 
 class A2Runtime:
-    def __init__(self, *, builder: BuilderProvider, critic: CriticProvider) -> None:
+    def __init__(
+        self,
+        *,
+        builder: BuilderProvider,
+        critic: CriticProvider,
+        clock: Callable[[], float] = monotonic,
+    ) -> None:
         self.builder = builder
         self.critic = critic
+        self.clock = clock
 
     def _outcome(
         self,
@@ -64,6 +72,28 @@ class A2Runtime:
             changed_paths=changed_paths,
             receipt_digest=str(receipt["receipt_digest"]),
             evidence=receipt,
+        )
+
+    def _timeout_outcome(
+        self,
+        request: RunRequest,
+        *,
+        started_at: float,
+        changed_paths: tuple[str, ...] = (),
+    ) -> RunOutcome | None:
+        elapsed = max(0.0, self.clock() - started_at)
+        if elapsed <= request.budgets.timeout_seconds:
+            return None
+        return self._outcome(
+            request,
+            "PROVIDER_TIMEOUT",
+            finding_codes=("PROVIDER_TIMEOUT",),
+            changed_paths=changed_paths,
+            extra={
+                "elapsed_seconds": round(elapsed, 6),
+                "timeout_seconds": request.budgets.timeout_seconds,
+                "transport_hard_stop": "PROVIDER_ADAPTER_REQUIRED",
+            },
         )
 
     @staticmethod
@@ -237,6 +267,7 @@ class A2Runtime:
         return None
 
     def run(self, request: RunRequest, *, observed_main_sha: str) -> RunOutcome:
+        started_at = self.clock()
         if observed_main_sha != request.expected_main_sha:
             return self._outcome(
                 request,
@@ -246,6 +277,13 @@ class A2Runtime:
 
         cumulative_turns = 0
         worker = self.builder.invoke(request, repair_cycle=0)
+        timeout = self._timeout_outcome(
+            request,
+            started_at=started_at,
+            changed_paths=worker.changed_paths,
+        )
+        if timeout is not None:
+            return timeout
         cumulative_turns += worker.usage["turns"]
         failure = self._validate_worker_before_review(
             request,
@@ -259,6 +297,13 @@ class A2Runtime:
             return failure
 
         review = self.critic.review(request, worker)
+        timeout = self._timeout_outcome(
+            request,
+            started_at=started_at,
+            changed_paths=worker.changed_paths,
+        )
+        if timeout is not None:
+            return timeout
         failure = self._validate_review_before_verdict(
             request,
             review,
@@ -279,6 +324,13 @@ class A2Runtime:
         previous_signature = _review_signature(review)
         for repair_cycle in range(1, request.budgets.max_repair_cycles + 1):
             worker = self.builder.invoke(request, repair_cycle=repair_cycle)
+            timeout = self._timeout_outcome(
+                request,
+                started_at=started_at,
+                changed_paths=worker.changed_paths,
+            )
+            if timeout is not None:
+                return timeout
             cumulative_turns += worker.usage["turns"]
             failure = self._validate_worker_before_review(
                 request,
@@ -292,6 +344,13 @@ class A2Runtime:
                 return failure
 
             current_review = self.critic.review(request, worker)
+            timeout = self._timeout_outcome(
+                request,
+                started_at=started_at,
+                changed_paths=worker.changed_paths,
+            )
+            if timeout is not None:
+                return timeout
             failure = self._validate_review_before_verdict(
                 request,
                 current_review,
