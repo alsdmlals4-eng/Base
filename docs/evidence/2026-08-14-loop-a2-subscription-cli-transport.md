@@ -24,8 +24,9 @@ The selected path reuses the official Codex CLI rather than creating another mod
 
 - Codex CLI distinguishes ChatGPT-managed login from API-key login.
 - `codex exec` supports non-interactive ephemeral execution, ignored user config/rules, read-only sandboxing, output JSON schema, and final-message capture.
-- Codex exposes `shell_tool` as a feature. Current official Codex source maps disabled `ShellTool` to `ConfigShellToolType::Disabled`.
-- Official Codex CLI tests demonstrate a strict config override can set `features.shell_tool=false`.
+- Codex exposes `shell_tool` as a feature. Current official Codex source maps disabled `ShellTool` to a disabled model shell.
+- Current official Codex source states web search is enabled by default and exposes request, cached, and standalone web-search feature paths.
+- Official Codex CLI tests demonstrate strict config feature overrides.
 
 Alternatives considered:
 
@@ -43,6 +44,9 @@ Each Builder/Critic model turn uses an independent `CodexCliProcess` and invokes
 codex
   --strict-config
   -c features.shell_tool=false
+  -c features.web_search_request=false
+  -c features.web_search_cached=false
+  -c features.standalone_web_search=false
   exec
   --ephemeral
   --ignore-user-config
@@ -54,7 +58,7 @@ codex
   -
 ```
 
-The model process runs in an empty temporary directory, not the project worktree. It receives no project directory through `--cd` or `--add-dir`. Shell execution is disabled. The dangerous sandbox-bypass option is not used.
+The model process runs in an empty temporary directory, not the project worktree. It receives no project directory through `--cd` or `--add-dir`. Model shell execution and live/cached/standalone web-search features are disabled. The dangerous sandbox-bypass option is not used.
 
 The child environment is allowlisted and excludes provider/GitHub secret variables including `OPENAI_API_KEY`, `OPENAI_ORG_ID`, `OPENAI_PROJECT_ID`, `OPENAI_BASE_URL`, `GITHUB_TOKEN`, and `GH_TOKEN`. `CODEX_HOME` may be retained only so the official Codex client can use its own ChatGPT-managed authentication store; the model has no shell tool with which to inspect that store.
 
@@ -94,17 +98,26 @@ RED evidence:
 - A2 Runtime Foundation run: `31807908045`
 - result: 207 tests, exactly one failure: missing `--strict-config` before `exec`
 
-The production invocation was then changed to the official strict-config form.
+The production invocation was then changed to the official strict-config form and the regression returned GREEN.
 
-GREEN implementation evidence:
+### Adversarial web-isolation RED
 
-- implementation head: `6b6f987c4b38c7de62da4a78fc7e0101150c9033`
-- A2 Runtime Foundation: `31808000578` — PASS
-- OpenAI Transport regression: `31808000655` — PASS
-- Base-v9 Operating Contracts: `31808000703` — PASS
-- Game Project Operating System: `31808000612` — required jobs PASS, including Ubuntu contract, docs validation, publication validation, and final CI gate
+A second adversarial review against current official Codex source found that web search is enabled by default. A test requiring all current web-search feature paths to be explicitly disabled was added before production changes.
 
-The Windows platform smoke was skipped by the repository's risk classifier for this change shape; no Windows production-boundary claim is made from that skip.
+RED evidence:
+
+- test-only head: `4ddc9a0afc8258d9b397c3d722c9c7839ea39477`
+- A2 Runtime Foundation run: `31808841652`
+- result: 207 tests, exactly one failure: `features.web_search_request=false` absent while all other A2 tests passed
+
+The production invocation then added strict false overrides for `web_search_request`, `web_search_cached`, and `standalone_web_search`.
+
+GREEN evidence:
+
+- implementation head: `bc86b3808a6341ef0d604ffdbd5b4993233e7edc`
+- A2 Runtime Foundation run: `31808944616` — PASS
+
+The final exact-head repository checks are rerun after this evidence update; this document does not pre-claim their outcome.
 
 ## Adversarial attack matrix
 
@@ -116,6 +129,7 @@ The Windows platform smoke was skipped by the repository's risk classifier for t
 | Project/user Codex config injects authority | blocked by `--ignore-user-config` |
 | User/project exec rules inject authority | blocked by `--ignore-rules` |
 | Model shell reads local auth/workspace files | blocked by `features.shell_tool=false` |
+| Model live/cached/extension web search expands context | blocked by explicit false overrides for all current web-search feature paths |
 | Model directly mutates project worktree | no worktree cwd/add-dir; read-only temp process; host applies validated writes |
 | Shell argument injection | subprocess argv list with `shell=False` |
 | Dangerous sandbox bypass | option is not passed and regression asserts absence |
@@ -136,6 +150,8 @@ paid_openai_api_policy: FORBIDDEN
 api_key_fallback: FORBIDDEN
 chatgpt_auth_gate: DETERMINISTICALLY_VALIDATED
 builder_critic_process_isolation: DETERMINISTICALLY_VALIDATED_BY_STRUCTURE_AND_TESTS
+model_shell_tool: DISABLED_BY_STRICT_CONFIG
+model_web_search_features: DISABLED_BY_STRICT_CONFIG
 paid_api_request: NOT_RUN
 paid_api_cost: NOT_RUN
 real_subscription_model_call: NOT_RUN_LOCAL_CHATGPT_AUTH_REQUIRED
