@@ -13,8 +13,8 @@ validated authority bundle
 → Codex Builder
 → actual Git Diff + deterministic scope gate
 → ProjectTestExecutor under explicit network boundary
-→ identity-bound PASS receipt
-→ independent Codex Critic with actual diff + bounded test evidence
+→ identity + exact-candidate-diff-bound PASS receipt
+→ independent Codex Critic with the same actual diff + bounded test evidence
 → WAITING_INTEGRATION or fail-closed state
 ```
 
@@ -60,8 +60,10 @@ The approved subscription design requires deterministic project-test evidence be
 1. verify durable worktree ownership for project/run/SHA;
 2. obtain Runtime Adapter text from the authority snapshot;
 3. materialize that exact adapter only in a system temporary directory outside the product worktree;
-4. call the existing `ProjectTestExecutor.run_all()` against the owned Builder worktree;
-5. publish only canonical PASS evidence to an in-memory mailbox keyed by project/run/package/SHA.
+4. compute the actual candidate Diff SHA-256;
+5. call the existing `ProjectTestExecutor.run_all()` against the owned Builder worktree;
+6. recompute and require the same candidate Diff SHA-256 after verification;
+7. publish only canonical PASS evidence to an in-memory mailbox keyed by project/run/package/SHA and candidate Diff SHA-256.
 
 The initial proposal to add a second `run_all_from_value()` executor API was removed after Existing Solution First review showed the existing file-based API already accepts an adapter path outside the worktree.
 
@@ -71,9 +73,11 @@ REAL runtime now fails closed before Builder if no candidate verifier exists. Ev
 
 Only the active subscription Codex Critic path is extended. The policy-closed generic direct Responses path is not widened for this feature.
 
-The subscription Critic is bound to one exact RunRequest identity and requires the matching project-test PASS receipt before the underlying Codex process can be invoked. The injected receipt contains command status, exit code, network policy/boundary ID, duration, byte counts, and stdout/stderr SHA-256 digests; raw stdout/stderr are not present.
+The subscription Critic is bound to one exact RunRequest identity and requires the matching project-test PASS receipt before the underlying Codex process can be invoked. The mailbox re-attests the owned worktree Diff before returning the PASS receipt; if content changed after test PASS, even under the same path names, the receipt is stale and unavailable to Critic.
 
-Cross-run Critic reuse and cross-run PASS receipt reuse fail closed.
+The injected receipt contains the candidate Diff SHA-256 plus command status, exit code, network policy/boundary ID, duration, byte counts, and stdout/stderr SHA-256 digests; raw stdout/stderr are not present.
+
+Cross-run Critic reuse, cross-run PASS receipt reuse, test-time candidate drift, and post-test same-path content drift all fail closed.
 
 ## Pre-model boundary proof
 
@@ -145,6 +149,15 @@ Attack: run the existing dedicated OpenAI transport workflow, whose intentionall
 - Fix: keep `tools.loop_a2_runtime.__init__` dependency-light and lazy-load the canonical M2 bundle validator only when a real authority snapshot is captured.
 - Head `cb97a5459a4b951d5c55b9242fa0d97d4910933`, dedicated OpenAI transport run `31817950690`: PASS.
 - Same head A2 Foundation run `31817950827`: PASS, including the TOCTOU regression.
+
+### Project-test PASS vs Critic Diff TOCTOU
+
+Attack: let project tests PASS, then mutate only the contents of an already-declared changed path before Critic. Changed-path equality alone cannot detect this.
+
+- RED head `10243c56d909e61425adc52ee32df1f7b2fe7531`, A2 run `31818584953`: 233 tests, 230 PASS; exactly the three new Diff-binding attacks failed.
+- Fix: `ProjectTestCandidateVerifier` computes the worktree Diff SHA-256 before and after project-test execution and publishes PASS only when they match. The PASS receipt records `candidate_diff_sha256` and the mailbox retains the owned worktree path in memory.
+- Before returning PASS evidence to the subscription Critic, the mailbox recomputes the current worktree Diff and invalidates the receipt if content has drifted.
+- GREEN head `63fe949e60f661a9a88d4a92ea380e23388d7359`, A2 run `31818883983`: PASS including the new Diff-binding regressions.
 
 ## Preserved authority and security limits
 
