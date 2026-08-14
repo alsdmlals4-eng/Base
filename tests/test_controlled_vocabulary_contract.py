@@ -234,6 +234,20 @@ class ControlledVocabularyContractTests(unittest.TestCase):
         self.assertIn("ARTIFACT Kind ≠ Build Artifact", vocabulary)
         self.assertIn("OpenTelemetry Profiles의 Alpha 상태 ≠ Profiling 일반의 Alpha 상태", vocabulary)
 
+    def test_wave3_context_qualifiers_do_not_create_new_base_classes(self) -> None:
+        vocabulary = VOCABULARY.read_text(encoding="utf-8")
+
+        self.assertIn(
+            "괄호·슬래시 뒤의 qualifier는 적용 문맥 메모이며 추가 Base Class가 아니다",
+            vocabulary,
+        )
+        for base_class in (
+            "STANDARDIZED_CONTEXT",
+            "INDUSTRY_COMMON",
+            "BASE_LOCAL_ALIAS",
+        ):
+            self.assertIn(base_class, vocabulary)
+
 
 if __name__ == "__main__":
     unittest.main()
