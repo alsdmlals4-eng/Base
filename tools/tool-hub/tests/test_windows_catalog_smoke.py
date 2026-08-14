@@ -12,6 +12,8 @@ from urllib.error import HTTPError
 
 import pytest
 
+from base_tool_contracts import validate_windows_project_identity
+from base_tool_contracts.windows_project_identity import WindowsProjectIdentityError
 from test_projects import make_project
 
 
@@ -24,6 +26,10 @@ def test_windows_process_starts_and_serves_blocked_catalog(tmp_path: Path) -> No
         make_project(tmp_path / "Coc Fiction Project With Spaces", "coc-fiction"),
         make_project(tmp_path / "Omenward Project With Spaces", "omenward"),
     )
+    try:
+        validate_windows_project_identity(projects[0], "coc-fiction", BASE_ROOT)
+    except WindowsProjectIdentityError as error:
+        pytest.fail(f"Windows identity preflight failed: {error}: {error._diagnostic}")
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
         probe.bind(("127.0.0.1", 0))
         port = probe.getsockname()[1]

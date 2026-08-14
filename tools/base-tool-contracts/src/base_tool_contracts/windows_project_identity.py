@@ -36,7 +36,9 @@ _GIT_OVERRIDES = (
 
 
 class WindowsProjectIdentityError(ValueError):
-    pass
+    def __init__(self, code: str, *, diagnostic: str = "") -> None:
+        super().__init__(code)
+        self._diagnostic = diagnostic
 
 
 @dataclass(frozen=True)
@@ -254,9 +256,20 @@ def _run_validator(
         if (
             hashlib.sha256(archive_path.read_bytes()).hexdigest() != archive_before
             or hashlib.sha256(schema_path.read_bytes()).hexdigest() != schema_before
-            or completed.returncode != 0
         ):
             raise WindowsProjectIdentityError("PROJECT_IDENTITY_VALIDATOR_BLOCKED")
+        if completed.returncode != 0:
+            diagnostic = completed.stderr.decode("utf-8", errors="replace")[-2000:]
+            for private_path, label in (
+                (str(project_root), "<PROJECT_ROOT>"),
+                (str(base_root), "<BASE_ROOT>"),
+                (str(runtime), "<PRIVATE_RUNTIME>"),
+            ):
+                diagnostic = diagnostic.replace(private_path, label)
+            raise WindowsProjectIdentityError(
+                "PROJECT_IDENTITY_VALIDATOR_BLOCKED",
+                diagnostic=diagnostic,
+            )
     return digest.hexdigest()
 
 
