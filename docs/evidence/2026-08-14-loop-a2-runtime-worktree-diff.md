@@ -11,17 +11,7 @@ This follow-up to PR #343 extends only the A2-owned paths from issue #342. It do
 - Existing A2 Foundation tests passed before the new test module failed to import.
 - Expected cause: `tools.loop_a2_runtime.worktree_adapter` did not exist.
 
-The new acceptance surface required:
-
-1. external detached Git worktree mutation;
-2. actual Git Diff as authoritative changed-path evidence;
-3. declared-vs-actual Diff mismatch failure;
-4. hard timeout of the direct subprocess Worker;
-5. no parent `OPENAI_API_KEY` inheritance;
-6. actual out-of-scope Diff quarantine before Critic;
-7. expected-SHA availability before Worker execution;
-8. external worktree cleanup;
-9. runtime root outside the source repository.
+The new acceptance surface required external detached Git worktree mutation, actual Git Diff evidence, declared-vs-actual mismatch failure, direct-subprocess timeout, parent-secret exclusion, actual out-of-scope quarantine, expected-SHA availability, cleanup, and an external runtime root.
 
 ## GREEN 1 — isolated FAKE execution
 
@@ -30,7 +20,7 @@ The new acceptance surface required:
 - Dedicated run: `31767051300` / PASS.
 - Result: `58` A2 tests passed, existing three-run Fake Provider burn-in passed, and whitespace validation passed.
 
-The adapter creates a detached worktree at the approved SHA, runs a bounded argv-based subprocess with an allowlisted environment, then replaces Worker changed-path claims with paths derived from actual Git state. The source repository remains clean.
+The adapter creates a detached worktree at the approved SHA, runs a bounded argv-based subprocess with an allowlisted environment, then replaces Worker changed-path claims with paths derived from actual Git state. The tested source repository remains clean.
 
 ## Adversarial RED 2 — unsandboxed REAL reuse
 
@@ -56,18 +46,43 @@ REAL request
 - Dedicated run: `31767282740` / PASS.
 - Result: `59` tests passed, three-run Fake Provider burn-in passed, and whitespace validation passed.
 
+## Adversarial RED 3 — ignored writes and unowned cleanup
+
+A second Diff review found two fail-closed gaps:
+
+1. `git ls-files --others --exclude-standard` omitted ignored untracked writes from actual changed-path evidence.
+2. `close()` could remove an already registered worktree at the deterministic runtime path even when the Adapter had not created it.
+
+- Test head: `fb5af848bd6c46911867307b5e48f7070bcac6af`.
+- Dedicated run: `31767531979` / expected failure.
+- Result: `61` tests ran; exactly the two new adversarial tests failed.
+
+## GREEN 3 — complete untracked evidence and owned cleanup
+
+The adapter now:
+
+- includes ignored untracked files in actual Git evidence by enumerating all untracked paths without `--exclude-standard`;
+- tracks worktree ownership in the Adapter instance;
+- permits repair reuse only for a worktree owned by that Adapter and registered at the exact canonical path;
+- refuses to remove a colliding registered worktree it did not create.
+
+- Fix head: `99a0af5541928be07d26c52b0a69df0865fc436e`.
+- Dedicated run: `31767591244` / PASS.
+- Result: `61` tests passed, three-run Fake Provider burn-in passed, and whitespace validation passed.
+
 ## Evidence meaning
 
 This slice proves:
 
 - a real local Git worktree is used for deterministic FAKE mutation tests;
+- tracked, untracked, and ignored-untracked Git workspace changes are visible to changed-path attestation;
 - actual Git state, not the Worker declaration, owns changed-path evidence;
 - out-of-scope actual changes are blocked before Critic;
 - parent OpenAI credentials are not inherited by the Worker environment;
 - the direct subprocess is terminated on the configured timeout;
 - the unsandboxed subprocess adapter cannot run `provider_mode=REAL`;
-- the source repository is not modified by the isolated Worker;
-- cleanup removes the external worktree.
+- a tested source repository is not modified by the isolated Worker;
+- cleanup removes only worktrees owned by the Adapter instance and preserves unowned collisions.
 
 It does **not** prove:
 
@@ -87,7 +102,7 @@ SCHEDULER: NOT_CONFIGURED
 
 ## Final integration gate
 
-The final PR head must pass the dedicated A2 suite, Base-v9 contract/adversarial gate, Game Project OS including Windows and final `ci-gate`, have unresolved review threads `0`, preserve current-main compatibility, and use expected-head squash merge. Postmerge main readback and push workflows remain mandatory.
+The final PR head must pass the dedicated A2 suite, Base-v9 contract/adversarial gate, Game Project OS and final `ci-gate`, have unresolved review threads `0`, preserve current-main compatibility, and use expected-head squash merge. Postmerge main readback and push workflows remain mandatory.
 
 ## Rollback
 
