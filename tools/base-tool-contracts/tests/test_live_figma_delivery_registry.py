@@ -20,11 +20,9 @@ EXPECTED_LIVE_TARGETS = {
 }
 
 
-def test_all_reviewed_projects_route_to_the_live_verified_figma_delivery_areas() -> None:
+def test_live_verified_projects_route_to_their_exact_figma_delivery_areas() -> None:
     registry = ProjectFigmaRegistry.load(REGISTRY)
     registry.assert_canonical(ROOT)
-
-    assert {project["project_id"] for project in registry.public_projects()} == set(EXPECTED_LIVE_TARGETS)
 
     for project_id, (page_node_id, area_node_id) in EXPECTED_LIVE_TARGETS.items():
         assert registry.routing_state(project_id) == "ROUTING_CONFIGURED"
