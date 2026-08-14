@@ -1,6 +1,29 @@
 # 서사·대화·관계 기획서 템플릿
 
-> 문서 위치: `templates/planning/NARRATIVE_CONTENT_PLAN.md` | 작성 방법: `docs/knowledge/methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md`
+> 문서 위치: `templates/planning/NARRATIVE_CONTENT_PLAN.md` | 이야기 발생: `docs/knowledge/methods/STORY_ORIGIN_AND_GENERATION_METHOD.md` | 장면·대화·관계 실행: `docs/knowledge/methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md`
+
+## 0. 이야기 발생 — 새 이야기·사건을 만들 때만
+
+이미 사건·목표·정본이 확정된 장면의 단순 작성·퇴고라면 이 절을 다시 만들지 않는다.
+
+```yaml
+story_origin_packet:
+  primary_seed:
+  secondary_seeds: []
+  seed_statement:
+  affected_agent:
+  pressure:
+  desire_or_goal:
+  resistance:
+  consequential_choice:
+  consequence:
+  shift:
+  next_pressure:
+  reader_or_player_value:
+  canon_constraints:
+```
+
+기본은 Primary Seed 1개와 필요한 Secondary Seed 0~2개다. 모든 seed 유형을 채우지 않는다. `consequential_choice`는 플레이어 분기를 자동 요구하지 않는다.
 
 ## 1. 콘텐츠 목표
 

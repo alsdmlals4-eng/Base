@@ -92,6 +92,7 @@ docs/knowledge/
 |---|---|
 | 전체 기획 체계 | `methods/PLANNING_SYSTEM_METHOD.md` |
 | 인수인계 | `methods/PROJECT_HANDOFF_CONTEXT_METHOD.md` |
+| 이야기 발상·생성 | `methods/STORY_ORIGIN_AND_GENERATION_METHOD.md` |
 | 서사·관계 | `methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md` |
 | 아트 | `methods/ART_DIRECTION_METHOD.md` |
 | 캐릭터·서사 아트 | `methods/CHARACTER_AND_NARRATIVE_ART_METHOD.md` |
