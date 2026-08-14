@@ -147,6 +147,26 @@ class ProjectTestExecutorTests(unittest.TestCase):
         self.assertNotIn("stderr", payload["commands"][0])
         self.assertRegex(payload["receipt_digest"], r"^[0-9a-f]{64}$")
 
+    def test_verification_workspace_contains_builder_changes(self) -> None:
+        (self.repo / "tests/marker.txt").write_text("builder-change\n", encoding="utf-8")
+        self.write_adapter(
+            [
+                self.command(
+                    [
+                        sys.executable,
+                        "-c",
+                        "from pathlib import Path; import sys; sys.exit(0 if Path('tests/marker.txt').read_text() == 'builder-change\\n' else 8)",
+                    ]
+                )
+            ]
+        )
+        result = self.run_executor(self.executor())
+        self.assertEqual(result.status, "PASS")
+        self.assertEqual(
+            (self.repo / "tests/marker.txt").read_text(encoding="utf-8"),
+            "builder-change\n",
+        )
+
     def test_nonzero_exit_is_verification_failure(self) -> None:
         self.write_adapter(
             [self.command([sys.executable, "-c", "raise SystemExit(7)"])]
@@ -170,6 +190,24 @@ class ProjectTestExecutorTests(unittest.TestCase):
         self.assertEqual(result.status, "BLOCKED")
         self.assertEqual(result.commands[0].status, "TIMEOUT")
         self.assertEqual(result.commands[0].error_code, "TEST_TIMEOUT")
+
+    def test_timeout_side_effect_cannot_contaminate_builder_worktree(self) -> None:
+        self.write_adapter(
+            [
+                self.command(
+                    [
+                        sys.executable,
+                        "-c",
+                        "from pathlib import Path; import time; Path('tests/timeout-side-effect.txt').write_text('bad'); time.sleep(3)",
+                    ],
+                    timeout_seconds=1,
+                )
+            ]
+        )
+        result = self.run_executor(self.executor())
+        self.assertEqual(result.status, "BLOCKED")
+        self.assertEqual(result.commands[0].error_code, "TEST_TIMEOUT")
+        self.assertFalse((self.repo / "tests/timeout-side-effect.txt").exists())
 
     def test_output_limit_blocks_without_persisting_output(self) -> None:
         self.write_adapter(
@@ -228,7 +266,7 @@ class ProjectTestExecutorTests(unittest.TestCase):
         self.assertEqual(result.status, "BLOCKED")
         self.assertEqual(result.commands[0].error_code, "TEST_WORKING_DIRECTORY_UNSAFE")
 
-    def test_workspace_mutation_by_test_command_is_blocked(self) -> None:
+    def test_workspace_mutation_by_test_command_is_blocked_and_disposable(self) -> None:
         self.write_adapter(
             [
                 self.command(
@@ -242,7 +280,11 @@ class ProjectTestExecutorTests(unittest.TestCase):
         )
         result = self.run_executor(self.executor())
         self.assertEqual(result.status, "BLOCKED")
-        self.assertEqual(result.commands[0].error_code, "TEST_MUTATED_WORKSPACE")
+        self.assertEqual(
+            result.commands[0].error_code,
+            "TEST_MUTATED_VERIFICATION_WORKSPACE",
+        )
+        self.assertFalse((self.repo / "tests/mutated.txt").exists())
 
     def test_stale_or_wrong_project_blocks_before_command_execution(self) -> None:
         self.write_adapter([self.command([sys.executable, "-c", "pass"])])
