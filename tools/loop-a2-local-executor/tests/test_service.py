@@ -9,6 +9,7 @@ SRC = Path(__file__).resolve().parents[1] / "src"
 sys.path.insert(0, str(SRC))
 
 from loop_a2_local_executor.job import LocalA2Job
+from loop_a2_local_executor.repositories import ManagedRepositoryError
 from loop_a2_local_executor.runtime import LocalRuntimeError
 from loop_a2_local_executor.service import LocalExecutorService
 
@@ -53,7 +54,7 @@ class FakePlane:
 
 
 class FakeRuntime:
-    def __init__(self, *, error: LocalRuntimeError | None = None) -> None:
+    def __init__(self, *, error: Exception | None = None) -> None:
         self.error = error
         self.jobs: list[LocalA2Job] = []
 
@@ -108,6 +109,16 @@ class ServiceTests(unittest.TestCase):
         self.assertEqual(result["status"], "BLOCKED")
         self.assertEqual(plane.published[0][1]["code"], "CODEX_CHATGPT_AUTH_REQUIRED")
         self.assertNotIn("local private detail", json.dumps(plane.published[0][1]))
+        self.assertTrue(plane.published[0][2])
+
+    def test_managed_repository_blocker_is_also_published_and_closed(self) -> None:
+        plane = FakePlane([valid_issue(3)])
+        runtime = FakeRuntime(error=ManagedRepositoryError("MANAGED_REPOSITORY_FETCH_FAILED", "private local detail"))
+        result = self.service(plane, runtime).once()
+        self.assertEqual(result["status"], "BLOCKED")
+        self.assertEqual(result["code"], "MANAGED_REPOSITORY_FETCH_FAILED")
+        self.assertEqual(plane.published[0][1]["code"], "MANAGED_REPOSITORY_FETCH_FAILED")
+        self.assertNotIn("private local detail", json.dumps(plane.published[0][1]))
         self.assertTrue(plane.published[0][2])
 
     def test_success_receipt_binds_job_and_a2_digest(self) -> None:
