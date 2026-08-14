@@ -207,6 +207,8 @@ class A2Runtime:
         )
 
     def burn_in(self, request: RunRequest, *, observed_main_sha: str, runs: int) -> dict[str, Any]:
+        if request.provider_mode != "FAKE":
+            raise ValueError("burn-in requires provider_mode FAKE")
         if not 1 <= runs <= 10:
             raise ValueError("runs must be 1..10")
         outcomes: list[RunOutcome] = []
