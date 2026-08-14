@@ -33,30 +33,53 @@ jobs:
         run: python -m pip install --disable-pip-version-check -r .github/validation-requirements.txt
       - name: Run boundary contract tests
         run: python -m unittest tests.test_loop_a2_network_boundary -v
-      - name: Prove real unshare namespace has no host network interface
+      - name: Observe unshare capability without claiming support
         shell: bash
         run: |
           set -euo pipefail
           command -v unshare
+          if unshare --user --map-root-user --net -- true 2>/tmp/unshare-error.txt; then
+            echo 'unshare capability available on this runner'
+          else
+            echo 'unshare capability unavailable; optional adapter remains fail-closed'
+            head -c 300 /tmp/unshare-error.txt || true
+          fi
+      - name: Preload one official Python image for boundary proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker pull python:3.12-slim
+          image_id="$(docker image inspect --format '{{.Id}}' python:3.12-slim)"
+          case "$image_id" in
+            sha256:????????????????????????????????????????????????????????????????) ;;
+            *) echo "unexpected Docker image id: $image_id" >&2; exit 1 ;;
+          esac
+          echo "LOOP_A2_TEST_IMAGE_ID=$image_id" >> "$GITHUB_ENV"
+      - name: Prove real Docker none network has only loopback
+        shell: bash
+        run: |
+          set -euo pipefail
           python - <<'PY'
+          import json
           import os
           from pathlib import Path
           import subprocess
-          import sys
 
-          from tools.loop_a2_runtime.network_boundary import LinuxUnshareDeniedNetworkBoundary
+          from tools.loop_a2_runtime.network_boundary import DockerNoneDeniedNetworkBoundary
 
-          boundary = LinuxUnshareDeniedNetworkBoundary()
+          image_id = os.environ['LOOP_A2_TEST_IMAGE_ID']
           env = {
               'PATH': os.environ['PATH'],
               'PYTHONIOENCODING': 'utf-8',
               'PYTHONUNBUFFERED': '1',
+              'PYTHONDONTWRITEBYTECODE': '1',
               'CI': '1',
           }
+          boundary = DockerNoneDeniedNetworkBoundary(image_id=image_id)
           plan = boundary.prepare(
               policy='DENIED',
               argv=(
-                  sys.executable,
+                  'python',
                   '-c',
                   "import json,socket; print(json.dumps(sorted(name for _,name in socket.if_nameindex())))",
               ),
@@ -64,21 +87,26 @@ jobs:
               environment=env,
           )
           if plan is None:
-              raise SystemExit('DENIED network namespace is not enforceable on this runner')
+              raise SystemExit('Docker none-network boundary is not enforceable on this runner')
           completed = subprocess.run(
               plan.argv,
               cwd=Path.cwd(),
               env=dict(plan.environment),
               text=True,
               capture_output=True,
-              timeout=10,
+              timeout=20,
               check=False,
           )
           if completed.returncode != 0:
-              raise SystemExit(f'wrapped child failed: {completed.returncode}: {completed.stderr[:300]}')
-          if completed.stdout.strip() != '["lo"]':
-              raise SystemExit(f'network namespace leaked host interfaces: {completed.stdout!r}')
-          print('LINUX_UNSHARE_DENIED_V1: PASS')
+              raise SystemExit(f'wrapped child failed: {completed.returncode}: {completed.stderr[:500]}')
+          names = json.loads(completed.stdout.strip())
+          if names != ['lo']:
+              raise SystemExit(f'none-network leaked host interfaces: {names!r}')
+          if '--network' not in plan.argv or plan.argv[plan.argv.index('--network') + 1] != 'none':
+              raise SystemExit('network=none missing from execution plan')
+          if '--pull' not in plan.argv or plan.argv[plan.argv.index('--pull') + 1] != 'never':
+              raise SystemExit('pull=never missing from execution plan')
+          print(f'DOCKER_NONE_DENIED_V1: PASS image_id={image_id}')
           PY
       - name: Validate whitespace
         run: git diff --check
