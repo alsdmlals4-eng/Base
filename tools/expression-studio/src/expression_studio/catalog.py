@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 
-from .models import ExpressionPreset, ExpressionRequest, FaceControl, Gaze, HeadPose
+from .models import EditMode, ExpressionPreset, ExpressionRequest, FaceControl, Gaze, HeadPose
 
 
 class ExpressionControlError(ValueError):
@@ -95,6 +95,8 @@ class ResolvedExpression:
     movement_phrases: tuple[str, ...]
     gaze_phrase: str
     head_pose_phrase: str
+    edit_mode: EditMode = "expression"
+    edit_prompt: str | None = None
 
 
 def _phrase(control: FaceControl) -> str:
@@ -120,7 +122,7 @@ def _validate_controls(controls: tuple[FaceControl, ...]) -> None:
 
 
 def resolve_expression(request: ExpressionRequest) -> ResolvedExpression:
-    """Resolve an approved request to reviewable movements without invoking an engine."""
+    """Resolve an approved request to reviewable movements and edit intent without invoking an engine."""
     controls = PRESET_CONTROLS[request.preset] if request.preset is not None else tuple(request.controls)
     _validate_controls(controls)
     return ResolvedExpression(
@@ -131,4 +133,6 @@ def resolve_expression(request: ExpressionRequest) -> ResolvedExpression:
         movement_phrases=tuple(_phrase(control) for control in controls),
         gaze_phrase=GAZE_PHRASES[request.gaze],
         head_pose_phrase=HEAD_POSE_PHRASES[request.head_pose],
+        edit_mode=request.edit_mode,
+        edit_prompt=request.edit_prompt,
     )
