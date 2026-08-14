@@ -7,7 +7,10 @@ import unittest
 
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = PACKAGE_ROOT.parents[1]
 INSTALLER = PACKAGE_ROOT / "windows" / "Base_Loop_A2_Local_Executor_Installer_v4.cmd"
+OWNER_DOC = REPO_ROOT / "docs" / "LOOP_A2_LOCAL_EXECUTOR.md"
+EVIDENCE = REPO_ROOT / "docs" / "evidence" / "2026-08-15-local-executor-docker-capability-resolver.md"
 IMAGE_REF = "python:3.12-slim@sha256:dd29372629eeba2dd003fd9e9d35a5b8236c44727875a0364254b5127af88e65"
 
 
@@ -70,6 +73,30 @@ class WindowsInstallerV4ContractTests(unittest.TestCase):
         daemon_confirmed = self.text.index("LOCAL_EXECUTOR_DAEMON_RUNNING")
         ready_banner = self.text.rindex("LOCAL_EXECUTOR_READY")
         self.assertLess(daemon_confirmed, ready_banner)
+
+    def test_owner_and_durable_evidence_describe_the_same_resolver_and_live_ceiling(self) -> None:
+        owner = OWNER_DOC.read_text(encoding="utf-8")
+        evidence = EVIDENCE.read_text(encoding="utf-8")
+
+        for term in (
+            "docker image inspect --platform",
+            "DOCKER_IMAGE_NOT_PRELOADED",
+            "Base_Loop_A2_Local_Executor_Installer_v4.cmd",
+            "shared preflight",
+        ):
+            self.assertIn(term, owner)
+
+        for term in (
+            "#419",
+            "#420",
+            "31851656420",
+            "31851800827",
+            "DOCKER_IMAGE_NOT_PRELOADED",
+            "LOCAL_EXECUTOR_READY",
+            "real_a2_burnin_runs: 0",
+            "live_v4_user_pc_preflight: NOT_RUN",
+        ):
+            self.assertIn(term, evidence)
 
     @unittest.skipUnless(os.name == "nt", "Windows cmd contract smoke")
     def test_v4_contract_mode_parses_without_running_installer(self) -> None:
