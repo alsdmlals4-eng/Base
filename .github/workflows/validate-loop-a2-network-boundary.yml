@@ -24,9 +24,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out exact source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Set up Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
         with:
           python-version: '3.12'
       - name: Install existing validation requirements
@@ -44,12 +44,13 @@ jobs:
             echo 'unshare capability unavailable; optional adapter remains fail-closed'
             head -c 300 /tmp/unshare-error.txt || true
           fi
-      - name: Preload one official Python image for boundary proof
+      - name: Preload one digest-pinned Python image for boundary proof
         shell: bash
         run: |
           set -euo pipefail
-          docker pull python:3.12-slim
-          image_id="$(docker image inspect --format '{{.Id}}' python:3.12-slim)"
+          image_ref='python:3.12-slim@sha256:dd29372629eeba2dd003fd9e9d35a5b8236c44727875a0364254b5127af88e65'
+          docker pull "$image_ref"
+          image_id="$(docker image inspect --format '{{.Id}}' "$image_ref")"
           case "$image_id" in
             sha256:????????????????????????????????????????????????????????????????) ;;
             *) echo "unexpected Docker image id: $image_id" >&2; exit 1 ;;
@@ -107,6 +108,132 @@ jobs:
           if '--pull' not in plan.argv or plan.argv[plan.argv.index('--pull') + 1] != 'never':
               raise SystemExit('pull=never missing from execution plan')
           print(f'DOCKER_NONE_DENIED_V1: PASS image_id={image_id}')
+          PY
+      - name: Prove ProjectTestExecutor consumes Docker DENIED boundary end to end
+        shell: bash
+        env:
+          OPENAI_API_KEY: LOOP_A2_SENTINEL_MUST_NOT_ENTER_CHILD
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import subprocess
+          import tempfile
+
+          from tools.loop_a2_runtime.network_boundary import DockerNoneDeniedNetworkBoundary
+          from tools.loop_a2_runtime.test_executor import ProjectTestExecutor
+
+          def git(repo: Path, *args: str) -> str:
+              completed = subprocess.run(
+                  ['git', *args],
+                  cwd=repo,
+                  text=True,
+                  capture_output=True,
+                  check=False,
+              )
+              if completed.returncode != 0:
+                  raise SystemExit(f"git {' '.join(args)} failed: {completed.stderr[:500]}")
+              return completed.stdout.strip()
+
+          child_code = (
+              "import os,socket,sys; "
+              "names=sorted(name for _,name in socket.if_nameindex()); "
+              "sock=socket.socket(); sock.settimeout(1); "
+              "rc=sock.connect_ex(('1.1.1.1',53)); sock.close(); "
+              "secret=os.environ.get('OPENAI_API_KEY'); "
+              "sys.exit(0 if names==['lo'] and not secret and rc!=0 else 23)"
+          )
+
+          with tempfile.TemporaryDirectory() as temporary:
+              root = Path(temporary)
+              repo = root / 'fixture-repo'
+              repo.mkdir()
+              git(repo, 'init', '-q')
+              git(repo, 'config', 'user.email', 'loop-a2-e2e@example.invalid')
+              git(repo, 'config', 'user.name', 'Loop A2 E2E')
+              tests_dir = repo / 'tests'
+              tests_dir.mkdir()
+              (tests_dir / 'marker.txt').write_text('fixture\n', encoding='utf-8')
+              git(repo, 'add', 'tests/marker.txt')
+              git(repo, 'commit', '-q', '-m', 'fixture')
+              expected_sha = git(repo, 'rev-parse', 'HEAD')
+
+              adapter_path = root / 'RUNTIME_ADAPTER.json'
+              adapter_path.write_text(
+                  json.dumps(
+                      {
+                          'schema_version': 1,
+                          'contract_role': 'LOOP_RUNTIME_ADAPTER',
+                          'project_id': 'DOCKER_DENIED_E2E',
+                          'status': 'PROJECT_ADAPTER_VALIDATED',
+                          'engine': {'name': 'Fixture', 'version': '1'},
+                          'languages': ['Python'],
+                          'source_roots': ['tests/'],
+                          'test_commands': [
+                              {
+                                  'command_id': 'DENIED_E2E',
+                                  'argv': ['python', '-c', child_code],
+                                  'working_directory': '.',
+                                  'timeout_seconds': 20,
+                                  'network': 'DENIED',
+                              }
+                          ],
+                          'runtime_commands': [],
+                          'build_commands': [],
+                          'protected_paths': ['tests/'],
+                          'semantic_resource_domains': ['NETWORK_BOUNDARY_E2E'],
+                          'rollback_strategy': 'Discard the disposable fixture worktree.',
+                      },
+                      ensure_ascii=False,
+                  ),
+                  encoding='utf-8',
+              )
+
+              before_status = git(repo, 'status', '--porcelain')
+              executor = ProjectTestExecutor(
+                  network_boundary=DockerNoneDeniedNetworkBoundary(
+                      image_id=os.environ['LOOP_A2_TEST_IMAGE_ID']
+                  )
+              )
+              result = executor.run_all(
+                  project_root=repo,
+                  adapter_path=adapter_path,
+                  expected_main_sha=expected_sha,
+                  allowed_overlay_paths=['tests/'],
+              )
+              after_status = git(repo, 'status', '--porcelain')
+
+              if before_status != after_status:
+                  raise SystemExit('ProjectTestExecutor polluted the source checkout')
+              if result.status != 'PASS' or len(result.commands) != 1:
+                  raise SystemExit(f'ProjectTestExecutor did not PASS: {result.to_dict()}')
+              command = result.commands[0]
+              if command.status != 'PASS' or command.exit_code != 0:
+                  raise SystemExit(f'DENIED command did not PASS: {command.to_dict()}')
+              if command.network_policy != 'DENIED':
+                  raise SystemExit(f'unexpected network policy: {command.network_policy!r}')
+              if command.network_boundary_id != 'DOCKER_NONE_DENIED_V1':
+                  raise SystemExit(f'unexpected boundary: {command.network_boundary_id!r}')
+              if not command.stdout_sha256 or command.stdout_bytes != 0:
+                  raise SystemExit('unexpected stdout evidence shape for silent proof command')
+              if command.stderr_bytes != 0:
+                  raise SystemExit('E2E proof wrote stderr')
+              receipt = json.dumps(result.to_dict(), sort_keys=True)
+              if 'LOOP_A2_SENTINEL_MUST_NOT_ENTER_CHILD' in receipt:
+                  raise SystemExit('parent secret sentinel leaked into executor evidence')
+              print(
+                  json.dumps(
+                      {
+                          'project_test_executor': result.status,
+                          'network_policy': command.network_policy,
+                          'network_boundary_id': command.network_boundary_id,
+                          'source_checkout_clean': before_status == after_status,
+                      },
+                      sort_keys=True,
+                  )
+              )
           PY
       - name: Validate whitespace
         run: git diff --check
