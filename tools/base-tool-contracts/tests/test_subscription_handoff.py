@@ -57,6 +57,10 @@ def test_valid_packet_is_deterministic_and_never_claims_provider_execution() -> 
             "min_dimension": 256,
             "max_dimension": 2048,
         },
+        "import": {
+            "run_mode": "subscription_handoff_import",
+            "declared_source": "CHATGPT_INCLUDED",
+        },
         "review_checklist": [
             "same character identity",
             "requested outfit change is visible",
@@ -71,6 +75,8 @@ def test_truth_fields_are_not_constructor_or_builder_inputs() -> None:
     result = packet()
     assert result.generation_surface == "CHATGPT_PRO_SUBSCRIPTION"
     assert result.output_media_type == "image/png"
+    assert result.import_run_mode == "subscription_handoff_import"
+    assert result.import_declared_source == "CHATGPT_INCLUDED"
 
     parameters = inspect.signature(SubscriptionHandoffPacket).parameters
     for fixed_field in (
@@ -78,6 +84,8 @@ def test_truth_fields_are_not_constructor_or_builder_inputs() -> None:
         "state",
         "generation_surface",
         "output_media_type",
+        "import_run_mode",
+        "import_declared_source",
         "provider_call_made",
         "requires_additional_payment",
     ):
@@ -87,6 +95,10 @@ def test_truth_fields_are_not_constructor_or_builder_inputs() -> None:
         packet(generation_surface="OPENAI_API")
     with pytest.raises(TypeError):
         packet(output_media_type="image/jpeg")
+    with pytest.raises(TypeError):
+        packet(import_run_mode="openai")
+    with pytest.raises(TypeError):
+        packet(import_declared_source="OTHER_USER_SUPPLIED")
 
 
 @pytest.mark.parametrize(

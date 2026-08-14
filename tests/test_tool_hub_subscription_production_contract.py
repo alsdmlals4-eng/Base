@@ -33,6 +33,8 @@ class ToolHubSubscriptionProductionContractTests(unittest.TestCase):
             'state: str = field(default="GPT_PRO_HANDOFF_READY", init=False)',
             'generation_surface: str = field(default="CHATGPT_PRO_SUBSCRIPTION", init=False)',
             'output_media_type: str = field(default="image/png", init=False)',
+            'import_run_mode: str = field(default="subscription_handoff_import", init=False)',
+            'import_declared_source: str = field(default="CHATGPT_INCLUDED", init=False)',
             'provider_call_made: bool = field(default=False, init=False)',
             'requires_additional_payment: bool = field(default=False, init=False)',
             "This function deliberately performs no provider call",
@@ -48,6 +50,21 @@ class ToolHubSubscriptionProductionContractTests(unittest.TestCase):
             "import openai",
         ):
             self.assertNotIn(forbidden_import, source)
+
+    def test_handoff_import_truth_matches_both_studio_consumers(self) -> None:
+        handoff = read("tools/base-tool-contracts/src/base_tool_contracts/subscription_handoff.py")
+        expression_imports = read("tools/expression-studio/src/expression_studio/imports.py")
+        sprite_imports = read("tools/sprite-animation-studio/src/sprite_animation_studio/imports.py")
+        expression_app = read("tools/expression-studio/src/expression_studio/app.py")
+        sprite_app = read("tools/sprite-animation-studio/src/sprite_animation_studio/app.py")
+
+        self.assertIn('import_declared_source: str = field(default="CHATGPT_INCLUDED", init=False)', handoff)
+        self.assertIn('import_run_mode: str = field(default="subscription_handoff_import", init=False)', handoff)
+        for source in (expression_imports, sprite_imports):
+            self.assertIn('"CHATGPT_INCLUDED"', source)
+            self.assertIn("DECLARED_SOURCES", source)
+        for source in (expression_app, sprite_app):
+            self.assertIn('default="subscription_handoff_import"', source)
 
     def test_each_registered_project_has_one_reviewed_character_expression_route(self) -> None:
         project_registry = json.loads(
