@@ -2,6 +2,34 @@
   "$id": "loop-a2-worker-result-v1.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "errors": {
+            "minItems": 1
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "status": {
+            "const": "COMPLETED"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "errors": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ],
   "properties": {
     "changed_paths": {
       "items": {
@@ -9,6 +37,7 @@
         "pattern": "^(?!/)(?![A-Za-z]:[\\\\/])(?!.*(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)).+$",
         "type": "string"
       },
+      "maxItems": 256,
       "type": "array",
       "uniqueItems": true
     },
@@ -25,6 +54,7 @@
             "type": "string"
           },
           "message": {
+            "maxLength": 2048,
             "minLength": 1,
             "type": "string"
           }
@@ -35,6 +65,7 @@
         ],
         "type": "object"
       },
+      "maxItems": 64,
       "type": "array"
     },
     "expected_main_sha": {
@@ -67,6 +98,7 @@
       ]
     },
     "summary": {
+      "maxLength": 2048,
       "minLength": 1,
       "type": "string"
     },
