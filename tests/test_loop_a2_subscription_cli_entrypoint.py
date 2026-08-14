@@ -8,11 +8,17 @@ from types import SimpleNamespace
 import sys
 import tempfile
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import ANY, MagicMock, patch
 
 import tools.loop_a2 as cli
+from tools.loop_a2_runtime.authority_snapshot import AuthoritySnapshotError
+from tools.loop_a2_runtime.network_boundary import DockerNoneDeniedNetworkBoundary
 from tools.loop_a2_runtime.protocol import RunRequest
+from tools.loop_a2_runtime.test_executor import ProjectTestExecutor
 from tests.test_loop_a2_protocol import valid_request
+
+
+IMAGE_ID = "sha256:" + "e" * 64
 
 
 def _real_request() -> RunRequest:
@@ -22,7 +28,13 @@ def _real_request() -> RunRequest:
 
 
 class SubscriptionCliEntrypointTests(unittest.TestCase):
-    def _argv(self, project_root: Path, runtime_root: Path | None) -> list[str]:
+    def _argv(
+        self,
+        project_root: Path,
+        runtime_root: Path | None,
+        *,
+        image_id: str | None = IMAGE_ID,
+    ) -> list[str]:
         argv = [
             "loop_a2.py",
             "run",
@@ -39,6 +51,8 @@ class SubscriptionCliEntrypointTests(unittest.TestCase):
         ]
         if runtime_root is not None:
             argv.extend(["--runtime-root", str(runtime_root)])
+        if image_id is not None:
+            argv.extend(["--denied-network-docker-image-id", image_id])
         return argv
 
     def test_real_provider_fails_closed_before_factory_when_chatgpt_auth_is_unavailable(self) -> None:
@@ -46,9 +60,12 @@ class SubscriptionCliEntrypointTests(unittest.TestCase):
             project_root = Path(temp) / "project"
             runtime_root = Path(temp) / "runtime"
             project_root.mkdir()
+            request = _real_request()
+            snapshot = object()
             output = io.StringIO()
             with (
-                patch.object(cli, "build_request_from_capsule", return_value=_real_request()),
+                patch.object(cli, "build_request_from_capsule", return_value=request),
+                patch.object(cli, "capture_authority_snapshot", return_value=snapshot) as capture,
                 patch.object(
                     cli,
                     "subscription_codex_cli_gate",
@@ -66,6 +83,11 @@ class SubscriptionCliEntrypointTests(unittest.TestCase):
 
             self.assertEqual(result, 2)
             self.assertEqual(json.loads(output.getvalue())["code"], "CODEX_CHATGPT_AUTH_REQUIRED")
+            capture.assert_called_once_with(
+                project_root=project_root,
+                capsule_relative="docs/operations/loop/PROJECT_EXECUTION_CAPSULE.json",
+                request=request,
+            )
             factory.assert_not_called()
 
     def test_real_provider_constructs_subscription_components_and_real_runtime(self) -> None:
@@ -73,7 +95,14 @@ class SubscriptionCliEntrypointTests(unittest.TestCase):
             project_root = Path(temp) / "project"
             runtime_root = Path(temp) / "runtime"
             project_root.mkdir()
-            components = SimpleNamespace(builder=object(), critic=object())
+            request = _real_request()
+            snapshot = object()
+            verifier = object()
+            components = SimpleNamespace(
+                builder=object(),
+                critic=object(),
+                candidate_verifier=verifier,
+            )
             outcome = SimpleNamespace(
                 state="WAITING_INTEGRATION",
                 evidence={"state": "WAITING_INTEGRATION", "provider_mode": "REAL"},
@@ -83,7 +112,8 @@ class SubscriptionCliEntrypointTests(unittest.TestCase):
             output = io.StringIO()
 
             with (
-                patch.object(cli, "build_request_from_capsule", return_value=_real_request()) as bridge,
+                patch.object(cli, "build_request_from_capsule", return_value=request) as bridge,
+                patch.object(cli, "capture_authority_snapshot", return_value=snapshot) as capture,
                 patch.object(
                     cli,
                     "subscription_codex_cli_gate",
@@ -99,10 +129,25 @@ class SubscriptionCliEntrypointTests(unittest.TestCase):
             self.assertEqual(result, 0)
             bridge.assert_called_once()
             self.assertEqual(bridge.call_args.kwargs["provider_mode"], "REAL")
-            factory.assert_called_once_with(repo_root=project_root, runtime_root=runtime_root)
+            capture.assert_called_once_with(
+                project_root=project_root,
+                capsule_relative="docs/operations/loop/PROJECT_EXECUTION_CAPSULE.json",
+                request=request,
+            )
+            factory.assert_called_once_with(
+                repo_root=project_root,
+                runtime_root=runtime_root,
+                authority_snapshot=snapshot,
+                run_request=request,
+                project_test_executor=ANY,
+            )
+            executor = factory.call_args.kwargs["project_test_executor"]
+            self.assertIsInstance(executor, ProjectTestExecutor)
+            self.assertIsInstance(executor.network_boundary, DockerNoneDeniedNetworkBoundary)
             runtime_class.assert_called_once_with(
                 builder=components.builder,
                 critic=components.critic,
+                candidate_verifier=verifier,
                 provider_mode="REAL",
             )
             runtime.run.assert_called_once()
@@ -124,6 +169,61 @@ class SubscriptionCliEntrypointTests(unittest.TestCase):
             payload = json.loads(output.getvalue())
             self.assertEqual(payload["status"], "CONTRACT_INVALID")
             self.assertEqual(payload["code"], "REAL_RUNTIME_ROOT_REQUIRED")
+
+    def test_real_provider_requires_explicit_denied_network_image_before_auth_or_factory(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            project_root = Path(temp) / "project"
+            runtime_root = Path(temp) / "runtime"
+            project_root.mkdir()
+            output = io.StringIO()
+            with (
+                patch.object(cli, "build_request_from_capsule", return_value=_real_request()),
+                patch.object(cli, "capture_authority_snapshot") as capture,
+                patch.object(cli, "subscription_codex_cli_gate") as gate,
+                patch.object(cli, "build_subscription_provider_components") as factory,
+                patch.object(
+                    sys,
+                    "argv",
+                    self._argv(project_root, runtime_root, image_id=None),
+                ),
+                redirect_stdout(output),
+            ):
+                result = cli.main()
+
+            self.assertEqual(result, 2)
+            payload = json.loads(output.getvalue())
+            self.assertEqual(payload["status"], "BLOCKED_UNVERIFIED")
+            self.assertEqual(payload["code"], "REAL_PROJECT_TEST_BOUNDARY_REQUIRED")
+            capture.assert_not_called()
+            gate.assert_not_called()
+            factory.assert_not_called()
+
+    def test_authority_snapshot_failure_blocks_before_auth_or_factory(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            project_root = Path(temp) / "project"
+            runtime_root = Path(temp) / "runtime"
+            project_root.mkdir()
+            output = io.StringIO()
+            with (
+                patch.object(cli, "build_request_from_capsule", return_value=_real_request()),
+                patch.object(
+                    cli,
+                    "capture_authority_snapshot",
+                    side_effect=AuthoritySnapshotError("stale authority"),
+                ),
+                patch.object(cli, "subscription_codex_cli_gate") as gate,
+                patch.object(cli, "build_subscription_provider_components") as factory,
+                patch.object(sys, "argv", self._argv(project_root, runtime_root)),
+                redirect_stdout(output),
+            ):
+                result = cli.main()
+
+            self.assertEqual(result, 2)
+            payload = json.loads(output.getvalue())
+            self.assertEqual(payload["status"], "CONTRACT_INVALID")
+            self.assertEqual(payload["code"], "AUTHORITY_SNAPSHOT_INVALID")
+            gate.assert_not_called()
+            factory.assert_not_called()
 
 
 if __name__ == "__main__":
