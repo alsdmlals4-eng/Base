@@ -6,6 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REFERENCE = ROOT / "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"
+TASK_RECOVERY = ROOT / "skills/managing-project-intake-and-work-contract/references/task-recovery-protocol.md"
 
 
 class ContinuousWorkExecutionContractTests(unittest.TestCase):
@@ -145,6 +146,26 @@ class ContinuousWorkExecutionContractTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
         self.assertIn("즉시 병합", text)
+
+    def test_unexpected_interruption_routes_to_task_recovery_protocol(self) -> None:
+        self.assertTrue(TASK_RECOVERY.is_file(), "task recovery protocol must exist")
+        continuous = REFERENCE.read_text(encoding="utf-8")
+        recovery = TASK_RECOVERY.read_text(encoding="utf-8")
+        for term in (
+            "task-recovery-protocol.md",
+            "TASK_RECOVERY_PROTOCOL",
+            "새로운 Skill이나 Work Mode가 아니다",
+        ):
+            self.assertIn(term, continuous)
+        for term in (
+            "RETRY",
+            "RESUME",
+            "CHECKPOINT",
+            "현재 상태 재확인",
+            "이미 완료된 단계는 다시 실행하지 않는다",
+            "자동 재전송 금지",
+        ):
+            self.assertIn(term, recovery)
 
 
 if __name__ == "__main__":
