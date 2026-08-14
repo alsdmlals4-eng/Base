@@ -45,3 +45,13 @@ jobs:
             --path examples/godot-narrative-dialogue-flow \
             --script res://tests/test_dialogue_flow_runtime.gd \
             2>&1 | tee narrative-dialogue-runtime.log
+      - name: Run sample scene headless smoke
+        shell: bash
+        run: |
+          set -o pipefail
+          "${RUNNER_TEMP}/Godot_v4.7.1-stable_linux.x86_64" \
+            --headless \
+            --path examples/godot-narrative-dialogue-flow \
+            --quit-after 3 \
+            2>&1 | tee narrative-dialogue-sample.log
+          grep -q "NARRATIVE_DIALOGUE_SAMPLE_READY" narrative-dialogue-sample.log
