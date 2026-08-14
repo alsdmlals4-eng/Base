@@ -61,13 +61,6 @@ class DurableWorktreeResumeTests(WorktreeAdapterTests):
         workspace = self.runtime / request.project_id / request.run_id
         workspace.parent.mkdir(parents=True)
         run_git(self.repo, "worktree", "add", "--detach", str(workspace), request.expected_main_sha)
-        self.addCleanup(lambda: subprocess.run(
-            ["git", "worktree", "remove", "--force", str(workspace)],
-            cwd=self.repo,
-            text=True,
-            capture_output=True,
-            check=False,
-        ))
 
         adapter = self.adapter(self.worker_script())
         with self.assertRaises(WorkspaceOwnershipError):
