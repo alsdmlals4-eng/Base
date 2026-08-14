@@ -48,12 +48,12 @@ replacements = (
         "validation dispatch switch",
     ),
     (
-        '''    dispatch_and_wait validate-evidence-knowledge.yml "$reviewed_head" || block "BLOCKED_ACTIONS_DISPATCH" "Evidence Knowledge dispatch or exact-head validation failed."
-    dispatch_and_wait validate-game-project-operating-system.yml "$reviewed_head" full || block "BLOCKED_VALIDATION" "Full Game Project OS validation failed."
+        '''  dispatch_and_wait validate-evidence-knowledge.yml "$reviewed_head" || block "BLOCKED_ACTIONS_DISPATCH" "Evidence Knowledge dispatch or exact-head validation failed."
+  dispatch_and_wait validate-game-project-operating-system.yml "$reviewed_head" full || block "BLOCKED_VALIDATION" "Full Game Project OS validation failed."
 ''',
-        '''    dispatch_and_wait validate-evidence-knowledge.yml "$reviewed_head" || block "BLOCKED_ACTIONS_DISPATCH" "Evidence Knowledge dispatch or exact-head validation failed."
-    dispatch_and_wait validate-base-v9-rc.yml "$reviewed_head" || block "BLOCKED_VALIDATION" "Base v9 dispatch or exact-head validation failed."
-    dispatch_and_wait validate-game-project-operating-system.yml "$reviewed_head" full || block "BLOCKED_VALIDATION" "Full Game Project OS validation failed."
+        '''  dispatch_and_wait validate-evidence-knowledge.yml "$reviewed_head" || block "BLOCKED_ACTIONS_DISPATCH" "Evidence Knowledge dispatch or exact-head validation failed."
+  dispatch_and_wait validate-base-v9-rc.yml "$reviewed_head" || block "BLOCKED_VALIDATION" "Base v9 dispatch or exact-head validation failed."
+  dispatch_and_wait validate-game-project-operating-system.yml "$reviewed_head" full || block "BLOCKED_VALIDATION" "Full Game Project OS validation failed."
 ''',
         "three-validator loop",
     ),
