@@ -30,7 +30,11 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v5
         with:
           python-version: '3.12'
-      - name: Run OpenAI transport contract
-        run: python -m unittest tests.test_loop_a2_openai_transport -v
+      - name: Run OpenAI transport contracts
+        run: >-
+          python -m unittest
+          tests.test_loop_a2_openai_transport
+          tests.test_loop_a2_openai_transport_adversarial
+          -v
       - name: Validate whitespace
         run: git diff --check
