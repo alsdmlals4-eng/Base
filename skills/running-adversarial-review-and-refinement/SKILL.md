@@ -261,3 +261,14 @@ L2 이상 다분야 결정, 저장소 전체 감사, 외부 코드·디자인 �
 - 각 Finding은 `lens`, `evidence`, `affected_requirement`, `severity`, `owner_skill`, `status`를 포함한다.
 - Lens 간 결론이 충돌하면 사실·영향·비용·코어·되돌리기 난이도로 `validate-critique`하고, 중요 방향 차이는 `USER_DECISION_REQUIRED`로 보낸다.
 - Named Agent별 별도 정본·PRD·Architecture 복제본을 만들지 않는다.
+
+## Socratic Review Lens
+
+주장·비판의 의미, 숨은 가정, 근거, 대안 관점, 파급, 질문 자체의 중요성이 현재 결론을 바꿀 수 있을 때만 `references/socratic-questioning-lenses.md`에서 **관련된 Lens만** 선택한다. 모든 질문군을 채우기 위한 **가짜 Finding**을 만들지 않는다.
+
+- `attack`에서는 주로 Clarification, Assumptions, Reasons / Evidence, Viewpoints, Implications / Consequences를 사용해 애매한 주장·숨은 전제·증거 공백·관점 맹점·파급을 찾는다.
+- `validate-critique`에서는 Reasons / Evidence와 Assumptions를 다시 검증하고 Meta-question으로 해당 비판이 실제 Requirement·범위·결론에 중요한지 재판정한다.
+- `regression-recheck`에서는 Implications / Consequences를 다시 적용해 정상 경로·복구·호환성·롤백에 새 회귀가 생기지 않았는지 확인한다.
+- Socratic 질문 후보가 생기면 먼저 **저장소·정본·실제 구현·도구**로 답할 수 있는지 조사한다. 그 근거로 판정할 수 있으면 사용자에게 묻지 않는다.
+- 필요한 증거가 없으면 기존 `BLOCKED_UNVERIFIED`와 확인 조건을 사용한다. 둘 이상의 유효한 선택이 프로젝트 코어·중요 방향을 다르게 만들 때만 기존 `USER_DECISION_REQUIRED`로 올린다.
+- Socratic Lens는 새 사용자 인터뷰 Gate나 별도 승인 권한을 만들지 않으며, 기존 intake/Grill Me의 질문 하나 원칙과 Finding decision 의미를 재정의하지 않는다.
