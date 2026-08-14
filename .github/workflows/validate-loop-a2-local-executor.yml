@@ -1,0 +1,42 @@
+name: Validate Loop A2 Local Executor
+
+on:
+  pull_request:
+    paths:
+      - 'tools/loop-a2-local-executor/**'
+      - 'docs/LOOP_A2_LOCAL_EXECUTOR.md'
+      - 'docs/evidence/2026-08-15-loop-a2-local-executor.md'
+      - 'docs/superpowers/specs/2026-08-15-loop-a2-local-executor-design.md'
+      - 'docs/superpowers/plans/2026-08-15-loop-a2-local-executor.md'
+      - '.github/workflows/validate-loop-a2-local-executor.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/loop-a2-local-executor/**'
+      - 'docs/LOOP_A2_LOCAL_EXECUTOR.md'
+      - 'docs/evidence/2026-08-15-loop-a2-local-executor.md'
+      - '.github/workflows/validate-loop-a2-local-executor.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Run local executor contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/loop-a2-local-executor/tests/test_job.py -v
