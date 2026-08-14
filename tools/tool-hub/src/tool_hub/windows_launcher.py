@@ -138,80 +138,137 @@ def hub_runtime_fingerprint(root: Path) -> str:
 ShortcutBuilder = Callable[[Path, Path, Path], bytes]
 
 
-def _run_shortcut_command(
-    powershell: Path,
-    script: str,
-    environment: dict[str, str],
-) -> subprocess.CompletedProcess[bytes]:
-    """Run the fixed STA shortcut builder without inheritable capture pipes."""
-    return subprocess.run(
-        [
-            str(powershell),
-            "-NoLogo",
-            "-NoProfile",
-            "-NonInteractive",
-            "-STA",
-            "-ExecutionPolicy",
-            "Bypass",
-            "-Command",
-            script,
-        ],
-        shell=False,
-        stdin=subprocess.DEVNULL,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        timeout=20,
-        check=False,
-        env=environment,
-        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+def _write_windows_shell_link(
+    destination: Path,
+    target: Path,
+    arguments: str,
+    working_directory: Path,
+) -> None:
+    """Create one Shell Link through the in-process Windows COM contract."""
+    if os.name != "nt":
+        raise LauncherError("BLOCKED_PLATFORM")
+    import ctypes
+    import uuid
+    from ctypes import wintypes
+
+    class GUID(ctypes.Structure):
+        _fields_ = (
+            ("Data1", ctypes.c_uint32),
+            ("Data2", ctypes.c_uint16),
+            ("Data3", ctypes.c_uint16),
+            ("Data4", ctypes.c_ubyte * 8),
+        )
+
+    def guid(value: str) -> GUID:
+        return GUID.from_buffer_copy(uuid.UUID(value).bytes_le)
+
+    def failed(result: int) -> bool:
+        return result < 0
+
+    def invoke(interface, index: int, result_type, argument_types, *values):
+        table = ctypes.cast(
+            interface,
+            ctypes.POINTER(ctypes.POINTER(ctypes.c_void_p)),
+        ).contents
+        method = ctypes.WINFUNCTYPE(
+            result_type,
+            ctypes.c_void_p,
+            *argument_types,
+        )(table[index])
+        return method(interface, *values)
+
+    ole32 = ctypes.OleDLL("ole32")
+    ole32.CoInitializeEx.argtypes = (ctypes.c_void_p, ctypes.c_uint32)
+    ole32.CoInitializeEx.restype = ctypes.c_long
+    ole32.CoUninitialize.argtypes = ()
+    ole32.CoUninitialize.restype = None
+    ole32.CoCreateInstance.argtypes = (
+        ctypes.POINTER(GUID),
+        ctypes.c_void_p,
+        ctypes.c_uint32,
+        ctypes.POINTER(GUID),
+        ctypes.POINTER(ctypes.c_void_p),
     )
+    ole32.CoCreateInstance.restype = ctypes.c_long
+
+    initialized = False
+    shell_link = ctypes.c_void_p()
+    persist_file = ctypes.c_void_p()
+    try:
+        initialization = ole32.CoInitializeEx(None, 2)
+        if initialization in (0, 1):
+            initialized = True
+        elif ctypes.c_uint32(initialization).value != 0x80010106:
+            raise LauncherError("LAUNCHER_SHORTCUT_FAILED")
+
+        clsid_shell_link = guid("00021401-0000-0000-C000-000000000046")
+        iid_shell_link = guid("000214F9-0000-0000-C000-000000000046")
+        created = ole32.CoCreateInstance(
+            ctypes.byref(clsid_shell_link),
+            None,
+            1,
+            ctypes.byref(iid_shell_link),
+            ctypes.byref(shell_link),
+        )
+        if failed(created) or not shell_link.value:
+            raise LauncherError("LAUNCHER_SHORTCUT_FAILED")
+
+        setters = (
+            (20, (ctypes.c_wchar_p,), str(target)),
+            (11, (ctypes.c_wchar_p,), arguments),
+            (9, (ctypes.c_wchar_p,), str(working_directory)),
+            (7, (ctypes.c_wchar_p,), "Base Tool Hub"),
+            (15, (ctypes.c_int,), 7),
+        )
+        for index, argument_types, value in setters:
+            if failed(invoke(shell_link, index, ctypes.c_long, argument_types, value)):
+                raise LauncherError("LAUNCHER_SHORTCUT_FAILED")
+
+        iid_persist_file = guid("0000010B-0000-0000-C000-000000000046")
+        queried = invoke(
+            shell_link,
+            0,
+            ctypes.c_long,
+            (ctypes.POINTER(GUID), ctypes.POINTER(ctypes.c_void_p)),
+            ctypes.byref(iid_persist_file),
+            ctypes.byref(persist_file),
+        )
+        if failed(queried) or not persist_file.value:
+            raise LauncherError("LAUNCHER_SHORTCUT_FAILED")
+        saved = invoke(
+            persist_file,
+            6,
+            ctypes.c_long,
+            (ctypes.c_wchar_p, wintypes.BOOL),
+            str(destination),
+            True,
+        )
+        if failed(saved):
+            raise LauncherError("LAUNCHER_SHORTCUT_FAILED")
+    except (OSError, TypeError, ValueError) as error:
+        raise LauncherError("LAUNCHER_SHORTCUT_FAILED") from error
+    finally:
+        if persist_file.value:
+            invoke(persist_file, 2, ctypes.c_ulong, ())
+        if shell_link.value:
+            invoke(shell_link, 2, ctypes.c_ulong, ())
+        if initialized:
+            ole32.CoUninitialize()
 
 
 def _default_shortcut_builder(pythonw: Path, launcher: Path, working: Path) -> bytes:
-    """Build a direct per-user .lnk with the fixed Windows Shell COM owner."""
+    """Build a direct per-user .lnk with the native Windows Shell Link owner."""
     if os.name != "nt":
         raise LauncherError("BLOCKED_PLATFORM")
-    system_root = Path(os.environ.get("SYSTEMROOT", ""))
-    powershell = system_root / "System32" / "WindowsPowerShell" / "v1.0" / "powershell.exe"
-    _assert_plain_parents(powershell)
-    metadata = powershell.lstat()
-    if not stat.S_ISREG(metadata.st_mode) or powershell.is_symlink():
-        raise LauncherError("LAUNCHER_SHORTCUT_FAILED")
     working.mkdir(parents=True, exist_ok=True)
     temporary = working / f".desktop-{secrets.token_hex(12)}.lnk"
-    script = (
-        "$ErrorActionPreference='Stop';"
-        "$shell=New-Object -ComObject WScript.Shell;"
-        "$link=$shell.CreateShortcut($env:BTH_SHORTCUT);"
-        "$link.TargetPath=$env:BTH_PYTHONW;"
-        "$link.Arguments='\"'+$env:BTH_LAUNCHER+'\"';"
-        "$link.WorkingDirectory=$env:BTH_WORKING;"
-        "$link.WindowStyle=7;"
-        "$link.Description='Base Tool Hub';"
-        "$link.Save()"
-    )
-    environment = {
-        "SYSTEMROOT": str(system_root),
-        "WINDIR": str(system_root),
-        "COMSPEC": str(system_root / "System32" / "cmd.exe"),
-        "PATH": ";".join(
-            (
-                str(system_root / "System32"),
-                str(system_root / "System32" / "WindowsPowerShell" / "v1.0"),
-            )
-        ),
-        "BTH_SHORTCUT": str(temporary),
-        "BTH_PYTHONW": str(pythonw),
-        "BTH_LAUNCHER": str(launcher),
-        "BTH_WORKING": str(working),
-    }
-    for name in ("APPDATA", "LOCALAPPDATA", "USERPROFILE", "TEMP", "TMP"):
-        if value := os.environ.get(name):
-            environment[name] = value
     try:
-        completed = _run_shortcut_command(powershell, script, environment)
-        if completed.returncode != 0:
-            raise LauncherError("LAUNCHER_SHORTCUT_FAILED")
+        _write_windows_shell_link(
+            temporary,
+            pythonw,
+            f'"{launcher}"',
+            working,
+        )
         shortcut_metadata = temporary.lstat()
         reparse = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
         if (
@@ -225,7 +282,7 @@ def _default_shortcut_builder(pythonw: Path, launcher: Path, working: Path) -> b
         if not shortcut or len(shortcut) > 1024 * 1024:
             raise LauncherError("LAUNCHER_SHORTCUT_FAILED")
         return shortcut
-    except (OSError, subprocess.TimeoutExpired) as error:
+    except OSError as error:
         raise LauncherError("LAUNCHER_SHORTCUT_FAILED") from error
     finally:
         try:

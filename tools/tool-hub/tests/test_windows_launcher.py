@@ -160,28 +160,14 @@ def test_installer_rejects_a_tampered_legacy_desktop_pyw(tmp_path: Path) -> None
     assert owner.status() == "REPAIR_REQUIRED"
 
 
-def test_shortcut_command_does_not_capture_com_descendant_pipes(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    observed: dict[str, object] = {}
+def test_shortcut_builder_uses_native_shell_link_without_external_process() -> None:
+    import inspect
 
-    def fake_run(command, **kwargs):
-        observed["command"] = command
-        observed.update(kwargs)
-        return subprocess.CompletedProcess(command, 0)
+    source = inspect.getsource(launcher_module._default_shortcut_builder)
 
-    monkeypatch.setattr(subprocess, "run", fake_run)
-    runner = getattr(launcher_module, "_run_shortcut_command", None)
-    assert runner is not None
-
-    result = runner(Path("powershell.exe"), "fixed-script", {"SYSTEMROOT": r"C:\Windows"})
-
-    assert result.returncode == 0
-    assert "-STA" in observed["command"]
-    assert observed["stdin"] is subprocess.DEVNULL
-    assert observed["stdout"] is subprocess.DEVNULL
-    assert observed["stderr"] is subprocess.DEVNULL
-    assert "capture_output" not in observed
+    assert "_write_windows_shell_link" in source
+    assert "subprocess" not in source
+    assert "powershell" not in source.casefold()
 
 
 def test_launcher_reuses_exact_health_or_starts_detached_before_opening_browser(tmp_path: Path) -> None:

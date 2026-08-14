@@ -46,7 +46,7 @@ The installer:
 1. Verifies the current Base root and repository-local `.venv\Scripts\pythonw.exe` as regular, non-reparse files.
 2. Writes `%LOCALAPPDATA%\BaseToolHub\launcher\launcher-config.json` atomically with the Base root fingerprint, expected Base/Tool Registry commit evidence, Hub port, and machine-local project-config path.
 3. Writes the reviewed private `Base Tool Hub.pyw` template atomically under the same launcher directory.
-4. Resolves the current user's Desktop known folder and atomically installs one user-visible `Base Tool Hub.lnk` without requiring administrator rights.
+4. Resolves the current user's Desktop known folder and atomically installs one user-visible `Base Tool Hub.lnk` through the in-process Windows `IShellLinkW`/`IPersistFile` COM contract, without launching PowerShell or requiring administrator rights.
 5. The shortcut directly targets the reviewed `pythonw.exe` with the private launcher as its fixed argument. It never changes global file associations, all-users locations, the Start Menu, or taskbar pins.
 6. When upgrading, remove the old Desktop `Base Tool Hub.pyw` only after it byte-matches the reviewed launcher and the new `.lnk` is published. Any mismatched or non-regular legacy entry blocks with a bounded repair state.
 
