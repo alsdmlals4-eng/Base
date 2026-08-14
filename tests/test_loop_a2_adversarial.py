@@ -36,6 +36,33 @@ class AdversarialTests(unittest.TestCase):
         self.assertEqual(result["status"], "USER_DECISION_REQUIRED")
         self.assertNotIn("credential", str(result).lower())
 
+    def test_sensitive_token_variants_are_redacted(self) -> None:
+        value = {
+            "access_token": "a",
+            "refresh-token": "b",
+            "client_secret": "c",
+            "github_token": "d",
+        }
+        redacted = redact_sensitive(value)
+        self.assertEqual(set(redacted.values()), {"[REDACTED]"})
+
+    def test_single_star_does_not_cross_directory_boundary(self) -> None:
+        from tools.loop_a2_runtime.scope import validate_changed_paths
+        finding_codes = {
+            finding.code
+            for finding in validate_changed_paths(
+                ("scripts/nested/a.gd",), ("scripts/*.gd",), ()
+            )
+        }
+        self.assertIn("OUT_OF_SCOPE_WRITE", finding_codes)
+
+    def test_double_star_directory_pattern_is_recursive(self) -> None:
+        from tools.loop_a2_runtime.scope import validate_changed_paths
+        self.assertEqual(
+            validate_changed_paths(("scripts/nested/a.gd",), ("scripts/**",), ()),
+            (),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
