@@ -31,6 +31,24 @@ function resetRunState() {
   document.querySelector("#review-metadata").textContent = "";
 }
 
+function currentEditMode() {
+  return document.querySelector("#edit-mode").value;
+}
+
+function editModeLabel(mode = currentEditMode()) {
+  if (mode === "outfit") return "복장";
+  if (mode === "scene") return "장소·배경";
+  return "표정";
+}
+
+function updateSubmitLabel() {
+  const importMode = studioConfig.run_mode === "subscription_handoff_import";
+  const noun = editModeLabel();
+  document.querySelector("#submit-button").textContent = importMode
+    ? `${noun} 후보 가져오기 및 검증`
+    : `${noun} 후보 생성`;
+}
+
 function applyRunModeUi() {
   const importMode = studioConfig.run_mode === "subscription_handoff_import";
   const openaiMode = studioConfig.run_mode === "openai";
@@ -46,7 +64,36 @@ function applyRunModeUi() {
     : openaiMode
       ? "ChatGPT 구독과 별개인 OpenAI API 크레딧을 사용합니다. 요청 실행 시 비용이 발생할 수 있습니다."
       : "테스트 후보만 만들며 provider를 호출하지 않고 내보내기와 Figma 전달을 차단합니다.";
-  document.querySelector("#submit-button").textContent = importMode ? "후보 가져오기 및 검증" : "표정 후보 생성";
+  updateSubmitLabel();
+}
+
+function applyEditModeUi() {
+  const mode = currentEditMode();
+  const expressionMode = mode === "expression";
+  const promptGroup = document.querySelector("#edit-prompt-group");
+  const editPrompt = document.querySelector("#edit-prompt");
+  document.querySelector("#expression-controls").hidden = !expressionMode;
+  promptGroup.hidden = expressionMode;
+  editPrompt.disabled = expressionMode;
+  editPrompt.required = !expressionMode;
+
+  if (!expressionMode) {
+    document.querySelector("#preset").value = "";
+    document.querySelector("#gaze").value = "center";
+    document.querySelector("#head-pose").value = "neutral";
+  }
+
+  const scope = document.querySelector("#edit-scope-note");
+  if (mode === "outfit") {
+    editPrompt.placeholder = "예: 짙은 남색 야전 코트와 황동 잠금장치";
+    scope.textContent = "얼굴·헤어·체형·포즈·구도·배경·화풍은 유지하고 복장·의상·착용 장비만 변경합니다.";
+  } else if (mode === "scene") {
+    editPrompt.placeholder = "예: 비 오는 밤의 네온 골목";
+    scope.textContent = "캐릭터 얼굴·헤어·복장·체형·포즈·구도·화풍은 유지하고 장소·환경·배경만 변경합니다.";
+  } else {
+    scope.textContent = "";
+  }
+  updateSubmitLabel();
 }
 
 function option(value, label) {
@@ -96,9 +143,13 @@ function controlsFromForm() {
 }
 
 function requestPayload() {
-  const preset = document.querySelector("#preset").value || null;
-  const controls = controlsFromForm();
+  const editMode = currentEditMode();
+  const expressionMode = editMode === "expression";
+  const preset = expressionMode ? (document.querySelector("#preset").value || null) : null;
+  const controls = expressionMode ? controlsFromForm() : [];
   if (preset && controls.length) throw new Error("프리셋과 직접 얼굴 제어를 동시에 선택할 수 없습니다.");
+  const editPrompt = expressionMode ? null : document.querySelector("#edit-prompt").value.trim();
+  if (!expressionMode && !editPrompt) throw new Error(`${editModeLabel(editMode)} 변경 요청을 입력하세요.`);
   return {
     project_id: document.querySelector("#project-id").value,
     asset_id: document.querySelector("#asset-id").value,
@@ -107,9 +158,11 @@ function requestPayload() {
       figma_node_url: document.querySelector("#figma-url").value,
       approval_status: "approved",
     },
+    edit_mode: editMode,
+    edit_prompt: editPrompt,
     controls,
-    gaze: document.querySelector("#gaze").value,
-    head_pose: document.querySelector("#head-pose").value,
+    gaze: expressionMode ? document.querySelector("#gaze").value : "center",
+    head_pose: expressionMode ? document.querySelector("#head-pose").value : "neutral",
     preset,
     candidate_count: Number(document.querySelector("#candidate-count").value),
   };
@@ -141,7 +194,7 @@ function renderCandidates(run) {
     });
     const image = document.createElement("img");
     image.src = `/api/runs/${run.run_id}/candidates/${index}`;
-    image.alt = `표정 후보 ${index + 1}`;
+    image.alt = `캐릭터 편집 후보 ${index + 1}`;
     card.append(radio, document.createTextNode(` 후보 ${index + 1}`), image);
     candidateGrid.append(card);
   }
@@ -151,10 +204,10 @@ document.querySelector("#expression-form").addEventListener("submit", async (eve
   event.preventDefault();
   resetRunState();
   try {
-    status.textContent = studioConfig.run_mode === "subscription_handoff_import"
-      ? "표정 후보 파일을 검증하고 가져오는 중입니다…"
-      : "표정 후보를 생성하는 중입니다…";
     const payload = requestPayload();
+    status.textContent = studioConfig.run_mode === "subscription_handoff_import"
+      ? `${editModeLabel(payload.edit_mode)} 후보 파일을 검증하고 가져오는 중입니다…`
+      : `${editModeLabel(payload.edit_mode)} 후보를 생성하는 중입니다…`;
     let run;
     if (studioConfig.run_mode === "subscription_handoff_import") {
       const files = [...document.querySelector("#candidate-files").files];
@@ -178,9 +231,12 @@ document.querySelector("#expression-form").addEventListener("submit", async (eve
     document.querySelector("#resolved-prompt").textContent = run.generation_instruction;
     const resolvedControls = run.resolved_expression.controls
       .map((control) => `${control.code} (강도 ${control.intensity}${control.side ? `, 캐릭터 기준 ${control.side}` : ""})`)
-      .join(", ") || "중립";
+      .join(", ") || "없음";
+    const editDetail = payload.edit_mode === "expression"
+      ? `해석된 제어: ${resolvedControls}`
+      : `변경 모드: ${editModeLabel(payload.edit_mode)} · 변경 요청: ${payload.edit_prompt}`;
     document.querySelector("#review-metadata").textContent =
-      `해석된 제어: ${resolvedControls} · 원본 SHA-256: ${run.lineage.anchor_sha256}`;
+      `${editDetail} · 원본 SHA-256: ${run.lineage.anchor_sha256}`;
     document.querySelector("#packet").textContent = "";
     exportButton.disabled = true;
     deliveryButton.disabled = true;
@@ -214,6 +270,7 @@ async function bootstrap() {
     studioConfig = await request("/api/config");
     document.querySelector("#project-id").value = studioConfig.project_id || "";
     applyRunModeUi();
+    applyEditModeUi();
     if (!studioConfig.delivery_eligible) {
       status.textContent = `${studioConfig.engine_provenance.toUpperCase()} / DELIVERY_BLOCKED · 실제 생성 엔진이 아닙니다.`;
     }
@@ -223,6 +280,10 @@ async function bootstrap() {
 }
 
 buildControlRows();
+document.querySelector("#edit-mode").addEventListener("change", () => {
+  resetRunState();
+  applyEditModeUi();
+});
 document.querySelector("#candidate-files").addEventListener("change", (event) => {
   document.querySelector("#file-count").textContent = `선택한 후보 ${event.target.files.length}개`;
 });
