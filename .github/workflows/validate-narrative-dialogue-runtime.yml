@@ -1,0 +1,47 @@
+name: Validate Narrative Dialogue Runtime
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "examples/godot-narrative-dialogue-flow/**"
+      - "templates/project-operations/FIGMA_NARRATIVE_DIALOGUE_FLOW_PROFILE.md"
+      - "tests/test_figma_narrative_dialogue_flow_contract.py"
+      - ".github/workflows/validate-narrative-dialogue-runtime.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: narrative-dialogue-runtime-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  godot-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Download and verify Godot 4.7.1
+        working-directory: ${{ runner.temp }}
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 --output godot.zip \
+            https://github.com/godotengine/godot-builds/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip
+          echo "c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba  godot.zip" | sha256sum --check -
+          unzip -q godot.zip
+          chmod +x Godot_v4.7.1-stable_linux.x86_64
+          ./Godot_v4.7.1-stable_linux.x86_64 --version
+      - name: Run narrative dialogue model and session tests
+        shell: bash
+        run: |
+          set -o pipefail
+          "${RUNNER_TEMP}/Godot_v4.7.1-stable_linux.x86_64" \
+            --headless \
+            --path examples/godot-narrative-dialogue-flow \
+            --script res://tests/test_dialogue_flow_runtime.gd \
+            2>&1 | tee narrative-dialogue-runtime.log
