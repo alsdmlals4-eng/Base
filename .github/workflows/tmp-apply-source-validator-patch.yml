@@ -1,0 +1,34 @@
+name: Apply Source Validator Patch
+
+on:
+  push:
+    branches:
+      - feat/daily-source-analysis-auto-merge-20260814
+    paths:
+      - ".github/workflows/tmp-apply-source-validator-patch.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out feature branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+
+      - name: Apply reviewed patch and push non-workflow files
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/apply_source_validator_patch.py
+          bash -n tools/run_periodic_source_scan_queue.sh
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- \
+            tools/run_periodic_source_scan_queue.sh \
+            tools/apply_source_validator_patch.py
+          git commit -m "fix: require all three source PR validators"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
