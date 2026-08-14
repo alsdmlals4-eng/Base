@@ -9,6 +9,7 @@ import sys
 import time
 
 from .control_plane import GhControlPlane
+from .instance_lock import InstanceLock
 from .repositories import ManagedRepositoryStore
 from .runtime import LocalA2Runtime
 from .service import LocalExecutorService
@@ -83,6 +84,12 @@ def build_service(state_root: Path) -> LocalExecutorService:
     )
 
 
+def _once_under_lock(service: LocalExecutorService, state_root: Path) -> dict[str, object]:
+    with InstanceLock(state_root / "executor.lock"):
+        service.preflight()
+        return service.once()
+
+
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     state_root = (args.state_root or _default_state_root()).resolve(strict=False)
@@ -93,12 +100,14 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(service.preflight(), sort_keys=True))
             return 0
         if args.command == "once":
-            result = service.once()
+            result = _once_under_lock(service, state_root)
             print(json.dumps(result, sort_keys=True))
             return 0 if result.get("status") in {"PASS", "IDLE"} else 2
-        while True:
-            service.once()
-            time.sleep(args.poll_seconds)
+        with InstanceLock(state_root / "executor.lock"):
+            service.preflight()
+            while True:
+                service.once()
+                time.sleep(args.poll_seconds)
     except KeyboardInterrupt:
         return 0
     except Exception as exc:
