@@ -2,7 +2,7 @@
   "schema_version": 1,
   "checkpoint_role": "UNIVERSAL_LOOP_CROSS_PROJECT_ACCEPTANCE",
   "base_kernel_main_sha": "8e7238a1bb9f49bd6e2403a2a6cb20d7aee863c7",
-  "status": "PORTABILITY_CONFIRMED_PROVIDER_TRANSPORT_READY_PAID_SMOKE_GATED",
+  "status": "PORTABILITY_CONFIRMED_SUBSCRIPTION_TRANSPORT_READY_LOCAL_SMOKE_GATED",
   "validated_projects": [
     {
       "project_id": "BLACKSMITH",
@@ -67,7 +67,8 @@
     "project_test_executor": "MERGED",
     "pr_handoff_postmerge_closure": "MERGED",
     "durable_worktree_resume": "MERGED",
-    "denied_network_boundary": "MERGED_MAIN_VALIDATED"
+    "denied_network_boundary": "MERGED_MAIN_VALIDATED",
+    "subscription_codex_cli_transport": "MERGED_MAIN_VALIDATED"
   },
   "provider_transport_evidence": {
     "implementation_pr": 365,
@@ -104,12 +105,37 @@
     "live_openai_request": "NOT_RUN",
     "paid_api_cost": "NOT_RUN"
   },
+  "provider_policy": {
+    "paid_openai_api": "FORBIDDEN",
+    "paid_provider_smoke": "NOT_PLANNED",
+    "primary_real_provider": "CHATGPT_AUTHENTICATED_CODEX_CLI",
+    "api_key_fallback": "FORBIDDEN"
+  },
+  "subscription_codex_cli_evidence": {
+    "implementation_issue": 379,
+    "implementation_pr": 380,
+    "exact_head": "c6ee0f6765ed166619cc6e39c3dd5b5e05b01f83",
+    "merge_main": "ef5f1f79945d3b083c96a89295ac4bcd88d61e2d",
+    "postmerge_a2_foundation_run": 31809731573,
+    "postmerge_openai_transport_run": 31809731526,
+    "postmerge_base_v9_run": 31809731528,
+    "postmerge_game_project_os_run": 31809731626,
+    "postmerge_windows_publication_smoke": "PASS",
+    "postmerge_windows_tool_hub_smoke": "PASS",
+    "postmerge_validation": "PASS",
+    "model_shell_tool": "DISABLED_BY_STRICT_CONFIG",
+    "model_web_search_features": "DISABLED_BY_STRICT_CONFIG",
+    "real_subscription_smoke": "NOT_RUN_LOCAL_CHATGPT_AUTH_REQUIRED",
+    "live_openai_api_request": "NOT_APPLICABLE_POLICY_FORBIDDEN",
+    "paid_api_cost": "NOT_RUN"
+  },
   "remaining_external_gate": {
     "real_codex_builder_transport": "MERGED_MAIN_VALIDATED",
     "real_gpt_critic_transport": "MERGED_MAIN_VALIDATED",
-    "real_openai_api": "NOT_RUN_USER_CREDENTIAL_DECISION_REQUIRED",
+    "real_openai_api": "NOT_APPLICABLE_POLICY_FORBIDDEN",
+    "subscription_codex_cli_smoke": "NOT_RUN_LOCAL_CHATGPT_AUTH_REQUIRED",
     "real_a2_burnin_runs": 0,
-    "paid_smoke_issue": "alsdmlals4-eng/Base#352"
+    "paid_smoke_issue": null
   },
   "preserved_limits": {
     "a3_auto_merge": "DISABLED",
