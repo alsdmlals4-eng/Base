@@ -21,6 +21,7 @@ Create:
 Modify:
 
 - `START_HERE.md` for one-step terminology routing
+- `docs/DOCUMENTATION_MAP.md` so the new public canon is registered in the repository's document-location/authority map
 
 Protect:
 
@@ -36,16 +37,18 @@ Protect:
 2. Add the semantic regression for discoverability, product-stage distinctions, and IRG fail-closed/local-alias boundaries.
 3. Refine the vocabulary so `IRG` is explicitly `BASE_LOCAL_ALIAS`, not an industry standard, while preserving existing owners.
 4. Reconcile the design record with the actual reviewed scope and current Base.
-5. Run exact-head CI and inspect all check conclusions, PR threads, same-goal PR overlap, changed paths, and current-main freshness.
-6. Run the adversarial review loop: attack → validate critique → minimal fix → regression recheck.
-7. Convert the PR from Draft only after the reviewed exact HEAD is green and no merge blocker remains.
-8. Squash merge the reviewed exact HEAD and read back the new `main`.
+5. Attack canonical discoverability; because `docs/DOCUMENTATION_MAP.md` owns document location/responsibility, register the new vocabulary there and make the regression require both routes.
+6. Run exact-head CI and inspect all check conclusions, PR threads, same-goal PR overlap, changed paths, and current-main freshness.
+7. Run the adversarial review loop: attack → validate critique → minimal fix → regression recheck.
+8. Convert the PR from Draft only after the reviewed exact HEAD is green and no merge blocker remains.
+9. Squash merge the reviewed exact HEAD and read back the new `main`.
 
 ## Verification
 
 Required fresh evidence on the final PR HEAD:
 
 - `tests/test_controlled_vocabulary_contract.py`
+- `START_HERE.md` and `docs/DOCUMENTATION_MAP.md` both route to `docs/CONTROLLED_VOCABULARY.md`
 - Base v9 contract / adversarial gate
 - Game Project Operating System checks including `ci-gate`
 - documentation validation and other automatically selected repository checks
@@ -67,6 +70,7 @@ MUST reject or fix:
 - test-file existence being reported as execution
 - static PASS being promoted to runtime/render/UX/fun PASS
 - a new Terminology/IRG Skill or Registry entry
+- a new canonical terminology document missing from `docs/DOCUMENTATION_MAP.md`
 - stale-main CI being reused as final evidence
 - design/plan scope claiming files that the actual PR does not touch
 
