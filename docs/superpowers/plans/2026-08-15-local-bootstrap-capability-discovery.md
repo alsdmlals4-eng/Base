@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Record and enforce a Base-wide local-bootstrap rule that discovers environment-dependent tools through multiple trusted routes, validates actual capability semantically, and preserves diagnostics without weakening security/authority gates.
+**Goal:** Record and enforce a Base local-bootstrap rule that discovers environment-dependent tools through multiple trusted routes, validates actual capability semantically, and preserves diagnostics without weakening security/authority gates.
 
-**Architecture:** Reuse the existing `ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP` and `PROJECT_DEDICATED_LOCAL_EXECUTION_ENVIRONMENT_FIRST` owner in `docs/GPT_CODEX_WORKFLOW_POLICY.md`. Add one focused regression to the already-routed `tests/test_one_shot_local_executor_bootstrap_contract.py`, then update the policy and existing intake Learning Log. No new Skill/Registry/runtime resolver framework is introduced.
+**Architecture:** Keep the broad `ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP` policy unchanged and put the new environment-discovery rule in its concrete Loop A2 consumer/owner, `docs/LOOP_A2_LOCAL_EXECUTOR.md`. Extend the already-existing one-shot regression and workflow so the owner plus the existing intake Learning Log stay coupled. No new Skill/Registry/runtime resolver framework is introduced.
 
 **Tech Stack:** Markdown policy/learning contracts, Python `unittest`, GitHub Actions existing Base validation.
 
@@ -25,155 +25,117 @@
 - Modify: `tests/test_one_shot_local_executor_bootstrap_contract.py`
 
 **Interfaces:**
-- Consumes: existing `docs/GPT_CODEX_WORKFLOW_POLICY.md` bootstrap owner.
-- Produces: regression method `test_bootstrap_discovers_capability_before_rejecting_one_executable_literal`.
+- Consumes: existing local bootstrap contract and `docs/LOOP_A2_LOCAL_EXECUTOR.md` owner.
+- Produces: regression `test_bootstrap_discovers_capability_before_rejecting_one_executable_literal`.
 
-- [ ] **Step 1: Add the failing test**
+- [x] **Step 1: Add the failing test** requiring `CAPABILITY_DISCOVERY_BEFORE_LITERAL_REJECTION`, `DIAGNOSTIC_PRESERVATION_ON_BOOTSTRAP_FAILURE`, `PATHEXT`, semantic readiness and the strict-boundary sentence.
+- [x] **Step 2: Observe RED in required CI.**
 
-Add a method requiring the policy to contain:
+Evidence:
 
-```python
-    def test_bootstrap_discovers_capability_before_rejecting_one_executable_literal(self) -> None:
-        policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
-        learning = (
-            ROOT / "skills/managing-project-intake-and-work-contract/LEARNING_LOG.md"
-        ).read_text(encoding="utf-8")
-
-        for term in (
-            "CAPABILITY_DISCOVERY_BEFORE_LITERAL_REJECTION",
-            "DIAGNOSTIC_PRESERVATION_ON_BOOTSTRAP_FAILURE",
-            "PATHEXT",
-            "semantic readiness probe",
-            "discovery는 넓게, authority와 acceptance는 좁게",
-        ):
-            self.assertIn(term, policy)
-
-        self.assertIn("codex.exe", learning)
-        self.assertIn("codex login status", learning)
-        self.assertIn("diagnostic", learning.lower())
-        self.assertIn("trusted", policy.lower())
+```yaml
+head: a8ee9bcefb11baf03a5ec30393a6affc05b09267
+workflow: Validate One-Shot Local Executor Bootstrap
+run: 31833180090
+job: 94873467584
+result: EXPECTED_RED
+existing_contracts: 3_PASS
+new_contract: 1_FAIL
+cause: CAPABILITY_DISCOVERY_BEFORE_LITERAL_REJECTION absent
 ```
 
-- [ ] **Step 2: Observe RED in required CI**
-
-Create/update the draft PR with only design/plan/test contract and wait for the existing local-bootstrap/Base validation to fail because the new policy tokens are absent.
-
-Expected: existing bootstrap contracts remain green; only the new resilience requirement fails.
-
-- [ ] **Step 3: Record exact RED head/run in PR evidence**
-
-Do not weaken the test to match existing behavior.
+- [x] **Step 3: Preserve the RED evidence rather than weakening the test.**
 
 ---
 
-### Task 2: Implement minimal policy contract
+### Task 2: Implement minimal owner contract and learning record
 
 **Files:**
-- Modify: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
+- Modify: `docs/LOOP_A2_LOCAL_EXECUTOR.md`
+- Modify: `skills/managing-project-intake-and-work-contract/LEARNING_LOG.md`
 - Test: `tests/test_one_shot_local_executor_bootstrap_contract.py`
 
 **Interfaces:**
-- Produces: policy identifiers `CAPABILITY_DISCOVERY_BEFORE_LITERAL_REJECTION` and `DIAGNOSTIC_PRESERVATION_ON_BOOTSTRAP_FAILURE`.
+- Produces: `CAPABILITY_DISCOVERY_BEFORE_LITERAL_REJECTION` and `DIAGNOSTIC_PRESERVATION_ON_BOOTSTRAP_FAILURE`.
 
-- [ ] **Step 1: Extend the existing one-shot bootstrap section**
-
-Add a compact rule with this exact semantic structure:
+- [x] **Step 1: Add trusted multi-route discovery.**
 
 ```text
-CAPABILITY_DISCOVERY_BEFORE_LITERAL_REJECTION
 required capability
 → current command resolution / PATHEXT
 → configured trusted path
 → known trusted standard install location when appropriate
 → semantic readiness probe
-→ PASS or bounded BLOCKED
+→ READY or bounded BLOCKED
 ```
 
-State explicitly that `.exe`/`.cmd`/`.bat` packaging differences are discovery details, not capability truth.
-
-- [ ] **Step 2: Add strict-boundary sentence**
-
-Include the literal:
-
-```text
-discovery는 넓게, authority와 acceptance는 좁게
-```
-
-Clarify that arbitrary disk search, untrusted same-name executables, API-key fallback and unpinned provider/image fallback remain forbidden.
-
-- [ ] **Step 3: Add diagnostic preservation rule**
-
-Define `DIAGNOSTIC_PRESERVATION_ON_BOOTSTRAP_FAILURE`: local bootstrap must keep a user-visible terminal failure state and/or durable bounded log; no credentials/raw private contents.
-
-- [ ] **Step 4: Re-run focused contract**
-
-Expected: focused bootstrap contract PASS.
+- [x] **Step 2: Add the strict boundary:** `discovery는 넓게, authority와 acceptance는 좁게`.
+- [x] **Step 3: Keep arbitrary disk search, untrusted same-name executable selection, API-key/paid fallback and unpinned Docker fallback forbidden.**
+- [x] **Step 4: Add diagnostic preservation:** user-visible terminal failure state and/or durable bounded diagnostic log, without secrets.
+- [x] **Step 5: Record the real 2026-08-15 problem → root cause → solution → boundary in the existing intake Learning Log.**
 
 ---
 
-### Task 3: Record the real problem → solution → lesson
+### Task 3: TDD workflow coupling
 
 **Files:**
-- Modify: `skills/managing-project-intake-and-work-contract/LEARNING_LOG.md`
+- Modify: `tests/test_one_shot_local_executor_bootstrap_contract.py`
+- Modify: `.github/workflows/validate-one-shot-local-executor-bootstrap.yml`
 
 **Interfaces:**
-- Consumes: approved policy semantics from Task 2.
-- Produces: durable `OBSERVATION` entry for 2026-08-15.
+- Produces: permanent CI coupling from owner/Learning Log/design/plan to the focused bootstrap contract.
 
-- [ ] **Step 1: Add a new top Learning Log entry**
-
-Record:
+- [x] **Step 1: Add a failing workflow-coupling test** requiring:
 
 ```text
-Trigger: user-PC Loop A2 installer rejected a working Codex session because it required codex.exe; follow-up installer could close before preserving failure evidence.
-Finding: packaging literal was stricter than real capability; discovery heuristics and authority/security gates were conflated; diagnostics were ephemeral.
-Decision: multi-route trusted discovery → semantic readiness probe → strict acceptance; preserve terminal/log diagnostics.
-Evidence: user terminal had already shown `codex login status` = `Logged in using ChatGPT`, while literal `codex.exe` detection failed.
-Boundary: no arbitrary disk search, no untrusted executable selection, no API-key/paid fallback, no weakening of exact authority/security gates.
-Next trigger: installers repeatedly false-block valid tools, ask for reinstall before probing actual capability, or lose blocker evidence on failure.
+docs/LOOP_A2_LOCAL_EXECUTOR.md
+skills/managing-project-intake-and-work-contract/LEARNING_LOG.md
 ```
 
-- [ ] **Step 2: Keep it an observation, not a new Skill**
+- [x] **Step 2: Observe RED.**
 
-Do not modify `skills/SKILL_REGISTRY.json`.
+```yaml
+head: 7655dbb8fd7f8f904233b6e1e3cb8def11a9fc6b
+workflow: Validate One-Shot Local Executor Bootstrap
+run: 31833487469
+job: 94874445902
+capability_contract: PASS
+workflow_coupling_contract: FAIL
+cause: docs/LOOP_A2_LOCAL_EXECUTOR.md not tracked by workflow
+```
+
+- [x] **Step 3: Extend workflow paths** to the owner, Learning Log, and capability-discovery spec/plan.
+- [ ] **Step 4: Require exact-final-head GREEN.**
 
 ---
 
-### Task 4: Adversarial regression, exact-head validation, merge
+### Task 4: Durable evidence and adversarial review
 
 **Files:**
-- Verify all changed files above.
+- Create: `docs/evidence/2026-08-15-local-bootstrap-capability-discovery.md`
+- Verify all files above.
 
 **Interfaces:**
-- Produces: merged Base policy/learning contract and closed Issue #415.
+- Produces: one durable problem/solution/evidence record for Issue #415 / PR #416.
 
-- [ ] **Step 1: Adversarial review**
+- [ ] **Step 1: Record actual local evidence**: GitHub auth, `codex login status`, Docker client/server and pinned image were working while literal `codex.exe` detection falsely blocked.
+- [ ] **Step 2: Record both RED cycles and final GREEN IDs.**
+- [ ] **Step 3: Adversarially attack:** arbitrary executable search, path-is-readiness, auth/payment weakening, credential logging, duplicate framework, open-PR overlap.
+- [ ] **Step 4: Require no validated P0/P1 finding before merge.**
 
-Attack:
+---
 
-```text
-- Does flexible discovery broaden to arbitrary untrusted executable search?
-- Can path existence become false readiness?
-- Are ChatGPT auth / paid API / exact SHA / protected paths weakened?
-- Can logs leak credentials/private contents?
-- Does this duplicate a Skill or resolver framework unnecessarily?
-- Does the diff overlap open PR #414 or any other active PR?
-```
+### Task 5: Exact-head validation, current-main reconciliation, merge
 
-Expected: all false after minimal implementation.
+**Files:**
+- Verify exact final PR diff and current Base `main`.
 
-- [ ] **Step 2: Run exact-head required checks**
+**Interfaces:**
+- Produces: merged Base policy/learning contract and completed Issue #415.
 
-Require focused bootstrap contract plus Base v9/adversarial and Game Project Operating System/`ci-gate` when emitted.
-
-- [ ] **Step 3: Re-read current main and active PRs before merge**
-
-Absorb only completed `main` changes if needed; never modify active PR branches.
-
-- [ ] **Step 4: Squash merge exact reviewed head**
-
-Use expected-head protection where supported.
-
-- [ ] **Step 5: Postmerge readback**
-
-Read merged policy/learning/test and confirm postmerge checks before closing Issue #415 as completed.
+- [ ] **Step 1: Re-read current `main` and active PRs.** Absorb only completed `main` changes when required; never modify active PR branches.
+- [ ] **Step 2: Confirm no changed-file overlap with active PR #414 or other active work.**
+- [ ] **Step 3: Require exact-head checks:** focused bootstrap, Loop A2 Local Executor when emitted, Base v9/adversarial, Game Project Operating System/`ci-gate`, and Dependency Review when emitted.
+- [ ] **Step 4: Confirm unresolved review threads = 0 and mergeability/ruleset conditions.**
+- [ ] **Step 5: Update PR #416 body, mark ready, and squash merge the exact reviewed head.**
+- [ ] **Step 6: Read merged `main`, verify postmerge checks, then close Issue #415 with durable evidence.**
