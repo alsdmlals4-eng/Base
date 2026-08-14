@@ -38,8 +38,8 @@ class WindowsInstallerV4ContractTests(unittest.TestCase):
         self.assertIn("pip install --disable-pip-version-check -e", self.text)
 
     def test_v4_uses_executor_preflight_as_docker_truth_and_only_pulls_exact_digest_on_missing_image(self) -> None:
-        self.assertGreaterEqual(self.text.count("loop-a2-local-executor.exe"), 2)
-        self.assertGreaterEqual(self.text.count(" preflight"), 2)
+        self.assertIn("loop-a2-local-executor.exe", self.text)
+        self.assertGreaterEqual(self.text.count("call :capture_preflight"), 2)
         self.assertIn("DOCKER_IMAGE_NOT_PRELOADED", self.text)
         self.assertIn('"!DOCKER_CMD!" pull "!IMAGE_REF!"', self.text)
         self.assertNotIn("docker image ls", self.folded)
