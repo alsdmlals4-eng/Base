@@ -89,6 +89,7 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
             'timezone: "Asia/Seoul"',
             "workflow_dispatch:",
             "bash tools/run_periodic_source_scan_queue.sh",
+            "python -m tools.periodic_source_analysis",
             "automation/source-scan-",
             "gh pr create",
             "gh workflow run validate-evidence-knowledge.yml",
@@ -109,6 +110,7 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
         for forbidden in (
             "timeout-minutes",
             "pull_request_target",
+            "python tools/periodic_source_analysis.py",
             "git push origin HEAD:main",
             "git push --force",
             "--admin",
