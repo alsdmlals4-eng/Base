@@ -142,13 +142,36 @@ class CandidateVerificationTests(unittest.TestCase):
             "rollback_strategy": "Discard fixture worktree.",
         }
         relative = "docs/operations/loop/RUNTIME_ADAPTER.json"
+        capsule = {
+            "contract_role": "LOOP_PROJECT_EXECUTION_CAPSULE",
+            "project_id": self.request.project_id,
+            "source_main_sha": self.sha,
+            "runtime_adapter_path": "RUNTIME_ADAPTER.json",
+            "implementation_package_path": "IMPLEMENTATION_PACKAGE.json",
+        }
+        package = {
+            "contract_role": "LOOP_IMPLEMENTATION_PACKAGE",
+            "project_id": self.request.project_id,
+            "package_id": self.request.package_id,
+            "source_main_sha": self.sha,
+        }
         return AuthoritySnapshot(
             project_id=self.request.project_id,
             package_id=self.request.package_id,
             source_main_sha=self.sha,
             capsule_path=self.request.capsule_path,
             runtime_adapter_path=relative,
-            files=(AuthorityFile(path=relative, content=json.dumps(adapter)),),
+            files=(
+                AuthorityFile(
+                    path=self.request.capsule_path,
+                    content=json.dumps(capsule),
+                ),
+                AuthorityFile(
+                    path=self.request.package_path,
+                    content=json.dumps(package),
+                ),
+                AuthorityFile(path=relative, content=json.dumps(adapter)),
+            ),
             snapshot_sha256="a" * 64,
         )
 
