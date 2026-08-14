@@ -67,5 +67,32 @@ jobs:
       - name: Figma plugin static contracts
         run: python -m pytest -q tools/tool-hub/tests/test_figma_plugin_contract.py
 
-      - name: Tool Hub web contracts
-        run: python -m pytest -q tools/tool-hub/tests/test_web_contract.py
+      - name: Web trust-boundary contract
+        run: python -m pytest -q tools/tool-hub/tests/test_web_contract.py::test_hub_warns_that_reviewed_runtime_must_not_be_edited_during_launch
+
+      - name: Web project-first baseline contract
+        run: python -m pytest -q tools/tool-hub/tests/test_web_contract.py::test_hub_browser_is_project_first_and_has_no_raw_command_surface
+
+      - name: Web catalog launch-state contract
+        run: python -m pytest -q tools/tool-hub/tests/test_web_contract.py::test_catalog_marks_all_three_reviewed_child_adapters_runnable
+
+      - name: Web child-state contract
+        run: python -m pytest -q tools/tool-hub/tests/test_web_contract.py::test_browser_uses_text_only_labels_and_project_tool_scoped_child_state
+
+      - name: Web onboarding contract
+        run: python -m pytest -q tools/tool-hub/tests/test_web_contract.py::test_browser_submits_the_selected_known_project_and_keeps_registered_projects_separate
+
+      - name: Web desktop launcher contract
+        run: python -m pytest -q tools/tool-hub/tests/test_web_contract.py::test_browser_installs_the_desktop_launcher_and_shuts_down_without_paths_or_pids
+
+      - name: Web authenticated child URL contract
+        run: python -m pytest -q tools/tool-hub/tests/test_web_contract.py::test_browser_opens_only_the_authenticated_loopback_url_returned_by_launch
+
+      - name: Web Figma bridge UX contract
+        run: python -m pytest -q tools/tool-hub/tests/test_web_contract.py::test_browser_has_project_scoped_figma_bridge_pairing_without_destination_inputs
+
+      - name: Web anchor evidence contract
+        run: python -m pytest -q tools/tool-hub/tests/test_web_contract.py::test_missing_project_anchor_evidence_has_a_truthful_public_reason
+
+      - name: Web QA launch regression
+        run: python -m pytest -q tools/tool-hub/tests/test_web_contract.py::test_hub_api_preserves_qa_launch_client
