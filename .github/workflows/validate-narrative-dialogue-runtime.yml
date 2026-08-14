@@ -7,6 +7,7 @@ on:
       - "examples/godot-narrative-dialogue-flow/**"
       - "examples/figma-make-narrative-dialogue-flow/**"
       - "templates/project-operations/FIGMA_NARRATIVE_DIALOGUE_FLOW_PROFILE.md"
+      - "docs/knowledge/godot/evidence/2026-08-14-narrative-dialogue-runtime-sample.md"
       - "tests/test_figma_narrative_dialogue_flow_contract.py"
       - ".github/workflows/validate-narrative-dialogue-runtime.yml"
   push:
@@ -15,6 +16,7 @@ on:
       - "examples/godot-narrative-dialogue-flow/**"
       - "examples/figma-make-narrative-dialogue-flow/**"
       - "templates/project-operations/FIGMA_NARRATIVE_DIALOGUE_FLOW_PROFILE.md"
+      - "docs/knowledge/godot/evidence/2026-08-14-narrative-dialogue-runtime-sample.md"
       - "tests/test_figma_narrative_dialogue_flow_contract.py"
       - ".github/workflows/validate-narrative-dialogue-runtime.yml"
   workflow_dispatch:
