@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from typing import Mapping
-
 from .job import JobContractError, LocalA2Job
+from .repositories import ManagedRepositoryError
 from .runtime import LocalRuntimeError
 
 
@@ -55,7 +54,7 @@ class LocalExecutorService:
         public = self._public_base(job)
         try:
             receipt = self.runtime.execute(job)
-        except LocalRuntimeError as exc:
+        except (LocalRuntimeError, ManagedRepositoryError) as exc:
             public.update({"status": "BLOCKED", "code": exc.code})
             self.control_plane.publish_terminal(job.issue_number, public, close=True)
             return {"status": "BLOCKED", "code": exc.code, "issue_number": job.issue_number}
