@@ -47,6 +47,8 @@ class SubscriptionHandoffPacket:
     review_checklist: tuple[str, ...]
     schema_version: int = 1
     state: str = "GPT_PRO_HANDOFF_READY"
+    generation_surface: str = "CHATGPT_PRO_SUBSCRIPTION"
+    output_media_type: str = "image/png"
     provider_call_made: bool = False
     requires_additional_payment: bool = False
 
@@ -54,6 +56,7 @@ class SubscriptionHandoffPacket:
         return {
             "schema_version": self.schema_version,
             "state": self.state,
+            "generation_surface": self.generation_surface,
             "project_id": self.project_id,
             "tool_id": self.tool_id,
             "run_id": self.run_id,
@@ -64,6 +67,7 @@ class SubscriptionHandoffPacket:
             },
             "generation": {
                 "instruction": self.instruction,
+                "output_media_type": self.output_media_type,
                 "expected_png_count": self.expected_png_count,
                 "min_dimension": self.min_dimension,
                 "max_dimension": self.max_dimension,
