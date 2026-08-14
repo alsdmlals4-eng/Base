@@ -52,18 +52,20 @@ WAITING_INTEGRATION
 
 The follow-up `GitWorktreeBuilderAdapter` provides a bounded local execution surface for deterministic tests:
 
-- the source repository remains clean while mutation occurs in an external detached Git worktree;
+- the tested source repository remains clean while mutation occurs in an external detached Git worktree;
 - the requested `expected_main_sha` must already exist in the source repository;
 - the runtime root must be outside the project repository;
-- changed-path evidence is collected from Git (`git diff ... HEAD` plus untracked files), not trusted from Worker claims;
+- changed-path evidence is collected from Git (`git diff ... HEAD` plus **all** untracked files, including ignored untracked files), not trusted from Worker claims;
 - declared-vs-actual changed-path mismatch fails closed;
 - actual out-of-scope changes reach the existing deterministic Runtime scope gate before Critic execution;
 - subprocess execution uses argv directly without shell expansion;
 - the subprocess receives a small allowlisted environment and does not inherit `OPENAI_API_KEY` or general parent secrets;
 - a bounded subprocess timeout returns `WORKER_TIMEOUT`;
-- cleanup removes the owned external worktree and prunes Git worktree metadata.
+- cleanup removes only external worktrees created by the current Adapter instance and preserves unowned path collisions.
 
 This generic subprocess adapter is intentionally **FAKE-only**. A `provider_mode=REAL` request returns `WORKER_PROVIDER_MODE_UNSUPPORTED` before the subprocess runs. A later real-provider adapter requires a separately reviewed sandbox/credential/transport boundary.
+
+Worktree ownership is currently process-local to the Adapter instance. Automatic recovery/reuse of a worktree after process restart is **not implemented**; a durable resume checkpoint and lease handoff are separate work.
 
 The timeout proves termination of the direct worker process used by this adapter. It does not claim a general OS sandbox or guaranteed process-tree termination for arbitrary descendants.
 
@@ -100,6 +102,7 @@ The following remain separate implementation slices:
 ```text
 sandboxed real Codex SDK Builder transport
 real read-only GPT Critic transport
+durable worktree resume / lease handoff after process restart
 project test-command execution and evidence capture
 PR handoff
 postmerge closure
