@@ -25,6 +25,7 @@ Base와 채택 프로젝트에서 반복되는 긴 설명을 짧은 용어로 �
 4. 테스트 파일 존재나 정적 PASS를 실제 실행·런타임·UX 완료로 과장할 수 있다.
 5. Base가 만든 압축명을 외부 업계 표준 용어처럼 오해할 수 있다.
 6. 같은 용어를 각 Skill에 반복 정의하면 정의가 갈라지고 수정 전파 비용이 커진다.
+7. semantic regression 파일이 존재해도 저장소의 명시적 CI 테스트 목록에 연결되지 않으면 실제 실행 Evidence가 생기지 않는다.
 
 ## 검토한 접근
 
@@ -33,7 +34,7 @@ Base와 채택 프로젝트에서 반복되는 긴 설명을 짧은 용어로 �
 | 거대한 독립 용어사전 | 한 파일에서 많은 용어 검색 | 비관련 용어까지 컨텍스트를 차지하고 책임 원본과 쉽게 분기 | 제외 |
 | 각 Skill에서 정의 반복 | 해당 Skill만 읽을 때 편함 | 중복·불일치·전파 누락 위험 | 제외 |
 | 새 Terminology Skill | 자동 trigger를 붙이기 쉬움 | 독립 입력·산출물·승인·검증 경계가 없어 기존 owner와 중복 | 제외 |
-| 얇은 통제 어휘 색인 + 기존 owner 링크 + 회귀 검사 | 한 단계 발견성, 낮은 중복, 기존 권한 보존 | 색인과 owner 일치 검사가 필요 | 채택 |
+| 얇은 통제 어휘 색인 + 기존 owner 링크 + 회귀 검사 | 한 단계 발견성, 낮은 중복, 기존 권한 보존 | 색인과 owner 일치 및 regression consumer 연결 검사가 필요 | 채택 |
 
 ## 설계 원칙
 
@@ -152,9 +153,10 @@ Evidence가 부족하면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED`, `BLOCK
 6. 정적 PASS를 runtime·render·UX·재미 PASS로 승격하지 않는다.
 7. 모든 의사결정 문서를 ADR이라고 부르지 않는다.
 8. 적대적 검토를 Red Team 공격 하나로 축약하지 않는다.
-9. `DDD`는 단독 사용하지 않는다.
+9. `DDD`를 단독 사용하지 않는다.
 10. 책임·권한·수명주기 조율이 없는 단일 도구를 Framework·Platform·Control Plane으로 과장하지 않는다.
 11. `BASE_LOCAL_ALIAS`를 외부 표준·업계 공인 용어처럼 소개하지 않는다.
+12. CI가 해당 regression을 호출하지 않았는데 단순 green workflow만으로 그 regression이 실행됐다고 주장하지 않는다.
 
 ## 구현 범위
 
@@ -169,6 +171,7 @@ Evidence가 부족하면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED`, `BLOCK
 
 - `START_HERE.md`
 - `docs/DOCUMENTATION_MAP.md`
+- `.github/workflows/validate-game-project-operating-system.yml`
 
 ### 의도적으로 미수정·보호
 
@@ -177,11 +180,13 @@ Evidence가 부족하면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED`, `BLOCK
 - `skills/SKILL_REGISTRY.json`
 - `docs/generated/BASE_ACTIVE_SKILLS.md`
 - `schemas/**`
-- `.github/workflows/**`
+- `.github/workflows/**` 중 위 semantic regression consumer 외의 모든 workflow
 - released lock·frozen release artifact
 - 프로젝트 고유 문서·게임 코드·데이터·Scene·Resource·자산
 
-`docs/DOCUMENTATION_MAP.md`는 문서 위치·책임의 상위 정본이므로 적대적 재검토에서 누락을 `MUST_FIX`로 판정했다. 따라서 `START_HERE.md`의 한 단계 사용자 라우팅과 함께 Map의 공용 책임 원본 표에도 `docs/CONTROLLED_VOCABULARY.md`를 등록한다. 이 수정은 새 실행 owner를 만들지 않고 발견성과 권한 일치만 보강한다.
+`docs/DOCUMENTATION_MAP.md`는 문서 위치·책임의 상위 정본이므로 적대적 재검토에서 누락을 `MUST_FIX`로 판정했다. 따라서 `START_HERE.md`의 한 단계 사용자 라우팅과 함께 Map의 공용 책임 원본 표에도 `docs/CONTROLLED_VOCABULARY.md`를 등록한다.
+
+또한 첫 exact-head green 뒤 실제 workflow 정의를 역검토한 결과, 새 semantic regression이 명시적 unittest 목록에 포함되지 않아 **테스트 파일 존재 ≠ 테스트 실행 Evidence** 문제가 발견됐다. 이를 `MUST_FIX`로 판정하고 `validate-game-project-operating-system.yml`의 `ubuntu-contract`에 해당 test를 compile·unittest consumer로 최소 연결한다. 다른 job 조건·권한·runner·검증 목록은 재설계하지 않는다.
 
 ## 완료 기준
 
@@ -191,8 +196,9 @@ Evidence가 부족하면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED`, `BLOCK
 4. IRG가 `BASE_LOCAL_ALIAS`로 명시되고 기존 검증 owner에 연결되며 새 Skill·Mode가 생기지 않는다.
 5. `START_HERE.md`와 `docs/DOCUMENTATION_MAP.md`가 새 정본을 직접 찾게 한다.
 6. semantic regression이 정본·양쪽 라우팅·금지된 새 Skill 등록·핵심 용어·IRG fail-closed 경계를 검사한다.
-7. exact-head CI, 적대적 검토, unresolved thread 0, 현재 main 충돌 검사를 통과한다.
-8. 병합 뒤 새 main에서 파일·용어·merge SHA와 필수 검사를 재조회한다.
+7. final exact HEAD의 Game Project OS `ubuntu-contract`가 `tests/test_controlled_vocabulary_contract.py`를 실제로 호출하고 PASS한다.
+8. workflow 변경으로 상승한 CI 검증 등급의 필수 job, Base v9, 적대적 gate, unresolved thread 0, 현재 main 충돌 검사를 통과한다.
+9. 병합 뒤 새 main에서 파일·용어·workflow consumer·merge SHA와 필수 검사를 재조회한다.
 
 ## 검증 전략
 
@@ -200,16 +206,18 @@ Evidence가 부족하면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED`, `BLOCK
 RED
 - semantic regression을 먼저 추가한다.
 - IRG의 BASE-local 표준성 경계와 Documentation Map 등록이 없으면 실패하도록 고정한다.
+- regression 파일만 존재하고 CI consumer가 없으면 실행 Evidence 미충족으로 본다.
 
 GREEN
 - 통제 어휘에 source class와 IRG의 BASE_LOCAL_ALIAS 경계를 추가한다.
 - START_HERE와 Documentation Map을 같은 canonical route로 맞춘다.
-- exact-head CI로 새 regression과 기존 Base 계약을 함께 검증한다.
+- Game Project OS ubuntu-contract의 명시적 compile/unittest 목록에 semantic regression을 연결한다.
+- final exact-head CI로 새 regression과 기존 Base 계약을 함께 검증한다.
 
 REVIEW
 - actual diff와 승인 범위를 Acceptance별 연결한다.
-- 동일 Goal PR과 untouched consumer를 재검사한다.
-- 용어 중복·권한 탈취·과장·모호성을 attack → validate-critique로 검토한다.
+- 동일 Goal PR과 동시 변경의 파일·hunk 충돌을 재검사한다.
+- 용어 중복·권한 탈취·과장·모호성·inert test를 attack → validate-critique로 검토한다.
 - 수정 뒤 regression-recheck를 실행한다.
 
 INTEGRATION
@@ -219,7 +227,7 @@ INTEGRATION
 
 ## 롤백
 
-단일 squash merge를 revert한다. 신규 Skill·Registry·Schema·프로젝트 데이터·마이그레이션이 없으므로 롤백은 문서·test route에 한정된다.
+단일 squash merge를 revert한다. 신규 Skill·Registry·Schema·프로젝트 데이터·마이그레이션이 없으며, 롤백 시 vocabulary·routing·semantic test와 그 최소 CI consumer를 함께 되돌린다.
 
 ## 외부 근거
 
