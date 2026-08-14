@@ -8,6 +8,7 @@ import subprocess
 import sys
 import time
 from urllib.request import HTTPCookieProcessor, Request, build_opener
+from urllib.error import HTTPError
 
 import pytest
 
@@ -82,8 +83,12 @@ def test_windows_process_starts_and_serves_blocked_catalog(tmp_path: Path) -> No
                     "X-Hub-CSRF": str(config["csrf_token"]),
                 },
             )
-            with opener.open(request, timeout=20) as response:
-                registered = json.load(response)
+            try:
+                with opener.open(request, timeout=20) as response:
+                    registered = json.load(response)
+            except HTTPError as error:
+                detail = error.read().decode("utf-8", errors="replace")
+                pytest.fail(f"Windows project registration returned HTTP {error.code}: {detail}")
             assert registered["project_id"] == project_id
 
         with opener.open(f"http://127.0.0.1:{port}/api/catalog", timeout=2) as response:
