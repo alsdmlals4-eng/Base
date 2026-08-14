@@ -2,13 +2,34 @@ from __future__ import annotations
 
 from pathlib import Path
 import sys
+import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
+import loop_a2_local_executor.cli as cli
 from loop_a2_local_executor.cli import build_parser
+
+
+class _FakeService:
+    def once(self):
+        return {"status": "IDLE", "code": "NO_ELIGIBLE_JOB"}
+
+
+class _RecordingLock:
+    def __init__(self, path: Path, entered: list[Path]) -> None:
+        self.path = Path(path)
+        self.entered = entered
+
+    def __enter__(self):
+        self.entered.append(self.path)
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        return False
 
 
 class EntrypointTests(unittest.TestCase):
@@ -34,6 +55,22 @@ class EntrypointTests(unittest.TestCase):
         pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
         self.assertIn('[project.scripts]', pyproject)
         self.assertIn('loop-a2-local-executor = "loop_a2_local_executor.cli:main"', pyproject)
+
+    def test_once_and_daemon_use_the_same_state_root_singleton_lock(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            state_root = Path(temp).resolve()
+            for command in (("once",), ("daemon", "--poll-seconds", "15")):
+                with self.subTest(command=command):
+                    entered: list[Path] = []
+                    lock_factory = lambda path: _RecordingLock(path, entered)
+                    with (
+                        patch.object(cli, "InstanceLock", side_effect=lock_factory),
+                        patch.object(cli, "build_service", return_value=_FakeService()),
+                        patch.object(cli.time, "sleep", side_effect=KeyboardInterrupt),
+                    ):
+                        result = cli.main(["--state-root", str(state_root), *command])
+                    self.assertEqual(result, 0)
+                    self.assertEqual(entered, [state_root / "executor.lock"])
 
 
 if __name__ == "__main__":
