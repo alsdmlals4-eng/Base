@@ -37,6 +37,7 @@ jobs:
           python -m unittest
           tests.test_loop_a2_openai_transport
           tests.test_loop_a2_openai_transport_adversarial
+          tests.test_loop_a2_openai_transport_authority
           -v
       - name: Validate whitespace
         run: git diff --check
