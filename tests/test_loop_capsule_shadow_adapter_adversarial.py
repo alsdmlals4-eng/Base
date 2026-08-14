@@ -7,6 +7,7 @@ import unittest
 
 from tests.test_loop_capsule_shadow_adapter import (
     LoopCapsuleShadowAdapterTests,
+    ROOT,
     SOURCE_SHA,
 )
 
@@ -71,18 +72,6 @@ class LoopCapsuleShadowAdapterAdversarialTests(LoopCapsuleShadowAdapterTests):
     def test_direct_cli_emits_closed_request_without_state_or_product_write(self) -> None:
         temporary, capsule_path = self._bundle()
         self.addCleanup(temporary.cleanup)
-        completed = subprocess.run(
-            [
-                sys.executable,
-                str(self.ROOT if hasattr(self, "ROOT") else capsule_path.parents[0]),
-            ],
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-        # Build the real command separately so a malformed test harness path can
-        # never be mistaken for adapter behavior.
-        from tests.test_loop_capsule_shadow_adapter import ROOT
         completed = subprocess.run(
             [
                 sys.executable,
