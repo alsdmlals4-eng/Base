@@ -11,6 +11,7 @@ on:
       - "templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md"
       - "templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md"
       - "templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md"
+      - "templates/project-operations/FIGMA_NARRATIVE_DIALOGUE_FLOW_PROFILE.md"
       - "templates/project-operations/PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md"
       - "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md"
       - "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md"
@@ -23,6 +24,7 @@ on:
       - "tests/test_bca_visual_sheet_workflow.py"
       - "tests/test_project_gdd_google_sheets_contract.py"
       - "tests/test_visual_collaboration_capability_contract.py"
+      - "tests/test_figma_narrative_dialogue_flow_contract.py"
       - ".github/reference-freshness.json"
       - ".github/workflows/validate-bca-visual-sheet-workflow.yml"
   workflow_dispatch:
@@ -60,9 +62,11 @@ jobs:
             python -m py_compile tests/test_bca_visual_sheet_workflow.py
             python -m py_compile tests/test_project_gdd_google_sheets_contract.py
             python -m py_compile tests/test_visual_collaboration_capability_contract.py
+            python -m py_compile tests/test_figma_narrative_dialogue_flow_contract.py
             python -m unittest tests.test_bca_visual_sheet_workflow -v
             python -m unittest tests.test_project_gdd_google_sheets_contract -v
             python -m unittest tests.test_visual_collaboration_capability_contract -v
+            python -m unittest tests.test_figma_narrative_dialogue_flow_contract -v
           } > bca-contract-results.txt 2>&1
           status=$?
           cat bca-contract-results.txt
