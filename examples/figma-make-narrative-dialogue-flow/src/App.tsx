@@ -63,6 +63,8 @@ function validateFlow(flow: DialogueFlow, indexes: Indexes): string[] {
     if (!scene.beats.some((beat) => beat.beat_id === scene.entry_beat_id)) errors.push(`${scene.scene_id}: entry beat is outside the scene`);
     scene.beats.forEach((beat) => {
       unique("beat", beat.beat_id);
+      if (beat.dialogues.length === 0) errors.push(`${beat.beat_id}: at least one dialogue line is required`);
+      if (beat.choices.length === 0) errors.push(`${beat.beat_id}: explicit END or transition choice is required`);
       beat.dialogues.forEach((line) => unique("dialogue", line.dialogue_id));
       beat.choices.forEach((choice) => {
         unique("choice", choice.choice_id);
@@ -122,9 +124,11 @@ export default function App() {
         </div>
       </header>
       {errors.length > 0 && <div className="error-banner"><b>검증 오류 {errors.length}</b>{errors.map((error) => <span key={error}>{error}</span>)}</div>}
-      {mode === "preview"
-        ? <Preview flow={flow} indexes={indexes} />
-        : <Editor flow={flow} indexes={indexes} setFlow={setFlow} />}
+      {mode === "preview" && errors.length > 0
+        ? <main className="preview-blocked"><b>PREVIEW BLOCKED</b><p>관계 오류를 수정해야 실행 미리보기를 시작할 수 있습니다.</p></main>
+        : mode === "preview"
+          ? <Preview flow={flow} indexes={indexes} />
+          : <Editor flow={flow} indexes={indexes} setFlow={setFlow} />}
     </div>
   );
 }
