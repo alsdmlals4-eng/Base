@@ -53,6 +53,7 @@ class NeutralAdversarialFeatureLifecycleTests(unittest.TestCase):
     def test_continuous_work_reuses_adversarial_lifecycle_without_bypassing_user_gates(self) -> None:
         intake = read("skills/managing-project-intake-and-work-contract/SKILL.md")
         reference = read("skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md")
+        task_recovery = read("skills/managing-project-intake-and-work-contract/references/task-recovery-protocol.md")
         routing = read("docs/WORK_MODE_AND_SKILL_ROUTING.md")
         operating = read("docs/OPERATING_MODEL.md")
         agents = read("AGENTS.md")
@@ -73,6 +74,16 @@ class NeutralAdversarialFeatureLifecycleTests(unittest.TestCase):
         ):
             self.assertIn(term, reference)
 
+        for term in (
+            "TASK_RECOVERY_PROTOCOL",
+            "RETRY",
+            "RESUME",
+            "연결이 끊어졌습니다. 전체 답변을 기다리는 중입니다",
+            "이미 완료된 단계는 다시 실행하지 않는다",
+        ):
+            self.assertIn(term, task_recovery)
+
+        self.assertIn("task-recovery-protocol.md", intake)
         self.assertIn("Work Mode를 대체하지 않는다", reference)
         self.assertIn("scheduler", reference)
         self.assertIn("webhook", reference)
