@@ -51,7 +51,7 @@ class _RawOutputRunner(_ExecRunner):
 
 
 class CodexCliTransportTests(unittest.TestCase):
-    def test_process_is_ephemeral_read_only_config_isolated_shell_disabled_and_shell_free(self) -> None:
+    def test_process_is_ephemeral_read_only_config_isolated_shell_and_web_disabled_and_shell_free(self) -> None:
         from tools.loop_a2_runtime.codex_cli_transport import CodexCliProcess
 
         runner = _ExecRunner()
@@ -86,6 +86,9 @@ class CodexCliTransportTests(unittest.TestCase):
             if item == "-c"
         ]
         self.assertIn("features.shell_tool=false", config_pairs)
+        self.assertIn("features.web_search_request=false", config_pairs)
+        self.assertIn("features.web_search_cached=false", config_pairs)
+        self.assertIn("features.standalone_web_search=false", config_pairs)
         for required in ("--ephemeral", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check"):
             self.assertIn(required, argv[exec_index + 1 :])
         sandbox_index = argv.index("--sandbox")
