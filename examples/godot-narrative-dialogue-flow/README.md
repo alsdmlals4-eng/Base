@@ -43,7 +43,7 @@ godot --headless \
   --script res://tests/test_dialogue_flow_runtime.gd
 ```
 
-CI는 Base에서 고정한 Godot 4.7.1 archive와 SHA-256을 사용한다.
+이 구현 검증에서는 고정된 Godot `4.7.1.stable.official.a13da4feb` archive와 SHA-256을 사용한 임시 branch harness로 실제 실행을 완료했다. 실행 ID와 결과는 `docs/knowledge/godot/evidence/2026-08-14-narrative-dialogue-runtime-sample.md`에 남긴다. 최종 Base에는 이 기능만을 위한 별도 상시 CI workflow를 추가하지 않고, 위 명령으로 동일한 runtime fixture를 재실행할 수 있게 유지한다.
 
 ## 현재 범위
 
