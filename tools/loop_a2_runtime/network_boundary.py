@@ -28,6 +28,7 @@ _CONTAINER_ENV_ALLOWLIST = frozenset(
         "TZ",
     }
 )
+_CONTAINER_WORKSPACE = "/workspace"
 _PROBE_CODE = (
     "import json,socket; "
     "print(json.dumps(sorted(name for _, name in socket.if_nameindex())))"
@@ -170,21 +171,10 @@ class LinuxUnshareDeniedNetworkBoundary:
         executable = self._resolve_unshare()
         if executable is None:
             return None
-        if not self._probe(
-            executable=executable,
-            cwd=closed_cwd,
-            environment=closed_environment,
-        ):
+        if not self._probe(executable=executable, cwd=closed_cwd, environment=closed_environment):
             return None
         return NetworkExecutionPlan(
-            argv=(
-                executable,
-                "--user",
-                "--map-root-user",
-                "--net",
-                "--",
-                *tuple(argv),
-            ),
+            argv=(executable, "--user", "--map-root-user", "--net", "--", *tuple(argv)),
             environment=closed_environment,
             boundary_id=_UNSHARE_BOUNDARY_ID,
         )
@@ -194,9 +184,8 @@ class DockerNoneDeniedNetworkBoundary:
     """Run DENIED project tests in a preloaded immutable Docker image.
 
     The boundary never pulls or builds an image. Callers must preload an image and
-    pass its exact local ``sha256:<64 hex>`` image ID. The test working directory is
-    the only host path mounted into the container and is mounted read-only. Docker's
-    ``none`` network driver supplies only loopback; all Linux capabilities are dropped.
+    pass its exact local ``sha256:<64 hex>`` image ID. Only the test working directory
+    is mounted into the container, at ``/workspace``, and the bind is read-only.
     """
 
     def __init__(
@@ -235,14 +224,7 @@ class DockerNoneDeniedNetworkBoundary:
             return self._image_verified
         try:
             completed = subprocess.run(
-                [
-                    executable,
-                    "image",
-                    "inspect",
-                    "--format",
-                    "{{.Id}}",
-                    self.image_id,
-                ],
+                [executable, "image", "inspect", "--format", "{{.Id}}", self.image_id],
                 cwd=cwd,
                 env=dict(environment),
                 text=True,
@@ -254,10 +236,7 @@ class DockerNoneDeniedNetworkBoundary:
         except (OSError, subprocess.TimeoutExpired):
             self._image_verified = False
             return False
-        self._image_verified = (
-            completed.returncode == 0
-            and completed.stdout.strip() == self.image_id
-        )
+        self._image_verified = completed.returncode == 0 and completed.stdout.strip() == self.image_id
         return self._image_verified
 
     def prepare(
@@ -287,17 +266,13 @@ class DockerNoneDeniedNetworkBoundary:
         executable = self._resolve_docker()
         if executable is None:
             return None
-        if not self._verify_local_image(
-            executable=executable,
-            cwd=closed_cwd,
-            environment=closed_environment,
-        ):
+        if not self._verify_local_image(executable=executable, cwd=closed_cwd, environment=closed_environment):
             return None
 
         docker_env: list[str] = []
         for key in sorted(_CONTAINER_ENV_ALLOWLIST.intersection(closed_environment)):
             docker_env.extend(("--env", key))
-        mount = f"type=bind,src={cwd_text},dst={cwd_text},readonly"
+        mount = f"type=bind,src={cwd_text},dst={_CONTAINER_WORKSPACE},readonly"
         return NetworkExecutionPlan(
             argv=(
                 executable,
@@ -319,7 +294,7 @@ class DockerNoneDeniedNetworkBoundary:
                 "--mount",
                 mount,
                 "--workdir",
-                cwd_text,
+                _CONTAINER_WORKSPACE,
                 *docker_env,
                 self.image_id,
                 *tuple(argv),
