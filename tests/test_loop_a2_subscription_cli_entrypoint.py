@@ -12,6 +12,7 @@ from unittest.mock import ANY, MagicMock, patch
 
 import tools.loop_a2 as cli
 from tools.loop_a2_runtime.authority_snapshot import AuthoritySnapshotError
+from tools.loop_a2_runtime.codex_cli_transport import CodexCliTransportError
 from tools.loop_a2_runtime.network_boundary import DockerNoneDeniedNetworkBoundary
 from tools.loop_a2_runtime.protocol import RunRequest
 from tools.loop_a2_runtime.test_executor import ProjectTestExecutor
@@ -55,7 +56,7 @@ class SubscriptionCliEntrypointTests(unittest.TestCase):
             argv.extend(["--denied-network-docker-image-id", image_id])
         return argv
 
-    def test_real_provider_fails_closed_before_factory_when_chatgpt_auth_is_unavailable(self) -> None:
+    def test_factory_owns_chatgpt_auth_failure_after_authority_and_boundary_inputs(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             project_root = Path(temp) / "project"
             runtime_root = Path(temp) / "runtime"
@@ -68,14 +69,12 @@ class SubscriptionCliEntrypointTests(unittest.TestCase):
                 patch.object(cli, "capture_authority_snapshot", return_value=snapshot) as capture,
                 patch.object(
                     cli,
-                    "subscription_codex_cli_gate",
-                    return_value={
-                        "status": "BLOCKED_UNVERIFIED",
-                        "code": "CODEX_CHATGPT_AUTH_REQUIRED",
-                        "message": "ChatGPT login required",
-                    },
-                ),
-                patch.object(cli, "build_subscription_provider_components") as factory,
+                    "build_subscription_provider_components",
+                    side_effect=CodexCliTransportError(
+                        "CODEX_CHATGPT_AUTH_REQUIRED",
+                        "ChatGPT login required",
+                    ),
+                ) as factory,
                 patch.object(sys, "argv", self._argv(project_root, runtime_root)),
                 redirect_stdout(output),
             ):
@@ -88,7 +87,7 @@ class SubscriptionCliEntrypointTests(unittest.TestCase):
                 capsule_relative="docs/operations/loop/PROJECT_EXECUTION_CAPSULE.json",
                 request=request,
             )
-            factory.assert_not_called()
+            factory.assert_called_once()
 
     def test_real_provider_constructs_subscription_components_and_real_runtime(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -114,11 +113,6 @@ class SubscriptionCliEntrypointTests(unittest.TestCase):
             with (
                 patch.object(cli, "build_request_from_capsule", return_value=request) as bridge,
                 patch.object(cli, "capture_authority_snapshot", return_value=snapshot) as capture,
-                patch.object(
-                    cli,
-                    "subscription_codex_cli_gate",
-                    return_value={"status": "READY", "code": "CODEX_CHATGPT_AUTH_READY"},
-                ),
                 patch.object(cli, "build_subscription_provider_components", return_value=components) as factory,
                 patch.object(cli, "A2Runtime", return_value=runtime) as runtime_class,
                 patch.object(sys, "argv", self._argv(project_root, runtime_root)),
@@ -170,7 +164,7 @@ class SubscriptionCliEntrypointTests(unittest.TestCase):
             self.assertEqual(payload["status"], "CONTRACT_INVALID")
             self.assertEqual(payload["code"], "REAL_RUNTIME_ROOT_REQUIRED")
 
-    def test_real_provider_requires_explicit_denied_network_image_before_auth_or_factory(self) -> None:
+    def test_real_provider_requires_explicit_denied_network_image_before_authority_or_factory(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             project_root = Path(temp) / "project"
             runtime_root = Path(temp) / "runtime"
@@ -179,7 +173,6 @@ class SubscriptionCliEntrypointTests(unittest.TestCase):
             with (
                 patch.object(cli, "build_request_from_capsule", return_value=_real_request()),
                 patch.object(cli, "capture_authority_snapshot") as capture,
-                patch.object(cli, "subscription_codex_cli_gate") as gate,
                 patch.object(cli, "build_subscription_provider_components") as factory,
                 patch.object(
                     sys,
@@ -195,10 +188,9 @@ class SubscriptionCliEntrypointTests(unittest.TestCase):
             self.assertEqual(payload["status"], "BLOCKED_UNVERIFIED")
             self.assertEqual(payload["code"], "REAL_PROJECT_TEST_BOUNDARY_REQUIRED")
             capture.assert_not_called()
-            gate.assert_not_called()
             factory.assert_not_called()
 
-    def test_authority_snapshot_failure_blocks_before_auth_or_factory(self) -> None:
+    def test_authority_snapshot_failure_blocks_before_factory_auth_gate(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             project_root = Path(temp) / "project"
             runtime_root = Path(temp) / "runtime"
@@ -211,7 +203,6 @@ class SubscriptionCliEntrypointTests(unittest.TestCase):
                     "capture_authority_snapshot",
                     side_effect=AuthoritySnapshotError("stale authority"),
                 ),
-                patch.object(cli, "subscription_codex_cli_gate") as gate,
                 patch.object(cli, "build_subscription_provider_components") as factory,
                 patch.object(sys, "argv", self._argv(project_root, runtime_root)),
                 redirect_stdout(output),
@@ -222,7 +213,6 @@ class SubscriptionCliEntrypointTests(unittest.TestCase):
             payload = json.loads(output.getvalue())
             self.assertEqual(payload["status"], "CONTRACT_INVALID")
             self.assertEqual(payload["code"], "AUTHORITY_SNAPSHOT_INVALID")
-            gate.assert_not_called()
             factory.assert_not_called()
 
 
