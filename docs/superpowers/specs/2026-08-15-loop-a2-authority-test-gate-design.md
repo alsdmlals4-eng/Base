@@ -56,18 +56,31 @@ Add `tools/loop_a2_runtime/candidate_verification.py`.
 For every successful Builder candidate, before Critic:
 
 1. verify durable worktree ownership for project/run/SHA;
-2. read the Runtime Adapter JSON from the immutable snapshot, not the baseline worktree;
-3. run the existing `ProjectTestExecutor` against the owned Builder worktree;
-4. require `PASS`;
-5. publish only the bounded canonical test receipt to the mailbox under project/run/package/SHA identity.
+2. read the Runtime Adapter text from the immutable snapshot, not the baseline worktree;
+3. materialize that exact text only into a system temporary directory outside the product worktree;
+4. call the existing file-based `ProjectTestExecutor.run_all()` unchanged against the owned Builder worktree;
+5. require `PASS`;
+6. publish only the bounded canonical test receipt to the mailbox under project/run/package/SHA identity.
+
+The temporary Runtime Adapter file is transport material only. It never becomes part of the project worktree or Git Diff. `ProjectTestExecutor` remains the single project-test implementation; no parallel value-based API or duplicate execution path is added.
 
 `FAIL`, `BLOCKED`, ownership mismatch, invalid adapter, or missing verifier blocks the REAL run before Critic. No automatic retry can bypass this gate.
 
-### 4. ProjectTestExecutor adapter-value entry point
+### 4. Existing ProjectTestExecutor remains unchanged
 
-Refactor `ProjectTestExecutor` so the existing file-based `run_all()` delegates to a new value-based entry point. This allows the verifier to supply the already-captured Runtime Adapter object without writing authority files into the execution worktree.
+Existing Solution First review showed that `ProjectTestExecutor.run_all(adapter_path=..., worktree_path=...)` does not require `adapter_path` to live inside the worktree. Therefore no `run_all_from_value()` refactor is necessary.
 
-Existing file-based consumers remain unchanged.
+Decision: **REUSE**, not REFACTOR.
+
+This preserves all existing behavior unchanged:
+
+- disposable verification worktree;
+- candidate-change overlay;
+- test-command workspace mutation detection;
+- timeout and bounded output handling;
+- digest-only durable stdout/stderr evidence;
+- explicit NetworkBoundary enforcement;
+- project/SHA identity checks.
 
 ### 5. Critic evidence binding
 
@@ -83,7 +96,8 @@ No Builder transcript, hidden model state, raw test stdout/stderr, API key, or s
 
 - `provider_mode=FAKE`: existing behavior remains compatible; verifier is optional.
 - `provider_mode=REAL`: a candidate verifier is mandatory at execution time.
-- after every initial/repair Builder scope PASS, verification must PASS before Critic runs.
+- the missing-verifier condition blocks before Builder, so subscription usage cannot be consumed by a run that could never pass deterministic tests;
+- after every initial/repair Builder scope PASS, verification must PASS before Critic runs;
 - verification failure produces `BLOCKED_UNVERIFIED` with bounded finding codes/evidence and zero Critic calls.
 
 This prevents a future REAL provider factory from accidentally bypassing deterministic project tests.
@@ -138,7 +152,7 @@ Therefore this Base fix must not select a Phase C product package. After Base po
 Create a real temporary Git fixture with:
 
 1. baseline commit containing implementation/test files;
-2. later authority commit adding Capsule bundle files whose `source_main_sha` points to baseline;
+2. later authority state adding Capsule bundle files whose `source_main_sha` points to baseline;
 3. detached A2 worktree at baseline.
 
 RED must prove current Builder authority collection fails because the Capsule is absent from the baseline worktree. GREEN must prove the snapshot supplies authority without copying it into the worktree.
@@ -147,7 +161,8 @@ RED must prove current Builder authority collection fails because the Capsule is
 
 Require:
 
-- REAL runtime with no verifier → blocked before Critic;
+- snapshot Runtime Adapter can drive the unchanged `ProjectTestExecutor` without being copied into the product worktree;
+- REAL runtime with no verifier → blocked before Builder/Critic;
 - project-test FAIL/BLOCKED → blocked before Critic;
 - PASS receipt → Critic invoked once;
 - repair Builder candidate → tests rerun before the next Critic call;
