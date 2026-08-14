@@ -10,6 +10,7 @@ from tools.periodic_source_scan_queue import select_due_source_batch
 
 
 ROOT = Path(__file__).resolve().parents[1]
+AGENTS = ROOT / "AGENTS.md"
 WORKFLOW = ROOT / ".github" / "workflows" / "periodic-source-scan-queue.yml"
 BASE_V9_WORKFLOW = ROOT / ".github" / "workflows" / "validate-base-v9-rc.yml"
 RUNNER = ROOT / "tools" / "run_periodic_source_scan_queue.sh"
@@ -100,7 +101,6 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
             "git merge --no-edit origin/main",
             "reviewThreads",
             "gh pr merge",
-            "--auto",
             "--squash",
             "--match-head-commit",
             "No material candidate survived the Evidence gate.",
@@ -119,6 +119,28 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
         trigger_block = workflow.split("\npermissions:", 1)[0]
         self.assertNotIn("PERIODIC_SOURCE_CANDIDATE_LEDGER.json", trigger_block)
         self.assertNotIn("PERIODIC_SOURCE_OPERATIONS_LEDGER.json", trigger_block)
+
+    def test_scheduled_write_automation_defers_while_foreign_pr_is_open(self) -> None:
+        agents = AGENTS.read_text(encoding="utf-8")
+        runner = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("SCHEDULED_AUTOMATION_ACTIVE_PR_GUARD", agents)
+        for required in (
+            "BLOCKED_ACTIVE_PR_GUARD",
+            "foreign_open_prs",
+            "assert_no_foreign_open_prs",
+            'assert_no_foreign_open_prs ""',
+            'assert_no_foreign_open_prs "$pr_number"',
+        ):
+            self.assertIn(required, runner)
+        self.assertLess(
+            runner.index('assert_no_foreign_open_prs ""'),
+            runner.index("python -m tools.periodic_source_analysis"),
+        )
+        self.assertLess(
+            runner.rindex('assert_no_foreign_open_prs "$pr_number"'),
+            runner.rindex("gh pr merge"),
+        )
+        self.assertNotIn("--auto", runner)
 
     def test_temporary_patch_and_export_files_are_removed(self) -> None:
         for path in TEMPORARY_PATCH_FILES:
