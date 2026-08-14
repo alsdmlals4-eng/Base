@@ -62,6 +62,7 @@ Base 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 �
 | 항상 적용 규칙 | `AGENTS.md` | 모든 작업의 권한·환경·승인·보호·증거·정확한 HEAD·완료 보고 불변 규칙 |
 | 통합 운영 모델 | `docs/OPERATING_MODEL.md` | 작업 생명주기·책임 원본·상태·발행·근거·검증 정책 |
 | Work Mode·Skill 라우팅 | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | PLAN·BUILD·REVIEW, 자동 선택, Grill Me, 실행 보고 |
+| 공용 용어·컨텍스트 압축 | `docs/CONTROLLED_VOCABULARY.md` | `BASE_SHARED` 교차 분야 용어의 짧은 정의·Bounded Context·별칭·금지 의미·기존 canonical owner 연결; 프로젝트 실제 상태·수치·세계관 정본은 소유하지 않음 |
 | GPT–Codex 역할·인계 | `docs/GPT_CODEX_WORKFLOW_POLICY.md` | GPT 기획·구현·POC 누적 → `USER_REQUESTED_CODEX_HANDOFF`; Codex는 실제 저장소·프로젝트·Godot을 재검증하고 `CODEX_PREFLIGHT_OPTIONAL`은 고위험·불확실 작업에서만 사용; 단계별 Godot 구현·PR Gate |
 | GitHub Pro 운영 | `docs/GITHUB_PRO_OPERATING_POLICY.md` | Ruleset·`ci-gate`·자동 병합·사용량 Budget |
 | Base GitHub 저장소 현행 Profile | `docs/operations/BASE_GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md` | 가변 owner·visibility·기본 Branch·플랫폼 검증 상태; 동결 release lock과 분리 |

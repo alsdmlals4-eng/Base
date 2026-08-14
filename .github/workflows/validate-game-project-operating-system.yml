@@ -318,6 +318,7 @@ jobs:
             templates/project-operations/github/check_skill_routing_governance.py \
             templates/project-operations/github/check_design_document_publications.py \
             tests/test_documentation_governance.py \
+            tests/test_controlled_vocabulary_contract.py \
             tests/test_skill_routing_governance.py \
             tests/test_consolidated_skill_references.py \
             tests/test_reference_freshness.py \
@@ -355,6 +356,7 @@ jobs:
           set -o pipefail
           python -m unittest \
             tests/test_documentation_governance.py \
+            tests/test_controlled_vocabulary_contract.py \
             tests/test_skill_routing_governance.py \
             tests/test_consolidated_skill_references.py \
             tests/test_reference_freshness.py \
