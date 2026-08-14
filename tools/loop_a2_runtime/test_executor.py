@@ -1,14 +1,17 @@
 from __future__ import annotations
 
+from contextlib import contextmanager
 from dataclasses import dataclass
 import hashlib
 import json
 import os
 from pathlib import Path, PurePosixPath
 import re
+import shutil
 import subprocess
+import tempfile
 import time
-from typing import Mapping, Protocol, Sequence
+from typing import Iterator, Mapping, Protocol, Sequence
 
 from tools.loop_contracts.schema_validation import validate_schema
 
@@ -166,12 +169,12 @@ def _resolve_inside(root: Path, relative: str) -> Path | None:
     return candidate
 
 
-def _git_bytes(repo: Path, *args: str) -> bytes:
+def _git_bytes(repo: Path, *args: str, check: bool = True) -> bytes:
     completed = subprocess.run(
         ["git", *args],
         cwd=repo,
         capture_output=True,
-        check=True,
+        check=check,
     )
     return completed.stdout
 
@@ -179,6 +182,22 @@ def _git_bytes(repo: Path, *args: str) -> bytes:
 def _untracked_paths(repo: Path) -> tuple[str, ...]:
     value = _git_bytes(repo, "ls-files", "--others", "-z")
     return tuple(sorted(item.decode("utf-8") for item in value.split(b"\0") if item))
+
+
+def _changed_paths(repo: Path) -> tuple[str, ...]:
+    tracked = _git_bytes(
+        repo,
+        "diff",
+        "--name-only",
+        "--no-renames",
+        "-z",
+        "HEAD",
+        "--",
+    )
+    tracked_paths = {
+        item.decode("utf-8") for item in tracked.split(b"\0") if item
+    }
+    return tuple(sorted(tracked_paths | set(_untracked_paths(repo))))
 
 
 def _workspace_state_digest(repo: Path) -> str:
@@ -217,6 +236,74 @@ def _worktree_head(repo: Path) -> str | None:
     return completed.stdout.strip()
 
 
+def _remove_path(path: Path) -> None:
+    if path.is_symlink() or path.is_file():
+        path.unlink(missing_ok=True)
+    elif path.is_dir():
+        shutil.rmtree(path)
+
+
+def _overlay_workspace(source: Path, target: Path) -> None:
+    for relative in _changed_paths(source):
+        source_path = source / relative
+        target_path = target / relative
+        if source_path.is_symlink():
+            _remove_path(target_path)
+            target_path.parent.mkdir(parents=True, exist_ok=True)
+            target_path.symlink_to(
+                os.readlink(source_path),
+                target_is_directory=source_path.is_dir(),
+            )
+        elif source_path.is_file():
+            _remove_path(target_path)
+            target_path.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source_path, target_path, follow_symlinks=False)
+        elif not source_path.exists():
+            _remove_path(target_path)
+        else:
+            raise RuntimeError(f"unsupported changed path type: {relative}")
+
+
+@contextmanager
+def _disposable_verification_worktree(
+    source: Path,
+    expected_main_sha: str,
+) -> Iterator[Path]:
+    parent = Path(tempfile.mkdtemp(prefix="loop-a2-verify-"))
+    target = parent / "worktree"
+    created = False
+    try:
+        completed = subprocess.run(
+            ["git", "worktree", "add", "--detach", str(target), expected_main_sha],
+            cwd=source,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if completed.returncode != 0:
+            raise RuntimeError("verification worktree creation failed")
+        created = True
+        _overlay_workspace(source, target)
+        yield target
+    finally:
+        if created:
+            subprocess.run(
+                ["git", "worktree", "remove", "--force", str(target)],
+                cwd=source,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            subprocess.run(
+                ["git", "worktree", "prune"],
+                cwd=source,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+        shutil.rmtree(parent, ignore_errors=True)
+
+
 class ProjectTestExecutor:
     def __init__(
         self,
@@ -251,8 +338,8 @@ class ProjectTestExecutor:
         expected_project_id: str,
         expected_main_sha: str,
     ) -> TestSuiteResult:
-        worktree = worktree_path.resolve(strict=True)
-        if _worktree_head(worktree) != expected_main_sha:
+        source_worktree = worktree_path.resolve(strict=True)
+        if _worktree_head(source_worktree) != expected_main_sha:
             return self._blocked(
                 project_id=expected_project_id,
                 expected_main_sha=expected_main_sha,
@@ -312,20 +399,46 @@ class ProjectTestExecutor:
                 code="TEST_ADAPTER_INVALID",
             )
 
+        try:
+            with _disposable_verification_worktree(
+                source_worktree,
+                expected_main_sha,
+            ) as verification_worktree:
+                return self._run_commands(
+                    verification_worktree,
+                    value["test_commands"],
+                    project_id=expected_project_id,
+                    expected_main_sha=expected_main_sha,
+                )
+        except RuntimeError:
+            return self._blocked(
+                project_id=expected_project_id,
+                expected_main_sha=expected_main_sha,
+                code="TEST_VERIFICATION_WORKTREE_FAILED",
+            )
+
+    def _run_commands(
+        self,
+        verification_worktree: Path,
+        commands: Sequence[Mapping[str, object]],
+        *,
+        project_id: str,
+        expected_main_sha: str,
+    ) -> TestSuiteResult:
         results: list[CommandEvidence] = []
-        for command in value["test_commands"]:
-            evidence = self._run_command(worktree, command)
+        for command in commands:
+            evidence = self._run_command(verification_worktree, command)
             results.append(evidence)
             if evidence.status != "PASS":
                 suite_status = "FAIL" if evidence.status == "FAIL" else "BLOCKED"
                 return TestSuiteResult(
-                    project_id=expected_project_id,
+                    project_id=project_id,
                     expected_main_sha=expected_main_sha,
                     status=suite_status,
                     commands=tuple(results),
                 )
         return TestSuiteResult(
-            project_id=expected_project_id,
+            project_id=project_id,
             expected_main_sha=expected_main_sha,
             status="PASS",
             commands=tuple(results),
@@ -442,7 +555,7 @@ class ProjectTestExecutor:
                 command_id=command_id,
                 status="BLOCKED",
                 exit_code=completed.returncode,
-                error_code="TEST_MUTATED_WORKSPACE",
+                error_code="TEST_MUTATED_VERIFICATION_WORKSPACE",
                 stdout_sha256=hashlib.sha256(stdout).hexdigest(),
                 stderr_sha256=hashlib.sha256(stderr).hexdigest(),
                 stdout_bytes=len(stdout),
