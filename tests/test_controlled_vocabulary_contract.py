@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 VOCABULARY = ROOT / "docs" / "CONTROLLED_VOCABULARY.md"
 START_HERE = ROOT / "START_HERE.md"
+DOCUMENTATION_MAP = ROOT / "docs" / "DOCUMENTATION_MAP.md"
 REGISTRY = ROOT / "skills" / "SKILL_REGISTRY.json"
 
 
@@ -15,9 +16,12 @@ class ControlledVocabularyContractTests(unittest.TestCase):
         self.assertTrue(VOCABULARY.is_file())
         vocabulary = VOCABULARY.read_text(encoding="utf-8")
         start_here = START_HERE.read_text(encoding="utf-8")
+        documentation_map = DOCUMENTATION_MAP.read_text(encoding="utf-8")
         registry = REGISTRY.read_text(encoding="utf-8")
 
         self.assertIn("docs/CONTROLLED_VOCABULARY.md", start_here)
+        self.assertIn("docs/CONTROLLED_VOCABULARY.md", documentation_map)
+        self.assertIn("공용 용어", documentation_map)
         self.assertIn("BASE_SHARED", vocabulary)
         self.assertIn("Bounded Context", vocabulary)
         self.assertIn("Ubiquitous Language", vocabulary)
