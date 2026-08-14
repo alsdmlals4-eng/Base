@@ -136,13 +136,24 @@ docs/superpowers/specs/*local-bootstrap-capability-discovery*.md
 docs/superpowers/plans/*local-bootstrap-capability-discovery*.md
 ```
 
-Final GREEN is evaluated on the final synchronized PR head and recorded in PR #416 / GitHub Actions rather than inferred from this evidence document.
+### Focused GREEN before latest-main reconciliation
+
+```yaml
+head: be7c191e01fed74109a8465ce2187153e28cc6ad
+workflow: Validate One-Shot Local Executor Bootstrap
+run: 31833705680
+result: PASS
+```
+
+The final synchronized PR head is revalidated again before merge. Final exact-head run IDs remain GitHub/PR evidence rather than being recursively written into this file and changing the head again.
 
 ## Completed-main reconciliation
 
-The branch originally started before merged PR #410. Current completed `main@06c71144c449123132adbeff99238740c99f518b` was incorporated without force through a two-parent merge commit after verifying zero changed-path overlap.
+The branch started before multiple unrelated completed changes reached `main`.
 
-PR #410 paths are Sprite/staging-specific. PR #416 paths are local bootstrap docs/workflow/learning/test only.
+1. Merged PR #410 advanced `main` to `06c71144c449123132adbeff99238740c99f518b`. Its Sprite/staging paths had zero overlap with PR #416 and were incorporated without force.
+2. A later completed task-recovery change advanced `main` to `c0d5042e86bc74506ad21dc47e6d410914be41d4`. Its only overlapping path was `skills/managing-project-intake-and-work-contract/LEARNING_LOG.md`.
+3. That Learning Log overlap was reconciled semantically: the completed task-recovery observation and this bootstrap-capability observation are both preserved. No completed-main learning was overwritten.
 
 Open PR #414 and #417 were inspected read-only. Their changed paths do not overlap PR #416, and their branches were not modified.
 
@@ -185,6 +196,7 @@ learning_observation: IMPLEMENTED
 tdd_red_1: OBSERVED
 tdd_red_2: OBSERVED
 workflow_coupling: IMPLEMENTED
+focused_green_pre_reconciliation: PASS
 ```
 
 Not proved by this slice:
