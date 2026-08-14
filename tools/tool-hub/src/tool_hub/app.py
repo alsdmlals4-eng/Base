@@ -15,9 +15,10 @@ from urllib.parse import urlsplit
 from base_tool_contracts import DeliveryBlockedError, ProjectFigmaRegistry
 from fastapi import FastAPI, Header, HTTPException, Response
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 import uvicorn
 
+from .figma_delivery import DeliveryError, FigmaDeliveryService
 from .launcher import LaunchError
 from .onboarding import CloneRunner, ProjectOnboardingService
 from .projects import ProjectBindingError, ProjectLocator
@@ -46,6 +47,12 @@ class LaunchPayload(BaseModel):
 
 class EmptyPayload(BaseModel):
     model_config = ConfigDict(extra="forbid")
+
+
+class BridgePairPayload(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    pairing_code: str = Field(pattern=r"^[0-9]{6}$")
+    bridge_version: str = Field(min_length=1, max_length=64)
 
 
 def configure_bounded_runtime_logging(log_directory: Path) -> RotatingFileHandler:
@@ -108,6 +115,12 @@ def create_app(
         locator,
         tools,
     )
+    figma_delivery = FigmaDeliveryService(
+        project_config.parent / "figma-delivery-runtime",
+        locator,
+        figma_registry,
+    )
+    pairing_projects: dict[str, str] = {}
     security = HubSecurity(bind_origin, test_mode=test_mode)
     root_stat = root.stat()
     root_fingerprint = hashlib.sha256(
@@ -128,6 +141,7 @@ def create_app(
             launcher.stop_all()
 
     app = FastAPI(title="Base Tool Hub", docs_url=None, redoc_url=None, lifespan=lifespan)
+    app.state.figma_delivery = figma_delivery
     install_security(app, security)
 
     @app.get("/api/config")
@@ -204,6 +218,75 @@ def create_app(
         if result.local_state != "REGISTERED":
             raise HTTPException(status_code=409, detail=result.local_state)
         return result.public_view()
+
+    @app.post("/api/figma/pairing/{project_id}")
+    def create_figma_pairing(project_id: str, payload: EmptyPayload) -> dict[str, object]:
+        if project_id not in known_project_ids:
+            raise HTTPException(status_code=422, detail="PROJECT_CATALOG_ENTRY_REQUIRED")
+        try:
+            pairing = figma_delivery.create_pairing(project_id)
+        except DeliveryError as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
+        pairing_projects[pairing.pairing_code] = pairing.project_id
+        return {
+            "status": "PAIRING_REQUIRED",
+            "project_id": pairing.project_id,
+            "pairing_code": pairing.pairing_code,
+            "figma_url": pairing.figma_url,
+            "expires_at": pairing.expires_at,
+        }
+
+    @app.post("/bridge/pair")
+    def pair_figma_bridge(payload: BridgePairPayload) -> dict[str, str]:
+        project_id = pairing_projects.get(payload.pairing_code)
+        if project_id is None:
+            raise HTTPException(status_code=409, detail="PAIRING_CODE_INVALID")
+        try:
+            target = figma_registry.resolve_ready_target(project_id)
+            session = figma_delivery.pair(
+                project_id,
+                target.figma_file_key,
+                payload.pairing_code,
+                payload.bridge_version,
+            )
+        except (DeliveryBlockedError, DeliveryError) as error:
+            pairing_projects.pop(payload.pairing_code, None)
+            raise HTTPException(status_code=409, detail=str(error)) from error
+        pairing_projects.pop(payload.pairing_code, None)
+        return {
+            "status": "BRIDGE_PAIRED",
+            "project_id": session.project_id,
+            "token": session.token,
+        }
+
+    @app.get("/bridge/jobs/next")
+    def bridge_next_job(authorization: str | None = Header(default=None)) -> dict[str, object]:
+        if authorization is None or not authorization.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="BRIDGE_AUTH_REQUIRED")
+        token = authorization[len("Bearer "):].strip()
+        if not token:
+            raise HTTPException(status_code=401, detail="BRIDGE_AUTH_REQUIRED")
+        try:
+            job = figma_delivery.claim_next(token)
+        except DeliveryError as error:
+            code = 401 if str(error) == "BRIDGE_AUTH_REQUIRED" else 409
+            raise HTTPException(status_code=code, detail=str(error)) from error
+        if job is None:
+            return {"status": "NO_PENDING_DELIVERY"}
+        return {
+            "status": "DELIVERY_PENDING",
+            "delivery_id": job.delivery_id,
+            "tool_id": job.tool_id,
+            "project_id": job.project_id,
+            "run_id": job.run_id,
+            "content_sha256": job.content_sha256,
+            "byte_length": job.byte_length,
+            "media_type": job.media_type,
+            "width": job.width,
+            "height": job.height,
+            "generation_area_node_id": job.generation_area_node_id,
+            "node_name": job.node_name,
+        }
 
     @app.post("/api/windows-launcher/install")
     def install_windows_launcher(payload: EmptyPayload) -> dict[str, str]:
