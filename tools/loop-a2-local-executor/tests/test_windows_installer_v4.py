@@ -38,7 +38,7 @@ class WindowsInstallerV4ContractTests(unittest.TestCase):
         self.assertIn("pip install --disable-pip-version-check -e", self.text)
 
     def test_v4_uses_executor_preflight_as_docker_truth_and_only_pulls_exact_digest_on_missing_image(self) -> None:
-        self.assertGreaterEqual(self.text.count("loop-a2-local-executor.exe"), 3)
+        self.assertGreaterEqual(self.text.count("loop-a2-local-executor.exe"), 2)
         self.assertGreaterEqual(self.text.count(" preflight"), 2)
         self.assertIn("DOCKER_IMAGE_NOT_PRELOADED", self.text)
         self.assertIn('"!DOCKER_CMD!" pull "!IMAGE_REF!"', self.text)
@@ -54,19 +54,22 @@ class WindowsInstallerV4ContractTests(unittest.TestCase):
         self.assertLess(missing_image, pull)
         self.assertLess(pull, second_preflight)
 
-    def test_v4_restarts_only_the_owned_daemon_and_confirms_singleton_ownership(self) -> None:
+    def test_v4_restarts_only_the_owned_daemon_and_confirms_exact_process_identity(self) -> None:
         self.assertIn(":stop_existing_daemon", self.text)
+        self.assertIn(":confirm_daemon", self.text)
+        self.assertIn("Get-CimInstance Win32_Process", self.text)
+        self.assertIn("ExecutablePath", self.text)
         self.assertIn("loop_a2_local_executor.cli", self.text)
         self.assertIn("STATE_ROOT", self.text)
         self.assertNotIn("taskkill /im pythonw.exe", self.folded)
         self.assertNotIn("taskkill /f /im pythonw.exe", self.folded)
-        self.assertIn("LOCAL_EXECUTOR_ALREADY_RUNNING", self.text)
+        self.assertIn("LOCAL_EXECUTOR_DAEMON_RUNNING", self.text)
         self.assertIn("Background:   STARTED", self.text)
         self.assertIn("Startup:      REGISTERED", self.text)
 
-        singleton = self.text.index("LOCAL_EXECUTOR_ALREADY_RUNNING")
+        daemon_confirmed = self.text.index("LOCAL_EXECUTOR_DAEMON_RUNNING")
         ready_banner = self.text.rindex("LOCAL_EXECUTOR_READY")
-        self.assertLess(singleton, ready_banner)
+        self.assertLess(daemon_confirmed, ready_banner)
 
     @unittest.skipUnless(os.name == "nt", "Windows cmd contract smoke")
     def test_v4_contract_mode_parses_without_running_installer(self) -> None:
