@@ -38,6 +38,16 @@ class TaskRecoveryProtocolTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
 
+    def test_disconnected_full_answer_state_is_an_explicit_recovery_signal(self) -> None:
+        text = PROTOCOL.read_text(encoding="utf-8")
+        for term in (
+            "연결이 끊어졌습니다",
+            "전체 답변을 기다리는 중입니다",
+            "RECOVERY_REQUIRED",
+            "안전한 retry control",
+        ):
+            self.assertIn(term, text)
+
     def test_side_effecting_work_requires_readback_before_resume(self) -> None:
         text = PROTOCOL.read_text(encoding="utf-8")
         for term in (
