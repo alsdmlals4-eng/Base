@@ -6,6 +6,10 @@
 
 외부 소설·게임 Writing 자료는 프로젝트 정본보다 높은 권한을 갖지 않는다. 선형 소설 craft와 interactive narrative는 공통 원리를 공유하되 매체의 입력·상태·검증 경계가 다르므로 그대로 복제하지 않는다.
 
+새 이야기·사건·퀘스트의 seed, affected agent, pressure, consequential choice가 아직 정해지지 않았다면 먼저 `docs/knowledge/methods/STORY_ORIGIN_AND_GENERATION_METHOD.md`의 `STORY_ORIGIN_ENGINE`을 사용한다. 이미 무엇이 발생하고 누가 무엇을 선택하는지가 정해졌다면 이 단계를 반복하지 않는다.
+
+`STORY_ORIGIN_ENGINE`은 이야기 발생을, 아래 `RELATIONAL_APPEAL`은 선택된 요소 조합의 장면 가치를, 이 Method는 장면·대사·선택·기억의 실행을 각각 소유한다.
+
 ## 1. 장면의 최소 단위
 
 한 장면은 다음 질문에 답해야 한다.

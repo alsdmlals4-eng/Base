@@ -42,7 +42,7 @@ Base는 공용 작법과 검수 방법만 소유한다. 작품 고유 인물·�
 ## Skill Modes
 
 - `canon-and-continuity`: 사용자 결정, 원작·로그·기존 정본의 우선순위와 각색 허용 영역을 복원하고 사건 결과·정보 시점·관계 연속성을 보호한다.
-- `arc-and-episode-design`: Reader Promise, 장기 목표, Episode Value, 상태 변화, 반복 구조 변주와 회차 경계를 설계한다.
+- `arc-and-episode-design`: 새 이야기·아크·회차 seed가 비어 있으면 `STORY_ORIGIN_ENGINE`으로 pressure·choice·shift를 만들고, Reader Promise, 장기 목표, Episode Value, 상태 변화, 반복 구조 변주와 회차 경계를 설계한다.
 - `pov-and-character-voice`: POV가 아는 정보, 주의를 두는 대상, 가치 판단, 욕망, 자기기만과 문장 리듬을 분리한다.
 - `character-and-opponent-integrity`: 인물별 관찰·말투·해결법·결점·대표 하이라이트를 분리하고, 중요 상대가 화면 안에서 위협을 증명한 뒤 주인공 고유 방식으로 승패가 결정되는지 감사한다.
 - `draft-and-prose`: 사건 요약을 감각·행동·대사·판단이 있는 장면으로 극화하고 설명·중복·작가 해설을 줄인다.
@@ -125,6 +125,8 @@ project_pilot: PROJECT_PILOT_NOT_RUN
 6. 캐릭터 개성·강자·적대자·전투/대결 위상 작업이면 `references/character-distinctiveness-and-opponent-threat.md`
 7. benchmark·댓글·리뷰 작업이면 `docs/knowledge/serial-fiction/READER_FEEDBACK_AND_BENCHMARK_EVIDENCE_GUIDE.md`
 8. 필요 시 `references/episode-quality-gates.md`, `references/benchmark-and-reader-feedback.md`
+
+새 이야기·아크·에피소드의 발생 원인이 아직 비어 있으면 `docs/knowledge/methods/STORY_ORIGIN_AND_GENERATION_METHOD.md`의 `STORY_ORIGIN_ENGINE`을 선택적으로 읽는다.
 
 캐릭터×캐릭터·캐릭터×세계·캐릭터×능력의 조합이 장면 선택과 관계 변화를 만드는지 점검할 때 `docs/knowledge/methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md`의 `RELATIONAL_APPEAL`을 선택적으로 사용한다.
 
