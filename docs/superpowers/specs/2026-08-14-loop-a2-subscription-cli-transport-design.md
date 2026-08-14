@@ -54,18 +54,24 @@ For each model turn:
 
 1. Host code collects the already-approved bounded context/diff.
 2. Host code starts a separate temporary directory.
-3. Host code runs `codex exec` non-interactively with:
-   - `--ephemeral`;
+3. Host code runs Codex non-interactively with strict explicit tool restrictions:
+   - global `--strict-config`;
+   - `features.shell_tool=false`;
+   - `features.web_search_request=false`;
+   - `features.web_search_cached=false`;
+   - `features.standalone_web_search=false`;
+   - `exec --ephemeral`;
    - `--ignore-user-config` so project/user config cannot silently add tools or MCP authority;
+   - `--ignore-rules` so local exec rules cannot add authority;
    - `--skip-git-repo-check` because the model runs in an empty isolated directory;
    - `--sandbox read-only`;
    - an output schema and final-message file.
-4. The child environment strips `OPENAI_API_KEY` and other provider-secret environment variables. ChatGPT-managed Codex auth remains available through Codex's normal auth store.
+4. The child environment strips `OPENAI_API_KEY` and other provider/GitHub secret environment variables. ChatGPT-managed Codex auth remains available through Codex's normal auth store.
 5. The final structured JSON is parsed and bounded.
 6. Builder write plans are validated by existing deterministic path/authority checks before host-side application.
 7. Critic receives only approved requirements plus actual diff evidence and cannot mutate the worktree.
 
-This preserves the existing security property: the model proposes; deterministic host code decides what can be written.
+This preserves the existing security property: the model proposes; deterministic host code decides what can be written. Shell and web-search capabilities are intentionally disabled so the model turn cannot use local shell reads or live/cached/extension web search to expand its information boundary.
 
 ### 3. Builder/Critic independence
 
@@ -113,8 +119,8 @@ Use a fake Codex executable/process runner so CI needs no ChatGPT credentials. T
 
 - ChatGPT login passes the subscription gate.
 - API-key login is rejected even when an API key exists.
-- no API-key environment value reaches the child process.
-- CLI invocation is ephemeral, read-only, config-isolated, and shell-free.
+- no API-key/GitHub secret environment value reaches the child process.
+- CLI invocation is ephemeral, read-only, config/rules-isolated, shell-free, and explicit web-search features are disabled.
 - Builder structured writes still pass through existing deterministic validation.
 - Critic runs in a separate invocation and receives only bounded review material.
 - malformed/oversized/non-zero/timeout outputs fail closed.
