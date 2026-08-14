@@ -5,6 +5,13 @@ from pathlib import PurePosixPath
 
 from .protocol import ProtocolError, normalize_contract_path
 
+_SYSTEM_PROTECTED_PATTERNS = (
+    ".git/**",
+    ".github/**",
+    "AGENTS.md",
+    "SECURITY.md",
+)
+
 
 @dataclass(frozen=True)
 class ScopeFinding:
@@ -36,6 +43,15 @@ def validate_changed_paths(
             path = normalize_contract_path(raw_path, "changed_path")
         except ProtocolError as exc:
             findings.append(ScopeFinding("UNSAFE_CHANGED_PATH", str(raw_path), str(exc)))
+            continue
+        if any(_matches(pattern, path) for pattern in _SYSTEM_PROTECTED_PATTERNS):
+            findings.append(
+                ScopeFinding(
+                    "SYSTEM_PROTECTED_WRITE",
+                    path,
+                    "path is protected by the A2 runtime regardless of package allowlists",
+                )
+            )
             continue
         if any(_matches(pattern, path) for pattern in forbidden_patterns):
             findings.append(ScopeFinding("FORBIDDEN_PATH_WRITE", path, "path matches an explicit forbidden pattern"))
