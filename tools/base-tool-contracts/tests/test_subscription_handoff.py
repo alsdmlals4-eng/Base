@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import inspect
+
 import pytest
 
 from base_tool_contracts.subscription_handoff import (
     SubscriptionHandoffError,
+    SubscriptionHandoffPacket,
     build_subscription_handoff_packet,
 )
 
@@ -64,10 +67,21 @@ def test_valid_packet_is_deterministic_and_never_claims_provider_execution() -> 
     }
 
 
-def test_subscription_surface_and_output_format_are_fixed_not_caller_selected() -> None:
+def test_truth_fields_are_not_constructor_or_builder_inputs() -> None:
     result = packet()
     assert result.generation_surface == "CHATGPT_PRO_SUBSCRIPTION"
     assert result.output_media_type == "image/png"
+
+    parameters = inspect.signature(SubscriptionHandoffPacket).parameters
+    for fixed_field in (
+        "schema_version",
+        "state",
+        "generation_surface",
+        "output_media_type",
+        "provider_call_made",
+        "requires_additional_payment",
+    ):
+        assert fixed_field not in parameters
 
     with pytest.raises(TypeError):
         packet(generation_surface="OPENAI_API")
@@ -79,18 +93,27 @@ def test_subscription_surface_and_output_format_are_fixed_not_caller_selected() 
     ("field", "value"),
     [
         ("project_id", "../other-project"),
+        ("project_id", 123),
         ("tool_id", "qa-evidence-studio"),
         ("run_id", "bad run id"),
+        ("run_id", 123),
         ("source_filename", "C:\\Users\\user\\secret.png"),
         ("source_filename", "../secret.png"),
+        ("source_filename", "secret:stream.png"),
         ("source_sha256", "not-a-sha"),
+        ("source_sha256", 123),
         ("instruction", ""),
+        ("instruction", 123),
         ("instruction", "x" * 4001),
         ("instruction", "use sk-proj-abcdefghijklmnopqrstuvwxyz0123456789"),
+        ("instruction", "token=abcdefghijklmnopqrstuvwxyz0123456789"),
         ("expected_png_count", 0),
         ("expected_png_count", 9),
+        ("expected_png_count", 1.5),
         ("min_dimension", 15),
+        ("min_dimension", 256.5),
         ("max_dimension", 8193),
+        ("max_dimension", 2048.5),
     ],
 )
 def test_invalid_or_private_inputs_fail_closed(field: str, value: object) -> None:
@@ -121,11 +144,12 @@ def test_dimension_range_and_review_checklist_are_bounded() -> None:
     with pytest.raises(SubscriptionHandoffError, match="dimension"):
         packet(min_dimension=2048, max_dimension=256)
 
-    with pytest.raises(SubscriptionHandoffError, match="review"):
-        packet(review_checklist=())
-
-    with pytest.raises(SubscriptionHandoffError, match="review"):
-        packet(review_checklist=("same character identity", "same character identity"))
-
-    with pytest.raises(SubscriptionHandoffError, match="review"):
-        packet(review_checklist=("x" * 241,))
+    for bad_checklist in (
+        (),
+        "same character identity",
+        (123,),
+        ("same character identity", "same character identity"),
+        ("x" * 241,),
+    ):
+        with pytest.raises(SubscriptionHandoffError, match="review"):
+            packet(review_checklist=bad_checklist)
