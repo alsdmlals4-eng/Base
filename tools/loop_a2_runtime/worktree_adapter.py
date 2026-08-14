@@ -4,7 +4,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
-from typing import Mapping, Protocol, Sequence
+from typing import Protocol, Sequence
 
 from .protocol import ProtocolError, RunRequest, WorkerResult
 
@@ -181,6 +181,14 @@ def _nul_paths(value: str) -> tuple[str, ...]:
     return tuple(item for item in value.split("\0") if item)
 
 
+def _worktree_paths(porcelain: str) -> set[Path]:
+    result: set[Path] = set()
+    for line in porcelain.splitlines():
+        if line.startswith("worktree "):
+            result.add(Path(line[len("worktree ") :]).resolve(strict=False))
+    return result
+
+
 class GitWorktreeBuilderAdapter:
     """Bind Builder claims to actual Git state in an external detached worktree."""
 
@@ -200,6 +208,7 @@ class GitWorktreeBuilderAdapter:
         if self.runtime_root == self.repo_root or self.repo_root in self.runtime_root.parents:
             raise ValueError("runtime_root must be outside the project repository")
         self.worker = worker
+        self._owned_workspaces: set[Path] = set()
 
     def workspace_path(self, request: RunRequest) -> Path:
         return self.runtime_root / request.project_id / request.run_id
@@ -214,8 +223,9 @@ class GitWorktreeBuilderAdapter:
         )
         return completed.returncode == 0
 
-    def _registered_worktrees(self) -> str:
-        return _git(self.repo_root, "worktree", "list", "--porcelain").stdout
+    def _registered_worktree_paths(self) -> set[Path]:
+        output = _git(self.repo_root, "worktree", "list", "--porcelain").stdout
+        return _worktree_paths(output)
 
     def _ensure_workspace(
         self,
@@ -224,6 +234,7 @@ class GitWorktreeBuilderAdapter:
         repair_cycle: int,
     ) -> WorkerResult | None:
         workspace = self.workspace_path(request)
+        canonical_workspace = workspace.resolve(strict=False)
         if not self._expected_sha_available(request):
             return _blocked_result(
                 request,
@@ -238,6 +249,12 @@ class GitWorktreeBuilderAdapter:
                     code="WORKSPACE_COLLISION",
                     message="runtime workspace already exists before the initial Builder call",
                 )
+            if canonical_workspace not in self._owned_workspaces:
+                return _blocked_result(
+                    request,
+                    code="WORKSPACE_NOT_OWNED",
+                    message="existing runtime workspace is not owned by this adapter instance",
+                )
             head = _git(workspace, "rev-parse", "HEAD", check=False)
             if head.returncode != 0 or head.stdout.strip() != request.expected_main_sha:
                 return _blocked_result(
@@ -245,7 +262,7 @@ class GitWorktreeBuilderAdapter:
                     code="WORKSPACE_IDENTITY_MISMATCH",
                     message="existing runtime workspace does not match expected main SHA",
                 )
-            if str(workspace.resolve()) not in self._registered_worktrees():
+            if canonical_workspace not in self._registered_worktree_paths():
                 return _blocked_result(
                     request,
                     code="WORKSPACE_NOT_REGISTERED",
@@ -269,6 +286,7 @@ class GitWorktreeBuilderAdapter:
                 code="WORKTREE_CREATE_FAILED",
                 message="Git could not create the isolated worktree",
             )
+        self._owned_workspaces.add(workspace.resolve(strict=True))
         return None
 
     def _actual_changed_paths(self, request: RunRequest) -> tuple[str, ...]:
@@ -282,11 +300,12 @@ class GitWorktreeBuilderAdapter:
             "HEAD",
             "--",
         ).stdout
+        # Do not use --exclude-standard here: ignored untracked files are still writes
+        # and must be visible to the deterministic scope gate.
         untracked = _git(
             workspace,
             "ls-files",
             "--others",
-            "--exclude-standard",
             "-z",
         ).stdout
         return tuple(sorted(set(_nul_paths(tracked)) | set(_nul_paths(untracked))))
@@ -356,6 +375,9 @@ class GitWorktreeBuilderAdapter:
 
     def close(self, request: RunRequest) -> None:
         workspace = self.workspace_path(request)
+        canonical_workspace = workspace.resolve(strict=False)
+        if canonical_workspace not in self._owned_workspaces:
+            return
         if workspace.exists():
             _git(
                 self.repo_root,
@@ -365,6 +387,7 @@ class GitWorktreeBuilderAdapter:
                 str(workspace),
                 check=False,
             )
+        self._owned_workspaces.discard(canonical_workspace)
         _git(self.repo_root, "worktree", "prune", check=False)
         parent = workspace.parent
         try:
