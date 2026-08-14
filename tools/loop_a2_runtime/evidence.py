@@ -7,7 +7,8 @@ from typing import Any, Mapping
 
 _SENSITIVE = {
     "authorization", "api_key", "openai_api_key", "token", "secret", "password",
-    "cookie", "set-cookie", "proxy-authorization",
+    "cookie", "set-cookie", "proxy-authorization", "access_token", "refresh_token",
+    "client_secret", "github_token", "bearer_token",
 }
 
 
