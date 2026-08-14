@@ -17,6 +17,12 @@ from base_tool_contracts.windows_project_identity import (
 BASE_ROOT = Path(__file__).resolve().parents[3]
 
 
+def test_package_exports_the_windows_project_identity_validator() -> None:
+    from base_tool_contracts import validate_windows_project_identity as public_validator
+
+    assert public_validator is validate_windows_project_identity
+
+
 def test_package_import_succeeds_when_posix_fcntl_is_unavailable() -> None:
     source_root = BASE_ROOT / "tools/base-tool-contracts/src"
     code = """
