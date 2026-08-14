@@ -67,7 +67,10 @@ def test_windows_process_starts_and_serves_blocked_catalog(tmp_path: Path) -> No
         env=environment,
     )
     try:
-        deadline = time.monotonic() + 20
+        # A clean windows-latest runner performs the reviewed Base/runtime
+        # identity checks from a cold filesystem cache.  Keep the smoke bounded,
+        # but do not confuse that cold start with a product failure.
+        deadline = time.monotonic() + 60
         payload: dict[str, object] | None = None
         opener = build_opener(HTTPCookieProcessor(CookieJar()))
         while time.monotonic() < deadline:
@@ -80,7 +83,17 @@ def test_windows_process_starts_and_serves_blocked_catalog(tmp_path: Path) -> No
                 break
             except OSError:
                 time.sleep(0.1)
-        assert payload is not None, "Tool Hub did not serve the Windows catalog before timeout"
+        if payload is None:
+            process.terminate()
+            try:
+                output, _ = process.communicate(timeout=5)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                output, _ = process.communicate(timeout=5)
+            pytest.fail(
+                "Tool Hub did not serve the Windows catalog before timeout: "
+                + output[-4000:]
+            )
         assert {
             item["tool_id"]: item["launch_state"]  # type: ignore[index]
             for item in payload["tools"]  # type: ignore[index]
@@ -127,12 +140,13 @@ def test_windows_process_starts_and_serves_blocked_catalog(tmp_path: Path) -> No
         serialized = json.dumps(registered_catalog)
         assert all(str(project_root) not in serialized for project_root in projects)
     finally:
-        process.terminate()
-        try:
-            process.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            process.kill()
-            process.wait(timeout=5)
+        if process.poll() is None:
+            process.terminate()
+            try:
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=5)
 
 
 @pytest.mark.skipif(sys.platform != "win32", reason="real Windows Git clone smoke")

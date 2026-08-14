@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from contextlib import contextmanager
 import json
 from http.cookiejar import CookieJar
 import os
@@ -14,6 +15,49 @@ from tool_hub.windows_launcher import WindowsLauncherInstaller
 
 
 BASE_ROOT = Path(__file__).resolve().parents[3]
+
+
+@contextmanager
+def temporary_real_pyw_association(pythonw: Path):
+    """Give a clean Windows runner the same per-user .pyw prerequisite as a Python install."""
+    import ctypes
+    import winreg
+
+    extension_key = r"Software\Classes\.pyw"
+    program_id = f"BaseToolHub.WindowsSmoke.{os.getpid()}"
+    command_key = rf"Software\Classes\{program_id}\shell\open\command"
+    previous: tuple[object, int] | None = None
+    try:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, extension_key) as key:
+            previous = winreg.QueryValueEx(key, "")
+    except FileNotFoundError:
+        pass
+
+    with winreg.CreateKey(winreg.HKEY_CURRENT_USER, extension_key) as key:
+        winreg.SetValueEx(key, "", 0, winreg.REG_SZ, program_id)
+    with winreg.CreateKey(winreg.HKEY_CURRENT_USER, command_key) as key:
+        winreg.SetValueEx(key, "", 0, winreg.REG_SZ, f'"{pythonw}" "%1" %*')
+    ctypes.windll.shell32.SHChangeNotify(0x08000000, 0, None, None)
+    try:
+        yield
+    finally:
+        for suffix in (r"shell\open\command", r"shell\open", "shell", ""):
+            key_name = rf"Software\Classes\{program_id}"
+            if suffix:
+                key_name += "\\" + suffix
+            try:
+                winreg.DeleteKey(winreg.HKEY_CURRENT_USER, key_name)
+            except OSError:
+                pass
+        with winreg.CreateKey(winreg.HKEY_CURRENT_USER, extension_key) as key:
+            if previous is None:
+                try:
+                    winreg.DeleteValue(key, "")
+                except FileNotFoundError:
+                    pass
+            else:
+                winreg.SetValueEx(key, "", 0, previous[1], previous[0])
+        ctypes.windll.shell32.SHChangeNotify(0x08000000, 0, None, None)
 
 
 @pytest.mark.skipif(sys.platform != "win32", reason="real Windows pythonw smoke")
@@ -31,12 +75,11 @@ def test_pythonw_launcher_starts_reuses_and_shuts_down_exact_hub(
         local_app_data=local,
         desktop=desktop,
     )
-    installer.install()
-    config_path = local / "BaseToolHub" / "launcher" / "launcher-config.json"
-    config = json.loads(config_path.read_text(encoding="utf-8"))
-    opened: list[str] = []
+    with temporary_real_pyw_association(installer.pythonw):
+        installer.install()
+        config_path = local / "BaseToolHub" / "launcher" / "launcher-config.json"
+        config = json.loads(config_path.read_text(encoding="utf-8"))
 
-    try:
         os.startfile(installer.desktop_entry)
         opener = build_opener(HTTPCookieProcessor(CookieJar()))
         status_request = Request(
@@ -83,6 +126,4 @@ def test_pythonw_launcher_starts_reuses_and_shuts_down_exact_hub(
             time.sleep(0.1)
         else:
             pytest.fail("pythonw Tool Hub still owned port 8764 after authenticated shutdown")
-    finally:
         # The authenticated shutdown is the only normal owner; no PID from the browser is killed here.
-        pass
