@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 import ctypes
-import fcntl
 import hashlib
 import json
 import os
@@ -16,6 +15,11 @@ import subprocess
 import sys
 import tempfile
 import zipfile
+
+try:
+    import fcntl
+except ModuleNotFoundError:  # Windows has no POSIX descriptor-sealing module.
+    fcntl = None
 
 from .trusted_files import (
     TrustedFileError,
@@ -147,6 +151,8 @@ def _private_bytes_file(raw: bytes, *, suffix: str) -> tuple[int, str, str]:
 
 def _sealed_memory_file(raw: bytes, *, label: str) -> tuple[int, str, str]:
     """Create a Linux sealed memfd so child/runtime bytes cannot change pre-exec."""
+    if fcntl is None:
+        raise ProjectIdentityError("PROJECT_IDENTITY_DESCRIPTOR_RUNTIME_UNAVAILABLE")
     library = ctypes.CDLL(None, use_errno=True)
     create = getattr(library, "memfd_create", None)
     if create is None:

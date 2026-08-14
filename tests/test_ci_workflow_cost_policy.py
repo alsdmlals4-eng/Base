@@ -135,6 +135,33 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
             r"if \(\$LASTEXITCODE -ne 0\) \{ exit \$LASTEXITCODE \}",
         )
 
+    def test_tool_hub_changes_run_a_real_windows_catalog_smoke(self) -> None:
+        classification = re.search(
+            r"case \"\$path\" in(?P<body>.*?)(?=\n\s+esac)",
+            self.text,
+            flags=re.DOTALL,
+        )
+        self.assertIsNotNone(classification)
+        for path in (
+            "tools/base-tool-contracts/*",
+            "tools/tool-hub/*",
+            "tools/qa-evidence-studio/*",
+            "tools/expression-studio/*",
+            "tools/sprite-animation-studio/*",
+        ):
+            self.assertIn(path, classification.group("body"))
+
+        windows_match = re.search(
+            r"platform-smoke-windows:\n(?P<body>.*?)(?=\n  ci-gate:)",
+            self.text,
+            flags=re.DOTALL,
+        )
+        self.assertIsNotNone(windows_match)
+        body = windows_match.group("body")
+        self.assertIn("Install Windows Tool Hub dependencies", body)
+        self.assertIn("Run Windows Tool Hub import and catalog smoke", body)
+        self.assertIn("tests/test_windows_catalog_smoke.py", body)
+
     def test_runtime_readiness_and_local_runner_are_validated_at_their_risk_tiers(self) -> None:
         publication_risk = re.search(
             r"case \"\$path\" in(?P<body>.*?)has_code=true\n\s+platform_smoke=true",

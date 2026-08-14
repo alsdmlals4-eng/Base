@@ -1,7 +1,9 @@
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
+import sys
 
 import pytest
 
@@ -9,6 +11,38 @@ from base_tool_contracts import ProjectIdentityError, validate_project_identity
 
 
 BASE_ROOT = Path(__file__).resolve().parents[3]
+
+
+def test_package_import_succeeds_when_posix_fcntl_is_unavailable() -> None:
+    source_root = BASE_ROOT / "tools/base-tool-contracts/src"
+    code = """
+import importlib.abc
+import sys
+
+class BlockFcntl(importlib.abc.MetaPathFinder):
+    def find_spec(self, fullname, path, target=None):
+        if fullname == "fcntl":
+            raise ModuleNotFoundError("No module named 'fcntl'")
+        return None
+
+sys.modules.pop("fcntl", None)
+sys.meta_path.insert(0, BlockFcntl())
+import base_tool_contracts
+print("BASE_TOOL_CONTRACTS_IMPORT_OK")
+"""
+    environment = dict(os.environ)
+    environment["PYTHONPATH"] = str(source_root)
+
+    completed = subprocess.run(
+        [sys.executable, "-c", code],
+        capture_output=True,
+        check=False,
+        text=True,
+        env=environment,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    assert completed.stdout.strip() == "BASE_TOOL_CONTRACTS_IMPORT_OK"
 
 
 def make_identity_project(root: Path, project_id: str = "demo-game") -> Path:

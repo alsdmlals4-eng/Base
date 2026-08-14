@@ -46,6 +46,8 @@ $projectConfig = Join-Path $env:LOCALAPPDATA 'BaseToolHub\projects.json'
 
 연결할 프로젝트는 Git 루트, v2 adapter, gitignored Asset Vault를 모두 갖춰야 합니다. visual Studio에는 canonical Base Figma route와 committed `docs/APPROVED_VISUAL_ANCHORS.json`도 필요합니다. 위 Windows 명령은 실행 경로 안내이며 실제 Windows child process-tree·공백 경로 smoke 통과 증거가 아닙니다.
 
+Windows에서는 Hub 프로세스와 검토된 도구 카탈로그를 열 수 있지만, 현재 프로젝트 등록과 Studio child 실행은 Linux descriptor/process-group 계약을 대체할 Windows Job Object 구현이 없어 `BLOCKED_PLATFORM`으로 fail-closed됩니다. 카탈로그가 열린 사실을 Expression/Sprite/QA 도구 실행 완료로 해석하지 않습니다.
+
 ## 현재 검증되지 않은 것
 
 - Windows child process-tree ownership과 두 프로젝트·네 child 공백 경로 smoke
