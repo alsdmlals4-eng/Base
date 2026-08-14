@@ -212,6 +212,17 @@ class RuntimeAdversarialIdentityTests(unittest.TestCase):
         self.assertEqual(builder.calls, 2)
         self.assertEqual(critic.calls, 2)
 
+    def test_burnin_rejects_non_fake_request(self) -> None:
+        value = valid_request()
+        value["provider_mode"] = "REAL"
+        request = RunRequest.from_dict(value)
+        runtime = A2Runtime(
+            builder=FakeBuilder(changed_paths=("scripts/feature/a.gd",)),
+            critic=FakeCritic(verdict="PASS", checked_requirement_ids=("REQ_001",)),
+        )
+        with self.assertRaisesRegex(ValueError, "FAKE"):
+            runtime.burn_in(request, observed_main_sha=request.expected_main_sha, runs=3)
+
 
 if __name__ == "__main__":
     unittest.main()
