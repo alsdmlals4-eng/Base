@@ -405,6 +405,20 @@ def build_subscription_provider_components(
             "subscription authority snapshot differs from the bound RunRequest",
         )
 
+    verification_mailbox = VerificationEvidenceMailbox()
+    candidate_verifier = ProjectTestCandidateVerifier(
+        repo_root=Path(repo_root),
+        runtime_root=Path(runtime_root),
+        authority_snapshot=authority_snapshot,
+        executor=project_test_executor,
+        mailbox=verification_mailbox,
+    )
+    if not candidate_verifier.preflight(run_request):
+        raise CodexCliTransportError(
+            "PROJECT_TEST_BOUNDARY_UNAVAILABLE",
+            "project-test network boundary is unavailable for the approved Runtime Adapter",
+        )
+
     gate = subscription_codex_cli_gate(run_command=login_runner)
     if gate.get("status") != "READY":
         raise CodexCliTransportError("SUBSCRIPTION_CODEX_GATE_CLOSED", "ChatGPT-authenticated Codex CLI is not ready")
@@ -415,7 +429,6 @@ def build_subscription_provider_components(
         raise CodexCliTransportError("CODEX_MODEL_INVALID", "Codex model selection must be non-empty")
 
     repair_mailbox = RepairMailbox()
-    verification_mailbox = VerificationEvidenceMailbox()
     builder_process = CodexCliProcess(run_command=exec_runner)
     critic_process = CodexCliProcess(run_command=exec_runner)
     builder_worker = OpenAIWorkspaceBuilder(
@@ -428,13 +441,6 @@ def build_subscription_provider_components(
         repo_root=Path(repo_root),
         runtime_root=Path(runtime_root),
         worker=builder_worker,
-    )
-    candidate_verifier = ProjectTestCandidateVerifier(
-        repo_root=Path(repo_root),
-        runtime_root=Path(runtime_root),
-        authority_snapshot=authority_snapshot,
-        executor=project_test_executor,
-        mailbox=verification_mailbox,
     )
     material_source = GitReviewMaterialSource(
         repo_root=Path(repo_root),
