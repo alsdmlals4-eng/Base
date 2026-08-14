@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "suite_id": "base-tool-hub",
+  "display_name": "Base Tool Hub",
+  "suite_root_role": "CANONICAL_SUITE_NAVIGATION_AND_MANIFEST",
+  "implementation_policy": {
+    "single_source_of_truth": true,
+    "runtime_source_root": "tools",
+    "duplicate_source_trees_allowed": false,
+    "symlink_aliases_allowed": false,
+    "physical_relocation_state": "DEFERRED_TO_REGISTRY_V2_MIGRATION"
+  },
+  "tools": [
+    {
+      "logical_name": "Tool Hub",
+      "tool_id": "base-tool-hub",
+      "implementation_path": "tools/tool-hub",
+      "suite_entry": "Base Tool Hub/Tool Hub/README.md",
+      "role": "project onboarding, catalog, launch orchestration, Windows desktop launcher",
+      "verified_state": "WINDOWS_ORCHESTRATION_VERIFIED"
+    },
+    {
+      "logical_name": "Character Studio",
+      "tool_id": "expression-studio",
+      "implementation_path": "tools/expression-studio",
+      "suite_entry": "Base Tool Hub/Character Studio/README.md",
+      "role": "expression, identity-preserving outfit variation, identity-preserving scene relocation",
+      "verified_state": "CONTRACT_AND_IMPORT_REVIEW_IMPLEMENTED",
+      "windows_child_state": "BLOCKED_PLATFORM",
+      "provider_generation_state": "BLOCKED_UNVERIFIED"
+    },
+    {
+      "logical_name": "Sprite Animation Studio",
+      "tool_id": "sprite-animation-studio",
+      "implementation_path": "tools/sprite-animation-studio",
+      "suite_entry": "Base Tool Hub/Sprite Animation Studio/README.md",
+      "role": "sprite action, pose sequence, effect stages, GIF/atlas/Godot handoff",
+      "verified_state": "LINUX_IMPORT_EXPORT_VERIFIED",
+      "windows_child_state": "BLOCKED_PLATFORM",
+      "production_generation_state": "BLOCKED_WORKSPACE_ISOLATION"
+    },
+    {
+      "logical_name": "QA Evidence Studio",
+      "tool_id": "qa-evidence-studio",
+      "implementation_path": "tools/qa-evidence-studio",
+      "suite_entry": "Base Tool Hub/QA Evidence Studio/README.md",
+      "role": "evidence review and Implementation Reality Gate support",
+      "verified_state": "IMPLEMENTED",
+      "windows_child_state": "BLOCKED_PLATFORM"
+    },
+    {
+      "logical_name": "Tool Radar",
+      "tool_id": null,
+      "implementation_path": null,
+      "suite_entry": "Base Tool Hub/Tool Radar/README.md",
+      "role": "tool discovery, benchmarking, adoption recommendations",
+      "verified_state": "DESIGN_ONLY_ABSORPTION_TARGET"
+    }
+  ],
+  "figma_delivery": {
+    "registered_projects": 8,
+    "live_write_readback_verified": 8,
+    "routing_registry": "docs/operations/PROJECT_FIGMA_TARGET_REGISTRY.json",
+    "local_tool_direct_upload": false,
+    "delivery_owner": "matching project GPT with connected Figma execution layer"
+  }
+}
