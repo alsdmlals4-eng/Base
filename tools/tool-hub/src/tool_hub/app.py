@@ -18,7 +18,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 import uvicorn
 
-from .figma_delivery import DeliveryError, FigmaDeliveryService
+from .figma_delivery import BridgeReceipt, DeliveryError, FigmaDeliveryService
 from .launcher import LaunchError
 from .onboarding import CloneRunner, ProjectOnboardingService
 from .projects import ProjectBindingError, ProjectLocator
@@ -55,6 +55,16 @@ class BridgePairPayload(BaseModel):
     bridge_version: str = Field(min_length=1, max_length=64)
 
 
+class BridgeReceiptPayload(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    created_node_id: str = Field(pattern=r"^\d+[:-]\d+$")
+    created_node_name: str = Field(min_length=1, max_length=160)
+    target_node_id: str = Field(pattern=r"^\d+[:-]\d+$")
+    content_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    bridge_version: str = Field(min_length=1, max_length=64)
+    image_hash: str = Field(min_length=1, max_length=256)
+
+
 def configure_bounded_runtime_logging(log_directory: Path) -> RotatingFileHandler:
     directory = Path(log_directory).absolute()
     directory.mkdir(parents=True, exist_ok=True)
@@ -66,6 +76,20 @@ def configure_bounded_runtime_logging(log_directory: Path) -> RotatingFileHandle
     )
     handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s"))
     return handler
+
+
+def _bridge_token(authorization: str | None) -> str:
+    if authorization is None or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="BRIDGE_AUTH_REQUIRED")
+    token = authorization[len("Bearer "):].strip()
+    if not token:
+        raise HTTPException(status_code=401, detail="BRIDGE_AUTH_REQUIRED")
+    return token
+
+
+def _delivery_http_error(error: DeliveryError) -> HTTPException:
+    status_code = 401 if str(error) == "BRIDGE_AUTH_REQUIRED" else 409
+    return HTTPException(status_code=status_code, detail=str(error))
 
 
 def create_app(
@@ -236,6 +260,15 @@ def create_app(
             "expires_at": pairing.expires_at,
         }
 
+    @app.get("/api/figma/status/{project_id}")
+    def figma_status(project_id: str) -> dict[str, object]:
+        if project_id not in known_project_ids:
+            raise HTTPException(status_code=422, detail="PROJECT_CATALOG_ENTRY_REQUIRED")
+        try:
+            return figma_delivery.public_status(project_id)
+        except DeliveryError as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
+
     @app.post("/bridge/pair")
     def pair_figma_bridge(payload: BridgePairPayload) -> dict[str, str]:
         project_id = pairing_projects.get(payload.pairing_code)
@@ -261,16 +294,11 @@ def create_app(
 
     @app.get("/bridge/jobs/next")
     def bridge_next_job(authorization: str | None = Header(default=None)) -> dict[str, object]:
-        if authorization is None or not authorization.startswith("Bearer "):
-            raise HTTPException(status_code=401, detail="BRIDGE_AUTH_REQUIRED")
-        token = authorization[len("Bearer "):].strip()
-        if not token:
-            raise HTTPException(status_code=401, detail="BRIDGE_AUTH_REQUIRED")
+        token = _bridge_token(authorization)
         try:
             job = figma_delivery.claim_next(token)
         except DeliveryError as error:
-            code = 401 if str(error) == "BRIDGE_AUTH_REQUIRED" else 409
-            raise HTTPException(status_code=code, detail=str(error)) from error
+            raise _delivery_http_error(error) from error
         if job is None:
             return {"status": "NO_PENDING_DELIVERY"}
         return {
@@ -286,6 +314,68 @@ def create_app(
             "height": job.height,
             "generation_area_node_id": job.generation_area_node_id,
             "node_name": job.node_name,
+        }
+
+    @app.get("/bridge/jobs/{delivery_id}/content")
+    def bridge_job_content(
+        delivery_id: str,
+        authorization: str | None = Header(default=None),
+    ) -> Response:
+        token = _bridge_token(authorization)
+        try:
+            content = figma_delivery.content(token, delivery_id)
+        except DeliveryError as error:
+            raise _delivery_http_error(error) from error
+        return Response(
+            content=content,
+            media_type="image/png",
+            headers={"X-Content-SHA256": hashlib.sha256(content).hexdigest()},
+        )
+
+    @app.post("/bridge/jobs/{delivery_id}/release")
+    def bridge_release_job(
+        delivery_id: str,
+        payload: EmptyPayload,
+        authorization: str | None = Header(default=None),
+    ) -> dict[str, str]:
+        token = _bridge_token(authorization)
+        try:
+            job = figma_delivery.release(token, delivery_id)
+        except DeliveryError as error:
+            raise _delivery_http_error(error) from error
+        return {"delivery_id": job.delivery_id, "status": job.state}
+
+    @app.post("/bridge/jobs/{delivery_id}/receipt")
+    def bridge_receipt(
+        delivery_id: str,
+        payload: BridgeReceiptPayload,
+        authorization: str | None = Header(default=None),
+    ) -> dict[str, object]:
+        token = _bridge_token(authorization)
+        try:
+            receipt = figma_delivery.finalize(
+                token,
+                delivery_id,
+                BridgeReceipt(
+                    created_node_id=payload.created_node_id,
+                    created_node_name=payload.created_node_name,
+                    target_node_id=payload.target_node_id,
+                    content_sha256=payload.content_sha256,
+                    bridge_version=payload.bridge_version,
+                    image_hash=payload.image_hash,
+                ),
+            )
+        except DeliveryError as error:
+            raise _delivery_http_error(error) from error
+        return {
+            "status": "FIGMA_DELIVERED_VERIFIED",
+            "delivery_id": receipt.delivery_id,
+            "project_id": receipt.project_id,
+            "run_id": receipt.run_id,
+            "created_node_id": receipt.created_node_id,
+            "created_node_name": receipt.created_node_name,
+            "content_sha256": receipt.content_sha256,
+            "verified_at": receipt.verified_at,
         }
 
     @app.post("/api/windows-launcher/install")
