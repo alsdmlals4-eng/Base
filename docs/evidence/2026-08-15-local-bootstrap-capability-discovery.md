@@ -145,7 +145,7 @@ run: 31833705680
 result: PASS
 ```
 
-The final synchronized PR head is revalidated again before merge. Final exact-head run IDs remain GitHub/PR evidence rather than being recursively written into this file and changing the head again.
+The final synchronized PR head is revalidated again before integration. Final exact-head run IDs remain GitHub/PR evidence rather than being recursively written into this file and changing the head again.
 
 ## Completed-main reconciliation
 
@@ -154,8 +154,9 @@ The branch started before multiple unrelated completed changes reached `main`.
 1. Merged PR #410 advanced `main` to `06c71144c449123132adbeff99238740c99f518b`. Its Sprite/staging paths had zero overlap with PR #416 and were incorporated without force.
 2. A later completed task-recovery change advanced `main` to `c0d5042e86bc74506ad21dc47e6d410914be41d4`. Its only overlapping path was `skills/managing-project-intake-and-work-contract/LEARNING_LOG.md`.
 3. That Learning Log overlap was reconciled semantically: the completed task-recovery observation and this bootstrap-capability observation are both preserved. No completed-main learning was overwritten.
+4. PR #414 was left read-only while in progress. After it merged, completed `main@658f7282e4de071f5225ba9d797bd15b642969ea` was incorporated without force; its story-origin paths have zero overlap with PR #416.
 
-Open PR #414 and #417 were inspected read-only. Their changed paths do not overlap PR #416, and their branches were not modified.
+Open PR #417 remains read-only. Its changed paths do not overlap PR #416, and its branch was not modified.
 
 ## Adversarial review
 
@@ -181,7 +182,7 @@ No. It adds policy semantics, an observation, and regression/workflow coupling o
 
 ### Attack — does this modify in-progress work?
 
-No. Open PR #414/#417 are read-only and have zero changed-path overlap with PR #416.
+No. Active PR #417 is read-only and has zero changed-path overlap with PR #416. PR #414 was only incorporated after it became a completed `main` change.
 
 ## Implementation Reality Gate
 
