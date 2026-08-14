@@ -2,6 +2,7 @@
 
 ## Unreleased — Base v9.5 focused maintenance candidate
 
+- Expanded the existing `BASE_SHARED` controlled vocabulary with work-tracking, requirements, dependency-design, interface/compatibility, build/delivery, and observability terms; it now separates Issue from Bug, API from ABI/Protocol/Schema, Artifacts from Packages, Deployment from Release, and Metrics/Logs/Traces/Profiles without adding a new Skill, Registry entry, Schema, route, workflow, or terminology framework.
 - Expanded the existing `BASE_SHARED` controlled vocabulary with project-management, release-state, testing, maintenance, and Git/versioning terms; it now separates Scrum-defined terms from broader industry usage, Early Access from Alpha/Beta, Regression Testing from the Base-local Regression Recheck, Refactor from Rewrite, and Git/SemVer primitives from team workflow labels without adding a new Skill, Registry entry, Schema, route, workflow, or terminology framework.
 - Added `LOWEST_VIABLE_RATING` with `AVOID_ADULTS_ONLY`: projects avoid 청소년이용불가·18+ by default but choose the lowest honest rating that preserves the approved core experience instead of forcing all-ages or hiding content.
 - Added a platform review and asset-rights workflow for Steam, STOVE, and Google Play, including per-asset provenance, commercial/build-distribution rights, secure contract references, and 참조 기반 독립 제작 for images, audio, fonts, 3D, animation, plugins, open source, AI, outsourcing, voice, composition, and translation.

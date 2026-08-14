@@ -34,6 +34,8 @@ Base는 용어의 **유용성**과 **외부 표준성**을 구분한다.
 | `INDUSTRY_COMMON` | 현업에서 널리 쓰이지만 조직·분야별 경계가 달라질 수 있는 용어 | 프로젝트가 Entry/Exit Criteria와 품질선을 필요하면 추가 고정한다. |
 | `BASE_LOCAL_ALIAS` | 기존 Base 계약을 짧게 호출하기 위해 Base가 정한 압축명 | 외부 업계 표준처럼 소개하지 않고 반드시 기존 owner로 연결한다. |
 
+표의 **괄호·슬래시 뒤의 qualifier는 적용 문맥 메모이며 추가 Base Class가 아니다**. 예를 들어 `INDUSTRY_COMMON / SRE_CONTEXT`는 기본 Class가 `INDUSTRY_COMMON`이고 SRE 문맥에서 뜻을 더 좁힌다는 의미다.
+
 별도 표시가 없다는 이유로 어떤 용어를 국제 표준·업계 공인 정의라고 추정하지 않는다. 특히 **Implementation Reality Gate(IRG)는 `BASE_LOCAL_ALIAS`이며 업계 표준 용어가 아니다.**
 
 ### 권한 분리
@@ -99,6 +101,41 @@ Product Backlog ≠ 모든 Backlog
 User Story ≠ 전체 명세
 Epic과 User Story는 Scrum Guide의 필수 Artifact가 아니다.
 ```
+
+## 작업·결함·운영 문제
+
+`Issue`는 문제의 종류가 아니라 **추적 단위**다. GitHub 같은 플랫폼에서는 Bug뿐 아니라 작업·아이디어·피드백·기능 요청도 Issue로 관리할 수 있으므로, Base는 Issue를 결함의 동의어로 사용하지 않는다.
+
+| 용어 | Class | 압축 정의 | 사용하지 않을 의미 |
+|---|---|---|---|
+| **Issue** | `INDUSTRY_COMMON / PLATFORM_CONTEXT` | 추적·논의·할당·상태 관리를 위해 등록한 작업 항목 또는 문제 항목 | Bug만을 뜻하는 표현 |
+| **Bug** | `INDUSTRY_COMMON` | 기대하거나 합의한 동작과 실제 소프트웨어 동작이 어긋나는 문제를 가리키는 일반 개발 표현 | 모든 Issue·Incident의 동의어 |
+| **Defect** | `INDUSTRY_COMMON / TESTING_CONTEXT` | 요구·명세·기대 결과와의 불일치를 결함으로 기록할 때 쓰는 품질·테스트 표현 | Bug와 항상 완전히 같은 범위 또는 항상 완전히 다른 범위라는 보편 규칙 |
+| **Incident** | `INDUSTRY_COMMON / SRE_CONTEXT` | 실제 서비스·운영에 의미 있는 영향을 주어 감지·완화·복구·조정된 대응이 필요한 사건 | 개별 코드 결함 하나와 자동으로 동일한 상태 |
+
+```text
+Issue ≠ Bug
+Incident ≠ 개별 Bug/Defect
+Bug와 Defect를 모든 조직에서 완전히 동일하거나 완전히 다른 용어로 강제하지 않는다.
+```
+
+프로젝트가 Bug와 Defect를 구분한다면 Test Strategy·Issue Template·Severity 규칙에서 번역 기준을 명시한다. Incident는 원인이 Bug일 수 있지만, **사용자·서비스 영향과 대응 상태**를 나타내는 별도 운영 축이다.
+
+## 요구·명세·제약
+
+| 용어 | Class | 압축 정의 | 혼동 방지 |
+|---|---|---|---|
+| **Requirement** | `INDUSTRY_COMMON` | 시스템·기능·품질·사용자 결과가 충족해야 하는 필요·조건·능력 | 문서 파일 하나 전체와 자동으로 동일하지 않음 |
+| **Specification** | `INDUSTRY_COMMON / STANDARDIZED_CONTEXT_DEPENDENT` | 요구·동작·인터페이스·특성·제약 등을 정밀하게 기술하는 문서·데이터·계약 | 모든 조직에서 Requirement와 완전히 동일한 계층이라는 주장 |
+| **Constraint** | `INDUSTRY_COMMON` | 선택 가능한 해법·환경·자원·플랫폼·성능·정책 범위를 제한하는 조건 | 항상 Requirement의 보편적 하위형이라는 주장 |
+
+```text
+Requirement ≠ Specification
+Constraint를 Requirement의 보편적 하위형으로 강제하지 않는다.
+Acceptance Criteria ≠ Requirement 전체
+```
+
+방법론에 따라 Constraint를 Requirement의 한 종류로 관리할 수 있고 Specification이 Requirement를 직접 담을 수도 있다. Base는 그 **조직별 정보 모델**을 공용 어휘에 강제로 고정하지 않고, 프로젝트 책임 원본이 관계를 선언하게 한다.
 
 ## 제작·실험·제품 단계
 
@@ -225,6 +262,42 @@ Technical Debt ≠ 모든 Bug
 
 Rewrite에서 목표 동작이 같더라도 기존 구현의 검증 Evidence가 자동 승계되지는 않는다. 동등성·마이그레이션·회귀·롤백 Evidence를 새 구현에 다시 연결한다.
 
+## 구조·의존 관계
+
+| 용어 | Class | 압축 정의 | 혼동 방지 |
+|---|---|---|---|
+| **Dependency** | `INDUSTRY_COMMON` | 한 모듈·컴포넌트·서비스·패키지가 다른 요소의 타입·데이터·동작·수명주기·가용성에 의존하는 관계 | 존재 자체가 나쁜 설계 또는 tight coupling의 확정 증거가 아님 |
+| **Coupling** | `INDUSTRY_COMMON` | 모듈·컴포넌트 사이 상호의존의 정도와 변경 전파 강도 | Dependency 개수만으로 자동 계산되는 단일 품질 점수 |
+| **Cohesion** | `INDUSTRY_COMMON` | 한 모듈·컴포넌트 내부 책임들이 얼마나 논리적으로 관련되어 하나의 목적을 이루는지 나타내는 성질 | 파일 크기·함수 수만으로 확정되는 품질 점수 |
+
+```text
+Dependency 존재 ≠ Tight Coupling 확정
+Coupling = 모듈 간 상호의존 정도
+Cohesion = 한 모듈 내부 책임들의 논리적 관련성
+```
+
+`High Cohesion / Low Coupling`은 변경 비용을 줄이는 데 유용한 **설계 휴리스틱**이지만 단독 품질 PASS 증거가 아니다. 의도된 공유 상태, 성능, 원자성, 플랫폼 제약 때문에 높은 결합을 선택할 수도 있으므로 실제 변경 영향과 Evidence를 본다.
+
+## 인터페이스·호환성·데이터 계약
+
+| 용어 | Class | 압축 정의 | 혼동 방지 |
+|---|---|---|---|
+| **API** | `INDUSTRY_COMMON` | 다른 코드·도구·사용자가 기능을 호출·조합하기 위해 사용하는 프로그램 인터페이스 계약 | HTTP/Web endpoint만을 뜻하지 않음 |
+| **ABI** | `INDUSTRY_COMMON / BINARY_CONTEXT` | 컴파일된 구성요소 사이 호출 규약·심볼·데이터 배치 등 binary-level 상호운용 계약 | API 문서가 같다는 이유만으로 보장되는 호환성 |
+| **Protocol** | `INDUSTRY_COMMON / STANDARDIZED_CONTEXT_DEPENDENT` | 참여자 사이 메시지 형식·순서·상태 전이·오류·의미 규칙을 포함하는 상호작용 계약 | Endpoint 이름 목록 또는 Schema 하나 |
+| **Schema** | `INDUSTRY_COMMON / STANDARDIZED_CONTEXT_DEPENDENT` | 데이터의 구조·필드·타입·제약·관계를 기술하거나 검증하는 계약 | 통신 Protocol 전체 또는 business behavior 전체 |
+
+```text
+API ≠ Web API만
+API compatibility ≠ ABI compatibility
+Protocol ≠ Endpoint 목록
+Schema ≠ Protocol
+OpenAPI ≠ 모든 종류의 API
+JSON Schema ≠ 모든 종류의 Schema
+```
+
+OpenAPI는 HTTP API를 기술하는 특정 표준 문맥이고 JSON Schema는 JSON 데이터 구조·제약을 기술·검증하는 특정 표준 문맥이다. 둘의 규칙을 모든 API·Protocol·Schema에 자동 적용하지 않는다.
+
 ## Git·버전 관리
 
 | 용어 | Class | 압축 정의 | 혼동 방지 |
@@ -245,6 +318,51 @@ SemVer는 public API를 선언한 소프트웨어에 의미 규칙을 적용한�
 
 게임 프로젝트가 public API를 정의하지 않았다면 `1.2.3` 형태를 쓴다는 이유만으로 SemVer 호환성을 주장하지 않는다. 스토어 표시 버전, 내부 빌드 번호, 저장 데이터 Schema 버전, 네트워크 프로토콜 버전은 필요하면 서로 다른 version axis로 관리한다.
 
+## 빌드·산출물·배포·출시
+
+`Build`는 현업에서 **과정과 결과물 모두**를 가리키는 경우가 있으므로 Base에서는 필요하면 `Build Process`와 `Build Output`으로 풀어 쓴다.
+
+| 용어 | Class | 압축 정의 | 혼동 방지 |
+|---|---|---|---|
+| **Build** | `INDUSTRY_COMMON / CONTEXT_SENSITIVE` | 소스·자산·설정을 실행·테스트·배포 가능한 형태로 변환하는 과정 또는 그 결과물 | process와 output을 구분해야 할 문맥에서 단독 사용 |
+| **Package** | `INDUSTRY_COMMON` | 설치·배포·의존성 소비·유통을 위해 정해진 구조와 메타데이터로 묶은 소프트웨어 단위 | 모든 생성 파일·Evidence의 동의어 |
+| **Artifact** | `INDUSTRY_COMMON` | build·test·workflow·evidence 과정에서 생성되어 보존·전달·검토되는 산출물 | 반드시 설치 가능한 Package 또는 제품 실행 파일 |
+| **Deployment** | `INDUSTRY_COMMON` | 특정 환경에 소프트웨어·구성·자원을 배치하고 실행 상태를 만들거나 갱신하는 행위·상태 | 사용자 공개·출시 승인 자체 |
+| **Release** | `INDUSTRY_COMMON` | 승인된 버전·빌드·콘텐츠를 정해진 대상에게 공식적으로 제공 가능하거나 제공한 상태 | 단순 Deployment·Release Candidate·내부 build 생성 |
+
+```text
+Build process ≠ Build output
+Artifact ≠ Package
+Deployment ≠ Release
+Release Candidate ≠ Release
+ARTIFACT Kind ≠ Build Artifact
+```
+
+운영 표의 `ARTIFACT` Kind는 문서·기록·계약 등을 포함하는 Base 일반 객체 분류다. 여기의 **Build Artifact**는 build/workflow가 만든 산출물이라는 기술 문맥이다. 혼동 가능성이 있으면 `Build Artifact`, `Workflow Artifact`, `Evidence Artifact`처럼 qualifier를 붙인다. Staging에 Deployment했다고 Public Release가 된 것은 아니다.
+
+## 관측·진단
+
+**Telemetry**는 시스템이 실행 중 생성·수집하는 관측 데이터를 포괄하는 상위 범주다. OpenTelemetry 같은 특정 프레임워크의 signal 분류를 Base 전체의 유일한 관측성 모델로 강제하지 않는다.
+
+| 용어 | Class | 압축 정의 | 혼동 방지 |
+|---|---|---|---|
+| **Telemetry** | `INDUSTRY_COMMON` | 실행 중 시스템 상태·행동·성능을 관찰하기 위해 수집·전송·저장하는 측정·이벤트·실행 문맥 데이터의 상위 범주 | 데이터가 있다는 이유만으로 원인 분석이 완료된 상태 |
+| **Metrics** | `INDUSTRY_COMMON / OPENTELEMETRY_CONTEXT` | 시간에 따른 수치 측정값과 집계로 상태·성능·빈도·용량 경향을 관찰하는 signal | 개별 이벤트 원문이나 전체 요청 인과 경로 |
+| **Logging / Logs** | `INDUSTRY_COMMON / OPENTELEMETRY_CONTEXT` | 특정 시점의 이벤트·상태·오류·문맥을 기록하는 행위와 그 기록 | 분산 요청 전체의 인과 관계를 자동 보장하는 Trace |
+| **Tracing / Traces** | `INDUSTRY_COMMON / OPENTELEMETRY_CONTEXT` | 하나의 요청·작업이 여러 컴포넌트를 거치는 실행 경로와 인과 문맥을 연결해 기록·분석하는 행위와 결과 | CPU·메모리 사용의 통계적 실행 샘플인 Profile |
+| **Profiling / Profiles** | `INDUSTRY_COMMON / TOOL_CONTEXT_DEPENDENT` | 실행 중 코드 경로·스택·CPU·메모리 등 자원 사용을 샘플링·측정해 비용 집중 지점을 분석하는 행위와 결과 | 개별 요청의 분산 인과 경로인 Trace |
+
+```text
+Metrics ≠ Logs
+Logs ≠ Traces
+Tracing ≠ Profiling
+Profile ≠ Trace
+관측 signal 존재 ≠ 원인 규명 완료
+OpenTelemetry Profiles의 Alpha 상태 ≠ Profiling 일반의 Alpha 상태
+```
+
+OpenTelemetry 문맥에서 Traces·Metrics·Logs는 지원 signal이고 Profiles는 2026-08 기준 Alpha 상태다. 이 maturity 표시는 **OpenTelemetry Profiles 규격의 상태**일 뿐, 운영체제 profiler·엔진 profiler·언어 profiler 등 Profiling 일반의 성숙도를 뜻하지 않는다. 어느 signal도 단독으로 Root Cause를 자동 증명하지 않는다.
+
 ## 자주 헷갈리는 구분
 
 ```text
@@ -253,8 +371,22 @@ PoC ≠ Vertical Slice
 First Playable ≠ 목표 품질 완료
 Demo ≠ Vertical Slice
 Sprint ≠ Milestone
+Issue ≠ Bug
+Incident ≠ 개별 Bug/Defect
+Requirement ≠ Specification
+Acceptance Criteria ≠ Requirement 전체
+Dependency 존재 ≠ Tight Coupling 확정
+API compatibility ≠ ABI compatibility
+Protocol ≠ Endpoint 목록
+Schema ≠ Protocol
 Early Access ≠ Beta
 Gold / Gold Master ≠ Release Candidate
+Release Candidate ≠ Release
+Artifact ≠ Package
+Deployment ≠ Release
+Metrics ≠ Logs
+Logs ≠ Traces
+Tracing ≠ Profiling
 Smoke Test ≠ 전체 Regression Testing
 UAT ≠ 일반 QA
 Regression Testing ≠ Regression Recheck
@@ -297,6 +429,22 @@ Verification ≠ Validation
 23. `DDD`를 단독 사용하지 않는다.
 24. 단일 도구를 근거 없이 Framework·Platform·Control Plane으로 과장하지 않는다.
 25. `BASE_LOCAL_ALIAS`를 외부 표준·업계 공인 용어처럼 소개하지 않는다.
+26. Issue를 Bug와 동일시해 Feature·Task·Feedback 같은 다른 추적 항목을 결함으로 오분류하지 않는다.
+27. Bug와 Defect를 조직의 정의 확인 없이 보편적인 완전 동의어 또는 완전 별개 개념이라고 강제하지 않는다.
+28. 모든 Bug·Defect를 Incident라고 불러 운영 영향과 대응 심각도를 과장하지 않는다.
+29. Requirement·Specification·Constraint 사이의 조직별 정보 모델을 공용 보편 계층으로 강제하지 않는다.
+30. Dependency 하나가 존재한다는 이유만으로 Tight Coupling이나 나쁜 설계를 확정하지 않는다.
+31. High Cohesion / Low Coupling만으로 설계 품질 PASS를 선언하지 않는다.
+32. API compatibility를 ABI compatibility와 동일시하지 않는다.
+33. OpenAPI를 모든 API·Protocol의 보편 정의 규격으로 소개하지 않는다.
+34. JSON Schema를 모든 Schema나 Protocol의 보편 정의 규격으로 소개하지 않는다.
+35. Build Process와 Build Output을 구분해야 하는 문맥에서 `Build` 하나로 혼동시키지 않는다.
+36. 모든 Artifact를 설치·배포 가능한 Package라고 부르지 않는다.
+37. Staging·내부 환경 Deployment를 Public Release로 승격하지 않는다.
+38. Release Candidate를 실제 Release 완료로 보고하지 않는다.
+39. Logs·Metrics·Traces·Profiles를 서로 대체 가능한 하나의 관측 signal로 취급하지 않는다.
+40. OpenTelemetry Profiles의 Alpha 상태를 Profiling 기술 일반의 Alpha 상태로 일반화하지 않는다.
+41. Telemetry·Log·Trace·Metric·Profile이 존재한다는 사실만으로 Root Cause가 증명됐다고 보고하지 않는다.
 
 ## 프로젝트 채택
 
