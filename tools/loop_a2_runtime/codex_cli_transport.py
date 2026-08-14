@@ -16,13 +16,21 @@ import subprocess
 import tempfile
 from typing import Any, Callable
 
+from .authority_snapshot import AuthoritySnapshot
+from .candidate_verification import (
+    CandidateVerificationError,
+    ProjectTestCandidateVerifier,
+    VerificationEvidenceMailbox,
+)
 from .openai_transport import (
     GitReviewMaterialSource,
     OpenAIWorkspaceBuilder,
     OpenAIWorktreeCritic,
     RepairMailbox,
 )
+from .protocol import ReviewResult, RunRequest, WorkerResult
 from .provider_gate import subscription_codex_cli_gate
+from .test_executor import ProjectTestExecutor
 from .worktree_adapter import GitWorktreeBuilderAdapter
 
 
@@ -76,6 +84,15 @@ def _configured_secret_values() -> tuple[str, ...]:
         value
         for key in _FORBIDDEN_SECRET_KEYS
         if (value := os.environ.get(key))
+    )
+
+
+def _same_run_identity(left: RunRequest, right: RunRequest) -> bool:
+    return (
+        left.project_id == right.project_id
+        and left.run_id == right.run_id
+        and left.package_id == right.package_id
+        and left.expected_main_sha == right.expected_main_sha
     )
 
 
@@ -259,16 +276,101 @@ class CodexCliResponsesClient:
         return _CodexCliResponse(output_text=output)
 
 
+class VerificationBoundCodexResponsesClient:
+    """Inject the exact run's deterministic PASS receipt into Critic model input."""
+
+    def __init__(
+        self,
+        *,
+        base_client: object,
+        run_request: RunRequest,
+        verification_mailbox: VerificationEvidenceMailbox,
+    ) -> None:
+        if not hasattr(base_client, "responses"):
+            raise ValueError("base_client must expose a Responses-style interface")
+        self.base_client = base_client
+        self.run_request = run_request
+        self.verification_mailbox = verification_mailbox
+        self.responses = self
+
+    def create(self, **kwargs: Any) -> object:
+        raw_input = kwargs.get("input")
+        if not isinstance(raw_input, str):
+            raise CodexCliTransportError(
+                "CRITIC_TEST_EVIDENCE_IDENTITY_MISMATCH",
+                "Critic input must be JSON text before evidence binding",
+            )
+        try:
+            payload = json.loads(raw_input)
+        except json.JSONDecodeError as exc:
+            raise CodexCliTransportError(
+                "CRITIC_TEST_EVIDENCE_IDENTITY_MISMATCH",
+                "Critic input must be valid JSON before evidence binding",
+            ) from exc
+        if not isinstance(payload, dict):
+            raise CodexCliTransportError(
+                "CRITIC_TEST_EVIDENCE_IDENTITY_MISMATCH",
+                "Critic input must be an object before evidence binding",
+            )
+        if (
+            payload.get("project_id") != self.run_request.project_id
+            or payload.get("package_id") != self.run_request.package_id
+        ):
+            raise CodexCliTransportError(
+                "CRITIC_TEST_EVIDENCE_IDENTITY_MISMATCH",
+                "Critic payload identity differs from the bound run",
+            )
+        try:
+            evidence = self.verification_mailbox.require_pass(self.run_request)
+        except CandidateVerificationError as exc:
+            raise CodexCliTransportError(
+                "CRITIC_TEST_EVIDENCE_MISSING",
+                "Critic requires matching deterministic project-test PASS evidence",
+            ) from exc
+        payload["test_evidence"] = evidence
+        forwarded = dict(kwargs)
+        forwarded["input"] = json.dumps(
+            payload,
+            ensure_ascii=False,
+            separators=(",", ":"),
+        )
+        return self.base_client.responses.create(**forwarded)
+
+
+class VerificationBoundCritic:
+    """Prevent one subscription Critic instance from being reused across run identities."""
+
+    def __init__(self, *, inner: object, run_request: RunRequest) -> None:
+        if not hasattr(inner, "review"):
+            raise ValueError("inner must expose Critic review")
+        self.inner = inner
+        self.run_request = run_request
+
+    def review(
+        self,
+        request: RunRequest,
+        worker_result: WorkerResult,
+    ) -> ReviewResult:
+        if not _same_run_identity(request, self.run_request):
+            raise CodexCliTransportError(
+                "CRITIC_RUN_IDENTITY_MISMATCH",
+                "subscription Critic cannot be reused for another run identity",
+            )
+        return self.inner.review(request, worker_result)
+
+
 @dataclass(frozen=True)
 class SubscriptionProviderComponents:
     builder: object
-    critic: OpenAIWorktreeCritic
+    critic: VerificationBoundCritic
     builder_worker: OpenAIWorkspaceBuilder
+    candidate_verifier: ProjectTestCandidateVerifier
+    verification_mailbox: VerificationEvidenceMailbox
 
     def usage_snapshot(self) -> dict[str, object]:
         return {
             "builder": self.builder_worker.usage_snapshot(),
-            "critic": self.critic.usage_snapshot(),
+            "critic": self.critic.inner.usage_snapshot(),
         }
 
 
@@ -276,12 +378,47 @@ def build_subscription_provider_components(
     *,
     repo_root: Path | str,
     runtime_root: Path | str,
+    authority_snapshot: AuthoritySnapshot,
+    run_request: RunRequest,
+    project_test_executor: ProjectTestExecutor,
     login_runner: Callable[..., subprocess.CompletedProcess[str]] | None = None,
     exec_runner: Callable[..., subprocess.CompletedProcess[str]] | None = None,
     builder_model: str | None = None,
     critic_model: str | None = None,
 ) -> SubscriptionProviderComponents:
-    """Construct REAL Loop A2 providers only from ChatGPT-authenticated Codex CLI."""
+    """Construct one REAL Loop A2 run from ChatGPT-authenticated Codex CLI."""
+    if not isinstance(authority_snapshot, AuthoritySnapshot):
+        raise CodexCliTransportError("AUTHORITY_SNAPSHOT_REQUIRED", "subscription A2 requires immutable authority snapshot")
+    if not isinstance(run_request, RunRequest) or run_request.provider_mode != "REAL":
+        raise CodexCliTransportError("REAL_RUN_REQUEST_REQUIRED", "subscription A2 requires one REAL RunRequest")
+    if not isinstance(project_test_executor, ProjectTestExecutor):
+        raise CodexCliTransportError("PROJECT_TEST_EXECUTOR_REQUIRED", "subscription A2 requires an explicit ProjectTestExecutor")
+    if (
+        authority_snapshot.project_id != run_request.project_id
+        or authority_snapshot.package_id != run_request.package_id
+        or authority_snapshot.source_main_sha != run_request.expected_main_sha
+        or authority_snapshot.capsule_path != run_request.capsule_path
+        or run_request.package_path not in authority_snapshot.paths
+    ):
+        raise CodexCliTransportError(
+            "AUTHORITY_SNAPSHOT_IDENTITY_MISMATCH",
+            "subscription authority snapshot differs from the bound RunRequest",
+        )
+
+    verification_mailbox = VerificationEvidenceMailbox()
+    candidate_verifier = ProjectTestCandidateVerifier(
+        repo_root=Path(repo_root),
+        runtime_root=Path(runtime_root),
+        authority_snapshot=authority_snapshot,
+        executor=project_test_executor,
+        mailbox=verification_mailbox,
+    )
+    if not candidate_verifier.preflight(run_request):
+        raise CodexCliTransportError(
+            "PROJECT_TEST_BOUNDARY_UNAVAILABLE",
+            "project-test network boundary is unavailable for the approved Runtime Adapter",
+        )
+
     gate = subscription_codex_cli_gate(run_command=login_runner)
     if gate.get("status") != "READY":
         raise CodexCliTransportError("SUBSCRIPTION_CODEX_GATE_CLOSED", "ChatGPT-authenticated Codex CLI is not ready")
@@ -291,13 +428,14 @@ def build_subscription_provider_components(
     if not builder_name or not critic_name:
         raise CodexCliTransportError("CODEX_MODEL_INVALID", "Codex model selection must be non-empty")
 
-    mailbox = RepairMailbox()
+    repair_mailbox = RepairMailbox()
     builder_process = CodexCliProcess(run_command=exec_runner)
     critic_process = CodexCliProcess(run_command=exec_runner)
     builder_worker = OpenAIWorkspaceBuilder(
         client=CodexCliResponsesClient(process=builder_process),
         model=builder_name,
-        repair_mailbox=mailbox,
+        repair_mailbox=repair_mailbox,
+        authority_snapshot=authority_snapshot,
     )
     builder = GitWorktreeBuilderAdapter(
         repo_root=Path(repo_root),
@@ -308,14 +446,25 @@ def build_subscription_provider_components(
         repo_root=Path(repo_root),
         runtime_root=Path(runtime_root),
     )
-    critic = OpenAIWorktreeCritic(
-        client=CodexCliResponsesClient(process=critic_process),
+    critic_client = VerificationBoundCodexResponsesClient(
+        base_client=CodexCliResponsesClient(process=critic_process),
+        run_request=run_request,
+        verification_mailbox=verification_mailbox,
+    )
+    inner_critic = OpenAIWorktreeCritic(
+        client=critic_client,
         model=critic_name,
         material_source=material_source,
-        repair_mailbox=mailbox,
+        repair_mailbox=repair_mailbox,
+    )
+    critic = VerificationBoundCritic(
+        inner=inner_critic,
+        run_request=run_request,
     )
     return SubscriptionProviderComponents(
         builder=builder,
         critic=critic,
         builder_worker=builder_worker,
+        candidate_verifier=candidate_verifier,
+        verification_mailbox=verification_mailbox,
     )
