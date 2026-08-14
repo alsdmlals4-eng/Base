@@ -15,7 +15,7 @@ api_key_fallback: FORBIDDEN
 
 The former paid-provider decision issue #352 was closed as `not_planned`. No separately billed OpenAI API request was executed and no separately billed API cost was incurred.
 
-Implementation issue: #379  
+Implementation issue: #379
 Implementation PR: #380
 
 ## Existing-solution review
