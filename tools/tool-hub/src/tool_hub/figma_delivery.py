@@ -151,7 +151,12 @@ class FigmaDeliveryService:
                     break
             if not code:
                 raise DeliveryError("PAIRING_CODE_UNAVAILABLE")
-            self._pairings[digest] = _PairingRecord(project_id, target.figma_file_key, digest, now + self.PAIRING_TTL_SECONDS)
+            self._pairings[digest] = _PairingRecord(
+                project_id,
+                target.figma_file_key,
+                digest,
+                now + self.PAIRING_TTL_SECONDS,
+            )
         return PairingView(project_id, code, target.figma_url, now + self.PAIRING_TTL_SECONDS)
 
     def pair_by_code(self, pairing_code: str, bridge_version: str) -> BridgeSession:
@@ -181,7 +186,13 @@ class FigmaDeliveryService:
             self._sessions[token] = session
             return session
 
-    def pair(self, project_id: str, figma_file_key: str, pairing_code: str, bridge_version: str) -> BridgeSession:
+    def pair(
+        self,
+        project_id: str,
+        figma_file_key: str,
+        pairing_code: str,
+        bridge_version: str,
+    ) -> BridgeSession:
         try:
             self._locator.resolve(project_id)
             target = self._registry.resolve_ready_target(project_id)
@@ -197,7 +208,14 @@ class FigmaDeliveryService:
                 raise DeliveryError("PAIRING_CODE_INVALID")
         return self.pair_by_code(pairing_code, bridge_version)
 
-    def enqueue(self, tool_id: str, project_id: str, run_id: str, image_bytes: bytes, media_type: str) -> DeliveryJob:
+    def enqueue(
+        self,
+        tool_id: str,
+        project_id: str,
+        run_id: str,
+        image_bytes: bytes,
+        media_type: str,
+    ) -> DeliveryJob:
         if not tool_id or not project_id or not run_id:
             raise DeliveryError("DELIVERY_IDENTITY_REQUIRED")
         if not isinstance(image_bytes, bytes) or not image_bytes:
@@ -218,11 +236,22 @@ class FigmaDeliveryService:
             raise DeliveryError("DELIVERY_QUEUE_WRITE_FAILED") from error
         now = float(self._clock())
         job = DeliveryJob(
-            delivery_id=delivery_id, tool_id=tool_id, project_id=project_id, run_id=run_id,
-            content_sha256=hashlib.sha256(image_bytes).hexdigest(), byte_length=len(image_bytes), media_type=media_type,
-            width=width, height=height, figma_file_key=target.figma_file_key, figma_url=target.figma_url,
-            delivery_page_node_id=target.delivery_page_node_id, generation_area_node_id=target.generation_area_node_id,
-            node_name=self._node_name(tool_id, run_id, delivery_id), state="QUEUED", created_at=now,
+            delivery_id=delivery_id,
+            tool_id=tool_id,
+            project_id=project_id,
+            run_id=run_id,
+            content_sha256=hashlib.sha256(image_bytes).hexdigest(),
+            byte_length=len(image_bytes),
+            media_type=media_type,
+            width=width,
+            height=height,
+            figma_file_key=target.figma_file_key,
+            figma_url=target.figma_url,
+            delivery_page_node_id=target.delivery_page_node_id,
+            generation_area_node_id=target.generation_area_node_id,
+            node_name=self._node_name(tool_id, run_id, delivery_id),
+            state="QUEUED",
+            created_at=now,
             expires_at=now + self.JOB_TTL_SECONDS,
         )
         try:
@@ -238,47 +267,55 @@ class FigmaDeliveryService:
     def claim_next(self, token: str) -> DeliveryJob | None:
         session = self._require_session(token)
         self._assert_session_route(session)
-        candidates = sorted(
-            (job for job in self._jobs.values() if job.project_id == session.project_id and job.state == "QUEUED"),
-            key=lambda item: (item.created_at, item.delivery_id),
-        )
-        for job in candidates:
-            if float(self._clock()) > job.expires_at:
-                self._set_state(job, "EXPIRED")
-                continue
-            self._verify_content(job)
-            return self._set_state(job, "CLAIMED")
-        return None
+        with self._state_lock:
+            candidates = sorted(
+                (
+                    job
+                    for job in self._jobs.values()
+                    if job.project_id == session.project_id and job.state == "QUEUED"
+                ),
+                key=lambda item: (item.created_at, item.delivery_id),
+            )
+            for job in candidates:
+                if float(self._clock()) > job.expires_at:
+                    self._set_state(job, "EXPIRED")
+                    continue
+                self._verify_content(job)
+                return self._set_state(job, "CLAIMED")
+            return None
 
     def content(self, token: str, delivery_id: str) -> bytes:
         session = self._require_session(token)
-        job = self._job_for_session(session, delivery_id)
-        if job.state != "CLAIMED":
-            raise DeliveryError("DELIVERY_NOT_CLAIMED")
-        if float(self._clock()) > job.expires_at:
-            self._set_state(job, "EXPIRED")
-            raise DeliveryError("DELIVERY_EXPIRED")
-        return self._verify_content(job)
+        with self._state_lock:
+            job = self._job_for_session(session, delivery_id)
+            if job.state != "CLAIMED":
+                raise DeliveryError("DELIVERY_NOT_CLAIMED")
+            if float(self._clock()) > job.expires_at:
+                self._set_state(job, "EXPIRED")
+                raise DeliveryError("DELIVERY_EXPIRED")
+            return self._verify_content(job)
 
     def release(self, token: str, delivery_id: str) -> DeliveryJob:
         session = self._require_session(token)
-        job = self._job_for_session(session, delivery_id)
-        if job.state != "CLAIMED":
-            raise DeliveryError("DELIVERY_NOT_CLAIMED")
-        if float(self._clock()) > job.expires_at:
-            return self._set_state(job, "EXPIRED")
-        self._verify_content(job)
-        return self._set_state(job, "QUEUED")
+        with self._state_lock:
+            job = self._job_for_session(session, delivery_id)
+            if job.state != "CLAIMED":
+                raise DeliveryError("DELIVERY_NOT_CLAIMED")
+            if float(self._clock()) > job.expires_at:
+                return self._set_state(job, "EXPIRED")
+            self._verify_content(job)
+            return self._set_state(job, "QUEUED")
 
     def job_view(self, project_id: str, delivery_id: str) -> DeliveryJob:
-        job = self._jobs.get(delivery_id)
-        if job is None:
-            raise DeliveryError("DELIVERY_NOT_FOUND")
-        if job.project_id != project_id:
-            raise DeliveryError("DELIVERY_SCOPE_MISMATCH")
-        if job.state in {"QUEUED", "CLAIMED"} and float(self._clock()) > job.expires_at:
-            return self._set_state(job, "EXPIRED")
-        return job
+        with self._state_lock:
+            job = self._jobs.get(delivery_id)
+            if job is None:
+                raise DeliveryError("DELIVERY_NOT_FOUND")
+            if job.project_id != project_id:
+                raise DeliveryError("DELIVERY_SCOPE_MISMATCH")
+            if job.state in {"QUEUED", "CLAIMED"} and float(self._clock()) > job.expires_at:
+                return self._set_state(job, "EXPIRED")
+            return job
 
     def public_status(self, project_id: str) -> dict[str, object]:
         try:
@@ -287,75 +324,109 @@ class FigmaDeliveryService:
             self._registry.assert_unchanged()
         except (ProjectBindingError, DeliveryBlockedError) as error:
             raise DeliveryError("DELIVERY_PROJECT_ROUTE_UNAVAILABLE") from error
-        pending = verified = expired = 0
-        for job in tuple(self._jobs.values()):
-            if job.project_id != project_id:
-                continue
-            current = job
-            if current.state in {"QUEUED", "CLAIMED"} and float(self._clock()) > current.expires_at:
-                current = self._set_state(current, "EXPIRED")
-            if current.state in {"QUEUED", "CLAIMED"}:
-                pending += 1
-            elif current.state == "DELIVERED_VERIFIED":
-                verified += 1
-            elif current.state == "EXPIRED":
-                expired += 1
-        paired = any(session.project_id == project_id for session in self._sessions.values())
-        return {
-            "project_id": project_id,
-            "bridge_state": "BRIDGE_PAIRED" if paired else "PAIRING_REQUIRED",
-            "delivery_state": "DELIVERY_PENDING" if pending else ("FIGMA_DELIVERED_VERIFIED" if verified else "NO_PENDING_DELIVERY"),
-            "pending_count": pending, "verified_count": verified, "expired_count": expired,
-        }
+        with self._state_lock:
+            pending = verified = expired = 0
+            for job in tuple(self._jobs.values()):
+                if job.project_id != project_id:
+                    continue
+                current = job
+                if current.state in {"QUEUED", "CLAIMED"} and float(self._clock()) > current.expires_at:
+                    current = self._set_state(current, "EXPIRED")
+                if current.state in {"QUEUED", "CLAIMED"}:
+                    pending += 1
+                elif current.state == "DELIVERED_VERIFIED":
+                    verified += 1
+                elif current.state == "EXPIRED":
+                    expired += 1
+            paired = any(session.project_id == project_id for session in self._sessions.values())
+            return {
+                "project_id": project_id,
+                "bridge_state": "BRIDGE_PAIRED" if paired else "PAIRING_REQUIRED",
+                "delivery_state": (
+                    "DELIVERY_PENDING"
+                    if pending
+                    else ("FIGMA_DELIVERED_VERIFIED" if verified else "NO_PENDING_DELIVERY")
+                ),
+                "pending_count": pending,
+                "verified_count": verified,
+                "expired_count": expired,
+            }
 
-    def finalize(self, token: str, delivery_id: str, receipt: BridgeReceipt) -> DeliveryReceipt:
+    def finalize(
+        self,
+        token: str,
+        delivery_id: str,
+        receipt: BridgeReceipt,
+    ) -> DeliveryReceipt:
         session = self._require_session(token)
-        job = self._job_for_session(session, delivery_id)
-        if job.state == "DELIVERED_VERIFIED":
-            raise DeliveryError("DELIVERY_ALREADY_VERIFIED")
-        if job.state != "CLAIMED":
-            raise DeliveryError("DELIVERY_NOT_CLAIMED")
-        if float(self._clock()) > job.expires_at:
-            self._set_state(job, "EXPIRED")
-            raise DeliveryError("DELIVERY_EXPIRED")
-        self._verify_content(job)
-        if receipt.target_node_id != job.generation_area_node_id:
-            raise DeliveryError("FIGMA_TARGET_MISMATCH")
-        if not hmac.compare_digest(receipt.content_sha256, job.content_sha256):
-            raise DeliveryError("DELIVERY_HASH_MISMATCH")
-        if receipt.created_node_name != job.node_name or not re.fullmatch(r"\d+[:-]\d+", receipt.created_node_id):
-            raise DeliveryError("FIGMA_NODE_IDENTITY_MISMATCH")
-        if not receipt.image_hash:
-            raise DeliveryError("FIGMA_IMAGE_HASH_REQUIRED")
-        if receipt.bridge_version != session.bridge_version:
-            raise DeliveryError("BRIDGE_VERSION_MISMATCH")
-        verified = DeliveryReceipt(
-            delivery_id=job.delivery_id, tool_id=job.tool_id, project_id=job.project_id, run_id=job.run_id,
-            content_sha256=job.content_sha256, byte_length=job.byte_length, media_type=job.media_type,
-            figma_file_key=job.figma_file_key, target_node_id=job.generation_area_node_id,
-            created_node_id=receipt.created_node_id, created_node_name=receipt.created_node_name,
-            bridge_version=receipt.bridge_version, image_hash=receipt.image_hash, verified_at=float(self._clock()),
-        )
-        root = self._job_roots.get(job.delivery_id)
-        if root is None:
-            raise DeliveryError("DELIVERY_NOT_FOUND")
-        evidence_path = root / "FIGMA_DELIVERY_RECEIPT.json"
-        try:
-            self._atomic_write_text(evidence_path, json.dumps(self._receipt_document(verified), ensure_ascii=False, indent=2, sort_keys=True) + "\n")
-            self._set_state(job, "DELIVERED_VERIFIED")
-        except OSError as error:
+        with self._state_lock:
+            job = self._job_for_session(session, delivery_id)
+            if job.state == "DELIVERED_VERIFIED":
+                raise DeliveryError("DELIVERY_ALREADY_VERIFIED")
+            if job.state != "CLAIMED":
+                raise DeliveryError("DELIVERY_NOT_CLAIMED")
+            if float(self._clock()) > job.expires_at:
+                self._set_state(job, "EXPIRED")
+                raise DeliveryError("DELIVERY_EXPIRED")
+            self._verify_content(job)
+            if receipt.target_node_id != job.generation_area_node_id:
+                raise DeliveryError("FIGMA_TARGET_MISMATCH")
+            if not hmac.compare_digest(receipt.content_sha256, job.content_sha256):
+                raise DeliveryError("DELIVERY_HASH_MISMATCH")
+            if (
+                receipt.created_node_name != job.node_name
+                or not re.fullmatch(r"\d+[:-]\d+", receipt.created_node_id)
+            ):
+                raise DeliveryError("FIGMA_NODE_IDENTITY_MISMATCH")
+            if not receipt.image_hash:
+                raise DeliveryError("FIGMA_IMAGE_HASH_REQUIRED")
+            if receipt.bridge_version != session.bridge_version:
+                raise DeliveryError("BRIDGE_VERSION_MISMATCH")
+            verified = DeliveryReceipt(
+                delivery_id=job.delivery_id,
+                tool_id=job.tool_id,
+                project_id=job.project_id,
+                run_id=job.run_id,
+                content_sha256=job.content_sha256,
+                byte_length=job.byte_length,
+                media_type=job.media_type,
+                figma_file_key=job.figma_file_key,
+                target_node_id=job.generation_area_node_id,
+                created_node_id=receipt.created_node_id,
+                created_node_name=receipt.created_node_name,
+                bridge_version=receipt.bridge_version,
+                image_hash=receipt.image_hash,
+                verified_at=float(self._clock()),
+            )
+            root = self._job_roots.get(job.delivery_id)
+            if root is None:
+                raise DeliveryError("DELIVERY_NOT_FOUND")
+            evidence_path = root / "FIGMA_DELIVERY_RECEIPT.json"
             try:
-                evidence_path.unlink(missing_ok=True)
-            except OSError:
-                pass
-            raise DeliveryError("DELIVERY_RECEIPT_WRITE_FAILED") from error
-        except DeliveryError:
-            try:
-                evidence_path.unlink(missing_ok=True)
-            except OSError:
-                pass
-            raise
-        return verified
+                self._atomic_write_text(
+                    evidence_path,
+                    json.dumps(
+                        self._receipt_document(verified),
+                        ensure_ascii=False,
+                        indent=2,
+                        sort_keys=True,
+                    )
+                    + "\n",
+                )
+                self._set_state(job, "DELIVERED_VERIFIED")
+            except OSError as error:
+                try:
+                    evidence_path.unlink(missing_ok=True)
+                except OSError:
+                    pass
+                raise DeliveryError("DELIVERY_RECEIPT_WRITE_FAILED") from error
+            except DeliveryError:
+                try:
+                    evidence_path.unlink(missing_ok=True)
+                except OSError:
+                    pass
+                raise
+            return verified
 
     def _prune_pairings(self, now: float) -> None:
         for digest, record in tuple(self._pairings.items()):
@@ -363,10 +434,11 @@ class FigmaDeliveryService:
                 self._pairings.pop(digest, None)
 
     def _require_session(self, token: str) -> BridgeSession:
-        session = self._sessions.get(token)
-        if session is None:
-            raise DeliveryError("BRIDGE_AUTH_REQUIRED")
-        return session
+        with self._state_lock:
+            session = self._sessions.get(token)
+            if session is None:
+                raise DeliveryError("BRIDGE_AUTH_REQUIRED")
+            return session
 
     def _assert_session_route(self, session: BridgeSession) -> None:
         try:
@@ -395,21 +467,25 @@ class FigmaDeliveryService:
             data = (root / "content.bin").read_bytes()
         except OSError as error:
             raise DeliveryError("DELIVERY_CONTENT_UNAVAILABLE") from error
-        if len(data) != job.byte_length or not hmac.compare_digest(hashlib.sha256(data).hexdigest(), job.content_sha256):
+        if (
+            len(data) != job.byte_length
+            or not hmac.compare_digest(hashlib.sha256(data).hexdigest(), job.content_sha256)
+        ):
             raise DeliveryError("DELIVERY_CONTENT_CHANGED")
         return data
 
     def _set_state(self, job: DeliveryJob, state: str) -> DeliveryJob:
-        updated = replace(job, state=state)
-        root = self._job_roots.get(job.delivery_id)
-        if root is None:
-            raise DeliveryError("DELIVERY_NOT_FOUND")
-        try:
-            self._write_job(root, updated)
-        except OSError as error:
-            raise DeliveryError("DELIVERY_QUEUE_WRITE_FAILED") from error
-        self._jobs[job.delivery_id] = updated
-        return updated
+        with self._state_lock:
+            updated = replace(job, state=state)
+            root = self._job_roots.get(job.delivery_id)
+            if root is None:
+                raise DeliveryError("DELIVERY_NOT_FOUND")
+            try:
+                self._write_job(root, updated)
+            except OSError as error:
+                raise DeliveryError("DELIVERY_QUEUE_WRITE_FAILED") from error
+            self._jobs[job.delivery_id] = updated
+            return updated
 
     def _recover_jobs(self) -> None:
         try:
@@ -437,7 +513,13 @@ class FigmaDeliveryService:
             for child in children:
                 self._recover_one(project_id, target, queue_root, child)
 
-    def _recover_one(self, project_id: str, target: object, queue_root: Path, child: Path) -> None:
+    def _recover_one(
+        self,
+        project_id: str,
+        target: object,
+        queue_root: Path,
+        child: Path,
+    ) -> None:
         if child.is_symlink() or not child.is_dir() or not re.fullmatch(r"[0-9a-f]{32}", child.name):
             return
         try:
@@ -451,36 +533,79 @@ class FigmaDeliveryService:
             if not isinstance(doc, dict) or doc.get("schema_version") != 1:
                 return
             required = {
-                "delivery_id", "tool_id", "project_id", "run_id", "content_sha256", "byte_length", "media_type",
-                "width", "height", "figma_file_key", "delivery_page_node_id", "generation_area_node_id", "node_name",
-                "state", "created_at", "expires_at"
+                "delivery_id",
+                "tool_id",
+                "project_id",
+                "run_id",
+                "content_sha256",
+                "byte_length",
+                "media_type",
+                "width",
+                "height",
+                "figma_file_key",
+                "delivery_page_node_id",
+                "generation_area_node_id",
+                "node_name",
+                "state",
+                "created_at",
+                "expires_at",
             }
             if not required.issubset(doc):
                 return
-            if doc["delivery_id"] != child.name or doc["project_id"] != project_id or doc["state"] not in self._JOB_STATES:
+            if (
+                doc["delivery_id"] != child.name
+                or doc["project_id"] != project_id
+                or doc["state"] not in self._JOB_STATES
+            ):
                 return
-            if doc["figma_file_key"] != target.figma_file_key or doc["delivery_page_node_id"] != target.delivery_page_node_id or doc["generation_area_node_id"] != target.generation_area_node_id:
+            if (
+                doc["figma_file_key"] != target.figma_file_key
+                or doc["delivery_page_node_id"] != target.delivery_page_node_id
+                or doc["generation_area_node_id"] != target.generation_area_node_id
+            ):
                 return
             content_path = resolved / "content.bin"
             if content_path.is_symlink():
                 return
             data = content_path.read_bytes()
             width, height = self._validate_raster(data, str(doc["media_type"]))
-            if int(doc["byte_length"]) != len(data) or str(doc["content_sha256"]) != hashlib.sha256(data).hexdigest():
+            if (
+                int(doc["byte_length"]) != len(data)
+                or str(doc["content_sha256"]) != hashlib.sha256(data).hexdigest()
+            ):
                 return
             if int(doc["width"]) != width or int(doc["height"]) != height:
                 return
-            expected_name = self._node_name(str(doc["tool_id"]), str(doc["run_id"]), child.name)
+            expected_name = self._node_name(
+                str(doc["tool_id"]),
+                str(doc["run_id"]),
+                child.name,
+            )
             if doc["node_name"] != expected_name:
                 return
             job = DeliveryJob(
-                delivery_id=child.name, tool_id=str(doc["tool_id"]), project_id=project_id, run_id=str(doc["run_id"]),
-                content_sha256=str(doc["content_sha256"]), byte_length=len(data), media_type=str(doc["media_type"]),
-                width=width, height=height, figma_file_key=target.figma_file_key, figma_url=target.figma_url,
-                delivery_page_node_id=target.delivery_page_node_id, generation_area_node_id=target.generation_area_node_id,
-                node_name=expected_name, state=str(doc["state"]), created_at=float(doc["created_at"]), expires_at=float(doc["expires_at"]),
+                delivery_id=child.name,
+                tool_id=str(doc["tool_id"]),
+                project_id=project_id,
+                run_id=str(doc["run_id"]),
+                content_sha256=str(doc["content_sha256"]),
+                byte_length=len(data),
+                media_type=str(doc["media_type"]),
+                width=width,
+                height=height,
+                figma_file_key=target.figma_file_key,
+                figma_url=target.figma_url,
+                delivery_page_node_id=target.delivery_page_node_id,
+                generation_area_node_id=target.generation_area_node_id,
+                node_name=expected_name,
+                state=str(doc["state"]),
+                created_at=float(doc["created_at"]),
+                expires_at=float(doc["expires_at"]),
             )
-            if job.state == "DELIVERED_VERIFIED" and not self._valid_recovered_receipt(resolved, job):
+            if job.state == "DELIVERED_VERIFIED" and not self._valid_recovered_receipt(
+                resolved,
+                job,
+            ):
                 return
             self._jobs[job.delivery_id] = job
             self._job_roots[job.delivery_id] = resolved
@@ -502,10 +627,14 @@ class FigmaDeliveryService:
         except (OSError, UnicodeError, json.JSONDecodeError):
             return False
         return bool(
-            isinstance(doc, dict) and doc.get("state") == "DELIVERED_VERIFIED"
-            and doc.get("delivery_id") == job.delivery_id and doc.get("project_id") == job.project_id
-            and doc.get("content_sha256") == job.content_sha256 and doc.get("figma_file_key") == job.figma_file_key
-            and doc.get("target_node_id") == job.generation_area_node_id and doc.get("created_node_name") == job.node_name
+            isinstance(doc, dict)
+            and doc.get("state") == "DELIVERED_VERIFIED"
+            and doc.get("delivery_id") == job.delivery_id
+            and doc.get("project_id") == job.project_id
+            and doc.get("content_sha256") == job.content_sha256
+            and doc.get("figma_file_key") == job.figma_file_key
+            and doc.get("target_node_id") == job.generation_area_node_id
+            and doc.get("created_node_name") == job.node_name
         )
 
     @staticmethod
@@ -515,7 +644,11 @@ class FigmaDeliveryService:
             vault_root = vault.resolve(strict=True)
         except OSError as error:
             raise DeliveryError("PROJECT_DELIVERY_AREA_UNAVAILABLE") from error
-        if vault_root != project_root.resolve() / ".asset-vault" or not vault_root.is_dir() or vault.is_symlink():
+        if (
+            vault_root != project_root.resolve() / ".asset-vault"
+            or not vault_root.is_dir()
+            or vault.is_symlink()
+        ):
             raise DeliveryError("PROJECT_DELIVERY_AREA_UNAVAILABLE")
         return vault_root
 
@@ -534,13 +667,13 @@ class FigmaDeliveryService:
         while offset < len(image_bytes):
             if offset + 12 > len(image_bytes):
                 raise DeliveryError("DELIVERY_IMAGE_INVALID")
-            length = struct.unpack(">I", image_bytes[offset:offset + 4])[0]
-            kind = image_bytes[offset + 4:offset + 8]
+            length = struct.unpack(">I", image_bytes[offset : offset + 4])[0]
+            kind = image_bytes[offset + 4 : offset + 8]
             end = offset + 12 + length
             if end > len(image_bytes):
                 raise DeliveryError("DELIVERY_IMAGE_INVALID")
-            payload = image_bytes[offset + 8:offset + 8 + length]
-            expected_crc = struct.unpack(">I", image_bytes[offset + 8 + length:end])[0]
+            payload = image_bytes[offset + 8 : offset + 8 + length]
+            expected_crc = struct.unpack(">I", image_bytes[offset + 8 + length : end])[0]
             if expected_crc != (binascii.crc32(kind + payload) & 0xFFFFFFFF):
                 raise DeliveryError("DELIVERY_IMAGE_INVALID")
             if first:
@@ -592,25 +725,56 @@ class FigmaDeliveryService:
 
     @classmethod
     def _write_job(cls, root: Path, job: DeliveryJob) -> None:
-        cls._atomic_write_text(root / "JOB.json", json.dumps(cls._job_document(job), ensure_ascii=False, indent=2, sort_keys=True) + "\n")
+        cls._atomic_write_text(
+            root / "JOB.json",
+            json.dumps(
+                cls._job_document(job),
+                ensure_ascii=False,
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n",
+        )
 
     @staticmethod
     def _job_document(job: DeliveryJob) -> dict[str, object]:
         return {
-            "schema_version": 1, "delivery_id": job.delivery_id, "tool_id": job.tool_id, "project_id": job.project_id,
-            "run_id": job.run_id, "content_sha256": job.content_sha256, "byte_length": job.byte_length,
-            "media_type": job.media_type, "width": job.width, "height": job.height, "figma_file_key": job.figma_file_key,
-            "delivery_page_node_id": job.delivery_page_node_id, "generation_area_node_id": job.generation_area_node_id,
-            "node_name": job.node_name, "state": job.state, "created_at": job.created_at, "expires_at": job.expires_at,
+            "schema_version": 1,
+            "delivery_id": job.delivery_id,
+            "tool_id": job.tool_id,
+            "project_id": job.project_id,
+            "run_id": job.run_id,
+            "content_sha256": job.content_sha256,
+            "byte_length": job.byte_length,
+            "media_type": job.media_type,
+            "width": job.width,
+            "height": job.height,
+            "figma_file_key": job.figma_file_key,
+            "delivery_page_node_id": job.delivery_page_node_id,
+            "generation_area_node_id": job.generation_area_node_id,
+            "node_name": job.node_name,
+            "state": job.state,
+            "created_at": job.created_at,
+            "expires_at": job.expires_at,
         }
 
     @staticmethod
     def _receipt_document(receipt: DeliveryReceipt) -> dict[str, object]:
         return {
-            "schema_version": 1, "delivery_id": receipt.delivery_id, "tool_id": receipt.tool_id,
-            "project_id": receipt.project_id, "run_id": receipt.run_id, "content_sha256": receipt.content_sha256,
-            "byte_length": receipt.byte_length, "media_type": receipt.media_type, "figma_file_key": receipt.figma_file_key,
-            "target_node_id": receipt.target_node_id, "created_node_id": receipt.created_node_id,
-            "created_node_name": receipt.created_node_name, "bridge_version": receipt.bridge_version,
-            "image_hash": receipt.image_hash, "verified_at": receipt.verified_at, "state": receipt.state,
+            "schema_version": 1,
+            "delivery_id": receipt.delivery_id,
+            "tool_id": receipt.tool_id,
+            "project_id": receipt.project_id,
+            "run_id": receipt.run_id,
+            "content_sha256": receipt.content_sha256,
+            "byte_length": receipt.byte_length,
+            "media_type": receipt.media_type,
+            "figma_file_key": receipt.figma_file_key,
+            "target_node_id": receipt.target_node_id,
+            "created_node_id": receipt.created_node_id,
+            "created_node_name": receipt.created_node_name,
+            "bridge_version": receipt.bridge_version,
+            "image_hash": receipt.image_hash,
+            "verified_at": receipt.verified_at,
+            "state": receipt.state,
         }
