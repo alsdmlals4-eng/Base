@@ -1,12 +1,13 @@
 # Base 공용 통제 어휘
 
-이 문서는 반복되는 긴 작업 계약을 짧은 현업 용어로 호출하기 위한 **Controlled Vocabulary**다. 한 줄 정의·적용 경계·금지 의미·기존 책임 원본만 연결하며, 상세 절차와 프로젝트 실제 상태는 복제하지 않는다.
+이 문서는 반복되는 긴 작업 계약을 짧은 용어로 호출하기 위한 **Controlled Vocabulary**다. 한 줄 정의·적용 경계·금지 의미·기존 책임 원본을 연결하며, 상세 절차와 프로젝트 실제 상태는 복제하지 않는다.
 
 ```text
 통제 어휘
 = 빠른 탐색·컨텍스트 압축·용어 충돌 방지
 ≠ 새 Work Mode·Skill·Skill Mode·Gate·제품 단계
 ≠ 프로젝트 구현·수치·세계관의 두 번째 정본
+≠ 여기 적힌 모든 표현이 외부 업계 표준이라는 주장
 ```
 
 ## Bounded Context
@@ -22,6 +23,18 @@
 **Ubiquitous Language**는 한 Context 안에서 사용자·기획·Issue·문서·코드·데이터·테스트가 함께 쓰는 공통 언어다. 같은 표기가 다른 Context에서 다른 뜻이면 전체 이름이나 Context prefix를 사용한다. 예를 들어 `DDD`는 `Digital Dopamine Design`과 `Domain-Driven Design` 중 하나를 풀어 써야 한다.
 
 새 용어는 기존 용어와 **범위, 산출물, 필요한 Evidence, 다음 Gate** 중 하나 이상이 실제로 다를 때만 추가한다.
+
+## 용어 출처 성격
+
+Base는 용어의 **유용성**과 **외부 표준성**을 구분한다.
+
+| Class | 의미 | 사용 규칙 |
+|---|---|---|
+| `STANDARDIZED_CONTEXT` | 특정 표준·가이드·전문기관 문맥에서 명시적으로 정의된 용어 | 그 문맥을 벗어나 보편 표준처럼 과장하지 않는다. |
+| `INDUSTRY_COMMON` | 현업에서 널리 쓰이지만 조직·분야별 경계가 달라질 수 있는 용어 | 프로젝트가 Entry/Exit Criteria와 품질선을 필요하면 추가 고정한다. |
+| `BASE_LOCAL_ALIAS` | 기존 Base 계약을 짧게 호출하기 위해 Base가 정한 압축명 | 외부 업계 표준처럼 소개하지 않고 반드시 기존 owner로 연결한다. |
+
+별도 표시가 없다는 이유로 어떤 용어를 국제 표준·업계 공인 정의라고 추정하지 않는다. 특히 **Implementation Reality Gate(IRG)는 `BASE_LOCAL_ALIAS`이며 업계 표준 용어가 아니다.**
 
 ### 권한 분리
 
@@ -69,7 +82,7 @@ Implementation Status = 실제 구현 상태
 
 ## 제작·실험·제품 단계
 
-이 용어들은 강제 선형 단계가 아니라 서로 다른 검증 질문이다.
+이 용어들은 강제 선형 단계가 아니라 서로 다른 검증 질문이다. `First Playable`, `Demo`, `Vertical Slice`처럼 스튜디오마다 경계가 달라질 수 있는 표현은 `INDUSTRY_COMMON`으로 보고 프로젝트 계약에서 품질선과 Entry/Exit Criteria를 고정한다.
 
 | 용어 | 핵심 질문 | 증명하지 못하는 것 |
 |---|---|---|
@@ -106,7 +119,7 @@ Vertical Slice 상세 owner는 `skills/designing-vertical-slices/SKILL.md`다. `
 
 ## Implementation Reality Gate
 
-**Implementation Reality Gate(IRG)**는 새 ACTIVE Skill·Work Mode·제품 단계가 아니다. 다음 기존 계약을 짧게 부르는 압축명이다.
+**Implementation Reality Gate(IRG)**는 `BASE_LOCAL_ALIAS`다. **업계 표준 용어가 아니다.** 새 ACTIVE Skill·Work Mode·제품 단계도 아니다. 다음 기존 계약을 짧게 부르는 압축명이다.
 
 ```text
 MATERIAL_CLAIM_LEDGER
@@ -129,6 +142,20 @@ MATERIAL_CLAIM_LEDGER
 
 Evidence가 부족하면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED`, `BLOCKED_UNVERIFIED`를 유지한다.
 
+## 자주 헷갈리는 구분
+
+```text
+Prototype ≠ MVP
+PoC ≠ Vertical Slice
+First Playable ≠ 목표 품질 완료
+Demo ≠ Vertical Slice
+Checklist ≠ Gate
+Acceptance Criteria ≠ Definition of Done
+Verification ≠ Validation
+테스트 파일 존재 ≠ 테스트 실행 Evidence
+정적 PASS ≠ runtime·render·UX·재미 PASS
+```
+
 ## 금지 용례
 
 1. **거친 Prototype을 MVP**라고 부르지 않는다.
@@ -141,6 +168,7 @@ Evidence가 부족하면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED`, `BLOCK
 8. 적대적 검토를 Red Team 공격 하나로 축약하지 않는다.
 9. `DDD`를 단독 사용하지 않는다.
 10. 단일 도구를 근거 없이 Framework·Platform·Control Plane으로 과장하지 않는다.
+11. `BASE_LOCAL_ALIAS`를 외부 표준·업계 공인 용어처럼 소개하지 않는다.
 
 ## 프로젝트 채택
 
