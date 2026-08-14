@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 import json
 import os
 from pathlib import Path
@@ -210,6 +211,15 @@ class CodexCliTransportTests(unittest.TestCase):
                 max_output_tokens=10,
                 timeout=30,
             )
+
+    def test_subscription_factory_requires_immutable_authority_snapshot(self) -> None:
+        from tools.loop_a2_runtime.codex_cli_transport import build_subscription_provider_components
+
+        parameter = inspect.signature(build_subscription_provider_components).parameters.get(
+            "authority_snapshot"
+        )
+        self.assertIsNotNone(parameter)
+        self.assertIs(parameter.default, inspect.Parameter.empty)
 
 
 if __name__ == "__main__":

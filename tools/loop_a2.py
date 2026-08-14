@@ -10,15 +10,20 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from tools.loop_a2_runtime.authority_snapshot import (
+    AuthoritySnapshotError,
+    capture_authority_snapshot,
+)
 from tools.loop_a2_runtime.codex_cli_transport import (
     CodexCliTransportError,
     build_subscription_provider_components,
 )
 from tools.loop_a2_runtime.contract_bridge import ContractBridgeError, build_request_from_capsule
+from tools.loop_a2_runtime.network_boundary import DockerNoneDeniedNetworkBoundary
 from tools.loop_a2_runtime.protocol import Budgets, ProtocolError, RunRequest
-from tools.loop_a2_runtime.provider_gate import subscription_codex_cli_gate
 from tools.loop_a2_runtime.providers import FakeBuilder, FakeCritic
 from tools.loop_a2_runtime.runner import A2Runtime
+from tools.loop_a2_runtime.test_executor import ProjectTestExecutor
 
 
 def _fake_output_path(request: RunRequest) -> str:
@@ -41,6 +46,17 @@ def _load_request_fixture(path: Path) -> RunRequest:
     return RunRequest.from_dict(json.loads(path.read_text(encoding="utf-8")))
 
 
+def _blocked(*, status: str, code: str, message: str) -> int:
+    print(
+        json.dumps(
+            {"status": status, "code": code, "message": message},
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    )
+    return 2
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Bounded Loop Engineering A2 foundation.")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -60,6 +76,13 @@ def main() -> int:
     run.add_argument("--max-turns", type=int, default=12)
     run.add_argument("--max-repair-cycles", type=int, default=2)
     run.add_argument("--timeout-seconds", type=int, default=600)
+    run.add_argument(
+        "--denied-network-docker-image-id",
+        help=(
+            "Exact local Docker image ID (sha256:...) required for REAL project "
+            "tests under Docker --network none."
+        ),
+    )
 
     args = parser.parse_args()
 
@@ -87,42 +110,63 @@ def main() -> int:
 
     if args.provider == "real":
         if args.runtime_root is None:
-            print(
-                json.dumps(
-                    {
-                        "status": "CONTRACT_INVALID",
-                        "code": "REAL_RUNTIME_ROOT_REQUIRED",
-                        "message": "Real provider runs require an explicit external runtime root.",
-                    },
-                    sort_keys=True,
-                )
+            return _blocked(
+                status="CONTRACT_INVALID",
+                code="REAL_RUNTIME_ROOT_REQUIRED",
+                message="Real provider runs require an explicit external runtime root.",
             )
-            return 2
-        gate = subscription_codex_cli_gate()
-        if gate["status"] != "READY":
-            print(json.dumps(gate, sort_keys=True))
-            return 2
+        if args.denied_network_docker_image_id is None:
+            return _blocked(
+                status="BLOCKED_UNVERIFIED",
+                code="REAL_PROJECT_TEST_BOUNDARY_REQUIRED",
+                message=(
+                    "Real provider runs require an exact local Docker image ID so "
+                    "DENIED project tests can be enforced before Critic."
+                ),
+            )
+        try:
+            network_boundary = DockerNoneDeniedNetworkBoundary(
+                image_id=args.denied_network_docker_image_id,
+            )
+        except ValueError as exc:
+            return _blocked(
+                status="CONTRACT_INVALID",
+                code="REAL_PROJECT_TEST_BOUNDARY_INVALID",
+                message=str(exc),
+            )
+        try:
+            authority_snapshot = capture_authority_snapshot(
+                project_root=args.project_root,
+                capsule_relative=args.capsule,
+                request=request,
+            )
+        except AuthoritySnapshotError as exc:
+            return _blocked(
+                status="CONTRACT_INVALID",
+                code="AUTHORITY_SNAPSHOT_INVALID",
+                message=str(exc),
+            )
+
+        executor = ProjectTestExecutor(network_boundary=network_boundary)
         try:
             components = build_subscription_provider_components(
                 repo_root=args.project_root,
                 runtime_root=args.runtime_root,
+                authority_snapshot=authority_snapshot,
+                run_request=request,
+                project_test_executor=executor,
             )
         except (CodexCliTransportError, OSError, ValueError) as exc:
             code = getattr(exc, "code", "SUBSCRIPTION_PROVIDER_CONSTRUCTION_FAILED")
-            print(
-                json.dumps(
-                    {
-                        "status": "BLOCKED_UNVERIFIED",
-                        "code": code,
-                        "message": "Subscription-native Codex provider construction failed closed.",
-                    },
-                    sort_keys=True,
-                )
+            return _blocked(
+                status="BLOCKED_UNVERIFIED",
+                code=str(code),
+                message="Subscription-native Codex provider construction failed closed.",
             )
-            return 2
         runtime = A2Runtime(
             builder=components.builder,
             critic=components.critic,
+            candidate_verifier=components.candidate_verifier,
             provider_mode="REAL",
         )
         outcome = runtime.run(request, observed_main_sha=args.observed_main_sha)

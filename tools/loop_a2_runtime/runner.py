@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from time import monotonic
-from typing import Any, Callable
+from typing import Any, Callable, Protocol
 
 from .evidence import canonical_receipt
 from .protocol import ReviewResult, RunRequest, WorkerResult
@@ -15,6 +15,10 @@ _PATH_VIOLATION_CODES = {
     "SYSTEM_PROTECTED_WRITE",
     "UNSAFE_CHANGED_PATH",
 }
+
+
+class CandidateVerifier(Protocol):
+    def verify(self, request: RunRequest, worker_result: WorkerResult) -> object: ...
 
 
 @dataclass(frozen=True)
@@ -43,6 +47,7 @@ class A2Runtime:
         critic: CriticProvider,
         clock: Callable[[], float] = monotonic,
         provider_mode: str = "FAKE",
+        candidate_verifier: CandidateVerifier | None = None,
     ) -> None:
         if provider_mode not in {"FAKE", "REAL"}:
             raise ValueError("provider_mode must be FAKE or REAL")
@@ -50,6 +55,7 @@ class A2Runtime:
         self.critic = critic
         self.clock = clock
         self.provider_mode = provider_mode
+        self.candidate_verifier = candidate_verifier
 
     def _outcome(
         self,
@@ -255,6 +261,58 @@ class A2Runtime:
             extra={"scope_findings": [item.__dict__ for item in findings]},
         )
 
+    def _verify_candidate(
+        self,
+        request: RunRequest,
+        worker: WorkerResult,
+    ) -> tuple[RunOutcome | None, dict[str, Any] | None]:
+        if self.provider_mode != "REAL":
+            return None, None
+        if self.candidate_verifier is None:
+            return (
+                self._outcome(
+                    request,
+                    "BLOCKED_UNVERIFIED",
+                    finding_codes=("PROJECT_TEST_GATE_REQUIRED",),
+                    changed_paths=worker.changed_paths,
+                ),
+                None,
+            )
+        try:
+            result = self.candidate_verifier.verify(request, worker)
+        except Exception as error:
+            return (
+                self._outcome(
+                    request,
+                    "BLOCKED_UNVERIFIED",
+                    finding_codes=("PROJECT_TEST_GATE_EXCEPTION",),
+                    changed_paths=worker.changed_paths,
+                    extra={"project_test_error_type": type(error).__name__},
+                ),
+                None,
+            )
+
+        status = getattr(result, "status", None)
+        to_dict = getattr(result, "to_dict", None)
+        evidence = to_dict() if callable(to_dict) else None
+        if not isinstance(evidence, dict):
+            evidence = None
+        if status != "PASS":
+            extra = {"project_test_status": str(status)}
+            if evidence is not None:
+                extra["project_test_evidence"] = evidence
+            return (
+                self._outcome(
+                    request,
+                    "BLOCKED_UNVERIFIED",
+                    finding_codes=("PROJECT_TEST_GATE_NOT_PASS",),
+                    changed_paths=worker.changed_paths,
+                    extra=extra,
+                ),
+                evidence,
+            )
+        return None, evidence
+
     def _handle_review_terminal(
         self,
         request: RunRequest,
@@ -262,31 +320,33 @@ class A2Runtime:
         worker: WorkerResult,
         *,
         repair_cycle: int,
+        project_test_evidence: dict[str, Any] | None = None,
     ) -> RunOutcome | None:
         if (
             review.verdict == "PASS"
             and set(review.checked_requirement_ids)
             != set(request.requirement_ids)
         ):
+            extra: dict[str, Any] = {
+                "required_requirement_ids": list(request.requirement_ids),
+                "checked_requirement_ids": list(review.checked_requirement_ids),
+            }
+            if project_test_evidence is not None:
+                extra["project_test_evidence"] = project_test_evidence
             return self._outcome(
                 request,
                 "BLOCKED_UNVERIFIED",
                 finding_codes=("CRITIC_COVERAGE_INCOMPLETE",),
                 changed_paths=worker.changed_paths,
-                extra={
-                    "required_requirement_ids": list(request.requirement_ids),
-                    "checked_requirement_ids": list(
-                        review.checked_requirement_ids
-                    ),
-                },
+                extra=extra,
             )
         if review.verdict == "PASS":
-            extra: dict[str, Any] = {
+            extra = {
                 "critic_verdict": "PASS",
-                "checked_requirement_ids": list(
-                    review.checked_requirement_ids
-                ),
+                "checked_requirement_ids": list(review.checked_requirement_ids),
             }
+            if project_test_evidence is not None:
+                extra["project_test_evidence"] = project_test_evidence
             if repair_cycle:
                 extra["repair_cycles"] = repair_cycle
             return self._outcome(
@@ -299,6 +359,9 @@ class A2Runtime:
             "USER_DECISION_REQUIRED",
             "BLOCKED_UNVERIFIED",
         }:
+            extra = {}
+            if project_test_evidence is not None:
+                extra["project_test_evidence"] = project_test_evidence
             return self._outcome(
                 request,
                 review.verdict,
@@ -307,6 +370,7 @@ class A2Runtime:
                 )
                 or (review.verdict,),
                 changed_paths=worker.changed_paths,
+                extra=extra or None,
             )
         return None
 
@@ -325,6 +389,12 @@ class A2Runtime:
                 request,
                 "STALE_BASE_SHA",
                 finding_codes=("STALE_BASE_SHA",),
+            )
+        if self.provider_mode == "REAL" and self.candidate_verifier is None:
+            return self._outcome(
+                request,
+                "BLOCKED_UNVERIFIED",
+                finding_codes=("PROJECT_TEST_GATE_REQUIRED",),
             )
 
         cumulative_turns = 0
@@ -352,6 +422,9 @@ class A2Runtime:
         if failure is not None:
             return failure
         failure = self._run_scope_gate(request, worker)
+        if failure is not None:
+            return failure
+        failure, project_test_evidence = self._verify_candidate(request, worker)
         if failure is not None:
             return failure
 
@@ -383,12 +456,14 @@ class A2Runtime:
             review,
             worker,
             repair_cycle=0,
+            project_test_evidence=project_test_evidence,
         )
         if terminal is not None:
             return terminal
 
         current_review = review
         previous_signature = _review_signature(review)
+        current_test_evidence = project_test_evidence
         for repair_cycle in range(
             1,
             request.budgets.max_repair_cycles + 1,
@@ -422,6 +497,9 @@ class A2Runtime:
             failure = self._run_scope_gate(request, worker)
             if failure is not None:
                 return failure
+            failure, current_test_evidence = self._verify_candidate(request, worker)
+            if failure is not None:
+                return failure
 
             try:
                 current_review = self.critic.review(request, worker)
@@ -451,12 +529,19 @@ class A2Runtime:
                 current_review,
                 worker,
                 repair_cycle=repair_cycle,
+                project_test_evidence=current_test_evidence,
             )
             if terminal is not None:
                 return terminal
 
             signature = _review_signature(current_review)
             if signature == previous_signature:
+                extra: dict[str, Any] = {
+                    "repair_cycles": repair_cycle,
+                    "cumulative_turns": cumulative_turns,
+                }
+                if current_test_evidence is not None:
+                    extra["project_test_evidence"] = current_test_evidence
                 return self._outcome(
                     request,
                     "NO_PROGRESS",
@@ -465,13 +550,13 @@ class A2Runtime:
                     )
                     or ("NO_PROGRESS",),
                     changed_paths=worker.changed_paths,
-                    extra={
-                        "repair_cycles": repair_cycle,
-                        "cumulative_turns": cumulative_turns,
-                    },
+                    extra=extra,
                 )
             previous_signature = signature
 
+        extra = {"cumulative_turns": cumulative_turns}
+        if current_test_evidence is not None:
+            extra["project_test_evidence"] = current_test_evidence
         return self._outcome(
             request,
             "REPAIR_LIMIT",
@@ -480,7 +565,7 @@ class A2Runtime:
             )
             or ("REPAIR_LIMIT",),
             changed_paths=worker.changed_paths,
-            extra={"cumulative_turns": cumulative_turns},
+            extra=extra,
         )
 
     def burn_in(
