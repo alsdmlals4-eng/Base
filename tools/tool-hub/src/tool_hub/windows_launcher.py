@@ -138,6 +138,35 @@ def hub_runtime_fingerprint(root: Path) -> str:
 ShortcutBuilder = Callable[[Path, Path, Path], bytes]
 
 
+def _run_shortcut_command(
+    powershell: Path,
+    script: str,
+    environment: dict[str, str],
+) -> subprocess.CompletedProcess[bytes]:
+    """Run the fixed STA shortcut builder without inheritable capture pipes."""
+    return subprocess.run(
+        [
+            str(powershell),
+            "-NoLogo",
+            "-NoProfile",
+            "-NonInteractive",
+            "-STA",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command",
+            script,
+        ],
+        shell=False,
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        timeout=20,
+        check=False,
+        env=environment,
+        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+    )
+
+
 def _default_shortcut_builder(pythonw: Path, launcher: Path, working: Path) -> bytes:
     """Build a direct per-user .lnk with the fixed Windows Shell COM owner."""
     if os.name != "nt":
@@ -163,33 +192,24 @@ def _default_shortcut_builder(pythonw: Path, launcher: Path, working: Path) -> b
     )
     environment = {
         "SYSTEMROOT": str(system_root),
+        "WINDIR": str(system_root),
+        "COMSPEC": str(system_root / "System32" / "cmd.exe"),
+        "PATH": ";".join(
+            (
+                str(system_root / "System32"),
+                str(system_root / "System32" / "WindowsPowerShell" / "v1.0"),
+            )
+        ),
         "BTH_SHORTCUT": str(temporary),
         "BTH_PYTHONW": str(pythonw),
         "BTH_LAUNCHER": str(launcher),
         "BTH_WORKING": str(working),
     }
-    for name in ("TEMP", "TMP"):
+    for name in ("APPDATA", "LOCALAPPDATA", "USERPROFILE", "TEMP", "TMP"):
         if value := os.environ.get(name):
             environment[name] = value
     try:
-        completed = subprocess.run(
-            [
-                str(powershell),
-                "-NoLogo",
-                "-NoProfile",
-                "-NonInteractive",
-                "-ExecutionPolicy",
-                "Bypass",
-                "-Command",
-                script,
-            ],
-            shell=False,
-            capture_output=True,
-            timeout=20,
-            check=False,
-            env=environment,
-            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
-        )
+        completed = _run_shortcut_command(powershell, script, environment)
         if completed.returncode != 0:
             raise LauncherError("LAUNCHER_SHORTCUT_FAILED")
         shortcut_metadata = temporary.lstat()
