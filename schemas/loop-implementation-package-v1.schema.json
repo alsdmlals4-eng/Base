@@ -1,0 +1,125 @@
+{
+  "$id": "loop-implementation-package-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "acceptance_criteria": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "allowed_paths": {
+      "items": {
+        "minLength": 1,
+        "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "contract_role": {
+      "const": "LOOP_IMPLEMENTATION_PACKAGE"
+    },
+    "execution_gate": {
+      "enum": [
+        "AUTONOMOUS_IMPLEMENTATION_READY",
+        "USER_DECISION_REQUIRED"
+      ]
+    },
+    "forbidden_paths": {
+      "items": {
+        "minLength": 1,
+        "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "package_id": {
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+      "type": "string"
+    },
+    "required_evidence_levels": {
+      "items": {
+        "enum": [
+          "E0_CONTRACT",
+          "E1_STATIC",
+          "E2_TEST",
+          "E3_RUNTIME",
+          "E4_VISUAL",
+          "E5_PLAY",
+          "E6_HUMAN_PLAYTEST"
+        ]
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "requirement_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "resource_locks": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "rollback": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "source_main_sha": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "visual_impact": {
+      "enum": [
+        "NONE",
+        "EXISTING_LOCKED",
+        "NEW_VISUAL_REQUIRED"
+      ]
+    },
+    "visual_lock_requirement": {
+      "enum": [
+        "VISUAL_NOT_APPLICABLE",
+        "VISUAL_LOCKED"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "contract_role",
+    "package_id",
+    "project_id",
+    "source_main_sha",
+    "requirement_ids",
+    "allowed_paths",
+    "forbidden_paths",
+    "resource_locks",
+    "acceptance_criteria",
+    "required_evidence_levels",
+    "visual_impact",
+    "visual_lock_requirement",
+    "execution_gate",
+    "rollback"
+  ],
+  "type": "object"
+}

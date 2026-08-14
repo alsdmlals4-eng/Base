@@ -1,6 +1,6 @@
 ---
 name: synchronizing-local-and-github-state
-description: Use when local and GitHub state must be compared, reconciled, refreshed, published, or verified without overwriting work or divergent history.
+description: Use when local and GitHub state must be compared, reconciled, refreshed, published, or verified without overwriting work or divergent history, including when GitHub CLI or local push authentication is unavailable and connector fallback must be selected.
 ---
 
 # Synchronizing Local and GitHub State
@@ -25,6 +25,10 @@ Git 상태:
 
 `CLEAR / STALE_BASE_SHA / WAITING_RESOURCE / DUPLICATE_WORK / BLOCKED_UNVERIFIED`
 
+GitHub 실행 capability:
+
+`github_connector / local_git / gh_cli / MISSING_OPTIONAL_CLI`
+
 ## Required inputs
 
 항상 필요한 입력:
@@ -37,6 +41,7 @@ uncommitted_and_untracked_files:
 upstream_and_branch_policy:
 credentials_permissions_and_required_checks:
 allowed_generated_files_and_secrets_policy:
+available_github_capabilities:
 ```
 
 첫 persistent write, PR 생성 또는 merge를 수행할 때 추가로 필요한 입력:
@@ -63,6 +68,21 @@ protected_concurrent_paths: []
 열린 PR 목록, changed paths, 현재 main, 현재 작업 identity, Branch HEAD 또는 권한 정책을 읽지 못하면 충돌 없음으로 추정하지 않는다.
 
 안전한 명령·충돌·조정 절차는 `references/safe-sync-protocol.md`를 필요할 때만 읽는다.
+
+## `GITHUB_CAPABILITY_FALLBACK`
+
+GitHub 게시·검토 작업은 특정 실행 파일의 존재가 아니라 **현재 필요한 동작을 안전하게 수행할 capability**로 판정한다.
+
+1. 연결·인증된 `github_connector`가 필요한 repository read/write, Branch, Git object, PR, merge, status 동작을 지원하면 먼저 사용한다.
+2. `local_git`은 checkout·status·diff·stage·commit과 인증 가능한 push에 사용한다. push 인증이 없더라도 로컬 검증 결과와 파일을 버리지 않는다.
+3. `gh_cli`는 connector와 `local_git`이 제공하지 않는 필수 기능에만 사용한다. 설치·인증돼 있으면 사용할 수 있지만 공용 선행조건이 아니다.
+4. `gh: command not found`, `gh auth status` 실패 또는 로컬 push 인증 실패는 `MISSING_OPTIONAL_CLI`다. connector가 현재 작업을 완결할 수 있으면 **`gh` 부재만으로 전체 작업을 중단하지 않는다**.
+5. connector coverage가 있는데 사용자에게 `gh` 반복 설치·재인증을 요청하지 않는다. Windows token을 cloud container로 복사하거나 비밀이 아닌 `GH_TOKEN`으로 지속시키지 않는다.
+6. 필요한 정확한 동작과 증거를 `github_connector`, `local_git`, `gh_cli` 모두 제공하지 못할 때만 `BLOCKED_UNVERIFIED`로 판정하고, 누락 capability 하나를 구체적으로 보고한다.
+
+인증된 push가 없고 connector Git object write가 있으면 검증된 로컬 파일을 `create_blob` → base tree를 사용한 `create_tree` → exact parent의 `create_commit` → `update_ref(force=false)` 순서로 게시한다. 각 persistent write 전 `CONCURRENT_CHANGE_PREFLIGHT`와 `write_parent_sha`를 다시 확인하고, PR·CI·merge에는 connector가 반환한 exact `expected_head_sha`를 사용한다.
+
+connector가 Branch·PR을 만들었다는 사실은 Required Checks, Branch protection, unresolved thread, mergeability 또는 release 성공의 증거가 아니다. 각 표면은 가능한 connector readback이나 실제 Actions 결과로 별도 검증한다.
 
 ## `CONCURRENT_CHANGE_PREFLIGHT`
 
@@ -105,6 +125,7 @@ preflight는 첫 persistent write 전, 각 후속 write의 parent 확인 전, �
 - 비밀·대용량 생성물·승인되지 않은 파일은 자동 커밋하지 않는다.
 - 기존 PR에 조정 comment를 남기거나 명시적 handoff를 받았다는 사실과 실제 resource 해제는 구분한다.
 - Required Checks 통과는 정확한 `expected_head_sha`와 현재 main에 대한 freshness를 함께 확인할 때만 병합 증거로 사용한다.
+- `MISSING_OPTIONAL_CLI`를 전체 권한 부재로 확대하거나 connector coverage 확인 전에 사용자 재인증을 요구하지 않는다.
 
 ## Output contract
 
@@ -115,6 +136,7 @@ preflight는 첫 persistent write 전, 각 후속 write의 parent 확인 전, �
 ## 동일 Goal PR·경로 중첩·semantic resource와 조정 결과
 ## 차이 파일·커밋·미추적 항목
 ## 선택한 reconcile 방식과 이유
+## github_connector / local_git / gh_cli capability 판정과 fallback
 ## 수행한 fetch/pull/commit/push/PR
 ## exact HEAD·Required Checks·최종 동등성
 ## post-merge main readback·같은 Goal 재검사
@@ -123,7 +145,7 @@ preflight는 첫 persistent write 전, 각 후속 write의 parent 확인 전, �
 
 ## Quality gate
 
-로컬 작업 유실, 무검토 자동 커밋, force push, 인증 실패 은폐, pull 성공을 기능 검증으로 오인, 열린 PR·changed paths를 보지 않고 `CLEAR` 판정, 현재 PR을 자기 중복으로 판정, stale `write_parent_sha` 위에 write, path만 보고 semantic 충돌을 무시, stale base 또는 다른 HEAD의 CI를 병합 증거로 사용하면 실패다.
+로컬 작업 유실, 무검토 자동 커밋, force push, 인증 실패 은폐, optional `gh` 부재를 connector 확인 없이 전역 blocker로 처리, connector coverage가 있는데 반복 인증 요구, pull 성공을 기능 검증으로 오인, 열린 PR·changed paths를 보지 않고 `CLEAR` 판정, 현재 PR을 자기 중복으로 판정, stale `write_parent_sha` 위에 write, path만 보고 semantic 충돌을 무시, stale base 또는 다른 HEAD의 CI를 병합 증거로 사용하면 실패다.
 
 Canonical Learning Log: `skills/SKILL_LEARNING_LOG.md`
 

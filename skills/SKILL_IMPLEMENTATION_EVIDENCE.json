@@ -132,7 +132,8 @@
     {
       "skill_id": "synchronizing-local-and-github-state",
       "evidence": [
-        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"}
+        {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"},
+        {"kind": "TEST", "path": "tests/test_github_connector_fallback_policy.py"}
       ]
     },
     {

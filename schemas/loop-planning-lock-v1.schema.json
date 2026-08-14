@@ -1,0 +1,129 @@
+{
+  "$id": "loop-planning-lock-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "approved_requirements": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "acceptance_criteria": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "requirement_id": {
+            "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "statement": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "requirement_id",
+          "statement",
+          "acceptance_criteria"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "authority_sources": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "authority_id": {
+            "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "path": {
+            "minLength": 1,
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+            "type": "string"
+          },
+          "source_commit": {
+            "pattern": "^[0-9a-f]{40}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "authority_id",
+          "path",
+          "source_commit"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "contract_role": {
+      "const": "LOOP_PLANNING_LOCK"
+    },
+    "excluded_scope": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "project_id": {
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+      "type": "string"
+    },
+    "protected_meanings": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "source_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "status": {
+      "const": "PLANNING_LOCKED"
+    },
+    "user_review": {
+      "additionalProperties": false,
+      "properties": {
+        "approval_ref": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "const": "APPROVED"
+        }
+      },
+      "required": [
+        "status",
+        "approval_ref"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "contract_role",
+    "project_id",
+    "status",
+    "source_commit",
+    "authority_sources",
+    "approved_requirements",
+    "protected_meanings",
+    "excluded_scope",
+    "user_review"
+  ],
+  "type": "object"
+}

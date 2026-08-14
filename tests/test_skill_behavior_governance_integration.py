@@ -134,6 +134,20 @@ class ClaimIntentBehaviorGovernanceIntegrationTests(unittest.TestCase):
         self.assertIn("External model behavior run: `NOT_RUN`", generated)
         self.assertIn("tests/test_claim_and_intent_verification_contract.py", generated)
 
+    def test_connector_fallback_fixture_and_generated_evidence_are_connected(self) -> None:
+        evals = json.loads((ROOT / "skills/SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8"))
+        case = next(case for case in evals["cases"] if case["case_id"] == "SBE-039")
+        self.assertEqual("synchronizing-local-and-github-state", case["expected_primary_skill"])
+        self.assertIn("github_connector / local_git / gh_cli capability 판정", case["required_evidence"])
+        generated = (ROOT / "docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md").read_text(encoding="utf-8")
+        owner_line = next(
+            line
+            for line in generated.splitlines()
+            if line.startswith("| `synchronizing-local-and-github-state`")
+        )
+        self.assertIn("tests/test_github_connector_fallback_policy.py", owner_line)
+        self.assertIn("External model behavior run: `NOT_RUN`", generated)
+
 
 if __name__ == "__main__":
     unittest.main()

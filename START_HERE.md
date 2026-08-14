@@ -4,7 +4,7 @@
 > Registry-derived active Skill view: `docs/generated/BASE_ACTIVE_SKILLS.md`
 > Game-system routes: `system-design` / `difficulty-and-combat-ai` → `skills/analyzing-and-refining-game-concepts/SKILL.md`
 
-이 문서는 새 채팅, 새 GPT, 새 Codex 또는 새 작업자가 Base와 프로젝트 작업의 책임 원본을 찾는 요청별 한 단계 라우터다. 전체 운영 설명은 `docs/OPERATING_MODEL.md`, 항상 적용되는 규칙은 `AGENTS.md`, Work Mode·Skill 선택은 `docs/WORK_MODE_AND_SKILL_ROUTING.md`, 문서 위치는 `docs/DOCUMENTATION_MAP.md`가 책임진다.
+이 문서는 새 채팅, 새 GPT, 새 Codex 또는 새 작업자가 Base와 프로젝트 작업의 책임 원본을 찾는 요청별 한 단계 라우터다. 전체 운영 설명은 `docs/OPERATING_MODEL.md`, 항상 적용되는 규칙은 `AGENTS.md`, Work Mode·Skill 선택은 `docs/WORK_MODE_AND_SKILL_ROUTING.md`, 공용 용어 정의·컨텍스트 압축은 `docs/CONTROLLED_VOCABULARY.md`, 문서 위치는 `docs/DOCUMENTATION_MAP.md`가 책임진다.
 
 ## 사용자가 기억할 최소 요청
 
@@ -63,6 +63,7 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 | Godot 구현·GDScript 테스트·실행 QA | HiGodot persistent authoring → adopted GUT deterministic test → adopted Hera `LIVE_QA_AND_OBSERVABILITY_ONLY` | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` + `templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md` |
 | 구형 자료 분류·보존·Archive·승인 삭제 | `governing-legacy-retention-and-archives` | `skills/governing-legacy-retention-and-archives/SKILL.md` |
 | 핵심 컨셉·DDD·벤치마크·플레이테스트·PoC | `analyzing-and-refining-game-concepts` | `skills/analyzing-and-refining-game-concepts/SKILL.md` |
+| 실무 개발 용어 정의·컨텍스트 압축·용어 충돌 확인 | 기존 주 책임 Skill + 공용 통제 어휘 색인 | `docs/CONTROLLED_VOCABULARY.md` |
 | 튜토리얼·온보딩·첫 세션 학습·성장 체감 | `analyzing-and-refining-game-concepts: tutorial-and-onboarding-design` | `skills/analyzing-and-refining-game-concepts/SKILL.md` |
 | 소설·웹소설·연재소설 기획·각색·원고 퇴고·POV·회차 pacing·독자 반응 진단 | `developing-and-revising-serial-fiction` | `skills/developing-and-revising-serial-fiction/SKILL.md` + `docs/knowledge/serial-fiction/README.md` |
 | Windows+Android 동시 목표·공용 코어·입력/UI/lifecycle·STOVE·Google Play·Steam 출시 wave | `analyzing-and-refining-game-concepts` + 기존 기술·Vertical Slice·검증 Skill | `docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md` + `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md` |

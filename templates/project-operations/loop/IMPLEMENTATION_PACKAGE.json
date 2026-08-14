@@ -1,0 +1,30 @@
+{
+  "acceptance_criteria": [
+    "The behavior is deterministic."
+  ],
+  "allowed_paths": [
+    "scripts/example.gd"
+  ],
+  "contract_role": "LOOP_IMPLEMENTATION_PACKAGE",
+  "execution_gate": "AUTONOMOUS_IMPLEMENTATION_READY",
+  "forbidden_paths": [
+    "project.godot"
+  ],
+  "package_id": "PACKAGE_001",
+  "project_id": "EXAMPLE_GAME",
+  "required_evidence_levels": [
+    "E1_STATIC",
+    "E2_TEST"
+  ],
+  "requirement_ids": [
+    "REQ_001"
+  ],
+  "resource_locks": [
+    "EXAMPLE_DOMAIN"
+  ],
+  "rollback": "Revert the package PR.",
+  "schema_version": 1,
+  "source_main_sha": "0000000000000000000000000000000000000000",
+  "visual_impact": "NONE",
+  "visual_lock_requirement": "VISUAL_NOT_APPLICABLE"
+}

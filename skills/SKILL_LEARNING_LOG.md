@@ -668,3 +668,12 @@
 - 통합하지 않은 책임: 적대적 검토, 정본 발행, 게임 시스템 기획, 단순 proofreading, 마케팅 카피.
 - 반례 학습: 성공작끼리 문체·정보량·속도·개그 강도가 상반되므로 인기작 표면 스타일을 Base 규칙으로 만들지 않는다.
 - 증거 상한: Skill/Registry/behavior 계약은 검증 가능하지만 실제 독자 만족·판매 개선은 `PROJECT_PILOT_NOT_RUN`, `HUMAN_NOT_RUN`, `NOT_RUN`이다.
+
+## 2026-08-14 — GitHub 도구가 아니라 capability를 선행조건으로 판정
+
+- 상태: `PATTERN`
+- 관찰: 검증된 변경을 게시하는 작업이 `gh: command not found`에서 중단됐지만, 연결된 GitHub connector에는 Branch·Git object·PR·status·merge capability가 이미 있었다.
+- 결정: 기존 `synchronizing-local-and-github-state`가 `GITHUB_CAPABILITY_FALLBACK`을 소유한다. connector가 정확한 동작을 지원하면 optional `gh` 부재나 로컬 push 인증 실패를 전역 blocker로 승격하지 않는다.
+- 안전 경계: connector/local Git/gh 어느 것도 필요한 정확한 capability와 증거를 제공하지 못할 때만 `BLOCKED_UNVERIFIED`로 유지한다. 사용자 Windows token 복사, 비밀이 아닌 `GH_TOKEN` 지속, force ref update, exact-SHA·Required Check·리뷰·post-merge gate 우회는 금지한다.
+- 검증: Registry 라우팅, 현실적인 행동 평가, Skill system coverage, reference freshness, 전체 회귀와 실제 PR Actions를 각각 확인한다. connector 게시 성공은 CI·merge·release 성공과 분리한다.
+- 다음 검토 트리거: connector coverage 확인 전 반복 인증 요구, missing optional CLI를 전체 작업 중단으로 확대, stale parent 위 Git-object write, 다른 HEAD의 CI를 병합 증거로 사용.

@@ -186,10 +186,10 @@ Phase 1 Tool Hub는 한 명의 개발자가 소유한 localhost 도구다. 동�
 
 - 브라우저가 전달하는 비신뢰 입력과 raw command·환경 변수·경로 주입
 - 프로젝트 저장소의 잘못되거나 악의적인 adapter, registry, symlink와 cross-project routing
-- 실행 준비와 child 시작 사이의 우발적 경로 교체·설정 drift·검토본 불일치
+- 최종 launch 검사 시점까지 발생한 경로·설정 drift·검토본 불일치
 - stale process, 잘못된 child identity, 다른 localhost 서비스와의 혼동
 
-reviewed runtime hash, descriptor binding, clean child environment와 process identity 검증은 이 경계의 방어 계층이다. 같은 OS 계정으로 이미 임의 코드를 실행할 수 있는 경쟁 프로세스가 검증 뒤 개별 runtime 파일·프로세스 메모리를 변경하는 상황까지 sandbox했다고 주장하지 않는다. 그 범위를 지원하려면 별도 OS 계정, 컨테이너 또는 서명된 읽기 전용 runtime과 플랫폼별 격리 증거가 필요하다. 이는 Phase 1 밖의 `HARDENED_RUNTIME_DEFERRED`이며, 해당 증거 전에는 같은 계정 공격자에 대한 tamper-proof 또는 immutable-runtime 완료 판정을 금지한다.
+reviewed runtime hash, descriptor binding, clean child environment와 process identity 검증은 이 경계의 방어 계층이다. 같은 OS 계정으로 이미 임의 코드를 실행할 수 있는 경쟁 프로세스가 검증 뒤 개별 runtime 파일·프로세스 메모리를 변경하는 상황까지 sandbox했다고 주장하지 않는다. 최종 검사와 child import 사이에 신뢰 사용자가 Base·Studio runtime을 동시에 편집하는 동작도 지원하지 않으며 UI와 운영 문서가 실행 중 편집 금지를 표시한다. 그 범위를 지원하려면 별도 OS 계정, 컨테이너 또는 서명된 읽기 전용 runtime과 플랫폼별 격리 증거가 필요하다. 이는 Phase 1 밖의 `HARDENED_RUNTIME_DEFERRED`이며, 해당 증거 전에는 같은 계정 변경에 대한 tamper-proof 또는 immutable-runtime 완료 판정을 금지한다.
 
 ### Tracked registry
 

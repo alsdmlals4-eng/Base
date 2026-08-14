@@ -17,9 +17,9 @@ PR #328/#329에서 병합된 Tool Hub·QA Evidence Studio·Expression/Sprite imp
 
 ## 로컬 신뢰 경계
 
-이 도구는 개발자 개인 PC에서 실행하는 localhost 작업 도구입니다. **동일 OS 사용자 계정과 기기 관리자는 신뢰 대상**입니다. 현재 구현은 브라우저·프로젝트 입력·경로 교체·설정 drift, 잘못된 registry/adapter 연결, 다른 프로젝트로의 출력 이탈을 차단하고 실행 직전 reviewed runtime의 변경을 탐지합니다.
+이 도구는 개발자 개인 PC에서 실행하는 localhost 작업 도구입니다. **동일 OS 사용자 계정과 기기 관리자는 신뢰 대상**입니다. 현재 구현은 브라우저·프로젝트 입력, 잘못된 registry/adapter 연결, 다른 프로젝트로의 출력 이탈을 차단하고 최종 launch 검사 시점까지의 경로·설정 drift를 탐지합니다.
 
-같은 OS 계정으로 이미 임의 코드를 실행할 수 있는 악성 프로세스까지 완전히 격리한다고 주장하지 않습니다. 그 공격자는 Tool Hub뿐 아니라 같은 계정의 파일·프로세스·메모리에도 접근할 수 있기 때문입니다. 이 수준의 방어에는 **별도 OS 계정·컨테이너·서명된 읽기 전용 runtime**이 필요하며 현재 상태는 `HARDENED_RUNTIME_DEFERRED`입니다. 현행 runtime hash와 descriptor binding은 승인되지 않은 입력과 우발적 drift를 막는 방어 계층이지, 동일 계정 공격자에 대한 sandbox 증거가 아닙니다.
+같은 OS 계정으로 이미 임의 코드를 실행할 수 있는 악성 프로세스까지 완전히 격리한다고 주장하지 않습니다. 그 공격자는 Tool Hub뿐 아니라 같은 계정의 파일·프로세스·메모리에도 접근할 수 있기 때문입니다. 또한 최종 검사와 child import 사이에 신뢰 사용자가 Base·Studio runtime을 동시에 편집하는 동작은 지원하지 않으므로, 도구 실행 중 해당 파일을 저장하지 않습니다. 이 수준까지 원자적으로 격리하려면 **별도 OS 계정·컨테이너·서명된 읽기 전용 runtime**이 필요하며 현재 상태는 `HARDENED_RUNTIME_DEFERRED`입니다. 현행 runtime hash와 descriptor binding은 승인되지 않은 입력과 launch 전 drift를 막는 방어 계층이지, 동일 계정의 동시 변경에 대한 sandbox 증거가 아닙니다.
 
 ## 2026-08-13 실행 증거
 

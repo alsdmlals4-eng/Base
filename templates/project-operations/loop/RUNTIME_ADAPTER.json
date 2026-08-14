@@ -1,0 +1,43 @@
+{
+  "build_commands": [],
+  "contract_role": "LOOP_RUNTIME_ADAPTER",
+  "engine": {
+    "name": "Godot",
+    "version": "4.x"
+  },
+  "languages": [
+    "GDScript"
+  ],
+  "project_id": "EXAMPLE_GAME",
+  "protected_paths": [
+    "data/",
+    "scripts/",
+    "scenes/",
+    "assets/",
+    "project.godot"
+  ],
+  "rollback_strategy": "Revert the package PR.",
+  "runtime_commands": [],
+  "schema_version": 1,
+  "semantic_resource_domains": [
+    "EXAMPLE_DOMAIN"
+  ],
+  "source_roots": [
+    "scripts/"
+  ],
+  "status": "PROJECT_ADAPTER_VALIDATED",
+  "test_commands": [
+    {
+      "argv": [
+        "python",
+        "-m",
+        "unittest",
+        "tests.test_example"
+      ],
+      "command_id": "PYTHON_TESTS",
+      "network": "DENIED",
+      "timeout_seconds": 600,
+      "working_directory": "."
+    }
+  ]
+}

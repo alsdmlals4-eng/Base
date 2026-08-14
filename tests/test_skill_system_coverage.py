@@ -65,6 +65,32 @@ class SkillSystemCoverageTests(unittest.TestCase):
             self.assertTrue(by_id[skill_id]["use_when"], skill_id)
             self.assertTrue(by_id[skill_id]["do_not_use_when"], skill_id)
 
+    def test_github_sync_routes_missing_optional_cli_to_connector(self) -> None:
+        registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
+        entry = next(
+            item
+            for item in registry["skills"]
+            if item["skill_id"] == "synchronizing-local-and-github-state"
+        )
+
+        self.assertTrue(
+            {
+                "github-cli-missing",
+                "gh-auth-missing",
+                "github-connector-fallback",
+            }.issubset(entry["trigger_tags"])
+        )
+        self.assertTrue(any("connector" in value and "gh" in value for value in entry["use_when"]))
+
+        skill = package_text("synchronizing-local-and-github-state")
+        for token in (
+            "GITHUB_CAPABILITY_FALLBACK",
+            "MISSING_OPTIONAL_CLI",
+            "BLOCKED_UNVERIFIED",
+            "update_ref(force=false)",
+        ):
+            self.assertIn(token, skill)
+
     def test_games_user_research_contract_has_exactly_eleven_domains(self) -> None:
         text = (ROOT / "skills/governing-game-user-research-coverage/SKILL.md").read_text(encoding="utf-8")
         numbered = [

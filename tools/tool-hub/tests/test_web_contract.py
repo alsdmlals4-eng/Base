@@ -5,20 +5,18 @@ from test_projects import make_project
 
 
 WEB_ROOT = Path(__file__).resolve().parents[1] / "web"
-README = Path(__file__).resolve().parents[1] / "README.md"
 
 
 def web_source(name: str) -> str:
     return (WEB_ROOT / name).read_text(encoding="utf-8")
 
 
-def test_readme_defines_the_supported_local_trust_boundary() -> None:
-    readme = README.read_text(encoding="utf-8")
+def test_hub_warns_that_reviewed_runtime_must_not_be_edited_during_launch() -> None:
+    html = web_source("index.html")
 
-    assert "동일 OS 사용자 계정과 기기 관리자는 신뢰 대상" in readme
-    assert "브라우저·프로젝트 입력·경로 교체·설정 drift" in readme
-    assert "별도 OS 계정·컨테이너·서명된 읽기 전용 runtime" in readme
-    assert "HARDENED_RUNTIME_DEFERRED" in readme
+    assert "동일 OS 사용자 계정과 기기 관리자는 신뢰 대상" in html
+    assert "도구 실행 중 Base·Studio 파일을 편집하지 마세요" in html
+    assert "HARDENED_RUNTIME_DEFERRED" in html
 
 
 def test_hub_browser_is_project_first_and_has_no_raw_command_surface(tmp_path: Path) -> None:

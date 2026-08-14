@@ -20,7 +20,7 @@
 - POSIX lifecycle is implemented and tested. Windows process-tree ownership and four-process path-with-spaces operation remain `BLOCKED_UNVERIFIED` until a real Windows smoke is run.
 - PR #322 changes only Loop Capsule design files and has no planned changed-path intersection.
 - No production code is written before its intended test fails.
-- Phase 1 trusts the same OS user account and machine administrator. Runtime hashes, no-follow path checks, descriptor binding, and clean environments protect reviewed launch inputs and detect accidental or untrusted project drift; they do not claim to sandbox an already-running malicious same-account process. Separate-user/container/signed read-only runtime hardening is `HARDENED_RUNTIME_DEFERRED`.
+- Phase 1 trusts the same OS user account and machine administrator. Runtime hashes, no-follow path checks, descriptor binding, and clean environments protect reviewed launch inputs and detect drift through the final launch check. Concurrent Base/Studio runtime edits after that check are unsupported and surfaced in the UI. Separate-user/container/signed read-only runtime hardening is `HARDENED_RUNTIME_DEFERRED`.
 
 ---
 
