@@ -399,6 +399,25 @@ class ClaimIntentImplementationEvidenceIntegrationTests(unittest.TestCase):
         self.assertIn("EXECUTABLE_EVIDENCE", owner_line)
         self.assertIn("tests/test_claim_and_intent_verification_contract.py", owner_line)
 
+    def test_github_connector_fallback_has_executable_evidence(self) -> None:
+        index = json.loads((ROOT / "skills/SKILL_IMPLEMENTATION_EVIDENCE.json").read_text(encoding="utf-8"))
+        owner = next(
+            entry
+            for entry in index["entries"]
+            if entry["skill_id"] == "synchronizing-local-and-github-state"
+        )
+        self.assertIn(
+            {"kind": "TEST", "path": "tests/test_github_connector_fallback_policy.py"},
+            owner["evidence"],
+        )
+        owner_line = next(
+            line
+            for line in load_builder().build_evidence_markdown(ROOT).splitlines()
+            if line.startswith("| `synchronizing-local-and-github-state`")
+        )
+        self.assertIn("EXECUTABLE_EVIDENCE", owner_line)
+        self.assertIn("tests/test_github_connector_fallback_policy.py", owner_line)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,15 @@
 # Synchronizing Local and GitHub State — Learning Log
 
+## 2026-08-14 — Missing optional GitHub CLI must not override connector capability
+
+- **Status:** `PATTERN`
+- **Observed failure:** `OBSERVED_FAILURE`. A verified feature branch was ready to publish, but the workflow stopped at `gh: command not found` and asked the user to install or authenticate again even though an authenticated GitHub connector exposed Branch, Git object, PR, workflow-status, and merge operations.
+- **Root cause:** tool identity was treated as the requirement. The real requirement was safe GitHub read/write capability at exact SHAs; `gh` was only one possible provider.
+- **Correction:** keep `synchronizing-local-and-github-state` as the owner and add `GITHUB_CAPABILITY_FALLBACK`: prefer the GitHub connector for supported operations, retain `local_git` for local evidence, use `gh_cli` only for uncovered required capabilities, and classify missing CLI alone as `MISSING_OPTIONAL_CLI` rather than a global blocker.
+- **Security boundary:** do not copy a user's Windows token into a cloud container or persist authentication through a non-secret `GH_TOKEN`. If every available provider lacks the exact required capability, report `BLOCKED_UNVERIFIED` with that capability instead of claiming completion.
+- **Evidence:** the same session created a remote Branch, Git blobs/tree/commit, non-force ref update, and PR through the GitHub connector after unauthenticated `git push` failed. CI, merge, release, and post-merge readback remain separate gates.
+- **Regression trigger:** any future workflow that asks for repeated CLI installation or authentication before checking connector coverage, or stops globally on missing optional `gh`, must reopen this policy.
+
 ## 2026-08-13 — Concurrent work needs identity, semantic ownership, and phase-bound SHAs
 
 - **Status:** `PATTERN`

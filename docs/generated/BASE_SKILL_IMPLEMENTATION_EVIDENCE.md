@@ -28,7 +28,7 @@
 | `refactoring-with-contract-preservation` | structure-maintenance | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_skill_system_coverage.py` |
 | `simplifying-skill-bodies` | skill-context-optimization | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_skill_system_coverage.py` |
 | `pruning-stale-and-nonfunctional-material` | repository-pruning | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_skill_system_coverage.py` |
-| `synchronizing-local-and-github-state` | git-operations | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_skill_system_coverage.py` |
+| `synchronizing-local-and-github-state` | git-operations | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_skill_system_coverage.py`<br>TEST: `tests/test_github_connector_fallback_policy.py` |
 | `maintaining-long-running-task-continuity` | execution-continuity | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_skill_system_coverage.py` |
 | `governing-game-user-research-coverage` | games-user-research-governance | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_skill_system_coverage.py` |
 | `creating-user-learning-notes` | user-learning | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_skill_system_coverage.py` |
