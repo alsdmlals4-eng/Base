@@ -115,6 +115,24 @@ def test_default_windows_association_checker_uses_the_effective_shell_user_choic
     assert launcher_module._default_association_checker(handler) is False
 
 
+def test_shell_association_query_accepts_a_successful_bounded_output_buffer(
+    tmp_path: Path,
+) -> None:
+    expected = str(tmp_path / "Python 3.12" / "pythonw.exe")
+
+    def query(flags, kind, association, extra, output, size):
+        assert flags == 0
+        assert kind == 2
+        assert association == ".pyw"
+        assert extra is None
+        assert size._obj.value == 32_768
+        output.value = expected
+        size._obj.value = len(expected) + 1
+        return 0
+
+    assert launcher_module._association_executable_from_query(query) == Path(expected).absolute()
+
+
 def test_installer_is_idempotent_and_fails_closed_without_windows_association(tmp_path: Path) -> None:
     owner, *_ = installer(tmp_path)
     assert owner.install().state == "INSTALLED"

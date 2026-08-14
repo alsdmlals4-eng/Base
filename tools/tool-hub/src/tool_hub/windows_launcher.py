@@ -135,6 +135,20 @@ def hub_runtime_fingerprint(root: Path) -> str:
     return digest.hexdigest()
 
 
+def _association_executable_from_query(query: Callable[..., int]) -> Path | None:
+    """Resolve one bounded ASSOCSTR_EXECUTABLE query without a null output probe."""
+    import ctypes
+    from ctypes import wintypes
+
+    capacity = wintypes.DWORD(32_768)
+    buffer = ctypes.create_unicode_buffer(capacity.value)
+    if query(0, 2, ".pyw", None, buffer, ctypes.byref(capacity)) != 0:
+        return None
+    if capacity.value <= 1 or capacity.value > len(buffer) or not buffer.value:
+        return None
+    return Path(buffer.value).absolute()
+
+
 def _effective_pyw_executable() -> Path | None:
     if os.name != "nt":
         return None
@@ -152,15 +166,7 @@ def _effective_pyw_executable() -> Path | None:
             ctypes.POINTER(wintypes.DWORD),
         )
         query.restype = wintypes.HRESULT
-        required = wintypes.DWORD(0)
-        if query(0, 2, ".pyw", None, None, ctypes.byref(required)) != 1:
-            return None
-        if required.value <= 1 or required.value > 32_768:
-            return None
-        buffer = ctypes.create_unicode_buffer(required.value)
-        if query(0, 2, ".pyw", None, buffer, ctypes.byref(required)) != 0:
-            return None
-        return Path(buffer.value).absolute()
+        return _association_executable_from_query(query)
     except (AttributeError, ImportError, OSError, ValueError):
         return None
 
