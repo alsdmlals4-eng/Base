@@ -1,0 +1,227 @@
+{
+  "$id": "loop-runtime-adapter-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "build_commands": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "argv": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "command_id": {
+            "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "network": {
+            "enum": [
+              "DENIED",
+              "READ_ONLY_APPROVED"
+            ]
+          },
+          "timeout_seconds": {
+            "maximum": 7200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "working_directory": {
+            "minLength": 1,
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "command_id",
+          "argv",
+          "working_directory",
+          "timeout_seconds",
+          "network"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "contract_role": {
+      "const": "LOOP_RUNTIME_ADAPTER"
+    },
+    "engine": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "version": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "type": "object"
+    },
+    "languages": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "project_id": {
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+      "type": "string"
+    },
+    "protected_paths": {
+      "items": {
+        "minLength": 1,
+        "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "rollback_strategy": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "runtime_commands": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "argv": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "command_id": {
+            "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "network": {
+            "enum": [
+              "DENIED",
+              "READ_ONLY_APPROVED"
+            ]
+          },
+          "timeout_seconds": {
+            "maximum": 7200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "working_directory": {
+            "minLength": 1,
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "command_id",
+          "argv",
+          "working_directory",
+          "timeout_seconds",
+          "network"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "semantic_resource_domains": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "source_roots": {
+      "items": {
+        "minLength": 1,
+        "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "status": {
+      "const": "PROJECT_ADAPTER_VALIDATED"
+    },
+    "test_commands": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "argv": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "command_id": {
+            "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "network": {
+            "enum": [
+              "DENIED",
+              "READ_ONLY_APPROVED"
+            ]
+          },
+          "timeout_seconds": {
+            "maximum": 7200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "working_directory": {
+            "minLength": 1,
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "command_id",
+          "argv",
+          "working_directory",
+          "timeout_seconds",
+          "network"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "contract_role",
+    "project_id",
+    "status",
+    "engine",
+    "languages",
+    "source_roots",
+    "test_commands",
+    "runtime_commands",
+    "build_commands",
+    "protected_paths",
+    "semantic_resource_domains",
+    "rollback_strategy"
+  ],
+  "type": "object"
+}

@@ -1,0 +1,14 @@
+{
+  "aspect_ratios": [],
+  "avoid": [],
+  "contract_role": "LOOP_VISUAL_LOCK",
+  "do_not_drift": [],
+  "keep": [],
+  "project_id": "EXAMPLE_GAME",
+  "provider": "NONE",
+  "reference_ids": [],
+  "schema_version": 1,
+  "source_commit": "0000000000000000000000000000000000000000",
+  "status": "VISUAL_NOT_APPLICABLE",
+  "target_platforms": []
+}
