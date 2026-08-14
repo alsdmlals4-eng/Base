@@ -4,9 +4,25 @@ on:
   pull_request:
     paths:
       - "tools/base-tool-contracts/**"
+      - "tools/tool-hub/src/tool_hub/adapters.py"
+      - "tools/expression-studio/src/expression_studio/app.py"
+      - "tools/sprite-animation-studio/src/sprite_animation_studio/app.py"
+      - "docs/operations/PROJECT_FIGMA_TARGET_REGISTRY.json"
       - "docs/operations/PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json"
+      - "tests/test_tool_hub_subscription_production_contract.py"
       - "docs/superpowers/specs/2026-08-15-tool-hub-subscription-production-contracts-design.md"
       - "docs/superpowers/plans/2026-08-15-tool-hub-subscription-production-contracts.md"
+      - ".github/workflows/validate-tool-hub-subscription-contracts.yml"
+  push:
+    branches: [main]
+    paths:
+      - "tools/base-tool-contracts/**"
+      - "tools/tool-hub/src/tool_hub/adapters.py"
+      - "tools/expression-studio/src/expression_studio/app.py"
+      - "tools/sprite-animation-studio/src/sprite_animation_studio/app.py"
+      - "docs/operations/PROJECT_FIGMA_TARGET_REGISTRY.json"
+      - "docs/operations/PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json"
+      - "tests/test_tool_hub_subscription_production_contract.py"
       - ".github/workflows/validate-tool-hub-subscription-contracts.yml"
   workflow_dispatch:
 
@@ -40,3 +56,5 @@ jobs:
           python -m pytest -q
           tools/base-tool-contracts/tests/test_subscription_handoff.py
           tools/base-tool-contracts/tests/test_figma_tool_routing.py
+      - name: Run repository production-boundary contract
+        run: python -m unittest tests/test_tool_hub_subscription_production_contract.py -v
