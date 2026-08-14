@@ -16,6 +16,7 @@ import subprocess
 import tempfile
 from typing import Any, Callable
 
+from .authority_snapshot import AuthoritySnapshot
 from .openai_transport import (
     GitReviewMaterialSource,
     OpenAIWorkspaceBuilder,
@@ -276,6 +277,7 @@ def build_subscription_provider_components(
     *,
     repo_root: Path | str,
     runtime_root: Path | str,
+    authority_snapshot: AuthoritySnapshot,
     login_runner: Callable[..., subprocess.CompletedProcess[str]] | None = None,
     exec_runner: Callable[..., subprocess.CompletedProcess[str]] | None = None,
     builder_model: str | None = None,
@@ -285,6 +287,9 @@ def build_subscription_provider_components(
     gate = subscription_codex_cli_gate(run_command=login_runner)
     if gate.get("status") != "READY":
         raise CodexCliTransportError("SUBSCRIPTION_CODEX_GATE_CLOSED", "ChatGPT-authenticated Codex CLI is not ready")
+
+    if not isinstance(authority_snapshot, AuthoritySnapshot):
+        raise CodexCliTransportError("AUTHORITY_SNAPSHOT_REQUIRED", "subscription A2 requires immutable authority snapshot")
 
     builder_name = (builder_model or os.environ.get("LOOP_A2_CODEX_BUILDER_MODEL") or _DEFAULT_MODEL).strip()
     critic_name = (critic_model or os.environ.get("LOOP_A2_CODEX_CRITIC_MODEL") or _DEFAULT_MODEL).strip()
@@ -298,6 +303,7 @@ def build_subscription_provider_components(
         client=CodexCliResponsesClient(process=builder_process),
         model=builder_name,
         repair_mailbox=mailbox,
+        authority_snapshot=authority_snapshot,
     )
     builder = GitWorktreeBuilderAdapter(
         repo_root=Path(repo_root),
