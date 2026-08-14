@@ -14,6 +14,9 @@ code { color: #8c86a8; font-size: 11px; }
 .toolbar button.active { border-color: #c89a5a; color: #e9bd80; background: #21180e; }
 .error-banner { display: flex; gap: 10px; align-items: center; padding: 8px 16px; background: #35151a; color: #ff9ca8; border-bottom: 1px solid #6f2730; font-size: 12px; }
 .error-banner span { opacity: .85; }
+.preview-blocked { min-height: calc(100vh - 52px); display: grid; place-content: center; gap: 8px; text-align: center; background: #0b090d; color: #d4a0aa; }
+.preview-blocked b { letter-spacing: .16em; }
+.preview-blocked p { color: #8f7d83; }
 .preview-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(360px, .65fr); min-height: calc(100vh - 52px); }
 .stage { padding: 34px; display: flex; flex-direction: column; justify-content: flex-end; border-right: 1px solid #20202b; }
 .scene-scene_hallway { background: radial-gradient(circle at 50% 10%, #282047 0, #17132b 48%, #090810 100%); }
