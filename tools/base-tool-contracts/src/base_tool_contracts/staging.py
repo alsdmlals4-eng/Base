@@ -14,6 +14,8 @@ from contextlib import contextmanager
 from dataclasses import dataclass, field
 from typing import Iterator
 
+from .trusted_files import TrustedFileError, read_regular_portable_nofollow
+
 
 class StagingViolation(ValueError):
     """Raised when local-only output cannot be proved confined and ignored."""
@@ -21,6 +23,30 @@ class StagingViolation(ValueError):
 
 _IDENTIFIER = re.compile(r"^[A-Za-z0-9_-]+$")
 _FILENAME = re.compile(r"^[A-Za-z0-9_.-]+$")
+_MAX_PORTABLE_STAGING_READ_BYTES = 512 * 1024 * 1024
+_REPARSE_POINT = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400 if os.name == "nt" else 0)
+
+
+def _is_reparse(metadata: os.stat_result) -> bool:
+    return bool(_REPARSE_POINT and getattr(metadata, "st_file_attributes", 0) & _REPARSE_POINT)
+
+
+def _portable_directory_identity(path: Path) -> tuple[int, int]:
+    """Validate a normal directory chain on platforms without dir-fd no-follow operations."""
+    absolute = Path(os.path.abspath(os.fspath(path)))
+    current = Path(absolute.anchor)
+    try:
+        for part in absolute.parts[1:]:
+            current = current / part
+            metadata = current.lstat()
+            if stat.S_ISLNK(metadata.st_mode) or _is_reparse(metadata):
+                raise StagingViolation("staging directory path contains a link or reparse point")
+            if not stat.S_ISDIR(metadata.st_mode):
+                raise StagingViolation("staging directory path contains a non-directory")
+    except OSError as error:
+        raise StagingViolation("staging directory is unavailable") from error
+    metadata = absolute.lstat()
+    return metadata.st_dev, metadata.st_ino
 
 
 def _open_staging_directory(directory: Path) -> int:
@@ -36,9 +62,21 @@ def _open_staging_directory(directory: Path) -> int:
 
 
 def staging_read_bytes(directory: Path, filename: str, *, expected_sha256: str | None = None) -> bytes:
-    """Read one regular output through a fixed directory fd without following its final symlink."""
+    """Read one regular output without following its final link."""
     if not _FILENAME.fullmatch(filename) or filename in {".", ".."}:
         raise StagingViolation("staging input filename is invalid")
+    if os.name == "nt":
+        try:
+            data, _ = read_regular_portable_nofollow(
+                directory / filename,
+                max_bytes=_MAX_PORTABLE_STAGING_READ_BYTES,
+            )
+        except TrustedFileError as error:
+            raise StagingViolation("staging input must be a readable regular file") from error
+        if expected_sha256 is not None and hashlib.sha256(data).hexdigest() != expected_sha256:
+            raise StagingViolation("staging input SHA-256 does not match the generated evidence")
+        return data
+
     directory_descriptor = -1
     descriptor = -1
     try:
@@ -75,6 +113,19 @@ def confined_staging_read_bytes(project_root: Path, path: Path, *, expected_sha2
         raise StagingViolation("staging input must remain under the project root") from error
     if not relative.parts or any(part in {"", ".", ".."} for part in relative.parts):
         raise StagingViolation("staging input path is invalid")
+
+    if os.name == "nt":
+        try:
+            data, _ = read_regular_portable_nofollow(
+                path,
+                max_bytes=_MAX_PORTABLE_STAGING_READ_BYTES,
+            )
+        except TrustedFileError as error:
+            raise StagingViolation("staging input path contains a link or unreadable component") from error
+        if expected_sha256 is not None and hashlib.sha256(data).hexdigest() != expected_sha256:
+            raise StagingViolation("staging input SHA-256 does not match the generated evidence")
+        return data
+
     directory_descriptor = -1
     descriptor = -1
     try:
@@ -111,10 +162,71 @@ def confined_staging_read_bytes(project_root: Path, path: Path, *, expected_sha2
             os.close(directory_descriptor)
 
 
+def _portable_staging_write_bytes(directory: Path, filename: str, data: bytes) -> Path:
+    directory_identity = _portable_directory_identity(directory)
+    target = directory / filename
+    try:
+        existing = target.lstat()
+    except FileNotFoundError:
+        pass
+    except OSError as error:
+        raise StagingViolation("staging output could not be inspected safely") from error
+    else:
+        if stat.S_ISLNK(existing.st_mode) or _is_reparse(existing) or not stat.S_ISREG(existing.st_mode):
+            raise StagingViolation("staging output must be a regular file")
+        try:
+            target.unlink()
+        except OSError as error:
+            raise StagingViolation("staging output could not be replaced safely") from error
+        if _portable_directory_identity(directory) != directory_identity:
+            raise StagingViolation("staging output directory identity changed before write")
+
+    descriptor = -1
+    try:
+        descriptor = os.open(
+            target,
+            os.O_WRONLY
+            | os.O_CREAT
+            | os.O_EXCL
+            | getattr(os, "O_BINARY", 0),
+            0o600,
+        )
+        opened_attributes = os.fstat(descriptor)
+        if not stat.S_ISREG(opened_attributes.st_mode):
+            raise StagingViolation("staging output must be a regular file")
+        view = memoryview(data)
+        while view:
+            written = os.write(descriptor, view)
+            if written <= 0:
+                raise StagingViolation("staging output write did not make progress")
+            view = view[written:]
+        os.fsync(descriptor)
+        named_attributes = target.lstat()
+        if (
+            stat.S_ISLNK(named_attributes.st_mode)
+            or _is_reparse(named_attributes)
+            or not stat.S_ISREG(named_attributes.st_mode)
+            or (opened_attributes.st_dev, opened_attributes.st_ino)
+            != (named_attributes.st_dev, named_attributes.st_ino)
+        ):
+            raise StagingViolation("staging output identity changed during write")
+        if _portable_directory_identity(directory) != directory_identity:
+            raise StagingViolation("staging output directory identity changed during write")
+        return target
+    except OSError as error:
+        raise StagingViolation("staging output could not be written safely") from error
+    finally:
+        if descriptor >= 0:
+            os.close(descriptor)
+
+
 def safe_staging_write_bytes(directory: Path, filename: str, data: bytes) -> Path:
     """Publish a fresh regular-file inode and never write through an existing entry."""
     if not _FILENAME.fullmatch(filename) or filename in {".", ".."}:
         raise StagingViolation("staging output filename is invalid")
+    if os.name == "nt":
+        return _portable_staging_write_bytes(directory, filename, data)
+
     try:
         directory_descriptor = _open_staging_directory(directory)
     except OSError as error:
@@ -169,10 +281,10 @@ def safe_staging_write_text(directory: Path, filename: str, text: str) -> Path:
 
 def staging_identity(path: Path) -> tuple[int, int]:
     try:
-        stat = path.stat(follow_symlinks=False)
+        attributes = path.stat(follow_symlinks=False)
     except OSError as error:
         raise StagingViolation("run output identity is unavailable") from error
-    return stat.st_dev, stat.st_ino
+    return attributes.st_dev, attributes.st_ino
 
 
 def _descriptor_alias(descriptor: int) -> Path:
@@ -222,8 +334,8 @@ class StableStagingTree:
                     raise StagingViolation("stable staging path contains a link or non-directory") from error
                 os.close(descriptor)
                 descriptor = next_descriptor
-            stat = os.fstat(descriptor)
-            if expected_identity is not None and (stat.st_dev, stat.st_ino) != expected_identity:
+            attributes = os.fstat(descriptor)
+            if expected_identity is not None and (attributes.st_dev, attributes.st_ino) != expected_identity:
                 raise StagingViolation("stable staging subdirectory identity changed after creation")
             alias = _descriptor_alias(descriptor)
             self._descriptors.append(descriptor)
@@ -238,14 +350,67 @@ class StableStagingTree:
             os.close(self._descriptors.pop())
 
 
+@dataclass
+class PortableStableStagingTree:
+    """Path-identity-backed Windows view for a developer-owned local workspace."""
+
+    _run_path: Path
+    _run_identity: tuple[int, int]
+
+    @property
+    def run_dir(self) -> Path:
+        if _portable_directory_identity(self._run_path) != self._run_identity:
+            raise StagingViolation("run output directory identity changed after creation")
+        return self._run_path
+
+    def open_directory(
+        self,
+        relative_path: str,
+        *,
+        create: bool = False,
+        expected_identity: tuple[int, int] | None = None,
+    ) -> Path:
+        relative = Path(relative_path)
+        if relative.is_absolute() or not relative.parts or any(
+            part in {"", ".", ".."} or not _IDENTIFIER.fullmatch(part)
+            for part in relative.parts
+        ):
+            raise StagingViolation("stable staging subdirectory is invalid")
+        current = self.run_dir
+        for component in relative.parts:
+            current = current / component
+            if create:
+                try:
+                    current.mkdir()
+                except FileExistsError:
+                    pass
+            identity = _portable_directory_identity(current)
+        if expected_identity is not None and identity != expected_identity:
+            raise StagingViolation("stable staging subdirectory identity changed after creation")
+        return current
+
+    def close(self) -> None:
+        return None
+
+
 @contextmanager
 def stable_staging_tree(
     project_root: Path,
     path: Path,
     expected_identity: tuple[int, int],
-) -> Iterator[StableStagingTree]:
-    """Hold a run handle and any explicitly opened child handles during mutable work."""
+) -> Iterator[StableStagingTree | PortableStableStagingTree]:
+    """Hold or revalidate one run and its mutable descendants during local tool work."""
     assert_verified_staging_path(project_root, path)
+    if os.name == "nt":
+        tree = PortableStableStagingTree(path, expected_identity)
+        if _portable_directory_identity(path) != expected_identity:
+            raise StagingViolation("run output directory identity changed after creation")
+        try:
+            yield tree
+        finally:
+            tree.close()
+        return
+
     flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
     try:
         descriptor = os.open(path, flags)
@@ -253,8 +418,8 @@ def stable_staging_tree(
         raise StagingViolation("run output directory cannot be opened without following links") from error
     tree = StableStagingTree(descriptor)
     try:
-        stat = os.fstat(descriptor)
-        if (stat.st_dev, stat.st_ino) != expected_identity:
+        attributes = os.fstat(descriptor)
+        if (attributes.st_dev, attributes.st_ino) != expected_identity:
             raise StagingViolation("run output directory identity changed after creation")
         _descriptor_alias(descriptor)
         yield tree
@@ -265,7 +430,7 @@ def stable_staging_tree(
 
 @contextmanager
 def stable_staging_path(project_root: Path, path: Path, expected_identity: tuple[int, int]) -> Iterator[Path]:
-    """Hold a no-follow directory handle across mutable local tool work."""
+    """Hold a no-follow directory handle across mutable local tool work where supported."""
     with stable_staging_tree(project_root, path, expected_identity) as tree:
         yield tree.run_dir
 
@@ -305,6 +470,21 @@ def _verify_not_protected(root: Path, relative: Path) -> None:
 
 
 def _mkdir_chain_nofollow(base: Path, components: tuple[str, ...], *, final_must_be_new: bool) -> None:
+    if os.name == "nt":
+        base_identity = _portable_directory_identity(base)
+        current = base
+        for index, component in enumerate(components):
+            current = current / component
+            try:
+                current.mkdir()
+            except FileExistsError:
+                if final_must_be_new and index == len(components) - 1:
+                    raise StagingViolation("run output directory already exists")
+            _portable_directory_identity(current)
+        if _portable_directory_identity(base) != base_identity:
+            raise StagingViolation("project asset vault library identity changed during directory creation")
+        return
+
     flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
     try:
         descriptor = os.open(base, flags)
@@ -335,6 +515,8 @@ def create_verified_run_directories(project_root: Path, *, dynamic_components: t
     library = root / ".asset-vault" / "library"
     if not library.is_dir() or library.is_symlink():
         raise StagingViolation("project asset vault library must exist and must not be a symlink")
+    if os.name == "nt":
+        _portable_directory_identity(library)
     repository = _git(root, "rev-parse", "--show-toplevel")
     if repository.returncode != 0 or Path(repository.stdout.strip()).resolve() != root:
         raise StagingViolation("project asset vault requires project_root to be the Git worktree root")
@@ -368,8 +550,8 @@ def assert_verified_staging_path(project_root: Path, path: Path) -> None:
         if current.is_symlink():
             raise StagingViolation("run output path contains a symlink")
         if current.exists():
-            attributes = getattr(current.stat(follow_symlinks=False), "st_file_attributes", 0)
-            if attributes & 0x400:
+            attributes = current.stat(follow_symlinks=False)
+            if _is_reparse(attributes):
                 raise StagingViolation("run output path contains a reparse point")
     resolved = path.resolve()
     if library.resolve() not in resolved.parents or not resolved.is_dir():
