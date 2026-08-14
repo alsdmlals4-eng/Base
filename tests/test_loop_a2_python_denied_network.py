@@ -5,7 +5,6 @@ import json
 import os
 from pathlib import Path
 import subprocess
-import sys
 import tempfile
 import textwrap
 import unittest
@@ -155,13 +154,13 @@ class PythonDeniedNetworkBoundaryTests(unittest.TestCase):
     def test_ctypes_dynamic_loading_escape_is_denied(self) -> None:
         self._write_probe(
             """
-            import ctypes
+            import importlib
             import unittest
 
             class Probe(unittest.TestCase):
-                def test_ctypes_denied(self):
+                def test_ctypes_denied_at_import_or_load(self):
                     with self.assertRaises(PermissionError):
-                        ctypes.CDLL(None)
+                        importlib.import_module('ctypes')
             """
         )
         result = self._run(["python", "-m", "unittest", "tests.test_boundary_probe", "-v"])
