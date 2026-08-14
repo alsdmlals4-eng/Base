@@ -31,6 +31,12 @@ def registry() -> ProjectFigmaRegistry:
     return ProjectFigmaRegistry.load(BASE_ROOT / "docs" / "operations" / "PROJECT_FIGMA_TARGET_REGISTRY.json")
 
 
+def paired_token(service: FigmaDeliveryService, project_id: str) -> str:
+    target = registry().resolve_ready_target(project_id)
+    pairing = service.create_pairing(project_id)
+    return service.pair(project_id, target.figma_file_key, pairing.pairing_code, "bridge-test").token
+
+
 def test_delivery_queue_binds_project_and_canonical_figma_target(tmp_path: Path) -> None:
     project = make_project(tmp_path / "project", "coc-fiction")
     locator = ProjectLocator(tmp_path / "machine-projects.json")
@@ -81,3 +87,60 @@ def test_pairing_is_one_time_and_bound_to_exact_project_figma_file(tmp_path: Pat
 
     with pytest.raises(DeliveryError, match="PAIRING_CODE_INVALID"):
         service.pair("coc-fiction", target.figma_file_key, pairing.pairing_code, "bridge-test")
+
+
+def test_bridge_session_claims_and_reads_only_its_project_jobs(tmp_path: Path) -> None:
+    coc = make_project(tmp_path / "coc", "coc-fiction")
+    omen = make_project(tmp_path / "omen", "omenward")
+    locator = ProjectLocator(tmp_path / "machine-projects.json")
+    locator.register(coc, "coc-fiction")
+    locator.register(omen, "omenward")
+    service = FigmaDeliveryService(tmp_path / "runtime", locator, registry())
+    coc_token = paired_token(service, "coc-fiction")
+    omen_token = paired_token(service, "omenward")
+    coc_bytes = png_bytes()
+    omen_bytes = png_bytes(2, 1)
+    coc_job = service.enqueue("expression-studio", "coc-fiction", "run-coc", coc_bytes, "image/png")
+    omen_job = service.enqueue("sprite-animation-studio", "omenward", "run-omen", omen_bytes, "image/png")
+
+    coc_claim = service.claim_next(coc_token)
+    omen_claim = service.claim_next(omen_token)
+
+    assert coc_claim is not None and coc_claim.delivery_id == coc_job.delivery_id
+    assert omen_claim is not None and omen_claim.delivery_id == omen_job.delivery_id
+    assert service.content(coc_token, coc_job.delivery_id) == coc_bytes
+    assert service.content(omen_token, omen_job.delivery_id) == omen_bytes
+    with pytest.raises(DeliveryError, match="DELIVERY_SCOPE_MISMATCH"):
+        service.content(coc_token, omen_job.delivery_id)
+
+
+def test_release_returns_claimed_job_to_same_project_queue(tmp_path: Path) -> None:
+    project = make_project(tmp_path / "project", "coc-fiction")
+    locator = ProjectLocator(tmp_path / "machine-projects.json")
+    locator.register(project, "coc-fiction")
+    service = FigmaDeliveryService(tmp_path / "runtime", locator, registry())
+    token = paired_token(service, "coc-fiction")
+    job = service.enqueue("expression-studio", "coc-fiction", "run-retry", png_bytes(), "image/png")
+
+    claimed = service.claim_next(token)
+    assert claimed is not None and claimed.state == "CLAIMED"
+    released = service.release(token, job.delivery_id)
+    assert released.state == "QUEUED"
+    reclaimed = service.claim_next(token)
+    assert reclaimed is not None and reclaimed.delivery_id == job.delivery_id
+
+
+def test_content_hash_is_revalidated_after_queue_tamper(tmp_path: Path) -> None:
+    project = make_project(tmp_path / "project", "coc-fiction")
+    locator = ProjectLocator(tmp_path / "machine-projects.json")
+    locator.register(project, "coc-fiction")
+    service = FigmaDeliveryService(tmp_path / "runtime", locator, registry())
+    token = paired_token(service, "coc-fiction")
+    job = service.enqueue("expression-studio", "coc-fiction", "run-tamper", png_bytes(), "image/png")
+    assert service.claim_next(token) is not None
+
+    content = project / ".asset-vault" / "tool-hub-delivery" / job.delivery_id / "content.bin"
+    content.write_bytes(png_bytes(2, 1))
+
+    with pytest.raises(DeliveryError, match="DELIVERY_CONTENT_CHANGED"):
+        service.content(token, job.delivery_id)
