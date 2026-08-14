@@ -22,6 +22,17 @@ IDENTITY_PREFIX = (
     "Preserve the exact same character: face geometry, hairstyle, costume, palette, framing, lighting, "
     "and art style. Edit only the requested facial expression, gaze, and head pose."
 )
+OUTFIT_IDENTITY_PREFIX = (
+    "Preserve the exact same character identity: face geometry, facial features, hairstyle, body proportions, "
+    "pose, framing, background, palette, lighting, and art style. "
+    "Change only clothing, costume, and wearable accessories."
+)
+SCENE_IDENTITY_PREFIX = (
+    "Preserve the exact same character identity and design: face geometry, facial features, hairstyle, costume, "
+    "body proportions, pose, framing, palette, and art style. "
+    "Change only the environment, location, and background. "
+    "Integrate scene lighting and shadows without changing the character design."
+)
 
 SAFE_PROVIDER_ERROR_CODES = frozenset(
     {
@@ -95,7 +106,29 @@ class ExpressionEngine(Protocol):
         """Generate local candidate PNGs without mutating the approved anchor."""
 
 
-def generation_instruction(resolved: ResolvedExpression) -> str:
+def generation_instruction(
+    request_or_resolved: ExpressionRequest | ResolvedExpression,
+    resolved: ResolvedExpression | None = None,
+) -> str:
+    """Build a bounded edit instruction while preserving the legacy one-argument API."""
+    request = request_or_resolved if isinstance(request_or_resolved, ExpressionRequest) else None
+    if resolved is None:
+        if not isinstance(request_or_resolved, ResolvedExpression):
+            raise TypeError("generation_instruction requires a resolved request")
+        resolved = request_or_resolved
+
+    edit_mode = request.edit_mode if request is not None else resolved.edit_mode
+    edit_prompt = request.edit_prompt if request is not None else resolved.edit_prompt
+
+    if edit_mode == "outfit":
+        if not edit_prompt:
+            raise ValueError("outfit edit requires edit_prompt")
+        return f"{OUTFIT_IDENTITY_PREFIX} Requested wardrobe change: {edit_prompt}."
+    if edit_mode == "scene":
+        if not edit_prompt:
+            raise ValueError("scene edit requires edit_prompt")
+        return f"{SCENE_IDENTITY_PREFIX} Requested scene: {edit_prompt}."
+
     movements = "; ".join(resolved.movement_phrases) or "keep a neutral facial expression"
     intensities = ", ".join(f"{control.code}: {INTENSITY_PHRASES[control.intensity]}" for control in resolved.controls) or "neutral intensity"
     return " ".join(
@@ -136,14 +169,14 @@ class FakeExpressionEngine:
             candidates.append(candidate)
         return EngineResult(
             candidates=candidates,
-            generation_instruction=generation_instruction(resolved),
+            generation_instruction=generation_instruction(request, resolved),
             provenance="simulated",
             delivery_eligible=False,
         )
 
 
 class OpenAIExpressionEngine:
-    """Reviewed OpenAI Images edit adapter for real expression candidates."""
+    """Reviewed OpenAI Images edit adapter for real character-consistency candidates."""
 
     provenance = "openai"
     delivery_eligible = True
@@ -223,7 +256,7 @@ class OpenAIExpressionEngine:
             raise EngineContractError("run-local approved anchor is unavailable or changed") from error
         if not anchor_bytes:
             raise EngineContractError("run-local approved anchor is unavailable")
-        instruction = generation_instruction(resolved)
+        instruction = generation_instruction(request, resolved)
         provider_failure: str | None = None
         response: object | None = None
         try:
