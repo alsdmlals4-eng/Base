@@ -89,5 +89,129 @@ class RuntimeTests(unittest.TestCase):
         self.assertEqual(report["false_completion_claims"], 0)
 
 
+class RuntimeAdversarialIdentityTests(unittest.TestCase):
+    def request(self) -> RunRequest:
+        return RunRequest.from_dict(valid_request())
+
+    def test_builder_turn_budget_is_enforced_before_critic(self) -> None:
+        class OverBudgetBuilder:
+            calls = 0
+
+            def invoke(self, request: RunRequest, *, repair_cycle: int):
+                from tools.loop_a2_runtime.protocol import WorkerResult
+                self.calls += 1
+                return WorkerResult.from_dict({
+                    "schema_version": 1,
+                    "contract_role": "LOOP_A2_WORKER_RESULT",
+                    "project_id": request.project_id,
+                    "run_id": request.run_id,
+                    "package_id": request.package_id,
+                    "expected_main_sha": request.expected_main_sha,
+                    "role": "BUILDER",
+                    "status": "COMPLETED",
+                    "changed_paths": ["scripts/feature/a.gd"],
+                    "summary": "over budget",
+                    "usage": {"turns": request.budgets.max_turns + 1},
+                    "errors": [],
+                })
+
+        builder = OverBudgetBuilder()
+        critic = FakeCritic(verdict="PASS", checked_requirement_ids=("REQ_001",))
+        result = A2Runtime(builder=builder, critic=critic).run(
+            self.request(), observed_main_sha=self.request().expected_main_sha
+        )
+        self.assertEqual(result.state, "BUDGET_EXCEEDED")
+        self.assertIn("BUILDER_TURN_BUDGET_EXCEEDED", result.finding_codes)
+        self.assertEqual(critic.calls, 0)
+
+    def test_empty_changeset_cannot_claim_waiting_integration(self) -> None:
+        result = A2Runtime(
+            builder=FakeBuilder(changed_paths=()),
+            critic=FakeCritic(verdict="PASS", checked_requirement_ids=("REQ_001",)),
+        ).run(self.request(), observed_main_sha=self.request().expected_main_sha)
+        self.assertEqual(result.state, "BLOCKED_UNVERIFIED")
+        self.assertIn("EMPTY_CHANGESET", result.finding_codes)
+
+    def test_critic_identity_mismatch_is_quarantined(self) -> None:
+        class WrongIdentityCritic:
+            calls = 0
+
+            def review(self, request: RunRequest, worker_result):
+                from tools.loop_a2_runtime.protocol import ReviewResult
+                self.calls += 1
+                return ReviewResult.from_dict({
+                    "schema_version": 1,
+                    "contract_role": "LOOP_A2_REVIEW_RESULT",
+                    "project_id": "OTHER_PROJECT",
+                    "run_id": request.run_id,
+                    "package_id": request.package_id,
+                    "expected_main_sha": request.expected_main_sha,
+                    "role": "CRITIC",
+                    "verdict": "PASS",
+                    "findings": [],
+                    "checked_requirement_ids": list(request.requirement_ids),
+                })
+
+        result = A2Runtime(
+            builder=FakeBuilder(changed_paths=("scripts/feature/a.gd",)),
+            critic=WrongIdentityCritic(),
+        ).run(self.request(), observed_main_sha=self.request().expected_main_sha)
+        self.assertEqual(result.state, "QUARANTINED")
+        self.assertIn("CRITIC_IDENTITY_MISMATCH", result.finding_codes)
+
+    def test_pass_with_findings_is_blocked(self) -> None:
+        result = A2Runtime(
+            builder=FakeBuilder(changed_paths=("scripts/feature/a.gd",)),
+            critic=FakeCritic(
+                verdict="PASS",
+                finding_codes=("SUSPICIOUS_PASS",),
+                checked_requirement_ids=("REQ_001",),
+            ),
+        ).run(self.request(), observed_main_sha=self.request().expected_main_sha)
+        self.assertEqual(result.state, "BLOCKED_UNVERIFIED")
+        self.assertIn("CRITIC_PASS_WITH_FINDINGS", result.finding_codes)
+
+    def test_repair_user_decision_stops_without_more_repairs(self) -> None:
+        class SequencedCritic:
+            calls = 0
+
+            def review(self, request: RunRequest, worker_result):
+                from tools.loop_a2_runtime.protocol import ReviewResult
+                self.calls += 1
+                if self.calls == 1:
+                    verdict = "MUST_FIX"
+                    code = "FIX_FIRST"
+                else:
+                    verdict = "USER_DECISION_REQUIRED"
+                    code = "PLANNING_CONFLICT"
+                return ReviewResult.from_dict({
+                    "schema_version": 1,
+                    "contract_role": "LOOP_A2_REVIEW_RESULT",
+                    "project_id": request.project_id,
+                    "run_id": request.run_id,
+                    "package_id": request.package_id,
+                    "expected_main_sha": request.expected_main_sha,
+                    "role": "CRITIC",
+                    "verdict": verdict,
+                    "findings": [{
+                        "code": code,
+                        "severity": "P1",
+                        "message": code,
+                        "paths": list(worker_result.changed_paths),
+                        "requirement_ids": list(request.requirement_ids),
+                    }],
+                    "checked_requirement_ids": list(request.requirement_ids),
+                })
+
+        builder = FakeBuilder(changed_paths=("scripts/feature/a.gd",))
+        critic = SequencedCritic()
+        result = A2Runtime(builder=builder, critic=critic).run(
+            self.request(), observed_main_sha=self.request().expected_main_sha
+        )
+        self.assertEqual(result.state, "USER_DECISION_REQUIRED")
+        self.assertEqual(builder.calls, 2)
+        self.assertEqual(critic.calls, 2)
+
+
 if __name__ == "__main__":
     unittest.main()
