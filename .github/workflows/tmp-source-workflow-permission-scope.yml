@@ -1,4 +1,4 @@
-name: Apply Source Workflow Permission Scope
+name: Export Source Workflow Permission Scope
 
 on:
   push:
@@ -11,9 +11,7 @@ permissions:
   contents: read
 
 jobs:
-  apply:
-    permissions:
-      contents: write
+  export:
     runs-on: ubuntu-latest
     steps:
       - name: Check out feature branch
@@ -21,16 +19,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Apply fixed permission-scope patch and remove temporary files
+      - name: Apply fixed permission-scope patch in the runner workspace
         shell: bash
         run: |
           set -euo pipefail
           python tools/apply_source_workflow_permission_scope.py
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- \
-            .github/workflows/periodic-source-scan-queue.yml \
-            .github/workflows/tmp-source-workflow-permission-scope.yml \
-            tools/apply_source_workflow_permission_scope.py
-          git commit -m "fix: scope Source automation write permissions to job"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Upload the exact patched workflow
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: patched-source-workflow
+          path: .github/workflows/periodic-source-scan-queue.yml
+          if-no-files-found: error
