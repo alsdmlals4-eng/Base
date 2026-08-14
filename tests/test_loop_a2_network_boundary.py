@@ -183,8 +183,10 @@ class DockerNoneDeniedNetworkBoundaryTests(BoundaryTestCase):
         self.assertIn("--mount", args)
         mount = args[args.index("--mount") + 1]
         self.assertIn(f"src={cwd}", mount)
-        self.assertIn(f"dst={cwd}", mount)
+        self.assertIn("dst=/workspace", mount)
         self.assertIn("readonly", mount)
+        self.assertIn("--workdir", args)
+        self.assertEqual(args[args.index("--workdir") + 1], "/workspace")
         inspect_call = run.call_args.args[0]
         self.assertEqual(inspect_call[:3], ["/usr/bin/docker", "image", "inspect"])
         self.assertEqual(inspect_call[-1], IMAGE_ID)
