@@ -238,3 +238,10 @@ project_pilot: NOT_RUN
 human_reader_quality: HUMAN_NOT_RUN
 commercial_effect: NOT_RUN
 ```
+
+## 2026-08-15 — 다중 진입 이야기 기원 엔진 흡수
+
+- 세계관·성격·가치관·관계·기관·직업·능력·질문·사건·전제·Reader Promise 중 어느 하나도 보편적 유일 출발점으로 두지 않는다.
+- `STORY_ORIGIN_ENGINE`은 seed를 `AFFECTED_AGENT → PRESSURE → CHOICE → SHIFT → NEXT_PRESSURE`로 변환하고, `RELATIONAL_APPEAL`은 이후 조합의 장면 가치를 검수한다.
+- MICE, Snowflake, Story Genius, Want/Need/Lie/Truth, Truby, Save the Cat, Story Grid는 `Lens`이며 필수 공식이 아니다.
+- Base 계약 Green은 프로젝트별 이야기 품질·독자 반응·상업 효과를 증명하지 않는다.
