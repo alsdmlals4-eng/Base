@@ -64,8 +64,9 @@ The implementation history deliberately preserved failed assumptions rather than
 4. Adversarial RED: a real Docker `none` path and immutable image contract were required.
 5. GREEN: Docker boundary implemented with read-only filesystem/mount, dropped capabilities, no-new-privileges, bounded pids/tmpfs, minimal environment, and `--pull never`.
 6. Production proof on PR head `dbbc5adde1a5dfe3dfd178a075815eb303cb91c8`: Docker child observed only `lo` and the dedicated boundary workflow passed.
+7. First Project Test Executor E2E attempt on head `307fc3072b35e7b4b8744e3092bcad46a5595ea4` failed before boundary invocation because the workflow harness called nonexistent `run_all(project_root=..., allowed_overlay_paths=...)` keywords. The production API was read back and the harness was corrected to the current `adapter_path`, `worktree_path`, `expected_project_id`, and `expected_main_sha` contract. No boundary PASS was claimed from that failed E2E attempt.
 
-That prior head is evidence for the direct boundary only. It is not the final integration or merge verdict.
+The earlier direct-boundary head is evidence for the direct boundary only. It is not the final integration or merge verdict.
 
 ## Integration Reality Gate
 

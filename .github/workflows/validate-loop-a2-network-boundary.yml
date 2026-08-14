@@ -198,10 +198,10 @@ jobs:
                   )
               )
               result = executor.run_all(
-                  project_root=repo,
                   adapter_path=adapter_path,
+                  worktree_path=repo,
+                  expected_project_id='DOCKER_DENIED_E2E',
                   expected_main_sha=expected_sha,
-                  allowed_overlay_paths=['tests/'],
               )
               after_status = git(repo, 'status', '--porcelain')
 
