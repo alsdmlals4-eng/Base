@@ -27,7 +27,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  character-studio-contract:
+  character-studio-contract-windows:
     runs-on: windows-latest
     timeout-minutes: 10
     steps:
@@ -85,3 +85,39 @@ jobs:
         run: |
           node --check web/app.js
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+  character-studio-regression-linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+
+      - name: Install reviewed tool dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install \
+            -e './tools/base-tool-contracts[dev]' \
+            -e './tools/expression-studio[dev]' \
+            -e './tools/qa-evidence-studio[dev]' \
+            -e './tools/sprite-animation-studio[dev]' \
+            -e './tools/tool-hub[dev]'
+
+      - name: Run full Character Studio regression
+        working-directory: tools/expression-studio
+        run: python -m pytest -q
+
+      - name: Run Tool Hub registry and adapter consumers
+        run: |
+          python -m pytest -q \
+            tools/tool-hub/tests/test_adapters.py \
+            tools/tool-hub/tests/test_api.py \
+            tools/tool-hub/tests/test_web_contract.py
