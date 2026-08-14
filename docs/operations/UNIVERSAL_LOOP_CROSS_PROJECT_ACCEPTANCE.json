@@ -2,7 +2,7 @@
   "schema_version": 1,
   "checkpoint_role": "UNIVERSAL_LOOP_CROSS_PROJECT_ACCEPTANCE",
   "base_kernel_main_sha": "8e7238a1bb9f49bd6e2403a2a6cb20d7aee863c7",
-  "status": "PORTABILITY_CONFIRMED_PROVIDER_PENDING",
+  "status": "PORTABILITY_CONFIRMED_PROVIDER_TRANSPORT_READY_PAID_SMOKE_GATED",
   "validated_projects": [
     {
       "project_id": "BLACKSMITH",
@@ -68,11 +68,27 @@
     "pr_handoff_postmerge_closure": "MERGED",
     "durable_worktree_resume": "MERGED"
   },
+  "provider_transport_evidence": {
+    "implementation_pr": 365,
+    "exact_head": "6d351ad7b60ca3ae339ace419f1e6e7eae7c501a",
+    "merge_main": "77da090833757e84486a10cc9a30a9ec1de8da6c",
+    "postmerge_openai_transport_run": 31796573727,
+    "postmerge_a2_foundation_run": 31796573695,
+    "postmerge_base_v9_run": 31796573709,
+    "postmerge_game_project_os_run": 31796573680,
+    "postmerge_game_project_os_attempt": 2,
+    "postmerge_game_project_os_attempt1": "FAIL_TRANSIENT_MERMAID_CHROME_WS_TIMEOUT",
+    "postmerge_game_project_os_attempt2": "PASS",
+    "postmerge_validation": "PASS",
+    "live_openai_request": "NOT_RUN",
+    "paid_api_cost": "NOT_RUN"
+  },
   "remaining_external_gate": {
-    "real_codex_builder_transport": "NOT_IMPLEMENTED",
-    "real_gpt_critic_transport": "NOT_IMPLEMENTED",
+    "real_codex_builder_transport": "MERGED_MAIN_VALIDATED",
+    "real_gpt_critic_transport": "MERGED_MAIN_VALIDATED",
     "real_openai_api": "NOT_RUN_USER_CREDENTIAL_DECISION_REQUIRED",
-    "real_a2_burnin_runs": 0
+    "real_a2_burnin_runs": 0,
+    "paid_smoke_issue": "alsdmlals4-eng/Base#352"
   },
   "preserved_limits": {
     "a3_auto_merge": "DISABLED",
