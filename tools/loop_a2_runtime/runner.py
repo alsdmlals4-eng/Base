@@ -72,15 +72,50 @@ class A2Runtime:
             and worker.expected_main_sha == request.expected_main_sha
         )
 
+    def _review_identity_matches(self, request: RunRequest, review: ReviewResult) -> bool:
+        return (
+            review.project_id == request.project_id
+            and review.run_id == request.run_id
+            and review.package_id == request.package_id
+            and review.expected_main_sha == request.expected_main_sha
+        )
+
+    def _validate_worker_before_review(self, request: RunRequest, worker: WorkerResult) -> RunOutcome | None:
+        if not self._identity_matches(request, worker):
+            return self._outcome(request, "QUARANTINED", finding_codes=("WORKER_IDENTITY_MISMATCH",))
+        if worker.status != "COMPLETED":
+            return self._outcome(request, "PROVIDER_FAILURE", finding_codes=("BUILDER_NOT_COMPLETED",))
+        if worker.usage["turns"] > request.budgets.max_turns:
+            return self._outcome(request, "BUDGET_EXCEEDED", finding_codes=("BUILDER_TURN_BUDGET_EXCEEDED",))
+        if not worker.changed_paths:
+            return self._outcome(request, "BLOCKED_UNVERIFIED", finding_codes=("EMPTY_CHANGESET",))
+        return None
+
+    def _validate_review_before_verdict(
+        self, request: RunRequest, review: ReviewResult, changed_paths: tuple[str, ...]
+    ) -> RunOutcome | None:
+        if not self._review_identity_matches(request, review):
+            return self._outcome(
+                request, "QUARANTINED",
+                finding_codes=("CRITIC_IDENTITY_MISMATCH",),
+                changed_paths=changed_paths,
+            )
+        if review.verdict == "PASS" and review.findings:
+            return self._outcome(
+                request, "BLOCKED_UNVERIFIED",
+                finding_codes=("CRITIC_PASS_WITH_FINDINGS",),
+                changed_paths=changed_paths,
+            )
+        return None
+
     def run(self, request: RunRequest, *, observed_main_sha: str) -> RunOutcome:
         if observed_main_sha != request.expected_main_sha:
             return self._outcome(request, "STALE_BASE_SHA", finding_codes=("STALE_BASE_SHA",))
 
         worker = self.builder.invoke(request, repair_cycle=0)
-        if not self._identity_matches(request, worker):
-            return self._outcome(request, "QUARANTINED", finding_codes=("WORKER_IDENTITY_MISMATCH",))
-        if worker.status != "COMPLETED":
-            return self._outcome(request, "PROVIDER_FAILURE", finding_codes=("BUILDER_NOT_COMPLETED",))
+        worker_failure = self._validate_worker_before_review(request, worker)
+        if worker_failure is not None:
+            return worker_failure
 
         scope_findings = validate_changed_paths(worker.changed_paths, request.allowed_paths, request.forbidden_paths)
         if scope_findings:
@@ -93,6 +128,9 @@ class A2Runtime:
             )
 
         review = self.critic.review(request, worker)
+        review_failure = self._validate_review_before_verdict(request, review, worker.changed_paths)
+        if review_failure is not None:
+            return review_failure
         if review.verdict == "PASS" and set(review.checked_requirement_ids) != set(request.requirement_ids):
             return self._outcome(
                 request, "BLOCKED_UNVERIFIED",
@@ -121,8 +159,9 @@ class A2Runtime:
         previous_signature = _review_signature(review)
         for repair_cycle in range(1, request.budgets.max_repair_cycles + 1):
             worker = self.builder.invoke(request, repair_cycle=repair_cycle)
-            if worker.status != "COMPLETED":
-                return self._outcome(request, "PROVIDER_FAILURE", finding_codes=("BUILDER_NOT_COMPLETED",))
+            worker_failure = self._validate_worker_before_review(request, worker)
+            if worker_failure is not None:
+                return worker_failure
             scope_findings = validate_changed_paths(worker.changed_paths, request.allowed_paths, request.forbidden_paths)
             if scope_findings:
                 return self._outcome(
@@ -131,6 +170,9 @@ class A2Runtime:
                     changed_paths=worker.changed_paths,
                 )
             next_review = self.critic.review(request, worker)
+            review_failure = self._validate_review_before_verdict(request, next_review, worker.changed_paths)
+            if review_failure is not None:
+                return review_failure
             if next_review.verdict == "PASS" and set(next_review.checked_requirement_ids) != set(request.requirement_ids):
                 return self._outcome(
                     request, "BLOCKED_UNVERIFIED",
@@ -141,6 +183,12 @@ class A2Runtime:
                 return self._outcome(
                     request, "WAITING_INTEGRATION", changed_paths=worker.changed_paths,
                     extra={"critic_verdict": "PASS", "repair_cycles": repair_cycle},
+                )
+            if next_review.verdict in {"USER_DECISION_REQUIRED", "BLOCKED_UNVERIFIED"}:
+                return self._outcome(
+                    request, next_review.verdict,
+                    finding_codes=tuple(f.code for f in next_review.findings) or (next_review.verdict,),
+                    changed_paths=worker.changed_paths,
                 )
             signature = _review_signature(next_review)
             if signature == previous_signature:
