@@ -24,13 +24,17 @@ It does **not** authorize separately billed OpenAI API usage, product-scope sele
 
 ## Current evidence ceiling
 
-Repository CI proves the queue/parser/repository/runtime/service contracts on Ubuntu and Windows. It does not prove that the user's local Windows machine has run Codex, Docker, GitHub auth, or the daemon.
+Repository CI proves the queue/parser/repository/runtime/service contracts on Ubuntu and Windows. Real user-PC evidence has also shown that installer v3 could install/register/start the executor and that the daemon consumed Blacksmith job `#418`; that job stopped at the Docker image readiness gate with `DOCKER_IMAGE_NOT_PRELOADED`. That is evidence of control-plane/background execution, not a successful REAL A2 burn-in.
 
 ```yaml
-real_local_chatgpt_codex_call: NOT_RUN
-windows_startup_registration: NOT_RUN
+local_v3_executor_and_daemon: OBSERVED_RUNNING
+real_local_queue_consumption: OBSERVED_BLOCKED_DOCKER_IMAGE_NOT_PRELOADED
+live_v4_user_pc_preflight: NOT_RUN
+real_local_chatgpt_codex_call: NOT_COMPLETED
 blacksmith_real_burnin_runs: 0
 ```
+
+Repository GREEN for the v4 contract does not upgrade `live_v4_user_pc_preflight`; only execution on the user's Windows machine can do that.
 
 ## Queue job
 
@@ -63,7 +67,7 @@ Default Windows state root:
 
 Repository identity is host-derived from validated `owner/name` as `https://github.com/<owner>/<repo>.git`; a job cannot inject a clone URL.
 
-## Docker boundary
+## Docker boundary and shared readiness authority
 
 REAL A2 project tests require the reviewed digest-pinned Python image:
 
@@ -71,7 +75,24 @@ REAL A2 project tests require the reviewed digest-pinned Python image:
 python:3.12-slim@sha256:dd29372629eeba2dd003fd9e9d35a5b8236c44727875a0364254b5127af88e65
 ```
 
-Work execution performs only `docker image inspect` and passes the exact local `sha256:<64hex>` image ID to `tools/loop_a2.py`. It does not pull an image during a job. If the reviewed image is absent, the job fails closed as `DOCKER_IMAGE_NOT_PRELOADED`.
+The runtime resolver keeps acceptance immutable while allowing bounded trusted discovery:
+
+```text
+exact reviewed digest-ref inspect
+→ if unavailable, docker version semantic probe for Server.Os/Server.Arch
+→ closed Linux platform normalization
+→ docker image inspect --platform <server-platform> --format {{.Id}} <same exact reviewed digest ref>
+→ exact sha256:<64hex> image ID validation
+→ READY | bounded BLOCKED
+```
+
+Supported reviewed container platforms are `linux/amd64` and `linux/arm64`; the bounded architecture aliases `x86_64 → amd64` and `aarch64 → arm64` are normalized. Unknown, malformed, or non-Linux Docker server platforms fail closed.
+
+Actual REAL A2 job execution **never pulls** an image. It resolves only the reviewed digest and passes the exact immutable local image ID to `tools/loop_a2.py`. If neither trusted inspect route resolves that digest, runtime fails closed as `DOCKER_IMAGE_NOT_PRELOADED`.
+
+`LocalExecutorService.preflight()` is the shared readiness authority for installer/updater and daemon startup. It requires both GitHub control-plane readiness and runtime Docker readiness. Path/image presence claimed by separate bootstrap logic is not enough.
+
+The user-facing v4 updater may perform one bootstrap-only recovery action: when the **shared preflight** itself returns `DOCKER_IMAGE_NOT_PRELOADED`, it may pull the same exact reviewed digest and must rerun the shared preflight. It may not enumerate images, choose a tag-only substitute, or pull on other blocker codes.
 
 ## Modes
 
@@ -83,7 +104,15 @@ loop-a2-local-executor once
 loop-a2-local-executor daemon --poll-seconds 60
 ```
 
-The `.pyw` Windows entrypoint delegates to the same CLI without requiring a PowerShell window. Actual installation and Windows startup registration are local machine actions and remain `NOT_RUN` until performed on the user's PC.
+The `.pyw` Windows entrypoint delegates to the same CLI without requiring a PowerShell window. The v4 one-click updater is committed at:
+
+```text
+tools/loop-a2-local-executor/windows/Base_Loop_A2_Local_Executor_Installer_v4.cmd
+```
+
+It preserves the existing install/state/startup locations, updates its dedicated Base source to completed `origin/main`, refreshes the editable executor package, safely stops only the executor-owned `pythonw.exe` identity, uses the shared preflight as Docker truth, recreates Startup registration, starts the daemon, and confirms the exact daemon process identity before printing `LOCAL_EXECUTOR_READY`.
+
+The updater uses Windows process inspection internally; the user does not need to open or operate PowerShell. Broad `taskkill /IM pythonw.exe` style process termination is forbidden.
 
 The daemon polling interval is bounded to 15–3600 seconds. V1 uses GitHub polling instead of adding a webhook server and inbound network/secret surface.
 
@@ -95,7 +124,7 @@ The local execution machine needs:
 - Git executable;
 - GitHub CLI authenticated through its local credential store;
 - Codex CLI authenticated with ChatGPT, not API-key fallback;
-- Docker with the reviewed digest-pinned image already present.
+- Docker Desktop/Engine capable of running the reviewed Linux image.
 
 The executor strips `OPENAI_API_KEY`, `OPENAI_ORG_ID`, `OPENAI_PROJECT_ID`, `OPENAI_BASE_URL`, `GH_TOKEN`, and `GITHUB_TOKEN` from the REAL A2 child environment. Existing local credential stores remain the intended authentication source.
 
@@ -152,9 +181,11 @@ Anything else fails closed and is not reported as successful automation.
 - no A3 auto-merge;
 - no Scheduler;
 - no mutation of the user's normal working tree;
+- no arbitrary Docker image scan/tag fallback;
+- no broad process kill fallback;
 - no claim that CI equals a real user-PC Codex run;
-- no modification of in-progress Tool Hub PRs.
+- no modification of unrelated in-progress Tool Hub PRs.
 
 ## Rollback
 
-Revert the local-executor implementation PR. Queue issues are control-plane records only; reverting does not require product, save, Planning, Visual, or asset rollback.
+Revert the Local Executor Docker resolver/v4 PR to restore the previous repository implementation. Reversion does not authorize paid API usage or mutate project product/save/visual data. On the user PC, the previous v3 installation remains recoverable through the dedicated install directory and preserved state root; do not delete `%LOCALAPPDATA%\BaseLoopA2LocalExecutor` as part of code rollback.
