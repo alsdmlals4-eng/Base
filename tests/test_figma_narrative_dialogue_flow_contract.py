@@ -97,6 +97,8 @@ class FigmaNarrativeDialogueFlowContractTests(unittest.TestCase):
             '<Title kind="CHOICE"',
             "{kind} INSPECTOR",
             "DERIVED FLOW MAP",
+            "PREVIEW BLOCKED",
+            "explicit END or transition choice is required",
             "STAY_IN_SCENE",
             "MOVE_SCENE",
             "dialogue_id",
@@ -105,6 +107,9 @@ class FigmaNarrativeDialogueFlowContractTests(unittest.TestCase):
             self.assertIn(token, make_text)
         self.assertNotIn("MNODES", make_text)
         self.assertNotIn("MEDGES", make_text)
+
+        model_text = (GODOT_ROOT / "src/dialogue_flow_model.gd").read_text(encoding="utf-8")
+        self.assertIn("choices must contain an explicit END or transition", model_text)
 
     def test_make_and_godot_reference_use_identical_sample_fixture(self):
         make_fixture = (MAKE_ROOT / "src/sample_dialogue.json").read_bytes()
