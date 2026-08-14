@@ -149,6 +149,15 @@ class ControlledVocabularyContractTests(unittest.TestCase):
         self.assertIn("Hotfix ≠ Git 명령", vocabulary)
         self.assertIn("SemVer는 public API를 선언", vocabulary)
 
+    def test_wave2_keeps_one_canonical_row_and_does_not_force_unit_component_equivalence(self) -> None:
+        vocabulary = VOCABULARY.read_text(encoding="utf-8")
+
+        self.assertEqual(vocabulary.count("| **Release Candidate** |"), 1)
+        self.assertEqual(vocabulary.count("| **Regression Recheck** |"), 1)
+        self.assertIn("Component / Unit Test는 검색 묶음 이름", vocabulary)
+        self.assertIn("Unit Test를 모든 조직에서 Component Test와 완전히 동일한 범위로 강제하지 않는다", vocabulary)
+        self.assertIn("STANDARDIZED_CONTEXT (ISTQB)", vocabulary)
+
 
 if __name__ == "__main__":
     unittest.main()
