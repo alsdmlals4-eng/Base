@@ -27,6 +27,7 @@ from .trusted_files import (
 
 _CANONICAL_REGISTRY = Path("docs/operations/PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json")
 RouteStatus = Literal["REGISTERED_NO_MUTATION", "READY_FOR_DELIVERY", "ARCHIVED"]
+NodeType = Literal["FRAME"]
 
 
 def _descriptor_reads_supported() -> bool:
@@ -46,8 +47,12 @@ class _RouteEntry(BaseModel):
     tool_route_id: str = Field(pattern=r"^[a-z0-9]+(?:_[a-z0-9]+)*$")
     figma_file_key: str = Field(pattern=r"^[A-Za-z0-9]+$")
     parent_node_id: str = Field(pattern=r"^\d+:\d+$")
+    parent_node_type: NodeType
     destination_node_id: str = Field(pattern=r"^\d+:\d+$")
+    destination_node_type: NodeType
     destination_name: str = Field(min_length=1, max_length=120)
+    project_marker_node_id: str = Field(pattern=r"^\d+:\d+$")
+    project_marker_node_type: NodeType
     project_marker_name: str = Field(min_length=1, max_length=180)
     delivery_status: RouteStatus
 
@@ -66,8 +71,12 @@ class ProjectFigmaToolRoute:
     tool_route_id: str
     figma_file_key: str
     parent_node_id: str
+    parent_node_type: str
     destination_node_id: str
+    destination_node_type: str
     destination_name: str
+    project_marker_node_id: str
+    project_marker_node_type: str
     project_marker_name: str
 
 
@@ -81,6 +90,11 @@ class ProjectFigmaToolRouteRegistry:
         for entry in document.entries:
             if entry.parent_node_id == entry.destination_node_id:
                 raise ValueError("Figma tool-route parent and destination node IDs must differ")
+            if entry.project_marker_node_id in {
+                entry.parent_node_id,
+                entry.destination_node_id,
+            }:
+                raise ValueError("Figma tool-route project marker node must differ from route nodes")
             expected_marker = f"Base Tool Hub Route · {entry.project_id}"
             if entry.project_marker_name != expected_marker:
                 raise ValueError("Figma tool-route project marker must match project_id")
@@ -185,7 +199,11 @@ class ProjectFigmaToolRouteRegistry:
             tool_route_id=entry.tool_route_id,
             figma_file_key=entry.figma_file_key,
             parent_node_id=entry.parent_node_id,
+            parent_node_type=entry.parent_node_type,
             destination_node_id=entry.destination_node_id,
+            destination_node_type=entry.destination_node_type,
             destination_name=entry.destination_name,
+            project_marker_node_id=entry.project_marker_node_id,
+            project_marker_node_type=entry.project_marker_node_type,
             project_marker_name=entry.project_marker_name,
         )
