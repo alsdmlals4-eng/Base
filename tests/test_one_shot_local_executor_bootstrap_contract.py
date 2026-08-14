@@ -65,6 +65,26 @@ class OneShotLocalExecutorBootstrapContractTests(unittest.TestCase):
         ):
             self.assertNotIn(forbidden_project_literal, combined)
 
+    def test_bootstrap_discovers_capability_before_rejecting_one_executable_literal(self) -> None:
+        policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
+        learning = (
+            ROOT / "skills/managing-project-intake-and-work-contract/LEARNING_LOG.md"
+        ).read_text(encoding="utf-8")
+
+        for term in (
+            "CAPABILITY_DISCOVERY_BEFORE_LITERAL_REJECTION",
+            "DIAGNOSTIC_PRESERVATION_ON_BOOTSTRAP_FAILURE",
+            "PATHEXT",
+            "semantic readiness probe",
+            "discovery는 넓게, authority와 acceptance는 좁게",
+        ):
+            self.assertIn(term, policy)
+
+        self.assertIn("codex.exe", learning)
+        self.assertIn("codex login status", learning)
+        self.assertIn("diagnostic", learning.lower())
+        self.assertIn("trusted", policy.lower())
+
 
 if __name__ == "__main__":
     unittest.main()
