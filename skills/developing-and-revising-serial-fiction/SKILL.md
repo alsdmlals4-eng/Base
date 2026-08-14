@@ -126,6 +126,8 @@ project_pilot: PROJECT_PILOT_NOT_RUN
 7. benchmark·댓글·리뷰 작업이면 `docs/knowledge/serial-fiction/READER_FEEDBACK_AND_BENCHMARK_EVIDENCE_GUIDE.md`
 8. 필요 시 `references/episode-quality-gates.md`, `references/benchmark-and-reader-feedback.md`
 
+캐릭터×캐릭터·캐릭터×세계·캐릭터×능력의 조합이 장면 선택과 관계 변화를 만드는지 점검할 때 `docs/knowledge/methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md`의 `RELATIONAL_APPEAL`을 선택적으로 사용한다.
+
 ## Process
 
 ### 1. 정본과 각색 경계를 먼저 고정한다
