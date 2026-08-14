@@ -121,14 +121,13 @@ Vertical Slice 상세 owner는 `skills/designing-vertical-slices/SKILL.md`다. `
 
 ## 출시 단계·배포 상태
 
-`Alpha`, `Beta`, `Gold / Gold Master`는 조직·플랫폼마다 경계가 달라지는 `INDUSTRY_COMMON` 표현이다. Base는 이를 보편적 선형 단계로 강제하지 않는다. **Alpha·Beta는 조직별 Entry/Exit Criteria**와 대상 사용자·안정성·콘텐츠 범위를 프로젝트가 명시해야 한다.
+`Alpha`, `Beta`, `Gold / Gold Master`는 조직·플랫폼마다 경계가 달라지는 `INDUSTRY_COMMON` 표현이다. Base는 이를 보편적 선형 단계로 강제하지 않는다. **Alpha·Beta는 조직별 Entry/Exit Criteria**와 대상 사용자·안정성·콘텐츠 범위를 프로젝트가 명시해야 한다. `Release Candidate`는 위 `제작·실험·제품 단계`의 기존 canonical row를 재사용한다.
 
 | 용어 | Class | 압축 정의 | 증명하지 못하는 것 |
 |---|---|---|---|
 | **Alpha** | `INDUSTRY_COMMON` | 핵심 기능·루프가 실제로 시험 가능하지만 기능·콘텐츠·안정성이 아직 크게 변할 수 있는 개발·검증 상태 | 기능 완성·시장 공개 준비를 자동 보장하지 않음 |
 | **Beta** | `INDUSTRY_COMMON` | 더 넓은 사용·호환성·안정성·밸런스·콘텐츠 검증을 수행하는 후기 개발 상태 | 모든 기능 완료·출시 승인을 자동 의미하지 않음 |
 | **Early Access** | `STANDARDIZED_CONTEXT (platform-specific)` + `INDUSTRY_COMMON` | 완성 전 플레이 가능한 제품을 고객에게 제공하면서 개발을 계속하는 상업·배포 상태; 플랫폼별 정책이 의미를 추가로 제한한다 | 단순 테스트 단계·예약 구매·미래 약속의 판매를 의미하지 않음 |
-| **Release Candidate** | `INDUSTRY_COMMON` | 차단 결함이 없다면 그대로 출시할 수 있는 후보 빌드·상태 | 최종 승인·배포 완료 자체가 아님 |
 | **Gold / Gold Master** | `INDUSTRY_COMMON / HISTORICAL` | 조직이 출시·복제·배포의 기준본으로 승인한 마스터 상태를 가리키는 전통적 표현 | 아직 승인 전인 Release Candidate와 동일하지 않음 |
 
 Steam 문맥의 Early Access는 개발 중인 미완성 제품을 현재 플레이 가능한 상태로 판매하는 별도 출시 방식이다. Alpha/Beta라는 내부 품질 단계와 플랫폼의 Early Access 상업 상태를 동일 축으로 취급하지 않는다. 디지털 라이브 배포에서는 `Gold / Gold Master`를 사용하지 않는 팀도 있으므로 프로젝트가 실제 release vocabulary를 선언한다.
@@ -145,16 +144,18 @@ Gold / Gold Master ≠ Release Candidate
 
 | 용어 | Class | 압축 정의 | 사용하지 않을 의미 |
 |---|---|---|---|
-| **Component / Unit Test** | `STANDARDIZED_CONTEXT` + `INDUSTRY_COMMON` | 가장 작은 책임 단위나 컴포넌트를 외부 의존성에서 최대한 분리해 검증 | 빠른 테스트 전체 |
-| **Integration Test** | `STANDARDIZED_CONTEXT` | 둘 이상의 컴포넌트·모듈·서비스·시스템 사이 인터페이스와 상호작용을 검증 | 단순히 테스트 파일이 큰 경우 |
+| **Component Test** | `STANDARDIZED_CONTEXT (ISTQB)` | 개별 소프트웨어 컴포넌트의 동작을 분리해 검증 | 빠른 테스트 전체 |
+| **Unit Test** | `INDUSTRY_COMMON` | 팀이 정의한 작은 코드 단위의 동작을 외부 의존성에서 최대한 분리해 검증 | 모든 조직에서 Component Test와 반드시 같은 범위 |
+| **Integration Test** | `STANDARDIZED_CONTEXT (ISTQB)` | 둘 이상의 컴포넌트·모듈·서비스·시스템 사이 인터페이스와 상호작용을 검증 | 단순히 테스트 파일이 큰 경우 |
 | **End-to-End / E2E Test** | `INDUSTRY_COMMON` | 사용자·업무 흐름의 입력부터 최종 결과까지 여러 실제 통합 경계를 관통해 검증 | 모든 하위 실패 원인을 정밀 격리하는 테스트 |
 | **Smoke Test** | `INDUSTRY_COMMON` | 빌드·환경·핵심 경로가 더 깊은 검증을 시작할 최소 상태인지 넓고 얕게 확인 | 전체 회귀·품질 보증 |
 | **Sanity Test** | `INDUSTRY_COMMON / HIGH_VARIANCE` | 제한된 수정·기능 영역이 상식적으로 동작하는지 좁고 빠르게 확인하는 관행적 표현 | 조직 간 완전히 동일한 표준 범위 |
 | **User Acceptance Testing / UAT** | `INDUSTRY_COMMON` | 이해관계자·대표 사용자·사업 측이 실제 요구와 수용 조건에 맞는지 확인 | QA 팀의 모든 기능 테스트 |
-| **Regression Testing** | `STANDARDIZED_CONTEXT` | 변경 후 이전에 정상 동작하던 영역에 의도치 않은 영향이 생겼는지 재검증 | 새 기능 자체의 최초 검증만 수행하는 것 |
-| **Regression Recheck** | `BASE_LOCAL_ALIAS` | 수정 뒤 원래 실패·보호 동작·인접 소비자를 의도적으로 다시 공격하는 Base 검토 절차 | 일반 테스트 분야의 Regression Testing 전체 |
+| **Regression Testing** | `STANDARDIZED_CONTEXT (ISTQB)` | 변경 후 이전에 정상 동작하던 영역에 의도치 않은 영향이 생겼는지 재검증 | 새 기능 자체의 최초 검증만 수행하는 것 |
 
-**Smoke/Sanity의 경계는 조직별 편차가 크다.** 같은 팀에서도 두 표현을 겹쳐 쓰는 경우가 있으므로 자동으로 서로의 PASS를 대체하지 않고 프로젝트 Test Strategy가 실제 범위를 고정한다.
+**Component / Unit Test는 검색 묶음 이름**일 뿐 완전 동일성 주장이 아니다. Unit Test를 모든 조직에서 Component Test와 완전히 동일한 범위로 강제하지 않는다.
+
+**Smoke/Sanity의 경계는 조직별 편차가 크다.** 같은 팀에서도 두 표현을 겹쳐 쓰는 경우가 있으므로 자동으로 서로의 PASS를 대체하지 않고 프로젝트 Test Strategy가 실제 범위를 고정한다. `Regression Recheck`는 아래 `완료·검증`의 기존 `BASE_LOCAL_ALIAS` canonical row를 재사용한다.
 
 ```text
 UAT ≠ 일반 QA
