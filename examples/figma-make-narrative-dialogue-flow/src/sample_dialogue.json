@@ -1,0 +1,91 @@
+{
+  "format_version": 1,
+  "flow_id": "after_school_sample",
+  "entry_beat_id": "beat_intro",
+  "scenes": [
+    {
+      "scene_id": "scene_hallway",
+      "location_id": "school_hallway",
+      "title": "방과 후 복도",
+      "background_ref": "sample://school_hallway",
+      "entry_beat_id": "beat_intro",
+      "beats": [
+        {
+          "beat_id": "beat_intro",
+          "title": "낯선 목소리",
+          "dialogues": [
+            {"dialogue_id": "dlg_intro_001", "speaker_id": null, "text": "방과 후, 텅 빈 복도에 발소리만 울린다."},
+            {"dialogue_id": "dlg_intro_002", "speaker_id": "yui", "text": "저기... 잠깐만요."}
+          ],
+          "choices": [
+            {"choice_id": "choice_talk", "text": "말을 건다", "target_beat_id": "beat_talk", "transition_kind": "STAY_IN_SCENE"},
+            {"choice_id": "choice_leave", "text": "그냥 지나친다", "target_beat_id": "beat_classroom", "transition_kind": "MOVE_SCENE"}
+          ]
+        },
+        {
+          "beat_id": "beat_talk",
+          "title": "노트 부탁",
+          "dialogues": [
+            {"dialogue_id": "dlg_talk_001", "speaker_id": "yui", "text": "혹시 수학 노트 좀 빌릴 수 있을까요?"},
+            {"dialogue_id": "dlg_talk_002", "speaker_id": "yui", "text": "내일 꼭 돌려드릴게요."}
+          ],
+          "choices": [
+            {"choice_id": "choice_library", "text": "같이 도서관으로 간다", "target_beat_id": "beat_library", "transition_kind": "MOVE_SCENE"},
+            {"choice_id": "choice_refuse", "text": "거절한다", "target_beat_id": "beat_regret", "transition_kind": "STAY_IN_SCENE"}
+          ]
+        },
+        {
+          "beat_id": "beat_regret",
+          "title": "복도에 남은 말",
+          "dialogues": [
+            {"dialogue_id": "dlg_regret_001", "speaker_id": "yui", "text": "아... 그렇군요. 괜찮아요."},
+            {"dialogue_id": "dlg_regret_002", "speaker_id": null, "text": "짧은 대답 뒤로 복도가 다시 조용해졌다."}
+          ],
+          "choices": [
+            {"choice_id": "choice_regret_end", "text": "집으로 돌아간다", "target_beat_id": null, "transition_kind": "END"}
+          ]
+        }
+      ]
+    },
+    {
+      "scene_id": "scene_classroom",
+      "location_id": "empty_classroom",
+      "title": "빈 교실",
+      "background_ref": "sample://empty_classroom",
+      "entry_beat_id": "beat_classroom",
+      "beats": [
+        {
+          "beat_id": "beat_classroom",
+          "title": "홀로",
+          "dialogues": [
+            {"dialogue_id": "dlg_classroom_001", "speaker_id": null, "text": "못 들은 척 지나쳐 빈 교실로 향했다."},
+            {"dialogue_id": "dlg_classroom_002", "speaker_id": null, "text": "창밖으로 저녁 노을이 번졌다."}
+          ],
+          "choices": [
+            {"choice_id": "choice_classroom_end", "text": "하루를 마친다", "target_beat_id": null, "transition_kind": "END"}
+          ]
+        }
+      ]
+    },
+    {
+      "scene_id": "scene_library",
+      "location_id": "library",
+      "title": "도서관",
+      "background_ref": "sample://library",
+      "entry_beat_id": "beat_library",
+      "beats": [
+        {
+          "beat_id": "beat_library",
+          "title": "함께 공부하기",
+          "dialogues": [
+            {"dialogue_id": "dlg_library_001", "speaker_id": null, "text": "조용한 도서관에 두 사람이 마주 앉았다."},
+            {"dialogue_id": "dlg_library_002", "speaker_id": "yui", "text": "고마워요. 덕분에 조금 안심됐어요."}
+          ],
+          "choices": [
+            {"choice_id": "choice_study_end", "text": "해 질 때까지 같이 공부한다", "target_beat_id": null, "transition_kind": "END"}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "base-figma-make-narrative-dialogue-reference",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": { "build": "vite build" },
+  "dependencies": {
+    "@vitejs/plugin-react": "4.7.0",
+    "vite": "6.3.5",
+    "typescript": "5.8.3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {}
+}
