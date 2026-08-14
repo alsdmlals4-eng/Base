@@ -1,5 +1,15 @@
 # Managing Project Intake and Work Contracts — Learning Log
 
+## 2026-08-15 — Separate blind retry from state-aware resume after execution interruption
+
+- **상태:** `OBSERVATION`
+- **호출 트리거:** 사용자가 ChatGPT의 `메시지 전송 시간이 초과되었습니다. 다시 시도해 주세요`와 `연결이 끊어졌습니다. 전체 답변을 기다리는 중입니다` 때문에 승인된 연속작업이 중단되는 문제를 자동 감지·복구하도록 요청했다.
+- **Finding:** 기존 continuous-work blocker recovery는 blocker를 어떻게 복구할지 소유했지만, **실행 자체가 끊긴 직후 같은 요청을 다시 보내도 되는지**를 별도로 분류하지 않았다. 특히 파일 수정·commit·PR·merge·메일·외부 write처럼 일부 부작용이 이미 일어났을 수 있는 작업에서 마지막 프롬프트를 그대로 재전송하면 중복 실행 위험이 있다. 또한 `연결이 끊어졌습니다. 전체 답변을 기다리는 중입니다`는 서버가 이미 요청을 처리 중일 수 있어 일반 timeout과 동일한 blind retry로 취급하면 안 된다.
+- **Decision:** 새 Skill/Mode를 만들지 않고 intake owner에 `TASK_RECOVERY_PROTOCOL` reference를 흡수했다. 안전한 일시 오류는 `RETRY`, 실행 여부가 불명확하거나 부작용 가능성이 있으면 `RESUME`으로 분리한다. 기본 웹 retry는 3초→10초→30초 최대 3회이며, `stalled`와 안전한 retry control이 없는 연결 단절은 자동 프롬프트 재전송을 금지한다. Resume은 authoritative readback·checkpoint·idempotency를 사용해 완료된 단계를 건너뛰고 pending 단계만 계속한다. Git worktree 재연결은 새 구현을 만들지 않고 기존 Loop A2 durable-resume의 exact identity/ownership receipt 계약을 재사용한다.
+- **Evidence:** dedicated `Validate Loop A2 Durable Resume`에 `tests/test_task_recovery_protocol.py`를 연결해 독립 테스트 false-GREEN을 제거했다. RED run `31827735602`에서 기존 durable-resume 계약은 통과하고 새 task-recovery 계약만 reference 부재로 실패했다. 이후 Skill package integrity가 새 reference의 owner 연결 누락을 잡았고, canonical reference freshness가 Skill 본문 변경에 대해 companion regression과 Learning Log 동기화를 다시 요구해 이 기록과 `tests/test_neutral_adversarial_feature_lifecycle.py`를 추가했다.
+- **Boundary:** Watchdog·트레이·브라우저 확장은 관찰 신호를 제공할 뿐 새로운 repository write·승인·결제·계정·보안 권위를 만들지 않는다. `USER_DECISION_REQUIRED`, `HIGH_RISK_CONFIRMATION_REQUIRED`, 권위 우회, 범위 확대는 자동 승인하지 않는다. 결과가 불명확한 POST/외부 write는 상태를 확인하기 전 재전송하지 않는다.
+- **다음 검토 트리거:** 동일 오류가 UI 변경으로 감지되지 않거나, retry/reload가 중복 실행을 만들거나, checkpoint가 완료 상태를 잘못 복원하거나, `RECOVERY_REQUIRED`가 무한 반복되거나, 실제 프로젝트에서 interruption 후 이미 완료된 단계가 다시 실행되는 사례가 발생할 때.
+
 ## 2026-08-09 — Recover local and transient blockers before global stop
 
 - **상태:** `OBSERVATION`
