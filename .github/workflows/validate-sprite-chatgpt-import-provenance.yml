@@ -1,4 +1,4 @@
-name: Validate Sprite Subscription Import Portability
+name: Validate Visual Studio Subscription Import Portability
 
 on:
   pull_request:
@@ -6,6 +6,9 @@ on:
       - "tools/base-tool-contracts/src/base_tool_contracts/staging.py"
       - "tools/base-tool-contracts/tests/test_figma_routing.py"
       - "tools/base-tool-contracts/tests/test_windows_portable_staging.py"
+      - "tools/expression-studio/src/expression_studio/service.py"
+      - "tools/expression-studio/pyproject.toml"
+      - "tools/expression-studio/tests/test_import_api.py"
       - "tools/sprite-animation-studio/src/sprite_animation_studio/service.py"
       - "tools/sprite-animation-studio/pyproject.toml"
       - "tools/sprite-animation-studio/tests/test_import_api.py"
@@ -16,7 +19,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: sprite-subscription-portability-${{ github.event.pull_request.number || github.ref }}
+  group: visual-studio-subscription-portability-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -35,17 +38,24 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
         with:
           python-version: "3.12"
-      - name: Install Sprite Studio test dependencies
+      - name: Install Expression Studio test dependencies first
         run: >-
           python -m pip install
           -e './tools/base-tool-contracts'
-          -e './tools/sprite-animation-studio[dev]'
+          -e './tools/expression-studio[dev]'
       - name: Run portable Asset Vault staging regression
         run: >-
           python -m pytest -q
           tools/base-tool-contracts/tests/test_windows_portable_staging.py
           tools/base-tool-contracts/tests/test_figma_routing.py::test_staging_write_replaces_a_hard_link_without_overwriting_its_external_inode
-      - name: Run ChatGPT subscription pose/effect import smoke
+      - name: Run ChatGPT subscription Expression import smoke before Sprite dependencies
+        working-directory: tools/expression-studio
+        run: >-
+          python -m pytest -q
+          tests/test_import_api.py::test_import_expression_candidates_without_a_provider_call
+      - name: Install Sprite Studio test dependencies
+        run: python -m pip install -e './tools/sprite-animation-studio[dev]'
+      - name: Run ChatGPT subscription Sprite pose/effect import smoke
         working-directory: tools/sprite-animation-studio
         run: >-
           python -m pytest -q
