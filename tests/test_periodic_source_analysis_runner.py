@@ -10,10 +10,10 @@ from tools.periodic_source_scan_queue import select_due_source_batch
 
 
 ROOT = Path(__file__).resolve().parents[1]
-AGENTS = ROOT / "AGENTS.md"
 WORKFLOW = ROOT / ".github" / "workflows" / "periodic-source-scan-queue.yml"
 BASE_V9_WORKFLOW = ROOT / ".github" / "workflows" / "validate-base-v9-rc.yml"
 RUNNER = ROOT / "tools" / "run_periodic_source_scan_queue.sh"
+QUEUE_DOC = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_SOURCE_SCAN_QUEUE.md"
 TEMPORARY_PATCH_FILES = (
     ROOT / ".github" / "workflows" / "tmp-export-source-rotation.yml",
     ROOT / ".github" / "workflows" / "tmp-source-workflow-permission-scope.yml",
@@ -114,6 +114,7 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
             "git push origin HEAD:main",
             "git push --force",
             "--admin",
+            "--auto",
         ):
             self.assertNotIn(forbidden, contract)
         trigger_block = workflow.split("\npermissions:", 1)[0]
@@ -121,11 +122,13 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
         self.assertNotIn("PERIODIC_SOURCE_OPERATIONS_LEDGER.json", trigger_block)
 
     def test_scheduled_write_automation_defers_while_foreign_pr_is_open(self) -> None:
-        agents = AGENTS.read_text(encoding="utf-8")
+        queue_doc = QUEUE_DOC.read_text(encoding="utf-8")
         runner = RUNNER.read_text(encoding="utf-8")
-        self.assertIn("SCHEDULED_AUTOMATION_ACTIVE_PR_GUARD", agents)
+        self.assertIn("SCHEDULED_AUTOMATION_ACTIVE_PR_GUARD", queue_doc)
         for required in (
             "BLOCKED_ACTIVE_PR_GUARD",
+            "BLOCKED_ACTIVE_PR_GUARD_QUERY",
+            "BLOCKED_MERGE_NOT_IMMEDIATE",
             "foreign_open_prs",
             "assert_no_foreign_open_prs",
             'assert_no_foreign_open_prs ""',
@@ -140,7 +143,6 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
             runner.rindex('assert_no_foreign_open_prs "$pr_number"'),
             runner.rindex("gh pr merge"),
         )
-        self.assertNotIn("--auto", runner)
 
     def test_temporary_patch_and_export_files_are_removed(self) -> None:
         for path in TEMPORARY_PATCH_FILES:
