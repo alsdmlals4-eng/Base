@@ -29,6 +29,7 @@ _MAX_CONTRACT_BYTES = 16 * 1024 * 1024
 _GIT_OVERRIDES = (
     "-c", "core.fsmonitor=false",
     "-c", "core.hooksPath=NUL" if os.name == "nt" else "core.hooksPath=/dev/null",
+    "-c", "core.autocrlf=true",
     "-c", "filter.lfs.required=false",
     "-c", "filter.lfs.smudge=cat",
     "-c", "filter.lfs.clean=cat",
@@ -318,12 +319,8 @@ def validate_windows_project_identity(
     committed = _git(git, root, "show", f"HEAD:{_ADAPTER.as_posix()}")
     if committed.returncode != 0 or not _semantic_json_equal(raw, committed.stdout):
         raise WindowsProjectIdentityError("PROJECT_IDENTITY_VALIDATOR_BLOCKED")
-    for arguments in (
-        ("diff", "--quiet", "--", _ADAPTER.as_posix()),
-        ("diff", "--cached", "--quiet", "--", _ADAPTER.as_posix()),
-    ):
-        if _git(git, root, *arguments).returncode != 0:
-            raise WindowsProjectIdentityError("PROJECT_IDENTITY_VALIDATOR_BLOCKED")
+    if _git(git, root, "diff", "--cached", "--quiet", "--", _ADAPTER.as_posix()).returncode != 0:
+        raise WindowsProjectIdentityError("PROJECT_IDENTITY_VALIDATOR_BLOCKED")
 
     base_release = adapter.get("base_release")
     version = base_release.get("version") if isinstance(base_release, dict) else None

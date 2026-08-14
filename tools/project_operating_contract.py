@@ -369,6 +369,7 @@ def _git(repository: Path, *arguments: str) -> subprocess.CompletedProcess[str]:
     safe = (
         "-c", "core.fsmonitor=false",
         "-c", "core.hooksPath=NUL" if os.name == "nt" else "core.hooksPath=/dev/null",
+        "-c", "core.autocrlf=true",
         "-c", "filter.lfs.required=false",
         "-c", "filter.lfs.smudge=cat",
         "-c", "filter.lfs.clean=cat",
@@ -403,6 +404,7 @@ def _git_show_bytes(repository: Path, commit: str, relative: str) -> bytes | Non
     safe = (
         "-c", "core.fsmonitor=false",
         "-c", "core.hooksPath=NUL" if os.name == "nt" else "core.hooksPath=/dev/null",
+        "-c", "core.autocrlf=true",
     ) if os.environ.get("BASE_TOOL_TRUSTED_GIT_ARGS") else ()
     inherited: tuple[int, ...] = ()
     if repository.parts[:4] == ("/", "proc", "self", "fd") and len(repository.parts) == 5:

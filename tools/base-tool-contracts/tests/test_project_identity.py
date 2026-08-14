@@ -143,6 +143,16 @@ def test_windows_identity_accepts_a_matching_project_with_spaces(tmp_path: Path)
     assert len(evidence.adapter_sha256) == 64
 
 
+def test_windows_identity_accepts_a_clean_crlf_adapter_checkout(tmp_path: Path) -> None:
+    project = make_identity_project(tmp_path / "Project With Spaces", "coc-fiction")
+    adapter = project / "skills" / "PROJECT_BASE_ADAPTER.json"
+    adapter.write_bytes(adapter.read_bytes().replace(b"\n", b"\r\n"))
+
+    evidence = validate_windows_project_identity(project, "coc-fiction", BASE_ROOT)
+
+    assert evidence.project_id == "coc-fiction"
+
+
 def test_windows_identity_rejects_selected_project_id_mismatch(tmp_path: Path) -> None:
     project = make_identity_project(tmp_path / "project", "coc-fiction")
 
