@@ -111,15 +111,15 @@ One raster delivery is limited to 10 MiB and PNG/JPEG/GIF/WebP inputs accepted b
 
 ## Project write contract
 
-The delivery queue never invents an arbitrary project path. It resolves the project through `ProjectLocator`, then writes only to a reviewed project-local Tool Hub delivery area.
+The delivery queue never invents a new project-local runtime root. It resolves the project through `ProjectLocator` and reuses the existing validated, gitignored `.asset-vault/` boundary already required by the v2 project identity contract.
 
-Initial durable receipt path:
+Durable delivery state is stored under:
 
-`<project>/.base-tool-hub/delivery/<delivery_id>/FIGMA_DELIVERY_RECEIPT.json`
+`<project>/.asset-vault/tool-hub-delivery/<delivery_id>/`
 
-The project must already treat `.base-tool-hub/` as ignored/local operational state before production enablement. If the exact ignored path is not proven by the project adapter or Git ignore evidence, queue creation fails closed with `PROJECT_DELIVERY_AREA_UNAVAILABLE`.
+The directory contains only delivery-local operational material such as the immutable queued raster bytes, bounded job metadata, and the final `FIGMA_DELIVERY_RECEIPT.json`. Queue creation fails closed if `.asset-vault/` is unavailable, escapes through a symlink, or is no longer gitignored; the existing project identity validation remains the authority for that proof.
 
-Accepted Studio exports remain owned by each Studio's current Asset Vault/export contract; this slice does not relocate or delete them.
+Accepted Studio exports remain owned by each Studio's current Asset Vault/export contract; this slice does not relocate or delete them. Remote Figma failure never deletes the accepted local export.
 
 ## Receipt contract
 
