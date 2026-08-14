@@ -3,12 +3,14 @@ from __future__ import annotations
 from contextlib import contextmanager
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 from typing import Iterator, Mapping
 import uuid
 
 
+_REPOSITORY = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}/[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$")
 _GIT_OVERRIDES = (
     "-c", "core.fsmonitor=false",
     "-c", f"core.hooksPath={os.devnull}",
@@ -45,6 +47,7 @@ class ManagedRepositoryStore:
         state_root: Path,
         repository_sources: Mapping[str, str],
         git_executable: str = "git",
+        allow_github_sources: bool = False,
     ) -> None:
         self.state_root = Path(state_root).resolve(strict=False)
         self.repositories_root = self.state_root / "repositories"
@@ -52,19 +55,24 @@ class ManagedRepositoryStore:
         self.runtime_root = self.state_root / "a2-runtime"
         self.sources = dict(repository_sources)
         self.git_executable = git_executable
+        self.allow_github_sources = bool(allow_github_sources)
 
-    def _source(self, repository: str) -> str:
-        source = self.sources.get(repository)
-        if not isinstance(source, str) or not source:
-            raise ManagedRepositoryError("MANAGED_REPOSITORY_UNTRUSTED", "repository has no configured trusted source")
-        return source
-
-    def _repo_path(self, repository: str) -> Path:
-        if repository.count("/") != 1:
+    def source_for_repository(self, repository: str) -> str:
+        if not isinstance(repository, str) or _REPOSITORY.fullmatch(repository) is None:
             raise ManagedRepositoryError("MANAGED_REPOSITORY_UNTRUSTED", "repository identity is invalid")
         owner, name = repository.split("/", 1)
-        if any(value in {"", ".", ".."} for value in (owner, name)):
-            raise ManagedRepositoryError("MANAGED_REPOSITORY_UNTRUSTED", "repository identity is invalid")
+        if name.casefold().endswith(".git") or owner in {".", ".."} or name in {".", ".."}:
+            raise ManagedRepositoryError("MANAGED_REPOSITORY_UNTRUSTED", "repository identity is not canonical")
+        source = self.sources.get(repository)
+        if isinstance(source, str) and source:
+            return source
+        if self.allow_github_sources:
+            return f"https://github.com/{repository}.git"
+        raise ManagedRepositoryError("MANAGED_REPOSITORY_UNTRUSTED", "repository has no configured trusted source")
+
+    def _repo_path(self, repository: str) -> Path:
+        self.source_for_repository(repository)
+        owner, name = repository.split("/", 1)
         return self.repositories_root / owner / name
 
     def _git(self, cwd: Path, *args: str) -> subprocess.CompletedProcess[str]:
@@ -87,7 +95,7 @@ class ManagedRepositoryStore:
         return completed.stdout.strip() if completed.returncode == 0 else None
 
     def ensure_repo(self, repository: str) -> Path:
-        source = self._source(repository)
+        source = self.source_for_repository(repository)
         destination = self._repo_path(repository)
         if destination.exists():
             if not destination.is_dir() or self._origin(destination) != source:
