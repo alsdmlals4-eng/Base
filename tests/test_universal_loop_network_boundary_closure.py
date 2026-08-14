@@ -40,15 +40,16 @@ class UniversalLoopNetworkBoundaryClosureTests(unittest.TestCase):
         self.assertEqual(evidence["live_openai_request"], "NOT_RUN")
         self.assertEqual(evidence["paid_api_cost"], "NOT_RUN")
 
-    def test_paid_smoke_and_autonomy_limits_remain_closed(self) -> None:
+    def test_successor_provider_policy_and_autonomy_limits_remain_closed(self) -> None:
         self.assertEqual(
             self.value["status"],
-            "PORTABILITY_CONFIRMED_PROVIDER_TRANSPORT_READY_PAID_SMOKE_GATED",
+            "PORTABILITY_CONFIRMED_SUBSCRIPTION_TRANSPORT_READY_LOCAL_SMOKE_GATED",
         )
         gate = self.value["remaining_external_gate"]
-        self.assertEqual(gate["real_openai_api"], "NOT_RUN_USER_CREDENTIAL_DECISION_REQUIRED")
+        self.assertEqual(gate["real_openai_api"], "NOT_APPLICABLE_POLICY_FORBIDDEN")
+        self.assertEqual(gate["subscription_codex_cli_smoke"], "NOT_RUN_LOCAL_CHATGPT_AUTH_REQUIRED")
         self.assertEqual(gate["real_a2_burnin_runs"], 0)
-        self.assertEqual(gate["paid_smoke_issue"], "alsdmlals4-eng/Base#352")
+        self.assertIsNone(gate["paid_smoke_issue"])
         limits = self.value["preserved_limits"]
         self.assertEqual(limits["a3_auto_merge"], "DISABLED")
         self.assertEqual(limits["scheduler"], "NOT_CONFIGURED")
