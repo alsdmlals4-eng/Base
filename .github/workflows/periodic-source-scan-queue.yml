@@ -2,22 +2,45 @@ name: Periodic Source Scan Queue
 
 on:
   schedule:
-    - cron: "17 10 * * 1"
+    - cron: "0 18 * * *"
       timezone: "Asia/Seoul"
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/periodic-source-scan-queue.yml"
+      - "tools/periodic_source_analysis*.py"
+      - "tools/periodic_source_candidate_state.py"
+      - "tools/periodic_source_operations_state.py"
+      - "tools/periodic_source_scan_queue.py"
+      - "tools/run_periodic_source_scan_queue.sh"
+      - "tests/test_periodic_source_analysis_auto_merge.py"
+      - "tests/test_periodic_source_analysis_runner.py"
+      - "tests/test_periodic_source_scan_queue.py"
+      - "docs/knowledge/game-development/PERIODIC_SOURCE_SCAN_QUEUE.md"
+      - "docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md"
+      - "docs/knowledge/game-development/source-scans/README.md"
+      - "docs/knowledge/game-development/PERIODIC_SOURCE_CANDIDATE_LEDGER.json"
 
 permissions:
   contents: read
-  issues: write
 
 concurrency:
   group: periodic-source-scan-queue
   cancel-in-progress: false
 
+env:
+  SOURCE_ANALYSIS_MODEL: ${{ vars.SOURCE_ANALYSIS_MODEL || 'gpt-5.6-terra' }}
+  SOURCE_SCAN_BATCH_SIZE: ${{ vars.SOURCE_SCAN_BATCH_SIZE || '4' }}
+
 jobs:
-  update-review-queue:
+  analyze-validate-and-merge:
+    permissions:
+      actions: write
+      contents: write
+      issues: write
+      pull-requests: write
     runs-on: ubuntu-latest
-    timeout-minutes: 15
     steps:
       - name: Check out default branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -29,53 +52,46 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Verify queue renderer contract
-        run: |
-          python -m py_compile \
-            tools/periodic_source_scan_queue.py \
-            tests/test_periodic_source_scan_queue.py
-          python -m unittest tests/test_periodic_source_scan_queue.py -v
-
-      - name: Render review queue
+      - name: Verify daily Source analysis contracts
         shell: bash
         run: |
-          queue_date="$(python -c 'from datetime import datetime; from zoneinfo import ZoneInfo; print(datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat())')"
-          python tools/periodic_source_scan_queue.py \
-            --ledger docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json \
-            --date "$queue_date" \
-            --output periodic-source-scan-queue.md
+          set -euo pipefail
+          python -m py_compile \
+            tools/periodic_source_scan_queue.py \
+            tools/periodic_source_analysis_contract.py \
+            tools/periodic_source_analysis_render.py \
+            tools/periodic_source_candidate_state.py \
+            tools/periodic_source_operations_state.py \
+            tools/periodic_source_analysis.py \
+            tests/test_periodic_source_scan_queue.py \
+            tests/test_periodic_source_analysis_auto_merge.py \
+            tests/test_periodic_source_analysis_runner.py
+          python -m unittest \
+            tests/test_periodic_source_scan_queue.py \
+            tests/test_periodic_source_analysis_auto_merge.py \
+            tests/test_periodic_source_analysis_runner.py \
+            -v
 
-      - name: Create or update the single open queue issue
+      - name: Run daily context analysis, PR validation, and expected-head auto-merge
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          ISSUE_TITLE: "[Periodic Source Scan Queue]"
-        run: |
-          issue_number="$(
-            gh issue list \
-              --state open \
-              --search 'in:title "[Periodic Source Scan Queue]"' \
-              --limit 100 \
-              --json number,title \
-              --jq '.[] | select(.title == "[Periodic Source Scan Queue]") | .number' \
-              | head -n 1
-          )"
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: bash tools/run_periodic_source_scan_queue.sh
 
-          if [[ -n "$issue_number" ]]; then
-            gh issue edit "$issue_number" \
-              --title "$ISSUE_TITLE" \
-              --body-file periodic-source-scan-queue.md
-          else
-            gh issue create \
-              --title "$ISSUE_TITLE" \
-              --body-file periodic-source-scan-queue.md
-          fi
-
-      - name: Upload rendered queue evidence
+      - name: Upload daily Source analysis evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          name: periodic-source-scan-queue
-          path: periodic-source-scan-queue.md
-          if-no-files-found: error
+          name: periodic-source-scan-queue-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            periodic-source-scan-queue.md
+            queue-final.md
+            source-analysis-status.json
+            changed-files.txt
+            source-scan-pr-body.md
+            docs/knowledge/game-development/source-scans/**
+            docs/knowledge/game-development/PERIODIC_SOURCE_CANDIDATE_LEDGER.json
+            docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json
+          if-no-files-found: warn

@@ -1,0 +1,33 @@
+name: Export Source Workflow Permission Scope
+
+on:
+  push:
+    branches:
+      - feat/daily-source-analysis-auto-merge-20260814
+    paths:
+      - ".github/workflows/tmp-source-workflow-permission-scope.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out feature branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+
+      - name: Apply fixed permission-scope patch in the runner workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/apply_source_workflow_permission_scope.py
+
+      - name: Upload the exact patched workflow
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: patched-source-workflow
+          path: .github/workflows/periodic-source-scan-queue.yml
+          if-no-files-found: error
