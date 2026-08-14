@@ -42,6 +42,12 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
       - name: Install reviewed tool dependencies
         shell: pwsh
         run: |
@@ -50,6 +56,14 @@ jobs:
           python -m pip install `
             -e ".\tools\base-tool-contracts[dev]" `
             -e ".\tools\expression-studio[dev]"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Validate suite manifest
+        shell: pwsh
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          python -m pytest -q ".\Base Tool Hub\tests\test_suite_manifest.py"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Run platform-neutral character contracts
@@ -63,4 +77,11 @@ jobs:
             tests/test_catalog.py `
             tests/test_character_consistency.py `
             tests/test_web_contract.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Check Character Studio JavaScript syntax
+        shell: pwsh
+        working-directory: tools/expression-studio
+        run: |
+          node --check web/app.js
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
