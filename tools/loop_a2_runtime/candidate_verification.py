@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 from pathlib import Path
+import subprocess
 import tempfile
 from typing import Any
 
@@ -21,10 +22,11 @@ class CandidateVerificationError(RuntimeError):
 
 
 class VerificationEvidenceMailbox:
-    """In-memory, identity-bound PASS receipts for the next Critic turn."""
+    """In-memory, identity- and candidate-diff-bound PASS receipts for Critic."""
 
     def __init__(self) -> None:
         self._receipts: dict[tuple[str, str, str, str], dict[str, Any]] = {}
+        self._workspaces: dict[tuple[str, str, str, str], Path] = {}
 
     @staticmethod
     def _key(request: RunRequest) -> tuple[str, str, str, str]:
@@ -42,6 +44,7 @@ class VerificationEvidenceMailbox:
         *,
         authority_snapshot_sha256: str,
         candidate_diff_sha256: str,
+        workspace_path: Path | None = None,
     ) -> dict[str, Any]:
         if result.status != "PASS":
             raise CandidateVerificationError("candidate test PASS evidence is required")
@@ -69,15 +72,37 @@ class VerificationEvidenceMailbox:
             "test_suite": result.to_dict(),
         }
         receipt = canonical_receipt(payload)
-        self._receipts[self._key(request)] = receipt
+        key = self._key(request)
+        self._receipts[key] = receipt
+        if workspace_path is not None:
+            self._workspaces[key] = Path(workspace_path).resolve(strict=False)
+        else:
+            self._workspaces.pop(key, None)
         return dict(receipt)
 
     def require_pass(self, request: RunRequest) -> dict[str, Any]:
-        receipt = self._receipts.get(self._key(request))
+        key = self._key(request)
+        receipt = self._receipts.get(key)
         if receipt is None or receipt.get("status") != "PASS":
             raise CandidateVerificationError(
                 "candidate test PASS evidence is unavailable for this request"
             )
+        workspace = self._workspaces.get(key)
+        if workspace is not None:
+            if not workspace.is_dir():
+                raise CandidateVerificationError(
+                    "candidate worktree disappeared after project-test PASS"
+                )
+            try:
+                current_diff_sha256 = compute_worktree_diff_sha256(workspace)
+            except (OSError, subprocess.SubprocessError, ValueError) as exc:
+                raise CandidateVerificationError(
+                    "candidate Diff cannot be re-attested after project-test PASS"
+                ) from exc
+            if current_diff_sha256 != receipt.get("candidate_diff_sha256"):
+                raise CandidateVerificationError(
+                    "candidate Diff changed after project-test PASS"
+                )
         return dict(receipt)
 
 
@@ -234,7 +259,7 @@ class ProjectTestCandidateVerifier:
                     expected_main_sha=request.expected_main_sha,
                 )
             diff_after = compute_worktree_diff_sha256(workspace)
-        except (OSError, ValueError):
+        except (OSError, subprocess.SubprocessError, ValueError):
             return self._blocked(request, "CANDIDATE_TEST_EXECUTION_ERROR")
 
         if diff_after != diff_before:
@@ -250,6 +275,7 @@ class ProjectTestCandidateVerifier:
                     result,
                     authority_snapshot_sha256=self.authority_snapshot.snapshot_sha256,
                     candidate_diff_sha256=diff_before,
+                    workspace_path=workspace,
                 )
             except CandidateVerificationError:
                 return self._blocked(request, "CANDIDATE_TEST_EVIDENCE_INVALID")
