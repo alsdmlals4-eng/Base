@@ -6,6 +6,11 @@ from .authority_snapshot import (
     AuthoritySnapshotError,
     capture_authority_snapshot,
 )
+from .candidate_verification import (
+    CandidateVerificationError,
+    ProjectTestCandidateVerifier,
+    VerificationEvidenceMailbox,
+)
 from .protocol import ProtocolError, ReviewResult, RunRequest, WorkerResult
 from .runner import A2Runtime, RunOutcome
 
@@ -14,10 +19,13 @@ __all__ = [
     "AuthorityFile",
     "AuthoritySnapshot",
     "AuthoritySnapshotError",
+    "CandidateVerificationError",
+    "ProjectTestCandidateVerifier",
     "ProtocolError",
     "ReviewResult",
     "RunOutcome",
     "RunRequest",
+    "VerificationEvidenceMailbox",
     "WorkerResult",
     "capture_authority_snapshot",
 ]
