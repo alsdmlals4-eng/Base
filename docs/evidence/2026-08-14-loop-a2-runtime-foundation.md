@@ -18,6 +18,10 @@
 6. Deadline RED run `31761285512`: the injected Provider elapsed beyond `timeout_seconds` and the unpatched Runtime failed to stop it.
 7. The Runtime now detects cumulative elapsed deadline after each Provider call and returns `PROVIDER_TIMEOUT`. Hard termination remains an external Worker Adapter responsibility and is not claimed here.
 8. Schema and Python Protocol independently reject contradictory Worker completion/failure evidence.
+9. Later adversarial hardening expanded the suite to `50` tests. Exact-head run `31765609253` exposed one invalid test fixture: `FakeCritic` correctly rejected contradictory `PASS + findings` at Protocol parsing, so the test never reached the Runtime's defense-in-depth branch.
+10. The fixture was corrected to construct a malformed `ReviewResult` directly, bypassing Protocol parsing only inside the test. This proves the Runtime independently returns `BLOCKED_UNVERIFIED / CRITIC_PASS_WITH_FINDINGS` if a malformed provider object somehow crosses the Protocol boundary.
+11. The reviewed A2-only blobs were backed up, then reapplied as one commit on current `main@1521be7dac93d434d49c5743d0862525ea0a621d`, preserving all unrelated work from other branches/chats.
+12. Rebased exact-head run `31766120579` passed all `50` tests, real M2 Template integration, three-run Fake Provider burn-in, and whitespace validation.
 
 ## Burn-in meaning
 
@@ -45,4 +49,18 @@ The Foundation does not claim:
 - Blacksmith, narrative/data, or visual/UI project readiness;
 - A3 auto-merge or Scheduler operation.
 
-Final integration evidence is the Ready-state exact HEAD, complete repository workflows, independent P0/P1 review, zero unresolved review threads, merge SHA, postmerge main readback, and push workflows.
+## Final integration evidence
+
+- Rebase parent: `1521be7dac93d434d49c5743d0862525ea0a621d`.
+- Rebased implementation head before this evidence update: `a2ee1eb1bbd4bfccd061e34e396ac7953e19ada8`.
+- A2 exact-head run: `31766120579` / PASS / `50` tests.
+- Base-v9 exact-head run: `31766120491` / contract + adversarial gate PASS.
+- Dependency Review: `31766120487` / PASS.
+- Game Project OS exact-head run: `31766120490`; final completion is required before merge.
+- Unresolved review threads at review time: `0`.
+
+Final merge still requires a fresh current-main readback, all exact-head required jobs including Windows and `ci-gate`, expected-head squash merge, postmerge main readback, and push workflows.
+
+## Rollback
+
+Revert the eventual squash merge. No project repository, planning canon, visual canon, asset, save data, or product code is migrated by this Foundation.
