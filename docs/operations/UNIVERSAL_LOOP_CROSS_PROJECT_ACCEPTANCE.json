@@ -66,7 +66,8 @@
     "git_worktree_diff_attestation": "MERGED",
     "project_test_executor": "MERGED",
     "pr_handoff_postmerge_closure": "MERGED",
-    "durable_worktree_resume": "MERGED"
+    "durable_worktree_resume": "MERGED",
+    "denied_network_boundary": "MERGED_MAIN_VALIDATED"
   },
   "provider_transport_evidence": {
     "implementation_pr": 365,
@@ -80,6 +81,26 @@
     "postmerge_game_project_os_attempt1": "FAIL_TRANSIENT_MERMAID_CHROME_WS_TIMEOUT",
     "postmerge_game_project_os_attempt2": "PASS",
     "postmerge_validation": "PASS",
+    "live_openai_request": "NOT_RUN",
+    "paid_api_cost": "NOT_RUN"
+  },
+  "denied_network_boundary_evidence": {
+    "implementation_issue": 372,
+    "implementation_pr": 374,
+    "exact_head": "8ad0980a9ec9f5913422b95ddaf6db3511c4bb81",
+    "merge_main": "c6400874fbd4947d6279cc1b009e2eaceaac0870",
+    "boundary_id": "DOCKER_NONE_DENIED_V1",
+    "postmerge_denied_network_run": 31803084020,
+    "postmerge_a2_foundation_run": 31803084028,
+    "postmerge_base_v9_run": 31803084003,
+    "postmerge_game_project_os_run": 31803084001,
+    "postmerge_validation": "PASS",
+    "hosted_ubuntu_network_interfaces": [
+      "lo"
+    ],
+    "unshare_hosted_ubuntu": "UNAVAILABLE_FAIL_CLOSED",
+    "read_only_approved_network": "NOT_IMPLEMENTED_FAIL_CLOSED",
+    "non_linux_production_boundary": "NOT_CLAIMED",
     "live_openai_request": "NOT_RUN",
     "paid_api_cost": "NOT_RUN"
   },
