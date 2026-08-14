@@ -281,6 +281,38 @@ class FigmaDeliveryService:
             return self._set_state(job, "EXPIRED")
         return job
 
+    def public_status(self, project_id: str) -> dict[str, object]:
+        try:
+            self._locator.resolve(project_id)
+            self._registry.resolve_ready_target(project_id)
+            self._registry.assert_unchanged()
+        except (ProjectBindingError, DeliveryBlockedError) as error:
+            raise DeliveryError("DELIVERY_PROJECT_ROUTE_UNAVAILABLE") from error
+        pending = 0
+        verified = 0
+        expired = 0
+        for job in tuple(self._jobs.values()):
+            if job.project_id != project_id:
+                continue
+            current = job
+            if current.state in {"QUEUED", "CLAIMED"} and float(self._clock()) > current.expires_at:
+                current = self._set_state(current, "EXPIRED")
+            if current.state in {"QUEUED", "CLAIMED"}:
+                pending += 1
+            elif current.state == "DELIVERED_VERIFIED":
+                verified += 1
+            elif current.state == "EXPIRED":
+                expired += 1
+        paired = any(session.project_id == project_id for session in self._sessions.values())
+        return {
+            "project_id": project_id,
+            "bridge_state": "BRIDGE_PAIRED" if paired else "PAIRING_REQUIRED",
+            "delivery_state": "DELIVERY_PENDING" if pending else ("FIGMA_DELIVERED_VERIFIED" if verified else "NO_PENDING_DELIVERY"),
+            "pending_count": pending,
+            "verified_count": verified,
+            "expired_count": expired,
+        }
+
     def finalize(self, token: str, delivery_id: str, receipt: BridgeReceipt) -> DeliveryReceipt:
         session = self._require_session(token)
         job = self._job_for_session(session, delivery_id)
