@@ -155,8 +155,9 @@ The branch started before multiple unrelated completed changes reached `main`.
 2. A later completed task-recovery change advanced `main` to `c0d5042e86bc74506ad21dc47e6d410914be41d4`. Its only overlapping path was `skills/managing-project-intake-and-work-contract/LEARNING_LOG.md`.
 3. That Learning Log overlap was reconciled semantically: the completed task-recovery observation and this bootstrap-capability observation are both preserved. No completed-main learning was overwritten.
 4. PR #414 was left read-only while in progress. After it merged, completed `main@658f7282e4de071f5225ba9d797bd15b642969ea` was incorporated without force; its story-origin paths have zero overlap with PR #416.
+5. PR #417 was likewise left read-only while in progress. After it merged, completed `main@10c4cbb8a530c43bcc0c72cc1ff41d49b766de8e` was incorporated without force; its Expression/Visual Studio portability paths have zero overlap with PR #416.
 
-Open PR #417 remains read-only. Its changed paths do not overlap PR #416, and its branch was not modified.
+Other still-open PR branches remain read-only and were not modified by this work.
 
 ## Adversarial review
 
@@ -182,7 +183,7 @@ No. It adds policy semantics, an observation, and regression/workflow coupling o
 
 ### Attack — does this modify in-progress work?
 
-No. Active PR #417 is read-only and has zero changed-path overlap with PR #416. PR #414 was only incorporated after it became a completed `main` change.
+No. Active PR branches remain read-only. #414 and #417 were incorporated only after their changes became completed `main` state.
 
 ## Implementation Reality Gate
 
