@@ -34,6 +34,8 @@ description: Use when routing a project request, closing material ambiguity, def
 
 연속작업 활성화·자동 승인·blocker recovery·종료 경계: `references/continuous-work-execution.md`
 
+예기치 않은 실행 중단의 Retry/Resume·Watchdog 신호·중복 실행 방지: `references/task-recovery-protocol.md`
+
 ## Skill Modes
 
 - `route`: 요청 의도·현재 단계·위험을 파악하고 Work Mode, 작업 수준, 변경 유형, 주 책임 분야와 최소 Skill 집합을 자동 판정한다. `[연속작업] 진행해`가 있으면 연속작업 opt-in도 함께 감지한다.
