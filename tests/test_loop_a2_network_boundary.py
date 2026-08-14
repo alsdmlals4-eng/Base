@@ -156,7 +156,9 @@ class LinuxUnshareDeniedNetworkBoundaryTests(unittest.TestCase):
         self.assertLessEqual(probe.kwargs["timeout"], 10)
         self.assertEqual(probe.args[0][0], "/usr/bin/unshare")
         self.assertIn("--net", probe.args[0])
-        self.assertEqual(probe.args[0][-3:-1], ["-c", probe.args[0][-2]])
+        self.assertEqual(probe.args[0][-3], sys.executable)
+        self.assertEqual(probe.args[0][-2], "-c")
+        self.assertIn("if_nameindex", probe.args[0][-1])
 
     def test_successful_probe_is_cached_per_boundary_instance(self) -> None:
         boundary = LinuxUnshareDeniedNetworkBoundary(unshare_executable="unshare")
