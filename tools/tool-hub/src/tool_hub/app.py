@@ -35,10 +35,11 @@ def create_app(
     *,
     bind_origin: str = "http://127.0.0.1:8764",
     test_mode: bool = False,
+    launch_supported: bool | None = None,
 ) -> FastAPI:
     root = base_root.resolve()
     try:
-        tools = load_reviewed_tools(root)
+        tools = load_reviewed_tools(root, launch_supported=launch_supported)
     except HubRegistryError as error:
         raise RuntimeError("Tool Hub cannot start without its reviewed registry") from error
     locator = ProjectLocator(project_config)
@@ -72,7 +73,9 @@ def create_app(
                 "tool_id": item["tool_id"],
                 "display_name": item["display_name"],
                 "capabilities": item["capabilities"],
-                "launch_state": "RUNNABLE",
+                "launch_state": (
+                    "RUNNABLE" if item.get("_launch_supported") is True else "BLOCKED_PLATFORM"
+                ),
             }
             for item in tools
         ]

@@ -26,6 +26,29 @@ def client_for(tmp_path: Path, *, bootstrap: bool = True) -> TestClient:
     return client
 
 
+def test_platform_without_descriptor_runtime_starts_in_catalog_only_mode(tmp_path: Path) -> None:
+    client = TestClient(
+        create_app(
+            BASE_ROOT,
+            tmp_path / "machine-projects.json",
+            bind_origin="http://testserver",
+            test_mode=True,
+            launch_supported=False,
+        )
+    )
+
+    response = client.get("/api/catalog")
+
+    assert response.status_code == 200
+    assert {
+        item["tool_id"]: item["launch_state"] for item in response.json()["tools"]
+    } == {
+        "expression-studio": "BLOCKED_PLATFORM",
+        "qa-evidence-studio": "BLOCKED_PLATFORM",
+        "sprite-animation-studio": "BLOCKED_PLATFORM",
+    }
+
+
 def test_catalog_lists_reviewed_tools_and_redacts_registered_root(tmp_path: Path) -> None:
     project = make_project(tmp_path / "Project With Spaces")
     client = client_for(tmp_path)
