@@ -4,9 +4,7 @@ from dataclasses import dataclass
 import hashlib
 import json
 from pathlib import Path
-from typing import Any
-
-from tools.loop_contracts.bundle_validation import validate_bundle
+from typing import Any, Iterable
 
 from .protocol import RunRequest, normalize_contract_path
 
@@ -63,6 +61,18 @@ class AuthoritySnapshot:
         return value
 
 
+def validate_bundle(capsule_path: Path) -> Iterable[Any]:
+    """Load the schema validator only when an authority snapshot is actually captured.
+
+    The generic provider transport imports this module only for the immutable
+    snapshot type and must remain usable in its intentionally smaller dependency
+    environment. Real capture still executes the canonical M2 bundle validator.
+    """
+    from tools.loop_contracts.bundle_validation import validate_bundle as _validate_bundle
+
+    return _validate_bundle(capsule_path)
+
+
 def _closed_path(root: Path, relative: str) -> Path:
     normalized = normalize_contract_path(relative, "authority_path")
     lexical = root.joinpath(*normalized.split("/"))
@@ -103,6 +113,35 @@ def _load_object(text: str, *, relative: str) -> dict[str, Any]:
 def _referenced_project_path(capsule_relative: str, reference: str, *, label: str) -> str:
     capsule_dir = Path(capsule_relative).parent
     return normalize_contract_path((capsule_dir / reference).as_posix(), label)
+
+
+def _resolve_authority_paths(
+    *,
+    normalized_capsule: str,
+    capsule: dict[str, Any],
+) -> tuple[dict[str, str], tuple[str, ...]]:
+    resolved_paths: dict[str, str] = {"capsule": normalized_capsule}
+    for key in _AUTHORITY_REFERENCE_KEYS:
+        value = capsule.get(key)
+        if not isinstance(value, str) or not value:
+            raise AuthoritySnapshotError(f"authority reference is missing: {key}")
+        resolved_paths[key] = _referenced_project_path(
+            normalized_capsule,
+            value,
+            label=key,
+        )
+    unique_paths = [normalized_capsule]
+    unique_paths.extend(
+        path for path in resolved_paths.values() if path not in unique_paths
+    )
+    return resolved_paths, tuple(unique_paths)
+
+
+def _read_authority_set(root: Path, paths: tuple[str, ...]) -> dict[str, str]:
+    return {
+        relative: _read_utf8(_closed_path(root, relative), relative=relative)
+        for relative in paths
+    }
 
 
 def _assert_request_matches(
@@ -149,30 +188,34 @@ def capture_authority_snapshot(
     normalized_capsule = normalize_contract_path(capsule_relative, "capsule_relative")
     capsule_path = _closed_path(root, normalized_capsule)
 
+    initial_capsule_text = _read_utf8(capsule_path, relative=normalized_capsule)
+    initial_capsule = _load_object(initial_capsule_text, relative=normalized_capsule)
+    resolved_paths, unique_paths = _resolve_authority_paths(
+        normalized_capsule=normalized_capsule,
+        capsule=initial_capsule,
+    )
+    before = _read_authority_set(root, unique_paths)
+
     findings = list(validate_bundle(capsule_path))
     if findings:
         codes = [getattr(item, "code", "CONTRACT_INVALID") for item in findings]
         raise AuthoritySnapshotError(f"authority bundle is not ready: {codes}")
 
-    capsule_text = _read_utf8(capsule_path, relative=normalized_capsule)
-    capsule = _load_object(capsule_text, relative=normalized_capsule)
+    after = _read_authority_set(root, unique_paths)
+    if after != before:
+        raise AuthoritySnapshotError("authority bundle changed during capture")
 
-    resolved_paths: dict[str, str] = {"capsule": normalized_capsule}
-    for key in _AUTHORITY_REFERENCE_KEYS:
-        value = capsule.get(key)
-        if not isinstance(value, str) or not value:
-            raise AuthoritySnapshotError(f"authority reference is missing: {key}")
-        resolved_paths[key] = _referenced_project_path(
-            normalized_capsule,
-            value,
-            label=key,
-        )
+    capsule_text = before[normalized_capsule]
+    capsule = _load_object(capsule_text, relative=normalized_capsule)
+    stable_resolved_paths, stable_unique_paths = _resolve_authority_paths(
+        normalized_capsule=normalized_capsule,
+        capsule=capsule,
+    )
+    if stable_resolved_paths != resolved_paths or stable_unique_paths != unique_paths:
+        raise AuthoritySnapshotError("authority bundle changed during capture")
 
     package_relative = resolved_paths["implementation_package_path"]
-    package_text = _read_utf8(
-        _closed_path(root, package_relative),
-        relative=package_relative,
-    )
+    package_text = before[package_relative]
     package = _load_object(package_text, relative=package_relative)
     _assert_request_matches(
         request=request,
@@ -182,21 +225,10 @@ def capture_authority_snapshot(
         package_relative=package_relative,
     )
 
-    captured: list[AuthorityFile] = []
-    unique_paths = [normalized_capsule]
-    unique_paths.extend(
-        path for path in resolved_paths.values() if path not in unique_paths
+    captured = tuple(
+        AuthorityFile(path=relative, content=before[relative])
+        for relative in unique_paths
     )
-    for relative in unique_paths:
-        text = (
-            capsule_text
-            if relative == normalized_capsule
-            else package_text
-            if relative == package_relative
-            else _read_utf8(_closed_path(root, relative), relative=relative)
-        )
-        captured.append(AuthorityFile(path=relative, content=text))
-
     canonical = json.dumps(
         {
             "project_id": request.project_id,
@@ -221,6 +253,6 @@ def capture_authority_snapshot(
         source_main_sha=request.expected_main_sha,
         capsule_path=normalized_capsule,
         runtime_adapter_path=resolved_paths["runtime_adapter_path"],
-        files=tuple(captured),
+        files=captured,
         snapshot_sha256=digest,
     )
