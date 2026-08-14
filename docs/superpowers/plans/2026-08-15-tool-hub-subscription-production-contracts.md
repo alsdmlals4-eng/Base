@@ -33,11 +33,14 @@
 - [x] Fix truth fields: `GPT_PRO_HANDOFF_READY`, `CHATGPT_PRO_SUBSCRIPTION`, `image/png`, `provider_call_made=false`, `requires_additional_payment=false`.
 - [x] Make all fixed truth fields non-overridable constructor fields with `init=False`.
 - [x] Reject invalid project/tool/run identities, Windows-special/path-shaped source filenames, invalid SHA-256, secret/token-like instruction content, non-integer/unbounded count/dimensions, malformed checklist values, and workflow/tool cross-wiring.
+- [x] Reject absolute Windows/POSIX private paths and Figma URL/node routing hints from free-text instruction/checklist fields.
 - [x] Prove initial GREEN in run `31818614093` on Ubuntu and Windows.
 - [x] Adversarial RED in run `31819013278` for missing subscription-surface/output fields.
 - [x] Prove refined GREEN in run `31819211022` on Ubuntu and Windows.
 - [x] Truth/type hardening RED in run `31819588625`: `11 failed, 21 passed`, with failures limited to intended hardening gaps.
 - [x] Truth/type hardening GREEN in run `31819831239` on Ubuntu and Windows.
+- [x] Private-routing hardening RED in run `31820091027`: `4 failed, 31 passed`, limited to absolute-path/Figma-route leakage cases.
+- [x] Private-routing hardening GREEN in run `31820175466` on Ubuntu and Windows.
 
 ## Task 2 — Canonical tool-specific Figma route registry — COMPLETE
 
@@ -56,7 +59,7 @@
 - [x] Pin exact project-marker node IDs and expected `FRAME` type for parent/destination/marker.
 - [x] Reject duplicate pairs, same parent/destination, reused marker node, malformed IDs, non-FRAME types, project/file/parent cross-wiring.
 - [x] Prove refined GREEN in run `31819211022` on Ubuntu and Windows.
-- [x] Reconfirm route contracts as part of final hardening GREEN `31819831239` on Ubuntu and Windows.
+- [x] Reconfirm route contracts as part of final private-routing GREEN `31820175466` on Ubuntu and Windows.
 
 ## Task 3 — Repository production-boundary regression — COMPLETE
 
@@ -74,7 +77,7 @@
 - [x] Keep the focused workflow as a permanent narrow regression surface with Ubuntu and Windows matrix.
 - [x] Prove repository-boundary GREEN in run `31818787891` on Ubuntu and Windows.
 - [x] Prove refined package + repository GREEN in run `31819211022` on Ubuntu and Windows.
-- [x] Prove final hardening package + repository GREEN in run `31819831239` on Ubuntu and Windows.
+- [x] Prove final package + repository GREEN in run `31820175466` on Ubuntu and Windows.
 
 ## Task 4 — Adversarial review, exact-head CI, PR and merge — PRE-MERGE IN PROGRESS
 
@@ -86,7 +89,7 @@
 - [x] Attack Figma cross-file/stale-name ambiguity; refinement added exact marker IDs and expected FRAME types.
 - [x] Attack route invention; sprite/effect routes remain absent and fail closed.
 - [x] Attack canonical drift; committed-byte proof and repository regression cover the route file.
-- [x] Attack secret/private-path leakage; packet input constraints and static no-client test cover the current surface.
+- [x] Attack secret/private-path leakage; final refinement also rejects absolute paths and Figma routing hints from free-text fields.
 - [x] Fetch PR changed files and verify zero changed-file overlap with open PR #373/#376/#386.
 - [ ] Confirm final document-head focused workflow, Base v9, Game Project Operating System, and Dependency Review are successful.
 - [ ] Confirm unresolved review threads = 0 and final P0/P1 = 0.
