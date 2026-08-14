@@ -143,4 +143,6 @@ The semantic input digest excludes `run_id`, allowing the Kernel to detect the s
 
 ## M2 integration
 
-This Kernel remains on an isolated branch while M2 PR #333 is owned by another workstream. The Kernel does not edit M2 files. After M2 is merged, a separate adapter must translate validated Capsule/Planning/Visual/Package/Coverage documents into the closed SHADOW request. That adapter is not implemented by M3 and must have its own TDD and compatibility evidence.
+M2 Capsule contracts were merged through PR #333 before the final M3 integration refresh. M3 still does not edit M2 Schema, Template, or validator paths. It consumes a normalized SHADOW request only.
+
+Translation from validated M2 Capsule/Planning/Visual/Package/Coverage documents into the closed SHADOW request is a separate adapter responsibility and is intentionally not implemented by M3. That adapter requires its own TDD and compatibility evidence and must not weaken M2 or M3 fail-closed gates.
