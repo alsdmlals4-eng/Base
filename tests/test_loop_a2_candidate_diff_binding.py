@@ -231,7 +231,7 @@ class CandidateDiffBindingTests(unittest.TestCase):
 
         with self.assertRaisesRegex(
             CodexCliTransportError,
-            "CRITIC_TEST_EVIDENCE_DIFF_MISMATCH",
+            "CRITIC_TEST_EVIDENCE_MISSING",
         ):
             client.responses.create(
                 model="critic-model",
