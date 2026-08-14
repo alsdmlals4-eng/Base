@@ -1,0 +1,38 @@
+name: Validate Loop A2 Windows Docker Boundary
+
+on:
+  pull_request:
+    paths:
+      - 'tools/loop_a2_runtime/network_boundary.py'
+      - 'tests/test_loop_a2_network_boundary.py'
+      - 'docs/evidence/2026-08-15-loop-a2-windows-docker-boundary.md'
+      - '.github/workflows/validate-loop-a2-windows-docker-boundary.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/loop_a2_runtime/network_boundary.py'
+      - 'tests/test_loop_a2_network_boundary.py'
+      - 'docs/evidence/2026-08-15-loop-a2-windows-docker-boundary.md'
+      - '.github/workflows/validate-loop-a2-windows-docker-boundary.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-contract:
+    runs-on: windows-2025
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Install existing validation requirements
+        run: python -m pip install --disable-pip-version-check -r .github/validation-requirements.txt
+      - name: Run Windows Docker host contract only
+        run: >-
+          python -m unittest
+          tests.test_loop_a2_network_boundary.DockerNoneDeniedNetworkBoundaryTests.test_windows_host_constructs_same_docker_none_boundary_plan
+          -v

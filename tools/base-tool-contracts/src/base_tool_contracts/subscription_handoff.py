@@ -61,6 +61,8 @@ class SubscriptionHandoffPacket:
     state: str = field(default="GPT_PRO_HANDOFF_READY", init=False)
     generation_surface: str = field(default="CHATGPT_PRO_SUBSCRIPTION", init=False)
     output_media_type: str = field(default="image/png", init=False)
+    import_run_mode: str = field(default="subscription_handoff_import", init=False)
+    import_declared_source: str = field(default="CHATGPT_INCLUDED", init=False)
     provider_call_made: bool = field(default=False, init=False)
     requires_additional_payment: bool = field(default=False, init=False)
 
@@ -83,6 +85,10 @@ class SubscriptionHandoffPacket:
                 "expected_png_count": self.expected_png_count,
                 "min_dimension": self.min_dimension,
                 "max_dimension": self.max_dimension,
+            },
+            "import": {
+                "run_mode": self.import_run_mode,
+                "declared_source": self.import_declared_source,
             },
             "review_checklist": list(self.review_checklist),
             "provider_call_made": self.provider_call_made,
