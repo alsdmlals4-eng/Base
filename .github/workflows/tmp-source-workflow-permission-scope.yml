@@ -1,0 +1,36 @@
+name: Apply Source Workflow Permission Scope
+
+on:
+  push:
+    branches:
+      - feat/daily-source-analysis-auto-merge-20260814
+    paths:
+      - ".github/workflows/tmp-source-workflow-permission-scope.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  apply:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out feature branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+
+      - name: Apply fixed permission-scope patch and remove temporary files
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/apply_source_workflow_permission_scope.py
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- \
+            .github/workflows/periodic-source-scan-queue.yml \
+            .github/workflows/tmp-source-workflow-permission-scope.yml \
+            tools/apply_source_workflow_permission_scope.py
+          git commit -m "fix: scope Source automation write permissions to job"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
