@@ -73,7 +73,7 @@ def _safe_worker_environment() -> dict[str, str]:
 
 
 class SubprocessWorkspaceWorker:
-    """Execute a worker process without shell expansion or inherited credentials."""
+    """Execute a FAKE worker process without shell expansion or inherited credentials."""
 
     def __init__(
         self,
@@ -97,6 +97,12 @@ class SubprocessWorkspaceWorker:
         worktree_path: Path,
         repair_cycle: int,
     ) -> WorkerResult:
+        if request.provider_mode != "FAKE":
+            return _blocked_result(
+                request,
+                code="WORKER_PROVIDER_MODE_UNSUPPORTED",
+                message="unsandboxed subprocess worktree worker supports FAKE provider mode only",
+            )
         payload = json.dumps(
             {
                 "request": request.to_dict(),
