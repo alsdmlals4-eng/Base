@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
-import importlib.util
 from pathlib import Path
+from types import ModuleType
+
+from .runtime_trust import RuntimeTrustError, assert_committed_file, capture_runtime_pins
 
 
 class HubRegistryError(ValueError):
@@ -11,13 +13,26 @@ class HubRegistryError(ValueError):
 
 
 def load_reviewed_tools(base_root: Path) -> tuple[dict[str, object], ...]:
-    validator_path = base_root.resolve() / "tools" / "validate_tool_registry.py"
-    spec = importlib.util.spec_from_file_location("base_tool_registry_validator", validator_path)
-    if spec is None or spec.loader is None:
-        raise HubRegistryError("reviewed tool registry validator is unavailable")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    root = base_root.resolve()
     try:
-        return module.load_registry(base_root, base_root / "tools" / "TOOL_REGISTRY.json")
-    except (OSError, ValueError) as error:
+        validator_relative = Path("tools/validate_tool_registry.py")
+        validator_bytes = assert_committed_file(root, validator_relative)
+        assert_committed_file(root, Path("tools/TOOL_REGISTRY.json"))
+        assert_committed_file(root, Path("schemas/base-tool-registry-v1.schema.json"))
+    except RuntimeTrustError as error:
+        raise HubRegistryError("reviewed tool registry is invalid") from error
+    validator_path = root / "tools" / "validate_tool_registry.py"
+    module = ModuleType("base_tool_registry_validator")
+    module.__file__ = str(validator_path)
+    exec(compile(validator_bytes, str(validator_path), "exec"), module.__dict__)
+    try:
+        reviewed = module.load_registry(base_root, base_root / "tools" / "TOOL_REGISTRY.json")
+        interpreter = root / ".venv" / "bin" / "python"
+        pinned: list[dict[str, object]] = []
+        for raw in reviewed:
+            tool = dict(raw)
+            tool.update(capture_runtime_pins(root, str(tool["owner_path"]), interpreter))
+            pinned.append(tool)
+        return tuple(pinned)
+    except (OSError, ValueError, RuntimeTrustError) as error:
         raise HubRegistryError("reviewed tool registry is invalid") from error

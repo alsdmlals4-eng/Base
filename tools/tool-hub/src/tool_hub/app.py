@@ -11,10 +11,11 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict
 import uvicorn
 
-from .launcher import LaunchError, QaEvidenceLauncher
+from .launcher import LaunchError
 from .projects import ProjectBindingError, ProjectLocator
 from .registry import HubRegistryError, load_reviewed_tools
 from .security import HubSecurity, install_security
+from .supervisor import ProcessSupervisor
 
 
 class ProjectRegistration(BaseModel):
@@ -41,7 +42,12 @@ def create_app(
     except HubRegistryError as error:
         raise RuntimeError("Tool Hub cannot start without its reviewed registry") from error
     locator = ProjectLocator(project_config)
-    launcher = QaEvidenceLauncher(project_config.parent / "runtime")
+    launcher = ProcessSupervisor(
+        project_config.parent / "runtime",
+        root,
+        locator,
+        tools,
+    )
     security = HubSecurity(bind_origin, test_mode=test_mode)
 
     @asynccontextmanager
@@ -66,7 +72,7 @@ def create_app(
                 "tool_id": item["tool_id"],
                 "display_name": item["display_name"],
                 "capabilities": item["capabilities"],
-                "launch_state": "RUNNABLE" if item["tool_id"] == "qa-evidence-studio" else "REGISTERED_NOT_YET_HUB_LAUNCHABLE",
+                "launch_state": "RUNNABLE",
             }
             for item in tools
         ]
@@ -81,15 +87,12 @@ def create_app(
 
     @app.post("/api/launch")
     def launch(payload: LaunchPayload) -> dict[str, object]:
-        if payload.tool_id != "qa-evidence-studio":
-            raise HTTPException(status_code=409, detail="tool is registered but not enabled in this vertical slice")
         try:
-            binding = locator.resolve(payload.project_id)
-            return launcher.start(binding).public_view()
-        except ProjectBindingError as error:
-            raise HTTPException(status_code=409, detail=str(error)) from error
+            return launcher.start(payload.tool_id, payload.project_id).public_view()
         except LaunchError as error:
-            raise HTTPException(status_code=503, detail=str(error)) from error
+            state = launcher.view(payload.tool_id, payload.project_id).status
+            status_code = 409 if state.startswith("BLOCKED_") else 503
+            raise HTTPException(status_code=status_code, detail=str(error)) from error
 
     web_root = Path(__file__).parents[2] / "web"
     app.mount("/", StaticFiles(directory=web_root, html=True), name="web")

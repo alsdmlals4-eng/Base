@@ -90,9 +90,29 @@ def test_status_exposes_immutable_child_identity(tmp_path: Path) -> None:
     assert len(payload["launch_nonce"]) >= 32
     assert len(payload["config_hash"]) == 64
     assert len(payload["root_fingerprint"]) == 64
+    assert len(payload["adapter_sha256"]) == 64
     assert len(payload["figma_registry_sha256"]) == 64
     assert len(payload["engine_config_sha256"]) == 64
     assert payload["process_id"] > 0
+
+
+def test_status_echoes_hub_supplied_project_identity(tmp_path: Path) -> None:
+    app = create_app(
+        tmp_path,
+        FakeExpressionEngine(tmp_path),
+        project_id="demo",
+        launch_nonce="n" * 43,
+        adapter_sha256="a" * 64,
+        root_fingerprint="b" * 64,
+        bind_origin="http://testserver",
+        test_mode=True,
+    )
+
+    payload = TestClient(app).get("/api/status").json()
+
+    assert payload["launch_nonce"] == "n" * 43
+    assert payload["adapter_sha256"] == "a" * 64
+    assert payload["root_fingerprint"] == "b" * 64
 
 
 def test_status_identity_changes_across_project_roots(tmp_path: Path) -> None:

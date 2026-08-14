@@ -15,7 +15,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 
 class StudioSecurity:
-    def __init__(self, tool_id: str, *, project_root: Path, expected_origin: str, engine_config_sha256: str, figma_registry_sha256: str, anchor_registry_sha256: str, launch_nonce: str | None = None, test_mode: bool = False) -> None:
+    def __init__(self, tool_id: str, *, project_root: Path, expected_origin: str, engine_config_sha256: str, figma_registry_sha256: str, anchor_registry_sha256: str, launch_nonce: str | None = None, adapter_sha256: str | None = None, root_fingerprint: str | None = None, test_mode: bool = False) -> None:
         self.tool_id = tool_id
         self.expected_origin = expected_origin.rstrip("/")
         self.allowed_hosts = ["127.0.0.1", "localhost", "[::1]"] + (["testserver"] if test_mode else [])
@@ -23,7 +23,8 @@ class StudioSecurity:
         self.csrf_token = secrets.token_urlsafe(32)
         self.session_id = secrets.token_urlsafe(32)
         stat = project_root.resolve().stat()
-        self.root_fingerprint = hashlib.sha256(f"{project_root.resolve()}:{stat.st_dev}:{stat.st_ino}".encode()).hexdigest()
+        self.root_fingerprint = root_fingerprint or hashlib.sha256(f"{project_root.resolve()}:{stat.st_dev}:{stat.st_ino}".encode()).hexdigest()
+        self.adapter_sha256 = adapter_sha256 or hashlib.sha256(b"DIRECT_OPERATOR_NOT_CONFIGURED").hexdigest()
         self.engine_config_sha256 = engine_config_sha256
         self.figma_registry_sha256 = figma_registry_sha256
         self.anchor_registry_sha256 = anchor_registry_sha256
@@ -36,6 +37,7 @@ class StudioSecurity:
             "delivery_eligible": config.get("delivery_eligible"),
             "routing_state": config.get("routing_state"),
             "root_fingerprint": self.root_fingerprint,
+            "adapter_sha256": self.adapter_sha256,
             "engine_config_sha256": self.engine_config_sha256,
             "figma_registry_sha256": self.figma_registry_sha256,
             "anchor_registry_sha256": self.anchor_registry_sha256,

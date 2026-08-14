@@ -2,13 +2,22 @@
 
 import argparse
 import hashlib
+import os
 from pathlib import Path
+from typing import Sequence
 
 from fastapi import FastAPI, File, Form, HTTPException, Response, UploadFile
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
-from base_tool_contracts import ApprovedAnchorRegistry, BoundedRequestBodyMiddleware
+from base_tool_contracts import (
+    ApprovedAnchorRegistry,
+    BoundedRequestBodyMiddleware,
+    HubStartupError,
+    hub_identity_from_environment,
+    open_loopback_listener,
+    write_startup_report,
+)
 from pydantic import BaseModel, ConfigDict, Field
 
 from .delivery import DeliveryBlockedError, ProjectFigmaRegistry
@@ -38,6 +47,8 @@ def create_app(
     test_mode: bool = False,
     anchor_registry: ApprovedAnchorRegistry | None = None,
     run_mode: str = "subscription_handoff_import",
+    adapter_sha256: str | None = None,
+    root_fingerprint: str | None = None,
 ) -> FastAPI:
     """Create an API bound by the CLI to loopback only."""
     service = ExpressionStudioService(project_root, engine, registry=registry, project_id=project_id, anchor_registry=anchor_registry, run_mode=run_mode)
@@ -52,6 +63,8 @@ def create_app(
         figma_registry_sha256=registry.config_sha256 if registry else hashlib.sha256(b"NOT_CONFIGURED").hexdigest(),
         anchor_registry_sha256=anchor_registry.config_sha256 if anchor_registry else hashlib.sha256(b"NOT_CONFIGURED").hexdigest(),
         launch_nonce=launch_nonce,
+        adapter_sha256=adapter_sha256,
+        root_fingerprint=root_fingerprint,
         test_mode=test_mode,
     )
     install_security(app, security)
@@ -145,16 +158,44 @@ def create_app(
     return app
 
 
-def main() -> None:
+def _port(value: str) -> int:
+    port = int(value)
+    if not 0 <= port <= 65535:
+        raise argparse.ArgumentTypeError("port must be between 0 and 65535")
+    return port
+
+
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run Expression Studio on localhost only.")
     parser.add_argument("--project-root", type=Path, required=True)
     parser.add_argument("--figma-target-registry", type=Path)
     parser.add_argument("--project-id", required=True)
     parser.add_argument("--approved-anchor-registry", type=Path)
     parser.add_argument("--run-mode", choices=("subscription_handoff_import", "simulated", "openai"), default="subscription_handoff_import")
-    parser.add_argument("--port", type=int, default=8766)
-    parser.add_argument("--launch-nonce")
-    args = parser.parse_args()
+    parser.add_argument("--port", type=_port, default=8766)
+    parser.add_argument("--startup-file", type=Path)
+    return parser
+
+
+def parse_cli_args(arguments: Sequence[str] | None = None) -> argparse.Namespace:
+    parser = build_parser()
+    args = parser.parse_args(arguments)
+    if args.port == 0 and args.startup_file is None:
+        parser.error("port 0 requires --startup-file")
+    if args.port != 0 and args.startup_file is not None:
+        parser.error("--startup-file is reserved for Tool Hub port 0 mode")
+    return args
+
+
+def main() -> None:
+    parser = build_parser()
+    args = parse_cli_args()
+    hub_identity = None
+    if args.port == 0:
+        try:
+            hub_identity = hub_identity_from_environment()
+        except HubStartupError as error:
+            parser.error(str(error))
     registry = ProjectFigmaRegistry.load(args.figma_target_registry) if args.figma_target_registry else None
     anchor_registry = ApprovedAnchorRegistry.load(args.approved_anchor_registry) if args.approved_anchor_registry else None
     try:
@@ -165,17 +206,38 @@ def main() -> None:
         )
     except EngineContractError as error:
         parser.error(str(error))
+    listener = open_loopback_listener(args.port)
+    actual_port = listener.getsockname()[1]
     app = create_app(
         args.project_root,
         engine,
         registry=registry,
         project_id=args.project_id,
-        launch_nonce=args.launch_nonce,
-        bind_origin=f"http://127.0.0.1:{args.port}",
+        launch_nonce=hub_identity.launch_nonce if hub_identity else None,
+        bind_origin=f"http://127.0.0.1:{actual_port}",
         anchor_registry=anchor_registry,
         run_mode=args.run_mode,
+        adapter_sha256=hub_identity.adapter_sha256 if hub_identity else None,
+        root_fingerprint=hub_identity.root_fingerprint if hub_identity else None,
     )
-    uvicorn.run(app, host="127.0.0.1", port=args.port)
+    if hub_identity and args.startup_file:
+        try:
+            write_startup_report(
+                args.startup_file,
+                {
+                    "tool_id": "expression-studio",
+                    "project_id": args.project_id,
+                    "process_id": os.getpid(),
+                    "port": actual_port,
+                    "launch_nonce": hub_identity.launch_nonce,
+                    "adapter_sha256": hub_identity.adapter_sha256,
+                    "root_fingerprint": hub_identity.root_fingerprint,
+                },
+            )
+        except HubStartupError as error:
+            listener.close()
+            parser.error(str(error))
+    uvicorn.Server(uvicorn.Config(app, host="127.0.0.1", port=actual_port)).run(sockets=[listener])
 
 
 if __name__ == "__main__":

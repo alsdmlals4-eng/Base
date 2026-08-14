@@ -9,6 +9,7 @@ import html
 import json
 import re
 import subprocess
+import os
 import unicodedata
 from copy import deepcopy
 from pathlib import Path
@@ -364,13 +365,28 @@ def validate_schema(data: dict[str, Any], schema_path: Path, label: str) -> list
 
 
 def _git(repository: Path, *arguments: str) -> subprocess.CompletedProcess[str]:
+    executable = os.environ.get("BASE_TOOL_TRUSTED_GIT", "git")
+    safe = (
+        "-c", "core.fsmonitor=false",
+        "-c", "core.hooksPath=/dev/null",
+        "-c", "filter.lfs.required=false",
+        "-c", "filter.lfs.smudge=cat",
+        "-c", "filter.lfs.clean=cat",
+    ) if os.environ.get("BASE_TOOL_TRUSTED_GIT_ARGS") else ()
+    inherited: tuple[int, ...] = ()
+    if repository.parts[:4] == ("/", "proc", "self", "fd") and len(repository.parts) == 5:
+        try:
+            inherited = (int(repository.parts[-1]),)
+        except ValueError:
+            inherited = ()
     return subprocess.run(
-        ["git", "-C", str(repository), *arguments],
+        [executable, *safe, "-C", str(repository), *arguments],
         capture_output=True,
         text=True,
         encoding="utf-8",
         errors="replace",
         check=False,
+        pass_fds=inherited,
     )
 
 
@@ -383,10 +399,22 @@ def _is_ancestor(repository: Path, ancestor: str, descendant: str) -> bool:
 
 
 def _git_show_bytes(repository: Path, commit: str, relative: str) -> bytes | None:
+    executable = os.environ.get("BASE_TOOL_TRUSTED_GIT", "git")
+    safe = (
+        "-c", "core.fsmonitor=false",
+        "-c", "core.hooksPath=/dev/null",
+    ) if os.environ.get("BASE_TOOL_TRUSTED_GIT_ARGS") else ()
+    inherited: tuple[int, ...] = ()
+    if repository.parts[:4] == ("/", "proc", "self", "fd") and len(repository.parts) == 5:
+        try:
+            inherited = (int(repository.parts[-1]),)
+        except ValueError:
+            inherited = ()
     result = subprocess.run(
-        ["git", "-C", str(repository), "show", f"{commit}:{relative}"],
+        [executable, *safe, "-C", str(repository), "show", f"{commit}:{relative}"],
         capture_output=True,
         check=False,
+        pass_fds=inherited,
     )
     return result.stdout if result.returncode == 0 else None
 
@@ -1191,6 +1219,51 @@ def validation_errors(
                 errors.append(f"Generated view manual modification or stale output detected: {names}")
         except ContractError as error:
             errors.append(str(error))
+    return errors
+
+
+def hub_identity_errors(
+    project_root: Path,
+    base_repository: Path,
+    *,
+    expected_project_id: str,
+    expected_adapter_sha256: str,
+) -> list[str]:
+    """Validate only canonical identity, Base pins, and protected policy for Hub launch."""
+    errors: list[str] = []
+    try:
+        adapter_path = safe_repository_path(project_root, CANONICAL_ADAPTER, "canonical adapter")
+        adapter_raw = adapter_path.read_bytes()
+        adapter = json.loads(adapter_raw.decode("utf-8"))
+    except (ContractError, OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return ["Canonical project adapter snapshot is invalid"]
+    if hashlib.sha256(adapter_raw).hexdigest() != expected_adapter_sha256:
+        return ["Canonical project adapter snapshot changed"]
+    if adapter.get("schema_version") != 2:
+        return ["IDENTITY_MIGRATION_REQUIRED"]
+    errors.extend(validate_schema(adapter, ADAPTER_V2_SCHEMA, "PROJECT_BASE_ADAPTER_V2"))
+    if errors:
+        return errors
+    if adapter.get("project", {}).get("project_id") != expected_project_id:
+        errors.append("Project identity mismatch")
+    clean_adapter, adapter_error = _clean_tracked_blob_bytes(
+        project_root, adapter_path, "Canonical project adapter"
+    )
+    if adapter_error:
+        errors.append(adapter_error)
+    elif clean_adapter is None:
+        errors.append("Canonical project adapter must be tracked and committed")
+    else:
+        try:
+            committed = json.loads(clean_adapter.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            errors.append("Canonical project adapter committed blob is invalid")
+        else:
+            if committed != adapter:
+                errors.append("Canonical project adapter differs from its committed record")
+    release_errors, _, _ = _release_lock_contract(adapter, base_repository)
+    errors.extend(release_errors)
+    errors.extend(_protected_policy_errors(project_root, adapter, ""))
     return errors
 
 

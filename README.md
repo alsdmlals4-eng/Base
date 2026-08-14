@@ -47,7 +47,7 @@ START_HERE.md
 - [공용 스킬 학습 기록](skills/SKILL_LEARNING_LOG.md)
 - [Base 수정제안서]([수정제안서]/README.md)
 
-Tool Hub의 현재 실제 실행 세로 단면은 이미지·UX 배치 후 개발자 본인이 PC 증거 검토를 수행하는 `QA Evidence Studio`다. Android 검증은 PC 구현 종료 후 출시 준비 직전 Gate까지 `DEFERRED_NOT_CONNECTED`로 유지한다. Expression/Sprite Studio는 registry에 등록되지만 Hub 실행 연결 전까지 기존 독립 실행법을 유지한다.
+PR #328/#329 baseline을 흡수한 `tools/tool-hub/` 하나가 QA Evidence, Expression, Sprite Animation Studio의 유일한 Hub 진입점이다. 2026-08-13 Linux smoke는 공백 경로의 두 committed project fixture에서 두 visual Studio씩 네 child를 고유 port/PID로 실행하고 Expression 후보, Sprite action, Sprite effect-stage의 import/export와 `provider_call_made=false`, cross-project output 부재를 확인했다. 이는 `subscription_handoff_import` 실행 증거이며 실제 AI 생성·live Figma upload·Windows·Android 증거가 아니다. QA의 Android 상태는 `DEFERRED_NOT_CONNECTED`로 유지하며 다음 독립 후보 `Balance & Scenario Lab`은 아직 Hub surface에 추가하지 않는다.
 
 ## 사용자가 기억할 최소 요청
 
