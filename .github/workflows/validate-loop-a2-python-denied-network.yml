@@ -32,6 +32,8 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v5
         with:
           python-version: '3.12'
+      - name: Install A2 validation requirements
+        run: python -m pip install --disable-pip-version-check -r .github/validation-requirements.txt
       - name: Run Python DENIED network contracts
         run: python -m unittest tests.test_loop_a2_python_denied_network -v
       - name: Validate whitespace
