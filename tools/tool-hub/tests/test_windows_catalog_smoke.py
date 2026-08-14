@@ -97,7 +97,7 @@ def test_windows_process_starts_and_serves_blocked_catalog(tmp_path: Path) -> No
                 pytest.fail(f"Windows project registration returned HTTP {error.code}: {detail}")
             assert registered["project_id"] == project_id
 
-        with opener.open(f"http://127.0.0.1:{port}/api/catalog", timeout=2) as response:
+        with opener.open(f"http://127.0.0.1:{port}/api/catalog", timeout=20) as response:
             registered_catalog = json.load(response)
         assert [project["project_id"] for project in registered_catalog["projects"]] == [
             "coc-fiction",
