@@ -158,6 +158,82 @@ class ControlledVocabularyContractTests(unittest.TestCase):
         self.assertIn("Unit Test를 모든 조직에서 Component Test와 완전히 동일한 범위로 강제하지 않는다", vocabulary)
         self.assertIn("STANDARDIZED_CONTEXT (ISTQB)", vocabulary)
 
+    def test_work_tracking_terms_separate_issue_bug_defect_and_incident(self) -> None:
+        vocabulary = VOCABULARY.read_text(encoding="utf-8")
+        for term in ("Issue", "Bug", "Defect", "Incident"):
+            self.assertIn(term, vocabulary)
+
+        self.assertIn("Issue ≠ Bug", vocabulary)
+        self.assertIn("Incident ≠ 개별 Bug/Defect", vocabulary)
+        self.assertIn(
+            "Bug와 Defect를 모든 조직에서 완전히 동일하거나 완전히 다른 용어로 강제하지 않는다",
+            vocabulary,
+        )
+
+    def test_requirement_terms_separate_requirement_specification_and_constraint(self) -> None:
+        vocabulary = VOCABULARY.read_text(encoding="utf-8")
+        for term in ("Requirement", "Specification", "Constraint"):
+            self.assertIn(term, vocabulary)
+
+        self.assertIn("Requirement ≠ Specification", vocabulary)
+        self.assertIn("Constraint를 Requirement의 보편적 하위형으로 강제하지 않는다", vocabulary)
+        self.assertIn("Acceptance Criteria ≠ Requirement 전체", vocabulary)
+
+    def test_structure_terms_distinguish_dependency_coupling_and_cohesion(self) -> None:
+        vocabulary = VOCABULARY.read_text(encoding="utf-8")
+        for term in ("Dependency", "Coupling", "Cohesion"):
+            self.assertIn(term, vocabulary)
+
+        self.assertIn("Dependency 존재 ≠ Tight Coupling 확정", vocabulary)
+        self.assertIn("Coupling = 모듈 간 상호의존 정도", vocabulary)
+        self.assertIn("Cohesion = 한 모듈 내부 책임들의 논리적 관련성", vocabulary)
+
+    def test_interface_terms_distinguish_api_abi_protocol_and_schema(self) -> None:
+        vocabulary = VOCABULARY.read_text(encoding="utf-8")
+        for term in ("API", "ABI", "Protocol", "Schema"):
+            self.assertIn(term, vocabulary)
+
+        self.assertIn("API compatibility ≠ ABI compatibility", vocabulary)
+        self.assertIn("Protocol ≠ Endpoint 목록", vocabulary)
+        self.assertIn("Schema ≠ Protocol", vocabulary)
+        self.assertIn("OpenAPI ≠ 모든 종류의 API", vocabulary)
+        self.assertIn("JSON Schema ≠ 모든 종류의 Schema", vocabulary)
+
+    def test_delivery_terms_distinguish_build_package_artifact_deployment_and_release(self) -> None:
+        vocabulary = VOCABULARY.read_text(encoding="utf-8")
+        for term in ("Build", "Package", "Artifact", "Deployment", "Release"):
+            self.assertIn(term, vocabulary)
+
+        self.assertIn("Build process ≠ Build output", vocabulary)
+        self.assertIn("Artifact ≠ Package", vocabulary)
+        self.assertIn("Deployment ≠ Release", vocabulary)
+        self.assertIn("Release Candidate ≠ Release", vocabulary)
+
+    def test_observability_terms_distinguish_telemetry_metrics_logs_traces_and_profiles(self) -> None:
+        vocabulary = VOCABULARY.read_text(encoding="utf-8")
+        for term in (
+            "Telemetry",
+            "Metrics",
+            "Logging / Logs",
+            "Tracing / Traces",
+            "Profiling / Profiles",
+        ):
+            self.assertIn(term, vocabulary)
+
+        self.assertIn("Metrics ≠ Logs", vocabulary)
+        self.assertIn("Logs ≠ Traces", vocabulary)
+        self.assertIn("Tracing ≠ Profiling", vocabulary)
+        self.assertIn("관측 signal 존재 ≠ 원인 규명 완료", vocabulary)
+
+    def test_wave3_preserves_canonical_rows_and_context_limits(self) -> None:
+        vocabulary = VOCABULARY.read_text(encoding="utf-8")
+
+        self.assertEqual(vocabulary.count("| **Release Candidate** |"), 1)
+        self.assertEqual(vocabulary.count("| **Regression Recheck** |"), 1)
+        self.assertEqual(vocabulary.count("| **Release** |"), 1)
+        self.assertIn("ARTIFACT Kind ≠ Build Artifact", vocabulary)
+        self.assertIn("OpenTelemetry Profiles의 Alpha 상태 ≠ Profiling 일반의 Alpha 상태", vocabulary)
+
 
 if __name__ == "__main__":
     unittest.main()
