@@ -1,6 +1,7 @@
 import json
 import os
 from pathlib import Path
+import threading
 
 import pytest
 
@@ -50,6 +51,41 @@ def test_startup_report_rejects_a_symlinked_parent(tmp_path: Path) -> None:
 
     with pytest.raises(HubStartupError, match="private|symlink"):
         write_startup_report(alias / "startup.json", {"tool_id": "sprite-animation-studio"})
+
+
+def test_startup_report_is_not_visible_until_the_json_is_complete(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import base_tool_contracts.hub_startup as startup_module
+
+    private = tmp_path / "private"
+    private.mkdir(mode=0o700)
+    report = private / "startup.json"
+    entered_write = threading.Event()
+    release_write = threading.Event()
+    real_write = startup_module.os.write
+
+    def delayed_write(descriptor: int, raw: bytes) -> int:
+        entered_write.set()
+        assert release_write.wait(timeout=2)
+        return real_write(descriptor, raw)
+
+    monkeypatch.setattr(startup_module.os, "write", delayed_write)
+    worker = threading.Thread(
+        target=startup_module.write_startup_report,
+        args=(report, {"tool_id": "expression-studio", "port": 12345}),
+    )
+    worker.start()
+    try:
+        assert entered_write.wait(timeout=2)
+        assert not report.exists()
+    finally:
+        release_write.set()
+        worker.join(timeout=2)
+
+    assert not worker.is_alive()
+    assert json.loads(report.read_text(encoding="utf-8"))["port"] == 12345
 
 
 def test_loopback_listener_reports_the_actual_ephemeral_port() -> None:

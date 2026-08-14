@@ -183,6 +183,10 @@ def _hash_descriptor(descriptor: int) -> str:
     return digest.hexdigest()
 
 
+def _runtime_platform() -> str:
+    return sys.platform
+
+
 def validate_project_identity(
     project_root: Path,
     expected_project_id: str | None,
@@ -190,6 +194,32 @@ def validate_project_identity(
 ) -> ProjectIdentityEvidence:
     if expected_project_id is not None and _PROJECT_ID.fullmatch(expected_project_id) is None:
         raise ProjectIdentityError("PROJECT_IDENTITY_INVALID_LOCATOR")
+    if _runtime_platform() == "win32":
+        if expected_project_id is None:
+            raise ProjectIdentityError("PROJECT_IDENTITY_INVALID_LOCATOR")
+        from .windows_project_identity import (
+            WindowsProjectIdentityError,
+            validate_windows_project_identity,
+        )
+
+        try:
+            evidence = validate_windows_project_identity(
+                project_root,
+                expected_project_id,
+                base_root,
+            )
+        except WindowsProjectIdentityError as error:
+            raise ProjectIdentityError(str(error)) from error
+        return ProjectIdentityEvidence(
+            project_id=evidence.project_id,
+            root=evidence.root,
+            repository=evidence.repository,
+            engine=evidence.engine,
+            root_fingerprint=evidence.root_fingerprint,
+            adapter_sha256=evidence.adapter_sha256,
+            protected_paths=evidence.protected_paths,
+            validator_sha256=evidence.validator_sha256,
+        )
     if not Path("/proc/self/fd").is_dir():
         raise ProjectIdentityError("PROJECT_IDENTITY_DESCRIPTOR_RUNTIME_UNAVAILABLE")
     try:

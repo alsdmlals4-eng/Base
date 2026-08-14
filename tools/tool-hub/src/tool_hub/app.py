@@ -6,6 +6,7 @@ import argparse
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+from base_tool_contracts import DeliveryBlockedError, ProjectFigmaRegistry
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict
@@ -20,6 +21,7 @@ from .supervisor import ProcessSupervisor
 
 class ProjectRegistration(BaseModel):
     model_config = ConfigDict(extra="forbid")
+    project_id: str
     project_root: str
 
 
@@ -42,6 +44,18 @@ def create_app(
         tools = load_reviewed_tools(root, launch_supported=launch_supported)
     except HubRegistryError as error:
         raise RuntimeError("Tool Hub cannot start without its reviewed registry") from error
+    try:
+        figma_registry = ProjectFigmaRegistry.load(
+            root / "docs" / "operations" / "PROJECT_FIGMA_TARGET_REGISTRY.json"
+        )
+        figma_registry.assert_canonical(root)
+    except (ValueError, DeliveryBlockedError) as error:
+        raise RuntimeError("Tool Hub cannot start without its canonical project catalog") from error
+    known_projects = figma_registry.public_projects()
+    known_project_ids = {item["project_id"] for item in known_projects}
+    known_project_names = {
+        item["project_id"]: item["display_name"] for item in known_projects
+    }
     locator = ProjectLocator(project_config)
     launcher = ProcessSupervisor(
         project_config.parent / "runtime",
@@ -79,12 +93,27 @@ def create_app(
             }
             for item in tools
         ]
-        return {"tools": public_tools, "projects": locator.public_projects()}
+        registered_projects = locator.public_projects()
+        for project in registered_projects:
+            project["display_name"] = known_project_names.get(
+                project["project_id"],
+                project["display_name"],
+            )
+        return {
+            "tools": public_tools,
+            "known_projects": known_projects,
+            "projects": registered_projects,
+        }
 
     @app.post("/api/projects", status_code=201)
     def register_project(payload: ProjectRegistration) -> dict[str, str]:
+        if payload.project_id not in known_project_ids:
+            raise HTTPException(status_code=422, detail="PROJECT_CATALOG_ENTRY_REQUIRED")
         try:
-            return locator.register(Path(payload.project_root)).public_view()
+            return locator.register(
+                Path(payload.project_root),
+                payload.project_id,
+            ).public_view()
         except ProjectBindingError as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
 

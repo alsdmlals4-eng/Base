@@ -88,7 +88,7 @@ def test_locator_registers_exact_v2_project_and_redacts_root(tmp_path: Path) -> 
     project = make_project(tmp_path / "Project With Spaces")
     locator = ProjectLocator(tmp_path / "machine-projects.json")
 
-    binding = locator.register(project)
+    binding = locator.register(project, "demo-game")
     public = locator.public_projects()
 
     assert binding.project_id == "demo-game"
@@ -97,10 +97,18 @@ def test_locator_registers_exact_v2_project_and_redacts_root(tmp_path: Path) -> 
     assert str(project.resolve()) not in json.dumps(public)
 
 
+def test_locator_requires_the_catalog_project_id_at_the_service_boundary(tmp_path: Path) -> None:
+    project = make_project(tmp_path / "Project With Spaces")
+    locator = ProjectLocator(tmp_path / "machine-projects.json")
+
+    with pytest.raises(TypeError):
+        locator.register(project)
+
+
 def test_locator_reloads_and_revalidates_fingerprint(tmp_path: Path) -> None:
     project = make_project(tmp_path / "demo")
     config = tmp_path / "machine-projects.json"
-    ProjectLocator(config).register(project)
+    ProjectLocator(config).register(project, "demo-game")
 
     assert ProjectLocator(config).resolve("demo-game").root == project.resolve()
 
@@ -108,18 +116,21 @@ def test_locator_reloads_and_revalidates_fingerprint(tmp_path: Path) -> None:
 def test_locator_rejects_v1_and_invalid_project_identity(tmp_path: Path) -> None:
     with pytest.raises(ProjectBindingError, match="IDENTITY_MIGRATION_REQUIRED"):
         ProjectLocator(tmp_path / "one.json").register(
-            make_project(tmp_path / "v1", schema_version=1)
+            make_project(tmp_path / "v1", schema_version=1),
+            "demo-game",
         )
     with pytest.raises(ProjectBindingError, match="PROJECT_IDENTITY_ADAPTER_INVALID"):
         ProjectLocator(tmp_path / "two.json").register(
-            make_project(tmp_path / "invalid", project_id="Invalid ID")
+            make_project(tmp_path / "invalid", project_id="Invalid ID"),
+            "invalid-id",
         )
 
 
 def test_locator_rejects_partial_document_that_only_claims_v2(tmp_path: Path) -> None:
     with pytest.raises(ProjectBindingError, match="PROJECT_IDENTITY_ADAPTER_INVALID"):
         ProjectLocator(tmp_path / "projects.json").register(
-            make_project(tmp_path / "partial", partial_adapter=True)
+            make_project(tmp_path / "partial", partial_adapter=True),
+            "demo-game",
         )
 
 
@@ -127,12 +138,12 @@ def test_locator_rejects_non_git_or_unignored_vault(tmp_path: Path) -> None:
     non_git = tmp_path / "non-git"
     non_git.mkdir()
     with pytest.raises(ProjectBindingError, match="PROJECT_IDENTITY_PATH_BLOCKED"):
-        ProjectLocator(tmp_path / "one.json").register(non_git)
+        ProjectLocator(tmp_path / "one.json").register(non_git, "demo-game")
 
     project = make_project(tmp_path / "tracked")
     (project / ".gitignore").write_text("", encoding="utf-8")
     with pytest.raises(ProjectBindingError, match="PROJECT_ASSET_VAULT_NOT_GITIGNORED"):
-        ProjectLocator(tmp_path / "two.json").register(project)
+        ProjectLocator(tmp_path / "two.json").register(project, "demo-game")
 
 
 def test_locator_rejects_a_vault_beneath_a_symlinked_component(tmp_path: Path) -> None:
@@ -144,7 +155,7 @@ def test_locator_rejects_a_vault_beneath_a_symlinked_component(tmp_path: Path) -
     (project / ".asset-vault").symlink_to(outside, target_is_directory=True)
 
     with pytest.raises(ProjectBindingError, match="PROJECT_IDENTITY_PATH_BLOCKED"):
-        ProjectLocator(tmp_path / "projects.json").register(project)
+        ProjectLocator(tmp_path / "projects.json").register(project, "demo-game")
 
 
 def test_locator_does_not_execute_project_fsmonitor(tmp_path: Path) -> None:
@@ -155,7 +166,7 @@ def test_locator_does_not_execute_project_fsmonitor(tmp_path: Path) -> None:
     hook.chmod(0o755)
     subprocess.run(["git", "-C", str(project), "config", "core.fsmonitor", str(hook)], check=True)
 
-    ProjectLocator(tmp_path / "projects.json").register(project)
+    ProjectLocator(tmp_path / "projects.json").register(project, "demo-game")
 
     assert not marker.exists()
 
@@ -169,7 +180,7 @@ def test_locator_rejects_untracked_canonical_adapter(tmp_path: Path) -> None:
     )
 
     with pytest.raises(ProjectBindingError, match="PROJECT_IDENTITY_VALIDATOR_BLOCKED"):
-        ProjectLocator(tmp_path / "projects.json").register(project)
+        ProjectLocator(tmp_path / "projects.json").register(project, "demo-game")
 
 
 def test_locator_rejects_symlinked_root_component(tmp_path: Path) -> None:
@@ -178,7 +189,7 @@ def test_locator_rejects_symlinked_root_component(tmp_path: Path) -> None:
     alias.symlink_to(tmp_path, target_is_directory=True)
 
     with pytest.raises(ProjectBindingError, match="PROJECT_IDENTITY_PATH_BLOCKED"):
-        ProjectLocator(tmp_path / "projects.json").register(alias / project.name)
+        ProjectLocator(tmp_path / "projects.json").register(alias / project.name, "demo-game")
 
 
 def test_identity_evidence_owns_repository_and_engine_metadata(tmp_path: Path) -> None:
@@ -200,7 +211,7 @@ def test_locator_ignores_a_fake_git_on_the_caller_path(tmp_path: Path, monkeypat
     fake_git.chmod(0o755)
     monkeypatch.setenv("PATH", str(attacker))
 
-    ProjectLocator(tmp_path / "projects.json").register(project)
+    ProjectLocator(tmp_path / "projects.json").register(project, "demo-game")
 
     assert not marker.exists()
 
@@ -366,7 +377,7 @@ def test_visual_preflight_requires_the_canonical_base_figma_registry(tmp_path: P
 
     project = make_project(tmp_path / "project", project_id="coc-fiction")
     locator = ProjectLocator(tmp_path / "projects.json")
-    locator.register(project)
+    locator.register(project, "coc-fiction")
     canonical = ProjectFigmaRegistry.load(
         BASE_ROOT / "docs" / "operations" / "PROJECT_FIGMA_TARGET_REGISTRY.json"
     )
@@ -393,7 +404,7 @@ def test_visual_preflight_rejects_untracked_anchor_registry(tmp_path: Path) -> N
 
     project = make_project(tmp_path / "project", project_id="coc-fiction")
     locator = ProjectLocator(tmp_path / "projects.json")
-    locator.register(project)
+    locator.register(project, "coc-fiction")
     figma = ProjectFigmaRegistry.load(
         BASE_ROOT / "docs" / "operations" / "PROJECT_FIGMA_TARGET_REGISTRY.json"
     )

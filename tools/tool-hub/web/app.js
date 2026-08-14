@@ -25,7 +25,7 @@ function childStateKey(projectId, toolId) {
 
 function defaultChildState(tool) {
   if (!state.projectId) return { status: "PROJECT_SELECTION_REQUIRED", detail: "먼저 프로젝트를 선택하세요.", tone: "idle" };
-  if (tool.launch_state !== "RUNNABLE") return { status: "BLOCKED_UNVERIFIED", detail: "서버가 이 도구를 실행 가능으로 등록하지 않았습니다.", tone: "blocked" };
+  if (tool.launch_state !== "RUNNABLE") return { status: "BLOCKED_PLATFORM", detail: "프로젝트는 선택됐지만 이 운영체제의 도구 실행은 아직 검증되지 않았습니다.", tone: "blocked" };
   const detail = VISUAL_TOOLS.has(tool.tool_id)
     ? "subscription_handoff_import · provider 호출 없음 · routing/anchor gate는 시작 전에 서버가 검증"
     : "프로젝트별 QA evidence child가 아직 시작되지 않았습니다.";
@@ -59,8 +59,25 @@ function requireAuthenticatedChildUrl(childUrl) {
   }
 }
 
-function render() {
-  const projects = document.querySelector("#project-list"); projects.replaceChildren();
+function renderKnownProjects() {
+  const knownProjects = document.querySelector("#known-project");
+  const selected = knownProjects.value;
+  knownProjects.replaceChildren();
+  const prompt = document.createElement("option");
+  prompt.value = "";
+  prompt.textContent = "연결할 프로젝트를 선택하세요";
+  knownProjects.append(prompt);
+  for (const project of state.catalog.known_projects) {
+    const option = document.createElement("option");
+    option.value = project.project_id;
+    option.textContent = `${project.display_name} · ${project.project_id}`;
+    knownProjects.append(option);
+  }
+  if ([...knownProjects.options].some(option => option.value === selected)) knownProjects.value = selected;
+}
+
+function renderRegisteredProjects() {
+  const projects = document.querySelector("#registered-project-list"); projects.replaceChildren();
   for (const project of state.catalog.projects) {
     const button = document.createElement("button");
     button.textContent = `${project.display_name} · ${project.state}`;
@@ -68,6 +85,17 @@ function render() {
     if (state.projectId === project.project_id) button.classList.add("selected");
     projects.append(button);
   }
+  if (!state.catalog.projects.length) {
+    const empty = document.createElement("p");
+    empty.className = "empty-state";
+    empty.textContent = "아직 연결된 프로젝트가 없습니다.";
+    projects.append(empty);
+  }
+}
+
+function render() {
+  renderKnownProjects();
+  renderRegisteredProjects();
   const tools = document.querySelector("#tool-catalog"); tools.replaceChildren();
   for (const tool of state.catalog.tools) {
     const card = document.createElement("article"); card.className = "tool-card";
@@ -108,7 +136,11 @@ async function refresh() { state.catalog = await api("/api/catalog"); if (!state
 document.querySelector("#project-registration").addEventListener("submit", async event => {
   event.preventDefault();
   try {
-    const project = await api("/api/projects", { method: "POST", body: JSON.stringify({ project_root: document.querySelector("#project-root").value }) });
+    const project = await api("/api/projects", { method: "POST", body: JSON.stringify({
+      project_id: document.querySelector("#known-project").value,
+      project_root: document.querySelector("#project-root").value,
+    }) });
+    document.querySelector("#project-root").value = "";
     state.projectId = project.project_id; await refresh(); show(`${project.project_id} 연결됨`);
   } catch (error) { show(error.message, true); }
 });

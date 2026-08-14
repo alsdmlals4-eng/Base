@@ -166,6 +166,18 @@ class ProjectFigmaRegistry:
             return "ROUTING_CONFIGURED"
         return "ROUTING_BLOCKED"
 
+    def public_projects(self) -> list[dict[str, str]]:
+        """Return the human-facing project catalog without Figma target details."""
+        return [
+            {
+                "project_id": entry.project_id,
+                "display_name": entry.display_name,
+                "routing_state": self.registration_state(entry.project_id),
+            }
+            for entry in self._document.entries
+            if entry.delivery_status != "ARCHIVED"
+        ]
+
     def resolve_ready_target(self, project_id: str) -> ProjectFigmaTarget:
         entry = self._entries.get(project_id)
         if entry is None:

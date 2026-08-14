@@ -16,11 +16,24 @@
 
     <section class="panel">
       <h2>프로젝트 연결</h2>
+      <p class="selection-note project-help">목록에서 프로젝트를 찾고, 처음 한 번만 해당 프로젝트의 로컬 Git 폴더를 입력하세요.</p>
       <form id="project-registration">
-        <label>프로젝트 Git 루트<input id="project-root" required placeholder="검증할 로컬 Git 루트를 입력하세요"></label>
+        <label>등록 가능한 프로젝트
+          <select id="known-project" required aria-describedby="project-picker-help">
+            <option value="">프로젝트 목록을 불러오는 중입니다.</option>
+          </select>
+        </label>
+        <small id="project-picker-help">이 목록은 프로젝트를 찾기 위한 안내이며, 실제 신원은 Git의 v2 Adapter로 검증합니다.</small>
+        <label>프로젝트 Git 폴더
+          <input id="project-root" required placeholder="예: D:\Games\Coc-Fiction">
+        </label>
         <button type="submit">프로젝트 검증 및 연결</button>
       </form>
-      <div id="project-list"></div>
+      <div class="registered-projects">
+        <h3>내 프로젝트</h3>
+        <p class="selection-note">한 번 검증된 프로젝트는 여기서 바로 선택할 수 있습니다.</p>
+        <div id="registered-project-list"></div>
+      </div>
     </section>
 
     <section class="panel">

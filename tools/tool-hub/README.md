@@ -44,13 +44,15 @@ $projectConfig = Join-Path $env:LOCALAPPDATA 'BaseToolHub\projects.json'
 
 브라우저에서 `http://127.0.0.1:8764`를 엽니다.
 
-연결할 프로젝트는 Git 루트, v2 adapter, gitignored Asset Vault를 모두 갖춰야 합니다. visual Studio에는 canonical Base Figma route와 committed `docs/APPROVED_VISUAL_ANCHORS.json`도 필요합니다. 위 Windows 명령은 실행 경로 안내이며 실제 Windows child process-tree·공백 경로 smoke 통과 증거가 아닙니다.
+`등록 가능한 프로젝트` 목록에서 게임 이름을 고른 뒤, 그 프로젝트의 로컬 Git 폴더를 처음 한 번만 입력합니다. 등록에 성공하면 `내 프로젝트`에 저장되어 다음부터는 버튼으로 바로 선택할 수 있습니다. 목록은 사람이 프로젝트를 찾기 위한 안내이며, 서버는 선택한 ID와 committed v2 `skills/PROJECT_BASE_ADAPTER.json`의 ID가 정확히 같은지 다시 검사합니다. 로컬 절대 경로는 브라우저 catalog에 반환하지 않습니다.
 
-Windows에서는 Hub 프로세스와 검토된 도구 카탈로그를 열 수 있지만, 현재 프로젝트 등록과 Studio child 실행은 Linux descriptor/process-group 계약을 대체할 Windows Job Object 구현이 없어 `BLOCKED_PLATFORM`으로 fail-closed됩니다. 카탈로그가 열린 사실을 Expression/Sprite/QA 도구 실행 완료로 해석하지 않습니다.
+연결할 프로젝트는 정확한 Git 루트, v2 adapter, gitignored Asset Vault를 모두 갖춰야 합니다. visual Studio에는 canonical Base Figma route와 committed `docs/APPROVED_VISUAL_ANCHORS.json`도 필요합니다. 프로젝트 등록은 도구 child 실행이나 Figma 배치 증거가 아닙니다.
+
+Windows에서는 Hub 프로세스·검토된 도구 카탈로그와 portable v2 프로젝트 등록 경로를 제공합니다. 하지만 Studio child 실행은 Windows Job Object와 Windows-safe staging 계약이 아직 없어 `BLOCKED_PLATFORM`으로 fail-closed됩니다. 프로젝트가 `내 프로젝트`에 표시된 사실을 Expression/Sprite/QA 실행 완료로 해석하지 않습니다.
 
 ## 현재 검증되지 않은 것
 
-- Windows child process-tree ownership과 두 프로젝트·네 child 공백 경로 smoke
+- Windows Job Object child process-tree ownership, Studio staging, 두 프로젝트·네 child 공백 경로 smoke
 - Android 기기 연결과 테스트
 - live Figma connector 배치·upload·node 존재
 - paid OpenAI 또는 pinned sprite provider 호출과 실제 AI 생성 품질·비용
