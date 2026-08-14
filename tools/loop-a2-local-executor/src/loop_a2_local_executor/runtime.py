@@ -96,13 +96,24 @@ class LocalA2Runtime:
         return image_id
 
     def _capsule(self, project_root: Path, job: LocalA2Job) -> tuple[str, str]:
-        path = project_root.joinpath(*job.capsule.split("/"))
+        current = project_root
+        for part in job.capsule.split("/"):
+            current = current / part
+            try:
+                if current.is_symlink():
+                    raise LocalRuntimeError(
+                        "CAPSULE_UNAVAILABLE",
+                        "Capsule path must not traverse symlinks",
+                    )
+            except OSError as exc:
+                raise LocalRuntimeError("CAPSULE_UNAVAILABLE", "exact authority Capsule is unavailable") from exc
+        path = current
         try:
             resolved_root = project_root.resolve(strict=True)
             resolved = path.resolve(strict=True)
         except (OSError, RuntimeError) as exc:
             raise LocalRuntimeError("CAPSULE_UNAVAILABLE", "exact authority Capsule is unavailable") from exc
-        if resolved_root not in resolved.parents or not resolved.is_file() or resolved.is_symlink():
+        if resolved == resolved_root or resolved_root not in resolved.parents or not resolved.is_file():
             raise LocalRuntimeError("CAPSULE_UNAVAILABLE", "Capsule path is not a regular file inside authority root")
         try:
             value = json.loads(resolved.read_text(encoding="utf-8"))
