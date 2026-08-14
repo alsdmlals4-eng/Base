@@ -1,0 +1,13 @@
+{
+  "contract_role": "LOOP_IMMUTABLE_RUN",
+  "design_drift_status": "NO_DRIFT",
+  "evidence": [],
+  "findings": [],
+  "package_id": "PACKAGE_001",
+  "project_id": "EXAMPLE_GAME",
+  "receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "run_id": "RUN_001",
+  "schema_version": 1,
+  "source_main_sha": "0000000000000000000000000000000000000000",
+  "state": "SHADOW_COMPLETE"
+}

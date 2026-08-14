@@ -1,0 +1,98 @@
+{
+  "$id": "loop-visual-lock-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "aspect_ratios": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "avoid": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "contract_role": {
+      "const": "LOOP_VISUAL_LOCK"
+    },
+    "do_not_drift": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "keep": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "project_id": {
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+      "type": "string"
+    },
+    "provider": {
+      "enum": [
+        "FIGMA_VISUAL_BIBLE",
+        "GITHUB_ART_BIBLE",
+        "IMMUTABLE_REFERENCE_SNAPSHOT",
+        "APPROVED_ASSET_MANIFEST",
+        "COMPOSITE",
+        "NONE"
+      ]
+    },
+    "reference_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "source_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "VISUAL_LOCKED",
+        "VISUAL_NOT_APPLICABLE"
+      ]
+    },
+    "target_platforms": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "contract_role",
+    "project_id",
+    "status",
+    "source_commit",
+    "provider",
+    "reference_ids",
+    "keep",
+    "avoid",
+    "do_not_drift"
+  ],
+  "type": "object"
+}

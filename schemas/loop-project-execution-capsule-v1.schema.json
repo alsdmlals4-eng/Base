@@ -1,0 +1,172 @@
+{
+  "$id": "loop-project-execution-capsule-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "a3_auto_merge_allowlist": {
+      "maxItems": 0,
+      "type": "array"
+    },
+    "active_run_path": {
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+      "type": "string"
+    },
+    "autonomy": {
+      "const": "A2_EXECUTE_ISOLATED"
+    },
+    "budgets": {
+      "additionalProperties": false,
+      "properties": {
+        "max_agents": {
+          "maximum": 8,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_ci_runs": {
+          "maximum": 10,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_parallel_agents": {
+          "maximum": 4,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_repair_cycles": {
+          "maximum": 5,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "max_agents",
+        "max_parallel_agents",
+        "max_repair_cycles",
+        "max_ci_runs"
+      ],
+      "type": "object"
+    },
+    "capabilities": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "context_isolation": {
+      "additionalProperties": false,
+      "properties": {
+        "cross_project_asset_import": {
+          "const": "FORBIDDEN"
+        },
+        "cross_project_canon_import": {
+          "const": "FORBIDDEN"
+        },
+        "cross_project_session_reuse": {
+          "const": "FORBIDDEN"
+        },
+        "cross_project_visual_reference_import": {
+          "const": "FORBIDDEN"
+        }
+      },
+      "required": [
+        "cross_project_canon_import",
+        "cross_project_visual_reference_import",
+        "cross_project_asset_import",
+        "cross_project_session_reuse"
+      ],
+      "type": "object"
+    },
+    "contract_role": {
+      "const": "LOOP_PROJECT_EXECUTION_CAPSULE"
+    },
+    "coverage_ledger_path": {
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+      "type": "string"
+    },
+    "immutable_run_path": {
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+      "type": "string"
+    },
+    "implementation_package_path": {
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+      "type": "string"
+    },
+    "planning_lock_path": {
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+      "type": "string"
+    },
+    "protected_surfaces": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "runtime_adapter_path": {
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+      "type": "string"
+    },
+    "scheduler_runtime_provider": {
+      "const": "NOT_CONFIGURED"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "semantic_resource_domains": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "source_main_sha": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "status": {
+      "const": "ADOPTED"
+    },
+    "visual_lock_path": {
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "contract_role",
+    "project_id",
+    "status",
+    "source_main_sha",
+    "planning_lock_path",
+    "visual_lock_path",
+    "runtime_adapter_path",
+    "implementation_package_path",
+    "coverage_ledger_path",
+    "active_run_path",
+    "immutable_run_path",
+    "capabilities",
+    "protected_surfaces",
+    "semantic_resource_domains",
+    "autonomy",
+    "a3_auto_merge_allowlist",
+    "budgets",
+    "context_isolation",
+    "scheduler_runtime_provider"
+  ],
+  "type": "object"
+}

@@ -1,0 +1,108 @@
+{
+  "$id": "loop-requirement-coverage-ledger-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contract_role": {
+      "const": "LOOP_REQUIREMENT_COVERAGE_LEDGER"
+    },
+    "package_id": {
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+      "type": "string"
+    },
+    "requirements": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "outputs": {
+            "items": {
+              "minLength": 1,
+              "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "requirement_id": {
+            "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "MAPPED",
+              "IMPLEMENTED",
+              "VERIFIED",
+              "DEFERRED_APPROVED"
+            ]
+          },
+          "tasks": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "tests": {
+            "items": {
+              "minLength": 1,
+              "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "requirement_id",
+          "tasks",
+          "outputs",
+          "tests",
+          "evidence",
+          "status"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "source_main_sha": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "INITIALIZED",
+        "IN_PROGRESS",
+        "VERIFIED"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "contract_role",
+    "project_id",
+    "source_main_sha",
+    "package_id",
+    "status",
+    "requirements"
+  ],
+  "type": "object"
+}
