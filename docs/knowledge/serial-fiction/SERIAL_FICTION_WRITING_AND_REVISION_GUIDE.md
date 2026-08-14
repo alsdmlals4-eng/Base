@@ -100,6 +100,23 @@ Reader Promise는 작품이 독자에게 반복적으로 주는 핵심 경험이
 
 매 회차가 동일 사건을 반복할 필요는 없다. 하지만 Reader Promise와 장기간 무관한 전개가 이어지면 `READER_PROMISE_MISSING`을 의심한다.
 
+### 3-A. 새 이야기·아크·에피소드 기원이 비어 있을 때 — `STORY_ORIGIN_ENGINE`
+
+새 이야기·아크·에피소드를 발상하거나 기존 Reader Promise에서 다음 사건을 생성해야 할 때 `docs/knowledge/methods/STORY_ORIGIN_AND_GENERATION_METHOD.md`를 선택적으로 사용한다.
+
+```text
+Reader Promise 또는 현재 seed
+→ AFFECTED_AGENT
+→ PRESSURE
+→ DESIRE / GOAL
+→ RESISTANCE
+→ CONSEQUENTIAL_CHOICE
+→ CONSEQUENCE / SHIFT
+→ 다음 회차가 소비할 NEXT_PRESSURE
+```
+
+이미 정본 사건·인과·회차 목표가 확정된 단순 퇴고에서는 story origin을 다시 만들지 않는다. 정본을 더 흥미롭게 만들기 위해 보호된 사건 결과를 바꾸지 않는다.
+
 ## 4. 사건 요약과 장면 체험을 구분한다
 
 압축 초안은 사건 배치에 유용하지만 완성 원고와 다르다.
