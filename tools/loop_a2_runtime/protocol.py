@@ -215,8 +215,8 @@ class WorkerResult:
         if not isinstance(usage, dict):
             raise ProtocolError("usage must be an object")
         _exact_keys(usage, {"turns"}, "usage")
-        if not isinstance(usage["turns"], int) or usage["turns"] < 0:
-            raise ProtocolError("usage.turns must be a non-negative integer")
+        if not isinstance(usage["turns"], int) or not 0 <= usage["turns"] <= 50:
+            raise ProtocolError("usage.turns must be 0..50")
         errors = value["errors"]
         if not isinstance(errors, list):
             raise ProtocolError("errors must be a list")
