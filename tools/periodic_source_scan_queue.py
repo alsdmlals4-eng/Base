@@ -139,7 +139,7 @@ def select_due_source_batch(
     for _, group in groupby(ordered, key=lambda row: _due_key(row)[:2]):
         tied = list(group)
         if len(tied) > 1:
-            start = today.toordinal() % len(tied)
+            start = (today.toordinal() * batch_size) % len(tied)
             tied = tied[start:] + tied[:start]
         rotated.extend(tied)
     return rotated[:batch_size]
