@@ -84,6 +84,24 @@ class ProtocolTests(unittest.TestCase):
         with self.assertRaises(ProtocolError):
             ReviewResult.from_dict(review | {"reasoning": "secret"})
 
+    def test_worker_usage_turns_are_bounded(self) -> None:
+        worker = {
+            "schema_version": 1,
+            "contract_role": "LOOP_A2_WORKER_RESULT",
+            "project_id": "BLACKSMITH",
+            "run_id": "RUN_001",
+            "package_id": "PACKAGE_001",
+            "expected_main_sha": "0123456789abcdef0123456789abcdef01234567",
+            "role": "BUILDER",
+            "status": "COMPLETED",
+            "changed_paths": ["scripts/feature/a.gd"],
+            "summary": "too many turns",
+            "usage": {"turns": 51},
+            "errors": [],
+        }
+        with self.assertRaises(ProtocolError):
+            WorkerResult.from_dict(worker)
+
 
 if __name__ == "__main__":
     unittest.main()
