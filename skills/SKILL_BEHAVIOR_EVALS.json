@@ -569,6 +569,34 @@
       ],
       "expected_user_decision_state": "NOT_REQUIRED",
       "rationale": "완료·의도·병합 주장의 독립 검증이 주 책임이며 생산자 설명이나 검색 snippet을 Evidence로 승격하지 않는다."
+    },
+    {
+      "case_id": "SBE-039",
+      "case_type": "positive",
+      "prompt": "클라우드에서 Base 변경과 테스트는 끝났는데 gh가 설치되어 있지 않고 로컬 push 인증도 없습니다. 연결된 GitHub 플러그인은 브랜치, Git object, PR, 상태, 병합을 지원합니다. 재인증을 요구하지 말고 동시 변경과 정확한 SHA를 확인해 안전하게 게시하고 검증해줘.",
+      "expected_work_mode": "BUILD",
+      "expected_primary_skill": "synchronizing-local-and-github-state",
+      "expected_supporting_skills": [
+        "reviewing-and-validating-project-changes"
+      ],
+      "expected_skill_modes": [
+        "GITHUB_CAPABILITY_FALLBACK",
+        "publish-remote",
+        "verify-sync"
+      ],
+      "forbidden_skills": [
+        "managing-design-documents",
+        "creating-user-learning-notes"
+      ],
+      "required_evidence": [
+        "github_connector / local_git / gh_cli capability 판정",
+        "CONCURRENT_CHANGE_PREFLIGHT",
+        "exact write parent와 expected HEAD",
+        "update_ref(force=false)",
+        "Required Checks와 post-merge main readback"
+      ],
+      "expected_user_decision_state": "NOT_REQUIRED",
+      "rationale": "필요한 GitHub capability가 이미 연결돼 있으므로 optional CLI 재인증이 아니라 기존 동기화 Skill의 connector fallback과 exact-SHA gate가 주 책임이다."
     }
   ]
 }
