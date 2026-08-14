@@ -29,11 +29,12 @@ class ToolHubSubscriptionProductionContractTests(unittest.TestCase):
     def test_subscription_handoff_contract_is_truthful_and_network_free(self) -> None:
         source = read("tools/base-tool-contracts/src/base_tool_contracts/subscription_handoff.py")
         for token in (
-            'state: str = "GPT_PRO_HANDOFF_READY"',
-            'generation_surface: str = "CHATGPT_PRO_SUBSCRIPTION"',
-            'output_media_type: str = "image/png"',
-            "provider_call_made: bool = False",
-            "requires_additional_payment: bool = False",
+            'schema_version: int = field(default=1, init=False)',
+            'state: str = field(default="GPT_PRO_HANDOFF_READY", init=False)',
+            'generation_surface: str = field(default="CHATGPT_PRO_SUBSCRIPTION", init=False)',
+            'output_media_type: str = field(default="image/png", init=False)',
+            'provider_call_made: bool = field(default=False, init=False)',
+            'requires_additional_payment: bool = field(default=False, init=False)',
             "This function deliberately performs no provider call",
         ):
             self.assertIn(token, source)
