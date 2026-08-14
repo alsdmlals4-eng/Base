@@ -49,7 +49,7 @@ Required caller-bound fields:
 - expected PNG count and allowed integer dimension range
 - bounded unique string review checklist
 
-The builder does not accept a caller-selected generation surface or output type. It rejects non-string identities, Windows-special/path-shaped source filenames, malformed SHA-256, non-integer count/dimensions, token/key-shaped instruction content, and malformed checklist values with `SubscriptionHandoffError`. The packet must not contain arbitrary Figma URLs/node IDs or a claim that generation occurred.
+The builder does not accept a caller-selected generation surface or output type. It rejects non-string identities, Windows-special/path-shaped source filenames, malformed SHA-256, non-integer count/dimensions, token/key-shaped instruction content, and malformed checklist values with `SubscriptionHandoffError`. Free-text instruction/checklist fields also reject absolute Windows/POSIX private paths and Figma URL/node routing hints, so the handoff cannot leak local storage layout or turn the normal ChatGPT surface into a Figma mutation authority. The packet must not contain a claim that generation occurred.
 
 ## Import boundary
 
@@ -152,6 +152,14 @@ Focused workflow run `31819588625` failed on Ubuntu with `11 failed, 21 passed`.
 
 After making fixed truth fields `init=False`, adding strict runtime type guards, Windows-safe display filename rejection, broader credential-like token detection, and fail-closed checklist handling, focused workflow run `31819831239` passed both package and repository contracts on **Ubuntu and Windows**.
 
+### Private-routing hardening RED
+
+Final patch review found that the free-text instruction/checklist could still carry local absolute paths or Figma routing hints. Focused workflow run `31820091027` failed on the intended four cases only with `4 failed, 31 passed`: Windows absolute path, POSIX absolute path, Figma URL/node hint in instruction, and private-routing content in the review checklist.
+
+### Private-routing hardening GREEN
+
+After adding bounded private-routing detection for Windows/POSIX absolute paths and Figma URL/node hints, focused workflow run `31820175466` passed package and repository contracts on **Ubuntu and Windows**.
+
 ## IRG
 
 Verified in this slice:
@@ -160,7 +168,7 @@ Verified in this slice:
 - generation surface fixed and non-overridable as ChatGPT Pro subscription: `IMPLEMENTED_TESTED`
 - PNG output contract fixed and non-overridable: `IMPLEMENTED_TESTED`
 - provider-call/additional-payment truth fields fixed and non-overridable: `IMPLEMENTED_TESTED`
-- strict runtime type and credential/private-path exclusion: `IMPLEMENTED_TESTED`
+- strict runtime type and credential/private-path/private-routing exclusion: `IMPLEMENTED_TESTED`
 - eight-project Expression Runs route registry: `IMPLEMENTED_TESTED`
 - exact parent/destination/project-marker IDs and FRAME types: `IMPLEMENTED_TESTED`
 - canonical committed-byte proof: `IMPLEMENTED_TESTED`
