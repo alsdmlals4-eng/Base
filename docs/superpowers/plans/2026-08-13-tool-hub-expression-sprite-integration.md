@@ -20,6 +20,7 @@
 - POSIX lifecycle is implemented and tested. Windows process-tree ownership and four-process path-with-spaces operation remain `BLOCKED_UNVERIFIED` until a real Windows smoke is run.
 - PR #322 changes only Loop Capsule design files and has no planned changed-path intersection.
 - No production code is written before its intended test fails.
+- Phase 1 trusts the same OS user account and machine administrator. Runtime hashes, no-follow path checks, descriptor binding, and clean environments protect reviewed launch inputs and detect accidental or untrusted project drift; they do not claim to sandbox an already-running malicious same-account process. Separate-user/container/signed read-only runtime hardening is `HARDENED_RUNTIME_DEFERRED`.
 
 ---
 
@@ -164,7 +165,7 @@ git commit -m "feat: add Hub startup contract to visual Studios"
 
 - [x] **Step 3: Implement clean per-child environments** with only reviewed OS essentials, a private empty mode-0700 `PYTHONPYCACHEPREFIX`, `PYTHONDONTWRITEBYTECODE=1`, Hub identity values, and no provider credentials for import mode.
 
-- [x] **Step 4: Implement fixed launch specs** using only each Studio's reviewed virtual-environment interpreter and module owner, `shell=False` argv arrays, immutable project evidence, canonical registries, and port zero.
+- [x] **Step 4: Implement fixed launch specs** using only each Studio's reviewed virtual-environment interpreter and module owner, `shell=False` argv arrays, fixed project evidence, canonical registries, and port zero. Runtime hash and descriptor checks are defense-in-depth within the approved local threat model, not a same-account process sandbox.
 
 - [x] **Step 5: Run registry, adapter, and environment suites**.
 
