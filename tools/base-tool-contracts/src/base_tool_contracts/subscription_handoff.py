@@ -42,6 +42,7 @@ _WORKFLOW_TOOL = {
     "sprite_effect_stages": "sprite-animation-studio",
 }
 _WINDOWS_FILENAME_FORBIDDEN = frozenset('<>:"/\\|?*')
+_MAX_RENDERED_PROMPT_BYTES = 12 * 1024
 
 
 @dataclass(frozen=True)
@@ -202,3 +203,64 @@ def build_subscription_handoff_packet(
         max_dimension=max_dimension,
         review_checklist=checklist,
     )
+
+
+def _revalidate_handoff_packet(packet: SubscriptionHandoffPacket) -> SubscriptionHandoffPacket:
+    """Re-run builder validation so direct dataclass construction cannot bypass renderer safety."""
+    if not isinstance(packet, SubscriptionHandoffPacket):
+        raise SubscriptionHandoffError("renderer requires a validated subscription handoff packet")
+    try:
+        validated = build_subscription_handoff_packet(
+            project_id=packet.project_id,
+            tool_id=packet.tool_id,
+            run_id=packet.run_id,
+            workflow=packet.workflow,
+            source_filename=packet.source_filename,
+            source_sha256=packet.source_sha256,
+            instruction=packet.instruction,
+            expected_png_count=packet.expected_png_count,
+            min_dimension=packet.min_dimension,
+            max_dimension=packet.max_dimension,
+            review_checklist=packet.review_checklist,
+        )
+    except SubscriptionHandoffError as error:
+        raise SubscriptionHandoffError("renderer packet failed handoff validation") from error
+    if validated != packet:
+        raise SubscriptionHandoffError("renderer packet truth fields do not match the reviewed handoff contract")
+    return validated
+
+
+def render_chatgpt_pro_prompt(packet: SubscriptionHandoffPacket) -> str:
+    """Render one deterministic, copy-ready prompt for the normal ChatGPT Pro UI."""
+
+    packet = _revalidate_handoff_packet(packet)
+    checklist = "\n".join(f"- {item}" for item in packet.review_checklist)
+    prompt = (
+        "Use the existing ChatGPT Pro subscription image-generation surface for this handoff.\n"
+        "This is a manual subscription handoff: no API/provider call is requested and no additional payment route is authorized.\n\n"
+        "Handoff identity\n"
+        f"- project_id: {packet.project_id}\n"
+        f"- tool_id: {packet.tool_id}\n"
+        f"- run_id: {packet.run_id}\n"
+        f"- workflow: {packet.workflow}\n\n"
+        "Approved source reference\n"
+        f"- filename: {packet.source_filename}\n"
+        f"- sha256: {packet.source_sha256}\n\n"
+        "Generation instruction\n"
+        f"{packet.instruction}\n\n"
+        "Required output\n"
+        f"- Return exactly {packet.expected_png_count} PNG image(s).\n"
+        f"- Each PNG must have both dimensions between {packet.min_dimension} and {packet.max_dimension} pixels.\n"
+        "- Preserve the approved source identity and change only what the generation instruction requests.\n\n"
+        "Review checklist\n"
+        f"{checklist}\n\n"
+        "Return/import\n"
+        "- Return the generated PNG files to the same Tool Hub run.\n"
+        f"- Tool Hub run mode: {packet.import_run_mode}\n"
+        f"- Tool Hub declared source: {packet.import_declared_source}\n"
+        "- provider_call_made=false\n"
+        "- requires_additional_payment=false\n"
+    )
+    if len(prompt.encode("utf-8")) > _MAX_RENDERED_PROMPT_BYTES:
+        raise SubscriptionHandoffError("rendered ChatGPT Pro prompt exceeds the bounded contract")
+    return prompt
