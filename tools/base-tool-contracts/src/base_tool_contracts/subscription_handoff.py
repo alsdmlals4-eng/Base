@@ -30,6 +30,12 @@ _SECRET_PATTERNS = (
     re.compile(r"\bapi[_ -]?key\b\s*[:=]\s*\S+", re.IGNORECASE),
     re.compile(r"\b(?:access[_ -]?token|token)\b\s*[:=]\s*\S+", re.IGNORECASE),
 )
+_PRIVATE_ROUTING_PATTERNS = (
+    re.compile(r"(?<![A-Za-z0-9])[A-Za-z]:[\\/][^\s\"']+"),
+    re.compile(r"(?<![A-Za-z0-9])/(?:home|Users|mnt|tmp|var|etc)/[^\s\"']+"),
+    re.compile(r"https?://(?:www\.)?figma\.com/", re.IGNORECASE),
+    re.compile(r"\bnode-id=\d+(?:[-:]\d+)?\b", re.IGNORECASE),
+)
 _WORKFLOW_TOOL = {
     "character_edit": "expression-studio",
     "sprite_pose_sequence": "sprite-animation-studio",
@@ -107,6 +113,10 @@ def _contains_secret(value: str) -> bool:
     return any(pattern.search(value) for pattern in _SECRET_PATTERNS)
 
 
+def _contains_private_routing(value: str) -> bool:
+    return any(pattern.search(value) for pattern in _PRIVATE_ROUTING_PATTERNS)
+
+
 def build_subscription_handoff_packet(
     *,
     project_id: str,
@@ -142,8 +152,10 @@ def build_subscription_handoff_packet(
         raise SubscriptionHandoffError("source sha256 is invalid")
     if not _bounded_text(instruction, maximum=4000):
         raise SubscriptionHandoffError("generation instruction is outside the bounded contract")
-    if _contains_secret(instruction):
-        raise SubscriptionHandoffError("generation instruction contains credential-like material")
+    if _contains_secret(instruction) or _contains_private_routing(instruction):
+        raise SubscriptionHandoffError(
+            "generation instruction contains credential-like or private routing material"
+        )
     if type(expected_png_count) is not int or not 1 <= expected_png_count <= 8:
         raise SubscriptionHandoffError("expected PNG count must be between 1 and 8")
     if (
@@ -164,6 +176,7 @@ def build_subscription_handoff_packet(
         not isinstance(item, str)
         or not _bounded_text(item, maximum=240)
         or _contains_secret(item)
+        or _contains_private_routing(item)
         for item in checklist
     ):
         raise SubscriptionHandoffError("review checklist contains invalid or private material")
