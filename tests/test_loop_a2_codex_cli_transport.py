@@ -34,8 +34,24 @@ class _ExecRunner:
         return subprocess.CompletedProcess(argv, self.returncode, stdout="", stderr="")
 
 
+class _RawOutputRunner(_ExecRunner):
+    def __init__(self, raw_output: str) -> None:
+        super().__init__()
+        self.raw_output = raw_output
+
+    def __call__(self, argv, **kwargs):
+        argv = tuple(str(item) for item in argv)
+        self.calls.append((argv, dict(kwargs)))
+        schema_path = Path(argv[argv.index("--output-schema") + 1])
+        output_path = Path(argv[argv.index("--output-last-message") + 1])
+        if not schema_path.is_file():
+            raise AssertionError("schema file must exist before codex exec")
+        output_path.write_text(self.raw_output, encoding="utf-8")
+        return subprocess.CompletedProcess(argv, 0, stdout="", stderr="")
+
+
 class CodexCliTransportTests(unittest.TestCase):
-    def test_process_is_ephemeral_read_only_config_isolated_and_shell_free(self) -> None:
+    def test_process_is_ephemeral_read_only_config_isolated_shell_disabled_and_shell_free(self) -> None:
         from tools.loop_a2_runtime.codex_cli_transport import CodexCliProcess
 
         runner = _ExecRunner()
@@ -61,8 +77,14 @@ class CodexCliTransportTests(unittest.TestCase):
         self.assertEqual(json.loads(result)["status"], "COMPLETED")
         argv, kwargs = runner.calls[0]
         self.assertEqual(argv[:2], ("codex", "exec"))
-        for required in ("--ephemeral", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check"):
+        for required in ("--ephemeral", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "--strict-config"):
             self.assertIn(required, argv)
+        config_pairs = [
+            argv[index + 1]
+            for index, item in enumerate(argv[:-1])
+            if item == "-c"
+        ]
+        self.assertIn("features.shell_tool=false", config_pairs)
         sandbox_index = argv.index("--sandbox")
         self.assertEqual(argv[sandbox_index + 1], "read-only")
         self.assertEqual(argv[-1], "-")
@@ -116,6 +138,27 @@ class CodexCliTransportTests(unittest.TestCase):
             CodexCliProcess(run_command=_ExecRunner(payload=huge), max_output_bytes=128).invoke(
                 instructions="i", input_text="{}", schema={"type": "object"}, timeout_seconds=30
             )
+
+    def test_malformed_json_and_secret_echo_fail_closed(self) -> None:
+        from tools.loop_a2_runtime.codex_cli_transport import CodexCliProcess, CodexCliTransportError
+
+        with self.assertRaisesRegex(CodexCliTransportError, "CODEX_OUTPUT_INVALID"):
+            CodexCliProcess(run_command=_RawOutputRunner("not-json")).invoke(
+                instructions="i", input_text="{}", schema={"type": "object"}, timeout_seconds=30
+            )
+
+        previous = os.environ.get("OPENAI_API_KEY")
+        os.environ["OPENAI_API_KEY"] = "sk-output-sentinel"
+        try:
+            with self.assertRaisesRegex(CodexCliTransportError, "CODEX_OUTPUT_SECRET_ECHO"):
+                CodexCliProcess(run_command=_RawOutputRunner(json.dumps({"value": "sk-output-sentinel"}))).invoke(
+                    instructions="i", input_text="{}", schema={"type": "object"}, timeout_seconds=30
+                )
+        finally:
+            if previous is None:
+                os.environ.pop("OPENAI_API_KEY", None)
+            else:
+                os.environ["OPENAI_API_KEY"] = previous
 
     def test_responses_client_adapts_existing_structured_contract_without_sdk_or_paid_key(self) -> None:
         from tools.loop_a2_runtime.codex_cli_transport import CodexCliProcess, CodexCliResponsesClient
