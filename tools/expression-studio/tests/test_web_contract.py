@@ -78,3 +78,19 @@ def test_expression_web_clears_previous_run_before_every_new_submission() -> Non
     assert reset_call < request_start
     for marker in ("currentRunId = null", "currentRunDeliveryEligible = false", 'document.querySelector("#packet").textContent = ""'):
         assert marker in script
+
+
+def test_character_studio_web_exposes_explicit_expression_outfit_and_scene_modes() -> None:
+    html = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
+    script = (WEB_ROOT / "app.js").read_text(encoding="utf-8")
+
+    assert "Character Studio" in html
+    assert 'id="edit-mode"' in html
+    assert 'value="expression"' in html
+    assert 'value="outfit"' in html
+    assert 'value="scene"' in html
+    assert 'id="edit-prompt"' in html
+    assert 'id="expression-controls"' in html
+    assert "function applyEditModeUi()" in script
+    assert "edit_mode" in script
+    assert "edit_prompt" in script
