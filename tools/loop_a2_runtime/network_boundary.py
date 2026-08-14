@@ -17,6 +17,17 @@ _UNSHARE_BOUNDARY_ID = "LINUX_UNSHARE_DENIED_V1"
 _DOCKER_BOUNDARY_ID = "DOCKER_NONE_DENIED_V1"
 _IMAGE_ID = re.compile(r"^sha256:[0-9a-f]{64}$")
 _ENV_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+_CONTAINER_ENV_ALLOWLIST = frozenset(
+    {
+        "CI",
+        "LANG",
+        "LC_ALL",
+        "PYTHONDONTWRITEBYTECODE",
+        "PYTHONIOENCODING",
+        "PYTHONUNBUFFERED",
+        "TZ",
+    }
+)
 _PROBE_CODE = (
     "import json,socket; "
     "print(json.dumps(sorted(name for _, name in socket.if_nameindex())))"
@@ -284,7 +295,7 @@ class DockerNoneDeniedNetworkBoundary:
             return None
 
         docker_env: list[str] = []
-        for key in sorted(closed_environment):
+        for key in sorted(_CONTAINER_ENV_ALLOWLIST.intersection(closed_environment)):
             docker_env.extend(("--env", key))
         mount = f"type=bind,src={cwd_text},dst={cwd_text},readonly"
         return NetworkExecutionPlan(
