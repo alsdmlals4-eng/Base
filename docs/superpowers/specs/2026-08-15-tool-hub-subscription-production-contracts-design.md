@@ -38,16 +38,18 @@ A packet is a user-visible bridge between the local Tool Hub and the normal Chat
 - `provider_call_made = false`
 - `requires_additional_payment = false`
 
+These truth fields are `init=False` in the frozen packet dataclass, so a caller cannot construct a packet that relabels an API route as a subscription route or flips the provider/payment claims.
+
 Required caller-bound fields:
 
 - exact `project_id`, `tool_id`, `run_id`
 - `workflow` in `character_edit | sprite_pose_sequence | sprite_effect_stages`
-- source declaration with immutable SHA-256 and local display filename only
+- source declaration with immutable SHA-256 and one local display-only PNG filename
 - bounded generation instruction
-- expected PNG count and allowed dimension range
-- review checklist
+- expected PNG count and allowed integer dimension range
+- bounded unique string review checklist
 
-The builder does not accept a caller-selected generation surface or output type. The packet must not contain API keys, tokens, absolute private paths, arbitrary Figma URLs/node IDs, or a claim that generation occurred.
+The builder does not accept a caller-selected generation surface or output type. It rejects non-string identities, Windows-special/path-shaped source filenames, malformed SHA-256, non-integer count/dimensions, token/key-shaped instruction content, and malformed checklist values with `SubscriptionHandoffError`. The packet must not contain arbitrary Figma URLs/node IDs or a claim that generation occurred.
 
 ## Import boundary
 
@@ -142,15 +144,23 @@ Focused workflow run `31819013278` failed on the intended missing fixed fields o
 
 Focused workflow run `31819211022` passed on both Ubuntu and Windows with package-level and repository-level contracts after adding those fixed fields.
 
+### Truth/type hardening RED
+
+Focused workflow run `31819588625` failed on Ubuntu with `11 failed, 21 passed`. The failures were limited to the intended hardening gaps: fixed truth fields were still dataclass constructor parameters, non-string identity/SHA/instruction values leaked raw `TypeError`, a Windows alternate-data-stream-shaped filename was accepted, token assignment text was not rejected, float count/dimensions were accepted, and malformed checklist runtime types were not consistently translated into the contract error.
+
+### Truth/type hardening GREEN
+
+After making fixed truth fields `init=False`, adding strict runtime type guards, Windows-safe display filename rejection, broader credential-like token detection, and fail-closed checklist handling, focused workflow run `31819831239` passed both package and repository contracts on **Ubuntu and Windows**.
+
 ## IRG
 
 Verified in this slice:
 
 - subscription handoff packet contract: `IMPLEMENTED_TESTED`
-- generation surface fixed to ChatGPT Pro subscription: `IMPLEMENTED_TESTED`
-- PNG output contract: `IMPLEMENTED_TESTED`
-- provider-call/additional-payment truth fields: `IMPLEMENTED_TESTED`
-- secret/private-path exclusion: `IMPLEMENTED_TESTED`
+- generation surface fixed and non-overridable as ChatGPT Pro subscription: `IMPLEMENTED_TESTED`
+- PNG output contract fixed and non-overridable: `IMPLEMENTED_TESTED`
+- provider-call/additional-payment truth fields fixed and non-overridable: `IMPLEMENTED_TESTED`
+- strict runtime type and credential/private-path exclusion: `IMPLEMENTED_TESTED`
 - eight-project Expression Runs route registry: `IMPLEMENTED_TESTED`
 - exact parent/destination/project-marker IDs and FRAME types: `IMPLEMENTED_TESTED`
 - canonical committed-byte proof: `IMPLEMENTED_TESTED`
