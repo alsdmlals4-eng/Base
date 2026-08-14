@@ -169,6 +169,21 @@ print(json.dumps({{
                 os.environ["OPENAI_API_KEY"] = previous
             adapter.close(request)
 
+    def test_subprocess_worker_refuses_real_provider_mode(self) -> None:
+        value = valid_request()
+        value["expected_main_sha"] = self.sha
+        value["allowed_paths"] = ["scripts/feature/a.gd"]
+        value["provider_mode"] = "REAL"
+        request = RunRequest.from_dict(value)
+        adapter = self.adapter(self.worker_script())
+        try:
+            result = adapter.invoke(request, repair_cycle=0)
+            self.assertEqual(result.status, "BLOCKED")
+            self.assertEqual(result.errors[0].code, "WORKER_PROVIDER_MODE_UNSUPPORTED")
+            self.assertEqual(result.changed_paths, ())
+        finally:
+            adapter.close(request)
+
     def test_actual_out_of_scope_diff_is_quarantined_by_runtime(self) -> None:
         request = self.request()
         adapter = self.adapter(self.worker_script(changed_path="README.md"))
