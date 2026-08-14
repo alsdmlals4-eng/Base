@@ -1,5 +1,15 @@
 # Managing Project Intake and Work Contracts — Learning Log
 
+## 2026-08-15 — Discover real local capability before rejecting one executable literal
+
+- **상태:** `OBSERVATION`
+- **호출 트리거:** Windows Loop A2 Local Executor 설치 중 사용자 PC에서 `gh auth status --hostname github.com`, `codex login status`, `docker version`이 실제로 성공했고 Codex는 `Logged in using ChatGPT`를 반환했지만, 첫 설치기가 `codex.exe`라는 특정 파일명만 찾도록 작성되어 `codex.exe was not found in PATH`로 잘못 차단했다. 뒤이은 설치기는 중간 실패 때 창이 닫혀 blocker의 diagnostic evidence가 사라지는 문제도 노출했다.
+- **Finding:** 실제 요구사항은 “ChatGPT-authenticated Codex CLI가 실행 가능한가”인데 packaging literal인 `codex.exe` 존재 여부를 capability보다 높은 gate로 사용했다. Windows command는 PATHEXT와 package-manager shim 때문에 `.exe`, `.cmd`, `.bat` 등으로 노출될 수 있으므로 단일 suffix 강제는 정상 환경을 false negative로 만들 수 있다. 동시에 보안·권위 조건과 환경 discovery heuristic을 같은 수준의 엄격성으로 처리해, 유연해야 할 탐색과 엄격해야 할 acceptance가 분리되지 않았다. 실패 창/로그 보존도 bootstrap 계약으로 명시하지 않아 수정 반복 시 근거가 쉽게 사라졌다.
+- **Decision:** local bootstrap은 `CAPABILITY_DISCOVERY_BEFORE_LITERAL_REJECTION`을 따른다. 현재 command resolution/PATHEXT, 명시된 trusted executable path, 필요한 경우 known trusted standard install location을 순서대로 탐색하고, 후보를 찾은 뒤 `codex login status` 같은 semantic readiness probe로 실제 capability를 검증한다. **discovery는 넓게, authority와 acceptance는 좁게** 유지한다. 또한 `DIAGNOSTIC_PRESERVATION_ON_BOOTSTRAP_FAILURE`로 실패 terminal을 사용자가 닫기 전까지 유지하거나 durable bounded diagnostic log를 남기고, 가능하면 둘 다 제공한다.
+- **Evidence:** 사용자 터미널에서 GitHub auth와 Codex ChatGPT auth가 성공했고 Docker Desktop client/server도 정상 응답했다. 고정 Docker image pull도 exact digest `sha256:dd29372629eeba2dd003fd9e9d35a5b8236c44727875a0364254b5127af88e65`로 완료됐다. 그럼에도 installer v1은 `codex.exe` literal만 검사해 BLOCKED를 냈다. Base 회귀 TDD RED는 PR #416 head `a8ee9bcefb11baf03a5ec30393a6affc05b09267`, workflow `Validate One-Shot Local Executor Bootstrap` run `31833180090`, job `94873467584`에서 기존 3개 bootstrap contract는 PASS이고 새 capability-discovery contract만 `CAPABILITY_DISCOVERY_BEFORE_LITERAL_REJECTION` 부재로 1 failure를 냈다.
+- **Boundary:** 유연한 discovery는 arbitrary disk search나 이름만 같은 untrusted binary 선택을 허용하지 않는다. repository/project identity, exact SHA, trusted author/label, ChatGPT authentication, reviewed Docker image, protected path는 계속 strict gate다. ChatGPT auth 실패 시 API key 또는 separately billed OpenAI API로 fallback하지 않으며, reviewed image 부재를 unpinned image로 우회하지 않는다. path 존재만으로 readiness를 PASS로 올리지 않는다.
+- **다음 검토 트리거:** 로컬 설치기/launcher가 실제 실행 가능한 도구를 특정 suffix·고정 path 때문에 다시 차단하거나, 사용자가 이미 성공시킨 capability를 재설치하라고 먼저 요구하거나, 실패 창·로그가 사라져 원인 증거를 잃거나, 반대로 multi-route discovery가 untrusted executable 선택으로 과도하게 넓어질 때.
+
 ## 2026-08-09 — Recover local and transient blockers before global stop
 
 - **상태:** `OBSERVATION`
