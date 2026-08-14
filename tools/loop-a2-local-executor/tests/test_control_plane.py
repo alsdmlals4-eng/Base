@@ -36,10 +36,27 @@ class ControlPlaneTests(unittest.TestCase):
             runner=runner,
         )
 
+    def test_preflight_authenticates_then_idempotently_ensures_queue_label(self) -> None:
+        runner = FakeRunner([
+            subprocess.CompletedProcess([], 0, stdout="ok", stderr=""),
+            subprocess.CompletedProcess([], 0, stdout="", stderr=""),
+        ])
+        self.plane(runner).preflight()
+        self.assertEqual(runner.calls[0]["argv"], ("/trusted/gh", "auth", "status", "--hostname", "github.com"))
+        self.assertEqual(
+            runner.calls[1]["argv"],
+            (
+                "/trusted/gh", "label", "create", "loop-a2-local-job", "--repo", "alsdmlals4-eng/Base",
+                "--color", "5319E7", "--description", "Bounded unattended Loop A2 local execution job",
+                "--force",
+            ),
+        )
+
     def test_list_jobs_uses_closed_argv_and_secret_free_environment(self) -> None:
         payload = [{"number": 10, "author": {"login": "alsdmlals4-eng"}, "labels": [{"name": "loop-a2-local-job"}], "body": "x"}]
         runner = FakeRunner([
             subprocess.CompletedProcess([], 0, stdout="ok", stderr=""),
+            subprocess.CompletedProcess([], 0, stdout="", stderr=""),
             subprocess.CompletedProcess([], 0, stdout=json.dumps(payload), stderr=""),
         ])
         old = {key: os.environ.get(key) for key in ("GH_TOKEN", "GITHUB_TOKEN", "OPENAI_API_KEY")}
@@ -57,9 +74,7 @@ class ControlPlaneTests(unittest.TestCase):
                 else:
                     os.environ[key] = value
         self.assertEqual(len(jobs), 1)
-        auth = runner.calls[0]
-        listing = runner.calls[1]
-        self.assertEqual(auth["argv"], ("/trusted/gh", "auth", "status", "--hostname", "github.com"))
+        listing = runner.calls[2]
         self.assertEqual(
             listing["argv"],
             (
