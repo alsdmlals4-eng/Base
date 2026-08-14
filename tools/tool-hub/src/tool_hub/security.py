@@ -10,6 +10,9 @@ from fastapi.responses import JSONResponse, Response
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 
+_PLUGIN_BRIDGE_PREFIX = "/api/figma-bridge/plugin/"
+
+
 class HubSecurity:
     def __init__(self, expected_origin: str, *, test_mode: bool = False) -> None:
         self.expected_origin = expected_origin.rstrip("/")
@@ -25,7 +28,12 @@ def install_security(app: FastAPI, security: HubSecurity) -> None:
     async def enforce_local_mutation(
         request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        if request.url.path.startswith("/api/") and request.method in {"POST", "PUT", "PATCH", "DELETE"}:
+        is_browser_api_mutation = (
+            request.url.path.startswith("/api/")
+            and not request.url.path.startswith(_PLUGIN_BRIDGE_PREFIX)
+            and request.method in {"POST", "PUT", "PATCH", "DELETE"}
+        )
+        if is_browser_api_mutation:
             if request.headers.get("origin", "").rstrip("/") != security.expected_origin:
                 return JSONResponse(status_code=403, content={"detail": "mutation Origin must match Tool Hub"})
             if request.cookies.get("hub_session") != security.session_id:
