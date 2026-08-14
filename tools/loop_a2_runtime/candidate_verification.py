@@ -7,6 +7,7 @@ from typing import Any
 
 from .authority_snapshot import AuthoritySnapshot, AuthoritySnapshotError
 from .evidence import canonical_receipt
+from .integration import compute_worktree_diff_sha256
 from .protocol import RunRequest, WorkerResult
 from .test_executor import CommandEvidence, ProjectTestExecutor, TestSuiteResult
 from .workspace_registry import WorkspaceOwnershipError, WorkspaceOwnershipRegistry
@@ -40,6 +41,7 @@ class VerificationEvidenceMailbox:
         result: TestSuiteResult,
         *,
         authority_snapshot_sha256: str,
+        candidate_diff_sha256: str,
     ) -> dict[str, Any]:
         if result.status != "PASS":
             raise CandidateVerificationError("candidate test PASS evidence is required")
@@ -48,6 +50,12 @@ class VerificationEvidenceMailbox:
             or result.expected_main_sha != request.expected_main_sha
         ):
             raise CandidateVerificationError("candidate test PASS identity differs from request")
+        if (
+            not isinstance(candidate_diff_sha256, str)
+            or len(candidate_diff_sha256) != 64
+            or any(character not in "0123456789abcdef" for character in candidate_diff_sha256)
+        ):
+            raise CandidateVerificationError("candidate Diff SHA-256 is invalid")
         payload = {
             "schema_version": 1,
             "contract_role": "LOOP_A2_CANDIDATE_TEST_EVIDENCE",
@@ -56,6 +64,7 @@ class VerificationEvidenceMailbox:
             "package_id": request.package_id,
             "expected_main_sha": request.expected_main_sha,
             "authority_snapshot_sha256": authority_snapshot_sha256,
+            "candidate_diff_sha256": candidate_diff_sha256,
             "status": "PASS",
             "test_suite": result.to_dict(),
         }
@@ -214,6 +223,7 @@ class ProjectTestCandidateVerifier:
             return self._blocked(request, "CANDIDATE_RUNTIME_ADAPTER_MISSING")
 
         try:
+            diff_before = compute_worktree_diff_sha256(workspace)
             with tempfile.TemporaryDirectory(prefix="loop-a2-authority-adapter-") as temp:
                 adapter_path = Path(temp) / "RUNTIME_ADAPTER.json"
                 adapter_path.write_text(adapter_text, encoding="utf-8", newline="")
@@ -223,8 +233,15 @@ class ProjectTestCandidateVerifier:
                     expected_project_id=request.project_id,
                     expected_main_sha=request.expected_main_sha,
                 )
+            diff_after = compute_worktree_diff_sha256(workspace)
         except (OSError, ValueError):
             return self._blocked(request, "CANDIDATE_TEST_EXECUTION_ERROR")
+
+        if diff_after != diff_before:
+            return self._blocked(
+                request,
+                "CANDIDATE_CHANGED_DURING_TEST_VERIFICATION",
+            )
 
         if result.status == "PASS":
             try:
@@ -232,6 +249,7 @@ class ProjectTestCandidateVerifier:
                     request,
                     result,
                     authority_snapshot_sha256=self.authority_snapshot.snapshot_sha256,
+                    candidate_diff_sha256=diff_before,
                 )
             except CandidateVerificationError:
                 return self._blocked(request, "CANDIDATE_TEST_EVIDENCE_INVALID")
