@@ -14,9 +14,9 @@ After one bounded transition installation, let the developer start Tool Hub by d
 | --- | --- | --- |
 | Existing FastAPI/browser Tool Hub | `REUSE` | It is the single reviewed UI and process owner; a second native UI would duplicate authority. |
 | Repository-local Python 3.12 virtual environment | `REUSE` | It already contains the exact packages used by the verified Hub. |
-| `pythonw.exe` plus a `.pyw` launcher | `BUILD_MINIMAL` | It runs without a console and avoids bundling a second interpreter or unsigned application binary. |
-| Per-user Desktop `.pyw` entry | `ADAPT` | The existing Python installation already supplies the no-console `pythonw.exe` association, so the developer can double-click a named desktop entry without adding another executable distribution. |
-| Windows Shell Link | `DEFER` | Shell links are the standard richer shortcut surface, but creating them adds COM or installer dependencies that are unnecessary for the first single-user launcher. <https://learn.microsoft.com/en-us/windows/win32/shell/links> |
+| `pythonw.exe` plus a private `.pyw` launcher | `BUILD_MINIMAL` | It runs without a console and avoids bundling a second interpreter or unsigned application binary. |
+| Per-user Desktop `.lnk` entry | `ADAPT` | The shortcut directly binds the reviewed `pythonw.exe` and private launcher, avoiding unreliable global `.pyw` association state. |
+| Windows Shell Link | `REUSE` | The standard per-user shortcut surface provides direct no-console launch without a second packaged executable. <https://learn.microsoft.com/en-us/windows/win32/shell/links> |
 | PyInstaller one-folder EXE | `DEFER` | PyInstaller can bundle an interpreter and dependencies, but it creates a separate distribution/update surface. <https://pyinstaller.org/en/stable/usage.html> |
 | Unsigned standalone EXE/MSIX | `REJECT_FOR_CURRENT_PHASE` | Unsigned downloads can trigger strong SmartScreen warnings; trusted signing or Store distribution adds a separate release program and possible cost. <https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation> |
 | Always-on Windows service or scheduled task | `REJECT` | Unnecessary persistence and lifecycle authority for a single-user local tool. |
@@ -27,7 +27,7 @@ The checked-in launcher template uses only the Python standard library. A fixed 
 
 ```text
 Desktop "Base Tool Hub"
-  -> Windows associates .pyw with pythonw.exe
+  -> reviewed .lnk directly invokes pythonw.exe + private launcher
   -> machine-local launcher reads fixed config
   -> validate Base root + venv pythonw + reviewed Hub files
   -> reuse healthy 127.0.0.1:8764 Hub, or spawn it detached
@@ -45,9 +45,10 @@ The installer:
 
 1. Verifies the current Base root and repository-local `.venv\Scripts\pythonw.exe` as regular, non-reparse files.
 2. Writes `%LOCALAPPDATA%\BaseToolHub\launcher\launcher-config.json` atomically with the Base root fingerprint, expected Base/Tool Registry commit evidence, Hub port, and machine-local project-config path.
-3. Writes the reviewed `Base Tool Hub.pyw` template atomically under the same launcher directory.
-4. Resolves the current user's Desktop known folder and atomically installs one user-visible `Base Tool Hub.pyw` bootstrap without requiring administrator rights.
-5. Verifies that `.pyw` is associated with the installed Python `pythonw.exe`. If the association is absent, installation fails with `PYW_ASSOCIATION_REQUIRED`; it does not change system file associations. It never modifies all-users locations, the Start Menu, or taskbar pins.
+3. Writes the reviewed private `Base Tool Hub.pyw` template atomically under the same launcher directory.
+4. Resolves the current user's Desktop known folder and atomically installs one user-visible `Base Tool Hub.lnk` without requiring administrator rights.
+5. The shortcut directly targets the reviewed `pythonw.exe` with the private launcher as its fixed argument. It never changes global file associations, all-users locations, the Start Menu, or taskbar pins.
+6. When upgrading, remove the old Desktop `Base Tool Hub.pyw` only after it byte-matches the reviewed launcher and the new `.lnk` is published. Any mismatched or non-regular legacy entry blocks with a bounded repair state.
 
 The transition from the already installed old Hub requires one final Base update. It can be performed through GitHub Desktop followed by double-clicking the checked-in installer, or by the existing one-block PowerShell path. After launcher installation succeeds, normal use does not require a terminal.
 
@@ -96,7 +97,7 @@ Closing the browser does not stop the Hub. A later desktop launch reuses the hea
 - TDD tests for install payload rejection, fixed paths, atomic config/template writes, known-folder resolution, duplicate install, and uninstall/repair behavior.
 - Launcher tests for healthy reuse, cold start, repeated double-click, wrong service on port, startup timeout, early child exit, changed Base/interpreter/registry, reparse paths, bounded logs, and native bounded error reporting.
 - Server tests for authenticated shutdown, missing/wrong CSRF, unrelated PID non-acceptance, supervisor stop ordering, listener close, and restart after shutdown.
-- Real `windows-latest` smoke starts the `.pyw` launcher with no persistent shell parent, verifies exact HTTP identity, launches it again to reuse one PID, requests UI shutdown, and verifies the process/listener are gone.
+- Real `windows-latest` smoke opens the Desktop `.lnk`, verifies exact HTTP identity, launches it again to reuse one PID, requests UI shutdown, and verifies the process/listener are gone.
 - Live user-PC smoke closes PowerShell, double-clicks the desktop entry, opens the browser, closes/reopens the browser, and shuts down from the UI.
 
 ## Exclusions and next gate

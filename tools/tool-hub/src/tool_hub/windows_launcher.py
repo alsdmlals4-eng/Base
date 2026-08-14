@@ -32,7 +32,7 @@ _REASON = re.compile(r"^[A-Z0-9_]{1,80}$")
 @dataclass(frozen=True)
 class LauncherInstallation:
     state: str
-    desktop_entry: str = "Base Tool Hub.pyw"
+    desktop_entry: str = "Base Tool Hub.lnk"
 
     def public_view(self) -> dict[str, str]:
         return {"state": self.state, "desktop_entry": self.desktop_entry}
@@ -135,67 +135,83 @@ def hub_runtime_fingerprint(root: Path) -> str:
     return digest.hexdigest()
 
 
-def _association_executable_from_query(query: Callable[..., int]) -> Path | None:
-    """Resolve one bounded ASSOCSTR_EXECUTABLE query without a null output probe."""
-    import ctypes
-    from ctypes import wintypes
-
-    capacity = wintypes.DWORD(32_768)
-    buffer = ctypes.create_unicode_buffer(capacity.value)
-    if query(0, 2, ".pyw", None, buffer, ctypes.byref(capacity)) != 0:
-        return None
-    if capacity.value <= 1 or capacity.value > len(buffer) or not buffer.value:
-        return None
-    return Path(buffer.value).absolute()
+ShortcutBuilder = Callable[[Path, Path, Path], bytes]
 
 
-def _effective_pyw_executable() -> Path | None:
+def _default_shortcut_builder(pythonw: Path, launcher: Path, working: Path) -> bytes:
+    """Build a direct per-user .lnk with the fixed Windows Shell COM owner."""
     if os.name != "nt":
-        return None
+        raise LauncherError("BLOCKED_PLATFORM")
+    system_root = Path(os.environ.get("SYSTEMROOT", ""))
+    powershell = system_root / "System32" / "WindowsPowerShell" / "v1.0" / "powershell.exe"
+    _assert_plain_parents(powershell)
+    metadata = powershell.lstat()
+    if not stat.S_ISREG(metadata.st_mode) or powershell.is_symlink():
+        raise LauncherError("LAUNCHER_SHORTCUT_FAILED")
+    working.mkdir(parents=True, exist_ok=True)
+    temporary = working / f".desktop-{secrets.token_hex(12)}.lnk"
+    script = (
+        "$ErrorActionPreference='Stop';"
+        "$shell=New-Object -ComObject WScript.Shell;"
+        "$link=$shell.CreateShortcut($env:BTH_SHORTCUT);"
+        "$link.TargetPath=$env:BTH_PYTHONW;"
+        "$link.Arguments='\"'+$env:BTH_LAUNCHER+'\"';"
+        "$link.WorkingDirectory=$env:BTH_WORKING;"
+        "$link.WindowStyle=7;"
+        "$link.Description='Base Tool Hub';"
+        "$link.Save()"
+    )
+    environment = {
+        "SYSTEMROOT": str(system_root),
+        "BTH_SHORTCUT": str(temporary),
+        "BTH_PYTHONW": str(pythonw),
+        "BTH_LAUNCHER": str(launcher),
+        "BTH_WORKING": str(working),
+    }
+    for name in ("TEMP", "TMP"):
+        if value := os.environ.get(name):
+            environment[name] = value
     try:
-        import ctypes
-        from ctypes import wintypes
-
-        query = ctypes.WinDLL("Shlwapi.dll").AssocQueryStringW
-        query.argtypes = (
-            wintypes.DWORD,
-            wintypes.DWORD,
-            wintypes.LPCWSTR,
-            wintypes.LPCWSTR,
-            wintypes.LPWSTR,
-            ctypes.POINTER(wintypes.DWORD),
+        completed = subprocess.run(
+            [
+                str(powershell),
+                "-NoLogo",
+                "-NoProfile",
+                "-NonInteractive",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-Command",
+                script,
+            ],
+            shell=False,
+            capture_output=True,
+            timeout=20,
+            check=False,
+            env=environment,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
         )
-        query.restype = wintypes.HRESULT
-        return _association_executable_from_query(query)
-    except (AttributeError, ImportError, OSError, ValueError):
-        return None
-
-
-def _default_association_checker(expected_pythonw: Path) -> bool:
-    if os.name != "nt":
-        return False
-    try:
-        handler = _effective_pyw_executable()
-        if handler is None:
-            return False
-        if handler.name.casefold() not in {"pythonw.exe", "pyw.exe"}:
-            return False
-        _assert_plain_parents(handler)
-        metadata = handler.lstat()
+        if completed.returncode != 0:
+            raise LauncherError("LAUNCHER_SHORTCUT_FAILED")
+        shortcut_metadata = temporary.lstat()
         reparse = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
         if (
-            not stat.S_ISREG(metadata.st_mode)
-            or stat.S_ISLNK(metadata.st_mode)
-            or (reparse and getattr(metadata, "st_file_attributes", 0) & reparse)
-            or metadata.st_size > 128 * 1024 * 1024
+            not stat.S_ISREG(shortcut_metadata.st_mode)
+            or stat.S_ISLNK(shortcut_metadata.st_mode)
+            or (reparse and getattr(shortcut_metadata, "st_file_attributes", 0) & reparse)
+            or shortcut_metadata.st_size > 1024 * 1024
         ):
-            return False
-        if handler.name.casefold() == "pythonw.exe":
-            expected = expected_pythonw.absolute()
-            return expected.is_file() and _sha256(handler) == _sha256(expected)
-        return True
-    except (LauncherError, OSError, ImportError):
-        return False
+            raise LauncherError("LAUNCHER_SHORTCUT_FAILED")
+        shortcut = temporary.read_bytes()
+        if not shortcut or len(shortcut) > 1024 * 1024:
+            raise LauncherError("LAUNCHER_SHORTCUT_FAILED")
+        return shortcut
+    except (OSError, subprocess.TimeoutExpired) as error:
+        raise LauncherError("LAUNCHER_SHORTCUT_FAILED") from error
+    finally:
+        try:
+            temporary.unlink()
+        except FileNotFoundError:
+            pass
 
 
 def _default_desktop(platform: str) -> Path:
@@ -221,7 +237,7 @@ class WindowsLauncherInstaller:
         local_app_data: Path | None = None,
         desktop: Path | None = None,
         platform: str | None = None,
-        association_checker: Callable[[Path], bool] = _default_association_checker,
+        shortcut_builder: ShortcutBuilder = _default_shortcut_builder,
         git_executable: Path | None = None,
     ) -> None:
         self.base_root = Path(base_root).absolute()
@@ -230,12 +246,13 @@ class WindowsLauncherInstaller:
         local_value = local_app_data or Path(os.environ.get("LOCALAPPDATA", ""))
         self.local_app_data = Path(local_value).absolute()
         self.desktop = Path(desktop or _default_desktop(self.platform)).absolute()
-        self.association_checker = association_checker
+        self.shortcut_builder = shortcut_builder
         self.git_executable = Path(git_executable).absolute() if git_executable else None
         self.launcher_root = self.local_app_data / "BaseToolHub" / "launcher"
         self.config_path = self.launcher_root / "launcher-config.json"
         self.launcher_path = self.launcher_root / "Base Tool Hub.pyw"
-        self.desktop_entry = self.desktop / "Base Tool Hub.pyw"
+        self.desktop_entry = self.desktop / "Base Tool Hub.lnk"
+        self.legacy_desktop_entry = self.desktop / "Base Tool Hub.pyw"
 
     @property
     def pythonw(self) -> Path:
@@ -262,13 +279,19 @@ class WindowsLauncherInstaller:
     def status(self) -> str:
         if self.platform != "win32":
             return "BLOCKED_PLATFORM"
+        try:
+            self.legacy_desktop_entry.lstat()
+        except FileNotFoundError:
+            pass
+        except OSError:
+            return "REPAIR_REQUIRED"
+        else:
+            return "REPAIR_REQUIRED"
         if not self.config_path.is_file() or not self.desktop_entry.is_file():
             return "NOT_INSTALLED"
         try:
-            if not self.association_checker(self.pythonw):
-                return "REPAIR_REQUIRED"
             payload = _load_config(self.config_path)
-            if _sha256(self.desktop_entry) != payload["launcher_sha256"]:
+            if _sha256(self.desktop_entry) != payload["desktop_entry_sha256"]:
                 return "UPDATE_REQUIRED"
             return "INSTALLED"
         except LauncherError as error:
@@ -284,9 +307,27 @@ class WindowsLauncherInstaller:
         git = self.git_executable or trusted_git_executable()
         for path in (self.pythonw, self.template, git):
             self._regular(path)
-        if not self.association_checker(self.pythonw):
-            raise LauncherError("PYW_ASSOCIATION_REQUIRED")
         self.desktop.mkdir(parents=True, exist_ok=True)
+        self.launcher_root.mkdir(parents=True, exist_ok=True)
+        template_bytes = self.template.read_bytes()
+        legacy_present = False
+        try:
+            legacy_metadata = self.legacy_desktop_entry.lstat()
+        except FileNotFoundError:
+            pass
+        except OSError as error:
+            raise LauncherError("LAUNCHER_LEGACY_CONFLICT") from error
+        else:
+            reparse = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
+            if (
+                not stat.S_ISREG(legacy_metadata.st_mode)
+                or stat.S_ISLNK(legacy_metadata.st_mode)
+                or (reparse and getattr(legacy_metadata, "st_file_attributes", 0) & reparse)
+                or legacy_metadata.st_size > 1024 * 1024
+                or self.legacy_desktop_entry.read_bytes() != template_bytes
+            ):
+                raise LauncherError("LAUNCHER_LEGACY_CONFLICT")
+            legacy_present = True
         token = secrets.token_urlsafe(32)
         if self.config_path.is_file():
             try:
@@ -297,7 +338,14 @@ class WindowsLauncherInstaller:
                     token = str(previous["launcher_token"])
             except (LauncherError, OSError, ValueError):
                 pass
-        template_bytes = self.template.read_bytes()
+        _atomic_write(self.launcher_path, template_bytes)
+        shortcut_bytes = self.shortcut_builder(
+            self.pythonw,
+            self.launcher_path,
+            self.launcher_root,
+        )
+        if not shortcut_bytes or len(shortcut_bytes) > 1024 * 1024:
+            raise LauncherError("LAUNCHER_SHORTCUT_FAILED")
         payload = {
             "schema_version": 1,
             "base_root": str(self.base_root),
@@ -311,11 +359,16 @@ class WindowsLauncherInstaller:
             "git_sha256": _sha256(git),
             "hub_runtime_fingerprint": hub_runtime_fingerprint(self.base_root),
             "launcher_sha256": hashlib.sha256(template_bytes).hexdigest(),
+            "desktop_entry_sha256": hashlib.sha256(shortcut_bytes).hexdigest(),
             "launcher_token": token,
         }
-        _atomic_write(self.launcher_path, template_bytes)
         _atomic_write(self.config_path, (json.dumps(payload, ensure_ascii=False, indent=2) + "\n").encode())
-        _atomic_write(self.desktop_entry, template_bytes)
+        _atomic_write(self.desktop_entry, shortcut_bytes)
+        if legacy_present:
+            try:
+                self.legacy_desktop_entry.unlink()
+            except OSError as error:
+                raise LauncherError("LAUNCHER_LEGACY_CONFLICT") from error
         return LauncherInstallation("INSTALLED")
 
 
@@ -326,7 +379,7 @@ def _load_config(path: Path) -> dict[str, object]:
         payload = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as error:
         raise LauncherError("LAUNCHER_CONFIG_INVALID") from error
-    required = {"base_root", "project_config", "project_config_fingerprint", "pythonw", "git_executable", "port", "root_fingerprint", "pythonw_sha256", "git_sha256", "launcher_sha256", "launcher_token", "hub_runtime_fingerprint"}
+    required = {"base_root", "project_config", "project_config_fingerprint", "pythonw", "git_executable", "port", "root_fingerprint", "pythonw_sha256", "git_sha256", "launcher_sha256", "desktop_entry_sha256", "launcher_token", "hub_runtime_fingerprint"}
     if payload.get("schema_version") != 1 or not required.issubset(payload):
         raise LauncherError("LAUNCHER_CONFIG_INVALID")
     if payload["port"] != 8764:

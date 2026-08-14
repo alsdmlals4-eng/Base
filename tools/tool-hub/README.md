@@ -42,11 +42,13 @@ $projectConfig = Join-Path $env:LOCALAPPDATA 'BaseToolHub\projects.json'
   --port 8764
 ```
 
-브라우저에서 `http://127.0.0.1:8764`를 연 뒤 `바탕화면 실행 아이콘 설치/복구`를 한 번 누릅니다. 설치가 성공하면 바탕화면에 `Base Tool Hub.pyw`가 생깁니다. 이후 정상 사용은 PowerShell을 열지 않고 이 파일을 두 번 클릭하면 됩니다. 같은 Hub가 이미 실행 중이면 새 프로세스를 만들지 않고 브라우저만 다시 엽니다. 종료할 때는 화면의 `Tool Hub 종료`를 사용합니다.
+브라우저에서 `http://127.0.0.1:8764`를 연 뒤 `바탕화면 실행 아이콘 설치/복구`를 한 번 누릅니다. 설치가 성공하면 바탕화면에 `Base Tool Hub.lnk`가 생깁니다. 이 바로가기는 검증된 `pythonw.exe`와 private launcher를 직접 가리키므로 `.pyw` 연결 프로그램에 의존하지 않습니다. 이후 정상 사용은 PowerShell을 열지 않고 이 아이콘을 두 번 클릭하면 됩니다. 같은 Hub가 이미 실행 중이면 새 프로세스를 만들지 않고 브라우저만 다시 엽니다. 종료할 때는 화면의 `Tool Hub 종료`를 사용합니다.
+
+이전 버전의 바탕화면 `Base Tool Hub.pyw`가 현재 검토된 launcher와 정확히 일치하면 설치 과정에서 새 `.lnk` 게시 후 제거합니다. 내용이 다르거나 비정상 파일이면 임의로 지우지 않고 `복구 필요`로 차단합니다.
 
 이 PowerShell 블록은 최초 설치 또는 Base/가상환경 변경 뒤 복구에만 필요합니다. 바탕화면 실행기는 Git pull, pip install, branch 변경, 프로젝트 파일 수정, 다른 프로세스 종료를 수행하지 않습니다. 8764 포트가 다른 프로그램이면 이를 죽이지 않고 `PORT_IDENTITY_CONFLICT`로 차단합니다.
 
-실행 중 진단은 `%LOCALAPPDATA%\BaseToolHub\logs`에 남으며 `tool-hub.log` 1개와 최대 2개의 1 MiB 회전본으로 제한됩니다. 강제 종료나 재부팅 뒤에는 OS가 실행기 잠금을 자동 회수하므로 남아 있는 `.launcher.lock` 파일 때문에 이후 더블클릭이 영구 차단되지 않습니다. `.pyw` 연결 프로그램이나 검토된 Python/Git/Base bytes가 바뀌면 `설치 복구 필요` 또는 `업데이트 필요`로 표시하고 자동으로 다른 실행 파일을 선택하지 않습니다.
+실행 중 진단은 `%LOCALAPPDATA%\BaseToolHub\logs`에 남으며 `tool-hub.log` 1개와 최대 2개의 1 MiB 회전본으로 제한됩니다. 강제 종료나 재부팅 뒤에는 OS가 실행기 잠금을 자동 회수하므로 남아 있는 `.launcher.lock` 파일 때문에 이후 더블클릭이 영구 차단되지 않습니다. 바탕화면 바로가기나 검토된 Python/Git/Base bytes가 바뀌면 `설치 복구 필요` 또는 `업데이트 필요`로 표시하고 자동으로 다른 실행 파일을 선택하지 않습니다.
 
 `등록 가능한 프로젝트`에서 게임 이름이나 카드의 버튼을 누릅니다. Tool Hub는 저장된 위치, `%USERPROFILE%\Documents\GitHub\<정확한 저장소 이름>`, `%USERPROFILE%\source\repos\<정확한 저장소 이름>`만 확인합니다. 발견되지 않으면 Base에 검토·커밋된 정확한 GitHub URL을 `%USERPROFILE%\Documents\GitHub`에 임시 staging으로 clone하고, origin·Git 루트·v2 Adapter·project ID·Asset Vault ignore를 검증한 뒤 게시합니다. 사용자가 Git 폴더나 GitHub/Figma URL을 입력할 필요가 없습니다.
 

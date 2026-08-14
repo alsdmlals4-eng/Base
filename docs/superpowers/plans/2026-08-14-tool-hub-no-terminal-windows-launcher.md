@@ -4,7 +4,7 @@
 
 **Goal:** Install a per-user desktop entry that starts or reopens Base Tool Hub without keeping PowerShell or Command Prompt open.
 
-**Architecture:** Keep the existing FastAPI browser Hub as the only UI and add a small standard-library `.pyw` launcher plus an authenticated installer. The launcher uses the reviewed repository-local `pythonw.exe`, validates exact local identity, reuses a healthy loopback Hub or starts it detached, and opens the browser only after authenticated readiness.
+**Architecture:** Keep the existing FastAPI browser Hub as the only UI and add a private `.pyw` launcher plus an authenticated installer that publishes a Desktop `.lnk`. The shortcut directly invokes the reviewed repository-local `pythonw.exe`; the private launcher validates exact local identity, reuses a healthy loopback Hub or starts it detached, and opens the browser only after authenticated readiness.
 
 **Tech Stack:** Python 3.12 standard library, FastAPI, Uvicorn `Server`, Windows `pythonw.exe`, vanilla HTML/CSS/JavaScript, pytest, GitHub Actions `windows-latest`.
 
@@ -35,7 +35,7 @@
 
 - [ ] **Step 1: Write failing installer tests**
 
-  Cover non-Windows blocking, exact `%LOCALAPPDATA%` files, Desktop known-folder resolution, regular/non-reparse `pythonw.exe`, `.pyw` association mismatch, atomic writes, duplicate install, changed root/interpreter/owner, no request-controlled values, bounded public states, and no secrets in config.
+  Cover non-Windows blocking, exact `%LOCALAPPDATA%` files, Desktop known-folder resolution, regular/non-reparse `pythonw.exe`, direct `.lnk` generation, atomic writes, duplicate install, changed root/interpreter/owner/shortcut, no request-controlled values, bounded public states, and no secrets in config.
 
 - [ ] **Step 2: Run focused tests and confirm RED**
 
@@ -45,7 +45,7 @@
 
 - [ ] **Step 3: Implement the installer**
 
-  Use per-user fixed locations, component-safe reads, atomic replacement, and the checked-in template. Resolve the Windows Desktop known folder without changing associations or system settings.
+  Use per-user fixed locations, component-safe reads, atomic replacement, the checked-in template, and a direct `.lnk` target. Resolve the Windows Desktop known folder without changing associations or all-users settings.
 
 - [ ] **Step 4: Run focused tests and confirm GREEN**
 
@@ -156,7 +156,7 @@
 - Modify: `START_HERE.md`
 
 **Interfaces:**
-- Adds a `windows-latest` smoke that installs the `.pyw`, starts it with `pythonw.exe`, verifies one exact Hub PID on repeated launch, shuts down through authenticated API, and confirms port/process termination.
+- Adds a `windows-latest` smoke that installs and opens the Desktop `.lnk`, verifies one exact Hub PID on repeated launch, shuts down through authenticated API, and confirms port/process termination.
 
 - [ ] **Step 1: Write smoke and documentation contract tests**
 

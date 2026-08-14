@@ -31,7 +31,7 @@ def make_base(tmp_path: Path) -> tuple[Path, Path]:
     return root, pythonw
 
 
-def installer(tmp_path: Path, *, platform: str = "win32", associated: bool = True):
+def installer(tmp_path: Path, *, platform: str = "win32"):
     root, pythonw = make_base(tmp_path)
     git = tmp_path / "Git" / "cmd" / "git.exe"
     git.parent.mkdir(parents=True)
@@ -45,7 +45,7 @@ def installer(tmp_path: Path, *, platform: str = "win32", associated: bool = Tru
         local_app_data=local,
         desktop=desktop,
         platform=platform,
-        association_checker=lambda _: associated,
+        shortcut_builder=lambda *_: b"reviewed Windows shortcut",
         git_executable=git,
     ), root, pythonw, local, desktop
 
@@ -56,14 +56,14 @@ def test_installer_writes_fixed_private_config_and_desktop_entry(tmp_path: Path)
     result = owner.install()
     config = json.loads((local / "BaseToolHub" / "launcher" / "launcher-config.json").read_text(encoding="utf-8"))
 
-    assert result.public_view() == {"state": "INSTALLED", "desktop_entry": "Base Tool Hub.pyw"}
+    assert result.public_view() == {"state": "INSTALLED", "desktop_entry": "Base Tool Hub.lnk"}
     assert config["base_root"] == str(root)
     assert config["pythonw"] == str(pythonw)
     assert config["git_executable"].endswith("git.exe")
     assert len(config["hub_runtime_fingerprint"]) == 64
     assert config["port"] == 8764
     assert len(config["launcher_token"]) >= 32
-    assert (desktop / "Base Tool Hub.pyw").is_file()
+    assert (desktop / "Base Tool Hub.lnk").read_bytes() == b"reviewed Windows shortcut"
     assert "OPENAI_API_KEY" not in json.dumps(config)
 
 
@@ -78,7 +78,7 @@ def test_reinstall_for_a_different_project_config_rotates_identity(tmp_path: Pat
         local_app_data=local,
         desktop=desktop,
         platform="win32",
-        association_checker=lambda _: True,
+        shortcut_builder=lambda *_: b"reviewed Windows shortcut",
         git_executable=Path(first["git_executable"]),
     )
 
@@ -92,48 +92,14 @@ def test_reinstall_for_a_different_project_config_rotates_identity(tmp_path: Pat
 def test_installed_bootstrap_validates_interpreter_before_spawning(tmp_path: Path) -> None:
     owner, _, pythonw, _, _ = installer(tmp_path)
     owner.install()
-    namespace = runpy.run_path(str(owner.desktop_entry), run_name="launcher_entry_test")
+    namespace = runpy.run_path(str(owner.launcher_path), run_name="launcher_entry_test")
     pythonw.write_bytes(b"changed before desktop launch")
 
     with pytest.raises(RuntimeError, match="LAUNCHER_UPDATE_REQUIRED"):
-        namespace["_validated_config"](owner.config_path, owner.desktop_entry)
+        namespace["_validated_config"](owner.config_path, owner.launcher_path)
 
 
-def test_default_windows_association_checker_uses_the_effective_shell_user_choice(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    handler = tmp_path / "Python 3.12" / "pythonw.exe"
-    handler.parent.mkdir()
-    handler.write_bytes(b"gui python")
-    monkeypatch.setattr(launcher_module.os, "name", "nt")
-    monkeypatch.setattr(launcher_module, "_effective_pyw_executable", lambda: handler)
-
-    assert launcher_module._default_association_checker(handler) is True
-
-    handler.unlink()
-    assert launcher_module._default_association_checker(handler) is False
-
-
-def test_shell_association_query_accepts_a_successful_bounded_output_buffer(
-    tmp_path: Path,
-) -> None:
-    expected = str(tmp_path / "Python 3.12" / "pythonw.exe")
-
-    def query(flags, kind, association, extra, output, size):
-        assert flags == 0
-        assert kind == 2
-        assert association == ".pyw"
-        assert extra is None
-        assert size._obj.value == 32_768
-        output.value = expected
-        size._obj.value = len(expected) + 1
-        return 0
-
-    assert launcher_module._association_executable_from_query(query) == Path(expected).absolute()
-
-
-def test_installer_is_idempotent_and_fails_closed_without_windows_association(tmp_path: Path) -> None:
+def test_installer_is_idempotent_and_does_not_depend_on_global_pyw_association(tmp_path: Path) -> None:
     owner, *_ = installer(tmp_path)
     assert owner.install().state == "INSTALLED"
     first_token = json.loads(owner.config_path.read_text(encoding="utf-8"))["launcher_token"]
@@ -143,11 +109,6 @@ def test_installer_is_idempotent_and_fails_closed_without_windows_association(tm
     unsupported, *_ = installer(tmp_path / "unsupported", platform="linux")
     with pytest.raises(LauncherError, match="BLOCKED_PLATFORM"):
         unsupported.install()
-
-    missing, *_ = installer(tmp_path / "missing", associated=False)
-    with pytest.raises(LauncherError, match="PYW_ASSOCIATION_REQUIRED"):
-        missing.install()
-
 
 def test_installer_status_detects_changed_runtime_bytes(tmp_path: Path) -> None:
     owner, root, pythonw, _, _ = installer(tmp_path)
@@ -165,28 +126,37 @@ def test_installer_status_detects_changed_runtime_bytes(tmp_path: Path) -> None:
     assert owner.status() == "UPDATE_REQUIRED"
 
 
-def test_installer_status_requires_the_current_pyw_association(tmp_path: Path) -> None:
-    associated = True
-    root, _ = make_base(tmp_path)
-    git = tmp_path / "Git" / "cmd" / "git.exe"
-    git.parent.mkdir(parents=True)
-    git.write_bytes(b"fake git")
-    desktop = tmp_path / "Desktop"
-    desktop.mkdir()
-    owner = WindowsLauncherInstaller(
-        root,
-        tmp_path / "projects.json",
-        local_app_data=tmp_path / "Local App Data",
-        desktop=desktop,
-        platform="win32",
-        association_checker=lambda _: associated,
-        git_executable=git,
-    )
+def test_installer_status_rejects_a_changed_desktop_shortcut(tmp_path: Path) -> None:
+    owner, *_ = installer(tmp_path)
     owner.install()
     assert owner.status() == "INSTALLED"
 
-    associated = False
+    owner.desktop_entry.write_bytes(b"changed shortcut")
 
+    assert owner.status() == "UPDATE_REQUIRED"
+
+
+def test_installer_migrates_the_exact_legacy_desktop_pyw(tmp_path: Path) -> None:
+    owner, root, *_ = installer(tmp_path)
+    legacy = owner.desktop / "Base Tool Hub.pyw"
+    legacy.write_bytes(owner.template.read_bytes())
+
+    owner.install()
+
+    assert not legacy.exists()
+    assert owner.desktop_entry.is_file()
+    assert owner.status() == "INSTALLED"
+
+
+def test_installer_rejects_a_tampered_legacy_desktop_pyw(tmp_path: Path) -> None:
+    owner, *_ = installer(tmp_path)
+    legacy = owner.desktop / "Base Tool Hub.pyw"
+    legacy.write_bytes(b"tampered legacy launcher")
+
+    with pytest.raises(LauncherError, match="LAUNCHER_LEGACY_CONFLICT"):
+        owner.install()
+
+    assert not owner.desktop_entry.exists()
     assert owner.status() == "REPAIR_REQUIRED"
 
 
@@ -330,12 +300,12 @@ def test_launcher_detects_a_child_that_exits_before_health(tmp_path: Path) -> No
 def test_desktop_bootstrap_rejects_a_linked_config_parent(tmp_path: Path) -> None:
     owner, _, _, _, _ = installer(tmp_path)
     owner.install()
-    namespace = runpy.run_path(str(owner.desktop_entry), run_name="launcher_entry_test")
+    namespace = runpy.run_path(str(owner.launcher_path), run_name="launcher_entry_test")
     linked_parent = tmp_path / "linked-launcher"
     linked_parent.symlink_to(owner.config_path.parent, target_is_directory=True)
 
     with pytest.raises(RuntimeError, match="LAUNCHER_CONFIG_INVALID"):
-        namespace["_validated_config"](linked_parent / owner.config_path.name, owner.desktop_entry)
+        namespace["_validated_config"](linked_parent / owner.config_path.name, owner.launcher_path)
 
 
 def test_no_console_launcher_reports_a_bounded_error_and_log_location(
@@ -362,7 +332,7 @@ def test_desktop_bootstrap_reports_a_launcher_child_import_failure(
 ) -> None:
     owner, _, _, local, _ = installer(tmp_path)
     owner.install()
-    namespace = runpy.run_path(str(owner.desktop_entry), run_name="launcher_entry_test")
+    namespace = runpy.run_path(str(owner.launcher_path), run_name="launcher_entry_test")
     shown: list[str] = []
 
     class FailedChild:

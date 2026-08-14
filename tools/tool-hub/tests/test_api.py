@@ -223,7 +223,7 @@ def test_windows_launcher_install_endpoint_has_no_path_or_command_payload(tmp_pa
         def install(self):
             class Result:
                 def public_view(self):
-                    return {"state": "INSTALLED", "desktop_entry": "Base Tool Hub.pyw"}
+                    return {"state": "INSTALLED", "desktop_entry": "Base Tool Hub.lnk"}
             return Result()
 
         def status(self):
