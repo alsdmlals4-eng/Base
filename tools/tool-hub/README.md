@@ -44,6 +44,8 @@ $projectConfig = Join-Path $env:LOCALAPPDATA 'BaseToolHub\projects.json'
 
 브라우저에서 `http://127.0.0.1:8764`를 연 뒤 `바탕화면 실행 아이콘 설치/복구`를 한 번 누릅니다. 설치가 성공하면 바탕화면에 `Base Tool Hub.lnk`가 생깁니다. 설치기는 외부 PowerShell을 띄우지 않고 Windows Shell Link API를 직접 사용하며, 바로가기는 검증된 `pythonw.exe`와 private launcher를 직접 가리켜 `.pyw` 연결 프로그램에도 의존하지 않습니다. 이후 정상 사용은 PowerShell을 열지 않고 이 아이콘을 두 번 클릭하면 됩니다. 같은 Hub가 이미 실행 중이면 새 프로세스를 만들지 않고 브라우저만 다시 엽니다. 종료할 때는 화면의 `Tool Hub 종료`를 사용합니다.
 
+구현 기준은 Microsoft의 [Windows Shell Links](https://learn.microsoft.com/en-us/windows/win32/shell/links) 계약입니다.
+
 이전 버전의 바탕화면 `Base Tool Hub.pyw`가 현재 검토된 launcher와 정확히 일치하면 설치 과정에서 새 `.lnk` 게시 후 제거합니다. 내용이 다르거나 비정상 파일이면 임의로 지우지 않고 `복구 필요`로 차단합니다.
 
 이 PowerShell 블록은 최초 설치 또는 Base/가상환경 변경 뒤 복구에만 필요합니다. 바탕화면 실행기는 Git pull, pip install, branch 변경, 프로젝트 파일 수정, 다른 프로세스 종료를 수행하지 않습니다. 8764 포트가 다른 프로그램이면 이를 죽이지 않고 `PORT_IDENTITY_CONFLICT`로 차단합니다.
