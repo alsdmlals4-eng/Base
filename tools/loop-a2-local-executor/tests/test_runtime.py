@@ -122,6 +122,39 @@ class RuntimeTests(unittest.TestCase):
         self.assertNotIn("powershell", rendered.casefold())
         self.assertNotIn("cmd.exe", rendered.casefold())
 
+    def test_image_resolution_retries_same_digest_with_daemon_platform(self) -> None:
+        image_id = "sha256:" + "e" * 64
+        runner = FakeRunner([
+            subprocess.CompletedProcess([], 1, stdout="", stderr="no such image"),
+            subprocess.CompletedProcess([], 0, stdout="linux/amd64\n", stderr=""),
+            subprocess.CompletedProcess([], 0, stdout=image_id + "\n", stderr=""),
+            subprocess.CompletedProcess([], 0, stdout=json.dumps(self.success_receipt()), stderr=""),
+        ])
+
+        result = self.runtime(runner).execute(job())
+
+        self.assertEqual(result["state"], "WAITING_INTEGRATION")
+        self.assertEqual(
+            runner.calls[0]["argv"],
+            ("/trusted/docker", "image", "inspect", "--format", "{{.Id}}", REVIEWED_TEST_IMAGE_REF),
+        )
+        self.assertEqual(
+            runner.calls[1]["argv"],
+            ("/trusted/docker", "version", "--format", "{{.Server.Os}}/{{.Server.Arch}}"),
+        )
+        self.assertEqual(
+            runner.calls[2]["argv"],
+            (
+                "/trusted/docker", "image", "inspect", "--platform", "linux/amd64",
+                "--format", "{{.Id}}", REVIEWED_TEST_IMAGE_REF,
+            ),
+        )
+        self.assertEqual(runner.calls[3]["argv"][0], "/trusted/python")
+        rendered_calls = "\n".join(" ".join(call["argv"]) for call in runner.calls)
+        self.assertNotIn(" pull ", f" {rendered_calls} ")
+        self.assertNotIn(" image ls ", f" {rendered_calls} ")
+        self.assertNotIn("python:3.12-slim ", rendered_calls)
+
     def test_execute_never_pulls_image(self) -> None:
         runner = FakeRunner([subprocess.CompletedProcess([], 1, stdout="", stderr="not found")])
         with self.assertRaises(LocalRuntimeError) as caught:
