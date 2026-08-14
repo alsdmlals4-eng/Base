@@ -39,4 +39,4 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python tools/loop-a2-local-executor/tests/test_job.py -v
+          python -m unittest discover -s tools/loop-a2-local-executor/tests -p 'test_*.py' -v
