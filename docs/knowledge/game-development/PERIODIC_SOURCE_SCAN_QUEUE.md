@@ -104,6 +104,22 @@ Runtime·Save/Data·Schema·Asset
 미검증·상충·약한 주장
 ```
 
+## 진행 중 PR 보호 Gate
+
+`SCHEDULED_AUTOMATION_ACTIVE_PR_GUARD`는 Base의 예약·주기 저장소 쓰기 자동화가 따라야 하는 보호 계약이다.
+
+- `open` 상태 PR은 draft/ready 구분 없이 진행 중 작업으로 취급한다.
+- 진행 중 PR이 하나라도 있으면 외부 분석과 저장소 변경 파이프라인에 진입하지 않고 `BLOCKED_ACTIVE_PR_GUARD`로 해당 실행만 defer한다.
+- open PR 목록을 확인할 수 없으면 `BLOCKED_ACTIVE_PR_GUARD_QUERY`로 fail-closed한다.
+- 분석 중 새 PR이 열리는 경우를 막기 위해 Branch/PR 게시 직전에 open PR 집합을 다시 확인한다.
+- 자동화가 자기 bounded PR을 만든 뒤에는 자기 PR 번호만 검사 대상에서 제외할 수 있다. 그 뒤 새 외부 PR이 열리면 validation, main 동기화, merge 전에 반복 검사하여 차단한다.
+- 기존 open PR의 head branch, commit, base, draft/ready 상태, metadata를 수정·rebase·update·merge하지 않는다.
+- 예약·주기 자동화는 보호 검사 이후에도 남아 나중에 발동할 수 있는 deferred auto-merge를 사용하지 않는다. 최종 active-PR 재검사 직후 expected-head 즉시 squash merge만 허용하며, 즉시 통합할 수 없으면 `BLOCKED_MERGE_NOT_IMMEDIATE`로 중단한다.
+- Queue Issue 갱신과 상태 조회 같은 비파괴 관찰·보고는 허용한다.
+- 이후 일간·주간 등 새로운 저장소 쓰기 자동화를 추가할 때도 이 계약을 재사용한다.
+
+이 Gate는 자동화가 자기 PR 외의 작업 PR을 건드리지 않는 최소 보호선이다. 사람의 명시적 작업이나 별도 승인된 수동 PR 흐름을 전면 직렬화하는 규칙은 아니다.
+
 ## PR 검증과 통합 Gate
 
 허용 가능한 작업 판정은 다음으로 제한한다.
@@ -117,20 +133,24 @@ LOW_RISK_BOUNDED_UPDATE
 `ABSORB_EXISTING_OWNER`도 자동 PR에서는 기존 owner 본문을 직접 바꾸지 않고, 후속 작업이 사용할 Evidence Record만 기록한다.
 
 ```text
-Schema·URL 검증
+외부 open PR 0 (draft/ready 모두)
+→ Schema·URL 검증
 → 독립 적대적 검토 P0/P1 0
 → 생성 경로 허용 범위 통과
+→ 외부 open PR 재검사 0
 → 열린 PR 경로 충돌 0
 → 별도 Branch와 PR
+→ 자기 Automation PR만 제외한 외부 open PR 0
 → Evidence Knowledge 검증
 → Game Project OS full 검증과 ci-gate
 → 최신 main 포함 여부 확인
-→ main 이동 시 동기화 후 exact-head 재검증
+→ main 이동 시 active-PR 재검사 후 동기화·exact-head 재검증
 → unresolved review thread 0
-→ 예상 Head가 일치할 때만 squash 통합
+→ 최종 외부 open PR 0
+→ 예상 Head가 일치할 때만 즉시 squash 통합
 ```
 
-Required Check·Ruleset을 우회하지 않고 `main`에 직접 쓰거나 강제 push하지 않는다.
+Required Check·Ruleset을 우회하지 않고 `main`에 직접 쓰거나 강제 push하지 않는다. deferred auto-merge를 보호 Gate의 대체 경로로 사용하지 않는다.
 
 ## 운영 진입점과 인증 실패 경계
 
@@ -167,7 +187,7 @@ Evidence Record 통합 != 프로젝트 Canon 갱신
 자동 PR 성공 != 외부 주장의 사실성·보편성 증명
 ```
 
-차단 상태는 `BLOCKED_MODEL_*`, `BLOCKED_CONTEXT_SCHEMA`, `BLOCKED_UNCITED_URL`, `BLOCKED_P0_P1`, `BLOCKED_PATH_SCOPE`, `BLOCKED_OPEN_PR_CONFLICT`, `BLOCKED_VALIDATION`, `BLOCKED_UNRESOLVED_REVIEW_THREAD` 등으로 Issue와 Artifact에 남긴다. 차단 시 direct-main 대체 경로를 사용하지 않는다.
+차단 상태는 `BLOCKED_ACTIVE_PR_GUARD`, `BLOCKED_ACTIVE_PR_GUARD_QUERY`, `BLOCKED_MERGE_NOT_IMMEDIATE`, `BLOCKED_MODEL_*`, `BLOCKED_CONTEXT_SCHEMA`, `BLOCKED_UNCITED_URL`, `BLOCKED_P0_P1`, `BLOCKED_PATH_SCOPE`, `BLOCKED_OPEN_PR_CONFLICT`, `BLOCKED_VALIDATION`, `BLOCKED_UNRESOLVED_REVIEW_THREAD` 등으로 Issue와 Artifact에 남긴다. 차단 시 direct-main 또는 deferred auto-merge 대체 경로를 사용하지 않는다.
 
 ## 지속성·Rollback
 
