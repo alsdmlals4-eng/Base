@@ -1,0 +1,144 @@
+{
+  "$id": "loop-a2-review-result-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "findings": {
+            "minItems": 1
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "PASS"
+          }
+        },
+        "required": [
+          "verdict"
+        ]
+      },
+      "then": {
+        "properties": {
+          "findings": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "checked_requirement_ids": {
+      "items": {
+        "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+        "type": "string"
+      },
+      "maxItems": 256,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "contract_role": {
+      "const": "LOOP_A2_REVIEW_RESULT"
+    },
+    "expected_main_sha": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "findings": {
+      "items": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "message": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "paths": {
+            "items": {
+              "maxLength": 1024,
+              "minLength": 1,
+              "pattern": "^(?!/)(?![A-Za-z]:[\\\\/])(?!.*(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)).+$",
+              "type": "string"
+            },
+            "maxItems": 256,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "requirement_ids": {
+            "items": {
+              "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            "maxItems": 256,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "severity": {
+            "enum": [
+              "P0",
+              "P1",
+              "P2"
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "severity",
+          "message",
+          "paths",
+          "requirement_ids"
+        ],
+        "type": "object"
+      },
+      "maxItems": 128,
+      "type": "array"
+    },
+    "package_id": {
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+      "type": "string"
+    },
+    "role": {
+      "const": "CRITIC"
+    },
+    "run_id": {
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "verdict": {
+      "enum": [
+        "PASS",
+        "MUST_FIX",
+        "USER_DECISION_REQUIRED",
+        "BLOCKED_UNVERIFIED"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "contract_role",
+    "project_id",
+    "run_id",
+    "package_id",
+    "expected_main_sha",
+    "role",
+    "verdict",
+    "findings",
+    "checked_requirement_ids"
+  ],
+  "type": "object"
+}
