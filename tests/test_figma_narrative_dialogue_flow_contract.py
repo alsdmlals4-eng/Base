@@ -31,7 +31,7 @@ class FigmaNarrativeDialogueFlowContractTests(unittest.TestCase):
     def test_same_scene_branch_preserves_background_continuity(self):
         text = PROFILE.read_text(encoding="utf-8")
 
-        self.assertIn("same `scene_id`", text)
+        self.assertIn("같은 `scene_id`", text)
         self.assertIn("background_ref", text)
         self.assertIn("STAY_IN_SCENE", text)
         self.assertIn("MOVE_SCENE", text)
