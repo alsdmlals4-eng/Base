@@ -107,7 +107,7 @@ class CiRequiredGateEvaluatorTests(unittest.TestCase):
                     env=environment,
                 )
                 self.assertNotEqual(0, result.returncode)
-                self.assertIn(f"missing input: {missing}", result.stdout)
+                self.assertIn(f"missing environment variable: {missing}", result.stdout)
 
 
 if __name__ == "__main__":
