@@ -2,12 +2,12 @@
   "schema_version": 1,
   "checkpoint_role": "UNIVERSAL_LOOP_CROSS_PROJECT_ACCEPTANCE",
   "base_kernel_main_sha": "8e7238a1bb9f49bd6e2403a2a6cb20d7aee863c7",
-  "status": "PORTABILITY_CONFIRMED_SUBSCRIPTION_TRANSPORT_READY_LOCAL_SMOKE_GATED",
+  "status": "PORTABILITY_CONFIRMED_UNATTENDED_LOCAL_EXECUTOR_READY_BLACKSMITH_BURNIN_AUTHORITY_READY_LOCAL_MACHINE_GATED",
   "validated_projects": [
     {
       "project_id": "BLACKSMITH",
       "repository": "alsdmlals4-eng/Blacksmith",
-      "main_sha": "5267f542ef6ce99f98b3b407e42b146b5672335b",
+      "main_sha": "6b241f28969410de78156c90cc10f33a067426a2",
       "project_shape": "GODOT_PRODUCT_SAVE_UID",
       "capsule_portability": "PASS",
       "unmodified_base_m2_m3_shadow": "NOT_RUN",
@@ -15,8 +15,10 @@
       "evidence": {
         "capsule_pr": 165,
         "active_run_pointer_fix_pr": 167,
-        "full_validation_run": 31788438786,
-        "live_editor_pilot_run": 31788439264
+        "burnin_authority_pr": 169,
+        "full_validation_run": 31828561974,
+        "live_editor_pilot_run": 31828562392,
+        "product_scope_selection": "UNCHANGED_UNSELECTED"
       }
     },
     {
@@ -68,7 +70,10 @@
     "pr_handoff_postmerge_closure": "MERGED",
     "durable_worktree_resume": "MERGED",
     "denied_network_boundary": "MERGED_MAIN_VALIDATED",
-    "subscription_codex_cli_transport": "MERGED_MAIN_VALIDATED"
+    "subscription_codex_cli_transport": "MERGED_MAIN_VALIDATED",
+    "unattended_local_executor": "MERGED_MAIN_VALIDATED",
+    "windows_docker_denied_network_host": "MERGED_MAIN_VALIDATED",
+    "blacksmith_burnin_authority": "MERGED_MAIN_VALIDATED"
   },
   "provider_transport_evidence": {
     "implementation_pr": 365,
@@ -101,7 +106,7 @@
     ],
     "unshare_hosted_ubuntu": "UNAVAILABLE_FAIL_CLOSED",
     "read_only_approved_network": "NOT_IMPLEMENTED_FAIL_CLOSED",
-    "non_linux_production_boundary": "NOT_CLAIMED",
+    "non_linux_production_boundary": "WINDOWS_HOST_PLAN_MERGED_MAIN_VALIDATED_LIVE_LOCAL_SMOKE_NOT_RUN",
     "live_openai_request": "NOT_RUN",
     "paid_api_cost": "NOT_RUN"
   },
@@ -129,10 +134,58 @@
     "live_openai_api_request": "NOT_APPLICABLE_POLICY_FORBIDDEN",
     "paid_api_cost": "NOT_RUN"
   },
+  "local_executor_evidence": {
+    "implementation_issue": 397,
+    "implementation_pr": 398,
+    "exact_head": "c576a4831cd1fdd76bb4a248ee6f8a33ba0015b5",
+    "merge_main": "f71f6c14f4a7119cfa7c0bf29097c04fd1c7adaf",
+    "postmerge_local_executor_run": 31825097578,
+    "postmerge_base_v9_run": 31825097617,
+    "postmerge_game_project_os_run": 31825097579,
+    "postmerge_validation": "PASS",
+    "local_installation": "NOT_RUN_LOCAL_MACHINE_REQUIRED",
+    "windows_startup_registration": "NOT_RUN_LOCAL_MACHINE_REQUIRED",
+    "local_gh_auth_status": "NOT_RUN_LOCAL_MACHINE_REQUIRED",
+    "local_codex_chatgpt_auth_status": "NOT_RUN_LOCAL_MACHINE_REQUIRED",
+    "real_local_chatgpt_codex_call": "NOT_RUN_LOCAL_MACHINE_REQUIRED"
+  },
+  "windows_docker_host_evidence": {
+    "implementation_issue": 400,
+    "implementation_pr": 401,
+    "exact_head": "6a022b2364d061a3802fee87d56d7c9b2b28929c",
+    "merge_main": "3b3af0706db1b861c1bec6a237192595944b79a5",
+    "postmerge_windows_host_contract_run": 31827788722,
+    "postmerge_denied_network_run": 31827788644,
+    "postmerge_a2_foundation_run": 31827788793,
+    "postmerge_base_v9_run": 31827788642,
+    "postmerge_game_project_os_run": 31827788674,
+    "windows_plan_construction": "PASS",
+    "linux_real_docker_loopback_only": "PASS",
+    "windows_live_docker_desktop": "NOT_RUN_LOCAL_MACHINE_REQUIRED",
+    "reviewed_image_preload": "NOT_RUN_LOCAL_MACHINE_REQUIRED",
+    "postmerge_validation": "PASS"
+  },
+  "blacksmith_burnin_authority_evidence": {
+    "implementation_issue": 168,
+    "implementation_pr": 169,
+    "exact_head": "b1bc083f95538ce9e5deab43f17aa2582281324c",
+    "merge_main": "6b241f28969410de78156c90cc10f33a067426a2",
+    "product_baseline_sha": "5267f542ef6ce99f98b3b407e42b146b5672335b",
+    "package_id": "BS_A2_BURNIN_TEST_ONLY_PKG_001",
+    "allowed_runtime_output": "docs/operations/loop/burnin/BS_A2_BURNIN_MARKER.txt",
+    "postmerge_full_validation_run": 31828561974,
+    "postmerge_live_editor_pilot_run": 31828562392,
+    "product_scope_selection": "UNCHANGED_UNSELECTED",
+    "real_a2_burnin_runs": 0,
+    "postmerge_validation": "PASS"
+  },
   "remaining_external_gate": {
     "real_codex_builder_transport": "MERGED_MAIN_VALIDATED",
     "real_gpt_critic_transport": "MERGED_MAIN_VALIDATED",
     "real_openai_api": "NOT_APPLICABLE_POLICY_FORBIDDEN",
+    "blacksmith_burnin_authority": "MERGED_MAIN_VALIDATED",
+    "local_executor_installation": "NOT_RUN_LOCAL_MACHINE_REQUIRED",
+    "windows_docker_desktop_smoke": "NOT_RUN_LOCAL_MACHINE_REQUIRED",
     "subscription_codex_cli_smoke": "NOT_RUN_LOCAL_CHATGPT_AUTH_REQUIRED",
     "real_a2_burnin_runs": 0,
     "paid_smoke_issue": null
