@@ -2,35 +2,74 @@
 
 ## Status
 
-Approved for implementation from `main@39936ff6a83410b4169878c1335de9eb3e4c25cf`. The GitHub connector blocks executable test-file writes in this session, so the planned semantic regression is `BLOCKED_TOOL_POLICY`; existing exact-head governance and Vertical Slice regressions remain required.
+Approved implementation, resumed after interruption and rebased onto `main@b1317f2c1b83e57f016ce4efd4e169bf7c0acd90`.
+
+The earlier connector limitation on executable test writes no longer applies to this execution surface: `tests/test_controlled_vocabulary_contract.py` was created successfully. Completion still requires fresh exact-head CI; file creation alone is not test execution evidence.
 
 ## Goal
 
-Create a thin controlled-vocabulary index, name the existing completion-claim contract `Implementation Reality Gate`, preserve current owners, and add deterministic regressions where the execution surface permits them.
+Create a thin controlled-vocabulary index, distinguish industry/common terms from Base-local aliases, name the existing completion-claim contract `Implementation Reality Gate`, preserve current owners, and protect the semantics with an executable regression.
 
 ## Scope
 
-Create `docs/CONTROLLED_VOCABULARY.md`; update the existing routing, Vertical Slice, claim-verification, and changelog documents named in the approved design. Do not add a Skill, Work Mode, Registry entry, Schema, or project migration.
+Create:
+
+- `docs/CONTROLLED_VOCABULARY.md`
+- approved design and implementation records
+- `tests/test_controlled_vocabulary_contract.py`
+
+Modify:
+
+- `START_HERE.md` for one-step terminology routing
+
+Protect:
+
+- `AGENTS.md`
+- `skills/**`
+- Skill Registry/generated maps
+- schemas/workflows/release locks
+- project code/data/assets
 
 ## Sequence
 
-1. Define the semantic regression before implementation; record the connector block without claiming RED execution.
-2. Add the vocabulary canon and one-step routes.
-3. Add the IRG alias to the existing verification owner and refine the product-experiment distinction table.
-4. Run focused and Base-wide exact-head validation.
-5. Perform adversarial review, merge the reviewed head, and read back the new main.
+1. Rebase/sync the dedicated feature branch with current `main` without dropping the existing vocabulary work.
+2. Add the semantic regression for discoverability, product-stage distinctions, and IRG fail-closed/local-alias boundaries.
+3. Refine the vocabulary so `IRG` is explicitly `BASE_LOCAL_ALIAS`, not an industry standard, while preserving existing owners.
+4. Reconcile the design record with the actual reviewed scope and current Base.
+5. Run exact-head CI and inspect all check conclusions, PR threads, same-goal PR overlap, changed paths, and current-main freshness.
+6. Run the adversarial review loop: attack → validate critique → minimal fix → regression recheck.
+7. Convert the PR from Draft only after the reviewed exact HEAD is green and no merge blocker remains.
+8. Squash merge the reviewed exact HEAD and read back the new `main`.
 
 ## Verification
 
-- Existing `tests.test_v9_governance_documents`
-- Existing `tests.test_vertical_slice_v9_contract`
-- Existing `tests.test_neutral_adversarial_feature_lifecycle`
-- Base v9 exact-head Actions
-- Game Project Operating System exact-head Actions
-- changed-path and open-PR overlap checks
+Required fresh evidence on the final PR HEAD:
+
+- `tests/test_controlled_vocabulary_contract.py`
+- Base v9 contract / adversarial gate
+- Game Project Operating System checks including `ci-gate`
+- documentation validation and other automatically selected repository checks
+- changed-path scope inspection
+- same-goal open/recent PR overlap check
+- unresolved review thread check
+- PR mergeability/current-main freshness
 - post-merge main readback
-- New semantic test: `BLOCKED_TOOL_POLICY`, not reported as run or passed
+
+Skipped checks are interpreted according to workflow conditions and are not promoted to PASS for capabilities they did not execute.
+
+## Adversarial acceptance
+
+MUST reject or fix:
+
+- `IRG` being presented as an external industry standard
+- Prototype/PoC/Vertical Slice/MVP/Demo collapsing into one linear stage
+- Checklist being treated as Gate
+- test-file existence being reported as execution
+- static PASS being promoted to runtime/render/UX/fun PASS
+- a new Terminology/IRG Skill or Registry entry
+- stale-main CI being reused as final evidence
+- design/plan scope claiming files that the actual PR does not touch
 
 ## Rollback
 
-Revert the single squash merge. No Registry, product data, runtime, or migration state is introduced.
+Revert the single squash merge. No Registry, product data, runtime, schema, workflow, or migration state is introduced.
