@@ -9,6 +9,13 @@ from .protocol import ReviewResult, RunRequest, WorkerResult
 from .providers import BuilderProvider, CriticProvider
 from .scope import validate_changed_paths
 
+_PATH_VIOLATION_CODES = {
+    "FORBIDDEN_PATH_WRITE",
+    "OUT_OF_SCOPE_WRITE",
+    "SYSTEM_PROTECTED_WRITE",
+    "UNSAFE_CHANGED_PATH",
+}
+
 
 @dataclass(frozen=True)
 class RunOutcome:
@@ -64,6 +71,7 @@ class A2Runtime:
             "finding_codes": list(finding_codes),
             "changed_paths": list(changed_paths),
             "provider_mode": request.provider_mode,
+            "integration_eligible": False,
             "a3_auto_merge": "DISABLED",
             "scheduler": "NOT_CONFIGURED",
         }
@@ -76,6 +84,23 @@ class A2Runtime:
             changed_paths=changed_paths,
             receipt_digest=str(receipt["receipt_digest"]),
             evidence=receipt,
+        )
+
+    def _provider_exception_outcome(
+        self,
+        request: RunRequest,
+        *,
+        role: str,
+        error: Exception,
+        changed_paths: tuple[str, ...] = (),
+    ) -> RunOutcome:
+        code = f"{role}_PROVIDER_EXCEPTION"
+        return self._outcome(
+            request,
+            "PROVIDER_FAILURE",
+            finding_codes=(code,),
+            changed_paths=changed_paths,
+            extra={"provider_error_type": type(error).__name__},
         )
 
     def _timeout_outcome(
@@ -195,7 +220,9 @@ class A2Runtime:
                     finding_codes=("CRITIC_PATH_EXPANSION",),
                     changed_paths=changed_paths,
                     extra={
-                        "critic_path_findings": [item.__dict__ for item in path_findings]
+                        "critic_path_findings": [
+                            item.__dict__ for item in path_findings
+                        ]
                     },
                 )
 
@@ -236,7 +263,11 @@ class A2Runtime:
         *,
         repair_cycle: int,
     ) -> RunOutcome | None:
-        if review.verdict == "PASS" and set(review.checked_requirement_ids) != set(request.requirement_ids):
+        if (
+            review.verdict == "PASS"
+            and set(review.checked_requirement_ids)
+            != set(request.requirement_ids)
+        ):
             return self._outcome(
                 request,
                 "BLOCKED_UNVERIFIED",
@@ -244,13 +275,17 @@ class A2Runtime:
                 changed_paths=worker.changed_paths,
                 extra={
                     "required_requirement_ids": list(request.requirement_ids),
-                    "checked_requirement_ids": list(review.checked_requirement_ids),
+                    "checked_requirement_ids": list(
+                        review.checked_requirement_ids
+                    ),
                 },
             )
         if review.verdict == "PASS":
             extra: dict[str, Any] = {
                 "critic_verdict": "PASS",
-                "checked_requirement_ids": list(review.checked_requirement_ids),
+                "checked_requirement_ids": list(
+                    review.checked_requirement_ids
+                ),
             }
             if repair_cycle:
                 extra["repair_cycles"] = repair_cycle
@@ -260,11 +295,16 @@ class A2Runtime:
                 changed_paths=worker.changed_paths,
                 extra=extra,
             )
-        if review.verdict in {"USER_DECISION_REQUIRED", "BLOCKED_UNVERIFIED"}:
+        if review.verdict in {
+            "USER_DECISION_REQUIRED",
+            "BLOCKED_UNVERIFIED",
+        }:
             return self._outcome(
                 request,
                 review.verdict,
-                finding_codes=tuple(finding.code for finding in review.findings)
+                finding_codes=tuple(
+                    finding.code for finding in review.findings
+                )
                 or (review.verdict,),
                 changed_paths=worker.changed_paths,
             )
@@ -288,7 +328,14 @@ class A2Runtime:
             )
 
         cumulative_turns = 0
-        worker = self.builder.invoke(request, repair_cycle=0)
+        try:
+            worker = self.builder.invoke(request, repair_cycle=0)
+        except Exception as error:
+            return self._provider_exception_outcome(
+                request,
+                role="BUILDER",
+                error=error,
+            )
         timeout = self._timeout_outcome(
             request,
             started_at=started_at,
@@ -308,7 +355,15 @@ class A2Runtime:
         if failure is not None:
             return failure
 
-        review = self.critic.review(request, worker)
+        try:
+            review = self.critic.review(request, worker)
+        except Exception as error:
+            return self._provider_exception_outcome(
+                request,
+                role="CRITIC",
+                error=error,
+                changed_paths=worker.changed_paths,
+            )
         timeout = self._timeout_outcome(
             request,
             started_at=started_at,
@@ -334,8 +389,21 @@ class A2Runtime:
 
         current_review = review
         previous_signature = _review_signature(review)
-        for repair_cycle in range(1, request.budgets.max_repair_cycles + 1):
-            worker = self.builder.invoke(request, repair_cycle=repair_cycle)
+        for repair_cycle in range(
+            1,
+            request.budgets.max_repair_cycles + 1,
+        ):
+            try:
+                worker = self.builder.invoke(
+                    request,
+                    repair_cycle=repair_cycle,
+                )
+            except Exception as error:
+                return self._provider_exception_outcome(
+                    request,
+                    role="BUILDER",
+                    error=error,
+                )
             timeout = self._timeout_outcome(
                 request,
                 started_at=started_at,
@@ -355,7 +423,15 @@ class A2Runtime:
             if failure is not None:
                 return failure
 
-            current_review = self.critic.review(request, worker)
+            try:
+                current_review = self.critic.review(request, worker)
+            except Exception as error:
+                return self._provider_exception_outcome(
+                    request,
+                    role="CRITIC",
+                    error=error,
+                    changed_paths=worker.changed_paths,
+                )
             timeout = self._timeout_outcome(
                 request,
                 started_at=started_at,
@@ -422,22 +498,28 @@ class A2Runtime:
         for index in range(1, runs + 1):
             run_request = replace(request, run_id=f"RUN_{index:03d}")
             outcomes.append(
-                self.run(run_request, observed_main_sha=observed_main_sha)
+                self.run(
+                    run_request,
+                    observed_main_sha=observed_main_sha,
+                )
             )
         passed = all(
-            outcome.state == "WAITING_INTEGRATION" for outcome in outcomes
+            outcome.state == "WAITING_INTEGRATION"
+            for outcome in outcomes
         )
         return {
-            "status": "FAKE_PROVIDER_BURNIN_GREEN"
-            if passed
-            else "FAKE_PROVIDER_BURNIN_FAILED",
+            "status": (
+                "FAKE_PROVIDER_BURNIN_GREEN"
+                if passed
+                else "FAKE_PROVIDER_BURNIN_FAILED"
+            ),
             "consecutive_runs": len(outcomes) if passed else 0,
             "states": [outcome.state for outcome in outcomes],
             "receipt_digests": [
                 outcome.receipt_digest for outcome in outcomes
             ],
             "out_of_scope_writes": sum(
-                "OUT_OF_SCOPE_WRITE" in outcome.finding_codes
+                bool(_PATH_VIOLATION_CODES.intersection(outcome.finding_codes))
                 for outcome in outcomes
             ),
             "false_completion_claims": 0,
