@@ -32,7 +32,11 @@ from tools.periodic_source_analysis_contract import (
 from tools.periodic_source_analysis_render import render_scan_markdown
 from tools.periodic_source_candidate_state import update_candidate_ledger
 from tools.periodic_source_operations_state import update_operations_ledger
-from tools.periodic_source_scan_queue import load_ledger, parse_iso_date, select_due_sources
+from tools.periodic_source_scan_queue import (
+    load_ledger,
+    parse_iso_date,
+    select_due_source_batch,
+)
 
 __all__ = [
     "ANALYSIS_SCHEMA",
@@ -119,7 +123,7 @@ def run_analysis(
         raise AnalysisBlocked("BLOCKED_CONTEXT_SCHEMA", "batch size must be between 1 and 20")
     safe_run_id = _safe_run_id(run_id)
     operations = load_ledger(operations_ledger_path)
-    selected = select_due_sources(operations, run_date)[:batch_size]
+    selected = select_due_source_batch(operations, run_date, batch_size)
     if not selected:
         return {"state": "NO_CHANGE", "detail": "No Source family is due."}
 
