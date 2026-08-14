@@ -35,6 +35,28 @@ INTERRUPTION
 
 `stalled`는 단순히 출력 변화가 일정 시간 없다는 관찰 신호다. 서버가 실제로 요청을 처리 중일 가능성을 배제할 수 없으므로 **자동 재전송 금지**다. 먼저 `RESUME` 경로로 전환해 현재 상태를 읽는다.
 
+### 연결 단절 + 전체 답변 대기
+
+ChatGPT 웹에서 다음과 같은 명시적 상태가 보이면 독립적인 복구 신호로 취급한다.
+
+```text
+연결이 끊어졌습니다. 전체 답변을 기다리는 중입니다
+```
+
+이 상태는 프롬프트가 서버에 이미 전달되고 응답이 계속 처리 중일 수 있으므로, 마지막 프롬프트를 blind resend하지 않는다.
+
+```text
+명시적 연결 단절 신호
+→ 같은 오류 surface 안의 안전한 retry control 확인
+   ├─ 존재: bounded RETRY
+   └─ 없음: RECOVERY_REQUIRED
+→ 동일 대화/작업 identity의 현재 상태 readback
+→ 완료 응답이 이미 존재하면 재전송 없이 RECOVERED
+→ 미완료이면 안전한 reconnect/resume 경로만 사용
+```
+
+`다시 시도`, `Retry`, `Try again`, `Regenerate`처럼 오류와 같은 국소 surface에 속한 **안전한 retry control**만 자동 클릭 후보가 된다. 다른 영역의 버튼, 승인/확인 버튼, 일반 `Continue`는 retry control로 간주하지 않는다.
+
 ### `RESUME`
 
 이미 일부 단계가 실행됐을 가능성이 있거나 부작용이 있는 작업에서 사용한다. 재개 전에 반드시 `CHECKPOINT`와 현재 정본을 비교한다.
@@ -91,7 +113,7 @@ WATCHDOG_SIGNAL
 ```
 
 - `RETRYING`: 명시적 transient failure에 대해 bounded `RETRY`가 진행 중이다.
-- `RECOVERY_REQUIRED`: retry ceiling, `stalled`, unsafe/missing retry control, 불확실한 side effect처럼 상태 재확인이 필요하다.
+- `RECOVERY_REQUIRED`: retry ceiling, `stalled`, unsafe/missing retry control, 연결 단절, 불확실한 side effect처럼 상태 재확인이 필요하다.
 - `RECOVERED`: 같은 작업 identity에서 retry 또는 resume 뒤 실행이 정상적으로 다시 진행되거나 terminal success를 확인했다.
 - `FAILED_TERMINAL`: bounded recovery path를 소진했거나 인증/권한/계약 위반처럼 자동 복구하면 안 되는 실패다.
 
