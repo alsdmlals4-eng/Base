@@ -38,6 +38,7 @@ def test_valid_packet_is_deterministic_and_never_claims_provider_execution() -> 
     assert first.public_view() == {
         "schema_version": 1,
         "state": "GPT_PRO_HANDOFF_READY",
+        "generation_surface": "CHATGPT_PRO_SUBSCRIPTION",
         "project_id": "urban-legend",
         "tool_id": "expression-studio",
         "run_id": "run_20260815_001",
@@ -48,6 +49,7 @@ def test_valid_packet_is_deterministic_and_never_claims_provider_execution() -> 
         },
         "generation": {
             "instruction": "Keep the approved character identity and change only the winter coat.",
+            "output_media_type": "image/png",
             "expected_png_count": 4,
             "min_dimension": 256,
             "max_dimension": 2048,
@@ -60,6 +62,17 @@ def test_valid_packet_is_deterministic_and_never_claims_provider_execution() -> 
         "provider_call_made": False,
         "requires_additional_payment": False,
     }
+
+
+def test_subscription_surface_and_output_format_are_fixed_not_caller_selected() -> None:
+    result = packet()
+    assert result.generation_surface == "CHATGPT_PRO_SUBSCRIPTION"
+    assert result.output_media_type == "image/png"
+
+    with pytest.raises(TypeError):
+        packet(generation_surface="OPENAI_API")
+    with pytest.raises(TypeError):
+        packet(output_media_type="image/jpeg")
 
 
 @pytest.mark.parametrize(
