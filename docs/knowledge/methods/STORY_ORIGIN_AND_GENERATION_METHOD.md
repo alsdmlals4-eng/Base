@@ -68,6 +68,8 @@ Primary Seed 하나로 먼저 story pressure를 만든다. Secondary Seed는 갈
 
 ## 3. Seed Catalog
 
+아래 목록 순서는 우선순위가 아니다. `CHARACTER`도 기본값이나 상위 seed가 아니며, 현재 작품에서 실제 압력과 선택을 가장 잘 만드는 항목을 Primary Seed로 고른다.
+
 ### `CHARACTER`
 
 성격, 욕망, 공포, 결점, 과거 경험, 판단 습관에서 시작한다.
