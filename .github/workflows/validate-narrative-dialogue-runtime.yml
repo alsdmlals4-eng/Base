@@ -9,6 +9,14 @@ on:
       - "templates/project-operations/FIGMA_NARRATIVE_DIALOGUE_FLOW_PROFILE.md"
       - "tests/test_figma_narrative_dialogue_flow_contract.py"
       - ".github/workflows/validate-narrative-dialogue-runtime.yml"
+  push:
+    branches: [main]
+    paths:
+      - "examples/godot-narrative-dialogue-flow/**"
+      - "examples/figma-make-narrative-dialogue-flow/**"
+      - "templates/project-operations/FIGMA_NARRATIVE_DIALOGUE_FLOW_PROFILE.md"
+      - "tests/test_figma_narrative_dialogue_flow_contract.py"
+      - ".github/workflows/validate-narrative-dialogue-runtime.yml"
   workflow_dispatch:
 
 permissions:
