@@ -1,0 +1,78 @@
+name: Validate Loop A2 Runtime Foundation
+
+on:
+  pull_request:
+    paths:
+      - "tools/loop_a2.py"
+      - "tools/loop_a2_runtime/**"
+      - "schemas/loop-a2-*.schema.json"
+      - "tests/test_loop_a2_*.py"
+      - "docs/LOOP_ENGINEERING_A2_RUNTIME.md"
+      - "docs/evidence/2026-08-14-loop-a2-runtime-foundation.md"
+      - ".github/workflows/validate-loop-a2-runtime.yml"
+  push:
+    branches: [main]
+    paths:
+      - "tools/loop_a2.py"
+      - "tools/loop_a2_runtime/**"
+      - "schemas/loop-a2-*.schema.json"
+      - "tests/test_loop_a2_*.py"
+      - ".github/workflows/validate-loop-a2-runtime.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: loop-a2-foundation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+      - name: Install pinned validation requirements
+        run: python -m pip install --requirement .github/validation-requirements.txt
+      - name: Run bounded A2 foundation tests
+        run: |
+          python -m py_compile tools/loop_a2.py tools/loop_a2_runtime/*.py
+          python -m unittest discover -s tests -p "test_loop_a2_*.py" -v
+      - name: Verify fake-provider burn-in
+        shell: bash
+        run: |
+          request="$(mktemp)"
+          cat > "$request" <<'JSON'
+          {
+            "schema_version": 1,
+            "contract_role": "LOOP_A2_RUN_REQUEST",
+            "project_id": "EXAMPLE_GAME",
+            "run_id": "RUN_001",
+            "package_id": "PACKAGE_001",
+            "expected_main_sha": "0000000000000000000000000000000000000000",
+            "capsule_path": "docs/operations/loop/PROJECT_EXECUTION_CAPSULE.json",
+            "package_path": "docs/operations/loop/IMPLEMENTATION_PACKAGE.json",
+            "allowed_paths": ["scripts/example.gd"],
+            "forbidden_paths": ["project.godot", ".github/**"],
+            "resource_locks": ["EXAMPLE_DOMAIN"],
+            "requirement_ids": ["REQ_001"],
+            "budgets": {"max_turns": 12, "max_repair_cycles": 2, "timeout_seconds": 600},
+            "provider_mode": "FAKE"
+          }
+          JSON
+          python tools/loop_a2.py burn-in-fixture "$request" \
+            --observed-main-sha 0000000000000000000000000000000000000000 \
+            --runs 3 | tee /tmp/a2-burnin.json
+          python - <<'PY'
+          import json
+          value = json.load(open('/tmp/a2-burnin.json', encoding='utf-8'))
+          assert value['status'] == 'FAKE_PROVIDER_BURNIN_GREEN'
+          assert value['consecutive_runs'] == 3
+          assert value['out_of_scope_writes'] == 0
+          assert value['false_completion_claims'] == 0
+          PY
+      - name: Validate whitespace
+        run: git diff --check
