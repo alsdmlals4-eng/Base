@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import binascii
+import json
 from pathlib import Path
 import struct
 import zlib
@@ -9,7 +10,7 @@ import pytest
 
 from base_tool_contracts import ProjectFigmaRegistry
 from test_projects import make_project
-from tool_hub.figma_delivery import DeliveryError, FigmaDeliveryService
+from tool_hub.figma_delivery import BridgeReceipt, DeliveryError, FigmaDeliveryService
 from tool_hub.projects import ProjectLocator
 
 
@@ -144,3 +145,66 @@ def test_content_hash_is_revalidated_after_queue_tamper(tmp_path: Path) -> None:
 
     with pytest.raises(DeliveryError, match="DELIVERY_CONTENT_CHANGED"):
         service.content(token, job.delivery_id)
+
+
+def test_pairing_and_queued_job_expire_fail_closed(tmp_path: Path) -> None:
+    now = [1000.0]
+    project = make_project(tmp_path / "project", "coc-fiction")
+    locator = ProjectLocator(tmp_path / "machine-projects.json")
+    locator.register(project, "coc-fiction")
+    service = FigmaDeliveryService(tmp_path / "runtime", locator, registry(), clock=lambda: now[0])
+    target = registry().resolve_ready_target("coc-fiction")
+
+    expired_pairing = service.create_pairing("coc-fiction")
+    now[0] += 301
+    with pytest.raises(DeliveryError, match="PAIRING_CODE_EXPIRED"):
+        service.pair("coc-fiction", target.figma_file_key, expired_pairing.pairing_code, "bridge-test")
+
+    token = paired_token(service, "coc-fiction")
+    job = service.enqueue("expression-studio", "coc-fiction", "run-expired", png_bytes(), "image/png")
+    now[0] += 901
+    assert service.claim_next(token) is None
+    assert service.job_view("coc-fiction", job.delivery_id).state == "EXPIRED"
+
+
+def test_finalize_validates_receipt_and_writes_secret_free_immutable_evidence(tmp_path: Path) -> None:
+    project = make_project(tmp_path / "project", "coc-fiction")
+    locator = ProjectLocator(tmp_path / "machine-projects.json")
+    locator.register(project, "coc-fiction")
+    service = FigmaDeliveryService(tmp_path / "runtime", locator, registry())
+    token = paired_token(service, "coc-fiction")
+    job = service.enqueue("expression-studio", "coc-fiction", "run-final", png_bytes(), "image/png")
+    claimed = service.claim_next(token)
+    assert claimed is not None
+
+    with pytest.raises(DeliveryError, match="FIGMA_TARGET_MISMATCH"):
+        service.finalize(token, job.delivery_id, BridgeReceipt(
+            "999:1", claimed.node_name, "999:999", claimed.content_sha256, "bridge-test", "image-hash"
+        ))
+    with pytest.raises(DeliveryError, match="DELIVERY_HASH_MISMATCH"):
+        service.finalize(token, job.delivery_id, BridgeReceipt(
+            "999:1", claimed.node_name, claimed.generation_area_node_id, "0" * 64, "bridge-test", "image-hash"
+        ))
+    with pytest.raises(DeliveryError, match="FIGMA_NODE_IDENTITY_MISMATCH"):
+        service.finalize(token, job.delivery_id, BridgeReceipt(
+            "999:1", "wrong-name", claimed.generation_area_node_id, claimed.content_sha256, "bridge-test", "image-hash"
+        ))
+
+    receipt = service.finalize(token, job.delivery_id, BridgeReceipt(
+        "999:1", claimed.node_name, claimed.generation_area_node_id, claimed.content_sha256, "bridge-test", "image-hash"
+    ))
+    assert receipt.state == "DELIVERED_VERIFIED"
+    evidence = project / ".asset-vault" / "tool-hub-delivery" / job.delivery_id / "FIGMA_DELIVERY_RECEIPT.json"
+    stored = json.loads(evidence.read_text(encoding="utf-8"))
+    assert stored["delivery_id"] == job.delivery_id
+    assert stored["created_node_id"] == "999:1"
+    assert stored["content_sha256"] == claimed.content_sha256
+    serialized = json.dumps(stored)
+    assert token not in serialized
+    assert str(project.resolve()) not in serialized
+    assert "pairing_code" not in serialized
+
+    with pytest.raises(DeliveryError, match="DELIVERY_ALREADY_VERIFIED"):
+        service.finalize(token, job.delivery_id, BridgeReceipt(
+            "999:2", claimed.node_name, claimed.generation_area_node_id, claimed.content_sha256, "bridge-test", "image-hash-2"
+        ))
