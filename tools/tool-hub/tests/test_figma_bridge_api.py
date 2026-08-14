@@ -4,14 +4,29 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-from test_api import BASE_ROOT, client_for
+from test_api import BASE_ROOT
 from test_projects import make_project
 from tool_hub.app import create_app
 
 
+def test_client(tmp_path: Path) -> TestClient:
+    app = create_app(
+        BASE_ROOT,
+        tmp_path / "machine-projects.json",
+        bind_origin="http://testserver",
+        test_mode=True,
+        launch_supported=False,
+    )
+    client = TestClient(app)
+    client.headers["Origin"] = "http://testserver"
+    config = client.get("/api/config").json()
+    client.headers["X-Hub-CSRF"] = config["csrf_token"]
+    return client
+
+
 def registered_app_client(tmp_path: Path) -> TestClient:
     project = make_project(tmp_path / "Project", "coc-fiction")
-    client = client_for(tmp_path)
+    client = test_client(tmp_path)
     response = client.post(
         "/api/projects",
         json={"project_id": "coc-fiction", "project_root": str(project)},
@@ -48,6 +63,7 @@ def test_bridge_pair_uses_only_one_time_code_and_does_not_require_browser_sessio
         tmp_path / "machine-projects.json",
         bind_origin="http://testserver",
         test_mode=True,
+        launch_supported=False,
     )
     browser = TestClient(app)
     browser.headers["Origin"] = "http://testserver"
