@@ -30,6 +30,11 @@ class EntrypointTests(unittest.TestCase):
         self.assertNotIn("powershell", text.casefold())
         self.assertNotIn("shell=True", text.replace(" ", ""))
 
+    def test_package_installs_named_console_command(self) -> None:
+        pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+        self.assertIn('[project.scripts]', pyproject)
+        self.assertIn('loop-a2-local-executor = "loop_a2_local_executor.cli:main"', pyproject)
+
 
 if __name__ == "__main__":
     unittest.main()
