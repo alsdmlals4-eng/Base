@@ -1,0 +1,126 @@
+{
+  "$id": "loop-a2-run-request-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "allowed_paths": {
+      "items": {
+        "minLength": 1,
+        "pattern": "^(?!/)(?![A-Za-z]:[\\\\/])(?!.*(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)).+$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "budgets": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "properties": {
+        "max_repair_cycles": {
+          "maximum": 5,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "max_turns": {
+          "maximum": 50,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "timeout_seconds": {
+          "maximum": 3600,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "max_turns",
+        "max_repair_cycles",
+        "timeout_seconds"
+      ],
+      "type": "object"
+    },
+    "capsule_path": {
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:[\\\\/])(?!.*(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)).+$",
+      "type": "string"
+    },
+    "contract_role": {
+      "const": "LOOP_A2_RUN_REQUEST"
+    },
+    "expected_main_sha": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "forbidden_paths": {
+      "items": {
+        "minLength": 1,
+        "pattern": "^(?!/)(?![A-Za-z]:[\\\\/])(?!.*(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)).+$",
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "package_id": {
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+      "type": "string"
+    },
+    "package_path": {
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:[\\\\/])(?!.*(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)).+$",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+      "type": "string"
+    },
+    "provider_mode": {
+      "enum": [
+        "FAKE",
+        "REAL"
+      ]
+    },
+    "requirement_ids": {
+      "items": {
+        "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "resource_locks": {
+      "items": {
+        "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "run_id": {
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "contract_role",
+    "project_id",
+    "run_id",
+    "package_id",
+    "expected_main_sha",
+    "capsule_path",
+    "package_path",
+    "allowed_paths",
+    "forbidden_paths",
+    "resource_locks",
+    "requirement_ids",
+    "budgets",
+    "provider_mode"
+  ],
+  "type": "object"
+}
