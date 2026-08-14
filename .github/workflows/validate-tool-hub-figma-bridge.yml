@@ -55,4 +55,5 @@ jobs:
       - name: Run Figma delivery contracts
         run: |
           python -m pytest -q tools/tool-hub/tests/test_figma_delivery.py
+          python -m pytest -q tools/tool-hub/tests/test_figma_delivery_hardening.py
           python -m pytest -q tools/tool-hub/tests/test_figma_bridge_api.py
