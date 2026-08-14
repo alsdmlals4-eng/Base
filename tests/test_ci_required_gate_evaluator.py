@@ -12,6 +12,9 @@ from tests.test_universal_loop_network_boundary_closure import (
 from tests.test_universal_loop_provider_transport_closure import (
     UniversalLoopProviderTransportClosureTests,
 )
+from tests.test_universal_loop_subscription_cli_closure import (
+    UniversalLoopSubscriptionCliClosureTests,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
