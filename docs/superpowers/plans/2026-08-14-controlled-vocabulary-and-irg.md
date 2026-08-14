@@ -2,7 +2,7 @@
 
 ## Status
 
-Approved implementation, resumed after interruption and rebased onto `main@b1317f2c1b83e57f016ce4efd4e169bf7c0acd90`.
+Approved implementation, resumed after interruption and rebased onto `main@b1317f2c1b83e57f016ce4efd4e169bf7c0acd90`. The merge-time freshness gate later detected PR #344 advancing `main`, so the branch was resynchronized without force onto `main@61b1fbd36f86d84e236a331dac6beaeb473bc6fb`; the final merge evidence must therefore come from the resulting newer exact HEAD.
 
 The earlier connector limitation on executable test writes no longer applies to this execution surface: `tests/test_controlled_vocabulary_contract.py` was created successfully. A later adversarial read of the CI workflows found that file was not in the explicit unittest lists, so earlier green workflows were not accepted as execution evidence for this regression. The minimal CI consumer is now part of the approved implementation scope.
 
