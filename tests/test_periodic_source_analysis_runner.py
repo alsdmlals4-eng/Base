@@ -16,8 +16,10 @@ RUNNER = ROOT / "tools" / "run_periodic_source_scan_queue.sh"
 TEMPORARY_PATCH_FILES = (
     ROOT / ".github" / "workflows" / "tmp-export-source-rotation.yml",
     ROOT / ".github" / "workflows" / "tmp-source-workflow-permission-scope.yml",
+    ROOT / ".github" / "workflows" / "tmp-apply-source-validator-patch.yml",
     ROOT / "tools" / "apply_source_rotation_import.py",
     ROOT / "tools" / "apply_source_workflow_permission_scope.py",
+    ROOT / "tools" / "apply_source_validator_patch.py",
 )
 
 
