@@ -36,9 +36,7 @@ class BoundaryTestCase(unittest.TestCase):
 class LinuxUnshareDeniedNetworkBoundaryTests(BoundaryTestCase):
     def test_read_only_approved_remains_fail_closed_without_probe(self) -> None:
         boundary = LinuxUnshareDeniedNetworkBoundary(unshare_executable="unshare")
-        with patch("tools.loop_a2_runtime.network_boundary.platform.system", return_value="Linux"), patch(
-            "tools.loop_a2_runtime.network_boundary.subprocess.run"
-        ) as run:
+        with patch("tools.loop_a2_runtime.network_boundary.platform.system", return_value="Linux"), patch("tools.loop_a2_runtime.network_boundary.subprocess.run") as run:
             plan = boundary.prepare(policy="READ_ONLY_APPROVED", argv=("python", "-m", "unittest"), cwd=Path.cwd(), environment=self.environment())
         self.assertIsNone(plan)
         run.assert_not_called()
@@ -138,7 +136,6 @@ class DockerNoneDeniedNetworkBoundaryTests(BoundaryTestCase):
         with patch("tools.loop_a2_runtime.network_boundary.platform.system", return_value="Linux"), patch("tools.loop_a2_runtime.network_boundary.shutil.which", return_value=None), patch("tools.loop_a2_runtime.network_boundary.subprocess.run") as run:
             self.assertIsNone(boundary.prepare(policy="DENIED", argv=("python", "-V"), cwd=Path.cwd(), environment=self.environment()))
         run.assert_not_called()
-
         boundary = DockerNoneDeniedNetworkBoundary(image_id=IMAGE_ID)
         with patch("tools.loop_a2_runtime.network_boundary.platform.system", return_value="Linux"), patch("tools.loop_a2_runtime.network_boundary.shutil.which", return_value="/usr/bin/docker"), patch("tools.loop_a2_runtime.network_boundary.subprocess.run", return_value=_Completed(returncode=1, stderr="No such image")):
             self.assertIsNone(boundary.prepare(policy="DENIED", argv=("python", "-V"), cwd=Path.cwd(), environment=self.environment()))
@@ -166,10 +163,11 @@ class DockerNoneDeniedNetworkBoundaryTests(BoundaryTestCase):
         self.assertIn("no-new-privileges", argv)
         self.assertIn(IMAGE_ID, argv)
         self.assertEqual(argv[-3:], ["python", "-m", "unittest"])
-        for value in environment.values():
-            if value == "present":
-                self.assertNotIn(value, argv)
-        self.assertIn("SAFE_SENTINEL", argv)
+        self.assertNotIn("SAFE_SENTINEL", argv)
+        self.assertIn("CI", argv)
+        self.assertIn("PYTHONIOENCODING", argv)
+        self.assertNotIn(environment["PATH"], argv)
+        self.assertNotIn("PATH", argv[argv.index("--workdir") + 2 : argv.index(IMAGE_ID)])
 
     def test_docker_plan_mounts_only_cwd_read_only_and_never_pulls(self) -> None:
         boundary = DockerNoneDeniedNetworkBoundary(image_id=IMAGE_ID)
@@ -180,6 +178,8 @@ class DockerNoneDeniedNetworkBoundaryTests(BoundaryTestCase):
         assert plan is not None
         args = list(plan.argv)
         self.assertNotIn("pull", args)
+        self.assertIn("--pull", args)
+        self.assertEqual(args[args.index("--pull") + 1], "never")
         self.assertIn("--mount", args)
         mount = args[args.index("--mount") + 1]
         self.assertIn(f"src={cwd}", mount)
