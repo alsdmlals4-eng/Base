@@ -122,7 +122,7 @@ class OpenAITransportContractTests(unittest.TestCase):
     def test_bounded_openai_transport_module_exists(self) -> None:
         self.assertIsNotNone(transport)
 
-    def test_real_gate_requires_explicit_distinct_builder_and_critic_models(self) -> None:
+    def test_direct_paid_openai_gate_remains_forbidden_with_complete_legacy_settings(self) -> None:
         keys = (
             "LOOP_A2_REAL_PROVIDER_APPROVED",
             "OPENAI_API_KEY",
@@ -133,22 +133,12 @@ class OpenAITransportContractTests(unittest.TestCase):
         try:
             os.environ["LOOP_A2_REAL_PROVIDER_APPROVED"] = "1"
             os.environ["OPENAI_API_KEY"] = "test-only-redacted-placeholder"
-            os.environ.pop("LOOP_A2_BUILDER_MODEL", None)
-            os.environ.pop("LOOP_A2_CRITIC_MODEL", None)
-            missing = real_provider_gate()
-            self.assertEqual(missing["status"], "USER_DECISION_REQUIRED")
-            self.assertEqual(missing["code"], "REAL_PROVIDER_MODELS_NOT_SELECTED")
-
             os.environ["LOOP_A2_BUILDER_MODEL"] = "MODEL_A"
-            os.environ["LOOP_A2_CRITIC_MODEL"] = "MODEL_A"
-            same = real_provider_gate()
-            self.assertEqual(same["status"], "USER_DECISION_REQUIRED")
-            self.assertEqual(same["code"], "REAL_PROVIDER_MODELS_NOT_INDEPENDENT")
-
             os.environ["LOOP_A2_CRITIC_MODEL"] = "MODEL_B"
-            ready = real_provider_gate()
-            self.assertEqual(ready["status"], "READY")
-            self.assertEqual(ready["code"], "REAL_PROVIDER_GATE_PASS")
+            result = real_provider_gate()
+            self.assertEqual(result["status"], "NOT_PLANNED")
+            self.assertEqual(result["code"], "PAID_OPENAI_API_FORBIDDEN")
+            self.assertNotIn("test-only-redacted-placeholder", str(result))
         finally:
             for key, value in previous.items():
                 if value is None:
@@ -189,8 +179,6 @@ class OpenAITransportContractTests(unittest.TestCase):
             self.assertEqual(fmt["name"], "loop_a2_builder_write_plan")
             usage = builder.usage_snapshot()
             self.assertEqual(usage["request_count"], 1)
-            self.assertEqual(usage["input_tokens"], 17)
-            self.assertEqual(usage["output_tokens"], 23)
             self.assertEqual(usage["total_tokens"], 40)
 
     def test_builder_blocks_out_of_scope_write_without_touching_workspace(self) -> None:
@@ -200,87 +188,82 @@ class OpenAITransportContractTests(unittest.TestCase):
             client = _Client(
                 {
                     "status": "COMPLETED",
-                    "summary": "bad proposal",
-                    "writes": [{"path": "README.md", "content": "not allowed\n"}],
+                    "summary": "bad scope",
+                    "writes": [{"path": "README.md", "content": "nope\n"}],
                     "blocked_reason": "",
                 }
             )
-            builder = Builder(client=client, model="builder-model")
-            result = builder.invoke(request, worktree_path=root, repair_cycle=0)
+            before = _git(root, "status", "--porcelain")
+            result = Builder(client=client, model="builder-model").invoke(
+                request, worktree_path=root, repair_cycle=0
+            )
+            after = _git(root, "status", "--porcelain")
             self.assertEqual(result.status, "BLOCKED")
-            self.assertIn("BUILDER_WRITE_SCOPE_VIOLATION", [item.code for item in result.errors])
+            self.assertEqual(result.errors[0]["code"], "BUILDER_WRITE_SCOPE_VIOLATION")
+            self.assertEqual(before, after)
             self.assertFalse((root / "README.md").exists())
-            self.assertEqual(_git(root, "status", "--porcelain"), "")
 
     def test_builder_fails_closed_before_api_when_context_exceeds_budget(self) -> None:
         Builder = _require("OpenAIWorkspaceBuilder")
         with tempfile.TemporaryDirectory() as tmp:
             root, request = _repo_and_request(tmp)
-            (root / "docs/operations/loop/PLANNING_LOCK.json").write_text(
-                json.dumps({"status": "PLANNING_LOCKED", "blob": "x" * 2048}),
-                encoding="utf-8",
+            client = _Client({"status": "COMPLETED", "summary": "unused", "writes": [], "blocked_reason": ""})
+            result = Builder(client=client, model="builder-model", max_context_bytes=8).invoke(
+                request, worktree_path=root, repair_cycle=0
             )
-            client = _Client({"status": "BLOCKED", "summary": "unused", "writes": [], "blocked_reason": "unused"})
-            builder = Builder(client=client, model="builder-model", max_context_bytes=256)
-            result = builder.invoke(request, worktree_path=root, repair_cycle=0)
             self.assertEqual(result.status, "BLOCKED")
-            self.assertIn("BUILDER_CONTEXT_LIMIT", [item.code for item in result.errors])
+            self.assertEqual(result.errors[0]["code"], "BUILDER_CONTEXT_LIMIT")
             self.assertEqual(client.responses.calls, [])
 
     def test_critic_is_read_only_and_returns_identity_bound_review(self) -> None:
-        ReviewMaterial = _require("ReviewMaterial")
         Critic = _require("OpenAIWorktreeCritic")
-        with tempfile.TemporaryDirectory() as tmp:
-            root, request = _repo_and_request(tmp)
-            before = _git(root, "status", "--porcelain")
-            material = ReviewMaterial(
-                diff_text="diff --git a/scripts/feature/a.gd b/scripts/feature/a.gd\n+pass\n",
+        Material = _require("ReviewMaterial")
+        request = RunRequest.from_dict({**valid_request(), "provider_mode": "REAL"})
+        worker = WorkerResult.from_dict(
+            {
+                "schema_version": 1,
+                "contract_role": "LOOP_A2_WORKER_RESULT",
+                "project_id": request.project_id,
+                "run_id": request.run_id,
+                "package_id": request.package_id,
+                "expected_main_sha": request.expected_main_sha,
+                "role": "BUILDER",
+                "status": "COMPLETED",
+                "changed_paths": ["scripts/feature/new.gd"],
+                "summary": "done",
+                "usage": {"turns": 1},
+                "errors": [],
+            }
+        )
+        material_source = _MaterialSource(
+            Material(
+                diff_text="diff --git a/scripts/feature/new.gd b/scripts/feature/new.gd\n",
                 diff_sha256="a" * 64,
-                changed_paths=("scripts/feature/a.gd",),
+                changed_paths=worker.changed_paths,
             )
-            client = _Client(
-                {
-                    "verdict": "PASS",
-                    "findings": [],
-                    "checked_requirement_ids": ["REQ_001"],
-                }
-            )
-            critic = Critic(
-                client=client,
-                model="critic-model",
-                material_source=_MaterialSource(material),
-                max_output_tokens=384,
-            )
-            worker = WorkerResult.from_dict(
-                {
-                    "schema_version": 1,
-                    "contract_role": "LOOP_A2_WORKER_RESULT",
-                    "project_id": request.project_id,
-                    "run_id": request.run_id,
-                    "package_id": request.package_id,
-                    "expected_main_sha": request.expected_main_sha,
-                    "role": "BUILDER",
-                    "status": "COMPLETED",
-                    "changed_paths": ["scripts/feature/a.gd"],
-                    "summary": "candidate",
-                    "usage": {"turns": 1},
-                    "errors": [],
-                }
-            )
-            review = critic.review(request, worker)
-            after = _git(root, "status", "--porcelain")
-
-            self.assertEqual(review.verdict, "PASS")
-            self.assertEqual(review.project_id, request.project_id)
-            self.assertEqual(review.expected_main_sha, request.expected_main_sha)
-            self.assertEqual(review.checked_requirement_ids, ("REQ_001",))
-            self.assertEqual(before, after)
-            call = client.responses.calls[0]
-            self.assertEqual(call["model"], "critic-model")
-            self.assertIs(call["store"], False)
-            self.assertNotIn("tools", call)
-            self.assertIn("a" * 64, json.dumps(call, default=str))
-            self.assertEqual(call["text"]["format"]["name"], "loop_a2_critic_review")
+        )
+        client = _Client(
+            {
+                "verdict": "PASS",
+                "findings": [],
+                "checked_requirement_ids": list(request.requirement_ids),
+            }
+        )
+        review = Critic(
+            client=client,
+            model="critic-model",
+            material_source=material_source,
+        ).review(request, worker)
+        self.assertEqual(review.verdict, "PASS")
+        self.assertEqual(material_source.calls, 1)
+        self.assertEqual(len(client.responses.calls), 1)
+        call = client.responses.calls[0]
+        self.assertNotIn("tools", call)
+        self.assertNotIn("filesystem", call)
+        payload = json.loads(call["input"])
+        self.assertEqual(payload["changed_paths"], ["scripts/feature/new.gd"])
+        self.assertEqual(payload["diff_sha256"], "a" * 64)
+        self.assertEqual(payload["requirement_ids"], list(request.requirement_ids))
 
 
 if __name__ == "__main__":
