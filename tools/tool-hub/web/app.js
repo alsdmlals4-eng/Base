@@ -1,5 +1,14 @@
 const childStates = new Map();
-const state = { csrf: "", catalog: null, projectId: null, windowsLauncherState: "UNKNOWN" };
+const state = {
+  csrf: "",
+  catalog: null,
+  projectId: null,
+  windowsLauncherState: "UNKNOWN",
+  figmaBridgeState: "PAIRING_REQUIRED",
+  figmaDeliveryState: "NO_PENDING_DELIVERY",
+  figmaPairingCode: "",
+  figmaUrl: "",
+};
 const statusBox = document.querySelector("#status");
 
 const VISUAL_TOOLS = new Set(["expression-studio", "sprite-animation-studio"]);
@@ -59,6 +68,20 @@ function requireAuthenticatedChildUrl(childUrl) {
   }
 }
 
+function clearFigmaSelectionState() {
+  state.figmaBridgeState = "PAIRING_REQUIRED";
+  state.figmaDeliveryState = "NO_PENDING_DELIVERY";
+  state.figmaPairingCode = "";
+  state.figmaUrl = "";
+}
+
+function selectProject(projectId) {
+  if (state.projectId !== projectId) clearFigmaSelectionState();
+  state.projectId = projectId;
+  render();
+  void refreshFigmaStatus();
+}
+
 function renderKnownProjects() {
   const knownProjects = document.querySelector("#known-project");
   const selected = knownProjects.value;
@@ -93,8 +116,10 @@ async function onboardProject(project) {
   show(`${project.display_name} 연결 상태를 확인하는 중입니다.`);
   try {
     const connected = await api(`/api/projects/${project.project_id}/onboard`, { method: "POST", body: JSON.stringify({}) });
+    if (state.projectId !== connected.project_id) clearFigmaSelectionState();
     state.projectId = connected.project_id;
     await refresh();
+    await refreshFigmaStatus();
     show(`${project.display_name} 연결됨`);
   } catch (error) {
     await refresh();
@@ -107,7 +132,7 @@ function renderRegisteredProjects() {
   for (const project of state.catalog.projects) {
     const button = document.createElement("button");
     button.textContent = `${project.display_name} · ${project.state}`;
-    button.addEventListener("click", () => { state.projectId = project.project_id; render(); });
+    button.addEventListener("click", () => selectProject(project.project_id));
     if (state.projectId === project.project_id) button.classList.add("selected");
     projects.append(button);
   }
@@ -119,9 +144,47 @@ function renderRegisteredProjects() {
   }
 }
 
+function renderFigmaBridge() {
+  const stateNode = document.querySelector("#figma-bridge-state");
+  const codeNode = document.querySelector("#figma-pairing-code");
+  const createButton = document.querySelector("#figma-pairing-create");
+  const openButton = document.querySelector("#figma-open");
+  const projectReady = Boolean(state.projectId);
+
+  stateNode.textContent = projectReady
+    ? `${state.figmaBridgeState} · ${state.figmaDeliveryState}`
+    : "PROJECT_SELECTION_REQUIRED";
+  codeNode.textContent = !projectReady
+    ? "프로젝트를 선택하세요."
+    : (state.figmaPairingCode || "연결 코드를 아직 만들지 않았습니다.");
+  createButton.disabled = !projectReady;
+  openButton.disabled = !projectReady || !state.figmaUrl;
+}
+
+async function refreshFigmaStatus() {
+  if (!state.projectId) {
+    renderFigmaBridge();
+    return;
+  }
+  const requestedProjectId = state.projectId;
+  try {
+    const figmaStatus = await api(`/api/figma/status/${state.projectId}`);
+    if (state.projectId !== requestedProjectId || figmaStatus.project_id !== requestedProjectId) return;
+    state.figmaBridgeState = figmaStatus.bridge_state;
+    state.figmaDeliveryState = figmaStatus.delivery_state;
+    renderFigmaBridge();
+  } catch (error) {
+    if (state.projectId !== requestedProjectId) return;
+    state.figmaBridgeState = "BLOCKED_UNVERIFIED";
+    renderFigmaBridge();
+    show(`Figma Bridge 상태 확인 실패: ${error.message}`, true);
+  }
+}
+
 function render() {
   renderKnownProjects();
   renderRegisteredProjects();
+  renderFigmaBridge();
   const tools = document.querySelector("#tool-catalog"); tools.replaceChildren();
   for (const tool of state.catalog.tools) {
     const card = document.createElement("article"); card.className = "tool-card";
@@ -157,7 +220,14 @@ function render() {
   }
 }
 
-async function refresh() { state.catalog = await api("/api/catalog"); if (!state.projectId && state.catalog.projects[0]) state.projectId = state.catalog.projects[0].project_id; render(); }
+async function refresh() {
+  state.catalog = await api("/api/catalog");
+  if (!state.projectId && state.catalog.projects[0]) {
+    state.projectId = state.catalog.projects[0].project_id;
+    clearFigmaSelectionState();
+  }
+  render();
+}
 
 document.querySelector("#project-registration").addEventListener("submit", async event => {
   event.preventDefault();
@@ -165,6 +235,35 @@ document.querySelector("#project-registration").addEventListener("submit", async
   const project = state.catalog.known_projects.find(item => item.project_id === projectId);
   if (!project) return show("연결할 프로젝트를 선택하세요.", true);
   await onboardProject(project);
+});
+
+document.querySelector("#figma-pairing-create").addEventListener("click", async () => {
+  if (!state.projectId) return show("먼저 프로젝트를 선택하세요.", true);
+  const requestedProjectId = state.projectId;
+  try {
+    const pairing = await api(`/api/figma/pairing/${state.projectId}`, { method: "POST", body: JSON.stringify({}) });
+    if (state.projectId !== requestedProjectId || pairing.project_id !== requestedProjectId) throw new Error("FIGMA_PAIRING_PROJECT_MISMATCH");
+    state.figmaPairingCode = pairing.pairing_code;
+    state.figmaUrl = pairing.figma_url;
+    state.figmaBridgeState = "PAIRING_REQUIRED";
+    renderFigmaBridge();
+    show("Figma Bridge에서 6자리 연결 코드를 입력하세요.");
+  } catch (error) {
+    show(`Figma Bridge 연결 코드 생성 실패: ${error.message}`, true);
+  }
+});
+
+document.querySelector("#figma-open").addEventListener("click", () => {
+  try {
+    if (!state.figmaUrl) throw new Error("FIGMA_URL_UNAVAILABLE");
+    const figmaUrl = new URL(state.figmaUrl);
+    if (figmaUrl.protocol !== "https:" || !["figma.com", "www.figma.com"].includes(figmaUrl.hostname)) {
+      throw new Error("REGISTERED_FIGMA_URL_REQUIRED");
+    }
+    window.open(figmaUrl.href, "_blank", "noopener");
+  } catch (error) {
+    show(`Figma 열기 차단: ${error.message}`, true);
+  }
 });
 
 document.querySelector("#windows-launcher-install").addEventListener("click", async () => {
@@ -190,5 +289,6 @@ api("/api/config").then(async config => {
   document.querySelector("#windows-launcher-state").textContent = config.windows_launcher_state;
   document.querySelector("#windows-launcher-install").disabled = config.windows_launcher_state === "BLOCKED_PLATFORM";
   await refresh();
+  await refreshFigmaStatus();
   show("검토된 도구와 프로젝트 상태를 불러왔습니다.");
 }).catch(error => show(error.message, true));
