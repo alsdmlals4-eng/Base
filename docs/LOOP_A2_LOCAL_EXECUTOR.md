@@ -99,6 +99,35 @@ The local execution machine needs:
 
 The executor strips `OPENAI_API_KEY`, `OPENAI_ORG_ID`, `OPENAI_PROJECT_ID`, `OPENAI_BASE_URL`, `GH_TOKEN`, and `GITHUB_TOKEN` from the REAL A2 child environment. Existing local credential stores remain the intended authentication source.
 
+## Resilient local capability discovery
+
+`CAPABILITY_DISCOVERY_BEFORE_LITERAL_REJECTION`: 로컬 bootstrap에서 환경 의존 도구의 존재를 판정할 때 특정 파일명·확장자 하나를 실제 capability보다 높은 gate로 두지 않는다. Windows에서는 같은 명령이 `.exe`, `.cmd`, `.bat` 또는 package-manager shim으로 제공될 수 있으므로, 가능한 경우 다음처럼 **trusted discovery route**를 순서대로 사용한다.
+
+```text
+required capability
+→ current command resolution / PATHEXT
+→ explicitly configured trusted executable path when present
+→ known trusted standard install location when appropriate
+→ semantic readiness probe
+→ READY | bounded BLOCKED
+```
+
+예를 들어 Codex 요구사항은 `codex.exe`라는 파일 자체가 아니라 **ChatGPT-authenticated Codex CLI capability**다. `codex` 명령을 신뢰 가능한 Windows command resolution으로 찾은 뒤 `codex login status` 같은 **semantic readiness probe**를 실행하고, 실제 readiness 결과가 계약과 일치할 때만 READY로 판정한다. path 존재만으로 readiness를 PASS로 올리지 않는다.
+
+이 유연성은 보안 완화가 아니다. **discovery는 넓게, authority와 acceptance는 좁게** 유지한다. repository/project identity, exact SHA, trusted author, ChatGPT authentication, reviewed Docker image, protected path, no-paid-API/no-API-key-fallback 같은 권위·보안 조건은 계속 엄격하다.
+
+허용되는 discovery는 현재 command resolver/PATHEXT, 명시적으로 승인된 configuration path, Base가 아는 trusted standard installation location처럼 출처가 제한된 후보뿐이다. 다음은 금지한다.
+
+- 전체 디스크에서 같은 이름의 arbitrary executable 탐색;
+- 출처를 확인하지 않은 binary/shim 자동 선택;
+- command discovery 실패를 이유로 임의 binary 자동 다운로드;
+- ChatGPT auth 실패 시 API key 또는 별도 결제 provider fallback;
+- reviewed/pinned Docker boundary를 태그 기반 임의 이미지로 대체.
+
+`DIAGNOSTIC_PRESERVATION_ON_BOOTSTRAP_FAILURE`: 사용자 PC bootstrap은 실패 시 원인 증거가 사라지지 않게 해야 한다. 최소한 **사용자가 직접 닫기 전까지 유지되는 terminal failure state** 또는 **durable bounded diagnostic log** 중 하나를 제공하고, 가능하면 둘 다 제공한다. 로그에는 stable blocker code와 비밀이 아닌 상태만 남기며 token, credential, raw private file content는 기록하지 않는다.
+
+따라서 bootstrap이 막히면 먼저 실제 실패 capability와 probe 결과를 보존하고, 사용자가 이미 성공시킨 capability를 단일 path/extension 가정 때문에 다시 설치하라고 요구하지 않는다.
+
 ## Public receipts
 
 Only allowlisted non-secret fields are posted back to the queue issue. Raw stdout/stderr, local absolute paths, tokens, model reasoning, changed file contents, and credentials are not copied into the public receipt.

@@ -4,9 +4,13 @@ on:
   pull_request:
     paths:
       - "docs/GPT_CODEX_WORKFLOW_POLICY.md"
+      - "docs/LOOP_A2_LOCAL_EXECUTOR.md"
+      - "skills/managing-project-intake-and-work-contract/LEARNING_LOG.md"
       - "templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md"
       - "docs/superpowers/specs/*one-shot-local-executor-bootstrap*.md"
       - "docs/superpowers/plans/*one-shot-local-executor-bootstrap*.md"
+      - "docs/superpowers/specs/*local-bootstrap-capability-discovery*.md"
+      - "docs/superpowers/plans/*local-bootstrap-capability-discovery*.md"
       - "tests/test_one_shot_local_executor_bootstrap_contract.py"
       - ".github/workflows/validate-one-shot-local-executor-bootstrap.yml"
   workflow_dispatch:
