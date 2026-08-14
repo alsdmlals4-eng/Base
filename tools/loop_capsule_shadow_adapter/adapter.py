@@ -49,6 +49,36 @@ def _normalized_changed_paths(coverage: dict[str, Any]) -> list[str]:
     return sorted(outputs, key=lambda item: (item.casefold(), item))
 
 
+def _validate_runtime_drift(
+    *,
+    visual_impact: str,
+    planning_drift: str,
+    visual_drift: str,
+) -> None:
+    if planning_drift in {"PLANNING_CONFLICT", "UNVERIFIED"}:
+        raise _error(
+            "PLANNING_DRIFT_BLOCKED",
+            f"planning drift must be verified before SHADOW translation: {planning_drift}",
+        )
+    if visual_impact == "NONE":
+        if visual_drift != "NOT_APPLICABLE":
+            raise _error(
+                "VISUAL_DRIFT_BLOCKED",
+                "visual impact NONE requires NOT_APPLICABLE drift",
+            )
+    elif visual_impact == "EXISTING_LOCKED":
+        if visual_drift not in {"NO_DRIFT", "MINOR_TECHNICAL_DRIFT"}:
+            raise _error(
+                "VISUAL_DRIFT_BLOCKED",
+                f"locked visual work requires verified drift: {visual_drift}",
+            )
+    elif visual_impact == "NEW_VISUAL_REQUIRED":
+        raise _error(
+            "USER_DECISION_REQUIRED",
+            "new visual design cannot be translated into autonomous SHADOW work",
+        )
+
+
 def build_shadow_request(
     capsule_path: Path | str,
     *,
@@ -79,6 +109,13 @@ def build_shadow_request(
             "STALE_MAIN_SHA",
             "observed main SHA differs from the validated Capsule source_main_sha",
         )
+
+    visual_impact = str(package["visual_impact"])
+    _validate_runtime_drift(
+        visual_impact=visual_impact,
+        planning_drift=planning_drift,
+        visual_drift=visual_drift,
+    )
 
     project_id = str(capsule["project_id"])
     approved_requirements = [
@@ -117,7 +154,7 @@ def build_shadow_request(
         "source_main_sha": str(source_main_sha),
         "observed_main_sha": observed_main_sha,
         "planning_status": str(planning["status"]),
-        "visual_impact": str(package["visual_impact"]),
+        "visual_impact": visual_impact,
         "visual_status": str(visual["status"]),
         "planning_drift": planning_drift,
         "visual_drift": visual_drift,
