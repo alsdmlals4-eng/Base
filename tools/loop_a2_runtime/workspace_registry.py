@@ -104,19 +104,19 @@ class WorkspaceOwnershipRegistry:
     ) -> Path:
         project = _identifier(project_id, "project_id")
         run = _identifier(run_id, "run_id")
-        lexical = self.runtime_root / project / run
-        supplied = Path(workspace)
-        try:
-            supplied.relative_to(self.runtime_root)
-        except ValueError as exc:
-            raise WorkspaceOwnershipError("workspace is not lexically runtime-bound") from exc
-        if supplied != lexical:
+        expected = self.runtime_root / project / run
+
+        # Validate the closed namespace itself before resolving the caller's path.
+        # This preserves the symlink-escape defense while allowing Windows 8.3
+        # short-path aliases to canonicalize to the same physical path.
+        self._assert_safe_tree(expected, allow_missing=True)
+        canonical_expected = expected.resolve(strict=False)
+        canonical_supplied = Path(workspace).resolve(strict=False)
+        if canonical_supplied != canonical_expected:
             raise WorkspaceOwnershipError("workspace path does not match the closed project/run namespace")
-        self._assert_safe_tree(supplied, allow_missing=True)
-        canonical = supplied.resolve(strict=False)
-        if canonical == self.runtime_root or self.runtime_root not in canonical.parents:
+        if canonical_supplied == self.runtime_root or self.runtime_root not in canonical_supplied.parents:
             raise WorkspaceOwnershipError("workspace escapes runtime_root")
-        return canonical
+        return canonical_supplied
 
     def _payload(
         self,
