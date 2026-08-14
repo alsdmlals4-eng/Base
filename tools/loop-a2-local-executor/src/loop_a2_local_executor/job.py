@@ -10,6 +10,7 @@ from typing import Mapping
 _SHA = re.compile(r"^[0-9a-f]{40}$")
 _REPOSITORY = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}/[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$")
 _RUN_ID = re.compile(r"^[A-Z0-9][A-Z0-9_-]{2,63}$")
+_WINDOWS_DRIVE = re.compile(r"^[A-Za-z]:/")
 _BODY = re.compile(r"\A\s*```json\r?\n(?P<payload>.+)\r?\n```\s*\Z", re.DOTALL)
 _KEYS = frozenset(
     {
@@ -36,7 +37,13 @@ def _fail(code: str, message: str) -> JobContractError:
 
 
 def _safe_capsule(value: object) -> str:
-    if not isinstance(value, str) or not value or "\\" in value or "\x00" in value:
+    if (
+        not isinstance(value, str)
+        or not value
+        or "\\" in value
+        or "\x00" in value
+        or _WINDOWS_DRIVE.match(value) is not None
+    ):
         raise _fail("JOB_CAPSULE_INVALID", "capsule must be a closed repository-relative JSON path")
     path = PurePosixPath(value)
     if path.is_absolute() or any(part in {"", ".", ".."} for part in path.parts):
