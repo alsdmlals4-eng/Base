@@ -6,6 +6,10 @@ import sys
 import unittest
 from pathlib import Path
 
+from tests.test_universal_loop_provider_transport_closure import (
+    UniversalLoopProviderTransportClosureTests,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 EVALUATOR = ROOT / "tools/evaluate_ci_required_gate.py"
