@@ -124,6 +124,9 @@ class CodexCliProcess:
 
             argv = [
                 "codex",
+                "--strict-config",
+                "-c",
+                "features.shell_tool=false",
                 "exec",
                 "--ephemeral",
                 "--ignore-user-config",
