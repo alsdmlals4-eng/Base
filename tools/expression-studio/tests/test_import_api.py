@@ -29,7 +29,7 @@ def test_import_expression_candidates_without_a_provider_call(tmp_path: Path) ->
 
     response = client.post("/api/import-runs", data=data, files=files)
 
-    assert response.status_code == 201
+    assert response.status_code == 201, response.text
     run = response.json()
     assert run["status"] == "generated"
     assert run["candidate_count"] == 2
