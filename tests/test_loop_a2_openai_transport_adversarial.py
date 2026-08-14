@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import inspect
 import json
 import os
 from pathlib import Path
@@ -116,6 +117,8 @@ class OpenAITransportAdversarialTests(unittest.TestCase):
 
     def test_builder_rejects_oversized_structured_output(self) -> None:
         Builder = _require("OpenAIWorkspaceBuilder")
+        if "max_response_bytes" not in inspect.signature(Builder).parameters:
+            self.fail("OpenAIWorkspaceBuilder lacks a bounded max_response_bytes contract")
         with tempfile.TemporaryDirectory() as tmp:
             root, request = _repo_and_request(tmp)
             output = json.dumps(
