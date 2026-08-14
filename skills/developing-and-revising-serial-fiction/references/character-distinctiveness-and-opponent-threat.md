@@ -27,6 +27,22 @@ signature_highlight: 이 인물을 한 장면으로 설명할 대표 하이라�
 
 이름을 지우고 대사·판단·행동을 읽었을 때 여러 인물이 서로 교환 가능하면 `CHARACTER_IDENTITY_BLUR`다.
 
+### 관계적 매력 감사 — `RELATIONAL_APPEAL`
+
+개별 캐릭터 카드가 충분해도 조합이 장면을 만들지 못하면 설정은 정지해 있을 수 있다. 필요할 때 공용 owner `docs/knowledge/methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md`의 `RELATIONAL_APPEAL`을 사용한다.
+
+```text
+CHARACTER_X_CHARACTER | CHARACTER_X_WORLD | CHARACTER_X_ABILITY
+→ 필요 시 ABILITY_X_ABILITY 보조 Lens
+→ 현재 조합에서 생기는 압력
+→ 새 선택 / 갈등·협력 / 대사·행동 / 결과 중 관찰 가능한 차이
+→ 기존 정본·욕망·판단과의 정합성
+```
+
+`ABILITY_X_ABILITY`는 능력끼리의 결합이 실제 장면을 바꿀 때만 사용한다. 모든 능력 쌍의 조합표를 만들지 않는다.
+
+`DECORATIVE_SYNERGY`, `FORCED_CHEMISTRY`, `CROSS_PRODUCT_OVERDESIGN`이 보이면 설정을 더 붙이기보다 현재 장면에 필요한 최소 조합만 남긴다.
+
 ## 2. 상대 위상 장부
 
 중요 상대마다 다음을 기록한다.

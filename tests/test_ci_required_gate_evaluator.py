@@ -6,6 +6,9 @@ import sys
 import unittest
 from pathlib import Path
 
+from tests.test_universal_loop_local_burnin_readiness_closure import (
+    UniversalLoopLocalBurninReadinessClosureTests,
+)
 from tests.test_universal_loop_network_boundary_closure import (
     UniversalLoopNetworkBoundaryClosureTests,
 )

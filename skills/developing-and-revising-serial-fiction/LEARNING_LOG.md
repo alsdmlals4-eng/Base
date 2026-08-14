@@ -200,3 +200,41 @@ human_reader_response: HUMAN_NOT_RUN
 commercial_effect: NOT_RUN
 platform_specific_fit: PLATFORM_REVERIFY_REQUIRED
 ```
+
+## 2026-08-15 — 관계적 매력 공용 원칙 흡수
+
+### 입력과 finding
+
+- 사용자 제공 작법 메모의 핵심은 “캐릭터를 단독 설정으로만 보지 말고 캐릭터 간, 캐릭터와 배경, 캐릭터와 능력의 관계에서 매력을 뽑는다”는 것이었다.
+- 기존 Base는 개별 캐릭터의 voice·관찰·문제 해결 방식과 관계 변화는 잘 다뤘지만, 서로 다른 요소의 조합이 실제 새 선택·갈등·대사·행동·결과를 만들어야 한다는 공용 판정은 명시적으로 없었다.
+
+### Base 결정
+
+- 새 Skill·Mode·Registry 항목을 만들지 않고 `docs/knowledge/methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md`를 공용 owner로 둔다.
+- `RELATIONAL_APPEAL`은 `CHARACTER_X_CHARACTER`, `CHARACTER_X_WORLD`, `CHARACTER_X_ABILITY` 세 축을 사용하되 설정 항목 수가 아니라 관찰 가능한 장면 차이를 증거로 본다.
+- 연재소설 Skill은 공용 owner를 선택적으로 읽고, 기존 캐릭터 감사 reference에서 필요한 조합만 감사한다.
+- 모든 캐릭터 쌍의 전용 이벤트, 관계 수치화, 모든 능력의 서사적 대가를 강제하지 않는다.
+
+### TDD RED
+
+```yaml
+red_head: 80b2c15d58111469a54d2f3698bc3c28ac2bd9eb
+workflow: Validate Game Project Operating System
+run_id: 31828556337
+job: ubuntu-contract
+job_id: 94858575065
+result: FAILED_AS_EXPECTED
+cause: RELATIONAL_APPEAL common owner absent
+suite_summary: 442 tests / 1 failure / 15 skipped
+```
+
+기존 계약은 유지되고 새 관계적 매력 contract만 실패해 구현 부재를 정확히 포착했다.
+
+### 검증 상한
+
+```yaml
+base_contract: IMPLEMENTED_PENDING_GREEN
+project_pilot: NOT_RUN
+human_reader_quality: HUMAN_NOT_RUN
+commercial_effect: NOT_RUN
+```

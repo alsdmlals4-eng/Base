@@ -43,7 +43,7 @@ class UniversalLoopNetworkBoundaryClosureTests(unittest.TestCase):
     def test_successor_provider_policy_and_autonomy_limits_remain_closed(self) -> None:
         self.assertEqual(
             self.value["status"],
-            "PORTABILITY_CONFIRMED_SUBSCRIPTION_TRANSPORT_READY_LOCAL_SMOKE_GATED",
+            "PORTABILITY_CONFIRMED_UNATTENDED_LOCAL_EXECUTOR_READY_BLACKSMITH_BURNIN_AUTHORITY_READY_LOCAL_MACHINE_GATED",
         )
         gate = self.value["remaining_external_gate"]
         self.assertEqual(gate["real_openai_api"], "NOT_APPLICABLE_POLICY_FORBIDDEN")
