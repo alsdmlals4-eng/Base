@@ -1,0 +1,41 @@
+{
+  "a3_auto_merge_allowlist": [],
+  "active_run_path": "ACTIVE_LOOP_RUN.json",
+  "autonomy": "A2_EXECUTE_ISOLATED",
+  "budgets": {
+    "max_agents": 2,
+    "max_ci_runs": 4,
+    "max_parallel_agents": 1,
+    "max_repair_cycles": 2
+  },
+  "capabilities": [
+    "GITHUB_CANON",
+    "REQUIREMENT_COVERAGE"
+  ],
+  "context_isolation": {
+    "cross_project_asset_import": "FORBIDDEN",
+    "cross_project_canon_import": "FORBIDDEN",
+    "cross_project_session_reuse": "FORBIDDEN",
+    "cross_project_visual_reference_import": "FORBIDDEN"
+  },
+  "contract_role": "LOOP_PROJECT_EXECUTION_CAPSULE",
+  "coverage_ledger_path": "REQUIREMENT_COVERAGE_LEDGER.json",
+  "immutable_run_path": "runs/IMMUTABLE_RUN.json",
+  "implementation_package_path": "IMPLEMENTATION_PACKAGE.json",
+  "planning_lock_path": "PLANNING_LOCK.json",
+  "project_id": "EXAMPLE_GAME",
+  "protected_surfaces": [
+    "PROJECT_CORE",
+    "PLAYER_EXPERIENCE",
+    "ART_DIRECTION"
+  ],
+  "runtime_adapter_path": "RUNTIME_ADAPTER.json",
+  "scheduler_runtime_provider": "NOT_CONFIGURED",
+  "schema_version": 1,
+  "semantic_resource_domains": [
+    "EXAMPLE_DOMAIN"
+  ],
+  "source_main_sha": "0000000000000000000000000000000000000000",
+  "status": "ADOPTED",
+  "visual_lock_path": "VISUAL_LOCK.json"
+}

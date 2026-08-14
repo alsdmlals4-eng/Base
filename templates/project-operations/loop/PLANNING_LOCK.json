@@ -1,0 +1,33 @@
+{
+  "approved_requirements": [
+    {
+      "acceptance_criteria": [
+        "The behavior is deterministic."
+      ],
+      "requirement_id": "REQ_001",
+      "statement": "Implement the approved example behavior."
+    }
+  ],
+  "authority_sources": [
+    {
+      "authority_id": "CANON_GDD",
+      "path": "docs/GDD.md",
+      "source_commit": "0000000000000000000000000000000000000000"
+    }
+  ],
+  "contract_role": "LOOP_PLANNING_LOCK",
+  "excluded_scope": [
+    "No new feature or visual design."
+  ],
+  "project_id": "EXAMPLE_GAME",
+  "protected_meanings": [
+    "Do not change the approved player-facing meaning."
+  ],
+  "schema_version": 1,
+  "source_commit": "0000000000000000000000000000000000000000",
+  "status": "PLANNING_LOCKED",
+  "user_review": {
+    "approval_ref": "USER_APPROVAL_EXAMPLE",
+    "status": "APPROVED"
+  }
+}
