@@ -132,6 +132,9 @@ func _index_choices(beat: Dictionary, beat_id: String, context: String) -> void:
     if typeof(choices_value) != TYPE_ARRAY:
         _errors.append(context + ".choices must be an array")
         return
+    if choices_value.is_empty():
+        _errors.append(context + ".choices must contain an explicit END or transition")
+        return
 
     for choice_index in range(choices_value.size()):
         var choice_value: Variant = choices_value[choice_index]
