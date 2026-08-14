@@ -1,7 +1,7 @@
 # Loop A2 denied-network checkpoint closure — 2026-08-14
 
-Issue: #377  
-Implementation: #372 / PR #374  
+Issue: #377
+Implementation: #372 / PR #374
 Closure PR: #378
 
 ## Purpose
