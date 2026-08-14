@@ -15,7 +15,16 @@ from loop_a2_local_executor.cli import build_parser
 
 
 class _FakeService:
+    def __init__(self) -> None:
+        self.preflights = 0
+        self.once_calls = 0
+
+    def preflight(self):
+        self.preflights += 1
+        return {"status": "READY", "code": "GH_CONTROL_PLANE_READY"}
+
     def once(self):
+        self.once_calls += 1
         return {"status": "IDLE", "code": "NO_ELIGIBLE_JOB"}
 
 
@@ -56,21 +65,24 @@ class EntrypointTests(unittest.TestCase):
         self.assertIn('[project.scripts]', pyproject)
         self.assertIn('loop-a2-local-executor = "loop_a2_local_executor.cli:main"', pyproject)
 
-    def test_once_and_daemon_use_the_same_state_root_singleton_lock(self) -> None:
+    def test_once_and_daemon_lock_then_preflight_before_processing(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             state_root = Path(temp).resolve()
             for command in (("once",), ("daemon", "--poll-seconds", "15")):
                 with self.subTest(command=command):
                     entered: list[Path] = []
+                    service = _FakeService()
                     lock_factory = lambda path: _RecordingLock(path, entered)
                     with (
                         patch.object(cli, "InstanceLock", side_effect=lock_factory),
-                        patch.object(cli, "build_service", return_value=_FakeService()),
+                        patch.object(cli, "build_service", return_value=service),
                         patch.object(cli.time, "sleep", side_effect=KeyboardInterrupt),
                     ):
                         result = cli.main(["--state-root", str(state_root), *command])
                     self.assertEqual(result, 0)
                     self.assertEqual(entered, [state_root / "executor.lock"])
+                    self.assertEqual(service.preflights, 1)
+                    self.assertEqual(service.once_calls, 1)
 
 
 if __name__ == "__main__":
