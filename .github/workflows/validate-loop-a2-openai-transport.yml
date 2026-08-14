@@ -1,0 +1,36 @@
+name: Validate Loop A2 OpenAI Transport
+
+on:
+  pull_request:
+    paths:
+      - 'tools/loop_a2_runtime/openai_transport.py'
+      - 'tools/loop_a2_runtime/provider_gate.py'
+      - 'requirements-loop-a2-provider.txt'
+      - 'tests/test_loop_a2_openai_transport*.py'
+      - '.github/workflows/validate-loop-a2-openai-transport.yml'
+      - 'docs/evidence/2026-08-14-loop-a2-openai-transport.md'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/loop_a2_runtime/openai_transport.py'
+      - 'tools/loop_a2_runtime/provider_gate.py'
+      - 'requirements-loop-a2-provider.txt'
+      - 'tests/test_loop_a2_openai_transport*.py'
+      - '.github/workflows/validate-loop-a2-openai-transport.yml'
+      - 'docs/evidence/2026-08-14-loop-a2-openai-transport.md'
+
+permissions:
+  contents: read
+
+jobs:
+  transport-contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v5
+        with:
+          python-version: '3.12'
+      - name: Run OpenAI transport contract
+        run: python -m unittest tests.test_loop_a2_openai_transport -v
+      - name: Validate whitespace
+        run: git diff --check
