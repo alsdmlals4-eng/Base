@@ -1,4 +1,4 @@
-"""Strict request contracts for local character-expression runs."""
+"""Strict request contracts for local character-consistency runs."""
 
 from typing import Literal
 
@@ -30,6 +30,7 @@ ExpressionPreset = Literal[
     "blink",
     "wink",
 ]
+EditMode = Literal["expression", "outfit", "scene"]
 
 
 class ExpressionAnchor(BaseModel):
@@ -61,13 +62,15 @@ class FaceControl(BaseModel):
 
 
 class ExpressionRequest(BaseModel):
-    """One still-image expression request rooted under one project workspace."""
+    """One approved-character edit request rooted under one project workspace."""
 
     model_config = ConfigDict(extra="forbid")
 
     project_id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     asset_id: str = Field(pattern=r"^[A-Za-z0-9_-]+$")
     anchor: ExpressionAnchor
+    edit_mode: EditMode = "expression"
+    edit_prompt: str | None = Field(default=None, max_length=1000)
     controls: list[FaceControl] = Field(default_factory=list, max_length=4)
     gaze: Gaze = "center"
     head_pose: HeadPose = "neutral"
@@ -76,8 +79,21 @@ class ExpressionRequest(BaseModel):
 
     @model_validator(mode="after")
     def validate_expression_request(self) -> "ExpressionRequest":
-        if not self.controls and self.preset is None:
-            raise ValueError("an expression request requires at least one control or preset")
-        if self.controls and self.preset is not None:
-            raise ValueError("choose direct controls or one preset, not both")
+        if self.edit_mode == "expression":
+            if self.edit_prompt is not None:
+                raise ValueError("expression edit does not accept edit_prompt")
+            if not self.controls and self.preset is None:
+                raise ValueError("an expression request requires at least one control or preset")
+            if self.controls and self.preset is not None:
+                raise ValueError("choose direct controls or one preset, not both")
+            return self
+
+        prompt = self.edit_prompt.strip() if self.edit_prompt is not None else ""
+        if not prompt:
+            raise ValueError("character edit requires a non-empty edit_prompt")
+        if self.controls or self.preset is not None:
+            raise ValueError("character edit cannot combine expression controls or presets")
+        if self.gaze != "center" or self.head_pose != "neutral":
+            raise ValueError("character edit preserves gaze and head pose; use expression mode to change them")
+        self.edit_prompt = prompt
         return self
