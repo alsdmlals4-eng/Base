@@ -7,6 +7,7 @@ import argparse
 import json
 import re
 from datetime import date, timedelta
+from itertools import groupby
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -122,6 +123,26 @@ def select_due_sources(payload: dict[str, object], today: date) -> list[dict[str
     assert isinstance(rows, list)
     due = [row for row in rows if isinstance(row, dict) and source_is_due(row, today)]
     return sorted(due, key=_due_key)
+
+
+def select_due_source_batch(
+    payload: dict[str, object],
+    today: date,
+    batch_size: int,
+) -> list[dict[str, object]]:
+    """Select a bounded due batch while rotating tied priority groups by date."""
+
+    if isinstance(batch_size, bool) or not isinstance(batch_size, int) or not 1 <= batch_size <= 20:
+        raise ValueError("batch size must be between 1 and 20")
+    ordered = select_due_sources(payload, today)
+    rotated: list[dict[str, object]] = []
+    for _, group in groupby(ordered, key=lambda row: _due_key(row)[:2]):
+        tied = list(group)
+        if len(tied) > 1:
+            start = today.toordinal() % len(tied)
+            tied = tied[start:] + tied[:start]
+        rotated.extend(tied)
+    return rotated[:batch_size]
 
 
 def _cell(value: object) -> str:
