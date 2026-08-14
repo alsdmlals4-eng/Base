@@ -75,12 +75,25 @@ func _initialize() -> void:
                 {"beat_id": "a", "title": "a", "dialogues": [{"dialogue_id": "d1", "speaker_id": null, "text": "a"}], "choices": [{"choice_id": "c1", "text": "bad", "target_beat_id": "b", "transition_kind": "STAY_IN_SCENE"}]}
             ]},
             {"scene_id": "s2", "location_id": "l2", "title": "two", "background_ref": "bg2", "entry_beat_id": "b", "beats": [
-                {"beat_id": "b", "title": "b", "dialogues": [{"dialogue_id": "d2", "speaker_id": null, "text": "b"}], "choices": []}
+                {"beat_id": "b", "title": "b", "dialogues": [{"dialogue_id": "d2", "speaker_id": null, "text": "b"}], "choices": [{"choice_id": "c2", "text": "end", "target_beat_id": null, "transition_kind": "END"}]}
             ]}
         ]
     }
     var invalid_model: RefCounted = model_script.new()
     _check(not invalid_model.load_from_dictionary(invalid_data), "cross-scene STAY_IN_SCENE fails closed")
+
+    var dead_end_data: Dictionary = {
+        "format_version": 1,
+        "flow_id": "invalid_dead_end",
+        "entry_beat_id": "dead",
+        "scenes": [
+            {"scene_id": "s_dead", "location_id": "l_dead", "title": "dead", "background_ref": "bg_dead", "entry_beat_id": "dead", "beats": [
+                {"beat_id": "dead", "title": "dead", "dialogues": [{"dialogue_id": "d_dead", "speaker_id": null, "text": "dead"}], "choices": []}
+            ]}
+        ]
+    }
+    var dead_end_model: RefCounted = model_script.new()
+    _check(not dead_end_model.load_from_dictionary(dead_end_data), "beat without explicit END or transition fails closed")
 
     _finish()
 
