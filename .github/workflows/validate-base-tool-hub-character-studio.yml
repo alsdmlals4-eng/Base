@@ -1,0 +1,62 @@
+name: Validate Base Tool Hub Character Studio
+
+on:
+  pull_request:
+    paths:
+      - "Base Tool Hub/**"
+      - "tools/expression-studio/**"
+      - "tools/TOOL_REGISTRY.json"
+      - ".github/workflows/validate-base-tool-hub-character-studio.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "Base Tool Hub/**"
+      - "tools/expression-studio/**"
+      - "tools/TOOL_REGISTRY.json"
+      - ".github/workflows/validate-base-tool-hub-character-studio.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: base-tool-hub-character-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  character-studio-contract:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+
+      - name: Install reviewed tool dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -m pip install `
+            -e ".\tools\base-tool-contracts[dev]" `
+            -e ".\tools\expression-studio[dev]"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Run character consistency contract tests
+        shell: pwsh
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          python -m pytest -q `
+            tools/expression-studio/tests/test_models.py `
+            tools/expression-studio/tests/test_character_consistency.py `
+            tools/expression-studio/tests/test_engine.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
