@@ -29,14 +29,36 @@ class ChildIdentity:
     launch_nonce: str
     url: str
     status: dict[str, Any]
+    state: str = "RUNNING"
 
     def public_view(self) -> dict[str, object]:
         return {
             "tool_id": self.tool_id,
             "project_id": self.project_id,
             "url": self.url,
-            "status": self.status["status"],
+            "status": self.state,
         }
+
+
+@dataclass(frozen=True)
+class ChildPublicView:
+    tool_id: str
+    project_id: str
+    status: str
+    url: str | None = None
+    log_tail: str = ""
+
+    def public_view(self) -> dict[str, object]:
+        value: dict[str, object] = {
+            "tool_id": self.tool_id,
+            "project_id": self.project_id,
+            "status": self.status,
+        }
+        if self.url is not None:
+            value["url"] = self.url
+        if self.log_tail:
+            value["log_tail"] = self.log_tail
+        return value
 
 
 class QaEvidenceLauncher:

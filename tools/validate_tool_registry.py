@@ -27,6 +27,23 @@ _FIELDS = {
     "production_engine_required_for_delivery",
 }
 _ADAPTERS = {"expression_studio", "qa_evidence_studio", "sprite_animation_studio"}
+_REVIEWED_TUPLES = {
+    "expression-studio": (
+        "tools/expression-studio",
+        "expression_studio",
+        ("expression_variation", "image_import", "figma_delivery_packet"),
+    ),
+    "qa-evidence-studio": (
+        "tools/qa-evidence-studio",
+        "qa_evidence_studio",
+        ("developer_pc_review", "image_evidence", "qa_evidence_packet"),
+    ),
+    "sprite-animation-studio": (
+        "tools/sprite-animation-studio",
+        "sprite_animation_studio",
+        ("sprite_action", "expression_variation", "pose_sequence", "effect_stages"),
+    ),
+}
 _ID = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 _CAPABILITY = re.compile(r"^[a-z0-9]+(?:_[a-z0-9]+)*$")
 
@@ -88,6 +105,13 @@ def load_registry(base_root: Path, registry_path: Path) -> tuple[dict[str, objec
             raise RegistryError("capabilities must be non-empty reviewed identifiers")
         if len(set(capabilities)) != len(capabilities):
             raise RegistryError("capabilities must be unique")
+        reviewed_tuple = _REVIEWED_TUPLES.get(tool_id)
+        if reviewed_tuple is None or (
+            owner_value,
+            adapter,
+            tuple(capabilities),
+        ) != reviewed_tuple:
+            raise RegistryError("tool must use its fixed reviewed tuple")
         if not isinstance(raw["display_name"], str) or not raw["display_name"]:
             raise RegistryError("display_name is required")
         if not isinstance(raw["production_engine_required_for_delivery"], bool):

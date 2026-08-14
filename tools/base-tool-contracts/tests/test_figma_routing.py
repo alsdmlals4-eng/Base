@@ -58,6 +58,60 @@ def test_loader_resolves_ready_target_and_routing_state(tmp_path: Path) -> None:
     assert registry.routing_state("demo") == "ROUTING_CONFIGURED"
 
 
+def test_loader_rejects_registry_beneath_a_symlinked_parent(tmp_path: Path) -> None:
+    module = routing_module()
+    real_parent = tmp_path / "real"
+    real_parent.mkdir()
+    path = write_registry(real_parent)
+    alias = tmp_path / "alias"
+    alias.symlink_to(real_parent, target_is_directory=True)
+
+    with pytest.raises(ValueError, match="unavailable|symlink"):
+        module.ProjectFigmaRegistry.load(alias / path.name)
+
+
+def test_figma_registry_requires_the_committed_canonical_base_path(tmp_path: Path) -> None:
+    module = routing_module()
+    canonical = module.ProjectFigmaRegistry.load(
+        ROOT / "docs" / "operations" / "PROJECT_FIGMA_TARGET_REGISTRY.json"
+    )
+    canonical.assert_canonical(ROOT)
+
+    copied = module.ProjectFigmaRegistry.load(write_registry(tmp_path))
+    with pytest.raises(module.DeliveryBlockedError, match="canonical"):
+        copied.assert_canonical(ROOT)
+
+
+def test_archived_figma_route_never_collapses_to_a_registered_route(tmp_path: Path) -> None:
+    module = routing_module()
+    path = write_registry(tmp_path)
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload["entries"][0]["delivery_status"] = "ARCHIVED"
+    payload["entries"][0]["delivery_page_node_id"] = None
+    payload["entries"][0]["generation_area_node_id"] = None
+    path.write_text(json.dumps(payload), encoding="utf-8")
+
+    registry = module.ProjectFigmaRegistry.load(path)
+
+    assert registry.routing_state("demo") == "ROUTING_ARCHIVED"
+    assert registry.registration_state("demo") == "ROUTING_ARCHIVED"
+
+
+def test_registered_no_mutation_is_distinct_from_ready_delivery(tmp_path: Path) -> None:
+    module = routing_module()
+    path = write_registry(tmp_path)
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload["entries"][0]["delivery_status"] = "REGISTERED_NO_MUTATION"
+    payload["entries"][0]["delivery_page_node_id"] = None
+    payload["entries"][0]["generation_area_node_id"] = None
+    path.write_text(json.dumps(payload), encoding="utf-8")
+
+    registry = module.ProjectFigmaRegistry.load(path)
+
+    assert registry.registration_state("demo") == "ROUTING_REGISTERED"
+    assert registry.routing_state("demo") == "ROUTING_BLOCKED"
+
+
 def test_anchor_validation_binds_file_key_and_normalizes_node_id(tmp_path: Path) -> None:
     module = routing_module()
     registry = module.ProjectFigmaRegistry.load(write_registry(tmp_path))
@@ -142,6 +196,58 @@ def test_anchor_registry_must_match_the_committed_project_blob(tmp_path: Path) -
     registry = ApprovedAnchorRegistry.load(registry_path)
     with pytest.raises(AnchorEvidenceError, match="committed project blob"):
         registry.assert_project_owned(tmp_path)
+
+
+def test_anchor_registry_rejects_a_symlinked_parent(tmp_path: Path) -> None:
+    from base_tool_contracts import AnchorEvidenceError, ApprovedAnchorRegistry
+
+    real_parent = tmp_path / "real"
+    real_parent.mkdir()
+    path = real_parent / "anchors.json"
+    path.write_text('{"version":1,"entries":[]}', encoding="utf-8")
+    alias = tmp_path / "alias"
+    alias.symlink_to(real_parent, target_is_directory=True)
+
+    with pytest.raises(AnchorEvidenceError, match="invalid|symlink"):
+        ApprovedAnchorRegistry.load(alias / path.name)
+
+
+def test_anchor_registry_accepts_only_line_ending_normalization_of_a_clean_blob(tmp_path: Path) -> None:
+    from base_tool_contracts import AnchorEvidenceError, ApprovedAnchorRegistry
+
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    subprocess.run(["git", "-C", str(tmp_path), "config", "user.email", "test@example.com"], check=True)
+    subprocess.run(["git", "-C", str(tmp_path), "config", "user.name", "Test"], check=True)
+    subprocess.run(["git", "-C", str(tmp_path), "config", "core.autocrlf", "true"], check=True)
+    (tmp_path / ".gitattributes").write_text("*.json text\n", encoding="utf-8")
+    registry_path = tmp_path / "docs" / "APPROVED_VISUAL_ANCHORS.json"
+    registry_path.parent.mkdir()
+    registry_path.write_bytes(b'{"version":1,"entries":[]}\n')
+    subprocess.run(["git", "-C", str(tmp_path), "add", "."], check=True)
+    subprocess.run(["git", "-C", str(tmp_path), "commit", "-qm", "anchor evidence"], check=True)
+    registry_path.write_bytes(b'{"version":1,"entries":[]}\r\n')
+
+    ApprovedAnchorRegistry.load(registry_path).assert_project_owned(tmp_path)
+
+    registry_path.write_bytes(b'{"version": 1,"entries":[]}\r\n')
+    with pytest.raises(AnchorEvidenceError, match="committed project blob"):
+        ApprovedAnchorRegistry.load(registry_path).assert_project_owned(tmp_path)
+
+
+def test_anchor_registry_rejects_a_noncanonical_tracked_project_path(tmp_path: Path) -> None:
+    from base_tool_contracts import AnchorEvidenceError, ApprovedAnchorRegistry
+
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    subprocess.run(["git", "-C", str(tmp_path), "config", "user.email", "test@example.com"], check=True)
+    subprocess.run(["git", "-C", str(tmp_path), "config", "user.name", "Test"], check=True)
+    registry_path = tmp_path / "docs" / "ATTACKER_ANCHORS.json"
+    registry_path.parent.mkdir()
+    registry_path.write_text('{"version":1,"entries":[]}', encoding="utf-8")
+    subprocess.run(["git", "-C", str(tmp_path), "add", "."], check=True)
+    subprocess.run(["git", "-C", str(tmp_path), "commit", "-qm", "attacker anchors"], check=True)
+
+    with pytest.raises(AnchorEvidenceError, match="canonical project path"):
+        ApprovedAnchorRegistry.load(registry_path).assert_project_owned(tmp_path)
 
 
 def test_staging_revalidation_rejects_a_post_create_symlink_swap(tmp_path: Path) -> None:

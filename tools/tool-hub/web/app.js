@@ -1,5 +1,8 @@
+const childStates = new Map();
 const state = { csrf: "", catalog: null, projectId: null };
 const statusBox = document.querySelector("#status");
+
+const VISUAL_TOOLS = new Set(["expression-studio", "sprite-animation-studio"]);
 
 function show(message, error = false) {
   statusBox.textContent = message;
@@ -16,6 +19,46 @@ async function api(path, options = {}) {
   return payload;
 }
 
+function childStateKey(projectId, toolId) {
+  return `${projectId}:${toolId}`;
+}
+
+function defaultChildState(tool) {
+  if (!state.projectId) return { status: "PROJECT_SELECTION_REQUIRED", detail: "먼저 프로젝트를 선택하세요.", tone: "idle" };
+  if (tool.launch_state !== "RUNNABLE") return { status: "BLOCKED_UNVERIFIED", detail: "서버가 이 도구를 실행 가능으로 등록하지 않았습니다.", tone: "blocked" };
+  const detail = VISUAL_TOOLS.has(tool.tool_id)
+    ? "subscription_handoff_import · provider 호출 없음 · routing/anchor gate는 시작 전에 서버가 검증"
+    : "프로젝트별 QA evidence child가 아직 시작되지 않았습니다.";
+  return { status: "REGISTERED", detail, tone: "ready" };
+}
+
+function childStateFor(tool) {
+  const key = childStateKey(state.projectId, tool.tool_id);
+  if (!childStates.has(key)) childStates.set(key, defaultChildState(tool));
+  return childStates.get(key);
+}
+
+function setChildState(projectId, toolId, nextState) {
+  childStates.set(childStateKey(projectId, toolId), nextState);
+  render();
+}
+
+function blockedChildState(message) {
+  if (message === "PROJECT_ANCHOR_EVIDENCE_UNAVAILABLE") {
+    return { status: "ANCHOR_EVIDENCE_MISSING", detail: "프로젝트 소유 anchor 증거를 확인한 뒤 다시 시작하세요.", tone: "blocked" };
+  }
+  if (message === "PROJECT_FIGMA_ROUTING_UNAVAILABLE") {
+    return { status: "BLOCKED_UNVERIFIED", detail: "ROUTING_REGISTERED 상태를 서버에서 확인할 수 없습니다.", tone: "blocked" };
+  }
+  return { status: "BLOCKED_UNVERIFIED", detail: "서버 preflight 또는 authenticated child 확인이 완료되지 않았습니다.", tone: "blocked" };
+}
+
+function requireAuthenticatedChildUrl(childUrl) {
+  if (childUrl.protocol !== "http:" || childUrl.hostname !== "127.0.0.1" || !childUrl.port || childUrl.username || childUrl.password) {
+    throw new Error("AUTHENTICATED_LOOPBACK_URL_REQUIRED");
+  }
+}
+
 function render() {
   const projects = document.querySelector("#project-list"); projects.replaceChildren();
   for (const project of state.catalog.projects) {
@@ -30,17 +73,33 @@ function render() {
     const card = document.createElement("article"); card.className = "tool-card";
     const title = document.createElement("h3"); title.textContent = tool.display_name;
     const description = document.createElement("p"); description.textContent = tool.capabilities.join(" · ");
-    const button = document.createElement("button"); button.textContent = tool.launch_state === "RUNNABLE" ? "열기" : "등록됨 · Hub 실행은 후속 단계";
-    button.disabled = tool.launch_state !== "RUNNABLE";
+    const childState = childStateFor(tool);
+    const status = document.createElement("strong"); status.className = `tool-status ${childState.tone}`; status.textContent = childState.status;
+    const detail = document.createElement("p"); detail.className = "tool-detail"; detail.textContent = childState.detail;
+    const button = document.createElement("button"); button.textContent = childState.status === "RUNNING" ? "다시 열기" : "시작 및 열기";
+    button.disabled = tool.launch_state !== "RUNNABLE" || !state.projectId || childState.status === "STARTING";
     button.addEventListener("click", async () => {
       if (!state.projectId) return show("먼저 프로젝트를 선택하세요.", true);
+      const launchProjectId = state.projectId;
+      setChildState(launchProjectId, tool.tool_id, { status: "STARTING", detail: "서버가 프로젝트 identity와 child health를 검증하는 중입니다.", tone: "busy" });
       try {
-        const child = await api("/api/launch", { method: "POST", body: JSON.stringify({ tool_id: tool.tool_id, project_id: state.projectId }) });
-        window.open(child.url, "_blank", "noopener");
-        show(`${tool.display_name} · ${state.projectId} 실행됨`);
-      } catch (error) { show(error.message, true); }
+        const child = await api("/api/launch", { method: "POST", body: JSON.stringify({ tool_id: tool.tool_id, project_id: launchProjectId }) });
+        if (child.project_id !== launchProjectId || child.tool_id !== tool.tool_id) throw new Error("AUTHENTICATED_CHILD_IDENTITY_REQUIRED");
+        const childUrl = new URL(child.url);
+        requireAuthenticatedChildUrl(childUrl);
+        setChildState(launchProjectId, tool.tool_id, {
+          status: child.status,
+          detail: VISUAL_TOOLS.has(tool.tool_id) ? "ROUTING_REGISTERED · subscription_handoff_import · provider 호출 없음" : "authenticated project-bound QA child",
+          tone: "running",
+        });
+        window.open(childUrl.href, "_blank", "noopener");
+        show(`${tool.display_name} · ${launchProjectId} 실행됨`);
+      } catch (error) {
+        setChildState(launchProjectId, tool.tool_id, blockedChildState(error.message));
+        show(`${tool.display_name} 시작이 차단되었습니다.`, true);
+      }
     });
-    card.append(title, description, button); tools.append(card);
+    card.append(title, description, status, detail, button); tools.append(card);
   }
 }
 

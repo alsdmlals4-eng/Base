@@ -2,7 +2,16 @@
 
 ## 1. 조건부 결정
 
-권장 가설은 Base에 `tools/tool-hub/`를 추가하는 것이다. 이 허브는 여러 프로젝트와 공용 도구를 한 화면에서 선택하고, **검증된 기존 도구 프로세스를 프로젝트별로 분리 실행**하며, 준비·실행·차단 상태를 보여 주는 localhost 전용 런처다. 다만 이 문서의 Phase 0/0.5 차단 조건과 실제 Windows 동시 실행 smoke가 통과하기 전에는 `HUB_LAUNCHER_ACCEPTED`로 판정하지 않는다. 실제 이미지 생성까지 포함한 `GENERATION_PRODUCT_READY`는 별도 승인된 production engine adapter, 실제 provider 샘플 smoke와 Figma placement evidence까지 통과해야 하며 현재 `BLOCKED_UNVERIFIED`다.
+권장 가설은 Base의 기존 `tools/tool-hub/` 하나를 유일한 Hub 진입점으로 유지하는 것이다. 이 허브는 여러 프로젝트와 공용 도구를 한 화면에서 선택하고, **검증된 기존 도구 프로세스를 프로젝트별로 분리 실행**하며, 준비·실행·차단 상태를 보여 주는 localhost 전용 런처다. PR #328/#329의 Tool Hub·QA·visual import baseline은 이 owner에 흡수됐고 별도 Tool Radar runtime·두 번째 Hub·marketplace·iframe은 만들지 않았다. 다만 실제 Windows 동시 실행 smoke가 통과하기 전에는 `HUB_LAUNCHER_ACCEPTED`로 판정하지 않는다. 실제 이미지 생성까지 포함한 `GENERATION_PRODUCT_READY`는 별도 승인된 production engine adapter, 실제 provider 샘플 smoke와 Figma placement evidence까지 통과해야 하며 현재 `BLOCKED_UNVERIFIED`다.
+
+### 2026-08-13 Task 5 구현 readback
+
+- 한 catalog가 선택한 프로젝트별 QA, Expression, Sprite child 상태를 독립 표시하고 server-returned authenticated loopback URL만 연다.
+- Linux에서 공백 경로를 가진 두 임시 committed project fixture에 canonical Base Figma route와 committed project-owned anchor evidence를 구성했다. 두 Expression + 두 Sprite child는 네 고유 PID·port와 정확한 `(tool_id, project_id)` identity를 보고했다.
+- Expression 2-candidate import/export, Sprite 4-frame `sprite_action` import/export, Sprite 4-frame `effect_stages` import/export가 project-local vault에서 통과했다. 모든 import/export public packet은 `subscription_handoff_import`, `INCLUDED_OR_LOCAL_HANDOFF`, `provider_call_made=false`였고 상대 프로젝트에 run/output path가 없었다.
+- QA session/evidence packet vertical slice도 별도로 통과해 Android `DEFERRED_NOT_CONNECTED`를 보존했다.
+- 이 증거는 Linux/import 자동 smoke다. Windows process tree, Android device, live Figma connector/upload/node, paid OpenAI/pinned provider 호출과 실제 AI 생성은 실행하지 않아 `BLOCKED_UNVERIFIED` 또는 `DEFERRED`다. Figma는 routing/placement surface일 뿐 Hub smoke 증거가 아니다.
+- 다음 독립 vertical slice 후보는 `Balance & Scenario Lab`이다. 현재 catalog에 placeholder를 두거나 기존 Hub/Studio owner에 흡수하지 않는다.
 
 허브는 이미지 생성 엔진, Sprite Animation Studio, Expression Studio, Figma 전달, Godot authoring 또는 프로젝트 자산 승인 책임을 다시 구현하지 않는다. 기존 owner와 실행 계약을 등록·호출하는 얇은 제어면만 소유한다.
 
@@ -167,9 +176,20 @@ remote_hosted_saas: DEFER
 | D. Figma plugin/page 안에서 실행 | 낮음 | 낮음 | 중간 | 중간 | 낮음 | 제외 |
 | E. 문서 링크 모음만 제공 | 높음 | 낮음 | 높음 | 높음 | 낮음 | 불충분 |
 
-A가 현재 가장 강한 가설인 이유는 “한곳”을 하나의 프로세스·데이터 저장소로 오해하지 않기 때문이다. 사용자가 보는 진입점은 하나지만 실제 Studio는 project ID에 immutable하게 결합된 별도 child process다. 그러나 clean environment, atomic port allocation, Windows process-tree, production adapter, 네 process smoke가 아직 없으므로 실제 격리·보안·유지보수 점수는 `BLOCKED_UNVERIFIED`다. 이 Gate를 통과하면 도구 오류와 dependency 전파를 process boundary에서 줄일 수 있다는 것이 현재 가설이다.
+A가 현재 가장 강한 가설인 이유는 “한곳”을 하나의 프로세스·데이터 저장소로 오해하지 않기 때문이다. 사용자가 보는 진입점은 하나지만 실제 Studio는 project ID에 immutable하게 결합된 별도 child process다. Clean environment, atomic port allocation과 Linux 네-process import smoke는 구현·실행됐지만 Windows process-tree, production adapter/provider, live Figma placement는 아직 없으므로 전체 다중 플랫폼·생성 제품 판정은 `BLOCKED_UNVERIFIED`다.
 
 ## 6. 소유권과 데이터 경계
+
+### Local threat model
+
+Phase 1 Tool Hub는 한 명의 개발자가 소유한 localhost 도구다. 동일 OS 사용자 계정과 기기 관리자는 신뢰 대상이며, 방어 대상은 다음으로 한정한다.
+
+- 브라우저가 전달하는 비신뢰 입력과 raw command·환경 변수·경로 주입
+- 프로젝트 저장소의 잘못되거나 악의적인 adapter, registry, symlink와 cross-project routing
+- 최종 launch 검사 시점까지 발생한 경로·설정 drift·검토본 불일치
+- stale process, 잘못된 child identity, 다른 localhost 서비스와의 혼동
+
+reviewed runtime hash, descriptor binding, clean child environment와 process identity 검증은 이 경계의 방어 계층이다. 같은 OS 계정으로 이미 임의 코드를 실행할 수 있는 경쟁 프로세스가 검증 뒤 개별 runtime 파일·프로세스 메모리를 변경하는 상황까지 sandbox했다고 주장하지 않는다. 최종 검사와 child import 사이에 신뢰 사용자가 Base·Studio runtime을 동시에 편집하는 동작도 지원하지 않으며 UI와 운영 문서가 실행 중 편집 금지를 표시한다. 그 범위를 지원하려면 별도 OS 계정, 컨테이너 또는 서명된 읽기 전용 runtime과 플랫폼별 격리 증거가 필요하다. 이는 Phase 1 밖의 `HARDENED_RUNTIME_DEFERRED`이며, 해당 증거 전에는 같은 계정 변경에 대한 tamper-proof 또는 immutable-runtime 완료 판정을 금지한다.
 
 ### Tracked registry
 
@@ -202,7 +222,7 @@ registry edit도 실행 신뢰 경계다. 구현은 다음을 모두 강제한�
 
 - `shell=False`와 argv array만 사용한다.
 - browser/request가 flag, environment, interpreter, owner path를 추가·교체할 수 없다.
-- `owner_path`와 interpreter는 reviewed Base/tool root 아래의 expected realpath·hash·environment identity와 일치해야 한다.
+- `owner_path`와 interpreter는 reviewed Base/tool root 아래의 expected realpath·hash·environment identity와 일치해야 한다. 이 검사는 위 local threat model의 시작 전 drift 탐지이며 동일 계정 악성 프로세스에 대한 sandbox 증거가 아니다.
 - `..`, symlink escape, registry path replacement, interpreter substitution을 시작 직전에 다시 차단한다.
 - schema는 `schemas/base-tool-registry-v1.schema.json`이 단일 owner가 되고 `$id`, version, migration policy를 가진다.
 - `README.md`, `START_HERE.md`, `docs/DOCUMENTATION_MAP.md`, validator, active Hub consumer와 compatibility tests가 같은 변경에서 연결돼야 한다.
@@ -460,9 +480,7 @@ registry의 `READY_FOR_DELIVERY`는 local routing configuration 이름이지 liv
 - clean environment builder와 confined `shell=False` argv launcher
 - machine/child locks, atomic port allocation, authenticated identity health check, OS별 process-tree start/open/stop
 - project/tool readiness and simulated/production 표시
-- 제공된 Tool Radar의 검색·필터·즐겨찾기·candidate draft UX를 단일 Hub catalog 탭으로 재구현
-- executable registry, periodic source의 derived reference projection, browser-local draft를 서로 다른 schema/state로 표시
-- browser-local image/JSON/SHA/diff utilities는 capability별 bounded input·output·security tests를 통과한 항목만 등록
+- Tool Radar 후보의 별도 runtime, marketplace, reference projection, browser-local draft/utilities는 이번 vertical slice에 구현하지 않고 후속 독립 범위로 유지
 - candidate ZIP의 `data.js`, self-declared `PASS/ACTIVE`, raw command와 duplicate Hub ID는 import하지 않음
 - 두 프로젝트 동시 실행 smoke test
 - README·START_HERE·Documentation Map·schema migration·active consumer·compatibility test route
@@ -544,7 +562,7 @@ registry의 `READY_FOR_DELIVERY`는 local routing configuration 이름이지 liv
 8. anchor Figma URL은 bound host/file key와 canonical source-node syntax를 검증하되 destination node와 동일시하지 않고, 별도 pinned evidence 없이 승인·live Figma proof로 표시하지 않는다.
 9. typed adapter 외에도 `shell=False`, argv array, reviewed realpath/interpreter/hash와 launch-time symlink/path recheck를 강제한다.
 10. 미승인 BCP-026을 authority로 사용하지 않고 Hub scope를 두 art Studio launcher로 한정한다.
-11. 대안 점수는 가설로 유지하고 실제 Windows·production adapter·네 process smoke 전에는 최선 확정이나 production-ready를 주장하지 않는다.
+11. 대안 점수는 가설로 유지하고 실제 Windows 네-process smoke·production adapter/provider·live Figma evidence 전에는 다중 플랫폼 또는 generation product-ready를 주장하지 않는다.
 12. project adapter의 raw `validators` 문자열은 절대 실행하지 않고 fixed reviewed validator adapter만 typed args와 `shell=False`로 호출한다.
 13. `HUB_LAUNCHER_ACCEPTED`와 `GENERATION_PRODUCT_READY`를 분리해 production adapter 부재를 launcher 합격으로 숨기지 않는다.
 
@@ -589,6 +607,6 @@ registry의 `READY_FOR_DELIVERY`는 local routing configuration 이름이지 liv
 
 ## 15. 최종 결론
 
-현재 비교에서 공용 도구 코드의 최선 후보 위치는 **Base repository의 `tools/` 아래**이며, 실행 형태의 최선 후보는 **localhost Tool Hub + tracked allowlist registry + machine-local locator + canonical project adapter identity + project-bound child processes**다.
+현재 비교에서 공용 도구 코드의 위치는 **Base repository의 `tools/` 아래**이고, 실행 형태는 **단일 localhost Tool Hub + tracked allowlist registry + machine-local locator + canonical project adapter identity + project-bound child processes**로 구현됐다.
 
-이를 “모든 도구를 한 앱으로 재작성”하거나 “Figma 안에서 생성”으로 확장하지 않는다. 현행 두 Studio를 재사용하되, 먼저 알려진 안전·identity·routing·vault·동시 실행 차단 결함을 고친 뒤 최소 Hub를 TDD로 구현한다. 사용자 L4 BUILD 승인은 닫혔고 Tool Radar 후보는 UI·utility 아이디어만 기존 Hub owner에 흡수한다. 실제 Windows 네 process smoke, provider 생성, live Figma placement 전 최종 상태는 `IMPLEMENTATION_IN_PROGRESS / BLOCKED_UNVERIFIED`다.
+이를 “모든 도구를 한 앱으로 재작성”하거나 “Figma 안에서 생성”으로 확장하지 않는다. 현행 두 visual Studio와 QA Studio를 독립 owner로 재사용하고 단일 Hub의 최소 UI·typed supervisor만 연결했다. Linux 네-process import 격리 증거는 확보했지만 실제 Windows 네-process smoke, provider 생성, Android device, live Figma placement 전 최종 상한은 `IMPLEMENTED_LINUX_IMPORT_SLICE / BLOCKED_UNVERIFIED`다.
