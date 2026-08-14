@@ -133,6 +133,41 @@ class NeutralAdversarialFeatureLifecycleTests(unittest.TestCase):
         ):
             self.assertIn(term, adversarial)
 
+    def test_socratic_review_lens_is_selective_evidence_first_and_meta_validated(self) -> None:
+        adversarial = read("skills/running-adversarial-review-and-refinement/SKILL.md")
+        socratic = read(
+            "skills/running-adversarial-review-and-refinement/references/"
+            "socratic-questioning-lenses.md"
+        )
+
+        for term in (
+            "Socratic Review Lens",
+            "references/socratic-questioning-lenses.md",
+            "저장소·정본·실제 구현·도구",
+            "사용자에게 묻지 않는다",
+            "관련된 Lens만",
+            "가짜 Finding",
+        ):
+            self.assertIn(term, adversarial)
+
+        for term in (
+            "Clarification",
+            "Assumptions",
+            "Reasons / Evidence",
+            "Viewpoints",
+            "Implications / Consequences",
+            "Meta-question",
+            "관련된 Lens만",
+            "가짜 Finding",
+            "사용자 질문은 마지막 수단",
+            "BLOCKED_UNVERIFIED",
+            "USER_DECISION_REQUIRED",
+            "답이 달라지면 실제 결정도 달라지는가",
+        ):
+            self.assertIn(term, socratic)
+
+        self.assertNotIn("skill_id: socratic-questioning", socratic)
+
     def test_post_change_monitor_loop_rechecks_prs_omissions_conflicts_and_complements(self) -> None:
         adversarial = read("skills/running-adversarial-review-and-refinement/SKILL.md")
         operating = read("docs/OPERATING_MODEL.md")
