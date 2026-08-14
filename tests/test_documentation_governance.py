@@ -219,6 +219,18 @@ class DocumentationGovernanceTests(unittest.TestCase):
             with self.subTest(token=token):
                 self.assertIn(token, capability_map)
 
+    def test_unreadable_user_provided_source_stops_work_and_requests_original(self) -> None:
+        agents = (REPOSITORY_ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        for token in (
+            "사용자가 작업 근거로 직접 제공한 외부 링크",
+            "즉시 `BLOCKED_UNVERIFIED`로 작업을 중단",
+            "원문 텍스트·파일·스크린샷",
+            "링크 제목·검색 스니펫·과거 기억·주변 자료·추정",
+            "다른 독립 작업으로 임의 전환하지 않는다",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, agents)
+
 
 if __name__ == "__main__":
     unittest.main()
