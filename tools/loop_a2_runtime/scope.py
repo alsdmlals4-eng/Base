@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from fnmatch import fnmatchcase
+from pathlib import PurePosixPath
 
 from .protocol import ProtocolError, normalize_contract_path
 
@@ -22,7 +22,7 @@ def _matches(pattern: str, path: str) -> bool:
     if normalized_pattern.endswith("/"):
         prefix = normalized_pattern.rstrip("/")
         return normalized_path == prefix or normalized_path.startswith(prefix + "/")
-    return fnmatchcase(normalized_path, normalized_pattern)
+    return PurePosixPath(normalized_path).match(normalized_pattern)
 
 
 def validate_changed_paths(
