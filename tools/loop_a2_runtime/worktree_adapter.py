@@ -7,6 +7,7 @@ import subprocess
 from typing import Protocol, Sequence
 
 from .protocol import ProtocolError, RunRequest, WorkerResult
+from .workspace_registry import WorkspaceOwnershipError, WorkspaceOwnershipRegistry
 
 
 _SAFE_INHERITED_ENV_KEYS = (
@@ -208,6 +209,10 @@ class GitWorktreeBuilderAdapter:
         if self.runtime_root == self.repo_root or self.repo_root in self.runtime_root.parents:
             raise ValueError("runtime_root must be outside the project repository")
         self.worker = worker
+        self.registry = WorkspaceOwnershipRegistry(
+            repo_root=self.repo_root,
+            runtime_root=self.runtime_root,
+        )
         self._owned_workspaces: set[Path] = set()
 
     def workspace_path(self, request: RunRequest) -> Path:
@@ -226,6 +231,24 @@ class GitWorktreeBuilderAdapter:
     def _registered_worktree_paths(self) -> set[Path]:
         output = _git(self.repo_root, "worktree", "list", "--porcelain").stdout
         return _worktree_paths(output)
+
+    def resume(self, request: RunRequest) -> None:
+        workspace = self.workspace_path(request)
+        canonical_workspace = workspace.resolve(strict=False)
+        self.registry.verify(
+            project_id=request.project_id,
+            run_id=request.run_id,
+            expected_main_sha=request.expected_main_sha,
+            workspace=workspace,
+        )
+        if not workspace.is_dir():
+            raise WorkspaceOwnershipError("owned worktree directory is missing")
+        if canonical_workspace not in self._registered_worktree_paths():
+            raise WorkspaceOwnershipError("owned worktree is not registered with Git")
+        head = _git(workspace, "rev-parse", "HEAD", check=False)
+        if head.returncode != 0 or head.stdout.strip() != request.expected_main_sha:
+            raise WorkspaceOwnershipError("owned worktree HEAD differs from expected_main_sha")
+        self._owned_workspaces.add(workspace.resolve(strict=True))
 
     def _ensure_workspace(
         self,
@@ -253,7 +276,7 @@ class GitWorktreeBuilderAdapter:
                 return _blocked_result(
                     request,
                     code="WORKSPACE_NOT_OWNED",
-                    message="existing runtime workspace is not owned by this adapter instance",
+                    message="existing runtime workspace is not owned by this adapter instance; explicit resume is required after restart",
                 )
             head = _git(workspace, "rev-parse", "HEAD", check=False)
             if head.returncode != 0 or head.stdout.strip() != request.expected_main_sha:
@@ -269,6 +292,32 @@ class GitWorktreeBuilderAdapter:
                     message="existing runtime workspace is not registered with Git",
                 )
             return None
+
+        try:
+            self.registry.validate_workspace_path(
+                project_id=request.project_id,
+                run_id=request.run_id,
+                workspace=workspace,
+            )
+        except WorkspaceOwnershipError as exc:
+            return _blocked_result(
+                request,
+                code="WORKSPACE_PATH_UNSAFE",
+                message=f"runtime workspace path is unsafe: {exc}",
+            )
+        try:
+            self.registry.preflight_claim(
+                project_id=request.project_id,
+                run_id=request.run_id,
+                expected_main_sha=request.expected_main_sha,
+                workspace=workspace,
+            )
+        except WorkspaceOwnershipError as exc:
+            return _blocked_result(
+                request,
+                code="WORKSPACE_OWNERSHIP_FAILED",
+                message=f"durable ownership preflight failed: {exc}",
+            )
 
         workspace.parent.mkdir(parents=True, exist_ok=True)
         completed = _git(
@@ -286,7 +335,30 @@ class GitWorktreeBuilderAdapter:
                 code="WORKTREE_CREATE_FAILED",
                 message="Git could not create the isolated worktree",
             )
-        self._owned_workspaces.add(workspace.resolve(strict=True))
+        canonical_workspace = workspace.resolve(strict=True)
+        try:
+            self.registry.claim(
+                project_id=request.project_id,
+                run_id=request.run_id,
+                expected_main_sha=request.expected_main_sha,
+                workspace=workspace,
+            )
+        except WorkspaceOwnershipError as exc:
+            _git(
+                self.repo_root,
+                "worktree",
+                "remove",
+                "--force",
+                str(workspace),
+                check=False,
+            )
+            _git(self.repo_root, "worktree", "prune", check=False)
+            return _blocked_result(
+                request,
+                code="WORKSPACE_OWNERSHIP_FAILED",
+                message=f"durable ownership receipt could not be published: {exc}",
+            )
+        self._owned_workspaces.add(canonical_workspace)
         return None
 
     def _actual_changed_paths(self, request: RunRequest) -> tuple[str, ...]:
@@ -378,6 +450,17 @@ class GitWorktreeBuilderAdapter:
         canonical_workspace = workspace.resolve(strict=False)
         if canonical_workspace not in self._owned_workspaces:
             return
+        try:
+            self.registry.verify(
+                project_id=request.project_id,
+                run_id=request.run_id,
+                expected_main_sha=request.expected_main_sha,
+                workspace=workspace,
+            )
+        except WorkspaceOwnershipError:
+            # Preserve both worktree and forensic receipt when durable ownership
+            # cannot be verified. A restarted process must never clean by guess.
+            return
         if workspace.exists():
             _git(
                 self.repo_root,
@@ -387,6 +470,17 @@ class GitWorktreeBuilderAdapter:
                 str(workspace),
                 check=False,
             )
+        try:
+            self.registry.remove(
+                project_id=request.project_id,
+                run_id=request.run_id,
+                expected_main_sha=request.expected_main_sha,
+                workspace=workspace,
+            )
+        except WorkspaceOwnershipError:
+            # If evidence changes between verify/remove, preserve it for forensic
+            # review rather than deleting a receipt we can no longer authenticate.
+            return
         self._owned_workspaces.discard(canonical_workspace)
         _git(self.repo_root, "worktree", "prune", check=False)
         parent = workspace.parent

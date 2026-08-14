@@ -1,0 +1,49 @@
+name: Validate Loop A2 Durable Resume
+
+on:
+  pull_request:
+    paths:
+      - "tools/loop_a2_runtime/workspace_registry.py"
+      - "tools/loop_a2_runtime/worktree_adapter.py"
+      - "tests/test_loop_a2_runtime_resume*.py"
+      - "docs/evidence/2026-08-14-loop-a2-durable-resume.md"
+      - ".github/workflows/validate-loop-a2-durable-resume.yml"
+  push:
+    branches: [main]
+    paths:
+      - "tools/loop_a2_runtime/workspace_registry.py"
+      - "tools/loop_a2_runtime/worktree_adapter.py"
+      - "tests/test_loop_a2_runtime_resume*.py"
+      - ".github/workflows/validate-loop-a2-durable-resume.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  durable-resume-ubuntu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+      - name: Compile and test durable A2 resume
+        run: |
+          python -m py_compile tools/loop_a2_runtime/workspace_registry.py tools/loop_a2_runtime/worktree_adapter.py tests/test_loop_a2_runtime_resume.py tests/test_loop_a2_runtime_resume_adversarial.py
+          python -m unittest tests.test_loop_a2_runtime_resume tests.test_loop_a2_runtime_resume_adversarial -v
+          git diff --check
+
+  durable-resume-windows:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+      - name: Test durable A2 resume on Windows
+        shell: pwsh
+        run: |
+          python -m unittest tests.test_loop_a2_runtime_resume tests.test_loop_a2_runtime_resume_adversarial -v
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
