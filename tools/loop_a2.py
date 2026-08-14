@@ -10,9 +10,13 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from tools.loop_a2_runtime.codex_cli_transport import (
+    CodexCliTransportError,
+    build_subscription_provider_components,
+)
 from tools.loop_a2_runtime.contract_bridge import ContractBridgeError, build_request_from_capsule
 from tools.loop_a2_runtime.protocol import Budgets, ProtocolError, RunRequest
-from tools.loop_a2_runtime.provider_gate import real_provider_gate
+from tools.loop_a2_runtime.provider_gate import subscription_codex_cli_gate
 from tools.loop_a2_runtime.providers import FakeBuilder, FakeCritic
 from tools.loop_a2_runtime.runner import A2Runtime
 
@@ -48,6 +52,7 @@ def main() -> int:
 
     run = commands.add_parser("run", help="Derive authority from an adopted M2 Capsule.")
     run.add_argument("--project-root", type=Path, required=True)
+    run.add_argument("--runtime-root", type=Path)
     run.add_argument("--capsule", required=True)
     run.add_argument("--run-id", required=True)
     run.add_argument("--observed-main-sha", required=True)
@@ -81,17 +86,48 @@ def main() -> int:
         return 2
 
     if args.provider == "real":
-        gate = real_provider_gate()
+        if args.runtime_root is None:
+            print(
+                json.dumps(
+                    {
+                        "status": "CONTRACT_INVALID",
+                        "code": "REAL_RUNTIME_ROOT_REQUIRED",
+                        "message": "Real provider runs require an explicit external runtime root.",
+                    },
+                    sort_keys=True,
+                )
+            )
+            return 2
+        gate = subscription_codex_cli_gate()
         if gate["status"] != "READY":
             print(json.dumps(gate, sort_keys=True))
             return 2
-        result = {
-            "status": "BLOCKED_UNVERIFIED",
-            "code": "REAL_PROVIDER_WORKER_NOT_IMPLEMENTED",
-            "message": "The paid transport gate passed, but the Codex/GPT workers are not part of this foundation.",
-        }
-        print(json.dumps(result, sort_keys=True))
-        return 2
+        try:
+            components = build_subscription_provider_components(
+                repo_root=args.project_root,
+                runtime_root=args.runtime_root,
+            )
+        except (CodexCliTransportError, OSError, ValueError) as exc:
+            code = getattr(exc, "code", "SUBSCRIPTION_PROVIDER_CONSTRUCTION_FAILED")
+            print(
+                json.dumps(
+                    {
+                        "status": "BLOCKED_UNVERIFIED",
+                        "code": code,
+                        "message": "Subscription-native Codex provider construction failed closed.",
+                    },
+                    sort_keys=True,
+                )
+            )
+            return 2
+        runtime = A2Runtime(
+            builder=components.builder,
+            critic=components.critic,
+            provider_mode="REAL",
+        )
+        outcome = runtime.run(request, observed_main_sha=args.observed_main_sha)
+        print(json.dumps(outcome.evidence, ensure_ascii=False, sort_keys=True))
+        return 0 if outcome.state == "WAITING_INTEGRATION" else 1
 
     outcome = _fake_runtime(request).run(request, observed_main_sha=args.observed_main_sha)
     print(json.dumps(outcome.evidence, ensure_ascii=False, sort_keys=True))

@@ -23,18 +23,25 @@ class AdversarialTests(unittest.TestCase):
         second = canonical_receipt({"a": 1, "b": 2})
         self.assertEqual(first["receipt_digest"], second["receipt_digest"])
 
-    def test_real_provider_is_fail_closed_without_explicit_approval(self) -> None:
-        old_approval = os.environ.pop("LOOP_A2_REAL_PROVIDER_APPROVED", None)
-        old_key = os.environ.pop("OPENAI_API_KEY", None)
+    def test_real_paid_provider_remains_forbidden_even_when_legacy_env_is_present(self) -> None:
+        old_approval = os.environ.get("LOOP_A2_REAL_PROVIDER_APPROVED")
+        old_key = os.environ.get("OPENAI_API_KEY")
+        os.environ["LOOP_A2_REAL_PROVIDER_APPROVED"] = "1"
+        os.environ["OPENAI_API_KEY"] = "sk-legacy-must-not-authorize"
         try:
             result = real_provider_gate()
         finally:
-            if old_approval is not None:
+            if old_approval is None:
+                os.environ.pop("LOOP_A2_REAL_PROVIDER_APPROVED", None)
+            else:
                 os.environ["LOOP_A2_REAL_PROVIDER_APPROVED"] = old_approval
-            if old_key is not None:
+            if old_key is None:
+                os.environ.pop("OPENAI_API_KEY", None)
+            else:
                 os.environ["OPENAI_API_KEY"] = old_key
-        self.assertEqual(result["status"], "USER_DECISION_REQUIRED")
-        self.assertNotIn("credential", str(result).lower())
+        self.assertEqual(result["status"], "NOT_PLANNED")
+        self.assertEqual(result["code"], "PAID_OPENAI_API_FORBIDDEN")
+        self.assertNotIn("sk-legacy-must-not-authorize", str(result))
 
     def test_sensitive_token_variants_are_redacted(self) -> None:
         value = {
