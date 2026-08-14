@@ -92,6 +92,35 @@ class SerialFictionDisciplineContractTests(unittest.TestCase):
         ):
             self.assertIn(token, combined)
 
+    def test_relational_appeal_has_common_owner_and_serial_fiction_consumers(self) -> None:
+        common_method = (
+            ROOT / "docs" / "knowledge" / "methods" / "NARRATIVE_AND_RELATIONSHIP_METHOD.md"
+        ).read_text(encoding="utf-8")
+        skill = SKILL_PATH.read_text(encoding="utf-8")
+        reference = (
+            REFERENCE_ROOT / "character-distinctiveness-and-opponent-threat.md"
+        ).read_text(encoding="utf-8")
+
+        for token in (
+            "RELATIONAL_APPEAL",
+            "CHARACTER_X_CHARACTER",
+            "CHARACTER_X_WORLD",
+            "CHARACTER_X_ABILITY",
+            "ABILITY_X_ABILITY",
+            "relational_appeal_proof",
+            "DECORATIVE_SYNERGY",
+            "FORCED_CHEMISTRY",
+            "CROSS_PRODUCT_OVERDESIGN",
+        ):
+            self.assertIn(token, common_method)
+
+        for consumer in (skill, reference):
+            self.assertIn(
+                "docs/knowledge/methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md",
+                consumer,
+            )
+            self.assertIn("RELATIONAL_APPEAL", consumer)
+
     def test_information_choice_highlight_and_foreshadow_contract_is_explicit(self) -> None:
         guide = (
             GUIDE_ROOT / "SERIAL_NARRATIVE_INFORMATION_AND_HIGHLIGHT_GUIDE.md"
