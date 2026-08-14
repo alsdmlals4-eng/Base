@@ -21,7 +21,6 @@ from tools.loop_a2_runtime.codex_cli_transport import (
 from tools.loop_a2_runtime.contract_bridge import ContractBridgeError, build_request_from_capsule
 from tools.loop_a2_runtime.network_boundary import DockerNoneDeniedNetworkBoundary
 from tools.loop_a2_runtime.protocol import Budgets, ProtocolError, RunRequest
-from tools.loop_a2_runtime.provider_gate import subscription_codex_cli_gate
 from tools.loop_a2_runtime.providers import FakeBuilder, FakeCritic
 from tools.loop_a2_runtime.runner import A2Runtime
 from tools.loop_a2_runtime.test_executor import ProjectTestExecutor
@@ -148,10 +147,6 @@ def main() -> int:
                 message=str(exc),
             )
 
-        gate = subscription_codex_cli_gate()
-        if gate["status"] != "READY":
-            print(json.dumps(gate, sort_keys=True))
-            return 2
         executor = ProjectTestExecutor(network_boundary=network_boundary)
         try:
             components = build_subscription_provider_components(
