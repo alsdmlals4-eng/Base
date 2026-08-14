@@ -202,6 +202,20 @@ Source는 기존 `Reedsy`, `Writing Excuses`, `Scriptnotes`, GDC narrative, IGDA
 | **DiGRA Digital Library** | `PROFESSIONAL_PRACTICE` | `https://dl.digra.org/` — 게임 연구 Proceedings·Whitepaper와 최근 player expertise·onboarding·systemic/fragmented narrative 연구 | conference paper 하나를 보편 설계 법칙, 실제 프로젝트 검증, 시장 성과로 만들지 않음 |
 | **Game Studies** | `PROFESSIONAL_PRACTICE` | `https://gamestudies.org/` — 게임의 미학·문화·소통·서사·플레이어 해석에 관한 peer-reviewed open-access 논문과 Archive | 이론·비평을 실제 플레이어 행동·인과·상업 성과·구현 증거로 과장하지 않음 |
 
+### Story Origin / Generation craft lenses
+
+| Source | role | use | claim ceiling |
+|---|---|---|---|
+| **Writing Excuses — MICE Quotient** | `PROFESSIONAL_PRACTICE` | Milieu·Inquiry·Character·Event처럼 서로 다른 story thread 출발점과 conflict/closure 질문을 비교 | 네 분류를 모든 작품의 완전한 taxonomy나 필수 구조로 만들지 않음 |
+| **Advanced Fiction Writing — Snowflake Method** | `PROFESSIONAL_PRACTICE` | 작은 seed에서 character·conflict·scene으로 점진 확장하는 방법 참고 | 전체 단계 수와 순서를 Base 필수 workflow로 복제하지 않음 |
+| **Lisa Cron — Story Genius** | `PROFESSIONAL_PRACTICE` | 외부 사건을 인물의 판단·내적 논리와 연결하는 character-first Lens | 모든 이야기를 과거 상처·오해에서 시작한다고 일반화하지 않음 |
+| **K. M. Weiland — Want/Need/Lie/Truth** | `PROFESSIONAL_PRACTICE` | 가치관·욕망·변화 방향을 진단하는 선택적 character-arc Lens | 모든 인물에게 네 칸이나 Positive Change Arc를 강제하지 않음 |
+| **John Truby — The Anatomy of Story** | `PROFESSIONAL_PRACTICE` | premise·character·theme·world·plot·scene 상호작용 참고 | 22-step이나 moral argument 형식을 Base 필수 구조로 만들지 않음 |
+| **Save the Cat — Institutionalized** | `PROFESSIONAL_PRACTICE` | 조직·집단 규칙과 개인 위치에서 story pressure를 찾는 Lens | 특정 세 결말·희생 구조를 모든 기관 이야기의 결말로 강제하지 않음 |
+| **Story Grid** | `PROFESSIONAL_PRACTICE` | 사건 전후 value/state shift가 실제인지 확인하는 downstream Lens | 모든 scene을 하나의 polarity table이나 beat formula에 맞추지 않음 |
+
+공용 craft owner는 `docs/knowledge/methods/STORY_ORIGIN_AND_GENERATION_METHOD.md`다. 이 Radar는 Source 발견·claim ceiling만 기록하며 실제 이야기 생성 규칙의 권위를 소유하지 않는다.
+
 ### Holarchic Fragment Packet
 
 선택적·파편화 서사는 조각 수나 숨김 정도가 아니라 각 조각의 자체 이해 가능성과 공유 storyworld 기여를 함께 검증한다.
