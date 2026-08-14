@@ -1,358 +1,171 @@
 # Loop A2 Authority Snapshot and Pre-Critic Test Gate Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** Use TDD, exact-head evidence, and adversarial review. This plan records the implementation actually selected after Existing Solution First and root-cause review.
 
 **Goal:** Make the ChatGPT-authenticated REAL A2 path executable against an M2 post-baseline authority bundle while requiring deterministic project-test PASS before every Critic turn.
 
-**Architecture:** Capture the validated M2 authority bundle into an immutable in-memory snapshot separate from the detached implementation-baseline worktree. Reuse the existing `ProjectTestExecutor` through a value-based Runtime Adapter entry point, run it after every Builder scope PASS, bind its canonical PASS receipt to the same run identity, and expose that bounded receipt to the independent Critic through review material.
+**Architecture:** Capture the validated M2 authority bundle into an immutable in-memory snapshot separate from the detached implementation-baseline worktree. Reuse the existing file-based `ProjectTestExecutor` unchanged by transiently materializing the captured Runtime Adapter outside the product worktree. Bind the resulting canonical PASS receipt to one run identity and inject that digest-only evidence only into the subscription Codex Critic path.
 
 **Tech Stack:** Python 3.12 standard library, existing Loop M2 contracts, Loop A2 runtime/worktree ownership, ProjectTestExecutor, Docker denied-network boundary injection, Codex CLI transport, unittest, GitHub Actions.
 
-## Global Constraints
+## Global constraints
 
 - Separately billed OpenAI API calls remain forbidden.
-- `source_main_sha` / `expected_main_sha` remain the approved implementation baseline; do not redefine them as an authority-file commit.
+- `source_main_sha` / `expected_main_sha` remain the approved implementation baseline.
 - Authority files are never copied into the detached product worktree.
 - REAL Critic execution is forbidden until deterministic project tests PASS.
+- REAL factory construction must prove the test network boundary before ChatGPT auth probing or model use.
 - FAKE runtime behavior remains backward compatible.
 - A3 auto-merge remains `DISABLED`; Scheduler remains `NOT_CONFIGURED`; automatic product-package selection remains forbidden.
-- CI must not make a live ChatGPT/Codex model call.
-- Do not modify open/draft PR #369 or any unrelated open PR.
+- CI never makes a live ChatGPT/Codex model call.
+- Open/draft PR #369 and all unrelated open PRs remain untouched.
 
 ---
 
-### Task 1: Capture immutable authority independently from implementation baseline
+## Task 1 — Immutable authority snapshot
 
-**Files:**
-- Create: `tools/loop_a2_runtime/authority_snapshot.py`
-- Create: `tests/test_loop_a2_authority_snapshot.py`
-- Modify: `tools/loop_a2_runtime/__init__.py`
+**Files**
 
-**Interfaces:**
-- Produces: `AuthorityFile(path: str, content: str)`.
-- Produces: `AuthoritySnapshot(project_id, package_id, source_main_sha, capsule_path, runtime_adapter_path, files, snapshot_sha256)`.
-- Produces: `capture_authority_snapshot(*, project_root: Path, capsule_relative: str, request: RunRequest) -> AuthoritySnapshot`.
-- Produces: `AuthoritySnapshot.text(relative: str) -> str` and `AuthoritySnapshot.parsed_object(relative: str) -> dict[str, object]`.
+- `tools/loop_a2_runtime/authority_snapshot.py`
+- `tools/loop_a2_runtime/__init__.py`
+- `tests/test_loop_a2_authority_snapshot.py`
 
-- [ ] **Step 1: Write the post-baseline authority RED fixture**
+- [x] Create a real Git fixture where the implementation baseline predates the Capsule bundle.
+- [x] Confirm RED because the snapshot module does not exist.
+- [x] Validate the current authority bundle before capture.
+- [x] Capture Capsule, Planning Lock, Visual Lock, Runtime Adapter, Package, Coverage, Active Run, and immutable Run as closed UTF-8 text.
+- [x] Reject symlinks, path escape, NUL/binary content, invalid UTF-8, missing files, and request/bundle identity mismatch.
+- [x] Compute canonical snapshot SHA-256.
 
-Create a temporary Git repository with a baseline commit containing `scripts/feature/a.gd` and tests. Record the baseline SHA. In the working tree after that commit, create a complete valid M2 Capsule bundle whose source fields point to the baseline SHA. Build the `RunRequest` from those current authority files.
+**TDD evidence**
 
-Assert:
+- RED head `6a116a2d5c73a81bf36a9367c04d659ce089cc81`, A2 run `31814067869`.
+- GREEN head `fd21d86edaa587a745e448953921a78b708100e3`, A2 run `31814199267`.
 
-```python
-snapshot = capture_authority_snapshot(
-    project_root=repo,
-    capsule_relative="docs/operations/loop/PROJECT_EXECUTION_CAPSULE.json",
-    request=request,
-)
-self.assertEqual(snapshot.source_main_sha, baseline_sha)
-self.assertIn(request.capsule_path, snapshot.paths)
-self.assertEqual(snapshot.package_id, request.package_id)
+## Task 2 — Separate Builder authority from execution baseline
+
+**Files**
+
+- `tools/loop_a2_runtime/openai_transport.py`
+- `tools/loop_a2_runtime/codex_cli_transport.py`
+- `tests/test_loop_a2_authority_context.py`
+- `tests/test_loop_a2_codex_cli_transport.py`
+
+- [x] Create a detached baseline worktree where the Capsule is absent.
+- [x] Confirm RED because Builder has no authority-snapshot input.
+- [x] Read trusted Loop authority only from the snapshot while reading allowed implementation context from the detached worktree.
+- [x] Keep snapshot authority paths immutable even if an overbroad Package allowlist contains them.
+- [x] Keep legacy direct Responses tests backward compatible.
+- [x] Require an immutable snapshot in the active subscription provider factory.
+
+**TDD evidence**
+
+- Authority-context RED head `1be3a36aad5510b59b441d8114f422f63a283b1c`, run `31814310262`.
+- Factory-contract RED head `2a2426c694f52774c2feaee2139f6026d7f3a1a2`, run `31814877204`.
+- GREEN head `f4682a3dc194b3ba2ca02c9448f777b9d8309252`, run `31814994369`.
+
+## Task 3 — Reuse ProjectTestExecutor through an owned candidate verifier
+
+**Files**
+
+- `tools/loop_a2_runtime/candidate_verification.py`
+- `tools/loop_a2_runtime/__init__.py`
+- `tests/test_loop_a2_candidate_verification.py`
+- `tests/test_loop_a2_candidate_preflight.py`
+
+### Existing Solution First correction
+
+An initial proposal added `ProjectTestExecutor.run_all_from_value()`. Review showed that existing `run_all(adapter_path=..., worktree_path=...)` does **not** require the Runtime Adapter path to live inside the product worktree. The new API and its test were deleted before production adoption.
+
+Decision: **REUSE**, not REFACTOR.
+
+- [x] Verify durable worktree ownership for project/run/SHA.
+- [x] Read Runtime Adapter text from immutable authority snapshot.
+- [x] Materialize it only in a system temporary directory outside the product worktree.
+- [x] Call existing `ProjectTestExecutor.run_all()` unchanged.
+- [x] Preserve its disposable verification worktree, change overlay, network enforcement, mutation detection, timeout, and digest-only stdout/stderr evidence.
+- [x] Publish PASS only to an identity-bound in-memory `VerificationEvidenceMailbox`.
+- [x] Reject cross-run receipt/workspace reuse.
+- [x] Add `preflight()` that proves every Runtime Adapter network policy can be prepared without running project tests or invoking a model.
+
+**TDD evidence**
+
+- Initial verifier RED run `31815137760` exposed the absent verifier/new entry surface.
+- Corrected minimal candidate verifier and fixture were GREEN by run `31815599142`.
+- Boundary preflight was GREEN at head `aeb8303f7cb10c2be0acfc463db2729e0cbc2af7`, run `31816628879`.
+
+## Task 4 — Require project-test PASS before every REAL Critic turn
+
+**Files**
+
+- `tools/loop_a2_runtime/runner.py`
+- `tools/loop_a2_runtime/codex_cli_transport.py`
+- `tests/test_loop_a2_real_verification_gate.py`
+- `tests/test_loop_a2_critic_test_evidence.py`
+- `tests/test_loop_a2_subscription_factory_preflight.py`
+
+- [x] REAL runtime without a candidate verifier blocks before Builder usage with `PROJECT_TEST_GATE_REQUIRED`.
+- [x] After every Builder scope PASS, run candidate verification before Critic.
+- [x] Project-test `FAIL` or `BLOCKED` produces `BLOCKED_UNVERIFIED` and zero Critic calls.
+- [x] Repair candidates rerun project tests before every subsequent Critic turn.
+- [x] Keep FAKE runtime unchanged.
+- [x] Bind the exact run's canonical PASS receipt into subscription Codex Critic input.
+- [x] Do not modify the policy-closed generic paid Responses Critic path solely for this evidence feature.
+- [x] Reject cross-run subscription Critic reuse.
+- [x] Ensure Critic evidence contains digests/byte counts, not raw stdout/stderr.
+- [ ] Enforce candidate-verifier `preflight()` inside the subscription factory **before** ChatGPT auth probe. This is the final GREEN step for Task 4.
+
+**TDD evidence**
+
+- REAL verifier RED run `31815599142`: exactly the new verifier requirements failed while prior A2 tests stayed green.
+- Subscription Critic evidence RED run `31815852833`; implementation was narrowed to the subscription-only wrapper after adversarial minimality review.
+- REAL verifier + Critic evidence GREEN head `c547a50619a28f126419868e6c25d2c21fe3c9d3`, A2 run `31816365245`.
+- Factory preflight RED head `a6784ce2acdda4489ec97ff4fb501b7d2972a603`, A2 run `31817037705`: 229 tests, 228 PASS, only missing factory preflight failed.
+
+## Task 5 — Wire REAL CLI
+
+**Files**
+
+- `tools/loop_a2.py`
+- `tests/test_loop_a2_subscription_cli_entrypoint.py`
+
+- [x] Require explicit external `--runtime-root`.
+- [x] Require exact `--denied-network-docker-image-id sha256:...` before authority capture/auth/factory.
+- [x] Capture authority snapshot after validated RunRequest derivation and before provider auth.
+- [x] Construct `DockerNoneDeniedNetworkBoundary` + `ProjectTestExecutor` explicitly.
+- [x] Pass snapshot, bound RunRequest, and executor to the subscription provider factory.
+- [x] Construct REAL `A2Runtime` with the factory candidate verifier.
+- [x] Preserve no-paid-API policy and no A3/Scheduler/package-selection behavior.
+
+**TDD evidence**
+
+- CLI RED head `041ec2602d65efd736982dd5137fbbc1600d4e33`, A2 run `31816690779`: existing A2 contracts passed; five new CLI contracts failed because snapshot/boundary wiring was absent.
+- CLI wiring head `8a7a4c18c732c9d259bab2c850d09d134524ffd6` passed the new CLI contracts before the final factory-preflight RED was added.
+
+## Task 6 — Exact-head adversarial verification and merge
+
+- [ ] Finish factory preflight GREEN.
+- [ ] Create `docs/evidence/2026-08-15-loop-a2-authority-test-gate.md` with root cause, RED/GREEN, exact head, claim ceiling, and run IDs.
+- [ ] Run focused A2 Foundation and subscription/OpenAI transport regressions.
+- [ ] Attack authority mismatch/symlink/authority write, stale/cross-run receipt, test bypass, repair bypass, boundary unavailable, secret leakage, paid fallback, A3/Scheduler activation.
+- [ ] Run Base-v9/adversarial, Game Project OS final `ci-gate`, and Dependency Review when triggered on one exact head.
+- [ ] Confirm changed-file scope and unresolved review threads `0`.
+- [ ] If `main` moved, absorb only completed `main` changes into this branch, prove diff unchanged, and repeat exact-head checks.
+- [ ] Mark PR #391 ready and squash merge with expected-head protection.
+- [ ] Read back merged `main` and require postmerge Base-v9/adversarial + Game Project OS success.
+- [ ] Close issue #390 with durable exact-head/merge/postmerge evidence.
+
+## Claim ceiling
+
+This PR may claim deterministic CI construction and fail-closed orchestration only. It must not claim:
+
+```yaml
+real_chatgpt_subscription_model_call: NOT_RUN
+blacksmith_real_a2_burnin: NOT_RUN
+paid_openai_api: FORBIDDEN
+a3_auto_merge: DISABLED
+scheduler: NOT_CONFIGURED
+automatic_product_package_selection: FORBIDDEN
 ```
 
-Also assert capture rejects request/package/SHA mismatch, symlink authority, NUL/binary content, unsafe paths, and a bundle that changes between request and capture.
-
-- [ ] **Step 2: Run the authority test and confirm RED**
-
-Run:
-
-```bash
-python -m unittest tests.test_loop_a2_authority_snapshot -v
-```
-
-Expected: FAIL because `authority_snapshot` does not exist.
-
-- [ ] **Step 3: Implement the minimum immutable snapshot**
-
-Implementation requirements:
-
-```python
-@dataclass(frozen=True)
-class AuthorityFile:
-    path: str
-    content: str
-
-@dataclass(frozen=True)
-class AuthoritySnapshot:
-    project_id: str
-    package_id: str
-    source_main_sha: str
-    capsule_path: str
-    runtime_adapter_path: str
-    files: tuple[AuthorityFile, ...]
-    snapshot_sha256: str
-```
-
-Use `validate_bundle()` first, normalize all paths with the existing A2 path contract, reject symlinks, decode UTF-8 only, and compute SHA-256 over canonical JSON containing normalized paths plus exact text. Verify the snapshot's Package fields exactly equal the supplied `RunRequest` authority fields.
-
-- [ ] **Step 4: Re-run the authority test and confirm GREEN**
-
-Run the Step 2 command. Expected: PASS.
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add tools/loop_a2_runtime/authority_snapshot.py tools/loop_a2_runtime/__init__.py tests/test_loop_a2_authority_snapshot.py
-git commit -m "feat: snapshot A2 authority outside baseline worktree"
-```
-
-### Task 2: Make Builder consume authority snapshot and baseline implementation context separately
-
-**Files:**
-- Modify: `tools/loop_a2_runtime/openai_transport.py`
-- Modify: `tools/loop_a2_runtime/codex_cli_transport.py`
-- Create: `tests/test_loop_a2_authority_context.py`
-- Modify: `tests/test_loop_a2_codex_cli_transport.py`
-- Modify: `tests/test_loop_a2_openai_transport.py`
-
-**Interfaces:**
-- Consumes: `AuthoritySnapshot` from Task 1.
-- `OpenAIWorkspaceBuilder(..., authority_snapshot: AuthoritySnapshot | None = None)`.
-- `build_subscription_provider_components(..., authority_snapshot: AuthoritySnapshot, ...)` requires the snapshot on the active subscription path.
-
-- [ ] **Step 1: Write the detached-baseline RED**
-
-Using the Task 1 Git fixture, create a detached worktree at the baseline SHA and prove the Capsule is absent there. Construct `OpenAIWorkspaceBuilder` with an `AuthoritySnapshot` and a fake structured client. Assert the Builder can collect authority and propose an allowed implementation write without copying any `docs/operations/loop/**` file into the detached worktree.
-
-Also assert a proposed write to a snapshot authority path returns `BUILDER_AUTHORITY_WRITE_FORBIDDEN` even when that path is absent from the baseline worktree.
-
-- [ ] **Step 2: Run focused context tests and confirm RED**
-
-```bash
-python -m unittest tests.test_loop_a2_authority_context tests.test_loop_a2_codex_cli_transport tests.test_loop_a2_openai_transport -v
-```
-
-Expected: new authority-context tests FAIL because Builder still reads authority from `worktree_path`.
-
-- [ ] **Step 3: Split trusted authority context from implementation context**
-
-Change the context collector so snapshot authority text is loaded from `AuthoritySnapshot`, while tracked allowed implementation context remains loaded from the detached worktree. Use snapshot authority paths for the immutable-write denylist. Keep snapshot-less behavior only for existing historical direct-transport test compatibility.
-
-- [ ] **Step 4: Require snapshot in subscription provider factory**
-
-Update `build_subscription_provider_components` to require `authority_snapshot` and pass it to `OpenAIWorkspaceBuilder`. Do not alter the Codex process sandbox/tool restrictions.
-
-- [ ] **Step 5: Re-run focused context tests and confirm GREEN**
-
-Run Step 2 command. Expected: PASS.
-
-- [ ] **Step 6: Commit**
-
-```bash
-git add tools/loop_a2_runtime/openai_transport.py tools/loop_a2_runtime/codex_cli_transport.py tests/test_loop_a2_authority_context.py tests/test_loop_a2_codex_cli_transport.py tests/test_loop_a2_openai_transport.py
-git commit -m "fix: separate A2 authority from execution worktree"
-```
-
-### Task 3: Add value-based ProjectTestExecutor entry point and candidate verifier
-
-**Files:**
-- Modify: `tools/loop_a2_runtime/test_executor.py`
-- Create: `tools/loop_a2_runtime/candidate_verification.py`
-- Modify: `tools/loop_a2_runtime/__init__.py`
-- Modify: `tests/test_loop_a2_project_test_executor.py`
-- Create: `tests/test_loop_a2_candidate_verification.py`
-
-**Interfaces:**
-- Produces: `ProjectTestExecutor.run_all_from_value(*, adapter_value: Mapping[str, object], worktree_path: Path, expected_project_id: str, expected_main_sha: str) -> TestSuiteResult`.
-- Produces: `VerificationEvidenceMailbox.publish(...)`, `.require_pass(...)`.
-- Produces: `ProjectTestCandidateVerifier.verify(request: RunRequest, worker_result: WorkerResult) -> TestSuiteResult`.
-
-- [ ] **Step 1: Write value-entry RED**
-
-Require `run_all_from_value()` to produce the same canonical result as file-based `run_all()` for an identical adapter object. Existing `run_all()` must remain a compatibility wrapper.
-
-- [ ] **Step 2: Write candidate-verifier RED**
-
-Create an owned external worktree fixture. Put the Runtime Adapter only in `AuthoritySnapshot`, not the baseline worktree. Assert:
-
-```python
-result = verifier.verify(request, worker_result)
-self.assertEqual(result.status, "PASS")
-self.assertEqual(mailbox.require_pass(request)["status"], "PASS")
-```
-
-Require ownership mismatch, adapter identity mismatch, test FAIL/BLOCKED, and stale run identity to fail closed without publishing a PASS receipt.
-
-- [ ] **Step 3: Run focused verification tests and confirm RED**
-
-```bash
-python -m unittest tests.test_loop_a2_project_test_executor tests.test_loop_a2_candidate_verification -v
-```
-
-Expected: FAIL because the value entry point/verifier do not exist.
-
-- [ ] **Step 4: Refactor ProjectTestExecutor without changing semantics**
-
-Move adapter-object validation/execution into `run_all_from_value()`. Keep `run_all()` responsible only for safe JSON file loading before delegating. Preserve disposable verification worktree, mutation detection, digest-only output, timeout, and NetworkBoundary behavior exactly.
-
-- [ ] **Step 5: Implement ownership-bound verifier and mailbox**
-
-The verifier must verify `WorkspaceOwnershipRegistry` for project/run/SHA before tests, parse Runtime Adapter text from the immutable snapshot, execute the existing ProjectTestExecutor, and publish only canonical PASS evidence under `(project_id, run_id, package_id, expected_main_sha)`.
-
-- [ ] **Step 6: Re-run focused verification tests and confirm GREEN**
-
-Run Step 3 command. Expected: PASS.
-
-- [ ] **Step 7: Commit**
-
-```bash
-git add tools/loop_a2_runtime/test_executor.py tools/loop_a2_runtime/candidate_verification.py tools/loop_a2_runtime/__init__.py tests/test_loop_a2_project_test_executor.py tests/test_loop_a2_candidate_verification.py
-git commit -m "feat: verify A2 candidates before Critic"
-```
-
-### Task 4: Enforce REAL pre-Critic verification and bind PASS evidence into Critic material
-
-**Files:**
-- Modify: `tools/loop_a2_runtime/runner.py`
-- Modify: `tools/loop_a2_runtime/providers.py`
-- Modify: `tools/loop_a2_runtime/openai_transport.py`
-- Modify: `tools/loop_a2_runtime/codex_cli_transport.py`
-- Create: `tests/test_loop_a2_real_verification_gate.py`
-- Modify: `tests/test_loop_a2_adversarial.py`
-- Modify: `tests/test_loop_a2_codex_cli_transport.py`
-
-**Interfaces:**
-- `A2Runtime(..., candidate_verifier: CandidateVerifier | None = None, provider_mode: str = "FAKE")`.
-- `ReviewMaterial(..., test_evidence: dict[str, object] | None = None)`.
-- `GitReviewMaterialSource(..., verification_mailbox: VerificationEvidenceMailbox | None = None)`.
-
-- [ ] **Step 1: Write REAL gate RED**
-
-Require:
-
-```python
-runtime = A2Runtime(builder=builder, critic=critic, provider_mode="REAL")
-outcome = runtime.run(request, observed_main_sha=request.expected_main_sha)
-self.assertEqual(outcome.state, "BLOCKED_UNVERIFIED")
-self.assertIn("PROJECT_TEST_GATE_REQUIRED", outcome.finding_codes)
-self.assertEqual(builder.calls, 0)
-self.assertEqual(critic.calls, 0)
-```
-
-The missing verifier must block before Builder to avoid consuming subscription usage when deterministic verification cannot later run.
-
-With a verifier present, require Builder PASS → scope PASS → verifier PASS → Critic. Test FAIL/BLOCKED must produce zero Critic calls. A repair Builder must trigger a fresh verifier call before the next Critic call.
-
-- [ ] **Step 2: Write Critic-evidence RED**
-
-Require `GitReviewMaterialSource` to attach only the matching mailbox PASS receipt. Cross-run/stale entries must raise a bounded transport error. Assert raw stdout/stderr keys are absent from the Critic payload and only digest/byte-count canonical test evidence is present.
-
-- [ ] **Step 3: Run REAL gate tests and confirm RED**
-
-```bash
-python -m unittest tests.test_loop_a2_real_verification_gate tests.test_loop_a2_codex_cli_transport tests.test_loop_a2_adversarial -v
-```
-
-Expected: new tests FAIL because REAL runtime has no verifier gate/test evidence binding.
-
-- [ ] **Step 4: Implement pre-Builder REAL verifier requirement and per-candidate verification**
-
-At the beginning of REAL `run()`, block if `candidate_verifier is None`. After each Builder deterministic scope PASS, call verifier. Map test `FAIL`/`BLOCKED` to `BLOCKED_UNVERIFIED` with bounded evidence and never invoke Critic. Keep FAKE paths unchanged.
-
-- [ ] **Step 5: Bind mailbox evidence into Critic review material**
-
-Add optional `test_evidence` to `ReviewMaterial`. On the subscription path, `GitReviewMaterialSource` requires the matching PASS receipt before material collection succeeds. `OpenAIWorktreeCritic` includes that receipt in the JSON payload.
-
-- [ ] **Step 6: Re-run REAL gate tests and confirm GREEN**
-
-Run Step 3 command. Expected: PASS.
-
-- [ ] **Step 7: Commit**
-
-```bash
-git add tools/loop_a2_runtime/runner.py tools/loop_a2_runtime/providers.py tools/loop_a2_runtime/openai_transport.py tools/loop_a2_runtime/codex_cli_transport.py tests/test_loop_a2_real_verification_gate.py tests/test_loop_a2_adversarial.py tests/test_loop_a2_codex_cli_transport.py
-git commit -m "fix: require project tests before REAL A2 Critic"
-```
-
-### Task 5: Wire authority capture and verifier through the REAL CLI
-
-**Files:**
-- Modify: `tools/loop_a2.py`
-- Modify: `tests/test_loop_a2_subscription_cli_entrypoint.py`
-- Create: `docs/evidence/2026-08-15-loop-a2-authority-test-gate.md`
-
-**Interfaces:**
-- Consumes: `capture_authority_snapshot`, subscription provider components containing `candidate_verifier`.
-- REAL CLI order: build request → capture snapshot → provider auth → components → REAL runtime.
-
-- [ ] **Step 1: Write CLI wiring RED**
-
-Patch deterministic boundaries and assert the subscription factory receives the exact captured snapshot and the REAL runtime receives `candidate_verifier=components.candidate_verifier`. Require authority capture failure to stop before Codex auth/factory execution.
-
-- [ ] **Step 2: Run CLI test and confirm RED**
-
-```bash
-python -m unittest tests.test_loop_a2_subscription_cli_entrypoint -v
-```
-
-Expected: FAIL because current CLI has no snapshot/verifier wiring.
-
-- [ ] **Step 3: Implement minimal REAL CLI wiring**
-
-Capture the snapshot immediately after the validated request. Pass it to `build_subscription_provider_components`. Construct REAL `A2Runtime` with the component verifier. Do not add paid API fallback, package selection, A3, or Scheduler behavior.
-
-The subscription factory's network boundary remains explicitly injectable. If no enforceable project-test boundary is configured, the REAL path must fail closed before Critic and may not claim smoke PASS.
-
-- [ ] **Step 4: Re-run CLI and full focused regressions**
-
-```bash
-python -m unittest \
-  tests.test_loop_a2_authority_snapshot \
-  tests.test_loop_a2_authority_context \
-  tests.test_loop_a2_candidate_verification \
-  tests.test_loop_a2_real_verification_gate \
-  tests.test_loop_a2_subscription_cli_entrypoint \
-  tests.test_loop_a2_codex_cli_transport \
-  tests.test_loop_a2_openai_transport \
-  tests.test_loop_a2_openai_transport_adversarial \
-  tests.test_loop_a2_runtime_worktree \
-  tests.test_loop_a2_project_test_executor \
-  tests.test_loop_a2_adversarial -v
-```
-
-Expected: PASS with no live model call.
-
-- [ ] **Step 5: Write exact evidence**
-
-Record root cause, TDD RED heads/run IDs, GREEN heads/run IDs, changed files, claim ceiling, and the fact that local ChatGPT subscription smoke remains `NOT_RUN`.
-
-- [ ] **Step 6: Commit**
-
-```bash
-git add tools/loop_a2.py tests/test_loop_a2_subscription_cli_entrypoint.py docs/evidence/2026-08-15-loop-a2-authority-test-gate.md
-git commit -m "fix: wire executable REAL A2 verification path"
-```
-
-### Task 6: Exact-head adversarial verification, merge, and postmerge closure
-
-**Files:**
-- No product files.
-- Modify evidence only if exact observed run IDs/head SHA require finalization.
-
-- [ ] **Step 1: Adversarial attack**
-
-Attack authority/request mismatch, symlink/path escape, snapshot mutation, authority-path writes absent from baseline, missing/stale/cross-run PASS receipt, test FAIL/BLOCKED bypass, repair-cycle bypass, Critic-before-test ordering, secret leakage, paid fallback, A3/Scheduler activation, and open-PR overlap.
-
-- [ ] **Step 2: Run repository-required exact-head gates**
-
-Require on one exact PR head:
-
-- Validate Loop A2 Runtime Foundation PASS;
-- Validate Loop A2 OpenAI Transport PASS;
-- Validate Base v9 Operating Contracts + adversarial gate PASS;
-- Validate Game Project Operating System final `ci-gate` PASS;
-- Dependency Review PASS when triggered;
-- unresolved review threads `0`.
-
-- [ ] **Step 3: Merge with expected-head protection**
-
-Squash merge only the M4.10 branch after all exact-head evidence is green. Do not modify or merge #369 or any unrelated open PR.
-
-- [ ] **Step 4: Postmerge readback**
-
-Read Base `main` for authority snapshot, verifier, REAL runner gate, CLI wiring, and evidence. Require postmerge Base-v9/adversarial and Game Project OS success before completion claim.
-
-- [ ] **Step 5: Close #390**
-
-Close issue #390 as completed with exact head, merge SHA, postmerge run IDs, and claim ceiling. The next independent task is Blacksmith test-only burn-in packaging / local executor portability, not product-package selection.
+After Base postmerge closure, the next independent step is a Blacksmith `A2_BURNIN_TEST_ONLY` operations/test package plus a local-executor path; it must leave the Phase C product package unselected.
