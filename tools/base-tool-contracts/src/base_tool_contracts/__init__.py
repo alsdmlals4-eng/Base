@@ -34,6 +34,7 @@ from .subscription_handoff import (
     SubscriptionHandoffError,
     SubscriptionHandoffPacket,
     build_subscription_handoff_packet,
+    render_chatgpt_pro_prompt,
 )
 from .windows_project_identity import validate_windows_project_identity
 
@@ -61,6 +62,7 @@ __all__ = [
     "create_verified_run_directories",
     "hub_identity_from_environment",
     "open_loopback_listener",
+    "render_chatgpt_pro_prompt",
     "safe_staging_write_bytes",
     "safe_staging_write_text",
     "stable_staging_path",
