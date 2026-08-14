@@ -511,7 +511,9 @@ jobs:
       - name: Install Windows Tool Hub dependencies
         shell: pwsh
         run: |
-          python -m pip install `
+          python -m venv .venv
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          .\.venv\Scripts\python.exe -m pip install `
             -e ".\tools\base-tool-contracts[dev]" `
             -e ".\tools\qa-evidence-studio[dev]" `
             -e ".\tools\expression-studio[dev]" `
@@ -549,11 +551,12 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
         run: |
-          python -c "import tool_hub, qa_evidence_studio, expression_studio, sprite_animation_studio; print('TOOL_IMPORT_OK')"
+          .\.venv\Scripts\python.exe -c "import tool_hub, qa_evidence_studio, expression_studio, sprite_animation_studio; print('TOOL_IMPORT_OK')"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          python -m pytest -q `
+          .\.venv\Scripts\python.exe -m pytest -q `
             tools/base-tool-contracts/tests/test_project_identity.py::test_package_import_succeeds_when_posix_fcntl_is_unavailable `
-            tools/tool-hub/tests/test_windows_catalog_smoke.py
+            tools/tool-hub/tests/test_windows_catalog_smoke.py `
+            tools/tool-hub/tests/test_windows_launcher_smoke.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
   ci-gate:

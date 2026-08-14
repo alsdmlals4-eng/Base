@@ -27,7 +27,7 @@ Linux smoke에서 공백이 있는 두 임시 Git 프로젝트 fixture를 각각
 
 기존 QA API vertical slice도 별도로 재실행해 session → visual/UX ready → developer PC results → image evidence → `QA_EVIDENCE_PACKET.json` 흐름과 Android `DEFERRED_NOT_CONNECTED` 상태를 확인했습니다. 이는 자동 테스트 fixture 증거이며 실제 특정 게임의 사람 검토를 대신하지 않습니다.
 
-## Windows PowerShell 실행
+## Windows 최초 전환과 이후 실행
 
 Base 루트에서:
 
@@ -42,13 +42,21 @@ $projectConfig = Join-Path $env:LOCALAPPDATA 'BaseToolHub\projects.json'
   --port 8764
 ```
 
-브라우저에서 `http://127.0.0.1:8764`를 엽니다.
+브라우저에서 `http://127.0.0.1:8764`를 연 뒤 `바탕화면 실행 아이콘 설치/복구`를 한 번 누릅니다. 설치가 성공하면 바탕화면에 `Base Tool Hub.pyw`가 생깁니다. 이후 정상 사용은 PowerShell을 열지 않고 이 파일을 두 번 클릭하면 됩니다. 같은 Hub가 이미 실행 중이면 새 프로세스를 만들지 않고 브라우저만 다시 엽니다. 종료할 때는 화면의 `Tool Hub 종료`를 사용합니다.
 
-`등록 가능한 프로젝트` 목록에서 게임 이름을 고른 뒤, 그 프로젝트의 로컬 Git 폴더를 처음 한 번만 입력합니다. 등록에 성공하면 `내 프로젝트`에 저장되어 다음부터는 버튼으로 바로 선택할 수 있습니다. 목록은 사람이 프로젝트를 찾기 위한 안내이며, 서버는 선택한 ID와 committed v2 `skills/PROJECT_BASE_ADAPTER.json`의 ID가 정확히 같은지 다시 검사합니다. 로컬 절대 경로는 브라우저 catalog에 반환하지 않습니다.
+이 PowerShell 블록은 최초 설치 또는 Base/가상환경 변경 뒤 복구에만 필요합니다. 바탕화면 실행기는 Git pull, pip install, branch 변경, 프로젝트 파일 수정, 다른 프로세스 종료를 수행하지 않습니다. 8764 포트가 다른 프로그램이면 이를 죽이지 않고 `PORT_IDENTITY_CONFLICT`로 차단합니다.
+
+실행 중 진단은 `%LOCALAPPDATA%\BaseToolHub\logs`에 남으며 `tool-hub.log` 1개와 최대 2개의 1 MiB 회전본으로 제한됩니다. 강제 종료나 재부팅 뒤에는 OS가 실행기 잠금을 자동 회수하므로 남아 있는 `.launcher.lock` 파일 때문에 이후 더블클릭이 영구 차단되지 않습니다. `.pyw` 연결 프로그램이나 검토된 Python/Git/Base bytes가 바뀌면 `설치 복구 필요` 또는 `업데이트 필요`로 표시하고 자동으로 다른 실행 파일을 선택하지 않습니다.
+
+`등록 가능한 프로젝트`에서 게임 이름이나 카드의 버튼을 누릅니다. Tool Hub는 저장된 위치, `%USERPROFILE%\Documents\GitHub\<정확한 저장소 이름>`, `%USERPROFILE%\source\repos\<정확한 저장소 이름>`만 확인합니다. 발견되지 않으면 Base에 검토·커밋된 정확한 GitHub URL을 `%USERPROFILE%\Documents\GitHub`에 임시 staging으로 clone하고, origin·Git 루트·v2 Adapter·project ID·Asset Vault ignore를 검증한 뒤 게시합니다. 사용자가 Git 폴더나 GitHub/Figma URL을 입력할 필요가 없습니다.
+
+기존 폴더는 덮어쓰거나 삭제하지 않습니다. 기존 repository에는 pull, fetch, reset, clean, checkout, migration을 자동 수행하지 않습니다. `PATH_OCCUPIED`, `IDENTITY_MISMATCH`, `PROJECT_SETUP_REQUIRED`, `AUTHENTICATION_REQUIRED`가 표시되면 기존 파일은 그대로 보존되며 GitHub Desktop 또는 프로젝트 GPT의 정식 변경 절차로 해결합니다. 로컬 절대 경로와 Git 진단은 브라우저 catalog에 반환하지 않습니다.
 
 연결할 프로젝트는 정확한 Git 루트, v2 adapter, gitignored Asset Vault를 모두 갖춰야 합니다. visual Studio에는 canonical Base Figma route와 committed `docs/APPROVED_VISUAL_ANCHORS.json`도 필요합니다. 프로젝트 등록은 도구 child 실행이나 Figma 배치 증거가 아닙니다.
 
 Windows에서는 Hub 프로세스·검토된 도구 카탈로그와 portable v2 프로젝트 등록 경로를 제공합니다. 하지만 Studio child 실행은 Windows Job Object와 Windows-safe staging 계약이 아직 없어 `BLOCKED_PLATFORM`으로 fail-closed됩니다. 프로젝트가 `내 프로젝트`에 표시된 사실을 Expression/Sprite/QA 실행 완료로 해석하지 않습니다.
+
+바탕화면 아이콘 설치와 Hub 재실행은 Tool Hub 자체의 Windows orchestration 증거입니다. 이는 위의 Studio child `BLOCKED_PLATFORM`, live Figma 배치, AI 생성 품질 또는 게임 이미지·UX 검토를 통과시킨다는 뜻이 아닙니다.
 
 ## 현재 검증되지 않은 것
 

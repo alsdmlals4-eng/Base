@@ -1,5 +1,5 @@
 const childStates = new Map();
-const state = { csrf: "", catalog: null, projectId: null };
+const state = { csrf: "", catalog: null, projectId: null, windowsLauncherState: "UNKNOWN" };
 const statusBox = document.querySelector("#status");
 
 const VISUAL_TOOLS = new Set(["expression-studio", "sprite-animation-studio"]);
@@ -74,6 +74,32 @@ function renderKnownProjects() {
     knownProjects.append(option);
   }
   if ([...knownProjects.options].some(option => option.value === selected)) knownProjects.value = selected;
+  const list = document.querySelector("#known-project-list"); list.replaceChildren();
+  for (const project of state.catalog.known_projects) {
+    const card = document.createElement("article"); card.className = "project-card";
+    const title = document.createElement("strong"); title.textContent = project.display_name;
+    const meta = document.createElement("span"); meta.textContent = `${project.repository_name} · ${project.local_state}`;
+    const button = document.createElement("button"); button.textContent = project.action_label;
+    button.disabled = project.local_state === "ONBOARDING";
+    button.addEventListener("click", () => onboardProject(project));
+    card.append(title, meta, button); list.append(card);
+  }
+}
+
+async function onboardProject(project) {
+  project.local_state = "ONBOARDING";
+  project.action_label = "설치 중";
+  render();
+  show(`${project.display_name} 연결 상태를 확인하는 중입니다.`);
+  try {
+    const connected = await api(`/api/projects/${project.project_id}/onboard`, { method: "POST", body: JSON.stringify({}) });
+    state.projectId = connected.project_id;
+    await refresh();
+    show(`${project.display_name} 연결됨`);
+  } catch (error) {
+    await refresh();
+    show(`${project.display_name}: ${error.message}`, true);
+  }
 }
 
 function renderRegisteredProjects() {
@@ -135,14 +161,34 @@ async function refresh() { state.catalog = await api("/api/catalog"); if (!state
 
 document.querySelector("#project-registration").addEventListener("submit", async event => {
   event.preventDefault();
-  try {
-    const project = await api("/api/projects", { method: "POST", body: JSON.stringify({
-      project_id: document.querySelector("#known-project").value,
-      project_root: document.querySelector("#project-root").value,
-    }) });
-    document.querySelector("#project-root").value = "";
-    state.projectId = project.project_id; await refresh(); show(`${project.project_id} 연결됨`);
-  } catch (error) { show(error.message, true); }
+  const projectId = document.querySelector("#known-project").value;
+  const project = state.catalog.known_projects.find(item => item.project_id === projectId);
+  if (!project) return show("연결할 프로젝트를 선택하세요.", true);
+  await onboardProject(project);
 });
 
-api("/api/config").then(async config => { state.csrf = config.csrf_token; await refresh(); show("검토된 도구와 프로젝트 상태를 불러왔습니다."); }).catch(error => show(error.message, true));
+document.querySelector("#windows-launcher-install").addEventListener("click", async () => {
+  try {
+    const result = await api("/api/windows-launcher/install", { method: "POST", body: JSON.stringify({}) });
+    state.windowsLauncherState = result.state;
+    document.querySelector("#windows-launcher-state").textContent = result.state;
+    show("바탕화면 실행 아이콘이 설치되었습니다. 다음부터 터미널을 열지 않아도 됩니다.");
+  } catch (error) { show(`실행 아이콘 설치 차단: ${error.message}`, true); }
+});
+
+document.querySelector("#hub-shutdown").addEventListener("click", async () => {
+  if (!window.confirm("Tool Hub와 Tool Hub가 시작한 도구를 종료할까요?")) return;
+  try {
+    await api("/api/shutdown", { method: "POST", body: JSON.stringify({}) });
+    show("Tool Hub를 종료하고 있습니다. 이 창은 닫아도 됩니다.");
+  } catch (error) { show(`종료 요청 실패: ${error.message}`, true); }
+});
+
+api("/api/config").then(async config => {
+  state.csrf = config.csrf_token;
+  state.windowsLauncherState = config.windows_launcher_state;
+  document.querySelector("#windows-launcher-state").textContent = config.windows_launcher_state;
+  document.querySelector("#windows-launcher-install").disabled = config.windows_launcher_state === "BLOCKED_PLATFORM";
+  await refresh();
+  show("검토된 도구와 프로젝트 상태를 불러왔습니다.");
+}).catch(error => show(error.message, true));

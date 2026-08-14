@@ -101,6 +101,10 @@ class ProjectLocator:
         self._write_config(config)
         return binding
 
+    def inspect(self, project_root: Path, expected_project_id: str) -> ProjectBinding:
+        """Validate a candidate without recording it in the machine locator."""
+        return self._inspect(project_root, expected_project_id)
+
     def resolve(self, project_id: str) -> ProjectBinding:
         config = self._read_config()
         record = config["projects"].get(project_id)

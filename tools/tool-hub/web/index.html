@@ -16,19 +16,17 @@
 
     <section class="panel">
       <h2>프로젝트 연결</h2>
-      <p class="selection-note project-help">목록에서 프로젝트를 찾고, 처음 한 번만 해당 프로젝트의 로컬 Git 폴더를 입력하세요.</p>
+      <p class="selection-note project-help">프로젝트 이름을 선택하면 PC의 표준 Git 폴더에서 자동으로 찾고, 없으면 검토된 GitHub 저장소를 자동 설치합니다.</p>
       <form id="project-registration">
         <label>등록 가능한 프로젝트
           <select id="known-project" required aria-describedby="project-picker-help">
             <option value="">프로젝트 목록을 불러오는 중입니다.</option>
           </select>
         </label>
-        <small id="project-picker-help">이 목록은 프로젝트를 찾기 위한 안내이며, 실제 신원은 Git의 v2 Adapter로 검증합니다.</small>
-        <label>프로젝트 Git 폴더
-          <input id="project-root" required placeholder="예: D:\Games\Coc-Fiction">
-        </label>
-        <button type="submit">프로젝트 검증 및 연결</button>
+        <small id="project-picker-help">GitHub·Figma 주소는 Base의 검토된 목록에서만 사용하며, 실제 신원은 Git의 v2 Adapter로 다시 검증합니다.</small>
+        <button type="submit">선택 프로젝트 자동 연결</button>
       </form>
+      <div id="known-project-list" class="known-project-list" aria-label="등록 가능한 프로젝트 목록"></div>
       <div class="registered-projects">
         <h3>내 프로젝트</h3>
         <p class="selection-note">한 번 검증된 프로젝트는 여기서 바로 선택할 수 있습니다.</p>
@@ -49,6 +47,19 @@
         <article class="tool-card"><h3>QA Evidence Studio</h3><p>developer_pc_review · image_evidence · qa_evidence_packet</p></article>
         <article class="tool-card"><h3>Sprite Animation Studio</h3><p>sprite_action · expression_variation · pose_sequence · effect_stages</p></article>
       </div>
+    </section>
+
+    <section class="panel" aria-labelledby="desktop-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">WINDOWS DESKTOP</p>
+          <h2 id="desktop-title">터미널 없는 실행</h2>
+        </div>
+        <p id="windows-launcher-state" class="selection-note">상태 확인 중</p>
+      </div>
+      <p class="project-help">한 번 설치하면 바탕화면의 <strong>Base Tool Hub.pyw</strong>를 두 번 클릭해 이 화면을 열 수 있습니다.</p>
+      <button id="windows-launcher-install" type="button">바탕화면 실행 아이콘 설치/복구</button>
+      <button id="hub-shutdown" type="button" class="secondary">Tool Hub 종료</button>
     </section>
 
     <section class="panel boundary-panel" aria-labelledby="boundary-title">

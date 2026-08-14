@@ -5,6 +5,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = ROOT / "docs/operations/PROJECT_FIGMA_WORKSPACE_REGISTRY.json"
+TARGET_REGISTRY_PATH = ROOT / "docs/operations/PROJECT_FIGMA_TARGET_REGISTRY.json"
 
 
 class ProjectFigmaWorkspaceRegistryTests(unittest.TestCase):
@@ -33,6 +34,23 @@ class ProjectFigmaWorkspaceRegistryTests(unittest.TestCase):
             self.assertTrue(item["figma_url"].startswith("https://www.figma.com/design/"))
             self.assertNotIn("access_token", item)
             self.assertNotIn("token", item)
+
+    def test_target_registry_binds_each_project_to_the_reviewed_github_repository(self):
+        entries = json.loads(TARGET_REGISTRY_PATH.read_text(encoding="utf-8"))["entries"]
+        expected = {
+            "coc-fiction": "https://github.com/alsdmlals4-eng/Coc-Fiction.git",
+            "ten-paces-hidden-moves": "https://github.com/alsdmlals4-eng/Ten-Paces-Hidden-Moves.git",
+            "ninja-survival": "https://github.com/alsdmlals4-eng/ninja-survival-godot.git",
+            "switchy-express-cargo-puzzle": "https://github.com/alsdmlals4-eng/Switchy-Express-Cargo-Puzzle.git",
+            "urban-legend": "https://github.com/alsdmlals4-eng/urban-legend.git",
+            "grimoire-how-to-rewrite-the-world": "https://github.com/alsdmlals4-eng/GRIMOIRE-.git",
+            "blacksmith": "https://github.com/alsdmlals4-eng/Blacksmith.git",
+            "omenward": "https://github.com/alsdmlals4-eng/omenward.git",
+        }
+        self.assertEqual(
+            {entry["project_id"]: entry["repository_url"] for entry in entries},
+            expected,
+        )
 
     def test_professional_single_file_profiles_preserve_visual_lifecycle(self):
         profiles = self.data["workspace_profiles"]

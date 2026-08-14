@@ -20,10 +20,11 @@
     "entry": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["project_id", "display_name", "figma_file_key", "figma_url", "delivery_status"],
+      "required": ["project_id", "display_name", "repository_url", "figma_file_key", "figma_url", "delivery_status"],
       "properties": {
         "project_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
         "display_name": {"type": "string", "minLength": 1},
+        "repository_url": {"type": "string", "format": "uri", "pattern": "^https://github\\.com/[^/]+/[^/]+\\.git$"},
         "figma_file_key": {"type": "string", "pattern": "^[A-Za-z0-9]+$"},
         "figma_url": {"type": "string", "format": "uri", "pattern": "^https://www\\.figma\\.com/design/"},
         "delivery_status": {"enum": ["REGISTERED_NO_MUTATION", "READY_FOR_DELIVERY", "ARCHIVED"]},
