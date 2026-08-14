@@ -21,7 +21,8 @@ class LocalExecutorService:
 
     def preflight(self) -> dict[str, str]:
         self.control_plane.preflight()
-        return {"status": "READY", "code": "GH_CONTROL_PLANE_READY"}
+        self.runtime.preflight()
+        return {"status": "READY", "code": "LOCAL_EXECUTOR_READY"}
 
     def _public_base(self, job: LocalA2Job) -> dict[str, object]:
         return {
