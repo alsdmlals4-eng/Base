@@ -81,7 +81,7 @@ Base는 `BASE_SHARED`만 직접 소유한다. 프로젝트별 실제 의미·수
 - 구현·검증 완료 주장: `skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md`
 - 문서 위치·책임: `docs/DOCUMENTATION_MAP.md`
 
-색인과 owner가 충돌하면 owner가 우선하며, 충돌 자체는 색인 회귀로 수정한다.
+색인과 owner가 충돌하면 owner가 우선하며, 충돌 자체는 색인 회귀로 수정한다. 새 공용 책임 원본을 만들면 `START_HERE.md`의 사용자 라우팅과 `docs/DOCUMENTATION_MAP.md`의 위치·책임 지도를 함께 갱신한다.
 
 ## 핵심 용어군
 
@@ -168,6 +168,7 @@ Evidence가 부족하면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED`, `BLOCK
 ### 수정
 
 - `START_HERE.md`
+- `docs/DOCUMENTATION_MAP.md`
 
 ### 의도적으로 미수정·보호
 
@@ -180,7 +181,7 @@ Evidence가 부족하면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED`, `BLOCK
 - released lock·frozen release artifact
 - 프로젝트 고유 문서·게임 코드·데이터·Scene·Resource·자산
 
-`docs/DOCUMENTATION_MAP.md`는 문서 위치의 상위 책임 원본이지만, 이번 변경은 `START_HERE.md`에서 한 단계 직접 라우팅되고 새 Skill·정책 실행 owner를 만들지 않는다. 같은 Goal의 동시 Base 변경과의 충돌을 줄이기 위해 이번 PR에서는 추가 소비자 수정 없이 최소 route로 닫는다. 향후 Documentation Map 구조 자체를 갱신할 때 이 항목을 흡수하는 것은 허용하되, 본 PR 완료의 선행조건으로 두지 않는다.
+`docs/DOCUMENTATION_MAP.md`는 문서 위치·책임의 상위 정본이므로 적대적 재검토에서 누락을 `MUST_FIX`로 판정했다. 따라서 `START_HERE.md`의 한 단계 사용자 라우팅과 함께 Map의 공용 책임 원본 표에도 `docs/CONTROLLED_VOCABULARY.md`를 등록한다. 이 수정은 새 실행 owner를 만들지 않고 발견성과 권한 일치만 보강한다.
 
 ## 완료 기준
 
@@ -188,8 +189,8 @@ Evidence가 부족하면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED`, `BLOCK
 2. Work Mode·Skill·Skill Mode·제품 단계·Gate·Verdict·Status가 분리된다.
 3. Prototype부터 Release Candidate까지 서로 다른 검증 질문이 구분되고 MVP는 실제 사용자 학습을 요구한다.
 4. IRG가 `BASE_LOCAL_ALIAS`로 명시되고 기존 검증 owner에 연결되며 새 Skill·Mode가 생기지 않는다.
-5. `START_HERE.md`가 새 정본을 직접 찾게 한다.
-6. semantic regression이 정본·라우팅·금지된 새 Skill 등록·핵심 용어·IRG fail-closed 경계를 검사한다.
+5. `START_HERE.md`와 `docs/DOCUMENTATION_MAP.md`가 새 정본을 직접 찾게 한다.
+6. semantic regression이 정본·양쪽 라우팅·금지된 새 Skill 등록·핵심 용어·IRG fail-closed 경계를 검사한다.
 7. exact-head CI, 적대적 검토, unresolved thread 0, 현재 main 충돌 검사를 통과한다.
 8. 병합 뒤 새 main에서 파일·용어·merge SHA와 필수 검사를 재조회한다.
 
@@ -198,10 +199,11 @@ Evidence가 부족하면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED`, `BLOCK
 ```text
 RED
 - semantic regression을 먼저 추가한다.
-- IRG의 BASE-local 표준성 경계가 문서에 없을 때 실패하도록 고정한다.
+- IRG의 BASE-local 표준성 경계와 Documentation Map 등록이 없으면 실패하도록 고정한다.
 
 GREEN
 - 통제 어휘에 source class와 IRG의 BASE_LOCAL_ALIAS 경계를 추가한다.
+- START_HERE와 Documentation Map을 같은 canonical route로 맞춘다.
 - exact-head CI로 새 regression과 기존 Base 계약을 함께 검증한다.
 
 REVIEW
