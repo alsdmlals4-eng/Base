@@ -55,6 +55,7 @@ jobs:
         run: >-
           python -m pytest -q
           tools/base-tool-contracts/tests/test_subscription_handoff.py
+          tools/base-tool-contracts/tests/test_subscription_prompt_renderer.py
           tools/base-tool-contracts/tests/test_figma_tool_routing.py
       - name: Run repository production-boundary contract
         run: python -m unittest tests/test_tool_hub_subscription_production_contract.py -v
