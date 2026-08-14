@@ -52,11 +52,20 @@ jobs:
           python -m pip install -e '.\tools\base-tool-contracts[dev]' -e '.\tools\tool-hub[dev]'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Run Figma delivery contracts
-        run: |
-          python -m pytest -q tools/tool-hub/tests/test_figma_delivery.py
-          python -m pytest -q tools/tool-hub/tests/test_figma_delivery_hardening.py
-          python -m pytest -q tools/tool-hub/tests/test_figma_delivery_concurrency.py
-          python -m pytest -q tools/tool-hub/tests/test_figma_bridge_api.py
-          python -m pytest -q tools/tool-hub/tests/test_figma_plugin_contract.py
-          python -m pytest -q tools/tool-hub/tests/test_web_contract.py
+      - name: Delivery core contracts
+        run: python -m pytest -q tools/tool-hub/tests/test_figma_delivery.py
+
+      - name: Delivery hardening contracts
+        run: python -m pytest -q tools/tool-hub/tests/test_figma_delivery_hardening.py
+
+      - name: Concurrent claim contract
+        run: python -m pytest -q tools/tool-hub/tests/test_figma_delivery_concurrency.py
+
+      - name: Bridge HTTP authority contracts
+        run: python -m pytest -q tools/tool-hub/tests/test_figma_bridge_api.py
+
+      - name: Figma plugin static contracts
+        run: python -m pytest -q tools/tool-hub/tests/test_figma_plugin_contract.py
+
+      - name: Tool Hub web contracts
+        run: python -m pytest -q tools/tool-hub/tests/test_web_contract.py
