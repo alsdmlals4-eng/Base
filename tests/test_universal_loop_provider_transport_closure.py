@@ -14,17 +14,18 @@ class UniversalLoopProviderTransportClosureTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.value = json.loads(CHECKPOINT.read_text(encoding="utf-8"))
 
-    def test_checkpoint_promotes_transport_without_claiming_paid_smoke(self) -> None:
+    def test_checkpoint_preserves_provider_transport_under_successor_policy(self) -> None:
         self.assertEqual(
             self.value["status"],
-            "PORTABILITY_CONFIRMED_PROVIDER_TRANSPORT_READY_PAID_SMOKE_GATED",
+            "PORTABILITY_CONFIRMED_SUBSCRIPTION_TRANSPORT_READY_LOCAL_SMOKE_GATED",
         )
         gate = self.value["remaining_external_gate"]
         self.assertEqual(gate["real_codex_builder_transport"], "MERGED_MAIN_VALIDATED")
         self.assertEqual(gate["real_gpt_critic_transport"], "MERGED_MAIN_VALIDATED")
-        self.assertEqual(gate["real_openai_api"], "NOT_RUN_USER_CREDENTIAL_DECISION_REQUIRED")
+        self.assertEqual(gate["real_openai_api"], "NOT_APPLICABLE_POLICY_FORBIDDEN")
+        self.assertEqual(gate["subscription_codex_cli_smoke"], "NOT_RUN_LOCAL_CHATGPT_AUTH_REQUIRED")
         self.assertEqual(gate["real_a2_burnin_runs"], 0)
-        self.assertEqual(gate["paid_smoke_issue"], "alsdmlals4-eng/Base#352")
+        self.assertIsNone(gate["paid_smoke_issue"])
 
     def test_transport_evidence_is_exact_and_postmerge_validated(self) -> None:
         evidence = self.value["provider_transport_evidence"]
