@@ -25,6 +25,21 @@
 - 이 상태는 채팅 전체에 영구 권한을 부여하지 않는다. 계약 완료, 사용자 중지, 진짜 전역 차단 또는 범위 변경에서 종료한다.
 - 다음 작업은 승인된 계약의 완료 기준에서 파생된 미완료 작업만 선택한다. 스스로 새 Goal을 만들거나 범위 확대를 하지 않는다.
 
+## 예기치 않은 실행 중단 복구
+
+메시지 timeout/network 오류, 응답 생성 실패, 실행 프로세스 종료, 장시간 `stalled`처럼 **작업 실행 자체가 끊긴 경우**에는 [`task-recovery-protocol.md`](task-recovery-protocol.md)의 `TASK_RECOVERY_PROTOCOL`을 먼저 적용한다. 이 프로토콜은 새로운 Skill이나 Work Mode가 아니다.
+
+```text
+interruption
+→ RETRY 또는 RESUME 분류
+→ trusted checkpoint + 현재 상태 readback
+→ 완료된 단계 보호
+→ 미완료 단계만 계속
+→ 기존 recovery ladder / Global Progress Queue로 복귀
+```
+
+안전한 transient failure만 bounded `RETRY`하고, 파일 수정·commit·PR·merge·외부 전송처럼 일부 부작용이 이미 일어났을 수 있는 작업은 `RESUME`으로 현재 상태를 재확인한다. Git worktree 기반 Loop A2 실행은 별도 durable-resume owner의 exact ownership/HEAD 검증을 재사용하며 임의로 기존 workspace를 adopt하지 않는다.
+
 ## Global Progress Queue
 
 연속작업은 현재 task 하나만 보지 않고 다음 세 집합을 유지한다.
