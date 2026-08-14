@@ -27,11 +27,33 @@ class LaunchContext:
     launch_nonce: str
 
 
+def _assert_windows_plain_directory(path: Path) -> None:
+    """Reject symlink/reparse traversal for a local Windows runtime directory."""
+    absolute = Path(os.path.abspath(path))
+    reparse = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
+    current = Path(absolute.anchor)
+    try:
+        for part in absolute.parts[1:]:
+            current = current / part
+            metadata = current.lstat()
+            if (
+                stat.S_ISLNK(metadata.st_mode)
+                or not stat.S_ISDIR(metadata.st_mode)
+                or (reparse and getattr(metadata, "st_file_attributes", 0) & reparse)
+            ):
+                raise EnvironmentError("private runtime directory is unavailable or replaced")
+    except OSError as error:
+        raise EnvironmentError("private runtime directory is unavailable or replaced") from error
+
+
 def ensure_runtime_directory(path: Path) -> Path:
-    """Create then reopen the Hub-owned runtime path without link traversal."""
+    """Create then verify the Hub-owned runtime path for the active platform."""
     path = Path(path).absolute()
     try:
         path.mkdir(parents=True, mode=0o700, exist_ok=True)
+        if os.name == "nt":
+            _assert_windows_plain_directory(path)
+            return path
         descriptor = open_directory_nofollow(path)
         try:
             os.fchmod(descriptor, 0o700)
@@ -55,9 +77,17 @@ def _private_empty_directory(path: Path) -> Path:
         metadata = os.lstat(path)
     except OSError as error:
         raise EnvironmentError("private Python cache is unavailable") from error
-    if (
+    reparse = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
+    common_invalid = (
         not stat.S_ISDIR(metadata.st_mode)
         or stat.S_ISLNK(metadata.st_mode)
+        or (reparse and getattr(metadata, "st_file_attributes", 0) & reparse)
+    )
+    if os.name == "nt":
+        if common_invalid:
+            raise EnvironmentError("private Python cache is unsafe")
+    elif (
+        common_invalid
         or metadata.st_uid != os.geteuid()
         or stat.S_IMODE(metadata.st_mode) != 0o700
     ):
@@ -92,4 +122,8 @@ def child_environment(context: LaunchContext, adapter_sha256: str, root_fingerpr
         "BASE_TOOL_HUB_ADAPTER_SHA256": adapter_sha256,
         "BASE_TOOL_HUB_ROOT_FINGERPRINT": root_fingerprint,
     }
+    if os.name == "nt":
+        for name in ("SystemRoot", "WINDIR"):
+            if value := os.environ.get(name):
+                environment[name] = value
     return MappingProxyType(environment)
