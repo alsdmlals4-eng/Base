@@ -4,10 +4,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
+import hmac
 import json
 import os
 from pathlib import Path
 import secrets
+import struct
 import tempfile
 import time
 from typing import Callable
@@ -39,10 +41,37 @@ class DeliveryJob:
     expires_at: float
 
 
+@dataclass(frozen=True)
+class PairingView:
+    project_id: str
+    pairing_code: str
+    figma_url: str
+    expires_at: float
+
+
+@dataclass(frozen=True)
+class BridgeSession:
+    token: str
+    project_id: str
+    figma_file_key: str
+    bridge_version: str
+
+
+@dataclass(frozen=True)
+class _PairingRecord:
+    project_id: str
+    figma_file_key: str
+    code_sha256: str
+    expires_at: float
+
+
 class FigmaDeliveryService:
     """Create local immutable queue entries bound to a reviewed project and Figma route."""
 
     JOB_TTL_SECONDS = 15 * 60
+    PAIRING_TTL_SECONDS = 5 * 60
+    MAX_IMAGE_BYTES = 10 * 1024 * 1024
+    MAX_IMAGE_DIMENSION = 4096
 
     def __init__(
         self,
@@ -56,6 +85,51 @@ class FigmaDeliveryService:
         self._locator = locator
         self._registry = registry
         self._clock = clock
+        self._pairings: dict[str, _PairingRecord] = {}
+        self._sessions: dict[str, BridgeSession] = {}
+
+    def create_pairing(self, project_id: str) -> PairingView:
+        try:
+            self._locator.resolve(project_id)
+            target = self._registry.resolve_ready_target(project_id)
+            self._registry.assert_unchanged()
+        except (ProjectBindingError, DeliveryBlockedError) as error:
+            raise DeliveryError("DELIVERY_PROJECT_ROUTE_UNAVAILABLE") from error
+        code = f"{secrets.randbelow(1_000_000):06d}"
+        now = float(self._clock())
+        self._pairings[project_id] = _PairingRecord(
+            project_id=project_id,
+            figma_file_key=target.figma_file_key,
+            code_sha256=hashlib.sha256(code.encode("ascii")).hexdigest(),
+            expires_at=now + self.PAIRING_TTL_SECONDS,
+        )
+        return PairingView(project_id, code, target.figma_url, now + self.PAIRING_TTL_SECONDS)
+
+    def pair(self, project_id: str, figma_file_key: str, pairing_code: str, bridge_version: str) -> BridgeSession:
+        if not bridge_version:
+            raise DeliveryError("BRIDGE_VERSION_REQUIRED")
+        try:
+            self._locator.resolve(project_id)
+            target = self._registry.resolve_ready_target(project_id)
+            self._registry.assert_unchanged()
+        except (ProjectBindingError, DeliveryBlockedError) as error:
+            raise DeliveryError("DELIVERY_PROJECT_ROUTE_UNAVAILABLE") from error
+        if figma_file_key != target.figma_file_key:
+            raise DeliveryError("FIGMA_ROUTE_MISMATCH")
+        record = self._pairings.get(project_id)
+        if record is None:
+            raise DeliveryError("PAIRING_CODE_INVALID")
+        if float(self._clock()) > record.expires_at:
+            self._pairings.pop(project_id, None)
+            raise DeliveryError("PAIRING_CODE_EXPIRED")
+        actual = hashlib.sha256(pairing_code.encode("utf-8")).hexdigest()
+        if not hmac.compare_digest(actual, record.code_sha256):
+            raise DeliveryError("PAIRING_CODE_INVALID")
+        self._pairings.pop(project_id, None)
+        token = secrets.token_urlsafe(32)
+        session = BridgeSession(token, project_id, target.figma_file_key, bridge_version)
+        self._sessions[token] = session
+        return session
 
     def enqueue(
         self,
@@ -69,6 +143,7 @@ class FigmaDeliveryService:
             raise DeliveryError("DELIVERY_IDENTITY_REQUIRED")
         if not isinstance(image_bytes, bytes) or not image_bytes:
             raise DeliveryError("DELIVERY_CONTENT_REQUIRED")
+        self._validate_raster(image_bytes, media_type)
         try:
             binding = self._locator.resolve(project_id)
             target = self._registry.resolve_ready_target(project_id)
@@ -119,6 +194,24 @@ class FigmaDeliveryService:
         except OSError as error:
             raise DeliveryError("DELIVERY_QUEUE_WRITE_FAILED") from error
         return job
+
+    @classmethod
+    def _validate_raster(cls, image_bytes: bytes, media_type: str) -> tuple[int, int]:
+        if len(image_bytes) > cls.MAX_IMAGE_BYTES:
+            raise DeliveryError("DELIVERY_IMAGE_TOO_LARGE")
+        if media_type != "image/png":
+            raise DeliveryError("DELIVERY_MEDIA_TYPE_UNSUPPORTED")
+        if len(image_bytes) < 24 or image_bytes[:8] != b"\x89PNG\r\n\x1a\n" or image_bytes[12:16] != b"IHDR":
+            raise DeliveryError("DELIVERY_IMAGE_INVALID")
+        try:
+            width, height = struct.unpack(">II", image_bytes[16:24])
+        except struct.error as error:
+            raise DeliveryError("DELIVERY_IMAGE_INVALID") from error
+        if width < 1 or height < 1:
+            raise DeliveryError("DELIVERY_IMAGE_INVALID")
+        if width > cls.MAX_IMAGE_DIMENSION or height > cls.MAX_IMAGE_DIMENSION:
+            raise DeliveryError("DELIVERY_IMAGE_DIMENSIONS_EXCEEDED")
+        return width, height
 
     @staticmethod
     def _atomic_write_bytes(path: Path, data: bytes) -> None:
