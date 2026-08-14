@@ -95,6 +95,19 @@ class ManagedRepositoryTests(unittest.TestCase):
             self.store().ensure_repo("other/Project")
         self.assertEqual(caught.exception.code, "MANAGED_REPOSITORY_UNTRUSTED")
 
+    def test_validated_github_identity_can_use_only_host_derived_https_source(self) -> None:
+        store = ManagedRepositoryStore(
+            state_root=self.state,
+            repository_sources={},
+            allow_github_sources=True,
+        )
+        self.assertEqual(
+            store.source_for_repository("alsdmlals4-eng/Blacksmith"),
+            "https://github.com/alsdmlals4-eng/Blacksmith.git",
+        )
+        with self.assertRaises(ManagedRepositoryError):
+            store.source_for_repository("https://evil.example/repo")
+
 
 if __name__ == "__main__":
     unittest.main()
