@@ -83,6 +83,7 @@ def _mailbox_with_pass(request: RunRequest) -> VerificationEvidenceMailbox:
         request,
         suite,
         authority_snapshot_sha256="d" * 64,
+        candidate_diff_sha256="e" * 64,
     )
     return mailbox
 
@@ -173,6 +174,7 @@ class CriticTestEvidenceTests(unittest.TestCase):
                 {
                     "project_id": request.project_id,
                     "package_id": request.package_id,
+                    "diff_sha256": "e" * 64,
                     "diff": "bounded",
                 }
             ),
@@ -188,6 +190,7 @@ class CriticTestEvidenceTests(unittest.TestCase):
         self.assertEqual(evidence["status"], "PASS")
         self.assertEqual(evidence["run_id"], request.run_id)
         self.assertEqual(evidence["expected_main_sha"], request.expected_main_sha)
+        self.assertEqual(evidence["candidate_diff_sha256"], "e" * 64)
         command = evidence["test_suite"]["commands"][0]
         self.assertIn("stdout_sha256", command)
         self.assertIn("stderr_sha256", command)
