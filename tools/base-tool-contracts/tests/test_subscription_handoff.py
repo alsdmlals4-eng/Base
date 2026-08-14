@@ -107,6 +107,9 @@ def test_truth_fields_are_not_constructor_or_builder_inputs() -> None:
         ("instruction", "x" * 4001),
         ("instruction", "use sk-proj-abcdefghijklmnopqrstuvwxyz0123456789"),
         ("instruction", "token=abcdefghijklmnopqrstuvwxyz0123456789"),
+        ("instruction", "Use C:\\Users\\user\\Private\\anchor.png as reference."),
+        ("instruction", "Use /home/user/private/anchor.png as reference."),
+        ("instruction", "Deliver to https://www.figma.com/design/ABCDEFGHIJKLMNOPQRSTUV/file?node-id=14-2"),
         ("expected_png_count", 0),
         ("expected_png_count", 9),
         ("expected_png_count", 1.5),
@@ -150,6 +153,9 @@ def test_dimension_range_and_review_checklist_are_bounded() -> None:
         (123,),
         ("same character identity", "same character identity"),
         ("x" * 241,),
+        ("compare against C:\\Users\\user\\Private\\anchor.png",),
+        ("compare against /home/user/private/anchor.png",),
+        ("verify https://figma.com/design/ABCDEFGHIJKLMNOPQRSTUV/file?node-id=14-2",),
     ):
         with pytest.raises(SubscriptionHandoffError, match="review"):
             packet(review_checklist=bad_checklist)
