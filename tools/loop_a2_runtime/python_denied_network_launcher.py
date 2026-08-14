@@ -21,10 +21,18 @@ _DENIED_PREFIXES = (
     "socket.",
     "subprocess.",
 )
+_DENIED_IMPORT_ROOTS = {"ctypes", "_ctypes"}
 
 
 def _audit(event: str, args: tuple[object, ...]) -> None:
-    del args
+    if event == "import" and args:
+        module_name = args[0]
+        if isinstance(module_name, str):
+            root = module_name.split(".", 1)[0]
+            if root in _DENIED_IMPORT_ROOTS:
+                raise PermissionError(
+                    f"Loop A2 DENIED network boundary blocked native escape import: {module_name}"
+                )
     if event in _DENIED_EXACT_EVENTS or any(
         event.startswith(prefix) for prefix in _DENIED_PREFIXES
     ):
