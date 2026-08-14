@@ -82,6 +82,19 @@ def test_figma_registry_requires_the_committed_canonical_base_path(tmp_path: Pat
         copied.assert_canonical(ROOT)
 
 
+def test_figma_registry_uses_the_portable_committed_reader_without_posix_descriptors(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    module = routing_module()
+    monkeypatch.setattr(module, "_descriptor_reads_supported", lambda: False)
+
+    canonical = module.ProjectFigmaRegistry.load(
+        ROOT / "docs" / "operations" / "PROJECT_FIGMA_TARGET_REGISTRY.json"
+    )
+
+    canonical.assert_canonical(ROOT)
+
+
 def test_archived_figma_route_never_collapses_to_a_registered_route(tmp_path: Path) -> None:
     module = routing_module()
     path = write_registry(tmp_path)

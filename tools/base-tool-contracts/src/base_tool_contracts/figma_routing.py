@@ -19,11 +19,23 @@ from .trusted_files import (
     open_directory_nofollow,
     read_regular_at,
     read_regular_nofollow,
+    read_regular_portable_nofollow,
+    run_portable_git,
     run_trusted_git,
 )
 
 
 _CANONICAL_REGISTRY = Path("docs/operations/PROJECT_FIGMA_TARGET_REGISTRY.json")
+
+
+def _descriptor_reads_supported() -> bool:
+    return bool(getattr(os, "O_NOFOLLOW", 0)) and os.name != "nt"
+
+
+def _read_registry_file(path: Path) -> bytes:
+    reader = read_regular_nofollow if _descriptor_reads_supported() else read_regular_portable_nofollow
+    raw, _ = reader(path)
+    return raw
 
 
 class DeliveryBlockedError(RuntimeError):
@@ -98,7 +110,7 @@ class ProjectFigmaRegistry:
     @classmethod
     def load(cls, path: Path) -> "ProjectFigmaRegistry":
         try:
-            raw, _ = read_regular_nofollow(path)
+            raw = _read_registry_file(path)
             payload = json.loads(raw.decode("utf-8"))
         except (OSError, TrustedFileError) as error:
             raise ValueError("Figma target registry is unavailable or crosses a symlink") from error
@@ -117,16 +129,18 @@ class ProjectFigmaRegistry:
         if self.source_path != expected:
             raise DeliveryBlockedError("Figma target registry is not the canonical Base registry")
         try:
-            root_fd = open_directory_nofollow(root)
-        except TrustedFileError as error:
-            raise DeliveryBlockedError("canonical Figma registry root is unavailable") from error
-        try:
-            current, _ = read_regular_at(root_fd, _CANONICAL_REGISTRY)
-            committed = run_trusted_git(root_fd, "show", f"HEAD:{_CANONICAL_REGISTRY.as_posix()}")
+            if _descriptor_reads_supported():
+                root_fd = open_directory_nofollow(root)
+                try:
+                    current, _ = read_regular_at(root_fd, _CANONICAL_REGISTRY)
+                    committed = run_trusted_git(root_fd, "show", f"HEAD:{_CANONICAL_REGISTRY.as_posix()}")
+                finally:
+                    os.close(root_fd)
+            else:
+                current, _ = read_regular_portable_nofollow(expected)
+                committed = run_portable_git(root, "show", f"HEAD:{_CANONICAL_REGISTRY.as_posix()}")
         except TrustedFileError as error:
             raise DeliveryBlockedError("canonical Figma registry proof is unavailable") from error
-        finally:
-            os.close(root_fd)
         if committed.returncode != 0 or normalized_line_endings(current) != normalized_line_endings(committed.stdout):
             raise DeliveryBlockedError("canonical Figma registry must match its committed Base blob")
         if hashlib.sha256(current).hexdigest() != self.config_sha256:
@@ -134,7 +148,7 @@ class ProjectFigmaRegistry:
 
     def assert_unchanged(self) -> None:
         try:
-            raw, _ = read_regular_nofollow(self.source_path)
+            raw = _read_registry_file(self.source_path)
             current = hashlib.sha256(raw).hexdigest()
         except (OSError, TrustedFileError) as error:
             raise DeliveryBlockedError("Figma target registry is unavailable during delivery revalidation") from error
