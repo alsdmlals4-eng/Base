@@ -41,7 +41,14 @@ _REVIEWED_TUPLES: dict[str, tuple[str, str, tuple[str, ...], str]] = {
     "expression-studio": (
         "tools/expression-studio",
         "expression_studio",
-        ("expression_variation", "image_import", "figma_delivery_packet"),
+        (
+            "expression_variation",
+            "identity_preserving_edit",
+            "outfit_variation",
+            "scene_relocation",
+            "image_import",
+            "figma_delivery_packet",
+        ),
         "expression_studio.app",
     ),
     "sprite-animation-studio": (
