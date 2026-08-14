@@ -85,6 +85,17 @@ class OneShotLocalExecutorBootstrapContractTests(unittest.TestCase):
         self.assertIn("diagnostic", learning.lower())
         self.assertIn("trusted", executor_policy.lower())
 
+    def test_one_shot_workflow_tracks_capability_owner_and_learning_log(self) -> None:
+        workflow = (
+            ROOT / ".github/workflows/validate-one-shot-local-executor-bootstrap.yml"
+        ).read_text(encoding="utf-8")
+
+        for path in (
+            "docs/LOOP_A2_LOCAL_EXECUTOR.md",
+            "skills/managing-project-intake-and-work-contract/LEARNING_LOG.md",
+        ):
+            self.assertIn(path, workflow)
+
 
 if __name__ == "__main__":
     unittest.main()
