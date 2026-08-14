@@ -293,6 +293,32 @@ class GitWorktreeBuilderAdapter:
                 )
             return None
 
+        try:
+            self.registry.validate_workspace_path(
+                project_id=request.project_id,
+                run_id=request.run_id,
+                workspace=workspace,
+            )
+        except WorkspaceOwnershipError as exc:
+            return _blocked_result(
+                request,
+                code="WORKSPACE_PATH_UNSAFE",
+                message=f"runtime workspace path is unsafe: {exc}",
+            )
+        try:
+            self.registry.preflight_claim(
+                project_id=request.project_id,
+                run_id=request.run_id,
+                expected_main_sha=request.expected_main_sha,
+                workspace=workspace,
+            )
+        except WorkspaceOwnershipError as exc:
+            return _blocked_result(
+                request,
+                code="WORKSPACE_OWNERSHIP_FAILED",
+                message=f"durable ownership preflight failed: {exc}",
+            )
+
         workspace.parent.mkdir(parents=True, exist_ok=True)
         completed = _git(
             self.repo_root,
