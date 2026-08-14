@@ -34,6 +34,8 @@ Base는 용어의 **유용성**과 **외부 표준성**을 구분한다.
 | `INDUSTRY_COMMON` | 현업에서 널리 쓰이지만 조직·분야별 경계가 달라질 수 있는 용어 | 프로젝트가 Entry/Exit Criteria와 품질선을 필요하면 추가 고정한다. |
 | `BASE_LOCAL_ALIAS` | 기존 Base 계약을 짧게 호출하기 위해 Base가 정한 압축명 | 외부 업계 표준처럼 소개하지 않고 반드시 기존 owner로 연결한다. |
 
+표의 **괄호·슬래시 뒤의 qualifier는 적용 문맥 메모이며 추가 Base Class가 아니다**. 예를 들어 `INDUSTRY_COMMON / SRE_CONTEXT`는 기본 Class가 `INDUSTRY_COMMON`이고 SRE 문맥에서 뜻을 더 좁힌다는 의미다.
+
 별도 표시가 없다는 이유로 어떤 용어를 국제 표준·업계 공인 정의라고 추정하지 않는다. 특히 **Implementation Reality Gate(IRG)는 `BASE_LOCAL_ALIAS`이며 업계 표준 용어가 아니다.**
 
 ### 권한 분리
