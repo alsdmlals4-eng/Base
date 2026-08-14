@@ -187,6 +187,21 @@ class RuntimeTests(unittest.TestCase):
         self.assertEqual(caught.exception.code, "CAPSULE_SOURCE_SHA_INVALID")
         self.assertEqual(runner.calls, [])
 
+    def test_symlinked_capsule_is_rejected_even_when_target_stays_inside_authority_root(self) -> None:
+        capsule = self.project / job().capsule
+        alternate = capsule.parent / "ALTERNATE_CAPSULE.json"
+        alternate.write_text(capsule.read_text(encoding="utf-8"), encoding="utf-8")
+        capsule.unlink()
+        try:
+            capsule.symlink_to(alternate.name)
+        except (OSError, NotImplementedError):
+            self.skipTest("symlink creation unavailable")
+        runner = FakeRunner([])
+        with self.assertRaises(LocalRuntimeError) as caught:
+            self.runtime(runner).execute(job())
+        self.assertEqual(caught.exception.code, "CAPSULE_UNAVAILABLE")
+        self.assertEqual(runner.calls, [])
+
 
 if __name__ == "__main__":
     unittest.main()
