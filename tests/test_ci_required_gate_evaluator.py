@@ -6,6 +6,9 @@ import sys
 import unittest
 from pathlib import Path
 
+from tests.test_universal_loop_local_burnin_readiness_closure import (
+    UniversalLoopLocalBurninReadinessClosureTests,
+)
 from tests.test_universal_loop_network_boundary_closure import (
     UniversalLoopNetworkBoundaryClosureTests,
 )
@@ -104,7 +107,7 @@ class CiRequiredGateEvaluatorTests(unittest.TestCase):
                     env=environment,
                 )
                 self.assertNotEqual(0, result.returncode)
-                self.assertIn(f"missing environment variable: {missing}", result.stdout)
+                self.assertIn(f"missing input: {missing}", result.stdout)
 
 
 if __name__ == "__main__":
