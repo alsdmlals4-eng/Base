@@ -5,7 +5,6 @@ import hashlib
 import json
 import os
 import re
-import stat
 from io import BytesIO
 from pathlib import Path
 from uuid import uuid4
@@ -16,6 +15,11 @@ from .engine import EngineContractError, EnginePolicy, EngineResult, SpriteEngin
 from PIL import Image, UnidentifiedImageError
 from base_tool_contracts import AnchorEvidenceError, ApprovedAnchorRegistry
 from base_tool_contracts import confined_staging_read_bytes, safe_staging_write_bytes
+from base_tool_contracts.trusted_files import (
+    TrustedFileError,
+    read_regular_nofollow,
+    read_regular_portable_nofollow,
+)
 from .exporter import ExportResult, export_run
 from .imports import DeclaredSource, ImportedImage, discard_import_bytes, import_metadata, revalidate_imported_image
 from .lineage import write_lineage
@@ -41,46 +45,15 @@ def _read_project_image(project_root: Path, source_path: str, *, expected_sha256
     relative = Path(source_path)
     if relative.is_absolute() or not relative.parts or any(part in {"", ".", ".."} for part in relative.parts):
         raise ValueError("approved anchor source_path must be a confined project image")
-    directory_descriptor = -1
-    descriptor = -1
+    reader = (
+        read_regular_nofollow
+        if getattr(os, "O_NOFOLLOW", 0) and os.name != "nt"
+        else read_regular_portable_nofollow
+    )
     try:
-        directory_descriptor = os.open(
-            project_root,
-            os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0),
-        )
-        directory_flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
-        for component in relative.parts[:-1]:
-            next_descriptor = os.open(component, directory_flags, dir_fd=directory_descriptor)
-            os.close(directory_descriptor)
-            directory_descriptor = next_descriptor
-        descriptor = os.open(
-            relative.parts[-1],
-            os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0),
-            dir_fd=directory_descriptor,
-        )
-        attributes = os.fstat(descriptor)
-        if not stat.S_ISREG(attributes.st_mode):
-            raise ValueError("approved anchor source must be a regular file, not a link")
-        if attributes.st_size > _MAX_ANCHOR_BYTES:
-            raise ValueError("approved anchor image exceeds the 25 MiB safety limit")
-        chunks: list[bytes] = []
-        total = 0
-        while True:
-            chunk = os.read(descriptor, min(1024 * 1024, _MAX_ANCHOR_BYTES + 1 - total))
-            if not chunk:
-                break
-            chunks.append(chunk)
-            total += len(chunk)
-            if total > _MAX_ANCHOR_BYTES:
-                raise ValueError("approved anchor image exceeds the 25 MiB safety limit")
-        data = b"".join(chunks)
-    except OSError as error:
+        data, _ = reader(project_root / relative, max_bytes=_MAX_ANCHOR_BYTES)
+    except TrustedFileError as error:
         raise ValueError("approved anchor source must be a readable regular file without links") from error
-    finally:
-        if descriptor >= 0:
-            os.close(descriptor)
-        if directory_descriptor >= 0:
-            os.close(directory_descriptor)
     if expected_sha256 is not None and hashlib.sha256(data).hexdigest() != expected_sha256:
         raise ValueError("approved anchor source SHA-256 does not match project-owned evidence")
     try:

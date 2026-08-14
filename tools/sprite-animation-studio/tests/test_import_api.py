@@ -22,9 +22,14 @@ def jpeg(color: tuple[int, int, int], *, size: tuple[int, int] = (8, 8)) -> byte
     return output.getvalue()
 
 
-def parts(images: list[bytes], *, payload: dict[str, object] | None = None) -> tuple[dict[str, str], list[tuple[str, tuple[str, bytes, str]]]]:
+def parts(
+    images: list[bytes],
+    *,
+    payload: dict[str, object] | None = None,
+    declared_source: str = "LOCAL_GENERATOR",
+) -> tuple[dict[str, str], list[tuple[str, tuple[str, bytes, str]]]]:
     return (
-        {"request_json": json.dumps(payload or valid_payload()), "declared_source": "LOCAL_GENERATOR"},
+        {"request_json": json.dumps(payload or valid_payload()), "declared_source": declared_source},
         [("frames", (f"browser-{index}.png", image, "image/png")) for index, image in enumerate(images)],
     )
 
@@ -47,6 +52,33 @@ def test_import_sprite_frames_preserves_order_without_a_provider_call(tmp_path: 
     assert run["provider_call_made"] is False
     assert run["declared_source"] == "LOCAL_GENERATOR"
     assert run["imported_files"][0]["index"] == 0
+
+
+def test_chatgpt_included_pose_and_effect_imports_use_subscription_path(tmp_path: Path) -> None:
+    colors = [(25, 45, 65, 255), (65, 85, 105, 255), (105, 125, 145, 255), (145, 165, 185, 255)]
+    for effect in (False, True):
+        client = client_for(tmp_path / ("effect" if effect else "pose"), run_mode="subscription_handoff_import")
+        payload = valid_payload(
+            asset_kind="effect" if effect else "character",
+            mode="effect_stages" if effect else "sprite_action",
+        )
+        data, files = parts(
+            [png(color) for color in colors],
+            payload=payload,
+            declared_source="CHATGPT_INCLUDED",
+        )
+
+        response = client.post("/api/import-runs", data=data, files=files)
+
+        assert response.status_code == 201, response.text
+        run = response.json()
+        assert run["status"] == "generated"
+        assert run["frame_count"] == 4
+        assert run["run_mode"] == "subscription_handoff_import"
+        assert run["cost_route"] == "INCLUDED_OR_LOCAL_HANDOFF"
+        assert run["provider_call_made"] is False
+        assert run["declared_source"] == "CHATGPT_INCLUDED"
+        assert [item["order"] for item in run["imports"]] == [0, 1, 2, 3]
 
 
 def test_import_mode_rejects_json_generation(tmp_path: Path) -> None:
