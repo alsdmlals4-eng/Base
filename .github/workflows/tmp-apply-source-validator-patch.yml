@@ -10,6 +10,7 @@ on:
 permissions:
   contents: write
 
+# retry: exact current runner indentation
 jobs:
   apply:
     runs-on: ubuntu-latest
