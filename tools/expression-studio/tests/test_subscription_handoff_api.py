@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from expression_studio.app import _MAX_REQUEST_BODY_BYTES
 from tests.test_confirm_delivery import RecordingSender, confirmed_client
 from tests.test_import_api import png
 from tests.test_models import valid_payload
@@ -98,3 +99,20 @@ def test_handoff_import_does_not_accept_browser_supplied_request_or_source_truth
     assert response.status_code == 201, response.text
     assert response.json()["run_id"] == run_id
     assert response.json()["declared_source"] == "CHATGPT_INCLUDED"
+
+
+def test_handoff_import_rejects_oversize_before_multipart_parsing(tmp_path: Path) -> None:
+    client = confirmed_client(tmp_path, RecordingSender())
+    run_id = client.post("/api/handoff-runs", json=valid_payload()).json()["run_id"]
+
+    response = client.post(
+        f"/api/handoff-runs/{run_id}/import",
+        content=b"not parsed",
+        headers={
+            "Content-Type": "multipart/form-data; boundary=ignored",
+            "Content-Length": str(_MAX_REQUEST_BODY_BYTES + 1),
+        },
+    )
+
+    assert response.status_code == 413
+    assert response.json()["detail"] == "request body exceeds the configured safety limit"
