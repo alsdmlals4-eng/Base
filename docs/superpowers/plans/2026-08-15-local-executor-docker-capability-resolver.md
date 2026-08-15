@@ -64,9 +64,9 @@
 - [x] Child env still excludes API/GitHub secrets.
 - [x] Base v9 + adversarial PASS before final documentation checkpoint.
 - [x] Game Project OS final `ci-gate` PASS before final documentation checkpoint; Windows smoke follows workflow risk classification.
-- [ ] Fresh exact-head Local Executor + Base v9/adversarial + Game Project OS `ci-gate` PASS after this plan/status sync.
-- [ ] Dependency Review PASS if emitted for the final exact head; otherwise record `NOT_TRIGGERED` rather than inventing a pass.
-- [ ] Review threads 0 and no blocking review submission at final merge gate.
+- [x] Fresh exact-head Local Executor + Base v9/adversarial + Game Project OS `ci-gate` PASS after plan/status sync at head `3fa0f178eb464e1c9b5341fe3f4d38b93fd257bd`: Local Executor `31852115712`, Base v9/adversarial `31852115709`, Game Project OS `31852115699`, One-Shot Bootstrap `31852115644`.
+- [x] Dependency Review was `NOT_TRIGGERED` on the final #420 exact head; no PASS was invented.
+- [x] Review threads `0` and submitted review blockers `0` at the final merge gate.
 
 ## Task 6 — integrate repo fix, then local v4 updater
 
@@ -81,7 +81,9 @@
 - [x] Installer v4 GREEN observed: Local Executor run `31851800827`, Ubuntu + Windows PASS including Windows `.cmd --contract-test` parse.
 - [x] Owner/evidence coupling RED observed: Local Executor run `31851870599`, existing runtime/v4 contracts PASS, missing durable resolver evidence failed.
 - [x] Update `docs/LOOP_A2_LOCAL_EXECUTOR.md` and durable resolver/v4 evidence to match actual runtime semantics and claim ceiling.
-- [ ] Squash merge #420 from the final reviewed exact head and complete postmerge readback on `main`.
+- [x] Squash merge #420 from reviewed head `3fa0f178eb464e1c9b5341fe3f4d38b93fd257bd` to Base `main@118f40c6ecc29ec98ca3265b67cf4fec4abb45c4`.
+- [x] Complete postmerge readback on exact merged main: Local Executor `31852250061` PASS Ubuntu+Windows, Base v9/adversarial `31852250070` PASS, Game Project OS `31852250010` PASS including Windows publication/Tool Hub smoke and final `ci-gate`; merged runtime/service/v4 files read back from `main` and same-goal open PR search returned none.
+- [x] Close tracking issue #419 as `completed` after postmerge evidence was recorded.
 
 ## Task 7 — live burn-in retry
 
@@ -106,10 +108,12 @@ scheduler: NOT_CONFIGURED
 ## Current claim ceiling
 
 ```yaml
-runtime_same_digest_platform_resolver: IMPLEMENTED
-service_shared_preflight: IMPLEMENTED
-installer_v4_repository_contract: IMPLEMENTED
+runtime_same_digest_platform_resolver: MERGED_MAIN_VALIDATED
+service_shared_preflight: MERGED_MAIN_VALIDATED
+installer_v4_repository_contract: MERGED_MAIN_VALIDATED
 installer_v4_windows_cmd_parse: PASS
+repository_postmerge_validation: PASS
+tracking_issue_419: CLOSED_COMPLETED
 live_v4_user_pc_preflight: NOT_RUN
 blacksmith_real_a2_burnin_runs: 0
 a3_auto_merge: DISABLED
