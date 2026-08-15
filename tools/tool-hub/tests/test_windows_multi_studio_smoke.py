@@ -5,7 +5,7 @@ import sys
 
 import pytest
 
-import test_multi_studio_smoke as linux_smoke
+import test_multi_studio_smoke as portable_smoke
 
 
 pytestmark = pytest.mark.skipif(sys.platform != "win32", reason="real Windows multi-Studio smoke")
@@ -22,10 +22,10 @@ def assert_windows_process_exited(pid: int) -> None:
         ctypes.windll.kernel32.CloseHandle(process)
 
 
-def test_windows_two_projects_run_expression_and_sprite_without_cross_wiring(
+def test_windows_four_process_import_workflows_are_project_isolated(
     tmp_path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(linux_smoke, "assert_process_exited", assert_windows_process_exited)
+    monkeypatch.setattr(portable_smoke, "assert_process_exited", assert_windows_process_exited)
 
-    linux_smoke.test_two_projects_can_run_expression_and_sprite_without_cross_wiring(tmp_path)
+    portable_smoke.test_linux_four_process_import_workflows_are_project_isolated(tmp_path)
