@@ -56,4 +56,4 @@ jobs:
 
       - name: Run Expression confirm-and-deliver contracts
         working-directory: tools/expression-studio
-        run: python -m pytest -q tests/test_confirm_delivery.py
+        run: python -m pytest -q tests/test_confirm_delivery.py tests/test_web_contract.py
