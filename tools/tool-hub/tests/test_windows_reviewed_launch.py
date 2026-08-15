@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
 import sys
 
 import pytest
 
-from base_tool_contracts import trusted_files
+from base_tool_contracts import HubStartupError, trusted_files, write_startup_report
 from tool_hub.adapters import bind_launch_spec, build_launch_spec
 from tool_hub.environment import LaunchContext
 from tool_hub.projects import ProjectBinding
@@ -80,7 +81,6 @@ def test_windows_child_preserves_only_standard_git_locator_variables(tmp_path: P
 def test_windows_portable_git_uses_reviewed_executable_resolver(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    reviewed = trusted_files.trusted_git_executable()
     original_which = trusted_files.shutil.which
 
     def reviewed_only(name: str, path: str | None = None) -> str | None:
@@ -93,6 +93,19 @@ def test_windows_portable_git_uses_reviewed_executable_resolver(
     completed = trusted_files.run_portable_git(BASE_ROOT, "rev-parse", "--git-dir")
 
     assert completed.returncode == 0
+
+
+def test_windows_startup_report_publishes_complete_new_file(tmp_path: Path) -> None:
+    private = tmp_path / "launch-runtime"
+    private.mkdir()
+    target = private / "expression-demo.json"
+    payload = {"tool_id": "expression-studio", "project_id": "demo", "port": 12345}
+
+    write_startup_report(target, payload)
+
+    assert json.loads(target.read_text(encoding="utf-8")) == payload
+    with pytest.raises(HubStartupError, match="already exists"):
+        write_startup_report(target, payload)
 
 
 def test_windows_site_packages_path_is_lib_site_packages(tmp_path: Path) -> None:
