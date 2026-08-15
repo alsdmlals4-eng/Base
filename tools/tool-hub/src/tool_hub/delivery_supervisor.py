@@ -74,12 +74,13 @@ class ProcessSupervisor(_BaseProcessSupervisor):
         )
 
     def authorize_delivery_token(self, token: str) -> tuple[str, str]:
-        """Resolve one credential only while its exact child process is live."""
+        """Resolve one credential only while its exact child is in the public RUNNING state."""
         if not isinstance(token, str) or len(token) < 32:
             raise LaunchError("studio delivery credential is invalid")
         matches: list[tuple[str, str]] = []
         for key, child in tuple(self._children.items()):
-            if child.process.poll() is not None:
+            state = self._states.get(key)
+            if state is None or state.status != "RUNNING" or child.process.poll() is not None:
                 continue
             candidate = str(child.spec.env.get(_DELIVERY_TOKEN_ENV, ""))
             if candidate and hmac.compare_digest(candidate, token):
@@ -87,3 +88,14 @@ class ProcessSupervisor(_BaseProcessSupervisor):
         if len(matches) != 1:
             raise LaunchError("studio delivery credential is invalid")
         return matches[0]
+
+    def _sanitized_log_tail(self, child: object) -> str:
+        """Preserve base log sanitization and additionally remove the child-only delivery secret."""
+        public = super()._sanitized_log_tail(child)  # type: ignore[arg-type]
+        try:
+            token = str(child.spec.env.get(_DELIVERY_TOKEN_ENV, ""))  # type: ignore[attr-defined]
+        except (AttributeError, TypeError):
+            token = ""
+        if token:
+            public = public.replace(token, "<redacted>")
+        return public
