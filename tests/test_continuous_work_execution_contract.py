@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REFERENCE = ROOT / "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"
 TASK_RECOVERY = ROOT / "skills/managing-project-intake-and-work-contract/references/task-recovery-protocol.md"
+SKILL = ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md"
 
 
 class ContinuousWorkExecutionContractTests(unittest.TestCase):
@@ -146,6 +147,22 @@ class ContinuousWorkExecutionContractTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
         self.assertIn("즉시 병합", text)
+
+    def test_user_directed_work_uses_separate_pr_without_touching_in_progress_prs(self) -> None:
+        reference = REFERENCE.read_text(encoding="utf-8")
+        skill = SKILL.read_text(encoding="utf-8")
+        for text in (reference, skill):
+            for term in (
+                "USER_DIRECTED_PARALLEL_PR",
+                "current completed main",
+                "separate branch/PR",
+                "same-goal",
+                "in-progress PR",
+                "scheduled/periodic",
+            ):
+                self.assertIn(term, text)
+        self.assertIn("do not modify/rebase/update", reference)
+        self.assertIn("superseded", reference)
 
     def test_unexpected_interruption_routes_to_task_recovery_protocol(self) -> None:
         self.assertTrue(TASK_RECOVERY.is_file(), "task recovery protocol must exist")
