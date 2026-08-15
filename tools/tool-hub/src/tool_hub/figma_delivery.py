@@ -85,6 +85,34 @@ class FigmaDeliveryService(_base.FigmaDeliveryService):
         except DeliveryBlockedError as error:
             raise DeliveryError("DELIVERY_TOOL_ROUTE_UNAVAILABLE") from error
 
+    def _assert_current_job_route(self, job: _base.DeliveryJob) -> ProjectFigmaToolRoute:
+        route = self._resolve_tool_route(job.tool_id, job.project_id)
+        if not isinstance(job, DeliveryJob):
+            raise DeliveryError("FIGMA_TOOL_ROUTE_IDENTITY_MISMATCH")
+        expected = (
+            route.tool_route_id,
+            route.parent_node_id,
+            route.destination_node_id,
+            route.destination_name,
+            route.project_marker_node_id,
+            route.project_marker_name,
+        )
+        actual = (
+            job.tool_route_id,
+            job.route_parent_node_id,
+            job.target_node_id,
+            job.target_node_name,
+            job.project_marker_node_id,
+            job.project_marker_name,
+        )
+        if actual != expected or job.generation_area_node_id != route.parent_node_id:
+            raise DeliveryError("FIGMA_TOOL_ROUTE_IDENTITY_MISMATCH")
+        return route
+
+    def _verify_content(self, job: _base.DeliveryJob) -> None:
+        self._assert_current_job_route(job)
+        super()._verify_content(job)
+
     def enqueue(
         self,
         tool_id: str,
