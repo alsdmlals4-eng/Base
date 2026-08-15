@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import os
 import re
-from typing import Callable
+from typing import Protocol
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlsplit
 from urllib.request import ProxyHandler, Request, build_opener
@@ -15,8 +15,14 @@ class HubDeliveryError(RuntimeError):
     """Raised when the private Studio-to-Hub delivery handoff cannot be verified."""
 
 
-HubDeliverySender = Callable[[str, bytes, str], dict[str, object]]
+class HubDeliverySender(Protocol):
+    def __call__(self, run_id: str, image_bytes: bytes, media_type: str) -> dict[str, object]: ...
+
+    def status(self, delivery_id: str) -> dict[str, object]: ...
+
+
 _RUN_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$")
+_DELIVERY_ID = re.compile(r"^[0-9a-f]{32}$")
 _MAX_RESPONSE_BYTES = 64 * 1024
 
 
@@ -38,7 +44,7 @@ def _validated_origin(value: str) -> str:
 
 
 class LocalHubDeliveryClient:
-    """POST exact confirmed PNG bytes to the owning loopback Tool Hub without proxies."""
+    """Exchange confirmed raster bytes and delivery status with the owning loopback Tool Hub."""
 
     def __init__(self, origin: str, token: str) -> None:
         self._origin = _validated_origin(origin)
@@ -47,20 +53,25 @@ class LocalHubDeliveryClient:
         self._token = token
         self._opener = build_opener(ProxyHandler({}))
 
-    def __call__(self, run_id: str, image_bytes: bytes, media_type: str) -> dict[str, object]:
-        if _RUN_ID.fullmatch(run_id) is None:
-            raise HubDeliveryError("delivery run identity is invalid")
-        if media_type != "image/png" or not isinstance(image_bytes, bytes) or not image_bytes:
-            raise HubDeliveryError("delivery content is invalid")
+    def _json_request(
+        self,
+        path: str,
+        *,
+        method: str,
+        data: bytes | None = None,
+        content_type: str | None = None,
+    ) -> dict[str, object]:
+        headers = {
+            "Authorization": f"Bearer {self._token}",
+            "Accept": "application/json",
+        }
+        if content_type is not None:
+            headers["Content-Type"] = content_type
         request = Request(
-            f"{self._origin}/internal/studio-delivery/{quote(run_id, safe='')}",
-            data=image_bytes,
-            method="POST",
-            headers={
-                "Authorization": f"Bearer {self._token}",
-                "Content-Type": "image/png",
-                "Accept": "application/json",
-            },
+            f"{self._origin}{path}",
+            data=data,
+            method=method,
+            headers=headers,
         )
         try:
             with self._opener.open(request, timeout=5.0) as response:
@@ -81,6 +92,19 @@ class LocalHubDeliveryClient:
             raise HubDeliveryError("Tool Hub delivery response is invalid") from error
         if not isinstance(payload, dict):
             raise HubDeliveryError("Tool Hub delivery response is invalid")
+        return payload
+
+    def __call__(self, run_id: str, image_bytes: bytes, media_type: str) -> dict[str, object]:
+        if _RUN_ID.fullmatch(run_id) is None:
+            raise HubDeliveryError("delivery run identity is invalid")
+        if media_type != "image/png" or not isinstance(image_bytes, bytes) or not image_bytes:
+            raise HubDeliveryError("delivery content is invalid")
+        payload = self._json_request(
+            f"/internal/studio-delivery/{quote(run_id, safe='')}",
+            method="POST",
+            data=image_bytes,
+            content_type="image/png",
+        )
         required = {
             "status",
             "delivery_id",
@@ -90,9 +114,36 @@ class LocalHubDeliveryClient:
             "content_sha256",
             "tool_route_id",
             "target_node_name",
+            "bridge_state",
+            "delivery_state",
+            "figma_url",
         }
         if not required.issubset(payload) or payload.get("run_id") != run_id:
             raise HubDeliveryError("Tool Hub delivery response identity is invalid")
+        return payload
+
+    def status(self, delivery_id: str) -> dict[str, object]:
+        if _DELIVERY_ID.fullmatch(delivery_id) is None:
+            raise HubDeliveryError("delivery identity is invalid")
+        payload = self._json_request(
+            f"/internal/studio-delivery/{delivery_id}/status",
+            method="GET",
+        )
+        required = {
+            "status",
+            "delivery_id",
+            "tool_id",
+            "project_id",
+            "run_id",
+            "content_sha256",
+            "tool_route_id",
+            "target_node_name",
+            "bridge_state",
+            "delivery_state",
+            "figma_url",
+        }
+        if not required.issubset(payload) or payload.get("delivery_id") != delivery_id:
+            raise HubDeliveryError("Tool Hub delivery status identity is invalid")
         return payload
 
 
