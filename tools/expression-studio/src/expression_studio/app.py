@@ -54,6 +54,7 @@ def create_app(
     hub_delivery_sender: HubDeliverySender | None = None,
 ) -> FastAPI:
     """Create an API bound by the CLI to loopback only."""
+    project_root = project_root.resolve()
     service = ExpressionStudioService(project_root, engine, registry=registry, project_id=project_id, anchor_registry=anchor_registry, run_mode=run_mode)
     sender = hub_delivery_sender if hub_delivery_sender is not None else sender_from_environment()
     confirmed_deliveries: dict[str, tuple[int, dict[str, object]]] = {}
@@ -177,7 +178,7 @@ def create_app(
                 if expected_sha256 is None:
                     raise RunBlockedError("confirmed export hash evidence is unavailable")
                 selected_bytes = _read_staged_file(
-                    project_root.resolve(),
+                    project_root,
                     record.export.selected,
                     expected_sha256=expected_sha256,
                 )
@@ -201,6 +202,8 @@ def create_app(
                     "status": "CONFIRMED_AND_VERIFIED" if verified else "CONFIRMED_AND_QUEUED",
                     "project_save": "SAVED",
                     "figma_delivery": "VERIFIED" if verified else "QUEUED",
+                    "download_state": "DOWNLOAD_READY",
+                    "download_url": f"/api/runs/{run_id}/confirmed-download",
                     "delivery_id": delivery["delivery_id"],
                     "content_sha256": content_sha256,
                     "tool_route_id": delivery["tool_route_id"],
@@ -212,6 +215,44 @@ def create_app(
         except RunNotFoundError as error:
             raise HTTPException(status_code=404, detail="run not found") from error
         except (RunBlockedError, DeliveryBlockedError, HubDeliveryError, ValueError) as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
+
+    @app.get("/api/runs/{run_id}/confirmed-download")
+    def confirmed_download(run_id: str) -> Response:
+        try:
+            with confirmed_delivery_lock:
+                confirmed = confirmed_deliveries.get(run_id)
+                if confirmed is None:
+                    raise RunBlockedError("confirmation is required before download")
+                _, prior_response = confirmed
+                confirmed_sha256 = prior_response.get("content_sha256")
+            if not isinstance(confirmed_sha256, str):
+                raise RunBlockedError("confirmed download evidence is unavailable")
+            record = service.get_run(run_id)
+            if record.export is None:
+                raise RunBlockedError("confirmed export is unavailable")
+            expected_sha256 = record.export_output_sha256.get("selected")
+            if expected_sha256 is None or expected_sha256 != confirmed_sha256:
+                raise RunBlockedError("confirmed export hash evidence does not match delivery")
+            selected_bytes = _read_staged_file(
+                project_root,
+                record.export.selected,
+                expected_sha256=expected_sha256,
+            )
+            if hashlib.sha256(selected_bytes).hexdigest() != confirmed_sha256:
+                raise RunBlockedError("confirmed export changed after delivery confirmation")
+            filename = f"selected-{run_id[:12]}.png"
+            return Response(
+                content=selected_bytes,
+                media_type="image/png",
+                headers={
+                    "Content-Disposition": f'attachment; filename="{filename}"',
+                    "X-Content-SHA256": confirmed_sha256,
+                },
+            )
+        except RunNotFoundError as error:
+            raise HTTPException(status_code=404, detail="run not found") from error
+        except (RunBlockedError, ValueError) as error:
             raise HTTPException(status_code=409, detail=str(error)) from error
 
     @app.post("/api/runs/{run_id}/figma-delivery")
