@@ -33,22 +33,39 @@ async function applyImage(message) {
   if (!job || !Array.isArray(bytes)) {
     throw new Error("DELIVERY_PAYLOAD_INVALID");
   }
-  if (!/^\d+[:-]\d+$/.test(job.generation_area_node_id || "")) {
-    throw new Error("FIGMA_TARGET_INVALID");
+  for (const field of ["target_node_id", "route_parent_node_id", "project_marker_node_id"]) {
+    if (!/^\d+[:-]\d+$/.test(job[field] || "")) {
+      throw new Error("FIGMA_TARGET_INVALID");
+    }
+  }
+  if (!job.target_node_name || !job.project_marker_name || !job.tool_route_id) {
+    throw new Error("FIGMA_ROUTE_IDENTITY_REQUIRED");
   }
   if (!Number.isFinite(job.width) || !Number.isFinite(job.height) || job.width < 1 || job.height < 1) {
     throw new Error("DELIVERY_DIMENSIONS_INVALID");
   }
 
-  const target = await figma.getNodeByIdAsync(job.generation_area_node_id);
+  const [parent, target, marker] = await Promise.all([
+    figma.getNodeByIdAsync(job.route_parent_node_id),
+    figma.getNodeByIdAsync(job.target_node_id),
+    figma.getNodeByIdAsync(job.project_marker_node_id),
+  ]);
+  if (!parent || !("children" in parent)) {
+    throw new Error("FIGMA_ROUTE_PARENT_UNAVAILABLE");
+  }
   if (!target || !("children" in target) || !("appendChild" in target)) {
     throw new Error("FIGMA_TARGET_UNAVAILABLE");
   }
-
-  const markerName = `Base Tool Hub Route · ${job.project_id}`;
-  const marker = target.children.find((child) => child.name === markerName);
-  const markerIsExact = Boolean(marker && marker.parent === target);
-  if (!markerIsExact || marker.visible !== false || marker.locked !== true) {
+  if (target.parent !== parent || target.name !== job.target_node_name) {
+    throw new Error("FIGMA_TARGET_IDENTITY_MISMATCH");
+  }
+  if (
+    !marker ||
+    marker.parent !== parent ||
+    marker.name !== job.project_marker_name ||
+    marker.visible !== false ||
+    marker.locked !== true
+  ) {
     throw new Error("FIGMA_ROUTE_MARKER_MISSING");
   }
 

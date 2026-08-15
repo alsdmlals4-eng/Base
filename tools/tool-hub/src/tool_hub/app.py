@@ -12,7 +12,11 @@ from pathlib import Path
 from typing import Callable
 from urllib.parse import urlsplit
 
-from base_tool_contracts import DeliveryBlockedError, ProjectFigmaRegistry
+from base_tool_contracts import (
+    DeliveryBlockedError,
+    ProjectFigmaRegistry,
+    ProjectFigmaToolRouteRegistry,
+)
 from fastapi import FastAPI, Header, HTTPException, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
@@ -118,6 +122,10 @@ def create_app(
             root / "docs" / "operations" / "PROJECT_FIGMA_TARGET_REGISTRY.json"
         )
         figma_registry.assert_canonical(root)
+        figma_tool_routes = ProjectFigmaToolRouteRegistry.load(
+            root / "docs" / "operations" / "PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json"
+        )
+        figma_tool_routes.assert_canonical(root)
     except (ValueError, DeliveryBlockedError) as error:
         raise RuntimeError("Tool Hub cannot start without its canonical project catalog") from error
     known_projects = figma_registry.public_projects()
@@ -143,6 +151,8 @@ def create_app(
         project_config.parent / "figma-delivery-runtime",
         locator,
         figma_registry,
+        tool_routes=figma_tool_routes,
+        base_root=root,
     )
     pairing_projects: dict[str, str] = {}
     security = HubSecurity(bind_origin, test_mode=test_mode)
@@ -313,6 +323,12 @@ def create_app(
             "width": job.width,
             "height": job.height,
             "generation_area_node_id": job.generation_area_node_id,
+            "tool_route_id": job.tool_route_id,
+            "route_parent_node_id": job.route_parent_node_id,
+            "target_node_id": job.target_node_id,
+            "target_node_name": job.target_node_name,
+            "project_marker_node_id": job.project_marker_node_id,
+            "project_marker_name": job.project_marker_name,
             "node_name": job.node_name,
         }
 
@@ -372,6 +388,9 @@ def create_app(
             "delivery_id": receipt.delivery_id,
             "project_id": receipt.project_id,
             "run_id": receipt.run_id,
+            "tool_route_id": receipt.tool_route_id,
+            "target_node_id": receipt.target_node_id,
+            "target_node_name": receipt.target_node_name,
             "created_node_id": receipt.created_node_id,
             "created_node_name": receipt.created_node_name,
             "content_sha256": receipt.content_sha256,
