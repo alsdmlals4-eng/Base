@@ -51,8 +51,9 @@ jobs:
           python -m pip install -e '.\tools\base-tool-contracts[dev]' -e '.\tools\tool-hub[dev]' -e '.\tools\expression-studio[dev]'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Run confirm-and-deliver contracts
-        run: >-
-          python -m pytest -q
-          tools/tool-hub/tests/test_studio_delivery_trust.py
-          tools/expression-studio/tests/test_confirm_delivery.py
+      - name: Run Tool Hub trusted delivery contracts
+        run: python -m pytest -q tools/tool-hub/tests/test_studio_delivery_trust.py
+
+      - name: Run Expression confirm-and-deliver contracts
+        working-directory: tools/expression-studio
+        run: python -m pytest -q tests/test_confirm_delivery.py
