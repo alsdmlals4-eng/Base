@@ -25,6 +25,9 @@ class RecordingSender:
         return {
             "delivery_id": "delivery-one",
             "status": "QUEUED",
+            "tool_id": "expression-studio",
+            "project_id": "demo",
+            "run_id": run_id,
             "content_sha256": hashlib.sha256(image_bytes).hexdigest(),
             "tool_route_id": "character_expression_runs",
             "target_node_name": "Expression Runs",
