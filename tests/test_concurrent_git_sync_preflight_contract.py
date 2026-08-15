@@ -57,6 +57,34 @@ class ConcurrentGitSyncPreflightContractTests(unittest.TestCase):
         ):
             self.assertIn(token, protocol)
 
+    def test_explicitly_authorized_provisional_integration_requires_reconciliation_before_merge(self) -> None:
+        agents = read("AGENTS.md")
+        skill = read("skills/synchronizing-local-and-github-state/SKILL.md")
+        protocol = read(
+            "skills/synchronizing-local-and-github-state/references/safe-sync-protocol.md"
+        )
+
+        for text in (agents, skill, protocol):
+            self.assertIn("PROVISIONAL_INTEGRATION", text)
+
+        for token in (
+            "explicit user authorization",
+            "owner PR branches",
+            "semantic reconciliation",
+            "exact-head",
+            "must not merge",
+        ):
+            self.assertIn(token, protocol)
+
+        self.assertIn("owner_pr_head_shas", skill)
+        self.assertIn("provisional_overlap_paths", skill)
+        self.assertIn("provisional_semantic_resources", skill)
+        self.assertIn("WAITING_RESOURCE", skill)
+        self.assertIn("DUPLICATE_WORK", skill)
+        self.assertIn("명시적 사용자 승인", agents)
+        self.assertIn("owner PR", agents)
+        self.assertIn("병합하지 않는다", agents)
+
     def test_audit_invalidates_search_only_readme_drift_hypothesis(self) -> None:
         readme = read("README.md")
         audit = read(
