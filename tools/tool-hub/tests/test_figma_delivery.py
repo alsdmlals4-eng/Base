@@ -102,7 +102,7 @@ def test_bridge_session_claims_and_reads_only_its_project_jobs(tmp_path: Path) -
     coc_bytes = png_bytes()
     omen_bytes = png_bytes(2, 1)
     coc_job = service.enqueue("expression-studio", "coc-fiction", "run-coc", coc_bytes, "image/png")
-    omen_job = service.enqueue("sprite-animation-studio", "omenward", "run-omen", omen_bytes, "image/png")
+    omen_job = service.enqueue("expression-studio", "omenward", "run-omen", omen_bytes, "image/png")
 
     coc_claim = service.claim_next(coc_token)
     omen_claim = service.claim_next(omen_token)
@@ -183,15 +183,15 @@ def test_finalize_validates_receipt_and_writes_secret_free_immutable_evidence(tm
         ))
     with pytest.raises(DeliveryError, match="DELIVERY_HASH_MISMATCH"):
         service.finalize(token, job.delivery_id, BridgeReceipt(
-            "999:1", claimed.node_name, claimed.generation_area_node_id, "0" * 64, "bridge-test", "image-hash"
+            "999:1", claimed.node_name, claimed.target_node_id, "0" * 64, "bridge-test", "image-hash"
         ))
     with pytest.raises(DeliveryError, match="FIGMA_NODE_IDENTITY_MISMATCH"):
         service.finalize(token, job.delivery_id, BridgeReceipt(
-            "999:1", "wrong-name", claimed.generation_area_node_id, claimed.content_sha256, "bridge-test", "image-hash"
+            "999:1", "wrong-name", claimed.target_node_id, claimed.content_sha256, "bridge-test", "image-hash"
         ))
 
     receipt = service.finalize(token, job.delivery_id, BridgeReceipt(
-        "999:1", claimed.node_name, claimed.generation_area_node_id, claimed.content_sha256, "bridge-test", "image-hash"
+        "999:1", claimed.node_name, claimed.target_node_id, claimed.content_sha256, "bridge-test", "image-hash"
     ))
     assert receipt.state == "DELIVERED_VERIFIED"
     evidence = project / ".asset-vault" / "tool-hub-delivery" / job.delivery_id / "FIGMA_DELIVERY_RECEIPT.json"
@@ -199,6 +199,8 @@ def test_finalize_validates_receipt_and_writes_secret_free_immutable_evidence(tm
     assert stored["delivery_id"] == job.delivery_id
     assert stored["created_node_id"] == "999:1"
     assert stored["content_sha256"] == claimed.content_sha256
+    assert stored["target_node_id"] == claimed.target_node_id
+    assert stored["tool_route_id"] == claimed.tool_route_id
     serialized = json.dumps(stored)
     assert token not in serialized
     assert str(project.resolve()) not in serialized
@@ -206,5 +208,5 @@ def test_finalize_validates_receipt_and_writes_secret_free_immutable_evidence(tm
 
     with pytest.raises(DeliveryError, match="DELIVERY_ALREADY_VERIFIED"):
         service.finalize(token, job.delivery_id, BridgeReceipt(
-            "999:2", claimed.node_name, claimed.generation_area_node_id, claimed.content_sha256, "bridge-test", "image-hash-2"
+            "999:2", claimed.node_name, claimed.target_node_id, claimed.content_sha256, "bridge-test", "image-hash-2"
         ))
