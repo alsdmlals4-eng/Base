@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+import hashlib
 import hmac
 import json
 from pathlib import Path
@@ -146,6 +147,36 @@ class FigmaDeliveryService(_base.FigmaDeliveryService):
         with self._state_lock:
             self._jobs[job.delivery_id] = job
         return job
+
+    def enqueue_idempotent(
+        self,
+        tool_id: str,
+        project_id: str,
+        run_id: str,
+        image_bytes: bytes,
+        media_type: str,
+    ) -> tuple[DeliveryJob, bool]:
+        """Queue one immutable run payload, reusing a live or verified retry."""
+        digest = hashlib.sha256(image_bytes).hexdigest()
+        with self._state_lock:
+            matching = [
+                job
+                for job in self._jobs.values()
+                if job.tool_id == tool_id
+                and job.project_id == project_id
+                and job.run_id == run_id
+            ]
+            if any(not hmac.compare_digest(job.content_sha256, digest) for job in matching):
+                raise DeliveryError("DELIVERY_RUN_CONTENT_MISMATCH")
+            reusable = sorted(
+                (job for job in matching if job.state != "EXPIRED"),
+                key=lambda item: (item.created_at, item.delivery_id),
+            )
+            if reusable:
+                job = reusable[0]
+                self._verify_content(job)
+                return job, False
+            return self.enqueue(tool_id, project_id, run_id, image_bytes, media_type), True
 
     def finalize(
         self,
