@@ -4,7 +4,11 @@ from pathlib import Path
 
 import pytest
 
-from base_tool_contracts import ProjectFigmaRegistry, ProjectFigmaToolRouteRegistry
+from base_tool_contracts import (
+    DeliveryBlockedError,
+    ProjectFigmaRegistry,
+    ProjectFigmaToolRouteRegistry,
+)
 from test_figma_delivery import paired_token, png_bytes
 from test_projects import make_project
 from tool_hub.figma_delivery import BridgeReceipt, DeliveryError, FigmaDeliveryService
@@ -104,6 +108,23 @@ def test_sprite_delivery_fails_closed_until_a_dedicated_tool_route_exists(tmp_pa
             png_bytes(),
             "image/png",
         )
+
+
+def test_claim_revalidates_exact_tool_route_before_exposing_job(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    service, _ = service_for(tmp_path)
+    token = paired_token(service, "coc-fiction")
+    service.enqueue("expression-studio", "coc-fiction", "run-route-drift", png_bytes(), "image/png")
+
+    def route_changed() -> None:
+        raise DeliveryBlockedError("Figma tool-route registry changed after loading")
+
+    monkeypatch.setattr(service._tool_routes, "assert_unchanged", route_changed)
+
+    with pytest.raises(DeliveryError, match="DELIVERY_TOOL_ROUTE_UNAVAILABLE"):
+        service.claim_next(token)
 
 
 def test_bridge_plugin_and_api_use_exact_target_and_route_identity() -> None:
