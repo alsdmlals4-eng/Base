@@ -50,8 +50,90 @@ def open_loopback_listener(port: int) -> socket.socket:
         raise
 
 
-def write_startup_report(path: Path, payload: dict[str, object]) -> None:
-    target = Path(os.path.abspath(path))
+def _startup_bytes(payload: dict[str, object]) -> bytes:
+    return (json.dumps(payload, ensure_ascii=True, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
+def _assert_portable_plain_parent(path: Path) -> Path:
+    """Validate a Windows-style directory chain without following reparse points."""
+    absolute = Path(os.path.abspath(path))
+    reparse = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
+    current = Path(absolute.anchor)
+    try:
+        for part in absolute.parts[1:]:
+            current = current / part
+            metadata = current.lstat()
+            if (
+                stat.S_ISLNK(metadata.st_mode)
+                or not stat.S_ISDIR(metadata.st_mode)
+                or (reparse and getattr(metadata, "st_file_attributes", 0) & reparse)
+            ):
+                raise HubStartupError("startup report parent is unavailable or crosses a symlink")
+    except OSError as error:
+        raise HubStartupError("startup report parent is unavailable or crosses a symlink") from error
+    return absolute
+
+
+def _write_startup_report_portable(target: Path, payload: dict[str, object]) -> None:
+    """Publish a complete startup report on Windows without descriptor-relative APIs."""
+    parent = _assert_portable_plain_parent(target.parent)
+    if os.path.lexists(target):
+        raise HubStartupError("startup report already exists")
+    temporary = parent / f".{target.name}.{secrets.token_hex(16)}.tmp"
+    descriptor = -1
+    published = False
+    try:
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0)
+        descriptor = os.open(temporary, flags, 0o600)
+        opened = os.fstat(descriptor)
+        if not stat.S_ISREG(opened.st_mode):
+            raise HubStartupError("startup report temporary file is not regular")
+        raw = _startup_bytes(payload)
+        offset = 0
+        while offset < len(raw):
+            written = os.write(descriptor, raw[offset:])
+            if written <= 0:
+                raise OSError("startup report write made no progress")
+            offset += written
+        os.fsync(descriptor)
+        os.close(descriptor)
+        descriptor = -1
+
+        # Creating a hard link is no-overwrite publication: if another file
+        # appears at the final name, the operation fails instead of replacing it.
+        try:
+            os.link(temporary, target, follow_symlinks=False)
+        except FileExistsError as error:
+            raise HubStartupError("startup report already exists") from error
+        published = True
+        final = target.lstat()
+        reparse = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
+        if (
+            stat.S_ISLNK(final.st_mode)
+            or not stat.S_ISREG(final.st_mode)
+            or (reparse and getattr(final, "st_file_attributes", 0) & reparse)
+            or (final.st_dev, final.st_ino) != (opened.st_dev, opened.st_ino)
+        ):
+            raise HubStartupError("startup report publication identity changed")
+        temporary.unlink()
+    except HubStartupError:
+        raise
+    except OSError as error:
+        raise HubStartupError("startup report could not be written safely") from error
+    finally:
+        if descriptor >= 0:
+            os.close(descriptor)
+        try:
+            temporary.unlink(missing_ok=True)
+        except OSError:
+            pass
+        if published:
+            # Never remove the final report during ordinary cleanup; the Hub
+            # owns it after successful no-overwrite publication.
+            pass
+
+
+def _write_startup_report_descriptor_bound(target: Path, payload: dict[str, object]) -> None:
     try:
         parent_fd = open_directory_nofollow(target.parent)
     except TrustedFileError as error:
@@ -75,10 +157,13 @@ def write_startup_report(path: Path, payload: dict[str, object]) -> None:
             )
         except FileExistsError as error:
             raise HubStartupError("startup report temporary file already exists") from error
-        raw = (json.dumps(payload, ensure_ascii=True, sort_keys=True, separators=(",", ":")) + "\n").encode()
+        raw = _startup_bytes(payload)
         offset = 0
         while offset < len(raw):
-            offset += os.write(descriptor, raw[offset:])
+            written = os.write(descriptor, raw[offset:])
+            if written <= 0:
+                raise OSError("startup report write made no progress")
+            offset += written
         os.fsync(descriptor)
         try:
             os.link(
@@ -107,3 +192,11 @@ def write_startup_report(path: Path, payload: dict[str, object]) -> None:
             except OSError:
                 pass
         os.close(parent_fd)
+
+
+def write_startup_report(path: Path, payload: dict[str, object]) -> None:
+    target = Path(os.path.abspath(path))
+    if os.name == "nt":
+        _write_startup_report_portable(target, payload)
+        return
+    _write_startup_report_descriptor_bound(target, payload)
