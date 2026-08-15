@@ -254,6 +254,11 @@ def create_app(
         candidates: list[UploadFile] = File(...),
     ) -> dict[str, object]:
         try:
+            pending = service.get_pending_handoff(run_id)
+            if len(candidates) != pending.request.candidate_count:
+                raise ValueError(
+                    f"import returned {len(candidates)} candidates; expected {pending.request.candidate_count}"
+                )
             source: DeclaredSource = "CHATGPT_INCLUDED"
             imported = []
             for index, upload in enumerate(candidates):
