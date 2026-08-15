@@ -16,6 +16,7 @@ let studioConfig = { project_id: null, delivery_eligible: false, engine_provenan
 const status = document.querySelector("#status");
 const candidateGrid = document.querySelector("#candidate-grid");
 const confirmDeliveryButton = document.querySelector("#confirm-delivery-button");
+const downloadCopyButton = document.querySelector("#download-copy-button");
 
 function resetRunState() {
   currentRunId = null;
@@ -23,6 +24,8 @@ function resetRunState() {
   currentRunDeliveryEligible = false;
   candidateGrid.replaceChildren();
   confirmDeliveryButton.disabled = true;
+  downloadCopyButton.disabled = true;
+  downloadCopyButton.dataset.url = "";
   document.querySelector("#run-result").hidden = true;
   document.querySelector("#delivery-result").textContent = "";
   document.querySelector("#resolved-prompt").textContent = "";
@@ -189,6 +192,8 @@ function renderCandidates(run) {
     radio.addEventListener("change", () => {
       selectedCandidate = index;
       confirmDeliveryButton.disabled = !currentRunDeliveryEligible;
+      downloadCopyButton.disabled = true;
+      downloadCopyButton.dataset.url = "";
       document.querySelector("#delivery-result").textContent = "";
     });
     const image = document.createElement("img");
@@ -238,6 +243,8 @@ document.querySelector("#expression-form").addEventListener("submit", async (eve
       `${editDetail} · 원본 SHA-256: ${run.lineage.anchor_sha256}`;
     document.querySelector("#delivery-result").textContent = "";
     confirmDeliveryButton.disabled = true;
+    downloadCopyButton.disabled = true;
+    downloadCopyButton.dataset.url = "";
     renderCandidates(run);
     status.textContent = run.run_mode === "subscription_handoff_import"
       ? `${run.cost.cost_route} · provider_call_made=false · 후보를 비교하고 하나를 선택하세요.`
@@ -250,6 +257,8 @@ document.querySelector("#expression-form").addEventListener("submit", async (eve
 confirmDeliveryButton.addEventListener("click", async () => {
   if (currentRunId === null || selectedCandidate === null) return;
   confirmDeliveryButton.disabled = true;
+  downloadCopyButton.disabled = true;
+  downloadCopyButton.dataset.url = "";
   status.textContent = `후보 ${selectedCandidate + 1}을 확정하고 프로젝트 저장 및 Figma 전달을 준비하는 중입니다…`;
   try {
     const result = await request(`/api/runs/${currentRunId}/confirm-delivery`, {
@@ -258,22 +267,39 @@ confirmDeliveryButton.addEventListener("click", async () => {
       body: JSON.stringify({ selected_candidate: selectedCandidate }),
     });
     const deliveryLabel = result.figma_delivery === "VERIFIED" ? "검증 완료" : "전달 대기";
+    downloadCopyButton.dataset.url = result.download_url;
+    downloadCopyButton.disabled = result.download_state !== "DOWNLOAD_READY";
     document.querySelector("#delivery-result").textContent = [
       `프로젝트 저장       ${result.project_save}`,
       `Figma 전달          ${result.figma_delivery}`,
       `Figma 상태          ${deliveryLabel}`,
+      `PC 다운로드         ${result.download_state}`,
       `Figma 대상          ${result.target_node_name}`,
       `전달 ID             ${result.delivery_id}`,
       `SHA-256             ${result.content_sha256}`,
     ].join("\n");
     status.textContent = result.figma_delivery === "VERIFIED"
-      ? `후보 ${selectedCandidate + 1} 확정 · 프로젝트 저장 및 Figma 전달 검증이 완료되었습니다.`
-      : `후보 ${selectedCandidate + 1} 확정 · 프로젝트 저장 완료 · ${result.target_node_name} 전달 대기열에 등록했습니다.`;
+      ? `후보 ${selectedCandidate + 1} 확정 · 프로젝트 저장 및 Figma 전달 검증이 완료되었습니다. PC 사본도 선택적으로 받을 수 있습니다.`
+      : `후보 ${selectedCandidate + 1} 확정 · 프로젝트 저장 완료 · ${result.target_node_name} 전달 대기열에 등록했습니다. PC 사본은 별도 버튼으로 받을 수 있습니다.`;
   } catch (error) {
+    downloadCopyButton.disabled = true;
+    downloadCopyButton.dataset.url = "";
     status.textContent = error.message;
   } finally {
     confirmDeliveryButton.disabled = !currentRunDeliveryEligible || selectedCandidate === null;
   }
+});
+
+downloadCopyButton.addEventListener("click", () => {
+  const url = downloadCopyButton.dataset.url;
+  if (!url) return;
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "";
+  link.hidden = true;
+  document.body.append(link);
+  link.click();
+  link.remove();
 });
 
 async function bootstrap() {
