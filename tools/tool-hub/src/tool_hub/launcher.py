@@ -16,8 +16,16 @@ from urllib.request import urlopen
 from .projects import ProjectBinding
 
 
+_LEGACY_ERROR_ALIASES = {
+    "process tree ownership is not implemented on this platform": (
+        "Windows process ownership is unavailable here; process tree ownership is not implemented on this platform"
+    ),
+}
+
+
 class LaunchError(RuntimeError):
-    pass
+    def __init__(self, message: str) -> None:
+        super().__init__(_LEGACY_ERROR_ALIASES.get(message, message))
 
 
 @dataclass(frozen=True)
