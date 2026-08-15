@@ -18,6 +18,7 @@ from tool_hub.projects import ProjectLocator
 
 DELIVERY_TOKEN_ENV = "BASE_TOOL_HUB_DELIVERY_TOKEN"
 DELIVERY_ORIGIN_ENV = "BASE_TOOL_HUB_DELIVERY_ORIGIN"
+_PRIVATE_TOKEN = "private-child-token-12345678901234567890"
 
 
 def test_child_environment_injects_private_hub_delivery_identity(
@@ -42,7 +43,7 @@ def test_child_environment_injects_private_hub_delivery_identity(
 
 
 def test_supervisor_delivery_token_is_bound_to_one_running_child(tmp_path: Path) -> None:
-    token = "private-child-token-12345678901234567890"
+    token = _PRIVATE_TOKEN
     supervisor = ProcessSupervisor(
         tmp_path / "runtime",
         tmp_path / "base",
@@ -74,7 +75,7 @@ def test_supervisor_delivery_token_is_bound_to_one_running_child(tmp_path: Path)
 
 
 def test_public_log_tail_redacts_private_delivery_token(tmp_path: Path) -> None:
-    token = "private-child-token-12345678901234567890"
+    token = _PRIVATE_TOKEN
     supervisor = ProcessSupervisor(
         tmp_path / "runtime",
         tmp_path / "base",
@@ -120,18 +121,27 @@ def _registered_hub(tmp_path: Path) -> TestClient:
     return client
 
 
-def test_internal_studio_delivery_requires_live_child_token_and_is_idempotent(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    client = _registered_hub(tmp_path)
-    private_token = "private-child-token-12345678901234567890"
-
+def _authorize_expression_child(monkeypatch: pytest.MonkeyPatch) -> None:
     def authorize(self: ProcessSupervisor, token: str) -> tuple[str, str]:
-        if token != private_token:
+        if token != _PRIVATE_TOKEN:
             raise LaunchError("studio delivery credential is invalid")
         return ("expression-studio", "coc-fiction")
 
     monkeypatch.setattr(ProcessSupervisor, "authorize_delivery_token", authorize)
+
+
+def _studio_headers() -> dict[str, str]:
+    return {
+        "Authorization": f"Bearer {_PRIVATE_TOKEN}",
+        "Content-Type": "image/png",
+    }
+
+
+def test_internal_studio_delivery_requires_live_child_token_and_is_idempotent(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client = _registered_hub(tmp_path)
+    _authorize_expression_child(monkeypatch)
     payload = png_bytes(2, 1)
 
     unauthorized = client.post(
@@ -141,12 +151,8 @@ def test_internal_studio_delivery_requires_live_child_token_and_is_idempotent(
     )
     assert unauthorized.status_code == 401
 
-    headers = {
-        "Authorization": f"Bearer {private_token}",
-        "Content-Type": "image/png",
-    }
-    first = client.post("/internal/studio-delivery/run-confirmed", content=payload, headers=headers)
-    second = client.post("/internal/studio-delivery/run-confirmed", content=payload, headers=headers)
+    first = client.post("/internal/studio-delivery/run-confirmed", content=payload, headers=_studio_headers())
+    second = client.post("/internal/studio-delivery/run-confirmed", content=payload, headers=_studio_headers())
 
     assert first.status_code == 201, first.text
     assert second.status_code == 200, second.text
@@ -162,7 +168,79 @@ def test_internal_studio_delivery_requires_live_child_token_and_is_idempotent(
     changed = client.post(
         "/internal/studio-delivery/run-confirmed",
         content=png_bytes(1, 1),
-        headers=headers,
+        headers=_studio_headers(),
     )
     assert changed.status_code == 409
     assert changed.json()["detail"] == "DELIVERY_RUN_CONTENT_MISMATCH"
+
+
+def test_unpaired_confirm_creates_one_reusable_project_pairing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client = _registered_hub(tmp_path)
+    _authorize_expression_child(monkeypatch)
+    payload = png_bytes(2, 1)
+
+    first = client.post("/internal/studio-delivery/run-pairing", content=payload, headers=_studio_headers())
+    retry = client.post("/internal/studio-delivery/run-pairing", content=payload, headers=_studio_headers())
+
+    assert first.status_code == 201, first.text
+    body = first.json()
+    assert body["bridge_state"] == "PAIRING_REQUIRED"
+    assert body["delivery_state"] == "DELIVERY_PENDING"
+    assert body["figma_url"].startswith("https://www.figma.com/design/")
+    assert len(body["pairing_code"]) == 6
+    assert body["pairing_expires_at"] > 0
+    assert retry.json()["pairing_code"] == body["pairing_code"]
+    for forbidden in ("figma_file_key", "project_root", "generation_area_node_id"):
+        assert forbidden not in first.text
+
+
+def test_internal_delivery_status_reflects_bridge_pair_and_verified_receipt(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client = _registered_hub(tmp_path)
+    _authorize_expression_child(monkeypatch)
+    queued = client.post(
+        "/internal/studio-delivery/run-verified",
+        content=png_bytes(2, 1),
+        headers=_studio_headers(),
+    ).json()
+
+    paired = client.post(
+        "/bridge/pair",
+        json={"pairing_code": queued["pairing_code"], "bridge_version": "bridge-test"},
+    )
+    assert paired.status_code == 200, paired.text
+    bridge_auth = {"Authorization": f"Bearer {paired.json()['token']}"}
+    claimed = client.get("/bridge/jobs/next", headers=bridge_auth).json()
+    assert claimed["delivery_id"] == queued["delivery_id"]
+    receipt = client.post(
+        f"/bridge/jobs/{queued['delivery_id']}/receipt",
+        json={
+            "created_node_id": "999:1000",
+            "created_node_name": claimed["node_name"],
+            "target_node_id": claimed["target_node_id"],
+            "content_sha256": claimed["content_sha256"],
+            "bridge_version": "bridge-test",
+            "image_hash": "figma-image-hash",
+        },
+        headers=bridge_auth,
+    )
+    assert receipt.status_code == 200, receipt.text
+
+    status = client.get(
+        f"/internal/studio-delivery/{queued['delivery_id']}/status",
+        headers={"Authorization": f"Bearer {_PRIVATE_TOKEN}"},
+    )
+
+    assert status.status_code == 200, status.text
+    body = status.json()
+    assert body["status"] == "DELIVERED_VERIFIED"
+    assert body["bridge_state"] == "BRIDGE_PAIRED"
+    assert body["delivery_state"] == "FIGMA_DELIVERED_VERIFIED"
+    assert body["delivery_id"] == queued["delivery_id"]
+    assert body["tool_route_id"] == "character_expression_runs"
+    assert body["target_node_name"] == "Expression Runs"
+    assert body["figma_url"].startswith("https://www.figma.com/design/")
+    assert "pairing_code" not in body
