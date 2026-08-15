@@ -11,10 +11,17 @@ const intensities = ["A", "B", "C", "D", "E"];
 let currentRunId = null;
 let selectedCandidate = null;
 let currentRunDeliveryEligible = false;
+let pendingHandoffRunId = null;
+let pendingHandoffCandidateCount = null;
 let studioConfig = { project_id: null, delivery_eligible: false, engine_provenance: "unavailable" };
 
 const status = document.querySelector("#status");
 const candidateGrid = document.querySelector("#candidate-grid");
+const candidateFiles = document.querySelector("#candidate-files");
+const prepareHandoffButton = document.querySelector("#prepare-handoff-button");
+const importHandoffButton = document.querySelector("#import-handoff-button");
+const handoffPrompt = document.querySelector("#handoff-prompt");
+const handoffRunInfo = document.querySelector("#handoff-run-info");
 const confirmDeliveryButton = document.querySelector("#confirm-delivery-button");
 const downloadCopyButton = document.querySelector("#download-copy-button");
 const figmaOpenLink = document.querySelector("#figma-open-link");
@@ -43,6 +50,25 @@ function resetRunState() {
   document.querySelector("#delivery-result").textContent = "";
   document.querySelector("#resolved-prompt").textContent = "";
   document.querySelector("#review-metadata").textContent = "";
+}
+
+function resetHandoffState() {
+  pendingHandoffRunId = null;
+  pendingHandoffCandidateCount = null;
+  handoffPrompt.value = "";
+  handoffPrompt.hidden = true;
+  handoffRunInfo.textContent = "";
+  handoffRunInfo.hidden = true;
+  importHandoffButton.disabled = true;
+}
+
+function updateHandoffImportButton() {
+  const importMode = studioConfig.run_mode === "subscription_handoff_import";
+  const fileCount = candidateFiles.files.length;
+  importHandoffButton.disabled = !importMode
+    || pendingHandoffRunId === null
+    || pendingHandoffCandidateCount === null
+    || fileCount !== pendingHandoffCandidateCount;
 }
 
 function trustedFigmaUrl(value) {
@@ -74,7 +100,7 @@ function updateSubmitLabel() {
   const importMode = studioConfig.run_mode === "subscription_handoff_import";
   const noun = editModeLabel();
   document.querySelector("#submit-button").textContent = importMode
-    ? `${noun} 후보 가져오기 및 검증`
+    ? `${noun} 기타 후보 직접 가져오기`
     : `${noun} 후보 생성`;
 }
 
@@ -82,18 +108,22 @@ function applyRunModeUi() {
   const importMode = studioConfig.run_mode === "subscription_handoff_import";
   const openaiMode = studioConfig.run_mode === "openai";
   document.querySelector("#import-controls").hidden = !importMode;
-  document.querySelector("#candidate-files").required = importMode;
-  document.querySelector("#candidate-files").disabled = !importMode;
+  document.querySelector("#handoff-controls").hidden = !importMode;
+  candidateFiles.required = importMode;
+  candidateFiles.disabled = !importMode;
+  prepareHandoffButton.disabled = !importMode;
   document.querySelector("#declared-source").disabled = !importMode;
+  if (!importMode) resetHandoffState();
   document.querySelector("#cost-title").textContent = importMode
     ? "추가 비용 없는 가져오기"
     : openaiMode ? "OpenAI API 별도 과금 모드" : "시뮬레이션 검토 모드";
   document.querySelector("#cost-detail").textContent = importMode
-    ? "ChatGPT·Figma 구독 또는 로컬 도구에서 만든 이미지를 검증하며, 이 도구는 유료 API를 호출하지 않습니다."
+    ? "ChatGPT Pro 구독 handoff 또는 Figma·로컬 도구에서 만든 이미지를 검증하며, 이 기본 경로는 유료 API를 호출하지 않습니다."
     : openaiMode
       ? "ChatGPT 구독과 별개인 OpenAI API 크레딧을 사용합니다. 요청 실행 시 비용이 발생할 수 있습니다."
       : "테스트 후보만 만들며 provider를 호출하지 않고 내보내기와 Figma 전달을 차단합니다.";
   updateSubmitLabel();
+  updateHandoffImportButton();
 }
 
 function applyEditModeUi() {
@@ -231,6 +261,35 @@ function renderCandidates(run) {
   }
 }
 
+function renderImportedRun(run, payload) {
+  if (run.status === "blocked") {
+    resetRunState();
+    status.textContent = `생성 차단됨 · ${(run.warnings || []).join(" ") || "엔진 결과를 검증할 수 없습니다."}`;
+    return;
+  }
+  currentRunId = run.run_id;
+  currentRunDeliveryEligible = Boolean(run.engine.delivery_eligible);
+  document.querySelector("#run-result").hidden = false;
+  document.querySelector("#resolved-prompt").textContent = run.generation_instruction;
+  const resolvedControls = run.resolved_expression.controls
+    .map((control) => `${control.code} (강도 ${control.intensity}${control.side ? `, 캐릭터 기준 ${control.side}` : ""})`)
+    .join(", ") || "없음";
+  const editDetail = payload.edit_mode === "expression"
+    ? `해석된 제어: ${resolvedControls}`
+    : `변경 모드: ${editModeLabel(payload.edit_mode)} · 변경 요청: ${payload.edit_prompt}`;
+  document.querySelector("#review-metadata").textContent =
+    `${editDetail} · 원본 SHA-256: ${run.lineage.anchor_sha256}`;
+  document.querySelector("#delivery-result").textContent = "";
+  confirmDeliveryButton.disabled = true;
+  resetDeliveryActions();
+  renderCandidates(run);
+  status.textContent = run.run_mode === "subscription_handoff_import"
+    ? `${run.cost.cost_route} · provider_call_made=false · 후보를 비교하고 하나를 선택하세요.`
+    : currentRunDeliveryEligible
+      ? "후보를 비교하고 하나를 선택하세요."
+      : `${studioConfig.engine_provenance.toUpperCase()} / DELIVERY_BLOCKED · 후보 검토만 가능하며 확정 및 전달은 차단됩니다.`;
+}
+
 function applyDeliveryResult(result) {
   if (typeof result.delivery_status_url !== "string" || result.delivery_status_url !== `/api/runs/${currentRunId}/delivery-status`) {
     throw new Error("검증되지 않은 전달 상태 경로입니다.");
@@ -282,17 +341,86 @@ function applyDeliveryResult(result) {
   }
 }
 
+prepareHandoffButton.addEventListener("click", async () => {
+  resetRunState();
+  resetHandoffState();
+  try {
+    if (studioConfig.run_mode !== "subscription_handoff_import") {
+      throw new Error("ChatGPT Pro handoff는 구독 가져오기 모드에서만 사용할 수 있습니다.");
+    }
+    const payload = requestPayload();
+    status.textContent = `${editModeLabel(payload.edit_mode)}용 ChatGPT Pro handoff Run과 프롬프트를 준비하는 중입니다…`;
+    const result = await request("/api/handoff-runs", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (
+      typeof result.run_id !== "string" || !/^[0-9a-f]{32}$/.test(result.run_id)
+      || result.state !== "GPT_PRO_HANDOFF_READY"
+      || result.generation_surface !== "CHATGPT_PRO_SUBSCRIPTION"
+      || result.run_mode !== "subscription_handoff_import"
+      || result.declared_source !== "CHATGPT_INCLUDED"
+      || result.provider_call_made !== false
+      || result.requires_additional_payment !== false
+      || typeof result.prompt !== "string"
+      || !result.generation
+      || Number(result.generation.expected_png_count) !== payload.candidate_count
+    ) {
+      throw new Error("ChatGPT Pro handoff 응답이 검토된 구독 계약과 일치하지 않습니다.");
+    }
+    pendingHandoffRunId = result.run_id;
+    pendingHandoffCandidateCount = Number(result.generation.expected_png_count);
+    handoffPrompt.value = result.prompt;
+    handoffPrompt.hidden = false;
+    handoffRunInfo.textContent = `준비된 Run: ${result.run_id} · 필요한 PNG ${pendingHandoffCandidateCount}개 · provider_call_made=false`;
+    handoffRunInfo.hidden = false;
+    updateHandoffImportButton();
+    status.textContent = `Run ${result.run_id.slice(0, 12)}… 준비 완료 · 위 프롬프트를 ChatGPT Pro에 사용하고 반환 PNG ${pendingHandoffCandidateCount}개를 후보 이미지에서 선택하세요.`;
+  } catch (error) {
+    resetHandoffState();
+    status.textContent = error.message;
+  }
+});
+
+importHandoffButton.addEventListener("click", async () => {
+  if (pendingHandoffRunId === null || pendingHandoffCandidateCount === null) return;
+  const serverRunId = pendingHandoffRunId;
+  try {
+    const payload = requestPayload();
+    const files = [...candidateFiles.files];
+    if (files.length !== pendingHandoffCandidateCount) {
+      throw new Error(`준비된 Run은 후보 ${pendingHandoffCandidateCount}개를 요구하며 현재 ${files.length}개가 선택되어 있습니다.`);
+    }
+    resetRunState();
+    importHandoffButton.disabled = true;
+    status.textContent = `ChatGPT Pro 반환 PNG를 Run ${serverRunId.slice(0, 12)}…에 검증하여 가져오는 중입니다…`;
+    const body = new FormData();
+    files.forEach((file) => body.append("candidates", file));
+    const run = await request(`/api/handoff-runs/${pendingHandoffRunId}/import`, { method: "POST", body });
+    if (run.run_id !== serverRunId || run.declared_source !== "CHATGPT_INCLUDED" || run.provider_call_made !== false) {
+      throw new Error("가져온 후보가 준비된 ChatGPT Pro Run과 일치하지 않습니다.");
+    }
+    resetHandoffState();
+    renderImportedRun(run, payload);
+  } catch (error) {
+    status.textContent = error.message;
+    updateHandoffImportButton();
+  }
+});
+
 document.querySelector("#expression-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   resetRunState();
+  resetHandoffState();
   try {
     const payload = requestPayload();
     status.textContent = studioConfig.run_mode === "subscription_handoff_import"
-      ? `${editModeLabel(payload.edit_mode)} 후보 파일을 검증하고 가져오는 중입니다…`
+      ? `${editModeLabel(payload.edit_mode)} 후보 파일을 보조 가져오기 경로로 검증하는 중입니다…`
       : `${editModeLabel(payload.edit_mode)} 후보를 생성하는 중입니다…`;
     let run;
     if (studioConfig.run_mode === "subscription_handoff_import") {
-      const files = [...document.querySelector("#candidate-files").files];
+      const files = [...candidateFiles.files];
       if (files.length !== payload.candidate_count) throw new Error(`후보 수 ${payload.candidate_count}개와 선택 파일 ${files.length}개가 같아야 합니다.`);
       const body = new FormData();
       body.append("request_json", JSON.stringify(payload));
@@ -302,32 +430,7 @@ document.querySelector("#expression-form").addEventListener("submit", async (eve
     } else {
       run = await request("/api/runs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
     }
-    if (run.status === "blocked") {
-      resetRunState();
-      status.textContent = `생성 차단됨 · ${(run.warnings || []).join(" ") || "엔진 결과를 검증할 수 없습니다."}`;
-      return;
-    }
-    currentRunId = run.run_id;
-    currentRunDeliveryEligible = Boolean(run.engine.delivery_eligible);
-    document.querySelector("#run-result").hidden = false;
-    document.querySelector("#resolved-prompt").textContent = run.generation_instruction;
-    const resolvedControls = run.resolved_expression.controls
-      .map((control) => `${control.code} (강도 ${control.intensity}${control.side ? `, 캐릭터 기준 ${control.side}` : ""})`)
-      .join(", ") || "없음";
-    const editDetail = payload.edit_mode === "expression"
-      ? `해석된 제어: ${resolvedControls}`
-      : `변경 모드: ${editModeLabel(payload.edit_mode)} · 변경 요청: ${payload.edit_prompt}`;
-    document.querySelector("#review-metadata").textContent =
-      `${editDetail} · 원본 SHA-256: ${run.lineage.anchor_sha256}`;
-    document.querySelector("#delivery-result").textContent = "";
-    confirmDeliveryButton.disabled = true;
-    resetDeliveryActions();
-    renderCandidates(run);
-    status.textContent = run.run_mode === "subscription_handoff_import"
-      ? `${run.cost.cost_route} · provider_call_made=false · 후보를 비교하고 하나를 선택하세요.`
-      : currentRunDeliveryEligible
-        ? "후보를 비교하고 하나를 선택하세요."
-        : `${studioConfig.engine_provenance.toUpperCase()} / DELIVERY_BLOCKED · 후보 검토만 가능하며 확정 및 전달은 차단됩니다.`;
+    renderImportedRun(run, payload);
   } catch (error) { status.textContent = error.message; }
 });
 
@@ -393,9 +496,22 @@ async function bootstrap() {
 buildControlRows();
 document.querySelector("#edit-mode").addEventListener("change", () => {
   resetRunState();
+  resetHandoffState();
   applyEditModeUi();
 });
-document.querySelector("#candidate-files").addEventListener("change", (event) => {
+candidateFiles.addEventListener("change", (event) => {
   document.querySelector("#file-count").textContent = `선택한 후보 ${event.target.files.length}개`;
+  updateHandoffImportButton();
+});
+for (const selector of [
+  "#asset-id", "#source-path", "#figma-url", "#candidate-count", "#gaze", "#head-pose", "#preset",
+  "[data-control-code]", "[data-intensity]", "[data-side]",
+]) {
+  document.querySelectorAll(selector).forEach((element) => element.addEventListener("change", () => {
+    if (pendingHandoffRunId !== null) resetHandoffState();
+  }));
+}
+document.querySelector("#edit-prompt").addEventListener("input", () => {
+  if (pendingHandoffRunId !== null) resetHandoffState();
 });
 bootstrap();
