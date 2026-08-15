@@ -28,6 +28,19 @@ def test_web_confirms_selected_candidate_directly_to_tool_hub_delivery() -> None
     assert "target_node_name" in script
 
 
+def test_web_exposes_optional_download_only_after_confirmation() -> None:
+    html = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
+    script = (WEB_ROOT / "app.js").read_text(encoding="utf-8")
+
+    assert 'id="download-copy-button" type="button" disabled' in html
+    assert "PC 사본 다운로드" in html
+    assert "DOWNLOAD_READY" in script
+    assert "download_url" in script
+    assert "downloadCopyButton.disabled = true" in script
+    assert "downloadCopyButton.disabled = result.download_state !== \"DOWNLOAD_READY\"" in script
+    assert "downloadCopyButton.dataset.url = result.download_url" in script
+
+
 def test_web_renders_resolved_controls_and_anchor_lineage_for_review() -> None:
     html = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
     script = (WEB_ROOT / "app.js").read_text(encoding="utf-8")
@@ -90,5 +103,6 @@ def test_expression_web_clears_previous_run_before_every_new_submission() -> Non
         "currentRunId = null",
         "currentRunDeliveryEligible = false",
         'document.querySelector("#delivery-result").textContent = ""',
+        'downloadCopyButton.dataset.url = ""',
     ):
         assert marker in script
