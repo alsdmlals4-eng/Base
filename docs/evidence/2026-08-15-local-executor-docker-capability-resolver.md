@@ -127,7 +127,19 @@ new_owner_evidence_contract: ERROR
 cause: durable resolver/v4 evidence file absent
 ```
 
-The owner and this evidence record are then updated together. Exact-final-head run IDs are kept in PR/check evidence rather than recursively rewriting this file after every validation.
+The owner and this evidence record were then updated together.
+
+### Final exact-head before merge
+
+Exact reviewed PR head: `3fa0f178eb464e1c9b5341fe3f4d38b93fd257bd`.
+
+- Validate One-Shot Local Executor Bootstrap `31852115644`: PASS.
+- Validate Loop A2 Local Executor `31852115712`: PASS on Ubuntu 24.04 and Windows 2025.
+- Validate Base v9 Operating Contracts `31852115709`: PASS including adversarial gate.
+- Validate Game Project Operating System `31852115699`: PASS including final `ci-gate`.
+- Dependency Review: `NOT_TRIGGERED` on this exact head.
+- unresolved review threads: `0`.
+- submitted review blockers: `0`.
 
 ## Installer/updater v4 behavior
 
@@ -174,16 +186,41 @@ No. It performs bounded process-identity confirmation after daemon start. Failed
 
 No. The provider remains ChatGPT-authenticated Codex with no API-key fallback. A3 stays disabled, Scheduler not configured, and Blacksmith product scope remains unselected.
 
-## Implementation Reality Gate
+## Merge and postmerge closure
 
-Repository evidence currently supports:
+PR #420 was squash-merged from exact reviewed head `3fa0f178eb464e1c9b5341fe3f4d38b93fd257bd`.
 
 ```yaml
-runtime_platform_aware_same_digest_resolver: IMPLEMENTED
-service_runtime_shared_preflight: IMPLEMENTED
-installer_v4_repository_contract: IMPLEMENTED
+merged_main: 118f40c6ecc29ec98ca3265b67cf4fec4abb45c4
+tracking_issue_419: CLOSED_COMPLETED
+same_goal_open_pr_after_merge: NONE
+```
+
+Fresh push validation on exact merged main:
+
+- Validate Loop A2 Local Executor `31852250061`: PASS on Ubuntu 24.04 + Windows 2025.
+- Validate Base v9 Operating Contracts `31852250070`: base-v9-contract PASS + adversarial-gate PASS.
+- Validate Game Project Operating System `31852250010`: docs-validation PASS, Ubuntu contract PASS, publication validation PASS, Windows publication/Tool Hub smoke PASS, final `ci-gate` PASS.
+
+Merged-main readback confirms:
+
+- runtime still resolves the exact reviewed digest through direct inspect, then the bounded Docker server-platform route only if required;
+- service still requires both control-plane and runtime preflight before returning `LOCAL_EXECUTOR_READY`;
+- merged v4 is present at the committed Windows path and preserves the shared-preflight/owned-daemon contract.
+
+`POST_CHANGE_MONITOR_LOOP` found no same-goal duplicate, no code/runtime conflict, and no missing active consumer after the two historical plan/evidence status lines were synchronized by the closure follow-up. Repository implementation classification: `NO_MATERIAL_FOLLOWUP` after that status sync.
+
+## Implementation Reality Gate
+
+Repository evidence now supports:
+
+```yaml
+runtime_platform_aware_same_digest_resolver: MERGED_MAIN_VALIDATED
+service_runtime_shared_preflight: MERGED_MAIN_VALIDATED
+installer_v4_repository_contract: MERGED_MAIN_VALIDATED
 installer_v4_windows_cmd_parse: PASS
-completed_main_reconciliation: PASS
+repository_postmerge_validation: PASS
+tracking_issue_419: CLOSED_COMPLETED
 real_a2_burnin_runs: 0
 live_v4_user_pc_preflight: NOT_RUN
 blacksmith_burnin_retry: NOT_RUN_AFTER_V4
@@ -194,10 +231,10 @@ Repository CI does **not** prove the user's current Docker Desktop image store, 
 ## Remaining live sequence
 
 ```text
-merge #420 + postmerge readback
-→ user runs v4 from merged main
+user runs merged-main v4
 → require LOCAL_EXECUTOR_READY
-→ requeue BS_A2_BURNIN_001 against current Base runtime SHA and Blacksmith authority SHA
+→ re-read current Base main and Blacksmith authority SHA
+→ requeue BS_A2_BURNIN_001
 → require PASS / A2_WAITING_INTEGRATION REAL receipt
 → count real burn-in #1
 → repeat #2 and #3
@@ -208,4 +245,4 @@ A3 and Scheduler remain outside this gate.
 
 ## Rollback
 
-Revert PR #420. The prior Base runtime then returns to the pre-resolver behavior, but the paid API path remains forbidden. User product/save/visual data is not migrated by this change. The local executor state root is preserved and should not be deleted as part of repository rollback.
+Revert PR #420 to remove the resolver/shared-preflight/v4 repository implementation. The paid API path remains forbidden. User product/save/visual data is not migrated by this change. The local executor state root is preserved and should not be deleted as part of repository rollback.
