@@ -28,19 +28,34 @@
           <label>원본 Figma 노드 URL <input id="figma-url" type="url" placeholder="https://www.figma.com/design/..." required></label>
           <label>후보 수 <input id="candidate-count" type="number" min="1" max="8" value="4" required></label>
           <div id="import-controls">
-            <label>이미지 출처
-              <select id="declared-source">
-                <option value="CHATGPT_INCLUDED">ChatGPT 구독 포함 생성</option>
-                <option value="FIGMA_INCLUDED">Figma 구독 포함 생성</option>
-                <option value="LOCAL_GENERATOR">로컬 생성기</option>
-                <option value="OTHER_USER_SUPPLIED">기타 사용자 제공</option>
-              </select>
-            </label>
-            <p class="muted">출처 선택은 구독·라이선스 증명이 아닙니다. 사용 권한과 생성 경로는 프로젝트에서 별도로 확인하세요.</p>
+            <div id="handoff-controls">
+              <h3>ChatGPT Pro 구독 생성</h3>
+              <p class="muted">먼저 현재 요청으로 안전한 프롬프트와 Run을 준비합니다. ChatGPT Pro에서 요청한 수의 PNG를 만든 뒤 아래 후보 이미지에 선택하고 같은 Run으로 가져오세요.</p>
+              <button id="prepare-handoff-button" type="button">ChatGPT Pro 프롬프트 준비</button>
+              <p id="handoff-run-info" hidden></p>
+              <label>ChatGPT Pro 프롬프트
+                <textarea id="handoff-prompt" rows="14" readonly hidden></textarea>
+              </label>
+              <button id="import-handoff-button" type="button" disabled>같은 Run으로 후보 가져오기</button>
+            </div>
+
             <label>후보 이미지
               <input id="candidate-files" name="candidates" type="file" accept="image/png,image/jpeg,image/webp" multiple required>
             </label>
             <p id="file-count">선택한 후보 없음</p>
+
+            <div id="legacy-import-controls">
+              <h3>기타 이미지 가져오기</h3>
+              <label>이미지 출처
+                <select id="declared-source">
+                  <option value="CHATGPT_INCLUDED">ChatGPT 구독 포함 생성</option>
+                  <option value="FIGMA_INCLUDED">Figma 구독 포함 생성</option>
+                  <option value="LOCAL_GENERATOR">로컬 생성기</option>
+                  <option value="OTHER_USER_SUPPLIED">기타 사용자 제공</option>
+                </select>
+              </label>
+              <p class="muted">출처 선택은 구독·라이선스 증명이 아닙니다. 사용 권한과 생성 경로는 프로젝트에서 별도로 확인하세요. 이 경로는 기존 파일을 직접 가져오는 보조 경로입니다.</p>
+            </div>
           </div>
         </section>
 
