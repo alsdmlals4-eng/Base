@@ -28,7 +28,7 @@ from .engine import EngineContractError, FakeExpressionEngine, OpenAIExpressionE
 from .hub_delivery import HubDeliveryError, HubDeliverySender, sender_from_environment
 from .imports import DECLARED_SOURCES, DeclaredSource, read_upload_limited, validate_imported_image
 from .models import ExpressionRequest
-from .service import ExpressionStudioService, RunBlockedError, RunNotFoundError, _read_staged_file
+from .service import ExpressionStudioService, RunBlockedError, RunNotFoundError, _read_project_image, _read_staged_file
 from .security import StudioSecurity, install_security
 
 
@@ -242,11 +242,36 @@ def create_app(
                 "prompt": pending.prompt,
                 "run_mode": pending.packet.import_run_mode,
                 "declared_source": pending.packet.import_declared_source,
+                "anchor_url": f"/api/handoff-runs/{pending.run_id}/anchor",
             }
         except RunBlockedError as error:
             raise HTTPException(status_code=409, detail=str(error)) from error
         except ValueError as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
+
+    @app.get("/api/handoff-runs/{run_id}/anchor")
+    def handoff_anchor(run_id: str) -> Response:
+        try:
+            pending = service.get_pending_handoff(run_id)
+            anchor_bytes = _read_project_image(
+                project_root,
+                pending.request.anchor.source_path,
+                expected_sha256=pending.anchor_sha256,
+            )
+            if hashlib.sha256(anchor_bytes).hexdigest() != pending.packet.source_sha256:
+                raise RunBlockedError("approved handoff source changed after preparation")
+            return Response(
+                content=anchor_bytes,
+                media_type="image/png",
+                headers={
+                    "Content-Disposition": f'attachment; filename="{pending.packet.source_filename}"',
+                    "X-Content-SHA256": pending.packet.source_sha256,
+                },
+            )
+        except RunNotFoundError as error:
+            raise HTTPException(status_code=404, detail="run not found") from error
+        except (RunBlockedError, ValueError) as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
 
     @app.post("/api/handoff-runs/{run_id}/import", status_code=201)
     async def import_handoff(
