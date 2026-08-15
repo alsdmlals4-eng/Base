@@ -17,6 +17,20 @@ const status = document.querySelector("#status");
 const candidateGrid = document.querySelector("#candidate-grid");
 const confirmDeliveryButton = document.querySelector("#confirm-delivery-button");
 const downloadCopyButton = document.querySelector("#download-copy-button");
+const figmaOpenLink = document.querySelector("#figma-open-link");
+const pairingInfo = document.querySelector("#pairing-info");
+const refreshDeliveryButton = document.querySelector("#refresh-delivery-button");
+
+function resetDeliveryActions() {
+  downloadCopyButton.disabled = true;
+  downloadCopyButton.dataset.url = "";
+  figmaOpenLink.hidden = true;
+  figmaOpenLink.removeAttribute("href");
+  pairingInfo.hidden = true;
+  pairingInfo.textContent = "";
+  refreshDeliveryButton.disabled = true;
+  refreshDeliveryButton.dataset.url = "";
+}
 
 function resetRunState() {
   currentRunId = null;
@@ -24,12 +38,26 @@ function resetRunState() {
   currentRunDeliveryEligible = false;
   candidateGrid.replaceChildren();
   confirmDeliveryButton.disabled = true;
-  downloadCopyButton.disabled = true;
-  downloadCopyButton.dataset.url = "";
+  resetDeliveryActions();
   document.querySelector("#run-result").hidden = true;
   document.querySelector("#delivery-result").textContent = "";
   document.querySelector("#resolved-prompt").textContent = "";
   document.querySelector("#review-metadata").textContent = "";
+}
+
+function trustedFigmaUrl(value) {
+  const parsed = new URL(value);
+  if (
+    parsed.protocol !== "https:" ||
+    parsed.hostname !== "www.figma.com" ||
+    !parsed.pathname.startsWith("/design/") ||
+    parsed.username ||
+    parsed.password ||
+    (parsed.port && parsed.port !== "443")
+  ) {
+    throw new Error("검증되지 않은 Figma 주소는 열 수 없습니다.");
+  }
+  return parsed.toString();
 }
 
 function currentEditMode() {
@@ -192,8 +220,7 @@ function renderCandidates(run) {
     radio.addEventListener("change", () => {
       selectedCandidate = index;
       confirmDeliveryButton.disabled = !currentRunDeliveryEligible;
-      downloadCopyButton.disabled = true;
-      downloadCopyButton.dataset.url = "";
+      resetDeliveryActions();
       document.querySelector("#delivery-result").textContent = "";
     });
     const image = document.createElement("img");
@@ -201,6 +228,57 @@ function renderCandidates(run) {
     image.alt = `캐릭터 편집 후보 ${index + 1}`;
     card.append(radio, document.createTextNode(` 후보 ${index + 1}`), image);
     candidateGrid.append(card);
+  }
+}
+
+function applyDeliveryResult(result) {
+  if (typeof result.delivery_status_url !== "string" || result.delivery_status_url !== `/api/runs/${currentRunId}/delivery-status`) {
+    throw new Error("검증되지 않은 전달 상태 경로입니다.");
+  }
+  downloadCopyButton.dataset.url = result.download_url;
+  downloadCopyButton.disabled = result.download_state !== "DOWNLOAD_READY";
+  figmaOpenLink.href = trustedFigmaUrl(result.figma_url);
+  figmaOpenLink.hidden = false;
+  refreshDeliveryButton.dataset.url = result.delivery_status_url;
+  refreshDeliveryButton.disabled = result.figma_delivery === "VERIFIED" || result.figma_delivery === "EXPIRED";
+
+  if (result.bridge_state === "PAIRING_REQUIRED") {
+    if (typeof result.pairing_code !== "string" || !/^\d{6}$/.test(result.pairing_code)) {
+      throw new Error("Figma 연결 코드가 유효하지 않습니다.");
+    }
+    pairingInfo.hidden = false;
+    pairingInfo.textContent = `Figma Bridge 연결 필요 · Figma 파일에서 Base Tool Hub Figma Bridge를 열고 연결 코드 ${result.pairing_code}를 입력하세요.`;
+  } else {
+    pairingInfo.hidden = true;
+    pairingInfo.textContent = "";
+  }
+
+  const deliveryLabel = result.figma_delivery === "VERIFIED"
+    ? "검증 완료"
+    : result.figma_delivery === "BRIDGE_REQUIRED"
+      ? "연결 필요"
+      : result.figma_delivery === "EXPIRED" ? "만료" : "전달 대기";
+  const lines = [
+    `프로젝트 저장       ${result.project_save}`,
+    `Figma 전달          ${result.figma_delivery}`,
+    `Figma 상태          ${deliveryLabel}`,
+    `Bridge 상태         ${result.bridge_state}`,
+    `PC 다운로드         ${result.download_state}`,
+    `Figma 대상          ${result.target_node_name}`,
+    `전달 ID             ${result.delivery_id}`,
+    `SHA-256             ${result.content_sha256}`,
+  ];
+  if (result.bridge_state === "PAIRING_REQUIRED") lines.push(`연결 코드            ${result.pairing_code}`);
+  document.querySelector("#delivery-result").textContent = lines.join("\n");
+
+  if (result.figma_delivery === "VERIFIED") {
+    status.textContent = `후보 ${selectedCandidate + 1} 확정 · 프로젝트 저장 및 Figma readback 검증이 완료되었습니다. PC 사본도 선택적으로 받을 수 있습니다.`;
+  } else if (result.bridge_state === "PAIRING_REQUIRED") {
+    status.textContent = `후보 ${selectedCandidate + 1} 확정 · 프로젝트 저장 완료 · Figma Bridge 연결이 필요합니다. Figma 열기 후 6자리 연결 코드를 입력하세요.`;
+  } else if (result.figma_delivery === "EXPIRED") {
+    status.textContent = `후보 ${selectedCandidate + 1}의 프로젝트 저장은 유지됐지만 Figma 전달 작업이 만료되었습니다.`;
+  } else {
+    status.textContent = `후보 ${selectedCandidate + 1} 확정 · 프로젝트 저장 완료 · ${result.target_node_name} 전달이 진행 중입니다.`;
   }
 }
 
@@ -243,8 +321,7 @@ document.querySelector("#expression-form").addEventListener("submit", async (eve
       `${editDetail} · 원본 SHA-256: ${run.lineage.anchor_sha256}`;
     document.querySelector("#delivery-result").textContent = "";
     confirmDeliveryButton.disabled = true;
-    downloadCopyButton.disabled = true;
-    downloadCopyButton.dataset.url = "";
+    resetDeliveryActions();
     renderCandidates(run);
     status.textContent = run.run_mode === "subscription_handoff_import"
       ? `${run.cost.cost_route} · provider_call_made=false · 후보를 비교하고 하나를 선택하세요.`
@@ -257,8 +334,7 @@ document.querySelector("#expression-form").addEventListener("submit", async (eve
 confirmDeliveryButton.addEventListener("click", async () => {
   if (currentRunId === null || selectedCandidate === null) return;
   confirmDeliveryButton.disabled = true;
-  downloadCopyButton.disabled = true;
-  downloadCopyButton.dataset.url = "";
+  resetDeliveryActions();
   status.textContent = `후보 ${selectedCandidate + 1}을 확정하고 프로젝트 저장 및 Figma 전달을 준비하는 중입니다…`;
   try {
     const result = await request(`/api/runs/${currentRunId}/confirm-delivery`, {
@@ -266,27 +342,25 @@ confirmDeliveryButton.addEventListener("click", async () => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ selected_candidate: selectedCandidate }),
     });
-    const deliveryLabel = result.figma_delivery === "VERIFIED" ? "검증 완료" : "전달 대기";
-    downloadCopyButton.dataset.url = result.download_url;
-    downloadCopyButton.disabled = result.download_state !== "DOWNLOAD_READY";
-    document.querySelector("#delivery-result").textContent = [
-      `프로젝트 저장       ${result.project_save}`,
-      `Figma 전달          ${result.figma_delivery}`,
-      `Figma 상태          ${deliveryLabel}`,
-      `PC 다운로드         ${result.download_state}`,
-      `Figma 대상          ${result.target_node_name}`,
-      `전달 ID             ${result.delivery_id}`,
-      `SHA-256             ${result.content_sha256}`,
-    ].join("\n");
-    status.textContent = result.figma_delivery === "VERIFIED"
-      ? `후보 ${selectedCandidate + 1} 확정 · 프로젝트 저장 및 Figma 전달 검증이 완료되었습니다. PC 사본도 선택적으로 받을 수 있습니다.`
-      : `후보 ${selectedCandidate + 1} 확정 · 프로젝트 저장 완료 · ${result.target_node_name} 전달 대기열에 등록했습니다. PC 사본은 별도 버튼으로 받을 수 있습니다.`;
+    applyDeliveryResult(result);
   } catch (error) {
-    downloadCopyButton.disabled = true;
-    downloadCopyButton.dataset.url = "";
+    resetDeliveryActions();
     status.textContent = error.message;
   } finally {
     confirmDeliveryButton.disabled = !currentRunDeliveryEligible || selectedCandidate === null;
+  }
+});
+
+refreshDeliveryButton.addEventListener("click", async () => {
+  if (!refreshDeliveryButton.dataset.url) return;
+  refreshDeliveryButton.disabled = true;
+  status.textContent = "Figma 전달 상태와 readback 영수증을 확인하는 중입니다…";
+  try {
+    const result = await request(refreshDeliveryButton.dataset.url);
+    applyDeliveryResult(result);
+  } catch (error) {
+    status.textContent = error.message;
+    refreshDeliveryButton.disabled = false;
   }
 });
 
