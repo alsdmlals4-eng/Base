@@ -88,6 +88,14 @@ class SkillSystemCoverageTests(unittest.TestCase):
             "MISSING_OPTIONAL_CLI",
             "BLOCKED_UNVERIFIED",
             "update_ref(force=false)",
+            "PROVISIONAL_INTEGRATION",
+            "owner_pr_head_shas",
+            "provisional_overlap_paths",
+            "provisional_semantic_resources",
+            "explicit user authorization",
+            "owner PR branches",
+            "semantic reconciliation",
+            "must not merge",
         ):
             self.assertIn(token, skill)
 
