@@ -150,7 +150,10 @@ def child_environment(context: LaunchContext, adapter_sha256: str, root_fingerpr
         environment["BASE_TOOL_HUB_DELIVERY_ORIGIN"] = _validated_hub_origin(context.hub_origin)
         environment["BASE_TOOL_HUB_DELIVERY_TOKEN"] = context.delivery_token
     if os.name == "nt":
-        for name in ("SystemRoot", "WINDIR"):
+        # Keep PATH isolated. These fixed Windows locator variables are the only
+        # additional inputs used by the reviewed Git resolver to find standard
+        # Git for Windows installations.
+        for name in ("SystemRoot", "WINDIR", "ProgramFiles", "ProgramFiles(x86)", "LOCALAPPDATA"):
             if value := os.environ.get(name):
                 environment[name] = value
     return MappingProxyType(environment)
