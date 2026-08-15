@@ -27,7 +27,12 @@ _GIT_OVERRIDES = (
 )
 
 
+def _reviewed_launch_supported() -> bool:
+    return (sys.platform == "linux" and Path("/proc/self/fd").is_dir()) or sys.platform == "win32"
+
+
 def _descriptor_launch_supported() -> bool:
+    """Compatibility alias used by older tests; descriptor binding remains Linux-only."""
     return sys.platform == "linux" and Path("/proc/self/fd").is_dir()
 
 
@@ -101,10 +106,11 @@ def load_reviewed_tools(
     launch_supported: bool | None = None,
 ) -> tuple[dict[str, object], ...]:
     root = base_root.resolve()
-    supported = _descriptor_launch_supported() if launch_supported is None else launch_supported
+    supported = _reviewed_launch_supported() if launch_supported is None else launch_supported
+    descriptor_supported = _descriptor_launch_supported()
     try:
         validator_relative = Path("tools/validate_tool_registry.py")
-        committed_reader = assert_committed_file if supported else _portable_committed_file
+        committed_reader = assert_committed_file if descriptor_supported else _portable_committed_file
         validator_bytes = committed_reader(root, validator_relative)
         committed_reader(root, Path("tools/TOOL_REGISTRY.json"))
         committed_reader(root, Path("schemas/base-tool-registry-v1.schema.json"))
@@ -116,7 +122,11 @@ def load_reviewed_tools(
     exec(compile(validator_bytes, str(validator_path), "exec"), module.__dict__)
     try:
         reviewed = module.load_registry(base_root, base_root / "tools" / "TOOL_REGISTRY.json")
-        interpreter = root / ".venv" / "bin" / "python"
+        interpreter = (
+            root / ".venv" / "Scripts" / "python.exe"
+            if sys.platform == "win32"
+            else root / ".venv" / "bin" / "python"
+        )
         pinned: list[dict[str, object]] = []
         for raw in reviewed:
             tool = dict(raw)
