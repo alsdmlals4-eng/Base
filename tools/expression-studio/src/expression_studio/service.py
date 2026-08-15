@@ -281,15 +281,18 @@ class ExpressionStudioService:
         self._pending_handoffs[run_id] = pending
         return pending
 
+    def get_pending_handoff(self, run_id: str) -> PendingHandoff:
+        try:
+            return self._pending_handoffs[run_id]
+        except KeyError as error:
+            raise RunNotFoundError(run_id) from error
+
     def import_subscription_handoff(
         self,
         run_id: str,
         candidates: tuple[ImportedImage, ...],
     ) -> RunRecord:
-        try:
-            pending = self._pending_handoffs[run_id]
-        except KeyError as error:
-            raise RunNotFoundError(run_id) from error
+        pending = self.get_pending_handoff(run_id)
         if self._registry is None or self._anchor_registry is None:
             raise ValueError("ChatGPT Pro handoff evidence is unavailable during import")
         try:
