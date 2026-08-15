@@ -6,6 +6,7 @@ on:
       - "tools/tool-hub/**"
       - "tools/figma-bridge/**"
       - "docs/operations/PROJECT_FIGMA_TARGET_REGISTRY.json"
+      - "docs/operations/PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json"
       - ".github/workflows/validate-provisional-figma-integration.yml"
   workflow_dispatch:
 
@@ -60,3 +61,4 @@ jobs:
           tools/tool-hub/tests/test_figma_delivery_concurrency.py
           tools/tool-hub/tests/test_figma_bridge_api.py
           tools/tool-hub/tests/test_figma_plugin_contract.py
+          tools/tool-hub/tests/test_figma_exact_tool_route.py
