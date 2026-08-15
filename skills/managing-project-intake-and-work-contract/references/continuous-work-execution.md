@@ -62,7 +62,13 @@ explicit user-directed continue
 → current completed main 확인
 → current completed main에서 새 branch 생성
 → separate branch/PR로 승인 범위 구현
-→ exact-head 검증
+→ synchronizing-local-and-github-state의 concurrent preflight
+   ├─ NO_OVERLAP → 일반 separate PR 검증/병합 Gate
+   └─ SAME_GOAL / PATH_OVERLAP / SEMANTIC_OVERLAP + explicit user authorization
+      → PROVISIONAL_INTEGRATION
+      → owner PR branches read-only
+      → owner/main 이동마다 semantic reconciliation + exact-head 재검증
+      → owner가 해결되기 전에는 merge하지 않는다
 → merge 직전 current main + same-goal PR 상태 재확인
    ├─ 다른 PR이 먼저 병합됨 → 이미 landed 된 중복 부분 제거, 남은 material delta만 유지
    └─ material delta 없음 → own PR을 superseded로 닫고 불필요한 churn 금지
@@ -70,7 +76,10 @@ explicit user-directed continue
 
 - `USER_DIRECTED_PARALLEL_PR`은 다른 `in-progress PR`의 branch·commit·review 상태를 소유하거나 채택하는 권한이 아니다.
 - unmerged PR의 구현은 canonical current state가 아니다. 새 작업 기준선은 항상 **current completed main**이다.
-- path overlap이 있어도 명시적 사용자 지시가 있으면 `separate branch/PR`을 만들 수 있지만, 병합은 최신 main에서 비충돌 material delta가 확인될 때까지 보류한다.
+- 새 PR을 **시작하는 권한**과 실제 overlap을 **병합하는 권한**은 분리한다. `synchronizing-local-and-github-state`의 preflight가 실제 `SAME_GOAL`, `PATH_OVERLAP`, `SEMANTIC_OVERLAP`을 판정하면 해당 owner의 `PROVISIONAL_INTEGRATION` 계약을 따른다.
+- `PROVISIONAL_INTEGRATION`에서는 겹치는 owner PR branches를 계속 read-only로 유지한다. owner PR이나 main이 움직이면 semantic reconciliation으로 더 최신·강한 canonical 구현을 보존하고 provisional duplicate를 제거한 뒤 exact-head 검증을 다시 수행한다.
+- actual provisional overlap은 owner 각각이 `merged and absorbed`, 명시적 `handoff/superseded`, 또는 사용자 명시적 replacement 승인 중 하나로 해결되기 전에는 **owner가 해결되기 전에는 merge하지 않는다**. CI가 green이거나 GitHub가 mergeable이어도 이 Gate를 낮추지 않는다.
+- 다른 PR이 먼저 병합된 뒤 현재 main과 비교해 material delta가 사라지면 own PR은 `superseded`로 닫는다. 이미 landed 된 내용을 다시 병합하기 위한 churn을 만들지 않는다.
 - 이 규칙은 `scheduled/periodic` repository-writing automation의 active-PR guard를 완화하지 않는다. 예약·주기 자동화는 자신의 owner contract가 open PR 존재 시 fail-closed를 요구하면 그 더 엄격한 계약을 따른다.
 - direct `main` push, force push, `--admin`, ruleset bypass, 다른 PR의 close/merge는 이 규칙으로 허용되지 않는다.
 
@@ -214,6 +223,8 @@ expected exact HEAD SHA 고정
 `CONTINUOUS_WORK_ACTIVE`는 기존 `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`를 반드시 소비한다.
 
 승인된 동일 범위의 PR은 **별도 병합 승인**을 묻지 않는다. 검토한 `exact HEAD`, `required checks`, 독립 검토, `unresolved thread 0`, `USER_REVIEW_REQUIRED`·`CHANGE_PROPOSAL`·P0/P1 없음이 확인되면 저장소가 허용한 방식으로 **즉시 병합**한다.
+
+단, 승인 상속은 동시작업 소유권을 우회하지 않는다. `synchronizing-local-and-github-state`가 actual overlap을 `PROVISIONAL_INTEGRATION`으로 분류한 경우에는 그 owner-resolution / semantic-reconciliation Gate가 우선하며, owner가 해결되기 전에는 merge하지 않는다. 즉 merge authority는 새 승인 질문을 제거할 뿐 unresolved owner overlap을 제거하지 않는다.
 
 연속작업은 이 merge safety gate를 제거하지 않는다. 승인 상속은 재승인 질문을 제거하는 것이지 검증을 제거하는 것이 아니다.
 
