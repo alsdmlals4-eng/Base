@@ -95,6 +95,41 @@ def test_prepare_subscription_handoff_is_server_issued_and_copy_ready(tmp_path: 
     assert str(tmp_path) not in pending.prompt
 
 
+@pytest.mark.parametrize(
+    ("edit_mode", "edit_prompt"),
+    [
+        ("outfit", "dark navy field coat with brass fasteners"),
+        ("scene", "rainy neon alley at night"),
+    ],
+)
+def test_prepare_subscription_handoff_supports_reviewed_character_edit_modes(
+    tmp_path: Path,
+    edit_mode: str,
+    edit_prompt: str,
+) -> None:
+    service = handoff_service(tmp_path)
+    request = ExpressionRequest.model_validate(
+        valid_payload(
+            edit_mode=edit_mode,
+            edit_prompt=edit_prompt,
+            controls=[],
+            gaze="center",
+            head_pose="neutral",
+            preset=None,
+        )
+    )
+
+    pending = service.prepare_subscription_handoff(request)
+
+    assert pending.packet.workflow == "character_edit"
+    assert edit_prompt in pending.packet.instruction
+    assert edit_prompt in pending.prompt
+    assert pending.packet.provider_call_made is False
+    assert pending.packet.requires_additional_payment is False
+    assert "https://www.figma.com/" not in pending.prompt
+    assert str(tmp_path) not in pending.prompt
+
+
 def test_subscription_handoff_import_preserves_exact_pending_run_and_consumes_once(tmp_path: Path) -> None:
     service = handoff_service(tmp_path)
     pending = service.prepare_subscription_handoff(ExpressionRequest.model_validate(valid_payload()))
