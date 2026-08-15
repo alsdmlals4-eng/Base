@@ -231,6 +231,41 @@ def create_app(
         except ValueError as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
 
+    @app.post("/api/handoff-runs", status_code=201)
+    def prepare_handoff(request: ExpressionRequest) -> dict[str, object]:
+        try:
+            pending = service.prepare_subscription_handoff(request)
+            public = pending.packet.public_view()
+            return {
+                **public,
+                "prompt": pending.prompt,
+                "run_mode": pending.packet.import_run_mode,
+                "declared_source": pending.packet.import_declared_source,
+            }
+        except RunBlockedError as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
+        except ValueError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+
+    @app.post("/api/handoff-runs/{run_id}/import", status_code=201)
+    async def import_handoff(
+        run_id: str,
+        candidates: list[UploadFile] = File(...),
+    ) -> dict[str, object]:
+        try:
+            source: DeclaredSource = "CHATGPT_INCLUDED"
+            imported = []
+            for index, upload in enumerate(candidates):
+                data = await read_upload_limited(upload)
+                imported.append(validate_imported_image(data, declared_source=source, order=index))
+            return service.import_subscription_handoff(run_id, tuple(imported)).public_view()
+        except RunNotFoundError as error:
+            raise HTTPException(status_code=404, detail="run not found") from error
+        except RunBlockedError as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
+        except ValueError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+
     @app.post("/api/import-runs", status_code=201)
     async def create_import_run(
         request_json: str = Form(...),
