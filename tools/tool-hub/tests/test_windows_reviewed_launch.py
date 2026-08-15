@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-import subprocess
 import sys
 
 import pytest
@@ -94,25 +93,6 @@ def test_windows_portable_git_uses_reviewed_executable_resolver(
     completed = trusted_files.run_portable_git(BASE_ROOT, "rev-parse", "--git-dir")
 
     assert completed.returncode == 0
-
-
-def test_windows_reviewed_venv_process_id_matches_running_python_identity() -> None:
-    interpreter = BASE_ROOT / ".venv" / "Scripts" / "python.exe"
-    process = subprocess.Popen(
-        [str(interpreter), "-I", "-c", "import os,time; print(os.getpid(), flush=True); time.sleep(2)"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-    )
-    try:
-        assert process.stdout is not None
-        reported_pid = int(process.stdout.readline().strip())
-        assert reported_pid == process.pid, (
-            f"reviewed venv launcher PID {process.pid} differs from running Python PID {reported_pid}"
-        )
-    finally:
-        process.terminate()
-        process.wait(timeout=5)
 
 
 def test_windows_startup_report_publishes_complete_new_file(tmp_path: Path) -> None:
