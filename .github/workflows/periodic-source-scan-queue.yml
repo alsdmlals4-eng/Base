@@ -37,12 +37,16 @@ env:
 # automation/source-scan-
 # gh pr create
 # gh workflow run validate-evidence-knowledge.yml
+# gh workflow run validate-base-v9-rc.yml
 # gh workflow run validate-game-project-operating-system.yml
 # validation_level=full
 # gh run watch
 # git merge --no-edit origin/main
 # reviewThreads
-# gh pr merge --auto --squash --match-head-commit
+# gh pr merge --squash --match-head-commit
+# BLOCKED_ACTIVE_PR_GUARD
+# BLOCKED_ACTIVE_PR_GUARD_QUERY
+# BLOCKED_MERGE_NOT_IMMEDIATE
 # BLOCKED_ACTIONS_PR_CREATION_SETTING
 # BLOCKED_ACTIONS_DISPATCH
 # BLOCKED_VALIDATION
@@ -87,7 +91,7 @@ jobs:
             tests/test_periodic_source_analysis_runner.py \
             -v
 
-      - name: Run daily context analysis, PR validation, and expected-head auto-merge
+      - name: Run daily context analysis, PR validation, and guarded expected-head merge
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
