@@ -111,14 +111,18 @@ def test_expression_web_exposes_canonical_chatgpt_pro_same_run_handoff() -> None
     assert 'id="prepare-handoff-button" type="button"' in html
     assert 'id="handoff-prompt"' in html
     assert 'id="handoff-run-info"' in html
+    assert 'id="handoff-anchor-link"' in html
     assert 'id="import-handoff-button" type="button" disabled' in html
     assert "ChatGPT Pro 프롬프트 준비" in html
+    assert "승인 원본 다운로드" in html
     assert "같은 Run으로 후보 가져오기" in html
     assert "let pendingHandoffRunId = null" in script
     assert 'request("/api/handoff-runs"' in script
     assert 'request(`/api/handoff-runs/${pendingHandoffRunId}/import`' in script
     assert "pendingHandoffRunId = result.run_id" in script
     assert "handoffPrompt.value = result.prompt" in script
+    assert 'handoffAnchorLink.href = result.anchor_url' in script
+    assert 'handoffAnchorLink.download = result.source.filename' in script
     assert "body.append(\"candidates\", file)" in script
     assert "renderImportedRun(run, payload)" in script
     assert 'request("/api/import-runs"' in script
