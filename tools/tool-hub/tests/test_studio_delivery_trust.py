@@ -9,10 +9,10 @@ from fastapi.testclient import TestClient
 from test_figma_delivery import png_bytes
 from test_projects import BASE_ROOT, make_project
 from tool_hub.app import create_app
+from tool_hub.delivery_supervisor import ProcessSupervisor
 from tool_hub.environment import LaunchContext, child_environment
 from tool_hub.launcher import LaunchError
 from tool_hub.projects import ProjectLocator
-from tool_hub.supervisor import ProcessSupervisor
 
 
 DELIVERY_TOKEN_ENV = "BASE_TOOL_HUB_DELIVERY_TOKEN"
@@ -28,7 +28,7 @@ def test_child_environment_injects_private_hub_delivery_identity(
         tmp_path,
         tmp_path / "runtime",
         tmp_path / ".venv" / "bin" / "python",
-        "launch-nonce",
+        "n" * 43,
         hub_origin="http://127.0.0.1:8764",
         delivery_token="d" * 43,
     )
