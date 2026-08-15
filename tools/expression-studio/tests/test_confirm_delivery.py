@@ -23,19 +23,23 @@ class RecordingSender:
         self.status_calls: list[str] = []
         self.fail_count = fail_count
         self.verified = False
+        self.last_run_id: str | None = None
+        self.last_content_sha256: str | None = None
 
     def __call__(self, run_id: str, image_bytes: bytes, media_type: str) -> dict[str, object]:
         self.calls.append((run_id, image_bytes, media_type))
         if self.fail_count:
             self.fail_count -= 1
             raise HubDeliveryError("temporary Tool Hub delivery failure")
+        self.last_run_id = run_id
+        self.last_content_sha256 = hashlib.sha256(image_bytes).hexdigest()
         return {
             "delivery_id": "delivery-one",
             "status": "QUEUED",
             "tool_id": "expression-studio",
             "project_id": "demo",
             "run_id": run_id,
-            "content_sha256": hashlib.sha256(image_bytes).hexdigest(),
+            "content_sha256": self.last_content_sha256,
             "tool_route_id": "character_expression_runs",
             "target_node_name": "Expression Runs",
             "bridge_state": "PAIRING_REQUIRED",
@@ -47,32 +51,30 @@ class RecordingSender:
 
     def status(self, delivery_id: str) -> dict[str, object]:
         self.status_calls.append(delivery_id)
-        if self.verified:
-            return {
-                "delivery_id": delivery_id,
-                "status": "DELIVERED_VERIFIED",
-                "tool_id": "expression-studio",
-                "project_id": "demo",
-                "run_id": "ignored-by-status-fixture",
-                "content_sha256": "f" * 64,
-                "tool_route_id": "character_expression_runs",
-                "target_node_name": "Expression Runs",
-                "bridge_state": "BRIDGE_PAIRED",
-                "delivery_state": "FIGMA_DELIVERED_VERIFIED",
-                "figma_url": "https://www.figma.com/design/abc123/demo?node-id=10-3",
-            }
-        return {
+        if self.last_run_id is None or self.last_content_sha256 is None:
+            raise AssertionError("status requested before a successful delivery")
+        common = {
             "delivery_id": delivery_id,
-            "status": "QUEUED",
             "tool_id": "expression-studio",
             "project_id": "demo",
-            "run_id": "ignored-by-status-fixture",
-            "content_sha256": "f" * 64,
+            "run_id": self.last_run_id,
+            "content_sha256": self.last_content_sha256,
             "tool_route_id": "character_expression_runs",
             "target_node_name": "Expression Runs",
+            "figma_url": "https://www.figma.com/design/abc123/demo?node-id=10-3",
+        }
+        if self.verified:
+            return {
+                **common,
+                "status": "DELIVERED_VERIFIED",
+                "bridge_state": "BRIDGE_PAIRED",
+                "delivery_state": "FIGMA_DELIVERED_VERIFIED",
+            }
+        return {
+            **common,
+            "status": "QUEUED",
             "bridge_state": "PAIRING_REQUIRED",
             "delivery_state": "DELIVERY_PENDING",
-            "figma_url": "https://www.figma.com/design/abc123/demo?node-id=10-3",
             "pairing_code": "123456",
             "pairing_expires_at": 9999999999.0,
         }
