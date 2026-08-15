@@ -124,11 +124,16 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
         ):
             self.assertIn(step_name, body)
         self.assertNotIn("- name: Install Windows publication dependencies", body)
-        self.assertRegex(
-            body,
-            r"choco install libreoffice-fresh -y --no-progress\s+"
-            r"if \(\$LASTEXITCODE -ne 0\) \{ exit \$LASTEXITCODE \}",
-        )
+        self.assertNotIn("choco install libreoffice-fresh", body)
+        for term in (
+            '$libreOfficeVersion = "26.2.3"',
+            '$libreOfficeSha256 = "468d1fb3880af3bcddac002e9054155912c70b45d105bfa1c82036f33456133d"',
+            "https://download.documentfoundation.org/libreoffice/stable/$libreOfficeVersion/win/x86_64/LibreOffice_${libreOfficeVersion}_Win_x86-64.msi",
+            "Get-FileHash -Algorithm SHA256",
+            "Start-Process msiexec.exe",
+            "@(0, 3010) -notcontains $libreOfficeInstall.ExitCode",
+        ):
+            self.assertIn(term, body)
         self.assertRegex(
             body,
             r"pnpm install --frozen-lockfile\s+"
