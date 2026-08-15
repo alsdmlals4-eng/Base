@@ -298,5 +298,28 @@ class ReviewRecordBehaviorTests(unittest.TestCase):
         self.assertEqual("PASS", result["gates"]["implementation"]["status"])
 
 
+class IntakeParallelPrPolicyBindingTests(unittest.TestCase):
+    def test_user_directed_parallel_pr_policy_is_bound_to_existing_intake_owner(self) -> None:
+        skill = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        reference = (
+            ROOT
+            / "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"
+        ).read_text(encoding="utf-8")
+
+        for text in (skill, reference):
+            for term in (
+                "USER_DIRECTED_PARALLEL_PR",
+                "current completed main",
+                "separate branch/PR",
+                "same-goal",
+                "in-progress PR",
+                "scheduled/periodic",
+            ):
+                self.assertIn(term, text)
+        self.assertIn("do not modify/rebase/update", reference)
+        self.assertIn("superseded", reference)
+        self.assertIn("read-only overlap evidence", skill)
+
+
 if __name__ == "__main__":
     unittest.main()
