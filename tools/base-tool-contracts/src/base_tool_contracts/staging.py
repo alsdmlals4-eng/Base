@@ -14,7 +14,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass, field
 from typing import Iterator
 
-from .trusted_files import TrustedFileError, read_regular_portable_nofollow
+from .trusted_files import TrustedFileError, read_regular_portable_nofollow, run_portable_git
 
 
 class StagingViolation(ValueError):
@@ -436,6 +436,17 @@ def stable_staging_path(project_root: Path, path: Path, expected_identity: tuple
 
 
 def _git(root: Path, *arguments: str) -> subprocess.CompletedProcess[str]:
+    if os.name == "nt":
+        try:
+            completed = run_portable_git(root, *arguments)
+        except TrustedFileError as error:
+            raise StagingViolation("project asset vault requires trusted Git") from error
+        return subprocess.CompletedProcess(
+            completed.args,
+            completed.returncode,
+            completed.stdout.decode("utf-8", errors="replace"),
+            completed.stderr.decode("utf-8", errors="replace"),
+        )
     return subprocess.run(["git", "-C", str(root), *arguments], capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
 
 
