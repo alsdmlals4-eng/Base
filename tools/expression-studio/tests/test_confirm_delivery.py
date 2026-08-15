@@ -20,7 +20,9 @@ from tests.test_import_api import import_parts, png
 class RecordingSender:
     def __init__(self, *, fail_count: int = 0) -> None:
         self.calls: list[tuple[str, bytes, str]] = []
+        self.status_calls: list[str] = []
         self.fail_count = fail_count
+        self.verified = False
 
     def __call__(self, run_id: str, image_bytes: bytes, media_type: str) -> dict[str, object]:
         self.calls.append((run_id, image_bytes, media_type))
@@ -36,6 +38,43 @@ class RecordingSender:
             "content_sha256": hashlib.sha256(image_bytes).hexdigest(),
             "tool_route_id": "character_expression_runs",
             "target_node_name": "Expression Runs",
+            "bridge_state": "PAIRING_REQUIRED",
+            "delivery_state": "DELIVERY_PENDING",
+            "figma_url": "https://www.figma.com/design/abc123/demo?node-id=10-3",
+            "pairing_code": "123456",
+            "pairing_expires_at": 9999999999.0,
+        }
+
+    def status(self, delivery_id: str) -> dict[str, object]:
+        self.status_calls.append(delivery_id)
+        if self.verified:
+            return {
+                "delivery_id": delivery_id,
+                "status": "DELIVERED_VERIFIED",
+                "tool_id": "expression-studio",
+                "project_id": "demo",
+                "run_id": "ignored-by-status-fixture",
+                "content_sha256": "f" * 64,
+                "tool_route_id": "character_expression_runs",
+                "target_node_name": "Expression Runs",
+                "bridge_state": "BRIDGE_PAIRED",
+                "delivery_state": "FIGMA_DELIVERED_VERIFIED",
+                "figma_url": "https://www.figma.com/design/abc123/demo?node-id=10-3",
+            }
+        return {
+            "delivery_id": delivery_id,
+            "status": "QUEUED",
+            "tool_id": "expression-studio",
+            "project_id": "demo",
+            "run_id": "ignored-by-status-fixture",
+            "content_sha256": "f" * 64,
+            "tool_route_id": "character_expression_runs",
+            "target_node_name": "Expression Runs",
+            "bridge_state": "PAIRING_REQUIRED",
+            "delivery_state": "DELIVERY_PENDING",
+            "figma_url": "https://www.figma.com/design/abc123/demo?node-id=10-3",
+            "pairing_code": "123456",
+            "pairing_expires_at": 9999999999.0,
         }
 
 
@@ -103,7 +142,7 @@ def imported_run(client: TestClient, selected: bytes, other: bytes) -> str:
     return imported.json()["run_id"]
 
 
-def test_confirm_and_deliver_exports_exact_selected_bytes_and_queues_them(tmp_path: Path) -> None:
+def test_confirm_and_deliver_exports_exact_selected_bytes_and_reports_bridge_required(tmp_path: Path) -> None:
     sender = RecordingSender()
     client = confirmed_client(tmp_path, sender)
     selected = png((220, 30, 30, 255))
@@ -117,9 +156,14 @@ def test_confirm_and_deliver_exports_exact_selected_bytes_and_queues_them(tmp_pa
 
     assert response.status_code == 200, response.text
     body = response.json()
-    assert body["status"] == "CONFIRMED_AND_QUEUED"
+    assert body["status"] == "CONFIRMED_BRIDGE_REQUIRED"
     assert body["project_save"] == "SAVED"
-    assert body["figma_delivery"] == "QUEUED"
+    assert body["figma_delivery"] == "BRIDGE_REQUIRED"
+    assert body["bridge_state"] == "PAIRING_REQUIRED"
+    assert body["delivery_state"] == "DELIVERY_PENDING"
+    assert body["pairing_code"] == "123456"
+    assert body["figma_url"].startswith("https://www.figma.com/design/")
+    assert body["delivery_status_url"] == f"/api/runs/{run_id}/delivery-status"
     assert body["download_state"] == "DOWNLOAD_READY"
     assert body["download_url"] == f"/api/runs/{run_id}/confirmed-download"
     assert body["delivery_id"] == "delivery-one"
@@ -132,6 +176,30 @@ def test_confirm_and_deliver_exports_exact_selected_bytes_and_queues_them(tmp_pa
     exported = list((tmp_path / ".asset-vault" / "library" / "generated" / "expression-studio").rglob("selected.png"))
     assert len(exported) == 1
     assert exported[0].read_bytes() == selected
+
+
+def test_delivery_status_refresh_promotes_cached_confirmation_to_verified(tmp_path: Path) -> None:
+    sender = RecordingSender()
+    client = confirmed_client(tmp_path, sender)
+    selected = png((220, 30, 30, 255))
+    run_id = imported_run(client, selected, png((30, 30, 220, 255)))
+    confirmed = client.post(f"/api/runs/{run_id}/confirm-delivery", json={"selected_candidate": 0}).json()
+
+    sender.verified = True
+    refreshed = client.get(confirmed["delivery_status_url"])
+    retry = client.post(f"/api/runs/{run_id}/confirm-delivery", json={"selected_candidate": 0})
+
+    assert refreshed.status_code == 200, refreshed.text
+    body = refreshed.json()
+    assert body["status"] == "CONFIRMED_AND_VERIFIED"
+    assert body["figma_delivery"] == "VERIFIED"
+    assert body["bridge_state"] == "BRIDGE_PAIRED"
+    assert body["delivery_state"] == "FIGMA_DELIVERED_VERIFIED"
+    assert "pairing_code" not in body
+    assert body["download_state"] == "DOWNLOAD_READY"
+    assert retry.json() == body
+    assert sender.status_calls == ["delivery-one"]
+    assert len(sender.calls) == 1
 
 
 def test_confirm_and_deliver_is_idempotent_after_success_and_browser_cannot_choose_route(tmp_path: Path) -> None:
