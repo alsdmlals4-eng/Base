@@ -145,6 +145,12 @@ def test_bridge_claim_content_release_round_trip_uses_exact_bytes(tmp_path: Path
     assert body["delivery_id"] == job.delivery_id
     assert body["content_sha256"] == job.content_sha256
     assert body["node_name"] == job.node_name
+    assert body["tool_route_id"] == job.tool_route_id
+    assert body["target_node_id"] == job.target_node_id
+    assert body["target_node_name"] == job.target_node_name
+    assert body["route_parent_node_id"] == job.route_parent_node_id
+    assert body["project_marker_node_id"] == job.project_marker_node_id
+    assert body["project_marker_name"] == job.project_marker_name
     assert "figma_file_key" not in body
     assert "figma_url" not in body
     assert "project_root" not in body
@@ -168,7 +174,7 @@ def test_bridge_content_is_denied_across_projects(tmp_path: Path) -> None:
     _register(client, coc, "coc-fiction")
     _register(client, omen, "omenward")
     omen_job = client.app.state.figma_delivery.enqueue(
-        "sprite-animation-studio", "omenward", "run-omen", png_bytes(2, 1), "image/png"
+        "expression-studio", "omenward", "run-omen", png_bytes(2, 1), "image/png"
     )
     coc_token, coc_bridge = _pair(client, "coc-fiction")
 
@@ -192,7 +198,7 @@ def test_bridge_receipt_finalizes_exact_claim_without_leaking_authority(tmp_path
     receipt_payload = {
         "created_node_id": "999:1000",
         "created_node_name": claimed["node_name"],
-        "target_node_id": claimed["generation_area_node_id"],
+        "target_node_id": claimed["target_node_id"],
         "content_sha256": claimed["content_sha256"],
         "bridge_version": "bridge-test",
         "image_hash": "figma-image-hash",
@@ -208,6 +214,9 @@ def test_bridge_receipt_finalizes_exact_claim_without_leaking_authority(tmp_path
     body = response.json()
     assert body["delivery_id"] == job.delivery_id
     assert body["status"] == "FIGMA_DELIVERED_VERIFIED"
+    assert body["tool_route_id"] == job.tool_route_id
+    assert body["target_node_id"] == job.target_node_id
+    assert body["target_node_name"] == job.target_node_name
     serialized = response.text
     assert token not in serialized
     assert "figma_file_key" not in serialized
