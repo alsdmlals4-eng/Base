@@ -176,9 +176,12 @@ class PeriodicSourceScanQueueTests(unittest.TestCase):
             "PERIODIC_SOURCE_OPERATIONS_LEDGER.json", "PERIODIC_SOURCE_CANDIDATE_LEDGER.json",
             "periodic-source-scan-queue.md", "automation/source-scan-", "gh pr create",
             "gh workflow run validate-evidence-knowledge.yml",
+            "gh workflow run validate-base-v9-rc.yml",
             "gh workflow run validate-game-project-operating-system.yml",
             "validation_level=full", "gh run watch", "git merge --no-edit origin/main",
-            "reviewThreads", "gh pr merge", "--auto", "--squash", "--match-head-commit",
+            "reviewThreads", "gh pr merge", "--squash", "--match-head-commit",
+            "BLOCKED_ACTIVE_PR_GUARD", "BLOCKED_ACTIVE_PR_GUARD_QUERY",
+            "BLOCKED_MERGE_NOT_IMMEDIATE",
             "BLOCKED_ACTIONS_PR_CREATION_SETTING", "BLOCKED_ACTIONS_DISPATCH",
             "BLOCKED_VALIDATION",
             "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
@@ -188,7 +191,7 @@ class PeriodicSourceScanQueueTests(unittest.TestCase):
             self.assertIn(required, workflow)
         for forbidden in (
             "timeout-minutes", "pull_request_target", "git push origin HEAD:main",
-            "git push --force", "--admin",
+            "git push --force", "--admin", "--auto",
         ):
             self.assertNotIn(forbidden, workflow)
 

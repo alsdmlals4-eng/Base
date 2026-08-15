@@ -89,6 +89,48 @@ block() {
   exit 0
 }
 
+foreign_open_prs() {
+  local excluded_pr="${1:-}"
+  local listing
+  if ! listing="$(
+    gh pr list \
+      --state open \
+      --limit 1000 \
+      --json number,headRefName \
+      --jq '.[] | [.number, .headRefName] | @tsv'
+  )"; then
+    return 1
+  fi
+  while IFS=$'\t' read -r number head_ref; do
+    [[ -n "$number" ]] || continue
+    if [[ -n "$excluded_pr" && "$number" == "$excluded_pr" ]]; then
+      continue
+    fi
+    printf '#%s(%s)\n' "$number" "$head_ref"
+  done <<< "$listing"
+}
+
+assert_no_foreign_open_prs() {
+  local excluded_pr="${1:-}"
+  local active_prs
+  if ! active_prs="$(foreign_open_prs "$excluded_pr")"; then
+    block \
+      "BLOCKED_ACTIVE_PR_GUARD_QUERY" \
+      "Could not verify the open-PR set; scheduled repository writes are fail-closed."
+  fi
+  if [[ -n "$active_prs" ]]; then
+    local active_summary
+    active_summary="$(printf '%s\n' "$active_prs" | paste -sd ',' -)"
+    block \
+      "BLOCKED_ACTIVE_PR_GUARD" \
+      "Scheduled repository writes deferred while open PR work exists: $active_summary"
+  fi
+}
+
+# Scheduled repository-writing automation never enters the analysis/write pipeline
+# while any draft or ready work PR is open.
+assert_no_foreign_open_prs ""
+
 python -m tools.periodic_source_analysis \
   --operations-ledger docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json \
   --candidate-ledger docs/knowledge/game-development/PERIODIC_SOURCE_CANDIDATE_LEDGER.json \
@@ -186,6 +228,9 @@ then
   block "BLOCKED_PATH_SCOPE" "Generated changes escaped the approved evidence/state paths."
 fi
 
+# Close the analysis-time race before any branch or PR is published.
+assert_no_foreign_open_prs ""
+
 conflict=""
 while read -r pr_number; do
   [[ -n "$pr_number" ]] || continue
@@ -221,7 +266,7 @@ cat > source-scan-pr-body.md <<EOF
 
 ## Merge gate
 
-This PR is eligible only after exact-head Evidence Knowledge, Base v9, and full Game Project OS validation, current-main ancestry, zero unresolved review threads, and expected-head squash auto-merge.
+This PR is eligible only after exact-head Evidence Knowledge, Base v9, and full Game Project OS validation, current-main ancestry, zero unresolved review threads, zero foreign open PRs, and expected-head guarded immediate squash merge.
 EOF
 
 if ! pr_url="$(gh pr create \
@@ -232,6 +277,9 @@ if ! pr_url="$(gh pr create \
   block "BLOCKED_ACTIONS_PR_CREATION_SETTING" "GitHub Actions could not create the bounded PR."
 fi
 pr_number="${pr_url##*/}"
+
+# Once the bounded automation PR exists, only that PR may be excluded from the guard.
+assert_no_foreign_open_prs "$pr_number"
 
 dispatch_and_wait() {
   local workflow="$1"
@@ -277,14 +325,17 @@ dispatch_and_wait() {
 }
 
 while true; do
+  assert_no_foreign_open_prs "$pr_number"
   reviewed_head="$(git rev-parse HEAD)"
   dispatch_and_wait validate-evidence-knowledge.yml "$reviewed_head" || block "BLOCKED_ACTIONS_DISPATCH" "Evidence Knowledge dispatch or exact-head validation failed."
   dispatch_and_wait validate-base-v9-rc.yml "$reviewed_head" || block "BLOCKED_VALIDATION" "Base v9 dispatch or exact-head validation failed."
   dispatch_and_wait validate-game-project-operating-system.yml "$reviewed_head" full || block "BLOCKED_VALIDATION" "Full Game Project OS validation failed."
+  assert_no_foreign_open_prs "$pr_number"
   git fetch origin main
   if git merge-base --is-ancestor origin/main "$reviewed_head"; then
     break
   fi
+  assert_no_foreign_open_prs "$pr_number"
   git merge --no-edit origin/main || block "BLOCKED_MAIN_MOVED_RETRY_REQUIRED" "Current main could not be merged cleanly."
   git push origin "$branch"
 done
@@ -302,17 +353,21 @@ unresolved="$(gh api graphql \
   --jq '[.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved == false)] | length')"
 [[ "$unresolved" == "0" ]] || block "BLOCKED_UNRESOLVED_REVIEW_THREAD" "$unresolved unresolved review thread(s)."
 
-gh pr merge "$pr_number" \
-  --auto \
+# Never leave a deferred auto-merge armed after the active-PR guard window.
+assert_no_foreign_open_prs "$pr_number"
+if ! gh pr merge "$pr_number" \
   --squash \
   --delete-branch \
-  --match-head-commit "$reviewed_head"
-
-pr_state="$(gh pr view "$pr_number" --json state,mergedAt,mergeCommit,headRefOid,autoMergeRequest)"
-merged_at="$(python -c 'import json,sys; print(json.load(sys.stdin).get("mergedAt") or "")' <<<"$pr_state")"
-if [[ -n "$merged_at" ]]; then
-  merge_sha="$(python -c 'import json,sys; print((json.load(sys.stdin).get("mergeCommit") or {}).get("oid") or "UNKNOWN")' <<<"$pr_state")"
-  update_queue "MERGED" "PR #$pr_number squash-merged at $merge_sha after exact-head validation."
-else
-  update_queue "AUTO_MERGE_ENABLED" "PR #$pr_number passed all local gates and auto-merge is enabled for head $reviewed_head."
+  --match-head-commit "$reviewed_head"; then
+  block \
+    "BLOCKED_MERGE_NOT_IMMEDIATE" \
+    "Guarded immediate merge was not available; deferred auto-merge is forbidden."
 fi
+
+pr_state="$(gh pr view "$pr_number" --json state,mergedAt,mergeCommit,headRefOid)"
+merged_at="$(python -c 'import json,sys; print(json.load(sys.stdin).get("mergedAt") or "")' <<<"$pr_state")"
+[[ -n "$merged_at" ]] || block \
+  "BLOCKED_MERGE_NOT_IMMEDIATE" \
+  "Merge command returned without immediate mergedAt evidence."
+merge_sha="$(python -c 'import json,sys; print((json.load(sys.stdin).get("mergeCommit") or {}).get("oid") or "UNKNOWN")' <<<"$pr_state")"
+update_queue "MERGED" "PR #$pr_number squash-merged at $merge_sha after exact-head validation and final active-PR guard."
