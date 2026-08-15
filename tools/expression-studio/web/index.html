@@ -11,7 +11,7 @@
       <header>
         <p class="eyebrow">LOCAL REVIEW TOOL</p>
         <h1>Character Studio</h1>
-        <p>승인된 원본 캐릭터의 정체성을 기준으로 표정, 복장, 장소·배경 변경 후보를 검토합니다. 실제 Figma 배치는 같은 프로젝트 GPT 작업공간에서만 수행됩니다.</p>
+        <p>승인된 원본 캐릭터의 정체성을 기준으로 표정, 복장, 장소·배경 변경 후보를 검토합니다. 선택한 후보는 확정 및 전달 시 프로젝트에 저장되고 Base Tool Hub의 검토된 Figma 경로로 전달됩니다.</p>
       </header>
 
       <section class="cost-banner">
@@ -100,9 +100,8 @@
         <p id="resolved-prompt"></p>
         <p id="review-metadata"></p>
         <div id="candidate-grid"></div>
-        <button id="export-button" type="button" disabled>선택 후보 내보내기</button>
-        <button id="delivery-button" type="button" disabled>프로젝트 GPT 전송 준비</button>
-        <pre id="packet"></pre>
+        <button id="confirm-delivery-button" type="button" disabled>확정 및 전달</button>
+        <pre id="delivery-result"></pre>
       </section>
 
       <p id="status" role="status"></p>
