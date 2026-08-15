@@ -22,6 +22,7 @@ const prepareHandoffButton = document.querySelector("#prepare-handoff-button");
 const importHandoffButton = document.querySelector("#import-handoff-button");
 const handoffPrompt = document.querySelector("#handoff-prompt");
 const handoffRunInfo = document.querySelector("#handoff-run-info");
+const handoffAnchorLink = document.querySelector("#handoff-anchor-link");
 const confirmDeliveryButton = document.querySelector("#confirm-delivery-button");
 const downloadCopyButton = document.querySelector("#download-copy-button");
 const figmaOpenLink = document.querySelector("#figma-open-link");
@@ -59,6 +60,9 @@ function resetHandoffState() {
   handoffPrompt.hidden = true;
   handoffRunInfo.textContent = "";
   handoffRunInfo.hidden = true;
+  handoffAnchorLink.hidden = true;
+  handoffAnchorLink.removeAttribute("href");
+  handoffAnchorLink.removeAttribute("download");
   importHandoffButton.disabled = true;
 }
 
@@ -364,6 +368,10 @@ prepareHandoffButton.addEventListener("click", async () => {
       || result.provider_call_made !== false
       || result.requires_additional_payment !== false
       || typeof result.prompt !== "string"
+      || typeof result.anchor_url !== "string"
+      || result.anchor_url !== `/api/handoff-runs/${result.run_id}/anchor`
+      || !result.source
+      || typeof result.source.filename !== "string"
       || !result.generation
       || Number(result.generation.expected_png_count) !== payload.candidate_count
     ) {
@@ -375,8 +383,11 @@ prepareHandoffButton.addEventListener("click", async () => {
     handoffPrompt.hidden = false;
     handoffRunInfo.textContent = `준비된 Run: ${result.run_id} · 필요한 PNG ${pendingHandoffCandidateCount}개 · provider_call_made=false`;
     handoffRunInfo.hidden = false;
+    handoffAnchorLink.href = result.anchor_url;
+    handoffAnchorLink.download = result.source.filename;
+    handoffAnchorLink.hidden = false;
     updateHandoffImportButton();
-    status.textContent = `Run ${result.run_id.slice(0, 12)}… 준비 완료 · 위 프롬프트를 ChatGPT Pro에 사용하고 반환 PNG ${pendingHandoffCandidateCount}개를 후보 이미지에서 선택하세요.`;
+    status.textContent = `Run ${result.run_id.slice(0, 12)}… 준비 완료 · 승인 원본을 다운로드해 ChatGPT Pro에 첨부하고 위 프롬프트를 사용한 뒤 반환 PNG ${pendingHandoffCandidateCount}개를 후보 이미지에서 선택하세요.`;
   } catch (error) {
     resetHandoffState();
     status.textContent = error.message;
