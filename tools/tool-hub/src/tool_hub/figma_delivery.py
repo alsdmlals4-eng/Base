@@ -109,9 +109,9 @@ class FigmaDeliveryService(_base.FigmaDeliveryService):
             raise DeliveryError("FIGMA_TOOL_ROUTE_IDENTITY_MISMATCH")
         return route
 
-    def _verify_content(self, job: _base.DeliveryJob) -> None:
+    def _verify_content(self, job: _base.DeliveryJob) -> bytes:
         self._assert_current_job_route(job)
-        super()._verify_content(job)
+        return super()._verify_content(job)
 
     def enqueue(
         self,
