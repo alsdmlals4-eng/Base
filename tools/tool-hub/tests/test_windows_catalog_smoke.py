@@ -24,7 +24,7 @@ BASE_ROOT = Path(__file__).resolve().parents[3]
 
 
 @pytest.mark.skipif(sys.platform != "win32", reason="real Windows process smoke")
-def test_windows_process_starts_and_serves_blocked_catalog(tmp_path: Path) -> None:
+def test_windows_process_starts_and_serves_runnable_catalog(tmp_path: Path) -> None:
     managed = tmp_path / "Documents" / "GitHub"
     projects = (
         make_project(managed / "Coc-Fiction", "coc-fiction"),
@@ -68,7 +68,7 @@ def test_windows_process_starts_and_serves_blocked_catalog(tmp_path: Path) -> No
     )
     try:
         # A clean windows-latest runner performs the reviewed Base/runtime
-        # identity checks from a cold filesystem cache.  Keep the smoke bounded,
+        # identity checks from a cold filesystem cache. Keep the smoke bounded,
         # but do not confuse that cold start with a product failure.
         deadline = time.monotonic() + 60
         payload: dict[str, object] | None = None
@@ -79,7 +79,7 @@ def test_windows_process_starts_and_serves_blocked_catalog(tmp_path: Path) -> No
                 pytest.fail(f"Tool Hub exited before Windows catalog smoke: {output[-2000:]}")
             try:
                 # Once the server accepts the request, let the single reviewed
-                # project scan complete.  A one-second timeout created another
+                # project scan complete. A one-second timeout created another
                 # expensive scan on every retry and could starve the Windows
                 # thread pool even though a real browser issues only one fetch.
                 with opener.open(f"http://127.0.0.1:{port}/api/catalog", timeout=30) as response:
@@ -102,9 +102,9 @@ def test_windows_process_starts_and_serves_blocked_catalog(tmp_path: Path) -> No
             item["tool_id"]: item["launch_state"]  # type: ignore[index]
             for item in payload["tools"]  # type: ignore[index]
         } == {
-            "expression-studio": "BLOCKED_PLATFORM",
-            "qa-evidence-studio": "BLOCKED_PLATFORM",
-            "sprite-animation-studio": "BLOCKED_PLATFORM",
+            "expression-studio": "RUNNABLE",
+            "qa-evidence-studio": "RUNNABLE",
+            "sprite-animation-studio": "RUNNABLE",
         }
         with opener.open(f"http://127.0.0.1:{port}/api/config", timeout=2) as response:
             config = json.load(response)
@@ -138,7 +138,7 @@ def test_windows_process_starts_and_serves_blocked_catalog(tmp_path: Path) -> No
             "omenward",
         ]
         assert all(
-            tool["launch_state"] == "BLOCKED_PLATFORM"
+            tool["launch_state"] == "RUNNABLE"
             for tool in registered_catalog["tools"]
         )
         serialized = json.dumps(registered_catalog)
