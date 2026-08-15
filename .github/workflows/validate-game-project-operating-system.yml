@@ -486,8 +486,25 @@ jobs:
       - name: Install Windows system publication dependencies
         shell: pwsh
         run: |
-          choco install libreoffice-fresh -y --no-progress
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $libreOfficeVersion = "26.2.3"
+          $libreOfficeSha256 = "468d1fb3880af3bcddac002e9054155912c70b45d105bfa1c82036f33456133d"
+          $libreOfficeUrl = "https://download.documentfoundation.org/libreoffice/stable/$libreOfficeVersion/win/x86_64/LibreOffice_${libreOfficeVersion}_Win_x86-64.msi"
+          $libreOfficeMsi = Join-Path $env:RUNNER_TEMP "LibreOffice_${libreOfficeVersion}_Win_x86-64.msi"
+          Invoke-WebRequest -Uri $libreOfficeUrl -OutFile $libreOfficeMsi
+          $actualLibreOfficeHash = (Get-FileHash -Algorithm SHA256 $libreOfficeMsi).Hash.ToLowerInvariant()
+          if ($actualLibreOfficeHash -ne $libreOfficeSha256) {
+            throw "LibreOffice MSI SHA-256 mismatch: expected $libreOfficeSha256, got $actualLibreOfficeHash"
+          }
+          $libreOfficeInstall = Start-Process msiexec.exe -ArgumentList @(
+            "/i",
+            "`"$libreOfficeMsi`"",
+            "/qn",
+            "/norestart"
+          ) -Wait -PassThru
+          if (@(0, 3010) -notcontains $libreOfficeInstall.ExitCode) {
+            throw "LibreOffice MSI install failed with exit code $($libreOfficeInstall.ExitCode)"
+          }
+
           $popplerVersion = "24.08.0-0"
           $popplerUrl = "https://github.com/oschwartz10612/poppler-windows/releases/download/v$popplerVersion/Release-$popplerVersion.zip"
           $popplerZip = Join-Path $env:RUNNER_TEMP "poppler-$popplerVersion.zip"
