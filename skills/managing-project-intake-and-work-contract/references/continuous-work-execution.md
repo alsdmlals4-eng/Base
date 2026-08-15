@@ -52,6 +52,28 @@ completed_tasks: []
 
 blocker가 생기면 현재 task의 blocker와 dependency를 기록한 뒤 `recovery ladder`를 실행한다. 바로 해결되지 않으면 그 task만 `deferred_tasks`로 옮기고, 실행 가능한 독립 task가 `ready_tasks`에 있으면 계속 수행한다. 새 증거·도구·선행 결과가 생길 때마다 deferred task를 다시 평가한다.
 
+## `USER_DIRECTED_PARALLEL_PR`
+
+사용자가 같은 승인 범위의 작업을 **명시적으로 계속 진행**하라고 지시했는데 `same-goal`의 `in-progress PR`이 이미 있으면, 그 PR의 존재만으로 interactive 작업 전체를 멈추지 않는다. 기존 PR은 overlap·risk 확인을 위한 read-only evidence로만 취급하고, 명시적으로 그 PR을 맡으라는 지시가 없는 한 **do not modify/rebase/update** 한다.
+
+```text
+explicit user-directed continue
+→ same-goal open/recent PR read-only inspection
+→ current completed main 확인
+→ current completed main에서 새 branch 생성
+→ separate branch/PR로 승인 범위 구현
+→ exact-head 검증
+→ merge 직전 current main + same-goal PR 상태 재확인
+   ├─ 다른 PR이 먼저 병합됨 → 이미 landed 된 중복 부분 제거, 남은 material delta만 유지
+   └─ material delta 없음 → own PR을 superseded로 닫고 불필요한 churn 금지
+```
+
+- `USER_DIRECTED_PARALLEL_PR`은 다른 `in-progress PR`의 branch·commit·review 상태를 소유하거나 채택하는 권한이 아니다.
+- unmerged PR의 구현은 canonical current state가 아니다. 새 작업 기준선은 항상 **current completed main**이다.
+- path overlap이 있어도 명시적 사용자 지시가 있으면 `separate branch/PR`을 만들 수 있지만, 병합은 최신 main에서 비충돌 material delta가 확인될 때까지 보류한다.
+- 이 규칙은 `scheduled/periodic` repository-writing automation의 active-PR guard를 완화하지 않는다. 예약·주기 자동화는 자신의 owner contract가 open PR 존재 시 fail-closed를 요구하면 그 더 엄격한 계약을 따른다.
+- direct `main` push, force push, `--admin`, ruleset bypass, 다른 PR의 close/merge는 이 규칙으로 허용되지 않는다.
+
 ## 실행 루프
 
 ```text
