@@ -3,6 +3,7 @@ name: Validate Provisional Confirm Delivery
 on:
   pull_request:
     paths:
+      - "tools/base-tool-contracts/**"
       - "tools/tool-hub/**"
       - "tools/expression-studio/**"
       - ".github/workflows/validate-provisional-confirm-delivery.yml"
@@ -50,6 +51,9 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python -m pip install -e '.\tools\base-tool-contracts[dev]' -e '.\tools\tool-hub[dev]' -e '.\tools\expression-studio[dev]'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Run approved-anchor portability contract
+        run: python -m pytest -q tools/base-tool-contracts/tests/test_approved_anchor_portability.py
 
       - name: Run Tool Hub trusted delivery contracts
         run: python -m pytest -q tools/tool-hub/tests/test_studio_delivery_trust.py
