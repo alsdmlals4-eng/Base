@@ -87,6 +87,12 @@ if os.name == "nt":
     _kernel32.OpenProcess.restype = wintypes.HANDLE
     _kernel32.AssignProcessToJobObject.argtypes = (wintypes.HANDLE, wintypes.HANDLE)
     _kernel32.AssignProcessToJobObject.restype = wintypes.BOOL
+    _kernel32.IsProcessInJob.argtypes = (
+        wintypes.HANDLE,
+        wintypes.HANDLE,
+        ctypes.POINTER(wintypes.BOOL),
+    )
+    _kernel32.IsProcessInJob.restype = wintypes.BOOL
     _kernel32.CreateToolhelp32Snapshot.argtypes = (wintypes.DWORD, wintypes.DWORD)
     _kernel32.CreateToolhelp32Snapshot.restype = wintypes.HANDLE
     _kernel32.Thread32First.argtypes = (wintypes.HANDLE, ctypes.POINTER(THREADENTRY32))
@@ -160,6 +166,23 @@ class WindowsJobOwner:
                 raise WindowsOwnershipError("child primary thread was not suspended")
         finally:
             _kernel32.CloseHandle(thread)
+
+    def contains_process(self, process_id: int) -> bool:
+        """Return whether an exact live process is owned by this Job Object."""
+        if self._closed or not self._assigned:
+            return False
+        if type(process_id) is not int or process_id <= 0:
+            return False
+        process = _kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, process_id)
+        if not process:
+            return False
+        try:
+            result = wintypes.BOOL()
+            if not _kernel32.IsProcessInJob(process, self._handle, ctypes.byref(result)):
+                raise _windows_error("could not verify Windows Job Object process membership")
+            return bool(result.value)
+        finally:
+            _kernel32.CloseHandle(process)
 
     @staticmethod
     def _thread_ids(process_id: int) -> list[int]:
