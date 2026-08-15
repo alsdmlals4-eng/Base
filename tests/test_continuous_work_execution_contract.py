@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REFERENCE = ROOT / "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"
 TASK_RECOVERY = ROOT / "skills/managing-project-intake-and-work-contract/references/task-recovery-protocol.md"
 SKILL = ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md"
+SYNC_PROTOCOL = ROOT / "skills/synchronizing-local-and-github-state/references/safe-sync-protocol.md"
 
 
 class ContinuousWorkExecutionContractTests(unittest.TestCase):
@@ -163,6 +164,22 @@ class ContinuousWorkExecutionContractTests(unittest.TestCase):
                 self.assertIn(term, text)
         self.assertIn("do not modify/rebase/update", reference)
         self.assertIn("superseded", reference)
+
+    def test_user_directed_overlap_delegates_to_provisional_integration_merge_gate(self) -> None:
+        reference = REFERENCE.read_text(encoding="utf-8")
+        skill = SKILL.read_text(encoding="utf-8")
+        sync = SYNC_PROTOCOL.read_text(encoding="utf-8")
+        for text in (reference, skill):
+            self.assertIn("PROVISIONAL_INTEGRATION", text)
+            self.assertIn("synchronizing-local-and-github-state", text)
+        for term in (
+            "explicit user authorization",
+            "owner PR branches",
+            "semantic reconciliation",
+            "must not merge",
+        ):
+            self.assertIn(term, sync)
+        self.assertIn("owner가 해결되기 전에는 merge하지 않는다", reference)
 
     def test_unexpected_interruption_routes_to_task_recovery_protocol(self) -> None:
         self.assertTrue(TASK_RECOVERY.is_file(), "task recovery protocol must exist")
