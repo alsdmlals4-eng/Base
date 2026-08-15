@@ -12,16 +12,21 @@ from PIL import Image
 from expression_studio.app import create_app
 from expression_studio.delivery import ProjectFigmaRegistry
 from expression_studio.engine import FakeExpressionEngine
+from expression_studio.hub_delivery import HubDeliveryError
 from tests.test_delivery import write_registry
 from tests.test_import_api import import_parts, png
 
 
 class RecordingSender:
-    def __init__(self) -> None:
+    def __init__(self, *, fail_count: int = 0) -> None:
         self.calls: list[tuple[str, bytes, str]] = []
+        self.fail_count = fail_count
 
     def __call__(self, run_id: str, image_bytes: bytes, media_type: str) -> dict[str, object]:
         self.calls.append((run_id, image_bytes, media_type))
+        if self.fail_count:
+            self.fail_count -= 1
+            raise HubDeliveryError("temporary Tool Hub delivery failure")
         return {
             "delivery_id": "delivery-one",
             "status": "QUEUED",
@@ -91,15 +96,19 @@ def confirmed_client(project_root: Path, sender: RecordingSender) -> TestClient:
     return client
 
 
+def imported_run(client: TestClient, selected: bytes, other: bytes) -> str:
+    data, files = import_parts(selected, other)
+    imported = client.post("/api/import-runs", data=data, files=files)
+    assert imported.status_code == 201, imported.text
+    return imported.json()["run_id"]
+
+
 def test_confirm_and_deliver_exports_exact_selected_bytes_and_queues_them(tmp_path: Path) -> None:
     sender = RecordingSender()
     client = confirmed_client(tmp_path, sender)
     selected = png((220, 30, 30, 255))
     other = png((30, 30, 220, 255))
-    data, files = import_parts(selected, other)
-    imported = client.post("/api/import-runs", data=data, files=files)
-    assert imported.status_code == 201, imported.text
-    run_id = imported.json()["run_id"]
+    run_id = imported_run(client, selected, other)
 
     response = client.post(
         f"/api/runs/{run_id}/confirm-delivery",
@@ -115,6 +124,7 @@ def test_confirm_and_deliver_exports_exact_selected_bytes_and_queues_them(tmp_pa
     assert body["tool_route_id"] == "character_expression_runs"
     assert body["target_node_name"] == "Expression Runs"
     assert body["content_sha256"] == hashlib.sha256(selected).hexdigest()
+    assert body["provider_call_made"] is False
     assert sender.calls == [(run_id, selected, "image/png")]
 
     exported = list((tmp_path / ".asset-vault" / "library" / "generated" / "expression-studio").rglob("selected.png"))
@@ -122,15 +132,16 @@ def test_confirm_and_deliver_exports_exact_selected_bytes_and_queues_them(tmp_pa
     assert exported[0].read_bytes() == selected
 
 
-def test_confirm_and_deliver_can_retry_same_export_but_browser_cannot_choose_route(tmp_path: Path) -> None:
+def test_confirm_and_deliver_is_idempotent_after_success_and_browser_cannot_choose_route(tmp_path: Path) -> None:
     sender = RecordingSender()
     client = confirmed_client(tmp_path, sender)
     selected = png((220, 30, 30, 255))
-    data, files = import_parts(selected, png((30, 30, 220, 255)))
-    run_id = client.post("/api/import-runs", data=data, files=files).json()["run_id"]
+    other = png((30, 30, 220, 255))
+    run_id = imported_run(client, selected, other)
 
     first = client.post(f"/api/runs/{run_id}/confirm-delivery", json={"selected_candidate": 0})
     retry = client.post(f"/api/runs/{run_id}/confirm-delivery", json={"selected_candidate": 0})
+    changed = client.post(f"/api/runs/{run_id}/confirm-delivery", json={"selected_candidate": 1})
     injected = client.post(
         f"/api/runs/{run_id}/confirm-delivery",
         json={"selected_candidate": 0, "target_node_id": "999:999", "figma_file_key": "attacker"},
@@ -138,9 +149,39 @@ def test_confirm_and_deliver_can_retry_same_export_but_browser_cannot_choose_rou
 
     assert first.status_code == 200
     assert retry.status_code == 200
+    assert retry.json() == first.json()
+    assert len(sender.calls) == 1
+    assert sender.calls[0][1] == selected
+    assert changed.status_code == 409
+    assert injected.status_code == 422
+
+
+def test_failed_hub_delivery_keeps_same_export_retryable(tmp_path: Path) -> None:
+    sender = RecordingSender(fail_count=1)
+    client = confirmed_client(tmp_path, sender)
+    selected = png((220, 30, 30, 255))
+    run_id = imported_run(client, selected, png((30, 30, 220, 255)))
+
+    failed = client.post(f"/api/runs/{run_id}/confirm-delivery", json={"selected_candidate": 0})
+    retry = client.post(f"/api/runs/{run_id}/confirm-delivery", json={"selected_candidate": 0})
+
+    assert failed.status_code == 409
+    assert retry.status_code == 200, retry.text
     assert len(sender.calls) == 2
     assert sender.calls[0][1] == sender.calls[1][1] == selected
-    assert injected.status_code == 422
+
+
+def test_legacy_figma_packet_is_blocked_after_direct_queue_confirmation(tmp_path: Path) -> None:
+    sender = RecordingSender()
+    client = confirmed_client(tmp_path, sender)
+    run_id = imported_run(client, png((220, 30, 30, 255)), png((30, 30, 220, 255)))
+
+    confirmed = client.post(f"/api/runs/{run_id}/confirm-delivery", json={"selected_candidate": 0})
+    legacy = client.post(f"/api/runs/{run_id}/figma-delivery")
+
+    assert confirmed.status_code == 200
+    assert legacy.status_code == 409
+    assert "already queued" in legacy.json()["detail"]
 
 
 def test_delivery_credential_is_not_added_to_browser_config_or_status(tmp_path: Path) -> None:

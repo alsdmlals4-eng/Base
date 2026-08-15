@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import os
 from pathlib import Path
+import threading
 from typing import Sequence
 
 from fastapi import FastAPI, File, Form, HTTPException, Response, UploadFile
@@ -55,6 +56,8 @@ def create_app(
     """Create an API bound by the CLI to loopback only."""
     service = ExpressionStudioService(project_root, engine, registry=registry, project_id=project_id, anchor_registry=anchor_registry, run_mode=run_mode)
     sender = hub_delivery_sender if hub_delivery_sender is not None else sender_from_environment()
+    confirmed_deliveries: dict[str, tuple[int, dict[str, object]]] = {}
+    confirmed_delivery_lock = threading.Lock()
     app = FastAPI(title="Expression Studio", docs_url=None, redoc_url=None)
     app.add_middleware(BoundedRequestBodyMiddleware, max_body_bytes=_MAX_REQUEST_BODY_BYTES, path="/api/import-runs")
     config_identity = service.config()
@@ -150,51 +153,62 @@ def create_app(
     @app.post("/api/runs/{run_id}/confirm-delivery")
     def confirm_delivery(run_id: str, payload: SelectionPayload) -> dict[str, object]:
         try:
-            record = service.get_run(run_id)
-            if record.status == "generated":
-                record = service.export(run_id, payload.selected_candidate)
-            elif record.status == "exported":
-                if record.selected_candidate != payload.selected_candidate:
-                    raise RunBlockedError("confirmed candidate cannot change after export")
-            else:
-                raise RunBlockedError("a generated or exported run is required before confirmation")
-            service.prepare_figma_delivery(run_id)
-            record = service.get_run(run_id)
-            if record.export is None:
-                raise RunBlockedError("confirmed export is unavailable")
-            expected_sha256 = record.export_output_sha256.get("selected")
-            if expected_sha256 is None:
-                raise RunBlockedError("confirmed export hash evidence is unavailable")
-            selected_bytes = _read_staged_file(
-                project_root.resolve(),
-                record.export.selected,
-                expected_sha256=expected_sha256,
-            )
-            if sender is None:
-                raise HubDeliveryError("Tool Hub confirmed delivery is unavailable")
-            delivery = sender(run_id, selected_bytes, "image/png")
-            content_sha256 = hashlib.sha256(selected_bytes).hexdigest()
-            if (
-                delivery.get("tool_id") != "expression-studio"
-                or delivery.get("project_id") != record.request.project_id
-                or delivery.get("run_id") != run_id
-                or delivery.get("content_sha256") != content_sha256
-                or not isinstance(delivery.get("delivery_id"), str)
-                or not isinstance(delivery.get("tool_route_id"), str)
-                or not isinstance(delivery.get("target_node_name"), str)
-            ):
-                raise HubDeliveryError("Tool Hub delivery response did not match the confirmed export")
-            hub_state = str(delivery.get("status", ""))
-            verified = hub_state == "DELIVERED_VERIFIED"
-            return {
-                "status": "CONFIRMED_AND_VERIFIED" if verified else "CONFIRMED_AND_QUEUED",
-                "project_save": "SAVED",
-                "figma_delivery": "VERIFIED" if verified else "QUEUED",
-                "delivery_id": delivery["delivery_id"],
-                "content_sha256": content_sha256,
-                "tool_route_id": delivery["tool_route_id"],
-                "target_node_name": delivery["target_node_name"],
-            }
+            with confirmed_delivery_lock:
+                confirmed = confirmed_deliveries.get(run_id)
+                if confirmed is not None:
+                    selected_candidate, prior_response = confirmed
+                    if selected_candidate != payload.selected_candidate:
+                        raise RunBlockedError("confirmed candidate cannot change after delivery was queued")
+                    return dict(prior_response)
+
+                record = service.get_run(run_id)
+                if record.status == "generated":
+                    record = service.export(run_id, payload.selected_candidate)
+                elif record.status == "exported":
+                    if record.selected_candidate != payload.selected_candidate:
+                        raise RunBlockedError("confirmed candidate cannot change after export")
+                else:
+                    raise RunBlockedError("a generated or exported run is required before confirmation")
+                service.prepare_figma_delivery(run_id)
+                record = service.get_run(run_id)
+                if record.export is None:
+                    raise RunBlockedError("confirmed export is unavailable")
+                expected_sha256 = record.export_output_sha256.get("selected")
+                if expected_sha256 is None:
+                    raise RunBlockedError("confirmed export hash evidence is unavailable")
+                selected_bytes = _read_staged_file(
+                    project_root.resolve(),
+                    record.export.selected,
+                    expected_sha256=expected_sha256,
+                )
+                if sender is None:
+                    raise HubDeliveryError("Tool Hub confirmed delivery is unavailable")
+                delivery = sender(run_id, selected_bytes, "image/png")
+                content_sha256 = hashlib.sha256(selected_bytes).hexdigest()
+                if (
+                    delivery.get("tool_id") != "expression-studio"
+                    or delivery.get("project_id") != record.request.project_id
+                    or delivery.get("run_id") != run_id
+                    or delivery.get("content_sha256") != content_sha256
+                    or delivery.get("status") not in {"QUEUED", "DELIVERED_VERIFIED"}
+                    or not isinstance(delivery.get("delivery_id"), str)
+                    or not isinstance(delivery.get("tool_route_id"), str)
+                    or not isinstance(delivery.get("target_node_name"), str)
+                ):
+                    raise HubDeliveryError("Tool Hub delivery response did not match the confirmed export")
+                verified = delivery["status"] == "DELIVERED_VERIFIED"
+                response = {
+                    "status": "CONFIRMED_AND_VERIFIED" if verified else "CONFIRMED_AND_QUEUED",
+                    "project_save": "SAVED",
+                    "figma_delivery": "VERIFIED" if verified else "QUEUED",
+                    "delivery_id": delivery["delivery_id"],
+                    "content_sha256": content_sha256,
+                    "tool_route_id": delivery["tool_route_id"],
+                    "target_node_name": delivery["target_node_name"],
+                    "provider_call_made": record.provider_call_made,
+                }
+                confirmed_deliveries[run_id] = (payload.selected_candidate, dict(response))
+                return response
         except RunNotFoundError as error:
             raise HTTPException(status_code=404, detail="run not found") from error
         except (RunBlockedError, DeliveryBlockedError, HubDeliveryError, ValueError) as error:
@@ -203,6 +217,9 @@ def create_app(
     @app.post("/api/runs/{run_id}/figma-delivery")
     def figma_delivery(run_id: str) -> dict[str, object]:
         try:
+            with confirmed_delivery_lock:
+                if run_id in confirmed_deliveries:
+                    raise RunBlockedError("direct Figma delivery is already queued for this run")
             return service.prepare_figma_delivery(run_id).public_view()
         except RunNotFoundError as error:
             raise HTTPException(status_code=404, detail="run not found") from error
