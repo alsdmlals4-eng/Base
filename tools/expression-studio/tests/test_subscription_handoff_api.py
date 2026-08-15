@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 
+import expression_studio.app as app_module
 from expression_studio.app import _MAX_REQUEST_BODY_BYTES
 from tests.test_confirm_delivery import RecordingSender, confirmed_client
 from tests.test_import_api import png
@@ -72,6 +74,26 @@ def test_failed_handoff_import_keeps_same_server_run_retryable(tmp_path: Path) -
     assert valid.json()["run_id"] == run_id
 
 
+def test_duplicate_handoff_candidates_fail_without_consuming_pending_run(tmp_path: Path) -> None:
+    client = confirmed_client(tmp_path, RecordingSender())
+    run_id = client.post("/api/handoff-runs", json=valid_payload()).json()["run_id"]
+    duplicate = png((220, 30, 30, 255))
+
+    invalid = client.post(
+        f"/api/handoff-runs/{run_id}/import",
+        files=[
+            ("candidates", ("duplicate-a.png", duplicate, "image/png")),
+            ("candidates", ("duplicate-b.png", duplicate, "image/png")),
+        ],
+    )
+    valid = client.post(f"/api/handoff-runs/{run_id}/import", files=candidate_files())
+
+    assert invalid.status_code == 422
+    assert "pixel-duplicates" in invalid.json()["detail"]
+    assert valid.status_code == 201, valid.text
+    assert valid.json()["run_id"] == run_id
+
+
 def test_unknown_handoff_run_fails_before_candidate_staging(tmp_path: Path) -> None:
     client = confirmed_client(tmp_path, RecordingSender())
 
@@ -80,6 +102,19 @@ def test_unknown_handoff_run_fails_before_candidate_staging(tmp_path: Path) -> N
     assert response.status_code == 404
     generated = tmp_path / ".asset-vault" / "library" / "generated" / "expression-studio"
     assert not generated.exists()
+
+
+def test_unknown_handoff_run_is_rejected_before_candidate_bytes_are_read(tmp_path: Path, monkeypatch) -> None:
+    client = confirmed_client(tmp_path, RecordingSender())
+
+    async def should_not_read(_upload):
+        raise AssertionError("unknown handoff must be rejected before candidate bytes are read")
+
+    monkeypatch.setattr(app_module, "read_upload_limited", should_not_read)
+
+    response = client.post(f"/api/handoff-runs/{'e' * 32}/import", files=candidate_files())
+
+    assert response.status_code == 404
 
 
 def test_handoff_import_does_not_accept_browser_supplied_request_or_source_truth(tmp_path: Path) -> None:
@@ -116,3 +151,38 @@ def test_handoff_import_rejects_oversize_before_multipart_parsing(tmp_path: Path
 
     assert response.status_code == 413
     assert response.json()["detail"] == "request body exceeds the configured safety limit"
+
+
+def test_same_run_handoff_composes_through_confirm_and_verified_receipt(tmp_path: Path) -> None:
+    sender = RecordingSender()
+    client = confirmed_client(tmp_path, sender)
+    prepared = client.post("/api/handoff-runs", json=valid_payload())
+    assert prepared.status_code == 201, prepared.text
+    run_id = prepared.json()["run_id"]
+
+    imported = client.post(f"/api/handoff-runs/{run_id}/import", files=candidate_files())
+    assert imported.status_code == 201, imported.text
+    assert imported.json()["run_id"] == run_id
+
+    confirmed = client.post(
+        f"/api/runs/{run_id}/confirm-delivery",
+        json={"selected_candidate": 0},
+    )
+    assert confirmed.status_code == 200, confirmed.text
+    confirmation = confirmed.json()
+    assert confirmation["project_save"] == "SAVED"
+    assert confirmation["figma_delivery"] == "BRIDGE_REQUIRED"
+    assert confirmation["delivery_state"] == "DELIVERY_PENDING"
+    assert sender.calls[0][0] == run_id
+    assert sender.calls[0][2] == "image/png"
+    assert confirmation["content_sha256"] == hashlib.sha256(sender.calls[0][1]).hexdigest()
+
+    sender.verified = True
+    verified = client.get(confirmation["delivery_status_url"])
+    assert verified.status_code == 200, verified.text
+    receipt = verified.json()
+    assert receipt["figma_delivery"] == "VERIFIED"
+    assert receipt["bridge_state"] == "BRIDGE_PAIRED"
+    assert receipt["delivery_state"] == "FIGMA_DELIVERED_VERIFIED"
+    assert receipt["delivery_id"] == confirmation["delivery_id"]
+    assert receipt["content_sha256"] == confirmation["content_sha256"]
