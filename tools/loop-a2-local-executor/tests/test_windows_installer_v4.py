@@ -40,6 +40,21 @@ class WindowsInstallerV4ContractTests(unittest.TestCase):
         self.assertIn("checkout --detach origin/main", self.text)
         self.assertIn("pip install --disable-pip-version-check -e", self.text)
 
+    def test_v4_discovers_docker_from_path_then_trusted_per_user_then_all_users_locations(self) -> None:
+        per_user = r"%LOCALAPPDATA%\Programs\DockerDesktop\resources\bin\docker.exe"
+        all_users = r"%ProgramFiles%\Docker\Docker\resources\bin\docker.exe"
+        resolver_call = (
+            'call :resolve DOCKER_CMD docker '
+            '"%LOCALAPPDATA%\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" '
+            '"%ProgramFiles%\\Docker\\Docker\\resources\\bin\\docker.exe"'
+        )
+
+        self.assertIn(per_user, self.text)
+        self.assertIn(all_users, self.text)
+        self.assertIn(resolver_call, self.text)
+        self.assertIn('if not defined %~1 if exist "%~4" set "%~1=%~4"', self.text)
+        self.assertLess(self.text.index(per_user), self.text.index(all_users))
+
     def test_v4_uses_executor_preflight_as_docker_truth_and_only_pulls_exact_digest_on_missing_image(self) -> None:
         self.assertIn("loop-a2-local-executor.exe", self.text)
         self.assertGreaterEqual(self.text.count("call :capture_preflight"), 2)
