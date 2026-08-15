@@ -120,6 +120,8 @@ def test_confirm_and_deliver_exports_exact_selected_bytes_and_queues_them(tmp_pa
     assert body["status"] == "CONFIRMED_AND_QUEUED"
     assert body["project_save"] == "SAVED"
     assert body["figma_delivery"] == "QUEUED"
+    assert body["download_state"] == "DOWNLOAD_READY"
+    assert body["download_url"] == f"/api/runs/{run_id}/confirmed-download"
     assert body["delivery_id"] == "delivery-one"
     assert body["tool_route_id"] == "character_expression_runs"
     assert body["target_node_name"] == "Expression Runs"
@@ -169,6 +171,30 @@ def test_failed_hub_delivery_keeps_same_export_retryable(tmp_path: Path) -> None
     assert retry.status_code == 200, retry.text
     assert len(sender.calls) == 2
     assert sender.calls[0][1] == sender.calls[1][1] == selected
+
+
+def test_confirmed_download_requires_confirmation_and_serves_exact_export(tmp_path: Path) -> None:
+    sender = RecordingSender()
+    client = confirmed_client(tmp_path, sender)
+    selected = png((220, 30, 30, 255))
+    run_id = imported_run(client, selected, png((30, 30, 220, 255)))
+
+    blocked = client.get(f"/api/runs/{run_id}/confirmed-download")
+    confirmed = client.post(f"/api/runs/{run_id}/confirm-delivery", json={"selected_candidate": 0})
+    download = client.get(confirmed.json()["download_url"])
+
+    assert blocked.status_code == 409
+    assert confirmed.status_code == 200
+    assert download.status_code == 200
+    assert download.content == selected
+    assert download.headers["content-type"].startswith("image/png")
+    assert download.headers["content-disposition"].startswith("attachment;")
+    assert ".png" in download.headers["content-disposition"]
+
+    exported = next((tmp_path / ".asset-vault" / "library" / "generated" / "expression-studio").rglob("selected.png"))
+    exported.write_bytes(png((20, 200, 20, 255)))
+    tampered = client.get(confirmed.json()["download_url"])
+    assert tampered.status_code == 409
 
 
 def test_legacy_figma_packet_is_blocked_after_direct_queue_confirmation(tmp_path: Path) -> None:
