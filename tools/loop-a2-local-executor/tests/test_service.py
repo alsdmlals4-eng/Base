@@ -54,9 +54,22 @@ class FakePlane:
 
 
 class FakeRuntime:
-    def __init__(self, *, error: Exception | None = None) -> None:
+    def __init__(
+        self,
+        *,
+        error: Exception | None = None,
+        preflight_error: Exception | None = None,
+    ) -> None:
         self.error = error
+        self.preflight_error = preflight_error
         self.jobs: list[LocalA2Job] = []
+        self.preflights = 0
+
+    def preflight(self):
+        self.preflights += 1
+        if self.preflight_error:
+            raise self.preflight_error
+        return {"status": "READY", "code": "DOCKER_REVIEWED_IMAGE_READY"}
 
     def execute(self, job: LocalA2Job):
         self.jobs.append(job)
@@ -133,13 +146,29 @@ class ServiceTests(unittest.TestCase):
         self.assertEqual(public["a3_auto_merge"], "DISABLED")
         self.assertEqual(public["scheduler"], "NOT_CONFIGURED")
 
-    def test_preflight_delegates_without_executing_jobs(self) -> None:
+    def test_preflight_requires_control_plane_and_runtime_readiness(self) -> None:
         plane = FakePlane([valid_issue(1)])
         runtime = FakeRuntime()
+
         result = self.service(plane, runtime).preflight()
-        self.assertEqual(result, {"status": "READY", "code": "GH_CONTROL_PLANE_READY"})
+
+        self.assertEqual(result, {"status": "READY", "code": "LOCAL_EXECUTOR_READY"})
         self.assertEqual(plane.preflights, 1)
+        self.assertEqual(runtime.preflights, 1)
         self.assertEqual(runtime.jobs, [])
+
+    def test_preflight_propagates_runtime_docker_blocker(self) -> None:
+        plane = FakePlane([])
+        runtime = FakeRuntime(
+            preflight_error=LocalRuntimeError("DOCKER_IMAGE_NOT_PRELOADED", "local Docker detail")
+        )
+
+        with self.assertRaises(LocalRuntimeError) as caught:
+            self.service(plane, runtime).preflight()
+
+        self.assertEqual(caught.exception.code, "DOCKER_IMAGE_NOT_PRELOADED")
+        self.assertEqual(plane.preflights, 1)
+        self.assertEqual(runtime.preflights, 1)
 
 
 if __name__ == "__main__":

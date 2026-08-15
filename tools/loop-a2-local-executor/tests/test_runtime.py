@@ -122,12 +122,102 @@ class RuntimeTests(unittest.TestCase):
         self.assertNotIn("powershell", rendered.casefold())
         self.assertNotIn("cmd.exe", rendered.casefold())
 
+    def test_image_resolution_retries_same_digest_with_daemon_platform(self) -> None:
+        image_id = "sha256:" + "e" * 64
+        runner = FakeRunner([
+            subprocess.CompletedProcess([], 1, stdout="", stderr="no such image"),
+            subprocess.CompletedProcess([], 0, stdout="linux/amd64\n", stderr=""),
+            subprocess.CompletedProcess([], 0, stdout=image_id + "\n", stderr=""),
+            subprocess.CompletedProcess([], 0, stdout=json.dumps(self.success_receipt()), stderr=""),
+        ])
+
+        result = self.runtime(runner).execute(job())
+
+        self.assertEqual(result["state"], "WAITING_INTEGRATION")
+        self.assertEqual(
+            runner.calls[0]["argv"],
+            ("/trusted/docker", "image", "inspect", "--format", "{{.Id}}", REVIEWED_TEST_IMAGE_REF),
+        )
+        self.assertEqual(
+            runner.calls[1]["argv"],
+            ("/trusted/docker", "version", "--format", "{{.Server.Os}}/{{.Server.Arch}}"),
+        )
+        self.assertEqual(
+            runner.calls[2]["argv"],
+            (
+                "/trusted/docker", "image", "inspect", "--platform", "linux/amd64",
+                "--format", "{{.Id}}", REVIEWED_TEST_IMAGE_REF,
+            ),
+        )
+        self.assertEqual(runner.calls[3]["argv"][0], "/trusted/python")
+        rendered_calls = "\n".join(" ".join(call["argv"]) for call in runner.calls)
+        self.assertNotIn(" pull ", f" {rendered_calls} ")
+        self.assertNotIn(" image ls ", f" {rendered_calls} ")
+        self.assertNotIn("python:3.12-slim ", rendered_calls)
+
+    def test_preflight_uses_same_reviewed_image_resolver_without_a2(self) -> None:
+        image_id = "sha256:" + "e" * 64
+        runner = FakeRunner([
+            subprocess.CompletedProcess([], 0, stdout=image_id + "\n", stderr=""),
+        ])
+
+        result = self.runtime(runner).preflight()
+
+        self.assertEqual(result, {"status": "READY", "code": "DOCKER_REVIEWED_IMAGE_READY"})
+        self.assertEqual(len(runner.calls), 1)
+        self.assertEqual(runner.calls[0]["argv"][-1], REVIEWED_TEST_IMAGE_REF)
+
     def test_execute_never_pulls_image(self) -> None:
-        runner = FakeRunner([subprocess.CompletedProcess([], 1, stdout="", stderr="not found")])
+        runner = FakeRunner([
+            subprocess.CompletedProcess([], 1, stdout="", stderr="not found"),
+            subprocess.CompletedProcess([], 0, stdout="linux/amd64\n", stderr=""),
+            subprocess.CompletedProcess([], 1, stdout="", stderr="not found for platform"),
+        ])
         with self.assertRaises(LocalRuntimeError) as caught:
             self.runtime(runner).execute(job())
         self.assertEqual(caught.exception.code, "DOCKER_IMAGE_NOT_PRELOADED")
-        self.assertTrue(all("pull" not in call["argv"] for call in runner.calls))
+        rendered_calls = "\n".join(" ".join(call["argv"]) for call in runner.calls)
+        self.assertNotIn(" pull ", f" {rendered_calls} ")
+        self.assertNotIn(" image ls ", f" {rendered_calls} ")
+
+    def test_unsupported_docker_platform_fails_closed_without_image_scan(self) -> None:
+        runner = FakeRunner([
+            subprocess.CompletedProcess([], 1, stdout="", stderr="not found"),
+            subprocess.CompletedProcess([], 0, stdout="windows/amd64\n", stderr=""),
+        ])
+
+        with self.assertRaises(LocalRuntimeError) as caught:
+            self.runtime(runner).preflight()
+
+        self.assertEqual(caught.exception.code, "DOCKER_PLATFORM_UNSUPPORTED")
+        self.assertEqual(len(runner.calls), 2)
+        self.assertTrue(all("ls" not in call["argv"] for call in runner.calls))
+
+    def test_malformed_docker_platform_fails_closed(self) -> None:
+        runner = FakeRunner([
+            subprocess.CompletedProcess([], 1, stdout="", stderr="not found"),
+            subprocess.CompletedProcess([], 0, stdout="unknown\n", stderr=""),
+        ])
+
+        with self.assertRaises(LocalRuntimeError) as caught:
+            self.runtime(runner).preflight()
+
+        self.assertEqual(caught.exception.code, "DOCKER_PLATFORM_INVALID")
+        self.assertEqual(len(runner.calls), 2)
+
+    def test_architecture_alias_is_normalized_but_digest_is_unchanged(self) -> None:
+        image_id = "sha256:" + "e" * 64
+        runner = FakeRunner([
+            subprocess.CompletedProcess([], 1, stdout="", stderr="not found"),
+            subprocess.CompletedProcess([], 0, stdout="linux/x86_64\n", stderr=""),
+            subprocess.CompletedProcess([], 0, stdout=image_id + "\n", stderr=""),
+        ])
+
+        result = self.runtime(runner).preflight()
+
+        self.assertEqual(result["code"], "DOCKER_REVIEWED_IMAGE_READY")
+        self.assertEqual(runner.calls[2]["argv"][4], "linux/amd64")
+        self.assertEqual(runner.calls[2]["argv"][-1], REVIEWED_TEST_IMAGE_REF)
 
     def test_invalid_image_id_fails_before_a2(self) -> None:
         runner = FakeRunner([subprocess.CompletedProcess([], 0, stdout="python:tag\n", stderr="")])

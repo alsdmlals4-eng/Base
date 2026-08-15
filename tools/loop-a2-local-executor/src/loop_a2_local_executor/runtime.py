@@ -18,6 +18,12 @@ _CHILD_ENV = (
     "PATH", "SYSTEMROOT", "WINDIR", "COMSPEC", "PATHEXT", "TEMP", "TMP", "TMPDIR",
     "LANG", "LC_ALL", "HOME", "USERPROFILE", "APPDATA", "LOCALAPPDATA", "CODEX_HOME",
 )
+_PLATFORM_ALIASES = {
+    "amd64": "amd64",
+    "x86_64": "amd64",
+    "arm64": "arm64",
+    "aarch64": "arm64",
+}
 
 
 class LocalRuntimeError(RuntimeError):
@@ -77,23 +83,81 @@ class LocalA2Runtime:
         except (OSError, subprocess.TimeoutExpired) as exc:
             raise LocalRuntimeError("LOCAL_PROCESS_EXECUTION_FAILED", "local bounded process did not complete") from exc
 
-    def _image_id(self) -> str:
-        completed = self._run(
-            (
-                self.docker_executable, "image", "inspect", "--format", "{{.Id}}",
-                REVIEWED_TEST_IMAGE_REF,
-            ),
-            timeout=10,
-        )
-        if completed.returncode != 0:
-            raise LocalRuntimeError("DOCKER_IMAGE_NOT_PRELOADED", "reviewed digest-pinned test image is not locally available")
-        stdout = completed.stdout or ""
+    def _validated_image_id(self, stdout: str) -> str:
         if len(stdout.encode("utf-8", errors="replace")) > 256:
             raise LocalRuntimeError("DOCKER_IMAGE_ID_INVALID", "Docker image identity output is invalid")
         image_id = stdout.strip()
         if _IMAGE_ID.fullmatch(image_id) is None:
             raise LocalRuntimeError("DOCKER_IMAGE_ID_INVALID", "Docker did not return an immutable image ID")
         return image_id
+
+    def _inspect_reviewed_image(self, *, platform: str | None = None) -> str | None:
+        argv: tuple[str, ...]
+        if platform is None:
+            argv = (
+                self.docker_executable,
+                "image",
+                "inspect",
+                "--format",
+                "{{.Id}}",
+                REVIEWED_TEST_IMAGE_REF,
+            )
+        else:
+            argv = (
+                self.docker_executable,
+                "image",
+                "inspect",
+                "--platform",
+                platform,
+                "--format",
+                "{{.Id}}",
+                REVIEWED_TEST_IMAGE_REF,
+            )
+        completed = self._run(argv, timeout=10)
+        if completed.returncode != 0:
+            return None
+        return self._validated_image_id(completed.stdout or "")
+
+    def _docker_server_platform(self) -> str:
+        completed = self._run(
+            (
+                self.docker_executable,
+                "version",
+                "--format",
+                "{{.Server.Os}}/{{.Server.Arch}}",
+            ),
+            timeout=10,
+        )
+        if completed.returncode != 0:
+            raise LocalRuntimeError("DOCKER_PLATFORM_INVALID", "Docker server platform could not be determined")
+        stdout = completed.stdout or ""
+        if len(stdout.encode("utf-8", errors="replace")) > 128:
+            raise LocalRuntimeError("DOCKER_PLATFORM_INVALID", "Docker server platform output is invalid")
+        raw = stdout.strip().casefold()
+        if raw.count("/") != 1:
+            raise LocalRuntimeError("DOCKER_PLATFORM_INVALID", "Docker server platform output is invalid")
+        os_name, architecture = raw.split("/", 1)
+        normalized_arch = _PLATFORM_ALIASES.get(architecture)
+        if os_name != "linux" or normalized_arch is None:
+            raise LocalRuntimeError("DOCKER_PLATFORM_UNSUPPORTED", "reviewed project-test image requires a supported Linux container platform")
+        return f"linux/{normalized_arch}"
+
+    def _image_id(self) -> str:
+        direct = self._inspect_reviewed_image()
+        if direct is not None:
+            return direct
+        platform = self._docker_server_platform()
+        platform_image = self._inspect_reviewed_image(platform=platform)
+        if platform_image is None:
+            raise LocalRuntimeError(
+                "DOCKER_IMAGE_NOT_PRELOADED",
+                "reviewed digest-pinned test image is not locally available for the Docker server platform",
+            )
+        return platform_image
+
+    def preflight(self) -> dict[str, str]:
+        self._image_id()
+        return {"status": "READY", "code": "DOCKER_REVIEWED_IMAGE_READY"}
 
     def _capsule(self, project_root: Path, job: LocalA2Job) -> tuple[str, str]:
         current = project_root
