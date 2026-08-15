@@ -22,13 +22,14 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 import uvicorn
 
+from .delivery_supervisor import ProcessSupervisor
 from .figma_delivery import BridgeReceipt, DeliveryError, FigmaDeliveryService
 from .launcher import LaunchError
 from .onboarding import CloneRunner, ProjectOnboardingService
 from .projects import ProjectBindingError, ProjectLocator
 from .registry import HubRegistryError, load_reviewed_tools
 from .security import HubSecurity, install_security
-from .supervisor import ProcessSupervisor
+from .studio_delivery_api import install_studio_delivery_api
 from .windows_launcher import (
     LauncherError,
     WindowsLauncherInstaller,
@@ -141,11 +142,20 @@ def create_app(
         managed_root=managed_project_root,
         clone_runner=onboarding_clone_runner,
     )
+    parsed_origin = urlsplit(bind_origin)
+    hub_port = parsed_origin.port or (443 if parsed_origin.scheme == "https" else 80)
+    if parsed_origin.scheme == "http" and parsed_origin.hostname in {"127.0.0.1", "localhost"}:
+        delivery_origin = f"http://127.0.0.1:{hub_port}"
+    elif test_mode:
+        delivery_origin = "http://127.0.0.1:8764"
+    else:
+        raise ValueError("Tool Hub bind origin must remain loopback-only")
     launcher = ProcessSupervisor(
         project_config.parent / "runtime",
         root,
         locator,
         tools,
+        hub_origin=delivery_origin,
     )
     figma_delivery = FigmaDeliveryService(
         project_config.parent / "figma-delivery-runtime",
@@ -161,8 +171,6 @@ def create_app(
         f"{root}:{root_stat.st_dev}:{root_stat.st_ino}".encode()
     ).hexdigest()
     effective_launcher_token = launcher_token or os.environ.get("BASE_TOOL_HUB_LAUNCHER_TOKEN")
-    parsed_origin = urlsplit(bind_origin)
-    hub_port = parsed_origin.port or (443 if parsed_origin.scheme == "https" else 80)
     installer = windows_launcher_installer
     if installer is None and os.name == "nt":
         installer = WindowsLauncherInstaller(root, project_config)
@@ -176,6 +184,8 @@ def create_app(
 
     app = FastAPI(title="Base Tool Hub", docs_url=None, redoc_url=None, lifespan=lifespan)
     app.state.figma_delivery = figma_delivery
+    app.state.launcher = launcher
+    install_studio_delivery_api(app, launcher, figma_delivery)
     install_security(app, security)
 
     @app.get("/api/config")
