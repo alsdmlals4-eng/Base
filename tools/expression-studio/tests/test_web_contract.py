@@ -41,6 +41,33 @@ def test_web_exposes_optional_download_only_after_confirmation() -> None:
     assert "downloadCopyButton.dataset.url = result.download_url" in script
 
 
+def test_web_guides_figma_pairing_and_refreshes_verified_delivery_without_editable_route() -> None:
+    html = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
+    script = (WEB_ROOT / "app.js").read_text(encoding="utf-8")
+
+    assert 'id="figma-open-link"' in html
+    assert 'id="pairing-info"' in html
+    assert 'id="refresh-delivery-button" type="button" disabled' in html
+    assert "Figma 열기" in html
+    assert "Figma 상태 새로고침" in html
+    assert "function trustedFigmaUrl(" in script
+    assert 'parsed.protocol !== "https:"' in script
+    assert 'parsed.hostname !== "www.figma.com"' in script
+    assert '!parsed.pathname.startsWith("/design/")' in script
+    assert "PAIRING_REQUIRED" in script
+    assert "pairing_code" in script
+    assert "delivery_status_url" in script
+    assert "figmaOpenLink.href = trustedFigmaUrl(result.figma_url)" in script
+    assert "refreshDeliveryButton.dataset.url = result.delivery_status_url" in script
+    assert "await request(refreshDeliveryButton.dataset.url)" in script
+    for forbidden in (
+        'id="figma-url-input"',
+        'id="target-node-input"',
+        'id="figma-file-key-input"',
+    ):
+        assert forbidden not in html
+
+
 def test_web_renders_resolved_controls_and_anchor_lineage_for_review() -> None:
     html = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
     script = (WEB_ROOT / "app.js").read_text(encoding="utf-8")
@@ -104,5 +131,7 @@ def test_expression_web_clears_previous_run_before_every_new_submission() -> Non
         "currentRunDeliveryEligible = false",
         'document.querySelector("#delivery-result").textContent = ""',
         'downloadCopyButton.dataset.url = ""',
+        'figmaOpenLink.removeAttribute("href")',
+        'refreshDeliveryButton.dataset.url = ""',
     ):
         assert marker in script
