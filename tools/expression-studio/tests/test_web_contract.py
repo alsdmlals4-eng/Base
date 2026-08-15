@@ -103,6 +103,27 @@ def test_expression_web_exposes_import_first_controls_without_auto_confirmation(
     assert "selectedCandidate = null" in script
 
 
+def test_expression_web_exposes_canonical_chatgpt_pro_same_run_handoff() -> None:
+    html = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
+    script = (WEB_ROOT / "app.js").read_text(encoding="utf-8")
+
+    assert 'id="handoff-controls"' in html
+    assert 'id="prepare-handoff-button" type="button"' in html
+    assert 'id="handoff-prompt"' in html
+    assert 'id="handoff-run-info"' in html
+    assert 'id="import-handoff-button" type="button" disabled' in html
+    assert "ChatGPT Pro 프롬프트 준비" in html
+    assert "같은 Run으로 후보 가져오기" in html
+    assert "let pendingHandoffRunId = null" in script
+    assert 'request("/api/handoff-runs"' in script
+    assert 'request(`/api/handoff-runs/${pendingHandoffRunId}/import`' in script
+    assert "pendingHandoffRunId = result.run_id" in script
+    assert "handoffPrompt.value = result.prompt" in script
+    assert "body.append(\"candidates\", file)" in script
+    assert "renderImportedRun(run, payload)" in script
+    assert 'request("/api/import-runs"' in script
+
+
 def test_expression_web_cost_copy_and_import_requirements_follow_server_run_mode() -> None:
     html = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
     script = (WEB_ROOT / "app.js").read_text(encoding="utf-8")
