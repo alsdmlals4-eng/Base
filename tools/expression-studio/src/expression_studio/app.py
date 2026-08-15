@@ -4,8 +4,10 @@ import argparse
 import hashlib
 import os
 from pathlib import Path
+import re
 import threading
 from typing import Sequence
+from urllib.parse import urlsplit
 
 from fastapi import FastAPI, File, Form, HTTPException, Response, UploadFile
 from fastapi.responses import JSONResponse
@@ -31,12 +33,147 @@ from .security import StudioSecurity, install_security
 
 
 _MAX_REQUEST_BODY_BYTES = 202 * 1024 * 1024
+_PAIRING_CODE = re.compile(r"^\d{6}$")
+_DELIVERY_STATES = frozenset({"QUEUED", "CLAIMED", "EXPIRED", "DELIVERED_VERIFIED"})
+_BRIDGE_STATES = frozenset({"PAIRING_REQUIRED", "BRIDGE_PAIRED"})
+_PUBLIC_DELIVERY_STATES = frozenset({"DELIVERY_PENDING", "FIGMA_DELIVERED_VERIFIED", "NO_PENDING_DELIVERY"})
 
 
 class SelectionPayload(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     selected_candidate: int = Field(ge=0)
+
+
+def _validated_figma_url(value: object) -> str:
+    if not isinstance(value, str):
+        raise HubDeliveryError("Tool Hub Figma URL is invalid")
+    parsed = urlsplit(value)
+    if (
+        parsed.scheme != "https"
+        or parsed.hostname != "www.figma.com"
+        or parsed.username is not None
+        or parsed.password is not None
+        or parsed.port not in {None, 443}
+        or not parsed.path.startswith("/design/")
+        or parsed.fragment
+    ):
+        raise HubDeliveryError("Tool Hub Figma URL is invalid")
+    return value
+
+
+def _normalize_delivery_payload(
+    delivery: dict[str, object],
+    *,
+    project_id: str,
+    run_id: str,
+    content_sha256: str,
+    expected_delivery_id: str | None = None,
+    expected_tool_route_id: str | None = None,
+    expected_target_node_name: str | None = None,
+) -> dict[str, object]:
+    delivery_id = delivery.get("delivery_id")
+    tool_route_id = delivery.get("tool_route_id")
+    target_node_name = delivery.get("target_node_name")
+    status = delivery.get("status")
+    bridge_state = delivery.get("bridge_state")
+    delivery_state = delivery.get("delivery_state")
+    if (
+        delivery.get("tool_id") != "expression-studio"
+        or delivery.get("project_id") != project_id
+        or delivery.get("run_id") != run_id
+        or delivery.get("content_sha256") != content_sha256
+        or not isinstance(delivery_id, str)
+        or not delivery_id
+        or not isinstance(tool_route_id, str)
+        or not tool_route_id
+        or not isinstance(target_node_name, str)
+        or not target_node_name
+        or status not in _DELIVERY_STATES
+        or bridge_state not in _BRIDGE_STATES
+        or delivery_state not in _PUBLIC_DELIVERY_STATES
+    ):
+        raise HubDeliveryError("Tool Hub delivery response did not match the confirmed export")
+    if expected_delivery_id is not None and delivery_id != expected_delivery_id:
+        raise HubDeliveryError("Tool Hub delivery status changed delivery identity")
+    if expected_tool_route_id is not None and tool_route_id != expected_tool_route_id:
+        raise HubDeliveryError("Tool Hub delivery status changed the reviewed tool route")
+    if expected_target_node_name is not None and target_node_name != expected_target_node_name:
+        raise HubDeliveryError("Tool Hub delivery status changed the reviewed target")
+    figma_url = _validated_figma_url(delivery.get("figma_url"))
+    normalized: dict[str, object] = {
+        "status": status,
+        "delivery_id": delivery_id,
+        "tool_route_id": tool_route_id,
+        "target_node_name": target_node_name,
+        "bridge_state": bridge_state,
+        "delivery_state": delivery_state,
+        "figma_url": figma_url,
+    }
+    if status == "DELIVERED_VERIFIED":
+        if bridge_state != "BRIDGE_PAIRED" or delivery_state != "FIGMA_DELIVERED_VERIFIED":
+            raise HubDeliveryError("Tool Hub verified delivery state is inconsistent")
+    elif status in {"QUEUED", "CLAIMED"}:
+        if delivery_state != "DELIVERY_PENDING":
+            raise HubDeliveryError("Tool Hub pending delivery state is inconsistent")
+    elif status == "EXPIRED" and delivery_state != "NO_PENDING_DELIVERY":
+        raise HubDeliveryError("Tool Hub expired delivery state is inconsistent")
+    if bridge_state == "PAIRING_REQUIRED" and status != "EXPIRED":
+        pairing_code = delivery.get("pairing_code")
+        pairing_expires_at = delivery.get("pairing_expires_at")
+        if (
+            not isinstance(pairing_code, str)
+            or _PAIRING_CODE.fullmatch(pairing_code) is None
+            or not isinstance(pairing_expires_at, (int, float))
+            or pairing_expires_at <= 0
+        ):
+            raise HubDeliveryError("Tool Hub pairing identity is invalid")
+        normalized["pairing_code"] = pairing_code
+        normalized["pairing_expires_at"] = float(pairing_expires_at)
+    return normalized
+
+
+def _confirmation_response(
+    *,
+    record: object,
+    run_id: str,
+    content_sha256: str,
+    delivery: dict[str, object],
+) -> dict[str, object]:
+    status = str(delivery["status"])
+    bridge_state = str(delivery["bridge_state"])
+    if status == "DELIVERED_VERIFIED":
+        public_status = "CONFIRMED_AND_VERIFIED"
+        figma_delivery = "VERIFIED"
+    elif status == "EXPIRED":
+        public_status = "CONFIRMED_DELIVERY_EXPIRED"
+        figma_delivery = "EXPIRED"
+    elif bridge_state == "PAIRING_REQUIRED":
+        public_status = "CONFIRMED_BRIDGE_REQUIRED"
+        figma_delivery = "BRIDGE_REQUIRED"
+    else:
+        public_status = "CONFIRMED_AND_QUEUED"
+        figma_delivery = "QUEUED"
+    response: dict[str, object] = {
+        "status": public_status,
+        "project_save": "SAVED",
+        "figma_delivery": figma_delivery,
+        "bridge_state": delivery["bridge_state"],
+        "delivery_state": delivery["delivery_state"],
+        "figma_url": delivery["figma_url"],
+        "delivery_status_url": f"/api/runs/{run_id}/delivery-status",
+        "download_state": "DOWNLOAD_READY",
+        "download_url": f"/api/runs/{run_id}/confirmed-download",
+        "delivery_id": delivery["delivery_id"],
+        "content_sha256": content_sha256,
+        "tool_route_id": delivery["tool_route_id"],
+        "target_node_name": delivery["target_node_name"],
+        "provider_call_made": bool(getattr(record, "provider_call_made", False)),
+    }
+    if "pairing_code" in delivery:
+        response["pairing_code"] = delivery["pairing_code"]
+        response["pairing_expires_at"] = delivery["pairing_expires_at"]
+    return response
 
 
 def create_app(
@@ -186,35 +323,80 @@ def create_app(
                     raise HubDeliveryError("Tool Hub confirmed delivery is unavailable")
                 delivery = sender(run_id, selected_bytes, "image/png")
                 content_sha256 = hashlib.sha256(selected_bytes).hexdigest()
-                if (
-                    delivery.get("tool_id") != "expression-studio"
-                    or delivery.get("project_id") != record.request.project_id
-                    or delivery.get("run_id") != run_id
-                    or delivery.get("content_sha256") != content_sha256
-                    or delivery.get("status") not in {"QUEUED", "DELIVERED_VERIFIED"}
-                    or not isinstance(delivery.get("delivery_id"), str)
-                    or not isinstance(delivery.get("tool_route_id"), str)
-                    or not isinstance(delivery.get("target_node_name"), str)
-                ):
-                    raise HubDeliveryError("Tool Hub delivery response did not match the confirmed export")
-                verified = delivery["status"] == "DELIVERED_VERIFIED"
-                response = {
-                    "status": "CONFIRMED_AND_VERIFIED" if verified else "CONFIRMED_AND_QUEUED",
-                    "project_save": "SAVED",
-                    "figma_delivery": "VERIFIED" if verified else "QUEUED",
-                    "download_state": "DOWNLOAD_READY",
-                    "download_url": f"/api/runs/{run_id}/confirmed-download",
-                    "delivery_id": delivery["delivery_id"],
-                    "content_sha256": content_sha256,
-                    "tool_route_id": delivery["tool_route_id"],
-                    "target_node_name": delivery["target_node_name"],
-                    "provider_call_made": record.provider_call_made,
-                }
+                normalized = _normalize_delivery_payload(
+                    delivery,
+                    project_id=record.request.project_id,
+                    run_id=run_id,
+                    content_sha256=content_sha256,
+                )
+                response = _confirmation_response(
+                    record=record,
+                    run_id=run_id,
+                    content_sha256=content_sha256,
+                    delivery=normalized,
+                )
                 confirmed_deliveries[run_id] = (payload.selected_candidate, dict(response))
                 return response
         except RunNotFoundError as error:
             raise HTTPException(status_code=404, detail="run not found") from error
         except (RunBlockedError, DeliveryBlockedError, HubDeliveryError, ValueError) as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
+
+    @app.get("/api/runs/{run_id}/delivery-status")
+    def delivery_status(run_id: str) -> dict[str, object]:
+        try:
+            with confirmed_delivery_lock:
+                confirmed = confirmed_deliveries.get(run_id)
+                if confirmed is None:
+                    raise RunBlockedError("confirmation is required before delivery status refresh")
+                selected_candidate, prior_response = confirmed
+            record = service.get_run(run_id)
+            if record.export is None:
+                raise RunBlockedError("confirmed export is unavailable")
+            content_sha256 = prior_response.get("content_sha256")
+            delivery_id = prior_response.get("delivery_id")
+            tool_route_id = prior_response.get("tool_route_id")
+            target_node_name = prior_response.get("target_node_name")
+            expected_sha256 = record.export_output_sha256.get("selected")
+            if (
+                not isinstance(content_sha256, str)
+                or expected_sha256 != content_sha256
+                or not isinstance(delivery_id, str)
+                or not isinstance(tool_route_id, str)
+                or not isinstance(target_node_name, str)
+            ):
+                raise RunBlockedError("confirmed delivery evidence is unavailable")
+            _read_staged_file(project_root, record.export.selected, expected_sha256=content_sha256)
+            if sender is None:
+                raise HubDeliveryError("Tool Hub confirmed delivery is unavailable")
+            status_reader = getattr(sender, "status", None)
+            if not callable(status_reader):
+                raise HubDeliveryError("Tool Hub delivery status is unavailable")
+            current = status_reader(delivery_id)
+            normalized = _normalize_delivery_payload(
+                current,
+                project_id=record.request.project_id,
+                run_id=run_id,
+                content_sha256=content_sha256,
+                expected_delivery_id=delivery_id,
+                expected_tool_route_id=tool_route_id,
+                expected_target_node_name=target_node_name,
+            )
+            response = _confirmation_response(
+                record=record,
+                run_id=run_id,
+                content_sha256=content_sha256,
+                delivery=normalized,
+            )
+            with confirmed_delivery_lock:
+                latest = confirmed_deliveries.get(run_id)
+                if latest is None or latest[0] != selected_candidate:
+                    raise RunBlockedError("confirmed delivery identity changed during status refresh")
+                confirmed_deliveries[run_id] = (selected_candidate, dict(response))
+            return response
+        except RunNotFoundError as error:
+            raise HTTPException(status_code=404, detail="run not found") from error
+        except (RunBlockedError, HubDeliveryError, ValueError) as error:
             raise HTTPException(status_code=409, detail=str(error)) from error
 
     @app.get("/api/runs/{run_id}/confirmed-download")
