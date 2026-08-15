@@ -41,7 +41,7 @@ call :resolve GIT_CMD git "%ProgramFiles%\Git\cmd\git.exe"
 if errorlevel 1 goto :blocked_git
 call :resolve GH_CMD gh "%ProgramFiles%\GitHub CLI\gh.exe"
 if errorlevel 1 goto :blocked_gh_command
-call :resolve DOCKER_CMD docker "%ProgramFiles%\Docker\Docker\resources\bin\docker.exe"
+call :resolve DOCKER_CMD docker "%LOCALAPPDATA%\Programs\DockerDesktop\resources\bin\docker.exe" "%ProgramFiles%\Docker\Docker\resources\bin\docker.exe"
 if errorlevel 1 goto :blocked_docker_command
 call :resolve CODEX_CMD codex "%APPDATA%\npm\codex.cmd"
 if errorlevel 1 goto :blocked_codex_command
@@ -320,6 +320,7 @@ exit /b 0
 set "%~1="
 for /f "delims=" %%I in ('where %~2 2^>nul') do if not defined %~1 set "%~1=%%I"
 if not defined %~1 if exist "%~3" set "%~1=%~3"
+if not defined %~1 if exist "%~4" set "%~1=%~4"
 if not defined %~1 exit /b 1
 exit /b 0
 
