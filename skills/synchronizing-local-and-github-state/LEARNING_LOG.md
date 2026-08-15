@@ -1,5 +1,16 @@
 # Synchronizing Local and GitHub State — Learning Log
 
+## 2026-08-15 — Explicit provisional integration can reduce waiting without mutating owner PRs
+
+- **Status:** `PATTERN`
+- **Observed constraint:** `OBSERVED_FAILURE`. Long-running open owner PRs can hold the same Tool Hub paths for hours while their feature cores are already substantially implemented but stale integration baselines keep focused CI red. Treating every overlap as indefinite `WAITING_RESOURCE` forces independent latest-main integration work to stop even when the user explicitly wants a parallel integration branch.
+- **Decision:** extend the existing `CONCURRENT_CHANGE_PREFLIGHT` rather than creating a second lock framework. Add `PROVISIONAL_INTEGRATION` only when the user gives explicit authorization for a latest-main integration PR. Record `owner_pr_head_shas`, `provisional_overlap_paths`, and `provisional_semantic_resources`; keep owner PR branches read-only.
+- **Reconciliation rule:** owner PR merge/close/supersede/head movement or material main advance immediately triggers semantic reconciliation on the integration branch. Preserve the stronger/current canonical security, cost, platform, and data contract; remove stale provisional duplicates; rerun exact-head validation.
+- **Merge boundary:** `PROVISIONAL_INTEGRATION` never means `CLEAR`. The integration PR must not merge while an overlapping owner remains unresolved unless that owner is merged and absorbed, explicitly handed off/superseded, or the user explicitly authorizes replacement. Without explicit provisional authorization, the default remains `WAITING_RESOURCE` / `DUPLICATE_WORK`.
+- **TDD evidence:** RED workflow run `31852789710` failed because `PROVISIONAL_INTEGRATION` was absent from Base governance. GREEN run `31852960596` passed the same focused contract after the minimal rule was added. The temporary focused workflow was removed before the final merge candidate so the policy does not create a permanent redundant CI surface.
+- **Adversarial result:** P0/P1/P2 = 0 for authorization bypass, owner-branch mutation, stale owner-head reuse, textual-only reconciliation, stale-CI reuse, and unresolved-owner merge attacks. This is governance evidence only; a later product integration PR must independently prove its Windows/Linux/runtime/Figma behavior.
+- **Regression trigger:** any workflow that treats ordinary continuous work as provisional-overlap authorization, writes to owner PR branches, hides overlap as `CLEAR`, or merges a provisional integration PR before owner resolution must reopen this policy.
+
 ## 2026-08-14 — Missing optional GitHub CLI must not override connector capability
 
 - **Status:** `PATTERN`
