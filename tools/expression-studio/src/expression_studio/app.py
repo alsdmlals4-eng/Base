@@ -198,6 +198,7 @@ def create_app(
     confirmed_delivery_lock = threading.Lock()
     app = FastAPI(title="Expression Studio", docs_url=None, redoc_url=None)
     app.add_middleware(BoundedRequestBodyMiddleware, max_body_bytes=_MAX_REQUEST_BODY_BYTES, path="/api/import-runs")
+    app.add_middleware(BoundedRequestBodyMiddleware, max_body_bytes=_MAX_REQUEST_BODY_BYTES, path_prefix="/api/handoff-runs/")
     config_identity = service.config()
     security = StudioSecurity(
         "expression-studio",
