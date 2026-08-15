@@ -15,18 +15,16 @@ let studioConfig = { project_id: null, delivery_eligible: false, engine_provenan
 
 const status = document.querySelector("#status");
 const candidateGrid = document.querySelector("#candidate-grid");
-const exportButton = document.querySelector("#export-button");
-const deliveryButton = document.querySelector("#delivery-button");
+const confirmDeliveryButton = document.querySelector("#confirm-delivery-button");
 
 function resetRunState() {
   currentRunId = null;
   selectedCandidate = null;
   currentRunDeliveryEligible = false;
   candidateGrid.replaceChildren();
-  exportButton.disabled = true;
-  deliveryButton.disabled = true;
+  confirmDeliveryButton.disabled = true;
   document.querySelector("#run-result").hidden = true;
-  document.querySelector("#packet").textContent = "";
+  document.querySelector("#delivery-result").textContent = "";
   document.querySelector("#resolved-prompt").textContent = "";
   document.querySelector("#review-metadata").textContent = "";
 }
@@ -190,7 +188,8 @@ function renderCandidates(run) {
     radio.value = String(index);
     radio.addEventListener("change", () => {
       selectedCandidate = index;
-      exportButton.disabled = !currentRunDeliveryEligible;
+      confirmDeliveryButton.disabled = !currentRunDeliveryEligible;
+      document.querySelector("#delivery-result").textContent = "";
     });
     const image = document.createElement("img");
     image.src = `/api/runs/${run.run_id}/candidates/${index}`;
@@ -237,32 +236,44 @@ document.querySelector("#expression-form").addEventListener("submit", async (eve
       : `변경 모드: ${editModeLabel(payload.edit_mode)} · 변경 요청: ${payload.edit_prompt}`;
     document.querySelector("#review-metadata").textContent =
       `${editDetail} · 원본 SHA-256: ${run.lineage.anchor_sha256}`;
-    document.querySelector("#packet").textContent = "";
-    exportButton.disabled = true;
-    deliveryButton.disabled = true;
+    document.querySelector("#delivery-result").textContent = "";
+    confirmDeliveryButton.disabled = true;
     renderCandidates(run);
     status.textContent = run.run_mode === "subscription_handoff_import"
       ? `${run.cost.cost_route} · provider_call_made=false · 후보를 비교하고 하나를 선택하세요.`
       : currentRunDeliveryEligible
         ? "후보를 비교하고 하나를 선택하세요."
-        : `${studioConfig.engine_provenance.toUpperCase()} / DELIVERY_BLOCKED · 후보 검토만 가능하며 내보내기와 Figma 전달은 차단됩니다.`;
+        : `${studioConfig.engine_provenance.toUpperCase()} / DELIVERY_BLOCKED · 후보 검토만 가능하며 확정 및 전달은 차단됩니다.`;
   } catch (error) { status.textContent = error.message; }
 });
 
-exportButton.addEventListener("click", async () => {
+confirmDeliveryButton.addEventListener("click", async () => {
+  if (currentRunId === null || selectedCandidate === null) return;
+  confirmDeliveryButton.disabled = true;
+  status.textContent = `후보 ${selectedCandidate + 1}을 확정하고 프로젝트 저장 및 Figma 전달을 준비하는 중입니다…`;
   try {
-    const run = await request(`/api/runs/${currentRunId}/export`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ selected_candidate: selectedCandidate }) });
-    deliveryButton.disabled = false;
-    status.textContent = `후보 ${run.selected_candidate + 1}을 프로젝트 내부 출력 경로에 내보냈습니다.`;
-  } catch (error) { status.textContent = error.message; }
-});
-
-deliveryButton.addEventListener("click", async () => {
-  try {
-    const packet = await request(`/api/runs/${currentRunId}/figma-delivery`, { method: "POST" });
-    document.querySelector("#packet").textContent = JSON.stringify(packet, null, 2);
-    status.textContent = "전달 패킷을 준비했습니다. Use this packet only in the matching project GPT workspace with the Figma connector.";
-  } catch (error) { status.textContent = error.message; }
+    const result = await request(`/api/runs/${currentRunId}/confirm-delivery`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ selected_candidate: selectedCandidate }),
+    });
+    const deliveryLabel = result.figma_delivery === "VERIFIED" ? "검증 완료" : "전달 대기";
+    document.querySelector("#delivery-result").textContent = [
+      `프로젝트 저장       ${result.project_save}`,
+      `Figma 전달          ${result.figma_delivery}`,
+      `Figma 상태          ${deliveryLabel}`,
+      `Figma 대상          ${result.target_node_name}`,
+      `전달 ID             ${result.delivery_id}`,
+      `SHA-256             ${result.content_sha256}`,
+    ].join("\n");
+    status.textContent = result.figma_delivery === "VERIFIED"
+      ? `후보 ${selectedCandidate + 1} 확정 · 프로젝트 저장 및 Figma 전달 검증이 완료되었습니다.`
+      : `후보 ${selectedCandidate + 1} 확정 · 프로젝트 저장 완료 · ${result.target_node_name} 전달 대기열에 등록했습니다.`;
+  } catch (error) {
+    status.textContent = error.message;
+  } finally {
+    confirmDeliveryButton.disabled = !currentRunDeliveryEligible || selectedCandidate === null;
+  }
 });
 
 async function bootstrap() {
