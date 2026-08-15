@@ -128,6 +128,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - 전체 로컬 계약은 `python tools/run_local_validation.py --trusted-history-commit <trusted-main-commit-sha>`로 실행한다. 인자는 검증 전에 확인한 정확한 40자 main SHA이며, 이동 가능한 ref 이름을 넘기지 않는다. 환경 미준비 skip을 pass로 바꾸지 않는다.
 - 작업 전 원격·로컬 상태를 확인하고, 검증된 변경만 commit·push한다. Workflow 파일 존재와 실제 Actions 실행·Required Check 강제를 구분한다.
 - GitHub 게시·검토는 연결된 GitHub plugin/connector capability를 먼저 사용한다. connector가 필요한 동작을 지원하면 missing `gh` alone is not a blocker이며 사용자에게 CLI 반복 설치·재인증을 요구하지 않는다. 상세 fallback과 exact-SHA 안전 규칙은 `synchronizing-local-and-github-state`가 소유한다.
+- **`PROVISIONAL_INTEGRATION`은 사용자가 명시적 사용자 승인으로 최신 main 기반 선행 통합 PR의 병렬 진행을 허용한 경우에만 사용한다. 겹치는 owner PR과 exact head·path·semantic resource를 기록하고, owner PR Branch에는 write하지 않는다. owner PR 또는 main이 변할 때마다 통합 Branch에서 semantic reconciliation과 exact-head 검증을 다시 수행하며, provisional duplicate는 더 최신·강한 정본 구현에 맞춰 제거한다. 겹치는 owner PR이 merged+absorbed, 명시적 handoff/superseded, 또는 사용자 replacement 승인 중 하나로 정리되지 않은 동안 통합 PR을 병합하지 않는다.**
 - 병합은 검토한 정확한 HEAD, 필수 검사, 독립 검토, unresolved thread 0, 결정 게이트를 다시 확인한 뒤 저장소가 허용한 방식으로 수행한다.
 - `skills/SKILL_REGISTRY.json`, released lock, frozen/generated release artifact, 보호 경로를 변경하려면 해당 전용 계약과 검증을 먼저 충족한다. 범위 밖에서는 bytes를 보존한다.
 - 생성 실패·미검증 바이너리·로컬 임시 산출물을 자동 push하지 않는다.
