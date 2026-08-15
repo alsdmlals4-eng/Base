@@ -40,15 +40,20 @@ def test_bridge_does_not_request_private_figma_file_key_or_arbitrary_destination
         assert forbidden not in combined
 
 
-def test_bridge_requires_exact_route_marker_before_mutation() -> None:
+def test_bridge_requires_exact_tool_route_before_mutation() -> None:
     code = (BRIDGE_ROOT / "code.js").read_text(encoding="utf-8")
 
-    assert "figma.getNodeByIdAsync(job.generation_area_node_id)" in code
-    assert "Base Tool Hub Route · ${job.project_id}" in code
-    assert "marker.parent === target" in code
+    assert "figma.getNodeByIdAsync(job.route_parent_node_id)" in code
+    assert "figma.getNodeByIdAsync(job.target_node_id)" in code
+    assert "figma.getNodeByIdAsync(job.project_marker_node_id)" in code
+    assert "target.parent !== parent" in code
+    assert "target.name !== job.target_node_name" in code
+    assert "marker.parent !== parent" in code
+    assert "marker.name !== job.project_marker_name" in code
     assert "FIGMA_ROUTE_MARKER_MISSING" in code
     assert "figma.createImage(new Uint8Array(bytes))" in code
     assert "target.appendChild(node)" in code
+    assert "figma.getNodeByIdAsync(job.generation_area_node_id)" not in code
 
 
 def test_bridge_ui_hashes_exact_bytes_before_requesting_figma_mutation() -> None:
