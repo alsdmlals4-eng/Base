@@ -1,5 +1,15 @@
 # Managing Project Intake and Work Contracts — Learning Log
 
+## 2026-08-15 — Separate user-directed parallel PR work from scheduled active-PR guards
+
+- **상태:** `OBSERVATION`
+- **호출 트리거:** 사용자가 같은 목표의 open/draft/ready PR이 이미 있더라도 그 PR을 수정하지 말고, 현재 완료된 `main`에서 새 PR을 만들어 명시적으로 요청한 작업을 계속 진행하도록 Base 공용 규칙에 반영하라고 지시했다.
+- **Finding:** 기존 Continuous Work는 blocker recovery와 병합 권한 상속을 소유했고, scheduled/periodic repository-writing automation은 active PR이 있으면 fail-closed하는 별도 안전장치를 갖게 됐다. 두 문맥을 구분하지 않으면 interactive 작업까지 불필요하게 중단하거나, 반대로 예약 자동화가 open PR 사이에서 계속 쓰기를 수행하는 과잉 권한이 생긴다.
+- **Decision:** 새 Skill/Mode를 만들지 않고 `managing-project-intake-and-work-contract`의 Continuous Work owner에 `USER_DIRECTED_PARALLEL_PR`을 흡수한다. 명시적 user-directed continue에서는 same-goal in-progress PR을 read-only overlap evidence로만 읽고 **do not modify/rebase/update** 하며, **current completed main**에서 **separate branch/PR**을 만든다. 병합 직전 최신 main과 same-goal PR을 재조회해 이미 landed 된 중복은 제거하고 material delta가 없으면 own PR을 `superseded`로 닫는다. `scheduled/periodic` automation의 active-PR guard는 별도 더 엄격한 계약으로 유지한다.
+- **Evidence:** focused test를 처음 standalone로 추가했을 때 기존 Game Project OS suite가 소비하지 않아 거짓 GREEN 위험을 발견했다. 전용 Durable Resume gate에 연결한 RED run `31852863100`에서는 기존 79개 계약이 통과하고 새 `USER_DIRECTED_PARALLEL_PR` 계약만 실패했다. production owner 반영 뒤 run `31853060506`은 Ubuntu/Windows 모두 GREEN이었다. canonical reference freshness는 `SKILL.md` 변경에 대해 승인된 companion test와 Learning Log 동기화를 추가로 요구해 이 기록과 `tests/test_claim_evidence_binding.py` binding test를 연결했다.
+- **Boundary:** 이 정책은 다른 in-progress PR의 branch·commit·review authority를 채택하지 않으며 direct main push, force push, `--admin`, ruleset bypass를 허용하지 않는다. path overlap이 있으면 새 PR 작성 자체는 가능하지만 최신 main에서 비충돌 material delta가 입증될 때까지 병합하지 않는다. 예약/주기 자동화에는 이 완화 규칙을 적용하지 않는다.
+- **다음 검토 트리거:** 같은 목표 PR이 먼저 병합됐는데 중복을 제거하지 못하거나, `superseded`여야 할 PR이 churn을 만들거나, interactive와 scheduled execution 경계가 다시 혼동되거나, 다른 PR branch를 암묵적으로 수정·rebase하는 사례가 나타날 때.
+
 ## 2026-08-15 — Discover real local capability before rejecting one executable literal
 
 - **상태:** `OBSERVATION`
