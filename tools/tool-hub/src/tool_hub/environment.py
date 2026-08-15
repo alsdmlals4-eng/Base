@@ -9,6 +9,7 @@ import re
 import stat
 from typing import Mapping
 from types import MappingProxyType
+from urllib.parse import urlsplit
 
 from base_tool_contracts.trusted_files import TrustedFileError, open_directory_nofollow
 
@@ -25,6 +26,8 @@ class LaunchContext:
     runtime_root: Path
     python_executable: Path
     launch_nonce: str
+    hub_origin: str | None = None
+    delivery_token: str | None = None
 
 
 def _assert_windows_plain_directory(path: Path) -> None:
@@ -100,6 +103,23 @@ def _private_empty_directory(path: Path) -> Path:
     return path
 
 
+def _validated_hub_origin(value: str) -> str:
+    parsed = urlsplit(value)
+    if (
+        parsed.scheme != "http"
+        or parsed.hostname != "127.0.0.1"
+        or parsed.username is not None
+        or parsed.password is not None
+        or parsed.path not in {"", "/"}
+        or parsed.query
+        or parsed.fragment
+        or parsed.port is None
+        or not 0 < parsed.port < 65536
+    ):
+        raise EnvironmentError("Hub delivery origin must be an exact 127.0.0.1 HTTP origin")
+    return f"http://127.0.0.1:{parsed.port}"
+
+
 def child_environment(context: LaunchContext, adapter_sha256: str, root_fingerprint: str) -> Mapping[str, str]:
     """Build an import-only child environment without inheriting caller secrets."""
     if len(context.launch_nonce) < 32:
@@ -108,6 +128,8 @@ def child_environment(context: LaunchContext, adapter_sha256: str, root_fingerpr
         raise EnvironmentError("project adapter identity is invalid")
     if re.fullmatch(r"[0-9a-f]{64}", root_fingerprint) is None:
         raise EnvironmentError("project root fingerprint is invalid")
+    if (context.hub_origin is None) != (context.delivery_token is None):
+        raise EnvironmentError("Hub delivery identity must be configured as one complete pair")
     runtime = ensure_runtime_directory(context.runtime_root)
     cache = _private_empty_directory(runtime / "pycache")
     environment = {
@@ -122,6 +144,11 @@ def child_environment(context: LaunchContext, adapter_sha256: str, root_fingerpr
         "BASE_TOOL_HUB_ADAPTER_SHA256": adapter_sha256,
         "BASE_TOOL_HUB_ROOT_FINGERPRINT": root_fingerprint,
     }
+    if context.hub_origin is not None and context.delivery_token is not None:
+        if len(context.delivery_token) < 32:
+            raise EnvironmentError("Hub delivery credential is invalid")
+        environment["BASE_TOOL_HUB_DELIVERY_ORIGIN"] = _validated_hub_origin(context.hub_origin)
+        environment["BASE_TOOL_HUB_DELIVERY_TOKEN"] = context.delivery_token
     if os.name == "nt":
         for name in ("SystemRoot", "WINDIR"):
             if value := os.environ.get(name):
