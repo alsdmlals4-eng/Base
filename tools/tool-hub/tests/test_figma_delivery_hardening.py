@@ -26,7 +26,7 @@ def test_pairing_codes_are_globally_unique_and_resolve_without_client_project_id
 ) -> None:
     service, _, _, _ = configured_service(tmp_path)
     generated = iter((123456, 123456, 654321))
-    monkeypatch.setattr("tool_hub.figma_delivery.secrets.randbelow", lambda _: next(generated))
+    monkeypatch.setattr("tool_hub._figma_delivery_base.secrets.randbelow", lambda _: next(generated))
 
     coc = service.create_pairing("coc-fiction")
     omen = service.create_pairing("omenward")
