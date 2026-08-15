@@ -36,6 +36,27 @@ def test_prepare_handoff_returns_server_run_and_fixed_subscription_truth(tmp_pat
     assert str(tmp_path) not in body["prompt"]
     assert body["source"]["filename"] == "hero.png"
     assert len(body["source"]["sha256"]) == 64
+    assert body["anchor_url"] == f"/api/handoff-runs/{body['run_id']}/anchor"
+
+
+def test_pending_handoff_exposes_only_exact_verified_anchor_bytes_until_consumed(tmp_path: Path) -> None:
+    client = confirmed_client(tmp_path, RecordingSender())
+    prepared = client.post("/api/handoff-runs", json=valid_payload()).json()
+    run_id = prepared["run_id"]
+    expected = (tmp_path / "art" / "source" / "hero.png").read_bytes()
+
+    source = client.get(prepared["anchor_url"])
+
+    assert source.status_code == 200
+    assert source.content == expected
+    assert source.headers["content-type"].startswith("image/png")
+    assert source.headers["x-content-sha256"] == hashlib.sha256(expected).hexdigest()
+    assert 'attachment; filename="hero.png"' == source.headers["content-disposition"]
+    assert str(tmp_path) not in str(source.headers)
+
+    imported = client.post(f"/api/handoff-runs/{run_id}/import", files=candidate_files())
+    assert imported.status_code == 201, imported.text
+    assert client.get(prepared["anchor_url"]).status_code == 404
 
 
 def test_handoff_candidate_import_uses_exact_server_run_and_consumes_once(tmp_path: Path) -> None:
