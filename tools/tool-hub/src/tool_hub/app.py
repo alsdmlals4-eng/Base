@@ -291,18 +291,9 @@ def create_app(
 
     @app.post("/bridge/pair")
     def pair_figma_bridge(payload: BridgePairPayload) -> dict[str, str]:
-        project_id = pairing_projects.get(payload.pairing_code)
-        if project_id is None:
-            raise HTTPException(status_code=409, detail="PAIRING_CODE_INVALID")
         try:
-            target = figma_registry.resolve_ready_target(project_id)
-            session = figma_delivery.pair(
-                project_id,
-                target.figma_file_key,
-                payload.pairing_code,
-                payload.bridge_version,
-            )
-        except (DeliveryBlockedError, DeliveryError) as error:
+            session = figma_delivery.pair_by_code(payload.pairing_code, payload.bridge_version)
+        except DeliveryError as error:
             pairing_projects.pop(payload.pairing_code, None)
             raise HTTPException(status_code=409, detail=str(error)) from error
         pairing_projects.pop(payload.pairing_code, None)
