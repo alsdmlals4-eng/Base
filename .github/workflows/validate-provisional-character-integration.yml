@@ -41,3 +41,4 @@ jobs:
           tests/test_character_surface_contract.py
           tests/test_subscription_handoff_run.py
           tests/test_subscription_handoff_api.py
+          tests/test_web_contract.py
