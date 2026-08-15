@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 from pathlib import Path
+import threading
 
 import pytest
 from fastapi.testclient import TestClient
@@ -40,7 +41,39 @@ def test_child_environment_injects_private_hub_delivery_identity(
     assert environment[DELIVERY_TOKEN_ENV] != environment["BASE_TOOL_HUB_LAUNCH_NONCE"]
 
 
-def test_supervisor_delivery_token_is_bound_to_one_live_child(tmp_path: Path) -> None:
+def test_supervisor_delivery_token_is_bound_to_one_running_child(tmp_path: Path) -> None:
+    token = "private-child-token-12345678901234567890"
+    supervisor = ProcessSupervisor(
+        tmp_path / "runtime",
+        tmp_path / "base",
+        ProjectLocator(tmp_path / "projects.json"),
+        [],
+        hub_origin="http://127.0.0.1:8764",
+    )
+    key = ("expression-studio", "coc-fiction")
+    child = SimpleNamespace(
+        process=SimpleNamespace(poll=lambda: None),
+        spec=SimpleNamespace(env={DELIVERY_TOKEN_ENV: token}),
+        identity=SimpleNamespace(tool_id=key[0], project_id=key[1]),
+    )
+    supervisor._children[key] = child
+    supervisor._set_state(key, "RUNNING")
+
+    assert supervisor.authorize_delivery_token(token) == key
+    with pytest.raises(LaunchError, match="delivery credential"):
+        supervisor.authorize_delivery_token("wrong-token")
+
+    supervisor._set_state(key, "STOPPING")
+    with pytest.raises(LaunchError, match="delivery credential"):
+        supervisor.authorize_delivery_token(token)
+
+    supervisor._set_state(key, "RUNNING")
+    child.process = SimpleNamespace(poll=lambda: 1)
+    with pytest.raises(LaunchError, match="delivery credential"):
+        supervisor.authorize_delivery_token(token)
+
+
+def test_public_log_tail_redacts_private_delivery_token(tmp_path: Path) -> None:
     token = "private-child-token-12345678901234567890"
     supervisor = ProcessSupervisor(
         tmp_path / "runtime",
@@ -50,19 +83,20 @@ def test_supervisor_delivery_token_is_bound_to_one_live_child(tmp_path: Path) ->
         hub_origin="http://127.0.0.1:8764",
     )
     child = SimpleNamespace(
-        process=SimpleNamespace(poll=lambda: None),
-        spec=SimpleNamespace(env={DELIVERY_TOKEN_ENV: token}),
-        identity=SimpleNamespace(tool_id="expression-studio", project_id="coc-fiction"),
+        log_tail=bytearray(f"startup error token={token}\n".encode("utf-8")),
+        log_lock=threading.Lock(),
+        launch_dir=tmp_path / "runtime" / "launch",
+        project_root=tmp_path / "project",
+        spec=SimpleNamespace(
+            env={DELIVERY_TOKEN_ENV: token},
+            expected_identity={"launch_nonce": "n" * 43},
+        ),
     )
-    supervisor._children[("expression-studio", "coc-fiction")] = child
 
-    assert supervisor.authorize_delivery_token(token) == ("expression-studio", "coc-fiction")
-    with pytest.raises(LaunchError, match="delivery credential"):
-        supervisor.authorize_delivery_token("wrong-token")
+    public = supervisor._sanitized_log_tail(child)
 
-    child.process = SimpleNamespace(poll=lambda: 1)
-    with pytest.raises(LaunchError, match="delivery credential"):
-        supervisor.authorize_delivery_token(token)
+    assert token not in public
+    assert "<redacted>" in public
 
 
 def _registered_hub(tmp_path: Path) -> TestClient:
