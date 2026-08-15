@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 import hmac
+import os
 from pathlib import Path
 import secrets
 from typing import Iterable
@@ -14,6 +15,7 @@ from .environment import LaunchContext
 from .launcher import LaunchError
 from .projects import ProjectBinding, ProjectLocator
 from .supervisor import ProcessSupervisor as _BaseProcessSupervisor
+from .windows_process_owner import WindowsOwnershipError
 
 
 _DELIVERY_TOKEN_ENV = "BASE_TOOL_HUB_DELIVERY_TOKEN"
@@ -72,6 +74,46 @@ class ProcessSupervisor(_BaseProcessSupervisor):
             spec_builder=delivery_spec_builder,
             **kwargs,
         )
+
+    def _read_startup(self, child: object, expected: dict[str, object]) -> dict[str, object]:
+        """Accept a Windows venv runtime PID only after exact Job Object ownership proof."""
+        if os.name != "nt":
+            return super()._read_startup(child, expected)  # type: ignore[arg-type,return-value]
+
+        startup_expected = {name: value for name, value in expected.items() if name != "process_id"}
+        payload = super()._read_startup(child, startup_expected)  # type: ignore[arg-type]
+        reported_pid = payload.get("process_id")
+        windows_owner = getattr(child, "windows_owner", None)
+        if type(reported_pid) is not int or reported_pid <= 0 or windows_owner is None:
+            raise LaunchError("child startup identity did not match the requested binding")
+        try:
+            owned = windows_owner.contains_process(reported_pid)
+        except WindowsOwnershipError as error:
+            raise LaunchError("child startup ownership proof failed") from error
+        if not owned:
+            raise LaunchError("child startup identity did not match the requested binding")
+        expected["process_id"] = reported_pid
+        setattr(child, "_runtime_process_id", reported_pid)
+        return payload
+
+    def _health_expected(self, child: object, expected: dict[str, object]) -> dict[str, object]:
+        """Keep health authentication bound to the verified runtime PID on Windows."""
+        if os.name == "nt":
+            runtime_pid = getattr(child, "_runtime_process_id", None)
+            if type(runtime_pid) is int and runtime_pid > 0:
+                return {**expected, "process_id": runtime_pid}
+        return super()._health_expected(child, expected)  # type: ignore[arg-type]
+
+    def _start(self, tool_id: str, project_id: str):
+        identity = super()._start(tool_id, project_id)
+        if os.name != "nt":
+            return identity
+        child = self._children.get((tool_id, project_id))
+        runtime_pid = getattr(child, "_runtime_process_id", None) if child is not None else None
+        if type(runtime_pid) is int and runtime_pid > 0 and identity.process_id != runtime_pid:
+            identity = replace(identity, process_id=runtime_pid)
+            child.identity = identity
+        return identity
 
     def authorize_delivery_token(self, token: str) -> tuple[str, str]:
         """Resolve one credential only while its exact child is in the public RUNNING state."""
