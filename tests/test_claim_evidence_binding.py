@@ -298,5 +298,42 @@ class ReviewRecordBehaviorTests(unittest.TestCase):
         self.assertEqual("PASS", result["gates"]["implementation"]["status"])
 
 
+class IntakeParallelPrPolicyBindingTests(unittest.TestCase):
+    def test_user_directed_parallel_pr_policy_is_bound_to_existing_intake_owner(self) -> None:
+        skill = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        reference = (
+            ROOT
+            / "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"
+        ).read_text(encoding="utf-8")
+        sync = (
+            ROOT
+            / "skills/synchronizing-local-and-github-state/references/safe-sync-protocol.md"
+        ).read_text(encoding="utf-8")
+
+        for text in (skill, reference):
+            for term in (
+                "USER_DIRECTED_PARALLEL_PR",
+                "current completed main",
+                "separate branch/PR",
+                "same-goal",
+                "in-progress PR",
+                "scheduled/periodic",
+                "PROVISIONAL_INTEGRATION",
+                "synchronizing-local-and-github-state",
+            ):
+                self.assertIn(term, text)
+        self.assertIn("do not modify/rebase/update", reference)
+        self.assertIn("superseded", reference)
+        self.assertIn("read-only overlap evidence", skill)
+        self.assertIn("owner가 해결되기 전에는 merge하지 않는다", reference)
+        for term in (
+            "explicit user authorization",
+            "owner PR branches",
+            "semantic reconciliation",
+            "must not merge",
+        ):
+            self.assertIn(term, sync)
+
+
 if __name__ == "__main__":
     unittest.main()
