@@ -150,6 +150,13 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, runner)
 
+    def test_queue_receipt_markdown_is_not_built_by_unquoted_shell_heredoc(self) -> None:
+        runner = RUNNER.read_text(encoding="utf-8")
+        self.assertNotIn('cat >> "$FINAL_PATH" <<EOF', runner)
+        self.assertIn('python - "$FINAL_PATH" "$MODE" "$FINAL_STATE"', runner)
+        self.assertIn("NO_CHANGE", runner)
+        self.assertIn("```yaml", runner)
+
     def test_temporary_patch_and_export_files_are_removed(self) -> None:
         for path in TEMPORARY_PATCH_FILES:
             with self.subTest(path=str(path.relative_to(ROOT))):
