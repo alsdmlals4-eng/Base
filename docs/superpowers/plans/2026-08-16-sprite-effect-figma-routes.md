@@ -2,88 +2,67 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add reviewed `Sprite Action Runs` and `Effect Runs` destinations to all eight registered Figma projects, register all 24 exact project/tool routes in Base, and enable fail-closed same-SHA Sprite/Effect atlas delivery through the existing localhost Tool Hub bridge.
+**Goal:** Add reviewed `Sprite Action Runs` and `Effect Runs` destinations to all eight registered Figma projects, register 24 exact project/tool routes in Base, and enable fail-closed same-SHA Sprite/Effect atlas delivery through the existing localhost Tool Hub bridge.
 
-**Architecture:** Keep Figma node authority in the existing project/route registries and keep the existing hidden project markers. Add two sibling Figma route frames per project, then extend Tool Hub so an authenticated `sprite-animation-studio` child may request only a server-derived `sprite_action_runs` or `effect_runs` route. Sprite Animation Studio confirms only its verified exported atlas PNG; Tool Hub revalidates tool/route/project/registry identity before queueing the existing exact-node bridge job.
+**Architecture:** Keep the existing project Figma registry, tool-route registry, and hidden project markers as the only mutation authority. Create two sibling Figma destinations per project, then let an authenticated Sprite Studio child request only a route derived from its server-owned run mode. Sprite confirmation sends the verified exported atlas PNG; Tool Hub validates tool, route, project, registry, node, and SHA before using the existing bridge queue/receipt lifecycle.
 
-**Tech Stack:** Python 3.12, FastAPI, Pydantic, pytest/unittest, existing Base `base-tool-contracts`, Tool Hub/Figma Bridge, Sprite Animation Studio, Figma Plugin API through the connected Figma tool, GitHub Actions on Ubuntu/Windows.
+**Tech Stack:** Python 3.12, FastAPI, Pydantic, pytest/unittest, Base `base-tool-contracts`, Tool Hub/Figma Bridge, Sprite Animation Studio, Figma Plugin API, GitHub Actions on Ubuntu and Windows.
 
 ## Global Constraints
 
 - `ZERO_INCREMENTAL_COST_REQUIRED`: no new paid API, API key, metered provider, or mandatory paid dependency.
-- Preserve `subscription_handoff_import` + `CHATGPT_INCLUDED`; provider call remains false for the normal ChatGPT Pro handoff path.
-- Do not mutate stale/open owner PR branches. Start implementation from latest completed `main`; copy approved spec/plan material as needed under `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`.
-- Keep `Expression Runs` and all eight existing hidden `Base Tool Hub Route · <project_id>` markers unchanged.
-- Never use generic `Generated Assets` or `Expression Runs` as Sprite/Effect fallback destinations.
-- Do not commit any new Sprite/Effect route as `READY_FOR_DELIVERY` until all 16 Figma frames have been created or safely reused and read back.
-- Browser/project input is not Figma route authority. Sprite route identity must come from server-owned `RunRecord.request.mode`.
+- Preserve `subscription_handoff_import` + `CHATGPT_INCLUDED`; the normal subscription path keeps `provider_call_made=false`.
+- Start implementation from latest completed `main`; do not modify stale/open owner PR branches. Use `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16` for approved overlap.
+- Keep all existing `Expression Runs` nodes and hidden `Base Tool Hub Route · {project_id}` markers unchanged.
+- Never route Sprite/Effect output to generic `Generated Assets` or `Expression Runs` as a fallback.
+- Do not commit a new Sprite/Effect route as `READY_FOR_DELIVERY` until all 16 Figma frames have been created or safely reused and read back.
+- Browser/project input is not Figma route authority. Sprite route identity comes from server-owned `RunRecord.request.mode`.
 - `pose_sequence` and `sprite_action` map to `sprite_action_runs`; `effect_stages` maps to `effect_runs`; `expression_variation` remains delivery-blocked in this slice.
-- The Sprite/Effect payload sent to Tool Hub is the exact verified exported atlas PNG, not a candidate frame, contact sheet, GIF, or browser-selected file.
-- Same run + same route + same atlas SHA is idempotent. Same run + changed route or changed bytes fails closed.
-- `PROJECT_ASSET_APPROVED` is not granted by this work.
-- Cloud Figma node/readback and CI evidence do not prove user-PC Tool Hub execution, real ChatGPT Pro visual quality, localhost Bridge receipt, or Godot consumption.
+- The confirmed Sprite/Effect payload is the exact verified exported atlas PNG.
+- Same run + same route + same atlas SHA is idempotent. Same run + changed route or bytes fails closed.
+- `PROJECT_ASSET_APPROVED` is not granted.
+- Cloud Figma/CI evidence does not prove user-PC execution, real ChatGPT Pro quality, localhost Bridge receipt, or Godot consumption.
 
----
-
-## File Structure
+## Files
 
 **Create**
-- `tools/base-tool-contracts/src/base_tool_contracts/hub_delivery.py` — shared loopback Studio-to-Hub client with optional exact route header.
-- `tools/sprite-animation-studio/tests/test_hub_delivery.py` — server-owned mode→route, atlas-byte, status, and idempotency contracts.
-- `docs/evidence/2026-08-16-sprite-effect-figma-route-readback.md` — immutable audit table of the 16 real Figma route node IDs observed during implementation.
+- `tools/base-tool-contracts/src/base_tool_contracts/hub_delivery.py`
+- `tools/sprite-animation-studio/tests/test_hub_delivery.py`
+- `docs/evidence/2026-08-16-sprite-effect-figma-route-readback.md`
 
 **Modify**
-- `tools/base-tool-contracts/src/base_tool_contracts/__init__.py` — export shared delivery client contracts.
-- `tools/expression-studio/src/expression_studio/hub_delivery.py` — compatibility re-export of the shared client so Expression behavior/import paths remain stable.
-- `tools/tool-hub/src/tool_hub/figma_delivery.py` — authenticated tool/route allowlist, explicit route resolution, route-bound idempotency/recovery.
-- `tools/tool-hub/src/tool_hub/studio_delivery_api.py` — accept/validate the child-only exact route header; preserve expression default compatibility.
-- `tools/tool-hub/tests/test_figma_exact_tool_route.py` — dedicated Sprite/Effect route tests.
-- `tools/tool-hub/tests/test_studio_delivery_trust.py` — authenticated child route-header trust and route mismatch tests.
-- `tools/sprite-animation-studio/src/sprite_animation_studio/service.py` — server-owned run-mode→route helper and confirmed-atlas evidence access.
-- `tools/sprite-animation-studio/src/sprite_animation_studio/app.py` — `confirm-delivery`, status refresh, and confirmed-atlas download endpoints using child-only Hub identity.
-- `tools/sprite-animation-studio/web/index.html` — expose `확정 및 전달`/delivery status after export.
-- `tools/sprite-animation-studio/web/app.js` — call only server run endpoints; never submit route/node/file authority.
-- `tools/sprite-animation-studio/README.md` — document dedicated route behavior and live-IRG ceiling.
-- `docs/operations/PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json` — expand 8 Character routes to 24 exact routes after Figma readback.
-- `tests/test_tool_hub_subscription_production_contract.py` — require 24 route pairs and canonical names.
-- `.github/workflows/validate-provisional-figma-integration.yml` — install Sprite/shared contracts and actually execute the new route/delivery tests on Ubuntu and Windows.
-- `docs/superpowers/specs/2026-08-16-sprite-effect-figma-routes-design.md` and this plan — copy unchanged onto the implementation branch for provenance.
-
-**External Figma mutations**
-- Eight existing Figma design files listed in the approved spec; create/reuse exactly 16 frames under their exact `Generated Assets` parents.
+- `tools/base-tool-contracts/src/base_tool_contracts/__init__.py`
+- `tools/base-tool-contracts/src/base_tool_contracts/figma_tool_routing.py`
+- `tools/expression-studio/src/expression_studio/hub_delivery.py`
+- `tools/tool-hub/src/tool_hub/figma_delivery.py`
+- `tools/tool-hub/src/tool_hub/studio_delivery_api.py`
+- `tools/tool-hub/tests/test_figma_exact_tool_route.py`
+- `tools/tool-hub/tests/test_studio_delivery_trust.py`
+- `tools/sprite-animation-studio/src/sprite_animation_studio/service.py`
+- `tools/sprite-animation-studio/src/sprite_animation_studio/app.py`
+- `tools/sprite-animation-studio/web/index.html`
+- `tools/sprite-animation-studio/web/app.js`
+- `tools/sprite-animation-studio/README.md`
+- `tools/sprite-animation-studio/tests/test_docs_contract.py`
+- `docs/operations/PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json`
+- `tests/test_tool_hub_subscription_production_contract.py`
+- `.github/workflows/validate-provisional-figma-integration.yml`
 
 ---
 
-### Task 1: Create latest-main implementation branch and establish TDD RED
+### Task 1: Fork latest main and establish TDD RED
 
-**Files:**
-- Modify: `tests/test_tool_hub_subscription_production_contract.py`
-- Modify: `tools/tool-hub/tests/test_figma_exact_tool_route.py`
-- Modify: `tools/tool-hub/tests/test_studio_delivery_trust.py`
-- Create: `tools/sprite-animation-studio/tests/test_hub_delivery.py`
-- Modify: `.github/workflows/validate-provisional-figma-integration.yml`
-- Copy unchanged: `docs/superpowers/specs/2026-08-16-sprite-effect-figma-routes-design.md`
-- Copy unchanged: `docs/superpowers/plans/2026-08-16-sprite-effect-figma-routes.md`
+**Files:** root contract, Tool Hub route/trust tests, new Sprite delivery test, Figma integration workflow, approved spec/plan copies.
 
-**Interfaces:**
-- Consumes: approved spec head from PR #451 plus latest completed Base `main`.
-- Produces: a separate implementation branch with failing contracts that require 24 registry routes, route-aware authenticated Sprite delivery, and Sprite confirmed-atlas delivery.
+**Interfaces:** Produces a separate `feat/sprite-effect-figma-routes-20260816` implementation branch. PR #451 becomes read-only design/plan provenance after handoff.
 
-- [ ] **Step 1: Re-read latest `main` and active PR overlap, then create a separate implementation branch**
+- [ ] **Step 1: Create the implementation branch from exact latest completed `main`**
 
-Create `feat/sprite-effect-figma-routes-20260816` from the exact latest completed `main` SHA. Copy the approved spec and this plan from PR #451 by blob/content; do not rebase, push to, or convert #451 into an implementation branch. Re-read open PR changed paths and use copy-integration if another PR has since touched a planned path.
+Re-read `main` and open PR changed paths. Create `feat/sprite-effect-figma-routes-20260816` from that SHA and copy the approved spec and plan blobs from #451. Do not push implementation commits to #451.
 
-Expected branch invariant:
+- [ ] **Step 2: Make the root route contract require the final 24-route shape**
 
-```text
-implementation base == latest completed Base main
-PR #451 branch == read-only design/plan source after handoff
-source owner branches == unmodified
-```
-
-- [ ] **Step 2: Change the root subscription production contract to the desired 24-route state**
-
-Replace the old “8 Character routes only / Sprite routes absent” assertions with:
+In `tests/test_tool_hub_subscription_production_contract.py` use:
 
 ```python
 expected_route_names = {
@@ -104,22 +83,18 @@ for route in routes:
     self.assertEqual(expected_route_names[route["tool_route_id"]], route["destination_name"])
 ```
 
-Also group each project's three entries and assert all three destination node IDs are distinct from each other, their parent, and their marker.
+Group each project's three entries and assert the three destination IDs are mutually distinct and distinct from parent/marker.
 
-- [ ] **Step 3: Replace the old Sprite-unavailable Tool Hub route test with desired route-aware RED tests**
+- [ ] **Step 3: Define RED Tool Hub route tests**
 
-In `tools/tool-hub/tests/test_figma_exact_tool_route.py`, define the expected contract:
+Add to `tools/tool-hub/tests/test_figma_exact_tool_route.py`:
 
 ```python
 def test_sprite_action_delivery_binds_only_sprite_action_destination(tmp_path: Path) -> None:
     service, _ = service_for(tmp_path, "omenward")
     job = service.enqueue(
-        "sprite-animation-studio",
-        "omenward",
-        "run-sprite-action",
-        png_bytes(),
-        "image/png",
-        tool_route_id="sprite_action_runs",
+        "sprite-animation-studio", "omenward", "run-sprite-action",
+        png_bytes(), "image/png", tool_route_id="sprite_action_runs",
     )
     assert job.tool_route_id == "sprite_action_runs"
     assert job.target_node_name == "Sprite Action Runs"
@@ -128,12 +103,8 @@ def test_sprite_action_delivery_binds_only_sprite_action_destination(tmp_path: P
 def test_effect_delivery_binds_only_effect_destination(tmp_path: Path) -> None:
     service, _ = service_for(tmp_path, "omenward")
     job = service.enqueue(
-        "sprite-animation-studio",
-        "omenward",
-        "run-effect",
-        png_bytes(),
-        "image/png",
-        tool_route_id="effect_runs",
+        "sprite-animation-studio", "omenward", "run-effect",
+        png_bytes(), "image/png", tool_route_id="effect_runs",
     )
     assert job.tool_route_id == "effect_runs"
     assert job.target_node_name == "Effect Runs"
@@ -149,11 +120,11 @@ def test_sprite_delivery_rejects_unowned_route(tmp_path: Path, route_id: str) ->
         )
 ```
 
-Add a same-run/same-bytes/different-route assertion expecting `DELIVERY_RUN_ROUTE_MISMATCH`.
+Add a same-run/same-bytes/different-route test expecting `DELIVERY_RUN_ROUTE_MISMATCH`.
 
-- [ ] **Step 4: Add authenticated Studio API RED tests**
+- [ ] **Step 4: Define RED authenticated child-route tests**
 
-Extend `tools/tool-hub/tests/test_studio_delivery_trust.py` with a Sprite child authorization helper and tests using the private route header:
+Add a Sprite authorization helper to `test_studio_delivery_trust.py`:
 
 ```python
 def _authorize_sprite_child(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -162,50 +133,28 @@ def _authorize_sprite_child(monkeypatch: pytest.MonkeyPatch) -> None:
             raise LaunchError("studio delivery credential is invalid")
         return ("sprite-animation-studio", "coc-fiction")
     monkeypatch.setattr(ProcessSupervisor, "authorize_delivery_token", authorize)
-
-
-def test_sprite_child_must_supply_an_owned_exact_route(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    client = _registered_hub(tmp_path)
-    _authorize_sprite_child(monkeypatch)
-    base = _studio_headers()
-
-    missing = client.post("/internal/studio-delivery/run-sprite", content=png_bytes(2, 1), headers=base)
-    assert missing.status_code == 409
-    assert missing.json()["detail"] == "DELIVERY_TOOL_ROUTE_UNAVAILABLE"
-
-    wrong = client.post(
-        "/internal/studio-delivery/run-sprite",
-        content=png_bytes(2, 1),
-        headers={**base, "X-Base-Tool-Route": "character_expression_runs"},
-    )
-    assert wrong.status_code == 409
-    assert wrong.json()["detail"] == "DELIVERY_TOOL_ROUTE_UNAVAILABLE"
 ```
 
-A valid `sprite_action_runs` request must return that route and `Sprite Action Runs`; a valid `effect_runs` request must return `Effect Runs`.
+Assert missing route and `character_expression_runs` both return HTTP 409 `DELIVERY_TOOL_ROUTE_UNAVAILABLE`; assert valid `sprite_action_runs` and `effect_runs` return the matching route/name.
 
-- [ ] **Step 5: Add Sprite Studio confirmed-atlas RED tests**
+- [ ] **Step 5: Define RED Sprite confirmed-atlas tests with a complete recording sender**
 
-Create `tools/sprite-animation-studio/tests/test_hub_delivery.py` around a recording sender:
+Create `tools/sprite-animation-studio/tests/test_hub_delivery.py` with this sender shape:
 
 ```python
 class RecordingSender:
     def __init__(self) -> None:
         self.calls: list[tuple[str, bytes, str, str | None]] = []
+        self.last: dict[str, object] | None = None
 
-    def __call__(
-        self,
-        run_id: str,
-        image_bytes: bytes,
-        media_type: str,
-        tool_route_id: str | None = None,
-    ) -> dict[str, object]:
+    def __call__(self, run_id: str, image_bytes: bytes, media_type: str,
+                 tool_route_id: str | None = None) -> dict[str, object]:
         self.calls.append((run_id, image_bytes, media_type, tool_route_id))
         target = {
             "sprite_action_runs": "Sprite Action Runs",
             "effect_runs": "Effect Runs",
         }[str(tool_route_id)]
-        return {
+        self.last = {
             "status": "QUEUED",
             "delivery_id": "1" * 32,
             "tool_id": "sprite-animation-studio",
@@ -218,50 +167,31 @@ class RecordingSender:
             "delivery_state": "DELIVERY_PENDING",
             "figma_url": "https://www.figma.com/design/PEa5zDbPHll3eHiNKX0e1k/example",
         }
+        return dict(self.last)
 
     def status(self, delivery_id: str) -> dict[str, object]:
-        ...
+        assert self.last is not None
+        assert delivery_id == self.last["delivery_id"]
+        verified = dict(self.last)
+        verified["status"] = "DELIVERED_VERIFIED"
+        verified["bridge_state"] = "BRIDGE_PAIRED"
+        verified["delivery_state"] = "FIGMA_DELIVERED_VERIFIED"
+        return verified
 ```
 
-Implement the test fixture's `status()` fully in the test file by storing the last response and returning the same identity with `status="DELIVERED_VERIFIED"` and `delivery_state="FIGMA_DELIVERED_VERIFIED"`; do not leave an ellipsis in committed code.
+Tests assert `pose_sequence`/`sprite_action` use `sprite_action_runs`, `effect_stages` uses `effect_runs`, `expression_variation` sends nothing and returns 409, and `sender.calls[0][1]` equals the exported atlas bytes whose SHA equals `record.export_output_sha256["atlas"]`. Atlas tampering must fail before sender invocation.
 
-Tests must prove:
+- [ ] **Step 6: Wire all RED tests into Ubuntu/Windows CI**
 
-```python
-assert sender.calls[0][3] == "sprite_action_runs"  # pose_sequence or sprite_action
-assert sender.calls[0][1] == exported_atlas.read_bytes()
-assert hashlib.sha256(sender.calls[0][1]).hexdigest() == record.export_output_sha256["atlas"]
-```
-
-For `effect_stages`, expect `effect_runs`. For `expression_variation`, expect HTTP 409 `DELIVERY_TOOL_ROUTE_UNAVAILABLE` and zero sender calls. Tampering the atlas after export must return 409 before any sender call.
-
-- [ ] **Step 6: Wire the RED tests into the existing cross-platform Figma workflow before production changes**
-
-Update `.github/workflows/validate-provisional-figma-integration.yml` path filters to include:
-
-```yaml
-- "tools/base-tool-contracts/**"
-- "tools/sprite-animation-studio/**"
-- "tests/test_tool_hub_subscription_production_contract.py"
-```
-
-Install:
+Extend `.github/workflows/validate-provisional-figma-integration.yml` path filters with `tools/base-tool-contracts/**`, `tools/sprite-animation-studio/**`, and `tests/test_tool_hub_subscription_production_contract.py`. Install all three editable packages:
 
 ```bash
 python -m pip install -e './tools/base-tool-contracts[dev]' -e './tools/tool-hub[dev]' -e './tools/sprite-animation-studio[dev]'
 ```
 
-and Windows equivalents. Extend the pytest invocation with:
+Run the existing Figma tests plus `test_studio_delivery_trust.py`, `tools/sprite-animation-studio/tests/test_hub_delivery.py`, and the root subscription production contract.
 
-```text
-tools/tool-hub/tests/test_studio_delivery_trust.py
-tools/sprite-animation-studio/tests/test_hub_delivery.py
-tests/test_tool_hub_subscription_production_contract.py
-```
-
-- [ ] **Step 7: Run RED and record why it fails**
-
-Run:
+- [ ] **Step 7: Run RED**
 
 ```bash
 python -m pytest -q \
@@ -271,13 +201,12 @@ python -m pytest -q \
   tests/test_tool_hub_subscription_production_contract.py
 ```
 
-Expected failures must be limited to the intended missing capabilities: registry still has 8 routes, Tool Hub has no Sprite route parameter/header support, and Sprite Studio has no Hub confirm-delivery path. If unrelated baseline failures appear, separate them before implementation.
+Expected failures are only: registry has 8 routes, Tool Hub lacks explicit Sprite route support, and Sprite Studio lacks confirmed Hub delivery. Reproduce any unrelated failure on current `main` before proceeding.
 
-- [ ] **Step 8: Commit the RED contract slice**
+- [ ] **Step 8: Commit RED**
 
 ```bash
-git add \
-  docs/superpowers/specs/2026-08-16-sprite-effect-figma-routes-design.md \
+git add docs/superpowers/specs/2026-08-16-sprite-effect-figma-routes-design.md \
   docs/superpowers/plans/2026-08-16-sprite-effect-figma-routes.md \
   tests/test_tool_hub_subscription_production_contract.py \
   tools/tool-hub/tests/test_figma_exact_tool_route.py \
@@ -289,59 +218,52 @@ git commit -m "test: define dedicated sprite and effect delivery routes"
 
 ---
 
-### Task 2: Create/reuse and read back all 16 Figma route frames
+### Task 2: Create/reuse and read back all 16 Figma frames
 
-**Files:**
-- Create: `docs/evidence/2026-08-16-sprite-effect-figma-route-readback.md`
-- External: mutate eight existing Figma design files only under their exact registered `Generated Assets` parents.
+**Files:** Create `docs/evidence/2026-08-16-sprite-effect-figma-route-readback.md`; mutate only the eight approved Figma files.
 
-**Interfaces:**
-- Consumes: the eight `(file_key, parent_node_id, expression_node_id, marker_node_id)` tuples from the approved spec.
-- Produces: `figma_route_nodes[project_id] = {"sprite_action_runs": node_id, "effect_runs": node_id}` for all 8 projects, plus cloud readback evidence. Task 3 must not begin registry mutation unless this map has 16 valid unique node IDs.
+**Interfaces:** Produces a complete map `figma_route_nodes[project_id][route_id] -> real node_id`. Task 3 starts only if this contains 16 valid new IDs.
 
-- [ ] **Step 1: Load Figma write guidance and re-read all eight parents before mutation**
+- [ ] **Step 1: Load Figma write guidance and re-read the exact parents**
 
-Attempt to load the available `figma-use` guidance before `use_figma`. Re-read each exact parent with metadata. Abort mutation for that file if any of these drift from the approved spec:
+Use these immutable preflight tuples:
 
 ```text
-parent type/name != FRAME / Generated Assets
-Expression Runs id/name/type mismatch
-project marker id/name/type mismatch
-parent no longer contains the Expression route and marker
+coc-fiction | PEa5zDbPHll3eHiNKX0e1k | parent 12:3 | Expression 15:2 | marker 23:2
+ten-paces-hidden-moves | pVQ2e6aK45iL8BLBJWDSw4 | parent 22:3 | Expression 28:2 | marker 38:2
+ninja-survival | xNm1xbYPftEaAE2jOENlvt | parent 12:3 | Expression 15:2 | marker 20:2
+switchy-express-cargo-puzzle | QMbylbdAi96PGSdHIT3AGa | parent 11:3 | Expression 14:2 | marker 19:2
+urban-legend | Z7J3eLeavEytKN20H4HfoP | parent 11:3 | Expression 14:2 | marker 19:2
+grimoire-how-to-rewrite-the-world | AdOGNMp61AZSMMvBVxsVBd | parent 8:3 | Expression 11:2 | marker 16:2
+blacksmith | xy6W4ga6ldkF3TvP0eRmtN | parent 13:3 | Expression 18:2 | marker 24:2
+omenward | IhxUJaS6ik6MpBzdxt6o8D | parent 10:3 | Expression 13:2 | marker 19:2
 ```
 
-Also search only direct children of the exact parent for `Sprite Action Runs` and `Effect Runs` so retries reuse valid siblings rather than creating duplicates.
+Abort mutation for a file if parent, Expression route, or marker name/type/parent has drifted.
 
-- [ ] **Step 2: For each Figma file, clone the existing Expression frame into the two exact sibling routes**
+- [ ] **Step 2: Retry-safely clone the existing Expression frame twice**
 
-Use the existing `Expression Runs` frame as the style source rather than reconstructing visual styling. The per-file Figma Plugin API operation follows this shape, with the approved file-specific constants substituted from the spec:
+For each file, pass an exact `cfg` object containing that row's IDs to this Figma operation:
 
 ```javascript
-const parent = await figma.getNodeByIdAsync(PARENT_ID);
-const expression = await figma.getNodeByIdAsync(EXPRESSION_ID);
-const marker = await figma.getNodeByIdAsync(MARKER_ID);
+const parent = await figma.getNodeByIdAsync(cfg.parentId);
+const expression = await figma.getNodeByIdAsync(cfg.expressionId);
+const marker = await figma.getNodeByIdAsync(cfg.markerId);
 if (!parent || parent.type !== "FRAME" || parent.name !== "Generated Assets") throw new Error("parent drift");
 if (!expression || expression.type !== "FRAME" || expression.parent !== parent || expression.name !== "Expression Runs") throw new Error("expression drift");
-if (!marker || marker.type !== "FRAME" || marker.parent !== parent || marker.name !== `Base Tool Hub Route · ${PROJECT_ID}`) throw new Error("marker drift");
+if (!marker || marker.type !== "FRAME" || marker.parent !== parent || marker.name !== `Base Tool Hub Route · ${cfg.projectId}`) throw new Error("marker drift");
 
 async function loadTextFonts(text) {
   if (text.characters.length === 0) return;
-  for (const font of text.getRangeAllFontNames(0, text.characters.length)) {
-    await figma.loadFontAsync(font);
-  }
+  for (const font of text.getRangeAllFontNames(0, text.characters.length)) await figma.loadFontAsync(font);
 }
 
-async function ensureRoute(name, y, titleText, noteText) {
+async function ensureRoute(name, y, note) {
   const matches = parent.children.filter(node => node.name === name);
   if (matches.length > 1) throw new Error(`duplicate ${name}`);
-  let frame;
-  if (matches.length === 1) {
-    frame = matches[0];
-    if (frame.type !== "FRAME") throw new Error(`${name} type drift`);
-  } else {
-    frame = expression.clone();
-    parent.appendChild(frame);
-  }
+  const frame = matches.length === 1 ? matches[0] : expression.clone();
+  if (frame.type !== "FRAME") throw new Error(`${name} type drift`);
+  if (matches.length === 0) parent.appendChild(frame);
   frame.name = name;
   frame.x = 40;
   frame.y = y;
@@ -350,54 +272,29 @@ async function ensureRoute(name, y, titleText, noteText) {
   if (texts.length < 2) throw new Error(`${name} presentation drift`);
   await loadTextFonts(texts[0]);
   await loadTextFonts(texts[1]);
-  texts[0].characters = titleText;
-  texts[1].characters = noteText;
+  texts[0].characters = name;
+  texts[1].characters = note;
   return frame;
 }
 
-const sprite = await ensureRoute(
-  "Sprite Action Runs", 408, "Sprite Action Runs",
-  "Base Tool Hub exact destination for reviewed sprite action / pose-sequence atlas deliveries."
-);
-const effect = await ensureRoute(
-  "Effect Runs", 576, "Effect Runs",
-  "Base Tool Hub exact destination for reviewed effect-stage atlas deliveries."
-);
+const sprite = await ensureRoute("Sprite Action Runs", 408,
+  "Base Tool Hub exact destination for reviewed sprite action and pose-sequence atlas deliveries.");
+const effect = await ensureRoute("Effect Runs", 576,
+  "Base Tool Hub exact destination for reviewed effect-stage atlas deliveries.");
 return JSON.stringify({sprite_action_runs: sprite.id, effect_runs: effect.id});
 ```
 
-Do not rename or reposition `Expression Runs` or the hidden project marker.
+- [ ] **Step 3: Read back each created/reused node**
 
-- [ ] **Step 3: Read back every new node after each write**
+Confirm exact type/name/parent, `Sprite Action Runs` geometry `40,408,1360,148`, `Effect Runs` geometry `40,576,1360,148`, one sibling per canonical name, and unchanged marker.
 
-For each of 16 nodes, confirm through Figma metadata:
+- [ ] **Step 4: Record real IDs**
 
-```text
-node.type == FRAME
-node.name == canonical name
-node.parent == exact Generated Assets parent
-Sprite Action geometry == x40/y408/1360x148
-Effect geometry == x40/y576/1360x148
-exact sibling name count == 1
-existing marker still present and unchanged
-```
+Create a Markdown table with 8 project rows and columns: project ID, file key, parent, marker, actual Sprite node ID, actual Effect node ID, readback `PASS`. Record the Base main SHA used for preflight and `LOCALHOST_BRIDGE_RECEIPT: NOT_RUN`.
 
-- [ ] **Step 4: Record exact observed IDs in the evidence document**
+- [ ] **Step 5: Gate and commit evidence**
 
-Write one row per project:
-
-```markdown
-| project_id | file_key | parent | marker | Sprite Action Runs | Effect Runs | readback |
-| ... | ... | ... | ... | <real node id> | <real node id> | PASS |
-```
-
-The document also records the Base main SHA used for preflight and states `LOCALHOST_BRIDGE_RECEIPT: NOT_RUN`.
-
-- [ ] **Step 5: Gate the next task on complete evidence**
-
-Count exactly 8 rows, 16 non-empty route IDs, and ensure within each project the parent, marker, Expression destination, Sprite destination, and Effect destination IDs are all distinct. If any Figma file failed, stop with the Base route registry still at 8 entries.
-
-- [ ] **Step 6: Commit only the readback evidence**
+Require 8 rows, 16 non-empty route IDs, and per-project uniqueness across parent/marker/Expression/Sprite/Effect IDs. If incomplete, leave the Base registry unchanged.
 
 ```bash
 git add docs/evidence/2026-08-16-sprite-effect-figma-route-readback.md
@@ -406,43 +303,19 @@ git commit -m "docs: record reviewed sprite and effect Figma route nodes"
 
 ---
 
-### Task 3: Expand the canonical registry to 24 exact routes
+### Task 3: Expand the canonical registry to 24 routes
 
-**Files:**
-- Modify: `docs/operations/PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json`
-- Modify: `tests/test_tool_hub_subscription_production_contract.py`
-- Test: `tools/tool-hub/tests/test_figma_exact_tool_route.py`
+**Files:** `PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json`, `figma_tool_routing.py`, root contract.
 
-**Interfaces:**
-- Consumes: complete `figma_route_nodes` evidence from Task 2.
-- Produces: 24 `READY_FOR_DELIVERY` project/tool route pairs; existing 8 Character entries remain byte-equivalent in semantic fields.
+**Interfaces:** Consumes the 16 exact IDs from Task 2. Produces 24 `READY_FOR_DELIVERY` route pairs.
 
-- [ ] **Step 1: Append two entries per project using only Task 2 observed node IDs**
+- [ ] **Step 1: Add `sprite_action_runs` and `effect_runs` per project**
 
-Each `sprite_action_runs` entry has:
+Copy `figma_file_key`, parent fields, marker fields, and marker name from that project's existing Character entry. Use only Task 2's observed destination ID. Use exact names `Sprite Action Runs` and `Effect Runs`. Keep all eight Character entries semantically unchanged.
 
-```json
-{
-  "project_id": "<same project as existing entry>",
-  "tool_route_id": "sprite_action_runs",
-  "figma_file_key": "<same existing file key>",
-  "parent_node_id": "<same existing Generated Assets parent>",
-  "parent_node_type": "FRAME",
-  "destination_node_id": "<Task 2 Sprite Action Runs id>",
-  "destination_node_type": "FRAME",
-  "destination_name": "Sprite Action Runs",
-  "project_marker_node_id": "<same existing marker>",
-  "project_marker_node_type": "FRAME",
-  "project_marker_name": "Base Tool Hub Route · <project_id>",
-  "delivery_status": "READY_FOR_DELIVERY"
-}
-```
+- [ ] **Step 2: Reject duplicate active destinations within one project**
 
-The `effect_runs` entry is identical except route ID, Task 2 Effect node ID, and `destination_name: "Effect Runs"`.
-
-- [ ] **Step 2: Strengthen registry collision validation for sibling destinations**
-
-In `ProjectFigmaToolRouteRegistry.__init__`, add a per-project destination uniqueness check so two active route IDs for the same project cannot point at the same destination node:
+Add to `ProjectFigmaToolRouteRegistry.__init__`:
 
 ```python
 project_destinations: dict[str, set[str]] = {}
@@ -455,23 +328,19 @@ for entry in document.entries:
     destinations.add(entry.destination_node_id)
 ```
 
-- [ ] **Step 3: Run the registry-focused tests**
-
-Run:
+- [ ] **Step 3: Run registry tests**
 
 ```bash
-python -m pytest -q \
-  tests/test_tool_hub_subscription_production_contract.py \
+python -m pytest -q tests/test_tool_hub_subscription_production_contract.py \
   tools/tool-hub/tests/test_figma_exact_tool_route.py
 ```
 
-Expected state after this task: 24-route registry assertions pass; Sprite Tool Hub delivery tests may still fail because explicit route selection is not implemented yet.
+The 24-route assertions must pass. Route-aware Tool Hub tests may remain RED until Task 4.
 
-- [ ] **Step 4: Commit the complete registry atomically**
+- [ ] **Step 4: Commit**
 
 ```bash
-git add \
-  docs/operations/PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json \
+git add docs/operations/PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json \
   tools/base-tool-contracts/src/base_tool_contracts/figma_tool_routing.py \
   tests/test_tool_hub_subscription_production_contract.py
 git commit -m "feat: register dedicated sprite and effect Figma routes"
@@ -479,21 +348,13 @@ git commit -m "feat: register dedicated sprite and effect Figma routes"
 
 ---
 
-### Task 4: Make Tool Hub route-aware without trusting browser route authority
+### Task 4: Enforce authenticated tool-to-route ownership in Tool Hub
 
-**Files:**
-- Modify: `tools/tool-hub/src/tool_hub/figma_delivery.py`
-- Modify: `tools/tool-hub/src/tool_hub/studio_delivery_api.py`
-- Modify: `tools/tool-hub/tests/test_figma_exact_tool_route.py`
-- Modify: `tools/tool-hub/tests/test_studio_delivery_trust.py`
+**Files:** `figma_delivery.py`, `studio_delivery_api.py`, Tool Hub route/trust tests.
 
-**Interfaces:**
-- Consumes: `tool_route_id` supplied only by the authenticated Studio server client; canonical route registry from Task 3.
-- Produces: `FigmaDeliveryService.enqueue(..., *, tool_route_id: str | None = None)` with a fixed authenticated-tool allowlist and route-bound idempotency.
+**Interfaces:** Produces `enqueue(..., *, tool_route_id: str | None = None)` and fixed route allowlists.
 
-- [ ] **Step 1: Replace the one-to-one tool map with an explicit allowlist**
-
-In `figma_delivery.py`:
+- [ ] **Step 1: Replace the one-route map with an allowlist**
 
 ```python
 _TOOL_ROUTE_IDS = {
@@ -515,54 +376,23 @@ def _requested_route_id(tool_id: str, requested: str | None) -> str:
     return requested
 ```
 
-Change `_resolve_tool_route` to accept `requested_route_id` and resolve only that allowed route.
+Make `_resolve_tool_route` accept the requested route and resolve only that canonical entry.
 
-- [ ] **Step 2: Thread the exact route through enqueue/idempotency**
+- [ ] **Step 2: Bind route to enqueue/idempotency/recovery**
 
-Use keyword-only route identity:
+Add keyword-only `tool_route_id` to `enqueue` and `enqueue_idempotent`. Before reusing a matching run, compare stored `job.tool_route_id` with `_requested_route_id(tool_id, tool_route_id)` and raise `DELIVERY_RUN_ROUTE_MISMATCH` on mismatch. Preserve existing `DELIVERY_RUN_CONTENT_MISMATCH` for changed bytes.
 
-```python
-def enqueue(
-    self,
-    tool_id: str,
-    project_id: str,
-    run_id: str,
-    image_bytes: bytes,
-    media_type: str,
-    *,
-    tool_route_id: str | None = None,
-) -> DeliveryJob:
-    route = self._resolve_tool_route(tool_id, project_id, tool_route_id)
-    ...
-```
+`_assert_current_job_route` and receipt recovery must resolve using the stored job route. Only a legacy Expression job may default a missing route to `character_expression_runs`; a recovered Sprite job with no stored route is invalid.
 
-and the same keyword in `enqueue_idempotent`.
+- [ ] **Step 3: Add the private route header to the internal Studio POST only**
 
-Before reusing matching jobs:
-
-```python
-requested = _requested_route_id(tool_id, tool_route_id)
-if any(job.tool_route_id != requested for job in matching if isinstance(job, DeliveryJob)):
-    raise DeliveryError("DELIVERY_RUN_ROUTE_MISMATCH")
-```
-
-Then preserve the existing different-content check and same-run/same-SHA reuse.
-
-- [ ] **Step 3: Revalidate stored route identity during claim/finalize/recovery**
-
-`_assert_current_job_route` resolves using `job.tool_route_id`. For recovered jobs, read `tool_route_id` from `JOB.json`; only legacy Expression jobs may default missing route identity to `character_expression_runs`. A Sprite job without a stored route ID is invalid and must be dropped from recovery rather than guessed.
-
-Use the same explicit job route in `_valid_recovered_receipt`.
-
-- [ ] **Step 4: Accept one bounded private route header in the Studio delivery API**
-
-In `studio_delivery_api.py`:
+In `studio_delivery_api.py` import `Header` and validate:
 
 ```python
 _ROUTE_ID = re.compile(r"^[a-z0-9]+(?:_[a-z0-9]+)*$")
 
 
-def requested_route(tool_id: str, value: str | None) -> str | None:
+def _requested_route(tool_id: str, value: str | None) -> str | None:
     if value is not None and _ROUTE_ID.fullmatch(value) is None:
         raise HTTPException(status_code=409, detail="DELIVERY_TOOL_ROUTE_UNAVAILABLE")
     if tool_id == "expression-studio":
@@ -576,32 +406,22 @@ def requested_route(tool_id: str, value: str | None) -> str | None:
     raise HTTPException(status_code=409, detail="DELIVERY_TOOL_ROUTE_UNAVAILABLE")
 ```
 
-Add `x_base_tool_route: str | None = Header(default=None, alias="X-Base-Tool-Route")` to the POST endpoint and pass the validated value to `enqueue_idempotent(..., tool_route_id=route_id)`.
+The POST endpoint accepts `x_base_tool_route: str | None = Header(default=None, alias="X-Base-Tool-Route")` and passes `_requested_route(tool_id, x_base_tool_route)` to `enqueue_idempotent`. The status endpoint accepts no route header and returns the stored route identity.
 
-Do not add this header to the public browser Tool Hub API. The endpoint remains protected by the existing live-child bearer token.
-
-- [ ] **Step 5: Keep status route-bound without accepting a second route assertion**
-
-The status endpoint authorizes the child token, loads the stored job, and checks `job.tool_id == authenticated tool_id`; it does not accept a route header. Return the already stored `tool_route_id`/target identity.
-
-- [ ] **Step 6: Run focused Tool Hub tests**
+- [ ] **Step 4: Run focused tests**
 
 ```bash
-python -m pytest -q \
-  tools/tool-hub/tests/test_figma_exact_tool_route.py \
+python -m pytest -q tools/tool-hub/tests/test_figma_exact_tool_route.py \
   tools/tool-hub/tests/test_studio_delivery_trust.py \
   tools/tool-hub/tests/test_figma_delivery.py \
   tools/tool-hub/tests/test_figma_delivery_hardening.py \
   tools/tool-hub/tests/test_figma_delivery_concurrency.py
 ```
 
-Expected: Expression tests remain green; valid Sprite Action/Effect routes green; missing/wrong route and route drift fail closed as asserted.
-
-- [ ] **Step 7: Commit Tool Hub route enforcement**
+- [ ] **Step 5: Commit**
 
 ```bash
-git add \
-  tools/tool-hub/src/tool_hub/figma_delivery.py \
+git add tools/tool-hub/src/tool_hub/figma_delivery.py \
   tools/tool-hub/src/tool_hub/studio_delivery_api.py \
   tools/tool-hub/tests/test_figma_exact_tool_route.py \
   tools/tool-hub/tests/test_studio_delivery_trust.py
@@ -610,62 +430,53 @@ git commit -m "feat(tool-hub): enforce exact sprite and effect delivery routes"
 
 ---
 
-### Task 5: Share the loopback Hub client and add Sprite confirmed-atlas delivery
+### Task 5: Share the loopback client and add Sprite confirmed-atlas delivery
 
-**Files:**
-- Create: `tools/base-tool-contracts/src/base_tool_contracts/hub_delivery.py`
-- Modify: `tools/base-tool-contracts/src/base_tool_contracts/__init__.py`
-- Modify: `tools/expression-studio/src/expression_studio/hub_delivery.py`
-- Modify: `tools/sprite-animation-studio/src/sprite_animation_studio/service.py`
-- Modify: `tools/sprite-animation-studio/src/sprite_animation_studio/app.py`
-- Test: `tools/sprite-animation-studio/tests/test_hub_delivery.py`
-- Regression: Expression Studio Hub-delivery tests already present in its test suite.
+**Files:** new shared `hub_delivery.py`, base exports, Expression compatibility wrapper, Sprite service/app/test.
 
-**Interfaces:**
-- Produces shared `LocalHubDeliveryClient.__call__(run_id, image_bytes, media_type, tool_route_id=None)` and `status(delivery_id)`.
-- Produces `SpriteAnimationService.delivery_route_id(run_id) -> str` and Sprite API endpoints that bind one exported atlas SHA to one route/delivery identity.
+**Interfaces:** Shared sender signature is `__call__(run_id, image_bytes, media_type, tool_route_id=None)` plus `status(delivery_id)`. Sprite service produces `delivery_route_id(run_id) -> str`.
 
-- [ ] **Step 1: Promote the existing Expression loopback client into base-tool-contracts without changing its security behavior**
+- [ ] **Step 1: Promote the Expression Hub client into `base-tool-contracts`**
 
-Move/copy the existing implementation semantics from `expression_studio/hub_delivery.py` into `base_tool_contracts/hub_delivery.py`. Preserve:
-
-```text
-http://127.0.0.1:<port> only
-no proxy use
-child-only bearer token length check
-5 second timeout
-64 KiB response cap
-strict JSON object response
-BASE_TOOL_HUB_DELIVERY_ORIGIN + BASE_TOOL_HUB_DELIVERY_TOKEN environment pair
-```
-
-Extend only the call signature and optional header:
+Preserve loopback-only origin validation, no-proxy opener, child token, 5-second timeout, 64-KiB response cap, strict JSON object response, and the two existing environment variables. Extend only the optional header path:
 
 ```python
 class HubDeliverySender(Protocol):
-    def __call__(
-        self,
-        run_id: str,
-        image_bytes: bytes,
-        media_type: str,
-        tool_route_id: str | None = None,
-    ) -> dict[str, object]: ...
+    def __call__(self, run_id: str, image_bytes: bytes, media_type: str,
+                 tool_route_id: str | None = None) -> dict[str, object]: ...
+    def status(self, delivery_id: str) -> dict[str, object]: ...
+```
 
+The protocol method bodies use Python protocol ellipsis syntax intentionally; production methods below are concrete.
 
-def __call__(self, run_id, image_bytes, media_type, tool_route_id=None):
-    headers = {}
+Concrete request code:
+
+```python
+def __call__(self, run_id: str, image_bytes: bytes, media_type: str,
+             tool_route_id: str | None = None) -> dict[str, object]:
+    if _RUN_ID.fullmatch(run_id) is None:
+        raise HubDeliveryError("delivery run identity is invalid")
+    if media_type != "image/png" or not isinstance(image_bytes, bytes) or not image_bytes:
+        raise HubDeliveryError("delivery content is invalid")
+    extra_headers: dict[str, str] = {}
     if tool_route_id is not None:
         if re.fullmatch(r"[a-z0-9]+(?:_[a-z0-9]+)*", tool_route_id) is None:
             raise HubDeliveryError("delivery tool route identity is invalid")
-        headers["X-Base-Tool-Route"] = tool_route_id
-    return self._json_request(..., extra_headers=headers)
+        extra_headers["X-Base-Tool-Route"] = tool_route_id
+    return self._json_request(
+        f"/internal/studio-delivery/{quote(run_id, safe='')}",
+        method="POST",
+        data=image_bytes,
+        content_type="image/png",
+        extra_headers=extra_headers,
+    )
 ```
 
-Implement `_json_request(..., extra_headers: dict[str, str] | None = None)` by merging only the caller-provided bounded internal headers after constructing Authorization/Accept/Content-Type.
+Add `extra_headers: dict[str, str] | None = None` to `_json_request` and merge those bounded headers after Authorization/Accept/Content-Type.
 
-- [ ] **Step 2: Preserve Expression import compatibility**
+- [ ] **Step 2: Preserve Expression compatibility**
 
-Replace `tools/expression-studio/src/expression_studio/hub_delivery.py` with a compatibility re-export:
+Replace `expression_studio/hub_delivery.py` with:
 
 ```python
 from base_tool_contracts.hub_delivery import (
@@ -676,18 +487,13 @@ from base_tool_contracts.hub_delivery import (
 )
 
 __all__ = [
-    "HubDeliveryError",
-    "HubDeliverySender",
-    "LocalHubDeliveryClient",
-    "sender_from_environment",
+    "HubDeliveryError", "HubDeliverySender", "LocalHubDeliveryClient", "sender_from_environment",
 ]
 ```
 
-Export the same names from `base_tool_contracts.__init__`. Expression app continues calling the sender with three arguments, so Tool Hub applies the only valid legacy default: `character_expression_runs`.
+Export the same names from `base_tool_contracts.__init__`. Existing Expression calls remain three-argument calls and therefore use the sole allowed Expression default route.
 
-- [ ] **Step 3: Add server-owned Sprite run-mode→route resolution**
-
-In `SpriteAnimationService`:
+- [ ] **Step 3: Add server-owned Sprite route mapping**
 
 ```python
 _SPRITE_DELIVERY_ROUTES = {
@@ -705,89 +511,47 @@ def delivery_route_id(self, run_id: str) -> str:
         raise RunBlockedError("DELIVERY_TOOL_ROUTE_UNAVAILABLE") from error
 ```
 
-Do not accept a route ID as an endpoint body/query parameter.
+No endpoint accepts route ID as body/query input.
 
-- [ ] **Step 4: Add Sprite confirmed delivery state to `create_app`**
+- [ ] **Step 4: Add Sprite `confirm-delivery`**
 
-Add `hub_delivery_sender: HubDeliverySender | None = None`, resolve `sender_from_environment()` when omitted, and maintain a lock-protected `confirmed_deliveries: dict[str, dict[str, object]]` analogous to Expression Studio.
-
-Add a private normalization helper that requires:
-
-```python
-expected_target = {
-    "sprite_action_runs": "Sprite Action Runs",
-    "effect_runs": "Effect Runs",
-}[route_id]
-```
-
-and verifies Tool Hub response fields equal:
-
-```text
-tool_id = sprite-animation-studio
-project_id = record.request.project_id
-run_id = exact run
-content_sha256 = exported atlas SHA
-tool_route_id = derived route_id
-target_node_name = expected_target
-delivery_id stable
-bridge/delivery states internally consistent
-figma_url = https://www.figma.com/design/...
-```
-
-- [ ] **Step 5: Add `POST /api/runs/{run_id}/confirm-delivery` with no route/body authority**
-
-Require an already exported run. The endpoint does not re-curate or choose a file. Core flow:
+`create_app` gains `hub_delivery_sender: HubDeliverySender | None = None`, resolves `sender_from_environment()` when absent, and holds a lock-protected confirmation map. The endpoint has no request body and requires an already exported run:
 
 ```python
 record = service.get_run(run_id)
 if record.status != "exported" or record.export is None:
     raise RunBlockedError("an exported run is required before confirmation")
-service.prepare_figma_delivery(run_id)  # revalidates export + anchor evidence
+service.prepare_figma_delivery(run_id)
 route_id = service.delivery_route_id(run_id)
 expected_sha256 = record.export_output_sha256.get("atlas")
 if expected_sha256 is None:
     raise RunBlockedError("confirmed atlas hash evidence is unavailable")
-atlas_bytes = _read_staged_file(
-    project_root,
-    record.export.atlas,
-    expected_sha256=expected_sha256,
-)
+atlas_bytes = _read_staged_file(project_root, record.export.atlas, expected_sha256=expected_sha256)
 if sender is None:
     raise HubDeliveryError("Tool Hub confirmed delivery is unavailable")
 delivery = sender(run_id, atlas_bytes, "image/png", route_id)
 ```
 
-Normalize and cache only after exact identity verification. Retry returns the same cached identity; the Tool Hub itself remains the final same-run/same-route/same-SHA idempotency authority.
+Normalize the response only if tool=`sprite-animation-studio`, project/run/SHA match, route equals the derived route, target name equals `Sprite Action Runs` or `Effect Runs`, the delivery ID is valid, states are internally consistent, and Figma URL is `https://www.figma.com/design/`.
 
-- [ ] **Step 6: Add status refresh and confirmed atlas download**
+- [ ] **Step 5: Add route-bound status and atlas download**
 
-Add:
+Implement `GET /api/runs/{run_id}/delivery-status` and `GET /api/runs/{run_id}/confirmed-download`. Status re-reads the atlas with cached SHA before `sender.status(delivery_id)` and rejects identity drift. Download returns the same atlas bytes with `X-Content-SHA256`.
 
-```text
-GET /api/runs/{run_id}/delivery-status
-GET /api/runs/{run_id}/confirmed-download
-```
-
-Status refresh re-reads the atlas with the cached SHA before calling `sender.status(delivery_id)`, and rejects route/target/delivery/SHA changes. Download returns only the same atlas bytes with `X-Content-SHA256` and a filename such as `atlas-<first12run>.png`.
-
-- [ ] **Step 7: Run shared-client, Sprite, and Expression regressions**
+- [ ] **Step 6: Run shared/Sprite/Expression regressions**
 
 ```bash
-python -m pytest -q \
-  tools/sprite-animation-studio/tests/test_hub_delivery.py \
+python -m pytest -q tools/sprite-animation-studio/tests/test_hub_delivery.py \
   tools/sprite-animation-studio/tests/test_api.py \
   tools/sprite-animation-studio/tests/test_delivery.py \
   tools/expression-studio/tests \
   tools/tool-hub/tests/test_studio_delivery_trust.py
 ```
 
-Expected: new Sprite confirmed-atlas tests pass; Expression delivery/import behavior remains unchanged.
-
-- [ ] **Step 8: Commit shared client and Sprite delivery lifecycle**
+- [ ] **Step 7: Commit**
 
 ```bash
-git add \
-  tools/base-tool-contracts/src/base_tool_contracts/hub_delivery.py \
+git add tools/base-tool-contracts/src/base_tool_contracts/hub_delivery.py \
   tools/base-tool-contracts/src/base_tool_contracts/__init__.py \
   tools/expression-studio/src/expression_studio/hub_delivery.py \
   tools/sprite-animation-studio/src/sprite_animation_studio/service.py \
@@ -798,47 +562,17 @@ git commit -m "feat(sprite-studio): confirm exact atlas delivery through Tool Hu
 
 ---
 
-### Task 6: Expose the safe Sprite confirmation UX and update operator docs
+### Task 6: Expose safe confirmation UX and update docs
 
-**Files:**
-- Modify: `tools/sprite-animation-studio/web/index.html`
-- Modify: `tools/sprite-animation-studio/web/app.js`
-- Modify: `tools/sprite-animation-studio/README.md`
-- Modify: `tools/sprite-animation-studio/tests/test_docs_contract.py`
-- Modify: `tests/test_tool_hub_subscription_production_contract.py`
+**Files:** Sprite web HTML/JS, README, docs contract, root production contract.
 
-**Interfaces:**
-- Consumes: server endpoints from Task 5.
-- Produces: user-facing `확정 및 전달`, delivery status refresh, pairing guidance, and confirmed-atlas download without browser route authority.
+- [ ] **Step 1: Add UX tests before web changes**
 
-- [ ] **Step 1: Add UX contract assertions before changing the web files**
+Require `confirm-delivery`, `delivery-status`, `confirmed-download`, `확정 및 전달`, `Sprite Action Runs`, and `Effect Runs`. Assert browser JavaScript does not submit `figma_file_key`, `target_node_id`, `generation_area_node_id`, `project_marker_node_id`, or `X-Base-Tool-Route`.
 
-Tests must require the Sprite web source to contain endpoint usage for:
+- [ ] **Step 2: Add confirmation and status calls**
 
-```text
-/api/runs/${runId}/confirm-delivery
-/api/runs/${runId}/delivery-status
-confirmed-download
-확정 및 전달
-Sprite Action Runs
-Effect Runs
-```
-
-and must reject browser-side strings/fields that attempt to send:
-
-```text
-figma_file_key
-target_node_id
-generation_area_node_id
-project_marker_node_id
-X-Base-Tool-Route
-```
-
-The private header belongs only in the Python shared Hub client, never browser JavaScript.
-
-- [ ] **Step 2: Replace the old project-GPT delivery action with the confirmed Hub path**
-
-After a successful export, enable `확정 및 전달`. Its request body is empty:
+After export:
 
 ```javascript
 const confirmation = await api(`/api/runs/${encodeURIComponent(runId)}/confirm-delivery`, {
@@ -846,44 +580,26 @@ const confirmation = await api(`/api/runs/${encodeURIComponent(runId)}/confirm-d
 });
 ```
 
-Render server-returned state only: target name, bridge state, pairing code if present, verified/pending state, and download URL. Do not derive a route from the browser's mode control.
-
-- [ ] **Step 3: Add status refresh without route selection**
+Refresh with:
 
 ```javascript
 const status = await api(`/api/runs/${encodeURIComponent(runId)}/delivery-status`);
 ```
 
-When `figma_delivery === "VERIFIED"`, show the canonical target name returned by the server. Pairing instructions may show the Figma URL/code returned by Tool Hub but never expose file keys or node IDs.
+Render only server-returned route target name, bridge state, pairing code when present, delivery state, and download URL. Never derive a Figma route from browser mode state.
 
-- [ ] **Step 4: Update Sprite README truthfully**
+- [ ] **Step 3: Update README truth**
 
-Document:
+Document `pose_sequence/sprite_action -> Sprite Action Runs`, `effect_stages -> Effect Runs`, `expression_variation -> delivery unavailable`, confirmed payload=`exported atlas PNG`, and live ChatGPT/user-PC/Bridge/Godot evidence remains `NOT_RUN` until observed.
 
-```text
-pose_sequence/sprite_action -> Sprite Action Runs
-effect_stages -> Effect Runs
-expression_variation -> delivery unavailable in this slice
-confirmed Figma payload -> exported atlas PNG
-real ChatGPT Pro visual-quality / user-PC / live Bridge receipt -> still NOT_RUN until observed
-```
-
-Remove historical prose that says all dedicated Sprite/Effect routes are unavailable after the new registry is merged.
-
-- [ ] **Step 5: Run web/docs contracts**
+- [ ] **Step 4: Test and commit**
 
 ```bash
-python -m pytest -q \
-  tools/sprite-animation-studio/tests/test_docs_contract.py \
+python -m pytest -q tools/sprite-animation-studio/tests/test_docs_contract.py \
   tools/sprite-animation-studio/tests/test_hub_delivery.py \
   tests/test_tool_hub_subscription_production_contract.py
-```
 
-- [ ] **Step 6: Commit the UX/docs slice**
-
-```bash
-git add \
-  tools/sprite-animation-studio/web/index.html \
+git add tools/sprite-animation-studio/web/index.html \
   tools/sprite-animation-studio/web/app.js \
   tools/sprite-animation-studio/README.md \
   tools/sprite-animation-studio/tests/test_docs_contract.py \
@@ -893,21 +609,14 @@ git commit -m "feat(sprite-studio): expose confirmed dedicated Figma delivery"
 
 ---
 
-### Task 7: Cross-platform GREEN, adversarial review, and latest-main reconciliation
+### Task 7: Cross-platform GREEN and adversarial reconciliation
 
-**Files:**
-- Modify if needed: `.github/workflows/validate-provisional-figma-integration.yml`
-- No new product scope.
+**Files:** implementation files above; CI workflow only if a bounded wiring correction is required.
 
-**Interfaces:**
-- Consumes: Tasks 1–6 complete implementation.
-- Produces: exact-head GREEN implementation PR with current-main reconciliation and no unresolved P0/P1 findings.
-
-- [ ] **Step 1: Run the entire focused local suite**
+- [ ] **Step 1: Run the full focused suite**
 
 ```bash
-python -m pytest -q \
-  tools/tool-hub/tests/test_figma_delivery.py \
+python -m pytest -q tools/tool-hub/tests/test_figma_delivery.py \
   tools/tool-hub/tests/test_figma_delivery_hardening.py \
   tools/tool-hub/tests/test_figma_delivery_concurrency.py \
   tools/tool-hub/tests/test_figma_bridge_api.py \
@@ -919,113 +628,51 @@ python -m pytest -q \
   tests/test_tool_hub_subscription_production_contract.py
 ```
 
-No failing test may be dismissed as unrelated without reproducing it on current `main` and recording that baseline separately.
+No failure is dismissed without reproducing it on current `main`.
 
-- [ ] **Step 2: Verify the dedicated workflow actually runs the new tests on both OSes**
+- [ ] **Step 2: Push and verify actual Ubuntu/Windows execution**
 
-Push the implementation branch and inspect `Validate Provisional Figma Integration`. Confirm Ubuntu and Windows both execute the named Sprite/Tool Hub/root contract files, not just that the workflow itself exists.
+Confirm `Validate Provisional Figma Integration` actually executes the new Sprite/Tool Hub/root test files on both operating systems. Require other Base gates triggered by the diff, including Base v9 and Game Project Operating System/`ci-gate` where applicable.
 
-Also require the normal Base operating gates triggered by the diff, including Base v9 and Game Project Operating System/`ci-gate` where applicable.
+- [ ] **Step 3: Adversarially attack the trust boundary**
 
-- [ ] **Step 3: Run adversarial reconciliation checks**
+Tests/review must cover: Sprite child requesting Character route, Expression child requesting Effect route, Sprite route omission, same run + changed route, same run + changed bytes, atlas tamper, route node rename/reparent, marker drift, generic-parent fallback, browser route/node/file injection, and recovered Sprite job missing route identity. Merge target is P0/P1 findings = 0.
 
-Attack at least these cases in tests/review:
+- [ ] **Step 4: Reconcile latest `main` and overlapping PRs without waiting**
 
-```text
-sprite child requests character route
-expression child requests effect route
-sprite child omits route
-same run + same bytes + changed route
-same run + changed bytes
-atlas changed after export
-registry node renamed/reparented
-marker drift
-generic Generated Assets fallback
-browser injects route/node/file fields
-recovered sprite job lacks route identity
-```
+Re-read `main` and open PR paths. If main moved, non-force reconcile onto the implementation branch. If approved open work overlaps, compare material deltas and copy compatible material onto this integration branch while leaving source branches read-only.
 
-Decision target: P0/P1 = 0; any unresolved fail-open behavior blocks merge.
+- [ ] **Step 5: Re-run exact-head CI and open/refresh the implementation PR**
 
-- [ ] **Step 4: Re-read latest Base main and open PR changed paths**
-
-If `main` moved, reconcile by non-force merge/copy integration onto the implementation branch, keeping source owner branches untouched. If another open PR now owns a changed path, compare material deltas; absorb approved compatible material onto the integration branch rather than waiting for the owner PR to merge.
-
-- [ ] **Step 5: Re-run exact-head workflows after every reconciliation movement**
-
-The head used for merge must be the head for which all required workflows are green. Record exact head SHA and the 16 Figma route IDs in the PR body.
-
-- [ ] **Step 6: Create/refresh the implementation PR and make it ready only after GREEN**
-
-PR body must state:
-
-```text
-24/24 registered routes
-16/16 new Figma node readbacks PASS
-Expression route behavior preserved
-Sprite server-owned mode→route mapping implemented
-confirmed payload = exported atlas SHA
-user-PC/live ChatGPT/live Bridge/Godot evidence still NOT_RUN
-source owner PR branches untouched
-```
-
-- [ ] **Step 7: Commit any final CI-only correction**
-
-If the workflow needed a path/test-list correction discovered during RED/GREEN, commit only that bounded correction and rerun exact-head CI.
+PR body records exact head SHA, 24/24 registry routes, 16/16 Figma readbacks, preserved Expression behavior, server-owned Sprite mode routing, atlas SHA binding, and live IRG items still `NOT_RUN`.
 
 ---
 
-### Task 8: Merge, post-merge verification, and tracking cleanup
+### Task 8: Merge, post-merge readback, and tracking cleanup
 
-**Files:**
-- No product changes after exact-head GREEN unless post-merge exposes a new regression.
-- Update tracking: Base Issue #393 and design PR #451 disposition.
+- [ ] **Step 1: Final pre-merge gate**
 
-**Interfaces:**
-- Consumes: exact-head GREEN implementation PR.
-- Produces: new Base `main` with 24-route authority and post-merge cloud/readback evidence; live PC IRG remains separately pending.
+Re-read Base main, implementation head, 24 registry pairs, all 16 new Figma nodes, unresolved review threads, and required workflow conclusions. Any movement reopens reconciliation.
 
-- [ ] **Step 1: Final pre-merge re-read**
+- [ ] **Step 2: Squash merge with expected-head protection**
 
-Immediately before merge verify:
+Do not use admin/ruleset bypass.
 
-```text
-Base main SHA unchanged since final reconciliation
-implementation head SHA unchanged
-24 registry pairs present on head
-16 Figma new nodes still exact name/type/parent
-unresolved review threads = 0
-required workflows = success
-```
+- [ ] **Step 3: Read back new main**
 
-- [ ] **Step 2: Merge with expected-head protection**
-
-Use squash merge with the exact verified head SHA. Do not use admin/ruleset bypass.
-
-- [ ] **Step 3: Read back new main authority**
-
-From the new Base `main`, re-read:
-
-```text
-docs/operations/PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json
-tools/tool-hub/src/tool_hub/figma_delivery.py
-tools/tool-hub/src/tool_hub/studio_delivery_api.py
-tools/sprite-animation-studio/src/sprite_animation_studio/app.py
-```
-
-Confirm registry count = 24 and exact route names = three canonical classes.
+Verify the canonical route registry has 24 entries and re-read `figma_delivery.py`, `studio_delivery_api.py`, and Sprite `app.py` from the merge SHA.
 
 - [ ] **Step 4: Re-read all 24 Figma destinations**
 
-For all eight files verify the existing Expression route plus the two new routes and existing marker. Any post-merge cloud drift is reported as a route-blocking issue rather than silently patched.
+For each of 8 files verify Expression + Sprite Action + Effect + existing marker. Report drift as a blocking issue rather than silently changing authority.
 
-- [ ] **Step 5: Verify post-merge push workflows**
+- [ ] **Step 5: Verify post-merge push CI**
 
-Wait for all workflows triggered on the merge SHA that cover the changed paths. Confirm no in-progress/failure conclusion remains before calling the repository layer complete.
+Wait until all workflows covering the changed paths on the merge SHA are complete and successful before calling repository/Figma routing complete.
 
-- [ ] **Step 6: Update Issue #393 with bounded evidence**
+- [ ] **Step 6: Update Base Issue #393 with bounded evidence**
 
-Record:
+Record exactly:
 
 ```text
 DEDICATED_SPRITE_EFFECT_ROUTE_CLOUD_PREFLIGHT = PASS_8_OF_8
@@ -1039,22 +686,10 @@ LOCALHOST_FIGMA_BRIDGE_RECEIPT = NOT_RUN
 GODOT_CONSUMPTION = NOT_RUN
 ```
 
-- [ ] **Step 7: Close/supersede #451 only after its spec/plan blobs are present on new main**
+- [ ] **Step 7: Reconcile design PR #451**
 
-Compare the design and plan blobs in new main with #451. If the implementation PR absorbed them byte-identically, comment that #451 was superseded by the merged implementation and close it. If not, keep #451 open until documentation provenance is reconciled; do not silently lose the approved design record.
+If the merged implementation contains the approved spec and plan byte-identically, comment that #451 was superseded by the merged implementation and close #451. Otherwise keep it open until documentation provenance is reconciled.
 
-- [ ] **Step 8: Hand off to the live PC IRG**
+- [ ] **Step 8: Hand off to live PC IRG**
 
-The next action after repository/Figma route completion is the real user-PC path:
-
-```text
-Base Tool Hub.lnk
-→ urban-legend
-→ real ChatGPT Pro Character/Expression same-run confirmation/receipt
-→ Sprite pose_sequence real sample
-→ Sprite effect_stages real sample
-→ exact Figma Bridge same-SHA receipts
-→ Godot/project consumption
-```
-
-Do not convert cloud Figma creation or CI into those live PASS claims.
+Next sequence: `Base Tool Hub.lnk -> urban-legend -> real Character/Expression same-run receipt -> real pose_sequence -> real effect_stages -> exact localhost Figma same-SHA receipts -> Godot/project consumption`. Do not promote cloud/CI evidence to those live PASS claims.
