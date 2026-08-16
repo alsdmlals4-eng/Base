@@ -27,6 +27,22 @@ DEFAULT_CONFIG = {
 }
 CONFIG_NAME = "PROJECT_ASSET_VAULT.json"
 STATE_NAME = "state.json"
+HARVEST_NAME = "harvest.json"
+HARVEST_CLASSIFICATIONS = {
+    "REUSE_AS_IS",
+    "VARIANT_SEED",
+    "STRUCTURE_PATTERN",
+    "STYLE_DNA",
+    "REBUILD_FOR_REUSE",
+    "ONE_OFF_KEEP",
+    "REJECT_REUSE",
+}
+HARVEST_METHODS = {
+    "SOURCE_LAYER",
+    "MASK_CUTOUT",
+    "MANUAL_OR_SEMANTIC_REBUILD",
+    "DERIVED_GENERATIVE_RECOVERY",
+}
 PARTIAL_SUFFIXES = (".crdownload", ".part", ".tmp")
 GODOT_TEXT_SUFFIXES = {
     ".cfg",
@@ -142,6 +158,7 @@ def paths(project_root: Path, config: dict[str, Any]) -> dict[str, Path]:
         "archive": vault / config["archive_dir"],
         "inbox": vault / config["inbox_dir"],
         "state": vault / STATE_NAME,
+        "harvest": vault / HARVEST_NAME,
         "workspace": workspace,
         "manifest": manifest,
         "promotion": promotion,
@@ -175,6 +192,27 @@ def load_state(state_path: Path) -> dict[str, Any]:
         state["rejected_hashes"] = []
     state["schema_version"] = 2
     return state
+
+
+def _default_harvest() -> dict[str, Any]:
+    return {
+        "schema_version": 1,
+        "authority": "local-vault-harvest-metadata",
+        "local_only": True,
+        "records": [],
+    }
+
+
+def load_harvest(path: Path) -> dict[str, Any]:
+    if not path.is_file():
+        return _default_harvest()
+    data = _read_json(path)
+    if not isinstance(data.get("records"), list):
+        raise VaultError("harvest records must be a list")
+    data["schema_version"] = 1
+    data["authority"] = "local-vault-harvest-metadata"
+    data["local_only"] = True
+    return data
 
 
 def ensure_gitignore(project_root: Path, relative_roots: Iterable[str]) -> None:
@@ -468,6 +506,70 @@ def pull_downloads(project_root: Path, sources: list[Path], include_existing: bo
     return {"imported": imported, "baselined": baselined, "rejected": rejected}
 
 
+def _harvest_library_asset(
+    p: dict[str, Path], config: dict[str, Any], key_text: str
+) -> tuple[str, Path, str]:
+    key = _safe_relative(key_text, "harvest asset key")
+    candidate = _safe_target_under(p["library"], key, "Harvest asset path")
+    if candidate.is_symlink() or not candidate.is_file():
+        raise VaultError(f"Harvest asset does not exist as a regular file: {key.as_posix()}")
+    if not _supported(candidate, set(config["supported_extensions"])):
+        raise VaultError(f"Harvest asset uses an unsupported extension: {key.as_posix()}")
+    return key.as_posix(), candidate, sha256_file(candidate)
+
+
+def record_harvest(
+    project_root: Path,
+    *,
+    record_id: str,
+    source_key_text: str,
+    classification: str,
+    method: str,
+    member_key_texts: list[str],
+) -> dict[str, Any]:
+    init_project(project_root)
+    config = load_config(project_root)
+    p = paths(project_root, config)
+    if classification not in HARVEST_CLASSIFICATIONS:
+        raise VaultError(f"Unsupported harvest classification: {classification}")
+    if method not in HARVEST_METHODS:
+        raise VaultError(f"Unsupported harvest method: {method}")
+    if not record_id or any(
+        char not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_."
+        for char in record_id
+    ):
+        raise VaultError("record_id must use only letters, digits, '-', '_', or '.'")
+
+    source_key, _, source_hash = _harvest_library_asset(p, config, source_key_text)
+    members = []
+    for member_text in member_key_texts:
+        member_key, _, member_hash = _harvest_library_asset(p, config, member_text)
+        members.append({"source_key": member_key, "sha256": member_hash})
+
+    harvest = load_harvest(p["harvest"])
+    if any(
+        item.get("record_id") == record_id
+        for item in harvest["records"]
+        if isinstance(item, dict)
+    ):
+        raise VaultError(f"Harvest record already exists: {record_id}")
+
+    record = {
+        "record_id": record_id,
+        "source_key": source_key,
+        "source_sha256": source_hash,
+        "classification": classification,
+        "method": method,
+        "members": members,
+        "contains_derived_generated_pixels": method == "DERIVED_GENERATIVE_RECOVERY",
+        "review_status": "IN_REVIEW",
+        "project_asset_approved": False,
+    }
+    harvest["records"].append(record)
+    _write_json(p["harvest"], harvest)
+    return record
+
+
 def promote_asset(project_root: Path, source_key_text: str, target_text: str) -> dict[str, str]:
     init_project(project_root)
     config = load_config(project_root)
@@ -590,6 +692,14 @@ def _parser() -> argparse.ArgumentParser:
     watch.add_argument("--include-existing", action="store_true")
     watch.add_argument("--once", action="store_true", help=argparse.SUPPRESS)
 
+    harvest = sub.add_parser("record-harvest", help="Record local-only reusable visual harvest metadata")
+    harvest.add_argument("--project-root", type=Path, required=True)
+    harvest.add_argument("--record-id", required=True)
+    harvest.add_argument("--source-key", required=True)
+    harvest.add_argument("--classification", required=True, choices=sorted(HARVEST_CLASSIFICATIONS))
+    harvest.add_argument("--method", required=True, choices=sorted(HARVEST_METHODS))
+    harvest.add_argument("--member-key", action="append", default=[])
+
     promote = sub.add_parser("promote", help="Explicitly copy one vault asset into the tracked project asset area")
     promote.add_argument("--project-root", type=Path, required=True)
     promote.add_argument("--source-key", required=True, help="Path relative to .asset-vault/library")
@@ -621,6 +731,20 @@ def main() -> int:
             if args.interval <= 0:
                 raise VaultError("--interval must be greater than zero")
             watch_downloads(args.project_root, args.source, args.interval, args.include_existing, args.once)
+        elif args.command == "record-harvest":
+            result = record_harvest(
+                args.project_root,
+                record_id=args.record_id,
+                source_key_text=args.source_key,
+                classification=args.classification,
+                method=args.method,
+                member_key_texts=args.member_key,
+            )
+            print(
+                "Visual harvest recorded: "
+                f"record_id={result['record_id']} "
+                f"classification={result['classification']} method={result['method']}"
+            )
         elif args.command == "promote":
             result = promote_asset(args.project_root, args.source_key, args.target)
             print(

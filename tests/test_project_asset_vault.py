@@ -276,6 +276,84 @@ class ProjectAssetVaultTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("overlaps", result.stderr)
 
+    def test_record_harvest_writes_local_only_hash_bound_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            self.assertEqual(run_tool("init", "--project-root", str(project)).returncode, 0)
+            source = project / ".asset-vault/library/scenes/source.png"
+            layer = project / ".asset-vault/library/scenes/layers/background.png"
+            source.parent.mkdir(parents=True)
+            layer.parent.mkdir(parents=True)
+            source.write_bytes(b"source")
+            layer.write_bytes(b"background")
+
+            result = run_tool(
+                "record-harvest",
+                "--project-root", str(project),
+                "--record-id", "HARVEST-SCENE-001",
+                "--source-key", "scenes/source.png",
+                "--classification", "REUSE_AS_IS",
+                "--method", "MASK_CUTOUT",
+                "--member-key", "scenes/layers/background.png",
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            path = project / ".asset-vault/harvest.json"
+            record = json.loads(path.read_text(encoding="utf-8"))["records"][0]
+            self.assertEqual(record["record_id"], "HARVEST-SCENE-001")
+            self.assertEqual(record["classification"], "REUSE_AS_IS")
+            self.assertEqual(record["method"], "MASK_CUTOUT")
+            self.assertEqual(record["review_status"], "IN_REVIEW")
+            self.assertFalse(record["project_asset_approved"])
+            self.assertNotIn(str(project), path.read_text(encoding="utf-8"))
+            self.assertFalse((project / "assets/approved").exists())
+
+    def test_record_harvest_rejects_invalid_classification_and_missing_source(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            self.assertEqual(run_tool("init", "--project-root", str(project)).returncode, 0)
+            source = project / ".asset-vault/library/ui/source.png"
+            source.parent.mkdir(parents=True)
+            source.write_bytes(b"source")
+
+            bad = run_tool(
+                "record-harvest", "--project-root", str(project),
+                "--record-id", "HARVEST-UI-001", "--source-key", "ui/source.png",
+                "--classification", "AUTO_PROMOTE", "--method", "SOURCE_LAYER",
+            )
+            self.assertNotEqual(bad.returncode, 0)
+
+            missing = run_tool(
+                "record-harvest", "--project-root", str(project),
+                "--record-id", "HARVEST-UI-002", "--source-key", "ui/missing.png",
+                "--classification", "ONE_OFF_KEEP", "--method", "SOURCE_LAYER",
+            )
+            self.assertNotEqual(missing.returncode, 0)
+
+    def test_record_harvest_marks_generated_recovery_as_derived_and_never_promotes(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            self.assertEqual(run_tool("init", "--project-root", str(project)).returncode, 0)
+            source = project / ".asset-vault/library/background/source.png"
+            recovered = project / ".asset-vault/library/background/recovered.png"
+            source.parent.mkdir(parents=True)
+            source.write_bytes(b"source")
+            recovered.write_bytes(b"generated-recovery")
+
+            result = run_tool(
+                "record-harvest", "--project-root", str(project),
+                "--record-id", "HARVEST-BG-001", "--source-key", "background/source.png",
+                "--classification", "VARIANT_SEED",
+                "--method", "DERIVED_GENERATIVE_RECOVERY",
+                "--member-key", "background/recovered.png",
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            record = json.loads(
+                (project / ".asset-vault/harvest.json").read_text(encoding="utf-8")
+            )["records"][0]
+            self.assertTrue(record["contains_derived_generated_pixels"])
+            self.assertFalse(record["project_asset_approved"])
+            self.assertFalse((project / "assets/approved").exists())
+
 
 if __name__ == "__main__":
     unittest.main()

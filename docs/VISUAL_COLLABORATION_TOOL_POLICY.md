@@ -69,6 +69,26 @@ Figma 링크나 frame/node를 읽을 수 없으면 과거 대화·파일명·스
 
 Figma의 Pages/Sections는 단계·milestone·협업 구역을 나누는 데 사용하고, 반복되는 UI 요소가 충분히 안정화된 프로젝트는 Components/Styles를 사용해 일관성을 높일 수 있다. 팀 Library 발행은 요금제·권한과 실제 재사용 필요가 확인된 경우에만 선택적으로 사용하며 Base가 강제하지 않는다. 큰 변경 전에는 Figma version history 또는 사용 가능한 branch/checkpoint를 활용해 복구 가능성을 확보한다.
 
+### Reusable visual references and reuse promotion
+
+Primary Use Gate를 통과한 시각 결과에서 반복 가치가 검증된 요소는 Figma Visual Bible의 reusable reference/component/pattern으로 **reuse promotion**할 수 있다. 이 승격은 시각 비교·재사용 편의를 위한 것이며 제품 자산 승격과 분리한다.
+
+```text
+primary-use accepted visual
+→ Reusable Visual Harvest Gate
+→ REUSE_AS_IS / VARIANT_SEED / STRUCTURE_PATTERN / STYLE_DNA / REBUILD_FOR_REUSE / ONE_OFF_KEEP / REJECT_REUSE
+→ Figma reusable reference/component/pattern when applicable
+```
+
+- `REUSE_AS_IS`와 `VARIANT_SEED`는 반복해서 실제로 쓸 가치가 있는 visual primitive/variant 기준에 사용한다.
+- `STRUCTURE_PATTERN`은 layout·hierarchy·interaction 구조를 기록하지만 게임 규칙의 새 정본이 되지 않는다.
+- `STYLE_DNA`는 palette·shape·material·lighting·camera·spacing의 `Keep / Avoid / Do Not Drift`를 보존한다.
+- `REBUILD_FOR_REUSE`는 생성 화면의 raster crop을 장기 UI 자산으로 착각하지 않고 Figma Component/Variant 또는 이후 Godot Theme/Scene/Resource로 의미 기반 재구축할 때 사용한다.
+- `ONE_OFF_KEEP`는 hero/narrative/title-specific 화면을 공용 library에 억지로 넣지 않는 정상 판정이다.
+- `DERIVED_GENERATIVE_RECOVERY`가 포함되면 원본 관측 사실이 아닌 generated/derived pixel임을 Visual Artifact Registry와 Asset Vault provenance에 연결한다.
+
+Figma에서의 reuse promotion은 `PROJECT_ASSET_APPROVED`가 아니다. 실제 후보 bytes는 **Asset Vault**가 소유하고, tracked 제품 자산은 `ASSET_MANIFEST.yml + promote` 경계를 통과해야 하며, 재사용 가능한 **Godot** Scene/Resource/Theme 또는 실제 runtime 사용은 별도 구현·검증 증거가 필요하다. Figma component 등록·Library 발행·`04_FINAL`만으로 이 경계를 건너뛰지 않는다.
+
 ### Project Visual Flow Workspace
 
 Visual Bible 안에서 화면 흐름을 관리할 때는 단순 이미지 저장이 아니라 `Project Visual Flow Workspace`로 운영한다. 대표 화면을 `screen_id`, 흐름을 `flow_id`로 묶고 화살표·Prototype 연결을 사용해 진입·전환·취소·복귀·실패 복구를 한눈에 확인한다.
@@ -136,4 +156,4 @@ Use image generation only when it is available and authorized. Otherwise use the
 
 ## Adversarial review
 
-Reject a change if it makes a visual tool a second canon, forces both tools, duplicates full content across tools, pins a live file without a snapshot, treats a prototype as runtime proof, silently bypasses access failure, auto-promotes `DISCOVERED_IDEA` or `AI_ASSUMPTION`, or mixes project URL/token/design decisions into Base.
+Reject a change if it makes a visual tool a second canon, forces both tools, duplicates full content across tools, pins a live file without a snapshot, treats a prototype as runtime proof, silently bypasses access failure, auto-promotes `DISCOVERED_IDEA` or `AI_ASSUMPTION`, treats Figma reuse promotion as `PROJECT_ASSET_APPROVED`, or mixes project URL/token/design decisions into Base.

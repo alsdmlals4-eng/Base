@@ -121,6 +121,27 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
         for context in ("GDD", "EXTERNAL_COLLABORATION", "BOTH"):
             self.assertIn(context, policy)
 
+    def test_reusable_visual_harvest_links_without_collapsing_authority(self) -> None:
+        image_policy = (ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md").read_text(encoding="utf-8")
+        visual_policy = (ROOT / "docs/VISUAL_COLLABORATION_TOOL_POLICY.md").read_text(encoding="utf-8")
+        image_plan = (ROOT / "templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md").read_text(encoding="utf-8")
+        figma_profile = (ROOT / "templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md").read_text(encoding="utf-8")
+        artifact_registry = json.loads(
+            (ROOT / "templates/project-operations/VISUAL_ARTIFACT_REGISTRY.json").read_text(encoding="utf-8")
+        )
+        artifact = artifact_registry["artifacts"][0]
+
+        for content in (image_plan, figma_profile):
+            self.assertIn("asset_vault_harvest_record_id", content)
+        self.assertIn("Reusable Visual Harvest Gate", image_policy)
+        self.assertIn("reuse promotion", visual_policy)
+        self.assertIn("PROJECT_ASSET_APPROVED", image_policy)
+        self.assertIn("PROJECT_ASSET_APPROVED", visual_policy)
+        self.assertIn("REBUILD_FOR_REUSE", figma_profile)
+        self.assertIn("ONE_OFF_KEEP", figma_profile)
+        self.assertIn("asset_vault_harvest_record_id", artifact)
+        self.assertIn("derived_pixel_status", artifact)
+
 
 if __name__ == "__main__":
     unittest.main()

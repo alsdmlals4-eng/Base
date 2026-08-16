@@ -120,9 +120,20 @@ do_not_drift: []
 01.7_ICONS
 01.8_VFX
 01.9_MARKETING
+01.10_REUSABLE_COMPONENTS
+01.11_STRUCTURE_PATTERNS
+01.12_VISUAL_DNA
 ```
 
 이 페이지에 들어가는 기준 Artifact는 Visual Artifact Registry에서 최소 `APPROVED_VISUAL_REFERENCE` 상태여야 한다.
+
+재사용 Section은 Primary Use Gate를 통과한 결과 중 실제 반복 가치가 확인된 항목만 사용한다.
+
+- `01.10_REUSABLE_COMPONENTS`: 반복해서 쓰는 primitive/component와 검증된 variant 기준. one-off hero art는 넣지 않는다.
+- `01.11_STRUCTURE_PATTERNS`: layout·hierarchy·interaction 구조를 기록하며 게임 규칙의 새 정본으로 사용하지 않는다.
+- `01.12_VISUAL_DNA`: palette·shape·material·lighting·camera·spacing의 `Keep / Avoid / Do Not Drift`를 보존한다.
+- `REBUILD_FOR_REUSE`는 raster crop보다 Figma Component/Variant 또는 Godot Theme/Scene/Resource로 의미 기반 재구축해야 하는 후보에 사용한다.
+- `ONE_OFF_KEEP`는 현재 장면·서사·타이틀 고유성이 중요해 공용화하지 않는 정상 판정이다.
 
 ### `02_WIP`
 
@@ -265,6 +276,24 @@ notes:
 last_verified_at:
 ```
 
+### Reusable harvest card
+
+Primary Use Gate를 통과한 시각 결과에서 재사용 후보가 실제로 발견된 경우에만 작성한다.
+
+```yaml
+source_visual_artifact_id:
+primary_use_status:
+reuse_classification: REUSE_AS_IS | VARIANT_SEED | STRUCTURE_PATTERN | STYLE_DNA | REBUILD_FOR_REUSE | ONE_OFF_KEEP | REJECT_REUSE
+reuse_reason:
+existing_reuse_conflict:
+asset_vault_harvest_record_id:
+derived_pixel_status: NONE | SOURCE_LAYER | MASK_CUTOUT | MANUAL_OR_SEMANTIC_REBUILD | DERIVED_GENERATIVE_RECOVERY
+second_use_validation: NOT_RUN | PASS | FAIL | NOT_APPLICABLE
+product_asset_status: NOT_APPROVED
+```
+
+이 카드는 Figma reuse reference와 local Harvest metadata를 연결할 뿐 실제 bytes를 저장하지 않는다. `product_asset_status: NOT_APPROVED`가 기본이며 Figma가 `PROJECT_ASSET_APPROVED`, `promote`, tracked asset, Godot runtime proof를 설정하는 권위가 되지 않는다.
+
 ### WIP card
 
 ```yaml
@@ -384,6 +413,7 @@ product_asset_status: NOT_APPLICABLE | APPROVED_CANDIDATE | PROJECT_ASSET_APPROV
 - [ ] 최신 프로젝트 정본과 Decision을 확인했다.
 - [ ] Visual Artifact Registry에서 관련 Figma Artifact를 찾았다.
 - [ ] `01_APPROVED_REFERENCE`의 관련 frame/node를 실제로 확인했다.
+- [ ] 기존 `01.10_REUSABLE_COMPONENTS / 01.11_STRUCTURE_PATTERNS / 01.12_VISUAL_DNA`로 해결 가능한지 확인했다.
 - [ ] 접근 불가라면 `LINK_UNVERIFIED / AUTH_REQUIRED / ACCESS_DENIED`를 기록했다.
 - [ ] `Keep / Avoid / Do Not Drift`를 작업 계약에 옮겼다.
 - [ ] WIP나 Rejected를 승인 기준으로 잘못 사용하지 않았다.
@@ -396,6 +426,10 @@ product_asset_status: NOT_APPLICABLE | APPROVED_CANDIDATE | PROJECT_ASSET_APPROV
 - [ ] 여러 화면이 연결되면 `FLOW_MAP`의 `screen_id / flow_id`와 진입·복귀 경로를 갱신했다.
 - [ ] 설정/GDD 충돌을 `VISUAL_CANONICAL_CONFLICT`로 분리했다.
 - [ ] 사용자 승인 없이 `01_APPROVED_REFERENCE`나 `04_FINAL`로 옮기지 않았다.
+- [ ] Primary Use Gate를 통과한 뒤에만 Reusable Visual Harvest Gate를 검토했다.
+- [ ] 반복 가치·비중복·독립성이 없는 항목은 `ONE_OFF_KEEP` 또는 `REJECT_REUSE`로 남기고 강제 componentization하지 않았다.
+- [ ] UI 재사용 후보는 단순 raster crop보다 `REBUILD_FOR_REUSE` 가능성을 먼저 검토했다.
+- [ ] Figma reuse promotion을 `PROJECT_ASSET_APPROVED`로 해석하지 않았다.
 - [ ] 승인 시 Visual Artifact Registry와 Decision 연결을 갱신했다.
 - [ ] 실제 제품 asset이라면 별도 `PROJECT_ASSET_APPROVED → promote`를 수행했다.
 
@@ -439,9 +473,15 @@ PROJECTNAME_Visual_Bible
 │  │  └─ ENV_CITY_NIGHT_001
 │  ├─ 01.5_BATTLEFIELD_MAP
 │  │  └─ BATTLE_MAIN_001
-│  └─ 01.6_UI_HUD
-│     ├─ UI_MAINHUD_001
-│     └─ UI_INVENTORY_002
+│  ├─ 01.6_UI_HUD
+│  │  ├─ UI_MAINHUD_001
+│  │  └─ UI_INVENTORY_002
+│  ├─ 01.10_REUSABLE_COMPONENTS
+│  │  └─ UI_BUTTON_PRIMARY_001
+│  ├─ 01.11_STRUCTURE_PATTERNS
+│  │  └─ UI_REWARD_LAYOUT_PATTERN_001
+│  └─ 01.12_VISUAL_DNA
+│     └─ VISUAL_DNA_CORE_001
 │
 ├─ 02_WIP
 │  ├─ 02.1_CURRENT_ITERATION
@@ -507,12 +547,14 @@ do_not_drift:
 - [ ] `00_DIRECTION`에 최소 visual statement와 `Do Not Drift`가 있다.
 - [ ] 화면 흐름이 중요하면 `00.8_VISUAL_FLOW_HUB`에 `FLOW_MAP`과 `screen_id / flow_id`가 있다.
 - [ ] `01_APPROVED_REFERENCE`에 승인 reference만 있다.
+- [ ] 재사용 요소가 실제로 있을 때만 `01.10_REUSABLE_COMPONENTS / 01.11_STRUCTURE_PATTERNS / 01.12_VISUAL_DNA`를 사용한다.
 - [ ] WIP/Rejected가 승인 reference와 분리되어 있다.
 - [ ] 중요 AI 화면에는 필요한 경우 `INTERPRETATION_RECORD`가 연결돼 있다.
 - [ ] 중요 frame에 stable ID와 metadata card가 있다.
 - [ ] Visual Artifact Registry에 file/page/frame/node와 상태가 연결됐다.
 - [ ] 이미지 생성 Skill이 승인 reference를 먼저 확인한다.
 - [ ] 제품 asset bytes 권위를 Figma로 옮기지 않았다.
+- [ ] Figma reuse promotion과 `PROJECT_ASSET_APPROVED`를 분리했다.
 
 ---
 

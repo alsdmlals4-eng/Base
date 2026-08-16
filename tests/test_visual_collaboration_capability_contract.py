@@ -182,6 +182,36 @@ class VisualCollaborationCapabilityContractTests(unittest.TestCase):
         ):
             self.assertIn(token, profile)
 
+    def test_figma_visual_bible_tracks_reuse_without_becoming_asset_authority(self):
+        policy = (ROOT / "docs/VISUAL_COLLABORATION_TOOL_POLICY.md").read_text(encoding="utf-8")
+        profile = (ROOT / "templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md").read_text(encoding="utf-8")
+        registry = json.loads(
+            (ROOT / "templates/project-operations/VISUAL_ARTIFACT_REGISTRY.json").read_text(encoding="utf-8")
+        )
+        item = registry["artifacts"][0]
+
+        for token in (
+            "01.10_REUSABLE_COMPONENTS",
+            "01.11_STRUCTURE_PATTERNS",
+            "01.12_VISUAL_DNA",
+            "REBUILD_FOR_REUSE",
+            "ONE_OFF_KEEP",
+        ):
+            self.assertIn(token, profile)
+
+        for field in (
+            "reuse_classification",
+            "reuse_source_artifact_id",
+            "asset_vault_harvest_record_id",
+            "derived_pixel_status",
+        ):
+            self.assertIn(field, item)
+
+        self.assertIn("reuse promotion", policy)
+        self.assertIn("PROJECT_ASSET_APPROVED", policy)
+        self.assertIn("Asset Vault", policy)
+        self.assertIn("Godot", policy)
+
 
 if __name__ == "__main__":
     unittest.main()
