@@ -109,6 +109,54 @@ class VisualRequirementGateTests(unittest.TestCase):
         self.assertIn("요구사항", guide)
         self.assertIn("파일", guide)
 
+    def test_visual_workflow_produces_first_and_harvests_only_after_primary_use(self) -> None:
+        guide = read(
+            "docs/knowledge/game-development/"
+            "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md"
+        )
+        policy = read("docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md")
+        plan = read("templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md")
+
+        for content in (guide, policy):
+            for token in (
+                "Primary Use Gate",
+                "Reusable Visual Harvest Gate",
+                "REUSE_AS_IS",
+                "VARIANT_SEED",
+                "STRUCTURE_PATTERN",
+                "STYLE_DNA",
+                "REBUILD_FOR_REUSE",
+                "ONE_OFF_KEEP",
+                "REJECT_REUSE",
+                "SOURCE_LAYER",
+                "MASK_CUTOUT",
+                "MANUAL_OR_SEMANTIC_REBUILD",
+                "DERIVED_GENERATIVE_RECOVERY",
+            ):
+                self.assertIn(token, content)
+
+        for token in (
+            "primary_use_status",
+            "harvest_status",
+            "reuse_classification",
+            "decomposition_method",
+            "asset_vault_harvest_record_id",
+            "second_use_validation",
+        ):
+            self.assertIn(token, plan)
+
+    def test_reuse_never_auto_promotes_or_overrides_primary_quality(self) -> None:
+        guide = read(
+            "docs/knowledge/game-development/"
+            "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md"
+        )
+        policy = read("docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md")
+        for content in (guide, policy):
+            self.assertIn("primary-use success", content)
+            self.assertIn("reuse promotion", content)
+            self.assertIn("PROJECT_ASSET_APPROVED", content)
+            self.assertIn("title-specific identity", content)
+
 
 if __name__ == "__main__":
     unittest.main()
