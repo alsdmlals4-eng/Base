@@ -57,7 +57,7 @@ jobs:
           python -m pip install -e '.\tools\base-tool-contracts[dev]' -e '.\tools\tool-hub[dev]' -e '.\tools\expression-studio[dev]' -e '.\tools\sprite-animation-studio[dev]'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Run full reviewed visual delivery regression
+      - name: Run canonical route and Tool Hub adversarial regression
         run: >-
           python -m pytest -q
           tools/base-tool-contracts/tests/test_figma_tool_routing.py
@@ -70,6 +70,12 @@ jobs:
           tools/tool-hub/tests/test_figma_exact_tool_route.py
           tools/tool-hub/tests/test_studio_delivery_trust.py
           tools/tool-hub/tests/test_sprite_effect_route_adversarial.py
-          tools/sprite-animation-studio/tests
-          tools/expression-studio/tests
           tests/test_tool_hub_subscription_production_contract.py
+
+      - name: Run full Sprite Animation Studio regression
+        working-directory: tools/sprite-animation-studio
+        run: python -m pytest -q tests
+
+      - name: Run full Expression Studio regression
+        working-directory: tools/expression-studio
+        run: python -m pytest -q tests
