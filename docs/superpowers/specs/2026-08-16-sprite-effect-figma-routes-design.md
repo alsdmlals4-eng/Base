@@ -2,7 +2,7 @@
 
 ## Status
 
-Approved design direction from the user on 2026-08-16. This document defines the implementation boundary before code/Figma mutation work begins.
+Approved by the user on 2026-08-16. The Figma layout/24-route A-design is unchanged. During implementation planning, a trust-boundary gap was found in the current one-route-per-tool delivery API; this approved design record therefore also fixes server-owned Sprite mode-to-route selection and exported-atlas SHA binding before production code changes begin.
 
 ## Goal
 
@@ -107,7 +107,7 @@ No aliases or runtime layer-name search are allowed as mutation authority.
 
 ## Trusted Sprite route selection and delivered artifact
 
-The existing Tool Hub child credential proves only `(tool_id, project_id)`. It does not distinguish two destination classes owned by the same `sprite-animation-studio`. Therefore the Sprite delivery path must add one explicit route-class identity without making browser input mutation authority.
+The existing Tool Hub child credential proves only `(tool_id, project_id)`. It does not distinguish two destination classes owned by the same `sprite-animation-studio`. Therefore the Sprite delivery path adds one explicit route-class identity without making browser input mutation authority.
 
 The authoritative route class is derived inside Sprite Animation Studio from the server-owned `RunRecord.request.mode` for the exact run being confirmed:
 
