@@ -92,3 +92,34 @@ def test_request_limit_can_be_scoped_to_only_the_import_endpoint() -> None:
         return int(sent[0]["status"]), called
 
     assert asyncio.run(call_other_path()) == (204, True)
+
+
+def test_request_limit_can_be_scoped_to_a_dynamic_path_prefix() -> None:
+    async def call(path: str) -> tuple[int, bool]:
+        called = False
+
+        async def app(scope: dict[str, object], receive: object, send: object) -> None:
+            nonlocal called
+            called = True
+            await send({"type": "http.response.start", "status": 204, "headers": []})
+            await send({"type": "http.response.body", "body": b""})
+
+        async def receive() -> dict[str, object]:
+            return {"type": "http.request", "body": b"", "more_body": False}
+
+        sent: list[dict[str, object]] = []
+
+        async def send(message: dict[str, object]) -> None:
+            sent.append(message)
+
+        scope = {"type": "http", "path": path, "headers": [(b"content-length", b"999")]}
+        await BoundedRequestBodyMiddleware(
+            app,
+            max_body_bytes=10,
+            path_prefix="/api/handoff-runs/",
+        )(scope, receive, send)
+        return int(sent[0]["status"]), called
+
+    assert asyncio.run(call("/api/handoff-runs/abc123/import")) == (413, False)
+    assert asyncio.run(call("/api/handoff-runs")) == (204, True)
+    assert asyncio.run(call("/api/config")) == (204, True)

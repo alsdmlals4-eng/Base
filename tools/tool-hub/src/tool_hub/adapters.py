@@ -14,7 +14,7 @@ from base_tool_contracts.trusted_files import TrustedFileError, open_directory_n
 
 from .environment import LaunchContext, child_environment, ensure_runtime_directory
 from .projects import ProjectBinding
-from .runtime_trust import RuntimeTrustError, assert_runtime_pins
+from .runtime_trust import RuntimeTrustError, _assert_plain_directory, assert_runtime_pins
 
 
 class AdapterError(ValueError):
@@ -41,7 +41,14 @@ _REVIEWED_TUPLES: dict[str, tuple[str, str, tuple[str, ...], str]] = {
     "expression-studio": (
         "tools/expression-studio",
         "expression_studio",
-        ("expression_variation", "image_import", "figma_delivery_packet"),
+        (
+            "expression_variation",
+            "identity_preserving_edit",
+            "outfit_variation",
+            "scene_relocation",
+            "image_import",
+            "figma_delivery_packet",
+        ),
         "expression_studio.app",
     ),
     "sprite-animation-studio": (
@@ -61,7 +68,10 @@ _RUN_REVIEWED_MODULE = (
 
 
 def bind_launch_spec(spec: LaunchSpec) -> LaunchSpec:
-    """Bind every executable/import root to inherited descriptors before Popen."""
+    """Bind Linux launch paths to descriptors; Windows uses pre-validated plain paths."""
+    if os.name == "nt":
+        return replace(spec, pass_fds=())
+
     descriptors: list[int] = []
     try:
         executable = Path(spec.argv[0]).resolve(strict=True)
@@ -106,15 +116,25 @@ def _reviewed_tuple(tool: dict[str, object]) -> tuple[str, str, tuple[str, ...],
     return reviewed
 
 
+def _verify_directory(path: Path, message: str) -> None:
+    if os.name == "nt":
+        try:
+            _assert_plain_directory(path)
+        except RuntimeTrustError as error:
+            raise AdapterError(message) from error
+        return
+    try:
+        descriptor = open_directory_nofollow(path)
+        os.close(descriptor)
+    except (OSError, TrustedFileError) as error:
+        raise AdapterError(message) from error
+
+
 def _verified_owner(context: LaunchContext, owner_relative: str) -> Path:
     root = Path(context.base_root).absolute()
     owner = root / owner_relative
-    try:
-        for path in (root, root / "tools", owner):
-            descriptor = open_directory_nofollow(path)
-            os.close(descriptor)
-    except (OSError, TrustedFileError) as error:
-        raise AdapterError("reviewed Studio owner is unavailable or replaced") from error
+    for path in (root, root / "tools", owner):
+        _verify_directory(path, "reviewed Studio owner is unavailable or replaced")
     return owner
 
 
@@ -123,13 +143,13 @@ def _verified_source_roots(context: LaunchContext, owner: Path) -> tuple[Path, P
     root = Path(context.base_root).absolute()
     contract_source = root / "tools" / "base-tool-contracts" / "src"
     owner_source = owner / "src"
-    site_packages = root / ".venv" / "lib" / f"python{sys.version_info.major}.{sys.version_info.minor}" / "site-packages"
-    try:
-        for path in (contract_source, owner_source, site_packages):
-            descriptor = open_directory_nofollow(path)
-            os.close(descriptor)
-    except (OSError, TrustedFileError) as error:
-        raise AdapterError("reviewed source root is unavailable or replaced") from error
+    site_packages = (
+        root / ".venv" / "Lib" / "site-packages"
+        if os.name == "nt"
+        else root / ".venv" / "lib" / f"python{sys.version_info.major}.{sys.version_info.minor}" / "site-packages"
+    )
+    for path in (contract_source, owner_source, site_packages):
+        _verify_directory(path, "reviewed source root is unavailable or replaced")
     return contract_source, owner_source, site_packages
 
 
@@ -142,7 +162,8 @@ def _reject_untracked_sourceless_bytecode(owner: Path) -> None:
 
 
 def _verified_interpreter(context: LaunchContext) -> Path:
-    expected = Path(context.base_root).absolute() / ".venv" / "bin" / "python"
+    root = Path(context.base_root).absolute() / ".venv"
+    expected = root / "Scripts" / "python.exe" if os.name == "nt" else root / "bin" / "python"
     selected = Path(context.python_executable).absolute()
     try:
         if not os.path.samefile(expected, selected):

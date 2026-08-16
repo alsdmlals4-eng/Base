@@ -211,13 +211,7 @@ def read_regular_portable_nofollow(
 
 def run_portable_git(root: Path, *arguments: str) -> subprocess.CompletedProcess[bytes]:
     """Run fixed Git arguments for catalog proof on non-POSIX platforms."""
-    candidate = shutil.which("git")
-    if not candidate:
-        raise TrustedFileError("trusted Git executable is unavailable")
-    executable = Path(candidate).absolute()
-    metadata = executable.lstat()
-    if executable.is_symlink() or not stat.S_ISREG(metadata.st_mode):
-        raise TrustedFileError("trusted Git executable must be a regular non-symlink file")
+    executable = trusted_git_executable()
     overrides = (
         "-c", "core.fsmonitor=false",
         "-c", "core.hooksPath=NUL" if os.name == "nt" else "core.hooksPath=/dev/null",
