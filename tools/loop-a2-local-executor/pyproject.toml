@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "loop-a2-local-executor"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = ["jsonschema==4.26.0"]
 
 [project.scripts]
 loop-a2-local-executor = "loop_a2_local_executor.cli:main"

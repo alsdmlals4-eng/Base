@@ -56,6 +56,16 @@ def _child_environment() -> dict[str, str]:
     return result
 
 
+def _require_authority_validation_dependency() -> None:
+    try:
+        import jsonschema  # noqa: F401
+    except ImportError as exc:
+        raise LocalRuntimeError(
+            "A2_RUNTIME_DEPENDENCY_MISSING",
+            "REAL A2 authority-validation dependency is unavailable",
+        ) from exc
+
+
 Runner = Callable[..., subprocess.CompletedProcess[str]]
 
 
@@ -196,6 +206,7 @@ class LocalA2Runtime:
         return verified
 
     def preflight(self) -> dict[str, str]:
+        _require_authority_validation_dependency()
         self._preflight_image_id = self._image_id()
         return {"status": "READY", "code": "DOCKER_REVIEWED_IMAGE_READY"}
 
