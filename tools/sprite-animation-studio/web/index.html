@@ -70,8 +70,18 @@
           <div id="sequence" class="sequence" aria-label="채택 프레임 순서"></div>
         </section>
         <section class="delivery-section" aria-live="polite">
-          <div class="section-title"><div><h2>프로젝트 Figma 전달</h2><p>같은 프로젝트 GPT 작업공간에서만 Figma 도구를 사용해 배치합니다.</p></div><button id="figma-delivery-button" type="button" disabled>프로젝트 GPT 전송 준비</button></div>
-          <p id="figma-delivery-status" class="muted">출력 준비 뒤, 등록된 프로젝트 대상과 보호 상태를 확인합니다. 이 브라우저는 Figma에 직접 업로드하지 않습니다.</p>
+          <div class="section-title">
+            <div>
+              <h2>확정 및 전달</h2>
+              <p>서버가 작업 모드에서 목적지를 결정합니다: 액션·포즈는 <strong>Sprite Action Runs</strong>, 단계별 이펙트는 <strong>Effect Runs</strong>.</p>
+            </div>
+            <div>
+              <button id="confirm-delivery-button" class="primary" type="button" disabled>확정 및 전달</button>
+              <button id="refresh-delivery-button" type="button" disabled>전달 상태 새로고침</button>
+            </div>
+          </div>
+          <p id="figma-delivery-status" class="muted">출력 준비 뒤 확정하면 검증된 atlas PNG 하나를 Tool Hub가 등록된 전용 Figma 목적지로 전달합니다.</p>
+          <a id="confirmed-download" hidden>확정한 atlas PNG 다운로드</a>
         </section>
         <section class="preview-section">
           <div class="section-title"><div><h2>애니메이션 미리보기</h2><p>선택된 순서와 FPS를 사용합니다.</p></div><button id="play-preview" type="button" disabled>재생 / 정지</button></div>
