@@ -85,7 +85,7 @@ class ConcurrentGitSyncPreflightContractTests(unittest.TestCase):
         self.assertIn("residual_owner_deltas", skill)
         self.assertIn("standing authorization", skill)
         self.assertIn("owner PR", agents)
-        self.assertIn("latest main", agents)
+        self.assertIn("latest completed `main`", agents)
         self.assertIn("superseded", agents)
         self.assertNotIn(
             "명시적 사용자 승인으로 최신 main 기반 선행 통합 PR의 병렬 진행을 허용한 경우에만",
