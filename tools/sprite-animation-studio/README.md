@@ -10,7 +10,7 @@
 - 원본 이미지·Figma 내보내기·생성 후보·GIF·아틀라스·실행 기록은 프로젝트 경로에만 남깁니다.
 - API 키와 프로젝트 생성물은 Base에 **커밋하지 않습니다**. Tool Hub 정상 경로는 `subscription_handoff_import`만 사용하며 별도 OpenAI API 키를 읽거나 저장하지 않습니다.
 - 브라우저는 Figma 파일 키, 목적 node, route를 선택하거나 전송 권한으로 제출하지 않습니다. 서버에 저장된 `RunRecord.request.mode`만 delivery route 권한을 가집니다.
-- 현재 canonical exact route는 프로젝트마다 세 개입니다.
+- 현재 canonical exact route는 프로젝트마다 세 개이며, 각 project/tool 조합의 **dedicated** destination으로 고정됩니다.
   - `character_expression_runs` → `Expression Runs`
   - `sprite_action_runs` → `Sprite Action Runs`
   - `effect_runs` → `Effect Runs`
