@@ -68,7 +68,12 @@ def validate_bundle(capsule_path: Path) -> Iterable[Any]:
     snapshot type and must remain usable in its intentionally smaller dependency
     environment. Real capture still executes the canonical M2 bundle validator.
     """
-    from tools.loop_contracts.bundle_validation import validate_bundle as _validate_bundle
+    try:
+        from tools.loop_contracts.bundle_validation import validate_bundle as _validate_bundle
+    except ImportError as exc:
+        raise AuthoritySnapshotError(
+            "canonical authority validator dependency is unavailable"
+        ) from exc
 
     return _validate_bundle(capsule_path)
 
