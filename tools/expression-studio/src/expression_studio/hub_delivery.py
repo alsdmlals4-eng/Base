@@ -1,6 +1,6 @@
 """Compatibility re-export for the shared child-only Tool Hub delivery client."""
 
-from base_tool_contracts import (
+from base_tool_contracts.hub_delivery import (
     HubDeliveryError,
     HubDeliverySender,
     LocalHubDeliveryClient,
