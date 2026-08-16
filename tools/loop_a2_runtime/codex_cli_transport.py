@@ -22,6 +22,7 @@ from .candidate_verification import (
     ProjectTestCandidateVerifier,
     VerificationEvidenceMailbox,
 )
+from .codex_cli_command import build_codex_command
 from .openai_transport import (
     GitReviewMaterialSource,
     OpenAIWorkspaceBuilder,
@@ -107,6 +108,7 @@ class CodexCliProcess:
     ) -> None:
         if not isinstance(max_output_bytes, int) or max_output_bytes <= 0:
             raise ValueError("max_output_bytes must be positive")
+        self._uses_default_runner = run_command is None
         self.run_command = run_command or subprocess.run
         self.max_output_bytes = max_output_bytes
 
@@ -139,8 +141,7 @@ class CodexCliProcess:
                 encoding="utf-8",
             )
 
-            argv = [
-                "codex",
+            codex_arguments = [
                 "--strict-config",
                 "-c",
                 "features.shell_tool=false",
@@ -164,8 +165,8 @@ class CodexCliProcess:
             ]
             selected_model = model.strip() if isinstance(model, str) else ""
             if selected_model and selected_model != _DEFAULT_MODEL:
-                argv.extend(["--model", selected_model])
-            argv.append("-")
+                codex_arguments.extend(["--model", selected_model])
+            codex_arguments.append("-")
 
             prompt = (
                 f"{instructions.strip()}\n\n"
@@ -174,7 +175,16 @@ class CodexCliProcess:
                 f"{input_text}\n"
                 "</loop_a2_input>\n"
             )
+            child_environment = _safe_environment()
             try:
+                argv = (
+                    ["codex", *codex_arguments]
+                    if not self._uses_default_runner
+                    else build_codex_command(
+                        codex_arguments,
+                        environment=child_environment,
+                    )
+                )
                 completed = self.run_command(
                     argv,
                     cwd=root,
@@ -183,7 +193,7 @@ class CodexCliProcess:
                     encoding="utf-8",
                     errors="replace",
                     capture_output=True,
-                    env=_safe_environment(),
+                    env=child_environment,
                     timeout=timeout_seconds,
                     check=False,
                     shell=False,
@@ -192,7 +202,7 @@ class CodexCliProcess:
                 raise CodexCliTransportError("CODEX_EXEC_TIMEOUT", "Codex CLI execution timed out") from exc
             except FileNotFoundError as exc:
                 raise CodexCliTransportError("CODEX_CLI_UNAVAILABLE", "Codex CLI executable is unavailable") from exc
-            except OSError as exc:
+            except (OSError, ValueError) as exc:
                 raise CodexCliTransportError(
                     "CODEX_EXEC_ERROR",
                     f"Codex CLI could not execute: {type(exc).__name__}",
