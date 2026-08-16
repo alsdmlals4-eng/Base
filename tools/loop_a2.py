@@ -49,7 +49,13 @@ def _load_request_fixture(path: Path) -> RunRequest:
 def _blocked(*, status: str, code: str, message: str) -> int:
     print(
         json.dumps(
-            {"status": status, "code": code, "message": message},
+            {
+                "schema_version": 1,
+                "contract_role": "LOOP_A2_CHILD_TERMINAL",
+                "status": status,
+                "code": code,
+                "message": message,
+            },
             ensure_ascii=False,
             sort_keys=True,
         )
@@ -105,8 +111,11 @@ def main() -> int:
             budgets=Budgets(args.max_turns, args.max_repair_cycles, args.timeout_seconds),
         )
     except (OSError, json.JSONDecodeError, ProtocolError, ContractBridgeError, ValueError) as exc:
-        print(json.dumps({"status": "CONTRACT_INVALID", "message": str(exc)}, sort_keys=True))
-        return 2
+        return _blocked(
+            status="CONTRACT_INVALID",
+            code="A2_CONTRACT_INVALID",
+            message=str(exc),
+        )
 
     if args.provider == "real":
         if args.runtime_root is None:

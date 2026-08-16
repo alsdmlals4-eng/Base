@@ -12,6 +12,7 @@ _RUNTIME_PUBLIC_PATTERNS = {
     "a2_finding_code": re.compile(r"^[A-Z][A-Z0-9_]{0,127}$"),
     "a2_provider_error_type": re.compile(r"^[A-Za-z_][A-Za-z0-9_.]{0,127}$"),
     "a2_receipt_digest": re.compile(r"^[0-9a-f]{64}$"),
+    "a2_child_code": re.compile(r"^[A-Z][A-Z0-9_]{0,127}$"),
 }
 
 

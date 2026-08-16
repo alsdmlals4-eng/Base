@@ -16,7 +16,9 @@ _SHA = re.compile(r"^[0-9a-f]{40}$")
 _DIGEST = re.compile(r"^[0-9a-f]{64}$")
 _PUBLIC_STATE = re.compile(r"^[A-Z][A-Z0-9_]{0,63}$")
 _PUBLIC_FINDING_CODE = re.compile(r"^[A-Z][A-Z0-9_]{0,127}$")
+_PUBLIC_CHILD_CODE = re.compile(r"^[A-Z][A-Z0-9_]{0,127}$")
 _PUBLIC_PROVIDER_ERROR_TYPE = re.compile(r"^[A-Za-z_][A-Za-z0-9_.]{0,127}$")
+_CHILD_TERMINAL_STATUSES = frozenset(("CONTRACT_INVALID", "BLOCKED_UNVERIFIED"))
 _CHILD_ENV = (
     "PATH", "SYSTEMROOT", "WINDIR", "COMSPEC", "PATHEXT", "TEMP", "TMP", "TMPDIR",
     "LANG", "LC_ALL", "HOME", "USERPROFILE", "APPDATA", "LOCALAPPDATA", "CODEX_HOME",
@@ -390,6 +392,26 @@ class LocalA2Runtime:
             details["a2_provider_error_type"] = provider_error_type
         return details
 
+    def _child_terminal_diagnostics(self, stdout: str) -> dict[str, str]:
+        try:
+            value = json.loads(stdout)
+        except json.JSONDecodeError:
+            return {}
+        if not isinstance(value, dict):
+            return {}
+        if (
+            value.get("schema_version") != 1
+            or value.get("contract_role") != "LOOP_A2_CHILD_TERMINAL"
+        ):
+            return {}
+        status = value.get("status")
+        if not isinstance(status, str) or status not in _CHILD_TERMINAL_STATUSES:
+            return {}
+        code = value.get("code")
+        if not isinstance(code, str) or _PUBLIC_CHILD_CODE.fullmatch(code) is None:
+            return {}
+        return {"a2_child_code": code}
+
     def execute(self, job: LocalA2Job) -> dict[str, object]:
         with self.store.exact_worktree(self.base_repository, job.base_runtime_sha, "base") as base_root:
             with self.store.exact_worktree(job.target_repository, job.authority_sha, "authority") as project_root:
@@ -428,6 +450,8 @@ class LocalA2Runtime:
                         source_sha=source_sha,
                         expected_package_id=expected_package_id,
                     )
+                    if not public_details:
+                        public_details = self._child_terminal_diagnostics(stdout)
                     raise LocalRuntimeError(
                         "A2_EXECUTION_BLOCKED",
                         "REAL A2 process did not reach an eligible terminal state",
