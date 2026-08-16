@@ -4,6 +4,8 @@
 
 Base의 기본 충돌 복구 방식은 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`에 따른 **latest-main copy integration**이다. 이미 승인된 작업이 같은 Goal·path·semantic resource와 겹치면 owner PR을 기다리거나 직접 고치지 않고, exact latest completed `main`에서 별도 통합 Branch를 만든 뒤 필요한 material delta만 selective copy/reproduce하고 semantic reconciliation한다.
 
+호환성 주의: 과거 계약의 literal `explicit user authorization`과 `must not merge`는 legacy migration/search token으로만 보존하며 **현재 Gate가 아니다**. 현재 계약은 standing authorization, owner PR read-only, material-delta accounting, exact-head validation으로 대체한다.
+
 ## 1. 기준과 작업 의도 고정
 
 1. remote·upstream·기본 Branch·현재 Branch·HEAD·working tree·untracked를 기록한다.
