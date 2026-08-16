@@ -96,12 +96,22 @@ def test_registry_rejects_malformed_or_identical_figma_node_ids(
         ProjectFigmaRegistry.load(path)
 
 
-def test_base_registry_keeps_all_unverified_project_figma_targets_blocked() -> None:
+def test_base_registry_keeps_all_reviewed_project_figma_targets_ready() -> None:
     base_root = Path(__file__).parents[3]
     registry = ProjectFigmaRegistry.load(base_root / "docs" / "operations" / "PROJECT_FIGMA_TARGET_REGISTRY.json")
 
-    project_ids = ("coc-fiction", "ten-paces-hidden-moves", "ninja-survival", "switchy-express-cargo-puzzle", "urban-legend", "grimoire-how-to-rewrite-the-world", "blacksmith", "omenward")
+    project_ids = (
+        "coc-fiction",
+        "ten-paces-hidden-moves",
+        "ninja-survival",
+        "switchy-express-cargo-puzzle",
+        "urban-legend",
+        "grimoire-how-to-rewrite-the-world",
+        "blacksmith",
+        "omenward",
+    )
     for project_id in project_ids:
-        assert registry.routing_state(project_id) == "ROUTING_BLOCKED"
-        with pytest.raises(DeliveryBlockedError, match="REGISTERED_NO_MUTATION"):
-            registry.resolve_ready_target(project_id)
+        assert registry.routing_state(project_id) == "ROUTING_CONFIGURED"
+        target = registry.resolve_ready_target(project_id)
+        assert target.project_id == project_id
+        assert target.generation_area_node_id
