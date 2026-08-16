@@ -88,7 +88,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 
 ## 4. 책임 원본·프로젝트·발행 경계
 
-- 한 질문에는 Registry에 등록된 Markdown 또는 JSON 책임 원본 하나만 둔다. DOCX·PDF·대시보드·과거 대화는 독립 정본이 아니다.
+- 한 질문에는 Registry에 등록된 Markdown 또는 JSON 책임 원본 하나만 둔다. DOCX·PDF·대시보드·과거 대화은 독립 정본이 아니다.
 - 프로젝트를 넘어 재사용되는 작업 규칙, 검증 절차, PR·정본·Sheet 동기화 원칙, 공용 플랫폼·자산·권리 기준은 Base 책임 원본에만 둔다. 프로젝트 저장소에서 같은 규칙을 재서술하거나 별도 공통 정책으로 승격하지 않는다.
 - 프로젝트 저장소에는 채택한 Base 책임 원본의 경로·버전, 프로젝트 고유의 엔진·보안·데이터·제품 제약, 프로젝트별 Decision·구현·테스트·실행 증거·미검증만 기록한다. 과거 프로젝트 내부 공통 정책은 활성 권위를 제거하고 Base 대체 경로만 남긴다.
 - 프로젝트 고유 제약이 Base보다 엄격할 수는 있지만, 공통 절차를 복제해 독립 권위로 만들 수는 없다. 충돌 시 사용자 최신 지시와 프로젝트 고유 제약을 보존하면서 공통 규칙은 Base에서만 수정한다.
@@ -128,7 +128,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - 전체 로컬 계약은 `python tools/run_local_validation.py --trusted-history-commit <trusted-main-commit-sha>`로 실행한다. 인자는 검증 전에 확인한 정확한 40자 main SHA이며, 이동 가능한 ref 이름을 넘기지 않는다. 환경 미준비 skip을 pass로 바꾸지 않는다.
 - 작업 전 원격·로컬 상태를 확인하고, 검증된 변경만 commit·push한다. Workflow 파일 존재와 실제 Actions 실행·Required Check 강제를 구분한다.
 - GitHub 게시·검토는 연결된 GitHub plugin/connector capability를 먼저 사용한다. connector가 필요한 동작을 지원하면 missing `gh` alone is not a blocker이며 사용자에게 CLI 반복 설치·재인증을 요구하지 않는다. 상세 fallback과 exact-SHA 안전 규칙은 `synchronizing-local-and-github-state`가 소유한다.
-- **`PROVISIONAL_INTEGRATION`은 사용자가 명시적 사용자 승인으로 최신 main 기반 선행 통합 PR의 병렬 진행을 허용한 경우에만 사용한다. 겹치는 owner PR과 exact head·path·semantic resource를 기록하고, owner PR Branch에는 write하지 않는다. owner PR 또는 main이 변할 때마다 통합 Branch에서 semantic reconciliation과 exact-head 검증을 다시 수행하며, provisional duplicate는 더 최신·강한 정본 구현에 맞춰 제거한다. 겹치는 owner PR이 merged+absorbed, 명시적 handoff/superseded, 또는 사용자 replacement 승인 중 하나로 정리되지 않은 동안 통합 PR을 병합하지 않는다.**
+- **`BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`은 Base의 기본 동시작업 조정 방식이다. 같은 Goal·path·semantic resource가 겹치면 owner PR을 기다리거나 수정하지 않고, owner PR exact head·변경 경로·의미 자원을 read-only로 기록한 뒤 exact latest completed `main`에서 별도 `PROVISIONAL_INTEGRATION` Branch/PR을 만든다. 필요한 material delta만 `selective copy`·재구현하고 최신 main 상태와 semantic reconciliation하며 stale duplicate를 제거한다. owner PR이 열려 있다는 사실만으로 통합 PR을 막지 않는다. 모든 필요한 owner delta가 `absorbed_owner_deltas` 또는 근거 있는 제외로 정리되고, 남은 고유 작업은 `residual_owner_deltas`로 보존되며, exact-head 검사·P0/P1 0·unresolved thread 0이 충족되면 통합 PR을 병합할 수 있다. 병합 뒤 고유 material delta가 남지 않은 owner PR은 `superseded`로 정리하고, residual이 남으면 해당 PR을 보존한다. 이 standing authorization은 범위 확대·파괴적 마이그레이션·결제·계정/보안 권한 확대·direct main·force push·`--admin`·ruleset bypass 권한이 아니다.**
 - 병합은 검토한 정확한 HEAD, 필수 검사, 독립 검토, unresolved thread 0, 결정 게이트를 다시 확인한 뒤 저장소가 허용한 방식으로 수행한다.
 - `skills/SKILL_REGISTRY.json`, released lock, frozen/generated release artifact, 보호 경로를 변경하려면 해당 전용 계약과 검증을 먼저 충족한다. 범위 밖에서는 bytes를 보존한다.
 - 생성 실패·미검증 바이너리·로컬 임시 산출물을 자동 push하지 않는다.
