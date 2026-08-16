@@ -15,7 +15,7 @@ description: Use when routing a project request, closing material ambiguity, def
 
 사용자가 `[연속작업] 진행해`라고 명시하면 `references/continuous-work-execution.md`에 따라 현재 승인된 작업 계약의 남은 범위에 `CONTINUOUS_WORK_ACTIVE` 실행 상태를 적용한다. 이는 `PLAN / BUILD / REVIEW`를 대체하지 않으며, 사용자 전용 결정·미검증 차단·고위험 외부 행위의 확인 Gate를 제거하지 않는다. blocker가 생기면 즉시 전역 종료하지 않고 `recover → local defer → independent ready work → global stop last` 순서로 처리한다.
 
-명시적인 user-directed 계속 작업에서 `same-goal`의 `in-progress PR`이 이미 있으면 `USER_DIRECTED_PARALLEL_PR`로 라우팅할 수 있다. 이때 기존 PR은 read-only overlap evidence로만 확인하고, **current completed main**에서 **separate branch/PR**을 만들어 독립 진행한다. 이후 `synchronizing-local-and-github-state`의 concurrent preflight가 실제 `SAME_GOAL / PATH_OVERLAP / SEMANTIC_OVERLAP`을 판정하면 `PROVISIONAL_INTEGRATION` 계약으로 위임한다. 겹치는 owner PR branch는 계속 read-only이고 owner/main 이동마다 semantic reconciliation과 exact-head 검증을 다시 수행하며, owner가 해결되기 전에는 merge하지 않는다. 이 규칙은 `scheduled/periodic` repository-writing automation의 더 엄격한 active-PR guard를 완화하지 않는다. 상세 중복 제거·superseded·병합 Gate는 `references/continuous-work-execution.md`와 `synchronizing-local-and-github-state`를 따른다.
+명시적인 user-directed 계속 작업에서 `same-goal`의 `in-progress PR`이 이미 있으면 `USER_DIRECTED_PARALLEL_PR`로 라우팅한다. 기존 PR은 read-only overlap evidence로만 확인하고 **do not modify/rebase/update** 하며, **current completed main**에서 **separate branch/PR**을 만든다. 이후 `synchronizing-local-and-github-state`의 concurrent preflight가 `SAME_GOAL / PATH_OVERLAP / SEMANTIC_OVERLAP`을 판정하면 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16` 아래 `PROVISIONAL_INTEGRATION`으로 전환한다. owner PR branches는 read-only로 보존하고 필요한 material delta만 selective copy·재구현한 뒤 semantic reconciliation과 exact-head 검증을 수행한다. owner PR이 열려 있다는 사실만으로 merge를 막지 않으며 `absorbed_owner_deltas`와 `residual_owner_deltas`로 material coverage를 증명한다. `scheduled/periodic` repository-writing automation도 unrelated open PR 존재 자체를 전역 blocker로 사용하지 않고 실제 path/semantic overlap만 국소 조정한다. 상세 superseded·residual·병합 Gate는 `references/continuous-work-execution.md`와 `synchronizing-local-and-github-state`를 따른다.
 
 새 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층 요청은 일반 설계보다 먼저 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`와 `evaluating-godot-assets-and-plugins-before-creation: inventory-current-environment / disposition`으로 라우팅한다. `existing_solution_disposition`과 비교 증거·사용자 승인 상태 없이 `BUILD_NEW` 계약을 만들지 않는다.
 
@@ -128,6 +128,7 @@ rollback_constraints:
 approval_reference:
 continuous_work_trigger:
 continuous_work_state: CONTINUOUS_WORK_ACTIVE | CONTINUOUS_WORK_INACTIVE
+copy_integration_standing_authorization: BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16
 existing_solution_inventory:
 existing_solution_disposition:
 existing_solution_evidence:
