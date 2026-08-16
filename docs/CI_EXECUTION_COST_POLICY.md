@@ -2,13 +2,15 @@
 
 이 문서는 Base와 Base를 적용한 프로젝트에서 GitHub Actions 사용량을 변경 위험에 맞게 배분하고, 검증 신뢰도를 보존하면서 원격 CI와 제한적 로컬 fallback의 책임을 분리하는 공용 정본이다.
 
+**상위 비용 Gate — `ZERO_INCREMENTAL_COST_REQUIRED`:** CI·자동화도 사용자의 추가 금전 지출을 만들지 않는 실행 경로만 기본 허용한다. 현재 저장소·계정에서 별도 과금이 없다고 확인된 standard runner·기존 로컬 환경은 사용할 수 있지만, `pay-as-you-go` API·유료 credit·larger/GPU runner·유료 storage·marketplace·기타 separately metered service는 사용자가 이 정책을 명시적으로 바꾸기 전에는 실행하지 않는다. 비용 상태를 확인할 수 없으면 실제 유료 가능 실행을 시작하지 않고 `COST_GATE_BLOCKED`로 둔다. 이 Gate는 필요한 검증을 삭제하는 권한이 아니라 **무료로 재현 가능한 검증 경로를 선택하거나 검증을 정직하게 보류하는 권한 경계**다.
+
 ## 1. 목표
 
 - 문서만 바뀐 PR에서 다중 운영체제·다중 Python·엔진 전체 검증을 반복하지 않는다.
 - 코드·도구·Schema·워크플로 변경에는 통합 신뢰도를 유지하는 충분한 검증을 실행한다.
 - `main` 병합, nightly, release 후보에서는 지원 운영체제·런타임 전체 계약을 확인한다.
 - 새 커밋이 올라온 PR의 오래된 실행을 자동 취소한다.
-- 공개 저장소의 standard GitHub-hosted runner는 기본 `REMOTE_CI`로 사용한다.
+- 추가비용 0이 확인된 공개 저장소의 standard GitHub-hosted runner는 기본 `REMOTE_CI`로 사용한다.
 - Actions 인프라가 실제로 검증 실행을 소유하지 못한 경우에만 엄격한 `LOCAL_FALLBACK`을 검토한다.
 - 실행하지 못했거나 locally reproducible 하지 않은 검증을 통과로 보고하지 않는다.
 
@@ -36,6 +38,7 @@
 8. **등가 증거만 허용**: fallback은 현재 로컬 검증 계약으로 locally reproducible 한 변경만 성공 처리한다.
 9. **보류와 통과 분리**: 필요한 증거가 로컬에서 동등하게 재현되지 않으면 `BLOCKED_BY_GITHUB_ACTIONS / UNVERIFIED`다.
 10. **프로젝트 지원 범위가 정본**: 지원하지 않는 운영체제·Python 버전을 관성적으로 matrix에 추가하지 않는다.
+11. **0원 Gate 우선**: 동일한 검증 목표에 separately metered 실행이 필요하면 자동 결제 경로로 우회하지 않고 무료 동등 경로를 찾거나 `COST_GATE_BLOCKED / UNVERIFIED`로 보류한다.
 
 저장소 전체에서 `name: ci-gate`를 노출하는 Job은 하나뿐이어야 한다. 그 Job을 소유한 Workflow의 `pull_request` 이벤트에는 Workflow-level `paths`·`paths-ignore`를 두지 않고 내부 분류 Job에서 비용 계층을 선택한다. 집중 Workflow는 path filter를 사용할 수 있지만 `ci-gate` 이름을 재사용하지 않는다.
 
@@ -219,9 +222,9 @@ Branch protection은 조건부 Job 이름을 모두 Required Check로 묶지 않
 
 ### 9.1 `REMOTE_CI` — 기본 모드
 
-- 공개 저장소에서 standard GitHub-hosted runner를 사용할 수 있으면 비용 예산과 무관하게 `REMOTE_CI`를 기본으로 사용한다.
+- 현재 저장소·계정에서 추가비용 0이 확인된 standard GitHub-hosted runner를 사용할 수 있으면 `REMOTE_CI`를 기본으로 사용한다.
 - 기존 변경 분류, 조건부 publication/Windows smoke, evaluator, Required Check `ci-gate`를 그대로 사용한다.
-- larger/GPU runner나 미래의 private repository처럼 과금 가능성이 있는 실행은 별도 예산·승인 정책을 따른다.
+- larger/GPU runner, 유료 storage, 미래의 private repository 등 과금 가능성이 있는 실행은 default authority 밖이며, 비용이 0임을 확인하지 못하면 `COST_GATE_BLOCKED`다.
 - 현재 head에 canonical `REMOTE_CI workflow run`이 존재하면 final `ci-gate` Check Run이 아직 생성되지 않았더라도 해당 SHA는 `REMOTE_CI` 소유다.
 - `ci-gate` Check Run 또는 commit status가 이미 존재하면 local fallback은 기존 증거를 덮지 않는다.
 - `ci-gate`가 실패·취소·queued·in progress이면 원인을 수정하거나 원격 실행을 재개한다. 테스트 실패나 workflow 실패를 이유로 fallback으로 전환하지 않는다.
@@ -351,9 +354,11 @@ Actions 사용 가능 상태 확인
 
 CI 최적화는 다음을 모두 만족해야 완료다.
 
+- `ZERO_INCREMENTAL_COST_REQUIRED`와 `COST_GATE_BLOCKED`가 CI 선택보다 우선한다.
 - 변경 분류 규칙과 안전한 fallback이 있다.
-- 실행 모드는 `REMOTE_CI`와 `LOCAL_FALLBACK` 두 개이며 기본은 `REMOTE_CI`다.
-- 공개 저장소의 standard GitHub-hosted runner를 비용 0이라는 이유만으로 우회하지 않는다.
+- 실행 모드는 `REMOTE_CI`와 `LOCAL_FALLBACK` 두 개이며, 추가비용 0이 확인된 원격 CI가 기본이다.
+- 무료로 사용할 수 있는 standard GitHub-hosted runner를 단지 로컬이 더 싸 보인다는 이유로 우회하지 않는다.
+- 비용 상태가 불명확한 separately metered runner·storage·service를 자동 실행하지 않는다.
 - 문서 전용 PR에서 고비용 전체 검증이 실행되지 않는다.
 - 코드·계약 변경은 필요한 Ubuntu 기준 검증을 건너뛰지 않는다.
 - main·nightly·release에서 선언된 전체 matrix가 실행된다.
