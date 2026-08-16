@@ -62,6 +62,7 @@ jobs:
           python -m pytest -q
           tools/base-tool-contracts/tests/test_figma_tool_routing.py
           tools/base-tool-contracts/tests/test_figma_tool_routing_adversarial.py
+          tools/base-tool-contracts/tests/test_hub_delivery.py
           tools/tool-hub/tests/test_figma_delivery.py
           tools/tool-hub/tests/test_figma_delivery_hardening.py
           tools/tool-hub/tests/test_figma_delivery_concurrency.py
