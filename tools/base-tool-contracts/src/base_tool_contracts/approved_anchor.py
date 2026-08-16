@@ -16,8 +16,20 @@ from .trusted_files import (
     open_directory_nofollow,
     read_regular_at,
     read_regular_nofollow,
+    read_regular_portable_nofollow,
+    run_portable_git,
     run_trusted_git,
 )
+
+
+def _descriptor_reads_supported() -> bool:
+    return bool(getattr(os, "O_NOFOLLOW", 0)) and os.name != "nt"
+
+
+def _read_registry_file(path: Path) -> bytes:
+    reader = read_regular_nofollow if _descriptor_reads_supported() else read_regular_portable_nofollow
+    raw, _ = reader(path)
+    return raw
 
 
 class AnchorEvidenceError(ValueError):
@@ -61,7 +73,7 @@ class ApprovedAnchorRegistry:
     @classmethod
     def load(cls, path: Path) -> "ApprovedAnchorRegistry":
         try:
-            raw, _ = read_regular_nofollow(path)
+            raw = _read_registry_file(path)
             payload = json.loads(raw.decode("utf-8"))
             document = _Document.model_validate(payload)
         except Exception as error:
@@ -83,13 +95,30 @@ class ApprovedAnchorRegistry:
         if relative != self.CANONICAL_RELATIVE_PATH:
             raise AnchorEvidenceError("approved-anchor registry must use the canonical project path")
         try:
-            root_fd = open_directory_nofollow(root)
-            try:
-                current, _ = read_regular_at(root_fd, relative)
-                tracked = run_trusted_git(root_fd, "ls-files", "--error-unmatch", "--", relative.as_posix())
-                committed = run_trusted_git(root_fd, "show", f"HEAD:{relative.as_posix()}")
-            finally:
-                os.close(root_fd)
+            if _descriptor_reads_supported():
+                root_fd = open_directory_nofollow(root)
+                try:
+                    current, _ = read_regular_at(root_fd, relative)
+                    tracked = run_trusted_git(
+                        root_fd,
+                        "ls-files",
+                        "--error-unmatch",
+                        "--",
+                        relative.as_posix(),
+                    )
+                    committed = run_trusted_git(root_fd, "show", f"HEAD:{relative.as_posix()}")
+                finally:
+                    os.close(root_fd)
+            else:
+                current, _ = read_regular_portable_nofollow(root / relative)
+                tracked = run_portable_git(
+                    root,
+                    "ls-files",
+                    "--error-unmatch",
+                    "--",
+                    relative.as_posix(),
+                )
+                committed = run_portable_git(root, "show", f"HEAD:{relative.as_posix()}")
         except TrustedFileError as error:
             raise AnchorEvidenceError("approved-anchor registry ownership proof is unavailable") from error
         if tracked.returncode != 0:
@@ -101,7 +130,7 @@ class ApprovedAnchorRegistry:
 
     def assert_unchanged(self) -> None:
         try:
-            raw, _ = read_regular_nofollow(self.source_path)
+            raw = _read_registry_file(self.source_path)
             current = hashlib.sha256(raw).hexdigest()
         except (OSError, TrustedFileError) as error:
             raise AnchorEvidenceError("approved-anchor registry is unavailable during revalidation") from error

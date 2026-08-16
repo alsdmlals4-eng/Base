@@ -17,15 +17,36 @@ class _RequestBodyTooLarge(Exception):
 class BoundedRequestBodyMiddleware:
     """Count the original receive stream and fail closed before unbounded multipart spooling."""
 
-    def __init__(self, app: ASGIApp, *, max_body_bytes: int, path: str | None = None) -> None:
+    def __init__(
+        self,
+        app: ASGIApp,
+        *,
+        max_body_bytes: int,
+        path: str | None = None,
+        path_prefix: str | None = None,
+    ) -> None:
         if max_body_bytes < 1:
             raise ValueError("request body limit must be positive")
+        if path is not None and path_prefix is not None:
+            raise ValueError("request body limit may use an exact path or a path prefix, not both")
+        if path_prefix is not None and not path_prefix.startswith("/"):
+            raise ValueError("request body path prefix must be absolute")
         self._app = app
         self._max_body_bytes = max_body_bytes
         self._path = path
+        self._path_prefix = path_prefix
 
     async def __call__(self, scope: dict[str, Any], receive: ASGIReceive, send: ASGISend) -> None:
-        if scope.get("type") != "http" or (self._path is not None and scope.get("path") != self._path):
+        if scope.get("type") != "http":
+            await self._app(scope, receive, send)
+            return
+        request_path = scope.get("path")
+        if self._path is not None and request_path != self._path:
+            await self._app(scope, receive, send)
+            return
+        if self._path_prefix is not None and (
+            not isinstance(request_path, str) or not request_path.startswith(self._path_prefix)
+        ):
             await self._app(scope, receive, send)
             return
         content_lengths = [value for name, value in scope.get("headers", []) if name.lower() == b"content-length"]

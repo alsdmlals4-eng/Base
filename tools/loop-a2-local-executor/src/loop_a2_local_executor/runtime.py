@@ -68,6 +68,7 @@ class LocalA2Runtime:
         self.docker_executable = docker_executable
         self.base_repository = base_repository
         self.output_limit_bytes = output_limit_bytes
+        self._preflight_image_id: str | None = None
 
     def _run(self, argv: tuple[str, ...], *, timeout: int) -> subprocess.CompletedProcess[str]:
         try:
@@ -157,8 +158,33 @@ class LocalA2Runtime:
             )
         return platform_image
 
+    def _execution_image_id(self) -> str:
+        image_id = self._preflight_image_id
+        if image_id is None:
+            return self._image_id()
+        completed = self._run(
+            (
+                self.docker_executable,
+                "image",
+                "inspect",
+                "--format",
+                "{{.Id}}",
+                image_id,
+            ),
+            timeout=10,
+        )
+        if completed.returncode != 0:
+            raise LocalRuntimeError(
+                "DOCKER_IMAGE_NOT_PRELOADED",
+                "preflight-verified immutable test image is no longer locally available",
+            )
+        verified = self._validated_image_id(completed.stdout or "")
+        if verified != image_id:
+            raise LocalRuntimeError("DOCKER_IMAGE_ID_INVALID", "preflight-verified Docker image identity changed")
+        return verified
+
     def preflight(self) -> dict[str, str]:
-        self._image_id()
+        self._preflight_image_id = self._image_id()
         return {"status": "READY", "code": "DOCKER_REVIEWED_IMAGE_READY"}
 
     def _capsule(self, project_root: Path, job: LocalA2Job) -> tuple[str, str]:
@@ -229,7 +255,7 @@ class LocalA2Runtime:
         with self.store.exact_worktree(self.base_repository, job.base_runtime_sha, "base") as base_root:
             with self.store.exact_worktree(job.target_repository, job.authority_sha, "authority") as project_root:
                 project_id, source_sha = self._capsule(Path(project_root), job)
-                image_id = self._image_id()
+                image_id = self._execution_image_id()
                 runtime_root = Path(self.store.runtime_root)
                 runtime_root.mkdir(parents=True, exist_ok=True)
                 loop_cli = Path(base_root) / "tools" / "loop_a2.py"
