@@ -49,9 +49,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python tests/test_loop_a2_windows_utf8_subprocess_capture.py -v
-          python tests/test_loop_a2_subscription_gate.py -v
-          python tests/test_loop_a2_codex_cli_transport.py -v
+          python -m unittest \
+            tests.test_loop_a2_windows_utf8_subprocess_capture \
+            tests.test_loop_a2_subscription_gate \
+            tests.test_loop_a2_codex_cli_transport \
+            -v
 
   base-v9-and-gpo-contracts:
     runs-on: ubuntu-24.04
