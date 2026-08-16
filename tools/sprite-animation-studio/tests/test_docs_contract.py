@@ -13,19 +13,39 @@ def test_readme_states_that_credentials_and_generated_art_are_not_committed() ->
     assert "커밋하지 않습니다" in text
 
 
-def test_adoption_guide_requires_figma_lineage_and_project_runtime_check() -> None:
+def test_adoption_guide_requires_figma_lineage_project_runtime_and_bridge_boundaries() -> None:
     text = ADOPTION_GUIDE.read_text(encoding="utf-8")
 
     assert "Figma 노드 URL" in text
     assert "Godot 런타임 검증" in text
+    assert "Base Tool Hub → Figma Bridge" not in text
+    assert "Tool Hub → Figma Bridge 전달" in text
+    assert "sprite_action_runs" in text
+    assert "effect_runs" in text
+    assert "LOCALHOST_FIGMA_BRIDGE_RECEIPT = NOT_RUN" in text
+    assert "Project GPT packet 수동 배치" in text
 
 
-def test_project_gpt_delivery_template_blocks_protected_targets_and_uses_new_run_sections() -> None:
+def test_legacy_named_delivery_template_routes_through_tool_hub_bridge() -> None:
     text = PROJECT_GPT_TEMPLATE.read_text(encoding="utf-8")
 
-    assert "REGISTERED_NO_MUTATION" in text
-    assert "새 실행 섹션" in text
-    assert "Figma 도구" in text
+    for token in (
+        "Base Tool Hub + Figma Bridge",
+        "sprite_action_runs",
+        "effect_runs",
+        "Sprite Action Runs",
+        "Effect Runs",
+        "DELIVERY_RUN_ROUTE_MISMATCH",
+        "DELIVERY_RUN_CONTENT_MISMATCH",
+        "DELIVERED_VERIFIED",
+    ):
+        assert token in text
+
+    for stale in (
+        "Use this action only after a visual result has been generated or curated in the **same project GPT workspace**",
+        "The Base browser can prepare a `ready_for_project_gpt` packet",
+    ):
+        assert stale not in text
 
 
 def test_readme_documents_dedicated_server_owned_sprite_routes_and_evidence_ceiling() -> None:
