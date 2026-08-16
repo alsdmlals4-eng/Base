@@ -152,8 +152,11 @@ echo [OK] Local Executor refreshed from completed Base main.
 
 echo.
 echo [7/8] Executor shared preflight...
-call :capture_preflight
-if not errorlevel 1 goto :preflight_ready
+"!VENV!\Scripts\loop-a2-local-executor.exe" --state-root "!STATE_ROOT!" preflight >"!PREFLIGHT_FILE!" 2>&1
+set "PREFLIGHT_RC=!ERRORLEVEL!"
+if exist "!PREFLIGHT_FILE!" type "!PREFLIGHT_FILE!" >>"!LOG!"
+if exist "!PREFLIGHT_FILE!" type "!PREFLIGHT_FILE!"
+if "!PREFLIGHT_RC!"=="0" goto :preflight_ready
 findstr /C:"DOCKER_IMAGE_NOT_PRELOADED" "!PREFLIGHT_FILE!" >nul 2>&1
 if errorlevel 1 goto :blocked_preflight
 
@@ -162,8 +165,11 @@ echo Reviewed image is not ready for the Docker server platform; pulling the exa
 if errorlevel 1 goto :blocked_docker_image
 
 echo Executor shared preflight after exact image pull...
-call :capture_preflight
-if errorlevel 1 goto :blocked_preflight
+"!VENV!\Scripts\loop-a2-local-executor.exe" --state-root "!STATE_ROOT!" preflight >"!PREFLIGHT_FILE!" 2>&1
+set "PREFLIGHT_RC=!ERRORLEVEL!"
+if exist "!PREFLIGHT_FILE!" type "!PREFLIGHT_FILE!" >>"!LOG!"
+if exist "!PREFLIGHT_FILE!" type "!PREFLIGHT_FILE!"
+if not "!PREFLIGHT_RC!"=="0" goto :blocked_preflight
 
 :preflight_ready
 if exist "!PREFLIGHT_FILE!" del /q "!PREFLIGHT_FILE!" >nul 2>&1
@@ -222,13 +228,6 @@ echo   !LOG!
 echo.
 echo This window will remain open. Close it manually when finished.
 goto :end
-
-:capture_preflight
-"!VENV!\Scripts\loop-a2-local-executor.exe" --state-root "!STATE_ROOT!" preflight >"!PREFLIGHT_FILE!" 2>&1
-set "PREFLIGHT_RC=!ERRORLEVEL!"
-if exist "!PREFLIGHT_FILE!" type "!PREFLIGHT_FILE!" >>"!LOG!"
-if exist "!PREFLIGHT_FILE!" type "!PREFLIGHT_FILE!"
-exit /b !PREFLIGHT_RC!
 
 :stop_existing_daemon
 if not exist "!VENV!\Scripts\pythonw.exe" exit /b 0
