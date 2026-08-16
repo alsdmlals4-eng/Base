@@ -1,5 +1,16 @@
 # Synchronizing Local and GitHub State — Learning Log
 
+## 2026-08-16 — Latest-main copy integration becomes the standing conflict recovery
+
+- **Status:** `PATTERN`
+- **Observed failure:** `OBSERVED_FAILURE`. Per-case `PROVISIONAL_INTEGRATION` authorization and all-open-PR scheduled guards protected owner branches, but they also serialized unrelated work and repeatedly left approved work idle while long-running PRs remained open.
+- **User decision:** adopt `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16` as the Base coordination default. Existing owner PR branches remain read-only; approved same-goal/path/semantic overlap is reproduced on a separate branch from exact latest completed `main` using selective copy and semantic reconciliation.
+- **Material-delta rule:** record `absorbed_owner_deltas` and `residual_owner_deltas`. Owner PR open state alone is not a merge blocker after all required material delta is accounted, stale duplicates are removed, latest main is reconciled, and exact-head safety gates pass. Fully absorbed owner PRs may be superseded after merge; residual unique work remains open.
+- **Scheduled automation correction:** unrelated open PRs do not block Source analysis. Bounded repository writes compare the generated `changed-files.txt` with foreign PR changed paths and defer only actual overlap that cannot be safely reconciled by the automation.
+- **Preserved boundary:** standing coordination authority does not authorize product-scope expansion, destructive migrations, payments, account/security privilege expansion, direct main writes, force push, `--admin`, ruleset bypass, or evidence inflation.
+- **TDD evidence:** PR #436 first RED head `d2edf12d016e718808be87762fc9ae47a40b3bad` failed exactly two Evidence Knowledge assertions because the old scheduled all-open-PR guard and old workflow tokens were still present. No unrelated Evidence Knowledge regression was observed in that RED run.
+- **Regression trigger:** any workflow that waits solely because a foreign PR is open, overwrites newer main with a stale whole-file copy, mutates an owner PR branch, loses residual unique work, or uses standing authorization to bypass exact-head/high-risk gates must reopen this policy.
+
 ## 2026-08-15 — Explicit provisional integration can reduce waiting without mutating owner PRs
 
 - **Status:** `PATTERN`

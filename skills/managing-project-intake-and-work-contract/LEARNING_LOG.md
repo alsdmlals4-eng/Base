@@ -1,5 +1,16 @@
 # Managing Project Intake and Work Contracts — Learning Log
 
+## 2026-08-16 — Copy integration replaces open-PR waiting as the Base coordination default
+
+- **상태:** `OBSERVATION`
+- **호출 트리거:** 사용자가 open/conflicting PR 때문에 대기시간이 길어지는 문제를 지적하고, 충돌되는 PR이나 파일은 원본을 건드리지 않은 채 복사해 별도 최신-main 작업으로 진행한 뒤 검증·병합하는 방식을 Base 공용 작업 방식으로 바꾸라고 지시했다.
+- **Finding:** 기존 `USER_DIRECTED_PARALLEL_PR`은 새 PR 시작은 허용했지만 actual overlap은 per-case replacement approval과 owner-resolution-before-merge에 묶였고 scheduled automation은 any-open-PR guard로 전면 직렬화됐다. 두 규칙을 합치면 owner branch 안전은 높지만 unrelated 작업까지 idle하게 만드는 waiting tax가 생겼다.
+- **Decision:** `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`을 기존 intake/safe-sync owner에 흡수한다. approved same-goal/path/semantic overlap은 exact latest completed main의 separate integration branch에서 필요한 material delta만 selective copy·재구현하고 semantic reconciliation한다. owner PR branches는 read-only다. merge 전에는 `absorbed_owner_deltas`/`residual_owner_deltas`, exact-head checks, P0/P1 0, unresolved thread 0을 요구한다. fully absorbed owner는 post-merge superseded로 정리하고 residual unique work는 보존한다.
+- **Scheduled boundary:** 예약·주기 작업도 foreign PR 존재만으로 분석 전체를 막지 않는다. 실제 changed-path/semantic overlap을 검사하고 안전하게 자동 reconcile할 수 없는 conflicted write만 국소 defer한다.
+- **Safety boundary:** standing authorization은 새 제품 범위, 파괴적 migration, 결제, 계정·보안 권한 확대, direct main, force push, `--admin`, ruleset bypass를 승인하지 않는다.
+- **TDD evidence:** PR #436 initial RED head `d2edf12d016e718808be87762fc9ae47a40b3bad`의 Evidence Knowledge run `31943137165`에서 기존 계약은 유지되고 새 scheduled overlap-aware assertions 두 건만 실패해 이전 all-open-PR 직렬화가 정확히 재현됐다.
+- **다음 검토 트리거:** unrelated open PR 때문에 전체 작업이 다시 대기하거나, stale whole-file copy가 newer main을 덮어쓰거나, owner PR branch를 수정하거나, residual unique work를 잃고 superseded 처리하거나, standing authorization이 새 범위·고위험 권한으로 확대되는 사례가 나타날 때.
+
 ## 2026-08-15 — Separate user-directed parallel PR work from scheduled active-PR guards
 
 - **상태:** `OBSERVATION`

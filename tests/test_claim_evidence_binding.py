@@ -320,19 +320,26 @@ class IntakeParallelPrPolicyBindingTests(unittest.TestCase):
                 "scheduled/periodic",
                 "PROVISIONAL_INTEGRATION",
                 "synchronizing-local-and-github-state",
+                "BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16",
             ):
                 self.assertIn(term, text)
         self.assertIn("do not modify/rebase/update", reference)
         self.assertIn("superseded", reference)
         self.assertIn("read-only overlap evidence", skill)
-        self.assertIn("owner가 해결되기 전에는 merge하지 않는다", reference)
+        self.assertIn("selective copy", reference)
+        self.assertIn("absorbed_owner_deltas", reference)
+        self.assertIn("residual_owner_deltas", reference)
+        self.assertIn("owner PR이 열려 있다는 사실만으로", reference)
         for term in (
-            "explicit user authorization",
+            "BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16",
             "owner PR branches",
             "semantic reconciliation",
-            "must not merge",
+            "selective copy",
+            "absorbed_owner_deltas",
+            "residual_owner_deltas",
         ):
             self.assertIn(term, sync)
+        self.assertNotIn("owner가 해결되기 전에는 merge하지 않는다", reference)
 
 
 if __name__ == "__main__":

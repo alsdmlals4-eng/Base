@@ -149,7 +149,7 @@ class ContinuousWorkExecutionContractTests(unittest.TestCase):
             self.assertIn(term, text)
         self.assertIn("즉시 병합", text)
 
-    def test_user_directed_work_uses_separate_pr_without_touching_in_progress_prs(self) -> None:
+    def test_user_directed_work_uses_latest_main_copy_integration_without_touching_in_progress_prs(self) -> None:
         reference = REFERENCE.read_text(encoding="utf-8")
         skill = SKILL.read_text(encoding="utf-8")
         for text in (reference, skill):
@@ -159,27 +159,33 @@ class ContinuousWorkExecutionContractTests(unittest.TestCase):
                 "separate branch/PR",
                 "same-goal",
                 "in-progress PR",
-                "scheduled/periodic",
+                "BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16",
             ):
                 self.assertIn(term, text)
         self.assertIn("do not modify/rebase/update", reference)
+        self.assertIn("selective copy", reference)
         self.assertIn("superseded", reference)
 
-    def test_user_directed_overlap_delegates_to_provisional_integration_merge_gate(self) -> None:
+    def test_overlap_uses_standing_copy_integration_and_material_absorption_merge_gate(self) -> None:
         reference = REFERENCE.read_text(encoding="utf-8")
         skill = SKILL.read_text(encoding="utf-8")
         sync = SYNC_PROTOCOL.read_text(encoding="utf-8")
         for text in (reference, skill):
             self.assertIn("PROVISIONAL_INTEGRATION", text)
             self.assertIn("synchronizing-local-and-github-state", text)
+            self.assertIn("BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16", text)
         for term in (
-            "explicit user authorization",
             "owner PR branches",
             "semantic reconciliation",
-            "must not merge",
+            "selective copy",
+            "absorbed_owner_deltas",
+            "residual_owner_deltas",
         ):
             self.assertIn(term, sync)
-        self.assertIn("owner가 해결되기 전에는 merge하지 않는다", reference)
+        self.assertIn("material delta", reference)
+        self.assertIn("owner PR이 열려 있다는 사실만으로", reference)
+        self.assertNotIn("owner가 해결되기 전에는 merge하지 않는다", reference)
+        self.assertNotIn("scheduled/periodic` repository-writing automation의 active-PR guard를 완화하지 않는다", reference)
 
     def test_unexpected_interruption_routes_to_task_recovery_protocol(self) -> None:
         self.assertTrue(TASK_RECOVERY.is_file(), "task recovery protocol must exist")

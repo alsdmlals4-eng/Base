@@ -12,6 +12,7 @@ RUN_IDENTITY="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
 RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 STATUS_PATH="source-analysis-status.json"
 QUEUE_PATH="periodic-source-scan-queue.md"
+COPY_INTEGRATION_AUTH="BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16"
 
 python tools/periodic_source_scan_queue.py \
   --ledger docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json \
@@ -34,6 +35,7 @@ issue_number="$(
   echo "- Schedule: daily 18:00 Asia/Seoul"
   echo "- Run: $RUN_URL"
   echo "- Model: $SOURCE_ANALYSIS_MODEL"
+  echo "- Concurrent PR policy: $COPY_INTEGRATION_AUTH"
   echo "- Status: ANALYSIS_PENDING"
 } >> "$QUEUE_PATH"
 if [[ -n "$issue_number" ]]; then
@@ -106,31 +108,43 @@ foreign_open_prs() {
     if [[ -n "$excluded_pr" && "$number" == "$excluded_pr" ]]; then
       continue
     fi
-    printf '#%s(%s)\n' "$number" "$head_ref"
+    printf '%s\t%s\n' "$number" "$head_ref"
   done <<< "$listing"
 }
 
-assert_no_foreign_open_prs() {
+detect_foreign_overlap() {
   local excluded_pr="${1:-}"
   local active_prs
   if ! active_prs="$(foreign_open_prs "$excluded_pr")"; then
     block \
-      "BLOCKED_ACTIVE_PR_GUARD_QUERY" \
-      "Could not verify the open-PR set; scheduled repository writes are fail-closed."
+      "BLOCKED_OPEN_PR_CONFLICT_QUERY" \
+      "Could not verify open PRs needed for overlap classification."
   fi
-  if [[ -n "$active_prs" ]]; then
-    local active_summary
-    active_summary="$(printf '%s\n' "$active_prs" | paste -sd ',' -)"
-    block \
-      "BLOCKED_ACTIVE_PR_GUARD" \
-      "Scheduled repository writes deferred while open PR work exists: $active_summary"
-  fi
+
+  local conflict=""
+  while IFS=$'\t' read -r pr_number head_ref; do
+    [[ -n "$pr_number" ]] || continue
+    if ! gh pr view "$pr_number" --json files --jq '.files[].path' | sort -u > "pr-$pr_number-files.txt"; then
+      block \
+        "BLOCKED_OPEN_PR_CONFLICT_QUERY" \
+        "Could not inspect changed paths for PR #$pr_number."
+    fi
+    local overlap
+    overlap="$(comm -12 changed-files.txt "pr-$pr_number-files.txt" || true)"
+    if [[ -n "$overlap" ]]; then
+      conflict="PR #$pr_number($head_ref): ${overlap//$'\n'/, }"
+      break
+    fi
+  done <<< "$active_prs"
+
+  [[ -z "$conflict" ]] || block \
+    "BLOCKED_OPEN_PR_CONFLICT" \
+    "Actual changed-path overlap remains after $COPY_INTEGRATION_AUTH classification: $conflict"
 }
 
-# Scheduled repository-writing automation never enters the analysis/write pipeline
-# while any draft or ready work PR is open.
-assert_no_foreign_open_prs ""
-
+# SCHEDULED_AUTOMATION_CONCURRENT_PR_RECONCILIATION:
+# unrelated open PRs never block Source analysis by existence alone.
+# Actual changed-path overlap is checked only after this run has material changed files.
 python -m tools.periodic_source_analysis \
   --operations-ledger docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json \
   --candidate-ledger docs/knowledge/game-development/PERIODIC_SOURCE_CANDIDATE_LEDGER.json \
@@ -228,20 +242,8 @@ then
   block "BLOCKED_PATH_SCOPE" "Generated changes escaped the approved evidence/state paths."
 fi
 
-# Close the analysis-time race before any branch or PR is published.
-assert_no_foreign_open_prs ""
-
-conflict=""
-while read -r pr_number; do
-  [[ -n "$pr_number" ]] || continue
-  gh pr view "$pr_number" --json files --jq '.files[].path' | sort -u > "pr-$pr_number-files.txt"
-  overlap="$(comm -12 changed-files.txt "pr-$pr_number-files.txt" || true)"
-  if [[ -n "$overlap" ]]; then
-    conflict="PR #$pr_number: ${overlap//$'\n'/, }"
-    break
-  fi
-done < <(gh pr list --state open --limit 100 --json number --jq '.[].number')
-[[ -z "$conflict" ]] || block "BLOCKED_OPEN_PR_CONFLICT" "$conflict"
+# Unrelated open PRs continue. Actual overlap is narrow and fail-closed.
+detect_foreign_overlap ""
 
 git config user.name "github-actions[bot]"
 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -262,11 +264,12 @@ cat > source-scan-pr-body.md <<EOF
 - Context extraction: strict structured Evidence packet
 - Independent adversarial review: completed before repository mutation
 - Generated path scope: immutable scan records and Source state only
+- Concurrent PR policy: $COPY_INTEGRATION_AUTH
 - Project Canon/runtime/policy write: none
 
 ## Merge gate
 
-This PR is eligible only after exact-head Evidence Knowledge, Base v9, and full Game Project OS validation, current-main ancestry, zero unresolved review threads, zero foreign open PRs, and expected-head guarded immediate squash merge.
+This PR is eligible only after exact-head Evidence Knowledge, Base v9, and full Game Project OS validation, current-main ancestry, zero unresolved review threads, no actual foreign changed-path overlap, and expected-head guarded immediate squash merge.
 EOF
 
 if ! pr_url="$(gh pr create \
@@ -278,8 +281,7 @@ if ! pr_url="$(gh pr create \
 fi
 pr_number="${pr_url##*/}"
 
-# Once the bounded automation PR exists, only that PR may be excluded from the guard.
-assert_no_foreign_open_prs "$pr_number"
+detect_foreign_overlap "$pr_number"
 
 dispatch_and_wait() {
   local workflow="$1"
@@ -325,17 +327,17 @@ dispatch_and_wait() {
 }
 
 while true; do
-  assert_no_foreign_open_prs "$pr_number"
+  detect_foreign_overlap "$pr_number"
   reviewed_head="$(git rev-parse HEAD)"
   dispatch_and_wait validate-evidence-knowledge.yml "$reviewed_head" || block "BLOCKED_ACTIONS_DISPATCH" "Evidence Knowledge dispatch or exact-head validation failed."
   dispatch_and_wait validate-base-v9-rc.yml "$reviewed_head" || block "BLOCKED_VALIDATION" "Base v9 dispatch or exact-head validation failed."
   dispatch_and_wait validate-game-project-operating-system.yml "$reviewed_head" full || block "BLOCKED_VALIDATION" "Full Game Project OS validation failed."
-  assert_no_foreign_open_prs "$pr_number"
+  detect_foreign_overlap "$pr_number"
   git fetch origin main
   if git merge-base --is-ancestor origin/main "$reviewed_head"; then
     break
   fi
-  assert_no_foreign_open_prs "$pr_number"
+  detect_foreign_overlap "$pr_number"
   git merge --no-edit origin/main || block "BLOCKED_MAIN_MOVED_RETRY_REQUIRED" "Current main could not be merged cleanly."
   git push origin "$branch"
 done
@@ -353,8 +355,8 @@ unresolved="$(gh api graphql \
   --jq '[.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved == false)] | length')"
 [[ "$unresolved" == "0" ]] || block "BLOCKED_UNRESOLVED_REVIEW_THREAD" "$unresolved unresolved review thread(s)."
 
-# Never leave a deferred auto-merge armed after the active-PR guard window.
-assert_no_foreign_open_prs "$pr_number"
+# Never leave a deferred auto-merge armed. Re-check only real overlap before immediate merge.
+detect_foreign_overlap "$pr_number"
 if ! gh pr merge "$pr_number" \
   --squash \
   --delete-branch \
@@ -370,4 +372,4 @@ merged_at="$(python -c 'import json,sys; print(json.load(sys.stdin).get("mergedA
   "BLOCKED_MERGE_NOT_IMMEDIATE" \
   "Merge command returned without immediate mergedAt evidence."
 merge_sha="$(python -c 'import json,sys; print((json.load(sys.stdin).get("mergeCommit") or {}).get("oid") or "UNKNOWN")' <<<"$pr_state")"
-update_queue "MERGED" "PR #$pr_number squash-merged at $merge_sha after exact-head validation and final active-PR guard."
+update_queue "MERGED" "PR #$pr_number squash-merged at $merge_sha after exact-head validation and final overlap recheck."
