@@ -96,6 +96,27 @@ def valid_issue() -> dict[str, object]:
     }
 
 
+def blocked_receipt(*, package_id: str = "BS_TEST_ONLY", run_id: str = "BS_A2_BURNIN_001") -> dict[str, object]:
+    return {
+        "schema_version": 1,
+        "contract_role": "LOOP_A2_RUN_RECEIPT",
+        "project_id": "BLACKSMITH",
+        "run_id": run_id,
+        "package_id": package_id,
+        "expected_main_sha": "c" * 40,
+        "state": "PROVIDER_FAILURE",
+        "finding_codes": ["BUILDER_PROVIDER_EXCEPTION", "SECOND_PRIVATE_FINDING"],
+        "changed_paths": ["private/local/path.txt"],
+        "provider_mode": "REAL",
+        "integration_eligible": False,
+        "a3_auto_merge": "DISABLED",
+        "scheduler": "NOT_CONFIGURED",
+        "provider_error_type": "CodexCliTransportError",
+        "receipt_digest": "d" * 64,
+        "message": "private provider detail",
+    }
+
+
 class WindowsUtf8BlockedReceiptDiagnosticsTests(unittest.TestCase):
     def test_control_plane_subprocess_capture_is_explicit_utf8_replace(self) -> None:
         runner = RecordingRunner([
@@ -127,7 +148,25 @@ class WindowsUtf8BlockedReceiptDiagnosticsTests(unittest.TestCase):
         capsule = project / local_job().capsule
         capsule.parent.mkdir(parents=True)
         capsule.write_text(
-            json.dumps({"project_id": "BLACKSMITH", "source_main_sha": "c" * 40}),
+            json.dumps(
+                {
+                    "project_id": "BLACKSMITH",
+                    "source_main_sha": "c" * 40,
+                    "implementation_package_path": "IMPLEMENTATION_PACKAGE.json",
+                }
+            ),
+            encoding="utf-8",
+        )
+        (capsule.parent / "IMPLEMENTATION_PACKAGE.json").write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "contract_role": "LOOP_IMPLEMENTATION_PACKAGE",
+                    "project_id": "BLACKSMITH",
+                    "package_id": "BS_TEST_ONLY",
+                    "source_main_sha": "c" * 40,
+                }
+            ),
             encoding="utf-8",
         )
         image_id = "sha256:" + "e" * 64
@@ -144,25 +183,7 @@ class WindowsUtf8BlockedReceiptDiagnosticsTests(unittest.TestCase):
         return temp, runtime
 
     def test_nonzero_same_run_a2_receipt_preserves_only_safe_diagnostics(self) -> None:
-        blocked = {
-            "schema_version": 1,
-            "contract_role": "LOOP_A2_RUN_RECEIPT",
-            "project_id": "BLACKSMITH",
-            "run_id": "BS_A2_BURNIN_001",
-            "package_id": "BS_TEST_ONLY",
-            "expected_main_sha": "c" * 40,
-            "state": "PROVIDER_FAILURE",
-            "finding_codes": ["BUILDER_PROVIDER_EXCEPTION", "SECOND_PRIVATE_FINDING"],
-            "changed_paths": ["private/local/path.txt"],
-            "provider_mode": "REAL",
-            "integration_eligible": False,
-            "a3_auto_merge": "DISABLED",
-            "scheduler": "NOT_CONFIGURED",
-            "provider_error_type": "CodexCliTransportError",
-            "receipt_digest": "d" * 64,
-            "message": "private provider detail",
-        }
-        temp, runtime = self._runtime_fixture(json.dumps(blocked))
+        temp, runtime = self._runtime_fixture(json.dumps(blocked_receipt()))
         try:
             with self.assertRaises(LocalRuntimeError) as caught:
                 runtime.execute(local_job())
@@ -184,21 +205,19 @@ class WindowsUtf8BlockedReceiptDiagnosticsTests(unittest.TestCase):
         self.assertNotIn("private provider detail", rendered)
         self.assertNotIn("SECOND_PRIVATE_FINDING", rendered)
 
+    def test_nonzero_authority_package_mismatch_remains_generic(self) -> None:
+        temp, runtime = self._runtime_fixture(json.dumps(blocked_receipt(package_id="OTHER_PACKAGE")))
+        try:
+            with self.assertRaises(LocalRuntimeError) as caught:
+                runtime.execute(local_job())
+        finally:
+            temp.cleanup()
+
+        self.assertEqual(caught.exception.code, "A2_EXECUTION_BLOCKED")
+        self.assertEqual(getattr(caught.exception, "public_details", {}), {})
+
     def test_nonzero_invalid_or_mismatched_output_remains_generic(self) -> None:
-        mismatched = {
-            "contract_role": "LOOP_A2_RUN_RECEIPT",
-            "project_id": "BLACKSMITH",
-            "run_id": "OTHER_RUN",
-            "package_id": "BS_TEST_ONLY",
-            "expected_main_sha": "c" * 40,
-            "state": "PROVIDER_FAILURE",
-            "finding_codes": ["BUILDER_PROVIDER_EXCEPTION"],
-            "provider_mode": "REAL",
-            "a3_auto_merge": "DISABLED",
-            "scheduler": "NOT_CONFIGURED",
-            "receipt_digest": "d" * 64,
-        }
-        for stdout in ("not-json", json.dumps(mismatched)):
+        for stdout in ("not-json", json.dumps(blocked_receipt(run_id="OTHER_RUN"))):
             with self.subTest(stdout=stdout[:16]):
                 temp, runtime = self._runtime_fixture(stdout)
                 try:
