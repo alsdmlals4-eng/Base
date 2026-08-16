@@ -67,7 +67,7 @@ Windows에서는 Tool Hub가 reviewed Studio child를 suspended 상태로 만들
 7. Tool Hub는 `PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json`의 현재 project에 대한 `character_expression_runs` route, parent/destination/marker를 다시 검증한 뒤 Figma Bridge queue에 넣습니다.
 8. Figma plugin이 exact target에 같은 bytes를 배치하고 receipt의 target/hash/bridge/image identity가 검증되어야 `VERIFIED`가 됩니다. queue 상태나 Figma 창 열기만으로는 성공으로 간주하지 않습니다.
 
-현재 Base registry에는 Character/Expression용 exact `Expression Runs` route만 등록되어 있습니다. Sprite/Effect의 별도 destination node는 검토 전이므로 임의로 재사용하지 않습니다.
+현재 Base canonical registry는 8개 프로젝트 각각에 `Expression Runs`, `Sprite Action Runs`, `Effect Runs`의 세 dedicated route를 등록합니다. Expression Studio의 인증된 child identity는 그중 `character_expression_runs`만 요청할 수 있으며 Sprite/Effect route 요청은 `DELIVERY_TOOL_ROUTE_UNAVAILABLE`로 fail-closed합니다.
 
 ## 테스트
 
