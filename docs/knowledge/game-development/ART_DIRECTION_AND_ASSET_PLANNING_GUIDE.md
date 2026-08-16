@@ -158,6 +158,73 @@ docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md
 
 따라서 requirement row, `ASSET_MANIFEST.yml`, 로컬 Asset Vault를 하나의 중복 원장으로 합치지 않는다. 승인 전 후보는 requirement와 로컬 작업면에서 관리하고, `PROJECT_ASSET_APPROVED` 뒤에만 기존 Manifest·promotion 흐름으로 승격한다.
 
+## 2.2 Primary Use Gate → Reusable Visual Harvest Gate
+
+시각 자산의 재사용성은 **좋은 이미지의 목적 달성 뒤에 수확한다.** 재사용을 쉽게 만들기 위해 최초 화면의 플레이어 경험·정보 위계·감정·구도나 프로젝트의 `title-specific identity`를 희생하지 않는다. `primary-use success`와 `reuse promotion`은 서로 다른 판정이다.
+
+```text
+existing approved asset / Visual Bible lookup
+→ visual proposal
+→ user approval
+→ image production
+→ Primary Use Gate
+→ Reusable Visual Harvest Gate
+→ selective structure / layer / semantic rebuild
+→ reusable asset / pattern / Visual DNA
+→ next-task reuse or variant
+```
+
+### Primary Use Gate
+
+완성 이미지는 먼저 본래 사용처에서 다음을 만족해야 한다.
+
+- 화면·배경·장면·키아트가 원래 목적과 플레이어/사용자 경험을 달성한다.
+- 정보 위계·가독성·감정·아트 방향이 승인 기준과 맞는다.
+- 재사용을 위해 장면의 고유 composition이나 identity를 평준화하지 않는다.
+- 제작 과정에서 `textless master`, `clean plate`, 투명 source처럼 저비용 separation hint를 자연스럽게 남길 수는 있지만 사전 자산화가 본 제작을 지배하지 않는다.
+
+### Reusable Visual Harvest Gate
+
+Primary Use Gate를 통과한 결과만 다음 질문으로 재사용 후보를 판정한다.
+
+1. 다른 화면·장면에서 같은 역할로 다시 쓸 가능성이 높은가?
+2. 기존 reusable asset·pattern과 중복되지 않는가?
+3. 독립적으로 편집·배치해도 원래 장면과 프로젝트의 `title-specific identity`를 훼손하지 않는가?
+4. 분리·재구축 비용보다 다음 사용에서 절감할 제작 비용이 큰가?
+5. 선택한 분리·재구축 방식이 source/provenance truth를 보존하는가?
+
+`잘라낼 수 있음`만으로 reusable asset이 되지 않는다. 후보는 다음 중 하나로 분류한다.
+
+| classification | 의미 | 예 |
+| --- | --- | --- |
+| `REUSE_AS_IS` | 동일 bytes/구조를 독립적으로 다시 사용 | 아이콘, 독립 prop, 장식 texture |
+| `VARIANT_SEED` | 승인 기준 자산에서 상태·색·테마 변형 | normal/hover/pressed, day/night |
+| `STRUCTURE_PATTERN` | 픽셀이 아니라 배치·정보 위계·interaction 구조 재사용 | HUD, 보상 화면 layout |
+| `STYLE_DNA` | palette·shape·material·lighting·camera·spacing 규칙 재사용 | 프로젝트 시각 문법 |
+| `REBUILD_FOR_REUSE` | crop보다 semantic component/scene/theme 재구축이 안전 | 버튼, scalable panel, UI skin |
+| `ONE_OFF_KEEP` | 현재 결과에는 중요하지만 공용화 가치가 낮아 그대로 보존 | 이벤트·영웅 장면, 서사 composition |
+| `REJECT_REUSE` | 오류·중복·권리·저품질·정체성 위험 때문에 재사용하지 않음 | 잘못 분리된 손·그림자 |
+
+`ONE_OFF_KEEP`는 실패가 아니다. 강한 narrative composition·hero image·타이틀 고유 표현은 공용화하지 않는 것이 일관성 보호에 더 적합할 수 있다.
+
+### 분리·재구축 방법
+
+가장 낮은 위험 방식부터 선택한다.
+
+```text
+SOURCE_LAYER
+→ MASK_CUTOUT
+→ MANUAL_OR_SEMANTIC_REBUILD
+→ DERIVED_GENERATIVE_RECOVERY
+```
+
+- `SOURCE_LAYER`: 제작 단계에서 이미 독립 layer/file로 존재한 source를 사용한다.
+- `MASK_CUTOUT`: 현재 관측되는 픽셀만 mask/matting으로 분리한다.
+- `MANUAL_OR_SEMANTIC_REBUILD`: 특히 UI처럼 상태·크기·현지화·접근성이 필요한 요소를 Figma Component/Variant, Godot Theme/Scene/Resource 등 의미 구조로 다시 만든다.
+- `DERIVED_GENERATIVE_RECOVERY`: 가려진 영역이 독립 재사용에 반드시 필요한 경우에만 생성 복원한다. 이는 원본에서 관측된 사실이 아니라 **생성된 derived pixel**이며 별도 provenance와 검토를 요구한다.
+
+Harvest 후보·분리 결과는 승인 전 `.asset-vault`/Figma WIP에서 검토하며, Harvest 판정만으로 `PROJECT_ASSET_APPROVED`, tracked asset, `promote`, Figma Final 또는 Godot runtime proof가 되지 않는다.
+
 ## 3. Visual Pillar
 
 Visual Pillar는 3~5개로 제한하고 서로 다른 책임을 가진다.
