@@ -139,9 +139,11 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
             "assert_no_foreign_open_prs",
         ):
             self.assertNotIn(forbidden, runner)
+        first_overlap_call = 'detect_foreign_overlap ""'
+        self.assertIn(first_overlap_call, runner)
         self.assertLess(
             runner.index("python -m tools.periodic_source_analysis"),
-            runner.index("detect_foreign_overlap"),
+            runner.index(first_overlap_call),
         )
         self.assertLess(
             runner.rindex("detect_foreign_overlap"),
