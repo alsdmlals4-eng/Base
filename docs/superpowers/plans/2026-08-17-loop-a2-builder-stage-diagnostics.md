@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Convert unexpected REAL Builder exceptions into stable stage-specific types already representable by the public receipt.
+**Goal:** Convert unexpected REAL Builder adapter exceptions into stable stage-specific types already representable by the public receipt.
 
-**Architecture:** Add a tiny exception-only module and narrow wrappers in `OpenAIWorkspaceBuilder` and `GitWorktreeBuilderAdapter`. Do not change A2 state/finding codes, provider behavior, scope, authority, or public receipt fields.
+**Architecture:** Add a tiny exception-only module and narrow wrappers in `GitWorktreeBuilderAdapter.invoke()`. Do not change OpenAI/Codex provider behavior, A2 state/finding codes, scope, authority, or public receipt fields.
 
 **Tech Stack:** Python 3.12, unittest, GitHub Actions.
 
@@ -18,20 +18,18 @@
 
 ### Task 1: TDD stage classification
 
-- [ ] Add focused tests that inject `AttributeError` at context, workspace, worker, diff, and result-binding boundaries.
-- [ ] Assert current exception type names are not the required stable stage names (RED).
-- [ ] Add one test proving an already stage-tagged inner error is not overwritten by the adapter.
+- [x] Add focused tests that inject `AttributeError` at workspace, worker, diff, and result-binding boundaries.
+- [x] Verify RED: current code exposes raw `AttributeError` at all four boundaries while existing Runtime Foundation tests remain green.
 
 ### Task 2: Minimal diagnostic implementation
 
-- [ ] Create `tools/loop_a2_runtime/builder_diagnostics.py` with stage exception classes only.
-- [ ] Wrap unexpected context-preparation exceptions in `OpenAIWorkspaceBuilder.invoke()` while preserving existing `OpenAITransportError` fail-closed results.
-- [ ] Wrap unexpected adapter exceptions at workspace/worker/diff/result-binding boundaries and preserve nested `BuilderStageError` unchanged.
-- [ ] Run focused and full Runtime Foundation tests.
+- [x] Create `tools/loop_a2_runtime/builder_diagnostics.py` with four stable stage exception classes and a private base class.
+- [x] Wrap unexpected adapter exceptions at workspace/worker/diff/result-binding boundaries; preserve intentional `WorkerResult` blockers and existing `BuilderStageError` specificity.
+- [x] Verify GREEN in Runtime Foundation.
 
 ### Task 3: Exact-head, merge, and live diagnostic
 
-- [ ] Require Local Executor Windows/Ubuntu, Runtime Foundation, OpenAI transport, Base-v9/adversarial, and GPO final `ci-gate` success.
+- [ ] Require Local Executor Windows/Ubuntu, Durable Resume Windows/Ubuntu, Runtime Foundation, Base-v9/adversarial, and GPO final `ci-gate` success. Runtime Foundation must retain existing OpenAI Builder transport contracts.
 - [ ] Reconcile against current completed main; copy to integration branch if main moved.
 - [ ] Merge with expected-head protection and run postmerge gates.
 - [ ] Run one fresh-run-id REAL Blacksmith diagnostic job using unchanged authority; record only stable public provider error type.
