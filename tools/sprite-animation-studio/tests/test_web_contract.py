@@ -37,7 +37,7 @@ def test_confirmed_delivery_is_guarded_and_server_owned() -> None:
     assert "Effect Runs" in html
     assert "/confirm-delivery" in script
     assert "/delivery-status" in script
-    assert "/confirmed-download" in script
+    assert "download.href = result.download_url" in script
     assert "/figma-delivery" not in script
     for forbidden in (
         "figma_file_key",
