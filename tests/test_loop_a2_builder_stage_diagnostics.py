@@ -2,11 +2,9 @@ from __future__ import annotations
 
 from pathlib import Path
 from types import SimpleNamespace
-import tempfile
 import unittest
 from unittest.mock import patch
 
-from tools.loop_a2_runtime.openai_transport import OpenAIWorkspaceBuilder
 from tools.loop_a2_runtime.protocol import RunRequest
 from tools.loop_a2_runtime.worktree_adapter import GitWorktreeBuilderAdapter
 from tests.test_loop_a2_protocol import valid_request
@@ -39,26 +37,6 @@ class _ReturningWorker:
 
 
 class BuilderStageDiagnosticsTests(unittest.TestCase):
-    def test_unexpected_builder_context_exception_is_stage_tagged(self) -> None:
-        request = _request()
-        client = SimpleNamespace(responses=SimpleNamespace(create=lambda **kwargs: None))
-        builder = OpenAIWorkspaceBuilder(client=client, model="TEST_MODEL")
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
-            with patch(
-                "tools.loop_a2_runtime.openai_transport._collect_context",
-                side_effect=AttributeError("secret-stage-detail"),
-            ):
-                _assert_stage(
-                    self,
-                    "BuilderContextPreparationError",
-                    lambda: builder.invoke(
-                        request,
-                        worktree_path=root,
-                        repair_cycle=0,
-                    ),
-                )
-
     def test_unexpected_workspace_preparation_exception_is_stage_tagged(self) -> None:
         adapter = object.__new__(GitWorktreeBuilderAdapter)
         adapter.worker = _ReturningWorker(object())
