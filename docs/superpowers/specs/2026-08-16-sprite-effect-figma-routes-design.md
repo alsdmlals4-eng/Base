@@ -105,6 +105,36 @@ Canonical destination names are exact:
 
 No aliases or runtime layer-name search are allowed as mutation authority.
 
+## Trusted Sprite route selection and delivered artifact
+
+The existing Tool Hub child credential proves only `(tool_id, project_id)`. It does not distinguish two destination classes owned by the same `sprite-animation-studio`. Therefore the Sprite delivery path must add one explicit route-class identity without making browser input mutation authority.
+
+The authoritative route class is derived inside Sprite Animation Studio from the server-owned `RunRecord.request.mode` for the exact run being confirmed:
+
+- `pose_sequence` → `sprite_action_runs`
+- `sprite_action` → `sprite_action_runs`
+- `effect_stages` → `effect_runs`
+- `expression_variation` → `DELIVERY_TOOL_ROUTE_UNAVAILABLE` for this dedicated Sprite/Effect delivery slice
+
+The browser does not submit a Figma route, node ID, file key, or authoritative mode during confirmation. The Studio sends only a route ID that it derived from the already-stored run. Tool Hub revalidates that route ID against the authenticated child tool using a fixed allowlist:
+
+- `expression-studio` may request only `character_expression_runs`;
+- `sprite-animation-studio` may request only `sprite_action_runs` or `effect_runs`.
+
+Tool Hub then resolves the exact project/route pair through the canonical committed registry. A route ID that is missing, malformed, unsupported by the authenticated tool, or absent from the project registry fails closed as `DELIVERY_TOOL_ROUTE_UNAVAILABLE` or an equally bounded route mismatch error.
+
+For Sprite/Effect confirmation, the exact PNG sent to Tool Hub is the run's verified exported **atlas PNG**. It is not an arbitrary candidate frame, contact sheet, GIF, or browser-selected file. Before sending, Sprite Animation Studio must:
+
+1. require an exported run with verified approved-anchor evidence and delivery-eligible import provenance;
+2. revalidate run paths, export evidence, and the stored atlas SHA-256;
+3. read the atlas from project-confined staging using the stored expected SHA-256;
+4. derive the route ID from the server-owned run mode;
+5. send `(run_id, route_id, atlas bytes, image/png)` through the child-only localhost Hub credential;
+6. verify that Tool Hub returns the same run, project, tool, route ID, atlas SHA-256, and canonical target name;
+7. bind subsequent status refresh/download evidence to the same delivery identity and SHA.
+
+This gives the later Godot-consumption IRG one stable artifact identity: the PNG delivered to Figma and the exported atlas used by the project can be compared by the same SHA-256. It does not itself prove that a real project consumed the atlas.
+
 ## Creation and registration sequence
 
 1. Re-read latest completed Base `main` and the eight Figma parents/markers before mutation.
@@ -114,8 +144,9 @@ No aliases or runtime layer-name search are allowed as mutation authority.
 5. Read back all 16 new route frames through the Figma connector and record their real node IDs.
 6. Add the resulting 16 route entries to `PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json`; retain the eight existing Character/Expression entries unchanged.
 7. Only after readback evidence exists may the new entries use `delivery_status: READY_FOR_DELIVERY`.
-8. Run exact-head tests and CI before merge.
-9. After merge, read the registry from new `main` and re-read all 24 Figma destinations to detect route drift.
+8. Add the Sprite server-owned route selection and atlas-confirmation path described above.
+9. Run exact-head tests and CI before merge.
+10. After merge, read the registry from new `main` and re-read all 24 Figma destinations to detect route drift.
 
 ## Fail-closed behavior
 
@@ -124,6 +155,10 @@ The following cases must remain blocked:
 - a Sprite action delivery resolves to `character_expression_runs` instead of `sprite_action_runs`;
 - an Effect delivery resolves to `character_expression_runs` instead of `effect_runs`;
 - Sprite/Effect delivery falls back to generic `Generated Assets`;
+- Sprite browser/request input attempts to choose a Figma route, file, or node as mutation authority;
+- `expression_variation` attempts to use either dedicated Sprite/Effect route;
+- the authenticated Studio tool and requested route ID do not match the fixed Tool Hub allowlist;
+- the Sprite run's exported atlas is missing, changed, or has a SHA different from the confirmed delivery bytes;
 - destination node is missing, renamed, reparented, wrong type, or belongs to the wrong Figma file;
 - project marker is missing, renamed, wrong type, or no longer distinct from route nodes;
 - a browser/request supplies a project, Figma URL, node ID, or route different from the server/canonical registry;
@@ -151,12 +186,17 @@ Tests must prove:
 
 Focused tests must prove:
 
-- Sprite action delivery selects only `sprite_action_runs`;
-- effect delivery selects only `effect_runs`;
+- `pose_sequence` and `sprite_action` confirmation select only `sprite_action_runs`;
+- `effect_stages` confirmation selects only `effect_runs`;
+- `expression_variation` remains blocked from the two new delivery classes;
+- the Sprite Studio derives route identity from its stored run rather than a browser-provided Figma route;
+- the exact verified exported atlas bytes and SHA are the payload handed to Tool Hub;
+- Tool Hub accepts only route IDs allowed for the authenticated Studio tool;
 - Character/Expression behavior is unchanged;
 - generic-parent and Character-route fallback for Sprite/Effect are rejected;
 - wrong project/file/node/name/type/hash fails closed;
-- idempotent same-run/same-SHA behavior remains unchanged.
+- idempotent same-run/same-SHA behavior remains unchanged;
+- same run with a different route or different content cannot be silently reused.
 
 ### Figma cloud preflight
 
@@ -192,6 +232,8 @@ If Figma creation succeeds for only some projects, the Base registry remains unc
 
 If Base registry update or CI later fails, the created empty Figma frames may remain as non-authoritative workspace structure; they become mutation authority only after a committed `READY_FOR_DELIVERY` registry entry passes canonical validation.
 
+Studio confirmation retry is also idempotent: same run + same route + same atlas SHA reuses one delivery identity. Same run with a changed route or changed bytes fails closed. Status refresh must not change route, target name, delivery ID, project, run, or content SHA.
+
 ## Rollback
 
 Rollback of the Base code/registry is additive and must not delete project assets.
@@ -207,7 +249,9 @@ Successful implementation and CI will establish:
 
 - reviewed dedicated Sprite/Effect cloud destination nodes for all eight projects;
 - exact Base registry authority for those nodes;
-- fail-closed software routing to the correct destination class.
+- fail-closed software routing to the correct destination class;
+- server-owned Sprite mode-to-route selection;
+- exact exported-atlas SHA binding in the local confirmation path.
 
 It will **not** by itself establish:
 
