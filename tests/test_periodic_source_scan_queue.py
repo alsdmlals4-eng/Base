@@ -180,8 +180,9 @@ class PeriodicSourceScanQueueTests(unittest.TestCase):
             "gh workflow run validate-game-project-operating-system.yml",
             "validation_level=full", "gh run watch", "git merge --no-edit origin/main",
             "reviewThreads", "gh pr merge", "--squash", "--match-head-commit",
-            "BLOCKED_ACTIVE_PR_GUARD", "BLOCKED_ACTIVE_PR_GUARD_QUERY",
-            "BLOCKED_MERGE_NOT_IMMEDIATE",
+            "SCHEDULED_AUTOMATION_CONCURRENT_PR_RECONCILIATION",
+            "BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16",
+            "BLOCKED_OPEN_PR_CONFLICT", "BLOCKED_MERGE_NOT_IMMEDIATE",
             "BLOCKED_ACTIONS_PR_CREATION_SETTING", "BLOCKED_ACTIONS_DISPATCH",
             "BLOCKED_VALIDATION",
             "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
@@ -192,6 +193,7 @@ class PeriodicSourceScanQueueTests(unittest.TestCase):
         for forbidden in (
             "timeout-minutes", "pull_request_target", "git push origin HEAD:main",
             "git push --force", "--admin", "--auto",
+            "BLOCKED_ACTIVE_PR_GUARD", "BLOCKED_ACTIVE_PR_GUARD_QUERY",
         ):
             self.assertNotIn(forbidden, workflow)
 
