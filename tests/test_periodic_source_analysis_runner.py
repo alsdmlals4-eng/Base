@@ -121,26 +121,30 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
         self.assertNotIn("PERIODIC_SOURCE_CANDIDATE_LEDGER.json", trigger_block)
         self.assertNotIn("PERIODIC_SOURCE_OPERATIONS_LEDGER.json", trigger_block)
 
-    def test_scheduled_write_automation_defers_while_foreign_pr_is_open(self) -> None:
+    def test_scheduled_write_automation_allows_unrelated_open_prs_and_blocks_only_overlap(self) -> None:
         queue_doc = QUEUE_DOC.read_text(encoding="utf-8")
         runner = RUNNER.read_text(encoding="utf-8")
-        self.assertIn("SCHEDULED_AUTOMATION_ACTIVE_PR_GUARD", queue_doc)
+        self.assertIn("SCHEDULED_AUTOMATION_CONCURRENT_PR_RECONCILIATION", queue_doc)
         for required in (
-            "BLOCKED_ACTIVE_PR_GUARD",
-            "BLOCKED_ACTIVE_PR_GUARD_QUERY",
-            "BLOCKED_MERGE_NOT_IMMEDIATE",
+            "BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16",
             "foreign_open_prs",
-            "assert_no_foreign_open_prs",
-            'assert_no_foreign_open_prs ""',
-            'assert_no_foreign_open_prs "$pr_number"',
+            "detect_foreign_overlap",
+            "BLOCKED_OPEN_PR_CONFLICT",
+            "changed-files.txt",
         ):
             self.assertIn(required, runner)
+        for forbidden in (
+            "BLOCKED_ACTIVE_PR_GUARD",
+            "BLOCKED_ACTIVE_PR_GUARD_QUERY",
+            "assert_no_foreign_open_prs",
+        ):
+            self.assertNotIn(forbidden, runner)
         self.assertLess(
-            runner.index('assert_no_foreign_open_prs ""'),
             runner.index("python -m tools.periodic_source_analysis"),
+            runner.index("detect_foreign_overlap"),
         )
         self.assertLess(
-            runner.rindex('assert_no_foreign_open_prs "$pr_number"'),
+            runner.rindex("detect_foreign_overlap"),
             runner.rindex("gh pr merge"),
         )
 
