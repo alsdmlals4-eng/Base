@@ -8,6 +8,7 @@ import hmac
 import json
 from pathlib import Path
 import re
+import secrets
 import time
 from typing import Callable
 
@@ -19,7 +20,7 @@ from base_tool_contracts import (
 )
 
 from . import _figma_delivery_base as _base
-from .projects import ProjectLocator
+from .projects import ProjectBindingError, ProjectLocator
 
 
 DeliveryError = _base.DeliveryError
@@ -141,12 +142,50 @@ class FigmaDeliveryService(_base.FigmaDeliveryService):
         *,
         tool_route_id: str | None = None,
     ) -> DeliveryJob:
+        """Persist the exact route identity in the first authoritative JOB write."""
+        if not tool_id or not project_id or not run_id:
+            raise DeliveryError("DELIVERY_IDENTITY_REQUIRED")
+        if not isinstance(image_bytes, bytes) or not image_bytes:
+            raise DeliveryError("DELIVERY_CONTENT_REQUIRED")
         route = self._resolve_tool_route(tool_id, project_id, tool_route_id)
-        base_job = super().enqueue(tool_id, project_id, run_id, image_bytes, media_type)
-        if base_job.generation_area_node_id != route.parent_node_id:
+        width, height = self._validate_raster(image_bytes, media_type)
+        try:
+            binding = self._locator.resolve(project_id)
+            target = self._registry.resolve_ready_target(project_id)
+            self._registry.assert_unchanged()
+        except (ProjectBindingError, DeliveryBlockedError) as error:
+            raise DeliveryError("DELIVERY_PROJECT_ROUTE_UNAVAILABLE") from error
+        if (
+            target.figma_file_key != route.figma_file_key
+            or target.generation_area_node_id != route.parent_node_id
+        ):
             raise DeliveryError("FIGMA_TOOL_ROUTE_PARENT_MISMATCH")
+        vault_root = self._validated_vault(binding.root)
+        delivery_id = secrets.token_hex(16)
+        delivery_root = vault_root / "tool-hub-delivery" / delivery_id
+        try:
+            delivery_root.mkdir(parents=True, exist_ok=False)
+        except OSError as error:
+            raise DeliveryError("DELIVERY_QUEUE_WRITE_FAILED") from error
+        now = float(self._clock())
         job = DeliveryJob(
-            **base_job.__dict__,
+            delivery_id=delivery_id,
+            tool_id=tool_id,
+            project_id=project_id,
+            run_id=run_id,
+            content_sha256=hashlib.sha256(image_bytes).hexdigest(),
+            byte_length=len(image_bytes),
+            media_type=media_type,
+            width=width,
+            height=height,
+            figma_file_key=target.figma_file_key,
+            figma_url=target.figma_url,
+            delivery_page_node_id=target.delivery_page_node_id,
+            generation_area_node_id=target.generation_area_node_id,
+            node_name=self._node_name(tool_id, run_id, delivery_id),
+            state="QUEUED",
+            created_at=now,
+            expires_at=now + self.JOB_TTL_SECONDS,
             tool_route_id=route.tool_route_id,
             route_parent_node_id=route.parent_node_id,
             target_node_id=route.destination_node_id,
@@ -154,17 +193,18 @@ class FigmaDeliveryService(_base.FigmaDeliveryService):
             project_marker_node_id=route.project_marker_node_id,
             project_marker_name=route.project_marker_name,
         )
-        root = self._job_roots.get(job.delivery_id)
-        if root is None:
-            raise DeliveryError("DELIVERY_NOT_FOUND")
         try:
-            self._write_job(root, job)
+            self._atomic_write_bytes(delivery_root / "content.bin", image_bytes)
+            self._write_job(delivery_root, job)
         except OSError as error:
-            self._jobs.pop(job.delivery_id, None)
-            self._job_roots.pop(job.delivery_id, None)
+            try:
+                (delivery_root / "JOB.json").unlink(missing_ok=True)
+            except OSError:
+                pass
             raise DeliveryError("DELIVERY_QUEUE_WRITE_FAILED") from error
         with self._state_lock:
-            self._jobs[job.delivery_id] = job
+            self._jobs[delivery_id] = job
+            self._job_roots[delivery_id] = delivery_root
         return job
 
     @staticmethod
