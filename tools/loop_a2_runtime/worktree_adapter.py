@@ -6,6 +6,13 @@ from pathlib import Path
 import subprocess
 from typing import Protocol, Sequence
 
+from .builder_diagnostics import (
+    BuilderDiffCollectionError,
+    BuilderResultBindingError,
+    BuilderStageError,
+    BuilderWorkerInvocationError,
+    BuilderWorkspacePreparationError,
+)
 from .protocol import ProtocolError, RunRequest, WorkerResult
 from .workspace_registry import WorkspaceOwnershipError, WorkspaceOwnershipRegistry
 
@@ -426,24 +433,52 @@ class GitWorktreeBuilderAdapter:
         )
 
     def invoke(self, request: RunRequest, *, repair_cycle: int) -> WorkerResult:
-        blocked = self._ensure_workspace(request, repair_cycle=repair_cycle)
+        try:
+            blocked = self._ensure_workspace(request, repair_cycle=repair_cycle)
+        except BuilderStageError:
+            raise
+        except Exception as exc:
+            raise BuilderWorkspacePreparationError(
+                "unexpected Builder workspace preparation failure"
+            ) from exc
         if blocked is not None:
             return blocked
         workspace = self.workspace_path(request)
-        result = self.worker.invoke(
-            request,
-            worktree_path=workspace,
-            repair_cycle=repair_cycle,
-        )
-        actual_paths = self._actual_changed_paths(request)
-        if result.status == "COMPLETED" and set(result.changed_paths) != set(actual_paths):
-            return _blocked_result(
+        try:
+            result = self.worker.invoke(
                 request,
-                code="DECLARED_DIFF_MISMATCH",
-                message="worker changed-path claims do not match actual Git state",
-                changed_paths=actual_paths,
+                worktree_path=workspace,
+                repair_cycle=repair_cycle,
             )
-        return self._with_actual_paths(request, result, actual_paths)
+        except BuilderStageError:
+            raise
+        except Exception as exc:
+            raise BuilderWorkerInvocationError(
+                "unexpected Builder worker invocation failure"
+            ) from exc
+        try:
+            actual_paths = self._actual_changed_paths(request)
+        except BuilderStageError:
+            raise
+        except Exception as exc:
+            raise BuilderDiffCollectionError(
+                "unexpected Builder diff collection failure"
+            ) from exc
+        try:
+            if result.status == "COMPLETED" and set(result.changed_paths) != set(actual_paths):
+                return _blocked_result(
+                    request,
+                    code="DECLARED_DIFF_MISMATCH",
+                    message="worker changed-path claims do not match actual Git state",
+                    changed_paths=actual_paths,
+                )
+            return self._with_actual_paths(request, result, actual_paths)
+        except BuilderStageError:
+            raise
+        except Exception as exc:
+            raise BuilderResultBindingError(
+                "unexpected Builder result binding failure"
+            ) from exc
 
     def close(self, request: RunRequest) -> None:
         workspace = self.workspace_path(request)
