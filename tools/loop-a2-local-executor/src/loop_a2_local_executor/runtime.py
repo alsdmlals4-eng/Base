@@ -74,6 +74,8 @@ class LocalA2Runtime:
             return self.runner(
                 list(argv),
                 text=True,
+                encoding="utf-8",
+                errors="replace",
                 capture_output=True,
                 shell=False,
                 env=_child_environment(),
