@@ -25,14 +25,28 @@ def test_workspace_exposes_all_project_sprite_modes() -> None:
         assert f'value="{mode}"' in html
 
 
-def test_project_gpt_handoff_is_guarded_not_an_automatic_upload() -> None:
+def test_confirmed_delivery_is_guarded_and_server_owned() -> None:
     html = (WEB / "index.html").read_text(encoding="utf-8")
     script = (WEB / "app.js").read_text(encoding="utf-8")
 
-    assert 'id="figma-delivery-button"' in html
-    assert "같은 프로젝트 GPT" in html
-    assert "/figma-delivery" in script
-    assert "업로드가 완료" not in script
+    assert 'id="confirm-delivery-button"' in html
+    assert 'id="refresh-delivery-button"' in html
+    assert 'id="confirmed-download"' in html
+    assert "확정 및 전달" in html
+    assert "Sprite Action Runs" in html
+    assert "Effect Runs" in html
+    assert "/confirm-delivery" in script
+    assert "/delivery-status" in script
+    assert "/confirmed-download" in script
+    assert "/figma-delivery" not in script
+    for forbidden in (
+        "figma_file_key",
+        "target_node_id",
+        "generation_area_node_id",
+        "project_marker_node_id",
+        "X-Base-Tool-Route",
+    ):
+        assert forbidden not in script
 
 
 def test_web_bootstraps_read_only_project_identity_and_blocks_simulated_export() -> None:
