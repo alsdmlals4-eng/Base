@@ -28,6 +28,10 @@
       "excluded_scope": "",
       "interpretation_status": "UNVERIFIED",
       "runtime_compare_status": "NOT_RUN",
+      "reuse_classification": "UNASSESSED|REUSE_AS_IS|VARIANT_SEED|STRUCTURE_PATTERN|STYLE_DNA|REBUILD_FOR_REUSE|ONE_OFF_KEEP|REJECT_REUSE",
+      "reuse_source_artifact_id": "",
+      "asset_vault_harvest_record_id": "",
+      "derived_pixel_status": "NONE|SOURCE_LAYER|MASK_CUTOUT|MANUAL_OR_SEMANTIC_REBUILD|DERIVED_GENERATIVE_RECOVERY",
       "supersedes": "",
       "sync_status": "UNVERIFIED"
     }
