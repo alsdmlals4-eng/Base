@@ -46,14 +46,8 @@ function applyRunModeUi() {
 }
 
 function frameUrl(index) { return `/api/runs/${state.runId}/frames/${index}`; }
-
-function curationPayload() {
-  return { selected: state.selected, transforms: state.transforms, rejected: [...Array(state.frameCount).keys()].filter((index) => !state.selected.includes(index)) };
-}
-
-function mutationHeaders() {
-  return { "Content-Type": "application/json", "X-Studio-CSRF": state.config.csrf_token };
-}
+function curationPayload() { return { selected: state.selected, transforms: state.transforms, rejected: [...Array(state.frameCount).keys()].filter((index) => !state.selected.includes(index)) }; }
+function mutationHeaders() { return { "Content-Type": "application/json", "X-Studio-CSRF": state.config.csrf_token }; }
 
 function moveUpload(position, offset) {
   const target = position + offset;
@@ -72,14 +66,22 @@ function renderImportQueue() {
     const label = document.createElement("span");
     label.textContent = `${position + 1}. ${entry.file.name}`;
     const previous = document.createElement("button");
-    previous.type = "button"; previous.textContent = "앞"; previous.disabled = position === 0;
+    previous.type = "button";
+    previous.textContent = "앞";
+    previous.disabled = position === 0;
     previous.addEventListener("click", () => moveUpload(position, -1));
     const next = document.createElement("button");
-    next.type = "button"; next.textContent = "뒤"; next.disabled = position === state.uploadQueue.length - 1;
+    next.type = "button";
+    next.textContent = "뒤";
+    next.disabled = position === state.uploadQueue.length - 1;
     next.addEventListener("click", () => moveUpload(position, 1));
     const remove = document.createElement("button");
-    remove.type = "button"; remove.textContent = "제거";
-    remove.addEventListener("click", () => { state.uploadQueue = state.uploadQueue.filter((item) => item.id !== entry.id); renderImportQueue(); });
+    remove.type = "button";
+    remove.textContent = "제거";
+    remove.addEventListener("click", () => {
+      state.uploadQueue = state.uploadQueue.filter((item) => item.id !== entry.id);
+      renderImportQueue();
+    });
     row.append(label, previous, next, remove);
     root.append(row);
   });
@@ -123,13 +125,20 @@ function renderSequence() {
     next.disabled = position === state.selected.length - 1;
     next.addEventListener("click", () => move(position, 1));
     const remove = controls.querySelector('[data-action="remove"]');
-    remove.addEventListener("click", () => { if (confirm("이 프레임을 채택 목록에서 제거할까요?")) { state.selected = state.selected.filter((value) => value !== index); if (state.active === index) state.active = state.selected[0] ?? null; renderAll(); } });
-    item.append(image, title, controls); sequence.append(item);
+    remove.addEventListener("click", () => {
+      if (!confirm("이 프레임을 채택 목록에서 제거할까요?")) return;
+      state.selected = state.selected.filter((value) => value !== index);
+      if (state.active === index) state.active = state.selected[0] ?? null;
+      renderAll();
+    });
+    item.append(image, title, controls);
+    sequence.append(item);
   });
 }
 
 function move(position, offset) {
   const target = position + offset;
+  if (target < 0 || target >= state.selected.length) return;
   [state.selected[position], state.selected[target]] = [state.selected[target], state.selected[position]];
   renderAll();
 }
@@ -144,7 +153,9 @@ function renderPreview() {
 }
 
 function renderAll() {
-  renderCandidates(); renderSequence(); renderPreview();
+  renderCandidates();
+  renderSequence();
+  renderPreview();
   $("#selection-count").textContent = `선택 ${state.selected.length} / 요청 ${state.frameCount} 프레임`;
   $("#export-button").disabled = state.selected.length !== state.frameCount || !state.runDeliveryEligible;
   $("#figma-delivery-button").disabled = !state.exported;
@@ -156,9 +167,15 @@ $("#request-form").addEventListener("submit", async (event) => {
   resetRunState();
   const form = new FormData(event.currentTarget);
   const request = {
-    project_id: form.get("project_id"), asset_id: form.get("asset_id"), asset_kind: form.get("asset_kind"), mode: form.get("mode"),
+    project_id: form.get("project_id"),
+    asset_id: form.get("asset_id"),
+    asset_kind: form.get("asset_kind"),
+    mode: form.get("mode"),
     anchor: { source_path: form.get("source_path"), figma_node_url: form.get("figma_node_url"), approval_status: "approved" },
-    action: { name: form.get("action_name"), direction: form.get("direction"), frame_count: Number(form.get("frame_count")), fps: Number(form.get("fps")), loop_mode: form.get("loop_mode"), prompt: form.get("prompt") }
+    action: {
+      name: form.get("action_name"), direction: form.get("direction"), frame_count: Number(form.get("frame_count")),
+      fps: Number(form.get("fps")), loop_mode: form.get("loop_mode"), prompt: form.get("prompt")
+    }
   };
   let response;
   if (state.config.run_mode === "subscription_handoff_import") {
@@ -180,9 +197,18 @@ $("#request-form").addEventListener("submit", async (event) => {
   const result = await response.json();
   if (!response.ok || result.status === "blocked") {
     resetRunState();
-    $("#warning-panel").textContent = result.detail || result.warnings?.join(" ") || "생성이 차단되었습니다."; setStatus("차단됨", true); renderAll(); return;
+    $("#warning-panel").textContent = result.detail || result.warnings?.join(" ") || "생성이 차단되었습니다.";
+    setStatus("차단됨", true);
+    renderAll();
+    return;
   }
-  state.runId = result.run_id; state.request = request; state.frameCount = result.frame_count; state.selected = [...Array(result.frame_count).keys()]; state.active = 0; state.transforms = {}; state.exported = false;
+  state.runId = result.run_id;
+  state.request = request;
+  state.frameCount = result.frame_count;
+  state.selected = [...Array(result.frame_count).keys()];
+  state.active = 0;
+  state.transforms = {};
+  state.exported = false;
   state.runDeliveryEligible = Boolean(result.engine.delivery_eligible);
   $("#source-path").textContent = request.anchor.source_path;
   $("#source-image").src = `/api/runs/${state.runId}/anchor`;
@@ -204,13 +230,31 @@ $("#frame-files").addEventListener("change", (event) => {
   state.uploadQueue = [...event.target.files].map((file) => ({ id: crypto.randomUUID(), file }));
   renderImportQueue();
 });
-
 $("#select-all").addEventListener("click", () => { state.selected = [...Array(state.frameCount).keys()]; state.active ??= 0; renderAll(); });
 $("#toggle-guides").addEventListener("change", (event) => $("#candidate-grid").classList.toggle("guide-grid", event.target.checked));
-$("#apply-transform").addEventListener("click", () => { if (state.active === null) return; state.transforms[state.active] = { dx: Number($("#transform-x").value), dy: Number($("#transform-y").value), scale: Number($("#transform-scale").value) }; renderAll(); });
-$("#export-button").addEventListener("click", async () => { const response = await fetch(`/api/runs/${state.runId}/export`, { method: "POST", headers: mutationHeaders(), body: JSON.stringify(curationPayload()) }); const result = await response.json(); state.exported = result.status === "exported"; setStatus(state.exported ? "출력 준비 완료" : "출력 준비 차단됨", !state.exported); $("#warning-panel").textContent = result.detail || (state.exported ? "프로젝트 작업공간에 프레임·GIF·아틀라스·Godot 핸드오프를 준비했습니다." : "선택을 확인하세요."); renderAll(); });
-$("#figma-delivery-button").addEventListener("click", async () => { const response = await fetch(`/api/runs/${state.runId}/figma-delivery`, { method: "POST", headers: { "X-Studio-CSRF": state.config.csrf_token } }); const result = await response.json(); const panel = $("#figma-delivery-status"); if (!response.ok) { panel.textContent = `전송 준비 차단됨: ${result.detail || "프로젝트 대상과 보호 상태를 확인하세요."}`; setStatus("Figma 전송 차단됨", true); return; } const target = result.target; panel.textContent = `${target.display_name} · ${target.delivery_page} / ${target.generation_area} · ${result.visual_deliverables.length}개 시각 산출물. 같은 프로젝트 GPT가 Figma 도구로 새 실행 섹션에 배치해야 하며, 이 화면은 업로드를 수행하지 않습니다.`; setStatus("프로젝트 GPT 전송 준비됨"); });
-$("#play-preview").addEventListener("click", () => { if (state.timer) { clearInterval(state.timer); state.timer = null; return; } let position = 0; const fps = state.request.action.fps; state.timer = setInterval(() => { state.active = state.selected[position % state.selected.length]; position += 1; renderAll(); }, 1000 / fps); });
+$("#apply-transform").addEventListener("click", () => {
+  if (state.active === null) return;
+  state.transforms[state.active] = { dx: Number($("#transform-x").value), dy: Number($("#transform-y").value), scale: Number($("#transform-scale").value) };
+  renderAll();
+});
+$("#export-button").addEventListener("click", async () => {
+  const response = await fetch(`/api/runs/${state.runId}/export`, { method: "POST", headers: mutationHeaders(), body: JSON.stringify(curationPayload()) });
+  const result = await response.json();
+  state.exported = result.status === "exported";
+  setStatus(state.exported ? "출력 준비 완료" : "출력 준비 차단됨", !state.exported);
+  $("#warning-panel").textContent = result.detail || (state.exported ? "프로젝트 작업공간에 프레임·GIF·아틀라스·Godot 핸드오프를 준비했습니다." : "선택을 확인하세요.");
+  renderAll();
+});
+$("#play-preview").addEventListener("click", () => {
+  if (state.timer) { clearInterval(state.timer); state.timer = null; return; }
+  let position = 0;
+  const fps = state.request.action.fps;
+  state.timer = setInterval(() => {
+    state.active = state.selected[position % state.selected.length];
+    position += 1;
+    renderAll();
+  }, 1000 / fps);
+});
 
 async function bootstrap() {
   try {

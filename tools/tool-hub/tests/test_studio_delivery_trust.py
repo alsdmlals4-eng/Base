@@ -130,11 +130,23 @@ def _authorize_expression_child(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(ProcessSupervisor, "authorize_delivery_token", authorize)
 
 
-def _studio_headers() -> dict[str, str]:
-    return {
+def _authorize_sprite_child(monkeypatch: pytest.MonkeyPatch) -> None:
+    def authorize(self: ProcessSupervisor, token: str) -> tuple[str, str]:
+        if token != _PRIVATE_TOKEN:
+            raise LaunchError("studio delivery credential is invalid")
+        return ("sprite-animation-studio", "coc-fiction")
+
+    monkeypatch.setattr(ProcessSupervisor, "authorize_delivery_token", authorize)
+
+
+def _studio_headers(tool_route_id: str | None = None) -> dict[str, str]:
+    headers = {
         "Authorization": f"Bearer {_PRIVATE_TOKEN}",
         "Content-Type": "image/png",
     }
+    if tool_route_id is not None:
+        headers["X-Base-Tool-Route"] = tool_route_id
+    return headers
 
 
 def test_internal_studio_delivery_requires_live_child_token_and_is_idempotent(
@@ -172,6 +184,79 @@ def test_internal_studio_delivery_requires_live_child_token_and_is_idempotent(
     )
     assert changed.status_code == 409
     assert changed.json()["detail"] == "DELIVERY_RUN_CONTENT_MISMATCH"
+
+
+def test_sprite_child_requires_server_supported_route_header(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client = _registered_hub(tmp_path)
+    _authorize_sprite_child(monkeypatch)
+    payload = png_bytes(2, 1)
+
+    missing = client.post(
+        "/internal/studio-delivery/run-sprite-missing",
+        content=payload,
+        headers=_studio_headers(),
+    )
+    character = client.post(
+        "/internal/studio-delivery/run-sprite-character",
+        content=payload,
+        headers=_studio_headers("character_expression_runs"),
+    )
+
+    assert missing.status_code == 409
+    assert missing.json()["detail"] == "DELIVERY_TOOL_ROUTE_UNAVAILABLE"
+    assert character.status_code == 409
+    assert character.json()["detail"] == "DELIVERY_TOOL_ROUTE_UNAVAILABLE"
+
+
+def test_sprite_child_can_queue_exact_sprite_and_effect_destinations(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client = _registered_hub(tmp_path)
+    _authorize_sprite_child(monkeypatch)
+    payload = png_bytes(2, 1)
+
+    sprite = client.post(
+        "/internal/studio-delivery/run-sprite",
+        content=payload,
+        headers=_studio_headers("sprite_action_runs"),
+    )
+    effect = client.post(
+        "/internal/studio-delivery/run-effect",
+        content=payload,
+        headers=_studio_headers("effect_runs"),
+    )
+
+    assert sprite.status_code == 201, sprite.text
+    assert sprite.json()["tool_route_id"] == "sprite_action_runs"
+    assert sprite.json()["target_node_name"] == "Sprite Action Runs"
+    assert effect.status_code == 201, effect.text
+    assert effect.json()["tool_route_id"] == "effect_runs"
+    assert effect.json()["target_node_name"] == "Effect Runs"
+
+
+def test_sprite_same_run_route_change_is_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client = _registered_hub(tmp_path)
+    _authorize_sprite_child(monkeypatch)
+    payload = png_bytes(2, 1)
+
+    first = client.post(
+        "/internal/studio-delivery/run-bound-route",
+        content=payload,
+        headers=_studio_headers("sprite_action_runs"),
+    )
+    changed = client.post(
+        "/internal/studio-delivery/run-bound-route",
+        content=payload,
+        headers=_studio_headers("effect_runs"),
+    )
+
+    assert first.status_code == 201, first.text
+    assert changed.status_code == 409
+    assert changed.json()["detail"] == "DELIVERY_RUN_ROUTE_MISMATCH"
 
 
 def test_unpaired_confirm_creates_one_reusable_project_pairing(
