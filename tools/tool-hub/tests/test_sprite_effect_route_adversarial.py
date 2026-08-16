@@ -11,7 +11,7 @@ from test_studio_delivery_trust import (
     _registered_hub,
     _studio_headers,
 )
-from tool_hub.figma_delivery import FigmaDeliveryService
+from tool_hub.figma_delivery import DeliveryJob, FigmaDeliveryService
 
 
 def test_expression_child_cannot_request_effect_route(
@@ -28,6 +28,35 @@ def test_expression_child_cannot_request_effect_route(
 
     assert response.status_code == 409
     assert response.json()["detail"] == "DELIVERY_TOOL_ROUTE_UNAVAILABLE"
+
+
+def test_route_identity_is_present_in_first_and_only_authoritative_job_write(
+    tmp_path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    service, _ = service_for(tmp_path, "omenward")
+    writes: list[DeliveryJob] = []
+    original_write = service._write_job
+
+    def record_write(root, job):
+        writes.append(job)
+        return original_write(root, job)
+
+    monkeypatch.setattr(service, "_write_job", record_write)
+
+    job = service.enqueue(
+        "sprite-animation-studio",
+        "omenward",
+        "first-write-route-bound",
+        png_bytes(2, 1),
+        "image/png",
+        tool_route_id="sprite_action_runs",
+    )
+
+    assert len(writes) == 1
+    assert isinstance(writes[0], DeliveryJob)
+    assert writes[0].delivery_id == job.delivery_id
+    assert writes[0].tool_route_id == "sprite_action_runs"
+    assert writes[0].target_node_name == "Sprite Action Runs"
 
 
 def test_recovered_sprite_job_without_stored_route_identity_is_rejected(tmp_path) -> None:
