@@ -23,6 +23,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 ## 2. 작업 진입 게이트
 
 - L1 이상 작업은 최신 main, 현재 결정, 분야 정본, 같은 Goal의 열린·최근 병합 PR, 실제 구현을 비교해 중복·누락·충돌·구형 참조·미반영을 먼저 판정한다.
+- **`ZERO_INCREMENTAL_COST_REQUIRED`:** Base와 Base를 적용한 프로젝트의 기본 실행 경로는 사용자의 추가 금전 지출을 만들지 않아야 한다. 이미 보유한 구독 기능도 해당 기능이 구독에 포함되고 별도 API·credit·marketplace·runner·storage·SaaS 같은 **separately metered** 과금으로 전환되지 않는 범위에서만 사용한다. `pay-as-you-go` API, 유료 credit, 신규 유료 구독·구매, 별도 과금 compute·runner·service는 사용자가 이 정책을 명시적으로 바꾸기 전에는 도입·실행하지 않는다. 비용 상태를 확정할 수 없으면 live call·구매·유료 실행을 하지 않고 `COST_GATE_BLOCKED`로 둔다. CI의 구체적 실행·비용 계층은 `docs/CI_EXECUTION_COST_POLICY.md`가 책임진다.**
 - **Existing Solution First Gate:** 신규 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층은 현재 사용 도구·connected MCP·enabled addon·dependency·같은 Goal의 열린/최근 병합 PR·유지되는 외부 대안을 먼저 조사하고 `REUSE / ABSORB / REFACTOR / ARCHIVE / BUILD_NEW` 판정을 기록하기 전에는 설계·구현하지 않는다. Godot 관련 정본은 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`이며, 직접 제작 판단은 `evaluating-godot-assets-and-plugins-before-creation`이 소유한다.
 - `BUILD_NEW`는 기존 대안의 핵심 기능·보안·라이선스·유지·Godot/OS/클라이언트 적합성 결함을 설정·격리·bounded patch로 해결할 수 없다는 증거와 사용자 승인이 있어야 한다. “직접 만들면 더 엄격하다”는 단독 근거가 아니다.
 - 검증·승인된 애드온이 현재 작업의 실제 문제를 해결하면 직접 중복 구현보다 활용을 우선한다. 단, 모든 프로젝트에 일괄 설치하지 않는다. 프로젝트 단계·Godot 버전·플랫폼·권위 경계·실제 소비 경로를 확인하고 필요한 프로젝트에만 선택적으로 채택한다.
