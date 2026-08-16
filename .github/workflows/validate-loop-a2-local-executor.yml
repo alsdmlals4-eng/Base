@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - 'tools/loop-a2-local-executor/**'
+      - 'tools/loop_a2.py'
+      - 'tools/loop_a2_runtime/**'
       - 'docs/LOOP_A2_LOCAL_EXECUTOR.md'
       - 'docs/evidence/2026-08-15-loop-a2-local-executor.md'
       - 'docs/superpowers/specs/2026-08-15-loop-a2-local-executor-design.md'
@@ -13,6 +15,8 @@ on:
     branches: [main]
     paths:
       - 'tools/loop-a2-local-executor/**'
+      - 'tools/loop_a2.py'
+      - 'tools/loop_a2_runtime/**'
       - 'docs/LOOP_A2_LOCAL_EXECUTOR.md'
       - 'docs/evidence/2026-08-15-loop-a2-local-executor.md'
       - '.github/workflows/validate-loop-a2-local-executor.yml'
