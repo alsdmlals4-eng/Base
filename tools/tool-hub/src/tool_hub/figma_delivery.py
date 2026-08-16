@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 import hashlib
 import hmac
 import json
@@ -45,8 +45,22 @@ class DeliveryReceipt(_base.DeliveryReceipt):
 
 
 _TOOL_ROUTE_IDS = {
-    "expression-studio": "character_expression_runs",
+    "expression-studio": frozenset({"character_expression_runs"}),
+    "sprite-animation-studio": frozenset({"sprite_action_runs", "effect_runs"}),
 }
+
+
+def _requested_route_id(tool_id: str, requested: str | None) -> str:
+    allowed = _TOOL_ROUTE_IDS.get(tool_id)
+    if allowed is None:
+        raise DeliveryError("DELIVERY_TOOL_ROUTE_UNAVAILABLE")
+    if requested is None:
+        if tool_id == "expression-studio":
+            return "character_expression_runs"
+        raise DeliveryError("DELIVERY_TOOL_ROUTE_UNAVAILABLE")
+    if requested not in allowed:
+        raise DeliveryError("DELIVERY_TOOL_ROUTE_UNAVAILABLE")
+    return requested
 
 
 class FigmaDeliveryService(_base.FigmaDeliveryService):
@@ -75,10 +89,13 @@ class FigmaDeliveryService(_base.FigmaDeliveryService):
         self._base_root = root
         super().__init__(runtime_root, locator, registry, clock=clock)
 
-    def _resolve_tool_route(self, tool_id: str, project_id: str) -> ProjectFigmaToolRoute:
-        route_id = _TOOL_ROUTE_IDS.get(tool_id)
-        if route_id is None:
-            raise DeliveryError("DELIVERY_TOOL_ROUTE_UNAVAILABLE")
+    def _resolve_tool_route(
+        self,
+        tool_id: str,
+        project_id: str,
+        tool_route_id: str | None = None,
+    ) -> ProjectFigmaToolRoute:
+        route_id = _requested_route_id(tool_id, tool_route_id)
         try:
             self._registry.assert_unchanged()
             self._tool_routes.assert_unchanged()
@@ -87,9 +104,9 @@ class FigmaDeliveryService(_base.FigmaDeliveryService):
             raise DeliveryError("DELIVERY_TOOL_ROUTE_UNAVAILABLE") from error
 
     def _assert_current_job_route(self, job: _base.DeliveryJob) -> ProjectFigmaToolRoute:
-        route = self._resolve_tool_route(job.tool_id, job.project_id)
-        if not isinstance(job, DeliveryJob):
+        if not isinstance(job, DeliveryJob) or not job.tool_route_id:
             raise DeliveryError("FIGMA_TOOL_ROUTE_IDENTITY_MISMATCH")
+        route = self._resolve_tool_route(job.tool_id, job.project_id, job.tool_route_id)
         expected = (
             route.tool_route_id,
             route.parent_node_id,
@@ -121,8 +138,10 @@ class FigmaDeliveryService(_base.FigmaDeliveryService):
         run_id: str,
         image_bytes: bytes,
         media_type: str,
+        *,
+        tool_route_id: str | None = None,
     ) -> DeliveryJob:
-        route = self._resolve_tool_route(tool_id, project_id)
+        route = self._resolve_tool_route(tool_id, project_id, tool_route_id)
         base_job = super().enqueue(tool_id, project_id, run_id, image_bytes, media_type)
         if base_job.generation_area_node_id != route.parent_node_id:
             raise DeliveryError("FIGMA_TOOL_ROUTE_PARENT_MISMATCH")
@@ -148,6 +167,14 @@ class FigmaDeliveryService(_base.FigmaDeliveryService):
             self._jobs[job.delivery_id] = job
         return job
 
+    @staticmethod
+    def _stored_route_id(job: _base.DeliveryJob) -> str:
+        if isinstance(job, DeliveryJob) and job.tool_route_id:
+            return job.tool_route_id
+        if job.tool_id == "expression-studio":
+            return "character_expression_runs"
+        raise DeliveryError("DELIVERY_TOOL_ROUTE_UNAVAILABLE")
+
     def enqueue_idempotent(
         self,
         tool_id: str,
@@ -155,8 +182,11 @@ class FigmaDeliveryService(_base.FigmaDeliveryService):
         run_id: str,
         image_bytes: bytes,
         media_type: str,
+        *,
+        tool_route_id: str | None = None,
     ) -> tuple[DeliveryJob, bool]:
-        """Queue one immutable run payload, reusing a live or verified retry."""
+        """Queue one immutable run/route payload, reusing only an exact live or verified retry."""
+        requested_route = _requested_route_id(tool_id, tool_route_id)
         digest = hashlib.sha256(image_bytes).hexdigest()
         with self._state_lock:
             matching = [
@@ -166,6 +196,9 @@ class FigmaDeliveryService(_base.FigmaDeliveryService):
                 and job.project_id == project_id
                 and job.run_id == run_id
             ]
+            for job in matching:
+                if self._stored_route_id(job) != requested_route:
+                    raise DeliveryError("DELIVERY_RUN_ROUTE_MISMATCH")
             if any(not hmac.compare_digest(job.content_sha256, digest) for job in matching):
                 raise DeliveryError("DELIVERY_RUN_CONTENT_MISMATCH")
             reusable = sorted(
@@ -175,8 +208,17 @@ class FigmaDeliveryService(_base.FigmaDeliveryService):
             if reusable:
                 job = reusable[0]
                 self._verify_content(job)
+                if not isinstance(job, DeliveryJob):
+                    raise DeliveryError("FIGMA_TOOL_ROUTE_IDENTITY_MISMATCH")
                 return job, False
-            return self.enqueue(tool_id, project_id, run_id, image_bytes, media_type), True
+            return self.enqueue(
+                tool_id,
+                project_id,
+                run_id,
+                image_bytes,
+                media_type,
+                tool_route_id=requested_route,
+            ), True
 
     def finalize(
         self,
@@ -284,10 +326,29 @@ class FigmaDeliveryService(_base.FigmaDeliveryService):
             )
         return document
 
+    def _route_from_job_document(
+        self,
+        job: _base.DeliveryJob,
+        document: dict[str, object],
+    ) -> ProjectFigmaToolRoute:
+        raw_route = document.get("tool_route_id")
+        if raw_route is None:
+            if job.tool_id != "expression-studio":
+                raise DeliveryError("DELIVERY_TOOL_ROUTE_UNAVAILABLE")
+            route_id = "character_expression_runs"
+        elif not isinstance(raw_route, str):
+            raise DeliveryError("DELIVERY_TOOL_ROUTE_UNAVAILABLE")
+        else:
+            route_id = raw_route
+        return self._resolve_tool_route(job.tool_id, job.project_id, route_id)
+
     def _valid_recovered_receipt(self, root: Path, job: _base.DeliveryJob) -> bool:
         try:
-            route = self._resolve_tool_route(job.tool_id, job.project_id)
-        except DeliveryError:
+            job_doc = json.loads((root / "JOB.json").read_text(encoding="utf-8"))
+            if not isinstance(job_doc, dict):
+                return False
+            route = self._route_from_job_document(job, job_doc)
+        except (OSError, UnicodeError, json.JSONDecodeError, DeliveryError):
             return False
         path = root / "FIGMA_DELIVERY_RECEIPT.json"
         if path.is_symlink() or not path.is_file():
@@ -296,15 +357,19 @@ class FigmaDeliveryService(_base.FigmaDeliveryService):
             doc = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, UnicodeError, json.JSONDecodeError):
             return False
+        if not isinstance(doc, dict):
+            return False
+        receipt_route = doc.get("tool_route_id")
+        if receipt_route is None and job.tool_id == "expression-studio":
+            receipt_route = "character_expression_runs"
         return bool(
-            isinstance(doc, dict)
-            and doc.get("state") == "DELIVERED_VERIFIED"
+            doc.get("state") == "DELIVERED_VERIFIED"
             and doc.get("delivery_id") == job.delivery_id
             and doc.get("project_id") == job.project_id
             and doc.get("content_sha256") == job.content_sha256
             and doc.get("figma_file_key") == job.figma_file_key
             and doc.get("target_node_id") == route.destination_node_id
-            and doc.get("tool_route_id") == route.tool_route_id
+            and receipt_route == route.tool_route_id
             and doc.get("created_node_name") == job.node_name
         )
 
@@ -314,9 +379,11 @@ class FigmaDeliveryService(_base.FigmaDeliveryService):
         if base_job is None:
             return
         try:
-            route = self._resolve_tool_route(base_job.tool_id, base_job.project_id)
             raw = (child / "JOB.json").read_text(encoding="utf-8")
             doc = json.loads(raw)
+            if not isinstance(doc, dict):
+                raise DeliveryError("FIGMA_TOOL_ROUTE_RECOVERY_MISMATCH")
+            route = self._route_from_job_document(base_job, doc)
             expected = {
                 "tool_route_id": route.tool_route_id,
                 "route_parent_node_id": route.parent_node_id,
