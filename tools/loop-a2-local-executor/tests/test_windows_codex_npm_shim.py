@@ -19,7 +19,7 @@ class WindowsCodexNpmShimTests(unittest.TestCase):
         shim.write_text(
             "@echo off\r\n"
             "if /I \"%~1\"==\"login\" if /I \"%~2\"==\"status\" (\r\n"
-            "  echo Logged in using ChatGPT\r\n"
+            "  echo Logged in using ChatGPT 1>&2\r\n"
             "  exit /b 0\r\n"
             ")\r\n"
             "set \"OUTPUT=\"\r\n"
