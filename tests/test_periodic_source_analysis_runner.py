@@ -11,7 +11,6 @@ from tools.periodic_source_scan_queue import select_due_source_batch
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github" / "workflows" / "periodic-source-scan-queue.yml"
-BASE_V9_WORKFLOW = ROOT / ".github" / "workflows" / "validate-base-v9-rc.yml"
 RUNNER = ROOT / "tools" / "run_periodic_source_scan_queue.sh"
 QUEUE_DOC = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_SOURCE_SCAN_QUEUE.md"
 TEMPORARY_PATCH_FILES = (
@@ -54,7 +53,7 @@ def payload(ids: list[str]) -> dict[str, object]:
 
 
 class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
-    def test_runner_entry_point_uses_the_fair_batch_selector(self) -> None:
+    def test_manual_analysis_module_still_uses_the_fair_batch_selector(self) -> None:
         self.assertTrue(callable(run_analysis))
         self.assertIn("select_due_source_batch", inspect.getsource(run_analysis))
 
@@ -80,9 +79,8 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
             set().union(*first_cycle),
         )
 
-    def test_workflow_delegates_to_all_exact_head_validators_without_recursion(self) -> None:
+    def test_scheduled_workflow_prepares_queue_without_metered_model_or_repository_write_pipeline(self) -> None:
         workflow = WORKFLOW.read_text(encoding="utf-8")
-        base_v9_workflow = BASE_V9_WORKFLOW.read_text(encoding="utf-8")
         runner = RUNNER.read_text(encoding="utf-8")
         contract = workflow + "\n" + runner
         for required in (
@@ -90,65 +88,67 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
             'timezone: "Asia/Seoul"',
             "workflow_dispatch:",
             "bash tools/run_periodic_source_scan_queue.sh",
+            "ZERO_INCREMENTAL_COST_QUEUE_PREP",
+            "AWAITING_CHATGPT_REVIEW",
+            "USER_DIRECTED_CHATGPT_REVIEW",
+            "ai_api_call",
+            "NONE",
+            "issues: write",
+        ):
+            self.assertIn(required, contract)
+        for forbidden in (
+            "timeout-minutes",
+            "pull_request_target",
+            "OPENAI_API_KEY",
+            "SOURCE_ANALYSIS_MODEL",
             "python -m tools.periodic_source_analysis",
+            "python tools/periodic_source_analysis.py",
+            "actions: write",
+            "contents: write",
+            "pull-requests: write",
             "automation/source-scan-",
             "gh pr create",
             "gh workflow run validate-evidence-knowledge.yml",
             "gh workflow run validate-base-v9-rc.yml",
             "gh workflow run validate-game-project-operating-system.yml",
-            "validation_level=full",
             "gh run watch",
             "git merge --no-edit origin/main",
             "reviewThreads",
             "gh pr merge",
-            "--squash",
-            "--match-head-commit",
-            "No material candidate survived the Evidence gate.",
-        ):
-            self.assertIn(required, contract)
-        self.assertIn("workflow_dispatch:", base_v9_workflow)
-        for forbidden in (
-            "timeout-minutes",
-            "pull_request_target",
-            "python tools/periodic_source_analysis.py",
             "git push origin HEAD:main",
             "git push --force",
             "--admin",
             "--auto",
         ):
             self.assertNotIn(forbidden, contract)
-        trigger_block = workflow.split("\npermissions:", 1)[0]
-        self.assertNotIn("PERIODIC_SOURCE_CANDIDATE_LEDGER.json", trigger_block)
-        self.assertNotIn("PERIODIC_SOURCE_OPERATIONS_LEDGER.json", trigger_block)
 
-    def test_scheduled_write_automation_allows_unrelated_open_prs_and_blocks_only_overlap(self) -> None:
+    def test_queue_prep_is_not_scan_success_and_defers_repository_changes_to_normal_copy_integration(self) -> None:
         queue_doc = QUEUE_DOC.read_text(encoding="utf-8")
         runner = RUNNER.read_text(encoding="utf-8")
-        self.assertIn("SCHEDULED_AUTOMATION_CONCURRENT_PR_RECONCILIATION", queue_doc)
         for required in (
+            "ZERO_INCREMENTAL_COST_REQUIRED",
+            "AWAITING_CHATGPT_REVIEW",
+            "Queue preparation",
+            "NO_CHANGE",
             "BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16",
-            "foreign_open_prs",
-            "detect_foreign_overlap",
-            "BLOCKED_OPEN_PR_CONFLICT",
-            "changed-files.txt",
+        ):
+            self.assertIn(required, queue_doc)
+        for required in (
+            "repository_change",
+            "NONE",
+            "ledger_scan_timestamp_change",
+            "candidate_evidence_claim",
+            "NOT_RUN",
         ):
             self.assertIn(required, runner)
         for forbidden in (
+            "BLOCKED_MODEL_AUTH",
             "BLOCKED_ACTIVE_PR_GUARD",
-            "BLOCKED_ACTIVE_PR_GUARD_QUERY",
             "assert_no_foreign_open_prs",
+            "foreign_open_prs",
+            "detect_foreign_overlap",
         ):
             self.assertNotIn(forbidden, runner)
-        first_overlap_call = 'detect_foreign_overlap ""'
-        self.assertIn(first_overlap_call, runner)
-        self.assertLess(
-            runner.index("python -m tools.periodic_source_analysis"),
-            runner.index(first_overlap_call),
-        )
-        self.assertLess(
-            runner.rindex("detect_foreign_overlap"),
-            runner.rindex("gh pr merge"),
-        )
 
     def test_temporary_patch_and_export_files_are_removed(self) -> None:
         for path in TEMPORARY_PATCH_FILES:
