@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Base Tool Hub Figma Bridge</title>
+  <style>
+    :root { font-family: Inter, system-ui, sans-serif; color-scheme: light dark; }
+    body { margin: 0; padding: 16px; font-size: 12px; }
+    h1 { margin: 0 0 8px; font-size: 16px; }
+    p { line-height: 1.45; }
+    .stack { display: grid; gap: 10px; }
+    .row { display: flex; gap: 8px; }
+    input, button { font: inherit; box-sizing: border-box; }
+    input { width: 100%; padding: 8px; }
+    button { padding: 8px 10px; cursor: pointer; }
+    button.primary { flex: 1; font-weight: 650; }
+    #status { padding: 10px; border: 1px solid currentColor; border-radius: 6px; white-space: pre-wrap; }
+    .muted { opacity: .72; }
+    code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+  </style>
+</head>
+<body>
+  <main class="stack">
+    <div>
+      <h1>Base Tool Hub Figma Bridge</h1>
+      <p class="muted">Tool Hub가 발급한 6자리 연결 코드만 입력합니다. 프로젝트·파일·노드 목적지는 Base가 고정합니다.</p>
+    </div>
+
+    <label>
+      연결 코드
+      <input id="pairing-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000" />
+    </label>
+
+    <div class="row">
+      <button id="pair" class="primary" type="button">연결</button>
+      <button id="disconnect" type="button">연결 해제</button>
+    </div>
+
+    <button id="deliver" class="primary" type="button">다음 이미지 전달</button>
+    <div id="status">PAIRING_REQUIRED</div>
+    <p class="muted">이미지 바이트의 SHA-256을 확인한 뒤, 현재 파일의 정확한 Generated Assets + 프로젝트 route marker가 일치할 때만 노드를 만듭니다.</p>
+  </main>
+
+  <script>
+    const HUB = 'http://127.0.0.1:8764';
+    let token = null;
+    let pendingReceipt = null;
+    let currentJob = null;
+    let mutationInFlight = false;
+
+    const codeInput = document.getElementById('pairing-code');
+    const statusNode = document.getElementById('status');
+    const pairButton = document.getElementById('pair');
+    const disconnectButton = document.getElementById('disconnect');
+    const deliverButton = document.getElementById('deliver');
+
+    function status(text) {
+      statusNode.textContent = String(text);
+    }
+
+    function pluginMessage(message) {
+      parent.postMessage({ pluginMessage: message }, '*');
+    }
+
+    async function responseDetail(response) {
+      try {
+        const body = await response.json();
+        return body && body.detail ? String(body.detail) : `HTTP_${response.status}`;
+      } catch (_) {
+        return `HTTP_${response.status}`;
+      }
+    }
+
+    function hex(bytes) {
+      return Array.from(new Uint8Array(bytes), (value) => value.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function sha256(buffer) {
+      return hex(await crypto.subtle.digest('SHA-256', buffer));
+    }
+
+    async function pair() {
+      const pairingCode = codeInput.value.trim();
+      if (!/^\d{6}$/.test(pairingCode)) {
+        throw new Error('PAIRING_CODE_INVALID');
+      }
+      status('PAIRING...');
+      const response = await fetch(`${HUB}/bridge/pair`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pairing_code: pairingCode, bridge_version: '1' }),
+      });
+      if (!response.ok) throw new Error(await responseDetail(response));
+      const body = await response.json();
+      if (!body.token || body.status !== 'BRIDGE_PAIRED') throw new Error('BRIDGE_PAIR_RESPONSE_INVALID');
+      token = body.token;
+      codeInput.value = '';
+      pluginMessage({ type: 'store-token', token });
+      status(`BRIDGE_PAIRED\n${body.project_id}`);
+    }
+
+    async function release(deliveryId) {
+      if (!token || !deliveryId) return;
+      const response = await fetch(`${HUB}/bridge/jobs/${encodeURIComponent(deliveryId)}/release`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: '{}',
+      });
+      if (!response.ok) throw new Error(await responseDetail(response));
+    }
+
+    async function submitReceipt(receipt) {
+      if (!token || !receipt || !receipt.delivery_id) throw new Error('PENDING_RECEIPT_INVALID');
+      status('VERIFYING_FIGMA_RECEIPT...');
+      const response = await fetch(`${HUB}/bridge/jobs/${encodeURIComponent(receipt.delivery_id)}/receipt`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          created_node_id: receipt.created_node_id,
+          created_node_name: receipt.created_node_name,
+          target_node_id: receipt.target_node_id,
+          content_sha256: receipt.content_sha256,
+          bridge_version: receipt.bridge_version,
+          image_hash: receipt.image_hash,
+        }),
+      });
+      if (!response.ok) {
+        const detail = await responseDetail(response);
+        if (response.status === 409 && detail === 'DELIVERY_ALREADY_VERIFIED') {
+          pendingReceipt = null;
+          pluginMessage({ type: 'clear-pending-receipt' });
+          status('FIGMA_DELIVERED_VERIFIED');
+          return;
+        }
+        throw new Error(detail);
+      }
+      const body = await response.json();
+      if (body.status !== 'FIGMA_DELIVERED_VERIFIED') throw new Error('RECEIPT_RESPONSE_INVALID');
+      pendingReceipt = null;
+      currentJob = null;
+      pluginMessage({ type: 'clear-pending-receipt' });
+      status(`FIGMA_DELIVERED_VERIFIED\nnode ${body.created_node_id}`);
+    }
+
+    async function deliverNext() {
+      if (!token) throw new Error('PAIRING_REQUIRED');
+      if (pendingReceipt) {
+        await submitReceipt(pendingReceipt);
+        return;
+      }
+      status('CLAIMING_DELIVERY...');
+      const claim = await fetch(`${HUB}/bridge/jobs/next`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      if (!claim.ok) throw new Error(await responseDetail(claim));
+      const job = await claim.json();
+      if (job.status === 'NO_PENDING_DELIVERY') {
+        status('NO_PENDING_DELIVERY');
+        return;
+      }
+      if (job.status !== 'DELIVERY_PENDING' || !job.delivery_id) throw new Error('DELIVERY_CLAIM_INVALID');
+      currentJob = job;
+
+      try {
+        const content = await fetch(`${HUB}/bridge/jobs/${encodeURIComponent(job.delivery_id)}/content`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (!content.ok) throw new Error(await responseDetail(content));
+        const buffer = await content.arrayBuffer();
+        const localHash = await sha256(buffer);
+        const headerHash = content.headers.get('X-Content-SHA256');
+        if (localHash !== job.content_sha256 || headerHash !== job.content_sha256) {
+          throw new Error('CONTENT_HASH_MISMATCH');
+        }
+        if (buffer.byteLength !== job.byte_length) throw new Error('CONTENT_LENGTH_MISMATCH');
+        mutationInFlight = true;
+        status('WRITING_TO_FIGMA...');
+        pluginMessage({
+          type: 'apply-image',
+          job,
+          bytes: Array.from(new Uint8Array(buffer)),
+        });
+      } catch (error) {
+        try { await release(job.delivery_id); } catch (_) {}
+        currentJob = null;
+        throw error;
+      }
+    }
+
+    pairButton.addEventListener('click', () => pair().catch((error) => status(error.message)));
+    deliverButton.addEventListener('click', () => deliverNext().catch((error) => status(error.message)));
+    disconnectButton.addEventListener('click', () => {
+      token = null;
+      pendingReceipt = null;
+      currentJob = null;
+      pluginMessage({ type: 'clear-token' });
+      status('PAIRING_REQUIRED');
+    });
+
+    onmessage = async (event) => {
+      const message = event.data && event.data.pluginMessage;
+      if (!message) return;
+      if (message.type === 'stored-state') {
+        token = message.token || null;
+        pendingReceipt = message.pendingReceipt || null;
+        status(token ? (pendingReceipt ? 'RECEIPT_RETRY_READY' : 'BRIDGE_PAIRED') : 'PAIRING_REQUIRED');
+        return;
+      }
+      if (message.type === 'mutation-complete') {
+        mutationInFlight = false;
+        pendingReceipt = message.receipt;
+        try {
+          await submitReceipt(message.receipt);
+        } catch (error) {
+          status(`RECEIPT_RETRY_READY\n${error.message}`);
+        }
+        return;
+      }
+      if (message.type === 'bridge-error') {
+        mutationInFlight = false;
+        if (currentJob) {
+          try { await release(currentJob.delivery_id); } catch (_) {}
+          currentJob = null;
+        }
+        status(message.detail || 'BRIDGE_OPERATION_FAILED');
+      }
+    };
+
+    pluginMessage({ type: 'load-state' });
+  </script>
+</body>
+</html>

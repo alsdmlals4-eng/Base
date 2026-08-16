@@ -4,13 +4,13 @@
   "tools": [
     {
       "tool_id": "expression-studio",
-      "display_name": "Expression Studio",
+      "display_name": "Character Studio",
       "audience": "HUMAN_INTERACTIVE",
       "owner_path": "tools/expression-studio",
       "launch_adapter": "expression_studio",
       "health_path": "/api/status",
       "project_scoped": true,
-      "capabilities": ["expression_variation", "image_import", "figma_delivery_packet"],
+      "capabilities": ["expression_variation", "identity_preserving_edit", "outfit_variation", "scene_relocation", "image_import", "figma_delivery_packet"],
       "production_engine_required_for_delivery": true
     },
     {

@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Expression Studio</title>
+    <title>Character Studio</title>
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
     <main>
       <header>
         <p class="eyebrow">LOCAL REVIEW TOOL</p>
-        <h1>Expression Studio</h1>
-        <p>승인된 원본 캐릭터를 유지한 채 표정 후보를 검토합니다. 실제 Figma 배치는 같은 프로젝트 GPT 작업공간에서만 수행됩니다.</p>
+        <h1>Character Studio</h1>
+        <p>승인된 원본 캐릭터의 정체성을 기준으로 표정, 복장, 장소·배경 변경 후보를 검토합니다. 선택한 후보는 확정 및 전달 시 프로젝트에 저장되고 Base Tool Hub의 검토된 Figma 경로로 전달됩니다.</p>
       </header>
 
       <section class="cost-banner">
@@ -28,50 +28,85 @@
           <label>원본 Figma 노드 URL <input id="figma-url" type="url" placeholder="https://www.figma.com/design/..." required></label>
           <label>후보 수 <input id="candidate-count" type="number" min="1" max="8" value="4" required></label>
           <div id="import-controls">
-            <label>이미지 출처
-              <select id="declared-source">
-                <option value="CHATGPT_INCLUDED">ChatGPT 구독 포함 생성</option>
-                <option value="FIGMA_INCLUDED">Figma 구독 포함 생성</option>
-                <option value="LOCAL_GENERATOR">로컬 생성기</option>
-                <option value="OTHER_USER_SUPPLIED">기타 사용자 제공</option>
-              </select>
-            </label>
-            <p class="muted">출처 선택은 구독·라이선스 증명이 아닙니다. 사용 권한과 생성 경로는 프로젝트에서 별도로 확인하세요.</p>
-            <label>표정 후보 이미지
+            <div id="handoff-controls">
+              <h3>ChatGPT Pro 구독 생성</h3>
+              <p class="muted">먼저 현재 요청으로 안전한 프롬프트와 Run을 준비합니다. 승인 원본을 내려받아 ChatGPT Pro에 함께 첨부하고 요청한 수의 PNG를 만든 뒤 아래 후보 이미지에 선택하고 같은 Run으로 가져오세요.</p>
+              <button id="prepare-handoff-button" type="button">ChatGPT Pro 프롬프트 준비</button>
+              <p id="handoff-run-info" hidden></p>
+              <a id="handoff-anchor-link" hidden>승인 원본 다운로드</a>
+              <label>ChatGPT Pro 프롬프트
+                <textarea id="handoff-prompt" rows="14" readonly hidden></textarea>
+              </label>
+              <button id="import-handoff-button" type="button" disabled>같은 Run으로 후보 가져오기</button>
+            </div>
+
+            <label>후보 이미지
               <input id="candidate-files" name="candidates" type="file" accept="image/png,image/jpeg,image/webp" multiple required>
             </label>
             <p id="file-count">선택한 후보 없음</p>
+
+            <div id="legacy-import-controls">
+              <h3>기타 이미지 가져오기</h3>
+              <label>이미지 출처
+                <select id="declared-source">
+                  <option value="CHATGPT_INCLUDED">ChatGPT 구독 포함 생성</option>
+                  <option value="FIGMA_INCLUDED">Figma 구독 포함 생성</option>
+                  <option value="LOCAL_GENERATOR">로컬 생성기</option>
+                  <option value="OTHER_USER_SUPPLIED">기타 사용자 제공</option>
+                </select>
+              </label>
+              <p class="muted">출처 선택은 구독·라이선스 증명이 아닙니다. 사용 권한과 생성 경로는 프로젝트에서 별도로 확인하세요. 이 경로는 기존 파일을 직접 가져오는 보조 경로입니다.</p>
+            </div>
           </div>
         </section>
 
         <section>
-          <h2>얼굴 제어</h2>
-          <p>최대 4개를 조합합니다. AU 코드는 모델 명령 보장이 아니라, 아래처럼 구체적 움직임으로 변환됩니다.</p>
-          <div id="control-rows"></div>
-        </section>
-
-        <section class="two-column">
-          <div>
-            <h2>시선</h2>
-            <select id="gaze">
-              <option value="center">정면</option><option value="left">왼쪽</option><option value="right">오른쪽</option><option value="up">위</option><option value="down">아래</option>
+          <h2>변경 종류</h2>
+          <label>편집 모드
+            <select id="edit-mode">
+              <option value="expression">표정·시선·머리 방향</option>
+              <option value="outfit">복장·착용 장비만 변경</option>
+              <option value="scene">장소·배경만 변경</option>
             </select>
-          </div>
-          <div>
-            <h2>머리 방향</h2>
-            <select id="head-pose">
-              <option value="neutral">중립</option><option value="turn_left">왼쪽 회전</option><option value="turn_right">오른쪽 회전</option><option value="up">위</option><option value="down">아래</option><option value="tilt_left">왼쪽 기울임</option><option value="tilt_right">오른쪽 기울임</option><option value="forward">앞으로</option><option value="back">뒤로</option>
-            </select>
+          </label>
+          <div id="edit-prompt-group" hidden>
+            <label>변경 요청
+              <textarea id="edit-prompt" maxlength="1000" rows="3" placeholder="바꾸고 싶은 복장 또는 장소를 구체적으로 적으세요."></textarea>
+            </label>
+            <p id="edit-scope-note" class="muted"></p>
           </div>
         </section>
 
-        <section>
-          <h2>게임 프리셋</h2>
-          <p>프리셋을 선택하면 직접 얼굴 제어 대신 검토 가능한 제어 조합으로 해석됩니다.</p>
-          <select id="preset">
-            <option value="">직접 제어 사용</option><option value="idle_neutral">무표정</option><option value="alert">경계</option><option value="determined">결의</option><option value="hurt">피격</option><option value="surprised">놀람</option><option value="joy">기쁨</option><option value="anger">분노</option><option value="fear">공포</option><option value="blink">깜박임</option><option value="wink">윙크</option>
-          </select>
-        </section>
+        <div id="expression-controls">
+          <section>
+            <h2>얼굴 제어</h2>
+            <p>최대 4개를 조합합니다. AU 코드는 모델 명령 보장이 아니라, 아래처럼 구체적 움직임으로 변환됩니다.</p>
+            <div id="control-rows"></div>
+          </section>
+
+          <section class="two-column">
+            <div>
+              <h2>시선</h2>
+              <select id="gaze">
+                <option value="center">정면</option><option value="left">왼쪽</option><option value="right">오른쪽</option><option value="up">위</option><option value="down">아래</option>
+              </select>
+            </div>
+            <div>
+              <h2>머리 방향</h2>
+              <select id="head-pose">
+                <option value="neutral">중립</option><option value="turn_left">왼쪽 회전</option><option value="turn_right">오른쪽 회전</option><option value="up">위</option><option value="down">아래</option><option value="tilt_left">왼쪽 기울임</option><option value="tilt_right">오른쪽 기울임</option><option value="forward">앞으로</option><option value="back">뒤로</option>
+              </select>
+            </div>
+          </section>
+
+          <section>
+            <h2>게임 프리셋</h2>
+            <p>프리셋을 선택하면 직접 얼굴 제어 대신 검토 가능한 제어 조합으로 해석됩니다.</p>
+            <select id="preset">
+              <option value="">직접 제어 사용</option><option value="idle_neutral">무표정</option><option value="alert">경계</option><option value="determined">결의</option><option value="hurt">피격</option><option value="surprised">놀람</option><option value="joy">기쁨</option><option value="anger">분노</option><option value="fear">공포</option><option value="blink">깜박임</option><option value="wink">윙크</option>
+            </select>
+          </section>
+        </div>
 
         <button id="submit-button" type="submit">실행 모드 확인 중</button>
       </form>
@@ -81,9 +116,12 @@
         <p id="resolved-prompt"></p>
         <p id="review-metadata"></p>
         <div id="candidate-grid"></div>
-        <button id="export-button" type="button" disabled>선택 후보 내보내기</button>
-        <button id="delivery-button" type="button" disabled>프로젝트 GPT 전송 준비</button>
-        <pre id="packet"></pre>
+        <button id="confirm-delivery-button" type="button" disabled>확정 및 전달</button>
+        <button id="download-copy-button" type="button" disabled>PC 사본 다운로드</button>
+        <a id="figma-open-link" target="_blank" rel="noopener noreferrer" hidden>Figma 열기</a>
+        <p id="pairing-info" hidden></p>
+        <button id="refresh-delivery-button" type="button" disabled>Figma 상태 새로고침</button>
+        <pre id="delivery-result"></pre>
       </section>
 
       <p id="status" role="status"></p>
