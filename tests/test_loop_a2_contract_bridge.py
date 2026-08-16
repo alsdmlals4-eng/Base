@@ -6,7 +6,7 @@ import tempfile
 import unittest
 
 from tools.loop_a2_runtime.contract_bridge import ContractBridgeError, build_request_from_capsule
-from tools.loop_a2_runtime.protocol import Budgets
+from tools.loop_a2_runtime.protocol import Budgets, ProtocolError
 
 
 class ContractBridgeTests(unittest.TestCase):
@@ -49,6 +49,27 @@ class ContractBridgeTests(unittest.TestCase):
             self.assertEqual(request.allowed_paths, ("scripts/feature/**", "tests/**"))
             self.assertEqual(request.forbidden_paths, ("project.godot", ".github/**"))
             self.assertEqual(request.requirement_ids, ("REQ_001",))
+
+    def test_m2_directory_prefix_pattern_is_preserved_in_run_request(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            self._project(root)
+            package_path = root / "docs/operations/loop/IMPLEMENTATION_PACKAGE.json"
+            package = json.loads(package_path.read_text(encoding="utf-8"))
+            package["forbidden_paths"] = ["data/"]
+            package_path.write_text(json.dumps(package), encoding="utf-8")
+            try:
+                request = build_request_from_capsule(
+                    project_root=root,
+                    capsule_relative="docs/operations/loop/PROJECT_EXECUTION_CAPSULE.json",
+                    run_id="RUN_001",
+                    provider_mode="FAKE",
+                    budgets=Budgets(12, 2, 600),
+                    bundle_validator=lambda _: (),
+                )
+            except ProtocolError as exc:
+                self.fail(f"schema-valid directory-prefix pattern must remain executable: {exc}")
+            self.assertEqual(request.forbidden_paths, ("data/",))
 
     def test_bundle_findings_block_request(self) -> None:
         class Finding:

@@ -5,6 +5,7 @@ import unittest
 
 from tools.loop_a2_runtime.evidence import canonical_receipt, redact_sensitive
 from tools.loop_a2_runtime.provider_gate import real_provider_gate
+from tools.loop_a2_runtime.protocol import ProtocolError
 
 
 class AdversarialTests(unittest.TestCase):
@@ -69,6 +70,22 @@ class AdversarialTests(unittest.TestCase):
             validate_changed_paths(("scripts/nested/a.gd",), ("scripts/**",), ()),
             (),
         )
+
+    def test_trailing_slash_directory_pattern_is_recursive_and_bounded(self) -> None:
+        from tools.loop_a2_runtime.scope import validate_changed_paths
+        try:
+            nested = validate_changed_paths(
+                ("data/example.json",), ("docs/**",), ("data/",)
+            )
+            root = validate_changed_paths(("data",), ("docs/**",), ("data/",))
+            unrelated = validate_changed_paths(
+                ("docs/example.md",), ("docs/**",), ("data/",)
+            )
+        except ProtocolError as exc:
+            self.fail(f"schema-valid directory-prefix pattern must reach scope matching: {exc}")
+        self.assertEqual(tuple(item.code for item in nested), ("FORBIDDEN_PATH_WRITE",))
+        self.assertEqual(tuple(item.code for item in root), ("FORBIDDEN_PATH_WRITE",))
+        self.assertEqual(unrelated, ())
 
 
 if __name__ == "__main__":
