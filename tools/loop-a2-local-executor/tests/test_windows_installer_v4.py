@@ -56,8 +56,15 @@ class WindowsInstallerV4ContractTests(unittest.TestCase):
         self.assertLess(self.text.index(per_user), self.text.index(all_users))
 
     def test_v4_uses_executor_preflight_as_docker_truth_and_only_pulls_exact_digest_on_missing_image(self) -> None:
+        preflight_command = (
+            '"!VENV!\\Scripts\\loop-a2-local-executor.exe" '
+            '--state-root "!STATE_ROOT!" preflight >"!PREFLIGHT_FILE!" 2>&1'
+        )
         self.assertIn("loop-a2-local-executor.exe", self.text)
-        self.assertGreaterEqual(self.text.count("call :capture_preflight"), 2)
+        self.assertEqual(self.text.count(preflight_command), 2)
+        self.assertNotIn("call :capture_preflight", self.text)
+        self.assertNotIn("\n:capture_preflight\n", self.text)
+        self.assertGreaterEqual(self.text.count('set "PREFLIGHT_RC=!ERRORLEVEL!"'), 2)
         self.assertIn("DOCKER_IMAGE_NOT_PRELOADED", self.text)
         self.assertIn('"!DOCKER_CMD!" pull "!IMAGE_REF!"', self.text)
         self.assertNotIn("docker image ls", self.folded)
