@@ -10,8 +10,15 @@ import re
 from uuid import uuid4
 
 from PIL import Image, UnidentifiedImageError
-from base_tool_contracts import AnchorEvidenceError, ApprovedAnchorRegistry
-from base_tool_contracts import confined_staging_read_bytes, safe_staging_write_bytes
+from base_tool_contracts import (
+    AnchorEvidenceError,
+    ApprovedAnchorRegistry,
+    SubscriptionHandoffPacket,
+    build_subscription_handoff_packet,
+    confined_staging_read_bytes,
+    render_chatgpt_pro_prompt,
+    safe_staging_write_bytes,
+)
 from base_tool_contracts.trusted_files import (
     TrustedFileError,
     read_regular_nofollow,
@@ -39,6 +46,12 @@ class RunBlockedError(RuntimeError):
 _MAX_ANCHOR_BYTES = 25 * 1024 * 1024
 _MAX_ANCHOR_DIMENSION = 4096
 _ALLOWED_ANCHOR_FORMATS = {"PNG", "JPEG", "WEBP"}
+_HANDOFF_REVIEW_CHECKLIST = (
+    "same approved character identity",
+    "requested edit is visible and limited to the requested scope",
+    "no unrequested composition, style, or character change",
+    "compare all candidates before confirming one result",
+)
 
 
 def _import_engine_policy() -> EnginePolicy:
@@ -162,6 +175,17 @@ class RunRecord:
         }
 
 
+@dataclass(frozen=True)
+class PendingHandoff:
+    run_id: str
+    request: ExpressionRequest
+    resolved: ResolvedExpression
+    anchor_sha256: str
+    anchor_evidence: dict[str, str]
+    packet: SubscriptionHandoffPacket
+    prompt: str
+
+
 class ExpressionStudioService:
     def __init__(
         self,
@@ -193,6 +217,124 @@ class ExpressionStudioService:
         if self._anchor_registry is not None:
             self._anchor_registry.assert_project_owned(self._project_root)
         self._runs: dict[str, RunRecord] = {}
+        self._pending_handoffs: dict[str, PendingHandoff] = {}
+
+    def prepare_subscription_handoff(self, request: ExpressionRequest) -> PendingHandoff:
+        if self._run_mode != "subscription_handoff_import":
+            raise RunBlockedError("MODE_NOT_AVAILABLE")
+        if request.project_id != self._project_id:
+            raise ValueError(f"request project_id must match configured project_id {self._project_id!r}")
+        if self._registry is None or self._anchor_registry is None:
+            raise ValueError("ChatGPT Pro handoff requires configured Figma routing and project-owned approved-anchor evidence")
+        try:
+            self._registry.validate_anchor_url(request.project_id, str(request.anchor.figma_node_url))
+            self._registry.assert_unchanged()
+            self._anchor_registry.assert_unchanged()
+            expected_anchor_sha256 = self._anchor_registry.expected_source_sha256(
+                project_id=request.project_id,
+                source_path=request.anchor.source_path,
+                figma_node_url=str(request.anchor.figma_node_url),
+            )
+        except (DeliveryBlockedError, AnchorEvidenceError) as error:
+            raise ValueError(str(error)) from error
+        anchor_bytes = _read_project_image(
+            self._project_root,
+            request.anchor.source_path,
+            expected_sha256=expected_anchor_sha256,
+        )
+        try:
+            anchor_evidence = self._anchor_registry.evidence(
+                project_id=request.project_id,
+                source_path=request.anchor.source_path,
+                figma_node_url=str(request.anchor.figma_node_url),
+                source_bytes=anchor_bytes,
+            )
+        except AnchorEvidenceError as error:
+            raise ValueError(str(error)) from error
+        resolved = resolve_expression(request)
+        run_id = uuid4().hex
+        while run_id in self._runs or run_id in self._pending_handoffs:
+            run_id = uuid4().hex
+        instruction = generation_instruction(request, resolved)
+        packet = build_subscription_handoff_packet(
+            project_id=request.project_id,
+            tool_id="expression-studio",
+            run_id=run_id,
+            workflow="character_edit",
+            source_filename=Path(request.anchor.source_path).name,
+            source_sha256=hashlib.sha256(anchor_bytes).hexdigest(),
+            instruction=instruction,
+            expected_png_count=request.candidate_count,
+            min_dimension=16,
+            max_dimension=4096,
+            review_checklist=_HANDOFF_REVIEW_CHECKLIST,
+        )
+        pending = PendingHandoff(
+            run_id=run_id,
+            request=request,
+            resolved=resolved,
+            anchor_sha256=hashlib.sha256(anchor_bytes).hexdigest(),
+            anchor_evidence=dict(anchor_evidence),
+            packet=packet,
+            prompt=render_chatgpt_pro_prompt(packet),
+        )
+        self._pending_handoffs[run_id] = pending
+        return pending
+
+    def get_pending_handoff(self, run_id: str) -> PendingHandoff:
+        try:
+            return self._pending_handoffs[run_id]
+        except KeyError as error:
+            raise RunNotFoundError(run_id) from error
+
+    def import_subscription_handoff(
+        self,
+        run_id: str,
+        candidates: tuple[ImportedImage, ...],
+    ) -> RunRecord:
+        pending = self.get_pending_handoff(run_id)
+        if self._registry is None or self._anchor_registry is None:
+            raise ValueError("ChatGPT Pro handoff evidence is unavailable during import")
+        try:
+            self._registry.assert_unchanged()
+            self._registry.validate_anchor_url(
+                pending.request.project_id,
+                str(pending.request.anchor.figma_node_url),
+            )
+            self._anchor_registry.assert_unchanged()
+            expected_anchor_sha256 = self._anchor_registry.expected_source_sha256(
+                project_id=pending.request.project_id,
+                source_path=pending.request.anchor.source_path,
+                figma_node_url=str(pending.request.anchor.figma_node_url),
+            )
+        except (DeliveryBlockedError, AnchorEvidenceError) as error:
+            raise ValueError(str(error)) from error
+        anchor_bytes = _read_project_image(
+            self._project_root,
+            pending.request.anchor.source_path,
+            expected_sha256=expected_anchor_sha256,
+        )
+        if hashlib.sha256(anchor_bytes).hexdigest() != pending.anchor_sha256:
+            raise ValueError("approved anchor changed after ChatGPT Pro handoff preparation")
+        try:
+            evidence = self._anchor_registry.evidence(
+                project_id=pending.request.project_id,
+                source_path=pending.request.anchor.source_path,
+                figma_node_url=str(pending.request.anchor.figma_node_url),
+                source_bytes=anchor_bytes,
+            )
+        except AnchorEvidenceError as error:
+            raise ValueError(str(error)) from error
+        if evidence != pending.anchor_evidence:
+            raise ValueError("approved-anchor evidence changed after ChatGPT Pro handoff preparation")
+        record = self.create_import_run(
+            pending.request,
+            candidates,
+            "CHATGPT_INCLUDED",
+            reserved_run_id=run_id,
+        )
+        del self._pending_handoffs[run_id]
+        return record
 
     def create_run(self, request: ExpressionRequest) -> RunRecord:
         if self._run_mode == "subscription_handoff_import":
@@ -318,6 +460,8 @@ class ExpressionStudioService:
         request: ExpressionRequest,
         candidates: tuple[ImportedImage, ...],
         declared_source: DeclaredSource,
+        *,
+        reserved_run_id: str | None = None,
     ) -> RunRecord:
         if self._run_mode != "subscription_handoff_import":
             raise RunBlockedError("MODE_NOT_AVAILABLE")
@@ -359,7 +503,9 @@ class ExpressionStudioService:
         if any(value == anchor_visual for value in visual_hashes):
             raise ValueError("import expression candidate must visibly differ from the anchor")
         resolved = resolve_expression(request)
-        run_id = uuid4().hex
+        run_id = reserved_run_id or uuid4().hex
+        if run_id in self._runs:
+            raise RunBlockedError("run identity is already in use")
         paths = create_run_paths(self._project_root, request.asset_id, run_id)
         revalidate_run_paths(self._project_root, paths)
         anchor_verification = "ANCHOR_ROUTE_SYNTAX_VALID" if self._registry is not None else "ANCHOR_UNVERIFIED"

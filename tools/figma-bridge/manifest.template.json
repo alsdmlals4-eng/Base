@@ -1,0 +1,14 @@
+{
+  "name": "Base Tool Hub Figma Bridge",
+  "id": "FIGMA_ASSIGNED_PLUGIN_ID",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": ["none"],
+    "devAllowedDomains": ["http://127.0.0.1:8764"],
+    "reasoning": "Development-only bridge to the developer's local Base Tool Hub. Production publishing must replace this with a reviewed HTTPS origin."
+  }
+}

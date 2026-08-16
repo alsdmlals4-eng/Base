@@ -21,14 +21,22 @@ from typing import Any, Callable, Iterable, Iterator
 from urllib.request import urlopen
 
 from base_tool_contracts import AnchorEvidenceError, ApprovedAnchorRegistry, ProjectFigmaRegistry
+from base_tool_contracts.trusted_files import TrustedFileError, read_regular_portable_nofollow
 
 from .adapters import AdapterError, LaunchSpec, bind_launch_spec, build_launch_spec
 from .environment import EnvironmentError, LaunchContext, ensure_runtime_directory
 from .launcher import ChildIdentity, ChildPublicView, LaunchError
 from .projects import ProjectBinding, ProjectBindingError, ProjectLocator
+from .windows_process_owner import (
+    CREATE_NO_WINDOW,
+    CREATE_SUSPENDED,
+    WindowsJobOwner,
+    WindowsOwnershipError,
+)
 
 
 _POSIX_PROCESS_GROUPS = os.name == "posix" and hasattr(os, "killpg")
+_WINDOWS_JOB_OBJECTS = os.name == "nt"
 _PUBLIC_STATES = frozenset(
     {
         "REGISTERED",
@@ -71,6 +79,7 @@ class _Child:
     log_lock: threading.Lock
     log_thread: threading.Thread | None = None
     state: str = "RUNNING"
+    windows_owner: WindowsJobOwner | None = None
 
 
 @dataclass
@@ -80,7 +89,7 @@ class _KeyLock:
 
 
 class ProcessSupervisor:
-    """Own one authenticated process group for each reviewed tool/project key."""
+    """Own one authenticated process tree for each reviewed tool/project key."""
 
     def __init__(
         self,
@@ -106,7 +115,12 @@ class ProcessSupervisor:
         self.base_root = Path(base_root).absolute()
         self.locator = locator
         self.tools = {str(tool["tool_id"]): tool for tool in tools}
-        self.python_executable = Path(python_executable or (self.base_root / ".venv" / "bin" / "python"))
+        default_python = (
+            self.base_root / ".venv" / "Scripts" / "python.exe"
+            if os.name == "nt"
+            else self.base_root / ".venv" / "bin" / "python"
+        )
+        self.python_executable = Path(python_executable or default_python)
         self.spec_builder = spec_builder
         self.spec_binder = spec_binder
         self.binding_resolver = binding_resolver or self._binding
@@ -167,8 +181,8 @@ class ProcessSupervisor:
         with self._machine_guard:
             if self._machine_lock_stream is not None or self._machine_lock_socket is not None:
                 return
-            if self.machine_lock_root is None:
-                if os.sys.platform != "linux":
+            if os.name == "nt" or self.machine_lock_root is None:
+                if os.sys.platform not in {"linux", "win32"}:
                     raise LaunchError("Tool Hub machine ownership is unavailable on this platform")
                 owner = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 try:
@@ -261,7 +275,8 @@ class ProcessSupervisor:
                 dir=runtime,
             )
         )
-        os.chmod(path, 0o700)
+        if os.name != "nt":
+            os.chmod(path, 0o700)
         return path
 
     @staticmethod
@@ -289,35 +304,45 @@ class ProcessSupervisor:
             time.sleep(self.poll_interval)
         else:
             raise LaunchError("child startup identity timeout")
-        descriptor = -1
-        try:
-            descriptor = os.open(
-                child.spec.startup_file,
-                os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_CLOEXEC", 0),
-            )
-            metadata = os.fstat(descriptor)
-            if (
-                not stat.S_ISREG(metadata.st_mode)
-                or metadata.st_uid != os.geteuid()
-                or metadata.st_size > _MAX_STATUS_BYTES
-            ):
-                raise ValueError("unsafe")
-            while metadata.st_nlink == 2 and time.monotonic() < deadline:
-                if child.process.poll() is not None:
-                    raise LaunchError("child exited before startup identity report")
-                time.sleep(self.poll_interval)
+        if os.name == "nt":
+            try:
+                raw, _ = read_regular_portable_nofollow(
+                    child.spec.startup_file,
+                    max_bytes=_MAX_STATUS_BYTES,
+                )
+                payload = json.loads(raw)
+            except (TrustedFileError, ValueError, json.JSONDecodeError) as error:
+                raise LaunchError("child startup identity was malformed") from error
+        else:
+            descriptor = -1
+            try:
+                descriptor = os.open(
+                    child.spec.startup_file,
+                    os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_CLOEXEC", 0),
+                )
                 metadata = os.fstat(descriptor)
-            if metadata.st_nlink != 1:
-                raise ValueError("unsafe link count")
-            raw = os.read(descriptor, _MAX_STATUS_BYTES + 1)
-            if len(raw) > _MAX_STATUS_BYTES or len(raw) != metadata.st_size:
-                raise ValueError("oversized or changed")
-            payload = json.loads(raw)
-        except (OSError, ValueError, json.JSONDecodeError) as error:
-            raise LaunchError("child startup identity was malformed") from error
-        finally:
-            if descriptor >= 0:
-                os.close(descriptor)
+                if (
+                    not stat.S_ISREG(metadata.st_mode)
+                    or metadata.st_uid != os.geteuid()
+                    or metadata.st_size > _MAX_STATUS_BYTES
+                ):
+                    raise ValueError("unsafe")
+                while metadata.st_nlink == 2 and time.monotonic() < deadline:
+                    if child.process.poll() is not None:
+                        raise LaunchError("child exited before startup identity report")
+                    time.sleep(self.poll_interval)
+                    metadata = os.fstat(descriptor)
+                if metadata.st_nlink != 1:
+                    raise ValueError("unsafe link count")
+                raw = os.read(descriptor, _MAX_STATUS_BYTES + 1)
+                if len(raw) > _MAX_STATUS_BYTES or len(raw) != metadata.st_size:
+                    raise ValueError("oversized or changed")
+                payload = json.loads(raw)
+            except (OSError, ValueError, json.JSONDecodeError) as error:
+                raise LaunchError("child startup identity was malformed") from error
+            finally:
+                if descriptor >= 0:
+                    os.close(descriptor)
         if not isinstance(payload, dict) or not self._matches(payload, expected):
             raise LaunchError("child startup identity did not match the requested binding")
         port = payload.get("port")
@@ -388,9 +413,26 @@ class ProcessSupervisor:
         except ProcessLookupError:
             return False
 
-    def _terminate_group(self, process: subprocess.Popen[bytes], process_group_id: int) -> None:
+    def _terminate_group(
+        self,
+        process: subprocess.Popen[bytes],
+        process_group_id: int,
+        windows_owner: WindowsJobOwner | None = None,
+    ) -> None:
+        if windows_owner is not None:
+            try:
+                windows_owner.terminate()
+                try:
+                    process.wait(timeout=self.stop_timeout)
+                except subprocess.TimeoutExpired as error:
+                    raise LaunchError("Windows child Job Object did not terminate") from error
+            except WindowsOwnershipError as error:
+                raise LaunchError("Windows child Job Object termination failed") from error
+            finally:
+                windows_owner.close()
+            return
         if not _POSIX_PROCESS_GROUPS:
-            raise LaunchError("Windows process ownership is not implemented")
+            raise LaunchError("process tree ownership is unavailable on this platform")
         try:
             os.killpg(process_group_id, signal.SIGTERM)
         except ProcessLookupError:
@@ -413,7 +455,11 @@ class ProcessSupervisor:
 
     def _cleanup_failed_child(self, child: _Child) -> None:
         try:
-            self._terminate_group(child.process, child.process_group_id)
+            self._terminate_group(
+                child.process,
+                child.process_group_id,
+                child.windows_owner,
+            )
         finally:
             if child.log_thread is not None:
                 child.log_thread.join(timeout=self.stop_timeout)
@@ -463,9 +509,9 @@ class ProcessSupervisor:
                     self._set_state(key, "UNHEALTHY", url=existing.identity.url)
                     raise LaunchError("child is unhealthy")
                 return existing.identity
-            if not _POSIX_PROCESS_GROUPS:
+            if not (_POSIX_PROCESS_GROUPS or _WINDOWS_JOB_OBJECTS):
                 self._set_state(key, "BLOCKED_PLATFORM")
-                raise LaunchError("Windows process ownership is not implemented")
+                raise LaunchError("process tree ownership is not implemented on this platform")
             try:
                 self._acquire_machine_lock()
             except LaunchError:
@@ -505,25 +551,57 @@ class ProcessSupervisor:
                     os.close(log_descriptor)
                     raise
                 self._set_state(key, "STARTING")
+                process: subprocess.Popen[bytes] | None = None
+                windows_owner: WindowsJobOwner | None = None
                 try:
-                    process = subprocess.Popen(
-                        list(bound_spec.argv),
-                        shell=False,
-                        cwd=bound_spec.cwd,
-                        env=dict(bound_spec.env),
-                        stdin=subprocess.DEVNULL,
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.STDOUT,
-                        start_new_session=True,
-                        pass_fds=bound_spec.pass_fds,
-                    )
+                    if _WINDOWS_JOB_OBJECTS:
+                        process = subprocess.Popen(
+                            list(bound_spec.argv),
+                            shell=False,
+                            cwd=bound_spec.cwd,
+                            env=dict(bound_spec.env),
+                            stdin=subprocess.DEVNULL,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT,
+                            close_fds=True,
+                            creationflags=CREATE_SUSPENDED | CREATE_NO_WINDOW,
+                        )
+                        self._started_process_count += 1
+                        windows_owner = WindowsJobOwner()
+                        windows_owner.attach_and_resume(process.pid)
+                    else:
+                        process = subprocess.Popen(
+                            list(bound_spec.argv),
+                            shell=False,
+                            cwd=bound_spec.cwd,
+                            env=dict(bound_spec.env),
+                            stdin=subprocess.DEVNULL,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT,
+                            start_new_session=True,
+                            pass_fds=bound_spec.pass_fds,
+                        )
+                        self._started_process_count += 1
                 except Exception:
+                    if windows_owner is not None:
+                        try:
+                            windows_owner.terminate()
+                        except WindowsOwnershipError:
+                            pass
+                        windows_owner.close()
+                    if process is not None and process.poll() is None:
+                        try:
+                            process.terminate()
+                            process.wait(timeout=self.stop_timeout)
+                        except (OSError, subprocess.TimeoutExpired):
+                            pass
                     os.close(log_descriptor)
                     raise
                 finally:
-                    for descriptor in bound_spec.pass_fds:
-                        os.close(descriptor)
-                self._started_process_count += 1
+                    if not _WINDOWS_JOB_OBJECTS:
+                        for descriptor in bound_spec.pass_fds:
+                            os.close(descriptor)
+                assert process is not None
                 placeholder = ChildIdentity(
                     tool_id,
                     project_id,
@@ -535,12 +613,6 @@ class ProcessSupervisor:
                 )
                 log_tail = bytearray()
                 log_lock = threading.Lock()
-                log_thread = threading.Thread(
-                    target=self._drain_bounded_log,
-                    args=(process.stdout, log_descriptor, log_tail, log_lock),
-                    daemon=True,
-                )
-                log_thread.start()
                 child = _Child(
                     process,
                     process.pid,
@@ -551,9 +623,17 @@ class ProcessSupervisor:
                     binding.root,
                     log_tail,
                     log_lock,
-                    log_thread,
-                    "STARTING",
+                    log_thread=None,
+                    state="STARTING",
+                    windows_owner=windows_owner,
                 )
+                log_thread = threading.Thread(
+                    target=self._drain_bounded_log,
+                    args=(process.stdout, log_descriptor, log_tail, log_lock),
+                    daemon=True,
+                )
+                child.log_thread = log_thread
+                log_thread.start()
                 expected = self._expected_for(tool_id, dict(spec.expected_identity), process.pid)
                 startup = self._read_startup(child, expected)
                 port = int(startup["port"])
@@ -631,7 +711,11 @@ class ProcessSupervisor:
                 return self._set_state(key, "STOPPED")
             if child.process.poll() is not None:
                 child.state = "UNHEALTHY"
-                self._terminate_group(child.process, child.process_group_id)
+                self._terminate_group(
+                    child.process,
+                    child.process_group_id,
+                    child.windows_owner,
+                )
                 self._children.pop(key, None)
                 view = self._set_state(key, "UNHEALTHY", log_tail=self._sanitized_log_tail(child))
                 shutil.rmtree(child.launch_dir, ignore_errors=True)
@@ -646,7 +730,11 @@ class ProcessSupervisor:
                 self._set_state(key, "UNHEALTHY", url=child.identity.url)
                 raise LaunchError("child stop ownership did not match")
             self._set_state(key, "STOPPING", url=child.identity.url)
-            self._terminate_group(child.process, child.process_group_id)
+            self._terminate_group(
+                child.process,
+                child.process_group_id,
+                child.windows_owner,
+            )
             if child.log_thread is not None:
                 child.log_thread.join(timeout=self.stop_timeout)
             child.state = "STOPPED"
