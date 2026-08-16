@@ -70,7 +70,7 @@ The new frames use the same width/height and horizontal alignment:
 
 No resize of `Generated Assets` is required.
 
-Each new frame should follow the existing `Expression Runs` internal presentation pattern: one title text node near the top and one concise note describing that the frame is a Base Tool Hub exact delivery destination. The route frame itself, not the text child, is the canonical destination node.
+Each new frame follows the existing `Expression Runs` internal presentation pattern: one title text node near the top and one concise note describing that the frame is a Base Tool Hub exact delivery destination. The route frame itself, not the text child, is the canonical destination node.
 
 ## Project inventory
 
@@ -121,14 +121,14 @@ No aliases or runtime layer-name search are allowed as mutation authority.
 
 The following cases must remain blocked:
 
-- Sprite action request resolves only `character_expression_runs`.
-- Effect request resolves only `character_expression_runs`.
-- Sprite/Effect request falls back to `Generated Assets`.
-- destination node is missing, renamed, reparented, wrong type, or belongs to the wrong Figma file.
-- project marker is missing, renamed, wrong type, or no longer distinct from route nodes.
-- a browser/request supplies a project, Figma URL, node ID, or route different from the server/canonical registry.
-- the registry changes after loading or differs from committed Base bytes.
-- the delivered file SHA differs from the accepted run SHA.
+- a Sprite action delivery resolves to `character_expression_runs` instead of `sprite_action_runs`;
+- an Effect delivery resolves to `character_expression_runs` instead of `effect_runs`;
+- Sprite/Effect delivery falls back to generic `Generated Assets`;
+- destination node is missing, renamed, reparented, wrong type, or belongs to the wrong Figma file;
+- project marker is missing, renamed, wrong type, or no longer distinct from route nodes;
+- a browser/request supplies a project, Figma URL, node ID, or route different from the server/canonical registry;
+- the registry changes after loading or differs from committed Base bytes;
+- the delivered file SHA differs from the accepted run SHA;
 - an unregistered project or unregistered tool route is requested.
 
 The expected public result for missing/unavailable Sprite/Effect routes remains a blocked state such as `DELIVERY_TOOL_ROUTE_UNAVAILABLE`; implementation must not silently degrade to a generic destination.
@@ -188,7 +188,7 @@ After merge, repeat:
 
 Figma creation must be retry-safe. A retry first searches only the exact registered parent for exact canonical sibling names and validates them before deciding whether creation is needed. It must never create `Sprite Action Runs 2`, `Effect Runs Copy`, or similar duplicates.
 
-If Figma creation succeeds for only some projects, do not publish incomplete new routes as a complete eight-project Base registry. Keep Base registry unchanged until all 16 nodes are read back, or record incomplete entries as non-delivery states only when an implementation test explicitly requires that representation.
+If Figma creation succeeds for only some projects, the Base registry remains unchanged. Do not publish any of the 16 new routes until all 16 route frames have been created or safely reused and read back successfully. This keeps the current eight Character/Expression routes as the only active authority until the new route set is complete.
 
 If Base registry update or CI later fails, the created empty Figma frames may remain as non-authoritative workspace structure; they become mutation authority only after a committed `READY_FOR_DELIVERY` registry entry passes canonical validation.
 
