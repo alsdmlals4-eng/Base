@@ -18,6 +18,8 @@ from tools.periodic_source_scan_queue import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+AGENTS = ROOT / "AGENTS.md"
+CI_COST_POLICY = ROOT / "docs" / "CI_EXECUTION_COST_POLICY.md"
 QUEUE_WORKFLOW = ROOT / ".github" / "workflows" / "periodic-source-scan-queue.yml"
 EVIDENCE_WORKFLOW = ROOT / ".github" / "workflows" / "validate-evidence-knowledge.yml"
 WATCHLIST = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md"
@@ -165,35 +167,42 @@ class PeriodicSourceScanQueueTests(unittest.TestCase):
             self.assertIn(required, first)
         self.assertNotIn("fresh-source", first)
 
-    def test_workflow_runs_daily_without_repository_timeout_and_uses_bounded_writes(self) -> None:
+    def test_base_zero_incremental_cost_policy_is_always_on_and_uses_existing_cost_owner(self) -> None:
+        agents = AGENTS.read_text(encoding="utf-8")
+        self.assertTrue(CI_COST_POLICY.is_file())
+        for required in (
+            "ZERO_INCREMENTAL_COST_REQUIRED",
+            "COST_GATE_BLOCKED",
+            "pay-as-you-go",
+            "separately metered",
+            "docs/CI_EXECUTION_COST_POLICY.md",
+        ):
+            self.assertIn(required, agents)
+        ci_policy = CI_COST_POLICY.read_text(encoding="utf-8")
+        for required in ("REMOTE_CI", "LOCAL_FALLBACK", "비용"):
+            self.assertIn(required, ci_policy)
+
+    def test_workflow_runs_daily_as_zero_cost_queue_preparation_only(self) -> None:
         self.assertTrue(QUEUE_WORKFLOW.is_file())
         workflow = QUEUE_WORKFLOW.read_text(encoding="utf-8")
         for required in (
             'cron: "0 18 * * *"', 'timezone: "Asia/Seoul"', "workflow_dispatch:",
-            "actions: write", "contents: write", "issues: write", "pull-requests: write",
-            "OPENAI_API_KEY", "SOURCE_ANALYSIS_MODEL",
-            "tools/periodic_source_analysis.py", "tools/periodic_source_scan_queue.py",
-            "PERIODIC_SOURCE_OPERATIONS_LEDGER.json", "PERIODIC_SOURCE_CANDIDATE_LEDGER.json",
-            "periodic-source-scan-queue.md", "automation/source-scan-", "gh pr create",
-            "gh workflow run validate-evidence-knowledge.yml",
-            "gh workflow run validate-base-v9-rc.yml",
-            "gh workflow run validate-game-project-operating-system.yml",
-            "validation_level=full", "gh run watch", "git merge --no-edit origin/main",
-            "reviewThreads", "gh pr merge", "--squash", "--match-head-commit",
-            "SCHEDULED_AUTOMATION_CONCURRENT_PR_RECONCILIATION",
-            "BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16",
-            "BLOCKED_OPEN_PR_CONFLICT", "BLOCKED_MERGE_NOT_IMMEDIATE",
-            "BLOCKED_ACTIONS_PR_CREATION_SETTING", "BLOCKED_ACTIONS_DISPATCH",
-            "BLOCKED_VALIDATION",
+            "issues: write", "tools/periodic_source_scan_queue.py",
+            "periodic-source-scan-queue.md",
+            "ZERO_INCREMENTAL_COST_QUEUE_PREP", "AWAITING_CHATGPT_REVIEW",
+            "USER_DIRECTED_CHATGPT_REVIEW",
             "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
             "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
-            "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a",
         ):
             self.assertIn(required, workflow)
         for forbidden in (
             "timeout-minutes", "pull_request_target", "git push origin HEAD:main",
             "git push --force", "--admin", "--auto",
             "BLOCKED_ACTIVE_PR_GUARD", "BLOCKED_ACTIVE_PR_GUARD_QUERY",
+            "SOURCE_SCAN_BATCH_SIZE",
+            "actions: write", "contents: write", "pull-requests: write",
+            "automation/source-scan-", "gh run watch", "reviewThreads",
+            "validation_level=full", "--squash", "--match-head-commit",
         ):
             self.assertNotIn(forbidden, workflow)
 
@@ -226,7 +235,8 @@ class PeriodicSourceScanQueueTests(unittest.TestCase):
         for required in (
             "UNVERIFIED_DISCOVERY", "Queue 완료 != scan 완료", "새 글·수정 글",
             "신규 Source 사이트", "Issue 갱신 != Ledger timestamp 갱신",
-            "기존 owner", "자동 Canon", "자동 PR",
+            "기존 owner", "자동 Canon", "자동 PR", "ZERO_INCREMENTAL_COST_REQUIRED",
+            "AWAITING_CHATGPT_REVIEW",
         ):
             self.assertIn(required, queue_guide)
 
@@ -265,7 +275,7 @@ class PeriodicSourceScanQueueTests(unittest.TestCase):
         queue_workflow = QUEUE_WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("고유 Source family 하나로 추적", watchlist)
         self.assertIn("PERIODIC_SOURCE_OPERATIONS_LEDGER.json", watchlist)
-        self.assertIn("PERIODIC_SOURCE_OPERATIONS_LEDGER.json", queue_workflow)
+        self.assertIn("tools/periodic_source_scan_queue.py", queue_workflow)
         self.assertNotIn('echo "last_successful_scan_at', queue_workflow)
 
 

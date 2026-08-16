@@ -9,17 +9,11 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/periodic-source-scan-queue.yml"
-      - "tools/periodic_source_analysis*.py"
-      - "tools/periodic_source_candidate_state.py"
-      - "tools/periodic_source_operations_state.py"
       - "tools/periodic_source_scan_queue.py"
       - "tools/run_periodic_source_scan_queue.sh"
-      - "tests/test_periodic_source_analysis_auto_merge.py"
       - "tests/test_periodic_source_analysis_runner.py"
       - "tests/test_periodic_source_scan_queue.py"
       - "docs/knowledge/game-development/PERIODIC_SOURCE_SCAN_QUEUE.md"
-      - "docs/knowledge/game-development/EVIDENCE_BASED_GAME_DEVELOPMENT_METHOD.md"
-      - "docs/knowledge/game-development/source-scans/README.md"
 
 permissions:
   contents: read
@@ -28,38 +22,19 @@ concurrency:
   group: periodic-source-scan-queue
   cancel-in-progress: false
 
-env:
-  SOURCE_ANALYSIS_MODEL: ${{ vars.SOURCE_ANALYSIS_MODEL || 'gpt-5.6-terra' }}
-  SOURCE_SCAN_BATCH_SIZE: ${{ vars.SOURCE_SCAN_BATCH_SIZE || '4' }}
-
-# The trusted shell runner owns the following bounded orchestration contract.
-# Keeping the tokens here makes the delegation visible to workflow-only contract readers.
-# automation/source-scan-
-# gh pr create
-# gh workflow run validate-evidence-knowledge.yml
-# gh workflow run validate-base-v9-rc.yml
-# gh workflow run validate-game-project-operating-system.yml
-# validation_level=full
-# gh run watch
-# git merge --no-edit origin/main
-# reviewThreads
-# gh pr merge --squash --match-head-commit
-# SCHEDULED_AUTOMATION_CONCURRENT_PR_RECONCILIATION
-# BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16
-# BLOCKED_OPEN_PR_CONFLICT
-# BLOCKED_OPEN_PR_CONFLICT_QUERY
-# BLOCKED_MERGE_NOT_IMMEDIATE
-# BLOCKED_ACTIONS_PR_CREATION_SETTING
-# BLOCKED_ACTIONS_DISPATCH
-# BLOCKED_VALIDATION
+# ZERO_INCREMENTAL_COST_QUEUE_PREP
+# state: AWAITING_CHATGPT_REVIEW
+# ai_api_call: NONE
+# next_executor: USER_DIRECTED_CHATGPT_REVIEW
+# output: periodic-source-scan-queue.md
+# Queue preparation is deterministic Issue maintenance only.
+# Actual web research and Evidence decisions happen in a user-directed ChatGPT review.
 
 jobs:
-  analyze-validate-and-merge:
+  prepare-queue:
     permissions:
-      actions: write
-      contents: write
+      contents: read
       issues: write
-      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Check out default branch
@@ -72,47 +47,23 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Verify daily Source analysis contracts
+      - name: Verify zero-cost Source Queue contracts
         shell: bash
         run: |
           set -euo pipefail
           python -m py_compile \
             tools/periodic_source_scan_queue.py \
-            tools/periodic_source_analysis_contract.py \
-            tools/periodic_source_analysis_render.py \
-            tools/periodic_source_candidate_state.py \
-            tools/periodic_source_operations_state.py \
-            tools/periodic_source_analysis.py \
             tests/test_periodic_source_scan_queue.py \
-            tests/test_periodic_source_analysis_auto_merge.py \
             tests/test_periodic_source_analysis_runner.py
           bash -n tools/run_periodic_source_scan_queue.sh
           python -m unittest \
             tests/test_periodic_source_scan_queue.py \
-            tests/test_periodic_source_analysis_auto_merge.py \
             tests/test_periodic_source_analysis_runner.py \
             -v
 
-      - name: Run daily context analysis, PR validation, and guarded expected-head merge
+      - name: Prepare due-Source Queue without metered AI execution
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: bash tools/run_periodic_source_scan_queue.sh
-
-      - name: Upload daily Source analysis evidence
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-        with:
-          name: periodic-source-scan-queue-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            periodic-source-scan-queue.md
-            queue-final.md
-            source-analysis-status.json
-            changed-files.txt
-            source-scan-pr-body.md
-            docs/knowledge/game-development/source-scans/**
-            docs/knowledge/game-development/PERIODIC_SOURCE_CANDIDATE_LEDGER.json
-            docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json
-          if-no-files-found: warn
