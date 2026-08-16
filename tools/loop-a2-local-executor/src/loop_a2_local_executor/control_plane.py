@@ -13,7 +13,7 @@ _SAFE_ENV = (
 _PUBLIC_FIELDS = (
     "status", "code", "issue_number", "target_repository", "base_runtime_sha",
     "authority_sha", "run_id", "a2_state", "a2_finding_code", "a2_provider_error_type",
-    "a2_receipt_digest", "provider_mode", "a3_auto_merge", "scheduler",
+    "a2_receipt_digest", "a2_child_code", "provider_mode", "a3_auto_merge", "scheduler",
 )
 
 

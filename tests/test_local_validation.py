@@ -52,6 +52,9 @@ from tests.test_local_ci_fallback import (
 from tests.test_local_godot_reference_library import (
     LocalGodotReferenceLibraryTests as _LocalGodotReferenceLibraryTests,
 )
+from tests.test_loop_a2_child_terminal_contract import (
+    LoopA2ChildTerminalContractTests as _LoopA2ChildTerminalContractTests,
+)
 from tests.test_project_asset_vault import (
     ProjectAssetVaultTests as _ProjectAssetVaultTests,
 )
