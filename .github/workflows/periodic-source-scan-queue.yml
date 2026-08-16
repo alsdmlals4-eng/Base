@@ -26,6 +26,7 @@ concurrency:
 # state: AWAITING_CHATGPT_REVIEW
 # ai_api_call: NONE
 # next_executor: USER_DIRECTED_CHATGPT_REVIEW
+# output: periodic-source-scan-queue.md
 # Queue preparation is deterministic Issue maintenance only.
 # Actual web research and Evidence decisions happen in a user-directed ChatGPT review.
 
