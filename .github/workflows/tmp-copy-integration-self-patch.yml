@@ -1,0 +1,67 @@
+name: Temporary copy-integration policy self patch
+
+on:
+  push:
+    branches:
+      - feat/copy-integration-default-20260816
+    paths:
+      - .github/workflows/tmp-copy-integration-self-patch.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-intake-owner:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/copy-integration-default-20260816
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+      - name: Apply exact owner patches and remove this temporary workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          skill_path = Path("skills/managing-project-intake-and-work-contract/SKILL.md")
+          skill = skill_path.read_text(encoding="utf-8")
+          old = """명시적인 user-directed 계속 작업에서 `same-goal`의 `in-progress PR`이 이미 있으면 `USER_DIRECTED_PARALLEL_PR`로 라우팅할 수 있다. 이때 기존 PR은 read-only overlap evidence로만 확인하고, **current completed main**에서 **separate branch/PR**을 만들어 독립 진행한다. 이후 `synchronizing-local-and-github-state`의 concurrent preflight가 실제 `SAME_GOAL / PATH_OVERLAP / SEMANTIC_OVERLAP`을 판정하면 `PROVISIONAL_INTEGRATION` 계약으로 위임한다. 겹치는 owner PR branch는 계속 read-only이고 owner/main 이동마다 semantic reconciliation과 exact-head 검증을 다시 수행하며, owner가 해결되기 전에는 merge하지 않는다. 이 규칙은 `scheduled/periodic` repository-writing automation의 더 엄격한 active-PR guard를 완화하지 않는다. 상세 중복 제거·superseded·병합 Gate는 `references/continuous-work-execution.md`와 `synchronizing-local-and-github-state`를 따른다."""
+          new = """명시적인 user-directed 계속 작업에서 `same-goal`의 `in-progress PR`이 이미 있으면 `USER_DIRECTED_PARALLEL_PR`로 라우팅한다. 기존 PR은 read-only overlap evidence로만 확인하고 **do not modify/rebase/update** 하며, **current completed main**에서 **separate branch/PR**을 만든다. 이후 `synchronizing-local-and-github-state`의 concurrent preflight가 `SAME_GOAL / PATH_OVERLAP / SEMANTIC_OVERLAP`을 판정하면 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16` 아래 `PROVISIONAL_INTEGRATION`으로 전환한다. owner PR branches는 read-only로 보존하고 필요한 material delta만 selective copy·재구현한 뒤 semantic reconciliation과 exact-head 검증을 수행한다. owner PR이 열려 있다는 사실만으로 merge를 막지 않으며 `absorbed_owner_deltas`와 `residual_owner_deltas`로 material coverage를 증명한다. `scheduled/periodic` repository-writing automation도 unrelated open PR 존재 자체를 전역 blocker로 사용하지 않고 실제 path/semantic overlap만 국소 조정한다. 상세 superseded·residual·병합 Gate는 `references/continuous-work-execution.md`와 `synchronizing-local-and-github-state`를 따른다."""
+          if skill.count(old) != 1:
+              raise SystemExit(f"intake owner replacement count={skill.count(old)}")
+          skill_path.write_text(skill.replace(old, new, 1), encoding="utf-8", newline="\n")
+
+          log_path = Path("skills/managing-project-intake-and-work-contract/LEARNING_LOG.md")
+          log = log_path.read_text(encoding="utf-8")
+          marker = "# Managing Project Intake and Work Contracts — Learning Log\n"
+          if not log.startswith(marker):
+              raise SystemExit("unexpected intake learning-log header")
+          entry = """
+
+## 2026-08-16 — Copy integration replaces open-PR waiting as the Base coordination default
+
+- **상태:** `OBSERVATION`
+- **호출 트리거:** 사용자가 open/conflicting PR 때문에 대기시간이 길어지는 문제를 지적하고, 충돌되는 PR이나 파일은 원본을 건드리지 않은 채 복사해 별도 최신-main 작업으로 진행한 뒤 검증·병합하는 방식을 Base 공용 작업 방식으로 바꾸라고 지시했다.
+- **Finding:** 기존 `USER_DIRECTED_PARALLEL_PR`은 새 PR 시작은 허용했지만 actual overlap은 per-case replacement approval과 owner-resolution-before-merge에 묶였고 scheduled automation은 any-open-PR guard로 전면 직렬화됐다. 두 규칙을 합치면 owner branch 안전은 높지만 unrelated 작업까지 idle하게 만드는 waiting tax가 생겼다.
+- **Decision:** `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`을 기존 intake/safe-sync owner에 흡수한다. approved same-goal/path/semantic overlap은 exact latest completed main의 separate integration branch에서 필요한 material delta만 selective copy·재구현하고 semantic reconciliation한다. owner PR branches는 read-only다. merge 전에는 `absorbed_owner_deltas`/`residual_owner_deltas`, exact-head checks, P0/P1 0, unresolved thread 0을 요구한다. fully absorbed owner는 post-merge superseded로 정리하고 residual unique work는 보존한다.
+- **Scheduled boundary:** 예약·주기 작업도 foreign PR 존재만으로 분석 전체를 막지 않는다. 실제 changed-path/semantic overlap을 검사하고 안전하게 자동 reconcile할 수 없는 conflicted write만 국소 defer한다.
+- **Safety boundary:** standing authorization은 새 제품 범위, 파괴적 migration, 결제, 계정·보안 권한 확대, direct main, force push, `--admin`, ruleset bypass를 승인하지 않는다.
+- **Regression trigger:** unrelated open PR 때문에 전체 작업이 다시 대기하거나, stale whole-file copy가 newer main을 덮어쓰거나, owner PR branch를 수정하거나, residual unique work를 잃고 superseded 처리하는 사례가 나타날 때.
+"""
+          if "## 2026-08-16 — Copy integration replaces open-PR waiting" not in log:
+              log = marker + entry + log[len(marker):]
+              log_path.write_text(log, encoding="utf-8", newline="\n")
+          PY
+          rm .github/workflows/tmp-copy-integration-self-patch.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add skills/managing-project-intake-and-work-contract/SKILL.md \
+            skills/managing-project-intake-and-work-contract/LEARNING_LOG.md \
+            .github/workflows/tmp-copy-integration-self-patch.yml
+          git commit -m "feat: align intake owner with standing copy integration"
+          git push origin HEAD:feat/copy-integration-default-20260816
