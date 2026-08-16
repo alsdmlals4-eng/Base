@@ -11,6 +11,7 @@ from base_tool_contracts import (
 )
 from test_figma_delivery import paired_token, png_bytes
 from test_projects import make_project
+from tool_hub import _figma_delivery_base as legacy_delivery
 from tool_hub.figma_delivery import BridgeReceipt, DeliveryError, FigmaDeliveryService
 from tool_hub.projects import ProjectLocator
 
@@ -60,6 +61,129 @@ def test_expression_delivery_binds_exact_character_expression_destination(tmp_pa
     assert job.target_node_id != job.generation_area_node_id
 
 
+def test_expression_cannot_use_sprite_or_effect_routes(tmp_path: Path) -> None:
+    service, _ = service_for(tmp_path)
+
+    for route_id in ("sprite_action_runs", "effect_runs"):
+        with pytest.raises(DeliveryError, match="DELIVERY_TOOL_ROUTE_UNAVAILABLE"):
+            service.enqueue(
+                "expression-studio",
+                "coc-fiction",
+                f"run-expression-misuse-{route_id}",
+                png_bytes(),
+                "image/png",
+                tool_route_id=route_id,
+            )
+
+
+def test_sprite_action_delivery_binds_only_sprite_action_destination(tmp_path: Path) -> None:
+    service, _ = service_for(tmp_path, "omenward")
+    job = service.enqueue(
+        "sprite-animation-studio",
+        "omenward",
+        "run-sprite-action",
+        png_bytes(),
+        "image/png",
+        tool_route_id="sprite_action_runs",
+    )
+
+    assert job.tool_route_id == "sprite_action_runs"
+    assert job.target_node_name == "Sprite Action Runs"
+    assert job.target_node_id == "21:2"
+
+
+def test_effect_delivery_binds_only_effect_destination(tmp_path: Path) -> None:
+    service, _ = service_for(tmp_path, "omenward")
+    job = service.enqueue(
+        "sprite-animation-studio",
+        "omenward",
+        "run-effect",
+        png_bytes(),
+        "image/png",
+        tool_route_id="effect_runs",
+    )
+
+    assert job.tool_route_id == "effect_runs"
+    assert job.target_node_name == "Effect Runs"
+    assert job.target_node_id == "21:5"
+
+
+def test_sprite_cannot_use_character_route_or_omit_route(tmp_path: Path) -> None:
+    service, _ = service_for(tmp_path, "omenward")
+
+    with pytest.raises(DeliveryError, match="DELIVERY_TOOL_ROUTE_UNAVAILABLE"):
+        service.enqueue(
+            "sprite-animation-studio",
+            "omenward",
+            "run-missing",
+            png_bytes(),
+            "image/png",
+        )
+    with pytest.raises(DeliveryError, match="DELIVERY_TOOL_ROUTE_UNAVAILABLE"):
+        service.enqueue(
+            "sprite-animation-studio",
+            "omenward",
+            "run-character-route",
+            png_bytes(),
+            "image/png",
+            tool_route_id="character_expression_runs",
+        )
+
+
+def test_recovered_sprite_job_without_stored_route_identity_is_rejected(tmp_path: Path) -> None:
+    project = make_project(tmp_path / "legacy-project", "omenward")
+    locator = ProjectLocator(tmp_path / "legacy-projects.json")
+    locator.register(project, "omenward")
+    legacy = legacy_delivery.FigmaDeliveryService(
+        tmp_path / "legacy-runtime",
+        locator,
+        project_registry(),
+    )
+    legacy_job = legacy.enqueue(
+        "sprite-animation-studio",
+        "omenward",
+        "run-legacy-sprite",
+        png_bytes(),
+        "image/png",
+    )
+
+    restarted = FigmaDeliveryService(
+        tmp_path / "legacy-runtime",
+        locator,
+        project_registry(),
+        tool_routes=tool_route_registry(),
+        base_root=BASE_ROOT,
+    )
+
+    with pytest.raises(DeliveryError, match="DELIVERY_NOT_FOUND"):
+        restarted.job_view("omenward", legacy_job.delivery_id)
+
+
+def test_same_sprite_run_cannot_change_route(tmp_path: Path) -> None:
+    service, _ = service_for(tmp_path, "omenward")
+    payload = png_bytes()
+    first, created = service.enqueue_idempotent(
+        "sprite-animation-studio",
+        "omenward",
+        "run-route-bound",
+        payload,
+        "image/png",
+        tool_route_id="sprite_action_runs",
+    )
+    assert created is True
+    assert first.tool_route_id == "sprite_action_runs"
+
+    with pytest.raises(DeliveryError, match="DELIVERY_RUN_ROUTE_MISMATCH"):
+        service.enqueue_idempotent(
+            "sprite-animation-studio",
+            "omenward",
+            "run-route-bound",
+            payload,
+            "image/png",
+            tool_route_id="effect_runs",
+        )
+
+
 def test_receipt_must_confirm_exact_tool_destination_not_generic_generation_area(tmp_path: Path) -> None:
     service, _ = service_for(tmp_path)
     token = paired_token(service, "coc-fiction")
@@ -95,19 +219,6 @@ def test_receipt_must_confirm_exact_tool_destination_not_generic_generation_area
     )
     assert receipt.target_node_id == claimed.target_node_id
     assert receipt.target_node_id != claimed.generation_area_node_id
-
-
-def test_sprite_delivery_fails_closed_until_a_dedicated_tool_route_exists(tmp_path: Path) -> None:
-    service, _ = service_for(tmp_path, "omenward")
-
-    with pytest.raises(DeliveryError, match="DELIVERY_TOOL_ROUTE_UNAVAILABLE"):
-        service.enqueue(
-            "sprite-animation-studio",
-            "omenward",
-            "run-sprite-action",
-            png_bytes(),
-            "image/png",
-        )
 
 
 def test_claim_revalidates_exact_tool_route_before_exposing_job(

@@ -73,7 +73,7 @@ def test_registry_rejects_malformed_or_identical_figma_target_node_ids(tmp_path:
         ProjectFigmaRegistry.load(path)
 
 
-def test_base_registry_loads_and_blocks_every_unverified_project_target() -> None:
+def test_base_registry_exposes_all_verified_project_figma_targets() -> None:
     base_root = Path(__file__).parents[3]
     registry = ProjectFigmaRegistry.load(base_root / "docs" / "operations" / "PROJECT_FIGMA_TARGET_REGISTRY.json")
 
@@ -87,6 +87,5 @@ def test_base_registry_loads_and_blocks_every_unverified_project_target() -> Non
         "blacksmith",
         "omenward",
     ):
-        assert registry.routing_state(project_id) == "ROUTING_BLOCKED"
-        with pytest.raises(DeliveryBlockedError, match="REGISTERED_NO_MUTATION"):
-            registry.resolve_ready_target(project_id)
+        assert registry.routing_state(project_id) == "ROUTING_CONFIGURED"
+        registry.resolve_ready_target(project_id)
