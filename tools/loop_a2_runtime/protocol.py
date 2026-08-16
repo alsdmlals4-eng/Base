@@ -58,6 +58,23 @@ def normalize_contract_path(value: Any, field: str) -> str:
     return "/".join(parts)
 
 
+def normalize_contract_pattern(value: Any, field: str) -> str:
+    raw = _string(value, field, max_length=1024)
+    if "\x00" in raw:
+        raise ProtocolError(f"{field} contains NUL")
+    normalized = unicodedata.normalize("NFC", raw).replace("\\", "/")
+    if normalized.startswith("/") or _DRIVE_RE.match(raw):
+        raise ProtocolError(f"{field} must be project-relative")
+    trailing_directory = normalized.endswith("/")
+    core = normalized[:-1] if trailing_directory else normalized
+    if not core:
+        raise ProtocolError(f"{field} contains an unsafe path segment")
+    parts = core.split("/")
+    if any(part in {"", ".", ".."} for part in parts):
+        raise ProtocolError(f"{field} contains an unsafe path segment")
+    return normalized
+
+
 def _path_tuple(value: Any, field: str, *, allow_empty: bool = False) -> tuple[str, ...]:
     if not isinstance(value, list) or (not allow_empty and not value):
         raise ProtocolError(
@@ -66,6 +83,19 @@ def _path_tuple(value: Any, field: str, *, allow_empty: bool = False) -> tuple[s
     if len(value) > 256:
         raise ProtocolError(f"{field} exceeds 256 entries")
     result = tuple(normalize_contract_path(item, f"{field}[]") for item in value)
+    if len(set(result)) != len(result):
+        raise ProtocolError(f"{field} contains duplicates")
+    return result
+
+
+def _pattern_tuple(value: Any, field: str, *, allow_empty: bool = False) -> tuple[str, ...]:
+    if not isinstance(value, list) or (not allow_empty and not value):
+        raise ProtocolError(
+            f"{field} must be a {'possibly empty' if allow_empty else 'non-empty'} list"
+        )
+    if len(value) > 256:
+        raise ProtocolError(f"{field} exceeds 256 entries")
+    result = tuple(normalize_contract_pattern(item, f"{field}[]") for item in value)
     if len(set(result)) != len(result):
         raise ProtocolError(f"{field} contains duplicates")
     return result
@@ -178,8 +208,8 @@ class RunRequest:
             _sha(value["expected_main_sha"], "expected_main_sha"),
             normalize_contract_path(value["capsule_path"], "capsule_path"),
             normalize_contract_path(value["package_path"], "package_path"),
-            _path_tuple(value["allowed_paths"], "allowed_paths"),
-            _path_tuple(
+            _pattern_tuple(value["allowed_paths"], "allowed_paths"),
+            _pattern_tuple(
                 value["forbidden_paths"],
                 "forbidden_paths",
                 allow_empty=True,
