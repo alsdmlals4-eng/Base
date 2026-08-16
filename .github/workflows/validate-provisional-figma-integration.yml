@@ -57,12 +57,13 @@ jobs:
           python -m pip install -e '.\tools\base-tool-contracts[dev]' -e '.\tools\tool-hub[dev]' -e '.\tools\expression-studio[dev]' -e '.\tools\sprite-animation-studio[dev]'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Run exact Figma tool-route and shared client contracts
+      - name: Run exact Figma route, shared client, and portable staging contracts
         run: >-
           python -m pytest -q
           tools/base-tool-contracts/tests/test_figma_tool_routing.py
           tools/base-tool-contracts/tests/test_figma_tool_routing_adversarial.py
           tools/base-tool-contracts/tests/test_hub_delivery.py
+          tools/base-tool-contracts/tests/test_windows_portable_staging.py
 
       - name: Run Tool Hub Figma delivery contracts
         run: >-
