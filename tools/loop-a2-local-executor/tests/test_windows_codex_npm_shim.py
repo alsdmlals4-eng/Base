@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from tools.loop_a2_runtime.codex_cli_transport import CodexCliProcess
+from tools.loop_a2_runtime.codex_cli_transport import CodexCliProcess, CodexCliTransportError
 from tools.loop_a2_runtime.provider_gate import subscription_codex_cli_gate
 
 
@@ -66,17 +66,20 @@ class WindowsCodexNpmShimTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             _, old = self._with_shim_environment(Path(temp))
             try:
-                output = CodexCliProcess().invoke(
-                    instructions="Return the required object.",
-                    input_text="{}",
-                    schema={
-                        "type": "object",
-                        "properties": {"ok": {"type": "boolean"}},
-                        "required": ["ok"],
-                        "additionalProperties": False,
-                    },
-                    timeout_seconds=10,
-                )
+                try:
+                    output = CodexCliProcess().invoke(
+                        instructions="Return the required object.",
+                        input_text="{}",
+                        schema={
+                            "type": "object",
+                            "properties": {"ok": {"type": "boolean"}},
+                            "required": ["ok"],
+                            "additionalProperties": False,
+                        },
+                        timeout_seconds=10,
+                    )
+                except CodexCliTransportError as exc:
+                    self.fail(f"Windows npm codex.cmd must execute through the REAL transport: {exc.code}")
             finally:
                 self._restore_environment(old)
         self.assertEqual(output.strip(), '{"ok":true}')
