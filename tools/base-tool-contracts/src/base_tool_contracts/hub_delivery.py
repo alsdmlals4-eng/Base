@@ -22,9 +22,11 @@ class HubDeliverySender(Protocol):
         image_bytes: bytes,
         media_type: str,
         tool_route_id: str | None = None,
-    ) -> dict[str, object]: ...
+    ) -> dict[str, object]:
+        raise NotImplementedError
 
-    def status(self, delivery_id: str) -> dict[str, object]: ...
+    def status(self, delivery_id: str) -> dict[str, object]:
+        raise NotImplementedError
 
 
 _RUN_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$")
