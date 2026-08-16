@@ -12,8 +12,8 @@ _SAFE_ENV = (
 )
 _PUBLIC_FIELDS = (
     "status", "code", "issue_number", "target_repository", "base_runtime_sha",
-    "authority_sha", "run_id", "a2_state", "a2_receipt_digest", "provider_mode",
-    "a3_auto_merge", "scheduler",
+    "authority_sha", "run_id", "a2_state", "a2_finding_code", "a2_provider_error_type",
+    "a2_receipt_digest", "provider_mode", "a3_auto_merge", "scheduler",
 )
 
 
@@ -80,6 +80,8 @@ class GhControlPlane:
             return self.runner(
                 list(argv),
                 text=True,
+                encoding="utf-8",
+                errors="replace",
                 capture_output=True,
                 shell=False,
                 env=_environment(),
