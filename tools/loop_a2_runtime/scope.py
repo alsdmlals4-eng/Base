@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import PurePosixPath
 
-from .protocol import ProtocolError, normalize_contract_path
+from .protocol import ProtocolError, normalize_contract_path, normalize_contract_pattern
 
 _SYSTEM_PROTECTED_PATTERNS = (
     ".git/**",
@@ -21,7 +21,7 @@ class ScopeFinding:
 
 
 def _matches(pattern: str, path: str) -> bool:
-    normalized_pattern = normalize_contract_path(pattern, "pattern")
+    normalized_pattern = normalize_contract_pattern(pattern, "pattern")
     normalized_path = normalize_contract_path(path, "changed_path")
     if normalized_pattern.endswith("/**"):
         prefix = normalized_pattern[:-3].rstrip("/")
