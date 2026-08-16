@@ -71,7 +71,13 @@ def subscription_codex_cli_gate(
             "message": "Codex login status failed; no paid API fallback is allowed.",
         }
 
-    if (completed.stdout or "").strip() != _CHATGPT_LOGIN_STATUS:
+    stdout = (completed.stdout or "").strip()
+    stderr = (completed.stderr or "").strip()
+    exact_chatgpt_status = (
+        (stdout == _CHATGPT_LOGIN_STATUS and not stderr)
+        or (stderr == _CHATGPT_LOGIN_STATUS and not stdout)
+    )
+    if not exact_chatgpt_status:
         return {
             "status": "BLOCKED_UNVERIFIED",
             "code": "CODEX_CHATGPT_AUTH_REQUIRED",
