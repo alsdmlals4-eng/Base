@@ -13,6 +13,8 @@ description: Use when local and GitHub state must be compared, reconciled, refre
 
 Base의 동시작업 기본 recovery는 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`이다. 이미 승인된 작업이 다른 활성 PR과 same-goal/path/semantic overlap이면 open PR 해제를 기다리는 대신 exact latest completed main에서 별도 integration Branch를 만들고 필요한 material delta만 selective copy·재구현한 뒤 semantic reconciliation한다. owner PR branches는 read-only다.
 
+Compatibility mapping: 현재 승인 계약 범위 안의 approved same-goal/path/semantic overlap에 한해서 이 standing authorization이 필요한 `explicit user authorization`을 제공한다. 이는 blanket merge 권한이 아니며 latest-main reconciliation, material-delta accounting, exact-head Required Checks, P0/P1, unresolved review gate 중 하나라도 닫히지 않으면 integration PR은 `must not merge` 상태다.
+
 이 Skill은 Git 상태의 동등성, 동시작업 소유권 사전판정과 안전한 전달만 책임진다. 변경 내용의 품질·완료 여부는 `reviewing-and-validating-project-changes`, PR 제안·승인 정책은 `managing-base-change-proposals`, 장기 실행 checkpoint는 `maintaining-long-running-task-continuity`가 책임진다. Loop Engineering Run이 있으면 그 `TASK_LEASE`·path/semantic `RESOURCE_LOCK`을 재사용하고 별도 권한 체계를 만들지 않는다.
 
 ## Modes and states
