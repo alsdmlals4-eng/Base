@@ -3,12 +3,14 @@
 ## Status
 
 ```yaml
+status_scope: DESIGN_APPROVAL_SNAPSHOT
 work_mode: PLAN
 base_main: 66818010e52b10d1f0a8ab9d008ec1450450ed75
 design_direction: APPROVED_BY_USER
 benchmark_validation: COMPLETED
-implementation: NOT_STARTED
-runtime_or_figma_mutation: NOT_RUN
+implementation: NOT_STARTED_AT_DESIGN_APPROVAL
+runtime_or_figma_mutation: NOT_RUN_AT_DESIGN_APPROVAL
+implementation_tracking: PR_433_BODY_AND_EXACT_HEAD_CI
 open_pr_428_boundary: READ_ONLY_NOT_MODIFIED
 new_skill_or_mode: NONE
 ```
