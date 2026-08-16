@@ -3,6 +3,8 @@ from __future__ import annotations
 import subprocess
 from typing import Any, Callable
 
+from .codex_cli_command import build_codex_command
+
 
 _CODEX_LOGIN_STATUS_TIMEOUT_SECONDS = 10
 _CHATGPT_LOGIN_STATUS = "Logged in using ChatGPT"
@@ -28,8 +30,13 @@ def subscription_codex_cli_gate(
     """Accept only a Codex CLI session authenticated through ChatGPT."""
     runner = run_command or subprocess.run
     try:
+        argv = (
+            ["codex", "login", "status"]
+            if run_command is not None
+            else build_codex_command(("login", "status"))
+        )
         completed = runner(
-            ["codex", "login", "status"],
+            argv,
             text=True,
             encoding="utf-8",
             errors="replace",
@@ -50,7 +57,7 @@ def subscription_codex_cli_gate(
             "code": "CODEX_LOGIN_STATUS_TIMEOUT",
             "message": "Codex login status timed out; no paid API fallback is allowed.",
         }
-    except OSError as exc:
+    except (OSError, ValueError) as exc:
         return {
             "status": "BLOCKED_UNVERIFIED",
             "code": "CODEX_LOGIN_STATUS_EXECUTION_ERROR",
