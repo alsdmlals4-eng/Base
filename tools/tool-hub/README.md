@@ -27,6 +27,16 @@ Linux smoke에서 공백이 있는 두 임시 Git 프로젝트 fixture를 각각
 
 기존 QA API vertical slice도 별도로 재실행해 session → visual/UX ready → developer PC results → image evidence → `QA_EVIDENCE_PACKET.json` 흐름과 Android `DEFERRED_NOT_CONNECTED` 상태를 확인했습니다. 이는 자동 테스트 fixture 증거이며 실제 특정 게임의 사람 검토를 대신하지 않습니다.
 
+## 2026-08-16 통합 상태
+
+PR #428이 `main`에 squash merge되어 Character/Outfit/Scene 편집, ChatGPT Pro same-run handoff, exact Figma tool-route delivery, Windows Job Object child ownership을 하나의 current-main 경로로 통합했습니다.
+
+- Windows child는 더 이상 `BLOCKED_PLATFORM` 구현 상태가 아닙니다. Tool Hub는 suspended root process를 만든 뒤 unnamed Windows Job Object에 연결하고, `JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE`와 실제 Studio runtime PID의 Job membership을 검증합니다.
+- PR #428 exact head와 merge 후 `main`에서 Linux supervisor regression 및 Windows real process-tree / reviewed launch / multi-project smoke가 통과했습니다.
+- Expression Studio는 server-issued same-run handoff를 만들고, `CHATGPT_INCLUDED` PNG를 동일 run으로 다시 가져온 뒤 검토/내보내기/전달 경로를 이어갑니다.
+- Figma delivery는 project/tool별 canonical route를 검증하며 잘못된 project/route/hash/node는 fail closed합니다.
+- 위 CI/코드 readback은 **사용자 개발자 PC에서 실제 Tool Hub와 Studio를 실행했다는 증거가 아닙니다.** 실제 PC 실행, 실제 ChatGPT Pro 픽셀, live Figma Desktop/plugin mutation/readback, 실제 게임 소비는 별도 IRG로 남습니다.
+
 ## Windows 최초 전환과 이후 실행
 
 Base 루트에서:
@@ -58,17 +68,32 @@ $projectConfig = Join-Path $env:LOCALAPPDATA 'BaseToolHub\projects.json'
 
 연결할 프로젝트는 정확한 Git 루트, v2 adapter, gitignored Asset Vault를 모두 갖춰야 합니다. visual Studio에는 canonical Base Figma route와 committed `docs/APPROVED_VISUAL_ANCHORS.json`도 필요합니다. 프로젝트 등록은 도구 child 실행이나 Figma 배치 증거가 아닙니다.
 
-Windows에서는 Hub 프로세스·검토된 도구 카탈로그와 portable v2 프로젝트 등록 경로를 제공합니다. 하지만 Studio child 실행은 Windows Job Object와 Windows-safe staging 계약이 아직 없어 `BLOCKED_PLATFORM`으로 fail-closed됩니다. 프로젝트가 `내 프로젝트`에 표시된 사실을 Expression/Sprite/QA 실행 완료로 해석하지 않습니다.
+Windows에서는 Hub 프로세스·검토된 도구 카탈로그와 portable v2 프로젝트 등록 경로뿐 아니라, reviewed visual Studio child의 native Job Object 소유권과 project/tool identity 검증 경로도 제공합니다. GitHub-hosted Windows 검증에서는 real child process tree, reviewed launch, 다중 프로젝트 child 격리를 확인했습니다. 다만 **사용자 개발자 PC에서 같은 경로를 실제로 실행한 결과는 아직 `NOT_RUN`**이며, 그 전에는 개발자-PC IRG를 PASS로 올리지 않습니다.
 
-바탕화면 아이콘 설치와 Hub 재실행은 Tool Hub 자체의 Windows orchestration 증거입니다. 이는 위의 Studio child `BLOCKED_PLATFORM`, live Figma 배치, AI 생성 품질 또는 게임 이미지·UX 검토를 통과시킨다는 뜻이 아닙니다.
+바탕화면 아이콘 설치와 Hub 재실행은 Tool Hub 자체의 Windows orchestration 증거입니다. Windows child CI 증거는 process ownership/runtime 격리 계약을 검증하지만, live Figma 배치, 실제 ChatGPT Pro 생성 품질 또는 특정 게임의 이미지·UX 검토를 통과시킨다는 뜻은 아닙니다.
+
+## 실제 PC IRG 시작 순서
+
+1. 바탕화면에 `Base Tool Hub.lnk`가 이미 있으면 PowerShell을 열지 말고 더블클릭합니다.
+2. 바로가기가 없거나 `설치 복구 필요`가 표시될 때만 위 최초 전환 블록을 한 번 사용하고 `바탕화면 실행 아이콘 설치/복구`를 누릅니다.
+3. Hub에서 실제 프로젝트 하나를 선택하고 Character/Expression Studio를 실행합니다.
+4. approved anchor와 변경 요청을 지정해 `GPT Pro로 생성` handoff를 준비합니다.
+5. 일반 ChatGPT Pro 화면에서 실제 이미지를 생성하고 반환된 PNG를 **같은 run**으로 가져옵니다.
+6. 후보를 검토·선택한 뒤 `확정 및 전달`을 실행합니다.
+7. Figma Bridge를 실제 프로젝트 파일과 pairing하고 상태를 새로고침해 exact `Expression Runs` route의 verified receipt를 확인합니다.
+8. 그 다음 Sprite에서 실제 `pose_sequence` 1개와 `effect_stages` 1개를 같은 subscription handoff 경로로 검증합니다.
+9. 마지막으로 실제 프로젝트/Godot 작업 경로가 승인된 자산을 소비하는지 확인합니다.
+
+각 단계는 실제 관측 전까지 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`입니다. fixture/CI/코드 존재를 사용자 PC·Figma·시각 품질·게임 소비 PASS로 대체하지 않습니다.
 
 ## 현재 검증되지 않은 것
 
-- Windows Job Object child process-tree ownership, Studio staging, 두 프로젝트·네 child 공백 경로 smoke
+- 사용자 개발자 PC에서의 실제 Tool Hub 실행, reviewed Studio child launch, 두 실제 프로젝트 동시 실행/격리
+- 실제 ChatGPT Pro 생성 이미지의 시각 품질과 Character/Expression identity 보존 결과
+- 실제 `pose_sequence`와 `effect_stages` subscription handoff 샘플 품질
+- live Figma Desktop/plugin mutation, exact node readback, same-SHA verified receipt
+- 특정 게임/Godot의 실제 승인 자산 소비
 - Android 기기 연결과 테스트
-- live Figma connector 배치·upload·node 존재
-- paid OpenAI 또는 pinned sprite provider 호출과 실제 AI 생성 품질·비용
-- 특정 게임의 사람 검토 이미지·UX 품질
 - 동일 OS 계정의 악성 프로세스를 격리하는 hardened runtime
 
-이 항목은 현재 `BLOCKED_UNVERIFIED`, `NOT_RUN` 또는 명시적 `DEFERRED`이며, Linux/import 테스트 통과로 대체하지 않습니다. 다음 독립 vertical slice 후보는 `Balance & Scenario Lab`이지만 현재 Hub에 placeholder/card/runtime은 추가하지 않았습니다.
+이 항목은 현재 `BLOCKED_UNVERIFIED`, `NOT_RUN` 또는 명시적 `DEFERRED`이며, GitHub-hosted CI나 fixture/import 테스트 통과로 대체하지 않습니다. 다음 독립 vertical slice 후보는 `Balance & Scenario Lab`이지만 현재 Hub에 placeholder/card/runtime은 추가하지 않았습니다.

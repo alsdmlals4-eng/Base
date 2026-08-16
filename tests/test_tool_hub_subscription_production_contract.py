@@ -115,6 +115,25 @@ class ToolHubSubscriptionProductionContractTests(unittest.TestCase):
         self.assertNotIn("sprite_action_runs", route_ids)
         self.assertNotIn("effect_runs", route_ids)
 
+    def test_operator_docs_match_post_428_windows_and_figma_authority(self) -> None:
+        hub = read("tools/tool-hub/README.md")
+        expression = read("tools/expression-studio/README.md")
+        sprite = read("tools/sprite-animation-studio/README.md")
+
+        self.assertIn("Windows Job Object", hub)
+        self.assertIn("사용자 개발자 PC", hub)
+        self.assertNotIn("Studio child `BLOCKED_PLATFORM`", hub)
+
+        self.assertIn("확정 및 전달", expression)
+        self.assertIn("Figma Bridge", expression)
+        self.assertNotIn("matching project GPT workspace", expression)
+        self.assertNotIn("실제 Windows 런타임은 `BLOCKED_UNVERIFIED`", expression)
+
+        self.assertIn("DELIVERY_TOOL_ROUTE_UNAVAILABLE", sprite)
+        self.assertIn("dedicated", sprite)
+        self.assertNotIn("`ready_for_project_gpt` 전달 패킷", sprite)
+        self.assertNotIn("실제 Windows 런타임은 `BLOCKED_UNVERIFIED`", sprite)
+
 
 if __name__ == "__main__":
     unittest.main()
