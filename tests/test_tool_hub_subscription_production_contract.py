@@ -66,7 +66,7 @@ class ToolHubSubscriptionProductionContractTests(unittest.TestCase):
         for source in (expression_app, sprite_app):
             self.assertIn('default="subscription_handoff_import"', source)
 
-    def test_each_registered_project_has_one_reviewed_character_expression_route(self) -> None:
+    def test_each_registered_project_has_three_reviewed_exact_routes(self) -> None:
         project_registry = json.loads(
             read("docs/operations/PROJECT_FIGMA_TARGET_REGISTRY.json")
         )
@@ -79,24 +79,30 @@ class ToolHubSubscriptionProductionContractTests(unittest.TestCase):
             if entry["delivery_status"] == "READY_FOR_DELIVERY"
         }
         routes = tool_registry["entries"]
+        expected_route_names = {
+            "character_expression_runs": "Expression Runs",
+            "sprite_action_runs": "Sprite Action Runs",
+            "effect_runs": "Effect Runs",
+        }
 
         self.assertEqual(8, len(projects))
-        self.assertEqual(8, len(routes))
-        self.assertEqual(set(projects), {entry["project_id"] for entry in routes})
+        self.assertEqual(24, len(routes))
         self.assertEqual(
-            {"character_expression_runs"},
-            {entry["tool_route_id"] for entry in routes},
+            {(project_id, route_id) for project_id in projects for route_id in expected_route_names},
+            {(entry["project_id"], entry["tool_route_id"]) for entry in routes},
         )
 
+        by_project: dict[str, list[dict[str, object]]] = {project_id: [] for project_id in projects}
         for route in routes:
             project = projects[route["project_id"]]
-            with self.subTest(project_id=route["project_id"]):
+            by_project[route["project_id"]].append(route)
+            with self.subTest(project_id=route["project_id"], route_id=route["tool_route_id"]):
                 self.assertEqual(project["figma_file_key"], route["figma_file_key"])
                 self.assertEqual(project["generation_area_node_id"], route["parent_node_id"])
                 self.assertEqual("FRAME", route["parent_node_type"])
                 self.assertEqual("FRAME", route["destination_node_type"])
                 self.assertEqual("FRAME", route["project_marker_node_type"])
-                self.assertEqual("Expression Runs", route["destination_name"])
+                self.assertEqual(expected_route_names[route["tool_route_id"]], route["destination_name"])
                 self.assertNotEqual(route["parent_node_id"], route["destination_node_id"])
                 self.assertNotIn(
                     route["project_marker_node_id"],
@@ -107,13 +113,15 @@ class ToolHubSubscriptionProductionContractTests(unittest.TestCase):
                     route["project_marker_name"],
                 )
 
-    def test_unreviewed_sprite_and_effect_destination_nodes_are_not_invented(self) -> None:
-        tool_registry = json.loads(
-            read("docs/operations/PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json")
-        )
-        route_ids = {entry["tool_route_id"] for entry in tool_registry["entries"]}
-        self.assertNotIn("sprite_action_runs", route_ids)
-        self.assertNotIn("effect_runs", route_ids)
+        for project_id, project_routes in by_project.items():
+            with self.subTest(project_id=project_id, invariant="destination identity"):
+                self.assertEqual(3, len(project_routes))
+                destination_ids = {str(route["destination_node_id"]) for route in project_routes}
+                self.assertEqual(3, len(destination_ids))
+                parent_id = str(project_routes[0]["parent_node_id"])
+                marker_id = str(project_routes[0]["project_marker_node_id"])
+                self.assertNotIn(parent_id, destination_ids)
+                self.assertNotIn(marker_id, destination_ids)
 
     def test_operator_docs_match_post_428_windows_and_figma_authority(self) -> None:
         hub = read("tools/tool-hub/README.md")

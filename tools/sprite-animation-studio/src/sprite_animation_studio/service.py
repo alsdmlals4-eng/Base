@@ -322,6 +322,15 @@ class SpriteAnimationService:
         except KeyError as error:
             raise RunNotFoundError(run_id) from error
 
+    def delivery_route_id(self, run_id: str) -> str:
+        """Derive Figma route authority only from the server-owned persisted run mode."""
+        mode = self.get_run(run_id).request.mode
+        if mode in {"pose_sequence", "sprite_action"}:
+            return "sprite_action_runs"
+        if mode == "effect_stages":
+            return "effect_runs"
+        raise RunBlockedError("DELIVERY_TOOL_ROUTE_UNAVAILABLE")
+
     def save_curation(self, run_id: str, curation: CurationState) -> RunRecord:
         record = self.get_run(run_id)
         if record.status == "blocked":

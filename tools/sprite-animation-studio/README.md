@@ -9,7 +9,13 @@
 - Base에는 코드, 테스트, 템플릿, 문서와 제3자 고지만 둡니다.
 - 원본 이미지·Figma 내보내기·생성 후보·GIF·아틀라스·실행 기록은 프로젝트 경로에만 남깁니다.
 - API 키와 프로젝트 생성물은 Base에 **커밋하지 않습니다**. Tool Hub 정상 경로는 `subscription_handoff_import`만 사용하며 별도 OpenAI API 키를 읽거나 저장하지 않습니다.
-- Studio 자체가 임의의 Figma node를 선택하거나 업로드하지 않습니다. 더 중요하게, 현재 Base에는 Character/Expression용 `character_expression_runs`만 exact tool route로 등록되어 있습니다. Sprite/Effect용 **dedicated** route가 검토·등록되기 전에는 Tool Hub Figma delivery가 `DELIVERY_TOOL_ROUTE_UNAVAILABLE`로 fail-closed하며, project GPT나 수동 node 선택으로 이 경계를 우회하지 않습니다.
+- 브라우저는 Figma 파일 키, 목적 node, route를 선택하거나 전송 권한으로 제출하지 않습니다. 서버에 저장된 `RunRecord.request.mode`만 delivery route 권한을 가집니다.
+- 현재 canonical exact route는 프로젝트마다 세 개이며, 각 project/tool 조합의 **dedicated** destination으로 고정됩니다.
+  - `character_expression_runs` → `Expression Runs`
+  - `sprite_action_runs` → `Sprite Action Runs`
+  - `effect_runs` → `Effect Runs`
+- Sprite Studio에서는 `pose_sequence`와 `sprite_action`이 `Sprite Action Runs`, `effect_stages`가 `Effect Runs`로만 전달됩니다. `expression_variation`은 이 slice에서 전용 전달 목적지가 없으므로 `DELIVERY_TOOL_ROUTE_UNAVAILABLE`로 fail-closed합니다.
+- Sprite/Effect output을 generic `Generated Assets` 또는 Character용 `Expression Runs`로 fallback하지 않습니다.
 
 ## 설치
 
@@ -22,7 +28,7 @@ python -m venv .venv
 
 Windows PowerShell에서는 `.venv\Scripts\python -m pip install -e '.[dev]'`를 사용할 수 있지만, 정상 사용자 흐름은 설치된 `Base Tool Hub.lnk`에서 Studio child를 시작하므로 매 실행마다 PowerShell을 열 필요가 없습니다.
 
-GitHub-hosted Windows에서는 reviewed Tool Hub child launch, 실제 process-tree ownership, multi-project isolation, subscription import portability가 검증됐습니다. **사용자 개발자 PC에서 실제 Sprite Studio child를 실행한 결과는 아직 `NOT_RUN`**입니다. 또한 별도 `pinned_sprite_gen` production 엔진은 OS-isolated workspace adapter가 없으므로 계속 fail-closed이며, 이 제한은 subscription import 경로의 Windows child 지원 여부와 별개입니다.
+GitHub-hosted Windows에서는 reviewed Tool Hub child launch, 실제 process-tree ownership, multi-project isolation, subscription import portability가 검증됐습니다. 이것은 사용자 개발자 PC에서 실제 Tool Hub와 Studio child를 실행했다는 증거가 아닙니다. 별도 `pinned_sprite_gen` production 엔진은 OS-isolated workspace adapter가 없으므로 계속 fail-closed이며, 이 제한은 subscription import 경로의 Windows child 지원 여부와 별개입니다.
 
 ## 실행
 
@@ -56,7 +62,7 @@ PYTHONPATH=src .venv/bin/python -m sprite_animation_studio.app \
 
 `sprite-gen execution is blocked until an OS-isolated workspace adapter is configured`가 현재의 정상적인 보호 결과입니다. 실제 생성이 가능하다고 판단하려면 별도 sandbox runner 구현, 경로 교체 공격 회귀 테스트, 실제 provider smoke가 모두 필요합니다.
 
-`--figma-target-registry`를 사용하는 실행은 반드시 `--project-id`로 작업공간의 정식 프로젝트 ID를 고정합니다. 요청의 프로젝트 ID가 다르면 후보 생성 단계에서 차단되므로, 한 프로젝트 작업공간에서 다른 프로젝트 대상으로 라우팅할 수 없습니다. 이 project-level registry가 존재해도 dedicated Sprite/Effect tool route가 생긴 것은 아닙니다.
+`--figma-target-registry`를 사용하는 실행은 반드시 `--project-id`로 작업공간의 정식 프로젝트 ID를 고정합니다. 요청의 프로젝트 ID가 다르면 후보 생성 단계에서 차단되므로 한 프로젝트 작업공간에서 다른 프로젝트 대상으로 라우팅할 수 없습니다. Figma target registry와 별도로 Base의 canonical tool-route registry가 project/tool별 exact descendant node를 고정합니다.
 
 `--project-root`는 Git 작업트리 루트여야 합니다. `.asset-vault/library/`를 만들고 프로젝트 `.gitignore`에서 `.asset-vault/`를 실제로 제외해야 합니다. 전역 ignore만 있는 경우, 뒤의 부정 규칙, tracked/protected 경로, symlink/reparse 경유는 거부합니다. 모든 후보와 실행 기록은 `.asset-vault/library/generated/sprite-animation-studio/<asset>/<action>/<run>/`에만 생성됩니다.
 
@@ -66,18 +72,36 @@ PYTHONPATH=src .venv/bin/python -m sprite_animation_studio.app \
 
 `--fake-engine` 결과는 `SIMULATED / DELIVERY_BLOCKED`로 표시됩니다. 프레임 검토는 가능하지만 export와 외부 전달은 서비스/API에서 차단되며 실제 액션·표정·포즈·이펙트 생성 성공으로 간주하지 않습니다.
 
-## ChatGPT Pro same-run → 스프라이트 export 흐름
+## ChatGPT Pro same-run → export → 확정 및 전달
 
-1. Figma에서 원본 이미지와 사용할 노드 URL을 확정하고 프로젝트에 원본 PNG와 committed `docs/APPROVED_VISUAL_ANCHORS.json` 증거를 준비합니다.
-2. `pose_sequence`, `effect_stages` 등 정확한 workflow와 프레임 수를 지정해 subscription handoff를 준비합니다.
-3. 일반 ChatGPT Pro 구독 화면에서 실제 프레임을 생성하고 Studio의 **같은 run**으로 순서대로 가져옵니다. import source는 `CHATGPT_INCLUDED`로 기록됩니다.
+1. Figma에서 원본 이미지와 사용할 승인 앵커 node URL을 확정하고 프로젝트에 원본 PNG와 committed `docs/APPROVED_VISUAL_ANCHORS.json` 증거를 준비합니다.
+2. `pose_sequence`, `sprite_action`, `effect_stages` 등 정확한 workflow와 프레임 수를 지정합니다.
+3. 일반 ChatGPT Pro 구독 화면에서 실제 프레임을 생성하고 Studio의 같은 run으로 순서대로 가져옵니다. import source는 `CHATGPT_INCLUDED`로 기록되고 Studio 자체의 `provider_call_made=false`를 유지합니다.
 4. 프레임을 검토하고 순서·위치·크기를 조정합니다. 원본 후보 PNG는 수정하지 않습니다.
 5. 전체 요청 프레임을 다시 검토한 뒤 project-local export를 수행합니다. production-eligible import에서만 `.asset-vault/library/generated/sprite-animation-studio/<asset>/<action>/<run>/exports/`의 프레임, `preview.gif`, `atlas.png`, `manifest.json`, Godot 핸드오프를 확인할 수 있습니다.
-6. **현재 Figma 전달은 여기서 멈춥니다.** `PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json`에 `sprite_action_runs` 또는 `effect_runs` 같은 reviewed dedicated route가 없으므로 Tool Hub의 Figma queue에 넣으려 하면 `DELIVERY_TOOL_ROUTE_UNAVAILABLE`가 정상 결과입니다.
-7. Character/Expression의 `Expression Runs` node, generic `Generated Assets` parent, project GPT, 수동 Figma upload를 Sprite/Effect 전달의 대체 route로 사용하지 않습니다. dedicated route가 별도 검토·등록되고 fail-closed tests가 갱신된 뒤에만 다음 Figma 단계로 승격합니다.
-8. `*.spriteframes.json`은 Godot에 적용할 정보를 담은 **핸드오프**이며, 실제 Godot Import·Scene 연결·런타임 동작을 자동으로 검증했다는 뜻은 아닙니다.
+6. **확정 및 전달**은 manifest와 export evidence를 다시 검증하고, `record.export_output_sha256["atlas"]`에 묶인 정확한 **exported atlas PNG**만 localhost Tool Hub에 전달합니다.
+7. 서버가 run mode에서 목적지를 결정합니다. `pose_sequence`/`sprite_action`은 `Sprite Action Runs`, `effect_stages`는 `Effect Runs`입니다. `expression_variation`은 `DELIVERY_TOOL_ROUTE_UNAVAILABLE`입니다.
+8. Tool Hub는 인증된 child의 tool identity와 route allowlist, canonical registry, project binding을 다시 검증합니다. 동일 run·동일 route·동일 SHA는 재사용하고 route 변경은 `DELIVERY_RUN_ROUTE_MISMATCH`, bytes 변경은 `DELIVERY_RUN_CONTENT_MISMATCH`로 차단합니다.
+9. 브라우저는 서버가 반환한 target name, bridge state, pairing code(필요한 경우), delivery state만 표시합니다. 전달 상태 새로고침과 `confirmed-download`도 같은 atlas SHA를 다시 검증합니다.
+10. `*.spriteframes.json`은 Godot에 적용할 정보를 담은 핸드오프이며, 실제 Godot Import·Scene 연결·런타임 동작을 자동으로 검증했다는 뜻은 아닙니다.
 
-따라서 현재 real-world IRG에서 Sprite는 **실제 ChatGPT Pro `pose_sequence`/`effect_stages` 생성 → same-run import → 사람 검토 → project-local export 품질**까지 검증할 수 있습니다. Figma same-SHA receipt는 dedicated Sprite/Effect route가 생기기 전에는 PASS 항목이 아니라 명시적 `BLOCKED_ROUTE_NOT_REGISTERED`입니다.
+## 증거 등급
+
+현재 저장소/클라우드 검증과 실제 사용자 PC 검증을 혼합하지 않습니다.
+
+```text
+DEDICATED_SPRITE_EFFECT_ROUTE_CLOUD_PREFLIGHT = PASS_8_OF_8
+BASE_TOOL_ROUTE_REGISTRY = READY_24_OF_24
+SPRITE_MODE_ROUTE_TRUST = VERIFIED_BY_TESTS
+SPRITE_CONFIRMED_ATLAS_SHA_BINDING = VERIFIED_BY_TESTS
+USER_PC_TOOL_HUB = NOT_RUN
+REAL_CHATGPT_PRO_POSE_SEQUENCE = NOT_RUN
+REAL_CHATGPT_PRO_EFFECT_STAGES = NOT_RUN
+LOCALHOST_FIGMA_BRIDGE_RECEIPT = NOT_RUN
+GODOT_CONSUMPTION = NOT_RUN
+```
+
+Figma의 8개 프로젝트에는 `Sprite Action Runs`와 `Effect Runs`가 실제 생성·readback되어 있지만, 이 cloud preflight를 사용자 PC의 `Base Tool Hub.lnk` 실행, real ChatGPT Pro 생성 품질, localhost Bridge receipt, Godot 소비 증거로 승격하지 않습니다.
 
 ## 테스트
 

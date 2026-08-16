@@ -26,6 +26,11 @@ from .trusted_files import (
 
 
 _CANONICAL_REGISTRY = Path("docs/operations/PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json")
+_CANONICAL_ROUTE_DESTINATION_NAMES = {
+    "character_expression_runs": "Expression Runs",
+    "sprite_action_runs": "Sprite Action Runs",
+    "effect_runs": "Effect Runs",
+}
 RouteStatus = Literal["REGISTERED_NO_MUTATION", "READY_FOR_DELIVERY", "ARCHIVED"]
 NodeType = Literal["FRAME"]
 
@@ -98,6 +103,11 @@ class ProjectFigmaToolRouteRegistry:
             expected_marker = f"Base Tool Hub Route · {entry.project_id}"
             if entry.project_marker_name != expected_marker:
                 raise ValueError("Figma tool-route project marker must match project_id")
+            expected_destination = _CANONICAL_ROUTE_DESTINATION_NAMES.get(entry.tool_route_id)
+            if expected_destination is None:
+                raise ValueError("Figma tool-route ID is not a reviewed canonical route")
+            if entry.destination_name != expected_destination:
+                raise ValueError("Figma tool-route destination name must match route ID")
         self._document = document
         self._entries = {
             (entry.project_id, entry.tool_route_id): entry for entry in document.entries
@@ -191,6 +201,9 @@ class ProjectFigmaToolRouteRegistry:
             raise DeliveryBlockedError("tool route Figma file does not match the bound project")
         if entry.parent_node_id != target.generation_area_node_id:
             raise DeliveryBlockedError("tool route parent does not match the bound project generation area")
+        expected_destination = _CANONICAL_ROUTE_DESTINATION_NAMES.get(entry.tool_route_id)
+        if expected_destination is None or entry.destination_name != expected_destination:
+            raise DeliveryBlockedError("tool route destination name does not match reviewed route identity")
         if not re.fullmatch(r"\d+:\d+", entry.destination_node_id):
             raise DeliveryBlockedError("tool route destination node ID is invalid")
 

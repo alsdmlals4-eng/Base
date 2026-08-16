@@ -8,6 +8,12 @@ from .figma_routing import (
     ProjectRepositoryPointer,
 )
 from .figma_tool_routing import ProjectFigmaToolRoute, ProjectFigmaToolRouteRegistry
+from .hub_delivery import (
+    HubDeliveryError,
+    HubDeliverySender,
+    LocalHubDeliveryClient,
+    sender_from_environment,
+)
 from .hub_startup import (
     HubLaunchIdentity,
     HubStartupError,
@@ -43,8 +49,11 @@ __all__ = [
     "ApprovedAnchorRegistry",
     "BoundedRequestBodyMiddleware",
     "DeliveryBlockedError",
+    "HubDeliveryError",
+    "HubDeliverySender",
     "HubLaunchIdentity",
     "HubStartupError",
+    "LocalHubDeliveryClient",
     "ProjectFigmaRegistry",
     "ProjectFigmaTarget",
     "ProjectFigmaToolRoute",
@@ -65,6 +74,7 @@ __all__ = [
     "render_chatgpt_pro_prompt",
     "safe_staging_write_bytes",
     "safe_staging_write_text",
+    "sender_from_environment",
     "stable_staging_path",
     "stable_staging_tree",
     "staging_identity",

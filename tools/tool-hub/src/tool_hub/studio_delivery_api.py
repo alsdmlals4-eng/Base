@@ -14,6 +14,8 @@ from .launcher import LaunchError
 
 
 _RUN_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$")
+_ROUTE_ID = re.compile(r"^[a-z0-9]+(?:_[a-z0-9]+)*$")
+_SUPPORTED_DELIVERY_TOOLS = frozenset({"expression-studio", "sprite-animation-studio"})
 
 
 def _bearer(authorization: str | None) -> str:
@@ -23,6 +25,20 @@ def _bearer(authorization: str | None) -> str:
     if len(token) < 32:
         raise HTTPException(status_code=401, detail="STUDIO_DELIVERY_AUTH_REQUIRED")
     return token
+
+
+def _requested_route(tool_id: str, value: str | None) -> str | None:
+    if value is not None and _ROUTE_ID.fullmatch(value) is None:
+        raise HTTPException(status_code=409, detail="DELIVERY_TOOL_ROUTE_UNAVAILABLE")
+    if tool_id == "expression-studio":
+        if value not in {None, "character_expression_runs"}:
+            raise HTTPException(status_code=409, detail="DELIVERY_TOOL_ROUTE_UNAVAILABLE")
+        return value
+    if tool_id == "sprite-animation-studio":
+        if value not in {"sprite_action_runs", "effect_runs"}:
+            raise HTTPException(status_code=409, detail="DELIVERY_TOOL_ROUTE_UNAVAILABLE")
+        return value
+    raise HTTPException(status_code=409, detail="DELIVERY_TOOL_ROUTE_UNAVAILABLE")
 
 
 async def _bounded_png(request: Request) -> bytes:
@@ -90,12 +106,12 @@ def install_studio_delivery_api(
         request: Request,
         response: Response,
         authorization: str | None = Header(default=None),
+        x_base_tool_route: str | None = Header(default=None, alias="X-Base-Tool-Route"),
     ) -> dict[str, object]:
         if _RUN_ID.fullmatch(run_id) is None:
             raise HTTPException(status_code=422, detail="DELIVERY_RUN_ID_INVALID")
         tool_id, project_id = authorize(authorization)
-        if tool_id != "expression-studio":
-            raise HTTPException(status_code=409, detail="DELIVERY_TOOL_ROUTE_UNAVAILABLE")
+        route_id = _requested_route(tool_id, x_base_tool_route)
         image_bytes = await _bounded_png(request)
         try:
             job, created = figma_delivery.enqueue_idempotent(
@@ -104,6 +120,7 @@ def install_studio_delivery_api(
                 run_id,
                 image_bytes,
                 "image/png",
+                tool_route_id=route_id,
             )
         except DeliveryError as error:
             raise HTTPException(status_code=409, detail=str(error)) from error
@@ -127,7 +144,7 @@ def install_studio_delivery_api(
         authorization: str | None = Header(default=None),
     ) -> dict[str, object]:
         tool_id, project_id = authorize(authorization)
-        if tool_id != "expression-studio":
+        if tool_id not in _SUPPORTED_DELIVERY_TOOLS:
             raise HTTPException(status_code=409, detail="DELIVERY_TOOL_ROUTE_UNAVAILABLE")
         try:
             job = figma_delivery.job_view(project_id, delivery_id)
