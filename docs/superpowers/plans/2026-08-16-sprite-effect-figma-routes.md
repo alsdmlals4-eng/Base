@@ -346,7 +346,7 @@ Make `_resolve_tool_route` resolve only the resulting route ID.
 
 - [ ] **Step 2: Bind route to idempotency and recovery**
 
-Compare the requested route with every matching stored job before reuse. Raise `DELIVERY_RUN_ROUTE_MISMATCH` if route differs and preserve `DELIVERY_RUN_CONTENT_MISMATCH` for changed bytes. `_assert_current_job_route` and receipt recovery resolve using `job.tool_route_id`. Only legacy Expression jobs may default missing route identity to `character_expression_runs`; a recovered Sprite job without stored route identity is invalid.
+Compare the requested route with every matching stored job before reuse. Raise `DELIVERY_RUN_ROUTE_MISMATCH` if route differs and preserve `DELIVERY_RUN_CONTENT_MISMATCH` for changed bytes. `_assert_current_job_route` and receipt recovery must resolve using `job.tool_route_id`. Only a legacy Expression job may default missing route identity to `character_expression_runs`; a recovered Sprite job without stored route identity is invalid.
 
 - [ ] **Step 3: Add private route header handling to the internal POST**
 
