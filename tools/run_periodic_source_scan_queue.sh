@@ -44,25 +44,37 @@ path.write_text(
 PY
 
 cp "$QUEUE_PATH" "$FINAL_PATH"
-cat >> "$FINAL_PATH" <<EOF
+python - "$FINAL_PATH" "$MODE" "$FINAL_STATE" "$NEXT_EXECUTOR" "$RUN_URL" <<'PY'
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+mode = sys.argv[2]
+state = sys.argv[3]
+next_executor = sys.argv[4]
+run_url = sys.argv[5]
+receipt = f"""
 
 ## Zero incremental cost Queue preparation
 
 ```yaml
-mode: $MODE
-state: $FINAL_STATE
+mode: {mode}
+state: {state}
 ai_api_call: NONE
 repository_change: NONE
 ledger_scan_timestamp_change: NONE
 candidate_evidence_claim: NOT_RUN
-next_executor: $NEXT_EXECUTOR
-run: $RUN_URL
+next_executor: {next_executor}
+run: {run_url}
 ```
 
 - Queue preparation only selected due Sources and refreshed this Issue.
 - Actual external research, Candidate Packet evaluation, Evidence disposition, and `NO_CHANGE` determination have **not** run in this automation.
 - A later user-directed ChatGPT review must perform original-source research before any scan-success or evidence claim.
-EOF
+"""
+with path.open("a", encoding="utf-8", newline="\n") as handle:
+    handle.write(receipt)
+PY
 
 issue_number="$(
   gh issue list \
