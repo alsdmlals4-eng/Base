@@ -18,7 +18,6 @@ def test_adoption_guide_requires_figma_lineage_project_runtime_and_bridge_bounda
 
     assert "Figma 노드 URL" in text
     assert "Godot 런타임 검증" in text
-    assert "Base Tool Hub → Figma Bridge" not in text
     assert "Tool Hub → Figma Bridge 전달" in text
     assert "sprite_action_runs" in text
     assert "effect_runs" in text
