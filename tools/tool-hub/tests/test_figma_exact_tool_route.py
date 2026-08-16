@@ -60,6 +60,91 @@ def test_expression_delivery_binds_exact_character_expression_destination(tmp_pa
     assert job.target_node_id != job.generation_area_node_id
 
 
+def test_sprite_action_delivery_binds_only_sprite_action_destination(tmp_path: Path) -> None:
+    service, _ = service_for(tmp_path, "omenward")
+    job = service.enqueue(
+        "sprite-animation-studio",
+        "omenward",
+        "run-sprite-action",
+        png_bytes(),
+        "image/png",
+        tool_route_id="sprite_action_runs",
+    )
+
+    assert job.tool_route_id == "sprite_action_runs"
+    assert job.target_node_name == "Sprite Action Runs"
+    assert job.target_node_id != job.generation_area_node_id
+
+
+def test_effect_delivery_binds_only_effect_destination(tmp_path: Path) -> None:
+    service, _ = service_for(tmp_path, "omenward")
+    job = service.enqueue(
+        "sprite-animation-studio",
+        "omenward",
+        "run-effect",
+        png_bytes(),
+        "image/png",
+        tool_route_id="effect_runs",
+    )
+
+    assert job.tool_route_id == "effect_runs"
+    assert job.target_node_name == "Effect Runs"
+    assert job.target_node_id != job.generation_area_node_id
+
+
+def test_sprite_missing_route_remains_fail_closed(tmp_path: Path) -> None:
+    service, _ = service_for(tmp_path, "omenward")
+
+    with pytest.raises(DeliveryError, match="DELIVERY_TOOL_ROUTE_UNAVAILABLE"):
+        service.enqueue(
+            "sprite-animation-studio",
+            "omenward",
+            "run-sprite-missing-route",
+            png_bytes(),
+            "image/png",
+        )
+
+
+def test_sprite_rejects_character_and_unknown_routes(tmp_path: Path) -> None:
+    service, _ = service_for(tmp_path, "omenward")
+
+    for route_id in ("character_expression_runs", "unknown_route"):
+        with pytest.raises(DeliveryError, match="DELIVERY_TOOL_ROUTE_UNAVAILABLE"):
+            service.enqueue(
+                "sprite-animation-studio",
+                "omenward",
+                f"run-{route_id}",
+                png_bytes(),
+                "image/png",
+                tool_route_id=route_id,
+            )
+
+
+def test_same_run_same_bytes_different_route_fails_closed(tmp_path: Path) -> None:
+    service, _ = service_for(tmp_path, "omenward")
+    payload = png_bytes()
+    first, created = service.enqueue_idempotent(
+        "sprite-animation-studio",
+        "omenward",
+        "run-route-identity",
+        payload,
+        "image/png",
+        tool_route_id="sprite_action_runs",
+    )
+
+    assert created is True
+    assert first.tool_route_id == "sprite_action_runs"
+    with pytest.raises(DeliveryError, match="DELIVERY_RUN_ROUTE_MISMATCH"):
+        service.enqueue_idempotent(
+            "sprite-animation-studio",
+            "omenward",
+            "run-route-identity",
+            payload,
+            "image/png",
+            tool_route_id="effect_runs",
+        )
+
+
 def test_receipt_must_confirm_exact_tool_destination_not_generic_generation_area(tmp_path: Path) -> None:
     service, _ = service_for(tmp_path)
     token = paired_token(service, "coc-fiction")
@@ -95,19 +180,6 @@ def test_receipt_must_confirm_exact_tool_destination_not_generic_generation_area
     )
     assert receipt.target_node_id == claimed.target_node_id
     assert receipt.target_node_id != claimed.generation_area_node_id
-
-
-def test_sprite_delivery_fails_closed_until_a_dedicated_tool_route_exists(tmp_path: Path) -> None:
-    service, _ = service_for(tmp_path, "omenward")
-
-    with pytest.raises(DeliveryError, match="DELIVERY_TOOL_ROUTE_UNAVAILABLE"):
-        service.enqueue(
-            "sprite-animation-studio",
-            "omenward",
-            "run-sprite-action",
-            png_bytes(),
-            "image/png",
-        )
 
 
 def test_claim_revalidates_exact_tool_route_before_exposing_job(
