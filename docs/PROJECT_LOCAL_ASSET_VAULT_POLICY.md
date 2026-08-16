@@ -13,6 +13,7 @@
 - 사용자가 같은 bytes를 `library/`에 직접 다시 넣는 행위는 명시적 재도입으로 간주하고 tombstone을 해제한다.
 - `GENERATED_EXPLORATION`, `IN_REVIEW`, `APPROVED_CANDIDATE`는 Repo 자산이 아니다. **`PROJECT_ASSET_APPROVED` 이후의 명시적 `promote`만 tracked 자산을 만든다.**
 - 이미 승격된 tracked 자산은 로컬 후보를 삭제했다고 자동 삭제하지 않는다. 폐기·교체는 별도 승인/자산 원장 절차를 따른다.
+- `.asset-vault/harvest.json`은 재사용 후보의 분류·방법·해시를 연결하는 **local-only metadata**이며 이미지 bytes·제품 승인·복원 원본이 아니다.
 
 ## 2. 권위와 저장 위치
 
@@ -24,7 +25,8 @@ ChatGPT 브라우저 다운로드 / 사용자 직접 추가 / 로컬 생성기
 ├─ archive/                           # 사용 중지 원본을 로컬 보관할 선택 영역
 ├─ inbox/                             # 브라우저/도구 입력 대기 영역
 ├─ state.json                         # 다운로드 event·tombstone·이전 투영 상태
-└─ sync.json                          # 현재 로컬 투영 결과
+├─ sync.json                          # 현재 로컬 투영 결과
+└─ harvest.json                       # 재사용 후보 분류·방법·content hash 연결, LOCAL ONLY
                     ↓ sync
 assets/_vault_local/                  # LOCAL ONLY, gitignored, Godot-visible/importable
                     ↓ PROJECT_ASSET_APPROVED + promote
@@ -33,7 +35,7 @@ ASSET_MANIFEST.yml                    # TRACKED, 승인·의미·권리·용도 
 Scene/Resource                        # TRACKED 자산 경로만 참조
 ```
 
-`sync.json`은 파일 존재·해시·로컬 작업 경로를 기록하는 **로컬 기계 동기화 원장**이다. `ASSET_MANIFEST.yml`은 승인 상태·용도·시각 DNA·권리·검증을 기록하는 **tracked 의미/승인 원장**이다. 둘을 합치지 않는다.
+`sync.json`은 파일 존재·해시·로컬 작업 경로를 기록하는 **로컬 기계 동기화 원장**이다. `harvest.json`은 Primary Use Gate 뒤 선별된 재사용 후보가 어떤 source/member bytes에서 왔는지 상대 경로와 SHA-256으로 연결하는 **로컬 재사용 검토 메타데이터**다. `ASSET_MANIFEST.yml`은 승인 상태·용도·시각 DNA·권리·검증을 기록하는 **tracked 의미/승인 원장**이다. 셋을 합치지 않는다.
 
 원격 AI/Codex가 사용자의 로컬 `.asset-vault/`를 볼 수 없는 경우 Repo 상태가 더 최신이라고 추정하지 않고 `VAULT_LOCAL_STATE_UNVERIFIED`로 표시한다.
 
@@ -74,7 +76,7 @@ API key·token·서비스 secret은 Repo, `PROJECT_ASSET_VAULT.json`, `ASSET_MAN
 
 ## 5. 동기화 계약
 
-`tools/project_asset_vault.py sync`는 Manifest를 복원 원본으로 사용하지 않고 매 실행마다 `library/`를 다시 스캔한다.
+`tools/project_asset_vault.py sync`는 Manifest나 Harvest metadata를 복원 원본으로 사용하지 않고 매 실행마다 `library/`를 다시 스캔한다.
 
 1. 지원 확장자의 현재 파일을 읽는다.
 2. SHA-256과 `library/` 기준 상대 경로를 계산한다.
@@ -83,13 +85,72 @@ API key·token·서비스 secret은 Repo, `PROJECT_ASSET_VAULT.json`, `ASSET_MAN
 5. 제거/교체된 이전 bytes를 tombstone으로 기록한다.
 6. 현재 `library/`에 다시 존재하는 bytes는 명시적 재도입으로 간주하여 tombstone을 해제한다.
 7. 로컬 `.asset-vault/sync.json`을 재생성한다.
-8. Manifest/state에는 사용자 PC 절대 경로를 프로젝트 공유 기록으로 노출하지 않는다.
+8. Manifest/state/Harvest metadata에는 사용자 PC 절대 경로를 프로젝트 공유 기록으로 노출하지 않는다.
 
 보존소의 symlink는 활성 자산으로 허용하지 않는다. `.crdownload`, `.part`, `.tmp` 같은 미완료 다운로드와 지원하지 않는 확장자는 가져오지 않는다.
 
+### 5.1 Reusable Visual Harvest metadata
+
+`record-harvest`는 이미 존재하는 `library/` source와 선택된 member files를 **분류·연결**한다. 이미지 분할·mask 생성·inpainting·복원·Figma mutation·Godot authoring을 수행하지 않는다.
+
+```text
+Primary Use Gate accepted
+→ Reusable Visual Harvest Gate
+→ source/member가 .asset-vault/library에 실제 존재하는지 재검증
+→ 상대 source_key + SHA-256 기록
+→ .asset-vault/harvest.json
+```
+
+지원 분류:
+
+```text
+REUSE_AS_IS
+VARIANT_SEED
+STRUCTURE_PATTERN
+STYLE_DNA
+REBUILD_FOR_REUSE
+ONE_OFF_KEEP
+REJECT_REUSE
+```
+
+지원 분리·재구축 provenance:
+
+```text
+SOURCE_LAYER
+MASK_CUTOUT
+MANUAL_OR_SEMANTIC_REBUILD
+DERIVED_GENERATIVE_RECOVERY
+```
+
+`DERIVED_GENERATIVE_RECOVERY`는 가려진 부분을 생성적으로 복원한 결과처럼 원본에서 직접 관측되지 않은 픽셀을 포함한다는 뜻이다. `contains_derived_generated_pixels=true`로 기록하며 원본 사실로 취급하지 않는다.
+
+다음 세 경계는 동일하지 않다.
+
+```text
+record-harvest != image decomposition
+record-harvest != PROJECT_ASSET_APPROVED
+record-harvest != promote
+```
+
+`harvest.json` record의 기본 상태는 `review_status: IN_REVIEW`, `project_asset_approved: false`다. 이 metadata는 `asset_vault_harvest_record_id`로 Figma/이미지 검토 기록에서 참조할 수 있지만, 역으로 Figma나 계획 문서가 local bytes의 존재를 만들어내지 않는다.
+
+사용자가 `library/`에서 source/member를 삭제하거나 archive로 이동해도 `harvest.json`이 파일을 복원하지 않는다. 현재 `library/` 파일시스템이 계속 최우선 권위이며, 해당 Harvest record는 과거 해시를 설명하는 stale/inert metadata가 될 수 있다. 같은 bytes의 명시적 재도입은 기존 tombstone 규칙을 그대로 따른다.
+
+예시:
+
+```powershell
+python tools/project_asset_vault.py record-harvest --project-root . `
+  --record-id "HARVEST-UI-001" `
+  --source-key "gpt-imports/2026-08-16/ui-screen.png" `
+  --classification "REBUILD_FOR_REUSE" `
+  --method "MANUAL_OR_SEMANTIC_REBUILD"
+```
+
+member file이 실제로 있다면 `--member-key "<library-relative-path>"`를 반복해서 추가한다. 브라우저 파일명이나 사용자 PC 절대 경로를 authoritative path로 기록하지 않는다.
+
 ## 6. 승인과 Repo 승격
 
-로컬 후보를 Repo/제품 자산으로 만드는 경계는 자동 `sync`가 아니라 **명시적 `promote`**다.
+로컬 후보를 Repo/제품 자산으로 만드는 경계는 자동 `sync`나 `record-harvest`가 아니라 **명시적 `promote`**다.
 
 ```text
 GENERATED_EXPLORATION / IN_REVIEW / APPROVED_CANDIDATE
@@ -131,6 +192,7 @@ python tools/project_asset_vault.py check --project-root .
 → sync에서 기존 로컬 작업 복사본 제거
 → 해당 bytes tombstone
 → rename/mtime 변경만으로 자동 부활 금지
+→ harvest.json은 해당 파일을 복원하지 않음
 
 사용자가 library → archive 이동
 → 활성 후보에서는 제거 + tombstone
@@ -144,7 +206,7 @@ python tools/project_asset_vault.py check --project-root .
 → 폐기/교체는 ASSET_MANIFEST와 프로젝트 승인 절차로 수행
 ```
 
-AI는 자산 작업을 시작할 때 로컬 접근 권한이 있으면 `library/` 현재 상태를 먼저 확인하고, 없으면 `VAULT_LOCAL_STATE_UNVERIFIED`를 유지한다. stale 대화 문맥·과거 `sync.json`·다운로드 폴더만 근거로 사용자가 삭제한 후보를 복원하지 않는다.
+AI는 자산 작업을 시작할 때 로컬 접근 권한이 있으면 `library/` 현재 상태를 먼저 확인하고, 없으면 `VAULT_LOCAL_STATE_UNVERIFIED`를 유지한다. stale 대화 문맥·과거 `sync.json`·`harvest.json`·다운로드 폴더만 근거로 사용자가 삭제한 후보를 복원하지 않는다.
 
 ## 8. Godot 안에서 보존소를 보는 방법 — 기존 솔루션 우선
 
@@ -201,6 +263,9 @@ python tools/project_asset_vault.py watch --project-root . --source "$env:USERPR
 # 감시 시작 전 이미 존재한 이미지까지 포함해야 할 때만
 python tools/project_asset_vault.py pull-downloads --project-root . --source "$env:USERPROFILE\Downloads" --include-existing
 
+# Primary Use 뒤 재사용 후보의 local-only 분류/provenance 기록
+python tools/project_asset_vault.py record-harvest --project-root . --record-id "<harvest-id>" --source-key "<library-relative-path>" --classification "<classification>" --method "<method>"
+
 # 승인된 후보만 tracked 자산으로 승격
 python tools/project_asset_vault.py promote --project-root . --source-key "<library-relative-path>" --target "<assets-relative-target>"
 
@@ -216,8 +281,12 @@ python tools/project_asset_vault.py check --project-root .
 - [ ] 수동 추가가 `assets/_vault_local/`에 반영된다.
 - [ ] 수동 삭제/archive 이동이 다음 sync에서 로컬 복사본 제거와 tombstone으로 반영된다.
 - [ ] 삭제 bytes가 rename/mtime 변경·stale download event 때문에 자동 부활하지 않는다.
+- [ ] `harvest.json`이 삭제된 source/member를 복원하거나 active library 권위를 대체하지 않는다.
+- [ ] `harvest.json`에는 source/member의 library-relative key와 SHA-256만 기록하며 사용자 PC 절대 경로를 저장하지 않는다.
+- [ ] `DERIVED_GENERATIVE_RECOVERY`는 generated/derived pixel provenance로 명시된다.
 - [ ] 도구가 관리하지 않은 workspace 파일은 임의 삭제하지 않는다.
 - [ ] 승인 전 후보가 tracked Repo 자산으로 자동 생성되지 않는다.
+- [ ] `record-harvest`가 `sync`, `promote`, provider/Figma mutation을 암묵적으로 수행하지 않는다.
 - [ ] `PROJECT_ASSET_APPROVED` 이후에만 `promote`로 tracked 자산을 만든다.
 - [ ] tracked Godot Scene/Resource가 `assets/_vault_local/`를 참조하지 않는다.
 - [ ] `ASSET_MANIFEST.yml`이 승격된 자산의 의미·권리·승인 상태를 소유한다.
