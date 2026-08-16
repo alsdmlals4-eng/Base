@@ -31,6 +31,8 @@ def subscription_codex_cli_gate(
         completed = runner(
             ["codex", "login", "status"],
             text=True,
+            encoding="utf-8",
+            errors="replace",
             capture_output=True,
             timeout=_CODEX_LOGIN_STATUS_TIMEOUT_SECONDS,
             check=False,

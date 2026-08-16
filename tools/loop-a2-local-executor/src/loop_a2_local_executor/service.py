@@ -1,8 +1,30 @@
 from __future__ import annotations
 
+import re
+
 from .job import JobContractError, LocalA2Job
 from .repositories import ManagedRepositoryError
 from .runtime import LocalRuntimeError
+
+
+_RUNTIME_PUBLIC_PATTERNS = {
+    "a2_state": re.compile(r"^[A-Z][A-Z0-9_]{0,63}$"),
+    "a2_finding_code": re.compile(r"^[A-Z][A-Z0-9_]{0,127}$"),
+    "a2_provider_error_type": re.compile(r"^[A-Za-z_][A-Za-z0-9_.]{0,127}$"),
+    "a2_receipt_digest": re.compile(r"^[0-9a-f]{64}$"),
+}
+
+
+def _safe_runtime_public_details(error: LocalRuntimeError) -> dict[str, str]:
+    details = getattr(error, "public_details", None)
+    if not isinstance(details, dict):
+        return {}
+    result: dict[str, str] = {}
+    for key, pattern in _RUNTIME_PUBLIC_PATTERNS.items():
+        value = details.get(key)
+        if isinstance(value, str) and pattern.fullmatch(value) is not None:
+            result[key] = value
+    return result
 
 
 class LocalExecutorService:
@@ -55,7 +77,12 @@ class LocalExecutorService:
         public = self._public_base(job)
         try:
             receipt = self.runtime.execute(job)
-        except (LocalRuntimeError, ManagedRepositoryError) as exc:
+        except LocalRuntimeError as exc:
+            public.update({"status": "BLOCKED", "code": exc.code})
+            public.update(_safe_runtime_public_details(exc))
+            self.control_plane.publish_terminal(job.issue_number, public, close=True)
+            return {"status": "BLOCKED", "code": exc.code, "issue_number": job.issue_number}
+        except ManagedRepositoryError as exc:
             public.update({"status": "BLOCKED", "code": exc.code})
             self.control_plane.publish_terminal(job.issue_number, public, close=True)
             return {"status": "BLOCKED", "code": exc.code, "issue_number": job.issue_number}
