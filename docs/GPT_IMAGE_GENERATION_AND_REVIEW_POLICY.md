@@ -131,6 +131,47 @@ GENERATED_EXPLORATION / IN_REVIEW / APPROVED_CANDIDATE
 - 로컬 vault를 볼 수 없는 원격 작업자는 `VAULT_LOCAL_STATE_UNVERIFIED`를 유지한다.
 - ChatGPT 웹 사용은 브라우저 다운로드 + 로컬 watcher가 기본 브리지다. 브라우저 다운로드까지 제거한 zero-click 보존은 로컬 생성/API 프로세스가 vault에 직접 쓰는 경우에만 주장한다.
 
+### 3.5 Primary Use Gate → Reusable Visual Harvest Gate
+
+이미지 작업의 기본 순서는 **`proposal -> user approval -> production -> primary use -> harvest review`**다. 처음부터 모든 결과를 재사용 파츠로 만들지 않고, 승인된 시각안으로 제작한 이미지가 먼저 본래 사용처에서 목적을 달성하게 한다. `primary-use success`와 `reuse promotion`은 별도 판정이며, 재사용성을 이유로 `title-specific identity`, 감정, 정보 위계, 구도를 약화시키지 않는다.
+
+```text
+기존 승인 자산 / Figma Visual Bible 조회
+→ 이미지·사진 시각안 제안
+→ 사용자 승인
+→ 이미지 제작
+→ Primary Use Gate
+→ Reusable Visual Harvest Gate
+→ 필요한 요소만 구조화·레이어화·semantic rebuild
+→ 재사용 자산·구조 패턴·Visual DNA 축적
+→ 다음 작업에서 우선 재사용·변형
+```
+
+제작 중 `textless master`, `clean plate`, `transparent source`처럼 비용이 낮고 자연스러운 separation hint는 보존할 수 있다. 그러나 이런 보조 산출물이 본 이미지의 composition·연출·가독성을 지배해서는 안 된다.
+
+Harvest 후보는 다음 분류를 사용한다.
+
+- `REUSE_AS_IS`: 동일 bytes/구조를 독립적으로 다시 사용한다.
+- `VARIANT_SEED`: 승인 자산을 상태·색·테마 변형의 기준으로 쓴다.
+- `STRUCTURE_PATTERN`: 픽셀이 아니라 layout·hierarchy·interaction 구조를 재사용한다.
+- `STYLE_DNA`: palette·shape·material·lighting·camera·spacing 같은 시각 문법을 재사용한다.
+- `REBUILD_FOR_REUSE`: crop보다 Figma Component/Variant, Godot Theme/Scene/Resource 등 semantic rebuild가 안전하다.
+- `ONE_OFF_KEEP`: 현재 목적에는 중요하지만 공용화 가치가 낮은 hero/narrative/title-specific 표현을 그대로 보존한다.
+- `REJECT_REUSE`: 오류·중복·권리·품질·정체성 위험 때문에 재사용하지 않는다.
+
+분리·재구축 방법은 위험이 낮은 순서로 사용한다.
+
+```text
+SOURCE_LAYER
+→ MASK_CUTOUT
+→ MANUAL_OR_SEMANTIC_REBUILD
+→ DERIVED_GENERATIVE_RECOVERY
+```
+
+`SOURCE_LAYER`는 원래 독립된 source를 사용하고, `MASK_CUTOUT`은 관측된 픽셀만 분리한다. `MANUAL_OR_SEMANTIC_REBUILD`는 특히 UX/UI처럼 상태·확장·현지화·접근성이 필요한 요소에 우선한다. `DERIVED_GENERATIVE_RECOVERY`는 가려진 영역을 생성 복원한 결과이며 원본에서 관측된 사실이 아니라 **derived generated pixels**로 provenance를 분리하고 별도 검수한다.
+
+Harvest 완료나 Figma reuse reference 등록만으로 제품 자산 승인 상태를 올리지 않는다. `Reusable Visual Harvest Gate`는 `PROJECT_ASSET_APPROVED`, `promote`, Figma `04_FINAL`, tracked asset, Godot runtime proof를 자동 생성하거나 대체하지 않는다.
+
 ## 4. 이미지 검수 계약
 
 모든 이미지·목업은 다음을 검사한다.
@@ -206,5 +247,9 @@ Sheet가 `NOT_CONFIGURED`이면 GitHub 정본까지만 갱신하고 상태를 �
 - 참조 원본이 제품 package에 남거나 `reference_brief`가 식별 가능한 표현을 유지하는가
 - AI 변환을 독립 제작 증거로 오해했는가
 - 실제 화면 검수 없이 예쁜 원화만 승인했는가
+- Primary Use Gate 전에 재사용 편의를 위해 본 화면 품질·정체성을 희생했는가
+- `ONE_OFF_KEEP`가 정상인데도 모든 이미지를 강제로 component/layer library로 승격했는가
+- `DERIVED_GENERATIVE_RECOVERY` 픽셀을 원본의 관측 사실로 기록했는가
+- Harvest 판정을 `PROJECT_ASSET_APPROVED` 또는 runtime proof로 오해했는가
 
 차단 Finding은 `MUST_FIX`, 권리·출처·약관·유사성 판정 불가는 `RELEASE_BLOCKED_UNVERIFIED`로 기록한다.
