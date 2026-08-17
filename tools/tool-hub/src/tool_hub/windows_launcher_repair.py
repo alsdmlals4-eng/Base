@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import stat
 import subprocess
 from typing import Callable
@@ -51,6 +51,11 @@ _RUNTIME_PATHS = (
     "schemas/base-tool-registry-v1.schema.json",
     "tools/validate_tool_registry.py",
 )
+_RUNTIME_DIRECTORY_PATHS = _RUNTIME_PATHS[:3]
+_RUNTIME_FILE_PATHS = frozenset(_RUNTIME_PATHS[3:])
+_MAX_RUNTIME_DIAGNOSTIC_BYTES = 64 * 1024
+_MAX_RUNTIME_DIAGNOSTIC_PATHS = 128
+_MAX_RUNTIME_PATH_BYTES = 1024
 
 
 def _regular(path: Path, *, max_bytes: int) -> None:
@@ -96,6 +101,56 @@ def _git(git: Path, root: Path, *arguments: str) -> subprocess.CompletedProcess[
     )
 
 
+def _validated_runtime_dirty_paths(raw: bytes) -> tuple[str, ...]:
+    if len(raw) > _MAX_RUNTIME_DIAGNOSTIC_BYTES:
+        raise LauncherError("LAUNCHER_GIT_CHECK_FAILED")
+    if not raw:
+        return ()
+    if not raw.endswith(b"\0"):
+        raise LauncherError("LAUNCHER_GIT_CHECK_FAILED")
+
+    chunks = raw.split(b"\0")
+    chunks.pop()
+    if len(chunks) > _MAX_RUNTIME_DIAGNOSTIC_PATHS:
+        raise LauncherError("LAUNCHER_GIT_CHECK_FAILED")
+
+    paths: list[str] = []
+    seen: set[str] = set()
+    for chunk in chunks:
+        if not chunk or len(chunk) > _MAX_RUNTIME_PATH_BYTES:
+            raise LauncherError("LAUNCHER_GIT_CHECK_FAILED")
+        try:
+            decoded = chunk.decode("utf-8", errors="strict")
+        except UnicodeDecodeError as error:
+            raise LauncherError("LAUNCHER_GIT_CHECK_FAILED") from error
+        if any(ord(character) < 32 or ord(character) == 127 for character in decoded):
+            raise LauncherError("LAUNCHER_GIT_CHECK_FAILED")
+
+        candidate = PurePosixPath(decoded)
+        if candidate.is_absolute() or any(part in {"", ".", ".."} for part in candidate.parts):
+            raise LauncherError("LAUNCHER_GIT_CHECK_FAILED")
+        normalized = candidate.as_posix()
+        allowed = normalized in _RUNTIME_FILE_PATHS or any(
+            normalized.startswith(f"{prefix}/") for prefix in _RUNTIME_DIRECTORY_PATHS
+        )
+        if not allowed:
+            raise LauncherError("LAUNCHER_GIT_CHECK_FAILED")
+        if normalized not in seen:
+            seen.add(normalized)
+            paths.append(normalized)
+    return tuple(paths)
+
+
+def _write_runtime_dirty_diagnostic(paths: tuple[str, ...]) -> None:
+    logs = Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "BaseToolHub" / "logs"
+    diagnostic = logs / "launcher-runtime-dirty.log"
+    payload = "LAUNCHER_RUNTIME_DIRTY\n" + "".join(f"{path}\n" for path in paths)
+    try:
+        _atomic_write(diagnostic, payload.encode("utf-8"))
+    except OSError as error:
+        raise LauncherError("LAUNCHER_DIAGNOSTIC_WRITE_FAILED") from error
+
+
 def _assert_reviewed_runtime(root: Path, git: Path) -> None:
     head = _git(git, root, "rev-parse", "--verify", "HEAD")
     remote = _git(git, root, "rev-parse", "--verify", "refs/remotes/origin/main")
@@ -108,14 +163,39 @@ def _assert_reviewed_runtime(root: Path, git: Path) -> None:
     ):
         raise LauncherError("LAUNCHER_MAIN_NOT_SYNCED")
 
-    changed = _git(git, root, "diff", "--quiet", "--no-ext-diff", "HEAD", "--", *_RUNTIME_PATHS)
-    if changed.returncode != 0:
+    changed = _git(
+        git,
+        root,
+        "diff",
+        "--name-only",
+        "-z",
+        "--no-ext-diff",
+        "--no-renames",
+        "--exit-code",
+        "HEAD",
+        "--",
+        *_RUNTIME_PATHS,
+    )
+    if changed.returncode not in (0, 1):
+        raise LauncherError("LAUNCHER_GIT_CHECK_FAILED")
+    if changed.returncode == 0:
+        if changed.stdout:
+            raise LauncherError("LAUNCHER_GIT_CHECK_FAILED")
+    else:
+        dirty_paths = _validated_runtime_dirty_paths(changed.stdout)
+        if not dirty_paths:
+            raise LauncherError("LAUNCHER_GIT_CHECK_FAILED")
+        _write_runtime_dirty_diagnostic(dirty_paths)
         raise LauncherError("LAUNCHER_RUNTIME_DIRTY")
 
     untracked = _git(git, root, "ls-files", "--others", "--", *_RUNTIME_PATHS)
     if untracked.returncode != 0:
-        raise LauncherError("LAUNCHER_UPDATE_REQUIRED")
-    for raw in untracked.stdout.decode("utf-8", errors="strict").splitlines():
+        raise LauncherError("LAUNCHER_GIT_CHECK_FAILED")
+    try:
+        untracked_paths = untracked.stdout.decode("utf-8", errors="strict").splitlines()
+    except UnicodeDecodeError as error:
+        raise LauncherError("LAUNCHER_GIT_CHECK_FAILED") from error
+    for raw in untracked_paths:
         candidate = Path(raw)
         if "__pycache__" in candidate.parts or any(part.endswith(".egg-info") for part in candidate.parts):
             continue
