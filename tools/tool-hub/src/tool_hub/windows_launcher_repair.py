@@ -106,10 +106,11 @@ def _validated_runtime_dirty_paths(raw: bytes) -> tuple[str, ...]:
         raise LauncherError("LAUNCHER_GIT_CHECK_FAILED")
     if not raw:
         return ()
+    if not raw.endswith(b"\0"):
+        raise LauncherError("LAUNCHER_GIT_CHECK_FAILED")
 
     chunks = raw.split(b"\0")
-    if chunks and chunks[-1] == b"":
-        chunks.pop()
+    chunks.pop()
     if len(chunks) > _MAX_RUNTIME_DIAGNOSTIC_PATHS:
         raise LauncherError("LAUNCHER_GIT_CHECK_FAILED")
 
@@ -182,8 +183,9 @@ def _assert_reviewed_runtime(root: Path, git: Path) -> None:
             raise LauncherError("LAUNCHER_GIT_CHECK_FAILED")
     else:
         dirty_paths = _validated_runtime_dirty_paths(changed.stdout)
-        if dirty_paths:
-            _write_runtime_dirty_diagnostic(dirty_paths)
+        if not dirty_paths:
+            raise LauncherError("LAUNCHER_GIT_CHECK_FAILED")
+        _write_runtime_dirty_diagnostic(dirty_paths)
         raise LauncherError("LAUNCHER_RUNTIME_DIRTY")
 
     untracked = _git(git, root, "ls-files", "--others", "--", *_RUNTIME_PATHS)
