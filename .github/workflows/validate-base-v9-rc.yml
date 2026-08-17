@@ -88,6 +88,7 @@ jobs:
             tests.test_approved_protected_change_gate \
             tests.test_protected_path_descendant_matching \
             tests.test_loop_execution_capsule_contracts \
+            tests.test_universal_loop_v1_real_burnin_closure \
             tests.test_project_gdd_google_sheets_contract \
             tests.test_vertical_slice_v9_contract \
             tests.test_base_v9_4_ai_operations_contract \
