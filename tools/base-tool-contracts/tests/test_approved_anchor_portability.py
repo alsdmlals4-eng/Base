@@ -123,3 +123,13 @@ def test_approved_anchor_registry_still_rejects_unknown_metadata(tmp_path: Path)
 
     with pytest.raises(AnchorEvidenceError, match="approved-anchor registry is invalid"):
         ApprovedAnchorRegistry.load(registry_path)
+
+
+def test_visual_anchor_registry_cannot_grant_product_asset_approval(tmp_path: Path) -> None:
+    registry_path = tmp_path / "APPROVED_VISUAL_ANCHORS.json"
+    payload = _canonical_visual_anchor_payload(b"anchor")
+    payload["entries"][0]["product_asset_approval"] = "GRANTED"  # type: ignore[index]
+    registry_path.write_text(json.dumps(payload) + "\n", encoding="utf-8")
+
+    with pytest.raises(AnchorEvidenceError, match="approved-anchor registry is invalid"):
+        ApprovedAnchorRegistry.load(registry_path)
