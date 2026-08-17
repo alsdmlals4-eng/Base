@@ -50,7 +50,7 @@ function blockedChildState(message) {
   if (message === "PROJECT_FIGMA_ROUTING_UNAVAILABLE") {
     return { status: "BLOCKED_UNVERIFIED", detail: "ROUTING_REGISTERED 상태를 서버에서 확인할 수 없습니다.", tone: "blocked" };
   }
-  return { status: "BLOCKED_UNVERIFIED", detail: "서버 preflight 또는 authenticated child 확인이 완료되지 않았습니다.", tone: "blocked" };
+  return { status: "START_FAILED", detail: message, tone: "blocked" };
 }
 
 function requireAuthenticatedChildUrl(childUrl) {
@@ -150,7 +150,7 @@ function render() {
         show(`${tool.display_name} · ${launchProjectId} 실행됨`);
       } catch (error) {
         setChildState(launchProjectId, tool.tool_id, blockedChildState(error.message));
-        show(`${tool.display_name} 시작이 차단되었습니다.`, true);
+        show(`${tool.display_name} 시작 차단: ${error.message}`, true);
       }
     });
     card.append(title, description, status, detail, button); tools.append(card);
