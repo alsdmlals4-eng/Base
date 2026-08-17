@@ -258,3 +258,42 @@ def test_launch_failure_keeps_the_exact_server_error_visible() -> None:
     assert 'status: "START_FAILED"' in source
     assert 'detail: message' in source
     assert 'show(`${tool.display_name} 시작 차단: ${error.message}`, true);' in source
+
+
+def test_web_registers_uuid_lease_and_30_second_heartbeat() -> None:
+    source = APP_JS.read_text(encoding="utf-8")
+
+    assert "crypto.randomUUID()" in source
+    assert 'api("/api/browser-lease/open"' in source
+    assert 'api("/api/browser-lease/heartbeat"' in source
+    assert "30000" in source
+
+
+def test_pagehide_releases_with_keepalive_not_direct_shutdown() -> None:
+    source = APP_JS.read_text(encoding="utf-8")
+
+    assert 'window.addEventListener("pagehide"' in source
+    assert 'fetch("/api/browser-lease/close"' in source
+    assert "keepalive: true" in source
+    assert '"X-Hub-CSRF": state.csrf' in source
+    start = source.index("function closeBrowserLease()")
+    end = source.index('window.addEventListener("pagehide"', start)
+    close_block = source[start:end]
+    assert 'api("/api/shutdown"' not in close_block
+    assert 'fetch("/api/shutdown"' not in close_block
+
+
+def test_pageshow_recovers_browser_lease_after_bfcache_restore() -> None:
+    source = APP_JS.read_text(encoding="utf-8")
+
+    assert 'window.addEventListener("pageshow", event =>' in source
+    assert "event.persisted" in source
+    assert "openBrowserLease()" in source
+
+
+def test_browser_lease_code_does_not_store_sensitive_credentials() -> None:
+    source = APP_JS.read_text(encoding="utf-8")
+
+    assert "OPENAI_API_KEY" not in source
+    assert "BASE_TOOL_HUB_LAUNCHER_TOKEN" not in source
+    assert "git_executable" not in source
