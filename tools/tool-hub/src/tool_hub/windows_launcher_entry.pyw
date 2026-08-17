@@ -115,9 +115,11 @@ def _validated_config(config_path: Path, launcher_path: Path) -> dict[str, objec
             or _sha256(pythonw) != payload["pythonw_sha256"]
             or _sha256(git) != payload["git_sha256"]
             or _sha256(launcher_path) != payload["launcher_sha256"]
-            or _hub_runtime_fingerprint(root) != payload["hub_runtime_fingerprint"]
         ):
             raise RuntimeError("LAUNCHER_UPDATE_REQUIRED")
+        payload["_runtime_update_required"] = (
+            _hub_runtime_fingerprint(root) != payload["hub_runtime_fingerprint"]
+        )
         return payload
     except RuntimeError:
         raise
@@ -145,9 +147,11 @@ def main() -> int:
     config_path = Path(os.environ["LOCALAPPDATA"]) / "BaseToolHub" / "launcher" / "launcher-config.json"
     try:
         payload = _validated_config(config_path, Path(__file__).absolute())
+        repair_required = bool(payload.pop("_runtime_update_required", False))
+        mode = "--repair-config" if repair_required else "--config"
         flags = getattr(subprocess, "DETACHED_PROCESS", 0) | getattr(subprocess, "CREATE_NO_WINDOW", 0)
         process = subprocess.Popen(
-            [str(payload["pythonw"]), "-m", "tool_hub.windows_launcher", "--config", str(config_path)],
+            [str(payload["pythonw"]), "-m", "tool_hub.windows_launcher", mode, str(config_path)],
             stdin=subprocess.DEVNULL,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
