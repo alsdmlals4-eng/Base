@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import shutil
 import subprocess
 
 import pytest
@@ -122,3 +123,58 @@ def test_runtime_dirty_requires_at_least_one_reviewed_path(
         repair_module._assert_reviewed_runtime(Path("C:/Base"), Path("C:/Git/git.exe"))
 
     assert not (tmp_path / "BaseToolHub" / "logs" / "launcher-runtime-dirty.log").exists()
+
+
+def test_reviewed_runtime_accepts_crlf_only_worktree_representation(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    git_name = shutil.which("git")
+    assert git_name is not None
+    git = Path(git_name)
+    root = tmp_path / "Base"
+    root.mkdir()
+
+    def run_git(*arguments: str) -> subprocess.CompletedProcess[bytes]:
+        return subprocess.run(
+            [str(git), "-C", str(root), *arguments],
+            check=True,
+            capture_output=True,
+        )
+
+    subprocess.run([str(git), "init", str(root)], check=True, capture_output=True)
+    run_git("config", "user.email", "tool-hub-test@example.invalid")
+    run_git("config", "user.name", "Tool Hub Test")
+    run_git("config", "core.autocrlf", "false")
+
+    relative = "tools/tool-hub/src/tool_hub/windows_launcher_repair.py"
+    target = root / relative
+    target.parent.mkdir(parents=True)
+    target.write_bytes(b"line_one = 1\nline_two = 2\n")
+    run_git("add", relative)
+    run_git("commit", "-m", "fixture")
+    head = run_git("rev-parse", "HEAD").stdout.strip().decode("ascii")
+    run_git("update-ref", "refs/remotes/origin/main", head)
+
+    target.write_bytes(b"line_one = 1\r\nline_two = 2\r\n")
+    raw = subprocess.run(
+        [
+            str(git),
+            "-c",
+            "core.autocrlf=false",
+            "-C",
+            str(root),
+            "diff",
+            "--quiet",
+            "--no-ext-diff",
+            "HEAD",
+            "--",
+            relative,
+        ],
+        check=False,
+        capture_output=True,
+    )
+    assert raw.returncode == 1
+
+    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "local"))
+    repair_module._assert_reviewed_runtime(root, git)
