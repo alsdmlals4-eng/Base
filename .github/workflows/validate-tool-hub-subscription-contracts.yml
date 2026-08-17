@@ -5,6 +5,9 @@ on:
     paths:
       - "tools/base-tool-contracts/**"
       - "tools/tool-hub/src/tool_hub/adapters.py"
+      - "tools/tool-hub/src/tool_hub/windows_launcher.py"
+      - "tools/tool-hub/src/tool_hub/windows_launcher_entry.pyw"
+      - "tools/tool-hub/src/tool_hub/windows_launcher_repair.py"
       - "tools/tool-hub/web/**"
       - "tools/tool-hub/tests/test_web_launch_diagnostics.py"
       - "tools/tool-hub/tests/test_windows_launcher_self_repair.py"
@@ -16,21 +19,27 @@ on:
       - "tests/test_tool_hub_subscription_production_contract.py"
       - "docs/superpowers/specs/2026-08-15-tool-hub-subscription-production-contracts-design.md"
       - "docs/superpowers/plans/2026-08-15-tool-hub-subscription-production-contracts.md"
+      - "docs/superpowers/plans/2026-08-18-tool-hub-runtime-dirty-diagnostics.md"
       - ".github/workflows/validate-tool-hub-subscription-contracts.yml"
   push:
     branches: [main]
     paths:
       - "tools/base-tool-contracts/**"
       - "tools/tool-hub/src/tool_hub/adapters.py"
+      - "tools/tool-hub/src/tool_hub/windows_launcher.py"
+      - "tools/tool-hub/src/tool_hub/windows_launcher_entry.pyw"
+      - "tools/tool-hub/src/tool_hub/windows_launcher_repair.py"
       - "tools/tool-hub/web/**"
       - "tools/tool-hub/tests/test_web_launch_diagnostics.py"
       - "tools/tool-hub/tests/test_windows_launcher_self_repair.py"
       - "tools/tool-hub/tests/test_windows_launcher_runtime_dirty_diagnostics.py"
       - "tools/expression-studio/src/expression_studio/app.py"
+      - "tools/sprite-animation-studio/src/expression_studio/app.py"
       - "tools/sprite-animation-studio/src/sprite_animation_studio/app.py"
       - "docs/operations/PROJECT_FIGMA_TARGET_REGISTRY.json"
       - "docs/operations/PROJECT_FIGMA_TOOL_ROUTE_REGISTRY.json"
       - "tests/test_tool_hub_subscription_production_contract.py"
+      - "docs/superpowers/plans/2026-08-18-tool-hub-runtime-dirty-diagnostics.md"
       - ".github/workflows/validate-tool-hub-subscription-contracts.yml"
   workflow_dispatch:
 
