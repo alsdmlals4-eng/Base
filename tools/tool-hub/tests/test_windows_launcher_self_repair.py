@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import runpy
+import subprocess
 
 import pytest
 
@@ -69,6 +70,7 @@ def test_repair_path_reissues_current_launcher_then_runs_it(
     result = repair_module.repair_installed_launcher(
         config_path,
         run=lambda path: events.append(f"run:{path}") or 0,
+        reviewed_runtime=lambda *_: None,
         desktop=owner.desktop,
         shortcut_builder=lambda *_: b"reviewed Windows shortcut",
     )
@@ -92,6 +94,22 @@ def test_repair_path_rejects_interpreter_tamper_before_reinstall(
         repair_module.repair_installed_launcher(
             owner.config_path,
             run=lambda _: 0,
+            reviewed_runtime=lambda *_: None,
             desktop=owner.desktop,
             shortcut_builder=lambda *_: b"reviewed Windows shortcut",
         )
+
+
+def test_reviewed_runtime_requires_head_to_equal_origin_main(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    results = iter(
+        [
+            subprocess.CompletedProcess([], 0, stdout=b"a" * 40 + b"\n", stderr=b""),
+            subprocess.CompletedProcess([], 0, stdout=b"b" * 40 + b"\n", stderr=b""),
+        ]
+    )
+    monkeypatch.setattr(repair_module.subprocess, "run", lambda *args, **kwargs: next(results))
+
+    with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_UPDATE_REQUIRED"):
+        repair_module._assert_reviewed_runtime(Path("C:/Base"), Path("C:/Git/git.exe"))
