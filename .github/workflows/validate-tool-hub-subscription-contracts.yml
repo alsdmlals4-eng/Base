@@ -8,6 +8,7 @@ on:
       - "tools/tool-hub/web/**"
       - "tools/tool-hub/tests/test_web_launch_diagnostics.py"
       - "tools/tool-hub/tests/test_windows_launcher_self_repair.py"
+      - "tools/tool-hub/tests/test_windows_launcher_runtime_dirty_diagnostics.py"
       - "tools/expression-studio/src/expression_studio/app.py"
       - "tools/sprite-animation-studio/src/sprite_animation_studio/app.py"
       - "docs/operations/PROJECT_FIGMA_TARGET_REGISTRY.json"
@@ -24,6 +25,7 @@ on:
       - "tools/tool-hub/web/**"
       - "tools/tool-hub/tests/test_web_launch_diagnostics.py"
       - "tools/tool-hub/tests/test_windows_launcher_self_repair.py"
+      - "tools/tool-hub/tests/test_windows_launcher_runtime_dirty_diagnostics.py"
       - "tools/expression-studio/src/expression_studio/app.py"
       - "tools/sprite-animation-studio/src/sprite_animation_studio/app.py"
       - "docs/operations/PROJECT_FIGMA_TARGET_REGISTRY.json"
@@ -66,5 +68,6 @@ jobs:
           tools/base-tool-contracts/tests/test_windows_subprocess_visibility.py
           tools/tool-hub/tests/test_web_launch_diagnostics.py
           tools/tool-hub/tests/test_windows_launcher_self_repair.py
+          tools/tool-hub/tests/test_windows_launcher_runtime_dirty_diagnostics.py
       - name: Run repository production-boundary contract
         run: python -m unittest tests/test_tool_hub_subscription_production_contract.py -v
