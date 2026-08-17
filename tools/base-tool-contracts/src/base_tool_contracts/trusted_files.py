@@ -209,6 +209,13 @@ def read_regular_portable_nofollow(
     return raw, FileIdentity(opened.st_dev, opened.st_ino, opened.st_mode)
 
 
+def portable_subprocess_creationflags() -> int:
+    """Return the no-console process flag only on Windows."""
+    if os.name != "nt":
+        return 0
+    return getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000)
+
+
 def run_portable_git(root: Path, *arguments: str) -> subprocess.CompletedProcess[bytes]:
     """Run fixed Git arguments for catalog proof on non-POSIX platforms."""
     executable = trusted_git_executable()
@@ -223,6 +230,7 @@ def run_portable_git(root: Path, *arguments: str) -> subprocess.CompletedProcess
         [str(executable), *overrides, "-C", str(root), *arguments],
         capture_output=True,
         check=False,
+        creationflags=portable_subprocess_creationflags(),
         env={
             "PATH": str(executable.parent),
             "GIT_CONFIG_NOSYSTEM": "1",
