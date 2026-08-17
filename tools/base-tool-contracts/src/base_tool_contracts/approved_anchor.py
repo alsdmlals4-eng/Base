@@ -46,16 +46,21 @@ class _Evidence(BaseModel):
 class _Entry(BaseModel):
     model_config = ConfigDict(extra="forbid")
     project_id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+    subject_id: str | None = Field(default=None, pattern=r"^[a-z0-9]+(?:_[a-z0-9]+)*$")
+    subject_name: str | None = Field(default=None, min_length=1)
+    anchor_role: str | None = Field(default=None, pattern=r"^[A-Z][A-Z0-9_]*$")
     source_path: str = Field(min_length=1)
     figma_node_url: HttpUrl
     source_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     approval_state: Literal["APPROVED"]
     evidence: _Evidence
+    product_asset_approval: Literal["NOT_GRANTED"] | None = None
 
 
 class _Document(BaseModel):
     model_config = ConfigDict(extra="forbid")
     version: Literal[1]
+    purpose: str | None = Field(default=None, min_length=1)
     entries: list[_Entry]
 
 
