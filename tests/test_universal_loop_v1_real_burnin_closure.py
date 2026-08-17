@@ -12,14 +12,14 @@ BLACKSMITH_AUTHORITY_SHA = "6b241f28969410de78156c90cc10f33a067426a2"
 HISTORICAL_KERNEL_SHA = "8e7238a1bb9f49bd6e2403a2a6cb20d7aee863c7"
 COUNTED_ISSUES = [490, 491, 492]
 COUNTED_RUN_IDS = [
-    "BS_A2_BURNIN_001",
-    "BS_A2_BURNIN_002",
-    "BS_A2_BURNIN_003",
+    "BS_A2_BURNIN_001_R1",
+    "BS_A2_BURNIN_001_R2",
+    "BS_A2_BURNIN_001_R3",
 ]
 COUNTED_RECEIPT_DIGESTS = [
-    "5d823019157717e796b6f07beca50abf0e7d960a32df48374b52b21152f37d10",
-    "449b3d7ff38f732092fac0549c0f2a89d069c89383150846ed7559eb9317457b",
-    "61474c908445357aea397923f56117e5fc8f0a136064537c9e4d9f0216f034a2",
+    "fcf3663d3d62c8364276488f3d9f29d9d510d91c0274fe27571cb5e2bb3e8ca9",
+    "9cc4f5066d21af7d8463dd87f73a45e2c5a25f581fb6e15c378dd41d82eefb4a",
+    "e19b7d060843bc4b6e0c352c88cb08a370a71a07a31deeeb5c82169fbaa7937c",
 ]
 
 
@@ -46,6 +46,7 @@ class UniversalLoopV1RealBurninClosureTests(unittest.TestCase):
         self.assertEqual(closure["terminal_state"], "WAITING_INTEGRATION")
         self.assertEqual(closure["non_counting_diagnostic_issue"], 489)
         self.assertEqual(closure["non_counting_diagnostic_run_id"], "BS_A2_DIAG_20260817_005")
+        self.assertEqual(closure["non_counting_diagnostic_receipt_digest"], "061e9c3c921bbc8a46698de1c1ba3513c76ca6cac7d88f6374fb6e660a420a06")
         self.assertEqual(closure["counted_issue_numbers"], COUNTED_ISSUES)
         self.assertEqual(closure["counted_run_ids"], COUNTED_RUN_IDS)
         self.assertEqual(closure["counted_receipt_digests"], COUNTED_RECEIPT_DIGESTS)
