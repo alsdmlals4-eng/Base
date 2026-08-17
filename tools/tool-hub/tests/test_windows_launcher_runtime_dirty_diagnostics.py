@@ -80,3 +80,45 @@ def test_runtime_dirty_diagnostic_rejects_out_of_scope_path(
         repair_module._assert_reviewed_runtime(Path("C:/Base"), Path("C:/Git/git.exe"))
 
     assert not (tmp_path / "BaseToolHub" / "logs" / "launcher-runtime-dirty.log").exists()
+
+
+def test_runtime_dirty_diagnostic_rejects_non_nul_terminated_git_output(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    same = _same_head()
+    results = iter(
+        [
+            subprocess.CompletedProcess([], 0, stdout=same, stderr=b""),
+            subprocess.CompletedProcess([], 0, stdout=same, stderr=b""),
+            subprocess.CompletedProcess([], 1, stdout=b"tools/tool-hub/web/app.js", stderr=b""),
+        ]
+    )
+    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path))
+    monkeypatch.setattr(repair_module.subprocess, "run", lambda *args, **kwargs: next(results))
+
+    with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_GIT_CHECK_FAILED"):
+        repair_module._assert_reviewed_runtime(Path("C:/Base"), Path("C:/Git/git.exe"))
+
+    assert not (tmp_path / "BaseToolHub" / "logs" / "launcher-runtime-dirty.log").exists()
+
+
+def test_runtime_dirty_requires_at_least_one_reviewed_path(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    same = _same_head()
+    results = iter(
+        [
+            subprocess.CompletedProcess([], 0, stdout=same, stderr=b""),
+            subprocess.CompletedProcess([], 0, stdout=same, stderr=b""),
+            subprocess.CompletedProcess([], 1, stdout=b"", stderr=b""),
+        ]
+    )
+    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path))
+    monkeypatch.setattr(repair_module.subprocess, "run", lambda *args, **kwargs: next(results))
+
+    with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_GIT_CHECK_FAILED"):
+        repair_module._assert_reviewed_runtime(Path("C:/Base"), Path("C:/Git/git.exe"))
+
+    assert not (tmp_path / "BaseToolHub" / "logs" / "launcher-runtime-dirty.log").exists()
