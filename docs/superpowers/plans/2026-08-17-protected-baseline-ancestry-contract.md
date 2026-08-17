@@ -45,9 +45,9 @@ The first placement also caused `ModuleNotFoundError: jsonschema` in `docs-valid
 
 Create a dedicated protected-baseline test module and import its TestCase from `tests/test_local_validation.py`, which is already compiled and executed by `ubuntu-contract` but not by the lightweight docs gate. No workflow edit is required.
 
-- [ ] **Step 4: Rebase the test-only state onto the current Base main and verify clean RED**
+- [x] **Step 4: Rebase the test-only state onto the current Base main and verify clean RED**
 
-The branch must be based on completed Base main `2b8856054573f1a06297ac8e65f5ca009fa2daef` (or a later completed main if it advances again). `docs-validation` must pass. `ubuntu-contract` must fail specifically on ancestor/missing/divergent/historical-diff assertions while equal authority and unchanged explicit-override/GITHUB_PR_BASE assertions pass.
+Test-only head `6ea6839fbb8168e58f347ed1a3c9cfefe1f5fbf7` was based on completed Base main `2b8856054573f1a06297ac8e65f5ca009fa2daef`. `docs-validation` passed. `ubuntu-contract` failed only on the five intended ancestry/historical-diff cases; equal authority, explicit override, and `GITHUB_PR_BASE` remained green.
 
 ### Task 2: Install the minimum fail-closed remote ancestry compatibility rule
 
@@ -59,7 +59,7 @@ The branch must be based on completed Base main `2b8856054573f1a06297ac8e65f5ca0
 - Consumes: existing `_resolve_commit()`, `_commit_exists()`, `_is_ancestor()`, and legacy `_trusted_protected_base()`.
 - Produces: official validator behavior that accepts a historical remote baseline iff it exists and is an ancestor of the resolved remote authority.
 
-- [ ] **Step 1: Add one idempotent compatibility installer**
+- [x] **Step 1: Add one idempotent compatibility installer**
 
 For `protected_base_override` or any authority kind other than `REMOTE_TRACKING_REF`, delegate to the legacy function unchanged. For `REMOTE_TRACKING_REF` with no explicit override:
 
@@ -77,7 +77,7 @@ if not contract_module._is_ancestor(project_root, adapter_commit, resolved):
 return adapter_commit, []
 ```
 
-`install_release_lock_paths()` must install this wrapper alongside the existing immutable release-finalization compatibility rule.
+`install_release_lock_paths()` installs this wrapper alongside the existing immutable release-finalization compatibility rule. Production implementation commit: `66c49c66b274989920f765c2a68cff359287be2e`.
 
 - [ ] **Step 2: Re-run exact-head focused and aggregate contract coverage**
 
