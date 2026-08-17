@@ -4,7 +4,7 @@
 
 **Goal:** Promote five verified Universal Loop v1 closure lessons into existing Base validation/freshness contracts and synchronize the stale current Local Executor evidence ceiling.
 
-**Architecture:** Extend the existing claim/intent validation reference and canonical-freshness Skill rather than adding a new Skill. Bind both behavior changes to existing consumed regression modules, record the reusable learning in the global learning log, and update only the active Local Executor current-state section while preserving historical evidence.
+**Architecture:** Extend the existing claim/intent validation reference and canonical-freshness Skill rather than adding a new Skill. Prove a focused RED that is explicitly consumed by Base-v9, bind the freshness body change to the existing recognized `tests/test_reference_freshness.py`, record the exact case in the freshness Skill's owner-local `LEARNING_LOG.md`, and update only the active Local Executor current-state section while preserving historical evidence. The owner-local log is an intentional post-RED refinement because the global log already contains earlier false-GREEN/test-consumption lessons and the existing coupled-change contract explicitly permits `skills/**/LEARNING_LOG.md`.
 
 **Tech Stack:** Markdown contracts, Python `unittest`, GitHub Actions Base-v9/GPO validation, GitHub exact-SHA evidence.
 
@@ -23,16 +23,17 @@
 ### Task 1: Claim-verification closure lessons
 
 **Files:**
-- Modify: `tests/test_claim_and_intent_verification_contract.py`
+- Add/Modify: `tests/test_universal_loop_v1_closure_learning_reuse.py`
+- Modify: `.github/workflows/validate-base-v9-rc.yml`
 - Modify: `skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md`
 
 **Interfaces:**
 - Consumes: existing `claim-and-intent-verification` mode and `COMPLETION_CLAIM_GATE`.
 - Produces: explicit machine-evidence correction, test-consumption proof, latest-exact-head, and bounded-zero-escape contracts.
 
-- [ ] **Step 1: Write the failing contract assertions**
+- [ ] **Step 1: Write the failing contract assertions and consume them**
 
-Extend `test_reference_is_fail_closed_and_evidence_bounded` or add a focused test requiring all of these literal contract markers and meanings:
+Require:
 
 ```python
 for marker in (
@@ -47,15 +48,15 @@ for marker in (
     self.assertIn(marker, reference)
 ```
 
-Also require text stating that a trigger/path match is not execution evidence and that summary prose is corrected when exact terminal evidence contradicts it.
+Add the test module to Base-v9's explicit unittest command before treating CI as evidence.
 
 - [ ] **Step 2: Verify RED**
 
-Run the existing consumed regression through the repository CI path. Expected failure: only the new markers/semantics are absent from `claim-and-intent-verification.md`; existing contract assertions remain green.
+Expected proof is not merely a started workflow: the Base-v9 log must show the new module in the actual command and its assertions must fail on the missing rules.
 
 - [ ] **Step 3: Add the minimal reference rules**
 
-Add a compact `Closure evidence hardening` section with exactly these rules:
+Add a compact `Closure evidence hardening` section with:
 
 ```text
 MACHINE_EVIDENCE_CORRECTION
@@ -68,11 +69,7 @@ Do not create new modes, registries, schemas, or runtime code.
 
 - [ ] **Step 4: Verify GREEN**
 
-Run the same regression and require all assertions to pass.
-
-- [ ] **Step 5: Commit**
-
-Commit the test/reference pair together.
+Run the same explicitly consumed regression and require pass.
 
 ---
 
@@ -81,14 +78,15 @@ Commit the test/reference pair together.
 **Files:**
 - Modify: `tests/test_reference_freshness.py`
 - Modify: `skills/auditing-canonical-reference-freshness/SKILL.md`
+- Add: `skills/auditing-canonical-reference-freshness/LEARNING_LOG.md`
 
 **Interfaces:**
 - Consumes: `CURRENT_MUTABLE`, `HISTORICAL_DISCOVERY`, `MISSING_PROPAGATION`, `CONFLICTING_SOURCE`.
 - Produces: a successor-state propagation rule for mutable checkpoints and predecessor tests.
 
-- [ ] **Step 1: Write the failing contract assertion**
+- [ ] **Step 1: Require the successor-state contract**
 
-Add a repository-level contract test that reads the canonical Skill and requires:
+Require:
 
 ```python
 for marker in (
@@ -100,15 +98,15 @@ for marker in (
     self.assertIn(marker, skill)
 ```
 
-Require the text to say that historical provenance stays exact while current mutable tests/consumers must be inspected when a verified state advances.
+The existing recognized freshness regression also carries a repository-level assertion so `.github/reference-freshness.json`'s coupled-change rule is genuinely satisfied.
 
 - [ ] **Step 2: Verify RED**
 
-Run the existing reference-freshness regression path. Expected failure: the new successor-state contract is absent; the freshness checker’s existing behavior remains green.
+Expected failure: the new successor-state contract is absent while existing freshness behavior remains green.
 
-- [ ] **Step 3: Add minimal Skill guidance**
+- [ ] **Step 3: Add minimal Skill guidance and local learning evidence**
 
-Add one subsection under impact/propagation handling:
+Add:
 
 ```text
 VERIFIED_SUCCESSOR_STATE
@@ -118,29 +116,27 @@ VERIFIED_SUCCESSOR_STATE
 - unexplained frozen ceilings are PREDECESSOR_CEILING_FREEZE and become a propagation/content-drift finding
 ```
 
+Record the #489–#494 case in the owner-local Learning Log rather than duplicating global historical lessons.
+
 - [ ] **Step 4: Verify GREEN**
 
-Run the same reference-freshness regression and require pass.
-
-- [ ] **Step 5: Commit**
-
-Commit the test/Skill pair together.
+Run focused freshness regressions and canonical-reference freshness.
 
 ---
 
-### Task 3: Record learning and synchronize the active Local Executor status
+### Task 3: Synchronize the active Local Executor status
 
 **Files:**
-- Modify: `skills/SKILL_LEARNING_LOG.md`
 - Modify: `docs/LOOP_A2_LOCAL_EXECUTOR.md`
+- Covered by: `tests/test_universal_loop_v1_closure_learning_reuse.py`
 
 **Interfaces:**
 - Consumes: #489 non-counting receipt, #490/#491/#492 counted receipts, #494 closure checkpoint.
-- Produces: reusable learning record and a current operational document consistent with the machine checkpoint.
+- Produces: a current operational document consistent with the machine checkpoint.
 
-- [ ] **Step 1: Add a regression assertion before current-state edits**
+- [ ] **Step 1: Require current live evidence**
 
-Extend the claim/intent regression to require the learning log to contain a `2026-08-17 — Universal Loop v1 closure evidence hardening` entry and require `docs/LOOP_A2_LOCAL_EXECUTOR.md` to contain:
+Require:
 
 ```text
 live_v4_user_pc_preflight: PASS
@@ -148,28 +144,15 @@ real_local_chatgpt_codex_call: PASS
 blacksmith_real_burnin_runs: 3
 ```
 
-and no longer contain those three old current-state values in its `Current evidence ceiling` block.
+and reject the old current-state values before `## Queue job`.
 
 - [ ] **Step 2: Verify RED**
 
-Expected failures: the learning entry is absent and the active Local Executor document still says NOT_RUN/NOT_COMPLETED/0.
+Expected failure: the active Local Executor document still says NOT_RUN/NOT_COMPLETED/0.
 
-- [ ] **Step 3: Write the reusable learning entry**
+- [ ] **Step 3: Synchronize only the active current-state section**
 
-Record:
-
-```text
-status: PATTERN
-trigger: #494 REAL A2 closure
-lessons: machine evidence correction; test-consumption proof; successor-aware mutable state; latest exact-head; bounded zero-escape
-boundary: no new Skill; historical evidence not rewritten; no game-wide quality claim
-verification: #494 exact-head + postmerge Base-v9/GPO; #489/#490/#491/#492 exact receipt identities
-next trigger: recurrence in another lifecycle or a false-green/frozen-successor regression
-```
-
-- [ ] **Step 4: Synchronize only the active current-state section**
-
-Update `docs/LOOP_A2_LOCAL_EXECUTOR.md` current evidence to the verified live state while preserving the document’s architecture, queue, Docker, security, and non-goal contracts. Include the exact closure provenance:
+Preserve queue, Docker, security and non-goal contracts and record exact provenance:
 
 ```text
 Base runtime used by successful runs: f4deebfc06de828cc956e47220e829cd98b1eb09
@@ -179,22 +162,18 @@ Counted: #490/#491/#492 / BS_A2_BURNIN_001_R1/R2/R3
 Closure main: 2b8856054573f1a06297ac8e65f5ca009fa2daef
 ```
 
-Do not rewrite historical evidence files.
+Do not rewrite historical evidence files or pretend the later closure SHA was the runtime used by the earlier burn-ins.
 
-- [ ] **Step 5: Verify GREEN**
+- [ ] **Step 4: Verify GREEN**
 
 Run focused contract tests plus canonical reference freshness.
-
-- [ ] **Step 6: Commit**
-
-Commit learning/current-state synchronization with its regression.
 
 ---
 
 ### Task 4: Exact-head review, merge, and remaining-work disposition
 
 **Files:**
-- No new production files unless exact-head validation exposes a propagation defect.
+- No new runtime/product files unless exact-head validation exposes a propagation defect.
 - Update PR/Issue metadata only after evidence exists.
 
 **Interfaces:**
@@ -208,7 +187,7 @@ Require:
 ```text
 Base-v9 focused contracts: PASS
 adversarial-gate: PASS
-Game Project Operating System docs/contract/publication/Windows/final ci-gate: PASS as selected by risk classifier
+Game Project Operating System selected jobs + final ci-gate: PASS
 canonical reference freshness: PASS
 ```
 
@@ -235,12 +214,10 @@ Mark ready only after exact-head gates pass, squash merge with expected head, th
 
 - [ ] **Step 5: Classify remaining Loop work**
 
-Use these dispositions:
-
 ```text
 #368 / PR #369: IN_PROGRESS_OWNER — do not touch.
 #393/#375: REMAINING_REAL_VISUAL_INTEGRATION — live Figma/Desktop/Tool Hub/Godot evidence still required; do not close from CI alone.
-#395: inspect current standalone Local Executor authority; close as NOT_PLANNED_SUPERSEDED only if no active PR owns it and current canonical architecture clearly replaces Tool-Hub-embedded broker semantics.
+#395: CLOSED_NOT_PLANNED_SUPERSEDED — replaced by standalone Local Executor #397/#398; do not claim completed as-written.
 A3/Scheduler: INTENTIONALLY_DEFERRED — do not open automatically.
 ```
 
