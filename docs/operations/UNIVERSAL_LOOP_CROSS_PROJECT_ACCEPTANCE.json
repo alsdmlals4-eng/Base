@@ -106,7 +106,7 @@
     ],
     "unshare_hosted_ubuntu": "UNAVAILABLE_FAIL_CLOSED",
     "read_only_approved_network": "NOT_IMPLEMENTED_FAIL_CLOSED",
-    "non_linux_production_boundary": "WINDOWS_HOST_PLAN_MERGED_MAIN_VALIDATED_LIVE_LOCAL_SMOKE_NOT_RUN",
+    "non_linux_production_boundary": "WINDOWS_HOST_PLAN_MERGED_MAIN_VALIDATED_LIVE_LOCAL_SMOKE_PASS",
     "live_openai_request": "NOT_RUN",
     "paid_api_cost": "NOT_RUN"
   },
