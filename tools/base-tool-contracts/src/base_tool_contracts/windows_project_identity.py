@@ -16,6 +16,8 @@ import sys
 import tempfile
 import zipfile
 
+from .trusted_files import portable_subprocess_creationflags
+
 
 _PROJECT_ID = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 _ADAPTER = Path("skills/PROJECT_BASE_ADAPTER.json")
@@ -135,6 +137,7 @@ def _git(git: Path, repository: Path, *arguments: str) -> subprocess.CompletedPr
         [str(git), *_GIT_OVERRIDES, "-C", str(repository), *arguments],
         capture_output=True,
         check=False,
+        creationflags=portable_subprocess_creationflags(),
         env={
             "PATH": str(git.parent),
             "GIT_CONFIG_NOSYSTEM": "1",
@@ -176,7 +179,14 @@ def _verified_validator_files(
     for candidate in (base_root / "tools").iterdir():
         if candidate.suffix.lower() not in {".py", ".pyc", ".pyo", ".pyd", ".so"}:
             continue
-        tracked = _git(git, base_root, "ls-files", "--error-unmatch", "--", candidate.relative_to(base_root).as_posix())
+        tracked = _git(
+            git,
+            base_root,
+            "ls-files",
+            "--error-unmatch",
+            "--",
+            candidate.relative_to(base_root).as_posix(),
+        )
         if tracked.returncode != 0:
             raise WindowsProjectIdentityError("PROJECT_IDENTITY_VALIDATOR_BLOCKED")
     return result
@@ -253,6 +263,7 @@ def _run_validator(
             },
             capture_output=True,
             check=False,
+            creationflags=portable_subprocess_creationflags(),
         )
         if (
             hashlib.sha256(archive_path.read_bytes()).hexdigest() != archive_before
