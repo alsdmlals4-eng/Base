@@ -34,15 +34,15 @@ class UniversalLoopSubscriptionCliClosureTests(unittest.TestCase):
         self.assertEqual(evidence["postmerge_validation"], "PASS")
         self.assertEqual(evidence["model_shell_tool"], "DISABLED_BY_STRICT_CONFIG")
         self.assertEqual(evidence["model_web_search_features"], "DISABLED_BY_STRICT_CONFIG")
-        self.assertEqual(evidence["real_subscription_smoke"], "NOT_RUN_LOCAL_CHATGPT_AUTH_REQUIRED")
+        self.assertEqual(evidence["real_subscription_smoke"], "PASS")
         self.assertEqual(evidence["live_openai_api_request"], "NOT_APPLICABLE_POLICY_FORBIDDEN")
         self.assertEqual(evidence["paid_api_cost"], "NOT_RUN")
 
-    def test_checkpoint_replaces_paid_smoke_gate_with_local_subscription_smoke(self) -> None:
+    def test_checkpoint_replaces_paid_smoke_gate_with_completed_local_subscription_smoke(self) -> None:
         gate = self.checkpoint["remaining_external_gate"]
         self.assertEqual(gate["real_openai_api"], "NOT_APPLICABLE_POLICY_FORBIDDEN")
-        self.assertEqual(gate["subscription_codex_cli_smoke"], "NOT_RUN_LOCAL_CHATGPT_AUTH_REQUIRED")
-        self.assertEqual(gate["real_a2_burnin_runs"], 0)
+        self.assertEqual(gate["subscription_codex_cli_smoke"], "PASS")
+        self.assertEqual(gate["real_a2_burnin_runs"], 3)
         self.assertIsNone(gate["paid_smoke_issue"])
 
     def test_preserved_limits_remain_closed(self) -> None:
