@@ -337,6 +337,22 @@ class CanonicalReferenceFreshnessTests(unittest.TestCase):
         passed = self._run(base, self._git("rev-parse", "HEAD"))
         self.assertEqual(passed.returncode, 0, passed.stdout + passed.stderr)
 
+    def test_repository_freshness_skill_declares_verified_successor_state_contract(self) -> None:
+        skill = (ROOT / "skills/auditing-canonical-reference-freshness/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        for marker in (
+            "VERIFIED_SUCCESSOR_STATE",
+            "PREDECESSOR_CEILING_FREEZE",
+            "CURRENT_MUTABLE",
+            "HISTORICAL_DISCOVERY",
+            "NOT_RUN",
+        ):
+            self.assertIn(marker, skill)
+        self.assertIn("historical provenance", skill)
+        self.assertIn("MISSING_PROPAGATION", skill)
+        self.assertIn("CONFLICTING_SOURCE", skill)
+
 
 if __name__ == "__main__":
     unittest.main()
