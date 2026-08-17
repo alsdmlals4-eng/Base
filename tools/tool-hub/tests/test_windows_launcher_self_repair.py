@@ -83,14 +83,14 @@ def test_repair_path_reissues_current_launcher_then_runs_it(
     assert owner.status() == "INSTALLED"
 
 
-def test_repair_path_rejects_interpreter_tamper_before_reinstall(
+def test_repair_path_reports_interpreter_tamper(
     tmp_path: Path,
 ) -> None:
     owner, _, pythonw, _, _ = installer(tmp_path)
     owner.install()
     pythonw.write_bytes(b"tampered interpreter")
 
-    with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_UPDATE_REQUIRED"):
+    with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_PYTHON_CHANGED"):
         repair_module.repair_installed_launcher(
             owner.config_path,
             run=lambda _: 0,
@@ -100,7 +100,77 @@ def test_repair_path_rejects_interpreter_tamper_before_reinstall(
         )
 
 
-def test_reviewed_runtime_requires_head_to_equal_origin_main(
+def test_repair_path_reports_git_tamper(tmp_path: Path) -> None:
+    owner, *_ = installer(tmp_path)
+    owner.install()
+    payload = json.loads(owner.config_path.read_text(encoding="utf-8"))
+    Path(payload["git_executable"]).write_bytes(b"tampered git")
+
+    with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_GIT_CHANGED"):
+        repair_module.repair_installed_launcher(
+            owner.config_path,
+            run=lambda _: 0,
+            reviewed_runtime=lambda *_: None,
+            desktop=owner.desktop,
+            shortcut_builder=lambda *_: b"reviewed Windows shortcut",
+        )
+
+
+def test_repair_path_reports_installed_bootstrap_tamper(tmp_path: Path) -> None:
+    owner, *_ = installer(tmp_path)
+    owner.install()
+    owner.launcher_path.write_bytes(b"tampered launcher")
+
+    with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_BOOTSTRAP_CHANGED"):
+        repair_module.repair_installed_launcher(
+            owner.config_path,
+            run=lambda _: 0,
+            reviewed_runtime=lambda *_: None,
+            desktop=owner.desktop,
+            shortcut_builder=lambda *_: b"reviewed Windows shortcut",
+        )
+
+
+def test_repair_path_reports_root_identity_change(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    owner, *_ = installer(tmp_path)
+    owner.install()
+    monkeypatch.setattr(repair_module, "_root_fingerprint", lambda _: "changed-root")
+
+    with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_ROOT_IDENTITY_CHANGED"):
+        repair_module._load_repair_seed(owner.config_path)
+
+
+def test_repair_path_reports_project_config_identity_change(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    owner, *_ = installer(tmp_path)
+    owner.install()
+    monkeypatch.setattr(repair_module, "project_config_fingerprint", lambda _: "changed-config")
+
+    with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_PROJECT_CONFIG_CHANGED"):
+        repair_module._load_repair_seed(owner.config_path)
+
+
+def test_repair_path_reports_shortcut_tamper(tmp_path: Path) -> None:
+    owner, *_ = installer(tmp_path)
+    owner.install()
+    owner.desktop_entry.write_bytes(b"changed shortcut")
+
+    with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_SHORTCUT_CHANGED"):
+        repair_module.repair_installed_launcher(
+            owner.config_path,
+            run=lambda _: 0,
+            reviewed_runtime=lambda *_: None,
+            desktop=owner.desktop,
+            shortcut_builder=lambda *_: b"reviewed Windows shortcut",
+        )
+
+
+def test_reviewed_runtime_reports_head_origin_mismatch(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     results = iter(
@@ -111,5 +181,45 @@ def test_reviewed_runtime_requires_head_to_equal_origin_main(
     )
     monkeypatch.setattr(repair_module.subprocess, "run", lambda *args, **kwargs: next(results))
 
-    with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_UPDATE_REQUIRED"):
+    with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_MAIN_NOT_SYNCED"):
+        repair_module._assert_reviewed_runtime(Path("C:/Base"), Path("C:/Git/git.exe"))
+
+
+def test_reviewed_runtime_reports_tracked_runtime_drift(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    same = b"a" * 40 + b"\n"
+    results = iter(
+        [
+            subprocess.CompletedProcess([], 0, stdout=same, stderr=b""),
+            subprocess.CompletedProcess([], 0, stdout=same, stderr=b""),
+            subprocess.CompletedProcess([], 1, stdout=b"", stderr=b""),
+        ]
+    )
+    monkeypatch.setattr(repair_module.subprocess, "run", lambda *args, **kwargs: next(results))
+
+    with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_RUNTIME_DIRTY"):
+        repair_module._assert_reviewed_runtime(Path("C:/Base"), Path("C:/Git/git.exe"))
+
+
+def test_reviewed_runtime_reports_unexpected_untracked_runtime_file(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    same = b"a" * 40 + b"\n"
+    results = iter(
+        [
+            subprocess.CompletedProcess([], 0, stdout=same, stderr=b""),
+            subprocess.CompletedProcess([], 0, stdout=same, stderr=b""),
+            subprocess.CompletedProcess([], 0, stdout=b"", stderr=b""),
+            subprocess.CompletedProcess(
+                [],
+                0,
+                stdout=b"tools/tool-hub/web/local-debug.js\n",
+                stderr=b"",
+            ),
+        ]
+    )
+    monkeypatch.setattr(repair_module.subprocess, "run", lambda *args, **kwargs: next(results))
+
+    with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_RUNTIME_UNTRACKED"):
         repair_module._assert_reviewed_runtime(Path("C:/Base"), Path("C:/Git/git.exe"))
