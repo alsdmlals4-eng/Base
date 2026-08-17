@@ -19,6 +19,7 @@ const status = document.querySelector("#status");
 const candidateGrid = document.querySelector("#candidate-grid");
 const candidateFiles = document.querySelector("#candidate-files");
 const prepareHandoffButton = document.querySelector("#prepare-handoff-button");
+const handoffReadiness = document.querySelector("#handoff-readiness");
 const importHandoffButton = document.querySelector("#import-handoff-button");
 const handoffPrompt = document.querySelector("#handoff-prompt");
 const handoffRunInfo = document.querySelector("#handoff-run-info");
@@ -75,6 +76,37 @@ function updateHandoffImportButton() {
     || fileCount !== pendingHandoffCandidateCount;
 }
 
+function updateHandoffPreparationState() {
+  const importMode = studioConfig.run_mode === "subscription_handoff_import";
+  if (!importMode) {
+    prepareHandoffButton.disabled = true;
+    handoffReadiness.textContent = "ChatGPT Pro handoff는 구독 가져오기 모드에서만 사용할 수 있습니다.";
+    return;
+  }
+
+  if (currentEditMode() === "expression") {
+    try {
+      const hasControls = controlsFromForm().length > 0;
+      const hasPreset = Boolean(document.querySelector("#preset").value);
+      const ready = hasControls || hasPreset;
+      prepareHandoffButton.disabled = !ready;
+      handoffReadiness.textContent = ready
+        ? "ChatGPT Pro 프롬프트 준비 가능"
+        : "표정 프리셋 또는 얼굴 제어를 하나 이상 선택하세요.";
+    } catch (error) {
+      prepareHandoffButton.disabled = true;
+      handoffReadiness.textContent = error.message;
+    }
+    return;
+  }
+
+  const editPrompt = document.querySelector("#edit-prompt").value.trim();
+  prepareHandoffButton.disabled = !editPrompt;
+  handoffReadiness.textContent = editPrompt
+    ? "ChatGPT Pro 프롬프트 준비 가능"
+    : `${editModeLabel()} 변경 요청을 입력하세요.`;
+}
+
 function trustedFigmaUrl(value) {
   const parsed = new URL(value);
   if (
@@ -115,7 +147,7 @@ function applyRunModeUi() {
   document.querySelector("#handoff-controls").hidden = !importMode;
   candidateFiles.required = importMode;
   candidateFiles.disabled = !importMode;
-  prepareHandoffButton.disabled = !importMode;
+  prepareHandoffButton.disabled = true;
   document.querySelector("#declared-source").disabled = !importMode;
   if (!importMode) resetHandoffState();
   document.querySelector("#cost-title").textContent = importMode
@@ -128,6 +160,7 @@ function applyRunModeUi() {
       : "테스트 후보만 만들며 provider를 호출하지 않고 내보내기와 Figma 전달을 차단합니다.";
   updateSubmitLabel();
   updateHandoffImportButton();
+  updateHandoffPreparationState();
 }
 
 function applyEditModeUi() {
@@ -157,6 +190,7 @@ function applyEditModeUi() {
     scope.textContent = "";
   }
   updateSubmitLabel();
+  updateHandoffPreparationState();
 }
 
 function option(value, label) {
@@ -210,6 +244,7 @@ function requestPayload() {
   const expressionMode = editMode === "expression";
   const preset = expressionMode ? (document.querySelector("#preset").value || null) : null;
   const controls = expressionMode ? controlsFromForm() : [];
+  if (!preset && !controls.length && expressionMode) throw new Error("표정 프리셋 또는 얼굴 제어를 하나 이상 선택하세요.");
   if (preset && controls.length) throw new Error("프리셋과 직접 얼굴 제어를 동시에 선택할 수 없습니다.");
   const editPrompt = expressionMode ? null : document.querySelector("#edit-prompt").value.trim();
   if (!expressionMode && !editPrompt) throw new Error(`${editModeLabel(editMode)} 변경 요청을 입력하세요.`);
@@ -231,13 +266,31 @@ function requestPayload() {
   };
 }
 
+function responseErrorMessage(payload) {
+  const detail = payload && payload.detail;
+  if (typeof detail === "string" && detail.trim()) return detail.slice(0, 1000);
+  if (Array.isArray(detail)) {
+    const messages = detail
+      .map((item) => {
+        if (!item || typeof item !== "object" || typeof item.msg !== "string") return null;
+        const location = Array.isArray(item.loc)
+          ? item.loc.filter((part) => part !== "body").map(String).join(".")
+          : "";
+        return location ? `${location}: ${item.msg}` : item.msg;
+      })
+      .filter(Boolean);
+    if (messages.length) return messages.join(" · ").slice(0, 1000);
+  }
+  return "요청을 처리할 수 없습니다.";
+}
+
 async function request(path, options = {}) {
   if (options.method && options.method !== "GET") {
     options.headers = { ...(options.headers || {}), "X-Studio-CSRF": studioConfig.csrf_token };
   }
   const response = await fetch(path, options);
   const payload = await response.json();
-  if (!response.ok) throw new Error(payload.detail || "요청을 처리할 수 없습니다.");
+  if (!response.ok) throw new Error(responseErrorMessage(payload));
   return payload;
 }
 
@@ -520,9 +573,11 @@ for (const selector of [
 ]) {
   document.querySelectorAll(selector).forEach((element) => element.addEventListener("change", () => {
     if (pendingHandoffRunId !== null) resetHandoffState();
+    updateHandoffPreparationState();
   }));
 }
 document.querySelector("#edit-prompt").addEventListener("input", () => {
   if (pendingHandoffRunId !== null) resetHandoffState();
+  updateHandoffPreparationState();
 });
 bootstrap();
