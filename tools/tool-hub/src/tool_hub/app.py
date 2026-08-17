@@ -22,6 +22,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 import uvicorn
 
+from .browser_lifecycle import BrowserLeaseManager
 from .delivery_supervisor import ProcessSupervisor
 from .figma_delivery import BridgeReceipt, DeliveryError, FigmaDeliveryService
 from .launcher import LaunchError
@@ -52,6 +53,13 @@ class LaunchPayload(BaseModel):
 
 class EmptyPayload(BaseModel):
     model_config = ConfigDict(extra="forbid")
+
+
+class BrowserLeasePayload(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    lease_id: str = Field(
+        pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    )
 
 
 class BridgePairPayload(BaseModel):
@@ -175,16 +183,25 @@ def create_app(
     if installer is None and os.name == "nt":
         installer = WindowsLauncherInstaller(root, project_config)
 
+    def request_hub_shutdown() -> None:
+        launcher.stop_all()
+        if shutdown_callback is not None:
+            shutdown_callback()
+
+    browser_leases = BrowserLeaseManager(request_hub_shutdown)
+
     @asynccontextmanager
     async def lifespan(_: FastAPI):
         try:
             yield
         finally:
+            browser_leases.stop()
             launcher.stop_all()
 
     app = FastAPI(title="Base Tool Hub", docs_url=None, redoc_url=None, lifespan=lifespan)
     app.state.figma_delivery = figma_delivery
     app.state.launcher = launcher
+    app.state.browser_leases = browser_leases
     install_studio_delivery_api(app, launcher, figma_delivery)
     install_security(app, security)
 
@@ -407,11 +424,25 @@ def create_app(
         except LauncherError as error:
             raise HTTPException(status_code=409, detail=str(error)) from error
 
+    @app.post("/api/browser-lease/open")
+    def open_browser_lease(payload: BrowserLeasePayload) -> dict[str, str]:
+        browser_leases.open(payload.lease_id)
+        return {"state": "OPEN"}
+
+    @app.post("/api/browser-lease/heartbeat")
+    def heartbeat_browser_lease(payload: BrowserLeasePayload) -> dict[str, str]:
+        browser_leases.heartbeat(payload.lease_id)
+        return {"state": "ALIVE"}
+
+    @app.post("/api/browser-lease/close")
+    def close_browser_lease(payload: BrowserLeasePayload) -> dict[str, str]:
+        browser_leases.close(payload.lease_id)
+        return {"state": "CLOSED"}
+
     @app.post("/api/shutdown")
     def shutdown(payload: EmptyPayload) -> dict[str, str]:
-        launcher.stop_all()
-        if shutdown_callback is not None:
-            shutdown_callback()
+        browser_leases.stop()
+        request_hub_shutdown()
         return {"state": "SHUTTING_DOWN"}
 
     @app.post("/api/launch")
