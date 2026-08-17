@@ -65,6 +65,12 @@ class UniversalLoopV1RealBurninClosureTests(unittest.TestCase):
         self.assertEqual(local["local_codex_chatgpt_auth_status"], "PASS")
         self.assertEqual(local["real_local_chatgpt_codex_call"], "PASS")
 
+        denied = checkpoint["denied_network_boundary_evidence"]
+        self.assertEqual(
+            denied["non_linux_production_boundary"],
+            "WINDOWS_HOST_PLAN_MERGED_MAIN_VALIDATED_LIVE_LOCAL_SMOKE_PASS",
+        )
+
         windows = checkpoint["windows_docker_host_evidence"]
         self.assertEqual(windows["windows_live_docker_desktop"], "PASS")
         self.assertEqual(windows["reviewed_image_preload"], "PASS")
