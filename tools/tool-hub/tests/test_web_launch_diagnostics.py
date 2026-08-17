@@ -277,7 +277,7 @@ def test_pagehide_releases_with_keepalive_not_direct_shutdown() -> None:
     assert "keepalive: true" in source
     assert '"X-Hub-CSRF": state.csrf' in source
     start = source.index("function closeBrowserLease()")
-    end = source.index('window.addEventListener("pagehide"', start)
+    end = source.index("function childStateKey", start)
     close_block = source[start:end]
     assert 'api("/api/shutdown"' not in close_block
     assert 'fetch("/api/shutdown"' not in close_block
