@@ -134,6 +134,36 @@ COMPLETION_CLAIM_GATE:
 파일 존재는 실행 증거가 아니다. 다른 SHA의 PASS는 현재 HEAD의 PASS가 아니다.
 CI가 queued·cancelled·skipped이면 성공으로 바꾸지 않는다.
 
+## Closure evidence hardening
+
+Universal Loop v1 REAL closure에서 확인한 완료 증거 실패 패턴을 기존 Gate에 흡수한다.
+새 Skill·새 Work Mode를 만들지 않고 아래 네 규칙을 모든 완료·통합 주장에 재사용한다.
+
+### `MACHINE_EVIDENCE_CORRECTION`
+
+- handoff·chat·worker·summary 설명이 exact repository readback 또는 terminal machine evidence와 충돌하면 설명을 권위로 유지하지 않는다.
+- 충돌한 summary는 `counterevidence`로 기록하고, 파생 기록·PR 설명·checkpoint를 실제 evidence에 맞춰 교정한 뒤 최종 판정을 낸다.
+- 최종 완료 근거는 가능한 경우 exact issue/run/SHA와 `receipt digest`처럼 재검증 가능한 identity에 묶는다.
+- 생산자 설명이 더 편리하거나 먼저 작성됐다는 이유로 exact machine evidence를 덮어쓰지 않는다.
+
+### `TEST_CONSUMPTION_PROOF`
+
+- `workflow trigger`, path filter, 테스트 파일 존재, workflow 시작은 그 테스트의 **실행 증거가 아니다**.
+- 새 회귀는 실제 test command·discovery·명시적 suite 목록에 소비됐다는 로그를 확인한다.
+- 가능하면 구현 전에 의도한 누락 때문에 해당 테스트가 실제 RED가 되는 것을 확인한다. 테스트가 실행되지 않은 GREEN은 완료 증거가 아니다.
+
+### `LATEST_EXACT_HEAD_ONLY`
+
+- 같은 PR에 여러 Actions run이 있으면 현재 exact HEAD에 속한 required gate만 현재 검증 증거가 된다.
+- `stale-head`, cancelled, superseded, zero-step, queued, pending, still-running 결과를 최신 HEAD의 PASS로 대체하지 않는다.
+- post-merge 판정도 merge SHA의 새 `main` readback과 해당 main의 검사를 별도로 확인한다.
+
+### `BOUNDED_ZERO_ESCAPE`
+
+- `omission_escape = 0`, `drift_escape = 0`, `unauthorized_addition_escape = 0` 같은 zero-escape 주장은 실제 측정한 exact package·scope·authority·evidence window에만 적용한다.
+- 한 operations-only package의 zero-escape를 게임 전체 품질, UX, 밸런스, 아트, 저장 호환성 또는 다른 제품 경로의 무결성으로 일반화하지 않는다.
+- 범위가 불명확하면 zero-escape 완료 주장을 `CLAIM_UNVERIFIED`로 유지한다.
+
 ## 실행 순서
 
 ```text

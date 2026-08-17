@@ -24,17 +24,34 @@ It does **not** authorize separately billed OpenAI API usage, product-scope sele
 
 ## Current evidence ceiling
 
-Repository CI proves the queue/parser/repository/runtime/service contracts on Ubuntu and Windows. Real user-PC evidence has also shown that installer v3 could install/register/start the executor and that the daemon consumed Blacksmith job `#418`; that job stopped at the Docker image readiness gate with `DOCKER_IMAGE_NOT_PRELOADED`. That is evidence of control-plane/background execution, not a successful REAL A2 burn-in.
+Repository CI proves the queue/parser/repository/runtime/service contracts on Ubuntu and Windows. Real user-PC evidence now additionally proves the v4 shared preflight, registered background startup, ChatGPT-authenticated Codex REAL path, reviewed Docker image path, one non-counting diagnostic PASS, and three counted Blacksmith REAL A2 runs that reached `WAITING_INTEGRATION` without opening A3 or Scheduler.
 
 ```yaml
-local_v3_executor_and_daemon: OBSERVED_RUNNING
-real_local_queue_consumption: OBSERVED_BLOCKED_DOCKER_IMAGE_NOT_PRELOADED
-live_v4_user_pc_preflight: NOT_RUN
-real_local_chatgpt_codex_call: NOT_COMPLETED
-blacksmith_real_burnin_runs: 0
+live_v4_user_pc_preflight: PASS
+local_executor_background_startup: PASS_REGISTERED
+github_auth: PASS
+codex_chatgpt_auth: PASS
+docker_desktop_and_reviewed_image: PASS
+real_local_queue_consumption: OBSERVED_PASS_WAITING_INTEGRATION
+real_local_chatgpt_codex_call: PASS
+blacksmith_real_burnin_runs: 3
 ```
 
-Repository GREEN for the v4 contract does not upgrade `live_v4_user_pc_preflight`; only execution on the user's Windows machine can do that.
+Exact live provenance for this completed v1 evidence:
+
+```text
+successful_real_a2_base_runtime: f4deebfc06de828cc956e47220e829cd98b1eb09
+blacksmith_authority: 6b241f28969410de78156c90cc10f33a067426a2
+non_counting_diagnostic: #489 / BS_A2_DIAG_20260817_005
+a2_burnin_1: #490 / BS_A2_BURNIN_001_R1
+a2_burnin_2: #491 / BS_A2_BURNIN_001_R2
+a2_burnin_3: #492 / BS_A2_BURNIN_001_R3
+universal_loop_v1_closure_main: 2b8856054573f1a06297ac8e65f5ca009fa2daef
+```
+
+The successful burn-ins were executed with Base runtime `f4deebfc...`; the later `2b885605...` commit records their closure evidence and does not retroactively claim those runs used the closure commit. Historical v3 blocker evidence remains valid history but is no longer the current evidence ceiling.
+
+Repository CI alone still cannot promote a future local-machine change to PASS. A future Local Executor/runtime change must again produce exact user-PC evidence; the completed receipts above are authority only for the v1 state they actually exercised.
 
 ## Queue job
 

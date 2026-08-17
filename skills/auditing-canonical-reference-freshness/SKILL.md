@@ -115,6 +115,16 @@ repository_search_roots: []
 - literal consumer를 semantic contract로 옮기기 전, 그 literal이 canonical owner가 정의한 실제 `literal protocol`인지 확인한다. 실제 protocol literal이면 assertion을 약화하지 않는다.
 - 단지 문서의 우연한 줄 모양·공백·복제 문자열을 검사하는 consumer만 canonical 의미가 보존된 semantic contract로 migration할 수 있다.
 
+#### Verified successor state propagation
+
+`VERIFIED_SUCCESSOR_STATE`는 exact repository·terminal·receipt evidence로 현재 상태가 이전 ceiling을 넘어섰음이 확인된 상태다.
+
+- `HISTORICAL_DISCOVERY`의 과거 PR·SHA·run·당시 `NOT_RUN`/`0` 표현은 historical provenance로 보존하고 현재 값으로 덮어쓰지 않는다.
+- 반대로 `CURRENT_MUTABLE` consumer, active handoff/status 문서, 현재 checkpoint를 읽는 predecessor regression assertion은 새 verified state와 함께 다시 검사한다.
+- 이전 단계의 `NOT_RUN`, `NOT_COMPLETED`, 숫자 `0`, readiness ceiling을 current truth로 영구 고정하면 안 된다.
+- exact successor evidence가 있는데도 current consumer나 predecessor test가 옛 ceiling을 강제하면 `PREDECESSOR_CEILING_FREEZE`로 기록하고 `MISSING_PROPAGATION` 또는 `CONFLICTING_SOURCE` finding으로 처리한다.
+- successor 상태를 이유로 history-only evidence를 다시 쓰거나, 검증되지 않은 더 높은 상태까지 연쇄 승격하지 않는다.
+
 #### Staged Canon migration support boundary
 
 연재소설의 staged migration이면 다음을 impact map에 포함한다.
@@ -278,6 +288,7 @@ python tools/check_canonical_reference_freshness.py \
 
 - 오래된 경로·Skill ID·문서 ID가 병합 후 발견됨.
 - 정본 변경 뒤 특정 소비자·템플릿·테스트가 반복 누락됨.
+- `PREDECESSOR_CEILING_FREEZE`로 current mutable state가 실제 successor evidence보다 뒤처짐.
 - 자동 검사가 역사 참조를 활성 stale reference로 반복 오탐함.
 - 파생본·Manifest가 CURRENT로 표시됐지만 실제 입력과 불일치함.
 - 새 채팅이 최신 정본 대신 오래된 파일을 선택함.
