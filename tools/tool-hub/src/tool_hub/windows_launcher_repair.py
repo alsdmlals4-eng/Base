@@ -81,6 +81,8 @@ def _git(git: Path, root: Path, *arguments: str) -> subprocess.CompletedProcess[
             "-c",
             "core.fsmonitor=false",
             "-c",
+            "core.autocrlf=input",
+            "-c",
             "core.hooksPath=",
             "-c",
             "credential.helper=",
