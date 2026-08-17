@@ -71,6 +71,8 @@ def test_repair_path_reissues_current_launcher_then_runs_it(
     result = repair(
         config_path,
         run=lambda path: events.append(f"run:{path}") or 0,
+        desktop=owner.desktop,
+        shortcut_builder=lambda *_: b"reviewed Windows shortcut",
     )
 
     after = json.loads(config_path.read_text(encoding="utf-8"))
@@ -79,3 +81,21 @@ def test_repair_path_reissues_current_launcher_then_runs_it(
     assert after["launcher_token"] == before["launcher_token"]
     assert after["hub_runtime_fingerprint"] != before["hub_runtime_fingerprint"]
     assert owner.status() == "INSTALLED"
+
+
+def test_repair_path_rejects_interpreter_tamper_before_reinstall(
+    tmp_path: Path,
+) -> None:
+    owner, _, pythonw, _, _ = installer(tmp_path)
+    owner.install()
+    pythonw.write_bytes(b"tampered interpreter")
+
+    repair = getattr(launcher_module, "repair_installed_launcher", None)
+    assert callable(repair)
+    with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_UPDATE_REQUIRED"):
+        repair(
+            owner.config_path,
+            run=lambda _: 0,
+            desktop=owner.desktop,
+            shortcut_builder=lambda *_: b"reviewed Windows shortcut",
+        )
