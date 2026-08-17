@@ -160,3 +160,25 @@ def test_expression_web_clears_previous_run_before_every_new_submission() -> Non
         'refreshDeliveryButton.dataset.url = ""',
     ):
         assert marker in script
+
+
+def test_expression_web_blocks_handoff_prepare_until_expression_input_is_valid() -> None:
+    html = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
+    script = (WEB_ROOT / "app.js").read_text(encoding="utf-8")
+
+    assert 'id="handoff-readiness"' in html
+    assert "function updateHandoffPreparationState()" in script
+    assert "prepareHandoffButton.disabled" in script
+    assert "controlsFromForm().length > 0" in script
+    assert 'document.querySelector("#preset").value' in script
+    assert "표정 프리셋 또는 얼굴 제어를 하나 이상 선택하세요." in script
+
+
+def test_expression_web_formats_structured_validation_errors_instead_of_object_object() -> None:
+    script = (WEB_ROOT / "app.js").read_text(encoding="utf-8")
+
+    assert "function responseErrorMessage(payload)" in script
+    assert "Array.isArray(detail)" in script
+    assert "item.msg" in script
+    assert "[object Object]" not in script
+    assert "throw new Error(responseErrorMessage(payload))" in script
