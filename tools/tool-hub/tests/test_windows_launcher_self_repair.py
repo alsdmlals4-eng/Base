@@ -223,3 +223,32 @@ def test_reviewed_runtime_reports_unexpected_untracked_runtime_file(
 
     with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_RUNTIME_UNTRACKED"):
         repair_module._assert_reviewed_runtime(Path("C:/Base"), Path("C:/Git/git.exe"))
+
+
+def test_desktop_spawn_preserves_only_reviewed_windows_git_locator_inputs(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    owner, _, _, local, _ = installer(tmp_path)
+    owner.install()
+    payload = json.loads(owner.config_path.read_text(encoding="utf-8"))
+    captured: dict[str, object] = {}
+
+    class Process:
+        def __init__(self, argv, **kwargs):
+            captured.update({"argv": argv, **kwargs})
+
+    monkeypatch.setenv("ProgramFiles", r"C:\Program Files")
+    monkeypatch.setenv("ProgramFiles(x86)", r"C:\Program Files (x86)")
+    monkeypatch.setenv("WINDIR", r"C:\Windows")
+    monkeypatch.setenv("OPENAI_API_KEY", "must-not-cross")
+    monkeypatch.setattr(launcher_module.subprocess, "Popen", Process)
+
+    launcher_module._spawn(payload)
+
+    environment = captured["env"]
+    assert isinstance(environment, dict)
+    assert environment["ProgramFiles"] == r"C:\Program Files"
+    assert environment["ProgramFiles(x86)"] == r"C:\Program Files (x86)"
+    assert environment["WINDIR"] == r"C:\Windows"
+    assert "OPENAI_API_KEY" not in environment

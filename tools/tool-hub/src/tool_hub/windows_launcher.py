@@ -553,7 +553,16 @@ def _spawn(payload: dict[str, object]) -> subprocess.Popen[bytes]:
         "PYTHONDONTWRITEBYTECODE": "1",
         "BASE_TOOL_HUB_LAUNCHER_TOKEN": str(payload["launcher_token"]),
     }
-    for name in ("SYSTEMROOT", "LOCALAPPDATA", "USERPROFILE", "TEMP", "TMP"):
+    for name in (
+        "SYSTEMROOT",
+        "WINDIR",
+        "ProgramFiles",
+        "ProgramFiles(x86)",
+        "LOCALAPPDATA",
+        "USERPROFILE",
+        "TEMP",
+        "TMP",
+    ):
         if value := os.environ.get(name):
             environment[name] = value
     flags = getattr(subprocess, "DETACHED_PROCESS", 0) | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0) | getattr(subprocess, "CREATE_NO_WINDOW", 0)
