@@ -102,13 +102,16 @@ def _assert_reviewed_runtime(root: Path, git: Path) -> None:
     if (
         head.returncode != 0
         or remote.returncode != 0
-        or head.stdout.strip() != remote.stdout.strip()
         or len(head.stdout.strip()) != 40
+        or len(remote.stdout.strip()) != 40
+        or head.stdout.strip() != remote.stdout.strip()
     ):
-        raise LauncherError("LAUNCHER_UPDATE_REQUIRED")
+        raise LauncherError("LAUNCHER_MAIN_NOT_SYNCED")
+
     changed = _git(git, root, "diff", "--quiet", "--no-ext-diff", "HEAD", "--", *_RUNTIME_PATHS)
     if changed.returncode != 0:
-        raise LauncherError("LAUNCHER_UPDATE_REQUIRED")
+        raise LauncherError("LAUNCHER_RUNTIME_DIRTY")
+
     untracked = _git(git, root, "ls-files", "--others", "--", *_RUNTIME_PATHS)
     if untracked.returncode != 0:
         raise LauncherError("LAUNCHER_UPDATE_REQUIRED")
@@ -116,7 +119,7 @@ def _assert_reviewed_runtime(root: Path, git: Path) -> None:
         candidate = Path(raw)
         if "__pycache__" in candidate.parts or any(part.endswith(".egg-info") for part in candidate.parts):
             continue
-        raise LauncherError("LAUNCHER_UPDATE_REQUIRED")
+        raise LauncherError("LAUNCHER_RUNTIME_UNTRACKED")
 
 
 def _load_repair_seed(path: Path) -> dict[str, object]:
@@ -145,17 +148,20 @@ def _load_repair_seed(path: Path) -> dict[str, object]:
     for candidate in (pythonw, git, installed_launcher):
         _regular(candidate, max_bytes=128 * 1024 * 1024)
     try:
-        static_changed = (
-            _root_fingerprint(root) != payload["root_fingerprint"]
-            or project_config_fingerprint(project_config) != payload["project_config_fingerprint"]
-            or _sha256(pythonw) != payload["pythonw_sha256"]
-            or _sha256(git) != payload["git_sha256"]
-            or _sha256(installed_launcher) != payload["launcher_sha256"]
-        )
+        if _root_fingerprint(root) != payload["root_fingerprint"]:
+            raise LauncherError("LAUNCHER_ROOT_IDENTITY_CHANGED")
+        if project_config_fingerprint(project_config) != payload["project_config_fingerprint"]:
+            raise LauncherError("LAUNCHER_PROJECT_CONFIG_CHANGED")
+        if _sha256(pythonw) != payload["pythonw_sha256"]:
+            raise LauncherError("LAUNCHER_PYTHON_CHANGED")
+        if _sha256(git) != payload["git_sha256"]:
+            raise LauncherError("LAUNCHER_GIT_CHANGED")
+        if _sha256(installed_launcher) != payload["launcher_sha256"]:
+            raise LauncherError("LAUNCHER_BOOTSTRAP_CHANGED")
+    except LauncherError:
+        raise
     except OSError as error:
         raise LauncherError("LAUNCHER_CONFIG_INVALID") from error
-    if static_changed:
-        raise LauncherError("LAUNCHER_UPDATE_REQUIRED")
     return payload
 
 
@@ -188,7 +194,7 @@ def repair_installed_launcher(
         raise LauncherError("LAUNCHER_CONFIG_INVALID")
     _regular(owner.desktop_entry, max_bytes=1024 * 1024)
     if _sha256(owner.desktop_entry) != payload["desktop_entry_sha256"]:
-        raise LauncherError("LAUNCHER_UPDATE_REQUIRED")
+        raise LauncherError("LAUNCHER_SHORTCUT_CHANGED")
     owner.install()
     try:
         refreshed = json.loads(config_path.read_text(encoding="utf-8"))
