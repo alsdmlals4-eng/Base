@@ -186,6 +186,7 @@ def test_reviewed_runtime_reports_head_origin_mismatch(
 
 
 def test_reviewed_runtime_reports_tracked_runtime_drift(
+    tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     same = b"a" * 40 + b"\n"
@@ -193,9 +194,15 @@ def test_reviewed_runtime_reports_tracked_runtime_drift(
         [
             subprocess.CompletedProcess([], 0, stdout=same, stderr=b""),
             subprocess.CompletedProcess([], 0, stdout=same, stderr=b""),
-            subprocess.CompletedProcess([], 1, stdout=b"", stderr=b""),
+            subprocess.CompletedProcess(
+                [],
+                1,
+                stdout=b"tools/tool-hub/src/tool_hub/app.py\x00",
+                stderr=b"",
+            ),
         ]
     )
+    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path))
     monkeypatch.setattr(repair_module.subprocess, "run", lambda *args, **kwargs: next(results))
 
     with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_RUNTIME_DIRTY"):
