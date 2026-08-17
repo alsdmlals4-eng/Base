@@ -39,10 +39,9 @@ def test_real_runtime_dirty_writes_only_reviewed_relative_paths(
         [
             subprocess.CompletedProcess([], 0, stdout=same, stderr=b""),
             subprocess.CompletedProcess([], 0, stdout=same, stderr=b""),
-            subprocess.CompletedProcess([], 1, stdout=b"", stderr=b""),
             subprocess.CompletedProcess(
                 [],
-                0,
+                1,
                 stdout=b"tools/tool-hub/web/app.js\x00tools/tool-hub/src/tool_hub/app.py\x00",
                 stderr=b"",
             ),
@@ -71,8 +70,7 @@ def test_runtime_dirty_diagnostic_rejects_out_of_scope_path(
         [
             subprocess.CompletedProcess([], 0, stdout=same, stderr=b""),
             subprocess.CompletedProcess([], 0, stdout=same, stderr=b""),
-            subprocess.CompletedProcess([], 1, stdout=b"", stderr=b""),
-            subprocess.CompletedProcess([], 0, stdout=b"docs/private.txt\x00", stderr=b""),
+            subprocess.CompletedProcess([], 1, stdout=b"docs/private.txt\x00", stderr=b""),
         ]
     )
     monkeypatch.setenv("LOCALAPPDATA", str(tmp_path))
