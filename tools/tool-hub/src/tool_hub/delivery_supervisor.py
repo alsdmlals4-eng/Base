@@ -75,6 +75,22 @@ class ProcessSupervisor(_BaseProcessSupervisor):
             **kwargs,
         )
 
+    def start(self, tool_id: str, project_id: str):
+        """Keep successful existing-child reuse delivery-authorized without widening auth states."""
+        identity = super().start(tool_id, project_id)
+        key = (tool_id, project_id)
+        with self._locked_key(key):
+            child = self._children.get(key)
+            state = self._states.get(key)
+            if (
+                child is not None
+                and state is not None
+                and state.status == "REGISTERED"
+                and child.process.poll() is None
+            ):
+                self._set_state(key, "RUNNING", url=identity.url)
+        return identity
+
     def _read_startup(self, child: object, expected: dict[str, object]) -> dict[str, object]:
         """Accept a Windows venv runtime PID only after exact Job Object ownership proof."""
         if os.name != "nt":
