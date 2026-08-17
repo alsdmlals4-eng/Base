@@ -13,9 +13,11 @@ The reusable behavior already has canonical owners:
 
 - `reviewing-and-validating-project-changes: claim-and-intent-verification` owns completion claims, exact execution evidence, exact-head and postmerge proof.
 - `auditing-canonical-reference-freshness` owns current-vs-historical consumer classification, propagation gaps, and stale mutable state.
-- `skills/SKILL_LEARNING_LOG.md` owns reusable failure/decision records.
+- the existing coupled-change contract accepts an owner-local `skills/**/LEARNING_LOG.md` when a Skill contract changes.
 
 Therefore the correct design is **ABSORB**, not BUILD_NEW.
+
+After RED, the learning-record placement was refined: the global `skills/SKILL_LEARNING_LOG.md` already contains earlier false-GREEN/test-consumption and propagation lessons. Repeating the same pattern there would add noise. The exact #489–#494 case is therefore kept in `skills/auditing-canonical-reference-freshness/LEARNING_LOG.md`, while the reusable behavior itself is promoted into the Claim/Freshness contracts.
 
 ## Reusable rules
 
@@ -41,7 +43,7 @@ A statement such as `omission_escape = 0`, `drift_escape = 0`, or `unauthorized_
 
 ## Current-state drift to repair
 
-`docs/LOOP_A2_LOCAL_EXECUTOR.md` is an active operational document, not historical evidence. Its `Current evidence ceiling` still claims:
+`docs/LOOP_A2_LOCAL_EXECUTOR.md` is an active operational document, not historical evidence. Its pre-change `Current evidence ceiling` still claimed:
 
 - `live_v4_user_pc_preflight: NOT_RUN`
 - `real_local_chatgpt_codex_call: NOT_COMPLETED`
@@ -55,18 +57,18 @@ Historical plans, evidence records, PR bodies, and old run descriptions keep the
 
 - Modify `skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md`
 - Modify `skills/auditing-canonical-reference-freshness/SKILL.md`
-- Modify `skills/SKILL_LEARNING_LOG.md`
+- Add `skills/auditing-canonical-reference-freshness/LEARNING_LOG.md`
 - Modify `docs/LOOP_A2_LOCAL_EXECUTOR.md`
-- Modify `tests/test_claim_and_intent_verification_contract.py`
-- Modify `tests/test_reference_freshness.py`
+- Add `tests/test_universal_loop_v1_closure_learning_reuse.py` and explicitly consume it in Base-v9
+- Modify existing recognized `tests/test_reference_freshness.py` so the Skill coupled-change contract remains enforceable
 
 No Registry, runtime/provider, Tool Hub implementation, Blacksmith product, A3, Scheduler, or paid-provider policy change.
 
 ## Verification strategy
 
-1. Add regression assertions first.
-2. Prove RED against the unchanged production/reference documents.
-3. Add only the new rules and current-state synchronization required by those tests.
+1. Add regression assertions first and explicitly wire the new focused regression into the Base-v9 unittest command.
+2. Prove RED against the unchanged production/reference documents; workflow triggering alone is not accepted as proof.
+3. Add only the new rules, owner-local learning record, and current-state synchronization required by those tests.
 4. Run the same focused tests and canonical reference freshness.
 5. Require Base-v9/adversarial and Game Project Operating System exact-head PASS.
 6. Recheck current completed main, same-goal PRs, unresolved review threads, and changed-file scope.
