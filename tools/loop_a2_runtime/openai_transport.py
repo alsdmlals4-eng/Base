@@ -32,6 +32,14 @@ _DEFAULT_RESPONSE_BYTES = 128 * 1024
 _DEFAULT_DIFF_BYTES = 256 * 1024
 _DEFAULT_OUTPUT_TOKENS = 2048
 _SECRET_TOKEN = re.compile(r"(?i)\b(?:sk|sess|Bearer)[-_ ][A-Za-z0-9._-]{8,}\b")
+_CONTEXT_DIAGNOSTIC_CODES = frozenset(
+    {
+        "BUILDER_AUTHORITY_PATH_RESOLUTION_EXCEPTION",
+        "BUILDER_AUTHORITY_CONTEXT_BINDING_EXCEPTION",
+        "BUILDER_TRACKED_CONTEXT_INVENTORY_EXCEPTION",
+        "BUILDER_TRACKED_CONTEXT_READ_EXCEPTION",
+    }
+)
 
 
 class OpenAITransportError(RuntimeError):
@@ -269,33 +277,67 @@ def _collect_context(
 ) -> list[dict[str, str]]:
     context: list[dict[str, str]] = []
     total = 0
-    authority_paths = _effective_authority_paths(root, request, authority_snapshot)
+    try:
+        authority_paths = _effective_authority_paths(root, request, authority_snapshot)
+    except OpenAITransportError:
+        raise
+    except Exception as exc:
+        raise OpenAITransportError(
+            "BUILDER_AUTHORITY_PATH_RESOLUTION_EXCEPTION",
+            "Builder authority path resolution failed closed",
+        ) from exc
 
-    if authority_snapshot is not None:
-        for item in authority_snapshot.files:
-            text = _redact_prompt_text(item.content)
-            total += len(item.path.encode("utf-8")) + len(text.encode("utf-8"))
-            if total > max_bytes:
-                raise OpenAITransportError("BUILDER_CONTEXT_LIMIT", "Builder context byte budget exceeded")
-            context.append({"path": item.path, "content": text})
-    else:
-        for relative in authority_paths:
+    try:
+        if authority_snapshot is not None:
+            for item in authority_snapshot.files:
+                text = _redact_prompt_text(item.content)
+                total += len(item.path.encode("utf-8")) + len(text.encode("utf-8"))
+                if total > max_bytes:
+                    raise OpenAITransportError("BUILDER_CONTEXT_LIMIT", "Builder context byte budget exceeded")
+                context.append({"path": item.path, "content": text})
+        else:
+            for relative in authority_paths:
+                path = _closed_path(root, relative, must_exist=True)
+                text = _redact_prompt_text(_read_utf8(path, label=relative))
+                total += len(relative.encode("utf-8")) + len(text.encode("utf-8"))
+                if total > max_bytes:
+                    raise OpenAITransportError("BUILDER_CONTEXT_LIMIT", "Builder context byte budget exceeded")
+                context.append({"path": relative, "content": text})
+    except OpenAITransportError:
+        raise
+    except Exception as exc:
+        raise OpenAITransportError(
+            "BUILDER_AUTHORITY_CONTEXT_BINDING_EXCEPTION",
+            "Builder authority context binding failed closed",
+        ) from exc
+
+    try:
+        tracked_context_paths = _tracked_allowed_context(root, request)
+    except OpenAITransportError:
+        raise
+    except Exception as exc:
+        raise OpenAITransportError(
+            "BUILDER_TRACKED_CONTEXT_INVENTORY_EXCEPTION",
+            "Builder tracked context inventory failed closed",
+        ) from exc
+
+    for relative in tracked_context_paths:
+        if relative in authority_paths:
+            continue
+        try:
             path = _closed_path(root, relative, must_exist=True)
             text = _redact_prompt_text(_read_utf8(path, label=relative))
             total += len(relative.encode("utf-8")) + len(text.encode("utf-8"))
             if total > max_bytes:
                 raise OpenAITransportError("BUILDER_CONTEXT_LIMIT", "Builder context byte budget exceeded")
             context.append({"path": relative, "content": text})
-
-    for relative in _tracked_allowed_context(root, request):
-        if relative in authority_paths:
-            continue
-        path = _closed_path(root, relative, must_exist=True)
-        text = _redact_prompt_text(_read_utf8(path, label=relative))
-        total += len(relative.encode("utf-8")) + len(text.encode("utf-8"))
-        if total > max_bytes:
-            raise OpenAITransportError("BUILDER_CONTEXT_LIMIT", "Builder context byte budget exceeded")
-        context.append({"path": relative, "content": text})
+        except OpenAITransportError:
+            raise
+        except Exception as exc:
+            raise OpenAITransportError(
+                "BUILDER_TRACKED_CONTEXT_READ_EXCEPTION",
+                "Builder tracked context read failed closed",
+            ) from exc
 
     if len(context) > max_files:
         raise OpenAITransportError("BUILDER_CONTEXT_LIMIT", "Builder context file count exceeded")
@@ -524,19 +566,41 @@ class OpenAIWorkspaceBuilder:
                 max_files=self.max_context_files,
                 authority_snapshot=self.authority_snapshot,
             )
-            immutable_authority_paths = _effective_authority_paths(
-                root,
-                request,
-                self.authority_snapshot,
-            )
         except OpenAITransportError as exc:
-            code = "BUILDER_CONTEXT_LIMIT" if exc.code == "BUILDER_CONTEXT_LIMIT" else "BUILDER_CONTEXT_INVALID"
-            return _blocked_worker(request, code=code, message="Builder context failed closed before provider invocation")
+            if exc.code == "BUILDER_CONTEXT_LIMIT":
+                code = "BUILDER_CONTEXT_LIMIT"
+            elif exc.code in _CONTEXT_DIAGNOSTIC_CODES:
+                code = exc.code
+            else:
+                code = "BUILDER_CONTEXT_INVALID"
+            return _blocked_worker(
+                request,
+                code=code,
+                message="Builder context failed closed before provider invocation",
+            )
         except Exception:
             return _blocked_worker(
                 request,
                 code="BUILDER_CONTEXT_PREPARATION_EXCEPTION",
                 message="Builder context preparation failed closed",
+            )
+        try:
+            immutable_authority_paths = _effective_authority_paths(
+                root,
+                request,
+                self.authority_snapshot,
+            )
+        except OpenAITransportError:
+            return _blocked_worker(
+                request,
+                code="BUILDER_CONTEXT_INVALID",
+                message="Builder context failed closed before provider invocation",
+            )
+        except Exception:
+            return _blocked_worker(
+                request,
+                code="BUILDER_IMMUTABLE_AUTHORITY_PATHS_EXCEPTION",
+                message="Builder immutable authority paths failed closed",
             )
 
         try:
