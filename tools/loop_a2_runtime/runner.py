@@ -163,10 +163,15 @@ class A2Runtime:
                 finding_codes=("WORKER_IDENTITY_MISMATCH",),
             )
         if worker.status != "COMPLETED":
+            finding_codes = ("BUILDER_NOT_COMPLETED",)
+            if worker.errors:
+                primary_code = worker.errors[0].code
+                if primary_code != "BUILDER_NOT_COMPLETED":
+                    finding_codes = (primary_code, *finding_codes)
             return self._outcome(
                 request,
                 "PROVIDER_FAILURE",
-                finding_codes=("BUILDER_NOT_COMPLETED",),
+                finding_codes=finding_codes,
             )
         if cumulative_turns > request.budgets.max_turns:
             return self._outcome(
