@@ -1,5 +1,12 @@
 const childStates = new Map();
-const state = { csrf: "", catalog: null, projectId: null, windowsLauncherState: "UNKNOWN" };
+const state = {
+  csrf: "",
+  catalog: null,
+  projectId: null,
+  windowsLauncherState: "UNKNOWN",
+  browserLeaseId: null,
+  browserLeaseTimer: null,
+};
 const statusBox = document.querySelector("#status");
 
 const VISUAL_TOOLS = new Set(["expression-studio", "sprite-animation-studio"]);
@@ -17,6 +24,38 @@ async function api(path, options = {}) {
   const payload = await response.json();
   if (!response.ok) throw new Error(payload.detail || `HTTP ${response.status}`);
   return payload;
+}
+
+async function openBrowserLease() {
+  if (state.browserLeaseId) return;
+  if (!globalThis.crypto?.randomUUID) throw new Error("BROWSER_LEASE_UUID_UNAVAILABLE");
+  const leaseId = crypto.randomUUID();
+  await api("/api/browser-lease/open", {
+    method: "POST",
+    body: JSON.stringify({ lease_id: leaseId }),
+  });
+  state.browserLeaseId = leaseId;
+  state.browserLeaseTimer = window.setInterval(() => {
+    if (!state.browserLeaseId) return;
+    api("/api/browser-lease/heartbeat", {
+      method: "POST",
+      body: JSON.stringify({ lease_id: state.browserLeaseId }),
+    }).catch(() => {});
+  }, 30000);
+}
+
+function closeBrowserLease() {
+  const leaseId = state.browserLeaseId;
+  if (!leaseId) return;
+  if (state.browserLeaseTimer !== null) window.clearInterval(state.browserLeaseTimer);
+  state.browserLeaseTimer = null;
+  state.browserLeaseId = null;
+  fetch("/api/browser-lease/close", {
+    method: "POST",
+    keepalive: true,
+    headers: { "Content-Type": "application/json", "X-Hub-CSRF": state.csrf },
+    body: JSON.stringify({ lease_id: leaseId }),
+  }).catch(() => {});
 }
 
 function childStateKey(projectId, toolId) {
@@ -184,11 +223,17 @@ document.querySelector("#hub-shutdown").addEventListener("click", async () => {
   } catch (error) { show(`종료 요청 실패: ${error.message}`, true); }
 });
 
+window.addEventListener("pagehide", closeBrowserLease);
+window.addEventListener("pageshow", event => {
+  if (event.persisted && state.csrf) openBrowserLease().catch(error => show(error.message, true));
+});
+
 api("/api/config").then(async config => {
   state.csrf = config.csrf_token;
   state.windowsLauncherState = config.windows_launcher_state;
   document.querySelector("#windows-launcher-state").textContent = config.windows_launcher_state;
   document.querySelector("#windows-launcher-install").disabled = config.windows_launcher_state === "BLOCKED_PLATFORM";
+  await openBrowserLease();
   await refresh();
   show("검토된 도구와 프로젝트 상태를 불러왔습니다.");
 }).catch(error => show(error.message, true));
