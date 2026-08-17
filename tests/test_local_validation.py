@@ -62,6 +62,9 @@ from tests.test_loop_a2_authority_dependency_boundary import (
 from tests.test_project_asset_vault import (
     ProjectAssetVaultTests as _ProjectAssetVaultTests,
 )
+from tests.test_project_protected_baseline_authority import (
+    ProtectedBaselineAuthorityTests as _ProtectedBaselineAuthorityTests,
+)
 from tests.test_serial_fiction_discipline import (
     SerialFictionDisciplineContractTests as _SerialFictionDisciplineContractTests,
 )
