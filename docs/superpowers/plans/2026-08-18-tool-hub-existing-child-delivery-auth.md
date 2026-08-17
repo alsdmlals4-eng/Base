@@ -4,7 +4,7 @@
 
 **Goal:** Preserve exact `RUNNING` delivery authority when Tool Hub reuses an already-healthy Studio child, without weakening token, process, project, or Figma boundaries.
 
-**Architecture:** Keep `authorize_delivery_token()` unchanged. Repair the existing-child success path in `ProcessSupervisor._start()` so authenticated reuse ends in `RUNNING`, then consume a regression in focused Ubuntu/Windows CI. The user-PC postmerge run reuses the existing four PNG candidates; if this final local-tool attempt still fails, stop investing in the full local Tool Hub path and fall back to Figma Bridge-only project image organization.
+**Architecture:** Keep `authorize_delivery_token()` unchanged. Let the existing base `ProcessSupervisor.start()` remain authoritative for liveness/authenticated-health validation, then have the production delivery-aware subclass reacquire the exact key lock and repair only a stale `REGISTERED` state to `RUNNING` when the same child still exists and is alive. Consume the regression in focused Ubuntu/Windows CI. The user-PC postmerge run reuses the existing four PNG candidates; if this final local-tool attempt still fails, stop investing in the full local Tool Hub path and fall back to Figma Bridge-only project image organization.
 
 **Tech Stack:** Python 3.12, pytest, FastAPI-local Tool Hub, GitHub Actions Ubuntu/Windows matrices.
 
@@ -24,18 +24,18 @@
 ### Task 1: Add a consumed RED regression for existing-child reuse authority
 
 **Files:**
-- Modify: `tools/tool-hub/tests/test_studio_delivery_trust.py`
+- Create: `tools/tool-hub/tests/test_existing_child_delivery_auth.py`
 - Modify: `.github/workflows/validate-tool-hub-subscription-contracts.yml`
 
 **Interfaces:**
 - Consumes: `tool_hub.delivery_supervisor.ProcessSupervisor.start()`, `.view()`, `.authorize_delivery_token()`.
 - Produces: regression `test_reusing_healthy_child_restores_running_state_and_delivery_authority` and focused CI consumption on Ubuntu/Windows.
 
-- [ ] **Step 1: Add the regression before production changes**
+- [x] **Step 1: Add the regression before production changes**
 
-Add a test that constructs one `ProcessSupervisor` with a reviewed `expression-studio` tool entry, seeds a live existing child with `_PRIVATE_TOKEN`, sets initial state `RUNNING`, stubs only `_fetch_status()` with the exact authenticated health payload, and calls `start()` again for the same `(tool_id, project_id)`.
+The regression constructs one delivery-aware `ProcessSupervisor`, seeds an existing live `expression-studio/coc-fiction` child with a private token and exact authenticated identity, stubs only the localhost health read, and calls `start()` again for the same key.
 
-The intended assertions are:
+Assertions:
 
 ```python
 reused = supervisor.start(*key)
@@ -48,90 +48,96 @@ with pytest.raises(LaunchError, match="delivery credential"):
     supervisor.authorize_delivery_token("wrong-token")
 ```
 
-The fake child must expose the same fields read by the production existing-child path: `process.pid`, `process.poll()`, `spec.expected_identity`, `spec.env`, `identity`, and `state`.
+- [x] **Step 2: Wire the focused workflow to production and regression paths**
 
-- [ ] **Step 2: Wire the focused workflow to the production and regression paths**
+Both pull/push path filters now include `supervisor.py`, `delivery_supervisor.py`, the new regression, existing delivery-auth tests, and this spec/plan. The focused Ubuntu/Windows command explicitly executes both delivery-auth test files.
 
-In both `pull_request.paths` and `push.paths`, add:
+- [x] **Step 3: Commit the RED-only change**
 
-```yaml
-- "tools/tool-hub/src/tool_hub/supervisor.py"
-- "tools/tool-hub/src/tool_hub/delivery_supervisor.py"
-- "tools/tool-hub/tests/test_studio_delivery_trust.py"
-- "docs/superpowers/specs/2026-08-18-tool-hub-existing-child-delivery-auth-design.md"
-- "docs/superpowers/plans/2026-08-18-tool-hub-existing-child-delivery-auth.md"
-```
+RED head: `cca705a4e650d5e4d4f13b82d6cf2dddcdff1e9f`. Production delivery-supervisor code was unchanged at this head.
 
-In `Run subscription, routing, and Windows preflight contracts`, add:
+- [x] **Step 4: Verify RED in GitHub Actions**
+
+Focused run `32080418145`, Ubuntu:
 
 ```text
-tools/tool-hub/tests/test_studio_delivery_trust.py
+1 failed, 86 passed
+assert 'REGISTERED' == 'RUNNING'
 ```
 
-- [ ] **Step 3: Commit the RED-only change**
+The new regression alone failed on the expected stale-state postcondition.
 
-Commit only the regression, workflow consumption wiring, and this plan/spec documentation. Production `supervisor.py` must remain unchanged on the RED head.
-
-- [ ] **Step 4: Verify RED in GitHub Actions**
-
-Expected focused result on current code: the new regression fails because `ProcessSupervisor._start()` leaves the public state `REGISTERED` after a healthy existing-child reuse. Existing delivery-token fail-closed tests must remain green.
-
-### Task 2: Implement the one-line state restoration
+### Task 2: Implement localized state restoration
 
 **Files:**
-- Modify: `tools/tool-hub/src/tool_hub/supervisor.py` in the existing-child success path of `_start()`.
-- Test: `tools/tool-hub/tests/test_studio_delivery_trust.py`
+- Modify: `tools/tool-hub/src/tool_hub/delivery_supervisor.py`
+- Test: `tools/tool-hub/tests/test_existing_child_delivery_auth.py`
+- Preserve unchanged: `authorize_delivery_token()` accepted states.
 
 **Interfaces:**
-- Consumes: existing authenticated health result already validated by `_matches(...)` and `status.get("status") == "ready"`.
-- Produces: `_set_state(key, "RUNNING", url=existing.identity.url)` immediately before returning `existing.identity`.
+- Consumes: successful `super().start(tool_id, project_id)`, which already performed existing-child liveness and authenticated-health validation.
+- Produces: after success, reacquire `_locked_key(key)` and restore `REGISTERED -> RUNNING` only when the exact child still exists and `child.process.poll() is None`.
 
-- [ ] **Step 1: Make the minimal production change**
+- [x] **Step 1: Make the minimal production change**
 
-After the existing child passes liveness and authenticated health checks, insert exactly:
+Implemented production wrapper:
 
 ```python
-self._set_state(key, "RUNNING", url=existing.identity.url)
-return existing.identity
+def start(self, tool_id: str, project_id: str):
+    identity = super().start(tool_id, project_id)
+    key = (tool_id, project_id)
+    with self._locked_key(key):
+        child = self._children.get(key)
+        state = self._states.get(key)
+        if (
+            child is not None
+            and state is not None
+            and state.status == "REGISTERED"
+            and child.process.poll() is None
+        ):
+            self._set_state(key, "RUNNING", url=identity.url)
+    return identity
 ```
 
-Do not change `authorize_delivery_token()`.
+This refinement localizes the fix to the delivery-aware production owner rather than widening the generic base supervisor. If a concurrent stop removes or transitions the child before this lock is reacquired, the guard does not overwrite it.
 
-- [ ] **Step 2: Verify GREEN on the focused workflow**
+- [x] **Step 2: Verify GREEN on the focused workflow**
 
-Required exact-head evidence:
-- Ubuntu focused Tool Hub contracts: PASS.
-- Windows focused Tool Hub contracts: PASS.
-- `test_reusing_healthy_child_restores_running_state_and_delivery_authority`: PASS.
-- Existing wrong-token / STOPPING / dead-process authorization tests: PASS.
-- production-boundary contract: PASS.
+Implementation head `63b63d9b610d7c776eb2d821c18c38683faf3ff8`, focused run `32080694518`:
+- Ubuntu focused contracts: PASS.
+- Windows focused contracts: PASS.
+- production-boundary contract: PASS on both.
+- new same-child authority regression: PASS.
+- existing wrong-token / STOPPING / dead-process contracts remain consumed and PASS.
 
 ### Task 3: Run integration gates and adversarial review
 
-**Files:** no new production files expected.
+**Files:** no additional production files expected.
 
 **Interfaces:**
-- Consumes: exact PR head from Task 2.
-- Produces: merge-ready evidence with zero unresolved important findings.
+- Consumes: final exact PR head after documentation alignment.
+- Produces: merge-ready evidence with zero unresolved Important/Critical findings.
 
-- [ ] **Step 1: Verify Base and integration workflows on the exact head**
+- [ ] **Step 1: Verify Base and integration workflows on the final exact head**
 
 Require:
 - Base v9 `base-v9-contract`: PASS.
 - Base v9 `adversarial-gate`: PASS.
 - Game Project Operating System docs/Ubuntu/publication/Windows smoke/final `ci-gate`: PASS.
 - Confirm Delivery Ubuntu/Windows contracts: PASS when triggered.
+- Focused Tool Hub Ubuntu/Windows + production-boundary: PASS.
 - Provisional Figma Integration is supplemental; if Windows hits the known 12-minute workflow budget after the relevant Tool Hub delivery tests have passed, record it as a CI budget ceiling rather than inventing a product PASS.
 
-- [ ] **Step 2: Adversarially review the exact diff**
+- [ ] **Step 2: Adversarially review the final exact diff**
 
 Check:
 1. `REGISTERED` remains unauthorized.
-2. `RUNNING` is restored only after authenticated health passes.
-3. Existing child identity/token are reused unchanged.
-4. No second process or token rotation path was introduced.
-5. Wrong/dead/stopping/cross-scope authorization remains fail-closed.
-6. No Figma/provider/project authority changed.
+2. State repair occurs only after successful base `start()` authenticated-health validation.
+3. The same key lock is reacquired before repair so a completed concurrent stop cannot be overwritten.
+4. Existing child identity/token are reused unchanged.
+5. No second process or token rotation path was introduced.
+6. Wrong/dead/stopping/cross-scope authorization remains fail-closed.
+7. No Figma/provider/project authority changed.
 
 Resolve any Important/Critical finding with a new RED→GREEN cycle before merge.
 
@@ -141,11 +147,11 @@ Resolve any Important/Critical finding with a new RED→GREEN cycle before merge
 
 - [ ] **Step 1: Mark ready and squash merge with exact-head protection**
 
-Merge only after all required exact-head gates and review are complete.
+Merge only after all required final exact-head gates and review are complete.
 
 - [ ] **Step 2: Verify postmerge main**
 
-Read back the merged `supervisor.py` and focused workflow. Require fresh main push evidence for Base v9, focused Tool Hub Ubuntu/Windows, and GPO final gate.
+Read back merged `delivery_supervisor.py` and focused workflow. Require fresh main push evidence for Base v9, focused Tool Hub Ubuntu/Windows, and GPO final gate.
 
 - [ ] **Step 3: Run the real user-PC sequence using the four existing PNGs**
 
