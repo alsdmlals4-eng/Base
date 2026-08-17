@@ -13,7 +13,7 @@ CLAIM_REFERENCE = (
     / "claim-and-intent-verification.md"
 )
 FRESHNESS_SKILL = ROOT / "skills" / "auditing-canonical-reference-freshness" / "SKILL.md"
-LEARNING_LOG = ROOT / "skills" / "SKILL_LEARNING_LOG.md"
+LEARNING_LOG = ROOT / "skills" / "auditing-canonical-reference-freshness" / "LEARNING_LOG.md"
 LOCAL_EXECUTOR_DOC = ROOT / "docs" / "LOOP_A2_LOCAL_EXECUTOR.md"
 
 
