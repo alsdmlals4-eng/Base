@@ -7,6 +7,7 @@ import runpy
 import pytest
 
 import tool_hub.windows_launcher as launcher_module
+import tool_hub.windows_launcher_repair as repair_module
 from test_windows_launcher import installer
 
 
@@ -40,7 +41,7 @@ def test_desktop_bootstrap_routes_reviewed_runtime_drift_to_repair_cli(
     assert namespace["main"]() == 0
     assert shown == []
     assert len(commands) == 1
-    assert commands[0][1:4] == ["-m", "tool_hub.windows_launcher", "--repair-config"]
+    assert commands[0][1:4] == ["-m", "tool_hub.windows_launcher_repair", "--config"]
     assert commands[0][4] == str(owner.config_path)
 
 
@@ -57,18 +58,15 @@ def test_repair_path_reissues_current_launcher_then_runs_it(
         encoding="utf-8",
     )
 
-    repair = getattr(launcher_module, "repair_installed_launcher", None)
-    assert callable(repair)
-
     events: list[str] = []
-    real_install = launcher_module.WindowsLauncherInstaller.install
+    real_install = repair_module.WindowsLauncherInstaller.install
 
     def recording_install(self):
         events.append("install")
         return real_install(self)
 
-    monkeypatch.setattr(launcher_module.WindowsLauncherInstaller, "install", recording_install)
-    result = repair(
+    monkeypatch.setattr(repair_module.WindowsLauncherInstaller, "install", recording_install)
+    result = repair_module.repair_installed_launcher(
         config_path,
         run=lambda path: events.append(f"run:{path}") or 0,
         desktop=owner.desktop,
@@ -90,10 +88,8 @@ def test_repair_path_rejects_interpreter_tamper_before_reinstall(
     owner.install()
     pythonw.write_bytes(b"tampered interpreter")
 
-    repair = getattr(launcher_module, "repair_installed_launcher", None)
-    assert callable(repair)
     with pytest.raises(launcher_module.LauncherError, match="LAUNCHER_UPDATE_REQUIRED"):
-        repair(
+        repair_module.repair_installed_launcher(
             owner.config_path,
             run=lambda _: 0,
             desktop=owner.desktop,
