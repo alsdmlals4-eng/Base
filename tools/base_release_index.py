@@ -84,7 +84,7 @@ def _install_finalization_pin_validation(contract_module: ModuleType) -> None:
 
 
 def _install_protected_baseline_ancestry(contract_module: ModuleType) -> None:
-    """Authenticate stable historical remote baselines without shortening the diff."""
+    """Authenticate canonical historical remote baselines without shortening the diff."""
 
     if getattr(contract_module, "_base_protected_baseline_ancestry_installed", False):
         return
@@ -98,7 +98,11 @@ def _install_protected_baseline_ancestry(contract_module: ModuleType) -> None:
         baseline: dict[str, Any],
         protected_base_override: str = "",
     ) -> tuple[str | None, list[str]]:
-        if protected_base_override or baseline.get("authority_kind") != "REMOTE_TRACKING_REF":
+        if (
+            protected_base_override
+            or baseline.get("authority_kind") != "REMOTE_TRACKING_REF"
+            or baseline.get("policy_source_type") != "CANONICAL_ADAPTER_SOURCE"
+        ):
             return original(project_root, baseline, protected_base_override)
 
         adapter_commit = baseline["commit"]
@@ -112,7 +116,7 @@ def _install_protected_baseline_ancestry(contract_module: ModuleType) -> None:
             return None, [f"Protected baseline commit is absent: {adapter_commit}"]
         if not contract_module._is_ancestor(project_root, adapter_commit, resolved):
             return None, [
-                "External protected baseline must be an ancestor of its authority: "
+                "External protected authority requires adapter baseline ancestry: "
                 f"{adapter_commit} is not an ancestor of {authority_ref} ({resolved})"
             ]
         return adapter_commit, []
