@@ -83,6 +83,44 @@ def _install_finalization_pin_validation(contract_module: ModuleType) -> None:
     contract_module._base_finalization_validation_installed = True
 
 
+def _install_protected_baseline_ancestry(contract_module: ModuleType) -> None:
+    """Authenticate stable historical remote baselines without shortening the diff."""
+
+    if getattr(contract_module, "_base_protected_baseline_ancestry_installed", False):
+        return
+
+    original: Callable[..., tuple[str | None, list[str]]] = (
+        contract_module._trusted_protected_base
+    )
+
+    def trusted_protected_base(
+        project_root: Path,
+        baseline: dict[str, Any],
+        protected_base_override: str = "",
+    ) -> tuple[str | None, list[str]]:
+        if protected_base_override or baseline.get("authority_kind") != "REMOTE_TRACKING_REF":
+            return original(project_root, baseline, protected_base_override)
+
+        adapter_commit = baseline["commit"]
+        authority_ref = baseline["authority_ref"]
+        resolved = contract_module._resolve_commit(project_root, authority_ref)
+        if resolved is None:
+            return None, [
+                f"Protected authority ref cannot be resolved to a commit: {authority_ref}"
+            ]
+        if not contract_module._commit_exists(project_root, adapter_commit):
+            return None, [f"Protected baseline commit is absent: {adapter_commit}"]
+        if not contract_module._is_ancestor(project_root, adapter_commit, resolved):
+            return None, [
+                "External protected baseline must be an ancestor of its authority: "
+                f"{adapter_commit} is not an ancestor of {authority_ref} ({resolved})"
+            ]
+        return adapter_commit, []
+
+    contract_module._trusted_protected_base = trusted_protected_base
+    contract_module._base_protected_baseline_ancestry_installed = True
+
+
 def install_release_lock_paths(contract_module: ModuleType) -> None:
     """Install canonical release identities into the legacy contract module.
 
@@ -94,3 +132,4 @@ def install_release_lock_paths(contract_module: ModuleType) -> None:
     contract_module.RELEASE_LOCK_PATHS.clear()
     contract_module.RELEASE_LOCK_PATHS.update(RELEASE_LOCK_PATHS)
     _install_finalization_pin_validation(contract_module)
+    _install_protected_baseline_ancestry(contract_module)
