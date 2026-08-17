@@ -52,7 +52,9 @@ $projectConfig = Join-Path $env:LOCALAPPDATA 'BaseToolHub\projects.json'
   --port 8764
 ```
 
-브라우저에서 `http://127.0.0.1:8764`를 연 뒤 `바탕화면 실행 아이콘 설치/복구`를 한 번 누릅니다. 설치가 성공하면 바탕화면에 `Base Tool Hub.lnk`가 생깁니다. 설치기는 외부 PowerShell을 띄우지 않고 Windows Shell Link API를 직접 사용하며, 바로가기는 검증된 `pythonw.exe`와 private launcher를 직접 가리켜 `.pyw` 연결 프로그램에도 의존하지 않습니다. 이후 정상 사용은 PowerShell을 열지 않고 이 아이콘을 두 번 클릭하면 됩니다. 같은 Hub가 이미 실행 중이면 새 프로세스를 만들지 않고 브라우저만 다시 엽니다. 종료할 때는 화면의 `Tool Hub 종료`를 사용합니다.
+브라우저에서 `http://127.0.0.1:8764`를 연 뒤 `바탕화면 실행 아이콘 설치/복구`를 한 번 누릅니다. 설치가 성공하면 바탕화면에 `Base Tool Hub.lnk`가 생깁니다. 설치기는 외부 PowerShell을 띄우지 않고 Windows Shell Link API를 직접 사용하며, 바로가기는 검증된 `pythonw.exe`와 private launcher를 직접 가리켜 `.pyw` 연결 프로그램에도 의존하지 않습니다. 이후 정상 사용은 PowerShell을 열지 않고 이 아이콘을 두 번 클릭하면 됩니다. 같은 Hub가 이미 실행 중이면 새 프로세스를 만들지 않고 브라우저만 다시 엽니다. 정상 종료는 **마지막 Tool Hub 브라우저 탭을 닫는 것만으로 충분**하며, 약 2초의 새로고침 보호 유예 뒤 Hub와 Hub가 시작한 Studio child가 함께 종료됩니다. 여러 Tool Hub 탭 중 하나만 닫거나 페이지를 새로고침하면 다른/대체 browser lease가 Hub를 유지합니다. 화면의 `Tool Hub 종료`는 기다리지 않고 즉시 종료해야 할 때 사용하는 fallback입니다.
+
+브라우저나 renderer가 비정상 종료되어 `pagehide` 신호가 사라진 경우에는 정상 백그라운드 탭을 잘못 죽이지 않기 위해 보수적인 heartbeat stale timeout(약 5분)을 기다린 뒤 정리합니다. 이 자동 종료 경로는 Git Fetch/Pull/Reset/Clean/Checkout을 실행하지 않고, Hub가 소유하지 않은 Figma Desktop/plugin·Git·Python 프로세스를 종료하지 않습니다.
 
 구현 기준은 Microsoft의 [Windows Shell Links](https://learn.microsoft.com/en-us/windows/win32/shell/links) 계약입니다.
 
