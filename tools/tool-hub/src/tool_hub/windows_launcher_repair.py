@@ -7,13 +7,17 @@ import json
 import os
 from pathlib import Path
 import stat
+import subprocess
 from typing import Callable
+
+from base_tool_contracts.trusted_files import portable_subprocess_creationflags
 
 from .windows_launcher import (
     LauncherError,
     ShortcutBuilder,
     WindowsLauncherInstaller,
     _assert_plain_parents,
+    _atomic_write,
     _default_shortcut_builder,
     _report_launcher_error,
     _root_fingerprint,
@@ -39,6 +43,14 @@ _REQUIRED = {
     "launcher_token",
     "hub_runtime_fingerprint",
 }
+_RUNTIME_PATHS = (
+    "tools/tool-hub/src/tool_hub",
+    "tools/tool-hub/web",
+    "tools/base-tool-contracts/src",
+    "tools/TOOL_REGISTRY.json",
+    "schemas/base-tool-registry-v1.schema.json",
+    "tools/validate_tool_registry.py",
+)
 
 
 def _regular(path: Path, *, max_bytes: int) -> None:
@@ -55,6 +67,56 @@ def _regular(path: Path, *, max_bytes: int) -> None:
         or metadata.st_size > max_bytes
     ):
         raise LauncherError("LAUNCHER_CONFIG_INVALID")
+
+
+def _git(git: Path, root: Path, *arguments: str) -> subprocess.CompletedProcess[bytes]:
+    return subprocess.run(
+        [
+            str(git),
+            "-c",
+            "core.fsmonitor=false",
+            "-c",
+            "core.hooksPath=",
+            "-c",
+            "credential.helper=",
+            "-C",
+            str(root),
+            *arguments,
+        ],
+        capture_output=True,
+        check=False,
+        creationflags=portable_subprocess_creationflags(),
+        env={
+            "PATH": str(git.parent),
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_CONFIG_GLOBAL": os.devnull,
+            "GIT_TERMINAL_PROMPT": "0",
+            "GIT_EXTERNAL_DIFF": "",
+        },
+    )
+
+
+def _assert_reviewed_runtime(root: Path, git: Path) -> None:
+    head = _git(git, root, "rev-parse", "--verify", "HEAD")
+    remote = _git(git, root, "rev-parse", "--verify", "refs/remotes/origin/main")
+    if (
+        head.returncode != 0
+        or remote.returncode != 0
+        or head.stdout.strip() != remote.stdout.strip()
+        or len(head.stdout.strip()) != 40
+    ):
+        raise LauncherError("LAUNCHER_UPDATE_REQUIRED")
+    changed = _git(git, root, "diff", "--quiet", "--no-ext-diff", "HEAD", "--", *_RUNTIME_PATHS)
+    if changed.returncode != 0:
+        raise LauncherError("LAUNCHER_UPDATE_REQUIRED")
+    untracked = _git(git, root, "ls-files", "--others", "--", *_RUNTIME_PATHS)
+    if untracked.returncode != 0:
+        raise LauncherError("LAUNCHER_UPDATE_REQUIRED")
+    for raw in untracked.stdout.decode("utf-8", errors="strict").splitlines():
+        candidate = Path(raw)
+        if "__pycache__" in candidate.parts or any(part.endswith(".egg-info") for part in candidate.parts):
+            continue
+        raise LauncherError("LAUNCHER_UPDATE_REQUIRED")
 
 
 def _load_repair_seed(path: Path) -> dict[str, object]:
@@ -101,6 +163,7 @@ def repair_installed_launcher(
     config_path: Path,
     *,
     run: Callable[[Path], int] = run_installed_launcher,
+    reviewed_runtime: Callable[[Path, Path], None] = _assert_reviewed_runtime,
     desktop: Path | None = None,
     shortcut_builder: ShortcutBuilder = _default_shortcut_builder,
 ) -> int:
@@ -110,6 +173,7 @@ def repair_installed_launcher(
     root = Path(str(payload["base_root"])).absolute()
     project_config = Path(str(payload["project_config"])).absolute()
     git = Path(str(payload["git_executable"])).absolute()
+    reviewed_runtime(root, git)
     local_app_data = config_path.parents[2]
     owner = WindowsLauncherInstaller(
         root,
@@ -126,6 +190,15 @@ def repair_installed_launcher(
     if _sha256(owner.desktop_entry) != payload["desktop_entry_sha256"]:
         raise LauncherError("LAUNCHER_UPDATE_REQUIRED")
     owner.install()
+    try:
+        refreshed = json.loads(config_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise LauncherError("LAUNCHER_CONFIG_INVALID") from error
+    refreshed["launcher_token"] = str(payload["launcher_token"])
+    _atomic_write(
+        config_path,
+        (json.dumps(refreshed, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8"),
+    )
     return run(config_path)
 
 
