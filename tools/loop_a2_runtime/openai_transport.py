@@ -129,7 +129,10 @@ def _git(repo: Path, *args: str) -> subprocess.CompletedProcess[str]:
         ["git", *args],
         cwd=repo,
         text=True,
+        encoding="utf-8",
+        errors="strict",
         capture_output=True,
+        shell=False,
         check=False,
     )
 
