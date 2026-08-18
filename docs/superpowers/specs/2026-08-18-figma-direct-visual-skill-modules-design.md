@@ -17,28 +17,32 @@ The goal is therefore not to revive the runtime. It is to preserve the reusable 
 Reuse rather than duplicate:
 
 - primary Skill owner: `skills/designing-art-prompts-and-technique-cards/SKILL.md`;
-- visual continuity: `references/figma-visual-bible-continuity-gate.md`;
+- visual continuity/router: `references/figma-visual-bible-continuity-gate.md`;
+- existing broad triggers: `image-prompt`, `image-mockup`, `image-approval`, `visual-qa-and-approval`;
 - project Figma structure: `templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md`;
 - reusable harvest: merged PR #433 and `Reusable Visual Harvest Gate`;
 - product asset authority: existing `PROJECT_ASSET_APPROVED` / Asset Vault / promote boundaries.
 
-Do not create a new broad Figma Skill, Expression Skill, Sprite Skill, or parallel asset canon.
+Do not create a new broad Figma Skill, Expression Skill, Sprite Skill, parallel asset canon, or a larger trigger surface when the existing art Skill already routes image work correctly.
 
 ## 3. Selected Architecture
 
-Keep one primary art/image Skill and add conditionally loaded reference modules:
+Keep one primary art/image Skill. The existing main Skill already routes Figma-backed image work through `figma-visual-bible-continuity-gate.md`; that gate becomes the conditional module router:
 
 ```text
 designing-art-prompts-and-technique-cards
-├─ figma-direct-placement-and-canon.md
-├─ character-identity-expression-controls.md
-├─ sprite-pose-sequence-controls.md
-├─ effect-stage-compositing-controls.md
-├─ candidate-review-and-reusable-harvest.md
-└─ local-visual-tool-lessons-and-fallback.md
+└─ figma-visual-bible-continuity-gate.md
+   ├─ figma-direct-placement-and-canon.md
+   ├─ character-identity-expression-controls.md
+   ├─ sprite-pose-sequence-controls.md
+   ├─ effect-stage-compositing-controls.md
+   ├─ candidate-review-and-reusable-harvest.md
+   └─ local-visual-tool-lessons-and-fallback.md
 ```
 
-The main Skill remains the router. It reads only the module needed for the current visual task.
+Only the module required by the current task is read. The main Skill body and Registry do not need new trigger tags.
+
+This refinement reduces routing ambiguity and context load compared with adding many tool-specific trigger names to the Registry.
 
 ## 4. Figma Direct Placement Contract
 
@@ -60,6 +64,7 @@ new candidate
 → auto-place in 02_WIP
 → use stable artifact naming
 → add/update WIP review metadata when useful
+→ read back actual placement
 → compare against approved canon
 → user review
 ```
@@ -114,19 +119,18 @@ This status is scoped to the visual image workflow. It does not delete unrelated
 
 ## 6. Skill Routing
 
-The existing `designing-art-prompts-and-technique-cards` Registry entry gains trigger coverage for:
+Use the existing Registry entry for `designing-art-prompts-and-technique-cards` unchanged. Existing image-related triggers already route the relevant tasks to the Skill.
 
-- `figma-direct-placement`
-- `approved-visual-anchor`
-- `character-expression`
-- `character-pose`
-- `sprite-sequence`
-- `effect-stage`
-- `visual-candidate-review`
-- `visual-asset-reuse`
-- `visual-harvest`
+The Skill's existing Figma continuity reference remains the entry point. The gate selects a focused module using observable task conditions:
 
-No new broad Skill ID is introduced.
+- Figma placement/canon organization;
+- character identity/expression edit;
+- pose/sprite sequence;
+- effect stages/compositing;
+- candidate comparison/reuse harvest;
+- local visual runtime status/fallback.
+
+No new broad Skill ID or Registry trigger expansion is introduced.
 
 ## 7. Authority and Safety Invariants
 
@@ -136,23 +140,25 @@ No new broad Skill ID is introduced.
 - Figma write availability changes execution convenience, not approval authority.
 - `APPROVED_VISUAL_REFERENCE != PROJECT_ASSET_APPROVED`.
 - Local Tool runtime code is preserved but not required by the normal image workflow.
+- Unrelated QA tooling is not globally deprecated by this visual fallback.
 - No paid OpenAI API or API-key fallback is introduced.
 - No project-specific asset is approved by this Base change.
 
 ## 8. Verification Contract
 
-TDD must demonstrate RED before Skill/reference edits.
+TDD must demonstrate RED before module/gate edits.
 
 Required tests:
 
-1. the existing art Skill links all six modules;
-2. Registry trigger tags route the new task vocabulary to that existing Skill;
-3. no new `figma-*` or tool-specific broad Skill ID is created;
+1. the existing art Skill still links the Figma continuity gate;
+2. the continuity gate links all six focused modules;
+3. existing art Skill Registry triggers remain sufficient and no new broad `figma-*`, `expression-*`, or `sprite-*` Skill ID appears;
 4. Figma direct module contains write-available auto-placement and write-unavailable exact-guidance branches;
 5. candidates enter `02_WIP` before approval;
 6. explicit user approval gates `01_APPROVED_REFERENCE` / `04_FINAL` promotion;
 7. Figma promotion remains separate from `PROJECT_ASSET_APPROVED`;
-8. local Tool Hub/Studio runtime is recorded as non-canonical for normal image work while source remains preserved/referenceable.
+8. local Tool Hub/Studio runtime is recorded as non-canonical for normal image work while source remains preserved/referenceable;
+9. CI must preserve any failing visual contract rather than returning only the final unittest exit code.
 
 ## 9. Real-World Evidence Ceiling
 
