@@ -39,17 +39,69 @@ PR #428이 `main`에 squash merge되어 Character/Outfit/Scene 편집, ChatGPT P
 
 ## Windows 최초 전환과 이후 실행
 
-Base 루트에서:
+최초 설치 또는 Base/가상환경 변경 뒤 복구에서만 PowerShell을 사용합니다. 이 단계는 `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`의 `FRESH_SHELL_ASSUMPTION`을 따르며, **새 PowerShell 창에서 아래 블록 전체를 한 번 붙여넣는 것**을 기본 경로로 합니다. 사용자가 먼저 `cd`로 Base 루트를 맞춰 둘 필요가 없습니다.
 
 ```powershell
-py -3.12 -m venv .venv
-.\.venv\Scripts\python -m pip install -e '.\tools\qa-evidence-studio[dev]' -e '.\tools\expression-studio[dev]' -e '.\tools\sprite-animation-studio[dev]' -e '.\tools\tool-hub[dev]'
+$ErrorActionPreference = 'Stop'
+$Stage = '0/4 LOCATION'
 
-$projectConfig = Join-Path $env:LOCALAPPDATA 'BaseToolHub\projects.json'
-.\.venv\Scripts\python -m tool_hub.app `
-  --base-root (Get-Location) `
-  --project-config $projectConfig `
-  --port 8764
+try {
+    $Candidates = @(
+        @(
+            (Join-Path $env:USERPROFILE 'Documents\GitHub\Base')
+            (Join-Path $env:USERPROFILE 'source\repos\Base')
+        ) | Where-Object {
+            (Test-Path -LiteralPath (Join-Path $_ '.git') -PathType Container) -and
+            (Test-Path -LiteralPath (Join-Path $_ 'tools\tool-hub'))
+        } | Select-Object -Unique
+    )
+
+    if ($Candidates.Count -ne 1) {
+        throw "Base repository location is not uniquely resolvable. Expected one reviewed Base clone under Documents\\GitHub\\Base or source\\repos\\Base; found $($Candidates.Count)."
+    }
+
+    $BaseRoot = $Candidates[0]
+    Write-Host "[$Stage] $BaseRoot"
+    Set-Location -LiteralPath $BaseRoot
+    if (-not (Test-Path -LiteralPath '.git' -PathType Container)) {
+        throw 'EXPECTED_PATH_MARKER missing: .git'
+    }
+
+    $Stage = '1/4 PREFLIGHT'
+    Write-Host "[$Stage]"
+    if (-not (Get-Command py -ErrorAction SilentlyContinue)) {
+        throw 'Python launcher `py` was not found.'
+    }
+
+    $Stage = '2/4 INSTALL'
+    Write-Host "[$Stage]"
+    py -3.12 -m venv .venv
+    if ($LASTEXITCODE -ne 0) { throw "venv creation failed with exit code $LASTEXITCODE" }
+    if (-not (Test-Path -LiteralPath '.\.venv\Scripts\python.exe' -PathType Leaf)) {
+        throw 'Expected .venv Python was not created.'
+    }
+
+    .\.venv\Scripts\python.exe -m pip install `
+        -e '.\tools\qa-evidence-studio[dev]' `
+        -e '.\tools\expression-studio[dev]' `
+        -e '.\tools\sprite-animation-studio[dev]' `
+        -e '.\tools\tool-hub[dev]'
+    if ($LASTEXITCODE -ne 0) { throw "Tool Hub dependency install failed with exit code $LASTEXITCODE" }
+
+    $Stage = '3/4 START'
+    Write-Host "[$Stage] Starting Base Tool Hub at http://127.0.0.1:8764"
+    $projectConfig = Join-Path $env:LOCALAPPDATA 'BaseToolHub\projects.json'
+    .\.venv\Scripts\python.exe -m tool_hub.app `
+        --base-root $BaseRoot `
+        --project-config $projectConfig `
+        --port 8764
+    if ($LASTEXITCODE -ne 0) { throw "Tool Hub exited with code $LASTEXITCODE" }
+}
+catch {
+    Write-Host "[BLOCKED][$Stage] $($_.Exception.Message)"
+    Write-Host "[CWD] $(Get-Location)"
+    throw
+}
 ```
 
 브라우저에서 `http://127.0.0.1:8764`를 연 뒤 `바탕화면 실행 아이콘 설치/복구`를 한 번 누릅니다. 설치가 성공하면 바탕화면에 `Base Tool Hub.lnk`가 생깁니다. 설치기는 외부 PowerShell을 띄우지 않고 Windows Shell Link API를 직접 사용하며, 바로가기는 검증된 `pythonw.exe`와 private launcher를 직접 가리켜 `.pyw` 연결 프로그램에도 의존하지 않습니다. 이후 정상 사용은 PowerShell을 열지 않고 이 아이콘을 두 번 클릭하면 됩니다. 같은 Hub가 이미 실행 중이면 새 프로세스를 만들지 않고 브라우저만 다시 엽니다. 정상 종료는 **마지막 Tool Hub 브라우저 탭을 닫는 것만으로 충분**하며, 약 2초의 새로고침 보호 유예 뒤 Hub와 Hub가 시작한 Studio child가 함께 종료됩니다. 여러 Tool Hub 탭 중 하나만 닫거나 페이지를 새로고침하면 다른/대체 browser lease가 Hub를 유지합니다. 화면의 `Tool Hub 종료`는 기다리지 않고 즉시 종료해야 할 때 사용하는 fallback입니다.

@@ -245,3 +245,41 @@ commercial_effect: NOT_RUN
 - `STORY_ORIGIN_ENGINE`은 seed를 `AFFECTED_AGENT → PRESSURE → CHOICE → SHIFT → NEXT_PRESSURE`로 변환하고, `RELATIONAL_APPEAL`은 이후 조합의 장면 가치를 검수한다.
 - MICE, Snowflake, Story Genius, Want/Need/Lie/Truth, Truby, Save the Cat, Story Grid는 `Lens`이며 필수 공식이 아니다.
 - Base 계약 Green은 프로젝트별 이야기 품질·독자 반응·상업 효과를 증명하지 않는다.
+
+## 2026-08-18 — 문단 호흡·private live-reference·CI consumer 전파
+
+### 입력과 finding
+
+- 사용자는 소설·스토리·대화 작업에서 줄바꿈과 문단 호흡을 중요한 품질 요소로 다루고, 계속 갱신되는 개인 `글따라쓰기` 문서를 선호 참고자료로 사용하도록 요청했다.
+- #523 final/postmerge 검증에서 연결된 Drive의 exact `글따라쓰기` 문서는 해석되지 않았다. 따라서 문서 내용에서 특정 문단·줄바꿈 패턴을 실제 관찰했다는 주장은 이번 작업의 증거 상한을 넘으며, content-specific preference evidence는 `NOT_VERIFIED`로 유지한다.
+- 첫 standalone contract test는 기존 workflow에서 소비되지 않아 거짓 GREEN이 됐다. workflow가 새 test module을 명시적으로 소비하도록 연결한 뒤 exact RED에서 새 계약 5개만 실패했다.
+- 구현 후 focused long-horizon contract는 GREEN이었지만 canonical reference freshness가 serial-fiction Skill 변경에 기존 `tests/test_serial_fiction_discipline.py`와 Skill learning consumer의 동반 변경이 빠졌음을 차단했다.
+
+### Base 결정
+
+- 새 Skill을 만들지 않고 기존 `developing-and-revising-serial-fiction`에 `PARAGRAPH_BREAK_AND_BREATH`를 흡수한다.
+- `LINE_BREAK_RHYTHM`, `PARAGRAPH_LENGTH_PATTERN`, `DIALOGUE_NARRATION_ALTERNATION`, `REACTION_ISOLATION`은 quota가 아니라 구조·호흡 감사 렌즈다.
+- 개인 참고자료는 `LIVE_CONNECTED_DRIVE_READ` + `USER_PREFERENCE_EVIDENCE`로 필요할 때 최신 상태를 다시 읽는다. 공개 Base에는 URL·raw document ID·원문을 저장하지 않는다.
+- 식별 가능한 문장·말투·비유를 복제하지 않고 고수준 구조만 추출한다. 사용자 선호 자료는 프로젝트 정본이나 universal style rule이 아니다.
+- 새 테스트를 만든 사실만으로 CI 소비를 추정하지 않는다. required/related workflow의 실제 module invocation과 canonical-reference freshness를 함께 확인한다.
+
+### 검증 상태
+
+```yaml
+privacy_boundary: STRUCTURAL_CONTRACT
+source_content_readback: NOT_VERIFIED
+focused_contract: GREEN_ON_PR_523_FINAL_HEAD
+companion_serial_test: GREEN_ON_PR_523_FINAL_HEAD
+reference_freshness: GREEN_ON_PR_523_FINAL_HEAD
+postmerge_main_readback: VERIFIED
+postmerge_merge_sha: 2ad5466be543291f272267b5b917f031f279b527
+human_reader_quality: HUMAN_NOT_RUN
+commercial_effect: NOT_RUN
+```
+
+### 다음 검토 트리거
+
+- `글따라쓰기`의 새 샘플이 실제로 해석되어 기존 선호 가설과 다르게 나타날 때
+- 문단 호흡 lens가 한 문장 한 문단 같은 고정 공식으로 변질될 때
+- private source URL/ID/원문이 공개 repository patch에 들어갈 때
+- 새 contract test가 CI에 다시 소비되지 않을 때

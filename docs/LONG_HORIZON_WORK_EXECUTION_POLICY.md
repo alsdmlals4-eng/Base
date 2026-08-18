@@ -559,3 +559,29 @@ latest main SHA
 ```
 
 파생 문서와 설명이 machine checkpoint/Registry/actual code와 다르면 **현재 구현을 추정하지 말고 freshness finding**으로 처리한다.
+
+## 17. 재사용 교훈 승격 Gate
+
+### `REUSABLE_LESSON_PROMOTION_GATE`
+
+작업 중의 실패·복구·개선·반복 패턴을 단순 회고 문장으로 끝내지 않는다. 다만 한 번의 성공을 즉시 공용 규칙이나 새 Skill로 승격하지도 않는다.
+
+```text
+incident / failure / solution / repeated reusable pattern
+→ project-specific vs reusable 분리
+→ REUSE_EXISTING_OWNER
+→ EXTEND_REFERENCE_OR_MODE
+→ EXTRACT_MODULE
+→ BASE_CHANGE_PROPOSAL
+→ NEW_SKILL_LAST
+```
+
+- `REUSE_EXISTING_OWNER`: 이미 같은 책임을 가진 Method·Skill·Tool·Template·Guide가 있으면 새 owner를 만들지 않고 그 owner를 재사용한다.
+- `EXTEND_REFERENCE_OR_MODE`: 독립 라우팅 책임이 아니라면 기존 owner의 mode/reference/test를 확장한다.
+- `EXTRACT_MODULE`: 실제 실행 경계가 있고 여러 프로젝트에서 재사용할 핵심/미니 시스템이면 프로젝트 고유 데이터·수치·세계관을 분리한 모듈과 fixture/test를 추출한다.
+- `BASE_CHANGE_PROPOSAL`: 프로젝트에서 얻은 공용 교훈이 Base 공유 정책·Skill·Module 변경을 요구하면 `managing-base-change-proposals`의 extract/review/implement/verify 생명주기를 사용한다.
+- `NEW_SKILL_LAST`: 기존 owner 확장으로 책임을 표현할 수 없고 독립 입력·산출물·Quality Bar·도구·승인 경계가 반복적으로 필요할 때만 `evolving-project-discipline-skills`로 새 Skill 경계를 검토한다. 활성 Skill 개수 자체는 목표나 상한이 아니다.
+
+실패·사건·해결방법·교훈은 최소한 **원인, 안전한 해결 경로, 반례/비사용 조건, 재현·검증 증거, 롤백/폐기 조건**을 함께 남긴다. 병합 뒤 교훈이 현재 owner에 흡수되면 구형 문서·기록은 삭제보다 `[대체됨]`, `SUPERSEDED`, archive/replacement pointer 등 현재 retention owner가 정의한 방법으로 오인 가능성을 제거한다.
+
+사용자에게 PowerShell 실행을 요구하는 공용 사용자 실행 교훈은 `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`를 먼저 재사용한다.
