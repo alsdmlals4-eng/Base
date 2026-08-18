@@ -39,18 +39,21 @@ Git history / archive
 → 과거 구현·복구 증거
 ```
 
-### 프로젝트
+### 프로젝트 — 도메인 분할 정본
 
 ```text
 NOTION_DEFAULT_PROJECT_WORKSPACE
-→ Project Registry
-→ 사람용 Project Home
-→ Project-filtered Work / Visual or Story Bible / Flow or Storyboard / Asset & Knowledge views
+→ NOTION_HUMAN_FACING_CANON
+→ Project Registry / 사람용 Project Home
+→ Visual or Story Bible / Flow or Storyboard / Asset Gallery
+→ 예산표 / Tier표 / 로스터·경제·성장표 / 사람이 수정하는 전체 그림
 
-REPO_NATIVE_STRUCTURED_DATA
-→ code / data / scene / resource / config / tracked implementation asset / tests
+REPOSITORY_STRUCTURED_CANON
+→ Markdown / JSON / game data / code / scene / resource / config / tests
 → REPOSITORY_RUNTIME_TRUTH
 ```
+
+`DOMAIN_SPLIT_CANON`은 GitHub와 Notion 중 하나를 모든 질문의 단일 도구로 강제하지 않는다. **사람이 이해·비교·수정하는 전체 그림, 시각 자료, 예산표, Tier표, Flow/Storyboard는 Notion을 우선**하고, **Markdown·JSON·실제 게임 데이터·코드·Scene·Resource·Test·Runtime evidence는 repository를 우선**한다. Notion 변경이 구조화 데이터나 구현 변경을 요구하면 `SYNC_BEFORE_IMPLEMENTATION`으로 repository에 동기화한 뒤 구현한다.
 
 `PROJECT_RELATION_REQUIRED`: project-scoped Work, Asset, Component, Screen, Reference, Benchmark, Character, Faction, Scene, Clue, Location, Canon record는 Project relation 없이 프로젝트 정본이 될 수 없다.
 
@@ -65,8 +68,8 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·
 | 통합 운영 모델 | `docs/OPERATING_MODEL.md` | 생명주기·정본·상태·발행·근거·검증 |
 | Work Mode / Skill | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | PLAN/BUILD/REVIEW와 Skill 자동 라우팅 |
 | 장기 작업 | `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md` | 현행조사→>=3 대안→벤치마킹→5회 전체 적대적 개선→장기 최선안 |
-| 프로젝트 workspace machine authority | `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json` | `NOTION_DEFAULT_PROJECT_WORKSPACE`, `PROJECT_RELATION_REQUIRED`, `WORK_MASTER`, `ASSET_KNOWLEDGE_MASTER`, `VISUAL_MAP_DERIVED`, `REPOSITORY_RUNTIME_TRUTH` |
-| 시각 협업 | `docs/VISUAL_COLLABORATION_TOOL_POLICY.md` | project-filtered human/AI view, Visual Map 파생 권위, runtime handoff |
+| 프로젝트 workspace machine authority | `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json` | `DOMAIN_SPLIT_CANON`, `NOTION_HUMAN_FACING_CANON`, `REPOSITORY_STRUCTURED_CANON`, `PROJECT_RELATION_REQUIRED`, `REPOSITORY_RUNTIME_TRUTH` |
+| 시각 협업 | `docs/VISUAL_COLLABORATION_TOOL_POLICY.md` | Notion 사람용 시각·표 정본, project-filtered human/AI view, repository runtime handoff |
 | Notion asset/flow workflow | `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md` | provenance·bounded edit·approval·version·reuse·benchmark·readback·handoff |
 | Google Sheets migration compatibility | `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` | `COMPATIBILITY_ONLY`, unique/duplicate/obsolete migration, destination readback |
 | 이미지 생성·검수 | `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md` | Visual Requirement Gate, candidate QA, 명시적 approval/promotion |
@@ -104,18 +107,18 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·
 | Skill behavior eval | `skills/SKILL_BEHAVIOR_EVALS.json` | prompt routing expected/forbidden behavior |
 | Local validation | `tools/run_local_validation.py` | full regression and exact trusted-main validation entrypoint |
 | Base proposal registry | `[수정제안서]/PROPOSAL_REGISTRY.json` | project-derived shared change proposal lifecycle |
-| Controlled vocabulary | `docs/CONTROLLED_VOCABULARY.md` | cross-domain stable terms and bounded-context definitions |
+| Controlled vocabulary | `docs/CONTROLLED_VOCABULARY.md` | **공용 용어**와 bounded-context 정의 |
 | Archived cross-project UI handoff | `docs/archive/handoffs/2026-07-29-ux-ui-common-system-expansion.md` | `COMPATIBILITY_ONLY`; historical handoff이며 active implementation authority 없음 |
 
 ## 4. 프로젝트 Notion 표준
 
-페이지 수를 임의로 3개에 제한하지 않는다. **책임이 실제로 다른 경우에만 하위 페이지를 분리**한다. 사람은 Project Registry에서 프로젝트를 눌렀을 때 먼저 Project Home을 본다. Project Home에는 상태·핵심 방향·최신 Flow·주요 작업면 링크처럼 사람이 즉시 판단할 정보만 둔다.
+페이지 수를 임의로 3개에 제한하지 않는다. **책임이 실제로 다른 경우에만 하위 페이지를 분리**한다. 사람은 Project Registry에서 프로젝트를 눌렀을 때 먼저 Project Home을 본다. Project Home에는 상태·핵심 재미·핵심 루프·핵심 방향·최신 Flow·주요 작업면 링크처럼 사람이 즉시 판단할 정보만 둔다.
 
 ### 4.1 게임 프로젝트 기본형
 
 ```text
 PROJECT HOME
-→ current status / blockers / core flow / quick links
+→ current status / blockers / core fun / core loop / quick links
 
 01 · 프로젝트 전체 작업계획
 → WORK_MASTER filtered by Project
@@ -134,9 +137,12 @@ PROJECT HOME
 
 06 · Production · Handoff
 → approved planning/asset → repository implementation → runtime QA
+
+07+ · 프로젝트 고유 확정표
+→ 예산 / Tier / 로스터 / 경제 / 성장 / 기타 사람이 비교·학습하기 좋은 표
 ```
 
-프로젝트 성격에 따라 03의 이름과 Flow 의미를 바꿀 수 있다. 예: 조사 Flow, 퍼즐 Flow, 제작·경제 Flow, 세계 재작성 Flow. 구조를 맞추기 위해 프로젝트 핵심 시스템을 일반화하지 않는다.
+프로젝트 성격에 따라 03과 07+의 이름·책임을 바꿀 수 있다. 예: 조사 Flow, 퍼즐 Flow, 제작·경제 Flow, 세계 재작성 Flow, 무공 기술 예산, 병종·건물 Tier. 구조를 맞추기 위해 프로젝트 핵심 시스템을 일반화하지 않는다.
 
 ### 4.2 Coc-Fiction / 서사 프로젝트 기본형
 
@@ -154,7 +160,7 @@ PROJECT HOME
 08 · Continuity · Publication Handoff
 ```
 
-서사 프로젝트는 게임 UI Flow를 억지로 사용하지 않는다. `CANON / CHARACTER / FACTION / SCENE / CLUE / LOCATION / REFERENCE / BENCHMARK` record를 Project-filtered view로 분리한다. Storyboard와 Faction Map은 파생 시각 표현이며 실제 record와 충돌하면 파생 Map을 갱신한다.
+서사 프로젝트는 게임 UI Flow를 억지로 사용하지 않는다. `CANON / CHARACTER / FACTION / SCENE / CLUE / LOCATION / REFERENCE / BENCHMARK` record를 Project-filtered view로 분리한다. Storyboard와 Faction Map은 사람이 보는 주요 시각 작업면이다. 그 변경이 구조화된 정사·연속성 데이터 변경을 요구하면 repository 정본에 동기화한다.
 
 ### 4.3 Work Master
 
@@ -197,7 +203,22 @@ ADOPT / ADAPT / TEST / REFERENCE_ONLY / AVOID / IGNORE
 
 ### 4.5 Visual Map / Storyboard
 
-`VISUAL_MAP_DERIVED`는 사람용 파생 표현이다. Game은 screen/navigation/system flow를, narrative project는 canon/character/faction/clue/scene/continuity 관계를 표현한다. semantic record와 그림이 충돌하면 그림을 재생성·수정한다.
+`VISUAL_MAP_DERIVED`는 structured Screen/relationship records에서 생성될 수 있다는 뜻이다. **승인된 Notion Map/Storyboard는 사람이 보는 시각 기획의 우선 표현**이다. Game은 screen/navigation/system flow를, narrative project는 canon/character/faction/clue/scene/continuity 관계를 표현한다. 시각 편집이 구조화 의미를 바꾸면 repository record를 동기화하고, runtime 변경이 생기면 Notion 표현을 다시 갱신한다.
+
+### 4.6 사람용 확정표
+
+예산표·Tier표·로스터표·경제표·성장표처럼 사람이 비교하고 직접 수정하기 쉬운 표현은 Notion을 기본 위치로 둔다.
+
+```text
+CONFIRMED HUMAN TABLE
+→ Project
+→ Decision ID / canonical repository path
+→ CONFIRMED / PROVISIONAL / DEFERRED / REJECTED 구분
+→ source main SHA 또는 freshness locator
+→ Notion last sync
+```
+
+표 자체가 machine data를 중복 소유하지 않는다. machine-consumed JSON·game data는 repository에 두고, Notion에서 의미가 바뀌면 repository에 동기화한 뒤 구현한다.
 
 ## 5. 이미지·시각 checkpoint
 
@@ -248,15 +269,29 @@ QA Evidence Studio는 위 폐기 범위에 포함되지 않는다. 실제 PC bui
 
 ## 7. 프로젝트 정본과 발행
 
-한 질문에는 active canonical owner 하나만 둔다. Notion은 planning/catalog/visual collaboration surface이고 repository는 runtime truth를 소유한다.
+도메인별 active canonical owner는 하나만 둔다.
 
 ```text
-DESIGN_DOCUMENT_REGISTRY.json
-→ registered Markdown/JSON owner
-→ code/data/asset/test consumers
+사람용 전체 그림 / Visual / 예산·Tier·비교표
+→ NOTION_HUMAN_FACING_CANON
+
+Markdown / JSON / game data / code / scene / resource / test
+→ REPOSITORY_STRUCTURED_CANON
+
+실제 구현·runtime 상태
+→ REPOSITORY_RUNTIME_TRUTH
 ```
 
-PDF/DOCX/dashboard는 선언된 publication/derived surface일 뿐 독립 canon이 아니다.
+승인 결정 복원 경로는 다음을 유지한다.
+
+```text
+GitHub 추적 근거
+→ CURRENT_CONFIRMED_DECISIONS.md
+→ 분야 책임 원본 / structured data
+→ 필요한 Notion 사람용 표·시각 표현 동기화
+```
+
+`DESIGN_DOCUMENT_REGISTRY.json`은 registered Markdown/JSON owner와 publication 경로를 관리한다. PDF/DOCX/dashboard는 선언된 publication/derived surface일 뿐 독립 canon이 아니다.
 
 ## 8. 검증
 
@@ -284,3 +319,15 @@ PAID_PLAN_COUNT: 1
 ```
 
 Notion은 Free 범위에서 사용한다. paid Notion AI, separately metered API/storage/automation, 신규 유료 SaaS/runner/compute는 새 사용자 승인 없이는 기본 경로에 넣지 않는다.
+
+## 10. 기존 공용 라우팅 발견성 보존
+
+Notion 전환은 기존 Base의 공용 능력을 삭제하거나 숨기는 작업이 아니다. 아래 라우팅 표현은 계속 발견 가능해야 한다.
+
+- **공용 용어**: `docs/CONTROLLED_VOCABULARY.md`에서 stable term과 bounded-context 의미를 찾는다.
+- 승인 Decision 복원: `→ CURRENT_CONFIRMED_DECISIONS.md`를 거쳐 분야 정본과 사람용 Notion 표현을 교차검증한다.
+- 저장소 전체 감사: `repository-wide-audit`는 별도 신규 Skill이 아니라 기존 REVIEW/검증 능력의 통합 mode로 라우팅한다.
+- 프로젝트 설치 템플릿: **프로젝트 설치 템플릿을 활성 상태 문서로 오인하지 않는다**. Template은 소비될 때만 프로젝트 상태가 된다.
+- Codex handoff: `USER_REQUESTED_CODEX_HANDOFF`가 있을 때만 구현 handoff를 생성하며 계획/검토 작업이 자동으로 Codex 구현 승인이 되지 않는다.
+- 기획 인터뷰: **Grill Me 핵심 의사결정 인터뷰**는 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`와 기존 planning/interview owner로 라우팅한다.
+- 연재소설: `developing-and-revising-serial-fiction`이 서사 개발·수정의 active owner이며 Coc-Fiction Notion Storyboard/Character/Faction 표면과 조합한다.
