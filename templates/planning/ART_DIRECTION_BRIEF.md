@@ -29,11 +29,11 @@
 
 ### 3.1 Pixel art candidate — 조건부
 
-픽셀 아트가 실제 후보일 때만 작성한다. Base Preset을 프로젝트 정본으로 복제하지 않고, 최소 3개 실질 대안을 프로젝트 플레이어 경험·플랫폼·생산비 기준으로 비교한 뒤 선택 결과만 프로젝트 Art Bible/Decision에 남긴다.
+픽셀 아트가 실제 후보일 때만 작성한다. Base Preset을 프로젝트 정본으로 복제하지 않고, Base `AGENTS.md`의 `MINIMUM_VIABLE_ALTERNATIVES: 3`, `BETTER_ALTERNATIVE_SEARCH`, `LONG_TERM_PLAN_FIT_REQUIRED`, `FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS`를 프로젝트 픽셀 아트 결정에 적용한다. 아래 값은 새 전역 규칙이 아니라 그 적용 결과를 기록하는 프로젝트용 필드다.
 
 ```yaml
 pixel_art_candidate: YES | NO
-minimum_substantive_alternatives: 3
+minimum_viable_alternatives: 3
 pixel_grammar:
 character_shape:
 view:
@@ -47,10 +47,10 @@ visual_reference_ids:
 runtime_validation:
 ```
 
-- `minimum_substantive_alternatives: 3`은 이름만 다른 후보 3개를 뜻하지 않는다. 시각 결과 또는 생산 파이프라인이 실질적으로 달라야 한다.
-- `better_alternative_search_status`는 결정 직전까지 새 근거·시각 예시·기술 제약에서 더 나은 후보가 발견됐는지 기록한다.
-- `long_term_plan_fit`은 두 번째·열 번째 같은 유형 자산, 애니메이션, 플랫폼 확장, 재사용, 유지비와 롤백까지 본다.
-- `pre_decision_rereview`는 최종 선택 직전 현행 유지와 다른 후보를 다시 공격 검토한 결과다.
+- `minimum_viable_alternatives: 3`은 이름만 다른 후보 3개를 뜻하지 않는다. 시각 결과 또는 생산 파이프라인이 실질적으로 달라야 하며, 유효하면 현행 비픽셀 유지도 후보에 포함한다.
+- `better_alternative_search_status`는 Base `BETTER_ALTERNATIVE_SEARCH`의 적용 기록이다. 결정 직전까지 새 근거·시각 예시·기술 제약에서 더 나은 후보가 발견됐는지 기록한다.
+- `long_term_plan_fit`은 Base `LONG_TERM_PLAN_FIT_REQUIRED`의 적용 기록이다. 두 번째·열 번째 같은 유형 자산, 애니메이션, 플랫폼 확장, 재사용, 유지비와 롤백까지 본다.
+- `pre_decision_rereview`는 최종 선택 직전 현행 유지와 다른 후보를 다시 공격 검토한 결과이며 별도 전역 Gate ID가 아니다.
 - `visual_reference_ids`는 관찰용 Reference를 가리키며 제품 자산 승인이나 스타일 승인을 자동 부여하지 않는다.
 
 ## 4. 시각 축
