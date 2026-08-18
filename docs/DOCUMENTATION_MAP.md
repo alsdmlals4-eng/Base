@@ -13,7 +13,7 @@ START_HERE.md
 → skills/SKILL_REGISTRY.json
 → docs/generated/BASE_ACTIVE_SKILLS.md
 → 현재 작업에 필요한 최소 Skill / reference / Template / Test
-→ 대상 프로젝트 Project page + repository truth
+→ 대상 프로젝트 Project Home + repository truth
 ```
 
 `SKILL_REGISTRY.json`이 active routing machine authority이고 `BASE_ACTIVE_SKILLS.md`는 생성된 사람용 view다. Archive·백업·보류·폐기 구현은 감사나 복구 요청이 없는 한 기본 읽기 대상이 아니다.
@@ -44,14 +44,15 @@ Git history / archive
 ```text
 NOTION_DEFAULT_PROJECT_WORKSPACE
 → Project Registry
-→ Project-filtered Work / Asset / Visual Map
+→ 사람용 Project Home
+→ Project-filtered Work / Visual or Story Bible / Flow or Storyboard / Asset & Knowledge views
 
-repository-native structured source
+REPO_NATIVE_STRUCTURED_DATA
 → code / data / scene / resource / config / tracked implementation asset / tests
 → REPOSITORY_RUNTIME_TRUTH
 ```
 
-`PROJECT_RELATION_REQUIRED`: project-scoped Work, Asset, Component, Screen, Reference, Benchmark record는 Project relation 없이 프로젝트 정본이 될 수 없다.
+`PROJECT_RELATION_REQUIRED`: project-scoped Work, Asset, Component, Screen, Reference, Benchmark, Character, Faction, Scene, Clue, Location, Canon record는 Project relation 없이 프로젝트 정본이 될 수 없다.
 
 Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·Expression/Sprite Studio·visual Tool Hub는 active authority가 아니다.
 
@@ -72,14 +73,20 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·
 | Art requirement | `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md` | Visual Requirement Gate, Delete Test, priority/disposition |
 | Preferred visual references | `docs/knowledge/game-development/PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md` | reference-only style families; project Art Canon과 분리 |
 | Pixel art system | `docs/knowledge/game-development/PIXEL_ART_STYLE_SYSTEM.md` | 재현 가능한 스타일 축·preset·검토 원칙 |
-| Pixel visual reference gallery | `docs/knowledge/game-development/PIXEL_ART_VISUAL_REFERENCE_GALLERY.md` | `REFERENCE_ONLY` pixel preset image examples, provenance, license and observation data |
+| Pixel visual reference gallery | `docs/knowledge/game-development/PIXEL_ART_VISUAL_REFERENCE_GALLERY.md` | `REFERENCE_ONLY` pixel preset image examples, provenance, license, observation data |
+| UI/UX 설계·폴리싱·감사 | `skills/auditing-and-refining-ui-art/SKILL.md` | `auditing-and-refining-ui-art`가 UI 설계·폴리싱·실제 화면 감사를 소유하고 `ui-motion-and-interaction-principles.md`를 조건부 reference로 사용 |
+| AI instruction/context | `docs/knowledge/ai/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md` | instruction authority·context curation·example/fixture·HARD_CONSTRAINT 설계 |
+| AI model/prompt cost | `skills/optimizing-ai-model-and-prompt-costs/SKILL.md` | `optimizing-ai-model-and-prompt-costs`가 model recommendation·effort routing·prompt caching·provider/cost boundary를 소유 |
 | 게임 시스템·난이도·전투 AI | `skills/analyzing-and-refining-game-concepts/SKILL.md`, `docs/knowledge/game-development/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md` | `system-design` / `difficulty-and-combat-ai` mode, 난이도 장벽·공정성·attack/threat budget |
 | 게임 개발 knowledge hub | `docs/knowledge/game-development/README.md` | 기획·아트·개발·AI·research·release Guide routing |
+| 게임 개발 Evidence Pack | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md` | 외부 근거·범위·검증 상태의 공용 조사 packet |
+| Game Development Case Card | `templates/research/GAME_DEVELOPMENT_CASE_CARD.md` | 게임 개발 사례의 context·transferable principle·failure condition·evidence 기록 |
+| Reference Case Card | `templates/research/REFERENCE_CASE_CARD.md` | 범용 사례의 source·context·적용 한계 기록 |
 | 플랫폼/권리/독립 제작 | `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md` | Steam/STOVE/Google Play, commercial/distribution rights, reference→independent production |
-| PC/Android delivery | `docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md` | shared core + platform adapter + staged rollout |
+| PC/Android delivery | `docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md`, `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md` | shared core + platform adapter + staged rollout |
 | Cloud Run / online backend | `docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md` | backend capability, Cloud Run/online service boundary, cost/security/runtime evidence |
 | Entitlement / DRM integrity | `docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md` | entitlement integrity, DRM/trust boundary, platform/runtime verification |
-| Godot authority | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` | Existing Solution First, persistent authoring boundary, GUT/Hera 공존 |
+| Godot author/test/live QA | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` | `HiGodot` = authoring authority, `GUT` = test framework, `Hera` = restricted live QA; second writer 금지 |
 | Local Godot reference | `docs/knowledge/godot/LOCAL_GODOT_REFERENCE_LIBRARY.md` | local reference-only shelf; missing path is non-blocking |
 | CI execution/cost | `docs/CI_EXECUTION_COST_POLICY.md` | change-class validation, runner/cost gate |
 | PowerShell user execution | `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md` | fresh shell, location first, one paste block, fail-fast |
@@ -98,43 +105,66 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·
 | Local validation | `tools/run_local_validation.py` | full regression and exact trusted-main validation entrypoint |
 | Base proposal registry | `[수정제안서]/PROPOSAL_REGISTRY.json` | project-derived shared change proposal lifecycle |
 | Controlled vocabulary | `docs/CONTROLLED_VOCABULARY.md` | cross-domain stable terms and bounded-context definitions |
+| Archived cross-project UI handoff | `docs/archive/handoffs/2026-07-29-ux-ui-common-system-expansion.md` | `COMPATIBILITY_ONLY`; historical handoff이며 active implementation authority 없음 |
 
 ## 4. 프로젝트 Notion 표준
 
+페이지 수를 임의로 3개에 제한하지 않는다. **책임이 실제로 다른 경우에만 하위 페이지를 분리**한다. 사람은 Project Registry에서 프로젝트를 눌렀을 때 먼저 Project Home을 본다. Project Home에는 상태·핵심 방향·최신 Flow·주요 작업면 링크처럼 사람이 즉시 판단할 정보만 둔다.
+
+### 4.1 게임 프로젝트 기본형
+
 ```text
-00 · PROJECT HUB
-→ PROJECT REGISTRY · Master
+PROJECT HOME
+→ current status / blockers / core flow / quick links
 
-project page
-  PROJECT BOUNDARY
+01 · 프로젝트 전체 작업계획
+→ WORK_MASTER filtered by Project
 
-  01 · PROJECT CONTROL
-  → WORK_MASTER filtered by Project
+02 · 비주얼 바이블
+→ approved visual direction / Visual North Star
 
-  [large visual gap]
+03 · UI · 게임플레이 Flow Map
+→ SCREEN records + semantic flow + VISUAL_MAP_DERIVED
 
-  02 · ASSET / LIBRARY / BENCHMARK
-  → ASSET_KNOWLEDGE_MASTER filtered by Project
+04 · 에셋 라이브러리
+→ ASSET / COMPONENT filtered gallery
 
-  [large visual gap]
+05 · Reference · Benchmark 도서관
+→ REFERENCE / BENCHMARK filtered views
 
-  03 · VISUAL MAP
-  → semantic Mermaid / Screen relationships
-  → approved project visual Gallery
-
-90 · SYSTEM MASTERS
-→ unfiltered registry / work / asset masters
+06 · Production · Handoff
+→ approved planning/asset → repository implementation → runtime QA
 ```
 
-### Work Master
+프로젝트 성격에 따라 03의 이름과 Flow 의미를 바꿀 수 있다. 예: 조사 Flow, 퍼즐 Flow, 제작·경제 Flow, 세계 재작성 Flow. 구조를 맞추기 위해 프로젝트 핵심 시스템을 일반화하지 않는다.
+
+### 4.2 Coc-Fiction / 서사 프로젝트 기본형
+
+```text
+PROJECT HOME
+→ current writing state / current scene flow / characters / factions / unresolved clue
+
+01 · 전체 집필 · 작업계획
+02 · Story Bible · Canon
+03 · Storyboard · Scene Flow
+04 · Character Bible · 인물
+05 · Faction Map · 세력
+06 · Clue · Location Library
+07 · Reference · Benchmark 도서관
+08 · Continuity · Publication Handoff
+```
+
+서사 프로젝트는 게임 UI Flow를 억지로 사용하지 않는다. `CANON / CHARACTER / FACTION / SCENE / CLUE / LOCATION / REFERENCE / BENCHMARK` record를 Project-filtered view로 분리한다. Storyboard와 Faction Map은 파생 시각 표현이며 실제 record와 충돌하면 파생 Map을 갱신한다.
+
+### 4.3 Work Master
 
 사람 view: 작업, 상태, 영역, 우선순위, 시작/종료, 완료 기준, 검증/증거, 담당자.
 
 System metadata: Task ID, Project relation, implementation evidence locator 등.
 
-### Asset & Knowledge Master
+### 4.4 Asset & Knowledge Master
 
-`Record Type`:
+게임 기본 `Record Type`:
 
 ```text
 ASSET
@@ -144,9 +174,20 @@ REFERENCE
 BENCHMARK
 ```
 
-Human Gallery: Preview, Name, Usage, Style, Approved, Reuse.
+서사 확장 `Record Type`:
 
-AI/System view: Project, Asset ID, Version, Status, Category, Prompt, AI Note, Source, Rights / License, Hash, Implementation Path, Decision.
+```text
+CANON
+CHARACTER
+FACTION
+SCENE
+CLUE
+LOCATION
+```
+
+Human Gallery: Preview, Name, Usage, Style, Approved, Reuse처럼 현재 판단에 필요한 최소 정보.
+
+AI/System view: Project, Asset ID, Version, Status, Category, Prompt, AI Note, Source, Rights / License, Hash, Implementation Path, Decision 등.
 
 Benchmark Decision:
 
@@ -154,9 +195,9 @@ Benchmark Decision:
 ADOPT / ADAPT / TEST / REFERENCE_ONLY / AVOID / IGNORE
 ```
 
-### Visual Map
+### 4.5 Visual Map / Storyboard
 
-`VISUAL_MAP_DERIVED`는 사람용 파생 표현이다. Game은 screen/navigation/system flow를, narrative project는 canon/character/clue/scene/continuity 관계를 표현할 수 있다. semantic record와 그림이 충돌하면 그림을 재생성·수정한다.
+`VISUAL_MAP_DERIVED`는 사람용 파생 표현이다. Game은 screen/navigation/system flow를, narrative project는 canon/character/faction/clue/scene/continuity 관계를 표현한다. semantic record와 그림이 충돌하면 그림을 재생성·수정한다.
 
 ## 5. 이미지·시각 checkpoint
 
@@ -190,12 +231,12 @@ generate / edit
 
 다음 active execution surfaces는 폐기됨:
 
-- dedicated visual bridge
-- product-specific project visual target/workspace/tool-route registries
+- dedicated Figma Bridge
+- project Figma target/workspace/tool-route registries
 - localhost Expression Studio
 - localhost Sprite Animation Studio
 - visual-delivery Tool Hub
-- product-specific visual templates/workflows/tests
+- Figma-only templates/workflows/tests
 
 재사용할 가치는 구현이 아니라 `NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`에 흡수된 project identity, provenance, bounded identity-preserving edits, approval, version/replacement, reuse classification, Screen/Flow ID, readback, explicit runtime handoff다.
 
