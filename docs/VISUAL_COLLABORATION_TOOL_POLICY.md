@@ -17,6 +17,10 @@ legacy Google Sheets
 
 No visual collaboration tool becomes a second runtime or implementation canon.
 
+## Supported collaboration contexts
+
+The same project-boundary rules apply whether the immediate work context is `GDD`, `EXTERNAL_COLLABORATION`, or `BOTH`. These labels describe where a visual decision is being consumed; they do not create another authority.
+
 ## Project boundary
 
 `PROJECT_RELATION_REQUIRED` is mandatory for project-scoped Work, Asset, Component, Screen, Reference and Benchmark records.
@@ -44,6 +48,17 @@ Cross-project reuse keeps one source record and records reuse intent; do not clo
 ```
 
 The large separation is intentional: it reduces accidental mixing between planning, reusable knowledge/assets and visual-flow interpretation.
+
+## Intermediate visual checkpoint
+
+`Intermediate visual checkpoint` is a project-scoped decision gate, not a tool/page-specific location.
+
+- `MISSING_CANON`: there is not enough approved visual direction to judge continuity safely.
+- `DRAFT_VISUAL`: the artifact is an exploratory checkpoint and is not an approved project asset.
+- `PROJECT_ASSET_APPROVED`: the project authority accepted the asset for a stated role.
+- `APPLIED_AND_RUNTIME_VERIFIED`: repository/runtime integration has separate evidence.
+
+A checkpoint may use a screenshot, generated image, component preview, semantic flow or Visual Map. It must retain the correct Project relation and must not imply runtime success merely because the draft looks correct.
 
 ## Asset and knowledge model
 
@@ -86,6 +101,10 @@ need / brief
 For identity-preserving edits, unchanged identity attributes are hard constraints. Change only the requested expression, pose, gaze, effect stage, UI state or other scoped property.
 
 A successful generation is not approval. A successful upload is not delivery until readback confirms the expected file/preview/version at the intended Project target.
+
+## Reuse promotion
+
+Reusable visual harvest and reuse promotion happen in `ASSET_KNOWLEDGE_MASTER`, not in a tool-specific profile. A source candidate may be classified as `REUSE_AS_IS`, `VARIANT_SEED`, `STRUCTURE_PATTERN`, `STYLE_DNA`, `REBUILD_FOR_REUSE`, `ONE_OFF_KEEP`, or `REJECT_REUSE` before any project approval. Reuse classification does not itself grant approval or rights.
 
 ## Visual Map
 
