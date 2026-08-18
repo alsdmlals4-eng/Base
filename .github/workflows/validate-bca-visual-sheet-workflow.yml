@@ -22,6 +22,7 @@ on:
       - "skills/managing-design-documents/**"
       - "skills/SKILL_REGISTRY.json"
       - "tests/test_bca_visual_sheet_workflow.py"
+      - "tests/test_figma_direct_visual_skill_modules.py"
       - "tests/test_project_gdd_google_sheets_contract.py"
       - "tests/test_visual_collaboration_capability_contract.py"
       - "tests/test_figma_narrative_dialogue_flow_contract.py"
@@ -60,10 +61,12 @@ jobs:
           set +e
           {
             python -m py_compile tests/test_bca_visual_sheet_workflow.py
+            python -m py_compile tests/test_figma_direct_visual_skill_modules.py
             python -m py_compile tests/test_project_gdd_google_sheets_contract.py
             python -m py_compile tests/test_visual_collaboration_capability_contract.py
             python -m py_compile tests/test_figma_narrative_dialogue_flow_contract.py
             python -m unittest tests.test_bca_visual_sheet_workflow -v
+            python -m unittest tests.test_figma_direct_visual_skill_modules -v
             python -m unittest tests.test_project_gdd_google_sheets_contract -v
             python -m unittest tests.test_visual_collaboration_capability_contract -v
             python -m unittest tests.test_figma_narrative_dialogue_flow_contract -v
