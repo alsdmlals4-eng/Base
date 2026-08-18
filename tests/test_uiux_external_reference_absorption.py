@@ -14,6 +14,9 @@ LONG_HORIZON = ROOT / "docs" / "LONG_HORIZON_WORK_EXECUTION_POLICY.md"
 VISUAL_POLICY = ROOT / "docs" / "VISUAL_COLLABORATION_TOOL_POLICY.md"
 DOCUMENTATION_MAP = ROOT / "docs" / "DOCUMENTATION_MAP.md"
 SHEET_POLICY = ROOT / "docs" / "PROJECT_GDD_GOOGLE_SHEETS_POLICY.md"
+IMAGE_POLICY = ROOT / "docs" / "GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md"
+IMAGE_PLAN = ROOT / "templates" / "planning" / "GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md"
+PREFERRED_VISUAL_LIBRARY = ROOT / "docs" / "knowledge" / "game-development" / "PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md"
 ART_SKILL = ROOT / "skills" / "designing-art-prompts-and-technique-cards" / "SKILL.md"
 UI_SKILL = ROOT / "skills" / "auditing-and-refining-ui-art" / "SKILL.md"
 UI_METHOD = ROOT / "skills" / "auditing-and-refining-ui-art" / "references" / "ux-ui-design-system-method.md"
@@ -79,9 +82,12 @@ class UiUxExternalReferenceAbsorptionTests(unittest.TestCase):
     def test_active_owners_do_not_reintroduce_figma_after_top_level_retirement(self) -> None:
         documentation_map = DOCUMENTATION_MAP.read_text(encoding="utf-8")
         sheet_policy = SHEET_POLICY.read_text(encoding="utf-8")
+        image_policy = IMAGE_POLICY.read_text(encoding="utf-8")
+        image_plan = IMAGE_PLAN.read_text(encoding="utf-8")
+        preferred_library = PREFERRED_VISUAL_LIBRARY.read_text(encoding="utf-8")
         art_skill = ART_SKILL.read_text(encoding="utf-8")
 
-        for text in (documentation_map, sheet_policy, art_skill):
+        for text in (documentation_map, sheet_policy, image_policy, image_plan, preferred_library, art_skill):
             self.assertIn("FIGMA_USAGE: DISABLED_BY_USER", text)
             self.assertIn("LEGACY_FIGMA_REFERENCE", text)
 
@@ -94,6 +100,11 @@ class UiUxExternalReferenceAbsorptionTests(unittest.TestCase):
             art_skill,
         )
         self.assertNotIn("Mermaid·Figma 대체안을 쓴다", art_skill)
+        self.assertNotIn("figma_visual_bible_status:", image_plan)
+        self.assertNotIn("Figma 승인 Reference", image_plan)
+        self.assertNotIn("기존 승인 자산 / Figma Visual Bible 조회", image_policy)
+        self.assertNotIn("https://www.figma.com/", preferred_library)
+        self.assertNotIn("BASE_OVERVIEW_AND_FIGMA_PAGE_", preferred_library)
 
     def test_existing_ui_owner_absorbs_design_read_and_resilience_principles(self) -> None:
         skill = UI_SKILL.read_text(encoding="utf-8")
