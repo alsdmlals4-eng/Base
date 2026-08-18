@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   migrate:
+    # This workflow is branch-local and is deleted before the PR is opened.
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
