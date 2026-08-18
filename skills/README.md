@@ -21,6 +21,12 @@ skills/SKILL_REGISTRY.json
 
 Registry 정책은 `load_all_skills: false`, `default_selection: automatic-trigger-match`다. 사용자는 Skill 이름을 선언할 필요가 없으며, trigger가 일치하는 최소 package만 선택한다. 활성 Skill 수와 목록을 이 문서에 수동 복제하지 않는다.
 
+### 라우팅 정확도 기본값
+
+Registry의 hard ceiling을 매 요청에서 채우지 않는다. `docs/knowledge/ai/SKILL_ROUTING_PRECISION_GUIDE.md`에 따라 **기본 supporting Skill budget은 1**로 운용하고, 두 번째 supporting Skill은 독립 산출물·독립 검증/권한 경계·hard guard가 실제로 필요한 경우에만 예외적으로 추가한다.
+
+이름·description·trigger가 겹치는 후보는 동시에 실행하지 않는다. Registry metadata로 먼저 작은 후보군을 만든 뒤 동률 후보의 **Skill 본문** `Use when`·`Do not use when`·입력·산출물·검증 경계를 비교해 한 owner로 좁힌다. 기능적으로 같은 책임이 반복되면 새 Skill 추가보다 `REUSE / ABSORB / MERGE`를 우선한다.
+
 ## 안정 도메인 진입점
 
 전체 활성 목록은 생성 뷰를 따르되, 사람이 자주 찾는 통합 책임은 안정 라우트로 유지한다.
