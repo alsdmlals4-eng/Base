@@ -55,6 +55,32 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         ):
             self.assertIn(term, policy)
 
+    def test_base_explicitly_requires_multi_option_long_term_selection(self) -> None:
+        agents = read("AGENTS.md")
+        policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
+        for text in (agents, policy):
+            for term in (
+                "CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY",
+                "현행 조사",
+                "여러 방법",
+                "장기적으로 최선",
+                "적대적 검토",
+            ):
+                self.assertIn(term, text)
+
+    def test_only_two_current_paid_plans_are_allowed_without_new_user_approval(self) -> None:
+        agents = read("AGENTS.md")
+        policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
+        for text in (agents, policy):
+            for term in (
+                "CURRENT_PAID_PLANS: GPT_PRO, FIGMA_PRO",
+                "PAID_PLAN_COUNT: 2",
+                "GPT Pro",
+                "Figma Pro",
+                "새 사용자 승인",
+            ):
+                self.assertIn(term, text)
+
     def test_execution_and_external_claims_are_fail_closed_by_existing_verification_owner(self) -> None:
         verification = read(
             "skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md"
