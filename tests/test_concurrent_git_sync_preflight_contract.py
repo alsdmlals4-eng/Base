@@ -7,8 +7,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def read(path: str) -> str:
-    return (ROOT / path).read_text(encoding="utf-8")
+def read(relative: str) -> str:
+    return (ROOT / relative).read_text(encoding="utf-8")
 
 
 class ConcurrentGitSyncPreflightContractTests(unittest.TestCase):
@@ -87,9 +87,38 @@ class ConcurrentGitSyncPreflightContractTests(unittest.TestCase):
         self.assertIn("owner PR", agents)
         self.assertIn("latest completed `main`", agents)
         self.assertIn("superseded", agents)
+
+    def test_other_chat_workstreams_require_explicit_absorption_authorization(self) -> None:
+        agents = read("AGENTS.md")
+        skill = read("skills/synchronizing-local-and-github-state/SKILL.md")
+        protocol = read(
+            "skills/synchronizing-local-and-github-state/references/safe-sync-protocol.md"
+        )
+        policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
+
+        for text in (agents, skill, protocol, policy):
+            self.assertIn("OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT", text)
+            self.assertIn(
+                "EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION",
+                text,
+            )
+
+        for token in (
+            "current_workstream_identity",
+            "owner_workstream_identity",
+            "cross_workstream_absorption_authorized",
+        ):
+            self.assertIn(token, skill)
+            self.assertIn(token, protocol)
+
+        self.assertIn("same workstream", skill)
+        self.assertIn("different workstream", skill)
+        self.assertIn("명시적으로 흡수·통합을 승인", agents)
+        self.assertIn("다른 채팅", agents)
+
         self.assertNotIn(
-            "명시적 사용자 승인으로 최신 main 기반 선행 통합 PR의 병렬 진행을 허용한 경우에만",
-            agents,
+            "approved same-goal/path/semantic overlap에 한해서 이 standing authorization이 필요한 `explicit user authorization`을 제공",
+            skill,
         )
 
     def test_audit_invalidates_search_only_readme_drift_hypothesis(self) -> None:

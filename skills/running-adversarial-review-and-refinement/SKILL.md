@@ -27,6 +27,29 @@ Registry의 `칭찬·균형 평가만 요청` 비사용 조건은 결정·권장
 
 일반 작업은 `attack → validate-critique → refine-approved-findings → regression-recheck → decision-report`를 사용한다. 저장소 전체 감사는 `references/repository-wide-audit-protocol.md`, 세부 Finding·회귀 판정은 `references/finding-and-regression-protocol.md`를 필요할 때만 읽는다.
 
+### Five-round review invariant
+
+이 Skill을 L1 이상 작업물·PR·저장소 감사·병합 후 결과의 **적대적 검토로 호출하면 항상 정확히 다섯 개의 서로 다른 공격 round**를 닫는다. 같은 자기비판을 다섯 번 반복하거나 여섯 번째 “보험성 round”를 추가하지 않는다. L0 단순 작업에 이 Skill을 quota 충족 목적으로 억지 호출하지는 않지만, 이 Skill이 적대적 검토로 실제 호출된 경우에는 다섯 round 계약을 생략하지 않는다.
+
+```text
+FIVE_DISTINCT_ADVERSARIAL_ROUNDS: REQUIRED_WHEN_REVIEW_RUNS
+ROUND_1_INTENT_ASSUMPTIONS_SCOPE
+ROUND_2_CANON_STRUCTURE_DEPENDENCIES
+ROUND_3_FAILURE_SECURITY_CONCURRENCY
+ROUND_4_VALUE_BENCHMARK_COST_MAINTAINABILITY
+ROUND_5_REGRESSION_EVIDENCE_COMPLETION_FRESHNESS
+```
+
+1. `ROUND_1_INTENT_ASSUMPTIONS_SCOPE`: 사용자 의도, 핵심 방향, 숨은 가정, 승인 범위 확대·축소·왜곡을 공격한다.
+2. `ROUND_2_CANON_STRUCTURE_DEPENDENCIES`: 정본·owner·routing·중복·stale·참조·Schema·consumer·dependency 누락을 공격한다.
+3. `ROUND_3_FAILURE_SECURITY_CONCURRENCY`: 실패 복구, 부분 상태, branch/worktree/path/port 충돌, retry side effect, credential·secret, rollback을 공격한다.
+4. `ROUND_4_VALUE_BENCHMARK_COST_MAINTAINABILITY`: 사용자·플레이어 가치, 성공·실패 사례, 실무 벤치마크, 비용, 복잡도, 장기 유지보수성을 공격한다.
+5. `ROUND_5_REGRESSION_EVIDENCE_COMPLETION_FRESHNESS`: 정상 경로 회귀, evidence ceiling, exact-head, 미검증 과장, 완료 기준, postmerge·reference freshness를 공격한다.
+
+각 round는 최소한 `attack hypothesis → evidence → finding/severity → disposition → recheck → PASS/FAIL/UNRESOLVED`를 기록한다. 같은 finding을 표현만 바꿔 여러 round에 중복 계수하지 않는다. 새 finding이 뒤늦게 발견되면 관련 round의 finding·recheck를 갱신하고 Round 5에서 회귀·완료를 재확인한다. 새 Goal이나 새 승인 범위가 생긴 경우에만 별도 5-round review contract를 시작한다.
+
+`attack / validate-critique / refine-approved-findings / regression-recheck / decision-report`는 **round 수가 아니라 각 round 안팎에서 사용하는 phase**다. 구현 전 PLAN 사전판정에서 수정할 작업물이 없어 `refine-approved-findings`가 비어 있어도, 이 Skill을 적대적 검토로 호출해 `decision-report`를 만들면 다섯 공격면을 짧게라도 모두 판정한다. `NOT_RUN`, `BLOCKED_UNVERIFIED`, `CANCELLED`는 PASS가 아니며 P0/P1 finding과 절차 gate를 분리해 기록한다.
+
 구현 전 PLAN 사전판정은 아직 수정할 작업물이 없으므로 `attack → validate-critique → decision-report`까지만 실행한다. 승인 finding은 `refine-approved-findings`에서 주 책임 분야 Skill이 한 번만 구현·수정하며, 이 Skill은 분야 작성 책임을 빼앗거나 이미 구현된 finding을 다시 수정하지 않는다. 그 뒤 `regression-recheck → decision-report`로 복귀해야 전체 루프가 완료된다.
 
 기본 Work Mode는 `REVIEW → 필요한 경우 BUILD → REVIEW`다. 같은 수행자가 맡아도 단계별 입력과 출력을 섞지 않는다.

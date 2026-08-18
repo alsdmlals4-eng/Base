@@ -1,6 +1,6 @@
 # Base 공용 AI 작업 규칙
 
-Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skill·Template·Case·Test의 원본이다. 이 파일은 모든 Base 작업에 항상 적용되는 불변 규칙만 책임진다. 요청별 탐색은 `START_HERE.md`, 전체 운영 생명주기는 `docs/OPERATING_MODEL.md`, Work Mode·Skill 선택과 병합 게이트는 `docs/WORK_MODE_AND_SKILL_ROUTING.md`, 기획 우선·Grill Me 승인 배치는 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`, 문서 위치는 `docs/DOCUMENTATION_MAP.md`가 책임진다.
+Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skill·Template·Case·Test의 원본이다. 이 파일은 모든 Base 작업에 항상 적용되는 불변 규칙만 책임진다. 요청별 탐색은 `START_HERE.md`, 전체 운영 생명주기는 `docs/OPERATING_MODEL.md`, Work Mode·Skill 선택과 병합 게이트는 `docs/WORK_MODE_AND_SKILL_ROUTING.md`, 기획 우선·Grill Me 승인 배치는 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`, 장기 작업 공용 계약은 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`, 문서 위치는 `docs/DOCUMENTATION_MAP.md`가 책임진다.
 
 ## 1. 권한과 읽기 순서
 
@@ -56,6 +56,27 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 
 상세 상태·조기 체크포인트·Sheet 의미는 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`가 책임진다.
 
+## 2.3 장기 작업 불변 계약
+
+장기·복합 L1 이상 작업은 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`를 적용한다. 이 계약은 새 Skill이 아니라 기존 intake·검증·Git·archive·Tool Hub·Loop Engineering 책임을 연결한다.
+
+```text
+DIRECTION_FIRST
+BENCHMARK_SYNTHESIS
+EXPECTED_EFFECTS_RISKS_MITIGATIONS_BEFORE_BUILD
+SINGLE_INITIAL_APPROVAL_THEN_CONTINUE
+FIVE_DISTINCT_ADVERSARIAL_ROUNDS
+REQUIRED_WORK_REMAINING
+FIGMA_DEFAULT_VISUAL_WORKSPACE
+```
+
+- 전체 방향·의도·플레이어 가치와 실제 정본을 먼저 고정하고, 벤치마킹·실무사례·실패사례를 비교한 뒤 예상 효과·문제·보완·롤백을 BUILD 전에 제시한다.
+- 완전한 작업 계약은 한 번 승인받고, 같은 범위의 구현·테스트·PR·적대적 검토·병합·postmerge는 routine approval로 멈추지 않는다. 핵심 방향 변경, 파괴적 migration, 비용·보안 권한 확대만 새 사용자 결정을 요구한다.
+- 최종 적대적 검토는 동일한 자기비판을 반복하지 않고 `의도/범위 → 정본/구조 → 실패/보안/동시성 → 플레이어 가치/벤치마크/비용 → 회귀/증거/완료`의 **정확히 5개 공격면**으로 실행한다.
+- 완료는 승인된 acceptance criteria의 `REQUIRED_WORK_REMAINING: 0`으로 판정한다. 외부 차단과 선택 backlog는 별도 축으로 남긴다.
+- 게임 작업은 core loop·핵심 시스템·세계관/핵심 스토리라인 정합성·가역적 dummy `BALANCE_BUDGET`·playable build/test·재사용 가능한 모듈 경계를 함께 설계한다.
+- 새 시각 작업의 기본 협업면은 프로젝트별 Figma이며, balance/economy/schema/runtime config는 repo-native structured source를 사용한다. 기존 Google Sheets는 검증된 migration이 끝날 때까지 legacy proposal/migration source로 보존한다.
+
 ## 3. Work Mode·Skill·사용자 결정
 
 새 L1 이상 요청은 `managing-project-intake-and-work-contract`에서 한 번만 접수한다. 사용자는 Skill이나 Skill Mode를 고를 필요가 없다.
@@ -95,8 +116,9 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - 프로젝트 고유 제약이 Base보다 엄격할 수는 있지만, 공통 절차를 복제해 독립 권위로 만들 수는 없다. 충돌 시 사용자 최신 지시와 프로젝트 고유 제약을 보존하면서 공통 규칙은 Base에서만 수정한다.
 - 신규 프로젝트와 승인된 마이그레이션의 활성 기획서는 저장소 루트 `[기획서]/` 아래에 둔다. `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않는다.
 - 상세 책임 원본, 상태 축, 발행 정책, 완료 조건은 `docs/OPERATING_MODEL.md`를 따른다.
-- Base 자체는 프로젝트 Google Sheets 동기화 대상이 아니다. 구성된 프로젝트 Sheet는 `USER_FACING_GDD_WORKSPACE`이며 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 따른다. 사용자 편집은 `PROPOSED_SHEET_CHANGE`로 보존하고 GitHub 정본·실제 구현과 비교한다.
-- 일반 기획·상태 확인은 GitHub 정본과 구성된 프로젝트 GDD Sheet를 우선한다. HTML 대시보드는 사용자 명시 요청 또는 기존 유지보수에만 사용한다.
+- 새 프로젝트·새 시각 기획의 기본 협업면은 `FIGMA_DEFAULT_VISUAL_WORKSPACE`다. 화면·컴포넌트·상태·프로토타입·승인 레퍼런스는 프로젝트 Figma에 구조화하고, 규칙·Decision은 GitHub 정본, 밸런스·경제·schema·runtime config는 repo-native structured source가 소유한다.
+- 기존 구성된 프로젝트 Google Sheet는 검증된 migration이 끝날 때까지 `USER_FACING_GDD_WORKSPACE` 호환성과 `PROPOSED_SHEET_CHANGE`를 보존하는 `GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE`로 취급한다. legacy Sheet의 상세 상태·proposal semantics·동기화 호환 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 따르되, 새 작업의 기본 workspace 권위는 이 파일과 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`의 Figma/repo-native 전환 규칙이 우선한다. Sheet-only 고유 내용과 proposal을 GitHub/Figma/repo-native source에 reconcile하고 readback·replacement pointer를 확인하기 전에는 삭제·폐기·migration 완료를 주장하지 않는다. Base 자체는 프로젝트 Sheet 동기화 대상이 아니다.
+- 일반 기획·상태 확인은 GitHub 정본을 우선하고, 시각 협업은 프로젝트 Figma, 구조화 데이터는 repo-native source를 사용한다. 기존 Sheet는 migration/proposal 확인이 필요한 경우에만 읽는다. HTML 대시보드·외부 HTML 도구 카탈로그는 사용자 명시 요청 또는 발견/유지보수 surface이며 독립 정본·실행 증거가 아니다.
 - 기존 승인 이미지가 있으면 별도 지시 없이 새 시안을 만들거나 제거·교체하지 않는다. UI 설계·폴리싱·구현 결과 감사는 `auditing-and-refining-ui-art`로 라우팅하고, 사용자 승인 finding만 실제 렌더로 재검수한다.
 - 접근성·성능·플레이테스트·벤치마크 결과는 실제 적용된 경우만 보고하며 법적 인증이나 제품 구현 사실로 과장하지 않는다.
 
@@ -129,7 +151,8 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - 전체 로컬 계약은 `python tools/run_local_validation.py --trusted-history-commit <trusted-main-commit-sha>`로 실행한다. 인자는 검증 전에 확인한 정확한 40자 main SHA이며, 이동 가능한 ref 이름을 넘기지 않는다. 환경 미준비 skip을 pass로 바꾸지 않는다.
 - 작업 전 원격·로컬 상태를 확인하고, 검증된 변경만 commit·push한다. Workflow 파일 존재와 실제 Actions 실행·Required Check 강제를 구분한다.
 - GitHub 게시·검토는 연결된 GitHub plugin/connector capability를 먼저 사용한다. connector가 필요한 동작을 지원하면 missing `gh` alone is not a blocker이며 사용자에게 CLI 반복 설치·재인증을 요구하지 않는다. 상세 fallback과 exact-SHA 안전 규칙은 `synchronizing-local-and-github-state`가 소유한다.
-- **`BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`은 Base의 기본 동시작업 조정 방식이다. 같은 Goal·path·semantic resource가 겹치면 owner PR을 기다리거나 수정하지 않고, owner PR exact head·변경 경로·의미 자원을 read-only로 기록한 뒤 exact latest completed `main`에서 별도 `PROVISIONAL_INTEGRATION` Branch/PR을 만든다. 필요한 material delta만 `selective copy`·재구현하고 최신 main 상태와 semantic reconciliation하며 stale duplicate를 제거한다. owner PR이 열려 있다는 사실만으로 통합 PR을 막지 않는다. 모든 필요한 owner delta가 `absorbed_owner_deltas` 또는 근거 있는 제외로 정리되고, 남은 고유 작업은 `residual_owner_deltas`로 보존되며, exact-head 검사·P0/P1 0·unresolved thread 0이 충족되면 통합 PR을 병합할 수 있다. 병합 뒤 고유 material delta가 남지 않은 owner PR은 `superseded`로 정리하고, residual이 남으면 해당 PR을 보존한다. 이 standing authorization은 범위 확대·파괴적 마이그레이션·결제·계정/보안 권한 확대·direct main·force push·`--admin`·ruleset bypass 권한이 아니다.**
+- **`OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT` / `EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION`: 다른 채팅 또는 독립 workstream이 소유한 Branch·path·PR은 같은 Goal처럼 보여도 기본적으로 별도 작업으로 취급한다. 해당 owner Branch에 checkout/write/rebase/close/merge하거나 material delta를 현재 작업에 흡수하지 않는다. 충돌 탐지를 위한 read-only 상태 확인은 가능하지만, 다른 채팅 작업을 실제로 흡수·통합하려면 사용자가 현재 작업에서 명시적으로 흡수·통합을 승인해야 한다. `same goal`만으로 다른 workstream 경계를 넘지 않는다.**
+- **`BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`은 Base의 기본 동시작업 조정 방식이지만 위 workstream 격리 Gate 아래에서만 작동한다. `same workstream`으로 확인된 같은 Goal·path·semantic resource 충돌은 owner PR exact head·변경 경로·의미 자원을 read-only로 기록한 뒤 exact latest completed `main`에서 별도 `PROVISIONAL_INTEGRATION` Branch/PR을 만들고 필요한 material delta만 `selective copy`·재구현한다. `different workstream` 또는 workstream identity 불명 상태에서는 standing authorization 자체가 cross-workstream 흡수 권한을 만들지 않는다. 사용자가 현재 작업에서 다른 workstream 흡수를 명시적으로 승인한 경우에만 같은 semantic reconciliation·`absorbed_owner_deltas` / `residual_owner_deltas` 절차를 예외적으로 적용한다. 모든 필요한 owner delta가 흡수 또는 근거 있는 제외로 정리되고 exact-head 검사·P0/P1 0·unresolved thread 0이 충족되면 통합 PR을 병합할 수 있다. 병합 뒤 고유 material delta가 남지 않은 owner PR은 명시 승인 범위 안에서만 `superseded`로 정리하고, residual이 남으면 해당 PR을 보존한다. 이 standing authorization과 예외 승인은 범위 확대·파괴적 마이그레이션·결제·계정/보안 권한 확대·direct main·force push·`--admin`·ruleset bypass 권한이 아니다.**
 - 병합은 검토한 정확한 HEAD, 필수 검사, 독립 검토, unresolved thread 0, 결정 게이트를 다시 확인한 뒤 저장소가 허용한 방식으로 수행한다.
 - `skills/SKILL_REGISTRY.json`, released lock, frozen/generated release artifact, 보호 경로를 변경하려면 해당 전용 계약과 검증을 먼저 충족한다. 범위 밖에서는 bytes를 보존한다.
 - 생성 실패·미검증 바이너리·로컬 임시 산출물을 자동 push하지 않는다.

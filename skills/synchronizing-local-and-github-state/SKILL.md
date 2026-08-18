@@ -7,178 +7,292 @@ description: Use when local and GitHub state must be compared, reconciled, refre
 
 ## Core principle
 
-동기화는 무조건 pull·commit·push하는 자동화가 아니다. 먼저 양쪽 상태와 권한을 판정하고, **clean + fast-forward + 승인된 변경**일 때만 자동 진행한다.
+동기화 목표는 최신처럼 보이는 상태가 아니라 **같은 Commit 계보와 같은 승인 Decision을 안전하게 공유하는 상태**다.
 
-여러 채팅·Agent·PR이 같은 저장소를 다룰 때 Git의 ahead/behind만으로는 안전을 증명할 수 없다. 첫 persistent write, PR 생성, merge 전에는 열린·최근 PR과 의도한 경로·의미 자원·기준 SHA를 비교한 `CONCURRENT_CHANGE_PREFLIGHT`를 닫는다. 이 기록은 협업자가 따르는 **cooperative coordination contract**이며 GitHub가 강제하는 mutex·lock service라고 주장하지 않는다.
+```text
+remote baseline
+→ local snapshot
+→ concurrent-change preflight
+→ compare
+→ reconcile
+→ refresh
+→ publish
+→ exact-SHA verify
+→ derived-surface refresh
+```
 
-Base의 동시작업 기본 recovery는 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`이다. 이미 승인된 작업이 다른 활성 PR과 same-goal/path/semantic overlap이면 open PR 해제를 기다리는 대신 exact latest completed main에서 별도 integration Branch를 만들고 필요한 material delta만 selective copy·재구현한 뒤 semantic reconciliation한다. owner PR branches는 read-only다.
+다른 채팅 또는 독립 workstream의 Branch·path·PR은 같은 Goal처럼 보여도 기본적으로 별개다.
 
-Compatibility mapping: 현재 승인 계약 범위 안의 approved same-goal/path/semantic overlap에 한해서 이 standing authorization이 필요한 `explicit user authorization`을 제공한다. 이는 blanket merge 권한이 아니며 latest-main reconciliation, material-delta accounting, exact-head Required Checks, P0/P1, unresolved review gate 중 하나라도 닫히지 않으면 integration PR은 `must not merge` 상태다.
+```text
+OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT
+EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION
+```
 
-이 Skill은 Git 상태의 동등성, 동시작업 소유권 사전판정과 안전한 전달만 책임진다. 변경 내용의 품질·완료 여부는 `reviewing-and-validating-project-changes`, PR 제안·승인 정책은 `managing-base-change-proposals`, 장기 실행 checkpoint는 `maintaining-long-running-task-continuity`가 책임진다. Loop Engineering Run이 있으면 그 `TASK_LEASE`·path/semantic `RESOURCE_LOCK`을 재사용하고 별도 권한 체계를 만들지 않는다.
+`same goal`은 `same workstream`의 증거가 아니다. `different workstream`이면 사용자의 현재 명시 승인 없이 checkout/write/rebase/close/merge/selective-copy를 수행하지 않는다.
 
-## Modes and states
+## Skill Modes
 
-`inspect` → `reconcile` → `refresh-local | publish-remote` → `verify-sync`
-
-Git 상태:
-
-`SYNCED / DIRTY / LOCAL_AHEAD / REMOTE_AHEAD / DIVERGED / BLOCKED`
-
-동시작업 disposition:
-
-`CLEAR / STALE_BASE_SHA / WAITING_RESOURCE / DUPLICATE_WORK / PROVISIONAL_INTEGRATION / BLOCKED_UNVERIFIED`
-
-GitHub 실행 capability:
-
-`github_connector / local_git / gh_cli / MISSING_OPTIONAL_CLI`
+- `preflight`: remote/local/branch/worktree/PR/ownership 상태를 읽고 첫 write 전에 충돌을 판정한다.
+- `reconcile`: divergence, stale base, same-goal overlap, workstream ownership을 분류하고 안전 경로를 선택한다.
+- `refresh`: remote 최신 상태와 승인 Decision을 현재 작업면에 반영한다.
+- `publish`: 검증된 변경만 push/PR로 게시한다.
+- `verify`: 정확한 SHA·PR·Required Check·merge·main readback을 검증한다.
+- `recover`: auth/tool/network/409/cancelled-run 같은 실패를 원인별로 분리하고 안전한 대체 경로로 재개한다.
+- `copy-integrate`: **same workstream** 또는 사용자가 현재 작업에서 명시적으로 흡수 승인한 `different workstream`의 owner delta를 latest completed `main` 위 별도 `PROVISIONAL_INTEGRATION` Branch에서 선택적으로 재현·흡수한다.
 
 ## Required inputs
 
-항상 필요한 입력:
-
 ```yaml
-repository_and_remote:
-local_branch_head_and_status:
-remote_branch_head:
-uncommitted_and_untracked_files:
-upstream_and_branch_policy:
-credentials_permissions_and_required_checks:
-allowed_generated_files_and_secrets_policy:
-available_github_capabilities:
-```
-
-첫 persistent write, PR 생성 또는 merge를 수행할 때 추가로 필요한 입력:
-
-```yaml
+repository:
 current_task_or_pr_identity:
+current_workstream_identity:
+owner_workstream_identity:
+cross_workstream_absorption_authorized: false | true
 source_main_sha:
 current_main_sha:
 write_parent_sha:
 expected_head_sha: PENDING_FIRST_WRITE | <exact-sha>
+current_branch:
+current_worktree:
 intended_paths: []
 semantic_resource_locks: []
 same_goal_open_and_recent_prs: []
-open_pr_changed_paths: {}
-protected_concurrent_paths: []
-copy_integration_policy: DEFAULT_ON_CONFLICT
-standing_authorization: BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16
-provisional_integration_authorized: false
-owner_pr_head_shas: {}
+open_pr_changed_paths: []
+protected_paths: []
+user_approved_scope:
+```
+
+첫 persistent write 전 `write_parent_sha`가 아직 없으면 `PENDING_FIRST_WRITE`로 둔다. `expected_head_sha`도 첫 persistent write 전에는 `PENDING_FIRST_WRITE`, 그 뒤에는 실제 `<exact-sha>`로 갱신한다. 값을 추측하지 않는다.
+
+## CONCURRENT_CHANGE_PREFLIGHT
+
+모든 L1 이상 GitHub write/PR/merge 작업은 첫 persistent write 전에 다음 표를 닫는다.
+
+```text
+CONCURRENT_CHANGE_PREFLIGHT
+current_task_or_pr_identity
+current_workstream_identity
+owner_workstream_identity
+cross_workstream_absorption_authorized
+source_main_sha
+current_main_sha
+write_parent_sha
+expected_head_sha
+intended_paths
+semantic_resource_locks
+same_goal_open_and_recent_prs
+open_pr_changed_paths
+```
+
+### Workstream identity gate
+
+1. 현재 채팅/작업 계약/PR을 `current_workstream_identity`로 식별한다.
+2. 겹치는 owner Branch/PR의 소유 작업을 `owner_workstream_identity`로 식별한다.
+3. 둘이 명확히 같은 작업 흐름이면 `same workstream`으로 판정할 수 있다.
+4. 다른 채팅·독립 작업으로 확인되면 `different workstream`이다.
+5. owner identity를 확인할 수 없으면 `UNKNOWN_WORKSTREAM`이며, cross-workstream 흡수는 `BLOCKED_UNVERIFIED`다.
+6. `different workstream`에서 `cross_workstream_absorption_authorized=false`이면 read-only 충돌 탐지만 허용하고 실제 Branch/path/PR 변경·흡수는 `WAITING_RESOURCE`로 둔다.
+7. 사용자가 현재 작업에서 다른 workstream을 **명시적으로 흡수·통합 승인**한 경우에만 `cross_workstream_absorption_authorized=true`로 기록하고 예외적인 copy integration을 허용한다.
+
+### Preflight outcomes
+
+- `CLEAR`: 현재 작업과 경쟁하는 write owner가 없고 base/head 증거가 최신이다.
+- `STALE_BASE_SHA`: 작업의 기준 SHA가 현재 authority와 다르다. 최신 main에서 재기준화한다.
+- `WAITING_RESOURCE`: path/semantic resource가 다른 task/PR 또는 다른 workstream owner에게 있고 현재 작업에 변경 권한이 없다.
+- `DUPLICATE_WORK`: 같은 Goal의 material delta가 이미 다른 owner에 의해 구현·검증되고 있다.
+- `BLOCKED_UNVERIFIED`: workstream identity·branch ownership·current SHA·open PR·권한을 검증할 수 없다.
+- `PROVISIONAL_INTEGRATION`: same-workstream overlap 또는 현재 사용자에게 cross-workstream 흡수 승인을 받은 owner delta를 latest-main 통합 Branch에서 재현 중이다.
+
+`PATH_OVERLAP`이 없어도 같은 schema, registry entry, policy decision, route identity처럼 `SEMANTIC_OVERLAP`이면 충돌로 본다.
+
+## BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16
+
+이 standing authorization은 동시 작업을 막지 않고 latest completed `main`에서 통합하는 기본 기술 경로를 제공하지만, **workstream 경계를 자동으로 넘는 사용자 권한은 아니다.**
+
+```text
+OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT
+EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION
+```
+
+### Authorization boundary
+
+- `same workstream`: 기존 승인 Goal 안의 same-goal/path/semantic overlap이면 standing authorization으로 `PROVISIONAL_INTEGRATION`을 시작할 수 있다.
+- `different workstream`: standing authorization만으로는 흡수 권한이 생기지 않는다. 현재 사용자가 명시적으로 흡수·통합 승인해 `cross_workstream_absorption_authorized=true`가 된 경우에만 예외적으로 같은 절차를 사용한다. This is **explicit user authorization** for the current integration scope; it is not standing cross-workstream permission.
+- `UNKNOWN_WORKSTREAM`: 사용자의 명시 승인과 owner identity evidence가 없으면 `BLOCKED_UNVERIFIED` 또는 `WAITING_RESOURCE`다.
+- 다른 채팅 owner PR을 “같은 Goal”이라는 이유만으로 자동 close/merge/rebase/copy하지 않는다.
+
+### Integration sequence
+
+```text
+exact latest completed main
+→ record owner PR head SHAs read-only
+→ record current_workstream_identity / owner_workstream_identity
+→ confirm same workstream OR explicit cross-workstream absorption authorization
+→ record overlapping paths / semantic resources
+→ create separate PROVISIONAL_INTEGRATION branch
+→ selective copy / reproduce only material delta
+→ semantic reconciliation against latest main
+→ run relevant tests + exact-head checks
+→ absorbed_owner_deltas / residual_owner_deltas
+→ merge integration PR if normal repository gates pass
+→ postmerge main readback
+→ supersede only authorized owner PRs with zero residual material delta
+```
+
+owner PR branches를 직접 수정하지 않는다. current integration Branch에서만 변경한다. 전체 stale branch를 merge해서 오래된 base를 되살리지 않는다.
+
+### Required copy-integration evidence
+
+```yaml
+owner_pr_head_shas: []
+current_workstream_identity:
+owner_workstream_identity:
+cross_workstream_absorption_authorized:
 provisional_overlap_paths: []
 provisional_semantic_resources: []
 absorbed_owner_deltas: []
 residual_owner_deltas: []
+rejected_duplicate_authority: []
 ```
 
-- `current_task_or_pr_identity`는 현재 작업을 다른 Task·Branch·PR과 구별하는 안정적 식별자다. same-goal·path 비교에서는 이 작업 자신을 제외한다.
-- `source_main_sha`는 조사·분기 기준, `current_main_sha`는 판정 시점의 실제 기본 Branch다.
-- `write_parent_sha`는 **다음 persistent write가 적용될 것으로 기대하는 현재 작업 Branch의 exact HEAD**다. 실제 Branch HEAD와 다르면 write를 중단하고 다시 읽는다.
-- 첫 write 전 최종 변경 HEAD는 아직 존재하지 않으므로 `expected_head_sha: PENDING_FIRST_WRITE`다. 첫 write가 반환한 commit SHA부터 exact `expected_head_sha`로 갱신하고, 다음 write 전에는 그 값을 새 `write_parent_sha`로 승격한다.
-- PR 검토·CI·merge 단계의 `expected_head_sha`는 검토·검사·병합하려는 정확한 변경 HEAD다.
-- `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`은 approved same-goal/path/semantic overlap의 coordination/replacement standing authorization이다. ordinary overlap마다 같은 승인 질문을 반복하지 않는다.
-- `provisional_integration_authorized`는 위 standing authorization과 현재 승인 계약 범위가 모두 유효하면 `true`다. 새 제품 범위, 파괴적 마이그레이션, 결제, 계정·보안 권한 확대처럼 별도 승인 대상까지 상속하지 않는다.
-- `owner_pr_head_shas`, `provisional_overlap_paths`, `provisional_semantic_resources`, `absorbed_owner_deltas`, `residual_owner_deltas`는 `PROVISIONAL_INTEGRATION`에서 필수다.
+`residual_owner_deltas`가 있으면 owner PR을 보존한다. zero residual이어도 다른 workstream owner PR은 사용자의 명시 승인 범위 밖에서 close/supersede하지 않는다.
 
-열린 PR 목록, changed paths, 현재 main, 현재 작업 identity, Branch HEAD 또는 권한 정책을 읽지 못하면 충돌 없음으로 추정하지 않는다.
+## Safe sync protocol
 
-안전한 명령·충돌·조정 절차는 `references/safe-sync-protocol.md`를 필요할 때만 읽는다.
+세부 명령·상태 표·충돌 판정은 `references/safe-sync-protocol.md`를 따른다.
 
-## `GITHUB_CAPABILITY_FALLBACK`
+핵심 단계:
 
-GitHub 게시·검토 작업은 특정 실행 파일의 존재가 아니라 **현재 필요한 동작을 안전하게 수행할 capability**로 판정한다.
+1. exact remote authority를 읽는다.
+2. current workstream/owner workstream identity를 판정한다.
+3. local/worktree/branch 상태를 읽는다.
+4. first persistent write 전에 path + semantic overlap + open/recent PR를 비교한다.
+5. same workstream이면 cooperative ownership 규칙을 적용한다.
+6. different workstream이면 explicit user absorption authorization 없이는 read-only 탐지까지만 하고 owner surface를 건드리지 않는다.
+7. `CLEAR` 또는 승인된 `PROVISIONAL_INTEGRATION`에서만 write한다.
+8. PR creation 전 같은 preflight를 반복한다.
+9. merge 직전 exact head/base/checks/threads를 다시 확인한다.
+10. merge 후 새 main SHA와 파생 소비자를 readback한다.
 
-1. 연결·인증된 `github_connector`가 필요한 repository read/write, Branch, Git object, PR, merge, status 동작을 지원하면 먼저 사용한다.
-2. `local_git`은 checkout·status·diff·stage·commit과 인증 가능한 push에 사용한다. push 인증이 없더라도 로컬 검증 결과와 파일을 버리지 않는다.
-3. `gh_cli`는 connector와 `local_git`이 제공하지 않는 필수 기능에만 사용한다. 설치·인증돼 있으면 사용할 수 있지만 공용 선행조건이 아니다.
-4. `gh: command not found`, `gh auth status` 실패 또는 로컬 push 인증 실패는 `MISSING_OPTIONAL_CLI`다. connector가 현재 작업을 완결할 수 있으면 **`gh` 부재만으로 전체 작업을 중단하지 않는다**.
-5. connector coverage가 있는데 사용자에게 `gh` 반복 설치·재인증을 요청하지 않는다. Windows token을 cloud container로 복사하거나 비밀이 아닌 `GH_TOKEN`으로 지속시키지 않는다.
-6. 필요한 정확한 동작과 증거를 `github_connector`, `local_git`, `gh_cli` 모두 제공하지 못할 때만 `BLOCKED_UNVERIFIED`로 판정하고, 누락 capability 하나를 구체적으로 보고한다.
+## Failure and recovery
 
-인증된 push가 없고 connector Git object write가 있으면 검증된 로컬 파일을 `create_blob` → base tree를 사용한 `create_tree` → exact parent의 `create_commit` → `update_ref(force=false)` 순서로 게시한다. 각 persistent write 전 `CONCURRENT_CHANGE_PREFLIGHT`와 `write_parent_sha`를 다시 확인하고, PR·CI·merge에는 connector가 반환한 exact `expected_head_sha`를 사용한다.
+### Stale write / HTTP 409
 
-connector가 Branch·PR을 만들었다는 사실은 Required Checks, Branch protection, unresolved thread, mergeability 또는 release 성공의 증거가 아니다. 각 표면은 가능한 connector readback이나 실제 Actions 결과로 별도 검증한다.
+GitHub contents API 등에서 stale blob/head로 409가 나면 blind retry하지 않는다.
 
-## `CONCURRENT_CHANGE_PREFLIGHT`
-
-```yaml
-CONCURRENT_CHANGE_PREFLIGHT:
-  current_task_or_pr_identity:
-  source_main_sha:
-  current_main_sha:
-  write_parent_sha:
-  expected_head_sha: PENDING_FIRST_WRITE | <exact-sha>
-  intended_paths: []
-  semantic_resource_locks: []
-  same_goal_open_and_recent_prs: []
-  open_pr_changed_paths: {}
-  overlap_classification: NO_OVERLAP | PATH_OVERLAP | SEMANTIC_OVERLAP | SAME_GOAL | UNKNOWN
-  disposition: CLEAR | STALE_BASE_SHA | WAITING_RESOURCE | DUPLICATE_WORK | PROVISIONAL_INTEGRATION | BLOCKED_UNVERIFIED
-  copy_integration_policy: DEFAULT_ON_CONFLICT
-  standing_authorization: BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16
-  provisional_integration_authorized: false
-  owner_pr_head_shas: {}
-  provisional_overlap_paths: []
-  provisional_semantic_resources: []
-  absorbed_owner_deltas: []
-  residual_owner_deltas: []
-  coordination_action:
+```text
+409 / non-fast-forward
+→ exact current blob/head re-read
+→ compare intended delta with current content
+→ preserve newer content
+→ apply only missing delta
+→ re-run regression
 ```
 
-- `CLEAR`: 필요한 증거를 실제로 읽었고 `source_main_sha == current_main_sha`이며, 현재 작업 자신을 제외한 동일 Goal의 활성·대체 작업과 path/semantic writer 충돌이 없고 관찰한 Branch HEAD가 `write_parent_sha`와 일치한다.
-- `STALE_BASE_SHA`: 기준을 고정한 뒤 main이 이동했다. 최신 main에 reconcile하고 영향 검증과 preflight를 다시 수행한다.
-- `WAITING_RESOURCE`: 필요한 owner delta를 안전하게 식별할 수 없거나 reconciliation이 새 사용자 결정/고위험 권한을 요구해 **그 material delta만** 당장 진행할 수 없다. open PR 존재 자체를 이 상태의 충분조건으로 쓰지 않는다.
-- `DUPLICATE_WORK`: 다른 작업이 같은 Goal을 소유하지만 현재 승인 범위에서 새 material delta가 전혀 없을 때다. 새 PR churn을 만들지 않고 existing landed/active work와 비교해 superseded 여부를 판정한다.
-- `PROVISIONAL_INTEGRATION`: approved work에 SAME_GOAL/PATH_OVERLAP/SEMANTIC_OVERLAP이 있어 standing authorization으로 latest-main 별도 integration Branch를 사용한다. owner PR branches는 read-only이고 owner/main 이동마다 semantic reconciliation과 exact-head 재검증을 수행한다.
-- `BLOCKED_UNVERIFIED`: main, Branch head, current identity, PR, changed-path, semantic ownership, policy 또는 exact-head 증거를 읽지 못했다. 이 상태를 `CLEAR`로 낮추지 않는다.
+stale bytes로 전체 파일을 다시 밀어넣지 않는다.
 
-`PATH_OVERLAP`은 텍스트 merge conflict가 확정됐다는 뜻이 아니다. 반대로 파일이 달라도 같은 정본·Schema·생성물·save/runtime·Scene·자산 계열을 바꾸면 `SEMANTIC_OVERLAP`일 수 있다. overlap 분류 뒤 실제 소유권·source/derivative 관계·의도한 변경 범위를 검증해 disposition을 정한다.
+### Missing local CLI or auth — `GITHUB_CAPABILITY_FALLBACK`
 
-preflight는 첫 persistent write 전, 각 후속 write의 parent 확인 전, 최종 `intended_paths`가 확정된 PR 생성 전, exact reviewed HEAD 병합 전, main·열린 PR·resource owner가 바뀐 뒤에 다시 실행한다. `PROVISIONAL_INTEGRATION`이면 owner PR의 merge/close/head 이동과 main의 material advance도 즉시 재검사 trigger다. merge 뒤에는 새 main을 read back하고 같은 Goal의 PR·정본·소비자 상태를 재검사한다.
+`MISSING_OPTIONAL_CLI`는 작업 중단 판정이 아니라 capability routing 입력이다. `gh` 또는 local push auth가 없더라도 연결된 GitHub connector가 같은 동작을 권위 있게 지원하면 connector를 사용한다. missing `gh` alone is not a blocker.
 
-## Rules
+```text
+GITHUB_CAPABILITY_FALLBACK
+MISSING_OPTIONAL_CLI
+→ inspect required GitHub capability
+→ prefer authenticated connector when it provides the exact capability
+→ preserve exact head/base evidence
+→ use update_ref(force=false) only when an explicit ref update is actually required
+→ never force-update or weaken repository governance
+```
 
-- `DIRTY`: 커밋·stash·폐기 선택 없이 pull/rebase/reset하지 않는다.
-- `REMOTE_AHEAD`: fast-forward 가능할 때만 자동 갱신한다.
-- `LOCAL_AHEAD`: diff·검증·커밋 범위를 확인한 뒤 push·PR한다.
-- `DIVERGED`: 자동 force push·hard reset을 금지하고 병합·rebase·새 branch 중 하나를 명시적으로 선택한다.
-- `STALE_BASE_SHA`와 `BLOCKED_UNVERIFIED`에서는 reconcile/증거 복구 전 persistent write·merge를 진행하지 않는다. `WAITING_RESOURCE`는 해당 material delta만 defer하고 independent work는 계속한다.
-- approved SAME_GOAL/PATH_OVERLAP/SEMANTIC_OVERLAP은 standing authorization 아래 `PROVISIONAL_INTEGRATION`으로 latest-main copy integration을 먼저 시도한다.
-- 실제 작업 Branch HEAD가 `write_parent_sha`와 다르면 concurrent branch update로 보고 write를 중단한다.
-- same-goal·path 목록에 현재 Task/PR 자신을 포함해 self-conflict를 만들지 않는다.
-- path가 비중첩이어도 semantic resource가 같으면 reconciliation 대상으로 기록한다.
-- 비밀·대용량 생성물·승인되지 않은 파일은 자동 커밋하지 않는다.
-- `PROVISIONAL_INTEGRATION`은 owner PR Branch를 직접 수정·rebase·force-push하는 권한이 아니다. owner 변경은 read-only로 관찰하고 통합 Branch에서만 흡수·대체·삭제한다.
-- whole-file stale copy보다 **selective copy**와 semantic reconciliation을 우선한다.
-- owner PR 또는 main이 움직이면 latest completed main을 기준으로 더 최신·강한 canonical 구현을 보존하고 stale/provisional duplicate를 제거한 뒤 exact-head 검증을 다시 실행한다.
-- merge 직전 모든 필요한 owner material delta가 `absorbed_owner_deltas` 또는 근거 있는 제외로 정리됐는지 확인하고, 고유 잔여 작업은 `residual_owner_deltas`로 보존한다.
-- owner PR이 열려 있다는 사실만으로 merge를 금지하지 않는다. exact-head required checks, P0/P1 0, unresolved thread 0, latest-main reconciliation, material-delta accounting이 충족되어야 한다.
-- merge 뒤 `residual_owner_deltas`가 없으면 fully absorbed owner PR을 absorption 근거와 함께 `superseded`로 정리할 수 있다. residual이 있으면 그대로 보존한다.
-- Required Checks 통과는 정확한 `expected_head_sha`와 현재 main에 대한 freshness를 함께 확인할 때만 병합 증거로 사용한다.
-- `MISSING_OPTIONAL_CLI`를 전체 권한 부재로 확대하거나 connector coverage 확인 전에 사용자 재인증을 요구하지 않는다.
+connector가 필요한 read/write/PR/check capability를 제공하지 못하거나 현재 권한을 검증할 수 없으면 `BLOCKED_UNVERIFIED`다. fallback이 권한 확대·새 credential 저장·사용자 계정 변경을 요구하면 사용자 결정 Gate를 사용한다. A missing optional CLI **must not merge** an unverified change or justify bypassing normal PR/check gates.
+
+### Local network/tool unavailable
+
+local clone/test가 DNS/network/tool 부재로 막혀도 authenticated connector + repository-native CI가 같은 acceptance criterion을 증명할 수 있으면 그 경로로 전환한다. 실행하지 않은 local validation을 PASS로 주장하지 않는다.
+
+### Cancelled CI
+
+`cancelled`는 PASS도 코드 FAIL도 아니다.
+
+- 같은 exact head의 더 최신 authoritative run이 있으면 최신 run을 사용한다.
+- concurrency가 이전 run을 취소한 경우 superseding run을 끝까지 본다.
+- 더 최신 run이 없으면 같은 exact head에서 failed/cancelled jobs를 안전하게 rerun한다.
+- 실행 중에는 불필요한 PR/head mutation으로 `cancel-in-progress`를 다시 유발하지 않는다.
+
+## Semantic reconciliation
+
+같은 Goal의 변경을 흡수할 때 파일 bytes만 복사하지 않는다. 다음을 latest main 기준으로 재판정한다.
+
+- 현재 owner/canon은 무엇인가
+- successor PR이 이미 같은 material delta를 병합했는가
+- old source PR의 unique delta가 실제로 남았는가
+- 더 강한 현재 구현이 old implementation을 대체했는가
+- test/evidence ceiling이 더 최신인가
+- whole-branch merge가 stale code/policy를 부활시키는가
+- 다른 workstream이면 현재 사용자 absorption authorization이 실제로 있는가
+
+판정:
+
+```text
+ABSORB_MATERIAL_DELTA
+ALREADY_ABSORBED_BY_SUCCESSOR
+REJECT_DUPLICATE_AUTHORITY
+PRESERVE_RESIDUAL_OWNER
+WAITING_RESOURCE
+BLOCKED_UNVERIFIED
+```
+
+## Publish and merge gate
+
+게시·병합은 최소 다음을 확인한다.
+
+- current branch/head exact SHA
+- current main/base exact SHA
+- current/owner workstream identity와 cross-workstream authorization 상태
+- expected head SHA와 실제 head SHA 일치
+- intended diff와 실제 diff 일치
+- required checks 실제 PASS
+- unresolved review thread 0
+- required approvals가 저장소 규칙과 일치
+- P0/P1 unresolved 0
+- `NOT_RUN`/`BLOCKED_*`/`CANCELLED`를 PASS로 승격하지 않음
+- stale/independent owner PR을 승인 없이 건드리지 않음
+
+병합 뒤 새 `main`을 다시 읽지 않으면 완료가 아니다.
 
 ## Output contract
 
 ```md
-## 로컬·원격 HEAD와 상태
-## CONCURRENT_CHANGE_PREFLIGHT 증거·분류·disposition
-## current task/PR identity·write parent·exact expected HEAD
-## 동일 Goal PR·경로 중첩·semantic resource와 조정 결과
-## standing authorization·owner heads·selective copy·reconciliation 상태
-## absorbed_owner_deltas·residual_owner_deltas
-## 차이 파일·커밋·미추적 항목
-## 선택한 reconcile 방식과 이유
-## github_connector / local_git / gh_cli capability 판정과 fallback
-## 수행한 fetch/pull/commit/push/PR
-## exact HEAD·Required Checks·최종 동등성
-## post-merge main readback·같은 Goal 재검사·superseded/residual 결과
-## 충돌·권한·미검증·사용자 조치
+## 동기화 mode
+## repository / branch / worktree
+## current_task_or_pr_identity
+## current_workstream_identity / owner_workstream_identity
+## cross_workstream_absorption_authorized
+## source_main_sha / current_main_sha / write_parent_sha / expected_head_sha
+## intended_paths / semantic_resource_locks
+## same-goal open/recent PRs
+## concurrent preflight 판정
+## owner PR head SHAs / overlap
+## absorbed_owner_deltas / residual_owner_deltas
+## 실행한 write / publish / merge
+## exact-head checks / review threads
+## postmerge main readback
+## BLOCKED / NOT_RUN / rollback
 ```
 
 ## Quality gate
 
-로컬 작업 유실, 무검토 자동 커밋, force push, 인증 실패 은폐, optional `gh` 부재를 connector 확인 없이 전역 blocker로 처리, connector coverage가 있는데 반복 인증 요구, pull 성공을 기능 검증으로 오인, 열린 PR·changed paths를 보지 않고 `CLEAR` 판정, 현재 PR을 자기 중복으로 판정, stale `write_parent_sha` 위에 write, path만 보고 semantic 충돌을 무시, stale base 또는 다른 HEAD의 CI를 병합 증거로 사용, owner PR Branch를 수정, stale whole-file copy로 최신 main을 덮어쓰기, material delta accounting 없이 owner PR을 superseded 처리, standing authorization을 범위 확대/고위험 권한으로 오용하면 실패다.
+완료 보고 전에 다음을 모두 만족한다.
 
-Canonical Learning Log: `skills/SKILL_LEARNING_LOG.md`
+- 다른 채팅/독립 workstream을 같은 Goal이라는 이유만으로 수정·흡수하지 않았다.
+- cross-workstream absorption은 현재 사용자의 명시 승인이 있을 때만 수행했다.
+- first write, PR creation, merge 직전 preflight를 실제로 재실행했다.
+- stale SHA·409·non-fast-forward를 blind overwrite로 처리하지 않았다.
+- owner PR branches를 직접 수정하지 않았다.
+- latest main에서 selective delta만 통합했다.
+- exact-head Required Checks를 확인했다.
+- postmerge main SHA/readback을 확인했다.
+- 실행하지 않은 로컬/CI/merge evidence를 성공으로 표시하지 않았다.
 
-Change Learning Record: `skills/synchronizing-local-and-github-state/LEARNING_LOG.md`
+Learning Log: `skills/synchronizing-local-and-github-state/LEARNING_LOG.md`

@@ -1,5 +1,14 @@
 # Synchronizing Local and GitHub State — Learning Log
 
+## 2026-08-18 — Reconcile moving integration state before overwriting or merging stale owners
+
+- **Status:** `PATTERN`
+- **Observed failures:** During the Base long-horizon governance integration, an attempted `AGENTS.md` write returned HTTP 409 because the branch file had advanced after the read. A broad Base-v9 run also caught floating GitHub Action tags in a newly added workflow even though the focused governance tests were already green. Several old open owner PRs still described RED or pre-successor states after stronger implementations had landed on `main`.
+- **Recovery:** Treat both write conflicts and stale owner PRs as readback triggers, not as reasons to overwrite or merge wholesale. Re-read the exact current blob/head, preserve the newer material, selectively apply only the missing delta, and re-run broad exact-head contracts. For CI actions, use the repository's current exact 40-character action pins rather than a floating major tag.
+- **Owner-PR reconciliation:** Close an old owner PR only after a current-main successor or integration proves that its unique material delta is fully absorbed. Preserve unrelated residual work as a separate scope instead of forcing it into the active integration.
+- **Evidence ceiling:** A focused GREEN does not imply Base-wide compatibility. The Base-v9/GPO gates remain independent evidence; `NOT_RUN`, stale workflow results, or old PR bodies never become PASS by inference.
+- **Regression trigger:** Any workflow that overwrites after a stale-blob/409 signal, merges a stale whole owner branch despite a current-main successor, uses floating action tags where Base requires exact pins, or treats focused CI as proof of repository-wide compatibility must reopen this pattern.
+
 ## 2026-08-16 — Latest-main copy integration becomes the standing conflict recovery
 
 - **Status:** `PATTERN`
@@ -20,7 +29,7 @@
 - **Merge boundary:** `PROVISIONAL_INTEGRATION` never means `CLEAR`. The integration PR must not merge while an overlapping owner remains unresolved unless that owner is merged and absorbed, explicitly handed off/superseded, or the user explicitly authorizes replacement. Without explicit provisional authorization, the default remains `WAITING_RESOURCE` / `DUPLICATE_WORK`.
 - **TDD evidence:** RED workflow run `31852789710` failed because `PROVISIONAL_INTEGRATION` was absent from Base governance. GREEN run `31852960596` passed the same focused contract after the minimal rule was added. The temporary focused workflow was removed before the final merge candidate so the policy does not create a permanent redundant CI surface.
 - **Adversarial result:** P0/P1/P2 = 0 for authorization bypass, owner-branch mutation, stale owner-head reuse, textual-only reconciliation, stale-CI reuse, and unresolved-owner merge attacks. This is governance evidence only; a later product integration PR must independently prove its Windows/Linux/runtime/Figma behavior.
-- **Regression trigger:** any workflow that treats ordinary continuous work as provisional-overlap authorization, writes to owner PR branches, hides overlap as `CLEAR`, or merges a provisional integration PR before owner resolution must reopen this policy.
+- **Regression trigger:** any future workflow that treats ordinary continuous work as provisional-overlap authorization, writes to owner PR branches, hides overlap as `CLEAR`, or merges a provisional integration PR before owner resolution must reopen this policy.
 
 ## 2026-08-14 — Missing optional GitHub CLI must not override connector capability
 

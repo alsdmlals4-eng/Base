@@ -1,0 +1,26 @@
+name: Validate Base Long-Horizon Work Contract
+
+on:
+  pull_request:
+    paths:
+      - "AGENTS.md"
+      - "docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md"
+      - "docs/LOOP_ENGINEERING_A2_RUNTIME.md"
+      - "docs/knowledge/ai/SKILL_ROUTING_PRECISION_GUIDE.md"
+      - "tests/test_base_long_horizon_work_contract.py"
+      - ".github/workflows/validate-base-long-horizon-work-contract.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  long-horizon-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+      - name: Validate long-horizon governance contract
+        run: python -m unittest tests.test_base_long_horizon_work_contract -v
