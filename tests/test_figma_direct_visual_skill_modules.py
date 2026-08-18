@@ -28,6 +28,7 @@ class FigmaDirectVisualSkillModuleTests(unittest.TestCase):
         for module in modules:
             self.assertTrue((ART_ROOT / "references" / module).exists(), module)
             self.assertIn(module, gate)
+            self.assertIn(f"references/{module}", art_skill)
 
         self.assertIn("references/figma-visual-bible-continuity-gate.md", art_skill)
         self.assertIn("FIGMA_DIRECT_VISUAL_ORGANIZATION", gate)
