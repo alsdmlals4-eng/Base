@@ -1,6 +1,6 @@
 # Project Google Sheets Workbook Contract
 
-이 파일은 개별 프로젝트 Google Sheets를 **사용자 중심 GDD 작업면**으로 만들거나 기존 Sheet를 재구조화할 때 사용하는 설치 계약이다. Base에는 Sheet를 만들지 않는다.
+이 파일은 **이미 Google Sheets를 사용하는 개별 프로젝트**에서 기존 Workbook을 감사·보존·이관할 때 사용하는 호환 계약이다. 새 프로젝트의 기본 GDD 작업면을 만들기 위한 설치 계약이 아니며 Base에는 Sheet를 만들지 않는다.
 
 공용 정책: `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`
 
@@ -8,7 +8,8 @@
 
 ```yaml
 project_google_sheet_status: PROJECT_SHEET_CONFIGURED | NOT_CONFIGURED
-workspace_role: USER_FACING_GDD_WORKSPACE
+workspace_role: GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE
+workspace_status: MIGRATION_COMPATIBILITY_SURFACE
 canonical_authority: GITHUB_CANONICAL_AND_ACTUAL_FILES
 user_edit_policy: PROPOSED_SHEET_CHANGE
 ai_read_policy: GITHUB_AND_SHEET_COMPARE
@@ -19,15 +20,16 @@ last_verified_at:
 last_verified_commit:
 ```
 
-정확한 URL·ID·권한을 확인하지 못하면 `NOT_CONFIGURED`로 유지한다. 비슷한 제목의 Sheet를 추정하거나 중복 생성하지 않는다.
+정확한 URL·ID·권한을 확인하지 못하면 `NOT_CONFIGURED`로 유지한다. 비슷한 제목의 Sheet를 추정하거나 중복 생성하지 않는다. 새 프로젝트에는 Sheet를 기본 workspace로 생성하지 않으며, 이 계약은 기존 Sheet의 고유 정보·수식·이미지·사용자 제안·변경 이력을 잃지 않고 이관하는 데만 사용한다.
 
 ## 책임 경계
 
-- 사용자는 Sheet에서 전체 흐름·현재 정보·이미지·수치를 확인하고 수정한다.
-- AI는 GitHub 정본·실제 파일과 Sheet를 함께 읽는다.
+- 사용자는 기존 Sheet에서 전체 흐름·현재 정보·이미지·수치를 확인하고 수정할 수 있다.
+- AI는 GitHub 정본·실제 파일과 구성된 기존 Sheet를 함께 읽는다.
 - Sheet에만 있는 수정은 `PROPOSED_SHEET_CHANGE`다.
-- 승인된 변경만 GitHub 정본과 Sheet 양쪽에 반영하고 재조회한다.
+- 승인된 변경만 GitHub 정본과 구성된 Sheet 양쪽에 반영하고 재조회한다.
 - Sheet는 GitHub 정본과 실제 구현을 대체하지 않는다.
+- 새 시각 협업의 기본 workspace와 구조화 데이터 권위는 상위 Base 정책의 Figma/repo-native 경계를 따른다.
 
 ## 표준 GDD 영역
 
@@ -98,18 +100,19 @@ Figma·Whimsical·기타 시각 Artifact가 실제로 있을 때만 `06_시각_�
 ## 설치·갱신 순서
 
 ```text
-정확한 Sheet 확인
+정확한 기존 Sheet 확인
 → metadata와 기존 tab 읽기
 → 중복·구형 tab·사용자 편집 범위 감사
 → 표준 GDD 6영역과 기존 정보 매핑
 → 이름 변경·병합·신규 tab 계획
 → 기존 값·수식·검증·링크·이미지 보존
-→ tab·열·시각 요약 설치
+→ 필요한 호환 tab·열·시각 요약 갱신
 → 정본 경로·Decision ID·Commit SHA 연결
 → 샘플이 아닌 실제 현재 Decision·구현 상태 동기화
 → PROPOSED_SHEET_CHANGE 분리
+→ GitHub/Figma/repo-native replacement 위치와 readback 확인
 → 재읽기·시각 검수·충돌 판정
-→ PROJECT_SHEET_CONFIGURED
+→ MIGRATION_COMPATIBILITY_SURFACE 유지 또는 검증된 supersession
 ```
 
 ## 동기화 상태
@@ -127,9 +130,11 @@ BLOCKED_UNVERIFIED
 ## 금지
 
 - Base용 Sheet 생성
+- 새 프로젝트에 기본 GDD Sheet를 강제 생성
 - 기존 Sheet URL 없이 임의 신규 Sheet 생성
 - 사용자 편집 범위를 읽지 않고 전면 덮어쓰기
 - Sheet-only 제안을 승인 정본으로 간주
+- replacement pointer와 readback 없이 기존 Sheet를 폐기·삭제
 - 세계관·핵심루프·인물·핵심시스템을 한 자유 메모 탭에 혼합
 - 긴 텍스트만 두고 흐름도·관계도·와이어프레임·이미지·수치 요약을 생략
 - 이미지 URL만 붙이고 생성 목적·원출처·검수·승인 상태를 기록하지 않음

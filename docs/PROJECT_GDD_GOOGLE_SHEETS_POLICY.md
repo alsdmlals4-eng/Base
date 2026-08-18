@@ -1,19 +1,32 @@
 # 프로젝트 GDD Google Sheets 정책
 
-이 문서는 Base를 적용한 개별 게임 프로젝트에서 Google Sheets를 어떻게 GDD로 사용하고, GitHub 정본·실제 구현·사용자 편집·AI 참조를 어떻게 연결할지 정의하는 공용 책임 원본이다.
+이 문서는 Base를 적용한 개별 게임 프로젝트에서 Google Sheets를 어떻게 GDD migration source로 보존하고, GitHub 정본·실제 구현·사용자 편집·AI 참조를 어떻게 연결할지 정의하는 공용 책임 원본이다.
 
-Base 자체는 프로젝트 Sheet를 만들거나 동기화하지 않으며 `BASE_EXCLUDED`다. 정확한 URL·Spreadsheet ID·tab·권한을 확인한 개별 프로젝트만 이 정책을 적용한다.
+Base 자체는 프로젝트 Sheet를 만들거나 동기화하지 않으며 `BASE_EXCLUDED`다. 정확한 URL·Spreadsheet ID·tab·권한을 확인한 기존 프로젝트만 이 정책의 Sheet migration 계약을 적용한다.
 
 ## 1. 목적과 역할
 
-프로젝트 Google Sheets의 역할은 `USER_FACING_GDD_WORKSPACE`다.
+현재 Base의 workspace authority는 다음과 같다.
 
-- 사용자가 프로젝트 전체 흐름, 방향성, 핵심 루프, 메인 시스템, 현재 승인·구현·검증 상태를 한곳에서 확인한다.
+```text
+FIGMA_DEFAULT_VISUAL_WORKSPACE
+REPO_NATIVE_STRUCTURED_DATA
+GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE
+USER_FACING_GDD_WORKSPACE_COMPATIBILITY_ALIAS
+```
+
+새 프로젝트와 새 시각 작업의 기본 협업면은 Figma이며, 승인 Decision·상세 규칙은 GitHub 정본, 밸런스·경제·Schema·runtime config 같은 구조화 데이터는 repo-native source가 소유한다.
+
+이미 구성된 프로젝트 Google Sheets는 검증된 이관이 끝날 때까지 `GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE`이며 `MIGRATION_COMPATIBILITY_SURFACE`로 취급한다.
+
+- 사용자가 기존 Sheet에서 프로젝트 전체 흐름, 방향성, 핵심 루프, 메인 시스템, 현재 승인·구현·검증 상태를 확인한다.
 - 사용자가 기존 정보를 수정하거나 새 제안을 기록한다.
-- AI는 GitHub와 Google Sheets를 함께 읽어 현재 방향과 변경 제안을 복원한다.
+- AI는 GitHub와 구성된 Google Sheets를 함께 읽어 현재 방향과 변경 제안을 복원한다.
 - 긴 기획 전문을 복제하기보다 시각 요약, 핵심 수치, 상태, GitHub 정본 경로를 연결한다.
 
-Google Sheets는 사용자의 기본 GDD 작업면이지만 GitHub 정본을 대체하지 않는다. 등록된 Markdown·JSON이 상세 규칙을, 실제 코드·데이터·Scene·Resource·자산·테스트가 구현 상태를 책임진다.
+Google Sheets는 migration 동안 사용자의 기존 GDD 검토·제안 surface를 보존하지만 GitHub 정본을 대체하지 않는다. 등록된 Markdown·JSON이 상세 규칙을, 실제 코드·데이터·Scene·Resource·자산·테스트가 구현 상태를 책임진다.
+
+`USER_FACING_GDD_WORKSPACE_COMPATIBILITY_ALIAS`는 기존 문서·Skill·Adapter·과거 기록에 남아 있는 `USER_FACING_GDD_WORKSPACE`를 **기존 Sheet의 읽기·제안·동기화 호환 의미**로 해석하기 위한 migration alias다. 이 별칭은 새 프로젝트에 Sheet를 만들거나 새 작업의 기본 workspace 권위를 되살리지 않는다.
 
 ### 1.1 현업 GDD 템플릿 비교와 채택
 
@@ -26,7 +39,7 @@ Google Sheets는 사용자의 기본 GDD 작업면이지만 GitHub 정본을 대
 
 **채택:** 한 화면 요약, Design Pillar·Core Loop·범위·위험·마일스톤 연결, 시스템별 상세, 결정 로그, 주기적 갱신.
 
-**적응:** Google Sheets에서는 장문 페이지 대신 카드형 요약·Decision ID·정본 경로·상태를 사용한다.
+**적응:** 기존 Google Sheets에서는 장문 페이지 대신 카드형 요약·Decision ID·정본 경로·상태를 사용하고, migration 뒤 책임 surface는 GitHub/Figma/repo-native로 분리한다.
 
 **제외:** 고정된 대형 GDD 본문 복제, GitHub/실제 구현과 분리된 상태표, 프로젝트 상태를 소유하는 외부 템플릿.
 
@@ -38,12 +51,12 @@ Google Sheets는 사용자의 기본 GDD 작업면이지만 GitHub 정본을 대
 → CURRENT_CONFIRMED_DECISIONS.md
 → 등록된 분야 Markdown·JSON 책임 원본
 → 실제 코드·데이터·Scene·Resource·자산·테스트
-→ 프로젝트 GDD Google Sheets
+→ 구성된 프로젝트 GDD Google Sheets migration source
 → Issue·PR·Commit 이력
 → 외부 근거·과거 대화·AI 추론
 ```
 
-Sheet는 사용자에게 가장 읽기 쉽고 수정하기 쉬운 작업면이지만, Sheet 한 곳의 값만으로 승인·구현·검증 완료를 확정하지 않는다.
+Sheet는 migration 동안 사용자에게 읽기 쉽고 수정하기 쉬운 호환 surface지만, Sheet 한 곳의 값만으로 승인·구현·검증 완료를 확정하지 않는다.
 
 ## 3. AI 공동 읽기 계약
 
@@ -198,7 +211,7 @@ GDD는 살아있는 문서다. 모든 주요 행은 다음 메타데이터를 �
 - Sheet·GitHub 동기화 상태
 - 다음 확인·재검증 조건
 
-승인 결정은 장기 작업 checkpoint까지 미루지 않고 즉시 GitHub 정본과 Sheet에 반영한 뒤 양쪽을 재조회한다.
+승인 결정은 장기 작업 checkpoint까지 미루지 않고 즉시 GitHub 정본에 반영한다. 구성된 legacy Sheet가 있으면 같은 승인 단위에서 Sheet에도 반영한 뒤 양쪽을 재조회한다.
 
 ## 10. 명확한 수치화
 
@@ -219,33 +232,36 @@ GDD는 살아있는 문서다. 모든 주요 행은 다음 메타데이터를 �
 
 ## 11. 설치·검증
 
-설치와 갱신은 다음 순서를 따른다.
+아래 설치·갱신 순서는 이미 `PROJECT_SHEET_CONFIGURED`인 기존 Sheet의 migration compatibility 유지·이관에만 적용한다.
 
 ```text
-정확한 Sheet URL·ID·권한 확인
+정확한 기존 Sheet URL·ID·권한 확인
 → 기존 tab·값·수식·이미지·검증 규칙 감사
 → 단일 현재 결정 원장과 기존 분야 tab의 Decision ID 매핑
 → 표준 GDD 영역과 프로젝트 고유 영역 매핑
 → 기존 정보 보존 계획
-→ tab·열·시각 요약 설치
+→ 필요한 호환 tab·열·시각 요약 갱신
 → GitHub 정본 경로·Decision ID·Commit 연결
 → 실제 현재 상태 동기화
 → 사용자 편집 범위 확인
+→ GitHub/Figma/repo-native replacement pointer·readback 확인
 → 재읽기·시각 검수·충돌 판정
 ```
 
-완료는 파일이나 tab 존재가 아니라 GitHub 정본·실제 구현·Sheet의 책임과 동기화 상태를 복원할 수 있을 때다.
+완료는 파일이나 tab 존재가 아니라 기존 Sheet의 고유 정보·제안·대체 관계를 GitHub/Figma/repo-native 책임 surface에서 복원할 수 있고, 필요한 readback과 replacement pointer가 검증됐을 때다.
 
 ## 12. HTML 대시보드 경계
 
-일반 프로젝트 기획·상태 확인은 GitHub 정본과 프로젝트 GDD Google Sheets를 우선한다. HTML 대시보드는 사용자가 명시적으로 요청하거나 기존 대시보드 유지보수가 필요한 경우에만 선택적으로 사용한다.
+일반 프로젝트 기획·상태 확인은 GitHub 정본을 우선하고, 새 시각 협업은 Figma, 구조화 데이터는 repo-native source를 사용한다. 기존 프로젝트 GDD Google Sheets는 migration·proposal·readback이 필요한 경우에만 사용한다. HTML 대시보드는 사용자가 명시적으로 요청하거나 기존 대시보드 유지보수가 필요한 경우에만 선택적으로 사용한다.
 
 ## 13. 실패 조건
 
 - Sheet를 GitHub 상세 정본이나 실제 구현 상태의 단일 권한으로 사용함
+- 새 프로젝트에 기본 GDD Sheet를 강제 생성함
 - 사용자 Sheet 편집을 읽지 않고 자동 덮어씀
 - Sheet-only 제안을 승인 결정처럼 구현함
-- GitHub만 갱신하거나 Sheet만 갱신하고 `SYNCED`로 보고함
+- replacement pointer와 readback 없이 기존 Sheet를 폐기·삭제함
+- GitHub만 갱신하거나 구성된 Sheet만 갱신하고 `SYNCED`로 보고함
 - 같은 현재 결정·상태·정본 경로를 허브·요약·분야 tab에 복사해 서로 다른 값을 만들 수 있게 둠
 - 긴 자유 메모만 두고 핵심 흐름·이미지·수치·상태를 찾을 수 없음
 - 단위·초기 시험값·조정 범위·검증 상태 없이 모호한 수치 표현만 유지함
