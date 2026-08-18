@@ -49,9 +49,12 @@ NOTION_DEFAULT_PROJECT_WORKSPACE
 → 예산표 / Tier표 / 로스터·경제·성장표 / 사람이 수정하는 전체 그림
 
 REPOSITORY_STRUCTURED_CANON
+→ REPO_NATIVE_STRUCTURED_DATA (compatibility alias)
 → Markdown / JSON / game data / code / scene / resource / config / tests
 → REPOSITORY_RUNTIME_TRUTH
 ```
+
+`REPO_NATIVE_STRUCTURED_DATA`는 과거 공용 계약·검증의 발견성을 보존하기 위한 compatibility alias이며, 현재 공식 이름은 `REPOSITORY_STRUCTURED_CANON`이다.
 
 `DOMAIN_SPLIT_CANON`은 GitHub와 Notion 중 하나를 모든 질문의 단일 도구로 강제하지 않는다. **사람이 이해·비교·수정하는 전체 그림, 시각 자료, 예산표, Tier표, Flow/Storyboard는 Notion을 우선**하고, **Markdown·JSON·실제 게임 데이터·코드·Scene·Resource·Test·Runtime evidence는 repository를 우선**한다. Notion 변경이 구조화 데이터나 구현 변경을 요구하면 `SYNC_BEFORE_IMPLEMENTATION`으로 repository에 동기화한 뒤 구현한다.
 
@@ -94,7 +97,7 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·
 | CI execution/cost | `docs/CI_EXECUTION_COST_POLICY.md` | change-class validation, runner/cost gate |
 | PowerShell user execution | `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md` | fresh shell, location first, one paste block, fail-fast |
 | GitHub governance | `docs/GITHUB_PRO_OPERATING_POLICY.md`, `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | PR/check/work-item lifecycle |
-| Decision sync | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | approved Decision 정본화·중복질문 방지 |
+| Decision sync | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | approved Decision 정본화·중복질문 방지·Notion/repository cross-sync |
 | Planning sequence/evidence | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | evidence, approval bundle, Demo-First |
 | Integrated vertical slice | `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md` | active integrated single-attachment execution route |
 | Capability composition | `docs/CAPABILITY_COMPOSITION_MAP.md` | capability 조합·금지 경계·필수 증거 |
