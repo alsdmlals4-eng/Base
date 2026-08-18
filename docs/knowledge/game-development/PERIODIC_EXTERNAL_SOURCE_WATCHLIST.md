@@ -105,6 +105,7 @@ PERIODIC_SOURCE_OPERATIONS_LEDGER.json
 | Source | role | 주요 용도 | 한계 |
 |---|---|---|---|
 | **Hada GeekNews** | `DISCOVERY_FEED` | AI agent, 개발 생산성, UX, 도구, 보안, 새로운 원문 발견 | 요약 자체는 권위가 아님. `ORIGINAL_SOURCE_BACKTRACE` 필수 |
+| **Huddling Figmapedia** | `DISCOVERY_FEED` | `https://huddling.ai/figma-info`의 Figma 실무 Q&A·업데이트·플러그인·AI 디자인 워크플로에서 반복 후보 발견 | Figma 제품 기능·MCP·정책 사실은 Figma 공식 문서·release note 등 original source로 역추적한 뒤 사용 |
 | **GameDiscoverCo newsletter** | `DISCOVERY_FEED` | Steam/PC/console discovery, festival·시장 사례 후보 | 자체 추정·유료 데이터·sponsor 표시 |
 | **GameAnalytics** | `OBSERVATIONAL_DATA_OR_VENDOR_GUIDE` | retention, funnel, event-based cohort, analytics 질문 설계 | vendor/F2P/mobile 편향; benchmark를 universal target으로 금지 |
 | **SteamDB** | `OBSERVATIONAL_DATA_OR_VENDOR_GUIDE` | Steam 공개 데이터 관찰, release/pricing 변화 | Valve 공식 서비스가 아님; 원인·알고리즘 정본으로 금지 |
@@ -417,7 +418,7 @@ LAST_SUCCESSFUL_SCAN
 ### 기본 cadence
 
 - `daily-or-weekly`: Hada, OpenAI/Anthropic/Google/GitHub/Microsoft AI engineering updates, Godot release/blog/source·issue/PR surface, GitHub Actions/Code Security, Steamworks, Android/Google Play policy/release, YouTube Help/Studio changes처럼 빠르게 변하는 면.
-- `weekly`: Godot Improvement Proposals, Python official docs/What's New/PEPs, OWASP updates, GameDiscoverCo, How To Market A Game, Game Developer, Reedsy recent learning, Adobe Premiere official release notes, Frame.io Insider, vidIQ research/blog, SteamDB 공개 관찰, Blackmagic/DaVinci 공식 training·release workflow surface.
+- `weekly`: Huddling Figmapedia (`figma-info`), Godot Improvement Proposals, Python official docs/What's New/PEPs, OWASP updates, GameDiscoverCo, How To Market A Game, Game Developer, Reedsy recent learning, Adobe Premiere official release notes, Frame.io Insider, vidIQ research/blog, SteamDB 공개 관찰, Blackmagic/DaVinci 공식 training·release workflow surface.
 - `monthly-or-on-demand`: Godot Demo Projects, Godot Asset Library, Git official documentation, GDC Vault, Games User Research, 80 Level, GameAnalytics, Deconstructor of Fun, GPUOpen, IGDA Game Writing, inkle/ink, Yarn Spinner.
 - `quarterly-or-when-relevant`: Google Engineering Practices, The Level Design Book, Game Accessibility Guidelines, Emily Short archive, Xbox Accessibility Guidelines처럼 상대적으로 정적이거나 필요 시 재검증 가치가 큰 Reference.
 
@@ -477,6 +478,7 @@ known_bias:
 - YouTube CTR/retention을 게임 판매·품질의 직접 인과로 오인했는가?
 - 편집 효과·motion·자막 장식이 이야기·증거·오디오 명료성보다 앞섰는가?
 - 최신 6개월에 집중한 나머지 오래됐지만 유효한 표준·연구·고전적 craft를 버렸는가?
+- Huddling/Figmapedia의 설명을 Figma 공식 제품 사실이나 정책 권위로 승격했는가?
 - 같은 원칙이 Base에 이미 있는데 새 Skill·Guide·Template를 만들었는가?
 - 열린 PR이 같은 책임을 이미 수정 중인데 병렬로 중복 변경했는가?
 - `새 규칙 없음`을 `유용한 흡수점 없음`으로 잘못 해석했는가?

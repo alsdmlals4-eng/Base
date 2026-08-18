@@ -91,6 +91,28 @@ REMOVE
 
 동일 의미의 아이콘·텍스트·배지를 중복 추가하지 않는다. 다중 채널은 같은 의미를 동등하게 전달하는 용도이며 장식 중복과 다르다.
 
+### 3.4a Design Read와 시각 의도
+
+토큰이나 스타일 이름을 고르기 전에 화면의 `design intent`와 플레이어가 받아야 할 인상을 짧은 prose로 고정한다. `modern / clean / premium` 같은 범용 형용사만 나열하지 않고 프로젝트 맥락에 맞는 `specific reference`와 **왜 그 참조가 맞는지**를 함께 적는다. 특정 제품·브랜드·창작자의 화면 표현을 복제하지 않고 역할·제약·차별화 축만 변환한다.
+
+```yaml
+Design Read:
+  design_intent:
+  specific_reference:
+  reference_reason:
+  visual_variance: 1-10
+  motion_intensity: 1-10
+  information_density: 1-10
+  intentional_do: []
+  intentional_dont: []
+```
+
+- `visual variance`, `motion intensity`, `information density`는 후보를 비교하고 의도를 전달하는 설계 축이지 Base 공용 고정 수치가 아니다.
+- 토큰·Schema·lint·diff는 구조와 일관성의 증거일 뿐 실제 렌더 품질, 플레이어 이해, 브랜드 적합성의 자동 PASS가 아니다.
+- 최소 폭·긴 한국어·브라우저 zoom·text scaling·사용자 spacing override에서도 `essential text`는 의미를 잃게 잘리거나 가려지지 않고 reflow되어야 한다.
+- badge·chip·count의 의미는 색 하나에만 의존하지 않는다. 빠른 반복 입력이나 animation cancel 뒤에도 최종 `semantic state`, focus, content가 서로 일치해야 한다.
+- Do/Don't는 프로젝트 의도를 지키는 짧고 검증 가능한 제약으로 유지한다. 금지 목록이 늘어나면 vague intent를 보완하는 대신 더 구체적인 reference와 이유로 다시 정리한다.
+
 ### 3.5 패턴 선택
 
 `game-ux-pattern-library.md`에서 문제와 플레이어 위험이 일치하는 패턴만 읽는다. 패턴은 다음 중 하나로 판정한다.
@@ -217,6 +239,8 @@ P0 BLOCKER
 ## 목적
 
 프로젝트의 색·타이포그래피·간격·형태·깊이·컴포넌트 표현을 AI와 도구가 읽을 수 있는 시각 토큰 정본으로 관리한다. `GAME_UX_UI_SYSTEM`은 플레이어 경험·화면 흐름·정보 계층·상태·입력·접근성·Godot 소유권의 상위 행동 정본으로 유지한다.
+
+YAML token은 반복 가능한 값을 고정하지만 시각 언어의 목적과 적용 이유를 대신하지 않는다. `DESIGN.md`의 Markdown prose에는 위 `Design Read`의 의도·구체 참조 이유·의도적 예외를 남기고, token 값만으로 실제 디자인 품질을 판정하지 않는다.
 
 ## 적용 조건
 
