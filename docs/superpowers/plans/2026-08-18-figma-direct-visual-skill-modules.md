@@ -4,109 +4,54 @@
 
 **Goal:** Preserve successful local visual-tool techniques as conditional Base art-skill modules while making direct project Figma organization the normal image-work path.
 
-**Architecture:** Keep `designing-art-prompts-and-technique-cards` as the single primary art/image Skill. Add six reference modules for Figma placement, character expression, sprite/pose, effect stages, candidate/reuse review, and local-tool fallback; route them conditionally from the existing Skill and Registry. Figma write capability should auto-place WIP and approved visuals when available, while lack of write capability produces exact placement instructions rather than requiring localhost Tool Hub/Studio runtime.
+**Architecture:** Keep `designing-art-prompts-and-technique-cards` and its existing Registry triggers unchanged. Its existing `figma-visual-bible-continuity-gate.md` becomes the conditional router for six focused modules, avoiding new broad Skills and trigger ambiguity. Figma write capability auto-places WIP when available; otherwise GPT returns exact placement guidance.
 
-**Tech Stack:** Markdown Skill/reference contracts, JSON Skill registry, Python `unittest`, GitHub Actions BCA visual workflow.
+**Tech Stack:** Markdown Skill/reference contracts, Python `unittest`, GitHub Actions BCA visual workflow.
 
 **Spec:** `docs/superpowers/specs/2026-08-18-figma-direct-visual-skill-modules-design.md`
 
 ## Global Constraints
 
 - Do not create a new broad visual/Figma/Expression/Sprite Skill ID.
-- Keep `designing-art-prompts-and-technique-cards` as the primary owner.
+- Do not expand the Skill Registry when existing image triggers already route correctly.
 - Reuse merged PR #433 `Reusable Visual Harvest Gate` and existing Figma Visual Bible structure.
-- Figma write availability changes execution convenience, not approval authority.
 - New generated visuals enter `02_WIP`/review before explicit user approval.
+- Figma write success requires readback before a placement success claim.
 - `APPROVED_VISUAL_REFERENCE != PROJECT_ASSET_APPROVED`.
 - Local Tool Hub/Expression/Sprite runtime remains source/reference but is non-canonical and non-required for normal image work after the 2026-08-18 stop-loss.
-- Do not delete Tool Hub/Studio source code in this change.
+- Do not delete Tool Hub/Studio source code or globally deprecate unrelated QA tools.
 - No paid OpenAI API/API-key path.
 - Do not touch unrelated open/draft PRs.
 
 ---
 
-### Task 1: Add RED contracts for direct Figma placement and modular routing
+### Task 1: Add a consumed RED contract and correct BCA failure aggregation
 
 **Files:**
-- Modify: `tests/test_bca_visual_sheet_workflow.py`
-- Test: `.github/workflows/validate-bca-visual-sheet-workflow.yml` already consumes this test and all art-skill paths.
+- Create: `tests/test_figma_direct_visual_skill_modules.py`
+- Modify: `.github/workflows/validate-bca-visual-sheet-workflow.yml`
 
 **Interfaces:**
-- Consumes: current `designing-art-prompts-and-technique-cards` Skill, Registry, visual policies/profile.
-- Produces: failing contract that names the six required modules and placement/authority behavior.
+- Consumes: existing art Skill, Figma continuity gate, Registry, Visual Bible profile.
+- Produces: focused contract proving module presence, Figma placement branches, harvest authority, source retention, and no duplicate Skill owner.
 
-- [ ] **Step 1: Add a failing test**
+- [x] **Step 1: Add RED tests before module/gate edits**
 
-Add `test_art_skill_routes_figma_direct_visual_modules_without_new_skill` that reads:
+The tests require six missing reference modules and therefore fail on the baseline.
 
-```python
-art_root = ROOT / "skills/designing-art-prompts-and-technique-cards"
-art_skill = (art_root / "SKILL.md").read_text(encoding="utf-8")
-registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
-profile = (ROOT / "templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md").read_text(encoding="utf-8")
-visual_policy = (ROOT / "docs/VISUAL_COLLABORATION_TOOL_POLICY.md").read_text(encoding="utf-8")
-image_policy = (ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md").read_text(encoding="utf-8")
-```
+- [x] **Step 2: Wire the new test into BCA CI**
 
-Require module files:
+Add the test path to PR filtering, `py_compile`, and `unittest` execution.
 
-```python
-modules = (
-    "figma-direct-placement-and-canon.md",
-    "character-identity-expression-controls.md",
-    "sprite-pose-sequence-controls.md",
-    "effect-stage-compositing-controls.md",
-    "candidate-review-and-reusable-harvest.md",
-    "local-visual-tool-lessons-and-fallback.md",
-)
-for module in modules:
-    self.assertTrue((art_root / "references" / module).exists(), module)
-    self.assertIn(f"references/{module}", art_skill)
-```
+- [x] **Step 3: Observe RED**
 
-Require one existing Skill owner and new triggers:
+Initial BCA log showed the new suite actually failed with missing module files (`1 failure + 2 errors`) while existing visual suites passed.
 
-```python
-entry = next(item for item in registry["skills"] if item["skill_id"] == "designing-art-prompts-and-technique-cards")
-for tag in (
-    "figma-direct-placement", "approved-visual-anchor", "character-expression",
-    "character-pose", "sprite-sequence", "effect-stage",
-    "visual-candidate-review", "visual-asset-reuse", "visual-harvest",
-):
-    self.assertIn(tag, entry["trigger_tags"])
-self.assertFalse(any(item["skill_id"].startswith("figma-") for item in registry["skills"]))
-```
+- [x] **Step 4: Fix the discovered CI evidence bug without touching Skill production**
 
-Require direct placement and authority text across profile/policies/modules:
+The prior workflow used `set +e` and returned only the final unittest exit status, masking earlier failures. Change each compile/test command to `... || status=1` and exit the accumulated status. A subsequent run must expose BCA `Run BCA contract tests = failure` while modules remain absent.
 
-```python
-figma_module = (art_root / "references/figma-direct-placement-and-canon.md").read_text(encoding="utf-8")
-fallback_module = (art_root / "references/local-visual-tool-lessons-and-fallback.md").read_text(encoding="utf-8")
-for token in ("FIGMA_WRITE_AVAILABLE", "AUTO_PLACE_WIP", "EXACT_PLACEMENT_GUIDANCE", "02_WIP", "01_APPROVED_REFERENCE", "04_FINAL"):
-    self.assertIn(token, figma_module)
-self.assertIn("explicit user approval", figma_module)
-self.assertIn("PROJECT_ASSET_APPROVED", figma_module)
-for text in (profile, visual_policy, image_policy):
-    self.assertIn("FIGMA_DIRECT_VISUAL_ORGANIZATION", text)
-self.assertIn("REFERENCE_ONLY_FOR_VISUAL_WORKFLOW", fallback_module)
-self.assertIn("2026-08-18", fallback_module)
-```
-
-- [ ] **Step 2: Run/observe RED**
-
-Run through the existing BCA workflow or equivalent:
-
-```text
-python -m unittest tests.test_bca_visual_sheet_workflow.BCAVisualSheetWorkflowTests.test_art_skill_routes_figma_direct_visual_modules_without_new_skill -v
-```
-
-Expected: FAIL because the six reference modules and new direct-placement tokens do not exist on current main.
-
-- [ ] **Step 3: Commit RED-only state**
-
-Production Skill/reference/policy files remain unchanged on the RED head.
-
-### Task 2: Add six conditional visual reference modules
+### Task 2: Add focused modules and route them from the existing continuity gate
 
 **Files:**
 - Create: `skills/designing-art-prompts-and-technique-cards/references/figma-direct-placement-and-canon.md`
@@ -115,137 +60,99 @@ Production Skill/reference/policy files remain unchanged on the RED head.
 - Create: `skills/designing-art-prompts-and-technique-cards/references/effect-stage-compositing-controls.md`
 - Create: `skills/designing-art-prompts-and-technique-cards/references/candidate-review-and-reusable-harvest.md`
 - Create: `skills/designing-art-prompts-and-technique-cards/references/local-visual-tool-lessons-and-fallback.md`
+- Modify: `skills/designing-art-prompts-and-technique-cards/references/figma-visual-bible-continuity-gate.md`
 
 **Interfaces:**
-- Consumes: existing Visual Bible continuity gate, #433 harvest categories, approved project canon.
-- Produces: focused reference material that the main art Skill can conditionally load.
+- Consumes: existing Visual Bible page/approval contract and #433 harvest taxonomy.
+- Produces: conditional module router under the existing art Skill.
 
-- [ ] **Step 1: Implement Figma direct placement module**
+- [x] **Step 1: Implement Figma direct placement**
 
-Must define observable branches:
+Contract:
 
 ```text
 FIGMA_WRITE_AVAILABLE
-  -> AUTO_PLACE_WIP under 02_WIP
-  -> readback required
-  -> explicit user approval
-  -> promote/reorganize to appropriate 01_APPROVED_REFERENCE section and/or 04_FINAL
+→ AUTO_PLACE_WIP in 02_WIP
+→ readback
+→ explicit user approval
+→ appropriate 01_APPROVED_REFERENCE and/or 04_FINAL organization
 
 FIGMA_WRITE_UNAVAILABLE
-  -> EXACT_PLACEMENT_GUIDANCE
-  -> file/page/section/artifact name/status/reference IDs/next gate
+→ EXACT_PLACEMENT_GUIDANCE
+→ project file/page/section/name/status/reference IDs/next gate
 ```
 
-- [ ] **Step 2: Implement character identity/expression module**
+- [x] **Step 2: Implement character identity/expression controls**
 
-Preserve identity axes; separate requested facial movement, gaze, and head pose; use FACS only as optional vocabulary; reject unrequested costume/style/geometry drift.
+Preserve identity axes; separate facial movement, gaze, head pose; keep FACS optional.
 
-- [ ] **Step 3: Implement sprite/pose sequence module**
+- [x] **Step 3: Implement sprite/pose sequence controls**
 
-Define pose intent, silhouette, identity invariants, prop/contact continuity, frame sequence, and atlas/export assumptions without inventing runtime evidence.
+Preserve identity, pose intent, silhouette, props/contact, frame order, atlas assumptions; do not invent runtime proof.
 
-- [ ] **Step 4: Implement effect-stage module**
+- [x] **Step 4: Implement effect-stage/compositing controls**
 
-Define stage order, alpha/background, anchor/scale, reuse classification, and reference-vs-runtime boundary.
+Define stage order, alpha/background, anchor/scale, and reference-vs-runtime boundary.
 
-- [ ] **Step 5: Implement candidate/reuse module**
+- [x] **Step 5: Implement candidate review/reusable harvest**
 
-Define comparison dimensions and reuse existing #433 classifications rather than introducing a second taxonomy.
+Reuse #433 classifications; no second taxonomy.
 
-- [ ] **Step 6: Implement local-tool fallback module**
+- [x] **Step 6: Implement local-tool fallback**
 
-Record `REFERENCE_ONLY_FOR_VISUAL_WORKFLOW` after the 2026-08-18 stop-loss, preserve source/reference value, and explicitly remove Tool Hub/PowerShell/localhost delivery from the normal image-work dependency chain.
+Record `REFERENCE_ONLY_FOR_VISUAL_WORKFLOW`, preserve source directories, remove Tool Hub/PowerShell/localhost delivery from the normal image-work dependency chain, and leave unrelated QA tooling intact.
 
-### Task 3: Route the existing Skill and Registry to the modules
+- [x] **Step 7: Route modules from the existing Figma continuity gate**
 
-**Files:**
-- Modify: `skills/designing-art-prompts-and-technique-cards/SKILL.md`
-- Modify: `skills/SKILL_REGISTRY.json`
+Add a condition-to-reference table and `FIGMA_DIRECT_VISUAL_ORGANIZATION` marker. Do not modify the main Skill or Registry.
 
-**Interfaces:**
-- Consumes: six Task 2 references.
-- Produces: one Skill owner with conditional module routing and searchable trigger vocabulary.
+- [x] **Step 8: Verify focused GREEN**
 
-- [ ] **Step 1: Add a compact conditional module routing section to SKILL.md**
+BCA run on implementation head must pass the new suite, all existing BCA visual suites, and reference freshness with the corrected failure aggregator.
 
-The main Skill should say:
+### Task 3: Final exact-head validation, adversarial review, merge, and postmerge readback
 
-```text
-Figma placement/canon -> figma-direct-placement-and-canon.md
-character expression/identity edit -> character-identity-expression-controls.md
-pose/sprite sequence -> sprite-pose-sequence-controls.md
-effect stages -> effect-stage-compositing-controls.md
-candidate comparison/reuse harvest -> candidate-review-and-reusable-harvest.md
-local visual-tool status/fallback -> local-visual-tool-lessons-and-fallback.md
-```
-
-Do not duplicate full module contents in `SKILL.md`.
-
-- [ ] **Step 2: Add Registry trigger tags to the existing art Skill entry**
-
-Add exactly the new vocabulary from the spec; do not add another Skill entry.
-
-### Task 4: Update Figma and image-work policies for direct placement
-
-**Files:**
-- Modify: `docs/VISUAL_COLLABORATION_TOOL_POLICY.md`
-- Modify: `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`
-- Modify: `templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md`
-
-**Interfaces:**
-- Consumes: direct placement module and current Visual Bible pages.
-- Produces: canonical policy marker `FIGMA_DIRECT_VISUAL_ORGANIZATION` and user-facing placement fallback contract.
-
-- [ ] **Step 1: Add normal-path policy**
-
-Record:
-
-```text
-FIGMA_DIRECT_VISUAL_ORGANIZATION
-- read approved canon first
-- write-capable GPT auto-places candidates in 02_WIP
-- readback before placement success claim
-- explicit approval before 01_APPROVED_REFERENCE/04_FINAL promotion
-- no Figma placement => PROJECT_ASSET_APPROVED implication
-```
-
-- [ ] **Step 2: Add no-write fallback**
-
-Require exact placement guidance rather than vague instructions.
-
-- [ ] **Step 3: Record local visual runtimes as non-required for image workflow**
-
-Do not delete or globally deprecate unrelated QA/tooling capabilities.
-
-### Task 5: Verify GREEN, skill behavior, references, and merge
-
-**Files:** no new production files expected after fixes.
+**Files:** no new production files expected after any review fixes.
 
 **Interfaces:**
 - Consumes: final exact PR head.
-- Produces: merge-ready evidence and postmerge readback.
+- Produces: merged reusable visual module package.
 
-- [ ] **Step 1: Verify focused BCA GREEN**
+- [ ] **Step 1: Verify exact-head workflows**
 
-Require the new test plus all existing BCA visual tests PASS.
+Require:
+- BCA Visual and Sheet Workflow: PASS;
+- Base v9 `base-v9-contract` and `adversarial-gate`: PASS;
+- Game Project Operating System applicable jobs and final `ci-gate`: PASS;
+- Integrated Vertical Slice Prompt when triggered: PASS;
+- Dependency Review when triggered: PASS.
 
-- [ ] **Step 2: Run Base v9/GPO and reference-freshness gates**
-
-Require applicable exact-head workflows PASS. Do not relabel unobserved runs.
-
-- [ ] **Step 3: Adversarial review**
+- [ ] **Step 2: Adversarial review**
 
 Check:
-1. no new broad Skill ID;
-2. no local Tool Hub runtime dependency in normal image path;
-3. no accidental deprecation of unrelated QA tools;
+1. no new broad Skill ID or Registry trigger expansion;
+2. normal image work does not depend on Tool Hub/PowerShell/localhost delivery;
+3. unrelated QA tooling is not deprecated;
 4. WIP never auto-promotes;
 5. Figma visual approval never collapses into product asset approval;
-6. modules do not duplicate each other or #433 taxonomy;
-7. future Figma write success requires actual readback.
+6. modules do not duplicate #433 taxonomy;
+7. Figma write success requires actual readback;
+8. existing continuity gate authority and access-fail-closed behavior were preserved;
+9. BCA CI cannot mask an earlier failing contract.
 
-- [ ] **Step 4: Mark ready and squash merge with exact-head protection**
+- [ ] **Step 3: Update PR evidence, mark ready, and squash merge with exact-head protection**
 
-- [ ] **Step 5: Postmerge readback**
+- [ ] **Step 4: Postmerge readback**
 
-Verify the merged Skill, Registry, six modules, and policy markers on `main`. Future actual image tasks then use Figma auto-placement when the connector/write capability is available, otherwise exact placement guidance.
+Verify merged `main` contains the six modules, continuity-gate routing, corrected BCA failure aggregation, and unchanged existing art Skill/Registry ownership.
+
+Future image work then follows:
+
+```text
+read project Figma canon
+→ generate/edit
+→ write available? auto-place in WIP + readback : exact placement guidance
+→ user approval
+→ approved visual organization
+→ separate product asset/runtime gates when needed
+```
