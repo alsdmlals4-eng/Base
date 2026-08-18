@@ -19,7 +19,10 @@
 ```text
 DIRECTION_FIRST
 CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY
+MINIMUM_VIABLE_ALTERNATIVES: 3
 BENCHMARK_SYNTHESIS
+BETTER_ALTERNATIVE_SEARCH
+LONG_TERM_PLAN_FIT_REQUIRED
 EXPECTED_EFFECTS_RISKS_MITIGATIONS_BEFORE_BUILD
 SINGLE_INITIAL_APPROVAL_THEN_CONTINUE
 RECOVER_TRY_ALTERNATIVES_RESUME
@@ -29,7 +32,7 @@ EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION
 ZERO_INCREMENTAL_COST_REQUIRED
 CURRENT_PAID_PLANS: GPT_PRO, FIGMA_PRO
 PAID_PLAN_COUNT: 2
-FIVE_DISTINCT_ADVERSARIAL_ROUNDS
+FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS
 POSTMERGE_PROMOTION_AND_SUPERSESSION
 CORE_LOOP_DUMMY_BALANCE_BUILD_TEST
 BALANCE_BUDGET
@@ -52,13 +55,16 @@ REQUIRED_WORK_REMAINING: 0
 RESEARCH
 → CURRENT STATE / OPEN PR RECONCILIATION
 → DIRECTION / INTENT
-→ MULTI-OPTION TRADE STUDY
+→ >= 3 VIABLE ALTERNATIVES
 → BENCHMARK SYNTHESIS
+→ TRADE STUDY
+→ PROVISIONAL BEST OPTION
 → EXPECTED EFFECTS / RISKS / MITIGATIONS
 → ONE USER APPROVAL
 → SMALL TESTABLE SLICES
 → TOOL / RUNTIME EXECUTION
-→ FIVE DISTINCT ADVERSARIAL ROUNDS
+→ FIVE FULL ADVERSARIAL IMPROVEMENT LOOPS
+→ LONG-TERM FIT CLOSURE
 → EXACT-HEAD PR GATE
 → MERGE
 → POSTMERGE READBACK
@@ -79,26 +85,31 @@ RESEARCH
 
 ### `CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY`
 
-L1 이상 중요 작업은 한 가지 해법을 먼저 선택한 뒤 벤치마킹으로 정당화하지 않는다. **현행 조사 → 여러 방법 탐색 → 동일 기준 비교 → 적대적 검토 → 장기적으로 최선인 선택** 순서를 기본으로 한다.
+L1 이상 중요한 설계·구현·정책 결정은 한 가지 해법을 먼저 선택한 뒤 벤치마킹으로 정당화하지 않는다. **현행 조사 → 최소 3개 실질 대안 탐색 → 벤치마킹 → 동일 기준 비교 → 임시 권장안 → 전체 적대적 개선 루프 → 장기 최선안** 순서를 기본으로 한다.
 
 ```text
 current-state evidence
-→ existing solution / no-change option when viable
-→ reuse / minimal-fix / structural-improvement / build-new alternatives
+→ >= 3 materially distinct viable alternatives
 → benchmark + industry practice + success/failure cases
-→ trade criteria comparison
-→ five distinct adversarial rounds
+→ common trade criteria
+→ provisional recommendation
+→ better-alternative search
+→ five full adversarial improvement loops
+→ long-term-plan-fit closure
 → long-term recommendation
 ```
 
 - **현행 조사**는 최신 `main`, 실제 구현, 현재 정본, 열린·최근 병합 PR, 테스트·실패 증거, Tool/Runtime 상태와 비용 제약을 읽고 시작한다.
-- **여러 방법**은 숫자를 채우기 위한 가짜 후보가 아니라 현재 Goal에서 실제로 가능한 대안만 둔다. 현행 유지/재사용/흡수/최소 수정/구조 개선/신규 구축 중 해당되는 후보를 펼친다.
-- 중요 결정에는 가능하면 둘 이상의 유효 대안을 비교한다. 유효 대안이 하나뿐이면 억지 후보를 만들지 말고 나머지 접근이 탈락한 근거를 기록한다.
+- **`MINIMUM_VIABLE_ALTERNATIVES: 3`**: L1 이상 중요한 결정은 현재 Goal에서 실제로 실행 가능한 materially distinct 대안을 **최소 3개** 확보한다. 현행 유지/재사용/흡수/최소 수정/구조 개선/신규 구축 중 해당되는 전략을 넓게 탐색한다.
+- 세 후보는 숫자를 채우기 위한 허수 대안이어서는 안 된다. 차이가 이름뿐이거나 실질적으로 같은 구현이면 하나의 대안으로 계산한다.
+- 처음에 세 후보가 보이지 않으면 조사 범위와 추상화 수준을 넓혀 `현행 유지`, `기존 것 재사용·흡수`, `구조 개선`, `신규 구축`, `외부 검증된 해법 채택` 등 전략적으로 다른 경로를 찾는다. 조사 뒤에도 구조적으로 세 실질 후보를 만들 수 없는 특수 제약이면 기준을 조용히 낮추지 말고 제한 사유와 탈락 증거를 기록해 `BLOCKED_UNVERIFIED` 또는 적절한 Decision Gate로 보낸다.
 - 벤치마킹·현업 조사·성공사례·실패사례는 한 사례를 모방하는 것이 아니라 작동 원리와 실패 조건을 추출한다.
 - 비교 기준은 작업 성격에 맞게 고르되 최소한 사용자/플레이어 가치, 정확성·기획 충실도, 위험, 수명주기 비용, 유지보수성, 되돌리기 난이도, 재사용·모듈성, 증거 강도, 현재 무료/구독 범위 적합성을 본다.
-- 5회 **적대적 검토**는 선택한 안뿐 아니라 탈락 후보와 비교 기준 자체의 왜곡도 공격한다.
+- **`BETTER_ALTERNATIVE_SEARCH`**: 최초 임시 권장안을 고른 뒤에도 새 테스트·실패·적대적 finding·환경 변화가 생기면 더 나은 방안이 나타났는지 다시 찾는다. 기존 결론을 방어하는 것이 목표가 아니다.
+- 더 나은 기술적 대안이 승인된 방향·범위 안에 있으면 근거와 함께 채택할 수 있다. 프로젝트 코어·플레이어 경험·중요 스토리 의미·비용·승인 범위를 바꾸면 `USER_DECISION_REQUIRED`로 올린다.
+- **`LONG_TERM_PLAN_FIT_REQUIRED`**: 최종 선택은 현재 작업만 통과하면 되는 것이 아니라 장기계획에 맞아야 한다. 최소한 수명주기 비용, 유지보수성, 되돌리기, 재사용/모듈화, 향후 Base 업데이트·정본 신선도, 사용자/플레이어 가치, 증거 강도, 현재 비용 경계를 재확인한다.
 - 단기 구현량이 작다는 이유만으로 장기 부채가 큰 안을 선택하지 않고, “장기적”이라는 명분으로 현재 Goal 밖의 과잉 플랫폼·Skill·도구를 만들지도 않는다.
-- 최종 권장안은 왜 다른 후보보다 **장기적으로 최선**인지, 어떤 조건에서 재검토해야 하는지와 함께 기록한다.
+- 최종 권장안은 왜 최소 3개 후보보다 **장기적으로 최선**인지, 어떤 조건에서 재검토해야 하는지와 함께 기록한다.
 
 ### `BENCHMARK_SYNTHESIS`
 
@@ -136,7 +147,11 @@ L1 이상 BUILD 전에 최소한 다음을 명시한다.
 expected_effects: []
 likely_problems: []
 mitigations: []
+considered_alternatives: []
 rejected_alternatives: []
+provisional_best_option:
+long_term_fit:
+revisit_conditions: []
 rollback: []
 acceptance_criteria: []
 verification_plan: []
@@ -400,63 +415,62 @@ NOT_RUN
 
 `WAITING_INTEGRATION`은 merge 증거가 아니다. `FAKE`와 `REAL`, repository CI와 사용자 PC runtime, provider transport와 제품 변경 권위를 구분한다.
 
-## 12. 정확히 5회의 적대적 검토
+## 12. 최소 5회의 전체 적대적 개선 루프
 
-### `FIVE_DISTINCT_ADVERSARIAL_ROUNDS`
+### `FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS`
 
-L1 이상 장기 작업의 최종 통합 검토는 **정확히 다섯 개의 서로 다른 공격면**으로 수행한다. 같은 질문을 다섯 번 반복하지 않는다.
+L1 이상 작업에서 적대적 검토를 실행하면 **전체 적대적 검토 생명주기를 최소 5회 반복**한다. 다섯 개의 서로 다른 관점이나 공격면을 하나씩 수행하는 방식이 아니다. 각 회차는 전체 승인 범위를 처음부터 다시 검토하며, 앞 회차의 수정 결과 자체도 새 공격 대상이다.
 
-### Round 1 — Intent / Assumptions / Scope
+한 회차의 필수 흐름:
 
-- 사용자 기획 의도를 편의상 재해석했는가
-- 승인 범위를 무단 확대/축소했는가
-- 큰 방향보다 세부 구현이 앞섰는가
-- 숨은 가정이 있는가
-
-### Round 2 — Canon / Ownership / Structure / Dependencies
-
-- 같은 사실을 두 정본이 소유하는가
-- Skill/Tool/Policy 역할이 겹치는가
-- stale generated/derived view가 정본처럼 보이는가
-- 참조·schema·consumer propagation이 누락됐는가
-
-### Round 3 — Failure / Security / Concurrency / Recovery
-
-- 실패 시 부분 상태가 남는가
-- port/worktree/branch/path ownership이 충돌하는가
-- retry가 중복 side effect를 만드는가
-- credential/secret/raw reasoning이 새는가
-- fail-closed 상태를 PASS로 오인하는가
-
-### Round 4 — Player Value / Benchmark / Cost / Maintainability
-
-- 실제 사용자/플레이어 가치가 있는가
-- 성공사례를 표면 복제했는가
-- 더 단순하고 검증된 대안이 있는가
-- 장기 유지비가 효과를 초과하는가
-- `ZERO_INCREMENTAL_COST_REQUIRED`를 깨는가
-
-### Round 5 — Regression / Evidence / Completion / Freshness
-
-- 변경 전 동작을 불필요하게 깨뜨렸는가
-- exact-head가 아닌 과거 성공을 재사용했는가
-- 테스트·runtime·Figma/tool evidence 상한을 과장했는가
-- merge 후 main readback과 successor/reference update가 빠졌는가
-- acceptance criterion 누락을 optional backlog로 숨겼는가
-
-각 Round는 다음을 기록한다.
-
-```yaml
-attack_hypothesis:
-evidence_checked: []
-findings: []
-severity: P0 | P1 | P2 | P3
-resolution: FIXED | REJECTED_CRITIQUE | DEFERRED_OPTIONAL | BLOCKED
-recheck:
-unresolved: []
+```text
+FULL_SCOPE_REVIEW
+→ FIND
+→ VALIDATE_CRITIQUE
+→ REFINE_APPROVED_FINDINGS
+→ VERIFY / REGRESSION_RECHECK
+→ BETTER_ALTERNATIVE_SEARCH
+→ LONG_TERM_PLAN_FIT_RECHECK
+→ RE-ATTACK RESULTING STATE
 ```
 
-병합 전 `P0=0`, `P1=0`이어야 한다. P2/P3도 acceptance criterion을 막으면 수정한다.
+각 회차의 `FULL_SCOPE_REVIEW`는 작업 성격에 적용되는 다음 전체 축을 함께 다시 본다.
+
+- 사용자 의도·기획 방향·승인 범위·숨은 가정
+- 정본·owner·Skill routing·중복·stale·schema·consumer·dependency
+- 실제 구현·데이터·자산·Tool/Runtime·Figma/구조화 데이터 경계
+- 실패 복구·부분 상태·branch/worktree/path/port·보안·secret·rollback
+- 사용자/플레이어 가치·벤치마킹·비용·수명주기 유지보수·모듈화
+- 정상 경로 회귀·evidence ceiling·exact-head·freshness·완료조건
+
+이 축들은 **매 회차 전부 확인하는 checklist**이며, 각각을 별도 회차로 계산하지 않는다.
+
+각 회차는 최소 다음을 기록한다.
+
+```yaml
+loop_index: 1..N
+input_state_or_head:
+evidence_delta: []
+full_scope_findings: []
+validated_findings: []
+changes_applied: []
+verification: []
+better_alternative_result:
+long_term_fit:
+unresolved: []
+output_state_or_head:
+```
+
+규칙:
+
+1. `FULL_LOOP_COUNT_MINIMUM: 5`. L1 이상에서 이 Skill을 적대적 검토로 실제 호출했다면 1~5회 전체 루프를 순서대로 닫는다. L0 단순 작업에 quota를 채우기 위해 Skill을 억지 호출하지 않는다.
+2. finding을 나열만 하고 개선하지 않은 상태는, 개선 권한과 증거가 있는 경우 해당 회차 완료가 아니다. `MUST_FIX`와 승인된 `SHOULD_FIX`는 분야 owner에서 개선·보완하고 실제 검증을 거쳐야 한다.
+3. 회차 N의 입력은 원칙적으로 회차 N-1의 **검증된 출력 상태**다. 앞 회차의 수정 결과가 새 충돌·누락을 만들었는지 다시 공격한다.
+4. 각 회차에서 새 증거가 생기면 `BETTER_ALTERNATIVE_SEARCH`를 다시 실행한다. 최소 3개 후보를 처음 비교했다는 이유로 이후 더 나은 경로 탐색을 멈추지 않는다.
+5. 각 회차에서 `LONG_TERM_PLAN_FIT_RECHECK`를 수행해 선택안이 장기계획·유지비·재사용·Base 변화·비용 경계에 계속 적합한지 확인한다.
+6. **5회차**에서도 전체 범위를 처음부터 다시 본다. 5회차 뒤 P0/P1 또는 acceptance criterion을 막는 finding이 남으면 횟수를 채웠다는 이유로 종료하지 않는다. finding을 수정·검증한 뒤 **추가 전체 루프**를 수행해 개선된 상태를 다시 공격한다.
+7. 새 더 나은 대안이 핵심 방향·승인 범위를 바꾸면 몰래 전환하지 않고 `USER_DECISION_REQUIRED`로 분리한다. 기술적으로 단일하며 기존 방향 안의 개선이면 승인된 연속작업 범위에서 반영할 수 있다.
+8. `NOT_RUN`, `BLOCKED_UNVERIFIED`, `CANCELLED`는 PASS가 아니다. 실행 증거가 없으면 회차의 해당 항목은 미검증으로 남긴다.
 
 ## 13. PR·병합·postmerge
 
@@ -469,7 +483,9 @@ unresolved: []
 - actual changed paths 확인
 - exact-head required checks
 - unresolved review thread 0
-- 다섯 Round P0/P1 0
+- 최소 5회의 **전체 적대적 개선 루프** evidence와 각 회차 개선·검증 연결
+- 최종 검증된 상태에서 `P0=0`, `P1=0`
+- `LONG_TERM_PLAN_FIT_REQUIRED` 최종 재판정
 - `NOT_RUN`/`BLOCKED_*` 과장 없음
 - rollback 확인
 

@@ -23,7 +23,11 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 ## 2. 작업 진입 게이트
 
 - L1 이상 작업은 최신 main, 현재 결정, 분야 정본, 같은 Goal의 열린·최근 병합 PR, 실제 구현을 비교해 중복·누락·충돌·구형 참조·미반영을 먼저 판정한다.
-- **`CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY`:** L1 이상 중요 작업은 한 방법을 먼저 정해 놓고 근거를 끼워 맞추지 않는다. 먼저 **현행 조사**로 실제 상태·기존 해법·제약·실패 사례를 확인하고, 현행 유지·재사용·최소 수정·구조 개선·신규 구축 등 현재 Goal에서 유효한 **여러 방법**을 다방면으로 펼친다. 그 뒤 벤치마킹·현업/실무 조사·성공사례·실패사례를 같은 평가 기준으로 비교하고, 5회의 서로 다른 **적대적 검토**를 거쳐 단기 구현량이 아니라 사용자/플레이어 가치·정확성·위험·수명주기 비용·유지보수·되돌리기 난이도·재사용성·증거 강도를 종합해 **장기적으로 최선**인 방안을 선택한다. 유효 대안이 실제로 하나뿐이면 형식상 가짜 대안을 만들지 말고 다른 후보가 탈락한 근거를 기록한다.**
+- **`CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY`:** L1 이상 중요한 설계·구현·정책 결정은 한 방법을 먼저 정해 놓고 근거를 끼워 맞추지 않는다. 먼저 **현행 조사**로 실제 상태·기존 해법·제약·실패 사례를 확인하고, 현행 유지·재사용·흡수·최소 수정·구조 개선·신규 구축 등 현재 Goal에서 실제로 가능한 **최소 3개**의 materially distinct 유효 대안을 확보해 동일 기준으로 비교한다. `MINIMUM_VIABLE_ALTERNATIVES: 3`. 숫자를 채우기 위한 허수 대안은 금지하며, 세 후보를 찾기 어렵다면 조사·추상화 수준을 넓혀 전략적으로 다른 실행 경로를 더 찾는다. 조사 뒤에도 세 실질 후보를 만들 수 없는 특수 제약이라면 임의로 기준을 낮추지 말고 그 제한과 탈락 근거를 `BLOCKED_UNVERIFIED` 또는 해당 Decision evidence로 남긴다.
+- **`BETTER_ALTERNATIVE_SEARCH`:** 최초 비교에서 권장안을 고른 뒤에도 새 증거·실패·검토 finding이 나오면 **더 나은 방안**이 생겼는지 다시 탐색한다. 기존 선택을 지키는 것이 목표가 아니며, 승인된 큰 방향을 보존하면서 더 강한 기술적 방법이 확인되면 근거와 함께 교체한다. 핵심 게임 방향·플레이어 경험·비용·범위를 바꾸는 더 나은 안이면 `USER_DECISION_REQUIRED`로 올린다.
+- **`LONG_TERM_PLAN_FIT_REQUIRED`:** 권장안은 단기 구현량뿐 아니라 **장기계획**에 적합한지 반드시 판정한다. 사용자/플레이어 가치, 정확성·기획 충실도, 위험, 수명주기 비용, 유지보수성, 되돌리기 난이도, 재사용·모듈성, Base의 향후 변화에 대한 신선도·호환성, 증거 강도, 현재 비용 경계를 함께 비교하고, 어떤 조건에서 권장안을 재검토해야 하는지도 기록한다.
+- **`FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS`:** L1 이상에서 적대적 검토를 실행할 때는 다섯 관점을 각각 한 번 보는 방식이 아니라, **전체 승인 범위에 대한 적대적 검토 → 충돌·누락·문제 발견 → 검증된 finding 개선·보완 → 실제 검증·회귀검사 → 개선된 상태 전체를 다시 적대적으로 공격**하는 완전한 개선 루프를 최소 5회 반복한다. 각 회차는 사용자 의도·정본·Skill/Tool/구조·실제 구현·데이터·테스트·실패복구·보안·동시성·비용·벤치마크·장기 유지·증거·완료조건을 전체적으로 다시 본다. 5회차 뒤에도 blocking finding이 남으면 횟수를 채웠다는 이유로 종료하지 않고 수정·검증 후 **추가 전체 루프**를 수행한다.
+- 벤치마킹·현업/실무 조사·성공사례·실패사례는 최소 3개 대안의 원리와 실패조건을 비교하는 근거로 사용하고, `ADOPT / ADAPT / REJECT`로 현재 환경 적합성을 판정한다. 외부 사례가 Base 요구사항 정본이 되지는 않는다.
 - **`ZERO_INCREMENTAL_COST_REQUIRED`:** Base와 Base를 적용한 프로젝트의 기본 실행 경로는 사용자의 추가 금전 지출을 만들지 않아야 한다. 이미 보유한 구독 기능도 해당 기능이 구독에 포함되고 별도 API·credit·marketplace·runner·storage·SaaS 같은 **separately metered** 과금으로 전환되지 않는 범위에서만 사용한다. `pay-as-you-go` API, 유료 credit, 신규 유료 구독·구매, 별도 과금 compute·runner·service는 사용자가 이 정책을 명시적으로 바꾸기 전에는 도입·실행하지 않는다. 비용 상태를 확정할 수 없으면 live call·구매·유료 실행을 하지 않고 `COST_GATE_BLOCKED`로 둔다. CI의 구체적 실행·비용 계층은 `docs/CI_EXECUTION_COST_POLICY.md`가 책임진다.**
 - **현재 유료 플랜 고정:** `CURRENT_PAID_PLANS: GPT_PRO, FIGMA_PRO`, `PAID_PLAN_COUNT: 2`. 현재 사용 가능한 유료 플랜은 **GPT Pro와 Figma Pro 두 개뿐**이다. 두 플랜 안의 기능도 별도 metered billing으로 전환되는 경로는 허용 범위가 아니다. 다른 유료 AI/API/SaaS/상위 플랜/marketplace/runner/compute/storage를 사용하거나 결제하려면 **새 사용자 승인**이 필요하다.
 - **Existing Solution First Gate:** 신규 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층은 현재 사용 도구·connected MCP·enabled addon·dependency·같은 Goal의 열린/최근 병합 PR·유지되는 외부 대안을 먼저 조사하고 `REUSE / ABSORB / REFACTOR / ARCHIVE / BUILD_NEW` 판정을 기록하기 전에는 설계·구현하지 않는다. Godot 관련 정본은 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`이며, 직접 제작 판단은 `evaluating-godot-assets-and-plugins-before-creation`이 소유한다.
@@ -65,19 +69,23 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 ```text
 DIRECTION_FIRST
 CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY
+MINIMUM_VIABLE_ALTERNATIVES: 3
 BENCHMARK_SYNTHESIS
+BETTER_ALTERNATIVE_SEARCH
+LONG_TERM_PLAN_FIT_REQUIRED
 EXPECTED_EFFECTS_RISKS_MITIGATIONS_BEFORE_BUILD
 SINGLE_INITIAL_APPROVAL_THEN_CONTINUE
-FIVE_DISTINCT_ADVERSARIAL_ROUNDS
+FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS
 REQUIRED_WORK_REMAINING
 FIGMA_DEFAULT_VISUAL_WORKSPACE
 CURRENT_PAID_PLANS: GPT_PRO, FIGMA_PRO
 PAID_PLAN_COUNT: 2
 ```
 
-- 전체 방향·의도·플레이어 가치와 실제 정본을 먼저 고정하고, 벤치마킹·실무사례·실패사례를 비교한 뒤 예상 효과·문제·보완·롤백을 BUILD 전에 제시한다.
+- 전체 방향·의도·플레이어 가치와 실제 정본을 먼저 고정하고, 최소 3개 실질 대안과 벤치마킹·실무사례·실패사례를 비교한 뒤 예상 효과·문제·보완·롤백을 BUILD 전에 제시한다.
+- 최초 권장안 뒤에도 새 증거·finding이 생기면 더 나은 방안을 다시 찾고, 선택안이 장기계획·유지보수·모듈화·비용·Base 신선도에 적합한지 재판정한다.
 - 완전한 작업 계약은 한 번 승인받고, 같은 범위의 구현·테스트·PR·적대적 검토·병합·postmerge는 routine approval로 멈추지 않는다. 핵심 방향 변경, 파괴적 migration, 비용·보안 권한 확대만 새 사용자 결정을 요구한다.
-- 최종 적대적 검토는 동일한 자기비판을 반복하지 않고 `의도/범위 → 정본/구조 → 실패/보안/동시성 → 플레이어 가치/벤치마크/비용 → 회귀/증거/완료`의 **정확히 5개 공격면**으로 실행한다.
+- 적대적 검토는 `전체 범위 공격 → finding 검증 → 개선·보완 → 실제 검증·회귀 → 개선된 전체 상태 재공격`의 **완전한 개선 루프를 최소 5회** 수행한다. 다섯 공격면으로 쪼개서 한 번씩 보는 것은 이 계약을 충족하지 않는다.
 - 완료는 승인된 acceptance criteria의 `REQUIRED_WORK_REMAINING: 0`으로 판정한다. 외부 차단과 선택 backlog는 별도 축으로 남긴다.
 - 게임 작업은 core loop·핵심 시스템·세계관/핵심 스토리라인 정합성·가역적 dummy `BALANCE_BUDGET`·playable build/test·재사용 가능한 모듈 경계를 함께 설계한다.
 - 새 시각 작업의 기본 협업면은 프로젝트별 Figma이며, balance/economy/schema/runtime config는 repo-native structured source를 사용한다. 기존 Google Sheets는 검증된 migration이 끝날 때까지 legacy proposal/migration source로 보존한다.
