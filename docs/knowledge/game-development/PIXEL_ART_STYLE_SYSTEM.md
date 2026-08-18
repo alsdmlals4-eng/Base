@@ -1,8 +1,8 @@
 # Pixel Art Style System
 
-> 역할: Base 공용 픽셀 아트 **분류·비교·선택 Reference**  
-> 실행 책임: 기존 `designing-art-prompts-and-technique-cards`, 프로젝트 Art/UX 책임자  
-> 시각 예시: `PIXEL_ART_VISUAL_REFERENCE_GALLERY.md`  
+> 역할: Base 공용 픽셀 아트 **분류·비교·선택 Reference**
+> 실행 책임: 기존 `designing-art-prompts-and-technique-cards`, 프로젝트 Art/UX 책임자
+> 시각 예시: `PIXEL_ART_VISUAL_REFERENCE_GALLERY.md`
 > 프로젝트 정본: 각 프로젝트의 승인된 Art Bible·Visual Bible·Decision
 
 ## 1. 목적과 권위 경계
