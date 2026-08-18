@@ -116,6 +116,7 @@ DETAIL_MOTION: MID_32_48_FLUID_KEY_ACTIONS
 | `PAINTERLY_PIXEL` | 픽셀 단위 제어를 유지하며 회화적 면·광원 사용 | 생산비 증가 |
 | `HD_PIXEL` | 큰 캔버스에서 픽셀 구조와 세부 묘사를 유지 | 애니메이션 비용 폭증 |
 | `HYBRID_RENDERED` | 3D/벡터/렌더 기반 결과를 팔레트·픽셀 규칙으로 변환 | 프레임 간 픽셀 일관성 붕괴 |
+| `PIXEL_DEPTH_LIT_HYBRID` | 픽셀 주체와 깊이·광원·고해상도 공간 표현을 결합 | 조명/카메라가 픽셀 주체를 압도 |
 
 ### 3.2 `CHARACTER_SHAPE`
 
@@ -145,28 +146,32 @@ DETAIL_MOTION: MID_32_48_FLUID_KEY_ACTIONS
 
 Preset은 시작점을 빠르게 찾기 위한 **조합 예시**다. 프로젝트에서는 그대로 채택하지 말고 5축 값을 조정한다. 시각 예시는 `PIXEL_ART_VISUAL_REFERENCE_GALLERY.md`에서 같은 이름으로 찾는다.
 
+`제작비`는 프로젝트 Template과 같은 `LOW | MEDIUM | HIGH` 3단계만 사용한다. 세부 사유는 프로젝트 기록에 적는다. 예를 들어 3D-to-Pixel은 초기 setup이 HIGH이고 반복 프레임 비용이 낮아질 수 있지만, 후보 비교에서는 총 파이프라인 비용을 `HIGH`로 둔다.
+
 | Preset | 대표 조합 | 잘 맞는 경우 | 제작비 | 주요 위험 |
 |---|---|---|---|---|
 | **1-Bit Graphic Pixel** | ONE_BIT + SILHOUETTE_FIRST + MONO | 공포 기록, 퍼즐, 아이콘, 특수 구간 | LOW | 긴 플레이에서 단조로움 |
 | **4-Tone Handheld Pixel** | LIMITED_INDEXED + HANDHELD_4_TONE | 회상, 휴대기기 감성, 규칙이 단순한 화면 | LOW | 상태 구분 색 부족 |
 | **8-Bit Limited Palette** | LIMITED_INDEXED + MICRO_8_16 | 대량 타일, 고전 액션·RPG | LOW | 개성·재질 표현 부족 |
 | **16-Bit Rich Pixel** | CLEAN_CLUSTER + HEROIC_RICH + CLASSIC_16_32 | RPG, 제작·탐험, 캐릭터 중심 2D | MEDIUM | 색 과다·클러터 |
-| **Clean Cluster Pixel** | CLEAN_CLUSTER + PROJECT_CUSTOM | 대부분의 읽기 우선 픽셀 게임 | LOW_MEDIUM | 지나친 균질화 |
+| **Clean Cluster Pixel** | CLEAN_CLUSTER + PROJECT_CUSTOM | 대부분의 읽기 우선 픽셀 게임 | MEDIUM | 지나친 균질화 |
 | **Dithered Texture Pixel** | DITHERED + LIMITED_INDEXED | 사막, 안개, 낡음, 거친 재질 | MEDIUM | 축소 노이즈 |
 | **Soft No-Outline Pixel** | SOFT_NO_OUTLINE + COZY_PASTEL | 힐링, 자연, 부드러운 환경 | MEDIUM | 배경과 실루엣 합쳐짐 |
 | **Hard-Outline Comic Pixel** | HARD_OUTLINE + SILHOUETTE_FIRST | 전투, 캐릭터 액션, 작은 화면 | MEDIUM | 화면이 무거워짐 |
 | **Chibi Pixel** | CHIBI + MID_32_64 | 육성, 수집, 경쾌한 RPG | MEDIUM | 진지한 감정의 무게 감소 |
-| **Anime / JRPG Pixel** | ANIME_COMPACT + CLEAN_CLUSTER | 캐릭터 정체성·파티·무협/판타지 | MEDIUM_HIGH | 표정·의상 변형 비용 |
+| **Anime / JRPG Pixel** | ANIME_COMPACT + CLEAN_CLUSTER | 캐릭터 정체성·파티·무협/판타지 | HIGH | 표정·의상 변형 비용 |
 | **HD Pixel** | HD_PIXEL + HD_64_PLUS | 대표 캐릭터·장비·풍경의 세부 묘사 | HIGH | 프레임 애니메이션 비용 |
 | **Painterly Pixel** | PAINTERLY_PIXEL + HD_64_PLUS | 분위기·광원·풍경이 핵심 경험 | HIGH | 반복 자산 일관성 |
 | **Pixel Noir** | CLEAN_CLUSTER/DITHERED + NOIR | 미스터리, 도시, 오컬트, 탐정 | MEDIUM | 암부 가독성 |
-| **Gothic Pixel** | HARD_OUTLINE/DITHERED + GOTHIC | 다크 판타지, 묘지, 저주, 공포 | MEDIUM_HIGH | 장식 과잉 |
+| **Gothic Pixel** | HARD_OUTLINE/DITHERED + GOTHIC | 다크 판타지, 묘지, 저주, 공포 | HIGH | 장식 과잉 |
 | **Cozy Pastel Pixel** | SOFT_NO_OUTLINE + COZY_PASTEL | 힐링, 생활, 수집 | MEDIUM | 상태 신호 약화 |
 | **Neon Pixel** | CLEAN_CLUSTER + NEON | 사이버, 야간 도시, 위험 신호 | MEDIUM | 눈부심·색 접근성 |
 | **Isometric Pixel** | CLEAN_CLUSTER + ISOMETRIC | 건설, 경영, 공간 퍼즐 | HIGH | 타일·방향 자산량 증가 |
-| **Tactical Top-down Pixel** | SILHOUETTE_FIRST + TACTICAL + CLASSIC_16_32 | 전략, 오토배틀, 다수 유닛 | LOW_MEDIUM | 캐릭터 감정 표현 약함 |
-| **3D-to-Pixel Hybrid** | HYBRID_RENDERED + RENDER_ASSISTED_MOTION | 회전·다방향·액션 프레임 생산을 안정화 | HIGH_SETUP_MEDIUM_REPEAT | 픽셀 문법 불일치 |
-| **HD-2D Hybrid** | PIXEL_SUBJECT + DEPTH_LIGHTING_HYBRID | 픽셀 주체와 깊이·광원·공간감을 동시에 강조 | HIGH | 렌더/조명 복잡도·정체성 분산 |
+| **Tactical Top-down Pixel** | SILHOUETTE_FIRST + TACTICAL + CLASSIC_16_32 | 전략, 오토배틀, 다수 유닛 | MEDIUM | 캐릭터 감정 표현 약함 |
+| **3D-to-Pixel Hybrid** | HYBRID_RENDERED + RENDER_ASSISTED_MOTION | 회전·다방향·액션 프레임 생산을 안정화 | HIGH | setup·후처리·픽셀 문법 일치 비용 |
+| **HD-2D Hybrid** | PIXEL_DEPTH_LIT_HYBRID + DEPTH_LIGHTING | 픽셀 주체와 깊이·광원·공간감을 동시에 강조 | HIGH | 렌더/조명 복잡도·정체성 분산 |
+
+`HD-2D Hybrid`는 탐색 편의를 위한 발견용 이름이다. Base의 canonical 조합명은 `PIXEL_DEPTH_LIT_HYBRID`이며, 특정 회사·제품의 브랜드 표현이나 서명적 화면을 복제하는 지시로 사용하지 않는다. 생성 모델의 공식 style 명령어로도 취급하지 않는다.
 
 ## 5. 프로젝트에서 사용하는 순서
 
