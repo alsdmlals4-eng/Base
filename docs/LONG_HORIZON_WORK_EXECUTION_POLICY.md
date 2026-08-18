@@ -18,6 +18,7 @@
 
 ```text
 DIRECTION_FIRST
+CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY
 BENCHMARK_SYNTHESIS
 EXPECTED_EFFECTS_RISKS_MITIGATIONS_BEFORE_BUILD
 SINGLE_INITIAL_APPROVAL_THEN_CONTINUE
@@ -26,6 +27,8 @@ INDEPENDENT_WORKSTREAM_ISOLATION
 OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT
 EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION
 ZERO_INCREMENTAL_COST_REQUIRED
+CURRENT_PAID_PLANS: GPT_PRO, FIGMA_PRO
+PAID_PLAN_COUNT: 2
 FIVE_DISTINCT_ADVERSARIAL_ROUNDS
 POSTMERGE_PROMOTION_AND_SUPERSESSION
 CORE_LOOP_DUMMY_BALANCE_BUILD_TEST
@@ -49,6 +52,7 @@ REQUIRED_WORK_REMAINING: 0
 RESEARCH
 → CURRENT STATE / OPEN PR RECONCILIATION
 → DIRECTION / INTENT
+→ MULTI-OPTION TRADE STUDY
 → BENCHMARK SYNTHESIS
 → EXPECTED EFFECTS / RISKS / MITIGATIONS
 → ONE USER APPROVAL
@@ -71,7 +75,30 @@ RESEARCH
 
 작업 시간이 길어져도 방향·제약·정본·검증이 누락되는 것보다 낫다. 반대로 “꼼꼼함”을 이유로 불필요한 문서·Skill·승인 Gate를 늘리지 않는다.
 
-## 3. 벤치마킹과 재해석
+## 3. 벤치마킹·현행 조사·대안 비교
+
+### `CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY`
+
+L1 이상 중요 작업은 한 가지 해법을 먼저 선택한 뒤 벤치마킹으로 정당화하지 않는다. **현행 조사 → 여러 방법 탐색 → 동일 기준 비교 → 적대적 검토 → 장기적으로 최선인 선택** 순서를 기본으로 한다.
+
+```text
+current-state evidence
+→ existing solution / no-change option when viable
+→ reuse / minimal-fix / structural-improvement / build-new alternatives
+→ benchmark + industry practice + success/failure cases
+→ trade criteria comparison
+→ five distinct adversarial rounds
+→ long-term recommendation
+```
+
+- **현행 조사**는 최신 `main`, 실제 구현, 현재 정본, 열린·최근 병합 PR, 테스트·실패 증거, Tool/Runtime 상태와 비용 제약을 읽고 시작한다.
+- **여러 방법**은 숫자를 채우기 위한 가짜 후보가 아니라 현재 Goal에서 실제로 가능한 대안만 둔다. 현행 유지/재사용/흡수/최소 수정/구조 개선/신규 구축 중 해당되는 후보를 펼친다.
+- 중요 결정에는 가능하면 둘 이상의 유효 대안을 비교한다. 유효 대안이 하나뿐이면 억지 후보를 만들지 말고 나머지 접근이 탈락한 근거를 기록한다.
+- 벤치마킹·현업 조사·성공사례·실패사례는 한 사례를 모방하는 것이 아니라 작동 원리와 실패 조건을 추출한다.
+- 비교 기준은 작업 성격에 맞게 고르되 최소한 사용자/플레이어 가치, 정확성·기획 충실도, 위험, 수명주기 비용, 유지보수성, 되돌리기 난이도, 재사용·모듈성, 증거 강도, 현재 무료/구독 범위 적합성을 본다.
+- 5회 **적대적 검토**는 선택한 안뿐 아니라 탈락 후보와 비교 기준 자체의 왜곡도 공격한다.
+- 단기 구현량이 작다는 이유만으로 장기 부채가 큰 안을 선택하지 않고, “장기적”이라는 명분으로 현재 Goal 밖의 과잉 플랫폼·Skill·도구를 만들지도 않는다.
+- 최종 권장안은 왜 다른 후보보다 **장기적으로 최선**인지, 어떤 조건에서 재검토해야 하는지와 함께 기록한다.
 
 ### `BENCHMARK_SYNTHESIS`
 
@@ -487,9 +514,15 @@ optional_backlog: []
 
 기본 실행은 추가 결제 없는 경로만 사용한다.
 
-- 현재 사용자가 이미 보유한 GPT Pro/Figma Pro 범위는 사용할 수 있다.
+```text
+CURRENT_PAID_PLANS: GPT_PRO, FIGMA_PRO
+PAID_PLAN_COUNT: 2
+```
+
+- 현재 사용 가능한 유료 플랜은 **GPT Pro와 Figma Pro 정확히 두 개**다.
+- 두 플랜 안에서 이미 포함된 기능은 사용할 수 있지만, 별도 API·credit·metered billing·marketplace·runner·compute·storage·추가 SaaS 과금으로 넘어가면 허용 범위 밖이다.
+- GPT Pro/Figma Pro 외의 새로운 유료 AI/API/SaaS/상위 플랜/유료 add-on을 도입·실행·결제하려면 **새 사용자 승인**이 필요하다.
 - 별도 pay-as-you-go API, credit, 추가 SaaS, 유료 marketplace, 신규 유료 runner/compute/storage는 자동 도입하지 않는다.
-- 기존 구독 기능이라도 별도 metered billing으로 전환되면 차단한다.
 - 비용 상태가 불명확하면 결제·live paid call을 실행하지 않고 `COST_GATE_BLOCKED`로 둔다.
 
 ## 16. Base 업데이트에 대한 신선도
