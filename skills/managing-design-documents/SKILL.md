@@ -84,6 +84,8 @@ Word 검토 → 선언한 경우의 선택 DOCX
 Google Sheets → COMPATIBILITY_ONLY migration source
 ```
 
+repository의 등록된 Markdown·JSON structured source는 시스템 규칙·예외·수치의 **상세 책임 원본**이며, Notion 사람용 표·시각 표현은 그 machine data를 독립적으로 재구현하지 않는다.
+
 한 질문에는 **도메인별 active owner 하나**만 둔다. 같은 서술을 Markdown과 JSON 양쪽에 독립 원본으로 복제하지 않고, Notion의 사람용 표·시각 표현도 machine data를 독립적으로 재구현하지 않는다.
 
 GitHub 댓글·Issue·PR·Discussion은 승인 결정의 추적 근거이지 최종 책임 원본의 대체물이 아니다. Notion은 사람용 도메인의 정본이며 runtime proof는 아니다. repository는 구조화/구현 도메인의 정본이며 사람이 raw Markdown·JSON을 직접 읽어야만 프로젝트를 이해하도록 강제하지 않는다.
