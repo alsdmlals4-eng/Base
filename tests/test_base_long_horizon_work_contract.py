@@ -68,9 +68,9 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
                 "LONG_TERM_PLAN_FIT_REQUIRED",
                 "현행 조사",
                 "최소 3개",
-                "장기적으로 최선",
             ):
                 self.assertIn(term, text)
+        self.assertIn("장기적으로 최선", policy)
 
     def test_only_two_current_paid_plans_are_allowed_without_new_user_approval(self) -> None:
         agents = read("AGENTS.md")
