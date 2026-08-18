@@ -43,6 +43,20 @@ approval_decision:
 
 키워드만 있는 “귀엽고 아름다운 판타지”는 Art Direction 계약이 아니다.
 
+### 2.0.1 Pixel Art 후보 Reference
+
+픽셀 아트가 프로젝트의 주 스타일·부분 스타일 후보라면 이 Guide의 플레이어 경험·Visual Pillar·실루엣·Color·Value·Composition 판단을 그대로 유지한 채 `PIXEL_ART_STYLE_SYSTEM.md`와 `PIXEL_ART_VISUAL_REFERENCE_GALLERY.md`를 **조건부 Reference**로 읽는다.
+
+```text
+ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md
+→ PIXEL_ART_STYLE_SYSTEM.md
+→ PIXEL_ART_VISUAL_REFERENCE_GALLERY.md
+→ 프로젝트별 최소 3개 실질 후보 비교
+→ 프로젝트 Art Bible/Decision 승인
+```
+
+Base의 Pixel Art Preset과 외부 예시는 프로젝트 정본이 아니며, 기존 승인 Art Bible을 자동 교체하거나 `PROJECT_ASSET_APPROVED`를 부여하지 않는다. 프로젝트 선택 시에는 현행 유지·비픽셀·하이브리드도 유효 대안이면 함께 비교하고, 결정 직전 더 나은 대안을 재탐색하며 장기 제작비·반복 생산성·롤백을 재검토한다.
+
 ## 2.1 Visual Requirement Gate
 
 프로젝트에서 이미지·아이콘·일러스트·UI 컴포넌트·VFX·마케팅 시각물을 후보로 떠올렸다는 이유만으로 바로 제작하지 않는다. 먼저 **무엇을 왜 만들어야 하는지**를 같은 기준으로 판정한다.
