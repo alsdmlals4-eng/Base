@@ -69,6 +69,12 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             loop_doc,
         )
 
+    def test_loop_preserves_package_and_product_selection_as_distinct_human_gates(self) -> None:
+        loop_doc = read("docs/LOOP_ENGINEERING_A2_RUNTIME.md")
+        self.assertIn("AUTOMATIC_PACKAGE_SELECTION: FORBIDDEN", loop_doc)
+        self.assertIn("AUTOMATIC_PRODUCT_SCOPE_SELECTION: FORBIDDEN", loop_doc)
+        self.assertIn("둘은 서로 다른 권한 경계", loop_doc)
+
     def test_sparse_skill_routing_is_wired_without_expanding_registry(self) -> None:
         guide = ROOT / "docs/knowledge/ai/SKILL_ROUTING_PRECISION_GUIDE.md"
         self.assertTrue(guide.exists())
