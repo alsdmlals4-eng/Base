@@ -8,7 +8,11 @@
     "version": "9.1.0"
   },
   "compatibility": {"cycle": "ONE_CYCLE", "legacy_inputs": {}, "views": []},
-  "gdd_sheet": {"role": "USER_FACING_GDD_WORKSPACE", "sync_status": "NOT_CONFIGURED"},
+  "gdd_sheet": {
+    "role": "GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE",
+    "sync_status": "NOT_CONFIGURED",
+    "workspace_status": "MIGRATION_COMPATIBILITY_SURFACE"
+  },
   "project": {
     "engine": "Godot 4.7",
     "project_id": "replace-with-canonical-project-id",
