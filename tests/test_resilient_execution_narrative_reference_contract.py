@@ -39,8 +39,8 @@ class ResilientExecutionNarrativeReferenceContractTests(unittest.TestCase):
         for term in (
             "docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md",
             "FRESH_SHELL_ASSUMPTION",
+            "$Stage = '0/4 LOCATION'",
             "Set-Location",
-            "[0/4 LOCATION]",
         ):
             self.assertIn(term, readme)
         location_index = readme.index("Set-Location")
