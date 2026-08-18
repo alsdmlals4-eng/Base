@@ -75,16 +75,16 @@ External sources do not become Base authority. They were used to challenge the d
 
 | Source | Observed principle | Base disposition |
 |---|---|---|
-| NASA Systems Engineering Handbook — Decision Analysis / Analysis of Alternatives (`https://www.nasa.gov/reference/6-8-decision-analysis/`, `https://www.nasa.gov/reference/system-engineering-handbook-appendix/`) | define alternatives, criteria, evaluation methods/results, cost/risk and recommendation instead of starting from one preferred answer | `ADAPT`: material Base decisions must compare viable alternatives before commitment; complexity of the trade study should match the decision |
-| NASA System Design Processes (`https://www.nasa.gov/reference/4-0-system-design-processes/`) | evaluate alternative designs against effectiveness, achievability, cost, schedule and risk; rank and drop weaker alternatives | `ADAPT`: use user/player value, correctness, cost, risk, reversibility, maintenance and evidence as trade criteria |
-| DORA — Working in small batches (`https://dora.dev/capabilities/working-in-small-batches/`) | small independent batches improve feedback and counter AI-assisted delivery instability | `ADOPT`: repository-wide discovery can be broad, implementation remains bounded/testable |
-| Google Engineering Practices — Small CLs (`https://google.github.io/eng-practices/review/developer/small-cls.html`) | small changes are easier to review deeply, reason about, merge and roll back | `ADOPT`: do not turn a Base-wide audit into one opaque unrelated mega-change |
+| NASA Systems Engineering Handbook — Decision Analysis / Analysis of Alternatives (`https://www.nasa.gov/reference/6-8-decision-analysis/`, `https://www.nasa.gov/reference/system-engineering-handbook-appendix/`) | define alternatives, criteria, evaluation methods/results, cost/risk and recommendation instead of starting from one preferred answer; analysis depth should fit decision complexity | `ADAPT`: material Base decisions compare viable alternatives before commitment without forcing a heavyweight report on trivial work |
+| NASA System Design Processes (`https://www.nasa.gov/reference/4-0-system-design-processes/`) | evaluate alternative designs against effectiveness, achievability, cost, schedule and risk; select the best alternative | `ADAPT`: use user/player value, correctness, life-cycle cost, risk, reversibility, maintenance and evidence as trade criteria |
+| DORA — Working in small batches (`https://dora.dev/capabilities/working-in-small-batches/`) | small independent batches improve feedback and counter instability as AI accelerates development | `ADOPT`: repository-wide discovery can be broad, implementation remains bounded/testable |
+| Google Engineering Practices — Small CLs (`https://google.github.io/eng-practices/review/developer/small-cls.html`) | small self-contained changes are easier to review deeply, reason about, merge and roll back | `ADOPT`: do not turn a Base-wide audit into one opaque unrelated mega-change |
 | Git `git-worktree` documentation (`https://git-scm.com/docs/git-worktree`) | one repository can support multiple linked working trees for different branches | `ADOPT`: isolated worktrees/branches are the standard concurrency mechanism; ownership still needs Base policy |
-| Figma plan/branching documentation (`https://help.figma.com/hc/en-us/articles/360040328273-Team-plans-in-Figma`, `https://help.figma.com/hc/en-us/articles/360063144053-Guide-to-branching`) | Professional has unlimited version history; Branching/Merging is Organization/Enterprise | `ADAPT`: Figma Professional workflow uses Pages/Sections, lifecycle states and version history; branching is optional only when actually available |
+| Figma plan/branching documentation (`https://help.figma.com/hc/en-us/articles/360040328273-Team-plans-in-Figma`, `https://help.figma.com/hc/en-us/articles/360063144053-Guide-to-branching`) | Professional has unlimited version history; Branching/Merging is Organization/Enterprise | `ADAPT`: current Figma Pro workflow uses Pages/Sections, lifecycle states and version history; branching is optional only when actually available |
 
 ## 4. Test-first evidence
 
-Test-only head:
+Initial test-only head:
 
 ```text
 307dd6b8701be9a079b2b25e0018803d871f46a4
@@ -103,77 +103,119 @@ Adversarial validation rejected the naive interpretation that both missing token
 - current `AGENTS.md` already requires latest main/current decisions/actual implementation and valid alternatives; long-horizon policy already requires multiple benchmark/practice/failure cases and `ADOPT / ADAPT / REJECT`.
 - current visual policy already says Library use depends on plan/permission and rollback uses `version history 또는 사용 가능한 branch/checkpoint`; therefore Figma Branching is not a required Professional-plan dependency.
 
-The test was corrected to lock the **existing composed owners** instead of manufacturing duplicate authority. Corrected test head begins at `ce0ab2d5ed2ec4e0088bce5ea185eb56ab891c41`.
+The test was corrected to lock the **existing composed owners** instead of manufacturing duplicate authority. Corrected test head began at `ce0ab2d5ed2ec4e0088bce5ea185eb56ab891c41`.
+
+### User-clarified invariant TDD
+
+The user then made two requirements explicit:
+
+1. work should always use current-state research and benchmarking to consider multiple viable methods from multiple angles, then use adversarial review to select the long-term best method;
+2. the currently owned paid plans are exactly GPT Pro and Figma Pro, two plans total.
+
+A fresh test-only head was created:
+
+```text
+4984e8a37d9ab1e71830e7ad9036532ea127c3a9
+Validate Base Long-Horizon Work Contract run: 32109703237
+result: RED
+```
+
+The RED was expected because the previous Base expressed related principles but did not expose these two requirements as stable explicit contracts in both the top-level invariant and long-horizon execution policy.
+
+Production implementation then added:
+
+```text
+CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY
+CURRENT_PAID_PLANS: GPT_PRO, FIGMA_PRO
+PAID_PLAN_COUNT: 2
+```
+
+Implementation head after both policy surfaces were updated:
+
+```text
+b3682418deb763de1460e46901ddc003a50441db
+```
+
+On that exact head, the focused Long-Horizon contract, Base-v9 contract, and Game UX/UI workflow were observed `success`; the final GPO gate was still running at the time this snapshot section was written. This is a historical observation, not permission to reuse stale CI for a later head.
 
 ## 5. Exactly five executed adversarial rounds
 
 ### Round 1 — Intent / assumptions / scope
 
-**Attack hypothesis:** The latest user requirement could be distorted into “always perform a heavy formal benchmark report and create more Skills,” increasing ceremony rather than decision quality.
+**Attack hypothesis:** The requirement could be distorted into “always perform a heavy formal benchmark report and create more Skills,” increasing ceremony rather than decision quality.
 
-**Evidence checked:** user requirement, `AGENTS.md`, long-horizon policy, current Skill ownership.
+**Evidence checked:** user requirement, `AGENTS.md`, long-horizon policy, current Skill ownership, NASA guidance that decision-analysis rigor should fit decision complexity.
 
 **Finding:** `P1` if implemented as a new broad Skill or mandatory fixed-size report.
 
-**Disposition:** `FIXED_BY_DESIGN`. Preserve sparse owners. Material decisions require real current-state/alternatives/benchmark evidence; trivial L0 mechanical work does not manufacture a trade study.
+**Disposition:** `FIXED_BY_DESIGN`. Preserve sparse owners. L1+ material decisions require real current-state/alternatives/benchmark evidence; L0 mechanical work does not manufacture a trade study. Valid alternatives are compared; fake alternatives are forbidden.
 
-**Recheck:** regression test now checks existing owner composition rather than a new broad owner.
+**Recheck:** regression test locks the composed owners and the explicit `CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY` contract.
 
 **Status:** `PASS`.
 
 ### Round 2 — Canon / structure / dependency
 
-**Attack hypothesis:** Adding another evidence/benchmark policy would create a second canon and duplicate claim-verification semantics.
+**Attack hypothesis:** Adding another evidence/benchmark policy or cost owner would create a second canon and duplicate claim-verification semantics.
 
 **Evidence checked:** `AGENTS.md`, `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`, adversarial Skill, `claim-and-intent-verification.md`, Skill Registry model.
 
-**Finding:** existing owners already divide responsibility correctly: planning/alternatives in entry+long-horizon; attack in adversarial review; material evidence in claim verification.
+**Findings:**
 
-**Disposition:** `REJECTED_CRITIQUE` for a new broad policy/Skill. Add regression coverage and this evidence record instead.
+- existing owners already divide responsibility correctly: top-level invariant/entry in `AGENTS.md`, long-horizon detailed execution in its policy, attack in adversarial review, material evidence in claim verification;
+- the paid-plan statement is intentionally mirrored in the top-level invariant and long-horizon machine contract so drift is caught by regression rather than creating an independent third authority.
+
+**Disposition:** `REJECTED_CRITIQUE` for a new broad policy/Skill or standalone paid-plan system. Use the existing authority chain and regression tests.
 
 **Status:** `PASS`.
 
 ### Round 3 — Failure / security / concurrency / recovery
 
-**Attack hypothesis:** Postmerge follow-up could mutate main directly, reuse stale CI, or mix stale Dependabot history into the governance fix.
+**Attack hypothesis:** Postmerge follow-up could mutate main directly, reuse stale CI, mix stale Dependabot history into the governance fix, or silently spend money through a feature nested inside an allowed subscription.
 
-**Evidence checked:** main SHA, new isolated branch, PR #517, #496 compare, exact test run.
+**Evidence checked:** main SHA, isolated branch, PR #517, #496 compare, exact test runs, cost wording.
 
 **Findings:**
 
 - #517 started from exact merged main and uses its own branch.
-- #496 is 14 commits behind current main and one commit ahead, so whole-branch merge is unsafe/stale even though its material delta is only `requirements-publication.txt`.
-- cancelled/old workflow evidence is not being reused as current-head PASS.
+- #496 is 14 commits behind the #516-era main snapshot and one commit ahead, so whole-branch merge is unsafe/stale even though its material delta is only `requirements-publication.txt`.
+- cancelled/old workflow evidence is not reused as current-head PASS.
+- `GPT Pro`/`Figma Pro` being allowed does not authorize separately metered API, credits, marketplace, runner, compute, storage, or a higher paid tier.
 
-**Disposition:** keep #496 out of #517; evaluate its one-line material dependency delta separately after governance closeout. No force/direct-main/bypass.
+**Disposition:** keep #496 out of #517; evaluate its one-line material dependency delta separately after governance closeout. No force/direct-main/bypass. New paid routes require fresh user approval.
 
 **Status:** `PASS`.
 
 ### Round 4 — Value / benchmark / cost / maintainability
 
-**Attack hypothesis:** “More research” can increase latency and maintenance without improving decisions; Figma guidance can accidentally assume a higher paid tier.
+**Attack hypothesis:** “More research” can increase latency and maintenance without improving decisions; a formal trade study can become ritual; Figma guidance can accidentally assume a higher paid tier.
 
-**Evidence checked:** NASA trade studies, DORA small batches, Google small CLs, Figma official plan/branching docs, current visual policy/profile.
+**Evidence checked:** NASA Decision Analysis/AoA, DORA small batches, Google small CLs, Figma official plan/branching docs, current visual policy/profile.
 
 **Findings:**
 
-- multiple alternatives and explicit criteria improve material decisions, but the analysis method should scale with decision complexity;
-- implementation should remain in bounded batches even when discovery is repository-wide;
-- Figma Professional does not provide Branching/Merging, but Base already makes branch/checkpoint conditional and uses Pages/Sections + version history as the normal organization/recovery path.
+- NASA supports defining alternatives and criteria before recommendation and explicitly says the analysis method should fit decision complexity;
+- DORA and Google support bounded, self-contained implementation units for feedback, review and rollback;
+- Figma Professional does not provide Branching/Merging, but Base already makes branch/checkpoint conditional and uses Pages/Sections + version history as the normal organization/recovery path;
+- long-term selection should include life-cycle cost and supportability, not only immediate implementation size.
 
-**Disposition:** `ADOPT` multi-option trade study for material decisions, `ADOPT` small-batch implementation, `REJECT` mandatory Figma branching, `REJECT` additional paid tool/API.
+**Disposition:** `ADOPT` multi-option trade study for material decisions, `ADOPT` small-batch implementation, `REJECT` fixed-count fake alternatives, `REJECT` mandatory Figma branching, `REJECT` additional paid tool/API without new approval.
 
 **Status:** `PASS`.
 
 ### Round 5 — Regression / evidence / completion / freshness
 
-**Attack hypothesis:** “Benchmarking and adversarial review happened” could remain only prose while the actual repository contracts or exact-head tests do not prove it.
+**Attack hypothesis:** “Benchmarking and adversarial review happened” could remain only prose while actual contracts or exact-head tests do not prove it; current paid-plan facts could drift later.
 
-**Evidence checked:** before/after commit compare, exact source files, Tool Hub Windows smoke test, Loop current checkpoint, #516 merged main readback, #517 test-only RED.
+**Evidence checked:** before/after commit compare, exact source files, Tool Hub Windows smoke test, Loop current checkpoint, #516 merged main readback, #517 RED/implementation heads, current tests.
 
-**Finding:** historical #516 review evidence correctly recorded its at-the-time pending gate but is not a current operational status authority. A follow-up snapshot must clearly declare itself historical and direct current status checks back to repository main/PR/workflows.
+**Findings:**
 
-**Disposition:** this record uses `SNAPSHOT_ROLE: HISTORICAL_EVIDENCE_NOT_CURRENT_STATUS`. Completion of #517 still requires fresh exact-head GREEN, unresolved threads 0, merge, and postmerge main readback.
+- historical #516 review evidence correctly recorded its at-the-time pending gate but is not a current operational status authority;
+- a current paid-plan snapshot is intentionally phrased as “current” and remains subordinate to the user’s latest instruction; if the plans change, Base must be updated rather than pretending the old count remains current;
+- exact-head regression tests now require the explicit trade-study and paid-plan boundaries.
+
+**Disposition:** this record uses `SNAPSHOT_ROLE: HISTORICAL_EVIDENCE_NOT_CURRENT_STATUS`; current repository/PR/workflow readback remains authoritative. Completion of #517 still requires a fresh exact-head GREEN after this evidence update, unresolved threads 0, merge, and postmerge main readback.
 
 **Status:** `PASS_WITH_PROCEDURAL_GATE_PENDING`.
 
@@ -183,7 +225,7 @@ The test was corrected to lock the **existing composed owners** instead of manuf
 P0_remaining: 0
 P1_design_or_code_remaining: 0
 procedural_gate:
-  - exact-head CI for PR #517
+  - exact-head CI for PR #517 after final evidence update
   - unresolved review threads == 0
   - normal merge
   - postmerge main readback
