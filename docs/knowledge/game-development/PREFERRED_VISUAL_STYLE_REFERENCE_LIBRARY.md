@@ -1,21 +1,23 @@
 # Preferred Visual Style Reference Library
 
-> 역할: 사용자가 반복적으로 선호한 시각 특성을 Base 공용 Reference로 구조화한다.
+> 역할: 사용자가 반복적으로 선호한 시각 특성과 검증된 현업 원리를 Base 공용 Reference로 구조화한다.
 > 권위: `REFERENCE_ONLY · NOT_PROJECT_CANON · NOT_PROJECT_ASSET_APPROVED`
 > 연결: `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md` → `PIXEL_ART_STYLE_SYSTEM.md` → 이 Library → 프로젝트 Art Bible / Visual Bible Decision
+> 지속 탐색: `VISUAL_STYLE_SOURCE_RADAR.md` — 기존 `PERIODIC_SPECIALTY_SOURCE_RADAR.md`의 bounded child reference
 > Figma workspace: https://www.figma.com/design/AEYEulNSiobxpCZckun27I
-> Figma image status: `BLOCKED_TRANSPORT` — 스타일군 페이지/평가 구조는 생성됐지만, 현재 연결의 raster upload 전송은 완료되지 않았다.
+> Figma structure: `FIGMA_STRUCTURE_READY`
+> Figma raster sync: `FIGMA_SYNC_PENDING_TRANSPORT`
 
 ## 1. 목적과 권위 경계
 
-이 Library는 “좋아 보였던 이미지 모음”을 프로젝트 기본 그림체로 자동 승격하지 않는다. 사용자가 선호한 결과에서 **재사용 가능한 시각 원리**를 추출하고, 프로젝트 작업 때 기존 Art Bible·Figma 승인 Reference·핵심 시스템과 비교할 수 있는 탐색 렌즈를 제공한다.
+이 Library는 “좋아 보였던 이미지 모음”을 모든 프로젝트의 기본 그림체로 자동 승격하지 않는다. 사용자 선호 결과와 외부 성공 사례에서 **재사용 가능한 시각 원리**를 추출하고, 프로젝트 작업 때 현재 Art Bible·Figma 승인 Reference·핵심 시스템과 비교할 수 있는 탐색 렌즈를 제공한다.
 
 ```text
-USER_PREFERENCE_REFERENCE
+USER_PREFERENCE_REFERENCE | PROFESSIONAL_REFERENCE
 → reusable visual principles
 → project problem + current canon
-→ at least 3 viable alternatives
-→ benchmark / reference comparison
+→ MINIMUM_VIABLE_ALTERNATIVES: 3
+→ benchmark + counterexample + production comparison
 → project-specific approval
 ```
 
@@ -27,61 +29,64 @@ PROJECT_ART_CANON_REMAINS_PROJECT_OWNED
 NO_AUTOMATIC_PROJECT_STYLE_PROMOTION
 ```
 
-- 이 문서의 `preferred`는 **사용자 선호 근거가 있음**을 뜻하며 품질 PASS·제품 채택·모든 프로젝트 기본값을 뜻하지 않는다.
+- `preferred`는 사용자 선호 근거가 있다는 뜻이며 품질 PASS·제품 채택·모든 프로젝트 기본값을 뜻하지 않는다.
 - 한 프로젝트의 생성 시안을 다른 프로젝트의 승인 자산으로 복사하지 않는다.
 - 특정 상용 작품·작가·스튜디오의 식별 가능한 스타일을 복제하는 지시로 사용하지 않는다.
-- 프로젝트에 이미 잠긴 Art Bible이 있으면 그 정본이 우선하며, 이 Library는 재검토 재료일 뿐이다.
+- 이미 잠긴 프로젝트 Art Bible이 있으면 그 정본이 우선한다.
+- 외부 성공작은 전체 외형 복제 대상이 아니라 `ADOPT / ADAPT / REJECT`할 제작·가독성 원리를 찾는 근거다.
 
-## 2. 최상위 평가축 3개
+## 2. 사용자 선호 Reference overview
 
-### 2.1 `AI_GENERATED_LOOK_REDUCTION`
+![Preferred visual style overview](reference-images/preferred-visual/preferred-visual-style-overview.jpg)
 
-이 항목은 **이미지의 AI 생성 여부를 판별하는 탐지기나 출처 판정이 아니다.** 생성·수작업 여부와 무관하게, 반복 제작 시 “규칙 없이 매번 다른 고밀도 이미지”처럼 보이게 만드는 관찰 가능한 위험을 줄이는 품질 Gate다.
+```yaml
+overview_status: REFERENCE_ONLY
+derivative_type: DERIVED_CONTACT_SHEET
+canonical_path: docs/knowledge/game-development/reference-images/preferred-visual/preferred-visual-style-overview.jpg
+source_scope: CURRENT_USER_PROVIDED_GENERATED_REFERENCES_U01_TO_U13
+source_assets_promoted: false
+project_asset_approval: false
+```
+
+이 overview는 원본 13장을 저용량 비교용으로 재배치한 파생 Reference다. 원본의 제품 사용권이나 프로젝트 승인 상태를 새로 만들지 않는다. 원본 식별은 아래 SHA-256 표를 사용한다.
+
+## 3. 최상위 평가축 3개
+
+### 3.1 `AI_GENERATED_LOOK_REDUCTION`
+
+이 항목은 AI 생성 여부를 판별하는 탐지기가 아니다. 생성·수작업 여부와 무관하게, **규칙 없이 매번 다른 고밀도 이미지처럼 보이는 관찰 가능한 결함**을 줄이는 품질 Gate다.
 
 강한 방향:
 
 - Shape language, silhouette, edge/outline, palette role, material, lighting, ornament budget가 반복 가능한 규칙으로 설명된다.
-- 캐릭터·배경·UI·VFX가 동일 세계의 재료·빛·형태 언어를 공유하되 역할 구분은 유지한다.
-- 작은 장식보다 큰 형태·기능·시선 흐름이 먼저 결정된다.
-- 이미지 안에 생성된 의미 텍스트를 굽지 않고 실제 UI/타이포그래피와 분리한다.
-- 대표 이미지 1장이 아니라 두 번째·열 번째 같은 유형 자산에서 같은 규칙을 재현할 수 있다.
+- 작은 장식보다 큰 형태·기능·시선 흐름을 먼저 결정한다.
+- 의미 텍스트는 이미지에 굽지 않고 실제 UI/타이포그래피로 분리한다.
+- 얼굴 비율·손·장비 구조·광원·재질이 같은 자산군 안에서 이유 없이 흔들리지 않는다.
+- 대표 이미지 1장이 아니라 두 번째·열 번째 같은 유형 자산에서도 같은 규칙을 재현할 수 있다.
 
 경고 신호:
 
-- 이유 없는 micro-detail, 임의 장식, 과도한 입자·발광·표면 질감.
-- 프레임마다 바뀌는 얼굴 비율·손·장비 구조·광원·재질.
-- 캐릭터는 단순한데 배경만 과도하게 사진적이거나, UI만 다른 게임의 재질처럼 보이는 불일치.
-- 기능과 무관한 문양·문자·소품이 빈 공간을 자동으로 채운다.
-- 한 장의 키아트는 훌륭하지만 같은 스타일의 상태 변형·애니메이션·UI 확장이 불가능하다.
+- 목적 없는 micro-detail, 임의 장식, 과도한 입자·발광·표면 질감.
+- 캐릭터는 단순한데 배경만 과도하게 사진적이거나 UI만 다른 게임처럼 보이는 불일치.
+- pseudo-text, 무의미한 문양·한자·소품으로 빈 공간을 자동 채움.
+- 키아트 한 장은 강하지만 상태 변형·애니메이션·UI 확장이 불가능함.
 
-검수 질문:
+### 3.2 `STYLE_CONSISTENCY_AND_READABILITY`
 
-```text
-Can the rule be named?
-Can the rule be repeated?
-Can the rule survive asset #2 and #10?
-Can the rule survive gameplay scale?
-Can the rule survive text/UI/VFX integration?
-```
-
-### 2.2 `STYLE_CONSISTENCY_AND_READABILITY`
-
-시각적 일관성은 모든 것을 같은 모양으로 만드는 것이 아니다. **공통 문법을 유지하면서 필요한 상태·역할·진영·행동 차이를 더 빨리 읽게 만드는 것**이 목표다.
+일관성은 모든 것을 같은 모양으로 만드는 것이 아니다. **공통 시각 문법을 유지하면서 역할·진영·상태·행동 차이를 더 빨리 읽게 하는 것**이 목표다.
 
 필수 확인:
 
-- 최종 표시 크기 silhouette test.
-- grayscale/value hierarchy test.
-- 색을 제거해도 핵심 상태가 구분되는지 확인.
-- 캐릭터·배경·UI·VFX가 같은 시선을 경쟁하지 않는지 확인.
-- 작은 모바일 화면, 16:9 PC, 카메라 확대/축소에서 정보 우선순위 유지.
-- UI 상태·아이콘·텍스트가 장식과 재질 효과에 묻히지 않음.
-- 반복 캐릭터/유닛에서 같은 픽셀 크기·edge rule·light direction·palette role 유지.
+- 실제 표시 크기 silhouette test와 thumbnail test.
+- grayscale/value hierarchy와 색 제거 상태 구분.
+- 캐릭터·배경·UI·VFX의 시선 경쟁 방지.
+- 모바일/PC/카메라 확대·축소에서 정보 우선순위 유지.
+- 반복 캐릭터·유닛의 pixel/edge/light/palette 규칙 일치.
 - 모션·VFX가 충돌 판정·다음 입력·위험 경고를 가리지 않음.
 
-### 2.3 `WORLD_CORE_SYSTEM_FIT`
+### 3.3 `WORLD_CORE_SYSTEM_FIT`
 
-스타일은 세계관 mood board와 핵심 시스템을 동시에 지원해야 한다. “분위기와 잘 맞음”만으로는 부족하다.
+스타일은 세계관 mood board와 핵심 시스템을 동시에 지원해야 한다. “분위기가 맞는다”만으로는 부족하다.
 
 ```yaml
 world_promise:
@@ -93,14 +98,11 @@ style_hides_or_distorts:
 production_fit:
 ```
 
-- 무협의 절제·여백이 강점이어도 전술 판단 UI를 흐리게 만들면 UI 계층에는 그대로 적용하지 않는다.
-- 오컬트 기록물 분위기가 좋아도 사건 단서·선택·위험 상태가 문서 질감에 묻히면 실패다.
-- 다크 판타지 장식이 좋아도 다수 유닛의 역할 판독을 늦추면 전장에서는 축소하거나 제거한다.
-- 핵심 시스템이 정보 완전성·예측을 요구하면 세부 묘사보다 telegraph·silhouette·state hierarchy를 우선한다.
+예를 들어 수묵 무협이 아름다워도 전술 판단을 흐리면 전투 UI에 그대로 쓰지 않는다. 오컬트 기록물 질감이 단서 판독을 늦추면 질감을 줄인다. 다크 판타지 장식이 다수 유닛의 역할 판독을 늦추면 전장에서는 제거한다.
 
-## 3. Base 의사결정 계약 적용
+## 4. Base 의사결정 계약
 
-이 Library 전용으로 별도 정책 ID를 만들지 않는다. 현행 Base `AGENTS.md`의 다음 계약을 그대로 적용한다.
+이 Library 전용 병렬 정책 ID를 만들지 않는다. 현행 Base 계약을 그대로 적용한다.
 
 ```text
 MINIMUM_VIABLE_ALTERNATIVES: 3
@@ -109,28 +111,24 @@ LONG_TERM_PLAN_FIT_REQUIRED
 FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS
 ```
 
-프로젝트에서 스타일을 고를 때:
+프로젝트에서 실제 그림체를 결정할 때는 현행 유지·비픽셀·픽셀·하이브리드·화면별 혼합 중 가능한 최소 3개 **materially distinct** 후보를 확보한다. 최초 3개를 채웠다는 이유로 탐색을 닫지 않고 결정 직전까지 더 나은 Reference·제작 파이프라인·표현법을 탐색한다.
 
-1. 현행 유지·비픽셀·픽셀·하이브리드·화면별 혼합 중 실제로 가능한 **최소 3개 materially distinct 후보**를 확보한다.
-2. 최초 3개를 채웠다는 이유로 탐색을 닫지 않고, 승인 직전까지 더 나은 Reference·제작 파이프라인·표현법이 발견되는지 `BETTER_ALTERNATIVE_SEARCH`를 계속한다.
-3. `LONG_TERM_PLAN_FIT_REQUIRED`에서 두 번째·열 번째 자산, 애니메이션, 모바일/PC, Figma 재사용, localization, accessibility, runtime cost, rollback까지 본다.
-4. 중요한 L1+ 결정은 `FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS`로 전체 범위를 반복 재공격한다.
-5. Base 후보 이름을 그대로 프로젝트 정본에 복사하지 않고, 프로젝트가 실제로 채택한 Visual Pillar·5축·금지 규칙·검증 결과만 기록한다.
+`LONG_TERM_PLAN_FIT_REQUIRED`에서는 첫 대표 이미지가 아니라 두 번째·열 번째 자산, 애니메이션, PC/mobile, Figma 재사용, localization, accessibility, runtime cost, source/rights, rollback까지 본다.
 
-## 4. Base 구조 대안 Trade Study
+## 5. Library 구조 Trade Study
 
 | 대안 | 내용 | 장점 | 약점 | 장기 적합성 | 판정 |
 |---|---|---|---|---|---|
-| A. Pixel-only preference catalog | 선호 이미지를 모두 도트/픽셀 계열로 묶음 | 단순하고 빠름 | 수묵·Noir UI·Dark Gold UI를 억지로 픽셀로 오분류 | LOW | REJECT |
-| B. Flat mood-board labels | `무협`, `다크`, `예쁨`, `고급` 같은 분위기명만 저장 | 사람이 보기 쉬움 | 가독성·생산 파이프라인·시스템 적합성 재현이 약함 | MEDIUM-LOW | REJECT |
-| C. Preferred family + existing Base axes | 선호 5군을 Reference Lens로 두고 기존 Pixel 5축·Art Guide와 결합 | 취향 보존, 프로젝트 독립성, 생산 규칙, 비교 가능성 | 기록 구조가 A/B보다 조금 복잡 | HIGH | **ADOPT** |
-| D. Machine registry first | 선호를 JSON/YAML Registry로 먼저 고정 | 자동 검색·도구화에 유리 | 현재는 데이터보다 사람 시각 비교가 먼저이며 premature schema 위험 | MEDIUM | DEFER |
+| A. Pixel-only preference catalog | 선호 이미지를 모두 도트/픽셀로 묶음 | 단순 | 수묵·Noir·Dark Gold를 오분류 | LOW | REJECT |
+| B. Flat mood-board labels | 무협·다크·고급 같은 분위기명만 저장 | 보기 쉬움 | 가독성·생산 규칙·시스템 적합성 약함 | MEDIUM-LOW | REJECT |
+| C. Preferred family + existing Base axes | 선호 family를 Lens로 두고 Art Guide·Pixel 5축과 결합 | 취향·생산 규칙·프로젝트 독립성 동시 보존 | 약간 더 구조적 | HIGH | **ADOPT** |
+| D. Machine registry first | JSON/YAML Registry부터 고정 | 자동화에 유리 | 현재는 premature schema 위험 | MEDIUM | DEFER |
 
-결정 직전 재탐색에서도 C보다 현재 요구에 강한 대안은 확인되지 않았다. C는 기존 Base Art/Pixels owner를 재사용하고, 새 broad Skill이나 두 번째 Art Bible을 만들지 않으며, 프로젝트가 각자 다른 결과를 선택할 수 있어 장기 확장성이 가장 높다.
+결정 직전 재탐색에서도 C가 현재 요구에 가장 강하다. 향후 후보 수가 커져 수동 검색 비용이 측정 가능한 병목이 되면 D를 다시 검토한다.
 
-## 5. 선호 스타일군 5종
+## 6. 선호 스타일군
 
-### 5.1 Pixel Illustration Hybrid
+### 6.1 Pixel Illustration Hybrid
 
 ```yaml
 family_id: PIXEL_ILLUSTRATION_HYBRID
@@ -139,30 +137,15 @@ pixel_strength: PIXEL_HYBRID_HIGH
 production_cost: MEDIUM_TO_HIGH
 consistency_difficulty: MEDIUM
 readability_risk: MEDIUM
-user_reference_sheet: FIGMA_PAGE_01_PIXEL_ILLUSTRATION_HYBRID
-image_transport_status: BLOCKED_TRANSPORT
+user_reference_sheet: BASE_OVERVIEW_AND_FIGMA_PAGE_01
 ```
 
-정의: 픽셀/도트의 형태 정리와 작은 캐릭터 판독성을 유지하면서, 배경·광원·공간 깊이·일러스트 밀도를 현대적으로 확장한다.
+픽셀의 형태 정리와 작은 캐릭터 판독성을 유지하면서 배경·광원·공간 깊이·일러스트 밀도를 현대적으로 확장한다. 큰 cluster/silhouette를 먼저 읽히게 하고, pixel scale과 anti-aliasing 규칙을 같은 자산군에서 임의 혼합하지 않는다.
 
-Visual DNA:
+benchmark_disposition: `Dead Cells — ADAPT` 반복 animation/retake 비용이 병목일 때 3D/렌더 보조 생산 원리를 검토한다.
+benchmark_disposition: `OCTOPATH TRAVELER II — ADAPT` pixel subject + depth/light/3D 공간 결합 원리만 참고한다.
 
-- 큰 cluster/silhouette가 작은 화면에서 먼저 읽힘.
-- 디테일은 캐릭터 역할·재질·등급을 설명할 때만 추가.
-- 배경은 더 풍부할 수 있지만 gameplay actor와 value/edge separation을 유지.
-- UI는 sprite detail보다 정돈된 vector/text hierarchy를 우선할 수 있음.
-- pixel scale과 anti-aliasing 규칙을 같은 자산군에서 임의 혼합하지 않음.
-
-`AI_GENERATED_LOOK_REDUCTION`: 팔레트·광원 방향·재질 단계·픽셀/edge 규칙을 고정하면 강하다. 배경마다 무작위 세부를 채우거나 캐릭터마다 다른 해상도 감각을 쓰면 급격히 약해진다.
-
-잘 맞는 문제: 전술 유닛, RPG field sprite, 수집/성장 캐릭터, pixel actor + 고밀도 배경, 현대적 조명과 픽셀 주체의 혼합.
-
-피해야 할 사용: 모든 자산을 HD화해 animation cost를 폭증시키기, pixel 주체를 bloom/lighting이 가리기, 콘셉트 한 장의 고밀도를 실제 전장 sprite에 그대로 축소.
-
-benchmark_disposition: `Dead Cells — ADAPT` 반복 애니메이션 retake 비용이 병목일 때 3D/렌더 보조 생산 원리를 검토하되, setup 비용과 프로젝트 룩을 별도 검증한다.
-benchmark_disposition: `OCTOPATH TRAVELER II — ADAPT` pixel subject + depth/light/3D 공간 결합 원리는 참고하되 특정 상용작의 branded visual signature를 복제하지 않는다.
-
-### 5.2 Chibi Epic Dark Fantasy
+### 6.2 Chibi Epic Dark Fantasy
 
 ```yaml
 family_id: CHIBI_EPIC_DARK_FANTASY
@@ -171,28 +154,14 @@ pixel_strength: PIXEL_OR_ILLUSTRATION_OPTIONAL
 production_cost: MEDIUM_TO_HIGH
 consistency_difficulty: MEDIUM_HIGH
 readability_risk: LOW_TO_MEDIUM
-user_reference_sheet: FIGMA_PAGE_02_CHIBI_EPIC_DARK_FANTASY
-image_transport_status: BLOCKED_TRANSPORT
+user_reference_sheet: BASE_OVERVIEW_AND_FIGMA_PAGE_02
 ```
 
-정의: compact/chibi 비율의 즉시 판독성과 다크 판타지의 큰 위협·보스·에너지 대비를 결합한다.
+compact/chibi 비율의 즉시 판독성과 다크 판타지의 위협·보스·에너지 대비를 결합한다. 머리·몸통·무기·대표 소품의 큰 덩어리를 고정하고, 적·보스의 무작위 뿔·사슬·불꽃 증식을 금지한다.
 
-Visual DNA:
+benchmark_disposition: `Shovel Knight — ADOPT/ADAPT` gameplay intent에서 silhouette·pose·palette를 시작하고 제한으로 cohesion을 만드는 원리를 채택한다.
 
-- 머리·몸통·무기·대표 소품을 큰 덩어리로 고정.
-- 캐릭터 귀여움보다 행동 방향과 직업 silhouette가 먼저 읽힘.
-- 적·보스는 크기·형태·value로 위협을 분리하고, 무작위 뿔·사슬·불꽃을 계속 추가하지 않음.
-- 유파/속성/VFX는 palette 역할과 shape motif를 공유하되 색만으로 구분하지 않음.
-
-`AI_GENERATED_LOOK_REDUCTION`: 의상 파츠·무기 비율·장식 위치·얼굴 비율을 character sheet로 고정하고, 반복 포즈에서도 같은 anatomy shortcut을 유지한다.
-
-잘 맞는 문제: 액션 로그라이트, 수집/성장, 직업/유파 차별화, 보스 중심 키아트와 gameplay sprite의 연결.
-
-피해야 할 사용: key art 복잡도를 모든 gameplay frame에 강제, 배경/보스/VFX를 모두 최대 contrast로 만들어 플레이어를 묻기, 귀여움 때문에 세계관의 위험과 대가를 지우기.
-
-benchmark_disposition: `Shovel Knight — ADOPT` 역할·실루엣·제한 팔레트·idle pose처럼 기능에서 형태를 시작하는 원리를 채택한다. 정확한 retro hardware 제한은 프로젝트 목적에 맞게 ADAPT한다.
-
-### 5.3 Ink Wash Wuxia
+### 6.3 Ink Wash Wuxia
 
 ```yaml
 family_id: INK_WASH_WUXIA
@@ -201,28 +170,14 @@ pixel_strength: NON_PIXEL_PREFERENCE_REFERENCE
 production_cost: MEDIUM
 consistency_difficulty: MEDIUM
 readability_risk: MEDIUM
-user_reference_sheet: FIGMA_PAGE_03_INK_WASH_WUXIA
-image_transport_status: BLOCKED_TRANSPORT
+user_reference_sheet: BASE_OVERVIEW_AND_FIGMA_PAGE_03
 ```
 
-정의: 수묵·종이·먹선·여백·산수·절제된 accent를 사용해 무협의 고요함, 긴장, 비장미와 시간성을 전달한다.
+수묵·종이·먹선·여백·산수·제한 accent로 무협의 고요함과 비장미를 전달한다. 붓질 방향·종이 texture 강도·산수 depth/value·seal 사용 규칙을 제한하고 의미 없는 한자 자동 생성을 금지한다.
 
-Visual DNA:
+benchmark_disposition: `Shovel Knight — ADAPT` 역사적 제약 자체가 아니라 제한된 시각 규칙이 cohesive identity를 만든다는 원리만 가져온다.
 
-- neutral paper/ink field + 제한된 accent.
-- negative space를 장식 부족이 아니라 시선/호흡 구조로 사용.
-- silhouette와 calligraphic gesture를 작은 장식보다 우선.
-- UI는 전통 소재를 쓰더라도 text/action hierarchy와 focus state를 명확히 유지.
-
-`AI_GENERATED_LOOK_REDUCTION`: 붓질 방향·종이 texture 강도·산수의 depth/value 단계·장식 seal 규칙을 제한하면 일관성이 강해진다. 의미 없는 한자/문양 자동 생성은 금지한다.
-
-잘 맞는 문제: 무협, 동양 판타지, 명상/대치, 서사 메뉴, 세계관 첫인상, 기록/도감의 특수 표면.
-
-피해야 할 사용: 모든 UI를 붓글씨로 만들어 가독성 저하, gameplay object와 배경을 같은 먹 농도로 합치기, 장식 한자를 정보 텍스트로 사용.
-
-benchmark_disposition: `Shovel Knight — ADAPT` 역사적 제약을 그대로 복제하지 않고, 제한된 시각 규칙이 cohesive identity를 만드는 원리만 차용한다.
-
-### 5.4 Dark Gold UI
+### 6.4 Dark Gold UI
 
 ```yaml
 family_id: DARK_GOLD_UI
@@ -231,29 +186,14 @@ pixel_strength: CROSS_RENDER_UI_REFERENCE
 production_cost: MEDIUM
 consistency_difficulty: LOW_TO_MEDIUM
 readability_risk: MEDIUM
-user_reference_sheet: FIGMA_PAGE_04_DARK_GOLD_UI
-image_transport_status: BLOCKED_TRANSPORT
+user_reference_sheet: BASE_OVERVIEW_AND_FIGMA_PAGE_04
 ```
 
-정의: 어두운 value field에 제한된 금색/황동 accent, 프레임·아이콘·재질감을 사용해 고급감과 세계관 물성을 만드는 UI 언어다.
+어두운 value field와 제한된 금색/황동 accent로 고급감과 세계관 물성을 만든다. 금색은 선택·제목·핵심 테두리·고급 상태처럼 역할을 가져야 하며 모든 선을 금색으로 만들지 않는다. frame corner·stroke·metal roughness·bevel·glow·icon family를 반복 가능한 token처럼 고정한다.
 
-Visual DNA:
+benchmark_disposition: `Hades — ADOPT` UI art를 gameplay requirement·icon family consistency·clarity와 함께 관리하는 생산 원리를 채택하고 고유 미술 표현은 복제하지 않는다.
 
-- 금색은 모든 장식이 아니라 **선택·제목·핵심 테두리·고급 상태**처럼 역할을 가진다.
-- black-on-black을 피하고 panel/background/text의 value 단계가 분리된다.
-- ornament density는 기능 위계보다 한 단계 아래.
-- disabled/locked/selected/focus를 hue 하나로만 구분하지 않는다.
-- 실제 typography와 icon set을 생성 이미지에서 분리한다.
-
-`AI_GENERATED_LOOK_REDUCTION`: frame corner, stroke weight, metal roughness, bevel depth, glow strength, icon family를 토큰처럼 고정하고 임의 장식 생성을 막는다.
-
-잘 맞는 문제: 다크 판타지, 대장간/금속, 마법 문서, 전술/전략의 premium shell, 기록/도감 UI.
-
-피해야 할 사용: 모든 선을 금색으로 만들어 hierarchy 소실, 금박 texture가 작은 한글/숫자를 침범, hover/selected마다 다른 장식 motif를 새로 생성.
-
-benchmark_disposition: `Hades — ADOPT` UI/HUD가 gameplay requirement와 함께 설계되고, 대량 icon family가 stylistically consistent해야 하며, 패치 과정에서 VFX/UI clarity·text readability를 지속 수정하는 원리를 채택한다. Hades의 고유 미술 표현 자체는 복제하지 않는다.
-
-### 5.5 Noir Archive / Investigation Interface
+### 6.5 Noir Archive / Investigation Interface
 
 ```yaml
 family_id: NOIR_ARCHIVE_INVESTIGATION_INTERFACE
@@ -262,53 +202,26 @@ pixel_strength: NON_PIXEL_OR_PIXEL_NOIR_OPTIONAL
 production_cost: MEDIUM
 consistency_difficulty: MEDIUM
 readability_risk: MEDIUM_HIGH
-user_reference_sheet: FIGMA_PAGE_05_NOIR_ARCHIVE_INVESTIGATION
-image_transport_status: BLOCKED_TRANSPORT
+user_reference_sheet: BASE_OVERVIEW_AND_FIGMA_PAGE_05
 ```
 
-정의: 기관 기록, 사건 파일, 조사 보드, 오래된 문서/기기, 제한된 경고색을 정보 architecture와 결합하는 interface family다.
+기관 기록·사건 파일·조사 보드·오래된 문서/기기·제한 경고색을 information architecture와 결합한다. generated pseudo-text를 실제 structured text layer로 교체하고 archive texture가 content legibility를 침범하지 않게 한다.
 
-Visual DNA:
+benchmark_disposition: `Into the Breach — ADOPT` 핵심 판단이 예측에 의존할 때 telegraph와 결과 정보가 분위기보다 우선한다는 원리를 채택한다.
 
-- 문서·기록·기관 소재가 실제 navigation/information role과 연결됨.
-- 사건 번호, 상태, 위험, 단서, 연결 관계가 decoration보다 우선.
-- dark field에서 text/panel/value separation을 강하게 유지.
-- danger accent는 제한적으로 사용하고 항상 shape/text/icon redundancy를 제공.
-- archive texture는 content legibility를 침범하지 않는 강도로 제한.
+## 7. 현업·성공작 Benchmark
 
-`AI_GENERATED_LOOK_REDUCTION`: generated pseudo-text를 제거하고 실제 structured text layer로 교체하며, stamp/document/device material을 제한된 set으로 반복한다.
-
-잘 맞는 문제: 조사, 추리, 오컬트, 정부/기관, case management, evidence linking, rule deduction.
-
-피해야 할 사용: 모든 화면을 낡고 어둡게 만들어 검색/입력/선택 속도 저하, fake text를 분위기 장식으로 과다 사용, 사건 정보보다 frame ornament가 먼저 보임.
-
-benchmark_disposition: `Into the Breach — ADOPT` 핵심 판단이 예측·정보 판독에 의존할 때 적 행동과 결과 정보를 명확히 telegraph하는 원리를 채택한다. 장르/미술 외형이 아니라 정보 설계 원리를 참조한다.
-
-## 6. 현업·성공작 Benchmark
-
-외부 사례는 Base 요구사항 정본이 아니다. 각 사례에서 **재현 가능한 생산/가독성 원리만** `ADOPT / ADAPT / REJECT`로 판정한다.
-
-| 작품/팀 | 확인한 원리 | 현재 Library 적용 | 판정 |
+| 작품/팀 | 관찰 원리 | Library 적용 | 판정 |
 |---|---|---|---|
-| Shovel Knight / Yacht Club Games | gameplay function에서 silhouette·pose·palette를 시작하고, 제한을 통해 cohesion/readability 확보 | 역할 우선, 제한된 palette/shape rule, animation 전 asset list | ADOPT/ADAPT |
-| Dead Cells / Motion Twin art pipeline | 작은 팀에서 반복 animation·retake 비용을 줄이기 위해 3D 기반 pose/animation을 low-res pixel result로 변환 | hybrid pipeline이 수명주기 비용을 실제로 줄일 때만 사용 | ADAPT |
-| OCTOPATH TRAVELER II / Square Enix | retro pixel art와 3DCG를 결합한 HD-2D 표현 | pixel actor + depth/light hybrid를 선택적 후보로 유지 | ADAPT |
-| Hades / Supergiant Games | 수많은 icon/UI asset의 stylistic consistency, gameplay clarity, performance/accessibility와 UI art의 결합 | Dark Gold UI를 장식 모음이 아니라 system UI family로 운영 | ADOPT |
-| Into the Breach / Subset Games | 적 공격이 telegraphed되고 turn decision이 정보 가독성에 의존 | 전술/조사 UI에서 prediction/decision 정보가 분위기보다 우선 | ADOPT |
+| Shovel Knight / Yacht Club Games | gameplay intent → concept → pixel model, size/style match, limited colors, silhouette와 idle pose 정리 | 역할 우선·제한된 visual grammar | ADOPT/ADAPT |
+| Dead Cells / Motion Twin art pipeline | 반복 animation/retake를 감당하기 위한 3D-assisted 2D production | lifecycle cost가 실제 감소할 때만 hybrid 사용 | ADAPT |
+| OCTOPATH TRAVELER II / Square Enix | pixel art와 3D/depth/light 결합 | depth-lit hybrid 후보 | ADAPT |
+| Hades / Supergiant Games | UI/icon family를 gameplay clarity와 함께 생산 | Dark Gold UI를 system family로 관리 | ADOPT |
+| Into the Breach / Subset Games | 예측 가능한 적 행동과 전술 정보의 명확성 | prediction/decision readability 우선 | ADOPT |
 
-원출처:
+원출처·현업 자료는 `VISUAL_STYLE_SOURCE_RADAR.md`의 최신성·원출처 역추적 규칙으로 재검증한다. 특정 작품의 외형 전체를 스타일 프롬프트로 사용하지 않는다.
 
-- Yacht Club Games, *Creating a Shovel Knight Character Sprite*: https://www.yachtclubgames.com/blog/creating-a-shovel-knight-character-sprite
-- Yacht Club Games, *Breaking the NES*: https://www.yachtclubgames.com/blog/breaking-the-nes
-- Game Developer, Thomas Vasseur, *Art Design Deep Dive: Using a 3D pipeline for 2D animation in Dead Cells*: https://www.gamedeveloper.com/art/art-design-deep-dive-using-a-3d-pipeline-for-2d-animation-in-i-dead-cells-i-
-- Square Enix, *OCTOPATH TRAVELER II*: https://www.square-enix-games.com/games/octopath-traveler-ii
-- Supergiant Games, UI illustrator role: https://www.supergiantgames.com/blog/ui-illustrator/
-- Supergiant Games, Hades II patch notes: https://www.supergiantgames.com/blog/hades2-patch-notes/
-- Subset Games, *Into the Breach*: https://subsetgames.com/itb.html
-
-## 7. 사용자 제공 Reference Provenance
-
-아래 입력은 사용자가 현재 대화에서 제공한 생성 시안이다. Base는 원본의 고유 캐릭터·로고·문구를 다른 작품에 복제하지 않고, **shape/value/material/UI hierarchy/production principle**만 추출한다.
+## 8. 사용자 제공 Reference provenance
 
 공통 상태:
 
@@ -335,9 +248,78 @@ NOT_PROJECT_ASSET_APPROVED
 | U12 | `생성된 이미지 1 (1)(3).png` | `da07d76e2037fd438ab70e9dc0abf65bdfbcf073ff6d4eb272ae923d4e9fdb6e` | Pixel Illustration Hybrid |
 | U13 | `92fa25e2-c1a9-41d2-9b16-a4eaa40c1fc2.png` | `c13422f47c0ba6a7cd70517bd281c81742b652aa917ef4048d342641bdc6ae1a` | Pixel Illustration Hybrid, Dark Gold UI |
 
-Figma에는 `00_START_HERE`와 5개 스타일군 페이지 구조를 생성했다. 현재 연결 환경에서 `mcp.figma.com` raster POST가 DNS 단계에서 실패했고 Plugin API raster 생성도 지원되지 않아 이미지 bytes 배치는 `BLOCKED_TRANSPORT`로 남긴다. 이 제한은 GitHub의 스타일 원리·출처 hash 기록을 무효화하지 않지만, **Figma에서 실제 이미지를 볼 수 있다고 주장하면 안 된다.** 전송 경로가 복구되면 위 SHA-256을 기준으로 원본/파생 sheet를 대조한 뒤 이미지만 채운다.
+## 9. `CONTINUOUS_STYLE_DISCOVERY`
 
-## 8. 프로젝트 사용 순서
+이 Library는 5개 family에서 닫히지 않는다. 새 스타일·새 제작법·새 성공 사례는 기존 Base Source discovery 경로를 재사용한다.
+
+```text
+CONTINUOUS_STYLE_DISCOVERY
+→ UNCAPPED_CANDIDATE_INTAKE
+→ ORIGINAL_SOURCE_BACKTRACE
+→ evidence / rights / freshness classification
+→ STYLE_FAMILY_MATCH | NEW_FAMILY_CANDIDATE
+→ AI_GENERATED_LOOK_REDUCTION
+→ STYLE_CONSISTENCY_AND_READABILITY
+→ WORLD_CORE_SYSTEM_FIT
+→ benchmark + counterexample
+→ ADOPT | ADAPT | TEST | REFERENCE_ONLY | AVOID | IGNORE
+→ approved Base reference delta
+```
+
+운영 원칙:
+
+- 후보 수에 임의 상한을 두지 않는 `UNCAPPED_CANDIDATE_INTAKE`를 사용한다. 단, 후보 수가 곧 채택 수는 아니다.
+- Pinterest·검색 썸네일·리포스트는 discovery surface일 수 있지만 `ORIGINAL_SOURCE_BACKTRACE` 뒤 원작자·개발사·GDC·공식 문서·원 게시물로 되돌린다.
+- 기존 5개 family로 충분히 설명되면 `STYLE_FAMILY_MATCH`로 흡수하고 이름만 다른 family를 늘리지 않는다.
+- 기존 family에 넣으면 핵심 제작 문법·가독성 위험·세계관/시스템 역할이 왜곡되는 경우에만 `NEW_FAMILY_CANDIDATE`를 연다.
+- 새 family를 Base에 넣는 것은 프로젝트 채택과 별개다.
+- 실제 스캔·근거 등급·PR 생명주기는 `VISUAL_STYLE_SOURCE_RADAR.md`와 그 상위 `PERIODIC_SPECIALTY_SOURCE_RADAR.md` / `PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md`를 따른다.
+
+## 10. Figma Reference sync contract
+
+전용 Figma 파일에는 다음 페이지 구조가 실제 생성되어 있으며 `FIGMA_STRUCTURE_READY`다.
+
+```text
+00_START_HERE
+01_PIXEL_ILLUSTRATION_HYBRID
+02_CHIBI_EPIC_DARK_FANTASY
+03_INK_WASH_WUXIA
+04_DARK_GOLD_UI
+05_NOIR_ARCHIVE_INVESTIGATION
+```
+
+공식 Figma MCP의 binary asset 경로는 `upload_assets`다. 현재 실행 세션에서는 `upload_assets`가 submit URL을 발급하는 단계까지 성공했지만, 그 URL로 파일 bytes를 POST하는 executor가 `mcp.figma.com` DNS를 해석하지 못했다. `use_figma` 내부 `createImage`를 이용한 대체 시도도 현재 실행 환경에서 `Image type is unsupported`로 거부됐다. 따라서 이미지 업로드 완료를 주장하지 않고 `FIGMA_SYNC_PENDING_TRANSPORT`를 유지한다.
+
+```text
+FIGMA_STRUCTURE_READY
+→ upload_assets
+→ POST raw/reference bytes
+→ place on target style page
+→ FIGMA_READBACK_REQUIRED
+→ screenshot/download/readback confirms visible image
+→ FIGMA_REFERENCE_SYNCED
+```
+
+실패 시:
+
+```text
+upload transport failure
+→ keep Git REFERENCE_ONLY overview + SHA-256 provenance
+→ FIGMA_SYNC_PENDING_TRANSPORT
+→ do not claim image upload
+→ retry when an authorized executor can reach the submit host
+→ FIGMA_READBACK_REQUIRED
+```
+
+공식 확인 경로:
+
+- https://developers.figma.com/docs/figma-mcp-server/tools-and-prompts/
+- https://developers.figma.com/docs/figma-mcp-server/write-to-canvas/
+- https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/
+
+Figma는 프로젝트 정본을 대신하지 않는다. Base 전용 Figma는 시각 Reference 열람면이고, 프로젝트가 특정 Reference를 채택할 때만 해당 프로젝트 Figma/Art Bible에서 별도 승인한다.
+
+## 11. 프로젝트 사용 순서
 
 ```text
 project current Art Bible / Figma approved reference
@@ -357,33 +339,29 @@ project current Art Bible / Figma approved reference
 → selected project rules only into Art Bible / Visual Bible
 ```
 
-이 Library의 5개 family를 후보 5개로 자동 제출하지 않는다. 프로젝트 문제에 실질적으로 다른 결과를 만드는 후보만 대안으로 센다.
+이 Library의 family 수를 후보 수로 자동 계산하지 않는다. 프로젝트 문제에 실질적으로 다른 결과를 만드는 후보만 대안으로 센다.
 
-## 9. `REVIEW_TRIGGERS`
+## 12. `REVIEW_TRIGGERS`
 
 다음 중 하나가 발생하면 선택 스타일을 재검토한다.
 
-```text
-REVIEW_TRIGGERS
-```
-
 - 두 번째·열 번째 같은 유형 자산에서 얼굴·실루엣·edge·palette·재질·광원이 흔들림.
-- 반복 생성 결과에서 임의 장식·pseudo-text·해부/구조 왜곡·과도한 micro-detail이 증가함.
-- 실제 gameplay scale, mobile, camera zoom에서 핵심 역할·상태가 읽히지 않음.
-- UI/VFX/배경이 핵심 입력·위험·선택 정보와 경쟁함.
-- localization 또는 긴 한국어/영어가 decorative UI에 수용되지 않음.
-- animation/VFX 변형 제작비 또는 retake 비용이 계획보다 커짐.
-- 프로젝트 core loop, world tone, camera, platform, art production capacity가 변경됨.
-- 더 낮은 수명주기 비용으로 같은 또는 더 높은 품질을 내는 실질 대안이 발견됨.
+- 임의 장식·pseudo-text·해부/구조 왜곡·과도한 micro-detail이 증가함.
+- gameplay scale/mobile/camera zoom에서 핵심 역할·상태가 읽히지 않음.
+- UI/VFX/배경이 입력·위험·선택 정보와 경쟁함.
+- localization이 decorative UI에 수용되지 않음.
+- animation/VFX retake 비용이 계획보다 커짐.
+- core loop, world tone, camera, platform, production capacity가 변경됨.
+- 더 낮은 수명주기 비용으로 같거나 더 높은 품질을 내는 대안이 발견됨.
 - 신규 현업 사례·도구·기법이 기존 선택의 장기 적합성을 약화시키는 증거를 제공함.
 - 기존 승인 Art Bible/Figma Reference가 갱신됨.
 
-재검토는 “새 스타일이 더 예뻐 보인다”만으로 자동 교체하지 않는다. 동일한 3개 최상위 평가축, 최소 3개 실질 대안, 장기 비용, rollback, 실제 화면 검증을 다시 적용한다.
+재검토는 “새 스타일이 더 예뻐 보인다”만으로 자동 교체하지 않는다. 동일한 세 평가축, 최소 3개 실질 대안, 장기 비용, rollback, 실제 화면 검증을 다시 적용한다.
 
-## 10. 완료·증거 한계
+## 13. 증거 한계
 
-- 이 문서 추가는 프로젝트별 그림체 확정이 아니다.
-- 현업 사례 조사와 Reference 분석은 실제 게임 runtime, 인간 가독성, 접근성, 성능 검증을 대신하지 않는다.
-- Figma page structure creation은 실제 raster Reference 업로드 증거가 아니다. 현재 상태는 `BLOCKED_TRANSPORT`다.
-- 프로젝트 채택 시에는 실제 대표 장면과 두 번째 같은 유형 자산을 만들어 검증해야 한다.
-- “AI 티 감소”는 visual-system consistency 목표이지 AI provenance detector가 아니다.
+- 이 Library 추가는 프로젝트별 그림체 확정이 아니다.
+- 현업 사례 조사와 Reference 분석은 실제 runtime·사람 가독성·접근성·성능 검증을 대신하지 않는다.
+- Figma page/readback 성공은 실제 raster Reference sync 성공과 다르며, 현재 raster 상태는 `FIGMA_SYNC_PENDING_TRANSPORT`다.
+- 프로젝트 채택 시 대표 장면뿐 아니라 두 번째 같은 유형 자산을 만들어 반복 생산성을 검증한다.
+- `AI_GENERATED_LOOK_REDUCTION`은 visual-system consistency 목표이지 AI provenance detector가 아니다.
