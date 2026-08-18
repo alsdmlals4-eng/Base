@@ -90,9 +90,20 @@ When the task requests the same character, UI element or asset with a limited ed
 
 Change only the requested expression, pose, gaze, effect stage, state, text-free content or other scoped property. If a requested change would materially alter identity, surface that as a new variant rather than silently replacing the master.
 
-## Candidate and reuse model
+## Candidate, promotion and reuse model
 
 Generated or edited output starts as a candidate. Do not promote a candidate merely because generation succeeded.
+
+Promotion is explicit:
+
+```text
+candidate
+→ project-scoped review
+→ readback-verified preview
+→ approval
+→ PROJECT_ASSET_APPROVED when promoted as a project asset
+→ implementation task when runtime use is required
+```
 
 Reusable classifications may include:
 
