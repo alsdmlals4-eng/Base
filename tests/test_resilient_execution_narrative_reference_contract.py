@@ -34,6 +34,19 @@ class ResilientExecutionNarrativeReferenceContractTests(unittest.TestCase):
         self.assertIn(owner_path, agents)
         self.assertIn(owner_path, start)
 
+    def test_tool_hub_first_transition_consumes_fresh_shell_contract(self) -> None:
+        readme = read("tools/tool-hub/README.md")
+        for term in (
+            "docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md",
+            "FRESH_SHELL_ASSUMPTION",
+            "Set-Location",
+            "[0/4 LOCATION]",
+        ):
+            self.assertIn(term, readme)
+        location_index = readme.index("Set-Location")
+        venv_index = readme.index("py -3.12 -m venv .venv")
+        self.assertLess(location_index, venv_index)
+
     def test_continuous_work_recalculates_remaining_work_after_postmerge(self) -> None:
         continuous = read(
             "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"
