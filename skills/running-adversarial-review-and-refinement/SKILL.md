@@ -27,6 +27,21 @@ Registry의 `칭찬·균형 평가만 요청` 비사용 조건은 결정·권장
 
 일반 작업은 `attack → validate-critique → refine-approved-findings → regression-recheck → decision-report`를 사용한다. 저장소 전체 감사는 `references/repository-wide-audit-protocol.md`, 세부 Finding·회귀 판정은 `references/finding-and-regression-protocol.md`를 필요할 때만 읽는다.
 
+### Five-round long-horizon contract
+
+장기·복합 L1 이상 작업에서 적대적 검토를 실행하면 동일한 자기비판을 반복하지 않고 아래 **정확히 다섯 개의 서로 다른 공격면**을 한 번씩 닫는다. 이 계약은 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`의 장기 작업 조합 규칙을 이 Skill의 실제 review owner에 연결하며, 일반 단순 작업을 무조건 다섯 배로 부풀리는 quota가 아니다.
+
+```text
+FIVE_DISTINCT_ADVERSARIAL_ROUNDS: REQUIRED_WHEN_REVIEW_RUNS
+ROUND_1_INTENT_ASSUMPTIONS_SCOPE
+ROUND_2_CANON_STRUCTURE_DEPENDENCIES
+ROUND_3_FAILURE_SECURITY_CONCURRENCY
+ROUND_4_VALUE_BENCHMARK_COST_MAINTAINABILITY
+ROUND_5_REGRESSION_EVIDENCE_COMPLETION_FRESHNESS
+```
+
+각 round는 최소한 `attack hypothesis → evidence → finding/severity → disposition → recheck → PASS/FAIL/UNRESOLVED`를 기록한다. 같은 finding을 표현만 바꿔 다섯 번 세지 않는다. `NOT_RUN`, `BLOCKED_UNVERIFIED`, `CANCELLED`는 PASS가 아니며, 최종 병합·완료 판정 전에는 P0/P1 미해결 finding과 exact-head 절차 gate를 분리해서 보고한다.
+
 구현 전 PLAN 사전판정은 아직 수정할 작업물이 없으므로 `attack → validate-critique → decision-report`까지만 실행한다. 승인 finding은 `refine-approved-findings`에서 주 책임 분야 Skill이 한 번만 구현·수정하며, 이 Skill은 분야 작성 책임을 빼앗거나 이미 구현된 finding을 다시 수정하지 않는다. 그 뒤 `regression-recheck → decision-report`로 복귀해야 전체 루프가 완료된다.
 
 기본 Work Mode는 `REVIEW → 필요한 경우 BUILD → REVIEW`다. 같은 수행자가 맡아도 단계별 입력과 출력을 섞지 않는다.
@@ -258,17 +273,3 @@ Learning Log: `skills/SKILL_LEARNING_LOG.md`
 L2 이상 다분야 결정, 저장소 전체 감사, 외부 코드·디자인 조달에서는 `references/cross-discipline-review-lenses.md`에서 현재 위험과 직접 관련된 Lens만 선택한다. Lens는 BMAD식 관점 확장을 제공하지만 **주 책임 Skill의 결정을 소유하지 않는다**.
 
 - 관련 없는 Lens는 억지 Finding을 만들지 않고 `NOT_APPLICABLE`과 이유를 기록한다.
-- 각 Finding은 `lens`, `evidence`, `affected_requirement`, `severity`, `owner_skill`, `status`를 포함한다.
-- Lens 간 결론이 충돌하면 사실·영향·비용·코어·되돌리기 난이도로 `validate-critique`하고, 중요 방향 차이는 `USER_DECISION_REQUIRED`로 보낸다.
-- Named Agent별 별도 정본·PRD·Architecture 복제본을 만들지 않는다.
-
-## Socratic Review Lens
-
-주장·비판의 의미, 숨은 가정, 근거, 대안 관점, 파급, 질문 자체의 중요성이 현재 결론을 바꿀 수 있을 때만 `references/socratic-questioning-lenses.md`에서 **관련된 Lens만** 선택한다. 모든 질문군을 채우기 위한 **가짜 Finding**을 만들지 않는다.
-
-- `attack`에서는 주로 Clarification, Assumptions, Reasons / Evidence, Viewpoints, Implications / Consequences를 사용해 애매한 주장·숨은 전제·증거 공백·관점 맹점·파급을 찾는다.
-- `validate-critique`에서는 Reasons / Evidence와 Assumptions를 다시 검증하고 Meta-question으로 해당 비판이 실제 Requirement·범위·결론에 중요한지 재판정한다.
-- `regression-recheck`에서는 Implications / Consequences를 다시 적용해 정상 경로·복구·호환성·롤백에 새 회귀가 생기지 않았는지 확인한다.
-- Socratic 질문 후보가 생기면 먼저 **저장소·정본·실제 구현·도구**로 답할 수 있는지 조사한다. 그 근거로 판정할 수 있으면 사용자에게 묻지 않는다.
-- 필요한 증거가 없으면 기존 `BLOCKED_UNVERIFIED`와 확인 조건을 사용한다. 둘 이상의 유효한 선택이 프로젝트 코어·중요 방향을 다르게 만들 때만 기존 `USER_DECISION_REQUIRED`로 올린다.
-- Socratic Lens는 새 사용자 인터뷰 Gate나 별도 승인 권한을 만들지 않으며, 기존 intake/Grill Me의 질문 하나 원칙과 Finding decision 의미를 재정의하지 않는다.
