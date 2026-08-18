@@ -28,6 +28,7 @@ on:
       - "skills/SKILL_REGISTRY.json"
       - "templates/game-development-youtube/EPISODE_PACKET.md"
       - "templates/research/**"
+      - "templates/planning/ART_DIRECTION_BRIEF.md"
       - "templates/planning/ART_TECHNIQUE_CARD.md"
       - "templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md"
       - "templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md"
@@ -53,6 +54,7 @@ on:
       - "tests/test_prompt_recipe_reference_contract.py"
       - "tests/test_pc_android_cross_platform_delivery.py"
       - "tests/test_visual_requirement_gate.py"
+      - "tests/test_pixel_art_style_system.py"
       - "tests/test_periodic_external_source_watchlist.py"
       - "tests/test_periodic_external_source_discovery_seeds.py"
       - "tests/test_periodic_source_scan_queue.py"
@@ -105,6 +107,7 @@ jobs:
               tests/test_prompt_recipe_reference_contract.py \
               tests/test_pc_android_cross_platform_delivery.py \
               tests/test_visual_requirement_gate.py \
+              tests/test_pixel_art_style_system.py \
               tests/test_periodic_external_source_watchlist.py \
               tests/test_periodic_external_source_discovery_seeds.py \
               tests/test_periodic_source_scan_queue.py \
@@ -122,6 +125,7 @@ jobs:
               tests/test_prompt_recipe_reference_contract.py \
               tests/test_pc_android_cross_platform_delivery.py \
               tests/test_visual_requirement_gate.py \
+              tests/test_pixel_art_style_system.py \
               tests/test_periodic_external_source_watchlist.py \
               tests/test_periodic_external_source_discovery_seeds.py \
               tests/test_periodic_source_scan_queue.py \
@@ -152,6 +156,8 @@ jobs:
             docs/knowledge/game-development/RECENT_EXTERNAL_EVIDENCE_REVIEW_2026-08-10.md
             docs/knowledge/game-development/SOURCE_SCAN_CHECKPOINT_2026-08-14.md
             docs/knowledge/game-development/TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md
+            docs/knowledge/game-development/PIXEL_ART_STYLE_SYSTEM.md
+            docs/knowledge/game-development/PIXEL_ART_VISUAL_REFERENCE_GALLERY.md
             docs/knowledge/game-development/source-scans/README.md
             docs/knowledge/research/PROMPT_RECIPE_SOURCE_AUDIT.md
             docs/superpowers/plans/2026-07-29-prompt-recipe-reference-integration.md
@@ -162,6 +168,7 @@ jobs:
             docs/superpowers/specs/2026-08-14-daily-source-analysis-auto-merge-design.md
             skills/producing-game-development-youtube-videos/LEARNING_LOG.md
             templates/game-development-youtube/EPISODE_PACKET.md
+            templates/planning/ART_DIRECTION_BRIEF.md
             templates/planning/ART_TECHNIQUE_CARD.md
             templates/planning/PC_ANDROID_DELIVERY_PROFILE.md
             templates/research/AI_IMAGE_PROMPT_RECIPE_CARD.md
@@ -181,6 +188,7 @@ jobs:
             tests/test_prompt_recipe_reference_contract.py
             tests/test_pc_android_cross_platform_delivery.py
             tests/test_visual_requirement_gate.py
+            tests/test_pixel_art_style_system.py
             tests/test_periodic_external_source_watchlist.py
             tests/test_periodic_external_source_discovery_seeds.py
             tests/test_periodic_source_scan_queue.py
