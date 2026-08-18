@@ -58,8 +58,9 @@
       "additionalProperties": true,
       "required": ["role", "sync_status"],
       "properties": {
-        "role": {"const": "USER_FACING_GDD_WORKSPACE"},
-        "sync_status": {"enum": ["NOT_CONFIGURED", "CURRENT", "PROPOSED_SHEET_CHANGE", "STALE", "BLOCKED"]}
+        "role": {"enum": ["GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE", "USER_FACING_GDD_WORKSPACE"]},
+        "sync_status": {"enum": ["NOT_CONFIGURED", "CURRENT", "PROPOSED_SHEET_CHANGE", "STALE", "BLOCKED"]},
+        "workspace_status": {"enum": ["MIGRATION_COMPATIBILITY_SURFACE"]}
       }
     },
     "protected_baseline": {"$ref": "#/$defs/protectedBaseline"},
