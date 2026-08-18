@@ -64,7 +64,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 
 ## 2.3 장기 작업 불변 계약
 
-장기·복합 L1 이상 작업은 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`를 적용한다. 이 계약은 새 Skill이 아니라 기존 intake·검증·Git·archive·Loop Engineering 책임을 연결한다.
+장기·복합 L1 이상 작업은 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`를 적용한다. 이 계약은 새 Skill이 아니라 기존 intake·검증·archive·Loop Engineering 책임을 연결한다.
 
 ```text
 DIRECTION_FIRST
@@ -89,7 +89,7 @@ PAID_PLAN_COUNT: 1
 - 적대적 검토는 `전체 범위 공격 → finding 검증 → 개선·보완 → 실제 검증·회귀 → 개선된 전체 상태 재공격`의 **완전한 개선 루프를 최소 5회** 수행한다. 다섯 공격면으로 쪼개서 한 번씩 보는 것은 이 계약을 충족하지 않는다.
 - 완료는 승인된 acceptance criteria의 `REQUIRED_WORK_REMAINING: 0`으로 판정한다. 외부 차단과 선택 backlog는 별도 축으로 남긴다.
 - 게임 작업은 core loop·핵심 시스템·세계관/핵심 스토리라인 정합성·가역적 dummy `BALANCE_BUDGET`·playable build/test·재사용 가능한 모듈 경계를 함께 설계한다.
-- 새 프로젝트와 새 시각 작업의 기본 협업면은 단일 Notion workspace의 프로젝트별 filtered page다. `Project` relation으로 작업·자산·화면·Reference·Benchmark를 분리하며, balance/economy/schema/runtime config와 실제 구현은 repo-native structured source를 사용한다. 기존 Google Sheets는 검증된 migration이 끝날 때까지 compatibility-only migration source로 보존한다.
+- 새 프로젝트와 새 시각 작업의 기본 협업면은 단일 Notion workspace의 프로젝트별 filtered page다. `Project` relation으로 작업·자산·화면·Reference·Benchmark를 분리하며, balance/economy/schema/runtime config와 실제 구현은 repo-native structured source를 사용한다. 기존 Google Sheets는 검증된 migration이 끝날 때까지 compatibility-only migration source로 보존한다. 상세 compatibility/migration owner는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`다.
 - 사용자에게 PowerShell 실행이 필요하면 `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`를 적용한다. 매 작업을 새 PowerShell 창 기준으로 보고 위치 세팅을 첫 실행 단계에 두며, 가능한 절차는 한 번에 붙여넣는 단일 블록으로 제공한다.
 
 ## 3. Work Mode·Skill·사용자 결정
@@ -132,7 +132,7 @@ PAID_PLAN_COUNT: 1
 - 신규 프로젝트와 승인된 마이그레이션의 활성 기획서는 저장소 루트 `[기획서]/` 아래에 둔다. `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않는다.
 - 상세 책임 원본, 상태 축, 발행 정책, 완료 조건은 `docs/OPERATING_MODEL.md`를 따른다.
 - 새 프로젝트·새 시각 기획의 기본 협업면은 `NOTION_DEFAULT_PROJECT_WORKSPACE`다. 하나의 Notion workspace 안에서 프로젝트별 페이지를 충분히 분리하고, Work/Asset/Screen/Reference/Benchmark는 `PROJECT_RELATION_REQUIRED`로 필터한다. 비주얼 맵은 파생 표현이며, 규칙·Decision과 실제 구현 상태는 GitHub/repository 정본과 런타임 증거가 소유한다.
-- 기존 구성된 프로젝트 Google Sheet는 검증된 migration이 끝날 때까지 `COMPATIBILITY_ONLY` migration source로 취급한다. Sheet-only 고유 내용과 proposal을 Notion/repository source에 reconcile하고 readback을 확인하기 전에는 삭제·폐기·migration 완료를 주장하지 않는다. Base 자체는 프로젝트 Sheet 동기화 대상이 아니다.
+- 기존 구성된 프로젝트 Google Sheet는 검증된 migration이 끝날 때까지 `COMPATIBILITY_ONLY` migration source로 취급한다. 상세 정본은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`다. Sheet-only 고유 내용과 proposal을 Notion/repository source에 reconcile하고 readback을 확인하기 전에는 삭제·폐기·migration 완료를 주장하지 않는다. Base 자체는 프로젝트 Sheet 동기화 대상이 아니다.
 - 일반 기획·상태 확인은 프로젝트 Notion page와 GitHub/repository 정본을 함께 사용하고, 구조화 runtime data는 repo-native source를 사용한다. 기존 Sheet는 migration/proposal 확인이 필요한 경우에만 읽는다. HTML 대시보드·외부 HTML 도구 카탈로그는 사용자 명시 요청 또는 발견/유지보수 surface이며 독립 정본·실행 증거가 아니다.
 - 기존 승인 이미지가 있으면 별도 지시 없이 새 시안을 만들거나 제거·교체하지 않는다. UI 설계·폴리싱·구현 결과 감사는 `auditing-and-refining-ui-art`로 라우팅하고, 사용자 승인 finding만 실제 렌더로 재검수한다.
 - 접근성·성능·플레이테스트·벤치마크 결과는 실제 적용된 경우만 보고하며 법적 인증이나 제품 구현 사실로 과장하지 않는다.
