@@ -51,7 +51,7 @@ cross_workstream_absorption_authorized: false | true
 source_main_sha:
 current_main_sha:
 write_parent_sha:
-expected_head_sha:
+expected_head_sha: PENDING_FIRST_WRITE | <exact-sha>
 current_branch:
 current_worktree:
 intended_paths: []
@@ -62,7 +62,7 @@ protected_paths: []
 user_approved_scope:
 ```
 
-첫 persistent write 전 `write_parent_sha`가 아직 없으면 `PENDING_FIRST_WRITE`로 둔다. 값을 추측하지 않는다.
+첫 persistent write 전 `write_parent_sha`가 아직 없으면 `PENDING_FIRST_WRITE`로 둔다. `expected_head_sha`도 첫 persistent write 전에는 `PENDING_FIRST_WRITE`, 그 뒤에는 실제 `<exact-sha>`로 갱신한다. 값을 추측하지 않는다.
 
 ## CONCURRENT_CHANGE_PREFLIGHT
 
