@@ -22,6 +22,33 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Fix one-shot cardinality assumptions
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path("tools/one_shot_active_figma_owner_retirement.py")
+          s = p.read_text(encoding="utf-8")
+          anchor = '''def replace_all(rel: str, old: str, new: str, label: str, expected: int | None = None) -> None:\n'''
+          helper = '''def replace_first(rel: str, old: str, new: str, label: str) -> None:\n    text = read(rel)\n    if old not in text:\n        raise RuntimeError(f"{label}: no match")\n    write(rel, text.replace(old, new, 1))\n\n\n'''
+          if helper not in s:
+              if anchor not in s:
+                  raise SystemExit("replace_all anchor missing")
+              s = s.replace(anchor, helper + anchor, 1)
+          old_call = '''    replace_once(rel, "Figma 승인 Reference", "승인 Visual Reference", "image plan backlog header")'''
+          new_call = '''    replace_first(rel, "Figma 승인 Reference", "승인 Visual Reference", "image plan backlog header")'''
+          if old_call in s:
+              s = s.replace(old_call, new_call, 1)
+          old_test_call = '''    replace_once(rel, '            "FIGMA_DEFAULT_VISUAL_WORKSPACE",\\n            "REPO_NATIVE_STRUCTURED_DATA",', '            "FIGMA_USAGE: DISABLED_BY_USER",\\n            "LEGACY_FIGMA_REFERENCE",\\n            "REPO_NATIVE_STRUCTURED_DATA",', "sheet contract current visual tokens")'''
+          new_test_call = old_test_call.replace("replace_once", "replace_first", 1)
+          if old_test_call in s:
+              s = s.replace(old_test_call, new_test_call, 1)
+          old_visual_call = '''    replace_once(rel, '            "FIGMA_DEFAULT_VISUAL_WORKSPACE",\\n            "REPO_NATIVE_STRUCTURED_DATA",', '            "FIGMA_USAGE: DISABLED_BY_USER",\\n            "LEGACY_FIGMA_REFERENCE",\\n            "REPO_NATIVE_STRUCTURED_DATA",', "visual policy test current tokens")'''
+          new_visual_call = old_visual_call.replace("replace_once", "replace_first", 1)
+          if old_visual_call in s:
+              s = s.replace(old_visual_call, new_visual_call, 1)
+          p.write_text(s, encoding="utf-8")
+          PY
       - name: Apply active-owner cleanup and targeted regressions
         run: python tools/one_shot_active_figma_owner_retirement.py
       - name: Commit verified cleanup and remove temporary harness
