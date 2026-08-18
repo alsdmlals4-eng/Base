@@ -29,14 +29,16 @@
 3. **Five full closed-loop review/refinement cycles with better-option search and long-term-fit recheck.** Preserves iterative learning, makes each repair input to the next attack, and keeps existing Skill ownership. **ADOPT.**
 4. **Create a new orchestration Skill just for the five-cycle behavior.** Explicit but duplicates intake/adversarial/validation owners and increases routing load. **REJECT.**
 
-## Benchmark synthesis already verified in Base evidence
+## Benchmark synthesis actually checked
 
-- NASA Decision Analysis / Analysis of Alternatives: define alternatives and criteria, compare performance/cost/risk, then recommend; rigor scales with decision complexity.
-- DORA working in small batches: bounded independently testable changes improve feedback and reduce instability.
-- Google Engineering Practices small CLs: self-contained changes improve review depth, reasoning, merge and rollback.
-- OpenAI agent-loop model previously reviewed for Base: later iterations are grounded by tool/results from prior iterations, supporting evidence-fed re-evaluation rather than disconnected repeated prose.
+Official-source benchmark evidence was refreshed successfully on 2026-08-18 after an earlier transient HTTP 503 attempt:
 
-Live web refresh was attempted on 2026-08-18 and returned HTTP 503; this plan therefore reuses the official-source evidence already captured in `docs/evidence/2026-08-18-base-postmerge-trade-study-and-adversarial-followup.md` and does not claim a fresh fetch succeeded.
+- NASA Decision Analysis / Analysis of Alternatives: define alternatives and objective criteria, compare technical/cost/schedule/risk and uncertainties, then recommend; decision-analysis rigor should match decision complexity.
+- DORA Working in Small Batches: bounded independently testable changes shorten feedback loops and are a countermeasure to AI-assisted delivery instability.
+- Google Engineering Practices Small CLs: self-contained changes are easier to review deeply, reason about, merge and roll back; related tests should travel with behavior changes.
+- OpenAI `Unrolling the Codex agent loop`: tool output is appended to the interaction and becomes input to a subsequent model iteration, supporting evidence-fed re-evaluation rather than disconnected repeated prose.
+
+These external sources challenge and inform the Base design but do not become Base authority. The earlier official-source synthesis remains preserved in `docs/evidence/2026-08-18-base-postmerge-trade-study-and-adversarial-followup.md`; current repository contracts and exact execution evidence remain authoritative for Base behavior.
 
 ## Tasks
 
