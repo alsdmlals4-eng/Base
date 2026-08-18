@@ -82,6 +82,36 @@ class SerialFictionDisciplineContractTests(unittest.TestCase):
         self.assertIn("universal", combined.lower())
         self.assertIn("production target", combined.lower())
 
+    def test_paragraph_break_breath_and_private_preference_reference_are_bounded(self) -> None:
+        skill = SKILL_PATH.read_text(encoding="utf-8")
+        pointer_path = GUIDE_ROOT / "BASE_OWNER_NARRATIVE_REFERENCE_POINTER.md"
+        self.assertTrue(pointer_path.is_file())
+        pointer = pointer_path.read_text(encoding="utf-8")
+        hub = (GUIDE_ROOT / "README.md").read_text(encoding="utf-8")
+
+        for token in (
+            "PARAGRAPH_BREAK_AND_BREATH",
+            "LINE_BREAK_RHYTHM",
+            "PARAGRAPH_LENGTH_PATTERN",
+            "DIALOGUE_NARRATION_ALTERNATION",
+            "REACTION_ISOLATION",
+        ):
+            self.assertIn(token, skill)
+
+        for token in (
+            "LIVE_CONNECTED_DRIVE_READ",
+            "USER_PREFERENCE_EVIDENCE",
+            "NOT_CANON",
+            "NO_STYLE_IMITATION",
+        ):
+            self.assertIn(token, pointer)
+
+        self.assertIn("BASE_OWNER_NARRATIVE_REFERENCE_POINTER.md", hub)
+        self.assertNotIn("docs.google.com/", pointer.lower())
+        self.assertNotIn("drive.google.com/", pointer.lower())
+        self.assertNotIn("https://", pointer.lower())
+        self.assertIn("universal", skill.lower())
+
     def test_character_and_opponent_integrity_is_a_real_contract_surface(self) -> None:
         skill = SKILL_PATH.read_text(encoding="utf-8")
         reference_path = REFERENCE_ROOT / "character-distinctiveness-and-opponent-threat.md"

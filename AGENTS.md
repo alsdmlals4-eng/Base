@@ -89,6 +89,7 @@ PAID_PLAN_COUNT: 2
 - 완료는 승인된 acceptance criteria의 `REQUIRED_WORK_REMAINING: 0`으로 판정한다. 외부 차단과 선택 backlog는 별도 축으로 남긴다.
 - 게임 작업은 core loop·핵심 시스템·세계관/핵심 스토리라인 정합성·가역적 dummy `BALANCE_BUDGET`·playable build/test·재사용 가능한 모듈 경계를 함께 설계한다.
 - 새 시각 작업의 기본 협업면은 프로젝트별 Figma이며, balance/economy/schema/runtime config는 repo-native structured source를 사용한다. 기존 Google Sheets는 검증된 migration이 끝날 때까지 legacy proposal/migration source로 보존한다.
+- 사용자에게 PowerShell 실행이 필요하면 `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`를 적용한다. 매 작업을 새 PowerShell 창 기준으로 보고 위치 세팅을 첫 실행 단계에 두며, 가능한 절차는 한 번에 붙여넣는 단일 블록으로 제공한다.
 
 ## 3. Work Mode·Skill·사용자 결정
 
