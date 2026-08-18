@@ -1,5 +1,14 @@
 # Running Adversarial Review and Refinement — Learning Log
 
+## 2026-08-18 — segmented five-round review was the wrong abstraction
+
+- **Trigger:** 사용자가 “5회 적대적 검토”는 5개 공격면 분할이 아니라 `전체 적대적 검토 → 충돌·누락·문제 발견 → 개선·보완 → 검증 → 개선된 전체 상태 재검토`를 5회 반복하는 것이라고 재확정했다. 중요 결정은 최소 3개의 실질 대안을 비교하고 더 나은 방안과 장기계획 적합성도 계속 확인해야 한다.
+- **Finding:** Base가 `FIVE_DISTINCT_ADVERSARIAL_ROUNDS`를 승격해 하나의 전체 검토를 다섯 lens로 분할했다. 이는 의식적 반복을 줄이려는 이전 해석이었지만 사용자 의도인 반복 개선 control loop를 바꿔 버렸다.
+- **Decision:** 새 광역 Skill 없이 기존 owner를 유지하고 `FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS`, `FULL_LOOP_COUNT_MINIMUM: 5`, `MINIMUM_VIABLE_ALTERNATIVES: 3`, `BETTER_ALTERNATIVE_SEARCH`, `LONG_TERM_PLAN_FIT_REQUIRED`를 상위 정책·장기정책·이 Skill에 연결한다. 각 회차는 앞 회차의 검증된 출력 상태를 입력으로 전체 승인 범위를 다시 공격한다.
+- **Evidence:** PR #519의 test-only head `b04c57bb9fd008c0043dbd488e8f8311c589e946`에서 Long-Horizon contract가 의도대로 RED였다. 초기 production head `26a07487ac60b943fe8510e1c25828f89346b5e8`에서는 새 full-loop 계약 대부분이 GREEN으로 전환됐지만, reference-freshness가 Skill Learning Log 동반 갱신 누락을 잡아 이 기록을 추가하게 됐다.
+- **Boundary:** 다섯 lens를 다섯 loop로 이름만 바꾸지 않는다. finding만 기록하고 승인 범위의 필수 수정·검증을 건너뛰지 않는다. 5회차 뒤 blocking finding이 남으면 추가 전체 루프를 수행한다. 최소 3개 대안은 이름만 다른 허수 후보로 채우지 않는다.
+- **Next trigger:** 전체 회차가 특정 lens 하나만 검사하거나, 각 회차 사이 실제 수정·검증 없이 보고서만 늘어나거나, 더 나은 방법 탐색과 장기 적합성 재판정이 누락되거나, active consumer에 `FIVE_DISTINCT_ADVERSARIAL_ROUNDS`가 재등장하면 즉시 재검토한다.
+
 ## 2026-08-15 — Socratic questioning works best as a selective review lens
 
 - **Trigger:** 적대적 검토 루프에 Socratic questioning의 명료화·가정·근거·관점·파급·질문 자체 성찰을 추가하라는 사용자 결정.
