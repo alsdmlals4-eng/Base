@@ -27,46 +27,92 @@ Registry의 `칭찬·균형 평가만 요청` 비사용 조건은 결정·권장
 
 일반 작업은 `attack → validate-critique → refine-approved-findings → regression-recheck → decision-report`를 사용한다. 저장소 전체 감사는 `references/repository-wide-audit-protocol.md`, 세부 Finding·회귀 판정은 `references/finding-and-regression-protocol.md`를 필요할 때만 읽는다.
 
-### Five-round review invariant
+### Five full adversarial improvement loop invariant
 
-이 Skill을 L1 이상 작업물·PR·저장소 감사·병합 후 결과의 **적대적 검토로 호출하면 항상 정확히 다섯 개의 서로 다른 공격 round**를 닫는다. 같은 자기비판을 다섯 번 반복하거나 여섯 번째 “보험성 round”를 추가하지 않는다. L0 단순 작업에 이 Skill을 quota 충족 목적으로 억지 호출하지는 않지만, 이 Skill이 적대적 검토로 실제 호출된 경우에는 다섯 round 계약을 생략하지 않는다.
+이 Skill을 L1 이상 작업물·PR·저장소 감사·병합 후 결과의 **적대적 검토로 호출하면 전체 검토·개선 생명주기를 최소 다섯 번 닫는다.** 다섯 개의 서로 다른 공격 관점을 각각 한 번 수행하는 의미가 아니다. 각 회차는 전체 승인 범위를 처음부터 다시 검토하며, 앞 회차의 수정 결과와 새 증거 자체도 다음 회차의 공격 입력이 된다.
 
 ```text
-FIVE_DISTINCT_ADVERSARIAL_ROUNDS: REQUIRED_WHEN_REVIEW_RUNS
-ROUND_1_INTENT_ASSUMPTIONS_SCOPE
-ROUND_2_CANON_STRUCTURE_DEPENDENCIES
-ROUND_3_FAILURE_SECURITY_CONCURRENCY
-ROUND_4_VALUE_BENCHMARK_COST_MAINTAINABILITY
-ROUND_5_REGRESSION_EVIDENCE_COMPLETION_FRESHNESS
+FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS: REQUIRED_WHEN_REVIEW_RUNS
+FULL_LOOP_COUNT_MINIMUM: 5
+FULL_SCOPE_REVIEW
+FIND → REFINE → VERIFY → RE-ATTACK
+BETTER_ALTERNATIVE_SEARCH
+LONG_TERM_PLAN_FIT_RECHECK
 ```
 
-1. `ROUND_1_INTENT_ASSUMPTIONS_SCOPE`: 사용자 의도, 핵심 방향, 숨은 가정, 승인 범위 확대·축소·왜곡을 공격한다.
-2. `ROUND_2_CANON_STRUCTURE_DEPENDENCIES`: 정본·owner·routing·중복·stale·참조·Schema·consumer·dependency 누락을 공격한다.
-3. `ROUND_3_FAILURE_SECURITY_CONCURRENCY`: 실패 복구, 부분 상태, branch/worktree/path/port 충돌, retry side effect, credential·secret, rollback을 공격한다.
-4. `ROUND_4_VALUE_BENCHMARK_COST_MAINTAINABILITY`: 사용자·플레이어 가치, 성공·실패 사례, 실무 벤치마크, 비용, 복잡도, 장기 유지보수성을 공격한다.
-5. `ROUND_5_REGRESSION_EVIDENCE_COMPLETION_FRESHNESS`: 정상 경로 회귀, evidence ceiling, exact-head, 미검증 과장, 완료 기준, postmerge·reference freshness를 공격한다.
+한 전체 회차의 기본 lifecycle은 다음과 같다.
 
-각 round는 최소한 `attack hypothesis → evidence → finding/severity → disposition → recheck → PASS/FAIL/UNRESOLVED`를 기록한다. 같은 finding을 표현만 바꿔 여러 round에 중복 계수하지 않는다. 새 finding이 뒤늦게 발견되면 관련 round의 finding·recheck를 갱신하고 Round 5에서 회귀·완료를 재확인한다. 새 Goal이나 새 승인 범위가 생긴 경우에만 별도 5-round review contract를 시작한다.
+```text
+FULL_SCOPE_REVIEW
+→ attack
+→ validate-critique
+→ refine-approved-findings
+→ regression-recheck / execution verification
+→ BETTER_ALTERNATIVE_SEARCH
+→ LONG_TERM_PLAN_FIT_RECHECK
+→ decision-report
+→ RE-ATTACK resulting state
+```
 
-`attack / validate-critique / refine-approved-findings / regression-recheck / decision-report`는 **round 수가 아니라 각 round 안팎에서 사용하는 phase**다. 구현 전 PLAN 사전판정에서 수정할 작업물이 없어 `refine-approved-findings`가 비어 있어도, 이 Skill을 적대적 검토로 호출해 `decision-report`를 만들면 다섯 공격면을 짧게라도 모두 판정한다. `NOT_RUN`, `BLOCKED_UNVERIFIED`, `CANCELLED`는 PASS가 아니며 P0/P1 finding과 절차 gate를 분리해 기록한다.
+각 회차는 전체 승인 범위를 처음부터 다시 보며 최소한 다음을 모두 현재 작업 성격에 맞게 공격한다.
 
-구현 전 PLAN 사전판정은 아직 수정할 작업물이 없으므로 `attack → validate-critique → decision-report`까지만 실행한다. 승인 finding은 `refine-approved-findings`에서 주 책임 분야 Skill이 한 번만 구현·수정하며, 이 Skill은 분야 작성 책임을 빼앗거나 이미 구현된 finding을 다시 수정하지 않는다. 그 뒤 `regression-recheck → decision-report`로 복귀해야 전체 루프가 완료된다.
+- 사용자 의도·핵심 방향·승인 범위·숨은 가정
+- 정본·owner·routing·중복·stale·reference·Schema·consumer·dependency
+- 실제 구현·데이터·자산·Tool/Runtime·Figma/구조화 데이터 경계
+- 실패 복구·부분 상태·branch/worktree/path/port 충돌·retry side effect·credential/secret·rollback
+- 사용자/플레이어 가치·성공/실패 사례·벤치마크·비용·복잡도·수명주기 유지보수·재사용성
+- 정상 경로 회귀·evidence ceiling·exact-head·미검증 과장·완료 기준·postmerge/reference freshness
 
-기본 Work Mode는 `REVIEW → 필요한 경우 BUILD → REVIEW`다. 같은 수행자가 맡아도 단계별 입력과 출력을 섞지 않는다.
+이 항목들은 **각 회차 안의 전체 checklist**다. 하나의 항목을 하나의 회차로 계산하지 않는다.
 
-PR 병합 또는 직접 `main` 결정 Commit 뒤에는 다음 확장 루트를 사용한다.
+각 전체 루프는 최소 다음 evidence를 남긴다.
+
+```yaml
+loop_index: 1..N
+input_state_or_head:
+evidence_delta: []
+full_scope_findings: []
+validated_findings: []
+changes_applied: []
+verification: []
+better_alternative_result:
+long_term_fit:
+unresolved: []
+output_state_or_head:
+```
+
+규칙:
+
+1. `FULL_LOOP_COUNT_MINIMUM: 5`. L1 이상에서 이 Skill이 적대적 검토로 실제 호출되면 1~5회 전체 루프를 순차 수행한다. L0 단순 작업에 quota를 채우기 위해 이 Skill을 억지 호출하지 않는다.
+2. `attack / validate-critique / refine-approved-findings / regression-recheck / decision-report`는 **회차를 쪼개는 이름이 아니라 각 전체 회차 안에서 반복되는 phase**다.
+3. 검증된 `MUST_FIX`와 승인된 `SHOULD_FIX`를 수정할 권한·증거가 있는데 finding만 기록하고 다음 회차로 넘어가지 않는다. 분야 작성 책임은 주 owner가 갖고, 이 Skill은 동일 finding을 중복 구현하지 않는다.
+4. 회차 N의 입력은 원칙적으로 회차 N-1의 **검증된 출력 상태**다. 앞 회차의 수정 결과가 새 충돌·누락·회귀를 만들었는지 다시 공격한다.
+5. 매 회차 새 증거·실패·finding이 생기면 `BETTER_ALTERNATIVE_SEARCH`로 더 나은 방법이 있는지 재탐색한다. 이미 선택한 안을 지키는 것이 목적이 아니다.
+6. 매 회차 `LONG_TERM_PLAN_FIT_RECHECK`로 사용자/플레이어 가치, 정확성·기획 충실도, 수명주기 비용, 유지보수성, 되돌리기, 재사용/모듈화, Base 변화 대응, 증거 강도, 현재 비용 경계 적합성을 다시 확인한다.
+7. 더 나은 방법이 핵심 방향·프로젝트 코어·승인 범위·비용을 바꾸면 `USER_DECISION_REQUIRED`다. 같은 승인 방향 안의 기술적 단일 개선은 기존 연속 실행 계약으로 반영할 수 있다.
+8. **5회차**에서도 전체 범위를 처음부터 다시 공격한다. 5회차 뒤 P0/P1 또는 acceptance criterion을 막는 finding이 남으면 횟수를 채웠다는 이유로 종료하지 않고, 수정·검증 뒤 **추가 전체 루프**를 수행한다.
+9. `NOT_RUN`, `BLOCKED_UNVERIFIED`, `CANCELLED`는 PASS가 아니다. 증거가 없으면 해당 판정을 그대로 보존한다.
+10. 동일 finding을 표현만 바꿔 여러 loop의 성과로 중복 계수하지 않는다. 다만 앞 회차에서 수정된 finding이 실제로 재발하거나 새로운 영향면을 만든 경우에는 새 evidence와 함께 다시 finding으로 기록한다.
+
+구현 전 PLAN 사전판정은 아직 수정할 작업물이 없을 수 있으므로 최초 `attack → validate-critique → decision-report` 결과를 작업 계약 입력으로 사용한다. 실제 BUILD/수정이 시작된 뒤에는 승인 finding을 분야 Skill이 구현하고 `regression-recheck`로 검증한 결과를 다음 전체 회차의 입력으로 삼는다. 기본 Work Mode는 `REVIEW → 필요한 경우 BUILD → REVIEW`이며 같은 수행자가 맡아도 단계별 입력과 출력을 섞지 않는다.
+
+PR 병합 또는 직접 `main` 결정 Commit 뒤에는 다음 확장 루트를 각 필요한 전체 회차에 사용한다.
 
 ```text
 new-main-baseline
 → canonical-and-sync-compare
+→ FULL_SCOPE_REVIEW
 → attack
 → validate-critique
 → refine-approved-findings
 → regression-recheck
+→ BETTER_ALTERNATIVE_SEARCH
+→ LONG_TERM_PLAN_FIT_RECHECK
 → post-merge-decision-report
+→ RE-ATTACK resulting state
 ```
 
-저장소 전체 감사에서는 다음 루트를 사용한다.
+저장소 전체 감사에서는 다음 repository-wide attack surface를 **각 전체 회차에서 다시** 사용한다.
 
 ```text
 repository-scope-map
@@ -176,10 +222,11 @@ repository_audit:
 12. 변경된 파일뿐 아니라 변경됐어야 할 untouched 소비자·Template·Test·파생본을 공격한다.
 13. 새 광역 Skill을 만들기 전에 이 mode와 reference-freshness·legacy-governance 조합으로 해결 가능한지 확인한다.
 14. 유지된 변경은 `POST_CHANGE_MONITOR_LOOP`의 PR·consumer·회귀·exact-head 검사를 닫기 전 완료로 보고하지 않는다.
+15. L1 이상 material decision은 `AGENTS.md`와 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`의 `MINIMUM_VIABLE_ALTERNATIVES: 3`, `BETTER_ALTERNATIVE_SEARCH`, `LONG_TERM_PLAN_FIT_REQUIRED`를 함께 적용한다.
 
 ## Repository-wide attack lenses
 
-`repository-wide-audit`에서는 다음을 필수 공격한다.
+`repository-wide-audit`에서는 다음을 필수 공격한다. 이 목록은 각 전체 개선 루프에서 다시 사용하는 검토 표면이며 loop 번호가 아니다.
 
 - 한 질문에 둘 이상의 현행 정본이 있는가.
 - 최신 승인 Decision이 누락되거나 `SUPERSEDED / REJECTED / DEFERRED` 결정이 부활했는가.
@@ -195,7 +242,7 @@ repository_audit:
 
 ## Post-merge attack lenses
 
-모든 병합과 직접 `main` 결정 Commit 뒤 다음을 공격한다.
+모든 병합과 직접 `main` 결정 Commit 뒤 다음을 공격한다. 이 목록도 각 전체 개선 루프에서 재사용하는 surface다.
 
 - 최근 사용자 승인 Decision이 누락됐는가
 - `SUPERSEDED`, `REJECTED`, `DEFERRED`된 결정이 다시 활성화됐는가
@@ -227,15 +274,18 @@ GitHub와 Sheets가 다르면 최신 사용자 승인, Decision ID, Commit SHA�
 ## Output contract
 
 ```md
-## 검토 mode·공격 관점과 실패 가정
+## 검토 mode·전체 개선 loop와 실패 가정
 ## 기준 Branch·Commit·Decision·정본·실제 diff
+## 최소 3개 실질 대안·벤치마크·trade study
 ## 열린·최근 병합 PR·중복 작업 비교
 ## Google Sheets 동기화 비교
 ## 저장소 감사 범위·권한 지도·미검증 범위
 ## stale·중복·고아·untouched 소비자·파생본 Finding
 ## MUST_FIX / SHOULD_FIX / USER_DECISION_REQUIRED / DEFER
 ## REJECTED_CRITIQUE / BLOCKED_UNVERIFIED / ALLOWED_LEGACY
-## 실제 반영한 최소 변경
+## 실제 반영한 최소 변경과 회차별 verification
+## BETTER_ALTERNATIVE_SEARCH 결과
+## LONG_TERM_PLAN_FIT_RECHECK 결과
 ## 보호한 코어·고유 정보·장점·범위
 ## reference freshness·정적·런타임·회귀 재검사
 ## branch cleanup 상태
