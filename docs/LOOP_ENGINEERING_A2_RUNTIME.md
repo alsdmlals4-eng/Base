@@ -127,11 +127,16 @@ docs/operations/UNIVERSAL_LOOP_CROSS_PROJECT_ACCEPTANCE.json
 ```yaml
 A3_AUTO_MERGE: DISABLED
 SCHEDULER: NOT_CONFIGURED
+AUTOMATIC_PACKAGE_SELECTION: FORBIDDEN
 AUTOMATIC_PRODUCT_SCOPE_SELECTION: FORBIDDEN
 PLANNING_APPROVAL: HUMAN_ONLY
 VISUAL_APPROVAL: HUMAN_ONLY
 PROJECT_PRODUCT_MUTATION_IN_BASE_TESTS: NONE
 ```
+
+- `AUTOMATIC_PACKAGE_SELECTION`은 승인된 Implementation Package를 runtime이 임의로 고르는 권한을 금지한다.
+- `AUTOMATIC_PRODUCT_SCOPE_SELECTION`은 다음 프로젝트/제품 범위를 runtime이 임의로 고르는 권한을 금지한다.
+- 둘은 서로 다른 권한 경계이며 하나가 다른 하나를 대체하지 않는다.
 
 provider 비용 정책은 `AGENTS.md`의 `ZERO_INCREMENTAL_COST_REQUIRED`와 current operational checkpoint를 따른다. 과거의 paid-provider 전제를 현재 정책으로 재사용하지 않는다.
 
