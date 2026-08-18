@@ -125,6 +125,24 @@ class ResilientExecutionNarrativeReferenceContractTests(unittest.TestCase):
         serial_readme = read("docs/knowledge/serial-fiction/README.md")
         self.assertIn("BASE_OWNER_NARRATIVE_REFERENCE_POINTER.md", serial_readme)
 
+    def test_narrative_learning_log_does_not_overclaim_private_source_readback(self) -> None:
+        learning = read("skills/developing-and-revising-serial-fiction/LEARNING_LOG.md")
+        marker = "## 2026-08-18 — 문단 호흡·private live-reference·CI consumer 전파"
+        self.assertIn(marker, learning)
+        section = learning.split(marker, 1)[1]
+        for term in (
+            "source_content_readback: NOT_VERIFIED",
+            "focused_contract: GREEN_ON_PR_523_FINAL_HEAD",
+            "reference_freshness: GREEN_ON_PR_523_FINAL_HEAD",
+            "postmerge_main_readback: VERIFIED",
+        ):
+            self.assertIn(term, section)
+        self.assertNotIn(
+            "연결된 Drive에서 현재 문서를 실제 readback했을 때",
+            section,
+        )
+        self.assertNotIn("reference_freshness: PENDING_RECHECK_AFTER_FIX", section)
+
     def test_documentation_map_uses_current_workspace_authority_split(self) -> None:
         docs = read("docs/DOCUMENTATION_MAP.md")
         for term in (

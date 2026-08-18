@@ -251,7 +251,7 @@ commercial_effect: NOT_RUN
 ### 입력과 finding
 
 - 사용자는 소설·스토리·대화 작업에서 줄바꿈과 문단 호흡을 중요한 품질 요소로 다루고, 계속 갱신되는 개인 `글따라쓰기` 문서를 선호 참고자료로 사용하도록 요청했다.
-- 연결된 Drive에서 현재 문서를 실제 readback했을 때 대사/서술 교차, 짧은 반응 분리, 문단 길이 변화, 빈 호흡이 관찰됐다.
+- #523 final/postmerge 검증에서 연결된 Drive의 exact `글따라쓰기` 문서는 해석되지 않았다. 따라서 문서 내용에서 특정 문단·줄바꿈 패턴을 실제 관찰했다는 주장은 이번 작업의 증거 상한을 넘으며, content-specific preference evidence는 `NOT_VERIFIED`로 유지한다.
 - 첫 standalone contract test는 기존 workflow에서 소비되지 않아 거짓 GREEN이 됐다. workflow가 새 test module을 명시적으로 소비하도록 연결한 뒤 exact RED에서 새 계약 5개만 실패했다.
 - 구현 후 focused long-horizon contract는 GREEN이었지만 canonical reference freshness가 serial-fiction Skill 변경에 기존 `tests/test_serial_fiction_discipline.py`와 Skill learning consumer의 동반 변경이 빠졌음을 차단했다.
 
@@ -267,16 +267,19 @@ commercial_effect: NOT_RUN
 
 ```yaml
 privacy_boundary: STRUCTURAL_CONTRACT
-focused_contract: GREEN_AT_INTERMEDIATE_HEAD
-companion_serial_test: ADDED
-reference_freshness: PENDING_RECHECK_AFTER_FIX
+source_content_readback: NOT_VERIFIED
+focused_contract: GREEN_ON_PR_523_FINAL_HEAD
+companion_serial_test: GREEN_ON_PR_523_FINAL_HEAD
+reference_freshness: GREEN_ON_PR_523_FINAL_HEAD
+postmerge_main_readback: VERIFIED
+postmerge_merge_sha: 2ad5466be543291f272267b5b917f031f279b527
 human_reader_quality: HUMAN_NOT_RUN
 commercial_effect: NOT_RUN
 ```
 
 ### 다음 검토 트리거
 
-- `글따라쓰기`의 새 샘플이 기존 선호 가설과 다르게 나타날 때
+- `글따라쓰기`의 새 샘플이 실제로 해석되어 기존 선호 가설과 다르게 나타날 때
 - 문단 호흡 lens가 한 문장 한 문단 같은 고정 공식으로 변질될 때
 - private source URL/ID/원문이 공개 repository patch에 들어갈 때
 - 새 contract test가 CI에 다시 소비되지 않을 때
