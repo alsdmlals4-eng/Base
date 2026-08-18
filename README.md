@@ -29,6 +29,7 @@ START_HERE.md
 - [Google Sheets compatibility 정책](docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md)
 - [근거 기반 게임 개발 지식 허브](docs/knowledge/game-development/README.md)
 - [게임 개발 Evidence Pack](templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md)
+- [Game Development Case Card](templates/research/GAME_DEVELOPMENT_CASE_CARD.md)
 - [Reference Case Card](templates/research/REFERENCE_CASE_CARD.md)
 - [PC/Android Cross-Platform Delivery Guide](docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md)
 - [PC/Android Delivery Profile](templates/planning/PC_ANDROID_DELIVERY_PROFILE.md)
@@ -51,18 +52,13 @@ START_HERE.md
 → Project Registry
 
 project page
-  01 · PROJECT CONTROL
-  → Work Master filtered by Project
-
-  [large visual separation]
-
-  02 · ASSET / LIBRARY / BENCHMARK
-  → Asset & Knowledge Master filtered by Project
-
-  [large visual separation]
-
-  03 · VISUAL MAP
-  → semantic flow + approved visual gallery
+  → 사람용 PROJECT HOME
+  → 01 PROJECT CONTROL
+  → 02 VISUAL / STORY BIBLE
+  → 03 FLOW / STORYBOARD
+  → 04 ASSET / CHARACTER LIBRARY
+  → 05 REFERENCE / BENCHMARK
+  → 06+ PRODUCTION / SPECIALIZED PAGES
 
 90 · SYSTEM MASTERS
 → unfiltered master data sources
