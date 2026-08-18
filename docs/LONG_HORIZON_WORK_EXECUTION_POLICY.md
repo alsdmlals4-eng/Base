@@ -22,6 +22,9 @@ BENCHMARK_SYNTHESIS
 EXPECTED_EFFECTS_RISKS_MITIGATIONS_BEFORE_BUILD
 SINGLE_INITIAL_APPROVAL_THEN_CONTINUE
 RECOVER_TRY_ALTERNATIVES_RESUME
+INDEPENDENT_WORKSTREAM_ISOLATION
+OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT
+EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION
 ZERO_INCREMENTAL_COST_REQUIRED
 FIVE_DISTINCT_ADVERSARIAL_ROUNDS
 POSTMERGE_PROMOTION_AND_SUPERSESSION
@@ -169,6 +172,25 @@ failure / interruption
 - 로컬 도구 port 충돌 → 소유권을 확인한 별도 port/instance 사용, 임의 프로세스 종료 금지
 
 새로운 증거가 생기지 않는 무한 retry는 금지한다.
+
+## 6.5 독립 Workstream 격리
+
+### `INDEPENDENT_WORKSTREAM_ISOLATION`
+
+기본 규칙은 다음과 같다.
+
+```text
+OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT
+EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION
+```
+
+- 다른 채팅, 다른 독립 Goal, 다른 프로젝트가 소유한 branch·worktree·path·PR은 같은 저장소에 있더라도 현재 작업의 수정 대상으로 간주하지 않는다.
+- 현재 작업은 자기 전용 branch/worktree/path/port/Resource Lock을 사용하고, 다른 workstream의 dirty state나 미완성 RED/Draft를 정리한다는 이유로 임의 수정·강제 병합·force update하지 않는다.
+- 같은 Goal의 선행 PR이라도 먼저 `REUSE / ABSORB / SUPERSEDE / KEEP_SEPARATE` 판정을 하고 실제 material delta만 통합한다. stale whole branch를 현재 main 위에 그대로 얹지 않는다.
+- 예외는 사용자가 현재 작업에 대해 **명시적으로 흡수·통합을 승인한 경우**다. 이때도 unrelated PR은 범위 밖으로 보존할 수 있으며, 흡수한 PR은 successor·superseded 근거와 replacement pointer를 남긴다.
+- 다른 workstream과 소유권이 불명확하면 수정부터 하지 말고 authoritative state를 재조회해 충돌을 fail closed로 처리한다.
+
+이 규칙은 병렬 작업의 독립성을 보호하기 위한 기본값이며, 사용자의 최신 명시 지시가 특정 workstream 흡수를 허용하면 그 승인 범위 안에서만 예외가 적용된다.
 
 ## 7. Skill·도구 과잉 방지
 
