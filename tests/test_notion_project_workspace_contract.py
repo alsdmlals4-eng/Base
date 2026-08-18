@@ -20,6 +20,33 @@ def test_machine_workspace_authority_is_notion_and_project_scoped() -> None:
     assert contract["runtime_truth"] == "REPOSITORY_RUNTIME_TRUTH"
 
 
+def test_canon_authority_is_split_by_human_visual_and_structured_runtime_domains() -> None:
+    contract = json.loads(text("docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json"))
+    assert contract["authority_model"] == "DOMAIN_SPLIT_CANON"
+    assert contract["human_facing_canon"] == "NOTION_HUMAN_FACING_CANON"
+    assert contract["repository_structured_canon"] == "REPOSITORY_STRUCTURED_CANON"
+    assert {
+        "PROJECT_OVERVIEW",
+        "VISUAL_DIRECTION",
+        "VISUAL_ASSET_CATALOG",
+        "BUDGET_TABLE",
+        "TIER_TABLE",
+        "HUMAN_EDITABLE_FLOW_MAP",
+        "STORYBOARD",
+    }.issubset(set(contract["notion_priority_domains"]))
+    assert {
+        "MARKDOWN_SPEC",
+        "JSON_DATA",
+        "GAME_DATA",
+        "CODE",
+        "SCENE",
+        "RESOURCE",
+        "TEST",
+        "RUNTIME_EVIDENCE",
+    }.issubset(set(contract["repository_priority_domains"]))
+    assert contract["cross_domain_sync"] == "SYNC_BEFORE_IMPLEMENTATION"
+
+
 def test_active_visual_policy_absorbs_tool_principles_without_figma_authority() -> None:
     policy = text("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
     required = (
