@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "project_workspace": "NOTION_DEFAULT_PROJECT_WORKSPACE",
+  "project_relation": "PROJECT_RELATION_REQUIRED",
+  "project_registry": "PROJECT_REGISTRY_MASTER",
+  "work_master": "WORK_MASTER",
+  "asset_master": "ASSET_KNOWLEDGE_MASTER",
+  "visual_map": "VISUAL_MAP_DERIVED",
+  "runtime_truth": "REPOSITORY_RUNTIME_TRUTH",
+  "human_view": "PROJECT_FILTERED_HUMAN_VIEW",
+  "ai_system_view": "PROJECT_FILTERED_AI_SYSTEM_VIEW",
+  "google_sheets": "COMPATIBILITY_ONLY",
+  "figma": "DEPRECATED_NOT_ACTIVE_AUTHORITY",
+  "default_cost_boundary": "ZERO_INCREMENTAL_COST",
+  "required_project_record_types": [
+    "WORK",
+    "ASSET",
+    "COMPONENT",
+    "SCREEN",
+    "REFERENCE",
+    "BENCHMARK"
+  ],
+  "benchmark_decisions": [
+    "ADOPT",
+    "ADAPT",
+    "TEST",
+    "REFERENCE_ONLY",
+    "AVOID",
+    "IGNORE"
+  ],
+  "invariants": [
+    "Every project-scoped work, asset, screen, reference, benchmark, and component record must resolve to exactly one Project relation before it can be treated as project canon.",
+    "Project pages expose only Project-filtered linked views; unfiltered master views belong under the system-master area.",
+    "The Visual Map is derived from project records and approved previews; it is never a second runtime or asset authority.",
+    "Image or file delivery success requires write completion plus readback before success may be reported.",
+    "Repository code, runtime data, scenes, resources, tracked implementation assets, builds, and tests remain runtime truth."
+  ]
+}
