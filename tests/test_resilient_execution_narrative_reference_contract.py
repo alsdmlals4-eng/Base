@@ -52,6 +52,7 @@ class ResilientExecutionNarrativeReferenceContractTests(unittest.TestCase):
     def test_reusable_lessons_route_to_existing_owners_before_new_skill(self) -> None:
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         agents = read("AGENTS.md")
+        start = read("START_HERE.md")
         for term in (
             "REUSABLE_LESSON_PROMOTION_GATE",
             "REUSE_EXISTING_OWNER",
@@ -62,7 +63,7 @@ class ResilientExecutionNarrativeReferenceContractTests(unittest.TestCase):
         ):
             self.assertIn(term, policy)
         self.assertIn("managing-base-change-proposals", agents)
-        self.assertIn("evolving-project-discipline-skills", agents)
+        self.assertIn("evolving-project-discipline-skills", start)
 
     def test_serial_fiction_owns_paragraph_break_and_breath_craft(self) -> None:
         skill = read("skills/developing-and-revising-serial-fiction/SKILL.md")
