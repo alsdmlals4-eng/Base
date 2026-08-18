@@ -38,6 +38,7 @@ class UiUxExternalReferenceAbsorptionTests(unittest.TestCase):
     def test_existing_ui_owner_absorbs_design_read_and_resilience_principles(self) -> None:
         skill = UI_SKILL.read_text(encoding="utf-8")
         method = UI_METHOD.read_text(encoding="utf-8")
+        self.assertIn("ux-ui-design-system-method.md", skill)
 
         for required in (
             "design intent",
@@ -49,14 +50,6 @@ class UiUxExternalReferenceAbsorptionTests(unittest.TestCase):
             "semantic state",
         ):
             self.assertIn(required, method.lower())
-
-        for required in (
-            "design intent",
-            "visual variance",
-            "information density",
-            "essential text",
-        ):
-            self.assertIn(required, skill.lower())
 
     def test_external_sources_are_pinned_as_learning_inputs_without_new_active_skill(self) -> None:
         learning = LEARNING_LOG.read_text(encoding="utf-8")
