@@ -117,7 +117,7 @@ FIGMA_DEFAULT_VISUAL_WORKSPACE
 - 신규 프로젝트와 승인된 마이그레이션의 활성 기획서는 저장소 루트 `[기획서]/` 아래에 둔다. `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않는다.
 - 상세 책임 원본, 상태 축, 발행 정책, 완료 조건은 `docs/OPERATING_MODEL.md`를 따른다.
 - 새 프로젝트·새 시각 기획의 기본 협업면은 `FIGMA_DEFAULT_VISUAL_WORKSPACE`다. 화면·컴포넌트·상태·프로토타입·승인 레퍼런스는 프로젝트 Figma에 구조화하고, 규칙·Decision은 GitHub 정본, 밸런스·경제·schema·runtime config는 repo-native structured source가 소유한다.
-- 기존 구성된 프로젝트 Google Sheet는 검증된 migration이 끝날 때까지 `USER_FACING_GDD_WORKSPACE` 호환성과 `PROPOSED_SHEET_CHANGE`를 보존하는 `GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE`로 취급한다. Sheet-only 고유 내용과 proposal을 GitHub/Figma/repo-native source에 reconcile하고 readback·replacement pointer를 확인하기 전에는 삭제·폐기·migration 완료를 주장하지 않는다. Base 자체는 프로젝트 Sheet 동기화 대상이 아니다.
+- 기존 구성된 프로젝트 Google Sheet는 검증된 migration이 끝날 때까지 `USER_FACING_GDD_WORKSPACE` 호환성과 `PROPOSED_SHEET_CHANGE`를 보존하는 `GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE`로 취급한다. legacy Sheet의 상세 상태·proposal semantics·동기화 호환 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 따르되, 새 작업의 기본 workspace 권위는 이 파일과 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`의 Figma/repo-native 전환 규칙이 우선한다. Sheet-only 고유 내용과 proposal을 GitHub/Figma/repo-native source에 reconcile하고 readback·replacement pointer를 확인하기 전에는 삭제·폐기·migration 완료를 주장하지 않는다. Base 자체는 프로젝트 Sheet 동기화 대상이 아니다.
 - 일반 기획·상태 확인은 GitHub 정본을 우선하고, 시각 협업은 프로젝트 Figma, 구조화 데이터는 repo-native source를 사용한다. 기존 Sheet는 migration/proposal 확인이 필요한 경우에만 읽는다. HTML 대시보드·외부 HTML 도구 카탈로그는 사용자 명시 요청 또는 발견/유지보수 surface이며 독립 정본·실행 증거가 아니다.
 - 기존 승인 이미지가 있으면 별도 지시 없이 새 시안을 만들거나 제거·교체하지 않는다. UI 설계·폴리싱·구현 결과 감사는 `auditing-and-refining-ui-art`로 라우팅하고, 사용자 승인 finding만 실제 렌더로 재검수한다.
 - 접근성·성능·플레이테스트·벤치마크 결과는 실제 적용된 경우만 보고하며 법적 인증이나 제품 구현 사실로 과장하지 않는다.
