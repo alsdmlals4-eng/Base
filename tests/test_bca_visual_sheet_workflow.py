@@ -60,6 +60,26 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
             self.assertIn(page, profile)
         self.assertNotIn('"skill_id": "figma-', registry)
 
+    def test_art_skill_indexes_figma_direct_modules_for_package_integrity(self) -> None:
+        art_skill = (ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md").read_text(encoding="utf-8")
+        gate = (
+            ROOT
+            / "skills/designing-art-prompts-and-technique-cards/references/figma-visual-bible-continuity-gate.md"
+        ).read_text(encoding="utf-8")
+        for module in (
+            "figma-direct-placement-and-canon.md",
+            "character-identity-expression-controls.md",
+            "sprite-pose-sequence-controls.md",
+            "effect-stage-compositing-controls.md",
+            "candidate-review-and-reusable-harvest.md",
+            "local-visual-tool-lessons-and-fallback.md",
+        ):
+            self.assertIn(f"references/{module}", art_skill)
+            self.assertIn(module, gate)
+        self.assertIn("FIGMA_DIRECT_VISUAL_ORGANIZATION", gate)
+        self.assertIn("02_WIP", gate)
+        self.assertIn("PROJECT_ASSET_APPROVED", gate)
+
     def test_visual_requirement_gate_is_consumed_without_duplicate_skill(self) -> None:
         guide = (ROOT / "docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md").read_text(encoding="utf-8")
         art_skill = (ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md").read_text(encoding="utf-8")
