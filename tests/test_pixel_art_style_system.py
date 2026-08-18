@@ -7,6 +7,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 STYLE_SYSTEM = ROOT / "docs" / "knowledge" / "game-development" / "PIXEL_ART_STYLE_SYSTEM.md"
 VISUAL_GALLERY = ROOT / "docs" / "knowledge" / "game-development" / "PIXEL_ART_VISUAL_REFERENCE_GALLERY.md"
+PREFERRED_LIBRARY = ROOT / "docs" / "knowledge" / "game-development" / "PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md"
+PREFERRED_OVERVIEW = ROOT / "docs" / "knowledge" / "game-development" / "reference-images" / "preferred-visual" / "preferred-visual-style-overview.jpg"
+SPECIALTY_RADAR = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_SPECIALTY_SOURCE_RADAR.md"
+VISUAL_STYLE_RADAR = ROOT / "docs" / "knowledge" / "game-development" / "VISUAL_STYLE_SOURCE_RADAR.md"
 ART_GUIDE = ROOT / "docs" / "knowledge" / "game-development" / "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md"
 DOC_MAP = ROOT / "docs" / "DOCUMENTATION_MAP.md"
 HUB = ROOT / "docs" / "knowledge" / "game-development" / "README.md"
@@ -85,6 +89,99 @@ class PixelArtStyleSystemTests(unittest.TestCase):
         self.assertIn("외부 예시는 스타일 정의가 아니라 관찰 자료", gallery)
         self.assertIn("PROJECT_ASSET_APPROVED를 부여하지 않는다", gallery)
 
+    def test_preferred_visual_library_tracks_user_taste_without_promoting_project_canon(self) -> None:
+        self.assertTrue(PREFERRED_LIBRARY.is_file())
+        preferred = read(PREFERRED_LIBRARY)
+        style = read(STYLE_SYSTEM)
+
+        self.assertIn("PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md", style)
+        for style_family in (
+            "Pixel Illustration Hybrid",
+            "Chibi Epic Dark Fantasy",
+            "Ink Wash Wuxia",
+            "Dark Gold UI",
+            "Noir Archive / Investigation Interface",
+        ):
+            self.assertIn(style_family, preferred)
+
+        for evaluation_axis in (
+            "AI_GENERATED_LOOK_REDUCTION",
+            "STYLE_CONSISTENCY_AND_READABILITY",
+            "WORLD_CORE_SYSTEM_FIT",
+        ):
+            self.assertIn(evaluation_axis, preferred)
+
+        for governance_term in (
+            "MINIMUM_VIABLE_ALTERNATIVES: 3",
+            "BETTER_ALTERNATIVE_SEARCH",
+            "LONG_TERM_PLAN_FIT_REQUIRED",
+            "REVIEW_TRIGGERS",
+            "REFERENCE_ONLY",
+            "NO_AUTOMATIC_PROJECT_STYLE_PROMOTION",
+        ):
+            self.assertIn(governance_term, preferred)
+
+        for benchmark in (
+            "Shovel Knight",
+            "Dead Cells",
+            "OCTOPATH TRAVELER II",
+            "Hades",
+            "Into the Breach",
+        ):
+            self.assertIn(benchmark, preferred)
+
+        self.assertGreaterEqual(preferred.count("user_reference_sheet:"), 5)
+        self.assertGreaterEqual(preferred.count("benchmark_disposition:"), 5)
+
+    def test_preferred_visual_library_preserves_visible_reference_overview(self) -> None:
+        self.assertTrue(PREFERRED_OVERVIEW.is_file())
+        preferred = read(PREFERRED_LIBRARY)
+        self.assertIn(
+            "reference-images/preferred-visual/preferred-visual-style-overview.jpg",
+            preferred,
+        )
+        self.assertIn("DERIVED_CONTACT_SHEET", preferred)
+        self.assertIn("REFERENCE_ONLY", preferred)
+
+    def test_continuous_style_discovery_reuses_existing_source_radar(self) -> None:
+        self.assertTrue(SPECIALTY_RADAR.is_file())
+        self.assertTrue(VISUAL_STYLE_RADAR.is_file())
+        preferred = read(PREFERRED_LIBRARY)
+        radar = read(VISUAL_STYLE_RADAR)
+
+        for term in (
+            "CONTINUOUS_STYLE_DISCOVERY",
+            "UNCAPPED_CANDIDATE_INTAKE",
+            "ORIGINAL_SOURCE_BACKTRACE",
+            "STYLE_FAMILY_MATCH",
+            "NEW_FAMILY_CANDIDATE",
+            "VISUAL_STYLE_SOURCE_RADAR.md",
+        ):
+            self.assertIn(term, preferred)
+
+        for term in (
+            "ART_DIRECTION_AND_VISUAL_STYLE",
+            "PERIODIC_SPECIALTY_SOURCE_RADAR.md",
+            "PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md",
+            "ORIGINAL_SOURCE_BACKTRACE",
+            "AI_GENERATED_LOOK_REDUCTION",
+            "STYLE_CONSISTENCY_AND_READABILITY",
+            "WORLD_CORE_SYSTEM_FIT",
+        ):
+            self.assertIn(term, radar)
+
+    def test_figma_reference_sync_has_official_route_and_truthful_fallback(self) -> None:
+        preferred = read(PREFERRED_LIBRARY)
+        for term in (
+            "FIGMA_STRUCTURE_READY",
+            "upload_assets",
+            "FIGMA_SYNC_PENDING_TRANSPORT",
+            "FIGMA_READBACK_REQUIRED",
+            "https://developers.figma.com/docs/figma-mcp-server/tools-and-prompts/",
+            "https://developers.figma.com/docs/figma-mcp-server/write-to-canvas/",
+        ):
+            self.assertIn(term, preferred)
+
     def test_pixel_candidate_template_captures_axes_cost_and_validation(self) -> None:
         brief = read(ART_BRIEF)
         for term in (
@@ -110,12 +207,14 @@ class PixelArtStyleSystemTests(unittest.TestCase):
     def test_canonical_art_owners_route_to_pixel_reference_system(self) -> None:
         art_guide = read(ART_GUIDE)
         doc_map = read(DOC_MAP)
+        style = read(STYLE_SYSTEM)
         for required in (
             "PIXEL_ART_STYLE_SYSTEM.md",
             "PIXEL_ART_VISUAL_REFERENCE_GALLERY.md",
         ):
             self.assertIn(required, art_guide)
             self.assertIn(required, doc_map)
+        self.assertIn("PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md", style)
 
 
 if __name__ == "__main__":
