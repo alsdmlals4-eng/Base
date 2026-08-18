@@ -1,21 +1,23 @@
 name: One-shot Notion source migration
 
 on:
-  push:
+  pull_request:
     branches:
-      - chore/notion-source-migration-20260819
+      - main
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: write
 
 jobs:
   migrate:
-    # This workflow is branch-local and is deleted before the PR is opened.
+    # Temporary branch-local migration harness; removed before merge.
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout branch
+      - name: Checkout PR head branch
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -42,4 +44,4 @@ jobs:
             exit 1
           fi
           git commit -m "chore: retire Figma sources and add Notion watch"
-          git push origin HEAD:${GITHUB_REF_NAME}
+          git push origin HEAD:${GITHUB_HEAD_REF}
