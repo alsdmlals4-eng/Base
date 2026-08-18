@@ -4,13 +4,16 @@ Figma와 Whimsical은 기획·UX/UI·인계·검토를 돕는 `VISUAL_WORKSPACE`
 
 ## Context and authority
 
+새 프로젝트와 새 시각 작업의 기본 협업면은 `FIGMA_DEFAULT_VISUAL_WORKSPACE`다. 밸런스·경제·Schema·runtime config 같은 구조화 데이터는 `REPO_NATIVE_STRUCTURED_DATA`가 소유하며, 기존 프로젝트 Google Sheets는 `GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE` / `MIGRATION_COMPATIBILITY_SURFACE`로만 보존한다.
+
 각 Artifact는 `GDD`, `EXTERNAL_COLLABORATION`, `BOTH` 중 하나의 `usage_context`를 가진다. GDD 안에서는 사람이 흐름과 화면을 빠르게 확인하는 시각 구성요소이고, GDD 밖에서는 설계 탐색·협업·리뷰·인계의 독립 작업면이다. 둘 중 어느 쪽도 도구 사용을 강제하거나 활용 범위를 제한하지 않는다.
 
 ```text
 GitHub Markdown·JSON + confirmed decisions → canonical rule and approval
-Google Sheets → USER_FACING_GDD_WORKSPACE summary and editable review surface
-Whimsical → loop, relation, branch, journey, system or work-flow visualization
-Figma → screen, component, state, prototype, design-system and pinned handoff view
+Figma → FIGMA_DEFAULT_VISUAL_WORKSPACE for screen, component, state, prototype, design-system and pinned handoff view
+repo-native structured source → REPO_NATIVE_STRUCTURED_DATA for balance, economy, schema and runtime configuration
+existing Google Sheets → GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE / MIGRATION_COMPATIBILITY_SURFACE for preserved summary, proposal and migration readback
+Whimsical → optional loop, relation, branch, journey, system or work-flow visualization
 Godot + tests → actual implementation and validation evidence
 ```
 
@@ -22,7 +25,8 @@ Godot + tests → actual implementation and validation evidence
 | --- | --- | --- |
 | core/session/meta loop, dependencies, narrative branches, AI/work process | Whimsical (or Mermaid for small static diagrams) | pixel-accurate UI or rule canon |
 | screen hierarchy, component states, focus/input flow, responsive layout, prototype | Figma | game-rule canon or Godot completion evidence |
-| compact status, link and user review | Google Sheets | a copy of every visual artifact |
+| balance, economy, schema, runtime configuration | repo-native structured source | a visual-workspace-only value |
+| preserved legacy status, link, user proposal and migration readback | configured Google Sheets | a new-project default workspace or a copy of every visual artifact |
 | durable rule, decision, handoff contract | GitHub | a live design-file-only decision |
 
 Do not create a `figma-*` or `whimsical-*` Skill merely because a connector exists. Extend the responsible planning, UX/UI, documentation, or handoff Skill. Use either tool independently when it solves the current problem; use both only when a confirmed structure must become a screen contract.
@@ -65,7 +69,7 @@ At `APPROVED_VISUAL_REFERENCE` or later, record a responsible document, Decision
 
 사용자 승인 뒤에만 Figma의 Approved/Final 위치와 Registry 상태를 갱신한다. 실제 이미지 bytes의 후보·제품 승격 권위는 `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`와 tracked asset 계약이 계속 소유하며, `PROJECT_ASSET_APPROVED → promote`를 우회하지 않는다.
 
-Figma 링크나 frame/node를 읽을 수 없으면 과거 대화·파일명·스크린샷 추정으로 내용을 확인했다고 보고하지 않는다. `LINK_UNVERIFIED`, `AUTH_REQUIRED`, `ACCESS_DENIED`, `READ_ONLY` 또는 `UNVERIFIED`를 기록하고 Markdown·text wireframe·로컬 승인 자산 등 현재 접근 가능한 근거로 fallback한다.
+Figma 링크나 frame/node를 읽을 수 없으면 과거 대화·파일명·스크린샷 추정으로 내용을 확인했다고 보고하지 않는다. `LINK_UNVERIFIED`, `AUTH_REQUIRED`, `ACCESS_DENIED`, `READ_ONLY` 또는 `UNVERIFIED`를 기록하고 Markdown·text wireframe·로컬 승인 자산 등 현재 접근 가능한 근거로 fallback한다. Figma 접근 실패만으로 Google Sheets를 새 기본 시각 workspace로 되살리지 않는다.
 
 Figma의 Pages/Sections는 단계·milestone·협업 구역을 나누는 데 사용하고, 반복되는 UI 요소가 충분히 안정화된 프로젝트는 Components/Styles를 사용해 일관성을 높일 수 있다. 팀 Library 발행은 요금제·권한과 실제 재사용 필요가 확인된 경우에만 선택적으로 사용하며 Base가 강제하지 않는다. 큰 변경 전에는 Figma version history 또는 사용 가능한 branch/checkpoint를 활용해 복구 가능성을 확보한다.
 
@@ -134,7 +138,7 @@ GPT가 Figma 쓰기 권한을 가진 경우 화면 옆 **편집 가능한 텍스
 - `MISSING_CANON`: 판정에 필요한 정본이 불충분함.
 - `VISUAL_CANONICAL_CONFLICT`: 시각 자료가 현재 정본과 충돌함.
 
-`DISCOVERED_IDEA`와 `AI_ASSUMPTION`은 보기 좋거나 구현 가능하다는 이유만으로 기획 요구로 승격하지 않는다. 사용자 Decision 뒤에만 정본·구현 계약에 반영한다. Figma 쓰기가 불가능하면 같은 기록을 책임 GitHub 문서나 프로젝트 Sheet에 남기고 실제 상태를 `SYNC_PENDING`, `READ_ONLY`, `AUTH_REQUIRED`, `ACCESS_DENIED` 또는 `UNVERIFIED`로 기록한다.
+`DISCOVERED_IDEA`와 `AI_ASSUMPTION`은 보기 좋거나 구현 가능하다는 이유만으로 기획 요구로 승격하지 않는다. 사용자 Decision 뒤에만 정본·구현 계약에 반영한다. Figma 쓰기가 불가능하면 같은 기록을 책임 GitHub 문서에 남기고, 이미 구성된 legacy Sheet가 migration 범위에 있을 때만 해당 Sheet에도 연결할 수 있다. 실제 상태는 `SYNC_PENDING`, `READ_ONLY`, `AUTH_REQUIRED`, `ACCESS_DENIED` 또는 `UNVERIFIED`로 기록한다.
 
 승인 시각 참조와 실제 구현 비교는 `MATCHED / INTENDED_DIFFERENCE / IMPLEMENTATION_GAP / PLANNING_CHANGE_REQUIRED / AI_MOCKUP_ERROR / VISUAL_CANONICAL_CONFLICT / BLOCKED_UNVERIFIED` 중 하나로 판정한다. 실제 `RUNTIME_CAPTURE`가 없으면 Prototype만으로 `MATCHED`를 주장하지 않는다.
 
@@ -146,7 +150,7 @@ If access is unavailable, use Markdown, Mermaid, a table, or a text wireframe; m
 
 ## GDD and implementation handoff
 
-Sheets hold a short Artifact ID, purpose, context, Decision ID, responsible source, status, link, snapshot, and next check. They do not copy full boards or frames. An implementation handoff uses a pinned Figma frame or a Whimsical structural reference plus a GitHub implementation contract; actual Godot render, input, accessibility, device, and human evidence remain independent and remain `NOT_RUN` until evidence exists.
+Configured legacy Sheets may hold a short Artifact ID, purpose, context, Decision ID, responsible source, status, link, snapshot, and next check during migration. They do not copy full boards or frames and are not required for new projects. An implementation handoff uses a pinned Figma frame or a Whimsical structural reference plus a GitHub implementation contract; actual Godot render, input, accessibility, device, and human evidence remain independent and remain `NOT_RUN` until evidence exists.
 
 ## Intermediate visual checkpoint
 
@@ -156,4 +160,4 @@ Use image generation only when it is available and authorized. Otherwise use the
 
 ## Adversarial review
 
-Reject a change if it makes a visual tool a second canon, forces both tools, duplicates full content across tools, pins a live file without a snapshot, treats a prototype as runtime proof, silently bypasses access failure, auto-promotes `DISCOVERED_IDEA` or `AI_ASSUMPTION`, treats Figma reuse promotion as `PROJECT_ASSET_APPROVED`, or mixes project URL/token/design decisions into Base.
+Reject a change if it makes a visual tool a second canon, forces both tools, duplicates full content across tools, pins a live file without a snapshot, treats a prototype as runtime proof, silently bypasses access failure, auto-promotes `DISCOVERED_IDEA` or `AI_ASSUMPTION`, treats Figma reuse promotion as `PROJECT_ASSET_APPROVED`, restores Google Sheets as a new-project default workspace, or mixes project URL/token/design decisions into Base.
