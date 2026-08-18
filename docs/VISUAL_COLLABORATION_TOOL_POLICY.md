@@ -4,16 +4,24 @@
 
 The default project operating surface is `NOTION_DEFAULT_PROJECT_WORKSPACE`.
 
+Authority is split by domain instead of forcing one tool to own every representation.
+
 ```text
 Notion project workspace
-→ project planning, Asset/Knowledge catalog, references, benchmarks, approved visual previews and derived Visual Map
+→ NOTION_HUMAN_FACING_CANON
+→ project overview / visual direction / visual asset catalog
+→ budget tables / tier tables / human-editable Flow Map / Storyboard
+→ the primary surface a person reads, compares, and edits
 
-repository-native code/data/scenes/resources/tests
-→ REPOSITORY_RUNTIME_TRUTH
+repository-native Markdown / JSON / game data / code / scenes / resources / tests
+→ REPOSITORY_STRUCTURED_CANON
+→ REPOSITORY_RUNTIME_TRUTH for implemented/runtime facts
 
 legacy Google Sheets
 → COMPATIBILITY_ONLY when an existing migration source still contains unique material
 ```
+
+`DOMAIN_SPLIT_CANON` means neither side is a disposable copy. Notion has priority for the human-facing visual/table/overview domains above; the repository has priority for structured specifications, data and implementation/runtime domains. When a Notion edit implies a Markdown/data/code/scene/resource/test change, synchronize that structured change to the repository before implementation or runtime claims (`SYNC_BEFORE_IMPLEMENTATION`).
 
 No visual collaboration tool becomes a second runtime or implementation canon.
 
@@ -32,22 +40,33 @@ Cross-project reuse keeps one source record and records reuse intent; do not clo
 ## Standard project surface
 
 ```text
+PROJECT HOME
+→ current direction / core fun / core loop / blockers / quick links
+
 01 · PROJECT CONTROL
 → WORK_MASTER filtered to the selected Project
 
-[large visual separation]
+02 · VISUAL BIBLE
+→ approved visual direction / human-readable north star
 
-02 · ASSET / LIBRARY / BENCHMARK
+03 · FLOW MAP / STORYBOARD
+→ human-editable visual relationship surface
+→ VISUAL_MAP_DERIVED from structured records when appropriate
+
+04 · ASSET LIBRARY
 → ASSET_KNOWLEDGE_MASTER filtered to the selected Project
 
-[large visual separation]
+05 · REFERENCE / BENCHMARK
+→ evidence and adoption decisions
 
-03 · VISUAL MAP
-→ VISUAL_MAP_DERIVED
-→ approved project visuals
+06 · PRODUCTION / HANDOFF
+→ approved planning → repository implementation → runtime QA
+
+07+ · PROJECT-SPECIFIC CONFIRMED TABLES
+→ budget / tier / roster / economy / progression / other human-learning tables when useful
 ```
 
-The large separation is intentional: it reduces accidental mixing between planning, reusable knowledge/assets and visual-flow interpretation.
+Project-specific confirmed tables are encouraged when they materially improve human understanding. They summarize approved facts with source Decision IDs/paths and must visibly separate confirmed, provisional, deferred and rejected values.
 
 ## Intermediate visual checkpoint
 
@@ -84,6 +103,23 @@ ADOPT / ADAPT / TEST / REFERENCE_ONLY / AVOID / IGNORE
 
 External references are evidence and inspiration, not project canon. Record why a source matters and what is transferable; do not copy identifiable expression merely because the source is cataloged.
 
+## Confirmed planning tables
+
+Budget, tier, roster, economy and progression tables that are primarily for human comparison belong in Notion as `NOTION_HUMAN_FACING_CANON`.
+
+Each confirmed table must preserve enough traceability to cross-check the repository:
+
+```text
+Project
+→ table purpose
+→ Decision ID or canonical repository path
+→ confirmed / provisional / deferred / rejected state
+→ repository main SHA or equivalent freshness locator when practical
+→ last Notion sync date
+```
+
+Do not turn a human table into an undocumented second data model. Machine-consumed JSON/game data stays in the repository. Conversely, do not force the user to inspect raw Markdown/JSON when a visual table is the clearer primary human representation.
+
 ## Image and visual candidate lifecycle
 
 ```text
@@ -108,31 +144,33 @@ Reusable visual harvest and reuse promotion happen in `ASSET_KNOWLEDGE_MASTER`, 
 
 ## Visual Map
 
-`VISUAL_MAP_DERIVED` is a human-facing representation derived from current Screen/relationship records and approved previews.
+`VISUAL_MAP_DERIVED` means the map may be generated from current Screen/relationship records and approved previews; it does **not** mean the human must treat the map as disposable. Once approved in Notion, that Notion view is the primary human-facing representation for visual planning and review.
 
-Game projects may visualize screen IDs, thumbnails, entry points, primary/secondary/conditional routes and key systems. Narrative projects may visualize canon, character, clue, scene and continuity relationships.
+Game projects may visualize screen IDs, thumbnails, entry points, primary/secondary/conditional routes and key systems. Narrative projects may visualize canon, character, faction, clue, scene and continuity relationships.
 
-The semantic graph and project records own the meaning. If the rendered map disagrees with current records, regenerate or correct the map rather than treating the picture as a competing canon.
+If a visual edit changes structured semantics, reconcile the semantic records/repository before implementation. If repository runtime facts change, refresh the Notion map so the person-facing view does not drift.
 
 ## Human and AI views
 
 The same records support two display layers:
 
-- `human` view: sparse visual information for scanning and decision making.
+- `human` view: sparse visual information for scanning, learning, comparison and direct planning edits.
 - `AI / System` view: provenance, IDs, version, status, hash, prompt, rights and implementation metadata.
 
 Hiding system metadata is a presentation decision, not deletion. Automation may still read it when needed.
 
 ## Repository handoff and runtime evidence
 
-Notion approval means the project accepted the planning or asset candidate for its stated use. It does not prove runtime implementation.
+Notion approval means the project accepted the human-facing planning, table, visual direction or asset candidate for its stated use. It does not prove runtime implementation.
 
 ```text
-Notion approved record
+Notion approved human-facing record
+→ synchronize any required Markdown / JSON / game data contract
 → repository implementation task
 → code / asset / scene / resource / config
 → build or runtime
 → QA evidence
+→ Notion readback/status refresh
 ```
 
 QA Evidence Studio or equivalent runtime evidence remains independent of the project planning workspace.
@@ -152,10 +190,11 @@ The default path must satisfy `ZERO_INCREMENTAL_COST_REQUIRED`. Notion Free may 
 Reject or revise a change if it:
 
 - exposes unfiltered cross-project records on a normal project page;
-- creates a second asset or runtime canon in the Visual Map;
+- treats Notion human-facing tables/visuals as runtime proof;
+- creates a competing structured data model in a visual table instead of synchronizing machine data to the repository;
 - duplicates one approved asset into multiple independent project authorities;
 - hides provenance by deleting metadata instead of hiding it from the human view;
 - reports upload success without readback;
 - promotes a Reference/Benchmark to approved asset without a project decision;
-- treats planning screenshots as runtime proof;
+- leaves an approved Notion visual/table materially inconsistent with the repository domain it is meant to summarize;
 - reintroduces a deprecated visual tool without evidence that it lowers total lifecycle cost.
