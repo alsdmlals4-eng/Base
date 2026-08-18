@@ -1,0 +1,186 @@
+name: One-shot UI UX Source Absorption
+
+on:
+  push:
+    branches:
+      - agent/absorb-uiux-reference-sources
+    paths:
+      - ".github/workflows/one-shot-uiux-source-absorption.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out implementation branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: agent/absorb-uiux-reference-sources
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+
+      - name: Apply bounded source and UI reference absorption
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json
+
+          root = Path('.')
+          watchlist_path = root / 'docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md'
+          ledger_path = root / 'docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json'
+          method_path = root / 'skills/auditing-and-refining-ui-art/references/ux-ui-design-system-method.md'
+          learning_path = root / 'skills/SKILL_LEARNING_LOG.md'
+
+          # 1) Huddling/Figmapedia: discovery source only, with official-source backtrace boundary.
+          watchlist = watchlist_path.read_text(encoding='utf-8')
+          if 'Huddling Figmapedia' not in watchlist:
+              anchor = '| **Hada GeekNews** | `DISCOVERY_FEED` | AI agent, 개발 생산성, UX, 도구, 보안, 새로운 원문 발견 | 요약 자체는 권위가 아님. `ORIGINAL_SOURCE_BACKTRACE` 필수 |'
+              row = '| **Huddling Figmapedia** | `DISCOVERY_FEED` | `https://huddling.ai/figma-info`의 Figma 실무 Q&A·업데이트·플러그인·AI 디자인 워크플로에서 반복 후보 발견 | Figma 제품 기능·MCP·정책 사실은 Figma 공식 문서·release note 등 original source로 역추적한 뒤 사용 |'
+              if anchor not in watchlist:
+                  raise SystemExit('watchlist discovery anchor not found')
+              watchlist = watchlist.replace(anchor, anchor + '\n' + row, 1)
+              cadence_anchor = '- `weekly`: Godot Improvement Proposals'
+              if cadence_anchor not in watchlist:
+                  raise SystemExit('weekly cadence anchor not found')
+              watchlist = watchlist.replace(cadence_anchor, '- `weekly`: Huddling Figmapedia (`figma-info`), Godot Improvement Proposals', 1)
+              lens_anchor = '- 같은 원칙이 Base에 이미 있는데 새 Skill·Guide·Template를 만들었는가?'
+              if lens_anchor not in watchlist:
+                  raise SystemExit('adversarial lens anchor not found')
+              watchlist = watchlist.replace(
+                  lens_anchor,
+                  '- Huddling/Figmapedia의 설명을 Figma 공식 제품 사실이나 정책 권위로 승격했는가?\n' + lens_anchor,
+                  1,
+              )
+              watchlist_path.write_text(watchlist, encoding='utf-8', newline='\n')
+
+          ledger = json.loads(ledger_path.read_text(encoding='utf-8'))
+          matches = [row for row in ledger['sources'] if row.get('source_id') == 'huddling-figmapedia']
+          if len(matches) > 1:
+              raise SystemExit('duplicate huddling-figmapedia source ids')
+          if not matches:
+              ledger['sources'].append({
+                  'source_id': 'huddling-figmapedia',
+                  'name': 'Huddling Figmapedia',
+                  'domains': ['GAME_DEVELOPMENT', 'PROMPT_AND_AGENT_WORKFLOW'],
+                  'roles': ['DISCOVERY_FEED'],
+                  'recommended_cadence': 'weekly',
+                  'scan_surfaces': [
+                      'figma-info',
+                      'Figma updates and glossary',
+                      'Figma MCP and AI design workflow',
+                      'linked original sources',
+                  ],
+                  'last_successful_scan_at': '2026-08-19',
+                  'last_material_candidate_at': '2026-08-19',
+                  'last_base_contribution_at': None,
+                  'last_base_contribution_ref': None,
+                  'material_candidate_count_since_tracking_start': 1,
+                  'base_contribution_count_since_tracking_start': 0,
+                  'status': 'ACTIVE',
+              })
+              ledger_path.write_text(
+                  json.dumps(ledger, ensure_ascii=False, separators=(',', ':')),
+                  encoding='utf-8',
+                  newline='\n',
+              )
+
+          # 2) Existing UI owner reference: synthesize only the missing durable principles.
+          method = method_path.read_text(encoding='utf-8')
+          marker = '### 3.4a Design Read와 시각 의도'
+          if marker not in method:
+              insert_before = '### 3.5 패턴 선택'
+              if insert_before not in method:
+                  raise SystemExit('UI method insertion anchor not found')
+              section = '''### 3.4a Design Read와 시각 의도
+
+토큰이나 스타일 이름을 고르기 전에 화면의 `design intent`와 플레이어가 받아야 할 인상을 짧은 prose로 고정한다. `modern / clean / premium` 같은 범용 형용사만 나열하지 않고 프로젝트 맥락에 맞는 `specific reference`와 **왜 그 참조가 맞는지**를 함께 적는다. 특정 제품·브랜드·창작자의 화면 표현을 복제하지 않고 역할·제약·차별화 축만 변환한다.
+
+```yaml
+Design Read:
+  design_intent:
+  specific_reference:
+  reference_reason:
+  visual_variance: 1-10
+  motion_intensity: 1-10
+  information_density: 1-10
+  intentional_do: []
+  intentional_dont: []
+```
+
+- `visual variance`, `motion intensity`, `information density`는 후보를 비교하고 의도를 전달하는 설계 축이지 Base 공용 고정 수치가 아니다.
+- 토큰·Schema·lint·diff는 구조와 일관성의 증거일 뿐 실제 렌더 품질, 플레이어 이해, 브랜드 적합성의 자동 PASS가 아니다.
+- 최소 폭·긴 한국어·브라우저 zoom·text scaling·사용자 spacing override에서도 `essential text`는 의미를 잃게 잘리거나 가려지지 않고 reflow되어야 한다.
+- badge·chip·count의 의미는 색 하나에만 의존하지 않는다. 빠른 반복 입력이나 animation cancel 뒤에도 최종 `semantic state`, focus, content가 서로 일치해야 한다.
+- Do/Don't는 프로젝트 의도를 지키는 짧고 검증 가능한 제약으로 유지한다. 금지 목록이 늘어나면 vague intent를 보완하는 대신 더 구체적인 reference와 이유로 다시 정리한다.
+
+'''
+              method = method.replace(insert_before, section + insert_before, 1)
+
+              adapter_anchor = '프로젝트의 색·타이포그래피·간격·형태·깊이·컴포넌트 표현을 AI와 도구가 읽을 수 있는 시각 토큰 정본으로 관리한다. `GAME_UX_UI_SYSTEM`은 플레이어 경험·화면 흐름·정보 계층·상태·입력·접근성·Godot 소유권의 상위 행동 정본으로 유지한다.\n\n## 적용 조건'
+              adapter_replacement = '프로젝트의 색·타이포그래피·간격·형태·깊이·컴포넌트 표현을 AI와 도구가 읽을 수 있는 시각 토큰 정본으로 관리한다. `GAME_UX_UI_SYSTEM`은 플레이어 경험·화면 흐름·정보 계층·상태·입력·접근성·Godot 소유권의 상위 행동 정본으로 유지한다.\n\nYAML token은 반복 가능한 값을 고정하지만 시각 언어의 목적과 적용 이유를 대신하지 않는다. `DESIGN.md`의 Markdown prose에는 위 `Design Read`의 의도·구체 참조 이유·의도적 예외를 남기고, token 값만으로 실제 디자인 품질을 판정하지 않는다.\n\n## 적용 조건'
+              if adapter_anchor not in method:
+                  raise SystemExit('DESIGN.md adapter anchor not found')
+              method = method.replace(adapter_anchor, adapter_replacement, 1)
+              method_path.write_text(method, encoding='utf-8', newline='\n')
+
+          # 3) Learning log: pin exact upstream identities and adoption decisions.
+          learning = learning_path.read_text(encoding='utf-8')
+          learning_marker = '## 2026-08-19 — UI/UX 외부 Source 선택 흡수와 Figma discovery watch'
+          if learning_marker not in learning:
+              title = '# Base Skill Learning Log\n\n'
+              if not learning.startswith(title):
+                  raise SystemExit('learning log title anchor not found')
+              entry = '''## 2026-08-19 — UI/UX 외부 Source 선택 흡수와 Figma discovery watch
+
+- **상태:** `OBSERVATION`
+- **Sources:** `nextlevelbuilder/ui-ux-pro-max-skill@a38d04c3d5c298c851dbe5e6ee1965ee3de42cb5`, `google-labs-code/design.md@9bf8eae67128b6cc55ad9bf86665767deb4c11cd`, `https://huddling.ai/figma-info`.
+- **Finding:** Base의 BCP-008과 `auditing-and-refining-ui-art`가 DESIGN.md adapter·외부 UI 조달·anti-generic Gate·UI 상태/중단 계약을 이미 소유하므로 외부 Skill/CLI를 통째로 설치하면 owner와 데이터가 중복된다. 반면 design intent를 prose로 고정하는 방식, specific reference의 이유 기록, resilient text와 compact state의 중단 복원은 기존 owner를 더 명확하게 만든다.
+- **Decision:** `ui-ux-pro-max-skill`은 `ADAPT` — `essential text` reflow, badge/chip 의미의 다중 신호, interaction cancel 뒤 semantic state/focus/content 일치, visual variance·motion intensity·information density를 설계 비교축으로만 흡수한다. 79-style/제품 profile/BM25/Web stack CLI와 데이터셋은 복제·설치하지 않는다.
+- **Decision:** `google-labs-code/design.md`의 token/schema/lint/diff와 Project DESIGN.md adapter는 `ALREADY_COVERED`; `ADAPT`로 prose 기반 design intent, specific reference + reason, 짧은 Do/Don't, token/lint의 증거 상한만 기존 UI method에 보강한다.
+- **Decision:** Huddling Figmapedia는 `DISCOVERY_FEED`로 weekly cadence에 등록한다. Figma 기능·MCP·정책 사실은 Huddling 설명만으로 확정하지 않고 Figma 공식 문서·release note 또는 연결된 original source로 backtrace한다.
+- **Boundary:** 신규 ACTIVE Skill `0`, 신규 scheduler `0`, package/CLI 설치 `0`, 프로젝트 Canon·Godot runtime 변경 `0`. 외부 원문·스타일 표·대규모 데이터셋을 Base에 복제하지 않는다.
+- **TDD evidence:** Draft PR #526 RED head `c59ee2a1ecbc620a9e6934106af2267d1beadfab`에서 기존 UI unittest 53개는 PASS했고 신규 계약 3개가 의도한 누락으로 FAIL했다. GREEN과 전체 적대적 회귀는 구현 exact head에서 별도 확인한다.
+- **Evidence ceiling:** Source 흡수와 정적 회귀는 실제 프로젝트 렌더·사람 이해·미적 품질 개선을 증명하지 않는다. 실제 두 프로젝트 적용 전 효과는 `OBSERVATION`이다.
+- **Next trigger:** 세 upstream source의 material update, Huddling 후보가 반복적으로 Figma 공식 원문과 불일치, 또는 서로 다른 두 프로젝트에서 이 Design Read/복원력 계약의 실제 효과가 관찰될 때 재검토한다.
+
+'''
+              learning = learning.replace(title, title + entry, 1)
+              learning_path.write_text(learning, encoding='utf-8', newline='\n')
+
+          # Fail closed before commit.
+          json.loads(ledger_path.read_text(encoding='utf-8'))
+          watchlist = watchlist_path.read_text(encoding='utf-8')
+          method = method_path.read_text(encoding='utf-8').lower()
+          learning = learning_path.read_text(encoding='utf-8')
+          for token in ('Huddling Figmapedia', 'https://huddling.ai/figma-info', 'Figma 공식', 'original source'):
+              assert token in watchlist, token
+          for token in ('design intent', 'specific reference', 'visual variance', 'motion intensity', 'information density', 'essential text', 'semantic state'):
+              assert token in method, token
+          for token in ('a38d04c3d5c298c851dbe5e6ee1965ee3de42cb5', '9bf8eae67128b6cc55ad9bf86665767deb4c11cd', 'ADAPT', 'ALREADY_COVERED'):
+              assert token in learning, token
+          PY
+
+      - name: Remove one-shot workflow and commit bounded result
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/one-shot-uiux-source-absorption.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md \
+            docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json \
+            skills/auditing-and-refining-ui-art/references/ux-ui-design-system-method.md \
+            skills/SKILL_LEARNING_LOG.md \
+            .github/workflows/one-shot-uiux-source-absorption.yml
+          git diff --cached --check
+          git commit -m "feat: absorb UI UX external source guidance"
+          git push origin HEAD:agent/absorb-uiux-reference-sources
