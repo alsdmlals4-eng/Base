@@ -207,6 +207,7 @@ class PixelArtStyleSystemTests(unittest.TestCase):
     def test_canonical_art_owners_route_to_pixel_reference_system(self) -> None:
         art_guide = read(ART_GUIDE)
         doc_map = read(DOC_MAP)
+        hub = read(HUB)
         style = read(STYLE_SYSTEM)
         for required in (
             "PIXEL_ART_STYLE_SYSTEM.md",
@@ -215,6 +216,8 @@ class PixelArtStyleSystemTests(unittest.TestCase):
             self.assertIn(required, art_guide)
             self.assertIn(required, doc_map)
         self.assertIn("PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md", style)
+        for consumer in (art_guide, doc_map, hub):
+            self.assertIn("PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md", consumer)
 
 
 if __name__ == "__main__":
