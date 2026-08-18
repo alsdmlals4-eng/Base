@@ -66,10 +66,10 @@ class PixelArtStyleSystemTests(unittest.TestCase):
             self.assertIn(preset, read(VISUAL_GALLERY))
 
         for contract in (
-            "MINIMUM_SUBSTANTIVE_ALTERNATIVES: 3",
-            "BETTER_ALTERNATIVE_SEARCH_UNTIL_DECISION",
-            "LONG_TERM_PLAN_FIT",
-            "PRE_DECISION_REREVIEW",
+            "MINIMUM_VIABLE_ALTERNATIVES: 3",
+            "BETTER_ALTERNATIVE_SEARCH",
+            "LONG_TERM_PLAN_FIT_REQUIRED",
+            "FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS",
             "PROJECT_ART_CANON_REMAINS_PROJECT_OWNED",
             "NO_AUTOMATIC_PROJECT_STYLE_PROMOTION",
         ):
@@ -96,7 +96,7 @@ class PixelArtStyleSystemTests(unittest.TestCase):
             "detail_motion:",
             "production_cost: LOW | MEDIUM | HIGH",
             "runtime_validation:",
-            "minimum_substantive_alternatives: 3",
+            "minimum_viable_alternatives: 3",
         ):
             self.assertIn(term, brief)
 
