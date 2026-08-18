@@ -38,7 +38,8 @@ CORE_LOOP_DUMMY_BALANCE_BUILD_TEST
 BALANCE_BUDGET
 WORLD_STORYLINE_FIT_REQUIRED
 REUSABLE_SYSTEM_EXTRACTION
-FIGMA_DEFAULT_VISUAL_WORKSPACE
+FIGMA_USAGE: DISABLED_BY_USER
+LEGACY_FIGMA_REFERENCE
 REPO_NATIVE_STRUCTURED_DATA
 GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE
 EXTERNAL_HTML_TOOL_CATALOG: DERIVED_DISCOVERY_SURFACE
@@ -319,25 +320,19 @@ tuning_evidence: []
 
 한 프로젝트의 세계관·고유 수치·정본을 공용 모듈에 박아 넣지 않는다.
 
-## 9. Figma·Google Sheets·구조화 데이터 전환
+## 9. 시각 협업·Google Sheets·구조화 데이터 전환
 
-### `FIGMA_DEFAULT_VISUAL_WORKSPACE`
+### `FIGMA_USAGE: DISABLED_BY_USER`
 
-새 프로젝트와 새 기획 작업의 **시각 협업 기본 작업면**은 프로젝트별 Figma다.
+현재 Figma는 Base와 Base 적용 프로젝트의 기본·보조·fallback 작업면이 아니다. 사용자가 다시 명시적으로 승인하기 전에는 Figma workspace·connector·MCP·Visual Bible·delivery 경로를 선택하거나 자동 read/write하지 않는다.
 
-Figma가 소유하기 적합한 것:
+`LEGACY_FIGMA_REFERENCE`는 과거 계약·Template·도구·evidence의 provenance와 호환성을 해석하기 위한 표식이다. 과거 안정 계약명 `FIGMA_DEFAULT_VISUAL_WORKSPACE`가 문서·테스트·Archive에 남아 있어도 현재 라우팅 권위를 갖지 않는다.
 
-- 방향 무드와 승인 레퍼런스
-- 화면·컴포넌트·상태·프로토타입
-- 이미지/시각 자료의 구조화·레이어화·재사용 분류
-- WIP / Approved / Rejected / Final 시각 상태
-- 구현에 pin한 visual handoff view
-
-Figma는 게임 규칙·런타임 데이터·테스트 결과의 정본이 아니며, Figma readback 없이 업로드/동기화를 성공으로 주장하지 않는다.
+새 프로젝트와 새 기획 작업에는 고정 외부 시각 workspace를 강제하지 않는다. 방향 무드·승인 레퍼런스·화면·컴포넌트·상태·프로토타입·이미지 구조화 자료는 GitHub 정본에 연결된 프로젝트 문서, repo-native 자산 또는 사용자가 승인한 현재 artifact surface에서 관리한다. Notion 공식 자료는 Skill·작업구조 학습 Source로 조사할 수 있지만 Figma를 대체하는 자동 시각 workspace로 승격하지 않는다.
 
 ### `REPO_NATIVE_STRUCTURED_DATA`
 
-다음은 Figma로 옮겨 두 번째 정본을 만들지 않는다.
+다음은 외부 시각 workspace로 옮겨 두 번째 정본을 만들지 않는다.
 
 - 밸런스 수치
 - 경제/확률
@@ -346,7 +341,7 @@ Figma는 게임 규칙·런타임 데이터·테스트 결과의 정본이 아�
 - save/state data contract
 - 테스트용 fixture
 
-프로젝트 기술에 맞는 JSON, CSV, Godot Resource 등 **repo-native structured source**를 정본으로 사용한다. 사람용 시각 요약은 Figma에서 해당 정본의 ID/Commit을 참조할 수 있다.
+프로젝트 기술에 맞는 JSON, CSV, Godot Resource 등 **repo-native structured source**를 정본으로 사용한다. 사람용 시각 요약은 해당 정본의 ID/Commit과 연결되는 프로젝트 문서·자산·승인 artifact로만 파생한다.
 
 ### `GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE`
 
@@ -356,9 +351,9 @@ Figma는 게임 규칙·런타임 데이터·테스트 결과의 정본이 아�
 existing Sheet audit
 → Sheet-only proposal 보존
 → GitHub canon reconciliation
-→ visual/human-facing content → Figma
+→ visual/human-facing content → repo/project approved artifact
 → structured runtime/balance data → repo-native source
-→ Figma/repo readback
+→ repo/project artifact readback
 → replacement pointer
 → active workflow removal
 → [대체됨] / SUPERSEDED / read-only archive
@@ -368,13 +363,13 @@ existing Sheet audit
 
 - 고유 내용 손실 여부 확인
 - `PROPOSED_SHEET_CHANGE` reconciliation
-- 새 GitHub/Figma 위치 readback
+- 새 GitHub/repo-native/승인 project artifact 위치 readback
 - Decision/Commit/Artifact 연결
 - rollback/reference path 보존
 
 영구 삭제는 별도의 destructive operation이며 사용자 명시 승인 없이는 수행하지 않는다.
 
-## 10. Tool Hub·외부 HTML 카탈로그·Figma
+## 10. Tool Hub·외부 HTML 카탈로그
 
 ### `TOOL_HUB: REQUIRED_WHEN_RELEVANT`
 
@@ -438,7 +433,7 @@ FULL_SCOPE_REVIEW
 
 - 사용자 의도·기획 방향·승인 범위·숨은 가정
 - 정본·owner·Skill routing·중복·stale·schema·consumer·dependency
-- 실제 구현·데이터·자산·Tool/Runtime·Figma/구조화 데이터 경계
+- 실제 구현·데이터·자산·Tool/Runtime·legacy Figma 비활성·구조화 데이터 경계
 - 실패 복구·부분 상태·branch/worktree/path/port·보안·secret·rollback
 - 사용자/플레이어 가치·벤치마킹·비용·수명주기 유지보수·모듈화
 - 정상 경로 회귀·evidence ceiling·exact-head·freshness·완료조건
@@ -535,8 +530,8 @@ CURRENT_PAID_PLANS: GPT_PRO, FIGMA_PRO
 PAID_PLAN_COUNT: 2
 ```
 
-- 현재 사용 가능한 유료 플랜은 **GPT Pro와 Figma Pro 정확히 두 개**다.
-- 두 플랜 안에서 이미 포함된 기능은 사용할 수 있지만, 별도 API·credit·metered billing·marketplace·runner·compute·storage·추가 SaaS 과금으로 넘어가면 허용 범위 밖이다.
+- 현재 비용 inventory에는 **GPT Pro와 Figma Pro 정확히 두 개**가 기록되어 있다. Figma Pro 기록은 사용 승인이나 활성 workspace 지정을 뜻하지 않는다.
+- GPT Pro에 이미 포함된 기능은 별도 API·credit·metered billing·marketplace·runner·compute·storage·추가 SaaS 과금으로 넘어가지 않는 범위에서 사용할 수 있다. Figma는 `FIGMA_USAGE: DISABLED_BY_USER`이므로 구독 포함 여부와 무관하게 사용하지 않는다.
 - GPT Pro/Figma Pro 외의 새로운 유료 AI/API/SaaS/상위 플랜/유료 add-on을 도입·실행·결제하려면 **새 사용자 승인**이 필요하다.
 - 별도 pay-as-you-go API, credit, 추가 SaaS, 유료 marketplace, 신규 유료 runner/compute/storage는 자동 도입하지 않는다.
 - 비용 상태가 불명확하면 결제·live paid call을 실행하지 않고 `COST_GATE_BLOCKED`로 둔다.

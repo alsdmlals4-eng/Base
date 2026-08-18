@@ -53,13 +53,17 @@ class UiUxExternalReferenceAbsorptionTests(unittest.TestCase):
         self.assertIn("Skills for Notion Agent", source["scan_surfaces"])
 
     def test_figma_legacy_references_cannot_reactivate_default_routing(self) -> None:
+        agents = AGENTS.read_text(encoding="utf-8")
         long_horizon = LONG_HORIZON.read_text(encoding="utf-8")
         visual_policy = VISUAL_POLICY.read_text(encoding="utf-8")
 
-        for text in (long_horizon, visual_policy):
+        for text in (agents, long_horizon, visual_policy):
             self.assertIn("FIGMA_USAGE: DISABLED_BY_USER", text)
             self.assertIn("LEGACY_FIGMA_REFERENCE", text)
 
+        self.assertNotIn("새 시각 작업의 기본 협업면은 프로젝트별 Figma", agents)
+        self.assertNotIn("새 프로젝트·새 시각 기획의 기본 협업면은 `FIGMA_DEFAULT_VISUAL_WORKSPACE`다.", agents)
+        self.assertNotIn("시각 협업은 프로젝트 Figma", agents)
         self.assertNotIn(
             "새 프로젝트와 새 기획 작업의 **시각 협업 기본 작업면**은 프로젝트별 Figma다.",
             long_horizon,

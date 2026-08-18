@@ -18,7 +18,8 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         for term in (
             "FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS",
             "REQUIRED_WORK_REMAINING",
-            "FIGMA_DEFAULT_VISUAL_WORKSPACE",
+            "FIGMA_USAGE: DISABLED_BY_USER",
+            "LEGACY_FIGMA_REFERENCE",
         ):
             self.assertIn(term, agents)
 
@@ -123,7 +124,8 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
     def test_visual_and_structured_data_authority_is_split_safely(self) -> None:
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         for term in (
-            "FIGMA_DEFAULT_VISUAL_WORKSPACE",
+            "FIGMA_USAGE: DISABLED_BY_USER",
+            "LEGACY_FIGMA_REFERENCE",
             "REPO_NATIVE_STRUCTURED_DATA",
             "GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE",
             "EXTERNAL_HTML_TOOL_CATALOG: DERIVED_DISCOVERY_SURFACE",
@@ -137,6 +139,8 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         profile = read("templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md")
         long_horizon = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         self.assertIn("GPT Pro/Figma Pro", long_horizon)
+        self.assertIn("FIGMA_USAGE: DISABLED_BY_USER", long_horizon)
+        self.assertIn("LEGACY_FIGMA_REFERENCE", visual_policy)
         self.assertIn("요금제·권한", visual_policy)
         self.assertIn("version history 또는 사용 가능한 branch/checkpoint", visual_policy)
         self.assertIn("version history 또는 사용 가능한 branch/checkpoint", profile)

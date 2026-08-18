@@ -78,7 +78,8 @@ EXPECTED_EFFECTS_RISKS_MITIGATIONS_BEFORE_BUILD
 SINGLE_INITIAL_APPROVAL_THEN_CONTINUE
 FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS
 REQUIRED_WORK_REMAINING
-FIGMA_DEFAULT_VISUAL_WORKSPACE
+FIGMA_USAGE: DISABLED_BY_USER
+LEGACY_FIGMA_REFERENCE
 CURRENT_PAID_PLANS: GPT_PRO, FIGMA_PRO
 PAID_PLAN_COUNT: 2
 ```
@@ -89,7 +90,7 @@ PAID_PLAN_COUNT: 2
 - 적대적 검토는 `전체 범위 공격 → finding 검증 → 개선·보완 → 실제 검증·회귀 → 개선된 전체 상태 재공격`의 **완전한 개선 루프를 최소 5회** 수행한다. 다섯 공격면으로 쪼개서 한 번씩 보는 것은 이 계약을 충족하지 않는다.
 - 완료는 승인된 acceptance criteria의 `REQUIRED_WORK_REMAINING: 0`으로 판정한다. 외부 차단과 선택 backlog는 별도 축으로 남긴다.
 - 게임 작업은 core loop·핵심 시스템·세계관/핵심 스토리라인 정합성·가역적 dummy `BALANCE_BUDGET`·playable build/test·재사용 가능한 모듈 경계를 함께 설계한다.
-- 새 시각 작업의 기본 협업면은 프로젝트별 Figma이며, balance/economy/schema/runtime config는 repo-native structured source를 사용한다. 기존 Google Sheets는 검증된 migration이 끝날 때까지 legacy proposal/migration source로 보존한다.
+- 새 시각 작업에는 고정 외부 시각 workspace를 강제하지 않는다. GitHub 정본과 repo-native 구조화 데이터·프로젝트 자산·사용자가 승인한 현재 artifact surface를 사용하며, `FIGMA_USAGE: DISABLED_BY_USER`를 따른다. 기존 Google Sheets는 검증된 migration이 끝날 때까지 legacy proposal/migration source로 보존한다.
 - 사용자에게 PowerShell 실행이 필요하면 `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`를 적용한다. 매 작업을 새 PowerShell 창 기준으로 보고 위치 세팅을 첫 실행 단계에 두며, 가능한 절차는 한 번에 붙여넣는 단일 블록으로 제공한다.
 
 ## 3. Work Mode·Skill·사용자 결정
@@ -131,9 +132,9 @@ PAID_PLAN_COUNT: 2
 - 프로젝트 고유 제약이 Base보다 엄격할 수는 있지만, 공통 절차를 복제해 독립 권위로 만들 수는 없다. 충돌 시 사용자 최신 지시와 프로젝트 고유 제약을 보존하면서 공통 규칙은 Base에서만 수정한다.
 - 신규 프로젝트와 승인된 마이그레이션의 활성 기획서는 저장소 루트 `[기획서]/` 아래에 둔다. `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않는다.
 - 상세 책임 원본, 상태 축, 발행 정책, 완료 조건은 `docs/OPERATING_MODEL.md`를 따른다.
-- 새 프로젝트·새 시각 기획의 기본 협업면은 `FIGMA_DEFAULT_VISUAL_WORKSPACE`다. 화면·컴포넌트·상태·프로토타입·승인 레퍼런스는 프로젝트 Figma에 구조화하고, 규칙·Decision은 GitHub 정본, 밸런스·경제·schema·runtime config는 repo-native structured source가 소유한다.
-- 기존 구성된 프로젝트 Google Sheet는 검증된 migration이 끝날 때까지 `USER_FACING_GDD_WORKSPACE` 호환성과 `PROPOSED_SHEET_CHANGE`를 보존하는 `GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE`로 취급한다. legacy Sheet의 상세 상태·proposal semantics·동기화 호환 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 따르되, 새 작업의 기본 workspace 권위는 이 파일과 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`의 Figma/repo-native 전환 규칙이 우선한다. Sheet-only 고유 내용과 proposal을 GitHub/Figma/repo-native source에 reconcile하고 readback·replacement pointer를 확인하기 전에는 삭제·폐기·migration 완료를 주장하지 않는다. Base 자체는 프로젝트 Sheet 동기화 대상이 아니다.
-- 일반 기획·상태 확인은 GitHub 정본을 우선하고, 시각 협업은 프로젝트 Figma, 구조화 데이터는 repo-native source를 사용한다. 기존 Sheet는 migration/proposal 확인이 필요한 경우에만 읽는다. HTML 대시보드·외부 HTML 도구 카탈로그는 사용자 명시 요청 또는 발견/유지보수 surface이며 독립 정본·실행 증거가 아니다.
+- 새 프로젝트·새 시각 기획에는 고정 외부 시각 workspace를 두지 않는다. 화면·컴포넌트·상태·프로토타입·승인 레퍼런스는 GitHub 정본에 연결된 프로젝트 문서·repo-native 자산 또는 사용자가 승인한 현재 artifact surface에서 관리하고, 규칙·Decision은 GitHub 정본, 밸런스·경제·schema·runtime config는 repo-native structured source가 소유한다. `FIGMA_DEFAULT_VISUAL_WORKSPACE`는 `LEGACY_FIGMA_REFERENCE`로만 남고 `FIGMA_USAGE: DISABLED_BY_USER`가 현재 권위다.
+- 기존 구성된 프로젝트 Google Sheet는 검증된 migration이 끝날 때까지 `USER_FACING_GDD_WORKSPACE` 호환성과 `PROPOSED_SHEET_CHANGE`를 보존하는 `GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE`로 취급한다. legacy Sheet의 상세 상태·proposal semantics·동기화 호환 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 따르되, 새 작업의 workspace 권위는 이 파일과 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`의 Figma 비활성/repo-native 전환 규칙이 우선한다. Sheet-only 고유 내용과 proposal을 GitHub/repo-native source와 사용자가 승인한 project artifact에 reconcile하고 readback·replacement pointer를 확인하기 전에는 삭제·폐기·migration 완료를 주장하지 않는다. Base 자체는 프로젝트 Sheet 동기화 대상이 아니다.
+- 일반 기획·상태 확인은 GitHub 정본을 우선하고, 시각 협업은 GitHub 정본에 연결된 프로젝트 문서·repo-native 자산·사용자가 승인한 현재 artifact surface, 구조화 데이터는 repo-native source를 사용한다. Figma는 사용하지 않으며, 기존 Sheet는 migration/proposal 확인이 필요한 경우에만 읽는다. HTML 대시보드·외부 HTML 도구 카탈로그는 사용자 명시 요청 또는 발견/유지보수 surface이며 독립 정본·실행 증거가 아니다.
 - 기존 승인 이미지가 있으면 별도 지시 없이 새 시안을 만들거나 제거·교체하지 않는다. UI 설계·폴리싱·구현 결과 감사는 `auditing-and-refining-ui-art`로 라우팅하고, 사용자 승인 finding만 실제 렌더로 재검수한다.
 - 접근성·성능·플레이테스트·벤치마크 결과는 실제 적용된 경우만 보고하며 법적 인증이나 제품 구현 사실로 과장하지 않는다.
 

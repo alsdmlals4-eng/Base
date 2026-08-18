@@ -4,11 +4,13 @@
 
 `FIGMA_USAGE: DISABLED_BY_USER`가 현재 사용자 결정이다. 새 기획·UI/UX·시각 작업은 Figma를 기본·보조·fallback workspace로 선택하거나 자동 read/write하지 않는다. 이 문서 아래의 Figma Visual Bible·delivery·component·prototype 설명은 기존 구현과 과거 Decision을 해석하기 위한 `LEGACY_FIGMA_REFERENCE`이며 새 작업의 활성 지시가 아니다. 사용자가 Figma 재도입을 명시적으로 승인하기 전에는 GitHub 정본, repo-native 구조화 데이터, 승인된 로컬/프로젝트 자산과 실제 Godot/runtime evidence를 사용하고, 다이어그램 도구는 현재 요청에 필요한 경우에만 별도 선택한다.
 
-Figma와 Whimsical은 기획·UX/UI·인계·검토를 돕는 `VISUAL_WORKSPACE`다. 어느 도구도 GitHub의 승인 결정·상세 규칙·구현 계약·실제 Godot 상태를 대체하지 않는다.
+## Legacy Figma policy — inactive
 
-## Context and authority
+`LEGACY_FIGMA_REFERENCE`: 아래 Figma/Whimsical 상세 규칙은 과거 결정·기존 Template·도구·evidence를 해석하기 위한 호환성 기록이며, 현재 작업에서 실행·라우팅 지시로 사용하지 않는다. 과거에는 Figma와 Whimsical을 기획·UX/UI·인계·검토용 `VISUAL_WORKSPACE`로 다뤘다.
 
-새 프로젝트와 새 시각 작업의 기본 협업면은 `FIGMA_DEFAULT_VISUAL_WORKSPACE`다. 밸런스·경제·Schema·runtime config 같은 구조화 데이터는 `REPO_NATIVE_STRUCTURED_DATA`가 소유하며, 기존 프로젝트 Google Sheets는 `GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE` / `MIGRATION_COMPATIBILITY_SURFACE`로만 보존한다.
+## Legacy context and authority
+
+과거 정책의 안정 계약명은 `FIGMA_DEFAULT_VISUAL_WORKSPACE`였지만 현재는 `LEGACY_FIGMA_REFERENCE`이며, 새 프로젝트와 새 시각 작업에는 적용하지 않는다. 밸런스·경제·Schema·runtime config 같은 구조화 데이터는 `REPO_NATIVE_STRUCTURED_DATA`가 소유하며, 기존 프로젝트 Google Sheets는 `GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE` / `MIGRATION_COMPATIBILITY_SURFACE`로만 보존한다.
 
 각 Artifact는 `GDD`, `EXTERNAL_COLLABORATION`, `BOTH` 중 하나의 `usage_context`를 가진다. GDD 안에서는 사람이 흐름과 화면을 빠르게 확인하는 시각 구성요소이고, GDD 밖에서는 설계 탐색·협업·리뷰·인계의 독립 작업면이다. 둘 중 어느 쪽도 도구 사용을 강제하거나 활용 범위를 제한하지 않는다.
 
