@@ -10,6 +10,7 @@ VISUAL_GALLERY = ROOT / "docs" / "knowledge" / "game-development" / "PIXEL_ART_V
 PREFERRED_LIBRARY = ROOT / "docs" / "knowledge" / "game-development" / "PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md"
 PREFERRED_OVERVIEW = ROOT / "docs" / "knowledge" / "game-development" / "reference-images" / "preferred-visual" / "preferred-visual-style-overview.jpg"
 SPECIALTY_RADAR = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_SPECIALTY_SOURCE_RADAR.md"
+VISUAL_STYLE_RADAR = ROOT / "docs" / "knowledge" / "game-development" / "VISUAL_STYLE_SOURCE_RADAR.md"
 ART_GUIDE = ROOT / "docs" / "knowledge" / "game-development" / "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md"
 DOC_MAP = ROOT / "docs" / "DOCUMENTATION_MAP.md"
 HUB = ROOT / "docs" / "knowledge" / "game-development" / "README.md"
@@ -143,8 +144,10 @@ class PixelArtStyleSystemTests(unittest.TestCase):
         self.assertIn("REFERENCE_ONLY", preferred)
 
     def test_continuous_style_discovery_reuses_existing_source_radar(self) -> None:
+        self.assertTrue(SPECIALTY_RADAR.is_file())
+        self.assertTrue(VISUAL_STYLE_RADAR.is_file())
         preferred = read(PREFERRED_LIBRARY)
-        radar = read(SPECIALTY_RADAR)
+        radar = read(VISUAL_STYLE_RADAR)
 
         for term in (
             "CONTINUOUS_STYLE_DISCOVERY",
@@ -152,11 +155,13 @@ class PixelArtStyleSystemTests(unittest.TestCase):
             "ORIGINAL_SOURCE_BACKTRACE",
             "STYLE_FAMILY_MATCH",
             "NEW_FAMILY_CANDIDATE",
+            "VISUAL_STYLE_SOURCE_RADAR.md",
         ):
             self.assertIn(term, preferred)
 
         for term in (
             "ART_DIRECTION_AND_VISUAL_STYLE",
+            "PERIODIC_SPECIALTY_SOURCE_RADAR.md",
             "PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md",
             "ORIGINAL_SOURCE_BACKTRACE",
             "AI_GENERATED_LOOK_REDUCTION",
