@@ -96,7 +96,7 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·
 | Local Godot reference | `docs/knowledge/godot/LOCAL_GODOT_REFERENCE_LIBRARY.md` | local reference-only shelf; missing path is non-blocking |
 | CI execution/cost | `docs/CI_EXECUTION_COST_POLICY.md` | change-class validation, runner/cost gate |
 | PowerShell user execution | `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md` | fresh shell, location first, one paste block, fail-fast |
-| GitHub governance | `docs/GITHUB_PRO_OPERATING_POLICY.md`, `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | PR/check/work-item lifecycle |
+| GitHub governance | `docs/GITHUB_PRO_OPERATING_POLICY.md`, `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | GitHub Pro 저장소 운영, GitHub Pro 보호·Ruleset·자동 병합, PR/check/work-item lifecycle |
 | Decision sync | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | approved Decision 정본화·중복질문 방지·Notion/repository cross-sync |
 | Planning sequence/evidence | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | evidence, approval bundle, Demo-First |
 | Integrated vertical slice | `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md` | active integrated single-attachment execution route |
@@ -112,6 +112,8 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·
 | Base proposal registry | `[수정제안서]/PROPOSAL_REGISTRY.json` | project-derived shared change proposal lifecycle |
 | Controlled vocabulary | `docs/CONTROLLED_VOCABULARY.md` | **공용 용어**와 bounded-context 정의 |
 | Archived cross-project UI handoff | `docs/archive/handoffs/2026-07-29-ux-ui-common-system-expansion.md` | `COMPATIBILITY_ONLY`; historical handoff이며 active implementation authority 없음 |
+
+기존 GitHub Pro 상세 프로필·예산 라우팅은 `GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md`와 `GITHUB_USAGE_BUDGET.md` 이름으로도 계속 발견 가능해야 한다.
 
 ## 4. 프로젝트 Notion 표준
 
@@ -331,7 +333,8 @@ Notion 전환은 기존 Base의 공용 능력을 삭제하거나 숨기는 작�
 - 승인 Decision 복원: `→ CURRENT_CONFIRMED_DECISIONS.md`를 거쳐 분야 정본과 사람용 Notion 표현을 교차검증한다.
 - 저장소 전체 감사: `repository-wide-audit`는 별도 신규 Skill이 아니라 기존 REVIEW/검증 능력의 통합 mode로 라우팅한다.
 - 프로젝트 설치 템플릿: **프로젝트 설치 템플릿을 활성 상태 문서로 오인하지 않는다**. Template은 소비될 때만 프로젝트 상태가 된다.
-- Codex handoff: **GPT→Codex 단계별 Godot 구현 인계**는 `USER_REQUESTED_CODEX_HANDOFF`가 있을 때만 생성하며 계획/검토 작업이 자동으로 Codex 구현 승인이 되지 않는다.
+- Codex handoff: **GPT→Codex 단계별 Godot 구현 인계**는 기존 `implementation-package-handoff` mode를 사용하며, `USER_REQUESTED_CODEX_HANDOFF`가 있을 때만 생성한다. 계획/검토 작업은 자동으로 Codex 구현 승인이 되지 않는다.
 - Codex preflight: `CODEX_PREFLIGHT_OPTIONAL`; 명시적 handoff가 없으면 계획/검토 단계에서 별도 구현 preflight를 강제하지 않는다.
+- GitHub governance: **GitHub Pro 저장소 운영**과 **GitHub Pro 보호·Ruleset·자동 병합**은 기존 GitHub governance owner로 라우팅하며 `GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md`, `GITHUB_USAGE_BUDGET.md`를 호환 발견 경로로 유지한다.
 - 기획 인터뷰: **Grill Me 핵심 의사결정 인터뷰**는 `clarify` + `references/grill-me-protocol.md`로 라우팅하고 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`의 승인 배치 정책을 함께 적용한다.
 - 연재소설: `developing-and-revising-serial-fiction`이 서사 개발·수정의 active owner이며 Coc-Fiction Notion Storyboard/Character/Faction 표면과 조합한다.
