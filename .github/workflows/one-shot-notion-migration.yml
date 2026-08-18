@@ -1,0 +1,44 @@
+name: One-shot Notion source migration
+
+on:
+  push:
+    branches:
+      - chore/notion-source-migration-20260819
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply migration with RED/GREEN verification
+        run: python tools/one_shot_notion_migration.py
+      - name: Commit verified migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add AGENTS.md \
+            docs/VISUAL_COLLABORATION_TOOL_POLICY.md \
+            docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md \
+            docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_DISCOVERY_SEEDS.md \
+            docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json \
+            skills/auditing-and-refining-ui-art/LEARNING_LOG.md \
+            tests/test_uiux_external_reference_absorption.py
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "No migration changes produced"
+            exit 1
+          fi
+          git commit -m "chore: retire Figma sources and add Notion watch"
+          git push origin HEAD:${GITHUB_REF_NAME}
