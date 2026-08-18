@@ -40,6 +40,7 @@
 | 튜토리얼·온보딩·첫 세션에서 규칙·필요·성장·독립 수행을 어떻게 가르치는가? | `TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md` | `RULE–NEED–DISCOVER–FEEL–PROVE–TRANSFER` 학습 계약·측정·적대적 검토 |
 | 프로젝트마다 어떤 이미지·시각 자산·UI 컴포넌트를 정말 만들어야 하는가? | `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate` | `requirement_id`·Delete Test·role·P0~P3·disposition·검증 |
 | 그림체·비주얼·캐릭터·환경·UI·애니메이션·에셋을 어떻게 기획하는가? | `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md` | Visual Pillar·Art Bible·Asset Specification |
+| 픽셀 아트를 어떤 축으로 조합하고 프로젝트별 후보를 어떻게 비교하는가? | `PIXEL_ART_STYLE_SYSTEM.md` + `PIXEL_ART_VISUAL_REFERENCE_GALLERY.md` | 5축 후보·20 Preset·시각 Reference·최소 3대안·장기계획 적합성·재검토 |
 | 게임 다운로드·설치·런타임·패치 용량을 화질·음질·성능 저하 없이 어떻게 줄이는가? | `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` | 용량 breakdown·품질 등급·font/texture/audio profile·patch/delivery 증거 |
 | ChatGPT·Codex·외부 AI를 어떻게 안전하고 검증 가능하게 협업시키는가? | `AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md` | Prompt 계약·Context Pack·Evals·독립 검수 |
 | Godot·플랫폼·성능·제작 파이프라인·출시를 어떻게 기획에 연결하는가? | `TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md` | 기술 계약·성능 예산·반복 제작성·출시 증거 |
@@ -57,6 +58,8 @@
 
 `TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md`는 실행 권한을 소유하지 않는다. 실제 작업은 `analyzing-and-refining-game-concepts: tutorial-and-onboarding-design`이 주 책임이며, 튜토리얼 이해도 연구 coverage 설치·누락 감사는 `governing-game-user-research-coverage`가 담당한다.
 
+`PIXEL_ART_STYLE_SYSTEM.md`와 `PIXEL_ART_VISUAL_REFERENCE_GALLERY.md`는 새 Art Skill이나 두 번째 Art Bible이 아니다. Base는 조합 가능한 픽셀 시각 어휘·비용·실패조건·Reference를 제공하고, 실제 선택과 승인·Figma Visual Bible·제품 자산 권위는 각 프로젝트가 소유한다.
+
 ## 4. 기존 Skill 라우팅
 
 | 작업 | 실행 책임 Skill | 이 허브에서 읽을 내용 |
@@ -70,6 +73,7 @@
 | 게임 build/package/download/patch·font/texture/audio 자산 최적화 | 기존 기획·아트·Vertical Slice·검증 Skill 조합 | `GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` + 프로젝트 Delivery Profile |
 | Games User Research 누락 감사 | `governing-game-user-research-coverage` | 연구 관련 Coverage와 Evidence 상태 |
 | 이미지·시각 자산·UI 컴포넌트 필요성·우선순위·제작 방식 선정 | 기존 Art/UX/asset evaluation Skill 조합 | Art Guide의 `Visual Requirement Gate`; 새 광역 Skill을 만들지 않음 |
+| 픽셀 아트 후보 탐색·비교·프로젝트 스타일 결정 준비 | `designing-art-prompts-and-technique-cards` + 프로젝트 Art/UX 책임 | `PIXEL_ART_STYLE_SYSTEM.md`의 5축·최소 3대안·장기 적합성 + `PIXEL_ART_VISUAL_REFERENCE_GALLERY.md`의 REFERENCE_ONLY 예시 |
 | 아트 방향·프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` | 아트 Guide·원출처·권리·승인 상태 |
 | 자산·플러그인 직접 채택과 참조 독립 제작 선택 | `evaluating-godot-assets-and-plugins-before-creation` | 플랫폼·자산 권리 Guide의 제작·도입 경로 |
 | 대표 경험·품질·제작 파이프라인 | `designing-vertical-slices` | 기획·아트·기술 Guide의 Quality Bar |
@@ -78,7 +82,7 @@
 | Skill 중복·과분할·학습 | `evolving-project-discipline-skills` | 반복 실패·Case·새 책임 경계 증거 |
 | 프로젝트 교훈의 Base 승격 | `managing-base-change-proposals` | 공용 원리와 프로젝트 고유값 분리 |
 
-합성 테스터 작업, 게임 용량 최적화 작업, Visual Requirement Gate, 주기 외부 Source 발견은 별도 광역 Skill을 만들지 않는다. 프로젝트 Registry가 선택한 기존 게임 디자인·아트·UX·자산 평가·Vertical Slice·검증 책임을 조합한다.
+합성 테스터 작업, 게임 용량 최적화 작업, Visual Requirement Gate, 픽셀 아트 Reference, 주기 외부 Source 발견은 별도 광역 Skill을 만들지 않는다. 프로젝트 Registry가 선택한 기존 게임 디자인·아트·UX·자산 평가·Vertical Slice·검증 책임을 조합한다.
 
 ## 5. Template
 
@@ -94,7 +98,7 @@
 - 게임 벤치마크·플레이어 근거: `templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md`
 - 튜토리얼·온보딩 설계: `templates/planning/TUTORIAL_AND_ONBOARDING_DESIGN_CONTRACT.md`
 
-프로젝트는 Base 문서를 복제하지 않는다. 프로젝트 저장소에는 결정 질문, 선택한 Coverage, Evidence ID, 개선 판정, 실제 기획 반영, 검증 결과와 프로젝트 고유 Case만 둔다.
+프로젝트는 Base 문서를 복제하지 않는다. 프로젝트 저장소에는 결정 질문, 선택한 Coverage, Evidence ID, 개선 판정, 실제 기획 반영, 검증 결과와 프로젝트 고유 Case만 둔다. 픽셀 아트 후보를 선택할 때도 Base의 20 Preset을 프로젝트 정본 목록으로 복제하지 않고 실제 후보와 선택 결과만 기록한다.
 
 ## 6. 사용하지 않는 경우
 
@@ -108,9 +112,9 @@
 
 ## 7. 완료 판정
 
-이 허브를 읽거나 문서를 작성한 것만으로 기획·구현·접근성·성능·출시가 검증된 것은 아니다. 합성 테스터 결과도 실제 사람 행동·재미·선호·조작감·접근성·성능을 검증하지 않는다. 등급·권리 Template도 법률 검토·플랫폼 제출·승인을 대신하지 않는다. PC·Android Profile도 실제 Windows build, Android 실기기, 모바일 UI·입력·중단 복구, 성능·발열, 상점 계정·테스트·심사 증거를 대신하지 않는다. 빌드 용량 Guide도 실제 프로젝트 build, store-served size, Steam patch preview, Android device, 사람의 시각·청각 품질 검증을 대신하지 않는다. 완료는 선택한 기존 Skill의 Output Contract와 실제 프로젝트 증거를 따른다.
+이 허브를 읽거나 문서를 작성한 것만으로 기획·구현·접근성·성능·출시가 검증된 것은 아니다. 합성 테스터 결과도 실제 사람 행동·재미·선호·조작감·접근성·성능을 검증하지 않는다. 등급·권리 Template도 법률 검토·플랫폼 제출·승인을 대신하지 않는다. PC·Android Profile도 실제 Windows build, Android 실기기, 모바일 UI·입력·중단 복구, 성능·발열, 상점 계정·테스트·심사 증거를 대신하지 않는다. 빌드 용량 Guide도 실제 프로젝트 build, store-served size, Steam patch preview, Android device, 사람의 시각·청각 품질 검증을 대신하지 않는다. Pixel Art System과 Gallery도 프로젝트 스타일 승인·실제 이미지 품질·엔진 렌더·제품 자산 권리를 대신하지 않는다. 완료는 선택한 기존 Skill의 Output Contract와 실제 프로젝트 증거를 따른다.
 
-계약·라우팅·중복 Skill 방지·Learning Log 연결은 `tests/test_evidence_based_game_development_knowledge.py`, `tests/test_evidence_knowledge_workflow_contract.py`, `tests/test_visual_requirement_gate.py`, `tests/test_pc_android_cross_platform_delivery.py`, `tests/test_game_build_size_asset_optimization.py`, `tests/test_platform_review_asset_rights_reference_production.py`, `tests/test_human_validation_artifact_governance.py`, `tests/test_synthetic_tester_simulation_governance.py`, `tests/test_periodic_external_source_watchlist.py`, `tests/test_periodic_external_source_discovery_seeds.py`, `.github/workflows/validate-evidence-knowledge.yml`의 전용 GitHub Actions에서 검증한다. Workflow 파일 존재와 실제 실행 성공을 분리해 확인한다.
+계약·라우팅·중복 Skill 방지·Learning Log 연결은 `tests/test_evidence_based_game_development_knowledge.py`, `tests/test_evidence_knowledge_workflow_contract.py`, `tests/test_visual_requirement_gate.py`, `tests/test_pixel_art_style_system.py`, `tests/test_pc_android_cross_platform_delivery.py`, `tests/test_game_build_size_asset_optimization.py`, `tests/test_platform_review_asset_rights_reference_production.py`, `tests/test_human_validation_artifact_governance.py`, `tests/test_synthetic_tester_simulation_governance.py`, `tests/test_periodic_external_source_watchlist.py`, `tests/test_periodic_external_source_discovery_seeds.py`, `.github/workflows/validate-evidence-knowledge.yml`의 전용 GitHub Actions에서 검증한다. Workflow 파일 존재와 실제 실행 성공을 분리해 확인한다.
 
 ## 8. Cloud Run 게임 백엔드 Capability Pack
 
