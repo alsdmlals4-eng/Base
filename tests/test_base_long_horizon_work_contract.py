@@ -16,7 +16,7 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         agents = read("AGENTS.md")
         self.assertIn("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md", agents)
         for term in (
-            "FIVE_DISTINCT_ADVERSARIAL_ROUNDS",
+            "FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS",
             "REQUIRED_WORK_REMAINING",
             "FIGMA_DEFAULT_VISUAL_WORKSPACE",
         ):
@@ -31,7 +31,7 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             "SINGLE_INITIAL_APPROVAL_THEN_CONTINUE",
             "RECOVER_TRY_ALTERNATIVES_RESUME",
             "ZERO_INCREMENTAL_COST_REQUIRED",
-            "FIVE_DISTINCT_ADVERSARIAL_ROUNDS",
+            "FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS",
             "POSTMERGE_PROMOTION_AND_SUPERSESSION",
             "REQUIRED_WORK_REMAINING: 0",
         ):
@@ -43,8 +43,10 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         for term in (
             "최신 main",
             "실제 구현",
-            "유효한 대안",
+            "최소 3개",
             "되돌리기 난이도",
+            "더 나은 방안",
+            "장기계획",
         ):
             self.assertIn(term, agents)
         for term in (
@@ -55,16 +57,18 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         ):
             self.assertIn(term, policy)
 
-    def test_base_explicitly_requires_multi_option_long_term_selection(self) -> None:
+    def test_base_explicitly_requires_three_or_more_options_and_long_term_selection(self) -> None:
         agents = read("AGENTS.md")
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         for text in (agents, policy):
             for term in (
                 "CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY",
+                "MINIMUM_VIABLE_ALTERNATIVES: 3",
+                "BETTER_ALTERNATIVE_SEARCH",
+                "LONG_TERM_PLAN_FIT_REQUIRED",
                 "현행 조사",
-                "여러 방법",
+                "최소 3개",
                 "장기적으로 최선",
-                "적대적 검토",
             ):
                 self.assertIn(term, text)
 
@@ -139,17 +143,22 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         self.assertIn("Pages/Sections", visual_policy)
         self.assertIn("Pages", profile)
 
-    def test_adversarial_review_owner_requires_exactly_five_distinct_rounds_when_invoked(self) -> None:
+    def test_adversarial_review_owner_requires_five_full_improvement_loops_when_invoked(self) -> None:
         skill = read("skills/running-adversarial-review-and-refinement/SKILL.md")
         for term in (
-            "FIVE_DISTINCT_ADVERSARIAL_ROUNDS: REQUIRED_WHEN_REVIEW_RUNS",
-            "ROUND_1_INTENT_ASSUMPTIONS_SCOPE",
-            "ROUND_2_CANON_STRUCTURE_DEPENDENCIES",
-            "ROUND_3_FAILURE_SECURITY_CONCURRENCY",
-            "ROUND_4_VALUE_BENCHMARK_COST_MAINTAINABILITY",
-            "ROUND_5_REGRESSION_EVIDENCE_COMPLETION_FRESHNESS",
+            "FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS: REQUIRED_WHEN_REVIEW_RUNS",
+            "FULL_LOOP_COUNT_MINIMUM: 5",
+            "FULL_SCOPE_REVIEW",
+            "FIND → REFINE → VERIFY → RE-ATTACK",
+            "BETTER_ALTERNATIVE_SEARCH",
+            "LONG_TERM_PLAN_FIT_RECHECK",
         ):
             self.assertIn(term, skill)
+        self.assertIn("각 회차는 전체 승인 범위를 처음부터 다시", skill)
+        self.assertIn("5회차", skill)
+        self.assertIn("추가 전체 루프", skill)
+        self.assertNotIn("FIVE_DISTINCT_ADVERSARIAL_ROUNDS", skill)
+        self.assertNotIn("ROUND_1_INTENT_ASSUMPTIONS_SCOPE", skill)
 
     def test_loop_foundation_doc_points_to_current_operational_checkpoint(self) -> None:
         loop_doc = read("docs/LOOP_ENGINEERING_A2_RUNTIME.md")
