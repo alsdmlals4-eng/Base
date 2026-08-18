@@ -10,28 +10,29 @@ The local Tool Hub / Character Studio path reached a real Windows stop-loss afte
 
 However, the useful domain knowledge built into Expression Studio, Sprite Animation Studio, Effect routes, candidate review, evidence handling, and the merged reusable visual harvest pipeline remains valuable for future image work.
 
-The goal is therefore not to revive the runtime. It is to preserve the reusable visual techniques as Base Skill reference modules and make direct Figma organization the normal visual workflow.
+The goal is therefore not to revive the runtime. It is to preserve reusable visual techniques as Base Skill reference modules and make direct Figma organization the normal visual workflow.
 
 ## 2. Existing Solution First
 
 Reuse rather than duplicate:
 
 - primary Skill owner: `skills/designing-art-prompts-and-technique-cards/SKILL.md`;
-- visual continuity/router: `references/figma-visual-bible-continuity-gate.md`;
+- visual continuity/conditional router: `references/figma-visual-bible-continuity-gate.md`;
 - existing broad triggers: `image-prompt`, `image-mockup`, `image-approval`, `visual-qa-and-approval`;
 - project Figma structure: `templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md`;
 - reusable harvest: merged PR #433 and `Reusable Visual Harvest Gate`;
 - product asset authority: existing `PROJECT_ASSET_APPROVED` / Asset Vault / promote boundaries.
 
-Do not create a new broad Figma Skill, Expression Skill, Sprite Skill, parallel asset canon, or a larger trigger surface when the existing art Skill already routes image work correctly.
+Do not create a new broad Figma Skill, Expression Skill, Sprite Skill, parallel asset canon, or a larger Registry trigger surface when the existing art Skill already routes image work correctly.
 
 ## 3. Selected Architecture
 
-Keep one primary art/image Skill. The existing main Skill already routes Figma-backed image work through `figma-visual-bible-continuity-gate.md`; that gate becomes the conditional module router:
+Keep one primary art/image Skill. The Figma continuity gate chooses the focused module for the current task, while the primary `SKILL.md` contains only a compact direct index of all packaged references because Base package-integrity requires every reference/script to be directly discoverable from its owning Skill.
 
 ```text
-designing-art-prompts-and-technique-cards
-└─ figma-visual-bible-continuity-gate.md
+designing-art-prompts-and-technique-cards/SKILL.md
+├─ compact direct module index (discoverability/package integrity only)
+└─ figma-visual-bible-continuity-gate.md (conditional runtime/reading router)
    ├─ figma-direct-placement-and-canon.md
    ├─ character-identity-expression-controls.md
    ├─ sprite-pose-sequence-controls.md
@@ -40,9 +41,14 @@ designing-art-prompts-and-technique-cards
    └─ local-visual-tool-lessons-and-fallback.md
 ```
 
-Only the module required by the current task is read. The main Skill body and Registry do not need new trigger tags.
+The direct index does not mean all six modules are loaded for every image task. The gate still owns progressive disclosure and selects only the relevant module.
 
-This refinement reduces routing ambiguity and context load compared with adding many tool-specific trigger names to the Registry.
+`skills/SKILL_REGISTRY.json` remains unchanged. Existing image-related triggers are sufficient.
+
+This structure satisfies both goals:
+
+- low routing ambiguity / low context cost;
+- Base Skill package integrity and reference discoverability.
 
 ## 4. Figma Direct Placement Contract
 
@@ -117,11 +123,13 @@ The local visual runtimes remain in Base as referenceable source and historical 
 
 This status is scoped to the visual image workflow. It does not delete unrelated tooling or forbid future explicit experiments requested by the user.
 
+The owning Skill learning log records this stop-loss and fallback so the module change is tied to observed operational evidence rather than a silent policy rewrite.
+
 ## 6. Skill Routing
 
-Use the existing Registry entry for `designing-art-prompts-and-technique-cards` unchanged. Existing image-related triggers already route the relevant tasks to the Skill.
+Use the existing Registry entry for `designing-art-prompts-and-technique-cards` unchanged. Existing image-related triggers already route relevant tasks to the Skill.
 
-The Skill's existing Figma continuity reference remains the entry point. The gate selects a focused module using observable task conditions:
+The Skill's Figma continuity gate selects a focused module using observable task conditions:
 
 - Figma placement/canon organization;
 - character identity/expression edit;
@@ -129,6 +137,8 @@ The Skill's existing Figma continuity reference remains the entry point. The gat
 - effect stages/compositing;
 - candidate comparison/reuse harvest;
 - local visual runtime status/fallback.
+
+The main `SKILL.md` directly indexes the same six references only to satisfy package discoverability. It does not duplicate module content or replace gate-based conditional loading.
 
 No new broad Skill ID or Registry trigger expansion is introduced.
 
@@ -143,26 +153,42 @@ No new broad Skill ID or Registry trigger expansion is introduced.
 - Unrelated QA tooling is not globally deprecated by this visual fallback.
 - No paid OpenAI API or API-key fallback is introduced.
 - No project-specific asset is approved by this Base change.
+- A Figma write request is not placement evidence until destination readback succeeds.
 
 ## 8. Verification Contract
 
-TDD must demonstrate RED before module/gate edits.
+TDD and repository-integrity evidence must demonstrate:
 
-Required tests:
-
-1. the existing art Skill still links the Figma continuity gate;
+1. the existing art Skill links the Figma continuity gate;
 2. the continuity gate links all six focused modules;
-3. existing art Skill Registry triggers remain sufficient and no new broad `figma-*`, `expression-*`, or `sprite-*` Skill ID appears;
-4. Figma direct module contains write-available auto-placement and write-unavailable exact-guidance branches;
-5. candidates enter `02_WIP` before approval;
-6. explicit user approval gates `01_APPROVED_REFERENCE` / `04_FINAL` promotion;
-7. Figma promotion remains separate from `PROJECT_ASSET_APPROVED`;
-8. local Tool Hub/Studio runtime is recorded as non-canonical for normal image work while source remains preserved/referenceable;
-9. CI must preserve any failing visual contract rather than returning only the final unittest exit code.
+3. the owning `SKILL.md` directly indexes all six packaged modules for package integrity;
+4. existing art Skill Registry triggers remain sufficient and no new broad `figma-*`, `expression-*`, or `sprite-*` Skill ID appears;
+5. Figma direct module contains write-available auto-placement and write-unavailable exact-guidance branches;
+6. candidates enter `02_WIP` before approval;
+7. explicit user approval gates `01_APPROVED_REFERENCE` / `04_FINAL` promotion;
+8. Figma promotion remains separate from `PROJECT_ASSET_APPROVED`;
+9. local Tool Hub/Studio runtime is recorded as non-canonical for normal image work while source remains preserved/referenceable;
+10. owning Skill learning evidence is updated when the Skill contract changes;
+11. a recognized existing BCA companion test consumes the Skill contract so canonical reference freshness remains valid;
+12. CI preserves any failing visual contract rather than returning only the final unittest exit code.
 
-## 9. Real-World Evidence Ceiling
+Do not weaken package-integrity or reference-freshness rules to make the new modules pass.
 
-This Base change can prove routing/documentation contracts. It does not by itself prove every project's Figma file is correctly structured or that every future upload succeeds.
+## 9. TDD / Failure-Discovery Notes
+
+The implementation intentionally treated repository contracts as evidence rather than paperwork:
+
+- the first module RED exposed missing module files;
+- the BCA log exposed a pre-existing failure-aggregation bug, which was fixed so earlier failing tests cannot be hidden by later successes;
+- GPO then exposed the package-integrity requirement that every new reference be directly linked from `SKILL.md`;
+- a focused RED was added for that direct-link requirement;
+- reference freshness then required a recognized existing companion test when `SKILL.md` changed, so `tests/test_bca_visual_sheet_workflow.py` was meaningfully extended instead of weakening freshness config.
+
+These findings are part of the final architecture.
+
+## 10. Real-World Evidence Ceiling
+
+This Base change can prove routing/documentation/integrity contracts. It does not by itself prove every project's Figma file is correctly structured or that every future upload succeeds.
 
 When a future image task occurs, the preferred behavior is:
 
