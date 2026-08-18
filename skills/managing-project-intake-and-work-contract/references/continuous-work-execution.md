@@ -286,6 +286,33 @@ BUILD
 
 executor handoff는 실제로 연결·호출 가능한 실행 환경이 있을 때만 수행한다. 호출 불가능하면 handoff package를 준비하고 해당 task를 defer할 뿐, 백그라운드 실행을 약속하지 않는다.
 
+## `POSTMERGE_REMAINING_WORK_RECALC`
+
+연속작업에서 merge는 종료 신호가 아니다. 현재 승인된 계약이 PR/merge 이후 readback·후속 검증·교훈 정리까지 포함하면 다음을 수행한다.
+
+```text
+merge
+→ merged main SHA / changed canon / generated consumer readback
+→ postmerge regression evidence
+→ acceptance criteria를 현재 main 기준으로 다시 대조
+→ REQUIRED_WORK_REMAINING 계산
+→ REQUIRED_WORK_REMAINING == 0
+   ├─ yes → COMPLETE 후보
+   └─ no  → REQUEUE_IN_SCOPE_WHEN_NONZERO
+             → 승인 범위 안의 미완료 항목만 ready_tasks / deferred_tasks로 재분류
+             → 실행 가능한 ready task 계속
+```
+
+### `REQUEUE_IN_SCOPE_WHEN_NONZERO`
+
+- `REQUIRED_WORK_REMAINING > 0`이면 merge했다는 이유로 완료 보고를 하지 않는다.
+- 남은 작업은 **현재 승인된 acceptance criteria에서 파생되는 항목만** 재큐잉한다. 새 Goal이나 optional idea를 required work로 몰래 승격하지 않는다.
+- external blocker와 optional backlog는 required work와 분리한다.
+- postmerge에서 새 회귀·stale consumer·대체 표시 누락·검증 실패가 발견되면 범위 안의 수정/재검증 task를 다시 queue에 넣는다.
+- 전역 종료는 required work 0 또는 앞에서 정의한 진짜 `GLOBAL_TERMINAL_BLOCKER` / 사용자 중지·결정 경계에서만 가능하다.
+
+사용자 행동이 필수인 blocker라면 현재 상태와 막힌 stage를 먼저 특정하고, 사용자가 그대로 따라 할 수 있는 처음부터의 간단한 단계로 안내한다. PowerShell이 필요한 경우 `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`를 사용해 새 창·위치 세팅·한 블록 실행을 기본으로 한다.
+
 ## 최종 보고
 
 정상 완료 시 중간 승인 질문을 반복 나열하지 않는다. 최종 보고에는 최소 다음을 포함한다.
@@ -296,6 +323,9 @@ approved_scope:
 ready_tasks: []
 deferred_tasks: []
 completed_tasks: []
+required_work_remaining: 0 | N
+external_blockers: []
+optional_backlog: []
 adversarial_findings: []
 auto_approved_recommendations: []
 recovery_actions: []
