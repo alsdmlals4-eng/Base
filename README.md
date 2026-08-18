@@ -28,6 +28,8 @@ START_HERE.md
 - [시각 협업 정책](docs/VISUAL_COLLABORATION_TOOL_POLICY.md)
 - [Google Sheets compatibility 정책](docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md)
 - [근거 기반 게임 개발 지식 허브](docs/knowledge/game-development/README.md)
+- [게임 개발 Evidence Pack](templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md)
+- [PC/Android Cross-Platform Delivery Guide](docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md)
 - [플랫폼 심사·자산 권리·참조 독립 제작 Guide](docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md)
 - [통합 Vertical Slice 실행문 v9](templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md)
 - [GPT 이미지 생성·검수 정책](docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md)
