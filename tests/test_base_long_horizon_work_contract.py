@@ -60,6 +60,18 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         ):
             self.assertIn(term, policy)
 
+    def test_adversarial_review_owner_requires_exactly_five_distinct_rounds_when_invoked(self) -> None:
+        skill = read("skills/running-adversarial-review-and-refinement/SKILL.md")
+        for term in (
+            "FIVE_DISTINCT_ADVERSARIAL_ROUNDS: REQUIRED_WHEN_REVIEW_RUNS",
+            "ROUND_1_INTENT_ASSUMPTIONS_SCOPE",
+            "ROUND_2_CANON_STRUCTURE_DEPENDENCIES",
+            "ROUND_3_FAILURE_SECURITY_CONCURRENCY",
+            "ROUND_4_VALUE_BENCHMARK_COST_MAINTAINABILITY",
+            "ROUND_5_REGRESSION_EVIDENCE_COMPLETION_FRESHNESS",
+        ):
+            self.assertIn(term, skill)
+
     def test_loop_foundation_doc_points_to_current_operational_checkpoint(self) -> None:
         loop_doc = read("docs/LOOP_ENGINEERING_A2_RUNTIME.md")
         self.assertIn("SUPERSEDED_STATUS_SNAPSHOT", loop_doc)
