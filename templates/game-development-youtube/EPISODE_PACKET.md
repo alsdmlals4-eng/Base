@@ -240,10 +240,15 @@ known_confounders:
 
 ```yaml
 observation_window:
+content_type: LONG_FORM | SHORT | LIVE | OTHER
+youtube_metric_definition_checked_at:
 traffic_sources:
 impressions:
 impressions_ctr:
+shorts_views_basis: NOT_APPLICABLE | PUBLIC_VIEWS | ENGAGED_VIEWS | BOTH_RECORDED | BLOCKED_UNVERIFIED
 views:
+shorts_public_views:
+shorts_engaged_views:
 unique_viewers:
 watch_time:
 average_view_duration:
@@ -261,6 +266,8 @@ known_confounders:
 sample_limit:
 status: MEASURED | INSUFFICIENT_SAMPLE | CONVERSION_UNVERIFIED | HUMAN_NOT_RUN
 ```
+
+For Shorts, record which view definition is being compared. YouTube changed public Shorts `views` on 2025-03-31 to count starts and replays while retaining the previous definition as `Engaged views` in Analytics. Do not join public views and Engaged views into one longitudinal metric without an explicit bridge or separate comparison. Treat format changes and metric-definition changes as confounders.
 
 Retention drops, spikes, and rewatches are observations. Do not claim a scene caused them without a follow-up comparison or experiment. Vendor benchmarks must retain niche, format, duration, sample, and observation-window context.
 
