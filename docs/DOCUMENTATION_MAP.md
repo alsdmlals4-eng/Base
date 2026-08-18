@@ -70,8 +70,10 @@ Base 콜드 스타트에서는 프로젝트 설치 템플릿을 활성 상태 �
 | GitHub 작업 항목 수명주기 | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | Issue·Goal·Branch·PR·Run·Artifact·Release 보존·종료 |
 | 승인 결정 동기화 | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | 질문 전 대조, 중복 질문 방지, 승인 즉시 정본화, 병합 후 검토 |
 | 기획 순서·근거·Demo-First | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | 누락·충돌 선감사, Evidence Pack, Approval Bundle, Vertical Slice |
-| 프로젝트 GDD Google Sheets | `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` | `USER_FACING_GDD_WORKSPACE`, 단일 결정·GDD Module·선택적 시각 Artifact 색인, Sheet 제안·GitHub 동기화 |
-| 시각 협업 도구 | `docs/VISUAL_COLLABORATION_TOOL_POLICY.md` | Figma·Whimsical의 GDD/외부 협업 역할·Artifact·정본 경계 |
+| 프로젝트 작업면 현행 권한 | `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json` | `FIGMA_DEFAULT_VISUAL_WORKSPACE`, `REPO_NATIVE_STRUCTURED_DATA`, `GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE`의 current machine contract; frozen v9 artifact는 호환·역사 증거로 보존 |
+| 프로젝트 GDD Google Sheets | `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` | 기존 구성 Sheet의 `USER_FACING_GDD_WORKSPACE` 호환 별칭·`PROPOSED_SHEET_CHANGE`·migration/readback/rollback을 보존하는 `GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE`; 새 프로젝트 기본 Sheet 생성 권위가 아님 |
+| 시각 협업 도구 | `docs/VISUAL_COLLABORATION_TOOL_POLICY.md` | `FIGMA_DEFAULT_VISUAL_WORKSPACE`의 화면·컴포넌트·상태·프로토타입·승인 레퍼런스와 `REPO_NATIVE_STRUCTURED_DATA`의 구조화 데이터 경계를 정의; Figma는 게임 규칙·runtime data 정본이 아님 |
+| 사용자 PowerShell 실행 | `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md` | 새 PowerShell 기준·위치 세팅 우선·한 번에 붙여넣는 단일 블록·fail-fast·stage별 오류 위치·초보자용 행동 안내 |
 | Tool Hub 프로젝트 식별자 전환 | `docs/operations/PROJECT_BASE_ADAPTER_V2_MIGRATION.md` | v1 audit 호환, v2 명시적 `project.project_id`, 비덮어쓰기 migration·rollback |
 | 로컬 Tool 공용 런타임 계약 | `tools/base-tool-contracts/README.md`, `schemas/project-figma-target-registry-v1.schema.json`, `schemas/project-approved-anchor-registry-v1.schema.json` | 단일 Figma parser, project-owned anchor evidence, gitignored vault confinement |
 | 로컬 Tool Registry·단일 Hub | `tools/TOOL_REGISTRY.json`, `schemas/base-tool-registry-v1.schema.json`, `tools/tool-hub/README.md` | PR #328/#329 baseline을 흡수한 QA/Expression/Sprite catalog, v2 프로젝트 바인딩, authenticated localhost child, Linux 네 child import smoke와 Windows·Android·Figma·provider 증거 상한; 다음 독립 `Balance & Scenario Lab`은 미구현 |
@@ -121,7 +123,7 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 과거 상태 → Git 이력·승인된 Archive
 ```
 
-일반 프로젝트의 기획·상태 확인은 GitHub 정본과 구성된 프로젝트 GDD Google Sheets를 우선한다. HTML 대시보드는 사용자 명시 요청 또는 기존 유지보수에만 사용한다.
+일반 프로젝트의 기획·상태 확인은 GitHub 정본을 우선하고, 시각 협업은 프로젝트별 `FIGMA_DEFAULT_VISUAL_WORKSPACE`, 밸런스·경제·schema·runtime config는 `REPO_NATIVE_STRUCTURED_DATA`를 사용한다. 기존 구성된 Google Sheets는 migration/proposal reconciliation이 필요한 동안만 `GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE`로 읽는다. HTML 대시보드는 사용자 명시 요청 또는 기존 유지보수에만 사용한다.
 
 ## 5. Active Skill Registry View
 
@@ -167,6 +169,7 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 | GPT→Codex 구현 인계 | `skills/maintaining-project-context-and-handoff/references/gpt-codex-implementation-handoff.md` | `templates/project-operations/MASTER_IMPLEMENTATION_PLAN.md`, `templates/project-operations/CODEX_PACKAGE_PLAN_REPORT.md`, `templates/project-operations/IMPLEMENTATION_PACKAGE_CONTRACT.md` |
 | GitHub 보호·Ruleset·자동 병합 | `docs/GITHUB_PRO_OPERATING_POLICY.md` | `templates/project-operations/github/GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md` |
 | PR·Run·Artifact 무손실 정리 | `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | `.github/pull_request_template.md`, `templates/pull_request_template.md` |
+| 사용자 PowerShell 실행 | `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md` | 위치 설정부터 포함한 한 번 붙여넣기 블록 + stage별 성공/오류 marker |
 | 구형 파일 분류·보존·Archive | `skills/governing-legacy-retention-and-archives/SKILL.md` | `templates/project-operations/LEGACY_ARTIFACT_RECONCILIATION.md` |
 | 게임 코어 판정·확정 | `skills/identifying-project-core/SKILL.md`, `skills/establishing-project-core/SKILL.md` | 프로젝트 코어 책임 원본 |
 | 게임 시스템·난이도·전투 AI (`system-design` / `difficulty-and-combat-ai`) | `skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-and-combat-ai.md` | `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md` |
@@ -268,7 +271,7 @@ DOCX·다이어그램은 선언한 경우만 생성한다. `CURRENT`, 자동 렌
 5. 정적·런타임·렌더·사람·접근성·성능 검증 중 무엇이 실행됐는가.
 6. 미확정·보류·위험·롤백·다음 진입 조건은 무엇인가.
 
-L1 이상 완료 보고는 실제 사용한 Work Mode·Skill·Skill Mode와 이유, 변경 파일, 근거, 검증 결과, 미검증, Archive·호환·롤백, 다음 작업을 분리한다. GitHub Actions·Repository 설정·런타임·Google Sheets를 확인하지 못했으면 성공으로 추정하지 않는다.
+L1 이상 완료 보고는 실제 사용한 Work Mode·Skill·Skill Mode와 이유, 변경 파일, 근거, 검증 결과, 미검증, Archive·호환·롤백, 다음 작업을 분리한다. GitHub Actions·Repository 설정·런타임과 현재 작업 범위에 실제로 구성된 legacy Google Sheet를 확인하지 못했으면 해당 항목을 성공으로 추정하지 않는다.
 
 ## Base v9.4 AI 운영 계약
 
@@ -310,6 +313,7 @@ L1 이상 완료 보고는 실제 사용한 Work Mode·Skill·Skill Mode와 이�
 | 구분 | 파일 | 책임 |
 |---|---|---|
 | 연재소설 Knowledge Hub | `docs/knowledge/serial-fiction/README.md` | 웹소설·연재소설 공용 작법·회차·독자 Evidence Guide 라우팅; 프로젝트 고유 정본·고정 POV 수·장르 비율·플랫폼별 생산 목표는 소유하지 않음 |
+| 사용자 선호 소설 참고 포인터 | `docs/knowledge/serial-fiction/BASE_OWNER_NARRATIVE_REFERENCE_POINTER.md` | 연결된 Drive의 현재 `글따라쓰기`를 필요할 때 `USER_PREFERENCE_EVIDENCE`로 live read하고, URL·ID·원문을 Base에 저장하지 않으며 식별 가능한 문체 모사를 금지 |
 | 연재소설 실행 Skill | `skills/developing-and-revising-serial-fiction/SKILL.md` | 정본·각색 경계, 아크·회차, POV·voice, 장면 집필·퇴고, pacing·payoff, setup-payoff debt, reader-feedback revision |
 
 플랫폼 글자 수·과금·연재 규칙은 가변 외부 사실이므로 적용 시 공식 원본을 재검증하며, 오래된 숫자를 Base universal 규칙으로 고정하지 않는다.
