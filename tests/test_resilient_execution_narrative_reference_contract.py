@@ -47,6 +47,9 @@ class ResilientExecutionNarrativeReferenceContractTests(unittest.TestCase):
         venv_index = readme.index("py -3.12 -m venv .venv")
         self.assertLess(location_index, venv_index)
 
+        workflow = read(".github/workflows/validate-base-long-horizon-work-contract.yml")
+        self.assertIn('"tools/tool-hub/README.md"', workflow)
+
     def test_continuous_work_recalculates_remaining_work_after_postmerge(self) -> None:
         continuous = read(
             "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"
