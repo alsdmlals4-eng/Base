@@ -15,6 +15,8 @@ description: Use when designing art or UI image prompts, generating planning or 
 
 현재 task에 필요한 reference만 추가로 읽는다. 매 이미지 작업에서 전부 로드하지 않는다.
 
+- Technique card output: `templates/planning/ART_TECHNIQUE_CARD.md`
+- Prompt-recipe research card: `templates/research/AI_IMAGE_PROMPT_RECIPE_CARD.md`
 - Project continuity / approval / screen-flow: `references/notion-project-visual-continuity-gate.md`
 - 캐릭터 identity·표정·시선·머리 방향: `references/character-identity-expression-controls.md`
 - pose/action/sprite sequence·atlas 후보: `references/sprite-pose-sequence-controls.md`
@@ -25,7 +27,7 @@ description: Use when designing art or UI image prompts, generating planning or 
 
 ## Skill modes
 
-- `technique-card`: 재사용 가능한 아트·UI 기술과 프롬프트 패턴을 기록한다.
+- `technique-card`: 재사용 가능한 아트·UI 기술과 프롬프트 패턴을 `templates/planning/ART_TECHNIQUE_CARD.md`에 기록한다.
 - `planning-visualization`: 세계관·인물·핵심루프·시스템·UI·대표 장면을 시각화해 방향과 모순을 비교한다.
 - `intermediate-visual-checkpoint`: 사용자가 중간 점검·예상 게임 화면·UI 포함 화면을 요청하거나 P1 해석 위험이 있을 때, 현재 Project canon만으로 한 화면 흐름을 `DRAFT_VISUAL` 또는 대체 와이어프레임으로 검토한다.
 - `final-visual-candidate`: 승인된 기획을 바탕으로 Demo-First·상점·홍보·UI·캐릭터·시스템 설명에 사용할 고품질 후보를 만든다.
@@ -204,7 +206,7 @@ Notion image/file replacement은 target을 다시 fetch해서 expected file/prev
 작업 성격에 따라 다음 중 필요한 것만 낸다.
 
 - image generation/edit prompt
-- technique card
+- `templates/planning/ART_TECHNIQUE_CARD.md` technique card
 - Visual Requirement 연결
 - Project continuity card
 - Screen Interpretation Review
