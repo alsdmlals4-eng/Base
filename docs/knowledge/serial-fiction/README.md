@@ -12,6 +12,8 @@
 → 필요 시 running-adversarial-review-and-refinement
 ```
 
+사용자 선호 문단·줄바꿈·대사/서술 호흡이 현재 작업에 관련되면 `BASE_OWNER_NARRATIVE_REFERENCE_POINTER.md`를 추가로 읽는다. 이 포인터는 공개 Base에 개인 문서 URL·ID·원문을 저장하지 않고, 연결된 Drive의 현재 **`글따라쓰기`**를 필요할 때 `USER_PREFERENCE_EVIDENCE`로 live read하는 경로만 정의한다. 참고자료의 식별 가능한 문장·말투를 복제하지 않고 문단 호흡·대사/서술 전환·반응 분리 같은 구조적 신호만 추상화한다.
+
 세계관·캐릭터·장르·현실 고증·표현·현지화·추리 단서·중국 무협·서브컬처 밈의 외부 Source가 필요하면 다음 경로를 추가한다.
 
 ```text
@@ -28,7 +30,9 @@
 ## Guides
 
 - `SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md`
-  - Reader Promise, 장면 극화, POV·voice, 대사·내면, 느림과 정체, 퇴고 순서, originality 경계
+  - Reader Promise, 장면 극화, POV·voice, 대사·내면, 문단·줄바꿈 호흡, 느림과 정체, 퇴고 순서, originality 경계
+- `BASE_OWNER_NARRATIVE_REFERENCE_POINTER.md`
+  - 사용자 관리 `글따라쓰기`를 private live preference evidence로 다시 읽는 경로, URL/ID/원문 비저장, 식별 가능한 style imitation 금지
 - `SERIAL_EPISODE_PACING_AND_PAYOFF_GUIDE.md`
   - Episode Value, 회차 경계, Local Payoff, Open Loop, Pattern Variation, Consequence Memory, Setup–Payoff Debt, 플랫폼 분량 검증
 - `SERIAL_NARRATIVE_INFORMATION_AND_HIGHLIGHT_GUIDE.md`
@@ -46,5 +50,6 @@
 - 개별 댓글·리뷰의 해결책
 - 프로젝트의 실제 독자 반응·판매 성과
 - 외부 Archive·Wiki·밈 DB·작법 강의·성격 유형표의 해석
+- 사용자 선호 참고자료 자체를 모든 프로젝트에 강제하는 universal style rule
 
 플랫폼 정책·과금·분량 조건은 실제 적용 시 현재 공식 원본을 다시 확인한다. 오래된 표본만 있으면 `PLATFORM_REVERIFY_REQUIRED`다.
