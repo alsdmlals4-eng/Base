@@ -29,7 +29,9 @@ START_HERE.md
 - [Google Sheets compatibility 정책](docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md)
 - [근거 기반 게임 개발 지식 허브](docs/knowledge/game-development/README.md)
 - [게임 개발 Evidence Pack](templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md)
+- [Reference Case Card](templates/research/REFERENCE_CASE_CARD.md)
 - [PC/Android Cross-Platform Delivery Guide](docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md)
+- [PC/Android Delivery Profile](templates/planning/PC_ANDROID_DELIVERY_PROFILE.md)
 - [플랫폼 심사·자산 권리·참조 독립 제작 Guide](docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md)
 - [통합 Vertical Slice 실행문 v9](templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md)
 - [GPT 이미지 생성·검수 정책](docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md)
@@ -132,6 +134,8 @@ QA Evidence Studio는 Figma/Notion과 독립적인 실제 PC 런타임 증거 �
 ## Active Skill Registry View
 
 현재 Active Skill 수·목록·owner·positive/negative trigger는 [Base Skill Map](docs/generated/BASE_ACTIVE_SKILLS.md)에서 생성해서 봅니다. 이 README는 두 번째 Skill 목록을 유지하지 않습니다.
+
+This entrypoint does not maintain a second Skill list.
 
 - Machine authority: `skills/SKILL_REGISTRY.json` + 각 `SKILL.md` frontmatter
 - Human view: `docs/generated/BASE_ACTIVE_SKILLS.md`
