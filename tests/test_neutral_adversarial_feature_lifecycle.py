@@ -144,6 +144,23 @@ class NeutralAdversarialFeatureLifecycleTests(unittest.TestCase):
         ):
             self.assertIn(term, adversarial)
 
+    def test_adversarial_review_closes_exactly_five_distinct_rounds_when_run(self) -> None:
+        adversarial = read("skills/running-adversarial-review-and-refinement/SKILL.md")
+        for term in (
+            "FIVE_DISTINCT_ADVERSARIAL_ROUNDS: REQUIRED_WHEN_REVIEW_RUNS",
+            "ROUND_1_INTENT_ASSUMPTIONS_SCOPE",
+            "ROUND_2_CANON_STRUCTURE_DEPENDENCIES",
+            "ROUND_3_FAILURE_SECURITY_CONCURRENCY",
+            "ROUND_4_VALUE_BENCHMARK_COST_MAINTAINABILITY",
+            "ROUND_5_REGRESSION_EVIDENCE_COMPLETION_FRESHNESS",
+            "round 수가 아니라",
+        ):
+            self.assertIn(term, adversarial)
+
+        self.assertIn("항상 정확히 다섯 개의 서로 다른 공격 round", adversarial)
+        self.assertIn("여섯 번째", adversarial)
+        self.assertIn("L0 단순 작업", adversarial)
+
     def test_socratic_review_lens_is_selective_evidence_first_and_meta_validated(self) -> None:
         adversarial = read("skills/running-adversarial-review-and-refinement/SKILL.md")
         socratic = read(
