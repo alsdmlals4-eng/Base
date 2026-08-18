@@ -1,7 +1,7 @@
 # Pixel Art Visual Reference Gallery
 
-> 연계 분류: `PIXEL_ART_STYLE_SYSTEM.md`  
-> 확인일: `2026-08-18`  
+> 연계 분류: `PIXEL_ART_STYLE_SYSTEM.md`
+> 확인일: `2026-08-18`
 > 상태: Base 공용 **REFERENCE_ONLY** 시각 자료
 
 ## 사용 원칙
