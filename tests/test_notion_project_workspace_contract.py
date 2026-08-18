@@ -47,6 +47,20 @@ def test_canon_authority_is_split_by_human_visual_and_structured_runtime_domains
     assert contract["cross_domain_sync"] == "SYNC_BEFORE_IMPLEMENTATION"
 
 
+def test_managing_design_documents_uses_notion_for_human_canon_and_repo_for_structured_canon() -> None:
+    skill = text("skills/managing-design-documents/SKILL.md")
+    for token in (
+        "NOTION_HUMAN_FACING_CANON",
+        "REPOSITORY_STRUCTURED_CANON",
+        "PROPOSED_NOTION_CHANGE",
+        "SYNC_BEFORE_IMPLEMENTATION",
+        "COMPATIBILITY_ONLY",
+    ):
+        assert token in skill
+    assert "USER_FACING_GDD_WORKSPACE" not in skill
+    assert "프로젝트 Google Sheets까지 같은 승인 단위에서 동기화" not in skill
+
+
 def test_active_visual_policy_absorbs_tool_principles_without_figma_authority() -> None:
     policy = text("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
     required = (
