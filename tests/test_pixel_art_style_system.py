@@ -9,6 +9,7 @@ STYLE_SYSTEM = ROOT / "docs" / "knowledge" / "game-development" / "PIXEL_ART_STY
 VISUAL_GALLERY = ROOT / "docs" / "knowledge" / "game-development" / "PIXEL_ART_VISUAL_REFERENCE_GALLERY.md"
 HUB = ROOT / "docs" / "knowledge" / "game-development" / "README.md"
 ART_BRIEF = ROOT / "templates" / "planning" / "ART_DIRECTION_BRIEF.md"
+WORKFLOW = ROOT / ".github" / "workflows" / "validate-evidence-knowledge.yml"
 
 
 def read(path: Path) -> str:
@@ -96,6 +97,13 @@ class PixelArtStyleSystemTests(unittest.TestCase):
             "minimum_substantive_alternatives: 3",
         ):
             self.assertIn(term, brief)
+
+    def test_visual_gallery_is_preserved_in_validation_evidence(self) -> None:
+        workflow = read(WORKFLOW)
+        self.assertIn(
+            "docs/knowledge/game-development/PIXEL_ART_VISUAL_REFERENCE_GALLERY.md",
+            workflow,
+        )
 
 
 if __name__ == "__main__":
