@@ -4,10 +4,17 @@ on:
   pull_request:
     paths:
       - "AGENTS.md"
+      - "START_HERE.md"
+      - "docs/DOCUMENTATION_MAP.md"
       - "docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md"
       - "docs/LOOP_ENGINEERING_A2_RUNTIME.md"
+      - "docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md"
       - "docs/knowledge/ai/SKILL_ROUTING_PRECISION_GUIDE.md"
+      - "docs/knowledge/serial-fiction/**"
+      - "skills/developing-and-revising-serial-fiction/**"
+      - "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"
       - "tests/test_base_long_horizon_work_contract.py"
+      - "tests/test_resilient_execution_narrative_reference_contract.py"
       - ".github/workflows/validate-base-long-horizon-work-contract.yml"
   workflow_dispatch:
 
@@ -23,4 +30,8 @@ jobs:
         with:
           python-version: "3.12"
       - name: Validate long-horizon governance contract
-        run: python -m unittest tests.test_base_long_horizon_work_contract -v
+        run: >-
+          python -m unittest
+          tests.test_base_long_horizon_work_contract
+          tests.test_resilient_execution_narrative_reference_contract
+          -v
