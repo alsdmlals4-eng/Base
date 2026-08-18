@@ -8,6 +8,8 @@ ROOT = Path(__file__).resolve().parents[1]
 STYLE_SYSTEM = ROOT / "docs" / "knowledge" / "game-development" / "PIXEL_ART_STYLE_SYSTEM.md"
 VISUAL_GALLERY = ROOT / "docs" / "knowledge" / "game-development" / "PIXEL_ART_VISUAL_REFERENCE_GALLERY.md"
 PREFERRED_LIBRARY = ROOT / "docs" / "knowledge" / "game-development" / "PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md"
+PREFERRED_OVERVIEW = ROOT / "docs" / "knowledge" / "game-development" / "reference-images" / "preferred-visual" / "preferred-visual-style-overview.jpg"
+SPECIALTY_RADAR = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_SPECIALTY_SOURCE_RADAR.md"
 ART_GUIDE = ROOT / "docs" / "knowledge" / "game-development" / "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md"
 DOC_MAP = ROOT / "docs" / "DOCUMENTATION_MAP.md"
 HUB = ROOT / "docs" / "knowledge" / "game-development" / "README.md"
@@ -89,7 +91,6 @@ class PixelArtStyleSystemTests(unittest.TestCase):
     def test_preferred_visual_library_tracks_user_taste_without_promoting_project_canon(self) -> None:
         self.assertTrue(PREFERRED_LIBRARY.is_file())
         preferred = read(PREFERRED_LIBRARY)
-        hub = read(HUB)
         style = read(STYLE_SYSTEM)
 
         self.assertIn("PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md", style)
@@ -130,6 +131,51 @@ class PixelArtStyleSystemTests(unittest.TestCase):
 
         self.assertGreaterEqual(preferred.count("user_reference_sheet:"), 5)
         self.assertGreaterEqual(preferred.count("benchmark_disposition:"), 5)
+
+    def test_preferred_visual_library_preserves_visible_reference_overview(self) -> None:
+        self.assertTrue(PREFERRED_OVERVIEW.is_file())
+        preferred = read(PREFERRED_LIBRARY)
+        self.assertIn(
+            "reference-images/preferred-visual/preferred-visual-style-overview.jpg",
+            preferred,
+        )
+        self.assertIn("DERIVED_CONTACT_SHEET", preferred)
+        self.assertIn("REFERENCE_ONLY", preferred)
+
+    def test_continuous_style_discovery_reuses_existing_source_radar(self) -> None:
+        preferred = read(PREFERRED_LIBRARY)
+        radar = read(SPECIALTY_RADAR)
+
+        for term in (
+            "CONTINUOUS_STYLE_DISCOVERY",
+            "UNCAPPED_CANDIDATE_INTAKE",
+            "ORIGINAL_SOURCE_BACKTRACE",
+            "STYLE_FAMILY_MATCH",
+            "NEW_FAMILY_CANDIDATE",
+        ):
+            self.assertIn(term, preferred)
+
+        for term in (
+            "ART_DIRECTION_AND_VISUAL_STYLE",
+            "PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md",
+            "ORIGINAL_SOURCE_BACKTRACE",
+            "AI_GENERATED_LOOK_REDUCTION",
+            "STYLE_CONSISTENCY_AND_READABILITY",
+            "WORLD_CORE_SYSTEM_FIT",
+        ):
+            self.assertIn(term, radar)
+
+    def test_figma_reference_sync_has_official_route_and_truthful_fallback(self) -> None:
+        preferred = read(PREFERRED_LIBRARY)
+        for term in (
+            "FIGMA_STRUCTURE_READY",
+            "upload_assets",
+            "FIGMA_SYNC_PENDING_TRANSPORT",
+            "FIGMA_READBACK_REQUIRED",
+            "https://developers.figma.com/docs/figma-mcp-server/tools-and-prompts/",
+            "https://developers.figma.com/docs/figma-mcp-server/write-to-canvas/",
+        ):
+            self.assertIn(term, preferred)
 
     def test_pixel_candidate_template_captures_axes_cost_and_validation(self) -> None:
         brief = read(ART_BRIEF)
