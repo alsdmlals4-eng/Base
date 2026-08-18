@@ -37,6 +37,15 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         ):
             self.assertIn(term, policy)
 
+    def test_independent_workstreams_are_isolated_unless_user_explicitly_authorizes_absorption(self) -> None:
+        policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
+        for term in (
+            "INDEPENDENT_WORKSTREAM_ISOLATION",
+            "OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT",
+            "EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION",
+        ):
+            self.assertIn(term, policy)
+
     def test_game_contract_is_budgeted_buildable_and_reusable(self) -> None:
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         for term in (
