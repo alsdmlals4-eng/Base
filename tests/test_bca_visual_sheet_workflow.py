@@ -7,160 +7,149 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def read(path: str) -> str:
+    return (ROOT / path).read_text(encoding="utf-8")
+
+
 class BCAVisualSheetWorkflowTests(unittest.TestCase):
     def test_v9_is_active_and_v6_to_v8_are_compatibility_only(self) -> None:
-        v9 = (ROOT / "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md").read_text(encoding="utf-8")
-        v8 = (ROOT / "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md").read_text(encoding="utf-8")
-        v7 = (ROOT / "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md").read_text(encoding="utf-8")
+        v9 = read("templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md")
+        v8 = read("templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md")
+        v7 = read("templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md")
         self.assertIn('contract_version: "9.1"', v9)
         self.assertIn("SINGLE_ATTACHMENT_RECONCILIATION_AWARE_INTEGRATED_EXECUTION", v9)
         self.assertIn("REPOSITORY_FIRST_INTERVIEW", v9)
         self.assertIn("INTEGRATED_DELIVERY_PROFILE", v9)
         self.assertIn("CONDITIONAL_RECONCILIATION", v9)
-        self.assertIn("PROJECT_SHEET_SEMANTIC_TABS", v9)
         self.assertIn("INTERMEDIATE_VISUAL_CHECKPOINT", v9)
-        self.assertIn("PROJECT_BASE_ADAPTER.json", v9)
-        self.assertIn("AGENT_MERGE_REQUIRED", v9)
-        self.assertIn("PROJECT_BASE_SKILL_ADAPTER.json", v9)
         self.assertIn("SUPERSEDED_COMPATIBILITY", v8)
         self.assertIn("SUPERSEDED_COMPATIBILITY", v7)
-        self.assertIn("VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md", v7)
 
-    def test_sheet_contract_has_semantic_and_visual_tabs(self) -> None:
-        sheet = (ROOT / "templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md").read_text(encoding="utf-8")
-        for tab in (
-            "11_세계관", "12_핵심루프", "13_주요인물", "14_조연_세력_관계",
-            "40_핵심시스템_메인콘텐츠", "71_이미지기획_생성목록", "72_이미지검수_승인로그",
-        ):
-            self.assertIn(tab, sheet)
-        for term in ("World ID", "Loop ID", "Character ID", "System ID", "APPROVED_CANDIDATE"):
-            self.assertIn(term, sheet)
+    def test_notion_workspace_contract_separates_projects_and_runtime_truth(self) -> None:
+        machine = json.loads(read("docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json"))
+        self.assertEqual(machine["project_workspace"], "NOTION_DEFAULT_PROJECT_WORKSPACE")
+        self.assertEqual(machine["project_relation"], "PROJECT_RELATION_REQUIRED")
+        self.assertEqual(machine["visual_map"], "VISUAL_MAP_DERIVED")
+        self.assertEqual(machine["runtime_truth"], "REPOSITORY_RUNTIME_TRUTH")
 
     def test_art_skill_contains_generation_and_review_modes(self) -> None:
-        skill = (ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md").read_text(encoding="utf-8")
-        for mode in ("planning-visualization", "intermediate-visual-checkpoint", "final-visual-candidate", "visual-qa-and-approval"):
+        skill = read("skills/designing-art-prompts-and-technique-cards/SKILL.md")
+        for mode in (
+            "planning-visualization",
+            "intermediate-visual-checkpoint",
+            "final-visual-candidate",
+            "visual-qa-and-approval",
+        ):
             self.assertIn(f"`{mode}`", skill)
-        for status in ("GENERATED_EXPLORATION", "REVISION_REQUIRED", "PROJECT_ASSET_APPROVED", "APPLIED_AND_RUNTIME_VERIFIED"):
+        for status in (
+            "GENERATED_EXPLORATION",
+            "REVISION_REQUIRED",
+            "PROJECT_ASSET_APPROVED",
+            "APPLIED_AND_RUNTIME_VERIFIED",
+        ):
             self.assertIn(status, skill)
         self.assertIn("생성 결과는 자동 최종 자산이 아니다", skill)
 
-    def test_art_skill_consumes_figma_visual_bible_without_new_skill(self) -> None:
-        art_skill = (ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md").read_text(encoding="utf-8")
-        gate = (
-            ROOT
-            / "skills/designing-art-prompts-and-technique-cards/references/figma-visual-bible-continuity-gate.md"
-        ).read_text(encoding="utf-8")
-        profile = (ROOT / "templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md").read_text(encoding="utf-8")
-        registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
-
-        self.assertIn("references/figma-visual-bible-continuity-gate.md", art_skill)
-        for token in ("APPROVED_VISUAL_REFERENCE", "Keep / Avoid / Do Not Drift", "VISUAL_CANONICAL_CONFLICT"):
-            self.assertIn(token, gate)
-        for page in ("00_DIRECTION", "01_APPROVED_REFERENCE", "02_WIP", "03_REJECTED", "04_FINAL"):
-            self.assertIn(page, profile)
-        self.assertNotIn('"skill_id": "figma-', registry)
-
-    def test_art_skill_indexes_figma_direct_modules_for_package_integrity(self) -> None:
-        art_skill = (ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md").read_text(encoding="utf-8")
-        gate = (
-            ROOT
-            / "skills/designing-art-prompts-and-technique-cards/references/figma-visual-bible-continuity-gate.md"
-        ).read_text(encoding="utf-8")
-        for module in (
-            "figma-direct-placement-and-canon.md",
-            "character-identity-expression-controls.md",
-            "sprite-pose-sequence-controls.md",
-            "effect-stage-compositing-controls.md",
-            "candidate-review-and-reusable-harvest.md",
-            "local-visual-tool-lessons-and-fallback.md",
+    def test_visual_workflow_absorbs_old_tool_principles_without_tool_dependency(self) -> None:
+        workflow = read("docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md")
+        policy = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
+        for token in (
+            "PROJECT_RELATION_REQUIRED",
+            "source provenance",
+            "Identity-preserving image edits",
+            "version",
+            "readback",
+            "ASSET",
+            "COMPONENT",
+            "SCREEN",
+            "REFERENCE",
+            "BENCHMARK",
         ):
-            self.assertIn(f"references/{module}", art_skill)
-            self.assertIn(module, gate)
-        self.assertIn("FIGMA_DIRECT_VISUAL_ORGANIZATION", gate)
-        self.assertIn("02_WIP", gate)
-        self.assertIn("PROJECT_ASSET_APPROVED", gate)
+            self.assertIn(token, workflow)
+        self.assertIn("Figma Bridge", workflow)
+        self.assertIn("not required", workflow)
+        self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", policy)
+        self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", policy)
 
     def test_visual_requirement_gate_is_consumed_without_duplicate_skill(self) -> None:
-        guide = (ROOT / "docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md").read_text(encoding="utf-8")
-        art_skill = (ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md").read_text(encoding="utf-8")
-        slice_skill = (ROOT / "skills/designing-vertical-slices/SKILL.md").read_text(encoding="utf-8")
-        policy = (ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md").read_text(encoding="utf-8")
+        guide = read("docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md")
+        art_skill = read("skills/designing-art-prompts-and-technique-cards/SKILL.md")
+        slice_skill = read("skills/designing-vertical-slices/SKILL.md")
+        policy = read("docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md")
         for text in (guide, art_skill, slice_skill, policy):
             self.assertIn("Visual Requirement Gate", text)
         self.assertIn("Delete Test", guide)
         self.assertIn("requirement_id", art_skill)
         self.assertIn("requirement_id", slice_skill)
-        self.assertIn("선정되지 않은 프로젝트 자산", policy)
-        registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
+        registry = read("skills/SKILL_REGISTRY.json")
         self.assertNotIn("selecting-project-visual-assets", registry)
 
     def test_reference_visuals_are_recreated_not_surface_copied(self) -> None:
-        skill = (ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md").read_text(encoding="utf-8")
-        policy = (ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md").read_text(encoding="utf-8")
+        skill = read("skills/designing-art-prompts-and-technique-cards/SKILL.md")
+        policy = read("docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md")
         for text in (skill, policy):
-            self.assertIn(
-                "PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md",
-                text,
-            )
+            self.assertIn("PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md", text)
             self.assertIn("reference_brief", text)
             self.assertIn("forbidden_expression", text)
             self.assertIn("reference_similarity_status", text)
             self.assertIn("RELEASE_BLOCKED_UNVERIFIED", text)
 
-    def test_registry_routes_existing_visual_work_without_a_duplicate_skill(self) -> None:
-        registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
-        entry = next(item for item in registry["skills"] if item["skill_id"] == "designing-art-prompts-and-technique-cards")
-        for tag in ("planning-visualization", "intermediate-visual-checkpoint", "final-visual-candidate", "visual-qa-and-approval", "image-mockup", "image-approval"):
+    def test_registry_routes_existing_visual_work_without_duplicate_skill(self) -> None:
+        registry = json.loads(read("skills/SKILL_REGISTRY.json"))
+        entry = next(
+            item
+            for item in registry["skills"]
+            if item["skill_id"] == "designing-art-prompts-and-technique-cards"
+        )
+        for tag in (
+            "planning-visualization",
+            "intermediate-visual-checkpoint",
+            "final-visual-candidate",
+            "visual-qa-and-approval",
+            "image-mockup",
+            "image-approval",
+        ):
             self.assertIn(tag, entry["trigger_tags"])
 
     def test_active_entrypoints_reference_v9_not_v7(self) -> None:
-        for path in ("START_HERE.md", "docs/DOCUMENTATION_MAP.md", "templates/project-operations/README.md"):
-            text = (ROOT / path).read_text(encoding="utf-8")
-            self.assertIn("VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md", text, path)
-            self.assertNotIn("상세 기획·Demo-First Vertical Slice·GPT→Codex·전체 검수 지시를 파일 하나로 첨부해야 할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md`", text, path)
-
-    def test_policy_forbids_duplicate_sheet_creation_and_false_approval(self) -> None:
-        policy = (ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md").read_text(encoding="utf-8")
-        for term in ("NOT_CONFIGURED", "새 Sheet를 추정 생성", "자동 최종 자산", "repository-wide-audit", "71_이미지기획_생성목록", "72_이미지검수_승인로그"):
-            self.assertIn(term, policy)
-
-    def test_image_policy_routes_local_candidates_through_explicit_promotion(self) -> None:
-        policy = (ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md").read_text(encoding="utf-8")
-        for term in (
-            "docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md",
-            "assets/_vault_local/",
-            "PROJECT_ASSET_APPROVED",
-            "promote",
-            "VAULT_LOCAL_STATE_UNVERIFIED",
+        for path in (
+            "START_HERE.md",
+            "docs/DOCUMENTATION_MAP.md",
+            "templates/project-operations/README.md",
         ):
-            self.assertIn(term, policy)
-        self.assertIn("tracked 제품 자산으로 자동 생성하지 않는다", policy)
+            text = read(path)
+            self.assertIn("VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md", text, path)
 
-    def test_visual_workspace_policy_supports_gdd_and_external_contexts(self) -> None:
-        policy = (ROOT / "docs/VISUAL_COLLABORATION_TOOL_POLICY.md").read_text(encoding="utf-8")
+    def test_sheets_are_migration_compatibility_not_default_visual_workspace(self) -> None:
+        policy = read("docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md")
+        self.assertIn("COMPATIBILITY_ONLY", policy)
+        self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", policy)
+        self.assertIn("Do not bulk-copy", policy)
+
+    def test_project_asset_delivery_requires_readback_and_explicit_promotion(self) -> None:
+        workflow = read("docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md")
+        local_policy = read("docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md")
+        image_policy = read("docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md")
+        self.assertIn("read back", workflow)
+        self.assertIn("PROJECT_ASSET_APPROVED", local_policy)
+        self.assertIn("PROJECT_ASSET_APPROVED", image_policy)
+        self.assertIn("promotion", workflow.lower())
+
+    def test_visual_workspace_supports_gdd_external_and_both_contexts_without_new_authority(self) -> None:
+        policy = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
         for context in ("GDD", "EXTERNAL_COLLABORATION", "BOTH"):
             self.assertIn(context, policy)
+        self.assertIn("PROJECT_RELATION_REQUIRED", policy)
+        self.assertIn("REPOSITORY_RUNTIME_TRUTH", policy)
 
-    def test_reusable_visual_harvest_links_without_collapsing_authority(self) -> None:
-        image_policy = (ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md").read_text(encoding="utf-8")
-        visual_policy = (ROOT / "docs/VISUAL_COLLABORATION_TOOL_POLICY.md").read_text(encoding="utf-8")
-        image_plan = (ROOT / "templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md").read_text(encoding="utf-8")
-        figma_profile = (ROOT / "templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md").read_text(encoding="utf-8")
-        artifact_registry = json.loads(
-            (ROOT / "templates/project-operations/VISUAL_ARTIFACT_REGISTRY.json").read_text(encoding="utf-8")
-        )
-        artifact = artifact_registry["artifacts"][0]
-
-        for content in (image_plan, figma_profile):
-            self.assertIn("asset_vault_harvest_record_id", content)
-        self.assertIn("Reusable Visual Harvest Gate", image_policy)
-        self.assertIn("reuse promotion", visual_policy)
-        self.assertIn("PROJECT_ASSET_APPROVED", image_policy)
-        self.assertIn("PROJECT_ASSET_APPROVED", visual_policy)
-        self.assertIn("REBUILD_FOR_REUSE", figma_profile)
-        self.assertIn("ONE_OFF_KEEP", figma_profile)
-        self.assertIn("asset_vault_harvest_record_id", artifact)
-        self.assertIn("derived_pixel_status", artifact)
+    def test_reusable_visual_harvest_uses_asset_master_not_figma_profile(self) -> None:
+        workflow = read("docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md")
+        visual_policy = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
+        self.assertIn("REUSE_AS_IS", workflow)
+        self.assertIn("REBUILD_FOR_REUSE", workflow)
+        self.assertIn("ONE_OFF_KEEP", workflow)
+        self.assertIn("ASSET_KNOWLEDGE_MASTER", visual_policy)
+        self.assertFalse((ROOT / "templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md").exists())
 
 
 if __name__ == "__main__":
