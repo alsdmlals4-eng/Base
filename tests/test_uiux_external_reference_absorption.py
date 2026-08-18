@@ -10,7 +10,7 @@ WATCHLIST = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNA
 LEDGER = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_SOURCE_OPERATIONS_LEDGER.json"
 UI_SKILL = ROOT / "skills" / "auditing-and-refining-ui-art" / "SKILL.md"
 UI_METHOD = ROOT / "skills" / "auditing-and-refining-ui-art" / "references" / "ux-ui-design-system-method.md"
-LEARNING_LOG = ROOT / "skills" / "SKILL_LEARNING_LOG.md"
+LEARNING_LOG = ROOT / "skills" / "auditing-and-refining-ui-art" / "LEARNING_LOG.md"
 REGISTRY = ROOT / "skills" / "SKILL_REGISTRY.json"
 
 
