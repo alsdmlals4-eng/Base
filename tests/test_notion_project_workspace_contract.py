@@ -61,6 +61,22 @@ def test_managing_design_documents_uses_notion_for_human_canon_and_repo_for_stru
     assert "프로젝트 Google Sheets까지 같은 승인 단위에서 동기화" not in skill
 
 
+def test_confirmed_decision_sync_uses_notion_human_surface_and_repository_structured_truth() -> None:
+    policy = text("docs/CONFIRMED_DECISION_SYNC_POLICY.md")
+    for token in (
+        "DOMAIN_SPLIT_CANON",
+        "NOTION_HUMAN_FACING_CANON",
+        "REPOSITORY_STRUCTURED_CANON",
+        "PROPOSED_NOTION_CHANGE",
+        "SYNC_BEFORE_IMPLEMENTATION",
+        "NOTION_UPDATED",
+        "COMPATIBILITY_ONLY",
+    ):
+        assert token in policy
+    assert "USER_FACING_GDD_WORKSPACE" not in policy
+    assert "Google Sheets가 갱신되고 재조회 결과가 일치했다" not in policy
+
+
 def test_active_visual_policy_absorbs_tool_principles_without_figma_authority() -> None:
     policy = text("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
     required = (
