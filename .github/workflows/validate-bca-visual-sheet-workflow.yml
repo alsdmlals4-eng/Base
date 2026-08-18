@@ -59,19 +59,19 @@ jobs:
         shell: bash
         run: |
           set +e
+          status=0
           {
-            python -m py_compile tests/test_bca_visual_sheet_workflow.py
-            python -m py_compile tests/test_figma_direct_visual_skill_modules.py
-            python -m py_compile tests/test_project_gdd_google_sheets_contract.py
-            python -m py_compile tests/test_visual_collaboration_capability_contract.py
-            python -m py_compile tests/test_figma_narrative_dialogue_flow_contract.py
-            python -m unittest tests.test_bca_visual_sheet_workflow -v
-            python -m unittest tests.test_figma_direct_visual_skill_modules -v
-            python -m unittest tests.test_project_gdd_google_sheets_contract -v
-            python -m unittest tests.test_visual_collaboration_capability_contract -v
-            python -m unittest tests.test_figma_narrative_dialogue_flow_contract -v
+            python -m py_compile tests/test_bca_visual_sheet_workflow.py || status=1
+            python -m py_compile tests/test_figma_direct_visual_skill_modules.py || status=1
+            python -m py_compile tests/test_project_gdd_google_sheets_contract.py || status=1
+            python -m py_compile tests/test_visual_collaboration_capability_contract.py || status=1
+            python -m py_compile tests/test_figma_narrative_dialogue_flow_contract.py || status=1
+            python -m unittest tests.test_bca_visual_sheet_workflow -v || status=1
+            python -m unittest tests.test_figma_direct_visual_skill_modules -v || status=1
+            python -m unittest tests.test_project_gdd_google_sheets_contract -v || status=1
+            python -m unittest tests.test_visual_collaboration_capability_contract -v || status=1
+            python -m unittest tests.test_figma_narrative_dialogue_flow_contract -v || status=1
           } > bca-contract-results.txt 2>&1
-          status=$?
           cat bca-contract-results.txt
           exit "$status"
       - name: Check reference freshness
