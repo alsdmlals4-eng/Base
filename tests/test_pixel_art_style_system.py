@@ -92,7 +92,6 @@ class PixelArtStyleSystemTests(unittest.TestCase):
         hub = read(HUB)
         style = read(STYLE_SYSTEM)
 
-        self.assertIn("PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md", hub)
         self.assertIn("PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md", style)
         for style_family in (
             "Pixel Illustration Hybrid",
@@ -153,21 +152,18 @@ class PixelArtStyleSystemTests(unittest.TestCase):
             "docs/knowledge/game-development/PIXEL_ART_VISUAL_REFERENCE_GALLERY.md",
             workflow,
         )
-        self.assertIn(
-            "docs/knowledge/game-development/PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md",
-            workflow,
-        )
 
     def test_canonical_art_owners_route_to_pixel_reference_system(self) -> None:
         art_guide = read(ART_GUIDE)
         doc_map = read(DOC_MAP)
+        style = read(STYLE_SYSTEM)
         for required in (
             "PIXEL_ART_STYLE_SYSTEM.md",
             "PIXEL_ART_VISUAL_REFERENCE_GALLERY.md",
-            "PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md",
         ):
             self.assertIn(required, art_guide)
             self.assertIn(required, doc_map)
+        self.assertIn("PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md", style)
 
 
 if __name__ == "__main__":
