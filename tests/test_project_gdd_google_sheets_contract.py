@@ -17,6 +17,7 @@ class ProjectGDDGoogleSheetsContractTests(unittest.TestCase):
         policy = read("docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md")
         for term in (
             "GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE",
+            "USER_FACING_GDD_WORKSPACE_COMPATIBILITY_ALIAS",
             "FIGMA_DEFAULT_VISUAL_WORKSPACE",
             "REPO_NATIVE_STRUCTURED_DATA",
             "PROPOSED_SHEET_CHANGE",
@@ -48,7 +49,7 @@ class ProjectGDDGoogleSheetsContractTests(unittest.TestCase):
         summary = read("docs/generated/BASE_ACTIVE_SKILLS.md")
         self.assertIn("Current active Skill count", summary)
 
-    def test_existing_foundation_skills_consume_sheet_as_legacy_migration_source(self) -> None:
+    def test_existing_foundation_skills_route_sheet_handling_to_the_central_policy(self) -> None:
         for path in (
             "skills/managing-project-intake-and-work-contract/SKILL.md",
             "skills/managing-game-project-operating-system/SKILL.md",
@@ -57,28 +58,18 @@ class ProjectGDDGoogleSheetsContractTests(unittest.TestCase):
             text = read(path)
             self.assertIn("PROJECT_GDD_GOOGLE_SHEETS_POLICY.md", text, path)
             self.assertIn("PROPOSED_SHEET_CHANGE", text, path)
-            self.assertIn("GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE", text, path)
 
-    def test_sync_policy_preserves_sheet_edits_as_migration_proposals(self) -> None:
+    def test_sync_and_planning_policies_route_sheet_semantics_to_the_central_policy(self) -> None:
+        for path in (
+            "docs/CONFIRMED_DECISION_SYNC_POLICY.md",
+            "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md",
+        ):
+            text = read(path)
+            self.assertIn("PROJECT_GDD_GOOGLE_SHEETS_POLICY.md", text, path)
+            self.assertIn("PROPOSED_SHEET_CHANGE", text, path)
         sync_policy = read("docs/CONFIRMED_DECISION_SYNC_POLICY.md")
-        for term in (
-            "GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE",
-            "PROPOSED_SHEET_CHANGE",
-            "GITHUB_UPDATE_PENDING_SHEET",
-            "SHEET_UPDATE_PENDING_GITHUB",
-            "SHEET_GITHUB_CONFLICT",
-        ):
+        for term in ("GITHUB_UPDATE_PENDING_SHEET", "SHEET_UPDATE_PENDING_GITHUB", "SHEET_GITHUB_CONFLICT"):
             self.assertIn(term, sync_policy)
-
-    def test_planning_policy_routes_migration_contract_without_restoring_sheet_default_authority(self) -> None:
-        planning = read("docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md")
-        for term in (
-            "PROJECT_GDD_GOOGLE_SHEETS_POLICY.md",
-            "GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE",
-            "PROPOSED_SHEET_CHANGE",
-        ):
-            self.assertIn(term, planning)
-        self.assertNotIn("역할은 `USER_FACING_GDD_WORKSPACE`다", planning)
 
     def test_visual_policy_uses_figma_first_and_sheet_compatibility_boundary(self) -> None:
         visual = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
@@ -91,12 +82,18 @@ class ProjectGDDGoogleSheetsContractTests(unittest.TestCase):
             self.assertIn(term, visual)
         self.assertNotIn("Google Sheets → USER_FACING_GDD_WORKSPACE summary and editable review surface", visual)
 
-    def test_v2_adapter_defaults_new_projects_to_migration_compatibility(self) -> None:
+    def test_v2_adapter_defaults_new_projects_to_sheet_migration_compatibility(self) -> None:
         adapter = json.loads(read("templates/project-operations/PROJECT_BASE_ADAPTER_V2.json"))
         self.assertEqual(adapter["gdd_sheet"]["role"], "GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE")
         self.assertEqual(adapter["gdd_sheet"]["workspace_status"], "MIGRATION_COMPATIBILITY_SURFACE")
-        self.assertEqual(adapter["visual_workspace"]["default"], "FIGMA_DEFAULT_VISUAL_WORKSPACE")
-        self.assertEqual(adapter["structured_data"]["authority"], "REPO_NATIVE_STRUCTURED_DATA")
+
+    def test_v2_schema_accepts_current_and_legacy_sheet_roles_during_migration(self) -> None:
+        schema = json.loads(read("schemas/project-base-adapter-v2.schema.json"))
+        roles = schema["properties"]["gdd_sheet"]["properties"]["role"]["enum"]
+        self.assertEqual(
+            roles,
+            ["GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE", "USER_FACING_GDD_WORKSPACE"],
+        )
 
     def test_frozen_v9_sheet_control_remains_historical_and_unchanged_in_meaning(self) -> None:
         frozen = json.loads(read("docs/operations/SHEET_CONTROL_CONTRACT.json"))
