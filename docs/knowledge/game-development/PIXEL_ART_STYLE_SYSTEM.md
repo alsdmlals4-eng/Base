@@ -32,29 +32,40 @@ NO_AUTOMATIC_PROJECT_STYLE_PROMOTION
 
 ## 2. 선택 Gate
 
-픽셀 아트가 프로젝트의 주 스타일 또는 중요한 하위 스타일 후보가 되면 다음을 적용한다.
+픽셀 아트가 프로젝트의 주 스타일 또는 중요한 하위 스타일 후보가 되면 별도 병렬 규칙을 만들지 않고 Base `AGENTS.md`의 현행 의사결정 계약을 그대로 적용한다.
 
 ```text
-MINIMUM_SUBSTANTIVE_ALTERNATIVES: 3
-BETTER_ALTERNATIVE_SEARCH_UNTIL_DECISION
-LONG_TERM_PLAN_FIT
-PRE_DECISION_REREVIEW
+MINIMUM_VIABLE_ALTERNATIVES: 3
+BETTER_ALTERNATIVE_SEARCH
+LONG_TERM_PLAN_FIT_REQUIRED
+FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS
 ```
 
 ### 최소 3개 실질 대안
+
+`MINIMUM_VIABLE_ALTERNATIVES: 3`을 픽셀 아트 결정에 적용한다.
 
 - 현행 유지도 실제로 유효하면 하나의 대안이 될 수 있다.
 - 최소 3개 후보는 이름만 다른 허수 후보가 아니라, 플레이어에게 보이는 결과 또는 제작 파이프라인이 materially distinct 해야 한다.
 - 권장 기준은 최소 두 축 이상이 다르거나, 같은 시각 결과라도 생산 방식·비용·애니메이션 파이프라인이 실질적으로 달라야 한다.
 - 세 후보를 만들기 어렵다면 `픽셀 아트 내부 변형`만 보지 말고 `비픽셀 현행 유지`, `하이브리드`, `화면별 혼합`까지 탐색한다.
+- 조사 뒤에도 세 실질 후보를 만들 수 없으면 임의로 기준을 낮추지 않고 Base의 fail-closed 경계를 따른다.
 
 ### 결정 직전까지 더 나은 대안 탐색
 
-`BETTER_ALTERNATIVE_SEARCH_UNTIL_DECISION`은 최초 3개를 적은 뒤 조사 종료를 뜻하지 않는다. 레퍼런스, 기술 제약, Figma 승인 자료, 실제 표시 크기, 애니메이션 비용, 프로토타입 결과에서 새 증거가 나오면 더 나은 후보를 계속 추가·교체한다. 결정 직전에 마지막 검색·비교를 수행하고 선택 이유를 갱신한다.
+`BETTER_ALTERNATIVE_SEARCH`를 픽셀 아트 선택 전체에 적용한다. 최초 3개를 적은 뒤 조사 종료로 취급하지 않는다. 레퍼런스, 기술 제약, Figma 승인 자료, 실제 표시 크기, 애니메이션 비용, 프로토타입 결과에서 새 증거가 나오면 더 나은 후보를 계속 추가·교체한다.
+
+프로젝트 승인 직전에는 마지막으로 다음을 다시 확인한다.
+
+1. 최초 선호안보다 더 명확하거나 더 낮은 수명주기 비용의 후보가 생겼는가.
+2. 새 후보가 핵심 플레이어 경험·프로젝트 정체성을 바꾼다면 사용자 결정이 필요한가.
+3. 선택 이유가 최신 증거를 반영하고 있는가.
+
+이 마지막 확인은 `BETTER_ALTERNATIVE_SEARCH`의 픽셀 아트 적용 기록이며 새 전역 Gate ID를 만들지 않는다.
 
 ### 장기계획 적합성
 
-`LONG_TERM_PLAN_FIT`은 다음을 본다.
+`LONG_TERM_PLAN_FIT_REQUIRED`는 다음을 본다.
 
 - 첫인상과 프로젝트 고유 기억점
 - 실제 플레이 거리에서의 실루엣·정보 가독성
@@ -69,7 +80,7 @@ PRE_DECISION_REREVIEW
 
 ### 최종 재검토
 
-`PRE_DECISION_REREVIEW`에서 최소한 다음을 다시 확인한다.
+프로젝트 Decision 직전에는 위 Base 계약의 적용 결과를 한 번 더 읽는다.
 
 1. 프로젝트 코어 경험을 아트 취향이 가리고 있지 않은가.
 2. 선택안보다 더 싸고 명확한 후보가 조사 중 발견됐는데 관성으로 무시하지 않았는가.
@@ -77,7 +88,7 @@ PRE_DECISION_REREVIEW
 4. 작은 화면·축소 화면에서도 핵심 상태가 읽히는가.
 5. 승인된 기존 Art Bible을 불필요하게 갈아엎고 있지 않은가.
 
-L1 이상이면 이 Gate 뒤에도 Base의 `FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS`가 그대로 적용된다.
+L1 이상에서는 `FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS`를 별도 축 체크리스트가 아니라 전체 승인 범위에 대한 완전한 개선 루프로 수행한다. blocking finding이 남으면 5회차 뒤에도 종료하지 않는다.
 
 ## 3. 다축 모델
 
@@ -178,13 +189,13 @@ Preset은 시작점을 빠르게 찾기 위한 **조합 예시**다. 프로젝�
 ```text
 프로젝트 Art/Visual canon + Figma 승인 Reference 확인
 → 아트가 해결해야 할 플레이어 질문 정의
-→ 비픽셀 현행 유지 포함 최소 3개 실질 후보
+→ MINIMUM_VIABLE_ALTERNATIVES: 3에 따라 비픽셀 현행 유지 포함 실질 후보 확보
 → 5축으로 후보를 기록
 → Visual Gallery에서 관찰 포인트 확인
 → 실제 표시 크기와 대표 화면에서 저비용 탐색
-→ BETTER_ALTERNATIVE_SEARCH_UNTIL_DECISION
-→ 비용·반복 제작·장기계획 비교
-→ PRE_DECISION_REREVIEW
+→ BETTER_ALTERNATIVE_SEARCH로 결정 직전까지 더 나은 후보 재탐색
+→ LONG_TERM_PLAN_FIT_REQUIRED로 비용·반복 제작·확장·롤백 비교
+→ 최종 재검토
 → 프로젝트 사용자 승인
 → 프로젝트 Art Bible/Decision에 선택 결과만 기록
 ```
