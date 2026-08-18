@@ -30,7 +30,6 @@ START_HERE.md
 - [근거 기반 게임 개발 지식 허브](docs/knowledge/game-development/README.md)
 - [게임 개발 Evidence Pack](templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md)
 - [Game Development Case Card](templates/research/GAME_DEVELOPMENT_CASE_CARD.md)
-- [Reference Case Card](templates/research/REFERENCE_CASE_CARD.md)
 - [PC/Android Cross-Platform Delivery Guide](docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md)
 - [PC/Android Delivery Profile](templates/planning/PC_ANDROID_DELIVERY_PROFILE.md)
 - [플랫폼 심사·자산 권리·참조 독립 제작 Guide](docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md)
