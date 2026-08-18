@@ -332,5 +332,6 @@ Notion 전환은 기존 Base의 공용 능력을 삭제하거나 숨기는 작�
 - 저장소 전체 감사: `repository-wide-audit`는 별도 신규 Skill이 아니라 기존 REVIEW/검증 능력의 통합 mode로 라우팅한다.
 - 프로젝트 설치 템플릿: **프로젝트 설치 템플릿을 활성 상태 문서로 오인하지 않는다**. Template은 소비될 때만 프로젝트 상태가 된다.
 - Codex handoff: `USER_REQUESTED_CODEX_HANDOFF`가 있을 때만 구현 handoff를 생성하며 계획/검토 작업이 자동으로 Codex 구현 승인이 되지 않는다.
-- 기획 인터뷰: **Grill Me 핵심 의사결정 인터뷰**는 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`와 기존 planning/interview owner로 라우팅한다.
+- Codex preflight: `CODEX_PREFLIGHT_OPTIONAL`; 명시적 handoff가 없으면 계획/검토 단계에서 별도 구현 preflight를 강제하지 않는다.
+- 기획 인터뷰: **Grill Me 핵심 의사결정 인터뷰**는 `clarify` + `references/grill-me-protocol.md`로 라우팅하고 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`의 승인 배치 정책을 함께 적용한다.
 - 연재소설: `developing-and-revising-serial-fiction`이 서사 개발·수정의 active owner이며 Coc-Fiction Notion Storyboard/Character/Faction 표면과 조합한다.
