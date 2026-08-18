@@ -10,6 +10,8 @@ WATCHLIST = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNA
 SEEDS = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_EXTERNAL_SOURCE_DISCOVERY_SEEDS.md"
 LEDGER = ROOT / "docs" / "knowledge" / "game-development" / "PERIODIC_SOURCE_OPERATIONS_LEDGER.json"
 AGENTS = ROOT / "AGENTS.md"
+LONG_HORIZON = ROOT / "docs" / "LONG_HORIZON_WORK_EXECUTION_POLICY.md"
+VISUAL_POLICY = ROOT / "docs" / "VISUAL_COLLABORATION_TOOL_POLICY.md"
 UI_SKILL = ROOT / "skills" / "auditing-and-refining-ui-art" / "SKILL.md"
 UI_METHOD = ROOT / "skills" / "auditing-and-refining-ui-art" / "references" / "ux-ui-design-system-method.md"
 LEARNING_LOG = ROOT / "skills" / "auditing-and-refining-ui-art" / "LEARNING_LOG.md"
@@ -49,6 +51,23 @@ class UiUxExternalReferenceAbsorptionTests(unittest.TestCase):
         self.assertEqual("weekly", source["recommended_cadence"])
         self.assertEqual("ACTIVE", source["status"])
         self.assertIn("Skills for Notion Agent", source["scan_surfaces"])
+
+    def test_figma_legacy_references_cannot_reactivate_default_routing(self) -> None:
+        long_horizon = LONG_HORIZON.read_text(encoding="utf-8")
+        visual_policy = VISUAL_POLICY.read_text(encoding="utf-8")
+
+        for text in (long_horizon, visual_policy):
+            self.assertIn("FIGMA_USAGE: DISABLED_BY_USER", text)
+            self.assertIn("LEGACY_FIGMA_REFERENCE", text)
+
+        self.assertNotIn(
+            "새 프로젝트와 새 기획 작업의 **시각 협업 기본 작업면**은 프로젝트별 Figma다.",
+            long_horizon,
+        )
+        self.assertNotIn(
+            "새 프로젝트와 새 시각 작업의 기본 협업면은 `FIGMA_DEFAULT_VISUAL_WORKSPACE`다.",
+            visual_policy,
+        )
 
     def test_existing_ui_owner_absorbs_design_read_and_resilience_principles(self) -> None:
         skill = UI_SKILL.read_text(encoding="utf-8")
