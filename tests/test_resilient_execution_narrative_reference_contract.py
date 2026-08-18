@@ -109,6 +109,21 @@ class ResilientExecutionNarrativeReferenceContractTests(unittest.TestCase):
         serial_readme = read("docs/knowledge/serial-fiction/README.md")
         self.assertIn("BASE_OWNER_NARRATIVE_REFERENCE_POINTER.md", serial_readme)
 
+    def test_documentation_map_uses_current_workspace_authority_split(self) -> None:
+        docs = read("docs/DOCUMENTATION_MAP.md")
+        for term in (
+            "FIGMA_DEFAULT_VISUAL_WORKSPACE",
+            "REPO_NATIVE_STRUCTURED_DATA",
+            "GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE",
+            "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json",
+            "docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md",
+        ):
+            self.assertIn(term, docs)
+        self.assertNotIn(
+            "일반 프로젝트의 기획·상태 확인은 GitHub 정본과 구성된 프로젝트 GDD Google Sheets를 우선한다.",
+            docs,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
