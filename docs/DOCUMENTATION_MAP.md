@@ -75,6 +75,8 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·
 | 게임 개발 knowledge hub | `docs/knowledge/game-development/README.md` | 기획·아트·개발·AI·research·release Guide routing |
 | 플랫폼/권리/독립 제작 | `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md` | Steam/STOVE/Google Play, commercial/distribution rights, reference→independent production |
 | PC/Android delivery | `docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md` | shared core + platform adapter + staged rollout |
+| Cloud Run / online backend | `docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md` | backend capability, Cloud Run/online service boundary, cost/security/runtime evidence |
+| Entitlement / DRM integrity | `docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md` | entitlement integrity, DRM/trust boundary, platform/runtime verification |
 | Godot authority | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` | Existing Solution First, persistent authoring boundary, GUT/Hera 공존 |
 | Local Godot reference | `docs/knowledge/godot/LOCAL_GODOT_REFERENCE_LIBRARY.md` | local reference-only shelf; missing path is non-blocking |
 | CI execution/cost | `docs/CI_EXECUTION_COST_POLICY.md` | change-class validation, runner/cost gate |
@@ -156,7 +158,7 @@ ADOPT / ADAPT / TEST / REFERENCE_ONLY / AVOID / IGNORE
 
 ## 5. 이미지·시각 checkpoint
 
-`Intermediate visual checkpoint`는 특정 Figma page가 아니라 **현재 Project relation 안에서의 중간 시각 의사결정 Gate**다.
+`Intermediate visual checkpoint`는 특정 product page가 아니라 **현재 Project relation 안에서의 중간 시각 의사결정 Gate**다.
 
 - `MISSING_CANON`: 비교할 승인 시각 기준이 부족함.
 - `DRAFT_VISUAL`: 탐색/검토용이며 project asset approval이 아님.
@@ -180,18 +182,18 @@ generate / edit
 
 ### Google Sheets
 
-기존 unique material이 남아 있을 때만 `COMPATIBILITY_ONLY`. migration은 unique / duplicate / obsolete를 분류하고, 올바른 Project destination에 옮긴 뒤 readback한다.
+기존 unique material이 남아 있을 때만 `COMPATIBILITY_ONLY`. 상세 migration contract는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 소유한다. migration은 unique / duplicate / obsolete를 분류하고, 올바른 Project destination에 옮긴 뒤 readback한다.
 
-### Figma / local visual-delivery tools
+### 폐기된 시각 실행면
 
 다음 active execution surfaces는 폐기됨:
 
-- Figma Bridge
-- Project Figma target/workspace/tool-route registries
-- Expression Studio
-- Sprite Animation Studio
+- dedicated visual bridge
+- product-specific project visual target/workspace/tool-route registries
+- localhost Expression Studio
+- localhost Sprite Animation Studio
 - visual-delivery Tool Hub
-- Figma-only templates/workflows/tests
+- product-specific visual templates/workflows/tests
 
 재사용할 가치는 구현이 아니라 `NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`에 흡수된 project identity, provenance, bounded identity-preserving edits, approval, version/replacement, reuse classification, Screen/Flow ID, readback, explicit runtime handoff다.
 
