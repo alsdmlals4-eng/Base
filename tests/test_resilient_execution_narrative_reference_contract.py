@@ -5,7 +5,6 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RAW_PRIVATE_DOCUMENT_ID = "14-b4KPQft1qNdSM8EtMECZn7dQS2SBZpNWhtOi8cs2Y"
 
 
 def read(path: str) -> str:
@@ -95,8 +94,17 @@ class ResilientExecutionNarrativeReferenceContractTests(unittest.TestCase):
             "NO_STYLE_IMITATION",
         ):
             self.assertIn(term, pointer)
-        self.assertNotIn("docs.google.com/document/d/", pointer)
-        self.assertNotIn(RAW_PRIVATE_DOCUMENT_ID, pointer)
+
+        lowered = pointer.lower()
+        for forbidden in (
+            "docs.google.com/",
+            "drive.google.com/",
+            "https://",
+            "http://",
+            "document_id:",
+            "document id:",
+        ):
+            self.assertNotIn(forbidden, lowered)
 
         serial_readme = read("docs/knowledge/serial-fiction/README.md")
         self.assertIn("BASE_OWNER_NARRATIVE_REFERENCE_POINTER.md", serial_readme)
