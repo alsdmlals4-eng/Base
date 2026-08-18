@@ -1,0 +1,40 @@
+name: One-shot active Figma owner retirement
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  retire:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply active-owner cleanup and targeted regressions
+        run: python tools/one_shot_active_figma_owner_retirement.py
+      - name: Commit verified cleanup and remove temporary harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "No cleanup changes produced"
+            exit 1
+          fi
+          git commit -m "chore: retire remaining active Figma owners"
+          git push origin HEAD:${GITHUB_HEAD_REF}
