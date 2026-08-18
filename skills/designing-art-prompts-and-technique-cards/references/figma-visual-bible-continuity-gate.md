@@ -14,6 +14,21 @@
 
 단, 이미지 생성 자체의 필요성은 상위 `Visual Requirement Gate`가 먼저 판정한다.
 
+## Conditional module routing
+
+이 gate는 `FIGMA_DIRECT_VISUAL_ORGANIZATION`의 공통 진입점이다. 현재 작업에 필요한 reference만 추가로 읽는다.
+
+| 조건 | 추가 reference |
+|---|---|
+| Figma에 생성 결과를 배치·정리하거나 승인 위치를 정해야 함 | `figma-direct-placement-and-canon.md` |
+| 캐릭터 identity를 유지하며 표정·시선·머리 방향을 바꿈 | `character-identity-expression-controls.md` |
+| pose/action/sprite sequence·pose sheet·atlas 후보를 만듦 | `sprite-pose-sequence-controls.md` |
+| VFX/effect stage·alpha/compositing 후보를 만듦 | `effect-stage-compositing-controls.md` |
+| 여러 후보 비교·선택 또는 primary-use 이후 재사용 판정 | `candidate-review-and-reusable-harvest.md` |
+| Tool Hub/Expression/Sprite 로컬 런타임을 정상 경로로 쓸지 판단해야 함 | `local-visual-tool-lessons-and-fallback.md` |
+
+모든 모듈을 기본 로드하지 않는다. 일반 이미지 작업은 기존 art Skill trigger로 이 gate에 들어오며, 별도 Figma/Expression/Sprite broad Skill을 만들지 않는다.
+
 ## Authority
 
 ```text
@@ -257,6 +272,8 @@ BLOCKED_UNVERIFIED
 8. `DISCOVERED_IDEA`나 `AI_ASSUMPTION`을 승인 없이 다음 요구로 굳혔는가.
 9. Prototype을 runtime proof로 과장했는가.
 10. 실제 구현 drift를 초기 AI 목업과 비교하면서 현재 정본·Decision을 건너뛰었는가.
+11. Figma write 요청 성공만 보고 readback 없이 `AUTO_PLACE_WIP` 성공을 주장했는가.
+12. 정상 이미지 작업을 이유 없이 Tool Hub/PowerShell/localhost delivery 경로로 되돌렸는가.
 
 P0/P1 충돌이 남으면 승인 승격을 멈춘다.
 

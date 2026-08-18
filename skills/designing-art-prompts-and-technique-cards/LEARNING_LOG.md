@@ -1,5 +1,58 @@
 # Designing Art Prompts and Technique Cards Learning Log
 
+## 2026-08-18 — 로컬 visual runtime의 도메인 지식은 보존하고 정상 이미지 경로는 Figma-direct로 단순화한다
+
+### Trigger
+
+Tool Hub → Character/Expression Studio → localhost delivery → Figma Bridge를 실제 Windows 사용자 PC에서 끝까지 검증하려 했지만 launcher/runtime/delivery 상태 실패가 반복됐고, 최종 fresh-main 시험도 Tool Hub 준비 단계에서 멈췄다. 사용자는 이 시점에서 추가 로컬 visual runtime 수리를 중단하고, 향후 이미지는 프로젝트별 Figma에 직접 축적·정리하면서 기존 도구의 유용한 제어 지식만 재사용하기로 확정했다.
+
+### Evidence reviewed
+
+- 실제 사용자 PC의 Tool Hub/Studio 실행·전달 실패와 2026-08-18 stop-loss
+- merged PR #433 `Reusable Visual Harvest Gate`
+- 기존 `figma-visual-bible-continuity-gate.md`와 Visual Bible page/approval 경계
+- Expression Studio의 identity-preserving expression control
+- Sprite Animation Studio의 pose/sequence continuity contract
+- Effect route의 stage/alpha/compositing contract
+- GPO `SkillPackageIntegrityTests`의 “packaged reference는 주 SKILL.md에서 직접 discoverable해야 한다” 계약
+
+### Lesson
+
+- 실행 wrapper가 불안정하더라도 **도메인 제어 규칙과 검수 지식은 runtime과 분리해 재사용할 수 있다**.
+- 새 Figma/Expression/Sprite Skill을 만드는 대신 기존 `designing-art-prompts-and-technique-cards`가 한 owner로 유지되고, 필요한 reference만 조건부로 읽는 편이 routing ambiguity와 context cost가 낮다.
+- 프로젝트 Figma write capability가 있으면 새 후보를 `02_WIP`에 직접 배치하되, write 요청 성공만으로 완료를 주장하지 않고 실제 node/page readback을 요구한다.
+- Figma write가 없으면 “나중에 올려라”가 아니라 project file/page/section/artifact name/status/approved reference/next gate를 포함한 exact placement guidance를 제공한다.
+- Figma WIP 배치와 시각 승인, `PROJECT_ASSET_APPROVED`, Godot/runtime proof는 서로 다른 상태다.
+- 로컬 Tool Hub/Expression/Sprite source는 삭제하지 않고 구현 역사·참고 자료로 보존하지만 정상 이미지 작업의 필수 의존성에서는 제거한다.
+- Base package integrity상 reference가 다른 reference에서 간접적으로만 연결돼도 부족하다. 조건부 상세 reference도 주 `SKILL.md`에 직접 색인하고, 실제 로딩 여부는 gate에서 결정해야 한다.
+
+### Base change
+
+- 기존 art Skill 아래 Figma direct placement, character identity/expression, sprite/pose sequence, effect stage/compositing, candidate/reuse harvest, local-tool fallback reference를 추가했다.
+- 기존 Figma continuity gate가 task condition에 따라 필요한 모듈만 선택한다.
+- 주 `SKILL.md`는 여섯 reference를 짧게 직접 색인해 package integrity와 progressive disclosure를 동시에 만족한다.
+- `SKILL_REGISTRY.json`은 변경하지 않고 기존 image-related trigger를 그대로 사용한다.
+- BCA visual workflow가 여러 unittest 중 앞선 실패를 마지막 성공이 덮지 못하도록 실패 상태를 누적하도록 고쳤다.
+
+### Guardrail
+
+이 변경은 QA Evidence Studio 등 unrelated local tooling을 전역 폐기하지 않는다. 정상 이미지 작업에서만 local visual runtime을 `REFERENCE_ONLY_FOR_VISUAL_WORKFLOW`로 취급한다. 향후 사용자가 명시적으로 새 runtime 실험을 요청하면 별도 범위와 증거로 재평가할 수 있다. Figma 자동 배치는 실제 write capability와 대상 asset bytes가 있을 때만 수행하며, readback 없는 성공 주장은 금지한다.
+
+### Validation state
+
+```yaml
+local_visual_runtime_user_pc: STOP_LOSS_REACHED
+figma_direct_module_contract: IMPLEMENTED_ON_FEATURE_BRANCH
+skill_package_direct_reference_index: IMPLEMENTED_ON_FEATURE_BRANCH
+bca_failure_aggregation: IMPLEMENTED_ON_FEATURE_BRANCH
+figma_auto_place_contract: IMPLEMENTED_ON_FEATURE_BRANCH
+real_future_asset_auto_placement: PER_TASK_NOT_RUN
+product_asset_promotion: NOT_GRANTED
+runtime_asset_validation: NOT_RUN
+```
+
+---
+
 ## 2026-08-12 — 프로젝트 Figma는 승인 시각 레퍼런스와 Flow 해석 작업면으로 소비한다
 
 ### Trigger
