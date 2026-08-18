@@ -3,6 +3,7 @@
 > 역할: Base 공용 픽셀 아트 **분류·비교·선택 Reference**
 > 실행 책임: 기존 `designing-art-prompts-and-technique-cards`, 프로젝트 Art/UX 책임자
 > 시각 예시: `PIXEL_ART_VISUAL_REFERENCE_GALLERY.md`
+> 사용자 선호 Reference: `PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md` — 픽셀/비픽셀 혼합 선호군과 AI-look·일관성·세계/시스템 적합성 평가 렌즈
 > 프로젝트 정본: 각 프로젝트의 승인된 Art Bible·Visual Bible·Decision
 
 ## 1. 목적과 권위 경계
@@ -183,6 +184,20 @@ Preset은 시작점을 빠르게 찾기 위한 **조합 예시**다. 프로젝�
 | **HD-2D Hybrid** | PIXEL_DEPTH_LIT_HYBRID + DEPTH_LIGHTING | 픽셀 주체와 깊이·광원·공간감을 동시에 강조 | HIGH | 렌더/조명 복잡도·정체성 분산 |
 
 `HD-2D Hybrid`는 탐색 편의를 위한 발견용 이름이다. Base의 canonical 조합명은 `PIXEL_DEPTH_LIT_HYBRID`이며, 특정 회사·제품의 브랜드 표현이나 서명적 화면을 복제하는 지시로 사용하지 않는다. 생성 모델의 공식 style 명령어로도 취급하지 않는다.
+
+## 4.1 사용자 선호 Reference Lens
+
+사용자가 반복적으로 선호한 픽셀 하이브리드·치비 다크 판타지·수묵 무협·Dark Gold UI·Noir Archive 계열은 `PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md`에서 별도 `REFERENCE_ONLY` 렌즈로 관리한다.
+
+이 렌즈는 기존 20 Preset을 대체하지 않는다. 프로젝트 후보를 만들 때 다음 세 질문을 추가한다.
+
+```text
+AI_GENERATED_LOOK_REDUCTION
+STYLE_CONSISTENCY_AND_READABILITY
+WORLD_CORE_SYSTEM_FIT
+```
+
+선호 Reference가 프로젝트 core나 현행 Art Bible보다 우선하지 않으며, `NO_AUTOMATIC_PROJECT_STYLE_PROMOTION`을 그대로 유지한다.
 
 ## 5. 프로젝트에서 사용하는 순서
 
