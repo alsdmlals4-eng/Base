@@ -381,3 +381,20 @@ before_after:
 - 계층·가독성·상태·입력·복구·접근성을 장식보다 먼저 해결한다.
 - 프로젝트의 DESIGN.md·GAME_UX_UI_SYSTEM·실제 목적에 맞는 의도적 표현은 보존한다.
 - 실제 렌더 없이 “AI 티가 제거됐다”고 주장하지 않는다.
+
+## 판정
+
+- `ADOPT`: source·license·dependency·overwrite·runtime·accessibility·render가 검증됐고 최소 수정으로 적합하다.
+- `ADAPT`: 원리는 적합하지만 프로젝트 token·상태·입력·플랫폼에 맞는 변환이 필요하다.
+- `REJECT`: 플랫폼·코어·보안·라이선스·상태 소유권과 충돌한다.
+- `BLOCKED_UNVERIFIED`: 필요한 source·CLI 변환·build·runtime·접근성·렌더 증거가 없다.
+
+## 적대적 검토
+
+- “공식 Registry”라는 이유로 코드를 무검토 설치했는가.
+- source 조회 성공을 설치·빌드·품질 성공으로 승격했는가.
+- dependency 선언과 실제 import·lockfile이 일치하는가.
+- MCP 또는 설치 도구가 secret·network·shell·overwrite 범위를 넓혔는가.
+- 외부 컴포넌트가 도메인 상태를 소유하거나 기존 시스템을 이중화하는가.
+- default styling을 그대로 배치해 프로젝트 고유 방향과 접근성을 잃었는가.
+- rollback이 source receipt와 실제 변경 파일을 복원할 수 있는가.
