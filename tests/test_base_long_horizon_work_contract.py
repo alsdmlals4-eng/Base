@@ -37,6 +37,29 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         ):
             self.assertIn(term, policy)
 
+    def test_claims_require_executed_current_comparison_benchmark_and_review_evidence(self) -> None:
+        policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
+        for term in (
+            "EXECUTION_EVIDENCE_BEFORE_CLAIM",
+            "CURRENT_STATE_COMPARISON_REQUIRED",
+            "benchmark_sources",
+            "commands_or_queries",
+            "observed_results",
+            "NOT_RUN",
+            "BLOCKED_UNVERIFIED",
+        ):
+            self.assertIn(term, policy)
+
+        review = read("skills/running-adversarial-review-and-refinement/SKILL.md")
+        for term in (
+            "EXECUTION_EVIDENCE_BEFORE_CLAIM",
+            "current_state_baseline",
+            "evidence_locator",
+            "benchmark_sources",
+            "observed_results",
+        ):
+            self.assertIn(term, review)
+
     def test_independent_workstreams_are_isolated_unless_user_explicitly_authorizes_absorption(self) -> None:
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         for term in (
@@ -68,6 +91,15 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             "LOOP_ENGINEERING: REQUIRED_WHEN_RELEVANT",
         ):
             self.assertIn(term, policy)
+
+    def test_figma_professional_workflow_does_not_depend_on_unavailable_branching(self) -> None:
+        policy = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
+        profile = read("templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md")
+        for text in (policy, profile):
+            self.assertIn("FIGMA_PRO_BRANCHING_NOT_ASSUMED", text)
+            self.assertIn("Professional", text)
+            self.assertIn("version history", text)
+            self.assertIn("Pages/Sections", text)
 
     def test_adversarial_review_owner_requires_exactly_five_distinct_rounds_when_invoked(self) -> None:
         skill = read("skills/running-adversarial-review-and-refinement/SKILL.md")
