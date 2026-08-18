@@ -37,28 +37,38 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         ):
             self.assertIn(term, policy)
 
-    def test_claims_require_executed_current_comparison_benchmark_and_review_evidence(self) -> None:
+    def test_material_decisions_require_current_state_alternatives_and_benchmark_synthesis(self) -> None:
+        agents = read("AGENTS.md")
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         for term in (
-            "EXECUTION_EVIDENCE_BEFORE_CLAIM",
-            "CURRENT_STATE_COMPARISON_REQUIRED",
-            "benchmark_sources",
-            "commands_or_queries",
-            "observed_results",
-            "NOT_RUN",
-            "BLOCKED_UNVERIFIED",
+            "최신 main",
+            "실제 구현",
+            "유효한 대안",
+            "되돌리기 난이도",
+        ):
+            self.assertIn(term, agents)
+        for term in (
+            "벤치마킹은 한 성공사례를 모방하는 절차가 아니다",
+            "실무사례·실패사례를 여러 개 비교",
+            "ADOPT / ADAPT / REJECT",
+            "장기적으로 더 강한 방안",
         ):
             self.assertIn(term, policy)
 
-        review = read("skills/running-adversarial-review-and-refinement/SKILL.md")
+    def test_execution_and_external_claims_are_fail_closed_by_existing_verification_owner(self) -> None:
+        verification = read(
+            "skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md"
+        )
         for term in (
-            "EXECUTION_EVIDENCE_BEFORE_CLAIM",
-            "current_state_baseline",
+            "MATERIAL_CLAIM_LEDGER",
+            "EXTERNAL_FACT",
             "evidence_locator",
-            "benchmark_sources",
-            "observed_results",
+            "Evidence ceiling",
+            "LATEST_EXACT_HEAD_ONLY",
+            "TEST_CONSUMPTION_PROOF",
+            "BLOCKED_UNVERIFIED",
         ):
-            self.assertIn(term, review)
+            self.assertIn(term, verification)
 
     def test_independent_workstreams_are_isolated_unless_user_explicitly_authorizes_absorption(self) -> None:
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
@@ -92,14 +102,16 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         ):
             self.assertIn(term, policy)
 
-    def test_figma_professional_workflow_does_not_depend_on_unavailable_branching(self) -> None:
-        policy = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
+    def test_figma_professional_cost_boundary_does_not_require_branching(self) -> None:
+        visual_policy = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
         profile = read("templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md")
-        for text in (policy, profile):
-            self.assertIn("FIGMA_PRO_BRANCHING_NOT_ASSUMED", text)
-            self.assertIn("Professional", text)
-            self.assertIn("version history", text)
-            self.assertIn("Pages/Sections", text)
+        long_horizon = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
+        self.assertIn("GPT Pro/Figma Pro", long_horizon)
+        self.assertIn("요금제·권한", visual_policy)
+        self.assertIn("version history 또는 사용 가능한 branch/checkpoint", visual_policy)
+        self.assertIn("version history 또는 사용 가능한 branch/checkpoint", profile)
+        self.assertIn("Pages/Sections", visual_policy)
+        self.assertIn("Pages", profile)
 
     def test_adversarial_review_owner_requires_exactly_five_distinct_rounds_when_invoked(self) -> None:
         skill = read("skills/running-adversarial-review-and-refinement/SKILL.md")
