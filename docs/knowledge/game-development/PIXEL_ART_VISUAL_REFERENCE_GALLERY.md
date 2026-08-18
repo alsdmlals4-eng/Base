@@ -206,14 +206,14 @@
 
 ## 18. Tactical Top-down Pixel
 
-![Tactical Top-down Pixel reference](https://opengameart.org/sites/default/files/TacticalIcons.png)
+![Tactical Top-down Pixel reference](https://opengameart.org/sites/default/files/soldier_8.png)
 
 - reference_status: REFERENCE_ONLY
-- source: https://opengameart.org/content/isometric-20x20-sprites-for-a-tactical-shooter
-- author: Master484
-- license: CC0 / Public Domain declaration on source page
-- observe: 약 20px 수준의 작은 유닛·차량에서도 팀·방향·행동 실루엣을 우선해 다수 개체를 읽히게 하는 방식.
-- avoid_copying: 얼굴 디테일보다 전장 상태·소속·방향 식별을 우선해야 하는 화면에서만 사용한다.
+- source: https://opengameart.org/content/pixel-art-top-down-soldiers
+- author: tbbk
+- license: CC0
+- observe: 32x32 top-down 캐릭터에서 앞·뒤·좌우 방향과 작은 장비 실루엣을 먼저 구분하는 방식. 다수 유닛 전장에서는 얼굴 디테일보다 소속·방향·행동 상태가 우선한다.
+- avoid_copying: 이 단일 NPC 예시를 완성 전투 애니메이션 세트로 오인하지 않는다. 실제 전술 프로젝트는 이동·공격·피격·선택 상태를 별도 검증한다.
 
 ## 19. 3D-to-Pixel Hybrid
 
