@@ -323,6 +323,8 @@ SUPERSEDED
 BLOCKED_UNVERIFIED
 ```
 
+`SHEET_UPDATED`는 과거 Google Sheets 기반 동기화의 **legacy compatibility audit token**이다. 현재 정상 상태 전이는 `NOTION_UPDATED`를 사용하며, `SHEET_UPDATED`를 새 프로젝트의 활성 동기화 상태로 사용하지 않는다.
+
 정상 종료는 해당 승인 범위에 필요한 두 도메인이 일치한 `SYNCED`다.
 
 - repository 쓰기 실패: 기존 댓글에 실패와 재개 조건을 기록한다.
