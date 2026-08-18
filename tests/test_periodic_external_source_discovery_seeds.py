@@ -133,19 +133,17 @@ class PeriodicExternalSourceDiscoverySeedTests(unittest.TestCase):
         ):
             self.assertIn(required, seeds)
 
-    def test_figma_market_success_and_kick_sources_preserve_metric_boundaries(self) -> None:
+    def test_notion_market_success_and_kick_sources_preserve_metric_boundaries(self) -> None:
         seeds = SEEDS.read_text(encoding="utf-8")
         benchmark = BENCHMARK.read_text(encoding="utf-8")
         combined = seeds + "\n" + benchmark
 
         for required in (
-            "Figma practical design workflow",
-            "help.figma.com",
-            "Auto Layout",
-            "Variants",
-            "Variables",
-            "FigJam",
-            "Dev Mode",
+            "notion-skills-work-structure",
+            "Skills for Notion Agent",
+            "Custom Agents",
+            "Notion MCP",
+            "database automations",
             "SteamDB",
             "GameDiscoverCo",
             "Sensor Tower",
@@ -166,6 +164,8 @@ class PeriodicExternalSourceDiscoverySeedTests(unittest.TestCase):
         ):
             self.assertIn(required, combined)
 
+        self.assertNotIn("Figma practical design workflow", seeds)
+        self.assertNotIn("help.figma.com", seeds)
         self.assertIn("downloads", combined.lower())
         self.assertIn("sales", combined.lower())
         self.assertIn("estimate", combined.lower())
