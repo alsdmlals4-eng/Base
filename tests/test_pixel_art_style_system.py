@@ -7,6 +7,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 STYLE_SYSTEM = ROOT / "docs" / "knowledge" / "game-development" / "PIXEL_ART_STYLE_SYSTEM.md"
 VISUAL_GALLERY = ROOT / "docs" / "knowledge" / "game-development" / "PIXEL_ART_VISUAL_REFERENCE_GALLERY.md"
+ART_GUIDE = ROOT / "docs" / "knowledge" / "game-development" / "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md"
+DOC_MAP = ROOT / "docs" / "DOCUMENTATION_MAP.md"
 HUB = ROOT / "docs" / "knowledge" / "game-development" / "README.md"
 ART_BRIEF = ROOT / "templates" / "planning" / "ART_DIRECTION_BRIEF.md"
 WORKFLOW = ROOT / ".github" / "workflows" / "validate-evidence-knowledge.yml"
@@ -104,6 +106,16 @@ class PixelArtStyleSystemTests(unittest.TestCase):
             "docs/knowledge/game-development/PIXEL_ART_VISUAL_REFERENCE_GALLERY.md",
             workflow,
         )
+
+    def test_canonical_art_owners_route_to_pixel_reference_system(self) -> None:
+        art_guide = read(ART_GUIDE)
+        doc_map = read(DOC_MAP)
+        for required in (
+            "PIXEL_ART_STYLE_SYSTEM.md",
+            "PIXEL_ART_VISUAL_REFERENCE_GALLERY.md",
+        ):
+            self.assertIn(required, art_guide)
+            self.assertIn(required, doc_map)
 
 
 if __name__ == "__main__":
