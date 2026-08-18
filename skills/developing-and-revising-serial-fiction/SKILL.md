@@ -120,11 +120,12 @@ project_pilot: PROJECT_PILOT_NOT_RUN
 1. 프로젝트가 선언한 정본 우선순위와 최신 사용자 결정
 2. 현재 아크·회차·장면의 실제 원고와 앞뒤 continuity
 3. `docs/knowledge/serial-fiction/SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md`
-4. 회차 경계·hook·payoff 작업이면 `docs/knowledge/serial-fiction/SERIAL_EPISODE_PACING_AND_PAYOFF_GUIDE.md`
-5. 정보 공개·캐릭터 선택 증명·대표 하이라이트·장기 복선/반전 작업이면 `docs/knowledge/serial-fiction/SERIAL_NARRATIVE_INFORMATION_AND_HIGHLIGHT_GUIDE.md`
-6. 캐릭터 개성·강자·적대자·전투/대결 위상 작업이면 `references/character-distinctiveness-and-opponent-threat.md`
-7. benchmark·댓글·리뷰 작업이면 `docs/knowledge/serial-fiction/READER_FEEDBACK_AND_BENCHMARK_EVIDENCE_GUIDE.md`
-8. 필요 시 `references/episode-quality-gates.md`, `references/benchmark-and-reader-feedback.md`
+4. 사용자 선호 문단·대화 호흡이 관련되면 `docs/knowledge/serial-fiction/BASE_OWNER_NARRATIVE_REFERENCE_POINTER.md`를 확인하고 접근 가능한 현재 연결 Drive 자료를 live read한다.
+5. 회차 경계·hook·payoff 작업이면 `docs/knowledge/serial-fiction/SERIAL_EPISODE_PACING_AND_PAYOFF_GUIDE.md`
+6. 정보 공개·캐릭터 선택 증명·대표 하이라이트·장기 복선/반전 작업이면 `docs/knowledge/serial-fiction/SERIAL_NARRATIVE_INFORMATION_AND_HIGHLIGHT_GUIDE.md`
+7. 캐릭터 개성·강자·적대자·전투/대결 위상 작업이면 `references/character-distinctiveness-and-opponent-threat.md`
+8. benchmark·댓글·리뷰 작업이면 `docs/knowledge/serial-fiction/READER_FEEDBACK_AND_BENCHMARK_EVIDENCE_GUIDE.md`
+9. 필요 시 `references/episode-quality-gates.md`, `references/benchmark-and-reader-feedback.md`
 
 새 이야기·아크·에피소드의 발생 원인이 아직 비어 있으면 `docs/knowledge/methods/STORY_ORIGIN_AND_GENERATION_METHOD.md`의 `STORY_ORIGIN_ENGINE`을 선택적으로 읽는다.
 
@@ -255,6 +256,29 @@ POV가 자연스럽게 아는 사실을 독자만 속이려고 부자연스럽�
 대표 캐릭터 하이라이트는 `IDENTITY + COMPETENCE + COST + CHOICE + CONSEQUENCE`를 점수표가 아닌 감사 렌즈로 사용한다. 강한 장면이 해당 인물의 고유 판단과 실제 유능함을 증명하고, 대가와 결정권을 거쳐 이후 상태를 바꾸는지 본다.
 
 장기 복선·반전은 필요할 때 `SETUP → RECALL → RECONTEXTUALIZE → PARTIAL_PAYOFF → PAYOFF → AFTERMATH`로 추적한다. 모든 복선에 모든 단계를 강제하지 않지만, 중요한 reveal은 이전 경험을 새 의미로 묶고 이후 행동을 바꿔야 한다.
+
+### 4-C. `PARAGRAPH_BREAK_AND_BREATH`
+
+줄바꿈과 문단은 맞춤법 뒤의 장식이 아니라 **독자가 어디에서 멈추고, 무엇을 한 덩어리로 읽고, 어떤 반응을 먼저 보게 되는지**를 조절하는 prose/pacing 장치다.
+
+필요할 때 다음을 함께 본다.
+
+```text
+LINE_BREAK_RHYTHM
+PARAGRAPH_LENGTH_PATTERN
+DIALOGUE_NARRATION_ALTERNATION
+REACTION_ISOLATION
+```
+
+- `LINE_BREAK_RHYTHM`: 정보·행동·대사·반응의 전환에서 어디서 호흡을 끊는지 본다.
+- `PARAGRAPH_LENGTH_PATTERN`: 평균 길이를 quota로 만들지 않고, 긴 설명 덩어리와 짧은 반응 문단의 **분포와 기능**을 본다.
+- `DIALOGUE_NARRATION_ALTERNATION`: 대사가 연속으로 붙어 화자·관계·미장센이 흐려지는지, 반대로 매 대사마다 불필요한 설명이 끼어 템포가 끊기는지 본다.
+- `REACTION_ISOLATION`: 충격·침묵·짧은 선택·시선 변화처럼 독자가 별도로 받아야 하는 beat는 독립 문단이 효과적인지 검토한다. 모든 짧은 문장을 독립 문단으로 만들지는 않는다.
+- 빈 줄은 장면 전환, 시간 점프, 정서적 beat 구분처럼 의미가 있을 때 사용한다. 단순히 화면을 잘게 쪼개기 위한 blank-line 남용은 피한다.
+- 모바일/웹 연재에서는 시각적 덩어리 크기와 스크롤 리듬을 확인하되 “한 문장 = 한 문단” 같은 universal rule을 만들지 않는다.
+- 소리 내 읽기, 모바일 폭, 앞뒤 문단의 정보 연결을 함께 보고 과도한 파편화와 벽처럼 긴 문단을 모두 경계한다.
+
+사용자의 Base-owner 선호 참고자료가 관련되면 `BASE_OWNER_NARRATIVE_REFERENCE_POINTER.md`에 따라 connected Drive의 현재 `글따라쓰기`를 `USER_PREFERENCE_EVIDENCE`로 live read할 수 있다. 여기서 추출하는 것은 문단/호흡/대사-서술 전환 같은 구조적 신호이며, 식별 가능한 원문 표현이나 특정 작가의 문체를 복제하지 않는다.
 
 ### 5. 회차에서 Local Payoff와 Open Loop를 함께 확인한다
 
