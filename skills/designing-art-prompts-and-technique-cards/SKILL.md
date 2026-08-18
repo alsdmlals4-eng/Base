@@ -11,6 +11,19 @@ description: Use when designing art or UI image prompts, generating planning or 
 
 프로젝트가 Figma Visual Bible을 구성했거나 Visual Artifact Registry가 Figma Artifact를 가리키면 `references/figma-visual-bible-continuity-gate.md`를 적용한다. 이 gate는 최신 프로젝트 정본·Decision보다 우선하지 않으며, 승인된 Figma frame/node를 실제로 읽을 수 있을 때만 시각 일관성 근거로 사용한다.
 
+### Conditional Figma-direct visual modules
+
+Figma continuity gate를 적용한 뒤 현재 작업에 필요한 reference만 추가로 읽는다. 아래 파일은 패키지 무결성을 위해 이 Skill이 직접 소유·색인하지만, 매 이미지 작업에서 전부 로드하지 않는다.
+
+- Figma 배치·정본·자동 WIP 정리: `references/figma-direct-placement-and-canon.md`
+- 캐릭터 identity·표정·시선·머리 방향: `references/character-identity-expression-controls.md`
+- pose/action/sprite sequence·atlas 후보: `references/sprite-pose-sequence-controls.md`
+- VFX/effect stage·alpha/compositing: `references/effect-stage-compositing-controls.md`
+- 후보 비교·선택·재사용 Harvest: `references/candidate-review-and-reusable-harvest.md`
+- 실패한 로컬 visual runtime의 보존 지식과 Figma-direct fallback: `references/local-visual-tool-lessons-and-fallback.md`
+
+정상 이미지 작업에서는 기존 image 관련 trigger와 `figma-visual-bible-continuity-gate.md`가 이 모듈을 조건부로 고른다. 별도 Figma/Expression/Sprite broad Skill을 만들거나 Tool Hub·PowerShell·localhost delivery를 기본 경로로 요구하지 않는다.
+
 ## Skill modes
 
 - `technique-card`: 재사용 가능한 아트·UI 기술과 프롬프트 패턴을 기록한다.
