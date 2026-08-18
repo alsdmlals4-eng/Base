@@ -92,7 +92,7 @@ output_state_or_head:
 7. 더 나은 방법이 핵심 방향·프로젝트 코어·승인 범위·비용을 바꾸면 `USER_DECISION_REQUIRED`다. 같은 승인 방향 안의 기술적 단일 개선은 기존 연속 실행 계약으로 반영할 수 있다.
 8. **5회차**에서도 전체 범위를 처음부터 다시 공격한다. 5회차 뒤 P0/P1 또는 acceptance criterion을 막는 finding이 남으면 횟수를 채웠다는 이유로 종료하지 않고, 수정·검증 뒤 **추가 전체 루프**를 수행한다.
 9. `NOT_RUN`, `BLOCKED_UNVERIFIED`, `CANCELLED`는 PASS가 아니다. 증거가 없으면 해당 판정을 그대로 보존한다.
-10. 동일 finding을 표현만 바꿔 여러 loop의 성과로 중복 계수하지 않는다. 다만 앞 회차에서 수정된 finding이 실제로 재발하거나 새로운 영향면을 만든 경우에는 새 evidence와 함께 다시 finding으로 기록한다.
+10. **이미 구현된 finding을 다시 수정하지 않는다.** 각 회차는 그 수정 결과를 다시 공격하지만, 새 evidence 없이 같은 수정을 반복하지 않는다. 실제 재발·회귀·새 영향면이 검증되면 그 증거를 새 finding으로 기록한 뒤 필요한 수정을 수행한다. 동일 finding을 표현만 바꿔 여러 loop의 성과로 중복 계수하지 않는다.
 
 구현 전 PLAN 사전판정은 아직 수정할 작업물이 없을 수 있으므로 최초 `attack → validate-critique → decision-report` 결과를 작업 계약 입력으로 사용한다. 실제 BUILD/수정이 시작된 뒤에는 승인 finding을 분야 Skill이 구현하고 `regression-recheck`로 검증한 결과를 다음 전체 회차의 입력으로 삼는다. 기본 Work Mode는 `REVIEW → 필요한 경우 BUILD → REVIEW`이며 같은 수행자가 맡아도 단계별 입력과 출력을 섞지 않는다.
 
