@@ -1,5 +1,9 @@
 # Visual Collaboration Tool Policy
 
+## Active status — 2026-08-19
+
+`FIGMA_USAGE: DISABLED_BY_USER`가 현재 사용자 결정이다. 새 기획·UI/UX·시각 작업은 Figma를 기본·보조·fallback workspace로 선택하거나 자동 read/write하지 않는다. 이 문서 아래의 Figma Visual Bible·delivery·component·prototype 설명은 기존 구현과 과거 Decision을 해석하기 위한 `LEGACY_FIGMA_REFERENCE`이며 새 작업의 활성 지시가 아니다. 사용자가 Figma 재도입을 명시적으로 승인하기 전에는 GitHub 정본, repo-native 구조화 데이터, 승인된 로컬/프로젝트 자산과 실제 Godot/runtime evidence를 사용하고, 다이어그램 도구는 현재 요청에 필요한 경우에만 별도 선택한다.
+
 Figma와 Whimsical은 기획·UX/UI·인계·검토를 돕는 `VISUAL_WORKSPACE`다. 어느 도구도 GitHub의 승인 결정·상세 규칙·구현 계약·실제 Godot 상태를 대체하지 않는다.
 
 ## Context and authority

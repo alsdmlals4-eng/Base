@@ -105,7 +105,6 @@ PERIODIC_SOURCE_OPERATIONS_LEDGER.json
 | Source | role | 주요 용도 | 한계 |
 |---|---|---|---|
 | **Hada GeekNews** | `DISCOVERY_FEED` | AI agent, 개발 생산성, UX, 도구, 보안, 새로운 원문 발견 | 요약 자체는 권위가 아님. `ORIGINAL_SOURCE_BACKTRACE` 필수 |
-| **Huddling Figmapedia** | `DISCOVERY_FEED` | `https://huddling.ai/figma-info`의 Figma 실무 Q&A·업데이트·플러그인·AI 디자인 워크플로에서 반복 후보 발견 | Figma 제품 기능·MCP·정책 사실은 Figma 공식 문서·release note 등 original source로 역추적한 뒤 사용 |
 | **GameDiscoverCo newsletter** | `DISCOVERY_FEED` | Steam/PC/console discovery, festival·시장 사례 후보 | 자체 추정·유료 데이터·sponsor 표시 |
 | **GameAnalytics** | `OBSERVATIONAL_DATA_OR_VENDOR_GUIDE` | retention, funnel, event-based cohort, analytics 질문 설계 | vendor/F2P/mobile 편향; benchmark를 universal target으로 금지 |
 | **SteamDB** | `OBSERVATIONAL_DATA_OR_VENDOR_GUIDE` | Steam 공개 데이터 관찰, release/pricing 변화 | Valve 공식 서비스가 아님; 원인·알고리즘 정본으로 금지 |
@@ -120,6 +119,7 @@ PERIODIC_SOURCE_OPERATIONS_LEDGER.json
 | **Google Developers Blog / Google Cloud AI & ADK** | `AUTHORITY_TARGET` | modular prompt architecture, context engineering, ADK, skills, agent lifecycle, evaluation | Google 제품 기능과 일반 architecture 주장을 분리 |
 | **Microsoft Learn** | `AUTHORITY_TARGET` | Agent Skills, Copilot Studio/Visual Studio instruction structure, test/preview guidance | preview/제품별 기능은 현재 version 재확인 |
 | **Hada GeekNews** | `DISCOVERY_FEED` | prompt engineering, agent harness, coding workflow, eval, security 원문 발견 | 반드시 원글/공식 문서로 역추적 |
+| **Notion official Help / Releases / Developers** | `AUTHORITY_TARGET` | Notion의 Skills for Notion Agent, Instructions와 Skills의 역할 차이, Custom Agents, database 기반 projects/tasks/views/relations/rollups/templates, automations/buttons/webhooks, Notion MCP·API와 권한·availability 변화를 조사한다. | Notion 제품 동작에만 T1 후보. Base의 정본·Skill 구조를 그대로 Notion에 종속시키지 않고, 요금제·권한·beta/availability는 적용 직전 현재 공식 문서로 재확인 |
 
 #### Prompt/작업구조에서 우선 찾을 질문
 
@@ -143,6 +143,7 @@ Skill 자료는 **설치 가능한 Skill 자체를 무조건 채택하기 위해
 | **GitHub Copilot Docs — Agent Skills / customization** | `AUTHORITY_TARGET` | always-on instruction vs prompt file vs custom agent vs task Skill의 역할 차이, 자동 발견, skill description routing | Copilot 구현 세부를 Base 표준 자체로 복사 금지 |
 | **Anthropic Engineering — Agent Skills** | `AUTHORITY_TARGET` | `SKILL.md` + references/scripts, progressive disclosure, code execution, skill iteration/security | Claude 전용 경로·기능과 일반 Skill 원리를 분리 |
 | **Google Developers Blog — ADK Agent Skills** | `AUTHORITY_TARGET` | on-demand loading, progressive disclosure, inline/file-based/generated skill pattern | runtime skill generation은 Base 자동승인 권한으로 해석 금지 |
+| **Notion official — Skills / Custom Agents** | `AUTHORITY_TARGET` | 반복 업무를 on-demand Skill로 캡슐화하는 법, persistent Instructions와의 경계, Custom Agents에서 Skill을 재사용하는 구조, workspace/database 기반 자동화 패턴 | Notion 제품 구현을 Base Skill 포맷으로 복제하지 않는다. reusable principle만 Existing Solution First + 적대적 검토 후 `ADAPT` |
 | **Microsoft Learn — Agent Skills** | `AUTHORITY_TARGET` | task description, steps, output format, constraints, edge cases, tools, preview test | preview 기능은 안정 API처럼 고정 금지 |
 | **OpenAI official workflow/eval guidance** | `AUTHORITY_TARGET` | repeatable workflow packaging, eval-driven refinement, smallest useful workflow, human review | 제품별 agent 기능과 Base Skill identity를 혼동하지 않음 |
 
@@ -418,7 +419,7 @@ LAST_SUCCESSFUL_SCAN
 ### 기본 cadence
 
 - `daily-or-weekly`: Hada, OpenAI/Anthropic/Google/GitHub/Microsoft AI engineering updates, Godot release/blog/source·issue/PR surface, GitHub Actions/Code Security, Steamworks, Android/Google Play policy/release, YouTube Help/Studio changes처럼 빠르게 변하는 면.
-- `weekly`: Huddling Figmapedia (`figma-info`), Godot Improvement Proposals, Python official docs/What's New/PEPs, OWASP updates, GameDiscoverCo, How To Market A Game, Game Developer, Reedsy recent learning, Adobe Premiere official release notes, Frame.io Insider, vidIQ research/blog, SteamDB 공개 관찰, Blackmagic/DaVinci 공식 training·release workflow surface.
+- `weekly`: Notion official Help / Releases / Developers, Godot Improvement Proposals, Python official docs/What's New/PEPs, OWASP updates, GameDiscoverCo, How To Market A Game, Game Developer, Reedsy recent learning, Adobe Premiere official release notes, Frame.io Insider, vidIQ research/blog, SteamDB 공개 관찰, Blackmagic/DaVinci 공식 training·release workflow surface.
 - `monthly-or-on-demand`: Godot Demo Projects, Godot Asset Library, Git official documentation, GDC Vault, Games User Research, 80 Level, GameAnalytics, Deconstructor of Fun, GPUOpen, IGDA Game Writing, inkle/ink, Yarn Spinner.
 - `quarterly-or-when-relevant`: Google Engineering Practices, The Level Design Book, Game Accessibility Guidelines, Emily Short archive, Xbox Accessibility Guidelines처럼 상대적으로 정적이거나 필요 시 재검증 가치가 큰 Reference.
 
@@ -478,7 +479,6 @@ known_bias:
 - YouTube CTR/retention을 게임 판매·품질의 직접 인과로 오인했는가?
 - 편집 효과·motion·자막 장식이 이야기·증거·오디오 명료성보다 앞섰는가?
 - 최신 6개월에 집중한 나머지 오래됐지만 유효한 표준·연구·고전적 craft를 버렸는가?
-- Huddling/Figmapedia의 설명을 Figma 공식 제품 사실이나 정책 권위로 승격했는가?
 - 같은 원칙이 Base에 이미 있는데 새 Skill·Guide·Template를 만들었는가?
 - 열린 PR이 같은 책임을 이미 수정 중인데 병렬로 중복 변경했는가?
 - `새 규칙 없음`을 `유용한 흡수점 없음`으로 잘못 해석했는가?
