@@ -117,7 +117,7 @@ EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION
 ### Authorization boundary
 
 - `same workstream`: 기존 승인 Goal 안의 same-goal/path/semantic overlap이면 standing authorization으로 `PROVISIONAL_INTEGRATION`을 시작할 수 있다.
-- `different workstream`: standing authorization만으로는 흡수 권한이 생기지 않는다. 현재 사용자가 명시적으로 흡수·통합을 승인해 `cross_workstream_absorption_authorized=true`가 된 경우에만 예외적으로 같은 절차를 사용한다.
+- `different workstream`: standing authorization만으로는 흡수 권한이 생기지 않는다. 현재 사용자가 명시적으로 흡수·통합 승인해 `cross_workstream_absorption_authorized=true`가 된 경우에만 예외적으로 같은 절차를 사용한다. This is **explicit user authorization** for the current integration scope; it is not standing cross-workstream permission.
 - `UNKNOWN_WORKSTREAM`: 사용자의 명시 승인과 owner identity evidence가 없으면 `BLOCKED_UNVERIFIED` 또는 `WAITING_RESOURCE`다.
 - 다른 채팅 owner PR을 “같은 Goal”이라는 이유만으로 자동 close/merge/rebase/copy하지 않는다.
 
@@ -191,17 +191,21 @@ GitHub contents API 등에서 stale blob/head로 409가 나면 blind retry하지
 
 stale bytes로 전체 파일을 다시 밀어넣지 않는다.
 
-### Missing local CLI or auth
+### Missing local CLI or auth — `GITHUB_CAPABILITY_FALLBACK`
 
-`gh` 또는 local push auth가 없더라도 연결된 GitHub connector가 같은 동작을 권위 있게 지원하면 connector를 사용한다. missing `gh` alone is not a blocker.
+`MISSING_OPTIONAL_CLI`는 작업 중단 판정이 아니라 capability routing 입력이다. `gh` 또는 local push auth가 없더라도 연결된 GitHub connector가 같은 동작을 권위 있게 지원하면 connector를 사용한다. missing `gh` alone is not a blocker.
 
 ```text
-preferred authenticated route available?
-  yes → use it
-  no  → inspect safe fallback
+GITHUB_CAPABILITY_FALLBACK
+MISSING_OPTIONAL_CLI
+→ inspect required GitHub capability
+→ prefer authenticated connector when it provides the exact capability
+→ preserve exact head/base evidence
+→ use update_ref(force=false) only when an explicit ref update is actually required
+→ never force-update or weaken repository governance
 ```
 
-fallback이 권한 확대·새 credential 저장·사용자 계정 변경을 요구하면 사용자 결정 Gate를 사용한다.
+connector가 필요한 read/write/PR/check capability를 제공하지 못하거나 현재 권한을 검증할 수 없으면 `BLOCKED_UNVERIFIED`다. fallback이 권한 확대·새 credential 저장·사용자 계정 변경을 요구하면 사용자 결정 Gate를 사용한다. A missing optional CLI **must not merge** an unverified change or justify bypassing normal PR/check gates.
 
 ### Local network/tool unavailable
 
