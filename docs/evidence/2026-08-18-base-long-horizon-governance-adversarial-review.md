@@ -63,7 +63,7 @@ Whole stale owner branches were not merged onto current main.
 
 **Attack hypothesis:** New policy text can create a second authority, stale status documents can contradict implementation, and “freshness fixes” can accidentally delete an older safety boundary that remains semantically distinct.
 
-**Evidence inspected:** `AGENTS.md`; `docs/LOOP_ENGINEERING_A2_RUNTIME.md`; `docs/operations/UNIVERSAL_LOOP_CROSS_PROJECT_ACCEPTANCE.json`; Skill routing guide; #399/#369/#384/#445/#450/#460 and their merged successors; current open-PR inventory.
+**Evidence inspected:** `AGENTS.md`; `docs/LOOP_ENGINEERING_A2_RUNTIME.md`; `docs/operations/UNIVERSAL_LOOP_CROSS_PROJECT_ACCEPTANCE.json`; `skills/running-adversarial-review-and-refinement/SKILL.md`; Skill routing guide; #399/#369/#384/#445/#450/#460 and their merged successors; current open-PR inventory.
 
 **Findings:**
 
@@ -71,6 +71,7 @@ Whole stale owner branches were not merged onto current main.
 2. #399 contained a useful sparse-routing delta not yet on completed main. Severity: `P1`.
 3. #369/#384/#445/#450/#460 remained open after stronger or canonical successor implementations existed. Severity: `P1` as duplicate/stale authority risk.
 4. During the Loop freshness rewrite, `AUTOMATIC_PACKAGE_SELECTION: FORBIDDEN` had been replaced by `AUTOMATIC_PRODUCT_SCOPE_SELECTION: FORBIDDEN`. These are not equivalent: one protects Implementation Package selection and the other protects project/product scope selection. Severity: `P1`.
+5. The new long-horizon policy required five distinct adversarial rounds, but the actual review owner Skill did not directly contain that invariant. A future task could therefore route to the Skill without inheriting the policy wording. Severity: `P1`.
 
 **Disposition / fix:**
 
@@ -79,8 +80,10 @@ Whole stale owner branches were not merged onto current main.
 - #399 was selectively absorbed into #516 and its focused routing contract revalidated; #399 was then closed as superseded.
 - #369 was reconciled against merged #374 (`DOCKER_NONE_DENIED_V1`) and #401 Windows host support; #384 against the reconciled Tool Hub/Figma delivery mainline (#428 and successors); #445 against #446; #450 against #452; #460 against #468. Each stale owner PR was closed unmerged with a supersession comment.
 - #496 remains open because it is an unrelated dependency update, not a residual owner delta of this Goal.
+- Add a regression test that requires the five named round tokens in the actual adversarial-review Skill owner. The test-only head produced the intended RED in `Validate Base Long-Horizon Work Contract` run `32104940626`: exactly the new owner test failed while the other seven contract tests passed.
+- Update the owner Skill so any L1+ adversarial-review invocation closes exactly five distinct attack rounds; existing `attack / validate-critique / refine-approved-findings / regression-recheck / decision-report` remain phases, not substitutes for the round count. L0 work does not invoke the Skill merely to fill a quota.
 
-**Recheck:** repository open-PR query after reconciliation shows #516 plus unrelated #496; in-scope residual owner PRs are `0`.
+**Recheck:** focused long-horizon run `32105232504` passed after the owner Skill fix; repository open-PR reconciliation leaves in-scope residual owner PRs at `0` and unrelated #496 preserved.
 
 **Round status:** `PASS`; unresolved P0/P1: `0`.
 
@@ -140,7 +143,7 @@ Whole stale owner branches were not merged onto current main.
 
 **Attack hypothesis:** Focused tests may pass while Base-wide contracts fail; stale PR/evidence text may overstate status; merged status can be claimed before exact-head checks and postmerge readback.
 
-**Evidence inspected:** TDD RED run for the long-horizon contract; exact-head focused workflows; Base-v9 broad workflow; GPO jobs/logs; PR changed paths/body; action pin policy; current open PRs.
+**Evidence inspected:** TDD RED runs; exact-head focused workflows; Base-v9 broad workflow; GPO jobs/logs; PR changed paths/body; per-file Skill patch; action pin policy; current open PRs.
 
 **Findings:**
 
@@ -148,20 +151,22 @@ Whole stale owner branches were not merged onto current main.
 2. A later Base-v9 broad run found a real compatibility failure: newly added workflows used floating GitHub Action major tags instead of Base’s required exact 40-character pins, while focused governance tests were green. Severity: `P1`.
 3. Canonical freshness then found that the Figma-default `AGENTS.md` rewrite had stopped explicitly pointing at the still-live legacy Google Sheets policy. Severity: `P1`.
 4. The PR body continued to describe the initial RED phase after production policy had been implemented. Severity: `P2`.
-5. This review itself detected the dropped `AUTOMATIC_PACKAGE_SELECTION` invariant and the misleading “only #516 open” summary that ignored unrelated #496. Severity: `P1` / `P2` respectively.
-6. Merge/postmerge claims remain invalid until the **final** exact-head checks, review threads, merge result and main readback are all observed. Severity: `P0` if bypassed.
+5. This review detected the dropped `AUTOMATIC_PACKAGE_SELECTION` invariant and the misleading “only #516 open” summary that ignored unrelated #496. Severity: `P1` / `P2` respectively.
+6. After the expected RED for the missing five-round owner contract, the first Skill implementation accidentally truncated the existing BCP-008 tail and Socratic Review Lens. The per-file PR patch exposed deletions unrelated to the requested invariant. Severity: `P1` regression.
+7. Merge/postmerge claims remain invalid until the **final** exact-head checks, review threads, merge result and main readback are all observed. Severity: `P0` if bypassed.
 
 **Disposition / fix:**
 
 - Pin new workflows to the repository’s exact reviewed action SHAs (`actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1`, `actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97`).
 - Restore explicit legacy Sheet policy reference while keeping new-work Figma/repo-native authority clear.
-- Update #516 body to the implemented/reconciled state; PR-body freshness P2 is resolved before merge.
+- Update #516 body to the implemented/reconciled state; update it again after final exact-head evidence so late findings are not omitted.
 - Restore both automatic-selection prohibitions and add the regression assertion.
 - Correct open-PR accounting: #516 is the only active PR **in this Goal**; #496 remains intentionally open and unrelated.
+- Restore `skills/running-adversarial-review-and-refinement/SKILL.md` from completed-main content and reinsert only the five-round invariant. The resulting PR file patch is pure addition at that owner location; the existing BCP-008 and Socratic Lens remain byte-semantically present instead of being removed.
 - Require fresh final-head GPO completion and all other exact-head workflows, unresolved thread count 0, latest-main compatibility, then mark Ready and merge through normal repository rules with expected-head SHA.
 - After merge, re-read `main` files and the merge SHA; only then report `REQUIRED_WORK_REMAINING: 0` for this approved contract.
 
-**Recheck state at review-writing time:** this correction creates another exact head and therefore intentionally leaves the final CI/merge/postmerge procedural gate pending. No design/code P0/P1 is knowingly unresolved.
+**Recheck state at review-writing time:** focused owner-contract GREEN has been observed, but this evidence correction creates another exact head and therefore intentionally leaves the final CI/merge/postmerge procedural gate pending. No design/code P0/P1 is knowingly unresolved.
 
 **Round status:** `PASS_WITH_FINAL_GATE_PENDING`; unresolved design/code P0/P1: `0`; pending procedural gate: exact-head CI + threads + merge + postmerge readback.
 
