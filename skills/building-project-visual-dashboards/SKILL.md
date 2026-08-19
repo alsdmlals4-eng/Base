@@ -1,39 +1,41 @@
 ---
 name: building-project-visual-dashboards
-description: Use when project concepts, loops, system relations, status, UX flows, evidence, risks, or next work require an editable visual dashboard.
+description: Compatibility-only retired route for old requests that referenced the former standalone HTML project dashboard skill.
 ---
 
-# Building Project Visual Dashboards
+# Building Project Visual Dashboards — RETIRED compatibility stub
 
-## Core principle
+`STATUS: RETIRED_COMPATIBILITY_ONLY`
 
-대시보드는 복잡한 관계를 보고 토론하는 작업 공간이다. 확정 결정과 구현 상태의 정본을 대체하지 않으며, 원본 경로·갱신 시점·상태를 명시한다.
+독립 HTML/CSS/JavaScript 프로젝트 dashboard는 현행 Base의 기본 또는 선택적 프로젝트 작업면이 아니다.
 
-이 Skill은 시각화와 탐색 인터페이스를 책임진다. 기획 책임 원본의 작성·발행은 `managing-design-documents`, 수치 분석의 정확성은 해당 데이터 분석 계약, 대시보드가 주장하는 구현 상태는 `reviewing-and-validating-project-changes`의 증거로 확인한다.
+이전 Skill이 책임졌던 유효한 목적은 다음 현행 owner로 흡수되었다.
 
-## Modes
+```text
+프로젝트 전체 그림·상태·사람용 표
+→ Notion Project Home / project-filtered Work·Core System views
 
-`frame` → `map-sources` → `build` → `bind-status` → `validate`
+UX·화면·관계 시각화
+→ docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md
+→ VISUAL_MAP_DERIVED
 
-## Default form
+구현·runtime 상태
+→ repository structured/runtime truth
 
-특별한 요구가 없으면 단일 HTML + CSS + 최소 JavaScript로 만들고 PC 가독성, 의미 있는 카드·표·화살표·상태 배지, 수정 위치 주석을 우선한다.
-
-정보 구조·검수표는 `references/dashboard-information-architecture.md`를 필요할 때만 읽는다.
-
-## Output contract
-
-```md
-## 대시보드 목적·독자·결정
-## 탭·흐름·데이터 원본
-## 편집·미리보기 동작
-## 상태·위험·누락 표시
-## 생성 파일과 실행 방법
-## 정본 동기화·검증·미확인
+완료·위험·검증 증거
+→ reviewing-and-validating-project-changes
+→ REPOSITORY_NATIVE_QA_EVIDENCE
 ```
 
-## Quality gate
+## 실행 금지
 
-예쁜 장식보다 정보 위계와 행동을 우선하고, 수동 복사된 오래된 상태를 최신으로 표시하지 않으며, 모바일·접근성·보안 요구가 있으면 별도 검증한다.
+- 새 standalone HTML project dashboard 생성
+- 기존 HTML dashboard를 현재 정본으로 승격
+- HTML surface 때문에 Notion/repository 내용을 중복 복사
+- 과거 dashboard 상태를 최신 구현 사실로 사용
 
-Learning Log: `skills/SKILL_LEARNING_LOG.md`
+과거 consumer가 이 Skill ID를 호출하면 새 HTML을 만들지 말고 위 현행 owner로 라우팅한다.
+
+기존 HTML surface의 고유 데이터 이관·삭제는 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`를 따른다.
+
+이 Stub은 오래된 Registry/문서 소비자가 현행 replacement를 찾기 위한 임시 locator다. consumer inventory에서 material consumer가 0이 되면 Skill package와 Registry entry를 함께 삭제한다.
