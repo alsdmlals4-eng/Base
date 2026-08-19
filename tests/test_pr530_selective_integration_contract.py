@@ -16,6 +16,7 @@ SHEET_CONTROL = ROOT / "docs" / "operations" / "SHEET_CONTROL_CONTRACT.json"
 DECISIONS = ROOT / "docs" / "operations" / "BASE_V9_DECISION_REGISTRY.json"
 GENERATOR = ROOT / "tools" / "build_base_v9_artifacts.py"
 FRESHNESS_CONFIG = ROOT / ".github" / "reference-freshness.json"
+ROUTING_TEST = ROOT / "tests" / "test_skill_routing_governance.py"
 
 
 class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
@@ -41,13 +42,13 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
     def test_planning_policy_uses_notion_and_repository_not_active_sheets(self) -> None:
         text = PLANNING.read_text(encoding="utf-8")
         for term in (
-            "BASE_EXCLUDED",
             "NOTION_HUMAN_FACING_CANON",
             "REPOSITORY_STRUCTURED_CANON",
             "REPOSITORY_RUNTIME_TRUTH",
             "GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL",
             "HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN",
             "OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM",
+            "docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md",
             "docs/knowledge/game-development/README.md",
             "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md",
         ):
@@ -135,15 +136,18 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
             for row in decisions
         ))
 
-    def test_freshness_accepts_real_visual_and_owner_local_part_tests(self) -> None:
+    def test_skill_freshness_requires_meaningful_routing_companion_not_any_part_test(self) -> None:
         data = json.loads(FRESHNESS_CONFIG.read_text(encoding="utf-8"))
         rule = next(
             item for item in data["coupled_change_rules"]
             if item["name"] == "skill-description-learning-test-sync"
         )
         companions = rule["require_any_changed"]
-        self.assertIn("tests/test_bca_visual_sheet_workflow.py", companions)
-        self.assertIn("tests/test_p0[1-9]_*.py", companions)
+        self.assertIn("tests/test_skill_routing_governance.py", companions)
+        self.assertNotIn("tests/test_p0[1-9]_*.py", companions)
+        self.assertNotIn("tests/test_bca_visual_sheet_workflow.py", companions)
+        routing_test = ROUTING_TEST.read_text(encoding="utf-8")
+        self.assertIn("test_base_visual_dashboard_routes_to_notion_home_not_html", routing_test)
 
     def test_qa_evidence_studio_files_remain_present(self) -> None:
         for relative in (
