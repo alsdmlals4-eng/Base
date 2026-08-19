@@ -283,3 +283,7 @@ write
 Project Registry에서 Project Key 중복, Core System Master에서 `(Project, Record Key)` 중복, Project relation 누락을 검사한다.
 
 기존 Project Home·child page·Work/Asset record를 삭제하거나 이동하지 않는다.
+
+## Human Home 상세 정책
+
+`HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`의 Base/Project Home 필수 내용은 `docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md`가 소유한다. 하위 페이지는 drilldown/evidence이며 core understanding을 대신하지 않는다.

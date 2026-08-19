@@ -85,19 +85,5 @@
     "A Notion edit that requires structured data, Markdown, code, scene, resource, test, or runtime behavior to change must be synchronized to the repository before implementation or runtime claims.",
     "Image or file delivery success requires write completion plus readback before success may be reported.",
     "Repository code, runtime data, scenes, resources, tracked implementation assets, builds, and tests remain runtime truth."
-  ],
-  "human_home_policy": "HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN",
-  "human_home_required_sections": [
-    "PROJECT_DEFINITION_AND_VALUE",
-    "CONFIRMED_DIRECTION_AND_PROTECTED_ELEMENTS",
-    "CORE_LOOP_AND_FLOW",
-    "CORE_SYSTEMS",
-    "UX_UI_VISUAL_DIRECTION",
-    "IMPLEMENTATION_STATUS",
-    "VALIDATION_EVIDENCE_CEILING",
-    "BLOCKERS_AND_NEXT_WORK",
-    "IMPORTANT_DECISIONS",
-    "RISKS_AND_REVISIT_CONDITIONS"
-  ],
-  "human_home_drilldown_rule": "CHILD_PAGES_ARE_DETAIL_EVIDENCE_NOT_REQUIRED_FOR_CORE_UNDERSTANDING"
+  ]
 }

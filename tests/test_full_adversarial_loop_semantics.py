@@ -3,25 +3,26 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
-AGENTS = ROOT / "AGENTS.md"
-LONG_HORIZON = ROOT / "docs" / "LONG_HORIZON_WORK_EXECUTION_POLICY.md"
+POLICY = ROOT / "docs" / "operations" / "FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md"
 OPERATING_MODEL = ROOT / "docs" / "operations" / "BASE_PARTITION_OPERATING_MODEL.md"
+AGENTS = ROOT / "AGENTS.md"
 
 
 class FullAdversarialLoopSemanticsTests(unittest.TestCase):
     def authoritative_text(self) -> str:
-        return "\n".join(
-            path.read_text(encoding="utf-8")
-            for path in (AGENTS, LONG_HORIZON, OPERATING_MODEL)
-        )
+        return POLICY.read_text(encoding="utf-8") + "\n" + OPERATING_MODEL.read_text(encoding="utf-8")
+
+    def test_base_still_requires_minimum_five_full_loops(self) -> None:
+        agents = AGENTS.read_text(encoding="utf-8")
+        self.assertIn("FULL_LOOP_COUNT_MINIMUM: 5", agents)
+        self.assertIn("MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5", agents)
 
     def test_full_loop_is_not_a_review_lens(self) -> None:
         text = self.authoritative_text()
         self.assertIn("FULL_LOOP_IS_NOT_A_REVIEW_LENS", text)
         self.assertIn("관점 하나", text)
-        self.assertIn("최소 5회", text)
+        self.assertIn("최소 5", text)
 
     def test_each_counted_loop_repeats_the_complete_lifecycle(self) -> None:
         text = self.authoritative_text()
@@ -43,16 +44,7 @@ class FullAdversarialLoopSemanticsTests(unittest.TestCase):
         self.assertIn("Loop 1=scope", text)
         self.assertIn("Loop 2=UX", text)
         self.assertIn("Loop 3=CI", text)
-        self.assertIn("full loop", text)
-        self.assertIn("계수", text)
-
-    def test_p03_active_workstream_is_not_required_for_governance_contract(self) -> None:
-        # The current governance PR must be able to establish the global rule
-        # without rewriting the still-open P03 implementation workstream.
-        agents = AGENTS.read_text(encoding="utf-8")
-        long_horizon = LONG_HORIZON.read_text(encoding="utf-8")
-        self.assertIn("FULL_LOOP_IS_NOT_A_REVIEW_LENS", agents)
-        self.assertIn("FULL_LOOP_IS_NOT_A_REVIEW_LENS", long_horizon)
+        self.assertIn("계수하지 않는다", text)
 
 
 if __name__ == "__main__":

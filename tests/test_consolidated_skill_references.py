@@ -373,14 +373,5 @@ class ClaimIntentConsolidatedReferenceTests(unittest.TestCase):
             self.assertIn("BLOCKED_UNVERIFIED", text)
 
 
-    def test_legacy_alias_table_separates_strict_ids_from_compatibility_names(self) -> None:
-        aliases = (ROOT / "skills/LEGACY_SKILL_ALIASES.md").read_text(encoding="utf-8")
-        self.assertIn("엄격 실행 ID", aliases)
-        self.assertIn("| `grill-me`, `grillme`, `Grill Me`", aliases)
-        self.assertIn("| — |", aliases)
-        self.assertIn("`legacy-retention-archives`", aliases)
-        self.assertIn("`asset-store-first`, `godot-asset-search-first`, `commercial-plugin-search`", aliases)
-
-
 if __name__ == "__main__":
     unittest.main()

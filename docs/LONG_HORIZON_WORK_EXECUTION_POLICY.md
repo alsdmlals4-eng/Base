@@ -21,8 +21,6 @@ ZERO_INCREMENTAL_COST_REQUIRED
 CURRENT_PAID_PLANS: GPT_PRO
 PAID_PLAN_COUNT: 1
 ADVERSARIAL_REVIEW_UNTIL_CLEAN
-
-`FULL_LOOP_IS_NOT_A_REVIEW_LENS`: 회차 번호를 scope/UX/CI/security 같은 서로 다른 lens에 배정하지 않는다. 각 counted loop가 현행/정본/실제 구현, 최소 3개 대안, 전체 attack, critique 검증, 수정, 실행·회귀·reference 검증, better-alternative search, long-term fit, 전체 결과 재공격을 모두 반복해야 한다.
 FULL_LOOP_COUNT_MINIMUM: 5
 MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
 POSTMERGE_PROMOTION_AND_SUPERSESSION
