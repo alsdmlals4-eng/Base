@@ -1,4 +1,4 @@
-# 컨셉·PoC 상세 계약
+# 컨셉·기술 Spike 상세 계약
 
 ## 핵심 컨셉
 
@@ -45,7 +45,7 @@ GDD 핵심 규칙, 레벨, 등장인물, 캐릭터 스타일, 스테이지, 세�
 - `SUPPORT`: 이해·리듬·동기를 보조.
 - `NEUTRAL`: 존재하지만 핵심에 기여하지 않아 삭제·축소 후보.
 - `CONFLICT`: 핵심 컨셉과 충돌해 재설계 후보.
-- `UNPROVEN`: PoC가 필요한 가설.
+- `UNPROVEN`: 추가 증거가 필요한 가설. **기술 불확실성**이면 `TECHNICAL_SPIKE_INTERNAL_ONLY`, 플레이어의 재미·몰입·가독성·첫인상·감정·기억처럼 사람 경험이 질문이면 `RELEASE_NEAR_VERTICAL_SLICE_FIRST`로 분리한다.
 
 ## 분석 렌즈
 
@@ -55,14 +55,19 @@ GDD 핵심 규칙, 레벨, 등장인물, 캐릭터 스타일, 스테이지, 세�
 - 루프·동기: Micro → Session → Meta가 다음 행동과 장기 목표를 연결하는가.
 - 차별화·제작성: 장르 관습이 아니라 핵심 행동의 차이이며 현재 팀과 파이프라인으로 반복 생산 가능한가.
 
-## PoC 계약
+## Technical Spike 계약
+
+```text
+TECHNICAL_SPIKE_INTERNAL_ONLY
+SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE
+```
 
 ```yaml
-hypothesis:
-riskiest_assumption:
+technical_question:
+riskiest_technical_assumption:
 minimal_implementation:
 comparison_or_baseline:
-player_task_and_observed_behavior:
+machine_or_runtime_observation:
 success_failure_stop_criteria:
 validation_environment:
 result:
@@ -70,17 +75,62 @@ decision: KEEP/AMPLIFY/CHANGE/REMOVE/DEFER/RETEST
 next_gate:
 ```
 
-PoC는 전체 게임이나 Vertical Slice가 아니다. 가장 위험한 가설을 확인하는 최소 구현만 만들고 결과를 본 뒤 성공 기준을 바꾸지 않는다.
+과거 `PoC` / `poc-contract` 기록은 compatibility 자료로 읽을 수 있지만, 새 실행에서는 **좁은 기술 Spike**로 해석한다. Technical Spike는 전체 게임이나 Vertical Slice가 아니다. 알고리즘·성능·호환성·저장/데이터 흐름·엔진 제약처럼 완성형 데모 구현을 막는 기술 질문 하나만 최소 구현으로 확인하고 결과를 본 뒤 성공 기준을 바꾸지 않는다.
+
+- 사람의 재미·몰입·가독성·첫인상·판매력·감정·기억·전체 UX를 Technical Spike 결과로 PASS 처리하지 않는다.
+- 사람 행동 관찰이 필요한 질문은 이 계약의 입력/판정으로 끌어오지 않고 `designing-vertical-slices`의 완성형 Slice와 `playtest-evidence`로 넘긴다.
+- Spike 구현이 유효하면 폐기용 별도 제품 단계로 남기지 말고 release-near Vertical Slice의 실제 시스템/데이터/파이프라인에 재사용하거나 Decision evidence로 기록한다.
+- Technical Spike가 필요하지 않으면 생략한다. 횟수를 채우기 위한 PoC를 만들지 않는다.
+
+## Release-near Vertical Slice handoff
+
+플레이어 경험 검증은 `designing-vertical-slices`가 소유한다.
+
+```text
+RELEASE_NEAR_VERTICAL_SLICE_FIRST
+→ actual game-use candidate UI/UX
+→ image/art + animation/presentation
+→ representative music/SFX
+→ VFX/feedback
+→ core system/data/content integration
+→ complete short Vertical Slice
+→ human play evidence
+```
+
+`SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE` 때문에 회색 상자·dummy UI·무음/무연출 PoC는 위 흐름을 대체하지 않는다. 기존 승인 자산·구현·엔진 기능·검증된 라이브러리/도구가 있으면 `EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT`로 먼저 `ADOPT / ADAPT / REJECT`한다.
 
 ## Production gate
 
-다음을 근거로 `PRODUCTION_READY / REPEAT_POC / HOLD / STOP`을 판정한다.
+컨셉 단계와 본제작 확대 판정을 분리한다.
+
+### `SLICE_BUILD_READY`
+
+다음 조건이 충족되면 완성형 release-near Vertical Slice 구현으로 진행할 수 있다.
 
 - 핵심 컨셉과 뾰족한 재미를 한 문장으로 설명할 수 있다.
-- 핵심 행동과 반복 동기가 PoC·플레이테스트에서 관찰됐다.
-- DDD 보상이 핵심 행동의 결과와 다음 행동을 연결한다.
-- 제품 사실·플레이어 반응·행동 근거·해석·제안을 분리했다.
+- 세계관·핵심 스토리·플레이어 판타지와 주요 시스템의 충돌이 닫혔다.
+- 데모 구현을 막는 기술 불확실성이 있으면 필요한 Technical Spike가 성공·실패·중단 기준까지 판정됐다.
+- DDD 보상이 핵심 행동의 결과와 다음 행동을 연결하도록 설계됐다.
+- 제품 사실·기존 플레이어 반응·행동 근거·해석·제안을 분리했다.
 - 벤치마크 발견을 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 판정했다.
 - 주요 요소가 코어에 정렬되고 제작 제약·위험·제외 범위가 명확하다.
 
-목표 품질과 제작 파이프라인까지 증명해야 하면 `designing-vertical-slices`로 넘긴다.
+`SLICE_BUILD_READY`는 재미·몰입이 증명됐다는 뜻이 아니다. 사람 경험은 아직 `NOT_RUN`일 수 있다.
+
+### 본제작 확대 판정
+
+`PRODUCTION_READY`는 `designing-vertical-slices`의 release-near Slice가 목표 품질·시스템 연결·파이프라인과 필요한 human play evidence를 현재 evidence ceiling 안에서 통과한 뒤에만 사용한다.
+
+```text
+PRODUCTION_READY
+REPEAT_VERTICAL_SLICE
+HOLD
+STOP
+```
+
+- `PRODUCTION_READY`: 대표 경험·목표 품질·제작성·필요한 사람 증거가 함께 성립한다.
+- `REPEAT_VERTICAL_SLICE`: 구간·표본·가설·통합 품질이 대표적이지 않아 완성형 Slice 조건을 바꿔 재검증한다.
+- `HOLD`: 외부 의존성·환경·권리·비용 때문에 판정 근거가 부족하다.
+- `STOP`: 핵심 제품 약속이나 제작성이 현재 증거에서 성립하지 않는다.
+
+정적 문서, 자동 테스트, Technical Spike 성공만으로 `PRODUCTION_READY`를 선언하지 않는다.
