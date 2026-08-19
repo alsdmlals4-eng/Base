@@ -69,7 +69,8 @@ class SequentialPartCoordinatorContractTests(unittest.TestCase):
         )
         text = OPERATING_MODEL.read_text(encoding="utf-8")
         self.assertIn("OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM", text)
-        self.assertIn("PR 상태만으로", text)
+        self.assertIn("open/draft/ready", text)
+        self.assertIn("상태만으로", text)
         self.assertIn("현재 작업 채팅은 이 채팅 하나", text)
 
     def test_coordinator_scope_allows_cross_part_and_cp0_with_semantic_attribution(self) -> None:
