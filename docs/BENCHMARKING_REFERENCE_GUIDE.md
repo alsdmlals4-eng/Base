@@ -6,6 +6,8 @@
 
 조사 방법의 상세 기준은 `docs/knowledge/research/DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md`를 따른다. 반복 재사용할 가치가 있는 결과는 `docs/knowledge/cases/`에 사례 연구로 남긴다.
 
+장르·메커닉뿐 아니라 시스템, 콘텐츠/데이터 구조, UI/UX, 도구·자동화, 에셋·이미지 재료, 작업구조, Skill/Eval, QA 패턴까지 **재사용 가능한 단위로 역공학·재가공**하려면 `docs/BENCHMARK_REVERSE_ENGINEERING_AND_REUSE_PIPELINE.md`와 `templates/research/PROJECT_REUSE_OPPORTUNITY_SCAN.md`를 사용한다. 사용자가 든 벤치마크 예시는 탐색 seed일 뿐 범위 상한이 아니며, 대상 프로젝트의 최신 정본과 실제 병목에서 추가 후보를 능동적으로 찾는다.
+
 ## 기본 원칙
 
 - 벤치마킹은 선택 절차가 아니라 중요한 기획·UI·아트·연출 작업 전 기본 절차다.
