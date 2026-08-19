@@ -17,7 +17,7 @@
     },
     "GRIMOIRE": {
       "repository": "alsdmlals4-eng/GRIMOIRE-",
-      "status": "DEFERRED_OPEN_PR",
+      "status": "READY_TO_ADOPT",
       "modules": {
         "RM-TOOL-001": "planned",
         "RM-SYS-001": "not_applicable",
@@ -25,8 +25,8 @@
         "RM-VIS-001": "planned",
         "RM-VIS-002": "planned"
       },
-      "blocker": "open PR #138 is read-only",
-      "revisit": "after PR #138 is completed, re-read current main and pilot sidecar helpers without changing FIVE_POINT_STAR runtime authority"
+      "evidence": "planning PR #138 merged as 293cde60ca19bfa6528b90807f7f4622037f2dd0 and no open GRIMOIRE PR remained at the final adoption audit",
+      "revisit": "pilot sidecar helpers from current main without changing FIVE_POINT_STAR runtime authority"
     },
     "SWITCHY": {
       "repository": "alsdmlals4-eng/Switchy-Express-Cargo-Puzzle",
