@@ -110,6 +110,7 @@ class NotionProjectIsolationCoreSystemContractTests(unittest.TestCase):
         for source in (intake, project_os):
             self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", source)
             self.assertIn("google_sheet_compatibility_source", source)
+            self.assertIn("docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md", source)
             self.assertNotIn("USER_FACING_GDD_WORKSPACE", source)
             self.assertNotIn("project_google_sheet:", source)
 
@@ -126,13 +127,14 @@ class NotionProjectIsolationCoreSystemContractTests(unittest.TestCase):
         paths = [
             "docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md",
             "docs/operations/base-partitions/learning/P01_LEARNING_LOG.md",
+            "skills/managing-game-project-operating-system/LEARNING_LOG.md",
             "skills/managing-game-project-operating-system/SKILL.md",
             "skills/managing-project-intake-and-work-contract/SKILL.md",
             "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md",
             "templates/project-operations/CURRENT_CONFIRMED_DECISIONS.md",
             "templates/project-operations/GRILL_ME_DECISION_RECORD.md",
-            "templates/project-operations/PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md",
             "templates/project-operations/README.md",
+            "tests/test_gpt_codex_workflow_contract.py",
             "tests/test_notion_project_isolation_core_system_contract.py",
         ]
         result = subprocess.run(
