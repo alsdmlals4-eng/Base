@@ -20,3 +20,9 @@ Skill Registry·shared routes·generated map은 CP0라 직접 수정하지 않�
 
 ## 검증/완료
 reference freshness와 관련 회귀를 실행하고 최소 5회 전체 적대적 개선 뒤 clean까지 계속한다.
+## 학습 루프
+- 작업마다 `docs/operations/base-partitions/learning/P02_LEARNING_LOG.md`에 Learning Checkpoint를 남긴다.
+- 새 공용 교훈이 없으면 `NO_NEW_REUSABLE_LESSON`; 프로젝트 전용이면 `PROJECT_ONLY`; Base 승격 후보면 `BASE_PROMOTION_CANDIDATE`.
+- 주기 Source domains: SKILL_AUTHORING_AND_EVOLUTION, CODE_ENGINEERING, PROMPT_AND_AGENT_WORKFLOW.
+- 전역 Periodic Source Scan Queue에서 기존 Source 새/변경 자료와 신규 관련 사이트를 탐색하고, 원출처 검증 전에는 `UNVERIFIED_DISCOVERY`로 유지한다.
+

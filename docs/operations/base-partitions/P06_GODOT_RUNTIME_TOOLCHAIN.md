@@ -20,3 +20,9 @@ P04 acceptance와 P05 visual 입력을 소비하고 P07에 runtime evidence를 �
 
 ## 검증/완료
 Godot focused tests와 가능한 실제 runtime evidence를 분리 보고. 최소 5회 전체 적대적 개선 후 clean까지.
+## 학습 루프
+- 작업마다 `docs/operations/base-partitions/learning/P06_LEARNING_LOG.md`에 Learning Checkpoint를 남긴다.
+- 새 공용 교훈이 없으면 `NO_NEW_REUSABLE_LESSON`; 프로젝트 전용이면 `PROJECT_ONLY`; Base 승격 후보면 `BASE_PROMOTION_CANDIDATE`.
+- 주기 Source domains: GAME_DEVELOPMENT, CODE_ENGINEERING.
+- 전역 Periodic Source Scan Queue에서 기존 Source 새/변경 자료와 신규 관련 사이트를 탐색하고, 원출처 검증 전에는 `UNVERIFIED_DISCOVERY`로 유지한다.
+

@@ -20,3 +20,9 @@ Attack → Validate Critique → Refine Approved Findings → Regression → Git
 
 ## 검증/완료
 focused adversarial/Git tests와 Part scope 검사. 1~5회 의무 전체 loop 후에도 finding이 있으면 6..N회 계속한다.
+## 학습 루프
+- 작업마다 `docs/operations/base-partitions/learning/P03_LEARNING_LOG.md`에 Learning Checkpoint를 남긴다.
+- 새 공용 교훈이 없으면 `NO_NEW_REUSABLE_LESSON`; 프로젝트 전용이면 `PROJECT_ONLY`; Base 승격 후보면 `BASE_PROMOTION_CANDIDATE`.
+- 주기 Source domains: CODE_ENGINEERING, PROMPT_AND_AGENT_WORKFLOW.
+- 전역 Periodic Source Scan Queue에서 기존 Source 새/변경 자료와 신규 관련 사이트를 탐색하고, 원출처 검증 전에는 `UNVERIFIED_DISCOVERY`로 유지한다.
+

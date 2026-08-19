@@ -95,6 +95,16 @@ GPT 기획 → UX/UI flow → Visual Requirement
 
 Figma, Google Sheets, external HTML workspace, 폐기 custom local Tool/Hub를 신규 기본 surface로 부활시키지 않는다. 발견 시 한 번만 `UNIQUE / DUPLICATE / OBSOLETE`로 분류한다. UNIQUE는 현행 Notion/repository owner로 흡수·readback 후 원본 consumer 0에서 제거한다.
 
+## 9A. 작업마다 교훈·학습
+
+모든 완료 작업은 Manifest의 해당 Part `learning_log`에 Learning Checkpoint 하나를 추가한다. 최소 필드는 `work_ref`, 결과, worked/failed, `reusable_lesson`, anti-pattern, 영향을 받은 규칙·Skill·Module, evidence, reuse scope, source follow-up, revisit condition이다.
+
+새 재사용 교훈이 없으면 `reusable_lesson: NO_NEW_REUSABLE_LESSON`을 기록한다. 단지 형식을 채우기 위해 가짜 교훈·새 규칙·새 Skill을 만들지 않는다. 프로젝트 고유 교훈은 `PROJECT_ONLY`, Part 내부만 유효하면 `PART_ONLY`, 여러 프로젝트/Part에 재사용 가치와 evidence가 있으면 `BASE_PROMOTION_CANDIDATE`다. Base 승격은 이 Part가 직접 CP0를 수정하지 않고 `CROSS_PART_CHANGE_REQUEST`/Integration으로 넘긴다.
+
+### 주기 Source Learning
+
+전역 `Periodic Source Scan Queue`와 Manifest의 `source_discovery`를 사용한다. 기존 Source의 새/변경 자료를 확인하고, 각 작업의 실패·빈 coverage·재검토 조건에서 **추가 관련 사이트/Source 검색 질문**을 만든다. 발견 자료는 원출처·날짜·범위·반례·commercial interest·consumer·validation을 확인하기 전 `UNVERIFIED_DISCOVERY`다. Source 수 자체를 목표로 하지 않는다.
+
 ## 10. 비용
 
 기본 유료 플랜은 `GPT_PRO` 하나다. Notion paid 기능은 실제 blocker와 무료 대안 비교 뒤 사용자 승인 전에는 도입하지 않는다.

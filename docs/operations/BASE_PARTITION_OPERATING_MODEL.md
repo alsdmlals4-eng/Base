@@ -163,6 +163,14 @@ GPT 기획 → UX/UI flow → visual requirement → 이미지 생성/선택
 
 삭제는 “오래됨”만으로 결정하지 않는다. `UNIQUE / DUPLICATE / OBSOLETE`를 한 번 분류하고 UNIQUE의 destination readback이 먼저다.
 
+## 작업별 Learning + 주기 Source Learning
+
+각 Part는 작업을 마칠 때 자기 `docs/operations/base-partitions/learning/Pxx_LEARNING_LOG.md`에 Learning Checkpoint 하나를 남긴다. `BASE_PROMOTION_CANDIDATE`만 Integration에서 Base 공용 승격을 검토하고, 프로젝트 전용 교훈은 프로젝트에 남긴다. 새 교훈이 없으면 `NO_NEW_REUSABLE_LESSON`을 기록해 억지 원칙 생성을 막는다.
+
+기존 `Periodic Source Scan Queue`를 재사용한다. Queue가 Manifest의 Part별 `source_discovery` 질문을 렌더링해 **기존 Source의 새/변경 자료 + 신규 관련 사이트/Source 탐색**을 정기적으로 요청한다. Queue 생성 자체는 학습 완료가 아니며, 실제 ChatGPT 원출처 검토·Evidence disposition 후에만 Learning Log/owner 개선 후보가 된다.
+
+자세한 계약: `docs/operations/BASE_PARTITION_LEARNING_SYSTEM.md`.
+
 ## Part 완료 계약
 
 각 Part는 `FULL_LOOP_COUNT_MINIMUM: 5`, `MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5`를 적용한다. 최소 5회의 완전한 전체 적대적 개선 루프 후에도 유효 오류·충돌·누락·blocker가 있으면 6..N회를 계속한다. `CLEAN_REVIEW_EXIT` 전에는 완료가 아니다.

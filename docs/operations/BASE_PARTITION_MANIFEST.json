@@ -6,7 +6,12 @@
   "selected_strategy": "HYBRID_CONTROL_PLANE_END_TO_END_CAPABILITY_PARTITIONS",
   "worker_model": "GPT_PRIMARY_OPTIONAL_CODEX_EXECUTOR",
   "notion_human_view": "Base · 작업 시스템 & Skill 지도",
-  "path_state_model": ["PART_OWNED", "READ_ONLY_DEPENDENCY", "CONTROL_PLANE", "DERIVED_OR_GENERATED"],
+  "path_state_model": [
+    "PART_OWNED",
+    "READ_ONLY_DEPENDENCY",
+    "CONTROL_PLANE",
+    "DERIVED_OR_GENERATED"
+  ],
   "unassigned_path_policy": "READ_ONLY_UNLESS_INTEGRATION_ASSIGNMENT_OR_CROSS_PART_CHANGE_REQUEST",
   "cross_part_protocol": "CROSS_PART_CHANGE_REQUEST",
   "review_contract": {
@@ -31,7 +36,6 @@
       "docs/CONFIRMED_DECISION_SYNC_POLICY.md",
       "docs/operations/BASE_PARTITION_OPERATING_MODEL.md",
       "docs/operations/BASE_PARTITION_MANIFEST.json",
-      "docs/operations/base-partitions/**",
       "templates/prompts/BASE_PARTITION_OPTIMIZATION_PROMPT.md",
       "templates/prompts/BASE_PARTITION_INTEGRATION_PROMPT.md",
       "skills/SKILL_REGISTRY.json",
@@ -48,9 +52,22 @@
       "tools/build_base_v9_artifacts.py",
       "tools/check_base_v9_integrity.py",
       "tools/check_base_partition_scope.py",
-      "tests/test_base_partition_contract.py"
+      "tests/test_base_partition_contract.py",
+      "docs/operations/base-partitions/P01_PROJECT_PLANNING_OPERATIONS_NOTION.md",
+      "docs/operations/base-partitions/P02_SKILL_GOVERNANCE_CANON_LEGACY.md",
+      "docs/operations/base-partitions/P03_ADVERSARIAL_QUALITY_REFACTORING_GIT.md",
+      "docs/operations/base-partitions/P04_GAME_DESIGN_CORE_VERTICAL_SLICE.md",
+      "docs/operations/base-partitions/P05_ART_UX_UI_VISUAL_ASSETS.md",
+      "docs/operations/base-partitions/P06_GODOT_RUNTIME_TOOLCHAIN.md",
+      "docs/operations/base-partitions/P07_PLATFORM_RELEASE_VALIDATION.md",
+      "docs/operations/base-partitions/P08_AI_OPERATIONS_EXECUTORS.md",
+      "docs/operations/base-partitions/P09_CONTENT_NARRATIVE_PUBLICATION.md",
+      "docs/operations/BASE_PARTITION_LEARNING_SYSTEM.md"
     ],
-    "derived_or_generated_paths": ["docs/generated/**", "docs/operations/base-v9/generated/**"],
+    "derived_or_generated_paths": [
+      "docs/generated/**",
+      "docs/operations/base-v9/generated/**"
+    ],
     "change_protocol": [
       "Part worker records CROSS_PART_CHANGE_REQUEST instead of editing CP0",
       "Integration deduplicates and validates requests",
@@ -65,9 +82,33 @@
     ]
   },
   "parallel_execution_groups": [
-    {"group_id": "G1_FOUNDATION", "parts": ["P01", "P02", "P03"], "can_run_with_other_groups": true},
-    {"group_id": "G2_GAME_PRODUCTION", "parts": ["P04", "P05", "P06"], "can_run_with_other_groups": true},
-    {"group_id": "G3_DELIVERY_AI_CONTENT", "parts": ["P07", "P08", "P09"], "can_run_with_other_groups": true}
+    {
+      "group_id": "G1_FOUNDATION",
+      "parts": [
+        "P01",
+        "P02",
+        "P03"
+      ],
+      "can_run_with_other_groups": true
+    },
+    {
+      "group_id": "G2_GAME_PRODUCTION",
+      "parts": [
+        "P04",
+        "P05",
+        "P06"
+      ],
+      "can_run_with_other_groups": true
+    },
+    {
+      "group_id": "G3_DELIVERY_AI_CONTENT",
+      "parts": [
+        "P07",
+        "P08",
+        "P09"
+      ],
+      "can_run_with_other_groups": true
+    }
   ],
   "parts": [
     {
@@ -75,7 +116,14 @@
       "name": "Project Planning, Operations & Notion",
       "purpose": "요청 intake부터 작업계약, 프로젝트 운영, 설계문서, handoff, 장기 continuity, 사람용 학습/Notion 흐름을 최적화한다.",
       "context_pack": "docs/operations/base-partitions/P01_PROJECT_PLANNING_OPERATIONS_NOTION.md",
-      "owned_skill_ids": ["managing-project-intake-and-work-contract", "managing-game-project-operating-system", "managing-design-documents", "maintaining-project-context-and-handoff", "maintaining-long-running-task-continuity", "creating-user-learning-notes"],
+      "owned_skill_ids": [
+        "managing-project-intake-and-work-contract",
+        "managing-game-project-operating-system",
+        "managing-design-documents",
+        "maintaining-project-context-and-handoff",
+        "maintaining-long-running-task-continuity",
+        "creating-user-learning-notes"
+      ],
       "owned_write_paths": [
         "skills/managing-project-intake-and-work-contract/**",
         "skills/managing-game-project-operating-system/**",
@@ -92,22 +140,114 @@
         "tests/test_gpt_codex_workflow_contract.py",
         "tests/test_notion_project_isolation_core_system_contract.py",
         "tests/test_*handoff*.py",
-        "tests/test_*continuity*.py"
+        "tests/test_*continuity*.py",
+        "docs/operations/base-partitions/learning/P01_LEARNING_LOG.md"
       ],
-      "allowed_new_paths": ["docs/operations/project-workspace/**", "tests/test_p01_*.py"],
-      "read_only_dependencies": ["CP0", "P02 canonical/reference rules", "P03 validation rules", "skills/SKILL_REGISTRY.json", "docs/DOCUMENTATION_MAP.md"],
-      "important_rules": ["DIRECTION_FIRST", "GPT_FIRST_PLANNING_AND_REVIEW", "NOTION_DEFAULT_PROJECT_WORKSPACE", "PROJECT_RELATION_REQUIRED", "SINGLE_INITIAL_APPROVAL_THEN_CONTINUE"],
-      "modules": ["Intake & Work Contract", "Project Operating System", "Design Document Lifecycle", "Context/Handoff", "Long-running Continuity", "User Learning & Notion Human View"],
-      "validation": ["python tools/check_base_partition_scope.py --part P01 --base <BASELINE_SHA> --head HEAD", "python -m unittest tests.test_gpt_codex_workflow_contract tests.test_notion_project_isolation_core_system_contract -v"],
-      "acceptance_criteria": ["intake→decision→Notion/GitHub→handoff 흐름에 중복 권위 0", "Codex가 의무 단계로 재승격되지 않음", "프로젝트별 Notion 격리 유지", "사용자 학습형 완료보고 유지"],
-      "revisit_conditions": ["Notion workspace 구조가 materially 변경됨", "Codex/executor 권위가 새 플랫폼으로 바뀜", "P01 cross-part request가 반복적으로 P02/P03에 집중됨"]
+      "allowed_new_paths": [
+        "docs/operations/project-workspace/**",
+        "tests/test_p01_*.py"
+      ],
+      "read_only_dependencies": [
+        "CP0",
+        "P02 canonical/reference rules",
+        "P03 validation rules",
+        "skills/SKILL_REGISTRY.json",
+        "docs/DOCUMENTATION_MAP.md"
+      ],
+      "important_rules": [
+        "DIRECTION_FIRST",
+        "GPT_FIRST_PLANNING_AND_REVIEW",
+        "NOTION_DEFAULT_PROJECT_WORKSPACE",
+        "PROJECT_RELATION_REQUIRED",
+        "SINGLE_INITIAL_APPROVAL_THEN_CONTINUE"
+      ],
+      "modules": [
+        "Intake & Work Contract",
+        "Project Operating System",
+        "Design Document Lifecycle",
+        "Context/Handoff",
+        "Long-running Continuity",
+        "User Learning & Notion Human View"
+      ],
+      "validation": [
+        "python tools/check_base_partition_scope.py --part P01 --base <BASELINE_SHA> --head HEAD",
+        "python -m unittest tests.test_gpt_codex_workflow_contract tests.test_notion_project_isolation_core_system_contract -v"
+      ],
+      "acceptance_criteria": [
+        "intake→decision→Notion/GitHub→handoff 흐름에 중복 권위 0",
+        "Codex가 의무 단계로 재승격되지 않음",
+        "프로젝트별 Notion 격리 유지",
+        "사용자 학습형 완료보고 유지"
+      ],
+      "revisit_conditions": [
+        "Notion workspace 구조가 materially 변경됨",
+        "Codex/executor 권위가 새 플랫폼으로 바뀜",
+        "P01 cross-part request가 반복적으로 P02/P03에 집중됨"
+      ],
+      "learning_log": "docs/operations/base-partitions/learning/P01_LEARNING_LOG.md",
+      "learning_capture": {
+        "required_after_each_work": true,
+        "fields": [
+          "work_ref",
+          "baseline_and_result",
+          "what_worked",
+          "what_failed_or_was_rejected",
+          "reusable_lesson",
+          "anti_pattern",
+          "affected_rules_skills_modules",
+          "evidence",
+          "reuse_scope",
+          "promotion_candidate",
+          "source_followup_questions",
+          "revisit_condition"
+        ],
+        "reuse_scope_values": [
+          "PART_ONLY",
+          "BASE_PROMOTION_CANDIDATE",
+          "PROJECT_ONLY",
+          "NO_NEW_REUSABLE_LESSON"
+        ]
+      },
+      "source_discovery": {
+        "periodic_queue": "Periodic Source Scan Queue",
+        "source_domains": [
+          "PROMPT_AND_AGENT_WORKFLOW",
+          "SKILL_AUTHORING_AND_EVOLUTION"
+        ],
+        "discovery_questions": [
+          "Notion/project operating systems that reduce duplicate decisions and handoff loss",
+          "human-facing documentation patterns that preserve one machine/runtime truth",
+          "agent instruction/context patterns that reduce repeated clarification and unnecessary executor hops"
+        ],
+        "existing_source_action": "CHECK_DUE_OR_MATERIAL_NEW_OR_UPDATED_ITEMS",
+        "new_source_action": "SEARCH_FOR_ADDITIONAL_PRIMARY_OR_PROFESSIONAL_SOURCES",
+        "disposition_required": true,
+        "allowed_dispositions": [
+          "ADOPT",
+          "ADAPT",
+          "TEST",
+          "PROJECT_ONLY",
+          "REFERENCE_ONLY",
+          "AVOID",
+          "IGNORE",
+          "BLOCKED_UNVERIFIED",
+          "PROMOTION_CANDIDATE"
+        ]
+      }
     },
     {
       "part_id": "P02",
       "name": "Skill Governance, Canon Freshness & Legacy",
       "purpose": "Skill 생명주기, 정본 신선도, Base 변경제안, 단순화, stale/legacy 흡수·archive·삭제를 최적화한다.",
       "context_pack": "docs/operations/base-partitions/P02_SKILL_GOVERNANCE_CANON_LEGACY.md",
-      "owned_skill_ids": ["evolving-project-discipline-skills", "auditing-canonical-reference-freshness", "managing-base-change-proposals", "simplifying-skill-bodies", "pruning-stale-and-nonfunctional-material", "governing-legacy-retention-and-archives"],
+      "owned_skill_ids": [
+        "evolving-project-discipline-skills",
+        "auditing-canonical-reference-freshness",
+        "managing-base-change-proposals",
+        "simplifying-skill-bodies",
+        "pruning-stale-and-nonfunctional-material",
+        "governing-legacy-retention-and-archives"
+      ],
       "owned_write_paths": [
         "skills/evolving-project-discipline-skills/**",
         "skills/auditing-canonical-reference-freshness/**",
@@ -123,22 +263,111 @@
         "tools/*legacy*",
         "tests/test_*reference_freshness*.py",
         "tests/test_*legacy*.py",
-        "tests/test_*archive*.py"
+        "tests/test_*archive*.py",
+        "docs/operations/base-partitions/learning/P02_LEARNING_LOG.md"
       ],
-      "allowed_new_paths": ["docs/operations/legacy-retirement/**", "tests/test_p02_*.py"],
-      "read_only_dependencies": ["CP0 registry and generated maps", "all Part Skill bodies as audit inputs", "P01 workspace authority", "P03 evidence contracts"],
-      "important_rules": ["Existing Solution First", "LEGACY_ABSORB_VERIFY_REMOVE", "GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL", "canonical reference freshness", "no duplicate active Skill authority"],
-      "modules": ["Skill Lifecycle Governance", "Canonical Reference Freshness", "Base Change Proposal", "Skill Simplification", "Stale Pruning", "Legacy Absorb/Verify/Remove"],
-      "validation": ["python tools/check_base_partition_scope.py --part P02 --base <BASELINE_SHA> --head HEAD", "python tools/check_canonical_reference_freshness.py --config .github/reference-freshness.json --base <BASELINE_SHA> --head HEAD"],
-      "acceptance_criteria": ["active Skill 중복/고아 routing 0", "legacy source의 unique material destination 명시", "삭제 전 consumer 0/readback 검증", "Registry 변경은 CP0 request로만 전달"],
-      "revisit_conditions": ["active Skill 수가 40개 초과", "legacy cleanup backlog가 독립 작업량으로 커짐", "reference freshness false positive/negative가 반복됨"]
+      "allowed_new_paths": [
+        "docs/operations/legacy-retirement/**",
+        "tests/test_p02_*.py"
+      ],
+      "read_only_dependencies": [
+        "CP0 registry and generated maps",
+        "all Part Skill bodies as audit inputs",
+        "P01 workspace authority",
+        "P03 evidence contracts"
+      ],
+      "important_rules": [
+        "Existing Solution First",
+        "LEGACY_ABSORB_VERIFY_REMOVE",
+        "GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL",
+        "canonical reference freshness",
+        "no duplicate active Skill authority"
+      ],
+      "modules": [
+        "Skill Lifecycle Governance",
+        "Canonical Reference Freshness",
+        "Base Change Proposal",
+        "Skill Simplification",
+        "Stale Pruning",
+        "Legacy Absorb/Verify/Remove"
+      ],
+      "validation": [
+        "python tools/check_base_partition_scope.py --part P02 --base <BASELINE_SHA> --head HEAD",
+        "python tools/check_canonical_reference_freshness.py --config .github/reference-freshness.json --base <BASELINE_SHA> --head HEAD"
+      ],
+      "acceptance_criteria": [
+        "active Skill 중복/고아 routing 0",
+        "legacy source의 unique material destination 명시",
+        "삭제 전 consumer 0/readback 검증",
+        "Registry 변경은 CP0 request로만 전달"
+      ],
+      "revisit_conditions": [
+        "active Skill 수가 40개 초과",
+        "legacy cleanup backlog가 독립 작업량으로 커짐",
+        "reference freshness false positive/negative가 반복됨"
+      ],
+      "learning_log": "docs/operations/base-partitions/learning/P02_LEARNING_LOG.md",
+      "learning_capture": {
+        "required_after_each_work": true,
+        "fields": [
+          "work_ref",
+          "baseline_and_result",
+          "what_worked",
+          "what_failed_or_was_rejected",
+          "reusable_lesson",
+          "anti_pattern",
+          "affected_rules_skills_modules",
+          "evidence",
+          "reuse_scope",
+          "promotion_candidate",
+          "source_followup_questions",
+          "revisit_condition"
+        ],
+        "reuse_scope_values": [
+          "PART_ONLY",
+          "BASE_PROMOTION_CANDIDATE",
+          "PROJECT_ONLY",
+          "NO_NEW_REUSABLE_LESSON"
+        ]
+      },
+      "source_discovery": {
+        "periodic_queue": "Periodic Source Scan Queue",
+        "source_domains": [
+          "SKILL_AUTHORING_AND_EVOLUTION",
+          "CODE_ENGINEERING",
+          "PROMPT_AND_AGENT_WORKFLOW"
+        ],
+        "discovery_questions": [
+          "skill consolidation, progressive disclosure, routing precision and evaluation",
+          "deprecation/legacy retirement patterns that preserve unique knowledge before deletion",
+          "canonical-reference freshness and stale-reference detection practices"
+        ],
+        "existing_source_action": "CHECK_DUE_OR_MATERIAL_NEW_OR_UPDATED_ITEMS",
+        "new_source_action": "SEARCH_FOR_ADDITIONAL_PRIMARY_OR_PROFESSIONAL_SOURCES",
+        "disposition_required": true,
+        "allowed_dispositions": [
+          "ADOPT",
+          "ADAPT",
+          "TEST",
+          "PROJECT_ONLY",
+          "REFERENCE_ONLY",
+          "AVOID",
+          "IGNORE",
+          "BLOCKED_UNVERIFIED",
+          "PROMOTION_CANDIDATE"
+        ]
+      }
     },
     {
       "part_id": "P03",
       "name": "Adversarial Quality, Refactoring & Git Integrity",
       "purpose": "적대적 검토, 계약보존 리팩터링, Git 동기화와 변경 무결성을 최적화하되 실제 실행 증거 owner는 P07과 분리한다.",
       "context_pack": "docs/operations/base-partitions/P03_ADVERSARIAL_QUALITY_REFACTORING_GIT.md",
-      "owned_skill_ids": ["running-adversarial-review-and-refinement", "refactoring-with-contract-preservation", "synchronizing-local-and-github-state"],
+      "owned_skill_ids": [
+        "running-adversarial-review-and-refinement",
+        "refactoring-with-contract-preservation",
+        "synchronizing-local-and-github-state"
+      ],
       "owned_write_paths": [
         "skills/running-adversarial-review-and-refinement/**",
         "skills/refactoring-with-contract-preservation/**",
@@ -152,22 +381,111 @@
         "tests/test_*refactor*.py",
         "tests/test_*git_sync*.py",
         "tools/*protected_change*",
-        "tools/*git_sync*"
+        "tools/*git_sync*",
+        "docs/operations/base-partitions/learning/P03_LEARNING_LOG.md"
       ],
-      "allowed_new_paths": ["docs/operations/quality/**", "tests/test_p03_*.py"],
-      "read_only_dependencies": ["CP0 global gates", "P02 freshness/legacy findings", "P07 execution evidence", "all Part diffs as adversarial inputs"],
-      "important_rules": ["FULL_LOOP_COUNT_MINIMUM: 5", "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5", "CLEAN_REVIEW_EXIT", "POST_CHANGE_MONITOR_LOOP", "INDEPENDENT_WORKSTREAM_ISOLATION"],
-      "modules": ["Adversarial Review Loop", "Finding Validation", "Contract-preserving Refactor", "Git Sync/Isolation", "Post-change Monitor"],
-      "validation": ["python tools/check_base_partition_scope.py --part P03 --base <BASELINE_SHA> --head HEAD", "python -m unittest tests.test_neutral_adversarial_feature_lifecycle tests.test_concurrent_git_sync_preflight_contract -v"],
-      "acceptance_criteria": ["최소 5회 + 이후 blocker 0까지 계약 유지", "다른 workstream 수정 0", "refactor semantic regression 0", "실행하지 않은 검증을 PASS로 승격 0"],
-      "revisit_conditions": ["review loop가 과도한 churn을 만듦", "Git concurrency failure가 반복됨", "P03/P07 evidence 책임 경계가 반복적으로 모호해짐"]
+      "allowed_new_paths": [
+        "docs/operations/quality/**",
+        "tests/test_p03_*.py"
+      ],
+      "read_only_dependencies": [
+        "CP0 global gates",
+        "P02 freshness/legacy findings",
+        "P07 execution evidence",
+        "all Part diffs as adversarial inputs"
+      ],
+      "important_rules": [
+        "FULL_LOOP_COUNT_MINIMUM: 5",
+        "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5",
+        "CLEAN_REVIEW_EXIT",
+        "POST_CHANGE_MONITOR_LOOP",
+        "INDEPENDENT_WORKSTREAM_ISOLATION"
+      ],
+      "modules": [
+        "Adversarial Review Loop",
+        "Finding Validation",
+        "Contract-preserving Refactor",
+        "Git Sync/Isolation",
+        "Post-change Monitor"
+      ],
+      "validation": [
+        "python tools/check_base_partition_scope.py --part P03 --base <BASELINE_SHA> --head HEAD",
+        "python -m unittest tests.test_neutral_adversarial_feature_lifecycle tests.test_concurrent_git_sync_preflight_contract -v"
+      ],
+      "acceptance_criteria": [
+        "최소 5회 + 이후 blocker 0까지 계약 유지",
+        "다른 workstream 수정 0",
+        "refactor semantic regression 0",
+        "실행하지 않은 검증을 PASS로 승격 0"
+      ],
+      "revisit_conditions": [
+        "review loop가 과도한 churn을 만듦",
+        "Git concurrency failure가 반복됨",
+        "P03/P07 evidence 책임 경계가 반복적으로 모호해짐"
+      ],
+      "learning_log": "docs/operations/base-partitions/learning/P03_LEARNING_LOG.md",
+      "learning_capture": {
+        "required_after_each_work": true,
+        "fields": [
+          "work_ref",
+          "baseline_and_result",
+          "what_worked",
+          "what_failed_or_was_rejected",
+          "reusable_lesson",
+          "anti_pattern",
+          "affected_rules_skills_modules",
+          "evidence",
+          "reuse_scope",
+          "promotion_candidate",
+          "source_followup_questions",
+          "revisit_condition"
+        ],
+        "reuse_scope_values": [
+          "PART_ONLY",
+          "BASE_PROMOTION_CANDIDATE",
+          "PROJECT_ONLY",
+          "NO_NEW_REUSABLE_LESSON"
+        ]
+      },
+      "source_discovery": {
+        "periodic_queue": "Periodic Source Scan Queue",
+        "source_domains": [
+          "CODE_ENGINEERING",
+          "PROMPT_AND_AGENT_WORKFLOW"
+        ],
+        "discovery_questions": [
+          "adversarial review and defect-finding methods that avoid performative checklist loops",
+          "contract-preserving refactoring and semantic regression detection",
+          "Git/worktree/PR concurrency and exact-head integration safety"
+        ],
+        "existing_source_action": "CHECK_DUE_OR_MATERIAL_NEW_OR_UPDATED_ITEMS",
+        "new_source_action": "SEARCH_FOR_ADDITIONAL_PRIMARY_OR_PROFESSIONAL_SOURCES",
+        "disposition_required": true,
+        "allowed_dispositions": [
+          "ADOPT",
+          "ADAPT",
+          "TEST",
+          "PROJECT_ONLY",
+          "REFERENCE_ONLY",
+          "AVOID",
+          "IGNORE",
+          "BLOCKED_UNVERIFIED",
+          "PROMOTION_CANDIDATE"
+        ]
+      }
     },
     {
       "part_id": "P04",
       "name": "Game Design, Core, Player Research & Vertical Slice",
       "purpose": "게임 컨셉·코어·기능·플레이어 가치·밸런스·Vertical Slice의 기획 품질과 검증 가능성을 최적화한다.",
       "context_pack": "docs/operations/base-partitions/P04_GAME_DESIGN_CORE_VERTICAL_SLICE.md",
-      "owned_skill_ids": ["analyzing-and-refining-game-concepts", "identifying-project-core", "establishing-project-core", "designing-vertical-slices", "governing-game-user-research-coverage"],
+      "owned_skill_ids": [
+        "analyzing-and-refining-game-concepts",
+        "identifying-project-core",
+        "establishing-project-core",
+        "designing-vertical-slices",
+        "governing-game-user-research-coverage"
+      ],
       "owned_write_paths": [
         "skills/analyzing-and-refining-game-concepts/**",
         "skills/identifying-project-core/**",
@@ -185,22 +503,111 @@
         "docs/knowledge/game-development/*PLAYER*",
         "tests/test_game_design*.py",
         "tests/test_*vertical_slice*.py",
-        "tests/test_*user_research*.py"
+        "tests/test_*user_research*.py",
+        "docs/operations/base-partitions/learning/P04_LEARNING_LOG.md"
       ],
-      "allowed_new_paths": ["docs/knowledge/game-development/game-design/**", "tests/test_p04_*.py"],
-      "read_only_dependencies": ["P01 project/decision contract", "P05 visualized PoC inputs", "P06 Godot feasibility", "P07 validation evidence", "CP0 routing"],
-      "important_rules": ["player value first", "CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY", "MINIMUM_VIABLE_ALTERNATIVES: 3", "BETTER_ALTERNATIVE_SEARCH", "LONG_TERM_PLAN_FIT_REQUIRED", "WORLD_STORYLINE_FIT_REQUIRED"],
-      "modules": ["Concept Refinement", "Project Core Identification", "Core Establishment", "Player Research Coverage", "Feature/Balance Design", "Vertical Slice"],
-      "validation": ["python tools/check_base_partition_scope.py --part P04 --base <BASELINE_SHA> --head HEAD", "python -m unittest discover -s tests -p 'test_*vertical_slice*.py' -v"],
-      "acceptance_criteria": ["기능 수보다 플레이어 감정/선택/보상 가치가 우선", "최소 3개 실질 대안과 benchmark trade study 존재", "PoC/Vertical Slice acceptance가 실행 가능", "프로젝트 고유 규칙과 Base 공용 원리가 분리"],
-      "revisit_conditions": ["게임 설계 Skill이 8개 이상으로 증가", "P04가 아트/런타임 구현까지 반복 침범", "다른 장르의 기획 계약이 현재 core model과 충돌"]
+      "allowed_new_paths": [
+        "docs/knowledge/game-development/game-design/**",
+        "tests/test_p04_*.py"
+      ],
+      "read_only_dependencies": [
+        "P01 project/decision contract",
+        "P05 visualized PoC inputs",
+        "P06 Godot feasibility",
+        "P07 validation evidence",
+        "CP0 routing"
+      ],
+      "important_rules": [
+        "player value first",
+        "CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY",
+        "MINIMUM_VIABLE_ALTERNATIVES: 3",
+        "BETTER_ALTERNATIVE_SEARCH",
+        "LONG_TERM_PLAN_FIT_REQUIRED",
+        "WORLD_STORYLINE_FIT_REQUIRED"
+      ],
+      "modules": [
+        "Concept Refinement",
+        "Project Core Identification",
+        "Core Establishment",
+        "Player Research Coverage",
+        "Feature/Balance Design",
+        "Vertical Slice"
+      ],
+      "validation": [
+        "python tools/check_base_partition_scope.py --part P04 --base <BASELINE_SHA> --head HEAD",
+        "python -m unittest discover -s tests -p 'test_*vertical_slice*.py' -v"
+      ],
+      "acceptance_criteria": [
+        "기능 수보다 플레이어 감정/선택/보상 가치가 우선",
+        "최소 3개 실질 대안과 benchmark trade study 존재",
+        "PoC/Vertical Slice acceptance가 실행 가능",
+        "프로젝트 고유 규칙과 Base 공용 원리가 분리"
+      ],
+      "revisit_conditions": [
+        "게임 설계 Skill이 8개 이상으로 증가",
+        "P04가 아트/런타임 구현까지 반복 침범",
+        "다른 장르의 기획 계약이 현재 core model과 충돌"
+      ],
+      "learning_log": "docs/operations/base-partitions/learning/P04_LEARNING_LOG.md",
+      "learning_capture": {
+        "required_after_each_work": true,
+        "fields": [
+          "work_ref",
+          "baseline_and_result",
+          "what_worked",
+          "what_failed_or_was_rejected",
+          "reusable_lesson",
+          "anti_pattern",
+          "affected_rules_skills_modules",
+          "evidence",
+          "reuse_scope",
+          "promotion_candidate",
+          "source_followup_questions",
+          "revisit_condition"
+        ],
+        "reuse_scope_values": [
+          "PART_ONLY",
+          "BASE_PROMOTION_CANDIDATE",
+          "PROJECT_ONLY",
+          "NO_NEW_REUSABLE_LESSON"
+        ]
+      },
+      "source_discovery": {
+        "periodic_queue": "Periodic Source Scan Queue",
+        "source_domains": [
+          "GAME_DEVELOPMENT"
+        ],
+        "discovery_questions": [
+          "player motivation, choice, reward, memory and first-impression evidence",
+          "vertical-slice and prototype validation practices for small teams",
+          "game balance, difficulty, onboarding and player-research methods with usable evidence"
+        ],
+        "existing_source_action": "CHECK_DUE_OR_MATERIAL_NEW_OR_UPDATED_ITEMS",
+        "new_source_action": "SEARCH_FOR_ADDITIONAL_PRIMARY_OR_PROFESSIONAL_SOURCES",
+        "disposition_required": true,
+        "allowed_dispositions": [
+          "ADOPT",
+          "ADAPT",
+          "TEST",
+          "PROJECT_ONLY",
+          "REFERENCE_ONLY",
+          "AVOID",
+          "IGNORE",
+          "BLOCKED_UNVERIFIED",
+          "PROMOTION_CANDIDATE"
+        ]
+      }
     },
     {
       "part_id": "P05",
       "name": "Art, UX/UI & Visual Assets",
       "purpose": "아트 방향, 이미지 생성/검수, UX/UI, 시각 자산 재사용과 Notion visual workflow를 최적화하고 폐기된 시각 Tool/HTML 권위를 제거한다.",
       "context_pack": "docs/operations/base-partitions/P05_ART_UX_UI_VISUAL_ASSETS.md",
-      "owned_skill_ids": ["designing-art-prompts-and-technique-cards", "auditing-and-refining-ui-art", "building-project-visual-dashboards"],
+      "owned_skill_ids": [
+        "designing-art-prompts-and-technique-cards",
+        "auditing-and-refining-ui-art",
+        "building-project-visual-dashboards"
+      ],
       "owned_write_paths": [
         "skills/designing-art-prompts-and-technique-cards/**",
         "skills/auditing-and-refining-ui-art/**",
@@ -224,22 +631,109 @@
         "tests/test_bca_visual_sheet_workflow.py",
         "tests/test_*ui*.py",
         "tests/test_*visual*.py",
-        "tests/test_*image*.py"
+        "tests/test_*image*.py",
+        "docs/operations/base-partitions/learning/P05_LEARNING_LOG.md"
       ],
-      "allowed_new_paths": ["docs/knowledge/game-development/visual/**", "tests/test_p05_*.py"],
-      "read_only_dependencies": ["P01 Notion/project authority", "P04 player/feature requirements", "P06 runtime constraints", "P02 legacy removal gate", "CP0 routing"],
-      "important_rules": ["VISUALIZED_POC_BEFORE_DEMO_TEST", "Notion project placement + readback", "PROJECT_ASSET_APPROVED before implementation use", "identity-preserving edits", "LEGACY_ABSORB_VERIFY_REMOVE"],
-      "modules": ["Art Direction", "Image Candidate Lifecycle", "UX/UI Audit", "Visual Asset Reuse", "Notion Visual Flow", "Retired Visual Tool Absorption"],
-      "validation": ["python tools/check_base_partition_scope.py --part P05 --base <BASELINE_SHA> --head HEAD", "python -m unittest tests.test_bca_visual_sheet_workflow -v"],
-      "acceptance_criteria": ["AI 티 감소·일관성·가독성 검수 계약 보존", "시각이 중요한 PoC는 승인 visual 입력을 소비", "Figma/HTML/local visual tool 신규 권위 0", "고유 기능 흡수 전 파괴적 삭제 0"],
-      "revisit_conditions": ["새 시각 workspace가 사용자 승인으로 도입됨", "Notion visual workflow가 성능/기능 blocker가 됨", "로컬 시각 Tool에 아직 대체 불가능 unique capability가 확인됨"]
+      "allowed_new_paths": [
+        "docs/knowledge/game-development/visual/**",
+        "tests/test_p05_*.py"
+      ],
+      "read_only_dependencies": [
+        "P01 Notion/project authority",
+        "P04 player/feature requirements",
+        "P06 runtime constraints",
+        "P02 legacy removal gate",
+        "CP0 routing"
+      ],
+      "important_rules": [
+        "VISUALIZED_POC_BEFORE_DEMO_TEST",
+        "Notion project placement + readback",
+        "PROJECT_ASSET_APPROVED before implementation use",
+        "identity-preserving edits",
+        "LEGACY_ABSORB_VERIFY_REMOVE"
+      ],
+      "modules": [
+        "Art Direction",
+        "Image Candidate Lifecycle",
+        "UX/UI Audit",
+        "Visual Asset Reuse",
+        "Notion Visual Flow",
+        "Retired Visual Tool Absorption"
+      ],
+      "validation": [
+        "python tools/check_base_partition_scope.py --part P05 --base <BASELINE_SHA> --head HEAD",
+        "python -m unittest tests.test_bca_visual_sheet_workflow -v"
+      ],
+      "acceptance_criteria": [
+        "AI 티 감소·일관성·가독성 검수 계약 보존",
+        "시각이 중요한 PoC는 승인 visual 입력을 소비",
+        "Figma/HTML/local visual tool 신규 권위 0",
+        "고유 기능 흡수 전 파괴적 삭제 0"
+      ],
+      "revisit_conditions": [
+        "새 시각 workspace가 사용자 승인으로 도입됨",
+        "Notion visual workflow가 성능/기능 blocker가 됨",
+        "로컬 시각 Tool에 아직 대체 불가능 unique capability가 확인됨"
+      ],
+      "learning_log": "docs/operations/base-partitions/learning/P05_LEARNING_LOG.md",
+      "learning_capture": {
+        "required_after_each_work": true,
+        "fields": [
+          "work_ref",
+          "baseline_and_result",
+          "what_worked",
+          "what_failed_or_was_rejected",
+          "reusable_lesson",
+          "anti_pattern",
+          "affected_rules_skills_modules",
+          "evidence",
+          "reuse_scope",
+          "promotion_candidate",
+          "source_followup_questions",
+          "revisit_condition"
+        ],
+        "reuse_scope_values": [
+          "PART_ONLY",
+          "BASE_PROMOTION_CANDIDATE",
+          "PROJECT_ONLY",
+          "NO_NEW_REUSABLE_LESSON"
+        ]
+      },
+      "source_discovery": {
+        "periodic_queue": "Periodic Source Scan Queue",
+        "source_domains": [
+          "GAME_DEVELOPMENT"
+        ],
+        "discovery_questions": [
+          "art direction and visual-consistency pipelines that reduce synthetic/AI-looking artifacts",
+          "game UX/UI readability, accessibility and first-impression evaluation",
+          "image-to-structured-layer/reusable-asset workflows and visual provenance management"
+        ],
+        "existing_source_action": "CHECK_DUE_OR_MATERIAL_NEW_OR_UPDATED_ITEMS",
+        "new_source_action": "SEARCH_FOR_ADDITIONAL_PRIMARY_OR_PROFESSIONAL_SOURCES",
+        "disposition_required": true,
+        "allowed_dispositions": [
+          "ADOPT",
+          "ADAPT",
+          "TEST",
+          "PROJECT_ONLY",
+          "REFERENCE_ONLY",
+          "AVOID",
+          "IGNORE",
+          "BLOCKED_UNVERIFIED",
+          "PROMOTION_CANDIDATE"
+        ]
+      }
     },
     {
       "part_id": "P06",
       "name": "Godot, Runtime & Technical Toolchain",
       "purpose": "Godot 저작/실행/디버깅, addon/toolchain, runtime adapter와 QA technical tooling을 최적화한다.",
       "context_pack": "docs/operations/base-partitions/P06_GODOT_RUNTIME_TOOLCHAIN.md",
-      "owned_skill_ids": ["diagnosing-game-engine-runtime-failures", "evaluating-godot-assets-and-plugins-before-creation"],
+      "owned_skill_ids": [
+        "diagnosing-game-engine-runtime-failures",
+        "evaluating-godot-assets-and-plugins-before-creation"
+      ],
       "owned_write_paths": [
         "skills/diagnosing-game-engine-runtime-failures/**",
         "skills/evaluating-godot-assets-and-plugins-before-creation/**",
@@ -251,22 +745,109 @@
         "schemas/qa-evidence-studio/**",
         "tests/qa-evidence-studio/**",
         "tests/test_godot_*.py",
-        "tests/test_*runtime*.py"
+        "tests/test_*runtime*.py",
+        "docs/operations/base-partitions/learning/P06_LEARNING_LOG.md"
       ],
-      "allowed_new_paths": ["docs/operations/godot-runtime/**", "tests/test_p06_*.py"],
-      "read_only_dependencies": ["P04 gameplay acceptance", "P05 approved visual inputs", "P07 release validation", "P02 legacy gate", "CP0 global authority"],
-      "important_rules": ["HiGodot single authoring authority when adopted", "Existing Solution First", "actual runtime evidence before PASS", "project-dedicated local environment", "no authoring bypass"],
-      "modules": ["Godot Authoring Authority", "Runtime Diagnostics", "Addon/Plugin Evaluation", "Editor/Runtime Adapter", "QA Technical Tooling", "Local Execution Environment"],
-      "validation": ["python tools/check_base_partition_scope.py --part P06 --base <BASELINE_SHA> --head HEAD", "python -m unittest discover -s tests -p 'test_godot_*.py' -v"],
-      "acceptance_criteria": ["Godot authoring writer 중복 0", "실행하지 않은 runtime PASS 0", "addon은 실제 consumer가 있을 때만 유지", "QA/local tooling은 unique 기능 흡수 후 retirement 여부 판정"],
-      "revisit_conditions": ["Godot major/minor toolchain 변경", "HiGodot authority 정책 변경", "QA Evidence Studio retirement가 완료되어 P06 범위가 크게 축소"]
+      "allowed_new_paths": [
+        "docs/operations/godot-runtime/**",
+        "tests/test_p06_*.py"
+      ],
+      "read_only_dependencies": [
+        "P04 gameplay acceptance",
+        "P05 approved visual inputs",
+        "P07 release validation",
+        "P02 legacy gate",
+        "CP0 global authority"
+      ],
+      "important_rules": [
+        "HiGodot single authoring authority when adopted",
+        "Existing Solution First",
+        "actual runtime evidence before PASS",
+        "project-dedicated local environment",
+        "no authoring bypass"
+      ],
+      "modules": [
+        "Godot Authoring Authority",
+        "Runtime Diagnostics",
+        "Addon/Plugin Evaluation",
+        "Editor/Runtime Adapter",
+        "QA Technical Tooling",
+        "Local Execution Environment"
+      ],
+      "validation": [
+        "python tools/check_base_partition_scope.py --part P06 --base <BASELINE_SHA> --head HEAD",
+        "python -m unittest discover -s tests -p 'test_godot_*.py' -v"
+      ],
+      "acceptance_criteria": [
+        "Godot authoring writer 중복 0",
+        "실행하지 않은 runtime PASS 0",
+        "addon은 실제 consumer가 있을 때만 유지",
+        "QA/local tooling은 unique 기능 흡수 후 retirement 여부 판정"
+      ],
+      "revisit_conditions": [
+        "Godot major/minor toolchain 변경",
+        "HiGodot authority 정책 변경",
+        "QA Evidence Studio retirement가 완료되어 P06 범위가 크게 축소"
+      ],
+      "learning_log": "docs/operations/base-partitions/learning/P06_LEARNING_LOG.md",
+      "learning_capture": {
+        "required_after_each_work": true,
+        "fields": [
+          "work_ref",
+          "baseline_and_result",
+          "what_worked",
+          "what_failed_or_was_rejected",
+          "reusable_lesson",
+          "anti_pattern",
+          "affected_rules_skills_modules",
+          "evidence",
+          "reuse_scope",
+          "promotion_candidate",
+          "source_followup_questions",
+          "revisit_condition"
+        ],
+        "reuse_scope_values": [
+          "PART_ONLY",
+          "BASE_PROMOTION_CANDIDATE",
+          "PROJECT_ONLY",
+          "NO_NEW_REUSABLE_LESSON"
+        ]
+      },
+      "source_discovery": {
+        "periodic_queue": "Periodic Source Scan Queue",
+        "source_domains": [
+          "GAME_DEVELOPMENT",
+          "CODE_ENGINEERING"
+        ],
+        "discovery_questions": [
+          "current Godot engine/runtime/debugging guidance and regressions",
+          "addon/plugin evaluation, editor tooling and local execution reliability",
+          "runtime QA tooling that provides unique evidence without duplicating the authoring authority"
+        ],
+        "existing_source_action": "CHECK_DUE_OR_MATERIAL_NEW_OR_UPDATED_ITEMS",
+        "new_source_action": "SEARCH_FOR_ADDITIONAL_PRIMARY_OR_PROFESSIONAL_SOURCES",
+        "disposition_required": true,
+        "allowed_dispositions": [
+          "ADOPT",
+          "ADAPT",
+          "TEST",
+          "PROJECT_ONLY",
+          "REFERENCE_ONLY",
+          "AVOID",
+          "IGNORE",
+          "BLOCKED_UNVERIFIED",
+          "PROMOTION_CANDIDATE"
+        ]
+      }
     },
     {
       "part_id": "P07",
       "name": "Platform, Release & Execution Validation",
       "purpose": "실제 diff/실행 증거 검증과 플랫폼·권리·빌드·배포·backend·DRM·release 준비를 하나의 delivery evidence 책임으로 최적화한다.",
       "context_pack": "docs/operations/base-partitions/P07_PLATFORM_RELEASE_VALIDATION.md",
-      "owned_skill_ids": ["reviewing-and-validating-project-changes"],
+      "owned_skill_ids": [
+        "reviewing-and-validating-project-changes"
+      ],
       "owned_write_paths": [
         "skills/reviewing-and-validating-project-changes/**",
         "templates/evidence/**",
@@ -282,22 +863,110 @@
         "tests/test_platform_*.py",
         "tests/test_game_entitlement_*.py",
         "tests/test_cloud_run_*.py",
-        "tests/test_*release*.py"
+        "tests/test_*release*.py",
+        "docs/operations/base-partitions/learning/P07_LEARNING_LOG.md"
       ],
-      "allowed_new_paths": ["docs/operations/release-validation/**", "tests/test_p07_*.py"],
-      "read_only_dependencies": ["P03 adversarial decisions", "P06 runtime/toolchain evidence", "P05 asset rights inputs", "P04 acceptance criteria", "CP0 release identity"],
-      "important_rules": ["Evidence ceiling", "LATEST_EXACT_HEAD_ONLY", "runtime/build proof separate from planning approval", "platform official-source-first", "Android deferred until approved release stage where applicable"],
-      "modules": ["Change Validation", "Evidence Ledger", "Platform/Store Review", "Build/Size/Release", "Backend/Online Services", "Entitlement/DRM"],
-      "validation": ["python tools/check_base_partition_scope.py --part P07 --base <BASELINE_SHA> --head HEAD", "python -m unittest discover -s tests -p 'test_*release*.py' -v"],
-      "acceptance_criteria": ["주요 완료 주장에 evidence locator 존재", "플랫폼 규칙은 최신 1차 출처로 검증", "Notion 승인과 runtime proof 혼동 0", "release blocker/미검증 명시"],
-      "revisit_conditions": ["출시 플랫폼 추가", "backend/provider 전략 변경", "P07 validation skill이 P03와 반복적으로 결합되어 독립성이 사라짐"]
+      "allowed_new_paths": [
+        "docs/operations/release-validation/**",
+        "tests/test_p07_*.py"
+      ],
+      "read_only_dependencies": [
+        "P03 adversarial decisions",
+        "P06 runtime/toolchain evidence",
+        "P05 asset rights inputs",
+        "P04 acceptance criteria",
+        "CP0 release identity"
+      ],
+      "important_rules": [
+        "Evidence ceiling",
+        "LATEST_EXACT_HEAD_ONLY",
+        "runtime/build proof separate from planning approval",
+        "platform official-source-first",
+        "Android deferred until approved release stage where applicable"
+      ],
+      "modules": [
+        "Change Validation",
+        "Evidence Ledger",
+        "Platform/Store Review",
+        "Build/Size/Release",
+        "Backend/Online Services",
+        "Entitlement/DRM"
+      ],
+      "validation": [
+        "python tools/check_base_partition_scope.py --part P07 --base <BASELINE_SHA> --head HEAD",
+        "python -m unittest discover -s tests -p 'test_*release*.py' -v"
+      ],
+      "acceptance_criteria": [
+        "주요 완료 주장에 evidence locator 존재",
+        "플랫폼 규칙은 최신 1차 출처로 검증",
+        "Notion 승인과 runtime proof 혼동 0",
+        "release blocker/미검증 명시"
+      ],
+      "revisit_conditions": [
+        "출시 플랫폼 추가",
+        "backend/provider 전략 변경",
+        "P07 validation skill이 P03와 반복적으로 결합되어 독립성이 사라짐"
+      ],
+      "learning_log": "docs/operations/base-partitions/learning/P07_LEARNING_LOG.md",
+      "learning_capture": {
+        "required_after_each_work": true,
+        "fields": [
+          "work_ref",
+          "baseline_and_result",
+          "what_worked",
+          "what_failed_or_was_rejected",
+          "reusable_lesson",
+          "anti_pattern",
+          "affected_rules_skills_modules",
+          "evidence",
+          "reuse_scope",
+          "promotion_candidate",
+          "source_followup_questions",
+          "revisit_condition"
+        ],
+        "reuse_scope_values": [
+          "PART_ONLY",
+          "BASE_PROMOTION_CANDIDATE",
+          "PROJECT_ONLY",
+          "NO_NEW_REUSABLE_LESSON"
+        ]
+      },
+      "source_discovery": {
+        "periodic_queue": "Periodic Source Scan Queue",
+        "source_domains": [
+          "GAME_DEVELOPMENT",
+          "CODE_ENGINEERING"
+        ],
+        "discovery_questions": [
+          "platform/store/build/release requirements and official policy changes",
+          "evidence-led validation, accessibility/performance/release readiness practices",
+          "backend, entitlement, DRM, rights and distribution practices appropriate for small games"
+        ],
+        "existing_source_action": "CHECK_DUE_OR_MATERIAL_NEW_OR_UPDATED_ITEMS",
+        "new_source_action": "SEARCH_FOR_ADDITIONAL_PRIMARY_OR_PROFESSIONAL_SOURCES",
+        "disposition_required": true,
+        "allowed_dispositions": [
+          "ADOPT",
+          "ADAPT",
+          "TEST",
+          "PROJECT_ONLY",
+          "REFERENCE_ONLY",
+          "AVOID",
+          "IGNORE",
+          "BLOCKED_UNVERIFIED",
+          "PROMOTION_CANDIDATE"
+        ]
+      }
     },
     {
       "part_id": "P08",
       "name": "AI Operations & External Executors",
       "purpose": "AI instruction/context, model/cost/source research, DeepSeek/worktree와 외부 executor 운영을 최적화한다.",
       "context_pack": "docs/operations/base-partitions/P08_AI_OPERATIONS_EXECUTORS.md",
-      "owned_skill_ids": ["orchestrating-deepseek-worktrees", "optimizing-ai-model-and-prompt-costs"],
+      "owned_skill_ids": [
+        "orchestrating-deepseek-worktrees",
+        "optimizing-ai-model-and-prompt-costs"
+      ],
       "owned_write_paths": [
         "skills/orchestrating-deepseek-worktrees/**",
         "skills/optimizing-ai-model-and-prompt-costs/**",
@@ -309,22 +978,110 @@
         "tests/test_ai_*.py",
         "tests/test_*model*.py",
         "tests/test_*source_radar*.py",
-        "tests/test_*deepseek*.py"
+        "tests/test_*deepseek*.py",
+        "docs/operations/base-partitions/learning/P08_LEARNING_LOG.md"
       ],
-      "allowed_new_paths": ["docs/operations/ai-executors/**", "tests/test_p08_*.py"],
-      "read_only_dependencies": ["P01 GPT/Codex handoff authority", "P02 skill routing/freshness", "P03 worktree isolation", "P07 evidence rules", "CP0 partition prompts protected first"],
-      "important_rules": ["GPT primary", "OPTIONAL_CODEX_EXECUTOR", "DEFAULT_SUPPORTING_SKILL_BUDGET: 1", "ZERO_INCREMENTAL_COST_REQUIRED", "CURRENT_PAID_PLANS: GPT_PRO"],
-      "modules": ["AI Instruction/Context", "Model/Cost Routing", "Source/Research Operations", "DeepSeek Worktree Orchestration", "Optional Executor Handoff"],
-      "validation": ["python tools/check_base_partition_scope.py --part P08 --base <BASELINE_SHA> --head HEAD", "python -m unittest discover -s tests -p 'test_*model*.py' -v"],
-      "acceptance_criteria": ["불필요한 Skill/tool 호출 감소", "추가 유료 API/SaaS 기본 의존 0", "외부 executor가 프로젝트 정본을 다시 읽음", "다른 worktree/프로젝트 혼입 0"],
-      "revisit_conditions": ["기본 AI provider/product 구조 변경", "새 유료 기능을 사용자 승인", "AI routing이 독립 시스템으로 커져 P08 분할이 필요"]
+      "allowed_new_paths": [
+        "docs/operations/ai-executors/**",
+        "tests/test_p08_*.py"
+      ],
+      "read_only_dependencies": [
+        "P01 GPT/Codex handoff authority",
+        "P02 skill routing/freshness",
+        "P03 worktree isolation",
+        "P07 evidence rules",
+        "CP0 partition prompts protected first"
+      ],
+      "important_rules": [
+        "GPT primary",
+        "OPTIONAL_CODEX_EXECUTOR",
+        "DEFAULT_SUPPORTING_SKILL_BUDGET: 1",
+        "ZERO_INCREMENTAL_COST_REQUIRED",
+        "CURRENT_PAID_PLANS: GPT_PRO"
+      ],
+      "modules": [
+        "AI Instruction/Context",
+        "Model/Cost Routing",
+        "Source/Research Operations",
+        "DeepSeek Worktree Orchestration",
+        "Optional Executor Handoff"
+      ],
+      "validation": [
+        "python tools/check_base_partition_scope.py --part P08 --base <BASELINE_SHA> --head HEAD",
+        "python -m unittest discover -s tests -p 'test_*model*.py' -v"
+      ],
+      "acceptance_criteria": [
+        "불필요한 Skill/tool 호출 감소",
+        "추가 유료 API/SaaS 기본 의존 0",
+        "외부 executor가 프로젝트 정본을 다시 읽음",
+        "다른 worktree/프로젝트 혼입 0"
+      ],
+      "revisit_conditions": [
+        "기본 AI provider/product 구조 변경",
+        "새 유료 기능을 사용자 승인",
+        "AI routing이 독립 시스템으로 커져 P08 분할이 필요"
+      ],
+      "learning_log": "docs/operations/base-partitions/learning/P08_LEARNING_LOG.md",
+      "learning_capture": {
+        "required_after_each_work": true,
+        "fields": [
+          "work_ref",
+          "baseline_and_result",
+          "what_worked",
+          "what_failed_or_was_rejected",
+          "reusable_lesson",
+          "anti_pattern",
+          "affected_rules_skills_modules",
+          "evidence",
+          "reuse_scope",
+          "promotion_candidate",
+          "source_followup_questions",
+          "revisit_condition"
+        ],
+        "reuse_scope_values": [
+          "PART_ONLY",
+          "BASE_PROMOTION_CANDIDATE",
+          "PROJECT_ONLY",
+          "NO_NEW_REUSABLE_LESSON"
+        ]
+      },
+      "source_discovery": {
+        "periodic_queue": "Periodic Source Scan Queue",
+        "source_domains": [
+          "PROMPT_AND_AGENT_WORKFLOW",
+          "SKILL_AUTHORING_AND_EVOLUTION",
+          "CODE_ENGINEERING"
+        ],
+        "discovery_questions": [
+          "current agent/context/prompt/eval patterns that reduce tool and skill overload",
+          "model routing and cost-control practices that preserve quality without new paid dependencies",
+          "safe external-executor/worktree patterns for long-running coding tasks"
+        ],
+        "existing_source_action": "CHECK_DUE_OR_MATERIAL_NEW_OR_UPDATED_ITEMS",
+        "new_source_action": "SEARCH_FOR_ADDITIONAL_PRIMARY_OR_PROFESSIONAL_SOURCES",
+        "disposition_required": true,
+        "allowed_dispositions": [
+          "ADOPT",
+          "ADAPT",
+          "TEST",
+          "PROJECT_ONLY",
+          "REFERENCE_ONLY",
+          "AVOID",
+          "IGNORE",
+          "BLOCKED_UNVERIFIED",
+          "PROMOTION_CANDIDATE"
+        ]
+      }
     },
     {
       "part_id": "P09",
       "name": "Content, Narrative & Publication",
       "purpose": "연재소설, 게임 서사/캐릭터/voice와 게임개발 YouTube 등 외부 콘텐츠 제작·발행 흐름을 최적화한다.",
       "context_pack": "docs/operations/base-partitions/P09_CONTENT_NARRATIVE_PUBLICATION.md",
-      "owned_skill_ids": ["producing-game-development-youtube-videos", "developing-and-revising-serial-fiction"],
+      "owned_skill_ids": [
+        "producing-game-development-youtube-videos",
+        "developing-and-revising-serial-fiction"
+      ],
       "owned_write_paths": [
         "skills/producing-game-development-youtube-videos/**",
         "skills/developing-and-revising-serial-fiction/**",
@@ -336,23 +1093,147 @@
         "docs/knowledge/game-development/*CHARACTER*",
         "tests/test_*fiction*.py",
         "tests/test_*youtube*.py",
-        "tests/test_*narrative*.py"
+        "tests/test_*narrative*.py",
+        "docs/operations/base-partitions/learning/P09_LEARNING_LOG.md"
       ],
-      "allowed_new_paths": ["docs/operations/content-publication/**", "tests/test_p09_*.py"],
-      "read_only_dependencies": ["P01 project/context authority", "P04 world/story fit", "P05 visual assets", "P07 platform/rights evidence", "CP0 routing"],
-      "important_rules": ["project canon first", "voice/style consistency", "platform/rights verification", "content output is not runtime implementation proof", "reusable lesson vs project-specific separation"],
-      "modules": ["Serial Fiction", "Narrative/Character/Voice", "Game-dev YouTube", "Publication Evidence", "Reusable Writing Lessons"],
-      "validation": ["python tools/check_base_partition_scope.py --part P09 --base <BASELINE_SHA> --head HEAD", "python -m unittest discover -s tests -p 'test_*fiction*.py' -v"],
-      "acceptance_criteria": ["정사/voice/style drift 감소", "프로젝트 고유 서사가 Base 공용 정본으로 오염되지 않음", "발행물 provenance/rights 경계 유지", "중복 콘텐츠 Skill 0"],
-      "revisit_conditions": ["콘텐츠 채널이 추가되어 publication 책임이 커짐", "서사 Skill 수가 materially 증가", "게임 서사와 일반 소설 계약이 더 이상 같은 Part에서 관리하기 어려움"]
+      "allowed_new_paths": [
+        "docs/operations/content-publication/**",
+        "tests/test_p09_*.py"
+      ],
+      "read_only_dependencies": [
+        "P01 project/context authority",
+        "P04 world/story fit",
+        "P05 visual assets",
+        "P07 platform/rights evidence",
+        "CP0 routing"
+      ],
+      "important_rules": [
+        "project canon first",
+        "voice/style consistency",
+        "platform/rights verification",
+        "content output is not runtime implementation proof",
+        "reusable lesson vs project-specific separation"
+      ],
+      "modules": [
+        "Serial Fiction",
+        "Narrative/Character/Voice",
+        "Game-dev YouTube",
+        "Publication Evidence",
+        "Reusable Writing Lessons"
+      ],
+      "validation": [
+        "python tools/check_base_partition_scope.py --part P09 --base <BASELINE_SHA> --head HEAD",
+        "python -m unittest discover -s tests -p 'test_*fiction*.py' -v"
+      ],
+      "acceptance_criteria": [
+        "정사/voice/style drift 감소",
+        "프로젝트 고유 서사가 Base 공용 정본으로 오염되지 않음",
+        "발행물 provenance/rights 경계 유지",
+        "중복 콘텐츠 Skill 0"
+      ],
+      "revisit_conditions": [
+        "콘텐츠 채널이 추가되어 publication 책임이 커짐",
+        "서사 Skill 수가 materially 증가",
+        "게임 서사와 일반 소설 계약이 더 이상 같은 Part에서 관리하기 어려움"
+      ],
+      "learning_log": "docs/operations/base-partitions/learning/P09_LEARNING_LOG.md",
+      "learning_capture": {
+        "required_after_each_work": true,
+        "fields": [
+          "work_ref",
+          "baseline_and_result",
+          "what_worked",
+          "what_failed_or_was_rejected",
+          "reusable_lesson",
+          "anti_pattern",
+          "affected_rules_skills_modules",
+          "evidence",
+          "reuse_scope",
+          "promotion_candidate",
+          "source_followup_questions",
+          "revisit_condition"
+        ],
+        "reuse_scope_values": [
+          "PART_ONLY",
+          "BASE_PROMOTION_CANDIDATE",
+          "PROJECT_ONLY",
+          "NO_NEW_REUSABLE_LESSON"
+        ]
+      },
+      "source_discovery": {
+        "periodic_queue": "Periodic Source Scan Queue",
+        "source_domains": [
+          "FICTION_AND_INTERACTIVE_NARRATIVE",
+          "YOUTUBE_AND_VIDEO_EDITING"
+        ],
+        "discovery_questions": [
+          "serial-fiction revision, character voice and continuity methods",
+          "interactive narrative, mystery/clue and worldbuilding practices with audience evidence",
+          "game-development YouTube packaging, script, edit and analytics practices without copying expression"
+        ],
+        "existing_source_action": "CHECK_DUE_OR_MATERIAL_NEW_OR_UPDATED_ITEMS",
+        "new_source_action": "SEARCH_FOR_ADDITIONAL_PRIMARY_OR_PROFESSIONAL_SOURCES",
+        "disposition_required": true,
+        "allowed_dispositions": [
+          "ADOPT",
+          "ADAPT",
+          "TEST",
+          "PROJECT_ONLY",
+          "REFERENCE_ONLY",
+          "AVOID",
+          "IGNORE",
+          "BLOCKED_UNVERIFIED",
+          "PROMOTION_CANDIDATE"
+        ]
+      }
     }
   ],
   "retirement_targets": [
-    {"surface": "Google Sheets", "primary_part": "P02", "destination_parts": ["P01", "P04", "P05"], "rule": "UNIQUE material only -> Notion/repository -> readback -> active consumer 0 -> remove"},
-    {"surface": "Figma references/workflows", "primary_part": "P05", "destination_parts": ["P05", "P01"], "rule": "absorb unique visual principles/provenance only; no active authority"},
-    {"surface": "external HTML visual/dashboard workspace", "primary_part": "P05", "destination_parts": ["P01", "P05"], "rule": "absorb unique human-view capability into Notion then remove active route"},
-    {"surface": "custom local visual Tool/Hub", "primary_part": "P05", "destination_parts": ["P05", "P06"], "rule": "inventory unique capability before deletion; do not revive as default workspace"},
-    {"surface": "QA Evidence Studio/local QA tooling", "primary_part": "P06", "destination_parts": ["P07"], "rule": "retain only unique verification capability not replaced by repo/runtime evidence; otherwise absorb then retire"}
+    {
+      "surface": "Google Sheets",
+      "primary_part": "P02",
+      "destination_parts": [
+        "P01",
+        "P04",
+        "P05"
+      ],
+      "rule": "UNIQUE material only -> Notion/repository -> readback -> active consumer 0 -> remove"
+    },
+    {
+      "surface": "Figma references/workflows",
+      "primary_part": "P05",
+      "destination_parts": [
+        "P05",
+        "P01"
+      ],
+      "rule": "absorb unique visual principles/provenance only; no active authority"
+    },
+    {
+      "surface": "external HTML visual/dashboard workspace",
+      "primary_part": "P05",
+      "destination_parts": [
+        "P01",
+        "P05"
+      ],
+      "rule": "absorb unique human-view capability into Notion then remove active route"
+    },
+    {
+      "surface": "custom local visual Tool/Hub",
+      "primary_part": "P05",
+      "destination_parts": [
+        "P05",
+        "P06"
+      ],
+      "rule": "inventory unique capability before deletion; do not revive as default workspace"
+    },
+    {
+      "surface": "QA Evidence Studio/local QA tooling",
+      "primary_part": "P06",
+      "destination_parts": [
+        "P07"
+      ],
+      "rule": "retain only unique verification capability not replaced by repo/runtime evidence; otherwise absorb then retire"
+    }
   ],
   "integration": {
     "chat_count": 1,
@@ -362,6 +1243,8 @@
       "Resolve latest main and manifest version",
       "Read all P01..P09 completion reports and CROSS_PART_CHANGE_REQUEST records",
       "Validate ACTUAL_CHANGED_PATHS against each Part owned scope",
+      "Review P01..P09 learning logs and promote only validated reusable lessons",
+      "Route periodic Source Queue discoveries to P01..P09 and preserve UNVERIFIED_DISCOVERY until reviewed",
       "Deduplicate cross-part requests",
       "Apply CP0 changes once",
       "Rebuild generated artifacts",
@@ -381,5 +1264,24 @@
     "new major product domain or engine is added",
     "Notion/GitHub authority model materially changes",
     "dynamic dependency clustering can preserve stable Part IDs and materially reduce conflicts"
-  ]
+  ],
+  "learning_system": {
+    "contract": "WORK_COMPLETION_LEARNING_CHECKPOINT_PLUS_PERIODIC_SOURCE_DISCOVERY",
+    "required_after_each_part_work": true,
+    "no_forced_lesson_token": "NO_NEW_REUSABLE_LESSON",
+    "promotion_flow": "PART_LEARNING_LOG -> CROSS_PART_CHANGE_REQUEST/PROMOTION_CANDIDATE -> INTEGRATION -> canonical Base owner",
+    "periodic_source_queue": ".github/workflows/periodic-source-scan-queue.yml",
+    "source_policy_owner": "docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md",
+    "operations_ledger": "docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json",
+    "research_executor": "USER_DIRECTED_CHATGPT_REVIEW",
+    "auto_canon_write": false,
+    "auto_learning_claim": false,
+    "rules": [
+      "Every completed Part work records one checkpoint, including NO_NEW_REUSABLE_LESSON when appropriate",
+      "Project-specific lessons stay project-specific unless the Base promotion gate is satisfied",
+      "External discovery remains UNVERIFIED_DISCOVERY until original-source review and evidence disposition",
+      "New source count is not a success metric; decision improvement and reproducibility are",
+      "Source Queue preparation does not imply research completion or learning completion"
+    ]
+  }
 }

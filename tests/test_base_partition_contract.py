@@ -12,6 +12,7 @@ OPERATING_MODEL = ROOT / "docs" / "operations" / "BASE_PARTITION_OPERATING_MODEL
 WORKER_PROMPT = ROOT / "templates" / "prompts" / "BASE_PARTITION_OPTIMIZATION_PROMPT.md"
 INTEGRATION_PROMPT = ROOT / "templates" / "prompts" / "BASE_PARTITION_INTEGRATION_PROMPT.md"
 SCOPE_CHECKER = ROOT / "tools" / "check_base_partition_scope.py"
+LEARNING_SYSTEM = ROOT / "docs" / "operations" / "BASE_PARTITION_LEARNING_SYSTEM.md"
 
 EXPECTED_SKILLS = {
     "managing-project-intake-and-work-contract", "managing-game-project-operating-system",
@@ -38,7 +39,7 @@ class BasePartitionContractTests(unittest.TestCase):
         return json.loads(MANIFEST.read_text(encoding="utf-8"))
 
     def test_required_partition_artifacts_exist(self) -> None:
-        for path in (MANIFEST, OPERATING_MODEL, WORKER_PROMPT, INTEGRATION_PROMPT, SCOPE_CHECKER):
+        for path in (MANIFEST, OPERATING_MODEL, WORKER_PROMPT, INTEGRATION_PROMPT, SCOPE_CHECKER, LEARNING_SYSTEM):
             self.assertTrue(path.exists(), str(path.relative_to(ROOT)))
 
     def test_manifest_uses_control_plane_plus_nine_functional_parts(self) -> None:
@@ -127,6 +128,28 @@ class BasePartitionContractTests(unittest.TestCase):
         surfaces = {item["surface"] for item in manifest["retirement_targets"]}
         for surface in ("Google Sheets", "Figma references/workflows", "external HTML visual/dashboard workspace", "custom local visual Tool/Hub", "QA Evidence Studio/local QA tooling"):
             self.assertIn(surface, surfaces)
+
+    def test_each_part_has_learning_log_and_source_discovery(self) -> None:
+        manifest = self.load_manifest()
+        self.assertTrue(manifest["learning_system"]["required_after_each_part_work"])
+        for part in manifest["parts"]:
+            learning_log = ROOT / part["learning_log"]
+            self.assertTrue(learning_log.exists(), part["part_id"])
+            self.assertIn(part["learning_log"], part["owned_write_paths"])
+            capture = part["learning_capture"]
+            self.assertTrue(capture["required_after_each_work"])
+            self.assertIn("NO_NEW_REUSABLE_LESSON", capture["reuse_scope_values"])
+            discovery = part["source_discovery"]
+            self.assertTrue(discovery["source_domains"])
+            self.assertGreaterEqual(len(discovery["discovery_questions"]), 3)
+
+    def test_periodic_source_queue_renders_partition_learning_radar(self) -> None:
+        from tools.periodic_source_scan_queue import render_partition_learning_radar
+        text = render_partition_learning_radar(self.load_manifest())
+        self.assertIn("Partition Learning Radar", text)
+        for part_id in [f"P{i:02d}" for i in range(1, 10)]:
+            self.assertIn(part_id, text)
+        self.assertIn("신규 Source 후보", text)
 
 
 if __name__ == "__main__":

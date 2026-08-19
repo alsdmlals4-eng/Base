@@ -62,6 +62,12 @@ Part에서 보고된 Figma/Sheets/HTML/local Tool/QA tooling 항목을 `UNIQUE /
 
 Notion은 Base/프로젝트 사람이 읽는 human-facing map, GitHub는 규칙/Skill/structured/runtime truth다. Integration 후 Notion `Base · 작업 시스템 & Skill 지도`를 merged facts로 갱신하고 readback한다. 진행 중 PR 내용을 현행처럼 표시하지 않는다.
 
+## 7A. Learning 통합
+
+P01~P09의 `learning_log`를 모두 읽는다. 같은 교훈의 중복 승격을 합치고 `PROJECT_ONLY`/`PART_ONLY`는 원래 범위에 남긴다. `BASE_PROMOTION_CANDIDATE`도 evidence·반복 재사용성·기존 canonical owner를 재검증한 뒤에만 흡수한다.
+
+Periodic Source Scan Queue에서 나온 항목은 `UNVERIFIED_DISCOVERY → source/evidence disposition → Part lesson → Base promotion candidate` 순서를 건너뛰지 않는다. 신규 사이트 수를 KPI로 삼지 않고 실제 결정 개선·재현성·회귀 감소를 본다.
+
 ## 8. 검증
 
 - partition contract CI
