@@ -100,6 +100,16 @@ class SequentialPartCoordinatorContractTests(unittest.TestCase):
         self.assertIn("open/draft/ready", protocol)
         self.assertIn("CROSS_PART_CHANGE_REQUEST", protocol)
 
+    def test_legacy_sheet_planning_template_is_migration_only(self) -> None:
+        text = (ROOT / "templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md").read_text(encoding="utf-8")
+        self.assertIn("MIGRATION_ONLY_UNTIL_REMOVAL", text)
+        self.assertIn("GOOGLE_SHEETS_COMPATIBILITY_ONLY", text)
+        self.assertIn("Project Notion Home", text)
+        self.assertIn("신규 설치 금지", text)
+        self.assertIn("새 Sheet/새 tab 설치는 금지", text)
+        self.assertNotIn("새 Sheet에 설치하는 권장 핵심 tab", text)
+        self.assertNotIn("시각 Artifact가 있을 때만 설치한다", text)
+
     def test_cross_part_request_is_only_for_real_coordination_blockers(self) -> None:
         text = WORKER_PROMPT.read_text(encoding="utf-8")
         self.assertIn("CROSS_PART_CHANGE", text)

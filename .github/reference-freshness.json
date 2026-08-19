@@ -444,8 +444,10 @@
       "require_all_changed": [],
       "require_any_changed": [
         "tests/test_bca_visual_sheet_workflow.py",
-        "tests/test_project_gdd_google_sheets_contract.py"
-      ]
+        "tests/test_project_gdd_google_sheets_contract.py",
+        "tests/test_sequential_part_coordinator_contract.py"
+      ],
+      "semantic_note": "Legacy planning-Sheet migration-only semantics may be verified by the sequential coordinator contract; existing BCA/Sheet tests remain valid companions for their own owned policies."
     },
     {
       "name": "skill-evolution-behavior-evidence-sync",
