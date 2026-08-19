@@ -11,11 +11,12 @@ def read(path: str) -> str:
 
 
 class DemoFirstPlanningSequenceTests(unittest.TestCase):
-    def test_policy_declares_sheet_scope_and_prework_audit(self) -> None:
+    def test_policy_declares_notion_repo_scope_and_prework_audit(self) -> None:
         policy = read("docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md")
         for term in (
-            "BASE_EXCLUDED",
-            "PROJECT_SHEET_CONFIGURED",
+            "NOTION_HUMAN_FACING_CANON",
+            "REPOSITORY_STRUCTURED_CANON",
+            "RETIRED_MIGRATION_ONLY",
             "DUPLICATE_WORK",
             "MISSING_CANON",
             "MISSING_CONSUMER",
@@ -25,6 +26,8 @@ class DemoFirstPlanningSequenceTests(unittest.TestCase):
             "PROPAGATION_AUDIT",
         ):
             self.assertIn(term, policy)
+        self.assertNotIn("PROJECT_SHEET_CONFIGURED", policy)
+        self.assertNotIn("USER_FACING_GDD_WORKSPACE", policy)
 
     def test_material_planning_uses_three_layer_evidence_and_approval_bundles(self) -> None:
         policy = read("docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md")
@@ -58,19 +61,19 @@ class DemoFirstPlanningSequenceTests(unittest.TestCase):
         self.assertNotIn("## 2. CORE_POC 결과", plan)
         self.assertIn("별도 `CORE_POC`", stage)
 
-    def test_project_sheet_tabs_follow_approved_planning_order(self) -> None:
-        template = read("templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md")
+    def test_project_human_planning_surfaces_follow_approved_order_without_sheet_template(self) -> None:
+        policy = read("docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md")
         ordered = (
-            "00_프로젝트_허브",
-            "01_작업순서",
-            "03_근거_라이브러리",
-            "04_누락_충돌_감사",
-            "20_코어경험_데모목표",
-            "80_데모_버티컬슬라이스_플레이테스트",
-            "99_변경이력",
+            "Project Home",
+            "Project Control",
+            "Reference / Benchmark",
+            "Visual / Story Bible",
+            "Core System",
+            "Production / Handoff",
         )
-        positions = [template.index(term) for term in ordered]
+        positions = [policy.index(term) for term in ordered]
         self.assertEqual(positions, sorted(positions))
+        self.assertNotIn("PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md", policy)
 
 
 if __name__ == "__main__":
