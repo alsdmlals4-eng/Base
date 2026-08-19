@@ -33,33 +33,39 @@ what_worked:
   - "The existing auditing-and-refining-ui-art Skill already routes Godot details to its owned implementation reference, so the reference could be strengthened without widening the Skill or touching CP0 routing."
   - "Primary/professional sources were reduced to reusable principles instead of copying platform or enterprise-scale claims."
   - "A fresh recheck of #530 changed filenames caught a newly introduced path overlap before merge and forced the final diff back to independent P05-owned paths."
+  - "Repository merge rules rejected reuse of an older successful merge-context after main advanced, forcing a fresh required-gate cycle instead of allowing stale integration evidence to be treated as current."
 what_failed_or_was_rejected:
   - "Broad HTML-dashboard/legacy visual routing cleanup was rejected in this PR because #530 already edits those paths and CP0 owns global routes."
   - "A new accessibility Skill or AI-art-production Skill was rejected because existing P05 responsibilities already own the behavior and a new Skill would add routing/context cost."
   - "Moving the visual-value regression into tests/test_pixel_art_style_system.py was reverted after the P05 scope audit found that path is not owned by the current Manifest patterns."
   - "A later attempt to bind the regression to tests/test_bca_visual_sheet_workflow.py was also reverted because a fresh #530 diff check showed that exact path is already modified by the open protected PR."
-reusable_lesson: "Visual accessibility PASS needs semantic/runtime evidence separate from visual or focus checks; AI-assisted art production value needs baseline-relative retake, repeated-style acceptance, human review cost, and runtime/export evidence rather than generation success alone. Concurrent-PR protection must be rechecked after every changed-path expansion, not only once at task start."
+  - "The first squash-merge attempt after main advanced was rejected with Required status check 'ci-gate' is expected; reusing the previous green synthetic merge ref was rejected as insufficient evidence for the new base."
+reusable_lesson: "Visual accessibility PASS needs semantic/runtime evidence separate from visual or focus checks; AI-assisted art production value needs baseline-relative retake, repeated-style acceptance, human review cost, and runtime/export evidence rather than generation success alone. Concurrent-PR protection must be rechecked after every changed-path expansion, and required merge-context gates must be renewed whenever the base advances even if the PR head did not change."
 anti_pattern:
   - "Inferring screen-reader usability from rendered UI or keyboard focus alone."
   - "Treating first-generation quality or a vendor/presenter savings headline as production-value proof."
   - "Assuming conceptual domain ownership implies Manifest write ownership for a similarly named test file."
   - "Reusing an earlier no-overlap result after the current PR's changed-path set has expanded."
+  - "Treating a stale synthetic merge-ref PASS as current integration evidence after the base branch advances."
 affected_rules_skills_modules:
   - "auditing-and-refining-ui-art / UX/UI Audit"
   - "VISUAL_STYLE_SOURCE_RADAR / Art Direction"
   - "P05 scope and concurrent-PR ownership"
+  - "required merge-context validation freshness"
 evidence:
   - "RED exact-head 29ade30083f25d6169481c5b05c8e6f5aecd05c7: Validate Game UX UI System failed only the two newly added contracts."
+  - "Exact head 7dbfdc598ca7425020de4d519827a00dbefeedc8 against its then-current merge context passed UX/UI, evidence knowledge, Skill routing, Base Partition, Base v9, publication and final ci-gate validation."
+  - "After main advanced to 3be8a3fb763327ad59cdc99a9bb15263f487cf90, GitHub rejected the squash merge with HTTP 405 because required status check ci-gate was expected for the refreshed merge context; no stale PASS was promoted."
   - "Temporary validation head bad7e5ddd0afa2ca96ffeb4a0db169332dd70db5 ran the integrated suite with 39 tests OK, but its test_bca path change was later reverted after #530 overlap discovery and is not part of final scope evidence."
   - "Godot stable documentation: screen-reader integration requires accessibility labels, logical reading flow, and target-platform testing."
   - "Xbox Accessibility Guidelines V3.2: game accessibility guidance for design/development/testing, not a legal-compliance checklist."
   - "GDC 2026 LifeAfter AIGC production session: value-oriented evaluation, human-AI workflow, asset management, and performance were adopted as evaluation principles; reported enterprise savings were not promoted as Base expectations."
 reuse_scope: BASE_PROMOTION_CANDIDATE
-promotion_candidate: "semantic accessibility evidence boundary + baseline-relative AI-assisted production value gate + changed-path expansion requires renewed concurrent-PR overlap audit"
+promotion_candidate: "semantic accessibility evidence boundary + baseline-relative AI-assisted production value gate + changed-path expansion requires renewed concurrent-PR overlap audit + base advancement requires refreshed merge-context required gates"
 source_followup_questions:
   - "What actual target-platform screen-reader evidence appears when a Godot project implements these properties?"
   - "What retake/review/runtime baseline emerges after a repeated family of visual assets is produced in a solo project?"
-revisit_condition: "Revisit when #530/Integration changes visual routing, Godot accessibility APIs change, or project measurements show these evidence fields do not predict lower rework or better consistency."
+revisit_condition: "Revisit when #530/Integration changes visual routing, Godot accessibility APIs change, required-gate topology changes, or project measurements show these evidence fields do not predict lower rework or better consistency."
 ```
 
 ### Adversarial review record
@@ -71,8 +77,9 @@ revisit_condition: "Revisit when #530/Integration changes visual routing, Godot 
 5. Full loop 5 — re-attacked P05 ownership, concurrent PR protection, accessibility/player value, AI-production evidence, legacy-authority risk, long-term fit, validation and rollback; no new in-scope MUST_FIX was found at that head.
 6. Full loop 6 — after temporarily binding production-value regression to the Manifest-required visual test, found duplicate ownership of the same regression and removed the duplicate.
 7. Full loop 7 — re-fetched open PR #530 changed paths after the test-owner change, found `tests/test_bca_visual_sheet_workflow.py` overlap, reverted that entire path to the protected version, restored the regression only under the non-overlapping P05-owned UX/UI test, and restarted exact-head validation.
+8. Full loop 8 — after all checks passed, main advanced because P06 #536 merged. The attempted squash merge was correctly blocked because the refreshed merge context had no current `ci-gate`; the stale PASS was rejected, this learning was recorded, and required validation was restarted against the new base.
 
-`CLEAN_REVIEW_EXIT` applies to PR #538's P05-owned scope only after the final exact-head CI, scope validation, Notion readback, unresolved-thread check, merge, and post-merge readback complete. It does not claim that #530/CP0 legacy-routing cleanup is complete.
+`CLEAN_REVIEW_EXIT` applies to PR #538's P05-owned scope only after the refreshed exact-head/merge-context CI, scope validation, Notion readback, unresolved-thread check, merge, and post-merge readback complete. It does not claim that #530/CP0 legacy-routing cleanup is complete.
 
 ## Source Learning
 
