@@ -40,7 +40,12 @@ class BasePartitionContractTests(unittest.TestCase):
         self.assertEqual(9, len(manifest["parts"]))
         self.assertEqual([f"P{i:02d}" for i in range(1, 10)], [p["part_id"] for p in manifest["parts"]])
         self.assertEqual("INTEGRATION_ONLY", manifest["control_plane"]["write_authority"])
-        self.assertEqual(10, manifest["integration"]["total_new_gpt_chats_after_task_1"])
+        integration = manifest["integration"]
+        self.assertEqual(9, integration["worker_chat_count"])
+        self.assertEqual(9, integration["total_new_gpt_chats_after_task_1"])
+        self.assertEqual(0, integration["new_integration_chat_count"])
+        self.assertEqual("CURRENT_COORDINATOR_CHAT", integration["integration_chat"])
+        self.assertEqual("CURRENT_COORDINATOR_CHAT", integration["final_confirmation_chat"])
 
     def test_all_active_skills_are_assigned_once_from_registry_authority(self) -> None:
         manifest = self.load_manifest()
@@ -132,11 +137,14 @@ class BasePartitionContractTests(unittest.TestCase):
             self.assertIn("CROSS_PART_CHANGE_REQUEST", text)
         self.assertIn("OPTIONAL_CODEX_EXECUTOR", worker)
         self.assertIn("사용자 학습형 완료보고", worker)
+        self.assertIn("CURRENT_COORDINATOR_CHAT", integration)
 
     def test_operating_model_compares_four_real_strategies_and_records_revisit_conditions(self) -> None:
         text = OPERATING_MODEL.read_text(encoding="utf-8")
         for term in ("A · 디렉터리 계층 분할", "B · 기능/도메인 분할", "C · Control Plane + End-to-End Capability Partition", "D · 동적 의존성 그래프 재클러스터링", "BETTER_ALTERNATIVE_SEARCH", "LONG_TERM_PLAN_FIT_REQUIRED", "재검토 조건"):
             self.assertIn(term, text)
+        self.assertIn("새 GPT 채팅은 P01~P09의 9개", text)
+        self.assertIn("CURRENT_COORDINATOR_CHAT", text)
 
     def test_scope_checker_declares_worker_and_integration_modes(self) -> None:
         text = SCOPE_CHECKER.read_text(encoding="utf-8")
