@@ -3,6 +3,7 @@
 > Base v9 RC status and release boundary: `docs/BASE_RULES_VERSION.md`
 > Registry-derived active Skill view: `docs/generated/BASE_ACTIVE_SKILLS.md`
 > GPT-first project lifecycle: `docs/GPT_FIRST_PROJECT_WORKFLOW.md`
+> Integrated Vertical Slice prompt: `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`
 > Human-facing project workspace: Notion / structured-runtime truth: repository
 
 이 문서는 새 채팅, 새 GPT, 새 Codex 또는 새 작업자가 Base와 프로젝트 작업의 책임 원본을 찾는 요청별 한 단계 라우터다. 전체 운영 설명은 `docs/OPERATING_MODEL.md`, 항상 적용되는 규칙은 `AGENTS.md`, 장기 작업은 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`, Work Mode·Skill 선택은 `docs/WORK_MODE_AND_SKILL_ROUTING.md`, 문서 위치는 `docs/DOCUMENTATION_MAP.md`가 책임진다.
