@@ -31,10 +31,9 @@ class P04ReverseEngineeringReusePipelineTests(unittest.TestCase):
         ):
             self.assertIn(term, guide)
 
-    def test_skill_reference_requires_project_first_opportunity_scan(self) -> None:
+    def test_shared_reference_requires_project_first_opportunity_scan(self) -> None:
         reference = read(
-            "skills/analyzing-and-refining-game-concepts/references/"
-            "reverse-engineering-reuse-pipeline.md"
+            "docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md"
         )
 
         for term in (
@@ -73,8 +72,7 @@ class P04ReverseEngineeringReusePipelineTests(unittest.TestCase):
 
     def test_pipeline_does_not_promote_discovery_to_asset_or_skill_authority(self) -> None:
         reference = read(
-            "skills/analyzing-and-refining-game-concepts/references/"
-            "reverse-engineering-reuse-pipeline.md"
+            "docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md"
         )
 
         self.assertIn("discovery != PROJECT_ASSET_APPROVED", reference)
