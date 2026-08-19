@@ -18,7 +18,8 @@ repository-native Markdown / JSON / game data / code / scenes / resources / test
 → REPOSITORY_RUNTIME_TRUTH for implemented/runtime facts
 
 legacy Google Sheets
-→ COMPATIBILITY_ONLY when an existing migration source still contains unique material
+→ RETIRED_MIGRATION_ONLY
+→ one-time unique-material migration, then active reference removal
 ```
 
 `DOMAIN_SPLIT_CANON` means neither side is a disposable copy. Notion has priority for the human-facing visual/table/overview domains above; the repository has priority for structured specifications, data and implementation/runtime domains. When a Notion edit implies a Markdown/data/code/scene/resource/test change, synchronize that structured change to the repository before implementation or runtime claims (`SYNC_BEFORE_IMPLEMENTATION`).
@@ -71,6 +72,18 @@ Project-specific confirmed tables are encouraged when they materially improve hu
 ## Intermediate visual checkpoint
 
 `Intermediate visual checkpoint` is a project-scoped decision gate, not a tool/page-specific location.
+
+```text
+NOTION_VISUAL_CHECKPOINT_BEFORE_POC
+UX_UI_REPRESENTATIVE_STATE_REQUIRED
+APPROVED_VISUALS_FEED_POC
+```
+
+When visual composition, UI hierarchy, readability, mood, feedback or identity can materially change the PoC/demo judgment, representative visual states are planned and reviewed in GPT, attached to the exact Project in Notion, read back, and approved **before** the PoC uses them.
+
+The checkpoint does not require every production screen. It requires enough representative states to judge the intended core experience: entry/first impression, primary play, key decision, major feedback/reward/fail/transition, and any HUD/popup/navigation state that is necessary to understand the system. A technical-only spike may skip the gate when visuals cannot affect the result, with the reason recorded.
+
+Checkpoint states:
 
 - `MISSING_CANON`: there is not enough approved visual direction to judge continuity safely.
 - `DRAFT_VISUAL`: the artifact is an exploratory checkpoint and is not an approved project asset.
@@ -125,18 +138,21 @@ Do not turn a human table into an undocumented second data model. Machine-consum
 ```text
 need / brief
 → generate or edit candidate
-→ bounded visual review
+→ GPT bounded visual + UX review
 → attach candidate to the correct Project record
 → readback
 → explicit approval or rejection
 → version / replacement relationship
-→ implementation task when needed
+→ repository implementation task when needed
+→ branch / PR / exact-head checks for implementation-bound assets
 → runtime evidence separately
 ```
 
 For identity-preserving edits, unchanged identity attributes are hard constraints. Change only the requested expression, pose, gaze, effect stage, UI state or other scoped property.
 
 A successful generation is not approval. A successful upload is not delivery until readback confirms the expected file/preview/version at the intended Project target.
+
+If an approved visual is a PoC input, use the approved image itself or a provenance-preserving implementation derivative instead of silently substituting an unrelated placeholder.
 
 ## Reuse promotion
 
@@ -167,23 +183,35 @@ Notion approval means the project accepted the human-facing planning, table, vis
 Notion approved human-facing record
 → synchronize any required Markdown / JSON / game data contract
 → repository implementation task
+→ optional Codex sub-executor when actual repository/engine mutation is needed
 → code / asset / scene / resource / config
 → build or runtime
-→ QA evidence
+→ REPOSITORY_NATIVE_QA_EVIDENCE
+→ GPT final planning/UX review
 → Notion readback/status refresh
 ```
 
-QA Evidence Studio or equivalent runtime evidence remains independent of the project planning workspace.
+`REPOSITORY_NATIVE_QA_EVIDENCE` uses exact commit/PR head, `PASS / FAIL / BLOCKED / NOT_RUN`, screenshot/video/log, GitHub Actions artifacts or PR evidence packets instead of requiring a standalone localhost QA application. Android not yet connected remains a separate `DEFERRED_NOT_CONNECTED` state rather than being inferred from PC results.
 
 ## Legacy and deprecated visual execution paths
 
-Dedicated Figma routing, a Figma Bridge, localhost Expression/Sprite Studios and visual-delivery Tool Hub routing are not active authorities or required project surfaces. Their reusable ideas—project identity, provenance, bounded edits, approval, versioning, reuse classification, readback and explicit handoff—are absorbed into `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`.
+Dedicated Figma routing, a Figma Bridge, localhost Expression/Sprite Studios, visual-delivery Tool Hub routing, standalone localhost/browser QA Evidence Studio, independent HTML project-management dashboards, and Google Sheets as an active GDD surface are not active authorities or required project surfaces.
+
+Their reusable ideas—project identity, provenance, bounded edits, approval, versioning, reuse classification, readback, explicit handoff, fail-closed evidence states—are absorbed into `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md` and `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`.
 
 Do not restore a deprecated execution surface merely because historical docs, Git history or archived evidence mention it. Reintroduction requires a new Existing Solution First comparison, lifecycle-cost justification and user approval.
 
 ## Cost boundary
 
-The default path must satisfy `ZERO_INCREMENTAL_COST_REQUIRED`. Notion Free may be used within its current feature/file-size limits; paid Notion AI, separately metered storage, paid automation, or external provider calls are not part of the default workflow.
+The default path must satisfy `ZERO_INCREMENTAL_COST_REQUIRED`.
+
+```text
+CURRENT_PAID_PLANS: GPT_PRO
+PAID_PLAN_COUNT: 1
+NOTION_PAID_ON_REQUEST_ONLY
+```
+
+Notion is used within its free/currently available feature and file-size limits by default. If a paid Notion feature would materially remove a repeated bottleneck, document `COST_BENEFIT_EVIDENCE_BEFORE_NOTION_UPGRADE` and ask for explicit user approval. Paid Notion AI, Business/Enterprise-only features, separately metered storage/automation, or external provider calls are not assumed before that approval.
 
 ## Adversarial rejection criteria
 
@@ -197,4 +225,5 @@ Reject or revise a change if it:
 - reports upload success without readback;
 - promotes a Reference/Benchmark to approved asset without a project decision;
 - leaves an approved Notion visual/table materially inconsistent with the repository domain it is meant to summarize;
-- reintroduces a deprecated visual tool without evidence that it lowers total lifecycle cost.
+- runs a visually material PoC with unrelated placeholder art after the project approved a specific visual checkpoint;
+- reintroduces a deprecated local/HTML/Sheet surface without evidence that it lowers total lifecycle cost.
