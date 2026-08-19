@@ -51,11 +51,15 @@ CROSS_PART_CHANGE:
 
 단순히 owner가 다르다는 이유로 defer하지 않는다.
 
-## 3. 독립 active workstream
+## 3. Open PR backlog와 실제 active workstream
 
-`ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED`
+`OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM`
 
-open/draft/ready 독립 PR의 branch/worktree는 임의로 수정·rebase·merge·close하지 않는다. 같은 의미 수정이 필요하면 latest completed main의 coordinator-owned branch에서 해결하거나 해당 workstream의 완료 후 재평가한다.
+`ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE`
+
+open/draft/ready 상태 자체는 현재 작업자 증거가 아니다. 열린 PR은 먼저 latest main과 Goal을 기준으로 `ACTIVE_OTHER_WORKER / COORDINATOR_TAKEOVER / READY_TO_FINISH / SUPERSEDED_DUPLICATE / STALE_BACKLOG / BLOCKED_EXTERNAL`로 분류한다.
+
+사용자가 현재 활성 작업 채팅이 `CURRENT_COORDINATOR_CHAT` 하나뿐이라고 확인하면 unresolved open PR을 coordinator backlog로 인수해 직접 완료·흡수·중복 종료할 수 있다. 실제 current owner evidence가 있는 `ACTIVE_OTHER_WORKER`만 mutation-protected다.
 
 ## 4. Current-state reconciliation
 

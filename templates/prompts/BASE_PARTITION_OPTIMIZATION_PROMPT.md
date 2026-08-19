@@ -44,17 +44,18 @@ CROSS_PART_CHANGE:
 - 사용자 중요 방향 결정이 필요함
 - 현재 변경셋에서 원자적으로 안전하게 검증할 수 없음
 
-## 0B. 독립 활성 workstream 보호
+## 0B. Open PR과 실제 활성 workstream 구분
 
-`ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED`
+`OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM`
 
-다른 Part라는 사실과 다른 독립 workstream이라는 사실을 구분한다.
+`ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE`
 
-- 다른 Part 경로: 필요하면 현재 coordinator가 수정 가능.
-- 다른 사람/채팅의 open/draft/ready PR·branch·worktree: read-only가 기본.
-- 기존 활성 PR을 임의로 수정·rebase·merge·close하지 않는다.
-- 같은 의미 수정이 필요하면 최신 completed `main`에 coordinator-owned 변경으로 해결하거나, 그 workstream 완료 후 재검토한다.
-- 사용자가 명시적으로 takeover를 지시한 경우만 기존 활성 workstream을 직접 이어받는다.
+- 다른 Part 경로는 필요하면 현재 coordinator가 수정 가능하다.
+- open/draft/ready는 **PR 상태**일 뿐 다른 작업자가 현재 활동 중이라는 증거가 아니다.
+- 사용자 지시, current chat/automation owner, Resource Lock, 실행 중 workstream 등 current owner evidence가 있을 때만 `ACTIVE_OTHER_WORKER`로 보호한다.
+- 사용자가 `CURRENT_COORDINATOR_CHAT`만 활성이라고 확인하면 열린 PR을 backlog로 읽고 `COORDINATOR_TAKEOVER / READY_TO_FINISH / SUPERSEDED_DUPLICATE / STALE_BACKLOG / BLOCKED_EXTERNAL` 중 하나로 재분류한다.
+- **다른 Part라는 이유만으로 수정 보류 금지**이며, **open PR이라는 이유만으로도 수정 보류하지 않는다.**
+- 실제 `ACTIVE_OTHER_WORKER`로 확인된 branch/worktree만 임의 수정·rebase·merge·close하지 않는다.
 
 ## 1. Part 시작 절차
 

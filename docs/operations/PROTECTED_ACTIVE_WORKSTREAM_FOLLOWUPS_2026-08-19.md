@@ -1,6 +1,6 @@
-# Protected active-workstream follow-ups · 2026-08-19
+# Workstream backlog reconciliation · 2026-08-19
 
-These findings remain valid but are not rewritten by the sequential coordinator PR because active independent PR #530 owns the same policy/test surface.
+> **Supersession:** the earlier assumption "open PR = protected active worker" is superseded by `OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM`. The user confirmed `CURRENT_COORDINATOR_CHAT` is the only active work chat. Findings below remain evidence, but #530/#535/#537 are now coordinator backlog to revalidate and finish; they are not protected merely because they are open.
 
 ## P01 / Project workspace schema consumer
 - current completed main has schema v2 while `tests/test_notion_project_workspace_contract.py` still asserts v1.
