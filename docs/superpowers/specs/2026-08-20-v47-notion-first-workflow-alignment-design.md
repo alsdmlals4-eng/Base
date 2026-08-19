@@ -1,7 +1,7 @@
 # v4.7 Notion-First Workflow Alignment Design
 
-**Date:** 2026-08-20 KST  
-**Status:** USER-APPROVED / REUSED_APPROVAL  
+**Date:** 2026-08-20 KST
+**Status:** USER-APPROVED / REUSED_APPROVAL
 **Baseline:** Base `61862f9a4f7995f1676acca4bb6d5365e46b7630`
 
 ## Goal
@@ -66,8 +66,8 @@ These are not reimplemented as new Skills.
 
 Create a new Skill that owns planning, Notion, benchmark, visuals, Codex handoff, PR, retirement, learning and postmerge.
 
-**Pros:** one visible entrypoint.  
-**Cons:** duplicates P01/P03/P04/P05/P06/P08/P09 owners, increases routing ambiguity, conflicts with consolidation-first.  
+**Pros:** one visible entrypoint.
+**Cons:** duplicates P01/P03/P04/P05/P06/P08/P09 owners, increases routing ambiguity, conflicts with consolidation-first.
 **Verdict:** `REJECT`.
 
 ### B. Existing-owner absorption + stale consumer correction — selected
@@ -83,16 +83,16 @@ Preserve current owners and change only stale/insufficient consumers:
 - creative benchmark frontier,
 - focused regression.
 
-**Pros:** smallest authority change, low long-term maintenance, current Base updates remain dynamic.  
-**Cons:** rules remain distributed by semantic owner, so discoverability must be tested.  
+**Pros:** smallest authority change, low long-term maintenance, current Base updates remain dynamic.
+**Cons:** rules remain distributed by semantic owner, so discoverability must be tested.
 **Verdict:** `ADOPT`.
 
 ### C. Instruction-only v4.7, no Base change
 
 Leave Base unchanged and put all latest decisions only in the project instruction file.
 
-**Pros:** lowest immediate repository work.  
-**Cons:** Base entrypoints would continue to suggest retired surfaces; future projects could drift from v4.7.  
+**Pros:** lowest immediate repository work.
+**Cons:** Base entrypoints would continue to suggest retired surfaces; future projects could drift from v4.7.
 **Verdict:** `REJECT`.
 
 ## Benchmark / professional evidence

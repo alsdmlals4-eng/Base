@@ -1,8 +1,8 @@
 # v4.7 Workflow Alignment — Adversarial Review Evidence
 
-**Date:** 2026-08-20 KST  
-**Baseline:** `61862f9a4f7995f1676acca4bb6d5365e46b7630`  
-**PR:** #556  
+**Date:** 2026-08-20 KST
+**Baseline:** `61862f9a4f7995f1676acca4bb6d5365e46b7630`
+**PR:** #556
 **Scope:** Notion-first project workflow, retired project-management tools, repository-native evidence, creative benchmarking, flexible Skill structure, PowerShell/Codex handoff.
 
 ## TDD evidence
