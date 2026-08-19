@@ -21,6 +21,8 @@ skills/SKILL_REGISTRY.json
 
 Registry 정책은 `load_all_skills: false`, `default_selection: automatic-trigger-match`다. 사용자는 Skill 이름을 선언할 필요가 없으며, trigger가 일치하는 최소 package만 선택한다. 활성 Skill 수와 목록을 이 문서에 수동 복제하지 않는다.
 
+**Skill 수 자체는 목표가 아니다.** `30개`, `40개`, `8개 이상` 같은 고정 개수·경고 임계값을 설계 품질의 대리 지표로 사용하지 않는다. 책임 중복, trigger 겹침, 사용되지 않는 mode, 과도한 context/routing 비용, 독립 input/output/authority/validation boundary의 실제 필요성으로 통합·유지·신규 생성 여부를 판단한다.
+
 ### 라우팅 정확도 기본값
 
 Registry의 hard ceiling을 매 요청에서 채우지 않는다. `docs/knowledge/ai/SKILL_ROUTING_PRECISION_GUIDE.md`에 따라 **기본 supporting Skill budget은 1**로 운용하고, 두 번째 supporting Skill은 독립 산출물·독립 검증/권한 경계·hard guard가 실제로 필요한 경우에만 예외적으로 추가한다.
@@ -69,6 +71,7 @@ skills/<skill-id>/agents/        지원 플랫폼용 발견 metadata
 - Registry에 없는 `SKILL.md` package 또는 `SKILL.md`가 없는 활성 package 유지
 - reference·script·agent metadata를 소비자·replacement·rollback 없이 방치
 - 파일 수나 길이만을 이유로 안전 규칙·고유 절차·검증 근거 삭제
+- Skill 개수 자체를 맞추기 위한 통합·분할·신규 생성
 
 프로젝트 교훈은 먼저 `[수정제안서]`에서 검토하고, 승인된 Base 변경만 별도 구현 PR에서 Registry·Skill·Template·Test·생성본과 함께 갱신한다.
 
