@@ -1,3 +1,4 @@
+# Triggered after the temporary migration workflow was installed.
 from __future__ import annotations
 
 import json
@@ -22,9 +23,6 @@ def write(path: str, text: str) -> None:
     p.write_text(text.rstrip() + "\n", encoding="utf-8", newline="\n")
 
 
-# Old P08 baseline -> current main comparison showed these files were not changed
-# by completed main after the original P08 baseline, so the reviewed P08 semantic
-# blobs can be rehydrated without overwriting newer same-file work.
 for path in (
     "docs/knowledge/ai/SKILL_ROUTING_PRECISION_GUIDE.md",
     "docs/knowledge/game-development/AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md",
@@ -35,8 +33,6 @@ for path in (
 ):
     write(path, old(path))
 
-# Exact semantic companion. Do not use a broad P0x wildcard; an unrelated Part
-# test must not satisfy a P08 Skill contract change.
 freshness_path = ROOT / ".github/reference-freshness.json"
 freshness = json.loads(freshness_path.read_text(encoding="utf-8"))
 rule = next(row for row in freshness["coupled_change_rules"] if row["name"] == "local-skill-contract-learning-test-sync")
@@ -45,7 +41,6 @@ if exact_test not in rule["require_any_changed"]:
     rule["require_any_changed"].append(exact_test)
 freshness_path.write_text(json.dumps(freshness, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-# Permanent CI consumption. File existence alone is not execution evidence.
 workflow_path = ".github/workflows/validate-base-v9-rc.yml"
 workflow = read(workflow_path)
 module = "tests.test_p08_ai_operations_contract"
@@ -56,7 +51,6 @@ if module not in workflow:
     workflow = workflow.replace(anchor, anchor + f"            {module} \\\n", 1)
 write(workflow_path, workflow)
 
-# Current-main P08 learning checkpoint. Do not reuse the old lens-style loop count.
 log_path = "docs/operations/base-partitions/learning/P08_LEARNING_LOG.md"
 log = read(log_path)
 entry = """
