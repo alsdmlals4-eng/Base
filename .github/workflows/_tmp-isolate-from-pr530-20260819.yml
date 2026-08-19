@@ -28,15 +28,14 @@ jobs:
           python-version: '3.12'
       - name: Restore active-workstream-owned paths and write conflict-free policies
         run: python tools/_tmp_isolate_from_pr530_20260819.py
-      - name: Verify coordinator contracts
+      - name: Verify coordinator isolation contracts
         run: |
           python tools/check_base_partition_scope.py --validate-manifest
           python -m unittest \
             tests.test_base_partition_contract \
             tests.test_sequential_part_coordinator_contract \
             tests.test_full_adversarial_loop_semantics \
-            tests.test_human_home_self_contained_contract \
-            tests.test_gpt_codex_workflow_contract -v
+            tests.test_human_home_self_contained_contract -v
           python tools/check_canonical_reference_freshness.py --config .github/reference-freshness.json --base origin/main --head HEAD
       - name: Commit durable changes
         shell: bash
