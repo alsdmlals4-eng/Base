@@ -63,16 +63,6 @@ FULL_SCOPE_REVIEW
 ```yaml
 loop_index: 1..N
 input_state_or_head:
-full_scope_coverage:
-  current_state_canon_actual_implementation_readback: true | false
-  alternatives_rechecked: true | false
-  full_scope_attack: true | false
-  critique_validated: true | false
-  verified_findings_refined: true | false
-  verification_rechecked: true | false
-  better_alternative_rechecked: true | false
-  long_term_fit_rechecked: true | false
-  whole_state_re_attacked: true | false
 evidence_delta: []
 full_scope_findings: []
 validated_findings: []
@@ -97,28 +87,6 @@ clean_exit_candidate: true | false
 8. **최소 5회를 완료한 뒤 전체 재공격 결과 새로운 유효 오류·충돌·누락·blocking finding이 0이고, 기존 수정 회귀 0, acceptance criteria 충족, 정본/참조 신선도와 evidence ceiling이 모두 닫힐 때만 `CLEAN_REVIEW_EXIT`다.**
 
 구현 전 PLAN에서는 수정 대상이 아직 없을 수 있으므로 공격·검증 결과를 계약 입력으로 사용한다. 실제 BUILD/수정 뒤에는 검증된 출력 상태를 다시 전체 공격한다. PR 병합 후에도 새 `main`을 입력으로 같은 clean-exit 규칙을 적용한다.
-
-### Full loop is not a review lens
-
-`FULL_LOOP_IS_NOT_A_REVIEW_LENS`
-
-한 `loop_index`는 scope, UX, CI 같은 **관점 하나가 아니다**. 각 counted loop는 현재 승인 범위 전체를 아래 lifecycle로 처음부터 끝까지 다시 검토한다.
-
-```text
-CURRENT STATE / CANON / ACTUAL IMPLEMENTATION READBACK
-→ MINIMUM 3 MATERIAL ALTERNATIVES / CURRENT OPTION RECHECK
-→ FULL-SCOPE ATTACK
-→ VALIDATE CRITIQUE
-→ FIX / REFINE VERIFIED FINDINGS
-→ EXECUTION / REGRESSION / REFERENCE VERIFICATION
-→ BETTER_ALTERNATIVE_SEARCH
-→ LONG_TERM_PLAN_FIT_RECHECK
-→ RE-ATTACK THE WHOLE RESULTING STATE
-```
-
-`Loop 1=scope`, `Loop 2=UX`, `Loop 3=CI`, `Loop 4=long-term`, `Loop 5=review`처럼 서로 다른 lens를 한 번씩 검사한 보고는 **full loop로 계수하지 않는다**. Scope/UX/CI/security/cost/consumer/rollback 같은 lens는 각 full loop 내부의 attack coverage다.
-
-회차마다 대표 finding을 제목으로 강조할 수 있지만 대표 finding이 그 회차의 검토 범위를 뜻하지 않는다. 최소 5회는 위 전체 lifecycle을 최소 5번 실제 반복한다는 뜻이다. finding이 없는 회차도 전체 lifecycle evidence가 있으면 유효하지만, lens 하나만 수행한 회차는 finding 수와 무관하게 무효다.
 
 ### `POST_CHANGE_MONITOR_LOOP`
 
