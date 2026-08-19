@@ -270,6 +270,7 @@ from tests.test_p04_reverse_engineering_reuse_pipeline import (
 from tests.test_p04_vertical_slice_player_value_trace import (
     P04VerticalSlicePlayerValueTraceTests,
 )
+from tests.test_reuse_adoption_profiles import ReuseAdoptionProfileTests
 from tests.test_reuse_adoption_safety import ReuseAdoptionSafetyTests
 
 
