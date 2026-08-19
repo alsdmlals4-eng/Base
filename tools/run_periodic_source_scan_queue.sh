@@ -16,6 +16,7 @@ NEXT_EXECUTOR="USER_DIRECTED_CHATGPT_REVIEW"
 
 python tools/periodic_source_scan_queue.py \
   --ledger docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json \
+  --partition-manifest docs/operations/BASE_PARTITION_MANIFEST.json \
   --date "$QUEUE_DATE" \
   --output "$QUEUE_PATH"
 

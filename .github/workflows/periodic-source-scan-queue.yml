@@ -14,6 +14,9 @@ on:
       - "tests/test_periodic_source_analysis_runner.py"
       - "tests/test_periodic_source_scan_queue.py"
       - "docs/knowledge/game-development/PERIODIC_SOURCE_SCAN_QUEUE.md"
+      - "docs/operations/BASE_PARTITION_MANIFEST.json"
+      - "docs/operations/BASE_PARTITION_LEARNING_SYSTEM.md"
+      - "docs/operations/base-partitions/learning/**"
 
 permissions:
   contents: read
@@ -61,7 +64,7 @@ jobs:
             tests/test_periodic_source_analysis_runner.py \
             -v
 
-      - name: Prepare due-Source Queue without metered AI execution
+      - name: Prepare due-Source Queue plus P01-P09 Learning Radar without metered AI execution
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}

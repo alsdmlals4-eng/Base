@@ -149,7 +149,45 @@ def _cell(value: object) -> str:
     return ("" if value is None else str(value)).replace("|", "\\|").replace("\n", " ").strip()
 
 
-def render_issue_body(payload: dict[str, object], today: date) -> str:
+def load_partition_manifest(path: Path) -> dict[str, object]:
+    try:
+        payload: Any = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        raise ValueError(f"invalid JSON partition manifest: {path}") from error
+    if not isinstance(payload, dict) or payload.get("contract_id") != "BASE_PARTITION_OPERATING_MODEL_V1":
+        raise ValueError("invalid Base partition manifest")
+    return payload
+
+
+def render_partition_learning_radar(manifest: dict[str, object]) -> str:
+    parts = manifest.get("parts")
+    if not isinstance(parts, list):
+        raise ValueError("partition manifest parts must be a list")
+    lines = [
+        "## Partition Learning Radar",
+        "",
+        "> 각 Part는 기존 Source의 새/변경 자료와 추가 신규 Source 사이트를 탐색한다. 아래 항목은 조사 질문이며 그 자체로 학습·Canon이 아니다.",
+        "",
+    ]
+    for raw in parts:
+        if not isinstance(raw, dict):
+            raise ValueError("partition entry must be an object")
+        part_id = _text(raw.get("part_id"), "part_id")
+        name = _text(raw.get("name"), "name")
+        discovery = raw.get("source_discovery")
+        if not isinstance(discovery, dict):
+            raise ValueError(f"missing source_discovery for {part_id}")
+        domains = discovery.get("source_domains")
+        questions = discovery.get("discovery_questions")
+        if not isinstance(domains, list) or not domains or not isinstance(questions, list) or not questions:
+            raise ValueError(f"invalid source_discovery for {part_id}")
+        lines.extend([f"### {part_id} · {name}", "", f"- Source domains: {', '.join(str(x) for x in domains)}"])
+        lines.extend(f"- [ ] {str(question)}" for question in questions)
+        lines.extend(["- [ ] 기존 Watchlist/원출처보다 더 권위 있거나 더 직접적인 신규 Source 후보가 있는지 탐색했다.", "- [ ] 후보를 current owner/consumer/validation/revisit condition에 연결했다.", ""])
+    return "\n".join(lines).rstrip()
+
+
+def render_issue_body(payload: dict[str, object], today: date, partition_manifest: dict[str, object] | None = None) -> str:
     normalized = _validate_payload(payload)
     due = select_due_sources(normalized, today)
     lines = [
@@ -238,6 +276,8 @@ def render_issue_body(payload: dict[str, object], today: date) -> str:
         "**Queue 완료 != Ledger scan 완료. Issue check 표시 != Evidence 검증·Base 흡수·프로젝트 Canon 갱신.**",
         "",
     ]
+    if partition_manifest is not None:
+        lines.extend(["", render_partition_learning_radar(partition_manifest), ""])
     return "\n".join(lines)
 
 
@@ -246,12 +286,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--ledger", type=Path, required=True)
     parser.add_argument("--date", dest="queue_date", required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--partition-manifest", type=Path)
     args = parser.parse_args(argv)
     queue_date = parse_iso_date(args.queue_date)
     if queue_date is None:
         parser.error("--date cannot be null")
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(render_issue_body(load_ledger(args.ledger), queue_date), encoding="utf-8", newline="\n")
+    partition_manifest = load_partition_manifest(args.partition_manifest) if args.partition_manifest else None
+    args.output.write_text(render_issue_body(load_ledger(args.ledger), queue_date, partition_manifest), encoding="utf-8", newline="\n")
     print(args.output)
     return 0
 

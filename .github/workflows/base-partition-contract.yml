@@ -1,0 +1,46 @@
+name: Validate Base Partition Contract
+
+on:
+  pull_request:
+    paths:
+      - 'docs/operations/BASE_PARTITION_*'
+      - 'docs/operations/base-partitions/**'
+      - 'templates/prompts/BASE_PARTITION_*'
+      - 'tools/check_base_partition_scope.py'
+      - 'tools/periodic_source_scan_queue.py'
+      - 'tools/run_periodic_source_scan_queue.sh'
+      - 'tests/test_base_partition_contract.py'
+      - 'tests/test_periodic_source_scan_queue.py'
+      - '.github/workflows/base-partition-contract.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/operations/BASE_PARTITION_*'
+      - 'docs/operations/base-partitions/**'
+      - 'templates/prompts/BASE_PARTITION_*'
+      - 'tools/check_base_partition_scope.py'
+      - 'tools/periodic_source_scan_queue.py'
+      - 'tools/run_periodic_source_scan_queue.sh'
+      - 'tests/test_base_partition_contract.py'
+      - 'tests/test_periodic_source_scan_queue.py'
+      - '.github/workflows/base-partition-contract.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  partition-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Check Python syntax
+        run: python -m py_compile tools/check_base_partition_scope.py tools/periodic_source_scan_queue.py tests/test_base_partition_contract.py
+      - name: Validate manifest
+        run: python tools/check_base_partition_scope.py --validate-manifest
+      - name: Run partition and source-learning contract tests
+        run: python -m unittest tests.test_base_partition_contract tests.test_periodic_source_scan_queue -v
