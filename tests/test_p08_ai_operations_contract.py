@@ -7,8 +7,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 EXTERNAL_AI_SKILL = ROOT / "skills" / "orchestrating-deepseek-worktrees" / "SKILL.md"
+EXTERNAL_AI_LOG = ROOT / "skills" / "orchestrating-deepseek-worktrees" / "LEARNING_LOG.md"
 MODEL_COST_SKILL = ROOT / "skills" / "optimizing-ai-model-and-prompt-costs" / "SKILL.md"
+MODEL_COST_LOG = ROOT / "skills" / "optimizing-ai-model-and-prompt-costs" / "LEARNING_LOG.md"
 ROUTING_GUIDE = ROOT / "docs" / "knowledge" / "ai" / "SKILL_ROUTING_PRECISION_GUIDE.md"
+P08_PARTITION_LOG = ROOT / "docs" / "operations" / "base-partitions" / "learning" / "P08_LEARNING_LOG.md"
 FRESHNESS = ROOT / ".github" / "reference-freshness.json"
 BASE_V9_WORKFLOW = ROOT / ".github" / "workflows" / "validate-base-v9-rc.yml"
 
@@ -60,6 +63,15 @@ class P08AiOperationsContractTests(unittest.TestCase):
         self.assertIn("tests/test_p08_ai_operations_contract.py", rule["require_any_changed"])
         workflow = BASE_V9_WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("tests.test_p08_ai_operations_contract", workflow)
+
+    def test_local_learning_logs_reference_only_real_current_evidence(self) -> None:
+        stale = "docs/operations/ai-executors/P08_OPTIMIZATION_REPORT_2026-08-19.md"
+        for path in (EXTERNAL_AI_LOG, MODEL_COST_LOG):
+            text = path.read_text(encoding="utf-8")
+            self.assertNotIn(stale, text, path)
+            self.assertIn("tests/test_p08_ai_operations_contract.py", text, path)
+            self.assertIn("docs/operations/base-partitions/learning/P08_LEARNING_LOG.md", text, path)
+        self.assertTrue(P08_PARTITION_LOG.is_file())
 
 
 if __name__ == "__main__":
