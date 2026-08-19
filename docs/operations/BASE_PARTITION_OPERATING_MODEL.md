@@ -68,6 +68,15 @@ C는 Base가 커져도 CP0와 Part ID를 유지하면서 Part 내부만 분리·
 - Part 전용 이미지·다이어그램은 자기 Notion 페이지에 둔다. 여러 Part가 공유하는 시각 자료는 직접 공용 페이지에 쓰지 않고 `CROSS_PART_CHANGE_REQUEST`로 Integration에 전달한다.
 - 동일 의미를 GitHub/Notion 양쪽에 독립 정본으로 만들지 않는다. GitHub가 구조화 규칙/Skill/Test 정본이고 Notion은 사람이 보는 설명·시각화·학습면이다.
 
+
+### 새 채팅 수와 최종 Integration 위치
+
+- **새 GPT 채팅은 P01~P09의 9개만** 만든다.
+- 각 새 채팅은 자기 Part를 처음부터 완료보고·PR·Notion 갱신까지 맡는다.
+- 각 Part가 끝나면 결과를 이 Partition 설계를 수행한 원래 총괄 채팅인 `CURRENT_COORDINATOR_CHAT`으로 회수한다.
+- 별도의 새 Integration 채팅을 만들지 않는다. `CURRENT_COORDINATOR_CHAT`이 CP0 변경, cross-part 조정, 전체 회귀, 최종 적대적 검토, 병합 후 확인을 수행한다.
+- 이 위치 규칙은 사용자 편의만이 아니라 Part 결과를 같은 총괄 맥락에서 다시 합쳐 누락·충돌을 찾기 위한 continuity 계약이다.
+
 ## CP0 · Base Control Plane
 
 일반 Part worker는 CP0를 **읽을 수 있지만 쓰지 않는다.**

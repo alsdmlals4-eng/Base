@@ -1381,10 +1381,10 @@
     }
   ],
   "integration": {
-    "chat_count": 1,
     "worker_chat_count": 9,
-    "total_new_gpt_chats_after_task_1": 10,
+    "total_new_gpt_chats_after_task_1": 9,
     "ordered_steps": [
+      "Return P01..P09 completion packets to CURRENT_COORDINATOR_CHAT",
       "Resolve latest main and manifest version",
       "Read all P01..P09 completion reports and CROSS_PART_CHANGE_REQUEST records",
       "Validate ACTUAL_CHANGED_PATHS against each Part owned scope",
@@ -1399,7 +1399,10 @@
       "Exact-head merge",
       "Post-merge main and Notion readback"
     ],
-    "rollback": "Revert integration commit/PR; Part PRs remain independently auditable and can be reverted by Part boundary. Never roll back unrelated workstreams."
+    "rollback": "Revert integration commit/PR; Part PRs remain independently auditable and can be reverted by Part boundary. Never roll back unrelated workstreams.",
+    "integration_chat": "CURRENT_COORDINATOR_CHAT",
+    "new_integration_chat_count": 0,
+    "final_confirmation_chat": "CURRENT_COORDINATOR_CHAT"
   },
   "revisit_conditions": [
     "active Skill count > 40",

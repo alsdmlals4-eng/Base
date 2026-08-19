@@ -31,6 +31,11 @@ CONTEXT_PACK: {{CONTEXT_PACK}}
 - 공용 시각 자료나 다른 Part/CP0 변경이 필요하면 직접 쓰지 말고 `CROSS_PART_CHANGE_REQUEST`를 남긴다.
 - 이미지·다이어그램은 Part 전용이면 자기 Notion 페이지에, 프로젝트 고유이면 정확한 Project Notion에 배치한다. 공용 자료의 중복 복사는 금지한다.
 
+
+## 완료 후 회수 위치
+
+Part가 `CLEAN_REVIEW_EXIT`와 자기 PR/Notion readback까지 완료되면 completion packet을 `CURRENT_COORDINATOR_CHAT`으로 전달한다. 새 Integration 채팅을 만들거나 다른 Part 채팅의 PR을 직접 합치지 않는다.
+
 ## 1. 실행 주체
 
 GPT가 기본 작업자다. 현행조사·기획·벤치마킹·최소 3개 대안·규칙/Skill/Module 검토·Notion/GitHub 대조·검수·적대적 검토를 GPT에서 닫는다.

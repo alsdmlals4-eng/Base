@@ -8,6 +8,14 @@ P01..P09의 독립 최적화 결과를 최신 Base `main`에 안전하게 통합
 
 Partition의 최종 산출물은 9개의 독립 Base가 아니라 **하나의 통합 Base**다. 필요한 Part만 활성화할 수 있으며, Integration은 실제로 수행된 Part의 결과만 모아 CP0·정본·Skill/Module 관계를 정리한다. 모든 일반 작업에 9개 Part 실행을 강제하지 않는다.
 
+
+## 0A. 실행 위치 — CURRENT_COORDINATOR_CHAT
+
+- 이 Integration은 새 채팅을 추가로 만들지 않는다.
+- P01~P09를 분배하기 전 Partition 설계를 수행한 **현재 총괄 채팅**을 `CURRENT_COORDINATOR_CHAT`으로 부른다.
+- 9개 Part 채팅이 끝나면 각 completion packet, PR, Notion 결과, `CROSS_PART_CHANGE_REQUEST`를 이 채팅으로 가져와 최종 통합한다.
+- 이 채팅은 Part별 소유권을 침범하지 않고, 병합된/완료된 결과만 CP0와 ONE BASE에 통합한다.
+
 ## 1. 입력
 
 - latest main exact SHA
