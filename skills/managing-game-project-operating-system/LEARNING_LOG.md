@@ -43,3 +43,10 @@
 - **Anti-pattern:** legacy 호환 파일을 current workspace로 확대 해석; coupled test를 통과시키려고 다른 Part 테스트를 수정; 새 canon을 만들어 stale Manifest path를 맞춤.
 - **Boundary:** 실제 프로젝트 Notion migration E2E, legacy Sheet의 UNIQUE material 이관·삭제, 사람 UX/기기 검증은 `NOT_RUN`이다.
 - **Next trigger:** legacy Sheet coupled-test owner가 Integration에서 정리되거나 실제 Project Notion migration pilot에서 새로운 consumer gap이 발견될 때 재검토한다.
+
+## 2026-08-19 · self-contained Project Home before drilldown
+
+- 관찰: Project Home이 핵심 방향은 보여주지만 시스템/검증/구현 설명을 하위 페이지 링크에 의존하면 사용자가 프로젝트 전체를 읽기 위해 계속 이동해야 한다.
+- 교훈: Notion human-facing canon의 첫 화면은 `HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`을 만족해야 하며, 하위 페이지는 상세 증거용이어야 한다.
+- 기대효과: cold-start 이해도 향상, 반복 질문 감소, 잘못된 project-state 추정 감소.
+- reuse_scope: BASE_PROMOTION_CANDIDATE

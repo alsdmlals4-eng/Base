@@ -8,6 +8,27 @@
 - 개선자: 검증된 문제만 최소 수정하고 수정 전후·영향 범위·보호 대상을 기록한다.
 - 회귀 검토자: 기존 기능·경험·데이터·호환성과 새 예외·복잡성·미검증을 독립적으로 재검사한다.
 
+## Full-loop evidence contract
+
+각 counted adversarial loop는 lens 하나가 아니라 전체 lifecycle임을 다음 evidence로 증명한다.
+
+```yaml
+loop_index:
+full_scope_coverage:
+  current_state_canon_actual_implementation_readback: true
+  alternatives_rechecked: true
+  attack_surfaces_rechecked: []
+  critique_validated: true
+  fixes_refined_or_no_change_justified: true
+  verification_rechecked: true
+  better_alternative_rechecked: true
+  long_term_fit_rechecked: true
+  whole_state_re_attacked: true
+representative_findings: []
+```
+
+`full_scope_coverage`의 필수 항목이 false이거나 evidence가 없으면 그 회차는 `FULL_LOOP_COUNT_MINIMUM`에 넣지 않는다. `Loop 1=scope`, `Loop 2=UX`, `Loop 3=CI` 같은 관점 분할은 이 계약을 충족하지 않는다.
+
 ## 공격 렌즈
 
 1. 프로젝트 코어, 승인 요구와 범위 충돌.
@@ -25,7 +46,7 @@
 13. 최근 사용자 승인 Decision 누락 또는 이전 Decision 부활.
 14. `CURRENT_CONFIRMED_DECISIONS.md`, 분야 책임 원본, 실제 diff의 불일치.
 15. 동일 Goal의 열린·최근 병합 PR, 중복 구현·문서·질문.
-16. GitHub `main`과 프로젝트 Google Sheets의 Decision·Commit·대체 관계 불일치.
+16. GitHub `main`과 적용 가능한 Project Notion human-facing state / repository authority의 Decision·Commit·대체 관계 불일치.
 17. 병합 뒤 관련 Registry·Template·Test·파생본이 untouched로 남은 전파 누락.
 
 `attack`에서는 장점·칭찬·해결책으로 공격 강도를 희석하지 않는다. 장점 보호와 수정 여부는 뒤 단계에서 판단한다.
@@ -57,7 +78,7 @@ canonical_and_sheet_scope:
 - 최신 사용자 승인과 Decision 대체 관계를 확인했는가?
 - 실제 diff와 새 `main` HEAD를 확인했는가?
 - 동일 Goal의 열린·최근 병합 PR을 확인했는가?
-- 프로젝트가 Google Sheets를 사용하면 해당 행을 재조회했는가?
+- 적용 가능한 Project Notion human-facing state와 repository authority를 destination readback했는가?
 - 단순 취향, 중복, 범위 밖 요구, 해결책 선호인가?
 - 발생 가능성과 실제 영향이 충분한가?
 - 수정 비용보다 개선 효과가 큰가?
@@ -77,7 +98,7 @@ scope_fit:
 
 - `USER_DECISION_REQUIRED`: 둘 이상의 유효한 선택지가 프로젝트 코어·중요 기획·방향성을 다르게 만든다.
 - `REJECTED_CRITIQUE`: 취향, 중복, 잘못된 전제, 범위 밖 요구다.
-- `BLOCKED_UNVERIFIED`: 필요한 정본·도구·권한·CI·런타임·Sheets 증거가 없어 판정할 수 없다.
+- `BLOCKED_UNVERIFIED`: 필요한 정본·도구·권한·CI·런타임·Notion/repository evidence가 없어 판정할 수 없다.
 
 레드팀의 높은 심각도가 자동으로 `MUST_FIX`가 되지는 않는다.
 
@@ -106,7 +127,7 @@ validation_plan:
 5. 데이터·저장·ID·Schema·호환성이 유지되는가?
 6. 새 예외·악용·복잡성·접근성·성능·플랫폼 비용이 생기지 않았는가?
 7. 정본·Registry·Template·Test·파생본 전파 누락이 없는가?
-8. GitHub `main`과 Google Sheets를 재조회해 일치하는가?
+8. GitHub `main`과 적용 가능한 Project Notion/repository authority를 재조회해 일치하는가?
 9. 동일 Goal의 중복 PR·중복 구현이 남지 않았는가?
 10. 롤백·복구 경로가 유지되는가?
 11. 실행하지 못한 검사를 `BLOCKED_UNVERIFIED`로 남겼는가?

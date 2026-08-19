@@ -6,6 +6,8 @@ P01→P09 순차 checkpoint를 완료한 **같은 coordinator 채팅**이 최종
 
 `SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS`
 
+현재 이 동일 coordinator 채팅의 canonical 이름은 `CURRENT_COORDINATOR_CHAT`이다.
+
 별도 Integration 채팅을 만들지 않는다. P01~P09를 작업한 현재 채팅이 그대로:
 
 - CP0

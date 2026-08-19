@@ -1,5 +1,11 @@
 # P06 · Godot, Runtime & Technical Toolchain — Context Pack
 
+## 현재 실행 계약
+`SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS` · `PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER`
+
+이 Part는 semantic responsibility / learning / validation checkpoint다. 현재 coordinator가 다른 Part/CP0의 검증된 오류·충돌·누락을 발견하면 다른 Part라는 이유만으로 보류하지 않고 `CROSS_PART_CHANGE`로 owner를 기록해 직접 수정할 수 있다. 단, 다른 독립 open/draft/ready PR·branch·worktree는 `ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED`에 따라 read-only다.
+
+
 ## 역할
 Godot authoring/runtime/debugging, addon/plugin 평가, editor/runtime adapter, QA technical tooling과 로컬 실행환경을 책임진다.
 
@@ -13,7 +19,7 @@ HiGodot single authority when adopted, Existing Solution First, actual runtime e
 Authoring Authority → Runtime Diagnostics → Addon Evaluation → Adapter → QA Technical Tooling → Local Execution.
 
 ## 경계
-P04 acceptance와 P05 visual 입력을 소비하고 P07에 runtime evidence를 제공한다. QA Evidence Studio/local tooling은 존재 자체를 유지 근거로 삼지 않는다.
+Part 경계는 수정 금지선이 아니라 semantic owner 지도다. 다른 Part/CP0 finding도 현재 coordinator가 증거와 검증 경로를 확보하면 직접 수정한다. 다른 독립 활성 workstream만 read-only로 보호하며, 실제 조정 blocker만 `CROSS_PART_CHANGE_REQUEST`로 남긴다.
 
 ## 우선 공격 대상
 중복 writer, process 존재를 readiness로 오판, 사용자 PC에서 실행하지 않은 테스트 PASS, 불필요 addon/tool, QA/local tool unique 기능 없는 잔존.

@@ -57,11 +57,16 @@ def parse_legacy_aliases(path: Path) -> set[str]:
     if not path.is_file():
         return set()
     aliases: set[str] = set()
-    table_row = re.compile(r"^\|\s*`([^`]+)`\s*\|")
+    first_cell = re.compile(r"^\|\s*(.*?)\|")
+    inline_code = re.compile(r"`([^`]+)`")
     for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
-        match = table_row.match(line)
-        if match:
-            aliases.add(match.group(1).strip())
+        match = first_cell.match(line)
+        if not match:
+            continue
+        for alias in inline_code.findall(match.group(1)):
+            alias = alias.strip()
+            if alias:
+                aliases.add(alias)
     return aliases
 
 

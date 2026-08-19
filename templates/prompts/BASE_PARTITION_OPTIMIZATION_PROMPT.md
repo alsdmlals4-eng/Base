@@ -323,3 +323,11 @@ python tools/check_base_partition_scope.py --coordinator --base <BASELINE_SHA> -
 8. 사용자 학습형 최종보고
 
 까지 수행한다.
+
+## Clean exit token
+
+최소 5회의 진짜 full-scope loop 이후 유효 blocker와 회귀가 0이고 acceptance/정본/evidence 조건이 닫혀야만 `CLEAN_REVIEW_EXIT`를 선언한다.
+
+## 사용자 학습형 완료보고
+
+각 Part checkpoint는 규칙·Skill·Module·BEFORE→AFTER·검증·교훈·재검토 조건을 사람이 이해할 수 있게 설명한다.

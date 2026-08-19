@@ -127,6 +127,30 @@ google_sheet_compatibility_source: OPTIONAL_LEGACY_MIGRATION_INPUT
 - Sheet-only 고유 정보는 현행 owner로 이관 → readback/Test → consumer/reference 확인 후에만 원본 수명주기를 판정한다.
 - 신규 install은 Google Sheet URL이나 tab을 요구하거나 생성하지 않는다.
 
+## Human-facing Project Home contract
+
+`HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`
+
+Project Notion Home은 링크 목록이 아니라 사람이 **추가 이동 없이 프로젝트의 핵심을 이해하는 첫 화면**이다. 하위 페이지는 drilldown/evidence/긴 표/asset/log를 위한 상세면이며, 아래 핵심 설명을 대체하지 않는다.
+
+Project Home에는 최소 다음을 직접 보여준다.
+
+1. **프로젝트 한 줄 정의** — 무엇을 만드는 프로젝트인지.
+2. **핵심 플레이어/사용자 가치** — 사용자가 무엇을 느끼고 선택하며 왜 계속하는지.
+3. **현재 확정 방향** — 유지해야 할 방향과 보호/금지 요소.
+4. **Core Loop / 주요 Flow** — 플레이/사용 흐름과 보상·진척 연결.
+5. **핵심 시스템** — 각 시스템의 목적, 작동, 서로 주고받는 입력/출력, 기대효과.
+6. **UX/UI/Visual** — 화면 구조, 정보 계층, 아트 방향, 승인된 Visual과 아직 미확정인 부분.
+7. **현재 구현상태** — repository/code/Scene/data 기준 구현됨·부분·미구현을 구분.
+8. **검증상태** — static/runtime/device/human/accessibility/platform/store 등 evidence ceiling을 분리해 PASS/PARTIAL/NOT_RUN/BLOCKED_UNVERIFIED로 표시.
+9. **현재 blocker / 다음 작업** — 바로 이어서 해야 할 일과 완료조건.
+10. **최근 중요한 결정** — 무엇을 왜 선택/기각/보류했는지.
+11. **주요 위험 / revisit condition** — 어떤 증거·환경·성과 변화에서 다시 결정해야 하는지.
+
+하위 페이지 링크는 위 내용을 더 깊게 보는 `drilldown`이다. Home 본문이 "상세는 08 페이지 참조"만 남아 위 핵심을 설명하지 않는 상태는 완료가 아니다.
+
+Repository가 `REPOSITORY_STRUCTURED_CANON`이고 Notion이 `NOTION_HUMAN_FACING_CANON`이라는 권위 분리는 그대로 유지한다. Home은 runtime truth를 새로 만들지 않고 latest merged repository facts와 사용자 확정 방향을 사람이 이해 가능한 형태로 투영한다.
+
 ## HiGodot provider adoption contract
 
 ```yaml

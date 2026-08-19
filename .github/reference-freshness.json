@@ -218,7 +218,11 @@
         "tests/test_godot_higodot_gut_hera_toolchain.py",
         "tests/test_serial_fiction_discipline.py",
         "tests/test_claim_evidence_binding.py",
-        "tests/test_skill_implementation_evidence.py"
+        "tests/test_skill_implementation_evidence.py",
+        "tests/test_p0[1-9]_*.py",
+        "tests/test_sequential_part_coordinator_contract.py",
+        "tests/test_full_adversarial_loop_semantics.py",
+        "tests/test_human_home_self_contained_contract.py"
       ],
       "ignore_frontmatter_only_keys": [
         "description"
@@ -313,7 +317,6 @@
       ],
       "exclude_when_changed": [],
       "require_all_changed": [
-        "skills/BASE_SHARED_SKILL_ROUTES.json",
         "skills/governing-legacy-retention-and-archives/LEARNING_LOG.md"
       ],
       "require_any_changed": [
@@ -322,7 +325,8 @@
       ],
       "ignore_frontmatter_only_keys": [
         "description"
-      ]
+      ],
+      "semantic_note": "Shared route companion is required only when route identity/trigger/activation semantics change, not for internal procedure/evidence edits."
     },
     {
       "name": "godot-asset-shared-skill-sync",
@@ -399,10 +403,10 @@
       ],
       "exclude_when_changed": [],
       "require_all_changed": [
-        ".github/reference-freshness.json",
         "tests/test_reference_freshness.py"
       ],
-      "require_any_changed": []
+      "require_any_changed": [],
+      "semantic_note": "Config companion changes only when config schema/keys/semantics change; parser-only fixes require owned regression test, not a no-op config edit."
     },
     {
       "name": "legacy-alias-test-sync",

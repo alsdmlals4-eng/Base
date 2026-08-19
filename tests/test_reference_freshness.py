@@ -354,5 +354,23 @@ class CanonicalReferenceFreshnessTests(unittest.TestCase):
         self.assertIn("CONFLICTING_SOURCE", skill)
 
 
+    def test_parse_legacy_aliases_reads_every_alias_in_first_table_cell(self) -> None:
+        from tempfile import TemporaryDirectory
+        from tools.check_canonical_reference_freshness import parse_legacy_aliases
+
+        with TemporaryDirectory() as tmp:
+            path = Path(tmp) / "aliases.md"
+            path.write_text(
+                "| Legacy alias | Current |\n"
+                "|---|---|\n"
+                "| `old-one` / `old-two` / `old-three` | current-skill |\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(
+                {"old-one", "old-two", "old-three"},
+                parse_legacy_aliases(path),
+            )
+
+
 if __name__ == "__main__":
     unittest.main()
