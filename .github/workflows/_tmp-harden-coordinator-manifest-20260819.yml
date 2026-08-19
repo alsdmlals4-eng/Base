@@ -1,0 +1,45 @@
+name: Temporary coordinator manifest hardening
+
+on:
+  push:
+    branches: [refactor/sequential-part-coordinator-20260819]
+    paths:
+      - tools/_tmp_harden_coordinator_manifest_semantics_20260819.py
+      - .github/workflows/_tmp-harden-coordinator-manifest-20260819.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - tools/_tmp_harden_coordinator_manifest_semantics_20260819.py
+      - .github/workflows/_tmp-harden-coordinator-manifest-20260819.yml
+
+permissions:
+  contents: write
+
+jobs:
+  harden:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: refactor/sequential-part-coordinator-20260819
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Apply semantic hardening
+        run: python tools/_tmp_harden_coordinator_manifest_semantics_20260819.py
+      - name: Verify
+        run: |
+          python tools/check_base_partition_scope.py --validate-manifest
+          python -m unittest tests.test_base_partition_contract tests.test_sequential_part_coordinator_contract -v
+      - name: Commit and push durable changes
+        shell: bash
+        run: |
+          git checkout -- .github/workflows/_tmp-harden-coordinator-manifest-20260819.yml
+          git rm tools/_tmp_harden_coordinator_manifest_semantics_20260819.py
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix: harden coordinator semantic ownership"
+          git pull --rebase origin refactor/sequential-part-coordinator-20260819
+          git push origin HEAD:refactor/sequential-part-coordinator-20260819
