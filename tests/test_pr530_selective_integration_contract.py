@@ -88,9 +88,11 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
 
         dashboard = rows["building-project-visual-dashboards"]
         self.assertEqual("ACTIVE", dashboard["status"])
-        dashboard_text = json.dumps(dashboard, ensure_ascii=False)
-        self.assertIn("notion", dashboard_text.lower())
-        self.assertNotIn("standalone HTML", dashboard_text)
+        self.assertTrue(any("notion" in text.lower() for text in dashboard["use_when"]))
+        self.assertFalse(any("standalone HTML" in text for text in dashboard["use_when"]))
+        self.assertNotIn("html-dashboard", dashboard["trigger_tags"])
+        self.assertNotIn("standalone-dashboard", dashboard["trigger_tags"])
+        self.assertIn("standalone HTML", " ".join(dashboard["do_not_use_when"] + dashboard["review_triggers"]))
 
     def test_dashboard_skill_is_notion_home_visual_map_owner_not_html_builder(self) -> None:
         text = DASHBOARD.read_text(encoding="utf-8")
