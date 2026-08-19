@@ -51,7 +51,6 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
 
     def test_enabled_profiles_use_project_specific_destinations(self) -> None:
         expected_destinations = {
-            ("URBAN_LEGEND", "RM-TOOL-001"): "tools/reuse/data_schema_crossref_validator.py",
             ("SWITCHY", "RM-SYS-001"): "game/reuse/grid_placement_rule_engine.gd",
             ("SWITCHY", "RM-VIS-001"): "game/reuse/semantic_ui_skin_kit.gd",
             ("SWITCHY", "RM-VIS-002"): "game/reuse/gameplay_symbol_atlas.gd",
@@ -63,6 +62,17 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
             profile = json.loads((PROFILE_ROOT / f"{project_key}.json").read_text(encoding="utf-8"))
             self.assertEqual("enabled", profile["modules"][module_id]["state"])
             self.assertEqual(destination, profile["modules"][module_id]["destination"])
+
+    def test_adapted_project_implementation_is_not_mislabeled_as_vendored_source(self) -> None:
+        profile = json.loads((PROFILE_ROOT / "URBAN_LEGEND.json").read_text(encoding="utf-8"))
+        matrix = json.loads(
+            (ROOT / "docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual("ADOPTED_AND_VERIFIED", matrix["projects"]["URBAN_LEGEND"]["status"])
+        self.assertEqual("deferred", profile["modules"]["RM-TOOL-001"]["state"])
+        self.assertEqual("deferred", matrix["projects"]["URBAN_LEGEND"]["modules"]["RM-TOOL-001"])
 
 
 if __name__ == "__main__":
