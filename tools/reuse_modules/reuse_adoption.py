@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import shutil
 from pathlib import Path
 from typing import Any
@@ -30,7 +31,15 @@ def _sha256(path: Path) -> str:
 
 def _safe_relative(value: str, *, field: str) -> str:
     path = Path(value)
-    if not value or path.is_absolute() or ".." in path.parts or path.parts[0] == ".git":
+    reserved_roots = {".git"}
+    if field == "destination":
+        reserved_roots.add(".base-reuse")
+    if (
+        not value
+        or path.is_absolute()
+        or ".." in path.parts
+        or path.parts[0] in reserved_roots
+    ):
         raise ValueError(f"unsafe {field}: {value!r}")
     return path.as_posix()
 
@@ -57,13 +66,14 @@ def validate_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
     if manifest.get("schema_version") != SCHEMA_VERSION:
         raise ValueError(f"schema_version must be {SCHEMA_VERSION}")
     base_commit = manifest.get("base_source_commit")
-    if not isinstance(base_commit, str) or not base_commit.strip():
-        raise ValueError("base_source_commit must be a non-empty string")
+    if not isinstance(base_commit, str) or re.fullmatch(r"[0-9a-f]{40}", base_commit) is None:
+        raise ValueError("base_source_commit must be an exact 40-character lowercase Git SHA")
     modules = manifest.get("modules")
     if not isinstance(modules, dict):
         raise ValueError("modules must be an object")
 
     normalized: dict[str, dict[str, Any]] = {}
+    enabled_destinations: dict[str, str] = {}
     for module_id, raw_config in modules.items():
         if module_id not in MODULE_SOURCES:
             raise ValueError(f"unknown reusable module: {module_id}")
@@ -83,13 +93,19 @@ def validate_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
                     f"source for {module_id} must match Base canonical source {canonical_source!r}"
                 )
             destination = _safe_relative(str(config.get("destination", "")), field="destination")
+            previous = enabled_destinations.get(destination)
+            if previous is not None:
+                raise ValueError(
+                    f"enabled modules {previous} and {module_id} share destination {destination!r}"
+                )
+            enabled_destinations[destination] = module_id
             config["source"] = source
             config["destination"] = destination
         normalized[module_id] = config
 
     return {
         "schema_version": SCHEMA_VERSION,
-        "base_source_commit": base_commit.strip(),
+        "base_source_commit": base_commit,
         "modules": normalized,
     }
 
@@ -102,15 +118,22 @@ def load_manifest(path: Path) -> dict[str, Any]:
 
 
 def _read_lock(project_root: Path) -> dict[str, Any] | None:
-    try:
-        lock_path = _confined_path(project_root, LOCK_REL_PATH.as_posix())
-    except ValueError:
-        return None
+    lock_path = _confined_path(project_root, LOCK_REL_PATH.as_posix())
     if not lock_path.is_file():
         return None
-    document = json.loads(lock_path.read_text(encoding="utf-8"))
+    try:
+        document = json.loads(lock_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"invalid adoption lock: {exc}") from exc
     if not isinstance(document, dict):
-        return None
+        raise ValueError("invalid adoption lock: root must be an object")
+    if document.get("schema_version") != SCHEMA_VERSION:
+        raise ValueError(f"invalid adoption lock: schema_version must be {SCHEMA_VERSION}")
+    if not isinstance(document.get("modules"), dict):
+        raise ValueError("invalid adoption lock: modules must be an object")
+    lock_commit = document.get("base_source_commit")
+    if not isinstance(lock_commit, str) or re.fullmatch(r"[0-9a-f]{40}", lock_commit) is None:
+        raise ValueError("invalid adoption lock: base_source_commit must be an exact Git SHA")
     return document
 
 
@@ -151,11 +174,10 @@ def check_adoption(
 
     try:
         _confined_path(project_root, LOCK_REL_PATH.as_posix())
-    except ValueError as exc:
-        violations.append(_violation("_manifest", "PATH_ESCAPE_OR_SYMLINK", str(exc)))
-        lock = None
-    else:
         lock = _read_lock(project_root)
+    except ValueError as exc:
+        violations.append(_violation("_manifest", "INVALID_LOCK", str(exc)))
+        lock = None
 
     for module_id, config in sorted(normalized["modules"].items()):
         if config["state"] != "enabled":
@@ -223,15 +245,15 @@ def apply_adoption(
 
     try:
         lock_path = _confined_path(project_root, LOCK_REL_PATH.as_posix())
+        existing_lock = _read_lock(project_root) or {}
     except ValueError as exc:
         return {
             "ok": False,
             "mode": "apply",
             "applied_modules": [],
-            "violations": [_violation("_manifest", "PATH_ESCAPE_OR_SYMLINK", str(exc))],
+            "violations": [_violation("_manifest", "INVALID_LOCK", str(exc))],
         }
 
-    existing_lock = _read_lock(project_root) or {}
     existing_entries = existing_lock.get("modules", {}) if isinstance(existing_lock, dict) else {}
     operations: list[tuple[str, Path, Path, str]] = []
 
