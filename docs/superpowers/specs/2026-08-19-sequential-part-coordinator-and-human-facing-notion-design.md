@@ -199,3 +199,23 @@ Selected B is preferred while Base is operated by one user with GPT as primary p
 - Base Notion Home contains self-contained detailed Skill, Module, Part, lifecycle, validation, and current-state explanations.
 - Project Home contract requires self-contained project understanding before drilldown.
 - Current Part integration finishes only after minimum five true full-scope loops and zero valid blockers.
+
+## Full-scope convergence evidence
+
+These are **whole-state loops**, not one-lens reviews. Each counted loop re-read current canon/actual implementation, rechecked the three material operating alternatives, attacked all four approved user changes plus active-workstream safety, validated findings, applied only verified fixes, checked regression/reference evidence, re-ran better-alternative search and long-term fit, then re-attacked the resulting whole state.
+
+### Loop 1 — whole-state result
+
+Validated finding: the first coordinator migration also edited two files already owned by active P03 PR #537. That violated `ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED` even though the new Part policy allows cross-Part fixes. The P03 Skill body and finding protocol were restored to current-main blobs in PR #544. Global `FULL_LOOP_IS_NOT_A_REVIEW_LENS` authority remains in AGENTS / Long-Horizon / Partition Operating Model so the governance correction does not depend on rewriting the active P03 workstream.
+
+Better-alternative result: **preserve P03 branch ownership and establish the global rule above it** is stronger than either overwriting P03 or deferring the entire governance fix.
+
+### Loop 2 — whole-state result
+
+Validated finding: broadening legacy alias parsing to treat every first-cell alias as a stale execution Skill ID falsely rejected legitimate compatibility/current-mode terms such as `Grill Me` and `reconcile-legacy`. The stronger design separates the alias table's human compatibility names from explicit `엄격 실행 ID` values. Deleted-path detection can still use the complete historical aliases, while execution-entrypoint stale-ID rejection uses only explicit strict IDs.
+
+Regression evidence: focused freshness/Registry tests, Base integrity, generated-artifact check, and committed-head freshness verification were used. This keeps P02's multi-alias coverage goal without converting user-facing compatibility names into false stale IDs.
+
+### Loop 3 — whole-state checkpoint
+
+The durable strict-ID migration was completed and temporary execution artifacts were removed. The next exact-head verification must prove: no temporary workflow/script remains, P03/P08 implementation bodies are absent from this PR, sequential coordinator and semantic ownership contracts remain machine-tested, generated Skill map matches Registry, and required CI consumes the relevant regressions. Any failure reopens the whole-state loop rather than being treated as an isolated lens pass.
