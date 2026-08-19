@@ -14,7 +14,7 @@ START_HERE.md
 → skills/SKILL_REGISTRY.json
 → docs/generated/BASE_ACTIVE_SKILLS.md
 → 현재 작업에 필요한 Skill·mode·reference·Template·Case
-→ 대상 프로젝트 정본과 실제 파일
+→ 대상 프로젝트 Notion Project Home·정본과 실제 파일
 ```
 
 - [Base 시작 지점](START_HERE.md)
@@ -26,7 +26,8 @@ START_HERE.md
 - [프로젝트 Workspace 권한 계약](docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json)
 - [Notion 시각 자산·Flow Workflow](docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md)
 - [시각 협업 정책](docs/VISUAL_COLLABORATION_TOOL_POLICY.md)
-- [Google Sheets compatibility 정책](docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md)
+- [폐기 프로젝트 작업면 정책](docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md)
+- [Google Sheets migration-only 정책](docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md)
 - [근거 기반 게임 개발 지식 허브](docs/knowledge/game-development/README.md)
 - [게임 개발 Evidence Pack](templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md)
 - [Game Development Case Card](templates/research/GAME_DEVELOPMENT_CASE_CARD.md)
@@ -35,7 +36,6 @@ START_HERE.md
 - [플랫폼 심사·자산 권리·참조 독립 제작 Guide](docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md)
 - [통합 Vertical Slice 실행문 v9](templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md)
 - [GPT 이미지 생성·검수 정책](docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md)
-- [PC 우선 QA Evidence Studio](tools/qa-evidence-studio/README.md)
 - [프로젝트 로컬 Asset Vault 정책](docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md)
 - [공용 Skill Registry](skills/SKILL_REGISTRY.json)
 - [활성 Skill 생성 Map](docs/generated/BASE_ACTIVE_SKILLS.md)
@@ -67,7 +67,7 @@ project page
 
 Visual Map은 `VISUAL_MAP_DERIVED`이며 두 번째 정본이 아닙니다. 코드·Scene·Resource·runtime config·tracked implementation asset·build/test는 repository-native runtime truth가 책임집니다.
 
-기존 프로젝트 Google Sheet는 고유 unmigrated material이 남아 있을 때만 `COMPATIBILITY_ONLY` migration source로 사용합니다.
+기존 프로젝트 Google Sheet는 고유 unmigrated material이 남아 있을 때만 `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL` source로 읽고, unique material을 Notion/repository로 이관·readback한 뒤 active route에서 제거합니다.
 
 ## 이미지·자산 Workflow
 
@@ -80,30 +80,38 @@ need / brief
 → approval or rejection
 → version / replacement
 → repository implementation task
-→ runtime QA
+→ REPOSITORY_NATIVE_EVIDENCE_CAPTURE
 ```
 
 사람용 Gallery에는 Preview·Name·Usage·Style·Approved·Reuse처럼 판단에 필요한 정보만 보여주고, AI/System view에는 Asset ID·Version·Status·Prompt·source provenance·Rights/License·Hash·Implementation Path 등을 보존할 수 있습니다.
 
 Reference와 Benchmark는 자산 정본이 아닙니다. 필요할 때 `ADOPT / ADAPT / TEST / REFERENCE_ONLY / AVOID / IGNORE`로 적용 판정을 기록합니다.
 
-## 폐기된 시각 실행면
+## 폐기된 프로젝트 작업면
 
-Figma Bridge, project Figma route registry, localhost Expression Studio, localhost Sprite Animation Studio, visual-delivery Tool Hub는 현재 active project surface가 아닙니다. Git history가 복구 기록을 보존합니다.
+다음은 현재 active/default project surface가 아닙니다.
 
-그 구현에서 검증된 다음 원칙만 현재 Workflow에 흡수했습니다.
+```text
+Figma / Figma Bridge / project Figma route registry
+external HTML workspace / dashboard / catalog
+legacy Google Sheets after migration
+project-management Tool Hub
+QA Evidence Studio
+localhost Expression / Sprite management surfaces
+```
 
-- 정확한 Project identity
-- source provenance
-- identity-preserving bounded edit
-- candidate review와 명시적 approval
-- version / replacement
-- reuse classification
-- screen/flow ID
-- upload 이후 readback
-- repository handoff와 runtime evidence 분리
+Git history와 과거 plan/test/evidence는 rollback·학습 기록으로 남을 수 있습니다. 고유 정보나 재사용 가능한 원리만 current Notion/repository/PowerShell/Loop owner로 흡수하고, 존재한다는 이유만으로 다시 기본 경로로 라우팅하지 않습니다.
 
-QA Evidence Studio는 Figma/Notion과 독립적인 실제 PC 런타임 증거 도구이므로 유지합니다.
+검증은 별도 QA 관리 앱을 기본으로 두지 않고 `REPOSITORY_NATIVE_EVIDENCE_CAPTURE`를 사용합니다.
+
+```text
+project/build identity
+→ acceptance contract
+→ existing tests / GUT / Godot·Hera runtime / logs / screenshots·video / CI artifacts
+→ exact commit/PR identity
+→ optional Notion human-facing link
+→ PASS | FAIL | BLOCKED | NOT_RUN + evidence ceiling
+```
 
 ## 사용자가 기억할 최소 요청
 
@@ -115,15 +123,18 @@ QA Evidence Studio는 Figma/Notion과 독립적인 실제 PC 런타임 증거 �
 
 ```text
 요청·현재 상태 조사
-→ 최소 3개 실질 대안·벤치마킹·장기 적합성
+→ 최소 3개 실질 대안·벤치마킹·창의성 frontier·장기 적합성
 → 승인된 작업 계약
 → Notion Project-filtered planning / asset / visual workspace
+→ 필요 시 PROJECT_VISUALIZATION_NEED_MAP와 기획 시각화
 → repository-native 구현
-→ Demo-First Vertical Slice·playtest·eval
+→ release-near Vertical Slice·playtest·eval
 → 정본·정적·runtime·접근성·성능·회귀 검증
 → 플랫폼·권리 검증
+→ 최소 5회 전체 적대적 개선 루프, 이후 clean까지
 → exact-head PR / merge / postmerge readback
 → 학습·필요 시 Base 승격
+→ REQUIRED_WORK_REMAINING: 0
 ```
 
 ## Active Skill Registry View
@@ -136,6 +147,8 @@ This entrypoint does not maintain a second Skill list.
 - Human view: `docs/generated/BASE_ACTIVE_SKILLS.md`
 - Behavior eval: `skills/SKILL_BEHAVIOR_EVALS.json`
 - Legacy ID: `skills/LEGACY_SKILL_ALIASES.md`
+
+Skill 수 자체는 목표가 아닙니다. 기존 owner/mode/reference로 책임을 보존할 수 있으면 흡수하고, 독립 input/output/authority/validation boundary가 실제로 필요할 때만 새 Skill을 추가합니다.
 
 ## 프로젝트 책임 원본
 
@@ -160,7 +173,7 @@ docs/knowledge/           분야별 Guide·Reference
 docs/operations/          machine/operational contract
 skills/                   실행 Skill·Registry·Learning Log·reference
 templates/                기획·실행·검증 Template
-tools/                    생성기·검증기·독립 QA 도구
+tools/                    생성기·검증기·역사/전문 도구 구현; 존재 자체가 active routing 권위는 아님
 tests/                    운영·라우팅·정본·회귀 테스트
 [수정제안서]/             Base 승격 후보·승인·구현 이력
 ```
