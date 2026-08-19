@@ -2,6 +2,8 @@
 
 이 Template은 프로젝트마다 **재사용 가능한 장르 문법·메커닉·시스템·콘텐츠/데이터 구조·UI/UX·도구·자동화·에셋/이미지 재료·작업구조·Skill/Eval·QA 패턴**을 찾고, 역공학·재사용·재구현 여부를 결정할 때 사용한다.
 
+현재 Base에서 이미 추출된 공용/프로젝트-seed 모듈은 `docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md`를 먼저 확인한다. 기존 모듈이 현재 병목을 해결하면 새 후보를 만들기보다 재사용·변형·프로젝트 adapter를 우선한다. 이 Registry는 후보 계약과 검증 상태를 기록하며, 프로젝트 runtime·Asset·Skill 권위를 자동 획득하지 않는다.
+
 ## 0. Scan identity
 
 ```yaml
