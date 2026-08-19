@@ -20,11 +20,13 @@
 - run: `32289024206`
 - result: expected FAIL after the focused contract was expanded to cover README/Documentation Map/flexible Skill-count consumers.
 
-### GREEN before final diff cleanup
+### GREEN and regression-driven refinements
 
 The focused v4.7 workflow, long-horizon contract, Evidence Knowledge and UI/UX workflows reached Green after current owners were updated. Integrated Vertical Slice then exposed a canonical-reference freshness omission: `docs/OPERATING_MODEL.md` correctly demoted Sheets to migration-only but had dropped the current migration-owner path. The owner link was restored without restoring Sheet authority.
 
 Base v9 later exposed a stale QA Studio discovery assertion. That regression consumer was replaced with a retirement + `REPOSITORY_NATIVE_EVIDENCE_CAPTURE` contract rather than reviving the tool.
+
+A final Game Project OS `docs-validation` pass then rejected trailing Markdown whitespace in newly written evidence/spec documents. The failure was classified as documentation hygiene, not product behavior. A bounded one-shot normalization removed only line-end whitespace/EOF inconsistency from changed Markdown and self-deleted; the final connector commit exists to trigger normal exact-head CI after the bot-authored normalization commit.
 
 ## Full adversarial improvement loops
 
@@ -101,7 +103,7 @@ Rechecked `CREATIVE_BENCHMARK_FRONTIER`, `PROJECT_VISUALIZATION_NEED_MAP`, `BALA
 ### Loop 5 — integration / concurrency / long-term-fit attack
 
 **FIND**
-The remaining material risks were current-main drift, independent workstream collision, temporary/debug artifacts, accidental manifest noise, and a tool-retirement policy that could delete history too aggressively.
+The remaining material risks were current-main drift, independent workstream collision, temporary/debug artifacts, accidental manifest noise, tool-retirement overreach, and final documentation hygiene.
 
 **VALIDATE**
 - another chat's PR #557 remains an independent workstream and was not modified;
@@ -109,13 +111,15 @@ The remaining material risks were current-main drift, independent workstream col
 - retirement removes active routing but does not physically delete historical code in this alignment patch;
 - physical removal remains a separate bounded retirement task after consumer/readback safety;
 - Skill count remains flexible and semantic rather than numerically fixed;
-- direct PowerShell/Codex and Loop Engineering remain usable without Tool Hub/QA Studio.
+- direct PowerShell/Codex and Loop Engineering remain usable without Tool Hub/QA Studio;
+- changed-file inventory contains no temporary/debug workflow after cleanup;
+- trailing-whitespace failure had a bounded formatting-only recovery and is being revalidated on a connector-authored final head.
 
 **REFINE**
-No new architecture was introduced. Accidental manifest related-page noise and temporary diagnostics were removed; stale regression consumers were updated instead of reactivating retired tools.
+No new architecture was introduced. Accidental manifest related-page noise, stale regression consumers, temporary diagnostics and documentation whitespace were fixed rather than weakening validation.
 
 **VERIFY / RE-ATTACK**
-Current exact-head CI is required after this evidence update. `CLEAN_REVIEW_EXIT` is still withheld until all required checks on the final head are Green, unresolved threads are zero, current main is fresh, and the final diff contains no temporary artifacts.
+Current exact-head CI is required after this evidence update. `CLEAN_REVIEW_EXIT` is withheld until all required checks on the final head are Green, unresolved threads are zero, current main is fresh, and the final diff contains no temporary artifacts.
 
 ## Current review state
 
