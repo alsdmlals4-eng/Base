@@ -371,5 +371,13 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         self.assertIn("explicit absorption authorization", intake)
 
 
+    def test_adversarial_registry_uses_workspace_neutral_authority_drift_terms(self) -> None:
+        registry_text = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
+        self.assertNotIn("google-sheets-drift", registry_text)
+        self.assertNotIn("GitHub·Google Sheets 불일치", registry_text)
+        self.assertIn("configured-workspace-authority-drift", registry_text)
+        self.assertIn("configured workspace/repository authority 불일치", registry_text)
+
+
 if __name__ == "__main__":
     unittest.main()

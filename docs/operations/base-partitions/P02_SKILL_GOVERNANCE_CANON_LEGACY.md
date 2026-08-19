@@ -1,5 +1,11 @@
 # P02 · Skill Governance, Canon Freshness & Legacy — Context Pack
 
+## 현재 실행 계약
+`SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS` · `PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER`
+
+이 Part는 semantic responsibility / learning / validation checkpoint다. 현재 coordinator가 다른 Part/CP0의 검증된 오류·충돌·누락을 발견하면 다른 Part라는 이유만으로 보류하지 않고 `CROSS_PART_CHANGE`로 owner를 기록해 직접 수정할 수 있다. 단, 다른 독립 open/draft/ready PR·branch·worktree는 `ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED`에 따라 read-only다.
+
+
 ## 역할
 Skill 생명주기·중복/과잉·canonical reference freshness·BCP·stale pruning·legacy 흡수/삭제를 책임진다.
 
@@ -13,7 +19,7 @@ Existing Solution First, 최소 Skill routing, LEGACY_ABSORB_VERIFY_REMOVE, Goog
 Skill Lifecycle → Freshness → BCP → Simplification → Stale Pruning → Legacy Absorb/Verify/Remove.
 
 ## 경계
-Skill Registry·shared routes·generated map은 CP0라 직접 수정하지 않는다. 각 Part Skill 본체는 audit 입력으로 읽되 타 Part 본체는 수정하지 않는다.
+Part 경계는 수정 금지선이 아니라 semantic owner 지도다. 다른 Part/CP0 finding도 현재 coordinator가 증거와 검증 경로를 확보하면 직접 수정한다. 다른 독립 활성 workstream만 read-only로 보호하며, 실제 조정 blocker만 `CROSS_PART_CHANGE_REQUEST`로 남긴다.
 
 ## 우선 공격 대상
 중복 Skill/Mode, 소비자 없는 규칙, Registry와 실제 Skill drift, Figma/HTML/local tool/Sheets 잔존 active authority, unique material 확인 없는 삭제.

@@ -64,15 +64,32 @@ def matching_part_ids(manifest: dict, path: str) -> list[str]:
     return owners
 
 
-def classify_path(manifest: dict, part: dict | None, path: str, integration: bool) -> tuple[bool, str]:
+def classify_path(
+    manifest: dict,
+    part: dict | None,
+    path: str,
+    *,
+    integration: bool,
+    coordinator: bool,
+) -> tuple[bool, str]:
     protected = manifest["control_plane"]["protected_write_paths"]
     if matches_any(path, protected):
+        if coordinator:
+            return True, "CONTROL_PLANE_COORDINATOR_WRITE"
         if integration:
             return True, "CONTROL_PLANE_INTEGRATION_WRITE"
         return False, "CONTROL_PLANE_WRITE_FORBIDDEN"
-    if integration:
-        owners = matching_part_ids(manifest, path)
-        return True, "PART_OWNED:" + ",".join(owners) if owners else "UNASSIGNED_INTEGRATION_REVIEW_REQUIRED"
+
+    owners = sorted(set(matching_part_ids(manifest, path)))
+    if coordinator or integration:
+        if len(owners) == 1:
+            return True, f"SEMANTIC_OWNER:{owners[0]}"
+        if len(owners) > 1:
+            # validate-manifest should make this impossible on tracked files.  Do not
+            # silently pick one owner if a caller supplies a new/untracked path.
+            return False, "SEMANTIC_OWNER_AMBIGUOUS:" + ",".join(owners)
+        return True, "SEMANTIC_OWNER:UNASSIGNED_REVIEW_REQUIRED"
+
     assert part is not None
     if matches_any(path, part["owned_write_paths"] + part.get("allowed_new_paths", [])):
         return True, "PART_OWNED"
@@ -112,8 +129,12 @@ def validate_manifest(manifest: dict) -> list[str]:
     ids = [p.get("part_id") for p in parts]
     if ids != [f"P{i:02d}" for i in range(1, 10)]:
         errors.append(f"part ids/order invalid: {ids}")
-    if manifest.get("control_plane", {}).get("write_authority") != "INTEGRATION_ONLY":
-        errors.append("control plane write_authority must be INTEGRATION_ONLY")
+
+    authority = manifest.get("control_plane", {}).get("write_authority")
+    if authority not in {"INTEGRATION_ONLY", "COORDINATOR_OR_INTEGRATION"}:
+        errors.append(
+            "control plane write_authority must be INTEGRATION_ONLY or COORDINATOR_OR_INTEGRATION"
+        )
 
     skills: list[str] = []
     paths: dict[str, str] = {}
@@ -158,19 +179,32 @@ def validate_manifest(manifest: dict) -> list[str]:
     for path in files:
         if matches_any(path, protected_patterns):
             continue
-        owners = matching_part_ids(manifest, path)
-        unique_owners = sorted(set(owners))
-        if len(unique_owners) > 1:
-            errors.append(f"semantic path overlap {path}: {unique_owners}")
+        owners = sorted(set(matching_part_ids(manifest, path)))
+        if len(owners) > 1:
+            errors.append(f"semantic path overlap {path}: {owners}")
+
+    coordinator = manifest.get("coordinator_execution")
+    if coordinator is not None:
+        if coordinator.get("policy") != "SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS":
+            errors.append("coordinator_execution policy invalid")
+        if coordinator.get("part_order") != [f"P{i:02d}" for i in range(1, 10)]:
+            errors.append("coordinator_execution part_order invalid")
 
     return errors
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Validate Base partition write scope")
+    parser = argparse.ArgumentParser(
+        description="Validate Base partition semantic ownership and write scope"
+    )
     mode = parser.add_mutually_exclusive_group()
-    mode.add_argument("--part", help="P01..P09 worker mode")
-    mode.add_argument("--integration", action="store_true", help="Integration audit mode")
+    mode.add_argument("--part", help="strict P01..P09 specialist/legacy mode")
+    mode.add_argument("--integration", action="store_true", help="integration audit mode")
+    mode.add_argument(
+        "--coordinator",
+        action="store_true",
+        help="single-chat sequential coordinator mode; allow cross-Part/CP0 writes with semantic attribution",
+    )
     parser.add_argument("--validate-manifest", action="store_true")
     parser.add_argument("--manifest", default=str(DEFAULT_MANIFEST))
     parser.add_argument("--base")
@@ -189,16 +223,25 @@ def main() -> int:
                 print(f"MANIFEST_ERROR {error}")
             return 3
         print("BASE_PARTITION_MANIFEST: PASS")
-        if not args.part and not args.integration and args.files is None and args.base is None:
+        if (
+            not args.part
+            and not args.integration
+            and not args.coordinator
+            and args.files is None
+            and args.base is None
+        ):
             return 0
-    if not args.part and not args.integration:
-        print("ERROR: choose --part or --integration", file=sys.stderr)
+
+    if not args.part and not args.integration and not args.coordinator:
+        print("ERROR: choose --part, --integration, or --coordinator", file=sys.stderr)
         return 3
+
     try:
-        part = None if args.integration else find_part(manifest, args.part)
+        part = None if (args.integration or args.coordinator) else find_part(manifest, args.part)
     except KeyError:
         print(f"ERROR: unknown part {args.part}", file=sys.stderr)
         return 3
+
     if args.files is not None:
         files = args.files
     else:
@@ -206,9 +249,16 @@ def main() -> int:
             print("ERROR: --base is required when --files is not supplied", file=sys.stderr)
             return 3
         files = changed_files(args.base, args.head)
+
     failures = 0
     for path in files:
-        allowed, reason = classify_path(manifest, part, path, args.integration)
+        allowed, reason = classify_path(
+            manifest,
+            part,
+            path,
+            integration=args.integration,
+            coordinator=args.coordinator,
+        )
         status = "PASS" if allowed else "FAIL"
         print(f"{status}\t{reason}\t{path}")
         failures += 0 if allowed else 1

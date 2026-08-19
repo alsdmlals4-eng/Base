@@ -1,5 +1,11 @@
 # Notion Project Isolation and Core System Contract
 
+## Project Home human-facing contract
+
+`HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`
+
+각 Project Home은 프로젝트 한 줄 정의·플레이어/사용자 가치·확정 방향·Core Loop/Flow·핵심 시스템 목적/상호작용·UX/UI/Visual·현재 구현상태·검증 evidence ceiling·blocker/다음 작업·중요 결정·위험/revisit condition을 본문에서 직접 설명한다. 하위 `08 · 핵심 시스템 · 상세` 같은 페이지는 상세 evidence와 긴 표를 위한 drilldown이며 Home의 핵심 이해를 대신하지 않는다.
+
 ## 목적
 
 여러 프로젝트가 같은 Notion workspace를 동시에 사용하더라도 서로의 작업·자산·핵심 시스템 데이터를 덮어쓰거나 섞지 않도록 한다. `PROJECT_NAMESPACE_ISOLATION`이 프로젝트 간 병렬 작업의 기본 쓰기 모델이다.
@@ -277,3 +283,7 @@ write
 Project Registry에서 Project Key 중복, Core System Master에서 `(Project, Record Key)` 중복, Project relation 누락을 검사한다.
 
 기존 Project Home·child page·Work/Asset record를 삭제하거나 이동하지 않는다.
+
+## Human Home 상세 정책
+
+`HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`의 Base/Project Home 필수 내용은 `docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md`가 소유한다. 하위 페이지는 drilldown/evidence이며 core understanding을 대신하지 않는다.

@@ -36,13 +36,13 @@ class BasePartitionContractTests(unittest.TestCase):
     def test_manifest_uses_control_plane_plus_nine_functional_parts(self) -> None:
         manifest = self.load_manifest()
         self.assertEqual("BASE_PARTITION_OPERATING_MODEL_V1", manifest["contract_id"])
-        self.assertEqual("HYBRID_CONTROL_PLANE_END_TO_END_CAPABILITY_PARTITIONS", manifest["selected_strategy"])
+        self.assertEqual("ONE_BASE_STABLE_PARTITIONS_SEQUENTIAL_COORDINATOR", manifest["selected_strategy"])
         self.assertEqual(9, len(manifest["parts"]))
         self.assertEqual([f"P{i:02d}" for i in range(1, 10)], [p["part_id"] for p in manifest["parts"]])
-        self.assertEqual("INTEGRATION_ONLY", manifest["control_plane"]["write_authority"])
+        self.assertEqual("COORDINATOR_OR_INTEGRATION", manifest["control_plane"]["write_authority"])
         integration = manifest["integration"]
-        self.assertEqual(9, integration["worker_chat_count"])
-        self.assertEqual(9, integration["total_new_gpt_chats_after_task_1"])
+        self.assertEqual(0, integration["worker_chat_count"])
+        self.assertEqual(0, integration["total_new_gpt_chats_after_task_1"])
         self.assertEqual(0, integration["new_integration_chat_count"])
         self.assertEqual("CURRENT_COORDINATOR_CHAT", integration["integration_chat"])
         self.assertEqual("CURRENT_COORDINATOR_CHAT", integration["final_confirmation_chat"])
@@ -79,29 +79,29 @@ class BasePartitionContractTests(unittest.TestCase):
         self.assertTrue(mode["integration_returns_to_one_base"])
         for path in (OPERATING_MODEL, WORKER_PROMPT, INTEGRATION_PROMPT):
             text = path.read_text(encoding="utf-8")
-            self.assertIn("PARTITION_IS_MAINTENANCE_AND_SPECIALIZATION_VIEW_NOT_RUNTIME_FRAGMENTATION", text)
+            self.assertIn("SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS", text)
 
-    def test_one_chat_one_part_notion_and_github_isolation(self) -> None:
+    def test_single_coordinator_preserves_unique_notion_part_pages_and_semantic_attribution(self) -> None:
         manifest = self.load_manifest()
         isolation = manifest["collaboration_isolation"]
-        self.assertEqual("ONE_GPT_CHAT_OWNS_ONE_PART_END_TO_END", isolation["worker_model"])
+        self.assertEqual("SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS", isolation["worker_model"])
         self.assertTrue(isolation["github"]["one_branch_per_part"])
         self.assertTrue(isolation["github"]["one_pr_per_part"])
-        self.assertEqual("INTEGRATION_ONLY", isolation["notion"]["hub_write"])
-        self.assertEqual("INTEGRATION_ONLY", isolation["notion"]["shared_visual_write"])
+        self.assertEqual("COORDINATOR", isolation["notion"]["hub_write"])
+        self.assertEqual("COORDINATOR", isolation["notion"]["shared_visual_write"])
         urls = []
         branches = []
         for part in manifest["parts"]:
-            self.assertEqual("ONE_CHAT_END_TO_END", part["chat_ownership"])
-            self.assertEqual("OWN_PART_PAGE_ONLY", part["notion_write_authority"])
+            self.assertEqual("CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT", part["chat_ownership"])
+            self.assertEqual("COORDINATOR_CURRENT_OR_AFFECTED_PART", part["notion_write_authority"])
             urls.append(part["notion_page_url"])
             branches.append(part["branch_template"])
         self.assertEqual(9, len(set(urls)))
         self.assertEqual(9, len(set(branches)))
         worker = WORKER_PROMPT.read_text(encoding="utf-8")
-        self.assertIn("ONE_GPT_CHAT_OWNS_ONE_PART_END_TO_END", worker)
-        self.assertIn("자기 `notion_page_url`만 직접 수정", worker)
-        self.assertIn("Base Hub", INTEGRATION_PROMPT.read_text(encoding="utf-8"))
+        self.assertIn("SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS", worker)
+        self.assertIn("PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER", worker)
+        self.assertIn("HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN", INTEGRATION_PROMPT.read_text(encoding="utf-8"))
 
     def test_p05_visual_scope_avoids_broad_ui_ux_globs(self) -> None:
         manifest = self.load_manifest()
@@ -118,9 +118,9 @@ class BasePartitionContractTests(unittest.TestCase):
             for field in ("purpose", "owned_write_paths", "read_only_dependencies", "important_rules", "owned_skill_ids", "modules", "validation", "acceptance_criteria", "revisit_conditions"):
                 self.assertTrue(part[field], f"{part['part_id']} missing {field}")
 
-    def test_parallel_groups_and_integration_order_are_explicit(self) -> None:
+    def test_responsibility_clusters_and_integration_order_are_explicit(self) -> None:
         manifest = self.load_manifest()
-        groups = manifest["parallel_execution_groups"]
+        groups = manifest["responsibility_clusters"]
         self.assertGreaterEqual(len(groups), 2)
         flattened = [part_id for group in groups for part_id in group["parts"]]
         self.assertEqual({f"P{i:02d}" for i in range(1, 10)}, set(flattened))
@@ -139,18 +139,21 @@ class BasePartitionContractTests(unittest.TestCase):
         self.assertIn("사용자 학습형 완료보고", worker)
         self.assertIn("CURRENT_COORDINATOR_CHAT", integration)
 
-    def test_operating_model_compares_four_real_strategies_and_records_revisit_conditions(self) -> None:
+    def test_operating_model_compares_real_execution_strategies_and_records_revisit_conditions(self) -> None:
         text = OPERATING_MODEL.read_text(encoding="utf-8")
-        for term in ("A · 디렉터리 계층 분할", "B · 기능/도메인 분할", "C · Control Plane + End-to-End Capability Partition", "D · 동적 의존성 그래프 재클러스터링", "BETTER_ALTERNATIVE_SEARCH", "LONG_TERM_PLAN_FIT_REQUIRED", "재검토 조건"):
+        for term in ("A · 9개 별도 채팅 유지", "B · 한 coordinator 채팅", "C · Part 자체 제거", "BETTER_ALTERNATIVE_SEARCH", "LONG_TERM_PLAN_FIT_REQUIRED", "재검토"):
             self.assertIn(term, text)
-        self.assertIn("새 GPT 채팅은 P01~P09의 9개", text)
-        self.assertIn("CURRENT_COORDINATOR_CHAT", text)
+        self.assertIn("새 Part 채팅을 9개 만들지 않는다", text)
+        self.assertIn("SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS", text)
 
     def test_scope_checker_declares_worker_and_integration_modes(self) -> None:
         text = SCOPE_CHECKER.read_text(encoding="utf-8")
         self.assertIn("--part", text)
         self.assertIn("--integration", text)
+        self.assertIn("--coordinator", text)
         self.assertIn("CONTROL_PLANE_WRITE_FORBIDDEN", text)
+        self.assertIn("CONTROL_PLANE_COORDINATOR_WRITE", text)
+        self.assertIn("SEMANTIC_OWNER:", text)
         self.assertIn("OUT_OF_PARTITION_WRITE", text)
         self.assertIn("semantic path overlap", text)
         self.assertIn("ACTIVE skills missing partition owner", text)
@@ -167,12 +170,16 @@ class BasePartitionContractTests(unittest.TestCase):
         outside = self.run_scope("--part", "P01", "--files", "skills/designing-vertical-slices/SKILL.md")
         self.assertEqual(2, outside.returncode)
         self.assertIn("OUT_OF_PARTITION_WRITE", outside.stdout)
+        coordinator = self.run_scope("--coordinator", "--files", "AGENTS.md", "skills/designing-vertical-slices/SKILL.md")
+        self.assertEqual(0, coordinator.returncode, coordinator.stdout + coordinator.stderr)
+        self.assertIn("CONTROL_PLANE_COORDINATOR_WRITE", coordinator.stdout)
+        self.assertIn("SEMANTIC_OWNER:P04", coordinator.stdout)
         integration = self.run_scope("--integration", "--files", "AGENTS.md", "skills/designing-vertical-slices/SKILL.md")
         self.assertEqual(0, integration.returncode, integration.stdout + integration.stderr)
 
     def test_manifest_retirement_and_unassigned_path_policy_fail_closed(self) -> None:
         manifest = self.load_manifest()
-        self.assertEqual("READ_ONLY_UNLESS_INTEGRATION_ASSIGNMENT_OR_CROSS_PART_CHANGE_REQUEST", manifest["unassigned_path_policy"])
+        self.assertEqual("COORDINATOR_REVIEW_WITH_SEMANTIC_OWNER_ATTRIBUTION", manifest["unassigned_path_policy"])
         surfaces = {item["surface"] for item in manifest["retirement_targets"]}
         for surface in ("Google Sheets", "Figma references/workflows", "external HTML visual/dashboard workspace", "custom local visual Tool/Hub", "QA Evidence Studio/local QA tooling"):
             self.assertIn(surface, surfaces)

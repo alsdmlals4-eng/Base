@@ -1,9 +1,9 @@
 {
   "contract_id": "BASE_PARTITION_OPERATING_MODEL_V1",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "design_baseline_sha": "f93016dbe90d3d1d906afaaaa75005b490220e90",
   "baseline_policy": "RESOLVE_LATEST_MAIN_AT_PART_START_AND_PIN_EXACT_SHA",
-  "selected_strategy": "HYBRID_CONTROL_PLANE_END_TO_END_CAPABILITY_PARTITIONS",
+  "selected_strategy": "ONE_BASE_STABLE_PARTITIONS_SEQUENTIAL_COORDINATOR",
   "worker_model": "GPT_PRIMARY_OPTIONAL_CODEX_EXECUTOR",
   "notion_human_view": "Base · 작업 시스템 & Skill 지도",
   "path_state_model": [
@@ -12,18 +12,19 @@
     "CONTROL_PLANE",
     "DERIVED_OR_GENERATED"
   ],
-  "unassigned_path_policy": "READ_ONLY_UNLESS_INTEGRATION_ASSIGNMENT_OR_CROSS_PART_CHANGE_REQUEST",
-  "cross_part_protocol": "CROSS_PART_CHANGE_REQUEST",
+  "unassigned_path_policy": "COORDINATOR_REVIEW_WITH_SEMANTIC_OWNER_ATTRIBUTION",
+  "cross_part_protocol": "CROSS_PART_CHANGE_DEFAULT_REQUEST_ONLY_FOR_REAL_BLOCKERS",
   "review_contract": {
     "FULL_LOOP_COUNT_MINIMUM": 5,
     "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT": 5,
     "maximum_loop_count": null,
-    "exit": "CLEAN_REVIEW_EXIT"
+    "exit": "CLEAN_REVIEW_EXIT",
+    "FULL_LOOP_IS_NOT_A_REVIEW_LENS": true
   },
   "control_plane": {
     "name": "CP0_BASE_CONTROL_PLANE",
     "purpose": "전역 권위, routing, registry, generated view, partition contract와 cross-part 통합을 단일 쓰기 지점으로 유지한다.",
-    "write_authority": "INTEGRATION_ONLY",
+    "write_authority": "COORDINATOR_OR_INTEGRATION",
     "protected_write_paths": [
       "AGENTS.md",
       "README.md",
@@ -69,11 +70,12 @@
       "docs/operations/base-v9/generated/**"
     ],
     "change_protocol": [
-      "Part worker records CROSS_PART_CHANGE_REQUEST instead of editing CP0",
-      "Integration deduplicates and validates requests",
-      "Integration updates canonical owner once",
+      "Coordinator may fix validated cross-Part or CP0 findings directly with CROSS_PART_CHANGE semantic attribution",
+      "Different Part ownership alone is not a write barrier",
+      "Independent open/draft/ready workstreams remain read-only unless the user explicitly authorizes takeover",
+      "CROSS_PART_CHANGE_REQUEST is reserved for real authority/evidence/active-workstream blockers",
       "Generated artifacts are rebuilt from authority rather than hand-edited",
-      "Exact-head CI and post-merge readback are required"
+      "Exact-head CI and post-merge GitHub/Notion readback are required"
     ],
     "validation": [
       "python tools/check_base_partition_scope.py --validate-manifest",
@@ -81,35 +83,6 @@
       "python tools/build_base_v9_artifacts.py --check"
     ]
   },
-  "parallel_execution_groups": [
-    {
-      "group_id": "G1_FOUNDATION",
-      "parts": [
-        "P01",
-        "P02",
-        "P03"
-      ],
-      "can_run_with_other_groups": true
-    },
-    {
-      "group_id": "G2_GAME_PRODUCTION",
-      "parts": [
-        "P04",
-        "P05",
-        "P06"
-      ],
-      "can_run_with_other_groups": true
-    },
-    {
-      "group_id": "G3_DELIVERY_AI_CONTENT",
-      "parts": [
-        "P07",
-        "P08",
-        "P09"
-      ],
-      "can_run_with_other_groups": true
-    }
-  ],
   "parts": [
     {
       "part_id": "P01",
@@ -133,7 +106,6 @@
         "skills/creating-user-learning-notes/**",
         "docs/GPT_CODEX_WORKFLOW_POLICY.md",
         "docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md",
-        "docs/PROJECT_WORKSPACE_AUTHORITY_POLICY.md",
         "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json",
         "templates/handoff/**",
         "templates/project-operations/**",
@@ -141,7 +113,8 @@
         "tests/test_notion_project_isolation_core_system_contract.py",
         "tests/test_*handoff*.py",
         "tests/test_*continuity*.py",
-        "docs/operations/base-partitions/learning/P01_LEARNING_LOG.md"
+        "docs/operations/base-partitions/learning/P01_LEARNING_LOG.md",
+        "docs/operations/NOTION_PROJECT_ISOLATION_AND_CORE_SYSTEM_CONTRACT.md"
       ],
       "allowed_new_paths": [
         "docs/operations/project-workspace/**",
@@ -234,11 +207,11 @@
           "PROMOTION_CANDIDATE"
         ]
       },
-      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P01-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
-      "notion_write_authority": "OWN_PART_PAGE_ONLY",
-      "notion_read_only_pages": [
+      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8137888edd1e41745099?pvs=204",
@@ -274,13 +247,14 @@
         "docs/knowledge/methods/**",
         "docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md",
         "archive/**",
-        "proposals/**",
+        "[수정제안서]/**",
         "tools/check_canonical_reference_freshness.py",
         "tools/*legacy*",
         "tests/test_*reference_freshness*.py",
         "tests/test_*legacy*.py",
         "tests/test_*archive*.py",
-        "docs/operations/base-partitions/learning/P02_LEARNING_LOG.md"
+        "docs/operations/base-partitions/learning/P02_LEARNING_LOG.md",
+        "templates/quality/CANONICAL_REFERENCE_FRESHNESS_AUDIT.md"
       ],
       "allowed_new_paths": [
         "docs/operations/legacy-retirement/**",
@@ -373,11 +347,11 @@
           "PROMOTION_CANDIDATE"
         ]
       },
-      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P02-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c8137888edd1e41745099?pvs=204",
-      "notion_write_authority": "OWN_PART_PAGE_ONLY",
-      "notion_read_only_pages": [
+      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
@@ -404,7 +378,6 @@
         "skills/running-adversarial-review-and-refinement/**",
         "skills/refactoring-with-contract-preservation/**",
         "skills/synchronizing-local-and-github-state/**",
-        "templates/quality/**",
         "docs/CI_EXECUTION_COST_POLICY.md",
         "tests/test_neutral_adversarial_feature_lifecycle.py",
         "tests/test_concurrent_git_sync_preflight_contract.py",
@@ -414,7 +387,8 @@
         "tests/test_*git_sync*.py",
         "tools/*protected_change*",
         "tools/*git_sync*",
-        "docs/operations/base-partitions/learning/P03_LEARNING_LOG.md"
+        "docs/operations/base-partitions/learning/P03_LEARNING_LOG.md",
+        "templates/quality/POST_MERGE_ADVERSARIAL_REVIEW.md"
       ],
       "allowed_new_paths": [
         "docs/operations/quality/**",
@@ -505,11 +479,11 @@
           "PROMOTION_CANDIDATE"
         ]
       },
-      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P03-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c8122acffca50aed2c68f?pvs=204",
-      "notion_write_authority": "OWN_PART_PAGE_ONLY",
-      "notion_read_only_pages": [
+      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
@@ -645,11 +619,11 @@
           "PROMOTION_CANDIDATE"
         ]
       },
-      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P04-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c81f2a6d7de82c0938277?pvs=204",
-      "notion_write_authority": "OWN_PART_PAGE_ONLY",
-      "notion_read_only_pages": [
+      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
@@ -697,7 +671,8 @@
         "docs/operations/base-partitions/learning/P05_LEARNING_LOG.md",
         "docs/knowledge/game-development/UI_UX_VISUAL_DESIGN_RULEBOOK.md",
         "docs/knowledge/game-development/UX_LAWS_COMPLETENESS_MATRIX.md",
-        "docs/knowledge/OPEN_SOURCE_GODOT_UI_REFERENCE_CATALOG.md"
+        "docs/knowledge/OPEN_SOURCE_GODOT_UI_REFERENCE_CATALOG.md",
+        "templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md"
       ],
       "allowed_new_paths": [
         "docs/knowledge/game-development/visual/**",
@@ -789,11 +764,11 @@
           "PROMOTION_CANDIDATE"
         ]
       },
-      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P05-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c81498eb5da3fea812390?pvs=204",
-      "notion_write_authority": "OWN_PART_PAGE_ONLY",
-      "notion_read_only_pages": [
+      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
@@ -920,11 +895,11 @@
           "PROMOTION_CANDIDATE"
         ]
       },
-      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P06-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c817eb473ea7758a1999d?pvs=204",
-      "notion_write_authority": "OWN_PART_PAGE_ONLY",
-      "notion_read_only_pages": [
+      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
@@ -961,7 +936,9 @@
         "tests/test_game_entitlement_*.py",
         "tests/test_cloud_run_*.py",
         "tests/test_*release*.py",
-        "docs/operations/base-partitions/learning/P07_LEARNING_LOG.md"
+        "docs/operations/base-partitions/learning/P07_LEARNING_LOG.md",
+        "templates/quality/PROJECT_CHANGE_VALIDATION.md",
+        "templates/quality/REVIEW_EVIDENCE_RECORD.json"
       ],
       "allowed_new_paths": [
         "docs/operations/release-validation/**",
@@ -972,7 +949,8 @@
         "P06 runtime/toolchain evidence",
         "P05 asset rights inputs",
         "P04 acceptance criteria",
-        "CP0 release identity"
+        "CP0 release identity",
+        "P01 project-operation evidence templates: templates/project-operations/** (read-only semantic dependency)"
       ],
       "important_rules": [
         "Evidence ceiling",
@@ -1054,11 +1032,11 @@
           "PROMOTION_CANDIDATE"
         ]
       },
-      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P07-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c8110b3c3f659a7fe266e?pvs=204",
-      "notion_write_authority": "OWN_PART_PAGE_ONLY",
-      "notion_read_only_pages": [
+      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
@@ -1185,11 +1163,11 @@
           "PROMOTION_CANDIDATE"
         ]
       },
-      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P08-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c8169b55af5b2f27d9bb7?pvs=204",
-      "notion_write_authority": "OWN_PART_PAGE_ONLY",
-      "notion_read_only_pages": [
+      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
@@ -1214,9 +1192,8 @@
       "owned_write_paths": [
         "skills/producing-game-development-youtube-videos/**",
         "skills/developing-and-revising-serial-fiction/**",
-        "docs/knowledge/writing/**",
-        "templates/writing/**",
-        "templates/game-dev-youtube/**",
+        "docs/knowledge/serial-fiction/**",
+        "templates/game-development-youtube/**",
         "docs/knowledge/game-development/NARRATIVE_*",
         "docs/knowledge/game-development/*VOICE*",
         "docs/knowledge/game-development/*CHARACTER*",
@@ -1315,11 +1292,11 @@
           "PROMOTION_CANDIDATE"
         ]
       },
-      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P09-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c812f9de1f7f5e2996d81?pvs=204",
-      "notion_write_authority": "OWN_PART_PAGE_ONLY",
-      "notion_read_only_pages": [
+      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
@@ -1381,21 +1358,18 @@
     }
   ],
   "integration": {
-    "worker_chat_count": 9,
-    "total_new_gpt_chats_after_task_1": 9,
+    "worker_chat_count": 0,
+    "total_new_gpt_chats_after_task_1": 0,
     "ordered_steps": [
-      "Return P01..P09 completion packets to CURRENT_COORDINATOR_CHAT",
-      "Resolve latest main and manifest version",
-      "Read all P01..P09 completion reports and CROSS_PART_CHANGE_REQUEST records",
-      "Validate ACTUAL_CHANGED_PATHS against each Part owned scope",
-      "Review P01..P09 learning logs and promote only validated reusable lessons",
-      "Route periodic Source Queue discoveries to P01..P09 and preserve UNVERIFIED_DISCOVERY until reviewed",
-      "Deduplicate cross-part requests",
-      "Apply CP0 changes once",
-      "Rebuild generated artifacts",
-      "Reconcile Notion Base human-facing map from merged facts",
+      "Run P01 through P09 sequentially in CURRENT_COORDINATOR_CHAT",
+      "Repin latest main between Part checkpoints",
+      "Fix validated cross-Part/CP0 findings directly when no protected active-workstream blocker exists",
+      "Record CROSS_PART_CHANGE semantic attribution",
+      "Deduplicate only real CROSS_PART_CHANGE_REQUEST blockers",
+      "Rebuild Registry/generated artifacts when affected",
+      "Reconcile self-contained Notion Base/Project Homes from merged facts",
       "Run repository-wide regression and required CI",
-      "Run at least 5 full adversarial improvement loops and continue until CLEAN_REVIEW_EXIT",
+      "Run at least 5 true full-scope adversarial loops and continue until CLEAN_REVIEW_EXIT",
       "Exact-head merge",
       "Post-merge main and Notion readback"
     ],
@@ -1441,23 +1415,81 @@
     "integration_returns_to_one_base": true
   },
   "collaboration_isolation": {
-    "worker_model": "ONE_GPT_CHAT_OWNS_ONE_PART_END_TO_END",
+    "worker_model": "SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS",
     "github": {
       "one_branch_per_part": true,
       "one_pr_per_part": true,
       "branch_template": "opt/base-part-{PART_ID}-{slug}",
-      "other_part_branches_prs": "READ_ONLY_DO_NOT_MUTATE",
-      "control_plane_write": "INTEGRATION_ONLY"
+      "other_part_branches_prs": "SEMANTIC_OWNER_REFERENCE_ONLY_NOT_WRITE_BARRIER",
+      "control_plane_write": "COORDINATOR_ALLOWED_WITH_ATTRIBUTION",
+      "active_independent_workstreams": "READ_ONLY_UNLESS_EXPLICIT_USER_TAKEOVER"
     },
     "notion": {
       "hub_url": "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
-      "hub_write": "INTEGRATION_ONLY",
+      "hub_write": "COORDINATOR",
       "shared_visual_url": "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
-      "shared_visual_write": "INTEGRATION_ONLY",
-      "part_page_write": "OWN_PART_ONLY",
-      "other_part_pages": "READ_ONLY",
-      "cross_part_change": "CROSS_PART_CHANGE_REQUEST",
+      "shared_visual_write": "COORDINATOR",
+      "part_page_write": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "other_part_pages": "COORDINATOR_MAY_UPDATE_WHEN_VALIDATED_CHANGE_AFFECTS_PAGE",
+      "cross_part_change": "CROSS_PART_CHANGE",
       "image_rule": "PART_SPECIFIC_VISUALS_TO_OWN_PAGE_SHARED_VISUALS_TO_INTEGRATION_SHARED_REFERENCE"
     }
-  }
+  },
+  "ownership_policy": "PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER",
+  "independent_workstream_policy": "ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED",
+  "coordinator_execution": {
+    "policy": "SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS",
+    "chat": "CURRENT_COORDINATOR_CHAT",
+    "part_order": [
+      "P01",
+      "P02",
+      "P03",
+      "P04",
+      "P05",
+      "P06",
+      "P07",
+      "P08",
+      "P09"
+    ],
+    "required_new_worker_chats": 0,
+    "one_part_checkpoint_at_a_time": true,
+    "repin_latest_main_between_parts": true,
+    "default_pr_model": "ONE_PART_PR_AT_A_TIME",
+    "cross_part_fix_policy": "FIX_VALIDATED_FINDINGS_IN_CURRENT_COORDINATOR_WORK_WITH_SEMANTIC_ATTRIBUTION",
+    "active_independent_workstreams": "READ_ONLY_UNLESS_EXPLICIT_USER_TAKEOVER"
+  },
+  "validation_evidence_policy": {
+    "contract": "TEST_FILE_EXISTENCE_IS_NOT_EXECUTION_EVIDENCE",
+    "required_for_ci_claim": "NAME_ACTUAL_CONSUMING_WORKFLOW_OR_COMMAND",
+    "main_advance_policy": "REVALIDATE_MERGE_READINESS_AGAINST_CURRENT_MAIN"
+  },
+  "responsibility_clusters": [
+    {
+      "parts": [
+        "P01",
+        "P02",
+        "P03"
+      ],
+      "cluster_id": "G1_FOUNDATION",
+      "purpose": "REFERENCE_AND_LEARNING_CLUSTER_ONLY"
+    },
+    {
+      "parts": [
+        "P04",
+        "P05",
+        "P06"
+      ],
+      "cluster_id": "G2_GAME_PRODUCTION",
+      "purpose": "REFERENCE_AND_LEARNING_CLUSTER_ONLY"
+    },
+    {
+      "parts": [
+        "P07",
+        "P08",
+        "P09"
+      ],
+      "cluster_id": "G3_DELIVERY_AI_CONTENT",
+      "purpose": "REFERENCE_AND_LEARNING_CLUSTER_ONLY"
+    }
+  ]
 }

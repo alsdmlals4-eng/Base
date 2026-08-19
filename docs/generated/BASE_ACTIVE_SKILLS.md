@@ -2,7 +2,7 @@
 
 > Artifact role: Registry-derived human navigation map; `skills/SKILL_REGISTRY.json` remains the sole routing authority.
 > Generated from `skills/SKILL_REGISTRY.json`. Do not edit this derivative.
-> Registry SHA-256: `d3327399f742f72ed1a1cc118ba7b24c470364d0920abbecbe5f5a7fb1666e19`
+> Registry SHA-256: `be9a0c6e76f5f1ab7c42e7a0f4acf566a670a3a63b590cdf10cc78362f506770`
 > Current active Skill count: `30`
 > Regenerate: `python tools/build_base_v9_artifacts.py --write`
 > Verify: `python tools/build_base_v9_artifacts.py --check`
@@ -25,7 +25,7 @@
 | `managing-base-change-proposals` | knowledge-management | project-learning; base-promotion; repeated-pattern; base-change-proposal; promotion-review; approved-base-change | 프로젝트 고유 값뿐이거나 공용화 근거·사용자 승인 없이 활성 Base를 직접 변경하려는 경우다. |
 | `identifying-project-core` | project-core-governance | project-core; core-identification; core-classification; core-loop-boundary; core-vs-mvp; identity-defining-system; technical-core; removal-test; change-impact | 새 프로젝트의 코어를 승인·확정하는 기획 작업, 단순 핵심 컨셉 브레인스토밍, 실제 diff의 통합 검증만 필요한 경우다. |
 | `establishing-project-core` | game-design-strategy | establish-project-core; confirm-project-core; planning-core-contract; core-invariants; core-approval; core-protection-boundary; core-reopen | 기존 프로젝트의 코어 사실만 읽기 전용으로 판정하거나, 사용자 승인 없이 코어를 확정하거나, 확정된 코어와 무관한 단일 기능을 구현하는 경우다. |
-| `running-adversarial-review-and-refinement` | integrated-review | adversarial-review; red-team-review; critique-refine; self-refine; failure-assumption; critique-validation; approved-refinement; regression-recheck; negative-review; post-merge-review; canonical-conflict; decision-omission; google-sheets-drift; merged-pr-regression; repository-wide-audit; full-file-audit; stale-file-audit; untouched-consumer-audit; prompt-drift | 칭찬·균형 평가만 요청됐거나, 같은 입력의 단순 검사 재실행이거나, 실제 변경의 정적·런타임 증거 검증만 필요한 경우다. |
+| `running-adversarial-review-and-refinement` | integrated-review | adversarial-review; red-team-review; critique-refine; self-refine; failure-assumption; critique-validation; approved-refinement; regression-recheck; negative-review; post-merge-review; canonical-conflict; decision-omission; configured-workspace-authority-drift; merged-pr-regression; repository-wide-audit; full-file-audit; stale-file-audit; untouched-consumer-audit; prompt-drift | 칭찬·균형 평가만 요청됐거나, 같은 입력의 단순 검사 재실행이거나, 실제 변경의 정적·런타임 증거 검증만 필요한 경우다. |
 | `refactoring-with-contract-preservation` | structure-maintenance | refactor; code-smell; complexity-reduction; duplicate-removal; behavior-preservation; structural-improvement | 기능·정책·Schema 변경이 주목적이거나 baseline과 회귀 검증 없이 구조를 바꾸려는 경우다. |
 | `simplifying-skill-bodies` | skill-context-optimization | skill-body-simplification; progressive-disclosure; context-reduction; reference-extraction; compact-skill; completeness-first; no-size-ceiling; instruction-budget; example-as-fixture; golden-set-preservation | 단순 문장 교정이거나 안전 규칙·핵심 절차를 숨기는 축약을 하려는 경우다. |
 | `pruning-stale-and-nonfunctional-material` | repository-pruning | pruning; dead-material; stale-content; duplicate-content; orphan-reference; obsolete-artifact; repository-bloat | 사용·소비자·승인·롤백을 확인하지 못했거나 단순히 파일 수를 줄이려는 경우다. |
