@@ -1,8 +1,12 @@
 # Godot Multi-Project Pilot Guide
 
+> 상태: `HISTORICAL_BASE_ADAPTER_REFERENCE_ONLY`
+>
+> 이 문서는 Base C0 multi-project Pilot의 격리·증거·rollback 설계를 보존하는 역사적 reference다. **현재 Godot persistent authoring 실행 경로가 아니다.** 현재 writer/authoring 권위와 HiGodot·GUT·Hera 역할은 `HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`를 따른다. 이 Pilot은 과거 Base adapter 증거의 감사·회귀·선별 재사용에 한정해 해석한다.
+
 ## Status
 
-Base C0 provides a reusable, listener-free validation runner. It is a **static and isolated Pilot surface**, not a production transport or a permanent project installation.
+Base C0 provides a reusable, listener-free validation runner. It is a **static and isolated historical Pilot surface**, not a production transport, a permanent project installation, or a current project-adoption route.
 
 ```yaml
 multi_project_pilot_runner: STATIC_PASS
@@ -63,4 +67,4 @@ Program A does not implement:
 - physical-input validation;
 - human editor usability approval.
 
-Program B and Program C require separate brainstorming, design, approval, implementation, and merge gates.
+Program B and Program C require separate brainstorming, design, approval, implementation, and merge gates. This historical statement does not authorize restarting those programs; any current need must first go through the current HiGodot/toolchain policy and Existing Solution First review.

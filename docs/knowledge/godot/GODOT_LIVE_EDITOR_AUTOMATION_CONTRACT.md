@@ -1,20 +1,24 @@
 # Godot Live Editor Automation Contract
 
+> 상태: `HISTORICAL_BASE_ADAPTER_REFERENCE_ONLY`
+>
+> 이 문서는 2026-08-05 Base custom live-editor adapter/contract의 감사·복구 교훈을 보존하는 역사적 reference다. **현재 Godot persistent authoring 실행 경로가 아니다.** 현재 writer/authoring 권위와 HiGodot·GUT·Hera 역할은 `HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`를 따른다. 아래 v1/v2 Schema·validator·Pilot·queue/ledger/recovery 세부는 회귀·감사·선별 재사용을 위해 보존하며 현재 프로젝트 도입 지침으로 해석하지 않는다.
+
 ## 목적과 권한
 
-이 문서는 AI 작업자가 Godot 프로젝트의 CLI, 실행 중 Editor, Scene, Resource, ProjectSettings, 테스트, export와 runtime 상태를 안전하게 관찰·변경·검증하기 위한 Base 공용 계약이다. Base는 typed capability, 실행 안전, 복구와 증거 경계만 소유한다. 실제 명령, EditorPlugin, runtime debugger와 프로젝트 증거는 각 프로젝트가 소유한다.
+이 문서는 AI 작업자가 Godot 프로젝트의 CLI, 실행 중 Editor, Scene, Resource, ProjectSettings, 테스트, export와 runtime 상태를 안전하게 관찰·변경·검증하기 위해 당시 Base adapter가 사용한 공용 계약을 기록한다. Base는 typed capability, 실행 안전, 복구와 증거 경계에 대한 역사적 설계 근거를 보존한다. 실제 현재 명령, EditorPlugin, runtime debugger와 프로젝트 증거의 권위는 이 문서에서 추론하지 않는다.
 
 프로젝트 설치 Template은 `GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json`이며 기본 상태는 `NOT_CONFIGURED`다. 파일 존재만으로 Editor 연결, 명령 지원, 테스트 runner, runtime 또는 사람 검증을 주장하지 않는다.
 
-## 활성 v2 권위
+## 보존된 v2 감사 표면
 
-활성 계약 파일은 다음과 같다.
+역사적으로 검증되어 감사용으로 보존되는 v2 파일은 다음과 같다.
 
 - `schemas/godot-live-editor-capability-manifest-v2.schema.json`
 - `schemas/godot-live-editor-operation-envelope-v2.schema.json`
 - `tools/validate_godot_live_editor_contract_v2.py`
 
-실행 순서는 고정한다.
+당시 검증 순서는 다음과 같았다.
 
 ```text
 manifest v2 Schema validation
@@ -33,7 +37,9 @@ JSON Schema는 구조를 검사하고 semantic validator는 equality, hash, appr
 
 v1 Schema와 `examples/godot-live-editor-pilot/` 증거는 회귀와 감사용으로 보존하며 상태는 `V1_AUDIT_ONLY`다. v1 Manifest 또는 과거 `operation_class` 값을 v2 mutation 권한으로 추론하지 않는다. 프로젝트가 v1로 구성되어 mutation을 요청하면 `MIGRATION_REQUIRED_V1` 또는 validator의 `V1_MUTATION_AUTHORITY_REJECTED`로 중단한다.
 
-## 실행 경로
+## 보존된 실행 경로 설계
+
+아래 경로는 당시 Base adapter의 계약을 설명한다. 현재 persistent authoring 명령으로 직접 사용하지 않는다.
 
 ### `CLI_HEADLESS`
 
@@ -59,7 +65,7 @@ Runtime 관찰은 `EditorDebuggerPlugin`, `EditorDebuggerSession`, `EngineDebugg
 
 ## 부트스트랩
 
-모든 engine 작업은 다음 순서를 사용한다.
+당시 Base adapter의 engine 작업은 다음 순서를 사용했다.
 
 ```text
 doctor → status → catalog --compact
@@ -159,6 +165,8 @@ idempotent mutation도 ledger와 exact replay 증거가 없으면 재전송하�
 project test runner가 없으면 `PROJECT_TEST_FRAMEWORK_NOT_CONFIGURED`, OS 입력 경로가 없으면 `PHYSICAL_INPUT_EVIDENCE_BLOCKED`다. `BLOCKED_ENVIRONMENT`, `NOT_RUN`, `HUMAN_NOT_RUN`은 PASS가 아니다.
 
 ## 기존 Base 책임 연결
+
+아래 연결은 historical adapter의 audit/ownership 추적을 위해 보존한다. 현재 Godot writer 선택은 `HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`가 우선한다.
 
 - 설치·Manifest·legacy adapter: `managing-game-project-operating-system`
 - runtime 재현·원인 격리: `diagnosing-game-engine-runtime-failures`

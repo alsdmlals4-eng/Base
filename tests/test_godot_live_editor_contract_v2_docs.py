@@ -8,9 +8,12 @@ ROOT = Path(__file__).resolve().parents[1]
 AUTOMATION_CONTRACT = ROOT / "docs/knowledge/godot/GODOT_LIVE_EDITOR_AUTOMATION_CONTRACT.md"
 SECURITY_CONTRACT = ROOT / "docs/knowledge/godot/GODOT_LIVE_EDITOR_SECURITY_AND_RECOVERY.md"
 READINESS = ROOT / "docs/knowledge/godot/GODOT_PRODUCTION_ADAPTER_READINESS.md"
+MULTI_PROJECT_PILOT = ROOT / "docs/knowledge/godot/GODOT_MULTI_PROJECT_PILOT_GUIDE.md"
 ADAPTER = ROOT / "templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md"
 AGENTS_FRAGMENT = ROOT / "templates/project-operations/godot-live-editor/AGENTS_FRAGMENT.md"
 HIGODOT_POLICY = ROOT / "docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md"
+HISTORICAL_STATUS = "HISTORICAL_BASE_ADAPTER_REFERENCE_ONLY"
+CURRENT_AUTHORITY_ROUTE = "HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md"
 
 
 def read(path: Path) -> str:
@@ -60,6 +63,21 @@ class GodotLiveEditorContractV2DocsTests(unittest.TestCase):
         self.assertNotIn("base_live_editor_adapter/", adapter)
         self.assertNotIn("| `READ_ONLY` |", adapter)
         self.assertNotIn("operation_class:", adapter)
+
+    def test_legacy_base_adapter_docs_are_explicitly_historical(self) -> None:
+        for path in (
+            AUTOMATION_CONTRACT,
+            SECURITY_CONTRACT,
+            READINESS,
+            MULTI_PROJECT_PILOT,
+        ):
+            body = read(path)
+            with self.subTest(path=path.name):
+                self.assertIn(HISTORICAL_STATUS, body)
+                self.assertIn(CURRENT_AUTHORITY_ROUTE, body)
+                self.assertIn("현재 Godot persistent authoring 실행 경로가 아니다", body)
+
+        self.assertNotIn("## 활성 v2 권위", read(AUTOMATION_CONTRACT))
 
     def test_readiness_stays_not_ready_until_editor_transaction_gates_pass(self) -> None:
         readiness = read(READINESS)
