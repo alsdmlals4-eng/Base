@@ -1,0 +1,55 @@
+name: Temporary P08 current-main migration
+
+on:
+  push:
+    branches: [integrate/p08-current-main-20260820]
+    paths:
+      - 'tools/_tmp_apply_p08_takeover_20260820.py'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tmp-p08-takeover-20260820
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: integrate/p08-current-main-20260820
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Apply current-main P08 takeover
+        run: |
+          if [ -f tools/_tmp_apply_p08_takeover_20260820.py ]; then
+            python tools/_tmp_apply_p08_takeover_20260820.py
+          else
+            echo 'migration script already removed; no-op'
+            exit 0
+          fi
+      - name: Install validation dependencies
+        run: python -m pip install --requirement .github/validation-requirements.txt
+      - name: Verify focused P08 + freshness before commit
+        run: |
+          python -m unittest tests.test_p08_ai_operations_contract tests.test_skill_routing_precision_policy -v
+          git add -A
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'test: provisional P08 freshness verification'
+          HEAD_SHA="$(git rev-parse HEAD)"
+          BASE_SHA="$(git rev-parse origin/main)"
+          python tools/check_canonical_reference_freshness.py --config .github/reference-freshness.json --base "$BASE_SHA" --head "$HEAD_SHA"
+          git reset --soft HEAD~1
+      - name: Commit durable P08 delta
+        shell: bash
+        run: |
+          git rm tools/_tmp_apply_p08_takeover_20260820.py
+          git add -A
+          git commit -m 'refactor(p08): integrate current-canon AI operations boundaries'
+          git pull --rebase origin integrate/p08-current-main-20260820
+          git push origin HEAD:integrate/p08-current-main-20260820
