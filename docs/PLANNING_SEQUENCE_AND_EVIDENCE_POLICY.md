@@ -30,7 +30,7 @@ Google Sheets
 
 Google Sheets는 새 기획·GDD·상태관리의 작업면이 아니다. 고유 미이관 정보가 실제로 남아 있는 migration scope에서만 unique / duplicate / obsolete를 분류해 Notion 또는 repository-native owner로 옮기고 destination readback 뒤 active reference를 제거한다.
 
-독립 HTML dashboard/catalog와 프로젝트 관리용 user-facing localhost apps도 새 기획 surface가 아니다. Project Home은 `HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`에 따라 핵심 방향·Core Loop·시스템·UX/Visual·구현·검증·blocker를 본문에서 직접 설명한다.
+Figma, 독립 HTML dashboard/catalog, project-management Tool Hub, QA Evidence Studio와 프로젝트 관리용 user-facing localhost apps도 새 기획 surface가 아니다. Project Home은 `HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`에 따라 핵심 방향·Core Loop·시스템·UX/Visual·구현·검증·blocker를 본문에서 직접 설명한다.
 
 ## 2. 내용 보존
 
@@ -89,15 +89,17 @@ GitHub main, Decision, canonical owner, actual implementation, PR, exact Project
 
 ### 4.2 DUPLICATE_OMISSION_CONFLICT_AUDIT
 
-같은 작업·질문을 문구만 바꿔 반복하지 않는다. retired local/HTML/Sheet surface가 current authority처럼 다시 노출되면 `STALE_REFERENCE`다.
+같은 작업·질문을 문구만 바꿔 반복하지 않는다. retired Figma/Tool Hub/QA/HTML/Sheet/local surface가 current authority처럼 다시 노출되면 `STALE_REFERENCE`다.
 
 ### 4.3 EVIDENCE_PACK
 
 중요 기획·방향성·제품 결정은 다음 세 층을 모두 검토한다.
 
-1. `BENCHMARK_EVIDENCE`: 직접 경쟁작, 인접 장르, 실패·혼합 사례.
+1. `BENCHMARK_EVIDENCE`: 직접 경쟁작, 인접 장르, distinctive/innovative 사례, 실패·혼합 사례.
 2. `PLAYER_RESPONSE_EVIDENCE`: 긍정·부정·혼합 리뷰, 커뮤니티, 플레이테스트, 행동 데이터.
 3. `PROFESSIONAL_OFFICIAL_EVIDENCE`: 현업 발표·사후 분석·공식 플랫폼·엔진·접근성·운영 자료.
+
+중요 게임 기획은 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`와 `docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md`의 `CREATIVE_BENCHMARK_FRONTIER`, `ORIGINALITY_FUN_CREATIVITY_REVIEW`를 함께 적용한다. 재미는 실제 player evidence 전에는 hypothesis다.
 
 필요 분야만 조사한다. 외부 Source 후보는 `docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md`에서 찾을 수 있지만, 후보 발견 자체를 Evidence나 canon promotion으로 취급하지 않는다. 가능한 한 원출처를 확인하고 현재 질문에 필요한 범위만 조사한다.
 
@@ -137,7 +139,7 @@ Approval Bundle:
   validation_gate:
 ```
 
-기술 세부와 초기 수치는 `RECOMMENDED_DEFAULT`로 처리한다. 프로젝트 코어·중요 기획·방향성·정본 충돌만 `USER_DECISION_REQUIRED`로 올린다.
+기술 세부와 초기 수치는 `RECOMMENDED_DEFAULT`로 처리한다. 프로젝트 코어·중요 기획·방향성·정본 충돌만 `USER_DECISION_REQUIRED`로 올린다. 핵심 시스템 수치는 가능한 한 쉽게 변경 가능한 `BALANCE_BUDGET`/범위/상대값으로 먼저 잡고 최종값으로 과장하지 않는다.
 
 ### 4.5 CANONICAL_UPDATE
 
@@ -159,7 +161,7 @@ legacy Sheet는 migration input일 뿐 승인 결과의 정상 sync target이 �
 - exact Project Notion의 해당 human-facing surface.
 - tests / runtime evidence / postmerge readback.
 
-retired Sheet/HTML/local app는 active consumer 목록에 넣지 않는다. 이관 작업에서는 migration source로만 기록한다.
+retired Figma/Tool Hub/QA/Sheet/HTML/local app는 active consumer 목록에 넣지 않는다. 이관 작업에서는 migration/history source로만 기록한다.
 
 ### 4.7 VALIDATION
 
@@ -169,6 +171,7 @@ retired Sheet/HTML/local app는 active consumer 목록에 넣지 않는다. 이�
 
 - 성공 사례의 표면 복사.
 - 장르·팀 규모·플랫폼 과잉 일반화.
+- 독창성 명목의 gimmick/복잡성 증가.
 - 행동과 자기보고 혼동.
 - AI 추론을 공식 사실로 사용.
 - 접근성·성능·보안·라이선스·제작비 누락.
@@ -192,21 +195,41 @@ MIGRATION_COMPLETE | MIGRATION_NOT_APPLICABLE | MIGRATION_PENDING
 
 기획·근거조사·대안 비교·UI/UX·아트 방향·시각 후보 검수·최종 판정은 `GPT_FIRST_PLANNING_AND_REVIEW`와 `GPT_PRIMARY_REVIEWER`가 기본이다.
 
-`OPTIONAL_CODEX_EXECUTOR`는 실제 repository/engine mutation·다수 파일 구현·runtime reproduction이 필요할 때만 사용한다. Codex를 모든 계획의 의무 단계로 만들지 않는다.
+`OPTIONAL_CODEX_EXECUTOR`는 실제 repository/engine mutation·다수 파일 구현·runtime reproduction이 필요할 때만 사용한다. Codex를 모든 계획의 의무 단계로 만들지 않는다. 사용자가 local implementation을 실행해야 할 때는 `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`의 location-first 한 블록을 사용한다.
 
-## 6. 시각 checkpoint와 Demo-First
+## 6. `PROJECT_VISUALIZATION_NEED_MAP`와 Demo-First
+
+프로젝트를 이해한 뒤, 구현 전에 어떤 시각 자료가 실제로 기획 오류·UI/UX 모호성·세계관 drift·handoff 재작업을 줄일지 먼저 정리한다.
+
+```yaml
+PROJECT_VISUALIZATION_NEED_MAP:
+  project:
+  source_main_sha:
+  notion_project:
+  needs:
+    - planning_question:
+      artifact_type:
+      why_visual_needed:
+      exact_project_notion_target:
+      source_decisions: []
+      implementation_consumer:
+      approval_state:
+```
+
+`exact Project Notion`의 Project relation/filter가 확인되지 않으면 다른 프로젝트 page/record에 임의 배치하지 않는다. 장식용 수량 채우기보다 **의사결정·가독성·일관성·구현 인계에 실제 효과가 있는 시각 자료**만 우선한다.
 
 ```text
-VISUALIZED_POC_BEFORE_DEMO_TEST
+PROJECT_VISUALIZATION_NEED_MAP
+→ VISUALIZED_POC_BEFORE_DEMO_TEST
 → REPRESENTATIVE_UX_UI_STATE_REQUIRED_WHEN_VISUALS_MATTER
 → APPROVED_VISUAL_INPUTS_FEED_POC
 → DEMO_FIRST_VERTICAL_SLICE
 → DEMO_VALIDATION
 ```
 
-이미지·UI·UX가 테스트 판단을 바꿀 수 있으면 대표 화면 상태를 GPT에서 기획·검수하고 exact Project Notion에 배치·readback·승인한 뒤 PoC/demo 입력으로 사용한다. 완성 production UI 전체를 먼저 만들 필요는 없다.
+이미지·UI·UX가 테스트 판단을 바꿀 수 있으면 대표 화면 상태를 GPT에서 기획·검수하고 exact Project Notion에 배치·readback·승인한 뒤 PoC/demo 입력으로 사용한다. 생성 성공/업로드 성공만으로 승인이나 runtime 적용을 주장하지 않는다.
 
-별도 `CORE_POC`를 모든 프로젝트의 필수 독립 단계로 만들지 않는다. 가장 큰 기술 불확실성만 격리해야 하면 `TECHNICAL_SPIKE`를 사용한다. 플레이어 경험 검증은 **완성 품질 데모**의 representative slice에서 수행한다.
+별도 `CORE_POC`를 모든 프로젝트의 필수 독립 단계로 만들지 않는다. 가장 큰 기술 불확실성만 격리해야 하면 `TECHNICAL_SPIKE`를 사용한다. 시스템-only Spike는 알고리즘·데이터·호환성 질문을 푸는 내부 증거이고, 플레이어 경험 검증은 **shipping-intent UI/UX·art/image·audio·VFX·system/content가 연결된 release-near Vertical Slice**에서 수행한다.
 
 ## 7. 사람용 Project surface 순서
 
@@ -229,7 +252,7 @@ material approval은 다음 상태까지 같은 승인 단위로 닫는다.
 
 ```text
 user approval
-→ adversarial review
+→ adversarial review (minimum five full loops for L1+ long-horizon scope, then clean exit)
 → repository structured update
 → Notion human-facing update/readback when relevant
 → branch / commit / PR
@@ -237,10 +260,11 @@ user approval
 → merge
 → postmerge GitHub main readback
 → Notion destination/status readback
+→ incident/solution/lesson classification
 → learning-oriented completion report
 ```
 
-이미지 파일도 implementation-bound approval이면 provenance, repository asset path, PR/merge, runtime consumption evidence를 구분해 확인한다.
+이미지 파일도 implementation-bound approval이면 provenance, repository asset path, PR/merge, runtime consumption evidence를 구분해 확인한다. planning-only visual은 exact Notion readback/approval을 닫되 runtime PASS로 승격하지 않는다.
 
 ## 9. 재검토 조건
 
@@ -251,3 +275,4 @@ user approval
 - GPT가 직접 안정적인 engine mutation/verification을 수행할 공식 surface가 생김.
 - Codex 실행환경·비용·권한이 크게 변함.
 - retired surface에서 아직 고유 material이 반복 발견됨.
+- 창의성 benchmark frontier가 실제 프로젝트에서 선택 품질을 높이지 못하거나 조사비용만 크게 늘림.
