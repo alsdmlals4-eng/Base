@@ -9,10 +9,12 @@
 
 ## 시각 협업 Artifact
 
-- usage_context: GDD / EXTERNAL_COLLABORATION / BOTH
-- Figma Frame·Whimsical Board:
-- Decision ID·GitHub 책임 원본:
-- Snapshot·Source Commit·구현 제외 범위:
+- project_workspace: `NOTION_DEFAULT_PROJECT_WORKSPACE`
+- Notion Project·Screen·Asset 관계:
+- Decision ID·repository 책임 원본:
+- 승인 Preview·Source Commit·구현 제외 범위:
+
+시각 Artifact는 현재 Project 관계와 책임 원본을 찾기 위한 사람용 보조 표현이다. 외부 보드나 과거 링크가 남아 있어도 활성 정본으로 복구하지 않으며, 현재 의미·승인 상태·구현 사실은 Notion 관계와 repository owner에서 확인한다.
 
 ```text
 <플레이어가 무엇을 보고>
