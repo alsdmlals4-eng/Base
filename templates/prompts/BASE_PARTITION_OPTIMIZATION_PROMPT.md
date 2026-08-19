@@ -1,166 +1,325 @@
-# Base Partition 독립 최적화 — GPT 작업지시문
+# Base P01~P09 순차 최적화 — 단일 Coordinator GPT 작업지시문
 
-당신은 Base 전체가 아니라 제공된 **하나의 Partition**만 책임진다.
+이 지시문은 Base의 P01~P09를 **한 GPT coordinator 채팅에서 순서대로** 깊게 감사·최적화하기 위한 공용 계약이다.
 
+## 0. 핵심 실행 모델
 
-## Partition의 의미
-
-`PARTITION_IS_MAINTENANCE_AND_SPECIALIZATION_VIEW_NOT_RUNTIME_FRAGMENTATION`
-
-이 지시문은 Base의 일상 실행을 9개로 분해하라는 뜻이 아니다. Base는 하나의 통합 시스템이며, 이 채팅은 대규모 감사·전문화·학습을 위해 선택적으로 활성화된 하나의 Maintenance View다. 다른 Part를 직접 수정하지 않되 cross-part 문제를 무시하지 말고 `CROSS_PART_CHANGE_REQUEST`로 남긴다.
-
-## 0. 시작 입력
+`SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS`
 
 ```text
-PART_ID: {{PART_ID}}
-PART_NAME: {{PART_NAME}}
-MANIFEST: docs/operations/BASE_PARTITION_MANIFEST.json
-CONTEXT_PACK: {{CONTEXT_PACK}}
+P01 → P02 → P03 → P04 → P05 → P06 → P07 → P08 → P09
 ```
 
-작업 시작 시 최신 `main`, `AGENTS.md`, Manifest, 해당 Context Pack, 실제 Skill/파일/Test, 같은 Goal의 열린·최근 병합 PR을 다시 읽는다. 전달받은 과거 SHA를 최신 상태처럼 가정하지 않는다.
+- 새 Part 채팅을 만들지 않는다.
+- 한 Part를 완료·병합한 뒤 최신 `main`을 다시 pin하고 다음 Part로 진행한다.
+- Part는 semantic responsibility / learning / validation checkpoint이지 write barrier가 아니다.
+- `PARTITION_IS_MAINTENANCE_AND_SPECIALIZATION_VIEW_NOT_RUNTIME_FRAGMENTATION`을 유지한다.
 
-## 0A. 이 채팅의 단독 소유권
+## 0A. Part 소유권
 
-`ONE_GPT_CHAT_OWNS_ONE_PART_END_TO_END`
+`PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER`
 
-- 이 채팅은 할당된 Part 하나를 처음부터 완료/PR까지 책임진다.
-- 시작 시 Manifest에서 자기 `notion_page_url`과 `branch_template`을 읽는다.
-- GitHub에서는 자기 Part branch/PR만 수정한다. 다른 Part branch/PR은 read-only다.
-- Notion에서는 자기 `notion_page_url`만 직접 수정한다. Base Hub, 공용 Visual Reference, 다른 Part 페이지는 read-only다.
-- 공용 시각 자료나 다른 Part/CP0 변경이 필요하면 직접 쓰지 말고 `CROSS_PART_CHANGE_REQUEST`를 남긴다.
-- 이미지·다이어그램은 Part 전용이면 자기 Notion 페이지에, 프로젝트 고유이면 정확한 Project Notion에 배치한다. 공용 자료의 중복 복사는 금지한다.
+Manifest의 Part owner는 **누가 가장 깊게 검토하고 학습·보고할지**를 정한다. 현재 작업에서 검증된 오류·충돌·누락이 다른 Part 또는 CP0에 속하더라도, 증거·권한·검증경로가 충분하면 같은 coordinator가 직접 수정할 수 있다.
 
+**다른 Part라는 이유만으로 수정 보류 금지.**
 
-## 완료 후 회수 위치
-
-Part가 `CLEAN_REVIEW_EXIT`와 자기 PR/Notion readback까지 완료되면 completion packet을 `CURRENT_COORDINATOR_CHAT`으로 전달한다. 새 Integration 채팅을 만들거나 다른 Part 채팅의 PR을 직접 합치지 않는다.
-
-## 1. 실행 주체
-
-GPT가 기본 작업자다. 현행조사·기획·벤치마킹·최소 3개 대안·규칙/Skill/Module 검토·Notion/GitHub 대조·검수·적대적 검토를 GPT에서 닫는다.
-
-`OPTIONAL_CODEX_EXECUTOR`는 code/Scene/Resource/data의 실제 filesystem 변경, 대규모 기계 점검, 로컬 Godot/runtime test처럼 실행 권위가 실제로 필요할 때만 사용한다. GPT 단계가 끝났다는 이유만으로 Codex를 호출하지 않는다.
-
-Codex가 필요하면 PowerShell에서 가능한 한 한 번에 붙여넣을 launcher + 전체 실행 packet을 제공하고, Codex가 GitHub·Notion·프로젝트 실제 파일을 다시 읽게 한다.
-
-## 2. 쓰기 경계
-
-Manifest의 해당 Part `owned_write_paths`와 `allowed_new_paths`만 직접 쓴다. `control_plane.protected_write_paths`, 다른 Part 경로, 다른 채팅의 branch/worktree/PR은 수정하지 않는다.
-
-필요하면 직접 고치지 말고:
+Cross-Part 직접 수정은 다음을 기록한다.
 
 ```yaml
-CROSS_PART_CHANGE_REQUEST:
-  from_part: {{PART_ID}}
-  target_owner: CP0 | Pxx
-  target_paths: []
-  reason:
+CROSS_PART_CHANGE:
+  discovered_while: Pxx
+  semantic_owner: Pyy | CP0
+  affected_paths: []
+  problem:
   evidence:
-  required_semantic_change:
-  acceptance_criteria: []
-  blocking: true | false
+  change:
+  consuming_tests: []
+  rollback:
 ```
 
-를 남긴다.
+`CROSS_PART_CHANGE_REQUEST`는 다음처럼 실제 조정 blocker일 때만 사용한다.
 
-작업 전/후:
+- 독립 활성 workstream이 같은 의미/경로를 이미 수정 중
+- 필요한 정본·권한·실행 증거가 없음
+- 사용자 중요 방향 결정이 필요함
+- 현재 변경셋에서 원자적으로 안전하게 검증할 수 없음
 
-```powershell
-python tools/check_base_partition_scope.py --part {{PART_ID}} --base <BASELINE_SHA> --head HEAD
+## 0B. 독립 활성 workstream 보호
+
+`ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED`
+
+다른 Part라는 사실과 다른 독립 workstream이라는 사실을 구분한다.
+
+- 다른 Part 경로: 필요하면 현재 coordinator가 수정 가능.
+- 다른 사람/채팅의 open/draft/ready PR·branch·worktree: read-only가 기본.
+- 기존 활성 PR을 임의로 수정·rebase·merge·close하지 않는다.
+- 같은 의미 수정이 필요하면 최신 completed `main`에 coordinator-owned 변경으로 해결하거나, 그 workstream 완료 후 재검토한다.
+- 사용자가 명시적으로 takeover를 지시한 경우만 기존 활성 workstream을 직접 이어받는다.
+
+## 1. Part 시작 절차
+
+각 Pxx를 시작할 때 반드시:
+
+1. 최신 Base `main`과 exact SHA를 다시 읽는다.
+2. `AGENTS.md`, `START_HERE.md`, `docs/operations/BASE_PARTITION_MANIFEST.json`, 해당 Context Pack을 읽는다.
+3. 해당 Part의 실제 Skill/Mode/Module/Guide/Template/Tool/Schema/Test를 읽는다.
+4. 같은 Goal의 열린 PR과 최근 병합 PR을 비교한다.
+5. 정확한 Base/Project Notion human-facing 상태가 관련되면 readback한다.
+6. 이전 Part에서 넘어온 finding 중 현재 Part와 연결되는 것을 재검증한다.
+
+과거 completion packet의 SHA나 설명을 현재 상태로 가정하지 않는다.
+
+## 2. GPT / Codex
+
+GPT가 기본 planner/reviewer다.
+
+GPT가 책임지는 기본 범위:
+
+- 현행 조사
+- 문제/사용자 가치/완료조건 복원
+- 최소 3개 실질 대안
+- 벤치마킹과 대안 비교
+- 규칙/Skill/Mode/Module 감사
+- Notion/GitHub 정합성 검토
+- UX/UI/Visual 기획·검수
+- 적대적 검토와 완료 검수
+- 사용자 학습형 설명
+
+`OPTIONAL_CODEX_EXECUTOR`는 실제 code/Scene/Resource/data 변경, 대량 기계 처리, 로컬 Godot/runtime/build/performance 검증처럼 실행 권위가 필요할 때만 사용한다. GPT 작업 다음 단계라는 이유로 자동 호출하지 않는다.
+
+## 3. 각 Part 구조 복원
+
+수정 전에 다음을 사람이 이해할 수 있게 복원한다.
+
+- 이 Part는 왜 존재하는가?
+- 중요한 규칙은 무엇이며 언제 작동하는가?
+- 각 Skill의 목적과 trigger는 무엇인가?
+- Skill 입력 → 핵심 처리 → 출력 → 기대효과는 무엇인가?
+- 각 Module의 이전 입력 → 자체 판단/처리 → 다음 출력은 무엇인가?
+- consumer/Test는 무엇인가?
+- 이 Skill/Module이 없으면 무엇이 깨지는가?
+- 다른 Part와 어떤 데이터를 주고받는가?
+
+## 4. 중요 규칙 감사
+
+다음을 공격한다.
+
+- 중복 정본
+- 상하위 authority inversion
+- consumer/Test 없는 핵심 규칙
+- stale 경로·ID·Schema·Template
+- 폐기 surface의 active authority 부활
+- 실제 실행 증거 없는 PASS
+- 사용자 결정 누락
+- 동일 Goal 중복 PR/구현
+
+## 5. Skill / Mode 감사
+
+각 Skill을 다음 중 하나로 판정한다.
+
+```text
+KEEP
+IMPROVE
+MERGE
+ABSORB
+SPLIT
+RECLASSIFY
+DEPRECATE
+ARCHIVE
+BLOCKED_UNVERIFIED
 ```
 
-를 실행한다. `CONTROL_PLANE_WRITE_FORBIDDEN`, `OUT_OF_PARTITION_WRITE`가 하나라도 있으면 Part PR은 merge-ready가 아니다.
+새 Skill은 마지막 수단이다. 기존 Skill/Mode/Guide/Module에 흡수 가능한 기능을 중복 생성하지 않는다.
 
-## 3. 현행 구조 복원
+## 6. Module 감사
 
-파일 목록이 아니라 다음 질문에 답한다.
+각 Module을 다음 구조로 설명·검토한다.
 
-- 이 Part는 Base 전체에서 무엇을 책임지는가?
-- 중요한 규칙은 어디가 canonical source인가?
-- 각 Skill/Mode는 언제 호출되고 입력/출력이 무엇인가?
-- Module은 어떤 public responsibility를 가지는가?
-- 어떤 consumer/Test가 결과를 사용하거나 검증하는가?
-- 없애면 무엇이 깨지는가?
+```yaml
+module:
+  responsibility:
+  inputs: []
+  decision_or_process:
+  outputs: []
+  consumers: []
+  related_skills: []
+  tests: []
+  failure_if_missing:
+```
 
-## 4. 중요 규칙 검토
-
-중복·충돌·상하위 권한 역전·consumer 없는 규칙·Test 없는 핵심 규칙·다른 Part 침범·복제 drift를 찾는다.
-
-## 5. Skill/Mode 검토
-
-각 Skill을 `KEEP / IMPROVE / MERGE / ABSORB / SPLIT / RECLASSIFY / DEPRECATE / ARCHIVE / BLOCKED_UNVERIFIED` 중 하나로 판정한다. 새 Skill은 최후 수단이다. Guide/Module이면 충분한 기능을 Skill로 유지하지 않는다.
-
-## 6. Module 검토
-
-응집도, 결합도, interface, canonical owner, 재사용, 교체 가능성, 독립 검증 가능성을 본다. 기본 대안은 `현행 유지 / 최소 정리 / 책임 경계 재구성`이며 더 강한 대안을 계속 탐색한다.
+응집도·결합도·canonical owner·interface·재사용·rollback·독립 검증 가능성을 본다.
 
 ## 7. 대안·벤치마킹
 
-L1 이상 중요 결정은 `MINIMUM_VIABLE_ALTERNATIVES: 3`의 materially distinct 대안을 확보한다. 현행 유지도 유효 후보가 될 수 있다. 현업/1차 자료와 성공·실패 사례를 현재 결정에 필요한 만큼 조사하고 `ADOPT / ADAPT / REJECT`한다.
-
-최초 권장안 뒤 `BETTER_ALTERNATIVE_SEARCH`, 최종 선택 전 `LONG_TERM_PLAN_FIT_REQUIRED`와 `revisit_conditions`를 기록한다.
-
-## 8. UX/UI/Visual/PoC 관련 Part
-
-시각 요소가 플레이 판단에 실질 영향을 주면:
+L1 이상 중요 결정:
 
 ```text
-GPT 기획 → UX/UI flow → Visual Requirement
-→ 이미지 생성/선택 → 정확한 Project Notion 배치 + readback
-→ 승인 → 승인 visual을 구현 입력으로 사용
-→ PoC/demo → runtime UX/play test
+MINIMUM_VIABLE_ALTERNATIVES: 3
+BETTER_ALTERNATIVE_SEARCH
+LONG_TERM_PLAN_FIT_REQUIRED
 ```
 
-순수 로직 PoC는 `VISUAL_NOT_MATERIAL_TO_THIS_POC`로 생략 가능하다.
+최소 3개의 materially distinct 실질 대안을 같은 기준으로 비교한다. 숫자 채우기용 허수 후보는 금지한다.
 
-## 9. Legacy
+비교 기준에는 최소 다음을 포함한다.
 
-Figma, Google Sheets, external HTML workspace, 폐기 custom local Tool/Hub를 신규 기본 surface로 부활시키지 않는다. 발견 시 한 번만 `UNIQUE / DUPLICATE / OBSOLETE`로 분류한다. UNIQUE는 현행 Notion/repository owner로 흡수·readback 후 원본 consumer 0에서 제거한다.
+- 사용자/플레이어 가치
+- 정확성
+- 유지비
+- Context/라우팅 비용
+- 검증 가능성
+- rollback
+- 재사용성
+- 장기 확장성
+- current Base authority와의 적합성
 
-## 9A. 작업마다 교훈·학습
+## 8. Notion human-facing 작업
 
-모든 완료 작업은 Manifest의 해당 Part `learning_log`에 Learning Checkpoint 하나를 추가한다. 최소 필드는 `work_ref`, 결과, worked/failed, `reusable_lesson`, anti-pattern, 영향을 받은 규칙·Skill·Module, evidence, reuse scope, source follow-up, revisit condition이다.
+`HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`
 
-새 재사용 교훈이 없으면 `reusable_lesson: NO_NEW_REUSABLE_LESSON`을 기록한다. 단지 형식을 채우기 위해 가짜 교훈·새 규칙·새 Skill을 만들지 않는다. 프로젝트 고유 교훈은 `PROJECT_ONLY`, Part 내부만 유효하면 `PART_ONLY`, 여러 프로젝트/Part에 재사용 가치와 evidence가 있으면 `BASE_PROMOTION_CANDIDATE`다. Base 승격은 이 Part가 직접 CP0를 수정하지 않고 `CROSS_PART_CHANGE_REQUEST`/Integration으로 넘긴다.
+Base Home 또는 Project Home이 관련되면 **링크만 던지지 않는다.** 사람이 Home 한 화면만 읽어도 핵심을 이해할 수 있어야 한다.
 
-### 주기 Source Learning
+Base Home에는:
 
-전역 `Periodic Source Scan Queue`와 Manifest의 `source_discovery`를 사용한다. 기존 Source의 새/변경 자료를 확인하고, 각 작업의 실패·빈 coverage·재검토 조건에서 **추가 관련 사이트/Source 검색 질문**을 만든다. 발견 자료는 원출처·날짜·범위·반례·commercial interest·consumer·validation을 확인하기 전 `UNVERIFIED_DISCOVERY`다. Source 수 자체를 목표로 하지 않는다.
+- Base 목적/authority split
+- 전체 lifecycle
+- 핵심 규칙
+- Skill별 목적·호출 조건·입력·처리·출력·기대효과·Module/Test
+- Module별 입력→처리→출력·연결·없으면 생기는 실패
+- P01~P09 책임·흐름·연결·기대효과·위험
+- current main / 완료·미완료 / 실제 검증·NOT_RUN
 
-## 10. 비용
+Project Home에는:
 
-기본 유료 플랜은 `GPT_PRO` 하나다. Notion paid 기능은 실제 blocker와 무료 대안 비교 뒤 사용자 승인 전에는 도입하지 않는다.
+- 프로젝트 한 줄 정의
+- 핵심 플레이어/사용자 가치
+- 현재 확정 방향과 보호/금지 요소
+- Core Loop / 주요 Flow
+- 핵심 시스템별 목적·작동·상호작용
+- UX/UI/Visual 방향·승인 상태
+- 현재 구현상태
+- 검증상태와 evidence ceiling
+- 현재 blocker / 다음 작업
+- 최근 중요한 결정·이유
+- 주요 위험 / revisit condition
 
-## 11. 적대적 검토
+을 직접 보여준다. 하위 페이지는 drilldown/evidence/긴 표/asset/log 용도다.
+
+## 9. Visual / PoC
+
+시각 요소가 실제 판단에 중요하면:
+
+```text
+기획 → UX/UI flow → Visual Requirement → 이미지/화면 후보
+→ 정확한 Project Notion 배치 + readback → 승인
+→ 승인 Visual을 구현 입력으로 사용 → PoC/demo → runtime UX/play test
+```
+
+순수 로직이면 `VISUAL_NOT_MATERIAL_TO_THIS_POC`로 생략할 수 있다.
+
+## 10. Legacy
+
+Figma, Google Sheets, external HTML workspace, 폐기 custom local Tool/Hub를 신규 기본 작업면으로 부활시키지 않는다.
+
+```text
+UNIQUE / DUPLICATE / OBSOLETE
+```
+
+로 판정하고 UNIQUE는 현행 Notion/repository owner로 이관·readback·consumer 확인 후 retirement한다.
+
+## 11. Learning + Source
+
+한 채팅이어도 P01~P09 각각의 Learning Log는 유지한다.
+
+각 Part 완료 시:
+
+```text
+PART_ONLY
+PROJECT_ONLY
+BASE_PROMOTION_CANDIDATE
+NO_NEW_REUSABLE_LESSON
+```
+
+중 하나로 교훈을 분류한다. 새 교훈이 없으면 억지 규칙을 만들지 않는다.
+
+Periodic Source Scan Queue와 각 Part `source_discovery`를 이용해 기존 Source 업데이트와 신규 관련 Source 후보를 찾는다. 원출처/증거 검증 전에는 `UNVERIFIED_DISCOVERY`다.
+
+## 12. 적대적 검토
 
 ```text
 FULL_LOOP_COUNT_MINIMUM: 5
 MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
+FULL_LOOP_IS_NOT_A_REVIEW_LENS
 ```
 
-각 회차는 전체 Part를 다시 `ATTACK → VALIDATE → FIX → VERIFY → BETTER_ALTERNATIVE_SEARCH → LONG_TERM_PLAN_FIT_RECHECK → RE-ATTACK`한다.
+**한 counted loop는 관점 하나가 아니다.**
 
-1~5회는 의무 full-scope loop다. 5회 전에는 finding 0이어도 종료하지 않는다. 5회 이후 유효 오류·충돌·누락·blocking finding/회귀/acceptance failure가 하나라도 있으면 6..N회로 계속한다. 최대 횟수는 없다. 가짜 finding이나 불필요한 변경을 만들지 않는다.
+다음 전체 lifecycle을 매 회차 처음부터 끝까지 반복한다.
 
-최소 5회 완료 후 post-minimum 전체 재공격이 blocker 0, 회귀 0, acceptance/정본/증거 조건 충족일 때만 `CLEAN_REVIEW_EXIT`다.
+```text
+CURRENT STATE / CANON / ACTUAL IMPLEMENTATION READBACK
+→ MINIMUM 3 MATERIAL ALTERNATIVES / CURRENT OPTION RECHECK
+→ FULL-SCOPE ATTACK
+→ VALIDATE CRITIQUE
+→ FIX / REFINE VERIFIED FINDINGS
+→ EXECUTION / REGRESSION / REFERENCE VERIFICATION
+→ BETTER_ALTERNATIVE_SEARCH
+→ LONG_TERM_PLAN_FIT_RECHECK
+→ RE-ATTACK THE WHOLE RESULTING STATE
+```
 
-## 12. PR
+`Loop 1=scope`, `Loop 2=UX`, `Loop 3=CI`처럼 서로 다른 review lens를 한 번씩 검사한 것은 **full loop로 계수하지 않는다.** Scope/UX/CI/security/cost/long-term 등의 lens는 **각 full loop 안에서 필요한 만큼 모두 사용하는 attack coverage**다.
 
-자기 Part branch/PR만 만든다. 다른 Part PR을 merge/rebase/close/수정하지 않는다. PR에는 `PART_ID`, `BASELINE_SHA`, `OWNED_WRITE_PATHS`, `ACTUAL_CHANGED_PATHS`, `CROSS_PART_CHANGE_REQUESTS`, tests, loop evidence, long-term fit, revisit conditions, NOT_RUN, rollback을 기록한다.
+회차 보고에 대표 finding은 적을 수 있지만 그 finding이 회차의 전체 범위를 뜻하지 않는다.
 
-## 13. 사용자 학습형 완료보고
+1~5회는 의무 full loop다. 5회 이후 유효 오류·충돌·누락·blocking finding·회귀·acceptance failure가 있으면 6..N회를 계속한다. 최대 횟수는 없다.
 
-단순 `완료/테스트 통과`로 끝내지 않는다.
+## 13. Git / PR
 
-1. **이 Part는 무엇인가**
-2. **가장 중요한 규칙 3~10개** — 무엇을 보장하고 언제 작동하는가
-3. **핵심 Skill/Mode** — 호출 조건·책임 차이
-4. **핵심 Module** — 입력→처리→출력→consumer/검증
-5. **잘 유지한 것 / 개선한 것 / 흡수·통합 / 제거·Archive / 의도적으로 추가하지 않은 것**
-6. **BEFORE → AFTER → 사용자/플레이어 효과 → trade-off**
-7. **장기 적합성 / 재검토 조건**
-8. **실제 검증 / NOT_RUN / BLOCKED_UNVERIFIED / 남은 위험**
-9. **프로젝트/Part 고유 교훈 vs Base 전체 승격 후보**
+기본은 **한 Part checkpoint당 coordinator-owned PR 하나**다.
 
-이 보고와 Part scope PASS, `CLEAN_REVIEW_EXIT`까지 완료해야 Part 완료다.
+- 현재 Part가 다른 Part/CP0 문제를 같이 고쳤다면 같은 PR에 `CROSS_PART_CHANGE`로 attribution한다.
+- 변경 범위를 작게 유지할 수 없을 정도로 독립적인 문제면 별도 coordinator PR로 분리한다.
+- 다른 활성 independent PR을 직접 수정하지 않는다.
+
+Scope 감사:
+
+```powershell
+python tools/check_base_partition_scope.py --coordinator --base <BASELINE_SHA> --head HEAD
+```
+
+`SEMANTIC_OWNER:Pxx`와 CP0 attribution을 검토한다. 파일 존재가 CI 실행 증거는 아니므로 각 claimed regression은 실제 workflow/command consumer를 확인한다.
+
+## 14. Part 완료
+
+각 Part checkpoint는 다음을 보고한다.
+
+1. Part 역할
+2. 중요 규칙
+3. Skill 목적/trigger/input/process/output/effect
+4. Module input/process/output/consumer/Test/failure-if-missing
+5. 유지/개선/흡수/제거/의도적 비추가
+6. 최소 3대안과 선택 이유
+7. BEFORE → AFTER → 기대효과 → trade-off
+8. actual tests / NOT_RUN / BLOCKED_UNVERIFIED
+9. cross-Part 직접 수정과 실제 requests
+10. Learning / Source
+11. revisit conditions
+12. true full adversarial loop evidence
+
+병합 후 latest `main`과 Notion을 readback한 뒤 다음 Part로 이동한다.
+
+## 15. P09 이후 Final Integration
+
+같은 coordinator 채팅이:
+
+1. latest main을 다시 pin
+2. P01~P09 결과/학습/남은 cross-Part finding 재검증
+3. CP0·Registry·generated·Notion 정합성 마감
+4. whole-Base regression/Required CI
+5. 최소 5회의 **진짜 full-scope adversarial loop**, 이후 오류 0까지
+6. exact-head merge
+7. post-merge main + Base/Project Home readback
+8. 사용자 학습형 최종보고
+
+까지 수행한다.
