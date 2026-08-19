@@ -53,6 +53,15 @@ class P04VerticalSlicePlayerValueTraceTests(unittest.TestCase):
         ):
             self.assertIn(term, benchmark)
 
+    def test_reuse_pipeline_checks_existing_module_registry_before_new_extraction(self) -> None:
+        pipeline = read("docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md")
+        registry_path = (
+            "docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md"
+        )
+
+        self.assertIn(registry_path, pipeline)
+        self.assertIn("재사용·변형·project adapter", pipeline)
+
     def test_current_active_projects_have_reusable_module_catalog(self) -> None:
         registry = read(
             "docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md"
