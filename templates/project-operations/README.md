@@ -1,208 +1,102 @@
-# 게임 프로젝트 운영체계 템플릿 키트
+# Project Operations Templates
 
-이 폴더는 Base 실행 Skill이 대상 프로젝트에 맞게 **분화해 설치**하는 공용 템플릿이다. 폴더 전체와 예시 경로를 그대로 복사하지 않는다.
+이 디렉터리는 Base를 채택한 프로젝트가 **프로젝트 운영 상태·결정·handoff·설계 문서 연결**을 시작할 때 복사/적용하는 템플릿 묶음이다. 설치 템플릿 자체는 프로젝트의 활성 상태 정본이 아니며, 실제 프로젝트에서 생성·채택된 문서와 정확한 Project Notion workspace가 정본 역할을 가진다.
 
-## 사용 Skill
+## Workspace authority
 
-- 요청 라우팅·요구 확정·실행 계약: `skills/managing-project-intake-and-work-contract/SKILL.md`
-- 신규 설치·기존 감사·승인된 마이그레이션·Health Review: `skills/managing-game-project-operating-system/SKILL.md`
-- 기획 책임 원본 작성·발행: `skills/managing-design-documents/SKILL.md`
-- 분야별 프로젝트 Skill 통합·학습: `skills/evolving-project-discipline-skills/SKILL.md`
-- Active Context·Handoff: `skills/maintaining-project-context-and-handoff/SKILL.md`
-- 프로젝트 교훈·Base 제안: `skills/managing-base-change-proposals/SKILL.md`
-
-통합 전 ID는 `skills/LEGACY_SKILL_ALIASES.md`로 새 Skill과 mode에 연결한다.
-
-## Base 기준 버전
+현재 기본 계약은 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json`의 `DOMAIN_SPLIT_CANON`이다.
 
 ```text
-프로젝트에 동기화된 Base 기준 우선
-→ docs/BASE_RULES_VERSION.md의 커밋 확인
-→ 업데이트 조사 때만 Base 원격과 비교
+NOTION_DEFAULT_PROJECT_WORKSPACE
+├─ NOTION_HUMAN_FACING_CANON: 사람이 읽고 판단하는 프로젝트 계획·결정·설명·시각 자료
+└─ Project relation으로 프로젝트 간 격리
+
+REPOSITORY_STRUCTURED_CANON
+└─ 구조화 상태·Commit·실제 코드/데이터/씬/자산·runtime truth·검증 증거
+
+Google Sheets
+└─ COMPATIBILITY_ONLY: 기존 프로젝트의 UNIQUE legacy material 이관 입력
 ```
 
-프로젝트 작업 중 원격 Base의 최신 상태를 암묵적으로 적용하지 않는다.
+- 새 프로젝트의 기본 사람용 계획 workspace로 Google Sheets를 만들지 않는다.
+- Figma, 외부 HTML workspace, 폐기된 custom local Tool/Hub를 신규 기본 surface로 부활시키지 않는다.
+- legacy source는 `UNIQUE / DUPLICATE / OBSOLETE`로 판정하고, `UNIQUE`만 현행 owner로 이관 → destination readback/Test → consumer/reference 확인 뒤 원본 수명주기를 판정한다.
 
-## 단일 첨부용 통합 실행문
+## Repository design root
 
-저장소 우선 인터뷰부터 기획·Demo-First Vertical Slice·GPT→Codex 인계·구현·검수·병합 후 동기화까지 현재 요청에 필요한 절차를 파일 하나로 전달할 때는 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 첨부한다. 별도 축약 실행문은 필요하지 않다. Prompt는 프로젝트에 동기화된 Base 기준과 프로젝트 정본보다 높은 권한이 아니며 drift는 `STALE_PROMPT_CONTRACT`로 보고한다. 감사·복원만 필요한 경우에는 계약이 `RECONCILIATION_PLANNING_PROFILE`을 선택하고, 구현이 요청·승인된 경우에는 `INTEGRATED_DELIVERY_PROFILE`로 계속 진행한다. 프로젝트에는 공용 본문 대신 `VERTICAL_SLICE_PROJECT_APPLICATION_v9.md`와 복원·감사 패킷을 얇게 적용한다.
+프로젝트가 Base 운영 템플릿을 채택할 때 설계 문서 폴더 `[기획서]`는 **저장소 루트**에 둔다. `templates/project-operations/` 자체나 중첩된 하위 폴더를 프로젝트의 활성 design root로 사용하지 않는다. Notion 사람용 workspace와 Repository `[기획서]` 구조화 문서는 서로 역할이 다르며, 어느 한쪽도 다른 쪽의 복사본으로 운영하지 않는다.
 
-## 가장 중요한 위치 규칙
+## 핵심 템플릿
 
-신규 설치와 승인된 마이그레이션의 활성 기획서는 저장소 루트 바로 아래에 둔다.
-
-```text
-<repository-root>/[기획서]/
-```
-
-기존 프로젝트의 안정된 기획 폴더는 `audit`와 사용자 승인 없이 강제 이동하지 않는다.
-
-## 템플릿 목록
-
-### 프로젝트 허브
-
-| 파일 | 역할 |
+| 경로 | 역할 |
 |---|---|
-| `PROJECT_OPERATING_SYSTEM_INSTALLATION_PLAN.md` | 신규 설치 계획 |
-| `PROJECT_BASE_ADAPTER.json` | Base v9.1 canonical project integration authority; install as `skills/PROJECT_BASE_ADAPTER.json` |
-| `PROJECT_BASE_ADAPTER_V2.json` | Hub-capable candidate with explicit canonical `project.project_id`; migrate and review without overwriting v1 |
-| `github/validate-project-base-adapter.yml` | Pull-request validator template that supplies the exact GitHub PR base SHA as trusted external baseline input |
-| `PROJECT_OPERATING_HEALTH.json` | Independent OM/PE axes and explicit critical-gate state; install under `docs/` |
-| `VERTICAL_SLICE_PROJECT_APPLICATION_v9.md` | Project-only v9 binding, protected boundary, local skills and default visual checkpoint |
-| `VERTICAL_SLICE_RECONCILIATION_PACKET_v9.md` | Baseline recovery, legacy traceability, finding, readiness and change-plan packet |
-| `.agents/skills/base-project-router/SKILL.md` | Thin repository-discovered router; it contains no shared workflow body |
-| `EXISTING_PROJECT_MIGRATION_AUDIT.md` | 기존 프로젝트 보존·참조 감사 |
-| `PROJECT_START_HERE.md` | 사용자·새 AI용 대시보드 |
-| `ACTIVE_CONTEXT.md` | 현재 상태의 기본 원본 |
-| `HANDOFF.md` | 세션·담당자·브랜치·마일스톤 경계 스냅샷 |
-| `ROADMAP.md` | 단계·우선순위·선행 조건·종료 기준 |
-| `CURRENT_CONFIRMED_DECISIONS.md` | 현재 승인 Decision·대체 관계·main Commit·Google Sheets 동기화 복원 정본 |
-| `DECISION_LOG.md` | 결정·근거·재검토 조건 |
-| `CHANGELOG.md` | 프로젝트 변경·검증·미검증 |
-| `BASE_RULES_VERSION.md` | 적용 Base 커밋·동기화 차이 |
-| `PROJECT_DOCUMENTATION_MAP.md` | 질문별 책임 원본·Skill·검증 라우터 |
-| `INTERVIEW_REGISTRY.json` | 사용자 확인과 실행 계약 연결 |
-| `INTERVIEW_RECORD.md` | 사실·결정·모호성·확인 기록 |
-| `DEVELOPMENT_GATES.md` | 작업·제품 게이트 |
-| `DOCUMENT_UPDATE_MATRIX.md` | 변경 유형별 갱신 책임 |
-| `AI_WORKFLOW.md` | GPT·Codex·GitHub 흐름 |
-| `LIFECYCLE_AREAS.md` | 현행·백업·보류·제거 후보 |
-| `OPERATING_SYSTEM_HEALTH_REPORT.md` | `verify` 결과 보고 |
+| `PROJECT_START_HERE.md` | 프로젝트 콜드 스타트 진입점 |
+| `ACTIVE_CONTEXT.md` | 현재 작업 단계·blocker·다음 행동 |
+| `CURRENT_CONFIRMED_DECISIONS.md` | 승인 Decision과 Repository/Notion readback 상태 |
+| `DECISION_LOG.md` | 결정 이력 |
+| `GRILL_ME_DECISION_RECORD.md` | 단일 Grill Me 질문·답변·승인·반영 증거 |
+| `GRILL_ME_BATCH_CHECKPOINT.md` | 최대 10건 승인 Decision 배치 checkpoint |
+| `HANDOFF.md` | 다른 세션/Executor가 이어받을 상태 |
+| `ROADMAP.md` | milestone/단계 |
+| `DEVELOPMENT_GATES.md` | 단계별 완료·검증 gate |
+| `PROJECT_DOCUMENTATION_MAP.md` | 프로젝트 정본 지도 |
+| `DESIGN_DOCUMENT_REGISTRY.json` | 구조화 설계 문서 registry |
+| `SKILL_EXECUTION_REPORT.md` | 실제 Work Mode/Skill/Mode 사용 증거 |
+| `LEGACY_ARTIFACT_RECONCILIATION.md` | 폐기·중복·고유 legacy 자료 이관 판정 |
+| `PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md` | **COMPATIBILITY_ONLY legacy migration aid**; 신규 Sheet 설계 계약이 아님 |
 
-Active Context를 현재 상태의 기본 원본으로 사용한다. Handoff는 두 번째 활성 상태 원본으로 유지하지 않는다.
+## Vertical Slice 실행 진입점
 
-### 기획 책임 원본·Skill
-
-| 파일 | 역할 |
-|---|---|
-| `DESIGN_DOCUMENT.md` | 서술 중심 Markdown 원본 템플릿 |
-| `DESIGN_DOCUMENT.json` | 구조 검증·게임 데이터 JSON 원본 템플릿 |
-| `DESIGN_DOCUMENT_REGISTRY.json` | 문서 ID·책임·원본·발행 정책 |
-| `SKILL_REGISTRY.json` | 선택적 Skill 라우팅·상태·학습 |
-| `PROJECT_SKILL_MAP.pdf` | 설정한 경우의 사람용 Skill Map |
-| `PROJECT_SKILL_MAP.md/.docx/.assets` | 선택 파생본 |
-| `SKILL_MAP_PUBLICATION_MANIFEST.json` | Skill Map 입력·출력·검수 상태 |
-| `skills/FOUNDATION_SKILL.md` | 공용 실행 계약 템플릿 |
-| `skills/DISCIPLINE_SKILL.md` | 분야 고유 판단·경로·검증 템플릿 |
-| `skills/SKILL_LEARNING_LOG.md` | 실패·중요 결정·재사용 교훈·검증 기록 |
-
-11개 분야는 선택 가능한 카탈로그다. 프로젝트에 필요하지 않은 분야를 강제로 설치하지 않는다.
-
-## 개별 프로젝트 기획 순서·Sheet tab
-
-Base 저장소 자체에는 Google Sheets를 만들지 않는다. 개별 프로젝트에서 `templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md`를 사용해 분야별 Approval Bundle과 tab 순서를 설치한다. 기본 제품 경로는 별도 Core PoC 없이 완성 품질의 Vertical Slice 데모·플레이테스트다.
-
-## 발행 정책
-
-각 문서는 Registry에서 하나를 선택한다.
-
-- `source_only`: 운영·라우팅 문서, PDF·DOCX·Manifest 없음
-- `milestone_sync`: 주요 게이트·정기 검토·외부 공유 시 발행
-- `always_sync`: 원본 변경과 같은 작업에서 상시 발행
-
-정책 선택 도구:
-
-```text
-tools/build_policy_driven_design_documents.py
-→ 항상 always_sync 선택
-→ --include-milestone일 때 milestone_sync 포함
-→ source_only는 생성 대상에서 제외
-→ tools/build_design_documents.py로 안전 생성
-```
-
-DOCX·다이어그램은 선언한 경우만 생성한다. `CURRENT`, 자동 렌더, Codex 검수, 사용자 검수는 독립 상태다.
-
-## GitHub 운영
-
-| 파일 | 역할 |
-|---|---|
-| `github/ISSUE_TEMPLATE.yml` | 작업 계약 Issue Form |
-| `github/PULL_REQUEST_TEMPLATE.md` | 게이트·책임 원본·검증 PR 체크 |
-| `github/CODEOWNERS.example` | 분야별 리뷰 예시 |
-| `github/documentation-governance.json` | 루트·Registry·Skill·발행 강제 설정 |
-| `github/check_documentation_governance.py` | 링크·경로·갱신 검사 |
-| `github/check_skill_routing_governance.py` | Registry·Learning·Skill Map 검사 |
-| `github/check_design_document_publications.py` | 정책 기반 책임 원본·발행 검사 |
-| `github/documentation-governance.yml` | GitHub Actions 예시 |
-
-파일 존재, Workflow 실제 실행, Required Status Check 강제를 서로 다른 상태로 기록한다.
-
-## 권장 대상 구조
-
-```text
-AGENTS.md
-README.md
-docs/BASE_RULES_VERSION.md
-
-tools/
-├─ build_project_skill_map.py
-├─ build_policy_driven_design_documents.py
-├─ build_design_documents.py
-├─ publication_v3.py
-└─ *_governance.py
-
-[기획서]/
-├─ 00_프로젝트_허브/
-│  ├─ START_HERE.md
-│  ├─ ACTIVE_CONTEXT.md
-│  ├─ HANDOFF.md                  # 경계 스냅샷
-│  ├─ ROADMAP.md
-│  ├─ DOCUMENTATION_MAP.md
-│  ├─ DEVELOPMENT_GATES.md
-│  ├─ DESIGN_DOCUMENT_REGISTRY.json
-│  ├─ SKILL_REGISTRY.json
-│  ├─ INTERVIEW_REGISTRY.json
-│  ├─ INTERVIEWS/
-│  ├─ EXECUTABLE_PROMPTS/
-│  ├─ PROJECT_SKILL_MAP.*         # 설정한 경우
-│  ├─ DOCUMENT_UPDATE_MATRIX.md
-│  ├─ CURRENT_CONFIRMED_DECISIONS.md
-│  ├─ DECISION_LOG.md
-│  ├─ CHANGELOG.md
-│  └─ AI_WORKFLOW.md
-└─ 선택한 분야 폴더/
-
-skills/
-├─ foundation/
-└─ 선택한 분야/
-```
+프로젝트가 통합 Vertical Slice 구현·검증 단계에 들어가면 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 canonical 실행 프롬프트 진입점으로 사용한다. 이 README는 해당 Prompt의 복사본을 소유하지 않으며, 프로젝트 운영 템플릿과 실제 Vertical Slice 실행 계약 사이의 링크만 유지한다.
 
 ## 설치 순서
 
-### 신규 프로젝트
-
 ```text
-managing-game-project-operating-system: install
-→ 루트·허브·Registry·게이트 설치
-→ 선택한 책임 원본·Skill 설치
-→ 정책 기반 발행·Governance 연결
-→ verify
+프로젝트 Repository 확인
+→ 프로젝트 AGENTS / START_HERE / 실제 파일 확인
+→ 저장소 루트의 [기획서] design root 확인
+→ 정확한 Project Notion workspace와 Project relation 확인
+→ templates/project-operations에서 필요한 최소 템플릿만 프로젝트에 적용
+→ CURRENT_CONFIRMED_DECISIONS / ACTIVE_CONTEXT / Documentation Map 연결
+→ 기존 legacy Sheet·HTML·Figma·custom Tool 자료가 있으면 UNIQUE/DUPLICATE/OBSOLETE 판정
+→ UNIQUE만 현재 Notion/Repository owner로 이관
+→ destination readback/Test + consumer/reference 확인
+→ 프로젝트 작업 시작
 ```
 
-### 기존 프로젝트
+Base 저장소 자체를 콜드 스타트할 때 이 디렉터리의 예시/빈 템플릿을 활성 프로젝트 상태로 오인하지 않는다.
+
+## 승인 Decision 동기화
+
+활성 Decision은 다음 순서를 기본으로 한다.
 
 ```text
-managing-game-project-operating-system: audit
-→ 고유 정보·참조·보존·위험 제안
-→ 사용자 승인
-→ 승인된 처리표만 migrate
-→ verify
+사용자 승인
+→ GitHub 추적
+→ 활성 Branch의 CURRENT_CONFIRMED_DECISIONS + 분야 정본
+→ 적용 가능한 NOTION_HUMAN_FACING_CANON record
+→ destination readback
+→ 논리 Commit
+→ APPROVED_PENDING_MERGE
+→ exact-head review / checks
+→ merge
+→ main readback + 적용 가능한 Notion readback
+→ SYNCED_TO_MAIN
 ```
 
-사용자 승인 전 대량 삭제·이동·통합을 하지 않는다.
+`COMPATIBILITY_ONLY` legacy Sheet의 존재·쓰기 권한·행 상태는 active Decision sync 완료 조건이 아니다.
 
-## 완료 검수
+## Legacy Sheet 관련 파일
 
-- [ ] 루트 `[기획서]`와 최초 읽기 경로가 명확하다.
-- [ ] 질문별 단일 Markdown 또는 JSON 책임 원본이 Registry에 등록됐다.
-- [ ] 발행 정책과 출력·Manifest 계약이 일치한다.
-- [ ] Skill Registry가 최소 호출과 mode를 연결한다.
-- [ ] 이전 ID가 Legacy Alias로 변환된다.
-- [ ] 실제 코드·데이터·자산·테스트가 책임 원본과 연결된다.
-- [ ] Governance·Actions·Required Check의 실제 상태가 구분된다.
-- [ ] Active Context가 실제 상태와 일치한다.
-- [ ] 승인 Decision이 GitHub 정본·main·Google Sheets에 반영되고 재조회 결과가 일치한다.
-- [ ] 새 작업자가 저장소만으로 방향·상태·다음 작업·보호 범위를 찾는다.
+`templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md`와 이 디렉터리의 `PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md` 같은 과거 Sheet surface는 새 프로젝트 기본 설치 경로가 아니다. 아직 이관되지 않은 legacy 정보를 해석·보존하는 호환 자료로만 취급한다. 해당 외부 템플릿의 장기 분류/Archive는 소유 Part/CP0가 별도로 결정해야 한다.
 
-- `PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md`: 세계관·핵심루프·인물·핵심시스템·이미지 검수 tab 설치 계약.
-- `../planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md`: 기획 중·기획 종료 GPT 이미지 생성과 승인 기록 Template.
+## Definition of Done
+
+- 정확한 프로젝트 Repository와 Project Notion workspace를 구분했다.
+- 사람용 `NOTION_HUMAN_FACING_CANON`과 구조화 `REPOSITORY_STRUCTURED_CANON`의 owner가 명확하다.
+- 저장소 루트의 `[기획서]` design root가 유지된다.
+- 승인 Decision은 Branch/Commit과 적용 가능한 Notion record에 추적된다.
+- Notion write는 정확한 Project relation으로 격리되고 destination readback을 가진다.
+- Google Sheets는 `COMPATIBILITY_ONLY`이며 신규 입력·active sync·완료 판정에 필요하지 않다.
+- legacy `UNIQUE` material은 현행 owner 이관·readback/Test·consumer 확인 없이 삭제하지 않는다.
+- 실제로 수행하지 않은 runtime/사용자 검증은 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 남긴다.
