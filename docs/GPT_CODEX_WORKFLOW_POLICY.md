@@ -68,6 +68,21 @@ launcher를 사용자에게 주기 전 adversarial review로 wrong worktree/bran
 
 project path, worktree, executable, port, version, host profile, CODEX_HOME, sandbox mode, live-QA product/profile 같은 구체 값은 각 consuming project 또는 현재 execution packet의 입력이다. Base 공용 정본에는 프로젝트별 literal을 고정하지 않는다.
 
+## 1A. GPT-first / optional Codex executor
+
+`GPT_FIRST_PLANNING_AND_REVIEW`가 기본 운영이다. GPT는 기획·조사·벤치마킹·대안 비교·시스템/데이터 설계·UI/UX·시각 방향·Notion 사람용 정본 갱신·검수·최종 적대적 검토를 주 책임으로 가진다. **GPT 단계가 끝났다는 이유만으로 Codex를 의무 호출하지 않는다.**
+
+`OPTIONAL_CODEX_EXECUTOR`는 다음처럼 실제 구현/실행 권위의 이점이 명확할 때만 사용한다.
+
+- 코드·Scene·Resource·game data의 실제 저장소 수정
+- 대규모 저장소를 대상으로 한 기계적 일괄 점검/변환
+- 로컬 Godot 실행·테스트·빌드·성능 확인
+- GPT가 현재 세션에서 직접 수행할 수 없는 filesystem/runtime 작업
+
+Codex를 호출하는 경우에도 GPT 실행 명세보다 현재 GitHub·Notion·프로젝트 파일·runtime evidence가 우선하며, Codex는 시작 시 이를 다시 읽는다. 사용자가 PowerShell에서 직접 시작해야 한다면 기존 `ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP`에 따라 **launcher + 전체 작업 prompt를 한 번에 붙여넣을 수 있는 형태**를 우선 제공한다.
+
+기획·검수·문서/Notion 정리만으로 완료 가능한 작업, 또는 GPT가 현재 도구로 직접 안전하게 완료 가능한 작업에는 Codex를 추가하지 않는다.
+
 ## 2. GPT 책임
 
 GPT는 평상시 작업과 Codex 인계 준비를 담당한다.
@@ -80,7 +95,6 @@ GPT는 평상시 작업과 Codex 인계 준비를 담당한다.
 - Scene·Node·Resource/Data·Signal·상태 구조 설계와 GDScript 초안·구현 보조
 - 승인 범위 안의 Godot POC·사전 제작과 직접 실행 가능한 경우의 재설계
 - `AGENTS.md`, Skill, Registry, Documentation Map, Schema, Template
-- HTML·Python 기반 기획·검증·발행 도구
 - GitHub Actions, 정적 검사, PDF·Manifest
 - 기획 Branch·Issue·PR와 필요 시 마스터 구현계획
 - `USER_REQUESTED_CODEX_HANDOFF` 또는 `CONTINUOUS_WORK_EXECUTOR_HANDOFF` 시 Codex 실행 명세 작성

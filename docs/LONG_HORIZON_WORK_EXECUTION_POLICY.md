@@ -20,7 +20,7 @@ EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION
 ZERO_INCREMENTAL_COST_REQUIRED
 CURRENT_PAID_PLANS: GPT_PRO
 PAID_PLAN_COUNT: 1
-FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS
+ADVERSARIAL_REVIEW_UNTIL_CLEAN
 POSTMERGE_PROMOTION_AND_SUPERSESSION
 CORE_LOOP_DUMMY_BALANCE_BUILD_TEST
 BALANCE_BUDGET
@@ -32,8 +32,8 @@ WORK_MASTER
 ASSET_KNOWLEDGE_MASTER
 VISUAL_MAP_DERIVED
 REPO_NATIVE_STRUCTURED_DATA
-GOOGLE_SHEETS_COMPATIBILITY_ONLY
-EXTERNAL_HTML_TOOL_CATALOG: DERIVED_DISCOVERY_SURFACE
+GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL
+EXTERNAL_HTML_WORKSPACE_RETIRED
 LOOP_ENGINEERING: REQUIRED_WHEN_RELEVANT
 REQUIRED_WORK_REMAINING: 0
 ```
@@ -52,7 +52,7 @@ RESEARCH
 → ONE USER APPROVAL
 → SMALL TESTABLE SLICES
 → TOOL / RUNTIME EXECUTION
-→ FIVE FULL ADVERSARIAL IMPROVEMENT LOOPS
+→ ADVERSARIAL REVIEW UNTIL CLEAN
 → LONG-TERM FIT CLOSURE
 → EXACT-HEAD PR GATE
 → MERGE
@@ -202,13 +202,13 @@ project page
 
 balance, economy, schema, runtime config, 코드, scene, resource, tracked implementation asset, build/test 상태는 repository-native source와 실제 runtime evidence가 소유한다. Notion의 승인이나 screenshot은 runtime proof가 아니다.
 
-### `GOOGLE_SHEETS_COMPATIBILITY_ONLY`
+### `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL`
 
-기존 Google Sheet는 고유 unmigrated material이 남아 있을 때만 compatibility/migration source로 읽는다. 검증된 migration과 readback 뒤에는 새 프로젝트 작업면으로 사용하지 않는다.
+기존 Google Sheet는 고유 unmigrated material을 한 번 이관하기 위한 migration-only source다. `UNIQUE / DUPLICATE / OBSOLETE` 분류와 destination readback 뒤 unique material이 0이면 활성 검색·라우팅·템플릿에서 제거한다.
 
-### `EXTERNAL_HTML_TOOL_CATALOG: DERIVED_DISCOVERY_SURFACE`
+### `EXTERNAL_HTML_WORKSPACE_RETIRED`
 
-외부 HTML catalog/dashboard는 발견·보조 surface일 뿐 정본이나 실행 증거가 아니다.
+외부 HTML catalog/dashboard는 신규 기본 작업면으로 사용하지 않는다. 고유 정보가 있으면 현재 Notion/repository owner로 한 번 흡수·검증한 뒤 활성 surface와 참조를 제거한다.
 
 ## 10. 시각 자산·Reference·Benchmark
 
@@ -229,6 +229,58 @@ generate / edit
 → runtime QA separately
 ```
 
+
+## GPT-first 기획·검수와 선택적 Codex 보조 계약
+
+`GPT_FIRST_PLANNING_AND_REVIEW`가 기본이다. GPT는 프로젝트 GitHub와 Notion의 현재 정본을 읽고 기획·조사·벤치마킹·대안 비교·시스템/데이터 설계·UI/UX 흐름·시각 방향·검수·적대적 검토를 닫는다. Codex는 필수 후속 단계가 아니라 실제 코드/Scene/Resource/data 변경, 저장소 규모가 큰 기계적 점검, 로컬 실행·테스트 등 **실행 권위가 필요한 경우에만** `OPTIONAL_CODEX_EXECUTOR`로 호출한다.
+
+```text
+GPT planning/research/review
+→ GitHub + Notion canon reconciliation
+→ UI/UX/visual requirement gate
+→ when visuals materially affect PoC: generate/curate candidate visuals
+→ attach to exact Project in Notion + readback
+→ user/GPT review and approval state
+→ implementation-ready package
+→ OPTIONAL_CODEX_EXECUTOR only when implementation/runtime work benefits from it
+→ repository implementation/runtime evidence
+→ GPT final adversarial review
+→ GitHub/Notion sync + readback
+```
+
+`VISUALIZED_POC_BEFORE_DEMO_TEST`: 플레이 경험을 UI/UX와 화면 맥락 없이 판단하면 왜곡될 위험이 큰 게임 PoC/데모는 회색 박스만으로 최종 평가하지 않는다. 기획·검수 단계에서 필요한 화면·HUD·핵심 상태·아트 앵커 이미지를 만들거나 승인된 기존 이미지를 선택하고, 올바른 Project의 Notion Visual/Asset surface에 배치·readback한 뒤 이를 구현 패키지의 시각 입력으로 사용한다. 모든 PoC에 완성 아트를 강제하지 않으며, 이미지가 판단에 실질 영향을 주지 않는 순수 로직 PoC는 예외로 기록한다.
+
+`LEGACY_ABSORB_VERIFY_REMOVE`: 더 이상 사용하지 않기로 확정된 Figma, 전용 로컬 시각 Tool/Hub, 외부 HTML 작업면, Google Sheets 등 구형 surface는 일상 검색·라우팅 대상에서 제거한다. 삭제 전 한 번만 `UNIQUE / DUPLICATE / OBSOLETE`를 분류하고, `UNIQUE`한 규칙·데이터·증거·재사용 원리만 현재 Notion 또는 repository 정본으로 흡수한다. 목적지 readback과 참조 신선도 검증이 끝나면 원본과 활성 참조를 제거한다. `DUPLICATE/OBSOLETE`는 재검토를 반복하지 않는다. 법적·감사·rollback 때문에 보존이 필요한 최소 이력은 명시적 archive manifest만 남기고 기본 탐색에서 제외한다.
+
+Google Sheets는 신규 입력을 받지 않는다. 남은 고유 자료는 Project relation을 확정해 Notion 사람용 정본 또는 repository structured/runtime owner로 이관하고, `MIGRATED_READBACK_VERIFIED`가 되면 활성 호환 surface 자체를 제거 대상으로 전환한다.
+
+`PAID_PLAN_GATE`: 현재 승인된 유료 플랜은 `GPT_PRO` 하나다. Notion은 현재 사용 가능한 무료 범위를 기본으로 하며, 기능 제한이 실제 목표를 막고 무료/기존 대안보다 유료 Notion이 장기 총비용·정확성에서 우월하다는 근거가 있을 때만 `NOTION_PAID_PLAN_PROPOSAL`로 사용자 승인을 요청한다. 승인 전에는 결제·유료 기능 의존을 만들지 않는다.
+
+## 적대적 검토 종료 조건
+
+`ADVERSARIAL_REVIEW_UNTIL_CLEAN`은 숫자 quota가 아니다.
+
+```text
+FULL_SCOPE_REVIEW
+→ validate findings
+→ fix approved findings
+→ verification/regression
+→ RE-ATTACK improved whole state
+→ repeat while any new valid error/conflict/omission/blocker appears
+→ CLEAN_REVIEW_EXIT
+```
+
+`CLEAN_REVIEW_EXIT` 조건은 모두 필요하다.
+
+- 새 유효 `MUST_FIX` 또는 blocking finding 0
+- 정본/owner/consumer/reference 충돌 0
+- acceptance criterion failure 0
+- 기존 수정으로 생긴 회귀 0
+- evidence ceiling 위반/미실행을 PASS로 과장한 항목 0
+- 더 나은 대안 재탐색과 장기계획 적합성 재검사가 현재 증거에서 추가 변경을 요구하지 않음
+
+한 회차가 깨끗해도 전체 범위를 다시 공격했을 때 새 finding이 나오면 종료하지 않는다. 반대로 깨끗한 상태에서 횟수를 채우기 위해 가짜 finding이나 불필요한 변경을 만들지 않는다.
+
 ## 11. 비용 경계
 
 ### `ZERO_INCREMENTAL_COST_REQUIRED`
@@ -240,11 +292,11 @@ PAID_PLAN_COUNT: 1
 
 현재 기본 유료 플랜은 **GPT Pro** 하나다. Notion은 Free 범위에서 사용하며 paid Notion AI, 별도 API credit, metered storage/automation, marketplace, 신규 유료 runner/compute/storage를 기본 경로에 넣지 않는다. 다른 유료 기능을 도입·실행·결제하려면 **새 사용자 승인**이 필요하다. 비용 상태가 불명확하면 `COST_GATE_BLOCKED`로 둔다.
 
-## 12. 다섯 번의 전체 적대적 개선 루프
+## 12. 오류가 사라질 때까지의 전체 적대적 개선 루프
 
-### `FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS`
+### `ADVERSARIAL_REVIEW_UNTIL_CLEAN`
 
-적대적 검토를 실제로 실행할 때는 다섯 관점을 한 번씩 보는 것이 아니라 다음 **전체 범위 개선 루프를 최소 5회** 반복한다.
+적대적 검토를 실제로 실행할 때는 고정 횟수를 채우는 것이 아니라 다음 **전체 범위 개선 루프를 CLEAN_REVIEW_EXIT가 성립할 때까지** 반복한다.
 
 ```text
 FULL_SCOPE_REVIEW

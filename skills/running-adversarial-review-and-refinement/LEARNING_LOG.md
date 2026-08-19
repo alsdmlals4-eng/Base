@@ -1,13 +1,22 @@
 # Running Adversarial Review and Refinement — Learning Log
 
+## 2026-08-19 — fixed loop counts are weaker than a verified clean-exit condition
+
+- **Trigger:** 사용자가 적대적 검토를 5회 같은 고정 횟수로 제한하지 말고, 검토 결과에서 유효한 오류·충돌·누락·blocking finding이 더 이상 나오지 않을 때까지 반복하라고 상위 규칙을 변경했다.
+- **Finding:** `FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS`와 `FULL_LOOP_COUNT_MINIMUM: 5`는 이전의 “5개 lens가 아니라 전체 개선 사이클을 반복한다”는 문제는 해결했지만, 여전히 숫자 quota가 종료 조건처럼 보일 수 있었다. 횟수를 채우는 데 초점을 두면 5회보다 빨리 깨끗해진 상태에서 불필요한 churn을 만들거나, 5회 이후 새 오류가 계속 나오는 상황을 숫자와 혼동할 수 있다.
+- **Decision:** 기존 Skill owner를 유지하고 `ADVERSARIAL_REVIEW_UNTIL_CLEAN`과 `CLEAN_REVIEW_EXIT`로 전환한다. 각 회차는 전체 승인 범위를 다시 공격하고, 새 유효 `MUST_FIX`/P0/P1/acceptance blocker/정본·참조 충돌/회귀/evidence ceiling 위반이 나오면 수정·검증 후 다음 전체 회차로 간다. 종료는 새 유효 오류·충돌·누락·blocking finding 0, 회귀 0, acceptance 충족, 정본·참조 신선도와 증거 ceiling 충족으로 판정한다.
+- **Evidence:** PR #531의 첫 one-shot migration run `32208848514`에서 정책 변환은 성공했지만 기존 회귀 테스트가 `FULL_LOOP_COUNT_MINIMUM: 5`를 요구해 RED가 발생했다. 후속 run `32208916516`에서 fixed-loop regression을 clean-exit regression으로 교체한 뒤 focused Long-Horizon/GPT-Codex contracts가 Green이었다. 이후 전체 CI의 canonical-reference freshness가 이 Learning Log 동반 갱신 필요성을 다시 검출했다.
+- **Boundary:** “오류가 안 나올 때까지”를 무한히 새로운 취향 finding을 발명하라는 의미로 사용하지 않는다. 동일 finding을 표현만 바꿔 계수하지 않고, `NO_MATERIAL_FOLLOWUP`이면 churn을 만들지 않는다. 실행할 수 없는 runtime/human test는 `NOT_RUN`/`BLOCKED_UNVERIFIED`로 남기며 clean 상태를 꾸미지 않는다.
+- **Next trigger:** clean-exit가 단순 “한 번 문제 없음”으로 축소되거나, evidence ceiling/consumer/reference drift가 무시되거나, 고정 숫자 quota가 active contract로 재도입되면 즉시 재검토한다.
+
 ## 2026-08-18 — segmented five-round review was the wrong abstraction
 
 - **Trigger:** 사용자가 “5회 적대적 검토”는 5개 공격면 분할이 아니라 `전체 적대적 검토 → 충돌·누락·문제 발견 → 개선·보완 → 검증 → 개선된 전체 상태 재검토`를 5회 반복하는 것이라고 재확정했다. 중요 결정은 최소 3개의 실질 대안을 비교하고 더 나은 방안과 장기계획 적합성도 계속 확인해야 한다.
 - **Finding:** Base가 `FIVE_DISTINCT_ADVERSARIAL_ROUNDS`를 승격해 하나의 전체 검토를 다섯 lens로 분할했다. 이는 의식적 반복을 줄이려는 이전 해석이었지만 사용자 의도인 반복 개선 control loop를 바꿔 버렸다.
-- **Decision:** 새 광역 Skill 없이 기존 owner를 유지하고 `FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS`, `FULL_LOOP_COUNT_MINIMUM: 5`, `MINIMUM_VIABLE_ALTERNATIVES: 3`, `BETTER_ALTERNATIVE_SEARCH`, `LONG_TERM_PLAN_FIT_REQUIRED`를 상위 정책·장기정책·이 Skill에 연결한다. 각 회차는 앞 회차의 검증된 출력 상태를 입력으로 전체 승인 범위를 다시 공격한다.
+- **Decision:** 새 광역 Skill 없이 기존 owner를 유지하고 당시 `FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS`, `FULL_LOOP_COUNT_MINIMUM: 5`, `MINIMUM_VIABLE_ALTERNATIVES: 3`, `BETTER_ALTERNATIVE_SEARCH`, `LONG_TERM_PLAN_FIT_REQUIRED`를 상위 정책·장기정책·이 Skill에 연결했다. 이 수치형 종료 계약은 2026-08-19의 더 최신 `ADVERSARIAL_REVIEW_UNTIL_CLEAN` 결정으로 대체되었다.
 - **Evidence:** PR #519의 test-only head `b04c57bb9fd008c0043dbd488e8f8311c589e946`에서 Long-Horizon contract가 의도대로 RED였다. 초기 production head `26a07487ac60b943fe8510e1c25828f89346b5e8`에서는 새 full-loop 계약 대부분이 GREEN으로 전환됐지만, reference-freshness가 Skill Learning Log 동반 갱신 누락을 잡아 이 기록을 추가하게 됐다.
-- **Boundary:** 다섯 lens를 다섯 loop로 이름만 바꾸지 않는다. finding만 기록하고 승인 범위의 필수 수정·검증을 건너뛰지 않는다. 5회차 뒤 blocking finding이 남으면 추가 전체 루프를 수행한다. 최소 3개 대안은 이름만 다른 허수 후보로 채우지 않는다.
-- **Next trigger:** 전체 회차가 특정 lens 하나만 검사하거나, 각 회차 사이 실제 수정·검증 없이 보고서만 늘어나거나, 더 나은 방법 탐색과 장기 적합성 재판정이 누락되거나, active consumer에 `FIVE_DISTINCT_ADVERSARIAL_ROUNDS`가 재등장하면 즉시 재검토한다.
+- **Boundary:** 당시 핵심 교훈인 “lens 분할이 아니라 수정·검증을 포함한 전체 재공격”은 유지한다. 단, 현재 종료 조건은 5회 quota가 아니라 `CLEAN_REVIEW_EXIT`다. 최소 3개 대안은 이름만 다른 허수 후보로 채우지 않는다.
+- **Next trigger:** 역사 기록을 현재 active contract로 오인하거나 `FIVE_DISTINCT_ADVERSARIAL_ROUNDS`가 active consumer에 재등장하면 재검토한다.
 
 ## 2026-08-15 — Socratic questioning works best as a selective review lens
 

@@ -16,7 +16,7 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         agents = read("AGENTS.md")
         self.assertIn("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md", agents)
         for term in (
-            "FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS",
+            "ADVERSARIAL_REVIEW_UNTIL_CLEAN",
             "REQUIRED_WORK_REMAINING",
             "NOTION_DEFAULT_PROJECT_WORKSPACE",
             "PROJECT_RELATION_REQUIRED",
@@ -32,7 +32,7 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             "SINGLE_INITIAL_APPROVAL_THEN_CONTINUE",
             "RECOVER_TRY_ALTERNATIVES_RESUME",
             "ZERO_INCREMENTAL_COST_REQUIRED",
-            "FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS",
+            "ADVERSARIAL_REVIEW_UNTIL_CLEAN",
             "POSTMERGE_PROMOTION_AND_SUPERSESSION",
             "REQUIRED_WORK_REMAINING: 0",
         ):
@@ -131,8 +131,8 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             "ASSET_KNOWLEDGE_MASTER",
             "VISUAL_MAP_DERIVED",
             "REPO_NATIVE_STRUCTURED_DATA",
-            "GOOGLE_SHEETS_COMPATIBILITY_ONLY",
-            "EXTERNAL_HTML_TOOL_CATALOG: DERIVED_DISCOVERY_SURFACE",
+            "GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL",
+            "EXTERNAL_HTML_WORKSPACE_RETIRED",
             "LOOP_ENGINEERING: REQUIRED_WHEN_RELEVANT",
         ):
             self.assertIn(term, policy)
@@ -145,22 +145,21 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", visual_policy)
         self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", visual_policy)
 
-    def test_adversarial_review_owner_requires_five_full_improvement_loops_when_invoked(self) -> None:
+    def test_adversarial_review_owner_repeats_until_clean_exit(self) -> None:
         skill = read("skills/running-adversarial-review-and-refinement/SKILL.md")
         for term in (
-            "FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS: REQUIRED_WHEN_REVIEW_RUNS",
-            "FULL_LOOP_COUNT_MINIMUM: 5",
+            "ADVERSARIAL_REVIEW_UNTIL_CLEAN: REQUIRED_WHEN_REVIEW_RUNS",
             "FULL_SCOPE_REVIEW",
-            "FIND → REFINE → VERIFY → RE-ATTACK",
+            "FIND → VALIDATE → REFINE → VERIFY → RE-ATTACK",
             "BETTER_ALTERNATIVE_SEARCH",
             "LONG_TERM_PLAN_FIT_RECHECK",
+            "CLEAN_REVIEW_EXIT",
+            "새로운 유효 오류·충돌·누락·blocking finding이 0",
         ):
             self.assertIn(term, skill)
-        self.assertIn("각 회차는 전체 승인 범위를 처음부터 다시", skill)
-        self.assertIn("5회차", skill)
-        self.assertIn("추가 전체 루프", skill)
-        self.assertNotIn("FIVE_DISTINCT_ADVERSARIAL_ROUNDS", skill)
-        self.assertNotIn("ROUND_1_INTENT_ASSUMPTIONS_SCOPE", skill)
+        self.assertNotIn("FULL_LOOP_COUNT_MINIMUM: 5", skill)
+        self.assertNotIn("FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS", skill)
+        self.assertNotIn("최소 다섯 번", skill)
 
     def test_loop_foundation_doc_points_to_current_operational_checkpoint(self) -> None:
         loop_doc = read("docs/LOOP_ENGINEERING_A2_RUNTIME.md")
@@ -188,6 +187,32 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             "FUNCTIONAL_OVERLAP: REUSE_ABSORB_MERGE_FIRST",
         ):
             self.assertIn(term, text)
+
+    def test_gpt_first_visualized_poc_legacy_removal_and_clean_review_contract(self) -> None:
+        agents = read("AGENTS.md")
+        policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
+        codex = read("docs/GPT_CODEX_WORKFLOW_POLICY.md")
+        visual = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
+        sheets = read("docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md")
+        adversarial = read("skills/running-adversarial-review-and-refinement/SKILL.md")
+        for token in (
+            "ADVERSARIAL_REVIEW_UNTIL_CLEAN",
+            "CLEAN_REVIEW_EXIT",
+            "GPT_FIRST_PLANNING_AND_REVIEW",
+            "OPTIONAL_CODEX_EXECUTOR",
+            "VISUALIZED_POC_BEFORE_DEMO_TEST",
+            "LEGACY_ABSORB_VERIFY_REMOVE",
+            "PAID_PLAN_GATE",
+        ):
+            self.assertIn(token, policy if token not in ("CLEAN_REVIEW_EXIT",) else policy + adversarial + agents)
+        self.assertIn("사용자 학습형 완료보고", agents)
+        self.assertIn("GPT_FIRST_PLANNING_AND_REVIEW", codex)
+        self.assertIn("OPTIONAL_CODEX_EXECUTOR", codex)
+        self.assertIn("VISUALIZED_POC_BEFORE_DEMO_TEST", visual)
+        self.assertIn("MIGRATION_ONLY_UNTIL_REMOVAL", sheets)
+        self.assertNotIn("FULL_LOOP_COUNT_MINIMUM: 5", adversarial)
+        self.assertNotIn("FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS", adversarial)
+        self.assertNotIn("최소 다섯 번", adversarial)
 
 
 if __name__ == "__main__":

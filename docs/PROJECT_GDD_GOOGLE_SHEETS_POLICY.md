@@ -2,7 +2,7 @@
 
 ## Status
 
-`COMPATIBILITY_ONLY`
+`MIGRATION_ONLY_UNTIL_REMOVAL`
 
 The default project operating surface is `NOTION_DEFAULT_PROJECT_WORKSPACE`. Google Sheets is not the default workspace for new projects, new visual planning, asset cataloging, or project status management.
 
@@ -55,6 +55,12 @@ Rendered flow diagrams are migrated as `VISUAL_MAP_DERIVED`; the underlying sema
 ## Runtime boundary
 
 A Sheet row, Notion record, screenshot, or visual map is not runtime proof. Code, scenes, resources, config, builds and QA evidence remain repository/runtime evidence.
+
+## Removal after migration
+
+Google Sheets는 신규 계획·수정·승인 데이터를 받지 않는 `MIGRATION_ONLY_UNTIL_REMOVAL` source다. 각 legacy Sheet는 한 번만 `UNIQUE / DUPLICATE / OBSOLETE`로 분류한다. `UNIQUE`만 올바른 Project의 Notion 사람용 owner 또는 repository structured/runtime owner로 이관하고 destination readback을 검증한다. `DUPLICATE / OBSOLETE`는 활성 자료로 재검토하지 않는다.
+
+모든 unique material이 `MIGRATED_READBACK_VERIFIED`이고 active consumer/reference가 0이면 해당 Sheet와 Sheet 전용 템플릿·라우팅·기본 검색 참조는 제거한다. 법적/감사/rollback에 꼭 필요한 최소 provenance만 archive manifest에 남길 수 있으며 기본 탐색에서 제외한다.
 
 ## Completion
 
