@@ -31,3 +31,15 @@
 - **Boundary:** `PLATFORM_NATIVE_FIRST`, `NO_CUSTOM_DRM_DEFAULT`, 플랫폼별 의미 보존, 단일 신호 영구 제재 금지, offline/outage·지원/이의제기·save access·sunset·privacy 결정이 필수다.
 - **Evidence:** 정적 테스트는 계약·라우팅·반례만 증명한다. Steam/Google Play/STOVE sandbox, 사람 오탐 복구, 법률 검토, 플랫폼 승인과 production readiness는 실행하지 않았다.
 - **Not run:** platform SDK integration `NOT_RUN`, human false-positive recovery `HUMAN_NOT_RUN`, legal/platform approval `NOT_PERFORMED`.
+
+## 2026-08-19 — Notion/Repository workspace authority consumer normalization
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** canonical workspace contract가 이미 `NOTION_HUMAN_FACING_CANON + REPOSITORY_STRUCTURED_CANON + Google Sheets COMPATIBILITY_ONLY`로 바뀌었지만 Project OS consumer가 구형 active-Sheet 입력을 계속 요구하는지 P01 독립 감사.
+- **Finding:** authority migration 자체는 이미 존재했지만 stale Skill consumer와 template 표현 때문에 신규 프로젝트가 Google Sheets를 다시 필수 작업면처럼 해석할 위험이 있었다. 반대로 legacy Sheet 계약은 reference-freshness의 별도 coupled test owner와 묶여 있어 P01 단독 변경이 ownership 경계를 넘었다.
+- **Decision:** 새 Skill/Mode/policy를 만들지 않고 Project OS의 active read/install/verify 경로만 Notion/Repository authority로 정규화한다. `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`는 legacy migration 의미의 canonical reference로 유지한다. 별도 coupled test owner가 필요한 legacy workbook 본문은 P01에서 임의로 단독 재작성하지 않고 cross-part follow-up으로 넘긴다.
+- **Evidence:** PR #534에서 permanent Base v9 test의 실제 RED → production 정규화 후 GREEN을 확인했다. 이후 Game Project Operating System workflow가 canonical reference/consumer 회귀를 잡아 Vertical Slice entrypoint와 Sheet migration policy reference를 복원했다.
+- **Reusable lesson:** canonical authority migration 뒤에는 새 abstraction보다 active consumer drift와 coupled-test ownership을 먼저 감사한다. P01 소유 Skill을 고칠 때는 Skill-local learning + P01-owned companion test를 같이 움직여 reference-freshness 계약을 실제로 소비한다.
+- **Anti-pattern:** legacy 호환 파일을 current workspace로 확대 해석; coupled test를 통과시키려고 다른 Part 테스트를 수정; 새 canon을 만들어 stale Manifest path를 맞춤.
+- **Boundary:** 실제 프로젝트 Notion migration E2E, legacy Sheet의 UNIQUE material 이관·삭제, 사람 UX/기기 검증은 `NOT_RUN`이다.
+- **Next trigger:** legacy Sheet coupled-test owner가 Integration에서 정리되거나 실제 Project Notion migration pilot에서 새로운 consumer gap이 발견될 때 재검토한다.
