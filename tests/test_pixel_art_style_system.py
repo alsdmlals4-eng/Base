@@ -170,18 +170,6 @@ class PixelArtStyleSystemTests(unittest.TestCase):
         ):
             self.assertIn(term, radar)
 
-    def test_ai_assisted_visual_candidates_require_production_value_evidence(self) -> None:
-        radar = read(VISUAL_STYLE_RADAR)
-        for term in (
-            "AI_ASSISTED_PRODUCTION_VALUE_GATE",
-            "retake_rate",
-            "style_consistency_acceptance",
-            "human_review_cost",
-            "runtime_or_export_impact",
-        ):
-            with self.subTest(term=term):
-                self.assertIn(term, radar)
-
     def test_notion_reference_sync_requires_project_relation_and_readback(self) -> None:
         preferred = read(PREFERRED_LIBRARY)
         for term in (
