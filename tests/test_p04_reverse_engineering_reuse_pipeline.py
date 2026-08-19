@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import importlib.util
+import json
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -175,6 +178,79 @@ class P04ReverseEngineeringReusePipelineTests(unittest.TestCase):
         self.assertIn("TETRIS_TRADE_DRESS_BOUNDARY", gameplay)
         self.assertIn("DIRECT_LICENSED_REUSE", visual)
         self.assertIn("PROJECT_ASSET_APPROVED", visual)
+
+    def test_p0_reference_implementations_exist(self) -> None:
+        for path in (
+            "tools/reuse_modules/data_schema_crossref_validator.py",
+            "templates/reuse-modules/godot/grid_placement_rule_engine.gd",
+            "templates/reuse-modules/godot/candidate_draft_weight_engine.gd",
+            "templates/reuse-modules/godot/semantic_ui_skin_kit.gd",
+            "templates/reuse-modules/godot/gameplay_symbol_atlas.gd",
+        ):
+            self.assertTrue((ROOT / path).is_file(), path)
+
+    def test_data_schema_crossref_validator_detects_core_failures(self) -> None:
+        module_path = ROOT / "tools/reuse_modules/data_schema_crossref_validator.py"
+        spec = importlib.util.spec_from_file_location("data_schema_crossref_validator", module_path)
+        self.assertIsNotNone(spec)
+        module = importlib.util.module_from_spec(spec)
+        assert spec is not None and spec.loader is not None
+        spec.loader.exec_module(module)
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            (root / "items.json").write_text(
+                json.dumps([
+                    {"id": "A", "kind": "weapon", "target_id": "MISSING"},
+                    {"id": "A", "kind": "invalid", "target_id": "MISSING"},
+                    {"id": "B", "kind": "armor"},
+                ]),
+                encoding="utf-8",
+            )
+            manifest = {
+                "files": [
+                    {
+                        "path": "items.json",
+                        "records": "$",
+                        "id_field": "id",
+                        "required_fields": ["id", "kind", "target_id"],
+                        "enum_fields": {"kind": ["weapon", "armor"]},
+                    }
+                ],
+                "references": [
+                    {
+                        "source_file": "items.json",
+                        "field": "target_id",
+                        "target_file": "items.json",
+                        "target_id_field": "id",
+                        "allow_null": True,
+                    }
+                ],
+            }
+            report = module.validate_manifest(root, manifest)
+            codes = {item["code"] for item in report["violations"]}
+            self.assertTrue({"DUPLICATE_ID", "MISSING_REQUIRED_FIELD", "INVALID_ENUM", "DANGLING_REFERENCE"}.issubset(codes))
+            self.assertFalse(report["ok"])
+
+    def test_p0_godot_reference_modules_are_pure_bounded_helpers(self) -> None:
+        grid = read("templates/reuse-modules/godot/grid_placement_rule_engine.gd")
+        draft = read("templates/reuse-modules/godot/candidate_draft_weight_engine.gd")
+        skin = read("templates/reuse-modules/godot/semantic_ui_skin_kit.gd")
+        symbols = read("templates/reuse-modules/godot/gameplay_symbol_atlas.gd")
+
+        for source in (grid, draft, skin, symbols):
+            self.assertIn("extends RefCounted", source)
+            self.assertNotIn("get_tree()", source)
+            self.assertNotIn("autoload", source.lower())
+
+        for term in ("OUT_OF_BOUNDS", "OCCUPIED", "preview_payload", "project_predicates"):
+            self.assertIn(term, grid)
+        for term in ("RandomNumberGenerator", "seed", "reason_trace", "duplicate_policy"):
+            self.assertIn(term, draft)
+        for term in ("semantic_role", "state", "fallback", "project_skin"):
+            self.assertIn(term, skin)
+        for term in ("symbol_id", "shape_cue", "text_cue", "color_is_not_sufficient"):
+            self.assertIn(term, symbols)
 
 
 if __name__ == "__main__":
