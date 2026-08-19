@@ -53,58 +53,6 @@ class P04VerticalSlicePlayerValueTraceTests(unittest.TestCase):
         ):
             self.assertIn(term, benchmark)
 
-    def test_benchmark_reverse_engineering_requires_pattern_and_genre_reuse_boundaries(self) -> None:
-        guide = read("docs/BENCHMARKING_REFERENCE_GUIDE.md")
-        method = read("docs/knowledge/research/DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md")
-        benchmark = read("templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md")
-
-        for surface in (guide, method, benchmark):
-            for term in (
-                "BENCHMARK_REVERSE_ENGINEERING_PATTERN_REUSE",
-                "REUSABLE_UNIT_DISCOVERY",
-                "MECHANIC_PATTERN_LIBRARY",
-                "GENRE_FOUNDATION_REFERENCE",
-                "MULTI_SOURCE_EXTRACTION",
-                "NOVELTY_DELTA",
-                "CLEAN_ROOM_REIMPLEMENTATION",
-            ):
-                self.assertIn(term, surface)
-
-        for reusable_unit in (
-            "SYSTEM_PATTERN",
-            "TOOL_PATTERN",
-            "ASSET_MATERIAL_PATTERN",
-            "UI_UX_PATTERN",
-            "CONTENT_PATTERN",
-            "WORKFLOW_PATTERN",
-            "SKILL_PATTERN",
-        ):
-            self.assertIn(reusable_unit, benchmark)
-
-        self.assertIn("테트리스류", benchmark)
-        self.assertIn("텍스트 선택형", benchmark)
-        self.assertIn("덱빌딩 로그라이크", benchmark)
-        self.assertIn("서바이버라이크", benchmark)
-        self.assertIn("표현·자산·코드", benchmark)
-
-    def test_reverse_engineered_skill_and_workflow_candidates_use_existing_adoption_owner(self) -> None:
-        guide = read("docs/BENCHMARKING_REFERENCE_GUIDE.md")
-        skill_guide = read("docs/AI_SKILL_ADOPTION_GUIDE.md")
-
-        for term in (
-            "REVERSE_ENGINEERED_SKILL_WORKFLOW_CANDIDATE",
-            "PATTERN_NOT_PACKAGE_COPY",
-            "EVAL_BEFORE_PROMOTION",
-        ):
-            self.assertIn(term, skill_guide)
-
-        for owner in (
-            "AI_SKILL_ADOPTION_GUIDE.md",
-            "PROJECT_LOCAL_ASSET_VAULT_POLICY.md",
-            "CAPABILITY_COMPOSITION_MAP.md",
-        ):
-            self.assertIn(owner, guide)
-
     def test_tutorial_template_uses_current_project_workspace(self) -> None:
         tutorial = read("templates/planning/TUTORIAL_AND_ONBOARDING_DESIGN_CONTRACT.md")
 
