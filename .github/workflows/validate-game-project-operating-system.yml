@@ -107,10 +107,6 @@ jobs:
                     has_code=true
                     platform_smoke=true
                     ;;
-                  tools/base-tool-contracts/*|tools/tool-hub/*|tools/qa-evidence-studio/*|tools/expression-studio/*|tools/sprite-animation-studio/*)
-                    has_code=true
-                    platform_smoke=true
-                    ;;
                   tools/*|tests/*|*.py|*.js|*.mjs|*.cjs|*.ts|*.tsx|*.gd|*.tscn|*.tres|project.godot)
                     has_code=true
                     ;;
@@ -525,24 +521,6 @@ jobs:
           python -m pip install -r requirements-publication.txt
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Install Windows Tool Hub dependencies
-        shell: pwsh
-        run: |
-          python -m venv .venv
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          if (Test-Path -LiteralPath ".\tools\tool-hub") {
-            .\.venv\Scripts\python.exe -m pip install `
-              -e ".\tools\base-tool-contracts[dev]" `
-              -e ".\tools\qa-evidence-studio[dev]" `
-              -e ".\tools\expression-studio[dev]" `
-              -e ".\tools\sprite-animation-studio[dev]" `
-              -e ".\tools\tool-hub[dev]"
-          } else {
-            Write-Host "Retired visual Tool Hub is absent; installing independent QA Evidence Studio only."
-            .\.venv\Scripts\python.exe -m pip install -e ".\tools\qa-evidence-studio[dev]"
-          }
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
       - name: Install Windows Node publication dependencies
         shell: pwsh
         run: |
@@ -567,26 +545,6 @@ jobs:
           python tools/check_publication_environment.py --require-mermaid
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python -m unittest tests.test_design_document_generation tests.test_policy_driven_publication tests.test_project_skill_map_generation tests.test_publication_readiness tests.test_ui_art_audit -v
-
-      - name: Run Windows Tool Hub import and catalog smoke
-        shell: pwsh
-        env:
-          PYTHONIOENCODING: utf-8
-        run: |
-          if (Test-Path -LiteralPath ".\tools\tool-hub") {
-            .\.venv\Scripts\python.exe -c "import tool_hub, qa_evidence_studio, expression_studio, sprite_animation_studio; print('TOOL_IMPORT_OK')"
-            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-            .\.venv\Scripts\python.exe -m pytest -q `
-              tools/base-tool-contracts/tests/test_project_identity.py::test_package_import_succeeds_when_posix_fcntl_is_unavailable `
-              tools/tool-hub/tests/test_windows_catalog_smoke.py `
-              tools/tool-hub/tests/test_windows_launcher_smoke.py
-          } else {
-            Write-Host "Retired visual Tool Hub is absent; validating the retained independent QA Evidence Studio."
-            .\.venv\Scripts\python.exe -c "import qa_evidence_studio; print('QA_EVIDENCE_IMPORT_OK')"
-            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-            .\.venv\Scripts\python.exe -m pytest -q tools/qa-evidence-studio/tests
-          }
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
   ci-gate:
     name: ci-gate
