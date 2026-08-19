@@ -1,5 +1,16 @@
 # Base Skill Learning Log
 
+## 2026-08-19 — Visual dashboard responsibility moved to self-contained Notion Home
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** 프로젝트 관리용 standalone HTML/local visual surface를 폐기하면서도 사람이 시스템 관계·상태·UX flow를 한 화면에서 읽을 책임은 계속 필요했다.
+- **Finding:** `building-project-visual-dashboards`를 통째로 삭제하면 기존 유효한 human-facing visualization 책임까지 잃고, 새 Notion 전용 Skill을 만들면 같은 목적의 owner가 중복된다.
+- **Decision:** 기존 Skill을 `NOTION_PROJECT_HOME_AND_VISUAL_MAP` 책임으로 재분류한다. Project Home은 `HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`을 만족하고, standalone HTML/dashboard 생성은 금지한다. GitHub/repository runtime truth와 Notion human-facing projection의 authority는 계속 분리한다.
+- **Evidence:** `tests/test_bca_visual_sheet_workflow.py`와 PR #548 selective-integration regression이 Skill body·Registry route·Notion Home·HTML 금지·Sheet migration-only 경계를 검증한다. QA Evidence Studio는 프로젝트 관리 surface가 아니라 specialist validation utility이므로 유지한다.
+- **Boundary:** Notion Home 재분류가 실제 사람 이해도를 향상시켰다는 human usability evidence는 아직 `NOT_RUN`이다.
+- **Next trigger:** Notion Home이 반복적으로 너무 커져 탐색성이 악화되거나, 별도 visual workspace에 고유 편집 기능이 실제 blocker로 입증될 때 재검토한다.
+
+
 ## 2026-08-13 — BCP-2026-027 Claim and Intent Verification Gate
 
 - **상태:** `PATTERN_CANDIDATE`

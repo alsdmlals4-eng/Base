@@ -2,7 +2,7 @@
 
 이 문서는 Base와 Base를 적용한 프로젝트에서 기획 작업을 어떤 순서로 묶고, 무엇을 먼저 비교하며, 어떤 근거로 승인하고, 새 정책·Template·Skill을 어디까지 전파 검증할지 정하는 공용 책임 원본이다.
 
-프로젝트 기본 역할은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`와 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`, 승인 결정 동기화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`, 분야 횡단 게임개발 근거 허브는 `docs/knowledge/game-development/README.md`, 최신 외부 Source 후보와 주기 학습은 `docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md`, Notion 시각·asset·flow는 `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`, legacy Sheet 이관·삭제는 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`, 데모 Gate는 `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md`가 책임진다.
+프로젝트 기본 역할은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`와 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`, 승인 결정 동기화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`, 분야 횡단 게임개발 근거 허브는 `docs/knowledge/game-development/README.md`, 최신 외부 Source 후보와 주기 학습은 `docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md`, Notion 시각·asset·flow는 `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`, legacy Sheet 이관·삭제는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`와 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`, 데모 Gate는 `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md`가 책임진다.
 
 공통 조사 기록은 `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`, 성공·실패·혼합 사례는 `templates/research/GAME_DEVELOPMENT_CASE_CARD.md`를 사용한다. Watchlist와 Source Queue는 조사 후보를 제공할 뿐 정본이나 학습 완료 증거가 아니며, 원출처 검토와 Evidence disposition 뒤에만 현재 결정에 사용한다.
 
