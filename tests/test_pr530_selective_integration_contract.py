@@ -72,7 +72,7 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
         self.assertEqual("MIGRATION_ONLY_UNTIL_REMOVAL", data["google_sheets"])
         self.assertEqual("QA_EVIDENCE_STUDIO_SPECIALIST_VALIDATION_RETAINED", data["qa_evidence_studio"])
 
-    def test_active_registry_removes_sheet_workspace_routing_and_reclassifies_dashboard(self) -> None:
+    def test_active_registry_removes_sheet_workspace_routing_and_preserves_decision_checkpoints(self) -> None:
         rows = self.registry_rows()
         for skill_id in (
             "managing-project-intake-and-work-contract",
@@ -92,6 +92,9 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
             self.assertIn("notion", row_text.lower())
             self.assertIn("migration", row_text.lower())
 
+        design = rows["managing-design-documents"]
+        self.assertIn("하위 시스템 checkpoint", design["use_when"][0])
+
         dashboard = rows["building-project-visual-dashboards"]
         self.assertEqual("ACTIVE", dashboard["status"])
         self.assertTrue(any("notion" in text.lower() for text in dashboard["use_when"]))
@@ -102,11 +105,17 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
 
     def test_dashboard_skill_is_notion_home_visual_map_owner_not_html_builder(self) -> None:
         text = DASHBOARD.read_text(encoding="utf-8")
-        self.assertIn("NOTION_PROJECT_HOME_AND_VISUAL_MAP", text)
-        self.assertIn("Notion Project Home", text)
-        self.assertIn("HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN", text)
-        self.assertIn("standalone HTML", text)
-        self.assertIn("금지", text)
+        for token in (
+            "NOTION_PROJECT_HOME_AND_VISUAL_MAP",
+            "Notion Project Home",
+            "HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN",
+            "dashboard-information-architecture.md",
+            "## Output contract",
+            "## Quality gate",
+            "standalone HTML",
+            "금지",
+        ):
+            self.assertIn(token, text)
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
         p05 = next(part for part in manifest["parts"] if part["part_id"] == "P05")
         self.assertIn("building-project-visual-dashboards", p05["owned_skill_ids"])
