@@ -24,7 +24,8 @@ REPOSITORY_RUNTIME_TRUTH
 → actual build / runtime / evidence
 
 Google Sheets
-→ `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL`
+→ `BASE_EXCLUDED` (Base repository)
+→ `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL` (legacy project sources only)
 ```
 
 Google Sheets는 새 기획·GDD·상태관리의 작업면이 아니다. 고유 미이관 정보가 실제로 남아 있는 migration scope에서만 unique / duplicate / obsolete를 분류해 Notion 또는 repository-native owner로 옮기고 destination readback 뒤 active reference를 제거한다.
