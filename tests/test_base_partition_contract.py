@@ -14,6 +14,9 @@ INTEGRATION_PROMPT = ROOT / "templates" / "prompts" / "BASE_PARTITION_INTEGRATIO
 SCOPE_CHECKER = ROOT / "tools" / "check_base_partition_scope.py"
 LEARNING_SYSTEM = ROOT / "docs" / "operations" / "BASE_PARTITION_LEARNING_SYSTEM.md"
 SKILL_REGISTRY = ROOT / "skills" / "SKILL_REGISTRY.json"
+ADVERSARIAL_SKILL = ROOT / "skills" / "running-adversarial-review-and-refinement" / "SKILL.md"
+WORKSPACE_AUTHORITY = ROOT / "docs" / "operations" / "PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json"
+PROJECT_OS_SKILL = ROOT / "skills" / "managing-game-project-operating-system" / "SKILL.md"
 
 
 class BasePartitionContractTests(unittest.TestCase):
@@ -33,19 +36,16 @@ class BasePartitionContractTests(unittest.TestCase):
         for path in (MANIFEST, OPERATING_MODEL, WORKER_PROMPT, INTEGRATION_PROMPT, SCOPE_CHECKER, LEARNING_SYSTEM):
             self.assertTrue(path.exists(), str(path.relative_to(ROOT)))
 
-    def test_manifest_uses_control_plane_plus_nine_functional_parts(self) -> None:
+    def test_manifest_uses_one_base_plus_nine_responsibility_views(self) -> None:
         manifest = self.load_manifest()
         self.assertEqual("BASE_PARTITION_OPERATING_MODEL_V1", manifest["contract_id"])
         self.assertEqual("HYBRID_CONTROL_PLANE_END_TO_END_CAPABILITY_PARTITIONS", manifest["selected_strategy"])
         self.assertEqual(9, len(manifest["parts"]))
         self.assertEqual([f"P{i:02d}" for i in range(1, 10)], [p["part_id"] for p in manifest["parts"]])
         self.assertEqual("INTEGRATION_ONLY", manifest["control_plane"]["write_authority"])
-        integration = manifest["integration"]
-        self.assertEqual(9, integration["worker_chat_count"])
-        self.assertEqual(9, integration["total_new_gpt_chats_after_task_1"])
-        self.assertEqual(0, integration["new_integration_chat_count"])
-        self.assertEqual("CURRENT_COORDINATOR_CHAT", integration["integration_chat"])
-        self.assertEqual("CURRENT_COORDINATOR_CHAT", integration["final_confirmation_chat"])
+        mode = manifest["operating_mode"]
+        self.assertEqual("UNIFIED_BASE", mode["daily_default"])
+        self.assertTrue(mode["integration_returns_to_one_base"])
 
     def test_all_active_skills_are_assigned_once_from_registry_authority(self) -> None:
         manifest = self.load_manifest()
@@ -69,6 +69,38 @@ class BasePartitionContractTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertNotIn("semantic path overlap", result.stdout)
 
+    def test_single_coordinator_chat_runs_p01_to_p09_sequentially(self) -> None:
+        manifest = self.load_manifest()
+        execution = manifest["execution_model"]
+        self.assertEqual("SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS", execution["policy"])
+        self.assertEqual("CURRENT_COORDINATOR_CHAT", execution["chat"])
+        self.assertEqual([f"P{i:02d}" for i in range(1, 10)], execution["part_order"])
+        self.assertEqual("SEQUENTIAL_CHECKPOINTS", execution["part_progression"])
+        self.assertEqual("FOCUS_AND_ATTRIBUTION_VIEW", execution["partition_semantics"])
+        self.assertEqual(0, execution["required_new_part_chats"])
+        for text in (
+            OPERATING_MODEL.read_text(encoding="utf-8"),
+            WORKER_PROMPT.read_text(encoding="utf-8"),
+            INTEGRATION_PROMPT.read_text(encoding="utf-8"),
+        ):
+            self.assertIn("SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS", text)
+            self.assertIn("P01 → P02 → P03 → P04 → P05 → P06 → P07 → P08 → P09", text)
+
+    def test_part_boundary_is_focus_not_cross_part_repair_prohibition(self) -> None:
+        manifest = self.load_manifest()
+        execution = manifest["execution_model"]
+        self.assertEqual("PART_BOUNDARY_IS_FOCUS_NOT_REPAIR_PROHIBITION", execution["cross_part_repair_policy"])
+        self.assertEqual("READ_ONLY_UNLESS_EXPLICIT_TRANSFER", execution["unrelated_active_workstreams"])
+        self.assertTrue(execution["coordinator_can_repair_cross_part"])
+        self.assertIn("semantic owner", " ".join(execution["cross_part_repair_conditions"]))
+        self.assertIn("open/draft/ready", " ".join(execution["cross_part_repair_conditions"]))
+        model = OPERATING_MODEL.read_text(encoding="utf-8")
+        worker = WORKER_PROMPT.read_text(encoding="utf-8")
+        self.assertIn("PART_BOUNDARY_IS_FOCUS_NOT_REPAIR_PROHIBITION", model)
+        self.assertIn("PART_BOUNDARY_IS_FOCUS_NOT_REPAIR_PROHIBITION", worker)
+        self.assertIn("다른 Part라는 이유만으로", worker)
+        self.assertIn("open/draft/ready", worker)
+
     def test_hybrid_partition_mode_keeps_one_unified_base(self) -> None:
         manifest = self.load_manifest()
         mode = manifest["operating_mode"]
@@ -80,28 +112,6 @@ class BasePartitionContractTests(unittest.TestCase):
         for path in (OPERATING_MODEL, WORKER_PROMPT, INTEGRATION_PROMPT):
             text = path.read_text(encoding="utf-8")
             self.assertIn("PARTITION_IS_MAINTENANCE_AND_SPECIALIZATION_VIEW_NOT_RUNTIME_FRAGMENTATION", text)
-
-    def test_one_chat_one_part_notion_and_github_isolation(self) -> None:
-        manifest = self.load_manifest()
-        isolation = manifest["collaboration_isolation"]
-        self.assertEqual("ONE_GPT_CHAT_OWNS_ONE_PART_END_TO_END", isolation["worker_model"])
-        self.assertTrue(isolation["github"]["one_branch_per_part"])
-        self.assertTrue(isolation["github"]["one_pr_per_part"])
-        self.assertEqual("INTEGRATION_ONLY", isolation["notion"]["hub_write"])
-        self.assertEqual("INTEGRATION_ONLY", isolation["notion"]["shared_visual_write"])
-        urls = []
-        branches = []
-        for part in manifest["parts"]:
-            self.assertEqual("ONE_CHAT_END_TO_END", part["chat_ownership"])
-            self.assertEqual("OWN_PART_PAGE_ONLY", part["notion_write_authority"])
-            urls.append(part["notion_page_url"])
-            branches.append(part["branch_template"])
-        self.assertEqual(9, len(set(urls)))
-        self.assertEqual(9, len(set(branches)))
-        worker = WORKER_PROMPT.read_text(encoding="utf-8")
-        self.assertIn("ONE_GPT_CHAT_OWNS_ONE_PART_END_TO_END", worker)
-        self.assertIn("자기 `notion_page_url`만 직접 수정", worker)
-        self.assertIn("Base Hub", INTEGRATION_PROMPT.read_text(encoding="utf-8"))
 
     def test_p05_visual_scope_avoids_broad_ui_ux_globs(self) -> None:
         manifest = self.load_manifest()
@@ -118,32 +128,82 @@ class BasePartitionContractTests(unittest.TestCase):
             for field in ("purpose", "owned_write_paths", "read_only_dependencies", "important_rules", "owned_skill_ids", "modules", "validation", "acceptance_criteria", "revisit_conditions"):
                 self.assertTrue(part[field], f"{part['part_id']} missing {field}")
 
-    def test_parallel_groups_and_integration_order_are_explicit(self) -> None:
+    def test_sequential_order_and_integration_order_are_explicit(self) -> None:
         manifest = self.load_manifest()
-        groups = manifest["parallel_execution_groups"]
-        self.assertGreaterEqual(len(groups), 2)
-        flattened = [part_id for group in groups for part_id in group["parts"]]
-        self.assertEqual({f"P{i:02d}" for i in range(1, 10)}, set(flattened))
-        self.assertEqual(len(flattened), len(set(flattened)))
+        self.assertEqual([f"P{i:02d}" for i in range(1, 10)], manifest["execution_model"]["part_order"])
         self.assertTrue(manifest["integration"]["ordered_steps"])
+        self.assertIn("P01..P09 sequential checkpoints", " ".join(manifest["integration"]["ordered_steps"]))
 
-    def test_prompts_require_minimum_five_then_until_clean_and_cross_part_requests(self) -> None:
+    def test_prompts_require_minimum_five_then_until_clean(self) -> None:
         worker = WORKER_PROMPT.read_text(encoding="utf-8")
         integration = INTEGRATION_PROMPT.read_text(encoding="utf-8")
         for text in (worker, integration):
             self.assertIn("FULL_LOOP_COUNT_MINIMUM: 5", text)
             self.assertIn("MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5", text)
             self.assertIn("CLEAN_REVIEW_EXIT", text)
-            self.assertIn("CROSS_PART_CHANGE_REQUEST", text)
+            self.assertIn("FULL_LOOP_IS_NOT_A_REVIEW_LENS", text)
         self.assertIn("OPTIONAL_CODEX_EXECUTOR", worker)
         self.assertIn("사용자 학습형 완료보고", worker)
         self.assertIn("CURRENT_COORDINATOR_CHAT", integration)
+
+    def test_full_adversarial_loop_cannot_be_counted_as_one_review_lens(self) -> None:
+        adversarial = ADVERSARIAL_SKILL.read_text(encoding="utf-8")
+        for term in (
+            "FULL_LOOP_IS_NOT_A_REVIEW_LENS",
+            "관점 하나만 검사한 것은 full loop로 계수하지 않는다",
+            "현행·정본·범위",
+            "최소 3개 실질 대안",
+            "attack",
+            "validate-critique",
+            "refine-approved-findings",
+            "regression-recheck",
+            "BETTER_ALTERNATIVE_SEARCH",
+            "LONG_TERM_PLAN_FIT_RECHECK",
+            "RE-ATTACK resulting state",
+        ):
+            self.assertIn(term, adversarial)
+        for invalid in (
+            "Loop 1 = scope",
+            "Loop 2 = UX",
+            "Loop 3 = consumer",
+            "Loop 4 = alternatives",
+            "Loop 5 = CI",
+        ):
+            self.assertIn(invalid, adversarial)
+
+    def test_project_home_is_self_contained_for_human_understanding(self) -> None:
+        contract = json.loads(WORKSPACE_AUTHORITY.read_text(encoding="utf-8"))
+        self.assertEqual("SELF_CONTAINED_HUMAN_HOME", contract["project_home_contract"])
+        self.assertTrue(contract["child_pages_optional_for_basic_understanding"])
+        required = set(contract["project_home_required_sections"])
+        self.assertTrue({
+            "CURRENT_DIRECTION_STATUS",
+            "PLAYER_OR_USER_PROMISE",
+            "CORE_LOOP",
+            "MAJOR_SYSTEMS_AND_CONNECTIONS",
+            "UX_UI_AND_VISUAL_DIRECTION",
+            "IMPLEMENTATION_RUNTIME_EVIDENCE",
+            "IMPORTANT_DECISIONS",
+            "RISKS_BLOCKERS",
+            "NEXT_WORK",
+        }.issubset(required))
+        project_os = PROJECT_OS_SKILL.read_text(encoding="utf-8")
+        for term in (
+            "SELF_CONTAINED_HUMAN_HOME",
+            "하위 페이지를 열지 않아도",
+            "CORE_LOOP",
+            "MAJOR_SYSTEMS_AND_CONNECTIONS",
+            "IMPLEMENTATION_RUNTIME_EVIDENCE",
+            "RISKS_BLOCKERS",
+            "NEXT_WORK",
+        ):
+            self.assertIn(term, project_os)
 
     def test_operating_model_compares_four_real_strategies_and_records_revisit_conditions(self) -> None:
         text = OPERATING_MODEL.read_text(encoding="utf-8")
         for term in ("A · 디렉터리 계층 분할", "B · 기능/도메인 분할", "C · Control Plane + End-to-End Capability Partition", "D · 동적 의존성 그래프 재클러스터링", "BETTER_ALTERNATIVE_SEARCH", "LONG_TERM_PLAN_FIT_REQUIRED", "재검토 조건"):
             self.assertIn(term, text)
-        self.assertIn("새 GPT 채팅은 P01~P09의 9개", text)
+        self.assertIn("한 채팅", text)
         self.assertIn("CURRENT_COORDINATOR_CHAT", text)
 
     def test_scope_checker_declares_worker_and_integration_modes(self) -> None:
@@ -158,24 +218,18 @@ class BasePartitionContractTests(unittest.TestCase):
     def run_scope(self, *args: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run([sys.executable, str(SCOPE_CHECKER), *args], cwd=ROOT, text=True, capture_output=True, check=False)
 
-    def test_scope_checker_allows_owned_and_blocks_control_plane_and_other_parts(self) -> None:
+    def test_scope_checker_still_supports_part_attribution_and_coordinator_integration(self) -> None:
         allowed = self.run_scope("--part", "P01", "--files", "skills/managing-design-documents/SKILL.md")
         self.assertEqual(0, allowed.returncode, allowed.stdout + allowed.stderr)
-        protected = self.run_scope("--part", "P01", "--files", "AGENTS.md")
-        self.assertEqual(2, protected.returncode)
-        self.assertIn("CONTROL_PLANE_WRITE_FORBIDDEN", protected.stdout)
-        outside = self.run_scope("--part", "P01", "--files", "skills/designing-vertical-slices/SKILL.md")
-        self.assertEqual(2, outside.returncode)
-        self.assertIn("OUT_OF_PARTITION_WRITE", outside.stdout)
         integration = self.run_scope("--integration", "--files", "AGENTS.md", "skills/designing-vertical-slices/SKILL.md")
         self.assertEqual(0, integration.returncode, integration.stdout + integration.stderr)
 
-    def test_manifest_retirement_and_unassigned_path_policy_fail_closed(self) -> None:
+    def test_manifest_retirement_and_unassigned_path_policy_fail_closed_for_unowned_external_work(self) -> None:
         manifest = self.load_manifest()
-        self.assertEqual("READ_ONLY_UNLESS_INTEGRATION_ASSIGNMENT_OR_CROSS_PART_CHANGE_REQUEST", manifest["unassigned_path_policy"])
         surfaces = {item["surface"] for item in manifest["retirement_targets"]}
         for surface in ("Google Sheets", "Figma references/workflows", "external HTML visual/dashboard workspace", "custom local visual Tool/Hub", "QA Evidence Studio/local QA tooling"):
             self.assertIn(surface, surfaces)
+        self.assertEqual("READ_ONLY_UNLESS_COORDINATOR_AUTHORIZED_OR_ACTIVE_WORKSTREAM_TRANSFERRED", manifest["unassigned_path_policy"])
 
     def test_each_part_has_learning_log_and_source_discovery(self) -> None:
         manifest = self.load_manifest()
