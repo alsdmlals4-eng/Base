@@ -63,6 +63,7 @@ discovery surface
 - GDC Vault Art Direction/UI/VFX/production 발표.
 - Game Developer 등에서 실제 개발자가 직접 작성한 production deep dive.
 - 반복 제작 비용, outsourcing brief, pipeline, readability, iteration 실패 사례를 우선한다.
+- GDC 2026 NetEase Games의 `'LifeAfter': AIGC Paradigm Change in Mobile Game Art Production`은 인간-AI 협업·value-oriented workflow·과학적 평가·asset management·performance까지 함께 평가한다는 원칙을 `ADAPT`한다. 발표가 제시한 기업 규모의 절감 수치나 자체 toolchain은 Base 기본값으로 승격하지 않는다.
 
 ### `VISUAL_DISCOVERY_FEED`
 
@@ -95,6 +96,13 @@ world_or_system_fit_example:
 AI_GENERATED_LOOK_REDUCTION:
 STYLE_CONSISTENCY_AND_READABILITY:
 WORLD_CORE_SYSTEM_FIT:
+AI_ASSISTED_PRODUCTION_VALUE_GATE:
+  baseline_workflow:
+  comparable_task_or_asset_class:
+  retake_rate:
+  style_consistency_acceptance:
+  human_review_cost:
+  runtime_or_export_impact:
 rights_or_reference_boundary:
 counterexample_or_failure_mode:
 existing_base_overlap:
@@ -102,7 +110,7 @@ STYLE_FAMILY_MATCH:
 NEW_FAMILY_CANDIDATE:
 long_term_cost_signal:
 validation_needed:
-disposition: ADOPT | ADAPT | TEST | REFERENCE_ONLY | AVOID | IGNORE
+disposition: ADOPT | ADAPT | TEST | REFERENCE_ONLY | AVOID | IGNORE | BLOCKED_UNVERIFIED
 recheck_trigger:
 ```
 
@@ -145,6 +153,17 @@ candidate
 - 핵심 시스템 정보를 숨기는 장식 비용은 없는가.
 - 시스템에 필요한 telegraph·state·interaction hierarchy와 함께 작동하는가.
 
+### `AI_ASSISTED_PRODUCTION_VALUE_GATE`
+
+AI-assisted visual workflow는 이미지가 생성되거나 첫 결과가 보기 좋다는 이유만으로 production improvement로 판정하지 않는다. 동일하거나 충분히 비슷한 asset class·과제를 기존 baseline workflow와 비교하고 다음 증거를 본다.
+
+- `retake_rate`: 승인 가능한 자산 하나를 얻기 위해 재생성·재작업·재수정이 얼마나 발생했는가. 실제 표본이 없으면 `UNVERIFIED`다.
+- `style_consistency_acceptance`: 같은 character/prop/UI family를 반복 제작했을 때 visual grammar·identity·readability 기준을 몇 개가 통과했는가. 첫 자산 한 장만으로 PASS하지 않는다.
+- `human_review_cost`: prompt 조정, paint-over, 레이어 정리, provenance 확인, 검수·재검수에 실제 사람이 쓰는 시간/노력을 함께 기록한다.
+- `runtime_or_export_impact`: asset size, memory/performance 후보, export/import 단계, 레이어·atlas·압축·포맷 재작업이 늘거나 줄었는지 확인한다.
+
+수치는 실제 측정치가 있을 때만 기록한다. 표본이 없으면 `LOW/MEDIUM/HIGH` 같은 상대 신호도 근거와 함께 쓰고, 검증 전에는 `TEST` 또는 `BLOCKED_UNVERIFIED`로 둔다. 외부 기업 사례의 절감률을 1인 개발 프로젝트의 기대치로 그대로 전이하지 않는다.
+
 ## 7. 성공작 사용법
 
 `최고의 작품을 찾는다`는 것은 한 작품을 최종 정답으로 복제한다는 뜻이 아니다.
@@ -172,7 +191,7 @@ source scan / user reference / project lesson
 → ORIGINAL_SOURCE_BACKTRACE
 → evidence + rights + freshness
 → STYLE_FAMILY_MATCH | NEW_FAMILY_CANDIDATE
-→ 3 evaluation axes
+→ 3 evaluation axes + AI_ASSISTED_PRODUCTION_VALUE_GATE when applicable
 → benchmark + counterexample
 → disposition
 → if reusable Base delta exists: normal Base PR
@@ -187,6 +206,7 @@ source scan / user reference / project lesson
 - 새로운 성공작/실패 사례가 기존 family의 장기 비용 가정을 뒤집음.
 - 새 도구/엔진 기능으로 동일 품질의 반복 제작비가 크게 낮아짐.
 - AI-assisted workflow의 일관성 실패 패턴이 새로 관찰됨.
+- `retake_rate`·`human_review_cost`·`runtime_or_export_impact`가 기존 제작법보다 악화됨.
 - 모바일/PC/접근성 검증에서 기존 스타일의 정보 손실이 확인됨.
 - 사용자 선호 Reference가 누적되어 기존 family로 설명할 수 없는 공통 문법이 반복됨.
 - 외부 source가 삭제·변경되거나 provenance/rights 해석이 달라짐.
