@@ -1,0 +1,80 @@
+name: Temporary release-near production-candidate patch
+
+on:
+  push:
+    branches:
+      - feat/release-near-vertical-slice-first-v2-20260820
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[production-candidate-patch]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/release-near-vertical-slice-first-v2-20260820
+      - name: Strengthen player-facing asset quality boundary
+        shell: python
+        run: |
+          from pathlib import Path
+
+          replacements = {
+            'docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md': [
+              (
+                '실제 게임에 사용할 방향의 UI/UX, 이미지·아트, 애니메이션/연출, 대표 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠가 한 구간에서 연결되어야 한다.',
+                '실제 게임 사용 후보인 UI/UX, 이미지·아트, 애니메이션/연출, 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠가 한 구간에서 연결되어야 한다. 플레이어가 보는·듣는·조작하는 경로에는 임시 `player-facing placeholder`나 dummy 표현을 남겨 플레이 경험을 왜곡하지 않는다.'
+              )
+            ],
+            'docs/VISUAL_COLLABORATION_TOOL_POLICY.md': [
+              (
+                '실제 게임에서 사용할 방향의 UI/UX, 이미지·아트, 애니메이션/연출, 대표 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠를 서로 연결한 상태여야 한다.',
+                '실제 게임 사용 후보인 UI/UX, 이미지·아트, 애니메이션/연출, 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠를 서로 연결한 상태여야 한다. 플레이어가 실제로 보는·듣는·조작하는 Slice 경로에는 임시 `player-facing placeholder`나 dummy presentation을 남기지 않는다.'
+              )
+            ],
+            'docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md': [
+              (
+                '플레이어 경험을 판정하는 Gate 2 테스트는 짧더라도 실제 출시 의도에 가까운 UI/UX, 이미지·아트, 대표 사운드, VFX/피드백, 시스템·데이터·콘텐츠가 연결된 완성형 Vertical Slice를 대상으로 한다.',
+                '플레이어 경험을 판정하는 Gate 2 테스트는 짧더라도 실제 게임 사용 후보인 UI/UX, 이미지·아트, 사운드, VFX/피드백, 시스템·데이터·콘텐츠가 연결된 완성형 Vertical Slice를 대상으로 한다. 플레이어가 접하는 경로에 임시 `player-facing placeholder`나 dummy presentation이 남아 있으면 플레이 경험 판정 Gate를 통과시키지 않는다.'
+              )
+            ],
+            'skills/designing-vertical-slices/SKILL.md': [
+              (
+                '`SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED`: 실제 게임에 사용할 방향의 UI/UX, 이미지·아트, 애니메이션/연출, 대표 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠가 한 대표 흐름에서 서로 연결되어야 한다. placeholder가 남아 전체 경험을 왜곡하면 human playtest gate로 올리지 않는다.',
+                '`SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED`: 실제 게임 사용 후보인 UI/UX, 이미지·아트, 애니메이션/연출, 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠가 한 대표 흐름에서 서로 연결되어야 한다. 플레이어가 보는·듣는·조작하는 경로에는 임시 `player-facing placeholder`나 dummy presentation을 남기지 않으며, 해당 요소가 이후 튜닝·교체될 수 있어도 현재 Slice 자체는 production-candidate 품질이어야 한다.'
+              )
+            ],
+            'templates/planning/VERTICAL_SLICE_PLAN.md': [
+              (
+                '플레이어 경험을 판단하는 Slice는 실제 게임에 사용할 방향의 **UI/UX · 이미지/아트 · 애니메이션/연출 · 대표 사운드 · VFX/피드백 · 핵심 시스템/데이터/콘텐츠**를 한 짧은 흐름으로 완성한 뒤 테스트한다.',
+                '플레이어 경험을 판단하는 Slice는 실제 게임 사용 후보인 **UI/UX · 이미지/아트 · 애니메이션/연출 · 사운드 · VFX/피드백 · 핵심 시스템/데이터/콘텐츠**를 한 짧은 흐름으로 완성한 뒤 테스트한다. 플레이어가 접하는 경로에 임시 `player-facing placeholder`나 dummy presentation을 남기지 않는다.'
+              )
+            ],
+          }
+
+          changed = []
+          for file, pairs in replacements.items():
+              p = Path(file)
+              text = p.read_text(encoding='utf-8')
+              original = text
+              for old, new in pairs:
+                  if new in text:
+                      continue
+                  if old not in text:
+                      raise SystemExit(f'anchor missing: {file}: {old[:100]}')
+                  text = text.replace(old, new, 1)
+              if text != original:
+                  p.write_text(text, encoding='utf-8')
+                  changed.append(file)
+          print('\n'.join(changed))
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md docs/VISUAL_COLLABORATION_TOOL_POLICY.md docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md skills/designing-vertical-slices/SKILL.md templates/planning/VERTICAL_SLICE_PLAN.md
+          git diff --cached --exit-code && exit 0
+          git commit -m "fix: require production-candidate player-facing slice assets [production-candidate-patch]"
+          git push origin HEAD:feat/release-near-vertical-slice-first-v2-20260820
