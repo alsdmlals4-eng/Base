@@ -277,7 +277,9 @@
         "skills/SKILL_BEHAVIOR_EVALS.json",
         "tests/test_base_v9_5_skill_operating_refinement.py",
         "tests/test_skill_routing_governance.py",
-        "tests/test_serial_fiction_discipline.py"
+        "tests/test_serial_fiction_discipline.py",
+        "tests/test_bca_visual_sheet_workflow.py",
+        "tests/test_p0[1-9]_*.py"
       ]
     },
     {
