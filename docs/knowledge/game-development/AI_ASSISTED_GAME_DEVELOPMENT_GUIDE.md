@@ -9,11 +9,14 @@ AI는 사람의 결정을 대신하는 단일 자동 개발자가 아니다. 각
 기본 실행 책임:
 
 - 요청·작업 계약: `managing-project-intake-and-work-contract`
-- GPT→Codex 인계: `maintaining-project-context-and-handoff`
+- 선택적 GPT→Codex 인계: `maintaining-project-context-and-handoff`
 - 외부 AI 격리: `orchestrating-deepseek-worktrees`
+- 모델·비용 surface: `optimizing-ai-model-and-prompt-costs`
 - 결과 검수: `reviewing-and-validating-project-changes: external-source-review`
 - 실패 가정·반례: `running-adversarial-review-and-refinement`
 - Skill 학습: `evolving-project-discipline-skills`
+
+`GPT_FIRST_PLANNING_AND_REVIEW`가 기본이며, GPT가 현재 도구와 승인 범위 안에서 안전하게 끝낼 수 있는 작업에 Codex를 의무 단계로 추가하지 않는다. Codex는 실제 filesystem/runtime/build 또는 대규모 기계 변경의 실행 권위가 필요할 때 `OPTIONAL_CODEX_EXECUTOR`로 사용한다.
 
 공식 참고:
 
@@ -21,6 +24,8 @@ AI는 사람의 결정을 대신하는 단일 자동 개발자가 아니다. 각
 - NIST Generative AI Profile은 생성형 AI의 특수 위험과 대응을 다룬다: https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence
 - OpenAI의 Eval primer는 `SPECIFY → MEASURE → IMPROVE`와 Golden Set을 강조한다: https://openai.com/index/evals-drive-next-chapter-of-ai/
 - 신뢰 가능한 Agent 평가에는 모델 이름뿐 아니라 harness·tool·budget·validity check가 필요하다: https://openai.com/index/trustworthy-third-party-evaluations-foundations/
+- OpenAI의 Codex harness 설명은 repository instruction·tool output·task context가 같은 작업 문맥을 소비함을 보여준다: https://openai.com/index/unrolling-the-codex-agent-loop/ , https://openai.com/index/harness-engineering/
+- Anthropic의 tool/context engineering은 목적이 겹치는 과도한 Tool을 피하고 필요한 context를 just-in-time으로 가져오는 방향을 권장한다: https://www.anthropic.com/engineering/writing-tools-for-agents , https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
 - GitHub Copilot Code Review는 Comment를 남기며 required approval이나 merge block을 대신하지 않는다: https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/copilot-code-review
 
 ## 2. 역할과 권한
@@ -32,25 +37,29 @@ AI는 사람의 결정을 대신하는 단일 자동 개발자가 아니다. 각
 - 플레이어 경험·게임 기획·벤치마킹
 - 시스템·데이터 구조 설계
 - 아트·내러티브·UX·사운드 기획
-- GitHub 문서·Issue·Codex Goal·검증 계약
+- GitHub 문서·Issue·실행 명세·검증 계약
+- 현재 연결 도구로 허용된 저장소/Notion 작업
 - 외부 자료 조사·근거 분류
-- Codex Plan·diff·PR·테스트 검수
+- Codex를 사용한 경우 Plan·diff·PR·테스트 검수
 
 기본 제한:
 
 - 실제 저장소와 실행 증거 없이 구현 완료를 주장하지 않는다.
 - 사용자 승인 없이 프로젝트 코어·중요 기획·제품 경로를 바꾸지 않는다.
+- 현재 surface에 없는 runtime/filesystem 권위를 가졌다고 주장하지 않는다.
 
-### Codex Plan
+### Codex Plan — 선택적 preflight
 
-- 저장소를 읽기 전용으로 조사한다.
-- 실제 호출 관계·파일·테스트·보호 경로를 확인한다.
-- 변경 파일·Red Test·완료·회귀·롤백이 있는 제안서를 작성한다.
+- 모든 구현의 의무 단계가 아니다.
+- 저장소를 읽기 전용으로 조사하고 실제 호출 관계·파일·테스트·보호 경로를 확인한다.
+- 고위험·다중 시스템 변경처럼 별도 구현 전 조사 가치가 클 때 변경 파일·Red Test·완료·회귀·롤백이 있는 제안서를 작성한다.
 - 질문과 부분 동의를 Codex Build 승인으로 해석하지 않는다.
 
-### Codex Build
+### Codex Build — `OPTIONAL_CODEX_EXECUTOR`
 
+- 실제 code/Scene/Resource/data 수정, 대규모 기계 변경, 로컬 runtime/build/performance 증거처럼 실행 권위가 필요할 때 사용한다.
 - 사용자가 승인한 패키지·Branch·Issue·Goal 범위만 구현한다.
+- 시작 시 GPT 요약보다 현재 저장소·프로젝트 `AGENTS.md`·exact branch/commit·관련 테스트를 다시 읽는다.
 - 실제 파일 변경·테스트·Commit·PR을 남긴다.
 - 기획 변경을 “기술적 필요”로 위장하지 않는다.
 - 승인 범위 밖 리팩터링·기능·자산을 추가하지 않는다.
@@ -65,7 +74,7 @@ DeepSeek·Claude·Gemini·기타 모델은 다음에 적합할 수 있다.
 - 여러 대안 생성
 - 특정 언어·도구·분야 보조
 
-그러나 외부 AI 결과는 항상 **검수 대기 입력**이다. 격리 Branch·worktree 또는 별도 문서에서 회수하고 실제 diff·근거·테스트를 확인한다.
+그러나 외부 AI 결과는 항상 **검수 대기 입력**이다. 격리 Branch·worktree 또는 별도 문서에서 회수하고 실제 diff·근거·테스트를 확인한다. 외부 executor는 실행 직전 현재 프로젝트 canon과 exact branch/commit을 재수화하며, handoff 요약을 정본으로 승격하지 않는다.
 
 ### 사용자 승인
 
@@ -74,11 +83,11 @@ DeepSeek·Claude·Gemini·기타 모델은 다음에 적합할 수 있다.
 - 프로젝트 코어·플레이어 약속
 - 주요 기획 방향·범위·제외
 - 승인 이미지·Art Bible
-- 제품 경로 Build 전환
+- 새 제품 경로 Build 전환
 - Base 승격
-- PR 병합과 예외
+- 예외적 권한·새 비용 경로
 
-저장소 사실·기술 기본값·검증으로 해결 가능한 문제는 사용자에게 선택으로 전가하지 않는다.
+저장소 사실·기술 기본값·검증으로 해결 가능한 문제는 사용자에게 선택으로 전가하지 않는다. 이미 승인된 동일 범위의 실행·병합 권한은 상위 Base 운영정책을 따른다.
 
 ## 3. AI 작업 단위
 
@@ -87,7 +96,7 @@ Prompt
 + Context Pack
 + Tool/Harness
 + Permission
-+ Budget
++ Cost Surface / Budget
 + Expected Artifact
 + Eval
 + Human/Independent Review
@@ -104,6 +113,8 @@ reasoning_or_effort_setting:
 context_pack_version:
 tools_and_permissions:
 branch_or_workspace:
+cost_surface:
+paid_path_approval:
 turn_token_cost_budget:
 retry_policy:
 expected_artifacts:
@@ -167,20 +178,22 @@ Context Pack은 대화를 통째로 복사하는 것이 아니다.
 - 전문을 여러 문서에 복사하지 않고 경로와 현재 차이를 기록한다.
 - 긴 작업은 checkpoint·resume 계약을 남긴다.
 - 모델이 바뀌어도 새로운 작업자가 저장소만으로 재개할 수 있어야 한다.
+- 현재 단계에 필요하지 않은 Skill/Tool/context를 미리 로드하지 않는다.
 
 ## 6. AI 작업 라우팅
 
 | 작업 | 권장 경로 | 검증 |
 |---|---|---|
-| 핵심 기획·방향 | ChatGPT PLAN + 사용자 승인 | 근거·반례·책임 원본 |
-| 대량 참고자료 분류 | 외부 AI 격리 | 표본 독립 검수·원출처 |
-| Godot 구현 | Codex Plan → 사용자 승인 → Codex Build | diff·test·runtime·PR |
+| 핵심 기획·방향 | ChatGPT PLAN + 필요한 사용자 승인 | 근거·반례·책임 원본 |
+| 대량 참고자료 분류 | 외부 AI 격리 또는 GPT 직접 처리 | 표본 독립 검수·원출처 |
+| Godot 구현 | GPT가 현재 승인된 authoring 권위로 직접 가능하면 직접 수행; 아니면 `OPTIONAL_CODEX_EXECUTOR` | diff·test·runtime·PR |
+| 고위험 구현 preflight | 필요할 때만 Codex Plan → 검수 → Build | 실제 저장소·보호 경로·Red/Green·rollback |
 | 코드 리뷰 | GPT/Copilot/외부 AI 보조 | 사람이 diff·테스트·권한 확인 |
-| 아트 후보 | GPT 이미지·Adobe·Canva·외부 도구 | 원출처·유사성·실제 인게임 검수 |
+| 아트 후보 | GPT 이미지·승인된 도구·외부 도구 | 원출처·유사성·실제 인게임 검수 |
 | 대사·콘텐츠 초안 | ChatGPT/외부 AI | 정본·연속성·사실·톤·사용자 승인 |
-| Base 공용화 | GPT BCP | 여러 사례·반례·승인·별도 구현 PR |
+| Base 공용화 | GPT BCP/기존 공용화 owner | 여러 사례·반례·승인·별도 구현 PR |
 
-하나의 모델을 모든 작업의 기본값으로 강제하지 않는다.
+하나의 모델을 모든 작업의 기본값으로 강제하지 않는다. 같은 이유로 “GPT 다음은 항상 Codex” 같은 고정 직렬 파이프라인도 만들지 않는다.
 
 ## 7. Contextual Evals
 
@@ -371,7 +384,7 @@ AI 결과에는 가능한 경우 다음을 기록한다.
 - Prompt·Context Pack version
 - 사용 도구와 권한
 - reasoning/effort 설정
-- 출력 파일·Commit
+- exact branch/commit 또는 출력 파일·Commit
 - 검증 결과
 
 “GPT가 했다”만으로 재현되지 않는다.
@@ -380,9 +393,25 @@ AI 결과에는 가능한 경우 다음을 기록한다.
 
 `토큰·비용·재시도`는 품질과 함께 Eval 조건이다.
 
+비용 계산보다 먼저 `optimizing-ai-model-and-prompt-costs`의 `COST_SURFACE_GATE`를 적용한다.
+
+```text
+SUBSCRIPTION_INCLUDED
+→ 현재 승인된 GPT_PRO 포함 사용량 안에서 Context/Skill/Tool/retry 효율 최적화
+
+SEPARATELY_METERED
+→ credits / API / 별도 SaaS·compute·storage 등
+→ 현재 ZERO_INCREMENTAL_COST_REQUIRED에서는 사용자 승인 전 사용 금지
+
+UNVERIFIED_COST_SURFACE
+→ 공식 근거 확인 전 0원/포함 사용량으로 단정 금지
+```
+
 ```yaml
 max_turns:
 max_tokens_or_usage:
+cost_surface:
+paid_path_approval:
 expected_cost:
 max_retries:
 retryable_failures:
@@ -393,29 +422,34 @@ stop_condition:
 
 비용 최적화:
 
-- 전체 저장소·모든 Skill 기본 로드를 피한다.
-- Documentation Map·Registry로 최소 컨텍스트를 선택한다.
+- 전체 저장소·모든 Skill·모든 Tool 기본 로드를 피한다.
+- Documentation Map·Registry와 현재 결정 질문으로 최소 컨텍스트를 선택한다.
 - 같은 조사·질문·검사를 중복하지 않는다.
-- 대량 분류와 중요 판단을 다른 모델·단계로 분리한다.
+- 대량 분류와 중요 판단을 다른 모델·단계로 분리할 수 있다.
 - 실패한 도구 호출을 이유 없이 반복하지 않는다.
 - 생성 이미지 실패 시 기존 Brief를 보존하고 복잡도를 줄인다.
+- 포함 구독 surface가 충분하면 별도 API/credits를 “최적화” 목적으로 추가하지 않는다.
 - 품질 기준을 낮춰 비용을 절감하지 않는다.
 
 ## 15. 사람과 AI의 협업 패턴
 
-### 제안→승인→구현
+### 제안→승인→실행
 
 ```text
 AI 조사·제안
-→ 사용자 핵심 결정
+→ 필요한 사용자 핵심 결정
 → 책임 원본 갱신
-→ Codex Plan
-→ GPT 검수
-→ 사용자 Build 승인
-→ Codex Build
+→ 현재 GPT가 승인 범위·도구로 직접 실행 가능한가?
+   ├─ YES → GPT 실행/변경 → 실제 증거 검수
+   └─ NO  → OPTIONAL_CODEX_EXECUTOR 필요성 확인
+            → 필요하면 선택적 Codex Plan
+            → Codex가 current canon/exact branch를 재조사
+            → Codex Build
 → 자동·수동 검증
-→ PR·병합
+→ PR·허용된 병합
 ```
+
+Codex를 호출했다는 사실이 별도 사용자 결정이 필요한 새 제품 범위를 자동 승인하지 않는다. 반대로 동일 승인 범위의 실행만 남았는데 현재 worker에 권위가 없으면 상위 `CONTINUOUS_WORK_EXECUTOR_HANDOFF` 정책을 따른다.
 
 ### 독립 레드팀
 
@@ -445,6 +479,8 @@ AI 조사·제안
 - 외부 AI 결과를 main에 직접 반영함
 - 성공 한 번을 모든 프로젝트의 공용 Skill로 승격함
 - 비용을 이유로 필수 검증을 삭제함
+- GPT 다음 단계라는 이유만으로 Codex를 의무 호출함
+- `GPT_PRO`를 credits/API/auto top-up의 포괄 승인으로 취급함
 
 ## 17. Output Contract
 
@@ -452,6 +488,7 @@ AI 조사·제안
 ## AI Work Package·역할·권한
 ## Prompt 계약·Context Pack
 ## 모델·도구·버전·도구 권한
+## Cost Surface / 추가비용 승인 상태
 ## SPECIFY / Golden Set / MEASURE / IMPROVE
 ## Eval task·harness·budget·scorer·유효성
 ## 자동 검사·독립 검수·사람 승인
@@ -466,4 +503,4 @@ AI 조사·제안
 
 Prompt·Context의 지시 권위, Interface-first, Example as Fixture, 결정 질문 중심 큐레이션과 Artifact 주장 상한은 `AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`를 사용한다.
 
-모델·추론 단계·Prompt caching·비용 추정과 실제 usage 재보정은 `optimizing-ai-model-and-prompt-costs`를 사용한다. `[모델 추천]` 호출 시 모델·추론 단계·이유·다음 checkpoint를 먼저 제안하며 실제 설정을 자동 변경했다고 주장하지 않는다.
+모델·추론 단계·Prompt caching·비용 추정과 실제 usage 재보정은 `optimizing-ai-model-and-prompt-costs`를 사용한다. `[모델 추천]` 호출 시 모델·추론 단계·이유·다음 checkpoint를 먼저 제안하며 실제 설정을 자동 변경했다고 주장하지 않는다. 모델/가격 판단 전에 `COST_SURFACE_GATE`로 `SUBSCRIPTION_INCLUDED`와 `SEPARATELY_METERED`를 분리한다.
