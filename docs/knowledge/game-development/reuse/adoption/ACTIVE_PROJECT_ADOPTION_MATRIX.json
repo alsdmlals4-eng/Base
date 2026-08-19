@@ -6,25 +6,27 @@
       "repository": "alsdmlals4-eng/Coc-Fiction",
       "status": "READY_TO_ADOPT",
       "modules": {
-        "RM-TOOL-001": "enabled",
+        "RM-TOOL-001": "planned",
         "RM-SYS-001": "not_applicable",
         "RM-SYS-003": "not_applicable",
         "RM-VIS-001": "not_applicable",
         "RM-VIS-002": "not_applicable"
       },
-      "revisit": "create a sidecar validator manifest and project PR when no concurrent project work blocks the path"
+      "existing_solution": "project already has fiction-specific content/operating/reverse-outline/scene validators; generic RM-TOOL-001 must prove additional cross-reference value before vendoring",
+      "revisit": "use the Adoption Kit manifest to record explicit non-duplication; enable RM-TOOL-001 only when a real cross-file ID gap is found"
     },
     "GRIMOIRE": {
       "repository": "alsdmlals4-eng/GRIMOIRE-",
-      "status": "READY_TO_ADOPT",
+      "status": "DEFERRED_OPEN_PR",
       "modules": {
-        "RM-TOOL-001": "enabled",
+        "RM-TOOL-001": "planned",
         "RM-SYS-001": "not_applicable",
         "RM-SYS-003": "planned",
-        "RM-VIS-001": "enabled",
-        "RM-VIS-002": "enabled"
+        "RM-VIS-001": "planned",
+        "RM-VIS-002": "planned"
       },
-      "revisit": "pilot sidecar helpers without changing FIVE_POINT_STAR runtime authority"
+      "blocker": "open PR #138 is read-only",
+      "revisit": "after PR #138 is completed, re-read current main and pilot sidecar helpers without changing FIVE_POINT_STAR runtime authority"
     },
     "SWITCHY": {
       "repository": "alsdmlals4-eng/Switchy-Express-Cargo-Puzzle",
@@ -63,7 +65,7 @@
         "RM-VIS-002": "planned"
       },
       "evidence": "project PR #208 merged as 5c91f4ff8d88b3e00f66252ba6f566795f2e50a3",
-      "revisit": "expand only after a project-specific consumer is ready"
+      "revisit": "standardize the already-identical validator into Adoption Lock after the Base Adoption Kit merge"
     },
     "NINJA_SURVIVAL": {
       "repository": "alsdmlals4-eng/ninja-survival-godot",
@@ -82,13 +84,13 @@
       "repository": "alsdmlals4-eng/MylittleBoat",
       "status": "READY_TO_ADOPT",
       "modules": {
-        "RM-TOOL-001": "enabled",
+        "RM-TOOL-001": "planned",
         "RM-SYS-001": "not_applicable",
         "RM-SYS-003": "not_applicable",
         "RM-VIS-001": "enabled",
         "RM-VIS-002": "enabled"
       },
-      "revisit": "pilot sidecar UI/symbol semantics without combat, failure, or online systems"
+      "revisit": "pilot sidecar UI/symbol semantics without combat, failure, or online systems; enable validator only if structured-data cross-reference need exists"
     },
     "BLACKSMITH": {
       "repository": "alsdmlals4-eng/Blacksmith",
