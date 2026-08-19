@@ -144,24 +144,24 @@ class NeutralAdversarialFeatureLifecycleTests(unittest.TestCase):
         ):
             self.assertIn(term, adversarial)
 
-    def test_adversarial_review_repeats_full_improvement_loop_at_least_five_times_when_run(self) -> None:
+    def test_adversarial_review_repeats_until_verified_clean_exit(self) -> None:
         adversarial = read("skills/running-adversarial-review-and-refinement/SKILL.md")
         for term in (
-            "FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS: REQUIRED_WHEN_REVIEW_RUNS",
-            "FULL_LOOP_COUNT_MINIMUM: 5",
+            "ADVERSARIAL_REVIEW_UNTIL_CLEAN: REQUIRED_WHEN_REVIEW_RUNS",
             "FULL_SCOPE_REVIEW",
-            "FIND → REFINE → VERIFY → RE-ATTACK",
+            "FIND → VALIDATE → REFINE → VERIFY → RE-ATTACK",
             "BETTER_ALTERNATIVE_SEARCH",
             "LONG_TERM_PLAN_FIT_RECHECK",
+            "CLEAN_REVIEW_EXIT",
             "loop_index",
+            "앞 회차의 수정 결과",
+            "새로운 유효 오류·충돌·누락·blocking finding이 0",
+            "이미 구현된 finding을 다시 수정하지 않는다",
         ):
             self.assertIn(term, adversarial)
 
-        self.assertIn("각 회차는 전체 승인 범위를 처음부터 다시", adversarial)
-        self.assertIn("앞 회차의 수정 결과", adversarial)
-        self.assertIn("5회차", adversarial)
-        self.assertIn("추가 전체 루프", adversarial)
-        self.assertIn("L0 단순 작업", adversarial)
+        self.assertNotIn("FULL_LOOP_COUNT_MINIMUM: 5", adversarial)
+        self.assertNotIn("FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS", adversarial)
         self.assertNotIn("FIVE_DISTINCT_ADVERSARIAL_ROUNDS", adversarial)
         self.assertNotIn("ROUND_1_INTENT_ASSUMPTIONS_SCOPE", adversarial)
 

@@ -169,6 +169,7 @@ repository_audit:
 3. `refine-approved-findings`는 `MUST_FIX`와 승인된 `SHOULD_FIX`만 최소 수정한다.
 4. 기획 방향을 바꾸는 finding은 몰래 수정하지 않고 `USER_DECISION_REQUIRED`로 분리한다.
 5. `regression-recheck`는 기존 장점·정상 경로·코어·범위와 새 결함을 다시 공격한다.
+- 이미 구현된 finding을 다시 수정하지 않는다. 입력 상태가 바뀌지 않은 이미 구현·검증 finding은 재수정하지 않으며, 새 증거·회귀·정본 변화가 있을 때만 재개방한다.
 6. `decision-report`는 반영·보류·기각·미검증과 남은 위험을 모두 기록한다.
 7. 병합 뒤에는 설명이나 기존 PR 승인만 신뢰하지 않고 새 `main` HEAD와 실제 diff를 다시 읽는다.
 8. 질문 전·병합 후 동일 Goal의 열린 PR, 최근 병합 PR, 대체·후속 링크를 확인한다.
