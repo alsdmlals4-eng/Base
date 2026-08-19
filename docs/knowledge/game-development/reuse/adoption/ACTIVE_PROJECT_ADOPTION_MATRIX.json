@@ -12,8 +12,14 @@
         "RM-VIS-001": "not_applicable",
         "RM-VIS-002": "not_applicable"
       },
+      "manifest_installation": {
+        "state": "INSTALLED_ON_MAIN",
+        "merge_commit": "fabc8fc489ff77459b31f0d62906966d94d79d88",
+        "verification": "Fiction operating system 32305116843 SUCCESS",
+        "runtime_validation": "NOT_APPLICABLE_MANIFEST_ONLY"
+      },
       "existing_solution": "project already has fiction-specific content/operating/reverse-outline/scene validators; generic RM-TOOL-001 must prove additional cross-reference value before vendoring",
-      "revisit": "use the Adoption Kit manifest to record explicit non-duplication; enable RM-TOOL-001 only when a real cross-file ID gap is found"
+      "revisit": "use the installed Adoption Kit manifest to record explicit non-duplication; enable RM-TOOL-001 only when a real cross-file ID gap is found"
     },
     "GRIMOIRE": {
       "repository": "alsdmlals4-eng/GRIMOIRE-",
@@ -25,7 +31,13 @@
         "RM-VIS-001": "planned",
         "RM-VIS-002": "planned"
       },
-      "evidence": "planning PR #138 merged as 293cde60ca19bfa6528b90807f7f4622037f2dd0 and no open GRIMOIRE PR remained at the final adoption audit",
+      "manifest_installation": {
+        "state": "INSTALLED_ON_MAIN",
+        "merge_commit": "5b51169130c97807234a0c2b457ed90dc3c04f3a",
+        "verification": "Validate GRIMOIRE planning and Base v9.4.3 32305233259 SUCCESS",
+        "runtime_validation": "EXISTING_RUNTIME_REGRESSIONS_SUCCESS_MANIFEST_ONLY"
+      },
+      "evidence": "planning PR #138 merged as 293cde60ca19bfa6528b90807f7f4622037f2dd0; adoption manifest PR #139 merged as 5b51169130c97807234a0c2b457ed90dc3c04f3a without product-runtime changes",
       "revisit": "pilot sidecar helpers from current main without changing FIVE_POINT_STAR runtime authority"
     },
     "SWITCHY": {
@@ -64,6 +76,7 @@
         "RM-VIS-001": "planned",
         "RM-VIS-002": "planned"
       },
+      "project_adoption_mode": "ADAPTED_IMPLEMENTATION",
       "evidence": "project PR #208 merged the RM-TOOL-001 concept as a project-adapted implementation at 5c91f4ff8d88b3e00f66252ba6f566795f2e50a3; current project file is intentionally not byte-identical to the Base vendor source",
       "blocker": "do not overwrite the verified project-adapted validator with the Base vendor source",
       "revisit": "only standardize to vendored source after an explicit equivalence/migration decision; the existing project implementation remains valid"
@@ -91,7 +104,14 @@
         "RM-VIS-001": "enabled",
         "RM-VIS-002": "enabled"
       },
-      "revisit": "pilot sidecar UI/symbol semantics without combat, failure, or online systems; enable validator only if structured-data cross-reference need exists"
+      "manifest_installation": {
+        "state": "INSTALLED_ON_MAIN",
+        "merge_commit": "91dc7c0a7df400eda426971b2cabc1a7de688a06",
+        "verification": "STATIC_PROFILE_BLOB_MATCH",
+        "runtime_validation": "NOT_RUN_NO_PROJECT_CI"
+      },
+      "evidence": "project manifest blob SHA a449498ad9bcc53a20690d4e6f53279d6cc78e64 matched the Base MY_LITTLE_BOAT profile blob exactly before merge",
+      "revisit": "vendor semantic UI/symbol sidecars only with a project Godot verification path; enable validator only if structured-data cross-reference need exists"
     },
     "BLACKSMITH": {
       "repository": "alsdmlals4-eng/Blacksmith",
