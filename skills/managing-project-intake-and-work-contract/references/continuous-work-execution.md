@@ -56,7 +56,7 @@ blocker가 생기면 현재 task의 blocker와 dependency를 기록한 뒤 `reco
 
 사용자가 같은 승인 범위의 작업을 **명시적으로 계속 진행**하라고 지시했는데 `same-goal`의 `in-progress PR`이 이미 있으면, 그 PR의 존재만으로 interactive 작업 전체를 멈추지 않는다. 기존 PR은 overlap·risk 확인을 위한 read-only evidence로만 취급하고, 명시적으로 그 PR을 맡으라는 지시가 없는 한 **do not modify/rebase/update** 한다.
 
-Base는 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`을 동시작업 조정의 standing authorization으로 사용한다.
+Base는 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`을 동시작업 조정의 standing authorization으로 사용한다. 단, `STRONGER_WORK_CONTRACT_OVERRIDES_COPY_INTEGRATION`이 적용된다. 현재 작업의 더 구체적인 승인 계약이 다른 open/draft/ready PR 또는 다른 workstream을 `read-only / no absorption`으로 지정하면 그 계약이 standing authorization보다 우선한다. 그 경계를 넘어 material delta를 가져오려면 **explicit absorption authorization**이 별도로 있어야 하며, 기존 전역 표현으로는 `EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION`을 만족해야 한다. 승인이 없으면 다른 PR은 충돌·overlap 탐지에만 읽고 selective copy·재구현·흡수하지 않는다.
 
 ```text
 explicit user-directed continue
@@ -67,27 +67,31 @@ explicit user-directed continue
 → synchronizing-local-and-github-state의 concurrent preflight
    ├─ NO_OVERLAP → 일반 separate PR 검증/병합 Gate
    └─ SAME_GOAL / PATH_OVERLAP / SEMANTIC_OVERLAP
-      → PROVISIONAL_INTEGRATION
-      → owner PR branches read-only
-      → 필요한 material delta만 selective copy / 재구현
-      → owner/main 이동마다 semantic reconciliation + exact-head 재검증
-      → absorbed_owner_deltas / residual_owner_deltas 기록
+      → stronger work contract 확인
+      ├─ read-only / no absorption + explicit absorption authorization 없음
+      │  → overlap만 기록하고 owner content는 흡수하지 않음
+      └─ 흡수 허용 범위
+         → PROVISIONAL_INTEGRATION
+         → owner PR branches read-only
+         → 필요한 material delta만 selective copy / 재구현
+         → owner/main 이동마다 semantic reconciliation + exact-head 재검증
+         → absorbed_owner_deltas / residual_owner_deltas 기록
 → merge 직전 current main + same-goal PR 상태 재확인
-   ├─ 다른 PR이 먼저 병합됨 → 이미 landed 된 중복 부분 제거, 남은 material delta만 유지
+   ├─ 다른 PR이 먼저 병합됨 → main에 실제 landed 된 내용만 새 정본으로 재평가
    ├─ material delta 없음 → own PR을 superseded로 닫고 불필요한 churn 금지
-   └─ 필요한 owner delta 모두 흡수·정리됨 → exact-head Gate 통과 후 integration PR 병합 가능
+   └─ 허용된 통합 범위가 정리됨 → exact-head Gate 통과 후 own PR 병합 가능
 ```
 
 - `USER_DIRECTED_PARALLEL_PR`은 다른 `in-progress PR`의 branch·commit·review 상태를 소유하거나 채택하는 권한이 아니다.
 - unmerged PR의 구현은 canonical current state가 아니다. 새 작업 기준선은 항상 **current completed main**이다.
-- approved same-goal/path/semantic overlap은 ordinary coordination 범위에서 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`을 재사용한다. 같은 replacement 승인을 매번 다시 묻지 않는다.
-- `PROVISIONAL_INTEGRATION`에서는 **owner PR branches**를 계속 read-only로 유지하고, stale whole-file 복사 대신 필요한 material delta만 **selective copy**·재구현한다.
+- approved same-goal/path/semantic overlap은 ordinary coordination 범위에서 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`을 재사용할 수 있지만, `STRONGER_WORK_CONTRACT_OVERRIDES_COPY_INTEGRATION`과 다른 workstream의 `EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION`을 우회하지 않는다.
+- `PROVISIONAL_INTEGRATION`이 실제 허용된 경우에도 **owner PR branches**를 계속 read-only로 유지하고, stale whole-file 복사 대신 필요한 material delta만 **selective copy**·재구현한다.
 - owner PR이나 main이 움직이면 semantic reconciliation으로 더 최신·강한 canonical 구현을 보존하고 provisional duplicate를 제거한 뒤 exact-head 검증을 다시 수행한다.
-- `absorbed_owner_deltas`는 통합 PR이 실제로 흡수·검증한 material delta를, `residual_owner_deltas`는 아직 고유하게 남아 owner PR에 보존할 material delta를 기록한다.
-- **owner PR이 열려 있다는 사실만으로** 통합 PR merge를 막지 않는다. latest-main reconciliation, 필요한 material delta accounting, exact-head required checks, P0/P1 0, unresolved thread 0이 충족되면 병합할 수 있다.
+- `absorbed_owner_deltas`는 명시적으로 허용된 통합 PR이 실제로 흡수·검증한 material delta를, `residual_owner_deltas`는 아직 고유하게 남아 owner PR에 보존할 material delta를 기록한다.
+- **owner PR이 열려 있다는 사실만으로** own PR merge를 막지 않는다. 다만 다른 workstream content를 흡수하지 않는 계약이면 그 PR의 미병합 material delta를 own PR 완료 조건으로 삼지 않는다.
 - 다른 PR이 먼저 병합된 뒤 현재 main과 비교해 material delta가 사라지면 own PR은 `superseded`로 닫는다. 이미 landed 된 내용을 다시 병합하기 위한 churn을 만들지 않는다.
-- integration merge 뒤 owner PR에 고유 material delta가 전혀 남지 않으면 absorption 근거를 남기고 `superseded`로 정리할 수 있다. residual unique work가 남으면 owner PR을 보존한다.
-- scheduled/periodic repository-writing automation도 unrelated open PR 존재 자체를 전역 blocker로 사용하지 않는다. 실제 path/semantic overlap을 판정하고, deterministic copy integration이 불가능한 conflicted write만 국소 defer한다.
+- 명시적 흡수 권한이 없는 다른 workstream PR을 own PR이 `superseded` 처리하거나 close하는 것은 금지한다.
+- scheduled/periodic repository-writing automation도 unrelated open PR 존재 자체를 전역 blocker로 사용하지 않는다. 실제 path/semantic overlap을 판정하고, deterministic coordination이 불가능한 conflicted write만 국소 defer한다.
 - direct `main` push, force push, `--admin`, ruleset bypass는 이 규칙으로 허용되지 않는다.
 - standing authorization은 새 제품 범위, 파괴적 migration, 결제, 계정·보안 권한 확대까지 승인하지 않는다.
 
@@ -232,9 +236,9 @@ expected exact HEAD SHA 고정
 
 승인된 동일 범위의 PR은 **별도 병합 승인**을 묻지 않는다. 검토한 `exact HEAD`, `required checks`, 독립 검토, `unresolved thread 0`, `USER_REVIEW_REQUIRED`·`CHANGE_PROPOSAL`·P0/P1 없음이 확인되면 저장소가 허용한 방식으로 **즉시 병합**한다.
 
-동시작업 overlap이 있으면 `synchronizing-local-and-github-state`의 `PROVISIONAL_INTEGRATION`과 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`을 적용한다. 이는 owner branch를 수정할 권한이 아니라 latest-main 통합 Branch에서 selective copy와 semantic reconciliation을 수행할 권한이다. owner PR의 open 상태 자체는 merge blocker가 아니며, 필요한 material delta가 모두 accounted되고 exact-head safety gate가 충족되어야 한다.
+동시작업 overlap이 있고 현재 작업 계약이 흡수를 허용하면 `synchronizing-local-and-github-state`의 `PROVISIONAL_INTEGRATION`과 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`을 적용한다. 이는 owner branch를 수정할 권한이 아니라 latest-main 통합 Branch에서 selective copy와 semantic reconciliation을 수행할 권한이다. 반대로 `STRONGER_WORK_CONTRACT_OVERRIDES_COPY_INTEGRATION`이 다른 workstream을 no-absorption으로 보호하면 **explicit absorption authorization** 없이는 그 경계를 넘지 않는다. owner PR의 open 상태 자체는 merge blocker가 아니지만, 허용되지 않은 owner delta를 own PR에 복제해 해결해서도 안 된다.
 
-연속작업은 merge safety gate를 제거하지 않는다. 승인 상속과 standing authorization은 재승인·불필요한 waiting을 제거하는 것이지 검증을 제거하는 것이 아니다.
+연속작업은 merge safety gate를 제거하지 않는다. 승인 상속과 standing authorization은 재승인·불필요한 waiting을 제거하는 것이지 검증이나 더 구체적인 작업 계약의 보호 경계를 제거하는 것이 아니다.
 
 ## 자동 승인 금지와 전역 종료 조건
 
@@ -335,3 +339,9 @@ next_state:
 ```
 
 `CONTINUOUS_WORK_ACTIVE`였다는 사실과 자동 승인해 반영한 권장안, blocker recovery, 적대 검토·회귀 검증 증거를 명확히 남긴다.
+
+## Failure conditions
+
+- `STRONGER_WORK_CONTRACT_OVERRIDES_COPY_INTEGRATION`을 무시하고 더 구체적인 read-only/no-absorption 작업 계약보다 standing authorization을 우선함
+- 다른 workstream PR을 `explicit absorption authorization` 없이 selective copy·재구현·흡수·close·supersede 처리함
+- 다른 PR을 읽는 것과 그 내용을 own PR에 흡수하는 것을 같은 권한으로 취급함
