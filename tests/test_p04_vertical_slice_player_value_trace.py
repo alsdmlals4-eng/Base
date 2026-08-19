@@ -28,15 +28,30 @@ class P04VerticalSlicePlayerValueTraceTests(unittest.TestCase):
             self.assertIn(term, plan)
 
     def test_world_storyline_fit_is_consumed_by_p04_execution_surfaces(self) -> None:
-        concept = read("skills/analyzing-and-refining-game-concepts/SKILL.md")
-        plan = read("templates/planning/VERTICAL_SLICE_PLAN.md")
+        concept_skill = read("skills/analyzing-and-refining-game-concepts/SKILL.md")
+        concept_plan = read("templates/planning/GAME_CONCEPT_DIRECTION_REVIEW.md")
+        slice_plan = read("templates/planning/VERTICAL_SLICE_PLAN.md")
 
-        self.assertIn("WORLD_STORYLINE_FIT_REQUIRED", concept)
+        self.assertIn("WORLD_STORYLINE_FIT_REQUIRED", concept_skill)
+        self.assertIn("WORLD_STORYLINE_FIT_REQUIRED", concept_plan)
         for term in ("세계관", "핵심 스토리", "플레이어 판타지"):
-            self.assertIn(term, concept)
+            self.assertIn(term, concept_skill)
+            self.assertIn(term, concept_plan)
 
-        self.assertIn("WORLD_STORYLINE_FIT_REQUIRED", plan)
-        self.assertIn("NOT_APPLICABLE", plan)
+        self.assertIn("WORLD_STORYLINE_FIT_REQUIRED", slice_plan)
+        self.assertIn("NOT_APPLICABLE", slice_plan)
+
+    def test_benchmark_template_requires_real_alternatives_and_long_term_fit(self) -> None:
+        benchmark = read("templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md")
+
+        for term in (
+            "CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY",
+            "MINIMUM_VIABLE_ALTERNATIVES: 3",
+            "BETTER_ALTERNATIVE_SEARCH",
+            "LONG_TERM_PLAN_FIT_REQUIRED",
+            "revisit_condition",
+        ):
+            self.assertIn(term, benchmark)
 
 
 if __name__ == "__main__":
