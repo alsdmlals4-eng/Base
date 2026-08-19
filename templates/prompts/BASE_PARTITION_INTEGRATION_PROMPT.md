@@ -2,6 +2,12 @@
 
 P01..P09의 독립 최적화 결과를 최신 Base `main`에 안전하게 통합한다. 개별 Part 작업을 대신하지 않고 **CP0·cross-part 정합성·전체 회귀·최종 merge**만 책임진다.
 
+## 0. Integration의 의미
+
+`PARTITION_IS_MAINTENANCE_AND_SPECIALIZATION_VIEW_NOT_RUNTIME_FRAGMENTATION`
+
+Partition의 최종 산출물은 9개의 독립 Base가 아니라 **하나의 통합 Base**다. 필요한 Part만 활성화할 수 있으며, Integration은 실제로 수행된 Part의 결과만 모아 CP0·정본·Skill/Module 관계를 정리한다. 모든 일반 작업에 9개 Part 실행을 강제하지 않는다.
+
 ## 1. 입력
 
 - latest main exact SHA
