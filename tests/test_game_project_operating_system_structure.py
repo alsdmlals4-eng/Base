@@ -302,8 +302,16 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             self.assertIn(policy, documents)
         for mode in ("frame", "constrain", "sharpen", "structure", "analyze", "poc-contract", "recalibrate", "production-gate"):
             self.assertIn(f"`{mode}`", concepts)
-        for phase in ("CONCEPT_SEED", "POINTED_FUN_HYPOTHESIS", "POC_BUILD_AND_TEST", "PRODUCTION_READY"):
+        for phase in (
+            "CONCEPT_SEED",
+            "POINTED_FUN_HYPOTHESIS",
+            "TECHNICAL_SPIKE_IF_NEEDED",
+            "RELEASE_NEAR_VERTICAL_SLICE_REQUIRED_FOR_PLAYER_VALIDATION",
+            "PRODUCTION_READY",
+        ):
             self.assertIn(phase, concepts)
+        self.assertNotIn("POC_BUILD_AND_TEST", concepts)
+        self.assertNotIn("REPEAT_POC", concepts)
         for lens in ("SWOT", "SO", "WO", "ST", "WT", "MDA", "DDE", "DDD"):
             self.assertIn(lens, concepts)
         self.assertIn("임의 해석하지 않는다", concepts)

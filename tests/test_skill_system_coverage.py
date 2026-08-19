@@ -145,7 +145,8 @@ class SkillSystemCoverageTests(unittest.TestCase):
                 "Fatigue and inflation", "feedback_channel", "telemetry_events",
                 "funnel_steps", "control_and_variants", "ADOPT", "ADAPT", "AVOID",
                 "TEST", "IGNORE", "KEEP", "REMOVE", "RETEST", "PRODUCTION_READY",
-                "REPEAT_POC", "HOLD", "STOP",
+                "REPEAT_VERTICAL_SLICE", "TECHNICAL_SPIKE_INTERNAL_ONLY",
+                "RELEASE_NEAR_VERTICAL_SLICE_FIRST", "HOLD", "STOP",
             ),
         }
         for skill_id, terms in required_terms.items():
