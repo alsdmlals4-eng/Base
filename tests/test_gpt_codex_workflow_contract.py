@@ -354,6 +354,22 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         ):
             self.assertIn(term, policy)
 
+    def test_p01_active_project_workspace_is_notion_and_repo_with_sheet_migration_only(self) -> None:
+        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        project_os = (ROOT / "skills/managing-game-project-operating-system/SKILL.md").read_text(encoding="utf-8")
+
+        for text in (intake, project_os):
+            self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", text)
+            self.assertIn("NOTION_HUMAN_FACING_CANON", text)
+            self.assertIn("REPOSITORY_STRUCTURED_CANON", text)
+            self.assertIn("COMPATIBILITY_ONLY", text)
+            self.assertIn("docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md", text)
+            self.assertNotIn("USER_FACING_GDD_WORKSPACE", text)
+            self.assertNotIn("project_google_sheet:", text)
+
+        self.assertIn("STRONGER_WORK_CONTRACT_OVERRIDES_COPY_INTEGRATION", intake)
+        self.assertIn("explicit absorption authorization", intake)
+
 
 if __name__ == "__main__":
     unittest.main()
