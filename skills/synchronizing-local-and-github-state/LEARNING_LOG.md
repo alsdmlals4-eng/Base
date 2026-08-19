@@ -52,3 +52,10 @@
 - **TDD evidence:** initial RED `acb59559701f90ceb835a8a271c630058b863696`에서 preflight/first-write 계약 누락만 2건 재현했고, adversarial RED `dc120e173922d97b610c115f82ba683d9c32157d`에서 current-PR self-conflict와 write-phase SHA 누락만 2건 재현했다. 첫 통합 후보 `617778650deb644e0b549fc675ed942c786a6389`는 Base v9 focused suite 327개를 통과했으나 canonical-reference freshness가 이 Skill 변경의 기존 통합 test companion과 Learning Log 누락을 정확히 차단했다. 병합 후 exact-SHA readback은 별도 정정 회귀를 추가해 검색 단서의 과승격도 차단했다.
 - **Boundary:** 이 계약은 GitHub가 강제하는 mutex·ruleset·merge queue 설정 증거가 아니다. semantic resource 명명 품질에 따라 false positive/negative가 생길 수 있다. 이 connector-only 실행은 로컬 full validation, `git fsck`, Godot runtime/render를 실행했다고 주장하지 않는다.
 - **Next trigger:** 실제 parallel-work 충돌 또는 불필요한 대기 사례가 누적될 때, semantic resource naming fixture나 machine-enforced lease가 필요한지 별도 Existing Solution First 검토를 수행한다.
+
+## 2026-08-20 — Open PR state is not execution-surface owner evidence
+
+- **Status:** `PATTERN`
+- An open/draft/ready PR is backlog metadata, not proof of another active worker.
+- Protect mutation only when current owner evidence exists; otherwise a user-confirmed single coordinator may revalidate and take over stale backlog on latest main.
+- Connector-only execution must still use `GITHUB_CONNECTOR_ONLY` / `NOT_APPLICABLE_CONNECTOR_ONLY` and never invent local evidence.

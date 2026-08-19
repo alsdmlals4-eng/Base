@@ -166,6 +166,22 @@ class NeutralAdversarialFeatureLifecycleTests(unittest.TestCase):
         self.assertNotIn("FIVE_DISTINCT_ADVERSARIAL_ROUNDS", adversarial)
         self.assertNotIn("ROUND_1_INTENT_ASSUMPTIONS_SCOPE", adversarial)
 
+    def test_p03_current_main_evidence_bounded_takeover(self) -> None:
+        adversarial = read("skills/running-adversarial-review-and-refinement/SKILL.md")
+        finding = read("skills/running-adversarial-review-and-refinement/references/finding-and-regression-protocol.md")
+        audit = read("skills/running-adversarial-review-and-refinement/references/repository-wide-audit-protocol.md")
+        postmerge = read("templates/quality/POST_MERGE_ADVERSARIAL_REVIEW.md")
+        sync = read("skills/synchronizing-local-and-github-state/SKILL.md")
+        safe_sync = read("skills/synchronizing-local-and-github-state/references/safe-sync-protocol.md")
+
+        for token in ("FIX_GUIDED_VERIFICATION_WHEN_EXECUTABLE", "FULL_LOOP_IS_NOT_A_REVIEW_LENS", "Loop 1=scope"):
+            self.assertIn(token, adversarial)
+        for text in (finding, audit, postmerge):
+            self.assertIn("CONFIGURED_PROJECT_WORKSPACE", text)
+        for text in (sync, safe_sync):
+            for token in ("execution_surface", "GITHUB_CONNECTOR_ONLY", "NOT_APPLICABLE_CONNECTOR_ONLY", "OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM"):
+                self.assertIn(token, text)
+
     def test_socratic_review_lens_is_selective_evidence_first_and_meta_validated(self) -> None:
         adversarial = read("skills/running-adversarial-review-and-refinement/SKILL.md")
         socratic = read(

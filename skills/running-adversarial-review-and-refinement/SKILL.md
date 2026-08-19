@@ -27,6 +27,13 @@ Registry의 `칭찬·균형 평가만 요청` 비사용 조건은 결정·권장
 
 일반 작업은 `attack → validate-critique → refine-approved-findings → regression-recheck → decision-report`를 사용한다. 저장소 전체 감사는 `references/repository-wide-audit-protocol.md`, 세부 Finding·회귀 판정은 `references/finding-and-regression-protocol.md`를 필요할 때만 읽는다.
 
+
+### Finding validation evidence guard
+
+`FIX_GUIDED_VERIFICATION_WHEN_EXECUTABLE: REQUIRED`
+
+구체적 수정으로 재현 가능한 Finding은 같은 acceptance/evidence ceiling에서 baseline과 candidate를 비교해 비판 자체를 재검증한다. candidate가 원 실패를 줄이지 못하거나 새 회귀를 만들면 심각도와 채택 여부를 다시 판정한다. 순수 기획·미감처럼 동등한 실행 비교가 불가능한 문제에는 억지로 적용하지 않는다. 세부 기록은 `references/finding-and-regression-protocol.md`를 따른다. 실제 runtime/build/render PASS 권위는 해당 validation owner를 넘지 않는다.
+
 ### Adversarial review until clean invariant
 
 이 Skill을 L1 이상 작업물·PR·저장소 감사·병합 후 결과의 적대적 검토로 호출하면 **최소 5회의 완전한 전체 개선 루프를 수행하고, 그 이후 CLEAN_REVIEW_EXIT까지 전체 검토·개선 생명주기를 반복한다.** `FULL_LOOP_COUNT_MINIMUM: 5`, `MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5`다. 5회는 종료 quota나 최대치가 아니라 최소 floor다. 앞 회차의 수정 결과와 새 증거 자체가 다음 회차의 공격 입력이다.
@@ -35,12 +42,16 @@ Registry의 `칭찬·균형 평가만 요청` 비사용 조건은 결정·권장
 ADVERSARIAL_REVIEW_UNTIL_CLEAN: REQUIRED_WHEN_REVIEW_RUNS
 FULL_LOOP_COUNT_MINIMUM: 5
 MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
+FULL_LOOP_IS_NOT_A_REVIEW_LENS
 FULL_SCOPE_REVIEW
 FIND → VALIDATE → REFINE → VERIFY → RE-ATTACK
 BETTER_ALTERNATIVE_SEARCH
 LONG_TERM_PLAN_FIT_RECHECK
 CLEAN_REVIEW_EXIT
 ```
+
+
+`FULL_LOOP_IS_NOT_A_REVIEW_LENS`: `Loop 1=scope`, `Loop 2=UX`, `Loop 3=CI`처럼 서로 다른 관점을 각각 한 번 검사한 것은 여러 full loop로 계수하지 않는다. Scope·UX·CI·security·cost·long-term 등 필요한 lens는 **각 counted loop 안에서** 전체 승인 범위를 다시 공격하기 위한 coverage로 사용한다. 회차별 대표 finding을 기록할 수는 있지만 대표 finding이 그 회차의 검토 범위를 뜻하지 않는다.
 
 한 전체 회차:
 
