@@ -218,7 +218,8 @@
         "tests/test_godot_higodot_gut_hera_toolchain.py",
         "tests/test_serial_fiction_discipline.py",
         "tests/test_claim_evidence_binding.py",
-        "tests/test_skill_implementation_evidence.py"
+        "tests/test_skill_implementation_evidence.py",
+        "tests/test_p08_ai_operations_contract.py"
       ],
       "ignore_frontmatter_only_keys": [
         "description"
