@@ -11,6 +11,8 @@ description: Use when defining or revising game concept, pointed fun, systems, d
 
 프로젝트 코어의 사실 판정·승인은 코어 Skill, 11영역 Games User Research 구조의 설치·누락 감사는 `governing-game-user-research-coverage`, 기획 책임 원본 작성·발행은 `managing-design-documents`, 실제 변경 검증은 `reviewing-and-validating-project-changes`가 책임진다.
 
+`DECISION_SPECIFIC_RESEARCH`: 이 Skill은 현재 게임 결정을 바꾸는 구체적 질문에 대해 벤치마크·플레이테스트·행동/자기보고 증거를 해석한다. 연구 영역의 전수 채움이나 coverage 상태 관리는 `governing-game-user-research-coverage`가 소유하며, 두 Skill이 같은 연구 책임을 중복 수행하지 않는다.
+
 ## Modes and state
 
 `frame` → `constrain` → `sharpen` → `structure` → 필요한 경우 `tutorial-and-onboarding-design` → 필요한 경우 `system-design` → 필요한 경우 `difficulty-and-combat-ai` → `benchmark-and-player-research` → `analyze` → `playtest-and-experiment` → `poc-contract` → `recalibrate` → `production-gate`
@@ -59,7 +61,7 @@ Windows+Android 동시 목표, STOVE·Google Play·Steam 단계 출시, 모바�
 1. 대상 플레이어, 핵심 행동·선택, 감정·판타지, 차별 원리를 한 문장으로 고정한다.
 2. 플레이·제작·기술·콘텐츠·표현·시장 제약을 확인한다.
 3. 요소를 `AMPLIFY / SUPPORT / NEUTRAL / CONFLICT / UNPROVEN`으로 정렬한다.
-4. `tutorial-and-onboarding-design`에서는 프로젝트 정본·Google Sheets·실제 코드·데이터·Scene·Resource·UI·입력·테스트·동일 Goal PR을 먼저 감사하고, 미확인 사실은 `BLOCKED_UNVERIFIED`로 분리한다.
+4. `tutorial-and-onboarding-design`에서는 최신 사용자 지시·프로젝트 Notion/GitHub 정본·실제 코드·데이터·Scene·Resource·UI·입력·테스트·동일 Goal PR을 먼저 감사하고, 미확인 사실은 `BLOCKED_UNVERIFIED`로 분리한다. 폐기된 Google Sheets는 프로젝트가 명시적으로 보존한 migration/read-only evidence가 있을 때만 비교 자료로 읽고 신규 입력·활성 정본으로 사용하지 않는다.
 5. 해당 mode에서는 학습 목표를 팝업 확인이 아닌 행동·필요 정보·시스템 반응·성공·실패·복구·독립 수행·전이로 정의하고 `RULE → NEED → DISCOVER → FEEL → PROVE → TRANSFER`를 설계한다.
 6. 해당 mode에서는 성장 전후 행동 차이, Skip·복습·복귀, 접근성 대체 채널, 완료율 외의 힌트·재시도·독립 수행·전이 측정을 연결한다.
 7. 시스템 설계가 필요하면 책임·입력·출력·비책임·정본·실패·검증을 나누고 행동·선택·결과 계약으로 연결한다.
