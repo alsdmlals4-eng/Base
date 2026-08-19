@@ -10,6 +10,7 @@ AUTHORITY = ROOT / "docs" / "operations" / "PROJECT_WORKSPACE_AUTHORITY_CONTRACT
 POLICY = ROOT / "docs" / "operations" / "NOTION_PROJECT_ISOLATION_AND_CORE_SYSTEM_CONTRACT.md"
 MANAGING = ROOT / "skills" / "managing-design-documents" / "SKILL.md"
 MAP = ROOT / "docs" / "DOCUMENTATION_MAP.md"
+V9_WORKFLOW = ROOT / ".github" / "workflows" / "validate-base-v9-rc.yml"
 
 
 class NotionProjectIsolationCoreSystemContractTests(unittest.TestCase):
@@ -69,6 +70,29 @@ class NotionProjectIsolationCoreSystemContractTests(unittest.TestCase):
 
         contract = json.loads(AUTHORITY.read_text(encoding="utf-8"))
         self.assertTrue((ROOT / contract["parallel_write_policy"]).is_file())
+
+    def test_free_plan_path_does_not_require_business_query_data_sources(self) -> None:
+        contract = json.loads(AUTHORITY.read_text(encoding="utf-8"))
+        self.assertEqual("ZERO_INCREMENTAL_COST", contract["default_cost_boundary"])
+        self.assertEqual("OPTIONAL_OPTIMIZATION_NOT_REQUIRED", contract["notion_query_data_sources"])
+        self.assertEqual(
+            "PROJECT_FILTERED_VIEW_SEARCH_FETCH_READBACK",
+            contract["free_plan_fallback"],
+        )
+
+        text = POLICY.read_text(encoding="utf-8")
+        for required in (
+            "QUERY_DATA_SOURCES_OPTIONAL",
+            "ZERO_INCREMENTAL_COST",
+            "Project-filtered linked view",
+            "search/fetch",
+            "destination readback",
+        ):
+            self.assertIn(required, text)
+
+    def test_permanent_base_v9_suite_runs_this_contract(self) -> None:
+        workflow = V9_WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("tests.test_notion_project_isolation_core_system_contract", workflow)
 
 
 if __name__ == "__main__":
