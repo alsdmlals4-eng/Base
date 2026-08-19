@@ -1,5 +1,9 @@
 # 병합 후 적대적 검토 결과
 
+`CONFIGURED_PROJECT_WORKSPACE: CONDITIONAL`
+
+별도 사람용 프로젝트 작업면은 현행 authority contract가 설정하고 현재 검토 책임을 배정한 경우에만 읽는다. 설정되지 않았으면 `NOT_CONFIGURED`로 기록하며, 폐기·migration-only surface를 일반 완료 Gate로 부활시키지 않는다.
+
 ## 1. 병합 정보
 
 ```yaml
@@ -26,7 +30,7 @@ reviewed_by:
 - 실제 diff·변경 파일:
 - 최근 승인 Decision:
 - 관련 열린·최근 병합 PR:
-- 프로젝트 Google Sheets:
+- configured project workspace: `NOT_CONFIGURED | <workspace + assigned responsibility>`
 - 실제 코드·데이터·Scene·Resource·자산·테스트:
 - 실행 가능한 검증 환경:
 
@@ -40,7 +44,7 @@ reviewed_by:
 - 일부 정본·템플릿·테스트·참조만 갱신됐다.
 - PR 범위를 벗어난 변경이 포함됐다.
 - 동일 Goal·기능·문서·질문이 중복됐다.
-- GitHub `main`과 Google Sheets가 다르다.
+- repository 정본과 configured workspace의 assigned responsibility가 다르다.
 - 기존 정상 경로나 롤백 경로가 회귀했다.
 - 임시값·플레이스홀더가 확정값으로 남았다.
 - 필요한 CI·런타임·렌더 검증을 실행하지 않았다.
@@ -54,7 +58,7 @@ reviewed_by:
 | 분야 책임 원본 | 등록된 Markdown·JSON |  | PASS / FAIL / UNVERIFIED |  |
 | 최근 승인 누락 | 병합 전후 Decision ID |  | PASS / FAIL / UNVERIFIED |  |
 | 대체 관계 | SUPERSEDED·REJECTED·DEFERRED |  | PASS / FAIL / UNVERIFIED |  |
-| Google Sheets | Decision ID·Commit·row |  | PASS / FAIL / UNVERIFIED |  |
+| configured workspace | assigned responsibility만 |  | PASS / FAIL / NOT_CONFIGURED / UNVERIFIED |  |
 | 열린·중복 PR | 동일 Goal |  | PASS / FAIL / UNVERIFIED |  |
 | branch cleanup | 병합 head branch |  | PASS / FAIL / UNVERIFIED |  |
 
@@ -73,6 +77,8 @@ DEFER
 REJECTED_CRITIQUE
 BLOCKED_UNVERIFIED
 ```
+
+실행 가능한 구체적 수정 Finding은 `finding-and-regression-protocol.md`의 `FIX_GUIDED_VERIFICATION_WHEN_EXECUTABLE`로 baseline/candidate를 같은 acceptance에서 비교한다.
 
 ## 6. 실제 반영한 최소 수정
 
@@ -94,7 +100,7 @@ BLOCKED_UNVERIFIED
 | 경계·반례 |  | PASS / FAIL / NOT_RUN |  |  |
 | 인접 기능 |  | PASS / FAIL / NOT_RUN |  |  |
 | 롤백·복구 |  | PASS / FAIL / NOT_RUN |  |  |
-| GitHub·Sheets 재조회 |  | PASS / FAIL / NOT_RUN |  |  |
+| repository + configured workspace readback |  | PASS / FAIL / NOT_CONFIGURED / NOT_RUN |  |  |
 
 ## 8. 최종 판정
 
@@ -109,7 +115,7 @@ BLOCKED_UNVERIFIED
 - 근거:
 - 정본 충돌:
 - 최근 승인 누락:
-- Google Sheets 불일치:
+- configured workspace 불일치:
 - 범위 외 변경:
 - 중복 구현·PR:
 - 회귀:
@@ -130,10 +136,11 @@ BLOCKED_UNVERIFIED
 - [ ] 병합 PR·Commit의 실제 diff를 확인했다.
 - [ ] 현재 확정 Decision과 분야 책임 원본을 비교했다.
 - [ ] 최근 승인 누락과 이전 Decision 부활을 검사했다.
-- [ ] Google Sheets의 Decision ID·Commit·row를 재조회했다.
+- [ ] `CONFIGURED_PROJECT_WORKSPACE`가 있으면 assigned responsibility를 재조회했고, 없으면 `NOT_CONFIGURED`로 기록했다.
 - [ ] 동일 Goal의 열린·중복 PR을 확인했다.
 - [ ] head branch 삭제 또는 자동 삭제 설정을 확인했다.
 - [ ] 공격과 비판 검증을 분리했다.
+- [ ] 실행 가능한 구체적 Finding은 필요 시 fix-guided 반사실 검증으로 재판정했다.
 - [ ] 필요한 최소 수정 뒤 회귀 재검사를 수행했다.
 - [ ] 실행하지 못한 검사를 통과로 표시하지 않았다.
 - [ ] 최종 판정과 남은 위험을 보고했다.
