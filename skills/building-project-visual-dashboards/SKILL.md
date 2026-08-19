@@ -1,6 +1,6 @@
 ---
 name: building-project-visual-dashboards
-description: Compatibility-only retired route for old requests that referenced the former standalone HTML project dashboard skill.
+description: Use when project concepts, loops, system relations, status, UX flows, evidence, risks, or next work require an editable visual dashboard.
 ---
 
 # Building Project Visual Dashboards — RETIRED compatibility stub
