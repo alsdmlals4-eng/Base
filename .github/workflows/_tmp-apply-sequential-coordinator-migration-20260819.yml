@@ -7,6 +7,12 @@ on:
     paths:
       - tools/_tmp_apply_sequential_coordinator_migration_20260819.py
       - .github/workflows/_tmp-apply-sequential-coordinator-migration-20260819.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - tools/_tmp_apply_sequential_coordinator_migration_20260819.py
+      - .github/workflows/_tmp-apply-sequential-coordinator-migration-20260819.yml
   workflow_dispatch:
 
 permissions:
