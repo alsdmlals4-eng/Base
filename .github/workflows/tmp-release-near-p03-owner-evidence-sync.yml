@@ -1,0 +1,188 @@
+name: Temporary P03 owner-evidence sync
+
+on:
+  push:
+    branches:
+      - feat/release-near-vertical-slice-first-v2-20260820
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[p03-owner-evidence-sync]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/release-near-vertical-slice-first-v2-20260820
+          fetch-depth: 0
+      - name: Align P03 synchronization owner semantics
+        shell: python
+        run: |
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              p = Path(path)
+              text = p.read_text(encoding="utf-8")
+              if new in text:
+                  return
+              if old not in text:
+                  raise SystemExit(f"anchor missing: {path}: {old[:160]!r}")
+              p.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          def append_once(path: str, marker: str, block: str) -> None:
+              p = Path(path)
+              text = p.read_text(encoding="utf-8")
+              if marker in text:
+                  return
+              p.write_text(text.rstrip() + "\n\n" + block.strip() + "\n", encoding="utf-8")
+
+          skill = "skills/synchronizing-local-and-github-state/SKILL.md"
+          protocol = "skills/synchronizing-local-and-github-state/references/safe-sync-protocol.md"
+          test = "tests/test_concurrent_git_sync_preflight_contract.py"
+          learning = "skills/synchronizing-local-and-github-state/LEARNING_LOG.md"
+
+          replace_once(
+              skill,
+              "다른 채팅 또는 독립 workstream의 Branch·path·PR은 같은 Goal처럼 보여도 기본적으로 별개다.\n\n```text\nOTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT\nEXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION\n```\n\n`same goal`은 `same workstream`의 증거가 아니다. `different workstream`이면 사용자의 현재 명시 승인 없이 checkout/write/rebase/close/merge/selective-copy를 수행하지 않는다.\n",
+              "PR·Branch·path의 존재와 **현재 활성 write owner**는 별개다.\n\n```text\nOPEN_PR_IS_NOT_ACTIVE_WORKSTREAM\nCURRENT_OWNER_EVIDENCE_REQUIRED\nACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE\nCURRENT_COORDINATOR_TAKEOVER_WHEN_NO_ACTIVE_OWNER\nEXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTION\n```\n\n`same goal`은 `same workstream`의 증거가 아니지만, `different workstream`이라는 분류만으로 현재 활성 owner를 추정하지도 않는다. 실제 `ACTIVE_OTHER_WORKER` evidence가 있을 때만 mutation-protected이며, current owner evidence가 없으면 open PR은 coordinator backlog로 재분류할 수 있다.\n",
+          )
+          replace_once(
+              skill,
+              "- `copy-integrate`: **same workstream** 또는 사용자가 현재 작업에서 명시적으로 흡수 승인한 `different workstream`의 owner delta를 latest completed `main` 위 별도 `PROVISIONAL_INTEGRATION` Branch에서 선택적으로 재현·흡수한다.",
+              "- `copy-integrate`: **same workstream**, `NO_ACTIVE_OWNER_EVIDENCE`로 판정된 coordinator takeover backlog, 또는 사용자가 실제 `ACTIVE_OTHER_WORKER`를 명시적으로 takeover 승인한 owner delta를 latest completed `main` 위 별도 `PROVISIONAL_INTEGRATION` Branch에서 선택적으로 재현·흡수한다.",
+          )
+          replace_once(
+              skill,
+              "current_workstream_identity:\nowner_workstream_identity:\ncross_workstream_absorption_authorized: false | true\nsource_main_sha:",
+              "current_workstream_identity:\nowner_workstream_identity:\nowner_activity_classification: CURRENT_COORDINATOR | ACTIVE_OTHER_WORKER | NO_ACTIVE_OWNER_EVIDENCE | UNKNOWN_OWNER_ACTIVITY\ncurrent_owner_evidence: []\ncross_workstream_absorption_authorized: false | true\nsource_main_sha:",
+          )
+          replace_once(
+              skill,
+              "current_workstream_identity\nowner_workstream_identity\ncross_workstream_absorption_authorized\nsource_main_sha",
+              "current_workstream_identity\nowner_workstream_identity\nowner_activity_classification\ncurrent_owner_evidence\ncross_workstream_absorption_authorized\nsource_main_sha",
+          )
+          replace_once(
+              skill,
+              "### Workstream identity gate\n\n1. 현재 채팅/작업 계약/PR을 `current_workstream_identity`로 식별한다.\n2. 겹치는 owner Branch/PR의 소유 작업을 `owner_workstream_identity`로 식별한다.\n3. 둘이 명확히 같은 작업 흐름이면 `same workstream`으로 판정할 수 있다.\n4. 다른 채팅·독립 작업으로 확인되면 `different workstream`이다.\n5. owner identity를 확인할 수 없으면 `UNKNOWN_WORKSTREAM`이며, cross-workstream 흡수는 `BLOCKED_UNVERIFIED`다.\n6. `different workstream`에서 `cross_workstream_absorption_authorized=false`이면 read-only 충돌 탐지만 허용하고 실제 Branch/path/PR 변경·흡수는 `WAITING_RESOURCE`로 둔다.\n7. 사용자가 현재 작업에서 다른 workstream을 **명시적으로 흡수·통합 승인**한 경우에만 `cross_workstream_absorption_authorized=true`로 기록하고 예외적인 copy integration을 허용한다.\n",
+              "### Workstream identity gate\n\n1. 현재 채팅/작업 계약/PR을 `current_workstream_identity`로 식별한다.\n2. 겹치는 Branch/PR의 목적을 `owner_workstream_identity`로 식별하되, open/draft/ready 상태 자체는 owner evidence로 쓰지 않는다.\n3. 사용자 지시, current session/automation owner, Resource Lock, matching running execution처럼 **현재 쓰기 주체를 증명하는 자료**를 `current_owner_evidence`로 기록한다.\n4. 현재 coordinator가 소유하면 `CURRENT_COORDINATOR`, 실제 다른 작업자가 활동 중이면 `ACTIVE_OTHER_WORKER`, 현재 owner evidence가 없으면 `NO_ACTIVE_OWNER_EVIDENCE`, 판단 근거 자체가 부족하면 `UNKNOWN_OWNER_ACTIVITY`로 `owner_activity_classification`을 정한다.\n5. `ACTIVE_OTHER_WORKER`는 mutation-protected다. `cross_workstream_absorption_authorized=false`이면 read-only 충돌 탐지만 허용하고 `WAITING_RESOURCE`로 둔다.\n6. `NO_ACTIVE_OWNER_EVIDENCE`인 unresolved open PR은 latest completed `main`과 Goal을 다시 읽어 `COORDINATOR_TAKEOVER / READY_TO_FINISH / SUPERSEDED_DUPLICATE / STALE_BACKLOG / BLOCKED_EXTERNAL`로 재분류한다. takeover/finish 범주는 현재 승인 범위 안에서 coordinator가 마무리할 수 있다.\n7. `UNKNOWN_OWNER_ACTIVITY`는 owner evidence를 더 확보하기 전 `BLOCKED_UNVERIFIED`다.\n8. 실제 `ACTIVE_OTHER_WORKER`를 현재 작업에 흡수하려면 사용자 takeover/owner handoff를 명시적으로 확인해 `cross_workstream_absorption_authorized=true`로 기록한다.\n",
+          )
+          replace_once(
+              skill,
+              "- `WAITING_RESOURCE`: path/semantic resource가 다른 task/PR 또는 다른 workstream owner에게 있고 현재 작업에 변경 권한이 없다.\n- `DUPLICATE_WORK`: 같은 Goal의 material delta가 이미 다른 owner에 의해 구현·검증되고 있다.\n- `BLOCKED_UNVERIFIED`: workstream identity·branch ownership·current SHA·open PR·권한 또는 현재 surface에 필요한 증거를 검증할 수 없다.\n- `PROVISIONAL_INTEGRATION`: same-workstream overlap 또는 현재 사용자에게 cross-workstream 흡수 승인을 받은 owner delta를 latest-main 통합 Branch에서 재현 중이다.",
+              "- `WAITING_RESOURCE`: 실제 `ACTIVE_OTHER_WORKER` 또는 현재 Resource Lock이 자원을 소유하고 있고 takeover 권한이 없다.\n- `DUPLICATE_WORK`: 같은 material delta가 실제 active owner에 의해 구현·검증 중이거나 completed main에서 이미 충족됐다.\n- `BLOCKED_UNVERIFIED`: owner activity·workstream identity·current SHA·권한 또는 현재 surface에 필요한 증거를 검증할 수 없다.\n- `PROVISIONAL_INTEGRATION`: same-workstream, `NO_ACTIVE_OWNER_EVIDENCE`의 coordinator takeover, 또는 명시 승인된 `ACTIVE_OTHER_WORKER` delta를 latest-main 통합 Branch에서 재현 중이다.",
+          )
+          replace_once(
+              skill,
+              "이 standing authorization은 동시 작업을 막지 않고 latest completed `main`에서 통합하는 기본 기술 경로를 제공하지만, **workstream 경계를 자동으로 넘는 사용자 권한은 아니다.**\n\n```text\nOTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT\nEXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION\n```\n\n### Authorization boundary\n\n- `same workstream`: 기존 승인 Goal 안의 same-goal/path/semantic overlap이면 standing authorization으로 `PROVISIONAL_INTEGRATION`을 시작할 수 있다.\n- `different workstream`: standing authorization만으로는 흡수 권한이 생기지 않는다. 현재 사용자가 명시적으로 흡수·통합 승인해 `cross_workstream_absorption_authorized=true`가 된 경우에만 예외적으로 같은 절차를 사용한다. This is **explicit user authorization** for the current integration scope; it is not standing cross-workstream permission.\n- `UNKNOWN_WORKSTREAM`: 사용자의 명시 승인과 owner identity evidence가 없으면 `BLOCKED_UNVERIFIED` 또는 `WAITING_RESOURCE`다.\n- 다른 채팅 owner PR을 “같은 Goal”이라는 이유만으로 자동 close/merge/rebase/copy하지 않는다.\n",
+              "이 standing authorization은 latest completed `main`에서 통합하는 기본 기술 경로를 제공하지만 **실제 활성 다른 작업자의 소유권을 자동으로 넘지 않는다.** open PR 상태만으로는 보호를 발동하지 않는다.\n\n```text\nOPEN_PR_IS_NOT_ACTIVE_WORKSTREAM\nCURRENT_OWNER_EVIDENCE_REQUIRED\nEXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTION\n```\n\n### Authorization boundary\n\n- `same workstream` / `CURRENT_COORDINATOR`: 기존 승인 Goal 안의 same-goal/path/semantic overlap이면 standing authorization으로 `PROVISIONAL_INTEGRATION`을 시작할 수 있다.\n- `NO_ACTIVE_OWNER_EVIDENCE`: unresolved open PR을 latest main과 비교해 `COORDINATOR_TAKEOVER / READY_TO_FINISH / SUPERSEDED_DUPLICATE / STALE_BACKLOG / BLOCKED_EXTERNAL`로 재분류한다. takeover/finish/supersession이 현재 사용자 승인 범위에 있으면 별도 cross-workstream 승인 없이 coordinator가 마무리할 수 있다.\n- `ACTIVE_OTHER_WORKER`: standing authorization만으로는 흡수 권한이 생기지 않는다. 사용자 takeover/owner handoff로 `cross_workstream_absorption_authorized=true`가 된 경우에만 예외적으로 통합한다.\n- `UNKNOWN_OWNER_ACTIVITY`: owner evidence를 확인할 때까지 `BLOCKED_UNVERIFIED`다.\n- 같은 Goal이라는 이유만으로 실제 active owner Branch/PR을 자동 close/merge/rebase/copy하지 않는다.\n",
+          )
+          replace_once(
+              skill,
+              "→ record current_workstream_identity / owner_workstream_identity\n→ confirm same workstream OR explicit cross-workstream absorption authorization",
+              "→ record current_workstream_identity / owner_workstream_identity\n→ record owner_activity_classification / current_owner_evidence\n→ confirm CURRENT_COORDINATOR or NO_ACTIVE_OWNER_EVIDENCE takeover OR explicit ACTIVE_OTHER_WORKER takeover authorization",
+          )
+          replace_once(
+              skill,
+              "current_workstream_identity:\nowner_workstream_identity:\ncross_workstream_absorption_authorized:\nprovisional_overlap_paths:",
+              "current_workstream_identity:\nowner_workstream_identity:\nowner_activity_classification:\ncurrent_owner_evidence: []\ncross_workstream_absorption_authorized:\nprovisional_overlap_paths:",
+          )
+          replace_once(
+              skill,
+              "`residual_owner_deltas`가 있으면 owner PR을 보존한다. zero residual이어도 다른 workstream owner PR은 사용자의 명시 승인 범위 밖에서 close/supersede하지 않는다.",
+              "`residual_owner_deltas`가 있으면 필요한 owner/backlog PR을 보존한다. zero residual이어도 실제 `ACTIVE_OTHER_WORKER` PR은 사용자 takeover 범위 밖에서 close/supersede하지 않는다. `NO_ACTIVE_OWNER_EVIDENCE` backlog는 current coordinator가 승인된 Goal 안에서 supersession을 마무리할 수 있다.",
+          )
+          replace_once(
+              skill,
+              "3. current workstream/owner workstream identity를 판정한다.\n4. local surface가 있으면 실제 local/worktree/branch 상태를 읽고, connector-only면 local 상태를 `NOT_APPLICABLE_CONNECTOR_ONLY`로 둔다.\n5. first persistent write 전에 path + semantic overlap + open/recent PR를 비교한다.\n6. same workstream이면 cooperative ownership 규칙을 적용한다.\n7. different workstream이면 explicit user absorption authorization 없이는 read-only 탐지까지만 하고 owner surface를 건드리지 않는다.\n8. `CLEAR` 또는 승인된 `PROVISIONAL_INTEGRATION`에서만 write한다.",
+              "3. current workstream/owner workstream identity와 `owner_activity_classification / current_owner_evidence`를 판정한다.\n4. local surface가 있으면 실제 local/worktree/branch 상태를 읽고, connector-only면 local 상태를 `NOT_APPLICABLE_CONNECTOR_ONLY`로 둔다.\n5. first persistent write 전에 path + semantic overlap + open/recent PR를 비교한다.\n6. `CURRENT_COORDINATOR` 또는 `NO_ACTIVE_OWNER_EVIDENCE` takeover이면 current approval 범위와 latest-main reconciliation을 확인한다.\n7. `ACTIVE_OTHER_WORKER`이면 explicit takeover authorization 없이는 read-only 탐지까지만 하고 owner surface를 건드리지 않는다.\n8. `CLEAR` 또는 승인된 `PROVISIONAL_INTEGRATION`에서만 write한다.",
+          )
+
+          replace_once(
+              protocol,
+              "Base의 기본 충돌 복구 방식은 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`에 따른 **latest-main copy integration**이지만 workstream 격리 Gate보다 우선하지 않는다.\n\n```text\nOTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT\nEXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION\n```\n\n같은 Goal·path·semantic resource가 겹치더라도 `different workstream`이면 현재 사용자의 명시적 흡수 승인 전에는 owner Branch·path·PR을 수정하거나 material delta를 가져오지 않는다. `same workstream`일 때만 standing authorization이 기본 통합 경로를 제공한다.\n",
+              "Base의 기본 충돌 복구 방식은 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`에 따른 **latest-main copy integration**이지만 실제 활성 owner 보호보다 우선하지 않는다.\n\n```text\nOPEN_PR_IS_NOT_ACTIVE_WORKSTREAM\nCURRENT_OWNER_EVIDENCE_REQUIRED\nACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE\nEXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTION\n```\n\n같은 Goal·path·semantic resource가 겹쳐도 open/draft/ready 상태만으로 active owner를 추정하지 않는다. `ACTIVE_OTHER_WORKER` evidence가 있으면 takeover 승인 전 owner Branch·path·PR을 수정하거나 material delta를 가져오지 않는다. `NO_ACTIVE_OWNER_EVIDENCE` backlog는 current coordinator가 latest main에서 takeover/finish/supersession 여부를 판정할 수 있다.\n",
+          )
+          replace_once(
+              protocol,
+              "current_workstream_identity:\nowner_workstream_identity:\ncross_workstream_absorption_authorized: false | true\nsource_main_sha:",
+              "current_workstream_identity:\nowner_workstream_identity:\nowner_activity_classification: CURRENT_COORDINATOR | ACTIVE_OTHER_WORKER | NO_ACTIVE_OWNER_EVIDENCE | UNKNOWN_OWNER_ACTIVITY\ncurrent_owner_evidence: []\ncross_workstream_absorption_authorized: false | true\nsource_main_sha:",
+          )
+          replace_once(
+              protocol,
+              "- `current_workstream_identity`: 현재 채팅/작업 계약/PR이 소유한 독립 작업 흐름.\n- `owner_workstream_identity`: 겹치는 Branch/PR/Task가 속한 독립 작업 흐름.\n- `cross_workstream_absorption_authorized`: 현재 사용자가 이 작업에서 다른 workstream의 변경을 실제 흡수·통합하도록 명시 승인했는지 여부.",
+              "- `current_workstream_identity`: 현재 채팅/작업 계약/PR이 소유한 독립 작업 흐름.\n- `owner_workstream_identity`: 겹치는 Branch/PR/Task의 목적/계보. 존재만으로 current owner를 의미하지 않는다.\n- `owner_activity_classification`: current owner evidence를 바탕으로 `CURRENT_COORDINATOR / ACTIVE_OTHER_WORKER / NO_ACTIVE_OWNER_EVIDENCE / UNKNOWN_OWNER_ACTIVITY`를 기록한다.\n- `current_owner_evidence`: 사용자 지시, current session/automation owner, Resource Lock, matching running execution 등 현재 활동 주체를 직접 뒷받침하는 locator.\n- `cross_workstream_absorption_authorized`: 실제 `ACTIVE_OTHER_WORKER`를 현재 작업에 takeover/흡수하도록 사용자가 명시 승인했는지 여부.",
+          )
+          replace_once(
+              protocol,
+              "## 2. Workstream identity gate\n\npath/semantic overlap보다 먼저 workstream 경계를 확인한다.\n\n1. 같은 채팅/같은 승인 contract/같은 integration Goal의 소유권이 확인되면 `same workstream`으로 분류한다.\n2. 다른 채팅 또는 별도 승인 contract/독립 PR 흐름이면 `different workstream`으로 분류한다.\n3. 식별할 근거가 부족하면 `UNKNOWN_WORKSTREAM`이다.\n4. `different workstream` + `cross_workstream_absorption_authorized=false`이면 read-only 상태 확인만 허용하고 `WAITING_RESOURCE`로 둔다.\n5. `UNKNOWN_WORKSTREAM`에서 cross-workstream absorption authorization도 없으면 `BLOCKED_UNVERIFIED`다.\n6. 사용자가 현재 작업에서 다른 채팅/독립 PR의 흡수·통합을 명시 승인하면 `cross_workstream_absorption_authorized=true`를 기록하고 그 승인 범위 안에서만 `PROVISIONAL_INTEGRATION`을 사용할 수 있다.\n\n`same goal`만으로 `same workstream`을 추정하지 않는다.\n",
+              "## 2. Workstream identity gate\n\npath/semantic overlap보다 먼저 **현재 active owner evidence**를 확인한다.\n\n1. 같은 채팅/같은 승인 contract/현재 coordinator 소유권이 확인되면 `CURRENT_COORDINATOR`다.\n2. open/draft/ready PR·Branch·과거 다른 채팅 기록은 owner identity metadata일 수 있지만 current owner evidence 자체는 아니다.\n3. 사용자 지시, current session/automation owner, Resource Lock, matching running execution을 `current_owner_evidence`로 수집한다.\n4. 실제 다른 작업자가 현재 활동 중이면 `ACTIVE_OTHER_WORKER`; takeover 승인 전 read-only 상태 확인만 허용하고 `WAITING_RESOURCE`로 둔다.\n5. current owner evidence가 없으면 `NO_ACTIVE_OWNER_EVIDENCE`; latest completed main과 Goal을 재검증해 `COORDINATOR_TAKEOVER / READY_TO_FINISH / SUPERSEDED_DUPLICATE / STALE_BACKLOG / BLOCKED_EXTERNAL`로 재분류한다.\n6. owner activity 자체를 판정할 근거가 부족하면 `UNKNOWN_OWNER_ACTIVITY`이고 `BLOCKED_UNVERIFIED`다.\n7. 사용자가 실제 `ACTIVE_OTHER_WORKER`의 takeover/통합을 명시 승인하면 `cross_workstream_absorption_authorized=true`를 기록하고 승인 범위 안에서만 `PROVISIONAL_INTEGRATION`을 사용한다.\n\n`same goal`만으로 `same workstream`이나 active owner를 추정하지 않는다. 반대로 `different workstream`이라는 역사적 계보만으로 현재 activity를 추정하지도 않는다.\n",
+          )
+          replace_once(
+              protocol,
+              "current_workstream_identity\nowner_workstream_identity\ncross_workstream_absorption_authorized\nsource_main_sha",
+              "current_workstream_identity\nowner_workstream_identity\nowner_activity_classification\ncurrent_owner_evidence\ncross_workstream_absorption_authorized\nsource_main_sha",
+          )
+          replace_once(
+              protocol,
+              "| `WAITING_RESOURCE` | path/semantic resource가 다른 task/PR/workstream owner에게 있고 현재 작업에 변경 권한이 없다 | owner surface를 건드리지 않고 해당 task만 보류 |\n| `DUPLICATE_WORK` | 같은 material delta가 이미 다른 owner에서 구현·검증 중 | 중복 구현 금지; workstream auth 확인 |\n| `BLOCKED_UNVERIFIED` | owner/workstream/SHA/PR/권한 또는 필요한 surface 증거를 검증 불가 | 증거 확보 전 write 금지 |\n| `PROVISIONAL_INTEGRATION` | same workstream 또는 명시 승인된 cross-workstream delta를 별도 latest-main Branch에서 통합 | selective copy + semantic reconciliation |",
+              "| `WAITING_RESOURCE` | 실제 `ACTIVE_OTHER_WORKER` 또는 Resource Lock이 자원을 소유하고 takeover 권한이 없다 | owner surface를 건드리지 않고 해당 task만 보류 |\n| `DUPLICATE_WORK` | 같은 material delta가 실제 active owner에서 구현 중이거나 completed main에서 이미 충족됨 | 중복 구현 금지; active/completed 상태 확인 |\n| `BLOCKED_UNVERIFIED` | owner activity/workstream/SHA/권한 또는 필요한 surface 증거를 검증 불가 | 증거 확보 전 write 금지 |\n| `PROVISIONAL_INTEGRATION` | same workstream, `NO_ACTIVE_OWNER_EVIDENCE` takeover, 또는 승인된 `ACTIVE_OTHER_WORKER` delta를 latest-main Branch에서 통합 | selective copy + semantic reconciliation |",
+          )
+          replace_once(
+              protocol,
+              "- 다른 owner Branch/worktree의 dirty state를 clean/rebase/reset하지 않는다.\n- 다른 채팅/독립 workstream의 Branch·path·PR은 기본 보호 대상이다.\n- overlap 확인을 위해 read-only diff/head/path 조회는 가능하다.\n- owner Branch에 직접 commit하지 않는다.\n- `different workstream`은 현재 사용자 명시 승인 전 selective copy도 하지 않는다.\n- `same workstream` 통합은 별도 Branch에서 수행한다.",
+              "- 실제 `ACTIVE_OTHER_WORKER` Branch/worktree의 dirty state를 clean/rebase/reset하지 않는다.\n- open/draft/ready PR 상태만으로 보호를 발동하지 않는다. actual current owner evidence가 있는 Branch·path·PR만 active mutation-protected다.\n- overlap과 owner activity 확인을 위해 read-only diff/head/path/status 조회는 가능하다.\n- `ACTIVE_OTHER_WORKER` owner Branch에 직접 commit하지 않는다.\n- `ACTIVE_OTHER_WORKER`는 사용자 takeover 승인 전 selective copy도 하지 않는다.\n- `CURRENT_COORDINATOR` / `NO_ACTIVE_OWNER_EVIDENCE` takeover 통합은 latest completed main의 별도 Branch에서 수행한다.",
+          )
+          replace_once(
+              protocol,
+              "### 5.1 Authorization boundary\n\nstanding authorization은 **same workstream**의 승인된 same-goal/path/semantic overlap을 기다리지 않고 latest main에서 통합하기 위한 기술적 권한이다.\n\n```text\nOTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT\nEXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION\n```\n\n- `same workstream`: standing authorization을 사용할 수 있다.\n- `different workstream`: standing authorization이 `explicit user authorization`을 대신하지 않는다. 사용자가 현재 작업에서 명시적으로 흡수·통합 승인해야 한다.\n- `UNKNOWN_WORKSTREAM`: owner identity와 승인 범위가 확인될 때까지 `BLOCKED_UNVERIFIED` 또는 `WAITING_RESOURCE`다.\n",
+              "### 5.1 Authorization boundary\n\nstanding authorization은 latest completed main에서 충돌을 통합하기 위한 기술적 권한이며, 실제 활성 다른 작업자의 takeover 권한을 대신하지 않는다.\n\n```text\nOPEN_PR_IS_NOT_ACTIVE_WORKSTREAM\nCURRENT_OWNER_EVIDENCE_REQUIRED\nEXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTION\n```\n\n- `CURRENT_COORDINATOR` / same workstream: standing authorization을 사용할 수 있다.\n- `NO_ACTIVE_OWNER_EVIDENCE`: current approval 범위의 `COORDINATOR_TAKEOVER / READY_TO_FINISH / SUPERSEDED_DUPLICATE`는 standing authorization으로 latest-main 통합을 진행할 수 있다.\n- `ACTIVE_OTHER_WORKER`: standing authorization이 takeover 승인을 대신하지 않는다. 사용자가 현재 작업에서 명시적으로 takeover/통합 승인해야 한다.\n- `UNKNOWN_OWNER_ACTIVITY`: owner activity evidence가 확인될 때까지 `BLOCKED_UNVERIFIED`다.\n",
+          )
+
+          replace_once(
+              test,
+              "    def test_other_chat_workstreams_require_explicit_absorption_authorization(self) -> None:\n        agents = read(\"AGENTS.md\")\n        skill = read(\"skills/synchronizing-local-and-github-state/SKILL.md\")\n        protocol = read(\n            \"skills/synchronizing-local-and-github-state/references/safe-sync-protocol.md\"\n        )\n        policy = read(\"docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md\")\n\n        for text in (agents, skill, protocol, policy):\n            self.assertIn(\"OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT\", text)\n            self.assertIn(\n                \"EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION\",\n                text,\n            )\n\n        for token in (\n            \"current_workstream_identity\",\n            \"owner_workstream_identity\",\n            \"cross_workstream_absorption_authorized\",\n        ):\n            self.assertIn(token, skill)\n            self.assertIn(token, protocol)\n\n        self.assertIn(\"same workstream\", skill)\n        self.assertIn(\"different workstream\", skill)\n        self.assertIn(\"명시적으로 흡수·통합을 승인\", agents)\n        self.assertIn(\"다른 채팅\", agents)\n\n        self.assertNotIn(\n            \"approved same-goal/path/semantic overlap에 한해서 이 standing authorization이 필요한 `explicit user authorization`을 제공\",\n            skill,\n        )\n",
+              "    def test_open_pr_requires_current_owner_evidence_before_protection(self) -> None:\n        agents = read(\"AGENTS.md\")\n        skill = read(\"skills/synchronizing-local-and-github-state/SKILL.md\")\n        protocol = read(\n            \"skills/synchronizing-local-and-github-state/references/safe-sync-protocol.md\"\n        )\n        policy = read(\"docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md\")\n\n        for text in (agents, skill, protocol, policy):\n            self.assertIn(\"OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM\", text)\n            self.assertIn(\"ACTIVE_OTHER_WORKER\", text)\n\n        for text in (skill, protocol, policy):\n            self.assertIn(\"CURRENT_OWNER_EVIDENCE_REQUIRED\", text)\n            self.assertNotIn(\"OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT\", text)\n            self.assertNotIn(\"EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION\", text)\n\n        for token in (\n            \"current_workstream_identity\",\n            \"owner_workstream_identity\",\n            \"owner_activity_classification\",\n            \"current_owner_evidence\",\n            \"cross_workstream_absorption_authorized\",\n            \"NO_ACTIVE_OWNER_EVIDENCE\",\n            \"COORDINATOR_TAKEOVER\",\n        ):\n            self.assertIn(token, skill)\n            self.assertIn(token, protocol)\n\n        self.assertIn(\"EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTION\", skill)\n        self.assertIn(\"EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTION\", protocol)\n        self.assertIn(\"same workstream\", skill)\n        self.assertIn(\"different workstream\", skill)\n        self.assertIn(\"CURRENT_COORDINATOR_CHAT\", agents)\n\n        self.assertNotIn(\n            \"approved same-goal/path/semantic overlap에 한해서 이 standing authorization이 필요한 `explicit user authorization`을 제공\",\n            skill,\n        )\n",
+          )
+
+          append_once(
+              learning,
+              "## 2026-08-20 — Open PR과 실제 active owner를 분리한다",
+              """
+          ## 2026-08-20 — Open PR과 실제 active owner를 분리한다
+
+          ### Trigger
+          current coordinator 단일 채팅 운영이 확정된 뒤에도 synchronization Skill/protocol 일부가 `different workstream` 또는 과거 다른 채팅 PR이라는 이유만으로 무조건 write를 막아 `OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM`과 충돌했다.
+
+          ### Lesson
+          - PR의 open/draft/ready 상태와 현재 write owner는 별도 증거다.
+          - 사용자 지시, current session/automation owner, Resource Lock, matching running execution 같은 `current_owner_evidence`로 `ACTIVE_OTHER_WORKER`를 확인했을 때만 mutation protection을 발동한다.
+          - owner evidence가 없으면 latest completed main과 Goal을 재검증해 `COORDINATOR_TAKEOVER / READY_TO_FINISH / SUPERSEDED_DUPLICATE / STALE_BACKLOG / BLOCKED_EXTERNAL`로 분류한다.
+          - 실제 `ACTIVE_OTHER_WORKER`는 기존처럼 강하게 보호하며 takeover에는 명시적 사용자 handoff가 필요하다.
+
+          ### Verification boundary
+          connector-only surface에서는 local process/worktree activity를 추정하지 않는다. 관찰할 수 없는 owner activity는 `UNKNOWN_OWNER_ACTIVITY` 또는 `BLOCKED_UNVERIFIED`로 둔다.
+          """,
+          )
+
+      - name: Verify focused P03 and policy contracts
+        run: |
+          python -m unittest \
+            tests.test_concurrent_git_sync_preflight_contract \
+            tests.test_base_long_horizon_work_contract \
+            tests.test_neutral_adversarial_feature_lifecycle \
+            tests.test_vertical_slice_v6_contract \
+            -v
+      - name: Commit bounded P03 sync
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            skills/synchronizing-local-and-github-state/SKILL.md \
+            skills/synchronizing-local-and-github-state/references/safe-sync-protocol.md \
+            skills/synchronizing-local-and-github-state/LEARNING_LOG.md \
+            tests/test_concurrent_git_sync_preflight_contract.py
+          git diff --cached --quiet && exit 0
+          git commit -m "fix(p03): require current owner evidence before workstream protection [p03-owner-evidence-sync]"
+          git push origin HEAD:feat/release-near-vertical-slice-first-v2-20260820
