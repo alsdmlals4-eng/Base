@@ -1,0 +1,109 @@
+name: Temporary release-near Vertical Slice migration
+
+on:
+  push:
+    branches:
+      - feat/release-near-vertical-slice-first-v2-20260820
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    if: ${{ !contains(github.event.head_commit.message, '[release-slice-migration]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/release-near-vertical-slice-first-v2-20260820
+          fetch-depth: 0
+      - name: Apply bounded current-main migration
+        shell: python
+        run: |
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              p = Path(path)
+              text = p.read_text(encoding="utf-8")
+              if new in text:
+                  return
+              if old not in text:
+                  raise SystemExit(f"anchor missing: {path}: {old[:80]!r}")
+              p.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          def insert_after(path: str, anchor: str, block: str, sentinel: str) -> None:
+              p = Path(path)
+              text = p.read_text(encoding="utf-8")
+              if sentinel in text:
+                  return
+              if anchor not in text:
+                  raise SystemExit(f"anchor missing: {path}: {anchor[:80]!r}")
+              p.write_text(text.replace(anchor, anchor + block, 1), encoding="utf-8")
+
+          replace_once(
+              "docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md",
+              "CORE_LOOP_DUMMY_BALANCE_BUILD_TEST\nBALANCE_BUDGET",
+              "RELEASE_NEAR_VERTICAL_SLICE_FIRST\nGAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE\nSYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE\nTECHNICAL_SPIKE_INTERNAL_ONLY\nEXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT\nSHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED\nBALANCE_BUDGET",
+          )
+          replace_once(
+              "docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md",
+              "### `CORE_LOOP_DUMMY_BALANCE_BUILD_TEST`\n\n게임 작업은 core loop, 핵심 시스템, 세계관/핵심 스토리라인 정합성, 가역적 dummy `BALANCE_BUDGET`, playable build/test와 재사용 가능한 모듈 경계를 함께 본다.",
+              "### `RELEASE_NEAR_VERTICAL_SLICE_FIRST`\n\n기획·검수를 닫은 뒤 플레이어 재미·몰입·가독성·첫인상·선택의 감정적 효과를 검증하는 첫 인간 플레이 테스트는 짧더라도 **실제 출시 의도에 가까운 완성형 Vertical Slice**를 대상으로 한다. `GAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE`이며, `SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED`에 따라 실제 게임에 사용할 방향의 UI/UX, 이미지·아트, 애니메이션/연출, 대표 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠가 한 구간에서 연결되어야 한다.\n\n`SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`: 시스템만 동작하는 회색 상자·dummy UI·무음/무연출 PoC는 알고리즘·성능·호환성·데이터 흐름 같은 좁은 기술 질문에는 쓸 수 있지만 재미·몰입·판매력·가독성·감정·기억·전체 UX의 PASS 근거가 될 수 없다. 이런 검증은 `TECHNICAL_SPIKE_INTERNAL_ONLY`로 분리하며 공개 데모·Vertical Slice·player-experience evidence로 승격하지 않는다.\n\n`EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT`: 완성형 Slice를 만든다는 이유로 모든 자산·UI·사운드·효과를 새로 만들지 않는다. 현재 프로젝트의 승인된 자산·구조·도구·상용/오픈소스 해법을 먼저 조사하고 `ADOPT / ADAPT / REJECT`로 판정한다. 프로젝트의 세계관·핵심 경험·가독성·일관성에 맞는 기존 해법은 재사용·변형하고, 검증 목적에 실제로 필요한 대표 품질만 구현한다.\n\n가역적 `BALANCE_BUDGET`과 내부 기술 Spike는 완성형 Slice 제작 중 위험을 줄이는 보조 수단이며, 그 자체가 인간 플레이 검증 제품은 아니다.",
+          )
+
+          replace_once(
+              "docs/VISUAL_COLLABORATION_TOOL_POLICY.md",
+              "## Visualized PoC / demo readiness\n\n`VISUALIZED_POC_BEFORE_DEMO_TEST`를 기본으로 한다. UI/UX, 화면 구성, 정보 가독성, 아트 분위기가 플레이 판단에 실질 영향을 주는 PoC/데모는 기획·검수 단계에서 먼저 필요한 이미지/화면 candidate를 만들거나 승인된 기존 시각 자산을 선택한다. candidate는 정확한 Project의 Notion Visual/Asset record에 배치하고 destination readback을 거친 뒤 구현 입력으로 사용한다.\n\n```text\nplanning + UX/UI flow\n→ visual requirements\n→ generate/select candidate images\n→ Notion project placement + readback\n→ approval/rejection\n→ implementation package uses approved visual inputs\n→ PoC/demo implementation\n→ runtime UX/UI/play test\n```\n\n완성 아트를 모든 로직 PoC에 강제하지 않는다. 시각 요소가 현재 가설 검증에 영향을 주지 않으면 `VISUAL_NOT_MATERIAL_TO_THIS_POC`로 기록하고 생략할 수 있다. 반대로 화면/가독성/첫인상/상호작용 의미를 검증하는 데모를 회색 박스만으로 최종 판정하지 않는다.",
+              "## Release-near Vertical Slice visual readiness\n\n`RELEASE_NEAR_VERTICAL_SLICE_FIRST`를 게임 플레이 검증의 기본으로 한다. 기획·검수를 닫은 뒤 재미·몰입·가독성·첫인상·판매 포인트·감정 곡선을 판단하는 플레이 테스트는 `shipping-intent` 짧은 Vertical Slice에서 수행한다. `SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED`에 따라 실제 게임에서 사용할 방향의 UI/UX, 이미지·아트, 애니메이션/연출, 대표 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠를 서로 연결한 상태여야 한다.\n\n```text\nplanning + UX/UI/audio/VFX flow\n→ visual/audio/effect requirements\n→ generate/select/reuse candidate assets\n→ Notion Project placement + readback\n→ approval/rejection\n→ repository implementation package\n→ shipping-intent UI + image/art + audio + VFX + system/content integration\n→ complete short Vertical Slice\n→ runtime UX/UI/play test\n```\n\n`SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`: 회색 상자, dummy UI, 무음/무연출, 시스템-only PoC는 기술 Spike로만 사용할 수 있으며 재미·몰입·전체 UX·플레이어 기억의 최종 판단 근거가 아니다. 좁은 기술 질문은 `TECHNICAL_SPIKE_INTERNAL_ONLY`로 먼저 풀 수 있지만, 그 결과는 완성형 Vertical Slice에 흡수한 뒤 플레이 테스트한다. 생성 성공·업로드 성공·정적 mockup만으로 player-experience PASS를 선언하지 않는다.",
+          )
+
+          insert_after(
+              "docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md",
+              "이 reference는 `designing-vertical-slices`의 제품 단계·통합 데모·플랫폼 준비가 현재 요청과 관련될 때만 읽는다.\n",
+              "\n## Release-near 플레이 검증 권위\n\n```text\nRELEASE_NEAR_VERTICAL_SLICE_FIRST\nGAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE\nSYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE\nTECHNICAL_SPIKE_INTERNAL_ONLY\nSHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED\nEXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT\n```\n\n플레이어 경험을 판정하는 Gate 2 테스트는 짧더라도 실제 출시 의도에 가까운 UI/UX, 이미지·아트, 대표 사운드, VFX/피드백, 시스템·데이터·콘텐츠가 연결된 완성형 Vertical Slice를 대상으로 한다. 시스템-only PoC는 기술 질문의 내부 Spike일 뿐 재미·몰입·가독성·판매력·감정·기억의 증거가 아니다.\n",
+              "RELEASE_NEAR_VERTICAL_SLICE_FIRST",
+          )
+          replace_once(
+              "docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md",
+              "데모 계약·품질 기준 확정\n→ 제작 의도 Vertical Slice 구현",
+              "데모 계약·품질 기준 확정\n→ shipping-intent UI/이미지/사운드/VFX/시스템/콘텐츠 통합\n→ 제작 의도 Vertical Slice 구현",
+          )
+
+          insert_after(
+              "skills/designing-vertical-slices/SKILL.md",
+              "게임 전체를 얕게 만드는 대신, 핵심 경험을 대표하는 작은 구간을 최종 품질에 가까운 깊이로 연결해 **재미·품질·제작성·실제 플레이 증거**를 동시에 검증한다.\n",
+              "\n`RELEASE_NEAR_VERTICAL_SLICE_FIRST`: 기획·검수 뒤 플레이어 경험을 판정하는 첫 인간 플레이 테스트는 짧더라도 release-near/shipping-intent Vertical Slice에서 수행한다.\n\n`SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED`: 실제 게임에 사용할 방향의 UI/UX, 이미지·아트, 애니메이션/연출, 대표 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠가 한 대표 흐름에서 서로 연결되어야 한다. placeholder가 남아 전체 경험을 왜곡하면 human playtest gate로 올리지 않는다.\n\n`SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`: 시스템-only PoC는 기술 가능성·알고리즘·성능·호환성 같은 좁은 질문의 `TECHNICAL_SPIKE_INTERNAL_ONLY` evidence다. 재미·몰입·가독성·첫인상·판매력·감정·기억·전체 UX의 PASS 근거로 사용하지 않는다.\n\n`EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT`: shipping-intent 품질을 위해 무조건 새로 만들지 않는다. 승인된 프로젝트 자산·기존 구현·검증된 라이브러리/도구를 먼저 조사하고 프로젝트 정체성에 맞게 `ADOPT / ADAPT / REJECT`한다.\n",
+              "SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED",
+          )
+
+          insert_after(
+              "skills/analyzing-and-refining-game-concepts/SKILL.md",
+              "프로젝트 코어의 사실 판정·승인은 코어 Skill, 11영역 Games User Research 구조의 설치·누락 감사는 `governing-game-user-research-coverage`, 기획 책임 원본 작성·발행은 `managing-design-documents`, 실제 변경 검증은 `reviewing-and-validating-project-changes`가 책임진다.\n",
+              "\n`PLAYER_APPEAL_QUALITY_GATE`: Production 후보와 플레이테스트용 Vertical Slice는 기능 수가 아니라 플레이어 가치로 검수한다. 최소한 **독창성/차별점**, `DDD`의 행동-피드백-보상 품질, 아트·UI·사운드·연출의 **일관성**, 불필요한 **복잡성**, 의도한 **난이도와 접근 가능성**, 캐릭터/세계관/상호작용의 개성과 기억에 남는 순간을 함께 공격한다. 자동 테스트나 정적 문서만으로 재미·몰입을 PASS 처리하지 않으며 실제 인간 플레이가 필요한 축은 실행 전까지 `NOT_RUN`이다.\n\n`EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT`: 벤치마크·기존 시스템·자산·UI·오디오·도구를 먼저 조사하되 복사하지 않고 현재 프로젝트 코어와 장기 방향에 맞게 `ADOPT / ADAPT / REJECT`한다.\n\n`RELEASE_NEAR_VERTICAL_SLICE_FIRST`: 시스템-only PoC는 기술 Spike로 제한한다. 재미·몰입·첫인상·전체 UX를 검증할 때는 shipping-intent UI/UX·이미지/아트·사운드·VFX·시스템/콘텐츠가 연결된 짧은 완성형 Vertical Slice를 사용한다.\n",
+              "PLAYER_APPEAL_QUALITY_GATE",
+          )
+
+          insert_after(
+              "templates/planning/VERTICAL_SLICE_PLAN.md",
+              "# Vertical Slice Plan",
+              "\n\n## 0. Release-near 플레이 검증 계약\n\n```yaml\nRELEASE_NEAR_VERTICAL_SLICE_FIRST: REQUIRED\nGAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE: REQUIRED\nSHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED: REQUIRED\nSYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE: REQUIRED\nTECHNICAL_SPIKE_INTERNAL_ONLY: REQUIRED\nEXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT: REQUIRED\nPLAYER_APPEAL_QUALITY_GATE: REQUIRED\n```\n\n플레이어 경험을 판단하는 Slice는 실제 게임에 사용할 방향의 **UI/UX · 이미지/아트 · 애니메이션/연출 · 대표 사운드 · VFX/피드백 · 핵심 시스템/데이터/콘텐츠**를 한 짧은 흐름으로 완성한 뒤 테스트한다. 시스템-only PoC는 기술 질문에만 쓰며 재미·몰입·가독성·첫인상·판매력·감정·기억을 PASS 처리하지 않는다.\n\n### Player Appeal Quality Gate\n- 독창성·차별점: 왜 유사 게임 대신 이 게임을 선택하는가?\n- DDD: 행동→피드백→보상 지연과 명료성이 핵심 경험을 강화하는가?\n- 일관성: UI·이미지·사운드·VFX·세계관·시스템이 같은 방향을 가리키는가?\n- 복잡성: 플레이어 고민을 만들지 않는 설명/규칙/버튼을 제거했는가?\n- 난이도: 도전이 공정하고 읽을 수 있으며 접근 가능한가?\n- 개성·기억: 첫인상과 대표 순간에 프로젝트만의 성격이 남는가?\n- 인간 플레이 증거: 실제 플레이 전 재미·몰입 판정은 `NOT_RUN`인가?\n",
+              "PLAYER_APPEAL_QUALITY_GATE",
+          )
+
+          # P05 partition is human-facing maintenance guidance; keep it aligned without creating new authority.
+          p05 = Path("docs/operations/base-partitions/P05_ART_UX_UI_VISUAL_ASSETS.md")
+          if p05.exists():
+              text = p05.read_text(encoding="utf-8")
+              text = text.replace("VISUALIZED_POC_BEFORE_DEMO_TEST", "RELEASE_NEAR_VERTICAL_SLICE_FIRST")
+              if "SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE" not in text:
+                  text += "\n\n## Current Vertical Slice visual invariant\n\n`RELEASE_NEAR_VERTICAL_SLICE_FIRST` + `SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`: player-facing validation uses shipping-intent UI/image/audio/VFX/system integration; system-only PoC stays technical-only.\n"
+              p05.write_text(text, encoding="utf-8")
+      - name: Commit migration result
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md docs/VISUAL_COLLABORATION_TOOL_POLICY.md docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md skills/designing-vertical-slices/SKILL.md skills/analyzing-and-refining-game-concepts/SKILL.md templates/planning/VERTICAL_SLICE_PLAN.md docs/operations/base-partitions/P05_ART_UX_UI_VISUAL_ASSETS.md
+          git diff --cached --exit-code && { echo "No changes"; exit 0; }
+          git commit -m "feat: integrate release-near Vertical Slice gameplay validation [release-slice-migration]"
+          git push origin HEAD:feat/release-near-vertical-slice-first-v2-20260820
