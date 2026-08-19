@@ -415,9 +415,10 @@
       ],
       "exclude_when_changed": [],
       "require_all_changed": [
-        "tests/test_consolidated_skill_references.py"
+        "tests/test_reference_freshness.py"
       ],
-      "require_any_changed": []
+      "require_any_changed": [],
+      "semantic_note": "Legacy alias table strict-ID semantics are parsed and regression-tested by tests/test_reference_freshness.py."
     },
     {
       "name": "integrated-prompt-contract-test-sync",

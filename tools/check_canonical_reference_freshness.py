@@ -373,6 +373,7 @@ def main() -> int:
     print(f"- scanned_files: {len(files)}")
     print(f"- legacy_aliases: {len(aliases)}")
     print(f"- strict_legacy_skill_ids: {len(strict_aliases)}")
+    print(f"- strict_legacy_skill_ids: {len(strict_aliases)}")
     print(f"- changed_files: {len(changed)}")
     return 0
 
