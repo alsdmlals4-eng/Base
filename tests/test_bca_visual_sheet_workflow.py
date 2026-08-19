@@ -120,11 +120,13 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
             text = read(path)
             self.assertIn("VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md", text, path)
 
-    def test_sheets_are_migration_compatibility_not_default_visual_workspace(self) -> None:
+    def test_sheets_are_retired_migration_only_not_default_visual_workspace(self) -> None:
         policy = read("docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md")
-        self.assertIn("COMPATIBILITY_ONLY", policy)
-        self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", policy)
-        self.assertIn("Do not bulk-copy", policy)
+        self.assertIn("RETIRED_MIGRATION_ONLY", policy)
+        self.assertIn("GOOGLE_SHEETS_MIGRATE_THEN_REMOVE", policy)
+        self.assertIn("Notion human-facing project canon", policy)
+        self.assertIn("workbook 전체", policy)
+        self.assertNotIn("COMPATIBILITY_ONLY", policy)
 
     def test_project_asset_delivery_requires_readback_and_explicit_promotion(self) -> None:
         workflow = read("docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md")
