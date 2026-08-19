@@ -109,14 +109,24 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         ):
             self.assertIn(term, verification)
 
-    def test_independent_workstreams_are_isolated_unless_user_explicitly_authorizes_absorption(self) -> None:
+    def test_open_pr_state_is_not_active_worker_evidence(self) -> None:
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         for term in (
             "INDEPENDENT_WORKSTREAM_ISOLATION",
-            "OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT",
-            "EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION",
+            "OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM",
+            "ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE",
+            "CURRENT_OWNER_EVIDENCE_REQUIRED",
+            "CURRENT_COORDINATOR_TAKEOVER_WHEN_NO_ACTIVE_OWNER",
+            "EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTION",
+            "ACTIVE_OTHER_WORKER",
+            "COORDINATOR_TAKEOVER",
+            "SUPERSEDED_DUPLICATE",
+            "STALE_BACKLOG",
+            "BLOCKED_EXTERNAL",
+            "READY_TO_FINISH",
         ):
             self.assertIn(term, policy)
+        self.assertNotIn("OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT", policy)
 
     def test_game_contract_requires_release_near_player_validation_and_reusable_boundaries(self) -> None:
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
