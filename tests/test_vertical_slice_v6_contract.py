@@ -70,6 +70,18 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
         self.assertIn("shipping-intent", visual.lower())
         self.assertIn("별도 `CORE_POC` 제품 단계는 사용하지 않는다", stage)
 
+    def test_part_contexts_consume_release_near_rule_and_current_coordinator_semantics(self) -> None:
+        p04 = read("docs/operations/base-partitions/P04_GAME_DESIGN_CORE_VERTICAL_SLICE.md")
+        p05 = read("docs/operations/base-partitions/P05_ART_UX_UI_VISUAL_ASSETS.md")
+
+        for text in (p04, p05):
+            self.assertIn("RELEASE_NEAR_VERTICAL_SLICE_FIRST", text)
+            self.assertIn("SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE", text)
+            self.assertIn("실제 게임 사용 후보", text)
+            self.assertIn("player-facing placeholder", text)
+            self.assertIn("OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM", text)
+            self.assertNotIn("다른 독립 open/draft/ready PR·branch·worktree는", text)
+
     def test_knowledge_references_preserve_detail_under_demo_first_authority(self) -> None:
         stage_path = "docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md"
         orchestration_path = "docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md"
