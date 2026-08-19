@@ -375,8 +375,8 @@ def build_artifacts() -> dict[Path, bytes]:
         "artifact_role": "sheet-control-contract",
         "base_sheet_status": "BASE_EXCLUDED",
         "external_sheet_writes_authorized": False,
-        "project_sheet_role": "USER_FACING_GDD_WORKSPACE",
-        "sheet_only_change_status": "PROPOSED_SHEET_CHANGE",
+        "project_sheet_role": "MIGRATION_ONLY_LEGACY_SOURCE",
+        "sheet_only_change_status": "MIGRATION_PROPOSAL_ONLY",
         "held_projects": [
             {"project": "Ten Paces: Hidden Moves", "status": "HOLD"},
             {"project": "Blacksmith", "status": "HOLD"},
