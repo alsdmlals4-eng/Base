@@ -14,6 +14,8 @@ def read(path: str) -> str:
 class V47WorkflowAlignmentTests(unittest.TestCase):
     def test_entrypoints_retire_tool_hub_and_qa_studio_from_active_project_flow(self) -> None:
         start = read("START_HERE.md")
+        readme = read("README.md")
+        docs_map = read("docs/DOCUMENTATION_MAP.md")
         retirement = read("docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md")
         powershell = read("docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md")
 
@@ -30,12 +32,20 @@ class V47WorkflowAlignmentTests(unittest.TestCase):
         self.assertIn("TOOL_HUB_RETIRED_FROM_DEFAULT_ROUTE", powershell)
         self.assertNotIn("Tool Hub 실제 runtime**을 우선", powershell)
 
+        self.assertNotIn("[PC 우선 QA Evidence Studio](tools/qa-evidence-studio/README.md)", readme)
+        self.assertNotIn("QA Evidence Studio는 Figma/Notion과 독립적인 실제 PC 런타임 증거 도구이므로 유지합니다.", readme)
+        self.assertIn("REPOSITORY_NATIVE_EVIDENCE_CAPTURE", readme)
+
+        self.assertNotIn("| QA runtime evidence | `tools/qa-evidence-studio/README.md`", docs_map)
+        self.assertIn("REPOSITORY_NATIVE_EVIDENCE_CAPTURE", docs_map)
+
     def test_operating_model_uses_notion_and_repository_not_google_sheet_gdd_authority(self) -> None:
         operating = read("docs/OPERATING_MODEL.md")
         self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", operating)
         self.assertIn("REPOSITORY_STRUCTURED_CANON", operating)
         self.assertIn("REPOSITORY_RUNTIME_TRUTH", operating)
         self.assertIn("GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL", operating)
+        self.assertIn("docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md", operating)
         self.assertNotIn("GDD Google Sheets는 `USER_FACING_GDD_WORKSPACE`", operating)
 
     def test_reuse_catalog_uses_repository_native_evidence_capture(self) -> None:
@@ -88,6 +98,12 @@ class V47WorkflowAlignmentTests(unittest.TestCase):
         ):
             self.assertIn(term, policy)
         self.assertNotIn("TOOL_HUB: REQUIRED_WHEN_RELEVANT", policy)
+
+    def test_flexible_structure_has_no_fixed_skill_count_gate(self) -> None:
+        manifest = read("docs/operations/BASE_PARTITION_MANIFEST.json")
+        skill_readme = read("skills/README.md")
+        self.assertNotIn("게임 설계 Skill이 8개 이상으로 증가", manifest)
+        self.assertIn("Skill 수 자체는 목표가 아니다", skill_readme)
 
     def test_user_action_and_completion_remain_learning_oriented(self) -> None:
         powershell = read("docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md")
