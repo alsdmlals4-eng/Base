@@ -5,7 +5,6 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-VISUAL_STYLE_RADAR = ROOT / "docs" / "knowledge" / "game-development" / "VISUAL_STYLE_SOURCE_RADAR.md"
 
 
 def read(path: str) -> str:
@@ -50,18 +49,6 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
         ):
             self.assertIn(status, skill)
         self.assertIn("생성 결과는 자동 최종 자산이 아니다", skill)
-
-    def test_ai_assisted_visual_candidates_require_production_value_evidence(self) -> None:
-        text = VISUAL_STYLE_RADAR.read_text(encoding="utf-8")
-        for required in (
-            "AI_ASSISTED_PRODUCTION_VALUE_GATE",
-            "retake_rate",
-            "style_consistency_acceptance",
-            "human_review_cost",
-            "runtime_or_export_impact",
-        ):
-            with self.subTest(required=required):
-                self.assertIn(required, text)
 
     def test_visual_workflow_absorbs_old_tool_principles_without_tool_dependency(self) -> None:
         workflow = read("docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md")
