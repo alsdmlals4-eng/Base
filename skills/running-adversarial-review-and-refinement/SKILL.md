@@ -255,7 +255,7 @@ GitHub와 Notion이 다르면 최신 사용자 승인, Decision ID, Commit SHA�
 - `NO_CONFLICT`: 정본·최근 승인·diff·Notion readback·적용 검증에서 확인된 충돌이 없다.
 - `CONFLICT_FIXED`: 검증된 충돌을 승인 범위 안에서 최소 수정하고 재검사했다.
 - `USER_DECISION_REQUIRED`: 기술적으로 단일 답을 정할 수 없는 중요 기획 충돌이 남았다.
-- `BLOCKED_UNVERIFIED`: 필요한 도구·권한·정본·CI·런타임·Sheets 증거가 없어 완료 판정할 수 없다.
+- `BLOCKED_UNVERIFIED`: 필요한 도구·권한·정본·CI·런타임·Notion readback/sync 증거가 없어 완료 판정할 수 없다.
 
 ## Quality gate
 
