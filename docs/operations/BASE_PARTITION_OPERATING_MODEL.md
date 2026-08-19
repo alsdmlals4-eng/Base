@@ -6,6 +6,18 @@ Base 전체를 여러 GPT 채팅이 동시에 깊게 최적화하더라도 **정
 
 설계 기준 main: `f93016dbe90d3d1d906afaaaa75005b490220e90`. 실제 Part 시작 시에는 이 SHA를 그대로 재사용하지 않고 최신 `main`을 다시 읽어 exact baseline으로 pin한다.
 
+
+## 운영 모드 — 하나의 Base, 필요할 때만 Partition
+
+`PARTITION_IS_MAINTENANCE_AND_SPECIALIZATION_VIEW_NOT_RUNTIME_FRAGMENTATION`
+
+- Base의 일상 사용과 프로젝트 적용은 **하나의 통합 Base**가 기본이다.
+- P01~P09는 Base를 9개 제품이나 9개 상시 runtime으로 쪼개는 구조가 아니다.
+- Partition은 대규모 감사, 분야별 심층 최적화, 전문 Source 학습, 책임 추적, 충돌 격리가 실질적으로 필요할 때만 활성화한다.
+- 일반 작업마다 P01~P09 전체를 강제 호출하지 않는다. 작업과 직접 관련된 Part만 선택적으로 사용할 수 있다.
+- 여러 Part를 사용했으면 Integration이 cross-part finding과 CP0를 정리해 결과를 다시 **ONE BASE**로 돌려놓는다.
+- 장기 성과는 Part 수 증가가 아니라 Base 전체 정확성, 사용자 이해도, 충돌 감소, 재사용성, Context 효율로 판단한다.
+
 ## 현행 상태 요약
 
 - `skills/SKILL_REGISTRY.json`이 active Skill routing의 유일한 권위이고 현재 active Skill은 30개다.
@@ -42,6 +54,19 @@ C는 Base가 커져도 CP0와 Part ID를 유지하면서 Part 내부만 분리·
 - https://git-scm.com/docs/git-worktree
 - https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 - https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets
+
+## 채팅·GitHub·Notion 충돌 격리
+
+`ONE_GPT_CHAT_OWNS_ONE_PART_END_TO_END`
+
+- P01~P09는 각각 **새 GPT 채팅 하나가 처음부터 완료까지** 책임진다.
+- 각 채팅은 자기 `opt/base-part-Pxx-<slug>` branch와 자기 PR 하나만 수정한다.
+- 다른 Part branch/worktree/PR은 읽을 수 있지만 수정·rebase·merge·close·흡수하지 않는다.
+- GitHub CP0와 `.github`, Registry, generated output은 Integration만 쓴다.
+- Notion Base Hub와 `00 · Base 공용 Visual Reference`는 Integration 전용 쓰기 영역이다.
+- 각 Part 채팅은 Manifest의 `notion_page_url` 하나만 직접 갱신한다. 다른 Part 페이지는 read-only다.
+- Part 전용 이미지·다이어그램은 자기 Notion 페이지에 둔다. 여러 Part가 공유하는 시각 자료는 직접 공용 페이지에 쓰지 않고 `CROSS_PART_CHANGE_REQUEST`로 Integration에 전달한다.
+- 동일 의미를 GitHub/Notion 양쪽에 독립 정본으로 만들지 않는다. GitHub가 구조화 규칙/Skill/Test 정본이고 Notion은 사람이 보는 설명·시각화·학습면이다.
 
 ## CP0 · Base Control Plane
 

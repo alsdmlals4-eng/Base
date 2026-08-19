@@ -64,6 +64,48 @@ class BasePartitionContractTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertNotIn("semantic path overlap", result.stdout)
 
+    def test_hybrid_partition_mode_keeps_one_unified_base(self) -> None:
+        manifest = self.load_manifest()
+        mode = manifest["operating_mode"]
+        self.assertEqual("PARTITION_IS_MAINTENANCE_AND_SPECIALIZATION_VIEW_NOT_RUNTIME_FRAGMENTATION", mode["policy"])
+        self.assertEqual("UNIFIED_BASE", mode["daily_default"])
+        self.assertTrue(mode["activate_only_relevant_parts"])
+        self.assertFalse(mode["run_all_parts_for_every_task"])
+        self.assertTrue(mode["integration_returns_to_one_base"])
+        for path in (OPERATING_MODEL, WORKER_PROMPT, INTEGRATION_PROMPT):
+            text = path.read_text(encoding="utf-8")
+            self.assertIn("PARTITION_IS_MAINTENANCE_AND_SPECIALIZATION_VIEW_NOT_RUNTIME_FRAGMENTATION", text)
+
+    def test_one_chat_one_part_notion_and_github_isolation(self) -> None:
+        manifest = self.load_manifest()
+        isolation = manifest["collaboration_isolation"]
+        self.assertEqual("ONE_GPT_CHAT_OWNS_ONE_PART_END_TO_END", isolation["worker_model"])
+        self.assertTrue(isolation["github"]["one_branch_per_part"])
+        self.assertTrue(isolation["github"]["one_pr_per_part"])
+        self.assertEqual("INTEGRATION_ONLY", isolation["notion"]["hub_write"])
+        self.assertEqual("INTEGRATION_ONLY", isolation["notion"]["shared_visual_write"])
+        urls = []
+        branches = []
+        for part in manifest["parts"]:
+            self.assertEqual("ONE_CHAT_END_TO_END", part["chat_ownership"])
+            self.assertEqual("OWN_PART_PAGE_ONLY", part["notion_write_authority"])
+            urls.append(part["notion_page_url"])
+            branches.append(part["branch_template"])
+        self.assertEqual(9, len(set(urls)))
+        self.assertEqual(9, len(set(branches)))
+        worker = WORKER_PROMPT.read_text(encoding="utf-8")
+        self.assertIn("ONE_GPT_CHAT_OWNS_ONE_PART_END_TO_END", worker)
+        self.assertIn("자기 `notion_page_url`만 직접 수정", worker)
+        self.assertIn("Base Hub", INTEGRATION_PROMPT.read_text(encoding="utf-8"))
+
+    def test_p05_visual_scope_avoids_broad_ui_ux_globs(self) -> None:
+        manifest = self.load_manifest()
+        p05 = next(part for part in manifest["parts"] if part["part_id"] == "P05")
+        for broad in ("docs/knowledge/game-development/*UI*", "docs/knowledge/game-development/UI_*", "docs/knowledge/game-development/*UX*"):
+            self.assertNotIn(broad, p05["owned_write_paths"])
+        self.assertIn("docs/knowledge/game-development/UI_UX_VISUAL_DESIGN_RULEBOOK.md", p05["owned_write_paths"])
+        self.assertIn("docs/knowledge/game-development/UX_LAWS_COMPLETENESS_MATRIX.md", p05["owned_write_paths"])
+
     def test_each_part_has_a_context_pack_and_operational_contract(self) -> None:
         manifest = self.load_manifest()
         for part in manifest["parts"]:

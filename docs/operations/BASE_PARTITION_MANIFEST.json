@@ -233,7 +233,23 @@
           "BLOCKED_UNVERIFIED",
           "PROMOTION_CANDIDATE"
         ]
-      }
+      },
+      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "branch_template": "opt/base-part-P01-<slug>",
+      "notion_page_url": "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
+      "notion_write_authority": "OWN_PART_PAGE_ONLY",
+      "notion_read_only_pages": [
+        "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8137888edd1e41745099?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8122acffca50aed2c68f?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81f2a6d7de82c0938277?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81498eb5da3fea812390?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c817eb473ea7758a1999d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8110b3c3f659a7fe266e?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8169b55af5b2f27d9bb7?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c812f9de1f7f5e2996d81?pvs=204"
+      ]
     },
     {
       "part_id": "P02",
@@ -356,7 +372,23 @@
           "BLOCKED_UNVERIFIED",
           "PROMOTION_CANDIDATE"
         ]
-      }
+      },
+      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "branch_template": "opt/base-part-P02-<slug>",
+      "notion_page_url": "https://app.notion.com/p/3c11b237eb1c8137888edd1e41745099?pvs=204",
+      "notion_write_authority": "OWN_PART_PAGE_ONLY",
+      "notion_read_only_pages": [
+        "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8122acffca50aed2c68f?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81f2a6d7de82c0938277?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81498eb5da3fea812390?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c817eb473ea7758a1999d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8110b3c3f659a7fe266e?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8169b55af5b2f27d9bb7?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c812f9de1f7f5e2996d81?pvs=204"
+      ]
     },
     {
       "part_id": "P03",
@@ -472,7 +504,23 @@
           "BLOCKED_UNVERIFIED",
           "PROMOTION_CANDIDATE"
         ]
-      }
+      },
+      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "branch_template": "opt/base-part-P03-<slug>",
+      "notion_page_url": "https://app.notion.com/p/3c11b237eb1c8122acffca50aed2c68f?pvs=204",
+      "notion_write_authority": "OWN_PART_PAGE_ONLY",
+      "notion_read_only_pages": [
+        "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8137888edd1e41745099?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81f2a6d7de82c0938277?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81498eb5da3fea812390?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c817eb473ea7758a1999d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8110b3c3f659a7fe266e?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8169b55af5b2f27d9bb7?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c812f9de1f7f5e2996d81?pvs=204"
+      ]
     },
     {
       "part_id": "P04",
@@ -596,7 +644,23 @@
           "BLOCKED_UNVERIFIED",
           "PROMOTION_CANDIDATE"
         ]
-      }
+      },
+      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "branch_template": "opt/base-part-P04-<slug>",
+      "notion_page_url": "https://app.notion.com/p/3c11b237eb1c81f2a6d7de82c0938277?pvs=204",
+      "notion_write_authority": "OWN_PART_PAGE_ONLY",
+      "notion_read_only_pages": [
+        "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8137888edd1e41745099?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8122acffca50aed2c68f?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81498eb5da3fea812390?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c817eb473ea7758a1999d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8110b3c3f659a7fe266e?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8169b55af5b2f27d9bb7?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c812f9de1f7f5e2996d81?pvs=204"
+      ]
     },
     {
       "part_id": "P05",
@@ -620,8 +684,6 @@
         "docs/knowledge/game-development/ART_*",
         "docs/knowledge/game-development/*PIXEL*",
         "docs/knowledge/game-development/*VISUAL*",
-        "docs/knowledge/game-development/*UI*",
-        "docs/knowledge/game-development/*UX*",
         "docs/knowledge/game-development/*IMAGE*",
         "docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md",
         "tools/asset-vault/**",
@@ -632,7 +694,10 @@
         "tests/test_*ui*.py",
         "tests/test_*visual*.py",
         "tests/test_*image*.py",
-        "docs/operations/base-partitions/learning/P05_LEARNING_LOG.md"
+        "docs/operations/base-partitions/learning/P05_LEARNING_LOG.md",
+        "docs/knowledge/game-development/UI_UX_VISUAL_DESIGN_RULEBOOK.md",
+        "docs/knowledge/game-development/UX_LAWS_COMPLETENESS_MATRIX.md",
+        "docs/knowledge/OPEN_SOURCE_GODOT_UI_REFERENCE_CATALOG.md"
       ],
       "allowed_new_paths": [
         "docs/knowledge/game-development/visual/**",
@@ -723,7 +788,23 @@
           "BLOCKED_UNVERIFIED",
           "PROMOTION_CANDIDATE"
         ]
-      }
+      },
+      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "branch_template": "opt/base-part-P05-<slug>",
+      "notion_page_url": "https://app.notion.com/p/3c11b237eb1c81498eb5da3fea812390?pvs=204",
+      "notion_write_authority": "OWN_PART_PAGE_ONLY",
+      "notion_read_only_pages": [
+        "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8137888edd1e41745099?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8122acffca50aed2c68f?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81f2a6d7de82c0938277?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c817eb473ea7758a1999d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8110b3c3f659a7fe266e?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8169b55af5b2f27d9bb7?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c812f9de1f7f5e2996d81?pvs=204"
+      ]
     },
     {
       "part_id": "P06",
@@ -838,7 +919,23 @@
           "BLOCKED_UNVERIFIED",
           "PROMOTION_CANDIDATE"
         ]
-      }
+      },
+      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "branch_template": "opt/base-part-P06-<slug>",
+      "notion_page_url": "https://app.notion.com/p/3c11b237eb1c817eb473ea7758a1999d?pvs=204",
+      "notion_write_authority": "OWN_PART_PAGE_ONLY",
+      "notion_read_only_pages": [
+        "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8137888edd1e41745099?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8122acffca50aed2c68f?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81f2a6d7de82c0938277?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81498eb5da3fea812390?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8110b3c3f659a7fe266e?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8169b55af5b2f27d9bb7?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c812f9de1f7f5e2996d81?pvs=204"
+      ]
     },
     {
       "part_id": "P07",
@@ -956,7 +1053,23 @@
           "BLOCKED_UNVERIFIED",
           "PROMOTION_CANDIDATE"
         ]
-      }
+      },
+      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "branch_template": "opt/base-part-P07-<slug>",
+      "notion_page_url": "https://app.notion.com/p/3c11b237eb1c8110b3c3f659a7fe266e?pvs=204",
+      "notion_write_authority": "OWN_PART_PAGE_ONLY",
+      "notion_read_only_pages": [
+        "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8137888edd1e41745099?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8122acffca50aed2c68f?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81f2a6d7de82c0938277?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81498eb5da3fea812390?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c817eb473ea7758a1999d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8169b55af5b2f27d9bb7?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c812f9de1f7f5e2996d81?pvs=204"
+      ]
     },
     {
       "part_id": "P08",
@@ -1071,7 +1184,23 @@
           "BLOCKED_UNVERIFIED",
           "PROMOTION_CANDIDATE"
         ]
-      }
+      },
+      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "branch_template": "opt/base-part-P08-<slug>",
+      "notion_page_url": "https://app.notion.com/p/3c11b237eb1c8169b55af5b2f27d9bb7?pvs=204",
+      "notion_write_authority": "OWN_PART_PAGE_ONLY",
+      "notion_read_only_pages": [
+        "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8137888edd1e41745099?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8122acffca50aed2c68f?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81f2a6d7de82c0938277?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81498eb5da3fea812390?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c817eb473ea7758a1999d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8110b3c3f659a7fe266e?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c812f9de1f7f5e2996d81?pvs=204"
+      ]
     },
     {
       "part_id": "P09",
@@ -1185,7 +1314,23 @@
           "BLOCKED_UNVERIFIED",
           "PROMOTION_CANDIDATE"
         ]
-      }
+      },
+      "chat_ownership": "ONE_CHAT_END_TO_END",
+      "branch_template": "opt/base-part-P09-<slug>",
+      "notion_page_url": "https://app.notion.com/p/3c11b237eb1c812f9de1f7f5e2996d81?pvs=204",
+      "notion_write_authority": "OWN_PART_PAGE_ONLY",
+      "notion_read_only_pages": [
+        "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8137888edd1e41745099?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8122acffca50aed2c68f?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81f2a6d7de82c0938277?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81498eb5da3fea812390?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c817eb473ea7758a1999d?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8110b3c3f659a7fe266e?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8169b55af5b2f27d9bb7?pvs=204"
+      ]
     }
   ],
   "retirement_targets": [
@@ -1283,5 +1428,33 @@
       "New source count is not a success metric; decision improvement and reproducibility are",
       "Source Queue preparation does not imply research completion or learning completion"
     ]
+  },
+  "operating_mode": {
+    "policy": "PARTITION_IS_MAINTENANCE_AND_SPECIALIZATION_VIEW_NOT_RUNTIME_FRAGMENTATION",
+    "daily_default": "UNIFIED_BASE",
+    "partition_activation": "MATERIAL_AUDIT_SPECIALIZATION_LEARNING_OR_CONFLICT_BOUNDARY",
+    "activate_only_relevant_parts": true,
+    "run_all_parts_for_every_task": false,
+    "integration_returns_to_one_base": true
+  },
+  "collaboration_isolation": {
+    "worker_model": "ONE_GPT_CHAT_OWNS_ONE_PART_END_TO_END",
+    "github": {
+      "one_branch_per_part": true,
+      "one_pr_per_part": true,
+      "branch_template": "opt/base-part-{PART_ID}-{slug}",
+      "other_part_branches_prs": "READ_ONLY_DO_NOT_MUTATE",
+      "control_plane_write": "INTEGRATION_ONLY"
+    },
+    "notion": {
+      "hub_url": "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
+      "hub_write": "INTEGRATION_ONLY",
+      "shared_visual_url": "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
+      "shared_visual_write": "INTEGRATION_ONLY",
+      "part_page_write": "OWN_PART_ONLY",
+      "other_part_pages": "READ_ONLY",
+      "cross_part_change": "CROSS_PART_CHANGE_REQUEST",
+      "image_rule": "PART_SPECIFIC_VISUALS_TO_OWN_PAGE_SHARED_VISUALS_TO_INTEGRATION_SHARED_REFERENCE"
+    }
   }
 }

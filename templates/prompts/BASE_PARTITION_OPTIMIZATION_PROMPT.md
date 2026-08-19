@@ -2,6 +2,13 @@
 
 당신은 Base 전체가 아니라 제공된 **하나의 Partition**만 책임진다.
 
+
+## Partition의 의미
+
+`PARTITION_IS_MAINTENANCE_AND_SPECIALIZATION_VIEW_NOT_RUNTIME_FRAGMENTATION`
+
+이 지시문은 Base의 일상 실행을 9개로 분해하라는 뜻이 아니다. Base는 하나의 통합 시스템이며, 이 채팅은 대규모 감사·전문화·학습을 위해 선택적으로 활성화된 하나의 Maintenance View다. 다른 Part를 직접 수정하지 않되 cross-part 문제를 무시하지 말고 `CROSS_PART_CHANGE_REQUEST`로 남긴다.
+
 ## 0. 시작 입력
 
 ```text
@@ -12,6 +19,17 @@ CONTEXT_PACK: {{CONTEXT_PACK}}
 ```
 
 작업 시작 시 최신 `main`, `AGENTS.md`, Manifest, 해당 Context Pack, 실제 Skill/파일/Test, 같은 Goal의 열린·최근 병합 PR을 다시 읽는다. 전달받은 과거 SHA를 최신 상태처럼 가정하지 않는다.
+
+## 0A. 이 채팅의 단독 소유권
+
+`ONE_GPT_CHAT_OWNS_ONE_PART_END_TO_END`
+
+- 이 채팅은 할당된 Part 하나를 처음부터 완료/PR까지 책임진다.
+- 시작 시 Manifest에서 자기 `notion_page_url`과 `branch_template`을 읽는다.
+- GitHub에서는 자기 Part branch/PR만 수정한다. 다른 Part branch/PR은 read-only다.
+- Notion에서는 자기 `notion_page_url`만 직접 수정한다. Base Hub, 공용 Visual Reference, 다른 Part 페이지는 read-only다.
+- 공용 시각 자료나 다른 Part/CP0 변경이 필요하면 직접 쓰지 말고 `CROSS_PART_CHANGE_REQUEST`를 남긴다.
+- 이미지·다이어그램은 Part 전용이면 자기 Notion 페이지에, 프로젝트 고유이면 정확한 Project Notion에 배치한다. 공용 자료의 중복 복사는 금지한다.
 
 ## 1. 실행 주체
 

@@ -19,6 +19,14 @@ Partition의 최종 산출물은 9개의 독립 Base가 아니라 **하나의 �
 
 진행 중 독립 workstream PR은 수정·흡수하지 않는다.
 
+## 1A. Notion/GitHub 충돌 통합
+
+- 각 Part는 자기 branch/PR 및 자기 Notion 페이지 하나만 썼는지 확인한다.
+- Base Hub `https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204`와 공용 Visual `https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204`은 Integration만 갱신한다.
+- 다른 Part 페이지를 직접 수정한 흔적은 scope 위반으로 취급한다.
+- 공용 Visual 후보는 중복 제거·정본 확인 후 한 번만 공용 페이지에 승격한다.
+- GitHub structured canon과 Notion human-facing summary가 같은 의미를 서로 다른 정본처럼 소유하지 않도록 readback한다.
+
 ## 2. Scope 감사
 
 각 Part의 `ACTUAL_CHANGED_PATHS`를 Manifest와 대조한다. Part branch에 대해 scope checker를 다시 실행한다.
