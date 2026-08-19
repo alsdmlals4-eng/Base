@@ -32,15 +32,19 @@ baseline_and_result: >-
   but the merged PC/Android delivery guide still described its Base contract as PROPOSED_IN_DRAFT_PR.
   The P07-owned publication marker was corrected to ACTIVE_IN_MAIN, the regression was attached to an existing actively consumed P07 platform test,
   and cross-Part dependency/CI-topology findings were left as CP0 requests rather than written outside P07.
+  Before merge, main advanced to 5cac901cc091dc058e2d43a2d10fd0d775485502 through completed P09 PR #541;
+  its changed paths were P09-owned and did not overlap the P07 change set, so current-main mergeability and CI had to be revalidated without editing P09.
 what_worked:
   - resolve latest main and pin the exact baseline before evaluating lifecycle claims
   - trace a rule to its actual consumer/test instead of normalizing status strings by name alone
   - recheck mutable platform policy against first-party sources without promoting project/runtime evidence
   - place the regression in an already consumed P07 test surface after checking Required CI consumption
   - preserve P01 and CP0 write ownership while recording precise cross-Part requests
+  - recheck a completed concurrent main advance before merge and force fresh current-base CI instead of reusing an older merge-ref result
 what_failed_or_was_rejected:
   - leaving a merged current-main contract marked PROPOSED_IN_DRAFT_PR
   - treating existence of a new test file as proof that Required CI executes it
+  - treating a cancelled workflow or a pre-base-advance merge-ref result as current PASS evidence
   - creating a new broad compliance/release Skill for a one-line lifecycle defect
   - creating a new global evidence-status schema that would flatten specialized backend/platform/runtime meanings
   - duplicating P01-owned project-operation evidence templates inside P07
@@ -48,11 +52,13 @@ what_failed_or_was_rejected:
 reusable_lesson: >-
   Publication lifecycle and execution evidence are separate axes: a contract may be ACTIVE_IN_MAIN while project pilot,
   physical-device, human-usability, build or store-submission evidence remains NOT_RUN. New regression tests also need consumption proof;
-  repository presence alone is not CI execution evidence.
+  repository presence alone is not CI execution evidence. If main advances after review, the merge candidate must be revalidated against that current base;
+  cancelled or superseded runs are not PASS.
 anti_pattern:
   - stale draft/proposed lifecycle markers surviving merge into current canon
   - evidence-state inflation caused by conflating merged documentation with runtime/device/submission proof
   - CI coverage claims based on filenames rather than the workflow command that actually executes them
+  - stale merge-ref validation reused after the base branch advances
   - solving a cross-Part dependency by copying the dependency into the consumer Part
   - adding a new Skill or schema before proving a distinct responsibility and consumer
 affected_rules_skills_modules:
@@ -70,16 +76,19 @@ evidence:
   - tests/test_platform_review_asset_rights_reference_production.py
   - docs/operations/release-validation/P07_OPTIMIZATION_AUDIT_2026-08-19.md
   - PR #542
+  - main 5cac901cc091dc058e2d43a2d10fd0d775485502 / merged PR #541
 reuse_scope: BASE_PROMOTION_CANDIDATE
 promotion_candidate: >-
   Integration should consider a shared rule that current canon must not retain stale proposal/draft publication markers,
-  and that a claimed regression test must name the workflow/local command that consumes it.
+  that a claimed regression test must name the workflow/local command that consumes it,
+  and that a base-branch advance invalidates reuse of earlier merge-ref CI as current evidence.
 source_followup_questions:
   - Should P07 explicitly declare P01 project-operation evidence templates as a read-only dependency in the Partition Manifest?
   - Should Required CI expose a stable P07 suite entrypoint, or should the Manifest state that its Part validation command is intentionally local-only?
 revisit_condition: >-
   Revisit if stale lifecycle markers recur after merge, P01/P07 evidence-template coupling grows,
-  or newly added P07 tests repeatedly fail to enter the intended validation surface.
+  newly added P07 tests repeatedly fail to enter the intended validation surface,
+  or concurrent main advances repeatedly leave ambiguous current-base verification.
 ```
 
 ## Source Learning
