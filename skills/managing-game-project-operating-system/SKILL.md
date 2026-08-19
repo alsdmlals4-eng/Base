@@ -9,7 +9,7 @@ Base v9.1 projects use the focused [project adapter and routing contract](refere
 
 ## Core principle
 
-신규 설치, 기존 구조 감사, 구형 파일 정리, 승인된 마이그레이션과 운영체계 검수는 같은 책임 원본·참조·복구 계약을 공유한다. `Work Mode`와 `Skill Mode`를 구분하며, 읽기 전용 조사와 승인된 쓰기 작업을 혼동하지 않는다. 프로젝트 GDD Google Sheets 설치·감사·검증은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 따른다.
+신규 설치, 기존 구조 감사, 구형 파일 정리, 승인된 마이그레이션과 운영체계 검수는 같은 책임 원본·참조·복구 계약을 공유한다. `Work Mode`와 `Skill Mode`를 구분하며, 읽기 전용 조사와 승인된 쓰기 작업을 혼동하지 않는다. 프로젝트 workspace는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json`의 `DOMAIN_SPLIT_CANON`을 따른다. 기본 사람용 workspace는 `NOTION_DEFAULT_PROJECT_WORKSPACE` / `NOTION_HUMAN_FACING_CANON`, 구조화·runtime truth는 `REPOSITORY_STRUCTURED_CANON`, Google Sheets는 `COMPATIBILITY_ONLY` legacy migration input이다.
 
 Godot MCP/addon/CLI 공급자 도입·업데이트는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`를 따른다. HiGodot (`hi-godot/godot-ai`)만 persistent Godot authoring 실행 권위이며 프로젝트는 `HIGODOT_ADOPTION_RECORD.json`에 exact pin, Godot 버전, host client, canary, regression, rollback과 미검증을 기록한다. GUT과 Hera Agent Godot은 프로젝트가 실제 필요에 따라 채택하는 별도 **third-party 검증 도구**이며, GUT은 deterministic GDScript tests, Hera는 `LIVE_QA_AND_OBSERVABILITY_ONLY`로만 공존한다.
 
@@ -47,7 +47,8 @@ project_start_here:
 documentation_map:
 active_context:
 current_confirmed_decisions:
-project_google_sheet:
+project_notion_workspace:
+google_sheet_compatibility_source:
 related_open_and_recent_prs:
 development_gates:
 design_document_registry:
@@ -83,7 +84,8 @@ hera_source_delta_guard:
 → AGENTS·README·START_HERE
 → Work Mode·Skill 라우팅 계약
 → Active Context·Documentation Map·Roadmap·Development Gates
-→ CURRENT_CONFIRMED_DECISIONS.md·동일 Goal의 열린·최근 병합 PR·프로젝트 Google Sheets
+→ CURRENT_CONFIRMED_DECISIONS.md·동일 Goal의 열린·최근 병합 PR·정확한 Project Notion workspace
+→ Google Sheets legacy source는 UNIQUE 미이관 material 확인이 필요할 때만
 → Design Document Registry·Skill Registry
 → 관련 책임 원본·Skill·Learning Log
 → third-party provider inventory·HIGODOT_ADOPTION_RECORD.json·GUT/Hera adoption state
@@ -103,12 +105,25 @@ hera_source_delta_guard:
 - 기존 승인 결정·수치·자산·실패·보류·참조는 조사와 승인 없이 제거하지 않는다.
 - 파일 존재와 실제 실행·강제를 구분한다.
 - 새 AI가 과거 대화 없이 `CURRENT_CONFIRMED_DECISIONS.md`에서 현재 승인 상태와 다음 작업을 찾을 수 있어야 한다.
-- 질문 전에 최신 `main`, 기존 Decision, 분야 정본, 동일 Goal의 PR과 Google Sheets를 비교하고 이미 답한 질문은 반복하지 않는다.
-- 승인된 Decision은 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`에 따라 GitHub 정본·허용된 `main` 문서 Commit·Google Sheets에 즉시 동기화한다.
+- 질문 전에 최신 `main`, 기존 Decision, 분야 정본, 동일 Goal의 PR과 정확한 Project Notion workspace를 비교하고 이미 답한 질문은 반복하지 않는다. legacy Sheet는 `google_sheet_compatibility_source`에 UNIQUE 미이관 정보가 있을 때만 대조한다.
+- 승인된 Decision은 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`와 workspace authority contract에 따라 Repository 정본과 적용 가능한 `NOTION_HUMAN_FACING_CANON`에 기록하고 **destination readback**한다. Google Sheets 쓰기는 active Decision sync 요구사항이 아니다.
 
-## Project GDD Google Sheets contract
+## Project workspace authority contract
 
-정확한 Sheet URL·권한이 확인된 프로젝트는 `USER_FACING_GDD_WORKSPACE`로 설치한다. 기존 값·수식·이미지·사용자 편집을 먼저 감사하고, Sheet-only 수정은 `PROPOSED_SHEET_CHANGE`로 보존한다. `install / audit / verify`는 GitHub 정본·실제 구현·Sheet의 Decision ID·Commit·수정 시각·동기화 상태를 비교한다.
+```yaml
+workspace_authority: DOMAIN_SPLIT_CANON
+default_project_workspace: NOTION_DEFAULT_PROJECT_WORKSPACE
+human_facing_canon: NOTION_HUMAN_FACING_CANON
+structured_runtime_canon: REPOSITORY_STRUCTURED_CANON
+google_sheets: COMPATIBILITY_ONLY
+google_sheet_compatibility_source: OPTIONAL_LEGACY_MIGRATION_INPUT
+```
+
+- 사람용 프로젝트 계획·결정·설명·시각 자료는 정확한 Project relation의 Notion workspace에 둔다.
+- 구조화 상태·Commit·runtime truth·실제 코드/데이터/씬/자산/Test는 Repository가 소유한다.
+- 기존 Google Sheet의 값·수식·이미지·사용자 편집은 삭제 전에 `UNIQUE / DUPLICATE / OBSOLETE`로 감사한다.
+- Sheet-only 고유 정보는 현행 owner로 이관 → readback/Test → consumer/reference 확인 후에만 원본 수명주기를 판정한다.
+- 신규 install은 Google Sheet URL이나 tab을 요구하거나 생성하지 않는다.
 
 ## HiGodot provider adoption contract
 
@@ -202,7 +217,7 @@ floating_latest: forbidden
 
 1. 신규·빈 프로젝트인지 확인한다. 고유 문서·자산·이력이 있으면 `audit`로 전환한다.
 2. 루트 `[기획서]/00_프로젝트_허브/`와 시작 문서·`CURRENT_CONFIRMED_DECISIONS.md`·Registry·게이트를 설치한다.
-3. 제공된 프로젝트 Google Sheets URL·확정 결정 탭·마지막 Decision ID를 연결하고, 없으면 `NOT_CONFIGURED`로 명시한다.
+3. 정확한 Project Notion workspace와 Project relation을 확인·연결한다. 적용되지 않으면 `NOT_APPLICABLE`로 두며 새 Google Sheet를 만들거나 요구하지 않는다. 기존 legacy Sheet가 실제 존재하면 `google_sheet_compatibility_source`로만 기록한다.
 4. 프로젝트가 실제 선택한 책임 분야만 등록한다.
 5. 서술은 Markdown, 구조·상태·게임 데이터는 JSON을 선택한다.
 6. 발행 생성기·Manifest·선택 파생본 정책을 설치한다.
@@ -225,7 +240,8 @@ floating_latest: forbidden
 - 현재 책임 문서·Skill·자산·파생본 지도
 - enabled addon·connected MCP·CLI·provider pin·host profile inventory
 - GUT/Hera exact pin·consumption·owner boundary·source-delta guard 상태
-- `CURRENT_CONFIRMED_DECISIONS.md`·분야 정본·GitHub `main`·프로젝트 Google Sheets의 Decision·Commit·대체 관계 대조
+- `CURRENT_CONFIRMED_DECISIONS.md`·분야 정본·GitHub `main`·정확한 Project Notion record의 Decision·Commit·대체 관계 대조
+- 실제 legacy Sheet가 있으면 `COMPATIBILITY_ONLY` 범위의 UNIQUE/DUPLICATE/OBSOLETE migration inventory
 - 중복·충돌·누락·구형 참조 목록
 - 목표 Registry와 책임 원본 구조
 - 갱신·통합·호환 보존·아카이브·삭제 후보
@@ -242,6 +258,7 @@ floating_latest: forbidden
 - 새 경로로 대체됐지만 활성 파일이 계속 참조하는 구형 경로·ID·Schema
 - 원본보다 오래된 생성물·Manifest·해시
 - 삭제된 Skill·명령·파일을 실행 경로가 참조함
+- Google Sheets·Figma·외부 HTML workspace·폐기된 custom local Tool/Hub가 active authority처럼 남아 있음
 - HiGodot과 겹치는 과거 Base MCP·Bridge, unrestricted Hera writer 또는 다른 persistent mutation addon이 활성 경로에 남음
 
 Hera가 존재한다는 사실만으로 legacy conflict로 판정하지 않는다. `LIVE_QA_AND_OBSERVABILITY_ONLY`로 제한되고 exact pair·consumption·source-delta guard가 검증된 Hera는 허용된 검증 도구다.
@@ -294,6 +311,8 @@ KEEP_UNRESOLVED
 → 새 책임 원본과 Registry에 승계
 → 승인 이미지·발행 경로 연결
 → 참조 갱신
+→ destination readback/Test
+→ consumer/reference 확인
 → 변경 전후 보존 대조
 → 기존 원본 수명주기 판정
 → verify
@@ -305,18 +324,19 @@ KEEP_UNRESOLVED
 
 1. 루트와 시작 문서
 2. Work Mode·Skill 자동 라우팅과 실행 보고
-3. `CURRENT_CONFIRMED_DECISIONS.md`·분야 정본·GitHub `main`·프로젝트 Google Sheets 동기화
-4. Design Document Registry와 단일 책임 원본
-5. 구형본 처리표·Legacy Alias·활성 stale reference 부재
-6. PDF·선택 DOCX·다이어그램·승인 이미지·Manifest
-7. Skill Registry·최소 라우팅·Learning Log
-8. Development Gates·Roadmap·결정 추적성
-9. Visual Source·Asset Manifest
-10. HiGodot exact pin·단일 persistent authoring 권위·host isolation·canary·regression·rollback
-11. adopted GUT exact compatible pin·GDScript test consumption·duplicate canonical case 부재
-12. adopted Hera exact CLI/addon pair·`LIVE_QA_AND_OBSERVABILITY_ONLY`·localhost/shared-token·live-QA consumption·source-delta `NONE`
-13. Governance checker·회귀 테스트·GitHub Actions·브랜치 보호
-14. 과거 대화 없이 현재 Decision을 복원하는 콜드 스타트
+3. `CURRENT_CONFIRMED_DECISIONS.md`·분야 정본·GitHub `main`·적용 가능한 Project Notion 동기화와 destination readback
+4. legacy Google Sheets가 있으면 `COMPATIBILITY_ONLY` migration 상태와 active authority 미승격
+5. Design Document Registry와 단일 책임 원본
+6. 구형본 처리표·Legacy Alias·활성 stale reference 부재
+7. PDF·선택 DOCX·다이어그램·승인 이미지·Manifest
+8. Skill Registry·최소 라우팅·Learning Log
+9. Development Gates·Roadmap·결정 추적성
+10. Visual Source·Asset Manifest
+11. HiGodot exact pin·단일 persistent authoring 권위·host isolation·canary·regression·rollback
+12. adopted GUT exact compatible pin·GDScript test consumption·duplicate canonical case 부재
+13. adopted Hera exact CLI/addon pair·`LIVE_QA_AND_OBSERVABILITY_ONLY`·localhost/shared-token·live-QA consumption·source-delta `NONE`
+14. Governance checker·회귀 테스트·GitHub Actions·브랜치 보호
+15. 과거 대화 없이 현재 Decision을 복원하는 콜드 스타트
 
 ```text
 결정
@@ -335,6 +355,8 @@ KEEP_UNRESOLVED
 ## Work Mode와 Skill Mode
 ## 자동 선택 이유
 ## 현재 구조·증거
+## Project Notion·Repository workspace authority
+## Legacy Google Sheets compatibility/migration 상태
 ## Third-party provider와 HiGodot exact pin
 ## GUT/Hera adoption·consumption·owner boundary
 ## Canary·project regression·rollback
@@ -342,7 +364,7 @@ KEEP_UNRESOLVED
 ## 실제 갱신·통합·아카이브·삭제
 ## 제안만 한 변경
 ## 보존·참조·롤백 대조
-## CURRENT_CONFIRMED_DECISIONS·GitHub·Google Sheets 동기화
+## CURRENT_CONFIRMED_DECISIONS·Repository·Notion 동기화
 ## Registry·책임 원본·발행본
 ## Skill·Learning·Routing
 ## 자동화·GitHub 강제
@@ -356,8 +378,10 @@ KEEP_UNRESOLVED
 
 - Work Mode와 Skill Mode·쓰기 권한이 명확하다.
 - 사용자가 Skill을 선언하지 않아도 trigger로 필요한 Skill Mode를 자동 선택했다.
+- `NOTION_DEFAULT_PROJECT_WORKSPACE`, `NOTION_HUMAN_FACING_CANON`, `REPOSITORY_STRUCTURED_CANON`, `COMPATIBILITY_ONLY`의 역할이 구분됐다.
 - 기존 프로젝트는 `audit`와 승인 없이 대규모 변경하지 않았다.
 - 구형 파일은 고유 정보·참조·파생본·복구·승인에 따라 판정됐다.
+- legacy Sheet는 active workspace로 재승격되지 않았고 UNIQUE material은 현행 owner 이관·readback/Test·consumer 확인을 거쳤다.
 - 삭제·통합 뒤 활성 stale reference와 untouched 소비자가 없다.
 - HiGodot project이면 exact pin, DeepSeek 금지, loopback, canary, regression, rollback 상태가 기록됐다.
 - GUT/Hera adopted project이면 exact pin/pair, 실제 consumption, owner boundary, rollback/removal과 Hera source-delta guard가 기록됐다.
@@ -368,6 +392,8 @@ KEEP_UNRESOLVED
 ## Failure conditions
 
 - 기존 프로젝트에 신규 설치 구조를 강제함
+- Google Sheets를 신규 입력·기본 사람용 workspace·active Decision sync surface로 요구함
+- legacy Sheet UNIQUE material을 현행 owner readback/Test 없이 삭제함
 - 사용자 승인 전 삭제·이동·통합함
 - 파일명에 `old`·`v2`가 있다는 이유만으로 삭제함
 - 파일 수 감소를 성공으로 판단함
