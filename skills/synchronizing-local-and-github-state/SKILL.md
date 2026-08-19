@@ -11,7 +11,7 @@ description: Use when local and GitHub state must be compared, reconciled, refre
 
 ```text
 remote baseline
-→ local snapshot
+→ execution-surface-aware snapshot
 → concurrent-change preflight
 → compare
 → reconcile
@@ -32,7 +32,7 @@ EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION
 
 ## Skill Modes
 
-- `preflight`: remote/local/branch/worktree/PR/ownership 상태를 읽고 첫 write 전에 충돌을 판정한다.
+- `preflight`: 현재 `execution_surface`에서 검증 가능한 remote/local/branch/worktree/PR/ownership 상태를 읽고 첫 write 전에 충돌을 판정한다.
 - `reconcile`: divergence, stale base, same-goal overlap, workstream ownership을 분류하고 안전 경로를 선택한다.
 - `refresh`: remote 최신 상태와 승인 Decision을 현재 작업면에 반영한다.
 - `publish`: 검증된 변경만 push/PR로 게시한다.
@@ -44,6 +44,7 @@ EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION
 
 ```yaml
 repository:
+execution_surface: LOCAL_WORKTREE | GITHUB_CONNECTOR_ONLY | HYBRID
 current_task_or_pr_identity:
 current_workstream_identity:
 owner_workstream_identity:
@@ -53,7 +54,7 @@ current_main_sha:
 write_parent_sha:
 expected_head_sha: PENDING_FIRST_WRITE | <exact-sha>
 current_branch:
-current_worktree:
+current_worktree: <actual path> | NOT_APPLICABLE_CONNECTOR_ONLY
 intended_paths: []
 semantic_resource_locks: []
 same_goal_open_and_recent_prs: []
@@ -61,6 +62,12 @@ open_pr_changed_paths: []
 protected_paths: []
 user_approved_scope:
 ```
+
+### Execution surface contract
+
+- `LOCAL_WORKTREE`: 실제 local branch/worktree/dirty state를 읽고 그 관찰값을 기록한다.
+- `GITHUB_CONNECTOR_ONLY`: authenticated connector의 remote branch/head/diff/PR/check 증거만 기록한다. 로컬 worktree가 존재한다고 가정하지 않고 `current_worktree: NOT_APPLICABLE_CONNECTOR_ONLY`로 둔다. 실행하지 않은 local test·dirty-state·filesystem 검사를 PASS로 만들지 않는다.
+- `HYBRID`: local evidence와 connector evidence를 각각 어느 surface에서 읽었는지 구분한다. 한쪽 관찰을 다른 쪽 상태로 추정하지 않는다.
 
 첫 persistent write 전 `write_parent_sha`가 아직 없으면 `PENDING_FIRST_WRITE`로 둔다. `expected_head_sha`도 첫 persistent write 전에는 `PENDING_FIRST_WRITE`, 그 뒤에는 실제 `<exact-sha>`로 갱신한다. 값을 추측하지 않는다.
 
@@ -70,6 +77,7 @@ user_approved_scope:
 
 ```text
 CONCURRENT_CHANGE_PREFLIGHT
+execution_surface
 current_task_or_pr_identity
 current_workstream_identity
 owner_workstream_identity
@@ -96,11 +104,11 @@ open_pr_changed_paths
 
 ### Preflight outcomes
 
-- `CLEAR`: 현재 작업과 경쟁하는 write owner가 없고 base/head 증거가 최신이다.
+- `CLEAR`: 현재 작업과 경쟁하는 write owner가 없고 현재 execution surface에서 base/head 증거가 최신이다.
 - `STALE_BASE_SHA`: 작업의 기준 SHA가 현재 authority와 다르다. 최신 main에서 재기준화한다.
 - `WAITING_RESOURCE`: path/semantic resource가 다른 task/PR 또는 다른 workstream owner에게 있고 현재 작업에 변경 권한이 없다.
 - `DUPLICATE_WORK`: 같은 Goal의 material delta가 이미 다른 owner에 의해 구현·검증되고 있다.
-- `BLOCKED_UNVERIFIED`: workstream identity·branch ownership·current SHA·open PR·권한을 검증할 수 없다.
+- `BLOCKED_UNVERIFIED`: workstream identity·branch ownership·current SHA·open PR·권한 또는 현재 surface에 필요한 증거를 검증할 수 없다.
 - `PROVISIONAL_INTEGRATION`: same-workstream overlap 또는 현재 사용자에게 cross-workstream 흡수 승인을 받은 owner delta를 latest-main 통합 Branch에서 재현 중이다.
 
 `PATH_OVERLAP`이 없어도 같은 schema, registry entry, policy decision, route identity처럼 `SEMANTIC_OVERLAP`이면 충돌로 본다.
@@ -125,6 +133,7 @@ EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION
 
 ```text
 exact latest completed main
+→ record execution_surface
 → record owner PR head SHAs read-only
 → record current_workstream_identity / owner_workstream_identity
 → confirm same workstream OR explicit cross-workstream absorption authorization
@@ -144,6 +153,7 @@ owner PR branches를 직접 수정하지 않는다. current integration Branch�
 ### Required copy-integration evidence
 
 ```yaml
+execution_surface:
 owner_pr_head_shas: []
 current_workstream_identity:
 owner_workstream_identity:
@@ -164,15 +174,16 @@ rejected_duplicate_authority: []
 핵심 단계:
 
 1. exact remote authority를 읽는다.
-2. current workstream/owner workstream identity를 판정한다.
-3. local/worktree/branch 상태를 읽는다.
-4. first persistent write 전에 path + semantic overlap + open/recent PR를 비교한다.
-5. same workstream이면 cooperative ownership 규칙을 적용한다.
-6. different workstream이면 explicit user absorption authorization 없이는 read-only 탐지까지만 하고 owner surface를 건드리지 않는다.
-7. `CLEAR` 또는 승인된 `PROVISIONAL_INTEGRATION`에서만 write한다.
-8. PR creation 전 같은 preflight를 반복한다.
-9. merge 직전 exact head/base/checks/threads를 다시 확인한다.
-10. merge 후 새 main SHA와 파생 소비자를 readback한다.
+2. 현재 `execution_surface`를 확정하고 그 surface에서 실제로 관찰 가능한 상태만 기록한다.
+3. current workstream/owner workstream identity를 판정한다.
+4. local surface가 있으면 실제 local/worktree/branch 상태를 읽고, connector-only면 local 상태를 `NOT_APPLICABLE_CONNECTOR_ONLY`로 둔다.
+5. first persistent write 전에 path + semantic overlap + open/recent PR를 비교한다.
+6. same workstream이면 cooperative ownership 규칙을 적용한다.
+7. different workstream이면 explicit user absorption authorization 없이는 read-only 탐지까지만 하고 owner surface를 건드리지 않는다.
+8. `CLEAR` 또는 승인된 `PROVISIONAL_INTEGRATION`에서만 write한다.
+9. PR creation 전 같은 preflight를 반복한다.
+10. merge 직전 exact head/base/checks/threads를 다시 확인한다.
+11. merge 후 새 main SHA와 파생 소비자를 readback한다.
 
 ## Failure and recovery
 
@@ -200,6 +211,8 @@ GITHUB_CAPABILITY_FALLBACK
 MISSING_OPTIONAL_CLI
 → inspect required GitHub capability
 → prefer authenticated connector when it provides the exact capability
+→ execution_surface: GITHUB_CONNECTOR_ONLY if no usable local worktree is observed
+→ current_worktree: NOT_APPLICABLE_CONNECTOR_ONLY
 → preserve exact head/base evidence
 → use update_ref(force=false) only when an explicit ref update is actually required
 → never force-update or weaken repository governance
@@ -209,7 +222,7 @@ connector가 필요한 read/write/PR/check capability를 제공하지 못하거�
 
 ### Local network/tool unavailable
 
-local clone/test가 DNS/network/tool 부재로 막혀도 authenticated connector + repository-native CI가 같은 acceptance criterion을 증명할 수 있으면 그 경로로 전환한다. 실행하지 않은 local validation을 PASS로 주장하지 않는다.
+local clone/test가 DNS/network/tool 부재로 막혀도 authenticated connector + repository-native CI가 같은 acceptance criterion을 증명할 수 있으면 `execution_surface: GITHUB_CONNECTOR_ONLY`로 전환한다. 실행하지 않은 local validation·dirty-state·worktree 검사를 PASS로 주장하지 않는다.
 
 ### Cancelled CI
 
@@ -247,6 +260,7 @@ BLOCKED_UNVERIFIED
 
 게시·병합은 최소 다음을 확인한다.
 
+- `execution_surface`와 그 surface에서 실제로 관찰한 증거
 - current branch/head exact SHA
 - current main/base exact SHA
 - current/owner workstream identity와 cross-workstream authorization 상태
@@ -264,8 +278,8 @@ BLOCKED_UNVERIFIED
 ## Output contract
 
 ```md
-## 동기화 mode
-## repository / branch / worktree
+## 동기화 mode / execution_surface
+## repository / branch / worktree-or-NOT_APPLICABLE_CONNECTOR_ONLY
 ## current_task_or_pr_identity
 ## current_workstream_identity / owner_workstream_identity
 ## cross_workstream_absorption_authorized
@@ -285,6 +299,8 @@ BLOCKED_UNVERIFIED
 
 완료 보고 전에 다음을 모두 만족한다.
 
+- 현재 `execution_surface`에 없는 local/remote 상태를 꾸며내지 않았다.
+- `GITHUB_CONNECTOR_ONLY`에서는 `current_worktree: NOT_APPLICABLE_CONNECTOR_ONLY`를 사용하고 local 검사 결과를 추정하지 않았다.
 - 다른 채팅/독립 workstream을 같은 Goal이라는 이유만으로 수정·흡수하지 않았다.
 - cross-workstream absorption은 현재 사용자의 명시 승인이 있을 때만 수행했다.
 - first write, PR creation, merge 직전 preflight를 실제로 재실행했다.
