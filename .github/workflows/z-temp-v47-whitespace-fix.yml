@@ -1,0 +1,50 @@
+name: One-shot v4.7 Whitespace Fix
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/z-temp-v47-whitespace-fix.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.head_ref == 'docs/v47-notion-first-workflow-alignment-20260820'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - name: Normalize changed Markdown whitespace and remove this workflow
+        shell: python
+        run: |
+          from pathlib import Path
+          import subprocess
+
+          base = subprocess.check_output(['git', 'merge-base', 'origin/main', 'HEAD'], text=True).strip()
+          names = subprocess.check_output(['git', 'diff', '--name-only', base, 'HEAD'], text=True).splitlines()
+          changed = []
+          for name in names:
+              if not name.endswith('.md'):
+                  continue
+              p = Path(name)
+              if not p.is_file():
+                  continue
+              original = p.read_text(encoding='utf-8')
+              normalized = '\n'.join(line.rstrip() for line in original.splitlines()) + '\n'
+              if normalized != original:
+                  p.write_text(normalized, encoding='utf-8')
+                  changed.append(name)
+          Path('.github/workflows/z-temp-v47-whitespace-fix.yml').unlink()
+          print('normalized:', changed)
+      - name: Commit bounded whitespace cleanup
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git diff --cached --check
+          git commit -m "fix: normalize v4.7 documentation whitespace"
+          git push origin HEAD:${{ github.head_ref }}
