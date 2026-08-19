@@ -12,6 +12,8 @@ WORKSPACE = ROOT / "docs" / "operations" / "PROJECT_WORKSPACE_AUTHORITY_CONTRACT
 REGISTRY = ROOT / "skills" / "SKILL_REGISTRY.json"
 DASHBOARD = ROOT / "skills" / "building-project-visual-dashboards" / "SKILL.md"
 MANIFEST = ROOT / "docs" / "operations" / "BASE_PARTITION_MANIFEST.json"
+SHEET_CONTROL = ROOT / "docs" / "operations" / "SHEET_CONTROL_CONTRACT.json"
+GENERATOR = ROOT / "tools" / "build_base_v9_artifacts.py"
 
 
 class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
@@ -95,6 +97,16 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
         p05 = next(part for part in manifest["parts"] if part["part_id"] == "P05")
         self.assertNotIn("building-project-visual-dashboards", p05["owned_skill_ids"])
+
+    def test_sheet_control_generator_cannot_reactivate_google_sheets(self) -> None:
+        generator = GENERATOR.read_text(encoding="utf-8")
+        self.assertIn('"project_sheet_role": "MIGRATION_ONLY_LEGACY_SOURCE"', generator)
+        self.assertIn('"sheet_only_change_status": "MIGRATION_PROPOSAL_ONLY"', generator)
+        self.assertNotIn('"project_sheet_role": "USER_FACING_GDD_WORKSPACE"', generator)
+        data = json.loads(SHEET_CONTROL.read_text(encoding="utf-8"))
+        self.assertEqual("MIGRATION_ONLY_LEGACY_SOURCE", data["project_sheet_role"])
+        self.assertEqual("MIGRATION_PROPOSAL_ONLY", data["sheet_only_change_status"])
+        self.assertFalse(data["external_sheet_writes_authorized"])
 
     def test_qa_evidence_studio_files_remain_present(self) -> None:
         for relative in (
