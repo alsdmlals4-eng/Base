@@ -27,6 +27,12 @@ Registry의 `칭찬·균형 평가만 요청` 비사용 조건은 결정·권장
 
 일반 작업은 `attack → validate-critique → refine-approved-findings → regression-recheck → decision-report`를 사용한다. 저장소 전체 감사는 `references/repository-wide-audit-protocol.md`, 세부 Finding·회귀 판정은 `references/finding-and-regression-protocol.md`를 필요할 때만 읽는다.
 
+### Finding validation evidence guard
+
+`FIX_GUIDED_VERIFICATION_WHEN_EXECUTABLE: REQUIRED`
+
+구체적 수정으로 재현 가능한 Finding은 같은 acceptance/evidence ceiling에서 baseline과 candidate를 비교해 비판 자체를 재검증한다. candidate가 원 실패를 줄이지 못하거나 새 회귀를 만들면 심각도와 채택 여부를 다시 판정한다. 순수 기획·미감처럼 동등한 실행 비교가 불가능한 문제에는 억지로 적용하지 않는다. 세부 기록은 `references/finding-and-regression-protocol.md`를 따른다. 실제 runtime/build/render PASS 권위는 해당 validation owner를 넘지 않는다.
+
 ### Adversarial review until clean invariant
 
 이 Skill을 L1 이상 작업물·PR·저장소 감사·병합 후 결과의 적대적 검토로 호출하면 **최소 5회의 완전한 전체 개선 루프를 수행하고, 그 이후 CLEAN_REVIEW_EXIT까지 전체 검토·개선 생명주기를 반복한다.** `FULL_LOOP_COUNT_MINIMUM: 5`, `MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5`다. 5회는 종료 quota나 최대치가 아니라 최소 floor다. 앞 회차의 수정 결과와 새 증거 자체가 다음 회차의 공격 입력이다.
@@ -170,6 +176,7 @@ repository_audit:
 - 사용자안과 AI 최초안을 동일한 사실성·영향·비용·코어·호환성 기준으로 비교한다.
 - 사용자가 동의를 요구했다는 이유로 비판을 생략하지 않고, 적대 검토를 반대를 위한 반대로 오용하지 않는다.
 - 장점과 정상 경로도 보존하며 유효한 비판이 없으면 `REJECTED_CRITIQUE` 또는 근거 있는 동의로 판정한다.
+- 실행 가능한 구체적 수정 Finding은 `FIX_GUIDED_VERIFICATION_WHEN_EXECUTABLE`로 baseline/candidate를 같은 acceptance에서 비교한다.
 3. `refine-approved-findings`는 `MUST_FIX`와 승인된 `SHOULD_FIX`만 최소 수정한다.
 4. 기획 방향을 바꾸는 finding은 몰래 수정하지 않고 `USER_DECISION_REQUIRED`로 분리한다.
 5. `regression-recheck`는 기존 장점·정상 경로·코어·범위와 새 결함을 다시 공격한다.
