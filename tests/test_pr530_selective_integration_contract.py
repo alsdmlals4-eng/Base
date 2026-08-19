@@ -15,6 +15,7 @@ MANIFEST = ROOT / "docs" / "operations" / "BASE_PARTITION_MANIFEST.json"
 SHEET_CONTROL = ROOT / "docs" / "operations" / "SHEET_CONTROL_CONTRACT.json"
 DECISIONS = ROOT / "docs" / "operations" / "BASE_V9_DECISION_REGISTRY.json"
 GENERATOR = ROOT / "tools" / "build_base_v9_artifacts.py"
+FRESHNESS_CONFIG = ROOT / ".github" / "reference-freshness.json"
 
 
 class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
@@ -40,6 +41,7 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
     def test_planning_policy_uses_notion_and_repository_not_active_sheets(self) -> None:
         text = PLANNING.read_text(encoding="utf-8")
         for term in (
+            "BASE_EXCLUDED",
             "NOTION_HUMAN_FACING_CANON",
             "REPOSITORY_STRUCTURED_CANON",
             "REPOSITORY_RUNTIME_TRUTH",
@@ -132,6 +134,16 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
             row["status"] == "CONFIRMED" and "USER_FACING_GDD_WORKSPACE" in row["decision"]
             for row in decisions
         ))
+
+    def test_freshness_accepts_real_visual_and_owner_local_part_tests(self) -> None:
+        data = json.loads(FRESHNESS_CONFIG.read_text(encoding="utf-8"))
+        rule = next(
+            item for item in data["coupled_change_rules"]
+            if item["name"] == "skill-description-learning-test-sync"
+        )
+        companions = rule["require_any_changed"]
+        self.assertIn("tests/test_bca_visual_sheet_workflow.py", companions)
+        self.assertIn("tests/test_p0[1-9]_*.py", companions)
 
     def test_qa_evidence_studio_files_remain_present(self) -> None:
         for relative in (
