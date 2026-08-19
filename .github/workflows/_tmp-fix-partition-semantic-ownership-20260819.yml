@@ -7,6 +7,12 @@ on:
     paths:
       - tools/_tmp_fix_partition_semantic_ownership_20260819.py
       - .github/workflows/_tmp-fix-partition-semantic-ownership-20260819.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - tools/_tmp_fix_partition_semantic_ownership_20260819.py
+      - .github/workflows/_tmp-fix-partition-semantic-ownership-20260819.yml
 
 permissions:
   contents: write
