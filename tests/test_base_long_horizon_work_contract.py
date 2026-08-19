@@ -76,6 +76,9 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             ):
                 self.assertIn(term, text)
         self.assertIn("장기적으로 최선", policy)
+        documentation_map = read("docs/DOCUMENTATION_MAP.md")
+        self.assertIn("최소 5회 전체 적대적 개선", documentation_map)
+        self.assertIn("5회 이후 오류·충돌·누락·blocker 0까지 추가 전체 루프", documentation_map)
 
     def test_default_paid_plan_and_notion_free_cost_boundary(self) -> None:
         agents = read("AGENTS.md")
