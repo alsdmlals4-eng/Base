@@ -2,7 +2,7 @@
 
 이 Reference는 벤치마킹 작업에서 **장르·메커닉뿐 아니라 시스템, 콘텐츠 구조, 데이터 구조, UI/UX, 도구, 자동화, 에셋·이미지 재료, 작업구조, Skill/Eval, QA 패턴까지 재사용 후보를 능동적으로 발굴**할 때 사용한다.
 
-상위 원칙은 `docs/BENCHMARKING_REFERENCE_GUIDE.md`의 `BENCHMARK_REVERSE_ENGINEERING_PATTERN_REUSE`를 따른다. 실행 기록은 `templates/research/PROJECT_REUSE_OPPORTUNITY_SCAN.md`를 사용한다.
+상위 원칙은 `docs/BENCHMARKING_REFERENCE_GUIDE.md`의 `BENCHMARK_REVERSE_ENGINEERING_PATTERN_REUSE`를 따른다. 실행 기록은 `templates/research/PROJECT_REUSE_OPPORTUNITY_SCAN.md`를 사용한다. 새 후보를 추출하기 전에 `docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md`에서 이미 정의된 공용/프로젝트-seed 모듈을 먼저 확인하고, 같은 문제를 해결하는 계약이 있으면 새 모듈보다 재사용·변형·project adapter를 우선한다.
 
 ## 핵심 계약
 
