@@ -260,6 +260,9 @@ class GameDesignDifficultyWorkflowTests(unittest.TestCase):
             self.assertIn(term, learning)
 
 
+# Required-check bridge: this existing workflow-owned test module deliberately
+# imports the focused P04 regression so player-value/world-fit contract changes
+# cannot pass only because a new test file exists outside the workflow list.
 from tests.test_p04_vertical_slice_player_value_trace import (
     P04VerticalSlicePlayerValueTraceTests,
 )
