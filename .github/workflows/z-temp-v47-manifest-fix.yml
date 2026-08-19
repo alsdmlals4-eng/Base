@@ -1,0 +1,47 @@
+name: One-shot v4.7 P07 Notion Link Fix
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/z-temp-v47-manifest-fix.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.head_ref == 'docs/v47-notion-first-workflow-alignment-20260820'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - name: Patch exact P07 duplicate and remove this one-shot workflow
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('docs/operations/BASE_PARTITION_MANIFEST.json')
+          text = p.read_text(encoding='utf-8')
+          marker = '"part_id": "P07"'
+          pos = text.index(marker)
+          head, tail = text[:pos], text[pos:]
+          old = '''"notion_related_pages": [
+                "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
+                "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",'''
+          new = '''"notion_related_pages": [
+                "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
+                "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",'''
+          if tail.count(old) != 1:
+              raise SystemExit(f'expected exact P07 duplicate once, found {tail.count(old)}')
+          p.write_text(head + tail.replace(old, new, 1), encoding='utf-8')
+          Path('.github/workflows/z-temp-v47-manifest-fix.yml').unlink()
+      - name: Commit bounded correction
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/operations/BASE_PARTITION_MANIFEST.json .github/workflows/z-temp-v47-manifest-fix.yml
+          git diff --cached --check
+          git commit -m "fix: restore P07 shared Notion reference"
+          git push origin HEAD:${{ github.head_ref }}
