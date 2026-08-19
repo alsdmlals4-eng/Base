@@ -17,6 +17,8 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         self.assertIn("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md", agents)
         for term in (
             "ADVERSARIAL_REVIEW_UNTIL_CLEAN",
+            "FULL_LOOP_COUNT_MINIMUM: 5",
+            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5",
             "REQUIRED_WORK_REMAINING",
             "NOTION_DEFAULT_PROJECT_WORKSPACE",
             "PROJECT_RELATION_REQUIRED",
@@ -33,6 +35,8 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             "RECOVER_TRY_ALTERNATIVES_RESUME",
             "ZERO_INCREMENTAL_COST_REQUIRED",
             "ADVERSARIAL_REVIEW_UNTIL_CLEAN",
+            "FULL_LOOP_COUNT_MINIMUM: 5",
+            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5",
             "POSTMERGE_PROMOTION_AND_SUPERSESSION",
             "REQUIRED_WORK_REMAINING: 0",
         ):
@@ -72,6 +76,9 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             ):
                 self.assertIn(term, text)
         self.assertIn("장기적으로 최선", policy)
+        documentation_map = read("docs/DOCUMENTATION_MAP.md")
+        self.assertIn("최소 5회 전체 적대적 개선", documentation_map)
+        self.assertIn("5회 이후 오류·충돌·누락·blocker 0까지 추가 전체 루프", documentation_map)
 
     def test_default_paid_plan_and_notion_free_cost_boundary(self) -> None:
         agents = read("AGENTS.md")
@@ -145,21 +152,24 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", visual_policy)
         self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", visual_policy)
 
-    def test_adversarial_review_owner_repeats_until_clean_exit(self) -> None:
+    def test_adversarial_review_requires_minimum_five_then_until_clean(self) -> None:
         skill = read("skills/running-adversarial-review-and-refinement/SKILL.md")
         for term in (
             "ADVERSARIAL_REVIEW_UNTIL_CLEAN: REQUIRED_WHEN_REVIEW_RUNS",
+            "FULL_LOOP_COUNT_MINIMUM: 5",
+            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5",
             "FULL_SCOPE_REVIEW",
             "FIND → VALIDATE → REFINE → VERIFY → RE-ATTACK",
             "BETTER_ALTERNATIVE_SEARCH",
             "LONG_TERM_PLAN_FIT_RECHECK",
             "CLEAN_REVIEW_EXIT",
+            "최소 5회의 완전한 전체 개선 루프",
+            "5회 이후에도",
             "새로운 유효 오류·충돌·누락·blocking finding이 0",
         ):
             self.assertIn(term, skill)
-        self.assertNotIn("FULL_LOOP_COUNT_MINIMUM: 5", skill)
-        self.assertNotIn("FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS", skill)
-        self.assertNotIn("최소 다섯 번", skill)
+        self.assertNotIn("FIVE_DISTINCT_ADVERSARIAL_ROUNDS", skill)
+        self.assertNotIn("ROUND_1_INTENT_ASSUMPTIONS_SCOPE", skill)
 
     def test_loop_foundation_doc_points_to_current_operational_checkpoint(self) -> None:
         loop_doc = read("docs/LOOP_ENGINEERING_A2_RUNTIME.md")
@@ -210,9 +220,9 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         self.assertIn("OPTIONAL_CODEX_EXECUTOR", codex)
         self.assertIn("VISUALIZED_POC_BEFORE_DEMO_TEST", visual)
         self.assertIn("MIGRATION_ONLY_UNTIL_REMOVAL", sheets)
-        self.assertNotIn("FULL_LOOP_COUNT_MINIMUM: 5", adversarial)
-        self.assertNotIn("FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS", adversarial)
-        self.assertNotIn("최소 다섯 번", adversarial)
+        self.assertIn("FULL_LOOP_COUNT_MINIMUM: 5", adversarial)
+        self.assertIn("MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5", adversarial)
+        self.assertNotIn("FIVE_DISTINCT_ADVERSARIAL_ROUNDS", adversarial)
 
 
 if __name__ == "__main__":
