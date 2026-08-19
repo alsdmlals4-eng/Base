@@ -7,6 +7,12 @@ on:
     paths:
       - tools/_tmp_add_partition_learning_system_20260819.py
       - .github/workflows/_tmp-apply-partition-learning-system-20260819.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - tools/_tmp_add_partition_learning_system_20260819.py
+      - .github/workflows/_tmp-apply-partition-learning-system-20260819.yml
 
 permissions:
   contents: write
