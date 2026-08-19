@@ -29,6 +29,7 @@ START_HERE.md
 - [폐기 프로젝트 작업면 흡수·삭제 정책](docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md)
 - [Google Sheets 일회성 이관 Stub](docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md)
 - [근거 기반 게임 개발 지식 허브](docs/knowledge/game-development/README.md)
+- [플랫폼 심사·자산 권리·참조 독립 제작 Guide](docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md)
 - [게임 개발 Evidence Pack](templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md)
 - [게임 개발 Case Card](templates/research/GAME_DEVELOPMENT_CASE_CARD.md)
 - [PC·Android Cross-platform Guide](docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md)
