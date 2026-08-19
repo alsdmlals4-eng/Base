@@ -70,6 +70,38 @@ def parse_legacy_aliases(path: Path) -> set[str]:
     return aliases
 
 
+def parse_strict_legacy_skill_ids(path: Path) -> set[str]:
+    """Return only aliases explicitly marked as stale execution Skill IDs.
+
+    The alias table deliberately mixes historical Skill IDs, user-facing compatibility
+    names, and current Skill Modes.  Bare execution-entrypoint rejection must apply
+    only to the explicit fourth-column strict IDs; deleted-path detection can still
+    use every first-cell alias.
+    """
+    if not path.is_file():
+        return set()
+    strict_ids: set[str] = set()
+    row = re.compile(r"^\|\s*(.*?)\|\s*(.*?)\|\s*(.*?)\|\s*(.*?)\|\s*$")
+    inline_code = re.compile(r"`([^`]+)`")
+    saw_four_column_data = False
+    for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        match = row.match(line)
+        if not match:
+            continue
+        fourth = match.group(4).strip()
+        if fourth.startswith("---") or "엄격 실행 ID" in fourth:
+            continue
+        saw_four_column_data = True
+        for alias in inline_code.findall(fourth):
+            alias = alias.strip()
+            if alias:
+                strict_ids.add(alias)
+    if saw_four_column_data:
+        return strict_ids
+    # Backward compatibility for old 3-column test/fixture tables.
+    return parse_legacy_aliases(path)
+
+
 def git_changed_files(root: Path, base: str, head: str) -> set[str]:
     if not base:
         return set()
@@ -178,6 +210,7 @@ def check_legacy_references(
     root: Path,
     files: list[Path],
     aliases: set[str],
+    strict_aliases: set[str],
     allowed_globs: list[str],
     strict_id_globs: list[str],
 ) -> list[str]:
@@ -192,11 +225,13 @@ def check_legacy_references(
             old_path = f"skills/{alias}/SKILL.md"
             if old_path in text:
                 errors.append(f"Deleted skill path remains in active file: {relative} -> {old_path}")
-            if check_bare_id and re.search(
-                rf"(?<![a-z0-9-]){re.escape(alias)}(?![a-z0-9-])",
-                text,
-            ):
-                errors.append(f"Legacy skill id remains in execution entrypoint: {relative} -> {alias}")
+        if check_bare_id:
+            for alias in sorted(strict_aliases):
+                if re.search(
+                    rf"(?<![a-z0-9-]){re.escape(alias)}(?![a-z0-9-])",
+                    text,
+                ):
+                    errors.append(f"Legacy skill id remains in execution entrypoint: {relative} -> {alias}")
     return errors
 
 
@@ -307,12 +342,14 @@ def main() -> int:
     )
     aliases_path = str(config.get("legacy_aliases_path", "")).strip()
     aliases = parse_legacy_aliases(root / aliases_path) if aliases_path else set()
+    strict_aliases = parse_strict_legacy_skill_ids(root / aliases_path) if aliases_path else set()
 
     errors: list[str] = []
     errors.extend(check_legacy_references(
         root,
         files,
         aliases,
+        strict_aliases,
         [str(item) for item in config.get("allowed_legacy_globs", [])],
         [str(item) for item in config.get("strict_legacy_id_globs", [])],
     ))
@@ -335,6 +372,7 @@ def main() -> int:
     print("REFERENCE FRESHNESS CHECK: PASS")
     print(f"- scanned_files: {len(files)}")
     print(f"- legacy_aliases: {len(aliases)}")
+    print(f"- strict_legacy_skill_ids: {len(strict_aliases)}")
     print(f"- changed_files: {len(changed)}")
     return 0
 

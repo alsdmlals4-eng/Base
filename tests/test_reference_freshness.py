@@ -23,9 +23,9 @@ class CanonicalReferenceFreshnessTests(unittest.TestCase):
         (self.root / "tests").mkdir()
         (self.root / "skills/LEGACY_SKILL_ALIASES.md").write_text(
             "# Legacy Skill Aliases\n\n"
-            "| 이전 Skill ID | 새 Skill ID | Mode |\n"
-            "|---|---|---|\n"
-            "| `old-skill` | `new-skill` | `run` |\n",
+            "| 이전 Skill ID·호환 이름 | 새 Skill ID | Mode | 엄격 실행 ID |\n"
+            "|---|---|---|---|\n"
+            "| `old-skill` | `new-skill` | `run` | `old-skill` |\n",
             encoding="utf-8",
         )
         (self.root / "docs/OPERATING_MODEL.md").write_text("# Canonical\n", encoding="utf-8")
@@ -370,6 +370,43 @@ class CanonicalReferenceFreshnessTests(unittest.TestCase):
                 {"old-one", "old-two", "old-three"},
                 parse_legacy_aliases(path),
             )
+
+
+    def test_strict_alias_column_distinguishes_compatibility_name_from_legacy_id(self) -> None:
+        aliases = self.root / "skills/LEGACY_SKILL_ALIASES.md"
+        aliases.write_text(
+            "| 이전 Skill ID·호환 이름 | 새 Skill ID | Mode | 엄격 실행 ID |\n"
+            "|---|---|---|---|\n"
+            "| `friendly label`, `old-two`, `old-three` | `new-skill` | `run` | `old-two`, `old-three` |\n",
+            encoding="utf-8",
+        )
+        (self.root / "README.md").write_text(
+            "See docs/OPERATING_MODEL.md and friendly label.\n",
+            encoding="utf-8",
+        )
+        allowed = self._run()
+        self.assertEqual(0, allowed.returncode, allowed.stdout + allowed.stderr)
+        (self.root / "README.md").write_text(
+            "See docs/OPERATING_MODEL.md and old-three.\n",
+            encoding="utf-8",
+        )
+        blocked = self._run()
+        self.assertNotEqual(0, blocked.returncode)
+        self.assertIn("Legacy skill id remains in execution entrypoint", blocked.stdout)
+
+    def test_parse_strict_legacy_skill_ids_reads_nonfirst_strict_alias(self) -> None:
+        from tempfile import TemporaryDirectory
+        from tools.check_canonical_reference_freshness import parse_strict_legacy_skill_ids
+
+        with TemporaryDirectory() as tmp:
+            path = Path(tmp) / "aliases.md"
+            path.write_text(
+                "| 이전 Skill ID·호환 이름 | 새 Skill ID | Mode | 엄격 실행 ID |\n"
+                "|---|---|---|---|\n"
+                "| `label`, `old-two`, `old-three` | `new` | `run` | `old-two`, `old-three` |\n",
+                encoding="utf-8",
+            )
+            self.assertEqual({"old-two", "old-three"}, parse_strict_legacy_skill_ids(path))
 
 
 if __name__ == "__main__":
