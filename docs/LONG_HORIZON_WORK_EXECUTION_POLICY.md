@@ -261,7 +261,7 @@ GPT planning/research/review
 → GitHub/Notion sync + readback
 ```
 
-`VISUALIZED_POC_BEFORE_DEMO_TEST`: 플레이 경험을 UI/UX와 화면 맥락 없이 판단하면 왜곡될 위험이 큰 게임 PoC/데모는 회색 박스만으로 최종 평가하지 않는다. 기획·검수 단계에서 필요한 화면·HUD·핵심 상태·아트 앵커 이미지를 만들거나 승인된 기존 이미지를 선택하고, 올바른 Project의 Notion Visual/Asset surface에 배치·readback한 뒤 이를 구현 패키지의 시각 입력으로 사용한다. 모든 PoC에 완성 아트를 강제하지 않으며, 이미지가 판단에 실질 영향을 주지 않는 순수 로직 PoC는 예외로 기록한다.
+`RELEASE_NEAR_VERTICAL_SLICE_FIRST`: 기획·검수 뒤 재미·몰입·가독성·첫인상·판매 포인트·감정 곡선을 판단하는 플레이 테스트는 shipping-intent UI/UX·이미지/아트·대표 사운드·VFX/피드백·핵심 시스템/콘텐츠가 연결된 짧은 완성형 Vertical Slice에서 수행한다. 좁은 기술 질문은 `TECHNICAL_SPIKE_INTERNAL_ONLY`로 먼저 풀 수 있지만 `SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`에 따라 그 결과만으로 플레이어 경험을 PASS 처리하지 않는다.
 
 `LEGACY_ABSORB_VERIFY_REMOVE`: 더 이상 사용하지 않기로 확정된 Figma, 전용 로컬 시각 Tool/Hub, 외부 HTML 작업면, Google Sheets 등 구형 surface는 일상 검색·라우팅 대상에서 제거한다. 삭제 전 한 번만 `UNIQUE / DUPLICATE / OBSOLETE`를 분류하고, `UNIQUE`한 규칙·데이터·증거·재사용 원리만 현재 Notion 또는 repository 정본으로 흡수한다. 목적지 readback과 참조 신선도 검증이 끝나면 원본과 활성 참조를 제거한다. `DUPLICATE/OBSOLETE`는 재검토를 반복하지 않는다. 법적·감사·rollback 때문에 보존이 필요한 최소 이력은 명시적 archive manifest만 남기고 기본 탐색에서 제외한다.
 
