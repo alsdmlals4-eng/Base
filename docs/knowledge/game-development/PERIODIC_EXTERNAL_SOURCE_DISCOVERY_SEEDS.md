@@ -831,56 +831,55 @@ BLOCKED_UNVERIFIED
 
 실질적인 개선이 없으면 `NO_CHANGE`로 닫고, seed를 추가했다는 이유만으로 새 Skill·규칙·문서 변경을 계속 만들지 않는다.
 
-## 12. Figma practical design workflow
+## 12. Notion skills, work structure, and utilization workflow
 
-Figma의 실전 사용법·팁·노하우는 일반 creator 영상보다 **현재 Figma Help / Learn 공식 문서**를 먼저 확인한다. 이 seed는 Figma 기능의 현재 동작과 availability에 한해 `AUTHORITY_TARGET`이며, Figma가 프로젝트 기획·Godot 구현의 canon이라는 뜻이 아니다.
+Notion은 Base의 정본이나 필수 workspace로 승격하지 않는다. 이 seed는 **Notion 자체 기능의 현재 동작과 반복 가능한 지식·작업 구조를 조사하는 공식 source**이며, 발견한 원리는 Existing Solution First와 적대적 검토를 통과한 뒤 기존 Base owner에 최소 흡수한다.
 
 ```yaml
-seed_group: figma-practical-design-workflow
+seed_group: notion-skills-work-structure
 status: ACTIVE_DISCOVERY_SEED
 domains:
-  - GAME_DEVELOPMENT
   - PROMPT_AND_AGENT_WORKFLOW
-recommended_cadence: monthly-or-when-figma-workflow-active
-existing_consumers:
-  authority_and_visual_lifecycle: docs/VISUAL_COLLABORATION_TOOL_POLICY.md
-  workspace_practice: templates/project-operations/FIGMA_WORKSPACE_STRUCTURE_PROFILE.md
-  visual_bible: templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md
-source_role: AUTHORITY_TARGET_FOR_FIGMA_BEHAVIOR
+  - SKILL_AUTHORING_AND_EVOLUTION
+source_role: AUTHORITY_TARGET_FOR_NOTION_BEHAVIOR
+recommended_cadence: weekly
 urls:
-  auto_layout: https://help.figma.com/hc/en-us/articles/360040451373-Guide-to-auto-layout
-  components_variants: https://help.figma.com/hc/en-us/articles/39636737843735-Components-collection-Variants-and-component-set-fundamentals
-  interactive_components: https://help.figma.com/hc/en-us/articles/360061175334-Create-interactive-components-with-variants
-  variables: https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma
-  prototyping: https://help.figma.com/hc/en-us/articles/360040314193-Guide-to-prototyping-in-Figma
-  dev_mode: https://help.figma.com/hc/en-us/articles/15023124644247-Guide-to-Dev-Mode
-  sections: https://help.figma.com/hc/en-us/articles/9771500257687-Organize-your-canvas-with-sections
-  figjam: https://help.figma.com/hc/en-us/articles/1500004362321-Guide-to-FigJam
+  skills: https://www.notion.com/help/skills-for-notion-agent
+  custom_agents: https://www.notion.com/help/custom-agents
+  notion_mcp: https://www.notion.com/help/notion-mcp
+  databases: https://www.notion.com/help/category/databases
+  database_automations: https://www.notion.com/help/database-automations
+  releases: https://www.notion.com/releases
+  developers: https://developers.notion.com/
 scan_surfaces:
-  - Auto Layout, sizing, padding, gap, wrap and responsive behavior
-  - Components, Variants, component properties and interactive components
-  - Variables, collections, modes and prototype state
-  - prototype flows and interaction behavior
-  - Sections and review / handoff organization
-  - FigJam research, diagramming, affinity and critique workflows
-  - Dev Mode, Ready for dev, annotations, inspection and version comparison
-  - plan / seat / availability changes when adoption depends on them
+  - Skills for Notion Agent and reusable task instructions
+  - persistent Instructions vs on-demand Skills vs autonomous Custom Agents
+  - databases, projects/tasks, views, relations, rollups, formulas and templates
+  - database automations, buttons, triggers, webhooks and failure boundaries
+  - Notion MCP, API, permissions and connected-app boundaries
+  - release notes, beta/general availability and plan/seat changes when adoption depends on them
 ```
 
-Figma source 결과는 `FIGMA_WORKSPACE_STRUCTURE_PROFILE.md`의 실전 workflow에 흡수하고, 기능명이 생겼다는 이유로 새 `figma-*` Skill을 만들지 않는다.
-
-과장 방지:
+### 12.1 흡수 질문
 
 ```text
-Figma feature availability != mandatory project workflow
-Auto Layout != correct for every visual object
-Component != every repeated-looking layer must be componentized
-Variables != every raw number should become a design token
-Prototype != Godot runtime proof
-Dev Mode snippet != production correctness
-FigJam note != confirmed Decision canon
+반복 작업을 매번 긴 prompt로 다시 쓰고 있는가?
+→ persistent preference는 instruction, 필요할 때만 부르는 절차는 skill, 시간/이벤트 기반 자율 실행은 agent/automation으로 책임을 분리할 수 있는가?
+→ database property·view·relation이 실제 의사결정과 handoff를 줄이는가, 아니면 관리 오버헤드만 늘리는가?
+→ template/button/automation이 반복 수작업을 줄이되 숨은 side effect와 권한 확대를 만들지 않는가?
+→ Notion MCP/API가 기존 GitHub·Google Sheets·repo-native owner를 대체하려는가, 아니면 명확한 보조 read/write 경계가 있는가?
+→ 공개 공식 자료에서 확인한 원리가 Base의 기존 Skill/Mode/Template에 이미 있는가?
+→ 기능 availability·plan·permission이 바뀌어도 Base 정본과 프로젝트 실행이 깨지지 않는가?
 ```
 
+### 12.2 승격 경계
+
+- Notion 기능명이 생겼다는 이유로 새 `notion-*` Skill을 만들지 않는다.
+- 반복 가치가 검증된 원리만 기존 owner에 `ADAPT`; 이미 있는 계약은 `ALREADY_COVERED`로 닫는다.
+- Notion 페이지·database를 Base/GitHub 정본보다 높은 권한으로 만들지 않는다.
+- 별도 유료 플랜·AI credit·API 비용·automation quota가 필요한 경로는 `ZERO_INCREMENTAL_COST_REQUIRED`와 새 사용자 승인을 통과하기 전 활성화하지 않는다.
+- 실제 연결 workspace를 읽거나 쓰지 않은 조사에서는 Notion 사용 완료·자동화 동작을 주장하지 않는다.
+- 실질 개선이 없으면 `NO_CHANGE`로 닫고 source scan 기록만 갱신한다.
 ## 13. Game market intelligence + verified success cases
 
 시장조사는 인기순위 수집이 아니라 **비교 차원 → table-stakes → failure/mixed cases → 검증 가능한 성과 → transferable principle → project kick candidate**로 이어진다. 상세 판정 owner는 `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md`다.

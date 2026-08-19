@@ -5,15 +5,29 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 
 
-class VisualCollaborationCapabilityContractTests(unittest.TestCase):
-    def test_policy_keeps_tools_reusable_and_noncanonical(self):
-        text = (ROOT / "docs/VISUAL_COLLABORATION_TOOL_POLICY.md").read_text(encoding="utf-8")
-        for token in ("GDD", "EXTERNAL_COLLABORATION", "BOTH", "VISUAL_CANONICAL_CONFLICT", "IMPLEMENTATION_PINNED", "NOT_RUN"):
-            self.assertIn(token, text)
-        self.assertIn("do not create a `figma-*`", text.lower())
+def read(path: str) -> str:
+    return (ROOT / path).read_text(encoding="utf-8")
 
-    def test_registry_template_records_context_and_handoff_evidence(self):
-        data = json.loads((ROOT / "templates/project-operations/VISUAL_ARTIFACT_REGISTRY.json").read_text(encoding="utf-8"))
+
+class VisualCollaborationCapabilityContractTests(unittest.TestCase):
+    def test_policy_keeps_collaboration_contexts_noncanonical(self):
+        text = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
+        for token in (
+            "GDD",
+            "EXTERNAL_COLLABORATION",
+            "BOTH",
+            "NOTION_DEFAULT_PROJECT_WORKSPACE",
+            "PROJECT_RELATION_REQUIRED",
+            "REPOSITORY_RUNTIME_TRUTH",
+            "Intermediate visual checkpoint",
+            "MISSING_CANON",
+            "DRAFT_VISUAL",
+        ):
+            self.assertIn(token, text)
+        self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", text)
+
+    def test_registry_template_keeps_generic_handoff_evidence(self):
+        data = json.loads(read("templates/project-operations/VISUAL_ARTIFACT_REGISTRY.json"))
         item = data["artifacts"][0]
         for field in (
             "usage_context",
@@ -30,175 +44,117 @@ class VisualCollaborationCapabilityContractTests(unittest.TestCase):
         ):
             self.assertIn(field, item)
 
-    def test_documentation_map_routes_existing_responsibilities_to_the_shared_policy(self):
-        text = (ROOT / "docs/DOCUMENTATION_MAP.md").read_text(encoding="utf-8")
+    def test_documentation_map_routes_shared_visual_responsibilities(self):
+        text = read("docs/DOCUMENTATION_MAP.md")
         self.assertIn("VISUAL_COLLABORATION_TOOL_POLICY.md", text)
+        self.assertIn("NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md", text)
         self.assertIn("CAPABILITY_COMPOSITION_MAP.md", text)
 
-    def test_figma_visual_bible_profile_keeps_stage_and_authority_boundaries(self):
-        policy = (ROOT / "docs/VISUAL_COLLABORATION_TOOL_POLICY.md").read_text(encoding="utf-8")
-        profile = (ROOT / "templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md").read_text(encoding="utf-8")
-
+    def test_notion_asset_workflow_preserves_stage_and_authority_boundaries(self):
+        policy = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
+        workflow = read("docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md")
         for token in (
-            "Project Figma Visual Bible",
-            "00_DIRECTION",
-            "01_APPROVED_REFERENCE",
-            "02_WIP",
-            "03_REJECTED",
-            "04_FINAL",
-            "APPROVED_VISUAL_REFERENCE",
+            "PROJECT_RELATION_REQUIRED",
+            "ASSET_KNOWLEDGE_MASTER",
+            "VISUAL_MAP_DERIVED",
             "PROJECT_ASSET_APPROVED",
+            "REPOSITORY_RUNTIME_TRUTH",
         ):
-            self.assertIn(token, policy)
-
-        self.assertIn("생성·편집 직후 실제 Figma `02_WIP`", policy)
-        self.assertIn("SYNC_PENDING", policy)
-
+            self.assertIn(token, policy + workflow)
         for token in (
-            "VISUAL_CANONICAL_CONFLICT",
-            "visual_status",
-            "product_asset_status",
-            "Keep / Avoid / Do Not Drift",
-            "CHAR_",
-            "UI_",
-            "BATTLE_",
+            "WIP",
+            "APPROVED",
+            "REPLACED",
+            "ARCHIVED",
+            "source provenance",
+            "readback",
         ):
-            self.assertIn(token, profile)
+            self.assertIn(token, workflow)
+        self.assertFalse((ROOT / "templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md").exists())
+        self.assertFalse((ROOT / "templates/project-operations/FIGMA_WORKSPACE_STRUCTURE_PROFILE.md").exists())
 
-        self.assertIn("제품 자산 승격은 별도 asset lifecycle", profile)
+    def test_art_generation_routes_through_project_visual_continuity_gate(self):
+        skill = read("skills/designing-art-prompts-and-technique-cards/SKILL.md")
+        gate = read(
+            "skills/designing-art-prompts-and-technique-cards/references/notion-project-visual-continuity-gate.md"
+        )
+        plan = read("templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md")
 
-    def test_art_generation_routes_through_figma_continuity_gate(self):
-        skill = (ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md").read_text(encoding="utf-8")
-        gate = (
-            ROOT
-            / "skills/designing-art-prompts-and-technique-cards/references/figma-visual-bible-continuity-gate.md"
-        ).read_text(encoding="utf-8")
-        plan = (ROOT / "templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md").read_text(encoding="utf-8")
-
-        self.assertIn("references/figma-visual-bible-continuity-gate.md", skill)
-        self.assertIn("APPROVED_VISUAL_REFERENCE", skill)
-        self.assertIn("Keep / Avoid / Do Not Drift", skill)
-
+        self.assertIn("references/notion-project-visual-continuity-gate.md", skill)
+        self.assertNotIn("figma-visual-bible-continuity-gate.md", skill)
         for token in (
             "APPROVED_VISUAL_REFERENCE",
             "Keep / Avoid / Do Not Drift",
             "BLOCKED_UNVERIFIED",
             "VISUAL_CANONICAL_CONFLICT",
             "PROJECT_ASSET_APPROVED",
+            "PROJECT_RELATION_REQUIRED",
         ):
             self.assertIn(token, gate)
-
         for token in (
-            "figma_visual_bible_status",
-            "figma_approved_reference_ids",
-            "figma_approved_frame_or_node_ids",
-            "figma_wip_target",
-            "figma_sync_status",
+            "project_relation",
+            "approved_visual_reference_ids",
+            "visual_map_status",
+            "readback_status",
+            "screen_id",
+            "flow_id",
         ):
             self.assertIn(token, plan)
 
-        self.assertIn("Figma `04_FINAL`", plan)
-        self.assertIn("PROJECT_ASSET_APPROVED", plan)
-
-    def test_figma_visual_flow_records_gpt_interpretation_and_runtime_compare(self):
-        policy = (ROOT / "docs/VISUAL_COLLABORATION_TOOL_POLICY.md").read_text(encoding="utf-8")
-        profile = (ROOT / "templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md").read_text(encoding="utf-8")
-        gate = (
-            ROOT
-            / "skills/designing-art-prompts-and-technique-cards/references/figma-visual-bible-continuity-gate.md"
-        ).read_text(encoding="utf-8")
-        plan = (ROOT / "templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md").read_text(encoding="utf-8")
-        registry = json.loads((ROOT / "templates/project-operations/VISUAL_ARTIFACT_REGISTRY.json").read_text(encoding="utf-8"))
+    def test_visual_flow_records_interpretation_and_runtime_compare_without_tool_lock_in(self):
+        policy = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
+        gate = read(
+            "skills/designing-art-prompts-and-technique-cards/references/notion-project-visual-continuity-gate.md"
+        )
+        plan = read("templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md")
+        registry = json.loads(read("templates/project-operations/VISUAL_ARTIFACT_REGISTRY.json"))
         item = registry["artifacts"][0]
 
         for token in (
-            "Project Visual Flow Workspace",
-            "FLOW_MAP",
-            "PROTOTYPE_FLOW",
-            "INTERPRETATION_RECORD",
-            "RUNTIME_CAPTURE",
-            "COMPARE_BOARD",
-            "CONFIRMED",
-            "DISCOVERED_IDEA",
-            "AI_ASSUMPTION",
-            "IMPLEMENTATION_GAP",
-            "AI_MOCKUP_ERROR",
+            "VISUAL_MAP_DERIVED",
+            "screen IDs",
+            "primary/secondary/conditional",
+            "runtime evidence",
         ):
             self.assertIn(token, policy)
-
-        for token in (
-            "00.8_VISUAL_FLOW_HUB",
-            "02.5_FLOW_PROTOTYPE",
-            "02.6_GPT_INTERPRETATION",
-            "GPT interpretation card",
-            "Flow map card",
-            "Runtime compare card",
-        ):
-            self.assertIn(token, profile)
-
         for token in (
             "screen_id",
             "flow_id",
             "INTERPRETATION_RECORD",
             "DISCOVERED_IDEA",
             "AI_ASSUMPTION",
-            "PROTOTYPE_FLOW",
             "RUNTIME_CAPTURE",
         ):
             self.assertIn(token, gate)
-
         for token in (
             "screen_id",
             "flow_id",
-            "figma_interpretation_record_id",
+            "interpretation_record_id",
             "interpretation_status",
             "runtime_compare_required",
             "runtime_capture_path",
             "drift_status",
         ):
             self.assertIn(token, plan)
-
         for field in ("screen_id", "flow_id", "interpretation_status", "runtime_compare_status"):
             self.assertIn(field, item)
 
-        self.assertIn("INTERPRETATION_RECORD", item["artifact_type"])
-        self.assertIn("COMPARE_BOARD", item["artifact_type"])
-
-    def test_figma_workspace_profile_teaches_practical_reusable_workflow(self):
-        profile = (
-            ROOT / "templates/project-operations/FIGMA_WORKSPACE_STRUCTURE_PROFILE.md"
-        ).read_text(encoding="utf-8")
-        for token in (
-            "Auto Layout",
-            "Shift+A",
-            "Variants",
-            "Variables",
-            "interactive components",
-            "FigJam",
-            "Dev Mode",
-            "prototype",
-            "runtime proof",
-            "componentizing one-off decoration",
-        ):
-            self.assertIn(token, profile)
-
-    def test_figma_visual_bible_tracks_reuse_without_becoming_asset_authority(self):
-        policy = (ROOT / "docs/VISUAL_COLLABORATION_TOOL_POLICY.md").read_text(encoding="utf-8")
-        profile = (ROOT / "templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md").read_text(encoding="utf-8")
-        registry = json.loads(
-            (ROOT / "templates/project-operations/VISUAL_ARTIFACT_REGISTRY.json").read_text(encoding="utf-8")
-        )
+    def test_reusable_visual_harvest_uses_asset_master_without_becoming_asset_authority(self):
+        policy = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
+        workflow = read("docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md")
+        registry = json.loads(read("templates/project-operations/VISUAL_ARTIFACT_REGISTRY.json"))
         item = registry["artifacts"][0]
 
         for token in (
-            "01.10_REUSABLE_COMPONENTS",
-            "01.11_STRUCTURE_PATTERNS",
-            "01.12_VISUAL_DNA",
+            "REUSE_AS_IS",
+            "VARIANT_SEED",
+            "STRUCTURE_PATTERN",
+            "STYLE_DNA",
             "REBUILD_FOR_REUSE",
             "ONE_OFF_KEEP",
+            "REJECT_REUSE",
         ):
-            self.assertIn(token, profile)
-
+            self.assertIn(token, workflow)
         for field in (
             "reuse_classification",
             "reuse_source_artifact_id",
@@ -206,11 +162,20 @@ class VisualCollaborationCapabilityContractTests(unittest.TestCase):
             "derived_pixel_status",
         ):
             self.assertIn(field, item)
-
         self.assertIn("reuse promotion", policy)
-        self.assertIn("PROJECT_ASSET_APPROVED", policy)
-        self.assertIn("Asset Vault", policy)
-        self.assertIn("Godot", policy)
+        self.assertIn("PROJECT_ASSET_APPROVED", workflow)
+
+    def test_deprecated_visual_execution_surfaces_stay_deleted(self):
+        for path in (
+            "tools/figma-bridge",
+            "tools/expression-studio",
+            "tools/sprite-animation-studio",
+            "tools/tool-hub",
+            "templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md",
+            "templates/project-operations/FIGMA_WORKSPACE_STRUCTURE_PROFILE.md",
+            "templates/project-operations/FIGMA_NARRATIVE_DIALOGUE_FLOW_PROFILE.md",
+        ):
+            self.assertFalse((ROOT / path).exists(), path)
 
 
 if __name__ == "__main__":

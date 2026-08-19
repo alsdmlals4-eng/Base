@@ -170,17 +170,19 @@ class PixelArtStyleSystemTests(unittest.TestCase):
         ):
             self.assertIn(term, radar)
 
-    def test_figma_reference_sync_has_official_route_and_truthful_fallback(self) -> None:
+    def test_notion_reference_sync_requires_project_relation_and_readback(self) -> None:
         preferred = read(PREFERRED_LIBRARY)
         for term in (
-            "FIGMA_STRUCTURE_READY",
-            "upload_assets",
-            "FIGMA_SYNC_PENDING_TRANSPORT",
-            "FIGMA_READBACK_REQUIRED",
-            "https://developers.figma.com/docs/figma-mcp-server/tools-and-prompts/",
-            "https://developers.figma.com/docs/figma-mcp-server/write-to-canvas/",
+            "NOTION_DEFAULT_PROJECT_WORKSPACE",
+            "PROJECT_RELATION_REQUIRED",
+            "Record Type: REFERENCE",
+            "NOTION_READBACK_REQUIRED",
+            "REFERENCE_SYNC_READBACK_VERIFIED",
+            "source provenance",
         ):
             self.assertIn(term, preferred)
+        self.assertNotIn("FIGMA_SYNC_PENDING_TRANSPORT", preferred)
+        self.assertNotIn("FIGMA_REFERENCE_SYNCED", preferred)
 
     def test_pixel_candidate_template_captures_axes_cost_and_validation(self) -> None:
         brief = read(ART_BRIEF)

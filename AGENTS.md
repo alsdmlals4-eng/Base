@@ -29,7 +29,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - **`FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS`:** L1 이상에서 적대적 검토를 실행할 때는 다섯 관점을 각각 한 번 보는 방식이 아니라, **전체 승인 범위에 대한 적대적 검토 → 충돌·누락·문제 발견 → 검증된 finding 개선·보완 → 실제 검증·회귀검사 → 개선된 상태 전체를 다시 적대적으로 공격**하는 완전한 개선 루프를 최소 5회 반복한다. 각 회차는 사용자 의도·정본·Skill/Tool/구조·실제 구현·데이터·테스트·실패복구·보안·동시성·비용·벤치마크·장기 유지·증거·완료조건을 전체적으로 다시 본다. 5회차 뒤에도 blocking finding이 남으면 횟수를 채웠다는 이유로 종료하지 않고 수정·검증 후 **추가 전체 루프**를 수행한다.
 - 벤치마킹·현업/실무 조사·성공사례·실패사례는 최소 3개 대안의 원리와 실패조건을 비교하는 근거로 사용하고, `ADOPT / ADAPT / REJECT`로 현재 환경 적합성을 판정한다. 외부 사례가 Base 요구사항 정본이 되지는 않는다.
 - **`ZERO_INCREMENTAL_COST_REQUIRED`:** Base와 Base를 적용한 프로젝트의 기본 실행 경로는 사용자의 추가 금전 지출을 만들지 않아야 한다. 이미 보유한 구독 기능도 해당 기능이 구독에 포함되고 별도 API·credit·marketplace·runner·storage·SaaS 같은 **separately metered** 과금으로 전환되지 않는 범위에서만 사용한다. `pay-as-you-go` API, 유료 credit, 신규 유료 구독·구매, 별도 과금 compute·runner·service는 사용자가 이 정책을 명시적으로 바꾸기 전에는 도입·실행하지 않는다. 비용 상태를 확정할 수 없으면 live call·구매·유료 실행을 하지 않고 `COST_GATE_BLOCKED`로 둔다. CI의 구체적 실행·비용 계층은 `docs/CI_EXECUTION_COST_POLICY.md`가 책임진다.**
-- **현재 유료 플랜 고정:** `CURRENT_PAID_PLANS: GPT_PRO, FIGMA_PRO`, `PAID_PLAN_COUNT: 2`. 현재 사용 가능한 유료 플랜은 **GPT Pro와 Figma Pro 두 개뿐**이다. 두 플랜 안의 기능도 별도 metered billing으로 전환되는 경로는 허용 범위가 아니다. 다른 유료 AI/API/SaaS/상위 플랜/marketplace/runner/compute/storage를 사용하거나 결제하려면 **새 사용자 승인**이 필요하다.
+- **현재 유료 플랜 고정:** `CURRENT_PAID_PLANS: GPT_PRO`, `PAID_PLAN_COUNT: 1`. 현재 기본 유료 플랜은 **GPT Pro 하나**다. Notion은 별도 유료 기능이나 metered billing 없이 Free 범위에서 사용한다. 다른 유료 AI/API/SaaS/상위 플랜/marketplace/runner/compute/storage를 사용하거나 결제하려면 **새 사용자 승인**이 필요하다.
 - **Existing Solution First Gate:** 신규 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층은 현재 사용 도구·connected MCP·enabled addon·dependency·같은 Goal의 열린/최근 병합 PR·유지되는 외부 대안을 먼저 조사하고 `REUSE / ABSORB / REFACTOR / ARCHIVE / BUILD_NEW` 판정을 기록하기 전에는 설계·구현하지 않는다. Godot 관련 정본은 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`이며, 직접 제작 판단은 `evaluating-godot-assets-and-plugins-before-creation`이 소유한다.
 - `BUILD_NEW`는 기존 대안의 핵심 기능·보안·라이선스·유지·Godot/OS/클라이언트 적합성 결함을 설정·격리·bounded patch로 해결할 수 없다는 증거와 사용자 승인이 있어야 한다. “직접 만들면 더 엄격하다”는 단독 근거가 아니다.
 - 검증·승인된 애드온이 현재 작업의 실제 문제를 해결하면 직접 중복 구현보다 활용을 우선한다. 단, 모든 프로젝트에 일괄 설치하지 않는다. 프로젝트 단계·Godot 버전·플랫폼·권위 경계·실제 소비 경로를 확인하고 필요한 프로젝트에만 선택적으로 채택한다.
@@ -58,13 +58,13 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - 프로젝트 방향을 바꾸지 않는 가역적 상세 데이터·초기 시험 수치는 `DETAILED_NUMERIC_DEFAULT`이자 `RECOMMENDED_DEFAULT`로 GPT 권장안을 적용하고 근거·조정 조건·검증·미검증을 기록한다.
 - 난이도 곡선·경제·성장 속도·세션 길이·빌드 우열·보상 의미·핵심 플레이 경험 또는 분야 책임 원본이 충돌하면 `PLANNING_CONFLICT`, `USER_DECISION_REQUIRED`, `GRILL_ME_REQUIRED`로 분류하고 Grill Me 사용자 승인 전 확정하지 않는다.
 - Grill Me 승인 Decision은 즉시 활성 배치 Branch와 GitHub 추적 surface에 같은 Decision ID로 기록한다. `MAX_APPROVED_DECISIONS_PER_BATCH: 10`은 최소 대기량이 아니라 최대 배치 크기이며, 10건 또는 조기 체크포인트에서 하나의 PR로 exact-head 검사와 `attack → validate-critique → regression-recheck → decision-report`를 수행한다.
-- 10번째 승인 뒤에는 배치 PR 병합·재동기화 전 11번째 질문을 금지한다. `unresolved thread 0`, `P0/P1 0`과 필수 검사가 충족된 뒤 병합하고 merged main SHA와 구성된 Sheet를 재조회해 `SYNCED_TO_MAIN`을 확정한다.
+- 10번째 승인 뒤에는 배치 PR 병합·재동기화 전 11번째 질문을 금지한다. `unresolved thread 0`, `P0/P1 0`과 필수 검사가 충족된 뒤 병합하고 merged main SHA와 구성된 프로젝트 workspace를 재조회해 `SYNCED_TO_MAIN`을 확정한다.
 
-상세 상태·조기 체크포인트·Sheet 의미는 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`가 책임진다.
+상세 상태·조기 체크포인트·workspace 의미는 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`가 책임진다.
 
 ## 2.3 장기 작업 불변 계약
 
-장기·복합 L1 이상 작업은 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`를 적용한다. 이 계약은 새 Skill이 아니라 기존 intake·검증·Git·archive·Tool Hub·Loop Engineering 책임을 연결한다.
+장기·복합 L1 이상 작업은 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`를 적용한다. 이 계약은 새 Skill이 아니라 기존 intake·검증·archive·Loop Engineering 책임을 연결한다.
 
 ```text
 DIRECTION_FIRST
@@ -77,9 +77,10 @@ EXPECTED_EFFECTS_RISKS_MITIGATIONS_BEFORE_BUILD
 SINGLE_INITIAL_APPROVAL_THEN_CONTINUE
 FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS
 REQUIRED_WORK_REMAINING
-FIGMA_DEFAULT_VISUAL_WORKSPACE
-CURRENT_PAID_PLANS: GPT_PRO, FIGMA_PRO
-PAID_PLAN_COUNT: 2
+NOTION_DEFAULT_PROJECT_WORKSPACE
+PROJECT_RELATION_REQUIRED
+CURRENT_PAID_PLANS: GPT_PRO
+PAID_PLAN_COUNT: 1
 ```
 
 - 전체 방향·의도·플레이어 가치와 실제 정본을 먼저 고정하고, 최소 3개 실질 대안과 벤치마킹·실무사례·실패사례를 비교한 뒤 예상 효과·문제·보완·롤백을 BUILD 전에 제시한다.
@@ -88,7 +89,7 @@ PAID_PLAN_COUNT: 2
 - 적대적 검토는 `전체 범위 공격 → finding 검증 → 개선·보완 → 실제 검증·회귀 → 개선된 전체 상태 재공격`의 **완전한 개선 루프를 최소 5회** 수행한다. 다섯 공격면으로 쪼개서 한 번씩 보는 것은 이 계약을 충족하지 않는다.
 - 완료는 승인된 acceptance criteria의 `REQUIRED_WORK_REMAINING: 0`으로 판정한다. 외부 차단과 선택 backlog는 별도 축으로 남긴다.
 - 게임 작업은 core loop·핵심 시스템·세계관/핵심 스토리라인 정합성·가역적 dummy `BALANCE_BUDGET`·playable build/test·재사용 가능한 모듈 경계를 함께 설계한다.
-- 새 시각 작업의 기본 협업면은 프로젝트별 Figma이며, balance/economy/schema/runtime config는 repo-native structured source를 사용한다. 기존 Google Sheets는 검증된 migration이 끝날 때까지 legacy proposal/migration source로 보존한다.
+- 새 프로젝트와 새 시각 작업의 기본 협업면은 단일 Notion workspace의 프로젝트별 filtered page다. `Project` relation으로 작업·자산·화면·Reference·Benchmark를 분리하며, balance/economy/schema/runtime config와 실제 구현은 repo-native structured source를 사용한다. 기존 Google Sheets는 검증된 migration이 끝날 때까지 compatibility-only migration source로 보존한다. 상세 compatibility/migration owner는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`다.
 - 사용자에게 PowerShell 실행이 필요하면 `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`를 적용한다. 매 작업을 새 PowerShell 창 기준으로 보고 위치 세팅을 첫 실행 단계에 두며, 가능한 절차는 한 번에 붙여넣는 단일 블록으로 제공한다.
 
 ## 3. Work Mode·Skill·사용자 결정
@@ -125,14 +126,14 @@ PAID_PLAN_COUNT: 2
 ## 4. 책임 원본·프로젝트·발행 경계
 
 - 한 질문에는 Registry에 등록된 Markdown 또는 JSON 책임 원본 하나만 둔다. DOCX·PDF·대시보드·과거 대화는 독립 정본이 아니다.
-- 프로젝트를 넘어 재사용되는 작업 규칙, 검증 절차, PR·정본·Sheet 동기화 원칙, 공용 플랫폼·자산·권리 기준은 Base 책임 원본에만 둔다. 프로젝트 저장소에서 같은 규칙을 재서술하거나 별도 공통 정책으로 승격하지 않는다.
+- 프로젝트를 넘어 재사용되는 작업 규칙, 검증 절차, PR·정본·workspace 동기화 원칙, 공용 플랫폼·자산·권리 기준은 Base 책임 원본에만 둔다. 프로젝트 저장소에서 같은 규칙을 재서술하거나 별도 공통 정책으로 승격하지 않는다.
 - 프로젝트 저장소에는 채택한 Base 책임 원본의 경로·버전, 프로젝트 고유의 엔진·보안·데이터·제품 제약, 프로젝트별 Decision·구현·테스트·실행 증거·미검증만 기록한다. 과거 프로젝트 내부 공통 정책은 활성 권위를 제거하고 Base 대체 경로만 남긴다.
-- 프로젝트 고유 제약이 Base보다 엄격할 수는 있지만, 공통 절차를 복제해 독립 권위로 만들 수는 없다. 충돌 시 사용자 최신 지시와 프로젝트 고유 제약을 보존하면서 공통 규칙은 Base에서만 수정한다.
+- 프로젝트 고유 제약이 Base보다 엄격할 수는 있지만, 공통 절차를 복제해 독립 권위로 만들 수 없다. 충돌 시 사용자 최신 지시와 프로젝트 고유 제약을 보존하면서 공통 규칙은 Base에서만 수정한다.
 - 신규 프로젝트와 승인된 마이그레이션의 활성 기획서는 저장소 루트 `[기획서]/` 아래에 둔다. `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않는다.
 - 상세 책임 원본, 상태 축, 발행 정책, 완료 조건은 `docs/OPERATING_MODEL.md`를 따른다.
-- 새 프로젝트·새 시각 기획의 기본 협업면은 `FIGMA_DEFAULT_VISUAL_WORKSPACE`다. 화면·컴포넌트·상태·프로토타입·승인 레퍼런스는 프로젝트 Figma에 구조화하고, 규칙·Decision은 GitHub 정본, 밸런스·경제·schema·runtime config는 repo-native structured source가 소유한다.
-- 기존 구성된 프로젝트 Google Sheet는 검증된 migration이 끝날 때까지 `USER_FACING_GDD_WORKSPACE` 호환성과 `PROPOSED_SHEET_CHANGE`를 보존하는 `GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE`로 취급한다. legacy Sheet의 상세 상태·proposal semantics·동기화 호환 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 따르되, 새 작업의 기본 workspace 권위는 이 파일과 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`의 Figma/repo-native 전환 규칙이 우선한다. Sheet-only 고유 내용과 proposal을 GitHub/Figma/repo-native source에 reconcile하고 readback·replacement pointer를 확인하기 전에는 삭제·폐기·migration 완료를 주장하지 않는다. Base 자체는 프로젝트 Sheet 동기화 대상이 아니다.
-- 일반 기획·상태 확인은 GitHub 정본을 우선하고, 시각 협업은 프로젝트 Figma, 구조화 데이터는 repo-native source를 사용한다. 기존 Sheet는 migration/proposal 확인이 필요한 경우에만 읽는다. HTML 대시보드·외부 HTML 도구 카탈로그는 사용자 명시 요청 또는 발견/유지보수 surface이며 독립 정본·실행 증거가 아니다.
+- 새 프로젝트·새 시각 기획의 기본 협업면은 `NOTION_DEFAULT_PROJECT_WORKSPACE`다. 하나의 Notion workspace 안에서 프로젝트별 페이지를 충분히 분리하고, Work/Asset/Screen/Reference/Benchmark는 `PROJECT_RELATION_REQUIRED`로 필터한다. 비주얼 맵은 파생 표현이며, 규칙·Decision과 실제 구현 상태는 GitHub/repository 정본과 런타임 증거가 소유한다.
+- 기존 구성된 프로젝트 Google Sheet는 검증된 migration이 끝날 때까지 `COMPATIBILITY_ONLY` migration source로 취급한다. 상세 정본은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`다. Sheet-only 고유 내용과 proposal을 Notion/repository source에 reconcile하고 readback을 확인하기 전에는 삭제·폐기·migration 완료를 주장하지 않는다. Base 자체는 프로젝트 Sheet 동기화 대상이 아니다.
+- 일반 기획·상태 확인은 프로젝트 Notion page와 GitHub/repository 정본을 함께 사용하고, 구조화 runtime data는 repo-native source를 사용한다. 기존 Sheet는 migration/proposal 확인이 필요한 경우에만 읽는다. HTML 대시보드·외부 HTML 도구 카탈로그는 사용자 명시 요청 또는 발견/유지보수 surface이며 독립 정본·실행 증거가 아니다.
 - 기존 승인 이미지가 있으면 별도 지시 없이 새 시안을 만들거나 제거·교체하지 않는다. UI 설계·폴리싱·구현 결과 감사는 `auditing-and-refining-ui-art`로 라우팅하고, 사용자 승인 finding만 실제 렌더로 재검수한다.
 - 접근성·성능·플레이테스트·벤치마크 결과는 실제 적용된 경우만 보고하며 법적 인증이나 제품 구현 사실로 과장하지 않는다.
 

@@ -18,7 +18,8 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         for term in (
             "FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS",
             "REQUIRED_WORK_REMAINING",
-            "FIGMA_DEFAULT_VISUAL_WORKSPACE",
+            "NOTION_DEFAULT_PROJECT_WORKSPACE",
+            "PROJECT_RELATION_REQUIRED",
         ):
             self.assertIn(term, agents)
 
@@ -72,18 +73,19 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
                 self.assertIn(term, text)
         self.assertIn("장기적으로 최선", policy)
 
-    def test_only_two_current_paid_plans_are_allowed_without_new_user_approval(self) -> None:
+    def test_default_paid_plan_and_notion_free_cost_boundary(self) -> None:
         agents = read("AGENTS.md")
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         for text in (agents, policy):
             for term in (
-                "CURRENT_PAID_PLANS: GPT_PRO, FIGMA_PRO",
-                "PAID_PLAN_COUNT: 2",
+                "CURRENT_PAID_PLANS: GPT_PRO",
+                "PAID_PLAN_COUNT: 1",
                 "GPT Pro",
-                "Figma Pro",
+                "Notion",
                 "새 사용자 승인",
             ):
                 self.assertIn(term, text)
+            self.assertNotIn("CURRENT_PAID_PLANS: GPT_PRO, FIGMA_PRO", text)
 
     def test_execution_and_external_claims_are_fail_closed_by_existing_verification_owner(self) -> None:
         verification = read(
@@ -120,28 +122,28 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         ):
             self.assertIn(term, policy)
 
-    def test_visual_and_structured_data_authority_is_split_safely(self) -> None:
+    def test_notion_visual_and_structured_data_authority_is_split_safely(self) -> None:
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         for term in (
-            "FIGMA_DEFAULT_VISUAL_WORKSPACE",
+            "NOTION_DEFAULT_PROJECT_WORKSPACE",
+            "PROJECT_RELATION_REQUIRED",
+            "WORK_MASTER",
+            "ASSET_KNOWLEDGE_MASTER",
+            "VISUAL_MAP_DERIVED",
             "REPO_NATIVE_STRUCTURED_DATA",
-            "GOOGLE_SHEETS_LEGACY_MIGRATION_SOURCE",
+            "GOOGLE_SHEETS_COMPATIBILITY_ONLY",
             "EXTERNAL_HTML_TOOL_CATALOG: DERIVED_DISCOVERY_SURFACE",
-            "TOOL_HUB: REQUIRED_WHEN_RELEVANT",
             "LOOP_ENGINEERING: REQUIRED_WHEN_RELEVANT",
         ):
             self.assertIn(term, policy)
 
-    def test_figma_professional_cost_boundary_does_not_require_branching(self) -> None:
+    def test_deprecated_figma_and_tool_hub_are_not_active_long_horizon_authorities(self) -> None:
+        policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         visual_policy = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
-        profile = read("templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md")
-        long_horizon = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
-        self.assertIn("GPT Pro/Figma Pro", long_horizon)
-        self.assertIn("요금제·권한", visual_policy)
-        self.assertIn("version history 또는 사용 가능한 branch/checkpoint", visual_policy)
-        self.assertIn("version history 또는 사용 가능한 branch/checkpoint", profile)
-        self.assertIn("Pages/Sections", visual_policy)
-        self.assertIn("Pages", profile)
+        self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", policy)
+        self.assertNotIn("TOOL_HUB: REQUIRED_WHEN_RELEVANT", policy)
+        self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", visual_policy)
+        self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", visual_policy)
 
     def test_adversarial_review_owner_requires_five_full_improvement_loops_when_invoked(self) -> None:
         skill = read("skills/running-adversarial-review-and-refinement/SKILL.md")
