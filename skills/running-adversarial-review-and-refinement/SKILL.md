@@ -13,7 +13,7 @@ description: Use when a work product, repository, PR, or merged decision must be
 
 Registry의 `칭찬·균형 평가만 요청` 비사용 조건은 결정·권장안이 없는 설명형 칭찬·균형 요약에만 적용한다. L1 이상 기능·설계·아키텍처·정책·방향 결정이나 중요 권장안이 포함된 균형 비교는 적대 검토 대상이다.
 
-실제 diff·정적·런타임·접근성·성능 증거는 `reviewing-and-validating-project-changes`, 프로젝트 코어 판정·확정은 관련 코어 Skill이 책임진다. 승인 결정·GitHub·Google Sheets 동기화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`를 따른다. 구형본의 archive·compatibility·삭제는 `governing-legacy-retention-and-archives`, 정본·경로·ID·Template·Test 전파는 `auditing-canonical-reference-freshness`가 책임진다.
+실제 diff·정적·런타임·접근성·성능 증거는 `reviewing-and-validating-project-changes`, 프로젝트 코어 판정·확정은 관련 코어 Skill이 책임진다. 승인 결정·GitHub·Notion/GitHub 동기화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`를 따른다. 구형본의 archive·compatibility·삭제는 `governing-legacy-retention-and-archives`, 정본·경로·ID·Template·Test 전파는 `auditing-canonical-reference-freshness`가 책임진다.
 
 ## Skill Modes
 
@@ -27,20 +27,20 @@ Registry의 `칭찬·균형 평가만 요청` 비사용 조건은 결정·권장
 
 일반 작업은 `attack → validate-critique → refine-approved-findings → regression-recheck → decision-report`를 사용한다. 저장소 전체 감사는 `references/repository-wide-audit-protocol.md`, 세부 Finding·회귀 판정은 `references/finding-and-regression-protocol.md`를 필요할 때만 읽는다.
 
-### Five full adversarial improvement loop invariant
+### Adversarial review until clean invariant
 
-이 Skill을 L1 이상 작업물·PR·저장소 감사·병합 후 결과의 **적대적 검토로 호출하면 전체 검토·개선 생명주기를 최소 다섯 번 닫는다.** 다섯 개의 서로 다른 공격 관점을 각각 한 번 수행하는 의미가 아니다. 각 회차는 전체 승인 범위를 처음부터 다시 검토하며, 앞 회차의 수정 결과와 새 증거 자체도 다음 회차의 공격 입력이 된다.
+이 Skill을 L1 이상 작업물·PR·저장소 감사·병합 후 결과의 적대적 검토로 호출하면 **고정 횟수 없이 CLEAN_REVIEW_EXIT까지 전체 검토·개선 생명주기를 반복한다.** 관점 수나 loop 수를 성과로 계산하지 않는다. 앞 회차의 수정 결과와 새 증거 자체가 다음 회차의 공격 입력이다.
 
 ```text
-FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS: REQUIRED_WHEN_REVIEW_RUNS
-FULL_LOOP_COUNT_MINIMUM: 5
+ADVERSARIAL_REVIEW_UNTIL_CLEAN: REQUIRED_WHEN_REVIEW_RUNS
 FULL_SCOPE_REVIEW
-FIND → REFINE → VERIFY → RE-ATTACK
+FIND → VALIDATE → REFINE → VERIFY → RE-ATTACK
 BETTER_ALTERNATIVE_SEARCH
 LONG_TERM_PLAN_FIT_RECHECK
+CLEAN_REVIEW_EXIT
 ```
 
-한 전체 회차의 기본 lifecycle은 다음과 같다.
+한 전체 회차:
 
 ```text
 FULL_SCOPE_REVIEW
@@ -54,18 +54,9 @@ FULL_SCOPE_REVIEW
 → RE-ATTACK resulting state
 ```
 
-각 회차는 전체 승인 범위를 처음부터 다시 보며 최소한 다음을 모두 현재 작업 성격에 맞게 공격한다.
+각 회차는 사용자 의도·핵심 방향·정본/owner/routing·Skill/Tool/Module·실제 구현·데이터·자산·실패복구·보안·동시성·비용·벤치마크·장기 유지·증거·완료조건을 전체적으로 다시 본다.
 
-- 사용자 의도·핵심 방향·승인 범위·숨은 가정
-- 정본·owner·routing·중복·stale·reference·Schema·consumer·dependency
-- 실제 구현·데이터·자산·Tool/Runtime·Figma/구조화 데이터 경계
-- 실패 복구·부분 상태·branch/worktree/path/port 충돌·retry side effect·credential/secret·rollback
-- 사용자/플레이어 가치·성공/실패 사례·벤치마크·비용·복잡도·수명주기 유지보수·재사용성
-- 정상 경로 회귀·evidence ceiling·exact-head·미검증 과장·완료 기준·postmerge/reference freshness
-
-이 항목들은 **각 회차 안의 전체 checklist**다. 하나의 항목을 하나의 회차로 계산하지 않는다.
-
-각 전체 루프는 최소 다음 evidence를 남긴다.
+각 loop evidence:
 
 ```yaml
 loop_index: 1..N
@@ -79,54 +70,19 @@ better_alternative_result:
 long_term_fit:
 unresolved: []
 output_state_or_head:
+clean_exit_candidate: true | false
 ```
 
-규칙:
+종료 규칙:
 
-1. `FULL_LOOP_COUNT_MINIMUM: 5`. L1 이상에서 이 Skill이 적대적 검토로 실제 호출되면 1~5회 전체 루프를 순차 수행한다. L0 단순 작업에 quota를 채우기 위해 이 Skill을 억지 호출하지 않는다.
-2. `attack / validate-critique / refine-approved-findings / regression-recheck / decision-report`는 **회차를 쪼개는 이름이 아니라 각 전체 회차 안에서 반복되는 phase**다.
-3. 검증된 `MUST_FIX`와 승인된 `SHOULD_FIX`를 수정할 권한·증거가 있는데 finding만 기록하고 다음 회차로 넘어가지 않는다. 분야 작성 책임은 주 owner가 갖고, 이 Skill은 동일 finding을 중복 구현하지 않는다.
-4. 회차 N의 입력은 원칙적으로 회차 N-1의 **검증된 출력 상태**다. 앞 회차의 수정 결과가 새 충돌·누락·회귀를 만들었는지 다시 공격한다.
-5. 매 회차 새 증거·실패·finding이 생기면 `BETTER_ALTERNATIVE_SEARCH`로 더 나은 방법이 있는지 재탐색한다. 이미 선택한 안을 지키는 것이 목적이 아니다.
-6. 매 회차 `LONG_TERM_PLAN_FIT_RECHECK`로 사용자/플레이어 가치, 정확성·기획 충실도, 수명주기 비용, 유지보수성, 되돌리기, 재사용/모듈화, Base 변화 대응, 증거 강도, 현재 비용 경계 적합성을 다시 확인한다.
-7. 더 나은 방법이 핵심 방향·프로젝트 코어·승인 범위·비용을 바꾸면 `USER_DECISION_REQUIRED`다. 같은 승인 방향 안의 기술적 단일 개선은 기존 연속 실행 계약으로 반영할 수 있다.
-8. **5회차**에서도 전체 범위를 처음부터 다시 공격한다. 5회차 뒤 P0/P1 또는 acceptance criterion을 막는 finding이 남으면 횟수를 채웠다는 이유로 종료하지 않고, 수정·검증 뒤 **추가 전체 루프**를 수행한다.
-9. `NOT_RUN`, `BLOCKED_UNVERIFIED`, `CANCELLED`는 PASS가 아니다. 증거가 없으면 해당 판정을 그대로 보존한다.
-10. **이미 구현된 finding을 다시 수정하지 않는다.** 각 회차는 그 수정 결과를 다시 공격하지만, 새 evidence 없이 같은 수정을 반복하지 않는다. 실제 재발·회귀·새 영향면이 검증되면 그 증거를 새 finding으로 기록한 뒤 필요한 수정을 수행한다. 동일 finding을 표현만 바꿔 여러 loop의 성과로 중복 계수하지 않는다.
+1. 새 유효 `MUST_FIX`, P0/P1, acceptance blocker가 하나라도 나오면 수정·검증 뒤 다음 전체 회차를 수행한다.
+2. 정본·consumer·reference·Schema drift, 정상 경로 회귀, evidence ceiling 위반이 발견되면 종료하지 않는다.
+3. `BETTER_ALTERNATIVE_SEARCH`와 `LONG_TERM_PLAN_FIT_RECHECK`에서 현재 승인 범위 안의 더 강한 개선이 확인되면 적용 후 다시 전체 검토한다.
+4. `NOT_RUN`, `BLOCKED_UNVERIFIED`, `CANCELLED`는 PASS가 아니며, 완료 조건에 필요한 증거가 없으면 clean exit가 아니다.
+5. 동일 finding을 표현만 바꿔 반복 계수하거나, 횟수를 채우기 위해 가짜 finding/불필요한 변경을 만들지 않는다.
+6. **전체 재공격 결과 새로운 유효 오류·충돌·누락·blocking finding이 0이고, 기존 수정 회귀 0, acceptance criteria 충족, 정본/참조 신선도와 evidence ceiling이 모두 닫힐 때만 `CLEAN_REVIEW_EXIT`다.**
 
-구현 전 PLAN 사전판정은 아직 수정할 작업물이 없을 수 있으므로 최초 `attack → validate-critique → decision-report` 결과를 작업 계약 입력으로 사용한다. 실제 BUILD/수정이 시작된 뒤에는 승인 finding을 분야 Skill이 구현하고 `regression-recheck`로 검증한 결과를 다음 전체 회차의 입력으로 삼는다. 기본 Work Mode는 `REVIEW → 필요한 경우 BUILD → REVIEW`이며 같은 수행자가 맡아도 단계별 입력과 출력을 섞지 않는다.
-
-PR 병합 또는 직접 `main` 결정 Commit 뒤에는 다음 확장 루트를 각 필요한 전체 회차에 사용한다.
-
-```text
-new-main-baseline
-→ canonical-and-sync-compare
-→ FULL_SCOPE_REVIEW
-→ attack
-→ validate-critique
-→ refine-approved-findings
-→ regression-recheck
-→ BETTER_ALTERNATIVE_SEARCH
-→ LONG_TERM_PLAN_FIT_RECHECK
-→ post-merge-decision-report
-→ RE-ATTACK resulting state
-```
-
-저장소 전체 감사에서는 다음 repository-wide attack surface를 **각 전체 회차에서 다시** 사용한다.
-
-```text
-repository-scope-map
-→ canonical-authority-map
-→ full-file-inventory
-→ stale-and-duplicate-attack
-→ untouched-consumer-attack
-→ derivative-and-prompt-drift-attack
-→ validate-critique
-→ legacy-classification
-→ approved-minimal-fix
-→ regression-and-freshness-recheck
-→ repository-audit-report
-```
+구현 전 PLAN에서는 수정 대상이 아직 없을 수 있으므로 공격·검증 결과를 계약 입력으로 사용한다. 실제 BUILD/수정 뒤에는 검증된 출력 상태를 다시 전체 공격한다. PR 병합 후에도 새 `main`을 입력으로 같은 clean-exit 규칙을 적용한다.
 
 ### `POST_CHANGE_MONITOR_LOOP`
 
@@ -278,7 +234,7 @@ GitHub와 Sheets가 다르면 최신 사용자 승인, Decision ID, Commit SHA�
 ## 기준 Branch·Commit·Decision·정본·실제 diff
 ## 최소 3개 실질 대안·벤치마크·trade study
 ## 열린·최근 병합 PR·중복 작업 비교
-## Google Sheets 동기화 비교
+## Notion/GitHub 동기화 비교
 ## 저장소 감사 범위·권한 지도·미검증 범위
 ## stale·중복·고아·untouched 소비자·파생본 Finding
 ## MUST_FIX / SHOULD_FIX / USER_DECISION_REQUIRED / DEFER

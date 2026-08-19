@@ -344,6 +344,16 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
 
+    def test_gpt_is_primary_and_codex_is_optional_executor(self) -> None:
+        policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
+        for term in (
+            "GPT_FIRST_PLANNING_AND_REVIEW",
+            "OPTIONAL_CODEX_EXECUTOR",
+            "GPT 단계가 끝났다는 이유만으로 Codex를 의무 호출하지 않는다",
+            "ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP",
+        ):
+            self.assertIn(term, policy)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -159,6 +159,23 @@ The same records support two display layers:
 
 Hiding system metadata is a presentation decision, not deletion. Automation may still read it when needed.
 
+## Visualized PoC / demo readiness
+
+`VISUALIZED_POC_BEFORE_DEMO_TEST`를 기본으로 한다. UI/UX, 화면 구성, 정보 가독성, 아트 분위기가 플레이 판단에 실질 영향을 주는 PoC/데모는 기획·검수 단계에서 먼저 필요한 이미지/화면 candidate를 만들거나 승인된 기존 시각 자산을 선택한다. candidate는 정확한 Project의 Notion Visual/Asset record에 배치하고 destination readback을 거친 뒤 구현 입력으로 사용한다.
+
+```text
+planning + UX/UI flow
+→ visual requirements
+→ generate/select candidate images
+→ Notion project placement + readback
+→ approval/rejection
+→ implementation package uses approved visual inputs
+→ PoC/demo implementation
+→ runtime UX/UI/play test
+```
+
+완성 아트를 모든 로직 PoC에 강제하지 않는다. 시각 요소가 현재 가설 검증에 영향을 주지 않으면 `VISUAL_NOT_MATERIAL_TO_THIS_POC`로 기록하고 생략할 수 있다. 반대로 화면/가독성/첫인상/상호작용 의미를 검증하는 데모를 회색 박스만으로 최종 판정하지 않는다.
+
 ## Repository handoff and runtime evidence
 
 Notion approval means the project accepted the human-facing planning, table, visual direction or asset candidate for its stated use. It does not prove runtime implementation.
