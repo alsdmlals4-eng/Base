@@ -232,38 +232,38 @@ No source is promoted merely because it is recent. Source truth, project canon a
 
 ### Loop 1 — authority / ownership attack
 
-Finding: Manifest write paths do not describe two active canonical P09 content surfaces.  
-Validation: actual directories, START_HERE/Skill/test consumers and Manifest-only searches were compared.  
+Finding: Manifest write paths do not describe two active canonical P09 content surfaces.
+Validation: actual directories, START_HERE/Skill/test consumers and Manifest-only searches were compared.
 Decision: valid MUST_FIX, but CP0-owned; create a nonblocking cross-part request. Do not duplicate directories.
 
 ### Loop 2 — duplicate Skill / responsibility attack
 
-Attack: serial fiction and YouTube might be an unnecessary content umbrella split, or game narrative might need a third Skill.  
-Validation: Registry triggers, do-not-use boundaries, modes, tests and consumers were compared.  
+Attack: serial fiction and YouTube might be an unnecessary content umbrella split, or game narrative might need a third Skill.
+Validation: Registry triggers, do-not-use boundaries, modes, tests and consumers were compared.
 Decision: no duplicate active Skill; merging increases ambiguity, third Skill lacks a distinct repeated workflow. No change.
 
 ### Loop 3 — context-cost / overengineering attack
 
-Attack: both Skill bodies are large and could be aggressively compressed.  
-Validation: lazy Registry routing, existing conditional references, rare safety contracts and tests were checked.  
+Attack: both Skill bodies are large and could be aggressively compressed.
+Validation: lazy Registry routing, existing conditional references, rare safety contracts and tests were checked.
 Decision: file size alone is insufficient evidence. Preserve behavior; defer compression until measured routing/context pressure exists.
 
 ### Loop 4 — source freshness attack
 
-Attack: YouTube metrics/experiments or interactive-narrative tooling may have invalidated P09 rules.  
-Validation: current first-party YouTube Help plus current ink/Yarn official surfaces were rechecked.  
+Attack: YouTube metrics/experiments or interactive-narrative tooling may have invalidated P09 rules.
+Validation: current first-party YouTube Help plus current ink/Yarn official surfaces were rechecked.
 Decision: current P09 contracts already bound the relevant platform changes; add no new Skill/mode/KPI law.
 
 ### Loop 5 — evidence overclaim / publication attack
 
-Attack: repository checks may be silently treated as audience, conversion, rights or runtime proof.  
-Validation: YouTube tests explicitly retain HUMAN_NOT_RUN/CONVERSION_UNVERIFIED and owner boundaries; fiction tests separate reader feedback from canon.  
+Attack: repository checks may be silently treated as audience, conversion, rights or runtime proof.
+Validation: YouTube tests explicitly retain HUMAN_NOT_RUN/CONVERSION_UNVERIFIED and owner boundaries; fiction tests separate reader feedback from canon.
 Decision: no semantic gap found.
 
 ### Loop 6 — regression / better-alternative reattack
 
-Attack: the minimal solution may merely document the problem rather than improve P09.  
-Validation: direct P09 value is preserved by recording the merged Shorts metric lesson in the YouTube Skill Learning Log and this bounded Part checkpoint, while the only structural defect is handed to its actual CP0 owner.  
+Attack: the minimal solution may merely document the problem rather than improve P09.
+Validation: direct P09 value is preserved by recording the merged Shorts metric lesson in the YouTube Skill Learning Log and this bounded Part checkpoint, while the only structural defect is handed to its actual CP0 owner.
 Decision: no additional valid P09-owned MUST_FIX remains. No speculative Skill rewrite.
 
 ```yaml
