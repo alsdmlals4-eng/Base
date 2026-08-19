@@ -100,7 +100,7 @@ branch: ai/deepseek-<topic>   외부 AI 작업 브랜치
 11. 승인된 최소 diff만 실제 작업 브랜치에 재작성하거나 선택적으로 가져온다.
 12. 기준 테스트와 문서 동기화를 확인한 뒤 worktree를 정리한다.
 
-`templates/ai/DEEPSEEK_WORK_PACKAGE.md`의 기존 `Codex 인계` 표기는 Codex가 실제 optional executor로 선택된 경우에만 그대로 해석한다. GPT가 직접 검수하는 경우 같은 필드를 **책임 검수자 인계 정보**로 사용한다. 템플릿 자체의 provider/reviewer-neutral 명칭 변경은 현재 coordinator가 별도 semantic owner 점검 후 수행한다.
+`templates/ai/DEEPSEEK_WORK_PACKAGE.md`의 기존 `Codex 인계` 표기는 Codex가 실제 optional executor로 선택된 경우에만 그대로 해석한다. GPT가 직접 검수하는 경우 같은 필드를 **책임 검수자 인계 정보**로 사용한다. 템플릿 자체의 provider/reviewer-neutral 명칭 변경은 P08 소유 범위 밖이면 `CROSS_PART_CHANGE_REQUEST`로 넘긴다.
 
 ## Token and context efficiency
 
