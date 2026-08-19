@@ -8,7 +8,10 @@ project:
   status: DRAFT | REVIEW | APPROVED | BLOCKED_UNVERIFIED
   base_commit:
   project_commit:
-  connected_google_sheet:
+  project_workspace: NOTION_DEFAULT_PROJECT_WORKSPACE
+  notion_project_page:
+  repository_structured_canon:
+  legacy_sheet_migration_evidence: NONE | READ_ONLY_REFERENCE
 ```
 
 ## 1. 프로젝트·첫 세션 현황 감사
@@ -18,15 +21,16 @@ latest_user_instruction:
 current_confirmed_decisions:
 project_agents_and_start_here:
 current_gdd_owner:
+project_notion_and_repository_state:
 actual_code_data_scene_resource_ui_paths:
 open_and_recent_merged_prs:
-configured_google_sheets_state:
+legacy_sheet_migration_evidence:
 existing_tutorial_help_and_first_session:
 blocked_or_unverified:
 ```
 
-- [ ] 프로젝트 정본과 실제 코드·데이터·Scene·Resource·UI·입력·테스트를 확인했다.
-- [ ] Google Sheets가 구성된 경우 현재 계획과 `PROPOSED_SHEET_CHANGE`를 비교했다.
+- [ ] 프로젝트 Notion/GitHub 정본과 실제 코드·데이터·Scene·Resource·UI·입력·테스트를 확인했다.
+- [ ] 폐기된 Google Sheets는 프로젝트가 명시적으로 보존한 migration/read-only evidence가 있을 때만 비교했고 신규 입력·활성 정본으로 사용하지 않았다.
 - [ ] 확인하지 못한 사실을 `BLOCKED_UNVERIFIED`로 분리했다.
 
 ## 2. 대상 플레이어·학습 목표

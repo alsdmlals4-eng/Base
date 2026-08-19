@@ -10,6 +10,9 @@ on:
       - 'tools/periodic_source_scan_queue.py'
       - 'tools/run_periodic_source_scan_queue.sh'
       - 'tests/test_base_partition_contract.py'
+      - 'tests/test_sequential_part_coordinator_contract.py'
+      - 'tests/test_full_adversarial_loop_semantics.py'
+      - 'tests/test_human_home_self_contained_contract.py'
       - 'tests/test_periodic_source_scan_queue.py'
       - '.github/workflows/base-partition-contract.yml'
   push:
@@ -23,6 +26,9 @@ on:
       - 'tools/periodic_source_scan_queue.py'
       - 'tools/run_periodic_source_scan_queue.sh'
       - 'tests/test_base_partition_contract.py'
+      - 'tests/test_sequential_part_coordinator_contract.py'
+      - 'tests/test_full_adversarial_loop_semantics.py'
+      - 'tests/test_human_home_self_contained_contract.py'
       - 'tests/test_periodic_source_scan_queue.py'
       - '.github/workflows/base-partition-contract.yml'
   workflow_dispatch:
@@ -39,8 +45,22 @@ jobs:
         with:
           python-version: '3.12'
       - name: Check Python syntax
-        run: python -m py_compile tools/check_base_partition_scope.py tools/periodic_source_scan_queue.py tests/test_base_partition_contract.py
+        run: >-
+          python -m py_compile
+          tools/check_base_partition_scope.py
+          tools/periodic_source_scan_queue.py
+          tests/test_base_partition_contract.py
+          tests/test_sequential_part_coordinator_contract.py
+          tests/test_full_adversarial_loop_semantics.py
+          tests/test_human_home_self_contained_contract.py
       - name: Validate manifest
         run: python tools/check_base_partition_scope.py --validate-manifest
       - name: Run partition and source-learning contract tests
-        run: python -m unittest tests.test_base_partition_contract tests.test_periodic_source_scan_queue -v
+        run: >-
+          python -m unittest
+          tests.test_base_partition_contract
+          tests.test_sequential_part_coordinator_contract
+          tests.test_full_adversarial_loop_semantics
+          tests.test_human_home_self_contained_contract
+          tests.test_periodic_source_scan_queue
+          -v

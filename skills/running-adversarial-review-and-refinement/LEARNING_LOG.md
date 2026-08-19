@@ -44,3 +44,10 @@
 - **Evidence:** Required Base v9 workflow head `884ad449f1ccbecdbd0b3f63a4888871a9d849f6`에서 318 tests 중 기존 계약은 통과하고 새 monitor-loop test만 `POST_CHANGE_MONITOR_LOOP` 부재로 실패했다. Godot runtime test 1개는 `GODOT_BIN` 미설정으로 skipped였으며 PASS로 계산하지 않는다.
 - **Boundary:** `NO_MATERIAL_FOLLOWUP`이면 억지 변경을 만들지 않는다. 이 Skill 계약 자체는 scheduler·webhook·background worker가 아니며, 보호된 정책·권한·보안·제품 방향 변경은 기존 사용자/BCP Gate를 유지한다. 실행하지 않은 CI·runtime·human validation을 PASS로 승격하지 않는다.
 - **Next trigger:** post-merge review가 실제 consumer 또는 후속 PR을 놓치거나, same-goal PR race가 발생하거나, complementary finding이 의미 없는 churn으로 변하거나, Required CI에서 focused monitor regression이 다시 빠질 때 재검토한다.
+
+## 2026-08-19 · full loop is not a review lens
+
+- 관찰: 정본은 이미 full-scope review를 요구했지만 실제 완료보고가 `Loop 1=scope`, `Loop 2=UX`, `Loop 3=CI`처럼 lens별 회차로 축약될 수 있었다.
+- 교훈: 최소 5회는 서로 다른 관점 5개가 아니라 **동일한 전체 lifecycle을 개선된 상태에 대해 최소 5번 반복**한다는 뜻이어야 한다.
+- 반영: `FULL_LOOP_IS_NOT_A_REVIEW_LENS`와 full-scope coverage evidence를 추가하고 lens-only 회차를 계수하지 않는다.
+- reuse_scope: BASE_PROMOTION_CANDIDATE

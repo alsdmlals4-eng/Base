@@ -9,6 +9,20 @@ description: Use when one playable segment must prove core experience, target qu
 
 게임 전체를 얕게 만드는 대신, 핵심 경험을 대표하는 작은 구간을 최종 품질에 가까운 깊이로 연결해 **재미·품질·제작성·실제 플레이 증거**를 동시에 검증한다.
 
+`PLAYER_VALUE_TRACE_REQUIRED`: Slice 범위를 정하기 전에 아래 추적을 고정한다. 기능 존재나 화면 완성도를 플레이어 가치의 대리 지표로 사용하지 않는다.
+
+```yaml
+player_promise:
+meaningful_choice:
+expected_experience:
+research_question:
+observable_signal:
+evidence_ceiling:
+slice_acceptance:
+```
+
+`evidence_ceiling`은 현재 확보 가능한 증거가 어디까지 주장할 수 있는지의 상한이다. 자동 테스트·정적 문서·UI 렌더만 있으면 사람의 이해·감정·고민·기억을 PASS로 올리지 않는다. `slice_acceptance`는 관찰 신호와 다음 개발 결정을 연결하며, 필요한 사람 플레이가 미실행이면 해당 경험 판정은 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 남긴다.
+
 ## Distinguish
 
 | 형태 | 검증 대상 |
@@ -55,13 +69,14 @@ playtest_contract:
 
 ### 1. Slice contract
 
-1. 한 문장 핵심 가설과 이 구간이 바꿀 개발 결정을 정한다.
-2. 진입→행동→판단→반응→결과→기록·복귀가 연결되는 대표 구간을 고른다.
-3. 핵심 세일즈포인트와 일반 플레이를 함께 보여주는지 확인한다.
-4. 포함 시스템·콘텐츠·아트·UI·사운드·데이터를 최소화한다.
-5. `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate`에서 이 구간에 필요한 시각 requirement를 고른다. 기본적으로 핵심 흐름을 막는 `P0 BLOCKER`, 이해·세일즈포인트에 필요한 `P1 CLARITY`, 반복 제작성을 증명하는 데 필요한 일부 `P2 CONSISTENCY`만 포함하고, P0~P2를 증명하기 전 `P3 DELIGHT` 대량 제작은 보류한다.
-6. 전체 분량, 모든 캐릭터, 장기 경제 등 제외 범위를 고정한다.
-7. 성공·실패·미검증 시 다음 개발 결정을 미리 정의한다.
+1. `PLAYER_VALUE_TRACE_REQUIRED`의 플레이어 약속·의미 있는 선택·예상 경험·연구 질문·관찰 신호·증거 상한·Slice acceptance를 먼저 고정한다.
+2. 한 문장 핵심 가설과 이 구간이 바꿀 개발 결정을 정한다.
+3. 진입→행동→판단→반응→결과→기록·복귀가 연결되는 대표 구간을 고른다.
+4. 핵심 세일즈포인트와 일반 플레이를 함께 보여주는지 확인한다.
+5. 포함 시스템·콘텐츠·아트·UI·사운드·데이터를 최소화한다.
+6. `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate`에서 이 구간에 필요한 시각 requirement를 고른다. 기본적으로 핵심 흐름을 막는 `P0 BLOCKER`, 이해·세일즈포인트에 필요한 `P1 CLARITY`, 반복 제작성을 증명하는 데 필요한 일부 `P2 CONSISTENCY`만 포함하고, P0~P2를 증명하기 전 `P3 DELIGHT` 대량 제작은 보류한다.
+7. 전체 분량, 모든 캐릭터, 장기 경제 등 제외 범위를 고정한다.
+8. 성공·실패·미검증 시 다음 개발 결정을 미리 정의한다.
 
 `Visual Requirement Gate`는 Slice 자산 목록의 새 권위를 만들지 않는다. 선정된 `requirement_id`를 기존 Art/UX 문서와 자산 제작·검수 경로가 소비한다.
 
@@ -125,6 +140,8 @@ Steam Playtest 같은 분리된 테스트 배포를 사용할 수 있지만, 테
 - `HOLD`: 외부 의존성·환경·비용 때문에 판정을 보류한다.
 - `STOP`: 핵심 재미·제작성·제품 약속이 함께 성립하지 않는다.
 
+판정은 `PLAYER_VALUE_TRACE_REQUIRED`의 `observable_signal`, `evidence_ceiling`, `slice_acceptance`를 넘어서지 않는다. 기술·UI·파이프라인 증거만 통과한 상태에서 사람 경험을 근거로 `EXPAND`하지 않는다.
+
 ## Platform and asset proof gate
 
 공용 기준은 `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`다. Vertical Slice는 대표 콘텐츠와 대표 자산을 포함하므로 목표 등급·권리·참조 독립성의 조기 증거도 제공해야 한다.
@@ -141,6 +158,7 @@ Steam Playtest 같은 분리된 테스트 배포를 사용할 수 있지만, 테
 ## Output contract
 
 - 검증 목적과 핵심 가설
+- `player_promise → meaningful_choice → expected_experience → research_question → observable_signal → evidence_ceiling → slice_acceptance` 추적
 - 목표 플레이어 경험
 - 대표 플레이 흐름과 예상 시간
 - 포함·제외 범위
@@ -160,6 +178,7 @@ Steam Playtest 같은 분리된 테스트 배포를 사용할 수 있지만, 테
 ## Definition of Done
 
 - 처음부터 끝까지 플레이 가능한 대표 구간이다.
+- 플레이어 약속·의미 있는 선택·예상 경험이 관찰 신호와 Slice acceptance로 추적된다.
 - 핵심 세일즈포인트와 일반 반복 플레이를 함께 검증한다.
 - 목표 품질이 관찰 가능한 기준과 실제 결과로 대조됐다.
 - 핵심 정보·입력·시간·난이도에서 주요 접근성 장벽을 확인했다.
@@ -168,11 +187,13 @@ Steam Playtest 같은 분리된 테스트 배포를 사용할 수 있지만, 테
 - 대표 자산의 제품 포함 권리와 참조 독립 제작 상태가 확인됐다.
 - 등급 전략이 대표 콘텐츠를 숨기지 않고 프로젝트 코어와 맞는다.
 - 내부·외부 플레이테스트의 빌드·표본·행동·자기보고가 분리 기록됐다.
+- 사람 경험 판정이 `evidence_ceiling`을 넘지 않는다.
 - 결과가 다음 개발 결정으로 연결됐다.
 
 ## Failure conditions
 
 - 기능 목록만 있고 처음부터 끝까지 플레이할 수 없음
+- 플레이어 약속·의미 있는 선택과 관찰 신호의 연결 없이 기능/화면 존재만 Slice acceptance로 사용함
 - `Visual Requirement Gate` 없이 “보여주면 좋을 것”인 자산을 Slice 범위에 누적함
 - P0/P1 미검증 상태에서 P3 장식 제작을 우선함
 - 특수 보스전처럼 일반 제작성을 대표하지 않는 구간
@@ -183,6 +204,7 @@ Steam Playtest 같은 분리된 테스트 배포를 사용할 수 있지만, 테
 - 내부 개발자 반응만으로 목표 플레이어 검증을 대체함
 - 빌드·버전·표본·피드백 채널 없이 리뷰·감상을 모음
 - 자기보고만으로 실제 행동을, 퍼널만으로 감정·원인을 단정함
+- 자동 테스트·정적 문서·UI 렌더만으로 사람 이해·감정·기억을 PASS 처리함
 - 평균 FPS나 옵션 존재만으로 성능·접근성 통과를 주장함
 - 참조 원본이 build에 포함되거나 필수 권리가 `UNKNOWN`인데 Production proof를 주장함
 - 등급 설문에서 대표 콘텐츠를 숨겨 낮은 등급을 목표로 함
@@ -194,6 +216,7 @@ Steam Playtest 같은 분리된 테스트 배포를 사용할 수 있지만, 테
 3. Prototype 결과가 좋더라도 아트·UI·사운드·접근성·성능·파이프라인이 검증되지 않으면 Vertical Slice 완료로 표시하지 않는다.
 4. 상위 능력·특수 장면·보너스 결말이 선택적 하이라이트라면 보유·미보유 양쪽 경로가 최종 구간에 진입하고 정상 완료되는지 검증한다.
 5. 대표 자산의 권리·출처·참조 독립 제작이 미확인되면 `RELEASE_BLOCKED_UNVERIFIED`로 남긴다.
+6. 사람 플레이 없이 자동 검증만 끝났다면 기술·UI·파이프라인 상태만 갱신하고 `PLAYER_EXPERIENCE_EVIDENCE`는 `NOT_RUN`으로 유지한다.
 
 ## Applied case — 선택적 하이라이트와 정상 완주 경로
 

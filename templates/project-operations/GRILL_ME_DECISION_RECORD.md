@@ -1,197 +1,124 @@
-# Grill Me 결정 원장
+# GRILL_ME_DECISION_RECORD
 
-## 문서 상태
+> Grill Me 질문 하나의 근거·사용자 답변·승인 결정·반영 상태를 보존한다. 사람용 결정 기록은 `NOTION_HUMAN_FACING_CANON`, 구조화 추적과 Commit은 `REPOSITORY_STRUCTURED_CANON`을 따른다. Google Sheets는 `COMPATIBILITY_ONLY` legacy migration source다.
 
 ```yaml
-project:
-interview_stage: GRILL_ME_0 | GRILL_ME_1 | GRILL_ME_2 | GRILL_ME_3
-status: IN_PROGRESS | READY_FOR_APPROVAL | COMPLETE | BLOCKED | UNVERIFIED
-baseline_branch: main
-baseline_commit:
-current_confirmed_decisions:
-google_sheet:
-active_tracking_surface:
-last_synced_decision:
-updated_at:
+질문 ID: GRILL-ME-YYYY-NNN
+Decision ID: DEC-YYYY-NNN
+상태: DRAFT | USER_DECISION_REQUIRED | APPROVED_PENDING_MERGE | SYNCED_TO_MAIN | SUPERSEDED
+Project:
+Project relation:
+Notion record:
+Google Sheet compatibility source:
+legacy_sheet_role: COMPATIBILITY_ONLY
 ```
 
-## 인터뷰 목적
+## 1. 질문을 만든 이유
 
-- 이번 단계에서 해소할 핵심 결정:
-- 이미 확정되어 다시 묻지 않을 내용:
-- 저장소·PR·Google Sheets 조사로 확인할 내용:
-- 사용자만 결정할 수 있는 내용:
-- `RECOMMENDED_DEFAULT`로 처리할 기술·초기 수치:
+- 해결하려는 충돌/모호성:
+- 저장소·책임 원본·현재 대화에서 이미 확인한 사실:
+- 동일 Goal의 최근 병합 PR:
+- read-only open/draft/ready PR과 overlap:
+- 관련 Project Notion readback:
+- legacy migration source가 실제 필요한가: YES / NO
+- 사용자가 아니면 결정할 수 없는 이유:
 
-## 질문 전 대조
+## 2. 질문
 
-| 항목 | 확인 위치 | 마지막 확인값 | 상태 | 비고 |
+**질문 ID:**
+
+질문:
+
+## 3. 선택지 비교
+
+| 선택지 | 장점 | 비용/위험 | 되돌리기 | 장기 적합성 |
 |---|---|---|---|---|
-| GitHub main HEAD |  |  | MATCH / OUTDATED / UNVERIFIED |  |
-| 동일 Goal 열린 PR |  |  | NONE / EXISTS / UNVERIFIED |  |
-| 최근 병합 PR |  |  | CHECKED / UNVERIFIED |  |
-| CURRENT_CONFIRMED_DECISIONS |  |  | MATCH / CONFLICT / MISSING |  |
-| 분야 책임 원본 |  |  | MATCH / CONFLICT / MISSING |  |
-| 실제 구현·데이터·자산·테스트 |  |  | MATCH / CONFLICT / UNVERIFIED |  |
-| Google Sheets |  |  | MATCH / OUTDATED / UNVERIFIED |  |
-| 미동기화 Decision |  |  | NONE / EXISTS |  |
+| A |  |  |  |  |
+| B |  |  |  |  |
+| C |  |  |  |  |
 
-## 질문 기록
+### GPT 권장안
 
-| 질문 ID / Decision ID | 질문 | 분류 | 기존 Decision | GPT 권장안 | 사용자 답변 | 최종 결정 | 분야 정본 | 반영 Commit | Sheet 위치 | 동기화 상태 |
-|---|---|---|---|---|---|---|---|---|---|---|
+- 권장:
+- 이유:
+- 반대 근거:
+- 더 나은 대안 재탐색 결과:
+- 재검토 조건:
 
-분류:
+## 4. 사용자 답변
 
-```text
-USER_DECISION_REQUIRED
-RECOMMENDED_DEFAULT
-```
+- 사용자 답변 원문:
+- 승인 시각/참조:
 
-동기화 상태:
+## 5. 최종 결정
 
-```text
-QUESTION_RECORDED
-AWAITING_USER_DECISION
-APPROVED_PENDING_CANON
-CANON_UPDATED
-MAIN_UPDATED
-SHEET_UPDATED
-SYNCED
-SYNC_FAILED
-BLOCKED_UNVERIFIED
-```
+- 최종 결정:
+- 비타협 조건:
+- 변경 가능한 요소:
+- 제거·보류 요소:
+- supersedes:
+- revisit condition:
 
-## 질문별 상세
-
-### Grill Me — DEC-YYYY-MM-DD-NNN
-
-#### 기존 정본 비교
-
-- 관련 책임 원본:
-- 기존 Decision ID:
-- 기존 확정 내용:
-- 현재 전제 유지 여부:
-- main HEAD:
-- 관련 열린 PR:
-- 최근 병합 PR:
-- Google Sheets 상태:
-- 중복 질문 판정:
-
-#### 질문
-
-사용자가 결정해야 하는 하나의 중요 기획 질문만 적는다.
-
-#### 이 결정이 중요한 이유
-
-프로젝트 코어, 플레이어 경험, 범위 또는 제작 가능성에 미치는 영향을 적는다.
-
-#### 새로 발생한 사실·충돌
-
-기존 Decision과 달라진 사실, 정본 충돌 또는 `UNVERIFIED`를 적는다.
-
-#### 선택지
-
-##### A.
-
-- 장점:
-- 단점:
-- 프로젝트 영향:
-
-##### B.
-
-- 장점:
-- 단점:
-- 프로젝트 영향:
-
-##### C.
-
-- 장점:
-- 단점:
-- 프로젝트 영향:
-
-#### GPT 권장안
-
-#### 권장 이유
-
-#### 선택 시 확정되는 사항
-
-#### GitHub 질문 댓글
-
-- 추적 surface:
-- comment ID·URL:
-- 기록 상태: QUESTION_RECORDED | FAILED | UNVERIFIED
-
-#### 사용자 답변
-
-#### 최종 결정
+## 6. 반영 위치
 
 ```yaml
-status: CONFIRMED | LATEST_OVERRIDE | SUPERSEDED | REJECTED | DEFERRED | UNRESOLVED
-classification: USER_DECISION_REQUIRED | RECOMMENDED_DEFAULT
-supersedes:
-protected_scope:
-reconsider_when:
+repository_structured_canon: REPOSITORY_STRUCTURED_CANON
+branch:
+반영 Commit:
+merge_commit:
+notion_human_facing_canon: NOTION_HUMAN_FACING_CANON
+notion_record_url:
+notion_project_relation:
+notion_readback: PASS | NOT_APPLICABLE | BLOCKED_UNVERIFIED
+google_sheet_compatibility_source:
+legacy_migration_status: NOT_PRESENT | UNMIGRATED_UNIQUE_MATERIAL | MIGRATED_READBACK_VERIFIED | ARCHIVED_APPROVED
 ```
 
-#### 반영 위치
+`Project relation`이 적용되는 프로젝트 사람용 결정이면 정확한 Notion record를 갱신한 뒤 **destination readback**한다. Base 자체처럼 프로젝트 Notion destination이 적용되지 않으면 `NOT_APPLICABLE`로 기록하고 목적지를 만들지 않는다.
 
-- `CURRENT_CONFIRMED_DECISIONS.md`:
-- 분야 책임 원본:
-- Active Context·작업 계약:
-- 반영 Commit:
-- Google Sheets tab·row:
-- GitHub 승인 댓글:
+## 7. 상태 전이
 
-#### 동기화 검증
+```text
+DRAFT
+→ USER_DECISION_REQUIRED
+→ 사용자 승인
+→ GitHub 추적 + Branch 정본 반영
+→ 적용 가능한 Notion 사람용 record 반영
+→ destination readback
+→ APPROVED_PENDING_MERGE
+→ exact-head 검증·리뷰·merge
+→ main readback + 적용 가능한 Notion readback
+→ SYNCED_TO_MAIN
+```
 
-- GitHub main 재조회:
-- 분야 정본 재조회:
-- Google Sheets 재조회:
-- Decision ID·Commit·대체 관계 일치:
-- 최종 상태: SYNCED | SYNC_FAILED | BLOCKED_UNVERIFIED
-- 실패·재개 조건:
+legacy Google Sheets는 `COMPATIBILITY_ONLY`다. 아직 이관되지 않은 **UNIQUE** 정보가 있는 경우에만 migration input으로 읽고, 현행 Notion/Repository owner로 이관 → readback/Test → consumer/reference 확인 뒤 원본 수명주기를 판정한다. 신규 입력·활성 동기화 때문에 Sheet를 만들거나 갱신하지 않는다.
 
-## 권장 기본값
+## 8. 비판 검증
 
-| 항목 | 권장값 | 이유 | 정본 영향 | 조정 조건 | 검증 | 반영 위치 |
-|---|---|---|---|---|---|---|
+- 이 질문은 저장소에서 이미 답을 찾을 수 있었는가:
+- 기술 기본값으로 처리할 수 있었는가:
+- 프로젝트 방향을 실제로 바꾸는가:
+- 사용자 답을 특정 선택지로 유도했는가:
+- 승인 후 다른 consumer가 빠졌는가:
+- Notion 사람용 기록과 Repository 구조화 정본이 의미상 충돌하는가:
+- legacy Sheet를 active canon처럼 다시 취급했는가:
 
-## 비타협 조건
+## 9. 승인 후 체크
 
-- 없음
+- [ ] 동일 Decision ID를 Branch 정본에 기록했다.
+- [ ] 반영 Commit을 기록했다.
+- [ ] 적용 가능한 Project Notion record를 갱신했다.
+- [ ] destination readback을 완료했거나 `NOT_APPLICABLE` 근거를 남겼다.
+- [ ] PR exact-head required checks를 확인했다.
+- [ ] unresolved thread 0을 확인했다.
+- [ ] 병합 후 exact merge SHA와 main을 재조회했다.
+- [ ] 적용 가능한 Notion destination을 다시 재조회했다.
+- [ ] Google Sheets가 `COMPATIBILITY_ONLY`를 넘어 active workspace로 승격되지 않았음을 확인했다.
 
-## 변경 가능한 요소
+## 10. 완료 조건
 
-- 없음
-
-## 제거·보류 요소 (기각 포함)
-
-| 항목 | 상태 | 이유 | 관련 Decision | 다시 제안하지 않을 범위 | 재검토 조건 |
-|---|---|---|---|---|---|
-
-## 남은 질문
-
-| 우선순위 | 질문 | 기존 Decision 대조 | 결정권자 | 차단 여부 | 다음 조건 |
-|---|---|---|---|---|---|
-
-## 종료 점검
-
-- [ ] 최신 main·열린 PR·최근 병합 PR을 확인했다.
-- [ ] `CURRENT_CONFIRMED_DECISIONS.md`와 분야 책임 원본을 확인했다.
-- [ ] Google Sheets의 마지막 Decision ID와 Commit을 확인했다.
-- [ ] 저장소와 도구에서 답할 수 있는 질문을 사용자에게 하지 않았다.
-- [ ] 이미 답한 질문이나 최신 결정으로 대체된 질문을 반복하지 않았다.
-- [ ] 기술 세부와 초기 수치는 `RECOMMENDED_DEFAULT`로 처리했다.
-- [ ] 질문은 한 번에 하나였다.
-- [ ] 각 질문에 선택지·영향·GPT 권장안이 있었다.
-- [ ] 질문과 사용자 답변 원문이 GitHub 추적 surface에 기록됐다.
-- [ ] 승인 Decision이 `CURRENT_CONFIRMED_DECISIONS.md`에 반영됐다.
-- [ ] 승인 Decision이 분야 책임 원본에 반영됐다.
-- [ ] 승인 문서가 `main`에 반영되고 Commit SHA가 기록됐다.
-- [ ] Google Sheets를 갱신하고 해당 행을 재조회했다.
-- [ ] GitHub와 Sheet의 Decision·Commit·대체 관계가 일치한다.
-- [ ] 모든 승인 건이 `SYNCED`이거나 명시적 `BLOCKED_UNVERIFIED`다.
-- [ ] 핵심 결정 분기가 해소됐다.
-- [ ] 비타협·변경 가능·제거·보류 요소가 기록됐다.
-- [ ] 남은 질문은 구현 세부 또는 비차단 수준이다.
+- 질문 ID, GPT 권장안, 사용자 답변, 최종 결정, 반영 Commit을 복원할 수 있다.
+- 비타협 조건·변경 가능한 요소·제거·보류 요소가 분리된다.
+- 승인 Decision이 대화 메모리에만 남지 않는다.
+- `NOTION_HUMAN_FACING_CANON`과 `REPOSITORY_STRUCTURED_CANON`을 같은 권위로 오해하지 않는다.
+- active Decision sync는 legacy Sheet의 존재나 쓰기 권한에 의존하지 않는다.

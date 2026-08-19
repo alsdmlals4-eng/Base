@@ -27,6 +27,51 @@ status: DRAFT | IN_RESEARCH | READY_FOR_DECISION | DECIDED | VALIDATED | SUPERSE
 - 조사 제외:
 - 성공·실패·중단 조건:
 
+## CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY
+
+중요한 L1+ 결정은 하나의 해법을 먼저 정한 뒤 벤치마크를 근거로 붙이지 않는다. 현재 상태와 기존 해법을 먼저 확인한 뒤 **`MINIMUM_VIABLE_ALTERNATIVES: 3`**의 materially distinct 실질 대안을 만든다. 숫자를 채우기 위한 허수 대안은 금지한다.
+
+| 대안 | 접근 방식 | 플레이어 가치 | 정확성·근거 | 제작·유지 비용 | AI Context 비용 | 충돌·위험 | Rollback | 검증 가능성 | 장기 확장성 | 관련 Evidence |
+|---|---|---|---|---|---|---|---|---|---|---|
+| A | 현행 유지·현행 해법 재사용 | | | | | | | | | |
+| B | 최소 수정·흡수 | | | | | | | | | |
+| C | 책임 경계 재구성·다른 실행 경로 | | | | | | | | | |
+| D+ | 조사에서 발견한 더 나은 대안 | | | | | | | | | |
+
+- 유효 대안 수:
+- 3개 미만이면 추가 조사·추상화가 필요한 이유:
+- 임시 권장안:
+- 탈락안과 탈락 이유:
+- 핵심 trade-off:
+
+### BETTER_ALTERNATIVE_SEARCH
+
+임시 권장안을 선택한 뒤에도 새 Evidence·실패·플레이테스트·적대적 검토 finding이 나오면 더 나은 대안이 생겼는지 다시 탐색한다.
+
+```yaml
+better_alternative_search:
+  new_candidates_considered: []
+  stronger_option_found: false
+  selected_option_after_recheck:
+  replacement_reason:
+```
+
+### LONG_TERM_PLAN_FIT_REQUIRED
+
+단기 구현량만이 아니라 플레이어 가치, 정확성·기획 충실도, 위험, 수명주기 비용, 유지보수성, rollback, 재사용·모듈성, 증거 강도와 현재 비용 경계를 비교한다.
+
+```yaml
+long_term_fit:
+  player_value:
+  design_fidelity:
+  maintenance_and_lifecycle_cost:
+  rollback_difficulty:
+  reuse_and_modularity:
+  evidence_strength:
+  current_cost_boundary:
+revisit_condition:
+```
+
 ## 비교 대상
 
 | 대상 | 유형 | 비교 차원 | 버전·기간 | 선정 이유 | Case Card |
@@ -196,7 +241,7 @@ Case Card Template: `templates/research/GAME_DEVELOPMENT_CASE_CARD.md`
 - `IGNORE`:
 - `REFERENCE_ONLY`:
 - 별도 PoC·Vertical Slice·A/B·Concept Test:
-- 기획서·Issue·Plan·Project Sheet 갱신:
+- 프로젝트 Notion·repository canonical owner 갱신:
 - 실제 코드·데이터·자산 영향:
 - 미검증·재검증 조건:
 - Base 승격 후보:

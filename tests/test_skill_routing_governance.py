@@ -231,6 +231,29 @@ class SkillRoutingGovernanceTests(unittest.TestCase):
         self.assertIn("regenerate and update", result.stdout)
         self.assertIn("update at least one Learning Log", result.stdout)
 
+    def test_base_visual_dashboard_routes_to_notion_home_not_html(self) -> None:
+        registry = json.loads(
+            (REPOSITORY_ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
+        )
+        dashboard = next(
+            item for item in registry["skills"]
+            if item["skill_id"] == "building-project-visual-dashboards"
+        )
+        self.assertEqual("ACTIVE", dashboard["status"])
+        self.assertIn("notion-project-home", dashboard["trigger_tags"])
+        self.assertIn("self-contained-home", dashboard["trigger_tags"])
+        self.assertNotIn("html-dashboard", dashboard["trigger_tags"])
+        self.assertTrue(any("notion" in text.lower() for text in dashboard["use_when"]))
+        self.assertFalse(any("standalone HTML" in text for text in dashboard["use_when"]))
+        self.assertIn(
+            "standalone HTML",
+            " ".join(dashboard["do_not_use_when"] + dashboard["review_triggers"]),
+        )
+        skill = (REPOSITORY_ROOT / dashboard["path"]).read_text(encoding="utf-8")
+        self.assertIn("NOTION_PROJECT_HOME_AND_VISUAL_MAP", skill)
+        self.assertIn("HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN", skill)
+        self.assertIn("standalone HTML", skill)
+
 
 if __name__ == "__main__":
     unittest.main()

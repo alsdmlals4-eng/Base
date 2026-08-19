@@ -14,6 +14,7 @@ UX_UI_WORKFLOW = ROOT / ".github" / "workflows" / "validate-game-ux-ui-system.ym
 PLANNING_TEMPLATE = ROOT / "templates" / "planning" / "GAME_UX_UI_SYSTEM.md"
 REFERENCE_CARD = ROOT / "templates" / "research" / "UX_UI_REFERENCE_CARD.md"
 REVIEW_CHECKLIST = ROOT / "templates" / "quality" / "GAME_UX_UI_REVIEW_CHECKLIST.md"
+VISUAL_STYLE_RADAR = ROOT / "docs" / "knowledge" / "game-development" / "VISUAL_STYLE_SOURCE_RADAR.md"
 
 
 class GameUxUiSystemContractTests(unittest.TestCase):
@@ -103,6 +104,34 @@ class GameUxUiSystemContractTests(unittest.TestCase):
         ):
             with self.subTest(source=source):
                 self.assertIn(source, text)
+
+    def test_accessibility_gate_requires_semantic_accessibility_contract(self) -> None:
+        text = "\n".join(
+            (
+                SKILL.read_text(encoding="utf-8"),
+                (REFERENCE_ROOT / "godot-ui-implementation-contract.md").read_text(encoding="utf-8"),
+            )
+        )
+        for required in (
+            "accessibility_name",
+            "accessibility_description",
+            "semantic_reading_order",
+            "screen reader",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, text)
+
+    def test_visual_source_radar_requires_ai_assisted_production_value_evidence(self) -> None:
+        text = VISUAL_STYLE_RADAR.read_text(encoding="utf-8")
+        for required in (
+            "AI_ASSISTED_PRODUCTION_VALUE_GATE",
+            "retake_rate",
+            "style_consistency_acceptance",
+            "human_review_cost",
+            "runtime_or_export_impact",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, text)
 
     def test_reference_card_carries_polishing_evidence(self) -> None:
         text = REFERENCE_CARD.read_text(encoding="utf-8")
@@ -315,7 +344,6 @@ class GameUxUiSystemContractTests(unittest.TestCase):
             "tools/validate_external_ui_procurement_receipt.py",
         ):
             self.assertIn(required, text)
-
 
 
 if __name__ == "__main__":

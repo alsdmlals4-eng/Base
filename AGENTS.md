@@ -23,6 +23,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 ## 2. 작업 진입 게이트
 
 - L1 이상 작업은 최신 main, 현재 결정, 분야 정본, 같은 Goal의 열린·최근 병합 PR, 실제 구현을 비교해 중복·누락·충돌·구형 참조·미반영을 먼저 판정한다.
+- **`OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM`:** `open/draft/ready` PR 상태는 backlog metadata이지 다른 작업자가 현재 활동 중이라는 증거가 아니다. 실제 동시 작업자 보호는 사용자 지시, current session/automation owner, Resource Lock 등 `current owner evidence`가 있을 때만 `ACTIVE_OTHER_WORKER`로 적용한다. 사용자가 `CURRENT_COORDINATOR_CHAT` 하나만 활성이라고 확인하면 unresolved open PR은 최신 `main`과 Goal을 재검증해 `COORDINATOR_TAKEOVER / READY_TO_FINISH / SUPERSEDED_DUPLICATE / STALE_BACKLOG / BLOCKED_EXTERNAL`로 분류하고 현재 채팅에서 마무리할 수 있다.
 - **`CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY`:** L1 이상 중요한 설계·구현·정책 결정은 한 방법을 먼저 정해 놓고 근거를 끼워 맞추지 않는다. 먼저 **현행 조사**로 실제 상태·기존 해법·제약·실패 사례를 확인하고, 현행 유지·재사용·흡수·최소 수정·구조 개선·신규 구축 등 현재 Goal에서 실제로 가능한 **최소 3개**의 materially distinct 유효 대안을 확보해 동일 기준으로 비교한다. `MINIMUM_VIABLE_ALTERNATIVES: 3`. 숫자를 채우기 위한 허수 대안은 금지하며, 세 후보를 찾기 어렵다면 조사·추상화 수준을 넓혀 전략적으로 다른 실행 경로를 더 찾는다. 조사 뒤에도 세 실질 후보를 만들 수 없는 특수 제약이라면 임의로 기준을 낮추지 말고 그 제한과 탈락 근거를 `BLOCKED_UNVERIFIED` 또는 해당 Decision evidence로 남긴다.
 - **`BETTER_ALTERNATIVE_SEARCH`:** 최초 비교에서 권장안을 고른 뒤에도 새 증거·실패·검토 finding이 나오면 **더 나은 방안**이 생겼는지 다시 탐색한다. 기존 선택을 지키는 것이 목표가 아니며, 승인된 큰 방향을 보존하면서 더 강한 기술적 방법이 확인되면 근거와 함께 교체한다. 핵심 게임 방향·플레이어 경험·비용·범위를 바꾸는 더 나은 안이면 `USER_DECISION_REQUIRED`로 올린다.
 - **`LONG_TERM_PLAN_FIT_REQUIRED`:** 권장안은 단기 구현량뿐 아니라 **장기계획**에 적합한지 반드시 판정한다. 사용자/플레이어 가치, 정확성·기획 충실도, 위험, 수명주기 비용, 유지보수성, 되돌리기 난이도, 재사용·모듈성, Base의 향후 변화에 대한 신선도·호환성, 증거 강도, 현재 비용 경계를 함께 비교하고, 어떤 조건에서 권장안을 재검토해야 하는지도 기록한다.

@@ -262,7 +262,8 @@ def build_artifacts() -> dict[Path, bytes]:
         "artifact_role": "base-v9-decision-registry",
         "decisions": [
             {"id": "BASE-V9-001", "status": "CONFIRMED", "decision": "Active Skill count is Registry-derived and not fixed."},
-            {"id": "BASE-V9-002", "status": "CONFIRMED", "decision": "Google Sheets remain USER_FACING_GDD_WORKSPACE for projects; Base is BASE_EXCLUDED."},
+            {"id": "BASE-V9-002", "status": "SUPERSEDED", "superseded_by": "BASE-V9-004", "decision": "Historical project Google Sheets workspace authority; no longer current."},
+            {"id": "BASE-V9-004", "status": "CONFIRMED", "decision": "Google Sheets are migration-only legacy sources until unique material is absorbed and active references are removed."},
             {"id": "BASE-V9-003", "status": "CONFIRMED", "decision": "Project adoption is a post-release wave and must not block the Base v9.0.0 release."},
         ],
     }
@@ -375,8 +376,8 @@ def build_artifacts() -> dict[Path, bytes]:
         "artifact_role": "sheet-control-contract",
         "base_sheet_status": "BASE_EXCLUDED",
         "external_sheet_writes_authorized": False,
-        "project_sheet_role": "USER_FACING_GDD_WORKSPACE",
-        "sheet_only_change_status": "PROPOSED_SHEET_CHANGE",
+        "project_sheet_role": "MIGRATION_ONLY_LEGACY_SOURCE",
+        "sheet_only_change_status": "MIGRATION_PROPOSAL_ONLY",
         "held_projects": [
             {"project": "Ten Paces: Hidden Moves", "status": "HOLD"},
             {"project": "Blacksmith", "status": "HOLD"},

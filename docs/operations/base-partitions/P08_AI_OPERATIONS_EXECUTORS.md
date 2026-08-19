@@ -1,5 +1,11 @@
 # P08 · AI Operations & External Executors — Context Pack
 
+## 현재 실행 계약
+`SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS` · `PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER`
+
+이 Part는 semantic responsibility / learning / validation checkpoint다. 현재 coordinator가 다른 Part/CP0의 검증된 오류·충돌·누락을 발견하면 다른 Part라는 이유만으로 보류하지 않고 `CROSS_PART_CHANGE`로 owner를 기록해 직접 수정할 수 있다. 단, 다른 독립 open/draft/ready PR·branch·worktree는 `ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED`에 따라 read-only다.
+
+
 ## 역할
 AI instruction/context, model/cost routing, source/research, DeepSeek/worktree와 선택적 외부 executor 운영을 책임진다.
 
@@ -13,7 +19,7 @@ GPT primary, OPTIONAL_CODEX_EXECUTOR, minimal Skill routing, ZERO_INCREMENTAL_CO
 Instruction/Context → Model/Cost → Source Research → DeepSeek Worktree → Optional Executor Handoff.
 
 ## 경계
-GPT/Codex 역할 정본은 P01을 읽고, workstream isolation은 P03, evidence는 P07. Partition 공통 Prompt는 CP0이므로 P08의 `templates/prompts/**`보다 CP0 보호가 우선한다.
+Part 경계는 수정 금지선이 아니라 semantic owner 지도다. 다른 Part/CP0 finding도 현재 coordinator가 증거와 검증 경로를 확보하면 직접 수정한다. 다른 독립 활성 workstream만 read-only로 보호하며, 실제 조정 blocker만 `CROSS_PART_CHANGE_REQUEST`로 남긴다.
 
 ## 우선 공격 대상
 도구/Skill 과다 호출, 불필요 유료 API/SaaS, executor가 GitHub/Notion 실제 상태를 재확인하지 않음, 다른 프로젝트/worktree 혼입.
