@@ -37,9 +37,7 @@ Require `FULL_LOOP_COUNT_MINIMUM: 5`, `MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5`,
 
 - [x] **Step 2: Run test to verify it fails**
 
-Run: `python -m unittest tests.test_base_long_horizon_work_contract -v`
-
-Expected: FAIL because current production Skill has clean-exit semantics but no minimum-five markers.
+Observed in GitHub Actions run `32210386245`: expected RED. `test_adversarial_review_requires_minimum_five_then_until_clean` and the GPT-first companion contract failed because production did not yet contain `FULL_LOOP_COUNT_MINIMUM: 5`.
 
 ### Task 2: Update active policy owners
 
@@ -52,17 +50,17 @@ Expected: FAIL because current production Skill has clean-exit semantics but no 
 - Consumes: the RED regression from Task 1.
 - Produces: one consistent active contract: five mandatory full loops, then continue until clean.
 
-- [ ] **Step 1: Add the minimum floor to `AGENTS.md`**
+- [x] **Step 1: Add the minimum floor to `AGENTS.md`**
 
-Keep `ADVERSARIAL_REVIEW_UNTIL_CLEAN`, add explicit minimum-five markers, forbid clean exit before loop 5, and require continuation after loop 5 while valid findings remain.
+Kept `ADVERSARIAL_REVIEW_UNTIL_CLEAN`, added explicit minimum-five markers, blocked clean exit before loop 5, and required continuation after loop 5 while valid findings remain.
 
-- [ ] **Step 2: Update Long-Horizon machine and narrative contracts**
+- [x] **Step 2: Update Long-Horizon machine and narrative contracts**
 
-Add both minimum markers to the machine block and make the lifecycle say `AT LEAST 5 FULL ADVERSARIAL LOOPS, THEN UNTIL CLEAN`.
+Added both minimum markers to the machine block and changed the lifecycle to `AT LEAST 5 FULL ADVERSARIAL LOOPS, THEN UNTIL CLEAN`.
 
-- [ ] **Step 3: Update the Skill owner**
+- [x] **Step 3: Update the Skill owner**
 
-Add the minimum markers, mandatory loop-1-through-5 rule, post-five continuation, and the rule that clean mandatory loops do not require manufactured findings or changes.
+Added the minimum markers, mandatory loop-1-through-5 rule, post-five continuation, and the rule that clean mandatory loops do not require manufactured findings or changes.
 
 ### Task 3: Synchronize historical learning and companion regression
 
@@ -74,13 +72,13 @@ Add the minimum markers, mandatory loop-1-through-5 rule, post-five continuation
 - Consumes: updated active Skill contract.
 - Produces: historical explanation and a second regression that prevents either pure fixed-five termination or floorless clean exit from returning.
 
-- [ ] **Step 1: Add a new Learning Log entry**
+- [x] **Step 1: Add a new Learning Log entry**
 
-Record that the 2026-08-19 floorless clean-exit decision is superseded by the later user decision: minimum five complete loops plus unbounded continuation to clean.
+Recorded that the earlier same-day floorless clean-exit decision is superseded by the later user decision: minimum five complete loops plus unbounded continuation to clean.
 
-- [ ] **Step 2: Update the neutral lifecycle regression**
+- [x] **Step 2: Update the neutral lifecycle regression**
 
-Assert both minimum markers and clean exit; keep assertions rejecting the obsolete five-lens abstraction.
+The neutral lifecycle regression now asserts both minimum markers and clean exit while still rejecting the obsolete five-lens abstraction.
 
 ### Task 4: Verify, review, merge, and read back
 
