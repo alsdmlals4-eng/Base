@@ -76,8 +76,14 @@
         "RM-VIS-001": "planned",
         "RM-VIS-002": "planned"
       },
+      "manifest_installation": {
+        "state": "INSTALLED_ON_MAIN",
+        "merge_commit": "1e75e5dc871ce1ce4d547b0521f6e9b680c46684",
+        "verification": "Validate Base v9 adoption 32306238522 SUCCESS",
+        "runtime_validation": "FULL_PROJECT_REGRESSIONS_SUCCESS_ADAPTED_VALIDATOR_UNCHANGED"
+      },
       "project_adoption_mode": "ADAPTED_IMPLEMENTATION",
-      "evidence": "project PR #208 merged the RM-TOOL-001 concept as a project-adapted implementation at 5c91f4ff8d88b3e00f66252ba6f566795f2e50a3; current project file is intentionally not byte-identical to the Base vendor source",
+      "evidence": "project PR #208 merged the RM-TOOL-001 concept as a project-adapted implementation at 5c91f4ff8d88b3e00f66252ba6f566795f2e50a3; adoption manifest PR #209 merged as 1e75e5dc871ce1ce4d547b0521f6e9b680c46684 after Base-v9, Project Base Adapter, docs, core, full matrix and ANNUAL-MVP regressions all succeeded; current project validator remains intentionally not byte-identical to the Base vendor source",
       "blocker": "do not overwrite the verified project-adapted validator with the Base vendor source",
       "revisit": "only standardize to vendored source after an explicit equivalence/migration decision; the existing project implementation remains valid"
     },
