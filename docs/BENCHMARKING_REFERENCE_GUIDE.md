@@ -65,6 +65,8 @@
 
 벤치마크 역공학은 **외부 제품을 복제하는 절차가 아니라 관찰 가능한 행동·문제 해결 구조를 재사용 가능한 계약으로 바꾸는 절차**다. 장르 문법뿐 아니라 시스템, 콘텐츠·데이터 구조, UI/UX, 도구, 에셋·이미지 재료, 작업구조, 반복 프로세스와 Skill 후보까지 `REUSABLE_UNIT_DISCOVERY` 대상으로 본다.
 
+프로젝트 단위 실행은 `docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md`를 읽고 `templates/research/PROJECT_REUSE_OPPORTUNITY_SCAN.md`에 기록한다.
+
 ```text
 BENCHMARK / PRACTICE OBSERVATION
 → SOURCE_AND_RIGHTS_PRECHECK
