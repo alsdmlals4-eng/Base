@@ -261,9 +261,12 @@ class GameDesignDifficultyWorkflowTests(unittest.TestCase):
 
 
 # Required-check bridge: this existing workflow-owned test module deliberately
-# imports the focused P04 regression so player-value/world-fit/legacy-surface
-# contract changes cannot pass only because a new test file exists outside the
-# workflow's explicit unittest list.
+# imports the focused P04 regressions so game-design/reuse contract changes
+# cannot pass only because a focused test file exists outside the workflow's
+# explicit unittest list.
+from tests.test_p04_reverse_engineering_reuse_pipeline import (
+    P04ReverseEngineeringReusePipelineTests,
+)
 from tests.test_p04_vertical_slice_player_value_trace import (
     P04VerticalSlicePlayerValueTraceTests,
 )
