@@ -9,10 +9,30 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MANIFEST = ROOT / "docs" / "operations" / "BASE_PARTITION_MANIFEST.json"
+DEFAULT_SKILL_REGISTRY = ROOT / "skills" / "SKILL_REGISTRY.json"
 
 
 def load_manifest(path: Path = DEFAULT_MANIFEST) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def active_skill_ids(path: Path = DEFAULT_SKILL_REGISTRY) -> set[str]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    rows = payload.get("skills", [])
+    if not isinstance(rows, list):
+        raise ValueError("SKILL_REGISTRY skills must be a list")
+    result: set[str] = set()
+    for row in rows:
+        if not isinstance(row, dict):
+            raise ValueError("SKILL_REGISTRY entries must be objects")
+        if row.get("status") == "ACTIVE":
+            skill_id = row.get("skill_id")
+            if not isinstance(skill_id, str) or not skill_id:
+                raise ValueError("ACTIVE skill must have a non-empty skill_id")
+            if skill_id in result:
+                raise ValueError(f"duplicate ACTIVE skill_id in registry: {skill_id}")
+            result.add(skill_id)
+    return result
 
 
 def matches(path: str, pattern: str) -> bool:
@@ -35,6 +55,15 @@ def find_part(manifest: dict, part_id: str) -> dict:
     raise KeyError(part_id)
 
 
+def matching_part_ids(manifest: dict, path: str) -> list[str]:
+    owners: list[str] = []
+    for part in manifest["parts"]:
+        patterns = part.get("owned_write_paths", []) + part.get("allowed_new_paths", [])
+        if matches_any(path, patterns):
+            owners.append(part["part_id"])
+    return owners
+
+
 def classify_path(manifest: dict, part: dict | None, path: str, integration: bool) -> tuple[bool, str]:
     protected = manifest["control_plane"]["protected_write_paths"]
     if matches_any(path, protected):
@@ -42,7 +71,7 @@ def classify_path(manifest: dict, part: dict | None, path: str, integration: boo
             return True, "CONTROL_PLANE_INTEGRATION_WRITE"
         return False, "CONTROL_PLANE_WRITE_FORBIDDEN"
     if integration:
-        owners = [p["part_id"] for p in manifest["parts"] if matches_any(path, p["owned_write_paths"] + p.get("allowed_new_paths", []))]
+        owners = matching_part_ids(manifest, path)
         return True, "PART_OWNED:" + ",".join(owners) if owners else "UNASSIGNED_INTEGRATION_REVIEW_REQUIRED"
     assert part is not None
     if matches_any(path, part["owned_write_paths"] + part.get("allowed_new_paths", [])):
@@ -64,6 +93,19 @@ def changed_files(base: str, head: str) -> list[str]:
     return [line.strip() for line in proc.stdout.splitlines() if line.strip()]
 
 
+def tracked_files() -> list[str]:
+    proc = subprocess.run(
+        ["git", "ls-files"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if proc.returncode != 0:
+        raise RuntimeError(proc.stderr.strip() or "git ls-files failed")
+    return [line.strip() for line in proc.stdout.splitlines() if line.strip()]
+
+
 def validate_manifest(manifest: dict) -> list[str]:
     errors: list[str] = []
     parts = manifest.get("parts", [])
@@ -72,22 +114,55 @@ def validate_manifest(manifest: dict) -> list[str]:
         errors.append(f"part ids/order invalid: {ids}")
     if manifest.get("control_plane", {}).get("write_authority") != "INTEGRATION_ONLY":
         errors.append("control plane write_authority must be INTEGRATION_ONLY")
+
     skills: list[str] = []
     paths: dict[str, str] = {}
-    protected = set(manifest.get("control_plane", {}).get("protected_write_paths", []))
+    protected_patterns = manifest.get("control_plane", {}).get("protected_write_paths", [])
+    protected_exact = set(protected_patterns)
     for part in parts:
+        part_id = part.get("part_id", "UNKNOWN")
         skills.extend(part.get("owned_skill_ids", []))
         context = ROOT / part.get("context_pack", "")
         if not context.exists():
             errors.append(f"missing context pack: {context}")
+        learning_log = ROOT / part.get("learning_log", "")
+        if not learning_log.exists():
+            errors.append(f"missing learning log for {part_id}: {learning_log}")
         for pattern in part.get("owned_write_paths", []):
-            if pattern in protected:
-                errors.append(f"{part['part_id']} owns protected pattern {pattern}")
-            previous = paths.setdefault(pattern, part["part_id"])
-            if previous != part["part_id"]:
-                errors.append(f"duplicate owned pattern {pattern}: {previous}/{part['part_id']}")
-    if len(skills) != len(set(skills)):
+            if pattern in protected_exact:
+                errors.append(f"{part_id} owns protected exact pattern {pattern}")
+            previous = paths.setdefault(pattern, part_id)
+            if previous != part_id:
+                errors.append(f"duplicate owned pattern {pattern}: {previous}/{part_id}")
+
+    assigned = set(skills)
+    try:
+        active = active_skill_ids()
+    except (OSError, ValueError, json.JSONDecodeError) as error:
+        errors.append(f"cannot read active Skill registry: {error}")
+        active = set()
+    if len(skills) != len(assigned):
         errors.append("duplicate skill ownership")
+    missing = sorted(active - assigned)
+    extra = sorted(assigned - active)
+    if missing:
+        errors.append(f"ACTIVE skills missing partition owner: {missing}")
+    if extra:
+        errors.append(f"partition owns non-ACTIVE/unknown skills: {extra}")
+
+    try:
+        files = tracked_files()
+    except RuntimeError as error:
+        errors.append(str(error))
+        files = []
+    for path in files:
+        if matches_any(path, protected_patterns):
+            continue
+        owners = matching_part_ids(manifest, path)
+        unique_owners = sorted(set(owners))
+        if len(unique_owners) > 1:
+            errors.append(f"semantic path overlap {path}: {unique_owners}")
+
     return errors
 
 
