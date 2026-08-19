@@ -70,6 +70,15 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
         self.assertIn("shipping-intent", visual.lower())
         self.assertIn("별도 `CORE_POC` 제품 단계는 사용하지 않는다", stage)
 
+    def test_concept_lifecycle_treats_poc_as_technical_spike_not_player_validation(self) -> None:
+        concept = read("skills/analyzing-and-refining-game-concepts/SKILL.md")
+        self.assertNotIn("POC_BUILD_AND_TEST", concept)
+        self.assertNotIn("REPEAT_POC", concept)
+        self.assertIn("TECHNICAL_SPIKE_INTERNAL_ONLY", concept)
+        self.assertIn("`poc-contract`은 과거 호환 mode", concept)
+        self.assertIn("RELEASE_NEAR_VERTICAL_SLICE_FIRST", concept)
+        self.assertIn("designing-vertical-slices", concept)
+
     def test_part_contexts_consume_release_near_rule_and_current_coordinator_semantics(self) -> None:
         p04 = read("docs/operations/base-partitions/P04_GAME_DESIGN_CORE_VERTICAL_SLICE.md")
         p05 = read("docs/operations/base-partitions/P05_ART_UX_UI_VISUAL_ASSETS.md")
