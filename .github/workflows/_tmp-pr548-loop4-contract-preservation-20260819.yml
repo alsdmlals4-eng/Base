@@ -1,0 +1,83 @@
+name: Temporary PR548 loop4 contract preservation
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tmp-pr548-loop4-contract-preservation-20260819
+  cancel-in-progress: true
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: integrate/pr530-current-main-20260819
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Install validation dependencies
+        run: python -m pip install -r .github/validation-requirements.txt
+      - name: Restore preserved contracts
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path('.')
+
+          dashboard = root / 'skills/building-project-visual-dashboards/SKILL.md'
+          text = dashboard.read_text(encoding='utf-8')
+          marker = 'Learning Log: `skills/building-project-visual-dashboards/LEARNING_LOG.md`'
+          addition = '''## Reference\n\n기존 human-facing 정보 계층 원리는 `skills/building-project-visual-dashboards/references/dashboard-information-architecture.md`를 참고하되, standalone HTML 탭 구현이 아니라 Notion Home/Visual Map에 맞게 적용한다.\n\n## Output contract\n\n최소 출력은 self-contained Project Home, 필요한 Visual Map/diagram, repository/runtime locator, 검증 상태, blocker·next work·revisit condition이다. 핵심 이해를 하위 링크로만 넘기지 않는다.\n\n## Quality gate\n\nHome만 읽어 프로젝트 핵심 가치·Core Loop·주요 시스템·UX/Visual·구현/검증 상태·다음 작업을 설명할 수 있어야 한다. Notion과 repository/runtime truth가 충돌하거나 미실행 검증을 PASS로 표시하거나 standalone HTML/local dashboard가 새 authority로 부활하면 실패다.\n\n'''
+          if '## Output contract' not in text:
+              if marker not in text:
+                  raise SystemExit('dashboard learning marker missing')
+              text = text.replace(marker, addition + marker, 1)
+          dashboard.write_text(text, encoding='utf-8', newline='\n')
+
+          consolidated = root / 'tests/test_consolidated_skill_references.py'
+          text = consolidated.read_text(encoding='utf-8')
+          if '"google-sheets-sync",' in text:
+              text = text.replace('"google-sheets-sync",', '"legacy-sheet-migration",', 1)
+          consolidated.write_text(text, encoding='utf-8', newline='\n')
+
+          registry_path = root / 'skills/SKILL_REGISTRY.json'
+          registry = json.loads(registry_path.read_text(encoding='utf-8'))
+          row = next(item for item in registry['skills'] if item['skill_id'] == 'managing-design-documents')
+          current = row['use_when'][0]
+          required = ' 하위 시스템 checkpoint에서는 누적 승인 결정을 책임 원본과 필요한 Notion Home/detail에 통합한다.'
+          if '하위 시스템 checkpoint' not in current:
+              row['use_when'][0] = current + required
+          registry_path.write_text(json.dumps(registry, ensure_ascii=False, separators=(',', ':')) + '\n', encoding='utf-8')
+          PY
+          python tools/build_base_v9_artifacts.py --write
+      - name: Verify focused and freshness contracts
+        run: |
+          python tools/build_base_v9_artifacts.py --check
+          python tools/check_base_v9_integrity.py --trusted-history-commit "$(git rev-parse origin/main)"
+          python -m unittest \
+            tests.test_consolidated_skill_references \
+            tests.test_skill_package_integrity \
+            tests.test_skill_system_coverage \
+            tests.test_game_project_operating_system_structure \
+            tests.test_skill_routing_governance \
+            tests.test_pr530_selective_integration_contract -v
+          python tools/check_canonical_reference_freshness.py --config .github/reference-freshness.json --base "$(git rev-parse origin/main)" --head HEAD
+          git diff --check
+      - name: Commit durable changes and remove temporary workflow
+        shell: bash
+        run: |
+          git rm .github/workflows/_tmp-pr548-loop4-contract-preservation-20260819.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add skills/building-project-visual-dashboards/SKILL.md tests/test_consolidated_skill_references.py skills/SKILL_REGISTRY.json docs/generated/BASE_ACTIVE_SKILLS.md
+          git commit -m "fix: preserve contracts during PR530 selective absorption"
+          git pull --rebase origin integrate/pr530-current-main-20260819
+          git push origin HEAD:integrate/pr530-current-main-20260819
