@@ -9,6 +9,7 @@
 
 ## 시각 협업 Artifact
 
+- usage_context: `NOTION_PROJECT / REPOSITORY_HANDOFF / BOTH`
 - project_workspace: `NOTION_DEFAULT_PROJECT_WORKSPACE`
 - Notion Project·Screen·Asset 관계:
 - Decision ID·repository 책임 원본:
@@ -295,7 +296,7 @@ disabled / locked / loading / warning / error / new
 | 입력·포커스 | | | | NOT_RUN | |
 | 기기 | | | | NOT_RUN | |
 | 사람 이해 | | | | HUMAN_NOT_RUN | |
-| 보조기기 사용자 | | | | HUMAN_NOT_RUN | |
+| 보조기기 사용자 | | | | HUMAN_NOT_RUN |
 
 ## 16. Base 승격과 프로젝트 전용 유지
 
