@@ -53,7 +53,7 @@ evidence:
   - "MDA: A Formal Approach to Game Design and Game Research"
   - "Games User Research: Choose the right playtest method"
   - "GDC Vault: The Vertical Slice Challenge"
-  - "P04 contract test tests/test_p04_player_value_evidence_contract.py"
+  - "P04 player-value evidence contract in tests/test_game_design_difficulty_workflow.py"
 reuse_scope: PART_ONLY
 promotion_candidate: "None; the reusable rule is now represented directly in the P04 canonical guide/Skills and does not need a new global control-plane rule."
 source_followup_questions:
