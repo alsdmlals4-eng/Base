@@ -35,6 +35,24 @@ def _safe_relative(value: str, *, field: str) -> str:
     return path.as_posix()
 
 
+def _confined_path(root: Path, relative: str) -> Path:
+    """Resolve a project/Base-relative path without following symlinks outside root."""
+
+    root_resolved = Path(root).resolve()
+    candidate = root_resolved / relative
+    cursor = candidate
+    while cursor != root_resolved:
+        if cursor.is_symlink():
+            raise ValueError(f"symlink path is not allowed: {relative}")
+        cursor = cursor.parent
+        if root_resolved not in cursor.parents and cursor != root_resolved:
+            raise ValueError(f"path escapes root: {relative}")
+    resolved = candidate.resolve(strict=False)
+    if resolved != root_resolved and root_resolved not in resolved.parents:
+        raise ValueError(f"path escapes root: {relative}")
+    return candidate
+
+
 def validate_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
     if manifest.get("schema_version") != SCHEMA_VERSION:
         raise ValueError(f"schema_version must be {SCHEMA_VERSION}")
@@ -84,7 +102,10 @@ def load_manifest(path: Path) -> dict[str, Any]:
 
 
 def _read_lock(project_root: Path) -> dict[str, Any] | None:
-    lock_path = project_root / LOCK_REL_PATH
+    try:
+        lock_path = _confined_path(project_root, LOCK_REL_PATH.as_posix())
+    except ValueError:
+        return None
     if not lock_path.is_file():
         return None
     document = json.loads(lock_path.read_text(encoding="utf-8"))
@@ -97,6 +118,26 @@ def _violation(module_id: str, code: str, message: str) -> dict[str, str]:
     return {"module_id": module_id, "code": code, "message": message}
 
 
+def _resolve_module_paths(
+    base_root: Path,
+    project_root: Path,
+    module_id: str,
+    config: dict[str, Any],
+) -> tuple[Path | None, Path | None, list[dict[str, str]]]:
+    violations: list[dict[str, str]] = []
+    try:
+        source_path = _confined_path(base_root, config["source"])
+    except ValueError as exc:
+        source_path = None
+        violations.append(_violation(module_id, "PATH_ESCAPE_OR_SYMLINK", str(exc)))
+    try:
+        destination_path = _confined_path(project_root, config["destination"])
+    except ValueError as exc:
+        destination_path = None
+        violations.append(_violation(module_id, "PATH_ESCAPE_OR_SYMLINK", str(exc)))
+    return source_path, destination_path, violations
+
+
 def check_adoption(
     base_root: Path,
     project_root: Path,
@@ -105,16 +146,27 @@ def check_adoption(
     base_root = Path(base_root)
     project_root = Path(project_root)
     normalized = validate_manifest(manifest)
-    lock = _read_lock(project_root)
     violations: list[dict[str, str]] = []
     checked: list[str] = []
+
+    try:
+        _confined_path(project_root, LOCK_REL_PATH.as_posix())
+    except ValueError as exc:
+        violations.append(_violation("_manifest", "PATH_ESCAPE_OR_SYMLINK", str(exc)))
+        lock = None
+    else:
+        lock = _read_lock(project_root)
 
     for module_id, config in sorted(normalized["modules"].items()):
         if config["state"] != "enabled":
             continue
         checked.append(module_id)
-        source_path = base_root / config["source"]
-        destination_path = project_root / config["destination"]
+        source_path, destination_path, path_violations = _resolve_module_paths(
+            base_root, project_root, module_id, config
+        )
+        violations.extend(path_violations)
+        if source_path is None or destination_path is None:
+            continue
         if not source_path.is_file():
             violations.append(_violation(module_id, "SOURCE_MISSING", config["source"]))
             continue
@@ -167,47 +219,64 @@ def apply_adoption(
     base_root = Path(base_root)
     project_root = Path(project_root)
     normalized = validate_manifest(manifest)
+    violations: list[dict[str, str]] = []
+
+    try:
+        lock_path = _confined_path(project_root, LOCK_REL_PATH.as_posix())
+    except ValueError as exc:
+        return {
+            "ok": False,
+            "mode": "apply",
+            "applied_modules": [],
+            "violations": [_violation("_manifest", "PATH_ESCAPE_OR_SYMLINK", str(exc))],
+        }
+
     existing_lock = _read_lock(project_root) or {}
     existing_entries = existing_lock.get("modules", {}) if isinstance(existing_lock, dict) else {}
-    violations: list[dict[str, str]] = []
     operations: list[tuple[str, Path, Path, str]] = []
 
     for module_id, config in sorted(normalized["modules"].items()):
         if config["state"] != "enabled":
             continue
-        source_path = base_root / config["source"]
-        destination_path = project_root / config["destination"]
+        source_path, destination_path, path_violations = _resolve_module_paths(
+            base_root, project_root, module_id, config
+        )
+        violations.extend(path_violations)
+        if source_path is None or destination_path is None:
+            continue
         if not source_path.is_file():
             violations.append(_violation(module_id, "SOURCE_MISSING", config["source"]))
             continue
 
         source_hash = _sha256(source_path)
         if destination_path.exists():
+            current_hash = _sha256(destination_path)
             lock_entry = existing_entries.get(module_id) if isinstance(existing_entries, dict) else None
             if not isinstance(lock_entry, dict):
-                violations.append(
-                    _violation(
-                        module_id,
-                        "REFUSE_OVERWRITE_UNTRACKED_FILE",
-                        config["destination"],
+                if current_hash != source_hash:
+                    violations.append(
+                        _violation(
+                            module_id,
+                            "REFUSE_OVERWRITE_UNTRACKED_FILE",
+                            config["destination"],
+                        )
                     )
-                )
-                continue
-            current_hash = _sha256(destination_path)
-            if current_hash != lock_entry.get("installed_sha256"):
-                violations.append(
-                    _violation(
-                        module_id,
-                        "REFUSE_OVERWRITE_LOCAL_MODIFICATION",
-                        config["destination"],
+                    continue
+            else:
+                if current_hash != lock_entry.get("installed_sha256"):
+                    violations.append(
+                        _violation(
+                            module_id,
+                            "REFUSE_OVERWRITE_LOCAL_MODIFICATION",
+                            config["destination"],
+                        )
                     )
-                )
-                continue
-            if config["destination"] != lock_entry.get("destination"):
-                violations.append(
-                    _violation(module_id, "REFUSE_DESTINATION_CHANGE", config["destination"])
-                )
-                continue
+                    continue
+                if config["destination"] != lock_entry.get("destination"):
+                    violations.append(
+                        _violation(module_id, "REFUSE_DESTINATION_CHANGE", config["destination"])
+                    )
+                    continue
         operations.append((module_id, source_path, destination_path, source_hash))
 
     if violations:
@@ -218,24 +287,30 @@ def apply_adoption(
             "violations": violations,
         }
 
-    lock_entries: dict[str, dict[str, str]] = {}
+    lock_entries: dict[str, dict[str, str]] = (
+        {key: dict(value) for key, value in existing_entries.items() if isinstance(value, dict)}
+        if isinstance(existing_entries, dict)
+        else {}
+    )
+    applied_modules: list[str] = []
     for module_id, source_path, destination_path, source_hash in operations:
-        destination_path.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(source_path, destination_path)
+        if not destination_path.exists() or _sha256(destination_path) != source_hash:
+            destination_path.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source_path, destination_path)
         installed_hash = _sha256(destination_path)
         lock_entries[module_id] = {
-            "source": source_path.relative_to(base_root).as_posix(),
-            "destination": destination_path.relative_to(project_root).as_posix(),
+            "source": source_path.relative_to(base_root.resolve()).as_posix(),
+            "destination": destination_path.relative_to(project_root.resolve()).as_posix(),
             "source_sha256": source_hash,
             "installed_sha256": installed_hash,
         }
+        applied_modules.append(module_id)
 
     lock_document = {
         "schema_version": SCHEMA_VERSION,
         "base_source_commit": normalized["base_source_commit"],
         "modules": lock_entries,
     }
-    lock_path = project_root / LOCK_REL_PATH
     lock_path.parent.mkdir(parents=True, exist_ok=True)
     lock_path.write_text(
         json.dumps(lock_document, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
@@ -244,7 +319,7 @@ def apply_adoption(
     return {
         "ok": True,
         "mode": "apply",
-        "applied_modules": sorted(lock_entries),
+        "applied_modules": sorted(applied_modules),
         "lock_path": LOCK_REL_PATH.as_posix(),
         "violations": [],
     }
