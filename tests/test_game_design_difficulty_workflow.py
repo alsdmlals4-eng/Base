@@ -260,5 +260,10 @@ class GameDesignDifficultyWorkflowTests(unittest.TestCase):
             self.assertIn(term, learning)
 
 
+from tests.test_p04_vertical_slice_player_value_trace import (
+    P04VerticalSlicePlayerValueTraceTests,
+)
+
+
 if __name__ == "__main__":
     unittest.main()
