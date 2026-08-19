@@ -15,7 +15,11 @@ description: Use when routing a project request, closing material ambiguity, def
 
 사용자가 `[연속작업] 진행해`라고 명시하면 `references/continuous-work-execution.md`에 따라 현재 승인된 작업 계약의 남은 범위에 `CONTINUOUS_WORK_ACTIVE` 실행 상태를 적용한다. 이는 `PLAN / BUILD / REVIEW`를 대체하지 않으며, 사용자 전용 결정·미검증 차단·고위험 외부 행위의 확인 Gate를 제거하지 않는다. blocker가 생기면 즉시 전역 종료하지 않고 `recover → local defer → independent ready work → global stop last` 순서로 처리한다.
 
-명시적인 user-directed 계속 작업에서 `same-goal`의 `in-progress PR`이 이미 있으면 `USER_DIRECTED_PARALLEL_PR`로 라우팅한다. 기존 PR은 read-only overlap evidence로만 확인하고 **do not modify/rebase/update** 하며, **current completed main**에서 **separate branch/PR**을 만든다. 이후 `synchronizing-local-and-github-state`의 concurrent preflight가 `SAME_GOAL / PATH_OVERLAP / SEMANTIC_OVERLAP`을 판정하면 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16` 아래 `PROVISIONAL_INTEGRATION`으로 전환한다. owner PR branches는 read-only로 보존하고 필요한 material delta만 selective copy·재구현한 뒤 semantic reconciliation과 exact-head 검증을 수행한다. owner PR이 열려 있다는 사실만으로 merge를 막지 않으며 `absorbed_owner_deltas`와 `residual_owner_deltas`로 material coverage를 증명한다. `scheduled/periodic` repository-writing automation도 unrelated open PR 존재 자체를 전역 blocker로 사용하지 않고 실제 path/semantic overlap만 국소 조정한다. 상세 superseded·residual·병합 Gate는 `references/continuous-work-execution.md`와 `synchronizing-local-and-github-state`를 따른다.
+명시적인 user-directed 계속 작업에서 `same-goal`의 `in-progress PR`이 이미 있으면 `USER_DIRECTED_PARALLEL_PR`로 라우팅한다. 기존 PR은 read-only overlap evidence로만 확인하고 **do not modify/rebase/update** 하며, **current completed main**에서 **separate branch/PR**을 만든다. ordinary same-workstream coordination에서 허용된 경우 `synchronizing-local-and-github-state`의 concurrent preflight와 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`을 사용할 수 있다.
+
+그러나 `STRONGER_WORK_CONTRACT_OVERRIDES_COPY_INTEGRATION`이 항상 먼저 적용된다. 현재 작업의 더 구체적인 승인 계약이 다른 open/draft/ready PR 또는 다른 workstream을 `read-only / no absorption`으로 지정하면 standing copy-integration보다 우선한다. 그 PR의 material delta를 own 작업으로 가져오려면 **explicit absorption authorization**이 별도로 있어야 하며, 다른 workstream에는 `EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION`을 충족해야 한다. 없으면 overlap 탐지·경로 회피·main의 이미 병합된 결과 재평가만 수행하고 selective copy·재구현·흡수·close·supersede 처리를 하지 않는다.
+
+흡수가 명시적으로 허용된 ordinary coordination에서만 `PROVISIONAL_INTEGRATION`을 사용한다. owner PR branches는 read-only로 보존하고 필요한 material delta만 selective copy·재구현한 뒤 semantic reconciliation과 exact-head 검증을 수행한다. `absorbed_owner_deltas`와 `residual_owner_deltas`로 coverage를 증명한다. `scheduled/periodic` repository-writing automation도 unrelated open PR 존재 자체를 전역 blocker로 사용하지 않고 실제 path/semantic overlap만 국소 조정한다. 상세 경계는 `references/continuous-work-execution.md`와 `synchronizing-local-and-github-state`를 따른다.
 
 새 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층 요청은 일반 설계보다 먼저 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`와 `evaluating-godot-assets-and-plugins-before-creation: inventory-current-environment / disposition`으로 라우팅한다. `existing_solution_disposition`과 비교 증거·사용자 승인 상태 없이 `BUILD_NEW` 계약을 만들지 않는다.
 
@@ -30,9 +34,11 @@ description: Use when routing a project request, closing material ambiguity, def
 
 상세 계약: `docs/WORK_MODE_AND_SKILL_ROUTING.md`
 
-승인 결정 복원·중복 질문 방지·GitHub·Google Sheets 동기화: `docs/CONFIRMED_DECISION_SYNC_POLICY.md`
+승인 결정 복원·중복 질문 방지·Repository/Notion 동기화: `docs/CONFIRMED_DECISION_SYNC_POLICY.md`
 
-프로젝트 GDD Google Sheets 역할·편집·시각화·수치화: `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`
+프로젝트 workspace 권위: `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json` (`NOTION_DEFAULT_PROJECT_WORKSPACE`, `NOTION_HUMAN_FACING_CANON`, `REPOSITORY_STRUCTURED_CANON`, Google Sheets `COMPATIBILITY_ONLY`).
+
+legacy Google Sheets 해석·이관이 필요한 경우에만 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`와 compatibility 계약을 참고한다. 이는 신규 입력이나 active workspace 권위를 만들지 않는다.
 
 연속작업 활성화·자동 승인·blocker recovery·종료 경계: `references/continuous-work-execution.md`
 
@@ -110,7 +116,8 @@ project_agents:
 project_start_here:
 active_context:
 current_confirmed_decisions:
-project_google_sheet:
+project_notion_workspace:
+google_sheet_compatibility_source:
 related_open_and_recent_prs:
 documentation_map:
 design_document_registry:
@@ -139,17 +146,18 @@ existing_solution_user_approval:
 
 1. 최신 사용자 지시
 2. 프로젝트 `AGENTS.md`, `START_HERE`, Active Context, Documentation Map
-3. `CURRENT_CONFIRMED_DECISIONS.md`, 동일 Goal의 열린·최근 병합 PR, 프로젝트 Google Sheets
-4. `docs/WORK_MODE_AND_SKILL_ROUTING.md`
-5. 현재 Issue·Plan·책임 원본과 실제 파일
-6. `SKILL_REGISTRY.json`
-7. 신규 MCP·addon·CLI·framework·Skill·Mode이면 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`와 Godot 평가 Skill
-8. L1 이상 지시문 작성 시 `references/first-prompt-direction-anchoring.md`
-9. 필요한 경우 `references/question-and-source-model.md`
-10. 종료 판정이 필요한 경우 `references/ambiguity-and-closure.md`
-11. Grill Me 정합성 확인과 핵심 결정 인터뷰가 필요한 경우 `references/grill-me-protocol.md`
-12. `[연속작업] 진행해`가 있으면 `references/continuous-work-execution.md`
-13. 작업 분해·순서화가 필요한 경우 `references/work-decomposition-and-sequencing.md`
+3. `CURRENT_CONFIRMED_DECISIONS.md`, 동일 Goal의 열린·최근 병합 PR, 정확한 Project Notion workspace
+4. legacy Sheet에 UNIQUE 미이관 material이 실제 있을 때만 `google_sheet_compatibility_source`
+5. `docs/WORK_MODE_AND_SKILL_ROUTING.md`
+6. 현재 Issue·Plan·책임 원본과 실제 파일
+7. `SKILL_REGISTRY.json`
+8. 신규 MCP·addon·CLI·framework·Skill·Mode이면 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`와 Godot 평가 Skill
+9. L1 이상 지시문 작성 시 `references/first-prompt-direction-anchoring.md`
+10. 필요한 경우 `references/question-and-source-model.md`
+11. 종료 판정이 필요한 경우 `references/ambiguity-and-closure.md`
+12. Grill Me 정합성 확인과 핵심 결정 인터뷰가 필요한 경우 `references/grill-me-protocol.md`
+13. `[연속작업] 진행해`가 있으면 `references/continuous-work-execution.md`
+14. 작업 분해·순서화가 필요한 경우 `references/work-decomposition-and-sequencing.md`
 
 ## Workflow
 
@@ -193,7 +201,7 @@ current environment inventory
 
 ### 2. Inspect repository facts
 
-최신 `main`, 동일 Goal의 열린·최근 병합 PR, `CURRENT_CONFIRMED_DECISIONS.md`, 분야 책임 원본, 실제 파일과 프로젝트 Google Sheets에서 확인 가능한 것은 `repository_observed` 근거로 기록하고 사용자에게 되묻지 않는다. 외부 자료와 모델 추론은 요구사항 권한이 없으며 `[확인 필요]` 또는 후보로 남긴다.
+최신 `main`, 동일 Goal의 열린·최근 병합 PR, `CURRENT_CONFIRMED_DECISIONS.md`, 분야 책임 원본, 실제 파일과 정확한 Project Notion workspace에서 확인 가능한 것은 `repository_observed` 근거로 기록하고 사용자에게 되묻지 않는다. legacy Sheet는 `google_sheet_compatibility_source`에 UNIQUE 미이관 material이 있을 때만 migration evidence로 읽는다. 외부 자료와 모델 추론은 요구사항 권한이 없으며 `[확인 필요]` 또는 후보로 남긴다.
 
 ### 3. Build one requirement model
 
@@ -385,9 +393,22 @@ status: PASS/PARTIAL/FAIL/UNVERIFIED
 
 템플릿: `templates/project-operations/SKILL_EXECUTION_REPORT.md`
 
-## Project GDD Google Sheets handling
+## Project workspace handling
 
-프로젝트가 구성된 Sheet를 사용하면 이를 `USER_FACING_GDD_WORKSPACE`로 읽는다. 최신 GitHub 정본·실제 파일과 Sheet를 비교하고, Sheet에만 있는 사용자 수정은 `PROPOSED_SHEET_CHANGE`로 보존한다. 기술 기본값과 중요 기획 결정을 분리하고 승인된 변경만 GitHub 정본·Commit·Sheet에 반영한 뒤 재조회한다.
+```yaml
+workspace_authority: DOMAIN_SPLIT_CANON
+default_project_workspace: NOTION_DEFAULT_PROJECT_WORKSPACE
+human_facing_canon: NOTION_HUMAN_FACING_CANON
+structured_canon: REPOSITORY_STRUCTURED_CANON
+google_sheets: COMPATIBILITY_ONLY
+google_sheet_compatibility_source: OPTIONAL_LEGACY_MIGRATION_INPUT
+```
+
+- 정확한 Project relation의 Notion workspace를 사람용 계획·결정·설명 정본으로 읽는다.
+- 최신 Repository 정본·실제 파일을 구조화·runtime truth로 읽고, 사람용 기록과 의미가 맞는지 destination readback한다.
+- Base 자체 작업처럼 프로젝트 Notion destination이 적용되지 않으면 목적지를 발명하지 않는다.
+- 기존 Google Sheet가 실제 존재하면 고유 사용자 수정·수식·이미지를 `UNIQUE / DUPLICATE / OBSOLETE`로 판정한다. `UNIQUE`만 현행 owner로 이관 → readback/Test → consumer/reference 확인한다.
+- Sheet는 신규 입력·active Decision sync·완료 판정에 필요하지 않으며 신규 프로젝트에 생성하지 않는다.
 
 ## State model
 
@@ -470,6 +491,8 @@ remaining_unknowns: []
 - `[연속작업] 진행해`가 있을 때만 `CONTINUOUS_WORK_ACTIVE`를 사용했고, 승인된 계약 밖으로 범위를 넓히지 않았다.
 - 연속작업 중 사용자 결정·고위험 행위는 자동 승인하지 않았고, recoverable/local blocker는 recovery ladder와 independent-ready-task scan 없이 전역 종료하지 않았다.
 - 승인된 동일 범위의 구현·검증 방법과 병합에는 기존 approval reference와 `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`를 재사용했다.
+- `STRONGER_WORK_CONTRACT_OVERRIDES_COPY_INTEGRATION`이 적용되는 다른 workstream PR은 `explicit absorption authorization` 없이 흡수하지 않았다.
+- `NOTION_DEFAULT_PROJECT_WORKSPACE` / `NOTION_HUMAN_FACING_CANON`과 `REPOSITORY_STRUCTURED_CANON`의 역할이 분리됐고 Google Sheets는 `COMPATIBILITY_ONLY`다.
 - 큰 작업은 독립 검증 가능한 결과·의존성·병렬 묶음·게이트로 분해됐다.
 - 실제 사용한 Work Mode·Skill·Skill Mode의 이유와 결과·증거를 보고했다.
 - 새 작업자가 같은 입력에서 동등한 계약·라우팅·실행 보고를 복원할 수 있다.
@@ -497,6 +520,10 @@ remaining_unknowns: []
 - recoverable verification·현재 세션 tool 부재·국소 blocker를 recovery/defer/independent-task scan 없이 전역 종료함
 - 연속작업을 scheduler·webhook·백그라운드 실행이나 다른 채팅 자동 메시지 전달로 오해함
 - 실제로 호출할 수 없는 Codex/agent/executor를 실행했다고 주장함
+- standing copy-integration을 더 구체적인 `read-only / no absorption` 작업 계약보다 우선함
+- 다른 workstream PR을 **explicit absorption authorization** 없이 selective copy·재구현·흡수·close·supersede 처리함
+- Google Sheets를 신규 입력·active 사람용 workspace·Decision sync 필수 surface로 사용함
+- legacy Sheet UNIQUE material을 현행 owner readback/Test·consumer 확인 없이 삭제함
 - 원 요청의 산출물을 문서로 임의 축소함
 - 제외·보호·보류·미검증을 손실함
 - 측정 불가능한 완료 기준만 작성함
