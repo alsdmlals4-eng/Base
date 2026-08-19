@@ -13,6 +13,7 @@ REGISTRY = ROOT / "skills" / "SKILL_REGISTRY.json"
 DASHBOARD = ROOT / "skills" / "building-project-visual-dashboards" / "SKILL.md"
 MANIFEST = ROOT / "docs" / "operations" / "BASE_PARTITION_MANIFEST.json"
 SHEET_CONTROL = ROOT / "docs" / "operations" / "SHEET_CONTROL_CONTRACT.json"
+DECISIONS = ROOT / "docs" / "operations" / "BASE_V9_DECISION_REGISTRY.json"
 GENERATOR = ROOT / "tools" / "build_base_v9_artifacts.py"
 
 
@@ -105,15 +106,31 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
         p05 = next(part for part in manifest["parts"] if part["part_id"] == "P05")
         self.assertIn("building-project-visual-dashboards", p05["owned_skill_ids"])
 
-    def test_sheet_control_generator_cannot_reactivate_google_sheets(self) -> None:
+    def test_sheet_control_and_decision_history_cannot_reactivate_google_sheets(self) -> None:
         generator = GENERATOR.read_text(encoding="utf-8")
         self.assertIn('"project_sheet_role": "MIGRATION_ONLY_LEGACY_SOURCE"', generator)
         self.assertIn('"sheet_only_change_status": "MIGRATION_PROPOSAL_ONLY"', generator)
         self.assertNotIn('"project_sheet_role": "USER_FACING_GDD_WORKSPACE"', generator)
+        self.assertIn('"id": "BASE-V9-004"', generator)
+        self.assertIn('"id": "BASE-V9-002", "status": "SUPERSEDED"', generator)
+
         data = json.loads(SHEET_CONTROL.read_text(encoding="utf-8"))
         self.assertEqual("MIGRATION_ONLY_LEGACY_SOURCE", data["project_sheet_role"])
         self.assertEqual("MIGRATION_PROPOSAL_ONLY", data["sheet_only_change_status"])
         self.assertFalse(data["external_sheet_writes_authorized"])
+        self.assertFalse(data["active_project_workspace"])
+
+        decisions = json.loads(DECISIONS.read_text(encoding="utf-8"))["decisions"]
+        old = next(row for row in decisions if row["id"] == "BASE-V9-002")
+        current = next(row for row in decisions if row["id"] == "BASE-V9-004")
+        self.assertEqual("SUPERSEDED", old["status"])
+        self.assertEqual("BASE-V9-004", old["superseded_by"])
+        self.assertEqual("CONFIRMED", current["status"])
+        self.assertIn("migration-only", current["decision"].lower())
+        self.assertFalse(any(
+            row["status"] == "CONFIRMED" and "USER_FACING_GDD_WORKSPACE" in row["decision"]
+            for row in decisions
+        ))
 
     def test_qa_evidence_studio_files_remain_present(self) -> None:
         for relative in (
