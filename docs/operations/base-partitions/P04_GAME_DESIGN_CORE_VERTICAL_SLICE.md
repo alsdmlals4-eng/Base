@@ -25,4 +25,3 @@ Visual 구현은 P05, Godot/runtime 구현은 P06, 실행 evidence는 P07. 이 P
 - 새 공용 교훈이 없으면 `NO_NEW_REUSABLE_LESSON`; 프로젝트 전용이면 `PROJECT_ONLY`; Base 승격 후보면 `BASE_PROMOTION_CANDIDATE`.
 - 주기 Source domains: GAME_DEVELOPMENT.
 - 전역 Periodic Source Scan Queue에서 기존 Source 새/변경 자료와 신규 관련 사이트를 탐색하고, 원출처 검증 전에는 `UNVERIFIED_DISCOVERY`로 유지한다.
-
