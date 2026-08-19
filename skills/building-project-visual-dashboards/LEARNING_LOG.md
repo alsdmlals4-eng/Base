@@ -16,3 +16,11 @@
 - `tests/test_p0[1-9]_*.py` 같은 광역 wildcard를 generic Skill companion으로 허용하는 대안은 기각한다. owner-local Part 테스트 지원이 필요하면 P08 후속에서 source owner와 test owner의 의미 일치를 검증하는 별도 계약으로 해결한다.
 - reuse_scope: `BASE_PROMOTION_CANDIDATE`.
 - revisit_condition: owner-local focused test가 반복적으로 canonical freshness에 막힐 때 semantic owner-aware companion resolution을 구현한다.
+
+## 2026-08-19 · Workspace retirement는 기존 consumer contract를 보존하며 바꾼다
+
+- Google Sheets active authority 제거와 Notion Home 재분류 과정에서 기존 GPO 테스트가 보호하던 `하위 시스템 checkpoint`, Skill package reference link, `Output contract`, `Quality gate` 같은 유효 소비 계약을 함께 잃으면 retirement 자체가 맞더라도 회귀다.
+- 정책 변경 시 제거 대상 literal과 보존해야 할 capability를 분리하고, stale assertion은 current authority로 갱신하되 실제 유효 capability는 Registry·Skill body·reference에서 계속 소비되게 한다.
+- frozen Base v9 Sheet artifact는 역사 증거로 보존하고 current migration-only authority는 별도 current decision/Workspace/Planning owner가 소유한다.
+- reuse_scope: `BASE_PROMOTION_CANDIDATE`.
+- revisit_condition: legacy retirement가 다시 unrelated capability 삭제나 historical artifact rewrite를 유발할 때 이 분리 계약을 재적용한다.
