@@ -15,6 +15,7 @@ SCOPE_CHECKER = ROOT / "tools" / "check_base_partition_scope.py"
 LEARNING_SYSTEM = ROOT / "docs" / "operations" / "BASE_PARTITION_LEARNING_SYSTEM.md"
 SKILL_REGISTRY = ROOT / "skills" / "SKILL_REGISTRY.json"
 AGENTS = ROOT / "AGENTS.md"
+ADVERSARIAL_SKILL = ROOT / "skills" / "running-adversarial-review-and-refinement" / "SKILL.md"
 WORKSPACE_AUTHORITY = ROOT / "docs" / "operations" / "PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json"
 PROJECT_OS_SKILL = ROOT / "skills" / "managing-game-project-operating-system" / "SKILL.md"
 
@@ -160,29 +161,32 @@ class BasePartitionContractTests(unittest.TestCase):
         self.assertIn("CURRENT_COORDINATOR_CHAT", integration)
 
     def test_full_adversarial_loop_cannot_be_counted_as_one_review_lens(self) -> None:
-        adversarial = AGENTS.read_text(encoding="utf-8")
-        for term in (
-            "FULL_LOOP_IS_NOT_A_REVIEW_LENS",
-            "관점 하나만 검사한 것은 full loop로 계수하지 않는다",
-            "현행·정본·범위",
-            "최소 3개 실질 대안",
-            "attack",
-            "validate-critique",
-            "refine-approved-findings",
-            "regression-recheck",
-            "BETTER_ALTERNATIVE_SEARCH",
-            "LONG_TERM_PLAN_FIT_RECHECK",
-            "RE-ATTACK resulting state",
+        for adversarial in (
+            AGENTS.read_text(encoding="utf-8"),
+            ADVERSARIAL_SKILL.read_text(encoding="utf-8"),
         ):
-            self.assertIn(term, adversarial)
-        for invalid in (
-            "Loop 1 = scope",
-            "Loop 2 = UX",
-            "Loop 3 = consumer",
-            "Loop 4 = alternatives",
-            "Loop 5 = CI",
-        ):
-            self.assertIn(invalid, adversarial)
+            for term in (
+                "FULL_LOOP_IS_NOT_A_REVIEW_LENS",
+                "관점 하나만 검사한 것은 full loop로 계수하지 않는다",
+                "현행·정본·범위",
+                "최소 3개 실질 대안",
+                "attack",
+                "validate-critique",
+                "refine-approved-findings",
+                "regression-recheck",
+                "BETTER_ALTERNATIVE_SEARCH",
+                "LONG_TERM_PLAN_FIT_RECHECK",
+                "RE-ATTACK resulting state",
+            ):
+                self.assertIn(term, adversarial)
+            for invalid in (
+                "Loop 1 = scope",
+                "Loop 2 = UX",
+                "Loop 3 = consumer",
+                "Loop 4 = alternatives",
+                "Loop 5 = CI",
+            ):
+                self.assertIn(invalid, adversarial)
 
     def test_project_home_is_self_contained_for_human_understanding(self) -> None:
         contract = json.loads(WORKSPACE_AUTHORITY.read_text(encoding="utf-8"))
