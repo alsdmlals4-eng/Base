@@ -80,6 +80,7 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
             "COC_FICTION": "fabc8fc489ff77459b31f0d62906966d94d79d88",
             "GRIMOIRE": "5b51169130c97807234a0c2b457ed90dc3c04f3a",
             "MY_LITTLE_BOAT": "91dc7c0a7df400eda426971b2cabc1a7de688a06",
+            "URBAN_LEGEND": "1e75e5dc871ce1ce4d547b0521f6e9b680c46684",
         }
         for project_key, merge_commit in expected_merges.items():
             installation = matrix["projects"][project_key]["manifest_installation"]
@@ -97,6 +98,9 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
         boat = matrix["projects"]["MY_LITTLE_BOAT"]["manifest_installation"]
         self.assertEqual("STATIC_PROFILE_BLOB_MATCH", boat["verification"])
         self.assertEqual("NOT_RUN_NO_PROJECT_CI", boat["runtime_validation"])
+        urban = matrix["projects"]["URBAN_LEGEND"]["manifest_installation"]
+        self.assertEqual("Validate Base v9 adoption 32306238522 SUCCESS", urban["verification"])
+        self.assertEqual("FULL_PROJECT_REGRESSIONS_SUCCESS_ADAPTED_VALIDATOR_UNCHANGED", urban["runtime_validation"])
 
 
 if __name__ == "__main__":
