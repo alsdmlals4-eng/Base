@@ -53,6 +53,28 @@ class P04VerticalSlicePlayerValueTraceTests(unittest.TestCase):
         ):
             self.assertIn(term, benchmark)
 
+    def test_benchmark_reverse_engineering_requires_pattern_and_genre_reuse_boundaries(self) -> None:
+        guide = read("docs/BENCHMARKING_REFERENCE_GUIDE.md")
+        method = read("docs/knowledge/research/DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md")
+        benchmark = read("templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md")
+
+        for surface in (guide, method, benchmark):
+            for term in (
+                "BENCHMARK_REVERSE_ENGINEERING_PATTERN_REUSE",
+                "MECHANIC_PATTERN_LIBRARY",
+                "GENRE_FOUNDATION_REFERENCE",
+                "MULTI_SOURCE_EXTRACTION",
+                "NOVELTY_DELTA",
+                "CLEAN_ROOM_REIMPLEMENTATION",
+            ):
+                self.assertIn(term, surface)
+
+        self.assertIn("테트리스류", benchmark)
+        self.assertIn("텍스트 선택형", benchmark)
+        self.assertIn("덱빌딩 로그라이크", benchmark)
+        self.assertIn("서바이버라이크", benchmark)
+        self.assertIn("표현·자산·코드", benchmark)
+
     def test_tutorial_template_uses_current_project_workspace(self) -> None:
         tutorial = read("templates/planning/TUTORIAL_AND_ONBOARDING_DESIGN_CONTRACT.md")
 
