@@ -1,5 +1,13 @@
 # Synchronizing Local and GitHub State — Learning Log
 
+## 2026-08-19 — Connector fallback needs an explicit execution surface
+
+- **Status:** `PATTERN`
+- **Observed failure:** the Skill already allowed authenticated GitHub connector + repository-native CI when a local clone/CLI/network was unavailable, but its required preflight schema still required `current_worktree` without a connector-only state. That makes an agent choose between inventing a local path, leaving an ambiguous blank, or over-reporting remote evidence as local validation.
+- **Correction:** keep the existing Skill and add `execution_surface: LOCAL_WORKTREE | GITHUB_CONNECTOR_ONLY | HYBRID`. In connector-only work, record `current_worktree: NOT_APPLICABLE_CONNECTOR_ONLY`; remote branch/head/diff/PR/check evidence remains valid, while local test, dirty-state, process, and filesystem checks remain `NOT_RUN` unless separately executed.
+- **Evidence ceiling:** a connector-only path is not weaker for GitHub mutations it actually supports, but it is not evidence for local-only acceptance criteria. Exact-head repository CI may substitute only for the criterion it actually executes.
+- **Regression trigger:** any future workflow that fabricates a local worktree during connector-only execution, treats missing optional `gh` as a global blocker despite equivalent authenticated connector capability, or promotes unexecuted local checks to PASS must reopen this pattern.
+
 ## 2026-08-18 — Reconcile moving integration state before overwriting or merging stale owners
 
 - **Status:** `PATTERN`
