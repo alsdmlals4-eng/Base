@@ -2,7 +2,7 @@
 
 ## 목적
 
-활성 Skill 수 자체를 고정 상한으로 관리하지 않고, **한 요청에서 실제로 노출·실행하는 Skill 후보를 작게 유지해 라우팅 혼동과 문맥 비용을 줄인다.**
+활성 Skill 수 자체를 고정 상한으로 관리하지 않고, **한 요청에서 실제로 노출·실행하는 Skill 후보를 작게 유지해 라우팅 혼동과 문맥 비용을 줄인다.** 같은 원칙을 Tool에도 적용하되, Skill과 Tool의 숫자를 억지로 같은 예산에 묶지는 않는다.
 
 이 Guide는 `skills/SKILL_REGISTRY.json`을 대체하지 않는다. Registry의 trigger, `do_not_use_when`, status, hard ceiling이 기계 권한이며 이 문서는 그 범위 안에서 더 보수적인 기본 shortlist 운용법을 정의한다.
 
@@ -20,7 +20,13 @@ MetaTool은 비슷한 선택지, 특정 상황, 신뢰성 이슈, multi-tool sel
 
 - Huang et al., *MetaTool Benchmark for Large Language Models: Deciding Whether to Use Tools and Which to Use*, ICLR 2024: https://proceedings.iclr.cc/paper_files/paper/2024/hash/bc12914d66b41b6bfc2d3a5decdb498b-Abstract-Conference.html
 
-이 근거는 Base에 동일한 효과 크기가 그대로 재현된다는 뜻이 아니다. Base는 이미 `load_all_skills=false`, trigger match, negative trigger, 주 분야 Skill 1개 제한을 사용한다. 이 Guide는 남은 위험인 **겹치는 supporting/foundation 후보의 과잉 활성화**를 줄이는 보수적 운영 계약이다.
+현재 실무 지침도 같은 방향이다.
+
+- Anthropic, *Writing effective tools for AI agents*: 목적이 분명하고 구별되는 Tool을 만들고, 기능이 겹치거나 과도한 Tool 집합은 선택을 방해할 수 있으므로 필요한 Tool만 제공하는 방향을 권장한다. https://www.anthropic.com/engineering/writing-tools-for-agents
+- Anthropic, *Effective context engineering for AI agents*: context를 유한 자원으로 다루고, 모든 정보를 선적재하기보다 필요할 때 가져오는 just-in-time retrieval을 강조한다. https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+- OpenAI, *Harness engineering* / *Unrolling the Codex agent loop*: repository instructions·tool output·task context가 같은 제한된 작업 문맥을 소비하므로, 짧은 진입 규칙과 구조화된 repository knowledge, 현재 작업에 필요한 context/tool 사용을 우선하는 방향을 보여준다. https://openai.com/index/harness-engineering/ , https://openai.com/index/unrolling-the-codex-agent-loop/
+
+이 근거는 Base에 동일한 효과 크기가 그대로 재현된다는 뜻이 아니다. Base는 이미 `load_all_skills=false`, trigger match, negative trigger, 주 분야 Skill 1개 제한을 사용한다. 이 Guide는 남은 위험인 **겹치는 supporting/foundation 후보와 Tool의 과잉 활성화**를 줄이는 보수적 운영 계약이다.
 
 ## Operational contract
 
@@ -30,6 +36,7 @@ SECOND_SUPPORTING_SKILL: EXCEPTION_ONLY
 FULL_SKILL_BODY_TIE_BREAK: REQUIRED
 DO_NOT_FILL_BUDGET: REQUIRED
 FUNCTIONAL_OVERLAP: REUSE_ABSORB_MERGE_FIRST
+TOOL_SHORTLIST_JUST_IN_TIME: REQUIRED
 ```
 
 ### 1. 먼저 주 책임 하나를 고른다
@@ -104,6 +111,37 @@ REUSE → ABSORB → MERGE → ARCHIVE → BUILD_NEW
 
 따라서 `PLAN → BUILD → REVIEW` 전체에서 모든 Skill을 계속 유지하지 않는다. 단계가 바뀔 때 shortlist를 다시 계산한다.
 
+## Tool shortlist — `TOOL_SHORTLIST_JUST_IN_TIME`
+
+Skill을 적게 고른 뒤 Tool을 전부 미리 활성화하면 같은 문제가 다시 생긴다. Tool은 Skill과 다른 실행 자원이므로 동일한 숫자 budget을 강제하지 않지만, **현재 단계의 실제 산출물에 필요한 목적이 분명한 Tool만 just-in-time으로 선택**한다.
+
+### 기본 순서
+
+```text
+현재 단계와 산출물
+→ 필요한 외부 권위/실행 기능
+→ 목적이 직접 맞는 Tool 후보
+→ 기능 중복 제거
+→ 최소 목적 집합 호출
+→ 단계 전환 시 다시 계산
+```
+
+- `TOOL_SHORTLIST_JUST_IN_TIME`은 “Tool을 1개만 써라”가 아니다. GitHub read + Notion read처럼 서로 독립적인 정본을 실제로 확인해야 하면 함께 사용한다.
+- 목적이 겹치는 Tool 또는 connector가 같은 사실을 반복해서 가져오는 경우, 더 정확한 정본·전용 인터페이스·낮은 context 비용을 가진 하나를 우선한다.
+- 현재 단계에서 필요하지 않은 Tool schema, 미래 구현 도구, 사용 가능하다는 이유만의 진단 도구를 미리 붙이지 않는다.
+- 단, weather/finance/runtime처럼 전용 source-of-truth Tool이 있는 도메인은 일반 검색으로 대체해 shortlist를 줄이지 않는다. 정확성과 권한이 숫자 절감보다 우선한다.
+- Tool 결과가 너무 크면 전체 출력을 계속 쌓기보다 필요한 범위를 fetch/read하거나 다음 결정에 필요한 고신호 정보만 유지한다.
+- Tool 선택 실패가 반복되면 Tool 수를 더 줄이는 것만으로 해결했다고 보지 않고 이름·description·owner·입출력 겹침을 audit한다.
+
+### Skill과 Tool의 차이
+
+```text
+Skill shortlist = 어떤 책임/판단 절차를 현재 단계에서 활성화할지
+Tool shortlist  = 그 책임을 수행하기 위해 어떤 외부 권위/실행 인터페이스가 필요한지
+```
+
+둘을 하나의 총 숫자 상한으로 합치지 않는다. 예를 들어 GitHub+Notion 두 정본을 읽는 P01 작업은 Tool 2개가 필요할 수 있지만, 그 사실이 supporting Skill 2개를 정당화하지 않는다.
+
 ## 예시
 
 ### 단일 게임 시스템 설계
@@ -115,6 +153,8 @@ deferred: reviewing-and-validating-project-changes
 ```
 
 검증 Skill을 PLAN 시작부터 미리 붙여 budget을 채우지 않는다.
+
+Tool도 현재 프로젝트 정본을 읽는 인터페이스만 먼저 사용하고, 구현·runtime Tool은 BUILD/REVIEW 단계가 실제로 시작될 때 재라우팅한다.
 
 ### Base Skill 구조 최적화
 
@@ -131,23 +171,26 @@ second supporting: 기본 금지
 ```text
 primary/supporting: 없음 또는 해당 L0 owner 하나
 full adversarial chain: 사용하지 않음
+Tool: 파일 수정에 실제 필요한 인터페이스만
 ```
 
 ## 회귀 검사
 
 - `python -m unittest tests.test_skill_routing_precision_policy -v`
+- P08 Tool shortlist 변경은 `python -m unittest tests.test_p08_ai_operations_contract -v`로 focused 검사를 수행한다.
 - 기존 Skill behavior eval과 Base operating contract를 함께 통과해야 한다.
 - 새 Skill 추가/통합 시 active count만 보지 말고 trigger overlap, negative trigger, owner 경계, actual shortlist를 검토한다.
 
 ## 성공 기준
 
-정확도 개선을 “Skill 수 감소”로 대체 측정하지 않는다. 다음을 성공 신호로 사용한다.
+정확도 개선을 “Skill 수 감소”나 “Tool 호출 수 감소”로 대체 측정하지 않는다. 다음을 성공 신호로 사용한다.
 
 - 불필요한 supporting Skill 연쇄 호출 감소
-- 같은 책임의 중복 실행 감소
+- 같은 책임의 중복 Skill/Tool 실행 감소
 - close candidate에서 owner 선택 근거가 명시됨
+- 현재 단계와 무관한 Tool 선호출 감소
 - 단순 작업의 절차 비용 감소
 - behavior eval에서 forbidden Skill 오선택이 증가하지 않음
 - 검증·안전 hard guard 누락이 증가하지 않음
 
-실제 모델 행동 정확도 향상은 별도 model-run eval 없이 `VERIFIED`로 주장하지 않고 `NOT_RUN`으로 둔다.
+실제 모델 행동 정확도 향상은 **실측 model-run eval** 없이 `VERIFIED`로 주장하지 않고 `NOT_RUN`으로 둔다. 문서·정적 contract PASS는 routing policy 존재를 증명할 뿐 모델별 선택 정확도 개선율을 증명하지 않는다.

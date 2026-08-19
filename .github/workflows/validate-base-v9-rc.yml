@@ -93,6 +93,7 @@ jobs:
             tests.test_project_gdd_google_sheets_contract \
             tests.test_notion_project_isolation_core_system_contract \
             tests.test_pr530_selective_integration_contract \
+            tests.test_p08_ai_operations_contract \
             tests.test_vertical_slice_v9_contract \
             tests.test_base_v9_4_ai_operations_contract \
             tests.test_base_v9_4_release_evidence_contract \
