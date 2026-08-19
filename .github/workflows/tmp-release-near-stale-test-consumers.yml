@@ -1,0 +1,58 @@
+name: Temporary release-near stale consumer patch
+
+on:
+  push:
+    branches:
+      - feat/release-near-vertical-slice-first-v2-20260820
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[release-near-stale-consumers]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/release-near-vertical-slice-first-v2-20260820
+          fetch-depth: 0
+      - name: Replace stale PoC consumer assertions
+        shell: python
+        run: |
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              p = Path(path)
+              text = p.read_text(encoding="utf-8")
+              if new in text:
+                  return
+              if old not in text:
+                  raise SystemExit(f"anchor missing: {path}: {old!r}")
+              p.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          replace_once(
+              "tests/test_skill_system_coverage.py",
+              '                "REPEAT_POC", "HOLD", "STOP",\n',
+              '                "REPEAT_VERTICAL_SLICE", "TECHNICAL_SPIKE_INTERNAL_ONLY",\n                "RELEASE_NEAR_VERTICAL_SLICE_FIRST", "HOLD", "STOP",\n',
+          )
+          replace_once(
+              "tests/test_game_project_operating_system_structure.py",
+              '        for phase in ("CONCEPT_SEED", "POINTED_FUN_HYPOTHESIS", "POC_BUILD_AND_TEST", "PRODUCTION_READY"):\n            self.assertIn(phase, concepts)\n',
+              '        for phase in (\n            "CONCEPT_SEED",\n            "POINTED_FUN_HYPOTHESIS",\n            "TECHNICAL_SPIKE_IF_NEEDED",\n            "RELEASE_NEAR_VERTICAL_SLICE_REQUIRED_FOR_PLAYER_VALIDATION",\n            "PRODUCTION_READY",\n        ):\n            self.assertIn(phase, concepts)\n        self.assertNotIn("POC_BUILD_AND_TEST", concepts)\n        self.assertNotIn("REPEAT_POC", concepts)\n',
+          )
+      - name: Verify focused consumers
+        run: |
+          python -m unittest \
+            tests.test_skill_system_coverage.SkillSystemCoverageTests.test_optimized_existing_skills_preserve_legacy_capabilities \
+            tests.test_game_project_operating_system_structure.GameProjectOperatingSystemStructureTests.test_unified_skill_modes_preserve_separate_safety_boundaries \
+            tests.test_vertical_slice_v6_contract \
+            -v
+      - name: Commit bounded patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/test_skill_system_coverage.py tests/test_game_project_operating_system_structure.py
+          git diff --cached --quiet && exit 0
+          git commit -m "test: align stale PoC consumers with release-near slice [release-near-stale-consumers]"
+          git push origin HEAD:feat/release-near-vertical-slice-first-v2-20260820
