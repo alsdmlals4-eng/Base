@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 import unittest
 from pathlib import Path
 
@@ -119,6 +121,39 @@ class NotionProjectIsolationCoreSystemContractTests(unittest.TestCase):
         self.assertNotIn("Decision ID·Branch Commit·정본 내용·Sheet 행 불일치", grill_policy)
         self.assertNotIn("Google Sheets의 마지막 Decision ID와 Commit SHA를 확인했다.", decisions)
         self.assertNotIn("Google Sheets의 마지막 Decision ID와 Commit을 확인했다.", grill_record)
+
+    def test_p01_workspace_authority_surfaces_pass_canonical_scope_checker(self) -> None:
+        paths = [
+            "docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md",
+            "docs/operations/base-partitions/learning/P01_LEARNING_LOG.md",
+            "skills/managing-game-project-operating-system/SKILL.md",
+            "skills/managing-project-intake-and-work-contract/SKILL.md",
+            "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md",
+            "templates/project-operations/CURRENT_CONFIRMED_DECISIONS.md",
+            "templates/project-operations/GRILL_ME_DECISION_RECORD.md",
+            "templates/project-operations/PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md",
+            "templates/project-operations/README.md",
+            "tests/test_notion_project_isolation_core_system_contract.py",
+        ]
+        result = subprocess.run(
+            [
+                sys.executable,
+                "tools/check_base_partition_scope.py",
+                "--part",
+                "P01",
+                "--files",
+                *paths,
+            ],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        for path in paths:
+            self.assertIn(f"PASS\tPART_OWNED\t{path}", result.stdout)
+        self.assertNotIn("CONTROL_PLANE_WRITE_FORBIDDEN", result.stdout)
+        self.assertNotIn("OUT_OF_PARTITION_WRITE", result.stdout)
 
     def test_permanent_base_v9_suite_runs_this_contract(self) -> None:
         workflow = V9_WORKFLOW.read_text(encoding="utf-8")
