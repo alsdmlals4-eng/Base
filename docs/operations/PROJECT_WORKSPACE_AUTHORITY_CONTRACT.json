@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "authority_model": "DOMAIN_SPLIT_CANON",
   "project_workspace": "NOTION_DEFAULT_PROJECT_WORKSPACE",
   "human_facing_canon": "NOTION_HUMAN_FACING_CANON",
@@ -19,6 +19,22 @@
   "parallel_write_policy": "docs/operations/NOTION_PROJECT_ISOLATION_AND_CORE_SYSTEM_CONTRACT.md",
   "notion_query_data_sources": "OPTIONAL_OPTIMIZATION_NOT_REQUIRED",
   "free_plan_fallback": "PROJECT_FILTERED_VIEW_SEARCH_FETCH_READBACK",
+  "workflow_policy": "docs/GPT_FIRST_PROJECT_WORKFLOW.md",
+  "planning_owner": "GPT_PRIMARY_PLANNING_REVIEW",
+  "final_review_owner": "GPT_FINAL_REVIEW_AUTHORITY",
+  "codex_role": "CODEX_OPTIONAL_SUB_EXECUTOR",
+  "visual_poc_gate": "NOTION_VISUAL_CHECKPOINT_BEFORE_POC",
+  "retirement_policy": "docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md",
+  "user_facing_local_tool_default": "RETIRED",
+  "html_project_surface": "RETIRED",
+  "google_sheets": "MIGRATION_ONLY_THEN_REMOVE",
+  "figma": "DEPRECATED_NOT_ACTIVE_AUTHORITY",
+  "default_paid_plans": [
+    "GPT_PRO"
+  ],
+  "notion_paid": "ON_REQUEST_ONLY_AFTER_COST_BENEFIT_EVIDENCE",
+  "default_cost_boundary": "ZERO_INCREMENTAL_COST",
+  "cross_domain_sync": "SYNC_BEFORE_IMPLEMENTATION",
   "core_system_identity_fields": [
     "Project",
     "Record Key",
@@ -30,10 +46,6 @@
     "CONFLICT_DUPLICATE_KEY",
     "CONFLICT_MISSING_PROJECT"
   ],
-  "google_sheets": "COMPATIBILITY_ONLY",
-  "figma": "DEPRECATED_NOT_ACTIVE_AUTHORITY",
-  "default_cost_boundary": "ZERO_INCREMENTAL_COST",
-  "cross_domain_sync": "SYNC_BEFORE_IMPLEMENTATION",
   "notion_priority_domains": [
     "PROJECT_OVERVIEW",
     "VISUAL_DIRECTION",
@@ -78,12 +90,15 @@
     "Core-system records use a deterministic Record Key scoped by Project and record type; duplicate keys fail closed instead of being guessed or merged.",
     "Same-record AI writes compare Revision and Last Edited immediately before a bounded record-level update; a stale read aborts instead of overwriting newer human or agent changes.",
     "A successful Notion write requires destination readback of Project, Record Key, Revision, and intended changed fields before completion may be reported.",
-    "The default Notion workflow stays within ZERO_INCREMENTAL_COST and must not require Business-only query_data_sources; Project-filtered views plus search/fetch and destination readback are the baseline fallback.",
+    "The default Notion workflow stays within ZERO_INCREMENTAL_COST and must not require paid query_data_sources; Project-filtered views plus search/fetch and destination readback are the baseline fallback.",
+    "Notion paid features may be proposed only after cost-benefit evidence and explicit user approval.",
+    "GPT is the default planning and final review owner; Codex is an optional sub-executor used only when actual repository or engine execution needs it.",
+    "When visuals materially affect PoC or demo judgment, representative UX/UI states and approved visuals are reviewed in Notion before implementation and feed the PoC.",
     "Notion is the primary human-facing canon for project overview, visual direction, visual asset catalogs, budget tables, tier tables, core-system human models, human-editable flow maps, and storyboards.",
     "Repository Markdown, JSON, game data, code, scenes, resources, tests, and runtime evidence remain the structured and implementation canon for their domains.",
-    "The Visual Map may be derived from structured records, but the approved Notion view is the primary human-facing representation for visual planning and review.",
     "A Notion edit that requires structured data, Markdown, code, scene, resource, test, or runtime behavior to change must be synchronized to the repository before implementation or runtime claims.",
     "Image or file delivery success requires write completion plus readback before success may be reported.",
+    "User-facing local project tools, independent HTML project-management surfaces, and Google Sheets are retired by default; unique material is absorbed into Notion or repository-native owners and active surfaces are then removed.",
     "Repository code, runtime data, scenes, resources, tracked implementation assets, builds, and tests remain runtime truth."
   ]
 }
