@@ -1,39 +1,106 @@
 ---
 name: building-project-visual-dashboards
-description: Use when project concepts, loops, system relations, status, UX flows, evidence, risks, or next work require an editable visual dashboard.
+description: Use when a project needs a self-contained Notion Project Home or Visual Map that explains concepts, loops, systems, UX/visual state, evidence, risks, and next work without replacing repository truth.
 ---
 
-# Building Project Visual Dashboards
+# Building Project Visual Dashboards — Notion Project Home & Visual Map
 
-## Core principle
+`NOTION_PROJECT_HOME_AND_VISUAL_MAP`
 
-대시보드는 복잡한 관계를 보고 토론하는 작업 공간이다. 확정 결정과 구현 상태의 정본을 대체하지 않으며, 원본 경로·갱신 시점·상태를 명시한다.
+## 목적
 
-이 Skill은 시각화와 탐색 인터페이스를 책임진다. 기획 책임 원본의 작성·발행은 `managing-design-documents`, 수치 분석의 정확성은 해당 데이터 분석 계약, 대시보드가 주장하는 구현 상태는 `reviewing-and-validating-project-changes`의 증거로 확인한다.
+이 Skill은 사람이 프로젝트를 **추가 페이지 이동 없이 메인 Home 한 화면에서 이해**할 수 있도록 Notion의 human-facing Project Home과 Visual Map을 구성·갱신한다.
 
-## Modes
+Repository Markdown/JSON/code/scene/resource/test/runtime evidence를 복제 정본으로 만들지 않는다. Notion은 사람이 이해·비교·학습하는 projection이고, structured/runtime truth는 Repository가 계속 소유한다.
 
-`frame` → `map-sources` → `build` → `bind-status` → `validate`
+## 핵심 계약
 
-## Default form
+`HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`
 
-특별한 요구가 없으면 단일 HTML + CSS + 최소 JavaScript로 만들고 PC 가독성, 의미 있는 카드·표·화살표·상태 배지, 수정 위치 주석을 우선한다.
+Project Home에는 최소 다음을 직접 설명한다.
 
-정보 구조·검수표는 `references/dashboard-information-architecture.md`를 필요할 때만 읽는다.
+- 프로젝트 한 줄 정의와 핵심 사용자/플레이어 가치
+- 현재 확정 방향과 보호/금지 요소
+- Core Loop / 주요 Flow
+- 핵심 시스템별 목적·작동 방식·상호작용·기대효과
+- UX/UI/Visual 방향과 승인 상태
+- 현재 구현상태와 repository/runtime truth 연결
+- 검증상태와 evidence ceiling
+- blocker / 다음 작업
+- 최근 중요한 결정과 선택 이유
+- 주요 위험과 revisit condition
+
+하위 페이지는 긴 표, 전체 asset 목록, 상세 evidence, history, Source를 위한 drilldown이다. Home 핵심 이해를 “링크 참조”로 대체하지 않는다.
+
+## 진행 흐름
+
+```text
+Project identity / latest user decisions
+→ latest GitHub main + Project Notion readback
+→ core direction / loop / systems / UX / visual / implementation / evidence 복원
+→ 사람이 알아야 할 정보 계층 설계
+→ Home 본문에 자체 완결 설명 작성
+→ 필요 시 Visual Map / image / diagram 배치
+→ structured/runtime locator 연결
+→ destination readback
+→ stale/duplicate/overclaim 검토
+```
+
+## 입력
+
+- exact Project identity
+- latest confirmed decisions
+- Project GitHub main / canonical owners
+- actual implementation/runtime evidence
+- Project Notion existing Home/detail pages
+- approved visual/reference inputs
+- current blockers / next work / revisit conditions
+
+## 출력
+
+- self-contained Notion Project Home
+- 필요한 Visual Map/diagram
+- 상세 하위 페이지로 가는 drilldown link
+- repository/runtime evidence locator
+- `PASS / PARTIAL / NOT_RUN / BLOCKED_UNVERIFIED`를 구분한 검증 상태
+
+## 기대효과
+
+- 사용자가 프로젝트를 다시 읽을 때 여러 하위 페이지를 찾아다니는 비용 감소
+- Skill/Module/시스템의 목적과 연결관계를 빠르게 학습
+- AI가 프로젝트를 재개할 때 human-facing 방향과 repository truth를 함께 복원하기 쉬움
+- 링크 허브만 남아 핵심 방향이 숨는 문제 감소
+
+## standalone HTML / local dashboard 금지
+
+다음은 현행 기본 경로가 아니다.
+
+- standalone HTML/CSS/JavaScript project dashboard 생성
+- 별도 localhost project-management UI 생성
+- HTML dashboard 상태를 current implementation truth로 사용
+- Notion/Repository 정보를 HTML에 다시 복사해 제3의 정본 생성
+
+과거 HTML dashboard의 UNIQUE 자료가 있으면 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`에 따라 현행 Notion/Repository owner로 흡수한다.
+
+## 검증
+
+- Home만 읽어도 핵심 방향·흐름·시스템·Visual·상태·다음 작업을 설명할 수 있는가
+- Notion 주장과 repository/runtime evidence가 충돌하지 않는가
+- 실제 미실행 검증이 PASS로 표시되지 않았는가
+- 다른 프로젝트 정보가 섞이지 않았는가
+- 핵심 정보를 하위 링크로만 밀어내지 않았는가
+- write 뒤 exact Project destination을 readback했는가
+
+## Reference
+
+기존 human-facing 정보 계층 원리는 `skills/building-project-visual-dashboards/references/dashboard-information-architecture.md`를 참고하되, standalone HTML 탭 구현이 아니라 Notion Home/Visual Map에 맞게 적용한다.
 
 ## Output contract
 
-```md
-## 대시보드 목적·독자·결정
-## 탭·흐름·데이터 원본
-## 편집·미리보기 동작
-## 상태·위험·누락 표시
-## 생성 파일과 실행 방법
-## 정본 동기화·검증·미확인
-```
+최소 출력은 self-contained Project Home, 필요한 Visual Map/diagram, repository/runtime locator, 검증 상태, blocker·next work·revisit condition이다. 핵심 이해를 하위 링크로만 넘기지 않는다.
 
 ## Quality gate
 
-예쁜 장식보다 정보 위계와 행동을 우선하고, 수동 복사된 오래된 상태를 최신으로 표시하지 않으며, 모바일·접근성·보안 요구가 있으면 별도 검증한다.
+Home만 읽어 프로젝트 핵심 가치·Core Loop·주요 시스템·UX/Visual·구현/검증 상태·다음 작업을 설명할 수 있어야 한다. Notion과 repository/runtime truth가 충돌하거나 미실행 검증을 PASS로 표시하거나 standalone HTML/local dashboard가 새 authority로 부활하면 실패다.
 
-Learning Log: `skills/SKILL_LEARNING_LOG.md`
+Learning Log: `skills/building-project-visual-dashboards/LEARNING_LOG.md`

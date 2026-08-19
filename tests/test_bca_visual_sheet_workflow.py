@@ -32,6 +32,20 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
         self.assertEqual(machine["visual_map"], "VISUAL_MAP_DERIVED")
         self.assertEqual(machine["runtime_truth"], "REPOSITORY_RUNTIME_TRUTH")
 
+    def test_dashboard_skill_routes_to_notion_home_not_standalone_html(self) -> None:
+        skill = read("skills/building-project-visual-dashboards/SKILL.md")
+        registry = json.loads(read("skills/SKILL_REGISTRY.json"))
+        entry = next(item for item in registry["skills"] if item["skill_id"] == "building-project-visual-dashboards")
+        self.assertIn("NOTION_PROJECT_HOME_AND_VISUAL_MAP", skill)
+        self.assertIn("HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN", skill)
+        self.assertIn("Notion Project Home", skill)
+        self.assertIn("standalone HTML", skill)
+        self.assertIn("금지", skill)
+        self.assertEqual("ACTIVE", entry["status"])
+        self.assertTrue(any("notion" in text.lower() for text in entry["use_when"]))
+        self.assertNotIn("html-dashboard", entry["trigger_tags"])
+        self.assertNotIn("standalone-dashboard", entry["trigger_tags"])
+
     def test_art_skill_contains_generation_and_review_modes(self) -> None:
         skill = read("skills/designing-art-prompts-and-technique-cards/SKILL.md")
         for mode in (

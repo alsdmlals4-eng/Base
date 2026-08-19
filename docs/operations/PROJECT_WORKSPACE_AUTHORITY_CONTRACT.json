@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "authority_model": "DOMAIN_SPLIT_CANON",
   "project_workspace": "NOTION_DEFAULT_PROJECT_WORKSPACE",
   "human_facing_canon": "NOTION_HUMAN_FACING_CANON",
@@ -30,7 +30,7 @@
     "CONFLICT_DUPLICATE_KEY",
     "CONFLICT_MISSING_PROJECT"
   ],
-  "google_sheets": "COMPATIBILITY_ONLY",
+  "google_sheets": "MIGRATION_ONLY_UNTIL_REMOVAL",
   "figma": "DEPRECATED_NOT_ACTIVE_AUTHORITY",
   "default_cost_boundary": "ZERO_INCREMENTAL_COST",
   "cross_domain_sync": "SYNC_BEFORE_IMPLEMENTATION",
@@ -78,12 +78,43 @@
     "Core-system records use a deterministic Record Key scoped by Project and record type; duplicate keys fail closed instead of being guessed or merged.",
     "Same-record AI writes compare Revision and Last Edited immediately before a bounded record-level update; a stale read aborts instead of overwriting newer human or agent changes.",
     "A successful Notion write requires destination readback of Project, Record Key, Revision, and intended changed fields before completion may be reported.",
-    "The default Notion workflow stays within ZERO_INCREMENTAL_COST and must not require Business-only query_data_sources; Project-filtered views plus search/fetch and destination readback are the baseline fallback.",
     "Notion is the primary human-facing canon for project overview, visual direction, visual asset catalogs, budget tables, tier tables, core-system human models, human-editable flow maps, and storyboards.",
     "Repository Markdown, JSON, game data, code, scenes, resources, tests, and runtime evidence remain the structured and implementation canon for their domains.",
     "The Visual Map may be derived from structured records, but the approved Notion view is the primary human-facing representation for visual planning and review.",
     "A Notion edit that requires structured data, Markdown, code, scene, resource, test, or runtime behavior to change must be synchronized to the repository before implementation or runtime claims.",
     "Image or file delivery success requires write completion plus readback before success may be reported.",
-    "Repository code, runtime data, scenes, resources, tracked implementation assets, builds, and tests remain runtime truth."
+    "Repository code, runtime data, scenes, resources, tracked implementation assets, builds, and tests remain runtime truth.",
+    "The default Notion workflow stays within ZERO_INCREMENTAL_COST and must not require paid-only Notion features; Project-filtered views plus search/fetch and destination readback are the baseline fallback.",
+    "GPT is the default planning/review owner; Codex is optional and used only when actual repository/runtime execution benefits from it.",
+    "When visuals materially affect PoC/demo judgment, representative UX/UI states and approved visual inputs are reviewed in Notion before implementation and runtime validation remains separate.",
+    "Project Home is self-contained for core human understanding; child pages are drilldown/evidence, not a substitute for the Home explanation.",
+    "Project-management local/HTML surfaces, Figma, and Google Sheets are retired or migration-only; QA Evidence Studio remains a specialist validation utility while its tested evidence role remains unique and useful."
+  ],
+  "workflow_policy": "docs/GPT_CODEX_WORKFLOW_POLICY.md",
+  "planning_owner": "GPT_FIRST_PLANNING_AND_REVIEW",
+  "final_review_owner": "GPT_PRIMARY_REVIEWER",
+  "codex_role": "OPTIONAL_CODEX_EXECUTOR",
+  "visual_poc_gate": "VISUALIZED_POC_BEFORE_DEMO_TEST",
+  "human_home_policy": "HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN",
+  "human_home_policy_path": "docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md",
+  "retirement_policy": "docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md",
+  "project_management_local_surface": "RETIRED",
+  "html_project_surface": "RETIRED",
+  "qa_evidence_studio": "QA_EVIDENCE_STUDIO_SPECIALIST_VALIDATION_RETAINED",
+  "default_paid_plans": [
+    "GPT_PRO"
+  ],
+  "notion_paid": "ON_REQUEST_ONLY_AFTER_COST_BENEFIT_EVIDENCE",
+  "human_home_required_sections": [
+    "PROJECT_DEFINITION_AND_VALUE",
+    "CONFIRMED_DIRECTION_AND_PROTECTED_ELEMENTS",
+    "CORE_LOOP_AND_FLOW",
+    "CORE_SYSTEMS",
+    "UX_UI_VISUAL_DIRECTION",
+    "IMPLEMENTATION_STATUS",
+    "VALIDATION_EVIDENCE_CEILING",
+    "BLOCKERS_AND_NEXT_WORK",
+    "IMPORTANT_DECISIONS",
+    "RISKS_AND_REVISIT_CONDITIONS"
   ]
 }

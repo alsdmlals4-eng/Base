@@ -7,13 +7,19 @@
       "status": "CONFIRMED"
     },
     {
-      "decision": "Google Sheets remain USER_FACING_GDD_WORKSPACE for projects; Base is BASE_EXCLUDED.",
+      "decision": "Historical project Google Sheets workspace authority; no longer current.",
       "id": "BASE-V9-002",
-      "status": "CONFIRMED"
+      "status": "SUPERSEDED",
+      "superseded_by": "BASE-V9-004"
     },
     {
       "decision": "Project adoption is a post-release wave and must not block the Base v9.0.0 release.",
       "id": "BASE-V9-003",
+      "status": "CONFIRMED"
+    },
+    {
+      "decision": "Google Sheets are migration-only legacy sources until unique material is absorbed and active references are removed.",
+      "id": "BASE-V9-004",
       "status": "CONFIRMED"
     }
   ],

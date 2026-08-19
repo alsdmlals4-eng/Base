@@ -287,7 +287,7 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         self.assertIn("Post-merge attack lenses", adversarial)
         for tag in (
             "confirmed-decision-sync",
-            "google-sheets-sync",
+            "legacy-sheet-migration",
             "post-merge-review",
             "canonical-conflict",
         ):

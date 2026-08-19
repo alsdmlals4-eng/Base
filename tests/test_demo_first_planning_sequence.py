@@ -11,11 +11,14 @@ def read(path: str) -> str:
 
 
 class DemoFirstPlanningSequenceTests(unittest.TestCase):
-    def test_policy_declares_sheet_scope_and_prework_audit(self) -> None:
+    def test_policy_declares_current_workspace_scope_and_prework_audit(self) -> None:
         policy = read("docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md")
         for term in (
-            "BASE_EXCLUDED",
-            "PROJECT_SHEET_CONFIGURED",
+            "NOTION_HUMAN_FACING_CANON",
+            "REPOSITORY_STRUCTURED_CANON",
+            "REPOSITORY_RUNTIME_TRUTH",
+            "GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL",
+            "OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM",
             "DUPLICATE_WORK",
             "MISSING_CANON",
             "MISSING_CONSUMER",
@@ -25,6 +28,11 @@ class DemoFirstPlanningSequenceTests(unittest.TestCase):
             "PROPAGATION_AUDIT",
         ):
             self.assertIn(term, policy)
+        for stale in (
+            "USER_FACING_GDD_WORKSPACE",
+            "PROJECT_SHEET_CONFIGURED",
+        ):
+            self.assertNotIn(stale, policy)
 
     def test_material_planning_uses_three_layer_evidence_and_approval_bundles(self) -> None:
         policy = read("docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md")
