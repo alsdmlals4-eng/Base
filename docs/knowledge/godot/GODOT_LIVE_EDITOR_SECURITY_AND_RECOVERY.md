@@ -1,12 +1,16 @@
 # Godot Live Editor Security and Recovery
 
-## 기본 보안 자세
+> 상태: `HISTORICAL_BASE_ADAPTER_REFERENCE_ONLY`
+>
+> 이 문서는 Base custom live-editor adapter의 보안·복구 설계와 실패 분류 교훈을 보존하는 역사적 reference다. **현재 Godot persistent authoring 실행 경로가 아니다.** 현재 writer/authoring 권위와 HiGodot·GUT·Hera 역할은 `HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`를 따른다. 아래 transport·approval·ledger·recovery 규칙은 historical adapter 감사와 선별 재사용 근거이며 현재 도구의 실제 지원 상태를 주장하지 않는다.
 
-Godot live-editor 자동화는 기본 off, 최소 권한, typed allowlist와 fail-closed 방식으로 운용한다. 프로젝트가 identity, capability, transport와 복구 절차를 v2 Manifest에 구성하기 전에는 `NOT_CONFIGURED`다. 임의 GDScript·C#·native code·shell, 전체 파일시스템 접근, remote 또는 wildcard bind를 기본 제공하지 않는다.
+## 보존된 Base adapter 보안 자세
+
+당시 Godot live-editor 자동화는 기본 off, 최소 권한, typed allowlist와 fail-closed 방식으로 운용했다. 프로젝트가 identity, capability, transport와 복구 절차를 v2 Manifest에 구성하기 전에는 `NOT_CONFIGURED`였다. 임의 GDScript·C#·native code·shell, 전체 파일시스템 접근, remote 또는 wildcard bind를 기본 제공하지 않았다.
 
 ## 위협 모델
 
-차단 대상은 다음과 같다.
+차단 대상으로 정의했던 항목은 다음과 같다.
 
 - 다른 프로젝트·service·Editor·runtime session으로 mutation 전송
 - 오래된 catalog 또는 input/output Schema로 승인 재사용
@@ -20,6 +24,8 @@ Godot live-editor 자동화는 기본 off, 최소 권한, typed allowlist와 fai
 - contract 파일 존재를 runtime·human PASS로 과장
 
 ## transport profile
+
+historical Base adapter는 다음 transport profile을 정의했다.
 
 - `CLI`: listener가 없고 현재 사용자 프로세스 경계만 사용한다.
 - `LOCAL_HTTP`: `127.0.0.1` 또는 `::1`만 허용하며 Origin explicit allowlist, session authentication, project-client session binding, frame·depth·batch·connection·idle 제한이 필요하다.
@@ -108,7 +114,7 @@ undoable Scene·Resource·setting mutation은 하나의 `EditorUndoRedoManager` 
 
 ## 복구 절차
 
-EditorPlugin 또는 tool script로 정상 시작이 실패하면 다음 순서를 사용한다.
+historical EditorPlugin 또는 tool script로 정상 시작이 실패했을 때의 복구 순서는 다음과 같았다.
 
 ```text
 mutation stop
