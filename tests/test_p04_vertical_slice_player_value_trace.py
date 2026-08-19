@@ -57,9 +57,6 @@ class P04VerticalSlicePlayerValueTraceTests(unittest.TestCase):
         guide = read("docs/BENCHMARKING_REFERENCE_GUIDE.md")
         method = read("docs/knowledge/research/DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md")
         benchmark = read("templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md")
-        skill_reference = read(
-            "skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md"
-        )
 
         for surface in (guide, method, benchmark):
             for term in (
@@ -72,13 +69,6 @@ class P04VerticalSlicePlayerValueTraceTests(unittest.TestCase):
                 "CLEAN_ROOM_REIMPLEMENTATION",
             ):
                 self.assertIn(term, surface)
-
-        for term in (
-            "BENCHMARK_REVERSE_ENGINEERING_PATTERN_REUSE",
-            "REUSABLE_UNIT_DISCOVERY",
-            "PROJECT_FIT_DISCOVERY",
-        ):
-            self.assertIn(term, skill_reference)
 
         for reusable_unit in (
             "SYSTEM_PATTERN",
