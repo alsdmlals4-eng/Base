@@ -28,13 +28,18 @@ actual_code_data_scenes_resources_assets_tests:
 open_recent_and_replacement_prs:
 known_renames_replacements_and_legacy_aliases:
 generated_derivatives_and_manifests:
-project_google_sheet_state:
+configured_project_workspace_state: NOT_CONFIGURED | <verified state>
 protected_paths_and_assets:
 validation_environment:
 change_authority:
 ```
 
-Base 자체는 `project_google_sheet_state: BASE_EXCLUDED`다. 개별 프로젝트가 Sheet를 사용하지 않으면 `NOT_CONFIGURED`이며 일치 여부를 추정하지 않는다.
+`CONFIGURED_PROJECT_WORKSPACE: CONDITIONAL`
+
+- repository는 구조화 규칙·실제 구현·검증 연결의 기본 authority다.
+- 별도 사람용 프로젝트 작업면은 현행 authority contract가 명시한 경우에만 입력으로 읽고, 그 작업면에 배정된 책임만 대조한다.
+- Base 자체 또는 별도 작업면이 없는 프로젝트는 `NOT_CONFIGURED`다. 일치 여부를 추정하거나 없는 작업면을 blocker로 만들지 않는다.
+- 폐기·migration-only surface는 현재 audit가 compatibility/retirement를 다루는 경우가 아니면 활성 authority 목록에 넣지 않는다.
 
 ## 3. 권한 분류
 
@@ -74,6 +79,7 @@ repository-scope-map
 - 최신 `main`, 현재 Branch, 동일 Goal의 열린·최근 병합·대체 PR을 고정한다.
 - 사용자 최신 승인과 `CURRENT_CONFIRMED_DECISIONS`를 복원한다.
 - 검색 root, 제외 root, generated root, archive root와 보호 경로를 기록한다.
+- `CONFIGURED_PROJECT_WORKSPACE`가 있으면 assigned responsibility와 readback 상태를 기록한다.
 - 도구·권한 때문에 전수 파일 목록을 얻지 못하면 `BLOCKED_UNVERIFIED` 범위를 명시한다.
 
 ### 4.2 `canonical-authority-map`
@@ -86,10 +92,11 @@ AGENTS·START_HERE·README
 → 프로젝트 설치 Template
 → 실제 코드·데이터·Scene·Resource·자산·테스트
 → 생성기·파생본·Manifest
-→ GitHub PR·Issue·Release·프로젝트 Sheet
+→ GitHub PR·Issue·Release
+→ CONFIGURED_PROJECT_WORKSPACE assigned responsibility (if configured)
 ```
 
-각 책임에 `CURRENT_AUTHORITY` 하나와 필요한 `ACTIVE_CONSUMER`를 연결한다.
+각 책임에 `CURRENT_AUTHORITY` 하나와 필요한 `ACTIVE_CONSUMER`를 연결한다. 사람용 작업면은 repository authority를 복제하는 두 번째 독립 정본으로 만들지 않는다.
 
 ### 4.3 `full-file-inventory`
 
@@ -116,6 +123,7 @@ AGENTS·START_HERE·README
 - README·기획서·Template·Skill·Test가 서로 다른 정책을 설명함
 - Base Template을 Base의 실제 프로젝트 상태로 오인함
 - 별도 `CORE_POC` 같은 폐기된 Gate가 활성 흐름으로 부활함
+- configured workspace의 assigned state가 repository의 현재 구조화 결정과 충돌함
 
 역사·호환 문맥의 명시적 구형 표현은 `ALLOWED_LEGACY` 후보로 분리한다.
 
@@ -143,7 +151,8 @@ UNTOUCHED_CONSUMER:
 - 분야 Skill·Reference·기획서·데이터 계약
 - Workflow·회귀 Test·checker·fixture
 - PDF·DOCX·Dashboard·Manifest·generated map
-- GitHub Issue·PR·프로젝트 Sheet
+- GitHub Issue·PR
+- 현재 responsibility가 배정된 `CONFIGURED_PROJECT_WORKSPACE`
 
 ### 4.6 `derivative-and-prompt-drift-attack`
 
@@ -170,7 +179,7 @@ UNTOUCHED_CONSUMER:
 - `DUPLICATE_QUESTION`
 - `UNVERIFIED_DEPENDENCY`
 
-각 비판은 최신 사용자 승인, 실제 파일·diff, 발생 가능성, 영향, 범위, 수정 비용, 코어·호환성 위험을 다시 검증한다.
+각 비판은 최신 사용자 승인, 실제 파일·diff, 발생 가능성, 영향, 범위, 수정 비용, 코어·호환성 위험을 다시 검증한다. 실행 가능한 구체적 수정 finding은 `finding-and-regression-protocol.md`의 `FIX_GUIDED_VERIFICATION_WHEN_EXECUTABLE`로 반사실 검증한다.
 
 판정:
 
@@ -209,7 +218,7 @@ UNTOUCHED_CONSUMER:
 4. 역사·Compatibility·rollback 증거를 훼손하지 않았는가?
 5. 실제 코드·데이터·저장·ID·Schema·자산 경로가 유지되는가?
 6. 동일 Goal의 중복 PR·Branch·작업이 남지 않았는가?
-7. 실행하지 않은 정적·런타임·렌더·Sheets·branch 삭제를 성공으로 표시하지 않았는가?
+7. 실행하지 않은 정적·런타임·렌더·configured-workspace·branch 삭제를 성공으로 표시하지 않았는가?
 
 회귀 판정:
 
@@ -224,7 +233,7 @@ UNTOUCHED_CONSUMER:
 ```md
 # 저장소 전체 적대적 감사
 
-## 기준 Branch·Commit·Decision·PR·Sheet 상태
+## 기준 Branch·Commit·Decision·PR·configured-workspace 상태
 ## 검색·인벤토리 범위와 미검증 범위
 ## 권한 지도와 CURRENT_AUTHORITY
 ## 중복·stale·고아·Decision 부활 Finding
@@ -248,6 +257,7 @@ UNTOUCHED_CONSUMER:
 - 변경됐어야 할 `UNTOUCHED_CONSUMER`를 판정했다.
 - 활성 stale와 `ALLOWED_LEGACY`를 구분했다.
 - 파생본·Prompt·Manifest 최신성을 검사했다.
+- configured workspace가 있으면 assigned responsibility만 readback했다.
 - 검증된 Finding만 수정하고 사용자 결정 영역을 침범하지 않았다.
 - 가능한 자동 검사와 회귀를 실제 실행했다.
 - 실행하지 못한 검사는 `BLOCKED_UNVERIFIED`다.
