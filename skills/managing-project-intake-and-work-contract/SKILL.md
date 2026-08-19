@@ -38,7 +38,7 @@ description: Use when routing a project request, closing material ambiguity, def
 
 프로젝트 workspace 권위: `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json` (`NOTION_DEFAULT_PROJECT_WORKSPACE`, `NOTION_HUMAN_FACING_CANON`, `REPOSITORY_STRUCTURED_CANON`, Google Sheets `COMPATIBILITY_ONLY`).
 
-legacy Google Sheets 해석·이관이 필요한 경우에만 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`와 compatibility 계약을 참고한다. 이는 신규 입력이나 active workspace 권위를 만들지 않는다.
+legacy Google Sheets 해석·이관이 필요한 경우에만 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`와 compatibility 계약을 참고한다. 이는 신규 입력이나 active workspace 권위를 만들지 않는다. 기존 consumer가 사용하는 legacy literal `project_google_sheet`는 `google_sheet_compatibility_source`의 호환 alias일 뿐이며 신규 Sheet·active sync·정본 권위를 뜻하지 않는다.
 
 연속작업 활성화·자동 승인·blocker recovery·종료 경계: `references/continuous-work-execution.md`
 
