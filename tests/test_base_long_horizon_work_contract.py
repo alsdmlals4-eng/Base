@@ -17,13 +17,14 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         self.assertIn("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md", agents)
         for term in (
             "ADVERSARIAL_REVIEW_UNTIL_CLEAN",
-            "FULL_LOOP_COUNT_MINIMUM: 5",
-            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5",
+            "CLEAN_REVIEW_EXIT",
             "REQUIRED_WORK_REMAINING",
             "NOTION_DEFAULT_PROJECT_WORKSPACE",
             "PROJECT_RELATION_REQUIRED",
         ):
             self.assertIn(term, agents)
+        self.assertNotIn("FULL_LOOP_COUNT_MINIMUM", agents)
+        self.assertNotIn("MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT", agents)
 
     def test_policy_covers_direction_completion_recovery_and_cost(self) -> None:
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
@@ -35,12 +36,13 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             "RECOVER_TRY_ALTERNATIVES_RESUME",
             "ZERO_INCREMENTAL_COST_REQUIRED",
             "ADVERSARIAL_REVIEW_UNTIL_CLEAN",
-            "FULL_LOOP_COUNT_MINIMUM: 5",
-            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5",
+            "CLEAN_REVIEW_EXIT",
             "POSTMERGE_PROMOTION_AND_SUPERSESSION",
             "REQUIRED_WORK_REMAINING: 0",
         ):
             self.assertIn(term, policy)
+        self.assertNotIn("FULL_LOOP_COUNT_MINIMUM", policy)
+        self.assertNotIn("MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT", policy)
 
     def test_material_decisions_require_current_state_alternatives_and_benchmark_synthesis(self) -> None:
         agents = read("AGENTS.md")
@@ -77,8 +79,10 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
                 self.assertIn(term, text)
         self.assertIn("장기적으로 최선", policy)
         documentation_map = read("docs/DOCUMENTATION_MAP.md")
-        self.assertIn("최소 5회 전체 적대적 개선", documentation_map)
-        self.assertIn("5회 이후 오류·충돌·누락·blocker 0까지 추가 전체 루프", documentation_map)
+        self.assertIn("ADVERSARIAL_REVIEW_UNTIL_CLEAN", documentation_map)
+        self.assertIn("CLEAN_REVIEW_EXIT", documentation_map)
+        self.assertNotIn("최소 5회 전체 적대적 개선", documentation_map)
+        self.assertNotIn("5회 이후 오류·충돌·누락·blocker 0까지 추가 전체 루프", documentation_map)
 
     def test_default_paid_plan_and_notion_free_cost_boundary(self) -> None:
         agents = read("AGENTS.md")
@@ -121,11 +125,12 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
     def test_game_contract_is_budgeted_buildable_and_reusable(self) -> None:
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         for term in (
-            "CORE_LOOP_DUMMY_BALANCE_BUILD_TEST",
             "BALANCE_BUDGET",
             "WORLD_STORYLINE_FIT_REQUIRED",
             "REUSABLE_SYSTEM_EXTRACTION",
             "ADOPT / ADAPT / REJECT",
+            "RELEASE_NEAR_VERTICAL_SLICE_FIRST",
+            "SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE",
         ):
             self.assertIn(term, policy)
 
@@ -152,24 +157,27 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", visual_policy)
         self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", visual_policy)
 
-    def test_adversarial_review_requires_minimum_five_then_until_clean(self) -> None:
+    def test_adversarial_review_repeats_full_lifecycle_until_clean_without_fixed_quota(self) -> None:
         skill = read("skills/running-adversarial-review-and-refinement/SKILL.md")
         for term in (
             "ADVERSARIAL_REVIEW_UNTIL_CLEAN: REQUIRED_WHEN_REVIEW_RUNS",
-            "FULL_LOOP_COUNT_MINIMUM: 5",
-            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5",
             "FULL_SCOPE_REVIEW",
             "FIND → VALIDATE → REFINE → VERIFY → RE-ATTACK",
             "BETTER_ALTERNATIVE_SEARCH",
             "LONG_TERM_PLAN_FIT_RECHECK",
             "CLEAN_REVIEW_EXIT",
-            "최소 5회의 완전한 전체 개선 루프",
-            "5회 이후에도",
             "새로운 유효 오류·충돌·누락·blocking finding이 0",
         ):
             self.assertIn(term, skill)
-        self.assertNotIn("FIVE_DISTINCT_ADVERSARIAL_ROUNDS", skill)
-        self.assertNotIn("ROUND_1_INTENT_ASSUMPTIONS_SCOPE", skill)
+        for stale in (
+            "FULL_LOOP_COUNT_MINIMUM",
+            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT",
+            "최소 5회의 완전한 전체 개선 루프",
+            "5회 이후에도",
+            "FIVE_DISTINCT_ADVERSARIAL_ROUNDS",
+            "ROUND_1_INTENT_ASSUMPTIONS_SCOPE",
+        ):
+            self.assertNotIn(stale, skill)
 
     def test_loop_foundation_doc_points_to_current_operational_checkpoint(self) -> None:
         loop_doc = read("docs/LOOP_ENGINEERING_A2_RUNTIME.md")
@@ -198,7 +206,7 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
 
-    def test_gpt_first_visualized_poc_legacy_removal_and_clean_review_contract(self) -> None:
+    def test_gpt_first_release_near_slice_legacy_removal_and_clean_review_contract(self) -> None:
         agents = read("AGENTS.md")
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         codex = read("docs/GPT_CODEX_WORKFLOW_POLICY.md")
@@ -210,7 +218,8 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             "CLEAN_REVIEW_EXIT",
             "GPT_FIRST_PLANNING_AND_REVIEW",
             "OPTIONAL_CODEX_EXECUTOR",
-            "VISUALIZED_POC_BEFORE_DEMO_TEST",
+            "RELEASE_NEAR_VERTICAL_SLICE_FIRST",
+            "GAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE",
             "LEGACY_ABSORB_VERIFY_REMOVE",
             "PAID_PLAN_GATE",
         ):
@@ -218,10 +227,11 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         self.assertIn("사용자 학습형 완료보고", agents)
         self.assertIn("GPT_FIRST_PLANNING_AND_REVIEW", codex)
         self.assertIn("OPTIONAL_CODEX_EXECUTOR", codex)
-        self.assertIn("VISUALIZED_POC_BEFORE_DEMO_TEST", visual)
+        self.assertIn("SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE", visual)
+        self.assertNotIn("VISUAL_NOT_MATERIAL_TO_THIS_POC", visual)
         self.assertIn("MIGRATION_ONLY_UNTIL_REMOVAL", sheets)
-        self.assertIn("FULL_LOOP_COUNT_MINIMUM: 5", adversarial)
-        self.assertIn("MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5", adversarial)
+        self.assertNotIn("FULL_LOOP_COUNT_MINIMUM", adversarial)
+        self.assertNotIn("MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT", adversarial)
         self.assertNotIn("FIVE_DISTINCT_ADVERSARIAL_ROUNDS", adversarial)
 
 
