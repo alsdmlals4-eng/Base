@@ -13,30 +13,21 @@ WORKER_PROMPT = ROOT / "templates" / "prompts" / "BASE_PARTITION_OPTIMIZATION_PR
 INTEGRATION_PROMPT = ROOT / "templates" / "prompts" / "BASE_PARTITION_INTEGRATION_PROMPT.md"
 SCOPE_CHECKER = ROOT / "tools" / "check_base_partition_scope.py"
 LEARNING_SYSTEM = ROOT / "docs" / "operations" / "BASE_PARTITION_LEARNING_SYSTEM.md"
-
-EXPECTED_SKILLS = {
-    "managing-project-intake-and-work-contract", "managing-game-project-operating-system",
-    "evolving-project-discipline-skills", "managing-design-documents",
-    "maintaining-project-context-and-handoff", "analyzing-and-refining-game-concepts",
-    "designing-vertical-slices", "producing-game-development-youtube-videos",
-    "orchestrating-deepseek-worktrees", "reviewing-and-validating-project-changes",
-    "auditing-canonical-reference-freshness", "designing-art-prompts-and-technique-cards",
-    "auditing-and-refining-ui-art", "managing-base-change-proposals", "identifying-project-core",
-    "establishing-project-core", "running-adversarial-review-and-refinement",
-    "refactoring-with-contract-preservation", "simplifying-skill-bodies",
-    "pruning-stale-and-nonfunctional-material", "synchronizing-local-and-github-state",
-    "maintaining-long-running-task-continuity", "governing-game-user-research-coverage",
-    "creating-user-learning-notes", "building-project-visual-dashboards",
-    "diagnosing-game-engine-runtime-failures", "governing-legacy-retention-and-archives",
-    "evaluating-godot-assets-and-plugins-before-creation", "optimizing-ai-model-and-prompt-costs",
-    "developing-and-revising-serial-fiction",
-}
+SKILL_REGISTRY = ROOT / "skills" / "SKILL_REGISTRY.json"
 
 
 class BasePartitionContractTests(unittest.TestCase):
     def load_manifest(self) -> dict:
         self.assertTrue(MANIFEST.exists(), "partition manifest must exist")
         return json.loads(MANIFEST.read_text(encoding="utf-8"))
+
+    def active_skill_ids(self) -> set[str]:
+        payload = json.loads(SKILL_REGISTRY.read_text(encoding="utf-8"))
+        return {
+            row["skill_id"]
+            for row in payload["skills"]
+            if row.get("status") == "ACTIVE"
+        }
 
     def test_required_partition_artifacts_exist(self) -> None:
         for path in (MANIFEST, OPERATING_MODEL, WORKER_PROMPT, INTEGRATION_PROMPT, SCOPE_CHECKER, LEARNING_SYSTEM):
@@ -51,10 +42,10 @@ class BasePartitionContractTests(unittest.TestCase):
         self.assertEqual("INTEGRATION_ONLY", manifest["control_plane"]["write_authority"])
         self.assertEqual(10, manifest["integration"]["total_new_gpt_chats_after_task_1"])
 
-    def test_all_active_skills_are_assigned_once(self) -> None:
+    def test_all_active_skills_are_assigned_once_from_registry_authority(self) -> None:
         manifest = self.load_manifest()
         assignments = [skill for part in manifest["parts"] for skill in part["owned_skill_ids"]]
-        self.assertEqual(EXPECTED_SKILLS, set(assignments))
+        self.assertEqual(self.active_skill_ids(), set(assignments))
         self.assertEqual(len(assignments), len(set(assignments)))
 
     def test_part_write_paths_are_unique_and_control_plane_is_not_part_owned(self) -> None:
@@ -67,6 +58,11 @@ class BasePartitionContractTests(unittest.TestCase):
                 self.assertNotIn(path, protected, f"{part['part_id']} owns protected path {path}")
                 self.assertNotIn(path, seen, f"{path} owned by both {seen.get(path)} and {part['part_id']}")
                 seen[path] = part["part_id"]
+
+    def test_manifest_has_no_semantic_cross_part_overlap_on_tracked_files(self) -> None:
+        result = self.run_scope("--validate-manifest")
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertNotIn("semantic path overlap", result.stdout)
 
     def test_each_part_has_a_context_pack_and_operational_contract(self) -> None:
         manifest = self.load_manifest()
@@ -106,6 +102,8 @@ class BasePartitionContractTests(unittest.TestCase):
         self.assertIn("--integration", text)
         self.assertIn("CONTROL_PLANE_WRITE_FORBIDDEN", text)
         self.assertIn("OUT_OF_PARTITION_WRITE", text)
+        self.assertIn("semantic path overlap", text)
+        self.assertIn("ACTIVE skills missing partition owner", text)
 
     def run_scope(self, *args: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run([sys.executable, str(SCOPE_CHECKER), *args], cwd=ROOT, text=True, capture_output=True, check=False)
