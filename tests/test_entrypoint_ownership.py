@@ -23,10 +23,15 @@ class EntrypointOwnershipTests(unittest.TestCase):
         self.assertIn("## 요청별 라우팅", self.start)
         self.assertNotIn("## 요청별 라우팅", self.agents)
         self.assertIn("완료 보고", self.agents)
-        self.assertNotIn("완료 보고", self.start)
 
-    def test_both_entrypoints_delegate_to_canonical_operating_sources(self) -> None:
-        for path in ("docs/OPERATING_MODEL.md", "docs/WORK_MODE_AND_SKILL_ROUTING.md", "docs/DOCUMENTATION_MAP.md"):
+    def test_both_entrypoints_delegate_to_current_canonical_operating_sources(self) -> None:
+        for path in (
+            "docs/GPT_FIRST_PROJECT_WORKFLOW.md",
+            "docs/OPERATING_MODEL.md",
+            "docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md",
+            "docs/WORK_MODE_AND_SKILL_ROUTING.md",
+            "docs/DOCUMENTATION_MAP.md",
+        ):
             with self.subTest(path=path):
                 self.assertIn(path, self.agents)
                 self.assertIn(path, self.start)
@@ -50,7 +55,7 @@ class EntrypointOwnershipTests(unittest.TestCase):
             with self.subTest(route=route):
                 self.assertIn(route, self.start)
 
-    def test_agents_keeps_always_on_safety_and_authority_boundaries(self) -> None:
+    def test_agents_keeps_current_always_on_safety_and_authority_boundaries(self) -> None:
         for term in (
             "사용자의 최신 지시",
             "사용자 승인",
@@ -60,8 +65,10 @@ class EntrypointOwnershipTests(unittest.TestCase):
             "[수정제안서]",
             "별도 구현 PR",
             "released lock",
-            "USER_FACING_GDD_WORKSPACE",
-            "PROPOSED_SHEET_CHANGE",
+            "GPT_PRIMARY_PLANNING_REVIEW",
+            "CODEX_OPTIONAL_SUB_EXECUTOR",
+            "NOTION_VISUAL_CHECKPOINT_BEFORE_POC",
+            "GOOGLE_SHEETS_MIGRATE_THEN_REMOVE",
             "정확한 HEAD",
             "소유 경계 없이 병렬",
             "직접 승인한 Base 변경 요청",
@@ -69,6 +76,8 @@ class EntrypointOwnershipTests(unittest.TestCase):
         ):
             with self.subTest(term=term):
                 self.assertIn(term, self.agents)
+        self.assertNotIn("USER_FACING_GDD_WORKSPACE", self.agents)
+        self.assertNotIn("PROPOSED_SHEET_CHANGE", self.agents)
 
     def test_detailed_contracts_are_not_duplicated_in_entrypoints(self) -> None:
         for term in (
@@ -88,23 +97,16 @@ class EntrypointOwnershipTests(unittest.TestCase):
                 self.assertNotIn(term, self.agents)
                 self.assertNotIn(term, self.start)
 
-    def test_every_game_system_first_hop_enters_the_owning_skill(self) -> None:
+    def test_game_system_route_enters_the_owning_skill_without_template_first_hop(self) -> None:
         routes = [
             line for line in self.start.splitlines()
-            if "Game-system routes:" in line
-            or line.startswith("| 게임 시스템·난이도·전투 AI |")
+            if line.startswith("| 게임 시스템·난이도·전투 AI |")
         ]
-        self.assertEqual(2, len(routes))
-        for route in routes:
-            with self.subTest(route=route):
-                self.assertIn("analyzing-and-refining-game-concepts", route)
-                self.assertIn("skills/analyzing-and-refining-game-concepts/SKILL.md", route)
-                self.assertNotIn("templates/planning/", route)
-
-        self.assertIn(
-            "templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md",
-            self.start,
-        )
+        self.assertEqual(1, len(routes))
+        route = routes[0]
+        self.assertIn("analyzing-and-refining-game-concepts", route)
+        self.assertIn("skills/analyzing-and-refining-game-concepts/SKILL.md", route)
+        self.assertNotIn("templates/planning/", route)
 
     def test_high_risk_routes_are_derived_from_registry_trigger_metadata(self) -> None:
         registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
