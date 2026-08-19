@@ -9,6 +9,14 @@ description: Use when one playable segment must prove core experience, target qu
 
 게임 전체를 얕게 만드는 대신, 핵심 경험을 대표하는 작은 구간을 최종 품질에 가까운 깊이로 연결해 **재미·품질·제작성·실제 플레이 증거**를 동시에 검증한다.
 
+`RELEASE_NEAR_VERTICAL_SLICE_FIRST`: 기획·검수 뒤 플레이어 경험을 판정하는 첫 인간 플레이 테스트는 짧더라도 release-near/shipping-intent Vertical Slice에서 수행한다.
+
+`SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED`: 실제 게임 사용 후보인 UI/UX, 이미지·아트, 애니메이션/연출, 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠가 한 대표 흐름에서 서로 연결되어야 한다. 플레이어가 보는·듣는·조작하는 경로에는 임시 `player-facing placeholder`나 dummy presentation을 남기지 않으며, 해당 요소가 이후 튜닝·교체될 수 있어도 현재 Slice 자체는 production-candidate 품질이어야 한다.
+
+`SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`: 시스템-only PoC는 기술 가능성·알고리즘·성능·호환성 같은 좁은 질문의 `TECHNICAL_SPIKE_INTERNAL_ONLY` evidence다. 재미·몰입·가독성·첫인상·판매력·감정·기억·전체 UX의 PASS 근거로 사용하지 않는다.
+
+`EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT`: shipping-intent 품질을 위해 무조건 새로 만들지 않는다. 승인된 프로젝트 자산·기존 구현·검증된 라이브러리/도구를 먼저 조사하고 프로젝트 정체성에 맞게 `ADOPT / ADAPT / REJECT`한다.
+
 `PLAYER_VALUE_TRACE_REQUIRED`: Slice 범위를 정하기 전에 아래 추적을 고정한다. 기능 존재나 화면 완성도를 플레이어 가치의 대리 지표로 사용하지 않는다.
 
 ```yaml

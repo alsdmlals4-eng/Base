@@ -31,6 +31,72 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
         self.assertNotIn("integrated-demo-package", skill)
         self.assertNotIn("skill-coverage-audit", skill)
 
+    def test_gameplay_validation_is_release_near_vertical_slice_first(self) -> None:
+        long_horizon = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
+        visual = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
+        stage = read("docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md")
+        slice_skill = read("skills/designing-vertical-slices/SKILL.md")
+        concept_skill = read("skills/analyzing-and-refining-game-concepts/SKILL.md")
+        plan = read("templates/planning/VERTICAL_SLICE_PLAN.md")
+
+        for token in (
+            "RELEASE_NEAR_VERTICAL_SLICE_FIRST",
+            "GAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE",
+            "SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE",
+            "TECHNICAL_SPIKE_INTERNAL_ONLY",
+        ):
+            self.assertIn(token, long_horizon)
+            self.assertIn(token, stage)
+
+        for text in (slice_skill, plan):
+            self.assertIn("SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED", text)
+            for term in ("UI", "이미지", "사운드", "VFX", "시스템"):
+                self.assertIn(term, text)
+
+        for text in (concept_skill, plan):
+            self.assertIn("PLAYER_APPEAL_QUALITY_GATE", text)
+            for term in ("독창성", "DDD", "일관성", "복잡성", "난이도"):
+                self.assertIn(term, text)
+
+        for text in (long_horizon, concept_skill, plan):
+            self.assertIn("EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT", text)
+
+        for text in (long_horizon, visual, stage, slice_skill, plan):
+            self.assertIn("실제 게임 사용 후보", text)
+            self.assertIn("player-facing placeholder", text)
+
+        self.assertNotIn("VISUAL_NOT_MATERIAL_TO_THIS_POC", visual)
+        self.assertIn("SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE", visual)
+        self.assertIn("shipping-intent", visual.lower())
+        self.assertIn("별도 `CORE_POC` 제품 단계는 사용하지 않는다", stage)
+
+    def test_concept_lifecycle_treats_poc_as_technical_spike_not_player_validation(self) -> None:
+        concept = read("skills/analyzing-and-refining-game-concepts/SKILL.md")
+        reference = read("skills/analyzing-and-refining-game-concepts/references/concept-evidence-and-gates.md")
+        self.assertNotIn("POC_BUILD_AND_TEST", concept)
+        self.assertNotIn("REPEAT_POC", concept)
+        self.assertIn("TECHNICAL_SPIKE_INTERNAL_ONLY", concept)
+        self.assertIn("`poc-contract`은 과거 호환 mode", concept)
+        self.assertIn("RELEASE_NEAR_VERTICAL_SLICE_FIRST", concept)
+        self.assertIn("designing-vertical-slices", concept)
+        self.assertNotIn("player_task_and_observed_behavior", reference)
+        self.assertNotIn("REPEAT_POC", reference)
+        self.assertIn("TECHNICAL_SPIKE_INTERNAL_ONLY", reference)
+        self.assertIn("RELEASE_NEAR_VERTICAL_SLICE_FIRST", reference)
+        self.assertIn("designing-vertical-slices", reference)
+
+    def test_part_contexts_consume_release_near_rule_and_current_coordinator_semantics(self) -> None:
+        p04 = read("docs/operations/base-partitions/P04_GAME_DESIGN_CORE_VERTICAL_SLICE.md")
+        p05 = read("docs/operations/base-partitions/P05_ART_UX_UI_VISUAL_ASSETS.md")
+
+        for text in (p04, p05):
+            self.assertIn("RELEASE_NEAR_VERTICAL_SLICE_FIRST", text)
+            self.assertIn("SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE", text)
+            self.assertIn("실제 게임 사용 후보", text)
+            self.assertIn("player-facing placeholder", text)
+            self.assertIn("OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM", text)
+            self.assertNotIn("다른 독립 open/draft/ready PR·branch·worktree는", text)
+
     def test_knowledge_references_preserve_detail_under_demo_first_authority(self) -> None:
         stage_path = "docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md"
         orchestration_path = "docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md"

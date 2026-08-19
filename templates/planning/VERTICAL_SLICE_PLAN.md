@@ -1,5 +1,29 @@
 # Vertical Slice 통합 데모 계획
 
+## 0. Release-near 플레이 검증 계약
+
+```yaml
+RELEASE_NEAR_VERTICAL_SLICE_FIRST: REQUIRED
+GAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE: REQUIRED
+SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED: REQUIRED
+SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE: REQUIRED
+TECHNICAL_SPIKE_INTERNAL_ONLY: REQUIRED
+EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT: REQUIRED
+PLAYER_APPEAL_QUALITY_GATE: REQUIRED
+```
+
+플레이어 경험을 판단하는 Slice는 실제 게임 사용 후보인 **UI/UX · 이미지/아트 · 애니메이션/연출 · 사운드 · VFX/피드백 · 핵심 시스템/데이터/콘텐츠**를 한 짧은 흐름으로 완성한 뒤 테스트한다. 플레이어가 접하는 경로에 임시 `player-facing placeholder`나 dummy presentation을 남기지 않는다. 시스템-only PoC는 기술 질문에만 쓰며 재미·몰입·가독성·첫인상·판매력·감정·기억을 PASS 처리하지 않는다.
+
+### Player Appeal Quality Gate
+- 독창성·차별점: 왜 유사 게임 대신 이 게임을 선택하는가?
+- DDD: 행동→피드백→보상 지연과 명료성이 핵심 경험을 강화하는가?
+- 일관성: UI·이미지·사운드·VFX·세계관·시스템이 같은 방향을 가리키는가?
+- 복잡성: 플레이어 고민을 만들지 않는 설명/규칙/버튼을 제거했는가?
+- 난이도: 도전이 공정하고 읽을 수 있으며 접근 가능한가?
+- 개성·기억: 첫인상과 대표 순간에 프로젝트만의 성격이 남는가?
+- 인간 플레이 증거: 실제 플레이 전 재미·몰입 판정은 `NOT_RUN`인가?
+
+
 ## 상세 계약 라우팅
 
 현재 작업에 필요한 문서만 읽는다.

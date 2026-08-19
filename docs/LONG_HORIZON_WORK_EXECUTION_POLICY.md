@@ -15,8 +15,11 @@ EXPECTED_EFFECTS_RISKS_MITIGATIONS_BEFORE_BUILD
 SINGLE_INITIAL_APPROVAL_THEN_CONTINUE
 RECOVER_TRY_ALTERNATIVES_RESUME
 INDEPENDENT_WORKSTREAM_ISOLATION
-OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT
-EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION
+OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM
+ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE
+CURRENT_OWNER_EVIDENCE_REQUIRED
+CURRENT_COORDINATOR_TAKEOVER_WHEN_NO_ACTIVE_OWNER
+EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTION
 ZERO_INCREMENTAL_COST_REQUIRED
 CURRENT_PAID_PLANS: GPT_PRO
 PAID_PLAN_COUNT: 1
@@ -24,7 +27,12 @@ ADVERSARIAL_REVIEW_UNTIL_CLEAN
 FULL_LOOP_COUNT_MINIMUM: 5
 MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
 POSTMERGE_PROMOTION_AND_SUPERSESSION
-CORE_LOOP_DUMMY_BALANCE_BUILD_TEST
+RELEASE_NEAR_VERTICAL_SLICE_FIRST
+GAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE
+SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE
+TECHNICAL_SPIKE_INTERNAL_ONLY
+EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT
+SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED
 BALANCE_BUDGET
 WORLD_STORYLINE_FIT_REQUIRED
 REUSABLE_SYSTEM_EXTRACTION
@@ -147,17 +155,31 @@ failure / interruption
 
 ### `INDEPENDENT_WORKSTREAM_ISOLATION`
 
-`OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT`
+`OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM`
 
-`EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION`
+`ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE`
 
-다른 채팅·Branch·PR이 같은 Goal처럼 보여도 기본적으로 별도 workstream으로 취급한다. read-only 충돌 탐지는 가능하지만 checkout/write/rebase/close/merge/material-delta 흡수는 사용자 명시 승인 없이는 수행하지 않는다.
+`CURRENT_OWNER_EVIDENCE_REQUIRED`
+
+`CURRENT_COORDINATOR_TAKEOVER_WHEN_NO_ACTIVE_OWNER`
+
+`EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTION`
+
+Part 경계, open PR 상태, 실제 동시 작업자는 서로 다른 개념이다. `open / draft / ready` PR·branch가 존재한다는 사실만으로 다른 작업자가 현재 활동 중이라고 판정하지 않는다. 사용자 지시, current session/automation owner, Resource Lock, matching running execution 같은 **current owner evidence**가 있을 때만 `ACTIVE_OTHER_WORKER`로 mutation-protected다.
+
+사용자가 `CURRENT_COORDINATOR_CHAT` 하나만 활성이라고 확인했거나 현재 owner evidence가 없으면 unresolved open PR은 latest completed `main`과 Goal을 다시 읽어 `COORDINATOR_TAKEOVER / READY_TO_FINISH / SUPERSEDED_DUPLICATE / STALE_BACKLOG / BLOCKED_EXTERNAL`로 분류한다. coordinator가 인수한 workstream은 현재 승인 범위 안에서 수정·검증·병합·중복 종료까지 마무리할 수 있다. 실제 `ACTIVE_OTHER_WORKER`를 흡수하려면 명시적 사용자 takeover/owner handoff가 필요하다.
 
 ## 8. 게임 작업 계약
 
-### `CORE_LOOP_DUMMY_BALANCE_BUILD_TEST`
+### `RELEASE_NEAR_VERTICAL_SLICE_FIRST`
 
-게임 작업은 core loop, 핵심 시스템, 세계관/핵심 스토리라인 정합성, 가역적 dummy `BALANCE_BUDGET`, playable build/test와 재사용 가능한 모듈 경계를 함께 본다.
+기획·검수를 닫은 뒤 플레이어 재미·몰입·가독성·첫인상·선택의 감정적 효과를 검증하는 첫 인간 플레이 테스트는 짧더라도 **실제 출시 의도에 가까운 완성형 Vertical Slice**를 대상으로 한다. `GAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE`이며, `SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED`에 따라 실제 게임 사용 후보인 UI/UX, 이미지·아트, 애니메이션/연출, 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠가 한 구간에서 연결되어야 한다. 플레이어가 보는·듣는·조작하는 경로에는 임시 `player-facing placeholder`나 dummy 표현을 남겨 플레이 경험을 왜곡하지 않는다.
+
+`SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`: 시스템만 동작하는 회색 상자·dummy UI·무음/무연출 PoC는 알고리즘·성능·호환성·데이터 흐름 같은 좁은 기술 질문에는 쓸 수 있지만 재미·몰입·판매력·가독성·감정·기억·전체 UX의 PASS 근거가 될 수 없다. 이런 검증은 `TECHNICAL_SPIKE_INTERNAL_ONLY`로 분리하며 공개 데모·Vertical Slice·player-experience evidence로 승격하지 않는다.
+
+`EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT`: 완성형 Slice를 만든다는 이유로 모든 자산·UI·사운드·효과를 새로 만들지 않는다. 현재 프로젝트의 승인된 자산·구조·도구·검증된 외부 해법을 먼저 조사하고 `ADOPT / ADAPT / REJECT`로 판정한다. 프로젝트의 세계관·핵심 경험·가독성·일관성에 맞는 기존 해법은 재사용·변형하고, 검증 목적에 실제로 필요한 대표 품질만 구현한다.
+
+가역적 `BALANCE_BUDGET`과 내부 기술 Spike는 완성형 Slice 제작 중 위험을 줄이는 보조 수단이며, 그 자체가 인간 플레이 검증 제품은 아니다.
 
 ### `WORLD_STORYLINE_FIT_REQUIRED`
 
@@ -250,7 +272,7 @@ GPT planning/research/review
 → GitHub/Notion sync + readback
 ```
 
-`VISUALIZED_POC_BEFORE_DEMO_TEST`: 플레이 경험을 UI/UX와 화면 맥락 없이 판단하면 왜곡될 위험이 큰 게임 PoC/데모는 회색 박스만으로 최종 평가하지 않는다. 기획·검수 단계에서 필요한 화면·HUD·핵심 상태·아트 앵커 이미지를 만들거나 승인된 기존 이미지를 선택하고, 올바른 Project의 Notion Visual/Asset surface에 배치·readback한 뒤 이를 구현 패키지의 시각 입력으로 사용한다. 모든 PoC에 완성 아트를 강제하지 않으며, 이미지가 판단에 실질 영향을 주지 않는 순수 로직 PoC는 예외로 기록한다.
+`RELEASE_NEAR_VERTICAL_SLICE_FIRST`: 기획·검수 뒤 재미·몰입·가독성·첫인상·판매 포인트·감정 곡선을 판단하는 플레이 테스트는 shipping-intent UI/UX·이미지/아트·대표 사운드·VFX/피드백·핵심 시스템/콘텐츠가 연결된 짧은 완성형 Vertical Slice에서 수행한다. 좁은 기술 질문은 `TECHNICAL_SPIKE_INTERNAL_ONLY`로 먼저 풀 수 있지만 `SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`에 따라 그 결과만으로 플레이어 경험을 PASS 처리하지 않는다.
 
 `LEGACY_ABSORB_VERIFY_REMOVE`: 더 이상 사용하지 않기로 확정된 Figma, 전용 로컬 시각 Tool/Hub, 외부 HTML 작업면, Google Sheets 등 구형 surface는 일상 검색·라우팅 대상에서 제거한다. 삭제 전 한 번만 `UNIQUE / DUPLICATE / OBSOLETE`를 분류하고, `UNIQUE`한 규칙·데이터·증거·재사용 원리만 현재 Notion 또는 repository 정본으로 흡수한다. 목적지 readback과 참조 신선도 검증이 끝나면 원본과 활성 참조를 제거한다. `DUPLICATE/OBSOLETE`는 재검토를 반복하지 않는다. 법적·감사·rollback 때문에 보존이 필요한 최소 이력은 명시적 archive manifest만 남기고 기본 탐색에서 제외한다.
 

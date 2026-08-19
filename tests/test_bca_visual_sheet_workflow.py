@@ -168,6 +168,16 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
         self.assertIn("ASSET_KNOWLEDGE_MASTER", visual_policy)
         self.assertFalse((ROOT / "templates/project-operations/FIGMA_VISUAL_BIBLE_PROFILE.md").exists())
 
+    def test_player_experience_validation_uses_release_near_visual_audio_vfx_integration(self) -> None:
+        visual_policy = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
+        slice_skill = read("skills/designing-vertical-slices/SKILL.md")
+        for text in (visual_policy, slice_skill):
+            self.assertIn("RELEASE_NEAR_VERTICAL_SLICE_FIRST", text)
+            self.assertIn("SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED", text)
+            self.assertIn("SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE", text)
+        self.assertNotIn("VISUALIZED_POC_BEFORE_DEMO_TEST", visual_policy)
+        self.assertNotIn("VISUAL_NOT_MATERIAL_TO_THIS_POC", visual_policy)
+
 
 if __name__ == "__main__":
     unittest.main()

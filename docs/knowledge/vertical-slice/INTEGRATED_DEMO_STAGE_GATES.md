@@ -2,6 +2,19 @@
 
 이 reference는 `designing-vertical-slices`의 제품 단계·통합 데모·플랫폼 준비가 현재 요청과 관련될 때만 읽는다.
 
+## Release-near 플레이 검증 권위
+
+```text
+RELEASE_NEAR_VERTICAL_SLICE_FIRST
+GAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE
+SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE
+TECHNICAL_SPIKE_INTERNAL_ONLY
+SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED
+EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT
+```
+
+플레이어 경험을 판정하는 Gate 2 테스트는 짧더라도 실제 게임 사용 후보인 UI/UX, 이미지·아트, 사운드, VFX/피드백, 시스템·데이터·콘텐츠가 연결된 완성형 Vertical Slice를 대상으로 한다. 플레이어가 접하는 경로에 임시 `player-facing placeholder`나 dummy presentation이 남아 있으면 플레이 경험 판정 Gate를 통과시키지 않는다. 시스템-only PoC는 기술 질문의 내부 Spike일 뿐 재미·몰입·가독성·판매력·감정·기억의 증거가 아니다.
+
 ## 1. 제품 단계
 
 ```text
@@ -60,6 +73,7 @@ CONCEPT_APPROVAL
 
 ```text
 데모 계약·품질 기준 확정
+→ shipping-intent UI/이미지/사운드/VFX/시스템/콘텐츠 통합
 → 제작 의도 Vertical Slice 구현
 → 통합 데모 QA
 → 내부 플레이테스트

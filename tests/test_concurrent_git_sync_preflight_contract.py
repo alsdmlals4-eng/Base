@@ -88,7 +88,7 @@ class ConcurrentGitSyncPreflightContractTests(unittest.TestCase):
         self.assertIn("latest completed `main`", agents)
         self.assertIn("superseded", agents)
 
-    def test_other_chat_workstreams_require_explicit_absorption_authorization(self) -> None:
+    def test_open_pr_requires_current_owner_evidence_before_protection(self) -> None:
         agents = read("AGENTS.md")
         skill = read("skills/synchronizing-local-and-github-state/SKILL.md")
         protocol = read(
@@ -97,24 +97,35 @@ class ConcurrentGitSyncPreflightContractTests(unittest.TestCase):
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
 
         for text in (agents, skill, protocol, policy):
-            self.assertIn("OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT", text)
-            self.assertIn(
-                "EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION",
-                text,
-            )
+            self.assertIn("OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM", text)
+            self.assertIn("ACTIVE_OTHER_WORKER", text)
+
+        for text in (skill, protocol, policy):
+            self.assertIn("CURRENT_OWNER_EVIDENCE_REQUIRED", text)
+            self.assertNotIn("OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT", text)
+            self.assertNotIn("EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION", text)
 
         for token in (
             "current_workstream_identity",
             "owner_workstream_identity",
+            "owner_activity_classification",
+            "current_owner_evidence",
             "cross_workstream_absorption_authorized",
+            "NO_ACTIVE_OWNER_EVIDENCE",
+            "COORDINATOR_TAKEOVER",
         ):
             self.assertIn(token, skill)
             self.assertIn(token, protocol)
 
+        required_takeover_token = (
+            "EXPLICIT_USER_ABSORPTION_AUTHORIZATION: "
+            "REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTION"
+        )
+        self.assertIn(required_takeover_token, skill)
+        self.assertIn(required_takeover_token, protocol)
         self.assertIn("same workstream", skill)
         self.assertIn("different workstream", skill)
-        self.assertIn("명시적으로 흡수·통합을 승인", agents)
-        self.assertIn("다른 채팅", agents)
+        self.assertIn("CURRENT_COORDINATOR_CHAT", agents)
 
         self.assertNotIn(
             "approved same-goal/path/semantic overlap에 한해서 이 standing authorization이 필요한 `explicit user authorization`을 제공",

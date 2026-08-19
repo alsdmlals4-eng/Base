@@ -159,22 +159,23 @@ The same records support two display layers:
 
 Hiding system metadata is a presentation decision, not deletion. Automation may still read it when needed.
 
-## Visualized PoC / demo readiness
+## Release-near Vertical Slice visual readiness
 
-`VISUALIZED_POC_BEFORE_DEMO_TEST`를 기본으로 한다. UI/UX, 화면 구성, 정보 가독성, 아트 분위기가 플레이 판단에 실질 영향을 주는 PoC/데모는 기획·검수 단계에서 먼저 필요한 이미지/화면 candidate를 만들거나 승인된 기존 시각 자산을 선택한다. candidate는 정확한 Project의 Notion Visual/Asset record에 배치하고 destination readback을 거친 뒤 구현 입력으로 사용한다.
+`RELEASE_NEAR_VERTICAL_SLICE_FIRST`를 게임 플레이 검증의 기본으로 한다. 기획·검수를 닫은 뒤 재미·몰입·가독성·첫인상·판매 포인트·감정 곡선을 판단하는 플레이 테스트는 `shipping-intent` 짧은 Vertical Slice에서 수행한다. `SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED`에 따라 실제 게임 사용 후보인 UI/UX, 이미지·아트, 애니메이션/연출, 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠를 서로 연결한 상태여야 한다. 플레이어가 실제로 보는·듣는·조작하는 Slice 경로에는 임시 `player-facing placeholder`나 dummy presentation을 남기지 않는다.
 
 ```text
-planning + UX/UI flow
-→ visual requirements
-→ generate/select candidate images
-→ Notion project placement + readback
+planning + UX/UI/audio/VFX flow
+→ visual/audio/effect requirements
+→ generate/select/reuse candidate assets
+→ Notion Project placement + readback
 → approval/rejection
-→ implementation package uses approved visual inputs
-→ PoC/demo implementation
+→ repository implementation package
+→ shipping-intent UI + image/art + audio + VFX + system/content integration
+→ complete short Vertical Slice
 → runtime UX/UI/play test
 ```
 
-완성 아트를 모든 로직 PoC에 강제하지 않는다. 시각 요소가 현재 가설 검증에 영향을 주지 않으면 `VISUAL_NOT_MATERIAL_TO_THIS_POC`로 기록하고 생략할 수 있다. 반대로 화면/가독성/첫인상/상호작용 의미를 검증하는 데모를 회색 박스만으로 최종 판정하지 않는다.
+`SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`: 회색 상자, dummy UI, 무음/무연출, 시스템-only PoC는 기술 Spike로만 사용할 수 있으며 재미·몰입·전체 UX·플레이어 기억의 최종 판단 근거가 아니다. 좁은 기술 질문은 `TECHNICAL_SPIKE_INTERNAL_ONLY`로 먼저 풀 수 있지만, 그 결과는 완성형 Vertical Slice에 흡수한 뒤 플레이 테스트한다. 생성 성공·업로드 성공·정적 mockup만으로 player-experience PASS를 선언하지 않는다.
 
 ## Repository handoff and runtime evidence
 
