@@ -69,6 +69,19 @@ slice_acceptance:
 - `evidence_ceiling`: 현재 확보한 증거로 주장 가능한 최대 수준을 기록한다. 기술·정적·UI 증거만으로 사람의 이해·감정·고민·기억을 PASS하지 않는다.
 - `slice_acceptance`: 관찰 신호에 따라 `EXPAND / REWORK / REPEAT_SLICE / HOLD / STOP` 중 어떤 다음 결정을 내릴지 연결한다.
 
+## 1.2 WORLD_STORYLINE_FIT_REQUIRED
+
+기능·시스템·난이도·연출이 작동하는지만 보지 않고, 현재 프로젝트에서 실질적인 경우 **세계관·핵심 스토리·플레이어 판타지**와의 정합성을 함께 판정한다.
+
+- 상태: `FIT / NOT_APPLICABLE / CONFLICT / UNVERIFIED`
+- 세계관 불변 조건·근거:
+- 핵심 스토리라인 불변 조건·근거:
+- 플레이어 판타지 약속·근거:
+- 이번 Slice의 충돌 가능 요소:
+- 충돌 시 제거·변형·재검증 결정:
+
+`NOT_APPLICABLE`은 세계관·스토리 축이 현재 게임에 실질적으로 없을 때만 이유와 함께 사용한다. `CONFLICT / UNVERIFIED` 상태를 기능 완성도나 벤치마크 인기로 덮어 `APPROVED` 또는 확장 판정으로 올리지 않는다.
+
 ## 2. 데모 핵심 위험·내부 Spike
 
 별도 `CORE_POC` Gate를 만들지 않는다. 아래는 데모 전체를 차단하는 기술 불확실성이 있을 때만 작성한다.
