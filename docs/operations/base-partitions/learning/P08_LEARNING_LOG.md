@@ -87,6 +87,53 @@ revisit_condition: >-
   CP0 ownership 재분류, 또는 optional executor semantics가 실제 프로젝트 실행을 막는 경우.
 ```
 
+## 2026-08-19 · exact-head freshness ownership blocker
+
+```yaml
+date: 2026-08-19
+work_ref: PR #535 / adversarial loop 6 after exact-head CI
+baseline_and_result: >-
+  Game Project OS canonical freshness가 수정된 P08 SKILL.md에 Skill-local Learning Log와 fixed-list test companion을 요구했다.
+  Skill-local Learning Log는 P08-owned Skill package 안에서 해결했다. 그러나 fixed-list test companion은 현재 P08 Manifest가
+  허용하는 tests/test_ai_*.py, tests/test_*model*.py, tests/test_*source_radar*.py, tests/test_*deepseek*.py,
+  tests/test_p08_*.py 중 어느 것도 받지 않아 cross-Part/CP0 blocker로 남았다.
+what_worked:
+  - 실제 CI failure를 종료조건 위반으로 즉시 승격
+  - skills/orchestrating-deepseek-worktrees/LEARNING_LOG.md 추가
+  - skills/optimizing-ai-model-and-prompt-costs/LEARNING_LOG.md 추가
+  - foreign test나 .github/reference-freshness.json을 P08에서 억지 수정하지 않음
+what_failed_or_was_rejected:
+  - 타 Part test를 touch해서 freshness를 만족시키는 방법은 Manifest ownership 위반이라 기각
+  - CP0 .github/reference-freshness.json 직접 수정은 Integration-only라 기각
+  - failing required check를 bypass/force merge하는 방법은 기각
+reusable_lesson: >-
+  Canonical freshness가 source owner에게 companion test를 강제할 때 그 test도 같은 owner의 합법적 write surface여야 한다.
+  그렇지 않으면 freshness gate가 품질 방어선이 아니라 cross-Part write를 강요하는 구조적 deadlock이 된다.
+anti_pattern:
+  - CI를 녹색으로 만들기 위해 foreign-owner companion 파일을 의미 없이 touch
+  - global freshness config를 Part worker가 직접 약화
+  - REQUIRED check failure를 nonblocking으로 축소 보고
+affected_rules_skills_modules:
+  - canonical reference freshness
+  - PARTITION_IS_MAINTENANCE_AND_SPECIALIZATION_VIEW_NOT_RUNTIME_FRAGMENTATION
+  - orchestrating-deepseek-worktrees
+  - optimizing-ai-model-and-prompt-costs
+  - P08 validation / CP0 integration boundary
+evidence:
+  - docs/operations/ai-executors/P08_CI_FRESHNESS_BLOCKER_2026-08-19.md
+  - GitHub Actions run 32223379656 / ubuntu-contract
+  - docs/operations/BASE_PARTITION_MANIFEST.json
+reuse_scope: BASE_PROMOTION_CANDIDATE
+promotion_candidate: >-
+  CP0 Integration에서 local-skill-contract-learning-test-sync가 Part별 owner-local focused test를 companion으로 수용하도록
+  freshness contract를 재설계하되 coverage를 약화하지 않는다.
+source_followup_questions:
+  - source owner별 companion test pattern을 Manifest에서 생성할 수 있는가?
+  - tests/test_pXX_*.py를 global freshness config가 안전하게 수용하도록 자동 검증할 수 있는가?
+revisit_condition: >-
+  CP0 reference-freshness companion mapping이 수정되거나 P08 Skill contract의 canonical owner/test ownership이 재분류될 때.
+```
+
 ## Source Learning
 
 - Source domains: PROMPT_AND_AGENT_WORKFLOW, SKILL_AUTHORING_AND_EVOLUTION, CODE_ENGINEERING
