@@ -3,7 +3,7 @@
 ## 2026-08-19 · P08 authority and freshness audit
 
 ```yaml
-work_ref: PR #535
+work_ref: "PR #535 historical P08 source; revalidated by current-main takeover PR #551"
 baseline: df8ef644d30fc96456da23a5157e5efb61b620bb
 finding: >-
   External-AI orchestration had a Codex-specific review step even though Base now treats GPT as the primary planner/reviewer and Codex as an optional executor.
@@ -16,6 +16,7 @@ reusable_lesson: >-
   A handoff package is not current canon. External executors must rehydrate authority and exact repository state at execution time, and provider-specific naming must not silently create provider-specific authority.
 evidence:
   - skills/orchestrating-deepseek-worktrees/SKILL.md
-  - docs/operations/ai-executors/P08_OPTIMIZATION_REPORT_2026-08-19.md
+  - tests/test_p08_ai_operations_contract.py
+  - docs/operations/base-partitions/learning/P08_LEARNING_LOG.md
 verification_status: PENDING_FINAL_EXACT_HEAD_CI
 ```
