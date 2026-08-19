@@ -152,6 +152,49 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         ):
             self.assertTrue((ROOT / path).is_file(), path)
 
+    def test_benchmark_reverse_engineering_pipeline_is_required_check_consumed(self) -> None:
+        guide = (ROOT / "docs/BENCHMARKING_REFERENCE_GUIDE.md").read_text(encoding="utf-8")
+        method = (ROOT / "docs/knowledge/research/DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md").read_text(encoding="utf-8")
+        benchmark = (ROOT / "templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md").read_text(encoding="utf-8")
+        skill_guide = (ROOT / "docs/AI_SKILL_ADOPTION_GUIDE.md").read_text(encoding="utf-8")
+
+        for surface in (guide, method, benchmark):
+            for token in (
+                "BENCHMARK_REVERSE_ENGINEERING_PATTERN_REUSE",
+                "REUSABLE_UNIT_DISCOVERY",
+                "MULTI_SOURCE_EXTRACTION",
+                "MECHANIC_PATTERN_LIBRARY",
+                "GENRE_FOUNDATION_REFERENCE",
+                "NOVELTY_DELTA",
+                "CLEAN_ROOM_REIMPLEMENTATION",
+            ):
+                self.assertIn(token, surface)
+
+        for token in (
+            "SYSTEM_PATTERN",
+            "TOOL_PATTERN",
+            "ASSET_MATERIAL_PATTERN",
+            "UI_UX_PATTERN",
+            "CONTENT_PATTERN",
+            "WORKFLOW_PATTERN",
+            "SKILL_PATTERN",
+        ):
+            self.assertIn(token, benchmark)
+
+        for token in (
+            "REVERSE_ENGINEERED_SKILL_WORKFLOW_CANDIDATE",
+            "PATTERN_NOT_PACKAGE_COPY",
+            "EVAL_BEFORE_PROMOTION",
+        ):
+            self.assertIn(token, skill_guide)
+
+        for owner in (
+            "AI_SKILL_ADOPTION_GUIDE.md",
+            "PROJECT_LOCAL_ASSET_VAULT_POLICY.md",
+            "CAPABILITY_COMPOSITION_MAP.md",
+        ):
+            self.assertIn(owner, guide)
+
     def test_playtest_accessibility_and_performance_gaps_are_integrated(self) -> None:
         concepts = skill_package_text("analyzing-and-refining-game-concepts")
         vertical = (ROOT / "skills/designing-vertical-slices/SKILL.md").read_text(encoding="utf-8")
@@ -358,6 +401,7 @@ class ClaimIntentConsolidatedReferenceTests(unittest.TestCase):
         template = (ROOT / "templates/quality/PROJECT_CHANGE_VALIDATION.md").read_text(encoding="utf-8")
         operating = (ROOT / "docs/OPERATING_MODEL.md").read_text(encoding="utf-8")
         routing = (ROOT / "docs/WORK_MODE_AND_SKILL_ROUTING.md").read_text(encoding="utf-8")
+
         self.assertTrue(reference_path.is_file())
         for token in (
             "`claim-and-intent-verification`",

@@ -61,6 +61,171 @@
 
 현재 프로젝트가 같은 문제를 더 단순한 구조로 해결할 수 있다면 표면 기능을 복제하지 않는다.
 
+## BENCHMARK_REVERSE_ENGINEERING_PATTERN_REUSE
+
+벤치마크 역공학은 **외부 제품을 복제하는 절차가 아니라 관찰 가능한 행동·문제 해결 구조를 재사용 가능한 계약으로 바꾸는 절차**다. 장르 문법뿐 아니라 시스템, 콘텐츠·데이터 구조, UI/UX, 도구, 에셋·이미지 재료, 작업구조, 반복 프로세스와 Skill 후보까지 `REUSABLE_UNIT_DISCOVERY` 대상으로 본다.
+
+프로젝트 단위 실행은 `docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md`를 읽고 `templates/research/PROJECT_REUSE_OPPORTUNITY_SCAN.md`에 기록한다.
+
+```text
+BENCHMARK / PRACTICE OBSERVATION
+→ SOURCE_AND_RIGHTS_PRECHECK
+→ MULTI_SOURCE_EXTRACTION
+→ REUSABLE_UNIT_DISCOVERY
+→ CONTRACT_ABSTRACTION
+→ PROJECT_FIT_DISCOVERY
+→ REUSE_MODE_DECISION
+→ NOVELTY_DELTA
+→ PROJECT-SPECIFIC ADAPT / REBUILD
+→ FIT-FOR-UNIT VALIDATION
+→ EXISTING OWNER PROMOTION / PROJECT-ONLY RETENTION
+```
+
+### 1. SOURCE_AND_RIGHTS_PRECHECK
+
+먼저 무엇을 관찰하고 무엇을 실제로 재사용할 권리가 있는지 분리한다.
+
+- 공개적으로 관찰 가능한 동작, 공식 문서, 개발자 발표, 합법적으로 확보한 제품·자료를 근거로 삼는다.
+- 라이선스가 허용하는 코드·도구·에셋은 역공학보다 `DIRECT_LICENSED_REUSE` 또는 `ADAPT_LICENSED`가 더 단순하고 안전한지 먼저 비교한다.
+- 소스 코드, 아트, 사운드, 문구, 고유 명칭, 고유 UI 표현, 고유 수치표를 권한 없이 복사해 패턴 라이브러리에 넣지 않는다.
+- 접근 통제 우회, 비공개 데이터 추출, 보안 우회, 서비스 약관을 회피하는 방법은 이 파이프라인의 범위가 아니다.
+- 라이선스·상표·특허·계약·플랫폼 정책 등 별도 권리 검토가 필요한 경우 `RIGHTS_REVIEW_REQUIRED`로 둔다.
+
+### 2. MULTI_SOURCE_EXTRACTION
+
+하나의 작품에서 본 기능을 바로 공용 원리로 승격하지 않는다.
+
+- 단일 사례는 그 사례의 관찰 근거가 될 수 있다.
+- `MECHANIC_PATTERN_LIBRARY` 또는 `GENRE_FOUNDATION_REFERENCE`처럼 일반화된 공용 패턴으로 만들 때는 가능한 경우 **서로 다른 구현·전제를 가진 3개 이상의 materially distinct 사례**를 비교한다.
+- 여러 작품에서 반복되는 불변 구조와 작품별 표현을 분리한다.
+- 성공 사례뿐 아니라 실패·혼합 사례를 함께 보며 “장르 관습”과 “특정 작품의 강한 시그니처”를 구분한다.
+- 세 사례를 확보하기 어렵다면 보편 법칙처럼 쓰지 않고 `SINGLE_SOURCE_HYPOTHESIS`로 남긴다.
+
+### 3. REUSABLE_UNIT_DISCOVERY
+
+발견 후보를 다음처럼 분류한다. 한 사례에서 여러 단위를 추출할 수 있다.
+
+- `GENRE_FOUNDATION_REFERENCE`: 장르에서 반복되는 최소 플레이 문법과 기대.
+- `MECHANIC_PATTERN_LIBRARY`: 입력·상태·규칙·결과·피드백으로 설명 가능한 메커닉 패턴.
+- `SYSTEM_PATTERN`: 전투, 경제, 진행, 생성, 상태 관리 등 여러 메커닉을 묶는 시스템 구조.
+- `CONTENT_PATTERN`: 이벤트, 적, 방, 퀘스트, 카드, 스테이지 등 콘텐츠를 생산하는 문법.
+- `DATA_SCHEMA_PATTERN`: 상태·콘텐츠를 안정적으로 표현하는 데이터 관계와 경계.
+- `UI_UX_PATTERN`: 정보 우선순위, 조작 흐름, 피드백, 오류·복구 패턴.
+- `TOOL_PATTERN`: 반복 제작·검증 비용을 줄이는 도구의 입력/처리/출력 계약.
+- `ASSET_MATERIAL_PATTERN`: 재사용 가능한 레이어, 모듈 파츠, 타일, 아이콘 계열, 배경 재료, 마스크·구조 패턴 등 시각 재료.
+- `WORKFLOW_PATTERN`: 조사→기획→구현→검증처럼 반복되는 생산 절차와 handoff 구조.
+- `SKILL_PATTERN`: AI/사람이 반복 수행할 판단 작업의 trigger, 입력, 정본, 절차, 산출물, 검증 계약.
+
+각 후보는 최소한 다음을 설명할 수 있어야 한다.
+
+```yaml
+problem_or_player_need:
+inputs:
+state:
+rule_or_process:
+outputs:
+feedback:
+tunable_parameters:
+dependencies:
+failure_and_recovery:
+source_observations:
+rights_and_license_boundary:
+```
+
+“화면이 비슷하다”, “유명 게임이 쓴다”만으로는 재사용 단위가 아니다.
+
+### 4. CONTRACT_ABSTRACTION
+
+특정 작품의 이름과 표현을 제거한 뒤 **무엇이 들어오면 어떤 상태 변화와 판단을 거쳐 무엇이 나가는가**를 다시 적는다.
+
+예시:
+
+```text
+표면: 전투 후 세 장 중 한 장을 고르는 카드 보상
+추상 계약:
+  current build state
+  → constrained candidate generation
+  → mutually exclusive visible choice
+  → build state mutation
+  → future candidate/value landscape changes
+```
+
+이 단계에서 고유 카드, 문구, 아이콘, 확률값, 화면 배치가 남아 있다면 추상화가 충분하지 않은지 다시 확인한다.
+
+### 5. PROJECT_FIT_DISCOVERY
+
+사용자가 예시로 든 장르에만 머물지 않는다. 대상 프로젝트의 최신 정본을 먼저 읽고 다음 병목을 기준으로 **추가 역공학 후보를 능동적으로 찾는다.**
+
+- 플레이어 약속과 핵심 감정.
+- Core Loop와 의미 있는 선택.
+- 현재 반복되는 설계·콘텐츠 제작 비용.
+- 밸런스·검증·QA 병목.
+- UI/UX 정보 전달과 입력 마찰.
+- 아트·이미지 제작의 반복 파츠와 일관성 병목.
+- 프로젝트 데이터·씬·Resource의 반복 구조.
+- 개발자가 반복 수행하는 수작업과 도구화 후보.
+- GPT/Codex 협업에서 반복되는 작업구조·검수·Skill 후보.
+- 플랫폼, 성능, 접근성, 비용, 일정과 권리 제약.
+
+검색 범위는 순서대로 `직접 장르 → 인접 장르/시스템 → 비게임 인터랙션·제품 → 도구/에셋/워크플로/Skill → 실패·반례`까지 넓힌다. 프로젝트 코어에 맞지 않으면 유명하거나 재사용하기 쉬워도 제외한다.
+
+### 6. 재사용 모드 결정
+
+후보마다 다음 중 하나를 명시한다.
+
+- `DIRECT_LICENSED_REUSE`: 라이선스·보안·의존성 검토 후 원본 패키지/에셋을 그대로 재사용.
+- `ADAPT_LICENSED`: 허용 범위에서 수정·래핑하여 재사용.
+- `PATTERN_EXTRACT`: 원리·계약만 추출하고 프로젝트 구현은 별도로 설계.
+- `CLEAN_ROOM_REIMPLEMENTATION`: 직접 원본 구현물을 복사하지 않고, 독립적으로 문서화한 관찰 계약과 테스트를 바탕으로 새 구현을 작성.
+- `REJECT`: 권리, 안전, 비용, 품질, 프로젝트 적합성 또는 유지보수 문제로 사용하지 않음.
+
+`CLEAN_ROOM_REIMPLEMENTATION`은 **Base의 엔지니어링 격리 방식 이름일 뿐 법적 면책이나 권리 적합성을 자동 보장하지 않는다.** 직접 재사용이 허용되는 검증된 오픈소스·에셋·도구라면 Existing Solution First에 따라 불필요한 재구현을 피한다.
+
+### 7. NOVELTY_DELTA
+
+`PATTERN_EXTRACT` 또는 `CLEAN_ROOM_REIMPLEMENTATION` 후보는 원본과의 거리만 묻지 않고 **프로젝트에서 실제 판단·경험·생산성이 어떻게 바뀌는지** 기록한다.
+
+```yaml
+NOVELTY_DELTA:
+  keep:
+  remove:
+  invert:
+  combine:
+  add:
+  changed_player_decision:
+  changed_feedback_or_pacing:
+  changed_production_result:
+  project_identity_gain:
+```
+
+스킨, 명칭, 색만 바뀌고 플레이어 판단이나 제작 계약이 사실상 동일하면 `NOVELTY_DELTA_INSUFFICIENT`로 재검토한다. 장르의 익숙한 문법을 의도적으로 유지하는 경우에는 “익숙함”과 “프로젝트 고유 차별점”을 분리해 기록한다.
+
+### 8. 단위별 검증
+
+재사용 후보의 종류에 맞는 증거를 요구한다.
+
+- 장르·메커닉·시스템·콘텐츠: PoC는 기술/규칙 증거, 플레이 경험은 대표 Vertical Slice와 실제 플레이 증거.
+- 데이터 구조: 샘플 데이터, 마이그레이션·직렬화·무결성·극단값 테스트.
+- UI/UX: 실제 해상도·입력 흐름·오류 복구·가독성 검증.
+- Tool: 대표 프로젝트 입력, 실패/복구, 반복 실행, 성능·의존성·보안 검증.
+- Asset/Image material: 실제 사용 맥락의 시각 품질·출처·권리·유사성·재사용성 검토.
+- Workflow/Skill: 대표 정상 사례, 실패 사례, 비선택/오라우팅 사례를 포함한 Eval 전후 비교.
+
+유명 작품의 성공 자체는 현재 프로젝트에서의 PASS가 아니다.
+
+### 9. 기존 owner로 승격
+
+이 파이프라인은 **발굴·추상화·분류·라우팅 owner**이지 병렬 자산/도구/Skill 정본을 만들지 않는다.
+
+- 게임 장르·메커닉·시스템·콘텐츠·UI 패턴 → 현재 벤치마크 Case와 프로젝트 기획 정본.
+- 에셋·이미지 재료 → `PROJECT_LOCAL_ASSET_VAULT_POLICY.md`의 Reusable Visual Harvest/명시적 승격 절차. 발견만으로 `PROJECT_ASSET_APPROVED`가 되지 않는다.
+- Skill·작업구조 후보 → `AI_SKILL_ADOPTION_GUIDE.md`; 기본은 기존 Skill/Mode/Reference에 흡수하고 새 Skill은 마지막 수단이다.
+- 외부 작업 프로세스 → `CAPABILITY_COMPOSITION_MAP.md`의 `EXTERNAL_PROCESS_OVERLAY` 경계를 유지한다.
+- Godot addon/plugin/tool 후보 → Existing Solution First와 현재 Godot 자산·플러그인 평가 owner를 따른다.
+- 라이선스된 코드·도구·에셋 직접 재사용 → 해당 라이선스, 보안, 공급망, 의존성, 프로젝트 소비 경로를 별도로 검증한다.
+
+프로젝트 하나에서만 유효한 결과는 Base에 억지로 승격하지 않고 프로젝트 전용으로 둔다.
+
 ## 출처 우선순위
 
 1. 공식 문서·개발자 발표·직접 사용.

@@ -104,10 +104,73 @@
 
 같은 전투 규칙을 공유할 수 있다면 공용 병종 데이터와 진영별 시각 세트가 더 적합할 수 있다.
 
+## 6.1 BENCHMARK_REVERSE_ENGINEERING_PATTERN_REUSE
+
+조사의 목적이 **검증된 구조를 재사용 가능한 단위로 추출해 기획·구현·콘텐츠 제작 비용을 줄이는 것**이라면 일반 벤치마킹에 다음 역공학 절차를 추가한다. 상세 계약과 owner routing은 `docs/BENCHMARKING_REFERENCE_GUIDE.md`가 책임진다.
+
+```text
+SOURCE_AND_RIGHTS_PRECHECK
+→ MULTI_SOURCE_EXTRACTION
+→ REUSABLE_UNIT_DISCOVERY
+→ MECHANIC_PATTERN_LIBRARY / GENRE_FOUNDATION_REFERENCE
+→ PROJECT_FIT_DISCOVERY
+→ rights / license / security / dependency gate
+→ NOVELTY_DELTA
+→ DIRECT_LICENSED_REUSE | ADAPT_LICENSED | PATTERN_EXTRACT | CLEAN_ROOM_REIMPLEMENTATION | REJECT
+→ unit-specific validation
+→ existing owner promotion
+```
+
+### MULTI_SOURCE_EXTRACTION
+
+- 한 작품의 구현을 보편 규칙으로 오인하지 않도록 여러 구현에서 반복되는 불변 구조와 작품별 표현을 분리한다.
+- 공용 `MECHANIC_PATTERN_LIBRARY` 또는 `GENRE_FOUNDATION_REFERENCE` 승격은 가능한 경우 서로 다른 전제를 가진 3개 이상의 사례를 비교한다.
+- 단일 사례뿐이면 `SINGLE_SOURCE_HYPOTHESIS`로 남기고 공용 법칙처럼 쓰지 않는다.
+- 성공 사례만 보지 않고 실패·혼합 사례를 포함해 어떤 조건에서 패턴이 깨지는지도 찾는다.
+
+### REUSABLE_UNIT_DISCOVERY
+
+게임 장르·메커닉만 찾지 않는다. 다음 질문을 병행한다.
+
+- 어떤 시스템 규칙이 반복 구현을 줄이는가?
+- 어떤 데이터/콘텐츠 구조가 여러 프로젝트에서 재사용 가능한가?
+- 어떤 UI/UX 흐름과 피드백 구조가 반복되는가?
+- 어떤 Tool 계약이 수작업을 줄이는가?
+- 어떤 에셋·이미지 재료를 레이어·파츠·타일·마스크·구조 패턴으로 재사용할 수 있는가?
+- 어떤 Workflow/작업구조가 handoff와 검증 오류를 줄이는가?
+- 어떤 판단 절차가 반복되는 Skill 후보인가?
+
+발견한 단위는 특정 제품명보다 `problem → inputs/state → rule/process → outputs/feedback → parameters → dependency → failure/recovery` 계약으로 기록한다.
+
+### PROJECT_FIT_DISCOVERY
+
+현재 프로젝트 정본에서 먼저 플레이어 약속, Core Loop, 의미 있는 선택, 제작 병목, 검증 병목, UI/UX 마찰, 아트 반복 작업, 플랫폼·비용·권리 제약을 추출한다. 그 뒤 `직접 장르 → 인접 장르/시스템 → 비게임 제품 → Tool/Asset/Workflow/Skill → 실패 사례` 순으로 탐색 범위를 넓힌다.
+
+사용자가 미리 든 예시는 seed일 뿐 후보 목록의 상한이 아니다. 프로젝트 코어와 병목에 잘 맞는 재사용 단위를 추가로 찾는 것이 이 단계의 책임이다.
+
+### NOVELTY_DELTA
+
+`PATTERN_EXTRACT`나 `CLEAN_ROOM_REIMPLEMENTATION`에서는 다음 차이를 기록한다.
+
+- 무엇을 유지하는가.
+- 무엇을 제거하는가.
+- 무엇을 뒤집는가.
+- 무엇과 결합하는가.
+- 무엇을 새로 추가하는가.
+- 그 결과 플레이어의 판단·피드백·페이싱 또는 제작자의 작업 결과가 실제로 어떻게 달라지는가.
+
+색·이름·스킨만 바뀌고 판단 구조가 그대로라면 독창적 재가공으로 과장하지 않는다. 반대로 장르의 익숙한 기본 문법은 의도적으로 유지할 수 있으며, 그 경우 프로젝트 고유 차별점을 별도로 명시한다.
+
+### CLEAN_ROOM_REIMPLEMENTATION
+
+Base에서 이 용어는 **직접 원본 코드·에셋·문구를 복사하지 않고 독립적으로 정리한 관찰 계약과 테스트를 바탕으로 다시 구현하는 엔지니어링 격리 방식**을 뜻한다. 법적 면책이나 권리 적합성을 자동 보장하지 않으며, 직접 재사용 가능한 라이선스 자산이라면 Existing Solution First를 우선한다.
+
 ## 7. 비용·권리·윤리 확인
 
 - 코드, 아트, 사운드, 문구, UI 배치를 직접 복제하지 않는다.
 - 라이선스와 사용 권한을 확인한다.
+- 여러 구성 요소의 선택·배열·결합이 특정 작품의 고유 표현으로 기능하는지 별도로 검토한다.
+- 기능/규칙을 추출했다는 이유만으로 상표, 특허, 계약, 플랫폼 정책 또는 라이선스 검토를 생략하지 않는다.
 - 생성형 도구를 사용한 자료는 최종 자산 여부와 후처리 책임을 구분한다.
 - 유료 자료, 로그인 정보, 쿠키, 개인 데이터가 필요한 조사 방법은 권한을 먼저 확인한다.
 - 비공개 프로젝트 사례를 Base에 올릴 때는 공개 가능한 수준으로 일반화한다.
