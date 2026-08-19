@@ -69,6 +69,8 @@ class P08AiOperationsContractTests(unittest.TestCase):
         for path in (EXTERNAL_AI_LOG, MODEL_COST_LOG):
             text = path.read_text(encoding="utf-8")
             self.assertNotIn(stale, text, path)
+            self.assertNotIn("PENDING_FINAL_EXACT_HEAD_CI", text, path)
+            self.assertIn("REVALIDATED_FOCUSED_AND_BASE_V9_ON_727ecb15", text, path)
             self.assertIn("tests/test_p08_ai_operations_contract.py", text, path)
             self.assertIn("docs/operations/base-partitions/learning/P08_LEARNING_LOG.md", text, path)
         self.assertTrue(P08_PARTITION_LOG.is_file())
