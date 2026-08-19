@@ -38,6 +38,19 @@ class P04VerticalSlicePlayerValueTraceTests(unittest.TestCase):
         self.assertIn("WORLD_STORYLINE_FIT_REQUIRED", plan)
         self.assertIn("NOT_APPLICABLE", plan)
 
+    def test_legacy_sheet_planning_template_is_migration_only(self) -> None:
+        legacy = read("templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md")
+
+        for term in (
+            "MIGRATION_ONLY_UNTIL_REMOVAL",
+            "NOTION_DEFAULT_PROJECT_WORKSPACE",
+            "NEW_PROJECT_USE: FORBIDDEN",
+        ):
+            self.assertIn(term, legacy)
+
+        self.assertNotIn("새 Sheet에 설치하는 권장 핵심 tab", legacy)
+        self.assertNotIn("실제 Figma·Whimsical·기타 시각 Artifact가 있을 때만 설치한다", legacy)
+
 
 if __name__ == "__main__":
     unittest.main()
