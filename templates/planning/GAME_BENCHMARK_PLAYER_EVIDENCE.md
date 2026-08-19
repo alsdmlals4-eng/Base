@@ -241,7 +241,7 @@ Case Card Template: `templates/research/GAME_DEVELOPMENT_CASE_CARD.md`
 - `IGNORE`:
 - `REFERENCE_ONLY`:
 - 별도 PoC·Vertical Slice·A/B·Concept Test:
-- 기획서·Issue·Plan·Project Sheet 갱신:
+- 프로젝트 Notion·repository canonical owner 갱신:
 - 실제 코드·데이터·자산 영향:
 - 미검증·재검증 조건:
 - Base 승격 후보:
