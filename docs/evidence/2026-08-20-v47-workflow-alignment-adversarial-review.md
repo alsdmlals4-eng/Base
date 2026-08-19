@@ -79,15 +79,50 @@ These were not intended product changes. The P07 duplicate and P03/P04/P05 addit
 - restore the P07 shared-visual URL;
 - remove accidental P03/P04/P05 related-page additions;
 - replace stale QA discovery regression with an explicit retired-tool → repository-native-evidence contract;
-- remove the temporary diagnostic workflow after isolation.
+- remove temporary diagnostic workflows after isolation.
 
 **VERIFY / RE-ATTACK**
-Manifest diff now contains only intentional semantic policy changes. Final exact-head CI is rerun after this evidence commit.
+Manifest and focused route contracts were re-read after cleanup; retired QA authority was not restored.
 
-## Loops 4–5 pending on current exact head
+### Loop 4 — creativity / benchmark / evidence-ceiling attack
 
-Loop 4 will re-attack creative benchmarking, originality/fun/creativity evidence ceilings, visualization planning, release-near slice, zero-incremental-cost and over-generalization.
+**FIND**
+No new blocking defect after re-attacking the new creative planning contract. The main risks were overfitting to famous games, treating novelty as quality, and laundering design confidence into player-experience evidence.
 
-Loop 5 will re-attack current main/PR freshness, independent workstream isolation, changed-file scope, Notion/repository authority, required checks, unresolved threads, long-term fit and required-work-remaining state.
+**VALIDATE**
+The retained contract separates five source sets — direct best-in-class, adjacent best-in-class, distinctive/innovative works, failure/mixed cases, and project-internal strengths — then extracts transferable principles rather than identifiable expression. `ORIGINALITY_FUN_CREATIVITY_REVIEW` explicitly keeps `fun_hypothesis` below player evidence and `PLAYER_EVIDENCE_REQUIRED_FOR_FUN_PASS` blocks premature PASS.
 
-No `CLEAN_REVIEW_EXIT` is claimed until both loops are completed on a current exact head with all required validation Green.
+**REFINE**
+No extra feature was added. The lower-cost design was retained: creative synthesis is an extension of the existing benchmark/reuse owner, not a new broad Skill or tool.
+
+**VERIFY / RE-ATTACK**
+Rechecked `CREATIVE_BENCHMARK_FRONTIER`, `PROJECT_VISUALIZATION_NEED_MAP`, `BALANCE_BUDGET`, `WORLD_STORYLINE_FIT_REQUIRED`, release-near Vertical Slice and zero-incremental-cost boundaries. No new valid MUST_FIX was found.
+
+### Loop 5 — integration / concurrency / long-term-fit attack
+
+**FIND**
+The remaining material risks were current-main drift, independent workstream collision, temporary/debug artifacts, accidental manifest noise, and a tool-retirement policy that could delete history too aggressively.
+
+**VALIDATE**
+- another chat's PR #557 remains an independent workstream and was not modified;
+- open PR metadata alone is not owner evidence, while explicit user/current-owner evidence is;
+- retirement removes active routing but does not physically delete historical code in this alignment patch;
+- physical removal remains a separate bounded retirement task after consumer/readback safety;
+- Skill count remains flexible and semantic rather than numerically fixed;
+- direct PowerShell/Codex and Loop Engineering remain usable without Tool Hub/QA Studio.
+
+**REFINE**
+No new architecture was introduced. Accidental manifest related-page noise and temporary diagnostics were removed; stale regression consumers were updated instead of reactivating retired tools.
+
+**VERIFY / RE-ATTACK**
+Current exact-head CI is required after this evidence update. `CLEAN_REVIEW_EXIT` is still withheld until all required checks on the final head are Green, unresolved threads are zero, current main is fresh, and the final diff contains no temporary artifacts.
+
+## Current review state
+
+```yaml
+FULL_LOOP_COUNT: 5
+new_valid_MUST_FIX_after_loop_5: 0
+blocking_finding_in_design_review: 0
+unsupported_player_experience_PASS: 0
+CLEAN_REVIEW_EXIT: PENDING_FINAL_EXACT_HEAD_CI_AND_PR_GATE
+```
