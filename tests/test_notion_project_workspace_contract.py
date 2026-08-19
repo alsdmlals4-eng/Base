@@ -135,6 +135,21 @@ def test_repository_native_qa_evidence_absorbs_the_useful_fail_closed_rules() ->
         assert token in retirement
 
 
+def test_active_operating_workflow_does_not_reference_retired_local_apps() -> None:
+    workflow = text(".github/workflows/validate-game-project-operating-system.yml")
+    for retired in (
+        "tools/qa-evidence-studio",
+        "qa_evidence_studio",
+        "tools/tool-hub",
+        "tool_hub",
+        "tools/expression-studio",
+        "expression_studio",
+        "tools/sprite-animation-studio",
+        "sprite_animation_studio",
+    ):
+        assert retired not in workflow, retired
+
+
 def test_google_sheets_is_migration_only_then_removed() -> None:
     policy = text("docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md")
     contract = json.loads(text("docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json"))
