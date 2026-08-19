@@ -66,7 +66,7 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
         self.assertEqual("MIGRATION_ONLY_UNTIL_REMOVAL", data["google_sheets"])
         self.assertEqual("QA_EVIDENCE_STUDIO_SPECIALIST_VALIDATION_RETAINED", data["qa_evidence_studio"])
 
-    def test_active_registry_removes_sheet_workspace_routing_and_html_dashboard(self) -> None:
+    def test_active_registry_removes_sheet_workspace_routing_and_reclassifies_dashboard(self) -> None:
         rows = self.registry_rows()
         for skill_id in (
             "managing-project-intake-and-work-contract",
@@ -87,16 +87,21 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
             self.assertIn("migration", row_text.lower())
 
         dashboard = rows["building-project-visual-dashboards"]
-        self.assertEqual("REMOVAL_CANDIDATE", dashboard["status"])
+        self.assertEqual("ACTIVE", dashboard["status"])
+        dashboard_text = json.dumps(dashboard, ensure_ascii=False)
+        self.assertIn("notion", dashboard_text.lower())
+        self.assertNotIn("standalone HTML", dashboard_text)
 
-    def test_dashboard_skill_is_retired_compatibility_locator_and_not_active_part_skill(self) -> None:
+    def test_dashboard_skill_is_notion_home_visual_map_owner_not_html_builder(self) -> None:
         text = DASHBOARD.read_text(encoding="utf-8")
-        self.assertIn("RETIRED_COMPATIBILITY_ONLY", text)
+        self.assertIn("NOTION_PROJECT_HOME_AND_VISUAL_MAP", text)
         self.assertIn("Notion Project Home", text)
-        self.assertIn("새 standalone HTML", text)
+        self.assertIn("HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN", text)
+        self.assertIn("standalone HTML", text)
+        self.assertIn("금지", text)
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
         p05 = next(part for part in manifest["parts"] if part["part_id"] == "P05")
-        self.assertNotIn("building-project-visual-dashboards", p05["owned_skill_ids"])
+        self.assertIn("building-project-visual-dashboards", p05["owned_skill_ids"])
 
     def test_sheet_control_generator_cannot_reactivate_google_sheets(self) -> None:
         generator = GENERATOR.read_text(encoding="utf-8")
