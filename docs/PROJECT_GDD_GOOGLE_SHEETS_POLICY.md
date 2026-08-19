@@ -1,67 +1,44 @@
-# Project GDD Google Sheets Compatibility Policy
+# Project GDD Google Sheets Retirement Stub
 
 ## Status
 
-`COMPATIBILITY_ONLY`
+`RETIRED_MIGRATION_ONLY`
 
-The default project operating surface is `NOTION_DEFAULT_PROJECT_WORKSPACE`. Google Sheets is not the default workspace for new projects, new visual planning, asset cataloging, or project status management.
+Google Sheets는 새 프로젝트 기획, GDD, 시각 작업, 자산 카탈로그, 상태 관리의 작업면이 아니다.
 
-This policy exists only for projects that already contain unique material in an older configured Sheet and have not yet completed migration/readback.
-
-## Authority
+현행 권위는 다음과 같다.
 
 ```text
 latest user decision
-→ project Notion workspace for project planning / asset catalog / visual map
-→ repository-native code, data, scenes, resources, implementation assets and tests for runtime truth
-→ legacy Google Sheet only when unique unmigrated material remains
-→ external references
+→ Notion human-facing project canon
+→ repository structured/runtime truth
+→ historical Google Sheet only for one-time unique-material migration when explicitly needed
 ```
 
-A legacy Sheet never overrides current user decisions, current Project relation, repository runtime truth, or an approved Notion project record merely because it has a newer edit timestamp.
+## `GOOGLE_SHEETS_MIGRATE_THEN_REMOVE`
 
-## Compatibility states
-
-- `COMPATIBILITY_ONLY`: legacy Sheet remains readable because unique material may still exist.
-- `PROPOSED_SHEET_CHANGE`: a user edit exists only in the legacy Sheet and must be reconciled before promotion.
-- `MIGRATION_PENDING`: unique material still needs migration.
-- `MIGRATED_READBACK_VERIFIED`: intended material has been moved to the active Notion/repository authority and read back successfully.
-- `BLOCKED_UNVERIFIED`: access, provenance or migration evidence is insufficient.
-
-## Migration rule
+기존 Sheet에 아직 고유 정보가 남아 있을 가능성이 검증된 경우에만 한 번 읽는다.
 
 ```text
-legacy Sheet material
-→ classify unique / duplicate / obsolete
-→ map unique material to the correct Project
-→ migrate to Notion Work Master, Asset & Knowledge Master, or repository runtime source
-→ preserve source provenance where material
-→ read back the destination
-→ mark the old Sheet compatibility-only or archive it
+legacy Sheet
+→ unique / duplicate / obsolete 분류
+→ exact Project 확정
+→ human-facing meaning → Notion
+→ machine/runtime structured meaning → repository-native owner
+→ provenance / Decision ID 보존
+→ destination readback
+→ conflict check
+→ MIGRATED_READBACK_VERIFIED
+→ active Sheet reference 제거
+→ 삭제 또는 사용자가 접근 가능한 archive/trash 처리
 ```
 
-Do not bulk-copy the old workbook into Notion. Preserve meaning, decision history and unique evidence while removing duplicated presentation structure.
+- workbook 전체를 Notion에 복제하지 않는다.
+- 중복 표현, superseded/rejected 결정, tool-specific layout은 이관하지 않는다.
+- Project identity가 불명확하면 추정하지 않고 `BLOCKED_UNVERIFIED`로 둔다.
+- Sheet row, screenshot, Notion record는 runtime proof가 아니다.
+- migration 완료 후 Sheet를 다시 기본 참고 자료로 읽지 않는다.
 
-## Project separation
+세부 흡수·삭제 기준은 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`가 소유한다.
 
-`PROJECT_RELATION_REQUIRED` applies during migration. A row cannot be migrated as project canon until its destination Project is known. If project identity is ambiguous, keep the row unpromoted and report the ambiguity instead of guessing.
-
-## Visual and asset migration
-
-Visual previews, references and asset candidates migrate to `ASSET_KNOWLEDGE_MASTER` with the correct Project, Record Type, approval state and source metadata. Human-facing views may hide IDs, prompts, hashes and system notes without deleting them.
-
-Rendered flow diagrams are migrated as `VISUAL_MAP_DERIVED`; the underlying semantic Screen or relationship records own the current meaning.
-
-## Runtime boundary
-
-A Sheet row, Notion record, screenshot, or visual map is not runtime proof. Code, scenes, resources, config, builds and QA evidence remain repository/runtime evidence.
-
-## Completion
-
-Do not claim a Sheet migration complete until:
-
-1. unique material has a destination;
-2. Project identity is explicit;
-3. current decisions are not duplicated as conflicting authorities;
-4. destination readback succeeds;
-5. any still-unmigrated material is explicitly listed.
+이 Stub은 기존 링크가 새 정책으로 안전하게 이동하도록 하는 임시 compatibility locator다. active consumer가 모두 새 정책으로 전환되면 이 파일 자체도 삭제 후보다.
