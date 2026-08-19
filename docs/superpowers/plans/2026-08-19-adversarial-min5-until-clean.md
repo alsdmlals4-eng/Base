@@ -67,10 +67,12 @@ Added the minimum markers, mandatory loop-1-through-5 rule, post-five continuati
 **Files:**
 - Modify: `skills/running-adversarial-review-and-refinement/LEARNING_LOG.md`
 - Modify: `tests/test_neutral_adversarial_feature_lifecycle.py`
+- Modify: `docs/evidence/2026-08-19-gpt-first-clean-review-workflow.md`
+- Modify: `docs/DOCUMENTATION_MAP.md`
 
 **Interfaces:**
 - Consumes: updated active Skill contract.
-- Produces: historical explanation and a second regression that prevents either pure fixed-five termination or floorless clean exit from returning.
+- Produces: historical explanation and consumer regressions that prevent either pure fixed-five termination or floorless clean exit from returning.
 
 - [x] **Step 1: Add a new Learning Log entry**
 
@@ -79,6 +81,14 @@ Recorded that the earlier same-day floorless clean-exit decision is superseded b
 - [x] **Step 2: Update the neutral lifecycle regression**
 
 The neutral lifecycle regression now asserts both minimum markers and clean exit while still rejecting the obsolete five-lens abstraction.
+
+- [x] **Step 3: Mark the PR #531 evidence as historical for loop-floor semantics**
+
+A full-scope adversarial pass found that the prior evidence file still described floorless clean exit without a supersession marker. It now preserves the historical evidence while directing readers to the later minimum-five-plus-until-clean active contract.
+
+- [x] **Step 4: Synchronize the Documentation Map consumer**
+
+A later full-scope pass found the Long-Horizon row could still read as fixed-five. It now says minimum five full improvements and additional full loops until valid error/conflict/omission/blocker reaches zero. The focused Long-Horizon regression asserts this consumer wording.
 
 ### Task 4: Verify, review, merge, and read back
 
@@ -99,7 +109,12 @@ Expected: required contract/governance checks PASS; any intentionally unconfigur
 
 - [ ] **Step 3: Perform adversarial review under the new contract**
 
-Execute at least five full-scope review cycles over the approved change. If cycle 5 or later finds any valid blocker, fix, verify, and continue full cycles until a post-minimum cycle is clean.
+Review evidence so far:
+1. Full-scope loop 1 — contract semantics, user intent, owner Skill, regression design: no fixed-five maximum; minimum-five floor present.
+2. Full-scope loop 2 — history/evidence consumers: found stale floorless PR #531 evidence; fixed with explicit supersession.
+3. Full-scope loop 3 — active documentation consumers: found `DOCUMENTATION_MAP.md` fixed-five ambiguity; fixed and regression-pinned.
+4. Full-scope loop 4 — independent workstream collision: PR #530 overlaps several files but remains read-only; no modification/rebase/merge/absorption performed.
+5. Full-scope loop 5 — pending exact-head CI, reference freshness, PR thread, full diff, cost/evidence ceiling, and Notion readback re-attack. If this or any later loop finds a valid blocker, continue with loop 6..N.
 
 - [ ] **Step 4: Exact-head merge**
 
@@ -107,4 +122,4 @@ Merge only if required checks are green, unresolved review threads are zero, and
 
 - [ ] **Step 5: Post-merge readback**
 
-Read new `main` versions of `AGENTS.md`, Long-Horizon policy, and Skill owner and verify PR status and same-goal open PR isolation.
+Read new `main` versions of `AGENTS.md`, Long-Horizon policy, Skill owner, and Documentation Map; verify PR status and same-goal open PR isolation. Update the Notion `Base · 작업 시스템 & Skill 지도` only from the merged `main`, not from the pending branch.
