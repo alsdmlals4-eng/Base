@@ -86,6 +86,8 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             ):
                 self.assertIn(term, text)
             self.assertNotIn("CURRENT_PAID_PLANS: GPT_PRO, FIGMA_PRO", text)
+        self.assertIn("NOTION_PAID_ON_REQUEST_ONLY", policy)
+        self.assertIn("COST_BENEFIT_EVIDENCE_BEFORE_NOTION_UPGRADE", policy)
 
     def test_execution_and_external_claims_are_fail_closed_by_existing_verification_owner(self) -> None:
         verification = read(
@@ -131,18 +133,42 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             "ASSET_KNOWLEDGE_MASTER",
             "VISUAL_MAP_DERIVED",
             "REPO_NATIVE_STRUCTURED_DATA",
-            "GOOGLE_SHEETS_COMPATIBILITY_ONLY",
-            "EXTERNAL_HTML_TOOL_CATALOG: DERIVED_DISCOVERY_SURFACE",
+            "GOOGLE_SHEETS_MIGRATE_THEN_REMOVE",
+            "HTML_PROJECT_SURFACE: RETIRED",
             "LOOP_ENGINEERING: REQUIRED_WHEN_RELEVANT",
         ):
             self.assertIn(term, policy)
+        self.assertNotIn("GOOGLE_SHEETS_COMPATIBILITY_ONLY", policy)
+        self.assertNotIn("EXTERNAL_HTML_TOOL_CATALOG: DERIVED_DISCOVERY_SURFACE", policy)
 
-    def test_deprecated_figma_and_tool_hub_are_not_active_long_horizon_authorities(self) -> None:
+    def test_gpt_primary_review_and_optional_codex_are_part_of_long_horizon_flow(self) -> None:
+        policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
+        for term in (
+            "GPT_PRIMARY_PLANNING_REVIEW",
+            "GPT_FINAL_REVIEW_AUTHORITY",
+            "CODEX_OPTIONAL_SUB_EXECUTOR",
+            "ONE_SHOT_CODEX_HANDOFF_WHEN_NEEDED",
+        ):
+            self.assertIn(term, policy)
+
+    def test_visual_checkpoint_and_repository_native_qa_precede_runtime_claims(self) -> None:
+        policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
+        for term in (
+            "NOTION_VISUAL_CHECKPOINT_BEFORE_POC",
+            "UX_UI_REPRESENTATIVE_STATE_REQUIRED",
+            "APPROVED_VISUALS_FEED_POC",
+            "REPOSITORY_NATIVE_QA_EVIDENCE",
+        ):
+            self.assertIn(term, policy)
+
+    def test_deprecated_figma_tool_hub_html_and_local_qa_are_not_active_authorities(self) -> None:
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         visual_policy = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
         self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", policy)
         self.assertNotIn("TOOL_HUB: REQUIRED_WHEN_RELEVANT", policy)
         self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", visual_policy)
+        self.assertIn("USER_FACING_LOCAL_TOOL_DEFAULT: RETIRED", policy)
+        self.assertIn("HTML_PROJECT_SURFACE: RETIRED", policy)
         self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", visual_policy)
 
     def test_adversarial_review_owner_requires_five_full_improvement_loops_when_invoked(self) -> None:
