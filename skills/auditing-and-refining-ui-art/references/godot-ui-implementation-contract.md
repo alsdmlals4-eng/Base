@@ -5,8 +5,9 @@
 The implementation contract must explicitly verify `Control`, `Container`,
 `Theme`, `Signal`, authoritative-state separation, focus navigation, input paths,
 accessibility, long Korean text, and resolution fixtures. Use the official Godot
-references for [UI](https://docs.godotengine.org/en/stable/tutorials/ui/index.html)
-and [focus navigation](https://docs.godotengine.org/en/stable/tutorials/ui/gui_navigation.html)
+references for [UI](https://docs.godotengine.org/en/stable/tutorials/ui/index.html),
+[focus navigation](https://docs.godotengine.org/en/stable/tutorials/ui/gui_navigation.html),
+and [screen reader integration](https://docs.godotengine.org/en/stable/tutorials/ui/creating_applications.html#screen-reader-integration)
 as engine evidence; do not treat them as a substitute for project runtime tests.
 
 ## 1. 원칙
@@ -168,6 +169,17 @@ signal database_updated()
 - 입력 아이콘은 현재 장치에 맞게 바뀌되 문맥과 선택은 유지한다.
 - 취소/뒤로 입력은 화면마다 같은 의미를 유지한다.
 
+### 9.1 시맨틱 접근성 / screen reader
+
+시각적으로 읽히는 UI와 보조기기에서 의미가 읽히는 UI는 같은 검증이 아니다. Godot의 screen reader 경로를 지원한다고 주장하려면 대상 플랫폼에서 시맨틱 정보와 실제 탐색 증거를 별도로 확인한다.
+
+- 상호작용하거나 의미 있는 `Control`은 보이는 텍스트만으로 식별이 충분하지 않을 때 `accessibility_name`을 제공하고, 추가 맥락·상태·결과 설명이 필요할 때 `accessibility_description`을 제공한다.
+- 이름과 설명은 보이는 텍스트를 기계적으로 반복해 소음을 늘리지 않고, 역할·행동·상태를 이해하는 데 필요한 의미만 보완한다.
+- `semantic_reading_order`는 화면의 시각적/과제 순서와 screen reader 탐색 순서가 같은 사용자 흐름을 전달하는지 확인하는 계약 이름이다. modal 진입·종료, 동적 목록 추가·삭제, disabled/hidden 상태에서도 논리 순서가 깨지지 않아야 한다.
+- 장식·중복 정보는 semantic tree를 불필요하게 채우지 않는다. 반대로 색·아이콘·위치만으로 전달되는 핵심 상태는 동등한 시맨틱 표현을 갖는다.
+- 대상 플랫폼의 Godot screen reader/AccessKit 경로를 실제로 실행하지 않았다면 정적 속성 존재만으로 `PASSED`라고 하지 않고 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 유지한다.
+- 자동 검사·렌더 확인·일반 키보드 포커스 테스트는 screen reader 사용성 검증을 대체하지 않는다. 실제 보조기기 검증이 필요한 항목은 별도 human/runtime evidence로 남긴다.
+
 ## 10. 텍스트·현지화
 
 - 한국어의 긴 조사·서술·숫자 단위를 fixture로 검증한다.
@@ -237,7 +249,7 @@ haptic_disabled
 - Theme type/variation 참조
 - Signal 연결과 상태 소유 경계
 - 금지된 UI 도메인 계산 후보
-- focus 설정·접근성 메타데이터 후보
+- focus 설정·`accessibility_name`·`accessibility_description`·`semantic_reading_order` 후보
 
 ### 런타임
 
@@ -246,6 +258,7 @@ haptic_disabled
 - 정상·disabled·locked·loading·error
 - 포인터·키보드·게임패드·터치
 - modal 진입·취소·복귀
+- 대상 플랫폼에서 screen reader 탐색·이름·설명·동적 상태 전달
 - 모션 감소·음향 끄기·자산 누락
 
 ### 인간
@@ -254,6 +267,7 @@ haptic_disabled
 - 비용·위험·결과 예측
 - 오류·실수 복구
 - 결과 인과 설명
+- screen reader 사용 흐름이 시각 흐름과 같은 과제 의미를 보존하는지 확인
 
 자동 테스트가 통과해도 인간 항목은 `HUMAN_NOT_RUN`일 수 있다.
 
@@ -267,6 +281,11 @@ component_scenes:
 theme_variations:
 signal_contracts:
 focus_contract:
+semantic_accessibility:
+  accessibility_name:
+  accessibility_description:
+  semantic_reading_order:
+  screen_reader_runtime_evidence:
 input_paths:
 resolution_fixtures:
 text_fixtures:
