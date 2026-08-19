@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "base_source_commit": "8553678f70e22f193a2336b591f677dcfa5a8965",
+  "modules": {
+    "RM-TOOL-001": {"state": "planned"},
+    "RM-SYS-001": {"state": "not_applicable"},
+    "RM-SYS-003": {"state": "not_applicable"},
+    "RM-VIS-001": {
+      "state": "enabled",
+      "source": "templates/reuse-modules/godot/semantic_ui_skin_kit.gd",
+      "destination": "scripts/base_reuse/semantic_ui_skin_kit.gd"
+    },
+    "RM-VIS-002": {
+      "state": "enabled",
+      "source": "templates/reuse-modules/godot/gameplay_symbol_atlas.gd",
+      "destination": "scripts/base_reuse/gameplay_symbol_atlas.gd"
+    }
+  }
+}
