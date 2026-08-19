@@ -18,7 +18,7 @@ Base는 게임·연재소설 등 등록된 창작·개발 프로젝트가 공용
 → 반복 가능한 스킬 학습
 ```
 
-Base에는 여러 프로젝트에서 재사용 가능한 판단·절차·검증만 둔다. 프로젝트 고유 세계관·원고·수치·경로·자산·구현 상태는 대상 프로젝트가 책임진다. 사람용 프로젝트 개요·기획·시각·비교·확정표의 기본 작업면은 `NOTION_DEFAULT_PROJECT_WORKSPACE`이며, machine-consumed Markdown·JSON·game data·code·scene·resource·test와 실제 build/runtime은 각각 `REPOSITORY_STRUCTURED_CANON`과 `REPOSITORY_RUNTIME_TRUTH`가 책임진다. 기존 Google Sheets는 `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL`로, 고유 미이관 자료가 있는 migration scope에서만 읽고 Notion/repository owner로 이관한다.
+Base에는 여러 프로젝트에서 재사용 가능한 판단·절차·검증만 둔다. 프로젝트 고유 세계관·원고·수치·경로·자산·구현 상태는 대상 프로젝트가 책임진다. 사람용 프로젝트 개요·기획·시각·비교·확정표의 기본 작업면은 `NOTION_DEFAULT_PROJECT_WORKSPACE`이며, machine-consumed Markdown·JSON·game data·code·scene·resource·test와 실제 build/runtime은 각각 `REPOSITORY_STRUCTURED_CANON`과 `REPOSITORY_RUNTIME_TRUTH`가 책임진다. 기존 Google Sheets는 `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL`로, 고유 미이관 자료가 있는 migration scope에서만 읽고 Notion/repository owner로 이관한다. 상세 이관·readback·제거 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 책임진다.
 
 ## 2. 우선순위
 
@@ -477,7 +477,7 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 사람용 프로젝트 작업면 → exact Project Notion Home·filtered Work/Asset/Core System/Visual surface (`NOTION_HUMAN_FACING_CANON`)
 구조화 정본 → repository-native Markdown·JSON·game data·scene·resource·tracked asset·test (`REPOSITORY_STRUCTURED_CANON`)
 실제 구현 상태 → build·runtime·test·log·capture (`REPOSITORY_RUNTIME_TRUTH`)
-legacy Google Sheets → `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL`, 신규 승인/수정 입력 금지
+legacy Google Sheets → `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` / `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL`, 신규 승인/수정 입력 금지
 과거 상태 → Git 이력
 ```
 
@@ -584,7 +584,7 @@ Base 저장소 자체에서는 프로젝트 설치 템플릿을 활성 상태로
 
 ## 프로젝트 GDD와 폐기 작업면 경계
 
-일반 프로젝트의 전체 흐름 확인·사람용 정보 수정·시각 검토는 exact Project Notion을 우선한다. 구조화 데이터·실제 구현·테스트는 repository owner가 우선한다. Google Sheets·Figma·project-management Tool Hub·QA Evidence Studio·외부 HTML dashboard/catalog·과거 localhost visual management surface는 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`에 따라 고유 정보만 한 번 흡수한 뒤 active/default 작업면으로 사용하지 않는다.
+일반 프로젝트의 전체 흐름 확인·사람용 정보 수정·시각 검토는 exact Project Notion을 우선한다. 구조화 데이터·실제 구현·테스트는 repository owner가 우선한다. Google Sheets migration 상세는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`, Figma·project-management Tool Hub·QA Evidence Studio·외부 HTML dashboard/catalog·과거 localhost visual management surface는 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`에 따라 고유 정보만 한 번 흡수한 뒤 active/default 작업면으로 사용하지 않는다.
 
 ## 구조 최적화·작업 지원 Skill
 
