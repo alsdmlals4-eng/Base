@@ -22,22 +22,23 @@ class VerticalSliceV9ContractTests(unittest.TestCase):
             'release_line: "Base v9.3"',
             "active_authority: true",
             "SINGLE_ATTACHMENT_RECONCILIATION_AWARE_INTEGRATED_EXECUTION",
-            "이 파일 하나만 첨부하면 저장소 우선 인터뷰부터 기획·Codex 인계·구현·검수·병합 후 동기화까지",
+            "GPT 기획·검수",
             "APPLICATION_BINDING",
             "REPOSITORY_FIRST_INTERVIEW",
             "INTEGRATED_DELIVERY_PROFILE",
             "RECONCILIATION_PLANNING_PROFILE",
             "CONDITIONAL_RECONCILIATION",
             "모든 첨부의 기본값이 아니라",
-            "PLAN_AND_CODEX_HANDOFF",
+            "OPTIONAL_CODEX_HANDOFF",
             "CANONICAL_UPDATE_AND_IMPLEMENTATION",
             "MERGE_AND_SYNC",
             "병합된 main을 기준으로만",
             "금지: 게임 코드·Scene·데이터·에셋 수정",
-            "Google Sheet 쓰기",
             "요청·승인·Issue/Goal 없이 제품 범위를 발명하는 구현",
         ):
             self.assertIn(term, prompt)
+        self.assertNotIn("PROJECT_SHEET_CONFIGURED", prompt)
+        self.assertNotIn("PROJECT_SHEET_SEMANTIC_TABS", prompt)
 
     def test_legacy_contracts_are_classified_without_auto_replacement(self) -> None:
         prompt = read("templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md")
@@ -67,6 +68,8 @@ class VerticalSliceV9ContractTests(unittest.TestCase):
             "최종 게임 리소스",
             "Godot 구현 완료",
             "사용자 Decision 없이는",
+            "NOTION_VISUAL_CHECKPOINT_BEFORE_POC",
+            "APPROVED_VISUALS_FEED_POC",
         ):
             self.assertIn(term, prompt)
 
@@ -176,16 +179,18 @@ class VerticalSliceV9ContractTests(unittest.TestCase):
         for term in ("`intermediate-visual-checkpoint`", "Screen Interpretation Review", "사용자 Decision 없이"):
             self.assertIn(term, skill)
 
-    def test_merged_main_sheet_sync_requires_exact_configured_destination_and_readback(self) -> None:
+    def test_postmerge_sync_targets_exact_project_notion_and_repository_readback(self) -> None:
         prompt = read("templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md")
         for term in (
-            "PROJECT_SHEET_CONFIGURED",
-            "spreadsheet URL·ID·쓰기 권한·대상 tab·변경 range",
-            "계약된 tab·range만",
-            "전후 값을 즉시 재조회",
+            "NOTION_HUMAN_FACING_CANON",
+            "REPOSITORY_STRUCTURED_CANON",
+            "exact Project Notion",
+            "destination readback",
             "병합된 **뒤에만**",
+            "GOOGLE_SHEETS_MIGRATE_THEN_REMOVE",
         ):
             self.assertIn(term, prompt)
+        self.assertNotIn("spreadsheet URL·ID·쓰기 권한·대상 tab·변경 range", prompt)
 
 
 if __name__ == "__main__":
