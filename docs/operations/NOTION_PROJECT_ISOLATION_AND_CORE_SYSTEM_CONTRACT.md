@@ -131,6 +131,27 @@ resolve exact Project
 - 여러 프로젝트가 들어 있는 공용 페이지의 전체 `replace_content`를 기본 업데이트 방식으로 사용.
 - linked view filter 없이 공용 Master를 project user surface에 노출.
 
+## 5A. ZERO_INCREMENTAL_COST Free-plan fallback
+
+기본 운영은 `ZERO_INCREMENTAL_COST`를 유지한다. Notion의 SQL형 `query_data_sources`는 `QUERY_DATA_SOURCES_OPTIONAL`이며 기본 작업 완료 조건이 아니다.
+
+`query_data_sources`가 플랜 제한으로 비활성·upgrade-required 상태여도 표준 프로젝트 작업은 중단하지 않는다.
+
+```text
+exact Project Registry row resolve
+→ Project-filtered linked view 확인
+→ search/fetch로 exact Project·Record Key 확인
+→ Revision + Last Edited pre-read
+→ bounded field-level update
+→ destination readback
+```
+
+- Project-filtered linked view, `search/fetch`, page/data-source fetch, bounded update, destination readback을 기본 fallback으로 사용한다.
+- Business 전용 SQL 집계 기능은 대량 교차 프로젝트 분석의 선택적 최적화일 뿐이다.
+- 표준 프로젝트 생성·수정·교차검증만을 위해 유료 Notion 업그레이드를 요구하지 않는다.
+- 여러 프로젝트 집계가 필요하지만 SQL query가 없으면 프로젝트별 filtered view/readback으로 분할 검증하고, 실행하지 않은 전역 집계를 완료로 주장하지 않는다.
+- 무료 fallback도 동일한 Project namespace, Record Key, Revision/Last Edited, conflict fail-closed 규칙을 유지한다.
+
 ## 6. Conflict states
 
 ```text
