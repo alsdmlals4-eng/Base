@@ -162,7 +162,7 @@ failure / interruption
 
 ### `RELEASE_NEAR_VERTICAL_SLICE_FIRST`
 
-기획·검수를 닫은 뒤 플레이어 재미·몰입·가독성·첫인상·선택의 감정적 효과를 검증하는 첫 인간 플레이 테스트는 짧더라도 **실제 출시 의도에 가까운 완성형 Vertical Slice**를 대상으로 한다. `GAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE`이며, `SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED`에 따라 실제 게임에 사용할 방향의 UI/UX, 이미지·아트, 애니메이션/연출, 대표 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠가 한 구간에서 연결되어야 한다.
+기획·검수를 닫은 뒤 플레이어 재미·몰입·가독성·첫인상·선택의 감정적 효과를 검증하는 첫 인간 플레이 테스트는 짧더라도 **실제 출시 의도에 가까운 완성형 Vertical Slice**를 대상으로 한다. `GAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE`이며, `SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED`에 따라 실제 게임 사용 후보인 UI/UX, 이미지·아트, 애니메이션/연출, 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠가 한 구간에서 연결되어야 한다. 플레이어가 보는·듣는·조작하는 경로에는 임시 `player-facing placeholder`나 dummy 표현을 남겨 플레이 경험을 왜곡하지 않는다.
 
 `SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`: 시스템만 동작하는 회색 상자·dummy UI·무음/무연출 PoC는 알고리즘·성능·호환성·데이터 흐름 같은 좁은 기술 질문에는 쓸 수 있지만 재미·몰입·판매력·가독성·감정·기억·전체 UX의 PASS 근거가 될 수 없다. 이런 검증은 `TECHNICAL_SPIKE_INTERNAL_ONLY`로 분리하며 공개 데모·Vertical Slice·player-experience evidence로 승격하지 않는다.
 

@@ -161,7 +161,7 @@ Hiding system metadata is a presentation decision, not deletion. Automation may 
 
 ## Release-near Vertical Slice visual readiness
 
-`RELEASE_NEAR_VERTICAL_SLICE_FIRST`를 게임 플레이 검증의 기본으로 한다. 기획·검수를 닫은 뒤 재미·몰입·가독성·첫인상·판매 포인트·감정 곡선을 판단하는 플레이 테스트는 `shipping-intent` 짧은 Vertical Slice에서 수행한다. `SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED`에 따라 실제 게임에서 사용할 방향의 UI/UX, 이미지·아트, 애니메이션/연출, 대표 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠를 서로 연결한 상태여야 한다.
+`RELEASE_NEAR_VERTICAL_SLICE_FIRST`를 게임 플레이 검증의 기본으로 한다. 기획·검수를 닫은 뒤 재미·몰입·가독성·첫인상·판매 포인트·감정 곡선을 판단하는 플레이 테스트는 `shipping-intent` 짧은 Vertical Slice에서 수행한다. `SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED`에 따라 실제 게임 사용 후보인 UI/UX, 이미지·아트, 애니메이션/연출, 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠를 서로 연결한 상태여야 한다. 플레이어가 실제로 보는·듣는·조작하는 Slice 경로에는 임시 `player-facing placeholder`나 dummy presentation을 남기지 않는다.
 
 ```text
 planning + UX/UI/audio/VFX flow

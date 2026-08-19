@@ -12,7 +12,7 @@ EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT: REQUIRED
 PLAYER_APPEAL_QUALITY_GATE: REQUIRED
 ```
 
-플레이어 경험을 판단하는 Slice는 실제 게임에 사용할 방향의 **UI/UX · 이미지/아트 · 애니메이션/연출 · 대표 사운드 · VFX/피드백 · 핵심 시스템/데이터/콘텐츠**를 한 짧은 흐름으로 완성한 뒤 테스트한다. 시스템-only PoC는 기술 질문에만 쓰며 재미·몰입·가독성·첫인상·판매력·감정·기억을 PASS 처리하지 않는다.
+플레이어 경험을 판단하는 Slice는 실제 게임 사용 후보인 **UI/UX · 이미지/아트 · 애니메이션/연출 · 사운드 · VFX/피드백 · 핵심 시스템/데이터/콘텐츠**를 한 짧은 흐름으로 완성한 뒤 테스트한다. 플레이어가 접하는 경로에 임시 `player-facing placeholder`나 dummy presentation을 남기지 않는다. 시스템-only PoC는 기술 질문에만 쓰며 재미·몰입·가독성·첫인상·판매력·감정·기억을 PASS 처리하지 않는다.
 
 ### Player Appeal Quality Gate
 - 독창성·차별점: 왜 유사 게임 대신 이 게임을 선택하는가?

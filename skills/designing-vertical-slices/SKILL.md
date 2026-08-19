@@ -11,7 +11,7 @@ description: Use when one playable segment must prove core experience, target qu
 
 `RELEASE_NEAR_VERTICAL_SLICE_FIRST`: 기획·검수 뒤 플레이어 경험을 판정하는 첫 인간 플레이 테스트는 짧더라도 release-near/shipping-intent Vertical Slice에서 수행한다.
 
-`SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED`: 실제 게임에 사용할 방향의 UI/UX, 이미지·아트, 애니메이션/연출, 대표 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠가 한 대표 흐름에서 서로 연결되어야 한다. placeholder가 남아 전체 경험을 왜곡하면 human playtest gate로 올리지 않는다.
+`SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED`: 실제 게임 사용 후보인 UI/UX, 이미지·아트, 애니메이션/연출, 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠가 한 대표 흐름에서 서로 연결되어야 한다. 플레이어가 보는·듣는·조작하는 경로에는 임시 `player-facing placeholder`나 dummy presentation을 남기지 않으며, 해당 요소가 이후 튜닝·교체될 수 있어도 현재 Slice 자체는 production-candidate 품질이어야 한다.
 
 `SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`: 시스템-only PoC는 기술 가능성·알고리즘·성능·호환성 같은 좁은 질문의 `TECHNICAL_SPIKE_INTERNAL_ONLY` evidence다. 재미·몰입·가독성·첫인상·판매력·감정·기억·전체 UX의 PASS 근거로 사용하지 않는다.
 
