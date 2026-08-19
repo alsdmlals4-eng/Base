@@ -53,6 +53,22 @@ class P04VerticalSlicePlayerValueTraceTests(unittest.TestCase):
         ):
             self.assertIn(term, benchmark)
 
+    def test_active_p04_templates_do_not_restore_retired_sheet_or_figma_authority(self) -> None:
+        tutorial = read("templates/planning/TUTORIAL_AND_ONBOARDING_DESIGN_CONTRACT.md")
+        feature = read("templates/planning/GAME_FEATURE_DESIGN_SPEC.md")
+        benchmark = read("templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md")
+
+        self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", tutorial)
+        self.assertNotIn("connected_google_sheet:", tutorial)
+        self.assertNotIn("configured_google_sheets_state:", tutorial)
+
+        self.assertIn("Notion", feature)
+        self.assertNotIn("Google Sheets에는 Feature ID", feature)
+        self.assertNotIn("Mermaid·Figma·FigJam", feature)
+
+        self.assertIn("Notion", benchmark)
+        self.assertNotIn("Project Sheet 갱신", benchmark)
+
 
 if __name__ == "__main__":
     unittest.main()
