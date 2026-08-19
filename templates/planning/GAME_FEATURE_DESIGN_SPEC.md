@@ -22,7 +22,7 @@ L0 Project Direction
 
 - 불확실성이 싼 검증에서 살아남기 전에 상세 문서를 키우지 않는다.
 - 전문 분야 정본이 더 정확하면 이 문서에 전문을 복제하지 않고 `source_id + path + section`으로 reference/compose한다.
-- Google Sheets에는 Feature ID·Decision ID·핵심 수치·상태·canonical path만 요약하고 이 전문을 복제하지 않는다.
+- 사람용 기획·승인 요약은 프로젝트 Notion의 현재 Project 관계에 연결하고, 코드·데이터·Scene·Resource·검증 상태는 repository-native owner를 따른다. 이 Spec 전문을 별도 표나 외부 작업면에 복제해 새 정본으로 만들지 않는다.
 - 구현 사실, 승인된 설계, 가설, 미결정을 같은 상태로 섞지 않는다.
 - benchmark와 prototype은 설계 근거이지 사람 플레이 검증을 자동으로 대신하지 않는다.
 
@@ -204,7 +204,7 @@ Trigger
 
 ### Flow diagram
 
-필요하면 Mermaid·Figma·FigJam·이미지를 사용하되 실제 책임 규칙은 본문의 ID와 연결한다.
+필요하면 Mermaid 또는 현재 승인된 Notion/repository-linked visual artifact를 사용하되 실제 책임 규칙은 본문의 ID와 연결한다. 시각 자료는 의미를 보조하며 이 Spec의 규칙 권위를 대체하지 않는다.
 
 ---
 

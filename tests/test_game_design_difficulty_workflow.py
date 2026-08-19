@@ -199,6 +199,49 @@ class GameDesignDifficultyWorkflowTests(unittest.TestCase):
         ):
             self.assertIn(term, guide)
 
+    def test_player_value_research_and_vertical_slice_evidence_contract(self) -> None:
+        guide = read(
+            "docs/knowledge/game-development/"
+            "GAME_DESIGN_AND_PLAYER_EXPERIENCE_GUIDE.md"
+        )
+        concept = read("skills/analyzing-and-refining-game-concepts/SKILL.md")
+        research = read("skills/governing-game-user-research-coverage/SKILL.md")
+        vertical_slice = read("skills/designing-vertical-slices/SKILL.md")
+
+        self.assertIn("P04_PLAYER_VALUE_TO_EVIDENCE_TRACE", guide)
+        for term in (
+            "player_promise",
+            "meaningful_choice",
+            "expected_experience",
+            "research_question",
+            "observable_signal",
+            "evidence_ceiling",
+            "slice_acceptance",
+        ):
+            self.assertIn(term, guide)
+
+        self.assertNotIn("프로젝트 정본·Google Sheets·실제 코드", concept)
+        self.assertIn("DECISION_SPECIFIC_RESEARCH", concept)
+        self.assertIn("Notion/GitHub", concept)
+
+        for term in (
+            "RESEARCH_QUESTION_FIRST",
+            "DECISION_RELEVANT_COVERAGE",
+            "NOT_APPLICABLE",
+            "11/11",
+        ):
+            self.assertIn(term, research)
+
+        for term in (
+            "PLAYER_VALUE_TRACE_REQUIRED",
+            "player_promise",
+            "meaningful_choice",
+            "observable_signal",
+            "evidence_ceiling",
+            "slice_acceptance",
+        ):
+            self.assertIn(term, vertical_slice)
+
     def test_change_and_learning_records_exist(self) -> None:
         changelog = read("docs/CHANGELOG.md")
         learning = read("skills/SKILL_LEARNING_LOG.md")
@@ -215,6 +258,15 @@ class GameDesignDifficultyWorkflowTests(unittest.TestCase):
             "한 번의 성공을 공용 강제 규칙으로 승격하지 않음",
         ):
             self.assertIn(term, learning)
+
+
+# Required-check bridge: this existing workflow-owned test module deliberately
+# imports the focused P04 regression so player-value/world-fit/legacy-surface
+# contract changes cannot pass only because a new test file exists outside the
+# workflow's explicit unittest list.
+from tests.test_p04_vertical_slice_player_value_trace import (
+    P04VerticalSlicePlayerValueTraceTests,
+)
 
 
 if __name__ == "__main__":

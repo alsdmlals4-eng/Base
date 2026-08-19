@@ -19,6 +19,29 @@
 - 반복할수록 깊어지는 요소:
 - 다음 플레이를 부르는 미완료 욕구:
 
+## 3.1 WORLD_STORYLINE_FIT_REQUIRED
+
+주요 컨셉·기능·시스템 후보는 기능적으로 성립하거나 벤치마크가 강해도, 프로젝트가 확정한 세계관·핵심 스토리·플레이어 판타지를 훼손하면 Production 후보로 승격하지 않는다.
+
+```yaml
+world_storyline_fit_status: FIT | NOT_APPLICABLE | CONFLICT | UNVERIFIED
+world_invariants:
+core_story_invariants:
+player_fantasy_promise:
+conflicting_elements:
+adaptation_or_removal:
+not_applicable_reason:
+```
+
+- 세계관:
+- 핵심 스토리:
+- 플레이어 판타지:
+- 이번 방향이 강화하는 부분:
+- 충돌하거나 약화시키는 부분:
+- `CONFLICT / UNVERIFIED`일 때 필요한 변경·추가 검증:
+
+`NOT_APPLICABLE`은 세계관·스토리 축이 현재 게임에 실질적으로 없을 때만 이유와 함께 사용한다.
+
 ## 4. 제약 조건
 
 | 영역 | 확인된 제약 | 설계 영향 | 대응·활용 |
@@ -177,5 +200,6 @@ ddd_observation:
 - 제외 범위:
 - Vertical Slice 선행 조건:
 - DDD 선행 검증:
+- `WORLD_STORYLINE_FIT_REQUIRED` 상태:
 - 미검증·위험:
 - 다음 질문:

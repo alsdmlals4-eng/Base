@@ -104,6 +104,28 @@ evidence_needed:
 
 사람 관찰을 실행하지 않았으면 `HUMAN_USABILITY_EVIDENCE=NOT_RUN`, `PLAYER_EXPERIENCE_EVIDENCE=NOT_RUN`을 유지한다. 작은 내부 테스트도 테스터의 사전 노출, 과제·질문, 실제 행동·답변, 표본 한계를 함께 기록한다. 자동 테스트·UI 렌더·텍스트 체크만으로 사람 경험의 상태를 올리지 않는다.
 
+### P04_PLAYER_VALUE_TO_EVIDENCE_TRACE
+
+P04의 핵심 기획·연구·Vertical Slice 판단은 기능 목록이 아니라 다음 한 줄 추적으로 연결한다.
+
+```yaml
+player_promise:
+meaningful_choice:
+expected_experience:
+research_question:
+observable_signal:
+evidence_ceiling:
+slice_acceptance:
+```
+
+- `player_promise`와 `meaningful_choice`는 코어가 플레이어에게 약속하는 가치와 실제 고민을 고정한다.
+- `research_question`은 방법을 고르기 전에 **어떤 결정을 바꾸기 위해 무엇을 배울지**를 명시한다.
+- `observable_signal`은 행동·자기보고·이벤트·퍼널·관찰 중 어떤 증거로 기대 경험을 확인할지 정한다.
+- `evidence_ceiling`은 현재 증거로 주장 가능한 최대 수준이다. 기술·정적·UI 증거만으로 사람의 이해·감정·기억을 PASS하지 않는다.
+- `slice_acceptance`는 신호가 지지·반박·미검증일 때 `EXPAND / REWORK / REPEAT_SLICE / HOLD / STOP` 등 다음 결정을 연결한다.
+
+`analyzing-and-refining-game-concepts`는 현재 결정을 위한 `DECISION_SPECIFIC_RESEARCH`를 수행하고, `governing-game-user-research-coverage`는 연구 질문에 필요한 coverage와 evidence gap을 감사한다. `designing-vertical-slices`는 이 trace를 대표 구간 acceptance로 소비한다. 프로젝트 코어의 기존 사실 판정과 새/변경 코어 확정 권한은 각각 `identifying-project-core`, `establishing-project-core`에 남긴다.
+
 ## 5. 핵심 루프·세션 루프·메타 루프
 
 ### Micro Loop
@@ -480,6 +502,7 @@ REMOVE
 ## 플레이어 약속·대상 플레이어·플레이 상황
 ## 감정·판타지·핵심 선택·반복 행동
 ## Mechanics / Dynamics / Experience / Evidence
+## P04 player-value-to-evidence trace·evidence ceiling·slice acceptance
 ## Micro·Session·Meta Loop
 ## 게임 필·보상 사다리·난이도·실패 복구
 ## 온보딩·점진적 공개
