@@ -294,7 +294,7 @@
         "Registry 변경은 CP0 request로만 전달"
       ],
       "revisit_conditions": [
-        "active Skill 수가 40개 초과",
+        "Skill 책임·trigger·context가 중복되어 실제 routing/maintenance 비용이 증가",
         "legacy cleanup backlog가 독립 작업량으로 커짐",
         "reference freshness false positive/negative가 반복됨"
       ],
@@ -490,6 +490,7 @@
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8137888edd1e41745099?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c8122acffca50aed2c68f?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81f2a6d7de82c0938277?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81498eb5da3fea812390?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c817eb473ea7758a1999d?pvs=204",
@@ -568,7 +569,7 @@
         "프로젝트 고유 규칙과 Base 공용 원리가 분리"
       ],
       "revisit_conditions": [
-        "게임 설계 Skill이 8개 이상으로 증가",
+        "게임 설계 Skill 책임·trigger가 겹치거나 context/routing 비용이 materially 증가",
         "P04가 아트/런타임 구현까지 반복 침범",
         "다른 장르의 기획 계약이 현재 core model과 충돌"
       ],
@@ -631,6 +632,7 @@
         "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8137888edd1e41745099?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8122acffca50aed2c68f?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81f2a6d7de82c0938277?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81498eb5da3fea812390?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c817eb473ea7758a1999d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8110b3c3f659a7fe266e?pvs=204",
@@ -777,6 +779,7 @@
         "https://app.notion.com/p/3c11b237eb1c8137888edd1e41745099?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8122acffca50aed2c68f?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81f2a6d7de82c0938277?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81498eb5da3fea812390?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c817eb473ea7758a1999d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8110b3c3f659a7fe266e?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8169b55af5b2f27d9bb7?pvs=204",
@@ -786,7 +789,7 @@
     {
       "part_id": "P06",
       "name": "Godot, Runtime & Technical Toolchain",
-      "purpose": "Godot 저작/실행/디버깅, addon/toolchain, runtime adapter와 QA technical tooling을 최적화한다.",
+      "purpose": "Godot 저작/실행/디버깅, addon/toolchain, runtime adapter와 repository-native runtime evidence boundary를 최적화한다.",
       "context_pack": "docs/operations/base-partitions/P06_GODOT_RUNTIME_TOOLCHAIN.md",
       "owned_skill_ids": [
         "diagnosing-game-engine-runtime-failures",
@@ -822,14 +825,15 @@
         "Existing Solution First",
         "actual runtime evidence before PASS",
         "project-dedicated local environment",
-        "no authoring bypass"
+        "no authoring bypass",
+        "QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW"
       ],
       "modules": [
         "Godot Authoring Authority",
         "Runtime Diagnostics",
         "Addon/Plugin Evaluation",
         "Editor/Runtime Adapter",
-        "QA Technical Tooling",
+        "Repository-native Runtime Evidence Interface",
         "Local Execution Environment"
       ],
       "validation": [
@@ -840,12 +844,12 @@
         "Godot authoring writer 중복 0",
         "실행하지 않은 runtime PASS 0",
         "addon은 실제 consumer가 있을 때만 유지",
-        "QA/local tooling은 unique 기능 흡수 후 retirement 여부 판정"
+        "retired QA/local management surface를 active route로 재도입 0"
       ],
       "revisit_conditions": [
         "Godot major/minor toolchain 변경",
         "HiGodot authority 정책 변경",
-        "QA Evidence Studio retirement가 완료되어 P06 범위가 크게 축소"
+        "retired local QA/tool code consumer 0이 확인되어 physical retirement task가 안전해짐"
       ],
       "learning_log": "docs/operations/base-partitions/learning/P06_LEARNING_LOG.md",
       "learning_capture": {
@@ -880,7 +884,7 @@
         "discovery_questions": [
           "current Godot engine/runtime/debugging guidance and regressions",
           "addon/plugin evaluation, editor tooling and local execution reliability",
-          "runtime QA tooling that provides unique evidence without duplicating the authoring authority"
+          "repository-native runtime evidence patterns that avoid a second management authority"
         ],
         "existing_source_action": "CHECK_DUE_OR_MATERIAL_NEW_OR_UPDATED_ITEMS",
         "new_source_action": "SEARCH_FOR_ADDITIONAL_PRIMARY_OR_PROFESSIONAL_SOURCES",
@@ -1040,7 +1044,7 @@
       "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
       "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
-        "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
+        "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8137888edd1e41745099?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c8122acffca50aed2c68f?pvs=204",
@@ -1348,7 +1352,7 @@
         "P05",
         "P06"
       ],
-      "rule": "inventory unique capability before deletion; do not revive as default workspace"
+      "rule": "absorb unique concepts into current owners; active/default Tool Hub route remains retired"
     },
     {
       "surface": "QA Evidence Studio/local QA tooling",
@@ -1356,7 +1360,7 @@
       "destination_parts": [
         "P07"
       ],
-      "rule": "retain only unique verification capability not replaced by repo/runtime evidence; otherwise absorb then retire"
+      "rule": "absorb evidence vocabulary/contracts into REPOSITORY_NATIVE_EVIDENCE_CAPTURE; retire active route; physical deletion only after consumer/readback safety"
     }
   ],
   "integration": {
@@ -1381,7 +1385,7 @@
     "final_confirmation_chat": "CURRENT_COORDINATOR_CHAT"
   },
   "revisit_conditions": [
-    "active Skill count > 40",
+    "Skill routing/ownership conflict materially increases despite consolidation",
     "median cross-part requests > 3 per Part optimization",
     "any single Part repeatedly exceeds practical GPT context",
     "two or more Parts repeatedly edit the same semantic owner through Integration",
