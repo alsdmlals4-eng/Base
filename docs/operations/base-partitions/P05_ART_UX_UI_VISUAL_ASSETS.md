@@ -13,7 +13,7 @@
 `designing-art-prompts-and-technique-cards`, `auditing-and-refining-ui-art`, `building-project-visual-dashboards`.
 
 ## 중요 규칙
-VISUALIZED_POC_BEFORE_DEMO_TEST, Project Notion placement + readback, PROJECT_ASSET_APPROVED, identity-preserving edit, LEGACY_ABSORB_VERIFY_REMOVE.
+RELEASE_NEAR_VERTICAL_SLICE_FIRST, Project Notion placement + readback, PROJECT_ASSET_APPROVED, identity-preserving edit, LEGACY_ABSORB_VERIFY_REMOVE.
 
 ## 핵심 Module
 Art Direction → Candidate Image → Visual QA → UX/UI → Notion Asset/Flow → Reuse → Retired Tool Absorption.
@@ -31,3 +31,8 @@ visual/BCA 회귀 + scope 검사 + 실제 Notion readback이 필요한 변경은
 - 새 공용 교훈이 없으면 `NO_NEW_REUSABLE_LESSON`; 프로젝트 전용이면 `PROJECT_ONLY`; Base 승격 후보면 `BASE_PROMOTION_CANDIDATE`.
 - 주기 Source domains: GAME_DEVELOPMENT.
 - 전역 Periodic Source Scan Queue에서 기존 Source 새/변경 자료와 신규 관련 사이트를 탐색하고, 원출처 검증 전에는 `UNVERIFIED_DISCOVERY`로 유지한다.
+
+
+## Current Vertical Slice visual invariant
+
+`RELEASE_NEAR_VERTICAL_SLICE_FIRST` + `SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`: player-facing validation uses shipping-intent UI/image/audio/VFX/system integration; system-only PoC stays technical-only.

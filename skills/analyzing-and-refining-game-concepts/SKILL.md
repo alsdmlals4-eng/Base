@@ -11,6 +11,12 @@ description: Use when defining or revising game concept, pointed fun, systems, d
 
 프로젝트 코어의 사실 판정·승인은 코어 Skill, 11영역 Games User Research 구조의 설치·누락 감사는 `governing-game-user-research-coverage`, 기획 책임 원본 작성·발행은 `managing-design-documents`, 실제 변경 검증은 `reviewing-and-validating-project-changes`가 책임진다.
 
+`PLAYER_APPEAL_QUALITY_GATE`: Production 후보와 플레이테스트용 Vertical Slice는 기능 수가 아니라 플레이어 가치로 검수한다. 최소한 **독창성/차별점**, `DDD`의 행동-피드백-보상 품질, 아트·UI·사운드·연출의 **일관성**, 불필요한 **복잡성**, 의도한 **난이도와 접근 가능성**, 캐릭터/세계관/상호작용의 개성과 기억에 남는 순간을 함께 공격한다. 자동 테스트나 정적 문서만으로 재미·몰입을 PASS 처리하지 않으며 실제 인간 플레이가 필요한 축은 실행 전까지 `NOT_RUN`이다.
+
+`EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT`: 벤치마크·기존 시스템·자산·UI·오디오·도구를 먼저 조사하되 복사하지 않고 현재 프로젝트 코어와 장기 방향에 맞게 `ADOPT / ADAPT / REJECT`한다.
+
+`RELEASE_NEAR_VERTICAL_SLICE_FIRST`: 시스템-only PoC는 기술 Spike로 제한한다. 재미·몰입·첫인상·전체 UX를 검증할 때는 shipping-intent UI/UX·이미지/아트·사운드·VFX·시스템/콘텐츠가 연결된 짧은 완성형 Vertical Slice를 사용한다.
+
 `DECISION_SPECIFIC_RESEARCH`: 이 Skill은 현재 게임 결정을 바꾸는 구체적 질문에 대해 벤치마크·플레이테스트·행동/자기보고 증거를 해석한다. 연구 영역의 전수 채움이나 coverage 상태 관리는 `governing-game-user-research-coverage`가 소유하며, 두 Skill이 같은 연구 책임을 중복 수행하지 않는다.
 
 `WORLD_STORYLINE_FIT_REQUIRED`: 주요 컨셉·기능·시스템·난이도·PoC 후보는 기능적으로 작동하거나 벤치마크가 강하더라도 프로젝트가 확정한 **세계관·핵심 스토리·플레이어 판타지**와 충돌하면 Production 후보로 승격하지 않는다. 해당 축이 현재 프로젝트에 실질적으로 없으면 이유가 있는 `NOT_APPLICABLE`로 남기고, 존재한다면 `FIT / CONFLICT / UNVERIFIED`를 근거와 함께 판정한다.

@@ -24,7 +24,12 @@ ADVERSARIAL_REVIEW_UNTIL_CLEAN
 FULL_LOOP_COUNT_MINIMUM: 5
 MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
 POSTMERGE_PROMOTION_AND_SUPERSESSION
-CORE_LOOP_DUMMY_BALANCE_BUILD_TEST
+RELEASE_NEAR_VERTICAL_SLICE_FIRST
+GAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE
+SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE
+TECHNICAL_SPIKE_INTERNAL_ONLY
+EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT
+SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED
 BALANCE_BUDGET
 WORLD_STORYLINE_FIT_REQUIRED
 REUSABLE_SYSTEM_EXTRACTION
@@ -155,9 +160,15 @@ failure / interruption
 
 ## 8. 게임 작업 계약
 
-### `CORE_LOOP_DUMMY_BALANCE_BUILD_TEST`
+### `RELEASE_NEAR_VERTICAL_SLICE_FIRST`
 
-게임 작업은 core loop, 핵심 시스템, 세계관/핵심 스토리라인 정합성, 가역적 dummy `BALANCE_BUDGET`, playable build/test와 재사용 가능한 모듈 경계를 함께 본다.
+기획·검수를 닫은 뒤 플레이어 재미·몰입·가독성·첫인상·선택의 감정적 효과를 검증하는 첫 인간 플레이 테스트는 짧더라도 **실제 출시 의도에 가까운 완성형 Vertical Slice**를 대상으로 한다. `GAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE`이며, `SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED`에 따라 실제 게임에 사용할 방향의 UI/UX, 이미지·아트, 애니메이션/연출, 대표 음악·효과음, VFX/피드백, 핵심 시스템·데이터·콘텐츠가 한 구간에서 연결되어야 한다.
+
+`SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`: 시스템만 동작하는 회색 상자·dummy UI·무음/무연출 PoC는 알고리즘·성능·호환성·데이터 흐름 같은 좁은 기술 질문에는 쓸 수 있지만 재미·몰입·판매력·가독성·감정·기억·전체 UX의 PASS 근거가 될 수 없다. 이런 검증은 `TECHNICAL_SPIKE_INTERNAL_ONLY`로 분리하며 공개 데모·Vertical Slice·player-experience evidence로 승격하지 않는다.
+
+`EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT`: 완성형 Slice를 만든다는 이유로 모든 자산·UI·사운드·효과를 새로 만들지 않는다. 현재 프로젝트의 승인된 자산·구조·도구·검증된 외부 해법을 먼저 조사하고 `ADOPT / ADAPT / REJECT`로 판정한다. 프로젝트의 세계관·핵심 경험·가독성·일관성에 맞는 기존 해법은 재사용·변형하고, 검증 목적에 실제로 필요한 대표 품질만 구현한다.
+
+가역적 `BALANCE_BUDGET`과 내부 기술 Spike는 완성형 Slice 제작 중 위험을 줄이는 보조 수단이며, 그 자체가 인간 플레이 검증 제품은 아니다.
 
 ### `WORLD_STORYLINE_FIT_REQUIRED`
 
