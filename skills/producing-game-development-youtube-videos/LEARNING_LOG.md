@@ -77,3 +77,41 @@ production_marketing_effectiveness: NOT_PROVEN
 - YouTube changes title/thumbnail experiment eligibility, tested elements, winner criteria, or result semantics.
 - A real project runs the native experiment and exposes repeatable fields or confounders missing from the current packet.
 - Multiple episodes show that the package experiment should be simplified, expanded, or removed.
+
+## 2026-08-18 — Shorts metric-definition context
+
+### Trigger
+
+Merged PR #520 rechecked first-party YouTube Help and found a bounded comparability risk: from 2025-03-31, Shorts public `views` count starts/replays without the previous minimum-watch-time basis, while the earlier basis remains available in Analytics as `Engaged views`.
+
+### What changed
+
+- Kept the existing YouTube Skill and Analytics mode; no new Skill, mode, KPI or platform policy was created.
+- The active `EPISODE_PACKET.md` records content type and the date on which the YouTube metric definition was checked.
+- Shorts public views and Engaged views are preserved as separate fields with an explicit `shorts_views_basis`.
+- A metric-definition change is treated as a longitudinal-comparison confounder rather than silently joining differently defined values into one time series.
+- `tests/test_youtube_metric_definition_context.py` locks the reusable recording contract.
+
+### Reusable lesson
+
+A platform metric label is not sufficient provenance for longitudinal analysis. When the platform changes a definition, record **content format + definition basis + checked/effective date** and keep incompatible historical/current values separate unless an explicit bridge is justified.
+
+This is measurement integrity, not evidence that game demand, audience quality, conversion or marketing effectiveness changed.
+
+### Knowledge state
+
+```yaml
+source_authority: YOUTUBE_FIRST_PARTY_HELP
+repository_contract: EXECUTABLE_EVIDENCE
+real_episode_longitudinal_pilot: NOT_RUN
+human_audience_validation: HUMAN_NOT_RUN
+conversion_validation: CONVERSION_UNVERIFIED
+production_marketing_effectiveness: NOT_PROVEN
+```
+
+### Revisit triggers
+
+- YouTube changes Shorts public-view or Engaged-view definitions again.
+- Analytics removes, renames or changes the availability of Engaged views.
+- A real project must bridge historical Shorts series across definition changes.
+- Another publication platform shows the same metric-label/definition drift often enough to justify Base-wide promotion.
