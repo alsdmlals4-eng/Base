@@ -131,8 +131,8 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             "ASSET_KNOWLEDGE_MASTER",
             "VISUAL_MAP_DERIVED",
             "REPO_NATIVE_STRUCTURED_DATA",
-            "GOOGLE_SHEETS_COMPATIBILITY_ONLY",
-            "EXTERNAL_HTML_TOOL_CATALOG: DERIVED_DISCOVERY_SURFACE",
+            "GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL",
+            "EXTERNAL_HTML_WORKSPACE_RETIRED",
             "LOOP_ENGINEERING: REQUIRED_WHEN_RELEVANT",
         ):
             self.assertIn(term, policy)

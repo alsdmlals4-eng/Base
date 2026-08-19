@@ -22,7 +22,7 @@ Registry의 `칭찬·균형 평가만 요청` 비사용 조건은 결정·권장
 - `refine-approved-findings`: `MUST_FIX`와 승인된 `SHOULD_FIX`만 최소 수정한다.
 - `regression-recheck`: 수정 전후의 정상 경로·코어·데이터·호환성·새 결함을 다시 공격한다.
 - `decision-report`: 반영·보류·기각·미검증과 남은 위험을 기록한다.
-- `post-merge-review`: 병합 또는 직접 `main` 결정 Commit 뒤 새 `main`·Decision·정본·실제 diff·Sheets·PR·branch를 다시 검토한다.
+- `post-merge-review`: 병합 또는 직접 `main` 결정 Commit 뒤 새 `main`·Decision·정본·실제 diff·Notion/GitHub sync·PR·branch를 다시 검토한다.
 - `repository-wide-audit`: 저장소 전체의 권한 지도, 중복·stale·고아 파일, 구형 계약, untouched 소비자, Prompt·파생본 drift를 공격하고 전문 Skill로 처리를 라우팅한다.
 
 일반 작업은 `attack → validate-critique → refine-approved-findings → regression-recheck → decision-report`를 사용한다. 저장소 전체 감사는 `references/repository-wide-audit-protocol.md`, 세부 Finding·회귀 판정은 `references/finding-and-regression-protocol.md`를 필요할 때만 읽는다.
@@ -128,7 +128,7 @@ merged_pr_or_direct_commit:
 main_head_before:
 main_head_after:
 open_and_recent_prs:
-google_sheet_state:
+notion_and_repository_sync_state:
 acceptance_criteria:
 protected_strengths_and_assets:
 constraints_and_validation_environment:
@@ -145,7 +145,7 @@ repository_audit:
   protected_paths_and_archive_roots:
 ```
 
-코어가 확정되지 않았다면 핵심 충돌은 `UNVERIFIED`로 둔다. Google Sheets 또는 Repository 설정을 읽지 못했으면 일치나 branch 삭제를 추정하지 않는다. 저장소 전체 tracked 목록을 얻지 못했으면 검색 결과를 전수 감사로 표현하지 않고 미검증 범위를 기록한다.
+코어가 확정되지 않았다면 핵심 충돌은 `UNVERIFIED`로 둔다. Notion 또는 Repository 설정을 읽지 못했으면 일치나 branch 삭제를 추정하지 않는다. 저장소 전체 tracked 목록을 얻지 못했으면 검색 결과를 전수 감사로 표현하지 않고 미검증 범위를 기록한다.
 
 ## Finding decisions
 
@@ -172,7 +172,7 @@ repository_audit:
 6. `decision-report`는 반영·보류·기각·미검증과 남은 위험을 모두 기록한다.
 7. 병합 뒤에는 설명이나 기존 PR 승인만 신뢰하지 않고 새 `main` HEAD와 실제 diff를 다시 읽는다.
 8. 질문 전·병합 후 동일 Goal의 열린 PR, 최근 병합 PR, 대체·후속 링크를 확인한다.
-9. 실행하지 않은 CI·런타임·렌더·Sheets 조회·branch 삭제를 통과로 표시하지 않는다.
+9. 실행하지 않은 CI·런타임·렌더·Notion readback·branch 삭제를 통과로 표시하지 않는다.
 10. 저장소 전체 감사에서 검색 API 결과만으로 전체 파일을 검수했다고 주장하지 않는다.
 11. 파일명·버전·날짜만으로 구형 파일을 삭제하지 않고 권한·고유 정보·활성 소비자·복구 가능성을 판정한다.
 12. 변경된 파일뿐 아니라 변경됐어야 할 untouched 소비자·Template·Test·파생본을 공격한다.
@@ -191,7 +191,7 @@ repository_audit:
 - 파일은 존재하지만 실제 routing·실행·검증 경로가 없는가.
 - PDF·DOCX·Dashboard·Manifest·생성본이 원본보다 오래됐는가.
 - 동일 Goal·기능·문서·질문·PR·branch가 중복됐는가.
-- Base Template·프로젝트 Sheet·프로젝트 상태의 권한이 혼동됐는가.
+- Base Template·프로젝트 Notion·프로젝트 상태의 권한이 혼동됐는가.
 - 별도 `CORE_POC`처럼 대체된 Gate가 현행 흐름으로 부활했는가.
 
 상세 권한 분류·`UNTOUCHED_CONSUMER` 표·처리 라우팅은 `references/repository-wide-audit-protocol.md`를 따른다.
@@ -206,7 +206,7 @@ repository_audit:
 - 실제 diff가 승인 범위나 프로젝트 코어를 벗어났는가
 - 관련 정본·Registry·Template·Test·파생본 일부가 untouched인가
 - 동일 Goal·기능·문서·질문·PR이 중복됐는가
-- GitHub `main`과 프로젝트 Google Sheets의 Decision·Commit·대체 관계가 다른가
+- GitHub `main`과 프로젝트 Notion의 Decision·Commit·대체 관계가 다른가
 - 기존 정상 경로·저장 호환성·롤백 경로가 회귀했는가
 - 임시값·플레이스홀더·미검증 주장이 확정 상태로 남았는가
 - 병합된 head branch가 안전 조건을 만족했는데 불필요하게 남았는가
@@ -220,12 +220,12 @@ merged PR or direct commit
 → affected domain canon
 → recent approved Decision IDs
 → actual code·data·assets·tests
-→ Google Sheets
+→ Project Notion
 → open and recent PRs
 → reference freshness·static·runtime·regression evidence
 ```
 
-GitHub와 Sheets가 다르면 최신 사용자 승인, Decision ID, Commit SHA와 분야 책임 원본을 비교해 어느 쪽이 누락됐는지 판정한다. 자동으로 양쪽 중 하나를 진실로 가정하지 않는다.
+GitHub와 Notion이 다르면 최신 사용자 승인, Decision ID, Commit SHA와 분야 책임 원본을 비교해 어느 쪽이 누락됐는지 판정한다. 자동으로 양쪽 중 하나를 진실로 가정하지 않는다.
 
 ## Output contract
 
@@ -252,7 +252,7 @@ GitHub와 Sheets가 다르면 최신 사용자 승인, Decision ID, Commit SHA�
 
 ## Post-merge final decisions
 
-- `NO_CONFLICT`: 정본·최근 승인·diff·Sheets·적용 검증에서 확인된 충돌이 없다.
+- `NO_CONFLICT`: 정본·최근 승인·diff·Notion readback·적용 검증에서 확인된 충돌이 없다.
 - `CONFLICT_FIXED`: 검증된 충돌을 승인 범위 안에서 최소 수정하고 재검사했다.
 - `USER_DECISION_REQUIRED`: 기술적으로 단일 답을 정할 수 없는 중요 기획 충돌이 남았다.
 - `BLOCKED_UNVERIFIED`: 필요한 도구·권한·정본·CI·런타임·Sheets 증거가 없어 완료 판정할 수 없다.
@@ -267,7 +267,7 @@ GitHub와 Sheets가 다르면 최신 사용자 승인, Decision ID, Commit SHA�
 - 현재 확정 Decision과 관련 분야 정본을 비교했다.
 - 최근 승인 누락과 이전 Decision 부활을 검사했다.
 - 동일 Goal의 열린·중복 PR을 확인했다.
-- 프로젝트가 Sheets를 사용하면 해당 Decision 행을 재조회했다.
+- 사람용 변경이 있으면 정확한 Project의 Notion destination을 readback했다.
 - 가능한 reference freshness·정적·런타임·회귀 검사를 실제 실행했다.
 - 실행하지 못한 검사를 성공으로 표시하지 않았다.
 
