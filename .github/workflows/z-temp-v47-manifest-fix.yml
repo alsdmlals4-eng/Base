@@ -22,20 +22,23 @@ jobs:
         shell: python
         run: |
           from pathlib import Path
+          import re
+
           p = Path('docs/operations/BASE_PARTITION_MANIFEST.json')
           text = p.read_text(encoding='utf-8')
           marker = '"part_id": "P07"'
           pos = text.index(marker)
           head, tail = text[:pos], text[pos:]
-          old = '''"notion_related_pages": [
-                "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
-                "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",'''
-          new = '''"notion_related_pages": [
-                "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
-                "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",'''
-          if tail.count(old) != 1:
-              raise SystemExit(f'expected exact P07 duplicate once, found {tail.count(old)}')
-          p.write_text(head + tail.replace(old, new, 1), encoding='utf-8')
+          hub = 'https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204'
+          shared = 'https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204'
+          pattern = re.compile(
+              r'("notion_related_pages"\s*:\s*\[\s*"' + re.escape(hub) +
+              r'"\s*,\s*)"' + re.escape(hub) + r'"'
+          )
+          tail, count = pattern.subn(r'\1"' + shared + '"', tail, count=1)
+          if count != 1:
+              raise SystemExit(f'expected exact P07 duplicate once, replaced {count}')
+          p.write_text(head + tail, encoding='utf-8')
           Path('.github/workflows/z-temp-v47-manifest-fix.yml').unlink()
       - name: Commit bounded correction
         run: |
