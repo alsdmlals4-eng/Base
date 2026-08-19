@@ -5,34 +5,47 @@ description: Use when installing, auditing, reconciling, migrating, or verifying
 
 # Managing the Game Project Operating System
 
-Base v9.1 projects use the focused [project adapter and routing contract](references/project-adapter-and-routing-contract.md). Validate the canonical adapter and generated snapshot before shared-route execution; copied shared bodies or failed pins are blocking integrity failures.
+Base projects use the focused [project adapter and routing contract](references/project-adapter-and-routing-contract.md). Validate the canonical adapter and generated snapshot before shared-route execution; copied shared bodies or failed pins are blocking integrity failures.
 
 ## Core principle
 
-신규 설치, 기존 구조 감사, 구형 파일 정리, 승인된 마이그레이션과 운영체계 검수는 같은 책임 원본·참조·복구 계약을 공유한다. `Work Mode`와 `Skill Mode`를 구분하며, 읽기 전용 조사와 승인된 쓰기 작업을 혼동하지 않는다. 프로젝트 GDD Google Sheets 설치·감사·검증은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 따른다.
+신규 설치, 기존 구조 감사, 구형 파일 정리, 승인된 마이그레이션과 운영체계 검수는 같은 책임 원본·참조·복구 계약을 공유한다. `Work Mode`와 `Skill Mode`를 구분하며, 읽기 전용 조사와 승인된 쓰기 작업을 혼동하지 않는다.
 
-Godot MCP/addon/CLI 공급자 도입·업데이트는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`를 따른다. HiGodot (`hi-godot/godot-ai`)만 persistent Godot authoring 실행 권위이며 프로젝트는 `HIGODOT_ADOPTION_RECORD.json`에 exact pin, Godot 버전, host client, canary, regression, rollback과 미검증을 기록한다. GUT과 Hera Agent Godot은 프로젝트가 실제 필요에 따라 채택하는 별도 **third-party 검증 도구**이며, GUT은 deterministic GDScript tests, Hera는 `LIVE_QA_AND_OBSERVABILITY_ONLY`로만 공존한다.
+프로젝트 사람이 보는 기본 운영면은 exact Project Notion이며, repository는 structured/runtime truth다.
+
+```text
+NOTION_HUMAN_FACING_CANON
+↕ SYNC_BEFORE_IMPLEMENTATION
+REPOSITORY_STRUCTURED_CANON
+→ REPOSITORY_RUNTIME_TRUTH
+```
+
+Google Sheets는 신규 설치 항목이 아니다. 고유 미이관 정보가 실제로 남은 기존 프로젝트에서만 `RETIRED_MIGRATION_ONLY` source로 감사하고 `GOOGLE_SHEETS_MIGRATE_THEN_REMOVE`를 적용한다.
+
+Standalone localhost project app, QA browser app, independent HTML dashboard/catalog도 신규 운영체계 기본 구성요소가 아니다. 고유 정보·원리 이관은 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`를 따른다.
+
+Godot MCP/addon/CLI 공급자 도입·업데이트는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`를 따른다. HiGodot (`hi-godot/godot-ai`)만 persistent Godot authoring 실행 권위이며 프로젝트는 `HIGODOT_ADOPTION_RECORD.json`에 **exact pin**, Godot 버전, host client, **canary**, regression, **rollback**과 미검증을 기록한다. GUT은 deterministic GDScript tests, Hera는 `LIVE_QA_AND_OBSERVABILITY_ONLY` 검증 역할로만 공존한다.
 
 - `Work Mode`: `PLAN / BUILD / REVIEW`
 - 이 문서의 `mode`: 운영체계 Skill 내부의 **Skill Mode**
 
 ## Skill Modes
 
-- `install`: 신규 또는 내용이 거의 없는 프로젝트에 운영체계와 승인된 third-party provider record를 설치한다.
-- `audit`: 기존 프로젝트를 변경 없이 조사하고 현재 구조·위험·보존표·addon/MCP/CLI provider inventory를 만든다.
-- `reconcile-legacy`: 구형·중복·버전명 파일과 파생본을 현행 정본에 맞춰 갱신·통합·호환 보존·아카이브·승인 삭제한다.
-- `migrate`: 사용자가 승인한 처리표 범위만 새 책임 구조로 재배치한다.
-- `verify`: 설치·정리·마이그레이션·provider upgrade·대규모 변경 뒤 전체 연결을 증거로 검수한다.
+- `install`: 신규/비어 있는 프로젝트에 project operating skeleton, Base adapter, Notion Project registration contract, required validation hooks를 설치한다.
+- `audit`: 변경 없이 repository·Notion·provider·legacy surface·actual runtime evidence를 조사한다.
+- `reconcile-legacy`: 구형/중복/retired surface를 `UPDATE_IN_PLACE / MERGE_TO_CANONICAL / COMPATIBILITY_STUB / ARCHIVE_HISTORY / DELETE_APPROVED / KEEP_UNRESOLVED`로 판정한다.
+- `migrate`: 승인된 처리표 범위만 새 책임 구조로 재배치하며 destination readback을 요구한다.
+- `verify`: 설치·정리·마이그레이션·provider upgrade·대규모 변경 뒤 전체 연결을 검증한다.
 
 ```text
 신규·내용 거의 없음 → install
 기존 운영 프로젝트 → audit
-v2·final·latest·복제본·구형 파생본 존재 → audit → reconcile-legacy
+v2·final·latest·복제본·구형 파생본·retired surface → audit → reconcile-legacy
 승인된 구조 이동표 있음 → migrate
 설치·정리·마이그레이션·주요 게이트·HiGodot/GUT/Hera upgrade 후 → verify
 ```
 
-`reconcile-legacy`는 별도 신규 Skill이 아니다. 기존 프로젝트의 책임 원본·참조·보존·삭제 권한을 다루는 같은 생명주기이므로 이 Skill의 전문 Skill Mode로 유지한다.
+`reconcile-legacy`는 별도 신규 Skill이 아니다.
 
 ## Required inputs
 
@@ -47,374 +60,194 @@ project_start_here:
 documentation_map:
 active_context:
 current_confirmed_decisions:
-project_google_sheet:
+project_notion_home:
+project_notion_surfaces: []
 related_open_and_recent_prs:
 development_gates:
 design_document_registry:
 skill_registry:
+project_base_adapter:
 publications_and_manifests:
 visual_and_asset_manifests:
 roadmap_issues_plans_prs:
 actual_code_data_assets_tests:
 protected_paths_decisions_assets:
 approved_migration_table:
-approved_legacy_reconciliation_table:
-known_versioned_duplicates_and_aliases:
-governance_and_workflow_state:
-rollback_ref:
-third_party_provider_inventory:
+legacy_migration_sources: []
+provider_inventory: []
 higodot_adoption_record:
-higodot_exact_pin:
-higodot_previous_rollback_pin:
-higodot_canary_evidence:
-higodot_project_regression_evidence:
-godot_test_framework:
-gut_exact_version:
-gut_test_consumption_path:
-hera_cli_addon_pair:
-hera_live_qa_consumption_path:
-hera_source_delta_guard:
+validation_environment:
+rollback_constraints:
 ```
 
-## Shared read order
+## Read first
+
+1. latest user decision.
+2. project `AGENTS.md`, START_HERE, Active Context, Documentation Map, Development Gates.
+3. `CURRENT_CONFIRMED_DECISIONS.md`, current Issue/Goal, same-goal open/recent PRs.
+4. exact project GitHub main + actual code/data/Scene/Resource/asset/tests.
+5. exact Project Notion Home + filtered Work/Asset/Core System/Visual/Reference surfaces.
+6. project adapter, Base pin, generated snapshot, Skill Registry.
+7. `docs/GPT_FIRST_PROJECT_WORKFLOW.md`, `docs/OPERATING_MODEL.md`, `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`.
+8. `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md` when migration/legacy cleanup is in scope.
+9. `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` when Godot authoring/provider work is in scope.
+
+## Project operating integrity
+
+`PROJECT_OPERATING_INTEGRITY` is fail-closed.
+
+Check:
 
 ```text
-최신 사용자 지시
-→ AGENTS·README·START_HERE
-→ Work Mode·Skill 라우팅 계약
-→ Active Context·Documentation Map·Roadmap·Development Gates
-→ CURRENT_CONFIRMED_DECISIONS.md·동일 Goal의 열린·최근 병합 PR·프로젝트 Google Sheets
-→ Design Document Registry·Skill Registry
-→ 관련 책임 원본·Skill·Learning Log
-→ third-party provider inventory·HIGODOT_ADOPTION_RECORD.json·GUT/Hera adoption state
-→ DOCX/PDF·다이어그램·승인 이미지·Manifest
-→ 실제 코드·데이터·자산·테스트
-→ Issue·Plan·PR·Workflow·최근 변경
+project adapter exists and validates
+→ Base release pin resolves
+→ generated project Skill snapshot/router is current
+→ required project paths exist
+→ project Notion identity resolves to exactly one Project
+→ repository structured owners resolve
+→ current runtime evidence is not inferred from docs
+→ retired surface is not current authority
 ```
 
-전체 skills 폴더를 기본 로드하지 않는다. 백업·보류·제거 후보는 감사·정리 대상일 때만 읽는다.
+Failure states include:
 
-## Shared operating contract
+```text
+MISSING_ADAPTER
+STALE_ADAPTER
+BROKEN_BASE_PIN
+STALE_GENERATED_SNAPSHOT
+MISSING_PROJECT_RELATION
+CANON_CONFLICT
+IMPLEMENTATION_CONFLICT
+RETIRED_SURFACE_ACTIVE_REFERENCE
+MIGRATION_PENDING
+BLOCKED_UNVERIFIED
+```
 
-- 한 질문에는 등록된 현행 Markdown 또는 JSON 책임 원본 하나만 둔다.
-- PDF·DOCX·다이어그램은 Registry 발행 정책과 Manifest를 따른다.
-- trigger가 일치하는 최소 Skill·Skill Mode를 자동 선택한다.
-- 승인·구현·검증·발행 최신성·사람 검수 상태를 분리한다.
-- 기존 승인 결정·수치·자산·실패·보류·참조는 조사와 승인 없이 제거하지 않는다.
-- 파일 존재와 실제 실행·강제를 구분한다.
-- 새 AI가 과거 대화 없이 `CURRENT_CONFIRMED_DECISIONS.md`에서 현재 승인 상태와 다음 작업을 찾을 수 있어야 한다.
-- 질문 전에 최신 `main`, 기존 Decision, 분야 정본, 동일 Goal의 PR과 Google Sheets를 비교하고 이미 답한 질문은 반복하지 않는다.
-- 승인된 Decision은 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`에 따라 GitHub 정본·허용된 `main` 문서 Commit·Google Sheets에 즉시 동기화한다.
+## Install
 
-## Project GDD Google Sheets contract
+Install only the minimum current operating system:
 
-정확한 Sheet URL·권한이 확인된 프로젝트는 `USER_FACING_GDD_WORKSPACE`로 설치한다. 기존 값·수식·이미지·사용자 편집을 먼저 감사하고, Sheet-only 수정은 `PROPOSED_SHEET_CHANGE`로 보존한다. `install / audit / verify`는 GitHub 정본·실제 구현·Sheet의 Decision ID·Commit·수정 시각·동기화 상태를 비교한다.
+```text
+project AGENTS / START_HERE / ACTIVE_CONTEXT / DOCUMENTATION_MAP / DEVELOPMENT_GATES
+→ CURRENT_CONFIRMED_DECISIONS / DESIGN_DOCUMENT_REGISTRY / SKILL_REGISTRY
+→ project Base adapter + generated snapshot/router
+→ GitHub workflow/governance hooks required by adopted contract
+→ exact Project Notion registration / filtered human surfaces
+→ project-specific runtime/test/engine setup when actually adopted
+```
 
-## HiGodot provider adoption contract
+Do not install Google Sheets, standalone HTML dashboard, localhost project apps, Figma routes, or retired QA Studio as default project surfaces.
+
+## Audit
+
+Audit is read-only by default.
 
 ```yaml
-provider: hi-godot/godot-ai
-authority: SOLE_GODOT_EXECUTION_AUTHORITY
-persistent_authoring_authority: SOLE_PERSISTENT_GODOT_AUTHORING_AUTHORITY
-exact pin: required
-floating_latest: forbidden
-automatic_unreviewed_update: forbidden
-network_mode: LOOPBACK_ONLY
-deepseek: FORBIDDEN
-rollback: required
+current_structure:
+canonical_owners:
+notion_project_identity:
+active_consumers:
+providers:
+retired_surfaces:
+legacy_unique_material:
+conflicts:
+missing_sync:
+verification_evidence:
 ```
 
-### Install
+Historical file age/name alone is not deletion evidence.
 
-1. `evaluating-godot-assets-and-plugins-before-creation`의 disposition이 `REUSE` 또는 승인된 `REFACTOR`인지 확인한다.
-2. exact release 또는 exact commit, package/source origin, license, Godot 버전과 host client를 기록한다.
-3. 개인 Codex·GPT profile에만 MCP를 등록하고 DeepSeek Analysis에는 등록·credential을 두지 않는다.
-4. 프로젝트에 활성 `.vscode/mcp.json`이나 `.codex/config.toml`을 공용 commit하지 않는다.
-5. `templates/project-operations/HIGODOT_ADOPTION_RECORD.json`을 프로젝트 record로 설치하고 실제 값을 채운다.
-6. connection, runtime, regression, production readiness를 독립 상태로 유지한다.
+## Reconcile legacy / migrate
 
-### Upgrade
+`DEPRECATED_SURFACE_ABSORB_THEN_DELETE`:
 
 ```text
-new release identified
-→ release note·dependency·tool schema·transport·security diff
-→ compatibility and adversarial review
-→ isolated fixture
-→ Godot import and plugin startup
-→ read canary
-→ destructive canary and exact restore
-→ representative project canary
-→ full affected project regression
-→ staged adoption
-→ previous exact pin and rollback package retained
+inventory exact legacy surface
+→ classify unique / duplicate / obsolete
+→ human-facing unique meaning → exact Project Notion
+→ structured/runtime unique meaning → repository-native owner
+→ destination readback
+→ active consumer/reference update
+→ approved delete/archive/compatibility action
+→ regression
 ```
 
-`destructive canary`는 최소한 Node 삭제/복원, file write·move·delete/복원, project settings 또는 autoload 변경/복원을 실제로 검증하되 source fixture를 최종적으로 exact restore한다. 실행하지 못한 OS·device·Editor UI·human flow는 `NOT_RUN`이다.
+Google Sheets uses `GOOGLE_SHEETS_MIGRATE_THEN_REMOVE`. Git history is rollback/audit, not active canon.
 
-### Verify
+Do not create new archive copies if Git history already provides sufficient rollback and no policy requires a separate archive.
 
-- 실제 installed version이 adoption record의 exact pin과 일치하는가
-- HiGodot 외 두 번째 Godot **persistent mutation authority**가 활성화되지 않았는가
-- network가 loopback only이고 LAN/public URL/forwarding/tunnel이 없는가
-- Codex·GPT profile과 DeepSeek 금지 경계가 유지되는가
-- enabled domain의 read·L1·L2 canary와 project regression evidence가 있는가
-- rollback pin·package·절차가 실제로 존재하는가
-- 단순 connection 또는 tools/list를 production readiness로 승격하지 않았는가
+## Existing Solution First / provider inventory
 
-## Godot deterministic-test and live-QA adoption contract
-
-GUT과 Hera는 HiGodot `HIGODOT_ADOPTION_RECORD.json`에 억지로 합치지 않는다. 프로젝트의 기존 `third-party` provider/addon inventory에 exact version, source, license, Godot compatibility, adoption state, consumption path, owner boundary, validation, rollback/removal을 기록한다.
-
-### GUT
-
-```yaml
-role: DETERMINISTIC_GDSCRIPT_TEST_AUTHORITY_WHEN_ADOPTED
-gut_exact_version: required
-godot_compatibility_match: required
-gut_test_consumption_path: required_when_adopted
-floating_latest: forbidden
-```
-
-- 테스트 가능한 GDScript 제품 코드와 반복 가능한 상태 규칙이 있을 때만 채택한다.
-- Godot 버전별 공식 compatibility matrix를 확인하고 exact version을 고정한다.
-- GUT 채택 이후 같은 GDScript test case를 HiGodot `McpTestSuite`와 두 canonical suite로 유지하지 않는다. 기존 `McpTestSuite` case는 migration input으로 보존한다.
-- C#/.NET·native SDK·platform sandbox·build/package test authority를 강제 대체하지 않는다.
-- 설치돼 있지만 실제 test/CI 소비가 없으면 `INSTALLED_UNUSED`; 필요가 아직 없으면 `DEFERRED`다.
-
-### Hera Agent Godot
-
-```yaml
-role_restriction: LIVE_QA_AND_OBSERVABILITY_ONLY
-hera_cli_addon_pair: exact_match_required
-hera_live_qa_consumption_path: required_when_adopted
-hera_source_delta_guard: required_for_acceptance
-persistent mutation authority: forbidden
-floating_latest: forbidden
-```
-
-- Hera restricted live QA는 HiGodot과 공존할 수 있다. **persistent mutation authority** 또는 unrestricted editor writer로 활성화되면 blocking duplicate authority다.
-- Base 채택은 localhost + shared token을 사용하고 token 원문을 저장소·prompt·log·evidence에 기록하지 않는다.
-- acceptance QA 전후 tracked source를 비교해 Hera-phase delta `NONE`을 요구한다.
-- `game set` 또는 state-changing runtime `call`은 `DIAGNOSTIC_ONLY`이며 acceptance evidence가 아니다. restore 또는 restart 후 정상 경로를 다시 검증한다.
-- 설치돼 있지만 live-QA consumption이 없으면 `INSTALLED_UNUSED`; 실행 가능한 game/live-QA 요구가 없으면 `DEFERRED`다.
-
-## Skill Mode: install
-
-1. 신규·빈 프로젝트인지 확인한다. 고유 문서·자산·이력이 있으면 `audit`로 전환한다.
-2. 루트 `[기획서]/00_프로젝트_허브/`와 시작 문서·`CURRENT_CONFIRMED_DECISIONS.md`·Registry·게이트를 설치한다.
-3. 제공된 프로젝트 Google Sheets URL·확정 결정 탭·마지막 Decision ID를 연결하고, 없으면 `NOT_CONFIGURED`로 명시한다.
-4. 프로젝트가 실제 선택한 책임 분야만 등록한다.
-5. 서술은 Markdown, 구조·상태·게임 데이터는 JSON을 선택한다.
-6. 발행 생성기·Manifest·선택 파생본 정책을 설치한다.
-7. Foundation·분야 Skill Registry와 Learning Log를 설치한다.
-8. Visual Source·Asset Manifest와 승인 상태를 연결한다.
-9. Governance 검사·Actions·Required Check 준비 상태를 구분한다.
-10. 승인된 HiGodot 사용 프로젝트이면 provider adoption contract와 exact pin record를 설치한다.
-11. GUT 또는 Hera가 현재 프로젝트에서 실제 필요하고 평가 결과가 `REUSE` 또는 승인된 `REFACTOR`일 때만 기존 third-party inventory에 project-specific adoption을 기록한다. 모든 프로젝트에 일괄 설치하지 않는다.
-12. `verify`로 콜드 스타트와 결정 복원·동기화·provider 경계를 확인한다.
-
-## Skill Mode: audit
-
-첫 단계는 `PLAN` 또는 `REVIEW` Work Mode이며 대량 삭제·이동·통합을 수행하지 않는다.
-
-| 현재 경로 | 역할 | 추정 버전 | 참조 | 고유 정보 | 중복·충돌 | 상태 | 제안 | 위험 | 검증 |
-|---|---|---|---|---|---|---|---|---|---|
-
-산출물:
-
-- 현재 책임 문서·Skill·자산·파생본 지도
-- enabled addon·connected MCP·CLI·provider pin·host profile inventory
-- GUT/Hera exact pin·consumption·owner boundary·source-delta guard 상태
-- `CURRENT_CONFIRMED_DECISIONS.md`·분야 정본·GitHub `main`·프로젝트 Google Sheets의 Decision·Commit·대체 관계 대조
-- 중복·충돌·누락·구형 참조 목록
-- 목표 Registry와 책임 원본 구조
-- 갱신·통합·호환 보존·아카이브·삭제 후보
-- 변경 전후 예상 구조
-- 보존·참조·롤백 검증 계획
-- 사용자가 승인해야 할 처리표
-
-## Skill Mode: reconcile-legacy
-
-다음 신호가 있으면 자동 선택한다.
-
-- `v2`, `v3`, `final`, `final2`, `latest`, 날짜 접미사 등 활성 복제본
-- 같은 책임을 가진 Markdown·JSON·PDF·DOCX 다중 현행본
-- 새 경로로 대체됐지만 활성 파일이 계속 참조하는 구형 경로·ID·Schema
-- 원본보다 오래된 생성물·Manifest·해시
-- 삭제된 Skill·명령·파일을 실행 경로가 참조함
-- HiGodot과 겹치는 과거 Base MCP·Bridge, unrestricted Hera writer 또는 다른 persistent mutation addon이 활성 경로에 남음
-
-Hera가 존재한다는 사실만으로 legacy conflict로 판정하지 않는다. `LIVE_QA_AND_OBSERVABILITY_ONLY`로 제한되고 exact pair·consumption·source-delta guard가 검증된 Hera는 허용된 검증 도구다.
-
-파일별로 하나를 판정한다.
+Before adding MCP/addon/CLI/framework/Skill/Mode:
 
 ```text
-CURRENT
-UPDATE_IN_PLACE
-MERGE_TO_CANONICAL
-COMPATIBILITY_STUB
-ARCHIVE_HISTORY
-DELETE_APPROVED
-KEEP_UNRESOLVED
+inventory-current-environment
+→ connected MCP / enabled addon / dependency / open and recently merged PR
+→ external maintained alternatives
+→ REUSE / ABSORB / REFACTOR / ARCHIVE / BUILD_NEW
 ```
 
-처리 순서:
+`BUILD_NEW` needs evidence and user approval.
+
+For HiGodot:
 
 ```text
-인벤토리·해시·참조 수집
-→ 현행 정본 판정
-→ 고유 결정·예외·이미지·보류 승계
-→ 충돌·미확정 분리
-→ 처리표 승인 확인
-→ BUILD Work Mode로 UPDATE·MERGE·STUB·ARCHIVE·DELETE 실행
-→ Registry·참조·생성기·테스트·파생본 갱신
-→ REVIEW Work Mode로 reference-freshness·회귀·복구 검증
+provider = hi-godot/godot-ai
+→ exact pin
+→ Godot compatibility
+→ host client / network boundary
+→ canary
+→ destructive canary when required
+→ project regression
+→ rollback
+→ production readiness evidence
 ```
 
-승인표가 없으면 `PLAN/REVIEW`에서 판정과 제안까지만 수행한다. 삭제는 다음을 모두 만족해야 한다.
+Do not claim provider readiness from configuration existence alone.
 
-- 모든 고유 정보·이미지·예외·보류가 현행 정본에 승계됨
-- 활성·보조·외부 참조가 새 경로로 갱신되거나 호환 stub이 있음
-- PDF·DOCX·Manifest·해시·생성기가 검증됨
-- Git 이력·태그·백업 등 복구 경로가 있음
-- 사용자 지시 또는 승인된 작업 계약의 삭제 근거가 있음
-- `auditing-canonical-reference-freshness`에 차단 finding이 없음
+## Verify
 
-템플릿: `templates/project-operations/LEGACY_ARTIFACT_RECONCILIATION.md`
-
-## Skill Mode: migrate
-
-`approved_migration_table` 항목만 `BUILD` Work Mode에서 수행한다.
+Verification separates evidence levels:
 
 ```text
-고유 문장·표·결정·예외·이미지·보류 추출
-→ 충돌 표시
-→ 최신 사용자 결정과 실제 구현으로 현행 판정
-→ 불확실성은 [확인 필요]
-→ 새 책임 원본과 Registry에 승계
-→ 승인 이미지·발행 경로 연결
-→ 참조 갱신
-→ 변경 전후 보존 대조
-→ 기존 원본 수명주기 판정
-→ verify
+static/schema
+→ focused contract tests
+→ project adapter / routing integrity
+→ Notion project identity + destination readback when changed
+→ Godot/runtime/build/render when applicable
+→ accessibility/performance when applicable
+→ regression
+→ exact-head PR checks
+→ postmerge readback
 ```
 
-## Skill Mode: verify
+`NOT_RUN`, `BLOCKED_UNVERIFIED`, `DEFERRED_NOT_CONNECTED` are not PASS.
 
-각 영역을 `PASS / PARTIAL / FAIL / NOT_RUN`과 증거 경로로 기록한다.
+## GPT-first / optional Codex
 
-1. 루트와 시작 문서
-2. Work Mode·Skill 자동 라우팅과 실행 보고
-3. `CURRENT_CONFIRMED_DECISIONS.md`·분야 정본·GitHub `main`·프로젝트 Google Sheets 동기화
-4. Design Document Registry와 단일 책임 원본
-5. 구형본 처리표·Legacy Alias·활성 stale reference 부재
-6. PDF·선택 DOCX·다이어그램·승인 이미지·Manifest
-7. Skill Registry·최소 라우팅·Learning Log
-8. Development Gates·Roadmap·결정 추적성
-9. Visual Source·Asset Manifest
-10. HiGodot exact pin·단일 persistent authoring 권위·host isolation·canary·regression·rollback
-11. adopted GUT exact compatible pin·GDScript test consumption·duplicate canonical case 부재
-12. adopted Hera exact CLI/addon pair·`LIVE_QA_AND_OBSERVABILITY_ONLY`·localhost/shared-token·live-QA consumption·source-delta `NONE`
-13. Governance checker·회귀 테스트·GitHub Actions·브랜치 보호
-14. 과거 대화 없이 현재 Decision을 복원하는 콜드 스타트
+Planning, audit synthesis, migration decision, UX/UI/art direction, visual review, and final operating-system review are GPT-primary.
 
-```text
-결정
-→ Markdown/JSON 책임 원본
-→ Issue·Plan
-→ 실제 구현·자산
-→ 테스트·캡처
-→ Active Context
-→ 사람용 발행본
-```
+Codex is `CODEX_OPTIONAL_SUB_EXECUTOR` only when actual repository/engine mutation or local reproduction is needed. If used, it must re-read actual repository state and follow the project authoring authority; GPT performs final review.
 
-## Output contract
+## Completion report
 
-```md
-# 게임 프로젝트 운영체계 결과
-## Work Mode와 Skill Mode
-## 자동 선택 이유
-## 현재 구조·증거
-## Third-party provider와 HiGodot exact pin
-## GUT/Hera adoption·consumption·owner boundary
-## Canary·project regression·rollback
-## 구형 파일·파생본 처리표
-## 실제 갱신·통합·아카이브·삭제
-## 제안만 한 변경
-## 보존·참조·롤백 대조
-## CURRENT_CONFIRMED_DECISIONS·GitHub·Google Sheets 동기화
-## Registry·책임 원본·발행본
-## Skill·Learning·Routing
-## 자동화·GitHub 강제
-## 콜드 스타트
-## PASS·PARTIAL·FAIL·NOT_RUN
-## 얻은 결과·미검증·위험
-## 다음 단계와 승인 조건
-```
+L1+ result includes:
 
-## Definition of Done
+- operating-system role.
+- important rules / canonical owners.
+- important Skills/Modes.
+- module/responsibility map.
+- current vs target structure.
+- preserved / migrated / removed / intentionally not installed.
+- exact tests/runtime/Notion readback/PR/main SHA.
+- unverified, risks, rollback, revisit conditions.
+- `REQUIRED_WORK_REMAINING`.
 
-- Work Mode와 Skill Mode·쓰기 권한이 명확하다.
-- 사용자가 Skill을 선언하지 않아도 trigger로 필요한 Skill Mode를 자동 선택했다.
-- 기존 프로젝트는 `audit`와 승인 없이 대규모 변경하지 않았다.
-- 구형 파일은 고유 정보·참조·파생본·복구·승인에 따라 판정됐다.
-- 삭제·통합 뒤 활성 stale reference와 untouched 소비자가 없다.
-- HiGodot project이면 exact pin, DeepSeek 금지, loopback, canary, regression, rollback 상태가 기록됐다.
-- GUT/Hera adopted project이면 exact pin/pair, 실제 consumption, owner boundary, rollback/removal과 Hera source-delta guard가 기록됐다.
-- 신규·정리·마이그레이션·provider update 결과는 `verify` 증거를 가진다.
-- 실행하지 않은 검사와 권한은 `NOT_RUN` 또는 `[미검증]`이다.
-- 사용한 Skill Mode의 이유와 얻은 결과를 보고했다.
+## References
 
-## Failure conditions
-
-- 기존 프로젝트에 신규 설치 구조를 강제함
-- 사용자 승인 전 삭제·이동·통합함
-- 파일명에 `old`·`v2`가 있다는 이유만으로 삭제함
-- 파일 수 감소를 성공으로 판단함
-- 고유 정보·승인 자산·보류·실패 기록을 축약함
-- Git 이력만 있다는 이유로 활성 참조·복구 검증 없이 삭제함
-- 호환성이 필요한 외부 경로를 stub 없이 제거함
-- PDF·DOCX를 독립 책임 원본으로 수정함
-- HiGodot/GUT/Hera floating latest 또는 automatic unreviewed update 사용
-- DeepSeek profile에 HiGodot 등록
-- 두 번째 Godot persistent mutation authority 활성화
-- Hera restricted live-QA 도입을 mere presence만으로 legacy conflict 처리
-- Hera persistent writer·source-delta failure·diagnostic mutation을 acceptance evidence로 허용
-- GUT이 C#/.NET·native·platform test authority를 강제 대체
-- consumption이 없는 addon/CLI를 `ADOPTED_ACTIVE` 완료로 보고
-- canary·project regression·rollback 없이 provider update 완료 보고
-- connection 성공을 production readiness로 보고
-- 설치·정리·마이그레이션 뒤 `verify`를 생략함
-- 사용한 이유와 결과 없이 Skill 실행만 주장함
-
-## 플랫폼 심사·자산 권리 설치와 감사
-
-공용 기준은 `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`다. 새 Skill Mode를 추가하지 않고 기존 `install / audit / migrate / verify`에 통합한다.
-
-- `install`: 프로젝트가 채택한 등가 정본 또는 `ASSET_RIGHTS_AND_PROVENANCE_RECORD.md`, `GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK.md` 인스턴스를 등록한다.
-- `audit`: 음악·효과음, 폰트, 캐릭터·일러스트, 3D·애니메이션, 플러그인·에셋, 오픈소스, AI, 외주, 성우·작곡·번역 계약 Coverage를 확인한다.
-- `migrate`: 기존 Asset Ledger와 계약 기록을 덮어쓰지 않고 새 필드와 연결하며 미확인은 보존한다.
-- `verify`: `content_rating_target`과 `target_audience`, Steam·STOVE·Google Play 설문, build·store·trailer 일치, 자산별 권리와 secure evidence를 분리 검증한다.
-
-필수 권리·등급·출처·계약·참조 유사성 증거가 없으면 `RELEASE_BLOCKED_UNVERIFIED`다. Template 존재는 실제 권리나 플랫폼 승인 증거가 아니다.
-
-## Legacy aliases
-
-- `installing-game-project-operating-system` → `install`
-- `migrating-existing-game-project-structure` → `audit`, `reconcile-legacy` 또는 `migrate`
-- `verifying-game-project-operating-system` → `verify`
-
-Related:
-
-- `docs/WORK_MODE_AND_SKILL_ROUTING.md`
-- `docs/knowledge/methods/DEVELOPMENT_GATES_METHOD.md`
-- `docs/knowledge/methods/DISCIPLINE_PDF_PUBLICATION_METHOD.md`
+- [project adapter and routing contract](references/project-adapter-and-routing-contract.md)
+- `docs/GPT_FIRST_PROJECT_WORKFLOW.md`
+- `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`
 - `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`
-
-## Cloud Run backend capability handoff
-
-`docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`가 선택된 프로젝트는 `templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md`를 프로젝트 책임 원본으로 설치한다. 상태는 `PROJECT_OWNED_SERVICE_CONTRACT`이며 실제 identity provider, datastore, region, traffic, budget, platform IDs와 runtime evidence는 프로젝트가 소유한다.
-
-## Entitlement and integrity capability handoff
-
-`docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md`가 선택된 프로젝트는 `templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md`를 `PROJECT_OWNED_ENTITLEMENT_INTEGRITY_RECORD`로 설치한다. 실제 platform account, product/package ID, SDK, signing, backend, privacy, recovery와 sandbox evidence는 프로젝트가 소유한다.
+- `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` — retirement/migration stub only
