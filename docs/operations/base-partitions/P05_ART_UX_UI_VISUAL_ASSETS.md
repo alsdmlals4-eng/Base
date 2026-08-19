@@ -1,0 +1,22 @@
+# P05 · Art, UX/UI & Visual Assets — Context Pack
+
+## 역할
+아트 방향·이미지 생성/편집·UX/UI·시각 자산 일관성/재사용·Notion visual flow와 폐기 시각 도구 흡수를 책임진다.
+
+## 핵심 Skill
+`designing-art-prompts-and-technique-cards`, `auditing-and-refining-ui-art`, `building-project-visual-dashboards`.
+
+## 중요 규칙
+VISUALIZED_POC_BEFORE_DEMO_TEST, Project Notion placement + readback, PROJECT_ASSET_APPROVED, identity-preserving edit, LEGACY_ABSORB_VERIFY_REMOVE.
+
+## 핵심 Module
+Art Direction → Candidate Image → Visual QA → UX/UI → Notion Asset/Flow → Reuse → Retired Tool Absorption.
+
+## 경계
+게임 요구는 P04, Notion 전체 권위는 P01, Godot/runtime 소비는 P06, legacy 삭제 Gate는 P02와 협력한다.
+
+## 우선 공격 대상
+AI 티/스타일 drift/가독성 저하, 회색박스만으로 시각 데모 최종판정, Figma/HTML/local Tool 권위 부활, unique 기능 흡수 없는 삭제.
+
+## 검증/완료
+visual/BCA 회귀 + scope 검사 + 실제 Notion readback이 필요한 변경은 readback 증거. 최소 5회 전체 검토 후 clean까지.

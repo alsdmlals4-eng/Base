@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 import unittest
 from pathlib import Path
 
@@ -12,35 +14,20 @@ INTEGRATION_PROMPT = ROOT / "templates" / "prompts" / "BASE_PARTITION_INTEGRATIO
 SCOPE_CHECKER = ROOT / "tools" / "check_base_partition_scope.py"
 
 EXPECTED_SKILLS = {
-    "managing-project-intake-and-work-contract",
-    "managing-game-project-operating-system",
-    "evolving-project-discipline-skills",
-    "managing-design-documents",
-    "maintaining-project-context-and-handoff",
-    "analyzing-and-refining-game-concepts",
-    "designing-vertical-slices",
-    "producing-game-development-youtube-videos",
-    "orchestrating-deepseek-worktrees",
-    "reviewing-and-validating-project-changes",
-    "auditing-canonical-reference-freshness",
-    "designing-art-prompts-and-technique-cards",
-    "auditing-and-refining-ui-art",
-    "managing-base-change-proposals",
-    "identifying-project-core",
-    "establishing-project-core",
-    "running-adversarial-review-and-refinement",
-    "refactoring-with-contract-preservation",
-    "simplifying-skill-bodies",
-    "pruning-stale-and-nonfunctional-material",
-    "synchronizing-local-and-github-state",
-    "maintaining-long-running-task-continuity",
-    "governing-game-user-research-coverage",
-    "creating-user-learning-notes",
-    "building-project-visual-dashboards",
-    "diagnosing-game-engine-runtime-failures",
-    "governing-legacy-retention-and-archives",
-    "evaluating-godot-assets-and-plugins-before-creation",
-    "optimizing-ai-model-and-prompt-costs",
+    "managing-project-intake-and-work-contract", "managing-game-project-operating-system",
+    "evolving-project-discipline-skills", "managing-design-documents",
+    "maintaining-project-context-and-handoff", "analyzing-and-refining-game-concepts",
+    "designing-vertical-slices", "producing-game-development-youtube-videos",
+    "orchestrating-deepseek-worktrees", "reviewing-and-validating-project-changes",
+    "auditing-canonical-reference-freshness", "designing-art-prompts-and-technique-cards",
+    "auditing-and-refining-ui-art", "managing-base-change-proposals", "identifying-project-core",
+    "establishing-project-core", "running-adversarial-review-and-refinement",
+    "refactoring-with-contract-preservation", "simplifying-skill-bodies",
+    "pruning-stale-and-nonfunctional-material", "synchronizing-local-and-github-state",
+    "maintaining-long-running-task-continuity", "governing-game-user-research-coverage",
+    "creating-user-learning-notes", "building-project-visual-dashboards",
+    "diagnosing-game-engine-runtime-failures", "governing-legacy-retention-and-archives",
+    "evaluating-godot-assets-and-plugins-before-creation", "optimizing-ai-model-and-prompt-costs",
     "developing-and-revising-serial-fiction",
 }
 
@@ -59,17 +46,13 @@ class BasePartitionContractTests(unittest.TestCase):
         self.assertEqual("BASE_PARTITION_OPERATING_MODEL_V1", manifest["contract_id"])
         self.assertEqual("HYBRID_CONTROL_PLANE_END_TO_END_CAPABILITY_PARTITIONS", manifest["selected_strategy"])
         self.assertEqual(9, len(manifest["parts"]))
-        self.assertEqual(
-            [f"P{i:02d}" for i in range(1, 10)],
-            [part["part_id"] for part in manifest["parts"]],
-        )
+        self.assertEqual([f"P{i:02d}" for i in range(1, 10)], [p["part_id"] for p in manifest["parts"]])
         self.assertEqual("INTEGRATION_ONLY", manifest["control_plane"]["write_authority"])
+        self.assertEqual(10, manifest["integration"]["total_new_gpt_chats_after_task_1"])
 
     def test_all_active_skills_are_assigned_once(self) -> None:
         manifest = self.load_manifest()
-        assignments: list[str] = []
-        for part in manifest["parts"]:
-            assignments.extend(part["owned_skill_ids"])
+        assignments = [skill for part in manifest["parts"] for skill in part["owned_skill_ids"]]
         self.assertEqual(EXPECTED_SKILLS, set(assignments))
         self.assertEqual(len(assignments), len(set(assignments)))
 
@@ -87,19 +70,8 @@ class BasePartitionContractTests(unittest.TestCase):
     def test_each_part_has_a_context_pack_and_operational_contract(self) -> None:
         manifest = self.load_manifest()
         for part in manifest["parts"]:
-            context_path = ROOT / part["context_pack"]
-            self.assertTrue(context_path.exists(), part["part_id"])
-            for field in (
-                "purpose",
-                "owned_write_paths",
-                "read_only_dependencies",
-                "important_rules",
-                "owned_skill_ids",
-                "modules",
-                "validation",
-                "acceptance_criteria",
-                "revisit_conditions",
-            ):
+            self.assertTrue((ROOT / part["context_pack"]).exists(), part["part_id"])
+            for field in ("purpose", "owned_write_paths", "read_only_dependencies", "important_rules", "owned_skill_ids", "modules", "validation", "acceptance_criteria", "revisit_conditions"):
                 self.assertTrue(part[field], f"{part['part_id']} missing {field}")
 
     def test_parallel_groups_and_integration_order_are_explicit(self) -> None:
@@ -124,15 +96,7 @@ class BasePartitionContractTests(unittest.TestCase):
 
     def test_operating_model_compares_four_real_strategies_and_records_revisit_conditions(self) -> None:
         text = OPERATING_MODEL.read_text(encoding="utf-8")
-        for term in (
-            "A · 디렉터리 계층 분할",
-            "B · 기능/도메인 분할",
-            "C · Control Plane + End-to-End Capability Partition",
-            "D · 동적 의존성 그래프 재클러스터링",
-            "BETTER_ALTERNATIVE_SEARCH",
-            "LONG_TERM_PLAN_FIT_REQUIRED",
-            "재검토 조건",
-        ):
+        for term in ("A · 디렉터리 계층 분할", "B · 기능/도메인 분할", "C · Control Plane + End-to-End Capability Partition", "D · 동적 의존성 그래프 재클러스터링", "BETTER_ALTERNATIVE_SEARCH", "LONG_TERM_PLAN_FIT_REQUIRED", "재검토 조건"):
             self.assertIn(term, text)
 
     def test_scope_checker_declares_worker_and_integration_modes(self) -> None:
@@ -141,6 +105,28 @@ class BasePartitionContractTests(unittest.TestCase):
         self.assertIn("--integration", text)
         self.assertIn("CONTROL_PLANE_WRITE_FORBIDDEN", text)
         self.assertIn("OUT_OF_PARTITION_WRITE", text)
+
+    def run_scope(self, *args: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run([sys.executable, str(SCOPE_CHECKER), *args], cwd=ROOT, text=True, capture_output=True, check=False)
+
+    def test_scope_checker_allows_owned_and_blocks_control_plane_and_other_parts(self) -> None:
+        allowed = self.run_scope("--part", "P01", "--files", "skills/managing-design-documents/SKILL.md")
+        self.assertEqual(0, allowed.returncode, allowed.stdout + allowed.stderr)
+        protected = self.run_scope("--part", "P01", "--files", "AGENTS.md")
+        self.assertEqual(2, protected.returncode)
+        self.assertIn("CONTROL_PLANE_WRITE_FORBIDDEN", protected.stdout)
+        outside = self.run_scope("--part", "P01", "--files", "skills/designing-vertical-slices/SKILL.md")
+        self.assertEqual(2, outside.returncode)
+        self.assertIn("OUT_OF_PARTITION_WRITE", outside.stdout)
+        integration = self.run_scope("--integration", "--files", "AGENTS.md", "skills/designing-vertical-slices/SKILL.md")
+        self.assertEqual(0, integration.returncode, integration.stdout + integration.stderr)
+
+    def test_manifest_retirement_and_unassigned_path_policy_fail_closed(self) -> None:
+        manifest = self.load_manifest()
+        self.assertEqual("READ_ONLY_UNLESS_INTEGRATION_ASSIGNMENT_OR_CROSS_PART_CHANGE_REQUEST", manifest["unassigned_path_policy"])
+        surfaces = {item["surface"] for item in manifest["retirement_targets"]}
+        for surface in ("Google Sheets", "Figma references/workflows", "external HTML visual/dashboard workspace", "custom local visual Tool/Hub", "QA Evidence Studio/local QA tooling"):
+            self.assertIn(surface, surfaces)
 
 
 if __name__ == "__main__":
