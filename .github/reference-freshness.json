@@ -63,6 +63,51 @@
       ]
     },
     {
+      "name": "gpt-first-project-workflow-entrypoints",
+      "canonical_path": "docs/GPT_FIRST_PROJECT_WORKFLOW.md",
+      "reference_tokens": [
+        "docs/GPT_FIRST_PROJECT_WORKFLOW.md",
+        "GPT_FIRST_PROJECT_WORKFLOW.md"
+      ],
+      "required_consumers": [
+        "README.md",
+        "START_HERE.md",
+        "AGENTS.md",
+        "docs/OPERATING_MODEL.md",
+        "docs/DOCUMENTATION_MAP.md"
+      ]
+    },
+    {
+      "name": "deprecated-project-surface-retirement-entrypoints",
+      "canonical_path": "docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md",
+      "reference_tokens": [
+        "docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md",
+        "DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md"
+      ],
+      "required_consumers": [
+        "README.md",
+        "START_HERE.md",
+        "AGENTS.md",
+        "docs/OPERATING_MODEL.md",
+        "docs/DOCUMENTATION_MAP.md",
+        "docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md"
+      ]
+    },
+    {
+      "name": "retired-google-sheets-migration-locator",
+      "canonical_path": "docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md",
+      "reference_tokens": [
+        "docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md",
+        "PROJECT_GDD_GOOGLE_SHEETS_POLICY.md"
+      ],
+      "required_consumers": [
+        "README.md",
+        "START_HERE.md",
+        "docs/DOCUMENTATION_MAP.md",
+        "docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md"
+      ]
+    },
+    {
       "name": "base-skill-registry-entrypoints",
       "canonical_path": "skills/SKILL_REGISTRY.json",
       "reference_tokens": [
@@ -107,27 +152,6 @@
         "START_HERE.md",
         "docs/DOCUMENTATION_MAP.md",
         "templates/project-operations/README.md"
-      ]
-    },
-    {
-      "name": "project-gdd-google-sheets-entrypoints",
-      "canonical_path": "docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md",
-      "reference_tokens": [
-        "docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md",
-        "PROJECT_GDD_GOOGLE_SHEETS_POLICY.md"
-      ],
-      "required_consumers": [
-        "README.md",
-        "START_HERE.md",
-        "AGENTS.md",
-        "docs/OPERATING_MODEL.md",
-        "docs/DOCUMENTATION_MAP.md",
-        "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md",
-        "skills/managing-project-intake-and-work-contract/SKILL.md",
-        "skills/managing-game-project-operating-system/SKILL.md",
-        "skills/managing-design-documents/SKILL.md",
-        "templates/project-operations/PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md",
-        "templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md"
       ]
     },
     {
