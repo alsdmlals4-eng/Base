@@ -8,6 +8,16 @@
 - 개선자: 검증된 문제만 최소 수정하고 수정 전후·영향 범위·보호 대상을 기록한다.
 - 회귀 검토자: 기존 기능·경험·데이터·호환성과 새 예외·복잡성·미검증을 독립적으로 재검사한다.
 
+## 프로젝트 작업면 증거 경계
+
+`CONFIGURED_PROJECT_WORKSPACE: CONDITIONAL`
+
+- repository의 정본·실제 구현·diff·test가 구조화/실행 사실의 기본 증거다.
+- 프로젝트가 별도 사람용 작업면을 현행 authority contract에 명시했으면 **그 작업면에 배정된 책임만** 함께 읽는다.
+- 별도 작업면이 없으면 `NOT_CONFIGURED`다. 없는 작업면의 상태를 추측하거나 검증 필수항목으로 만들지 않는다.
+- 폐기·migration-only surface는 현재 작업이 호환성·흡수·retirement 자체를 검증하는 경우가 아니면 활성 정본처럼 재도입하지 않는다.
+- 작업면을 읽지 못해도 그 작업면의 assigned responsibility가 현재 판정에 필요하지 않다면 blocker로 승격하지 않는다.
+
 ## 공격 렌즈
 
 1. 프로젝트 코어, 승인 요구와 범위 충돌.
@@ -25,7 +35,7 @@
 13. 최근 사용자 승인 Decision 누락 또는 이전 Decision 부활.
 14. `CURRENT_CONFIRMED_DECISIONS.md`, 분야 책임 원본, 실제 diff의 불일치.
 15. 동일 Goal의 열린·최근 병합 PR, 중복 구현·문서·질문.
-16. GitHub `main`과 프로젝트 Google Sheets의 Decision·Commit·대체 관계 불일치.
+16. repository 정본과 `CONFIGURED_PROJECT_WORKSPACE`의 assigned Decision·상태·대체 관계 불일치.
 17. 병합 뒤 관련 Registry·Template·Test·파생본이 untouched로 남은 전파 누락.
 
 `attack`에서는 장점·칭찬·해결책으로 공격 강도를 희석하지 않는다. 장점 보호와 수정 여부는 뒤 단계에서 판단한다.
@@ -44,7 +54,7 @@ confidence:
 suggested_direction:
 related_decision_ids:
 merged_pr_or_commit:
-canonical_and_sheet_scope:
+repository_and_workspace_scope:
 ```
 
 근거가 없는 의심은 가설로 기록할 수 있지만 `evidence`와 `confidence`를 비워 두지 않는다.
@@ -57,7 +67,7 @@ canonical_and_sheet_scope:
 - 최신 사용자 승인과 Decision 대체 관계를 확인했는가?
 - 실제 diff와 새 `main` HEAD를 확인했는가?
 - 동일 Goal의 열린·최근 병합 PR을 확인했는가?
-- 프로젝트가 Google Sheets를 사용하면 해당 행을 재조회했는가?
+- `CONFIGURED_PROJECT_WORKSPACE`가 현재 판정에 필요한 책임을 갖는 경우 해당 상태를 재조회했는가?
 - 단순 취향, 중복, 범위 밖 요구, 해결책 선호인가?
 - 발생 가능성과 실제 영향이 충분한가?
 - 수정 비용보다 개선 효과가 큰가?
@@ -77,9 +87,33 @@ scope_fit:
 
 - `USER_DECISION_REQUIRED`: 둘 이상의 유효한 선택지가 프로젝트 코어·중요 기획·방향성을 다르게 만든다.
 - `REJECTED_CRITIQUE`: 취향, 중복, 잘못된 전제, 범위 밖 요구다.
-- `BLOCKED_UNVERIFIED`: 필요한 정본·도구·권한·CI·런타임·Sheets 증거가 없어 판정할 수 없다.
+- `BLOCKED_UNVERIFIED`: 필요한 정본·도구·권한·CI·런타임 또는 configured workspace 증거가 없어 판정할 수 없다.
 
 레드팀의 높은 심각도가 자동으로 `MUST_FIX`가 되지는 않는다.
+
+## 실행 가능한 Finding의 반사실 검증
+
+`FIX_GUIDED_VERIFICATION_WHEN_EXECUTABLE: REQUIRED`
+
+레드팀이 **구체적으로 수정 가능한** finding을 냈고 baseline과 candidate를 같은 acceptance/test로 비교할 수 있으면, 수정 제안 자체를 증거로 재검증한다. 목적은 “수정안을 만들었으니 원 finding이 옳다”는 자기확증을 막는 것이다.
+
+```yaml
+finding_id:
+baseline_contract_result:
+candidate_fix_result:
+counterfactual_improvement:
+new_regressions:
+disposition: KEEP_FINDING | DOWNGRADE | REJECTED_CRITIQUE | BLOCKED_UNVERIFIED
+```
+
+규칙:
+
+1. baseline과 candidate에 **같은 acceptance와 같은 evidence ceiling**을 적용한다.
+2. candidate가 원 실패를 줄이지 못하면 finding을 자동 유지하지 않고 `DOWNGRADE` 또는 `REJECTED_CRITIQUE`로 재판정한다.
+3. candidate가 새 회귀를 만들면 그 비용을 포함해 finding의 우선순위를 다시 계산한다.
+4. 테스트 가능한 코드·규칙·문서 계약에는 characterization/contract/static test를 우선 사용한다.
+5. 순수 미감·장기 제품 방향처럼 같은 조건의 실행 비교가 불가능한 판단에는 이 Gate를 억지로 적용하지 않는다.
+6. P03는 이 판정 방식을 소유하지만 실제 runtime/build/render 증거의 실행·PASS 권위는 해당 validation owner에게 위임한다.
 
 ## 승인된 개선 기록
 
@@ -106,7 +140,7 @@ validation_plan:
 5. 데이터·저장·ID·Schema·호환성이 유지되는가?
 6. 새 예외·악용·복잡성·접근성·성능·플랫폼 비용이 생기지 않았는가?
 7. 정본·Registry·Template·Test·파생본 전파 누락이 없는가?
-8. GitHub `main`과 Google Sheets를 재조회해 일치하는가?
+8. repository와 필요한 `CONFIGURED_PROJECT_WORKSPACE`를 재조회해 assigned responsibility가 일치하는가?
 9. 동일 Goal의 중복 PR·중복 구현이 남지 않았는가?
 10. 롤백·복구 경로가 유지되는가?
 11. 실행하지 못한 검사를 `BLOCKED_UNVERIFIED`로 남겼는가?
