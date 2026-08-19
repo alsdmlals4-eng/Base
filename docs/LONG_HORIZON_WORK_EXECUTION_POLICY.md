@@ -2,6 +2,8 @@
 
 이 문서는 Base와 Base를 채택한 프로젝트에서 시간보다 기획 의도·정확성·복원성·검증 가능성을 우선하는 L1 이상 장기 작업의 공용 생명주기를 정의한다. 새 Skill이나 Work Mode가 아니라 기존 intake·검증·Git·archive·Loop Engineering 책임을 한 흐름으로 묶는다.
 
+프로젝트의 기본 작업 순서는 `docs/GPT_FIRST_PROJECT_WORKFLOW.md`, 폐기된 프로젝트 작업면의 흡수·삭제는 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`가 세부 책임을 갖는다.
+
 ## 1. Machine contract
 
 ```text
@@ -12,6 +14,14 @@ BENCHMARK_SYNTHESIS
 BETTER_ALTERNATIVE_SEARCH
 LONG_TERM_PLAN_FIT_REQUIRED
 EXPECTED_EFFECTS_RISKS_MITIGATIONS_BEFORE_BUILD
+GPT_PRIMARY_PLANNING_REVIEW
+GPT_FINAL_REVIEW_AUTHORITY
+CODEX_OPTIONAL_SUB_EXECUTOR
+ONE_SHOT_CODEX_HANDOFF_WHEN_NEEDED
+NOTION_VISUAL_CHECKPOINT_BEFORE_POC
+UX_UI_REPRESENTATIVE_STATE_REQUIRED
+APPROVED_VISUALS_FEED_POC
+APPROVAL_TO_ADVERSARIAL_REVIEW_SYNC_PR_READBACK
 SINGLE_INITIAL_APPROVAL_THEN_CONTINUE
 RECOVER_TRY_ALTERNATIVES_RESUME
 INDEPENDENT_WORKSTREAM_ISOLATION
@@ -20,6 +30,8 @@ EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION
 ZERO_INCREMENTAL_COST_REQUIRED
 CURRENT_PAID_PLANS: GPT_PRO
 PAID_PLAN_COUNT: 1
+NOTION_PAID_ON_REQUEST_ONLY
+COST_BENEFIT_EVIDENCE_BEFORE_NOTION_UPGRADE
 FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS
 POSTMERGE_PROMOTION_AND_SUPERSESSION
 CORE_LOOP_DUMMY_BALANCE_BUILD_TEST
@@ -32,9 +44,13 @@ WORK_MASTER
 ASSET_KNOWLEDGE_MASTER
 VISUAL_MAP_DERIVED
 REPO_NATIVE_STRUCTURED_DATA
-GOOGLE_SHEETS_COMPATIBILITY_ONLY
-EXTERNAL_HTML_TOOL_CATALOG: DERIVED_DISCOVERY_SURFACE
+REPOSITORY_NATIVE_QA_EVIDENCE
+DEPRECATED_SURFACE_ABSORB_THEN_DELETE
+USER_FACING_LOCAL_TOOL_DEFAULT: RETIRED
+HTML_PROJECT_SURFACE: RETIRED
+GOOGLE_SHEETS_MIGRATE_THEN_REMOVE
 LOOP_ENGINEERING: REQUIRED_WHEN_RELEVANT
+USER_LEARNING_COMPLETION_REPORT
 REQUIRED_WORK_REMAINING: 0
 ```
 
@@ -43,20 +59,28 @@ REQUIRED_WORK_REMAINING: 0
 ```text
 RESEARCH
 → CURRENT STATE / OPEN PR RECONCILIATION
+→ GITHUB + NOTION PREFLIGHT
 → DIRECTION / INTENT
 → >= 3 VIABLE ALTERNATIVES
 → BENCHMARK SYNTHESIS
 → TRADE STUDY
 → PROVISIONAL BEST OPTION
+→ GPT PLANNING / REVIEW
 → EXPECTED EFFECTS / RISKS / MITIGATIONS
+→ NOTION VISUAL CHECKPOINT WHEN MATERIAL
 → ONE USER APPROVAL
-→ SMALL TESTABLE SLICES
-→ TOOL / RUNTIME EXECUTION
-→ FIVE FULL ADVERSARIAL IMPROVEMENT LOOPS
+→ APPROVAL-SCOPE ADVERSARIAL REVIEW
+→ repository + Notion sync preparation
+→ optional CODEX sub-executor when actual implementation needs it
+→ SMALL TESTABLE SLICES / TOOL / RUNTIME EXECUTION
+→ GPT FINAL REVIEW
+→ FIVE FULL ADVERSARIAL IMPROVEMENT LOOPS when required
 → LONG-TERM FIT CLOSURE
 → EXACT-HEAD PR GATE
 → MERGE
 → POSTMERGE READBACK
+→ NOTION READBACK / STATUS REFRESH
+→ USER LEARNING COMPLETION REPORT
 → LESSON PROMOTION / SUPERSESSION
 → REQUIRED WORK REMAINING = 0
 ```
@@ -65,8 +89,9 @@ RESEARCH
 
 1. 현재 사용자 목표, 플레이어 가치, 성공 조건, 비목표를 먼저 복원한다.
 2. 최신 main, 같은 Goal의 열린·최근 병합 PR, 현재 정본, 실제 구현, 테스트·실패 증거를 대조한다.
-3. 세부 수치나 구현 편의가 큰 방향을 역으로 결정하지 못하게 한다.
-4. 프로젝트 코어·플레이어 경험·비용·범위를 바꾸는 선택만 사용자 결정으로 올리고, 승인된 방향 안의 가역적 기술 세부는 연속 실행한다.
+3. 사람이 보는 Project Notion Home과 관련 visual/table/flow surface를 함께 대조한다.
+4. 세부 수치나 구현 편의가 큰 방향을 역으로 결정하지 못하게 한다.
+5. 프로젝트 코어·플레이어 경험·비용·범위를 바꾸는 선택만 사용자 결정으로 올리고, 승인된 방향 안의 가역적 기술 세부는 연속 실행한다.
 
 ## 3. 현행 조사·대안·벤치마킹
 
@@ -114,6 +139,14 @@ acceptance_criteria: []
 verification_plan: []
 ```
 
+### `GPT_PRIMARY_PLANNING_REVIEW`
+
+기획·조사·시스템/데이터 설계·UI/UX·아트 방향·이미지 후보·정본 충돌 검수와 최종 결과 판정은 GPT가 기본 주 책임을 갖는다.
+
+`CODEX_OPTIONAL_SUB_EXECUTOR`는 Codex를 모든 프로젝트 작업의 필수 단계로 만들지 않는다. 실제 저장소/엔진 mutation, 다수 파일 구현, runtime 재현처럼 실행 권위가 필요할 때만 보조 executor로 호출한다. Codex가 호출되어도 구현 결과는 `GPT_FINAL_REVIEW_AUTHORITY`로 돌아와 기획·Notion·repository·runtime evidence와 다시 대조한다.
+
+Codex가 필요하면 `ONE_SHOT_CODEX_HANDOFF_WHEN_NEEDED`에 따라 새 PowerShell에서 exact project/worktree를 잡고 하나의 완전한 실행 블록과 구현 계약을 우선 제공한다.
+
 ## 5. 승인 후 연속 실행
 
 ### `SINGLE_INITIAL_APPROVAL_THEN_CONTINUE`
@@ -121,6 +154,27 @@ verification_plan: []
 완전한 작업 계약을 한 번 승인받은 뒤 같은 범위의 구현, 테스트, 실패 진단, 가역적 수정, PR 생성, exact-head 검사, 적대적 검토, 회귀 검사, 저장소 정책이 허용하는 병합과 postmerge readback은 routine approval로 멈추지 않는다.
 
 새 사용자 승인이 필요한 것은 핵심 게임 방향·플레이어 경험·중요 스토리 의미 변경, 승인 범위 확대, 파괴적 migration/삭제, 새 결제·별도 과금, 계정·보안 권한 확대, 사용자 취향 선택이 필요한 복수 유효안이다.
+
+### `APPROVAL_TO_ADVERSARIAL_REVIEW_SYNC_PR_READBACK`
+
+사용자가 승인한 L1 이상 material change/deliverable은 승인 사실만 남기고 미동기화 상태로 방치하지 않는다.
+
+```text
+USER APPROVAL
+→ approved-scope adversarial review
+→ verified finding refinement
+→ GitHub structured/runtime change preparation
+→ Notion human-facing change preparation
+→ Branch / Commit / PR
+→ EXACT-HEAD PR GATE
+→ required checks / unresolved thread 0 / P0-P1 0
+→ merge when policy permits
+→ POSTMERGE READBACK from GitHub main
+→ Notion destination/status readback
+→ cross-domain sync verdict
+```
+
+이미지 파일도 PoC/구현 입력으로 승인되면 provenance, Notion readback, repository implementation path, PR/merge, runtime consumption evidence를 같은 승인 단위에서 분리해 확인한다.
 
 ## 6. 실패 복구
 
@@ -165,6 +219,14 @@ failure / interruption
 
 반복해서 필요한 기능은 프로젝트 고유 수치·세계관·콘텐츠와 공용 구조를 분리해 재사용한다. 한 번의 성공만으로 새 공용 Skill이나 플랫폼을 만들지 않는다.
 
+### `NOTION_VISUAL_CHECKPOINT_BEFORE_POC`
+
+이미지·UI·UX가 핵심 경험 판단에 materially relevant하면 PoC/demo 전에 `UX_UI_REPRESENTATIVE_STATE_REQUIRED`를 적용한다.
+
+최소한 core loop 진입/첫인상, 주 플레이, 핵심 선택, 주요 feedback 중 테스트 판단을 바꿀 상태를 대표 이미지·UI 상태로 기획·검수하고 Notion에 배치한 뒤 readback과 승인을 거친다.
+
+`APPROVED_VISUALS_FEED_POC`는 승인된 시각 후보가 PoC 판단 근거라면 PoC가 그 이미지를 직접 사용하거나 동일 provenance를 가진 구현용 파생 자산을 사용하도록 한다. 기술-only spike처럼 시각이 테스트 결과에 영향을 주지 않는 경우만 이유를 남기고 생략한다.
+
 ## 9. 프로젝트 작업면과 데이터 권위
 
 ### `NOTION_DEFAULT_PROJECT_WORKSPACE`
@@ -202,13 +264,21 @@ project page
 
 balance, economy, schema, runtime config, 코드, scene, resource, tracked implementation asset, build/test 상태는 repository-native source와 실제 runtime evidence가 소유한다. Notion의 승인이나 screenshot은 runtime proof가 아니다.
 
-### `GOOGLE_SHEETS_COMPATIBILITY_ONLY`
+### `REPOSITORY_NATIVE_QA_EVIDENCE`
 
-기존 Google Sheet는 고유 unmigrated material이 남아 있을 때만 compatibility/migration source로 읽는다. 검증된 migration과 readback 뒤에는 새 프로젝트 작업면으로 사용하지 않는다.
+별도 사용자-facing localhost QA 앱을 기본 경로로 요구하지 않는다. exact commit/PR head, `PASS / FAIL / BLOCKED / NOT_RUN`, screenshot/video/log, GitHub Actions artifact 또는 PR evidence packet처럼 repository-native evidence를 우선한다. Android 미연결은 PC 결과와 분리해 `DEFERRED_NOT_CONNECTED`로 유지할 수 있다.
 
-### `EXTERNAL_HTML_TOOL_CATALOG: DERIVED_DISCOVERY_SURFACE`
+### `DEPRECATED_SURFACE_ABSORB_THEN_DELETE`
 
-외부 HTML catalog/dashboard는 발견·보조 surface일 뿐 정본이나 실행 증거가 아니다.
+`USER_FACING_LOCAL_TOOL_DEFAULT: RETIRED`
+
+`HTML_PROJECT_SURFACE: RETIRED`
+
+`GOOGLE_SHEETS_MIGRATE_THEN_REMOVE`
+
+기존 사용자-facing 로컬 도구, 독립 HTML 프로젝트 관리 surface, Google Sheets는 새 작업의 기본 읽기/쓰기 경로가 아니다. 고유 의미·provenance·검증 원리를 Notion 또는 repository-native owner로 한 번 이관하고 destination readback과 active consumer 교체를 확인한 뒤 active surface에서 제거한다. 삭제 이력은 Git history를 rollback 근거로 사용하며 별도 복제 archive를 기본 생성하지 않는다.
+
+repository 내부 CI/build/migration/validation script처럼 실제 non-interactive 소비자가 있는 자동화는 이 규칙만으로 삭제하지 않는다.
 
 ## 10. 시각 자산·Reference·Benchmark
 
@@ -225,7 +295,7 @@ generate / edit
 → readback
 → approval / rejection
 → version / replacement relation
-→ repository handoff
+→ repository handoff when implementation-bound
 → runtime QA separately
 ```
 
@@ -236,9 +306,14 @@ generate / edit
 ```text
 CURRENT_PAID_PLANS: GPT_PRO
 PAID_PLAN_COUNT: 1
+NOTION_PAID_ON_REQUEST_ONLY
 ```
 
-현재 기본 유료 플랜은 **GPT Pro** 하나다. Notion은 Free 범위에서 사용하며 paid Notion AI, 별도 API credit, metered storage/automation, marketplace, 신규 유료 runner/compute/storage를 기본 경로에 넣지 않는다. 다른 유료 기능을 도입·실행·결제하려면 **새 사용자 승인**이 필요하다. 비용 상태가 불명확하면 `COST_GATE_BLOCKED`로 둔다.
+현재 기본 유료 플랜은 **GPT Pro 하나**다. Notion은 무료 범위에서 우선 사용한다.
+
+`COST_BENEFIT_EVIDENCE_BEFORE_NOTION_UPGRADE`는 Notion 유료 기능이 반복 병목을 실제로 줄이고 무료 fallback보다 총비용이 낮다는 근거를 먼저 요구한다. 필요성이 확인되면 비용, 얻는 기능, 무료 대안, 미결 위험을 사용자에게 설명하고 **명시적 요청/승인 후에만** Notion 유료 플랜을 도입한다.
+
+paid Notion AI, Business/Enterprise-only 기능, 별도 metered storage/automation, 다른 유료 AI/API/SaaS/runner/compute/storage는 승인 전 기본 실행 경로에 넣지 않는다. 비용 상태가 불명확하면 `COST_GATE_BLOCKED`로 둔다.
 
 ## 12. 다섯 번의 전체 적대적 개선 루프
 
@@ -279,6 +354,25 @@ optional_backlog: []
 ```
 
 `REQUIRED_WORK_REMAINING: 0`은 승인된 필수 criterion이 모두 충족됐을 때만 쓴다. 외부 계정/사용자 PC/기기 검증은 external blocker로, 장기 개선 아이디어는 optional backlog로 분리한다.
+
+### `USER_LEARNING_COMPLETION_REPORT`
+
+Base와 프로젝트의 L1 이상 완료 보고는 사용자 학습을 위해 다음을 실제 구조와 증거에 맞게 설명한다.
+
+- 이 작업/파트가 전체에서 맡는 역할
+- **핵심 규칙**: 무엇을 보장/차단하고 언제 작동하는지
+- **핵심 Skill**: 호출 조건, 책임, 다른 Skill과의 경계
+- **핵심 모듈**: 역할, 입력, 출력, 연결 대상
+- 잘 유지해야 하는 것 / 개선한 것 / 통합·흡수한 것 / 제거한 것
+- 추가하면 좋은 것 / 현재는 추가하지 않는 것이 좋은 것
+- **변경 전** 구조와 문제
+- **변경 후** 구조와 이유
+- 사용자/플레이어에게 기대되는 **장기 효과**와 trade-off
+- **재검토 조건**
+- 실제 변경 파일, 테스트/빌드/runtime/Notion readback, PR/merge/main SHA
+- 미검증, 남은 위험, external blocker
+
+모듈화를 위한 모듈화나 Skill 수 증가를 개선으로 포장하지 않는다.
 
 ## 15. 신선도와 교훈 승격
 
