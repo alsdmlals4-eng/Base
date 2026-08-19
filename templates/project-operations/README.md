@@ -41,6 +41,10 @@ Google Sheets
 | `LEGACY_ARTIFACT_RECONCILIATION.md` | 폐기·중복·고유 legacy 자료 이관 판정 |
 | `PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md` | **COMPATIBILITY_ONLY legacy migration aid**; 신규 Sheet 설계 계약이 아님 |
 
+## Vertical Slice 실행 진입점
+
+프로젝트가 통합 Vertical Slice 구현·검증 단계에 들어가면 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 canonical 실행 프롬프트 진입점으로 사용한다. 이 README는 해당 Prompt의 복사본을 소유하지 않으며, 프로젝트 운영 템플릿과 실제 Vertical Slice 실행 계약 사이의 링크만 유지한다.
+
 ## 설치 순서
 
 ```text
