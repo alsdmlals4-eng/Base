@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "authority_model": "DOMAIN_SPLIT_CANON",
   "project_workspace": "NOTION_DEFAULT_PROJECT_WORKSPACE",
   "human_facing_canon": "NOTION_HUMAN_FACING_CANON",
@@ -8,10 +8,26 @@
   "project_registry": "PROJECT_REGISTRY_MASTER",
   "work_master": "WORK_MASTER",
   "asset_master": "ASSET_KNOWLEDGE_MASTER",
+  "core_system_master": "CORE_SYSTEM_MASTER",
   "visual_map": "VISUAL_MAP_DERIVED",
   "runtime_truth": "REPOSITORY_RUNTIME_TRUTH",
   "human_view": "PROJECT_FILTERED_HUMAN_VIEW",
   "ai_system_view": "PROJECT_FILTERED_AI_SYSTEM_VIEW",
+  "parallel_project_write_model": "PROJECT_NAMESPACE_ISOLATION",
+  "same_record_concurrency": "OPTIMISTIC_CONFLICT_DETECTION",
+  "notion_write_mode": "BOUNDED_RECORD_WRITE",
+  "parallel_write_policy": "docs/operations/NOTION_PROJECT_ISOLATION_AND_CORE_SYSTEM_CONTRACT.md",
+  "core_system_identity_fields": [
+    "Project",
+    "Record Key",
+    "Revision",
+    "Last Edited"
+  ],
+  "conflict_states": [
+    "CONFLICT_STALE_READ",
+    "CONFLICT_DUPLICATE_KEY",
+    "CONFLICT_MISSING_PROJECT"
+  ],
   "google_sheets": "COMPATIBILITY_ONLY",
   "figma": "DEPRECATED_NOT_ACTIVE_AUTHORITY",
   "default_cost_boundary": "ZERO_INCREMENTAL_COST",
@@ -22,6 +38,7 @@
     "VISUAL_ASSET_CATALOG",
     "BUDGET_TABLE",
     "TIER_TABLE",
+    "CORE_SYSTEM_HUMAN_MODEL",
     "HUMAN_EDITABLE_FLOW_MAP",
     "STORYBOARD"
   ],
@@ -41,7 +58,8 @@
     "COMPONENT",
     "SCREEN",
     "REFERENCE",
-    "BENCHMARK"
+    "BENCHMARK",
+    "SYSTEM"
   ],
   "benchmark_decisions": [
     "ADOPT",
@@ -52,9 +70,13 @@
     "IGNORE"
   ],
   "invariants": [
-    "Every project-scoped work, asset, screen, reference, benchmark, and component record must resolve to exactly one Project relation before it can be treated as project canon.",
+    "Every project-scoped work, asset, screen, reference, benchmark, component, and system record must resolve to exactly one Project relation before it can be treated as project canon.",
     "Project pages expose only Project-filtered linked views; unfiltered master views belong under the system-master area.",
-    "Notion is the primary human-facing canon for project overview, visual direction, visual asset catalogs, budget tables, tier tables, human-editable flow maps, and storyboards.",
+    "Parallel work across different projects uses Project namespace isolation and must never write through another Project relation.",
+    "Core-system records use a deterministic Record Key scoped by Project and record type; duplicate keys fail closed instead of being guessed or merged.",
+    "Same-record AI writes compare Revision and Last Edited immediately before a bounded record-level update; a stale read aborts instead of overwriting newer human or agent changes.",
+    "A successful Notion write requires destination readback of Project, Record Key, Revision, and intended changed fields before completion may be reported.",
+    "Notion is the primary human-facing canon for project overview, visual direction, visual asset catalogs, budget tables, tier tables, core-system human models, human-editable flow maps, and storyboards.",
     "Repository Markdown, JSON, game data, code, scenes, resources, tests, and runtime evidence remain the structured and implementation canon for their domains.",
     "The Visual Map may be derived from structured records, but the approved Notion view is the primary human-facing representation for visual planning and review.",
     "A Notion edit that requires structured data, Markdown, code, scene, resource, test, or runtime behavior to change must be synchronized to the repository before implementation or runtime claims.",
