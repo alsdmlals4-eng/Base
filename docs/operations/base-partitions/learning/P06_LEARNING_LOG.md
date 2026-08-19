@@ -22,6 +22,61 @@ source_followup_questions: []
 revisit_condition:
 ```
 
+### 2026-08-19 · PR #536 — historical Godot adapter authority clarity
+
+```yaml
+date: 2026-08-19
+work_ref: "Base PR #536 / P06 optimization"
+baseline_and_result: >-
+  Baseline df8ef644d30fc96456da23a5157e5efb61b620bb had a current HiGodot
+  single-writer policy but retained Base live-editor documents still used active/current
+  authority language. The P06 branch kept unique security/runtime evidence while making
+  every retained legacy document explicitly historical and routing current writer/tool
+  roles to HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md.
+what_worked:
+  - "TDD first: exact-head RED proved the four legacy documents lacked the required historical/current-authority boundary before production-document edits."
+  - "Minimal authority-label normalization preserved stale-state, approval, rollback, identity, physical-evidence, and Pilot learning instead of deleting it."
+  - "Current Godot/GUT/HiGodot/Hera primary/upstream checks supported keeping the existing author→test→live-QA responsibility split."
+what_failed_or_was_rejected:
+  - "Keeping the baseline unchanged was rejected because direct document entry could still present v2 as active authority."
+  - "Deleting all legacy adapter artifacts was rejected because unique audit/regression consumers remain."
+  - "Adding a new legacy-history Skill or provider-neutral Godot orchestration layer was rejected as routing/context overhead without a measured blocker."
+  - "QA Evidence Studio cleanup was not absorbed because open PR #530 owns active changes there and is read-only to P06."
+reusable_lesson: >-
+  Retained legacy evidence must declare its non-authoritative status inside each directly
+  discoverable document, name the current canonical authority, and have a regression
+  guard against stale active-authority wording. An archive index alone is insufficient
+  because search/direct links can bypass it.
+anti_pattern:
+  - "Preserve an obsolete implementation for audit but leave active/current wording inside the retained file."
+  - "Treat archive retention as permission to keep a second writer route discoverable."
+  - "Delete unique historical evidence before proving consumer/reference zero and an approved destination for reusable lessons."
+affected_rules_skills_modules:
+  - "HiGodot single persistent authoring authority"
+  - "Existing Solution First"
+  - "actual runtime evidence before PASS"
+  - "evaluating-godot-assets-and-plugins-before-creation"
+  - "Godot Authoring Authority"
+  - "Editor / Runtime Adapter Evidence"
+evidence:
+  - "RED commit 6481375f2d75223e25d84533955f3fdac24df44e: 5 expected failures in Validate Base v9 Operating Contracts"
+  - "GREEN run 32223186130: Base v9 contract job and adversarial gate PASS after authority normalization"
+  - "docs/operations/godot-runtime/P06_OPTIMIZATION_2026-08-19.md"
+reuse_scope: BASE_PROMOTION_CANDIDATE
+promotion_candidate: >-
+  Integration may generalize the direct-document legacy-status regression pattern for
+  other Parts that retain obsolete implementation evidence. Do not promote P06-specific
+  provider names or Godot rules into a generic policy.
+source_followup_questions:
+  - "Has the stable Godot/GUT compatibility baseline changed at the next engine or test-framework upgrade?"
+  - "Has HiGodot's upstream architecture/security changed enough to require a new authoring-authority review?"
+  - "Does Hera still need the same Base-local QA-only restriction at its next exact-pair upgrade?"
+revisit_condition: >-
+  Revisit on Godot major/minor upgrade, HiGodot authority change, GUT compatibility change,
+  Hera role/security change, PR #530 QA-tooling resolution, or proven consumer-zero for
+  the historical Base adapter surface.
+```
+
 ## Source Learning
 
 - Source domains: GAME_DEVELOPMENT, CODE_ENGINEERING
