@@ -18,5 +18,6 @@ evidence:
   - skills/optimizing-ai-model-and-prompt-costs/SKILL.md
   - tests/test_p08_ai_operations_contract.py
   - docs/operations/base-partitions/learning/P08_LEARNING_LOG.md
-verification_status: PENDING_FINAL_EXACT_HEAD_CI
+verification_status: REVALIDATED_FOCUSED_AND_BASE_V9_ON_727ecb15
+final_gate_owner: "PR #551 exact-head required CI and post-merge readback"
 ```
