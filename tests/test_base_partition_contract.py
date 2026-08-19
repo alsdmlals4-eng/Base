@@ -14,7 +14,7 @@ INTEGRATION_PROMPT = ROOT / "templates" / "prompts" / "BASE_PARTITION_INTEGRATIO
 SCOPE_CHECKER = ROOT / "tools" / "check_base_partition_scope.py"
 LEARNING_SYSTEM = ROOT / "docs" / "operations" / "BASE_PARTITION_LEARNING_SYSTEM.md"
 SKILL_REGISTRY = ROOT / "skills" / "SKILL_REGISTRY.json"
-ADVERSARIAL_SKILL = ROOT / "skills" / "running-adversarial-review-and-refinement" / "SKILL.md"
+AGENTS = ROOT / "AGENTS.md"
 WORKSPACE_AUTHORITY = ROOT / "docs" / "operations" / "PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json"
 PROJECT_OS_SKILL = ROOT / "skills" / "managing-game-project-operating-system" / "SKILL.md"
 
@@ -90,16 +90,29 @@ class BasePartitionContractTests(unittest.TestCase):
         manifest = self.load_manifest()
         execution = manifest["execution_model"]
         self.assertEqual("PART_BOUNDARY_IS_FOCUS_NOT_REPAIR_PROHIBITION", execution["cross_part_repair_policy"])
-        self.assertEqual("READ_ONLY_UNLESS_EXPLICIT_TRANSFER", execution["unrelated_active_workstreams"])
+        self.assertEqual("ACTUAL_ACTIVE_OWNERSHIP_ONLY", execution["foreign_workstream_protection_basis"])
         self.assertTrue(execution["coordinator_can_repair_cross_part"])
         self.assertIn("semantic owner", " ".join(execution["cross_part_repair_conditions"]))
-        self.assertIn("open/draft/ready", " ".join(execution["cross_part_repair_conditions"]))
         model = OPERATING_MODEL.read_text(encoding="utf-8")
         worker = WORKER_PROMPT.read_text(encoding="utf-8")
         self.assertIn("PART_BOUNDARY_IS_FOCUS_NOT_REPAIR_PROHIBITION", model)
         self.assertIn("PART_BOUNDARY_IS_FOCUS_NOT_REPAIR_PROHIBITION", worker)
         self.assertIn("다른 Part라는 이유만으로", worker)
-        self.assertIn("open/draft/ready", worker)
+
+    def test_open_pr_is_not_automatically_active_ownership(self) -> None:
+        manifest = self.load_manifest()
+        execution = manifest["execution_model"]
+        self.assertEqual("OPEN_PR_IS_NOT_ACTIVE_OWNERSHIP", execution["open_pr_policy"])
+        self.assertEqual("ACTUAL_ACTIVE_OWNERSHIP_ONLY", execution["foreign_workstream_protection_basis"])
+        self.assertEqual("CURRENT_CHAT_ONLY_WHEN_USER_CONFIRMS", execution["single_chat_override"])
+        for text in (
+            AGENTS.read_text(encoding="utf-8"),
+            OPERATING_MODEL.read_text(encoding="utf-8"),
+            WORKER_PROMPT.read_text(encoding="utf-8"),
+            INTEGRATION_PROMPT.read_text(encoding="utf-8"),
+        ):
+            self.assertIn("OPEN_PR_IS_NOT_ACTIVE_OWNERSHIP", text)
+            self.assertIn("실제 활성", text)
 
     def test_hybrid_partition_mode_keeps_one_unified_base(self) -> None:
         manifest = self.load_manifest()
@@ -143,11 +156,11 @@ class BasePartitionContractTests(unittest.TestCase):
             self.assertIn("CLEAN_REVIEW_EXIT", text)
             self.assertIn("FULL_LOOP_IS_NOT_A_REVIEW_LENS", text)
         self.assertIn("OPTIONAL_CODEX_EXECUTOR", worker)
-        self.assertIn("사용자 학습형 완료보고", worker)
+        self.assertIn("사용자 학습형", worker)
         self.assertIn("CURRENT_COORDINATOR_CHAT", integration)
 
     def test_full_adversarial_loop_cannot_be_counted_as_one_review_lens(self) -> None:
-        adversarial = ADVERSARIAL_SKILL.read_text(encoding="utf-8")
+        adversarial = AGENTS.read_text(encoding="utf-8")
         for term in (
             "FULL_LOOP_IS_NOT_A_REVIEW_LENS",
             "관점 하나만 검사한 것은 full loop로 계수하지 않는다",
