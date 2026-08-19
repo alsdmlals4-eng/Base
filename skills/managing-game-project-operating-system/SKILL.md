@@ -11,6 +11,8 @@ Base v9.1 projects use the focused [project adapter and routing contract](refere
 
 신규 설치, 기존 구조 감사, 구형 파일 정리, 승인된 마이그레이션과 운영체계 검수는 같은 책임 원본·참조·복구 계약을 공유한다. `Work Mode`와 `Skill Mode`를 구분하며, 읽기 전용 조사와 승인된 쓰기 작업을 혼동하지 않는다. 프로젝트 workspace는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json`의 `DOMAIN_SPLIT_CANON`을 따른다. 기본 사람용 workspace는 `NOTION_DEFAULT_PROJECT_WORKSPACE` / `NOTION_HUMAN_FACING_CANON`, 구조화·runtime truth는 `REPOSITORY_STRUCTURED_CANON`, Google Sheets는 `COMPATIBILITY_ONLY` legacy migration input이다.
 
+Google Sheets legacy migration의 공용 의미·폐기 경계는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 따른다. 이 참조는 Sheet를 신규 입력면이나 active project workspace로 재승격하지 않는다.
+
 Godot MCP/addon/CLI 공급자 도입·업데이트는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`를 따른다. HiGodot (`hi-godot/godot-ai`)만 persistent Godot authoring 실행 권위이며 프로젝트는 `HIGODOT_ADOPTION_RECORD.json`에 exact pin, Godot 버전, host client, canary, regression, rollback과 미검증을 기록한다. GUT과 Hera Agent Godot은 프로젝트가 실제 필요에 따라 채택하는 별도 **third-party 검증 도구**이며, GUT은 deterministic GDScript tests, Hera는 `LIVE_QA_AND_OBSERVABILITY_ONLY`로만 공존한다.
 
 - `Work Mode`: `PLAN / BUILD / REVIEW`
@@ -433,6 +435,7 @@ KEEP_UNRESOLVED
 Related:
 
 - `docs/WORK_MODE_AND_SKILL_ROUTING.md`
+- `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`
 - `docs/knowledge/methods/DEVELOPMENT_GATES_METHOD.md`
 - `docs/knowledge/methods/DISCIPLINE_PDF_PUBLICATION_METHOD.md`
 - `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`
