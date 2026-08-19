@@ -58,14 +58,15 @@
       "repository": "alsdmlals4-eng/urban-legend",
       "status": "ADOPTED_AND_VERIFIED",
       "modules": {
-        "RM-TOOL-001": "enabled",
+        "RM-TOOL-001": "deferred",
         "RM-SYS-001": "not_applicable",
         "RM-SYS-003": "planned",
         "RM-VIS-001": "planned",
         "RM-VIS-002": "planned"
       },
-      "evidence": "project PR #208 merged as 5c91f4ff8d88b3e00f66252ba6f566795f2e50a3",
-      "revisit": "standardize the already-identical validator into Adoption Lock after the Base Adoption Kit merge"
+      "evidence": "project PR #208 merged the RM-TOOL-001 concept as a project-adapted implementation at 5c91f4ff8d88b3e00f66252ba6f566795f2e50a3; current project file is intentionally not byte-identical to the Base vendor source",
+      "blocker": "do not overwrite the verified project-adapted validator with the Base vendor source",
+      "revisit": "only standardize to vendored source after an explicit equivalence/migration decision; the existing project implementation remains valid"
     },
     "NINJA_SURVIVAL": {
       "repository": "alsdmlals4-eng/ninja-survival-godot",
