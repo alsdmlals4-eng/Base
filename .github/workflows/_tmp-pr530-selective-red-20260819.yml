@@ -1,8 +1,6 @@
 name: Temporary PR530 selective migration
 
 on:
-  push:
-    branches: [integrate/pr530-current-main-20260819]
   pull_request:
     branches: [main]
 
