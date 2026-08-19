@@ -27,6 +27,72 @@ Skill과 외부 모델은 다음을 덮어쓸 수 없다.
 
 새 Skill은 기존 Skill의 mode로 표현할 수 없고, 반복 빈도와 별도 검증 경계가 있을 때만 만든다. 벤치마크 조사와 작업 순서 설계는 각각 기존 기획 분석과 요청·계약 생명주기의 mode로 흡수한다.
 
+## 2A. REVERSE_ENGINEERED_SKILL_WORKFLOW_CANDIDATE
+
+외부 Skill, Agent workflow, 프롬프트 체계, 작업구조, 제작 프로세스에서 재사용 가능한 부분을 발견한 경우 **패키지 전체를 모방하는 대신 `PATTERN_NOT_PACKAGE_COPY`를 기본값**으로 한다.
+
+```text
+OBSERVE REPRESENTATIVE TASKS
+→ SOURCE / LICENSE / PERMISSION CHECK
+→ CONTRACT EXTRACTION
+→ VENDOR-SPECIFIC EXPRESSION REMOVAL
+→ EXISTING OWNER / PLACEMENT COMPARISON
+→ MINIMUM ABSORPTION OR BOUNDED REIMPLEMENTATION
+→ EVAL_BEFORE_PROMOTION
+→ PROJECT PILOT
+→ BASE PROMOTION ONLY IF REPEATED AND DISTINCT
+```
+
+### 추출할 계약
+
+외부 절차의 이름이나 마케팅 문구보다 다음을 기록한다.
+
+```yaml
+trigger:
+goal:
+required_inputs:
+source_of_truth:
+protected_constraints:
+state_or_steps:
+tool_and_permission_boundary:
+output_contract:
+failure_and_recovery:
+validation_or_quality_bar:
+handoff_or_stop_condition:
+```
+
+- 특정 공급자 persona, 브랜드 용어, 장식적인 “magic wording”은 핵심 계약으로 오인하지 않는다.
+- 동일한 효과가 현재 Base instruction, Template, 기존 Skill mode, deterministic Tool로 가능하면 새 Skill을 만들지 않는다.
+- 외부 프로세스가 독립 도메인 권한이 아니라 실행 방식만 바꾸면 `CAPABILITY_COMPOSITION_MAP.md`의 `EXTERNAL_PROCESS_OVERLAY`로 남길 수 있다.
+- 직접 패키지를 설치·복사하는 것이 더 적합하면 라이선스, 출처, 버전 pin, 의존성, 권한, 보안·공급망과 rollback을 검토한 뒤 Existing Solution First로 처리한다.
+- 제3자 proprietary instruction·코드·문구를 권한 없이 Base에 복사하지 않는다.
+
+### 배치 우선순위
+
+```text
+기존 owner의 짧은 규칙 보강
+→ 기존 Template/Reference 보강
+→ 기존 Skill의 mode로 흡수
+→ deterministic script/tool
+→ EXTERNAL_PROCESS_OVERLAY
+→ 독립 Skill/Agent (마지막 수단)
+```
+
+독립 Skill/Agent는 반복 빈도가 높다는 이유만으로 만들지 않는다. 고유 trigger, 입력, authority, 산출물, 실패 조건과 별도 검증 경계가 있어야 한다.
+
+### EVAL_BEFORE_PROMOTION
+
+역공학한 Workflow/Skill 패턴을 Base ACTIVE 계약으로 승격하기 전 다음을 비교한다.
+
+1. 패턴 적용 전 대표 작업의 누락·오판·시간/Context 비용.
+2. 패턴 적용 후 같은 대표 작업.
+3. 입력을 변형한 시나리오.
+4. 패턴을 **선택하면 안 되는** negative-routing 시나리오.
+5. 실패·부분 입력·도구 불가·권한 부족 시나리오.
+6. 기존 Skill/Workflow와의 중복, handoff 손실, 유지보수 비용.
+
+문서가 그럴듯하거나 유명 팀/제품이 쓴다는 사실은 승격 증거가 아니다. 실제 개선이 확인되지 않으면 `REFERENCE_ONLY`, `TEST`, 또는 프로젝트 전용으로 유지한다.
+
 ## 3. 최소 라우팅
 
 기본값은 통합 Foundation Skill 1개와 필요한 전문 Skill 1개 이하이다. 발행·검증·Handoff는 해당 단계에서만 실행한다.
