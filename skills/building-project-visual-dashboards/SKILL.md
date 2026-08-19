@@ -91,4 +91,16 @@ Project identity / latest user decisions
 - 핵심 정보를 하위 링크로만 밀어내지 않았는가
 - write 뒤 exact Project destination을 readback했는가
 
+## Reference
+
+기존 human-facing 정보 계층 원리는 `skills/building-project-visual-dashboards/references/dashboard-information-architecture.md`를 참고하되, standalone HTML 탭 구현이 아니라 Notion Home/Visual Map에 맞게 적용한다.
+
+## Output contract
+
+최소 출력은 self-contained Project Home, 필요한 Visual Map/diagram, repository/runtime locator, 검증 상태, blocker·next work·revisit condition이다. 핵심 이해를 하위 링크로만 넘기지 않는다.
+
+## Quality gate
+
+Home만 읽어 프로젝트 핵심 가치·Core Loop·주요 시스템·UX/Visual·구현/검증 상태·다음 작업을 설명할 수 있어야 한다. Notion과 repository/runtime truth가 충돌하거나 미실행 검증을 PASS로 표시하거나 standalone HTML/local dashboard가 새 authority로 부활하면 실패다.
+
 Learning Log: `skills/building-project-visual-dashboards/LEARNING_LOG.md`
