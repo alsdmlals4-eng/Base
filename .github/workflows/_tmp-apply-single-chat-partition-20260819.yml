@@ -1,0 +1,52 @@
+name: Temporary apply single-chat partition contract
+
+on:
+  push:
+    branches:
+      - feat/single-chat-partition-notion-home-20260819
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/single-chat-partition-notion-home-20260819
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Apply durable contracts
+        shell: bash
+        run: |
+          if [[ ! -f tools/_tmp_apply_single_chat_partition_contract_20260819.py ]]; then
+            echo 'migration already applied'
+            exit 0
+          fi
+          python tools/_tmp_apply_single_chat_partition_contract_20260819.py
+          python tools/_tmp_patch_actual_active_ownership_20260819.py
+      - name: Verify focused contracts
+        shell: bash
+        run: |
+          if [[ ! -f tools/_tmp_apply_single_chat_partition_contract_20260819.py ]]; then
+            echo 'already applied; no-op verification'
+            exit 0
+          fi
+          python tools/check_base_partition_scope.py --validate-manifest
+          python -m unittest tests.test_base_partition_contract tests.test_notion_project_isolation_core_system_contract tests.test_neutral_adversarial_feature_lifecycle -v
+      - name: Commit durable changes
+        shell: bash
+        run: |
+          if [[ ! -f tools/_tmp_apply_single_chat_partition_contract_20260819.py ]]; then
+            exit 0
+          fi
+          rm tools/_tmp_apply_single_chat_partition_contract_20260819.py tools/_tmp_patch_actual_active_ownership_20260819.py
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add AGENTS.md docs/operations/BASE_PARTITION_MANIFEST.json docs/operations/BASE_PARTITION_OPERATING_MODEL.md docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json templates/prompts/BASE_PARTITION_OPTIMIZATION_PROMPT.md templates/prompts/BASE_PARTITION_INTEGRATION_PROMPT.md skills/running-adversarial-review-and-refinement/SKILL.md skills/managing-game-project-operating-system/SKILL.md tests/test_base_partition_contract.py tools/_tmp_apply_single_chat_partition_contract_20260819.py tools/_tmp_patch_actual_active_ownership_20260819.py
+          git commit -m 'refactor: use one coordinator for partition maintenance'
+          git push origin HEAD:feat/single-chat-partition-notion-home-20260819
