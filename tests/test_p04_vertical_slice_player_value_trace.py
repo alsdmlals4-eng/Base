@@ -74,6 +74,13 @@ class P04VerticalSlicePlayerValueTraceTests(unittest.TestCase):
         self.assertIn("Notion", benchmark)
         self.assertNotIn("Project Sheet 갱신", benchmark)
 
+    def test_game_ux_ui_template_does_not_restore_figma_authority(self) -> None:
+        ux = read("templates/planning/GAME_UX_UI_SYSTEM.md")
+
+        self.assertIn("Notion", ux)
+        self.assertIn("repository", ux)
+        self.assertNotIn("Figma Frame", ux)
+
 
 if __name__ == "__main__":
     unittest.main()
