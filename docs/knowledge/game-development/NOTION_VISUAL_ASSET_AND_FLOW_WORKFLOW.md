@@ -6,6 +6,28 @@
 
 Every project-scoped record must satisfy `PROJECT_RELATION_REQUIRED`. A record without a Project relation is unassigned working material, not project canon.
 
+## GPT-first visual planning
+
+```text
+NOTION_VISUAL_CHECKPOINT_BEFORE_POC
+UX_UI_REPRESENTATIVE_STATE_REQUIRED
+APPROVED_VISUALS_FEED_POC
+```
+
+When image, UI, UX or screen composition can materially change the PoC/demo judgment, GPT plans and reviews representative visual states before implementation. The visual checkpoint is part of planning/review, not a post-PoC decoration pass.
+
+The minimum representative set is selected by the current core experience, but normally includes enough of the following to judge the intended experience:
+
+- entry / first-impression state;
+- primary play state;
+- key decision or interaction state;
+- major feedback, reward, fail or transition state;
+- HUD, popup or navigation state that is necessary to understand the system.
+
+Do not force complete production UI before PoC. A technical-only spike may skip this gate when visuals cannot affect the result, but record the reason.
+
+Approved visual candidates are PoC inputs. If a candidate was approved because its composition, hierarchy, readability, mood or identity matters, the PoC should use that asset directly or an implementation derivative with the same provenance instead of silently substituting an unrelated placeholder.
+
 ## Standard project page
 
 Each project page keeps large visual separation between three responsibilities:
@@ -98,11 +120,14 @@ Promotion is explicit:
 
 ```text
 candidate
+→ GPT visual + UX review
 → project-scoped review
 → readback-verified preview
 → approval
 → PROJECT_ASSET_APPROVED when promoted as a project asset
 → implementation task when runtime use is required
+→ repository PR/merge when implementation-bound
+→ runtime consumption evidence
 ```
 
 Reusable classifications may include:
@@ -160,13 +185,25 @@ A generated image or uploaded file is not considered delivered merely because an
 generate / edit
 → keep under workspace file-size boundary
 → upload to Notion
-→ attach to the intended project record or page
+→ attach to the intended Project record or page
 → fetch/read back the target
 → verify expected file/preview/version
-→ report success
+→ report candidate delivery
 ```
 
 If readback fails, report the delivery as unverified and do not promote the asset.
+
+If the image is approved as a PoC/runtime input, continue:
+
+```text
+approved Notion image
+→ stable provenance / version
+→ repository implementation asset or derivative
+→ branch / PR / exact-head checks
+→ merge
+→ runtime scene/resource consumption evidence
+→ Notion status/readback refresh
+```
 
 ## Runtime handoff
 
@@ -175,9 +212,11 @@ Notion manages the project operating workspace; runtime integration remains repo
 ```text
 Notion approved asset / screen / decision
 → explicit implementation task
+→ optional Codex sub-executor when actual repository/engine mutation is needed
 → repository asset / scene / resource / config
 → runtime build
-→ QA evidence
+→ repository-native QA evidence
+→ GPT final planning/UX review
 ```
 
 A Notion approval, screenshot or Visual Map is not evidence that Godot or another runtime consumed the asset correctly.
@@ -191,5 +230,9 @@ The following old execution surfaces are not required by this workflow:
 - localhost Expression Studio
 - localhost Sprite Animation Studio
 - visual-delivery Tool Hub routing
+- standalone localhost/browser QA Evidence Studio as the default project review surface
+- independent HTML project-management dashboards
 
-The reusable concepts from those systems are represented above as project identity, provenance, approval, versioning, reuse classification, bounded edits, readback and explicit runtime handoff.
+The reusable concepts from those systems are represented above as project identity, provenance, approval, versioning, reuse classification, bounded edits, readback, explicit runtime handoff and repository-native evidence.
+
+Retired surface cleanup follows `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`; do not restore a retired local/HTML surface merely because historical files or Git history mention it.
