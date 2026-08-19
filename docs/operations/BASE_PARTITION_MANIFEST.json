@@ -70,11 +70,12 @@
       "docs/operations/base-v9/generated/**"
     ],
     "change_protocol": [
-      "Part worker records CROSS_PART_CHANGE_REQUEST instead of editing CP0",
-      "Integration deduplicates and validates requests",
-      "Integration updates canonical owner once",
+      "Coordinator may fix validated cross-Part or CP0 findings directly with CROSS_PART_CHANGE semantic attribution",
+      "Different Part ownership alone is not a write barrier",
+      "Independent open/draft/ready workstreams remain read-only unless the user explicitly authorizes takeover",
+      "CROSS_PART_CHANGE_REQUEST is reserved for real authority/evidence/active-workstream blockers",
       "Generated artifacts are rebuilt from authority rather than hand-edited",
-      "Exact-head CI and post-merge readback are required"
+      "Exact-head CI and post-merge GitHub/Notion readback are required"
     ],
     "validation": [
       "python tools/check_base_partition_scope.py --validate-manifest",
@@ -82,38 +83,6 @@
       "python tools/build_base_v9_artifacts.py --check"
     ]
   },
-  "parallel_execution_groups": [
-    {
-      "group_id": "G1_FOUNDATION",
-      "parts": [
-        "P01",
-        "P02",
-        "P03"
-      ],
-      "can_run_with_other_groups": false,
-      "execution_role": "REFERENCE_CLUSTER_ONLY_SEQUENTIAL_COORDINATOR_IS_DEFAULT"
-    },
-    {
-      "group_id": "G2_GAME_PRODUCTION",
-      "parts": [
-        "P04",
-        "P05",
-        "P06"
-      ],
-      "can_run_with_other_groups": false,
-      "execution_role": "REFERENCE_CLUSTER_ONLY_SEQUENTIAL_COORDINATOR_IS_DEFAULT"
-    },
-    {
-      "group_id": "G3_DELIVERY_AI_CONTENT",
-      "parts": [
-        "P07",
-        "P08",
-        "P09"
-      ],
-      "can_run_with_other_groups": false,
-      "execution_role": "REFERENCE_CLUSTER_ONLY_SEQUENTIAL_COORDINATOR_IS_DEFAULT"
-    }
-  ],
   "parts": [
     {
       "part_id": "P01",
@@ -284,7 +253,8 @@
         "tests/test_*reference_freshness*.py",
         "tests/test_*legacy*.py",
         "tests/test_*archive*.py",
-        "docs/operations/base-partitions/learning/P02_LEARNING_LOG.md"
+        "docs/operations/base-partitions/learning/P02_LEARNING_LOG.md",
+        "templates/quality/CANONICAL_REFERENCE_FRESHNESS_AUDIT.md"
       ],
       "allowed_new_paths": [
         "docs/operations/legacy-retirement/**",
@@ -408,7 +378,6 @@
         "skills/running-adversarial-review-and-refinement/**",
         "skills/refactoring-with-contract-preservation/**",
         "skills/synchronizing-local-and-github-state/**",
-        "templates/quality/**",
         "docs/CI_EXECUTION_COST_POLICY.md",
         "tests/test_neutral_adversarial_feature_lifecycle.py",
         "tests/test_concurrent_git_sync_preflight_contract.py",
@@ -418,7 +387,8 @@
         "tests/test_*git_sync*.py",
         "tools/*protected_change*",
         "tools/*git_sync*",
-        "docs/operations/base-partitions/learning/P03_LEARNING_LOG.md"
+        "docs/operations/base-partitions/learning/P03_LEARNING_LOG.md",
+        "templates/quality/POST_MERGE_ADVERSARIAL_REVIEW.md"
       ],
       "allowed_new_paths": [
         "docs/operations/quality/**",
@@ -701,7 +671,8 @@
         "docs/operations/base-partitions/learning/P05_LEARNING_LOG.md",
         "docs/knowledge/game-development/UI_UX_VISUAL_DESIGN_RULEBOOK.md",
         "docs/knowledge/game-development/UX_LAWS_COMPLETENESS_MATRIX.md",
-        "docs/knowledge/OPEN_SOURCE_GODOT_UI_REFERENCE_CATALOG.md"
+        "docs/knowledge/OPEN_SOURCE_GODOT_UI_REFERENCE_CATALOG.md",
+        "templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md"
       ],
       "allowed_new_paths": [
         "docs/knowledge/game-development/visual/**",
@@ -965,7 +936,9 @@
         "tests/test_game_entitlement_*.py",
         "tests/test_cloud_run_*.py",
         "tests/test_*release*.py",
-        "docs/operations/base-partitions/learning/P07_LEARNING_LOG.md"
+        "docs/operations/base-partitions/learning/P07_LEARNING_LOG.md",
+        "templates/quality/PROJECT_CHANGE_VALIDATION.md",
+        "templates/quality/REVIEW_EVIDENCE_RECORD.json"
       ],
       "allowed_new_paths": [
         "docs/operations/release-validation/**",
@@ -1489,5 +1462,34 @@
     "contract": "TEST_FILE_EXISTENCE_IS_NOT_EXECUTION_EVIDENCE",
     "required_for_ci_claim": "NAME_ACTUAL_CONSUMING_WORKFLOW_OR_COMMAND",
     "main_advance_policy": "REVALIDATE_MERGE_READINESS_AGAINST_CURRENT_MAIN"
-  }
+  },
+  "responsibility_clusters": [
+    {
+      "parts": [
+        "P01",
+        "P02",
+        "P03"
+      ],
+      "cluster_id": "G1_FOUNDATION",
+      "purpose": "REFERENCE_AND_LEARNING_CLUSTER_ONLY"
+    },
+    {
+      "parts": [
+        "P04",
+        "P05",
+        "P06"
+      ],
+      "cluster_id": "G2_GAME_PRODUCTION",
+      "purpose": "REFERENCE_AND_LEARNING_CLUSTER_ONLY"
+    },
+    {
+      "parts": [
+        "P07",
+        "P08",
+        "P09"
+      ],
+      "cluster_id": "G3_DELIVERY_AI_CONTENT",
+      "purpose": "REFERENCE_AND_LEARNING_CLUSTER_ONLY"
+    }
+  ]
 }

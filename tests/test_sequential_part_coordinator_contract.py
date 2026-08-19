@@ -68,6 +68,38 @@ class SequentialPartCoordinatorContractTests(unittest.TestCase):
         self.assertNotIn("OUT_OF_PARTITION_WRITE", result.stdout)
         self.assertNotIn("CONTROL_PLANE_WRITE_FORBIDDEN", result.stdout)
 
+    def test_manifest_uses_reference_clusters_not_parallel_execution_groups(self) -> None:
+        manifest = self.load_manifest()
+        self.assertNotIn("parallel_execution_groups", manifest)
+        clusters = manifest["responsibility_clusters"]
+        self.assertEqual(3, len(clusters))
+        self.assertEqual({"G1_FOUNDATION", "G2_GAME_PRODUCTION", "G3_DELIVERY_AI_CONTENT"}, {row["cluster_id"] for row in clusters})
+        self.assertTrue(all(row["purpose"] == "REFERENCE_AND_LEARNING_CLUSTER_ONLY" for row in clusters))
+
+    def test_quality_templates_have_semantic_owners_instead_of_broad_p03_glob(self) -> None:
+        manifest = self.load_manifest()
+        p03 = next(p for p in manifest["parts"] if p["part_id"] == "P03")
+        self.assertNotIn("templates/quality/**", p03["owned_write_paths"])
+        expected = {
+            "templates/quality/CANONICAL_REFERENCE_FRESHNESS_AUDIT.md": "P02",
+            "templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md": "P05",
+            "templates/quality/POST_MERGE_ADVERSARIAL_REVIEW.md": "P03",
+            "templates/quality/PROJECT_CHANGE_VALIDATION.md": "P07",
+            "templates/quality/REVIEW_EVIDENCE_RECORD.json": "P07",
+        }
+        for path, owner in expected.items():
+            result = self.run_scope("--coordinator", "--files", path)
+            self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+            self.assertIn(f"SEMANTIC_OWNER:{owner}", result.stdout)
+
+    def test_control_plane_protocol_allows_direct_cross_part_fixes_but_protects_active_workstreams(self) -> None:
+        manifest = self.load_manifest()
+        protocol = "\n".join(manifest["control_plane"]["change_protocol"])
+        self.assertIn("CROSS_PART_CHANGE", protocol)
+        self.assertIn("not a write barrier", protocol)
+        self.assertIn("open/draft/ready", protocol)
+        self.assertIn("CROSS_PART_CHANGE_REQUEST", protocol)
+
     def test_cross_part_request_is_only_for_real_coordination_blockers(self) -> None:
         text = WORKER_PROMPT.read_text(encoding="utf-8")
         self.assertIn("CROSS_PART_CHANGE", text)

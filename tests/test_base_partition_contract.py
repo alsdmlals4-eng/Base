@@ -118,9 +118,9 @@ class BasePartitionContractTests(unittest.TestCase):
             for field in ("purpose", "owned_write_paths", "read_only_dependencies", "important_rules", "owned_skill_ids", "modules", "validation", "acceptance_criteria", "revisit_conditions"):
                 self.assertTrue(part[field], f"{part['part_id']} missing {field}")
 
-    def test_parallel_groups_and_integration_order_are_explicit(self) -> None:
+    def test_responsibility_clusters_and_integration_order_are_explicit(self) -> None:
         manifest = self.load_manifest()
-        groups = manifest["parallel_execution_groups"]
+        groups = manifest["responsibility_clusters"]
         self.assertGreaterEqual(len(groups), 2)
         flattened = [part_id for group in groups for part_id in group["parts"]]
         self.assertEqual({f"P{i:02d}" for i in range(1, 10)}, set(flattened))
