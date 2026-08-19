@@ -57,16 +57,24 @@ Observed:
 
 Disposition: `ADAPT` for narrative flow/presentation boundary; dependency adoption은 project별 Existing Solution First에서 별도 판정.
 
-## 서울 2033 · text choice + persistent state consequences
+## 서울 2033 · choice-driven event consequences
 
-Public product descriptions checked through current app/store surfaces and Banjihagames public presence.
+Current public/developer surfaces:
+- https://banjihagames.com/
+- https://play.google.com/store/apps/details?id=com.banjihagames.seoul2033
+- https://apps.apple.com/kr/app/%EC%84%9C%EC%9A%B8-2033/id1439604101
 
-Observed at product-description level:
-- text roguelike/choice-driven adventure framing.
-- 선택이 능력·아이템·돈·건강/상태와 얽혀 이후 상황에 영향을 주는 구조.
-- 반복 플레이에서 새로운 story/content를 발견하는 구조.
+Verified from current developer-supplied store description:
+- 폐허가 된 서울을 탐험하는 선택 중심 어드벤처로 소개된다.
+- 한 순간의 선택과 판단이 플레이어와 서울의 운명을 바꿀 수 있다고 명시한다.
+- 350개 이상의 story가 있다고 설명한다.
 
-Disposition: `ADAPT` for `RM-SYS-005`, `RM-SYS-006`, `RM-NAR-001`의 문제 해결 원리만 사용. 사건 문구·세계관·고유 조건/수치를 복제하지 않는다.
+Not established by these public descriptions alone:
+- 내부 능력/아이템/돈/건강의 exact state schema.
+- 특정 event trigger formula나 수치.
+- 반복 플레이의 exact unlock/branch algorithm.
+
+Disposition: `ADAPT` for `RM-SYS-005`, `RM-SYS-006`, `RM-NAR-001`의 **선택→상태/후속 귀결** 설계 가설만 사용한다. exact 내부 규칙이 필요하면 실제 플레이/추가 1차 근거를 별도 수집하며, 사건 문구·세계관·고유 조건/수치를 복제하지 않는다.
 
 ## Slay the Spire · composable action/build units + iterative balance
 
@@ -127,7 +135,7 @@ Primary:
 - https://www.tetris.com/about
 
 Observed:
-- 공식 Tetris site는 Tetris logos, theme song, Tetriminos를 trademarks로, Tetris trade dress를 Tetris Holding 소유로 명시.
+- 공식 Tetris site는 Tetris logos, theme song and Tetriminos를 trademarks로, Tetris trade dress를 Tetris Holding 소유로 명시.
 
 Disposition:
 - `PATTERN_EXTRACT` only for abstract grid placement/completion reasoning.
