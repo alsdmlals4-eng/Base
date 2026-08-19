@@ -53,6 +53,99 @@ class P04VerticalSlicePlayerValueTraceTests(unittest.TestCase):
         ):
             self.assertIn(term, benchmark)
 
+    def test_current_active_projects_have_reusable_module_catalog(self) -> None:
+        registry = read(
+            "docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md"
+        )
+
+        for project_key in (
+            "COC_FICTION",
+            "GRIMOIRE",
+            "SWITCHY",
+            "TETRIS",
+            "URBAN_LEGEND",
+            "NINJA_SURVIVAL",
+            "MY_LITTLE_BOAT",
+            "BLACKSMITH",
+            "TEN_PACES",
+            "OMENWARD",
+        ):
+            self.assertIn(project_key, registry)
+
+        for module_id in (
+            "RM-SYS-001",
+            "RM-SYS-003",
+            "RM-SYS-005",
+            "RM-SYS-011",
+            "RM-SYS-012",
+            "RM-SYS-013",
+            "RM-SYS-015",
+            "RM-SYS-016",
+            "RM-SYS-017",
+            "RM-SYS-018",
+            "RM-SYS-019",
+            "RM-SYS-020",
+            "RM-NAR-001",
+            "RM-NAR-002",
+            "RM-TOOL-001",
+            "RM-TOOL-003",
+            "RM-VIS-001",
+            "RM-VIS-003",
+            "RM-WORK-001",
+            "RM-WORK-002",
+        ):
+            self.assertIn(module_id, registry)
+
+        for term in (
+            "MODULE_CONTRACT_DEFINED",
+            "IMPLEMENTATION_NOT_BUILT",
+            "RIGHTS_REVIEW_REQUIRED",
+            "NOTION_HUMAN_VIEW",
+        ):
+            self.assertIn(term, registry)
+
+    def test_reusable_module_catalog_keeps_family_contracts_separate(self) -> None:
+        gameplay = read(
+            "docs/knowledge/game-development/reuse/GAMEPLAY_AND_CONTENT_MODULES.md"
+        )
+        production = read(
+            "docs/knowledge/game-development/reuse/PRODUCTION_TOOL_WORKFLOW_MODULES.md"
+        )
+        visual = read(
+            "docs/knowledge/game-development/reuse/VISUAL_ASSET_MATERIAL_MODULES.md"
+        )
+
+        for term in (
+            "GRID_PLACEMENT_RULE_ENGINE",
+            "NARRATIVE_NODE_CHOICE_STATE_ENGINE",
+            "CARD_ACTION_EFFECT_ENGINE",
+            "SURVIVOR_AUTO_COMBAT_PROGRESSION_CORE",
+            "FALLING_BLOCK_LINE_CLEAR_CORE",
+        ):
+            self.assertIn(term, gameplay)
+
+        for term in (
+            "DATA_SCHEMA_CROSSREF_VALIDATOR",
+            "DETERMINISTIC_SEED_REPLAY_CAPTURE",
+            "BALANCE_SCENARIO_BATCH_SIMULATOR",
+            "PROJECT_REUSE_OPPORTUNITY_SCAN",
+            "SKILL_WORKFLOW_PATTERN_EVAL",
+        ):
+            self.assertIn(term, production)
+
+        for term in (
+            "SEMANTIC_UI_SKIN_KIT",
+            "GAMEPLAY_SYMBOL_ATLAS",
+            "MODULAR_BACKGROUND_LAYER_KIT",
+            "COMBAT_TELEGRAPH_VFX_KIT",
+            "PORTRAIT_STATE_VARIANT_KIT",
+        ):
+            self.assertIn(term, visual)
+
+        self.assertIn("TETRIS_TRADE_DRESS_BOUNDARY", gameplay)
+        self.assertIn("DIRECT_LICENSED_REUSE", visual)
+        self.assertIn("PROJECT_ASSET_APPROVED", visual)
+
     def test_tutorial_template_uses_current_project_workspace(self) -> None:
         tutorial = read("templates/planning/TUTORIAL_AND_ONBOARDING_DESIGN_CONTRACT.md")
 
