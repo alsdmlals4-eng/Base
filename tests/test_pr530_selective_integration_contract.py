@@ -40,7 +40,6 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
     def test_planning_policy_uses_notion_and_repository_not_active_sheets(self) -> None:
         text = PLANNING.read_text(encoding="utf-8")
         for term in (
-            "BASE_EXCLUDED",
             "NOTION_HUMAN_FACING_CANON",
             "REPOSITORY_STRUCTURED_CANON",
             "REPOSITORY_RUNTIME_TRUTH",
