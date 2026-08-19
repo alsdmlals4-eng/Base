@@ -73,6 +73,20 @@ class P08AiOperationsContractTests(unittest.TestCase):
             self.assertIn("docs/operations/base-partitions/learning/P08_LEARNING_LOG.md", text, path)
         self.assertTrue(P08_PARTITION_LOG.is_file())
 
+    def test_old_p08_nonblocking_ownership_questions_survive_takeover_without_old_report_authority(self) -> None:
+        text = P08_PARTITION_LOG.read_text(encoding="utf-8")
+        for required in (
+            "CARRY_FORWARD_TO_FINAL_INTEGRATION",
+            "P08-OWNERSHIP-01",
+            "templates/ai/DEEPSEEK_WORK_PACKAGE.md",
+            "P08-OWNERSHIP-02",
+            ".codex-plugin/plugin.json",
+            "former P08 freshness ownership deadlock is resolved",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, text)
+        self.assertIn("PR #535 Git history", text)
+
 
 if __name__ == "__main__":
     unittest.main()
