@@ -17,6 +17,7 @@ DECISIONS = ROOT / "docs" / "operations" / "BASE_V9_DECISION_REGISTRY.json"
 GENERATOR = ROOT / "tools" / "build_base_v9_artifacts.py"
 FRESHNESS_CONFIG = ROOT / ".github" / "reference-freshness.json"
 ROUTING_TEST = ROOT / "tests" / "test_skill_routing_governance.py"
+BASE_RULES_VERSION = ROOT / "docs" / "BASE_RULES_VERSION.md"
 
 
 class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
@@ -123,6 +124,11 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
         self.assertEqual("PROPOSED_SHEET_CHANGE", frozen["sheet_only_change_status"])
         self.assertFalse(frozen["external_sheet_writes_authorized"])
         self.assertNotIn("active_project_workspace", frozen)
+
+        version = BASE_RULES_VERSION.read_text(encoding="utf-8")
+        self.assertIn("Frozen v9.0 release derivatives", version)
+        self.assertIn("not a current projection", version)
+        self.assertIn("Project GDD Google Sheets policy", version)
 
         decisions = json.loads(DECISIONS.read_text(encoding="utf-8"))["decisions"]
         old = next(row for row in decisions if row["id"] == "BASE-V9-002")
