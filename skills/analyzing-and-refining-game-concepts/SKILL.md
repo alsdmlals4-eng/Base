@@ -86,7 +86,7 @@ Windows+Android 동시 목표, STOVE·Google Play·Steam 단계 출시, 모바�
 11. 결정을 바꿀 질문만 벤치마킹하고 `ADOPT / ADAPT / AVOID / TEST / IGNORE`로 결론낸다.
 12. 필요한 사람 플레이 질문은 빌드·표본·과제·관찰·이벤트·퍼널·지표를 설계한 뒤 `designing-vertical-slices`의 release-near Slice 계약으로 넘긴다. 이미 확보된 유효 human evidence는 분석할 수 있지만 새 system-only PoC로 사람 경험을 대체하지 않는다.
 13. 데모 전체를 차단하는 가장 위험한 **기술 불확실성**이 있을 때만 최소 `TECHNICAL_SPIKE_INTERNAL_ONLY`를 실행해 `KEEP / AMPLIFY / CHANGE / REMOVE / DEFER / RETEST`를 결정한다. 기술 Spike가 필요 없으면 생략한다. 이 결과만으로 재미·몰입·전체 UX를 판정하지 않는다.
-14. `KEEP / CHANGE / RETEST`로 살아남고 release-near Vertical Slice 구현을 위해 여러 직군의 production handoff가 필요한 **주요 L2 기능만** 상세 기획 후보로 승격한다. pre-evidence 아이디어, `REMOVE / DEFER`, L0·L1 단일 수정은 승격하지 않는다. 승격 시 `managing-design-documents`에 넘겨 `GAME_FEATURE_DESIGN_SPEC.md`를 작성·등록하고, 승인 뒤 기존 Traceability Packet으로 구현·검증 연결을 넘긴다.
+14. `KEEP / CHANGE / RETEST`로 살아남고 release-near Vertical Slice 구현을 위해 여러 직군의 production handoff가 필요한 **주요 L2 기능만** 상세 기획 후보로 승격한다. pre-evidence 아이디어(과거 문서의 `pre-PoC` 포함), `REMOVE / DEFER`, L0·L1 단일 수정은 승격하지 않는다. 승격 시 `managing-design-documents`에 넘겨 `GAME_FEATURE_DESIGN_SPEC.md`를 작성·등록하고, 승인 뒤 기존 Traceability Packet으로 구현·검증 연결을 넘긴다.
 
 ## Output contract
 
@@ -117,7 +117,7 @@ Windows+Android 동시 목표, STOVE·Google Play·Steam 단계 출시, 모바�
 
 난이도·전투 AI에서는 보이지 않는 정보로 처벌, 플레이어 입력 직접 읽기, 카메라 밖 즉사, 연속 기절·회피 불가능 조합, 체력 스펀지로 선택 대체, 성공 직후 성장 무효화, 현재 전투 중 노골적인 수치 조작, 히스테리시스 없는 난이도 진동, 텔레메트리만으로 감정·원인 확정을 금지한다.
 
-상세 기획 승격에서는 pre-evidence 아이디어를 문서 완성도로 정당화하거나, 전문 분야 정본을 범용 Spec으로 대체하거나, Feature Spec에 Task progress·PR 상태·executed verification을 복제하는 것을 금지한다.
+상세 기획 승격에서는 pre-evidence 아이디어(과거 `pre-PoC` 포함)를 문서 완성도로 정당화하거나, 전문 분야 정본을 범용 Spec으로 대체하거나, Feature Spec에 Task progress·PR 상태·executed verification을 복제하는 것을 금지한다.
 
 Learning Log: `skills/SKILL_LEARNING_LOG.md`
 
