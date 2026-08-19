@@ -69,21 +69,40 @@ CROSS_PART_CHANGE:
 - 사용자 중요 방향 결정이 필요함
 - 현재 변경셋에서 안전하게 원자적으로 검증할 수 없음
 
-## 독립 workstream 보호
+## 독립 workstream 보호와 open PR 분류
 
-`ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED`
+`OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM`
 
-Part 경계 해제와 독립 workstream 보호는 서로 다른 규칙이다.
+`ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE`
+
+Part 경계, PR 상태, 실제 동시 작업자는 서로 다른 개념이다.
 
 - **다른 Part**라는 사실은 수정 금지 사유가 아니다.
-- **다른 독립 작업자의 open/draft/ready PR·branch·worktree**라는 사실은 보호 사유다.
+- **PR이 open/draft/ready라는 상태만으로** 다른 작업자가 현재 작업 중이라고 판정하지 않는다.
+- 실제 mutation 보호는 사용자 지시, 현재 세션/automation owner, Resource Lock, 실행 중인 matching workstream 등 **current owner evidence**가 있을 때만 적용한다.
+- 사용자가 **“현재 작업 채팅은 이 채팅 하나”**라고 확인하면 unresolved open PR은 현재 coordinator의 backlog로 재분류한다.
 
-현재 작업은 다른 활성 PR의 branch를 임의로 수정·rebase·close·merge하지 않는다. 같은 의미 수정이 필요하면:
+열린 PR은 최신 `main`과 현재 Goal을 다시 읽은 뒤 다음 중 하나로 판정한다.
 
-1. 기존 활성 PR을 읽어 충돌·중복을 확인하고,
-2. 최신 completed `main`에서 coordinator-owned branch로 안전하게 해결하거나,
-3. 해당 active workstream 완료 후 다시 판정하거나,
-4. 사용자가 명시적으로 인수하도록 지시했을 때만 기존 workstream을 직접 이어받는다.
+```text
+ACTIVE_OTHER_WORKER
+COORDINATOR_TAKEOVER
+READY_TO_FINISH
+SUPERSEDED_DUPLICATE
+STALE_BACKLOG
+BLOCKED_EXTERNAL
+```
+
+### 판정 뒤 행동
+
+- `ACTIVE_OTHER_WORKER`: branch/worktree를 read-only 보호. takeover는 새 사용자 승인이나 명시적 owner handoff가 필요하다.
+- `COORDINATOR_TAKEOVER`: 현재 coordinator가 기존 PR을 이어받거나 최신 main 기반 finish branch로 재구성할 수 있다.
+- `READY_TO_FINISH`: current CI/acceptance를 다시 확인하고 정상 병합까지 닫는다.
+- `SUPERSEDED_DUPLICATE`: 이미 main에 같은 의미가 유지되는지 readback한 뒤 중복 PR을 종료한다.
+- `STALE_BACKLOG`: 현재 Goal에서 더 이상 가치가 없음을 근거로 종료/Archive한다.
+- `BLOCKED_EXTERNAL`: 코드/기획 문제가 아니라 외부 권한·인프라·사용자 결정을 정확히 기록하고 대기한다.
+
+즉 **open PR 목록은 보호 목록이 아니라 먼저 분류해야 하는 backlog inventory**다. 같은 채팅 하나만 활성인 상태에서 “open이므로 다른 채팅 일”이라고 보류하지 않는다.
 
 ## ONE BASE와 P01~P09 관계
 

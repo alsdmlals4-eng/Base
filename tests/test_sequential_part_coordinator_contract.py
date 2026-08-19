@@ -44,14 +44,34 @@ class SequentialPartCoordinatorContractTests(unittest.TestCase):
             "PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER",
             manifest["ownership_policy"],
         )
-        self.assertEqual(
-            "ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED",
-            manifest["independent_workstream_policy"],
-        )
         text = OPERATING_MODEL.read_text(encoding="utf-8")
         self.assertIn("다른 Part라는 이유만으로", text)
-        self.assertIn("ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED", text)
         self.assertIn("CROSS_PART_CHANGE", text)
+
+    def test_open_pr_is_not_active_workstream_without_current_owner_evidence(self) -> None:
+        manifest = self.load_manifest()
+        self.assertEqual("OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM", manifest["open_pr_policy"])
+        detection = manifest["active_workstream_detection"]
+        self.assertTrue(detection["requires_current_owner_evidence"])
+        self.assertFalse(detection["open_pr_state_is_sufficient"])
+        self.assertIn("USER_CONFIRMED_SINGLE_ACTIVE_CHAT", detection["coordinator_takeover_signals"])
+        self.assertIn("CURRENT_COORDINATOR_CHAT", detection["coordinator_takeover_signals"])
+        self.assertEqual(
+            [
+                "ACTIVE_OTHER_WORKER",
+                "COORDINATOR_TAKEOVER",
+                "SUPERSEDED_DUPLICATE",
+                "STALE_BACKLOG",
+                "BLOCKED_EXTERNAL",
+                "READY_TO_FINISH",
+            ],
+            detection["open_pr_classifications"],
+        )
+        text = OPERATING_MODEL.read_text(encoding="utf-8")
+        self.assertIn("OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM", text)
+        self.assertIn("open/draft/ready", text)
+        self.assertIn("상태만으로", text)
+        self.assertIn("현재 작업 채팅은 이 채팅 하나", text)
 
     def test_coordinator_scope_allows_cross_part_and_cp0_with_semantic_attribution(self) -> None:
         result = self.run_scope(
@@ -92,25 +112,19 @@ class SequentialPartCoordinatorContractTests(unittest.TestCase):
             self.assertEqual(0, result.returncode, result.stdout + result.stderr)
             self.assertIn(f"SEMANTIC_OWNER:{owner}", result.stdout)
 
-    def test_control_plane_protocol_allows_direct_cross_part_fixes_but_protects_active_workstreams(self) -> None:
+    def test_control_plane_protocol_allows_takeover_after_real_workstream_classification(self) -> None:
         manifest = self.load_manifest()
         protocol = "\n".join(manifest["control_plane"]["change_protocol"])
         self.assertIn("CROSS_PART_CHANGE", protocol)
         self.assertIn("not a write barrier", protocol)
-        self.assertIn("open/draft/ready", protocol)
-        self.assertIn("CROSS_PART_CHANGE_REQUEST", protocol)
-
-    def test_legacy_sheet_planning_migration_is_preserved_as_active_workstream_followup(self) -> None:
-        followup = (ROOT / "docs/operations/PROTECTED_ACTIVE_WORKSTREAM_FOLLOWUPS_2026-08-19.md").read_text(encoding="utf-8")
-        self.assertIn("P04 / legacy Sheet planning inventory", followup)
-        self.assertIn("active-looking Sheet/Figma legacy language", followup)
-        self.assertIn("actively modified by #530", followup)
-        self.assertIn("revalidate and migrate after #530 completes", followup)
+        self.assertIn("Open PR state alone is not active-worker evidence", protocol)
+        self.assertIn("current owner evidence", protocol)
+        self.assertIn("COORDINATOR_TAKEOVER", protocol)
 
     def test_cross_part_request_is_only_for_real_coordination_blockers(self) -> None:
         text = WORKER_PROMPT.read_text(encoding="utf-8")
         self.assertIn("CROSS_PART_CHANGE", text)
-        self.assertIn("독립 활성 workstream", text)
+        self.assertIn("OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM", text)
         self.assertIn("다른 Part라는 이유만으로 수정 보류 금지", text)
 
 

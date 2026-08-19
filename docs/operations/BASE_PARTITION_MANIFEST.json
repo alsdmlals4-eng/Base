@@ -72,8 +72,10 @@
     "change_protocol": [
       "Coordinator may fix validated cross-Part or CP0 findings directly with CROSS_PART_CHANGE semantic attribution",
       "Different Part ownership alone is not a write barrier",
-      "Independent open/draft/ready workstreams remain read-only unless the user explicitly authorizes takeover",
-      "CROSS_PART_CHANGE_REQUEST is reserved for real authority/evidence/active-workstream blockers",
+      "Open PR state alone is not active-worker evidence; require current owner evidence before protecting a workstream",
+      "When the user confirms CURRENT_COORDINATOR_CHAT is the only active worker, classify unresolved open PRs and use COORDINATOR_TAKEOVER, READY_TO_FINISH, SUPERSEDED_DUPLICATE, STALE_BACKLOG, or BLOCKED_EXTERNAL as appropriate",
+      "Only ACTIVE_OTHER_WORKER workstreams are mutation-protected unless the user explicitly authorizes takeover",
+      "CROSS_PART_CHANGE_REQUEST is reserved for real authority/evidence/current-owner blockers",
       "Generated artifacts are rebuilt from authority rather than hand-edited",
       "Exact-head CI and post-merge GitHub/Notion readback are required"
     ],
@@ -1436,7 +1438,7 @@
     }
   },
   "ownership_policy": "PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER",
-  "independent_workstream_policy": "ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED",
+  "independent_workstream_policy": "ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE",
   "coordinator_execution": {
     "policy": "SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS",
     "chat": "CURRENT_COORDINATOR_CHAT",
@@ -1456,7 +1458,8 @@
     "repin_latest_main_between_parts": true,
     "default_pr_model": "ONE_PART_PR_AT_A_TIME",
     "cross_part_fix_policy": "FIX_VALIDATED_FINDINGS_IN_CURRENT_COORDINATOR_WORK_WITH_SEMANTIC_ATTRIBUTION",
-    "active_independent_workstreams": "READ_ONLY_UNLESS_EXPLICIT_USER_TAKEOVER"
+    "active_independent_workstreams": "PROTECT_ONLY_AFTER_CURRENT_OWNER_EVIDENCE",
+    "open_pr_backlog_policy": "REVALIDATE_AND_CLASSIFY_NOT_AUTOMATIC_READ_ONLY"
   },
   "validation_evidence_policy": {
     "contract": "TEST_FILE_EXISTENCE_IS_NOT_EXECUTION_EVIDENCE",
@@ -1491,5 +1494,28 @@
       "cluster_id": "G3_DELIVERY_AI_CONTENT",
       "purpose": "REFERENCE_AND_LEARNING_CLUSTER_ONLY"
     }
-  ]
+  ],
+  "open_pr_policy": "OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM",
+  "active_workstream_detection": {
+    "requires_current_owner_evidence": true,
+    "open_pr_state_is_sufficient": false,
+    "current_owner_evidence": [
+      "USER_EXPLICITLY_IDENTIFIES_ANOTHER_ACTIVE_CHAT_OR_WORKER",
+      "CURRENT_SESSION_OR_AUTOMATION_OWNERSHIP_MARKER",
+      "CURRENT_RESOURCE_LOCK_OR_RUNNING_EXECUTION_WITH_MATCHING_OWNER"
+    ],
+    "coordinator_takeover_signals": [
+      "USER_CONFIRMED_SINGLE_ACTIVE_CHAT",
+      "CURRENT_COORDINATOR_CHAT"
+    ],
+    "open_pr_classifications": [
+      "ACTIVE_OTHER_WORKER",
+      "COORDINATOR_TAKEOVER",
+      "SUPERSEDED_DUPLICATE",
+      "STALE_BACKLOG",
+      "BLOCKED_EXTERNAL",
+      "READY_TO_FINISH"
+    ],
+    "rule": "PR state is metadata. Classify actual current ownership before deciding whether mutation is forbidden."
+  }
 }
