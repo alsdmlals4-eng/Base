@@ -90,6 +90,36 @@ class NotionProjectIsolationCoreSystemContractTests(unittest.TestCase):
         ):
             self.assertIn(required, text)
 
+    def test_p01_active_planning_surfaces_use_notion_and_legacy_sheets_are_compatibility_only(self) -> None:
+        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        project_os = (ROOT / "skills/managing-game-project-operating-system/SKILL.md").read_text(encoding="utf-8")
+        grill_policy = (ROOT / "docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md").read_text(encoding="utf-8")
+        continuous = (
+            ROOT
+            / "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"
+        ).read_text(encoding="utf-8")
+        decisions = (ROOT / "templates/project-operations/CURRENT_CONFIRMED_DECISIONS.md").read_text(encoding="utf-8")
+        grill_record = (ROOT / "templates/project-operations/GRILL_ME_DECISION_RECORD.md").read_text(encoding="utf-8")
+
+        for source in (intake, project_os, grill_policy, decisions, grill_record):
+            self.assertIn("NOTION_HUMAN_FACING_CANON", source)
+            self.assertIn("COMPATIBILITY_ONLY", source)
+
+        for source in (intake, project_os):
+            self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", source)
+            self.assertIn("google_sheet_compatibility_source", source)
+            self.assertNotIn("USER_FACING_GDD_WORKSPACE", source)
+            self.assertNotIn("project_google_sheet:", source)
+
+        for source in (intake, continuous):
+            self.assertIn("STRONGER_WORK_CONTRACT_OVERRIDES_COPY_INTEGRATION", source)
+            self.assertIn("explicit absorption authorization", source)
+
+        self.assertNotIn("구성된 Sheet 행을 APPROVED_PENDING_MERGE로 기록·재조회", grill_policy)
+        self.assertNotIn("Decision ID·Branch Commit·정본 내용·Sheet 행 불일치", grill_policy)
+        self.assertNotIn("Google Sheets의 마지막 Decision ID와 Commit SHA를 확인했다.", decisions)
+        self.assertNotIn("Google Sheets의 마지막 Decision ID와 Commit을 확인했다.", grill_record)
+
     def test_permanent_base_v9_suite_runs_this_contract(self) -> None:
         workflow = V9_WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("tests.test_notion_project_isolation_core_system_contract", workflow)
