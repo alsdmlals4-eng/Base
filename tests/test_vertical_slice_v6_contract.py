@@ -61,6 +61,10 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
         for text in (long_horizon, concept_skill, plan):
             self.assertIn("EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT", text)
 
+        for text in (long_horizon, visual, stage, slice_skill, plan):
+            self.assertIn("실제 게임 사용 후보", text)
+            self.assertIn("player-facing placeholder", text)
+
         self.assertNotIn("VISUAL_NOT_MATERIAL_TO_THIS_POC", visual)
         self.assertIn("SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE", visual)
         self.assertIn("shipping-intent", visual.lower())
