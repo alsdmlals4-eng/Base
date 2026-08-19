@@ -1,5 +1,4 @@
 {
-  "active_project_workspace": false,
   "artifact_role": "sheet-control-contract",
   "base_sheet_status": "BASE_EXCLUDED",
   "external_sheet_writes_authorized": false,
@@ -25,9 +24,7 @@
       "status": "HOLD"
     }
   ],
-  "human_facing_destination": "NOTION_HUMAN_FACING_CANON",
-  "migration_policy": "GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL",
-  "project_sheet_role": "MIGRATION_ONLY_LEGACY_SOURCE",
+  "project_sheet_role": "USER_FACING_GDD_WORKSPACE",
   "resume_prerequisites": [
     "base-v9-final-lock",
     "repository-audit",
@@ -36,6 +33,5 @@
     "verification-environment"
   ],
   "schema_version": 1,
-  "sheet_only_change_status": "MIGRATION_PROPOSAL_ONLY",
-  "structured_destination": "REPOSITORY_STRUCTURED_CANON"
+  "sheet_only_change_status": "PROPOSED_SHEET_CHANGE"
 }
