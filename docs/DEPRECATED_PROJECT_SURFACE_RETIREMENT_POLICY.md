@@ -1,6 +1,6 @@
 # 폐기 프로젝트 작업면 흡수·제거 정책
 
-이 문서는 더 이상 기본 프로젝트 작업면으로 사용하지 않는 **프로젝트 관리용 user-facing local/HTML/visual surface, Figma, Google Sheets**를 마지막으로 감사하고 고유 정보만 현행 owner로 옮긴 뒤 active routing에서 제거하는 방법을 정의한다.
+이 문서는 더 이상 기본 프로젝트 작업면으로 사용하지 않는 **프로젝트 관리용 user-facing local/HTML/visual surface, Figma, Google Sheets, project-management Tool Hub, QA Evidence Studio**를 마지막으로 감사하고 고유 정보만 현행 owner로 옮긴 뒤 active routing에서 제거하는 방법을 정의한다.
 
 ## Machine contract
 
@@ -10,7 +10,9 @@ PROJECT_MANAGEMENT_LOCAL_SURFACE_RETIRED
 EXTERNAL_HTML_WORKSPACE_RETIRED
 GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL
 FIGMA_DEPRECATED_NOT_ACTIVE_AUTHORITY
-QA_EVIDENCE_STUDIO_SPECIALIST_VALIDATION_RETAINED
+TOOL_HUB_RETIRED_FROM_ACTIVE_PROJECT_FLOW
+QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW
+REPOSITORY_NATIVE_EVIDENCE_CAPTURE
 GIT_HISTORY_IS_ROLLBACK_NOT_ACTIVE_CANON
 NO_DEFAULT_READ_OF_RETIRED_SURFACE
 ```
@@ -18,26 +20,60 @@ NO_DEFAULT_READ_OF_RETIRED_SURFACE
 ## 1. 기본 작업면
 
 ```text
-GPT
-→ planning / research / review
+GPT Pro
+→ planning / research / benchmark / review
 
 Notion
 → human-facing Project Home / visual / asset / flow / confirmed human tables
 
 GitHub repository
-→ structured data / code / scene / resource / tracked assets / tests / runtime evidence
+→ structured data / code / scene / resource / tracked assets / tests / CI/runtime evidence
 
-Codex
-→ optional implementation/runtime executor when actually useful
+PowerShell + Codex
+→ actual repository/runtime executor when implementation needs it
+
+Godot + project-adopted HiGodot / GUT / Hera
+→ authoring / deterministic tests / live QA under each project's current authority contract
+
+Loop Engineering
+→ bounded execution/control plane only when current project/package/evidence says it is relevant
 ```
 
-프로젝트 기획·자산·UX·정본을 관리하기 위해 새 localhost/browser/desktop app 또는 standalone HTML dashboard를 기본 작업면으로 만들지 않는다.
+프로젝트 기획·자산·UX·정본을 관리하기 위해 새 localhost/browser/desktop app 또는 standalone HTML dashboard를 기본 작업면으로 만들지 않는다. Tool Hub나 QA Evidence Studio를 프로젝트 기본 실행면으로 복원하지 않는다.
 
 ## 2. 폐기 대상
 
 ### `PROJECT_MANAGEMENT_LOCAL_SURFACE_RETIRED`
 
-과거의 Tool Hub, Expression/Sprite 계열 프로젝트 관리·시각 작업면처럼 Notion/Repository로 대체된 user-facing local management surface는 신규 기본 경로가 아니다. 고유 capability가 남아 있는지 한 번 감사하고 `UNIQUE / DUPLICATE / OBSOLETE`로 분류한다.
+과거의 Expression/Sprite 계열 프로젝트 관리·시각 작업면처럼 Notion/Repository로 대체된 user-facing local management surface는 신규 기본 경로가 아니다. 고유 capability가 남아 있는지 한 번 감사하고 `UNIQUE / DUPLICATE / OBSOLETE`로 분류한다.
+
+### `TOOL_HUB_RETIRED_FROM_ACTIVE_PROJECT_FLOW`
+
+Tool Hub는 신규 프로젝트의 discovery, launcher, asset/visual management, PowerShell 대체면 또는 기본 coordinator가 아니다.
+
+- 과거 Hub 구현·Plan·PR·테스트·runtime evidence는 역사/rollback 증거로 남을 수 있다.
+- Hub에만 있던 UNIQUE workflow 원리, project identity, fail-closed rule이 있으면 현재 Notion/repository/PowerShell/Loop owner로 흡수한다.
+- Tool Hub code가 repository에 남아 있다는 사실은 active adoption을 뜻하지 않는다.
+- `START_HERE`, 일반 project handoff, 기본 PowerShell 계약은 Tool Hub를 우선 경로로 라우팅하지 않는다.
+- 재도입하려면 최신 사용자 승인, Existing Solution First, 총수명주기 비용 비교와 실제 consumer evidence가 새로 필요하다.
+
+### `QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW`
+
+QA Evidence Studio는 더 이상 신규 project validation의 active/default utility가 아니다.
+
+재사용할 것은 **도구 자체가 아니라 증거 계약**이다.
+
+```text
+project/build identity
+→ expected validation contract
+→ existing test/runtime/log/screenshot evidence
+→ repository or CI artifact
+→ exact commit/PR identity
+→ human-facing Notion link when useful
+→ PASS | FAIL | BLOCKED | NOT_RUN with evidence ceiling
+```
+
+이 계약은 `REPOSITORY_NATIVE_EVIDENCE_CAPTURE`가 소유한다. 별도 capture app을 새로 만들거나 QA Studio adapter를 프로젝트마다 추가하지 않는다. 과거 Studio code·tests·review docs는 물리 삭제 전까지 archive/history가 될 수 있지만 신규 작업의 자동 라우팅·필수 preflight·완료 조건에 넣지 않는다.
 
 ### `EXTERNAL_HTML_WORKSPACE_RETIRED`
 
@@ -66,21 +102,37 @@ legacy Sheet
 
 Figma는 신규 active visual workspace가 아니다. 과거 링크/asset에 UNIQUE provenance가 있으면 현재 Project Notion/Repository owner로 이관·readback한 뒤 active reference를 제거한다.
 
-## 3. QA Evidence Studio는 폐기 프로젝트 작업면과 다르다
+## 3. `REPOSITORY_NATIVE_EVIDENCE_CAPTURE`
 
-`QA_EVIDENCE_STUDIO_SPECIALIST_VALIDATION_RETAINED`
+전문 validation utility를 새로 만들지 않아도 다음 기존 증거를 조합해 project validation을 닫을 수 있다.
 
-QA Evidence Studio는 프로젝트 기획·정본·Visual workspace가 아니라 **실제 PC 빌드의 체크리스트·화면 증거·PASS/FAIL/BLOCKED/NOT_RUN 판정을 exact Git commit에 묶는 specialist validation utility**다.
+```yaml
+repository_native_evidence:
+  project_identity:
+  commit_or_pr:
+  build_identity:
+  acceptance_criteria: []
+  test_results: []
+  runtime_logs: []
+  screenshots_or_video: []
+  deterministic_state_or_hash:
+  platform_or_input_context:
+  human_observation:
+  storage:
+    repository_path:
+    ci_artifact:
+    notion_human_link:
+  verdict: PASS | FAIL | BLOCKED | NOT_RUN
+  evidence_ceiling:
+```
 
-따라서 다음 조건을 유지하는 동안 retirement 대상에 포함하지 않는다.
+원칙:
 
-- repository 안에 실제 implementation과 automated contract tests가 존재
-- 프로젝트 정본/asset/runtime를 자동 수정하지 않음
-- evidence ceiling을 넘는 PASS를 만들지 않음
-- 외부 AI/API나 별도 유료 서비스가 필요 없음
-- 실제 validation consumer가 존재
-
-향후 이 조건이 사라지거나 repository-native/GitHub artifact만으로 동일 기능을 더 단순하게 완전히 대체할 수 있다는 검증된 증거가 생기면 그때 별도 retirement review를 수행한다.
+- 기존 Godot/GUT/Hera/CLI/test/CI 출력과 직접 캡처를 우선한다.
+- capture 도구가 없다는 이유로 검증을 PASS 처리하지 않는다.
+- Notion preview나 screenshot은 runtime truth를 대체하지 않는다.
+- 사람이 재미·이해·조작감을 관찰하지 않았으면 human/player evidence는 `NOT_RUN`이다.
+- evidence 수집을 위해 새 GUI app을 만드는 것은 기본값이 아니다.
 
 ## 4. 흡수 기준
 
@@ -117,6 +169,8 @@ inventory exact surface
 
 Git history는 rollback/audit history이지 active canon이 아니다. 역사 조사 필요성이 없는 한 삭제된 surface를 매 작업마다 다시 후보로 올리지 않는다.
 
+이 정책 변경만으로 과거 Tool Hub/QA Studio source tree를 즉시 삭제하지 않는다. 물리 삭제는 consumer 0, UNIQUE material 이관, rollback 필요성, package/test 영향과 현재 사용자 승인을 확인한 별도 bounded retirement task로 수행한다.
+
 ## 6. 비용
 
 현재 기본 유료 플랜은 `GPT_PRO` 하나다. Notion은 Free 범위를 먼저 사용한다. 추가 유료 기능은 실제 blocker·무료 대안·비용·장기 효과를 비교한 뒤 사용자 명시 승인이 있어야 한다.
@@ -130,9 +184,10 @@ retired_surface:
   repository_readback: PASS | BLOCKED | NOT_APPLICABLE
   active_references_remaining: []
   files_removed: []
-  retained_specialist_utilities: []
+  retained_historical_code_or_evidence: []
+  replacement_owner:
   rollback: Git history
-  result: REMOVED | BLOCKED_UNVERIFIED | PARTIAL_RETIREMENT
+  result: REMOVED | BLOCKED_UNVERIFIED | PARTIAL_RETIREMENT | RETIRED_FROM_ACTIVE_FLOW
 ```
 
 `PARTIAL_RETIREMENT`에서 완료를 주장하지 않는다.
