@@ -13,11 +13,13 @@ PROJECT_CANON_FIRST
 → CORE_EXPERIENCE_AND_CONSTRAINT_MAP
 → REPEATED_COST_AND_BOTTLENECK_MAP
 → BOTTLENECK_TO_CANDIDATE_SEARCH
+→ CREATIVE_BENCHMARK_FRONTIER
 → SOURCE_AND_RIGHTS_PRECHECK
 → MULTI_SOURCE_REVERSE_ENGINEERING
 → REUSABLE_CONTRACT_EXTRACTION
 → EXISTING_SOLUTION_FIRST
 → PROJECT_FIT_AND_NOVELTY_DELTA
+→ ORIGINALITY_FUN_CREATIVITY_REVIEW
 → REUSE_OWNER_ROUTING
 → PROJECT_SPECIFIC_SYNTHESIS
 → FIT_FOR_UNIT_VALIDATION
@@ -90,7 +92,37 @@ J. 실패·혼합 사례와 폐기된 접근
 
 후보는 유명세보다 **현재 병목을 얼마나 줄이는지**로 평가한다.
 
-## 4. 재사용 후보 분류
+## 4. `CREATIVE_BENCHMARK_FRONTIER`
+
+중요한 게임 기획은 직접 장르의 대표작만 보면 동질화 위험이 커진다. 같은 문제를 서로 다르게 푸는 다음 다섯 집합을 결정 직전까지 탐색한다.
+
+```text
+DIRECT_GENRE_BEST_IN_CLASS
+ADJACENT_GENRE_BEST_IN_CLASS
+DISTINCTIVE_OR_INNOVATIVE_WORK
+FAILURE_OR_MIXED_CASE
+PROJECT_INTERNAL_STRENGTH
+```
+
+```yaml
+creative_frontier:
+  player_promise:
+  design_question:
+  direct_genre_best_in_class: []
+  adjacent_genre_best_in_class: []
+  distinctive_or_innovative_work: []
+  failure_or_mixed_case: []
+  project_internal_strength: []
+  transferable_principles: []
+  expressions_not_to_copy: []
+  recombination_candidates: []
+```
+
+최고의 작품은 단순 판매량 순위가 아니라 **현재 설계 질문에서 무엇을 가장 잘 해결하는지**로 선정한다. 하나의 작품을 통째로 모사하지 않고, 여러 사례의 장점·실패조건을 분리해 프로젝트 고유 조합으로 재설계한다.
+
+시장 성과·리뷰·수상·다운로드 수는 discovery 신호일 수 있지만, 현재 프로젝트의 재미·시장성·기술 적합성을 자동 증명하지 않는다.
+
+## 5. 재사용 후보 분류
 
 한 사례에서 여러 종류를 동시에 추출할 수 있다.
 
@@ -100,13 +132,13 @@ J. 실패·혼합 사례와 폐기된 접근
 | Mechanic / system | 입력·상태·규칙·결과 | 콤보, 상태효과, 어그로, 드래프트, 리롤, 위험/보상 |
 | Content / data schema | 콘텐츠 생성·표현 구조 | 이벤트 노드, 카드 정의, 적 역할, loot table, encounter budget |
 | UI / UX | 정보·입력·피드백 패턴 | telegraph, compare view, lock/continue, preview, undo/recovery |
-| Tool / automation | 반복 작업 절감 계약 | 에셋 전처리, 콘텐츠 검증, 밸런스 시뮬레이션, 증거 캡처 |
+| Tool / automation | 반복 작업 절감 계약 | 에셋 전처리, 콘텐츠 검증, 밸런스 시뮬레이션, repository-native evidence capture |
 | Asset / image material | 분해·재조합 가능한 시각 재료 | 타일, 프레임, 아이콘군, 실루엣, 배경 모듈, 마스크, VFX 파츠 |
 | Workflow / work structure | 생산·handoff 절차 | research→spec→slice→evidence, batch review, content assembly |
 | Skill / evaluation | 반복 판단·검수 계약 | trigger, inputs, canon, output, negative case, regression eval |
 | Testing / QA | 실패 탐지·재현 패턴 | deterministic seed, snapshot, golden case, stress matrix, replay |
 
-## 5. MULTI_SOURCE_REVERSE_ENGINEERING
+## 6. MULTI_SOURCE_REVERSE_ENGINEERING
 
 일반화할 후보는 가능한 경우 서로 다른 구현·전제를 가진 3개 이상의 사례를 비교한다.
 
@@ -124,7 +156,7 @@ project_relevant_constraints:
 
 단일 작품의 고유 조합을 그대로 “장르 공식”으로 승격하지 않는다. 반복되는 불변 원리와 작품별 표현을 분리한다.
 
-## 6. REUSABLE_CONTRACT_EXTRACTION
+## 7. REUSABLE_CONTRACT_EXTRACTION
 
 재사용 후보는 최소 다음 계약으로 추상화한다.
 
@@ -147,7 +179,7 @@ rights_and_license_boundary:
 
 도구·Workflow·Skill 후보는 `player_need` 대신 `production_problem`을 중심으로 써도 된다.
 
-## 7. EXISTING_SOLUTION_FIRST
+## 8. EXISTING_SOLUTION_FIRST
 
 새로 재현하기 전에 다음을 비교한다.
 
@@ -167,7 +199,7 @@ rights_and_license_boundary:
 
 직접 재사용 가능한 검증된 해결책을 불필요하게 역공학해서 다시 만드는 것은 작업 절감 목표와 충돌한다.
 
-## 8. PROJECT_FIT_AND_NOVELTY_DELTA
+## 9. PROJECT_FIT_AND_NOVELTY_DELTA
 
 다음 축으로 후보를 공격한다.
 
@@ -201,13 +233,40 @@ project_identity_gain:
 
 장르 table-stakes를 의도적으로 유지하는 경우에도 프로젝트의 고유 선택·감정·피드백·세계관·시각 언어 중 무엇이 달라지는지 기록한다.
 
-## 9. REUSE_OWNER_ROUTING
+## 10. `ORIGINALITY_FUN_CREATIVITY_REVIEW`
+
+재조합 후보는 실제 구현 전에 다음으로 다시 본다.
+
+```yaml
+originality_fun_creativity:
+  originality_delta:
+  fun_hypothesis:
+  creativity_recombination:
+  familiar_anchor:
+  meaningful_choice:
+  tension_or_tradeoff:
+  feedback_and_pacing:
+  world_story_fit:
+  visual_identity_fit:
+  avoid_gimmick_complexity:
+  player_evidence_status:
+```
+
+`fun_hypothesis`는 “재밌어 보인다”가 아니라 **무슨 행동·선택·위험·보상·피드백 때문에 어떤 감정/고민이 생길 것인지**를 적는다.
+
+```text
+PLAYER_EVIDENCE_REQUIRED_FOR_FUN_PASS
+```
+
+실제 사람 플레이 증거 전에는 `FUN_HYPOTHESIS` 이상의 상태로 올리지 않는다. 독창성도 새 요소 개수로 평가하지 않고 familiar anchor와 project-specific recombination이 학습비용 대비 새로운 플레이 의미를 만드는지 본다.
+
+## 11. REUSE_OWNER_ROUTING
 
 이 Reference는 후보를 **발굴하고 추상화하는 owner**다. 최종 권위는 기존 owner에 넘긴다.
 
 - 게임 규칙·시스템·콘텐츠 → 프로젝트 기획 정본과 해당 설계 Skill.
 - UI/UX → 현재 UI/UX 설계 owner와 실제 화면/입력 검증.
-- Asset/Image material → 프로젝트 Asset Vault / Reusable Visual Harvest owner.
+- Asset/Image material → Project Notion Asset/Visual workflow + repository implementation owner.
 - Tool/addon → Existing Solution First, 도구 계약, Godot addon/plugin 평가 owner.
 - Workflow → 기존 Base 운영 정책·reference·Mode에 먼저 흡수.
 - Skill/Eval → `AI_SKILL_ADOPTION_GUIDE.md`의 재사용·흡수·평가 절차.
@@ -223,7 +282,7 @@ discovery != RUNTIME_PROOF
 discovery != COPYRIGHT_OR_LICENSE_CLEARANCE
 ```
 
-## 10. PROJECT_SPECIFIC_SYNTHESIS
+## 12. PROJECT_SPECIFIC_SYNTHESIS
 
 최종 목표는 벤치마크를 닮는 것이 아니라 **프로젝트 코어를 더 싸고 빠르게 구현하면서 고유 경험을 강화하는 것**이다.
 
@@ -233,20 +292,22 @@ reusable foundation
 + project-specific content
 + project-specific visual language
 + project-specific tuning
++ creative benchmark recombination
 = project implementation candidate
 ```
 
 재사용 foundation이 프로젝트 코어보다 커지면 기각한다.
 
-## 11. 검증 증거 ceiling
+## 13. 검증 증거 ceiling
 
 - 규칙·시스템 PoC는 구현 가능성과 규칙 동작을 증명하지만 재미·몰입을 자동 증명하지 않는다.
 - `VERTICAL_SLICE_EVIDENCE_CEILING`: 플레이어 경험을 주장하려면 실제 UI/UX·아트·대표 콘텐츠가 포함된 release-near Vertical Slice와 플레이 증거가 필요하다.
 - Tool은 실제 대표 입력, 반복 실행, 실패·복구, 성능·의존성 검증이 필요하다.
 - Asset/Image material은 실제 화면에서의 가독성·일관성·재사용성·출처·권리 검토가 필요하다.
 - Workflow/Skill은 대표 성공 사례뿐 아니라 실패·비선택·오라우팅 사례를 포함한 전후 Eval이 필요하다.
+- benchmark가 강해도 실제 project fit·runtime·player evidence를 대신하지 않는다.
 
-## 12. 프로젝트별 결과 저장
+## 14. 프로젝트별 결과 저장
 
 Base에는 공용 방법만 둔다. 실제 프로젝트 스캔 결과는 각 프로젝트의 Notion/GitHub 정본에 둔다.
 
