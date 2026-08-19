@@ -22,6 +22,10 @@ Google Sheets
 - Figma, 외부 HTML workspace, 폐기된 custom local Tool/Hub를 신규 기본 surface로 부활시키지 않는다.
 - legacy source는 `UNIQUE / DUPLICATE / OBSOLETE`로 판정하고, `UNIQUE`만 현행 owner로 이관 → destination readback/Test → consumer/reference 확인 뒤 원본 수명주기를 판정한다.
 
+## Repository design root
+
+프로젝트가 Base 운영 템플릿을 채택할 때 설계 문서 폴더 `[기획서]`는 **저장소 루트**에 둔다. `templates/project-operations/` 자체나 중첩된 하위 폴더를 프로젝트의 활성 design root로 사용하지 않는다. Notion 사람용 workspace와 Repository `[기획서]` 구조화 문서는 서로 역할이 다르며, 어느 한쪽도 다른 쪽의 복사본으로 운영하지 않는다.
+
 ## 핵심 템플릿
 
 | 경로 | 역할 |
@@ -50,6 +54,7 @@ Google Sheets
 ```text
 프로젝트 Repository 확인
 → 프로젝트 AGENTS / START_HERE / 실제 파일 확인
+→ 저장소 루트의 [기획서] design root 확인
 → 정확한 Project Notion workspace와 Project relation 확인
 → templates/project-operations에서 필요한 최소 템플릿만 프로젝트에 적용
 → CURRENT_CONFIRMED_DECISIONS / ACTIVE_CONTEXT / Documentation Map 연결
@@ -89,6 +94,7 @@ Base 저장소 자체를 콜드 스타트할 때 이 디렉터리의 예시/빈 
 
 - 정확한 프로젝트 Repository와 Project Notion workspace를 구분했다.
 - 사람용 `NOTION_HUMAN_FACING_CANON`과 구조화 `REPOSITORY_STRUCTURED_CANON`의 owner가 명확하다.
+- 저장소 루트의 `[기획서]` design root가 유지된다.
 - 승인 Decision은 Branch/Commit과 적용 가능한 Notion record에 추적된다.
 - Notion write는 정확한 Project relation으로 격리되고 destination readback을 가진다.
 - Google Sheets는 `COMPATIBILITY_ONLY`이며 신규 입력·active sync·완료 판정에 필요하지 않다.
