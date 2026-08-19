@@ -182,6 +182,28 @@ class BaseSharedSkillRouteTests(unittest.TestCase):
         self.assertEqual(policy["project_specific_skills"], "create-and-maintain-in-project")
         self.assertEqual(policy["duplicate_base_skill_bodies"], "forbidden")
 
+    def test_retired_qa_studio_is_replaced_by_repository_native_evidence(self) -> None:
+        start_here = (ROOT / "START_HERE.md").read_text(encoding="utf-8")
+        retirement = (
+            ROOT / "docs" / "DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md"
+        ).read_text(encoding="utf-8")
+        modules = (
+            ROOT
+            / "docs"
+            / "knowledge"
+            / "game-development"
+            / "reuse"
+            / "PRODUCTION_TOOL_WORKFLOW_MODULES.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW", start_here)
+        self.assertIn("REPOSITORY_NATIVE_EVIDENCE_CAPTURE", retirement)
+        self.assertIn("RM-TOOL-004 · REPOSITORY_NATIVE_EVIDENCE_CAPTURE", modules)
+        self.assertNotIn(
+            "이미지·UX 배치 후 개발자 PC 증거 검토: `tools/qa-evidence-studio/README.md`",
+            start_here,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
