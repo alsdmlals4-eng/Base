@@ -145,21 +145,24 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", visual_policy)
         self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", visual_policy)
 
-    def test_adversarial_review_owner_repeats_until_clean_exit(self) -> None:
+    def test_adversarial_review_requires_minimum_five_then_until_clean(self) -> None:
         skill = read("skills/running-adversarial-review-and-refinement/SKILL.md")
         for term in (
             "ADVERSARIAL_REVIEW_UNTIL_CLEAN: REQUIRED_WHEN_REVIEW_RUNS",
+            "FULL_LOOP_COUNT_MINIMUM: 5",
+            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5",
             "FULL_SCOPE_REVIEW",
             "FIND → VALIDATE → REFINE → VERIFY → RE-ATTACK",
             "BETTER_ALTERNATIVE_SEARCH",
             "LONG_TERM_PLAN_FIT_RECHECK",
             "CLEAN_REVIEW_EXIT",
+            "최소 5회의 완전한 전체 개선 루프",
+            "5회 이후에도",
             "새로운 유효 오류·충돌·누락·blocking finding이 0",
         ):
             self.assertIn(term, skill)
-        self.assertNotIn("FULL_LOOP_COUNT_MINIMUM: 5", skill)
-        self.assertNotIn("FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS", skill)
-        self.assertNotIn("최소 다섯 번", skill)
+        self.assertNotIn("FIVE_DISTINCT_ADVERSARIAL_ROUNDS", skill)
+        self.assertNotIn("ROUND_1_INTENT_ASSUMPTIONS_SCOPE", skill)
 
     def test_loop_foundation_doc_points_to_current_operational_checkpoint(self) -> None:
         loop_doc = read("docs/LOOP_ENGINEERING_A2_RUNTIME.md")
@@ -210,9 +213,9 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         self.assertIn("OPTIONAL_CODEX_EXECUTOR", codex)
         self.assertIn("VISUALIZED_POC_BEFORE_DEMO_TEST", visual)
         self.assertIn("MIGRATION_ONLY_UNTIL_REMOVAL", sheets)
-        self.assertNotIn("FULL_LOOP_COUNT_MINIMUM: 5", adversarial)
-        self.assertNotIn("FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS", adversarial)
-        self.assertNotIn("최소 다섯 번", adversarial)
+        self.assertIn("FULL_LOOP_COUNT_MINIMUM: 5", adversarial)
+        self.assertIn("MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5", adversarial)
+        self.assertNotIn("FIVE_DISTINCT_ADVERSARIAL_ROUNDS", adversarial)
 
 
 if __name__ == "__main__":
