@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 AUTHORITY = ROOT / "docs" / "operations" / "PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json"
+POLICY = ROOT / "docs" / "operations" / "NOTION_PROJECT_ISOLATION_AND_CORE_SYSTEM_CONTRACT.md"
 MANAGING = ROOT / "skills" / "managing-design-documents" / "SKILL.md"
 MAP = ROOT / "docs" / "DOCUMENTATION_MAP.md"
 
@@ -19,6 +20,10 @@ class NotionProjectIsolationCoreSystemContractTests(unittest.TestCase):
         self.assertEqual("CORE_SYSTEM_MASTER", contract["core_system_master"])
         self.assertEqual("OPTIMISTIC_CONFLICT_DETECTION", contract["same_record_concurrency"])
         self.assertEqual("BOUNDED_RECORD_WRITE", contract["notion_write_mode"])
+        self.assertEqual(
+            "docs/operations/NOTION_PROJECT_ISOLATION_AND_CORE_SYSTEM_CONTRACT.md",
+            contract["parallel_write_policy"],
+        )
         self.assertIn("SYSTEM", contract["required_project_record_types"])
         self.assertIn("Record Key", contract["core_system_identity_fields"])
         self.assertIn("Revision", contract["core_system_identity_fields"])
@@ -37,11 +42,12 @@ class NotionProjectIsolationCoreSystemContractTests(unittest.TestCase):
         ):
             self.assertIn(required, invariants)
 
-    def test_managing_design_documents_has_fail_closed_parallel_write_protocol(self) -> None:
-        text = MANAGING.read_text(encoding="utf-8")
+    def test_single_policy_owner_has_fail_closed_parallel_write_protocol(self) -> None:
+        text = POLICY.read_text(encoding="utf-8")
         for required in (
             "PROJECT_NAMESPACE_ISOLATION",
             "CORE SYSTEM · Master",
+            "08 · 핵심 시스템 · 상세",
             "<ProjectKey>::<RecordType>::<LocalId>",
             "Revision",
             "Last Edited",
@@ -55,16 +61,14 @@ class NotionProjectIsolationCoreSystemContractTests(unittest.TestCase):
         self.assertIn("다른 Project relation", text)
         self.assertIn("전체 `replace_content`", text)
 
-    def test_documentation_map_routes_core_system_human_surface(self) -> None:
-        text = MAP.read_text(encoding="utf-8")
-        for required in (
-            "CORE SYSTEM · Master",
-            "08 · 핵심 시스템 · 상세",
-            "Project namespace",
-            "Record Key",
-            "optimistic conflict",
-        ):
-            self.assertIn(required, text)
+    def test_existing_skill_and_documentation_map_route_to_workspace_authority(self) -> None:
+        managing = MANAGING.read_text(encoding="utf-8")
+        documentation_map = MAP.read_text(encoding="utf-8")
+        for text in (managing, documentation_map):
+            self.assertIn("PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json", text)
+
+        contract = json.loads(AUTHORITY.read_text(encoding="utf-8"))
+        self.assertTrue((ROOT / contract["parallel_write_policy"]).is_file())
 
 
 if __name__ == "__main__":
