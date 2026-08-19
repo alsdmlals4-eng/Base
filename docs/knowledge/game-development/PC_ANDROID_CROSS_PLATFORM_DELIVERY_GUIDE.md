@@ -392,7 +392,7 @@ Base 공용 Guide 작성 시점:
 
 ```yaml
 research_and_official_source_review: COMPLETE_AS_OF_2026_08_11
-base_contract: PROPOSED_IN_DRAFT_PR
+base_contract: ACTIVE_IN_MAIN
 actual_project_pilot: NOT_RUN
 physical_android_device: DEVICE_NOT_RUN
 human_usability: HUMAN_NOT_RUN

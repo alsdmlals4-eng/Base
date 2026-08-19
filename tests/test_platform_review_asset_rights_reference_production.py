@@ -13,6 +13,13 @@ GUIDE = (
     / "game-development"
     / "PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md"
 )
+PC_ANDROID_GUIDE = (
+    ROOT
+    / "docs"
+    / "knowledge"
+    / "game-development"
+    / "PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md"
+)
 ASSET_RECORD = (
     ROOT
     / "templates"
@@ -42,13 +49,18 @@ class PlatformReviewAssetRightsReferenceProductionTests(unittest.TestCase):
     maxDiff = None
 
     def test_required_artifacts_exist(self) -> None:
-        required = (GUIDE, ASSET_RECORD, RELEASE_PACK, LEARNING_LOG)
+        required = (GUIDE, PC_ANDROID_GUIDE, ASSET_RECORD, RELEASE_PACK, LEARNING_LOG)
         missing = [
             str(path.relative_to(ROOT))
             for path in required
             if not path.is_file()
         ]
         self.assertEqual([], missing)
+
+    def test_merged_pc_android_contract_is_not_left_as_draft(self) -> None:
+        guide = read(PC_ANDROID_GUIDE)
+        self.assertIn("base_contract: ACTIVE_IN_MAIN", guide)
+        self.assertNotIn("base_contract: PROPOSED_IN_DRAFT_PR", guide)
 
     def test_rating_strategy_avoids_adults_only_without_forcing_all_ages(self) -> None:
         guide = read(GUIDE)
@@ -261,7 +273,6 @@ class PlatformReviewAssetRightsReferenceProductionTests(unittest.TestCase):
         self.assertIn("새 광역 Skill을 추가하지 않음", learning)
         self.assertIn("자동 법률 판정기를 추가하지 않음", learning)
 
-
     def test_entitlement_integrity_capability_remains_distinct_and_routed(self) -> None:
         guide_path = (
             "docs/knowledge/game-development/"
@@ -283,6 +294,7 @@ class PlatformReviewAssetRightsReferenceProductionTests(unittest.TestCase):
         self.assertIn("PLATFORM_NATIVE_FIRST", release_pack)
         self.assertNotIn("GAME_ENTITLEMENT_AND_INTEGRITY_RECORD", read("skills/SKILL_REGISTRY.json"))
         self.assertNotIn("GAME_ENTITLEMENT_AND_INTEGRITY_RECORD", read("skills/BASE_SHARED_SKILL_ROUTES.json"))
+
 
 if __name__ == "__main__":
     unittest.main()
