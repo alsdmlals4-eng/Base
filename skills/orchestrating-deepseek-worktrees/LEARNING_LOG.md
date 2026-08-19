@@ -1,0 +1,21 @@
+# Orchestrating DeepSeek Worktrees — Learning Log
+
+## 2026-08-19 · P08 authority and freshness audit
+
+```yaml
+work_ref: PR #535
+baseline: df8ef644d30fc96456da23a5157e5efb61b620bb
+finding: >-
+  External-AI orchestration had a Codex-specific review step even though Base now treats GPT as the primary planner/reviewer and Codex as an optional executor.
+change:
+  - keep external-AI results REVIEW_PENDING
+  - make GPT the default responsible reviewer
+  - use Codex only when separate filesystem/runtime/build execution authority is needed
+  - re-read current AGENTS.md, canon, exact branch/commit, protected paths, and tests immediately before executor work
+reusable_lesson: >-
+  A handoff package is not current canon. External executors must rehydrate authority and exact repository state at execution time, and provider-specific naming must not silently create provider-specific authority.
+evidence:
+  - skills/orchestrating-deepseek-worktrees/SKILL.md
+  - docs/operations/ai-executors/P08_OPTIMIZATION_REPORT_2026-08-19.md
+verification_status: PENDING_FINAL_EXACT_HEAD_CI
+```
