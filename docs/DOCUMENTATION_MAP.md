@@ -7,7 +7,9 @@ Base는 게임·연재소설 등 등록 프로젝트가 공유하는 **[학습�
 ```text
 START_HERE.md
 → AGENTS.md
+→ docs/GPT_FIRST_PROJECT_WORKFLOW.md
 → docs/OPERATING_MODEL.md
+→ docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md
 → docs/WORK_MODE_AND_SKILL_ROUTING.md
 → docs/DOCUMENTATION_MAP.md
 → skills/SKILL_REGISTRY.json
@@ -25,6 +27,12 @@ START_HERE.md
 ```text
 AGENTS.md / START_HERE.md / docs/OPERATING_MODEL.md
 → 공용 운영 계약
+
+docs/GPT_FIRST_PROJECT_WORKFLOW.md
+→ GPT 기획·검수 주 책임 / Codex 선택 보조 / 시각 checkpoint / 학습형 완료보고
+
+docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md
+→ 장기 조사·대안·검증·적대적 개선·병합 생명주기
 
 docs/DOCUMENTATION_MAP.md
 → 책임 위치
@@ -60,7 +68,7 @@ REPOSITORY_STRUCTURED_CANON
 
 `PROJECT_RELATION_REQUIRED`: project-scoped Work, Asset, Component, Screen, Reference, Benchmark, Character, Faction, Scene, Clue, Location, Canon record는 Project relation 없이 프로젝트 정본이 될 수 없다.
 
-Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·Expression/Sprite Studio·visual Tool Hub는 active authority가 아니다.
+Google Sheets는 `RETIRED_MIGRATION_ONLY`이며 고유 미이관 정보의 일회성 이관 뒤 active reference를 제거한다. Figma·Figma Bridge·Expression/Sprite Studio·visual Tool Hub·standalone QA Evidence Studio·독립 HTML project dashboard는 active authority가 아니다.
 
 ## 3. 현재 공용 책임 원본
 
@@ -68,21 +76,23 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·
 |---|---|---|
 | 최초 라우터 | `START_HERE.md` | 최소 cold-start 경로와 요청 유형 라우팅 |
 | 항상 적용 규칙 | `AGENTS.md` | 권한·승인·환경·비용·검증·보호·완료 불변 규칙 |
+| GPT-first 프로젝트 생명주기 | `docs/GPT_FIRST_PROJECT_WORKFLOW.md` | GPT 기획·검수 주 책임, Codex 선택 보조, GitHub+Notion preflight, 시각 checkpoint, 승인 단위 닫힘, 학습형 완료보고 |
 | 통합 운영 모델 | `docs/OPERATING_MODEL.md` | 생명주기·정본·상태·발행·근거·검증 |
 | Work Mode / Skill | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | PLAN/BUILD/REVIEW와 Skill 자동 라우팅 |
 | 장기 작업 | `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md` | 현행조사→>=3 대안→벤치마킹→5회 전체 적대적 개선→장기 최선안 |
-| 프로젝트 workspace machine authority | `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json` | `DOMAIN_SPLIT_CANON`, `NOTION_HUMAN_FACING_CANON`, `REPOSITORY_STRUCTURED_CANON`, `PROJECT_RELATION_REQUIRED`, `REPOSITORY_RUNTIME_TRUTH` |
-| 시각 협업 | `docs/VISUAL_COLLABORATION_TOOL_POLICY.md` | Notion 사람용 시각·표 정본, project-filtered human/AI view, repository runtime handoff |
-| Notion asset/flow workflow | `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md` | provenance·bounded edit·approval·version·reuse·benchmark·readback·handoff |
-| Google Sheets migration compatibility | `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` | `COMPATIBILITY_ONLY`, unique/duplicate/obsolete migration, destination readback |
+| 프로젝트 workspace machine authority | `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json` | `DOMAIN_SPLIT_CANON`, GPT owner, Codex optional, Notion/repository authority, project isolation |
+| 시각 협업 | `docs/VISUAL_COLLABORATION_TOOL_POLICY.md` | Notion 사람용 시각·표 정본, project-filtered human/AI view, pre-PoC visual checkpoint, repository runtime handoff |
+| Notion asset/flow workflow | `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md` | provenance·bounded edit·approval·version·reuse·benchmark·readback·approved visuals→PoC·handoff |
+| 폐기 project surface | `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md` | local/HTML/Sheets 고유 원리·데이터 흡수→readback→active surface 삭제; Git history rollback |
+| Google Sheets migration retirement | `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` | `RETIRED_MIGRATION_ONLY`, `GOOGLE_SHEETS_MIGRATE_THEN_REMOVE`, destination readback |
 | 이미지 생성·검수 | `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md` | Visual Requirement Gate, candidate QA, 명시적 approval/promotion |
 | Art requirement | `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md` | Visual Requirement Gate, Delete Test, priority/disposition |
 | Preferred visual references | `docs/knowledge/game-development/PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md` | reference-only style families; project Art Canon과 분리 |
 | Pixel art system | `docs/knowledge/game-development/PIXEL_ART_STYLE_SYSTEM.md` | 재현 가능한 스타일 축·preset·검토 원칙 |
 | Pixel visual reference gallery | `docs/knowledge/game-development/PIXEL_ART_VISUAL_REFERENCE_GALLERY.md` | `REFERENCE_ONLY` pixel preset image examples, provenance, license, observation data |
-| UI/UX 설계·폴리싱·감사 | `skills/auditing-and-refining-ui-art/SKILL.md` | `auditing-and-refining-ui-art`가 UI 설계·폴리싱·실제 화면 감사를 소유하고 `ui-motion-and-interaction-principles.md`를 조건부 reference로 사용 |
+| UI/UX 설계·폴리싱·감사 | `skills/auditing-and-refining-ui-art/SKILL.md` | UI 설계·폴리싱·실제 화면 감사를 소유하고 `ui-motion-and-interaction-principles.md`를 조건부 reference로 사용 |
 | AI instruction/context | `docs/knowledge/ai/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md` | instruction authority·context curation·example/fixture·HARD_CONSTRAINT 설계 |
-| AI model/prompt cost | `skills/optimizing-ai-model-and-prompt-costs/SKILL.md` | `optimizing-ai-model-and-prompt-costs`가 model recommendation·effort routing·prompt caching·provider/cost boundary를 소유 |
+| AI model/prompt cost | `skills/optimizing-ai-model-and-prompt-costs/SKILL.md` | model recommendation·effort routing·prompt caching·provider/cost boundary |
 | 게임 시스템·난이도·전투 AI | `skills/analyzing-and-refining-game-concepts/SKILL.md`, `docs/knowledge/game-development/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md` | `system-design` / `difficulty-and-combat-ai` mode, 난이도 장벽·공정성·attack/threat budget |
 | 게임 개발 knowledge hub | `docs/knowledge/game-development/README.md` | 기획·아트·개발·AI·research·release Guide routing |
 | 게임 개발 Evidence Pack | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md` | 외부 근거·범위·검증 상태의 공용 조사 packet |
@@ -96,13 +106,13 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·
 | Local Godot reference | `docs/knowledge/godot/LOCAL_GODOT_REFERENCE_LIBRARY.md` | local reference-only shelf; missing path is non-blocking |
 | CI execution/cost | `docs/CI_EXECUTION_COST_POLICY.md` | change-class validation, runner/cost gate |
 | PowerShell user execution | `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md` | fresh shell, location first, one paste block, fail-fast |
-| GitHub governance | `docs/GITHUB_PRO_OPERATING_POLICY.md`, `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | GitHub Pro 저장소 운영, GitHub Pro 보호·Ruleset·자동 병합, PR/check/work-item lifecycle |
+| GitHub governance | `docs/GITHUB_PRO_OPERATING_POLICY.md`, `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | GitHub 보호·Ruleset·자동 병합·PR/check/work-item lifecycle |
 | Decision sync | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | approved Decision 정본화·중복질문 방지·Notion/repository cross-sync |
 | Planning sequence/evidence | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | evidence, approval bundle, Demo-First |
 | Integrated vertical slice | `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md` | active integrated single-attachment execution route |
 | Capability composition | `docs/CAPABILITY_COMPOSITION_MAP.md` | capability 조합·금지 경계·필수 증거 |
-| Project local Asset Vault | `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`, `tools/project_asset_vault.py` | local candidate preservation, explicit promotion, tombstone |
-| QA runtime evidence | `tools/qa-evidence-studio/README.md` | developer-owned PC runtime evidence; Android `DEFERRED_NOT_CONNECTED` |
+| Project local Asset Vault | `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`, `tools/project_asset_vault.py` | local candidate preservation, explicit promotion, tombstone; 사용자-facing project app가 아님 |
+| QA runtime evidence | `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`의 `REPOSITORY_NATIVE_QA_EVIDENCE` | exact commit/PR head + test/build/runtime + screenshot/video/log/Actions artifact; `PASS/FAIL/BLOCKED/NOT_RUN` |
 | Active Skill machine source | `skills/SKILL_REGISTRY.json` | trigger/status/path/mode routing |
 | Active Skill generated view | `docs/generated/BASE_ACTIVE_SKILLS.md` | Registry-derived human discovery surface |
 | Legacy Skill alias | `skills/LEGACY_SKILL_ALIASES.md` | historical Skill ID → current Skill/mode |
@@ -227,7 +237,7 @@ CONFIRMED HUMAN TABLE
 
 ## 5. 이미지·시각 checkpoint
 
-`Intermediate visual checkpoint`는 특정 product page가 아니라 **현재 Project relation 안에서의 중간 시각 의사결정 Gate**다.
+`NOTION_VISUAL_CHECKPOINT_BEFORE_POC`는 현재 Project relation 안에서의 시각 의사결정 Gate다. 이미지·UI·UX가 테스트 판단을 바꿀 수 있으면 GPT 기획·검수 단계에서 대표 상태를 먼저 준비하고 Notion에 배치·readback·승인한다.
 
 - `MISSING_CANON`: 비교할 승인 시각 기준이 부족함.
 - `DRAFT_VISUAL`: 탐색/검토용이며 project asset approval이 아님.
@@ -239,10 +249,12 @@ Context token은 필요할 때 `GDD`, `EXTERNAL_COLLABORATION`, `BOTH`를 유지
 ```text
 generate / edit
 → Project target
+→ GPT visual + UX review
 → candidate
-→ readback
+→ Notion readback
 → review / approval
 → version / replacement
+→ APPROVED_VISUALS_FEED_POC
 → repository implementation
 → runtime QA
 ```
@@ -251,9 +263,9 @@ generate / edit
 
 ### Google Sheets
 
-기존 unique material이 남아 있을 때만 `COMPATIBILITY_ONLY`. 상세 migration contract는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 소유한다. migration은 unique / duplicate / obsolete를 분류하고, 올바른 Project destination에 옮긴 뒤 readback한다.
+`RETIRED_MIGRATION_ONLY`. 고유 미이관 정보가 실제로 남은 경우에만 일회성 migration source로 읽는다. `GOOGLE_SHEETS_MIGRATE_THEN_REMOVE`에 따라 unique / duplicate / obsolete를 분류하고 올바른 Project/structured destination으로 옮겨 readback한 뒤 active Sheet reference를 제거한다.
 
-### 폐기된 시각 실행면
+### 폐기된 시각·프로젝트 실행면
 
 다음 active execution surfaces는 폐기됨:
 
@@ -262,15 +274,13 @@ generate / edit
 - localhost Expression Studio
 - localhost Sprite Animation Studio
 - visual-delivery Tool Hub
-- Figma-only templates/workflows/tests
+- standalone localhost/browser QA Evidence Studio
+- independent HTML project-management dashboard/catalog
+- Google Sheets GDD/workspace
 
-재사용할 가치는 구현이 아니라 `NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`에 흡수된 project identity, provenance, bounded identity-preserving edits, approval, version/replacement, reuse classification, Screen/Flow ID, readback, explicit runtime handoff다.
+재사용할 가치는 구현 surface가 아니라 `NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`와 `DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`에 흡수된 project identity, provenance, bounded identity-preserving edits, approval, version/replacement, reuse classification, Screen/Flow ID, readback, explicit runtime handoff, fail-closed QA evidence다.
 
-Git history가 복구 기록이다. historical plan/spec/learning entry는 current authority가 아니며, 새 workflow가 그것을 참조할 필요는 없다.
-
-### QA Evidence Studio
-
-QA Evidence Studio는 위 폐기 범위에 포함되지 않는다. 실제 PC build에 배치된 UI/asset의 developer-owned evidence를 기록하는 독립 runtime QA 도구다.
+Git history가 복구 기록이다. historical plan/spec/learning entry는 current authority가 아니며 새 workflow가 기본 읽기 대상으로 삼지 않는다.
 
 ## 7. 프로젝트 정본과 발행
 
@@ -296,7 +306,7 @@ GitHub 추적 근거
 → 필요한 Notion 사람용 표·시각 표현 동기화
 ```
 
-`DESIGN_DOCUMENT_REGISTRY.json`은 registered Markdown/JSON owner와 publication 경로를 관리한다. PDF/DOCX/dashboard는 선언된 publication/derived surface일 뿐 독립 canon이 아니다.
+`DESIGN_DOCUMENT_REGISTRY.json`은 registered Markdown/JSON owner와 publication 경로를 관리한다. PDF/DOCX/dashboard는 선언된 publication/derived surface일 뿐 독립 canon이 아니다. 여기서 dashboard는 배포·문서 파생 산출물일 수 있으나 독립 HTML project management surface를 뜻하지 않는다.
 
 ## 8. 검증
 
@@ -321,20 +331,21 @@ Notion page·image upload 성공은 Godot runtime proof가 아니다. Upload/att
 ZERO_INCREMENTAL_COST_REQUIRED
 CURRENT_PAID_PLANS: GPT_PRO
 PAID_PLAN_COUNT: 1
+NOTION_PAID_ON_REQUEST_ONLY
 ```
 
-Notion은 Free 범위에서 사용한다. paid Notion AI, separately metered API/storage/automation, 신규 유료 SaaS/runner/compute는 새 사용자 승인 없이는 기본 경로에 넣지 않는다.
+Notion은 무료/현재 사용 가능한 범위를 우선한다. 유료 Notion 기능이 반복 병목을 실제로 줄이고 무료 대안보다 총비용이 낮다는 `COST_BENEFIT_EVIDENCE_BEFORE_NOTION_UPGRADE`가 있을 때만 사용자에게 제안하고, 명시적 승인 뒤 사용한다. paid Notion AI, separately metered API/storage/automation, 신규 유료 SaaS/runner/compute는 승인 전 기본 경로에 넣지 않는다.
 
 ## 10. 기존 공용 라우팅 발견성 보존
 
-Notion 전환은 기존 Base의 공용 능력을 삭제하거나 숨기는 작업이 아니다. 아래 라우팅 표현은 계속 발견 가능해야 한다.
+Notion 전환은 기존 Base의 유효한 공용 능력을 삭제하거나 숨기는 작업이 아니다. 아래 라우팅 표현은 계속 발견 가능해야 한다.
 
 - **공용 용어**: `docs/CONTROLLED_VOCABULARY.md`에서 stable term과 bounded-context 의미를 찾는다.
 - 승인 Decision 복원: `→ CURRENT_CONFIRMED_DECISIONS.md`를 거쳐 분야 정본과 사람용 Notion 표현을 교차검증한다.
 - 저장소 전체 감사: `repository-wide-audit`는 별도 신규 Skill이 아니라 기존 REVIEW/검증 능력의 통합 mode로 라우팅한다.
 - 프로젝트 설치 템플릿: **프로젝트 설치 템플릿을 활성 상태 문서로 오인하지 않는다**. Template은 소비될 때만 프로젝트 상태가 된다.
-- Codex handoff: **GPT→Codex 단계별 Godot 구현 인계**는 기존 `implementation-package-handoff` mode를 사용하며, `USER_REQUESTED_CODEX_HANDOFF`가 있을 때만 생성한다. 계획/검토 작업은 자동으로 Codex 구현 승인이 되지 않는다.
-- Codex preflight: `CODEX_PREFLIGHT_OPTIONAL`; 명시적 handoff가 없으면 계획/검토 단계에서 별도 구현 preflight를 강제하지 않는다.
+- Codex handoff: GPT가 기획·검수를 끝낸 뒤 실제 저장소/엔진 실행이 필요할 때만 `CODEX_OPTIONAL_SUB_EXECUTOR`와 기존 `implementation-package-handoff`를 사용한다. `USER_REQUESTED_CODEX_HANDOFF`는 명시적 요청일 때 즉시 라우팅할 수 있으나 일반 계획/검토를 자동 Codex 구현 승인으로 보지 않는다.
+- Codex preflight: `CODEX_PREFLIGHT_OPTIONAL`; 별도 기술 위험이 큰 경우에만 사용하고 모든 구현에 강제하지 않는다.
 - GitHub governance: **GitHub Pro 저장소 운영**과 **GitHub Pro 보호·Ruleset·자동 병합**은 기존 GitHub governance owner로 라우팅하며 `GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md`, `GITHUB_USAGE_BUDGET.md`를 호환 발견 경로로 유지한다.
 - 기획 인터뷰: **Grill Me 핵심 의사결정 인터뷰**는 `clarify` + `references/grill-me-protocol.md`로 라우팅하고 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`의 승인 배치 정책을 함께 적용한다.
 - 연재소설: `developing-and-revising-serial-fiction`이 서사 개발·수정의 active owner이며 Coc-Fiction Notion Storyboard/Character/Faction 표면과 조합한다.
