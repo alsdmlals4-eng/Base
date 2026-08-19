@@ -7,6 +7,12 @@ on:
     paths:
       - tests/test_base_partition_contract.py
       - .github/workflows/_tmp-base-partition-red-20260819.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - tests/test_base_partition_contract.py
+      - .github/workflows/_tmp-base-partition-red-20260819.yml
 
 permissions:
   contents: read
