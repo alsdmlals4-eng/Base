@@ -166,6 +166,41 @@ class NeutralAdversarialFeatureLifecycleTests(unittest.TestCase):
         self.assertNotIn("FIVE_DISTINCT_ADVERSARIAL_ROUNDS", adversarial)
         self.assertNotIn("ROUND_1_INTENT_ASSUMPTIONS_SCOPE", adversarial)
 
+    def test_p03_evidence_bounded_review_contract_is_focus_tested(self) -> None:
+        adversarial = read("skills/running-adversarial-review-and-refinement/SKILL.md")
+        finding = read(
+            "skills/running-adversarial-review-and-refinement/references/"
+            "finding-and-regression-protocol.md"
+        )
+        audit = read(
+            "skills/running-adversarial-review-and-refinement/references/"
+            "repository-wide-audit-protocol.md"
+        )
+        postmerge = read("templates/quality/POST_MERGE_ADVERSARIAL_REVIEW.md")
+        sync = read("skills/synchronizing-local-and-github-state/SKILL.md")
+        safe_sync = read("skills/synchronizing-local-and-github-state/references/safe-sync-protocol.md")
+
+        self.assertIn("FIX_GUIDED_VERIFICATION_WHEN_EXECUTABLE", adversarial)
+        for token in (
+            "baseline_contract_result",
+            "candidate_fix_result",
+            "counterfactual_improvement",
+            "new_regressions",
+        ):
+            self.assertIn(token, finding)
+
+        for text in (finding, audit, postmerge):
+            self.assertIn("CONFIGURED_PROJECT_WORKSPACE", text)
+            self.assertNotIn("Google Sheets", text)
+
+        for text in (sync, safe_sync):
+            for token in (
+                "execution_surface",
+                "GITHUB_CONNECTOR_ONLY",
+                "NOT_APPLICABLE_CONNECTOR_ONLY",
+            ):
+                self.assertIn(token, text)
+
     def test_socratic_review_lens_is_selective_evidence_first_and_meta_validated(self) -> None:
         adversarial = read("skills/running-adversarial-review-and-refinement/SKILL.md")
         socratic = read(
