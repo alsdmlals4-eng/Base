@@ -17,6 +17,7 @@ EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION
 
 ```yaml
 repository:
+execution_surface: LOCAL_WORKTREE | GITHUB_CONNECTOR_ONLY | HYBRID
 current_task_or_pr_identity:
 current_workstream_identity:
 owner_workstream_identity:
@@ -24,7 +25,7 @@ cross_workstream_absorption_authorized: false | true
 source_main_sha:
 current_main_sha:
 current_branch:
-current_worktree:
+current_worktree: <actual path> | NOT_APPLICABLE_CONNECTOR_ONLY
 write_parent_sha: PENDING_FIRST_WRITE
 expected_head_sha:
 intended_paths: []
@@ -32,6 +33,10 @@ semantic_resource_locks: []
 protected_paths: []
 ```
 
+- `execution_surface`: 이번 동기화에서 실제로 관찰·수정 가능한 표면. 관찰하지 않은 local/remote 상태를 다른 표면의 증거로 추정하지 않는다.
+- `LOCAL_WORKTREE`: 실제 local branch/worktree/dirty state를 읽는다.
+- `GITHUB_CONNECTOR_ONLY`: connector의 remote branch/head/diff/PR/check만 증거로 사용한다. local worktree가 관찰되지 않았으면 `current_worktree: NOT_APPLICABLE_CONNECTOR_ONLY`로 기록하고 local test/dirty-state를 추정하지 않는다.
+- `HYBRID`: local과 connector 증거의 출처를 각각 구분한다.
 - `source_main_sha`: 작업 계약/Branch를 시작할 때 기준이 된 completed main SHA.
 - `current_main_sha`: 현재 remote authority를 다시 읽은 SHA.
 - `write_parent_sha`: 실제 first persistent write 직전 Branch parent. 아직 쓰지 않았으면 `PENDING_FIRST_WRITE`.
@@ -70,6 +75,7 @@ path/semantic overlap보다 먼저 workstream 경계를 확인한다.
 확인 항목:
 
 ```text
+execution_surface
 current_task_or_pr_identity
 current_workstream_identity
 owner_workstream_identity
@@ -97,11 +103,11 @@ workstream Gate는 위 overlap보다 먼저 적용한다. `SAME_GOAL`이어도 `
 
 | 상태 | 의미 | 다음 행동 |
 |---|---|---|
-| `CLEAR` | 경쟁 owner가 없고 base/head가 최신 | write 가능 |
+| `CLEAR` | 경쟁 owner가 없고 현재 execution surface에서 base/head가 최신 | write 가능 |
 | `STALE_BASE_SHA` | 기준 SHA가 current authority와 다름 | latest main에서 재기준화 |
 | `WAITING_RESOURCE` | 자원을 다른 task/PR/workstream이 소유 | owner surface를 건드리지 않고 해당 task만 보류 |
 | `DUPLICATE_WORK` | 같은 material delta가 이미 다른 owner에서 구현·검증 중 | 중복 구현 금지; workstream auth 확인 |
-| `BLOCKED_UNVERIFIED` | owner/workstream/SHA/PR/권한을 검증 불가 | 증거 확보 전 write 금지 |
+| `BLOCKED_UNVERIFIED` | owner/workstream/SHA/PR/권한 또는 필요한 surface 증거를 검증 불가 | 증거 확보 전 write 금지 |
 | `PROVISIONAL_INTEGRATION` | same workstream 또는 명시 승인된 cross-workstream delta를 별도 latest-main Branch에서 통합 | selective copy + semantic reconciliation |
 
 ## 4. Cooperative ownership
@@ -116,6 +122,7 @@ workstream Gate는 위 overlap보다 먼저 적용한다. `SAME_GOAL`이어도 `
 - `same workstream` 통합은 별도 Branch에서 수행한다.
 - 같은 파일을 피했더라도 같은 semantic resource면 owner 충돌로 처리한다.
 - process/port/temp directory도 소유권이 있으면 임의 종료·재사용하지 않는다.
+- `GITHUB_CONNECTOR_ONLY`에서 local process/worktree/dirty state가 없다고 단정하지 않는다. 그 상태는 `NOT_APPLICABLE_CONNECTOR_ONLY` 또는 `NOT_RUN`이다.
 
 ## 5. BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16
 
@@ -137,6 +144,7 @@ EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION
 통합 전 owner PR branches를 수정하지 않고 기록한다.
 
 ```yaml
+execution_surface:
 owner_pr_head_shas: []
 current_workstream_identity:
 owner_workstream_identity:
@@ -222,12 +230,13 @@ rejected_duplicate_authority: []
 first persistent write 직전:
 
 1. current main을 다시 읽는다.
-2. current/owner workstream identity를 다시 확인한다.
-3. current task Branch/head를 다시 읽는다.
-4. same-goal open/recent PR을 다시 읽는다.
-5. current task or PR itself를 overlap 후보에서 제외한다.
-6. intended path + semantic resource overlap을 판정한다.
-7. `CLEAR` 또는 승인된 `PROVISIONAL_INTEGRATION`일 때만 write한다.
+2. `execution_surface`와 실제 관찰 가능한 증거를 다시 확인한다.
+3. current/owner workstream identity를 다시 확인한다.
+4. current task Branch/head를 다시 읽는다.
+5. same-goal open/recent PR을 다시 읽는다.
+6. current task or PR itself를 overlap 후보에서 제외한다.
+7. intended path + semantic resource overlap을 판정한다.
+8. `CLEAR` 또는 승인된 `PROVISIONAL_INTEGRATION`일 때만 write한다.
 
 GitHub contents API는 stale blob SHA를 거부할 수 있다. 409는 blind retry 신호가 아니다.
 
@@ -244,6 +253,7 @@ HTTP 409 / stale blob
 
 PR creation 직전:
 
+- execution surface 재확인
 - current main/base SHA 재확인
 - actual branch head 확인
 - changed paths/semantic resources 확인
@@ -259,6 +269,7 @@ PR creation 직전:
 merge 직전:
 
 ```text
+execution_surface evidence is explicit
 expected_head_sha == actual PR head sha
 current main/base acceptable
 workstream authorization still valid
@@ -286,6 +297,7 @@ PR metadata나 과거 성공 run만 보고 merge하지 않는다. exact head의 
 6. current operational machine checkpoint가 있으면 읽는다.
 7. generated/derived surface가 stale인지 확인한다.
 8. postmerge workflow가 있으면 evidence ceiling을 확인한다.
+9. connector-only 실행이면 local post-merge state를 성공으로 추정하지 않는다.
 
 병합 자체는 완료 증거가 아니다.
 
@@ -293,11 +305,11 @@ PR metadata나 과거 성공 run만 보고 merge하지 않는다. exact head의 
 
 ### Missing `gh` / push auth
 
-연결된 GitHub connector가 같은 mutation/read 기능을 제공하면 connector를 우선 사용한다. 사용자가 반복 인증해야 하는 수동 CLI 경로로 회귀하지 않는다.
+연결된 GitHub connector가 같은 mutation/read 기능을 제공하면 connector를 우선 사용한다. 사용자가 반복 인증해야 하는 수동 CLI 경로로 회귀하지 않는다. local worktree가 실제로 관찰되지 않으면 `execution_surface: GITHUB_CONNECTOR_ONLY`, `current_worktree: NOT_APPLICABLE_CONNECTOR_ONLY`로 기록한다.
 
 ### Local clone/network unavailable
 
-GitHub connector + repository CI가 acceptance criterion을 권위 있게 증명할 수 있는지 확인한다. 가능하면 그 경로를 사용하고 local run은 `NOT_RUN`으로 남긴다.
+GitHub connector + repository CI가 acceptance criterion을 권위 있게 증명할 수 있는지 확인한다. 가능하면 `GITHUB_CONNECTOR_ONLY`로 전환하고 local run은 `NOT_RUN`으로 남긴다. repository-native CI가 증명하지 않는 local-only acceptance를 자동 PASS로 만들지 않는다.
 
 ### Workflow cancellation
 
@@ -326,12 +338,14 @@ new main readback
 
 ```md
 ## CONCURRENT_CHANGE_PREFLIGHT
+- execution_surface: LOCAL_WORKTREE | GITHUB_CONNECTOR_ONLY | HYBRID
 - current_task_or_pr_identity:
 - current_workstream_identity:
 - owner_workstream_identity:
 - cross_workstream_absorption_authorized:
 - source_main_sha:
 - current_main_sha:
+- current_worktree: <actual path> | NOT_APPLICABLE_CONNECTOR_ONLY
 - write_parent_sha:
 - expected_head_sha:
 - intended_paths:
@@ -349,6 +363,7 @@ new main readback
 - rejected_duplicate_authority:
 
 ## Verification
+- execution-surface evidence:
 - exact-head checks:
 - unresolved threads:
 - required approvals:
@@ -359,6 +374,8 @@ new main readback
 
 ## 12. 금지
 
+- 존재가 확인되지 않은 local worktree/dirty state/test 결과를 추정
+- `GITHUB_CONNECTOR_ONLY`를 local 검증 PASS처럼 표현
 - 다른 채팅/독립 workstream을 same-goal이라는 이유만으로 자동 흡수
 - explicit cross-workstream authorization 없이 owner Branch/path/PR write/rebase/close/merge/selective-copy
 - owner PR branches 직접 수정
