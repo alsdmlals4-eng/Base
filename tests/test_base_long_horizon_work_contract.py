@@ -17,6 +17,8 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         self.assertIn("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md", agents)
         for term in (
             "ADVERSARIAL_REVIEW_UNTIL_CLEAN",
+            "FULL_LOOP_COUNT_MINIMUM: 5",
+            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5",
             "REQUIRED_WORK_REMAINING",
             "NOTION_DEFAULT_PROJECT_WORKSPACE",
             "PROJECT_RELATION_REQUIRED",
@@ -33,6 +35,8 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             "RECOVER_TRY_ALTERNATIVES_RESUME",
             "ZERO_INCREMENTAL_COST_REQUIRED",
             "ADVERSARIAL_REVIEW_UNTIL_CLEAN",
+            "FULL_LOOP_COUNT_MINIMUM: 5",
+            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5",
             "POSTMERGE_PROMOTION_AND_SUPERSESSION",
             "REQUIRED_WORK_REMAINING: 0",
         ):

@@ -29,10 +29,12 @@ Registry의 `칭찬·균형 평가만 요청` 비사용 조건은 결정·권장
 
 ### Adversarial review until clean invariant
 
-이 Skill을 L1 이상 작업물·PR·저장소 감사·병합 후 결과의 적대적 검토로 호출하면 **고정 횟수 없이 CLEAN_REVIEW_EXIT까지 전체 검토·개선 생명주기를 반복한다.** 관점 수나 loop 수를 성과로 계산하지 않는다. 앞 회차의 수정 결과와 새 증거 자체가 다음 회차의 공격 입력이다.
+이 Skill을 L1 이상 작업물·PR·저장소 감사·병합 후 결과의 적대적 검토로 호출하면 **최소 5회의 완전한 전체 개선 루프를 수행하고, 그 이후 CLEAN_REVIEW_EXIT까지 전체 검토·개선 생명주기를 반복한다.** `FULL_LOOP_COUNT_MINIMUM: 5`, `MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5`다. 5회는 종료 quota나 최대치가 아니라 최소 floor다. 앞 회차의 수정 결과와 새 증거 자체가 다음 회차의 공격 입력이다.
 
 ```text
 ADVERSARIAL_REVIEW_UNTIL_CLEAN: REQUIRED_WHEN_REVIEW_RUNS
+FULL_LOOP_COUNT_MINIMUM: 5
+MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
 FULL_SCOPE_REVIEW
 FIND → VALIDATE → REFINE → VERIFY → RE-ATTACK
 BETTER_ALTERNATIVE_SEARCH
@@ -75,12 +77,14 @@ clean_exit_candidate: true | false
 
 종료 규칙:
 
-1. 새 유효 `MUST_FIX`, P0/P1, acceptance blocker가 하나라도 나오면 수정·검증 뒤 다음 전체 회차를 수행한다.
-2. 정본·consumer·reference·Schema drift, 정상 경로 회귀, evidence ceiling 위반이 발견되면 종료하지 않는다.
-3. `BETTER_ALTERNATIVE_SEARCH`와 `LONG_TERM_PLAN_FIT_RECHECK`에서 현재 승인 범위 안의 더 강한 개선이 확인되면 적용 후 다시 전체 검토한다.
-4. `NOT_RUN`, `BLOCKED_UNVERIFIED`, `CANCELLED`는 PASS가 아니며, 완료 조건에 필요한 증거가 없으면 clean exit가 아니다.
-5. 동일 finding을 표현만 바꿔 반복 계수하거나, 횟수를 채우기 위해 가짜 finding/불필요한 변경을 만들지 않는다.
-6. **전체 재공격 결과 새로운 유효 오류·충돌·누락·blocking finding이 0이고, 기존 수정 회귀 0, acceptance criteria 충족, 정본/참조 신선도와 evidence ceiling이 모두 닫힐 때만 `CLEAN_REVIEW_EXIT`다.**
+1. **1~5회는 의무 전체 루프다.** 최소 5회의 완전한 전체 개선 루프를 실제 수행하기 전에는 중간 회차 finding이 0이어도 `CLEAN_REVIEW_EXIT`를 선언하지 않는다.
+2. 새 유효 `MUST_FIX`, P0/P1, acceptance blocker가 하나라도 나오면 수정·검증 뒤 다음 전체 회차를 수행한다.
+3. 정본·consumer·reference·Schema drift, 정상 경로 회귀, evidence ceiling 위반이 발견되면 종료하지 않는다.
+4. `BETTER_ALTERNATIVE_SEARCH`와 `LONG_TERM_PLAN_FIT_RECHECK`에서 현재 승인 범위 안의 더 강한 개선이 확인되면 적용 후 다시 전체 검토한다.
+5. `NOT_RUN`, `BLOCKED_UNVERIFIED`, `CANCELLED`는 PASS가 아니며, 완료 조건에 필요한 증거가 없으면 clean exit가 아니다.
+6. **5회 이후에도** 새로운 유효 오류·충돌·누락·blocking finding, 정본 충돌, acceptance failure 또는 회귀가 하나라도 나오면 수정·검증 후 6..N번째 전체 루프를 계속한다. 최대 회차 수는 고정하지 않는다.
+7. 동일 finding을 표현만 바꿔 반복 계수하거나, 최소 횟수를 채우기 위해 가짜 finding/불필요한 변경을 만들지 않는다. full-scope attack·검증·대안·장기 적합성 재검사를 실제 수행했다면 finding과 changes가 0인 clean loop도 유효한 의무 회차다.
+8. **최소 5회를 완료한 뒤 전체 재공격 결과 새로운 유효 오류·충돌·누락·blocking finding이 0이고, 기존 수정 회귀 0, acceptance criteria 충족, 정본/참조 신선도와 evidence ceiling이 모두 닫힐 때만 `CLEAN_REVIEW_EXIT`다.**
 
 구현 전 PLAN에서는 수정 대상이 아직 없을 수 있으므로 공격·검증 결과를 계약 입력으로 사용한다. 실제 BUILD/수정 뒤에는 검증된 출력 상태를 다시 전체 공격한다. PR 병합 후에도 새 `main`을 입력으로 같은 clean-exit 규칙을 적용한다.
 

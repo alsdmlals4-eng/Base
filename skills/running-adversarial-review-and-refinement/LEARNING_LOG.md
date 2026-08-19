@@ -1,6 +1,15 @@
 # Running Adversarial Review and Refinement — Learning Log
 
-## 2026-08-19 — fixed loop counts are weaker than a verified clean-exit condition
+## 2026-08-19 — minimum five full loops plus verified clean exit is the active contract
+
+- **Trigger:** 사용자가 최신 규칙으로 적대적 검토 루프를 **최소 5회 수행하고, 5회 이후에도 유효 오류가 남으면 오류 0이 될 때까지 계속**하도록 명시했다.
+- **Finding:** 직전 `ADVERSARIAL_REVIEW_UNTIL_CLEAN`은 숫자 quota가 종료조건을 왜곡하는 문제를 해결했지만 최소 검토 깊이가 사라져 한두 번의 우연한 clean 결과로 충분히 깊게 공격하지 못할 수 있었다. 반대로 과거 fixed-five 계약은 5회를 최대 종료점처럼 오해할 여지가 있었다.
+- **Decision:** 기존 Skill owner를 유지하고 `FULL_LOOP_COUNT_MINIMUM: 5`, `MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5`, `CLEAN_REVIEW_EXIT`를 함께 사용한다. 1~5회는 전체 승인 범위를 다시 공격하는 의무 loop이며 5회 전에는 종료하지 않는다. 5회 이후에는 새 유효 `MUST_FIX`/P0/P1/정본 충돌/acceptance failure/회귀가 하나라도 있으면 6..N회로 계속하고, post-minimum 전체 재공격에서 유효 blocking finding 0일 때만 종료한다.
+- **Evidence:** PR #532에서 먼저 Long-Horizon regression을 바꿔 current production이 `FULL_LOOP_COUNT_MINIMUM: 5` 부재로 RED가 되는 것을 확인했다. production owner와 companion regression을 동기화한 뒤 focused/required CI로 GREEN을 요구한다.
+- **Boundary:** 최소 5회는 가짜 finding이나 불필요한 변경을 만들라는 뜻이 아니다. full-scope attack·검증·대안·장기 적합성 재검사를 실제 수행하면 finding/changes가 0인 clean loop도 의무 회차로 인정한다. 5회는 최대치가 아니며 5회 이후 오류가 남으면 계속한다.
+- **Next trigger:** 5회 미만 clean exit, 5회에서 강제 종료, loop를 lens/checklist 개수로 대체, 가짜 finding 생성, evidence ceiling 무시가 나타나면 즉시 재검토한다.
+
+## 2026-08-19 — fixed loop counts are weaker than a verified clean-exit condition (SUPERSEDED LATER SAME DAY)
 
 - **Trigger:** 사용자가 적대적 검토를 5회 같은 고정 횟수로 제한하지 말고, 검토 결과에서 유효한 오류·충돌·누락·blocking finding이 더 이상 나오지 않을 때까지 반복하라고 상위 규칙을 변경했다.
 - **Finding:** `FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS`와 `FULL_LOOP_COUNT_MINIMUM: 5`는 이전의 “5개 lens가 아니라 전체 개선 사이클을 반복한다”는 문제는 해결했지만, 여전히 숫자 quota가 종료 조건처럼 보일 수 있었다. 횟수를 채우는 데 초점을 두면 5회보다 빨리 깨끗해진 상태에서 불필요한 churn을 만들거나, 5회 이후 새 오류가 계속 나오는 상황을 숫자와 혼동할 수 있다.

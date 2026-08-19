@@ -21,6 +21,8 @@ ZERO_INCREMENTAL_COST_REQUIRED
 CURRENT_PAID_PLANS: GPT_PRO
 PAID_PLAN_COUNT: 1
 ADVERSARIAL_REVIEW_UNTIL_CLEAN
+FULL_LOOP_COUNT_MINIMUM: 5
+MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
 POSTMERGE_PROMOTION_AND_SUPERSESSION
 CORE_LOOP_DUMMY_BALANCE_BUILD_TEST
 BALANCE_BUDGET
@@ -52,7 +54,7 @@ RESEARCH
 → ONE USER APPROVAL
 → SMALL TESTABLE SLICES
 → TOOL / RUNTIME EXECUTION
-→ ADVERSARIAL REVIEW UNTIL CLEAN
+→ AT LEAST 5 FULL ADVERSARIAL LOOPS, THEN UNTIL CLEAN
 → LONG-TERM FIT CLOSURE
 → EXACT-HEAD PR GATE
 → MERGE
@@ -258,20 +260,22 @@ Google Sheets는 신규 입력을 받지 않는다. 남은 고유 자료는 Proj
 
 ## 적대적 검토 종료 조건
 
-`ADVERSARIAL_REVIEW_UNTIL_CLEAN`은 숫자 quota가 아니다.
+`ADVERSARIAL_REVIEW_UNTIL_CLEAN`은 **최소 5회 floor + 이후 clean-exit** 계약이다. `FULL_LOOP_COUNT_MINIMUM: 5`, `MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5`이며 5회는 최대 quota가 아니다.
 
 ```text
-FULL_SCOPE_REVIEW
-→ validate findings
-→ fix approved findings
-→ verification/regression
-→ RE-ATTACK improved whole state
-→ repeat while any new valid error/conflict/omission/blocker appears
-→ CLEAN_REVIEW_EXIT
+FULL_SCOPE_REVIEW #1
+→ validate findings → fix approved findings → verification/regression → RE-ATTACK
+→ FULL_SCOPE_REVIEW #2
+→ FULL_SCOPE_REVIEW #3
+→ FULL_SCOPE_REVIEW #4
+→ FULL_SCOPE_REVIEW #5
+→ if any new valid error/conflict/omission/blocker remains: continue #6..N
+→ CLEAN_REVIEW_EXIT only after minimum 5 and verified zero-blocker re-attack
 ```
 
 `CLEAN_REVIEW_EXIT` 조건은 모두 필요하다.
 
+- 완전한 전체 개선 루프 5회 이상 완료
 - 새 유효 `MUST_FIX` 또는 blocking finding 0
 - 정본/owner/consumer/reference 충돌 0
 - acceptance criterion failure 0
@@ -279,7 +283,7 @@ FULL_SCOPE_REVIEW
 - evidence ceiling 위반/미실행을 PASS로 과장한 항목 0
 - 더 나은 대안 재탐색과 장기계획 적합성 재검사가 현재 증거에서 추가 변경을 요구하지 않음
 
-한 회차가 깨끗해도 전체 범위를 다시 공격했을 때 새 finding이 나오면 종료하지 않는다. 반대로 깨끗한 상태에서 횟수를 채우기 위해 가짜 finding이나 불필요한 변경을 만들지 않는다.
+1~5회 중 한 회차가 깨끗해도 최소 floor를 충족하기 전에는 종료하지 않는다. **5회 이후에도** 전체 범위를 다시 공격했을 때 새 finding이 나오면 수정·검증 후 추가 전체 루프를 수행한다. 다만 횟수를 채우기 위해 가짜 finding이나 불필요한 변경을 만들지 않으며, full-scope 검토와 검증을 실제 수행했다면 finding/changes가 0인 clean loop도 유효한 회차다.
 
 ## 11. 비용 경계
 
@@ -292,23 +296,30 @@ PAID_PLAN_COUNT: 1
 
 현재 기본 유료 플랜은 **GPT Pro** 하나다. Notion은 Free 범위에서 사용하며 paid Notion AI, 별도 API credit, metered storage/automation, marketplace, 신규 유료 runner/compute/storage를 기본 경로에 넣지 않는다. 다른 유료 기능을 도입·실행·결제하려면 **새 사용자 승인**이 필요하다. 비용 상태가 불명확하면 `COST_GATE_BLOCKED`로 둔다.
 
-## 12. 오류가 사라질 때까지의 전체 적대적 개선 루프
+## 12. 최소 5회 후 오류가 사라질 때까지의 전체 적대적 개선 루프
 
 ### `ADVERSARIAL_REVIEW_UNTIL_CLEAN`
 
-적대적 검토를 실제로 실행할 때는 고정 횟수를 채우는 것이 아니라 다음 **전체 범위 개선 루프를 CLEAN_REVIEW_EXIT가 성립할 때까지** 반복한다.
+적대적 검토를 실제로 실행할 때는 다음 **전체 범위 개선 루프를 최소 5회 수행하고, 5회 이후에는 CLEAN_REVIEW_EXIT가 성립할 때까지** 반복한다.
 
 ```text
+FULL_LOOP_COUNT_MINIMUM: 5
+MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
 FULL_SCOPE_REVIEW
 → finding 검증
 → 개선/보완
 → 실제 검증/회귀
 → 개선된 전체 상태 RE-ATTACK
+→ repeat through loop 5 even when an earlier loop is clean
+→ after loop 5, continue while any valid blocker exists
+→ CLEAN_REVIEW_EXIT
 ```
 
 각 회차는 사용자 의도, 정본/owner, Skill/Tool, 실제 구현, 데이터/자산, 실패 복구, 보안, 동시성, 비용, 벤치마크, 장기 유지, 증거와 완료조건을 다시 본다. 회차 N 입력은 원칙적으로 회차 N-1의 검증된 출력 상태다.
 
-각 회차에서 `BETTER_ALTERNATIVE_SEARCH`와 `LONG_TERM_PLAN_FIT_REQUIRED`를 다시 확인한다. 5회차 뒤 P0/P1 또는 acceptance criterion을 막는 finding이 남으면 수정·검증 후 추가 전체 루프를 수행한다.
+각 회차에서 `BETTER_ALTERNATIVE_SEARCH`와 `LONG_TERM_PLAN_FIT_REQUIRED`를 다시 확인한다. **최소 5회의 완전한 전체 개선 루프**를 수행하기 전에는 `CLEAN_REVIEW_EXIT`를 선언하지 않는다. **5회 이후에도** P0/P1, `MUST_FIX`, 정본 충돌, acceptance criterion을 막는 finding 또는 회귀가 남으면 수정·검증 후 추가 전체 루프를 수행한다. 최대 회차 수는 고정하지 않는다.
+
+finding이 없는 의무 회차에서도 전체 범위 attack·검증·대안·장기 적합성 재검사를 실제 수행하고 evidence를 남긴다. 횟수를 채우기 위한 가짜 finding이나 불필요한 변경은 금지한다.
 
 `NOT_RUN`, `BLOCKED_UNVERIFIED`, `CANCELLED`는 PASS가 아니다.
 
