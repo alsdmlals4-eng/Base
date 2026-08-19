@@ -109,25 +109,41 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         ):
             self.assertIn(term, verification)
 
-    def test_independent_workstreams_are_isolated_unless_user_explicitly_authorizes_absorption(self) -> None:
+    def test_open_pr_state_is_not_active_worker_evidence(self) -> None:
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         for term in (
             "INDEPENDENT_WORKSTREAM_ISOLATION",
-            "OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT",
-            "EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION",
+            "OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM",
+            "ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE",
+            "CURRENT_OWNER_EVIDENCE_REQUIRED",
+            "CURRENT_COORDINATOR_TAKEOVER_WHEN_NO_ACTIVE_OWNER",
+            "EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTION",
+            "ACTIVE_OTHER_WORKER",
+            "COORDINATOR_TAKEOVER",
+            "SUPERSEDED_DUPLICATE",
+            "STALE_BACKLOG",
+            "BLOCKED_EXTERNAL",
+            "READY_TO_FINISH",
         ):
             self.assertIn(term, policy)
+        self.assertNotIn("OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT", policy)
 
-    def test_game_contract_is_budgeted_buildable_and_reusable(self) -> None:
+    def test_game_contract_requires_release_near_player_validation_and_reusable_boundaries(self) -> None:
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         for term in (
-            "CORE_LOOP_DUMMY_BALANCE_BUILD_TEST",
+            "RELEASE_NEAR_VERTICAL_SLICE_FIRST",
+            "GAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE",
+            "SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE",
+            "TECHNICAL_SPIKE_INTERNAL_ONLY",
+            "SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED",
+            "EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT",
             "BALANCE_BUDGET",
             "WORLD_STORYLINE_FIT_REQUIRED",
             "REUSABLE_SYSTEM_EXTRACTION",
             "ADOPT / ADAPT / REJECT",
         ):
             self.assertIn(term, policy)
+        self.assertNotIn("CORE_LOOP_DUMMY_BALANCE_BUILD_TEST", policy)
 
     def test_notion_visual_and_structured_data_authority_is_split_safely(self) -> None:
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
@@ -198,7 +214,7 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
 
-    def test_gpt_first_visualized_poc_legacy_removal_and_clean_review_contract(self) -> None:
+    def test_gpt_first_release_near_slice_legacy_removal_and_clean_review_contract(self) -> None:
         agents = read("AGENTS.md")
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         codex = read("docs/GPT_CODEX_WORKFLOW_POLICY.md")
@@ -210,7 +226,8 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             "CLEAN_REVIEW_EXIT",
             "GPT_FIRST_PLANNING_AND_REVIEW",
             "OPTIONAL_CODEX_EXECUTOR",
-            "VISUALIZED_POC_BEFORE_DEMO_TEST",
+            "RELEASE_NEAR_VERTICAL_SLICE_FIRST",
+            "SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE",
             "LEGACY_ABSORB_VERIFY_REMOVE",
             "PAID_PLAN_GATE",
         ):
@@ -218,7 +235,10 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         self.assertIn("사용자 학습형 완료보고", agents)
         self.assertIn("GPT_FIRST_PLANNING_AND_REVIEW", codex)
         self.assertIn("OPTIONAL_CODEX_EXECUTOR", codex)
-        self.assertIn("VISUALIZED_POC_BEFORE_DEMO_TEST", visual)
+        self.assertIn("RELEASE_NEAR_VERTICAL_SLICE_FIRST", visual)
+        self.assertIn("SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE", visual)
+        self.assertNotIn("VISUALIZED_POC_BEFORE_DEMO_TEST", visual)
+        self.assertNotIn("VISUALIZED_POC_BEFORE_DEMO_TEST", policy)
         self.assertIn("MIGRATION_ONLY_UNTIL_REMOVAL", sheets)
         self.assertIn("FULL_LOOP_COUNT_MINIMUM: 5", adversarial)
         self.assertIn("MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5", adversarial)

@@ -112,3 +112,36 @@ PR #539의 P04 규칙을 최신 completed main 위 독립 workstream으로 복�
 ### Revisit
 
 P04 planning templates의 ownership이 바뀌거나, Notion/repository authority 정책이 다시 변경되거나, Required CI에서 focused P04 regression 소비 경로가 바뀌면 재검토한다.
+
+## 2026-08-20 — 플레이어 경험 검증은 완성형 짧은 Vertical Slice에서 한다
+
+### Trigger
+
+시스템만 작동하는 PoC를 먼저 플레이하면 UI·이미지·사운드·연출이 빠져 실제 게임의 몰입·가독성·첫인상·감정·기억을 판단하기 어렵다는 사용자 제작 원칙이 확정됐다.
+
+### Evidence reviewed
+
+- 기존 `DEMO_FIRST_VERTICAL_SLICE`와 Vertical Slice quality/pipeline/playtest 계약
+- `VISUALIZED_POC_BEFORE_DEMO_TEST`가 시각 요소 비중이 낮은 PoC에 예외를 허용하던 기존 정책
+- `PLAYER_VALUE_TRACE_REQUIRED`의 human evidence ceiling
+- 현재 Notion + repository authority와 Existing Solution First 원칙
+- exact-head CI에서 실제로 소비되는 Vertical Slice 및 visual-workflow 회귀 테스트
+
+### Lesson
+
+`SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`: 시스템-only PoC는 알고리즘·성능·호환성 같은 좁은 기술 질문을 푸는 내부 Spike로는 유효하지만, 재미·몰입·전체 UX를 판정하는 제품 단계로 취급하면 증거 상한을 넘는다. 플레이어 경험 검증은 짧더라도 shipping-intent UI/UX, 이미지·아트, 대표 사운드, VFX/피드백, 핵심 시스템·데이터·콘텐츠가 연결된 완성형 Vertical Slice에서 해야 한다.
+
+### Base change
+
+- 기존 Vertical Slice Skill을 유지하고 새 광역 Skill을 만들지 않았다.
+- `RELEASE_NEAR_VERTICAL_SLICE_FIRST`, `GAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE`, `SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED`를 공용 정책·Skill·Gate·작성 템플릿에 연결했다.
+- `PLAYER_APPEAL_QUALITY_GATE`에 독창성, DDD, 일관성, 복잡성, 난이도, 개성·기억을 포함했다.
+- 기존 자산·UI·오디오·도구를 먼저 조사하고 `ADOPT / ADAPT / REJECT`하는 `EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT`를 보존했다.
+
+### Guardrail
+
+완성형 Slice 원칙은 모든 기술 질문을 고비용 완성 자산으로 검증하라는 뜻이 아니다. 기술 Spike는 허용하지만 플레이어 경험 PASS로 승격하지 않는다. 자동 테스트·정적 문서·렌더만으로 재미·몰입을 PASS 처리하지 않으며 실제 인간 플레이 전에는 해당 경험 축을 `NOT_RUN`으로 남긴다.
+
+### Revisit
+
+특정 장르에서 shipping-intent audiovisual presentation 자체가 핵심 가설을 오염시키거나, 반복 실험 비용이 학습 속도를 심각하게 저해한다는 실제 프로젝트 증거가 누적될 때 재검토한다.
