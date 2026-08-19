@@ -84,12 +84,12 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 | 기존 프로젝트 구조 감사·마이그레이션 | `managing-game-project-operating-system: audit / reconcile-legacy / migrate / verify` | `skills/managing-game-project-operating-system/SKILL.md` |
 | 구형 surface·자료 흡수·삭제 | `governing-legacy-retention-and-archives` + pruning | `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md` |
 | 핵심 컨셉·DDD·벤치마크·플레이테스트·PoC | `analyzing-and-refining-game-concepts` | `skills/analyzing-and-refining-game-concepts/SKILL.md` |
-| 게임 시스템·난이도·전투 AI | `analyzing-and-refining-game-concepts: system-design / difficulty-and-combat-ai` | `skills/analyzing-and-refining-game-concepts/SKILL.md` |
+| 게임 시스템·난이도·전투 AI | `analyzing-and-refining-game-concepts: system-design / difficulty-and-combat-ai` | `docs/knowledge/game-development/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md` + `skills/analyzing-and-refining-game-concepts/SKILL.md` |
 | 기존 프로젝트 코어 판정 | `identifying-project-core` | `skills/identifying-project-core/SKILL.md` |
 | 기획 단계 프로젝트 코어 확정 | `establishing-project-core` | `skills/establishing-project-core/SKILL.md` |
 | 튜토리얼·온보딩·첫 세션 | `analyzing-and-refining-game-concepts: tutorial-and-onboarding-design` | `skills/analyzing-and-refining-game-concepts/SKILL.md` |
 | 소설·웹소설·연재소설 | `developing-and-revising-serial-fiction` | `skills/developing-and-revising-serial-fiction/SKILL.md` |
-| Windows+Android delivery | 기존 기획·기술·Vertical Slice·검증 Skill | `docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md` |
+| Windows+Android delivery | 기존 기획·기술·Vertical Slice·검증 Skill | `docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md` + `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md` |
 | build/package/자산 용량 최적화 | 기존 기획·아트·Vertical Slice·검증 Skill | `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` |
 | 적대적 검토·전수 감사 | `running-adversarial-review-and-refinement` | `skills/running-adversarial-review-and-refinement/SKILL.md` |
 | 일반 변경·완료 주장 검증 | `reviewing-and-validating-project-changes` | `skills/reviewing-and-validating-project-changes/SKILL.md` |
@@ -100,9 +100,9 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 | 실제 구현에 Codex가 필요한 경우 | `maintaining-project-context-and-handoff: on-demand-codex-handoff` | `docs/GPT_FIRST_PROJECT_WORKFLOW.md` + `docs/GPT_CODEX_WORKFLOW_POLICY.md` |
 | 프로젝트 교훈의 Base 제안 | `managing-base-change-proposals` | `skills/managing-base-change-proposals/SKILL.md` |
 | Vertical Slice 품질·플레이 | `designing-vertical-slices` | `skills/designing-vertical-slices/SKILL.md` |
-| 이미지·시각 자산·UI 후보 | 기존 아트·UX Skill 조합 | `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md` |
+| 이미지·시각 자산·UI 후보 | 기존 아트·UX Skill 조합 | `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate` + `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md` |
 | 아트 프롬프트·기술 카드 | `designing-art-prompts-and-technique-cards` | `skills/designing-art-prompts-and-technique-cards/SKILL.md` |
-| 게임 UX/UI 설계·감사 | `auditing-and-refining-ui-art` | `skills/auditing-and-refining-ui-art/SKILL.md` |
+| 게임 UX/UI 설계·폴리싱·감사 | `auditing-and-refining-ui-art` | `skills/auditing-and-refining-ui-art/SKILL.md` |
 | Godot 에셋·플러그인 제작 전 조사 | `evaluating-godot-assets-and-plugins-before-creation` | `skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md` |
 | Steam·STOVE·Google Play 권리·심사 | 기존 운영·에셋·아트·검증 Skill | `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md` |
 | 사용자 학습형 완료 설명 | `creating-user-learning-notes` 또는 현재 주 책임 Skill의 완료보고 | `docs/GPT_FIRST_PROJECT_WORKFLOW.md` |
