@@ -13,6 +13,8 @@ description: Use when defining or revising game concept, pointed fun, systems, d
 
 `DECISION_SPECIFIC_RESEARCH`: 이 Skill은 현재 게임 결정을 바꾸는 구체적 질문에 대해 벤치마크·플레이테스트·행동/자기보고 증거를 해석한다. 연구 영역의 전수 채움이나 coverage 상태 관리는 `governing-game-user-research-coverage`가 소유하며, 두 Skill이 같은 연구 책임을 중복 수행하지 않는다.
 
+`WORLD_STORYLINE_FIT_REQUIRED`: 주요 컨셉·기능·시스템·난이도·PoC 후보는 기능적으로 작동하거나 벤치마크가 강하더라도 프로젝트가 확정한 **세계관·핵심 스토리·플레이어 판타지**와 충돌하면 Production 후보로 승격하지 않는다. 해당 축이 현재 프로젝트에 실질적으로 없으면 이유가 있는 `NOT_APPLICABLE`로 남기고, 존재한다면 `FIT / CONFLICT / UNVERIFIED`를 근거와 함께 판정한다.
+
 ## Modes and state
 
 `frame` → `constrain` → `sharpen` → `structure` → 필요한 경우 `tutorial-and-onboarding-design` → 필요한 경우 `system-design` → 필요한 경우 `difficulty-and-combat-ai` → `benchmark-and-player-research` → `analyze` → `playtest-and-experiment` → `poc-contract` → `recalibrate` → `production-gate`
@@ -28,6 +30,7 @@ current_idea_or_gdd:
 target_player_and_play_context:
 player_experience_goal:
 core_loop_and_game_elements:
+world_storyline_and_player_fantasy_invariants:
 current_system_and_combat_rules:
 difficulty_barriers_and_assists:
 enemy_roles_ai_and_encounter_pacing:
@@ -60,7 +63,7 @@ Windows+Android 동시 목표, STOVE·Google Play·Steam 단계 출시, 모바�
 
 1. 대상 플레이어, 핵심 행동·선택, 감정·판타지, 차별 원리를 한 문장으로 고정한다.
 2. 플레이·제작·기술·콘텐츠·표현·시장 제약을 확인한다.
-3. 요소를 `AMPLIFY / SUPPORT / NEUTRAL / CONFLICT / UNPROVEN`으로 정렬한다.
+3. 요소를 `AMPLIFY / SUPPORT / NEUTRAL / CONFLICT / UNPROVEN`으로 정렬하고, 세계관·핵심 스토리·플레이어 판타지가 실질적 축이면 `WORLD_STORYLINE_FIT_REQUIRED`를 함께 판정한다.
 4. `tutorial-and-onboarding-design`에서는 최신 사용자 지시·프로젝트 Notion/GitHub 정본·실제 코드·데이터·Scene·Resource·UI·입력·테스트·동일 Goal PR을 먼저 감사하고, 미확인 사실은 `BLOCKED_UNVERIFIED`로 분리한다. 폐기된 Google Sheets는 프로젝트가 명시적으로 보존한 migration/read-only evidence가 있을 때만 비교 자료로 읽고 신규 입력·활성 정본으로 사용하지 않는다.
 5. 해당 mode에서는 학습 목표를 팝업 확인이 아닌 행동·필요 정보·시스템 반응·성공·실패·복구·독립 수행·전이로 정의하고 `RULE → NEED → DISCOVER → FEEL → PROVE → TRANSFER`를 설계한다.
 6. 해당 mode에서는 성장 전후 행동 차이, Skip·복습·복귀, 접근성 대체 채널, 완료율 외의 힌트·재시도·독립 수행·전이 측정을 연결한다.
@@ -78,6 +81,7 @@ Windows+Android 동시 목표, STOVE·Google Play·Steam 단계 출시, 모바�
 ```md
 ## 핵심 컨셉·대상 플레이어·뾰족한 재미
 ## 제약과 코어 정렬
+## 세계관·핵심 스토리·플레이어 판타지 정합성
 ## 플레이어 경험 목표·시스템 경계·행동/선택/결과
 ## 난이도 장벽 프로필·공정성 안전 규칙
 ## 개별 적 판단·전투 조율자·난이도/페이싱 디렉터
@@ -95,7 +99,7 @@ Windows+Android 동시 목표, STOVE·Google Play·Steam 단계 출시, 모바�
 
 ## Quality gate
 
-기능 복사, 리뷰 표본 편향, 자기보고와 행동 혼동, 여러 변수 동시 실험, PoC 범위 팽창, DDD의 무의미한 자극화, 결과를 본 뒤 성공 기준 변경을 금지한다.
+기능 복사, 리뷰 표본 편향, 자기보고와 행동 혼동, 여러 변수 동시 실험, PoC 범위 팽창, DDD의 무의미한 자극화, 결과를 본 뒤 성공 기준 변경을 금지한다. 세계관·핵심 스토리·플레이어 판타지가 실질적 프로젝트 축인데 기능 편의나 벤치마크 인기를 이유로 그 충돌을 무시하는 것도 금지한다.
 
 `tutorial-and-onboarding-design`에서는 프로젝트 정본·실제 구현 선감사 누락, 정적 조작표를 학습 완료로 판정, 문제 인식 전 해결책 광고, 상점·과금을 위한 강제 패배, 숨은 규칙으로 만든 가짜 결핍, 숫자·연출만 바뀌는 가짜 성장, 안내 없는 독립 수행·다른 상황 전이 검사·Skip·복습·복귀·접근성 대체 채널 누락을 금지한다.
 
