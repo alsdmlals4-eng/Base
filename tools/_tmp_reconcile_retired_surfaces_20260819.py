@@ -17,9 +17,7 @@ patch(
     [
         ("GOOGLE_SHEETS_COMPATIBILITY_ONLY", "GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL"),
         ("EXTERNAL_HTML_TOOL_CATALOG: DERIVED_DISCOVERY_SURFACE", "EXTERNAL_HTML_WORKSPACE_RETIRED"),
-        ("### `GOOGLE_SHEETS_COMPATIBILITY_ONLY`", "### `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL`"),
         ("기존 Google Sheet는 고유 unmigrated material이 남아 있을 때만 compatibility/migration source로 읽는다. 검증된 migration과 readback 뒤에는 새 프로젝트 작업면으로 사용하지 않는다.", "기존 Google Sheet는 고유 unmigrated material을 한 번 이관하기 위한 migration-only source다. `UNIQUE / DUPLICATE / OBSOLETE` 분류와 destination readback 뒤 unique material이 0이면 활성 검색·라우팅·템플릿에서 제거한다."),
-        ("### `EXTERNAL_HTML_TOOL_CATALOG: DERIVED_DISCOVERY_SURFACE`", "### `EXTERNAL_HTML_WORKSPACE_RETIRED`"),
         ("외부 HTML catalog/dashboard는 발견·보조 surface일 뿐 정본이나 실행 증거가 아니다.", "외부 HTML catalog/dashboard는 신규 기본 작업면으로 사용하지 않는다. 고유 정보가 있으면 현재 Notion/repository owner로 한 번 흡수·검증한 뒤 활성 surface와 참조를 제거한다."),
     ],
 )
