@@ -252,6 +252,96 @@ class P04ReverseEngineeringReusePipelineTests(unittest.TestCase):
         for term in ("symbol_id", "shape_cue", "text_cue", "color_is_not_sufficient"):
             self.assertIn(term, symbols)
 
+    def test_reuse_adoption_contract_surfaces_exist(self) -> None:
+        for path in (
+            "tools/reuse_modules/reuse_adoption.py",
+            "templates/reuse-modules/PROJECT_REUSE_ADOPTION_MANIFEST.json",
+            "docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json",
+            "docs/knowledge/game-development/reuse/adoption/README.md",
+        ):
+            self.assertTrue((ROOT / path).is_file(), path)
+
+    def test_reuse_adoption_tool_applies_selected_module_and_detects_drift(self) -> None:
+        module_path = ROOT / "tools/reuse_modules/reuse_adoption.py"
+        spec = importlib.util.spec_from_file_location("reuse_adoption", module_path)
+        self.assertIsNotNone(spec)
+        module = importlib.util.module_from_spec(spec)
+        assert spec is not None and spec.loader is not None
+        spec.loader.exec_module(module)
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            project_root = Path(temp_dir)
+            manifest = {
+                "schema_version": 1,
+                "base_source_commit": "8553678f70e22f193a2336b591f677dcfa5a8965",
+                "modules": {
+                    "RM-SYS-001": {
+                        "state": "enabled",
+                        "source": "templates/reuse-modules/godot/grid_placement_rule_engine.gd",
+                        "destination": "vendor/base-reuse/grid_placement_rule_engine.gd",
+                    },
+                    "RM-SYS-003": {"state": "not_applicable"},
+                },
+            }
+            report = module.apply_adoption(ROOT, project_root, manifest)
+            self.assertTrue(report["ok"])
+            vendor = project_root / "vendor/base-reuse/grid_placement_rule_engine.gd"
+            lock = project_root / ".base-reuse/adoption-lock.json"
+            self.assertTrue(vendor.is_file())
+            self.assertTrue(lock.is_file())
+            self.assertTrue(module.check_adoption(ROOT, project_root, manifest)["ok"])
+
+            vendor.write_text(vendor.read_text(encoding="utf-8") + "\n# project modification\n", encoding="utf-8")
+            drift = module.check_adoption(ROOT, project_root, manifest)
+            self.assertFalse(drift["ok"])
+            self.assertIn("LOCAL_MODIFICATION", {item["code"] for item in drift["violations"]})
+            refused = module.apply_adoption(ROOT, project_root, manifest)
+            self.assertFalse(refused["ok"])
+            self.assertIn("REFUSE_OVERWRITE_LOCAL_MODIFICATION", {item["code"] for item in refused["violations"]})
+
+    def test_reuse_adoption_manifest_rejects_unknown_module_or_state(self) -> None:
+        module_path = ROOT / "tools/reuse_modules/reuse_adoption.py"
+        spec = importlib.util.spec_from_file_location("reuse_adoption_invalid", module_path)
+        self.assertIsNotNone(spec)
+        module = importlib.util.module_from_spec(spec)
+        assert spec is not None and spec.loader is not None
+        spec.loader.exec_module(module)
+
+        invalid = {
+            "schema_version": 1,
+            "base_source_commit": "x",
+            "modules": {"RM-UNKNOWN": {"state": "magic"}},
+        }
+        with self.assertRaises(ValueError):
+            module.validate_manifest(invalid)
+
+    def test_active_project_adoption_matrix_covers_all_projects_and_states(self) -> None:
+        matrix = json.loads(read("docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json"))
+        projects = matrix["projects"]
+        expected = {
+            "COC_FICTION",
+            "GRIMOIRE",
+            "SWITCHY",
+            "TETRIS",
+            "URBAN_LEGEND",
+            "NINJA_SURVIVAL",
+            "MY_LITTLE_BOAT",
+            "BLACKSMITH",
+            "TEN_PACES",
+            "OMENWARD",
+        }
+        self.assertEqual(expected, set(projects))
+        allowed = {
+            "ADOPTED_AND_VERIFIED",
+            "READY_TO_ADOPT",
+            "DEFERRED_OPEN_PR",
+            "DEFERRED_PHASE_GATE",
+            "DEFERRED_PRODUCT_GATE",
+            "NOT_APPLICABLE",
+        }
+        self.assertTrue(all(project["status"] in allowed for project in projects.values()))
+        self.assertEqual("ADOPTED_AND_VERIFIED", projects["URBAN_LEGEND"]["status"])
+
 
 if __name__ == "__main__":
     unittest.main()

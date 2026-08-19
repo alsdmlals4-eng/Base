@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "base_source_commit": "8553678f70e22f193a2336b591f677dcfa5a8965",
+  "modules": {
+    "RM-TOOL-001": {"state": "planned"},
+    "RM-SYS-001": {
+      "state": "enabled",
+      "source": "templates/reuse-modules/godot/grid_placement_rule_engine.gd",
+      "destination": "game/reuse/grid_placement_rule_engine.gd"
+    },
+    "RM-SYS-003": {"state": "not_applicable"},
+    "RM-VIS-001": {
+      "state": "enabled",
+      "source": "templates/reuse-modules/godot/semantic_ui_skin_kit.gd",
+      "destination": "game/reuse/semantic_ui_skin_kit.gd"
+    },
+    "RM-VIS-002": {
+      "state": "enabled",
+      "source": "templates/reuse-modules/godot/gameplay_symbol_atlas.gd",
+      "destination": "game/reuse/gameplay_symbol_atlas.gd"
+    }
+  }
+}

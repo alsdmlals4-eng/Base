@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "base_reference_commit": "8553678f70e22f193a2336b591f677dcfa5a8965",
+  "projects": {
+    "COC_FICTION": {
+      "repository": "alsdmlals4-eng/Coc-Fiction",
+      "status": "READY_TO_ADOPT",
+      "modules": {
+        "RM-TOOL-001": "planned",
+        "RM-SYS-001": "not_applicable",
+        "RM-SYS-003": "not_applicable",
+        "RM-VIS-001": "not_applicable",
+        "RM-VIS-002": "not_applicable"
+      },
+      "existing_solution": "project already has fiction-specific content/operating/reverse-outline/scene validators; generic RM-TOOL-001 must prove additional cross-reference value before vendoring",
+      "revisit": "use the Adoption Kit manifest to record explicit non-duplication; enable RM-TOOL-001 only when a real cross-file ID gap is found"
+    },
+    "GRIMOIRE": {
+      "repository": "alsdmlals4-eng/GRIMOIRE-",
+      "status": "READY_TO_ADOPT",
+      "modules": {
+        "RM-TOOL-001": "planned",
+        "RM-SYS-001": "not_applicable",
+        "RM-SYS-003": "planned",
+        "RM-VIS-001": "planned",
+        "RM-VIS-002": "planned"
+      },
+      "evidence": "planning PR #138 merged as 293cde60ca19bfa6528b90807f7f4622037f2dd0 and no open GRIMOIRE PR remained at the final adoption audit",
+      "revisit": "pilot sidecar helpers from current main without changing FIVE_POINT_STAR runtime authority"
+    },
+    "SWITCHY": {
+      "repository": "alsdmlals4-eng/Switchy-Express-Cargo-Puzzle",
+      "status": "DEFERRED_OPEN_PR",
+      "modules": {
+        "RM-TOOL-001": "planned",
+        "RM-SYS-001": "enabled",
+        "RM-SYS-003": "not_applicable",
+        "RM-VIS-001": "enabled",
+        "RM-VIS-002": "enabled"
+      },
+      "blocker": "open PR #154 is read-only",
+      "revisit": "after PR #154 is completed and current main is re-read"
+    },
+    "TETRIS": {
+      "repository": "alsdmlals4-eng/Tetris",
+      "status": "DEFERRED_OPEN_PR",
+      "modules": {
+        "RM-TOOL-001": "planned",
+        "RM-SYS-001": "planned",
+        "RM-SYS-003": "planned",
+        "RM-VIS-001": "planned",
+        "RM-VIS-002": "planned"
+      },
+      "blocker": "open PRs #3 and #9 are read-only",
+      "revisit": "after active Tetris PRs are completed and production Line/Chain plan allows adapters"
+    },
+    "URBAN_LEGEND": {
+      "repository": "alsdmlals4-eng/urban-legend",
+      "status": "ADOPTED_AND_VERIFIED",
+      "modules": {
+        "RM-TOOL-001": "deferred",
+        "RM-SYS-001": "not_applicable",
+        "RM-SYS-003": "planned",
+        "RM-VIS-001": "planned",
+        "RM-VIS-002": "planned"
+      },
+      "evidence": "project PR #208 merged the RM-TOOL-001 concept as a project-adapted implementation at 5c91f4ff8d88b3e00f66252ba6f566795f2e50a3; current project file is intentionally not byte-identical to the Base vendor source",
+      "blocker": "do not overwrite the verified project-adapted validator with the Base vendor source",
+      "revisit": "only standardize to vendored source after an explicit equivalence/migration decision; the existing project implementation remains valid"
+    },
+    "NINJA_SURVIVAL": {
+      "repository": "alsdmlals4-eng/ninja-survival-godot",
+      "status": "DEFERRED_PHASE_GATE",
+      "modules": {
+        "RM-TOOL-001": "planned",
+        "RM-SYS-001": "planned",
+        "RM-SYS-003": "planned",
+        "RM-VIS-001": "planned",
+        "RM-VIS-002": "planned"
+      },
+      "blocker": "project requires explicit planning completion and Phase B PASS before Phase C production implementation",
+      "revisit": "after project Phase B Definition of Ready passes"
+    },
+    "MY_LITTLE_BOAT": {
+      "repository": "alsdmlals4-eng/MylittleBoat",
+      "status": "READY_TO_ADOPT",
+      "modules": {
+        "RM-TOOL-001": "planned",
+        "RM-SYS-001": "not_applicable",
+        "RM-SYS-003": "not_applicable",
+        "RM-VIS-001": "enabled",
+        "RM-VIS-002": "enabled"
+      },
+      "revisit": "pilot sidecar UI/symbol semantics without combat, failure, or online systems; enable validator only if structured-data cross-reference need exists"
+    },
+    "BLACKSMITH": {
+      "repository": "alsdmlals4-eng/Blacksmith",
+      "status": "DEFERRED_PRODUCT_GATE",
+      "modules": {
+        "RM-TOOL-001": "planned",
+        "RM-SYS-001": "not_applicable",
+        "RM-SYS-003": "planned",
+        "RM-VIS-001": "planned",
+        "RM-VIS-002": "planned"
+      },
+      "blocker": "general product implementation is BLOCKED outside the approved vertical-slice namespace",
+      "revisit": "after the Blacksmith product/Task gate explicitly allows the relevant adapter paths"
+    },
+    "TEN_PACES": {
+      "repository": "alsdmlals4-eng/Ten-Paces-Hidden-Moves",
+      "status": "DEFERRED_PHASE_GATE",
+      "modules": {
+        "RM-TOOL-001": "planned",
+        "RM-SYS-001": "not_applicable",
+        "RM-SYS-003": "not_applicable",
+        "RM-VIS-001": "planned",
+        "RM-VIS-002": "planned"
+      },
+      "blocker": "current runtime work mode is REVIEW and protected product paths require an approved BUILD package",
+      "revisit": "when a BUILD package explicitly includes reuse adoption"
+    },
+    "OMENWARD": {
+      "repository": "alsdmlals4-eng/omenward",
+      "status": "DEFERRED_OPEN_PR",
+      "modules": {
+        "RM-TOOL-001": "planned",
+        "RM-SYS-001": "not_applicable",
+        "RM-SYS-003": "enabled",
+        "RM-VIS-001": "planned",
+        "RM-VIS-002": "planned"
+      },
+      "blocker": "open PR #197 is read-only",
+      "revisit": "after PR #197 is completed and current main/control-plane state is re-read"
+    }
+  }
+}
