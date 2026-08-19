@@ -1,0 +1,36 @@
+name: Validate v4.7 Workflow Alignment
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "START_HERE.md"
+      - "AGENTS.md"
+      - "docs/OPERATING_MODEL.md"
+      - "docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md"
+      - "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md"
+      - "docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md"
+      - "docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md"
+      - "docs/operations/BASE_PARTITION_OPERATING_MODEL.md"
+      - "docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md"
+      - "docs/knowledge/game-development/reuse/PRODUCTION_TOOL_WORKFLOW_MODULES.md"
+      - "docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md"
+      - "tests/test_v47_workflow_alignment.py"
+      - ".github/workflows/validate-v47-workflow-alignment.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  v47-workflow-alignment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+      - name: Run v4.7 workflow alignment contract
+        run: python -m unittest tests.test_v47_workflow_alignment -v
