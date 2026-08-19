@@ -50,6 +50,25 @@
 - 세계관 마스코트·상징 동반자 후보:
 - 제약·제외 범위:
 
+## 1.1 P04_PLAYER_VALUE_TO_EVIDENCE_TRACE
+
+`PLAYER_VALUE_TRACE_REQUIRED`를 실제 Slice 계약에서 소비한다. 기능 존재나 화면 완성도를 플레이어 가치의 대리 지표로 사용하지 않는다.
+
+```yaml
+player_promise:
+meaningful_choice:
+expected_experience:
+research_question:
+observable_signal:
+evidence_ceiling:
+slice_acceptance:
+```
+
+- `research_question`: 어떤 개발 결정을 바꾸기 위해 무엇을 배울지 기록한다.
+- `observable_signal`: 행동·관찰·자기보고·이벤트·퍼널 중 어떤 신호를 볼지 기록한다.
+- `evidence_ceiling`: 현재 확보한 증거로 주장 가능한 최대 수준을 기록한다. 기술·정적·UI 증거만으로 사람의 이해·감정·고민·기억을 PASS하지 않는다.
+- `slice_acceptance`: 관찰 신호에 따라 `EXPAND / REWORK / REPEAT_SLICE / HOLD / STOP` 중 어떤 다음 결정을 내릴지 연결한다.
+
 ## 2. 데모 핵심 위험·내부 Spike
 
 별도 `CORE_POC` Gate를 만들지 않는다. 아래는 데모 전체를 차단하는 기술 불확실성이 있을 때만 작성한다.
