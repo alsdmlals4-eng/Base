@@ -139,6 +139,8 @@ EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTI
 - `UNKNOWN_OWNER_ACTIVITY`: owner evidence를 확인할 때까지 `BLOCKED_UNVERIFIED`다.
 - 같은 Goal이라는 이유만으로 실제 active owner Branch/PR을 자동 close/merge/rebase/copy하지 않는다.
 
+For an actual `ACTIVE_OTHER_WORKER`, the user takeover/owner handoff is the required **explicit user authorization**; this compatibility wording does not restore blanket protection for merely open/draft/ready PRs.
+
 ### Integration sequence
 
 ```text
