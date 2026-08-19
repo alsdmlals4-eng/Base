@@ -49,6 +49,7 @@ Notion `PROJECT REGISTRY · Master`에서 2026-08-20 현재 `ACTIVE`로 분류�
 | `BASE_PROMOTION_CANDIDATE` | 둘 이상의 프로젝트/벤치마크에서 반복 가치가 보여 공용화 후보 |
 | `BASE_ACTIVE_METHOD` | 이미 Base의 실행 방법/Template로 사용 중 |
 | `EXISTING_OWNER_REUSE` | 새 도구/Skill을 만들지 않고 기존 Base owner를 재사용 |
+| `NO_DEDICATED_CAPTURE_APP` | 별도 검증 GUI/app 대신 repository/runtime/CI 증거를 조합 |
 | `DIRECT_LICENSED_REUSE_CANDIDATE` | 라이선스·버전·보안·소비 경로 검토 후 직접 자산/패키지 재사용 가능 후보 |
 | `RIGHTS_REVIEW_REQUIRED` | 표현·상표·trade dress·라이선스 등 별도 권리 검토가 필요 |
 | `NOTION_HUMAN_VIEW` | Notion은 사람이 보는 요약/현황. 구조화·runtime 권위는 저장소/프로젝트 owner |
@@ -107,8 +108,8 @@ Notion `PROJECT REGISTRY · Master`에서 2026-08-20 현재 `ACTIVE`로 분류�
 |---|---|---|---|---|
 | `RM-TOOL-001` | `DATA_SCHEMA_CROSSREF_VALIDATOR` | 전체 데이터 중심 프로젝트 | `PATTERN_EXTRACT` | `MODULE_CONTRACT_DEFINED · BASE_PROMOTION_CANDIDATE · IMPLEMENTATION_NOT_BUILT` |
 | `RM-TOOL-002` | `DETERMINISTIC_SEED_REPLAY_CAPTURE` | TEN_PACES / OMENWARD / BLACKSMITH / SWITCHY / TETRIS / NINJA_SURVIVAL | `PATTERN_EXTRACT` | `MODULE_CONTRACT_DEFINED · BASE_PROMOTION_CANDIDATE · IMPLEMENTATION_NOT_BUILT` |
-| `RM-TOOL-003` | `BALANCE_SCENARIO_BATCH_SIMULATOR` | 기존 Balance & Scenario Lab 방향 | `EXISTING_OWNER_REUSE` | `MODULE_CONTRACT_DEFINED · EXISTING_OWNER_REUSE` |
-| `RM-TOOL-004` | `QA_EVIDENCE_CAPTURE_ADAPTER` | `tools/qa-evidence-studio` | `EXISTING_OWNER_REUSE` | `EXISTING_OWNER_REUSE · PROJECT_ADAPTER_ONLY` |
+| `RM-TOOL-003` | `BALANCE_SCENARIO_BATCH_SIMULATOR` | deterministic runner + project snapshot candidate | `PATTERN_EXTRACT` | `MODULE_CONTRACT_DEFINED · IMPLEMENTATION_NOT_BUILT` |
+| `RM-TOOL-004` | `REPOSITORY_NATIVE_EVIDENCE_CAPTURE` | current project tests/runtime/CI + Notion human link | `EXISTING_OWNER_REUSE` | `BASE_ACTIVE_METHOD · NO_DEDICATED_CAPTURE_APP` |
 | `RM-WORK-001` | `PROJECT_REUSE_OPPORTUNITY_SCAN` | merged Base reverse-engineering method | `EXISTING_OWNER_REUSE` | `BASE_ACTIVE_METHOD` |
 | `RM-WORK-002` | `SKILL_WORKFLOW_PATTERN_EVAL` | `docs/AI_SKILL_ADOPTION_GUIDE.md` | `EXISTING_OWNER_REUSE` | `BASE_ACTIVE_METHOD` |
 
@@ -134,14 +135,14 @@ Notion `PROJECT REGISTRY · Master`에서 2026-08-20 현재 `ACTIVE`로 분류�
 |---|---|
 | `COC_FICTION` | ◎ RM-NAR-001/002/003/004 · ○ RM-SYS-005/006 · ○ RM-VIS-003/005 · ○ RM-WORK-001/002 |
 | `GRIMOIRE` | ◎ RM-SYS-017 · ○ RM-SYS-002/005/007/009/011 · ○ RM-NAR-001/002/003 · ○ RM-VIS-001/002/003/004/005 |
-| `SWITCHY` | ◎ RM-SYS-001/016 · ○ RM-SYS-002/004 · ○ RM-TOOL-002 · ○ RM-VIS-001/002 |
-| `TETRIS` | ◎ RM-SYS-013/014 · ○ RM-SYS-001/002/011 · ○ RM-TOOL-002/003 · ○ RM-VIS-001/002 |
-| `URBAN_LEGEND` | ◎ RM-SYS-005/006/008/009 · ○ RM-SYS-002/003/004/010 · ○ RM-NAR-001/002/003 · ○ RM-VIS-003/005 |
-| `NINJA_SURVIVAL` | ◎ RM-SYS-001/012 · ○ RM-SYS-002/003/004/007/011 · ○ RM-TOOL-002/003 · ○ RM-VIS-001/002/004 |
-| `MY_LITTLE_BOAT` | ◎ RM-SYS-020 · ○ RM-SYS-002/005/009/010 · △ RM-NAR-001 · ○ RM-VIS-001/002/003 |
-| `BLACKSMITH` | ◎ RM-SYS-019 · ○ RM-SYS-004/006/010 · ○ RM-TOOL-002/003 · ○ RM-VIS-001/002 |
-| `TEN_PACES` | ◎ RM-SYS-015 · ○ RM-SYS-004 · ○ RM-TOOL-002 · ○ RM-VIS-001/002/004 |
-| `OMENWARD` | ◎ RM-SYS-018 · ○ RM-SYS-002/003/004/007 · ○ RM-TOOL-002/003 · ○ RM-VIS-001/002/004 |
+| `SWITCHY` | ◎ RM-SYS-001/016 · ○ RM-SYS-002/004 · ○ RM-TOOL-002/004 · ○ RM-VIS-001/002 |
+| `TETRIS` | ◎ RM-SYS-013/014 · ○ RM-SYS-001/002/011 · ○ RM-TOOL-002/003/004 · ○ RM-VIS-001/002 |
+| `URBAN_LEGEND` | ◎ RM-SYS-005/006/008/009 · ○ RM-SYS-002/003/004/010 · ○ RM-NAR-001/002/003 · ○ RM-TOOL-004 · ○ RM-VIS-003/005 |
+| `NINJA_SURVIVAL` | ◎ RM-SYS-001/012 · ○ RM-SYS-002/003/004/007/011 · ○ RM-TOOL-002/003/004 · ○ RM-VIS-001/002/004 |
+| `MY_LITTLE_BOAT` | ◎ RM-SYS-020 · ○ RM-SYS-002/005/009/010 · △ RM-NAR-001 · ○ RM-TOOL-004 · ○ RM-VIS-001/002/003 |
+| `BLACKSMITH` | ◎ RM-SYS-019 · ○ RM-SYS-004/006/010 · ○ RM-TOOL-002/003/004 · ○ RM-VIS-001/002 |
+| `TEN_PACES` | ◎ RM-SYS-015 · ○ RM-SYS-004 · ○ RM-TOOL-002/004 · ○ RM-VIS-001/002/004 |
+| `OMENWARD` | ◎ RM-SYS-018 · ○ RM-SYS-002/003/004/007 · ○ RM-TOOL-002/003/004 · ○ RM-VIS-001/002/004 |
 
 ## 9. 벤치마크 및 Existing Solution disposition
 
@@ -150,11 +151,11 @@ Notion `PROJECT REGISTRY · Master`에서 2026-08-20 현재 `ACTIVE`로 분류�
 | Godot 4.7 Scenes / Resources | 데이터와 재사용 가능한 scene/script를 분리해 작은 인터페이스로 조립 | `ADOPT` |
 | ink | story state와 branching choice를 content/presentation에서 분리 | `ADAPT` |
 | Yarn Spinner | dialogue runner / option presentation / variable storage 경계 | `ADAPT` |
-| Seoul 2033 | 선택·상태·아이템·부상/스트레스가 이후 사건에 영향을 주는 텍스트 선택 구조 | `ADAPT` |
+| Seoul 2033 | 선택·판단과 이후 귀결이 이어지는 텍스트 선택 구조의 공개적으로 확인 가능한 원리만 사용 | `ADAPT` |
 | Slay the Spire | 카드/효과를 조합 가능한 build 단위로 보고 데이터·밸런스를 반복 조정 | `ADAPT` |
 | Vampire Survivors | 실시간 압박 속 자동행동 + 성장 선택 + run/meta 분리 | `ADAPT` |
 | Backpack Battles 계열 | inventory arrangement 자체를 전투 전 전략 입력으로 사용 | `ADAPT` |
-| Kenney CC0 packs | prototype/placeholder와 일부 최종 UI 재료의 직접 라이선스 재사용 가능성 | `DIRECT_LICENSED_REUSE_CANDIDATE` |
+| Kenney CC0 packs | prototype/일부 UI 재료의 직접 라이선스 재사용 가능성 | `DIRECT_LICENSED_REUSE_CANDIDATE` |
 | Tetris | 공간 배치와 line completion이라는 추상 원리만 분석 | `PATTERN_EXTRACT · RIGHTS_REVIEW_REQUIRED` |
 
 외부 사례의 성공은 현재 프로젝트의 재미·시장성 PASS가 아니다. 각 module은 실제 프로젝트 Pilot에서 별도 검증한다.
@@ -163,7 +164,7 @@ Notion `PROJECT REGISTRY · Master`에서 2026-08-20 현재 `ACTIVE`로 분류�
 
 ### `TETRIS_TRADE_DRESS_BOUNDARY`
 
-`RM-SYS-013`은 낙하/배치/line completion 같은 **추상적인 상호작용 계약**을 프로젝트 요구에 맞게 독립 설계하기 위한 seed다. Tetris 로고, 테마곡, Tetrimino 명칭/표현, 공식 색·UI·trade dress 또는 특정 작품의 시그니처 표현을 이 Registry가 재사용 승인하지 않는다. 현재 Tetris 공식 사이트가 관련 상표와 trade dress 소유를 명시하므로 제품화 전 `RIGHTS_REVIEW_REQUIRED`를 유지한다.
+`RM-SYS-013`은 낙하/배치/line completion 같은 **추상적인 상호작용 계약**을 프로젝트 요구에 맞게 독립 설계하기 위한 seed다. Tetris 로고, 테마곡, Tetrimino 명칭/표현, 공식 색·UI·trade dress 또는 특정 작품의 시그니처 표현을 이 Registry가 재사용 승인하지 않는다. 제품화 전 `RIGHTS_REVIEW_REQUIRED`를 유지한다.
 
 ### Licensed asset boundary
 
@@ -184,6 +185,7 @@ license/source/version check
 1. P0 module 중 한 개씩 **서로 다른 2개 프로젝트**에 적용 가능한 adapter contract를 작성한다.
 2. 실제로 중복 코드/기획 시간이 줄었는지 비교한다.
 3. 플레이 경험을 바꾸는 gameplay module은 release-near Vertical Slice에서 검증한다.
-4. Visual module은 Asset Vault / Reusable Visual Harvest를 통해 실제 화면 품질을 검수한다.
-5. 공용 구현이 오히려 프로젝트별 예외 분기만 늘리면 `PROJECT_SEED`로 되돌린다.
-6. Notion에는 `NOTION_HUMAN_VIEW`로 module ID·프로젝트 fit·상태를 보여 주되, 구현 상태는 이 Registry와 실제 프로젝트 저장소에서 판정한다.
+4. Visual module은 Notion Asset/Visual workflow와 repository implementation evidence를 통해 실제 화면 품질을 검수한다.
+5. `RM-TOOL-004`는 별도 capture app 설치 없이 project-native test/runtime/CI evidence로 실제 유용성을 검증한다.
+6. 공용 구현이 오히려 프로젝트별 예외 분기만 늘리면 `PROJECT_SEED`로 되돌린다.
+7. Notion에는 `NOTION_HUMAN_VIEW`로 module ID·프로젝트 fit·상태를 보여 주되, 구현 상태는 이 Registry와 실제 프로젝트 저장소에서 판정한다.
