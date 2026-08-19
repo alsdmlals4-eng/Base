@@ -262,7 +262,8 @@ def build_artifacts() -> dict[Path, bytes]:
         "artifact_role": "base-v9-decision-registry",
         "decisions": [
             {"id": "BASE-V9-001", "status": "CONFIRMED", "decision": "Active Skill count is Registry-derived and not fixed."},
-            {"id": "BASE-V9-002", "status": "CONFIRMED", "decision": "Google Sheets remain USER_FACING_GDD_WORKSPACE for projects; Base is BASE_EXCLUDED."},
+            {"id": "BASE-V9-002", "status": "SUPERSEDED", "superseded_by": "BASE-V9-004", "decision": "Historical project Google Sheets workspace authority; no longer current."},
+            {"id": "BASE-V9-004", "status": "CONFIRMED", "decision": "Google Sheets are migration-only legacy sources until unique material is absorbed and active references are removed."},
             {"id": "BASE-V9-003", "status": "CONFIRMED", "decision": "Project adoption is a post-release wave and must not block the Base v9.0.0 release."},
         ],
     }

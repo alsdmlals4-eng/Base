@@ -187,16 +187,16 @@ MIGRATION_COMPLETE | MIGRATION_NOT_APPLICABLE | MIGRATION_PENDING
 
 ## 5. GPT-first / Codex optional
 
-기획·근거조사·대안 비교·UI/UX·아트 방향·시각 후보 검수·최종 판정은 `GPT_PRIMARY_PLANNING_REVIEW`와 `GPT_FINAL_REVIEW_AUTHORITY`가 기본이다.
+기획·근거조사·대안 비교·UI/UX·아트 방향·시각 후보 검수·최종 판정은 `GPT_FIRST_PLANNING_AND_REVIEW`와 `GPT_PRIMARY_REVIEWER`가 기본이다.
 
-`CODEX_OPTIONAL_SUB_EXECUTOR`는 실제 repository/engine mutation·다수 파일 구현·runtime reproduction이 필요할 때만 사용한다. Codex를 모든 계획의 의무 단계로 만들지 않는다.
+`OPTIONAL_CODEX_EXECUTOR`는 실제 repository/engine mutation·다수 파일 구현·runtime reproduction이 필요할 때만 사용한다. Codex를 모든 계획의 의무 단계로 만들지 않는다.
 
 ## 6. 시각 checkpoint와 Demo-First
 
 ```text
-NOTION_VISUAL_CHECKPOINT_BEFORE_POC
-→ UX_UI_REPRESENTATIVE_STATE_REQUIRED
-→ APPROVED_VISUALS_FEED_POC
+VISUALIZED_POC_BEFORE_DEMO_TEST
+→ REPRESENTATIVE_UX_UI_STATE_REQUIRED_WHEN_VISUALS_MATTER
+→ APPROVED_VISUAL_INPUTS_FEED_POC
 → DEMO_FIRST_VERTICAL_SLICE
 → DEMO_VALIDATION
 ```
