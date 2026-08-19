@@ -32,22 +32,25 @@ what_worked:
   - "TDD RED isolated the two missing contracts before implementation: semantic accessibility and AI-assisted production-value evidence."
   - "The existing auditing-and-refining-ui-art Skill already routes Godot details to its owned implementation reference, so the reference could be strengthened without widening the Skill or touching CP0 routing."
   - "Primary/professional sources were reduced to reusable principles instead of copying platform or enterprise-scale claims."
+  - "The AI production-value regression was ultimately bound to the Manifest-required P05 visual workflow test so the partition validation entrypoint exercises the new contract."
 what_failed_or_was_rejected:
   - "Broad HTML-dashboard/legacy visual routing cleanup was rejected in this PR because #530 already edits those paths and CP0 owns global routes."
   - "A new accessibility Skill or AI-art-production Skill was rejected because existing P05 responsibilities already own the behavior and a new Skill would add routing/context cost."
   - "Moving the visual-value regression into tests/test_pixel_art_style_system.py was reverted after the P05 scope audit found that path is not owned by the current Manifest patterns."
+  - "Temporarily keeping the same production-value regression in both the UX/UI test and the P05 visual workflow test was rejected as duplicate maintenance; the UX/UI test now keeps only semantic accessibility."
 reusable_lesson: "Visual accessibility PASS needs semantic/runtime evidence separate from visual or focus checks; AI-assisted art production value needs baseline-relative retake, repeated-style acceptance, human review cost, and runtime/export evidence rather than generation success alone."
 anti_pattern:
   - "Inferring screen-reader usability from rendered UI or keyboard focus alone."
   - "Treating first-generation quality or a vendor/presenter savings headline as production-value proof."
   - "Assuming conceptual domain ownership implies Manifest write ownership for a similarly named test file."
+  - "Duplicating one contract across unrelated test owners merely to trigger CI."
 affected_rules_skills_modules:
   - "auditing-and-refining-ui-art / UX/UI Audit"
   - "VISUAL_STYLE_SOURCE_RADAR / Art Direction"
   - "P05 scope ownership"
 evidence:
   - "RED exact-head 29ade30083f25d6169481c5b05c8e6f5aecd05c7: Validate Game UX UI System failed only the two newly added contracts."
-  - "GREEN exact-head 1ac54294c840600c03caacfc6cde0b1d133fde3c: UX/UI, evidence knowledge, Skill routing, and Base v9 operating workflows passed before final review refinements."
+  - "GREEN exact-head bad7e5ddd0afa2ca96ffeb4a0db169332dd70db5: Manifest-required P05 visual workflow suite ran 39 tests with OK, including the production-value gate; UX/UI suite ran 55 unittest cases plus 9 pytest cases with PASS."
   - "Godot stable documentation: screen-reader integration requires accessibility labels, logical reading flow, and target-platform testing."
   - "Xbox Accessibility Guidelines V3.2: game accessibility guidance for design/development/testing, not a legal-compliance checklist."
   - "GDC 2026 LifeAfter AIGC production session: value-oriented evaluation, human-AI workflow, asset management, and performance were adopted as evaluation principles; reported enterprise savings were not promoted as Base expectations."
@@ -65,9 +68,10 @@ revisit_condition: "Revisit when #530/Integration changes visual routing, Godot 
 2. Full loop 2 — found a future workflow-trigger gap for `VISUAL_STYLE_SOURCE_RADAR.md`; recorded as a non-blocking CP0/Integration request instead of editing `.github/**`.
 3. Full loop 3 — rechecked engine/accessibility freshness and overclaim risk; Godot 4.7.1 remains stable while 4.7.2 is pre-release, so no stable baseline change was justified.
 4. Full loop 4 — found `BLOCKED_UNVERIFIED` used by the new production-value rule but absent from its candidate disposition enumeration; aligned the packet.
-5. Full loop 5 — re-attacked P05 ownership, concurrent PR protection, accessibility/player value, AI-production evidence, legacy-authority risk, long-term fit, validation and rollback; no new in-scope MUST_FIX was found.
+5. Full loop 5 — re-attacked P05 ownership, concurrent PR protection, accessibility/player value, AI-production evidence, legacy-authority risk, long-term fit, validation and rollback; no new in-scope MUST_FIX was found at that head.
+6. Full loop 6 — after binding the production-value regression to the Manifest-required P05 visual test, re-reviewed the full diff, found duplicate ownership of the same regression in the UX/UI test, removed the duplicate, and re-ran exact-head validation.
 
-`CLEAN_REVIEW_EXIT` applies to PR #538's P05-owned scope after final exact-head CI, scope validation, Notion readback, and merge checks complete. It does not claim that #530/CP0 legacy-routing cleanup is complete.
+`CLEAN_REVIEW_EXIT` applies to PR #538's P05-owned scope only after the final exact-head CI, scope validation, Notion readback, unresolved-thread check, merge, and post-merge readback complete. It does not claim that #530/CP0 legacy-routing cleanup is complete.
 
 ## Source Learning
 
