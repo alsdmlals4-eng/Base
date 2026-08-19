@@ -110,7 +110,7 @@ STYLE_FAMILY_MATCH:
 NEW_FAMILY_CANDIDATE:
 long_term_cost_signal:
 validation_needed:
-disposition: ADOPT | ADAPT | TEST | REFERENCE_ONLY | AVOID | IGNORE
+disposition: ADOPT | ADAPT | TEST | REFERENCE_ONLY | AVOID | IGNORE | BLOCKED_UNVERIFIED
 recheck_trigger:
 ```
 
