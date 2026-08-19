@@ -40,16 +40,18 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
     def test_planning_policy_uses_notion_and_repository_not_active_sheets(self) -> None:
         text = PLANNING.read_text(encoding="utf-8")
         for term in (
+            "BASE_EXCLUDED",
             "NOTION_HUMAN_FACING_CANON",
             "REPOSITORY_STRUCTURED_CANON",
             "REPOSITORY_RUNTIME_TRUTH",
             "GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL",
             "HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN",
             "OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM",
+            "docs/knowledge/game-development/README.md",
+            "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md",
         ):
             self.assertIn(term, text)
         for stale in (
-            "USER_FACING_GDD_WORKSPACE",
             "PROJECT_SHEET_CONFIGURED",
             "새 Sheet에 설치",
             "Sheet·GitHub 동기화",
@@ -106,19 +108,19 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
         p05 = next(part for part in manifest["parts"] if part["part_id"] == "P05")
         self.assertIn("building-project-visual-dashboards", p05["owned_skill_ids"])
 
-    def test_sheet_control_and_decision_history_cannot_reactivate_google_sheets(self) -> None:
+    def test_frozen_sheet_history_is_preserved_while_current_authority_is_migration_only(self) -> None:
         generator = GENERATOR.read_text(encoding="utf-8")
         self.assertIn('"project_sheet_role": "MIGRATION_ONLY_LEGACY_SOURCE"', generator)
         self.assertIn('"sheet_only_change_status": "MIGRATION_PROPOSAL_ONLY"', generator)
-        self.assertNotIn('"project_sheet_role": "USER_FACING_GDD_WORKSPACE"', generator)
         self.assertIn('"id": "BASE-V9-004"', generator)
         self.assertIn('"id": "BASE-V9-002", "status": "SUPERSEDED"', generator)
 
-        data = json.loads(SHEET_CONTROL.read_text(encoding="utf-8"))
-        self.assertEqual("MIGRATION_ONLY_LEGACY_SOURCE", data["project_sheet_role"])
-        self.assertEqual("MIGRATION_PROPOSAL_ONLY", data["sheet_only_change_status"])
-        self.assertFalse(data["external_sheet_writes_authorized"])
-        self.assertFalse(data["active_project_workspace"])
+        frozen = json.loads(SHEET_CONTROL.read_text(encoding="utf-8"))
+        self.assertEqual("BASE_EXCLUDED", frozen["base_sheet_status"])
+        self.assertEqual("USER_FACING_GDD_WORKSPACE", frozen["project_sheet_role"])
+        self.assertEqual("PROPOSED_SHEET_CHANGE", frozen["sheet_only_change_status"])
+        self.assertFalse(frozen["external_sheet_writes_authorized"])
+        self.assertNotIn("active_project_workspace", frozen)
 
         decisions = json.loads(DECISIONS.read_text(encoding="utf-8"))["decisions"]
         old = next(row for row in decisions if row["id"] == "BASE-V9-002")
