@@ -39,19 +39,21 @@ jobs:
       - name: Rebuild Base generated artifacts from Registry
         run: python tools/build_base_v9_artifacts.py --write
       - name: Verify focused fixes
+        shell: bash
         run: |
+          TRUSTED_HISTORY_COMMIT="$(git rev-parse origin/main)"
           python -m py_compile tools/check_canonical_reference_freshness.py tests/test_reference_freshness.py tests/test_gpt_codex_workflow_contract.py
           python -m unittest tests.test_reference_freshness tests.test_gpt_codex_workflow_contract -v
-          python tools/check_base_v9_integrity.py --trusted-history-commit origin/main
+          python tools/check_base_v9_integrity.py --trusted-history-commit "$TRUSTED_HISTORY_COMMIT"
           python tools/build_base_v9_artifacts.py --check
-          python tools/check_canonical_reference_freshness.py --config .github/reference-freshness.json --base origin/main --head HEAD
+          python tools/check_canonical_reference_freshness.py --config .github/reference-freshness.json --base "$TRUSTED_HISTORY_COMMIT" --head HEAD
       - name: Commit durable non-workflow changes
         shell: bash
         run: |
           git checkout -- .github/workflows/_tmp-fix-freshness-strict-aliases-20260819.yml
           git rm tools/_tmp_fix_freshness_strict_aliases_20260819.py
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email "4189828+github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit -m "fix: distinguish strict legacy ids and refresh generated artifacts"
           git pull --rebase origin refactor/sequential-part-coordinator-20260819
