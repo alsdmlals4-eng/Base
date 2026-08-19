@@ -2,15 +2,32 @@
 
 이 문서는 Base와 Base를 채택한 프로젝트에서 **기획 우선 원칙**, 상세 데이터·수치 결정권, Grill Me 승인 Decision의 기록·PR·검증·병합 순서를 책임지는 상세 정본이다.
 
-`AGENTS.md`가 항상 적용되는 상위 규칙이며, 이 문서는 다음 문서의 일반 규칙을 Grill Me 승인 배치에 맞게 구체화한다.
+`AGENTS.md`가 항상 적용되는 상위 규칙이며, 이 문서는 다음 정본을 Grill Me 승인 배치에 맞게 구체화한다.
 
 - `docs/OPERATING_MODEL.md`
 - `docs/WORK_MODE_AND_SKILL_ROUTING.md`
 - `docs/CONFIRMED_DECISION_SYNC_POLICY.md`
 - `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md`
+- `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json`
 - `skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md`
 
-충돌 시 최신 사용자 지시와 프로젝트 `AGENTS.md` 다음으로 Base `AGENTS.md`와 이 정책을 적용한다. 기존 문서의 “승인 Decision 즉시 동기화”는 계속 유효하지만, Grill Me 승인에서는 **활성 배치 Branch에 즉시 내구 기록**하는 것을 뜻한다. 배치 PR이 병합되기 전에는 main 동기화 완료를 주장하지 않는다.
+## 0. Workspace authority
+
+프로젝트의 활성 계획·결정 동기화는 `PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json`의 `DOMAIN_SPLIT_CANON`을 따른다.
+
+```yaml
+workspace_authority: DOMAIN_SPLIT_CANON
+human_workspace: NOTION_HUMAN_FACING_CANON
+structured_workspace: REPOSITORY_STRUCTURED_CANON
+legacy_google_sheets: COMPATIBILITY_ONLY
+```
+
+- 사람용 프로젝트 계획·결정·설명은 정확한 Project relation 아래의 `NOTION_HUMAN_FACING_CANON`에 둔다.
+- 구조화 상태·실행 계약·runtime truth·Git 추적은 `REPOSITORY_STRUCTURED_CANON`이 소유한다.
+- Google Sheets는 `COMPATIBILITY_ONLY` legacy migration source다. 신규 입력·활성 동기화·완료 판정의 필수 surface로 사용하지 않는다.
+- Base 자체 작업처럼 프로젝트 Notion destination이 적용되지 않는 경우에는 Notion 기록을 발명하지 않는다. 적용 가능한 목적지만 동기화하고 **destination readback**으로 확인한다.
+
+충돌 시 최신 사용자 지시와 프로젝트 `AGENTS.md` 다음으로 Base `AGENTS.md`와 이 정책을 적용한다. 기존 문서의 “승인 Decision 즉시 동기화”는 계속 유효하지만, Grill Me 승인에서는 **활성 배치 Branch에 즉시 내구 기록**하고 적용 가능한 Notion 사람용 목적지를 갱신·재조회하는 것을 뜻한다. 배치 PR이 병합되기 전에는 main 동기화 완료를 주장하지 않는다.
 
 ## 1. 기획 우선 원칙
 
@@ -51,12 +68,7 @@ requirements:
   - evidence_limit_recorded
 ```
 
-예:
-
-- 플레이테스트 전 초기 밸런스 시험값
-- 입력 버퍼·전환 시간·쿨다운의 첫 구현값
-- 로그·오류 처리·내부 데이터 구조·테스트 세부
-- 승인된 기획을 구현하기 위한 가역적 기술 수치
+예: 플레이테스트 전 초기 밸런스 시험값, 입력 버퍼·전환 시간·쿨다운의 첫 구현값, 로그·오류 처리·내부 데이터 구조·테스트 세부, 승인된 기획을 구현하기 위한 가역적 기술 수치.
 
 GPT 권장안대로 진행하더라도 실제 테스트 전에는 확정 밸런스, 사람 검증, 제품 성숙도 상승으로 보고하지 않는다.
 
@@ -90,16 +102,17 @@ Grill Me는 저장소와 도구로 해결할 수 없는 사용자 결정만 한 
 → 동일 Decision ID 생성 또는 재사용
 → GitHub 추적 surface 기록
 → 활성 배치 Branch의 CURRENT_CONFIRMED_DECISIONS·분야 책임 원본 갱신
+→ 적용 가능한 Project relation의 Notion 사람용 기록 갱신
+→ destination readback
 → Decision별 논리 Commit
-→ 구성된 Sheet 행을 APPROVED_PENDING_MERGE로 기록·재조회
 → 배치 승인 수·체크포인트 사유 재계산
 ```
 
 - Branch 정본은 복원 가능한 승인 작업면이지만 main 통합 완료가 아니다.
-- `APPROVED_PENDING_MERGE`는 사용자 승인과 Branch Commit을 보존한다는 뜻이다.
+- `APPROVED_PENDING_MERGE`는 사용자 승인과 Branch Commit, 적용 가능한 사람용 목적지 readback을 보존한다는 뜻이다.
 - 배치 PR 병합 전에는 `MAIN_UPDATED`, `SYNCED`, `SYNCED_TO_MAIN`을 주장하지 않는다.
-- Google Sheets가 없거나 쓰기 권한이 없으면 내용을 추정하지 않고 `NOT_CONFIGURED` 또는 `BLOCKED_UNVERIFIED`를 기록한다.
-- Base 자체는 프로젝트 Google Sheets 동기화 대상이 아니다.
+- Notion 목적지가 구성되지 않았거나 적용되지 않는 작업은 내용을 추정하지 않고 `NOT_APPLICABLE` 또는 `BLOCKED_UNVERIFIED`를 사실대로 기록한다.
+- legacy `google_sheet_compatibility_source`에 아직 이관되지 않은 **UNIQUE** material이 있을 때만 migration input으로 읽는다. Sheet 행 갱신은 활성 Decision sync 요구사항이 아니다.
 
 ## 4. 최대 10건 Grill Me 결정 배치
 
@@ -111,7 +124,7 @@ checkpoint_reason: TEN_APPROVALS | HIGH_IMPACT | CANON_CONFLICT | IMPLEMENTATION
 status: COLLECTING | CHECKPOINT_REQUIRED | BATCH_PR_OPEN | CHECKS_RUNNING | REVIEW_REQUIRED | MERGED | SYNCED_TO_MAIN | BLOCKED
 ```
 
-`10`은 정확히 채워야 하는 최소량이 아니라 한 PR의 **최대 승인 Decision 수**다. 작은 자기완결 변경이 검토 정확도·롤백·병합에 유리하므로 다음 경우에는 조기 체크포인트를 연다.
+`10`은 정확히 채워야 하는 최소량이 아니라 한 PR의 **최대 승인 Decision 수**다. 작은 자기완결 변경이 검토 정확도·롤백·병합에 유리하므로 다음 경우에는 **조기 체크포인트**를 연다.
 
 - `HIGH_IMPACT`: 프로젝트 코어·주요 UX·경제·세션 구조 등 광범위하거나 되돌리기 어려운 결정
 - `CANON_CONFLICT`: 기존 Decision 대체 또는 분야 정본 충돌
@@ -123,7 +136,7 @@ status: COLLECTING | CHECKPOINT_REQUIRED | BATCH_PR_OPEN | CHECKS_RUNNING | REVI
 규칙:
 
 - 같은 Goal에는 하나의 활성 Grill Me 배치 PR만 둔다.
-- 10번째 승인 뒤에는 병합·재동기화 전 11번째 질문을 금지한다.
+- 10번째 승인 뒤에는 **병합·재동기화 전 11번째 질문**을 금지한다.
 - 인터뷰가 10건 미만에서 끝나도 잔여 승인 건을 같은 Gate로 닫는다.
 - 배치가 `BLOCKED`면 새 질문보다 기존 배치 복구를 우선한다.
 - 고위험 Decision은 10건을 기다리지 않고 조기 체크포인트로 분리한다.
@@ -134,25 +147,15 @@ status: COLLECTING | CHECKPOINT_REQUIRED | BATCH_PR_OPEN | CHECKS_RUNNING | REVI
 BATCH_PR_OPEN
 → latest exact-head required checks
 → 변경 Decision·정본·실제 구현·untouched 소비자 영향 지도
-→ attack
-→ validate-critique
-→ regression-recheck
-→ decision-report
+→ attack → validate-critique → regression-recheck → decision-report
 → unresolved thread 0
 → P0/P1 0
 → 사용자 결정 미해결 0
-→ squash merge
+→ 저장소가 허용한 정상 merge
 → merged main SHA 재조회
 → GitHub 정본·분야 원본 재조회
-→ Sheet의 APPROVED_PENDING_MERGE 행에 merge Commit 반영
-→ Sheet 재조회
+→ 적용 가능한 Notion 사람용 destination 재조회
 → SYNCED_TO_MAIN
-```
-
-기계 표기:
-
-```text
-attack → validate-critique → regression-recheck → decision-report
 ```
 
 병합 금지 조건:
@@ -162,10 +165,11 @@ attack → validate-critique → regression-recheck → decision-report
 - P0/P1 finding이 1개 이상
 - `PLANNING_CONFLICT` 또는 `USER_DECISION_REQUIRED` 미해결
 - `BLOCKED_UNVERIFIED`
-- Decision ID·Branch Commit·정본 내용·Sheet 행 불일치
+- Decision ID·Branch Commit·구조화 정본·적용 가능한 Notion 사람용 기록 사이의 의미 불일치
+- destination readback 실패
 - 범위 밖 제품 코드·자산·정본 변경
 
-병합 후 GitHub main과 Sheet의 Decision ID·결정·대체 관계·merge Commit이 일치할 때만 `SYNCED_TO_MAIN`을 사용한다.
+병합 후 `REPOSITORY_STRUCTURED_CANON`과 적용 가능한 `NOTION_HUMAN_FACING_CANON`의 Decision ID·결정·대체 관계·merge Commit이 일치하고 destination readback이 끝났을 때만 `SYNCED_TO_MAIN`을 사용한다. `COMPATIBILITY_ONLY` Sheet의 migration state는 별도 상태이며 active sync 완료를 좌우하지 않는다.
 
 ## 6. 적대적 검토 체크리스트
 
@@ -177,8 +181,9 @@ attack → validate-critique → regression-recheck → decision-report
 - 저장소에서 확인 가능한 사실을 Grill Me 질문으로 전가했다.
 - 10건 배치가 너무 커져 하나의 자기완결 변경이 아니게 됐다.
 - 중요한 Decision이 11번째 질문까지 지연됐다.
-- 승인 내용이 Branch·정본·Sheet에 즉시 기록되지 않았다.
-- Sheet가 병합 전 main 동기화를 주장했다.
+- 승인 내용이 Branch·정본·적용 가능한 Notion 목적지에 즉시 기록되지 않았다.
+- 병합 전 main 동기화를 주장했다.
+- legacy Sheet가 다시 활성 사람용 정본처럼 취급됐다.
 - 같은 Goal에 여러 활성 결정 PR이 생겼다.
 - 적대적 검토가 반대를 위한 반대로 변했다.
 - exact-head가 아닌 이전 Commit의 성공 검사를 사용했다.
@@ -200,13 +205,14 @@ attack → validate-critique → regression-recheck → decision-report
 - L1 이상 작업이 승인 없는 BUILD로 진입하지 않는다.
 - 상세 수치 기본값과 기획 충돌이 명시적으로 분류된다.
 - 기획 충돌은 Grill Me 사용자 승인 전 확정되지 않는다.
-- 승인 Decision이 대화 메모리에만 남지 않고 Branch·GitHub·가능한 Sheet에 기록된다.
+- 승인 Decision이 대화 메모리에만 남지 않고 Branch·GitHub·적용 가능한 Notion 목적지에 기록되고 destination readback이 끝난다.
+- Google Sheets는 `COMPATIBILITY_ONLY`이며 신규 입력·active sync 필수 surface가 아니다.
 - 한 배치가 10건을 초과하지 않는다.
 - 고위험·충돌·세션 종료 시 조기 체크포인트가 열린다.
 - 10번째 승인 뒤 11번째 질문이 차단된다.
 - latest exact-head 검사와 적대적 검토가 모두 통과한다.
 - unresolved thread 0, P0/P1 0이다.
-- 병합 뒤 main과 Sheet를 재조회하고 `SYNCED_TO_MAIN`을 확인한다.
+- 병합 뒤 main과 적용 가능한 Notion destination을 재조회하고 `SYNCED_TO_MAIN`을 확인한다.
 
 ## 9. 증거 한계
 
@@ -215,5 +221,5 @@ attack → validate-critique → regression-recheck → decision-report
 - 실제 10건 또는 조기 체크포인트 Grill Me 배치 운영
 - 사용자 질문 피로와 결정 품질 평가
 - 배치 PR 크기·리뷰 시간·재작업률 측정
-- 실제 외부 모델 라우팅
+- 실제 프로젝트 Notion relation에 대한 end-to-end 쓰기·readback pilot
 - 사람·기기·접근성 검증
