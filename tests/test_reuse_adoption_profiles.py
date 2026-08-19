@@ -31,14 +31,18 @@ def load_adoption_module():
     return module
 
 
+def load_matrix() -> dict:
+    return json.loads(
+        (ROOT / "docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+
 class ReuseAdoptionProfileTests(unittest.TestCase):
     def test_all_active_projects_have_machine_valid_profiles_matching_matrix(self) -> None:
         module = load_adoption_module()
-        matrix = json.loads(
-            (ROOT / "docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json").read_text(
-                encoding="utf-8"
-            )
-        )
+        matrix = load_matrix()
         for project_key in PROJECT_KEYS:
             profile_path = PROFILE_ROOT / f"{project_key}.json"
             self.assertTrue(profile_path.is_file(), project_key)
@@ -65,14 +69,34 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
 
     def test_adapted_project_implementation_is_not_mislabeled_as_vendored_source(self) -> None:
         profile = json.loads((PROFILE_ROOT / "URBAN_LEGEND.json").read_text(encoding="utf-8"))
-        matrix = json.loads(
-            (ROOT / "docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json").read_text(
-                encoding="utf-8"
-            )
-        )
+        matrix = load_matrix()
         self.assertEqual("ADOPTED_AND_VERIFIED", matrix["projects"]["URBAN_LEGEND"]["status"])
         self.assertEqual("deferred", profile["modules"]["RM-TOOL-001"]["state"])
         self.assertEqual("deferred", matrix["projects"]["URBAN_LEGEND"]["modules"]["RM-TOOL-001"])
+
+    def test_safe_project_rollout_merges_are_recorded_without_overclaiming_runtime(self) -> None:
+        matrix = load_matrix()
+        expected_merges = {
+            "COC_FICTION": "fabc8fc489ff77459b31f0d62906966d94d79d88",
+            "GRIMOIRE": "5b51169130c97807234a0c2b457ed90dc3c04f3a",
+            "MY_LITTLE_BOAT": "91dc7c0a7df400eda426971b2cabc1a7de688a06",
+        }
+        for project_key, merge_commit in expected_merges.items():
+            installation = matrix["projects"][project_key]["manifest_installation"]
+            self.assertEqual("INSTALLED_ON_MAIN", installation["state"])
+            self.assertEqual(merge_commit, installation["merge_commit"])
+
+        self.assertEqual(
+            "Fiction operating system 32305116843 SUCCESS",
+            matrix["projects"]["COC_FICTION"]["manifest_installation"]["verification"],
+        )
+        self.assertEqual(
+            "Validate GRIMOIRE planning and Base v9.4.3 32305233259 SUCCESS",
+            matrix["projects"]["GRIMOIRE"]["manifest_installation"]["verification"],
+        )
+        boat = matrix["projects"]["MY_LITTLE_BOAT"]["manifest_installation"]
+        self.assertEqual("STATIC_PROFILE_BLOB_MATCH", boat["verification"])
+        self.assertEqual("NOT_RUN_NO_PROJECT_CI", boat["runtime_validation"])
 
 
 if __name__ == "__main__":
