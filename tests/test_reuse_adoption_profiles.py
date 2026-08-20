@@ -81,6 +81,8 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
             "GRIMOIRE": "5b51169130c97807234a0c2b457ed90dc3c04f3a",
             "MY_LITTLE_BOAT": "91dc7c0a7df400eda426971b2cabc1a7de688a06",
             "URBAN_LEGEND": "1e75e5dc871ce1ce4d547b0521f6e9b680c46684",
+            "NINJA_SURVIVAL": "a84980661767b02391f85d87e8fc4e9fc5dc67e7",
+            "BLACKSMITH": "c09d074bd32be889630922896ffdb8ed8c68118d",
         }
         for project_key, merge_commit in expected_merges.items():
             installation = matrix["projects"][project_key]["manifest_installation"]
@@ -101,6 +103,41 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
         urban = matrix["projects"]["URBAN_LEGEND"]["manifest_installation"]
         self.assertEqual("Validate Base v9 adoption 32306238522 SUCCESS", urban["verification"])
         self.assertEqual("FULL_PROJECT_REGRESSIONS_SUCCESS_ADAPTED_VALIDATOR_UNCHANGED", urban["runtime_validation"])
+
+        ninja = matrix["projects"]["NINJA_SURVIVAL"]
+        self.assertEqual("READY_TO_ADOPT", ninja["status"])
+        self.assertEqual("GUT 32317360022 SUCCESS", ninja["manifest_installation"]["verification"])
+        self.assertEqual(
+            "GODOT_IMPORT_MAIN_SCENE_SMOKE_FULL_GUT_SUCCESS_MANIFEST_ONLY",
+            ninja["manifest_installation"]["runtime_validation"],
+        )
+
+        blacksmith = matrix["projects"]["BLACKSMITH"]
+        self.assertEqual("DEFERRED_PRODUCT_GATE", blacksmith["status"])
+        self.assertEqual(
+            "Validate Base v9 adoption 32317369978 SUCCESS",
+            blacksmith["manifest_installation"]["verification"],
+        )
+        self.assertEqual(
+            "BASE_V9_ADVERSARIAL_AND_PROJECT_REGRESSIONS_SUCCESS_PRODUCT_GATE_UNCHANGED",
+            blacksmith["manifest_installation"]["runtime_validation"],
+        )
+
+    def test_ten_paces_rollout_is_deferred_when_current_main_keeps_advancing(self) -> None:
+        ten = load_matrix()["projects"]["TEN_PACES"]
+        installation = ten["manifest_installation"]
+        self.assertEqual("DEFERRED_CONCURRENT_MAIN_CHURN", installation["state"])
+        self.assertEqual([167, 169], installation["attempted_prs"])
+        self.assertEqual(
+            [
+                "d1fbe2de9675401e6b5db1b2dd4463b516c261c2",
+                "f199eb7963b2012ff8a5ec8540117c1fd49db8cd",
+                "c5c54096829c1778996b32873203b85db7d9318a",
+            ],
+            installation["observed_main_commits"],
+        )
+        self.assertEqual("NOT_RUN_NO_MANIFEST_INSTALLED", installation["runtime_validation"])
+        self.assertIn("concurrent planning", ten["blocker"])
 
 
 if __name__ == "__main__":
