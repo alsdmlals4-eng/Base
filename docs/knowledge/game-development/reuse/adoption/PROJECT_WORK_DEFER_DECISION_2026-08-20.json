@@ -1,9 +1,10 @@
 {
   "schema_version": 1,
-  "state": "FINAL",
+  "state": "FINAL_WITH_PARTIAL_SUPERSESSION",
   "decision_date": "2026-08-20",
   "decision": "DEFER_RUNTIME_ROLLOUT_TO_PROJECT_WORK",
-  "base_scope": "BASE_AND_NOTION_STATUS_SYNC_ONLY",
+  "current_effect": "MY_LITTLE_BOAT_ONLY",
+  "base_scope": "HISTORICAL_DECISION_WITH_OMENWARD_SUPERSESSION",
   "base_main_before": "3cdb82f94af402fedcc9c1e80902d1d01b8d3ab3",
   "projects": {
     "MY_LITTLE_BOAT": {
@@ -16,19 +17,26 @@
       "revisit": "when My Little Boat project work resumes"
     },
     "OMENWARD": {
-      "state": "DEFER_TO_PROJECT_WORK",
+      "state": "SUPERSEDED_BY_LATER_USER_APPROVAL",
+      "prior_state": "DEFER_TO_PROJECT_WORK",
       "modules": ["RM-SYS-003"],
-      "project_files_changed": false,
-      "merge_action": "NONE",
-      "protected_open_pr": 197,
-      "revisit": "when Omenward project work resumes"
+      "superseded_on": "2026-08-20",
+      "superseding_pr": 198,
+      "replacement_merge": "67487c932cc883db95da7bc852f4eb33883f0052",
+      "project_files_changed": true,
+      "merge_action": "SQUASH_MERGED",
+      "superseded_pr": 197,
+      "followup_issue": 199,
+      "revisit": "production consumer connection remains a future project-authorized task"
     }
   },
   "protected_current_work": {
     "SWITCHY": [154, 157],
     "TETRIS": [3, 9],
-    "OMENWARD": [197],
     "BASE": [556]
+  },
+  "closed_superseded_work": {
+    "OMENWARD": [197]
   },
   "sync_targets": {
     "base_matrix": "docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json",
@@ -36,10 +44,10 @@
     "notion_sync_state": "AFTER_BASE_MERGE"
   },
   "evidence_ceiling": [
-    "STATUS_SYNC_IS_NOT_RUNTIME_IMPLEMENTATION",
-    "ENABLED_PROFILE_IS_NOT_PROJECT_MERGE",
-    "OPEN_PR_IS_READ_ONLY",
+    "LITTLE_BOAT_DEFER_REMAINS_ACTIVE",
+    "OMENWARD_SIDECAR_VERIFIED_IS_NOT_PRODUCTION_CONSUMER_CONNECTED",
+    "FULL_OMENWARD_REPOSITORY_CONTRACT_GREEN_NOT_CLAIMED",
     "NOTION_IS_HUMAN_VIEW_NOT_RUNTIME_CANON"
   ],
-  "rollback": "revert the Base merge and restore the previous Notion status text; project repositories are unaffected"
+  "rollback": "revert the later Omenward project merge and Base adoption closure independently; restoring the prior Notion status does not alter either repository"
 }
