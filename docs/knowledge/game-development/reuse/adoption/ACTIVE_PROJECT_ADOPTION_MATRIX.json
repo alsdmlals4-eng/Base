@@ -89,7 +89,7 @@
     },
     "NINJA_SURVIVAL": {
       "repository": "alsdmlals4-eng/ninja-survival-godot",
-      "status": "DEFERRED_PHASE_GATE",
+      "status": "READY_TO_ADOPT",
       "modules": {
         "RM-TOOL-001": "planned",
         "RM-SYS-001": "planned",
@@ -97,8 +97,14 @@
         "RM-VIS-001": "planned",
         "RM-VIS-002": "planned"
       },
-      "blocker": "project requires explicit planning completion and Phase B PASS before Phase C production implementation",
-      "revisit": "after project Phase B Definition of Ready passes"
+      "manifest_installation": {
+        "state": "INSTALLED_ON_MAIN",
+        "merge_commit": "a84980661767b02391f85d87e8fc4e9fc5dc67e7",
+        "verification": "GUT 32317360022 SUCCESS",
+        "runtime_validation": "GODOT_IMPORT_MAIN_SCENE_SMOKE_FULL_GUT_SUCCESS_MANIFEST_ONLY"
+      },
+      "evidence": "Phase B Definition of Ready is PHASE_B_PASS and Phase C is authorized on main; PR #20 installed only the adoption manifest and its existing-GUT workflow contract without implementing a Phase-C task or vendoring a runtime reuse module",
+      "revisit": "vendor only the P0 module required by an approved Phase-C task, keeping project-specific gameplay and backpack/combo authority local"
     },
     "MY_LITTLE_BOAT": {
       "repository": "alsdmlals4-eng/MylittleBoat",
@@ -129,6 +135,13 @@
         "RM-VIS-001": "planned",
         "RM-VIS-002": "planned"
       },
+      "manifest_installation": {
+        "state": "INSTALLED_ON_MAIN",
+        "merge_commit": "c09d074bd32be889630922896ffdb8ed8c68118d",
+        "verification": "Validate Base v9 adoption 32317369978 SUCCESS",
+        "runtime_validation": "BASE_V9_ADVERSARIAL_AND_PROJECT_REGRESSIONS_SUCCESS_PRODUCT_GATE_UNCHANGED"
+      },
+      "evidence": "PR #170 installed the adoption manifest through the existing Base-v9 regression; Base-v9 adversarial gate, PR validation, Project Base Adapter, Thin Adapter Migration and BCA Adoption all succeeded without product-path changes",
       "blocker": "general product implementation is BLOCKED outside the approved vertical-slice namespace",
       "revisit": "after the Blacksmith product/Task gate explicitly allows the relevant adapter paths"
     },
@@ -142,8 +155,18 @@
         "RM-VIS-001": "planned",
         "RM-VIS-002": "planned"
       },
-      "blocker": "current runtime work mode is REVIEW and protected product paths require an approved BUILD package",
-      "revisit": "when a BUILD package explicitly includes reuse adoption"
+      "manifest_installation": {
+        "state": "DEFERRED_CONCURRENT_MAIN_CHURN",
+        "attempted_prs": [167, 169],
+        "observed_main_commits": [
+          "d1fbe2de9675401e6b5db1b2dd4463b516c261c2",
+          "f199eb7963b2012ff8a5ec8540117c1fd49db8cd",
+          "c5c54096829c1778996b32873203b85db7d9318a"
+        ],
+        "runtime_validation": "NOT_RUN_NO_MANIFEST_INSTALLED"
+      },
+      "blocker": "manifest-only rollout deferred because concurrent planning main advanced twice while two TDD attempts were open; protected runtime paths still require an approved BUILD package",
+      "revisit": "after the concurrent planning wave stabilizes, re-read current main and install the manifest; runtime modules remain gated by an approved BUILD package"
     },
     "OMENWARD": {
       "repository": "alsdmlals4-eng/omenward",
