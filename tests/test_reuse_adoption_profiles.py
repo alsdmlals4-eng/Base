@@ -58,7 +58,7 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
             ("SWITCHY", "RM-SYS-001"): "game/reuse/grid_placement_rule_engine.gd",
             ("SWITCHY", "RM-VIS-001"): "game/reuse/semantic_ui_skin_kit.gd",
             ("SWITCHY", "RM-VIS-002"): "game/reuse/gameplay_symbol_atlas.gd",
-            ("OMENWARD", "RM-SYS-003"): "scripts/reuse/candidate_draft_weight_engine.gd",
+            ("OMENWARD", "RM-SYS-003"): "vendor/base-reuse/candidate_draft_weight_engine.gd",
             ("MY_LITTLE_BOAT", "RM-VIS-001"): "scripts/base_reuse/semantic_ui_skin_kit.gd",
             ("MY_LITTLE_BOAT", "RM-VIS-002"): "scripts/base_reuse/gameplay_symbol_atlas.gd",
         }
@@ -83,6 +83,7 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
             "URBAN_LEGEND": "1e75e5dc871ce1ce4d547b0521f6e9b680c46684",
             "NINJA_SURVIVAL": "a84980661767b02391f85d87e8fc4e9fc5dc67e7",
             "BLACKSMITH": "c09d074bd32be889630922896ffdb8ed8c68118d",
+            "OMENWARD": "67487c932cc883db95da7bc852f4eb33883f0052",
         }
         for project_key, merge_commit in expected_merges.items():
             installation = matrix["projects"][project_key]["manifest_installation"]
@@ -123,6 +124,22 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
             blacksmith["manifest_installation"]["runtime_validation"],
         )
 
+        omenward = matrix["projects"]["OMENWARD"]
+        self.assertEqual("ADOPTED_AND_VERIFIED", omenward["status"])
+        self.assertEqual("VENDORED_REFERENCE_WITH_PROJECT_ADAPTER", omenward["project_adoption_mode"])
+        installation = omenward["manifest_installation"]
+        self.assertEqual(
+            "Base v9 adoption 32364532263 SUCCESS; Omenward Core Godot 32364532205/96411071736 SUCCESS",
+            installation["verification"],
+        )
+        self.assertEqual(
+            "GODOT_4_7_1_IMPORT_ALL_HEADLESS_RUNTIME_SMOKE_SUCCESS_SIDECAR_ONLY",
+            installation["runtime_validation"],
+        )
+        self.assertIn("PRODUCTION_CONSUMER_NOT_CONNECTED", omenward["evidence_ceiling"])
+        self.assertEqual(199, omenward["followup_issue"])
+        self.assertNotIn("runtime_rollout_policy", omenward)
+
     def test_ten_paces_rollout_is_deferred_when_current_main_keeps_advancing(self) -> None:
         ten = load_matrix()["projects"]["TEN_PACES"]
         installation = ten["manifest_installation"]
@@ -139,7 +156,7 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
         self.assertEqual("NOT_RUN_NO_MANIFEST_INSTALLED", installation["runtime_validation"])
         self.assertIn("concurrent planning", ten["blocker"])
 
-    def test_user_deferred_runtime_rollout_waits_for_project_work(self) -> None:
+    def test_little_boat_defer_remains_and_omenward_defer_is_superseded(self) -> None:
         matrix = load_matrix()
         decision = json.loads(
             (
@@ -148,36 +165,29 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
             ).read_text(encoding="utf-8")
         )
 
-        self.assertEqual("FINAL", decision["state"])
-        self.assertEqual("BASE_AND_NOTION_STATUS_SYNC_ONLY", decision["base_scope"])
-        for project_key, expected_modules in {
-            "MY_LITTLE_BOAT": ["RM-VIS-001", "RM-VIS-002"],
-            "OMENWARD": ["RM-SYS-003"],
-        }.items():
-            project = matrix["projects"][project_key]
-            policy = project["runtime_rollout_policy"]
-            self.assertEqual("DEFER_TO_PROJECT_WORK", policy["state"])
-            self.assertEqual("USER_APPROVED", policy["authority"])
-            self.assertEqual("2026-08-20", policy["decided_on"])
-            self.assertEqual(expected_modules, policy["modules"])
-            self.assertFalse(policy["project_files_changed"])
-            self.assertEqual("NONE", policy["merge_action"])
-            self.assertEqual(
-                "DEFER_TO_PROJECT_WORK",
-                decision["projects"][project_key]["state"],
-            )
+        self.assertEqual("FINAL_WITH_PARTIAL_SUPERSESSION", decision["state"])
+        self.assertEqual("MY_LITTLE_BOAT_ONLY", decision["current_effect"])
 
         boat = matrix["projects"]["MY_LITTLE_BOAT"]
+        policy = boat["runtime_rollout_policy"]
+        self.assertEqual("DEFER_TO_PROJECT_WORK", policy["state"])
+        self.assertEqual("USER_APPROVED", policy["authority"])
+        self.assertEqual("2026-08-20", policy["decided_on"])
+        self.assertEqual(["RM-VIS-001", "RM-VIS-002"], policy["modules"])
+        self.assertFalse(policy["project_files_changed"])
+        self.assertEqual("NONE", policy["merge_action"])
+        self.assertEqual("DEFER_TO_PROJECT_WORK", decision["projects"]["MY_LITTLE_BOAT"]["state"])
         self.assertEqual("READY_TO_ADOPT", boat["status"])
         self.assertEqual("INSTALLED_ON_MAIN", boat["manifest_installation"]["state"])
         self.assertEqual("NOT_RUN_NO_PROJECT_CI", boat["manifest_installation"]["runtime_validation"])
         self.assertIn("project work", boat["blocker"])
 
-        omenward = matrix["projects"]["OMENWARD"]
-        self.assertEqual("DEFERRED_OPEN_PR", omenward["status"])
-        self.assertIn("#197", omenward["blocker"])
-        self.assertIn("project work", omenward["blocker"])
-        self.assertNotIn("manifest_installation", omenward)
+        omenward_decision = decision["projects"]["OMENWARD"]
+        self.assertEqual("SUPERSEDED_BY_LATER_USER_APPROVAL", omenward_decision["state"])
+        self.assertEqual(198, omenward_decision["superseding_pr"])
+        self.assertEqual("67487c932cc883db95da7bc852f4eb33883f0052", omenward_decision["replacement_merge"])
+        self.assertEqual("SQUASH_MERGED", omenward_decision["merge_action"])
+        self.assertTrue(omenward_decision["project_files_changed"])
 
 
 if __name__ == "__main__":
