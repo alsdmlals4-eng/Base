@@ -139,6 +139,46 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
         self.assertEqual("NOT_RUN_NO_MANIFEST_INSTALLED", installation["runtime_validation"])
         self.assertIn("concurrent planning", ten["blocker"])
 
+    def test_user_deferred_runtime_rollout_waits_for_project_work(self) -> None:
+        matrix = load_matrix()
+        decision = json.loads(
+            (
+                ROOT
+                / "docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_DEFER_DECISION_2026-08-20.json"
+            ).read_text(encoding="utf-8")
+        )
+
+        self.assertEqual("FINAL", decision["state"])
+        self.assertEqual("BASE_AND_NOTION_STATUS_SYNC_ONLY", decision["base_scope"])
+        for project_key, expected_modules in {
+            "MY_LITTLE_BOAT": ["RM-VIS-001", "RM-VIS-002"],
+            "OMENWARD": ["RM-SYS-003"],
+        }.items():
+            project = matrix["projects"][project_key]
+            policy = project["runtime_rollout_policy"]
+            self.assertEqual("DEFER_TO_PROJECT_WORK", policy["state"])
+            self.assertEqual("USER_APPROVED", policy["authority"])
+            self.assertEqual("2026-08-20", policy["decided_on"])
+            self.assertEqual(expected_modules, policy["modules"])
+            self.assertFalse(policy["project_files_changed"])
+            self.assertEqual("NONE", policy["merge_action"])
+            self.assertEqual(
+                "DEFER_TO_PROJECT_WORK",
+                decision["projects"][project_key]["state"],
+            )
+
+        boat = matrix["projects"]["MY_LITTLE_BOAT"]
+        self.assertEqual("READY_TO_ADOPT", boat["status"])
+        self.assertEqual("INSTALLED_ON_MAIN", boat["manifest_installation"]["state"])
+        self.assertEqual("NOT_RUN_NO_PROJECT_CI", boat["manifest_installation"]["runtime_validation"])
+        self.assertIn("project work", boat["blocker"])
+
+        omenward = matrix["projects"]["OMENWARD"]
+        self.assertEqual("DEFERRED_OPEN_PR", omenward["status"])
+        self.assertIn("#197", omenward["blocker"])
+        self.assertIn("project work", omenward["blocker"])
+        self.assertNotIn("manifest_installation", omenward)
+
 
 if __name__ == "__main__":
     unittest.main()
