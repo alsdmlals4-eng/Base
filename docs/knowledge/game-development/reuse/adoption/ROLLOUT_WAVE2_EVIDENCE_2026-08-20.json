@@ -1,7 +1,21 @@
 {
   "schema_version": 1,
-  "state": "RED_EXPECTED_PENDING_FLEET_MATRIX_SYNC",
+  "state": "GREEN_FOCUSED_VERIFIED",
   "base_before": "ef0092256be25eaa70a296a76d02f7205934929e",
+  "focused_tdd": {
+    "red": {
+      "run_id": 32317836720,
+      "result": "FAILURE",
+      "tests": 148,
+      "expected_errors": 2,
+      "reason": "fleet matrix lacked Ninja/Blacksmith manifest_installation and Ten Paces concurrent-main defer evidence"
+    },
+    "green": {
+      "run_id": 32317906342,
+      "result": "SUCCESS",
+      "tests": 148
+    }
+  },
   "installed": {
     "NINJA_SURVIVAL": {
       "merge_commit": "a84980661767b02391f85d87e8fc4e9fc5dc67e7",
@@ -25,5 +39,6 @@
       ],
       "result": "no manifest installed; no runtime/product path changed"
     }
-  }
+  },
+  "evidence_ceiling": "six projects have manifests installed; this does not mean runtime P0 modules are vendored in those six projects"
 }
