@@ -189,6 +189,76 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
         self.assertEqual("SQUASH_MERGED", omenward_decision["merge_action"])
         self.assertTrue(omenward_decision["project_files_changed"])
 
+    def test_project_work_handoff_routes_every_project_to_reuse_before_new_build(self) -> None:
+        handoff_path = (
+            ROOT
+            / "docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json"
+        )
+        self.assertTrue(handoff_path.is_file())
+        handoff = json.loads(handoff_path.read_text(encoding="utf-8"))
+        matrix = load_matrix()
+        registry = (
+            ROOT
+            / "docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md"
+        ).read_text(encoding="utf-8")
+        adoption_readme = (
+            ROOT
+            / "docs/knowledge/game-development/reuse/adoption/README.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertEqual("CURRENT_PROJECT_WORK_HANDOFF", handoff["state"])
+        self.assertEqual("ONLY_DURING_APPROVED_PROJECT_WORK", handoff["install_policy"])
+        self.assertEqual([], handoff["preinstall_projects"])
+        self.assertEqual(set(PROJECT_KEYS), set(handoff["projects"]))
+        self.assertEqual(
+            "docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json",
+            matrix["project_work_handoff"],
+        )
+
+        for required_step in (
+            "READ_CURRENT_PROJECT_AUTHORITY",
+            "READ_BASE_REUSE_STATE",
+            "EXISTING_MODULE_FIRST",
+            "PROJECT_REUSE_OPPORTUNITY_SCAN_IF_NEEDED",
+            "ADAPT_OR_EXTRACT_WITH_PROJECT_IDENTITY",
+            "IMPLEMENT_ONLY_INSIDE_APPROVED_PROJECT_SCOPE",
+        ):
+            self.assertIn(required_step, handoff["entry_contract"])
+
+        for required_field in (
+            "selected_modules",
+            "reuse_mode",
+            "project_paths_changed",
+            "verification_evidence",
+            "evidence_ceiling",
+            "rollback",
+            "project_only_lessons",
+            "base_promotion_candidates",
+        ):
+            self.assertIn(required_field, handoff["exit_handoff_fields"])
+
+        for project_key in PROJECT_KEYS:
+            project = handoff["projects"][project_key]
+            self.assertEqual(matrix["projects"][project_key]["repository"], project["repository"])
+            self.assertEqual(
+                f"docs/knowledge/game-development/reuse/adoption/profiles/{project_key}.json",
+                project["profile"],
+            )
+            self.assertTrue(project["priority_reference_modules"])
+            self.assertTrue(project["project_owned_identity"])
+            self.assertTrue(project["next_project_work_action"])
+            self.assertTrue(project["do_not_flatten_project_identity"])
+            for module_id in project["priority_reference_modules"]:
+                self.assertIn(module_id, registry)
+
+        for term in (
+            "PROJECT_WORK_REUSE_ENTRY_GATE",
+            "PROJECT_WORK_REUSE_EXIT_HANDOFF",
+            "PROJECT_WORK_REUSE_HANDOFF.json",
+            "templates/research/PROJECT_REUSE_OPPORTUNITY_SCAN.md",
+        ):
+            self.assertIn(term, adoption_readme)
+
 
 if __name__ == "__main__":
     unittest.main()

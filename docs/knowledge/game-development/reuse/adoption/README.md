@@ -24,6 +24,8 @@ Base reference module
 - 실행 도구: `tools/reuse_modules/reuse_adoption.py`
 - Manifest 예시: `templates/reuse-modules/PROJECT_REUSE_ADOPTION_MANIFEST.json`
 - 전체 프로젝트 상태: `ACTIVE_PROJECT_ADOPTION_MATRIX.json`
+- 프로젝트 작업 인계: `PROJECT_WORK_REUSE_HANDOFF.json`
+- 프로젝트별 후보 재탐색 Template: `templates/research/PROJECT_REUSE_OPPORTUNITY_SCAN.md`
 - 설치 Lock: 프로젝트의 `.base-reuse/adoption-lock.json`
 
 ## Manifest 상태
@@ -65,6 +67,52 @@ python tools/reuse_modules/reuse_adoption.py check docs/base-reuse-adoption.json
 
 상태가 `DEFERRED_*`여도 Base에서 적용 가능한 manifest/profile을 유지해 blocker가 풀린 뒤 동일 검증 절차를 재사용한다.
 
+## 프로젝트 작업 시 재사용 진입·종료
+
+### `PROJECT_WORK_REUSE_ENTRY_GATE`
+
+각 프로젝트의 실제 작업을 시작할 때만 다음 순서를 사용한다. Base가 프로젝트 작업 전에 남은 모듈을 일괄 설치하거나 프로젝트 고유 구조를 공용 구조로 강제하지 않는다.
+
+```text
+fresh project AGENTS / Active Context / confirmed Decisions / approved scope
+→ actual code · data · scene · asset · test · runtime evidence
+→ ACTIVE_PROJECT_ADOPTION_MATRIX + project profile
+→ PROJECT_WORK_REUSE_HANDOFF project entry
+→ existing project implementation and existing Base module first
+→ unresolved bottleneck only: PROJECT_REUSE_OPPORTUNITY_SCAN
+→ REUSE / VENDOR / THIN_ADAPTER / PROJECT_ONLY_EXTRACT / NO_REUSE
+→ implement only inside the approved project scope
+→ project-owned tests and runtime evidence
+```
+
+- `PROJECT_WORK_REUSE_HANDOFF.json`의 `priority_reference_modules`는 **탐색 시작 후보**이지 설치 지시나 구현 정본이 아니다.
+- profile과 matrix는 현재 adoption 상태를 기록하고, 프로젝트 정본이 실제 사용 여부·수치·씬·UI·자산·저장 구조를 결정한다.
+- 기존 모듈이 해결하지 못하는 반복 병목이 확인된 경우에만 `templates/research/PROJECT_REUSE_OPPORTUNITY_SCAN.md`로 새 후보를 추출한다.
+- 공용 adapter가 프로젝트 고유 코드보다 커지거나 정체성을 평준화하면 `PROJECT_ONLY` 또는 `NO_REUSE`로 되돌린다.
+- 권리·라이선스·비용·보안·현재 PR/동시작업 경계가 불명확하면 설치하지 않는다.
+
+### `PROJECT_WORK_REUSE_EXIT_HANDOFF`
+
+프로젝트 작업 종료 시 다음을 프로젝트 작업 보고와 정본에 남긴다.
+
+```text
+selected_modules
+reuse_mode
+project_paths_changed
+verification_evidence
+evidence_ceiling
+rollback
+project_only_lessons
+base_promotion_candidates
+```
+
+- 한 프로젝트에서 유효했다는 이유만으로 Base 공용 모듈로 자동 승격하지 않는다.
+- `base_promotion_candidates`는 서로 다른 프로젝트의 반복 가치, 좁고 안정적인 인터페이스, 실제 소비자, 권리·비용 경계, 회귀 증거가 생겼을 때만 Base 후속 검토 대상으로 넘긴다.
+- 프로젝트 고유 규칙·콘텐츠·시각 언어·수치는 `project_only_lessons`로 남기며 Base에 일반화하지 않는다.
+- 실제 변경·검증·미검증·남은 위험을 분리하고, 실행하지 않은 runtime이나 플레이 경험을 PASS로 기록하지 않는다.
+
+이 인계 계약으로 현재의 cross-project 사전 설치 workstream은 종료한다. 이후 모듈 선택·모듈화·소비자 연결은 각 프로젝트의 승인된 작업이 소유한다.
+
 ## 권위 경계
 
 ```text
@@ -72,6 +120,8 @@ ADOPTION_KIT_INSTALLED != PROJECT_ADOPTION_APPROVED
 PROJECT_ADAPTER_VERIFIED != HUMAN_PLAYER_EXPERIENCE_PASS
 VENDORED_REFERENCE != PROJECT_CANON
 SEMANTIC_UI_CONTRACT != PRODUCT_ART_APPROVAL
+PRIORITY_REFERENCE != AUTO_INSTALL
+BASE_HANDOFF != PROJECT_IMPLEMENTATION_AUTHORITY
 ```
 
 실제 프로젝트 적용은 해당 저장소의 최신 `AGENTS.md`, active decision, open PR isolation, required CI를 우선한다.
