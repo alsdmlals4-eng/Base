@@ -1,13 +1,16 @@
 {
   "schema_version": 1,
-  "state": "RED_EXPECTED_PENDING_MATRIX_SYNC",
+  "state": "FINAL",
   "decision_date": "2026-08-20",
   "decision": "DEFER_RUNTIME_ROLLOUT_TO_PROJECT_WORK",
   "base_scope": "BASE_AND_NOTION_STATUS_SYNC_ONLY",
+  "base_main_before": "3cdb82f94af402fedcc9c1e80902d1d01b8d3ab3",
   "projects": {
     "MY_LITTLE_BOAT": {
       "state": "DEFER_TO_PROJECT_WORK",
       "modules": ["RM-VIS-001", "RM-VIS-002"],
+      "manifest_state": "INSTALLED_ON_MAIN",
+      "runtime_state": "NOT_RUN_NO_PROJECT_CI",
       "project_files_changed": false,
       "merge_action": "NONE",
       "revisit": "when My Little Boat project work resumes"
@@ -24,12 +27,19 @@
   "protected_current_work": {
     "SWITCHY": [154, 157],
     "TETRIS": [3, 9],
-    "OMENWARD": [197]
+    "OMENWARD": [197],
+    "BASE": [556]
+  },
+  "sync_targets": {
+    "base_matrix": "docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json",
+    "notion_human_view": "Base · 재사용 모듈 라이브러리",
+    "notion_sync_state": "AFTER_BASE_MERGE"
   },
   "evidence_ceiling": [
     "STATUS_SYNC_IS_NOT_RUNTIME_IMPLEMENTATION",
     "ENABLED_PROFILE_IS_NOT_PROJECT_MERGE",
     "OPEN_PR_IS_READ_ONLY",
     "NOTION_IS_HUMAN_VIEW_NOT_RUNTIME_CANON"
-  ]
+  ],
+  "rollback": "revert the Base merge and restore the previous Notion status text; project repositories are unaffected"
 }
