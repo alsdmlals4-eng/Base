@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "state": "RED_EXPECTED_PENDING_FLEET_MATRIX_SYNC",
+  "base_before": "ef0092256be25eaa70a296a76d02f7205934929e",
+  "installed": {
+    "NINJA_SURVIVAL": {
+      "merge_commit": "a84980661767b02391f85d87e8fc4e9fc5dc67e7",
+      "verification": "GUT 32317360022 SUCCESS",
+      "evidence_ceiling": "manifest-only; no Phase-C task or runtime reuse module implemented"
+    },
+    "BLACKSMITH": {
+      "merge_commit": "c09d074bd32be889630922896ffdb8ed8c68118d",
+      "verification": "Validate Base v9 adoption 32317369978 SUCCESS",
+      "evidence_ceiling": "manifest-only; product implementation gate remains BLOCKED"
+    }
+  },
+  "deferred": {
+    "TEN_PACES": {
+      "reason": "concurrent planning main churn",
+      "attempted_prs": [167, 169],
+      "observed_main_commits": [
+        "d1fbe2de9675401e6b5db1b2dd4463b516c261c2",
+        "f199eb7963b2012ff8a5ec8540117c1fd49db8cd",
+        "c5c54096829c1778996b32873203b85db7d9318a"
+      ],
+      "result": "no manifest installed; no runtime/product path changed"
+    }
+  }
+}
