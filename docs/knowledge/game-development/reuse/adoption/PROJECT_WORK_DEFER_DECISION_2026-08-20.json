@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "state": "RED_EXPECTED_PENDING_MATRIX_SYNC",
+  "decision_date": "2026-08-20",
+  "decision": "DEFER_RUNTIME_ROLLOUT_TO_PROJECT_WORK",
+  "base_scope": "BASE_AND_NOTION_STATUS_SYNC_ONLY",
+  "projects": {
+    "MY_LITTLE_BOAT": {
+      "state": "DEFER_TO_PROJECT_WORK",
+      "modules": ["RM-VIS-001", "RM-VIS-002"],
+      "project_files_changed": false,
+      "merge_action": "NONE",
+      "revisit": "when My Little Boat project work resumes"
+    },
+    "OMENWARD": {
+      "state": "DEFER_TO_PROJECT_WORK",
+      "modules": ["RM-SYS-003"],
+      "project_files_changed": false,
+      "merge_action": "NONE",
+      "protected_open_pr": 197,
+      "revisit": "when Omenward project work resumes"
+    }
+  },
+  "protected_current_work": {
+    "SWITCHY": [154, 157],
+    "TETRIS": [3, 9],
+    "OMENWARD": [197]
+  },
+  "evidence_ceiling": [
+    "STATUS_SYNC_IS_NOT_RUNTIME_IMPLEMENTATION",
+    "ENABLED_PROFILE_IS_NOT_PROJECT_MERGE",
+    "OPEN_PR_IS_READ_ONLY",
+    "NOTION_IS_HUMAN_VIEW_NOT_RUNTIME_CANON"
+  ]
+}
