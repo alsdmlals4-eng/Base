@@ -1,0 +1,274 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-08-20",
+  "state": "CURRENT_PROJECT_WORK_HANDOFF",
+  "purpose": "Route each future project work session through current project authority, existing reusable modules, bounded project adaptation, truthful verification, and project-to-Base learning handoff.",
+  "install_policy": "ONLY_DURING_APPROVED_PROJECT_WORK",
+  "preinstall_projects": [],
+  "authority_order": [
+    "USER_LATEST_INSTRUCTION",
+    "PROJECT_AGENTS_SECURITY_ENGINE_DATA_RULES",
+    "PROJECT_ACTIVE_CONTEXT_CONFIRMED_DECISIONS_AND_APPROVED_SCOPE",
+    "PROJECT_CODE_DATA_SCENES_ASSETS_TESTS_AND_RUNTIME_EVIDENCE",
+    "PROJECT_ADOPTED_BASE_PROFILE",
+    "BASE_CURRENT_REUSE_REGISTRY_AND_PIPELINE"
+  ],
+  "state_sources": {
+    "fleet_matrix": "docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json",
+    "project_profiles": "docs/knowledge/game-development/reuse/adoption/profiles/*.json",
+    "module_registry": "docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md",
+    "reverse_engineering_pipeline": "docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md",
+    "opportunity_scan_template": "templates/research/PROJECT_REUSE_OPPORTUNITY_SCAN.md",
+    "adoption_kit": "docs/knowledge/game-development/reuse/adoption/README.md"
+  },
+  "entry_contract": [
+    "READ_CURRENT_PROJECT_AUTHORITY",
+    "READ_BASE_REUSE_STATE",
+    "EXISTING_MODULE_FIRST",
+    "PROJECT_REUSE_OPPORTUNITY_SCAN_IF_NEEDED",
+    "ADAPT_OR_EXTRACT_WITH_PROJECT_IDENTITY",
+    "IMPLEMENT_ONLY_INSIDE_APPROVED_PROJECT_SCOPE"
+  ],
+  "entry_rules": {
+    "priority_reference_modules_are_starting_hypotheses": true,
+    "profile_and_matrix_are_current_adoption_state": true,
+    "no_bulk_install": true,
+    "no_forced_generalization": true,
+    "project_canon_overrides_base_reference": true,
+    "runtime_change_requires_project_authority": true,
+    "open_or_concurrent_work_requires_fresh_owner_and_path_check": true,
+    "new_module_requires_unresolved_project_bottleneck": true
+  },
+  "reuse_modes": [
+    "REUSE_EXISTING_PROJECT_IMPLEMENTATION",
+    "VENDOR_VERIFIED_BASE_REFERENCE",
+    "ADAPT_WITH_THIN_PROJECT_ADAPTER",
+    "EXTRACT_PROJECT_ONLY_MODULE",
+    "BASE_PROMOTION_CANDIDATE",
+    "NO_REUSE"
+  ],
+  "exit_handoff_fields": [
+    "selected_modules",
+    "reuse_mode",
+    "project_paths_changed",
+    "verification_evidence",
+    "evidence_ceiling",
+    "rollback",
+    "project_only_lessons",
+    "base_promotion_candidates"
+  ],
+  "promotion_rule": {
+    "project_only_default": true,
+    "base_promotion_requires": [
+      "REPEATED_VALUE_ACROSS_DISTINCT_PROJECTS_OR_STRONG_SHARED_CONTRACT",
+      "PROJECT_IDENTITY_NOT_FLATTENED",
+      "NARROW_STABLE_INTERFACE",
+      "RIGHTS_LICENSE_SECURITY_AND_COST_BOUNDARY_CLEAR",
+      "REAL_CONSUMER_AND_REGRESSION_EVIDENCE"
+    ],
+    "promotion_is_not_automatic": true
+  },
+  "authority_boundary": [
+    "BASE_HANDOFF_IS_NOT_PROJECT_CANON",
+    "PRIORITY_REFERENCE_IS_NOT_AUTO_INSTALL",
+    "MODULE_CONTRACT_IS_NOT_RUNTIME_PROOF",
+    "VENDORED_REFERENCE_IS_NOT_PROJECT_IDENTITY",
+    "PROJECT_ADAPTER_VERIFIED_IS_NOT_PLAYER_EXPERIENCE_PASS"
+  ],
+  "projects": {
+    "COC_FICTION": {
+      "repository": "alsdmlals4-eng/Coc-Fiction",
+      "profile": "docs/knowledge/game-development/reuse/adoption/profiles/COC_FICTION.json",
+      "priority_reference_modules": [
+        "RM-NAR-001",
+        "RM-NAR-002",
+        "RM-NAR-003",
+        "RM-NAR-004",
+        "RM-SYS-005",
+        "RM-SYS-006",
+        "RM-VIS-003",
+        "RM-VIS-005",
+        "RM-WORK-001",
+        "RM-WORK-002"
+      ],
+      "project_owned_identity": "Canon, source provenance, continuity, scene revision, and fiction publication authority remain Coc-Fiction-owned.",
+      "next_project_work_action": "Read current fiction canon and existing validators first; use the listed modules only when a concrete continuity, content assembly, visual-material, or workflow bottleneck remains.",
+      "do_not_flatten_project_identity": true
+    },
+    "GRIMOIRE": {
+      "repository": "alsdmlals4-eng/GRIMOIRE-",
+      "profile": "docs/knowledge/game-development/reuse/adoption/profiles/GRIMOIRE.json",
+      "priority_reference_modules": [
+        "RM-SYS-017",
+        "RM-SYS-002",
+        "RM-SYS-005",
+        "RM-SYS-007",
+        "RM-SYS-009",
+        "RM-SYS-011",
+        "RM-NAR-001",
+        "RM-NAR-002",
+        "RM-NAR-003",
+        "RM-VIS-001",
+        "RM-VIS-002",
+        "RM-VIS-003",
+        "RM-VIS-004",
+        "RM-VIS-005"
+      ],
+      "project_owned_identity": "FIVE_POINT_STAR, character-to-circuit-to-spell composition, explicit commit rules, lesson pacing, and field-practice experience remain GRIMOIRE-owned.",
+      "next_project_work_action": "Map the approved lesson or field-practice task to existing composition, phase, event, card, narrative, and visual modules before extracting any new bounded helper.",
+      "do_not_flatten_project_identity": true
+    },
+    "SWITCHY": {
+      "repository": "alsdmlals4-eng/Switchy-Express-Cargo-Puzzle",
+      "profile": "docs/knowledge/game-development/reuse/adoption/profiles/SWITCHY.json",
+      "priority_reference_modules": [
+        "RM-SYS-001",
+        "RM-SYS-016",
+        "RM-SYS-002",
+        "RM-SYS-004",
+        "RM-TOOL-002",
+        "RM-VIS-001",
+        "RM-VIS-002"
+      ],
+      "project_owned_identity": "LIFO cargo routing, switch semantics, sealed layout, BUILD/RUN transition, and logistics puzzle readability remain Switchy-owned.",
+      "next_project_work_action": "After current Switchy work is safely owned or completed, re-read main and reuse the grid, route-stack, phase, explainability, replay, UI, and symbol contracts through thin project adapters.",
+      "do_not_flatten_project_identity": true
+    },
+    "TETRIS": {
+      "repository": "alsdmlals4-eng/Tetris",
+      "profile": "docs/knowledge/game-development/reuse/adoption/profiles/TETRIS.json",
+      "priority_reference_modules": [
+        "RM-SYS-013",
+        "RM-SYS-014",
+        "RM-SYS-001",
+        "RM-SYS-002",
+        "RM-SYS-011",
+        "RM-TOOL-002",
+        "RM-TOOL-003",
+        "RM-VIS-001",
+        "RM-VIS-002"
+      ],
+      "project_owned_identity": "Line/Chain dual-mode timing, player-controlled pause/lock flow, combat clock, skill tier, and original presentation remain project-owned; Tetris trade dress is excluded.",
+      "next_project_work_action": "After current PR work is completed, use abstract falling-block, chain, grid, phase, card-effect, replay, balance, UI, and symbol contracts without copying protected names, visuals, audio, or trade dress.",
+      "do_not_flatten_project_identity": true
+    },
+    "URBAN_LEGEND": {
+      "repository": "alsdmlals4-eng/urban-legend",
+      "profile": "docs/knowledge/game-development/reuse/adoption/profiles/URBAN_LEGEND.json",
+      "priority_reference_modules": [
+        "RM-SYS-005",
+        "RM-SYS-006",
+        "RM-SYS-008",
+        "RM-SYS-009",
+        "RM-SYS-002",
+        "RM-SYS-003",
+        "RM-SYS-004",
+        "RM-SYS-010",
+        "RM-NAR-001",
+        "RM-NAR-002",
+        "RM-NAR-003",
+        "RM-VIS-003",
+        "RM-VIS-005"
+      ],
+      "project_owned_identity": "Schedule, anomaly investigation, delayed consequences, companion response, evidence causality, and modern occult tone remain Urban Legend-owned.",
+      "next_project_work_action": "Preserve the verified project-adapted validator, then compare each approved event, schedule, research, companion, collection, narrative, background, or portrait task with the listed modules before extending locally.",
+      "do_not_flatten_project_identity": true
+    },
+    "NINJA_SURVIVAL": {
+      "repository": "alsdmlals4-eng/ninja-survival-godot",
+      "profile": "docs/knowledge/game-development/reuse/adoption/profiles/NINJA_SURVIVAL.json",
+      "priority_reference_modules": [
+        "RM-SYS-001",
+        "RM-SYS-012",
+        "RM-SYS-002",
+        "RM-SYS-003",
+        "RM-SYS-004",
+        "RM-SYS-007",
+        "RM-SYS-011",
+        "RM-TOOL-002",
+        "RM-TOOL-003",
+        "RM-VIS-001",
+        "RM-VIS-002",
+        "RM-VIS-004"
+      ],
+      "project_owned_identity": "Backpack placement, recipe combination, survivor auto-combat, REST workbench, reward cadence, and ninja fantasy remain Ninja Survival-owned.",
+      "next_project_work_action": "For each approved Phase-C task, select only the grid, survivor, phase, draft, explainability, wave, card, replay, balance, UI, symbol, or telegraph contract actually consumed by that task.",
+      "do_not_flatten_project_identity": true
+    },
+    "MY_LITTLE_BOAT": {
+      "repository": "alsdmlals4-eng/MylittleBoat",
+      "profile": "docs/knowledge/game-development/reuse/adoption/profiles/MY_LITTLE_BOAT.json",
+      "priority_reference_modules": [
+        "RM-SYS-020",
+        "RM-SYS-002",
+        "RM-SYS-005",
+        "RM-SYS-009",
+        "RM-SYS-010",
+        "RM-NAR-001",
+        "RM-VIS-001",
+        "RM-VIS-002",
+        "RM-VIS-003"
+      ],
+      "project_owned_identity": "Calm short-session discovery, photos, bottle letters, collection memory, companion reactions, and noncompetitive emotional tone remain My Little Boat-owned.",
+      "next_project_work_action": "Keep runtime helpers deferred until My Little Boat work resumes; then re-read main and use only the calm-session, phase, event, companion, collection, narrative, UI, symbol, or background module needed by the approved task.",
+      "do_not_flatten_project_identity": true
+    },
+    "BLACKSMITH": {
+      "repository": "alsdmlals4-eng/Blacksmith",
+      "profile": "docs/knowledge/game-development/reuse/adoption/profiles/BLACKSMITH.json",
+      "priority_reference_modules": [
+        "RM-SYS-019",
+        "RM-SYS-004",
+        "RM-SYS-006",
+        "RM-SYS-010",
+        "RM-TOOL-002",
+        "RM-TOOL-003",
+        "RM-VIS-001",
+        "RM-VIS-002"
+      ],
+      "project_owned_identity": "Enhancement tension, durability and destruction, push-or-stop judgment, item lifecycle, DDD structure, precision crafting, and customer lifecycle remain Blacksmith-owned.",
+      "next_project_work_action": "Only inside an approved Blacksmith product namespace, compare enhancement, explainability, delayed consequence, collection history, replay, balance, UI, and symbol modules before building or adapting a bounded implementation.",
+      "do_not_flatten_project_identity": true
+    },
+    "TEN_PACES": {
+      "repository": "alsdmlals4-eng/Ten-Paces-Hidden-Moves",
+      "profile": "docs/knowledge/game-development/reuse/adoption/profiles/TEN_PACES.json",
+      "priority_reference_modules": [
+        "RM-SYS-015",
+        "RM-SYS-004",
+        "RM-TOOL-002",
+        "RM-VIS-001",
+        "RM-VIS-002",
+        "RM-VIS-004"
+      ],
+      "project_owned_identity": "Hidden simultaneous planning, ten-pace resolution, public-information AI, information boundaries, and explainable replay remain Ten Paces-owned.",
+      "next_project_work_action": "After planning main stabilizes and an approved BUILD package exists, reuse hidden-plan, explainability, deterministic replay, UI, symbol, and telegraph contracts without exposing protected hidden information.",
+      "do_not_flatten_project_identity": true
+    },
+    "OMENWARD": {
+      "repository": "alsdmlals4-eng/omenward",
+      "profile": "docs/knowledge/game-development/reuse/adoption/profiles/OMENWARD.json",
+      "priority_reference_modules": [
+        "RM-SYS-018",
+        "RM-SYS-002",
+        "RM-SYS-003",
+        "RM-SYS-004",
+        "RM-SYS-007",
+        "RM-TOOL-002",
+        "RM-TOOL-003",
+        "RM-VIS-001",
+        "RM-VIS-002",
+        "RM-VIS-004"
+      ],
+      "project_owned_identity": "Player-constructed probability, TokenSource semantics, three omen wheels, irreversible lane commitment, pressure language, and causal review remain Omenward-owned.",
+      "next_project_work_action": "Keep the verified RM-SYS-003 sidecar isolated until an approved product task connects a consumer; then read current canon and relevant Issue #199 authority before using roulette, phase, draft, explainability, wave, replay, balance, UI, symbol, or telegraph contracts.",
+      "do_not_flatten_project_identity": true
+    }
+  },
+  "workstream_closure": {
+    "state": "CROSS_PROJECT_PREINSTALLATION_CLOSED",
+    "remaining_runtime_rollout": "PROJECT_WORK_OWNED",
+    "base_role": "REFERENCE_REGISTRY_ADOPTION_PROFILE_AND_LEARNING_HANDOFF",
+    "project_repository_changes_in_this_handoff": 0
+  }
+}
