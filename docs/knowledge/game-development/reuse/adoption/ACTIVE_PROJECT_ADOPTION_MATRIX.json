@@ -179,7 +179,7 @@
     },
     "OMENWARD": {
       "repository": "alsdmlals4-eng/omenward",
-      "status": "DEFERRED_OPEN_PR",
+      "status": "ADOPTED_AND_VERIFIED",
       "modules": {
         "RM-TOOL-001": "planned",
         "RM-SYS-001": "not_applicable",
@@ -187,16 +187,22 @@
         "RM-VIS-001": "planned",
         "RM-VIS-002": "planned"
       },
-      "runtime_rollout_policy": {
-        "state": "DEFER_TO_PROJECT_WORK",
-        "authority": "USER_APPROVED",
-        "decided_on": "2026-08-20",
-        "modules": ["RM-SYS-003"],
-        "project_files_changed": false,
-        "merge_action": "NONE"
+      "manifest_installation": {
+        "state": "INSTALLED_ON_MAIN",
+        "merge_commit": "67487c932cc883db95da7bc852f4eb33883f0052",
+        "verification": "Base v9 adoption 32364532263 SUCCESS; Omenward Core Godot 32364532205/96411071736 SUCCESS",
+        "runtime_validation": "GODOT_4_7_1_IMPORT_ALL_HEADLESS_RUNTIME_SMOKE_SUCCESS_SIDECAR_ONLY"
       },
-      "blocker": "open draft PR #197 remains read-only, and runtime reuse work is intentionally deferred by user until the next Omenward project work session",
-      "revisit": "when Omenward project work resumes, resolve or complete PR #197 under project authority, re-read current main, and only then decide whether RM-SYS-003 should be merged"
+      "project_adoption_mode": "VENDORED_REFERENCE_WITH_PROJECT_ADAPTER",
+      "evidence": "PR #198 squash-merged the Base RM-SYS-003 reference engine, an Omenward-specific exact-three adapter, project manifest and permanent regression coverage under vendor/base-reuse; stale PR #197 was closed unmerged as superseded",
+      "evidence_ceiling": [
+        "PRODUCTION_CONSUMER_NOT_CONNECTED",
+        "FULL_REPOSITORY_CONTRACT_GREEN_NOT_CLAIMED",
+        "CURRENT_HUMAN_PLAYER_EVIDENCE_NOT_RUN"
+      ],
+      "followup_issue": 199,
+      "blocker": "production consumer integration remains intentionally unrun; Issue #199 tracks unrelated reopened-v4.7 versus legacy-validator baseline drift",
+      "revisit": "connect the adapter to production only inside an approved Omenward product task after reading current canon and resolving any relevant Issue #199 authority conflict"
     }
   }
 }
