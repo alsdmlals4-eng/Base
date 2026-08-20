@@ -122,8 +122,17 @@
         "verification": "STATIC_PROFILE_BLOB_MATCH",
         "runtime_validation": "NOT_RUN_NO_PROJECT_CI"
       },
-      "evidence": "project manifest blob SHA a449498ad9bcc53a20690d4e6f53279d6cc78e64 matched the Base MY_LITTLE_BOAT profile blob exactly before merge",
-      "revisit": "vendor semantic UI/symbol sidecars only with a project Godot verification path; enable validator only if structured-data cross-reference need exists"
+      "runtime_rollout_policy": {
+        "state": "DEFER_TO_PROJECT_WORK",
+        "authority": "USER_APPROVED",
+        "decided_on": "2026-08-20",
+        "modules": ["RM-VIS-001", "RM-VIS-002"],
+        "project_files_changed": false,
+        "merge_action": "NONE"
+      },
+      "evidence": "project manifest blob SHA a449498ad9bcc53a20690d4e6f53279d6cc78e64 matched the Base MY_LITTLE_BOAT profile blob exactly before merge; runtime helper vendoring remains intentionally unrun",
+      "blocker": "runtime helper vendoring and adapter work are intentionally deferred by user until the next My Little Boat project work session",
+      "revisit": "when My Little Boat project work resumes, re-read current main and run a Godot 4.7 verification path before vendoring RM-VIS-001 and RM-VIS-002"
     },
     "BLACKSMITH": {
       "repository": "alsdmlals4-eng/Blacksmith",
@@ -178,8 +187,16 @@
         "RM-VIS-001": "planned",
         "RM-VIS-002": "planned"
       },
-      "blocker": "open PR #197 is read-only",
-      "revisit": "after PR #197 is completed and current main/control-plane state is re-read"
+      "runtime_rollout_policy": {
+        "state": "DEFER_TO_PROJECT_WORK",
+        "authority": "USER_APPROVED",
+        "decided_on": "2026-08-20",
+        "modules": ["RM-SYS-003"],
+        "project_files_changed": false,
+        "merge_action": "NONE"
+      },
+      "blocker": "open draft PR #197 remains read-only, and runtime reuse work is intentionally deferred by user until the next Omenward project work session",
+      "revisit": "when Omenward project work resumes, resolve or complete PR #197 under project authority, re-read current main, and only then decide whether RM-SYS-003 should be merged"
     }
   }
 }
