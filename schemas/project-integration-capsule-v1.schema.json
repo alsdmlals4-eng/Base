@@ -1,0 +1,315 @@
+{
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/project-integration-capsule-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Integration Capsule v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_role",
+    "authority",
+    "status",
+    "project",
+    "decision",
+    "authority_refs",
+    "base_adapter",
+    "notion",
+    "codex",
+    "godot",
+    "change_boundary",
+    "cost_surface",
+    "acceptance",
+    "evidence",
+    "rollback",
+    "reality_gate",
+    "evidence_ceiling"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "PROJECT_INTEGRATION_CAPSULE"},
+    "authority": {"const": "READ_ONLY_BINDING_NOT_CANON"},
+    "status": {
+      "enum": ["TEMPLATE_NOT_CONFIGURED", "READ_ONLY_BINDING_VERIFIED", "BLOCKED_UNVERIFIED"]
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "project_id",
+        "repository",
+        "base_branch",
+        "worktree_branch",
+        "base_sha",
+        "result_sha",
+        "worktree_relative_root"
+      ],
+      "properties": {
+        "project_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "repository": {"type": "string", "pattern": "^[^/\\s]+/[^/\\s]+$"},
+        "base_branch": {"type": "string", "pattern": "^[A-Za-z0-9._/-]+$"},
+        "worktree_branch": {"type": "string", "pattern": "^[A-Za-z0-9._/-]+$"},
+        "base_sha": {"$ref": "#/$defs/sha40"},
+        "result_sha": {"$ref": "#/$defs/sha40"},
+        "worktree_relative_root": {"$ref": "#/$defs/relativePath"}
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision_id", "approval_status", "approval_ref", "decision_record_path"],
+      "properties": {
+        "decision_id": {"type": "string", "minLength": 1},
+        "approval_status": {"enum": ["NOT_CONFIGURED", "APPROVED"]},
+        "approval_ref": {"type": "string", "minLength": 1},
+        "decision_record_path": {"$ref": "#/$defs/relativePath"}
+      }
+    },
+    "authority_refs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workspace", "notion_isolation", "gpt_codex", "godot"],
+      "properties": {
+        "workspace": {"const": "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json"},
+        "notion_isolation": {"const": "docs/operations/NOTION_PROJECT_ISOLATION_AND_CORE_SYSTEM_CONTRACT.md"},
+        "gpt_codex": {"const": "docs/GPT_CODEX_WORKFLOW_POLICY.md"},
+        "godot": {"const": "docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md"}
+      }
+    },
+    "base_adapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"const": "skills/PROJECT_BASE_ADAPTER.json"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "notion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "access_mode",
+        "project_relation_count",
+        "project_key",
+        "record_key",
+        "revision",
+        "last_edited",
+        "readback_status",
+        "existing_page_write"
+      ],
+      "properties": {
+        "access_mode": {"const": "SEARCH_FETCH_ONLY"},
+        "project_relation_count": {"type": "integer", "minimum": 0, "maximum": 1},
+        "project_key": {"type": "string", "minLength": 1},
+        "record_key": {"type": "string", "minLength": 1},
+        "revision": {"type": "integer", "minimum": 0},
+        "last_edited": {"type": ["string", "null"]},
+        "readback_status": {"enum": ["NOT_RUN", "PASS", "FAIL", "CONFLICT"]},
+        "existing_page_write": {"const": "FORBIDDEN"}
+      }
+    },
+    "codex": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workspace_access",
+        "godot_direct_write",
+        "mutation_authority",
+        "external_connectors_during_mutation"
+      ],
+      "properties": {
+        "workspace_access": {"const": "LOCAL_WORKTREE_NATIVE"},
+        "godot_direct_write": {"enum": ["FORBIDDEN", "ALLOWED"]},
+        "mutation_authority": {"const": "NONE_READ_ONLY"},
+        "external_connectors_during_mutation": {"const": "DISABLED"}
+      }
+    },
+    "godot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "engine",
+        "authoring_provider",
+        "writer_authority",
+        "adoption_record_path",
+        "adoption_record_sha256",
+        "network_mode",
+        "operation_level",
+        "editor_project_root",
+        "project_godot_sha256",
+        "direct_filesystem_write_enforcement"
+      ],
+      "properties": {
+        "engine": {"const": "GODOT"},
+        "authoring_provider": {"const": "hi-godot/godot-ai"},
+        "writer_authority": {"const": "SOLE_PERSISTENT_GODOT_AUTHORING_AUTHORITY"},
+        "adoption_record_path": {"$ref": "#/$defs/relativePath"},
+        "adoption_record_sha256": {"$ref": "#/$defs/sha256"},
+        "network_mode": {"const": "LOOPBACK_ONLY"},
+        "operation_level": {"const": "L0_OBSERVE"},
+        "editor_project_root": {"$ref": "#/$defs/relativePath"},
+        "project_godot_sha256": {"$ref": "#/$defs/sha256"},
+        "direct_filesystem_write_enforcement": {"enum": ["NOT_RUN", "PASS", "FAIL"]}
+      }
+    },
+    "change_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["write_allowlist", "codex_forbidden_godot_paths", "unexpected_tracked_diff"],
+      "properties": {
+        "write_allowlist": {"type": "array", "maxItems": 0},
+        "codex_forbidden_godot_paths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "unexpected_tracked_diff": {"enum": ["NOT_RUN", "PASS", "FAIL"]}
+      }
+    },
+    "cost_surface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["boundary", "allowed_service_classes", "prohibited_metered_services", "status"],
+      "properties": {
+        "boundary": {"const": "ZERO_INCREMENTAL_COST_REQUIRED"},
+        "allowed_service_classes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "GPT_PRO",
+              "NOTION_FREE",
+              "LOCAL_OPEN_SOURCE_TOOLS",
+              "GITHUB_FREE_OR_INCLUDED"
+            ]
+          }
+        },
+        "prohibited_metered_services": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "OPENAI_API_PAYG",
+              "PAID_CI_RUNNER",
+              "PAID_NOTION_AI",
+              "PAID_REMOTE_HOSTING"
+            ]
+          }
+        },
+        "status": {
+          "enum": [
+            "POLICY_NOT_ADOPTED",
+            "DECLARED_ZERO_INCREMENTAL_COST_POLICY"
+          ]
+        }
+      }
+    },
+    "acceptance": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["acceptance_id", "statement", "status", "evidence_ids"],
+        "properties": {
+          "acceptance_id": {"const": "ACC_READ_ONLY_BINDING"},
+          "statement": {
+            "const": "Bind one exact project across Git, Notion, and Godot without product-file mutation."
+          },
+          "status": {"enum": ["NOT_RUN", "PASS", "FAIL", "BLOCKED_UNVERIFIED"]},
+          "evidence_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "maxItems": 2,
+            "items": {
+              "enum": ["EVID_NOTION_READBACK", "EVID_WRITER_EXCLUSIVITY"]
+            }
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "maxItems": 2,
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["evidence_id", "level", "kind", "path", "sha256"],
+            "properties": {
+              "evidence_id": {"const": "EVID_NOTION_READBACK"},
+              "level": {"const": "E3_RUNTIME"},
+              "kind": {"const": "NOTION_READBACK"},
+              "path": {"$ref": "#/$defs/relativePath"},
+              "sha256": {"$ref": "#/$defs/sha256"}
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["evidence_id", "level", "kind", "path", "sha256"],
+            "properties": {
+              "evidence_id": {"const": "EVID_WRITER_EXCLUSIVITY"},
+              "level": {"const": "E2_TEST"},
+              "kind": {"const": "WRITER_EXCLUSIVITY_CANARY"},
+              "path": {"$ref": "#/$defs/relativePath"},
+              "sha256": {"$ref": "#/$defs/sha256"}
+            }
+          }
+        ]
+      }
+    },
+    "rollback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rollback_ref", "procedure", "drill_status"],
+      "properties": {
+        "rollback_ref": {"$ref": "#/$defs/sha40"},
+        "procedure": {"type": "string", "minLength": 1},
+        "drill_status": {"enum": ["NOT_RUN", "PASS", "FAIL", "NOT_APPLICABLE"]}
+      }
+    },
+    "reality_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exact_head",
+        "notion_readback",
+        "godot_import",
+        "writer_exclusivity",
+        "rollback_drill",
+        "final_status"
+      ],
+      "properties": {
+        "exact_head": {"$ref": "#/$defs/gateStatus"},
+        "notion_readback": {"$ref": "#/$defs/gateStatus"},
+        "godot_import": {"$ref": "#/$defs/gateStatus"},
+        "writer_exclusivity": {"$ref": "#/$defs/gateStatus"},
+        "rollback_drill": {"$ref": "#/$defs/gateStatus"},
+        "final_status": {"enum": ["READ_ONLY_BINDING_VERIFIED", "BLOCKED_UNVERIFIED"]}
+      }
+    },
+    "evidence_ceiling": {
+      "enum": [
+        "POLICY_AND_STATIC_CONTRACT_ONLY",
+        "LOCAL_RECEIPT_BINDING_ONLY"
+      ]
+    }
+  },
+  "$defs": {
+    "sha40": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!.*[\\u0000-\\u001f\\u007f])(?!/)(?!.*(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$))(?![A-Za-z]:[\\\\/]).+$"
+    },
+    "gateStatus": {"enum": ["NOT_RUN", "PASS", "FAIL", "NOT_APPLICABLE", "BLOCKED_UNVERIFIED"]}
+  }
+}

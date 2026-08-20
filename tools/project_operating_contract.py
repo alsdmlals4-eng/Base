@@ -13,7 +13,7 @@ import os
 import unicodedata
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Callable, Iterable
 
 from jsonschema import Draft202012Validator
 
@@ -448,8 +448,25 @@ def _clean_tracked_blob_bytes(
 
 
 def _release_lock_contract(
-    adapter: dict[str, Any], base_repository: Path
+    adapter: dict[str, Any],
+    base_repository: Path,
+    *,
+    git_runner: Callable[..., subprocess.CompletedProcess[str]] | None = None,
+    git_show_bytes: Callable[[Path, str, str], bytes | None] | None = None,
 ) -> tuple[list[str], dict[str, Any] | None, bytes | None]:
+    run_git = git_runner or _git
+    show_bytes = git_show_bytes or _git_show_bytes
+
+    def commit_exists(commit: str) -> bool:
+        return run_git(
+            base_repository, "cat-file", "-e", f"{commit}^{{commit}}"
+        ).returncode == 0
+
+    def is_ancestor(ancestor: str, descendant: str) -> bool:
+        return run_git(
+            base_repository, "merge-base", "--is-ancestor", ancestor, descendant
+        ).returncode == 0
+
     errors: list[str] = []
     base_release = adapter["base_release"]
     version = base_release.get("version")
@@ -486,14 +503,14 @@ def _release_lock_contract(
                 f"expected {expected!r}, got {base_release.get(field)!r}"
             )
     if isinstance(release_pin, str) and isinstance(evidence_pin, str):
-        if not _commit_exists(base_repository, release_pin):
+        if not commit_exists(release_pin):
             errors.append(f"Base v{version} release lock pin is absent: {release_pin}")
-        if not _commit_exists(base_repository, evidence_pin):
+        if not commit_exists(evidence_pin):
             errors.append(f"Base v{version} release lock evidence pin is absent: {evidence_pin}")
         if (
-            _commit_exists(base_repository, release_pin)
-            and _commit_exists(base_repository, evidence_pin)
-            and not _is_ancestor(base_repository, release_pin, evidence_pin)
+            commit_exists(release_pin)
+            and commit_exists(evidence_pin)
+            and not is_ancestor(release_pin, evidence_pin)
         ):
             errors.append(f"Base v{version} release lock pin is not an ancestor of its evidence pin")
     registry_lock = lock.get("candidate_registry")
@@ -510,7 +527,7 @@ def _release_lock_contract(
             if adapter_registry != registry_lock:
                 errors.append(f"Adapter pinned Base Registry path/hash does not match Base v{version} release lock")
             if isinstance(evidence_pin, str):
-                pinned_registry = _git_show_bytes(base_repository, evidence_pin, path)
+                pinned_registry = show_bytes(base_repository, evidence_pin, path)
                 if pinned_registry is None:
                     errors.append(f"Pinned Base Registry blob is unavailable: {evidence_pin}:{path}")
                 elif sha256_bytes(pinned_registry) != expected_hash:

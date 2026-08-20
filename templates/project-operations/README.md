@@ -43,6 +43,7 @@ Google Sheets
 | `DESIGN_DOCUMENT_REGISTRY.json` | 구조화 설계 문서 registry |
 | `SKILL_EXECUTION_REPORT.md` | 실제 Work Mode/Skill/Mode 사용 증거 |
 | `LEGACY_ARTIFACT_RECONCILIATION.md` | 폐기·중복·고유 legacy 자료 이관 판정 |
+| `PROJECT_INTEGRATION_CAPSULE.json` | Git·Notion·Godot·비용·Evidence의 동일 프로젝트 read-only binding; 정본·writer가 아님 |
 | `PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md` | **COMPATIBILITY_ONLY legacy migration aid**; 신규 Sheet 설계 계약이 아님 |
 
 ## Vertical Slice 실행 진입점
@@ -57,6 +58,7 @@ Google Sheets
 → 저장소 루트의 [기획서] design root 확인
 → 정확한 Project Notion workspace와 Project relation 확인
 → templates/project-operations에서 필요한 최소 템플릿만 프로젝트에 적용
+→ Git·Notion·Godot을 함께 읽어야 할 때만 PROJECT_INTEGRATION_CAPSULE read-only binding 검사
 → CURRENT_CONFIRMED_DECISIONS / ACTIVE_CONTEXT / Documentation Map 연결
 → 기존 legacy Sheet·HTML·Figma·custom Tool 자료가 있으면 UNIQUE/DUPLICATE/OBSOLETE 판정
 → UNIQUE만 현재 Notion/Repository owner로 이관
@@ -100,3 +102,4 @@ Base 저장소 자체를 콜드 스타트할 때 이 디렉터리의 예시/빈 
 - Google Sheets는 `COMPATIBILITY_ONLY`이며 신규 입력·active sync·완료 판정에 필요하지 않다.
 - legacy `UNIQUE` material은 현행 owner 이관·readback/Test·consumer 확인 없이 삭제하지 않는다.
 - 실제로 수행하지 않은 runtime/사용자 검증은 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 남긴다.
+- `PROJECT_INTEGRATION_CAPSULE`은 `READ_ONLY_BINDING_NOT_CANON`이며 Notion write나 두 번째 Godot writer를 허용하지 않는다.
