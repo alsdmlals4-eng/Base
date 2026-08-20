@@ -1,6 +1,7 @@
 {
   "schema_version": 1,
   "base_reference_commit": "8553678f70e22f193a2336b591f677dcfa5a8965",
+  "project_work_handoff": "docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json",
   "projects": {
     "COC_FICTION": {
       "repository": "alsdmlals4-eng/Coc-Fiction",
