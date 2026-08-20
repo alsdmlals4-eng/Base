@@ -7,7 +7,7 @@
     "RM-SYS-003": {
       "state": "enabled",
       "source": "templates/reuse-modules/godot/candidate_draft_weight_engine.gd",
-      "destination": "scripts/reuse/candidate_draft_weight_engine.gd"
+      "destination": "vendor/base-reuse/candidate_draft_weight_engine.gd"
     },
     "RM-VIS-001": {"state": "planned"},
     "RM-VIS-002": {"state": "planned"}
