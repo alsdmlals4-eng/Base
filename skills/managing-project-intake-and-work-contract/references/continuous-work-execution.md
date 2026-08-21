@@ -2,7 +2,7 @@
 
 ## 목적
 
-`[연속작업] 진행해`는 사용자가 현재 채팅의 **현재 승인된 작업 계약** 안에서 중간 승인 대기 없이 다음 미완료 작업까지 계속 수행하라고 명시적으로 선택하는 opt-in 트리거다.
+`CONTINUATION_INTENT_ALIASES`는 `[연속작업] 진행해`뿐 아니라 **이미 승인된 동일 작업 계약**에 대한 `진행해`, `계속해`, `남은 작업 진행` 같은 명확한 계속 실행 의도를 인식한다. 유효한 approval reference와 함께 있을 때만 `APPROVED_CONTRACT_CONTINUATION`으로 중간 routine approval 대기 없이 다음 미완료 작업까지 수행한다.
 
 이 계약은 새로운 Skill이나 Work Mode가 아니다. `CONTINUOUS_WORK_ACTIVE` / `CONTINUOUS_WORK_INACTIVE`라는 실행 상태를 기존 intake 계약에 얹으며, `PLAN / BUILD / REVIEW` Work Mode를 대체하지 않는다.
 
@@ -11,17 +11,19 @@
 ## 활성화와 범위
 
 ```text
-사용자 입력에 [연속작업] 진행해 존재
-→ 현재 승인된 작업 계약 확인
+사용자 입력에 CONTINUATION_INTENT_ALIASES 존재
+→ 현재 승인된 동일 작업 계약과 approval reference 확인
+→ APPROVED_CONTRACT_CONTINUATION
 → CONTINUOUS_WORK_ACTIVE
 
-트리거가 없는 일반 요청
+유효한 승인 계약 또는 계속 실행 의도 트리거가 없는 일반 요청
 → CONTINUOUS_WORK_INACTIVE
 → 기존 승인·Grill Me 계약 유지
 ```
 
 - 동일 메시지에 새 작업 범위가 함께 있으면 먼저 intake의 `route → first-prompt → contract → clarify`로 계약을 닫고, 승인된 범위에서만 활성화한다.
-- 이미 진행 중인 작업에서 `[연속작업] 진행해`가 입력되면 **현재 승인된 작업 계약**의 남은 범위에 적용한다.
+- 이미 진행 중인 작업에서 `[연속작업] 진행해`, `진행해`, `계속해`, `남은 작업 진행`이 입력되면 **현재 승인된 작업 계약**의 남은 범위에 적용한다.
+- 별칭은 자연어를 넓게 추측하는 권한이 아니다. approval reference가 없거나 새 Goal·범위가 섞이면 `CONTINUOUS_WORK_INACTIVE`를 유지하고 intake 계약을 먼저 닫는다.
 - 이 상태는 채팅 전체에 영구 권한을 부여하지 않는다. 계약 완료, 사용자 중지, 진짜 전역 차단 또는 범위 변경에서 종료한다.
 - 다음 작업은 승인된 계약의 완료 기준에서 파생된 미완료 작업만 선택한다. 스스로 새 Goal을 만들거나 범위 확대를 하지 않는다.
 
@@ -294,9 +296,15 @@ executor handoff는 실제로 연결·호출 가능한 실행 환경이 있을 �
 
 연속작업에서 merge는 종료 신호가 아니다. 현재 승인된 계약이 PR/merge 이후 readback·후속 검증·교훈 정리까지 포함하면 다음을 수행한다.
 
+이 단계는 `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`를 소비한다. 새 main의 exact SHA에서 전체 범위를 다시 공격하고, 유효 finding은 `POSTMERGE_CORRECTION_REQUIRED`로 새 Branch/PR에 교정한다. 적용 가능한 Notion 사람용 정본은 GitHub 증거 뒤에만 갱신하며, 두 목적지를 다시 읽은 `PROGRESS_READBACK_REQUIRED` 없이는 완료율을 확정하지 않는다.
+
 ```text
 merge
 → merged main SHA / changed canon / generated consumer readback
+→ full-scope adversarial review
+→ required correction on new latest-main branch/PR when findings exist
+→ applicable Notion current-state update after GitHub evidence
+→ GitHub + Notion destination readback
 → postmerge regression evidence
 → acceptance criteria를 현재 main 기준으로 다시 대조
 → REQUIRED_WORK_REMAINING 계산

@@ -23,10 +23,17 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 ## 2. 작업 진입 게이트
 
 - L1 이상 작업은 최신 main, 현재 결정, 분야 정본, 같은 Goal의 열린·최근 병합 PR, 실제 구현을 비교해 중복·누락·충돌·구형 참조·미반영을 먼저 판정한다.
-- **`OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM`:** `open/draft/ready` PR 상태는 backlog metadata이지 다른 작업자가 현재 활동 중이라는 증거가 아니다. 실제 동시 작업자 보호는 사용자 지시, current session/automation owner, Resource Lock 등 `current owner evidence`가 있을 때만 `ACTIVE_OTHER_WORKER`로 적용한다. 사용자가 `CURRENT_COORDINATOR_CHAT` 하나만 활성이라고 확인하면 unresolved open PR은 최신 `main`과 Goal을 재검증해 `COORDINATOR_TAKEOVER / READY_TO_FINISH / SUPERSEDED_DUPLICATE / STALE_BACKLOG / BLOCKED_EXTERNAL`로 분류하고 현재 채팅에서 마무리할 수 있다.
+- **`DEEP_WORK_PREANSWER_GATE` / `REQUIRED_EVIDENCE_BEFORE_FINAL`:** L1 이상 또는 사용자가 조사·벤치마킹·검토·구현·검증을 요청한 작업은 저장소/현재 정본 조사, 필요한 인터넷·외부 원출처 조사, 최소 3개 실질 대안 비교, 구현 현실성 확인, 요구된 적대적 검토와 실제 검증을 **수행한 뒤에만** substantive final answer를 낸다. 계획을 말하거나 빠른 초안을 내는 것은 이 Gate의 완료가 아니다.
+- **`NOT_RUN_MANDATORY_GATE_BLOCKS_COMPLETION`:** 필수 조사·벤치마킹·테스트·검토가 `NOT_RUN`이면 완료 답변을 금지한다. 실행 불가능한 항목은 `BLOCKED_UNVERIFIED`와 필요한 해제 조건으로만 보고한다.
+- **`INTERMEDIATE_REPORT_SUPPRESSION_IS_NOT_WORK_REDUCTION`:** 사용자가 중간보고를 줄이거나 한 번에 끝내 달라고 해도 사용자에게 보이는 설명만 줄인다. 실제 조사·도구 호출·대안 비교·검토·테스트·readback은 생략하거나 뒤로 미루지 않는다.
+- **`GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY` / `REASONING_EFFORT_IS_NOT_WORK_EVIDENCE`:** GPT가 주 기획자·검수자라는 뜻은 채팅 문장만 작성한다는 뜻이 아니다. `매우 높음` 같은 추론 강도는 사고 자원일 뿐 저장소 readback, 인터넷 원출처, 실제 Tool 호출, 실행·테스트·렌더 증거를 대신하지 않는다.
+- **`REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF`:** 별도 Codex 인계는 GPT가 현재 도구로 직접 수행할 수 없고 filesystem/runtime/build 권위가 필요할 때만 선택적이다. 반대로 현재 요청의 필수 evidence를 이 세션의 browser·repository·connector·runtime Tool로 얻을 수 있으면 실제 호출은 의무이며, `OPTIONAL_CODEX_EXECUTOR`를 이유로 생략하지 않는다.
+- **`OPEN_PR_READ_ONLY_BY_DEFAULT` / `FOLLOW_UP_TARGET_IS_MERGED_MAIN`:** `open/draft/ready` PR·Branch는 현재 작업자의 활동 여부와 무관하게 기본 read-only 보호 대상이다. 같은 Goal의 현황·충돌 확인에는 읽을 수 있지만 checkout/write/rebase/close/merge/selective-copy/material-delta 흡수 대상으로 삼지 않는다. 기본 후속 수정 대상은 최신 completed `main`에 실제로 유지된 변경뿐이다.
+- **`OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION`:** 열린 PR을 변경·인수·종료·병합·흡수하려면 사용자가 현재 작업에서 **PR 번호와 허용 동작을 명시적으로 지정**해야 한다. “현재 채팅만 활성”, 같은 Goal, owner evidence 부재, standing authorization은 예외 권한이 아니다.
 - **`CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY`:** L1 이상 중요한 설계·구현·정책 결정은 한 방법을 먼저 정해 놓고 근거를 끼워 맞추지 않는다. 먼저 **현행 조사**로 실제 상태·기존 해법·제약·실패 사례를 확인하고, 현행 유지·재사용·흡수·최소 수정·구조 개선·신규 구축 등 현재 Goal에서 실제로 가능한 **최소 3개**의 materially distinct 유효 대안을 확보해 동일 기준으로 비교한다. `MINIMUM_VIABLE_ALTERNATIVES: 3`. 숫자를 채우기 위한 허수 대안은 금지하며, 세 후보를 찾기 어렵다면 조사·추상화 수준을 넓혀 전략적으로 다른 실행 경로를 더 찾는다. 조사 뒤에도 세 실질 후보를 만들 수 없는 특수 제약이라면 임의로 기준을 낮추지 말고 그 제한과 탈락 근거를 `BLOCKED_UNVERIFIED` 또는 해당 Decision evidence로 남긴다.
 - **`BETTER_ALTERNATIVE_SEARCH`:** 최초 비교에서 권장안을 고른 뒤에도 새 증거·실패·검토 finding이 나오면 **더 나은 방안**이 생겼는지 다시 탐색한다. 기존 선택을 지키는 것이 목표가 아니며, 승인된 큰 방향을 보존하면서 더 강한 기술적 방법이 확인되면 근거와 함께 교체한다. 핵심 게임 방향·플레이어 경험·비용·범위를 바꾸는 더 나은 안이면 `USER_DECISION_REQUIRED`로 올린다.
 - **`LONG_TERM_PLAN_FIT_REQUIRED`:** 권장안은 단기 구현량뿐 아니라 **장기계획**에 적합한지 반드시 판정한다. 사용자/플레이어 가치, 정확성·기획 충실도, 위험, 수명주기 비용, 유지보수성, 되돌리기 난이도, 재사용·모듈성, Base의 향후 변화에 대한 신선도·호환성, 증거 강도, 현재 비용 경계를 함께 비교하고, 어떤 조건에서 권장안을 재검토해야 하는지도 기록한다.
+- **`BEST_LONG_TERM_EFFICIENT_METHOD` / `QUALITY_OVER_RESPONSE_SPEED` / `BENCHMARK_PRACTICE_COMPARISON`:** Base와 이를 적용한 프로젝트의 기본 목표는 **현재 가능한 방법 중 사용자·플레이어 가치, 정확성, 출시 품질, 유지보수성, 재사용성, 되돌리기 가능성, 수명주기 비용을 함께 보아 가장 효율적이고 장기적인 방법**을 찾고 실행하는 것이다. 효율을 가장 빠른 답변·최소 Tool 호출·최소 토큰으로 축소하지 않는다. 중요한 작업은 필요한 만큼 더 오래 조사하고 더 많은 추론·도구·검증 자원을 사용해도 되며, 답변 속도보다 증거와 결과 품질을 우선한다. 현행 정본·실제 구현을 확인한 뒤 최소 3개 실질 대안을 공식/1차 자료, 벤치마크, 현업 운영 방식, 실무 성공·실패 사례와 비교하고 `ADOPT / ADAPT / REJECT` 및 장기 총비용으로 판정한다.
 - **`ADVERSARIAL_REVIEW_UNTIL_CLEAN`:** L1 이상에서 적대적 검토를 실행하면 `FULL_LOOP_COUNT_MINIMUM: 5`, `MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5`를 적용한다. **전체 승인 범위 적대적 검토 → 충돌·누락·오류·위험 finding 검증 → 검증된 finding 개선·보완 → 실제 검증·회귀검사 → 개선된 상태 전체를 다시 공격**하는 완전한 개선 루프를 **최소 5회** 수행하며, 5회의 완전한 전체 개선 루프를 마치기 전에는 finding이 0이어도 `CLEAN_REVIEW_EXIT`로 종료하지 않는다. **5회 이후에도** 새로 검증되는 `MUST_FIX`·blocking finding·정본 충돌·acceptance failure가 하나라도 나오면 수정·검증 뒤 추가 전체 루프를 계속한다. 종료는 최소 5회를 충족한 뒤 **새로운 유효 오류·충돌·누락·blocking finding이 0이고, 기존 수정의 회귀가 없으며, acceptance criteria·정본 신선도·증거 ceiling을 모두 만족하는 `CLEAN_REVIEW_EXIT`**으로만 판정한다. 5회는 최소 floor이지 최대치가 아니며, 횟수를 채우기 위해 가짜 finding이나 불필요한 변경을 만들지 않는다.
 - 벤치마킹·현업/실무 조사·성공사례·실패사례는 최소 3개 대안의 원리와 실패조건을 비교하는 근거로 사용하고, `ADOPT / ADAPT / REJECT`로 현재 환경 적합성을 판정한다. 외부 사례가 Base 요구사항 정본이 되지는 않는다.
 - **`ZERO_INCREMENTAL_COST_REQUIRED`:** Base와 Base를 적용한 프로젝트의 기본 실행 경로는 사용자의 추가 금전 지출을 만들지 않아야 한다. 이미 보유한 구독 기능도 해당 기능이 구독에 포함되고 별도 API·credit·marketplace·runner·storage·SaaS 같은 **separately metered** 과금으로 전환되지 않는 범위에서만 사용한다. `pay-as-you-go` API, 유료 credit, 신규 유료 구독·구매, 별도 과금 compute·runner·service는 사용자가 이 정책을 명시적으로 바꾸기 전에는 도입·실행하지 않는다. 비용 상태를 확정할 수 없으면 live call·구매·유료 실행을 하지 않고 `COST_GATE_BLOCKED`로 둔다. CI의 구체적 실행·비용 계층은 `docs/CI_EXECUTION_COST_POLICY.md`가 책임진다.**
@@ -69,15 +76,28 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 
 ```text
 DIRECTION_FIRST
+DEEP_WORK_PREANSWER_GATE
+REQUIRED_EVIDENCE_BEFORE_FINAL
+NOT_RUN_MANDATORY_GATE_BLOCKS_COMPLETION
+INTERMEDIATE_REPORT_SUPPRESSION_IS_NOT_WORK_REDUCTION
+GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY
+REASONING_EFFORT_IS_NOT_WORK_EVIDENCE
+REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF
 CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY
 MINIMUM_VIABLE_ALTERNATIVES: 3
 BENCHMARK_SYNTHESIS
 BETTER_ALTERNATIVE_SEARCH
 LONG_TERM_PLAN_FIT_REQUIRED
+BEST_LONG_TERM_EFFICIENT_METHOD
+QUALITY_OVER_RESPONSE_SPEED
+BENCHMARK_PRACTICE_COMPARISON
 EXPECTED_EFFECTS_RISKS_MITIGATIONS_BEFORE_BUILD
 SINGLE_INITIAL_APPROVAL_THEN_CONTINUE
 FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS
 REQUIRED_WORK_REMAINING
+POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP
+POSTMERGE_CORRECTION_REQUIRED
+PROGRESS_READBACK_REQUIRED
 NOTION_DEFAULT_PROJECT_WORKSPACE
 PROJECT_RELATION_REQUIRED
 CURRENT_PAID_PLANS: GPT_PRO
@@ -85,6 +105,7 @@ PAID_PLAN_COUNT: 1
 ```
 
 - 전체 방향·의도·플레이어 가치와 실제 정본을 먼저 고정하고, 최소 3개 실질 대안과 벤치마킹·실무사례·실패사례를 비교한 뒤 예상 효과·문제·보완·롤백을 BUILD 전에 제시한다.
+- 중간보고 생략은 사용자 노출을 줄이는 것일 뿐 실제 연구·검토·실행을 줄이는 지시가 아니다. 필수 evidence가 `NOT_RUN`이면 완료 답변 대신 차단 상태를 보고한다.
 - 최초 권장안 뒤에도 새 증거·finding이 생기면 더 나은 방안을 다시 찾고, 선택안이 장기계획·유지보수·모듈화·비용·Base 신선도에 적합한지 재판정한다.
 - 완전한 작업 계약은 한 번 승인받고, 같은 범위의 구현·테스트·PR·적대적 검토·병합·postmerge는 routine approval로 멈추지 않는다. 핵심 방향 변경, 파괴적 migration, 비용·보안 권한 확대만 새 사용자 결정을 요구한다.
 - 적대적 검토는 `전체 범위 공격 → finding 검증 → 개선·보완 → 실제 검증·회귀 → 개선된 전체 상태 재공격`의 **완전한 개선 루프를 최소 5회** 수행한다. 다섯 공격면으로 쪼개서 한 번씩 보는 것은 이 계약을 충족하지 않는다.
@@ -106,7 +127,7 @@ PAID_PLAN_COUNT: 1
 - `Grill Me alignment gate` 또는 유효한 기존 승인 근거가 없으면 `AWAITING_USER_CONFIRMATION`을 유지하고 구현·Codex 인계·외부 AI 위임·제품 변경으로 진행하지 않는다.
 - 프로젝트 코어, 플레이어 경험, 주요 UX, 콘텐츠 의미, 비용·범위를 바꾸는 충돌만 사용자 결정으로 올린다. 저장소·정본·테스트로 판단 가능한 오류나 누락을 사용자에게 전가하지 않는다.
 - 사용자 확인 전 실행 계약을 확정하거나 구현하지 않는다. 사용자가 승인한 범위에서는 단계별 구현·검증·적대적 재검토를 끝까지 수행한다.
-- 사용자가 `[연속작업] 진행해`라고 명시하면 현재 승인된 작업 계약 안에서 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`를 적용한다. `작업 → 적대적 검토 → 범위 안의 기술적 권장안 자동 승인 → 최소 반영·회귀 검증 → blocker recovery → 다음 ready task`를 반복한다. `BLOCKED_UNVERIFIED`·현재 세션 도구 부재·일시적 증거 전송 실패는 그 자체로 전역 종료가 아니며, **recover first → defer locally → continue independent work → stop globally last** 순서로 처리한다. 진짜 `USER_DECISION_REQUIRED`, 고위험 외부 행위, 범위 확대는 자동 승인하지 않되 독립 작업이 남아 있으면 해당 task만 보류한다. 트리거가 없으면 기존 승인 흐름을 유지한다.
+- 사용자가 `[연속작업] 진행해`라고 명시하거나, 이미 승인된 동일 작업 계약에 대해 `진행해`, `계속해`, `남은 작업 진행`처럼 계속 실행 의도를 명확히 표현하면 `APPROVED_CONTRACT_CONTINUATION`으로 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`를 적용한다. 이를 `CONTINUATION_INTENT_ALIASES`라 하며 승인되지 않은 범위나 새 범위를 자동 승인하는 마법 문구가 아니다. `작업 → 적대적 검토 → 범위 안의 기술적 권장안 자동 승인 → 최소 반영·회귀 검증 → blocker recovery → 다음 ready task`를 반복한다. `BLOCKED_UNVERIFIED`·현재 세션 도구 부재·일시적 증거 전송 실패는 그 자체로 전역 종료가 아니며, **recover first → defer locally → continue independent work → stop globally last** 순서로 처리한다. 진짜 `USER_DECISION_REQUIRED`, 고위험 외부 행위, 범위 확대는 자동 승인하지 않되 독립 작업이 남아 있으면 해당 task만 보류한다. 승인된 계약도 계속 실행 의도도 없으면 기존 승인 흐름을 유지한다.
 - 상세 라우팅·권한 전환·리뷰·GPT→Codex·병합 절차는 `docs/WORK_MODE_AND_SKILL_ROUTING.md`를 따른다.
 
 금지:
@@ -117,7 +138,7 @@ PAID_PLAN_COUNT: 1
 - L1 이상 지시문을 intake·좋은 프롬프트 변환·Grill Me 확인 없이 바로 실행
 - 방향 문장의 앞 배치를 이유로 사용자 지시·정본·`HARD_CONSTRAINT`를 무시
 - 사용자 확인 전 범위 확대·대량 병렬화
-- `[연속작업] 진행해` 없이 일반 요청을 연속작업 자동 승인으로 처리
+- 승인된 동일 계약이나 명확한 계속 실행 의도 없이 일반 요청을 연속작업 자동 승인으로 처리
 - 연속작업을 이유로 사용자 전용 결정·미검증·고위험 외부 행위 Gate를 우회
 - 같은 파일·Schema·자산의 소유 경계 없이 병렬 작업
 - 검증·발행·Handoff 조기 실행
@@ -133,7 +154,9 @@ PAID_PLAN_COUNT: 1
 - 신규 프로젝트와 승인된 마이그레이션의 활성 기획서는 저장소 루트 `[기획서]/` 아래에 둔다. `v2`, `final`, `latest`, 날짜별 활성 복제본을 만들지 않는다.
 - 상세 책임 원본, 상태 축, 발행 정책, 완료 조건은 `docs/OPERATING_MODEL.md`를 따른다.
 - 새 프로젝트·새 시각 기획의 기본 협업면은 `NOTION_DEFAULT_PROJECT_WORKSPACE`다. 하나의 Notion workspace 안에서 프로젝트별 페이지를 충분히 분리하고, Work/Asset/Screen/Reference/Benchmark는 `PROJECT_RELATION_REQUIRED`로 필터한다. 비주얼 맵은 파생 표현이며, 규칙·Decision과 실제 구현 상태는 GitHub/repository 정본과 런타임 증거가 소유한다.
+- `USER_FACING_GDD_WORKSPACE`는 현재 `NOTION_DEFAULT_PROJECT_WORKSPACE`의 compatibility alias다. 과거 소비자가 이 이름을 사용해도 사람용 Project Home으로 라우팅하되 별도 Sheet·HTML·Figma 권한을 만들지 않는다.
 - 기존 구성된 프로젝트 Google Sheet는 검증된 migration이 끝날 때까지 `COMPATIBILITY_ONLY` migration source로 취급한다. 상세 정본은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`다. Sheet-only 고유 내용과 proposal을 Notion/repository source에 reconcile하고 readback을 확인하기 전에는 삭제·폐기·migration 완료를 주장하지 않는다. Base 자체는 프로젝트 Sheet 동기화 대상이 아니다.
+- `PROPOSED_SHEET_CHANGE`는 compatibility-only Sheet에서 발견된 미확정 변경 제안 상태다. 이를 승인 Decision이나 현행 정본으로 승격하지 않고 Notion/repository 책임 원본과 대조·승인·readback한다.
 - 일반 기획·상태 확인은 프로젝트 Notion page와 GitHub/repository 정본을 함께 사용하고, 구조화 runtime data는 repo-native source를 사용한다. 기존 Sheet는 migration/proposal 확인이 필요한 경우에만 읽는다. HTML 대시보드·외부 HTML 도구 카탈로그는 사용자 명시 요청 또는 발견/유지보수 surface이며 독립 정본·실행 증거가 아니다.
 - 기존 승인 이미지가 있으면 별도 지시 없이 새 시안을 만들거나 제거·교체하지 않는다. UI 설계·폴리싱·구현 결과 감사는 `auditing-and-refining-ui-art`로 라우팅하고, 사용자 승인 finding만 실제 렌더로 재검수한다.
 - 접근성·성능·플레이테스트·벤치마크 결과는 실제 적용된 경우만 보고하며 법적 인증이나 제품 구현 사실로 과장하지 않는다.
@@ -167,8 +190,8 @@ PAID_PLAN_COUNT: 1
 - 전체 로컬 계약은 `python tools/run_local_validation.py --trusted-history-commit <trusted-main-commit-sha>`로 실행한다. 인자는 검증 전에 확인한 정확한 40자 main SHA이며, 이동 가능한 ref 이름을 넘기지 않는다. 환경 미준비 skip을 pass로 바꾸지 않는다.
 - 작업 전 원격·로컬 상태를 확인하고, 검증된 변경만 commit·push한다. Workflow 파일 존재와 실제 Actions 실행·Required Check 강제를 구분한다.
 - GitHub 게시·검토는 연결된 GitHub plugin/connector capability를 먼저 사용한다. connector가 필요한 동작을 지원하면 missing `gh` alone is not a blocker이며 사용자에게 CLI 반복 설치·재인증을 요구하지 않는다. 상세 fallback과 exact-SHA 안전 규칙은 `synchronizing-local-and-github-state`가 소유한다.
-- **`OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT` / `EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION`: 다른 채팅 또는 독립 workstream이 소유한 Branch·path·PR은 같은 Goal처럼 보여도 기본적으로 별도 작업으로 취급한다. 해당 owner Branch에 checkout/write/rebase/close/merge하거나 material delta를 현재 작업에 흡수하지 않는다. 충돌 탐지를 위한 read-only 상태 확인은 가능하지만, 다른 채팅 작업을 실제로 흡수·통합하려면 사용자가 현재 작업에서 명시적으로 흡수·통합을 승인해야 한다. `same goal`만으로 다른 workstream 경계를 넘지 않는다.**
-- **`BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`은 Base의 기본 동시작업 조정 방식이지만 위 workstream 격리 Gate 아래에서만 작동한다. `same workstream`으로 확인된 같은 Goal·path·semantic resource 충돌은 owner PR exact head·변경 경로·의미 자원을 read-only로 기록한 뒤 exact latest completed `main`에서 별도 `PROVISIONAL_INTEGRATION` Branch/PR을 만들고 필요한 material delta만 `selective copy`·재구현한다. `different workstream` 또는 workstream identity 불명 상태에서는 standing authorization 자체가 cross-workstream 흡수 권한을 만들지 않는다. 사용자가 현재 작업에서 다른 workstream 흡수를 명시적으로 승인한 경우에만 같은 semantic reconciliation·`absorbed_owner_deltas` / `residual_owner_deltas` 절차를 예외적으로 적용한다. 모든 필요한 owner delta가 흡수 또는 근거 있는 제외로 정리되고 exact-head 검사·P0/P1 0·unresolved thread 0이 충족되면 통합 PR을 병합할 수 있다. 병합 뒤 고유 material delta가 남지 않은 owner PR은 명시 승인 범위 안에서만 `superseded`로 정리하고, residual이 남으면 해당 PR을 보존한다. 이 standing authorization과 예외 승인은 범위 확대·파괴적 마이그레이션·결제·계정/보안 권한 확대·direct main·force push·`--admin`·ruleset bypass 권한이 아니다.**
+- **`OPEN_PR_READ_ONLY_BY_DEFAULT` / `FOLLOW_UP_TARGET_IS_MERGED_MAIN`: 모든 `open/draft/ready` PR·Branch는 기본 read-only다. 현황·충돌·중복 확인을 위해 읽을 수 있지만 checkout/write/rebase/close/merge/selective-copy/material-delta 흡수를 하지 않는다. 후속 수정은 exact latest completed `main`에서 새 작업 Branch로 시작하며, main에 실제 유지된 의미만 대상으로 한다.**
+- **`OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION`: 열린 PR을 변경하려면 사용자가 현재 작업에서 PR 번호와 허용 동작을 지정해야 한다. 같은 Goal, owner evidence 부재, `CURRENT_COORDINATOR_CHAT`, `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`은 이 권한을 대신하지 않는다. 명시 승인이 있더라도 exact head·범위·rollback을 다시 확인하고 승인된 동작만 수행한다.**
 - 병합은 검토한 정확한 HEAD, 필수 검사, 독립 검토, unresolved thread 0, 결정 게이트를 다시 확인한 뒤 저장소가 허용한 방식으로 수행한다.
 - `skills/SKILL_REGISTRY.json`, released lock, frozen/generated release artifact, 보호 경로를 변경하려면 해당 전용 계약과 검증을 먼저 충족한다. 범위 밖에서는 bytes를 보존한다.
 - 생성 실패·미검증 바이너리·로컬 임시 산출물을 자동 push하지 않는다.

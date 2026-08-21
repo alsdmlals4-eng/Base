@@ -1,5 +1,13 @@
 # Learning Log
 
+## 2026-08-21 · 행동 평가는 현재 Project Home 실행 단계를 이름으로 추적한다
+
+- 2026-08-19의 HTML → Notion Project Home 재분류 뒤에도 `SBE-031`은 단일 HTML과 구형 `frame → map-sources → build → bind-status → validate`를 계속 요구해 current Skill과 충돌했다.
+- 구형 HTML 경로를 부활시키지 않고 `frame-project-home → map-canonical-sources → build-project-home → bind-evidence-status → verify-destination-readback`을 current Skill Mode로 명시했다.
+- 행동 평가는 self-contained Notion Home, 선택적 Visual Map, repository/runtime owner locator, evidence status와 exact destination readback을 요구한다.
+- 정적 fixture·routing 계약 통과는 실제 Notion write/readback이나 사람 이해도 검증이 아니다. model behavior run과 실제 Project 적용은 계속 `NOT_RUN`이다.
+- revisit_condition: Project Home의 실행 단계가 다시 바뀌거나 model behavior run이 mode 혼동·HTML 회귀·destination overclaim을 검출할 때 fixture와 Skill을 함께 재검토한다.
+
 ## 2026-08-19 · HTML builder에서 Notion human-facing projection owner로 재분류
 
 - standalone HTML dashboard는 사용자 기본 작업면에서 제거한다.

@@ -18,7 +18,11 @@ Base는 게임·연재소설 등 등록된 창작·개발 프로젝트가 공용
 → 반복 가능한 스킬 학습
 ```
 
-Base에는 여러 프로젝트에서 재사용 가능한 판단·절차·검증만 둔다. 프로젝트 고유 세계관·원고·수치·경로·자산·구현 상태는 대상 프로젝트가 책임진다. 게임 프로젝트에 구성된 GDD Google Sheets는 `USER_FACING_GDD_WORKSPACE`로 사용하며 상세 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 책임진다. 연재소설 등 다른 분야의 프로젝트 문서·Sheet는 해당 프로젝트가 선언한 정본·문서 계약을 따른다.
+Base에는 여러 프로젝트에서 재사용 가능한 판단·절차·검증만 둔다. 프로젝트 고유 세계관·원고·수치·경로·자산·구현 상태는 대상 프로젝트가 책임진다. 프로젝트 정본은 `DOMAIN_SPLIT_CANON`을 따른다. 사람의 기획·시각 판단과 협업 상태는 프로젝트별 Notion page인 `NOTION_HUMAN_FACING_CANON`, 구조화 데이터·코드·Scene·Resource·Test·runtime evidence는 `REPOSITORY_STRUCTURED_CANON`이 책임진다. 기존 Google Sheets는 고유 자료의 검증된 이관이 끝날 때까지만 `COMPATIBILITY_ONLY` migration source이며 신규 기본 작업면이 아니다. 상세 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 책임진다.
+
+### `BEST_LONG_TERM_EFFICIENT_METHOD`
+
+Base와 이를 적용한 프로젝트의 작업목표는 **현재 가능한 방법 중 가장 효율적이고 장기적인 방법**을 찾아 출시 의도에 가까운 품질로 실행하는 것이다. 여기서 효율은 가장 빠른 응답이나 가장 적은 토큰이 아니라 사용자·플레이어 가치, 정확성·기획 충실도, 품질, 유지보수성, 재사용성, 되돌리기 가능성, 위험, 수명주기 총비용을 함께 최적화하는 뜻이다. `QUALITY_OVER_RESPONSE_SPEED`에 따라 중요한 작업은 조사·추론·도구 실행·검증에 더 많은 시간과 토큰을 써도 되며, 빠른 답변 자체를 완료 증거로 삼지 않는다. `BENCHMARK_PRACTICE_COMPARISON`에 따라 현행 정본과 실제 구현, 최소 3개 실질 대안, 공식/1차 자료, 벤치마킹, 현업 운영 방식, 실무 성공·실패 사례를 동일 기준으로 비교해 `ADOPT / ADAPT / REJECT`와 장기 적합성을 판정한다.
 
 ## 2. 우선순위
 
@@ -113,9 +117,28 @@ retained-change-or-merge
 
 이 루프는 Base의 완료·검토 의미를 정의하며 scheduler·webhook·백그라운드 실행 자체를 의미하지 않는다. 반복 감시를 별도 자동화가 수행하더라도 발견사항은 동일한 authority·Evidence·PR·exact-head Gate를 거쳐야 한다.
 
+#### `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`
+
+Base 또는 프로젝트 변경을 GitHub에 병합한 뒤에는 병합 자체를 완료로 보지 않는다. 새 `main`의 정확한 SHA를 다시 가져와 전체 승인 범위를 적대적으로 검토하고, 검증된 finding은 `POSTMERGE_CORRECTION_REQUIRED`에 따라 최신 main에서 새 Branch/PR로 교정한다. 해당 프로젝트에 Notion 사람용 정본이 적용되면 GitHub 병합 증거 뒤에만 관련 현재 블록을 갱신하고, GitHub와 Notion을 모두 다시 읽어 `PROGRESS_READBACK_REQUIRED`를 닫는다.
+
+```text
+GitHub merge
+→ exact new main SHA fetch/readback
+→ full-scope adversarial review
+→ finding validation
+→ required correction on a new branch/PR
+→ regression + exact-head verification
+→ applicable Notion current-state update after GitHub evidence
+→ GitHub/Notion destination readback
+→ progress, remaining work, blockers recalculation
+→ repeat until clean
+```
+
+열린 다른 PR은 계속 read-only이며, Notion이 실제 적용되지 않는 저장소 작업에 가짜 동기화 증거를 만들지 않는다. 과거 기록은 현재 상태처럼 일괄 치환하지 않고 명시적 역사로 보존한다.
+
 ### 연속작업 실행 루프
 
-사용자가 현재 채팅에서 `[연속작업] 진행해`라고 명시한 경우에만 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`를 적용한다. 이는 별도 Skill이나 Work Mode가 아니라 현재 승인된 작업 계약에 얹는 `CONTINUOUS_WORK_ACTIVE` 실행 상태다.
+사용자가 `[연속작업] 진행해`라고 명시하거나 이미 승인된 동일 계약에 대해 `진행해`, `계속해`, `남은 작업 진행`처럼 계속 실행 의도를 명확히 표현한 경우 `APPROVED_CONTRACT_CONTINUATION`으로 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`를 적용한다. 이 `CONTINUATION_INTENT_ALIASES`는 별도 Skill이나 Work Mode가 아니라 현재 승인된 작업 계약에 얹는 `CONTINUOUS_WORK_ACTIVE` 실행 상태이며, 새 범위나 미승인 계약을 자동 승인하지 않는다.
 
 ```text
 현재 승인된 작업 계약
@@ -133,7 +156,7 @@ retained-change-or-merge
 → 최종 보고
 ```
 
-트리거가 없으면 `CONTINUOUS_WORK_INACTIVE`이며 기존 승인·Grill Me 흐름을 유지한다. `BLOCKED_UNVERIFIED`, 현재 세션의 도구 부재, 일시적 evidence transport failure는 그 자체로 전체 루프를 중지하지 않는다. 먼저 재조회·대체 authoritative evidence·authorized alternate executor를 시도하고, 당장 해결되지 않으면 해당 task만 defer한 뒤 독립 작업을 계속한다. 진짜 `USER_DECISION_REQUIRED`, 범위 확대, 결제·계정 삭제·보안/권한 확대 등 고위험 외부 행위는 자동 승인하지 않지만 다른 독립 작업이 남아 있으면 해당 task만 보류한다. recovery path를 소진했고 실행 가능한 독립 task가 없을 때만 `GLOBAL_TERMINAL_BLOCKER`로 전역 중지한다. 이 계약은 현재 응답·실행 세션 안의 orchestration이며 scheduler·webhook·백그라운드 실행이나 다른 채팅 자동 메시지 전달을 의미하지 않는다.
+유효한 승인 계약이나 계속 실행 의도가 없으면 `CONTINUOUS_WORK_INACTIVE`이며 기존 승인·Grill Me 흐름을 유지한다. `BLOCKED_UNVERIFIED`, 현재 세션의 도구 부재, 일시적 evidence transport failure는 그 자체로 전체 루프를 중지하지 않는다. 먼저 재조회·대체 authoritative evidence·authorized alternate executor를 시도하고, 당장 해결되지 않으면 해당 task만 defer한 뒤 독립 작업을 계속한다. 진짜 `USER_DECISION_REQUIRED`, 범위 확대, 결제·계정 삭제·보안/권한 확대 등 고위험 외부 행위는 자동 승인하지 않지만 다른 독립 작업이 남아 있으면 해당 task만 보류한다. recovery path를 소진했고 실행 가능한 독립 task가 없을 때만 `GLOBAL_TERMINAL_BLOCKER`로 전역 중지한다. 이 계약은 현재 응답·실행 세션 안의 orchestration이며 scheduler·webhook·백그라운드 실행이나 다른 채팅 자동 메시지 전달을 의미하지 않는다.
 
 ### `LOOP_ENGINEERING_CONTROL_PLANE` — 기획 잠금 뒤 자율 실행
 
@@ -476,7 +499,9 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 사람용 발행 → Registry 정책이 요구하는 PDF·선택 DOCX·assets
 발행 최신성 → Publication Manifest
 실제 상태 → 코드·데이터·자산·테스트·캡처·프로파일
-사용자 GDD 작업면 → 프로젝트 Google Sheets(`USER_FACING_GDD_WORKSPACE`), 제안 편집은 `PROPOSED_SHEET_CHANGE`
+사람용 기획·시각 작업면 → 프로젝트별 Notion page(`NOTION_HUMAN_FACING_CANON`)
+구조화·runtime 정본 → repository(`REPOSITORY_STRUCTURED_CANON`)
+기존 Google Sheets → `COMPATIBILITY_ONLY` migration source, 미확정 편집은 `PROPOSED_SHEET_CHANGE`
 과거 상태 → Git 이력
 ```
 

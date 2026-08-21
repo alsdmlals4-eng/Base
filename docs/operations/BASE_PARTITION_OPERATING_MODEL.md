@@ -10,6 +10,12 @@ Base는 **하나의 통합 시스템(ONE BASE)** 이다. P01~P09는 Base를 9개
 
 `SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS`
 
+`BASE_FULL_PART_COORDINATOR_EXPLICIT_ONLY`
+
+`GENERAL_PROJECT_WORK_USES_GOAL_SCOPED_PHASES`
+
+이 실행 계약은 사용자가 **Base 전체 P01~P09 감사·최적화**를 명시적으로 요청한 maintenance session에만 활성화한다. 일반 프로젝트 작업, 단일 Goal 수정, 진단, 질문 답변의 기본 구조가 아니다. 일반 L1+ 작업은 현재 Goal에 필요한 범위만 `PLAN / RESEARCH / REVIEW → 승인된 BUILD / VERIFY`로 진행하며 모든 Part를 순회하지 않는다.
+
 한 GPT coordinator 채팅이 다음 순서로 Part를 하나씩 깊게 처리한다.
 
 ```text
@@ -69,40 +75,21 @@ CROSS_PART_CHANGE:
 - 사용자 중요 방향 결정이 필요함
 - 현재 변경셋에서 안전하게 원자적으로 검증할 수 없음
 
-## 독립 workstream 보호와 open PR 분류
+## 독립 workstream과 open PR 보호
 
-`OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM`
+`OPEN_PR_READ_ONLY_BY_DEFAULT`
 
-`ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE`
+`OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION`
 
-Part 경계, PR 상태, 실제 동시 작업자는 서로 다른 개념이다.
+`FOLLOW_UP_TARGET_IS_MERGED_MAIN`
 
-- **다른 Part**라는 사실은 수정 금지 사유가 아니다.
-- **PR이 open/draft/ready라는 상태만으로** 다른 작업자가 현재 작업 중이라고 판정하지 않는다.
-- 실제 mutation 보호는 사용자 지시, 현재 세션/automation owner, Resource Lock, 실행 중인 matching workstream 등 **current owner evidence**가 있을 때만 적용한다.
-- 사용자가 **“현재 작업 채팅은 이 채팅 하나”**라고 확인하면 unresolved open PR은 현재 coordinator의 backlog로 재분류한다.
+Part 경계와 PR 보호는 서로 다른 개념이다. 현재 작업 범위 안에서 다른 Part의 **merged-main** 오류를 고칠 수는 있지만, `open/draft/ready` PR·Branch는 현재 작업자 증거와 무관하게 기본 read-only다.
 
-열린 PR은 최신 `main`과 현재 Goal을 다시 읽은 뒤 다음 중 하나로 판정한다.
-
-```text
-ACTIVE_OTHER_WORKER
-COORDINATOR_TAKEOVER
-READY_TO_FINISH
-SUPERSEDED_DUPLICATE
-STALE_BACKLOG
-BLOCKED_EXTERNAL
-```
-
-### 판정 뒤 행동
-
-- `ACTIVE_OTHER_WORKER`: branch/worktree를 read-only 보호. takeover는 새 사용자 승인이나 명시적 owner handoff가 필요하다.
-- `COORDINATOR_TAKEOVER`: 현재 coordinator가 기존 PR을 이어받거나 최신 main 기반 finish branch로 재구성할 수 있다.
-- `READY_TO_FINISH`: current CI/acceptance를 다시 확인하고 정상 병합까지 닫는다.
-- `SUPERSEDED_DUPLICATE`: 이미 main에 같은 의미가 유지되는지 readback한 뒤 중복 PR을 종료한다.
-- `STALE_BACKLOG`: 현재 Goal에서 더 이상 가치가 없음을 근거로 종료/Archive한다.
-- `BLOCKED_EXTERNAL`: 코드/기획 문제가 아니라 외부 권한·인프라·사용자 결정을 정확히 기록하고 대기한다.
-
-즉 **open PR 목록은 보호 목록이 아니라 먼저 분류해야 하는 backlog inventory**다. 같은 채팅 하나만 활성인 상태에서 “open이므로 다른 채팅 일”이라고 보류하지 않는다.
+- 열린 PR의 head/diff/check는 현행·충돌·중복 확인을 위해 읽을 수 있다.
+- checkout/write/rebase/close/merge/selective-copy/material-delta 흡수는 하지 않는다.
+- 일반 후속 변경은 latest completed `main`에서 새 Branch로 시작하고 main에 실제 유지된 의미만 대상으로 한다.
+- 사용자가 열린 PR을 변경하려면 현재 작업에서 PR 번호와 허용 동작을 명시해야 한다.
+- “현재 채팅만 활성”, 같은 Goal, owner evidence 부재는 mutation 권한이 아니다.
 
 ## ONE BASE와 P01~P09 관계
 

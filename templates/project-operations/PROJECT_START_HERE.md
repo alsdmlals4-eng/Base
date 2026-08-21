@@ -7,6 +7,13 @@
 - Skill Registry: `SKILL_REGISTRY.json`
 - 사람용 Skill Map: Registry 정책이 요구하는 `PROJECT_SKILL_MAP.pdf`와 선택 파생본
 
+## 공용 작업목표와 병합 후 종료 조건
+
+- `BEST_LONG_TERM_EFFICIENT_METHOD`: 가장 빠른 답변이나 최소 토큰이 아니라 사용자·플레이어 가치, 정확성, 출시 품질, 유지보수성, 재사용성, 되돌리기 가능성, 수명주기 총비용을 함께 보아 가장 효율적이고 장기적인 방법을 선택한다.
+- `QUALITY_OVER_RESPONSE_SPEED`: 중요한 작업은 필요한 만큼 조사·추론·도구 실행·검증에 더 많은 시간과 토큰을 사용하고, 증거 없는 빠른 답변을 완료로 보지 않는다.
+- `BENCHMARK_PRACTICE_COMPARISON`: 현행 정본·실제 구현과 최소 3개 실질 대안을 공식/1차 자료, 벤치마크, 현업 운영 방식, 실무 성공·실패 사례로 비교한다.
+- `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`: GitHub 병합 뒤 exact new main에서 전체 승인 범위를 적대적으로 다시 검토하고 필수 교정을 새 Branch/PR로 처리한다. 적용 가능한 Notion current-state는 GitHub 증거 뒤에 갱신하며, 양쪽 destination readback과 `PROGRESS_READBACK_REQUIRED`로 진행도·남은 작업을 다시 계산해야 완료다.
+
 ## 한눈에 보기
 
 | 항목 | 현재 기준 |
@@ -26,6 +33,7 @@
 | 기준 Git 커밋 |  |
 | Base 기준 커밋 |  |
 | 최근 운영체계 Health Review |  |
+| 최근 postmerge GitHub·Notion readback |  |
 
 ## 현재 상태
 

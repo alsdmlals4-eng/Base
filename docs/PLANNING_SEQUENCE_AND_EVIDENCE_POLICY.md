@@ -46,7 +46,7 @@ latest user request
 → project GitHub latest main
 → CURRENT_CONFIRMED_DECISIONS.md
 → relevant canonical owner
-→ same-goal open/recent PR backlog classification (`OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM`)
+→ same-goal open/recent PR read-only reconciliation (`OPEN_PR_READ_ONLY_BY_DEFAULT`)
 → actual code / data / Scene / Resource / assets / tests
 → exact Project Notion Home and relevant filtered surfaces (`HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`)
 → optional RETIRED_MIGRATION_ONLY Sheet only when migration is the current scope
@@ -193,6 +193,14 @@ MIGRATION_COMPLETE | MIGRATION_NOT_APPLICABLE | MIGRATION_PENDING
 기획·근거조사·대안 비교·UI/UX·아트 방향·시각 후보 검수·최종 판정은 `GPT_FIRST_PLANNING_AND_REVIEW`와 `GPT_PRIMARY_REVIEWER`가 기본이다.
 
 `OPTIONAL_CODEX_EXECUTOR`는 실제 repository/engine mutation·다수 파일 구현·runtime reproduction이 필요할 때만 사용한다. Codex를 모든 계획의 의무 단계로 만들지 않는다.
+
+```text
+GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY
+REASONING_EFFORT_IS_NOT_WORK_EVIDENCE
+REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF
+```
+
+GPT-primary는 답변 문장만 만드는 경로가 아니다. 추론 강도는 실제 조사·readback·Tool 실행·검증 증거가 아니며, 현재 세션이 필요한 browser/repository/connector/runtime Tool을 보유하면 직접 사용한다. 별도 Codex 인계가 선택적이라는 사실은 필수 실행 evidence도 선택적이라는 뜻이 아니다.
 
 ## 6. 시각 checkpoint와 Demo-First
 

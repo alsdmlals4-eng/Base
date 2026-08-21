@@ -25,6 +25,7 @@ EVALUATOR = ROOT / "tools/evaluate_ci_required_gate.py"
 PASSING_ENV = {
     "CLASSIFY_RESULT": "success",
     "DOCS_RESULT": "success",
+    "CORE_REGRESSION_RESULT": "success",
     "CONTRACT_REQUIRED": "true",
     "CONTRACT_RESULT": "success",
     "PUBLICATION_REQUIRED": "true",
@@ -57,6 +58,7 @@ class CiRequiredGateEvaluatorTests(unittest.TestCase):
         for variable, result_value, job_name in (
             ("CLASSIFY_RESULT", "failure", "classify-changes"),
             ("DOCS_RESULT", "skipped", "docs-validation"),
+            ("CORE_REGRESSION_RESULT", "failure", "core-regression"),
         ):
             with self.subTest(variable=variable):
                 result = self._run({variable: result_value})

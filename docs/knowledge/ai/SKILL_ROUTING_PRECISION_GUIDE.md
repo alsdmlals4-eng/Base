@@ -37,6 +37,10 @@ FULL_SKILL_BODY_TIE_BREAK: REQUIRED
 DO_NOT_FILL_BUDGET: REQUIRED
 FUNCTIONAL_OVERLAP: REUSE_ABSORB_MERGE_FIRST
 TOOL_SHORTLIST_JUST_IN_TIME: REQUIRED
+SPARSE_ROUTING_MUST_NOT_SKIP_MANDATORY_GATES
+TOOL_SHORTLIST_MUST_NOT_DEFER_REQUIRED_RESEARCH
+MANDATORY_GUARD_IS_NOT_BUDGET_FILLING
+REQUIRED_RESEARCH_IS_CURRENT_STAGE_WORK
 ```
 
 ### 1. 먼저 주 책임 하나를 고른다
@@ -61,6 +65,8 @@ Registry의 `max_primary_discipline_skills=1`은 그대로 지킨다.
 - 미래 단계에서 필요할 수 있다.
 
 미래 단계의 Skill은 현재 실행하지 않고 deferred 후보로 둔 뒤 단계 전환 시 재라우팅한다.
+
+단, L1 이상 작업의 현행 조사·벤치마킹·대안 비교·적대적 검토·구현 현실성·검증처럼 상위 계약이 **현재 응답 전 필수**로 지정한 책임은 미래 단계가 아니다. `SPARSE_ROUTING_MUST_NOT_SKIP_MANDATORY_GATES`가 shortlist budget보다 우선한다.
 
 ### 3. 두 번째 supporting Skill은 예외다
 
@@ -111,6 +117,8 @@ REUSE → ABSORB → MERGE → ARCHIVE → BUILD_NEW
 
 따라서 `PLAN → BUILD → REVIEW` 전체에서 모든 Skill을 계속 유지하지 않는다. 단계가 바뀔 때 shortlist를 다시 계산한다.
 
+`MANDATORY_GUARD_IS_NOT_BUDGET_FILLING`: 현재 응답의 유효성을 결정하는 필수 검토·검증 guard를 붙이는 것은 숫자를 채우는 행위가 아니다. 해당 guard를 빼면 final answer가 근거 없이 완료되므로 supporting budget의 예외 사유다. 반대로 현재 결과와 무관한 미래 guard는 계속 deferred한다.
+
 ## Tool shortlist — `TOOL_SHORTLIST_JUST_IN_TIME`
 
 Skill을 적게 고른 뒤 Tool을 전부 미리 활성화하면 같은 문제가 다시 생긴다. Tool은 Skill과 다른 실행 자원이므로 동일한 숫자 budget을 강제하지 않지만, **현재 단계의 실제 산출물에 필요한 목적이 분명한 Tool만 just-in-time으로 선택**한다.
@@ -127,6 +135,8 @@ Skill을 적게 고른 뒤 Tool을 전부 미리 활성화하면 같은 문제�
 ```
 
 - `TOOL_SHORTLIST_JUST_IN_TIME`은 “Tool을 1개만 써라”가 아니다. GitHub read + Notion read처럼 서로 독립적인 정본을 실제로 확인해야 하면 함께 사용한다.
+- `REQUIRED_RESEARCH_IS_CURRENT_STAGE_WORK`: 사용자가 인터넷 조사·벤치마킹·최신 정보 확인을 요구했거나 L1+ Gate가 외부 원출처 비교를 요구하면 web/search/browser는 미래 도구가 아니라 현재 RESEARCH 단계의 필수 도구다.
+- `TOOL_SHORTLIST_MUST_NOT_DEFER_REQUIRED_RESEARCH`: just-in-time은 필요한 시점에 호출하라는 뜻이지, 답변 뒤로 미루거나 호출하지 말라는 뜻이 아니다. 필수 source/evidence가 없으면 final answer 대신 `BLOCKED_UNVERIFIED`를 사용한다.
 - 목적이 겹치는 Tool 또는 connector가 같은 사실을 반복해서 가져오는 경우, 더 정확한 정본·전용 인터페이스·낮은 context 비용을 가진 하나를 우선한다.
 - 현재 단계에서 필요하지 않은 Tool schema, 미래 구현 도구, 사용 가능하다는 이유만의 진단 도구를 미리 붙이지 않는다.
 - 단, weather/finance/runtime처럼 전용 source-of-truth Tool이 있는 도메인은 일반 검색으로 대체해 shortlist를 줄이지 않는다. 정확성과 권한이 숫자 절감보다 우선한다.
@@ -152,7 +162,7 @@ supporting: 0~1 (실제 문서 정본 갱신이 현재 산출물이라면 managi
 deferred: reviewing-and-validating-project-changes
 ```
 
-검증 Skill을 PLAN 시작부터 미리 붙여 budget을 채우지 않는다.
+현재 요청이 설계 초안만 요구하면 구현 검증은 deferred할 수 있다. 그러나 사용자가 검토·벤치마킹·완료 판정을 요구하거나 L1+ pre-answer Gate가 현재 결과의 독립 검증을 요구하면 관련 guard를 현재 단계에 붙인다.
 
 Tool도 현재 프로젝트 정본을 읽는 인터페이스만 먼저 사용하고, 구현·runtime Tool은 BUILD/REVIEW 단계가 실제로 시작될 때 재라우팅한다.
 
@@ -192,5 +202,6 @@ Tool: 파일 수정에 실제 필요한 인터페이스만
 - 단순 작업의 절차 비용 감소
 - behavior eval에서 forbidden Skill 오선택이 증가하지 않음
 - 검증·안전 hard guard 누락이 증가하지 않음
+- 필수 조사·벤치마킹·검토가 `NOT_RUN`인 상태에서 완료 답변을 내지 않음
 
 실제 모델 행동 정확도 향상은 **실측 model-run eval** 없이 `VERIFIED`로 주장하지 않고 `NOT_RUN`으로 둔다. 문서·정적 contract PASS는 routing policy 존재를 증명할 뿐 모델별 선택 정확도 개선율을 증명하지 않는다.

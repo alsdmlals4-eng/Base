@@ -5,13 +5,12 @@
 Base의 기본 충돌 복구 방식은 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`에 따른 **latest-main copy integration**이지만 실제 활성 owner 보호보다 우선하지 않는다.
 
 ```text
-OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM
-CURRENT_OWNER_EVIDENCE_REQUIRED
-ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE
-EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTION
+OPEN_PR_READ_ONLY_BY_DEFAULT
+OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION
+FOLLOW_UP_TARGET_IS_MERGED_MAIN
 ```
 
-같은 Goal·path·semantic resource가 겹쳐도 open/draft/ready 상태만으로 active owner를 추정하지 않는다. `ACTIVE_OTHER_WORKER` evidence가 있으면 takeover 승인 전 owner Branch·path·PR을 수정하거나 material delta를 가져오지 않는다. `NO_ACTIVE_OWNER_EVIDENCE` backlog는 current coordinator가 latest main에서 takeover/finish/supersession 여부를 판정할 수 있다.
+같은 Goal·path·semantic resource가 겹쳐도 open/draft/ready PR은 owner activity와 무관하게 read-only다. 일반 후속 작업은 latest completed `main`에서 시작한다. 열린 PR mutation은 사용자가 현재 작업에서 PR 번호와 허용 동작을 명시한 경우에만 가능하다.
 
 ## 1. 기준과 작업 의도 고정
 
@@ -41,7 +40,7 @@ protected_paths: []
 - `LOCAL_WORKTREE`: 실제 local branch/worktree/dirty state를 읽는다.
 - `GITHUB_CONNECTOR_ONLY`: connector의 remote branch/head/diff/PR/check만 증거로 사용한다. local worktree가 관찰되지 않았으면 `current_worktree: NOT_APPLICABLE_CONNECTOR_ONLY`로 기록하고 local test/dirty-state를 추정하지 않는다.
 - `HYBRID`: local과 connector 증거의 출처를 각각 구분한다.
-- `OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM`: open/draft/ready 상태는 owner evidence가 아니다. 실제 current owner evidence가 없고 사용자가 현재 coordinator만 활성이라고 확인했으면 열린 PR을 backlog로 분류해 최신 main에서 takeover/finish/supersession할 수 있다.
+- `OPEN_PR_READ_ONLY_BY_DEFAULT`: open/draft/ready 상태면 read-only다. 현황 확인은 가능하지만 owner evidence 부재나 현재 coordinator만 활성이라는 이유로 takeover/finish/supersession하지 않는다.
 - `source_main_sha`: 작업 계약/Branch를 시작할 때 기준이 된 completed main SHA.
 - `current_main_sha`: 현재 remote authority를 다시 읽은 SHA.
 - `write_parent_sha`: 실제 first persistent write 직전 Branch parent. 아직 쓰지 않았으면 `PENDING_FIRST_WRITE`.
@@ -51,7 +50,7 @@ protected_paths: []
 - `owner_workstream_identity`: 겹치는 Branch/PR/Task의 목적/계보. 존재만으로 current owner를 의미하지 않는다.
 - `owner_activity_classification`: current owner evidence를 바탕으로 `CURRENT_COORDINATOR / ACTIVE_OTHER_WORKER / NO_ACTIVE_OWNER_EVIDENCE / UNKNOWN_OWNER_ACTIVITY`를 기록한다.
 - `current_owner_evidence`: 사용자 지시, current session/automation owner, Resource Lock, matching running execution 등 현재 활동 주체를 직접 뒷받침하는 locator.
-- `cross_workstream_absorption_authorized`: 실제 `ACTIVE_OTHER_WORKER`를 현재 작업에 takeover/흡수하도록 사용자가 명시 승인했는지 여부.
+- `cross_workstream_absorption_authorized`: 사용자가 열린 PR 번호와 허용 동작을 현재 작업에서 명시했는지 여부.
 
 값을 모르면 추측하지 않는다.
 
@@ -60,12 +59,12 @@ protected_paths: []
 path/semantic overlap보다 먼저 **현재 active owner evidence**를 확인한다.
 
 1. 같은 채팅/같은 승인 contract/현재 coordinator 소유권이 확인되면 `CURRENT_COORDINATOR`다.
-2. open/draft/ready PR·Branch·과거 다른 채팅 기록은 owner identity metadata일 수 있지만 current owner evidence 자체는 아니다.
+2. open/draft/ready PR·Branch는 owner identity metadata이면서 read-only 보호 대상이다.
 3. 사용자 지시, current session/automation owner, Resource Lock, matching running execution을 `current_owner_evidence`로 수집한다.
-4. 실제 다른 작업자가 현재 활동 중이면 `ACTIVE_OTHER_WORKER`; takeover 승인 전 read-only 상태 확인만 허용하고 `WAITING_RESOURCE`로 둔다.
-5. current owner evidence가 없으면 `NO_ACTIVE_OWNER_EVIDENCE`; latest completed main과 Goal을 재검증해 `COORDINATOR_TAKEOVER / READY_TO_FINISH / SUPERSEDED_DUPLICATE / STALE_BACKLOG / BLOCKED_EXTERNAL`로 재분류한다.
-6. owner activity 자체를 판정할 근거가 부족하면 `UNKNOWN_OWNER_ACTIVITY`이고 `BLOCKED_UNVERIFIED`다.
-7. 사용자가 실제 `ACTIVE_OTHER_WORKER`의 takeover/통합을 명시 승인하면 `cross_workstream_absorption_authorized=true`를 기록하고 승인 범위 안에서만 `PROVISIONAL_INTEGRATION`을 사용한다.
+4. open/draft/ready PR이면 실제 활동 여부와 무관하게 read-only 상태 확인만 허용한다.
+5. current owner evidence가 없어도 coordinator takeover로 재분류하지 않는다. 후속은 latest completed main에서 시작한다.
+6. owner activity를 판정할 근거가 부족해도 read-only 보호는 유지한다. mutation 필요성과 권한이 불명확하면 `BLOCKED_UNVERIFIED`다.
+7. 사용자가 PR 번호와 허용 동작을 명시하면 `cross_workstream_absorption_authorized=true`를 기록하고 승인 범위 안에서만 `PROVISIONAL_INTEGRATION`을 사용한다.
 
 `same goal`만으로 `same workstream`이나 active owner를 추정하지 않는다. 반대로 `different workstream`이라는 역사적 계보만으로 현재 activity를 추정하지도 않는다.
 
@@ -107,7 +106,7 @@ open_pr_changed_paths
 - `SAME_GOAL`: 같은 사용자 Goal의 구현/후속 변경.
 - `UNKNOWN`: owner/목적/changed path를 검증할 수 없음.
 
-owner activity Gate는 위 overlap보다 먼저 적용한다. `SAME_GOAL`이어도 실제 `ACTIVE_OTHER_WORKER`이면 takeover 승인 없이는 흡수하지 않는다. 반대로 `different workstream` history만으로 `ACTIVE_OTHER_WORKER`를 추정하지 않는다.
+open-PR read-only Gate는 위 overlap보다 먼저 적용한다. `SAME_GOAL`이어도 명시적인 PR 번호+동작 승인 없이는 흡수하지 않는다.
 
 ### Preflight outcomes
 
@@ -115,21 +114,21 @@ owner activity Gate는 위 overlap보다 먼저 적용한다. `SAME_GOAL`이어�
 |---|---|---|
 | `CLEAR` | 경쟁 active owner가 없고 현재 execution surface에서 base/head가 최신 | write 가능 |
 | `STALE_BASE_SHA` | 기준 SHA가 current authority와 다름 | latest main에서 재기준화 |
-| `WAITING_RESOURCE` | 실제 `ACTIVE_OTHER_WORKER` 또는 Resource Lock이 자원을 소유하고 takeover 권한이 없음 | owner surface를 건드리지 않고 해당 task만 보류 |
+| `WAITING_RESOURCE` | 열린 PR 또는 Resource Lock이 자원을 소유하고 명시 mutation 권한이 없음 | owner surface를 건드리지 않고 해당 task만 보류 |
 | `DUPLICATE_WORK` | 같은 material delta가 실제 active owner에서 구현 중이거나 completed main에서 이미 충족됨 | 중복 구현 금지; active/completed 상태 확인 |
 | `BLOCKED_UNVERIFIED` | owner activity/workstream/SHA/권한 또는 필요한 surface 증거를 검증 불가 | 증거 확보 전 write 금지 |
-| `PROVISIONAL_INTEGRATION` | same workstream, `NO_ACTIVE_OWNER_EVIDENCE` takeover, 또는 승인된 `ACTIVE_OTHER_WORKER` delta를 별도 latest-main Branch에서 통합 | selective copy + semantic reconciliation |
+| `PROVISIONAL_INTEGRATION` | merged-main delta 또는 사용자가 PR 번호+동작을 명시 승인한 예외 delta를 별도 latest-main Branch에서 통합 | selective copy + semantic reconciliation |
 
 ## 4. Cooperative ownership
 
 동시 작업 격리는 강제 lock이 아니라 cooperative ownership이다.
 
 - 실제 `ACTIVE_OTHER_WORKER` Branch/worktree의 dirty state를 clean/rebase/reset하지 않는다.
-- open/draft/ready PR 상태만으로 보호를 발동하지 않는다. actual current owner evidence가 있는 Branch·path·PR만 active mutation-protected다.
+- open/draft/ready PR은 actual current owner evidence와 무관하게 mutation-protected다.
 - overlap과 owner activity 확인을 위해 read-only diff/head/path/status 조회는 가능하다.
 - `ACTIVE_OTHER_WORKER` owner Branch에 직접 commit하지 않는다.
-- `ACTIVE_OTHER_WORKER`는 사용자 takeover 승인 전 selective copy도 하지 않는다.
-- `CURRENT_COORDINATOR` / `NO_ACTIVE_OWNER_EVIDENCE` takeover 통합은 latest completed main의 별도 Branch에서 수행한다.
+- 열린 PR은 사용자 named-action 승인 전 selective copy도 하지 않는다.
+- 일반 후속 통합은 latest completed main의 별도 Branch에서 수행한다.
 - 같은 파일을 피했더라도 같은 semantic resource면 owner 충돌로 처리한다.
 - process/port/temp directory도 실제 소유권 evidence가 있으면 임의 종료·재사용하지 않는다.
 - `GITHUB_CONNECTOR_ONLY`에서 local process/worktree/dirty state가 없다고 단정하지 않는다. 그 상태는 `NOT_APPLICABLE_CONNECTOR_ONLY` 또는 `NOT_RUN`이다.
@@ -138,18 +137,18 @@ owner activity Gate는 위 overlap보다 먼저 적용한다. `SAME_GOAL`이어�
 
 ### 5.1 Authorization boundary
 
-standing authorization은 latest completed main에서 충돌을 통합하기 위한 기술적 권한이며, 실제 활성 다른 작업자의 takeover 권한을 대신하지 않는다.
+standing authorization은 latest completed main에서 충돌을 통합하기 위한 기술적 권한이며, 열린 PR mutation 권한을 대신하지 않는다.
 
 ```text
-OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM
-CURRENT_OWNER_EVIDENCE_REQUIRED
-EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTION
+OPEN_PR_READ_ONLY_BY_DEFAULT
+OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION
+FOLLOW_UP_TARGET_IS_MERGED_MAIN
 ```
 
-- `CURRENT_COORDINATOR` / same workstream: standing authorization을 사용할 수 있다.
-- `NO_ACTIVE_OWNER_EVIDENCE`: current approval 범위의 `COORDINATOR_TAKEOVER / READY_TO_FINISH / SUPERSEDED_DUPLICATE`는 standing authorization으로 latest-main 통합을 진행할 수 있다.
-- `ACTIVE_OTHER_WORKER`: standing authorization이 takeover 승인을 대신하지 않는다. 사용자가 현재 작업에서 명시적으로 takeover/통합 승인해야 한다.
-- `UNKNOWN_OWNER_ACTIVITY`: owner activity evidence가 확인될 때까지 `BLOCKED_UNVERIFIED`다.
+- latest completed main: standing authorization으로 main-retained delta의 후속 통합을 진행할 수 있다.
+- open/draft/ready PR: standing authorization은 mutation 권한이 아니다.
+- explicit named exception: 사용자가 현재 작업에서 PR 번호와 허용 동작을 지정해야 한다.
+- authorization ambiguity: 대상 PR 또는 동작이 불명확하면 `BLOCKED_UNVERIFIED`다.
 
 ### 5.2 Read-only owner snapshot
 
@@ -177,7 +176,7 @@ provisional_semantic_resources: []
 - semantic ownership
 - workstream identity
 - current owner evidence
-- 실제 active other worker이면 현재 user takeover authorization 여부
+- 열린 PR을 사용한다면 현재 user named-action authorization 여부
 
 ### 5.3 Create a separate PROVISIONAL_INTEGRATION branch
 
@@ -204,7 +203,7 @@ whole stale branch merge를 기본으로 하지 않는다.
 - successor merge로 이미 main에 흡수됨
 - old base에만 맞는 stale code
 - 현재 owner/canon을 약화하는 duplicate authority
-- 실제 `ACTIVE_OTHER_WORKER`에서 takeover 승인되지 않은 변경
+- 열린 PR에서 named-action 승인되지 않은 변경
 - unrelated dependency/product work
 
 ### 5.5 Semantic reconciliation
@@ -218,7 +217,7 @@ owner intent
 + latest main implementation
 + successor merges
 + current canon
-+ takeover authorization when actually needed
++ explicit named PR/action authorization when actually needed
 → semantic reconciliation
 ```
 
@@ -228,10 +227,9 @@ owner intent
 - `ALREADY_ABSORBED_BY_SUCCESSOR`
 - `REJECT_DUPLICATE_AUTHORITY`
 - `PRESERVE_RESIDUAL_OWNER`
-- `COORDINATOR_TAKEOVER`
-- `READY_TO_FINISH`
-- `SUPERSEDED_DUPLICATE`
-- `STALE_BACKLOG`
+- `READ_ONLY_OPEN_PR`
+- `EXPLICIT_NAMED_EXCEPTION`
+- `SUPERSEDED_BY_MERGED_MAIN`
 - `BLOCKED_EXTERNAL`
 - `WAITING_RESOURCE`
 - `BLOCKED_UNVERIFIED`
@@ -244,7 +242,7 @@ residual_owner_deltas: []
 rejected_duplicate_authority: []
 ```
 
-`residual_owner_deltas`가 0이어야 해당 owner/backlog가 이 Goal에서 완전히 superseded되었다고 볼 수 있다. 그러나 실제 `ACTIVE_OTHER_WORKER` PR의 close/supersede는 사용자의 takeover 승인 범위 안에서만 수행한다. `NO_ACTIVE_OWNER_EVIDENCE` backlog는 current coordinator가 승인된 Goal 안에서 supersession을 마무리할 수 있다.
+`residual_owner_deltas`가 0이어도 열린 PR을 자동 supersede하지 않는다. close/supersede는 사용자가 해당 PR 번호와 종료 동작을 명시한 경우에만 수행한다.
 
 ## 6. Write-time preflight
 
@@ -294,7 +292,7 @@ execution_surface evidence is explicit
 expected_head_sha == actual PR head sha
 current main/base acceptable
 owner_activity_classification is current
-ACTIVE_OTHER_WORKER takeover authorization is valid when required
+explicit named PR/action authorization is valid when required
 required checks == PASS
 unresolved threads == 0
 required approvals satisfied
@@ -305,7 +303,7 @@ NOT_RUN / BLOCKED_* / CANCELLED not promoted to PASS
 
 PR metadata나 과거 성공 run만 보고 merge하지 않는다. exact head의 상태를 읽는다.
 
-실제 `ACTIVE_OTHER_WORKER` PR을 close/supersede하는 것도 merge와 별개의 mutation이며 current takeover 승인 범위가 필요하다.
+열린 PR을 close/supersede하는 것도 merge와 별개의 mutation이며 current named-action 승인 범위가 필요하다.
 
 ## 9. Post-merge main readback
 
@@ -315,7 +313,7 @@ PR metadata나 과거 성공 run만 보고 merge하지 않는다. exact head의 
 2. merge PR의 실제 merged state와 merge SHA를 읽는다.
 3. changed canon/registry/policy/runtime file을 main에서 다시 읽는다.
 4. same-goal open/recent PR을 다시 조회하고 current owner evidence도 갱신한다.
-5. authorized active-owner 또는 takeover backlog의 `absorbed_owner_deltas / residual_owner_deltas`를 다시 확인한다.
+5. merged-main 또는 explicit named exception의 `absorbed_owner_deltas / residual_owner_deltas`를 다시 확인한다.
 6. current operational machine checkpoint가 있으면 읽는다.
 7. generated/derived surface가 stale인지 확인한다.
 8. postmerge workflow가 있으면 evidence ceiling을 확인한다.
@@ -400,10 +398,10 @@ new main readback
 
 - 존재가 확인되지 않은 local worktree/dirty state/test 결과를 추정
 - `GITHUB_CONNECTOR_ONLY`를 local 검증 PASS처럼 표현
-- open/draft/ready 상태만으로 다른 작업자를 active owner로 추정
-- 실제 `ACTIVE_OTHER_WORKER`를 same-goal이라는 이유만으로 자동 흡수
-- active-other-worker takeover authorization 없이 owner Branch/path/PR write/rebase/close/merge/selective-copy
-- 실제 active owner PR branches 직접 수정
+- open/draft/ready PR을 owner activity 추정으로 read-only 보호에서 제외
+- 열린 PR을 same-goal이라는 이유만으로 자동 흡수
+- explicit named PR/action authorization 없이 owner Branch/path/PR write/rebase/close/merge/selective-copy
+- 열린 owner PR branches 직접 수정
 - dirty sibling worktree clean/reset
 - stale blob/head blind overwrite
 - whole old branch를 latest main에 무검토 merge

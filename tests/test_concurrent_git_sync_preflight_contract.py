@@ -64,7 +64,7 @@ class ConcurrentGitSyncPreflightContractTests(unittest.TestCase):
             "skills/synchronizing-local-and-github-state/references/safe-sync-protocol.md"
         )
 
-        for text in (agents, skill, protocol):
+        for text in (skill, protocol):
             self.assertIn("PROVISIONAL_INTEGRATION", text)
             self.assertIn("BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16", text)
 
@@ -84,11 +84,11 @@ class ConcurrentGitSyncPreflightContractTests(unittest.TestCase):
         self.assertIn("absorbed_owner_deltas", skill)
         self.assertIn("residual_owner_deltas", skill)
         self.assertIn("standing authorization", skill)
-        self.assertIn("owner PR", agents)
+        self.assertIn("OPEN_PR_READ_ONLY_BY_DEFAULT", agents)
         self.assertIn("latest completed `main`", agents)
-        self.assertIn("superseded", agents)
+        self.assertIn("OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION", agents)
 
-    def test_open_pr_requires_current_owner_evidence_before_protection(self) -> None:
+    def test_open_pr_is_read_only_without_owner_inference(self) -> None:
         agents = read("AGENTS.md")
         skill = read("skills/synchronizing-local-and-github-state/SKILL.md")
         protocol = read(
@@ -97,13 +97,9 @@ class ConcurrentGitSyncPreflightContractTests(unittest.TestCase):
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
 
         for text in (agents, skill, protocol, policy):
-            self.assertIn("OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM", text)
-            self.assertIn("ACTIVE_OTHER_WORKER", text)
-
-        for text in (skill, protocol, policy):
-            self.assertIn("CURRENT_OWNER_EVIDENCE_REQUIRED", text)
-            self.assertNotIn("OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT", text)
-            self.assertNotIn("EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION", text)
+            self.assertIn("OPEN_PR_READ_ONLY_BY_DEFAULT", text)
+            self.assertIn("OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION", text)
+            self.assertIn("FOLLOW_UP_TARGET_IS_MERGED_MAIN", text)
 
         for token in (
             "current_workstream_identity",
@@ -111,26 +107,14 @@ class ConcurrentGitSyncPreflightContractTests(unittest.TestCase):
             "owner_activity_classification",
             "current_owner_evidence",
             "cross_workstream_absorption_authorized",
-            "NO_ACTIVE_OWNER_EVIDENCE",
-            "COORDINATOR_TAKEOVER",
         ):
             self.assertIn(token, skill)
             self.assertIn(token, protocol)
 
-        required_takeover_token = (
-            "EXPLICIT_USER_ABSORPTION_AUTHORIZATION: "
-            "REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTION"
-        )
-        self.assertIn(required_takeover_token, skill)
-        self.assertIn(required_takeover_token, protocol)
-        self.assertIn("same workstream", skill)
-        self.assertIn("different workstream", skill)
-        self.assertIn("CURRENT_COORDINATOR_CHAT", agents)
-
-        self.assertNotIn(
-            "approved same-goal/path/semantic overlap에 한해서 이 standing authorization이 필요한 `explicit user authorization`을 제공",
-            skill,
-        )
+        self.assertIn("PR 번호와 허용 동작", skill)
+        self.assertIn("PR 번호와 허용 동작", protocol)
+        self.assertNotIn("COORDINATOR_TAKEOVER", skill)
+        self.assertNotIn("COORDINATOR_TAKEOVER", protocol)
 
     def test_audit_invalidates_search_only_readme_drift_hypothesis(self) -> None:
         readme = read("README.md")

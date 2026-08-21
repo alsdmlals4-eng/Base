@@ -1,5 +1,14 @@
 # Managing Project Intake and Work Contracts — Learning Log
 
+## 2026-08-21 — Continue intent inherits only an already approved contract
+
+- **상태:** `PATTERN_CANDIDATE`
+- **호출 트리거:** 사용자가 이미 승인한 장기 교정 작업에서 `진행해`, `계속해`, `남은 작업 진행`이라고 자연스럽게 말했는데도 exact `[연속작업] 진행해` 문구가 없다는 이유로 실행이 끊길 수 있는 퇴행을 감사했다.
+- **Finding:** exact magic phrase는 미승인 작업의 오작동을 막지만, 승인 상태와 계속 의도를 하나의 literal로 결합해 정상적인 후속 지시에도 재승인 대기와 조기 답변을 만들었다.
+- **Decision:** `CONTINUATION_INTENT_ALIASES`를 `APPROVED_CONTRACT_CONTINUATION`으로 도입한다. 별칭은 유효한 approval reference와 함께 있을 때만 현재 계약의 남은 범위를 계속하며, 새 Goal·범위 확대·사용자 전용 결정·고위험 외부 행위는 승인하지 않는다.
+- **TDD evidence:** `tests/test_postmerge_github_notion_long_term_contract.py`의 RED에서 `CONTINUATION_INTENT_ALIASES`와 `APPROVED_CONTRACT_CONTINUATION` 부재를 재현했다. 최종 증거는 전체 discovery와 Skill coverage에서 확정한다.
+- **다음 검토 트리거:** 자연어 별칭이 미승인 요청을 자동 실행하거나, 반대로 승인된 동일 계약의 명확한 계속 지시를 다시 마법 문구 부족으로 차단할 때.
+
 ## 2026-08-16 — Copy integration replaces open-PR waiting as the Base coordination default
 
 - **상태:** `OBSERVATION`

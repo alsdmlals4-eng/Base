@@ -4,6 +4,15 @@
 
 ## 현재 단계·다음 게이트
 
+postmerge_progress_readback:
+- merged_main_sha:
+- github_readback_status: NOT_RUN
+- notion_applicability: NOT_ASSESSED
+- notion_readback_status: NOT_RUN
+- adversarial_review_status: NOT_RUN
+- required_corrections_remaining:
+- required_work_remaining:
+
 ## 확정·구현·검증 상태
 
 ## 다음 작업

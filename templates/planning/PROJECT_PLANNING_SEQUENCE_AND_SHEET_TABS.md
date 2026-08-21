@@ -1,10 +1,12 @@
-# 프로젝트 기획 작업순서·Google Sheets GDD tab Template
+# 프로젝트 Google Sheets GDD legacy compatibility inventory
 
-이 Template은 Base 자체가 아니라 Base를 적용한 개별 프로젝트에서 사용한다. 프로젝트 Google Sheets가 없거나 정확한 URL을 확인하지 못하면 `NOT_CONFIGURED`로 기록하고 새 Sheet나 임의 후보를 추정하지 않는다.
+`COMPATIBILITY_ONLY` / `DO_NOT_INSTALL_NEW`
+
+이 Template은 Base 자체가 아니라 Base를 적용한 개별 프로젝트의 **기존 Google Sheets 고유 자료를 감사·이관할 때만** 사용한다. 새 Sheet를 만들거나 이 tab 구성을 신규 설치하지 않는다. 프로젝트 Google Sheets가 없거나 정확한 URL을 확인하지 못하면 `NOT_CONFIGURED`로 기록하고 새 Sheet나 임의 후보를 추정하지 않는다.
 
 공용 정책: `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`
 
-## 1. 설치할 tab
+## 1. legacy tab inventory
 
 ```text
 00_프로젝트_허브
@@ -21,7 +23,7 @@
 50_제작_검증
 ```
 
-위 11개는 **새 Sheet에 설치하는 권장 핵심 tab**이다. 다음은 기존 Sheet에만 남을 수 있는 호환 상세 tab의 참조 목록이며, 새 Sheet에 자동 생성하거나 사용자 승인 없이 이름을 바꾸지 않는다.
+위 11개와 아래 상세 tab은 과거 Sheet에 존재할 수 있는 **migration inventory**다. 고유 내용을 Notion 사람용 정본 또는 repository 구조화 정본에 흡수하고 목적지 readback을 확인하기 위한 참조이며, 새 Sheet에 자동 생성하거나 사용자 승인 없이 이름을 바꾸지 않는다.
 
 ```text
 10_제품방향

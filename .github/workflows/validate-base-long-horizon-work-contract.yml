@@ -13,7 +13,6 @@ on:
       - "docs/knowledge/serial-fiction/**"
       - "skills/developing-and-revising-serial-fiction/**"
       - "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"
-      - "tools/tool-hub/README.md"
       - "tests/test_base_long_horizon_work_contract.py"
       - "tests/test_resilient_execution_narrative_reference_contract.py"
       - ".github/workflows/validate-base-long-horizon-work-contract.yml"

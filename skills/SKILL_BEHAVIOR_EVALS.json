@@ -580,15 +580,16 @@
         "reviewing-and-validating-project-changes"
       ],
       "expected_skill_modes": [
-        "GITHUB_CAPABILITY_FALLBACK",
-        "publish-remote",
-        "verify-sync"
+        "recover",
+        "publish",
+        "verify"
       ],
       "forbidden_skills": [
         "managing-design-documents",
         "creating-user-learning-notes"
       ],
       "required_evidence": [
+        "GITHUB_CAPABILITY_FALLBACK",
         "github_connector / local_git / gh_cli capability 판정",
         "CONCURRENT_CHANGE_PREFLIGHT",
         "exact write parent와 expected HEAD",
@@ -597,6 +598,81 @@
       ],
       "expected_user_decision_state": "NOT_REQUIRED",
       "rationale": "필요한 GitHub capability가 이미 연결돼 있으므로 optional CLI 재인증이 아니라 기존 동기화 Skill의 connector fallback과 exact-SHA gate가 주 책임이다."
+    },
+    {
+      "case_id": "SBE-040",
+      "case_type": "cross-skill",
+      "prompt": "Base의 장기 작업 구조가 바뀐 뒤 조사 없이 너무 빨리 답하는 문제가 생겼어. 2일 전 상태와 현재 저장소를 비교하고, 필요한 인터넷 원출처와 실무 사례를 조사하며, 최소 3개 실질 대안의 장기 적합성과 구현 현실성을 비교해 승인 범위만 고쳐줘. 저장소·브라우저·runtime Tool 실행, 실제 테스트와 적대적 전체 개선 루프 5회가 끝나기 전에는 최종 완료 답변을 하지 말고, 중간보고를 줄이라는 말도 실제 작업 축소로 해석하지 마.",
+      "expected_work_mode": "BUILD",
+      "expected_primary_skill": "managing-project-intake-and-work-contract",
+      "expected_supporting_skills": [
+        "running-adversarial-review-and-refinement",
+        "reviewing-and-validating-project-changes"
+      ],
+      "expected_skill_modes": [
+        "route",
+        "contract",
+        "decompose-and-sequence",
+        "execution-report",
+        "attack",
+        "validate-critique",
+        "regression-recheck",
+        "decision-report",
+        "contract-check",
+        "static-validation",
+        "regression",
+        "evidence-report"
+      ],
+      "forbidden_skills": [
+        "optimizing-ai-model-and-prompt-costs",
+        "building-project-visual-dashboards",
+        "creating-user-learning-notes"
+      ],
+      "required_evidence": [
+        "2일 전 exact baseline과 현재 저장소·정본·실제 diff를 비교한다.",
+        "결론에 필요한 인터넷 원출처와 실무 성공·실패 사례를 실제 조사한다.",
+        "최소 3개 materially distinct 대안을 같은 기준으로 비교하고 장기계획 적합성과 재검토 조건을 기록한다.",
+        "추론 강도나 계획 문장을 증거로 대체하지 않고 필요한 repository·browser·runtime Tool 실행 결과를 남긴다.",
+        "조사·테스트·검증·5회의 완전한 전체 적대적 개선 루프 중 하나라도 NOT_RUN이면 완료 답변을 금지한다.",
+        "중간보고 축소는 사용자 노출만 줄이며 실제 조사·Tool 실행·검토·테스트를 줄이지 않는다.",
+        "보호 범위 밖 변경과 열린 PR mutation을 피하고 실제 변경·미검증·남은 위험·롤백을 분리한다."
+      ],
+      "expected_user_decision_state": "NOT_REQUIRED",
+      "rationale": "명확히 승인된 Base 작업구조 복구를 intake가 범위화하고, 적대적 검토와 실제 변경 검증이 조사·실행 없는 조기 완료를 함께 차단하는 교차 Skill 작업이다."
+    },
+    {
+      "case_id": "SBE-041",
+      "case_type": "boundary",
+      "prompt": "앞에서 승인한 교정 계약 그대로 계속해. 남은 작업 진행하고 GitHub 병합 뒤 적대적 검토, 필요한 교정, Notion 반영과 진행도 재확인까지 끝내줘.",
+      "expected_work_mode": "BUILD",
+      "expected_primary_skill": "managing-project-intake-and-work-contract",
+      "expected_supporting_skills": [
+        "managing-game-project-operating-system",
+        "running-adversarial-review-and-refinement",
+        "reviewing-and-validating-project-changes"
+      ],
+      "expected_skill_modes": [
+        "route",
+        "contract",
+        "decompose-and-sequence",
+        "execution-report",
+        "verify",
+        "regression-recheck"
+      ],
+      "forbidden_skills": [
+        "optimizing-ai-model-and-prompt-costs",
+        "building-project-visual-dashboards"
+      ],
+      "required_evidence": [
+        "유효한 기존 approval reference와 계속 실행 의도를 함께 확인한다.",
+        "새 범위로 확대하지 않고 현재 계약의 required work만 계속한다.",
+        "병합 뒤 exact main SHA와 전체 범위 적대 검토를 재실행한다.",
+        "유효 finding은 latest main의 새 Branch/PR로 교정하고 회귀를 확인한다.",
+        "적용 가능한 Notion current-state를 GitHub 증거 뒤 갱신하고 양쪽 destination을 readback한다.",
+        "진행도, 남은 필수 작업, 선택 backlog, blocker를 다시 계산한다."
+      ],
+      "expected_user_decision_state": "NOT_REQUIRED",
+      "rationale": "자연어 계속 지시는 새 승인이 아니라 이미 승인된 동일 계약의 실행 상속이며, 병합 후 Project OS 검증과 진행도 closure까지 같은 범위에서 이어진다."
     }
   ]
 }

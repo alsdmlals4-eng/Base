@@ -48,7 +48,7 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
             "REPOSITORY_RUNTIME_TRUTH",
             "GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL",
             "HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN",
-            "OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM",
+            "OPEN_PR_READ_ONLY_BY_DEFAULT",
             "docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md",
             "docs/knowledge/game-development/README.md",
             "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md",

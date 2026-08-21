@@ -90,6 +90,7 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·
 | Reference Case Card | `templates/research/REFERENCE_CASE_CARD.md` | 범용 사례의 source·context·적용 한계 기록 |
 | 플랫폼/권리/독립 제작 | `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md` | Steam/STOVE/Google Play, commercial/distribution rights, reference→independent production |
 | PC/Android delivery | `docs/knowledge/game-development/PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md`, `templates/planning/PC_ANDROID_DELIVERY_PROFILE.md` | shared core + platform adapter + staged rollout |
+| 게임 build size·asset optimization | `docs/knowledge/game-development/GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` | build/package/download/install/patch 실측, font/texture/audio 품질 등급, store delivery evidence |
 | Cloud Run / online backend | `docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md` | backend capability, Cloud Run/online service boundary, cost/security/runtime evidence |
 | Entitlement / DRM integrity | `docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md` | entitlement integrity, DRM/trust boundary, platform/runtime verification |
 | Godot author/test/live QA | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` | `HiGodot` = authoring authority, `GUT` = test framework, `Hera` = restricted live QA; second writer 금지 |

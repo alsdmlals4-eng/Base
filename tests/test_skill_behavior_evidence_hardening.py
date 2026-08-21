@@ -434,9 +434,15 @@ class ClaimIntentBehaviorEvidenceHardeningTests(unittest.TestCase):
         self.assertEqual(1, len(cases))
         case = cases[0]
         self.assertEqual("synchronizing-local-and-github-state", case["expected_primary_skill"])
-        self.assertIn("GITHUB_CAPABILITY_FALLBACK", case["expected_skill_modes"])
+        self.assertEqual(["recover", "publish", "verify"], case["expected_skill_modes"])
         required = chr(10).join(case["required_evidence"])
-        for token in ("CONCURRENT_CHANGE_PREFLIGHT", "expected HEAD", "force=false", "post-merge"):
+        for token in (
+            "GITHUB_CAPABILITY_FALLBACK",
+            "CONCURRENT_CHANGE_PREFLIGHT",
+            "expected HEAD",
+            "force=false",
+            "post-merge",
+        ):
             self.assertIn(token, required)
         self.assertEqual("NOT_RUN", documents[0]["model_run_status"])
 

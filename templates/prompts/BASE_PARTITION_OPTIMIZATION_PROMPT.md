@@ -6,6 +6,12 @@
 
 `SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS`
 
+`BASE_FULL_PART_COORDINATOR_EXPLICIT_ONLY`
+
+`GENERAL_PROJECT_WORK_USES_GOAL_SCOPED_PHASES`
+
+이 Prompt는 사용자가 Base 전체 P01~P09 감사·최적화를 명시적으로 요청했을 때만 사용한다. 일반 프로젝트 작업·단일 Goal·진단·질문에는 적용하지 않으며, 그 경우 현재 Goal에 필요한 `PLAN / RESEARCH / REVIEW → 승인된 BUILD / VERIFY`만 실행한다.
+
 ```text
 P01 → P02 → P03 → P04 → P05 → P06 → P07 → P08 → P09
 ```
@@ -44,18 +50,19 @@ CROSS_PART_CHANGE:
 - 사용자 중요 방향 결정이 필요함
 - 현재 변경셋에서 원자적으로 안전하게 검증할 수 없음
 
-## 0B. Open PR과 실제 활성 workstream 구분
+## 0B. Open PR 보호
 
-`OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM`
+`OPEN_PR_READ_ONLY_BY_DEFAULT`
 
-`ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE`
+`OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION`
 
-- 다른 Part 경로는 필요하면 현재 coordinator가 수정 가능하다.
-- open/draft/ready는 **PR 상태**일 뿐 다른 작업자가 현재 활동 중이라는 증거가 아니다.
-- 사용자 지시, current chat/automation owner, Resource Lock, 실행 중 workstream 등 current owner evidence가 있을 때만 `ACTIVE_OTHER_WORKER`로 보호한다.
-- 사용자가 `CURRENT_COORDINATOR_CHAT`만 활성이라고 확인하면 열린 PR을 backlog로 읽고 `COORDINATOR_TAKEOVER / READY_TO_FINISH / SUPERSEDED_DUPLICATE / STALE_BACKLOG / BLOCKED_EXTERNAL` 중 하나로 재분류한다.
-- **다른 Part라는 이유만으로 수정 보류 금지**이며, **open PR이라는 이유만으로도 수정 보류하지 않는다.**
-- 실제 `ACTIVE_OTHER_WORKER`로 확인된 branch/worktree만 임의 수정·rebase·merge·close하지 않는다.
+`FOLLOW_UP_TARGET_IS_MERGED_MAIN`
+
+- 다른 Part의 merged-main 경로는 승인 범위에서 수정할 수 있다.
+- 모든 open/draft/ready PR·Branch는 기본 read-only다.
+- 현황·충돌·중복 확인을 위한 head/diff/check 읽기만 허용한다.
+- 후속 수정은 latest completed `main`에서 새 Branch로 시작한다.
+- 열린 PR mutation은 사용자가 PR 번호와 허용 동작을 지정한 경우에만 수행한다.
 
 ## 1. Part 시작 절차
 

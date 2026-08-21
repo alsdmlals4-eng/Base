@@ -32,6 +32,14 @@ Project Home에는 최소 다음을 직접 설명한다.
 
 하위 페이지는 긴 표, 전체 asset 목록, 상세 evidence, history, Source를 위한 drilldown이다. Home 핵심 이해를 “링크 참조”로 대체하지 않는다.
 
+## Skill Modes
+
+- `frame-project-home`: exact Project identity, latest confirmed decisions, GitHub main, existing Notion Home과 현재 blocker를 읽어 이번 Home의 범위와 보호 대상을 고정한다.
+- `map-canonical-sources`: core direction·loop·systems·UX/Visual·implementation·evidence의 repository/runtime owner와 human-facing projection을 연결한다.
+- `build-project-home`: 핵심 이해가 자체 완결된 Notion Project Home을 구성·갱신하고 관계 설명에 실질적으로 필요할 때만 Visual Map/diagram을 추가한다.
+- `bind-evidence-status`: 구현·검증·위험·다음 작업을 owner locator와 연결하고 `PASS / PARTIAL / NOT_RUN / BLOCKED_UNVERIFIED`를 분리한다.
+- `verify-destination-readback`: write 뒤 exact Project destination을 다시 읽어 project 혼입, stale·duplicate 정보, evidence overclaim과 drilldown-only 핵심 누락을 검사한다.
+
 ## 진행 흐름
 
 ```text

@@ -18,6 +18,14 @@ AI는 사람의 결정을 대신하는 단일 자동 개발자가 아니다. 각
 
 `GPT_FIRST_PLANNING_AND_REVIEW`가 기본이며, GPT가 현재 도구와 승인 범위 안에서 안전하게 끝낼 수 있는 작업에 Codex를 의무 단계로 추가하지 않는다. Codex는 실제 filesystem/runtime/build 또는 대규모 기계 변경의 실행 권위가 필요할 때 `OPTIONAL_CODEX_EXECUTOR`로 사용한다.
 
+```text
+GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY
+REASONING_EFFORT_IS_NOT_WORK_EVIDENCE
+REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF
+```
+
+GPT-primary는 판단 owner이지 prose-only 실행면이 아니다. `매우 높음` 같은 추론 강도는 실제 인터넷 원출처 조사, 저장소 readback, Tool 호출, 테스트·런타임 증거를 대체하지 않는다. 현재 GPT가 필요한 Tool을 보유하면 직접 실행하고, 별도 Codex handoff만 선택적으로 판단한다. 필수 evidence를 어느 실행면에서도 만들 수 없으면 빠른 답변으로 대체하지 않고 `BLOCKED_UNVERIFIED`로 둔다.
+
 공식 참고:
 
 - NIST AI RMF는 AI 위험을 조직 목표와 생명주기에 맞춰 관리하는 자발적 프레임워크다: https://www.nist.gov/itl/ai-risk-management-framework

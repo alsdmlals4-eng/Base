@@ -25,6 +25,12 @@ jobs:
     steps:
       - run: python tools/check_ci_required_gate_topology.py
 
+  core-regression:
+    name: core-regression
+    runs-on: ubuntu-latest
+    steps:
+      - run: python -m unittest discover -s tests -v
+
   ubuntu-contract:
     name: ubuntu-contract
     runs-on: ubuntu-latest
@@ -48,6 +54,7 @@ jobs:
     needs:
       - classify-changes
       - docs-validation
+      - core-regression
       - ubuntu-contract
       - publication-validation
       - platform-smoke-windows
@@ -61,6 +68,7 @@ jobs:
         env:
           CLASSIFY_RESULT: ${{ needs.classify-changes.result }}
           DOCS_RESULT: ${{ needs.docs-validation.result }}
+          CORE_REGRESSION_RESULT: ${{ needs.core-regression.result }}
           CONTRACT_REQUIRED: ${{ needs.classify-changes.outputs.run_contract }}
           CONTRACT_RESULT: ${{ needs.ubuntu-contract.result }}
           PUBLICATION_REQUIRED: ${{ needs.classify-changes.outputs.run_publication }}
@@ -372,12 +380,14 @@ jobs:
         reordered = VALID_CANONICAL.replace(
             "      - classify-changes\n"
             "      - docs-validation\n"
+            "      - core-regression\n"
             "      - ubuntu-contract\n"
             "      - publication-validation\n"
             "      - platform-smoke-windows\n",
             "      - platform-smoke-windows\n"
             "      - publication-validation\n"
             "      - ubuntu-contract\n"
+            "      - core-regression\n"
             "      - docs-validation\n"
             "      - classify-changes\n",
         )

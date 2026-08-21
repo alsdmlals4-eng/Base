@@ -6,6 +6,12 @@ P01→P09 순차 checkpoint를 완료한 **같은 coordinator 채팅**이 최종
 
 `SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS`
 
+`BASE_FULL_PART_COORDINATOR_EXPLICIT_ONLY`
+
+`GENERAL_PROJECT_WORK_USES_GOAL_SCOPED_PHASES`
+
+이 Prompt는 명시적으로 시작된 Base 전체 P01~P09 maintenance session의 최종 통합에만 사용한다. 일반 프로젝트 작업·단일 Goal·진단·질문에는 적용하지 않는다.
+
 현재 이 동일 coordinator 채팅의 canonical 이름은 `CURRENT_COORDINATOR_CHAT`이다.
 
 별도 Integration 채팅을 만들지 않는다. P01~P09를 작업한 현재 채팅이 그대로:
@@ -51,15 +57,15 @@ CROSS_PART_CHANGE:
 
 단순히 owner가 다르다는 이유로 defer하지 않는다.
 
-## 3. Open PR backlog와 실제 active workstream
+## 3. Open PR 보호
 
-`OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM`
+`OPEN_PR_READ_ONLY_BY_DEFAULT`
 
-`ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE`
+`OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION`
 
-open/draft/ready 상태 자체는 현재 작업자 증거가 아니다. 열린 PR은 먼저 latest main과 Goal을 기준으로 `ACTIVE_OTHER_WORKER / COORDINATOR_TAKEOVER / READY_TO_FINISH / SUPERSEDED_DUPLICATE / STALE_BACKLOG / BLOCKED_EXTERNAL`로 분류한다.
+`FOLLOW_UP_TARGET_IS_MERGED_MAIN`
 
-사용자가 현재 활성 작업 채팅이 `CURRENT_COORDINATOR_CHAT` 하나뿐이라고 확인하면 unresolved open PR을 coordinator backlog로 인수해 직접 완료·흡수·중복 종료할 수 있다. 실제 current owner evidence가 있는 `ACTIVE_OTHER_WORKER`만 mutation-protected다.
+모든 open/draft/ready PR·Branch는 기본 read-only다. latest main과의 차이, 충돌, 중복 여부는 읽을 수 있지만 직접 완료·흡수·종료·병합하지 않는다. 후속 수정은 latest completed `main`에서 새 Branch로 시작한다. 예외는 사용자가 현재 작업에서 PR 번호와 허용 동작을 명시한 경우뿐이다.
 
 ## 4. Current-state reconciliation
 

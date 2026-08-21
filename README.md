@@ -130,6 +130,10 @@ QA Evidence Studio는 Figma/Notion과 독립적인 실제 PC 런타임 증거 �
 
 현재 Active Skill 수·목록·owner·positive/negative trigger는 [Base Skill Map](docs/generated/BASE_ACTIVE_SKILLS.md)에서 생성해서 봅니다. 이 README는 두 번째 Skill 목록을 유지하지 않습니다.
 
+활성 Skill 수는 Registry 관찰값이며 설계 제약이 아니다. 새 Skill은 고정 개수 목표가 아니라 독립 입력·산출물·검증·승인 경계가 실제로 필요한지로 판단합니다.
+
+현재 routing authority는 `skills/SKILL_REGISTRY.json`과 각 active `SKILL.md`입니다. Release lock과 고정 payload는 frozen v9.0 release derivatives이며 현행 Registry를 되돌리는 권한이 아닙니다.
+
 This entrypoint does not maintain a second Skill list.
 
 - Machine authority: `skills/SKILL_REGISTRY.json` + 각 `SKILL.md` frontmatter
@@ -170,8 +174,11 @@ tests/                    운영·라우팅·정본·회귀 테스트
 전체 로컬 검증은 exact trusted main SHA를 명시합니다.
 
 ```bash
+python -m pip install --requirement .github/validation-requirements.txt
 python tools/run_local_validation.py --trusted-history-commit <trusted-main-commit-sha>
 ```
+
+검증기는 pinned dependency가 누락되면 `LOCAL_VALIDATION_DEPENDENCY_MISSING`으로 먼저 중단하고 설치 명령을 표시합니다. 의존성 누락으로 생긴 import failure를 제품 회귀와 섞어 보고하지 않습니다.
 
 실행하지 않은 테스트·런타임·렌더·권한은 통과로 보고하지 않습니다.
 
