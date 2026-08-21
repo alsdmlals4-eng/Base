@@ -10,6 +10,17 @@
 - **Boundary:** 열린 다른 PR은 번호·동작의 명시적 승인 없이 수정하지 않는다. 역사 Notion 블록을 current state처럼 일괄 치환하지 않으며, Notion이 적용되지 않는 작업에 가짜 sync를 만들지 않는다.
 - **Next trigger:** GitHub merge 뒤 Notion current-state가 stale하거나, postmerge finding이 진행도에서 사라지거나, 교정이 direct main/기존 open PR mutation으로 우회될 때.
 
+## 2026-08-21 — Demo/Test-double은 기존 backend contract의 선택 경로다
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** 공개 ERP 데모 역공학에서 실제 backend와 같은 consumer API를 쓰는 Mock adapter, 합성 seed, resettable state, 공개 demo sanitization이 게임 프로젝트의 backend/UI flow 검증에도 재사용 가능하다는 승인된 판단.
+- **Finding:** Base는 이미 `GAME_BACKEND_CLOUD_RUN` Guide·프로젝트 Contract·Skill owner routing을 갖고 있으므로 새 ERP, 새 module registry, 새 active Skill을 만들면 중복 책임이 된다. 반대로 fake handler가 미등록 operation을 성공처럼 흘리는 fail-open 방식은 Base의 evidence·validation 경계와 충돌한다.
+- **Decision:** 기존 backend capability에 `ONE_CONSUMER_INTERFACE`, `REAL_ADAPTER`, `FAKE_ADAPTER`, `CONTRACT_PARITY_REQUIRED`, `FAIL_CLOSED_UNKNOWN_OPERATION`, `DETERMINISTIC_FIXTURE`, `RESETTABLE_STATE`, `SYNTHETIC_DATA_ONLY`, `PUBLIC_DEMO_SANITIZATION`, `SIMULATED_ONLY`를 흡수한다. Project economics/P&L은 공용 강제가 아니라 실제 필요 프로젝트의 기존 Budget surface에서 별도 pilot한다.
+- **Evidence boundary:** fake/demo 실행은 consumer flow·UI/UX·오류 처리·결정적 상태 전이는 검증할 수 있지만 real provider `RUNTIME_VERIFIED`, load, dependency failure, cost, security, persistence, rollback, `PRODUCTION_READY`를 증명하지 않는다.
+- **TDD status:** 새 regression expectation을 implementation보다 먼저 commit했지만 draft 상태에서는 Actions run이 생성되지 않아 실행된 RED 증거는 `NOT_RUN`이다. Ready 전환 뒤 실제 CI 결과만 GREEN/FAIL evidence로 사용한다.
+- **Propagation lesson:** backend Guide나 project Contract 변경은 Learning Log·CHANGELOG·game-development discovery surface와 함께 움직여야 하며 reference-freshness Gate를 우회하지 않는다.
+- **Next trigger:** 실제 프로젝트에서 fake/real adapter contract drift, fixture 비결정성, demo privacy leak, 또는 real-provider verification 병목이 반복될 때 별도 validator나 reusable implementation module 필요성을 재검토한다.
+
 ## 2026-08-05 — 플랫폼 심사·자산 권리·참조 기반 독립 제작
 
 - **상태:** `PATTERN_CANDIDATE`
