@@ -157,6 +157,11 @@ class LoopCompletionGateTests(unittest.TestCase):
         self.assertEqual(completed.returncode, 1)
         self.assertIn("COMPLETION_REQUIREMENT_OPEN", completed.stdout)
 
+    def test_project_capsule_contract_routes_completion_gate(self) -> None:
+        contract = (ROOT / "docs/LOOP_ENGINEERING_PROJECT_CAPSULE_CONTRACT.md").read_text(encoding="utf-8")
+        self.assertIn("COMPLETION_AND_DESTINATION_FRESHNESS_GATE.md", contract)
+        self.assertIn("--phase completion", contract)
+
 
 if __name__ == "__main__":
     unittest.main()
