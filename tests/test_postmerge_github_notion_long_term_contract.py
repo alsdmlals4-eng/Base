@@ -55,6 +55,30 @@ class PostmergeGithubNotionLongTermContractTests(unittest.TestCase):
                 self.assertIn("POSTMERGE_CORRECTION_REQUIRED", source)
                 self.assertIn("PROGRESS_READBACK_REQUIRED", source)
 
+    def test_postmerge_loop_requires_issue_successor_freshness(self) -> None:
+        policy = text("docs/POSTMERGE_ISSUE_SUCCESSOR_FRESHNESS_POLICY.md")
+        template = text("templates/project-operations/PROJECT_START_HERE.md")
+
+        for token in (
+            "ISSUE_SUCCESSOR_FRESHNESS_REQUIRED",
+            "OPEN_ISSUE_STATUS_IS_NOT_AUTHORITY",
+            "CURRENT_VALID",
+            "DEFERRED_VALID",
+            "COMPLETED",
+            "SUPERSEDED",
+            "CONFLICT_WITH_CURRENT_CANON",
+            "POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP",
+        ):
+            self.assertIn(token, policy)
+
+        self.assertIn("ISSUE_SUCCESSOR_FRESHNESS_REQUIRED", template)
+        self.assertIn("docs/POSTMERGE_ISSUE_SUCCESSOR_FRESHNESS_POLICY.md", template)
+        self.assertIn("exact new main", policy)
+        self.assertIn("Human QA", policy)
+        self.assertIn("NOT_RUN", policy)
+        self.assertIn("completed", policy)
+        self.assertIn("not_planned", policy)
+
     def test_retired_visual_tools_are_not_cold_start_routes(self) -> None:
         start = text("START_HERE.md")
         for retired_route in (
