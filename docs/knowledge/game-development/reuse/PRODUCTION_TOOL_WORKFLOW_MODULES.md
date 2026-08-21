@@ -175,8 +175,8 @@ output:
 
 | 경로 | 판정 | 이유 |
 |---|---|---|
-| 프로젝트별 임시 script만 계속 작성 | `ADAPT_AS_PHASE_0` | 초기 비용은 낮지만 비교 UI·공통 report·재현 계약이 반복될 수 있음 |
-| 외부 balance GUI를 Base 표준으로 직접 탑재 | `REJECT_AS_DEFAULT` | 엔진/보안/프로젝트 격리/라이선스 owner가 이중화되고 Tool Hub와 책임이 겹침 |
+| 프로젝트별 임시 script만 계속 작성 | `ADAPT` | 초기 비용은 낮지만 비교 UI·공통 report·재현 계약이 반복될 수 있어 Phase 0까지만 적합 |
+| 외부 balance GUI를 Base 표준으로 직접 탑재 | `REJECT` | 엔진/보안/프로젝트 격리/라이선스 owner가 이중화되고 Tool Hub와 책임이 겹침 |
 | 독립 거대 Balance 앱을 새로 구축 | `DEFER` | 실제 소비가 증명되기 전에 UI·편집기·export 기능을 과잉 구축할 위험 |
 | 기존 RM-TOOL-002/003 계약 + project adapter + 필요 시 Tool Hub thin surface | `ADOPT` | deterministic evidence를 먼저 만들고 검증된 반복 작업만 공용 UI로 올릴 수 있음 |
 
