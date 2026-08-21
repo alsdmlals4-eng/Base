@@ -25,6 +25,17 @@ Issue가 `open`이라는 사실만으로 다음 구현 권한·현재 정본·�
 
 따라서 Issue 상태는 작업 큐의 보조 신호일 뿐, 현재 권위 그 자체가 아니다.
 
+### GitHub 공식 동작 근거
+
+이 정책은 GitHub 자체 상태 모델을 대체하지 않고, 그 상태를 **현재 책임 증거와 함께 해석**한다.
+
+- GitHub Docs · Linking a pull request to an issue: https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue
+  - default branch에 연결된 PR이 merge되면 linked Issue가 자동 종료될 수 있다.
+- GitHub Docs · Closing an issue: https://docs.github.com/en/issues/tracking-your-work-with-issues/administering-issues/closing-an-issue
+  - Issue는 해결 완료뿐 아니라 work not planned를 나타내기 위해서도 닫을 수 있다.
+
+따라서 `open = current authority`, `closed = responsibility fully satisfied` 같은 단순 등식은 사용하지 않는다.
+
 ## Trigger
 
 다음 조건을 모두 만족하면 `ISSUE_SUCCESSOR_FRESHNESS_REQUIRED`를 실행한다.
