@@ -115,6 +115,45 @@ class PublicVideoResearchIngestTests(unittest.TestCase):
             with self.subTest(value=value), self.assertRaises(module.VideoIngestError):
                 module.validate_caption_url(value)
 
+    def test_missing_ytdlp_returns_actionable_fail_closed_code(self) -> None:
+        module = self.module
+        with self.assertRaises(module.VideoIngestError) as caught:
+            module.fetch_ytdlp_version("__definitely_missing_yt_dlp_binary__")
+        self.assertEqual("MISSING_YT_DLP", caught.exception.code)
+
+    def test_ingest_no_caption_returns_asr_fallback_without_caption_fetch(self) -> None:
+        module = self.module
+        metadata = {
+            "id": "ItWEhmEm7jA",
+            "title": "No captions",
+            "subtitles": {},
+            "automatic_captions": {},
+        }
+        with (
+            mock.patch.object(module, "fetch_ytdlp_version", return_value="test-version"),
+            mock.patch.object(module, "fetch_metadata", return_value=metadata),
+            mock.patch.object(module, "fetch_caption_text") as fetch_caption,
+        ):
+            packet = module.ingest_public_video("https://youtu.be/ItWEhmEm7jA")
+        self.assertEqual("ASR_FALLBACK_REQUIRED", packet["transcript"]["status"])
+        self.assertEqual("BLOCKED_UNVERIFIED", packet["content_claim_ceiling"])
+        fetch_caption.assert_not_called()
+
+    def test_fetch_metadata_requests_metadata_only_and_checks_video_identity(self) -> None:
+        module = self.module
+        payload = {"id": "ItWEhmEm7jA", "title": "Example"}
+        completed = module.subprocess.CompletedProcess(
+            args=[], returncode=0, stdout=json.dumps(payload), stderr=""
+        )
+        with mock.patch.object(module, "_run_ytdlp", return_value=completed) as run_ytdlp:
+            result = module.fetch_metadata("https://youtu.be/ItWEhmEm7jA", "yt-dlp")
+        self.assertEqual("ItWEhmEm7jA", result["id"])
+        arguments = run_ytdlp.call_args.args[0]
+        self.assertIn("--skip-download", arguments)
+        self.assertIn("--dump-single-json", arguments)
+        self.assertIn("--no-playlist", arguments)
+        self.assertNotIn("--write-video", arguments)
+
     def test_fetch_caption_text_rejects_redirect_to_untrusted_host(self) -> None:
         module = self.module
 
