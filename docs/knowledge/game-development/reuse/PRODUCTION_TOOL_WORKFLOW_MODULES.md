@@ -166,7 +166,7 @@ output:
 
 ### 1차 project scenarios
 
-- **OMENWARD 우선 Pilot:** roulette 확률·wave·unit 결과 분포. production consumer를 건드리지 않는 read-only snapshot sidecar부터 검증한다.
+- **OMENWARD 우선 Pilot:** roulette 확률·wave·unit 결과 분포. production consumer를 건드리지 않는 read-only snapshot sidecar부터 검증한다. 현재 `ACTIVE_PROJECT_ADOPTION_MATRIX`의 production integration blocker/Issue #199 권위 충돌은 그대로 유지하며, 이 Pilot 우선순위가 write/integration 권한을 부여하거나 blocker를 해제하지 않는다.
 - NINJA_SURVIVAL: 보상/백팩 조합/encounter build 성능.
 - BLACKSMITH: 강화·경제·의뢰 결과 분포.
 - TETRIS: Line/Chain reward bridge와 skill 선택 분포.
