@@ -1,0 +1,29 @@
+{
+  "checks": [
+    {
+      "check_id": "REQUIRED_AUTOMATED_TESTS",
+      "evidence_ref": "",
+      "reason": "Template placeholder; execution has not started.",
+      "required": true,
+      "status": "NOT_RUN"
+    }
+  ],
+  "contract_role": "LOOP_VERIFICATION_RECEIPT",
+  "destinations": [
+    {
+      "destination_id": "PROJECT_GITHUB_MAIN",
+      "evidence_ref": "",
+      "expected_ref": "0000000000000000000000000000000000000000",
+      "kind": "GITHUB",
+      "observed_ref": "",
+      "required": true,
+      "sync_state": "UNVERIFIED"
+    }
+  ],
+  "exact_head_sha": "0000000000000000000000000000000000000000",
+  "package_id": "PACKAGE_001",
+  "project_id": "EXAMPLE_GAME",
+  "schema_version": 1,
+  "source_main_sha": "0000000000000000000000000000000000000000",
+  "status": "OPEN"
+}
