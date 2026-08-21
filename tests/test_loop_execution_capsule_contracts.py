@@ -21,6 +21,7 @@ REQUIRED_SCHEMAS = (
     "loop-requirement-coverage-ledger-v1.schema.json",
     "loop-active-run-v1.schema.json",
     "loop-immutable-run-v1.schema.json",
+    "loop-verification-receipt-v1.schema.json",
 )
 REQUIRED_TEMPLATES = (
     "PROJECT_EXECUTION_CAPSULE.json",
@@ -30,6 +31,7 @@ REQUIRED_TEMPLATES = (
     "IMPLEMENTATION_PACKAGE.json",
     "REQUIREMENT_COVERAGE_LEDGER.json",
     "ACTIVE_LOOP_RUN.json",
+    "VERIFICATION_RECEIPT.json",
     "runs/IMMUTABLE_RUN.json",
     "README.md",
 )
@@ -62,6 +64,7 @@ class LoopExecutionCapsuleContractTests(unittest.TestCase):
             "IMPLEMENTATION_PACKAGE.json": "loop-implementation-package-v1.schema.json",
             "REQUIREMENT_COVERAGE_LEDGER.json": "loop-requirement-coverage-ledger-v1.schema.json",
             "ACTIVE_LOOP_RUN.json": "loop-active-run-v1.schema.json",
+            "VERIFICATION_RECEIPT.json": "loop-verification-receipt-v1.schema.json",
             "runs/IMMUTABLE_RUN.json": "loop-immutable-run-v1.schema.json",
         }
         for relative in REQUIRED_TEMPLATES:
