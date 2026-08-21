@@ -150,6 +150,24 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, runner)
 
+    def test_actual_source_review_receipt_drives_weekly_scan_state_batch(self) -> None:
+        queue_doc = QUEUE_DOC.read_text(encoding="utf-8")
+        for required in (
+            "ACTUAL_SOURCE_REVIEW_RECEIPT",
+            "actual_source_review_receipt:",
+            "scanned_source_ids: []",
+            "scanned_discovery_seed_ids: []",
+            "retained_candidate_source_ids: []",
+            "material_candidate_count_by_source: {}",
+            "merged_base_contribution_refs: []",
+            "DEFER_TO_WEEKLY_SCAN_STATE_BATCH",
+            "WEEKLY_SCAN_STATE_BATCH",
+            "BLOCKED_UNVERIFIED_BACKFILL",
+            "last_actual_review_at",
+            "ledger_synced_through",
+        ):
+            self.assertIn(required, queue_doc)
+
     def test_queue_receipt_markdown_is_not_built_by_unquoted_shell_heredoc(self) -> None:
         runner = RUNNER.read_text(encoding="utf-8")
         self.assertNotIn('cat >> "$FINAL_PATH" <<EOF', runner)
