@@ -174,6 +174,19 @@ class SkillImplementationEvidenceTests(unittest.TestCase):
         self.assertEqual(1, markdown.count("`alpha-skill`"))
         self.assertEqual(1, markdown.count("`beta-skill`"))
 
+    def test_markdown_binds_behavior_case_count_and_source_digest(self) -> None:
+        builder = load_builder()
+        directory, root = self.build_root()
+        self.addCleanup(directory.cleanup)
+
+        markdown = builder.build_evidence_markdown(root)
+
+        self.assertIn("> Behavior evaluation case count: `2`", markdown)
+        self.assertIn(
+            f"> Behavior evaluation source SHA-256: `{builder.behavior_source_digest(root)}`",
+            markdown,
+        )
+
     def test_youtube_skill_has_executable_repository_evidence(self) -> None:
         builder = load_builder()
         self.assertEqual([], builder.validate_evidence_index(ROOT))

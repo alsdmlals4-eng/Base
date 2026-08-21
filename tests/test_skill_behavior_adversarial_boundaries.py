@@ -288,6 +288,16 @@ class SkillBehaviorAdversarialBoundaryTests(unittest.TestCase):
 
 
 class ClaimIntentAdversarialBoundaryTests(unittest.TestCase):
+    def test_sbe_040_and_041_reject_fast_completion_and_open_pr_mutation(self) -> None:
+        evals = json.loads((ROOT / "skills/SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8"))
+        cases = {case["case_id"]: case for case in evals["cases"]}
+        deliberate = "\n".join(cases["SBE-040"]["required_evidence"])
+        continuation = "\n".join(cases["SBE-041"]["required_evidence"])
+        for token in ("인터넷 원출처", "최소 3개", "Tool 실행", "5회", "NOT_RUN"):
+            self.assertIn(token, deliberate)
+        for token in ("exact main SHA", "새 Branch/PR", "destination", "남은 필수 작업"):
+            self.assertIn(token, continuation)
+
     def test_sbe_038_rejects_search_producer_and_stale_sha_shortcuts(self) -> None:
         evals = json.loads((ROOT / "skills/SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8"))
         case = next(case for case in evals["cases"] if case["case_id"] == "SBE-038")

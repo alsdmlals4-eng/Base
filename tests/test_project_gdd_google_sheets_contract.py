@@ -38,6 +38,12 @@ class ProjectGDDGoogleSheetsContractTests(unittest.TestCase):
             self.assertIn(term, policy)
         self.assertIn("Do not bulk-copy", policy)
 
+    def test_legacy_tab_template_is_migration_inventory_not_new_install(self) -> None:
+        template = read("templates/planning/PROJECT_PLANNING_SEQUENCE_AND_SHEET_TABS.md")
+        for term in ("COMPATIBILITY_ONLY", "DO_NOT_INSTALL_NEW", "migration inventory"):
+            self.assertIn(term, template)
+        self.assertNotIn("새 Sheet에 설치하는 권장 핵심 tab", template)
+
     def test_visual_policy_uses_notion_project_boundary(self) -> None:
         visual = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
         for term in (
