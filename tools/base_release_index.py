@@ -38,37 +38,9 @@ def _install_finalization_pin_validation(contract_module: ModuleType) -> None:
     )
 
     def release_lock_contract(
-        adapter: dict[str, Any],
-        base_repository: Path,
-        *,
-        git_runner: Callable[..., Any] | None = None,
-        git_show_bytes: Callable[[Path, str, str], bytes | None] | None = None,
+        adapter: dict[str, Any], base_repository: Path
     ) -> tuple[list[str], dict[str, Any] | None, bytes | None]:
-        if git_runner is None and git_show_bytes is None:
-            errors, lock, pinned_registry = original(adapter, base_repository)
-        else:
-            errors, lock, pinned_registry = original(
-                adapter,
-                base_repository,
-                git_runner=git_runner,
-                git_show_bytes=git_show_bytes,
-            )
-        run_git = git_runner or contract_module._git
-
-        def commit_exists(commit: str) -> bool:
-            return run_git(
-                base_repository, "cat-file", "-e", f"{commit}^{{commit}}"
-            ).returncode == 0
-
-        def is_ancestor(ancestor: str, descendant: str) -> bool:
-            return run_git(
-                base_repository,
-                "merge-base",
-                "--is-ancestor",
-                ancestor,
-                descendant,
-            ).returncode == 0
-
+        errors, lock, pinned_registry = original(adapter, base_repository)
         base_release = adapter.get("base_release", {})
         if not isinstance(base_release, dict):
             return errors, lock, pinned_registry
@@ -92,15 +64,15 @@ def _install_finalization_pin_validation(contract_module: ModuleType) -> None:
                 f"expected {expected!r}, got {finalization_commit!r}"
             )
             return errors, lock, pinned_registry
-        if not commit_exists(expected):
+        if not contract_module._commit_exists(base_repository, expected):
             errors.append(f"Base v{version} finalization commit is absent: {expected}")
             return errors, lock, pinned_registry
 
         evidence_commit = base_release.get("release_evidence_commit")
         if (
             isinstance(evidence_commit, str)
-            and commit_exists(evidence_commit)
-            and not is_ancestor(evidence_commit, expected)
+            and contract_module._commit_exists(base_repository, evidence_commit)
+            and not contract_module._is_ancestor(base_repository, evidence_commit, expected)
         ):
             errors.append(
                 f"Base v{version} release evidence is not an ancestor of finalization commit"
