@@ -25,6 +25,12 @@ class LoopCompletionGateTests(unittest.TestCase):
         shutil.copytree(TEMPLATES, destination, dirs_exist_ok=True)
         return destination / "PROJECT_EXECUTION_CAPSULE.json"
 
+    def _close_coverage(self, capsule_path: Path) -> None:
+        ledger = load_json(capsule_path.parent / "REQUIREMENT_COVERAGE_LEDGER.json")
+        ledger["status"] = "VERIFIED"
+        ledger["requirements"][0]["status"] = "VERIFIED"
+        write_json(capsule_path.parent / "REQUIREMENT_COVERAGE_LEDGER.json", ledger)
+
     def test_readiness_accepts_mapped_requirement_but_completion_rejects_it(self) -> None:
         from tools.loop_contracts.bundle_validation import validate_bundle, validate_completion
 
@@ -37,10 +43,7 @@ class LoopCompletionGateTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as temporary:
             capsule_path = self._copy_bundle(Path(temporary) / "loop")
-            ledger = load_json(capsule_path.parent / "REQUIREMENT_COVERAGE_LEDGER.json")
-            ledger["status"] = "VERIFIED"
-            ledger["requirements"][0]["status"] = "VERIFIED"
-            write_json(capsule_path.parent / "REQUIREMENT_COVERAGE_LEDGER.json", ledger)
+            self._close_coverage(capsule_path)
 
             receipt = load_json(capsule_path.parent / "VERIFICATION_RECEIPT.json")
             receipt["status"] = "VERIFIED"
@@ -66,15 +69,45 @@ class LoopCompletionGateTests(unittest.TestCase):
             self.assertIn("REQUIRED_CHECK_NOT_PASS", codes)
             self.assertIn("DESTINATION_REF_MISMATCH", codes)
 
+    def test_empty_check_or_destination_list_cannot_close_completion(self) -> None:
+        from tools.loop_contracts.bundle_validation import validate_completion
+
+        with tempfile.TemporaryDirectory() as temporary:
+            capsule_path = self._copy_bundle(Path(temporary) / "loop")
+            self._close_coverage(capsule_path)
+            receipt_path = capsule_path.parent / "VERIFICATION_RECEIPT.json"
+            receipt = load_json(receipt_path)
+            receipt["status"] = "VERIFIED"
+            receipt["checks"] = []
+            receipt["destinations"] = [{
+                "destination_id": "PROJECT_GITHUB_MAIN",
+                "kind": "GITHUB",
+                "required": True,
+                "expected_ref": "same-ref",
+                "observed_ref": "same-ref",
+                "sync_state": "SYNCED",
+                "evidence_ref": "github-readback",
+            }]
+            write_json(receipt_path, receipt)
+            self.assertIn("SCHEMA_INVALID", {item.code for item in validate_completion(capsule_path)})
+
+            receipt["checks"] = [{
+                "check_id": "CORE_TESTS",
+                "required": True,
+                "status": "PASS",
+                "evidence_ref": "ci://run/123",
+                "reason": "",
+            }]
+            receipt["destinations"] = []
+            write_json(receipt_path, receipt)
+            self.assertIn("SCHEMA_INVALID", {item.code for item in validate_completion(capsule_path)})
+
     def test_fully_verified_receipt_can_close_completion(self) -> None:
         from tools.loop_contracts.bundle_validation import validate_completion
 
         with tempfile.TemporaryDirectory() as temporary:
             capsule_path = self._copy_bundle(Path(temporary) / "loop")
-            ledger = load_json(capsule_path.parent / "REQUIREMENT_COVERAGE_LEDGER.json")
-            ledger["status"] = "VERIFIED"
-            ledger["requirements"][0]["status"] = "VERIFIED"
-            write_json(capsule_path.parent / "REQUIREMENT_COVERAGE_LEDGER.json", ledger)
+            self._close_coverage(capsule_path)
 
             receipt = load_json(capsule_path.parent / "VERIFICATION_RECEIPT.json")
             receipt["status"] = "VERIFIED"
