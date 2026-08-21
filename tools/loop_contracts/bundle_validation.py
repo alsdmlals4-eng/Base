@@ -165,6 +165,35 @@ def validate_completion(capsule_path: Path) -> list[Finding]:
             )
         )
 
+    exact_head_sha = str(receipt.get("exact_head_sha", "")).strip()
+    if exact_head_sha == "0" * 40:
+        findings.append(
+            Finding(
+                "COMPLETION_HEAD_PLACEHOLDER",
+                "verification receipt exact_head_sha is still the template placeholder",
+                receipt_relative,
+            )
+        )
+
+    checks = receipt["checks"]
+    destinations = receipt["destinations"]
+    if not any(check["required"] for check in checks):
+        findings.append(
+            Finding(
+                "REQUIRED_CHECK_MISSING",
+                "completion requires at least one required verification check",
+                receipt_relative,
+            )
+        )
+    if not any(destination["required"] for destination in destinations):
+        findings.append(
+            Finding(
+                "REQUIRED_DESTINATION_MISSING",
+                "completion requires at least one required destination readback",
+                receipt_relative,
+            )
+        )
+
     if coverage.get("status") != "VERIFIED":
         findings.append(
             Finding(
@@ -195,7 +224,7 @@ def validate_completion(capsule_path: Path) -> list[Finding]:
             )
         )
 
-    for check in receipt["checks"]:
+    for check in checks:
         status = check["status"]
         check_id = check["check_id"]
         reason = str(check.get("reason", "")).strip()
@@ -226,7 +255,7 @@ def validate_completion(capsule_path: Path) -> list[Finding]:
                 )
             )
 
-    for destination in receipt["destinations"]:
+    for destination in destinations:
         destination_id = destination["destination_id"]
         expected_ref = str(destination.get("expected_ref", "")).strip()
         observed_ref = str(destination.get("observed_ref", "")).strip()
