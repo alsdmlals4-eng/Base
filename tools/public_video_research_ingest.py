@@ -343,6 +343,7 @@ def fetch_caption_text(track_url: str, metadata: Mapping[str, object], *, timeou
     request = urllib.request.Request(safe_url, headers=_safe_caption_headers(metadata))
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:  # noqa: S310 - validated HTTPS host
+            validate_caption_url(response.geturl())
             data = response.read()
     except urllib.error.HTTPError as error:
         raise VideoIngestError("CAPTION_FETCH_FAILED", f"HTTP {error.code}") from error
