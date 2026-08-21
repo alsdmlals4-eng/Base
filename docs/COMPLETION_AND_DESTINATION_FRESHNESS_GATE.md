@@ -48,6 +48,8 @@ Coverage ledger 전체 status도 `VERIFIED`여야 한다.
 
 `LOOP_VERIFICATION_RECEIPT`는 완료 시점의 실행·생략·목적지 readback을 구조화한다.
 
+빈 receipt로 완료 Gate를 우회할 수 없도록 **최소 1개의 check와 최소 1개의 destination readback**을 반드시 포함한다. 현재 작업에 적용 가능한 검증이나 목적지가 정말 없다면 completion contract 자체가 필요 없는 작업인지 먼저 재라우팅하며, `checks=[]` 또는 `destinations=[]`를 `VERIFIED`의 근거로 사용하지 않는다.
+
 ### Required check
 
 각 check는 최소 다음을 가진다.
