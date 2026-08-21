@@ -18,8 +18,18 @@ Requirement Coverage is bidirectional: every approved requirement needs tasks, o
 
 The Capsule is not a second GDD or Art Bible. It binds exact authority documents. A3 remains empty and Scheduler remains `NOT_CONFIGURED` in v1.
 
-Validate with:
+Validate readiness with:
 
 ```bash
-python tools/check_loop_execution_capsule.py   templates/project-operations/loop/PROJECT_EXECUTION_CAPSULE.json   --format json
+python tools/check_loop_execution_capsule.py templates/project-operations/loop/PROJECT_EXECUTION_CAPSULE.json --format json
 ```
+
+## Completion phase
+
+Readiness and completion are separate claims. The entry gate above remains the pre-execution readiness contract. When claiming a run complete or closed, follow [Completion & Destination Freshness Gate](./COMPLETION_AND_DESTINATION_FRESHNESS_GATE.md) and validate the completion receipt with:
+
+```bash
+python tools/check_loop_execution_capsule.py templates/project-operations/loop/PROJECT_EXECUTION_CAPSULE.json --phase completion --format text
+```
+
+Do not label a required GitHub, Notion, or other declared destination `SYNCED` until its observed readback matches the expected reference.
