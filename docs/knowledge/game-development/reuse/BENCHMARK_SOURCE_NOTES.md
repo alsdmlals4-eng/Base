@@ -107,7 +107,7 @@ Observed:
 - UI도 firing 도중 transient update를 연속 publish하지 않고 settled result 뒤 갱신하도록 계약한다.
 
 Disposition:
-- LOADED 코드·에셋·고유 수치·UI 표현은 `REJECT_DIRECT_REUSE`.
+- LOADED 코드·에셋·고유 수치·UI 표현의 direct reuse는 `REJECT`.
 - 관찰 가능한 원리는 `PATTERN_EXTRACT`로만 사용해 `RM-TOOL-002`의 preview/RNG causal boundary와 `ATOMIC_RESOLUTION_BOUNDARY`를 보강한다.
 - zone/container ownership 구조는 현재 이 Source만으로 Base 보편 법칙으로 승격하지 않고 `SINGLE_SOURCE_HYPOTHESIS`로 유지한다. 다른 materially distinct 구현과 프로젝트 소비가 확인되기 전 별도 `RM-SYS-*`를 만들지 않는다.
 
@@ -126,7 +126,7 @@ Observed:
 
 Disposition:
 - 기능/UX 원리는 `ADAPT` for `RM-TOOL-003`.
-- `DIRECT_LICENSED_REUSE_CANDIDATE`는 실제 source import가 필요할 때만 별도 rights/security review 후 판단한다. 현재는 `LICENSE_METADATA_CONFLICT_REVIEW_REQUIRED`.
+- `DIRECT_LICENSED_REUSE_CANDIDATE`는 실제 source import가 필요할 때만 별도 rights/security review 후 판단한다. 현재는 `RIGHTS_REVIEW_REQUIRED · LICENSE_METADATA_CONFLICT`.
 - Base 기본 경로는 **read-only project snapshot + deterministic runner + machine-readable report → 반복 가치 검증 후 Tool Hub thin surface**다.
 - external Electron app 직접 탑재와 독립 거대 Balance GUI 신규 구축은 기본값에서 제외한다.
 - output을 상업 게임 설계에 사용하는 것과 소프트웨어 코드를 Base에 편입·재배포하는 것은 별도 권리 질문으로 분리한다.
