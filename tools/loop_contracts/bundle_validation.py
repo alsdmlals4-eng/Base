@@ -15,6 +15,7 @@ FILES = {
     "immutable": ("loop-immutable-run-v1.schema.json", "immutable_run_path"),
 }
 
+
 def validate_bundle(capsule_path: Path) -> list[Finding]:
     findings: list[Finding] = []
     root = capsule_path.parent.resolve(strict=True)
@@ -43,7 +44,7 @@ def validate_bundle(capsule_path: Path) -> list[Finding]:
         except Exception as exc:
             findings.append(Finding("CONTRACT_UNREADABLE", str(exc), relative))
 
-    blocking = {"SCHEMA_INVALID","CONTRACT_REFERENCE_MISSING","CONTRACT_UNREADABLE","UNSAFE_PROJECT_PATH"}
+    blocking = {"SCHEMA_INVALID", "CONTRACT_REFERENCE_MISSING", "CONTRACT_UNREADABLE", "UNSAFE_PROJECT_PATH"}
     if any(item.code in blocking for item in findings):
         return findings
 
@@ -53,8 +54,8 @@ def validate_bundle(capsule_path: Path) -> list[Finding]:
             findings.append(Finding("PROJECT_ID_MISMATCH", f"{role} project_id differs", paths[role]))
 
     source_sha = capsule["source_main_sha"]
-    for role in ("planning","visual","package","coverage","active","immutable"):
-        source_key = "source_commit" if role in {"planning","visual"} else "source_main_sha"
+    for role in ("planning", "visual", "package", "coverage", "active", "immutable"):
+        source_key = "source_commit" if role in {"planning", "visual"} else "source_main_sha"
         if objects[role].get(source_key) != source_sha:
             findings.append(Finding("STALE_AUTHORITY", f"{role} source differs", paths[role]))
 
@@ -88,5 +89,191 @@ def validate_bundle(capsule_path: Path) -> list[Finding]:
         findings.append(Finding("VISUAL_LOCK_MISMATCH", "NONE requires VISUAL_NOT_APPLICABLE", paths["package"]))
     elif impact == "EXISTING_LOCKED" and (requirement != "VISUAL_LOCKED" or visual["status"] != "VISUAL_LOCKED"):
         findings.append(Finding("VISUAL_LOCK_MISMATCH", "EXISTING_LOCKED requires VISUAL_LOCKED", paths["package"]))
+
+    return findings
+
+
+def validate_completion(capsule_path: Path) -> list[Finding]:
+    """Validate that an already-ready Loop package may be reported complete.
+
+    Readiness and completion are deliberately separate. `validate_bundle()`
+    continues to allow MAPPED/IMPLEMENTED work so an approved package can
+    start. This function adds fail-closed closure, execution-evidence, and
+    destination-readback requirements without changing readiness semantics.
+    """
+
+    readiness_findings = validate_bundle(capsule_path)
+    if readiness_findings:
+        return readiness_findings
+
+    root = capsule_path.parent.resolve(strict=True)
+    capsule = load_object(capsule_path)
+
+    package_relative = capsule["implementation_package_path"]
+    coverage_relative = capsule["coverage_ledger_path"]
+    package = load_object(resolve_project_relative(root, package_relative))
+    coverage = load_object(resolve_project_relative(root, coverage_relative))
+
+    receipt_relative = capsule.get("verification_receipt_path")
+    if not isinstance(receipt_relative, str) or not receipt_relative:
+        return [
+            Finding(
+                "COMPLETION_RECEIPT_MISSING",
+                "completion requires verification_receipt_path",
+                capsule_path.name,
+            )
+        ]
+
+    try:
+        receipt_path = resolve_project_relative(root, receipt_relative)
+        receipt = load_object(receipt_path)
+    except ValueError:
+        return [Finding("UNSAFE_PROJECT_PATH", receipt_relative, capsule_path.name)]
+    except Exception as exc:
+        return [Finding("COMPLETION_RECEIPT_UNREADABLE", str(exc), receipt_relative)]
+
+    findings = validate_schema(
+        "loop-verification-receipt-v1.schema.json",
+        receipt,
+        receipt_relative,
+    )
+    if findings:
+        return findings
+
+    if receipt.get("project_id") != capsule.get("project_id"):
+        findings.append(
+            Finding(
+                "COMPLETION_PROJECT_MISMATCH",
+                "receipt project_id differs from capsule",
+                receipt_relative,
+            )
+        )
+    if receipt.get("source_main_sha") != capsule.get("source_main_sha"):
+        findings.append(
+            Finding(
+                "COMPLETION_SOURCE_MISMATCH",
+                "receipt source_main_sha differs from capsule",
+                receipt_relative,
+            )
+        )
+    if receipt.get("package_id") != package.get("package_id"):
+        findings.append(
+            Finding(
+                "COMPLETION_PACKAGE_MISMATCH",
+                "receipt package_id differs from implementation package",
+                receipt_relative,
+            )
+        )
+
+    if coverage.get("status") != "VERIFIED":
+        findings.append(
+            Finding(
+                "COMPLETION_COVERAGE_OPEN",
+                f"coverage ledger status is {coverage.get('status')!r}, expected 'VERIFIED'",
+                coverage_relative,
+            )
+        )
+
+    closed_requirement_states = {"VERIFIED", "DEFERRED_APPROVED"}
+    for item in coverage["requirements"]:
+        status = item["status"]
+        if status not in closed_requirement_states:
+            findings.append(
+                Finding(
+                    "COMPLETION_REQUIREMENT_OPEN",
+                    f"{item['requirement_id']} is {status}; expected VERIFIED or DEFERRED_APPROVED",
+                    coverage_relative,
+                )
+            )
+
+    if receipt.get("status") != "VERIFIED":
+        findings.append(
+            Finding(
+                "COMPLETION_RECEIPT_OPEN",
+                f"verification receipt status is {receipt.get('status')!r}, expected 'VERIFIED'",
+                receipt_relative,
+            )
+        )
+
+    for check in receipt["checks"]:
+        status = check["status"]
+        check_id = check["check_id"]
+        reason = str(check.get("reason", "")).strip()
+        evidence_ref = str(check.get("evidence_ref", "")).strip()
+
+        if status != "PASS" and not reason:
+            findings.append(
+                Finding(
+                    "CHECK_REASON_MISSING",
+                    f"{check_id} is {status} without a reason",
+                    receipt_relative,
+                )
+            )
+        if check["required"] and status != "PASS":
+            findings.append(
+                Finding(
+                    "REQUIRED_CHECK_NOT_PASS",
+                    f"required check {check_id} is {status}",
+                    receipt_relative,
+                )
+            )
+        if check["required"] and status == "PASS" and not evidence_ref:
+            findings.append(
+                Finding(
+                    "CHECK_EVIDENCE_MISSING",
+                    f"required PASS check {check_id} has no evidence_ref",
+                    receipt_relative,
+                )
+            )
+
+    for destination in receipt["destinations"]:
+        destination_id = destination["destination_id"]
+        expected_ref = str(destination.get("expected_ref", "")).strip()
+        observed_ref = str(destination.get("observed_ref", "")).strip()
+        sync_state = destination["sync_state"]
+        evidence_ref = str(destination.get("evidence_ref", "")).strip()
+
+        if sync_state == "SYNCED" and expected_ref != observed_ref:
+            findings.append(
+                Finding(
+                    "DESTINATION_REF_MISMATCH",
+                    f"{destination_id} is marked SYNCED but expected_ref != observed_ref",
+                    receipt_relative,
+                )
+            )
+
+        if destination["required"]:
+            if not expected_ref or not observed_ref:
+                findings.append(
+                    Finding(
+                        "DESTINATION_READBACK_MISSING",
+                        f"required destination {destination_id} lacks expected/observed readback",
+                        receipt_relative,
+                    )
+                )
+            elif expected_ref != observed_ref and sync_state != "SYNCED":
+                findings.append(
+                    Finding(
+                        "DESTINATION_REF_MISMATCH",
+                        f"required destination {destination_id} expected_ref != observed_ref",
+                        receipt_relative,
+                    )
+                )
+            if sync_state != "SYNCED":
+                findings.append(
+                    Finding(
+                        "DESTINATION_NOT_SYNCED",
+                        f"required destination {destination_id} is {sync_state}",
+                        receipt_relative,
+                    )
+                )
+            if not evidence_ref:
+                findings.append(
+                    Finding(
+                        "DESTINATION_EVIDENCE_MISSING",
+                        f"required destination {destination_id} has no evidence_ref",
+                        receipt_relative,
+                    )
+                )
 
     return findings
