@@ -62,6 +62,7 @@ class PostmergeGithubNotionLongTermContractTests(unittest.TestCase):
         for token in (
             "ISSUE_SUCCESSOR_FRESHNESS_REQUIRED",
             "OPEN_ISSUE_STATUS_IS_NOT_AUTHORITY",
+            "MERGE_LINKED_ISSUE_READBACK_REQUIRED",
             "CURRENT_VALID",
             "DEFERRED_VALID",
             "COMPLETED",
@@ -72,6 +73,7 @@ class PostmergeGithubNotionLongTermContractTests(unittest.TestCase):
             self.assertIn(token, policy)
 
         self.assertIn("ISSUE_SUCCESSOR_FRESHNESS_REQUIRED", template)
+        self.assertIn("MERGE_LINKED_ISSUE_READBACK_REQUIRED", template)
         self.assertIn("docs/POSTMERGE_ISSUE_SUCCESSOR_FRESHNESS_POLICY.md", template)
         self.assertIn("exact new main", policy)
         self.assertIn("Human QA", policy)
