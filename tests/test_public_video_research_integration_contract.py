@@ -42,7 +42,7 @@ class PublicVideoResearchIntegrationContractTests(unittest.TestCase):
             self.assertIn(term, registry + "\n" + visual)
 
         self.assertIn("project_visual_canon_ref", visual)
-        self.assertIn("provider는", visual)
+        self.assertIn("provider/model은", visual)
         self.assertIn("새 지출", visual)
 
     def test_human_edit_delta_stays_under_existing_workflow_eval_owner(self) -> None:
