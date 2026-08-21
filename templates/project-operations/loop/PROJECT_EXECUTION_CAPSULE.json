@@ -37,5 +37,6 @@
   ],
   "source_main_sha": "0000000000000000000000000000000000000000",
   "status": "ADOPTED",
+  "verification_receipt_path": "VERIFICATION_RECEIPT.json",
   "visual_lock_path": "VISUAL_LOCK.json"
 }

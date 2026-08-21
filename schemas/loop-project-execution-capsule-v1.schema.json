@@ -140,6 +140,11 @@
     "status": {
       "const": "ADOPTED"
     },
+    "verification_receipt_path": {
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
+      "type": "string"
+    },
     "visual_lock_path": {
       "minLength": 1,
       "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?![A-Za-z]:[\\\\/]).+$",
