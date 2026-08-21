@@ -1,0 +1,134 @@
+{
+  "$id": "loop-verification-receipt-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "check_id": {
+            "type": "string",
+            "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$"
+          },
+          "evidence_ref": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NOT_RUN",
+              "SKIPPED"
+            ]
+          }
+        },
+        "required": [
+          "check_id",
+          "required",
+          "status",
+          "evidence_ref",
+          "reason"
+        ]
+      }
+    },
+    "contract_role": {
+      "const": "LOOP_VERIFICATION_RECEIPT"
+    },
+    "destinations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "destination_id": {
+            "type": "string",
+            "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$"
+          },
+          "evidence_ref": {
+            "type": "string"
+          },
+          "expected_ref": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "GITHUB",
+              "NOTION",
+              "OTHER"
+            ]
+          },
+          "observed_ref": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "sync_state": {
+            "enum": [
+              "SYNCED",
+              "STALE",
+              "UNVERIFIED",
+              "NOT_APPLICABLE"
+            ]
+          }
+        },
+        "required": [
+          "destination_id",
+          "kind",
+          "required",
+          "expected_ref",
+          "observed_ref",
+          "sync_state",
+          "evidence_ref"
+        ]
+      }
+    },
+    "exact_head_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "package_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$"
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "source_main_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "status": {
+      "enum": [
+        "OPEN",
+        "VERIFIED",
+        "BLOCKED"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "contract_role",
+    "project_id",
+    "source_main_sha",
+    "package_id",
+    "exact_head_sha",
+    "status",
+    "checks",
+    "destinations"
+  ],
+  "type": "object"
+}
