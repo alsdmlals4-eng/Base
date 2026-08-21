@@ -13,6 +13,7 @@
 - `QUALITY_OVER_RESPONSE_SPEED`: 중요한 작업은 필요한 만큼 조사·추론·도구 실행·검증에 더 많은 시간과 토큰을 사용하고, 증거 없는 빠른 답변을 완료로 보지 않는다.
 - `BENCHMARK_PRACTICE_COMPARISON`: 현행 정본·실제 구현과 최소 3개 실질 대안을 공식/1차 자료, 벤치마크, 현업 운영 방식, 실무 성공·실패 사례로 비교한다.
 - `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`: GitHub 병합 뒤 exact new main에서 전체 승인 범위를 적대적으로 다시 검토하고 필수 교정을 새 Branch/PR로 처리한다. 적용 가능한 Notion current-state는 GitHub 증거 뒤에 갱신하며, 양쪽 destination readback과 `PROGRESS_READBACK_REQUIRED`로 진행도·남은 작업을 다시 계산해야 완료다.
+- `ISSUE_SUCCESSOR_FRESHNESS_REQUIRED`: GitHub Issues를 사용하는 프로젝트는 병합 뒤 exact new main·current canon·실제 구현·증거와 open Issue를 다시 대조한다. `open` 상태만으로 현재 권한을 만들지 않으며, `CURRENT_VALID / DEFERRED_VALID / COMPLETED / SUPERSEDED / CONFLICT_WITH_CURRENT_CANON / REVIEW_REQUIRED`로 판정한 뒤 필요한 disposition과 readback을 수행한다. 상세 계약은 `docs/POSTMERGE_ISSUE_SUCCESSOR_FRESHNESS_POLICY.md`를 따른다.
 
 ## 한눈에 보기
 
@@ -163,6 +164,7 @@ AI·자동 검사
 - 백업·보류·제거 후보를 기본 컨텍스트에 포함하지 않는다.
 - 전체 skills 폴더를 기본 로드하지 않는다.
 - 사용자 승인 전 기존 프로젝트의 파일을 대량 삭제·이동·통합하지 않는다.
+- GitHub Issue가 `open`이라는 이유만으로 현재 구현 권한·정본·남은 작업으로 단정하지 않는다.
 
 ## 다음 작업
 
@@ -180,6 +182,7 @@ AI·자동 검사
 - 발행 상태: 각 Publication Manifest
 - 운영체계 Health Review: `managing-game-project-operating-system`의 `verify` 결과
 - 최근 변경 검증: `reviewing-and-validating-project-changes` 결과
+- 최근 Issue successor freshness: `docs/POSTMERGE_ISSUE_SUCCESSOR_FRESHNESS_POLICY.md` 적용 결과 또는 `NOT_APPLICABLE`
 
 ## 수명주기 영역
 
@@ -199,5 +202,6 @@ AI·자동 검사
 - 현재 작업에 필요한 통합 Skill과 mode는 무엇인가?
 - 발행 정책과 사람이 볼 최신 자료는 무엇인가?
 - 보류·확인 필요·미검증은 어디인가?
+- open Issue 중 실제 current/deferred 작업과 completed/superseded history는 어떻게 구분되는가?
 
 답하지 못하면 이 문서 또는 연결된 Registry·책임 원본·실제 증거를 갱신한다.
