@@ -1,6 +1,6 @@
 # Reusable Module Benchmark Source Notes
 
-- 확인일: 2026-08-20
+- 확인일: 2026-08-22
 - 역할: `REUSABLE_MODULE_REGISTRY.md`의 외부 benchmark provenance 보조 자료
 - 권위: 외부 사례는 Base/project 요구사항 정본이 아니다.
 
@@ -11,7 +11,7 @@
 ```text
 external source
 → observed contract
-→ ADOPT | ADAPT | TEST | REJECT | DIRECT_LICENSED_REUSE_CANDIDATE
+→ ADOPT | ADAPT | TEST | REJECT | PATTERN_EXTRACT | DIRECT_LICENSED_REUSE_CANDIDATE
 → project fit
 → project evidence
 ```
@@ -91,6 +91,46 @@ Disposition:
 - `ADAPT` for `RM-TOOL-003 BALANCE_SCENARIO_BATCH_SIMULATOR`의 data/evidence mindset.
 - 카드 UI·고유 카드·유물·수치·맵 구조를 복제하지 않는다.
 
+## DevBawky LOADED · resolution/RNG/lifecycle pattern extraction
+
+Primary / developer repository:
+- https://github.com/DevBawky/LOADED
+- https://github.com/DevBawky/LOADED/blob/main/README.md
+- https://github.com/DevBawky/LOADED/blob/main/Docs/BulletDeckLifecycle.md
+- https://github.com/DevBawky/LOADED/blob/main/.agents/skills/loaded-edit-bullet-deck/SKILL.md
+
+Observed:
+- 공개 저장소 README는 심사 목적으로만 공개됐고 코드·에셋의 복제, 수정, 재배포, 상업적 이용 및 다른 프로젝트 사용을 금지한다고 명시한다.
+- 탄환 instance는 authoritative container 중 하나에만 존재하고 `nextCycleOrder`는 실제 owner가 아닌 preview/reservation 정보로 분리한다.
+- 미래 파괴 결과를 preview하기 위해 RNG를 미리 소비하지 않는다고 설계 문서와 project Skill 양쪽에서 명시한다.
+- 마지막 자원 소진과 마지막 적 제거처럼 충돌할 수 있는 결과는 개별 effect 중간이 아니라 firing/effect sequence 종료 뒤 우선순위에 따라 확정한다.
+- UI도 firing 도중 transient update를 연속 publish하지 않고 settled result 뒤 갱신하도록 계약한다.
+
+Disposition:
+- LOADED 코드·에셋·고유 수치·UI 표현의 direct reuse는 `REJECT`.
+- 관찰 가능한 원리는 `PATTERN_EXTRACT`로만 사용해 `RM-TOOL-002`의 preview/RNG causal boundary와 `ATOMIC_RESOLUTION_BOUNDARY`를 보강한다.
+- zone/container ownership 구조는 현재 이 Source만으로 Base 보편 법칙으로 승격하지 않고 `SINGLE_SOURCE_HYPOTHESIS`로 유지한다. 다른 materially distinct 구현과 프로젝트 소비가 확인되기 전 별도 `RM-SYS-*`를 만들지 않는다.
+
+## DevBawky Kalivra · explainable balance analysis and simulation
+
+Primary / developer repository:
+- https://github.com/DevBawky/Kalivra
+- https://github.com/DevBawky/Kalivra/blob/main/README.md
+- https://github.com/DevBawky/Kalivra/blob/main/LICENSE.md
+
+Observed:
+- README는 Monte Carlo 반복 실행, damage/TTK 분포, 승률 신뢰 구간, outlier/long-tail, explainable battle log, preset diff, formula preset, imbalance watchdog, goal-seeking adjustment를 목표 기능으로 설명한다.
+- 이러한 기능은 `RM-TOOL-003`이 이미 가진 snapshot/scenario/distribution/dominant-choice/baseline-candidate 계약과 높은 중복을 보인다.
+- README badge/설명은 MIT라고 표현하지만 실제 `LICENSE.md`에는 attribution과 함께 **소프트웨어 자체 또는 수정본의 유료 판매·임대 금지** 조건이 추가되어 있다. 따라서 `MIT` 표기만 보고 표준 MIT dependency로 취급하면 안 된다.
+- `main.js`의 Electron 설정은 `nodeIntegration: true`, `contextIsolation: false`이므로 Base의 기존 project-isolated Tool Hub에 그대로 drop-in하는 것을 기본 경로로 삼지 않는다.
+
+Disposition:
+- 기능/UX 원리는 `ADAPT` for `RM-TOOL-003`.
+- `DIRECT_LICENSED_REUSE_CANDIDATE`는 실제 source import가 필요할 때만 별도 rights/security review 후 판단한다. 현재는 `RIGHTS_REVIEW_REQUIRED · LICENSE_METADATA_CONFLICT`.
+- Base 기본 경로는 **read-only project snapshot + deterministic runner + machine-readable report → 반복 가치 검증 후 Tool Hub thin surface**다.
+- external Electron app 직접 탑재와 독립 거대 Balance GUI 신규 구축은 기본값에서 제외한다.
+- output을 상업 게임 설계에 사용하는 것과 소프트웨어 코드를 Base에 편입·재배포하는 것은 별도 권리 질문으로 분리한다.
+
 ## Vampire Survivors · auto-action pressure + bounded growth choices
 
 Primary/developer source:
@@ -147,7 +187,8 @@ Disposition:
 1. 현재 10개 프로젝트의 실제 반복 문제와 직접 연결됨.
 2. 원리 수준에서 서로 다른 장르/도구가 같은 문제를 해결하는 사례를 제공함.
 3. Godot/ink/Yarn/Kenney/Tetris/Mega Crit처럼 공식/1차 자료로 권리·구조·개발 의도를 확인할 수 있는 축을 우선함.
-4. Store description은 제품의 공개 동작/포지셔닝을 관찰할 때만 사용하며 개발 의도나 성공 원인 증거로 과장하지 않음.
+4. LOADED/Kalivra처럼 개발자가 공개한 repository·설계 문서·license는 영상/검색 snippet보다 구현·권리 경계를 직접 확인할 수 있을 때 우선한다.
+5. Store description은 제품의 공개 동작/포지셔닝을 관찰할 때만 사용하며 개발 의도나 성공 원인 증거로 과장하지 않음.
 
 ## Recheck triggers
 
@@ -155,3 +196,4 @@ Disposition:
 - license/terms가 바뀌었을 때.
 - 특정 benchmark의 exact mechanic/rule 수치가 결정에 필요할 때.
 - project identity와 benchmark similarity가 가까워져 rights/trade-dress 검토가 필요할 때.
+- Kalivra source를 실제 Base code에 편입하려 할 때 `README`의 MIT 표기와 `LICENSE.md`의 추가 제한 충돌을 다시 검토한다.
