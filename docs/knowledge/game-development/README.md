@@ -120,6 +120,8 @@
 
 - 서버 필요가 발견되면 `docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`에서 `SERVER_FEATURE_DETECTED` → `CLOUD_RUN_DEFAULT_CANDIDATE` → `FIT_AND_RISK_ASSESSMENT`를 수행한다.
 - 실제 프로젝트 계약은 `templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md`가 소유하며 문서 존재만으로 배포·부하·비용·보안 준비를 주장하지 않는다.
+- 서비스-backed Demo/Test가 필요하면 같은 Guide와 Contract에서 `ONE_CONSUMER_INTERFACE` → `REAL_ADAPTER | FAKE_ADAPTER`를 사용하고 `CONTRACT_PARITY_REQUIRED`, `FAIL_CLOSED_UNKNOWN_OPERATION`, deterministic/resettable synthetic fixture를 유지한다.
+- 공개·공유 Demo는 `PUBLIC_DEMO_SANITIZATION`과 `SYNTHETIC_DATA_ONLY`를 적용하며 fake 실행 증거는 `SIMULATED_ONLY`라서 실제 provider `RUNTIME_VERIFIED`나 production readiness를 대신하지 않는다.
 - 고주파 authoritative realtime, UDP, indefinite worker, instance-local durable authority는 기본 후보에서 제외한다.
 
 ## 9. 게임 권한·무결성·DRM Capability Pack

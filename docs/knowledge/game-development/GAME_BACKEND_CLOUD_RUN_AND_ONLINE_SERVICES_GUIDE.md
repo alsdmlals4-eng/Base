@@ -78,6 +78,50 @@ authenticate -> authorize -> validate schema/version
 Paid, competitive, currency, reward, and trade state is not finalized from a
 client claim alone.
 
+## Demo and test-double service contract
+
+A project may validate a service-backed flow before the real provider is ready,
+but it must not fork consumer behavior into a separate demo-only API. Use
+`ONE_CONSUMER_INTERFACE`: the same consumer-facing operation contract is
+implemented by a `REAL_ADAPTER` and, when useful, a `FAKE_ADAPTER`.
+
+```text
+consumer
+-> ONE_CONSUMER_INTERFACE
+   -> REAL_ADAPTER -> real provider
+   -> FAKE_ADAPTER -> deterministic synthetic fixture
+```
+
+`CONTRACT_PARITY_REQUIRED` means both adapters preserve the same operation IDs,
+request shape and version, response/domain-result shape, stable error classes,
+and mutation semantics that the consumer is expected to handle. A fake adapter
+may replace infrastructure and external side effects, but it must not silently
+invent a friendlier contract than the real provider.
+
+Unknown fake operations use `FAIL_CLOSED_UNKNOWN_OPERATION`. Missing handlers,
+unsupported request versions, schema mismatches, or unseeded required state must
+return an explicit test/demo failure or `BLOCKED_UNVERIFIED`; they must not fall
+through to `null`, `{ok: true}`, or another fabricated success.
+
+Demo fixtures use `DETERMINISTIC_FIXTURE` and `RESETTABLE_STATE` when repeatable
+validation benefits from a known starting state. A reset must restore the same
+approved seed and must not mutate project canon, production data, or a real
+provider. Public or shareable demo data uses `SYNTHETIC_DATA_ONLY`.
+
+`PUBLIC_DEMO_SANITIZATION` requires the demo boundary to exclude real secrets,
+private records, and real identity data unless a specific field is both necessary
+and explicitly approved for public use. Replace identities, customer/player
+records, credentials, approval recipients, and other private operational values
+with synthetic equivalents. Never copy production credentials or private data
+into a fixture merely to make the demo realistic.
+
+Fake execution has evidence ceiling `SIMULATED_ONLY`. It may prove consumer flow,
+UI/UX behavior, deterministic state transitions, error handling, and contract
+expectations inside the fake boundary. It does not satisfy real-provider
+`RUNTIME_VERIFIED`, load, dependency-failure, cost, security, persistence,
+rollback, or `PRODUCTION_READY` evidence. Provider contract verification and real
+runtime evidence remain separate gates.
+
 ## Identity, privilege, and secret boundary
 
 ```text
@@ -159,7 +203,9 @@ Forbidden claims:
 
 Static CI validates files, routes, terms, and forbidden boundaries. It does not
 prove deployment, runtime persistence, load, failure recovery, cost, security,
-or production readiness.
+or production readiness. Fake/demo adapter execution remains `SIMULATED_ONLY`
+until the corresponding real-provider contract and runtime evidence are actually
+verified.
 
 Re-check current official documentation before implementation:
 - https://cloud.google.com/run/docs
