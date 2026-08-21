@@ -5,6 +5,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -113,6 +114,27 @@ class PublicVideoResearchIngestTests(unittest.TestCase):
         for value in ("http://www.youtube.com/api/timedtext", "https://example.com/caption.vtt", "file:///tmp/caption.vtt"):
             with self.subTest(value=value), self.assertRaises(module.VideoIngestError):
                 module.validate_caption_url(value)
+
+    def test_fetch_caption_text_rejects_redirect_to_untrusted_host(self) -> None:
+        module = self.module
+
+        class FakeResponse:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, tb):
+                return False
+
+            def geturl(self) -> str:
+                return "https://example.com/redirected.vtt"
+
+            def read(self) -> bytes:
+                return b"WEBVTT\n\n00:00.000 --> 00:01.000\ntext\n"
+
+        with mock.patch.object(module.urllib.request, "urlopen", return_value=FakeResponse()):
+            with self.assertRaises(module.VideoIngestError) as caught:
+                module.fetch_caption_text("https://www.youtube.com/api/timedtext?x=1", {})
+        self.assertEqual("UNSAFE_CAPTION_URL", caught.exception.code)
 
     def test_build_evidence_packet_preserves_provenance_and_local_storage_policy(self) -> None:
         module = self.module
