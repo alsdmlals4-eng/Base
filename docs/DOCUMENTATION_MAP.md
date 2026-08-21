@@ -60,7 +60,7 @@ REPOSITORY_STRUCTURED_CANON
 
 `PROJECT_RELATION_REQUIRED`: project-scoped Work, Asset, Component, Screen, Reference, Benchmark, Character, Faction, Scene, Clue, Location, Canon record는 Project relation 없이 프로젝트 정본이 될 수 없다.
 
-Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·Expression/Sprite Studio·visual Tool Hub는 active authority가 아니다.
+Google Sheets는 `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL` source다. Figma·Figma Bridge·Expression/Sprite Studio·external HTML workspace·project-management Tool Hub·QA Evidence Studio는 active/default authority가 아니다. 상세 retirement는 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`가 소유한다.
 
 ## 3. 현재 공용 책임 원본
 
@@ -70,11 +70,12 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·
 | 항상 적용 규칙 | `AGENTS.md` | 권한·승인·환경·비용·검증·보호·완료 불변 규칙 |
 | 통합 운영 모델 | `docs/OPERATING_MODEL.md` | 생명주기·정본·상태·발행·근거·검증 |
 | Work Mode / Skill | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | PLAN/BUILD/REVIEW와 Skill 자동 라우팅 |
-| 장기 작업 | `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md` | 현행조사→>=3 대안→벤치마킹→최소 5회 전체 적대적 개선→5회 이후 오류·충돌·누락·blocker 0까지 추가 전체 루프→장기 최선안 |
+| 장기 작업 | `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md` | 현행조사→>=3 대안→creative benchmark frontier→최소 5회 전체 적대적 개선→5회 이후 오류·충돌·누락·blocker 0까지 추가 전체 루프→장기 최선안 |
 | 프로젝트 workspace machine authority | `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json` | `DOMAIN_SPLIT_CANON`, `NOTION_HUMAN_FACING_CANON`, `REPOSITORY_STRUCTURED_CANON`, `PROJECT_RELATION_REQUIRED`, `REPOSITORY_RUNTIME_TRUTH` |
 | 시각 협업 | `docs/VISUAL_COLLABORATION_TOOL_POLICY.md` | Notion 사람용 시각·표 정본, project-filtered human/AI view, repository runtime handoff |
 | Notion asset/flow workflow | `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md` | provenance·bounded edit·approval·version·reuse·benchmark·readback·handoff |
-| Google Sheets migration compatibility | `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` | `COMPATIBILITY_ONLY`, unique/duplicate/obsolete migration, destination readback |
+| 폐기 작업면 | `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md` | Figma/HTML/Sheets/Tool Hub/QA Studio/local management surface의 unique 흡수→active route 제거 |
+| Google Sheets migration compatibility | `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` | `MIGRATION_ONLY_UNTIL_REMOVAL`, unique/duplicate/obsolete migration, destination readback |
 | 이미지 생성·검수 | `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md` | Visual Requirement Gate, candidate QA, 명시적 approval/promotion |
 | Art requirement | `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md` | Visual Requirement Gate, Delete Test, priority/disposition |
 | Preferred visual references | `docs/knowledge/game-development/PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md` | reference-only style families; project Art Canon과 분리 |
@@ -84,6 +85,7 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·
 | AI instruction/context | `docs/knowledge/ai/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md` | instruction authority·context curation·example/fixture·HARD_CONSTRAINT 설계 |
 | AI model/prompt cost | `skills/optimizing-ai-model-and-prompt-costs/SKILL.md` | `optimizing-ai-model-and-prompt-costs`가 model recommendation·effort routing·prompt caching·provider/cost boundary를 소유 |
 | 게임 시스템·난이도·전투 AI | `skills/analyzing-and-refining-game-concepts/SKILL.md`, `docs/knowledge/game-development/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md` | `system-design` / `difficulty-and-combat-ai` mode, 난이도 장벽·공정성·attack/threat budget |
+| creative benchmark / reuse | `docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md`, `docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md` | multi-source 원리 추출, originality/fun/creativity hypothesis, module contract와 project-specific synthesis |
 | 게임 개발 knowledge hub | `docs/knowledge/game-development/README.md` | 기획·아트·개발·AI·research·release Guide routing |
 | 게임 개발 Evidence Pack | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md` | 외부 근거·범위·검증 상태의 공용 조사 packet |
 | Game Development Case Card | `templates/research/GAME_DEVELOPMENT_CASE_CARD.md` | 게임 개발 사례의 context·transferable principle·failure condition·evidence 기록 |
@@ -95,15 +97,15 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·
 | Entitlement / DRM integrity | `docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md` | entitlement integrity, DRM/trust boundary, platform/runtime verification |
 | Godot author/test/live QA | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` | `HiGodot` = authoring authority, `GUT` = test framework, `Hera` = restricted live QA; second writer 금지 |
 | Local Godot reference | `docs/knowledge/godot/LOCAL_GODOT_REFERENCE_LIBRARY.md` | local reference-only shelf; missing path is non-blocking |
+| repository-native evidence | `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`, `docs/knowledge/game-development/reuse/PRODUCTION_TOOL_WORKFLOW_MODULES.md` | `REPOSITORY_NATIVE_EVIDENCE_CAPTURE`: existing test/runtime/log/screenshot/CI evidence를 exact build identity에 결합 |
 | CI execution/cost | `docs/CI_EXECUTION_COST_POLICY.md` | change-class validation, runner/cost gate |
-| PowerShell user execution | `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md` | fresh shell, location first, one paste block, fail-fast |
+| PowerShell user execution | `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md` | fresh shell, location first, one paste block, fail-fast, direct Codex/Loop route |
 | GitHub governance | `docs/GITHUB_PRO_OPERATING_POLICY.md`, `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | GitHub Pro 저장소 운영, GitHub Pro 보호·Ruleset·자동 병합, PR/check/work-item lifecycle |
 | Decision sync | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | approved Decision 정본화·중복질문 방지·Notion/repository cross-sync |
-| Planning sequence/evidence | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | evidence, approval bundle, Demo-First |
+| Planning sequence/evidence | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | evidence, approval bundle, `PROJECT_VISUALIZATION_NEED_MAP`, Demo-First |
 | Integrated vertical slice | `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md` | active integrated single-attachment execution route |
 | Capability composition | `docs/CAPABILITY_COMPOSITION_MAP.md` | capability 조합·금지 경계·필수 증거 |
 | Project local Asset Vault | `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`, `tools/project_asset_vault.py` | local candidate preservation, explicit promotion, tombstone |
-| QA runtime evidence | `tools/qa-evidence-studio/README.md` | developer-owned PC runtime evidence; Android `DEFERRED_NOT_CONNECTED` |
 | Active Skill machine source | `skills/SKILL_REGISTRY.json` | trigger/status/path/mode routing |
 | Active Skill generated view | `docs/generated/BASE_ACTIVE_SKILLS.md` | Registry-derived human discovery surface |
 | Legacy Skill alias | `skills/LEGACY_SKILL_ALIASES.md` | historical Skill ID → current Skill/mode |
@@ -115,6 +117,8 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Figma·Figma Bridge·
 | Archived cross-project UI handoff | `docs/archive/handoffs/2026-07-29-ux-ui-common-system-expansion.md` | `COMPATIBILITY_ONLY`; historical handoff이며 active implementation authority 없음 |
 
 기존 GitHub Pro 상세 프로필·예산 라우팅은 `GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md`와 `GITHUB_USAGE_BUDGET.md` 이름으로도 계속 발견 가능해야 한다.
+
+Skill 수 자체는 목표·완료조건·경고 임계값이 아니다. 책임 중복·trigger 충돌·사용되지 않는 mode·과도한 컨텍스트 비용처럼 **실제 구조 문제**가 있을 때 consolidation 또는 새 Skill 필요성을 판단한다.
 
 ## 4. 프로젝트 Notion 표준
 
@@ -142,7 +146,7 @@ PROJECT HOME
 → REFERENCE / BENCHMARK filtered views
 
 06 · Production · Handoff
-→ approved planning/asset → repository implementation → runtime QA
+→ approved planning/asset → repository implementation → runtime validation
 
 07+ · 프로젝트 고유 확정표
 → 예산 / Tier / 로스터 / 경제 / 성장 / 기타 사람이 비교·학습하기 좋은 표
@@ -245,33 +249,43 @@ generate / edit
 → review / approval
 → version / replacement
 → repository implementation
-→ runtime QA
+→ REPOSITORY_NATIVE_EVIDENCE_CAPTURE
 ```
 
 ## 6. Legacy·compatibility·폐기
 
 ### Google Sheets
 
-기존 unique material이 남아 있을 때만 `COMPATIBILITY_ONLY`. 상세 migration contract는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 소유한다. migration은 unique / duplicate / obsolete를 분류하고, 올바른 Project destination에 옮긴 뒤 readback한다.
+기존 unique material이 남아 있을 때만 `MIGRATION_ONLY_UNTIL_REMOVAL`. 상세 migration contract는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 소유한다. migration은 unique / duplicate / obsolete를 분류하고, 올바른 Project destination에 옮긴 뒤 readback한다. 완료 후 active reference에서 제거한다.
 
-### 폐기된 시각 실행면
+### 폐기된 프로젝트 작업면
 
-다음 active execution surfaces는 폐기됨:
+다음은 active/default execution surface가 아니다.
 
-- dedicated Figma Bridge
-- project Figma target/workspace/tool-route registries
+- Figma / dedicated Figma Bridge / project Figma target-workspace registries
+- external HTML workspace / catalog / dashboard
 - localhost Expression Studio
 - localhost Sprite Animation Studio
-- visual-delivery Tool Hub
-- Figma-only templates/workflows/tests
+- project-management / visual-delivery Tool Hub
+- QA Evidence Studio
+- Google Sheets after unique migration
 
-재사용할 가치는 구현이 아니라 `NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`에 흡수된 project identity, provenance, bounded identity-preserving edits, approval, version/replacement, reuse classification, Screen/Flow ID, readback, explicit runtime handoff다.
+재사용할 가치는 구현 자체가 아니라 current Notion/repository/PowerShell/Loop owner에 흡수된 project identity, provenance, bounded identity-preserving edits, approval, version/replacement, reuse classification, Screen/Flow ID, readback, evidence ceiling, explicit runtime handoff다.
 
 Git history가 복구 기록이다. historical plan/spec/learning entry는 current authority가 아니며, 새 workflow가 그것을 참조할 필요는 없다.
 
-### QA Evidence Studio
+### `REPOSITORY_NATIVE_EVIDENCE_CAPTURE`
 
-QA Evidence Studio는 위 폐기 범위에 포함되지 않는다. 실제 PC build에 배치된 UI/asset의 developer-owned evidence를 기록하는 독립 runtime QA 도구다.
+별도 QA GUI/app을 기본 경로로 사용하지 않는다.
+
+```text
+project/build identity
+→ acceptance contract
+→ tests / GUT / Godot·Hera runtime / logs / screenshot·video / CI artifact
+→ exact commit/PR identity
+→ optional Notion human-facing link
+→ PASS | FAIL | BLOCKED | NOT_RUN + evidence ceiling
+```
 
 ## 7. 프로젝트 정본과 발행
 

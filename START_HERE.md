@@ -21,10 +21,11 @@ Base START_HERE.md·AGENTS.md
 → docs/DOCUMENTATION_MAP.md
 → skills/SKILL_REGISTRY.json
 → 대상 프로젝트 AGENTS.md·프로젝트 START_HERE
+→ exact Project Notion Home·filtered human-facing surfaces
 → 현재 책임 원본·실제 코드·데이터·자산·테스트
 ```
 
-프로젝트가 Google Sheets를 사용하면 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 함께 읽는다. 통합 Vertical Slice 실행이 승인된 경우에만 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 사용한다. 이 Prompt와 과거 v6~v8 자료는 최신 사용자 결정·프로젝트 정본보다 높은 권한을 갖지 않는다.
+기본 사람용 프로젝트 작업면은 `NOTION_DEFAULT_PROJECT_WORKSPACE`다. legacy Google Sheets는 **현재 작업이 실제 migration scope일 때만** `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`와 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`를 읽어 고유 자료를 Notion/repository owner로 이관한다. 통합 Vertical Slice 실행이 승인된 경우에만 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 사용한다. 이 Prompt와 과거 v6~v8 자료는 최신 사용자 결정·프로젝트 정본보다 높은 권한을 갖지 않는다.
 
 신규 MCP·addon·CLI·framework·Skill·Mode 또는 유사 실행 계층 제작 요청은 설계보다 먼저 `evaluating-godot-assets-and-plugins-before-creation: inventory-current-environment / disposition`으로 라우팅하고 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`의 Existing Solution First Gate를 통과한다. 이미 사용 중인 도구·연결된 MCP·enabled addon·dependency·관련 PR·외부 대안을 확인하지 않은 `BUILD_NEW`는 시작하지 않는다.
 
@@ -36,13 +37,13 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 - 확정된 운영 계약: `AGENTS.md`, `START_HERE.md`, `docs/OPERATING_MODEL.md`, `docs/DOCUMENTATION_MAP.md`
 - 사용자 PowerShell 실행이 필요한 작업: `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md` — 새 PowerShell 기준, 위치 세팅 우선, 한 번에 붙여넣는 단일 블록, stage별 오류 위치 표시
 - `RETIRED_HISTORY_ONLY`: 폐기된 Tool Hub·Expression Studio·Sprite Animation Studio의 과거 설계와 migration 증거는 Git 이력·명시적 archive에서만 찾는다. 현재 실행 경로·신규 설치 경로로 안내하지 않는다.
-- 이미지·UX 배치 후 개발자 PC 증거 검토: `tools/qa-evidence-studio/README.md`
+- `QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW`: historical implementation `tools/qa-evidence-studio/README.md` is history/reference only; active project QA uses repository-native evidence and does not route through this tool.
 - Android 실기기 검증은 프로젝트 PC 구현 완료 후 출시 준비 직전까지 `DEFERRED_NOT_CONNECTED`로 유지할 수 있으며, 이를 PASS나 누락으로 바꾸지 않는다.
-- 완료된 Base 변경: `docs/CHANGELOG.md`
-- 활성 Skill: `skills/SKILL_REGISTRY.json`
-- 이전 Skill ID: `skills/LEGACY_SKILL_ALIASES.md`
-- 검토 대기 제안: `[수정제안서]/PROPOSAL_REGISTRY.json`과 개별 `PROPOSAL.md`
-- 진행 중 구현과 실제 검사: GitHub PR·Actions
+- 완료된 Base 변경: `docs/CHANGELOG.md`.
+- 활성 Skill: `skills/SKILL_REGISTRY.json`.
+- 이전 Skill ID: `skills/LEGACY_SKILL_ALIASES.md`.
+- 검토 대기 제안: `[수정제안서]/PROPOSAL_REGISTRY.json`과 개별 `PROPOSAL.md`.
+- 진행 중 구현과 실제 검사: GitHub PR·Actions. 단, open/draft/ready 상태만으로 active worker라고 추정하지 않고 사용자 지시·현재 세션·Resource Lock 등 current-owner evidence를 확인한다.
 
 활성 Base 인터뷰가 없으면 `등록 없음`, 제출 제안의 우선순위가 승인되지 않았으면 `사용자 검토 대기·우선순위 미확정`으로 답한다.
 
@@ -104,7 +105,7 @@ PC·Android Delivery Guide도 새 광역 Skill이 아니다. `analyzing-and-refi
 | 불필요 자료 판정 | `pruning-stale-and-nonfunctional-material` |
 | 게임 사용자 연구 11영역 | `governing-game-user-research-coverage` |
 | 사용자 학습 자료 | `creating-user-learning-notes` |
-| 프로젝트 HTML·상태 시각화 | `building-project-visual-dashboards` |
+| 프로젝트 상태·시각화 | `building-project-visual-dashboards` — 현재 owner는 Notion human-facing view이며 외부 HTML workspace를 만들지 않음 |
 | Godot·Unity 런타임 오류 | `diagnosing-game-engine-runtime-failures` |
 | Godot live Editor·MCP·addon·Scene·Resource 자동화 | HiGodot persistent authoring → GUT deterministic GDScript test → Hera live QA (`LIVE_QA_AND_OBSERVABILITY_ONLY`) |
 
@@ -117,6 +118,7 @@ Godot 자동화는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERA
 ```text
 프로젝트 AGENTS.md
 → 루트 [기획서]/00_프로젝트_허브/START_HERE.md
+→ exact Project Notion Home·Project-filtered views
 → ACTIVE_CONTEXT.md·DOCUMENTATION_MAP.md·DEVELOPMENT_GATES.md
 → DESIGN_DOCUMENT_REGISTRY.json·현재 책임 원본
 → SKILL_REGISTRY.json·필요한 Skill과 mode

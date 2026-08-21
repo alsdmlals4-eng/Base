@@ -15,6 +15,8 @@ COMMAND_PREFLIGHT
 NATIVE_EXIT_CODE_REQUIRED
 ERROR_STAGE_MARKER
 BEGINNER_SAFE_USER_ACTION
+TOOL_HUB_RETIRED_FROM_DEFAULT_ROUTE
+LOOP_ENGINEERING_DIRECT_WHEN_RELEVANT
 ```
 
 ## 1. `FRESH_SHELL_ASSUMPTION`
@@ -130,21 +132,38 @@ catch {
 
 최소 설명 순서:
 
-1. **어디를 클릭하는지** — 예: 시작 메뉴 → PowerShell
-2. **무엇을 복사하는지** — 제공된 코드 블록 전체
-3. **어디에 붙여넣는지** — 새 PowerShell 창
-4. **무엇을 누르는지** — Enter
-5. **성공하면 무엇이 보이는지** — `[N/N RESULT] ...`
-6. **실패하면 무엇을 보내는지** — `[BLOCKED][...]` 줄과 필요 시 바로 아래 최소 로그
+1. **어디를 클릭하는지** — 예: 시작 메뉴 → PowerShell.
+2. **무엇을 복사하는지** — 제공된 코드 블록 전체.
+3. **어디에 붙여넣는지** — 새 PowerShell 창.
+4. **무엇을 누르는지** — Enter.
+5. **성공하면 무엇이 보이는지** — `[N/N RESULT] ...`.
+6. **실패하면 무엇을 보내는지** — `[BLOCKED][...]` 줄과 필요 시 바로 아래 최소 로그.
 
 사용자에게 `cd ...`, `git ...`, `python ...`을 각각 따로 입력하게 하는 방식은 자동화할 수 없는 이유가 없으면 기본안으로 사용하지 않는다.
 
-## 9. Tool Hub·Loop Engineering 관계
+## 9. Direct execution·Loop Engineering 관계
 
-- 로컬 도구가 Tool Hub에 등록·실행 가능한 작업이면 사람이 PowerShell을 반복 조작하게 만들기보다 **Tool Hub 실제 runtime**을 우선한다.
-- Loop Engineering의 installer/preflight/runtime 검증에서 사용자 PowerShell이 필요하면 이 계약을 적용한다.
-- PowerShell 블록을 제공했다는 사실은 Tool Hub/Loop Engineering 실제 작동 증거가 아니다. runtime readback·health·test evidence가 별도로 필요하다.
-- 이미 GUI/로컬 앱으로 안전하게 수행 가능한 작업에 PowerShell을 불필요하게 추가하지 않는다.
+`TOOL_HUB_RETIRED_FROM_DEFAULT_ROUTE`: Tool Hub는 신규 프로젝트의 기본 launcher나 PowerShell 대체면이 아니다. 과거 Hub code/history가 남아 있어도 이 계약에서 우선 실행 경로로 라우팅하지 않는다.
+
+기본 로컬 구현 경로는 다음과 같다.
+
+```text
+fresh PowerShell
+→ LOCATION_FIRST
+→ project identity / worktree preflight
+→ project-dedicated Godot / HiGodot / CODEX_HOME 확인·복구
+→ adopted GUT / Hera가 현재 acceptance에 필요할 때만 해당 profile 확인
+→ Codex를 exact project/worktree에서 실행
+→ Codex 내부에서 fresh repository/runtime evidence 확인
+→ implementation / test / runtime verification
+```
+
+`LOOP_ENGINEERING_DIRECT_WHEN_RELEVANT`: 승인된 Implementation Package와 current operational evidence가 Loop Engineering 사용을 정당화하면 Tool Hub를 경유하지 않고 해당 Loop contract/runtime을 직접 사용한다. 현재 지원 범위는 `docs/operations/UNIVERSAL_LOOP_CROSS_PROJECT_ACCEPTANCE.json`과 실제 code/test에서 다시 읽는다.
+
+- PowerShell 블록을 제공했다는 사실은 Codex/Godot/Loop Engineering 실제 readiness 증거가 아니다.
+- editor process 존재나 port listen만으로 project-authorized readiness를 PASS 처리하지 않는다.
+- 다른 프로젝트의 CODEX_HOME, HiGodot profile/port, Hera token/profile을 재사용하지 않는다.
+- 이미 안전한 current project runtime이 정확히 확인되면 불필요한 중복 process를 만들지 않는다.
 
 ## 10. Security and rollback
 

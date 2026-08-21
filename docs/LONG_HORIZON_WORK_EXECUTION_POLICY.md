@@ -16,6 +16,8 @@ REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF
 CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY
 MINIMUM_VIABLE_ALTERNATIVES: 3
 BENCHMARK_SYNTHESIS
+CREATIVE_BENCHMARK_FRONTIER
+ORIGINALITY_FUN_CREATIVITY_REVIEW
 BETTER_ALTERNATIVE_SEARCH
 LONG_TERM_PLAN_FIT_REQUIRED
 BEST_LONG_TERM_EFFICIENT_METHOD
@@ -52,9 +54,12 @@ PROJECT_RELATION_REQUIRED
 WORK_MASTER
 ASSET_KNOWLEDGE_MASTER
 VISUAL_MAP_DERIVED
+PROJECT_VISUALIZATION_NEED_MAP
 REPO_NATIVE_STRUCTURED_DATA
 GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL
 EXTERNAL_HTML_WORKSPACE_RETIRED
+TOOL_HUB_RETIRED_FROM_ACTIVE_PROJECT_FLOW
+QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW
 LOOP_ENGINEERING: REQUIRED_WHEN_RELEVANT
 REQUIRED_WORK_REMAINING: 0
 ```
@@ -68,7 +73,7 @@ RESEARCH
 → CURRENT STATE / OPEN PR RECONCILIATION
 → DIRECTION / INTENT
 → >= 3 VIABLE ALTERNATIVES
-→ BENCHMARK SYNTHESIS
+→ BENCHMARK SYNTHESIS + CREATIVE FRONTIER
 → TRADE STUDY
 → PROVISIONAL BEST OPTION
 → EXPECTED EFFECTS / RISKS / MITIGATIONS
@@ -123,7 +128,49 @@ ADOPT / ADAPT / REJECT
 - `ADAPT`: 장점의 원리를 가져오되 프로젝트 세계관·핵심 경험·기술 경계에 맞게 재해석한다.
 - `REJECT`: 성공 사례라도 현재 환경에서 총비용·권위·플레이어 가치가 맞지 않는다.
 
-`BETTER_ALTERNATIVE_SEARCH`는 최초 권장안을 보호하는 절차가 아니다. 새 테스트·실패·적대적 finding·환경 변화가 생길 때마다 더 나은 방안이 나타났는지 다시 본다. **장기적으로 더 강한 방안**이 승인된 방향 안에 있으면 근거와 함께 교체한다.
+### `CREATIVE_BENCHMARK_FRONTIER`
+
+게임의 중요한 코어·시스템·콘텐츠·UX·서사 방향은 직접 장르 성공작 한두 개만 보지 않는다. 결정 직전까지 다음 다섯 축에서 현재 문제를 가장 잘 푸는 작품·시스템·실패사례를 찾는다.
+
+```text
+DIRECT_GENRE_BEST_IN_CLASS
++ ADJACENT_GENRE_BEST_IN_CLASS
++ DISTINCTIVE_OR_INNOVATIVE_WORK
++ FAILURE_OR_MIXED_CASE
++ PROJECT_INTERNAL_STRENGTH
+→ transferable principles
+→ recombination candidates
+→ project-specific synthesis
+```
+
+목표는 “많이 섞기”가 아니라 **서로 다른 강점의 원리를 분리한 뒤 프로젝트의 플레이어 약속·세계관·제작 규모에 맞는 새로운 조합으로 다시 설계**하는 것이다. 유명세·판매량·수상 여부는 후보 발견 신호일 뿐 프로젝트 적합성 증거가 아니다.
+
+### `ORIGINALITY_FUN_CREATIVITY_REVIEW`
+
+권장 기획에는 기능성뿐 아니라 다음을 함께 공격한다.
+
+```yaml
+creative_review:
+  originality_delta:
+  fun_hypothesis:
+  creativity_recombination:
+  familiar_anchor:
+  surprising_or_distinctive_element:
+  meaningful_player_decision:
+  feedback_and_pacing:
+  world_story_fit:
+  production_feasibility:
+  risks_of_gimmick_or_complexity:
+  player_evidence_status:
+```
+
+- `originality_delta`: benchmark에서 무엇을 유지·제거·뒤집고·결합·추가했는지 설명한다.
+- `fun_hypothesis`: 왜 재미있을 것으로 예상하는지 행동·선택·긴장·보상·피드백으로 설명한다.
+- `creativity_recombination`: 여러 원리가 하나의 coherent player experience로 연결되는지 본다.
+- 익숙함을 모두 없애 독해 비용을 높이거나, 독창성을 핑계로 핵심 루프를 복잡하게 만들지 않는다.
+- **재미 PASS는 실제 player evidence 전에는 주장하지 않는다.** 기획/benchmark 단계는 `FUN_HYPOTHESIS`이며 release-near Slice의 사람 플레이 증거가 있어야 높은 evidence로 승격한다.
+
+`BETTER_ALTERNATIVE_SEARCH`는 최초 권장안을 보호하는 절차가 아니다. 새 테스트·실패·적대적 finding·환경 변화·더 강한 benchmark 후보가 생길 때마다 더 나은 방안이 나타났는지 다시 본다. **장기적으로 더 강한 방안**이 승인된 방향 안에 있으면 근거와 함께 교체한다.
 
 `LONG_TERM_PLAN_FIT_REQUIRED`는 최종 선택이 현재 작업뿐 아니라 장기계획에 적합한지 확인한다. 최종 보고에는 왜 현재 후보 중 **장기적으로 최선**인지와 재검토 조건을 함께 기록한다.
 
@@ -202,17 +249,17 @@ failure / interruption
 
 `SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`: 시스템만 동작하는 회색 상자·dummy UI·무음/무연출 PoC는 알고리즘·성능·호환성·데이터 흐름 같은 좁은 기술 질문에는 쓸 수 있지만 재미·몰입·판매력·가독성·감정·기억·전체 UX의 PASS 근거가 될 수 없다. 이런 검증은 `TECHNICAL_SPIKE_INTERNAL_ONLY`로 분리하며 공개 데모·Vertical Slice·player-experience evidence로 승격하지 않는다.
 
-`EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT`: 완성형 Slice를 만든다는 이유로 모든 자산·UI·사운드·효과를 새로 만들지 않는다. 현재 프로젝트의 승인된 자산·구조·도구·검증된 외부 해법을 먼저 조사하고 `ADOPT / ADAPT / REJECT`로 판정한다. 프로젝트의 세계관·핵심 경험·가독성·일관성에 맞는 기존 해법은 재사용·변형하고, 검증 목적에 실제로 필요한 대표 품질만 구현한다.
+`EXISTING_SOLUTION_FIRST_ADAPT_TO_PROJECT`: 완성형 Slice를 만든다는 이유로 모든 자산·UI·사운드·효과를 새로 만들지 않는다. 현재 프로젝트의 승인된 자산·구조·검증된 외부 해법을 먼저 조사하고 `ADOPT / ADAPT / REJECT`로 판정한다. 프로젝트의 세계관·핵심 경험·가독성·일관성에 맞는 기존 해법은 재사용·변형하고, 검증 목적에 실제로 필요한 대표 품질만 구현한다.
 
-가역적 `BALANCE_BUDGET`과 내부 기술 Spike는 완성형 Slice 제작 중 위험을 줄이는 보조 수단이며, 그 자체가 인간 플레이 검증 제품은 아니다.
+가역적 `BALANCE_BUDGET`과 내부 기술 Spike는 완성형 Slice 제작 중 위험을 줄이는 보조 수단이며, 그 자체가 인간 플레이 검증 제품은 아니다. Core Loop를 구성하는 핵심 시스템은 먼저 parameter budget·상대값·cap·dummy-but-coherent test values를 두고 build/test 가능한 상태를 만든 뒤 실제 플레이 증거에 따라 튜닝한다. 프로젝트 고유 예산표 자체는 프로젝트 정본이 소유한다.
 
 ### `WORLD_STORYLINE_FIT_REQUIRED`
 
-기능적으로 맞아도 세계관·핵심 스토리·플레이어 판타지를 훼손하면 완료가 아니다.
+기능적으로 맞아도 세계관·핵심 스토리·플레이어 판타지를 훼손하면 완료가 아니다. 게임 프로젝트는 최소한 세계 premise, 플레이어 역할, 핵심 갈등/질문, Core Loop와 연결되는 결과·귀결의 backbone을 정의해 시스템·콘텐츠·Visual이 따로 노는 것을 막는다.
 
 ### `REUSABLE_SYSTEM_EXTRACTION`
 
-반복해서 필요한 기능은 프로젝트 고유 수치·세계관·콘텐츠와 공용 구조를 분리해 재사용한다. 한 번의 성공만으로 새 공용 Skill이나 플랫폼을 만들지 않는다.
+반복해서 필요한 핵심 시스템·미니 시스템은 프로젝트 고유 수치·세계관·콘텐츠와 공용 구조를 분리해 재사용한다. 한 번의 성공만으로 새 공용 Skill이나 universal runtime을 만들지 않고, module contract → project adapter/pilot → 반복 검증 → Base promotion 순서를 따른다.
 
 ## 9. 프로젝트 작업면과 데이터 권위
 
@@ -255,15 +302,42 @@ balance, economy, schema, runtime config, 코드, scene, resource, tracked imple
 
 기존 Google Sheet는 고유 unmigrated material을 한 번 이관하기 위한 migration-only source다. `UNIQUE / DUPLICATE / OBSOLETE` 분류와 destination readback 뒤 unique material이 0이면 활성 검색·라우팅·템플릿에서 제거한다.
 
-### `EXTERNAL_HTML_WORKSPACE_RETIRED`
+### Retired project surfaces
 
-외부 HTML catalog/dashboard는 신규 기본 작업면으로 사용하지 않는다. 고유 정보가 있으면 현재 Notion/repository owner로 한 번 흡수·검증한 뒤 활성 surface와 참조를 제거한다.
+```text
+EXTERNAL_HTML_WORKSPACE_RETIRED
+FIGMA_DEPRECATED_NOT_ACTIVE_AUTHORITY
+TOOL_HUB_RETIRED_FROM_ACTIVE_PROJECT_FLOW
+QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW
+```
+
+Figma, 외부 HTML catalog/dashboard, project-management Tool Hub, QA Evidence Studio와 과거 localhost visual management surface는 신규 기본 작업면·필수 preflight·완료 조건이 아니다. 고유 정보·증거 vocabulary·재사용 원리가 있으면 현재 Notion/repository/PowerShell/Loop owner로 한 번 흡수하고 기본 탐색에서 제외한다.
+
+Loop Engineering은 이 폐기 surface와 독립적이다. current operational checkpoint와 프로젝트 Package가 사용을 정당화할 때 직접 사용할 수 있다.
 
 ## 10. 시각 자산·Reference·Benchmark
 
 Asset & Knowledge Master는 `ASSET / COMPONENT / SCREEN / REFERENCE / BENCHMARK` Record Type을 사용할 수 있다. 사람 view에는 Preview/Name/Usage/Style/Approved/Reuse처럼 판단에 필요한 정보만 보이고, AI/System view에는 ID, Project, version, Status, Prompt, source provenance, Rights / License, Hash, Implementation Path, Decision 등을 보존할 수 있다.
 
 Reference/Benchmark decision은 필요할 때 `ADOPT / ADAPT / TEST / REFERENCE_ONLY / AVOID / IGNORE`를 사용한다. 외부 자료는 요구사항 정본이 아니며 고유 표현을 복제하지 않는다.
+
+### `PROJECT_VISUALIZATION_NEED_MAP`
+
+프로젝트 정본·Core Loop·세계관·UI 흐름·현재 구현을 이해한 뒤, 무엇을 시각화하면 기획 정확성·일관성·구현 인계가 실제로 좋아지는지 먼저 목록화한다.
+
+```yaml
+visualization_need:
+  project:
+  planning_question:
+  needed_artifact:
+  why_visual_needed:
+  exact_project_notion_target:
+  source_decisions: []
+  implementation_consumer:
+  approval_state:
+```
+
+이미지·flow·screen mock·diagram이 의사결정을 개선하면 기획 중에도 생성/정리해 exact Project Notion에 배치하고 readback한다. 단 장식 수량 채우기나 “이미지가 있으면 좋아 보인다”는 이유만으로 생성하지 않는다. 생성물은 `DRAFT_VISUAL`/candidate와 승인 자산/runtime evidence를 분리한다.
 
 생성·수정 이미지의 성공 보고는 upload call만으로 끝나지 않는다.
 
@@ -275,25 +349,25 @@ generate / edit
 → approval / rejection
 → version / replacement relation
 → repository handoff
-→ runtime QA separately
+→ runtime validation separately
 ```
-
 
 ## GPT-first 기획·검수와 선택적 Codex 보조 계약
 
-`GPT_FIRST_PLANNING_AND_REVIEW`가 기본이다. GPT는 프로젝트 GitHub와 Notion의 현재 정본을 읽고 기획·조사·벤치마킹·대안 비교·시스템/데이터 설계·UI/UX 흐름·시각 방향·검수·적대적 검토를 닫는다. Codex는 필수 후속 단계가 아니라 실제 코드/Scene/Resource/data 변경, 저장소 규모가 큰 기계적 점검, 로컬 실행·테스트 등 **실행 권위가 필요한 경우에만** `OPTIONAL_CODEX_EXECUTOR`로 호출한다.
+`GPT_FIRST_PLANNING_AND_REVIEW`가 기본이다. GPT는 프로젝트 GitHub와 Notion의 현재 정본을 읽고 기획·조사·벤치마킹·대안 비교·시스템/데이터 설계·UI/UX 흐름·시각 방향·검수·적대적 검토를 닫는다. Codex는 실제 코드/Scene/Resource/data 변경, 저장소 규모가 큰 기계적 점검, 로컬 실행·테스트 등 **실행 권위가 필요한 경우에만** `OPTIONAL_CODEX_EXECUTOR`로 호출한다.
 
 `GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY`: GPT-primary는 prose-only가 아니다. `REASONING_EFFORT_IS_NOT_WORK_EVIDENCE`이며 추론 강도는 source readback·Tool 호출·runtime·test evidence를 대신하지 않는다. `REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF`에 따라 현재 GPT 세션이 필요한 browser/repository/connector/runtime Tool을 보유하면 직접 실행하고, 별도 Codex handoff만 선택적으로 판단한다.
 
 ```text
 GPT planning/research/review
 → GitHub + Notion canon reconciliation
-→ UI/UX/visual requirement gate
-→ when visuals materially affect PoC: generate/curate candidate visuals
+→ >=3 alternatives + creative benchmark frontier
+→ UI/UX/visual requirement + PROJECT_VISUALIZATION_NEED_MAP
+→ when visuals improve decisions: generate/curate candidate visuals
 → attach to exact Project in Notion + readback
 → user/GPT review and approval state
 → implementation-ready package
-→ OPTIONAL_CODEX_EXECUTOR only when implementation/runtime work benefits from it
+→ OPTIONAL_CODEX_EXECUTOR when repository/runtime mutation is needed
 → repository implementation/runtime evidence
 → GPT final adversarial review
 → GitHub/Notion sync + readback
@@ -301,7 +375,7 @@ GPT planning/research/review
 
 `RELEASE_NEAR_VERTICAL_SLICE_FIRST`: 기획·검수 뒤 재미·몰입·가독성·첫인상·판매 포인트·감정 곡선을 판단하는 플레이 테스트는 shipping-intent UI/UX·이미지/아트·대표 사운드·VFX/피드백·핵심 시스템/콘텐츠가 연결된 짧은 완성형 Vertical Slice에서 수행한다. 좁은 기술 질문은 `TECHNICAL_SPIKE_INTERNAL_ONLY`로 먼저 풀 수 있지만 `SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`에 따라 그 결과만으로 플레이어 경험을 PASS 처리하지 않는다.
 
-`LEGACY_ABSORB_VERIFY_REMOVE`: 더 이상 사용하지 않기로 확정된 Figma, 전용 로컬 시각 Tool/Hub, 외부 HTML 작업면, Google Sheets 등 구형 surface는 일상 검색·라우팅 대상에서 제거한다. 삭제 전 한 번만 `UNIQUE / DUPLICATE / OBSOLETE`를 분류하고, `UNIQUE`한 규칙·데이터·증거·재사용 원리만 현재 Notion 또는 repository 정본으로 흡수한다. 목적지 readback과 참조 신선도 검증이 끝나면 원본과 활성 참조를 제거한다. `DUPLICATE/OBSOLETE`는 재검토를 반복하지 않는다. 법적·감사·rollback 때문에 보존이 필요한 최소 이력은 명시적 archive manifest만 남기고 기본 탐색에서 제외한다.
+`LEGACY_ABSORB_VERIFY_REMOVE`: 더 이상 사용하지 않기로 확정된 Figma, 전용 로컬 시각 Tool/Hub, QA Evidence Studio, 외부 HTML 작업면, Google Sheets 등 구형 surface는 일상 검색·라우팅 대상에서 제거한다. 삭제 전 한 번만 `UNIQUE / DUPLICATE / OBSOLETE`를 분류하고, `UNIQUE`한 규칙·데이터·증거·재사용 원리만 현재 Notion 또는 repository 정본으로 흡수한다. 목적지 readback과 참조 신선도 검증이 끝나면 원본과 활성 참조를 제거한다. `DUPLICATE/OBSOLETE`는 재검토를 반복하지 않는다. 법적·감사·rollback 때문에 보존이 필요한 최소 이력은 명시적 archive manifest만 남기고 기본 탐색에서 제외한다.
 
 Google Sheets는 신규 입력을 받지 않는다. 남은 고유 자료는 Project relation을 확정해 Notion 사람용 정본 또는 repository structured/runtime owner로 이관하고, `MIGRATED_READBACK_VERIFIED`가 되면 활성 호환 surface 자체를 제거 대상으로 전환한다.
 
