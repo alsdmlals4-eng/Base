@@ -25,7 +25,7 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
         data = json.loads(REGISTRY.read_text(encoding="utf-8"))
         return {row["skill_id"]: row for row in data["skills"]}
 
-    def test_retirement_policy_targets_project_management_surfaces_not_qa_validation(self) -> None:
+    def test_retirement_policy_retires_qa_studio_from_active_validation_routing(self) -> None:
         text = RETIREMENT.read_text(encoding="utf-8")
         for term in (
             "DEPRECATED_PROJECT_SURFACE_ABSORB_THEN_REMOVE",
@@ -33,11 +33,13 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
             "EXTERNAL_HTML_WORKSPACE_RETIRED",
             "GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL",
             "FIGMA_DEPRECATED_NOT_ACTIVE_AUTHORITY",
-            "QA_EVIDENCE_STUDIO_SPECIALIST_VALIDATION_RETAINED",
+            "QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW",
+            "REPOSITORY_NATIVE_EVIDENCE_CAPTURE",
         ):
             self.assertIn(term, text)
         self.assertIn("QA Evidence Studio", text)
         self.assertIn("검증", text)
+        self.assertNotIn("QA_EVIDENCE_STUDIO_SPECIALIST_VALIDATION_RETAINED", text)
         self.assertNotIn("별도 QA Evidence Studio 앱을 기본 경로로 유지할 필요는 없지만", text)
 
     def test_planning_policy_uses_notion_and_repository_not_active_sheets(self) -> None:
@@ -70,7 +72,11 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
         self.assertEqual("HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN", data["human_home_policy"])
         self.assertEqual("docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md", data["retirement_policy"])
         self.assertEqual("MIGRATION_ONLY_UNTIL_REMOVAL", data["google_sheets"])
-        self.assertEqual("QA_EVIDENCE_STUDIO_SPECIALIST_VALIDATION_RETAINED", data["qa_evidence_studio"])
+        self.assertEqual("QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW", data["qa_evidence_studio"])
+        self.assertTrue(any(
+            "REPOSITORY_NATIVE_EVIDENCE_CAPTURE" in invariant
+            for invariant in data["invariants"]
+        ))
 
     def test_active_registry_removes_sheet_workspace_routing_and_preserves_decision_checkpoints(self) -> None:
         rows = self.registry_rows()
