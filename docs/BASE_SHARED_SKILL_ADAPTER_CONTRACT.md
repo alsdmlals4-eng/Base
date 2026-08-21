@@ -4,7 +4,7 @@
 
 The canonical project integration file is `skills/PROJECT_BASE_ADAPTER.json`.
 
-For Tool Hub identity, schema v2 requires the independently project-owned `project.project_id`; v1 remains audit-compatible but is `IDENTITY_MIGRATION_REQUIRED` for Hub use. See `docs/operations/PROJECT_BASE_ADAPTER_V2_MIGRATION.md`. Free-form `validators` strings are compatibility metadata and are never executed by Tool Hub or `base-tool-contracts`; executable validation remains a fixed reviewed Base adapter with typed arguments and `shell=False`.
+`RETIRED_HISTORY_ONLY`: 과거 Tool Hub·`base-tool-contracts` identity migration 설명은 Git 이력과 명시적 역사 문서에서만 감사할 수 있으며 현재 adapter 실행 권위·신규 설치 경로가 아니다. Free-form `validators` 문자열은 compatibility metadata일 뿐 실행하지 않으며, executable validation은 현재 저장소가 유지하는 고정·검토된 validator와 typed argument·`shell=False` 경계만 사용한다.
 `skills/PROJECT_BASE_SKILL_ADAPTER.json`, `skills/BASE_V9_ADAPTER.json`, and
 `skills/PROJECT_PATH_ADAPTER.json` remain for one compatibility cycle only as
 deterministic `GENERATED_COMPATIBILITY_VIEW` outputs. Never hand-edit them.

@@ -1,9 +1,9 @@
 # P04 · Game Design, Core, Player Research & Vertical Slice — Context Pack
 
 ## 현재 실행 계약
-`SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS` · `PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER` · `OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM`
+`SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS` · `PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER` · `OPEN_PR_READ_ONLY_BY_DEFAULT`
 
-이 Part는 semantic responsibility / learning / validation checkpoint다. 현재 coordinator가 다른 Part/CP0의 검증된 오류·충돌·누락을 발견하면 다른 Part라는 이유만으로 보류하지 않고 `CROSS_PART_CHANGE`로 owner를 기록해 직접 수정할 수 있다. open/draft/ready PR·branch가 존재한다는 사실만으로 다른 작업자가 있다고 간주하지 않으며, **실제 current-owner evidence가 있는 `ACTIVE_OTHER_WORKER`만** read-only로 보호한다.
+이 Part는 semantic responsibility / learning / validation checkpoint다. 현재 coordinator가 다른 Part/CP0의 merged-main 오류·충돌·누락을 발견하면 `CROSS_PART_CHANGE`로 owner를 기록해 수정할 수 있다. 모든 open/draft/ready PR·branch는 read-only이며 mutation은 사용자가 PR 번호와 허용 동작을 명시한 경우에만 가능하다.
 
 ## 역할
 게임의 플레이어 가치, 컨셉, 프로젝트 코어, 기능/밸런스, 사용자 연구와 Vertical Slice 설계를 책임진다.

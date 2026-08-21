@@ -7,6 +7,7 @@ import os
 ALWAYS_REQUIRED = (
     ("classify-changes", "CLASSIFY_RESULT"),
     ("docs-validation", "DOCS_RESULT"),
+    ("core-regression", "CORE_REGRESSION_RESULT"),
 )
 CONDITIONAL = (
     ("ubuntu-contract", "CONTRACT_REQUIRED", "CONTRACT_RESULT"),
@@ -16,6 +17,7 @@ CONDITIONAL = (
 INPUT_NAMES = (
     "CLASSIFY_RESULT",
     "DOCS_RESULT",
+    "CORE_REGRESSION_RESULT",
     "CONTRACT_REQUIRED",
     "CONTRACT_RESULT",
     "PUBLICATION_REQUIRED",

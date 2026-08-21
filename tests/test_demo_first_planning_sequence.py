@@ -18,7 +18,7 @@ class DemoFirstPlanningSequenceTests(unittest.TestCase):
             "REPOSITORY_STRUCTURED_CANON",
             "REPOSITORY_RUNTIME_TRUTH",
             "GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL",
-            "OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM",
+            "OPEN_PR_READ_ONLY_BY_DEFAULT",
             "DUPLICATE_WORK",
             "MISSING_CANON",
             "MISSING_CONSUMER",

@@ -72,9 +72,8 @@
     "change_protocol": [
       "Coordinator may fix validated cross-Part or CP0 findings directly with CROSS_PART_CHANGE semantic attribution",
       "Different Part ownership alone is not a write barrier",
-      "Open PR state alone is not active-worker evidence; require current owner evidence before protecting a workstream",
-      "When the user confirms CURRENT_COORDINATOR_CHAT is the only active worker, classify unresolved open PRs and use COORDINATOR_TAKEOVER, READY_TO_FINISH, SUPERSEDED_DUPLICATE, STALE_BACKLOG, or BLOCKED_EXTERNAL as appropriate",
-      "Only ACTIVE_OTHER_WORKER workstreams are mutation-protected unless the user explicitly authorizes takeover",
+      "All open, draft, and ready PRs remain read-only unless the user names the PR and authorized mutation",
+      "Follow-up changes start from latest completed main and target only behavior retained in merged main",
       "CROSS_PART_CHANGE_REQUEST is reserved for real authority/evidence/current-owner blockers",
       "Generated artifacts are rebuilt from authority rather than hand-edited",
       "Exact-head CI and post-merge GitHub/Notion readback are required"
@@ -663,9 +662,6 @@
         "docs/knowledge/game-development/*IMAGE*",
         "docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md",
         "tools/asset-vault/**",
-        "tools/expression-studio/**",
-        "tools/sprite-animation-studio/**",
-        "tools/tool-hub/**",
         "tests/test_bca_visual_sheet_workflow.py",
         "tests/test_*ui*.py",
         "tests/test_*visual*.py",
@@ -1438,9 +1434,13 @@
     }
   },
   "ownership_policy": "PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER",
-  "independent_workstream_policy": "ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE",
+  "independent_workstream_policy": "OPEN_PR_READ_ONLY_BY_DEFAULT",
   "coordinator_execution": {
     "policy": "SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS",
+    "applies_only_when": "EXPLICIT_BASE_FULL_P01_P09_OPTIMIZATION",
+    "is_default_for_general_project_work": false,
+    "general_project_workflow": "GOAL_SCOPED_PLAN_RESEARCH_REVIEW_THEN_BUILD_VERIFY",
+    "deep_work_preanswer_gate": "REQUIRED",
     "chat": "CURRENT_COORDINATOR_CHAT",
     "part_order": [
       "P01",
@@ -1458,8 +1458,8 @@
     "repin_latest_main_between_parts": true,
     "default_pr_model": "ONE_PART_PR_AT_A_TIME",
     "cross_part_fix_policy": "FIX_VALIDATED_FINDINGS_IN_CURRENT_COORDINATOR_WORK_WITH_SEMANTIC_ATTRIBUTION",
-    "active_independent_workstreams": "PROTECT_ONLY_AFTER_CURRENT_OWNER_EVIDENCE",
-    "open_pr_backlog_policy": "REVALIDATE_AND_CLASSIFY_NOT_AUTOMATIC_READ_ONLY"
+    "active_independent_workstreams": "OPEN_DRAFT_READY_READ_ONLY",
+    "open_pr_backlog_policy": "READ_ONLY_UNLESS_EXPLICIT_NAMED_AUTHORIZATION"
   },
   "validation_evidence_policy": {
     "contract": "TEST_FILE_EXISTENCE_IS_NOT_EXECUTION_EVIDENCE",
@@ -1495,27 +1495,16 @@
       "purpose": "REFERENCE_AND_LEARNING_CLUSTER_ONLY"
     }
   ],
-  "open_pr_policy": "OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM",
+  "open_pr_policy": "OPEN_PR_READ_ONLY_BY_DEFAULT",
   "active_workstream_detection": {
-    "requires_current_owner_evidence": true,
-    "open_pr_state_is_sufficient": false,
-    "current_owner_evidence": [
-      "USER_EXPLICITLY_IDENTIFIES_ANOTHER_ACTIVE_CHAT_OR_WORKER",
-      "CURRENT_SESSION_OR_AUTOMATION_OWNERSHIP_MARKER",
-      "CURRENT_RESOURCE_LOCK_OR_RUNNING_EXECUTION_WITH_MATCHING_OWNER"
-    ],
-    "coordinator_takeover_signals": [
-      "USER_CONFIRMED_SINGLE_ACTIVE_CHAT",
-      "CURRENT_COORDINATOR_CHAT"
-    ],
+    "open_pr_state_is_sufficient_for_read_only": true,
+    "mutation_requires_explicit_named_authorization": true,
+    "default_follow_up_target": "MERGED_MAIN_ONLY",
     "open_pr_classifications": [
-      "ACTIVE_OTHER_WORKER",
-      "COORDINATOR_TAKEOVER",
-      "SUPERSEDED_DUPLICATE",
-      "STALE_BACKLOG",
-      "BLOCKED_EXTERNAL",
-      "READY_TO_FINISH"
+      "READ_ONLY_REFERENCE",
+      "SUPERSEDED_BY_MERGED_MAIN",
+      "BLOCKED_EXTERNAL"
     ],
-    "rule": "PR state is metadata. Classify actual current ownership before deciding whether mutation is forbidden."
+    "rule": "Open, draft, and ready PRs are read-only by default. Mutation requires the user to name the PR and the allowed action."
   }
 }

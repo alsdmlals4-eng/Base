@@ -29,7 +29,9 @@ revisit_condition:
 - `UNVERIFIED_DISCOVERY`는 원출처·날짜·적용 범위·반례·consumer·검증을 확인하기 전 학습/정본이 아니다.
 - 실제 Base 공용 개선으로 재사용할 가치가 있을 때만 `BASE_PROMOTION_CANDIDATE`로 Integration에 보낸다.
 
-## 2026-08-20 · Current-main P08 coordinator takeover
+## 2026-08-20 · Current-main P08 coordinator takeover (historical)
+
+> This checkpoint records the policy used on 2026-08-20. Current operations use `OPEN_PR_READ_ONLY_BY_DEFAULT`; this log does not authorize a new takeover.
 
 ```yaml
 work_ref: "P08 current-main coordinator takeover / PR #551; supersedes unfinished #535"

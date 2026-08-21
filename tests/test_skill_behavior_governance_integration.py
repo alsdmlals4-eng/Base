@@ -104,6 +104,18 @@ class SkillBehaviorGovernanceIntegrationTests(unittest.TestCase):
         self.assertIn("External model behavior run: `NOT_RUN`", generated)
         self.assertIn("tests/test_bcp008_behavior_and_procurement_pilot.py", generated)
 
+    def test_deliberate_work_and_postmerge_cases_are_governed_evidence(self) -> None:
+        evals = json.loads((ROOT / "skills/SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8"))
+        cases = {case["case_id"]: case for case in evals["cases"]}
+        self.assertEqual("managing-project-intake-and-work-contract", cases["SBE-040"]["expected_primary_skill"])
+        self.assertEqual("managing-project-intake-and-work-contract", cases["SBE-041"]["expected_primary_skill"])
+        self.assertIn("NOT_RUN", "\n".join(cases["SBE-040"]["required_evidence"]))
+        self.assertIn("Notion", "\n".join(cases["SBE-041"]["required_evidence"]))
+
+        generated = (ROOT / "docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md").read_text(encoding="utf-8")
+        self.assertIn("Behavior evaluation case count", generated)
+        self.assertIn("Behavior evaluation source SHA-256", generated)
+
 
     def test_serial_fiction_skill_coupled_change_and_entrypoint_contract_is_explicit(self) -> None:
         config = json.loads((ROOT / ".github/reference-freshness.json").read_text(encoding="utf-8"))

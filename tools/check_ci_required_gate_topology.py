@@ -10,6 +10,7 @@ CANONICAL_WORKFLOW = Path(".github/workflows/validate-game-project-operating-sys
 REQUIRED_GATE_NEEDS = (
     "classify-changes",
     "docs-validation",
+    "core-regression",
     "ubuntu-contract",
     "publication-validation",
     "platform-smoke-windows",
@@ -17,6 +18,7 @@ REQUIRED_GATE_NEEDS = (
 REQUIRED_GATE_ENV = {
     "CLASSIFY_RESULT": "${{ needs.classify-changes.result }}",
     "DOCS_RESULT": "${{ needs.docs-validation.result }}",
+    "CORE_REGRESSION_RESULT": "${{ needs.core-regression.result }}",
     "CONTRACT_REQUIRED": "${{ needs.classify-changes.outputs.run_contract }}",
     "CONTRACT_RESULT": "${{ needs.ubuntu-contract.result }}",
     "PUBLICATION_REQUIRED": "${{ needs.classify-changes.outputs.run_publication }}",

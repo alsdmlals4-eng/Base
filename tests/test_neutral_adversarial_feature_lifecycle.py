@@ -179,7 +179,7 @@ class NeutralAdversarialFeatureLifecycleTests(unittest.TestCase):
         for text in (finding, audit, postmerge):
             self.assertIn("CONFIGURED_PROJECT_WORKSPACE", text)
         for text in (sync, safe_sync):
-            for token in ("execution_surface", "GITHUB_CONNECTOR_ONLY", "NOT_APPLICABLE_CONNECTOR_ONLY", "OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM"):
+            for token in ("execution_surface", "GITHUB_CONNECTOR_ONLY", "NOT_APPLICABLE_CONNECTOR_ONLY", "OPEN_PR_READ_ONLY_BY_DEFAULT"):
                 self.assertIn(token, text)
 
     def test_socratic_review_lens_is_selective_evidence_first_and_meta_validated(self) -> None:

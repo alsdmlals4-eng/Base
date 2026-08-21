@@ -7,6 +7,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from tests.test_cloud_run_game_backend_capability import (
     CloudRunGameBackendCapabilityTests as _CloudRunGameBackendCapabilityTests,
@@ -194,6 +195,16 @@ raise SystemExit(7)
         self.assertTrue(self.git_check_ignore(".venv/probe"))
         self.assertTrue(self.git_check_ignore(".tmp/probe"))
         self.assertFalse(self.git_check_ignore("tmp-user-data/probe"))
+
+    def test_dependency_preflight_reports_missing_required_modules(self) -> None:
+        with patch.object(
+            runner.importlib.util,
+            "find_spec",
+            side_effect=lambda name: None if name == "jsonschema" else object(),
+        ):
+            missing = runner.missing_required_modules()
+
+        self.assertEqual(("jsonschema",), missing)
 
     def git_check_ignore(self, path: str) -> bool:
         result = subprocess.run(

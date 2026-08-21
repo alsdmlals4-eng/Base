@@ -6,20 +6,28 @@
 
 ```text
 DIRECTION_FIRST
+DEEP_WORK_PREANSWER_GATE
+REQUIRED_EVIDENCE_BEFORE_FINAL
+NOT_RUN_MANDATORY_GATE_BLOCKS_COMPLETION
+INTERMEDIATE_REPORT_SUPPRESSION_IS_NOT_WORK_REDUCTION
+GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY
+REASONING_EFFORT_IS_NOT_WORK_EVIDENCE
+REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF
 CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY
 MINIMUM_VIABLE_ALTERNATIVES: 3
 BENCHMARK_SYNTHESIS
 BETTER_ALTERNATIVE_SEARCH
 LONG_TERM_PLAN_FIT_REQUIRED
+BEST_LONG_TERM_EFFICIENT_METHOD
+QUALITY_OVER_RESPONSE_SPEED
+BENCHMARK_PRACTICE_COMPARISON
 EXPECTED_EFFECTS_RISKS_MITIGATIONS_BEFORE_BUILD
 SINGLE_INITIAL_APPROVAL_THEN_CONTINUE
 RECOVER_TRY_ALTERNATIVES_RESUME
 INDEPENDENT_WORKSTREAM_ISOLATION
-OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM
-ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE
-CURRENT_OWNER_EVIDENCE_REQUIRED
-CURRENT_COORDINATOR_TAKEOVER_WHEN_NO_ACTIVE_OWNER
-EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTION
+OPEN_PR_READ_ONLY_BY_DEFAULT
+OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION
+FOLLOW_UP_TARGET_IS_MERGED_MAIN
 ZERO_INCREMENTAL_COST_REQUIRED
 CURRENT_PAID_PLANS: GPT_PRO
 PAID_PLAN_COUNT: 1
@@ -27,6 +35,9 @@ ADVERSARIAL_REVIEW_UNTIL_CLEAN
 FULL_LOOP_COUNT_MINIMUM: 5
 MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
 POSTMERGE_PROMOTION_AND_SUPERSESSION
+POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP
+POSTMERGE_CORRECTION_REQUIRED
+PROGRESS_READBACK_REQUIRED
 RELEASE_NEAR_VERTICAL_SLICE_FIRST
 GAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE
 SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE
@@ -50,6 +61,8 @@ REQUIRED_WORK_REMAINING: 0
 
 ## 2. 기본 흐름
 
+`BEST_LONG_TERM_EFFICIENT_METHOD`가 이 흐름의 목표다. `QUALITY_OVER_RESPONSE_SPEED`에 따라 효율을 빠른 답변·최소 토큰·최소 Tool 호출로 정의하지 않고, 사용자·플레이어 가치, 정확성, 출시 품질, 유지보수성, 재사용성, 되돌리기 가능성, 위험, 수명주기 총비용의 결합으로 판정한다. 중요한 작업은 최고 결과를 위해 더 많은 시간·토큰·조사·검증을 사용할 수 있다. `BENCHMARK_PRACTICE_COMPARISON`은 공식/1차 자료, 벤치마크, 현업 운영 방식, 실무 성공·실패 사례를 최소 3개 실질 대안과 함께 비교하도록 요구한다.
+
 ```text
 RESEARCH
 → CURRENT STATE / OPEN PR RECONCILIATION
@@ -70,6 +83,16 @@ RESEARCH
 → LESSON PROMOTION / SUPERSESSION
 → REQUIRED WORK REMAINING = 0
 ```
+
+### `DEEP_WORK_PREANSWER_GATE`
+
+L1 이상 또는 조사·벤치마킹·검토·구현·검증을 명시한 요청은 `REQUIRED_EVIDENCE_BEFORE_FINAL`이다. 현재 정본과 실제 구현 조사, 필요한 외부 원출처 조사, 최소 3개 실질 대안 비교, 구현 현실성, 요구된 적대적 검토와 검증을 실제로 수행하기 전에 substantive final answer로 종료하지 않는다.
+
+`INTERMEDIATE_REPORT_SUPPRESSION_IS_NOT_WORK_REDUCTION`: 중간보고를 생략하거나 한 번에 결과를 달라는 요청은 사용자 노출만 줄인다. 도구 호출·조사·검토·테스트·readback을 생략하거나 미래 단계로 미루는 근거가 아니다.
+
+`NOT_RUN_MANDATORY_GATE_BLOCKS_COMPLETION`: 필수 evidence가 `NOT_RUN`이면 완료가 아니다. 현재 실행할 수 없으면 `BLOCKED_UNVERIFIED`와 해제 조건을 보고하고, 실행 가능한 독립 범위는 계속한다.
+
+`GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY`: GPT-first는 판단·통합 책임의 owner를 정하는 말이지 prose-only 경로가 아니다. `REASONING_EFFORT_IS_NOT_WORK_EVIDENCE`이므로 `매우 높음` 같은 추론 강도도 실제 source readback·Tool 호출·실행·테스트 증거를 대체하지 않는다. `REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF`에 따라 현재 세션 Tool로 필수 evidence를 얻을 수 있으면 실행하며, 별도 Codex 인계의 선택성과 혼동하지 않는다.
 
 ### `DIRECTION_FIRST`
 
@@ -132,6 +155,12 @@ verification_plan: []
 
 새 사용자 승인이 필요한 것은 핵심 게임 방향·플레이어 경험·중요 스토리 의미 변경, 승인 범위 확대, 파괴적 migration/삭제, 새 결제·별도 과금, 계정·보안 권한 확대, 사용자 취향 선택이 필요한 복수 유효안이다.
 
+이미 승인된 동일 계약에서 `[연속작업] 진행해`, `진행해`, `계속해`, `남은 작업 진행`처럼 계속 실행 의도가 명확하면 `CONTINUATION_INTENT_ALIASES`를 `APPROVED_CONTRACT_CONTINUATION`으로 해석한다. 정확한 마법 문구를 다시 요구하지 않되, 승인되지 않은 범위·새 Goal·사용자 결정 Gate는 이 별칭으로 승인하지 않는다.
+
+### `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`
+
+모든 Base/project GitHub 병합 뒤에는 새 main SHA를 다시 가져와 전체 승인 범위를 적대적으로 검토한다. 유효 finding은 `POSTMERGE_CORRECTION_REQUIRED`로 최신 main에서 새 Branch/PR에 교정하고 exact-head 회귀를 재실행한다. 해당 프로젝트에 Notion 사람용 정본이 적용되면 repository 증거가 확정된 뒤에만 현재 상태 블록을 갱신한다. 마지막으로 GitHub와 Notion 목적지를 모두 재조회하고 `PROGRESS_READBACK_REQUIRED`에 따라 완료율, 남은 필수 작업, 선택 backlog, blocker를 다시 계산한다. 열린 다른 PR은 명시적 번호·동작 승인 없이 수정하지 않고, 역사 섹션을 현재 상태로 일괄 치환하지 않는다.
+
 ## 6. 실패 복구
 
 ### `RECOVER_TRY_ALTERNATIVES_RESUME`
@@ -155,19 +184,15 @@ failure / interruption
 
 ### `INDEPENDENT_WORKSTREAM_ISOLATION`
 
-`OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM`
+`OPEN_PR_READ_ONLY_BY_DEFAULT`
 
-`ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED_WHEN_ACTUALLY_ACTIVE`
+`OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION`
 
-`CURRENT_OWNER_EVIDENCE_REQUIRED`
+`FOLLOW_UP_TARGET_IS_MERGED_MAIN`
 
-`CURRENT_COORDINATOR_TAKEOVER_WHEN_NO_ACTIVE_OWNER`
+`open / draft / ready` PR·branch는 실제 동시 작업자 여부와 무관하게 기본 read-only다. current-state reconciliation을 위한 head/diff/check 읽기는 가능하지만 checkout/write/rebase/close/merge/selective-copy/material-delta 흡수는 하지 않는다. 일반 후속 작업은 latest completed `main`에서 새 Branch로 시작하고 main에 실제 유지된 변경만 대상으로 한다.
 
-`EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_ACTIVE_OTHER_WORKER_EXCEPTION`
-
-Part 경계, open PR 상태, 실제 동시 작업자는 서로 다른 개념이다. `open / draft / ready` PR·branch가 존재한다는 사실만으로 다른 작업자가 현재 활동 중이라고 판정하지 않는다. 사용자 지시, current session/automation owner, Resource Lock, matching running execution 같은 **current owner evidence**가 있을 때만 `ACTIVE_OTHER_WORKER`로 mutation-protected다.
-
-사용자가 `CURRENT_COORDINATOR_CHAT` 하나만 활성이라고 확인했거나 현재 owner evidence가 없으면 unresolved open PR은 latest completed `main`과 Goal을 다시 읽어 `COORDINATOR_TAKEOVER / READY_TO_FINISH / SUPERSEDED_DUPLICATE / STALE_BACKLOG / BLOCKED_EXTERNAL`로 분류한다. coordinator가 인수한 workstream은 현재 승인 범위 안에서 수정·검증·병합·중복 종료까지 마무리할 수 있다. 실제 `ACTIVE_OTHER_WORKER`를 흡수하려면 명시적 사용자 takeover/owner handoff가 필요하다.
+열린 PR mutation이 필요하면 사용자가 현재 작업에서 PR 번호와 허용 동작을 명시해야 한다. 같은 Goal, owner evidence 부재, 현재 coordinator만 활성이라는 확인, 과거 standing authorization은 예외 권한이 아니다.
 
 ## 8. 게임 작업 계약
 
@@ -257,6 +282,8 @@ generate / edit
 ## GPT-first 기획·검수와 선택적 Codex 보조 계약
 
 `GPT_FIRST_PLANNING_AND_REVIEW`가 기본이다. GPT는 프로젝트 GitHub와 Notion의 현재 정본을 읽고 기획·조사·벤치마킹·대안 비교·시스템/데이터 설계·UI/UX 흐름·시각 방향·검수·적대적 검토를 닫는다. Codex는 필수 후속 단계가 아니라 실제 코드/Scene/Resource/data 변경, 저장소 규모가 큰 기계적 점검, 로컬 실행·테스트 등 **실행 권위가 필요한 경우에만** `OPTIONAL_CODEX_EXECUTOR`로 호출한다.
+
+`GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY`: GPT-primary는 prose-only가 아니다. `REASONING_EFFORT_IS_NOT_WORK_EVIDENCE`이며 추론 강도는 source readback·Tool 호출·runtime·test evidence를 대신하지 않는다. `REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF`에 따라 현재 GPT 세션이 필요한 browser/repository/connector/runtime Tool을 보유하면 직접 실행하고, 별도 Codex handoff만 선택적으로 판단한다.
 
 ```text
 GPT planning/research/review

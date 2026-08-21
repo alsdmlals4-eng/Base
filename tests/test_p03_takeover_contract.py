@@ -54,7 +54,7 @@ class P03TakeoverContractTests(unittest.TestCase):
             ):
                 self.assertIn(token, text, path)
         manifest = read("docs/operations/BASE_PARTITION_MANIFEST.json")
-        self.assertIn("OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM", manifest)
+        self.assertIn("OPEN_PR_READ_ONLY_BY_DEFAULT", manifest)
 
 
 if __name__ == "__main__":

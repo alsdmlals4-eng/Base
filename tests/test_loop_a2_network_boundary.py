@@ -177,10 +177,13 @@ class DockerNoneDeniedNetworkBoundaryTests(BoundaryTestCase):
             self.assertIsNone(boundary.prepare(policy="DENIED", argv=("python", "-V"), cwd=Path.cwd(), environment=self.environment()))
 
     def test_exact_image_inspection_is_cached_and_plan_uses_none_network(self) -> None:
-        boundary = DockerNoneDeniedNetworkBoundary(image_id=IMAGE_ID)
+        boundary = DockerNoneDeniedNetworkBoundary(
+            image_id=IMAGE_ID,
+            docker_executable=sys.executable,
+        )
         environment = self.environment()
         environment["SAFE_SENTINEL"] = "present"
-        with patch("tools.loop_a2_runtime.network_boundary.platform.system", return_value="Linux"), patch("tools.loop_a2_runtime.network_boundary.shutil.which", return_value="/usr/bin/docker"), patch("tools.loop_a2_runtime.network_boundary.subprocess.run", return_value=_Completed(returncode=0, stdout=IMAGE_ID + "\n")) as run:
+        with patch("tools.loop_a2_runtime.network_boundary.platform.system", return_value="Linux"), patch("tools.loop_a2_runtime.network_boundary.subprocess.run", return_value=_Completed(returncode=0, stdout=IMAGE_ID + "\n")) as run:
             first = boundary.prepare(policy="DENIED", argv=("python", "-m", "unittest"), cwd=Path.cwd(), environment=environment)
             second = boundary.prepare(policy="DENIED", argv=("python", "-V"), cwd=Path.cwd(), environment=environment)
         self.assertEqual(run.call_count, 1)
@@ -190,7 +193,7 @@ class DockerNoneDeniedNetworkBoundaryTests(BoundaryTestCase):
         self.assertEqual(first.boundary_id, "DOCKER_NONE_DENIED_V1")
         self.assertEqual(dict(first.environment), environment)
         argv = list(first.argv)
-        self.assertEqual(argv[0], "/usr/bin/docker")
+        self.assertEqual(argv[0], str(Path(sys.executable).resolve(strict=True)))
         self.assertIn("--network", argv)
         self.assertEqual(argv[argv.index("--network") + 1], "none")
         self.assertIn("--read-only", argv)
@@ -206,10 +209,13 @@ class DockerNoneDeniedNetworkBoundaryTests(BoundaryTestCase):
         self.assertNotIn("PATH", argv[argv.index("--workdir") + 2 : argv.index(IMAGE_ID)])
 
     def test_docker_plan_mounts_only_cwd_read_only_and_never_pulls(self) -> None:
-        boundary = DockerNoneDeniedNetworkBoundary(image_id=IMAGE_ID)
+        boundary = DockerNoneDeniedNetworkBoundary(
+            image_id=IMAGE_ID,
+            docker_executable=sys.executable,
+        )
         with tempfile.TemporaryDirectory() as temporary:
             cwd = Path(temporary).resolve()
-            with patch("tools.loop_a2_runtime.network_boundary.platform.system", return_value="Linux"), patch("tools.loop_a2_runtime.network_boundary.shutil.which", return_value="/usr/bin/docker"), patch("tools.loop_a2_runtime.network_boundary.subprocess.run", return_value=_Completed(returncode=0, stdout=IMAGE_ID + "\n")) as run:
+            with patch("tools.loop_a2_runtime.network_boundary.platform.system", return_value="Linux"), patch("tools.loop_a2_runtime.network_boundary.subprocess.run", return_value=_Completed(returncode=0, stdout=IMAGE_ID + "\n")) as run:
                 plan = boundary.prepare(policy="DENIED", argv=("python", "-c", "print(1)"), cwd=cwd, environment=self.environment())
         assert plan is not None
         args = list(plan.argv)
@@ -224,7 +230,10 @@ class DockerNoneDeniedNetworkBoundaryTests(BoundaryTestCase):
         self.assertIn("--workdir", args)
         self.assertEqual(args[args.index("--workdir") + 1], "/workspace")
         inspect_call = run.call_args.args[0]
-        self.assertEqual(inspect_call[:3], ["/usr/bin/docker", "image", "inspect"])
+        self.assertEqual(
+            inspect_call[:3],
+            [str(Path(sys.executable).resolve(strict=True)), "image", "inspect"],
+        )
         self.assertEqual(inspect_call[-1], IMAGE_ID)
 
 

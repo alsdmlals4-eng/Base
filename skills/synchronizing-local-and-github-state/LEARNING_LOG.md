@@ -1,5 +1,13 @@
 # Synchronizing Local and GitHub State — Learning Log
 
+## 2026-08-21 — Capability fallback vocabulary must survive authorization hardening
+
+- **Status:** `PATTERN`
+- **Observed failure:** open-PR authorization을 더 강한 named PR/action 계약으로 교체하는 과정에서 `github_connector / local_git / gh_cli` provider 판정과 connector Git Data publication 단계가 Skill 본문에서 사라졌다. 보안 계약은 강화됐지만 optional `gh` 부재 복구의 실행 발견성이 약해졌다.
+- **Correction:** 열린 PR read-only와 named authorization 계약은 유지하고, 독립된 `GITHUB_CAPABILITY_FALLBACK` 절에 provider 순서, `create_blob → create_tree → create_commit → update_ref(force=false)`, 반복 설치·재인증 금지를 복구했다.
+- **Evidence ceiling:** 계약과 회귀 테스트는 capability routing의 발견성을 증명하지만 실제 connector 권한, 원격 write, CI, merge 성공은 각 실행에서 별도로 readback해야 한다.
+- **Regression trigger:** authorization·owner 정책 개편이 missing-CLI fallback provider나 non-force Git Data 경로를 다시 제거하면 이 패턴을 재검토한다.
+
 ## 2026-08-18 — Reconcile moving integration state before overwriting or merging stale owners
 
 - **Status:** `PATTERN`

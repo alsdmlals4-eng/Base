@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -38,6 +39,19 @@ def load_cases(root: Path) -> tuple[list[dict[str, Any]], str]:
         if relative == EVAL_PATHS[0]:
             model_run_status = document.get("model_run_status", "NOT_RUN")
     return cases, model_run_status
+
+
+def behavior_source_digest(root: Path) -> str:
+    digest = hashlib.sha256()
+    for relative in EVAL_PATHS:
+        path = root / relative
+        if not path.is_file():
+            continue
+        digest.update(relative.as_posix().encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(path.read_bytes())
+        digest.update(b"\0")
+    return digest.hexdigest()
 
 
 def behavior_coverage(
@@ -169,6 +183,7 @@ def build_evidence_markdown(root: Path = ROOT) -> str:
     registry = load_json(root / REGISTRY_PATH)
     index = load_json(root / EVIDENCE_INDEX_PATH)
     cases, model_run_status = load_cases(root)
+    behavior_digest = behavior_source_digest(root)
     active = [
         entry
         for entry in registry.get("skills", [])
@@ -184,6 +199,8 @@ def build_evidence_markdown(root: Path = ROOT) -> str:
         "> Generated from `skills/SKILL_REGISTRY.json`, behavior evaluation sets, and `skills/SKILL_IMPLEMENTATION_EVIDENCE.json`. Do not edit this derivative.",
         f"> Active Skill count: `{len(active)}`",
         f"> External model behavior run: `{model_run_status}`",
+        f"> Behavior evaluation case count: `{len(cases)}`",
+        f"> Behavior evaluation source SHA-256: `{behavior_digest}`",
         "",
         "`EXECUTABLE_EVIDENCE` means a repository test, tool, workflow, or package script is linked. It does not mean that evidence passed on the current commit. `CONTRACT_EVIDENCE` means only a contract or documentation consumer is linked. Actual model, runtime, device, and human validation remain separate.",
         "",

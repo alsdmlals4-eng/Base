@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import os
 import shutil
 import subprocess
@@ -12,6 +13,21 @@ from pathlib import Path
 
 
 SESSION_PREFIX = "local-validation-"
+LOCAL_VALIDATION_REQUIRED_MODULES = (
+    "jsonschema",
+    "PIL",
+    "markdown_it",
+    "docx",
+    "pypdf",
+)
+
+
+def missing_required_modules() -> tuple[str, ...]:
+    return tuple(
+        module
+        for module in LOCAL_VALIDATION_REQUIRED_MODULES
+        if importlib.util.find_spec(module) is None
+    )
 
 
 def default_commands(
@@ -110,6 +126,19 @@ def main() -> int:
     parser.add_argument("--trusted-history-commit", required=True)
     args = parser.parse_args()
     repository_root = Path(__file__).resolve().parents[1]
+    missing = missing_required_modules()
+    if missing:
+        print(
+            "LOCAL_VALIDATION_DEPENDENCY_MISSING: " + ", ".join(missing),
+            file=sys.stderr,
+        )
+        print(
+            "Install pinned dependencies with: "
+            f"{sys.executable} -m pip install --requirement "
+            ".github/validation-requirements.txt",
+            file=sys.stderr,
+        )
+        return 2
     return run_validation(
         repository_root,
         default_commands(sys.executable, args.trusted_history_commit),

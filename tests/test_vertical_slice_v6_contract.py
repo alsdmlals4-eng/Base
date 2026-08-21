@@ -94,7 +94,7 @@ class VerticalSliceV6ContractTests(unittest.TestCase):
             self.assertIn("SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE", text)
             self.assertIn("실제 게임 사용 후보", text)
             self.assertIn("player-facing placeholder", text)
-            self.assertIn("OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM", text)
+            self.assertIn("OPEN_PR_READ_ONLY_BY_DEFAULT", text)
             self.assertNotIn("다른 독립 open/draft/ready PR·branch·worktree는", text)
 
     def test_knowledge_references_preserve_detail_under_demo_first_authority(self) -> None:

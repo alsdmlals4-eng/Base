@@ -1,6 +1,6 @@
 # Workstream backlog reconciliation · 2026-08-19
 
-> **Supersession:** the earlier assumption "open PR = protected active worker" is superseded by `OPEN_PR_IS_NOT_ACTIVE_WORKSTREAM`. The user confirmed `CURRENT_COORDINATOR_CHAT` is the only active work chat. Findings below remain evidence, but #530/#535/#537 are now coordinator backlog to revalidate and finish; they are not protected merely because they are open.
+> **Current supersession:** `OPEN_PR_READ_ONLY_BY_DEFAULT` and `FOLLOW_UP_TARGET_IS_MERGED_MAIN` supersede the former coordinator-takeover interpretation. Findings below remain historical evidence, but open/draft/ready PRs stay read-only unless the user names the PR and allowed action. New follow-up work starts from latest completed `main`.
 
 ## P01 / Project workspace schema consumer
 - current completed main has schema v2 while `tests/test_notion_project_workspace_contract.py` still asserts v1.

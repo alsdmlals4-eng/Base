@@ -1,5 +1,14 @@
 # Base Skill Learning Log
 
+## 2026-08-21 — Behavior fixtures must move with active Skill contracts
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** behavior contract 검사가 Git 동기화의 구형 `publish-remote / verify-sync`와 폐기된 standalone HTML dashboard mode를 current Skill package에서 찾지 못했다.
+- **Finding:** 2일 전 기준에도 Git 동기화 fixture 3개가 이미 stale했고, HTML → Notion Home 재분류 뒤 3개가 추가됐다. 본문 전체 단어 검색은 우연히 남은 `inspect`, `frame`, `build` 토큰을 mode로 오인해 일부 drift를 숨겼다.
+- **Decision:** current Git sync의 `preflight / reconcile / publish / verify`, current Notion Home의 명시적 5단계 mode로 fixture를 갱신한다. 조기 최종답변 회귀를 직접 압박하는 `SBE-040`은 2일 전 비교, 인터넷 원출처, 최소 3개 대안, 실제 Tool 실행, 5회 전체 적대적 개선 루프, `NOT_RUN` 완료 차단과 중간보고 축소≠작업 축소를 요구한다.
+- **Evidence ceiling:** schema·coverage·discoverability 검사는 정적 계약만 증명한다. 외부 모델 결과 파일이 없으므로 `MODEL_RUN_STATUS: NOT_RUN`이며 실제 ChatGPT 행동 개선은 별도 fresh-conversation benchmark 전까지 미검증이다.
+- **Next trigger:** mode 토큰이 선언부가 아닌 본문 우연 일치로 통과하거나, active Skill 변경 시 behavior fixture drift가 다시 발생하면 machine-readable mode ownership과 freshness check를 별도 승인 범위에서 검토한다.
+
 ## 2026-08-19 — Visual dashboard responsibility moved to self-contained Notion Home
 
 - **상태:** `PATTERN_CANDIDATE`

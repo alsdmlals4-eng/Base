@@ -1,5 +1,15 @@
 # Managing Game Project Operating System Learning Log
 
+## 2026-08-21 — Merge is followed by GitHub/Notion adversarial progress closure
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** Base 복구 병합은 성공했지만 복구 기준 자체의 stale canon/test/routing이 남아 전체 회귀 19건과 Notion current SHA drift가 병합 뒤에야 드러났다.
+- **Finding:** premerge 검증만으로는 새 main에서의 untouched consumer, Notion 사람용 current-state, 진행도 재계산 누락을 완전히 막지 못한다. 병합을 종료 신호로 해석하면 복구 성공과 시스템 CLEAN을 혼동한다.
+- **Decision:** 기존 `verify`에 `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`를 흡수한다. exact new main readback → 전체 범위 적대 검토 → 검증된 finding의 새 Branch/PR 교정 → 회귀 → 적용 가능한 Notion current block 갱신 → 양쪽 destination readback → remaining work 재계산을 반복한다.
+- **TDD evidence:** `tests/test_postmerge_github_notion_long_term_contract.py` RED가 Project OS consumer의 병합 후 교정·readback 계약 부재를 재현했다. 최종 증거는 전체 discovery와 exact-head CI에서 확정한다.
+- **Boundary:** 열린 다른 PR은 번호·동작의 명시적 승인 없이 수정하지 않는다. 역사 Notion 블록을 current state처럼 일괄 치환하지 않으며, Notion이 적용되지 않는 작업에 가짜 sync를 만들지 않는다.
+- **Next trigger:** GitHub merge 뒤 Notion current-state가 stale하거나, postmerge finding이 진행도에서 사라지거나, 교정이 direct main/기존 open PR mutation으로 우회될 때.
+
 ## 2026-08-05 — 플랫폼 심사·자산 권리·참조 기반 독립 제작
 
 - **상태:** `PATTERN_CANDIDATE`
