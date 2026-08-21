@@ -100,6 +100,49 @@ class CloudRunGameBackendCapabilityTests(unittest.TestCase):
         ):
             self.assertIn(term, guide)
 
+    def test_demo_test_double_contract_is_interface_compatible_and_fail_closed(self) -> None:
+        guide = read(GUIDE)
+        contract = read(CONTRACT)
+        required_terms = (
+            "ONE_CONSUMER_INTERFACE",
+            "REAL_ADAPTER",
+            "FAKE_ADAPTER",
+            "CONTRACT_PARITY_REQUIRED",
+            "FAIL_CLOSED_UNKNOWN_OPERATION",
+        )
+        for term in required_terms:
+            self.assertIn(term, guide)
+            self.assertIn(term, contract)
+        for field in (
+            "consumer_interface:",
+            "real_adapter:",
+            "fake_adapter:",
+            "contract_version:",
+            "unknown_operation_policy: FAIL_CLOSED_UNKNOWN_OPERATION",
+            "provider_contract_verification: NOT_RUN",
+        ):
+            self.assertIn(field, contract)
+
+    def test_demo_fixtures_are_deterministic_synthetic_resettable_and_simulated_only(self) -> None:
+        guide = read(GUIDE)
+        contract = read(CONTRACT)
+        for term in (
+            "DETERMINISTIC_FIXTURE",
+            "RESETTABLE_STATE",
+            "SYNTHETIC_DATA_ONLY",
+            "PUBLIC_DEMO_SANITIZATION",
+            "SIMULATED_ONLY",
+        ):
+            self.assertIn(term, guide)
+            self.assertIn(term, contract)
+        for phrase in (
+            "real secrets",
+            "private records",
+            "real identity",
+        ):
+            self.assertIn(phrase, guide)
+        self.assertIn("## Demo, test-double, and public-demo boundary", contract)
+
     def test_secrets_and_privileged_routes_stay_server_side(self) -> None:
         guide = read(GUIDE)
         for term in (
@@ -176,6 +219,7 @@ class CloudRunGameBackendCapabilityTests(unittest.TestCase):
             "## Privacy, retention, and region",
             "## Capacity, cost, quota, and alerts",
             "## Failure, degradation, backup, and rollback",
+            "## Demo, test-double, and public-demo boundary",
             "## Runtime, load, failure, and cost evidence",
             "## Current readiness and remaining gates",
         ):
@@ -279,7 +323,6 @@ class CloudRunGameBackendCapabilityTests(unittest.TestCase):
             self.assertNotIn(token, registry)
             self.assertNotIn(token, shared_routes)
 
-
     def test_adversarial_decision_fixtures(self) -> None:
         guide = read(GUIDE)
         fixtures = {
@@ -296,6 +339,7 @@ class CloudRunGameBackendCapabilityTests(unittest.TestCase):
         }
         for scenario, decision in fixtures.items():
             self.assertIn(f"{scenario} -> {decision}", guide)
+
 
 if __name__ == "__main__":
     unittest.main()

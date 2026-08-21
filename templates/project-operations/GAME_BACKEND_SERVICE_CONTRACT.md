@@ -257,6 +257,47 @@ service_sunset:
 support_owner:
 ```
 
+## Demo, test-double, and public-demo boundary
+
+Use this section only when the project actually needs a fake/demo service path.
+The consumer-facing service contract remains one interface; a fake path is an
+adapter, not a second product API.
+
+```yaml
+consumer_interface:
+consumer_interface_policy: ONE_CONSUMER_INTERFACE
+real_adapter: REAL_ADAPTER
+fake_adapter: FAKE_ADAPTER
+contract_version:
+contract_parity_policy: CONTRACT_PARITY_REQUIRED
+parity_operations:
+parity_request_schema:
+parity_response_or_domain_result:
+parity_error_classes:
+parity_mutation_semantics:
+unknown_operation_policy: FAIL_CLOSED_UNKNOWN_OPERATION
+fixture_policy: DETERMINISTIC_FIXTURE
+fixture_seed:
+reset_policy: RESETTABLE_STATE
+reset_target:
+synthetic_data_policy: SYNTHETIC_DATA_ONLY
+public_demo_policy: PUBLIC_DEMO_SANITIZATION
+real_secrets_policy: FORBIDDEN
+private_records_policy: FORBIDDEN
+real_identity_policy: REPLACE_WITH_SYNTHETIC_UNLESS_EXPLICITLY_PUBLIC_APPROVED
+provider_contract_verification: NOT_RUN
+provider_contract_evidence:
+fake_evidence_ceiling: SIMULATED_ONLY
+```
+
+Required boundaries:
+
+- `REAL_ADAPTER` and `FAKE_ADAPTER` implement the same approved consumer contract.
+- Unknown operations, unsupported versions, missing required fixture state, and schema mismatches fail closed; they never fabricate success.
+- Reset restores the approved deterministic seed and does not mutate production or project canon.
+- Public/shareable fixtures contain synthetic records and no production credentials, private user/customer/project records, or unapproved real identities.
+- `SIMULATED_ONLY` may support consumer-flow and error-handling evidence but never satisfies real provider `RUNTIME_VERIFIED`, load, dependency-failure, cost, security, persistence, rollback, or `PRODUCTION_READY` evidence.
+
 ## Runtime, load, failure, and cost evidence
 
 ```yaml
