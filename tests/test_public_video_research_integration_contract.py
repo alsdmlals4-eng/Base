@@ -82,7 +82,7 @@ class PublicVideoResearchIntegrationContractTests(unittest.TestCase):
             "new_hub_or_gui: NONE",
             "incremental_paid_cost: 0",
             "유료 transcript API",
-            "No video/audio download",
+            "영상/오디오 자체를 Base 저장소에 다운로드·보관하지 않는다",
         ):
             self.assertIn(term, design)
 
