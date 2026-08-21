@@ -122,7 +122,7 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, contract)
 
-    def test_queue_prep_is_not_scan_success_and_defers_repository_changes_to_normal_copy_integration(self) -> None:
+    def test_queue_prep_is_not_scan_success_and_uses_current_open_pr_protection(self) -> None:
         queue_doc = QUEUE_DOC.read_text(encoding="utf-8")
         runner = RUNNER.read_text(encoding="utf-8")
         for required in (
@@ -130,9 +130,11 @@ class PeriodicSourceAnalysisRunnerTests(unittest.TestCase):
             "AWAITING_CHATGPT_REVIEW",
             "Queue preparation",
             "NO_CHANGE",
-            "BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16",
+            "OPEN_PR_READ_ONLY_BY_DEFAULT",
+            "OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION",
         ):
             self.assertIn(required, queue_doc)
+        self.assertNotIn("BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16", queue_doc)
         for required in (
             "repository_change",
             "NONE",
