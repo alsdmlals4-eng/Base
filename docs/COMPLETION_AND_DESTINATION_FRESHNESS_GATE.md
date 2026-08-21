@@ -48,7 +48,9 @@ Coverage ledger 전체 status도 `VERIFIED`여야 한다.
 
 `LOOP_VERIFICATION_RECEIPT`는 완료 시점의 실행·생략·목적지 readback을 구조화한다.
 
-빈 receipt로 완료 Gate를 우회할 수 없도록 **최소 1개의 check와 최소 1개의 destination readback**을 반드시 포함한다. 현재 작업에 적용 가능한 검증이나 목적지가 정말 없다면 completion contract 자체가 필요 없는 작업인지 먼저 재라우팅하며, `checks=[]` 또는 `destinations=[]`를 `VERIFIED`의 근거로 사용하지 않는다.
+빈 receipt로 완료 Gate를 우회할 수 없도록 **최소 1개의 check와 최소 1개의 destination readback**을 반드시 포함한다. 그중에도 **최소 1개의 required check와 최소 1개의 required destination**이 있어야 하며, 모두 optional로 돌려 completion을 우회할 수 없다. `exact_head_sha`는 실제 검증 head를 기록해야 하며 Template placeholder `0000000000000000000000000000000000000000`은 완료 증거가 아니다.
+
+현재 작업에 적용 가능한 검증이나 목적지가 정말 없다면 completion contract 자체가 필요 없는 작업인지 먼저 재라우팅하며, 빈 배열·optional-only 배열·placeholder exact head를 `VERIFIED`의 근거로 사용하지 않는다.
 
 ### Required check
 
