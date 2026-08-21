@@ -193,10 +193,10 @@ class P04ReverseEngineeringReusePipelineTests(unittest.TestCase):
 
         for term in (
             "DevBawky/LOADED",
-            "REJECT_DIRECT_REUSE",
+            "direct reuse는 `REJECT`",
             "SINGLE_SOURCE_HYPOTHESIS",
             "DevBawky/Kalivra",
-            "LICENSE_METADATA_CONFLICT_REVIEW_REQUIRED",
+            "RIGHTS_REVIEW_REQUIRED · LICENSE_METADATA_CONFLICT",
             "ATOMIC_RESOLUTION_BOUNDARY",
             "read-only project snapshot + deterministic runner",
         ):
