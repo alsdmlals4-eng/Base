@@ -18,7 +18,7 @@ Base는 게임·연재소설 등 등록된 창작·개발 프로젝트가 공용
 → 반복 가능한 스킬 학습
 ```
 
-Base에는 여러 프로젝트에서 재사용 가능한 판단·절차·검증만 둔다. 프로젝트 고유 세계관·원고·수치·경로·자산·구현 상태는 대상 프로젝트가 책임진다. 프로젝트 정본은 `DOMAIN_SPLIT_CANON`을 따른다. 사람의 기획·시각 판단과 협업 상태는 프로젝트별 Notion page인 `NOTION_HUMAN_FACING_CANON`, 구조화 데이터·코드·Scene·Resource·Test·runtime evidence는 `REPOSITORY_STRUCTURED_CANON`이 책임진다. 기존 Google Sheets는 고유 자료의 검증된 이관이 끝날 때까지만 `COMPATIBILITY_ONLY` migration source이며 신규 기본 작업면이 아니다. 상세 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 책임진다.
+Base에는 여러 프로젝트에서 재사용 가능한 판단·절차·검증만 둔다. 프로젝트 고유 세계관·원고·수치·경로·자산·구현 상태는 대상 프로젝트가 책임진다. 프로젝트 정본은 `DOMAIN_SPLIT_CANON`을 따른다. 사람의 기획·시각 판단과 협업 상태는 프로젝트별 Notion page인 `NOTION_HUMAN_FACING_CANON`이며 기본 사람용 workspace 계약은 `NOTION_DEFAULT_PROJECT_WORKSPACE`다. 구조화 데이터·코드·Scene·Resource·Test는 `REPOSITORY_STRUCTURED_CANON`, 실제 build/test/runtime 상태는 `REPOSITORY_RUNTIME_TRUTH`가 책임진다. 기존 Google Sheets는 고유 자료의 검증된 이관이 끝날 때까지만 `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL`인 `COMPATIBILITY_ONLY` migration source이며 신규 기본 작업면이 아니다. 상세 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 책임진다.
 
 ### `BEST_LONG_TERM_EFFICIENT_METHOD`
 
@@ -47,6 +47,7 @@ Base START_HERE
 → Base Skill Registry
 → 대상 프로젝트 AGENTS
 → 프로젝트 START_HERE·Active Context·Documentation Map
+→ exact Project Notion Home·filtered human-facing surfaces
 → 현재 책임 원본·Issue·Plan
 → Prompt 의도·현재 단계
 → PLAN / BUILD / REVIEW Work Mode
@@ -606,15 +607,15 @@ PLAN: audit only
 
 Base 저장소 자체에서는 프로젝트 설치 템플릿을 활성 상태로 오인하지 않는다. Base의 완료 변경은 `docs/CHANGELOG.md`, 활성 Skill은 `skills/SKILL_REGISTRY.json`, 검토 대기 제안은 `[수정제안서]/PROPOSAL_REGISTRY.json`, 진행 중 구현은 GitHub PR·Actions가 책임진다.
 
-## 프로젝트 GDD와 HTML 대시보드 경계
+## 프로젝트 GDD와 폐기 작업면 경계
 
-일반 프로젝트의 전체 흐름 확인·정보 수정은 GitHub 정본과 프로젝트 GDD Google Sheets를 우선한다. HTML 대시보드는 사용자 명시 요청 또는 기존 대시보드 유지보수에서만 선택적으로 사용한다.
+일반 프로젝트의 전체 흐름 확인·사람용 정보 수정·시각 검토는 exact Project Notion을 우선한다. 구조화 데이터·실제 구현·테스트는 repository owner가 우선한다. Google Sheets migration 상세는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`, Figma·project-management Tool Hub·QA Evidence Studio·외부 HTML dashboard/catalog·과거 localhost visual management surface는 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`에 따라 고유 정보만 한 번 흡수한 뒤 active/default 작업면으로 사용하지 않는다.
 
 ## 구조 최적화·작업 지원 Skill
 
 Base와 프로젝트 구조를 줄이거나 바꿀 때는 `pruning-stale-and-nonfunctional-material → simplifying-skill-bodies → refactoring-with-contract-preservation → running-adversarial-review-and-refinement → reviewing-and-validating-project-changes` 순서로 기능 보존과 회귀를 확인한다.
 
-Git 상태는 `synchronizing-local-and-github-state`, 긴 실행의 checkpoint는 `maintaining-long-running-task-continuity`, Games User Research 11영역은 `governing-game-user-research-coverage`, 학습 자료는 `creating-user-learning-notes`, 시각 작업 공간은 `building-project-visual-dashboards`, 엔진 런타임 오류는 `diagnosing-game-engine-runtime-failures`가 책임진다.
+Git 상태는 `synchronizing-local-and-github-state`, 긴 실행의 checkpoint는 `maintaining-long-running-task-continuity`, Games User Research 11영역은 `governing-game-user-research-coverage`, 학습 자료는 `creating-user-learning-notes`, 프로젝트 상태·시각화는 `building-project-visual-dashboards`의 Notion human-facing mode, 엔진 런타임 오류는 `diagnosing-game-engine-runtime-failures`가 책임진다.
 
 책임 coverage 원본은 `skills/SKILL_COVERAGE.json`이며 사람용 설명은 `docs/SKILL_COVERAGE_MAP.md`다.
 

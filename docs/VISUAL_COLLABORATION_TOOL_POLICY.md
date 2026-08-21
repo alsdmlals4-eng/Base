@@ -60,7 +60,7 @@ PROJECT HOME
 → evidence and adoption decisions
 
 06 · PRODUCTION / HANDOFF
-→ approved planning → repository implementation → runtime QA
+→ approved planning → repository implementation → runtime validation
 
 07+ · PROJECT-SPECIFIC CONFIRMED TABLES
 → budget / tier / roster / economy / progression / other human-learning tables when useful
@@ -165,6 +165,7 @@ Hiding system metadata is a presentation decision, not deletion. Automation may 
 
 ```text
 planning + UX/UI/audio/VFX flow
+→ PROJECT_VISUALIZATION_NEED_MAP
 → visual/audio/effect requirements
 → generate/select/reuse candidate assets
 → Notion Project placement + readback
@@ -187,21 +188,21 @@ Notion approved human-facing record
 → repository implementation task
 → code / asset / scene / resource / config
 → build or runtime
-→ QA evidence
+→ REPOSITORY_NATIVE_EVIDENCE_CAPTURE
 → Notion readback/status refresh
 ```
 
-QA Evidence Studio or equivalent runtime evidence remains independent of the project planning workspace.
+`REPOSITORY_NATIVE_EVIDENCE_CAPTURE`는 별도 QA GUI/app을 요구하지 않는다. 현재 프로젝트가 이미 쓰는 tests, GUT, Godot/Hera runtime, logs, screenshots/video, CI artifacts를 exact project/build identity에 묶고 `PASS / FAIL / BLOCKED / NOT_RUN`과 evidence ceiling을 기록한다. Notion preview는 사람이 보는 연결면이며 runtime truth를 대체하지 않는다.
 
 ## Legacy and deprecated visual execution paths
 
-Dedicated Figma routing, a Figma Bridge, localhost Expression/Sprite Studios and visual-delivery Tool Hub routing are not active authorities or required project surfaces. Their reusable ideas—project identity, provenance, bounded edits, approval, versioning, reuse classification, readback and explicit handoff—are absorbed into `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`.
+Dedicated Figma routing, Figma Bridge, localhost Expression/Sprite Studios, visual-delivery/project-management Tool Hub, QA Evidence Studio, and external HTML workspace/catalog/dashboard are not active authorities or required project surfaces. 재사용 가능한 아이디어—project identity, provenance, bounded edits, approval, versioning, reuse classification, readback, evidence ceiling, explicit handoff—만 current Notion/repository/PowerShell/Loop owner에 흡수한다.
 
 Do not restore a deprecated execution surface merely because historical docs, Git history or archived evidence mention it. Reintroduction requires a new Existing Solution First comparison, lifecycle-cost justification and user approval.
 
 ## Cost boundary
 
-The default path must satisfy `ZERO_INCREMENTAL_COST_REQUIRED`. Notion Free may be used within its current feature/file-size limits; paid Notion AI, separately metered storage, paid automation, or external provider calls are not part of the default workflow.
+The default path must satisfy `ZERO_INCREMENTAL_COST_REQUIRED`. Notion Free may be used within its current feature/file-size limits; paid Notion AI, separately metered storage, paid automation, or external provider calls are not part of the default workflow. Current paid AI plan is `GPT_PRO` only.
 
 ## Adversarial rejection criteria
 
@@ -215,4 +216,5 @@ Reject or revise a change if it:
 - reports upload success without readback;
 - promotes a Reference/Benchmark to approved asset without a project decision;
 - leaves an approved Notion visual/table materially inconsistent with the repository domain it is meant to summarize;
-- reintroduces a deprecated visual tool without evidence that it lowers total lifecycle cost.
+- reintroduces Figma, Tool Hub, QA Studio, external HTML or another deprecated visual/management surface without current evidence and new approval;
+- reports repository-native static/test evidence as human fun/usability proof.

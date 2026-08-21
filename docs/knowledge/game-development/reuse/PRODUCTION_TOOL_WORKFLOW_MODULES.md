@@ -2,7 +2,7 @@
 
 이 문서는 프로젝트 10개의 반복 제작비를 기준으로 **도구·자동화·검증·작업구조** 재사용 후보를 정리한다.
 
-새 Tool Hub나 새 광역 Skill을 만들기 위한 목록이 아니다. 같은 책임의 기존 Base owner가 있으면 `EXISTING_OWNER_REUSE`가 기본이다.
+새 Tool Hub·QA capture app·광역 Skill을 만들기 위한 목록이 아니다. 같은 책임의 기존 Base owner와 repository/runtime evidence가 있으면 `EXISTING_OWNER_REUSE`가 기본이다.
 
 ---
 
@@ -89,11 +89,9 @@ replay_format_version:
 
 ## RM-TOOL-003 · BALANCE_SCENARIO_BATCH_SIMULATOR
 
-**판정:** `EXISTING_OWNER_REUSE`.
+**판정:** `MODULE_CONTRACT_DEFINED`.
 
-Base `START_HERE.md`에는 **Balance & Scenario Lab이 다음 독립 후보지만 현재 미구현**이라고 명시돼 있다. 따라서 이 PR은 두 번째 balance tool을 만들지 않는다.
-
-공통 계약만 확정한다.
+Balance/scenario simulation은 공통 가치가 있지만 현재 공용 executable이 존재한다고 가정하지 않는다. 별도 대형 Tool을 만들기 전에 프로젝트별 snapshot + deterministic runner + repository-native report 조합을 우선 비교한다.
 
 ```yaml
 snapshot_input:
@@ -123,37 +121,47 @@ output:
 증거 ceiling:
 - simulation은 플레이어 재미를 증명하지 않는다.
 - patch suggestion은 프로젝트 수치 정본을 자동 수정하지 않는다.
-- 실제 Tool 구현은 별도 owner/PR에서 진행.
+- 실제 executable 구현은 별도 evidence/approval 없이 완료로 주장하지 않는다.
 
 ---
 
-## RM-TOOL-004 · QA_EVIDENCE_CAPTURE_ADAPTER
+## RM-TOOL-004 · REPOSITORY_NATIVE_EVIDENCE_CAPTURE
 
-**판정:** `EXISTING_OWNER_REUSE`.
+**판정:** `EXISTING_OWNER_REUSE · NO_DEDICATED_CAPTURE_APP`.
 
-Base에는 이미 `tools/qa-evidence-studio/` 구현이 존재한다. 새 capture app을 만들지 않고 프로젝트 adapter/profile만 추가하는 방향을 우선한다.
+프로젝트 검증 증거는 별도 QA 관리 앱을 기본 경로로 두지 않고 **이미 존재하는 repository/runtime/test/CI 증거**를 exact project/build identity에 묶는다.
 
 ```yaml
 project_identity:
 build_identity:
 validation_contract:
-  resolution:
+  resolution_or_viewport:
   input_path:
   accessibility_checks:
   expected_state_or_screen:
 capture_sources:
-  screenshot:
-  video:
-  logs:
-  machine_state:
+  screenshots: []
+  video: []
+  logs: []
+  test_results: []
+  machine_state: []
+storage:
+  repository_or_ci_artifact:
+  notion_human_link_when_useful:
 verdict:
   human_or_rule_owner:
   evidence_ceiling:
 ```
 
-추가 adapter가 필요할 때만 project-local launch/build/capture commands를 정의한다.
+원칙:
 
-`QA_EVIDENCE_CAPTURE_ADAPTER != AI_AUTO_PASS`.
+1. GUT/Godot/Hera/CLI/CI처럼 현재 프로젝트가 이미 채택한 evidence source를 우선한다.
+2. screenshot/video가 필요한 경우 현재 실행환경에서 직접 캡처하고 commit/build/viewport/input context를 함께 기록한다.
+3. Notion은 사람이 보는 링크·preview·설명면이 될 수 있지만 repository/runtime truth를 대체하지 않는다.
+4. 사람이 실제로 관찰하지 않은 usability/fun evidence는 `NOT_RUN`이다.
+5. capture app·project adapter·별도 local management UI를 신규 기본 의존성으로 만들지 않는다.
+
+`REPOSITORY_NATIVE_EVIDENCE_CAPTURE != AI_AUTO_PASS`.
 
 ---
 
@@ -225,7 +233,7 @@ maintenance_cost:
 PROJECT_REUSE_OPPORTUNITY_SCAN
 → DATA_SCHEMA_CROSSREF_VALIDATOR
 → project-specific unit tests
-→ QA_EVIDENCE_CAPTURE_ADAPTER when runtime/UI evidence is needed
+→ REPOSITORY_NATIVE_EVIDENCE_CAPTURE when runtime/UI evidence is needed
 ```
 
 추천 대상: URBAN_LEGEND, NINJA_SURVIVAL, OMENWARD, GRIMOIRE, BLACKSMITH.
@@ -234,9 +242,10 @@ PROJECT_REUSE_OPPORTUNITY_SCAN
 
 ```text
 DETERMINISTIC_SEED_REPLAY_CAPTURE
-→ BALANCE_SCENARIO_BATCH_SIMULATOR
+→ BALANCE_SCENARIO_BATCH_SIMULATOR when justified
 → EXPLAINABLE_RESULT_PACKET
-→ runtime/player validation
+→ repository-native runtime evidence
+→ human/player validation when the claim requires it
 ```
 
 추천 대상: OMENWARD, NINJA_SURVIVAL, BLACKSMITH, TETRIS, TEN_PACES.
@@ -256,7 +265,7 @@ CANON_SOURCE_PROVENANCE_REGISTRY
 
 # Godot 재사용 구현 원칙
 
-Godot 4.7 공식 문서는 Resource를 data container로, scripts/scenes를 주요 재사용 객체 메커니즘으로 설명한다. 따라서 공용 Godot Pilot이 필요할 때 다음을 우선 비교한다.
+Godot 프로젝트의 공용 Pilot이 필요할 때 다음을 우선 비교한다.
 
 ```text
 Resource data contract
@@ -278,7 +287,7 @@ Resource data contract
 
 ## Godot
 
-- Scenes/Resources의 재사용·인스턴스화를 `ADOPT`.
+- Scenes/Resources의 재사용·인스턴스화를 `ADOPT` 후보로 검토한다.
 - 하나의 거대 autoload/global manager는 이 조사에서 도출된 결론이 아니다.
 
 ## GitHub reusable workflow pattern
@@ -308,10 +317,10 @@ Existing Solution First
 |---|---|---|
 | P0 | `RM-TOOL-001 DATA_SCHEMA_CROSSREF_VALIDATOR` | 여러 프로젝트의 반복 오류를 낮은 UI/runtime 위험으로 줄일 수 있음 |
 | P0 | `RM-TOOL-002 DETERMINISTIC_SEED_REPLAY_CAPTURE` | simulation/replay/debug 기반을 공유할 수 있음 |
-| P1 | `RM-TOOL-003 BALANCE_SCENARIO_BATCH_SIMULATOR` | 가치가 크지만 별도 Tool 구현과 프로젝트 snapshot adapter가 필요 |
-| P1 | `RM-TOOL-004 QA_EVIDENCE_CAPTURE_ADAPTER` | 기존 Studio가 있어 새 Tool보다 adapter 소비 검증이 우선 |
+| P1 | `RM-TOOL-003 BALANCE_SCENARIO_BATCH_SIMULATOR` | 가치가 크지만 project snapshot/runner evidence가 먼저 필요 |
+| ACTIVE | `RM-TOOL-004 REPOSITORY_NATIVE_EVIDENCE_CAPTURE` | 별도 앱 없이 기존 test/runtime/CI 증거를 재사용 |
 | ACTIVE | `RM-WORK-001/002` | 이미 Base 방법으로 존재 |
 
 # 완료 상태
 
-이 문서의 신규 tool module은 `MODULE_CONTRACT_DEFINED`다. `RM-TOOL-004`의 Base QA Evidence Studio를 제외하면 공용 executable 구현을 완료했다고 주장하지 않는다. `Balance & Scenario Lab`은 현재 `IMPLEMENTATION_NOT_BUILT` 상태를 유지한다.
+이 문서의 신규 tool contract는 실제 executable 구현과 분리한다. `RM-TOOL-004`는 별도 프로그램이 아니라 현재 repository/runtime evidence를 조합하는 **활성 방법 계약**이다. `RM-TOOL-001/002/003`은 실제 공용 executable 증거가 생기기 전까지 `IMPLEMENTATION_NOT_BUILT` 또는 project-local pilot 상태를 유지한다.

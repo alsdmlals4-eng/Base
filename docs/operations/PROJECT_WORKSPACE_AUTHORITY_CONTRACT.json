@@ -88,7 +88,7 @@
     "GPT is the default planning/review owner; Codex is optional and used only when actual repository/runtime execution benefits from it.",
     "When visuals materially affect PoC/demo judgment, representative UX/UI states and approved visual inputs are reviewed in Notion before implementation and runtime validation remains separate.",
     "Project Home is self-contained for core human understanding; child pages are drilldown/evidence, not a substitute for the Home explanation.",
-    "Project-management local/HTML surfaces, Figma, and Google Sheets are retired or migration-only; QA Evidence Studio remains a specialist validation utility while its tested evidence role remains unique and useful."
+    "Project-management local/HTML surfaces, Figma, and Google Sheets are retired or migration-only; QA Evidence Studio code may remain historical or specialist reference, but active/default project validation routes through REPOSITORY_NATIVE_EVIDENCE_CAPTURE instead of the Studio."
   ],
   "workflow_policy": "docs/GPT_CODEX_WORKFLOW_POLICY.md",
   "planning_owner": "GPT_FIRST_PLANNING_AND_REVIEW",
@@ -100,7 +100,7 @@
   "retirement_policy": "docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md",
   "project_management_local_surface": "RETIRED",
   "html_project_surface": "RETIRED",
-  "qa_evidence_studio": "QA_EVIDENCE_STUDIO_SPECIALIST_VALIDATION_RETAINED",
+  "qa_evidence_studio": "QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW",
   "default_paid_plans": [
     "GPT_PRO"
   ],
