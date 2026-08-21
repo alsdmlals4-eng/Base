@@ -11,7 +11,7 @@
 ```text
 external source
 → observed contract
-→ ADOPT | ADAPT | TEST | REJECT | DIRECT_LICENSED_REUSE_CANDIDATE
+→ ADOPT | ADAPT | TEST | REJECT | PATTERN_EXTRACT | DIRECT_LICENSED_REUSE_CANDIDATE
 → project fit
 → project evidence
 ```
