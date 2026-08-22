@@ -6,19 +6,26 @@ This contract defines the minimum reliable workflow for using GPT with the proje
 
 It extends `NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`; it does not replace repository runtime truth or project-specific visual authority.
 
-## Decision
+## Current decision
 
 Use the existing **Notion MCP + Visual Registry metadata + bounded Layout Contract + Human/AI surface separation**.
 
-Do not add a second dashboard, dedicated visual-delivery tool, or paid automation service by default.
+```text
+NOTION_DEFAULT_PROJECT_WORKSPACE
+DIRECT_NOTION_ATTACHMENT_OR_BLOCKED
+NO_LOCAL_BRIDGE_DEFAULT
+NO_SHEETS_AS_NEW_IMAGE_TRANSPORT
+```
+
+Do not add a second dashboard, local binary bridge, Google Sheet relay, dedicated visual-delivery tool, or paid automation service by default.
 
 ### Alternatives considered
 
 1. **Free-form GPT page redesign** — rejected as the default. It maximizes apparent flexibility but causes layout drift, weak repeatability, and accidental exposure of system metadata.
-2. **External automation layer (Zapier/Make/custom service)** — defer. It can automate triggers but adds cost, another failure surface, and little value until MCP capability gaps are demonstrated by a real workflow.
-3. **Notion MCP + bounded placement contract** — adopted. It reuses the current project workspace, preserves human-readable Notion, keeps repository runtime authority separate, and can be strengthened incrementally when a real limitation is observed.
+2. **External/local automation layer** — rejected as the default. It adds another failure surface, environment burden and duplicate routing authority.
+3. **Notion MCP + bounded placement contract + direct attachment when callable** — adopted. It reuses the current project workspace, preserves human-readable Notion, keeps repository runtime authority separate, and fails closed when binary delivery is not currently supported.
 
-Reconsider option 2 only when repeated manual placement or unsupported Notion operations create measured workflow cost that the MCP path cannot remove.
+Reconsider a new transport helper only when repeated real project evidence proves a direct attachment gap, Existing Solution First finds no supported route, and the user explicitly approves a new active tool boundary.
 
 ## Capability ceiling
 
@@ -32,61 +39,71 @@ Reconsider option 2 only when repeated manual placement or unsupported Notion op
 
 `SERVER_READBACK_PASS != HUMAN_VISIBLE_DEVICE_PASS`
 
-GPT must distinguish three kinds of evidence:
+GPT distinguishes three kinds of evidence:
 
 - **Structured page evidence**: page text, headings, properties, database records, image/file block references and surrounding context that the current Notion connection actually returns.
-- **Visual evidence**: the image pixels were supplied to or otherwise directly inspected by a vision-capable path in the current task.
-- **UI-layout evidence**: the resulting Notion page or block arrangement was read back through a representation that exposes the relevant columns/blocks, or manually verified by the user when visual geometry is not observable through the tool.
+- **Visual evidence**: image pixels were supplied to or directly inspected by a vision-capable path in the current task.
+- **UI-layout evidence**: the resulting Notion page/block arrangement was read back through a representation exposing the relevant structure, or manually verified by the user when visual geometry is not observable through the tool.
 
-Never claim that GPT understood the visual content of an image merely because an image block, file name, caption or metadata is present.
+Never claim GPT understood image content merely because an image block, filename, caption or metadata exists.
 
-The legacy/read-only ChatGPT Notion search connector does not index non-document media such as images and videos. Notion MCP can read and write workspace pages, but image semantic inspection still requires direct visual evidence when the decision depends on the pixels.
+### MCP Reality Gate
 
-### MCP capability evidence
-
-Notion workspace/self capability discovery is a routing hint, not completion evidence. If a capability is reported as `available` but the current ChatGPT client does not expose a callable function with the required input schema, classify it as `DISCOVERED_ONLY / BLOCKED_TOOL_SURFACE` rather than executable.
-
-For capability-dependent work, apply the shared `claim-and-intent-verification` Reality Gate:
+Workspace/self capability discovery is a routing hint, not completion evidence. A value such as `self.current_tool_access=available` does not prove the current client exposes the required callable function or schema.
 
 ```text
 capability discovery
 → callable function + usable schema
 → minimum real invocation
-→ durable destination readback when applicable
-→ human/device-visible observation when the claim depends on rendering
+→ durable destination readback
+→ consumer / Android/iOS/browser observation when rendering matters
 ```
 
-A successful API/write call is at most `INVOCATION_PASS`; a durable page change requires `READBACK_PASS`. Android/browser rendering becomes `HUMAN_VISIBLE_PASS` only after that client is actually observed. Server-side image block readback never substitutes for the device-visible rendering claim.
-
-### Binary media delivery routing
-
-Notion MCP remains the default owner for text, page structure, databases, semantic placement and ordinary readback. A separate local path is allowed only for a **proven binary-media capability gap** where the target operation requires the official typed `file_upload` representation and the current client cannot preserve it.
-
-Current routing:
+States remain distinct:
 
 ```text
-Notion text / structure / database / semantic layout
-→ Notion MCP
-
-binary media
-→ current MCP exposes usable typed `file_upload` attach + real invocation/readback succeeds
-  → use MCP
-→ otherwise
-  → Notion Native File Bridge
-  → official `ntn files create`
-  → typed `file_upload` attach through `ntn api`
-  → destination readback
-
-client-visible claim
-→ actual Android / iOS / browser observation
-→ only then HUMAN_VISIBLE_PASS
+DISCOVERED_ONLY / BLOCKED_TOOL_SURFACE
+INVOCATION_PASS
+READBACK_PASS
+HUMAN_VISIBLE_PASS
 ```
 
-The local **Notion Native File Bridge** is not a second Notion workspace or automation authority. It is a narrow transport adapter around Notion's official `ntn` CLI for local binary upload and typed attachment only. OAuth/keychain handling remains owned by the official CLI; no Notion token is committed to Base or project repositories.
+A successful API/write call is at most `INVOCATION_PASS`. Do not treat a successful write invocation as durable effect without destination readback. Android/browser rendering becomes `HUMAN_VISIBLE_PASS` only after that client is actually observed.
 
-If a target client has already reproduced `422` or broken-image behavior for external media, changing from one external host/CDN to another is not an acceptable substitute for typed `file_upload`. A GitHub raw URL, jsDelivr URL, temporary signed URL, status text, filename, empty Gallery card or server-only image readback cannot be promoted to Android-visible success.
+## Binary media delivery routing
 
-When the ChatGPT Notion connector later exposes and verifies typed `file_upload` attachment directly, prefer the connector-native path and retire the local bridge rather than maintaining duplicate infrastructure.
+The current binary contract is:
+
+```text
+DIRECT_NOTION_ATTACHMENT_OR_BLOCKED
+```
+
+Notion MCP remains the owner for text, structure, databases, semantic placement and ordinary readback.
+
+For an approved human-facing image:
+
+```text
+approved image / visual
+→ current-client attachment capability check
+→ trusted direct HTTPS source or connector-native attachment source available?
+  → YES
+     → invoke current Notion attachment function with its actual supported schema
+     → require upload completion
+     → consume returned attachment representation as-is
+     → attach to exact Project destination
+     → destination fetch/readback
+     → client-visible observation when required
+  → NO
+     → BLOCKED_NO_DIRECT_NOTION_BINARY_TRANSPORT
+```
+
+`NO_LOCAL_BRIDGE_DEFAULT` means a binary capability gap does not automatically authorize a new local helper, PowerShell relay, local HTTP server, or desktop utility.
+
+Google Sheets is `MIGRATION_ONLY_UNTIL_REMOVAL` and cannot be used as a new image relay. A temporary Sheet, even if deleted later, is still a new active transport and is forbidden by the current workspace boundary.
+
+If no direct source is callable, block only the binary-delivery-dependent step. Continue independent planning, visual review, Notion text/structure, repository implementation and other safe work.
+
+The detailed current transport/evidence ceiling is owned by `NOTION_CONNECTOR_IMAGE_DELIVERY_CORRECTION_2026-08-22.md`.
 
 ## Human and AI surfaces
 
@@ -100,7 +117,7 @@ Human-facing project surfaces prioritize comprehension and decision usefulness:
 - approved Visual Map / Flow
 - current focus, important decisions and links
 
-AI/system surfaces retain processing metadata that is useful to automation but noisy to people:
+AI/system surfaces retain processing metadata useful to automation but noisy to people:
 
 - Asset ID
 - Project
@@ -158,7 +175,7 @@ Layout Readback:
 
 ## Placement decision sequence
 
-Before inserting or moving a visual, GPT applies this sequence:
+Before inserting or moving a visual, GPT applies:
 
 ```text
 identify project
@@ -167,6 +184,7 @@ identify project
 → determine semantic destination
 → check for an existing canonical instance
 → choose prominence from intended use / placement priority
+→ verify direct attachment availability when bytes must be delivered
 → place or link once
 → keep system metadata off the human surface
 → fetch/read back destination
@@ -205,19 +223,19 @@ Current state / decisions / important links
 
 Rules:
 
-- Prefer semantic proximity over decorative symmetry: a visual belongs next to the explanation it helps a person understand.
-- Use two-column arrangements only when the Notion tool representation can create/preserve columns reliably and the pair is genuinely comparative or mutually explanatory.
-- Do not create dense mosaics merely to use empty space.
+- Prefer semantic proximity over decorative symmetry.
+- Use two-column arrangements only when the current representation can create/preserve them reliably and the pair is genuinely comparative.
+- Do not create dense mosaics merely to fill space.
 - Do not move unrelated sections to make room for an image.
 - Avoid duplicated canonical images. Reuse the same canonical record or link when possible.
-- A generated Visual Map is derived presentation. Structured Screen/Flow records remain authoritative when the rendered map disagrees.
+- A generated Visual Map is derived presentation. Structured Screen/Flow records remain authoritative when the map disagrees.
 - Pixel-level width, crop, mask and exact visual balance are manual/UI-level refinements unless the active tool path exposes and verifies them.
 
 ## Image understanding gate
 
-When placement depends only on known metadata and approved intended use, GPT may place the visual without re-inspecting pixels.
+When placement depends only on approved metadata/intended use, GPT may place an already available visual without re-inspecting pixels.
 
-When the decision depends on actual visual content — composition, readability, character identity, UI hierarchy, contrast, cropping, visual similarity or whether the image matches a description — require direct visual evidence.
+When a decision depends on composition, readability, character identity, UI hierarchy, contrast, cropping or similarity, require direct visual evidence.
 
 ```text
 METADATA_ONLY
@@ -231,16 +249,16 @@ NO_DIRECT_VISUAL_EVIDENCE + visual-content-dependent decision
 → BLOCKED_UNVERIFIED for that judgement
 ```
 
-Do not generate a missing image merely to satisfy this gate. Image generation remains subject to the user's explicit generation instruction and project policy.
+Do not generate a missing image merely to satisfy this gate. Image generation still follows the user's approval sequence and project policy.
 
 ## Delivery and readback
 
-Every Notion write that changes durable visual organization follows:
+Every durable Notion visual organization change follows:
 
 ```text
 read current destination
 → smallest bounded edit
-→ write
+→ write/attach through currently supported direct route
 → fetch/read back
 → verify expected block/record and surrounding section
 ```
@@ -249,18 +267,19 @@ A successful write call alone is not completion.
 
 Readback verifies semantic placement and persistence. If the tool output cannot expose exact width, crop, visual balance or on-screen geometry, mark those aspects `UI_GEOMETRY_NOT_VERIFIED` rather than inferring them.
 
-For Android/iOS/browser-visible image delivery, add a final client observation step. A Notion server image block, signed file URL, or successful page fetch can prove persistence but cannot prove that a specific client actually rendered the bytes.
+For Android/iOS/browser-visible image delivery, add a final client observation step. Server image readback proves persistence, not device rendering.
 
 ## Project workflow integration
 
-During project planning/review:
+During planning/review:
 
 ```text
-read project Home + Visual Bible + approved assets + implementation state
+read Project Home + Visual Bible + approved assets + implementation state
 → build only the visual inventory needed by that project
 → separate missing visual requirements from existing actual visuals
 → for each actual approved visual, record intended use + placement priority
-→ update human surface through this contract
+→ if bytes require delivery, run DIRECT_NOTION_ATTACHMENT_OR_BLOCKED
+→ update human surface when supported
 → read back
 → hand runtime-bound assets to repository implementation explicitly
 ```
@@ -269,48 +288,49 @@ During ordinary text-only planning, do not create visual records or placeholder 
 
 ## Implementation Reality Gate
 
-Before expanding automation beyond this contract, demonstrate the specific missing capability with a real project example.
+Before expanding automation beyond this contract:
 
-Required probe order:
-
-1. read an existing page that contains image/file blocks and surrounding sections;
+1. read an existing page containing the target media/structure;
 2. inspect current MCP/client tool exposure, not only workspace capability discovery;
 3. require a callable function with usable schema for the intended operation;
-4. perform one bounded real invocation using current Notion MCP capabilities;
+4. perform one bounded real invocation;
 5. fetch/read back the target;
-6. classify what was actually observable: block presence, order, columns, caption, file reference, or only text context;
-7. when client rendering matters, observe that Android/iOS/browser surface separately;
-8. add a helper/tool only for a repeatable capability gap that materially affects the workflow.
+6. classify exactly what was observable;
+7. when client rendering matters, observe Android/iOS/browser separately;
+8. if the required direct binary route is unavailable, use `BLOCKED_NO_DIRECT_NOTION_BINARY_TRANSPORT` rather than inventing a relay;
+9. propose a new helper/tool only after repeated project evidence, Existing Solution First, long-term cost review and explicit user approval.
 
 Do not build infrastructure for hypothetical layout limitations.
 
 ## Failure modes to reject
 
-- treating a text art direction as an actual approved image;
-- claiming image semantic understanding from a filename/caption alone;
-- putting Prompt/Hash/AI notes on the human Home by default;
-- duplicating the same approved visual into competing canonical records;
-- redesigning the entire Home during a bounded asset placement task;
-- claiming exact visual layout quality when only semantic block readback was available;
-- treating `self.current_tool_access=available` as proof that the current client can invoke the capability;
+- treating text art direction as an actual approved image;
+- claiming image semantic understanding from filename/caption alone;
+- putting Prompt/Hash/AI notes on human Home by default;
+- duplicating one approved visual into competing canonical records;
+- redesigning the entire Home during bounded placement;
+- claiming exact visual layout quality when only semantic block readback exists;
+- treating `self.current_tool_access=available` as proof the current client can invoke the capability;
 - treating a successful write invocation as durable effect without destination readback;
 - treating server image readback as Android/browser render PASS;
-- using a different external CDN as a hidden workaround after the target client has reproduced media 422;
-- treating Notion Native File Bridge readback as `HUMAN_VISIBLE_PASS` without actual client observation;
-- introducing a paid automation layer before current MCP behavior was tested;
-- treating Notion placement as proof that Godot/runtime integration occurred.
+- using Google Sheets as a temporary binary relay;
+- introducing a new local binary helper because the direct connector path is unavailable;
+- changing external hosts/CDNs repeatedly after a target client has reproduced a media failure without proving the actual failure boundary;
+- introducing paid automation before current MCP behavior is tested;
+- treating Notion placement as proof of Godot/runtime integration.
 
 ## Acceptance criteria
 
 The workflow is healthy when:
 
 - human Home remains concise and readable;
-- AI/system metadata remains queryable without polluting the human page;
+- AI/system metadata remains queryable without polluting human pages;
 - every displayed project visual is traceable to an actual asset/reference and approval state;
 - GPT can select a semantic destination from metadata without repeatedly asking where the asset belongs;
 - visual-content-dependent judgements require direct image evidence;
 - capability-dependent claims distinguish discovery, callable schema, invocation, readback and human-visible evidence;
-- binary media uses a verified typed `file_upload` path instead of known-broken external delivery when client rendering matters;
+- binary media uses a supported direct Notion-owned attachment path or explicitly blocks with `BLOCKED_NO_DIRECT_NOTION_BINARY_TRANSPORT`;
+- no Google Sheet relay, local binary bridge or paid automation is silently introduced;
 - all Notion writes receive destination readback;
 - exact UI geometry is not overstated when the tool cannot verify it;
 - repository runtime truth remains separate from Notion presentation state.
