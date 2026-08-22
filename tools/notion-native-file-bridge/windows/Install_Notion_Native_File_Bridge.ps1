@@ -31,6 +31,15 @@ function Require-MajorVersion {
     }
 }
 
+function Test-Python312 {
+    param(
+        [Parameter(Mandatory = $true)][string]$Command,
+        [string[]]$PrefixArgs = @()
+    )
+    & $Command @PrefixArgs -c "import sys; raise SystemExit(0 if sys.version_info >= (3, 12) else 1)" *> $null
+    return ($LASTEXITCODE -eq 0)
+}
+
 $node = Require-Command "node"
 $npm = Require-Command "npm"
 Require-MajorVersion "NODE" 22 (& $node --version)
@@ -57,29 +66,23 @@ if ($LASTEXITCODE -ne 0) {
 $bridgeRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $py = Get-Command "py" -ErrorAction SilentlyContinue
 $python = Get-Command "python" -ErrorAction SilentlyContinue
+$pythonCommand = $null
+$pythonPrefixArgs = @()
 
-if ($py) {
-    & $py.Source -3.12 -c "import sys; assert sys.version_info >= (3, 12)"
-    if ($LASTEXITCODE -ne 0) {
-        throw "PYTHON_3_12_UNAVAILABLE"
-    }
-    & $py.Source -3.12 -m pip install --user $bridgeRoot
-    if ($LASTEXITCODE -ne 0) {
-        throw "BRIDGE_INSTALL_FAILED:$LASTEXITCODE"
-    }
+if ($py -and (Test-Python312 -Command $py.Source -PrefixArgs @("-3.12"))) {
+    $pythonCommand = $py.Source
+    $pythonPrefixArgs = @("-3.12")
 }
-elif ($python) {
-    & $python.Source -c "import sys; assert sys.version_info >= (3, 12)"
-    if ($LASTEXITCODE -ne 0) {
-        throw "PYTHON_3_12_UNAVAILABLE"
-    }
-    & $python.Source -m pip install --user $bridgeRoot
-    if ($LASTEXITCODE -ne 0) {
-        throw "BRIDGE_INSTALL_FAILED:$LASTEXITCODE"
-    }
+elif ($python -and (Test-Python312 -Command $python.Source)) {
+    $pythonCommand = $python.Source
 }
 else {
-    throw "PYTHON_UNAVAILABLE"
+    throw "PYTHON_3_12_UNAVAILABLE"
+}
+
+& $pythonCommand @pythonPrefixArgs -m pip install --user $bridgeRoot
+if ($LASTEXITCODE -ne 0) {
+    throw "BRIDGE_INSTALL_FAILED:$LASTEXITCODE"
 }
 
 if ($Login) {
@@ -90,15 +93,11 @@ if ($Login) {
     }
 }
 
-$bridge = Get-Command "notion-native-file-bridge" -ErrorAction SilentlyContinue
-if ($bridge) {
-    & $bridge.Source preflight
-    if ($LASTEXITCODE -ne 0) {
-        throw "BRIDGE_PREFLIGHT_FAILED:$LASTEXITCODE"
-    }
-}
-else {
-    Write-Warning "Bridge installed, but the current shell PATH does not yet include the Python user Scripts directory. Open a new PowerShell window and run: notion-native-file-bridge preflight"
+# Run through the selected interpreter so installation verification does not
+# depend on the Python user Scripts directory already being on PATH.
+& $pythonCommand @pythonPrefixArgs -m notion_native_file_bridge.cli preflight
+if ($LASTEXITCODE -ne 0) {
+    throw "BRIDGE_PREFLIGHT_FAILED:$LASTEXITCODE"
 }
 
 Write-Host "Notion Native File Bridge installation completed."
