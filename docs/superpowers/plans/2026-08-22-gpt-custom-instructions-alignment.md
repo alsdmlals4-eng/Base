@@ -4,7 +4,7 @@
 
 **Goal:** Align the Base GPT custom-instructions template and guide with the current domain-split canon while preventing future drift from duplicated Base rules.
 
-**Architecture:** Treat ChatGPT Custom Instructions as a stable bootstrap layer, not as a second project/Base canon. Keep user/work-style constraints and dynamic authority routing in the template; leave volatile project facts and detailed Base gates in current repository/Notion authorities.
+**Architecture:** Treat ChatGPT Custom Instructions as a stable bootstrap layer, not as a second project/Base canon. Keep user/work-style constraints and dynamic authority routing in the template; leave volatile project facts and detailed Base gates in current repository/Notion authorities. Preserve the moved AI-instruction Method through a no-content compatibility alias rather than duplicating its canonical body.
 
 **Tech Stack:** Markdown, GitHub branch/PR workflow, repository readback validation
 
@@ -16,6 +16,8 @@
 - Do not create a second canon by copying volatile Base rules into Custom Instructions.
 - Preserve `DOMAIN_SPLIT_CANON`: Notion human-facing canon, repository structured/runtime canon, Google Sheets migration-only compatibility.
 - Do not restore deprecated HTML dashboard/project workspace routes.
+- `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md` remains the canonical AI-instruction Method.
+- The old `docs/knowledge/ai/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md` path may exist only as `COMPATIBILITY_ALIAS_ONLY` with no duplicated Method body.
 - Do not change `templates/custom-instructions.codex.md` in this scope.
 - Work on an isolated branch, then PR, verification, merge, and post-merge readback.
 
@@ -105,36 +107,37 @@ Confirm the guide points users to `templates/custom-instructions.gpt.md` and doe
 
 ---
 
-### Task 3: Repair the documentation owner map
+### Task 3: Restore the moved AI-instruction Method route without duplicating canon
 
 **Files:**
-- Modify: `docs/DOCUMENTATION_MAP.md`
+- Create: `docs/knowledge/ai/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`
+- Read: `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`
 
 **Interfaces:**
-- Consumes: actual existing custom-instruction guide/template paths.
-- Produces: a resolvable owner entry for AI instruction/custom-instruction design.
+- Consumes: the current Documentation Map old-path route and canonical game-development Method.
+- Produces: a resolvable compatibility path that cannot become a second Method authority.
 
-- [ ] **Step 1: Replace the broken owner row**
+- [ ] **Step 1: Verify canonical target**
 
-Replace the row pointing to nonexistent:
+Read `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md` and confirm it owns instruction authority, context curation, fixture/example and artifact-claim design.
 
-```text
-docs/knowledge/ai/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md
-```
+- [ ] **Step 2: Create a compatibility-only router**
 
-with existing owners:
+The new old-path file must contain only:
 
 ```text
-docs/CUSTOM_INSTRUCTIONS_GUIDE.md
-templates/custom-instructions.gpt.md
-templates/custom-instructions.codex.md
+COMPATIBILITY_ALIAS_ONLY
+canonical owner path
+custom-instructions guide path
+migration/read rule
+no duplicated Method body
 ```
 
-Describe the responsibility as stable-vs-dynamic instruction boundary, authority routing, and tool-specific bootstrap templates.
+It must explicitly state that edits belong in the canonical target, not in the alias.
 
-- [ ] **Step 2: Read back the exact map region**
+- [ ] **Step 3: Read back both paths**
 
-Confirm every path in the new owner row resolves on the branch.
+Confirm the old path resolves and the canonical Method remains the only content authority.
 
 ---
 
@@ -185,4 +188,4 @@ Use the repository-supported merge method without bypassing rulesets or forcing 
 
 - [ ] **Step 10: Post-merge readback**
 
-Read `templates/custom-instructions.gpt.md`, `docs/CUSTOM_INSTRUCTIONS_GUIDE.md`, and the repaired `docs/DOCUMENTATION_MAP.md` owner row from main and confirm the merged state matches the approved design.
+Read `templates/custom-instructions.gpt.md`, `docs/CUSTOM_INSTRUCTIONS_GUIDE.md`, the old-path compatibility alias, and the canonical AI-instruction Method from main and confirm the merged state matches the approved design.
