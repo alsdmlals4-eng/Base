@@ -34,7 +34,7 @@
 - Consumes: design spec only.
 - Produces: expected public types `BridgeError`, `NtnClient`, and CLI commands `preflight`, `upload`, `append-image`, `set-cover`, `set-files-property`.
 
-- [ ] **Step 1: Add package behavior tests before implementation**
+- [x] **Step 1: Add package behavior tests before implementation**
 
 Write `unittest` cases that import the future package and require:
 
@@ -48,31 +48,24 @@ client.set_files_property(page_id, property_name, upload_id, filename)
 
 The fake runner must assert exact typed `ntn` argument construction and upload stdin bytes.
 
-- [ ] **Step 2: Add error/identity tests**
+- [x] **Step 2: Add error/identity tests**
 
-Tests must require:
+Tests require:
 
 - SHA-256 + byte-count upload receipt,
 - upload-ID/readback equality,
 - destination readback after writes,
+- ambiguous non-idempotent append state detection,
 - `NOTION_API_TOKEN` redaction from surfaced subprocess errors,
 - no `HUMAN_VISIBLE_PASS` emitted by the bridge.
 
-- [ ] **Step 3: Add Base integration contract test**
+- [x] **Step 3: Add Base integration contract test**
 
-`tests/test_notion_native_file_bridge_contract.py` must assert package/docs paths and that `.github/workflows/validate-game-project-operating-system.yml` contains `python -m unittest discover -s tests -v`.
+`tests/test_notion_native_file_bridge_contract.py` asserts package/docs paths, consumes the nested package test suite, and confirms `.github/workflows/validate-game-project-operating-system.yml` contains `python -m unittest discover -s tests -v`.
 
-- [ ] **Step 4: Run RED verification**
+- [x] **Step 4: Run RED verification**
 
-Run:
-
-```bash
-PYTHONPATH=tools/notion-native-file-bridge/src \
-python -m unittest discover -s tools/notion-native-file-bridge/tests -v
-python -m unittest tests.test_notion_native_file_bridge_contract -v
-```
-
-Expected: FAIL because the production package/files do not yet exist.
+Observed RED before production implementation: package tests failed with `ModuleNotFoundError: notion_native_file_bridge`.
 
 ---
 
@@ -90,15 +83,15 @@ Expected: FAIL because the production package/files do not yet exist.
   - `UploadReceipt`
   - `NtnClient`
 
-- [ ] **Step 1: Implement minimal subprocess boundary**
+- [x] **Step 1: Implement minimal subprocess boundary**
 
 `NtnClient` locates `ntn` with `shutil.which`, runs commands with captured stdout/stderr, and raises fail-closed `BridgeError` codes.
 
-- [ ] **Step 2: Implement secret redaction**
+- [x] **Step 2: Implement secret redaction**
 
 Before an error is emitted, replace the current exact value of `NOTION_API_TOKEN` with `<REDACTED>` in captured output.
 
-- [ ] **Step 3: Implement preflight**
+- [x] **Step 3: Implement preflight**
 
 Run:
 
@@ -109,7 +102,7 @@ ntn api v1/users/me --notion-version 2026-03-11
 
 Parse the API probe as JSON and return a machine-readable PASS receipt.
 
-- [ ] **Step 4: Implement upload + readback**
+- [x] **Step 4: Implement upload + readback**
 
 For a local file, infer MIME, read bytes, compute SHA-256, run:
 
@@ -117,11 +110,11 @@ For a local file, infer MIME, read bytes, compute SHA-256, run:
 ntn files create --plain --filename <name> --content-type <mime>
 ```
 
-with file bytes on stdin, parse the first tab-separated field as `upload_id`, then GET `v1/file_uploads/<id>` and require the same ID with uploaded status.
+with file bytes on stdin, parse the first tab-separated field as `upload_id`, then run official `ntn files get <id> --json` and require the same ID with `status=uploaded`.
 
-- [ ] **Step 5: Run Task 1 unit tests and keep only transport-related tests green**
+- [x] **Step 5: Transport behavior is covered by the package suite**
 
-Run package unittest discovery and verify transport tests now pass while CLI tests may still fail because `cli.py` is not implemented.
+The nested package suite is executed by the root `core-regression` contract rather than merely existing as unconsumed tests.
 
 ---
 
@@ -137,9 +130,9 @@ Run package unittest discovery and verify transport tests now pass while CLI tes
 - `set_files_property(page_id, property_name, upload_id, filename)` uses typed Files-property fields.
 - CLI prints one JSON object and returns `0` on PASS, `2` on blocked/fail-closed errors.
 
-- [ ] **Step 1: Implement typed image append**
+- [x] **Step 1: Implement typed image append**
 
-Construct `ntn api` args equivalent to:
+Official CLI syntax is fixed to:
 
 ```text
 children[0][type]=image
@@ -147,9 +140,9 @@ children[0][image][type]=file_upload
 children[0][image][file_upload][id]=<id>
 ```
 
-Then GET the created block and require `type=image`.
+Then read back the created block and require `type=image`. If the write returns a block ID but readback fails, return `AMBIGUOUS_DESTINATION_STATE`; do not invite a blind retry because append is non-idempotent.
 
-- [ ] **Step 2: Implement typed cover update**
+- [x] **Step 2: Implement typed cover update**
 
 Use:
 
@@ -158,24 +151,19 @@ cover[type]=file_upload
 cover[file_upload][id]=<id>
 ```
 
-and require a page readback with a non-null file cover.
+and require a page readback with a Notion-hosted file cover.
 
-- [ ] **Step 3: Implement typed Files-property update**
+- [x] **Step 3: Implement typed Files-property update**
 
 Use bracket args under `properties[<name>][files][0]` with `type=file_upload`, upload ID, and display name. Read the page back and require a non-empty target Files property.
 
-- [ ] **Step 4: Implement argparse CLI**
+- [x] **Step 4: Implement argparse CLI**
 
-Add `preflight`, `upload`, `append-image`, `set-cover`, `set-files-property`; output stable JSON receipts with no secret values.
+Added `preflight`, `upload`, `append-image`, `set-cover`, `set-files-property`; output stable JSON receipts with no secret values.
 
-- [ ] **Step 5: Run package tests to GREEN**
+- [ ] **Step 5: Exact-head package/core regression GREEN**
 
-```bash
-PYTHONPATH=tools/notion-native-file-bridge/src \
-python -m unittest discover -s tools/notion-native-file-bridge/tests -v
-```
-
-Expected: all package tests PASS.
+Fresh CI remains the authority. Current implementation is still under exact-head validation.
 
 ---
 
@@ -187,20 +175,20 @@ Expected: all package tests PASS.
 - Modify: `docs/knowledge/game-development/NOTION_GPT_VISUAL_LAYOUT_CONTRACT.md`
 
 **Interfaces:**
-- Installer detects Node/npm/`ntn`, installs official `ntn` via npm when absent, installs bridge user-scoped, and optionally starts `ntn login`.
+- Installer detects Node/npm/`ntn`, installs official `ntn` via npm when absent, selects a verified Python 3.12+ launcher, installs bridge user-scoped, and optionally starts `ntn login`.
 - Documentation routes binary work to the bridge only when typed MCP attachment is unavailable.
 
-- [ ] **Step 1: Document beginner setup and exact commands**
+- [x] **Step 1: Document beginner setup and exact commands**
 
-Include Node 22+, npm 10+, `npm install --global ntn`, `ntn login`, bridge preflight, upload-once, typed attachment commands, and Android verification.
+Includes Node 22+, npm 10+, `npm install --global ntn`, `ntn login`, bridge preflight, upload-once, typed attachment commands, ambiguous append handling, and Android verification.
 
-- [ ] **Step 2: Add fail-closed PowerShell installer**
+- [x] **Step 2: Add fail-closed PowerShell installer**
 
-The script must never ask for/store a token itself and must stop on missing Node/npm or unsupported Node major version.
+The script never asks for/stores a token itself, validates Node/npm floors, tries `py -3.12` then `python` fallback, and runs module-based preflight without requiring the Python user Scripts directory to already be on PATH.
 
-- [ ] **Step 3: Update Notion visual-layout contract**
+- [x] **Step 3: Update Notion visual-layout contract**
 
-Add media routing:
+Media routing:
 
 ```text
 MCP typed media attach available + verified -> use MCP
@@ -208,11 +196,9 @@ otherwise local official ntn bridge -> typed file_upload
 external CDN -> not a substitute when target client has known 422
 ```
 
-- [ ] **Step 4: Run root integration contract to GREEN**
+- [ ] **Step 4: Exact-head root integration contract GREEN**
 
-```bash
-python -m unittest tests.test_notion_native_file_bridge_contract -v
-```
+Fresh CI remains the authority.
 
 ---
 
@@ -220,42 +206,38 @@ python -m unittest tests.test_notion_native_file_bridge_contract -v
 
 **Files:**
 - Modify only files required by verified findings.
-- Update: `docs/superpowers/plans/2026-08-22-notion-native-file-bridge.md` to mark executed steps/results if Base policy expects closure state.
+- This plan records executed evidence and leaves live Android acceptance separate.
 
 **Interfaces:**
 - Produces exact-head CI evidence and merge/postmerge evidence.
 
-- [ ] **Step 1: Run local focused and root tests**
+- [ ] **Step 1: Fresh exact-head focused + root tests GREEN**
 
-```bash
-PYTHONPATH=tools/notion-native-file-bridge/src \
-python -m unittest discover -s tools/notion-native-file-bridge/tests -v
-python -m unittest tests.test_notion_native_file_bridge_contract -v
-```
+`core-regression` must execute both the root contract and the nested package unit suite.
 
-- [ ] **Step 2: Execute adversarial full loop 1 — secrets/auth**
+- [x] **Step 2: Adversarial full loop 1 — secrets/auth**
 
-Attack token leakage, OAuth assumptions, stdout/stderr receipts, installer behavior. Fix verified findings and rerun tests.
+Findings addressed: official auth owner retained; token never committed; exact `NOTION_API_TOKEN` value redacted from subprocess output; `ntn login` full-member requirement documented.
 
-- [ ] **Step 3: Execute adversarial full loop 2 — typed API semantics/readback**
+- [x] **Step 3: Adversarial full loop 2 — typed API semantics/readback**
 
-Attack malformed bracket fields, stale upload IDs, incomplete write success, readback mismatches. Fix verified findings and rerun tests.
+Official current Notion CLI docs verified bracket syntax for nested/array fields, typed image append, Files-property attach, `ntn files create --plain`, and `ntn files get --json`; page-cover typed `file_upload` was checked against current Update Page/File Upload docs.
 
-- [ ] **Step 4: Execute adversarial full loop 3 — Windows/onboarding**
+- [x] **Step 4: Adversarial full loop 3 — Windows/onboarding**
 
-Attack missing Node/npm/ntn, version floors, paths with spaces, installation without admin rights. Fix verified findings and rerun tests.
+Finding addressed: `py` existing without Python 3.12 no longer blocks a valid `python` 3.12 fallback; preflight no longer depends on console-script PATH propagation in the current shell.
 
-- [ ] **Step 5: Execute adversarial full loop 4 — reuse/partial failure**
+- [x] **Step 5: Adversarial full loop 4 — reuse/partial failure**
 
-Attack upload succeeds but attach fails, one upload reused on multiple destinations, missing local file, unsupported MIME. Fix verified findings and rerun tests.
+Finding addressed: non-idempotent image append reports `AMBIGUOUS_DESTINATION_STATE` when write returns a block ID but readback fails, requiring destination inspection before retry.
 
-- [ ] **Step 6: Execute adversarial full loop 5 — authority/evidence ceiling**
+- [x] **Step 6: Adversarial full loop 5 — authority/evidence ceiling**
 
-Attack accidental replacement of MCP, project canon leakage, external-CDN regression, false Android PASS. Fix verified findings and rerun tests.
+MCP remains default Notion owner; bridge is binary-only; external-CDN regression is rejected after reproduced Android 422; bridge cannot emit `HUMAN_VISIBLE_PASS`.
 
-- [ ] **Step 7: Open current-task PR referencing #604**
+- [x] **Step 7: Open current-task PR referencing #604**
 
-Do not auto-close #604 because device-visible acceptance is still pending.
+Draft PR #606 is open. It does not auto-close #604 because device-visible acceptance is pending.
 
 - [ ] **Step 8: Require fresh exact-head CI**
 
