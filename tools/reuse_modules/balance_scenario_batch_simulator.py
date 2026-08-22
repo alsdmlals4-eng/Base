@@ -69,28 +69,30 @@ def _variant_report(runs: list[dict[str, Any]]) -> dict[str, Any]:
                 raise ValueError(f"metric {metric_id!r} must be finite")
             metrics[str(metric_id)].append(numeric)
             metric_rows[str(metric_id)].append((numeric, seed))
-        for failure in run.get("failures", []):
-            failure_counts[str(failure)] += 1
+        for failure in {str(item) for item in run.get("failures", [])}:
+            failure_counts[failure] += 1
         for choice in run.get("choices", []):
             choice_counts[str(choice)] += 1
 
     run_count = len(runs)
+    total_choice_events = sum(choice_counts.values())
     report: dict[str, Any] = {
         "run_count": run_count,
         "metrics": {
             metric_id: summarize_values(values)
             for metric_id, values in sorted(metrics.items())
         },
+        "failure_rate_denominator": "RUNS_CONTAINING_TAG",
         "failure_rates": {
             key: (count / run_count if run_count else 0.0)
             for key, count in sorted(failure_counts.items())
         },
+        "choice_share_denominator": "TOTAL_CHOICE_EVENTS",
+        "choice_event_count": total_choice_events,
         "choice_frequencies": {
             key: {
                 "count": count,
-                "share": (
-                    count / sum(choice_counts.values()) if choice_counts else 0.0
-                ),
+                "share": (count / total_choice_events if total_choice_events else 0.0),
             }
             for key, count in sorted(choice_counts.items())
         },
@@ -101,11 +103,10 @@ def _variant_report(runs: list[dict[str, Any]]) -> dict[str, Any]:
         dominant_choice, dominant_count = sorted(
             choice_counts.items(), key=lambda item: (-item[1], item[0])
         )[0]
-        total_choices = sum(choice_counts.values())
         report["dominant_choice"] = {
             "choice": dominant_choice,
             "count": dominant_count,
-            "share": dominant_count / total_choices,
+            "share": dominant_count / total_choice_events,
         }
 
     for metric_id, rows in sorted(metric_rows.items()):
@@ -181,8 +182,8 @@ def analyze_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
 
     Project adapters remain responsible for producing deterministic records from
     project-authoritative rules. This shared layer only summarizes distributions,
-    failure tags, choice frequencies, paired-seed deltas, tail runs, and bounded
-    non-authoritative goal-seek rankings. It never mutates project data.
+    failure tags, choice-event frequencies, paired-seed deltas, tail runs, and
+    bounded non-authoritative goal-seek rankings. It never mutates project data.
     """
 
     if manifest.get("schema_version") != 1:
