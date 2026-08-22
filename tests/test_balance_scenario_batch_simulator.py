@@ -12,10 +12,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MODULE_PATH = ROOT / "tools/reuse_modules/balance_scenario_batch_simulator.py"
+TEMPLATE_PATH = ROOT / "templates/reuse-modules/BALANCE_SCENARIO_BATCH_MANIFEST.json"
 
 
 def load_module():
-    spec = importlib.util.spec_from_file_location("balance_scenario_batch_simulator", MODULE_PATH)
+    spec = importlib.util.spec_from_file_location(
+        "balance_scenario_batch_simulator", MODULE_PATH
+    )
     if spec is None or spec.loader is None:
         raise RuntimeError("balance_scenario_batch_simulator module could not be loaded")
     module = importlib.util.module_from_spec(spec)
@@ -32,7 +35,12 @@ class BalanceScenarioBatchSimulatorTests(unittest.TestCase):
             "evidence_ceiling": ["PLANNING_ONLY"],
             "baseline_variant": "baseline",
             "runs": [
-                {"seed": 1, "variant": "baseline", "metrics": {"score": 10}, "choices": ["A"]},
+                {
+                    "seed": 1,
+                    "variant": "baseline",
+                    "metrics": {"score": 10},
+                    "choices": ["A"],
+                },
                 {
                     "seed": 2,
                     "variant": "baseline",
@@ -40,19 +48,53 @@ class BalanceScenarioBatchSimulatorTests(unittest.TestCase):
                     "choices": ["A"],
                     "failures": ["SHORT"],
                 },
-                {"seed": 3, "variant": "baseline", "metrics": {"score": 30}, "choices": ["B"]},
-                {"seed": 4, "variant": "baseline", "metrics": {"score": 40}, "choices": ["A"]},
-                {"seed": 1, "variant": "candidate_good", "metrics": {"score": 12}, "choices": ["A"]},
-                {"seed": 2, "variant": "candidate_good", "metrics": {"score": 24}, "choices": ["B"]},
-                {"seed": 3, "variant": "candidate_good", "metrics": {"score": 36}, "choices": ["B"]},
-                {"seed": 4, "variant": "candidate_good", "metrics": {"score": 48}, "choices": ["B"]},
+                {
+                    "seed": 3,
+                    "variant": "baseline",
+                    "metrics": {"score": 30},
+                    "choices": ["B"],
+                },
+                {
+                    "seed": 4,
+                    "variant": "baseline",
+                    "metrics": {"score": 40},
+                    "choices": ["A"],
+                },
+                {
+                    "seed": 1,
+                    "variant": "candidate_good",
+                    "metrics": {"score": 12},
+                    "choices": ["A"],
+                },
+                {
+                    "seed": 2,
+                    "variant": "candidate_good",
+                    "metrics": {"score": 24},
+                    "choices": ["B"],
+                },
+                {
+                    "seed": 3,
+                    "variant": "candidate_good",
+                    "metrics": {"score": 36},
+                    "choices": ["B"],
+                },
+                {
+                    "seed": 4,
+                    "variant": "candidate_good",
+                    "metrics": {"score": 48},
+                    "choices": ["B"],
+                },
                 {"seed": 1, "variant": "candidate_bad", "metrics": {"score": 1}},
                 {"seed": 2, "variant": "candidate_bad", "metrics": {"score": 2}},
                 {"seed": 3, "variant": "candidate_bad", "metrics": {"score": 3}},
                 {"seed": 4, "variant": "candidate_bad", "metrics": {"score": 4}},
             ],
             "goal_seek": [
-                {"metric": "score", "target": [30, 50], "variants": ["candidate_good", "candidate_bad"]}
+                {
+                    "metric": "score",
+                    "target": [30, 50],
+                    "variants": ["candidate_good", "candidate_bad"],
+                }
             ],
         }
 
@@ -66,7 +108,9 @@ class BalanceScenarioBatchSimulatorTests(unittest.TestCase):
 
         self.assertEqual(source_before, source)
         self.assertEqual("TEST", report["project_id"])
-        self.assertEqual("LINEAR_INDEX_Q_TIMES_N_MINUS_1", report["percentile_method"])
+        self.assertEqual(
+            "LINEAR_INDEX_Q_TIMES_N_MINUS_1", report["percentile_method"]
+        )
         self.assertEqual(["PLANNING_ONLY"], report["evidence_ceiling"])
         self.assertFalse(report["mutates_project_data"])
 
@@ -87,9 +131,16 @@ class BalanceScenarioBatchSimulatorTests(unittest.TestCase):
             baseline["metrics"]["score"],
         )
         self.assertEqual({"SHORT": 0.25}, baseline["failure_rates"])
-        self.assertEqual({"choice": "A", "count": 3, "share": 0.75}, baseline["dominant_choice"])
         self.assertEqual(
-            [{"seed": 4, "value": 40.0}, {"seed": 3, "value": 30.0}, {"seed": 2, "value": 20.0}],
+            {"choice": "A", "count": 3, "share": 0.75},
+            baseline["dominant_choice"],
+        )
+        self.assertEqual(
+            [
+                {"seed": 4, "value": 40.0},
+                {"seed": 3, "value": 30.0},
+                {"seed": 2, "value": 20.0},
+            ],
             baseline["tail_runs"]["score"]["highest"],
         )
 
@@ -107,7 +158,7 @@ class BalanceScenarioBatchSimulatorTests(unittest.TestCase):
         self.assertEqual("candidate_bad", ranking[1]["variant"])
         self.assertTrue(report["goal_seek"][0]["non_authoritative"])
 
-    def test_rejects_duplicate_variant_seed_and_non_numeric_metrics(self) -> None:
+    def test_rejects_duplicate_variant_seed_and_invalid_metrics(self) -> None:
         self.assertTrue(MODULE_PATH.is_file(), MODULE_PATH)
         module = load_module()
 
@@ -124,10 +175,49 @@ class BalanceScenarioBatchSimulatorTests(unittest.TestCase):
         invalid_metric = {
             "schema_version": 1,
             "project_id": "TEST",
-            "runs": [{"seed": 1, "variant": "baseline", "metrics": {"score": "not-a-number"}}],
+            "runs": [
+                {
+                    "seed": 1,
+                    "variant": "baseline",
+                    "metrics": {"score": "not-a-number"},
+                }
+            ],
         }
         with self.assertRaisesRegex(ValueError, "must be numeric"):
             module.analyze_manifest(invalid_metric)
+
+        non_finite_metric = {
+            "schema_version": 1,
+            "project_id": "TEST",
+            "runs": [
+                {
+                    "seed": 1,
+                    "variant": "baseline",
+                    "metrics": {"score": float("nan")},
+                }
+            ],
+        }
+        with self.assertRaisesRegex(ValueError, "must be finite"):
+            module.analyze_manifest(non_finite_metric)
+
+        non_finite_target = self.manifest()
+        non_finite_target["goal_seek"] = [
+            {"metric": "score", "target": [0, float("inf")]}
+        ]
+        with self.assertRaisesRegex(ValueError, "target values must be finite"):
+            module.analyze_manifest(non_finite_target)
+
+    def test_manifest_template_is_runnable_and_read_only(self) -> None:
+        self.assertTrue(TEMPLATE_PATH.is_file(), TEMPLATE_PATH)
+        module = load_module()
+        manifest = json.loads(TEMPLATE_PATH.read_text(encoding="utf-8"))
+
+        report = module.analyze_manifest(manifest)
+
+        self.assertEqual("EXAMPLE_PROJECT", report["project_id"])
+        self.assertEqual(2, report["run_count"])
+        self.assertFalse(report["mutates_project_data"])
+        self.assertEqual("candidate", report["goal_seek"][0]["ranking"][0]["variant"])
 
     def test_cli_fail_closed_for_invalid_manifest(self) -> None:
         self.assertTrue(MODULE_PATH.is_file(), MODULE_PATH)
