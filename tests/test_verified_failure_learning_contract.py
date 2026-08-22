@@ -16,14 +16,17 @@ REFERENCE = (
 
 
 class VerifiedFailureLearningContractTests(unittest.TestCase):
+    def reference_text(self) -> str:
+        self.assertTrue(REFERENCE.is_file(), "verified failure learning reference is missing")
+        return REFERENCE.read_text(encoding="utf-8")
+
     def test_existing_skill_owns_verified_failure_learning_without_new_skill(self) -> None:
         skill = SKILL.read_text(encoding="utf-8")
         self.assertIn("verified-failure-learning-and-promotion.md", skill)
         self.assertIn("VERIFIED_FAILURE_LEARNING", skill)
 
     def test_failure_learning_requires_verified_fix_before_reuse(self) -> None:
-        self.assertTrue(REFERENCE.is_file(), "verified failure learning reference is missing")
-        text = REFERENCE.read_text(encoding="utf-8")
+        text = self.reference_text()
         for marker in (
             "OBSERVED_FAILURE",
             "VERIFIED_FIX",
@@ -37,7 +40,7 @@ class VerifiedFailureLearningContractTests(unittest.TestCase):
             self.assertIn(marker, text)
 
     def test_learning_entry_preserves_failure_context_and_counterevidence(self) -> None:
-        text = REFERENCE.read_text(encoding="utf-8")
+        text = self.reference_text()
         for field in (
             "failure_signature:",
             "exact_context:",
@@ -54,7 +57,7 @@ class VerifiedFailureLearningContractTests(unittest.TestCase):
             self.assertIn(field, text)
 
     def test_base_rule_promotion_requires_recurrence_and_negative_validation(self) -> None:
-        text = REFERENCE.read_text(encoding="utf-8")
+        text = self.reference_text()
         for marker in (
             "CROSS_PROJECT_OR_INDEPENDENT_RECURRENCE_REQUIRED",
             "NEGATIVE_CASE_REQUIRED_BEFORE_PROACTIVE_PROMOTION",
