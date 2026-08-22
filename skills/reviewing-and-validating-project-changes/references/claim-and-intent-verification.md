@@ -134,6 +134,67 @@ COMPLETION_CLAIM_GATE:
 파일 존재는 실행 증거가 아니다. 다른 SHA의 PASS는 현재 HEAD의 PASS가 아니다.
 CI가 queued·cancelled·skipped이면 성공으로 바꾸지 않는다.
 
+## Connector / MCP executable-surface Reality Gate
+
+외부 connector·MCP·agent runtime의 self-discovery나 capability 목록은 **탐색 증거**다.
+`available`, `enabled`, `connected`, `supported`라는 표시만으로 실제 실행 가능·효과 발생·사용자 표시를 PASS 처리하지 않는다.
+
+```text
+DISCOVERED_AVAILABLE != EXECUTABLE_AVAILABLE
+EXECUTABLE_AVAILABLE != EFFECT_VERIFIED
+SERVER_READBACK_PASS != HUMAN_VISIBLE_DEVICE_PASS
+```
+
+Capability를 완료 근거로 사용할 때는 필요한 층까지 아래 순서를 실제로 통과한다.
+
+```text
+capability discovery
+→ callable function + usable schema exposure
+→ minimum real invocation
+→ durable effect / destination readback when applicable
+→ consumer / human / device-visible observation when the claim depends on that surface
+```
+
+허용 상태:
+
+- `DISCOVERED_ONLY`: capability/self 상태만 확인됨.
+- `CALLABLE_SCHEMA_PRESENT`: 현재 실행 surface에 필요한 입력 Schema가 실제 노출됨.
+- `INVOCATION_PASS`: 실제 최소 호출이 성공함.
+- `READBACK_PASS`: 쓰기/효과가 대상 시스템에서 다시 읽혀 지속됨.
+- `HUMAN_VISIBLE_PASS`: 사람·기기 표시가 claim에 필요하고 실제 관찰됨.
+- `BLOCKED_TOOL_SURFACE`: 공급자는 기능을 표시하지만 현재 client/tool surface가 호출에 필요한 함수나 usable schema를 노출하지 않음.
+- `FAIL`: 필요한 실제 호출·효과·표시가 실행됐고 실패함.
+
+### 판정 규칙
+
+- self/workspace discovery의 `available`만 있으면 최대 `DISCOVERED_ONLY`다.
+- 설명 문서에 함수가 있어도 현재 callable schema가 없거나 필수 입력을 전달할 수 없으면 `BLOCKED_TOOL_SURFACE`다.
+- 실제 호출 성공만으로 write/effect를 완료 처리하지 않는다. durable 변경이면 destination readback을 요구한다.
+- 서버 readback은 Android/iOS/브라우저 등 실제 client rendering의 대체 증거가 아니다.
+- runtime·render·device·human claim은 그 consumer를 실제 관찰하지 않았다면 기존 Evidence Ceiling에 따라 `NOT_RUN`/`BLOCKED_UNVERIFIED`를 유지한다.
+- connector 구현 세부를 새로운 광역 Skill로 복제하지 않고 이 기존 verification owner가 공용 claim ceiling을 소유한다.
+
+### 대표 반례
+
+```text
+MCP self: create_file_upload = available
++ 현재 ChatGPT에 callable create_file_upload 없음
+→ DISCOVERED_ONLY + BLOCKED_TOOL_SURFACE
+→ "업로드 기능 사용 가능" 완료 주장 금지
+```
+
+```text
+write invocation PASS
++ destination readback 없음
+→ EFFECT_VERIFIED 아님
+```
+
+```text
+Notion server image block readback PASS
++ Android 실제 렌더 미관찰 또는 422
+→ HUMAN_VISIBLE_PASS 아님
+```
+
 ## Closure evidence hardening
 
 Universal Loop v1 REAL closure에서 확인한 완료 증거 실패 패턴을 기존 Gate에 흡수한다.
@@ -205,6 +266,7 @@ Universal Loop v1 REAL closure에서 확인한 완료 증거 실패 패턴을 �
 - 정적 PASS를 runtime·render·사용성·재미 PASS로 승격한다.
 - stale branch의 검증을 current main 후보에 재사용한다.
 - merged 상태·merge SHA·main readback 없이 병합 완료를 주장한다.
+- capability discovery의 `available`만으로 실제 호출·효과·기기 표시를 PASS 처리한다.
 - 필요한 증거가 없는데 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED`,
   `BLOCKED_UNVERIFIED`를 해제한다.
 
