@@ -231,7 +231,7 @@ def _read_local_transcript(path: Path) -> tuple[bytes, str]:
     try:
         size = path.stat().st_size
     except OSError as error:
-        raise VideoIngestError("LOCAL_TRANSCRIPT_READ_FAILED", str(error)) from error
+        raise VideoIngestError("LOCAL_TRANSCRIPT_READ_FAILED", "unable to inspect local transcript") from error
     if size > MAX_LOCAL_TRANSCRIPT_BYTES:
         raise VideoIngestError(
             "LOCAL_TRANSCRIPT_TOO_LARGE",
@@ -240,7 +240,7 @@ def _read_local_transcript(path: Path) -> tuple[bytes, str]:
     try:
         payload = path.read_bytes()
     except OSError as error:
-        raise VideoIngestError("LOCAL_TRANSCRIPT_READ_FAILED", str(error)) from error
+        raise VideoIngestError("LOCAL_TRANSCRIPT_READ_FAILED", "unable to read local transcript") from error
     if len(payload) > MAX_LOCAL_TRANSCRIPT_BYTES:
         raise VideoIngestError(
             "LOCAL_TRANSCRIPT_TOO_LARGE",
@@ -384,8 +384,11 @@ def ingest_local_transcript(
         "video_binding": "UNVERIFIED",
         "creation_source": "UNKNOWN",
     }
-    if not timestamped:
-        packet["content_claim_ceiling"] = "TRANSCRIPT_TEXT_ONLY_NO_TIMESTAMP_FACT_VERIFICATION"
+    packet["content_claim_ceiling"] = (
+        "LOCAL_TRANSCRIPT_TIMESTAMPS_ONLY_VIDEO_BINDING_UNVERIFIED_NOT_FACT_VERIFICATION"
+        if timestamped
+        else "LOCAL_TRANSCRIPT_TEXT_ONLY_VIDEO_BINDING_UNVERIFIED_NOT_FACT_VERIFICATION"
+    )
     return packet
 
 

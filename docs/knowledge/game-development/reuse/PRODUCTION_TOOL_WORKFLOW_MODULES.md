@@ -305,7 +305,7 @@ storage_policy:
 1. Base reference implementation은 `yt-dlp --skip-download --dump-single-json`으로 metadata/caption track만 찾고 선택한 WebVTT만 읽는다. 영상·오디오를 다운로드하지 않는다.
 2. manual caption을 auto caption보다 우선하며 둘의 provenance를 분리한다.
 3. caption이 없으면 `ASR_FALLBACK_REQUIRED`를 반환한다. local ASR이 이미 준비된 환경에서 별도 bounded adapter로 처리할 수 있지만 Base가 모델·GPU runtime·ffmpeg를 자동 설치하지 않는다.
-4. `yt-dlp`를 사용할 수 없거나 별도 도구·사용자가 transcript를 이미 확보한 경우 `.vtt`, `.srt`, `.txt`를 caller-supplied local fallback으로 받을 수 있다. 이 경로는 파일 내용을 SHA-256으로 묶되 절대 로컬 경로를 packet에 저장하지 않고, 영상과의 실제 대응은 `video_binding: UNVERIFIED`, 생성 방식은 `creation_source: UNKNOWN`, 자동생성 여부는 `is_generated: null`로 남긴다.
+4. `yt-dlp`를 사용할 수 없거나 별도 도구·사용자가 transcript를 이미 확보한 경우 `.vtt`, `.srt`, `.txt`를 caller-supplied local fallback으로 받을 수 있다. 이 경로는 파일 내용을 SHA-256으로 묶되 절대 로컬 경로를 packet 또는 read-failure detail에 저장하지 않고, 영상과의 실제 대응은 `video_binding: UNVERIFIED`, 생성 방식은 `creation_source: UNKNOWN`, 자동생성 여부는 `is_generated: null`로 남긴다.
 5. local `.vtt/.srt`의 timestamp 존재는 `timestamp_evidence: AVAILABLE`을 뜻할 뿐 source video와 timestamp가 맞는다는 검증이 아니다. `.txt`는 `timestamp_evidence: UNAVAILABLE`이며 timestamp 기반 사실 검증에 사용할 수 없다.
 6. hosted transcript SaaS, paid proxy, separately metered API/credit를 자동 fallback으로 사용하지 않는다.
 7. full transcript는 기본적으로 Git ignore 대상인 `.tmp/` local research packet으로만 저장한다. GitHub/Notion에는 현재 결정에 필요한 derived note·짧은 인용·timestamp·source URL을 남긴다.
@@ -326,6 +326,9 @@ LOCAL_TRANSCRIPT_READY
 
 TIMESTAMPS_PRESENT
 != TIMESTAMPS_MATCH_SOURCE_VIDEO
+
+LOCAL_TRANSCRIPT_TIMESTAMPS_ONLY_VIDEO_BINDING_UNVERIFIED_NOT_FACT_VERIFICATION
+LOCAL_TRANSCRIPT_TEXT_ONLY_VIDEO_BINDING_UNVERIFIED_NOT_FACT_VERIFICATION
 ```
 
 실제 live YouTube retrieval은 `yt-dlp`가 준비된 실행환경에서 대표 영상으로 별도 검증한다. unit test만으로 site compatibility를 PASS 처리하지 않는다. caller-supplied local transcript fallback은 live site compatibility를 증명하지 않으며, 원 영상과의 대응을 별도 확인하기 전에는 그 transcript를 해당 영상의 검증된 본문으로 승격하지 않는다.

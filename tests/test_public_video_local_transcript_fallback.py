@@ -48,6 +48,10 @@ class PublicVideoLocalTranscriptFallbackTests(unittest.TestCase):
         self.assertRegex(packet["local_transcript_input"]["sha256"], r"^[0-9a-f]{64}$")
         self.assertEqual("UNVERIFIED", packet["local_transcript_input"]["video_binding"])
         self.assertEqual("UNKNOWN", packet["local_transcript_input"]["creation_source"])
+        self.assertEqual(
+            "LOCAL_TRANSCRIPT_TIMESTAMPS_ONLY_VIDEO_BINDING_UNVERIFIED_NOT_FACT_VERIFICATION",
+            packet["content_claim_ceiling"],
+        )
         self.assertNotIn(str(path.parent), json.dumps(packet, ensure_ascii=False))
 
     def test_local_srt_ingest_normalizes_timestamped_segments(self) -> None:
@@ -70,7 +74,10 @@ class PublicVideoLocalTranscriptFallbackTests(unittest.TestCase):
         self.assertEqual("READY", packet["transcript"]["status"])
         self.assertEqual("local_plain_text", packet["transcript"]["source_kind"])
         self.assertEqual("UNAVAILABLE", packet["transcript"]["timestamp_evidence"])
-        self.assertEqual("TRANSCRIPT_TEXT_ONLY_NO_TIMESTAMP_FACT_VERIFICATION", packet["content_claim_ceiling"])
+        self.assertEqual(
+            "LOCAL_TRANSCRIPT_TEXT_ONLY_VIDEO_BINDING_UNVERIFIED_NOT_FACT_VERIFICATION",
+            packet["content_claim_ceiling"],
+        )
         self.assertIsNone(packet["transcript"]["segments"][0]["start_sec"])
 
     def test_local_input_rejects_unsupported_extension_and_oversized_file(self) -> None:
@@ -87,6 +94,15 @@ class PublicVideoLocalTranscriptFallbackTests(unittest.TestCase):
             with self.assertRaises(module.VideoIngestError) as oversized_error:
                 module.ingest_local_transcript("ItWEhmEm7jA", oversized)
             self.assertEqual("LOCAL_TRANSCRIPT_TOO_LARGE", oversized_error.exception.code)
+
+    def test_local_read_failure_does_not_leak_absolute_path(self) -> None:
+        module = self.module
+        with tempfile.TemporaryDirectory() as temp_dir:
+            missing = Path(temp_dir) / "private-transcript.txt"
+            with self.assertRaises(module.VideoIngestError) as caught:
+                module.ingest_local_transcript("ItWEhmEm7jA", missing)
+        self.assertEqual("LOCAL_TRANSCRIPT_READ_FAILED", caught.exception.code)
+        self.assertNotIn(temp_dir, caught.exception.detail)
 
     def test_cli_transcript_file_path_skips_ytdlp(self) -> None:
         module = self.module
@@ -121,6 +137,8 @@ class PublicVideoLocalTranscriptFallbackTests(unittest.TestCase):
         self.assertIn("creation_source: UNKNOWN", contract)
         self.assertIn("LOCAL_TRANSCRIPT_READY", contract)
         self.assertIn("TIMESTAMPS_PRESENT", contract)
+        self.assertIn("LOCAL_TRANSCRIPT_TIMESTAMPS_ONLY_VIDEO_BINDING_UNVERIFIED_NOT_FACT_VERIFICATION", contract)
+        self.assertIn("LOCAL_TRANSCRIPT_TEXT_ONLY_VIDEO_BINDING_UNVERIFIED_NOT_FACT_VERIFICATION", contract)
 
 
 if __name__ == "__main__":
