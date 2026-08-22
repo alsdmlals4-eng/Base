@@ -74,6 +74,29 @@ ARCHIVED
 
 Approval means the user or project authority accepted the candidate for the stated use. It does not prove runtime integration.
 
+### Approved project visual delivery gate
+
+`APPROVED_VISUAL_NOTION_DELIVERY_REQUIRED`
+
+`APPROVAL_WITHOUT_NOTION_DELIVERY_IS_INCOMPLETE`
+
+When an **actual** image, mockup, diagram, screenshot composition or visualization exists and is approved for project use, the approval is incomplete until the visual is durably represented in the project Notion workspace.
+
+```text
+actual visual exists
+→ project-scoped approval
+→ upload/attach to Project Visual Bible or project-scoped Asset record
+→ record Approved + intended use + Project
+→ fetch/readback destination
+→ verify file/preview and approval state
+→ PROJECT_ASSET_APPROVED
+```
+
+- A text-only art direction, image prompt/package, `READY_TO_GENERATE` state or reference candidate is **not** an actual approved image.
+- Do not generate a missing visual merely to satisfy this gate. Image generation still requires the user's explicit image-generation request when the project/user policy requires it.
+- Human-facing Visual Bible/Home shows the visual and human-useful approval context. Prompt, AI Note, Hash, Implementation Path and similar processing metadata stay in `AI / System` surfaces.
+- If an approved visual is stored ad hoc outside the project Visual Bible/Asset lifecycle, move or link it into the correct project human surface and create/update the project-scoped Approved asset record without duplicating the visual as competing canon.
+
 ## Identity-preserving image edits
 
 When the task requests the same character, UI element or asset with a limited edit, treat unchanged identity attributes as hard constraints. Depending on the asset this can include:
