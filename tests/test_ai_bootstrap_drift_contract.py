@@ -100,16 +100,23 @@ class AiBootstrapDriftContractTests(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, text)
 
-    def test_sheet_control_contract_is_migration_only(self) -> None:
-        data = json.loads(self.read("docs/operations/SHEET_CONTROL_CONTRACT.json"))
+    def test_sheet_history_is_frozen_while_current_policy_is_migration_only(self) -> None:
+        frozen = json.loads(self.read("docs/operations/SHEET_CONTROL_CONTRACT.json"))
+        current = self.read("docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md")
 
-        self.assertGreaterEqual(data["schema_version"], 2)
-        self.assertEqual(data["project_sheet_role"], "MIGRATION_ONLY_UNTIL_REMOVAL")
-        self.assertEqual(data["active_human_facing_canon"], "NOTION_DEFAULT_PROJECT_WORKSPACE")
-        self.assertEqual(data["active_structured_canon"], "REPOSITORY_STRUCTURED_CANON")
-        self.assertEqual(data["runtime_truth"], "REPOSITORY_RUNTIME_TRUTH")
-        self.assertFalse(data["external_sheet_writes_authorized"])
-        self.assertNotEqual(data["project_sheet_role"], "USER_FACING_GDD_WORKSPACE")
+        self.assertEqual(frozen["schema_version"], 1)
+        self.assertEqual(frozen["project_sheet_role"], "USER_FACING_GDD_WORKSPACE")
+        self.assertTrue(all(project["status"] == "HOLD" for project in frozen["held_projects"]))
+        self.assertFalse(frozen["external_sheet_writes_authorized"])
+
+        for required in (
+            "MIGRATION_ONLY_UNTIL_REMOVAL",
+            "NOTION_DEFAULT_PROJECT_WORKSPACE",
+            "Google Sheets is not the default workspace",
+            "repository runtime truth",
+            "MIGRATED_READBACK_VERIFIED",
+        ):
+            self.assertIn(required, current)
 
     def test_custom_instruction_guide_marks_executor_audit_current(self) -> None:
         text = self.read("docs/CUSTOM_INSTRUCTIONS_GUIDE.md")
