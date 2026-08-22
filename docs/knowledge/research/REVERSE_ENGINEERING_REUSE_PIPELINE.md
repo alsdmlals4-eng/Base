@@ -4,18 +4,26 @@
 
 상위 원칙은 `docs/BENCHMARKING_REFERENCE_GUIDE.md`의 `BENCHMARK_REVERSE_ENGINEERING_PATTERN_REUSE`를 따른다. 실행 기록은 `templates/research/PROJECT_REUSE_OPPORTUNITY_SCAN.md`를 사용한다. 새 후보를 추출하기 전에 `docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md`에서 이미 정의된 공용/프로젝트-seed 모듈을 먼저 확인하고, 같은 문제를 해결하는 계약이 있으면 새 모듈보다 재사용·변형·project adapter를 우선한다.
 
+Context에서 아직 존재하지 않는 공용 구조를 설계하는 두 번째 origin 경로는 `docs/knowledge/research/CONTEXT_DRIVEN_REUSE_SYNTHESIS.md`가 정의한다.
+
 ## 핵심 계약
 
-`PROJECT_REUSE_OPPORTUNITY_SCAN`은 사용자가 이미 알고 있는 예시 목록을 확장하는 절차가 아니다. **대상 프로젝트의 최신 정본과 실제 병목을 먼저 읽고, 그 문제를 해결할 재사용 후보를 외부 사례와 기존 내부 자산에서 역으로 찾는 절차**다.
+`PROJECT_REUSE_OPPORTUNITY_SCAN`은 사용자가 이미 알고 있는 예시 목록을 확장하는 절차가 아니다. **대상 프로젝트의 최신 정본과 실제 병목·roadmap·책임 구조를 먼저 읽고, 증거에서 패턴을 추출하거나 아직 없는 더 나은 구조를 context hypothesis로 설계하는 절차**다.
 
 ```text
 PROJECT_CANON_FIRST
 → CORE_EXPERIENCE_AND_CONSTRAINT_MAP
 → REPEATED_COST_AND_BOTTLENECK_MAP
-→ BOTTLENECK_TO_CANDIDATE_SEARCH
-→ CREATIVE_BENCHMARK_FRONTIER
-→ SOURCE_AND_RIGHTS_PRECHECK
-→ MULTI_SOURCE_REVERSE_ENGINEERING
+→ CANDIDATE_ORIGIN_GATE
+   ├─ EVIDENCE_DERIVED
+   │  → BOTTLENECK_TO_CANDIDATE_SEARCH
+   │  → CREATIVE_BENCHMARK_FRONTIER
+   │  → SOURCE_AND_RIGHTS_PRECHECK
+   │  → MULTI_SOURCE_REVERSE_ENGINEERING
+   └─ CONTEXT_SYNTHESIZED
+      → CONTEXT_DRIVEN_REUSE_SYNTHESIS
+      → FALSIFICATION_AND_SMALLEST_PILOT
+   EVIDENCE_DERIVED + CONTEXT_SYNTHESIZED → HYBRID
 → REUSABLE_CONTRACT_EXTRACTION
 → EXISTING_SOLUTION_FIRST
 → PROJECT_FIT_AND_NOVELTY_DELTA
@@ -26,11 +34,19 @@ PROJECT_CANON_FIRST
 → PROJECT_ONLY | BASE_PROMOTION_CANDIDATE
 ```
 
+```text
+SOURCE_NOT_REQUIRED_FOR_HYPOTHESIS
+CONTEXT_SYNTHESIS_IS_NOT_VALIDATION
+EVIDENCE_REQUIRED_FOR_PROMOTION
+```
+
+외부 Source나 반복 구현 기록이 없어도 context candidate를 `HYPOTHESIS` 또는 `MODULE_CONTRACT_DEFINED`로 설계할 수 있다. 반대로 context 추론만으로 reference implementation, project adoption, runtime proof, player value를 주장할 수 없다.
+
 `EXAMPLE_IS_NOT_SCOPE_LIMIT`: 테트리스류, 선택형 비주얼노벨/텍스트 로그라이크, 덱빌딩, 서바이버라이크 등 사용자가 직접 든 사례는 **탐색 seed**일 뿐 고정 범위가 아니다. 프로젝트의 실제 문제와 제작 비용을 더 잘 줄이는 후보가 있으면 다른 장르·제품·툴·오픈소스·에셋·제작 파이프라인·QA 방식까지 조사한다.
 
 ## 1. PROJECT_CANON_FIRST
 
-역공학 후보를 찾기 전에 다음을 최신 프로젝트 정본과 실제 코드·데이터·Scene·Resource·자산·테스트에서 확인한다.
+역공학 또는 Context-Synthesis 후보를 찾기 전에 다음을 최신 프로젝트 정본과 실제 코드·데이터·Scene·Resource·자산·테스트·승인 roadmap에서 확인한다.
 
 ```yaml
 project:
@@ -42,6 +58,7 @@ current_systems:
 current_tools_and_automation:
 current_asset_reuse_structure:
 current_workflow_and_skill_routes:
+planned_consumers:
 production_capacity:
 platform_and_performance_constraints:
 rights_cost_security_constraints:
@@ -52,7 +69,7 @@ current_poc_or_vertical_slice_state:
 
 ## 2. 반복 비용·병목 지도
 
-`REPEATED_COST_AND_BOTTLENECK_MAP`은 플레이어 문제와 제작 문제를 구분한다.
+`REPEATED_COST_AND_BOTTLENECK_MAP`은 플레이어 문제와 제작 문제를 구분한다. 실제 반복 기록뿐 아니라 승인된 roadmap에서 구조적으로 반복이 예정되는 비용도 구분해서 기록할 수 있다.
 
 ### 플레이어 측
 
@@ -72,10 +89,33 @@ current_poc_or_vertical_slice_state:
 - 반복되는 버그 탐색·QA·회귀 테스트.
 - GPT/Codex에 매번 다시 설명하는 작업 규칙·검토 방식.
 - 같은 판단을 여러 문서/도구에서 반복하는 중복 작업.
+- 아직 반복되지 않았지만 실제 planned consumers 때문에 곧 같은 작업이 반복될 구조.
 
-## 3. BOTTLENECK_TO_CANDIDATE_SEARCH
+## 3. CANDIDATE_ORIGIN_GATE
 
-병목마다 후보 검색 범위를 단계적으로 확장한다.
+각 후보는 먼저 origin을 명시한다.
+
+```yaml
+candidate_origin: EVIDENCE_DERIVED | CONTEXT_SYNTHESIZED | HYBRID
+```
+
+### `EVIDENCE_DERIVED`
+
+실제 구현·반복 병목·benchmark·실패·운영 기록에서 공통 불변원리를 추출한다. 이 경로는 아래 `BOTTLENECK_TO_CANDIDATE_SEARCH`와 `MULTI_SOURCE_REVERSE_ENGINEERING`을 사용한다.
+
+### `CONTEXT_SYNTHESIZED`
+
+아직 반복 evidence가 없어도 실제 project canon, 승인 roadmap, planned consumer, 책임 결합, 예상 반복비용을 근거로 새 bounded contract를 설계한다. 세부 trigger, `falsification_test`, `smallest_pilot`, rollback 규칙은 `CONTEXT_DRIVEN_REUSE_SYNTHESIS.md`를 따른다.
+
+### `HYBRID`
+
+Context hypothesis를 외부/내부 evidence로 공격하거나, evidence-derived pattern을 현재 project 구조와 새로 재조합할 때 사용한다.
+
+origin은 validation state가 아니다. `CONTEXT_SYNTHESIZED` 또는 `HYBRID`라고 해서 증거 수준이 자동 상승하지 않는다.
+
+## 4. BOTTLENECK_TO_CANDIDATE_SEARCH
+
+Evidence-derived 병목마다 후보 검색 범위를 단계적으로 확장한다.
 
 ```text
 A. 프로젝트 내부 기존 구현·자산·도구
@@ -92,7 +132,7 @@ J. 실패·혼합 사례와 폐기된 접근
 
 후보는 유명세보다 **현재 병목을 얼마나 줄이는지**로 평가한다.
 
-## 4. `CREATIVE_BENCHMARK_FRONTIER`
+## 5. `CREATIVE_BENCHMARK_FRONTIER`
 
 중요한 게임 기획은 직접 장르의 대표작만 보면 동질화 위험이 커진다. 같은 문제를 서로 다르게 푸는 다음 다섯 집합을 결정 직전까지 탐색한다.
 
@@ -122,9 +162,9 @@ creative_frontier:
 
 시장 성과·리뷰·수상·다운로드 수는 discovery 신호일 수 있지만, 현재 프로젝트의 재미·시장성·기술 적합성을 자동 증명하지 않는다.
 
-## 5. 재사용 후보 분류
+## 6. 재사용 후보 분류
 
-한 사례에서 여러 종류를 동시에 추출할 수 있다.
+한 사례 또는 context packet에서 여러 종류를 동시에 추출할 수 있다.
 
 | Candidate family | 추출 대상 | 예시 |
 |---|---|---|
@@ -138,9 +178,9 @@ creative_frontier:
 | Skill / evaluation | 반복 판단·검수 계약 | trigger, inputs, canon, output, negative case, regression eval |
 | Testing / QA | 실패 탐지·재현 패턴 | deterministic seed, snapshot, golden case, stress matrix, replay |
 
-## 6. MULTI_SOURCE_REVERSE_ENGINEERING
+## 7. MULTI_SOURCE_REVERSE_ENGINEERING
 
-일반화할 후보는 가능한 경우 서로 다른 구현·전제를 가진 3개 이상의 사례를 비교한다.
+외부 사례의 반복 불변원리를 주장하는 후보는 가능한 경우 서로 다른 구현·전제를 가진 3개 이상의 사례를 비교한다.
 
 ```yaml
 candidate_id:
@@ -156,13 +196,19 @@ project_relevant_constraints:
 
 단일 작품의 고유 조합을 그대로 “장르 공식”으로 승격하지 않는다. 반복되는 불변 원리와 작품별 표현을 분리한다.
 
-## 7. REUSABLE_CONTRACT_EXTRACTION
+Pure `CONTEXT_SYNTHESIZED` hypothesis에는 Source 3개가 선행 조건이 아니다. 대신 `context_basis`, 실명 가능한 `planned_consumers`, `falsification_test`, `smallest_pilot`이 필수다. 이후 external invariant를 주장하려면 그 시점부터 evidence 경계를 적용한다.
+
+## 8. REUSABLE_CONTRACT_EXTRACTION
 
 재사용 후보는 최소 다음 계약으로 추상화한다.
 
 ```yaml
+candidate_origin:
+context_basis:
+planned_consumers: []
 unit_type:
 problem_or_player_need:
+production_problem:
 inputs:
 state:
 rules_or_process:
@@ -175,11 +221,16 @@ content_or_asset_interfaces:
 test_or_validation_interface:
 source_observations:
 rights_and_license_boundary:
+falsification_test:
+smallest_pilot:
+rollback_or_discard_condition:
+maturity:
+validation_state:
 ```
 
-도구·Workflow·Skill 후보는 `player_need` 대신 `production_problem`을 중심으로 써도 된다.
+도구·Workflow·Skill 후보는 `player_need` 대신 `production_problem`을 중심으로 써도 된다. Evidence-derived 후보는 context-only 필드를 `not_applicable`로 명시할 수 있지만, 현재 project fit과 consumer는 항상 기록한다.
 
-## 8. EXISTING_SOLUTION_FIRST
+## 9. EXISTING_SOLUTION_FIRST
 
 새로 재현하기 전에 다음을 비교한다.
 
@@ -187,7 +238,8 @@ rights_and_license_boundary:
 2. Base 또는 다른 프로젝트에서 검증된 공용 요소를 흡수할 수 있는가.
 3. 공식/오픈소스/에셋 라이브러리에 라이선스가 명확한 해결책이 있는가.
 4. 설정·래핑·부분 수정으로 해결 가능한가.
-5. 그래도 충족되지 않을 때만 `PATTERN_EXTRACT` 또는 `CLEAN_ROOM_REIMPLEMENTATION`을 검토한다.
+5. 여러 기존 모듈의 composition으로 해결 가능한가.
+6. 그래도 충족되지 않을 때만 새 `PATTERN_EXTRACT`, bounded reference implementation 또는 `CLEAN_ROOM_REIMPLEMENTATION`을 검토한다.
 
 재사용 모드:
 
@@ -197,9 +249,9 @@ rights_and_license_boundary:
 - `CLEAN_ROOM_REIMPLEMENTATION`
 - `REJECT`
 
-직접 재사용 가능한 검증된 해결책을 불필요하게 역공학해서 다시 만드는 것은 작업 절감 목표와 충돌한다.
+직접 재사용 가능한 검증된 해결책을 불필요하게 역공학해서 다시 만드는 것은 작업 절감 목표와 충돌한다. Context-Synthesis도 새 구조를 발명했다는 이유만으로 Existing Solution First를 건너뛰지 않는다.
 
-## 9. PROJECT_FIT_AND_NOVELTY_DELTA
+## 10. PROJECT_FIT_AND_NOVELTY_DELTA
 
 다음 축으로 후보를 공격한다.
 
@@ -233,7 +285,7 @@ project_identity_gain:
 
 장르 table-stakes를 의도적으로 유지하는 경우에도 프로젝트의 고유 선택·감정·피드백·세계관·시각 언어 중 무엇이 달라지는지 기록한다.
 
-## 10. `ORIGINALITY_FUN_CREATIVITY_REVIEW`
+## 11. `ORIGINALITY_FUN_CREATIVITY_REVIEW`
 
 재조합 후보는 실제 구현 전에 다음으로 다시 본다.
 
@@ -260,7 +312,7 @@ PLAYER_EVIDENCE_REQUIRED_FOR_FUN_PASS
 
 실제 사람 플레이 증거 전에는 `FUN_HYPOTHESIS` 이상의 상태로 올리지 않는다. 독창성도 새 요소 개수로 평가하지 않고 familiar anchor와 project-specific recombination이 학습비용 대비 새로운 플레이 의미를 만드는지 본다.
 
-## 11. REUSE_OWNER_ROUTING
+## 12. REUSE_OWNER_ROUTING
 
 이 Reference는 후보를 **발굴하고 추상화하는 owner**다. 최종 권위는 기존 owner에 넘긴다.
 
@@ -280,9 +332,10 @@ discovery != PROJECT_ASSET_APPROVED
 discovery != NEW_SKILL_APPROVED
 discovery != RUNTIME_PROOF
 discovery != COPYRIGHT_OR_LICENSE_CLEARANCE
+context synthesis != validation
 ```
 
-## 12. PROJECT_SPECIFIC_SYNTHESIS
+## 13. PROJECT_SPECIFIC_SYNTHESIS
 
 최종 목표는 벤치마크를 닮는 것이 아니라 **프로젝트 코어를 더 싸고 빠르게 구현하면서 고유 경험을 강화하는 것**이다.
 
@@ -292,13 +345,14 @@ reusable foundation
 + project-specific content
 + project-specific visual language
 + project-specific tuning
-+ creative benchmark recombination
++ evidence-derived learning
++ context-driven invention
 = project implementation candidate
 ```
 
 재사용 foundation이 프로젝트 코어보다 커지면 기각한다.
 
-## 13. 검증 증거 ceiling
+## 14. 검증 증거 ceiling
 
 - 규칙·시스템 PoC는 구현 가능성과 규칙 동작을 증명하지만 재미·몰입을 자동 증명하지 않는다.
 - `VERTICAL_SLICE_EVIDENCE_CEILING`: 플레이어 경험을 주장하려면 실제 UI/UX·아트·대표 콘텐츠가 포함된 release-near Vertical Slice와 플레이 증거가 필요하다.
@@ -306,8 +360,9 @@ reusable foundation
 - Asset/Image material은 실제 화면에서의 가독성·일관성·재사용성·출처·권리 검토가 필요하다.
 - Workflow/Skill은 대표 성공 사례뿐 아니라 실패·비선택·오라우팅 사례를 포함한 전후 Eval이 필요하다.
 - benchmark가 강해도 실제 project fit·runtime·player evidence를 대신하지 않는다.
+- Context-Synthesized 후보는 실제 `smallest_pilot`을 통과하기 전 `VALIDATION_NOT_RUN` 또는 직접 실행된 좁은 검증 수준 이상으로 올라가지 않는다.
 
-## 14. 프로젝트별 결과 저장
+## 15. 프로젝트별 결과 저장
 
 Base에는 공용 방법만 둔다. 실제 프로젝트 스캔 결과는 각 프로젝트의 Notion/GitHub 정본에 둔다.
 
@@ -315,4 +370,4 @@ Base에는 공용 방법만 둔다. 실제 프로젝트 스캔 결과는 각 프
 - `BASE_PROMOTION_CANDIDATE`: 서로 다른 프로젝트에서 반복 가치가 확인되어 공용화 검토 가치가 있음.
 - `REJECTED`: 권리·비용·품질·적합성·유지보수 문제로 탈락.
 
-공용 승격은 “좋아 보임”이 아니라 반복 소비자와 검증 증거가 생겼을 때만 한다.
+공용 승격은 “좋아 보임” 또는 “구조적으로 그럴듯함”이 아니라 실제 consumer와 검증 증거가 생겼을 때만 한다.

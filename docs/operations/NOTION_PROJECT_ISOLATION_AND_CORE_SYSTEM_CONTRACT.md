@@ -4,7 +4,13 @@
 
 `HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`
 
+`PROJECT_REGISTRY_IS_SYSTEM_MASTER_NOT_HUMAN_HOME`
+
+`HUMAN_HOME_PHYSICALLY_SEPARATE_FROM_REGISTRY_ROW`
+
 각 Project Home은 프로젝트 한 줄 정의·플레이어/사용자 가치·확정 방향·Core Loop/Flow·핵심 시스템 목적/상호작용·UX/UI/Visual·현재 구현상태·검증 evidence ceiling·blocker/다음 작업·중요 결정·위험/revisit condition을 본문에서 직접 설명한다. 하위 `08 · 핵심 시스템 · 상세` 같은 페이지는 상세 evidence와 긴 표를 위한 drilldown이며 Home의 핵심 이해를 대신하지 않는다.
+
+`PROJECT REGISTRY · Master`는 Project Key·Repository·동기화·실행환경 연결을 보존하는 AI/System Master다. `Codex Home`, `Project Local Path`, `Godot Port`, `Repo Main SHA`, `Record Key`, `Revision` 같은 machine metadata를 가진 Registry row를 사람용 Project Home으로 재사용하지 않는다. Human Home은 Registry row와 **별도 일반 페이지로 물리 분리**하고, 단순히 database view의 column을 숨기는 것으로 대체하지 않는다. 사람용 기본 화면에는 `Prompt`, `AI Note`, `Hash`, `Implementation Path` 같은 AI/asset processing metadata도 노출하지 않는다.
 
 ## 목적
 
@@ -136,6 +142,7 @@ resolve exact Project
 - stale read 뒤 overwrite.
 - 여러 프로젝트가 들어 있는 공용 페이지의 전체 `replace_content`를 기본 업데이트 방식으로 사용.
 - linked view filter 없이 공용 Master를 project user surface에 노출.
+- AI/System metadata를 보유한 Project Registry row를 Human Project Home으로 사용.
 
 ## 5A. ZERO_INCREMENTAL_COST Free-plan fallback
 
@@ -282,8 +289,8 @@ write
 
 Project Registry에서 Project Key 중복, Core System Master에서 `(Project, Record Key)` 중복, Project relation 누락을 검사한다.
 
-기존 Project Home·child page·Work/Asset record를 삭제하거나 이동하지 않는다.
+기존 Project Home·child page·Work/Asset record를 삭제하거나 이동하지 않는다. 단, Human Home/AI-System 물리 분리 교정처럼 **명시적으로 승인된 구조 교정**은 기존 System Master를 보존한 채 링크/부모만 이동하고 destination readback과 rollback path를 남긴다.
 
 ## Human Home 상세 정책
 
-`HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`의 Base/Project Home 필수 내용은 `docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md`가 소유한다. 하위 페이지는 drilldown/evidence이며 core understanding을 대신하지 않는다.
+`HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`의 Base/Project Home 필수 내용과 AI/System 제외 규칙은 `docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md`가 소유한다. 하위 페이지는 drilldown/evidence이며 core understanding을 대신하지 않는다.

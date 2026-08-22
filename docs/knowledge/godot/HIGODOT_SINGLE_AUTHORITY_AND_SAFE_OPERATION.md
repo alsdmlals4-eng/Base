@@ -251,6 +251,99 @@ shared token 원문은 저장소·prompt·log·evidence에 기록하지 않는�
 
 Hera acceptance QA 직전에 tracked source 상태를 fingerprint 또는 Git diff 기준으로 기록하고 QA 직후 다시 비교한다. **Hera-phase delta는 `NONE`이어야 한다.** 새 tracked source delta가 생기면 Hera가 제품 변경을 만든 것으로 승인하지 않고 실패로 처리해 원인을 조사한다.
 
+### 외부 고영양가 runtime-QA 패턴 흡수
+
+```text
+EXTERNAL_RUNTIME_QA_PATTERN_ABSORB_ONLY
+HERA_REMAINS_DEFAULT_LIVE_QA_PROVIDER
+```
+
+2026-08-22 외부 구현 조사에서 `mrf/godot-stagehand`와 `satelliteoflove/godot-mcp`의 공개 repository·문서·테스트 계약을 비교했다. 두 구현은 running game 관찰·입력·상태 assertion·screenshot·성능 관찰 같은 유용한 패턴을 제공하지만, Base의 현재 HiGodot/Hera 권위 구조를 자동 교체하지 않는다.
+
+- `mrf/godot-stagehand`: runtime-only 외부 driver와 MCP/CLI scenario runner가 같은 core를 공유하고, machine-readable report·JUnit·trace·screenshot diff를 남기는 패턴은 `ABSORB`. 다만 pre-1.0 beta이며 별도 addon/server 설치가 필요하므로 Base 기본 provider로 자동 승격하지 않는다.
+- `satelliteoflove/godot-mcp`: frozen/stepped game time, structured runtime-state observation, profiler window, read/write surface 분리 패턴은 `ABSORB`. persistent editor mutation 기능이 HiGodot 단일 저작 권위와 겹치므로 두 번째 기본 mutation MCP로 설치하지 않는다.
+- 현재 Base의 live QA 기본 provider는 Hera이며, 외부 도구의 설치·교체는 각 프로젝트 Existing Solution First와 별도 adoption evidence가 있을 때만 다시 판단한다.
+
+외부 도구 이름이나 tool schema를 복제하지 않고 다음 provider-neutral packet만 흡수한다.
+
+```yaml
+RUNTIME_QA_SCENARIO_PACKET:
+  scenario_id:
+  build_or_commit:
+  provider:
+  launch_context:
+  setup:
+    mode: GAMEPLAY_PATH | DIAGNOSTIC_ONLY
+  steps:
+    - action:
+      wait_until:
+      assert_state:
+      capture_when_material:
+  time_semantics:
+    mode: FRAME_OR_CLOCK_STEP_DETERMINISTIC | WALL_CLOCK_APPROX
+  state_observation:
+    structured_state_first: true
+  visual_baseline:
+    platform:
+    resolution:
+    renderer:
+    baseline_id:
+    pixel_sensitivity:
+    image_diff_threshold:
+  performance_probe:
+    warmup:
+    sample_count_or_duration:
+    statistic: min | max | mean | median | p95
+    threshold:
+  artifacts:
+    report:
+    junit_or_machine_result:
+    logs:
+    screenshots:
+    diff_images:
+    trace:
+  source_delta: NONE
+```
+
+#### `WALL_CLOCK_APPROX_REPLAY_IS_NOT_DETERMINISTIC_STATE_REPLAY`
+
+입력과 millisecond timestamp를 기록해 wall-clock 기준으로 재생하는 방식은 재현 비용을 줄일 수 있지만 frame-perfect deterministic replay 증거가 아니다. deterministic 판정이 필요하면 seed·state checkpoint·clock/frame step·동일 입력에 대한 동일 결과처럼 프로젝트가 요구하는 인과 경계를 별도로 검증한다.
+
+#### `STRUCTURED_STATE_BEFORE_SCREENSHOT`
+
+질문이 위치·속도·HP·animation state·flag·signal·counter처럼 구조화된 상태로 판정 가능한 경우 먼저 structured state/assertion을 사용한다. screenshot은 layout·rendering·시각 hierarchy·VFX·겹침처럼 픽셀이 실제 판단 대상일 때 사용한다. 이 규칙은 screenshot을 금지하는 것이 아니라 토큰·시간·모호성을 줄이고 machine assertion을 우선하는 것이다.
+
+#### `VISUAL_DIFF_TWO_AXIS_TOLERANCE`
+
+visual regression은 최소한 다음 두 축을 구분한다.
+
+```text
+pixel_sensitivity = 한 픽셀이 얼마나 달라야 changed pixel로 셀 것인가
+image_diff_threshold = 전체 픽셀 중 changed pixel을 얼마나 허용할 것인가
+```
+
+두 값을 하나의 “느슨함” 값으로 합치지 않는다. 플랫폼·해상도·renderer가 픽셀 결과를 materially 바꾸면 baseline identity에 그 축을 포함한다. visual diff PASS는 디자인 품질·가독성·접근성·재미·human approval PASS가 아니다.
+
+#### `PERFORMANCE_SAMPLE_WINDOW`
+
+성능 Gate는 한 순간의 숫자보다 warmup과 명시적 sample window를 사용한다.
+
+```yaml
+performance_probe:
+  warmup:
+  sample_count_or_duration:
+  statistic: min | max | mean | median | p95
+  threshold:
+```
+
+단일 frame/instant metric은 spike·GC·shader warmup·loading을 대표하지 않을 수 있다. 반대로 median/p95 smoke도 baseline variance·환경 통제·반복 run이 없는 한 완전한 statistical regression proof로 과장하지 않는다.
+
+#### `DIAGNOSTIC_SETUP_IS_NOT_ACCEPTANCE_PATH`
+
+runtime `set/call/eval` 또는 테스트 전용 GDScript로 wave·inventory·enemy state를 강제로 준비하는 것은 특정 상태를 빠르게 관찰하는 diagnostic setup에는 유용할 수 있다. 그러나 정상 게임 흐름을 우회했다면 그 실행만으로 실제 player-facing path의 acceptance를 증명하지 않는다. 최종 acceptance가 정상 진입 경로를 요구하면 동일 핵심 assertion을 실제 gameplay path에서 다시 검증한다.
+
+외부 runner가 stable exit code·machine-readable report·JUnit·trace를 제공하는 패턴은 repository-native evidence에 흡수할 수 있다. 특정 provider를 설치하지 않아도 현재 Hera/GUT/CI 조합이 같은 evidence contract를 충족하면 Existing Solution First로 그대로 유지한다.
+
 ## 7. 표준 author → test → live-QA 흐름
 
 ```text
