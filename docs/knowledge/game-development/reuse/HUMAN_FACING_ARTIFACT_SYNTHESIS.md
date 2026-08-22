@@ -2,7 +2,7 @@
 
 - candidate_origin: `HYBRID`
 - maturity: `MODULE_CONTRACT_DEFINED`
-- validation_state: `VALIDATION_NOT_RUN`
+- validation_state: `FOCUSED_VERIFIED`
 - default_provider: `NONE`
 - authority: provider-neutral workflow candidate; existing document/Notion/repository owners remain authoritative
 - cost boundary: no new paid SaaS/API/subscription is required by this contract
@@ -183,20 +183,49 @@ smallest_pilot:
 rollback_or_discard_condition:
   - 단계가 문서 생산을 복잡하게 만들거나 provider-specific 예외가 neutral contract보다 커지면 reference-only로 낮춤
 maturity: MODULE_CONTRACT_DEFINED
-validation_state: VALIDATION_NOT_RUN
+validation_state: FOCUSED_VERIFIED
 ```
 
-## Validation before promotion
+## Focused Pilot evidence · 2026-08-22
+
+첫 실제 consumer는 기존 Notion human surface `Base · 재사용 모듈 라이브러리`였다. 별도 presentation provider 없이 `INPUT_MODE_STRUCTURE_EXISTING`으로 실행했다.
+
+Pilot evidence owner: `RM_WORK_003_IMPLEMENTATION_PILOT.md`.
+
+확인된 좁은 범위:
+
+- 5개 section outline을 layout 전에 고정하고 그 뒤 Notion callout/columns/table로 표현함.
+- child artifact를 destination에서 다시 fetch해 source meaning과 parent 연결을 확인함.
+- post-generation claim-gap review에서 parent human surface의 stale `2026-08-21 · 현재 운영 기준`을 발견함.
+- parent 상단에 2026-08-22 current summary와 child 링크를 추가하고, 기존 8/21 heading을 역사 snapshot으로 명확히 한 뒤 다시 readback함.
+- provider/API/paid dependency 없이 기존 owner로 수행함.
+
+따라서 workflow mechanics에 한해 `FOCUSED_VERIFIED`로 올린다.
+
+```text
+HUMAN_EDIT_DELTA: NOT_RUN_USER_REVIEW_PENDING
+HUMAN_VISUAL_REVIEW: NOT_RUN_USER_REVIEW_PENDING
+```
+
+이 두 human evidence가 없으므로 실제 사용자의 수정시간 감소, 이해도 향상, 시각 품질, 선호도 개선은 주장하지 않는다.
+
+## Validation before further promotion
 
 `RM-WORK-003`은 현재 `BASE_ACTIVE_METHOD`가 아니다.
 
-승격 전 최소 증거:
+현재 확인됨:
 
-- 실제 Base/project human-facing artifact consumer 1개 이상의 Pilot.
-- source claim 누락/변형 여부 비교.
-- outline-first가 재작업을 줄였는지 `HUMAN_EDIT_DELTA` 또는 동등한 total-effort 기록.
-- provider를 썼다면 provider 없이도 contract가 유지되는지 확인.
-- human visual review 결과.
-- export/readback이 원 source/canon과 일치하는지 확인.
+- 실제 human-facing consumer 1개에서 outline-before-layout 실행.
+- source claim fidelity review.
+- claim-gap review가 stale parent human surface를 실제로 찾아 bounded correction으로 이어짐.
+- Notion create + destination readback.
+- provider-free 실행.
 
-현재 상태는 `MODULE_CONTRACT_DEFINED · VALIDATION_NOT_RUN`을 넘지 않는다.
+다음 승격 전 필요한 증거:
+
+- 실제 사용자 review를 통한 `HUMAN_EDIT_DELTA` 또는 동등한 total-effort evidence.
+- `HUMAN_VISUAL_REVIEW`.
+- materially different human-facing artifact consumer에서 재검증 후에만 `MULTI_CONTEXT_VERIFIED` 검토.
+- provider를 쓰는 경우에도 provider 없이 neutral contract가 유지되는지 확인.
+
+현재 상태는 `MODULE_CONTRACT_DEFINED · FOCUSED_VERIFIED`이며 `PLAYER_OR_USER_VERIFIED` 또는 `BASE_ACTIVE_METHOD`를 주장하지 않는다.
