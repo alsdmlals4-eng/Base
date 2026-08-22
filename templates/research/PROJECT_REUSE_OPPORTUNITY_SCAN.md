@@ -69,6 +69,31 @@ what_is_signature_expression_not_pattern:
 source_and_rights_notes:
 ```
 
+### 4A. Public video evidence provenance
+
+공개 YouTube 영상·강연·튜토리얼·개발자 인터뷰의 **본문 내용이 현재 판단에 실제로 필요한 경우** `RM-TOOL-005 PUBLIC_VIDEO_RESEARCH_INGEST_ADAPTER` 또는 동등한 검증 경로로 transcript provenance와 timestamp를 확보한다.
+
+```yaml
+public_video_evidence:
+  source_url:
+  video_id:
+  title:
+  checked_at:
+  transcript_source_kind: youtube_manual_caption | youtube_auto_caption | local_asr | user_provided
+  transcript_language:
+  retrieval_tool_and_version:
+  timestamp_evidence: []
+  content_claim_ceiling:
+```
+
+규칙:
+
+- 영상 URL·제목·검색 snippet만 읽고 영상 본문을 확인했다고 쓰지 않는다.
+- transcript가 없거나 접근 실패한 경우 내용 수준 claim은 `BLOCKED_UNVERIFIED`다.
+- auto caption/local ASR은 human-authored transcript로 취급하지 않는다.
+- 전체 제3자 transcript 전문은 기본적으로 `.tmp/` 같은 local research cache에만 둔다. 프로젝트/Base 문서에는 현재 결정에 필요한 derived note·timestamp·허용 범위의 짧은 인용만 남긴다.
+- transcript 확보는 speaker claim의 사실성·저작권 허가·프로젝트 적합성을 자동 증명하지 않는다.
+
 ## 5. Reusable contract
 
 ```yaml
@@ -113,6 +138,8 @@ rights_and_license_boundary:
 |  |  |  |  |  |  |  |  |  |  |  |
 
 우선순위는 유명세가 아니라 **프로젝트 가치 + 반복 절감 + 낮은 통합/권리 위험 + 검증 가능성**으로 정한다.
+
+Tool/Workflow/Visual provider 후보에서 제작시간을 비교할 때 생성/실행 시간만 보지 않고 필요하면 `RM-WORK-002`의 `HUMAN_EDIT_DELTA`로 재시도·사람 수정·통합·QA를 포함한 total effort를 비교한다.
 
 ## 8. NOVELTY_DELTA
 
@@ -177,9 +204,10 @@ REUSABLE FOUNDATION
 - 기술/규칙 PoC:
 - 대표 Vertical Slice 필요 여부:
 - Tool 대표 입력/실패/복구 테스트:
+- Public video evidence provenance/timestamp/claim ceiling:
 - Asset/Image 실제 화면 검증:
 - 데이터/Schema 무결성·극단값:
-- Workflow/Skill 전후 Eval:
+- Workflow/Skill 전후 Eval + `HUMAN_EDIT_DELTA` when applicable:
 - 권리·라이선스 확인:
 - 성능·플랫폼 확인:
 - 사용자/플레이어 실제 증거:
