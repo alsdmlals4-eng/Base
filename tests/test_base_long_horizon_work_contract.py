@@ -122,6 +122,36 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             self.assertIn(term, policy)
         self.assertNotIn("CURRENT_COORDINATOR_TAKEOVER_WHEN_NO_ACTIVE_OWNER", policy)
 
+    def test_current_task_continuation_inherits_ready_merge_authority_without_blanket_takeover(self) -> None:
+        agents = read("AGENTS.md")
+        policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
+        continuous = read(
+            "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"
+        )
+        for term in (
+            "CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE",
+            "APPROVED_CONTRACT_CONTINUATION",
+            "current-task PR",
+            "exact HEAD",
+            "required checks",
+            "postmerge readback",
+        ):
+            self.assertIn(term, agents + "\n" + policy)
+        self.assertIn("APPROVED_ITEM_INHERITS_MERGE_AUTHORITY", continuous)
+        self.assertIn("OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION", agents)
+        for protected in (
+            "pre-existing",
+            "unrelated",
+            "other-workstream",
+            "draft",
+            "force push",
+            "ruleset bypass",
+            "병합하지 마",
+            "PR만 열어",
+            "검토만",
+        ):
+            self.assertIn(protected, agents)
+
     def test_game_contract_requires_release_near_player_validation_and_reusable_boundaries(self) -> None:
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         for term in (
