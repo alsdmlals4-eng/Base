@@ -11,7 +11,7 @@ incremental_cost_policy: ZERO_INCREMENTAL_COST_REQUIRED
 scheduled_mode: ZERO_INCREMENTAL_COST_QUEUE_PREP
 scheduled_state: AWAITING_CHATGPT_REVIEW
 research_executor: USER_DIRECTED_CHATGPT_REVIEW
-concurrent_pr_policy: BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16
+concurrent_pr_policy: OPEN_PR_READ_ONLY_BY_DEFAULT
 new_active_skill: false
 project_canon_authority: false
 ```
@@ -35,8 +35,14 @@ GitHub Actions: ZERO_INCREMENTAL_COST_QUEUE_PREP
 → Evidence Method 판정
 → 독립 적대적 검토
 → ADOPT | ADAPT | TEST | PROJECT_ONLY | REFERENCE_ONLY | AVOID | IGNORE | BLOCKED_UNVERIFIED
+→ ACTUAL_SOURCE_REVIEW_RECEIPT 기록
 → material repository change가 있으면 일반 latest-main PR 흐름
 → material change가 없으면 Queue receipt만 남기고 NO_CHANGE
+
+주간 Source 종합
+→ 지난 실제 ACTUAL_SOURCE_REVIEW_RECEIPT만 집계
+→ WEEKLY_SCAN_STATE_BATCH
+→ 실제 확인된 Source freshness만 Operations Ledger에 동기화
 ```
 
 **Queue preparation**은 외부 조사가 아니다. 자동화가 Due Source를 선정했다는 사실만으로 Source를 확인했다고 기록하거나 `NO_CHANGE`를 선언하지 않는다.
@@ -76,6 +82,98 @@ Issue 갱신 != Ledger timestamp 갱신
 ```
 
 실제 원출처를 확인하지 않았으므로 `last_successful_scan_at`, material candidate count, Base contribution count를 변경하지 않는다.
+
+## `ACTUAL_SOURCE_REVIEW_RECEIPT`
+
+실제 ChatGPT Source review가 원출처를 확인한 뒤에는 Issue #334의 comment/receipt에 사람용 설명과 함께 다음 machine-readable block을 남긴다. 이 블록은 Queue 준비 상태와 실제 조사 상태가 서로 덮어쓰지 않도록 하는 **운영 관측 receipt**이며 Evidence tier나 프로젝트 Canon을 자동 승격하지 않는다.
+
+```yaml
+actual_source_review_receipt:
+  scan_date:
+  start_main:
+  final_main:
+  disposition: NO_CHANGE | MATERIAL_CHANGE | BLOCKED_UNVERIFIED
+  scanned_source_ids: []
+  scanned_discovery_seed_ids: []
+  retained_candidate_source_ids: []
+  material_candidate_count_by_source: {}
+  merged_base_contribution_refs: []
+  repository_change:
+  pr_created:
+  merge_sha:
+  ledger_write: DEFER_TO_WEEKLY_SCAN_STATE_BATCH
+  unverified_scope: []
+```
+
+운영 규칙:
+
+- `scanned_source_ids`에는 `PERIODIC_SOURCE_OPERATIONS_LEDGER.json`에 이미 존재하는 `source_id` 중 **이번 회차에서 실제 원출처 surface를 열어 확인한 것만** 기록한다.
+- Queue에 노출됐다는 사실, 검색 결과 제목/snippet, 이전 회차 기억은 scan 증거가 아니다.
+- durable Source로 승격되지 않은 신규 후보는 `scanned_discovery_seed_ids`에 분리하고 Ledger Source인 것처럼 가장하지 않는다.
+- `retained_candidate_source_ids`와 `material_candidate_count_by_source`는 실제 Candidate Packet을 유지한 경우에만 기록한다.
+- `merged_base_contribution_refs`는 해당 Source에서 파생된 Base 변경이 실제 `main`에 병합되고 파생 관계를 readback한 경우에만 기록한다.
+- material change가 없어도 실제 Source를 확인했다면 `NO_CHANGE`는 유효한 scan 결과다. 반대로 조사하지 않았다면 `NO_CHANGE`를 기록하지 않는다.
+
+### 사람용 최신 상태 요약
+
+Queue 본문이나 별도 derived status view가 최신 실제 receipt를 표시할 때는 다음처럼 **권위가 아닌 요약**으로만 표시할 수 있다.
+
+```yaml
+last_actual_review_at:
+last_review_disposition:
+last_actual_review_receipt_ref:
+ledger_synced_through:
+```
+
+- GitHub Queue scheduler가 이 값을 임의로 scan success로 만들지 않는다.
+- `last_actual_review_at`은 실제 review receipt에서만 파생한다.
+- `ledger_synced_through`는 Operations Ledger의 실제 batch merge/readback 기준일이다.
+- Queue가 새로 준비되어 `AWAITING_CHATGPT_REVIEW`가 되어도 이전 실제 review receipt의 역사적 사실은 사라지지 않는다.
+
+## `WEEKLY_SCAN_STATE_BATCH`
+
+일일 조사 때마다 timestamp-only PR을 만드는 것은 피하되, 실제 조사 이력이 Ledger에 영구히 반영되지 않아 모든 Source가 `NEVER`로 반복 선택되는 것도 허용하지 않는다. 따라서 Operations Ledger freshness는 **주 1회 batch**로 동기화한다.
+
+```text
+지난 7일 ACTUAL_SOURCE_REVIEW_RECEIPT 수집
+→ source_id 직접 증거 확인
+→ source별 가장 최근 실제 scan_date 선택
+→ retained material candidate 직접 증거 확인
+→ 실제 merged contribution ref 확인
+→ 기존 Ledger와 비교
+→ 변경이 있으면 Ledger-only 최소 PR
+→ 관련 검증
+→ merge/readback
+→ ledger_synced_through 갱신
+```
+
+### freshness 규칙
+
+- `last_successful_scan_at`: `scanned_source_ids`에 직접 기록된 Source만 최신 실제 `scan_date`로 이동한다.
+- `last_material_candidate_at`과 material count: retained Candidate Packet의 Source 연결과 count가 receipt에 직접 있을 때만 갱신한다.
+- `last_base_contribution_at`·ref·count: 실제 merged Base contribution을 Source와 연결하는 증거가 있을 때만 갱신한다.
+- counter는 감소시키거나 단순 추정으로 올리지 않는다.
+- Source가 실제로 확인됐지만 material change가 없었던 `NO_CHANGE` 회차도 freshness에는 반영한다.
+
+### 초기 상태 복구
+
+Ledger가 tracking 시작 이후 실제 Issue receipt와 명백히 어긋나 있으면 첫 `WEEKLY_SCAN_STATE_BATCH`에서 2026-08-11 이후의 기존 receipt를 한 번 보수적으로 복구할 수 있다.
+
+```text
+명시적 source_id receipt
+→ direct backfill
+
+source_id는 없지만 checked_at + 고유 Source 이름 + 실제 공식 surface가
+현재 Ledger family 하나와 일대일 대응
+→ bounded backfill
+
+애매한 이름 / 여러 Source family 후보 / snippet만 존재
+→ BLOCKED_UNVERIFIED_BACKFILL
+```
+
+과거 scan 이력을 추정해 채우는 것이 아니라 **이미 남아 있는 직접 관측 기록을 Ledger에 복구**하는 작업이다. 애매한 과거 기록은 `null`로 남기는 편을 우선한다.
+
+주간 Ledger-only PR은 단순 장식 timestamp churn이 아니라 **Due Source 선정 정확도와 반복 조사 비용을 복구하는 운영 정합성 변경**이다. 이 batch 외에 일일 timestamp-only PR을 만들지 않는다.
 
 ## Evidence 경계
 
@@ -176,13 +274,16 @@ Queue preparation은 Candidate Packet을 임의 생성하지 않는다.
 
 ## repository change가 생긴 뒤의 동시작업 Gate
 
-Queue 준비는 Issue만 갱신하므로 open PR과 repository path 경쟁을 만들지 않는다. 이후 사용자 지시 research가 실제 repository diff를 정당화하면 그때부터 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`을 적용한다.
+Queue 준비는 Issue만 갱신하므로 open PR과 repository path 경쟁을 만들지 않는다. 이후 실제 research가 repository diff를 정당화하면 현재 `AGENTS.md`의 open-PR 보호 규칙을 따른다.
 
 ```text
+OPEN_PR_READ_ONLY_BY_DEFAULT
+OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION
+
 latest completed main 확인
 → 같은 Goal/open PR read-only 확인
-→ 별도 integration branch
-→ 필요한 material delta만 selective copy / semantic reconciliation
+→ open PR path/semantic overlap 분리
+→ 겹치지 않는 승인 범위만 별도 branch에서 최소 변경
 → exact-head validation
 → P0/P1 0
 → unresolved review thread 0
@@ -190,11 +291,14 @@ latest completed main 확인
 → post-merge main readback
 ```
 
-open PR이 존재한다는 사실만으로 research를 멈추지 않는다. 실제 path/semantic overlap이 생기면 owner PR branch를 수정하지 않고 latest-main integration 경로에서 조정한다.
+- `open / draft / ready` PR은 사용자 최신 작업에서 PR 번호와 허용 동작을 명시하지 않는 한 수정·인수·rebase·close·merge하지 않는다.
+- same-goal 또는 과거 standing authorization만으로 open PR mutation 권한을 만들지 않는다.
+- 이 Queue 작업의 기본 후속 대상은 최신 completed `main`에 실제로 유지된 변경이다.
+- 실제 path/semantic overlap이 있는 open PR은 그 범위를 defer하고 다른 독립 범위만 진행한다.
 
 ## Queue Issue와 완료 경계
 
-열린 `[Periodic Source Scan Queue]` Issue는 하나만 유지한다. 예약 실행은 Due Source와 zero-cost receipt만 갱신한다. 실제 research가 시작되면 별도 comment/receipt에 조사 범위·원출처·Candidate Packet disposition·미검증을 남긴다.
+열린 `[Periodic Source Scan Queue]` Issue는 하나만 유지한다. 예약 실행은 Due Source와 zero-cost receipt만 갱신한다. 실제 research가 시작되면 별도 comment/receipt에 조사 범위·원출처·Candidate Packet disposition·미검증과 `ACTUAL_SOURCE_REVIEW_RECEIPT`를 남긴다.
 
 ```text
 Queue 완료 != scan 완료
@@ -203,6 +307,7 @@ Issue check 표시 != Evidence 검증
 Evidence Record 통합 != 프로젝트 Canon 갱신
 ChatGPT review 시작 != research 완료
 NO_CHANGE != research 미실행
+ACTUAL_SOURCE_REVIEW_RECEIPT != WEEKLY_SCAN_STATE_BATCH 완료
 ```
 
 신규 Source는 실제 research 전까지 `UNVERIFIED_DISCOVERY`다. 검색 결과·제목·snippet만으로 Active Source·Evidence·정책 권위를 부여하지 않는다.
@@ -211,4 +316,4 @@ NO_CHANGE != research 미실행
 
 GitHub schedule은 지연되거나 비활성화될 수 있으므로 `workflow_dispatch`를 복구 경로로 유지한다. 하루를 넘겨 Queue 준비 기록이 없으면 `SCHEDULE_DRIFT`로 확인한다.
 
-Rollback은 이 zero-cost Queue-preparation 변경을 revert한다. 그러나 revert로 별도 과금 경로를 다시 활성화하는 것은 `ZERO_INCREMENTAL_COST_REQUIRED`와 충돌하므로 사용자 정책 변경 없이 운영상 재활성화하지 않는다. 이 기능은 Runtime·Save/Data Schema·Skill Registry·프로젝트 Canon을 Migration하지 않는다.
+Rollback은 이 Source 운영 계약 변경을 revert한다. 그러나 revert로 별도 과금 경로를 다시 활성화하거나 실제 scan receipt와 Ledger를 다시 분리하는 것은 현재 운영 목표와 충돌하므로 사용자 정책 변경 없이 자동 재활성화하지 않는다. 이 기능은 Runtime·Save/Data Schema·Skill Registry·프로젝트 Canon을 Migration하지 않는다.

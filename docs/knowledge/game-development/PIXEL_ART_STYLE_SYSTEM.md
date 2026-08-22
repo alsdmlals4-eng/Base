@@ -29,7 +29,7 @@ NO_AUTOMATIC_PROJECT_STYLE_PROMOTION
 - Base Preset은 **선택 재료**이며 프로젝트 정본이 아니다.
 - Base Preset 이름을 프로젝트 문서에 복사했다는 사실만으로 스타일이 승인되지 않는다.
 - 이미 잠긴 프로젝트 Art Bible과 충돌하면 현행 프로젝트 정본을 우선한다.
-- 외부 예시는 `REFERENCE_ONLY`이며 제품 자산·라이선스 승인·Figma 승인·`PROJECT_ASSET_APPROVED`를 뜻하지 않는다.
+- 외부 예시는 `REFERENCE_ONLY`이며 제품 자산·라이선스 승인·Project Visual 승인·`PROJECT_ASSET_APPROVED`를 뜻하지 않는다.
 
 ## 2. 선택 Gate
 
@@ -54,7 +54,7 @@ FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS
 
 ### 결정 직전까지 더 나은 대안 탐색
 
-`BETTER_ALTERNATIVE_SEARCH`를 픽셀 아트 선택 전체에 적용한다. 최초 3개를 적은 뒤 조사 종료로 취급하지 않는다. 레퍼런스, 기술 제약, Figma 승인 자료, 실제 표시 크기, 애니메이션 비용, 프로토타입 결과에서 새 증거가 나오면 더 나은 후보를 계속 추가·교체한다.
+`BETTER_ALTERNATIVE_SEARCH`를 픽셀 아트 선택 전체에 적용한다. 최초 3개를 적은 뒤 조사 종료로 취급하지 않는다. 레퍼런스, 기술 제약, 승인된 Project Visual Reference / Notion Asset surface, 실제 표시 크기, 애니메이션 비용, 프로토타입 결과에서 새 증거가 나오면 더 나은 후보를 계속 추가·교체한다.
 
 프로젝트 승인 직전에는 마지막으로 다음을 다시 확인한다.
 
@@ -75,7 +75,7 @@ FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS
 - 애니메이션 프레임 수와 변형 비용
 - PC/모바일 해상도·화면비·카메라 확대 축소
 - 1인 개발자가 Production까지 유지할 수 있는가
-- Figma Visual Bible과 재사용 자산으로 구조화하기 쉬운가
+- Project Visual/Art Bible과 Notion human-facing 자산 구조로 연결하기 쉬운가
 - 향후 콘텐츠 확장·현지화·접근성에서 깨지지 않는가
 - 실패했을 때 다른 후보로 되돌리기 쉬운가
 
@@ -202,7 +202,7 @@ WORLD_CORE_SYSTEM_FIT
 ## 5. 프로젝트에서 사용하는 순서
 
 ```text
-프로젝트 Art/Visual canon + Figma 승인 Reference 확인
+프로젝트 Art/Visual canon + 승인된 Project Visual Reference / Notion Asset surface 확인
 → 아트가 해결해야 할 플레이어 질문 정의
 → MINIMUM_VIABLE_ALTERNATIVES: 3에 따라 비픽셀 현행 유지 포함 실질 후보 확보
 → 5축으로 후보를 기록
@@ -252,7 +252,7 @@ Godot의 pixel art는 원본 PNG만으로 결정되지 않는다. 실제 프로�
 - 카메라·화면비·주 플랫폼 변경
 - 캐릭터 수·유닛 수·반복 배경 수가 크게 증가
 - 애니메이션 요구량이 예상보다 커짐
-- Figma 승인 Reference 또는 프로젝트 Art Bible 변경
+- 승인된 Project Visual Reference / Notion Asset surface 또는 프로젝트 Art Bible 변경
 - 작은 화면 가독성·접근성 실패
 - 대표 자산은 좋지만 두 번째 같은 유형 자산에서 품질/비용이 유지되지 않음
 - 더 나은 생산 방식이나 장기적으로 싼 실질 후보가 발견됨
