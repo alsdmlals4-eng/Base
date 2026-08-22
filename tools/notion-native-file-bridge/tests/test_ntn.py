@@ -149,6 +149,22 @@ class NtnClientTests(unittest.TestCase):
             ["ntn", "api", f"v1/blocks/{block_id}", "--notion-version", NOTION_VERSION],
         )
 
+    def test_append_image_readback_failure_reports_ambiguous_state_instead_of_inviting_retry(self) -> None:
+        runner = QueueRunner(
+            [
+                completed('{"object":"list","results":[{"id":"block-1","type":"image"}]}'),
+                completed(stderr="temporary readback outage", returncode=1),
+            ]
+        )
+        client = NtnClient(executable="ntn", runner=runner)
+
+        with self.assertRaises(BridgeError) as ctx:
+            client.append_image("page-1", "upload-1")
+
+        self.assertEqual(ctx.exception.code, "AMBIGUOUS_DESTINATION_STATE")
+        self.assertIn("block-1", ctx.exception.detail)
+        self.assertIn("inspect", ctx.exception.detail.lower())
+
     def test_set_cover_uses_typed_file_upload_and_page_readback(self) -> None:
         runner = QueueRunner(
             [
