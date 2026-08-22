@@ -90,6 +90,16 @@ class NotionNativeFileBridgeContractTests(unittest.TestCase):
             self.fail("nested bridge unit suite failed:\n" + output.getvalue())
         self.assertGreaterEqual(result.testsRun, 10)
 
+    def test_windows_installer_falls_back_between_python_launchers_and_preflights_by_module(self) -> None:
+        script = (BRIDGE / "windows" / "Install_Notion_Native_File_Bridge.ps1").read_text(encoding="utf-8")
+
+        self.assertIn('Get-Command "py"', script)
+        self.assertIn('Get-Command "python"', script)
+        self.assertIn('"-3.12"', script)
+        self.assertIn("Test-Python312", script)
+        self.assertIn("notion_native_file_bridge.cli", script)
+        self.assertNotIn('Get-Command "notion-native-file-bridge"', script)
+
     def test_visual_layout_contract_routes_binary_media_without_false_android_pass(self) -> None:
         text = LAYOUT.read_text(encoding="utf-8")
         self.assertIn("Notion Native File Bridge", text)
