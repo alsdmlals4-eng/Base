@@ -140,16 +140,23 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
             r"if \(\$LASTEXITCODE -ne 0\) \{ exit \$LASTEXITCODE \}",
         )
 
-    def test_qa_evidence_changes_run_a_real_windows_smoke_without_retired_tools(self) -> None:
+    def test_retired_qa_evidence_studio_is_not_required_windows_smoke(self) -> None:
         classification = re.search(
             r"case \"\$path\" in(?P<body>.*?)(?=\n\s+esac)",
             self.text,
             flags=re.DOTALL,
         )
         self.assertIsNotNone(classification)
-        self.assertIn("tools/qa-evidence-studio/*", classification.group("body"))
+        body = classification.group("body")
+        self.assertIn("tools/qa-evidence-studio/*", body)
+        self.assertRegex(
+            body,
+            r"tools/qa-evidence-studio/\*\)\s+"
+            r"has_code=true\s+"
+            r"platform_smoke=false",
+        )
         for retired in ("tools/tool-hub/*", "tools/expression-studio/*", "tools/sprite-animation-studio/*"):
-            self.assertNotIn(retired, classification.group("body"))
+            self.assertNotIn(retired, body)
 
         windows_match = re.search(
             r"platform-smoke-windows:\n(?P<body>.*?)(?=\n  ci-gate:)",
@@ -157,11 +164,13 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
             flags=re.DOTALL,
         )
         self.assertIsNotNone(windows_match)
-        body = windows_match.group("body")
-        self.assertIn("Install Windows QA Evidence Studio dependencies", body)
-        self.assertIn("Run Windows QA Evidence Studio smoke", body)
-        self.assertIn("tools/qa-evidence-studio/tests", body)
-        self.assertNotIn("tools/tool-hub", body)
+        windows_body = windows_match.group("body")
+        for disabled_step in (
+            "- name: Install Windows QA Evidence Studio dependencies\n        if: ${{ false }}",
+            "- name: Run Windows QA Evidence Studio smoke\n        if: ${{ false }}",
+        ):
+            self.assertIn(disabled_step, windows_body)
+        self.assertNotIn("tools/tool-hub", windows_body)
 
     def test_runtime_readiness_and_local_runner_are_validated_at_their_risk_tiers(self) -> None:
         publication_risk = re.search(
