@@ -3,7 +3,7 @@
 - 상태: `BASE_REFERENCE_IMPLEMENTED`
 - 승인: 사용자 2026-08-20 — P0 1~4순위 실제 구현 및 프로젝트 Pilot; 2026-08-22 — `RM-TOOL-003` 남은 구현·다중 프로젝트 검증 진행
 - 목적: `MODULE_CONTRACT_DEFINED`에서 실제 재사용 가능한 reference implementation + project adapter/evidence로 승격한다.
-- 상태 우선순위: 이 문서는 아래 P0 ID들의 **최신 구현 상태**를 기록하며, 이전 `REUSABLE_MODULE_REGISTRY.md` 또는 분야 문서의 `IMPLEMENTATION_NOT_BUILT` 표기는 해당 ID에 한해 이 문서와 각 전용 implementation pilot이 갱신한다.
+- 상태 우선순위: 이 문서는 아래 P0 ID들의 **최신 구현 상태**를 기록한다. `REUSABLE_MODULE_REGISTRY.md`는 Base PR #591 병합본에서 completed-main reference implementation freshness를 정합화했으며, `RM-TOOL-003` 상세 증거는 전용 implementation pilot이 소유한다.
 - `RM-TOOL-003` 상세 상태 owner: `docs/knowledge/game-development/reuse/RM_TOOL_003_IMPLEMENTATION_PILOT.md`.
 
 ## 구현 대상과 현재 상태
@@ -15,7 +15,7 @@
 | `RM-SYS-003 CANDIDATE_DRAFT_WEIGHT_ENGINE` | `templates/reuse-modules/godot/candidate_draft_weight_engine.gd` | Omenward PR #198 | `BASE_REFERENCE_IMPLEMENTED · PROJECT_ADAPTER_VERIFIED_CORE · PROJECT_MERGED` |
 | `RM-VIS-001 SEMANTIC_UI_SKIN_KIT` | `templates/reuse-modules/godot/semantic_ui_skin_kit.gd` | Switchy PR #154 | `BASE_REFERENCE_IMPLEMENTED · PROJECT_ADAPTER_VERIFIED_GUT · PILOT_MERGE_BLOCKED_UNRELATED_BASELINE` |
 | `RM-VIS-002 GAMEPLAY_SYMBOL_ATLAS` | `templates/reuse-modules/godot/gameplay_symbol_atlas.gd` | Switchy PR #154 | `BASE_REFERENCE_IMPLEMENTED · PROJECT_ADAPTER_VERIFIED_GUT · PILOT_MERGE_BLOCKED_UNRELATED_BASELINE` |
-| `RM-TOOL-003 BALANCE_SCENARIO_BATCH_SIMULATOR` | `tools/reuse_modules/balance_scenario_batch_simulator.py` | Omenward #202 / Blacksmith #181 / Ninja #24 | `BASE_REFERENCE_IMPLEMENTED · MULTI_PROJECT_READ_ONLY_CONTRACT_EVIDENCE · PROJECT_PRS_PENDING_MERGE` |
+| `RM-TOOL-003 BALANCE_SCENARIO_BATCH_SIMULATOR` | `tools/reuse_modules/balance_scenario_batch_simulator.py` | Omenward #202 / Blacksmith #181 / Ninja #24 | `BASE_REFERENCE_IMPLEMENTED · MULTI_PROJECT_READ_ONLY_CONTRACT_EVIDENCE · PROJECT_PRS_MERGED_MAIN_READBACK` |
 
 ## 구현 경계
 
@@ -88,14 +88,17 @@ small neutral core
   - `tests/test_balance_scenario_batch_simulator.py`
   - `tests/test_balance_scenario_batch_schema.py`
   - `tests/test_balance_scenario_batch_read_only.py`
+- Base PR #580 squash merge: `8c9a32379244e9de67c72ae949653cd3a16b5746`.
+- Base PR #591 merge `e37c4e72344662b344f62a442dd2f7f39dbad34e`에서 Registry의 `RM-TOOL-003` 상태도 `REFERENCE_IMPLEMENTATION_EXISTS · MULTI_PROJECT_READ_ONLY_CONTRACT_EVIDENCE`로 정합화됐다.
 
 ### Omenward · RM-TOOL-003 PR #202
 
 - changed paths: `docs/analysis/balance/`의 Markdown + JSON 두 파일만 추가.
-- open canon reconciliation PR #201과 changed-path 교집합 0.
 - 10,000 deterministic seed planning-envelope Pilot에서 normalization 이후 raw envelope 밖으로 이동하는 표본을 W1 `1.24%`, W2 `1.93%`, Final `3.44%` 관찰했다.
-- `Validate Base v9 adoption` run `32539884644`: `SUCCESS`.
-- `Validate Project Core Documentation` run `32539884555`와 `Validate Omenward GDD Sheet Adoption` run `32539884696`은 current main의 기존 canon/legacy-validator drift로 실패했다. 로그는 `PROJECT_CORE`, `CURRENT_IMPLEMENTATION_STATUS`, historical C1/Vertical Slice marker 불일치를 지목하며 이번 두 sidecar 파일과 무관하다. 이 범위는 open PR #201이 소유하므로 #202에서 우회·수정하지 않는다.
+- 최초 #202 head의 `Validate Base v9 adoption` run `32539884644`는 `SUCCESS`였다. 당시 Project Core/GDD 두 실패는 #202 sidecar와 무관한 pre-#201 canon/legacy-validator drift였다.
+- 선행 PR #201은 exact head `17f8b0a7a5753fe16ff54806ecaa31dcea3ef609`에서 15개 PR workflow가 모두 `SUCCESS`였고 squash merge `4876748eb4683b4f7f711f30e0029ffad4f707b2`로 current canon/legacy-validator drift를 해소했다.
+- 그 뒤 #202를 새 main 기준으로 재확인해 `mergeable=true`를 확인하고 squash merge `b46374e511447cb531709a5d56f3ba9a6e4dcc8d`로 반영했다.
+- Omenward 최종 `main`이 #202 merge `b46374e511447cb531709a5d56f3ba9a6e4dcc8d`를 가리키고 parent가 #201 merge임을 readback했으며, 두 sidecar 파일도 `main`에서 직접 readback했다.
 - runtime/human/final numerics는 계속 `NOT_RUN/NOT_APPROVED`.
 
 ### Blacksmith · RM-TOOL-003 PR #181
@@ -109,6 +112,7 @@ small neutral core
   - Validate Thin Adapter Migration `32539891561`
   - Validate Blacksmith BCA Adoption `32539891585`
   - PR validation `32539891645`
+- squash merge `307126031956bf5345da20a7b0c4466aa26c9b94` 후 Blacksmith `main` readback과 Notion Handoff `MERGED` 동기화를 완료했다.
 
 ### Ninja Survival · RM-TOOL-003 PR #24
 
@@ -117,6 +121,7 @@ small neutral core
 - `data/stages/`가 `.gitkeep`뿐임을 확인해 DEC-026 신규 balance는 생성/추정하지 않았다.
 - 2개 docs/evidence 파일만 추가했고 runtime/data/test 변경은 0.
 - exact head `6b4cb0bfc48d9029f209ea9e9d4f0d0692220722`의 GUT run `32539901612`: `SUCCESS`.
+- squash merge `46c5e151808f2481cc20be0003dd03866133ae49` 후 Ninja Survival `main` readback과 Notion Handoff `MERGED` 동기화를 완료했다.
 
 ## 기존 P0 5회 전체 적대적 개선 루프
 
@@ -138,11 +143,12 @@ small neutral core
 FULL_LOOP_COUNT_EXISTING_P0: 5
 FULL_LOOP_COUNT_RM_TOOL_003: 5
 BASE_VALID_MUST_FIX_REMAINING_BEFORE_CI: 0
-RM_TOOL_003_BASE_KERNEL: BASE_REFERENCE_IMPLEMENTED
-RM_TOOL_003_OMENWARD: SIDECAREVIDENCE_BASE_V9_PASS_EXISTING_DOC_DRIFT_SEPARATED
-RM_TOOL_003_BLACKSMITH: FIVE_WORKFLOWS_SUCCESS
-RM_TOOL_003_NINJA: GUT_SUCCESS
-RM_TOOL_003_PROJECT_PRS: OPEN_UNMERGED_READ_ONLY
+RM_TOOL_003_BASE_KERNEL: BASE_REFERENCE_IMPLEMENTED_MERGED
+RM_TOOL_003_OMENWARD: MERGED_MAIN_READBACK_PLANNING_ONLY
+RM_TOOL_003_BLACKSMITH: MERGED_MAIN_READBACK_INTEROP_ONLY
+RM_TOOL_003_NINJA: MERGED_MAIN_READBACK_LEGACY_ACTUATOR_ONLY
+RM_TOOL_003_PROJECT_PRS: ALL_THREE_MERGED_MAIN_READBACK
+RM_TOOL_003_REGISTRY: REFERENCE_IMPLEMENTATION_EXISTS_ALIGNED_BY_BASE_591
 RM_TOOL_003_TOOL_HUB_GUI: DEFER
 LOCAL_CLONE_EXECUTION: NOT_RUN_NETWORK_BLOCKED
 HUMAN_PLAYER_EXPERIENCE: NOT_RUN
@@ -153,15 +159,15 @@ PRODUCT_BALANCE_PASS: NOT_CLAIMED
 
 - reference source 존재만으로 프로젝트 재사용 PASS를 주장하지 않는다.
 - project adapter/test가 실제 해당 프로젝트 CI/Godot에서 실행돼야 runtime 관련 `PROJECT_ADAPTER_VERIFIED`를 주장한다.
-- docs-only Pilot의 sidecar 분석 성공을 전체 프로젝트 merge-ready/product balance와 혼동하지 않는다.
-- Omenward #202의 두 baseline validator failure는 별도 #201 영역이며 이번 Pilot에서 수정하지 않는다.
+- docs-only Pilot의 sidecar 분석 성공을 전체 프로젝트 product balance PASS와 혼동하지 않는다.
+- Omenward #202의 최초 두 baseline validator failure는 **pre-#201 historical evidence**이며 #201 merge 후 current blocker가 아니다.
 - player fun/immersion, 실제 최종 UI 아트 품질, final product balance는 별도 release-near Vertical Slice/player evidence 없이는 `NOT_RUN/NOT_APPROVED`다.
 - `RM-TOOL-003`의 goal-seek output은 non-authoritative candidate ranking이며 project data를 자동 변경하지 않는다.
 
 ## Rollback
 
-- Base: eventual squash merge를 revert하면 reference analyzer/test/template와 `RM_TOOL_003_IMPLEMENTATION_PILOT.md` 상태 문서를 함께 원복한다.
+- Base RM-TOOL-003 reference: #580 merge `8c9a32379244e9de67c72ae949653cd3a16b5746`을 revert하고, Registry에서 #591이 추가한 `RM-TOOL-003 REFERENCE_IMPLEMENTATION_EXISTS` freshness claim만 후속 정합화한다. #591 전체를 되돌려 다른 context-synthesis 변경까지 제거하지 않는다.
 - Urban Legend: merge `5c91f4ff8d88b3e00f66252ba6f566795f2e50a3`를 revert하면 validator/test/manifest 세 파일만 제거된다.
 - Omenward RM-SYS-003: merge `67487c932cc883db95da7bc852f4eb33883f0052`를 revert하면 isolated vendor/reference adapter scope만 제거된다.
 - Switchy의 기존 Pilot은 현재 미병합 보호 상태를 유지한다.
-- Omenward #202 / Blacksmith #181 / Ninja #24는 docs-only open PR이므로 미병합 상태에서 폐기하면 product/runtime canon에 영향이 없다.
+- Omenward RM-TOOL-003은 #202 merge `b46374e511447cb531709a5d56f3ba9a6e4dcc8d`, Blacksmith는 #181 merge `307126031956bf5345da20a7b0c4466aa26c9b94`, Ninja Survival은 #24 merge `46c5e151808f2481cc20be0003dd03866133ae49`를 각각 revert하면 해당 docs-only sidecar만 제거된다.
