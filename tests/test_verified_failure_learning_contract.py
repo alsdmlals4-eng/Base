@@ -6,6 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "skills" / "evolving-project-discipline-skills" / "SKILL.md"
+LEARNING_LOG = ROOT / "skills" / "evolving-project-discipline-skills" / "LEARNING_LOG.md"
 REFERENCE = (
     ROOT
     / "skills"
@@ -20,10 +21,13 @@ class VerifiedFailureLearningContractTests(unittest.TestCase):
         self.assertTrue(REFERENCE.is_file(), "verified failure learning reference is missing")
         return REFERENCE.read_text(encoding="utf-8")
 
-    def test_existing_skill_owns_verified_failure_learning_without_new_skill(self) -> None:
+    def test_existing_learn_mode_routes_failure_evidence_without_new_skill(self) -> None:
         skill = SKILL.read_text(encoding="utf-8")
-        self.assertIn("verified-failure-learning-and-promotion.md", skill)
-        self.assertIn("VERIFIED_FAILURE_LEARNING", skill)
+        learning = LEARNING_LOG.read_text(encoding="utf-8")
+        self.assertIn("→ learn`", skill)
+        self.assertIn("learning_and_failure_evidence:", skill)
+        self.assertIn("verified-failure-learning-and-promotion.md", learning)
+        self.assertIn("VERIFIED_FAILURE_LEARNING", learning)
 
     def test_failure_learning_requires_verified_fix_before_reuse(self) -> None:
         text = self.reference_text()
