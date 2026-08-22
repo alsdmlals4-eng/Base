@@ -158,6 +158,7 @@ class BalanceScenarioBatchSimulatorTests(unittest.TestCase):
         self.assertEqual("candidate_good", ranking[0]["variant"])
         self.assertEqual(0.0, ranking[0]["distance_to_target"])
         self.assertTrue(ranking[0]["inside_target"])
+        self.assertEqual(0.5, ranking[0]["inside_target_share"])
         self.assertEqual("candidate_bad", ranking[1]["variant"])
         self.assertTrue(report["goal_seek"][0]["non_authoritative"])
 
@@ -181,6 +182,48 @@ class BalanceScenarioBatchSimulatorTests(unittest.TestCase):
         baseline = report["variants"]["baseline"]
         self.assertEqual({"X": 1.0}, baseline["failure_rates"])
         self.assertLessEqual(max(baseline["failure_rates"].values()), 1.0)
+
+    def test_goal_seek_prefers_more_runs_inside_target_when_medians_tie(self) -> None:
+        module = load_module()
+        runs = []
+        volatile = [0, 40, 40, 100]
+        stable = [35, 40, 40, 45]
+        for seed, value in enumerate(volatile, start=1):
+            runs.append(
+                {
+                    "seed": seed,
+                    "variant": "candidate_a_volatile",
+                    "metrics": {"score": value},
+                }
+            )
+        for seed, value in enumerate(stable, start=1):
+            runs.append(
+                {
+                    "seed": seed,
+                    "variant": "candidate_z_stable",
+                    "metrics": {"score": value},
+                }
+            )
+        manifest = {
+            "schema_version": 1,
+            "project_id": "TEST",
+            "runs": runs,
+            "goal_seek": [
+                {
+                    "metric": "score",
+                    "target": [30, 50],
+                    "variants": ["candidate_a_volatile", "candidate_z_stable"],
+                }
+            ],
+        }
+
+        ranking = module.analyze_manifest(manifest)["goal_seek"][0]["ranking"]
+
+        self.assertEqual("candidate_z_stable", ranking[0]["variant"])
+        self.assertEqual(1.0, ranking[0]["inside_target_share"])
+        self.assertEqual(0.5, ranking[1]["inside_target_share"])
+        self.assertEqual(0.0, ranking[0]["distance_to_target"])
+        self.assertEqual(0.0, ranking[1]["distance_to_target"])
 
     def test_rejects_duplicate_variant_seed_and_invalid_metrics(self) -> None:
         self.assertTrue(MODULE_PATH.is_file(), MODULE_PATH)
