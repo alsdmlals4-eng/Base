@@ -1,8 +1,15 @@
 # Project Reuse Opportunity Scan
 
-이 Template은 프로젝트마다 **재사용 가능한 장르 문법·메커닉·시스템·콘텐츠/데이터 구조·UI/UX·도구·자동화·에셋/이미지 재료·작업구조·Skill/Eval·QA 패턴**을 찾고, 역공학·재사용·재구현 여부를 결정할 때 사용한다.
+이 Template은 프로젝트마다 **재사용 가능한 장르 문법·메커닉·시스템·콘텐츠/데이터 구조·UI/UX·도구·자동화·에셋/이미지 재료·작업구조·Skill/Eval·QA 패턴**을 찾고, 역공학·재사용·재구현 또는 Context-Synthesis 여부를 결정할 때 사용한다.
 
 현재 Base에서 이미 추출된 공용/프로젝트-seed 모듈은 `docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md`를 먼저 확인한다. 기존 모듈이 현재 병목을 해결하면 새 후보를 만들기보다 재사용·변형·프로젝트 adapter를 우선한다. 이 Registry는 후보 계약과 검증 상태를 기록하며, 프로젝트 runtime·Asset·Skill 권위를 자동 획득하지 않는다.
+
+Context-Synthesis 세부 규칙은 `docs/knowledge/research/CONTEXT_DRIVEN_REUSE_SYNTHESIS.md`를 따른다.
+
+```text
+SOURCE_NOT_REQUIRED_FOR_HYPOTHESIS
+EVIDENCE_REQUIRED_FOR_PROMOTION
+```
 
 ## 0. Scan identity
 
@@ -25,6 +32,7 @@ status: DRAFT | IN_RESEARCH | READY_FOR_DECISION | VALIDATED | SUPERSEDED
 - 현재 도구·자동화:
 - 현재 Asset/Image 재사용 구조:
 - 현재 작업구조·Skill/Eval:
+- 승인된 roadmap / planned consumers:
 - 플랫폼·성능·접근성:
 - 일정·비용·인력 제약:
 - 권리·라이선스·보안 제약:
@@ -32,29 +40,47 @@ status: DRAFT | IN_RESEARCH | READY_FOR_DECISION | VALIDATED | SUPERSEDED
 
 ## 2. Repeated cost & bottleneck map
 
-| 병목 ID | 사용자/플레이어 문제 또는 제작 문제 | 반복 빈도 | 현재 비용·마찰 | 현재 우회법 | 영향을 받는 코어 | 근거 |
+| 병목 ID | 사용자/플레이어 문제 또는 제작 문제 | 반복 빈도/예정 반복 | 현재 비용·마찰 | 현재 우회법 | 영향을 받는 코어 | 근거 |
 |---|---|---:|---|---|---|---|
 | B-001 |  |  |  |  |  |  |
 
-## 3. Candidate discovery matrix
+## 3. Candidate origin gate
 
-사용자가 예시로 든 장르에만 한정하지 않는다. 프로젝트 병목을 해결할 가능성이 있는 후보를 내부 → Base → 직접 장르 → 인접 장르 → 비게임 제품/도구 → 오픈소스/에셋 → 실패사례 순으로 넓혀 찾는다.
+각 후보는 발견/설계 기원을 먼저 기록한다.
 
-| 후보 ID | Candidate family | 해결 대상 병목 | 참고 사례/Source | 공통 원리 | 예상 절감/가치 | 현재 프로젝트 적합성 | 상태 |
-|---|---|---|---|---|---|---|---|
-| C-001 | Genre foundation |  |  |  |  |  | DISCOVERED |
-| C-002 | Mechanic / system |  |  |  |  |  | DISCOVERED |
-| C-003 | Content / data schema |  |  |  |  |  | DISCOVERED |
-| C-004 | UI / UX |  |  |  |  |  | DISCOVERED |
-| C-005 | Tool / automation |  |  |  |  |  | DISCOVERED |
-| C-006 | Asset / image material |  |  |  |  |  | DISCOVERED |
-| C-007 | Workflow / work structure |  |  |  |  |  | DISCOVERED |
-| C-008 | Skill / evaluation |  |  |  |  |  | DISCOVERED |
-| C-009 | Testing / QA |  |  |  |  |  | DISCOVERED |
+```yaml
+candidate_id:
+candidate_origin: EVIDENCE_DERIVED | CONTEXT_SYNTHESIZED | HYBRID
+maturity: HYPOTHESIS | MODULE_CONTRACT_DEFINED | REFERENCE_IMPLEMENTATION_EXISTS | PROJECT_ADAPTER_VERIFIED | PROJECT_MERGED
+validation_state: VALIDATION_NOT_RUN | FOCUSED_VERIFIED | MULTI_CONTEXT_VERIFIED | PLAYER_OR_USER_VERIFIED
+context_basis:
+planned_consumers: []
+falsification_test:
+smallest_pilot:
+rollback_or_discard_condition:
+```
 
-## 4. Multi-source reverse engineering
+- `EVIDENCE_DERIVED`: 실제 구현·반복 문제·benchmark·실패 기록에서 추출한다.
+- `CONTEXT_SYNTHESIZED`: 반복 evidence가 없어도 현재 구조·roadmap·예상 비용에서 새 contract를 가설로 설계한다.
+- `HYBRID`: 두 경로를 함께 사용한다.
 
-일반화하는 후보는 가능한 경우 materially distinct 사례 3개 이상을 비교한다. 세 사례를 확보하지 못하면 `SINGLE_SOURCE_HYPOTHESIS`로 유지한다.
+Context-Synthesized 후보는 Source가 없어도 만들 수 있지만 `context_basis`, 실명 가능한 `planned_consumers`, `falsification_test`, `smallest_pilot` 없이 durable module candidate로 승격하지 않는다.
+
+## 4. Candidate discovery matrix
+
+사용자가 예시로 든 장르에만 한정하지 않는다. Evidence-derived 후보는 프로젝트 병목을 해결할 가능성이 있는 후보를 내부 → Base → 직접 장르 → 인접 장르 → 비게임 제품/도구 → 오픈소스/에셋 → 실패사례 순으로 넓혀 찾는다. Context-Synthesized 후보는 승인 roadmap·책임 구조·한 입력 다중 소비·예상 반복비용을 먼저 본다.
+
+| 후보 ID | Origin | Candidate family | 해결 대상 병목/예상 반복 | 참고 사례/Context | 공통 원리/가설 | 예상 절감/가치 | 현재 프로젝트 적합성 | 상태 |
+|---|---|---|---|---|---|---|---|---|
+| C-001 | EVIDENCE_DERIVED | Genre foundation |  |  |  |  |  | DISCOVERED |
+| C-002 | CONTEXT_SYNTHESIZED | Mechanic / system |  |  |  |  |  | HYPOTHESIS |
+| C-003 | HYBRID | Workflow / work structure |  |  |  |  |  | HYPOTHESIS |
+
+## 5. Multi-source reverse engineering
+
+외부 반복 불변원리를 일반화하는 후보는 가능한 경우 materially distinct 사례 3개 이상을 비교한다. 세 사례를 확보하지 못하면 `SINGLE_SOURCE_HYPOTHESIS`로 유지한다.
+
+Pure `CONTEXT_SYNTHESIZED` hypothesis에는 세 Source가 선행 조건이 아니다. 이 경우 내부 context packet과 falsification/pilot이 선행 조건이다. 이후 외부 반복 불변원리를 주장하려면 evidence 기준을 적용한다.
 
 ```yaml
 candidate_id:
@@ -69,7 +95,7 @@ what_is_signature_expression_not_pattern:
 source_and_rights_notes:
 ```
 
-### 4A. Public video evidence provenance
+### 5A. Public video evidence provenance
 
 공개 YouTube 영상·강연·튜토리얼·개발자 인터뷰의 **본문 내용이 현재 판단에 실제로 필요한 경우** `RM-TOOL-005 PUBLIC_VIDEO_RESEARCH_INGEST_ADAPTER` 또는 동등한 검증 경로로 transcript provenance와 timestamp를 확보한다.
 
@@ -94,10 +120,15 @@ public_video_evidence:
 - 전체 제3자 transcript 전문은 기본적으로 `.tmp/` 같은 local research cache에만 둔다. 프로젝트/Base 문서에는 현재 결정에 필요한 derived note·timestamp·허용 범위의 짧은 인용만 남긴다.
 - transcript 확보는 speaker claim의 사실성·저작권 허가·프로젝트 적합성을 자동 증명하지 않는다.
 
-## 5. Reusable contract
+## 6. Reusable contract
 
 ```yaml
 candidate_id:
+candidate_origin: EVIDENCE_DERIVED | CONTEXT_SYNTHESIZED | HYBRID
+maturity:
+validation_state:
+context_basis:
+planned_consumers: []
 unit_type:
 problem_or_player_need:
 production_problem:
@@ -113,11 +144,14 @@ content_or_asset_interfaces:
 test_or_validation_interface:
 source_observations:
 rights_and_license_boundary:
+falsification_test:
+smallest_pilot:
+rollback_or_discard_condition:
 ```
 
-## 6. Existing Solution First
+## 7. Existing Solution First
 
-| 후보 | 프로젝트 내부 | Base/다른 프로젝트 검증 요소 | 공식/오픈소스/Asset 해결책 | 설정·래핑 가능 | 신규 재현 필요 | 판정 |
+| 후보 | 프로젝트 내부 | Base/다른 프로젝트 검증 요소 | 공식/오픈소스/Asset 해결책 | 설정·래핑/조합 가능 | 신규 계약 필요 | 판정 |
 |---|---|---|---|---|---|---|
 |  |  |  |  |  |  |  |
 
@@ -129,9 +163,9 @@ rights_and_license_boundary:
 - `CLEAN_ROOM_REIMPLEMENTATION`
 - `REJECT`
 
-`CLEAN_ROOM_REIMPLEMENTATION`은 독립적으로 정리한 관찰 계약과 테스트에서 새 구현을 작성하는 엔지니어링 경계이며, 권리·라이선스 적합성을 자동 보장하지 않는다.
+`CLEAN_ROOM_REIMPLEMENTATION`은 독립적으로 정리한 관찰 계약과 테스트에서 새 구현을 작성하는 엔지니어링 경계이며, 권리·라이선스 적합성을 자동 보장하지 않는다. Context-Synthesis도 Existing Solution First를 우회하지 않는다.
 
-## 7. Fit / cost / risk
+## 8. Fit / cost / risk
 
 | 후보 | 플레이어/사용자 가치 | Core fit | 제작시간 절감 | 반복 빈도 | 통합 비용 | 유지 비용 | 권리·보안 위험 | 증거 | Rollback | 우선순위 |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -141,9 +175,9 @@ rights_and_license_boundary:
 
 Tool/Workflow/Visual provider 후보에서 제작시간을 비교할 때 생성/실행 시간만 보지 않고 필요하면 `RM-WORK-002`의 `HUMAN_EDIT_DELTA`로 재시도·사람 수정·통합·QA를 포함한 total effort를 비교한다.
 
-## 8. NOVELTY_DELTA
+## 9. NOVELTY_DELTA
 
-`PATTERN_EXTRACT` 또는 `CLEAN_ROOM_REIMPLEMENTATION` 후보마다 기록한다.
+`PATTERN_EXTRACT`, `CLEAN_ROOM_REIMPLEMENTATION`, `CONTEXT_SYNTHESIZED` 후보마다 기록한다.
 
 ```yaml
 candidate_id:
@@ -161,7 +195,7 @@ NOVELTY_DELTA:
 
 장르의 익숙한 table-stakes를 유지하는 경우에는 유지 이유와 프로젝트 고유 차별점을 별도로 적는다.
 
-## 9. Reuse owner routing
+## 10. Reuse owner routing
 
 | 후보 | 최종 owner | 저장 위치 | 필요한 검증 | 승격 상태 |
 |---|---|---|---|---|
@@ -173,15 +207,16 @@ NOVELTY_DELTA:
 | Skill / evaluation | AI Skill adoption/evolution owner |  | positive/negative/non-route eval | PROJECT_ONLY / BASE_PROMOTION_CANDIDATE |
 | Testing / QA | 현재 validation owner |  | 재현성·회귀·극단값 | PROJECT_ONLY / BASE_PROMOTION_CANDIDATE |
 
-발견만으로 권위가 상승하지 않는다.
+발견이나 Context-Synthesis만으로 권위가 상승하지 않는다.
 
 ```text
 discovery != PROJECT_ASSET_APPROVED
 discovery != NEW_SKILL_APPROVED
 discovery != RUNTIME_PROOF
+CONTEXT_SYNTHESIS_IS_NOT_VALIDATION
 ```
 
-## 10. Project-specific synthesis
+## 11. Project-specific synthesis
 
 ```text
 REUSABLE FOUNDATION
@@ -199,8 +234,11 @@ REUSABLE FOUNDATION
 - 제작비가 줄어드는 지점:
 - 새로운 의존성/위험:
 
-## 11. Validation contract
+## 12. Validation contract
 
+- candidate origin / maturity / validation state:
+- Context basis / planned consumers / falsification test:
+- smallest pilot / discard condition:
 - 기술/규칙 PoC:
 - 대표 Vertical Slice 필요 여부:
 - Tool 대표 입력/실패/복구 테스트:
@@ -213,13 +251,13 @@ REUSABLE FOUNDATION
 - 사용자/플레이어 실제 증거:
 - 미검증:
 
-## 12. Decision
+## 13. Decision
 
 | 후보 | 결정 | 이유 | 다음 행동 | Revisit condition |
 |---|---|---|---|---|
 |  | ADOPT / ADAPT / TEST / REJECT / DEFER |  |  |  |
 
-## 13. Promotion
+## 14. Promotion
 
 - `PROJECT_ONLY`:
 - `BASE_PROMOTION_CANDIDATE`:
@@ -227,3 +265,5 @@ REUSABLE FOUNDATION
 - 공용 승격에 필요한 추가 프로젝트/증거:
 - 프로젝트 정본 갱신 위치:
 - 롤백:
+
+`SOURCE_NOT_REQUIRED_FOR_HYPOTHESIS`는 발명 경로를 열기 위한 규칙이다. `EVIDENCE_REQUIRED_FOR_PROMOTION`은 그 발명이 검증됐다고 과장하지 않기 위한 별도 규칙이다.
