@@ -1,7 +1,7 @@
 # Reusable Module Registry
 
 - 상태: Base 공용 재사용 모듈 카탈로그
-- 기준일: 2026-08-20 KST
+- 기준일: 2026-08-22 KST
 - source method: `docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md`
 - project scan template: `templates/research/PROJECT_REUSE_OPPORTUNITY_SCAN.md`
 - human view: `NOTION_HUMAN_VIEW`
@@ -18,6 +18,7 @@ module contract != shared runtime implementation
 module discovery != PROJECT_ASSET_APPROVED
 module discovery != NEW_SKILL_APPROVED
 module contract != player-experience PASS
+REFERENCE_IMPLEMENTATION_EXISTS != project adoption/runtime proof
 NOTION_HUMAN_VIEW != repository structured/runtime authority
 ```
 
@@ -44,6 +45,7 @@ Notion `PROJECT REGISTRY · Master`에서 2026-08-20 현재 `ACTIVE`로 분류�
 |---|---|
 | `MODULE_CONTRACT_DEFINED` | 입력·상태·규칙·출력·경계가 Base 문서로 추상화됨 |
 | `IMPLEMENTATION_NOT_BUILT` | 공용 runtime/tool 구현은 아직 만들지 않음 |
+| `REFERENCE_IMPLEMENTATION_EXISTS` | Base에 bounded reference script/tool은 있으나 project adoption·live/runtime proof는 별도 |
 | `PROJECT_IMPLEMENTATION_EXISTS` | 하나 이상의 프로젝트에 유사 기능이 실제 존재하지만 공용화하지 않음 |
 | `PROJECT_SEED` | 특정 프로젝트에서 강하게 출발한 모듈. 다른 프로젝트 검증 전 보편화 금지 |
 | `BASE_PROMOTION_CANDIDATE` | 둘 이상의 프로젝트/벤치마크에서 반복 가치가 보여 공용화 후보 |
@@ -70,6 +72,8 @@ Notion `PROJECT REGISTRY · Master`에서 2026-08-20 현재 `ACTIVE`로 분류�
 8. `RM-VIS-002 GAMEPLAY_SYMBOL_ATLAS`
 
 이 목록은 공용 코드 구현 승인이나 모든 프로젝트 일괄 적용을 뜻하지 않는다. 각 프로젝트에서 adapter 비용과 실제 소비자를 확인한 뒤 최소 Pilot부터 적용한다.
+
+`RM-TOOL-005`와 `RM-VIS-006`은 2026-08-22에 추가된 **조건부 연구/제작 adapter**다. 기존 P0 gameplay/runtime 우선순위를 밀어내지 않으며, 실제 소비 장면에서만 Pilot한다.
 
 ## 5. Gameplay / content / narrative modules
 
@@ -110,8 +114,11 @@ Notion `PROJECT REGISTRY · Master`에서 2026-08-20 현재 `ACTIVE`로 분류�
 | `RM-TOOL-002` | `DETERMINISTIC_SEED_REPLAY_CAPTURE` | TEN_PACES / OMENWARD / BLACKSMITH / SWITCHY / TETRIS / NINJA_SURVIVAL | `PATTERN_EXTRACT` | `MODULE_CONTRACT_DEFINED · BASE_PROMOTION_CANDIDATE · IMPLEMENTATION_NOT_BUILT` |
 | `RM-TOOL-003` | `BALANCE_SCENARIO_BATCH_SIMULATOR` | deterministic runner + project snapshot candidate | `PATTERN_EXTRACT` | `MODULE_CONTRACT_DEFINED · IMPLEMENTATION_NOT_BUILT` |
 | `RM-TOOL-004` | `REPOSITORY_NATIVE_EVIDENCE_CAPTURE` | current project tests/runtime/CI + Notion human link | `EXISTING_OWNER_REUSE` | `BASE_ACTIVE_METHOD · NO_DEDICATED_CAPTURE_APP` |
+| `RM-TOOL-005` | `PUBLIC_VIDEO_RESEARCH_INGEST_ADAPTER` | public talk/tutorial/developer interview evidence | `PATTERN_EXTRACT` + thin `yt-dlp` adapter | `MODULE_CONTRACT_DEFINED · BASE_PROMOTION_CANDIDATE · REFERENCE_IMPLEMENTATION_EXISTS` |
 | `RM-WORK-001` | `PROJECT_REUSE_OPPORTUNITY_SCAN` | merged Base reverse-engineering method | `EXISTING_OWNER_REUSE` | `BASE_ACTIVE_METHOD` |
-| `RM-WORK-002` | `SKILL_WORKFLOW_PATTERN_EVAL` | `docs/AI_SKILL_ADOPTION_GUIDE.md` | `EXISTING_OWNER_REUSE` | `BASE_ACTIVE_METHOD` |
+| `RM-WORK-002` | `SKILL_WORKFLOW_PATTERN_EVAL` | `docs/AI_SKILL_ADOPTION_GUIDE.md` | `EXISTING_OWNER_REUSE` | `BASE_ACTIVE_METHOD · HUMAN_EDIT_DELTA` |
+
+`RM-TOOL-005` reference implementation: `tools/public_video_research_ingest.py`. Network-free unit test evidence와 실제 live YouTube compatibility는 구분한다.
 
 상세 계약: `PRODUCTION_TOOL_WORKFLOW_MODULES.md`.
 
@@ -124,6 +131,9 @@ Notion `PROJECT REGISTRY · Master`에서 2026-08-20 현재 `ACTIVE`로 분류�
 | `RM-VIS-003` | `MODULAR_BACKGROUND_LAYER_KIT` | URBAN_LEGEND / GRIMOIRE / MY_LITTLE_BOAT / COC_FICTION | `PATTERN_EXTRACT` | `MODULE_CONTRACT_DEFINED · BASE_PROMOTION_CANDIDATE` |
 | `RM-VIS-004` | `COMBAT_TELEGRAPH_VFX_KIT` | NINJA_SURVIVAL / OMENWARD / GRIMOIRE / TEN_PACES | `PATTERN_EXTRACT` | `MODULE_CONTRACT_DEFINED · BASE_PROMOTION_CANDIDATE` |
 | `RM-VIS-005` | `PORTRAIT_STATE_VARIANT_KIT` | URBAN_LEGEND / GRIMOIRE / COC_FICTION | `PATTERN_EXTRACT` | `MODULE_CONTRACT_DEFINED · BASE_PROMOTION_CANDIDATE` |
+| `RM-VIS-006` | `VISUAL_CREATIVE_PROVIDER_ADAPTER` | 시각 제작 provider가 필요한 모든 프로젝트의 조건부 production path | `PATTERN_EXTRACT · PROVIDER_NEUTRAL` | `MODULE_CONTRACT_DEFINED · BASE_PROMOTION_CANDIDATE` |
+
+`RM-VIS-006`은 runtime visual module이나 새 art owner가 아니다. 기존 project Visual Canon/brief 아래에서 AI service·local model·manual·approved outsource를 교체 가능한 제작 backend로 비교하고 `HUMAN_EDIT_DELTA`를 남긴다.
 
 상세 계약: `VISUAL_ASSET_MATERIAL_MODULES.md`.
 
@@ -144,6 +154,8 @@ Notion `PROJECT REGISTRY · Master`에서 2026-08-20 현재 `ACTIVE`로 분류�
 | `TEN_PACES` | ◎ RM-SYS-015 · ○ RM-SYS-004 · ○ RM-TOOL-002/004 · ○ RM-VIS-001/002/004 |
 | `OMENWARD` | ◎ RM-SYS-018 · ○ RM-SYS-002/003/004/007 · ○ RM-TOOL-002/003/004 · ○ RM-VIS-001/002/004 |
 
+`RM-TOOL-005`는 project runtime fit이 아니라 **공개 영상 본문 evidence가 필요한 조사 작업의 조건부 입력 adapter**라서 위 project runtime fit 행에 일괄 추가하지 않는다. `RM-VIS-006`도 모든 프로젝트에 강제하지 않고 실제 시각 제작이 승인된 단계에서 기존 RM-VIS/project-specific target에 붙인다.
+
 ## 9. 벤치마크 및 Existing Solution disposition
 
 | Source | 추출 원리 | 판정 |
@@ -157,6 +169,9 @@ Notion `PROJECT REGISTRY · Master`에서 2026-08-20 현재 `ACTIVE`로 분류�
 | Backpack Battles 계열 | inventory arrangement 자체를 전투 전 전략 입력으로 사용 | `ADAPT` |
 | Kenney CC0 packs | prototype/일부 UI 재료의 직접 라이선스 재사용 가능성 | `DIRECT_LICENSED_REUSE_CANDIDATE` |
 | Tetris | 공간 배치와 line completion이라는 추상 원리만 분석 | `PATTERN_EXTRACT · RIGHTS_REVIEW_REQUIRED` |
+| yt-dlp | public video metadata/caption track discovery를 좁은 CLI contract로 사용 | `ADAPT_LICENSED · THIN_ADAPTER` |
+| ytscribe | subtitles-first + optional local ASR + provenance pattern | `REFERENCE_ONLY · POSSIBLE_BOUNDED_PILOT` |
+| youtube-transcript-api | 간단한 transcript access pattern, cloud/provider IP blocking·proxy 운영 위험 | `TEST_ONLY · NOT_DEFAULT` |
 
 외부 사례의 성공은 현재 프로젝트의 재미·시장성 PASS가 아니다. 각 module은 실제 프로젝트 Pilot에서 별도 검증한다.
 
@@ -180,6 +195,13 @@ license/source/version check
 → project owner promotion
 ```
 
+### Public transcript / generated visual boundary
+
+- 제3자 공개 영상 transcript는 연구 입력이지 재배포 가능한 Base 콘텐츠라는 뜻이 아니다. 전체 transcript는 기본 local-only이며 repository에는 derived note·timestamp·필요한 짧은 근거만 남긴다.
+- auto caption/local ASR은 human-authored transcript로 승격하지 않는다.
+- AI provider를 바꾸거나 generated visual을 후처리해도 입력 reference의 권리·최종 similarity·provider terms 검토를 우회하지 않는다.
+- `VISUAL_CREATIVE_PROVIDER_ADAPTER`는 `PROJECT_ASSET_APPROVED` 권한을 갖지 않는다.
+
 ## 11. 다음 검증
 
 1. P0 module 중 한 개씩 **서로 다른 2개 프로젝트**에 적용 가능한 adapter contract를 작성한다.
@@ -187,5 +209,7 @@ license/source/version check
 3. 플레이 경험을 바꾸는 gameplay module은 release-near Vertical Slice에서 검증한다.
 4. Visual module은 Notion Asset/Visual workflow와 repository implementation evidence를 통해 실제 화면 품질을 검수한다.
 5. `RM-TOOL-004`는 별도 capture app 설치 없이 project-native test/runtime/CI evidence로 실제 유용성을 검증한다.
-6. 공용 구현이 오히려 프로젝트별 예외 분기만 늘리면 `PROJECT_SEED`로 되돌린다.
-7. Notion에는 `NOTION_HUMAN_VIEW`로 module ID·프로젝트 fit·상태를 보여 주되, 구현 상태는 이 Registry와 실제 프로젝트 저장소에서 판정한다.
+6. `RM-TOOL-005`는 `yt-dlp`가 준비된 실제 로컬 환경에서 manual caption, auto caption, no-caption 대표 영상 각각을 검증하고 site compatibility·failure recovery evidence를 남긴다.
+7. `RM-VIS-006`은 실제 승인된 시각 제작 작업에서 기존 방식과 provider 후보를 `HUMAN_EDIT_DELTA`로 비교하고 quality/consistency/rights가 함께 개선되는지 확인한다.
+8. 공용 구현이 오히려 프로젝트별 예외 분기만 늘리면 `PROJECT_SEED` 또는 reference-only로 되돌린다.
+9. Notion에는 `NOTION_HUMAN_VIEW`로 module ID·프로젝트 fit·상태를 보여 주되, 구현 상태는 이 Registry와 실제 프로젝트 저장소에서 판정한다.

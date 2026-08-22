@@ -263,6 +263,63 @@ verdict:
 
 ---
 
+## RM-TOOL-005 · PUBLIC_VIDEO_RESEARCH_INGEST_ADAPTER
+
+**문제:** GDC 발표·개발자 인터뷰·튜토리얼·제작 회고처럼 공개 영상이 조사 근거일 때 웹 검색 스니펫이나 기억만으로 내용을 대체하면 실제 발언·맥락·timestamp를 잃고 `BLOCKED_UNVERIFIED`가 반복된다.
+
+**판정:** `PATTERN_EXTRACT + BASE_REFERENCE_IMPLEMENTATION`.
+
+Reference implementation: `tools/public_video_research_ingest.py`.
+
+```yaml
+module: PUBLIC_VIDEO_RESEARCH_INGEST_ADAPTER
+inputs:
+  source_url:
+  preferred_languages: [ko, en, en-US]
+  yt_dlp_executable: yt-dlp
+source_ladder:
+  - accessible_manual_caption
+  - accessible_auto_caption
+  - optional_existing_local_asr_adapter
+  - BLOCKED_UNVERIFIED
+outputs:
+  source_identity:
+  retrieval_tool_and_version:
+  transcript_status:
+  transcript_source_kind:
+  transcript_language:
+  timestamped_segments: []
+storage_policy:
+  full_transcript: LOCAL_RESEARCH_ONLY
+  default_output_root: .tmp/public-video-research
+  repository_evidence: DERIVED_NOTES_AND_TIMESTAMPS_ONLY
+```
+
+### 구현·비용 경계
+
+1. Base reference implementation은 `yt-dlp --skip-download --dump-single-json`으로 metadata/caption track만 찾고 선택한 WebVTT만 읽는다. 영상·오디오를 다운로드하지 않는다.
+2. manual caption을 auto caption보다 우선하며 둘의 provenance를 분리한다.
+3. caption이 없으면 `ASR_FALLBACK_REQUIRED`를 반환한다. local ASR이 이미 준비된 환경에서 별도 bounded adapter로 처리할 수 있지만 Base가 모델·GPU runtime·ffmpeg를 자동 설치하지 않는다.
+4. hosted transcript SaaS, paid proxy, separately metered API/credit를 자동 fallback으로 사용하지 않는다.
+5. full transcript는 기본적으로 Git ignore 대상인 `.tmp/` local research packet으로만 저장한다. GitHub/Notion에는 현재 결정에 필요한 derived note·짧은 인용·timestamp·source URL을 남긴다.
+6. caption URL은 HTTPS YouTube/GoogleVideo host로 제한하고 untrusted metadata가 임의 host fetch로 이어지지 않게 한다.
+
+### 증거 ceiling
+
+```text
+CAPTION_INGEST_PASS
+!= SPEAKER_CLAIM_FACT_PASS
+!= COPYRIGHT_CLEARANCE
+!= PROJECT_FIT_PASS
+!= ASR_OR_CAPTION_PERFECT_ACCURACY
+```
+
+실제 live YouTube retrieval은 `yt-dlp`가 준비된 실행환경에서 대표 영상으로 별도 검증한다. unit test만으로 site compatibility를 PASS 처리하지 않는다.
+
+상태: `MODULE_CONTRACT_DEFINED · BASE_PROMOTION_CANDIDATE · REFERENCE_IMPLEMENTATION_ADDED · PROJECT_ADOPTION_NOT_RUN`.
+
+---
+
 ## RM-WORK-001 · PROJECT_REUSE_OPPORTUNITY_SCAN
 
 **상태:** `BASE_ACTIVE_METHOD`.
@@ -311,7 +368,21 @@ baseline_eval:
 candidate_eval:
 negative_route_eval:
 maintenance_cost:
+HUMAN_EDIT_DELTA:
+  baseline_total_minutes:
+  candidate_generation_or_creation_minutes:
+  attempt_count:
+  human_edit_minutes:
+  integration_minutes:
+  qa_minutes:
+  candidate_total_minutes:
+  net_minutes_saved:
+  quality_delta:
+  consistency_delta:
+  repeatability:
 ```
+
+`HUMAN_EDIT_DELTA`는 “AI가 몇 초 만에 만들었다” 같은 생성 시간만으로 생산성을 과장하지 않기 위한 공통 측정 계약이다. 외부 Tool/Workflow/Visual provider 후보는 재시도·사람 수정·통합·QA까지 포함한 total effort와 품질·일관성을 기존 baseline과 비교한다.
 
 ### PROJECT_SUBSYSTEM_CHANGE_MAP
 
@@ -352,6 +423,7 @@ project_subsystem_change_map:
 - trigger가 너무 넓어 unrelated 작업까지 라우팅함.
 - 실제 전후 Eval이 없음.
 - Tool/권한/정본 경계가 명확하지 않음.
+- 생성 속도만 빠르고 사람 수정·통합·QA를 포함한 총비용이 개선되지 않음.
 
 ---
 
@@ -391,6 +463,16 @@ CANON_SOURCE_PROVENANCE_REGISTRY
 ```
 
 추천 대상: COC_FICTION, URBAN_LEGEND, GRIMOIRE.
+
+## D. 공개 영상·발표를 조사 근거로 사용할 때
+
+```text
+PUBLIC_VIDEO_RESEARCH_INGEST_ADAPTER
+→ transcript provenance + timestamp evidence
+→ PROJECT_REUSE_OPPORTUNITY_SCAN
+→ multi-source / existing-solution comparison
+→ derived notes only in repository
+```
 
 ---
 
@@ -440,6 +522,12 @@ Existing Solution First
 → rollback
 ```
 
+### Public video ingest dependency note
+
+- `yt-dlp` presence/version is checked at runtime.
+- Base가 `yt-dlp`나 local ASR을 자동 설치하지 않으며 hosted transcript paid fallback을 쓰지 않는다.
+- live compatibility는 대표 영상 실제 검증이 필요하다.
+
 ---
 
 # 구현 우선순위
@@ -449,10 +537,11 @@ Existing Solution First
 | P0 | `RM-TOOL-001 DATA_SCHEMA_CROSSREF_VALIDATOR` | 여러 프로젝트의 반복 오류를 낮은 UI/runtime 위험으로 줄일 수 있음 |
 | P0 | `RM-TOOL-002 DETERMINISTIC_SEED_REPLAY_CAPTURE` | simulation/replay/debug 기반과 preview/RNG 인과 경계를 공유할 수 있음 |
 | P1 | `RM-TOOL-003 BALANCE_SCENARIO_BATCH_SIMULATOR` | 가치가 크지만 project snapshot/runner evidence가 먼저 필요; OMENWARD read-only Pilot이 1차 소비자 |
+| P1 | `RM-TOOL-005 PUBLIC_VIDEO_RESEARCH_INGEST_ADAPTER` | 영상 연구의 근거 손실을 줄이지만 live site compatibility와 실제 프로젝트 소비 검증이 필요 |
 | ACTIVE | `ATOMIC_RESOLUTION_BOUNDARY` | 새 runtime module이 아니라 기존 FSM/result/replay owner가 공유하는 경계 계약 |
 | ACTIVE | `RM-TOOL-004 REPOSITORY_NATIVE_EVIDENCE_CAPTURE` | 별도 앱 없이 기존 test/runtime/CI 증거를 재사용 |
-| ACTIVE | `RM-WORK-001/002` | 이미 Base 방법으로 존재; subsystem change map은 Skill 증식 전 단계 |
+| ACTIVE | `RM-WORK-001/002` | 이미 Base 방법으로 존재; subsystem change map과 `HUMAN_EDIT_DELTA`는 기존 owner 보강 |
 
 # 완료 상태
 
-이 문서의 신규 tool contract는 실제 executable 구현과 분리한다. `RM-TOOL-004`는 별도 프로그램이 아니라 현재 repository/runtime evidence를 조합하는 **활성 방법 계약**이다. `RM-TOOL-001/002/003`은 실제 공용 executable 증거가 생기기 전까지 `IMPLEMENTATION_NOT_BUILT` 또는 project-local pilot 상태를 유지한다. `ATOMIC_RESOLUTION_BOUNDARY`와 `PROJECT_SUBSYSTEM_CHANGE_MAP`은 기존 owner를 보강하는 계약이며 별도 공용 runtime/Skill 구현이 아니다.
+이 문서의 신규 tool contract는 실제 executable 구현과 분리한다. `RM-TOOL-004`는 별도 프로그램이 아니라 현재 repository/runtime evidence를 조합하는 **활성 방법 계약**이다. `RM-TOOL-001/002/003`은 실제 공용 executable 증거가 생기기 전까지 `IMPLEMENTATION_NOT_BUILT` 또는 project-local pilot 상태를 유지한다. `ATOMIC_RESOLUTION_BOUNDARY`와 `PROJECT_SUBSYSTEM_CHANGE_MAP`은 기존 owner를 보강하는 계약이며 별도 공용 runtime/Skill 구현이 아니다. `RM-TOOL-005`는 bounded reference implementation `tools/public_video_research_ingest.py`가 있으며 unit test는 계약·parser·fail-closed 동작만 증명한다. live YouTube compatibility와 project adoption은 별도 검증이 필요하다.
