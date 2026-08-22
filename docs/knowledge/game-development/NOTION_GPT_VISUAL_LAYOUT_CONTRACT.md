@@ -58,6 +58,36 @@ capability discovery
 
 A successful API/write call is at most `INVOCATION_PASS`; a durable page change requires `READBACK_PASS`. Android/browser rendering becomes `HUMAN_VISIBLE_PASS` only after that client is actually observed. Server-side image block readback never substitutes for the device-visible rendering claim.
 
+### Binary media delivery routing
+
+Notion MCP remains the default owner for text, page structure, databases, semantic placement and ordinary readback. A separate local path is allowed only for a **proven binary-media capability gap** where the target operation requires the official typed `file_upload` representation and the current client cannot preserve it.
+
+Current routing:
+
+```text
+Notion text / structure / database / semantic layout
+→ Notion MCP
+
+binary media
+→ current MCP exposes usable typed `file_upload` attach + real invocation/readback succeeds
+  → use MCP
+→ otherwise
+  → Notion Native File Bridge
+  → official `ntn files create`
+  → typed `file_upload` attach through `ntn api`
+  → destination readback
+
+client-visible claim
+→ actual Android / iOS / browser observation
+→ only then HUMAN_VISIBLE_PASS
+```
+
+The local **Notion Native File Bridge** is not a second Notion workspace or automation authority. It is a narrow transport adapter around Notion's official `ntn` CLI for local binary upload and typed attachment only. OAuth/keychain handling remains owned by the official CLI; no Notion token is committed to Base or project repositories.
+
+If a target client has already reproduced `422` or broken-image behavior for external media, changing from one external host/CDN to another is not an acceptable substitute for typed `file_upload`. A GitHub raw URL, jsDelivr URL, temporary signed URL, status text, filename, empty Gallery card or server-only image readback cannot be promoted to Android-visible success.
+
+When the ChatGPT Notion connector later exposes and verifies typed `file_upload` attachment directly, prefer the connector-native path and retire the local bridge rather than maintaining duplicate infrastructure.
+
 ## Human and AI surfaces
 
 `HUMAN_HOME_IS_NOT_AI_CONTEXT_DUMP`
@@ -265,6 +295,8 @@ Do not build infrastructure for hypothetical layout limitations.
 - treating `self.current_tool_access=available` as proof that the current client can invoke the capability;
 - treating a successful write invocation as durable effect without destination readback;
 - treating server image readback as Android/browser render PASS;
+- using a different external CDN as a hidden workaround after the target client has reproduced media 422;
+- treating Notion Native File Bridge readback as `HUMAN_VISIBLE_PASS` without actual client observation;
 - introducing a paid automation layer before current MCP behavior was tested;
 - treating Notion placement as proof that Godot/runtime integration occurred.
 
@@ -278,6 +310,7 @@ The workflow is healthy when:
 - GPT can select a semantic destination from metadata without repeatedly asking where the asset belongs;
 - visual-content-dependent judgements require direct image evidence;
 - capability-dependent claims distinguish discovery, callable schema, invocation, readback and human-visible evidence;
+- binary media uses a verified typed `file_upload` path instead of known-broken external delivery when client rendering matters;
 - all Notion writes receive destination readback;
 - exact UI geometry is not overstated when the tool cannot verify it;
 - repository runtime truth remains separate from Notion presentation state.
