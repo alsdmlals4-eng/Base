@@ -136,7 +136,8 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             "required checks",
             "postmerge readback",
         ):
-            self.assertIn(term, agents + "\n" + policy)
+            self.assertIn(term, agents)
+            self.assertIn(term, policy)
         self.assertIn("APPROVED_ITEM_INHERITS_MERGE_AUTHORITY", continuous)
         self.assertIn("OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION", agents)
         for protected in (
