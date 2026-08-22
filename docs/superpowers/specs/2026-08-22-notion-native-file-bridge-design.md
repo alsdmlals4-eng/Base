@@ -64,7 +64,7 @@ Pros:
 Cons:
 
 - local Node.js/`ntn` installation required,
-- first login requires user OAuth approval,
+- first login requires user OAuth approval and full workspace membership,
 - actual Android rendering still requires device observation.
 
 ### C. Custom Python Notion REST client — FALLBACK
@@ -90,6 +90,12 @@ Evidence Gate
   ├─ upload invocation PASS
   ├─ Notion destination readback PASS
   └─ Android/browser actual pixel observation -> HUMAN_VISIBLE_PASS
+```
+
+The evidence ceiling is explicit:
+
+```text
+READBACK_PASS != HUMAN_VISIBLE_PASS
 ```
 
 The bridge is intentionally narrow. MCP stays the default owner for page/document work. The bridge is invoked only when a real binary must become a typed Notion `file_upload` attachment.
@@ -138,7 +144,7 @@ Output example:
 - reads local bytes only,
 - infers MIME type,
 - invokes `ntn files create --plain --filename ... --content-type ...`,
-- reads the returned upload ID back through `v1/file_uploads/{id}`,
+- reads the returned upload back with official `ntn files get <id> --json` and requires the same ID with `status=uploaded`,
 - emits filename, MIME, byte count, SHA-256, upload ID, and upload status.
 
 The SHA-256 is evidence identity, not a secret.
@@ -160,6 +166,8 @@ Uses typed API arguments equivalent to:
 ```
 
 Then reads back the created block and requires `type=image`.
+
+Image append is not idempotent. If the append response returned a created block ID but the independent readback fails, classify the result as `AMBIGUOUS_DESTINATION_STATE` and inspect the destination before retrying. Blind retry can create a duplicate image block.
 
 ### `set-cover --page-id ID --upload-id ID`
 
@@ -206,9 +214,10 @@ Windows uses the official npm distribution rather than a custom credential imple
 
 1. require Node.js 22+ and npm 10+;
 2. install `ntn` globally if absent;
-3. install this zero-runtime-dependency Python package locally/user-scoped;
-4. optionally run `ntn login`;
-5. run bridge `preflight`.
+3. choose the first verified Python 3.12+ launcher (`py -3.12`, then `python` fallback);
+4. install this zero-runtime-dependency Python package user-scoped;
+5. optionally run `ntn login`;
+6. run bridge `preflight` through the selected Python module path so the current shell does not depend on the user Scripts directory already being on `PATH`.
 
 The installer does not request or persist tokens itself.
 
@@ -224,6 +233,7 @@ Representative codes:
 - `UPLOAD_ID_MISSING`
 - `UPLOAD_READBACK_MISMATCH`
 - `DESTINATION_READBACK_FAILED`
+- `AMBIGUOUS_DESTINATION_STATE`
 - `FILE_NOT_FOUND`
 - `UNSUPPORTED_CONTENT_TYPE`
 
@@ -240,6 +250,7 @@ Use fake subprocess runners to verify:
 - SHA-256/content-length receipt identity,
 - upload readback mismatch fails closed,
 - attach readback required,
+- ambiguous non-idempotent append state does not invite blind retry,
 - token redaction,
 - CLI JSON/exit-code behavior.
 
@@ -250,8 +261,9 @@ A root `unittest` checks that:
 - package files exist,
 - official `ntn` is the transport owner,
 - no Python HTTP dependency is introduced,
-- docs preserve the `HUMAN_VISIBLE_PASS` ceiling,
-- the root test is consumed by `core-regression` through test discovery.
+- package unit tests are actually consumed by the root `core-regression` suite,
+- Windows bootstrap has Python-launcher fallback and module-based preflight,
+- docs preserve the `HUMAN_VISIBLE_PASS` ceiling.
 
 ### Live verification
 
