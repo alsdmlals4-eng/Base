@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Remove stale AI bootstrap and Sheet authority from Base and verified affected projects, add automatic drift regression, and prove cold-start routing against actual Notion/repository authorities.
+**Goal:** Remove stale AI bootstrap from Base and verified affected projects, preserve frozen Sheet evidence, add automatic drift regression, and prove cold-start routing against actual Notion/repository authorities.
 
-**Architecture:** Base owns stable dynamic bootstrap templates and migration compatibility rules; projects own their specific runtime/design constraints while routing human-facing planning to Notion and structured/runtime truth to repository. Legacy references are preserved only when needed for compatibility, never as competing active canon.
+**Architecture:** Base owns stable dynamic bootstrap templates; current project planning authority is split between Notion and repository. Frozen historical artifacts remain immutable evidence, while current policies route legacy Sheets as migration-only compatibility. Projects keep their specific runtime/design constraints and receive only targeted authority/bootstrap corrections.
 
 **Tech Stack:** Markdown, JSON, Python unittest, GitHub branch/PR/Actions, Notion readback
 
@@ -15,6 +15,7 @@
 - Work only from latest completed `main`; pre-existing open PRs are read-only.
 - Never force-push, direct-push main, bypass rulesets, or absorb another workstream.
 - `DOMAIN_SPLIT_CANON`: Notion human-facing; repository structured/runtime; Google Sheets migration compatibility only.
+- Frozen release/history artifacts are not rewritten to look current.
 - Preserve project-specific runtime/design constraints that do not conflict with current canon.
 - Do not touch GRIMOIRE PR #151.
 - Every write repo gets its own branch/PR, exact-HEAD verification, merge, and postmerge readback.
@@ -35,19 +36,20 @@
 - [ ] Preserve user-change protection, scope control, evidence/reporting, and permission boundaries.
 - [ ] Read back both files and scan for stale literals.
 
-### Task 2: Align project AGENTS scaffold and Sheet machine contract
+### Task 2: Align project AGENTS scaffold and verify Sheet history/current policy split
 
 **Files:**
 - Modify: `templates/AGENTS.project.md`
-- Modify: `docs/operations/SHEET_CONTROL_CONTRACT.json`
+- Read/verify unchanged frozen history: `docs/operations/SHEET_CONTROL_CONTRACT.json`
+- Read/verify current owner: `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`
 
-**Produces:** new-project scaffold that cannot reintroduce Sheet-first or fixed local-copy authority.
+**Produces:** new-project scaffold that cannot reintroduce Sheet-first or fixed local-copy authority while preserving v9 evidence.
 
 - [ ] Add `DOMAIN_SPLIT_CANON` block to project scaffold.
 - [ ] Replace fixed Base-local-copy file list with adopted-version + progressive owner lookup.
 - [ ] Add dynamic current open-PR protection rule without PR-number literals.
-- [ ] Convert Sheet contract to schema v2 `MIGRATION_ONLY_UNTIL_REMOVAL` compatibility contract while preserving held-project inventory.
-- [ ] Read back JSON and validate parseability/authority values.
+- [ ] Preserve frozen v9 Sheet contract exactly (`schema_version=1`, `USER_FACING_GDD_WORKSPACE`, held `HOLD`).
+- [ ] Verify current Sheet policy remains `MIGRATION_ONLY_UNTIL_REMOVAL`, Notion-first, repository-runtime.
 
 ### Task 3: Add anti-drift regression and update guide
 
@@ -55,9 +57,10 @@
 - Create: `tests/test_ai_bootstrap_drift_contract.py`
 - Modify: `docs/CUSTOM_INSTRUCTIONS_GUIDE.md`
 
-**Produces:** automatic detection of stale fixed-role, fixed-file, Sheet-primary and scaffold regressions.
+**Produces:** automatic detection of stale fixed-role, fixed-file, active Sheet-primary, historical rewrite and scaffold regressions.
 
-- [ ] Write unittest assertions for GPT/Codex/Copilot/project scaffold/Sheet contract.
+- [ ] Write unittest assertions for GPT/Codex/Copilot/project scaffold.
+- [ ] Assert frozen Sheet history and current migration-only policy as separate layers.
 - [ ] Update guide to mark Codex/Copilot audit completed and explain repository-wide vs path-specific/bootstrap responsibilities.
 - [ ] Ensure core-regression unittest discovery executes the new test.
 
@@ -69,7 +72,7 @@
 - [ ] Full loop 4: runtime/evidence claim boundary.
 - [ ] Full loop 5: cold-start from no chat memory.
 - [ ] Compare to latest main; reconcile if main advanced.
-- [ ] Open Base PR; inspect exact diff, reviews, threads, workflow runs.
+- [ ] Update current-task PR; inspect exact diff, reviews, threads, workflow runs.
 - [ ] Merge exact verified head; postmerge readback.
 
 ### Task 5: Project preflight and targeted corrections
