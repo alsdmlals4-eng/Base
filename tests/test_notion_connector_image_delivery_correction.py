@@ -21,21 +21,31 @@ class NotionConnectorImageDeliveryCorrectionTests(unittest.TestCase):
 
     def test_correction_explicitly_supersedes_old_binary_routing(self) -> None:
         self.assertIn("supersedes the `Binary media delivery routing` subsection", self.text)
+        self.assertIn("NO_SHEETS_NO_LOCAL_BRIDGE_IMAGE_TRANSPORT", self.text)
 
-    def test_connector_only_page_image_path_is_primary(self) -> None:
-        ordered = [
+    def test_google_sheets_and_local_bridge_are_not_active_image_transport(self) -> None:
+        for stale_route in (
             "temporary Google Sheets image_uris transport",
+            "temporary Sheets transport: PASS",
+            "connector-only temporary Sheets transport",
+            "Notion Native File Bridge (`ntn`) fallback",
+            "tools/notion-native-file-bridge` remains valid and maintained as a **fallback capability",
+        ):
+            self.assertNotIn(stale_route, self.text)
+        self.assertIn("Google Sheets: FORBIDDEN_AS_NEW_IMAGE_TRANSPORT", self.text)
+        self.assertIn("LOCAL_NOTION_FILE_BRIDGE: RETIRED_FROM_ACTIVE_ROUTE", self.text)
+
+    def test_direct_notion_attachment_is_primary_and_missing_transport_fails_closed(self) -> None:
+        ordered = [
+            "trusted direct HTTPS source or connector-native attachment source",
             "Notion create-attachment(source_url)",
             "suggested_markdown / file-upload:// source",
             "prod-files-secure readback",
-            "delete temporary Sheet",
         ]
         positions = [self.text.index(marker) for marker in ordered]
         self.assertEqual(positions, sorted(positions))
-
-    def test_local_ntn_bridge_is_fallback_not_mandatory(self) -> None:
-        self.assertIn("Notion Native File Bridge (`ntn`) fallback", self.text)
-        self.assertIn("Do not require PowerShell/`ntn`", self.text)
+        self.assertIn("BLOCKED_NO_DIRECT_NOTION_BINARY_TRANSPORT", self.text)
+        self.assertIn("do not substitute Google Sheets or a local bridge", self.text)
 
     def test_android_success_requires_actual_pixel_observation(self) -> None:
         self.assertIn("HUMAN_VISIBLE_PASS", self.text)
