@@ -4,6 +4,8 @@
 
 `NOTION_DEFAULT_PROJECT_WORKSPACE` is the default human-facing project workspace. It organizes planning, reusable assets, references, benchmarks and derived visual maps. It does not replace repository runtime truth.
 
+For GPT-assisted semantic placement, Home/AI surface separation, image-understanding evidence ceilings and bounded layout/readback rules, apply `NOTION_GPT_VISUAL_LAYOUT_CONTRACT.md` together with this workflow.
+
 Every project-scoped record must satisfy `PROJECT_RELATION_REQUIRED`. A record without a Project relation is unassigned working material, not project canon.
 
 ## Standard project page
