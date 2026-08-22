@@ -1,12 +1,12 @@
 # v4.7 Workflow Alignment — Adversarial Review Evidence
 
-**Date:** 2026-08-20 KST  
-**Closure readback:** 2026-08-22 KST  
-**Baseline:** `61862f9a4f7995f1676acca4bb6d5365e46b7630`  
-**Superseded draft PR: #556**  
-**Fresh-main implementation PR: #573**  
-**Fresh-main exact head:** `af96707bb42dbbb8a36708242574802404b44e80`  
-**Merged commit:** `182f98b1c1a0f0fa578994b453d0d5f7b57a57c7`  
+**Date:** 2026-08-20 KST
+**Closure readback:** 2026-08-22 KST
+**Baseline:** `61862f9a4f7995f1676acca4bb6d5365e46b7630`
+**Superseded draft PR: #556**
+**Fresh-main implementation PR: #573**
+**Fresh-main exact head:** `af96707bb42dbbb8a36708242574802404b44e80`
+**Merged commit:** `182f98b1c1a0f0fa578994b453d0d5f7b57a57c7`
 **Scope:** Notion-first project workflow, retired project-management tools, repository-native evidence, creative benchmarking, flexible Skill structure, PowerShell/Codex handoff.
 
 ## Supersession and closure
