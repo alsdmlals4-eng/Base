@@ -12,12 +12,22 @@ CORRECTION = (
     / "game-development"
     / "NOTION_CONNECTOR_IMAGE_DELIVERY_CORRECTION_2026-08-22.md"
 )
+LAYOUT = (
+    ROOT
+    / "docs"
+    / "knowledge"
+    / "game-development"
+    / "NOTION_GPT_VISUAL_LAYOUT_CONTRACT.md"
+)
+BRIDGE = ROOT / "tools" / "notion-native-file-bridge"
+BRIDGE_ROOT_TEST = ROOT / "tests" / "test_notion_native_file_bridge_contract.py"
 
 
 class NotionConnectorImageDeliveryCorrectionTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.text = CORRECTION.read_text(encoding="utf-8")
+        cls.layout = LAYOUT.read_text(encoding="utf-8")
 
     def test_correction_explicitly_supersedes_old_binary_routing(self) -> None:
         self.assertIn("supersedes the `Binary media delivery routing` subsection", self.text)
@@ -46,6 +56,27 @@ class NotionConnectorImageDeliveryCorrectionTests(unittest.TestCase):
         self.assertEqual(positions, sorted(positions))
         self.assertIn("BLOCKED_NO_DIRECT_NOTION_BINARY_TRANSPORT", self.text)
         self.assertIn("do not substitute Google Sheets or a local bridge", self.text)
+
+    def test_layout_contract_has_no_active_local_bridge_or_sheet_fallback(self) -> None:
+        for term in (
+            "DIRECT_NOTION_ATTACHMENT_OR_BLOCKED",
+            "NO_LOCAL_BRIDGE_DEFAULT",
+            "BLOCKED_NO_DIRECT_NOTION_BINARY_TRANSPORT",
+            "SERVER_READBACK_PASS != HUMAN_VISIBLE_DEVICE_PASS",
+            "HUMAN_VISIBLE_PASS",
+        ):
+            self.assertIn(term, self.layout)
+        for stale in (
+            "Notion Native File Bridge",
+            "ntn api",
+            "tools/notion-native-file-bridge/",
+            "temporary Google Sheets",
+        ):
+            self.assertNotIn(stale, self.layout)
+
+    def test_retired_local_bridge_source_and_root_regression_are_removed(self) -> None:
+        self.assertFalse(BRIDGE.exists(), BRIDGE)
+        self.assertFalse(BRIDGE_ROOT_TEST.exists(), BRIDGE_ROOT_TEST)
 
     def test_android_success_requires_actual_pixel_observation(self) -> None:
         self.assertIn("HUMAN_VISIBLE_PASS", self.text)
