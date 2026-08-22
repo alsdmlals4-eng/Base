@@ -1,48 +1,37 @@
 {
-  "schema_version": 2,
-  "artifact_role": "LEGACY_PROJECT_SHEET_MIGRATION_COMPATIBILITY_CONTRACT",
+  "artifact_role": "sheet-control-contract",
   "base_sheet_status": "BASE_EXCLUDED",
   "external_sheet_writes_authorized": false,
-  "no_fake_sheet_completion": true,
-  "project_sheet_role": "MIGRATION_ONLY_UNTIL_REMOVAL",
-  "active_human_facing_canon": "NOTION_DEFAULT_PROJECT_WORKSPACE",
-  "active_structured_canon": "REPOSITORY_STRUCTURED_CANON",
-  "runtime_truth": "REPOSITORY_RUNTIME_TRUTH",
-  "legacy_sheet_read_policy": "READ_ONLY_FOR_UNIQUE_UNMIGRATED_MATERIAL",
-  "legacy_sheet_write_policy": "NO_NEW_CANONICAL_GDD_WRITES",
-  "sheet_only_change_status": "PROPOSED_SHEET_CHANGE",
   "held_projects": [
     {
       "project": "Ten Paces: Hidden Moves",
-      "status": "MIGRATION_COMPATIBILITY_HOLD"
+      "status": "HOLD"
     },
     {
       "project": "Blacksmith",
-      "status": "MIGRATION_COMPATIBILITY_HOLD"
+      "status": "HOLD"
     },
     {
       "project": "OMENWARD",
-      "status": "MIGRATION_COMPATIBILITY_HOLD"
+      "status": "HOLD"
     },
     {
       "project": "urban-legend",
-      "status": "MIGRATION_COMPATIBILITY_HOLD"
+      "status": "HOLD"
     },
     {
       "project": "GRIMOIRE: 세계를 다시 쓰는 법",
-      "status": "MIGRATION_COMPATIBILITY_HOLD"
+      "status": "HOLD"
     }
   ],
-  "migration_steps": [
-    "classify legacy material as UNIQUE / DUPLICATE / OBSOLETE",
-    "move UNIQUE human-facing planning material to the correct Notion Project authority",
-    "move UNIQUE structured/runtime material to the repository owner",
-    "verify destination readback and project identity",
-    "remove active Sheet routing only after all unique material is migrated"
+  "project_sheet_role": "USER_FACING_GDD_WORKSPACE",
+  "resume_prerequisites": [
+    "base-v9-final-lock",
+    "repository-audit",
+    "sheet-access",
+    "user-approval",
+    "verification-environment"
   ],
-  "removal_gate": [
-    "all unique material is MIGRATED_READBACK_VERIFIED",
-    "active Sheet consumers and references are zero",
-    "required provenance is preserved in archive or destination owner"
-  ]
+  "schema_version": 1,
+  "sheet_only_change_status": "PROPOSED_SHEET_CHANGE"
 }
