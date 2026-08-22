@@ -65,6 +65,8 @@ def _variant_report(runs: list[dict[str, Any]]) -> dict[str, Any]:
             if isinstance(value, bool) or not isinstance(value, (int, float)):
                 raise ValueError(f"metric {metric_id!r} must be numeric")
             numeric = float(value)
+            if not math.isfinite(numeric):
+                raise ValueError(f"metric {metric_id!r} must be finite")
             metrics[str(metric_id)].append(numeric)
             metric_rows[str(metric_id)].append((numeric, seed))
         for failure in run.get("failures", []):
@@ -141,8 +143,12 @@ def _paired_deltas(
                 candidate_value, (int, float)
             ):
                 continue
+            baseline_numeric = float(baseline_value)
+            candidate_numeric = float(candidate_value)
+            if not math.isfinite(baseline_numeric) or not math.isfinite(candidate_numeric):
+                raise ValueError(f"paired metric {metric_id!r} must be finite")
             metric_deltas[str(metric_id)].append(
-                float(candidate_value) - float(baseline_value)
+                candidate_numeric - baseline_numeric
             )
 
     result: dict[str, Any] = {}
@@ -227,6 +233,8 @@ def analyze_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(target, list) or len(target) != 2:
             raise ValueError("goal_seek target must be [low, high]")
         low, high = float(target[0]), float(target[1])
+        if not math.isfinite(low) or not math.isfinite(high):
+            raise ValueError("goal_seek target values must be finite")
         requested_variants = [
             str(item) for item in request.get("variants", sorted(grouped))
         ]
