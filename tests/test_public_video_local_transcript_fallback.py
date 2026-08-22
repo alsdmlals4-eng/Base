@@ -104,6 +104,40 @@ class PublicVideoLocalTranscriptFallbackTests(unittest.TestCase):
         self.assertEqual("LOCAL_TRANSCRIPT_READ_FAILED", caught.exception.code)
         self.assertNotIn(temp_dir, caught.exception.detail)
 
+    def test_local_reader_uses_opened_file_identity_and_bounded_read(self) -> None:
+        module = self.module
+
+        class FakeStream:
+            read_size = None
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, tb):
+                return False
+
+            def fileno(self) -> int:
+                return 123
+
+            def read(self, size: int) -> bytes:
+                self.read_size = size
+                return b"x" * size
+
+        stream = FakeStream()
+        opened_stat = type(
+            "OpenedStat",
+            (),
+            {"st_mode": module.stat.S_IFREG, "st_size": 0},
+        )()
+        with (
+            mock.patch.object(module.Path, "open", return_value=stream),
+            mock.patch.object(module.os, "fstat", return_value=opened_stat),
+            self.assertRaises(module.VideoIngestError) as caught,
+        ):
+            module._read_local_transcript(Path("captions.txt"))
+        self.assertEqual("LOCAL_TRANSCRIPT_TOO_LARGE", caught.exception.code)
+        self.assertEqual(module.MAX_LOCAL_TRANSCRIPT_BYTES + 1, stream.read_size)
+
     def test_cli_transcript_file_path_skips_ytdlp(self) -> None:
         module = self.module
         with tempfile.TemporaryDirectory() as temp_dir:

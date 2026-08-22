@@ -13,7 +13,9 @@ import argparse
 import hashlib
 import html
 import json
+import os
 import re
+import stat
 import subprocess
 import sys
 import urllib.error
@@ -229,16 +231,21 @@ def _read_local_transcript(path: Path) -> tuple[bytes, str]:
             "local transcript must use .vtt, .srt, or .txt",
         )
     try:
-        size = path.stat().st_size
-    except OSError as error:
-        raise VideoIngestError("LOCAL_TRANSCRIPT_READ_FAILED", "unable to inspect local transcript") from error
-    if size > MAX_LOCAL_TRANSCRIPT_BYTES:
-        raise VideoIngestError(
-            "LOCAL_TRANSCRIPT_TOO_LARGE",
-            f"local transcript exceeds {MAX_LOCAL_TRANSCRIPT_BYTES} bytes",
-        )
-    try:
-        payload = path.read_bytes()
+        with path.open("rb") as stream:
+            opened = os.fstat(stream.fileno())
+            if not stat.S_ISREG(opened.st_mode):
+                raise VideoIngestError(
+                    "LOCAL_TRANSCRIPT_NOT_REGULAR_FILE",
+                    "local transcript must be a regular file",
+                )
+            if opened.st_size > MAX_LOCAL_TRANSCRIPT_BYTES:
+                raise VideoIngestError(
+                    "LOCAL_TRANSCRIPT_TOO_LARGE",
+                    f"local transcript exceeds {MAX_LOCAL_TRANSCRIPT_BYTES} bytes",
+                )
+            payload = stream.read(MAX_LOCAL_TRANSCRIPT_BYTES + 1)
+    except VideoIngestError:
+        raise
     except OSError as error:
         raise VideoIngestError("LOCAL_TRANSCRIPT_READ_FAILED", "unable to read local transcript") from error
     if len(payload) > MAX_LOCAL_TRANSCRIPT_BYTES:
