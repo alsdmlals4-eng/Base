@@ -62,6 +62,22 @@ class GodotHiGodotGutHeraToolchainTests(unittest.TestCase):
         ):
             self.assertIn(marker, text)
 
+    def test_high_nutrient_runtime_qa_patterns_are_absorbed_without_second_default_provider(self) -> None:
+        text = POLICY.read_text(encoding="utf-8")
+        for marker in (
+            "EXTERNAL_RUNTIME_QA_PATTERN_ABSORB_ONLY",
+            "HERA_REMAINS_DEFAULT_LIVE_QA_PROVIDER",
+            "RUNTIME_QA_SCENARIO_PACKET",
+            "WALL_CLOCK_APPROX_REPLAY_IS_NOT_DETERMINISTIC_STATE_REPLAY",
+            "STRUCTURED_STATE_BEFORE_SCREENSHOT",
+            "VISUAL_DIFF_TWO_AXIS_TOLERANCE",
+            "PERFORMANCE_SAMPLE_WINDOW",
+            "DIAGNOSTIC_SETUP_IS_NOT_ACCEPTANCE_PATH",
+            "mrf/godot-stagehand",
+            "satelliteoflove/godot-mcp",
+        ):
+            self.assertIn(marker, text)
+
     def test_evaluation_owner_routes_gut_and_hera_without_blanket_installation(self) -> None:
         text = EVALUATION_SKILL.read_text(encoding="utf-8")
         for marker in (
