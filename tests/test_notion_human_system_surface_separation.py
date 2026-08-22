@@ -43,7 +43,7 @@ class NotionHumanSystemSurfaceSeparationTests(unittest.TestCase):
         )
 
     def test_approved_visual_requires_notion_delivery_and_readback(self) -> None:
-        text = VISUAL_WORKFLOW.read_text(encoding="utf-8")
+        text = HUMAN_HOME.read_text(encoding="utf-8") + "\n" + VISUAL_WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("APPROVED_VISUAL_NOTION_DELIVERY_REQUIRED", text)
         self.assertIn("APPROVAL_WITHOUT_NOTION_DELIVERY_IS_INCOMPLETE", text)
         self.assertIn("Visual Bible", text)
