@@ -300,6 +300,17 @@
       "submitted_at": "2026-08-13",
       "approval_ref": "[수정제안서]/BCP-2026-027-claim-and-intent-verification-gate/PROPOSAL.md#승인과-구현",
       "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/319"
+    },
+    {
+      "proposal_id": "BCP-2026-028-public-video-evidence-workflow-authority",
+      "title": "Public Video Evidence Workflow Authority",
+      "path": "[수정제안서]/BCP-2026-028-public-video-evidence-workflow-authority/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "alsdmlals4-eng/Base",
+      "source_commit": "b1852eea26af1e0445aefdf717eeaf5e9717af6e",
+      "submitted_at": "2026-08-22",
+      "approval_ref": null,
+      "implementation_pr": null
     }
   ]
 }
