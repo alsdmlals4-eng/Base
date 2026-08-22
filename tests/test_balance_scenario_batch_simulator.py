@@ -130,7 +130,10 @@ class BalanceScenarioBatchSimulatorTests(unittest.TestCase):
             },
             baseline["metrics"]["score"],
         )
+        self.assertEqual("RUNS_CONTAINING_TAG", baseline["failure_rate_denominator"])
         self.assertEqual({"SHORT": 0.25}, baseline["failure_rates"])
+        self.assertEqual("TOTAL_CHOICE_EVENTS", baseline["choice_share_denominator"])
+        self.assertEqual(4, baseline["choice_event_count"])
         self.assertEqual(
             {"choice": "A", "count": 3, "share": 0.75},
             baseline["dominant_choice"],
@@ -157,6 +160,27 @@ class BalanceScenarioBatchSimulatorTests(unittest.TestCase):
         self.assertTrue(ranking[0]["inside_target"])
         self.assertEqual("candidate_bad", ranking[1]["variant"])
         self.assertTrue(report["goal_seek"][0]["non_authoritative"])
+
+    def test_failure_rate_deduplicates_same_tag_within_one_run(self) -> None:
+        module = load_module()
+        manifest = {
+            "schema_version": 1,
+            "project_id": "TEST",
+            "runs": [
+                {
+                    "seed": 1,
+                    "variant": "baseline",
+                    "metrics": {"score": 1},
+                    "failures": ["X", "X"],
+                }
+            ],
+        }
+
+        report = module.analyze_manifest(manifest)
+
+        baseline = report["variants"]["baseline"]
+        self.assertEqual({"X": 1.0}, baseline["failure_rates"])
+        self.assertLessEqual(max(baseline["failure_rates"].values()), 1.0)
 
     def test_rejects_duplicate_variant_seed_and_invalid_metrics(self) -> None:
         self.assertTrue(MODULE_PATH.is_file(), MODULE_PATH)
