@@ -10,7 +10,16 @@
     "RUNTIME_NOT_PROVEN",
     "HUMAN_PLAYER_EVIDENCE_NOT_RUN"
   ],
+  "analysis_context": {
+    "adapter_evidence_mode": "DIRECT_PROJECT_RULES"
+  },
   "baseline_variant": "baseline",
+  "strategy_baselines": [
+    {
+      "variant": "baseline",
+      "strategy_id": "example_behavioral_baseline"
+    }
+  ],
   "runs": [
     {
       "seed": 1,
@@ -45,6 +54,27 @@
       "variants": [
         "baseline",
         "candidate"
+      ]
+    }
+  ],
+  "parameter_sweeps": [
+    {
+      "parameter": "example_tunable",
+      "metric": "example_metric",
+      "summary_stat": "median",
+      "target": 11,
+      "locked_parameters": [
+        "other_tunable"
+      ],
+      "points": [
+        {
+          "value": 1,
+          "variant": "baseline"
+        },
+        {
+          "value": 2,
+          "variant": "candidate"
+        }
       ]
     }
   ]
