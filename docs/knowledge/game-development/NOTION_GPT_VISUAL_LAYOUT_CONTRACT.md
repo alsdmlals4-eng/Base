@@ -26,6 +26,12 @@ Reconsider option 2 only when repeated manual placement or unsupported Notion op
 
 `NOTION_BLOCK_WRITABLE != PIXEL_LAYOUT_CONTROLLED`
 
+`MCP_DISCOVERED_AVAILABLE != CURRENT_CLIENT_EXECUTABLE`
+
+`CURRENT_CLIENT_EXECUTABLE != EFFECT_VERIFIED`
+
+`SERVER_READBACK_PASS != HUMAN_VISIBLE_DEVICE_PASS`
+
 GPT must distinguish three kinds of evidence:
 
 - **Structured page evidence**: page text, headings, properties, database records, image/file block references and surrounding context that the current Notion connection actually returns.
@@ -35,6 +41,22 @@ GPT must distinguish three kinds of evidence:
 Never claim that GPT understood the visual content of an image merely because an image block, file name, caption or metadata is present.
 
 The legacy/read-only ChatGPT Notion search connector does not index non-document media such as images and videos. Notion MCP can read and write workspace pages, but image semantic inspection still requires direct visual evidence when the decision depends on the pixels.
+
+### MCP capability evidence
+
+Notion workspace/self capability discovery is a routing hint, not completion evidence. If a capability is reported as `available` but the current ChatGPT client does not expose a callable function with the required input schema, classify it as `DISCOVERED_ONLY / BLOCKED_TOOL_SURFACE` rather than executable.
+
+For capability-dependent work, apply the shared `claim-and-intent-verification` Reality Gate:
+
+```text
+capability discovery
+→ callable function + usable schema
+→ minimum real invocation
+→ durable destination readback when applicable
+→ human/device-visible observation when the claim depends on rendering
+```
+
+A successful API/write call is at most `INVOCATION_PASS`; a durable page change requires `READBACK_PASS`. Android/browser rendering becomes `HUMAN_VISIBLE_PASS` only after that client is actually observed. Server-side image block readback never substitutes for the device-visible rendering claim.
 
 ## Human and AI surfaces
 
@@ -197,6 +219,8 @@ A successful write call alone is not completion.
 
 Readback verifies semantic placement and persistence. If the tool output cannot expose exact width, crop, visual balance or on-screen geometry, mark those aspects `UI_GEOMETRY_NOT_VERIFIED` rather than inferring them.
 
+For Android/iOS/browser-visible image delivery, add a final client observation step. A Notion server image block, signed file URL, or successful page fetch can prove persistence but cannot prove that a specific client actually rendered the bytes.
+
 ## Project workflow integration
 
 During project planning/review:
@@ -220,10 +244,13 @@ Before expanding automation beyond this contract, demonstrate the specific missi
 Required probe order:
 
 1. read an existing page that contains image/file blocks and surrounding sections;
-2. perform one bounded placement/edit using current Notion MCP capabilities;
-3. fetch/read back the target;
-4. classify what was actually observable: block presence, order, columns, caption, file reference, or only text context;
-5. add a helper/tool only for a repeatable capability gap that materially affects the workflow.
+2. inspect current MCP/client tool exposure, not only workspace capability discovery;
+3. require a callable function with usable schema for the intended operation;
+4. perform one bounded real invocation using current Notion MCP capabilities;
+5. fetch/read back the target;
+6. classify what was actually observable: block presence, order, columns, caption, file reference, or only text context;
+7. when client rendering matters, observe that Android/iOS/browser surface separately;
+8. add a helper/tool only for a repeatable capability gap that materially affects the workflow.
 
 Do not build infrastructure for hypothetical layout limitations.
 
@@ -235,6 +262,9 @@ Do not build infrastructure for hypothetical layout limitations.
 - duplicating the same approved visual into competing canonical records;
 - redesigning the entire Home during a bounded asset placement task;
 - claiming exact visual layout quality when only semantic block readback was available;
+- treating `self.current_tool_access=available` as proof that the current client can invoke the capability;
+- treating a successful write invocation as durable effect without destination readback;
+- treating server image readback as Android/browser render PASS;
 - introducing a paid automation layer before current MCP behavior was tested;
 - treating Notion placement as proof that Godot/runtime integration occurred.
 
@@ -247,6 +277,7 @@ The workflow is healthy when:
 - every displayed project visual is traceable to an actual asset/reference and approval state;
 - GPT can select a semantic destination from metadata without repeatedly asking where the asset belongs;
 - visual-content-dependent judgements require direct image evidence;
+- capability-dependent claims distinguish discovery, callable schema, invocation, readback and human-visible evidence;
 - all Notion writes receive destination readback;
 - exact UI geometry is not overstated when the tool cannot verify it;
 - repository runtime truth remains separate from Notion presentation state.
