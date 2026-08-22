@@ -4,11 +4,13 @@
 The reference implementation intentionally does not download video/audio and does not
 invoke a cloud transcript API. yt-dlp is used only to discover video metadata and
 caption track URLs; WebVTT normalization is handled with the Python standard library.
+A caller-supplied local transcript can be used when yt-dlp is unavailable.
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import html
 import json
 import re
@@ -37,6 +39,8 @@ ALLOWED_YOUTUBE_HOSTS = {
 ALLOWED_CAPTION_HOST_SUFFIXES = ("youtube.com", "googlevideo.com")
 DEFAULT_OUTPUT_ROOT = Path(".tmp/public-video-research")
 DEFAULT_LANGUAGES = ("ko", "en", "en-US")
+MAX_LOCAL_TRANSCRIPT_BYTES = 5 * 1024 * 1024
+LOCAL_TRANSCRIPT_SUFFIXES = {".vtt", ".srt", ".txt"}
 
 
 class VideoIngestError(RuntimeError):
@@ -205,6 +209,50 @@ def parse_vtt(text: str) -> list[dict[str, object]]:
     return segments
 
 
+def _parse_plain_text(text: str) -> list[dict[str, object]]:
+    normalized = text.replace("\r\n", "\n").replace("\r", "\n").lstrip("\ufeff")
+    segments: list[dict[str, object]] = []
+    for block in re.split(r"\n\s*\n", normalized):
+        cleaned = re.sub(r"\s+", " ", block).strip()
+        if cleaned:
+            segments.append({"start_sec": None, "end_sec": None, "text": cleaned})
+    if not segments:
+        raise EmptyTranscript("local transcript contained no usable text")
+    return segments
+
+
+def _read_local_transcript(path: Path) -> tuple[bytes, str]:
+    suffix = path.suffix.lower()
+    if suffix not in LOCAL_TRANSCRIPT_SUFFIXES:
+        raise VideoIngestError(
+            "UNSUPPORTED_LOCAL_TRANSCRIPT_FORMAT",
+            "local transcript must use .vtt, .srt, or .txt",
+        )
+    try:
+        size = path.stat().st_size
+    except OSError as error:
+        raise VideoIngestError("LOCAL_TRANSCRIPT_READ_FAILED", str(error)) from error
+    if size > MAX_LOCAL_TRANSCRIPT_BYTES:
+        raise VideoIngestError(
+            "LOCAL_TRANSCRIPT_TOO_LARGE",
+            f"local transcript exceeds {MAX_LOCAL_TRANSCRIPT_BYTES} bytes",
+        )
+    try:
+        payload = path.read_bytes()
+    except OSError as error:
+        raise VideoIngestError("LOCAL_TRANSCRIPT_READ_FAILED", str(error)) from error
+    if len(payload) > MAX_LOCAL_TRANSCRIPT_BYTES:
+        raise VideoIngestError(
+            "LOCAL_TRANSCRIPT_TOO_LARGE",
+            f"local transcript exceeds {MAX_LOCAL_TRANSCRIPT_BYTES} bytes",
+        )
+    try:
+        text = payload.decode("utf-8-sig")
+    except UnicodeDecodeError as error:
+        raise VideoIngestError("LOCAL_TRANSCRIPT_ENCODING_FAILED", "local transcript must be UTF-8") from error
+    return payload, text
+
+
 def validate_caption_url(value: str) -> str:
     """Prevent metadata-driven fetches outside known HTTPS YouTube caption hosts."""
     parsed = urlparse(value)
@@ -278,6 +326,64 @@ def build_evidence_packet(
             else "BLOCKED_UNVERIFIED"
         ),
     }
+
+
+def ingest_local_transcript(
+    source_url: str,
+    transcript_file: Path,
+    *,
+    language: str | None = None,
+) -> dict[str, object]:
+    """Normalize a caller-supplied local transcript without invoking yt-dlp."""
+    video_id = extract_video_id(source_url)
+    source_url_value = (
+        f"https://www.youtube.com/watch?v={video_id}"
+        if VIDEO_ID_RE.fullmatch(source_url.strip())
+        else source_url
+    )
+    path = Path(transcript_file)
+    payload, text = _read_local_transcript(path)
+    suffix = path.suffix.lower()
+    timestamped = suffix in {".vtt", ".srt"}
+    segments = parse_vtt(text) if timestamped else _parse_plain_text(text)
+    source_kind = {
+        ".vtt": "local_vtt",
+        ".srt": "local_srt",
+        ".txt": "local_plain_text",
+    }[suffix]
+    metadata: dict[str, object] = {
+        "id": video_id,
+        "webpage_url": f"https://www.youtube.com/watch?v={video_id}",
+    }
+    track: dict[str, object] = {
+        "source_kind": source_kind,
+        "language": language,
+        "is_generated": False,
+    }
+    packet = build_evidence_packet(
+        metadata,
+        source_url=source_url_value,
+        tool_version="local-file",
+        track=track,
+        segments=segments,
+        status="READY",
+    )
+    packet["retrieval"] = {
+        "tool": "local-file",
+        "tool_version": "filesystem",
+        "checked_at": _utc_now(),
+    }
+    transcript = packet["transcript"]
+    if isinstance(transcript, dict):
+        transcript["timestamp_evidence"] = "AVAILABLE" if timestamped else "UNAVAILABLE"
+    packet["local_transcript_input"] = {
+        "format": suffix.removeprefix("."),
+        "byte_length": len(payload),
+        "sha256": hashlib.sha256(payload).hexdigest(),
+    }
+    if not timestamped:
+        packet["content_claim_ceiling"] = "TRANSCRIPT_TEXT_ONLY_NO_TIMESTAMP_FACT_VERIFICATION"
+    return packet
 
 
 def _run_ytdlp(arguments: Sequence[str], *, yt_dlp: str, timeout: int = 60) -> subprocess.CompletedProcess[str]:
@@ -417,6 +523,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("source_url", help="YouTube URL or 11-character video ID")
     parser.add_argument("--langs", type=_parse_languages, default=DEFAULT_LANGUAGES, help="comma-separated language priority")
     parser.add_argument("--yt-dlp", default="yt-dlp", dest="yt_dlp", help="yt-dlp executable path")
+    parser.add_argument("--transcript-file", type=Path, help="caller-supplied local .vtt/.srt/.txt transcript")
+    parser.add_argument("--language", help="language code for --transcript-file provenance")
     parser.add_argument("--output", type=Path, help="local JSON packet path; defaults under .tmp/")
     args = parser.parse_args(argv)
 
@@ -424,7 +532,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     if VIDEO_ID_RE.fullmatch(source_url):
         source_url = f"https://www.youtube.com/watch?v={source_url}"
     try:
-        packet = ingest_public_video(source_url, languages=args.langs, yt_dlp=args.yt_dlp)
+        if args.transcript_file is not None:
+            packet = ingest_local_transcript(source_url, args.transcript_file, language=args.language)
+        else:
+            packet = ingest_public_video(source_url, languages=args.langs, yt_dlp=args.yt_dlp)
         path = write_packet(packet, output=args.output)
     except (VideoIngestError, ValueError) as error:
         code = error.code if isinstance(error, VideoIngestError) else "INVALID_SOURCE_URL"
