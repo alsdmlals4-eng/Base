@@ -6,6 +6,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = ROOT / "docs/evidence/2026-08-20-v47-workflow-alignment-adversarial-review.md"
+WORKFLOW = ROOT / ".github/workflows/validate-game-project-operating-system.yml"
+RETIREMENT = ROOT / "docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md"
 
 
 class V47SupersededPrClosureTests(unittest.TestCase):
@@ -21,6 +23,21 @@ class V47SupersededPrClosureTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
         self.assertNotIn("CLEAN_REVIEW_EXIT: PENDING_FINAL_EXACT_HEAD_CI_AND_PR_GATE", text)
+
+    def test_retired_qa_studio_is_not_an_active_or_required_ci_surface(self) -> None:
+        workflow = WORKFLOW.read_text(encoding="utf-8")
+        retirement = RETIREMENT.read_text(encoding="utf-8")
+
+        self.assertIn("QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW", retirement)
+        self.assertIn("신규 작업의 자동 라우팅·필수 preflight·완료 조건에 넣지 않는다", retirement)
+
+        for stale_active_consumer in (
+            "tools/qa-evidence-studio/*",
+            "Install Windows QA Evidence Studio dependencies",
+            "Run Windows QA Evidence Studio smoke",
+            "tools/qa-evidence-studio/tests",
+        ):
+            self.assertNotIn(stale_active_consumer, workflow)
 
 
 if __name__ == "__main__":
