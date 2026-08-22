@@ -153,7 +153,13 @@ class NtnClient:
         block_id = results[0].get("id")
         if not isinstance(block_id, str) or not block_id:
             raise BridgeError("DESTINATION_READBACK_FAILED", "created image block id missing")
-        block = self._json(["api", f"v1/blocks/{block_id}", "--notion-version", NOTION_VERSION])
+        try:
+            block = self._json(["api", f"v1/blocks/{block_id}", "--notion-version", NOTION_VERSION])
+        except BridgeError as exc:
+            raise BridgeError(
+                "AMBIGUOUS_DESTINATION_STATE",
+                f"append returned block_id={block_id}, but readback failed; inspect the destination before retrying to avoid a duplicate image block ({exc.code})",
+            ) from exc
         if block.get("id") != block_id or block.get("type") != "image":
             raise BridgeError("DESTINATION_READBACK_FAILED", "created block did not read back as image")
         return {
