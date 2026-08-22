@@ -105,7 +105,7 @@ AGENTS.md
 
 ## Request-to-work rule
 
-기능·게임 경험·아트 방향·구조·워크플로 변경은 현재 Project router가 지정한 intake/work-contract Skill을 사용한다.
+기능·게임 경험·아트 방향·구조·워크플로 변경은 current Base의 통합 intake owner인 `managing-project-intake-and-work-contract`를 사용한다. Skill Registry가 successor/alias를 선언하면 current registry route를 따르되, 프로젝트 template에서 별도 intake Skill을 새로 만들지 않는다.
 
 ```text
 route
@@ -118,7 +118,7 @@ route
 오탈자, 명확한 단일 파일 기계 수정, 입력이 같은 검사 재실행은 예외다. 인터뷰 Registry를 사용하는 프로젝트는 `CONFIRMED`와 사용자 확인 근거가 있을 때만 실행 계약을 확정한다.
 
 - Work contract type: `github_issue` / `approved_direct_request`
-- Current intake Skill/mode:
+- Current intake Skill/mode: `managing-project-intake-and-work-contract`
 - Interview ID·status·confirmation:
 - Current executable contract:
 
