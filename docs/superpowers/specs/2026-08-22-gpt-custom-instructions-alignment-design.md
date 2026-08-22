@@ -16,7 +16,7 @@ ChatGPT 맞춤설정을 Base와 프로젝트의 두 번째 정본으로 만들�
 - 현재 `DOMAIN_SPLIT_CANON` — Notion human-facing canon / repository structured+runtime canon / Google Sheets migration-only — 가 반영되지 않았다.
 - 현재 Base가 소유하는 PR 보호, evidence gate, benchmark/alternative/adversarial/reality validation을 맞춤설정이 자체 규칙으로 재복제할 위험이 있다.
 - 프로젝트 실제 작업의 권위 순서가 현재 `AGENTS.md`와 다르다.
-- `docs/DOCUMENTATION_MAP.md`는 현재 main에 존재하지 않는 `docs/knowledge/ai/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`를 AI instruction/context 책임 원본으로 가리킨다.
+- `docs/DOCUMENTATION_MAP.md`는 `docs/knowledge/ai/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`를 가리키지만, canonical Method는 현재 `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`에 있다. old path가 없어 과거 참조와 map route가 깨진다.
 
 이 상태에서는 Base가 개선될수록 맞춤설정이 다시 낡고, 과거 규칙이 최신 프로젝트 작업을 오염시킬 수 있다.
 
@@ -117,6 +117,18 @@ Notion Project Home은 사람에게 필요한 핵심 이해를 우선한다. Pro
 
 Memory는 장기 사용자 선호와 재사용 가치가 높은 개인 작업 성향을 보조한다. 현재 진행도, PR 번호, 구현 완료 여부, 시스템 최신 수치, 일회성 작업 상태, 교체된 도구 정책은 프로젝트 정본을 대체하지 않는다.
 
+### AI instruction Method compatibility
+
+`docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`가 canonical owner다. 과거 `docs/knowledge/ai/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md` 참조를 모두 즉시 찾아 고치는 대신 old path에 **content duplication이 없는 `COMPATIBILITY_ALIAS_ONLY` router**를 둔다.
+
+```text
+old path
+→ COMPATIBILITY_ALIAS_ONLY
+→ canonical game-development Method
+```
+
+Alias는 Method 내용을 복사하지 않고 canonical path와 custom-instructions guide를 안내한다. 이 방식은 과거 참조를 깨지 않으면서 복수 authority를 만들지 않는다.
+
 ## Files
 
 - Modify `templates/custom-instructions.gpt.md`
@@ -125,8 +137,8 @@ Memory는 장기 사용자 선호와 재사용 가치가 높은 개인 작업 �
 - Modify `docs/CUSTOM_INSTRUCTIONS_GUIDE.md`
   - stable bootstrap vs dynamic canon 경계를 명시한다.
   - Product Personalization / Memory / Base routing 관계를 설명한다.
-- Modify `docs/DOCUMENTATION_MAP.md`
-  - 존재하지 않는 AI instruction owner를 제거하고 실제 custom-instruction owner를 등록한다.
+- Create `docs/knowledge/ai/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`
+  - `COMPATIBILITY_ALIAS_ONLY` router로 canonical Method와 custom-instructions guide를 연결한다.
 - Leave `templates/custom-instructions.codex.md` unchanged in this change.
   - Codex template의 별도 stale-read audit은 독립 범위로 남긴다. GPT 설정 교정과 묶어 역할 범위를 불필요하게 확대하지 않는다.
 
@@ -136,6 +148,7 @@ Memory는 장기 사용자 선호와 재사용 가치가 높은 개인 작업 �
 2. GPT template이 `DOMAIN_SPLIT_CANON`과 최신 authority routing을 설명한다.
 3. L1 상세 Gate를 custom instructions에 복제하지 않고 current Base contract를 다시 읽도록 한다.
 4. Guide가 stable/volatile 정보 경계를 명확히 설명한다.
-5. Documentation Map의 AI instruction/custom-instruction owner가 실제 존재하는 파일만 가리킨다.
-6. 변경 브랜치의 diff와 destination readback을 검증한다.
-7. PR merge 뒤 main에서 세 대상 파일을 다시 읽어 반영을 확인한다.
+5. `docs/DOCUMENTATION_MAP.md`가 가리키는 old AI instruction path가 compatibility alias로 실제 resolve되고, alias는 canonical content를 복제하지 않는다.
+6. canonical Method는 `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md` 하나로 유지된다.
+7. 변경 브랜치의 diff와 destination readback을 검증한다.
+8. PR merge 뒤 main에서 GPT template, guide, compatibility alias와 canonical target을 다시 읽어 반영을 확인한다.
