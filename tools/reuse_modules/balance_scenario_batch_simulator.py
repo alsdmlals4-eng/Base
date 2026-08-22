@@ -177,6 +177,24 @@ def _distance_to_target(value: float, low: float, high: float) -> float:
     return 0.0
 
 
+def _goal_metric_values(
+    runs: list[dict[str, Any]], metric_id: str
+) -> list[float]:
+    values: list[float] = []
+    for run in runs:
+        metrics = run.get("metrics", {})
+        if metric_id not in metrics:
+            continue
+        value = metrics[metric_id]
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            continue
+        numeric = float(value)
+        if not math.isfinite(numeric):
+            raise ValueError(f"goal metric {metric_id!r} must be finite")
+        values.append(numeric)
+    return values
+
+
 def analyze_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
     """Analyze project-supplied run records without owning game simulation rules.
 
@@ -236,6 +254,8 @@ def analyze_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
         low, high = float(target[0]), float(target[1])
         if not math.isfinite(low) or not math.isfinite(high):
             raise ValueError("goal_seek target values must be finite")
+        if low > high:
+            low, high = high, low
         requested_variants = [
             str(item) for item in request.get("variants", sorted(grouped))
         ]
@@ -247,15 +267,27 @@ def analyze_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
                 continue
             median = float(metric_summary["median"])
             distance = _distance_to_target(median, low, high)
+            values = _goal_metric_values(grouped.get(variant, []), metric_id)
+            inside_count = sum(1 for value in values if low <= value <= high)
+            inside_share = inside_count / len(values) if values else 0.0
             ranking.append(
                 {
                     "variant": variant,
                     "median": median,
                     "distance_to_target": distance,
                     "inside_target": distance == 0.0,
+                    "inside_target_count": inside_count,
+                    "metric_run_count": len(values),
+                    "inside_target_share": inside_share,
                 }
             )
-        ranking.sort(key=lambda item: (item["distance_to_target"], item["variant"]))
+        ranking.sort(
+            key=lambda item: (
+                item["distance_to_target"],
+                -item["inside_target_share"],
+                item["variant"],
+            )
+        )
         goal_seek_reports.append(
             {
                 "metric": metric_id,
