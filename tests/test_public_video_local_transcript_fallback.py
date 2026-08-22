@@ -10,6 +10,7 @@ from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 MODULE_PATH = ROOT / "tools" / "public_video_research_ingest.py"
+MODULE_CONTRACT_PATH = ROOT / "docs" / "knowledge" / "game-development" / "reuse" / "PRODUCTION_TOOL_WORKFLOW_MODULES.md"
 
 
 def load_module():
@@ -112,6 +113,14 @@ class PublicVideoLocalTranscriptFallbackTests(unittest.TestCase):
             ytdlp_version.assert_not_called()
             packet = json.loads(output_path.read_text(encoding="utf-8"))
             self.assertEqual("local_vtt", packet["transcript"]["source_kind"])
+
+    def test_canonical_contract_documents_local_file_provenance_ceiling(self) -> None:
+        contract = MODULE_CONTRACT_PATH.read_text(encoding="utf-8")
+        self.assertIn("caller_supplied_local_transcript", contract)
+        self.assertIn("video_binding: UNVERIFIED", contract)
+        self.assertIn("creation_source: UNKNOWN", contract)
+        self.assertIn("LOCAL_TRANSCRIPT_READY", contract)
+        self.assertIn("TIMESTAMPS_PRESENT", contract)
 
 
 if __name__ == "__main__":

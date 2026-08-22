@@ -277,9 +277,11 @@ inputs:
   source_url:
   preferred_languages: [ko, en, en-US]
   yt_dlp_executable: yt-dlp
+  local_transcript_file: optional [.vtt, .srt, .txt]
 source_ladder:
   - accessible_manual_caption
   - accessible_auto_caption
+  - caller_supplied_local_transcript
   - optional_existing_local_asr_adapter
   - BLOCKED_UNVERIFIED
 outputs:
@@ -289,6 +291,9 @@ outputs:
   transcript_source_kind:
   transcript_language:
   timestamped_segments: []
+  local_input_sha256:
+  video_binding: UNVERIFIED
+  creation_source: UNKNOWN
 storage_policy:
   full_transcript: LOCAL_RESEARCH_ONLY
   default_output_root: .tmp/public-video-research
@@ -300,9 +305,11 @@ storage_policy:
 1. Base reference implementation은 `yt-dlp --skip-download --dump-single-json`으로 metadata/caption track만 찾고 선택한 WebVTT만 읽는다. 영상·오디오를 다운로드하지 않는다.
 2. manual caption을 auto caption보다 우선하며 둘의 provenance를 분리한다.
 3. caption이 없으면 `ASR_FALLBACK_REQUIRED`를 반환한다. local ASR이 이미 준비된 환경에서 별도 bounded adapter로 처리할 수 있지만 Base가 모델·GPU runtime·ffmpeg를 자동 설치하지 않는다.
-4. hosted transcript SaaS, paid proxy, separately metered API/credit를 자동 fallback으로 사용하지 않는다.
-5. full transcript는 기본적으로 Git ignore 대상인 `.tmp/` local research packet으로만 저장한다. GitHub/Notion에는 현재 결정에 필요한 derived note·짧은 인용·timestamp·source URL을 남긴다.
-6. caption URL은 HTTPS YouTube/GoogleVideo host로 제한하고 untrusted metadata가 임의 host fetch로 이어지지 않게 한다.
+4. `yt-dlp`를 사용할 수 없거나 별도 도구·사용자가 transcript를 이미 확보한 경우 `.vtt`, `.srt`, `.txt`를 caller-supplied local fallback으로 받을 수 있다. 이 경로는 파일 내용을 SHA-256으로 묶되 절대 로컬 경로를 packet에 저장하지 않고, 영상과의 실제 대응은 `video_binding: UNVERIFIED`, 생성 방식은 `creation_source: UNKNOWN`, 자동생성 여부는 `is_generated: null`로 남긴다.
+5. local `.vtt/.srt`의 timestamp 존재는 `timestamp_evidence: AVAILABLE`을 뜻할 뿐 source video와 timestamp가 맞는다는 검증이 아니다. `.txt`는 `timestamp_evidence: UNAVAILABLE`이며 timestamp 기반 사실 검증에 사용할 수 없다.
+6. hosted transcript SaaS, paid proxy, separately metered API/credit를 자동 fallback으로 사용하지 않는다.
+7. full transcript는 기본적으로 Git ignore 대상인 `.tmp/` local research packet으로만 저장한다. GitHub/Notion에는 현재 결정에 필요한 derived note·짧은 인용·timestamp·source URL을 남긴다.
+8. caption URL은 HTTPS YouTube/GoogleVideo host로 제한하고 untrusted metadata가 임의 host fetch로 이어지지 않게 한다.
 
 ### 증거 ceiling
 
@@ -312,9 +319,16 @@ CAPTION_INGEST_PASS
 != COPYRIGHT_CLEARANCE
 != PROJECT_FIT_PASS
 != ASR_OR_CAPTION_PERFECT_ACCURACY
+
+LOCAL_TRANSCRIPT_READY
+!= VERIFIED_VIDEO_BINDING
+!= VERIFIED_CREATION_SOURCE
+
+TIMESTAMPS_PRESENT
+!= TIMESTAMPS_MATCH_SOURCE_VIDEO
 ```
 
-실제 live YouTube retrieval은 `yt-dlp`가 준비된 실행환경에서 대표 영상으로 별도 검증한다. unit test만으로 site compatibility를 PASS 처리하지 않는다.
+실제 live YouTube retrieval은 `yt-dlp`가 준비된 실행환경에서 대표 영상으로 별도 검증한다. unit test만으로 site compatibility를 PASS 처리하지 않는다. caller-supplied local transcript fallback은 live site compatibility를 증명하지 않으며, 원 영상과의 대응을 별도 확인하기 전에는 그 transcript를 해당 영상의 검증된 본문으로 승격하지 않는다.
 
 상태: `MODULE_CONTRACT_DEFINED · BASE_PROMOTION_CANDIDATE · REFERENCE_IMPLEMENTATION_ADDED · PROJECT_ADOPTION_NOT_RUN`.
 
@@ -526,6 +540,7 @@ Existing Solution First
 
 - `yt-dlp` presence/version is checked at runtime.
 - Base가 `yt-dlp`나 local ASR을 자동 설치하지 않으며 hosted transcript paid fallback을 쓰지 않는다.
+- caller-supplied `.vtt/.srt/.txt`는 `yt-dlp` 없는 환경의 zero-incremental-cost fallback이지만, hash-bound local input일 뿐 원 영상과의 binding 또는 생성 출처를 자동 증명하지 않는다.
 - live compatibility는 대표 영상 실제 검증이 필요하다.
 
 ---
@@ -544,4 +559,4 @@ Existing Solution First
 
 # 완료 상태
 
-이 문서의 신규 tool contract는 실제 executable 구현과 분리한다. `RM-TOOL-004`는 별도 프로그램이 아니라 현재 repository/runtime evidence를 조합하는 **활성 방법 계약**이다. `RM-TOOL-001/002/003`은 실제 공용 executable 증거가 생기기 전까지 `IMPLEMENTATION_NOT_BUILT` 또는 project-local pilot 상태를 유지한다. `ATOMIC_RESOLUTION_BOUNDARY`와 `PROJECT_SUBSYSTEM_CHANGE_MAP`은 기존 owner를 보강하는 계약이며 별도 공용 runtime/Skill 구현이 아니다. `RM-TOOL-005`는 bounded reference implementation `tools/public_video_research_ingest.py`가 있으며 unit test는 계약·parser·fail-closed 동작만 증명한다. live YouTube compatibility와 project adoption은 별도 검증이 필요하다.
+이 문서의 신규 tool contract는 실제 executable 구현과 분리한다. `RM-TOOL-004`는 별도 프로그램이 아니라 현재 repository/runtime evidence를 조합하는 **활성 방법 계약**이다. `RM-TOOL-001/002/003`은 실제 공용 executable 증거가 생기기 전까지 `IMPLEMENTATION_NOT_BUILT` 또는 project-local pilot 상태를 유지한다. `ATOMIC_RESOLUTION_BOUNDARY`와 `PROJECT_SUBSYSTEM_CHANGE_MAP`은 기존 owner를 보강하는 계약이며 별도 공용 runtime/Skill 구현이 아니다. `RM-TOOL-005`는 bounded reference implementation `tools/public_video_research_ingest.py`가 있으며 unit test는 계약·parser·fail-closed 동작과 caller-supplied local transcript provenance 제한을 증명한다. live YouTube compatibility와 project adoption은 별도 검증이 필요하다.
