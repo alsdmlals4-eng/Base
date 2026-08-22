@@ -48,7 +48,7 @@ The official Notion file-upload contract uses a typed `file_upload` object after
 
 ### A. Keep using Notion MCP only — REJECT
 
-Pros: no local dependency.  
+Pros: no local dependency.
 Cons: the current surfaced attach representation has already produced Android 422 across inline, cover, and Gallery use. More URL permutations would repeat a disproven architecture.
 
 ### B. Thin wrapper over official `ntn` CLI — ADOPT
@@ -69,7 +69,7 @@ Cons:
 
 ### C. Custom Python Notion REST client — FALLBACK
 
-Pros: complete transport control.  
+Pros: complete transport control.
 Cons: duplicates official authentication, multipart upload, API-version handling, error normalization, and credential management. Higher maintenance with no current user-value advantage.
 
 ## Architecture
