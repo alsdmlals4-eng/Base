@@ -50,12 +50,12 @@ PROJECT_CANON_FIRST
 후보의 출처, 성숙도, 검증을 하나의 문자열로 섞지 않는다.
 
 ```yaml
-origin:
+candidate_origin:
   EVIDENCE_DERIVED | CONTEXT_SYNTHESIZED | HYBRID
 maturity:
   HYPOTHESIS | MODULE_CONTRACT_DEFINED | REFERENCE_IMPLEMENTATION_EXISTS | PROJECT_ADAPTER_VERIFIED | PROJECT_MERGED
-validation:
-  NOT_RUN | FOCUSED_VERIFIED | MULTI_CONTEXT_VERIFIED | PLAYER_OR_USER_VERIFIED
+validation_state:
+  VALIDATION_NOT_RUN | FOCUSED_VERIFIED | MULTI_CONTEXT_VERIFIED | PLAYER_OR_USER_VERIFIED
 ```
 
 ### 핵심 ceiling
@@ -89,7 +89,7 @@ Context-Synthesized 후보는 외부 사례가 없어도 `HYPOTHESIS` 또는 `MO
 
 ```yaml
 candidate_id:
-origin: CONTEXT_SYNTHESIZED | HYBRID
+candidate_origin: CONTEXT_SYNTHESIZED | HYBRID
 context_basis:
 planned_consumers: []
 predicted_repeat_or_tangle:
@@ -102,7 +102,7 @@ falsification_test:
 smallest_pilot:
 rollback_or_discard_condition:
 maturity: HYPOTHESIS | MODULE_CONTRACT_DEFINED
-validation: NOT_RUN
+validation_state: VALIDATION_NOT_RUN
 ```
 
 `falsification_test`와 `rollback_or_discard_condition`이 없으면 단순 아이디어 메모이며 reusable module candidate로 승격하지 않는다.
@@ -166,7 +166,7 @@ PROVIDER_USE_IS_OPTIONAL_NOT_BASE_DEPENDENCY
 
 ## 8. Registry integration
 
-Registry는 origin/maturity/validation의 의미를 정의하고, 각 row의 기존 legacy status를 한 번에 전면 마이그레이션하지 않는다. 새/갱신 candidate가 세 축을 명시할 수 있게 하고, completed-main 직접 증거가 있는 P0 reference implementation은 stale `IMPLEMENTATION_NOT_BUILT`를 유지하지 않는다.
+Registry는 `candidate_origin`/`maturity`/`validation_state`의 의미를 정의하고, 각 row의 기존 legacy status를 한 번에 전면 마이그레이션하지 않는다. 새/갱신 candidate가 세 축을 명시할 수 있게 하고, completed-main 직접 증거가 있는 P0 reference implementation은 stale `IMPLEMENTATION_NOT_BUILT`를 유지하지 않는다.
 
 이번 정합화 대상:
 
