@@ -92,8 +92,10 @@ class ContextDrivenReuseSynthesisTests(unittest.TestCase):
         row = table_row(text, "RM-WORK-003")
         self.assertIn("HYBRID", row)
         self.assertIn("MODULE_CONTRACT_DEFINED", row)
-        self.assertIn("VALIDATION_NOT_RUN", row)
+        self.assertIn("FOCUSED_VERIFIED", row)
+        self.assertNotIn("VALIDATION_NOT_RUN", row)
         self.assertNotIn("BASE_ACTIVE_METHOD", row)
+        self.assertNotIn("PLAYER_OR_USER_VERIFIED", row)
 
     def test_presentation_pattern_is_provider_neutral_and_preserves_canon_boundaries(self) -> None:
         text = read(ARTIFACT)

@@ -147,11 +147,11 @@ EVIDENCE_REQUIRED_FOR_PROMOTION
 | `RM-TOOL-005` | `PUBLIC_VIDEO_RESEARCH_INGEST_ADAPTER` | public talk/tutorial/developer interview evidence | `PATTERN_EXTRACT` + thin `yt-dlp` adapter | `MODULE_CONTRACT_DEFINED · BASE_PROMOTION_CANDIDATE · REFERENCE_IMPLEMENTATION_EXISTS` |
 | `RM-WORK-001` | `PROJECT_REUSE_OPPORTUNITY_SCAN` | merged Base reverse-engineering method | `EXISTING_OWNER_REUSE` | `BASE_ACTIVE_METHOD` |
 | `RM-WORK-002` | `SKILL_WORKFLOW_PATTERN_EVAL` | `docs/AI_SKILL_ADOPTION_GUIDE.md` | `EXISTING_OWNER_REUSE` | `BASE_ACTIVE_METHOD · HUMAN_EDIT_DELTA` |
-| `RM-WORK-003` | `HUMAN_FACING_ARTIFACT_SYNTHESIS` | Base human-publication context + official presentation-AI patterns | `HYBRID · PROVIDER_NEUTRAL` | `MODULE_CONTRACT_DEFINED · VALIDATION_NOT_RUN` |
+| `RM-WORK-003` | `HUMAN_FACING_ARTIFACT_SYNTHESIS` | Base human-publication context + official presentation-AI patterns | `HYBRID · PROVIDER_NEUTRAL` | `MODULE_CONTRACT_DEFINED · FOCUSED_VERIFIED` |
 
 `RM-TOOL-005` reference implementation: `tools/public_video_research_ingest.py`. Network-free unit test evidence와 실제 live YouTube compatibility는 구분한다.
 
-`RM-WORK-003` contract: `HUMAN_FACING_ARTIFACT_SYNTHESIS.md`. 특정 Gamma/Canva/Beautiful.ai/Pitch/SlidesAI provider를 Base 기본값으로 채택하지 않는다.
+`RM-WORK-003` contract: `HUMAN_FACING_ARTIFACT_SYNTHESIS.md`; focused Pilot evidence: `RM_WORK_003_IMPLEMENTATION_PILOT.md`. 특정 Gamma/Canva/Beautiful.ai/Pitch/SlidesAI provider를 Base 기본값으로 채택하지 않는다.
 
 상세 tool/workflow 계약: `PRODUCTION_TOOL_WORKFLOW_MODULES.md`.
 
@@ -247,6 +247,6 @@ license/source/version check
 5. `RM-TOOL-004`는 별도 capture app 설치 없이 project-native test/runtime/CI evidence로 실제 유용성을 검증한다.
 6. `RM-TOOL-005`는 `yt-dlp`가 준비된 실제 로컬 환경에서 manual caption, auto caption, no-caption 대표 영상 각각을 검증하고 site compatibility·failure recovery evidence를 남긴다.
 7. `RM-VIS-006`은 실제 승인된 시각 제작 작업에서 기존 방식과 provider 후보를 `HUMAN_EDIT_DELTA`로 비교하고 quality/consistency/rights가 함께 개선되는지 확인한다.
-8. `RM-WORK-003`은 기존 승인 자료 하나를 source로 smallest Pilot을 수행하고 outline-first/claim-gap review가 total human edit + QA cost를 줄이는지 확인한다.
+8. `RM-WORK-003`의 첫 Notion human-facing Pilot은 `FOCUSED_VERIFIED`; 다음 단계는 실제 사용자 `HUMAN_EDIT_DELTA`/`HUMAN_VISUAL_REVIEW`와 materially different 두 번째 consumer다.
 9. 공용 구현이 오히려 프로젝트별 예외 분기만 늘리면 `PROJECT_SEED` 또는 reference-only로 되돌린다.
 10. Notion에는 `NOTION_HUMAN_VIEW`로 module ID·프로젝트 fit·상태를 보여 주되, 구현 상태는 이 Registry와 실제 프로젝트 저장소에서 판정한다.
