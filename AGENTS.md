@@ -28,8 +28,9 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - **`INTERMEDIATE_REPORT_SUPPRESSION_IS_NOT_WORK_REDUCTION`:** 사용자가 중간보고를 줄이거나 한 번에 끝내 달라고 해도 사용자에게 보이는 설명만 줄인다. 실제 조사·도구 호출·대안 비교·검토·테스트·readback은 생략하거나 뒤로 미루지 않는다.
 - **`GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY` / `REASONING_EFFORT_IS_NOT_WORK_EVIDENCE`:** GPT가 주 기획자·검수자라는 뜻은 채팅 문장만 작성한다는 뜻이 아니다. `매우 높음` 같은 추론 강도는 사고 자원일 뿐 저장소 readback, 인터넷 원출처, 실제 Tool 호출, 실행·테스트·렌더 증거를 대신하지 않는다.
 - **`REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF`:** 별도 Codex 인계는 GPT가 현재 도구로 직접 수행할 수 없고 filesystem/runtime/build 권위가 필요할 때만 선택적이다. 반대로 현재 요청의 필수 evidence를 이 세션의 browser·repository·connector·runtime Tool로 얻을 수 있으면 실제 호출은 의무이며, `OPTIONAL_CODEX_EXECUTOR`를 이유로 생략하지 않는다.
-- **`OPEN_PR_READ_ONLY_BY_DEFAULT` / `FOLLOW_UP_TARGET_IS_MERGED_MAIN`:** `open/draft/ready` PR·Branch는 현재 작업자의 활동 여부와 무관하게 기본 read-only 보호 대상이다. 같은 Goal의 현황·충돌 확인에는 읽을 수 있지만 checkout/write/rebase/close/merge/selective-copy/material-delta 흡수 대상으로 삼지 않는다. 기본 후속 수정 대상은 최신 completed `main`에 실제로 유지된 변경뿐이다.
-- **`OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION`:** 열린 PR을 변경·인수·종료·병합·흡수하려면 사용자가 현재 작업에서 **PR 번호와 허용 동작을 명시적으로 지정**해야 한다. “현재 채팅만 활성”, 같은 Goal, owner evidence 부재, standing authorization은 예외 권한이 아니다.
+- **`OPEN_PR_READ_ONLY_BY_DEFAULT` / `FOLLOW_UP_TARGET_IS_MERGED_MAIN`:** `open/draft/ready` PR·Branch는 현재 작업자의 활동 여부와 무관하게 기본 read-only 보호 대상이다. 같은 Goal의 현황·충돌 확인에는 읽을 수 있지만 checkout/write/rebase/close/merge/selective-copy/material-delta 흡수 대상으로 삼지 않는다. 기본 후속 수정 대상은 최신 completed `main`에 실제로 유지된 변경뿐이다. 단, 아래 `CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE`를 만족하는 현재 작업의 own PR은 그 예외 범위 안에서만 계속 실행한다.
+- **`OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION`:** 열린 PR을 변경·인수·종료·병합·흡수하려면 사용자가 현재 작업에서 **PR 번호와 허용 동작을 명시적으로 지정**하는 것이 기본이다. “현재 채팅만 활성”, 같은 Goal, owner evidence 부재, standing authorization은 예외 권한이 아니다. 다만 아래 `CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE`는 이미 승인된 동일 작업 계약이 **직접 생성한 단일 current-task PR**에 한해 별도 PR 번호 재입력을 요구하지 않는 좁은 예외다.
+- **`CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE`:** `APPROVED_CONTRACT_CONTINUATION`이 활성이고, 현재 승인된 작업 계약이 latest completed `main`에서 직접 만든 **단 하나의 명확한 current-task PR**이라면 `[연속작업] 진행해`, `진행해`, `계속해`, `남은 작업 진행`, `끝까지 진행` 같은 continuation intent는 그 PR의 안전한 latest-main reconciliation, exact HEAD 재검증, repository가 요구하는 `required checks`·review·unresolved-thread·ruleset Gate 통과 뒤 merge, 그리고 `postmerge readback`까지 포함한다. 이 경우 같은 작업에 대해 PR 번호를 다시 요구하지 않는다. 이 예외는 `pre-existing`, `unrelated`, `other-workstream`, `draft` PR, 복수의 모호한 PR 후보, 다른 작업의 material delta 흡수·종료·supersede에는 적용되지 않는다. `force push`, direct `main` push, `--admin`, `ruleset bypass`는 계속 금지한다. 사용자가 `병합하지 마`, `PR만 열어`, `검토만`처럼 더 좁게 지시하면 그 최신 지시가 우선하며 merge 권한을 제거한다.
 - **`CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY`:** L1 이상 중요한 설계·구현·정책 결정은 한 방법을 먼저 정해 놓고 근거를 끼워 맞추지 않는다. 먼저 **현행 조사**로 실제 상태·기존 해법·제약·실패 사례를 확인하고, 현행 유지·재사용·흡수·최소 수정·구조 개선·신규 구축 등 현재 Goal에서 실제로 가능한 **최소 3개**의 materially distinct 유효 대안을 확보해 동일 기준으로 비교한다. `MINIMUM_VIABLE_ALTERNATIVES: 3`. 숫자를 채우기 위한 허수 대안은 금지하며, 세 후보를 찾기 어렵다면 조사·추상화 수준을 넓혀 전략적으로 다른 실행 경로를 더 찾는다. 조사 뒤에도 세 실질 후보를 만들 수 없는 특수 제약이라면 임의로 기준을 낮추지 말고 그 제한과 탈락 근거를 `BLOCKED_UNVERIFIED` 또는 해당 Decision evidence로 남긴다.
 - **`BETTER_ALTERNATIVE_SEARCH`:** 최초 비교에서 권장안을 고른 뒤에도 새 증거·실패·검토 finding이 나오면 **더 나은 방안**이 생겼는지 다시 탐색한다. 기존 선택을 지키는 것이 목표가 아니며, 승인된 큰 방향을 보존하면서 더 강한 기술적 방법이 확인되면 근거와 함께 교체한다. 핵심 게임 방향·플레이어 경험·비용·범위를 바꾸는 더 나은 안이면 `USER_DECISION_REQUIRED`로 올린다.
 - **`LONG_TERM_PLAN_FIT_REQUIRED`:** 권장안은 단기 구현량뿐 아니라 **장기계획**에 적합한지 반드시 판정한다. 사용자/플레이어 가치, 정확성·기획 충실도, 위험, 수명주기 비용, 유지보수성, 되돌리기 난이도, 재사용·모듈성, Base의 향후 변화에 대한 신선도·호환성, 증거 강도, 현재 비용 경계를 함께 비교하고, 어떤 조건에서 권장안을 재검토해야 하는지도 기록한다.
@@ -93,6 +94,7 @@ QUALITY_OVER_RESPONSE_SPEED
 BENCHMARK_PRACTICE_COMPARISON
 EXPECTED_EFFECTS_RISKS_MITIGATIONS_BEFORE_BUILD
 SINGLE_INITIAL_APPROVAL_THEN_CONTINUE
+CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE
 FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS
 REQUIRED_WORK_REMAINING
 POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP
@@ -107,7 +109,7 @@ PAID_PLAN_COUNT: 1
 - 전체 방향·의도·플레이어 가치와 실제 정본을 먼저 고정하고, 최소 3개 실질 대안과 벤치마킹·실무사례·실패사례를 비교한 뒤 예상 효과·문제·보완·롤백을 BUILD 전에 제시한다.
 - 중간보고 생략은 사용자 노출을 줄이는 것일 뿐 실제 연구·검토·실행을 줄이는 지시가 아니다. 필수 evidence가 `NOT_RUN`이면 완료 답변 대신 차단 상태를 보고한다.
 - 최초 권장안 뒤에도 새 증거·finding이 생기면 더 나은 방안을 다시 찾고, 선택안이 장기계획·유지보수·모듈화·비용·Base 신선도에 적합한지 재판정한다.
-- 완전한 작업 계약은 한 번 승인받고, 같은 범위의 구현·테스트·PR·적대적 검토·병합·postmerge는 routine approval로 멈추지 않는다. 핵심 방향 변경, 파괴적 migration, 비용·보안 권한 확대만 새 사용자 결정을 요구한다.
+- 완전한 작업 계약은 한 번 승인받고, 같은 범위의 구현·테스트·PR·적대적 검토·병합·postmerge는 routine approval로 멈추지 않는다. 핵심 방향 변경, 파괴적 migration, 비용·보안 권한 확대만 새 사용자 결정을 요구한다. `CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE`가 성립하면 현재 계약이 직접 만든 current-task PR의 ready merge와 postmerge readback도 이 연속 실행에 포함한다.
 - 적대적 검토는 `전체 범위 공격 → finding 검증 → 개선·보완 → 실제 검증·회귀 → 개선된 전체 상태 재공격`의 **완전한 개선 루프를 최소 5회** 수행한다. 다섯 공격면으로 쪼개서 한 번씩 보는 것은 이 계약을 충족하지 않는다.
 - 완료는 승인된 acceptance criteria의 `REQUIRED_WORK_REMAINING: 0`으로 판정한다. 외부 차단과 선택 backlog는 별도 축으로 남긴다.
 - 게임 작업은 core loop·핵심 시스템·세계관/핵심 스토리라인 정합성·가역적 dummy `BALANCE_BUDGET`·playable build/test·재사용 가능한 모듈 경계를 함께 설계한다.
@@ -127,7 +129,7 @@ PAID_PLAN_COUNT: 1
 - `Grill Me alignment gate` 또는 유효한 기존 승인 근거가 없으면 `AWAITING_USER_CONFIRMATION`을 유지하고 구현·Codex 인계·외부 AI 위임·제품 변경으로 진행하지 않는다.
 - 프로젝트 코어, 플레이어 경험, 주요 UX, 콘텐츠 의미, 비용·범위를 바꾸는 충돌만 사용자 결정으로 올린다. 저장소·정본·테스트로 판단 가능한 오류나 누락을 사용자에게 전가하지 않는다.
 - 사용자 확인 전 실행 계약을 확정하거나 구현하지 않는다. 사용자가 승인한 범위에서는 단계별 구현·검증·적대적 재검토를 끝까지 수행한다.
-- 사용자가 `[연속작업] 진행해`라고 명시하거나, 이미 승인된 동일 작업 계약에 대해 `진행해`, `계속해`, `남은 작업 진행`처럼 계속 실행 의도를 명확히 표현하면 `APPROVED_CONTRACT_CONTINUATION`으로 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`를 적용한다. 이를 `CONTINUATION_INTENT_ALIASES`라 하며 승인되지 않은 범위나 새 범위를 자동 승인하는 마법 문구가 아니다. `작업 → 적대적 검토 → 범위 안의 기술적 권장안 자동 승인 → 최소 반영·회귀 검증 → blocker recovery → 다음 ready task`를 반복한다. `BLOCKED_UNVERIFIED`·현재 세션 도구 부재·일시적 증거 전송 실패는 그 자체로 전역 종료가 아니며, **recover first → defer locally → continue independent work → stop globally last** 순서로 처리한다. 진짜 `USER_DECISION_REQUIRED`, 고위험 외부 행위, 범위 확대는 자동 승인하지 않되 독립 작업이 남아 있으면 해당 task만 보류한다. 승인된 계약도 계속 실행 의도도 없으면 기존 승인 흐름을 유지한다.
+- 사용자가 `[연속작업] 진행해`라고 명시하거나, 이미 승인된 동일 작업 계약에 대해 `진행해`, `계속해`, `남은 작업 진행`처럼 계속 실행 의도를 명확히 표현하면 `APPROVED_CONTRACT_CONTINUATION`으로 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`를 적용한다. 이를 `CONTINUATION_INTENT_ALIASES`라 하며 승인되지 않은 범위나 새 범위를 자동 승인하는 마법 문구가 아니다. `작업 → 적대적 검토 → 범위 안의 기술적 권장안 자동 승인 → 최소 반영·회귀 검증 → blocker recovery → 다음 ready task`를 반복한다. 현재 계약이 직접 생성한 단 하나의 current-task PR은 `CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE` 조건을 만족할 때 latest-main reconciliation → exact HEAD `required checks` → merge → `postmerge readback`까지 이어서 수행하며 같은 PR 번호를 다시 묻지 않는다. `BLOCKED_UNVERIFIED`·현재 세션 도구 부재·일시적 증거 전송 실패는 그 자체로 전역 종료가 아니며, **recover first → defer locally → continue independent work → stop globally last** 순서로 처리한다. 진짜 `USER_DECISION_REQUIRED`, 고위험 외부 행위, 범위 확대는 자동 승인하지 않되 독립 작업이 남아 있으면 해당 task만 보류한다. 승인된 계약도 계속 실행 의도도 없으면 기존 승인 흐름을 유지한다.
 - 상세 라우팅·권한 전환·리뷰·GPT→Codex·병합 절차는 `docs/WORK_MODE_AND_SKILL_ROUTING.md`를 따른다.
 
 금지:
@@ -190,8 +192,9 @@ PAID_PLAN_COUNT: 1
 - 전체 로컬 계약은 `python tools/run_local_validation.py --trusted-history-commit <trusted-main-commit-sha>`로 실행한다. 인자는 검증 전에 확인한 정확한 40자 main SHA이며, 이동 가능한 ref 이름을 넘기지 않는다. 환경 미준비 skip을 pass로 바꾸지 않는다.
 - 작업 전 원격·로컬 상태를 확인하고, 검증된 변경만 commit·push한다. Workflow 파일 존재와 실제 Actions 실행·Required Check 강제를 구분한다.
 - GitHub 게시·검토는 연결된 GitHub plugin/connector capability를 먼저 사용한다. connector가 필요한 동작을 지원하면 missing `gh` alone is not a blocker이며 사용자에게 CLI 반복 설치·재인증을 요구하지 않는다. 상세 fallback과 exact-SHA 안전 규칙은 `synchronizing-local-and-github-state`가 소유한다.
-- **`OPEN_PR_READ_ONLY_BY_DEFAULT` / `FOLLOW_UP_TARGET_IS_MERGED_MAIN`: 모든 `open/draft/ready` PR·Branch는 기본 read-only다. 현황·충돌·중복 확인을 위해 읽을 수 있지만 checkout/write/rebase/close/merge/selective-copy/material-delta 흡수를 하지 않는다. 후속 수정은 exact latest completed `main`에서 새 작업 Branch로 시작하며, main에 실제 유지된 의미만 대상으로 한다.**
-- **`OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION`: 열린 PR을 변경하려면 사용자가 현재 작업에서 PR 번호와 허용 동작을 지정해야 한다. 같은 Goal, owner evidence 부재, `CURRENT_COORDINATOR_CHAT`, `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`은 이 권한을 대신하지 않는다. 명시 승인이 있더라도 exact head·범위·rollback을 다시 확인하고 승인된 동작만 수행한다.**
+- **`OPEN_PR_READ_ONLY_BY_DEFAULT` / `FOLLOW_UP_TARGET_IS_MERGED_MAIN`: 모든 `open/draft/ready` PR·Branch는 기본 read-only다. 현황·충돌·중복 확인을 위해 읽을 수 있지만 checkout/write/rebase/close/merge/selective-copy/material-delta 흡수를 하지 않는다. 후속 수정은 exact latest completed `main`에서 새 작업 Branch로 시작하며, main에 실제 유지된 의미만 대상으로 한다. `CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE`를 만족하는 현재 작업 own PR만 그 승인 계약의 merge-ready 실행 범위에서 예외다.**
+- **`OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION`: 열린 PR 변경은 사용자가 현재 작업에서 PR 번호와 허용 동작을 지정하는 것이 기본이다. 같은 Goal, owner evidence 부재, `CURRENT_COORDINATOR_CHAT`, `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`은 이 권한을 대신하지 않는다. 단, 현재 승인 계약이 직접 생성한 단일 current-task PR에 `APPROVED_CONTRACT_CONTINUATION`과 `CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE`가 함께 성립하면 PR 번호 재지정 없이 그 own PR의 latest-main reconciliation·exact HEAD 재검증·ready merge·postmerge readback을 수행할 수 있다. 명시 승인이 있거나 이 좁은 예외가 성립하더라도 exact head·범위·rollback을 다시 확인하고 허용된 동작만 수행한다.**
+- **`CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE`는 `pre-existing`, `unrelated`, `other-workstream`, `draft` PR이나 복수 후보의 takeover 권한이 아니다. 다른 PR의 변경·흡수·close·supersede에는 여전히 `OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION`이 적용된다. `force push`, direct main push, `--admin`, `ruleset bypass`는 금지하며, `병합하지 마`·`PR만 열어`·`검토만` 같은 최신 제한 지시는 언제나 이 예외보다 우선한다.**
 - 병합은 검토한 정확한 HEAD, 필수 검사, 독립 검토, unresolved thread 0, 결정 게이트를 다시 확인한 뒤 저장소가 허용한 방식으로 수행한다.
 - `skills/SKILL_REGISTRY.json`, released lock, frozen/generated release artifact, 보호 경로를 변경하려면 해당 전용 계약과 검증을 먼저 충족한다. 범위 밖에서는 bytes를 보존한다.
 - 생성 실패·미검증 바이너리·로컬 임시 산출물을 자동 push하지 않는다.
