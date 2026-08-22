@@ -305,12 +305,12 @@
       "proposal_id": "BCP-2026-028-public-video-evidence-workflow-authority",
       "title": "Public Video Evidence Workflow Authority",
       "path": "[수정제안서]/BCP-2026-028-public-video-evidence-workflow-authority/PROPOSAL.md",
-      "status": "SUBMITTED",
+      "status": "IMPLEMENTED",
       "source_project": "alsdmlals4-eng/Base",
       "source_commit": "b1852eea26af1e0445aefdf717eeaf5e9717af6e",
       "submitted_at": "2026-08-22",
-      "approval_ref": null,
-      "implementation_pr": null
+      "approval_ref": "https://github.com/alsdmlals4-eng/Base/pull/596#issuecomment-5377786729",
+      "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/575"
     }
   ]
 }
