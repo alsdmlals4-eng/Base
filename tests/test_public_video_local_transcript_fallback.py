@@ -42,8 +42,11 @@ class PublicVideoLocalTranscriptFallbackTests(unittest.TestCase):
         self.assertEqual("local-file", packet["retrieval"]["tool"])
         self.assertEqual("local_vtt", packet["transcript"]["source_kind"])
         self.assertEqual("AVAILABLE", packet["transcript"]["timestamp_evidence"])
+        self.assertIsNone(packet["transcript"]["is_generated"])
         self.assertEqual(2, packet["transcript"]["segment_count"])
         self.assertRegex(packet["local_transcript_input"]["sha256"], r"^[0-9a-f]{64}$")
+        self.assertEqual("UNVERIFIED", packet["local_transcript_input"]["video_binding"])
+        self.assertEqual("UNKNOWN", packet["local_transcript_input"]["creation_source"])
         self.assertNotIn(str(path.parent), json.dumps(packet, ensure_ascii=False))
 
     def test_local_srt_ingest_normalizes_timestamped_segments(self) -> None:
