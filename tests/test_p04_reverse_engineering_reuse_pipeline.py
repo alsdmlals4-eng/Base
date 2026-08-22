@@ -163,6 +163,13 @@ class P04ReverseEngineeringReusePipelineTests(unittest.TestCase):
             "BALANCE_SCENARIO_BATCH_SIMULATOR",
             "PROJECT_REUSE_OPPORTUNITY_SCAN",
             "SKILL_WORKFLOW_PATTERN_EVAL",
+            "PREVIEW_DOES_NOT_MUTATE_CAUSAL_STATE",
+            "PREVIEW_DOES_NOT_CONSUME_RUNTIME_RNG",
+            "RNG_CONSUMPTION_HAS_EXPLICIT_CAUSAL_BOUNDARY",
+            "ATOMIC_RESOLUTION_BOUNDARY",
+            "PROJECT_SUBSYSTEM_CHANGE_MAP",
+            "paired_seed_delta",
+            "goal_seek",
         ):
             self.assertIn(term, production)
 
@@ -178,6 +185,22 @@ class P04ReverseEngineeringReusePipelineTests(unittest.TestCase):
         self.assertIn("TETRIS_TRADE_DRESS_BOUNDARY", gameplay)
         self.assertIn("DIRECT_LICENSED_REUSE", visual)
         self.assertIn("PROJECT_ASSET_APPROVED", visual)
+
+    def test_loaded_and_kalivra_sources_keep_rights_and_adoption_boundaries(self) -> None:
+        notes = read(
+            "docs/knowledge/game-development/reuse/BENCHMARK_SOURCE_NOTES.md"
+        )
+
+        for term in (
+            "DevBawky/LOADED",
+            "direct reuse는 `REJECT`",
+            "SINGLE_SOURCE_HYPOTHESIS",
+            "DevBawky/Kalivra",
+            "RIGHTS_REVIEW_REQUIRED · LICENSE_METADATA_CONFLICT",
+            "ATOMIC_RESOLUTION_BOUNDARY",
+            "read-only project snapshot + deterministic runner",
+        ):
+            self.assertIn(term, notes)
 
     def test_p0_reference_implementations_exist(self) -> None:
         for path in (
