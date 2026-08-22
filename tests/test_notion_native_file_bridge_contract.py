@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 from pathlib import Path
 import subprocess
 import sys
@@ -80,6 +81,14 @@ class NotionNativeFileBridgeContractTests(unittest.TestCase):
             runner.calls[1],
             ["ntn", "api", "v1/blocks/block-1", "--notion-version", NOTION_VERSION],
         )
+
+    def test_package_unit_suite_is_consumed_by_core_regression(self) -> None:
+        suite = unittest.defaultTestLoader.discover(str(BRIDGE / "tests"), pattern="test_*.py")
+        output = io.StringIO()
+        result = unittest.TextTestRunner(stream=output, verbosity=1).run(suite)
+        if not result.wasSuccessful():
+            self.fail("nested bridge unit suite failed:\n" + output.getvalue())
+        self.assertGreaterEqual(result.testsRun, 10)
 
     def test_visual_layout_contract_routes_binary_media_without_false_android_pass(self) -> None:
         text = LAYOUT.read_text(encoding="utf-8")
