@@ -22,7 +22,7 @@ class AiBootstrapDriftContractTests(unittest.TestCase):
             "START_HERE.md",
             "Active Context",
             "현재 채택된 Base 계약",
-            "MIGRATION_ONLY_UNTIL_REMOVAL",
+            "migration compatibility",
         ):
             self.assertIn(required, text)
 
