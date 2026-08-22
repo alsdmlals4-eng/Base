@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "project_id": "EXAMPLE_PROJECT",
+  "snapshot": {
+    "source_commit": "REPLACE_WITH_PROJECT_COMMIT",
+    "source_contract": "REPLACE_WITH_PROJECT_CANON_OR_RUNTIME_SOURCE"
+  },
+  "evidence_ceiling": [
+    "EXAMPLE_ONLY",
+    "RUNTIME_NOT_PROVEN",
+    "HUMAN_PLAYER_EVIDENCE_NOT_RUN"
+  ],
+  "baseline_variant": "baseline",
+  "runs": [
+    {
+      "seed": 1,
+      "variant": "baseline",
+      "metrics": {
+        "example_metric": 10
+      },
+      "choices": [
+        "A"
+      ],
+      "failures": []
+    },
+    {
+      "seed": 1,
+      "variant": "candidate",
+      "metrics": {
+        "example_metric": 12
+      },
+      "choices": [
+        "B"
+      ],
+      "failures": []
+    }
+  ],
+  "goal_seek": [
+    {
+      "metric": "example_metric",
+      "target": [
+        11,
+        13
+      ],
+      "variants": [
+        "baseline",
+        "candidate"
+      ]
+    }
+  ]
+}
