@@ -31,6 +31,12 @@ small neutral core
 - reference implementation 존재는 프로젝트 adoption이나 player-experience PASS가 아니다.
 - 같은 기능을 새로 만들기 전에 `REUSABLE_MODULE_REGISTRY.md`와 실제 reference implementation을 먼저 검색한다.
 
+## 기존 P0 project adoption freshness
+
+- Omenward PR #198: `RM-SYS-003` current-main integration, squash merge `67487c932cc883db95da7bc852f4eb33883f0052`.
+- stale Omenward PR #197은 superseded/closed-unmerged history이며 current Pilot이 아니다.
+- Switchy PR #154는 GUT-verified 범위와 별도 기존 baseline blocker를 분리한다.
+
 ## RM-TOOL-003 상세 상태
 
 상세 owner: `docs/knowledge/game-development/reuse/RM_TOOL_003_IMPLEMENTATION_PILOT.md`.
