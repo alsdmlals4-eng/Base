@@ -10,6 +10,18 @@ from typing import Any
 
 
 PERCENTILE_METHOD = "LINEAR_INDEX_Q_TIMES_N_MINUS_1"
+SWEEP_SUMMARY_STATS = {
+    "mean",
+    "median",
+    "min",
+    "max",
+    "percentile_05",
+    "percentile_25",
+    "percentile_75",
+    "percentile_95",
+}
+ADAPTER_EVIDENCE_MODES = {"DIRECT_PROJECT_RULES", "MATHEMATICAL_MODEL"}
+ADAPTER_EQUIVALENCE_STATES = {"VERIFIED", "NOT_VERIFIED"}
 
 
 def _percentile(sorted_values: list[float], q: float) -> float:
@@ -218,13 +230,317 @@ def _goal_metric_values(
     return values
 
 
+def _non_empty_string(value: Any, label: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{label} must be a non-empty string")
+    return value.strip()
+
+
+def _adapter_evidence_report(manifest: dict[str, Any]) -> dict[str, Any] | None:
+    context = manifest.get("analysis_context")
+    if context is None:
+        return None
+    if not isinstance(context, dict):
+        raise ValueError("analysis_context must be an object")
+
+    mode = _non_empty_string(
+        context.get("adapter_evidence_mode"), "adapter_evidence_mode"
+    )
+    if mode not in ADAPTER_EVIDENCE_MODES:
+        raise ValueError(
+            "adapter_evidence_mode must be DIRECT_PROJECT_RULES or MATHEMATICAL_MODEL"
+        )
+
+    equivalence = context.get("adapter_equivalence", {})
+    if not isinstance(equivalence, dict):
+        raise ValueError("adapter_equivalence must be an object")
+    status = equivalence.get("status", "NOT_VERIFIED")
+    status = _non_empty_string(status, "adapter_equivalence status")
+    if status not in ADAPTER_EQUIVALENCE_STATES:
+        raise ValueError(
+            "adapter_equivalence status must be VERIFIED or NOT_VERIFIED"
+        )
+
+    artifact = equivalence.get("validation_artifact")
+    if artifact is not None:
+        artifact = _non_empty_string(
+            artifact, "adapter_equivalence validation_artifact"
+        )
+    if status == "VERIFIED" and not artifact:
+        raise ValueError(
+            "adapter_equivalence validation_artifact is required when status is VERIFIED"
+        )
+
+    if mode == "MATHEMATICAL_MODEL":
+        verified = status == "VERIFIED" and artifact is not None
+        if verified:
+            ceiling = (
+                "MATHEMATICAL_MODEL_EQUIVALENCE_RECORDED_NOT_RUNTIME_OR_PLAYER_PASS"
+            )
+        else:
+            ceiling = (
+                "MATHEMATICAL_MODEL_ONLY_RUNTIME_EQUIVALENCE_NOT_VERIFIED"
+            )
+        required = True
+    else:
+        verified = False
+        ceiling = "DIRECT_RULE_ANALYSIS_NOT_RUNTIME_OR_PLAYER_PASS"
+        required = False
+
+    return {
+        "mode": mode,
+        "equivalence_status": status,
+        "validation_artifact": artifact,
+        "runtime_equivalence_required": required,
+        "runtime_equivalence_verified": verified,
+        "claim_ceiling": ceiling,
+    }
+
+
+def _strategy_baseline_reports(
+    manifest: dict[str, Any], grouped: dict[str, list[dict[str, Any]]]
+) -> list[dict[str, Any]]:
+    raw = manifest.get("strategy_baselines", [])
+    if not isinstance(raw, list):
+        raise ValueError("strategy_baselines must be a list")
+
+    reports: list[dict[str, Any]] = []
+    seen_variants: set[str] = set()
+    for index, item in enumerate(raw):
+        if not isinstance(item, dict):
+            raise ValueError(f"strategy baseline {index} must be an object")
+        variant = _non_empty_string(
+            item.get("variant"), f"strategy baseline {index} variant"
+        )
+        if variant not in grouped:
+            raise ValueError(f"strategy baseline variant {variant!r} not found")
+        if variant in seen_variants:
+            raise ValueError(f"duplicate strategy baseline variant {variant!r}")
+        seen_variants.add(variant)
+        strategy_id = _non_empty_string(
+            item.get("strategy_id"), f"strategy baseline {index} strategy_id"
+        )
+        reports.append(
+            {
+                "variant": variant,
+                "strategy_id": strategy_id,
+                "role": "BEHAVIORAL_BASELINE",
+                "player_skill_truth": False,
+                "player_fun_truth": False,
+                "difficulty_truth": False,
+                "claim_ceiling": "BEHAVIORAL_BASELINE_NOT_PLAYER_EVIDENCE",
+            }
+        )
+    return reports
+
+
+def _threshold_crossings(
+    series: list[dict[str, Any]], target: float
+) -> list[dict[str, Any]]:
+    crossings: list[dict[str, Any]] = []
+    seen: set[float] = set()
+
+    def append_crossing(
+        parameter_value: float,
+        kind: str,
+        between_values: list[float],
+    ) -> None:
+        key = round(parameter_value, 12)
+        if key in seen:
+            return
+        seen.add(key)
+        crossings.append(
+            {
+                "estimated_parameter_value": float(parameter_value),
+                "kind": kind,
+                "between_values": between_values,
+                "evidence_ceiling": (
+                    "OBSERVED_POINT_NOT_PROJECT_TRUTH"
+                    if kind == "EXACT_OBSERVED_POINT"
+                    else "LINEAR_INTERPOLATION_ESTIMATE_NOT_PROJECT_TRUTH"
+                ),
+            }
+        )
+
+    for index, point in enumerate(series):
+        x1 = float(point["parameter_value"])
+        y1 = float(point["metric_value"])
+        if y1 == target:
+            append_crossing(x1, "EXACT_OBSERVED_POINT", [x1, x1])
+        if index + 1 >= len(series):
+            continue
+
+        next_point = series[index + 1]
+        x2 = float(next_point["parameter_value"])
+        y2 = float(next_point["metric_value"])
+        delta1 = y1 - target
+        delta2 = y2 - target
+        if delta1 * delta2 < 0.0:
+            interpolated = x1 + (target - y1) * (x2 - x1) / (y2 - y1)
+            append_crossing(
+                interpolated,
+                "LINEAR_INTERPOLATION_ESTIMATE",
+                [x1, x2],
+            )
+
+    return crossings
+
+
+def _parameter_sweep_reports(
+    manifest: dict[str, Any],
+    grouped: dict[str, list[dict[str, Any]]],
+    variants: dict[str, Any],
+) -> list[dict[str, Any]]:
+    raw_sweeps = manifest.get("parameter_sweeps", [])
+    if not isinstance(raw_sweeps, list):
+        raise ValueError("parameter_sweeps must be a list")
+
+    reports: list[dict[str, Any]] = []
+    for index, sweep in enumerate(raw_sweeps):
+        if not isinstance(sweep, dict):
+            raise ValueError(f"parameter sweep {index} must be an object")
+
+        parameter = _non_empty_string(
+            sweep.get("parameter"), f"parameter sweep {index} parameter"
+        )
+        metric = _non_empty_string(
+            sweep.get("metric"), f"parameter sweep {index} metric"
+        )
+        summary_stat = sweep.get("summary_stat", "median")
+        summary_stat = _non_empty_string(
+            summary_stat, f"parameter sweep {index} summary_stat"
+        )
+        if summary_stat not in SWEEP_SUMMARY_STATS:
+            raise ValueError(
+                f"parameter sweep {index} summary_stat must be one of "
+                + ", ".join(sorted(SWEEP_SUMMARY_STATS))
+            )
+
+        locked_parameters = sweep.get("locked_parameters", [])
+        if not isinstance(locked_parameters, list):
+            raise ValueError(
+                f"parameter sweep {index} locked_parameters must be a list"
+            )
+        normalized_locks: list[str] = []
+        for lock_index, value in enumerate(locked_parameters):
+            normalized_locks.append(
+                _non_empty_string(
+                    value,
+                    f"parameter sweep {index} locked parameter {lock_index}",
+                )
+            )
+        if len(normalized_locks) != len(set(normalized_locks)):
+            raise ValueError(
+                f"parameter sweep {index} locked_parameters must be unique"
+            )
+        if parameter in normalized_locks:
+            raise ValueError("swept parameter cannot also be locked")
+
+        raw_points = sweep.get("points")
+        if not isinstance(raw_points, list) or len(raw_points) < 2:
+            raise ValueError(
+                f"parameter sweep {index} points must contain at least two entries"
+            )
+
+        point_values: set[float] = set()
+        point_variants: set[str] = set()
+        series: list[dict[str, Any]] = []
+        seed_sets: list[set[int]] = []
+
+        for point_index, point in enumerate(raw_points):
+            if not isinstance(point, dict):
+                raise ValueError(
+                    f"parameter sweep {index} point {point_index} must be an object"
+                )
+            raw_value = point.get("value")
+            if isinstance(raw_value, bool) or not isinstance(raw_value, (int, float)):
+                raise ValueError("sweep point value must be numeric")
+            parameter_value = float(raw_value)
+            if not math.isfinite(parameter_value):
+                raise ValueError("sweep point value must be finite")
+            if parameter_value in point_values:
+                raise ValueError("sweep point values must be unique")
+            point_values.add(parameter_value)
+
+            variant = _non_empty_string(
+                point.get("variant"),
+                f"parameter sweep {index} point {point_index} variant",
+            )
+            if variant not in grouped:
+                raise ValueError(f"sweep variant {variant!r} not found")
+            if variant in point_variants:
+                raise ValueError("sweep point variants must be unique")
+            point_variants.add(variant)
+
+            metric_summary = variants[variant]["metrics"].get(metric)
+            if not metric_summary or metric_summary.get("count", 0) == 0:
+                raise ValueError(
+                    f"sweep metric {metric!r} not found for variant {variant!r}"
+                )
+            metric_value = float(metric_summary[summary_stat])
+            if not math.isfinite(metric_value):
+                raise ValueError(
+                    f"sweep metric {metric!r} summary must be finite"
+                )
+
+            seed_sets.append({int(run["seed"]) for run in grouped[variant]})
+            series.append(
+                {
+                    "parameter_value": parameter_value,
+                    "variant": variant,
+                    "metric_value": metric_value,
+                }
+            )
+
+        first_seed_set = seed_sets[0]
+        if any(seed_set != first_seed_set for seed_set in seed_sets[1:]):
+            raise ValueError(
+                "parameter sweep variants must use the same seed set"
+            )
+
+        series.sort(key=lambda item: (item["parameter_value"], item["variant"]))
+
+        target = sweep.get("target")
+        crossings: list[dict[str, Any]] = []
+        normalized_target: float | None = None
+        if target is not None:
+            if isinstance(target, bool) or not isinstance(target, (int, float)):
+                raise ValueError("parameter sweep target must be numeric")
+            normalized_target = float(target)
+            if not math.isfinite(normalized_target):
+                raise ValueError("parameter sweep target must be finite")
+            crossings = _threshold_crossings(series, normalized_target)
+
+        reports.append(
+            {
+                "parameter": parameter,
+                "metric": metric,
+                "summary_stat": summary_stat,
+                "target": normalized_target,
+                "locked_parameters": normalized_locks,
+                "locked_parameter_verification": "DECLARED_NOT_RUNTIME_VERIFIED",
+                "series": series,
+                "seed_set_equal_across_points": True,
+                "seed_count_per_point": len(first_seed_set),
+                "single_tunable_only": True,
+                "automatic_best_value": False,
+                "threshold_crossings": crossings,
+                "threshold_crossing_count": len(crossings),
+                "non_authoritative": True,
+            }
+        )
+    return reports
+
+
 def analyze_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
     """Analyze project-supplied run records without owning game simulation rules.
 
     Project adapters remain responsible for producing deterministic records from
     project-authoritative rules. This shared layer only summarizes distributions,
-    failure tags, choice-event frequencies, paired-seed deltas, tail runs, and
-    bounded non-authoritative goal-seek rankings. It never mutates project data.
+    failure tags, choice-event frequencies, paired-seed deltas, tail runs, bounded
+    non-authoritative goal-seek rankings, and declared single-parameter sweep
+    evidence. It never mutates project data or treats strategy/model outputs as
+    player evidence.
     """
 
     if manifest.get("schema_version") != 1:
@@ -291,7 +607,10 @@ def analyze_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
         target = request.get("target")
         if not isinstance(target, list) or len(target) != 2:
             raise ValueError("goal_seek target must be [low, high]")
-        if any(isinstance(value, bool) or not isinstance(value, (int, float)) for value in target):
+        if any(
+            isinstance(value, bool) or not isinstance(value, (int, float))
+            for value in target
+        ):
             raise ValueError("goal_seek target values must be numeric")
         low, high = float(target[0]), float(target[1])
         if not math.isfinite(low) or not math.isfinite(high):
@@ -349,7 +668,11 @@ def analyze_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
             }
         )
 
-    return {
+    adapter_evidence = _adapter_evidence_report(manifest)
+    strategy_baselines = _strategy_baseline_reports(manifest, grouped)
+    parameter_sweeps = _parameter_sweep_reports(manifest, grouped, variants)
+
+    report = {
         "schema_version": 1,
         "project_id": project_id,
         "percentile_method": PERCENTILE_METHOD,
@@ -359,8 +682,13 @@ def analyze_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
         "variants": variants,
         "paired_seed_deltas": paired,
         "goal_seek": goal_seek_reports,
+        "strategy_baselines": strategy_baselines,
+        "parameter_sweeps": parameter_sweeps,
         "mutates_project_data": False,
     }
+    if adapter_evidence is not None:
+        report["adapter_evidence"] = adapter_evidence
+    return report
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -377,7 +705,13 @@ def main(argv: list[str] | None = None) -> int:
         manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
         report = analyze_manifest(manifest)
     except (OSError, json.JSONDecodeError, ValueError, KeyError, TypeError) as exc:
-        print(json.dumps({"ok": False, "error": str(exc)}, ensure_ascii=False, sort_keys=True))
+        print(
+            json.dumps(
+                {"ok": False, "error": str(exc)},
+                ensure_ascii=False,
+                sort_keys=True,
+            )
+        )
         return 2
 
     print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
