@@ -1,11 +1,13 @@
 # RM-TOOL-003 · Balance Scenario Batch Simulator Implementation Pilot
 
-- 상태: `BASE_REFERENCE_IMPLEMENTED`
+- 상태: `BASE_REFERENCE_IMPLEMENTED · MULTI_PROJECT_PILOTS_MERGED_MAIN_READBACK`
 - 기준일: 2026-08-22 KST
 - 계약 owner: `docs/knowledge/game-development/reuse/PRODUCTION_TOOL_WORKFLOW_MODULES.md`
 - 구현: `tools/reuse_modules/balance_scenario_batch_simulator.py`
 - 입력 예시: `templates/reuse-modules/BALANCE_SCENARIO_BATCH_MANIFEST.json`
 - 회귀: `tests/test_balance_scenario_batch_simulator.py`, `tests/test_balance_scenario_batch_schema.py`, `tests/test_balance_scenario_batch_read_only.py`
+- Base reference merge: PR #580 → `8c9a32379244e9de67c72ae949653cd3a16b5746`
+- Registry freshness: PR #591 → `e37c4e72344662b344f62a442dd2f7f39dbad34e`
 
 ## 1. 구현 판정
 
@@ -93,10 +95,13 @@ PRODUCT_BALANCE_PASS: NOT_CLAIMED
 - 10,000 deterministic seeds로 raw wave search envelope를 추출 후 현재 계약대로 합계 1 정규화.
 - 정규화 결과가 raw search envelope 밖으로 나가는 비율을 발견: W1 `1.24%`, W2 `1.93%`, Final `3.44%`.
 - 이 결과는 오류 판정이 아니라 **final numerics 전에 pre/post-normalization semantics를 명확히 해야 한다는 planning finding**이다.
-- open canon reconciliation PR #201과 changed-path 교집합 0.
-- runtime/canon/product mutation 없음.
+- product/runtime/canon mutation 없음.
+- 최초 #202 CI의 Project Core/GDD 실패는 sidecar가 아니라 당시 current-main canon/legacy-validator drift였고, 선행 #201에서 해소됐다.
+- #201 exact head `17f8b0a7a5753fe16ff54806ecaa31dcea3ef609`의 15개 PR workflow가 모두 `SUCCESS`; squash merge `4876748eb4683b4f7f711f30e0029ffad4f707b2`.
+- #201 병합 후 #202는 새 main에서 다시 `mergeable=true`로 확인했고 squash merge `b46374e511447cb531709a5d56f3ba9a6e4dcc8d`.
+- Omenward final `main`과 두 sidecar 파일을 직접 readback했다.
 
-Evidence ceiling: `PLANNING_ENVELOPE_ONLY · RUNTIME_NOT_RUN · FINAL_PRODUCT_NUMERICS_NOT_APPROVED`.
+Evidence ceiling: `PLANNING_ENVELOPE_ONLY · CURRENT_V4_7_PLAYER_EVIDENCE_NOT_RUN · HUMAN_VALIDATION_NOT_RUN · FINAL_PRODUCT_NUMERICS_NOT_APPROVED`.
 
 ### BLACKSMITH · PR #181
 
@@ -104,6 +109,8 @@ Evidence ceiling: `PLANNING_ENVELOPE_ONLY · RUNTIME_NOT_RUN · FINAL_PRODUCT_NU
 - Existing Solution First 결과, Base가 enhancement rules를 다시 구현하는 것은 duplicate authority라 `REJECT`.
 - project simulator가 rule/run-generation owner를 유지하고, 필요 시 개별 trial record를 Base kernel에 전달하는 구조를 `ADOPT`.
 - 이번 Pilot은 interoperability/field ownership만 검증하고 새 trial export나 runtime 연결은 만들지 않는다.
+- exact head `cb5dc9509769f3ae4ea8436718bfe0b2c917b115`의 5개 관련 workflow가 모두 `SUCCESS`.
+- squash merge `307126031956bf5345da20a7b0c4466aa26c9b94`; Blacksmith `main`과 Notion Handoff를 readback했다.
 
 Evidence ceiling: `PROJECT_SIMULATOR_EXISTS · INTEROP_CONTRACT_REVIEWED · NEW_TRIAL_EXPORT_NOT_IMPLEMENTED · FINAL_PRODUCT_BALANCE_NOT_APPROVED`.
 
@@ -113,6 +120,8 @@ Evidence ceiling: `PROJECT_SIMULATOR_EXISTS · INTEROP_CONTRACT_REVIEWED · NEW_
 - default `batch_size=2`, `max_active_enemies=8`; enabled variant는 모든 case에서 cap violation 0, disabled variant는 spawn 0.
 - `data/stages/`는 `.gitkeep`만 존재하므로 DEC-026 새 stage/encounter balance를 임의 생성하지 않는다.
 - 이 Pilot은 shared run-record 인터페이스가 deterministic actuator에도 적용됨만 증명한다.
+- exact head `6b4cb0bfc48d9029f209ea9e9d4f0d0692220722`의 GUT run `32539901612`: `SUCCESS`.
+- squash merge `46c5e151808f2481cc20be0003dd03866133ae49`; Ninja Survival `main`과 Notion Handoff를 readback했다.
 
 Evidence ceiling: `LEGACY_MVP3_ACTUATOR_CONTRACT_ONLY · DEC014_026_RUNTIME_NOT_STARTED · PRODUCT_BALANCE_NOT_EVALUATED`.
 
@@ -165,8 +174,29 @@ project canon/runtime owner 확인
 
 `RM-TOOL-003` 존재 자체는 project balance PASS, 재미 PASS, 자동 패치 권한을 주지 않는다.
 
-## 9. Rollback
+## 9. Post-change closeout
 
-- Base reference: 구현/테스트/template/이 문서를 함께 revert.
-- 프로젝트 Pilot PR은 모두 docs-only sidecar이므로 해당 PR을 폐기/되돌리면 product/runtime에는 영향이 없다.
+```yaml
+BASE_REFERENCE_PR_580: MERGED_8c9a32379244e9de67c72ae949653cd3a16b5746
+REGISTRY_PR_591: MERGED_e37c4e72344662b344f62a442dd2f7f39dbad34e
+OMENWARD_PR_201: MERGED_4876748eb4683b4f7f711f30e0029ffad4f707b2
+OMENWARD_PR_202: MERGED_b46374e511447cb531709a5d56f3ba9a6e4dcc8d
+BLACKSMITH_PR_181: MERGED_307126031956bf5345da20a7b0c4466aa26c9b94
+NINJA_SURVIVAL_PR_24: MERGED_46c5e151808f2481cc20be0003dd03866133ae49
+PROJECT_MAIN_READBACK: PASS
+PROJECT_NOTION_HANDOFF_READBACK: PASS
+REGISTRY_REFERENCE_IMPLEMENTATION_FRESHNESS: PASS
+RM_TOOL_003_MUST_FIX_REMAINING: 0
+HUMAN_PLAYER_EVIDENCE: NOT_RUN
+FINAL_PRODUCT_BALANCE: NOT_APPROVED
+```
+
+완료 판정은 **공용 analyzer 구현 + 세 프로젝트의 서로 다른 소비 형태 검증 + 실제 PR 병합/main readback + Notion Handoff 동기화 + Registry freshness**까지다. 이것은 각 게임의 재미·난이도·final numerics가 승인됐다는 뜻이 아니다.
+
+## 10. Rollback
+
+- Base reference: #580 merge `8c9a32379244e9de67c72ae949653cd3a16b5746`을 revert하고, Registry에서 #591이 추가한 `RM-TOOL-003 REFERENCE_IMPLEMENTATION_EXISTS` freshness claim만 별도 정합화한다. #591 전체를 revert해 다른 context-synthesis 변경을 제거하지 않는다.
+- Omenward Pilot: #202 merge `b46374e511447cb531709a5d56f3ba9a6e4dcc8d`를 revert하면 두 docs-only sidecar가 제거된다. #201 canon reconciliation은 독립 owner이므로 RM-TOOL-003 rollback 대상으로 묶지 않는다.
+- Blacksmith Pilot: #181 merge `307126031956bf5345da20a7b0c4466aa26c9b94`를 revert하면 docs/evidence sidecar만 제거된다.
+- Ninja Survival Pilot: #24 merge `46c5e151808f2481cc20be0003dd03866133ae49`를 revert하면 legacy actuator docs/evidence sidecar만 제거된다.
 - project-owned simulator와 기존 balance canon은 이 Base reference의 rollback과 독립적이다.
