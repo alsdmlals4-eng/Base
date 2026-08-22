@@ -12,6 +12,27 @@ class AiBootstrapDriftContractTests(unittest.TestCase):
     def read(self, path: str) -> str:
         return (ROOT / path).read_text(encoding="utf-8")
 
+    def test_gpt_template_keeps_dynamic_authority_and_no_deprecated_workspace(self) -> None:
+        text = self.read("templates/custom-instructions.gpt.md")
+
+        for required in (
+            "bootstrap layer",
+            "DOMAIN_SPLIT_CANON",
+            "AGENTS.md",
+            "START_HERE.md",
+            "Active Context",
+            "현재 채택된 Base 계약",
+            "MIGRATION_ONLY_UNTIL_REMOVAL",
+        ):
+            self.assertIn(required, text)
+
+        for forbidden in (
+            "HTML 대시보드 설계",
+            "Google Sheets를 기본",
+            "너는 구현 담당자다",
+        ):
+            self.assertNotIn(forbidden, text)
+
     def test_codex_template_uses_dynamic_authority_bootstrap(self) -> None:
         text = self.read("templates/custom-instructions.codex.md")
 
