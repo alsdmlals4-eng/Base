@@ -1,6 +1,6 @@
 # Custom Instructions Guide
 
-이 문서는 ChatGPT, Codex 같은 AI 도구의 맞춤형 지침을 **현재 Base·프로젝트 정본과 충돌하지 않는 bootstrap layer**로 설계하고 유지하는 공용 기준이다.
+이 문서는 ChatGPT, Codex, Copilot 같은 AI 도구의 맞춤형 지침을 **현재 Base·프로젝트 정본과 충돌하지 않는 bootstrap layer**로 설계하고 유지하는 공용 기준이다.
 
 ## 1. 핵심 원칙
 
@@ -152,25 +152,30 @@ Memory는 맞춤설정을 보조하지만 프로젝트 정본은 아니다.
 
 현재 프로젝트 사실을 말할 때는 Memory가 아니라 프로젝트 정본을 readback한다.
 
-## 8. Codex 및 다른 실행 도구
+## 8. Codex/Copilot bootstrap
 
-Codex용 bootstrap 원본은 `templates/custom-instructions.codex.md`다. 해당 템플릿도 프로젝트 `AGENTS.md`와 최신 실행 계약보다 높은 authority가 아니다.
+Codex용 stable bootstrap 원본은 `templates/custom-instructions.codex.md`, Copilot의 repository-wide bootstrap 원본은 `templates/copilot-instructions.md`다. 둘 다 현재 프로젝트 `AGENTS.md`와 최신 실행 계약보다 높은 authority가 아니다.
 
-GPT와 Codex의 책임을 영구적으로 `기획 전용` / `구현 전용`처럼 과도하게 고정하지 않는다. 현재 세션이 실제 Tool과 권위를 가지고 수행할 수 있는 범위를 먼저 보고, 별도 executor가 필요한 경우에만 handoff한다.
+GPT·Codex·Copilot의 제품 이름을 `기획 전용` / `구현 전용`처럼 영구 역할과 동일시하지 않는다. **dynamic authority** 원칙에 따라 현재 세션에서 실제로 사용할 수 있는 repository/filesystem/runtime/test 권한과 사용자 요청을 먼저 보고 조사·계획·구현·검증 역할을 정한다.
 
-Codex 템플릿 자체의 상세 read-order와 stale-path 감사는 GPT 맞춤설정 변경과 독립된 변경 범위로 수행한다.
+Codex/Copilot bootstrap은 과거 Base 파일의 긴 고정 read-order를 복제하지 않는다. Base 작업은 current Base `AGENTS.md`/`START_HERE.md`, 프로젝트 작업은 project `AGENTS.md`/Active Context/분야별 정본에서 시작하고, Documentation Map·router·Skill Registry가 지시하는 최소 owner만 progressive-load한다.
+
+Copilot의 **repository-wide** instructions는 공통 프로젝트 지도·정본 경계·검증 진입점만 가진다. 특정 폴더·언어·기능에만 필요한 규칙은 nearest `AGENTS.md` 또는 **path-specific** instructions로 분리해 전역 context를 과적재하지 않는다.
 
 ## 9. 유지보수와 drift 검수
 
 Base의 큰 운영 구조, 기본 project surface, domain canon, 비용 정책, executor 역할이 변경될 때 다음을 확인한다.
 
-1. `templates/custom-instructions.gpt.md`가 새 정본과 충돌하는 고정 사실을 갖고 있는가?
+1. `templates/custom-instructions.gpt.md` 또는 Codex/Copilot bootstrap이 새 정본과 충돌하는 고정 사실을 갖고 있는가?
 2. 맞춤설정에 복사된 세부 Gate 때문에 Base 변경이 이중 수정 작업이 되었는가?
 3. deprecated/migration-only tool이 active/default route로 남았는가?
 4. Memory나 과거 대화가 현재 정본보다 높은 것처럼 표현되었는가?
-5. 새 채팅이 프로젝트 이름과 현재 상태를 모르더라도 현재 Base/프로젝트 authority로 스스로 진입할 수 있는가?
+5. 새 채팅/새 executor가 프로젝트 이름과 현재 상태를 모르더라도 현재 Base/프로젝트 authority로 스스로 진입할 수 있는가?
+6. repository-wide instructions에 path-specific 규칙이 불필요하게 누적되어 있는가?
 
 하나라도 실패하면 프로젝트 사실을 더 추가하기보다 **bootstrap을 줄이고 current authority routing을 강화**하는 방향을 우선한다.
+
+`tests/test_ai_bootstrap_drift_contract.py`는 GPT/Codex/Copilot/project scaffold/Sheet compatibility의 핵심 회귀를 자동으로 감지한다. 이 테스트를 통과시키기 위해 deprecated authority를 다른 이름으로 재도입하지 않는다.
 
 ## 10. 파일 변경 설명 규칙
 
@@ -180,4 +185,5 @@ AI가 파일을 생성, 수정, 삭제, 이동, 이름 변경할 때는 변경 �
 
 - ChatGPT: `templates/custom-instructions.gpt.md`
 - Codex: `templates/custom-instructions.codex.md`
+- Copilot repository bootstrap: `templates/copilot-instructions.md`
 - 프로젝트 최상위 작업 규칙 예시: `templates/AGENTS.project.md`
