@@ -53,6 +53,28 @@ def summarize_values(values: list[float]) -> dict[str, float | int]:
     }
 
 
+def _validate_run(run: dict[str, Any], index: int) -> str:
+    seed = run.get("seed")
+    if isinstance(seed, bool) or not isinstance(seed, int):
+        raise ValueError(f"run {index} seed must be an integer")
+
+    variant = run.get("variant")
+    if not isinstance(variant, str) or not variant.strip():
+        raise ValueError(f"run {index} variant must be a non-empty string")
+
+    metrics = run.get("metrics", {})
+    if not isinstance(metrics, dict):
+        raise ValueError(f"run {index} metrics must be an object")
+    choices = run.get("choices", [])
+    if not isinstance(choices, list):
+        raise ValueError(f"run {index} choices must be a list")
+    failures = run.get("failures", [])
+    if not isinstance(failures, list):
+        raise ValueError(f"run {index} failures must be a list")
+
+    return variant.strip()
+
+
 def _variant_report(runs: list[dict[str, Any]]) -> dict[str, Any]:
     metrics: dict[str, list[float]] = defaultdict(list)
     failure_counts: Counter[str] = Counter()
@@ -60,7 +82,7 @@ def _variant_report(runs: list[dict[str, Any]]) -> dict[str, Any]:
     metric_rows: dict[str, list[tuple[float, int]]] = defaultdict(list)
 
     for run in runs:
-        seed = int(run["seed"])
+        seed = run["seed"]
         for metric_id, value in run.get("metrics", {}).items():
             if isinstance(value, bool) or not isinstance(value, (int, float)):
                 raise ValueError(f"metric {metric_id!r} must be numeric")
@@ -127,8 +149,8 @@ def _paired_deltas(
     baseline_runs: list[dict[str, Any]],
     candidate_runs: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    baseline_by_seed = {int(run["seed"]): run for run in baseline_runs}
-    candidate_by_seed = {int(run["seed"]): run for run in candidate_runs}
+    baseline_by_seed = {run["seed"]: run for run in baseline_runs}
+    candidate_by_seed = {run["seed"]: run for run in candidate_runs}
     shared_seeds = sorted(set(baseline_by_seed) & set(candidate_by_seed))
     metric_deltas: dict[str, list[float]] = defaultdict(list)
 
@@ -206,9 +228,17 @@ def analyze_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
 
     if manifest.get("schema_version") != 1:
         raise ValueError("schema_version must be 1")
-    project_id = str(manifest.get("project_id", "")).strip()
-    if not project_id:
+    project_id = manifest.get("project_id")
+    if not isinstance(project_id, str) or not project_id.strip():
         raise ValueError("project_id is required")
+    project_id = project_id.strip()
+
+    snapshot = manifest.get("snapshot", {})
+    if not isinstance(snapshot, dict):
+        raise ValueError("snapshot must be an object")
+    evidence_ceiling = manifest.get("evidence_ceiling", [])
+    if not isinstance(evidence_ceiling, list):
+        raise ValueError("evidence_ceiling must be a list")
 
     runs = manifest.get("runs")
     if not isinstance(runs, list) or not runs:
@@ -219,10 +249,8 @@ def analyze_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
     for index, run in enumerate(runs):
         if not isinstance(run, dict):
             raise ValueError(f"run {index} must be an object")
-        if "variant" not in run or "seed" not in run:
-            raise ValueError(f"run {index} requires variant and seed")
-        variant = str(run["variant"])
-        seed = int(run["seed"])
+        variant = _validate_run(run, index)
+        seed = run["seed"]
         identity = (variant, seed)
         if identity in seen_variant_seed:
             raise ValueError(f"duplicate variant/seed pair: {variant}/{seed}")
@@ -235,7 +263,9 @@ def analyze_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
     baseline_variant = manifest.get("baseline_variant")
     paired: dict[str, Any] = {}
     if baseline_variant is not None:
-        baseline_variant = str(baseline_variant)
+        if not isinstance(baseline_variant, str) or not baseline_variant.strip():
+            raise ValueError("baseline_variant must be a non-empty string")
+        baseline_variant = baseline_variant.strip()
         if baseline_variant not in grouped:
             raise ValueError(f"baseline_variant {baseline_variant!r} not found")
         for candidate in sorted(grouped):
@@ -245,29 +275,50 @@ def analyze_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
                 grouped[baseline_variant], grouped[candidate]
             )
 
+    goal_seek = manifest.get("goal_seek", [])
+    if not isinstance(goal_seek, list):
+        raise ValueError("goal_seek must be a list")
+
     goal_seek_reports: list[dict[str, Any]] = []
-    for request in manifest.get("goal_seek", []):
-        metric_id = str(request["metric"])
+    for request_index, request in enumerate(goal_seek):
+        if not isinstance(request, dict):
+            raise ValueError(f"goal_seek request {request_index} must be an object")
+        metric_value = request.get("metric")
+        if not isinstance(metric_value, str) or not metric_value.strip():
+            raise ValueError(f"goal_seek request {request_index} metric is required")
+        metric_id = metric_value.strip()
         target = request.get("target")
         if not isinstance(target, list) or len(target) != 2:
             raise ValueError("goal_seek target must be [low, high]")
+        if any(isinstance(value, bool) or not isinstance(value, (int, float)) for value in target):
+            raise ValueError("goal_seek target values must be numeric")
         low, high = float(target[0]), float(target[1])
         if not math.isfinite(low) or not math.isfinite(high):
             raise ValueError("goal_seek target values must be finite")
         if low > high:
             low, high = high, low
-        requested_variants = [
-            str(item) for item in request.get("variants", sorted(grouped))
-        ]
+
+        raw_variants = request.get("variants", sorted(grouped))
+        if not isinstance(raw_variants, list):
+            raise ValueError("goal_seek variants must be a list")
+        requested_variants: list[str] = []
+        for value in raw_variants:
+            if not isinstance(value, str) or not value.strip():
+                raise ValueError("goal_seek variants must contain non-empty strings")
+            variant = value.strip()
+            if variant not in grouped:
+                raise ValueError(f"goal_seek variant {variant!r} not found")
+            requested_variants.append(variant)
+
         ranking = []
         for variant in requested_variants:
-            variant_metrics = variants.get(variant, {}).get("metrics", {})
+            variant_metrics = variants[variant]["metrics"]
             metric_summary = variant_metrics.get(metric_id)
             if not metric_summary or metric_summary.get("count", 0) == 0:
                 continue
             median = float(metric_summary["median"])
             distance = _distance_to_target(median, low, high)
-            values = _goal_metric_values(grouped.get(variant, []), metric_id)
+            values = _goal_metric_values(grouped[variant], metric_id)
             inside_count = sum(1 for value in values if low <= value <= high)
             inside_share = inside_count / len(values) if values else 0.0
             ranking.append(
@@ -301,8 +352,8 @@ def analyze_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
         "schema_version": 1,
         "project_id": project_id,
         "percentile_method": PERCENTILE_METHOD,
-        "snapshot": manifest.get("snapshot", {}),
-        "evidence_ceiling": manifest.get("evidence_ceiling", []),
+        "snapshot": snapshot,
+        "evidence_ceiling": evidence_ceiling,
         "run_count": len(runs),
         "variants": variants,
         "paired_seed_deltas": paired,
