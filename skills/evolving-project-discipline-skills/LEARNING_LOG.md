@@ -1,5 +1,14 @@
 # Evolving Project Discipline Skills — Focused Learning Log
 
+## 2026-08-22 — Verified fixes need recurrence and negative cases before proactive promotion
+
+- **Trigger:** high-nutrient Source scan에서 `leigest519/OpenGame/agent-test/debug-skill`의 living debug protocol을 확인했다. 외부 구현은 관찰된 오류의 signature·root cause·verified fix를 누적하고 반복 패턴을 proactive validation으로 일반화한다.
+- **Source boundary:** OpenGame root license는 Apache-2.0으로 확인했으며 Base는 코드·고유 prompt·패키지를 복사하지 않고 `PATTERN_NOT_PACKAGE_COPY`로 원리만 흡수한다.
+- **Finding:** 현재 Base에는 Learning Log와 `EVAL_BEFORE_PROMOTION`은 있지만, 한 실패의 `failing evidence → verified fix → independent recurrence → proactive check candidate → promoted rule`을 명시적으로 구분하는 공통 증거 구조가 약했다. 반대로 단순 occurrence threshold만 도입하면 동일 run의 재시도나 같은 error code의 서로 다른 원인을 하나의 공용 규칙으로 잘못 일반화할 수 있다.
+- **Decision:** 새 Debug Skill/Agent/Rule Engine을 만들지 않고 기존 `learn` 단계와 `learning_and_failure_evidence` 입력을 그대로 owner로 유지한다. 상세 `VERIFIED_FAILURE_LEARNING` 계약은 `docs/knowledge/research/VERIFIED_FAILURE_LEARNING_AND_PROMOTION.md`에 둔다. 같은 실패를 수정 전·후로 실제 검증해야 `VERIFIED_FIX`가 되며, 같은 run 재시도는 독립 evidence로 세지 않는다. 공용 proactive check는 cross-project 또는 독립 recurrence, common root cause, negative case, false-positive/maintenance cost, Existing Owner First를 통과해야 한다. LLM/automation의 자동 semantic promotion은 금지한다.
+- **Evidence ceiling:** contract와 focused test는 학습 구조를 정의할 뿐 실제 실패 DB, 자동 validator, 예방률 개선을 증명하지 않는다. `PREVENTED_OCCURRENCE_EVIDENCE`는 이후 실제 프로젝트에서 같은 failure class를 merge/build/runtime 이전에 잡은 직접 증거가 생겼을 때만 기록한다.
+- **Next trigger:** 서로 다른 프로젝트에서 같은 verified failure class가 재발하거나, 기존 validator/test가 실제 prevented occurrence를 만들었을 때 machine-readable failure ledger 또는 deterministic checker의 필요성을 Existing Solution First로 재평가한다.
+
 ## 2026-08-02 — Complete behavior coverage is not actual model behavior evidence
 
 - **Trigger:** the active-Skill audit found strong Registry, fixture, reference-freshness, and CI contracts, but `MODEL_RUN_STATUS: NOT_RUN` remained true and several active Skills had no primary behavior-evaluation case.
