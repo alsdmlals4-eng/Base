@@ -15,7 +15,9 @@ on:
       - "docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md"
       - "docs/knowledge/game-development/reuse/PRODUCTION_TOOL_WORKFLOW_MODULES.md"
       - "docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md"
+      - "docs/evidence/2026-08-20-v47-workflow-alignment-adversarial-review.md"
       - "tests/test_v47_workflow_alignment.py"
+      - "tests/test_v47_superseded_pr_closure.py"
       - ".github/workflows/validate-v47-workflow-alignment.yml"
   workflow_dispatch:
 
@@ -33,4 +35,8 @@ jobs:
         with:
           python-version: "3.12"
       - name: Run v4.7 workflow alignment contract
-        run: python -m unittest tests.test_v47_workflow_alignment -v
+        run: |
+          python -m unittest \
+            tests.test_v47_workflow_alignment \
+            tests.test_v47_superseded_pr_closure \
+            -v
