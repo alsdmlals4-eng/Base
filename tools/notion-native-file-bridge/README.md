@@ -31,7 +31,7 @@ The bridge delegates that lifecycle to Notion's official `ntn` CLI rather than i
 - Python 3.12+
 - Notion official `ntn` CLI
 - On Windows, the npm installation route requires Node.js 22+ and npm 10+
-- A Notion workspace account that can authenticate with `ntn login`
+- A full Notion workspace member account when using interactive `ntn login`
 
 No paid automation service is required.
 
@@ -48,11 +48,12 @@ The installer:
 
 1. verifies Node.js/npm versions;
 2. installs official `ntn` with `npm install --global ntn` when needed;
-3. installs this Python package for the current user;
-4. optionally starts `ntn login`;
-5. runs bridge preflight.
+3. tries `py -3.12` first and falls back to a verified `python` 3.12+ launcher;
+4. installs this Python package for the current user;
+5. optionally starts `ntn login`;
+6. runs bridge preflight through `python -m notion_native_file_bridge.cli`, so the current shell does not need the Python user Scripts directory on `PATH` yet.
 
-`ntn login` opens Notion authorization in the browser and stores the workspace credential through the official CLI's credential mechanism. The bridge never asks for or writes a token itself.
+`ntn login` opens Notion authorization in the browser and stores the workspace credential through the official CLI's credential mechanism. The bridge never asks for or writes a token itself. Notion's official CLI currently requires full workspace membership for interactive `ntn login`; guests/restricted members need an appropriate role or a supported personal-access-token path.
 
 ## Manual setup
 
@@ -68,8 +69,10 @@ Install the bridge from the Base checkout:
 
 ```powershell
 py -3.12 -m pip install --user .\tools\notion-native-file-bridge
-notion-native-file-bridge preflight
+py -3.12 -m notion_native_file_bridge.cli preflight
 ```
+
+If `py -3.12` is unavailable but `python --version` is 3.12+, use `python` instead.
 
 Expected preflight shape:
 
@@ -92,7 +95,7 @@ The JSON receipt includes:
 - local SHA-256
 - Notion upload status
 
-Save `upload_id`; the same upload can be attached to multiple destinations after it has been made permanent by attachment.
+Save `upload_id`. Notion requires an unattached upload to be attached before its expiry window; once attached it becomes a permanent workspace file and the same upload ID can be reused across supported destinations.
 
 ## Append an image block
 
@@ -111,6 +114,8 @@ children[0][image][file_upload][id]=<FILE_UPLOAD_ID>
 ```
 
 and independently reads back the created block.
+
+**Do not blindly retry an ambiguous append.** Appending a block is not idempotent. If the bridge returns `AMBIGUOUS_DESTINATION_STATE`, the write response already supplied a block ID but independent readback failed. Inspect the page/block through Notion MCP or `ntn api` first; a blind retry can create a duplicate image.
 
 ## Set a page cover
 
@@ -165,6 +170,7 @@ The CLI exits with code `2` and a JSON `BLOCKED` receipt for fail-closed errors 
 - `UPLOAD_ID_MISSING`
 - `UPLOAD_READBACK_MISMATCH`
 - `DESTINATION_READBACK_FAILED`
+- `AMBIGUOUS_DESTINATION_STATE`
 
 ## Routing rule
 
