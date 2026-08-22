@@ -28,8 +28,8 @@ class RMTool003ImplementationPilotTests(unittest.TestCase):
         self.assertIn("RM_TOOL_003_IMPLEMENTATION_PILOT.md", p0)
         self.assertIn("BASE_REFERENCE_IMPLEMENTED", pilot)
         self.assertIn("project-supplied deterministic run record", pilot)
-        self.assertIn("Tool Hub", pilot)
-        self.assertIn("DEFER", pilot)
+        self.assertIn("NO_TOOL_HUB_OR_BALANCE_GUI_ACTIVE_ROUTE", pilot)
+        self.assertNotIn("기존 Tool Hub의 thin surface를 재검토", pilot)
         self.assertIn("OMENWARD · PR #202", pilot)
         self.assertIn("BLACKSMITH · PR #181", pilot)
         self.assertIn("NINJA_SURVIVAL · PR #24", pilot)
@@ -61,10 +61,11 @@ class RMTool003ImplementationPilotTests(unittest.TestCase):
             "project-owned deterministic record producer",
             "PRODUCT_BALANCE_PASS: NOT_CLAIMED",
             "HUMAN_PLAYER_EXPERIENCE: NOT_RUN",
-            "RM_TOOL_003_TOOL_HUB_GUI: DEFER",
+            "RM_TOOL_003_TOOL_HUB_GUI: RETIRED_NOT_ACTIVE_ROUTE",
             "Omenward #202 / Blacksmith #181 / Ninja #24",
         ):
             self.assertIn(term, p0)
+        self.assertNotIn("RM_TOOL_003_TOOL_HUB_GUI: DEFER", p0)
 
 
 if __name__ == "__main__":
