@@ -21,6 +21,8 @@ on:
       - "docs/superpowers/specs/*periodic-source-scan-queue*.md"
       - "docs/superpowers/specs/*daily-source-analysis-auto-merge*.md"
       - "docs/superpowers/specs/*github-solo-gamedev-source-seeds*.md"
+      - "docs/superpowers/specs/*public-video-research-and-creative-provider-adapters*.md"
+      - "docs/superpowers/plans/*public-video-research-and-creative-provider-adapters*.md"
       - "skills/analyzing-and-refining-game-concepts/SKILL.md"
       - "skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-*.md"
       - "skills/governing-game-user-research-coverage/references/**"
@@ -39,6 +41,7 @@ on:
       - "tools/periodic_source_analysis_*.py"
       - "tools/periodic_source_candidate_state.py"
       - "tools/periodic_source_operations_state.py"
+      - "tools/public_video_research_ingest.py"
       - "tools/run_periodic_source_scan_queue.sh"
       - "README.md"
       - "docs/DOCUMENTATION_MAP.md"
@@ -61,6 +64,8 @@ on:
       - "tests/test_periodic_source_analysis_auto_merge.py"
       - "tests/test_periodic_source_analysis_runner.py"
       - "tests/test_weekly_work_improvement_review.py"
+      - "tests/test_public_video_research_ingest.py"
+      - "tests/test_public_video_research_integration_contract.py"
       - ".github/workflows/periodic-source-scan-queue.yml"
       - ".github/workflows/validate-evidence-knowledge.yml"
   workflow_dispatch:
@@ -98,6 +103,7 @@ jobs:
               tools/periodic_source_candidate_state.py \
               tools/periodic_source_operations_state.py \
               tools/periodic_source_analysis.py \
+              tools/public_video_research_ingest.py \
               tests/test_game_design_difficulty_workflow.py \
               tests/test_game_development_youtube_skill.py \
               tests/test_evidence_based_game_development_knowledge.py \
@@ -113,7 +119,9 @@ jobs:
               tests/test_periodic_source_scan_queue.py \
               tests/test_periodic_source_analysis_auto_merge.py \
               tests/test_periodic_source_analysis_runner.py \
-              tests/test_weekly_work_improvement_review.py
+              tests/test_weekly_work_improvement_review.py \
+              tests/test_public_video_research_ingest.py \
+              tests/test_public_video_research_integration_contract.py
             bash -n tools/run_periodic_source_scan_queue.sh
             python -m unittest \
               tests/test_game_design_difficulty_workflow.py \
@@ -132,6 +140,8 @@ jobs:
               tests/test_periodic_source_analysis_auto_merge.py \
               tests/test_periodic_source_analysis_runner.py \
               tests/test_weekly_work_improvement_review.py \
+              tests/test_public_video_research_ingest.py \
+              tests/test_public_video_research_integration_contract.py \
               -v
           } > evidence-knowledge-results.txt 2>&1
           status=$?
@@ -159,25 +169,32 @@ jobs:
             docs/knowledge/game-development/PIXEL_ART_STYLE_SYSTEM.md
             docs/knowledge/game-development/PIXEL_ART_VISUAL_REFERENCE_GALLERY.md
             docs/knowledge/game-development/source-scans/README.md
+            docs/knowledge/game-development/reuse/PRODUCTION_TOOL_WORKFLOW_MODULES.md
+            docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md
+            docs/knowledge/game-development/reuse/VISUAL_ASSET_MATERIAL_MODULES.md
             docs/knowledge/research/PROMPT_RECIPE_SOURCE_AUDIT.md
             docs/superpowers/plans/2026-07-29-prompt-recipe-reference-integration.md
             docs/superpowers/plans/2026-08-14-periodic-source-scan-queue.md
             docs/superpowers/plans/2026-08-14-daily-source-analysis-auto-merge.md
+            docs/superpowers/plans/2026-08-22-public-video-research-and-creative-provider-adapters.md
             docs/superpowers/specs/2026-07-29-prompt-recipe-reference-integration-design.md
             docs/superpowers/specs/2026-08-14-periodic-source-scan-queue-design.md
             docs/superpowers/specs/2026-08-14-daily-source-analysis-auto-merge-design.md
+            docs/superpowers/specs/2026-08-22-public-video-research-and-creative-provider-adapters-design.md
             skills/producing-game-development-youtube-videos/LEARNING_LOG.md
             templates/game-development-youtube/EPISODE_PACKET.md
             templates/planning/ART_DIRECTION_BRIEF.md
             templates/planning/ART_TECHNIQUE_CARD.md
             templates/planning/PC_ANDROID_DELIVERY_PROFILE.md
             templates/research/AI_IMAGE_PROMPT_RECIPE_CARD.md
+            templates/research/PROJECT_REUSE_OPPORTUNITY_SCAN.md
             tools/periodic_source_scan_queue.py
             tools/periodic_source_analysis_contract.py
             tools/periodic_source_analysis_render.py
             tools/periodic_source_candidate_state.py
             tools/periodic_source_operations_state.py
             tools/periodic_source_analysis.py
+            tools/public_video_research_ingest.py
             tools/run_periodic_source_scan_queue.sh
             tests/test_game_design_difficulty_workflow.py
             tests/test_game_development_youtube_skill.py
@@ -195,4 +212,6 @@ jobs:
             tests/test_periodic_source_analysis_auto_merge.py
             tests/test_periodic_source_analysis_runner.py
             tests/test_weekly_work_improvement_review.py
+            tests/test_public_video_research_ingest.py
+            tests/test_public_video_research_integration_contract.py
           if-no-files-found: error
