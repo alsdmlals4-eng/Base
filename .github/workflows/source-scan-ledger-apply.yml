@@ -1,0 +1,43 @@
+name: Apply Verified Source Scan Ledger Delta
+
+on:
+  push:
+    branches: [docs/source-scan-2026-08-22]
+    paths:
+      - ".github/workflows/source-scan-ledger-apply.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: docs/source-scan-2026-08-22
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+      - name: Validate recorder
+        run: python -m unittest tests/test_record_periodic_source_scan.py -v
+      - name: Record reviewed sources
+        run: >-
+          python tools/record_periodic_source_scan.py
+          --ledger docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json
+          --date 2026-08-22
+          --sources hada-geeknews,adobe-premiere,blackmagic-davinci,frameio,gamediscoverco,godot-proposals,reedsy,steamdb,vidiq,80-level,deconstructor-of-fun,gameanalytics,git-scm,godot-demo-projects,gpuopen,igda-game-writing,emily-short,game-accessibility-guidelines,google-engineering-practices,level-design-book,xbox-accessibility,microsoft-learn,youtube-official,game-developer,how-to-market-a-game,android-games,anthropic,github-copilot,github-platform-engineering,godot,google-ai-adk,google-play-policy,openai,steamworks
+          --material youtube-official,github-copilot,godot,steamworks
+      - name: Commit ledger delta
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json
+          if git diff --cached --quiet; then
+            echo "No ledger delta"
+            exit 0
+          fi
+          git commit -m "docs: record verified 2026-08-22 source scan"
+          git push origin HEAD:docs/source-scan-2026-08-22
