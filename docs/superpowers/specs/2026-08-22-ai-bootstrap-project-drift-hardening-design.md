@@ -6,14 +6,14 @@
 
 ## Goal
 
-GPT 맞춤설정 교정 이후 남은 Codex/Copilot/project scaffold/legacy Sheet drift를 제거하고, 같은 회귀가 다시 active authority로 들어오는 것을 자동 검증한다.
+GPT 맞춤설정 교정 이후 남은 Codex/Copilot/project scaffold drift를 제거하고, 같은 회귀가 다시 active authority로 들어오는 것을 자동 검증한다. Legacy Sheet는 current authority와 frozen historical evidence를 구분해 보존한다.
 
 ## Current-state findings
 
 1. `templates/custom-instructions.codex.md`는 Codex를 항상 `구현 담당자`로 고정하고, `AI_WORKFLOW_RULES`·`MVP_WORKFLOW_CHECKLIST` 등 과거 파일 목록을 매 작업마다 강제한다.
 2. `templates/copilot-instructions.md`도 고정 read-order를 가진다.
 3. `templates/AGENTS.project.md`는 Base 로컬 사본의 과거 고정 목록을 기본 전제로 하며 현재 `DOMAIN_SPLIT_CANON`을 직접 설명하지 않는다.
-4. `docs/operations/SHEET_CONTROL_CONTRACT.json`은 `project_sheet_role = USER_FACING_GDD_WORKSPACE`를 유지해 현재 `MIGRATION_ONLY_UNTIL_REMOVAL` 정책과 충돌한다.
+4. `docs/operations/SHEET_CONTROL_CONTRACT.json`은 단독으로 보면 `USER_FACING_GDD_WORKSPACE`라 stale처럼 보이지만, Base v9 regression이 이 파일을 **frozen historical evidence**로 명시적으로 보호한다. Current authority는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`의 `MIGRATION_ONLY_UNTIL_REMOVAL`이다. 따라서 frozen 파일은 수정 대상이 아니다.
 5. 실제 프로젝트 감사에서 Ten-Paces와 Blacksmith의 `AGENTS.md`가 Google Sheet/HTML workbook을 사람용 정본으로 유지하고, Tetris는 이미 종료된 PR 번호를 영구 보호 규칙으로 고정하며, MylittleBoat는 최신 Base/Notion authority bootstrap이 거의 없다.
 6. GRIMOIRE에는 현재 열린 PR #151이 있으므로 이번 교정에서 write 대상에서 제외하고 read-only cold-start 검증만 한다.
 
@@ -46,19 +46,19 @@ GitHub는 repository-wide custom instructions와 path-specific instructions를 �
 
 Codex 맞춤설정만 최신화한다.
 
-**Reject.** Project scaffold와 Sheet machine contract가 계속 구형 authority를 재생산한다.
+**Reject.** Project scaffold와 Copilot bootstrap drift가 계속 구형 authority를 재생산한다.
 
-### B. Delete all legacy instruction/Sheet surfaces
+### B. Rewrite/delete all legacy instruction and Sheet surfaces
 
-과거 AI workflow 문서와 Sheet control 파일을 일괄 삭제한다.
+과거 AI workflow 문서와 Sheet control 파일을 일괄 삭제·최신화한다.
 
-**Reject.** 미이관 unique material, historical discovery, compatibility consumer를 깨뜨릴 수 있다.
+**Reject.** 미이관 unique material, historical discovery, frozen release evidence를 깨뜨릴 수 있다. 실제 CI가 frozen Sheet mutation을 3개 기존 regression으로 거부했다.
 
-### C. Stable bootstrap + compatibility downgrade + regression guard
+### C. Stable bootstrap + frozen-history preservation + regression guard
 
-Codex/Copilot/project scaffold는 짧은 dynamic authority bootstrap으로 바꾸고, legacy Sheet는 migration-only compatibility로 명시하며, 테스트가 deprecated primary-authority 문구 재등장을 막는다. 프로젝트별 stale `AGENTS.md`는 실제 Notion/repository current authority를 확인한 곳만 별도 PR로 교정한다.
+Codex/Copilot/project scaffold는 짧은 dynamic authority bootstrap으로 바꾸고, current Sheet authority는 기존 migration-only policy에서 검증한다. Frozen v9 Sheet contract는 원문 그대로 보존한다. 프로젝트별 stale `AGENTS.md`는 실제 Notion/repository current authority를 확인한 곳만 별도 PR로 교정한다.
 
-**Adopt.** 현재 정본과 외부 agent-instruction 실무 패턴을 동시에 만족하며 rollback과 compatibility를 보존한다.
+**Adopt.** 현재 정본과 외부 agent-instruction 실무 패턴을 만족하면서 history/rollback/compatibility까지 보존한다.
 
 ## Base design
 
@@ -80,27 +80,36 @@ Codex/Copilot/project scaffold는 짧은 dynamic authority bootstrap으로 바�
 
 - `DOMAIN_SPLIT_CANON`을 기본 scaffold에 직접 넣는다.
 - `NOTION_HUMAN_FACING_CANON` / `REPOSITORY_STRUCTURED_CANON` / `REPOSITORY_RUNTIME_TRUTH`를 분리한다.
-- Google Sheets는 `MIGRATION_ONLY_UNTIL_REMOVAL`로만 허용한다.
+- Google Sheets는 current policy의 `MIGRATION_ONLY_UNTIL_REMOVAL`로만 라우팅한다.
 - local Base copy가 존재하면 채택 버전과 freshness를 확인하되 특정 과거 파일목록을 영구 요구하지 않는다.
 - 열린 PR 보호는 current Base rule을 따라 동적으로 판단하고 PR 번호를 template에 고정하지 않는다.
 
-### Sheet control compatibility
+### Frozen Sheet history boundary
 
-`docs/operations/SHEET_CONTROL_CONTRACT.json`은 삭제하지 않고 schema v2 migration compatibility contract로 전환한다.
+`docs/operations/SHEET_CONTROL_CONTRACT.json`은 Base v9 당시 상태를 증명하는 frozen historical artifact다. current policy로 덮어쓰지 않는다.
 
-- external writes remain unauthorized by default.
-- project Sheet role becomes `MIGRATION_ONLY_UNTIL_REMOVAL`.
-- active human canon is Notion; structured/runtime canon is repository.
-- held project entries are preserved as historical/migration inventory, not active workspace authority.
+```text
+frozen v9 evidence
+→ docs/operations/SHEET_CONTROL_CONTRACT.json
+→ USER_FACING_GDD_WORKSPACE / HOLD state preserved exactly
+
+current authority
+→ docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md
+→ MIGRATION_ONLY_UNTIL_REMOVAL
+→ NOTION_DEFAULT_PROJECT_WORKSPACE + repository runtime truth
+```
+
+Regression guard는 두 층을 동시에 검증해, 과거 증거 rewrite와 current Sheet-first 회귀를 모두 막는다.
 
 ### Regression guard
 
 새 `tests/test_ai_bootstrap_drift_contract.py`가 다음을 고정한다.
 
+- GPT/Codex/Copilot에서 dynamic authority routing과 deprecated default-workspace 금지.
 - Codex template에서 fixed `구현 담당자`와 deprecated mandatory file list 금지.
-- GPT/Codex/Copilot/project scaffold에서 dynamic authority routing 요구.
-- project scaffold에서 `DOMAIN_SPLIT_CANON`과 migration-only Sheet 요구.
-- Sheet control contract에서 `USER_FACING_GDD_WORKSPACE` 재등장 금지.
+- project scaffold에서 `DOMAIN_SPLIT_CANON`, dynamic open-PR protection, current migration-only Sheet route 요구.
+- frozen Sheet contract는 v1 historical identity를 그대로 유지.
+- current Google Sheets policy는 migration-only/Notion route를 유지.
 - Custom Instructions Guide가 Codex audit을 future TODO로 남기지 않음.
 
 ## Project rollout
@@ -134,8 +143,8 @@ Base와 각 write project는 다음을 독립적으로 충족해야 한다.
 ## Acceptance criteria
 
 - Base의 Codex/Copilot/project scaffold가 stale fixed-file bootstrap을 요구하지 않는다.
-- Base machine Sheet contract가 current migration-only policy와 충돌하지 않는다.
-- regression test가 primary Sheet/fixed Codex role 회귀를 막는다.
+- frozen Sheet evidence는 변경되지 않고 current policy는 migration-only로 검증된다.
+- regression test가 primary Sheet/fixed executor role 회귀와 historical rewrite를 모두 막는다.
 - 확인된 stale project instructions가 current Notion/repository authority와 일치한다.
 - 현재로서 올바른 프로젝트는 불필요하게 재작성하지 않는다.
 - GRIMOIRE PR #151은 변경·흡수·병합하지 않는다.
