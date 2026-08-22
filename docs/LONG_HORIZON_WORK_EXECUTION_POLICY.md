@@ -29,6 +29,7 @@ RECOVER_TRY_ALTERNATIVES_RESUME
 INDEPENDENT_WORKSTREAM_ISOLATION
 OPEN_PR_READ_ONLY_BY_DEFAULT
 OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION
+CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE
 FOLLOW_UP_TARGET_IS_MERGED_MAIN
 ZERO_INCREMENTAL_COST_REQUIRED
 CURRENT_PAID_PLANS: GPT_PRO
@@ -204,6 +205,12 @@ verification_plan: []
 
 이미 승인된 동일 계약에서 `[연속작업] 진행해`, `진행해`, `계속해`, `남은 작업 진행`처럼 계속 실행 의도가 명확하면 `CONTINUATION_INTENT_ALIASES`를 `APPROVED_CONTRACT_CONTINUATION`으로 해석한다. 정확한 마법 문구를 다시 요구하지 않되, 승인되지 않은 범위·새 Goal·사용자 결정 Gate는 이 별칭으로 승인하지 않는다.
 
+### `CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE`
+
+`APPROVED_CONTRACT_CONTINUATION`이 활성이고 현재 승인된 작업 계약이 latest completed `main`에서 직접 만든 **단 하나의 명확한 `current-task PR`**이라면, continuation intent는 그 PR의 latest-main reconciliation, `exact HEAD` 재검증, repository가 요구하는 `required checks`·review·unresolved-thread·ruleset Gate 통과 뒤 merge와 `postmerge readback`까지 포함한다. 같은 작업의 PR 번호를 다시 요구하지 않는다.
+
+이 예외는 `pre-existing`, `unrelated`, `other-workstream`, `draft` PR, 복수의 모호한 PR 후보, 다른 작업의 material-delta takeover에는 적용하지 않는다. `force push`, direct `main` push, `--admin`, `ruleset bypass`는 계속 금지한다. 사용자가 `병합하지 마`, `PR만 열어`, `검토만`처럼 범위를 좁히면 최신 지시가 merge authority를 제거한다.
+
 ### `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`
 
 모든 Base/project GitHub 병합 뒤에는 새 main SHA를 다시 가져와 전체 승인 범위를 적대적으로 검토한다. 유효 finding은 `POSTMERGE_CORRECTION_REQUIRED`로 최신 main에서 새 Branch/PR에 교정하고 exact-head 회귀를 재실행한다. 해당 프로젝트에 Notion 사람용 정본이 적용되면 repository 증거가 확정된 뒤에만 현재 상태 블록을 갱신한다. 마지막으로 GitHub와 Notion 목적지를 모두 재조회하고 `PROGRESS_READBACK_REQUIRED`에 따라 완료율, 남은 필수 작업, 선택 backlog, blocker를 다시 계산한다. 열린 다른 PR은 명시적 번호·동작 승인 없이 수정하지 않고, 역사 섹션을 현재 상태로 일괄 치환하지 않는다.
@@ -240,6 +247,8 @@ failure / interruption
 `open / draft / ready` PR·branch는 실제 동시 작업자 여부와 무관하게 기본 read-only다. current-state reconciliation을 위한 head/diff/check 읽기는 가능하지만 checkout/write/rebase/close/merge/selective-copy/material-delta 흡수는 하지 않는다. 일반 후속 작업은 latest completed `main`에서 새 Branch로 시작하고 main에 실제 유지된 변경만 대상으로 한다.
 
 열린 PR mutation이 필요하면 사용자가 현재 작업에서 PR 번호와 허용 동작을 명시해야 한다. 같은 Goal, owner evidence 부재, 현재 coordinator만 활성이라는 확인, 과거 standing authorization은 예외 권한이 아니다.
+
+단, `CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE`의 조건을 모두 만족하는 현재 승인 작업의 단일 `current-task PR`은 위 기본 금지의 좁은 예외다. 이 예외는 다른 open PR의 mutation·흡수·종료·supersede 권한으로 확장되지 않는다.
 
 ## 8. 게임 작업 계약
 
