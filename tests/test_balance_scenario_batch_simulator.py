@@ -151,8 +151,8 @@ class BalanceScenarioBatchSimulatorTests(unittest.TestCase):
         self.assertEqual(4, delta["paired_count"])
         self.assertEqual(5.0, delta["mean_delta"])
         self.assertEqual(5.0, delta["median_delta"])
-        self.assertEqual(2.3, delta["percentile_05_delta"])
-        self.assertEqual(7.7, delta["percentile_95_delta"])
+        self.assertAlmostEqual(2.3, delta["percentile_05_delta"], places=12)
+        self.assertAlmostEqual(7.7, delta["percentile_95_delta"], places=12)
 
         ranking = report["goal_seek"][0]["ranking"]
         self.assertEqual("candidate_good", ranking[0]["variant"])
