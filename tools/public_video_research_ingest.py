@@ -376,10 +376,13 @@ def ingest_local_transcript(
     transcript = packet["transcript"]
     if isinstance(transcript, dict):
         transcript["timestamp_evidence"] = "AVAILABLE" if timestamped else "UNAVAILABLE"
+        transcript["is_generated"] = None
     packet["local_transcript_input"] = {
         "format": suffix.removeprefix("."),
         "byte_length": len(payload),
         "sha256": hashlib.sha256(payload).hexdigest(),
+        "video_binding": "UNVERIFIED",
+        "creation_source": "UNKNOWN",
     }
     if not timestamped:
         packet["content_claim_ceiling"] = "TRANSCRIPT_TEXT_ONLY_NO_TIMESTAMP_FACT_VERIFICATION"
