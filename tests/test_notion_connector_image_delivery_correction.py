@@ -42,9 +42,22 @@ class NotionConnectorImageDeliveryCorrectionTests(unittest.TestCase):
         self.assertIn("actual Android/iOS/browser pixel observation", self.text)
         self.assertIn("READBACK_PASS != HUMAN_VISIBLE_PASS", self.text)
 
-    def test_page_images_do_not_imply_gallery_preview_success(self) -> None:
-        self.assertIn("Page/Home/Visual image success does not prove database Files-property", self.text)
-        self.assertIn("Gallery Preview", self.text)
+    def test_preview_is_optional_and_not_a_human_image_completion_gate(self) -> None:
+        self.assertIn("OPTIONAL / NON-AUTHORITY", self.text)
+        self.assertIn(
+            "Do not make Asset Library `Preview` a completion gate",
+            self.text,
+        )
+        self.assertIn("direct Notion-owned image block", self.text)
+
+    def test_preview_wrapper_failures_are_documented_without_private_id_hack(self) -> None:
+        self.assertIn('Preview=["file-upload://<id>"]', self.text)
+        self.assertIn('Preview=["<raw-upload-id>"]', self.text)
+        self.assertIn("User cannot access file id", self.text)
+        self.assertIn(
+            "does **not** spend additional complexity on reverse-engineering private Notion file IDs",
+            self.text,
+        )
 
 
 if __name__ == "__main__":
