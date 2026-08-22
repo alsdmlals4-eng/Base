@@ -26,7 +26,9 @@ adopted Base contract
 → current shared operating rules
 ```
 
-맞춤설정이나 Memory와 현재 프로젝트 정본이 충돌하면 최신 사용자 지시와 현재 프로젝트/Base authority를 우선한다.
+맞춤설정이나 Memory와 현재 정본이 충돌하면 최신 사용자 지시와 현재 Base/프로젝트 authority를 우선한다.
+
+AI 지시의 `HARD_CONSTRAINT / RECOMMENDED_DEFAULT / JUDGMENT_SPACE`, Context curation, Example-as-Fixture, Artifact claim limit 같은 상세 Method는 `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`가 소유한다. Custom Instructions Guide는 제품 맞춤설정의 stable bootstrap 경계만 소유한다.
 
 ## 2. Stable bootstrap에 넣을 것
 
@@ -38,7 +40,8 @@ adopted Base contract
 - 비용 경계: 무료·로컬·현재 연결된 도구 우선, 추가 유료비용은 장기 가치가 명확할 때만 제안.
 - 이미지 생성·편집처럼 사용자가 명시적 요청을 요구하는 capability boundary.
 - 기억·과거 대화를 현재 정본으로 승격하지 않는 규칙.
-- 최신 프로젝트 `AGENTS.md`, Active Context, 승인 계약, 분야별 정본, 실제 evidence를 다시 읽는 authority bootstrap.
+- Base 작업에서는 최신 Base `AGENTS.md`, `START_HERE.md`, 책임 원본과 실제 evidence를 다시 읽는 bootstrap.
+- 프로젝트 작업에서는 최신 프로젝트 `AGENTS.md`, Active Context, 승인 계약, 분야별 정본, 실제 evidence를 다시 읽는 bootstrap.
 - `DOMAIN_SPLIT_CANON`처럼 장기적인 정본 분할 원칙.
 - 세부 Gate를 복제하지 않고 현재 채택된 Base 규칙을 실제로 읽고 실행한다는 dynamic lookup rule.
 
@@ -69,6 +72,15 @@ latest user instruction
 → registered domain canon + actual code/data/assets/tests/runtime evidence
 → adopted Base contract
 → Base remote
+→ external references / memory / past conversation / inference
+```
+
+Base 자체 작업은 프로젝트 Notion을 억지로 거치지 않는다.
+
+```text
+latest user instruction
+→ Base AGENTS.md + START_HERE.md
+→ registered Base owner docs + actual repository evidence
 → external references / memory / past conversation / inference
 ```
 
@@ -155,8 +167,8 @@ Base의 큰 운영 구조, 기본 project surface, domain canon, 비용 정책, 
 1. `templates/custom-instructions.gpt.md`가 새 정본과 충돌하는 고정 사실을 갖고 있는가?
 2. 맞춤설정에 복사된 세부 Gate 때문에 Base 변경이 이중 수정 작업이 되었는가?
 3. deprecated/migration-only tool이 active/default route로 남았는가?
-4. Memory나 과거 대화가 프로젝트 정본보다 높은 것처럼 표현되었는가?
-5. 새 채팅이 프로젝트 이름과 현재 상태를 모르더라도 저장소/Notion의 current authority로 스스로 진입할 수 있는가?
+4. Memory나 과거 대화가 현재 정본보다 높은 것처럼 표현되었는가?
+5. 새 채팅이 프로젝트 이름과 현재 상태를 모르더라도 현재 Base/프로젝트 authority로 스스로 진입할 수 있는가?
 
 하나라도 실패하면 프로젝트 사실을 더 추가하기보다 **bootstrap을 줄이고 current authority routing을 강화**하는 방향을 우선한다.
 
