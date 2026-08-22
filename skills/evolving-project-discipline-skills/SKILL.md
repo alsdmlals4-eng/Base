@@ -18,6 +18,7 @@ description: Use when creating, consolidating, evaluating, or improving project 
 `inventory → decide-boundary → create-or-integrate → register → behavior-eval → verify → learn`
 
 - `behavior-eval`: 현실적인 사용자 Prompt에서 예상 Work Mode·주/보조 Skill·Skill Mode·금지 라우팅·필수 증거를 비교한다. 모든 ACTIVE Skill에 주 책임 사례와 잘못 선택하면 안 되는 non-selection 사례가 있어야 하며, 실제 모델 결과가 없으면 `MODEL_RUN_STATUS: NOT_RUN`으로 유지한다.
+- `learn`: 반복 실패나 수정 경험을 공용 규칙으로 승격하려면 `VERIFIED_FAILURE_LEARNING`을 적용한다. 실패를 실제로 재현하고 수정 후 같은 scope에서 검증한 뒤에만 학습 후보로 남기며, 반복 증거·negative case·기존 owner를 확인하기 전에는 예방 규칙으로 승격하지 않는다. 상세 계약은 `references/verified-failure-learning-and-promotion.md`를 필요할 때만 읽는다.
 
 ## Required inputs
 
@@ -61,6 +62,7 @@ skill_implementation_evidence_index:
    - 작성 컨텍스트와 다른 `independent reviewer context`를 기록하지 못하면 실제 모델 행동 통과로 인정하지 않는다.
 7. `skills/SKILL_IMPLEMENTATION_EVIDENCE.json`의 명시적 근거 경로를 검증하고 `tools/build_skill_implementation_evidence.py`로 `docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md`를 생성·대조한다.
 8. `auditing-canonical-reference-freshness`와 `managing-game-project-operating-system` verify를 실행한다.
+9. 반복 실패를 학습할 때는 `references/verified-failure-learning-and-promotion.md`의 상태·증거 Gate를 적용한다. 같은 실행의 재시도 횟수를 독립 재발로 세지 않고, 프로젝트 전용 실패를 공용 규칙으로 과승격하지 않는다.
 
 `behavior-eval`의 계약·coverage·결과 채점은 `tools/check_skill_behavior_evals.py`가 책임진다. Prompt에 예상 Skill ID나 Skill Mode를 노출하지 않고, 실제 결과 파일이 없으면 fixture와 coverage 유효성만 통과시키며 라우팅 품질은 통과로 보고하지 않는다. 결과 파일이 있어도 source identity가 현재 HEAD·Registry·평가셋과 다르거나 독립 검토 컨텍스트가 아니면 fail-closed 한다.
 
@@ -70,6 +72,7 @@ skill_implementation_evidence_index:
 - `CONTRACT_EVIDENCE`: 계약·문서 소비자는 있으나 실행형 근거가 아직 없다.
 - `MISSING_EVIDENCE`: Skill package, 주 책임·non-selection coverage 또는 등록 증거가 누락됐다.
 - 실제 모델 행동, 프로젝트 Pilot, 엔진 Runtime, 사람 이해도는 별도 상태이며 파일 존재로 승격하지 않는다.
+- `VERIFIED_FIX`는 같은 실패를 제거한 증거일 뿐 Base 공용 규칙의 증거가 아니다. 반복성·비적용 사례·예방비용·기존 owner 검증 전에는 `RECURRENCE_CANDIDATE` 또는 프로젝트 전용으로 유지한다.
 
 ## Output contract
 
@@ -98,6 +101,8 @@ skill_implementation_evidence_index:
 - 작성자와 같은 컨텍스트의 자기검토를 독립 검토로 표시하지 않는다.
 - 실제 결과 없이 지식 상태를 승격하지 않는다.
 - fixture·schema·증거 경로 존재를 실제 모델·Runtime·사람 행동 통과로 표현하지 않는다.
+- 실패를 재현하지 않았거나 수정 후 같은 검증을 다시 통과하지 못했으면 `VERIFIED_FIX`로 기록하지 않는다.
+- 반복 횟수만으로 LLM 또는 automation이 Base-wide semantic rule을 자동 승격하지 않는다.
 
 Registry Learning Log index: `skills/SKILL_LEARNING_LOG.md`
 
