@@ -70,11 +70,19 @@ Context-Synthesized 후보는 Source가 없어도 만들 수 있지만 `context_
 
 사용자가 예시로 든 장르에만 한정하지 않는다. Evidence-derived 후보는 프로젝트 병목을 해결할 가능성이 있는 후보를 내부 → Base → 직접 장르 → 인접 장르 → 비게임 제품/도구 → 오픈소스/에셋 → 실패사례 순으로 넓혀 찾는다. Context-Synthesized 후보는 승인 roadmap·책임 구조·한 입력 다중 소비·예상 반복비용을 먼저 본다.
 
+기존 후보 family를 Origin 모델 때문에 축소하지 않는다. 각 family는 `EVIDENCE_DERIVED`, `CONTEXT_SYNTHESIZED`, `HYBRID` 어느 경로에서도 시작할 수 있다.
+
 | 후보 ID | Origin | Candidate family | 해결 대상 병목/예상 반복 | 참고 사례/Context | 공통 원리/가설 | 예상 절감/가치 | 현재 프로젝트 적합성 | 상태 |
 |---|---|---|---|---|---|---|---|---|
 | C-001 | EVIDENCE_DERIVED | Genre foundation |  |  |  |  |  | DISCOVERED |
 | C-002 | CONTEXT_SYNTHESIZED | Mechanic / system |  |  |  |  |  | HYPOTHESIS |
-| C-003 | HYBRID | Workflow / work structure |  |  |  |  |  | HYPOTHESIS |
+| C-003 | HYBRID | Content / data schema |  |  |  |  |  | HYPOTHESIS |
+| C-004 | EVIDENCE_DERIVED | UI / UX |  |  |  |  |  | DISCOVERED |
+| C-005 | CONTEXT_SYNTHESIZED | Tool / automation |  |  |  |  |  | HYPOTHESIS |
+| C-006 | HYBRID | Asset / image material |  |  |  |  |  | HYPOTHESIS |
+| C-007 | HYBRID | Workflow / work structure |  |  |  |  |  | HYPOTHESIS |
+| C-008 | CONTEXT_SYNTHESIZED | Skill / evaluation |  |  |  |  |  | HYPOTHESIS |
+| C-009 | EVIDENCE_DERIVED | Testing / QA |  |  |  |  |  | DISCOVERED |
 
 ## 5. Multi-source reverse engineering
 
