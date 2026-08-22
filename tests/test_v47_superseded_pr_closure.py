@@ -24,31 +24,21 @@ class V47SupersededPrClosureTests(unittest.TestCase):
             self.assertIn(term, text)
         self.assertNotIn("CLEAN_REVIEW_EXIT: PENDING_FINAL_EXACT_HEAD_CI_AND_PR_GATE", text)
 
-    def test_retired_qa_studio_is_not_an_active_or_required_ci_surface(self) -> None:
+    def test_retired_qa_studio_is_absent_from_active_required_ci(self) -> None:
         workflow = WORKFLOW.read_text(encoding="utf-8")
         retirement = RETIREMENT.read_text(encoding="utf-8")
 
         self.assertIn("QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW", retirement)
         self.assertIn("신규 작업의 자동 라우팅·필수 preflight·완료 조건에 넣지 않는다", retirement)
 
-        historical_path_block = (
-            "tools/qa-evidence-studio/*)\n"
-            "                    has_code=true\n"
-            "                    platform_smoke=false"
-        )
-        self.assertIn(historical_path_block, workflow)
-        self.assertNotIn(
-            "tools/qa-evidence-studio/*)\n"
-            "                    has_code=true\n"
-            "                    platform_smoke=true",
-            workflow,
-        )
-
-        for disabled_step in (
-            "      - name: Install Windows QA Evidence Studio dependencies\n        if: ${{ false }}",
-            "      - name: Run Windows QA Evidence Studio smoke\n        if: ${{ false }}",
+        for stale_active_consumer in (
+            "tools/qa-evidence-studio/*",
+            "Install Windows QA Evidence Studio dependencies",
+            "Run Windows QA Evidence Studio smoke",
+            "tools/qa-evidence-studio/tests",
+            "qa_evidence_studio",
         ):
-            self.assertIn(disabled_step, workflow)
+            self.assertNotIn(stale_active_consumer, workflow)
 
 
 if __name__ == "__main__":
