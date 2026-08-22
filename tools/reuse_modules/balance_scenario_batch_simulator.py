@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import math
 from collections import Counter, defaultdict
@@ -352,8 +353,8 @@ def analyze_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
         "schema_version": 1,
         "project_id": project_id,
         "percentile_method": PERCENTILE_METHOD,
-        "snapshot": snapshot,
-        "evidence_ceiling": evidence_ceiling,
+        "snapshot": copy.deepcopy(snapshot),
+        "evidence_ceiling": copy.deepcopy(evidence_ceiling),
         "run_count": len(runs),
         "variants": variants,
         "paired_seed_deltas": paired,
