@@ -100,6 +100,21 @@ class V47WorkflowAlignmentTests(unittest.TestCase):
             self.assertIn(term, policy)
         self.assertNotIn("TOOL_HUB: REQUIRED_WHEN_RELEVANT", policy)
 
+    def test_pixel_art_reference_uses_current_project_visual_authority(self) -> None:
+        pixel = read("docs/knowledge/game-development/PIXEL_ART_STYLE_SYSTEM.md")
+        for stale in (
+            "Figma 승인",
+            "Figma Visual Bible",
+            "Figma 승인 Reference",
+        ):
+            self.assertNotIn(stale, pixel)
+        for current in (
+            "Notion",
+            "Project Visual Reference",
+            "PROJECT_ART_CANON_REMAINS_PROJECT_OWNED",
+        ):
+            self.assertIn(current, pixel)
+
     def test_flexible_structure_has_no_fixed_skill_count_gate(self) -> None:
         manifest = read("docs/operations/BASE_PARTITION_MANIFEST.json")
         skill_readme = read("skills/README.md")
