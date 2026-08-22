@@ -31,13 +31,24 @@ class V47SupersededPrClosureTests(unittest.TestCase):
         self.assertIn("QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW", retirement)
         self.assertIn("신규 작업의 자동 라우팅·필수 preflight·완료 조건에 넣지 않는다", retirement)
 
-        for stale_active_consumer in (
-            "tools/qa-evidence-studio/*",
-            "Install Windows QA Evidence Studio dependencies",
-            "Run Windows QA Evidence Studio smoke",
-            "tools/qa-evidence-studio/tests",
+        historical_path_block = (
+            "tools/qa-evidence-studio/*)\n"
+            "                    has_code=true\n"
+            "                    platform_smoke=false"
+        )
+        self.assertIn(historical_path_block, workflow)
+        self.assertNotIn(
+            "tools/qa-evidence-studio/*)\n"
+            "                    has_code=true\n"
+            "                    platform_smoke=true",
+            workflow,
+        )
+
+        for disabled_step in (
+            "      - name: Install Windows QA Evidence Studio dependencies\n        if: ${{ false }}",
+            "      - name: Run Windows QA Evidence Studio smoke\n        if: ${{ false }}",
         ):
-            self.assertNotIn(stale_active_consumer, workflow)
+            self.assertIn(disabled_step, workflow)
 
 
 if __name__ == "__main__":
