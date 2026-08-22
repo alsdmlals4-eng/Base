@@ -1,9 +1,46 @@
 # v4.7 Workflow Alignment — Adversarial Review Evidence
 
-**Date:** 2026-08-20 KST
-**Baseline:** `61862f9a4f7995f1676acca4bb6d5365e46b7630`
-**PR:** #556
+**Date:** 2026-08-20 KST  
+**Closure readback:** 2026-08-22 KST  
+**Baseline:** `61862f9a4f7995f1676acca4bb6d5365e46b7630`  
+**Superseded draft PR: #556**  
+**Fresh-main implementation PR: #573**  
+**Fresh-main exact head:** `af96707bb42dbbb8a36708242574802404b44e80`  
+**Merged commit:** `182f98b1c1a0f0fa578994b453d0d5f7b57a57c7`  
 **Scope:** Notion-first project workflow, retired project-management tools, repository-native evidence, creative benchmarking, flexible Skill structure, PowerShell/Codex handoff.
+
+## Supersession and closure
+
+Draft PR #556 was not merged directly because its baseline became stale while Base main advanced. Its still-relevant v4.7 requirements were reconstructed on fresh main in PR #573 instead of reviving the old branch wholesale.
+
+```text
+#556 stale draft
+→ identify still-relevant requirements
+→ reconstruct on fresh main
+→ update stale regression consumers
+→ exact-head validation on #573
+→ merge #573
+→ post-merge main readback
+```
+
+This preserves newer main work and avoids laundering an old merge result into current evidence. The fresh-main implementation also added the missing workspace-authority contract and updated the stale PR530 QA regression that had blocked the old #556 Base-v9 run.
+
+Exact-head verification for PR #573 at `af96707bb42dbbb8a36708242574802404b44e80` completed with all required exact-head workflows: PASS.
+
+Successful exact-head workflows included:
+
+- Validate Game Project Operating System
+- Dependency Review
+- Validate v4.7 Workflow Alignment
+- Validate Base Partition Contract
+- Validate Base Long-Horizon Work Contract
+- Validate Evidence-Based Game Development Knowledge
+- Validate Skill Routing Precision
+- Validate Integrated Vertical Slice Prompt
+- Validate Game UX UI System
+- Validate Base v9 Operating Contracts
+
+PR #573 then merged as `182f98b1c1a0f0fa578994b453d0d5f7b57a57c7`. Later completed-main work remains authoritative where it changes the same surfaces.
 
 ## TDD evidence
 
@@ -26,7 +63,7 @@ The focused v4.7 workflow, long-horizon contract, Evidence Knowledge and UI/UX w
 
 Base v9 later exposed a stale QA Studio discovery assertion. That regression consumer was replaced with a retirement + `REPOSITORY_NATIVE_EVIDENCE_CAPTURE` contract rather than reviving the tool.
 
-A final Game Project OS `docs-validation` pass then rejected trailing Markdown whitespace in newly written evidence/spec documents. The failure was classified as documentation hygiene, not product behavior. A bounded one-shot normalization removed only line-end whitespace/EOF inconsistency from changed Markdown and self-deleted; the final connector commit exists to trigger normal exact-head CI after the bot-authored normalization commit.
+The stale #556 branch was then superseded by fresh-main PR #573. Its exact head passed the focused contract and the full required Base workflow set before merge.
 
 ## Full adversarial improvement loops
 
@@ -84,7 +121,7 @@ These were not intended product changes. The P07 duplicate and P03/P04/P05 addit
 - remove temporary diagnostic workflows after isolation.
 
 **VERIFY / RE-ATTACK**
-Manifest and focused route contracts were re-read after cleanup; retired QA authority was not restored.
+Manifest and focused route contracts were re-read after cleanup; retired QA authority was not restored. Fresh-main PR #573 carried the corrected stale regression consumer.
 
 ### Loop 4 — creativity / benchmark / evidence-ceiling attack
 
@@ -103,30 +140,34 @@ Rechecked `CREATIVE_BENCHMARK_FRONTIER`, `PROJECT_VISUALIZATION_NEED_MAP`, `BALA
 ### Loop 5 — integration / concurrency / long-term-fit attack
 
 **FIND**
-The remaining material risks were current-main drift, independent workstream collision, temporary/debug artifacts, accidental manifest noise, tool-retirement overreach, and final documentation hygiene.
+The material risks were current-main drift, independent workstream collision, temporary/debug artifacts, accidental manifest noise, tool-retirement overreach, stale regression consumers, and final documentation hygiene.
 
 **VALIDATE**
-- another chat's PR #557 remains an independent workstream and was not modified;
-- open PR metadata alone is not owner evidence, while explicit user/current-owner evidence is;
-- retirement removes active routing but does not physically delete historical code in this alignment patch;
-- physical removal remains a separate bounded retirement task after consumer/readback safety;
-- Skill count remains flexible and semantic rather than numerically fixed;
-- direct PowerShell/Codex and Loop Engineering remain usable without Tool Hub/QA Studio;
-- changed-file inventory contains no temporary/debug workflow after cleanup;
-- trailing-whitespace failure had a bounded formatting-only recovery and is being revalidated on a connector-authored final head.
+- stale #556 was not merged directly;
+- fresh-main reconstruction #573 preserved newer main and added only still-relevant v4.7 requirements;
+- retirement removed active routing without physically deleting historical code in the alignment change;
+- Skill count remained flexible and semantic rather than numerically fixed;
+- direct PowerShell/Codex and Loop Engineering remained usable without Tool Hub/QA Studio;
+- exact-head #573 required workflows all completed successfully;
+- unresolved old QA regression was updated rather than bypassed.
 
 **REFINE**
-No new architecture was introduced. Accidental manifest related-page noise, stale regression consumers, temporary diagnostics and documentation whitespace were fixed rather than weakening validation.
+No new architecture was introduced. Stale evidence and regression consumers were reconciled to the fresh-main implementation instead of weakening validation or reopening the stale branch.
 
 **VERIFY / RE-ATTACK**
-Current exact-head CI is required after this evidence update. `CLEAN_REVIEW_EXIT` is withheld until all required checks on the final head are Green, unresolved threads are zero, current main is fresh, and the final diff contains no temporary artifacts.
+PR #573 exact head `af96707bb42dbbb8a36708242574802404b44e80` passed every required workflow listed above and merged as `182f98b1c1a0f0fa578994b453d0d5f7b57a57c7`.
 
 ## Current review state
 
 ```yaml
 FULL_LOOP_COUNT: 5
+superseded_draft_pr: 556
+fresh_main_implementation_pr: 573
+fresh_main_exact_head: af96707bb42dbbb8a36708242574802404b44e80
+merged_commit: 182f98b1c1a0f0fa578994b453d0d5f7b57a57c7
+all_required_exact_head_workflows: PASS
 new_valid_MUST_FIX_after_loop_5: 0
 blocking_finding_in_design_review: 0
 unsupported_player_experience_PASS: 0
-CLEAN_REVIEW_EXIT: PENDING_FINAL_EXACT_HEAD_CI_AND_PR_GATE
+CLEAN_REVIEW_EXIT: true
 ```
