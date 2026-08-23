@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-08-20",
+  "updated_at": "2026-08-23",
   "state": "CURRENT_PROJECT_WORK_HANDOFF",
   "purpose": "Route each future project work session through current project authority, existing reusable modules, bounded project adaptation, truthful verification, and project-to-Base learning handoff.",
   "install_policy": "ONLY_DURING_APPROVED_PROJECT_WORK",
@@ -131,7 +131,7 @@
         "RM-VIS-002"
       ],
       "project_owned_identity": "LIFO cargo routing, switch semantics, sealed layout, BUILD/RUN transition, and logistics puzzle readability remain Switchy-owned.",
-      "next_project_work_action": "After current Switchy work is safely owned or completed, re-read main and reuse the grid, route-stack, phase, explainability, replay, UI, and symbol contracts through thin project adapters.",
+      "next_project_work_action": "Re-read current main and the SX-DEC-059 acceptance/human-evidence gates; reuse grid, route-stack, phase, explainability, replay, UI, and symbol contracts only through an approved finite-delivery task.",
       "do_not_flatten_project_identity": true
     },
     "TETRIS": {
@@ -148,8 +148,8 @@
         "RM-VIS-001",
         "RM-VIS-002"
       ],
-      "project_owned_identity": "Line/Chain dual-mode timing, player-controlled pause/lock flow, combat clock, skill tier, and original presentation remain project-owned; Tetris trade dress is excluded.",
-      "next_project_work_action": "After current PR work is completed, use abstract falling-block, chain, grid, phase, card-effect, replay, balance, UI, and symbol contracts without copying protected names, visuals, audio, or trade dress.",
+      "project_owned_identity": "Enemy Telegraph -> one Shared Player Turn Budget across Line/Tetris -> Swap-Match Chain -> Action -> Enemy Resolve, READY carryover within the turn, Energy/Chain Stock/Tier plus Tempo semantics, and original presentation remain Tetris-owned; Tetris trade dress is excluded.",
+      "next_project_work_action": "Re-read current TETRIS-CORE-024, TETRIS-TIME-025 and the explicit BUILD gate; keep reuse modules deferred until an approved Shared Player Turn Budget/Line/Chain production task actually consumes them, without copying protected names, visuals, audio, or trade dress.",
       "do_not_flatten_project_identity": true
     },
     "URBAN_LEGEND": {
@@ -242,7 +242,7 @@
         "RM-VIS-004"
       ],
       "project_owned_identity": "Hidden simultaneous planning, ten-pace resolution, public-information AI, information boundaries, and explainable replay remain Ten Paces-owned.",
-      "next_project_work_action": "After planning main stabilizes and an approved BUILD package exists, reuse hidden-plan, explainability, deterministic replay, UI, symbol, and telegraph contracts without exposing protected hidden information.",
+      "next_project_work_action": "Read current main + exact Notion state + open PRs first; the first-five-duel Phase I–VI is already implemented, so reuse hidden-plan, explainability, deterministic replay, UI, symbol, and telegraph contracts only when a current approved project task actually consumes them, without exposing protected hidden information or promoting Human/device evidence.",
       "do_not_flatten_project_identity": true
     },
     "OMENWARD": {
@@ -261,7 +261,7 @@
         "RM-VIS-004"
       ],
       "project_owned_identity": "Player-constructed probability, TokenSource semantics, three omen wheels, irreversible lane commitment, pressure language, and causal review remain Omenward-owned.",
-      "next_project_work_action": "Keep the verified RM-SYS-003 sidecar isolated until an approved product task connects a consumer; then read current canon and relevant Issue #199 authority before using roulette, phase, draft, explainability, wave, replay, balance, UI, symbol, or telegraph contracts.",
+      "next_project_work_action": "Keep the verified RM-SYS-003 sidecar isolated until an approved product task connects a consumer; then read current canon plus the resolved validator history (Issue #199 -> merged PR #201) before using roulette, phase, draft, explainability, wave, replay, balance, UI, symbol, or telegraph contracts.",
       "do_not_flatten_project_identity": true
     }
   },
