@@ -122,55 +122,77 @@ Skill 수 자체는 목표·완료조건·경고 임계값이 아니다. 책임 
 
 ## 4. 프로젝트 Notion 표준
 
-페이지 수를 임의로 3개에 제한하지 않는다. **책임이 실제로 다른 경우에만 하위 페이지를 분리**한다. 사람은 Project Registry에서 프로젝트를 눌렀을 때 먼저 Project Home을 본다. Project Home에는 상태·핵심 재미·핵심 루프·핵심 방향·최신 Flow·주요 작업면 링크처럼 사람이 즉시 판단할 정보만 둔다.
+Project Notion은 `PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json`과 `docs/operations/NOTION_PROJECT_ISOLATION_AND_CORE_SYSTEM_CONTRACT.md`의 shallow IA를 따른다.
 
-### 4.1 게임 프로젝트 기본형
+```text
+L0 · PROJECT_HUB
+→ 프로젝트 선택
+
+L1 · HUMAN_PROJECT_HOME
+→ 전체 게임/작품 Flow
+→ 핵심 시스템 + 필요한 설정/플레이어 역할
+→ 프로젝트 고유 핵심 데이터 표
+→ UX/UI/Visual + 승인 anchor
+→ AI가 이해한 핵심 + 내가 수정하는 방법
+→ 구현/검증 상태·blocker·다음 작업
+→ 4~6개 L2 Domain drilldown
+
+L2 · DOMAIN_WORKSPACE
+→ 프로젝트 의미에 맞춘 책임 그룹
+→ 빈 폴더 금지
+→ current authority/상태/결정/위험 + L3 owner/view
+
+L3 · DETAIL_OR_RECORD
+→ Visual/Story Bible, Flow/Storyboard, Asset, Reference, Production, Core System, 대표 Encounter, confirmed table, DB record/view 등 실제 상세 owner
+```
+
+`SHALLOW_BY_DEFAULT`: 일반 navigation은 L3에서 끝낸다. L4+ 일반 page nesting은 `L4_EXCEPTION_REVIEW_REQUIRED`이며 DB Record/Relation/linked view/toggle/section으로 해결할 수 없는 실제 owner 분리가 필요할 때만 예외로 둔다.
+
+`FULL_GAME_FLOW_VISIBLE_ON_HOME`, `CORE_SYSTEMS_AND_SETTING_VISIBLE_ON_HOME`, `PROJECT_SPECIFIC_CORE_DATA_TABLES_VISIBLE_ON_HOME`, `HOME_DETAIL_LINKS_CANNOT_REPLACE_CORE_UNDERSTANDING`은 구조 단순화보다 우선한다. Home을 짧게 만들기 위해 전체 Flow·핵심 시스템/설정·핵심 데이터 표를 하위 페이지로 밀어내지 않는다.
+
+### 4.1 게임 프로젝트 Domain starting pattern
+
+고정 taxonomy가 아니라 starting pattern이다. 필요하지 않은 Domain은 만들지 않고 프로젝트 의미가 겹치면 합친다.
 
 ```text
 PROJECT HOME
-→ current status / blockers / core fun / core loop / quick links
-
-01 · 프로젝트 전체 작업계획
-→ WORK_MASTER filtered by Project
-
-02 · 비주얼 바이블
-→ approved visual direction / Visual North Star
-
-03 · UI · 게임플레이 Flow Map
-→ SCREEN records + semantic flow + VISUAL_MAP_DERIVED
-
-04 · 에셋 라이브러리
-→ ASSET / COMPONENT filtered gallery
-
-05 · Reference · Benchmark 도서관
-→ REFERENCE / BENCHMARK filtered views
-
-06 · Production · Handoff
-→ approved planning/asset → repository implementation → runtime validation
-
-07+ · 프로젝트 고유 확정표
-→ 예산 / Tier / 로스터 / 경제 / 성장 / 기타 사람이 비교·학습하기 좋은 표
+├ Direction · Planning
+├ Design · Canon · Data
+├ Visual · UX · Assets
+├ Production · Validation
+├ Reference · Benchmark
+└ optional Content · World
 ```
 
-프로젝트 성격에 따라 03과 07+의 이름·책임을 바꿀 수 있다. 예: 조사 Flow, 퍼즐 Flow, 제작·경제 Flow, 세계 재작성 Flow, 무공 기술 예산, 병종·건물 Tier. 구조를 맞추기 위해 프로젝트 핵심 시스템을 일반화하지 않는다.
+Tetris처럼 전투 구조가 핵심이면 `Combat Design · Data`, TEN_PACES라면 `Combat · Martial Arts · Route`, Blacksmith라면 `Enhancement · Durability · Economy`처럼 프로젝트 고유 언어를 사용한다. 4~6개 L2 Domain을 권장한다.
 
-### 4.2 Coc-Fiction / 서사 프로젝트 기본형
+기존 문서 책임은 사라지지 않는다. 다음은 적절한 L2 아래 L3 owner로 이동할 수 있다.
 
 ```text
-PROJECT HOME
-→ current writing state / current scene flow / characters / factions / unresolved clue
-
-01 · 전체 집필 · 작업계획
-02 · Story Bible · Canon
-03 · Storyboard · Scene Flow
-04 · Character Bible · 인물
-05 · Faction Map · 세력
-06 · Clue · Location Library
-07 · Reference · Benchmark 도서관
-08 · Continuity · Publication Handoff
+프로젝트 전체 작업계획
+Visual/Story Bible
+UI·게임플레이 Flow / Storyboard
+Asset Library
+Reference · Benchmark
+Production · Handoff
+Core System detail
+대표 Encounter / First Run / World content
+프로젝트 고유 예산·Tier·로스터·경제·성장표
 ```
 
-서사 프로젝트는 게임 UI Flow를 억지로 사용하지 않는다. `CANON / CHARACTER / FACTION / SCENE / CLUE / LOCATION / REFERENCE / BENCHMARK` record를 Project-filtered view로 분리한다. Storyboard와 Faction Map은 사람이 보는 주요 시각 작업면이다. 그 변경이 구조화된 정사·연속성 데이터 변경을 요구하면 repository 정본에 동기화한다.
+### 4.2 Coc-Fiction / 서사 프로젝트 Domain starting pattern
+
+```text
+COC-Fiction Home
+├ Direction · Planning
+├ Story · Canon · Events
+├ Characters · Factions · World
+├ Visual · Storyboard · Assets
+├ Production · Continuity · Validation
+└ Reference · Benchmark
+```
+
+서사 프로젝트는 게임 UI Flow를 억지로 사용하지 않는다. `CANON / CHARACTER / FACTION / SCENE / CLUE / LOCATION / REFERENCE / BENCHMARK` record를 Project-filtered view로 분리한다. Home에는 Part/story 상위 Flow, 핵심 인물·세력·관계·사건/세계 규칙의 대표 데이터가 직접 보여야 한다.
 
 ### 4.3 Work Master
 
@@ -217,7 +239,7 @@ ADOPT / ADAPT / TEST / REFERENCE_ONLY / AVOID / IGNORE
 
 ### 4.6 사람용 확정표
 
-예산표·Tier표·로스터표·경제표·성장표처럼 사람이 비교하고 직접 수정하기 쉬운 표현은 Notion을 기본 위치로 둔다.
+예산표·Tier표·로스터표·경제표·성장표처럼 사람이 비교하고 직접 수정하기 쉬운 표현은 Notion을 기본 위치로 둔다. Home에는 **핵심 대표 표/관계**를 직접 보여주고 전체 raw table은 적절한 L3 owner/linked view에 둔다.
 
 ```text
 CONFIRMED HUMAN TABLE

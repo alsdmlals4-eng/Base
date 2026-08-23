@@ -22,6 +22,14 @@
 
 `HOME_PROJECTION_IS_NOT_DUPLICATE_CANON`
 
+`FULL_GAME_FLOW_VISIBLE_ON_HOME`
+
+`CORE_SYSTEMS_AND_SETTING_VISIBLE_ON_HOME`
+
+`PROJECT_SPECIFIC_CORE_DATA_TABLES_VISIBLE_ON_HOME`
+
+`HOME_DETAIL_LINKS_CANNOT_REPLACE_CORE_UNDERSTANDING`
+
 Notion의 Base Home과 Project Home은 링크 허브가 아니라 사람이 **추가 이동 없이 핵심을 이해하는 첫 화면**이다. GitHub/Repository의 structured/runtime truth를 복제해 새 정본을 만드는 것이 아니라, latest merged facts와 사용자 확정 방향을 사람이 읽기 쉬운 형태로 투영한다.
 
 `PROJECT_HOME_INFORMATION_RICHNESS_ALLOWED`: Human Home의 문제는 정보량이 아니라 **책임이 다른 정보의 혼재**다. 사람이 프로젝트 전체를 이해·학습·비교·수정하는 데 직접 필요한 Flow, 핵심 시스템, 핵심 데이터, 승인 Visual, 중요한 결정 이유, 현재 상태는 Home에 충분히 많이 들어갈 수 있다. 페이지를 짧게 만들기 위해 핵심 이해를 하위 링크로 밀어내지 않는다.
@@ -30,9 +38,17 @@ Notion의 Base Home과 Project Home은 링크 허브가 아니라 사람이 **�
 
 ```text
 30초: 프로젝트/작업의 전체 약속과 핵심 흐름
-→ 5분: Core Flow / CORE_SYSTEMS / PROJECT_SPECIFIC_CORE_DATA / VISUAL_ASSET_ANCHORS / 현재 상태
-→ drilldown: 전체 표·asset·reference·history·원시 evidence·구현 상세
+→ 5분: Full Game/Story Flow / CORE_SYSTEMS / SETTING / PROJECT_SPECIFIC_CORE_DATA / VISUAL_ASSET_ANCHORS / 현재 상태
+→ drilldown: 전체 raw table·asset·reference·history·원시 evidence·구현 상세
 ```
+
+`FULL_GAME_FLOW_VISIBLE_ON_HOME`: Home은 Core Loop 한 줄만 보여주고 전체 플레이 흐름을 하위 페이지로 밀어내지 않는다. 프로젝트에 맞는 **전체 session/run/story flow**를 직접 보여준다. encounter/core loop와 meta/progression loop가 모두 있으면 두 흐름이 어떻게 연결되는지도 Home에서 설명한다. 서사 프로젝트는 Part·사건·장면·독자 경험의 상위 흐름을 같은 역할로 사용한다.
+
+`CORE_SYSTEMS_AND_SETTING_VISIBLE_ON_HOME`: 핵심 시스템의 이름만 나열하지 않고 목적·작동·상호작용·플레이어 판단을 Home에서 직접 설명한다. 세계/설정이 시스템의 의미를 결정한다면 플레이어 역할, 세계 전제, 핵심 갈등·목표도 함께 보인다. 설정 비중이 낮은 프로젝트는 `NOT_APPLICABLE_WITH_REASON`으로 이유를 적을 수 있지만, 필요한 설정을 단순히 상세 페이지로 숨길 수는 없다.
+
+`PROJECT_SPECIFIC_CORE_DATA_TABLES_VISIBLE_ON_HOME`: 프로젝트의 핵심을 이해·비교·수정하는 데 필요한 대표 값과 관계는 Home의 표 또는 project-filtered linked view로 직접 보인다. 전체 raw dataset과 machine schema는 L3/Database/Repository owner에 남긴다. Home을 짧게 만들기 위해 핵심 데이터 표 전체를 drilldown으로 이동하지 않는다.
+
+`HOME_DETAIL_LINKS_CANNOT_REPLACE_CORE_UNDERSTANDING`: 하위 링크는 **더 자세히 보기**다. 사용자가 프로젝트의 전체 Flow, 핵심 시스템·설정, 핵심 데이터 관계를 처음 이해하기 위해 반드시 하위 페이지를 열어야 한다면 Human Home 계약 실패다.
 
 `HOME_PROJECTION_IS_NOT_DUPLICATE_CANON`: Home에 사람용 설명·표·필터 View·Visual anchor를 보여주는 것은 repository/Master의 구조화 원본을 독립 복제하는 것이 아니다. 긴 원시 데이터나 machine-consumed 규칙을 Home에 두 번째 정본으로 재구현하지 않는다.
 
@@ -117,9 +133,9 @@ Base Home은 raw PR/SHA/CI/receipt history를 학습 흐름보다 먼저 보여�
 1. 프로젝트 한 줄 정의
 2. 핵심 플레이어/사용자 가치
 3. 현재 확정 방향과 보호/금지 요소
-4. Core Loop / 주요 FLOW_MAP
-5. CORE_SYSTEMS별 목적·작동·상호작용·플레이어 의미·기대효과
-6. `PROJECT_SPECIFIC_CORE_DATA`: 사람이 비교·학습·수정해야 하는 프로젝트 고유 핵심 데이터
+4. `FULL_GAME_FLOW_VISIBLE_ON_HOME`: 전체 session/run/story Flow와 Core Loop/주요 FLOW_MAP의 관계
+5. `CORE_SYSTEMS_AND_SETTING_VISIBLE_ON_HOME`: CORE_SYSTEMS별 목적·작동·상호작용·플레이어 의미·기대효과 + 필요한 설정/플레이어 역할/핵심 갈등
+6. `PROJECT_SPECIFIC_CORE_DATA_TABLES_VISIBLE_ON_HOME`: 사람이 비교·학습·수정해야 하는 프로젝트 고유 핵심 데이터의 대표 표/관계
 7. UX/UI/Visual 방향·승인 상태와 `VISUAL_ASSET_ANCHORS`
 8. `AI_INTERPRETATION_FOR_USER_CORRECTION`
 9. `HUMAN_EDIT_GUIDE_REQUIRED`
@@ -128,6 +144,7 @@ Base Home은 raw PR/SHA/CI/receipt history를 학습 흐름보다 먼저 보여�
 12. 현재 blocker / 다음 작업
 13. 최근 중요한 결정과 이유
 14. 주요 위험 / revisit condition
+15. L2/L3 drilldown은 위 핵심 이해를 대체하지 않고 전체 raw detail/evidence를 제공
 
 ### PROJECT_SPECIFIC_CORE_DATA
 
