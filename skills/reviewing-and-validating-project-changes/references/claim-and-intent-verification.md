@@ -134,6 +134,25 @@ COMPLETION_CLAIM_GATE:
 파일 존재는 실행 증거가 아니다. 다른 SHA의 PASS는 현재 HEAD의 PASS가 아니다.
 CI가 queued·cancelled·skipped이면 성공으로 바꾸지 않는다.
 
+### Completion-candidate correction requirement
+
+`COMPLETION_CLAIM_GATE`가 각 Evidence 층을 PASS로 판정해도 계획 목록 소진이나 `required_work_remaining: 0`만으로 **전체 완료**를 선언하지 않는다. Base `docs/OPERATING_MODEL.md`의 `REMAINING_WORK_COMPLETION_GATE`를 소비한다.
+
+```text
+REMAINING_WORK_RECALCULATION_REQUIRED
+→ actionable remaining work == 0
+→ COMPLETION_CANDIDATE
+→ IMPLEMENTATION_CORRECTION_RESCAN
+   ├─ valid finding → NEW_FINDING_REOPENS_REMAINING_WORK → fix / verify / recalculate
+   └─ no required finding → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
+→ same final POST_CHANGE_MONITOR_LOOP
+→ minimum-five full-scope loops, then until CLEAN_REVIEW_EXIT
+→ FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
+→ full-completion claim allowed
+```
+
+`POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 두 번째 독립 review cycle이 아니라 최종 completion candidate를 입력으로 하는 기존 `POST_CHANGE_MONITOR_LOOP`다. 승인 범위 안에 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, 미해결 required `DEFER` 또는 새 구현/교정 finding이 남아 있으면 full-completion claim은 `BLOCKED_UNVERIFIED` 또는 현재 부분 상태로 유지한다.
+
 ## Connector / MCP executable-surface Reality Gate
 
 외부 connector·MCP·agent runtime의 self-discovery나 capability 목록은 **탐색 증거**다.
