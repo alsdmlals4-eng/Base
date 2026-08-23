@@ -1,7 +1,7 @@
 # Shallow Notion Project Information Architecture Design
 
-**Date:** 2026-08-24 KST  
-**Status:** USER-APPROVED / IMPLEMENTATION AUTHORIZED  
+**Date:** 2026-08-24 KST
+**Status:** USER-APPROVED / IMPLEMENTATION AUTHORIZED
 **Baseline:** Base `3f02864b5cd04537e1c6d14d0f3bc6a65fc898a6`
 
 ## Goal
@@ -138,8 +138,8 @@ Production
 Reference
 ```
 
-**장점:** 매우 단순하고 교육하기 쉽다.  
-**단점:** Narrative, management, strategy, exploration 프로젝트의 핵심 문법이 사라지고 분류를 맞추기 위한 억지 이동이 생긴다.  
+**장점:** 매우 단순하고 교육하기 쉽다.
+**단점:** Narrative, management, strategy, exploration 프로젝트의 핵심 문법이 사라지고 분류를 맞추기 위한 억지 이동이 생긴다.
 **Verdict:** `REJECT_AS_STRICT_SCHEMA`.
 
 ### B. Common 4-layer architecture + project-specific L2 domains — selected
@@ -159,16 +159,16 @@ Optional: Content · World
 
 프로젝트당 **4~6개 L2 Domain**을 권장하고, 필요하지 않은 Domain은 만들지 않는다. 같은 책임이 자연스럽게 합쳐지면 4개까지 줄이고, 의미가 실제로 분리되는 경우에만 6개까지 허용한다.
 
-**장점:** 탐색 일관성과 프로젝트 특수성을 동시에 보존한다.  
-**단점:** 초기 migration inventory와 per-project mapping이 필요하다.  
+**장점:** 탐색 일관성과 프로젝트 특수성을 동시에 보존한다.
+**단점:** 초기 migration inventory와 per-project mapping이 필요하다.
 **Verdict:** `ADOPT`.
 
 ### C. Fully flat DB-first workspace
 
 Home 아래 일반 detail page를 거의 없애고 모든 자료를 Master DB Record/View로 만든다.
 
-**장점:** nesting과 duplicate page가 최소다.  
-**단점:** 초보 사용자에게는 DB schema가 먼저 보이고, Visual Bible/Flow/대표 Encounter 같은 문서형 정보를 억지로 record화할 수 있다.  
+**장점:** nesting과 duplicate page가 최소다.
+**단점:** 초보 사용자에게는 DB schema가 먼저 보이고, Visual Bible/Flow/대표 Encounter 같은 문서형 정보를 억지로 record화할 수 있다.
 **Verdict:** `REJECT_AS_DEFAULT`; L3 내부 구현 패턴으로만 사용한다.
 
 ## Target architecture
