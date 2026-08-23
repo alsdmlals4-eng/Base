@@ -51,6 +51,28 @@ Do Not Drift
 
 `Keep / Avoid / Do Not Drift` is a constraint summary, not a second canon. If it disagrees with a newer project Decision, record `VISUAL_CANONICAL_CONFLICT` and stop promotion until reconciled.
 
+## Image conversation approval boundary
+
+프로젝트 이미지 **생성·편집**을 실제로 실행할 때는 `docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md`를 함께 적용한다. 이 reference는 아트 Skill의 project-scoped visual 경로에서 항상 적용되므로 Home/Notion 배치 경로를 거치지 않는 직접 이미지 작업도 conversation Gate를 우회하지 않는다.
+
+```text
+PROJECT_REVIEW_COMPLETE
+→ current Project/Visual canon + Keep/Avoid/Do Not Drift
+→ text brief
+→ TEXT_BRIEF_STOP_REQUIRED
+
+next user message
+→ NEXT_USER_EXPLICIT_APPROVAL
+→ GENERATE_EXACTLY_ONE
+→ STOP_REQUIRED_AFTER_GENERATION
+```
+
+- text brief를 처음 제시한 같은 assistant turn에서 곧바로 생성/편집으로 넘어가지 않는다.
+- 한 번의 승인 뒤 기본 생성은 이미지/편집 결과 1건이다.
+- 생성 직후 다음 pose/character/UI/component/decomposition asset을 자동 연쇄 생성하지 않는다.
+- 이미 존재하는 승인 Visual의 **배치·링크·readback만** 수행하는 경우에는 새 이미지를 생성하지 않으므로 이 generation checkpoint를 만들지 않는다.
+- 생성 성공은 `PROJECT_ASSET_APPROVED`나 runtime integration을 뜻하지 않는다.
+
 ## Conditional modules
 
 Load only what the current task needs:
@@ -90,6 +112,7 @@ If a prototype or draft shows behavior that is not established in project record
 
 ```text
 Visual Requirement Gate
+→ conversation Gate when generation/editing is required
 → generate / edit candidate
 → DRAFT_VISUAL or GENERATED_EXPLORATION
 → attach to correct Project record
