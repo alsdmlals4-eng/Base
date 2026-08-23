@@ -35,6 +35,12 @@ class SkillEvalIntegrityContractTests(unittest.TestCase):
         self.assertIn("자동 activation", guide)
         self.assertIn("실제 모델 행동 PASS로 승격하지 않는다", guide)
 
+    def test_dedicated_skill_behavior_workflow_consumes_integrity_owner_and_regression(self) -> None:
+        workflow = (ROOT / ".github/workflows/validate-skill-behavior-evidence.yml").read_text(encoding="utf-8")
+        self.assertIn('- "docs/AI_SKILL_ADOPTION_GUIDE.md"', workflow)
+        self.assertIn('- "tests/test_skill_eval_integrity_contract.py"', workflow)
+        self.assertIn("tests/test_skill_eval_integrity_contract.py \\", workflow)
+
 
 if __name__ == "__main__":
     unittest.main()
