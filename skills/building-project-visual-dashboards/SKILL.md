@@ -1,6 +1,6 @@
 ---
 name: building-project-visual-dashboards
-description: Use when a project needs a self-contained Notion Project Home or Visual Map that explains concepts, loops, systems, project-specific core data, UX/visual state, evidence, risks, next work, and user correction paths without replacing repository truth.
+description: Use when a project needs a self-contained Notion Project Home or Visual Map that explains concepts, loops, systems, UX/visual state, evidence, risks, and next work without replacing repository truth.
 ---
 
 # Building Project Visual Dashboards — Notion Project Home & Visual Map
