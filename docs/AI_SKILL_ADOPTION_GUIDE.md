@@ -93,6 +93,26 @@ handoff_or_stop_condition:
 
 문서가 그럴듯하거나 유명 팀/제품이 쓴다는 사실은 승격 증거가 아니다. 실제 개선이 확인되지 않으면 `REFERENCE_ONLY`, `TEST`, 또는 프로젝트 전용으로 유지한다.
 
+#### Functional eval integrity
+
+Skill·Workflow 변경이 단순 routing을 넘어 **작업 정확도·수정 품질·변경 범위 감소**를 주장하고 결정론적 behavioral oracle을 만들 수 있으면, 비교 실행 전에 evaluator 자체를 먼저 검증한다.
+
+```yaml
+BROKEN_BASELINE:
+  expected: FAIL_FOR_REGISTERED_REASON
+REFERENCE_SOLUTION:
+  expected: PASS_SAME_ORACLE
+UNCHANGED_ORACLE_REQUIRED: true
+```
+
+- broken baseline이 의도한 실패를 재현하지 않거나 reference solution이 **같은 변경되지 않은 oracle**을 통과하지 못하면 `BLOCKED_INVALID_ORACLE`이다. reference를 통과시키려고 assertion·threshold·fixture·expected output을 약화하지 않는다.
+- `FIXTURE_VALIDITY_NOT_SKILL_EFFICACY`: broken-baseline/reference-solution 쌍은 evaluator가 실패와 성공을 구분할 수 있음을 증명할 뿐, agent가 Skill을 발견·적용하거나 더 잘 해결한다는 증거가 아니다.
+- grader/verifier source를 읽는 것만으로 원인 API·필요 flag·정답 구조·exact repair가 노출될 수 있으면 `HIDDEN_GRADER_WHEN_CAUSAL_LEAKAGE`를 적용해 agent workspace 밖에서 root evaluator가 실행한다. 숨길 수 없으면 `GRADER_VISIBLE_CEILING`을 기록하고 블라인드 비교와 동급으로 취급하지 않는다.
+- Skill 효능은 fresh workspace에서 candidate arm과 no-Skill 또는 previous-release baseline을 `SAME_HARNESS_AB`로 비교한다. 가능한 범위에서 model/version, tools, permissions, fixture, user task, time/context budget을 동일하게 고정하고 독립 oracle로 채점한다.
+- `EFFICIENCY_METRICS_SEPARATE_FROM_CORRECTNESS`: 두 arm이 같은 correctness를 보이면 correctness uplift를 주장하지 않는다. 반복적으로 확인된 changed-file/patch scope, unnecessary edits, reference/context loads, extra tool/diagnostic calls, 실제 측정된 elapsed/budget 차이만 해당 범위의 efficiency 개선으로 표현한다.
+- 자동 activation을 주장하려면 평가 Prompt에서 Skill 이름·expected Skill ID·정답 mode를 직접 지정하지 않은 별도 실행이 필요하다.
+- oracle pair만 검증되고 실제 model A/B가 없으면 `VALID_ORACLE_MODEL_RUN_NOT_RUN`이다. 문서·fixture·schema 존재를 실제 모델 행동 PASS로 승격하지 않는다.
+
 ## 3. 최소 라우팅
 
 기본값은 통합 Foundation Skill 1개와 필요한 전문 Skill 1개 이하이다. 발행·검증·Handoff는 해당 단계에서만 실행한다.
@@ -217,7 +237,6 @@ stop_or_handoff_conditions:
 validation:
 unverified_or_missing_input_behavior:
 ```
-
 규칙:
 
 - 목표·완료 기준·정본·보호 대상·출력 형식을 분명히 한다.
