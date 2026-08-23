@@ -15,8 +15,10 @@ on:
       - "tools/check_skill_behavior_evals.py"
       - "tools/build_skill_implementation_evidence.py"
       - "tools/check_external_ai_worktree_contract.py"
+      - "docs/AI_SKILL_ADOPTION_GUIDE.md"
       - "docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md"
       - "tests/test_skill_behavior_*.py"
+      - "tests/test_skill_eval_integrity_contract.py"
       - "tests/test_skill_implementation_evidence.py"
       - "tests/test_external_ai_worktree_contract.py"
       - ".github/workflows/validate-skill-behavior-evidence.yml"
@@ -47,6 +49,7 @@ jobs:
             tests/test_skill_behavior_evidence_hardening.py \
             tests/test_skill_behavior_adversarial_boundaries.py \
             tests/test_skill_behavior_governance_integration.py \
+            tests/test_skill_eval_integrity_contract.py \
             tests/test_skill_implementation_evidence.py \
             tests/test_external_ai_worktree_contract.py \
             -v
