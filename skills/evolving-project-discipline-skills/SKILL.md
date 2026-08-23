@@ -59,6 +59,7 @@ skill_implementation_evidence_index:
    - 모든 ACTIVE Skill은 `primary behavior coverage >= 1`, `non-selection behavior coverage >= 1`을 만족해야 한다.
    - 실제 결과는 `schemas/skill-behavior-results-v1.schema.json`과 `skills/SKILL_BEHAVIOR_RESULTS.template.json`을 사용하고 exact commit·Registry SHA-256·평가셋 SHA-256을 기록한다.
    - 작성 컨텍스트와 다른 `independent reviewer context`를 기록하지 못하면 실제 모델 행동 통과로 인정하지 않는다.
+   - 라우팅을 넘어 **작업 정확도·수정 품질·변경 범위 감소**를 주장하고 결정론적 behavioral oracle을 만들 수 있으면 `references/behavior-eval-integrity.md`를 적용한다. broken baseline과 reference solution이 같은 변경되지 않은 oracle을 각각 의도대로 fail/pass하지 못하면 `BLOCKED_INVALID_ORACLE`이며, fixture 자체의 유효성을 Skill 효능 증거로 승격하지 않는다.
 7. `skills/SKILL_IMPLEMENTATION_EVIDENCE.json`의 명시적 근거 경로를 검증하고 `tools/build_skill_implementation_evidence.py`로 `docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md`를 생성·대조한다.
 8. `auditing-canonical-reference-freshness`와 `managing-game-project-operating-system` verify를 실행한다.
 
@@ -70,6 +71,7 @@ skill_implementation_evidence_index:
 - `CONTRACT_EVIDENCE`: 계약·문서 소비자는 있으나 실행형 근거가 아직 없다.
 - `MISSING_EVIDENCE`: Skill package, 주 책임·non-selection coverage 또는 등록 증거가 누락됐다.
 - 실제 모델 행동, 프로젝트 Pilot, 엔진 Runtime, 사람 이해도는 별도 상태이며 파일 존재로 승격하지 않는다.
+- `VALID_ORACLE_MODEL_RUN_NOT_RUN`: functional oracle 자체는 broken-baseline/reference-solution 쌍으로 검증됐지만 candidate-vs-baseline fresh-agent 비교는 아직 실행하지 않았다. Skill 효능 PASS로 표현하지 않는다.
 
 ## Output contract
 
@@ -98,6 +100,7 @@ skill_implementation_evidence_index:
 - 작성자와 같은 컨텍스트의 자기검토를 독립 검토로 표시하지 않는다.
 - 실제 결과 없이 지식 상태를 승격하지 않는다.
 - fixture·schema·증거 경로 존재를 실제 모델·Runtime·사람 행동 통과로 표현하지 않는다.
+- behavioral grader가 정답 구현의 원인을 노출할 수 있는데 agent가 이를 읽을 수 있었다면 해당 결과의 ceiling을 기록하고 블라인드 비교와 동등하게 취급하지 않는다.
 
 Registry Learning Log index: `skills/SKILL_LEARNING_LOG.md`
 
