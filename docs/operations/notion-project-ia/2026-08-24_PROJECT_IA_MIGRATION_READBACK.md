@@ -45,7 +45,9 @@ Resolution:
 
 This preserves evidence and avoids both deletion and duplicate Human navigation.
 
-## Post-move stale-current correction
+## Post-move stale-current corrections
+
+### Tetris timing owner
 
 The whole-result review found one valid `STALE_CURRENT` conflict inside Tetris `08 · 핵심 시스템 · 상세`: the page's latest `TETRIS-TIME-025` owner already required one Shared Player Turn Budget with READY carryover, while a lower `Turn Phase Controller` paragraph still called independent Line/Chain/Action timers with no carryover the current production rule.
 
@@ -56,7 +58,17 @@ Correction/readback:
 - labeled the old `30s / 30s / 30s · no carryover` model as superseded, not current production timing;
 - fetched the moved L3 page again under `02 · Combat Design · Data → Tetris · Home` and confirmed the corrected current wording.
 
-This finding reset the post-change clean-review count to `0/5`; only reviews after this correction may count toward final clean exit.
+### Project Hub navigation explanation
+
+The physical Hub → Home links were already correct, but the Project Hub introduction still described the old flat collection of planning/visual/flow/asset/reference/production pages instead of teaching the new shallow hierarchy.
+
+Correction/readback:
+- kept each Project Home as the first-click destination;
+- changed the Human Hub explanation to `Home에서 전체 Flow·핵심 시스템/설정·핵심 데이터 표 확인 → 4~6 Project Domain → Detail/Record`;
+- stated that normal navigation should not deepen beyond that structure;
+- fetched the Hub again and confirmed all ten Project Home child links remained intact.
+
+These findings reset the post-change clean-review count to `0/5`; only reviews after both corrections may count toward final clean exit.
 
 ## Authority and evidence ceiling
 
