@@ -2,9 +2,22 @@
 
 ## Purpose
 
-프로젝트용 이미지·목업·UI 시각화·캐릭터/배경/에셋 생성·편집에서 **기획 검토와 이미지 실행을 같은 대화 턴에 연속 수행하지 않도록** 하는 공용 hard conversation gate다.
+프로젝트용 이미지·목업·UI 시각화·캐릭터/배경/에셋 생성·편집에서 **기획 검토와 이미지 실행을 같은 대화 턴에 연속 수행하지 않도록** 하는 Base 수준의 공용 hard conversation gate다.
 
 이 계약은 기존 `Visual Requirement Gate`, 프로젝트 Visual Canon, 승인/자산 promotion, Notion delivery/readback 계약을 대체하지 않는다. 이미지가 정말 필요한지와 어떤 이미지를 만들지는 기존 owner가 판단하고, 이 문서는 **언제 생성 실행으로 넘어갈 수 있는가**만 책임진다.
+
+## Host / system precedence and evidence ceiling
+
+`HOST_PLATFORM_PRECEDENCE`
+
+이 Gate는 Base 프로젝트 작업 규칙이며 **상위 시스템·developer·host platform 정책이나 도구 계약보다 높은 실행 권한을 가지지 않는다**. 상위 정책이 이미지 생성 시점·도구 호출·응답 형태를 다르게 요구하면 해당 상위 정책을 우선한다.
+
+그 때문에 이 Gate의 정상 sequence를 그대로 실행할 수 없는 경우 작업 기록은 다음 상태를 명시한다.
+
+- `HOST_POLICY_OVERRIDE` — 상위 시스템/host 정책이 Base workflow보다 우선되어 실행 순서가 달라짐
+- `RUNTIME_ENFORCEMENT_NOT_GUARANTEED` — 이 정적 문서만으로 실제 host runtime 동작을 강제했다고 주장할 수 없음
+
+이 경우에도 호환 가능한 프로젝트 정본·Visual Need·승인/자산 lifecycle·Notion delivery·evidence ceiling은 유지한다. 다만 상위 정책을 위반해서 Base Gate를 강제하거나, host가 보장하지 않은 동작을 `PASS` 또는 runtime-enforced로 과장하지 않는다.
 
 ## Machine contract
 
@@ -135,5 +148,6 @@ image generation success
 - 생성 뒤 `STOP_REQUIRED_AFTER_GENERATION`을 지켰는가
 - 자동 image chain이 없었는가
 - 생성/승인/Notion delivery/runtime 상태를 서로 과장하지 않았는가
+- host/system 우선권이 개입했다면 `HOST_POLICY_OVERRIDE`와 `RUNTIME_ENFORCEMENT_NOT_GUARANTEED`를 숨기지 않았는가
 
 위 조건을 충족하지 않으면 해당 프로젝트 이미지 작업은 `REVIEW_REQUIRED`이며, 존재하는 결과물을 자동 승인하거나 다음 생성의 근거로 사용하지 않는다.
