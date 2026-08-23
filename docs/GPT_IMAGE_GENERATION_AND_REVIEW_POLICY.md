@@ -62,6 +62,32 @@
 
 이 Gate는 “무엇을 생성할 것인가”를 결정하며 실제 파일 존재·승인 자산 권위를 새로 소유하지 않는다.
 
+### 3.0A IMAGE_TWO_TURN_HARD_BARRIER
+
+프로젝트용 이미지 생성·편집은 `IMAGE_TWO_TURN_HARD_BARRIER`를 따른다. 이미지가 실제로 필요한지 판단하기 전에 프로젝트 전체 핵심 방향·관련 시스템·기존 승인 Visual/Asset·현재 구현 상태를 읽고 `PROJECT_REVIEW_COMPLETE`를 확보한다.
+
+```text
+PROJECT_REVIEW_COMPLETE
+→ VISUAL_NEED_DEFINED
+→ TEXT_BRIEF_COMPLETE
+→ STOP_REQUIRED
+
+[next user message]
+→ EXPLICIT_IMAGE_APPROVAL
+→ GENERATE_EXACTLY_ONE
+→ STOP_REQUIRED
+
+[next user message]
+→ APPROVE | REVISE | REJECT
+```
+
+- **동일 assistant 응답에서** `TEXT_BRIEF_COMPLETE` 직후 이미지 생성으로 이어가지 않는다. 텍스트 brief를 사용자에게 보여준 응답은 `STOP_REQUIRED`로 끝낸다.
+- 다음 사용자 메시지에서 해당 brief의 실제 이미지 제작이 명시적으로 승인된 경우에만 `EXPLICIT_IMAGE_APPROVAL`로 승격한다.
+- 한 승인 단위에서는 `GENERATE_EXACTLY_ONE`을 기본으로 하고, 생성 뒤 다시 `STOP_REQUIRED`로 종료한다. 여러 후보를 자동 연속 생성하거나 `이미지 생성 → 사용자 채팅 없이 다음 이미지 생성`으로 이어가지 않는다.
+- 이미지가 필요한 화면/에셋이 여러 개여도 프로젝트 전체를 먼저 검토해 우선순위를 정하고, 각 이미지별 brief·승인·생성·검토 상태를 분리한다.
+- 사용자가 현재 대화에서 이미 특정 이미지 한 장의 생성을 명시적으로 요청했고 그 이미지의 대상/범위가 충분히 확정되어 있는 경우 그 메시지 자체가 해당 이미지의 `EXPLICIT_IMAGE_APPROVAL`이 될 수 있다. 그러나 프로젝트 전체 자산 일괄 생성, 후속 변형 자동 생성, 새로운 별도 이미지까지 포괄 승인한 것으로 확장하지 않는다.
+- 이 barrier는 승인 전 이미지 생성을 막는 대화/기획 Gate이며, 생성 성공·업로드·Notion 배치·runtime 적용·제품 자산 승격의 증거를 대신하지 않는다.
+
 ### 3.1 기획 중 시각화
 
 목적은 텍스트 기획의 방향·가독성·구현 가능성을 빠르게 비교하는 것이다.
@@ -235,6 +261,8 @@ Sheet가 `NOT_CONFIGURED`이면 GitHub 정본까지만 갱신하고 상태를 �
 각 단계 종료 시 `running-adversarial-review-and-refinement: repository-wide-audit`로 다음을 공격한다.
 
 - Visual Requirement Gate에서 선정되지 않은 프로젝트 자산을 관성적으로 대량 생성했는가
+- `IMAGE_TWO_TURN_HARD_BARRIER`를 건너뛰어 동일 assistant 응답에서 brief와 생성이 이어졌는가
+- `GENERATE_EXACTLY_ONE` 뒤 자동 후속 이미지를 생성했는가
 - 승인 전 생성 이미지가 최종 자산처럼 사용됐는가
 - 승인 전 vault 후보가 tracked Repo 자산으로 자동 승격됐는가
 - tracked Scene/Resource가 `assets/_vault_local/`을 참조하는가
