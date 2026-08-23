@@ -94,6 +94,21 @@ class CompletionCorrectionAdversarialGateTests(unittest.TestCase):
         self.assertLess(rescan, final_review)
         self.assertLess(final_review, clean_exit)
 
+    def test_long_horizon_preserves_premerge_review_before_completion_candidate_review(self) -> None:
+        long_horizon = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
+        premerge_review = long_horizon.index("AT LEAST 5 FULL ADVERSARIAL LOOPS, THEN UNTIL CLEAN")
+        exact_head = long_horizon.index("EXACT-HEAD PR GATE")
+        merge = long_horizon.index("→ MERGE")
+        postmerge = long_horizon.index("POSTMERGE READBACK")
+        completion_recalc = long_horizon.index("REMAINING_WORK_RECALCULATION_REQUIRED", postmerge)
+        completion_review = long_horizon.index("POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED", completion_recalc)
+        self.assertLess(premerge_review, exact_head)
+        self.assertLess(exact_head, merge)
+        self.assertLess(merge, postmerge)
+        self.assertLess(postmerge, completion_recalc)
+        self.assertLess(completion_recalc, completion_review)
+        self.assertIn("same final-state lineage", long_horizon)
+
     def test_project_active_context_tracks_completion_candidate_evidence(self) -> None:
         active_context = read("templates/project-operations/ACTIVE_CONTEXT.md")
         for field in (
