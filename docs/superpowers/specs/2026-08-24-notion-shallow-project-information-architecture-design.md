@@ -1,7 +1,7 @@
 # Shallow Notion Project Information Architecture Design
 
 **Date:** 2026-08-24 KST  
-**Status:** USER-APPROVED DESIGN / SPEC REVIEW PENDING  
+**Status:** USER-APPROVED / IMPLEMENTATION AUTHORIZED  
 **Baseline:** Base `3f02864b5cd04537e1c6d14d0f3bc6a65fc898a6`
 
 ## Goal
@@ -281,12 +281,9 @@ Domain은 프로젝트에 맞춰 이름을 바꾼다.
 
 ```text
 Combat Design · Data
-→ Turn System
-→ Line System
-→ Chain System
-→ Skill System
-→ Gatebreaker Encounter
-→ Balance Budget
+→ Core System detail
+→ Representative Encounter
+→ Balance table
 ```
 
 또는:
@@ -294,328 +291,276 @@ Combat Design · Data
 ```text
 Visual · UX · Assets
 → Visual Bible
-→ UI / Combat Flow
+→ UI Flow
 → Asset Library
-→ Audio Bible
-→ Image Production Package
+→ Character/Enemy DB Record
 ```
 
-Database를 사용하는 경우 L3 page/record가 terminal navigation node다. Relation으로 다른 L3 record를 연결할 수 있지만 이를 L4 page-tree navigation으로 다시 확장하지 않는다.
+L3에서 더 세분화가 필요할 때 새 일반 child page를 만드는 대신 다음을 우선한다.
 
-### L4+ — AVOID NORMAL PAGE NESTING
+1. database record
+2. relation / linked view
+3. toggle / section
+4. 기존 L3 owner 안의 structured table
+5. 위 방식으로 책임 분리가 불가능할 때만 `L4_EXCEPTION_REVIEW_REQUIRED`
 
-`L4+ NORMAL_PAGE_NESTING = AVOID_BY_DEFAULT`
+### L4+ exception
 
-예외는 다음과 같다.
+`L4_EXCEPTION_REVIEW_REQUIRED`
 
-- Notion Database Record 내부 block/section
-- relation으로 연결된 다른 terminal record
-- import/archive provenance를 보존하기 위한 비활성 historical container
-- 외부 도구가 기술적으로 생성하지만 사람이 정상 탐색 경로로 사용하지 않는 implementation detail
+다음 조건을 모두 만족할 때만 예외다.
 
-예외를 current human/AI navigation으로 승격하려면 `왜 L3로 표현할 수 없는가`가 설명돼야 한다.
+- 별도 owner가 실제로 필요함
+- DB Record/Relation/View/section으로 표현하면 책임이 더 모호해짐
+- 해당 깊이가 사람 기본 navigation에는 노출되지 않음
+- rollback/migration 비용보다 명확성 이득이 큼
 
-## Global AI/System surfaces
+즉 L4+를 기술적으로 금지하는 것이 아니라 **일반 navigation 기본값에서 제외**한다.
 
-`90 · SYSTEM MASTERS`, Project Registry, cross-project Master DB는 프로젝트 Human navigation tree와 별도 infrastructure로 유지한다.
+## Migration design
 
-이들은 L4+를 허용하는 loophole이 아니다. Project L2/L3에서는 exact `Project` relation으로 filter한 view/record를 연결한다.
+### 1. Inventory first
+
+각 프로젝트마다 먼저 현재 child page/DB/view inventory를 만든다.
 
 ```text
-Human navigation
-PROJECT HUB → HOME → DOMAIN → DETAIL
-
-AI/System infrastructure
-SYSTEM MASTERS / Registry / shared DB
-       ↑ project-filtered relation/view
-DOMAIN / DETAIL
+CURRENT PAGE
+→ responsibility
+→ UNIQUE / DUPLICATE / STALE / HISTORICAL
+→ target L2 Domain
+→ target L3 owner
+→ Home projection needed?
+→ move / merge / keep / archive
 ```
 
-GitHub repository는 계속 structured data/code/scene/resource/test/runtime truth를 소유한다.
+### 2. No destructive bulk rewrite
 
-## Home projection and SSoT
+- page를 삭제하지 않고 이동/재분류를 먼저 한다.
+- 기존 child page/DB를 전부 `replace_content`해서 재작성하지 않는다.
+- 물리 move 전 target Domain과 rollback parent를 기록한다.
+- move 후 Home/Domain/Detail을 fetch하여 ancestor path와 content를 readback한다.
 
-Home의 rich information은 별도 canon 복제가 아니다.
+### 3. SSoT cleanup during move
 
-### Preferred
-
-- linked project-filtered View
-- summary table derived from current owner
-- approved Visual anchor
-- current semantic summary + canonical locator
-
-### Avoid
-
-- raw dataset 전체 복사
-- exact SHA/PR/CI 값을 current Home prose에 장기 고정
-- 동일 rule table을 Home/L2/L3 세 곳에 독립 편집 가능한 형태로 복제
-- detail link만 남기고 Home 설명 제거
-
-Home 변경이 structured/runtime 의미를 바꾸면 기존 `SYNC_BEFORE_IMPLEMENTATION`을 그대로 따른다.
-
-## Migration algorithm
-
-각 프로젝트를 다음 순서로 처리한다.
-
-### Phase 0 — Inventory only
-
-Home 아래 현재 page tree와 linked DB/view를 recursive read한다. 모든 item을 다음 중 하나로 분류한다.
+Migration에서 발견한 중복은 다음처럼 처리한다.
 
 ```text
-KEEP_INLINE_ON_HOME
-L2_DOMAIN
-L3_DETAIL
-DB_RECORD_OR_VIEW
-AI_SYSTEM_INFRASTRUCTURE
-HISTORICAL_RETAIN
-DUPLICATE_CONSOLIDATE
-OBSOLETE_REVIEW
+current owner 확정
+→ Home에는 human summary/projection
+→ L2에는 domain summary/current status
+→ L3/DB에는 detail/raw owner
+→ old duplicate current text는 historical label 또는 제거
 ```
 
-분류 전에는 page를 이동/삭제하지 않는다.
+현재 mutable 값(SHA/PR/current test count)을 여러 페이지에 복제하지 않는다.
 
-### Phase 1 — Target mapping
+### 4. Home acceptance gate before and after move
 
-프로젝트별 `current → target` mapping을 만든다.
-
-각 기존 page에는:
-
-- current parent
-- current role
-- target L2 Domain
-- target L3 role
-- source/canon owner
-- duplicate/stale status
-- move risk
-- linked view/relation dependencies
-
-를 기록한다.
-
-### Phase 2 — Domain creation
-
-실제 content가 있는 Domain만 L2에 만든다. 빈 folder page를 만들지 않는다.
-
-L2 page 자체에는 Domain summary + current state + L3 index/view가 있어야 한다.
-
-### Phase 3 — Physical move/reparent
-
-`notion-move-pages`를 사용해 existing page ID를 가능한 한 유지한 채 target Domain 아래로 물리 이동한다.
-
-- 이동 전 source fetch
-- 이동
-- destination fetch/readback
-- parent/path 확인
-- mention/link/view/Project relation 확인
-
-검증 실패 시 다음 move를 진행하지 않고 해당 프로젝트를 `MIGRATION_REVIEW_REQUIRED`로 둔다.
-
-### Phase 4 — Home rewire
-
-Home의 `작업면`은 4~6개 L2 Domain을 기본 drilldown으로 보여준다.
-
-동시에 Home의 전체 게임 흐름·핵심 시스템/설정·핵심 데이터 표·Visual·AI 이해·수정 방법·현재 상태는 그대로 유지하거나 더 명확하게 만든다.
-
-### Phase 5 — Duplicate/stale cleanup
-
-- current duplicate는 one owner + projection/link로 통합한다.
-- historical information은 current처럼 보이지 않게 상태를 명시한다.
-- obsolete content는 unique information이 없는지 확인하기 전 삭제하지 않는다.
-- physical deletion/trash가 필요한 경우 기존 deletion gate를 따른다.
-
-### Phase 6 — Readback and regression
-
-각 프로젝트에서:
+각 프로젝트마다 migration 전후 다음 표를 비교한다.
 
 ```text
-Hub → Home
-Home full flow visible
-Home core systems/settings visible
-Home core data tables visible
-Home → 4~6 Domain
-Domain → L3 detail/record
-normal L4+ navigation absent
-Project relation/filter preserved
-AI/System metadata excluded from Home
-runtime/Human evidence ceiling preserved
+Full Game/Story Flow on Home           YES/NO
+Core Systems on Home                   YES/NO
+Setting/Player Role/Core Conflict      YES/NO or NOT_APPLICABLE_WITH_REASON
+Project-specific Core Data Table       YES/NO
+Approved Visual Anchors                PRESENT/WAITING/NOT_APPLICABLE
+AI Interpretation                      YES/NO
+Human Edit Guide                       YES/NO
+Implementation/Validation Ceiling      YES/NO
+L2 Domain Count                         4..6 preferred
+Normal Navigation Depth                 <= L3
 ```
 
-를 readback한다.
+하나라도 Home core requirement가 퇴행하면 migration을 완료로 판정하지 않는다.
 
-## Rollout strategy
+## Tetris pilot
 
-### 1. Base contract first
+Tetris를 첫 migration으로 사용한다. 현재 detail page가 많고 Visual/Flow/Core/Data/Production이 모두 있어 정보 architecture를 검증하기에 적합하다.
 
-새 broad Skill을 만들지 않는다. 기존 owner를 확장한다.
+초기 target:
 
-Expected owner set:
+```text
+Tetris Home
+├ 01 · Direction · Planning
+│  ├ 프로젝트 전체 작업계획
+│  ├ Production Content Lock
+│  └ Final Planning Audit
+├ 02 · Combat Design · Data
+│  ├ 핵심 시스템
+│  ├ 대표 전투
+│  ├ First Run Flow
+│  └ 세계관/전투 설정
+├ 03 · Visual · UX · Assets
+│  ├ Visual Bible
+│  ├ UI · Combat Flow
+│  ├ Asset Library
+│  ├ Audio Bible
+│  └ 이미지 제작 패키지
+├ 04 · Production · Validation
+│  └ Production / Handoff
+└ 05 · Reference · Benchmark
+```
+
+Pilot acceptance:
+
+- Home의 direct drilldown choice가 4~6개 Domain으로 줄어듦
+- Home 전체 Flow/시스템/설정/핵심 데이터는 유지 또는 개선
+- 기존 child page는 손실 없이 L3로 이동
+- existing mention/link와 project-filtered view가 정상 resolve
+- L4+ normal nesting 없음
+- duplicate/stale current text를 새 구조로 그대로 운반하지 않음
+
+Pilot이 실패하면 fleet migration을 중단하고 rollback/mapping을 교정한다.
+
+## Fleet rollout
+
+Tetris pilot clean 이후 나머지 프로젝트를 **각 프로젝트 current inventory에 맞춰 순차 이동**한다.
+
+예상 순서:
+
+```text
+Tetris pilot
+→ TEN_PACES
+→ Blacksmith
+→ Omenward
+→ GRIMOIRE
+→ Switchy Express
+→ 괴이기록국
+→ 닌자 서바이벌
+→ 마이 리틀 보트
+→ COC-Fiction
+```
+
+순서는 current open PR/active owner에 따라 바꿀 수 있다. 구조 migration 중에도 진행 중 project PR은 기본 read-only다. Branch-only content를 새 current Home/L2/L3 정본처럼 승격하지 않는다.
+
+## Base contract changes
+
+새 broad Skill을 만들지 않는다. 기존 owner만 정렬한다.
+
+Expected Base consumers:
 
 - `docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md`
+  - full flow/system/setting/core-data Home requirements 강화
+  - Home richness 보호
 - `docs/operations/NOTION_PROJECT_ISOLATION_AND_CORE_SYSTEM_CONTRACT.md`
+  - L0/L1/L2/L3 navigation contract
+  - `08 · 핵심 시스템 · 상세` direct-child 고정 제거
+  - move/reparent/readback/rollback rule
 - `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json`
-- `skills/managing-design-documents/SKILL.md`
-- 필요 시 `skills/building-project-visual-dashboards/SKILL.md`
-- focused regression tests
+  - machine-readable navigation layers/depth/domain policy
+- `docs/DOCUMENTATION_MAP.md`
+  - project Notion standard를 direct 01~07+ sibling list에서 Domain grouping으로 갱신
+- `tests/test_human_home_self_contained_contract.py`
+- `tests/test_notion_human_system_surface_separation.py`
 
-정확한 파일 목록은 implementation plan에서 current main을 다시 읽고 최소화한다.
+`managing-design-documents`는 이미 Human Home owner policy와 workspace authority를 소비한다. 실제 테스트에서 consumer gap이 재발하지 않는 한 추가 Skill 변경을 기본값으로 만들지 않는다.
 
-### 2. Tetris pilot
+## Verification
 
-현재 breadth가 큰 Tetris를 pilot로 사용한다.
+### Base static contract
 
-목적은 game-specific content를 바꾸는 것이 아니라:
-
-- 14개 수준의 first-choice detail을 4~6 Domain으로 줄이는지
-- Home richness가 유지되는지
-- physical move 이후 existing links/views가 유지되는지
-- `08` 등 numbered direct-child assumption을 제거해도 consumer가 정상인지
-
-를 검증하는 것이다.
-
-Pilot이 clean이면 별도 승인 없이 같은 승인 범위로 보호되지 않은 프로젝트에 연속 rollout한다.
-
-### 3. Fleet rollout
-
-모든 프로젝트에 동일 taxonomy를 복사하지 않고 project-specific mapping을 적용한다.
-
-현재 다른 작업선이 active인 프로젝트는 read-only다. 예를 들어 migration 시점에 COC-Fiction 또는 GRIMOIRE의 active PR/Notion 작업이 계속 존재하면 해당 프로젝트는 `DEFERRED_ACTIVE_WORKSTREAM`으로 남기고, 그 작업이 main에 완료된 뒤 fresh inventory에서 이어간다. 사용자가 특정 active PR에 별도 takeover/exception authority를 주지 않는 한 진행 중 작업을 재배치하지 않는다.
-
-### 4. Final fleet audit
-
-10개 active project 모두:
-
-- dedicated Human Home
-- Home self-contained acceptance
-- 4~6 Domain 또는 정당화된 더 작은 수
-- terminal L3 detail/record
-- no normal L4+ navigation
-- current Project relation/filter
-- post-move readback
-
-을 충족해야 fleet migration 완료로 판정한다.
-
-## Testing and verification
-
-### Repository regression
-
-최소 다음을 machine-readable/static contract로 검증한다.
+Required assertions:
 
 ```text
-SHALLOW_BY_DEFAULT
-L0_PROJECT_HUB
-L1_HUMAN_PROJECT_HOME
-L2_DOMAIN_WORKSPACE
-L3_DETAIL_OR_RECORD
-L4_PLUS_NORMAL_PAGE_NESTING_AVOID_BY_DEFAULT
 FULL_GAME_FLOW_VISIBLE_ON_HOME
 CORE_SYSTEMS_AND_SETTING_VISIBLE_ON_HOME
 PROJECT_SPECIFIC_CORE_DATA_TABLES_VISIBLE_ON_HOME
 HOME_DETAIL_LINKS_CANNOT_REPLACE_CORE_UNDERSTANDING
-NO_DUPLICATED_CANON
-NO_FIXED_UNIVERSAL_GAME_TAXONOMY
+SHALLOW_BY_DEFAULT
+PROJECT_HUB
+HUMAN_PROJECT_HOME
+DOMAIN_WORKSPACE
+DETAIL_OR_RECORD
+L4_EXCEPTION_REVIEW_REQUIRED
+```
+
+Machine contract verifies:
+
+```json
+{
+  "notion_navigation_layers": [
+    "PROJECT_HUB",
+    "HUMAN_PROJECT_HOME",
+    "DOMAIN_WORKSPACE",
+    "DETAIL_OR_RECORD"
+  ],
+  "default_navigation_depth_max": "L3",
+  "l4_normal_page_nesting": "AVOID",
+  "domain_workspace_recommended_count": {"min": 4, "max": 6}
+}
 ```
 
 기존 Human/System separation, Project relation, approved visual delivery/readback, zero-incremental-cost tests를 약화하지 않는다.
 
 ### Live Notion verification
 
-CI만으로 live Notion tree를 PASS 처리하지 않는다. 실제 connector readback으로 parent path, child/domain mapping, Home content, linked view/filter, Project relation을 확인한다.
+각 migrated project는:
 
-### Evidence ceilings
+- Hub → Home ancestor/path 확인
+- Home → L2 Domain 4~6개 권장 범위 확인
+- L2 → L3 owner 정상 이동 확인
+- moved page가 기존 content/DB를 보존했는지 확인
+- Home acceptance gate 전 항목 확인
+- 다른 Project relation/data 혼입 없음 확인
 
-이번 IA migration으로 증명되지 않는 것:
+### Evidence ceiling
 
-- 게임 runtime correctness
-- Windows/Android/device validation
-- Human 재미/가독성/usability
-- Notion desktop/mobile pixel geometry
-- visual asset quality
+Notion semantic fetch/readback으로 다음을 주장할 수 있다.
 
-해당 상태는 기존 evidence를 그대로 유지한다.
+- page parent/child 구조
+- visible text/table/mention 존재
+- database/view relation metadata
+- content 이동 보존
 
-## Adversarial review requirements
+다음은 별도 rendered evidence 전에는 주장하지 않는다.
 
-구현 전/후 각각 동일 전체안을 최소 5회 다시 검토한다.
+- pixel-perfect hierarchy
+- actual sidebar visual balance
+- mobile crop/scroll quality
+- user comprehension speed
 
-각 loop는 특정 관점 하나가 아니라 다음 전체를 다시 본다.
+## Adversarial review
 
-- user intent / Home richness
-- navigation simplicity
-- project-specific fit
-- SSoT / duplicate drift
-- Human vs AI/System boundary
-- Project isolation/relation
-- current GitHub/Notion owner
-- active PR/workstream collision
-- Visual/asset implications
-- implementation feasibility
-- migration rollback/readback
-- cost
-- evidence ceiling
+Pre-migration design과 post-migration 결과 모두 minimum 5 whole reviews를 적용한다.
 
-문제가 발견되면 수정한 뒤 다음 loop에서 수정된 전체안을 처음부터 다시 검토한다. 최소 5회 이후에도 unresolved issue가 있으면 clean할 때까지 계속한다.
+한 loop는 전체 current candidate를 다음 범위까지 다시 본다.
 
-## Rollback and safety
+- user intent
+- Home richness
+- navigation depth/breadth
+- SSoT/duplicate risk
+- project-specific semantics
+- AI/System isolation
+- linked view/database integrity
+- open PR/concurrent work
+- rollback
+- zero-cost constraint
+- IRG/evidence ceiling
 
-- migration 동안 content를 먼저 삭제하지 않는다.
-- move 전 source path/page IDs를 inventory에 기록한다.
-- move 후 destination readback 실패 시 해당 프로젝트의 다음 move를 중지한다.
-- L2 Domain 자체가 잘못된 경우 page ID를 유지한 채 원래 Home 또는 corrected Domain으로 reparent한다.
-- GitHub Base 변경은 별도 PR 하나로 묶고 exact-head validation 후 merge한다.
-- 진행 중 project PR/branch는 사용자 명시 예외 없이 수정하지 않는다.
+5회 전에 finding이 발생하면 수정한다. material design 또는 migration mapping이 바뀌면 clean count를 0/5로 reset한다. 5회 이후에도 새 valid blocker가 나오면 clean까지 추가 full review를 계속한다.
 
-## Acceptance criteria
+## Rollback
 
-완료 조건은 `페이지가 적어 보임`이 아니라 다음이다.
+- Base: eventual squash merge를 revert하면 정책/테스트를 되돌릴 수 있다.
+- Notion: migration map에 기존 parent ID와 target parent ID를 모두 기록한다.
+- page move 실패/회귀 시 해당 page를 recorded old parent로 되돌린다.
+- child page/DB 삭제를 rollback 수단으로 사용하지 않는다.
+- content cleanup은 surviving owner destination readback 후에만 수행한다.
 
-1. Project Hub에서 project 선택 시 dedicated Human Home으로 바로 진입한다.
-2. **Home에서 전체 게임/작품 흐름을 직접 볼 수 있다.**
-3. **Home에서 핵심 시스템과 핵심 설정/플레이어 역할을 직접 볼 수 있다.**
-4. **Home에서 프로젝트 고유 핵심 데이터 표 또는 linked filtered projection을 직접 볼 수 있다.**
-5. Home에는 AI/System raw metadata가 기본 노출되지 않는다.
-6. Home의 핵심 이해를 detail link로 대체하지 않는다.
-7. 각 Project Home의 첫 drilldown 선택은 원칙적으로 4~6개 L2 Domain이다.
-8. L2 Domain은 empty folder가 아니라 책임·상태·L3 index/view를 가진다.
-9. 정상 navigation은 L3 Detail/Record에서 끝난다.
-10. L4+ 일반 page nesting은 없거나 명시적 예외 사유가 있다.
-11. 동일 canon/data의 독립 복제를 만들지 않는다.
-12. shared Master/Registry는 AI/System infrastructure로 유지하고 project-filtered relation/view로 연결한다.
-13. project-specific data/terminology를 universal template 때문에 잃지 않는다.
-14. active concurrent workstream은 보호된다.
-15. Notion write/move마다 destination readback이 있다.
-16. Base regression + live Notion verification + 전체 적대적 검토 최소 5회 clean exit가 있다.
-17. 모든 미검증 runtime/device/Human/UI geometry 상태는 과장 없이 `NOT_RUN`/appropriate ceiling을 유지한다.
+## Acceptance
 
-## Expected effect
-
-### Before
-
-```text
-Hub
-→ rich Home
-→ 많은 번호형 detail이 같은 레벨에 병렬 노출
-→ detail 안에서 다시 detail/history/view로 이동
-```
-
-사용자와 AI가 `어느 페이지가 어떤 책임을 갖는지`를 페이지 번호와 기억에 의존한다.
-
-### After
-
-```text
-Hub
-→ rich Home
-→ 4~6 project-specific Domain
-→ terminal Detail/Record
-```
-
-Home에서 전체 프로젝트를 이해하고, 더 자세한 작업은 의미가 분명한 Domain을 통해 들어간다. 데이터 원본은 하나를 유지하며 Home/Domain에서는 적절한 projection/view를 사용한다.
-
-장기 기대효과는 다음이다.
-
-- navigation depth 감소
-- first-choice overload 감소
-- 새 page 폭증 억제
-- stale duplicate 감소
-- AI routing/owner 판정 단순화
-- 사용자 학습·교정 속도 향상
-- 프로젝트별 고유 시스템/데이터 표현 보존
-- Notion 구조가 커져도 Home의 전체 게임 이해 기능 유지
+1. Project Hub는 각 dedicated Human Project Home의 first-click launcher다.
+2. 모든 Project Home은 full game/story flow를 직접 보여준다.
+3. 모든 Project Home은 core systems와 프로젝트에 필요한 setting/player role/core conflict를 직접 보여준다.
+4. 모든 Project Home은 project-specific core data의 대표 표/관계를 직접 보여준다.
+5. Home drilldown link는 core understanding을 대체하지 않는다.
+6. 프로젝트별 L2 Domain은 4~6개를 권장하되 project semantics에 따라 구성한다.
+7. 일반 navigation은 L3에서 끝나고 L4+는 review-required exception이다.
+8. L2는 empty folder가 아니라 domain responsibility surface다.
+9. L3는 detail/record owner이며 더 깊은 구조는 DB/Relation/View/section을 우선한다.
+10. current owner가 하나이며 duplicate current canon을 만들지 않는다.
+11. AI/System metadata는 Human Home 기본 화면에서 제외된다.
+12. Notion move는 read-before-write + destination readback + rollback parent 기록을 가진다.
+13. 진행 중 project PR은 read-only이며 branch-only content를 current truth로 승격하지 않는다.
+14. 유료 Notion 기능이나 새 broad Skill은 필요하지 않다.
+15. Tetris pilot이 acceptance를 통과한 뒤에만 fleet rollout을 계속한다.
