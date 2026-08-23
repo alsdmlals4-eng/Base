@@ -43,7 +43,7 @@
     },
     "SWITCHY": {
       "repository": "alsdmlals4-eng/Switchy-Express-Cargo-Puzzle",
-      "status": "DEFERRED_OPEN_PR",
+      "status": "READY_TO_ADOPT",
       "modules": {
         "RM-TOOL-001": "planned",
         "RM-SYS-001": "enabled",
@@ -51,12 +51,12 @@
         "RM-VIS-001": "enabled",
         "RM-VIS-002": "enabled"
       },
-      "blocker": "open PR #154 is read-only",
-      "revisit": "after PR #154 is completed and current main is re-read"
+      "blocker": "no current adoption blocker; runtime or product changes still require fresh Switchy authority and the existing acceptance/human-evidence gates",
+      "revisit": "re-read current main before project work and preserve SX-DEC-059 finite-delivery authority; adopt only modules consumed by an approved task"
     },
     "TETRIS": {
       "repository": "alsdmlals4-eng/Tetris",
-      "status": "DEFERRED_OPEN_PR",
+      "status": "DEFERRED_PRODUCT_GATE",
       "modules": {
         "RM-TOOL-001": "planned",
         "RM-SYS-001": "planned",
@@ -64,8 +64,8 @@
         "RM-VIS-001": "planned",
         "RM-VIS-002": "planned"
       },
-      "blocker": "open PRs #3 and #9 are read-only",
-      "revisit": "after active Tetris PRs are completed and production Line/Chain plan allows adapters"
+      "blocker": "production Shared Player Turn Budget, Line/Chain runtime and Tempo remain NOT_PRESENT; BUILD is deferred until the explicit project build gate",
+      "revisit": "re-read current TETRIS-CORE-024 plus TETRIS-TIME-025 and adopt only modules required by an explicitly approved production task"
     },
     "URBAN_LEGEND": {
       "repository": "alsdmlals4-eng/urban-legend",
@@ -202,8 +202,9 @@
         "CURRENT_HUMAN_PLAYER_EVIDENCE_NOT_RUN"
       ],
       "followup_issue": 199,
-      "blocker": "production consumer integration remains intentionally unrun; Issue #199 tracks unrelated reopened-v4.7 versus legacy-validator baseline drift",
-      "revisit": "connect the adapter to production only inside an approved Omenward product task after reading current canon and resolving any relevant Issue #199 authority conflict"
+      "followup_issue_state": "RESOLVED_BY_PR_201",
+      "blocker": "production consumer integration remains intentionally unrun; current v4.7 player/Human evidence remains separately gated",
+      "revisit": "connect the adapter to production only inside an approved Omenward product task after reading current canon; treat Issue #199 and merged PR #201 as resolved validator-history evidence"
     }
   }
 }
