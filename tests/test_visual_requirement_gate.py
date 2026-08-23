@@ -175,6 +175,14 @@ class VisualRequirementGateTests(unittest.TestCase):
         self.assertIn("동일 assistant 응답", combined)
         self.assertIn("자동", combined)
 
+    def test_image_policy_uses_notion_first_and_keeps_google_sheets_migration_only(self) -> None:
+        policy = read("docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md")
+        self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", policy)
+        self.assertIn("GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL", policy)
+        self.assertNotIn("## 2. B — 프로젝트 Google Sheets 구조", policy)
+        self.assertNotIn("PROJECT_SHEET_CONFIGURED", policy)
+        self.assertNotIn("필수 탭:", policy)
+
 
 if __name__ == "__main__":
     unittest.main()
