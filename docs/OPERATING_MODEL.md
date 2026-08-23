@@ -137,7 +137,8 @@ approved-scope remaining work
    │  → REMAINING_WORK_RECALCULATION_REQUIRED로 복귀
    └─ no required implementation/correction finding
       → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
-      → minimum-five full-scope adversarial loops on the final candidate
+      → POST_CHANGE_MONITOR_LOOP on the final candidate
+      → minimum-five full-scope adversarial loops
       → CLEAN_REVIEW_EXIT
       → FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
       → completion-report
@@ -145,7 +146,7 @@ approved-scope remaining work
 
 `IMPLEMENTATION_CORRECTION_RESCAN`은 새 정본이나 별도 검토 시스템이 아니다. 기존 `running-adversarial-review-and-refinement`와 `reviewing-and-validating-project-changes`를 사용해 구현 누락, 승인 의도와 실제 diff의 불일치, 정본·Notion/Repository sync drift, Test·consumer·Template·reference 누락, 열린/최근 PR 충돌, runtime/readback evidence gap을 다시 찾는다. 검증된 새 finding이 있으면 `NEW_FINDING_REOPENS_REMAINING_WORK`로 현재 승인 범위의 남은 작업에 편입해 교정하고 다시 계산한다.
 
-`POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 기존 최소 5회 full-loop + `CLEAN_REVIEW_EXIT` 규칙을 재사용하며 두 번째 독립 framework를 만들지 않는다. 마지막 구현·교정 이후의 최종 후보 상태가 이 검토의 입력이어야 한다. `NO_MATERIAL_FOLLOWUP`이면 횟수를 채우기 위해 가짜 finding이나 불필요한 변경을 만들지 않는다.
+`POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 **최종 후보 상태에서 수행하는 기존 `POST_CHANGE_MONITOR_LOOP` 자체**이며 두 번째 독립 review cycle이나 framework가 아니다. 그 동일 루프가 기존 최소 5회 full-loop + `CLEAN_REVIEW_EXIT` 규칙을 충족한다. 마지막 구현·교정 이후의 최종 후보 상태가 입력이어야 하며, 이미 최종 후보를 대상으로 수행한 같은 full loop를 중복 계수하거나 다시 처음부터 반복하지 않는다. `NO_MATERIAL_FOLLOWUP`이면 횟수를 채우기 위해 가짜 finding이나 불필요한 변경을 만들지 않는다.
 
 `FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK`는 **현재 승인 범위에서** 필요한 실행·교정이 0이고, 완료 조건에 필요한 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, 미해결 `DEFER`가 없을 때만 `전체 완료`를 허용한다. 범위 밖 future improvement나 명시적으로 다음 단계로 분리된 항목은 별도 후보로 보존할 수 있지만 현재 범위의 미완료를 숨겨서는 안 된다. 승인 범위 안의 blocker·defer가 남으면 `PARTIAL / BLOCKED_UNVERIFIED / DEFERRED`와 재개 조건을 보고한다.
 
@@ -596,8 +597,7 @@ PLAN: audit only
 → 적용 시 accessibility-review
 → 적용 시 performance-profile
 → 대표·경계·반례·회귀
-→ REMAINING_WORK_COMPLETION_GATE
-→ POST_CHANGE_MONITOR_LOOP
+→ REMAINING_WORK_COMPLETION_GATE (final POST_CHANGE_MONITOR_LOOP 포함)
 → 판정·미실행·위험·롤백 보고
 → Work Mode·Skill·Skill Mode의 이유·결과·증거 보고
 ```
