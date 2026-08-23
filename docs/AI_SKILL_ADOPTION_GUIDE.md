@@ -185,7 +185,7 @@ Method·Checklist·Template에 같은 실행 절차를 장문 복제하지 않�
 - `SKILL.md`: 언제 사용하고 어떤 상태·mode로 실행하는가
 - `references/`: 이유·배경·상세 Schema·판단 모델·공식 근거
 - `templates/`: 복사할 출력 형식
-- `scripts/`: 실제 자동화가 있을 때만
+- `scripts/`: 자동 검사·변환
 
 ## 5A. Prompt / Instruction / Skill / Agent / Tool 배치 결정
 
