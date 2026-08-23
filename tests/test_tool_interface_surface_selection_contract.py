@@ -23,6 +23,7 @@ class ToolInterfaceSurfaceSelectionContractTest(unittest.TestCase):
             "KEYBOARD_FIRST_IS_CROSS_SURFACE",
             "NO_DEPRECATED_SURFACE_REVIVAL",
             "TARGET_PLATFORM_VERIFIED",
+            "HUMAN_WORKFLOW_VALUE_VERIFIED",
         )
         for token in required_tokens:
             with self.subTest(token=token):
@@ -40,6 +41,8 @@ class ToolInterfaceSurfaceSelectionContractTest(unittest.TestCase):
         self.assertIn("CLI", capability)
         self.assertIn("TUI", capability)
         self.assertIn("thin GUI", capability)
+        self.assertIn("not** a GUI-first rule", capability)
+        self.assertIn("does not prohibit TUI", capability)
         self.assertNotIn("GUI_ALWAYS_FIRST", capability)
         self.assertNotIn("TUI_PROHIBITED", capability)
 
