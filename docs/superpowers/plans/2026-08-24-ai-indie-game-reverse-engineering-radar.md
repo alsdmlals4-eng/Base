@@ -4,7 +4,7 @@
 
 **Goal:** Add a weekly AI-assisted solo/indie game reverse-engineering capture path that feeds existing Base source-discovery and reuse owners without creating a new Skill, scheduler, or runtime AI framework.
 
-**Architecture:** One specialty Radar remains subordinate to the existing periodic Watchlist. One dated Pattern Pack remains subordinate to the existing reverse-engineering reuse pipeline. One focused regression protects owner boundaries and required capture fields. Because the permanent Base validator enumerates unittest modules explicitly, the regression is routed through the existing validator with one added test-module entry rather than a new workflow.
+**Architecture:** One specialty Radar remains subordinate to the existing periodic Watchlist. One dated Pattern Pack remains subordinate to the existing reverse-engineering reuse pipeline. One focused regression protects owner boundaries and required capture fields. The existing Game Project Operating System `core-regression` uses `unittest discover`, so the new regression is discovered automatically; no permanent CI-workflow mutation is required.
 
 **Spec:** `docs/superpowers/specs/2026-08-24-ai-indie-game-reverse-engineering-radar-design.md`
 
@@ -15,7 +15,7 @@
 - `REVERSE_ENGINEERING_REUSE_PIPELINE.md` remains reuse-discovery owner.
 - `AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md` remains AI-production authority.
 - `REUSABLE_MODULE_REGISTRY.md` remains promotion registry.
-- no new Skill/Agent, paid dependency, runtime-AI dependency, project gameplay implementation, or Notion mutation.
+- no new Skill/Agent, paid dependency, runtime-AI dependency, project gameplay implementation, Notion mutation, or permanent CI-workflow change.
 - separate `PRODUCTION_ASSISTED` from `RUNTIME_GENERATIVE`.
 - popularity is discovery evidence, never causal proof by itself.
 - Red → partial Green → full Green must be visible in CI.
@@ -24,12 +24,11 @@
 
 **Files**
 - Create: `tests/test_ai_indie_game_reverse_engineering_radar.py`
-- Modify: `.github/workflows/validate-base-v9-rc.yml`
 
 - [x] Add a focused test that fails while Radar and Pattern Pack are absent.
-- [x] Discover that the existing Base validator enumerates unittest modules instead of auto-discovering new files.
-- [x] Route the new test through the existing validator with one module entry; do not create a second CI workflow.
 - [x] Verify actual RED in GitHub Actions: both expected missing-artifact assertions fail while existing neighboring contracts remain green.
+- [x] Verify that the repository-wide `core-regression` auto-discovers new tests.
+- [x] Remove the temporary duplicate Base-v9 test-list routing after adversarial review showed it was unnecessary and escalated this docs/research PR into an avoidable CI-toolchain/Windows-smoke path.
 
 ## Task 2 — Specialty weekly Radar
 
@@ -72,18 +71,18 @@ Reusable gameplay candidate:
 - [x] Route reusable candidates to existing Base owners before proposing anything new.
 - [x] Add 10-project fit hypotheses with `PROJECT_ADOPTION_NOT_RUN`.
 - [x] Add Implementation Reality Gate and 5-pass adversarial review.
-- [ ] Verify full Green on the Pattern Pack commit and resolve any current-head failures.
+- [ ] Verify full Green on the final current head and resolve any current-head failures.
 
 ## Task 4 — Current-head PR closure
 
 **PR:** `#631`
 
 - [ ] Compare branch against current `main` and active independent PR files.
-- [ ] Confirm only spec, plan, test, Radar, Pattern Pack, and one existing-CI test routing line changed.
+- [ ] Confirm only spec, plan, test, Radar, and Pattern Pack differ from `main`.
 - [ ] Recheck evidence claims: upcoming games are not called successes; self-reported metrics are labeled; popularity is not treated as causality.
 - [ ] Run/observe permanent Base contract, evidence-knowledge, project-operating, and dependency checks on current head.
 - [ ] Perform final adversarial review against the current diff.
-- [ ] Update PR body from RED-phase description to final verified scope.
+- [ ] Update PR body to the final verified scope.
 - [ ] Merge only under current Base merge policy after current-head verification is green and no active-PR conflict exists.
 
 ## Task 5 — External weekly scheduler handoff
