@@ -12,6 +12,12 @@ postmerge_progress_readback:
 - adversarial_review_status: NOT_RUN
 - required_corrections_remaining:
 - required_work_remaining:
+- remaining_work_recalculation_status: NOT_RUN
+- implementation_correction_rescan_status: NOT_RUN
+- completion_adversarial_review_status: NOT_RUN
+- clean_review_exit_status: NOT_RUN
+
+`required_work_remaining: 0`은 완료가 아니라 `COMPLETION_CANDIDATE`다. Base `REMAINING_WORK_COMPLETION_GATE`에 따라 `REMAINING_WORK_RECALCULATION_REQUIRED → IMPLEMENTATION_CORRECTION_RESCAN → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED → CLEAN_REVIEW_EXIT`를 닫은 뒤에만 전체 완료 상태를 기록한다. 새 유효 finding은 `NEW_FINDING_REOPENS_REMAINING_WORK`로 승인 범위의 남은 작업을 다시 연다.
 
 ## 확정·구현·검증 상태
 
