@@ -23,6 +23,7 @@
 | `BENCHMARK_CHARACTER_REACTION_AND_LEARNING_FAILURE_CASE.md` | 캐릭터 선택·규칙 학습 게임 | 짧은 동료 반응, 선택 기억, 학습 가능한 실패 | 조건부 참고 |
 | `FACS_EXPRESSION_EDITING_PROMPT_CASE.md` | 원본 캐릭터 표정 편집 | 자연어·FACS AU·보호 조건 결합 | 가설·모델별 검증 필요 |
 | `CHARACTER_PROMO_POSTER_LAYOUT_CASE.md` | 캐릭터 포스터·상세 페이지 | 메인 일러스트와 정보 슬롯 모듈화 | 패턴·시각 검증 필요 |
+| `AGENT_GENERATED_UI_SURFACE_SELECTION_CASE.md` | 에이전트 생성 GUI·TUI/CLI 도구 설계 | CLI/TUI/thin GUI 선택, one core, Implementation Reality Gate | 채택·프로젝트 반복 검증 전 |
 
 외부 사례는 원리만 기록한다. 중요한 현재 기능·가격·정책·모델 동작 판단에서는 최신 원본과 1차 출처를 다시 확인한다.
 
@@ -68,6 +69,7 @@
 | 짧은 동료 반응·실패 학습·선택 기억 | `BENCHMARK_CHARACTER_REACTION_AND_LEARNING_FAILURE_CASE.md` |
 | 캐릭터 정체성을 유지하며 윙크·미소·시선을 편집 | `FACS_EXPRESSION_EDITING_PROMPT_CASE.md` |
 | 캐릭터 포스터·상세 페이지를 다른 캐릭터에도 재사용 | `CHARACTER_PROMO_POSTER_LAYOUT_CASE.md` |
+| 반복 도구를 CLI/TUI/GUI 중 무엇으로 노출할지 결정 | `AGENT_GENERATED_UI_SURFACE_SELECTION_CASE.md` |
 | 화면에 정보가 많아 현재 행동이 묻힘 | `URBAN_LEGEND_SCENE_FIRST_UI_CASE.md` |
 | 공개 명칭 변경과 저장 호환 | `URBAN_LEGEND_DISPLAY_NAME_INTERNAL_ID_CASE.md` |
 | 캐릭터 대사가 기능 흐름을 방해함 | `URBAN_LEGEND_DIALOGUE_DENSITY_BY_CONTEXT_CASE.md` |
