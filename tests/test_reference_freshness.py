@@ -337,6 +337,27 @@ class CanonicalReferenceFreshnessTests(unittest.TestCase):
         passed = self._run(base, self._git("rev-parse", "HEAD"))
         self.assertEqual(passed.returncode, 0, passed.stdout + passed.stderr)
 
+    def test_completion_correction_gate_has_a_recognized_freshness_companion(self) -> None:
+        live_config = json.loads((ROOT / ".github/reference-freshness.json").read_text(encoding="utf-8"))
+        rule = next(
+            item
+            for item in live_config["coupled_change_rules"]
+            if item["name"] == "local-skill-contract-learning-test-sync"
+        )
+        self.assertIn("tests/test_reference_freshness.py", rule["require_any_changed"])
+
+        focused = (ROOT / "tests/test_completion_correction_adversarial_gate.py").read_text(
+            encoding="utf-8"
+        )
+        for marker in (
+            "REMAINING_WORK_COMPLETION_GATE",
+            "IMPLEMENTATION_CORRECTION_RESCAN",
+            "NEW_FINDING_REOPENS_REMAINING_WORK",
+            "POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED",
+            "CLEAN_REVIEW_EXIT",
+        ):
+            self.assertIn(marker, focused)
+
     def test_repository_freshness_skill_declares_verified_successor_state_contract(self) -> None:
         skill = (ROOT / "skills/auditing-canonical-reference-freshness/SKILL.md").read_text(
             encoding="utf-8"
