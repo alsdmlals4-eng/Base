@@ -8,6 +8,7 @@ POLICY = ROOT / "docs" / "operations" / "HUMAN_HOME_SELF_CONTAINED_POLICY.md"
 NOTION_CONTRACT = ROOT / "docs" / "operations" / "NOTION_PROJECT_ISOLATION_AND_CORE_SYSTEM_CONTRACT.md"
 BASE_MODEL = ROOT / "docs" / "operations" / "BASE_PARTITION_OPERATING_MODEL.md"
 DASHBOARD_SKILL = ROOT / "skills" / "building-project-visual-dashboards" / "SKILL.md"
+DESIGN_DOCUMENT_SKILL = ROOT / "skills" / "managing-design-documents" / "SKILL.md"
 
 
 class HumanHomeSelfContainedContractTests(unittest.TestCase):
@@ -65,6 +66,17 @@ class HumanHomeSelfContainedContractTests(unittest.TestCase):
             "AI_INTERPRETATION_FOR_USER_CORRECTION",
             "HUMAN_EDIT_GUIDE_REQUIRED",
             "NO_UNIVERSAL_GAME_DATA_TEMPLATE",
+        ):
+            self.assertIn(term, text)
+
+    def test_design_document_skill_routes_project_home_to_rich_human_owner(self) -> None:
+        text = DESIGN_DOCUMENT_SKILL.read_text(encoding="utf-8")
+        self.assertIn("docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md", text)
+        for term in (
+            "HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN",
+            "PROJECT_SPECIFIC_CORE_DATA",
+            "AI_INTERPRETATION_FOR_USER_CORRECTION",
+            "HUMAN_EDIT_GUIDE_REQUIRED",
         ):
             self.assertIn(term, text)
 
