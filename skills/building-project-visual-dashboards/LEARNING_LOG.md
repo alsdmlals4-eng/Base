@@ -1,5 +1,16 @@
 # Learning Log
 
+## 2026-08-23 · Human Home의 문제는 정보량이 아니라 AI/System 정보 혼재다
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** 실제 Base Home과 10개 Project Home을 사용자와 함께 검토했을 때, Home을 짧게 만드는 것보다 사람이 게임/작업 구조를 한 화면에서 학습할 수 있게 하고 raw PR·SHA·CI·Prompt·Hash 같은 운영 메타데이터만 분리하는 것이 더 중요하다는 결론이 나왔다.
+- **Finding:** 기존 self-contained Home 계약은 방향은 맞았지만 실제 Home은 핵심 Flow·시스템·예산/상대/백팩/징조륜 같은 프로젝트 고유 데이터가 하위 페이지에만 숨어 있거나 Base Home에 운영 closure 증거가 과도하게 노출되는 편차가 있었다. 모든 게임에 같은 몬스터·경제·성장 섹션을 강제하는 범용 Template은 프로젝트 정체성을 약화시킨다.
+- **Decision:** `PROJECT_HOME_INFORMATION_RICHNESS_ALLOWED` + `PROJECT_SPECIFIC_CORE_DATA` + `AI_INTERPRETATION_FOR_USER_CORRECTION` + `HUMAN_EDIT_GUIDE_REQUIRED`를 기존 `building-project-visual-dashboards`에 흡수한다. Home은 `30초 전체 그림 → 5분 핵심 Flow/System/Data/Visual → drilldown`으로 구성하고, 원시 운영 메타데이터는 기존 `90 · SYSTEM MASTERS`/AI-System surface에 남긴다. 새 broad Skill이나 별도 dashboard는 만들지 않는다.
+- **Image boundary:** 프로젝트 이미지 생성/편집은 `TEXT_BRIEF_STOP_REQUIRED → 다음 사용자 명시 승인 → GENERATE_EXACTLY_ONE → STOP_REQUIRED_AFTER_GENERATION`으로 분리해 같은 assistant turn의 자동 이미지 연쇄를 막는다.
+- **Evidence:** Human Home/Visual Requirement/v4.7 workflow의 TDD RED가 새 계약 누락을 재현했고, Base 정책·기존 Skill을 보강한 뒤 관련 workflow가 GREEN으로 전환됐다. 실제 Notion에서는 Base Home, Hub, 10개 Project Home을 bounded edit하고 destination readback했다. COC-Fiction은 Part 1/Part 2를 별도 인물·세력 surface로 유지했다.
+- **Evidence ceiling:** 문서·Notion readback은 구조와 지속성을 증명하지만, 새 중학생 사용자의 실제 이해도 테스트와 모든 기기에서의 최종 페이지 pixel geometry는 아직 `NOT_RUN`이다. 이번 migration에서 새 이미지는 생성하지 않았다.
+- **Next trigger:** Home이 다시 raw AI/System log로 오염되거나, project-specific core data가 범용 Template 때문에 누락/왜곡되거나, 실제 사용자 이해 테스트에서 정보 위계 문제가 반복될 때 정보 구조를 재검토한다.
+
 ## 2026-08-21 · 행동 평가는 현재 Project Home 실행 단계를 이름으로 추적한다
 
 - 2026-08-19의 HTML → Notion Project Home 재분류 뒤에도 `SBE-031`은 단일 HTML과 구형 `frame → map-sources → build → bind-status → validate`를 계속 요구해 current Skill과 충돌했다.
