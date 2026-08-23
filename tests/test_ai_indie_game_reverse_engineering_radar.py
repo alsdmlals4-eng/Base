@@ -52,10 +52,31 @@ class AiIndieGameReverseEngineeringRadarTests(unittest.TestCase):
             "RNG_AGENCY_AND_RECOVERY",
             "Implementation Reality Gate",
             "Adversarial review 5/5",
-            "PROJECT_ADOPTION_NOT_RUN",
         ):
             with self.subTest(required=required):
                 self.assertIn(required, text)
+
+    def test_pattern_pack_records_executed_cross_project_adoption(self) -> None:
+        self.assertTrue(PACK.is_file())
+        text = PACK.read_text(encoding="utf-8")
+        for required in (
+            "project_adoption: PROJECT_ADOPTION_EXECUTED",
+            "notion_mutation: COMPLETE_READBACK",
+            "PROJECT_ADOPTION_RECEIPT_2026-08-24",
+            "alsdmlals4-eng/omenward#203",
+            "alsdmlals4-eng/ninja-survival-godot#25",
+            "alsdmlals4-eng/Blacksmith#184",
+            "alsdmlals4-eng/GRIMOIRE-#156",
+            "alsdmlals4-eng/Switchy-Express-Cargo-Puzzle#163",
+            "alsdmlals4-eng/Tetris#15",
+            "alsdmlals4-eng/urban-legend#223",
+            "alsdmlals4-eng/MylittleBoat#3",
+            "alsdmlals4-eng/Ten-Paces-Hidden-Moves#190",
+            "alsdmlals4-eng/Coc-Fiction#51",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, text)
+        self.assertNotIn("project_adoption: PROJECT_ADOPTION_NOT_RUN", text)
 
 
 if __name__ == "__main__":
