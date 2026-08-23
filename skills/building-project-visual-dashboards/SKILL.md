@@ -107,6 +107,23 @@ Home에는 중학생도 따라갈 수 있는 수정 경로를 둔다.
 → 현재 프로젝트 Visual canon과 사용자 이미지 Gate를 먼저 확인
 ```
 
+### Image generation / edit boundary
+
+프로젝트 이미지 생성·편집이 실제로 요청되면 `docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md`를 적용한다.
+
+```text
+Project/Visual canon review
+→ text brief
+→ TEXT_BRIEF_STOP_REQUIRED
+
+next user message
+→ explicit image approval
+→ GENERATE_EXACTLY_ONE
+→ STOP_REQUIRED_AFTER_GENERATION
+```
+
+Home/Visual Map을 정리하는 과정에서 누락된 이미지를 자동 생성하지 않는다. Text brief를 처음 제시한 같은 assistant turn에서 이미지 생성으로 이어가지 않고, 생성 직후에도 다음 이미지·포즈·컴포넌트·분해 에셋을 자동 연속 생성하지 않는다.
+
 ## Skill Modes
 
 - `frame-project-home`: exact Project identity, latest confirmed decisions, GitHub main, existing Notion Home, 관련 Flow/System/Visual/사람용 표와 현재 blocker를 읽어 이번 Home의 범위와 보호 대상을 고정한다.
@@ -180,6 +197,7 @@ Project identity / latest user decisions
 - Home이 짧아 보이기 위해 핵심 표/Flow/System 이해를 링크로만 밀어내지 않았는가
 - AI interpretation이 human-facing 설계 의도이며 raw 운영 metadata가 아닌가
 - 사용자가 설명/기획/이미지 수정 경로의 차이를 이해할 수 있는가
+- 이미지 생성/편집이 요청된 경우 `TEXT_BRIEF_STOP_REQUIRED → 다음 사용자 승인 → GENERATE_EXACTLY_ONE → STOP_REQUIRED_AFTER_GENERATION`을 지켰는가
 - Notion 주장과 repository/runtime evidence가 충돌하지 않는가
 - 실제 미실행 검증이 PASS로 표시되지 않았는가
 - 다른 프로젝트 정보가 섞이지 않았는가
@@ -192,12 +210,14 @@ Project identity / latest user decisions
 
 상위 Human Home 내용/AI-System 분리 계약은 `docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md`가 소유한다.
 
+이미지 생성·편집의 hard conversation barrier는 `docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md`가 소유한다.
+
 ## Output contract
 
 최소 출력은 self-contained Project Home, 프로젝트 고유 core-data 설명, 필요한 Visual Map/diagram, AI interpretation, 사용자 edit guide, repository/runtime locator, 검증 상태, blocker·next work·revisit condition이다. 핵심 이해를 하위 링크로만 넘기지 않는다.
 
 ## Quality gate
 
-Home만 읽어 프로젝트 핵심 가치·Core Loop·주요 시스템·프로젝트 고유 핵심 데이터·UX/Visual·AI가 이해한 설계 의도·수정 방법·구현/검증 상태·다음 작업을 설명할 수 있어야 한다. Notion과 repository/runtime truth가 충돌하거나 미실행 검증을 PASS로 표시하거나 raw AI/System metadata가 Home을 오염하거나 standalone HTML/local dashboard가 새 authority로 부활하면 실패다.
+Home만 읽어 프로젝트 핵심 가치·Core Loop·주요 시스템·프로젝트 고유 핵심 데이터·UX/Visual·AI가 이해한 설계 의도·수정 방법·구현/검증 상태·다음 작업을 설명할 수 있어야 한다. Notion과 repository/runtime truth가 충돌하거나 미실행 검증을 PASS로 표시하거나 raw AI/System metadata가 Home을 오염하거나 이미지 작업이 two-turn gate를 우회하거나 standalone HTML/local dashboard가 새 authority로 부활하면 실패다.
 
 Learning Log: `skills/building-project-visual-dashboards/LEARNING_LOG.md`
