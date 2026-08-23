@@ -1,5 +1,18 @@
 # Running Adversarial Review and Refinement — Learning Log
 
+## 2026-08-24 — Completion is a candidate until remaining work is recalculated
+
+- **Trigger:** Base와 프로젝트에서 계획된 남은 작업을 모두 처리한 뒤에도 실제 구현·정본·Test·consumer·PR·readback을 다시 확인해 교정할 사항이 없는지 적대적으로 검토하고 나서 완료를 판정하라는 사용자 결정.
+- **Finding 1:** 계획 목록의 소진은 실제 상태의 누락이 0이라는 증거가 아니다. 계획 밖에서 드러난 구현·교정 누락을 완료 뒤 발견하면 조기 완료 보고가 된다.
+- **Decision 1:** `REMAINING_WORK_RECALCULATION_REQUIRED → IMPLEMENTATION_CORRECTION_RESCAN`을 완료 후보 Gate로 둔다. 유효한 새 finding은 `NEW_FINDING_REOPENS_REMAINING_WORK`로 현재 승인 범위의 작업을 다시 열고 기존 owner에서 최소 교정·회귀·readback 후 재계산한다.
+- **Finding 2:** 완료 후보용 적대 검토와 기존 `POST_CHANGE_MONITOR_LOOP`를 별도 5회 루프로 해석하면 같은 최종 상태를 5+5회 중복 검토하는 운영비가 생긴다.
+- **Decision 2:** `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 새 framework나 두 번째 5회 cycle이 아니라 **최종 completion candidate를 입력으로 하는 기존 `POST_CHANGE_MONITOR_LOOP` 자체**다. 같은 final-state lineage가 기존 minimum-five full loop와 `CLEAN_REVIEW_EXIT`를 충족한다.
+- **Finding 3 / RED evidence:** Skill owner 본문과 전용 회귀만 추가한 후보는 canonical reference freshness에서 실패했다. `local-skill-contract-learning-test-sync`와 `local-skill-contract-learning-sync`가 recognized lifecycle test와 Learning Log companion 누락을 실제로 차단했다.
+- **Correction:** 기존 `tests/test_reference_freshness.py`를 recognized companion으로 갱신하고 이 Learning Log를 동기화했다. 전용 `tests/test_completion_correction_adversarial_gate.py`는 Base/프로젝트 owner 간 완료 계약을 직접 검사한다.
+- **Boundary:** `NO_MATERIAL_FOLLOWUP`이면 최소 회차를 채우기 위해 가짜 finding이나 불필요한 변경을 만들지 않는다. `FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK`는 현재 승인 범위에만 적용하며, 범위 밖 future improvement는 별도 후보로 보존한다. 승인 범위 안의 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, 미해결 `DEFER`는 `전체 완료`로 숨기지 않는다.
+- **Evidence ceiling:** 이 변경의 정적 계약·회귀·CI 성공은 운영 규칙의 구현 증거다. 개별 게임의 runtime·사람 플레이·제품 품질이 자동으로 검증됐다는 뜻은 아니다.
+- **Next trigger:** 완료 Gate가 작은 L0 작업까지 과도하게 확장되거나, 동일 최종 상태의 중복 review가 재발하거나, 새 finding이 남은 작업으로 편입되지 않은 채 완료 보고되는 사례가 발견되면 경계를 재검토한다.
+
 ## 2026-08-19 — minimum five full loops plus verified clean exit is the active contract
 
 - **Trigger:** 사용자가 최신 규칙으로 적대적 검토 루프를 **최소 5회 수행하고, 5회 이후에도 유효 오류가 남으면 오류 0이 될 때까지 계속**하도록 명시했다.
