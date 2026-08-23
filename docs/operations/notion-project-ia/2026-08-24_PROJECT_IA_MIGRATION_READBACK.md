@@ -45,6 +45,19 @@ Resolution:
 
 This preserves evidence and avoids both deletion and duplicate Human navigation.
 
+## Post-move stale-current correction
+
+The whole-result review found one valid `STALE_CURRENT` conflict inside Tetris `08 · 핵심 시스템 · 상세`: the page's latest `TETRIS-TIME-025` owner already required one Shared Player Turn Budget with READY carryover, while a lower `Turn Phase Controller` paragraph still called independent Line/Chain/Action timers with no carryover the current production rule.
+
+Correction/readback:
+- preserved `Enemy Telegraph → Line → Line Settle → Chain → Chain Settle → Action → Player Action → Enemy Resolve`;
+- replaced independent per-phase timer wording with the single Shared Player Turn Budget;
+- restored Line/Chain READY carryover and non-consuming Settle/forced-animation/System-Pause semantics;
+- labeled the old `30s / 30s / 30s · no carryover` model as superseded, not current production timing;
+- fetched the moved L3 page again under `02 · Combat Design · Data → Tetris · Home` and confirmed the corrected current wording.
+
+This finding reset the post-change clean-review count to `0/5`; only reviews after this correction may count toward final clean exit.
+
 ## Authority and evidence ceiling
 
 Verified:
