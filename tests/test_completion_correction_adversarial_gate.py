@@ -58,12 +58,13 @@ class CompletionCorrectionAdversarialGateTests(unittest.TestCase):
             "README": read("README.md"),
             "AGENTS": read("AGENTS.md"),
             "long_horizon": read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md"),
-            "routing": read("docs/WORK_MODE_AND_SKILL_ROUTING.md"),
-            "intake": read("skills/managing-project-intake-and-work-contract/SKILL.md"),
             "continuous": read(
                 "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"
             ),
-            "validation": read("skills/reviewing-and-validating-project-changes/SKILL.md"),
+            "claim_verification": read(
+                "skills/reviewing-and-validating-project-changes/references/"
+                "claim-and-intent-verification.md"
+            ),
             "project_agents": read("templates/AGENTS.project.md"),
             "project_workflow": read("templates/project-operations/AI_WORKFLOW.md"),
         }
@@ -73,6 +74,13 @@ class CompletionCorrectionAdversarialGateTests(unittest.TestCase):
                 self.assertIn("REMAINING_WORK_COMPLETION_GATE", text)
                 self.assertIn("IMPLEMENTATION_CORRECTION_RESCAN", text)
                 self.assertIn("POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED", text)
+
+    def test_existing_owner_delegation_reaches_updated_references(self) -> None:
+        intake = read("skills/managing-project-intake-and-work-contract/SKILL.md")
+        validation = read("skills/reviewing-and-validating-project-changes/SKILL.md")
+
+        self.assertIn("references/continuous-work-execution.md", intake)
+        self.assertIn("references/claim-and-intent-verification.md", validation)
 
     def test_continuous_work_recalculates_then_rescans_before_final_review(self) -> None:
         continuous = read(
