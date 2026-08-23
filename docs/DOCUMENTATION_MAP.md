@@ -72,11 +72,12 @@ Google Sheets는 `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL` source다. Figma·
 | Work Mode / Skill | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | PLAN/BUILD/REVIEW와 Skill 자동 라우팅 |
 | 장기 작업 | `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md` | 현행조사→>=3 대안→creative benchmark frontier→최소 5회 전체 적대적 개선→5회 이후 오류·충돌·누락·blocker 0까지 추가 전체 루프→장기 최선안 |
 | 프로젝트 workspace machine authority | `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json` | `DOMAIN_SPLIT_CANON`, `NOTION_HUMAN_FACING_CANON`, `REPOSITORY_STRUCTURED_CANON`, `PROJECT_RELATION_REQUIRED`, `REPOSITORY_RUNTIME_TRUTH` |
+| Human Home | `docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md` | `HUMAN_HOME_INFORMATION_RICHNESS_IS_ALLOWED`, 프로젝트별 대표 시스템·데이터·Visual, AI 설계 해석/수정방법, AI/System metadata 분리 |
 | 시각 협업 | `docs/VISUAL_COLLABORATION_TOOL_POLICY.md` | Notion 사람용 시각·표 정본, project-filtered human/AI view, repository runtime handoff |
-| Notion asset/flow workflow | `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md` | provenance·bounded edit·approval·version·reuse·benchmark·readback·handoff |
+| Notion asset/flow workflow | `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md` | provenance·bounded edit·approval·version·reuse·benchmark·readback·handoff + `IMAGE_TWO_TURN_HARD_BARRIER` |
 | 폐기 작업면 | `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md` | Figma/HTML/Sheets/Tool Hub/QA Studio/local management surface의 unique 흡수→active route 제거 |
 | Google Sheets migration compatibility | `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` | `MIGRATION_ONLY_UNTIL_REMOVAL`, unique/duplicate/obsolete migration, destination readback |
-| 이미지 생성·검수 | `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md` | Visual Requirement Gate, candidate QA, 명시적 approval/promotion |
+| 이미지 생성·검수 | `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md` | Visual Requirement Gate, `TEXT_BRIEF_COMPLETE → STOP_REQUIRED → EXPLICIT_IMAGE_APPROVAL → GENERATE_EXACTLY_ONE → STOP_REQUIRED`, candidate QA, approval/promotion |
 | Art requirement | `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md` | Visual Requirement Gate, Delete Test, priority/disposition |
 | Preferred visual references | `docs/knowledge/game-development/PREFERRED_VISUAL_STYLE_REFERENCE_LIBRARY.md` | reference-only style families; project Art Canon과 분리 |
 | Pixel art system | `docs/knowledge/game-development/PIXEL_ART_STYLE_SYSTEM.md` | 재현 가능한 스타일 축·preset·검토 원칙 |
@@ -122,13 +123,23 @@ Skill 수 자체는 목표·완료조건·경고 임계값이 아니다. 책임 
 
 ## 4. 프로젝트 Notion 표준
 
-페이지 수를 임의로 3개에 제한하지 않는다. **책임이 실제로 다른 경우에만 하위 페이지를 분리**한다. 사람은 Project Registry에서 프로젝트를 눌렀을 때 먼저 Project Home을 본다. Project Home에는 상태·핵심 재미·핵심 루프·핵심 방향·최신 Flow·주요 작업면 링크처럼 사람이 즉시 판단할 정보만 둔다.
+페이지 수를 임의로 3개에 제한하지 않는다. **책임이 실제로 다른 경우에만 하위 페이지를 분리**한다. 사람은 Project Registry/프로젝트 허브에서 프로젝트를 선택했을 때 먼저 Project Home을 본다. `HUMAN_HOME_INFORMATION_RICHNESS_IS_ALLOWED`: Project Home은 정보량을 인위적으로 줄이는 요약 카드가 아니라, 사람이 프로젝트 전체 핵심을 학습·이해·수정할 수 있는 첫 화면이다.
+
+Home에는 프로젝트 한 줄 정의·핵심 재미·Core Loop뿐 아니라 프로젝트별 `PROJECT_SPECIFIC_CORE_DATA_INVENTORY`에서 선정한 핵심 시스템, 최신 Flow, 대표 예산/경제/상대·몬스터/아이템/성장/Route/로스터 등의 데이터, 승인 Visual/Asset anchor, `AI_DESIGN_INTERPRETATION_FOR_HUMAN_REVIEW`, `HOW_TO_CORRECT_AI_UNDERSTANDING`, 현재 구현/검증 상태를 직접 보여준다. `DO_NOT_FORCE_UNIVERSAL_DATA_CATEGORIES`: 실제 프로젝트에 없는 범용 카테고리를 템플릿 맞추기 위해 만들지 않는다.
+
+PR/commit/raw SHA/CI run ID, Prompt/AI Note/Hash/Asset ID/Record Key/Revision, local path/port/implementation path 같은 AI/System metadata는 `90 · SYSTEM MASTERS`, Project Registry, AI/System view 또는 Production/Handoff drilldown으로 분리한다.
 
 ### 4.1 게임 프로젝트 기본형
 
 ```text
 PROJECT HOME
-→ current status / blockers / core fun / core loop / quick links
+→ project definition / core fun / core loop / current status
+→ core systems + player questions / feedback
+→ project-specific representative data & visualizations
+→ approved Visual / Asset anchors
+→ AI design interpretation for human review
+→ how to correct AI understanding / edit flow
+→ blockers / next / NOT_RUN / drilldown links
 
 01 · 프로젝트 전체 작업계획
 → WORK_MASTER filtered by Project
@@ -152,13 +163,17 @@ PROJECT HOME
 → 예산 / Tier / 로스터 / 경제 / 성장 / 기타 사람이 비교·학습하기 좋은 표
 ```
 
-프로젝트 성격에 따라 03과 07+의 이름·책임을 바꿀 수 있다. 예: 조사 Flow, 퍼즐 Flow, 제작·경제 Flow, 세계 재작성 Flow, 무공 기술 예산, 병종·건물 Tier. 구조를 맞추기 위해 프로젝트 핵심 시스템을 일반화하지 않는다.
+프로젝트 성격에 따라 03과 07+의 이름·책임을 바꿀 수 있다. 예: 조사 Flow, 퍼즐 Flow, 제작·경제 Flow, 세계 재작성 Flow, 무공 기술 예산, 병종·건물 Tier. 구조를 맞추기 위해 프로젝트 핵심 시스템을 일반화하지 않는다. Home에는 이 상세 owner를 통째로 복사하지 않고 사람이 핵심 관계를 이해할 대표 요약/시각화와 locator를 둔다.
 
 ### 4.2 Coc-Fiction / 서사 프로젝트 기본형
 
 ```text
 PROJECT HOME
 → current writing state / current scene flow / characters / factions / unresolved clue
+→ central theme / reader experience / canon relationships
+→ representative Storyboard / Character / Faction / Clue anchors
+→ AI design interpretation for human review
+→ how to correct AI understanding / canon change flow
 
 01 · 전체 집필 · 작업계획
 02 · Story Bible · Canon
@@ -241,16 +256,29 @@ CONFIRMED HUMAN TABLE
 
 Context token은 필요할 때 `GDD`, `EXTERNAL_COLLABORATION`, `BOTH`를 유지할 수 있으나, 세 context 모두 Notion Project relation과 repository truth를 우회하지 않는다.
 
+새 이미지 생성/편집은 `IMAGE_TWO_TURN_HARD_BARRIER`를 적용한다.
+
 ```text
-generate / edit
-→ Project target
-→ candidate
+PROJECT_REVIEW_COMPLETE
+→ VISUAL_NEED_DEFINED
+→ TEXT_BRIEF_COMPLETE
+→ STOP_REQUIRED
+
+[next user message]
+→ EXPLICIT_IMAGE_APPROVAL
+→ GENERATE_EXACTLY_ONE
+→ STOP_REQUIRED
+
+[next user message]
+→ review / approval / revision / rejection
+→ approved visual이면 Project target attach
 → readback
-→ review / approval
 → version / replacement
 → repository implementation
 → REPOSITORY_NATIVE_EVIDENCE_CAPTURE
 ```
+
+동일 assistant 응답에서 텍스트 brief와 생성을 이어서 실행하지 않고, 한 이미지 생성 뒤 다음 후보를 자동 연속 생성하지 않는다. 빈 Hero/Visual slot이나 `READY_TO_GENERATE` 상태는 이미지 생성 권한이 아니다.
 
 ## 6. Legacy·compatibility·폐기
 
