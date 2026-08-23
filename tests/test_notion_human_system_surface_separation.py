@@ -52,6 +52,16 @@ class NotionHumanSystemSurfaceSeparationTests(unittest.TestCase):
         ):
             self.assertIn(term, required_sections)
 
+    def test_workspace_authority_contract_uses_shallow_project_navigation(self) -> None:
+        contract = json.loads(AUTHORITY.read_text(encoding="utf-8"))
+        self.assertEqual(
+            contract["notion_navigation_layers"],
+            ["PROJECT_HUB", "HUMAN_PROJECT_HOME", "DOMAIN_WORKSPACE", "DETAIL_OR_RECORD"],
+        )
+        self.assertEqual(contract["default_navigation_depth_max"], "L3")
+        self.assertEqual(contract["l4_normal_page_nesting"], "AVOID")
+        self.assertEqual(contract["domain_workspace_recommended_count"], {"min": 4, "max": 6})
+
     def test_approved_visual_requires_notion_delivery_and_readback(self) -> None:
         text = HUMAN_HOME.read_text(encoding="utf-8") + "\n" + VISUAL_WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("APPROVED_VISUAL_NOTION_DELIVERY_REQUIRED", text)

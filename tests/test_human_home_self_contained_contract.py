@@ -49,6 +49,16 @@ class HumanHomeSelfContainedContractTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
 
+    def test_project_home_keeps_full_flow_system_setting_and_core_tables(self) -> None:
+        text = POLICY.read_text(encoding="utf-8")
+        for term in (
+            "FULL_GAME_FLOW_VISIBLE_ON_HOME",
+            "CORE_SYSTEMS_AND_SETTING_VISIBLE_ON_HOME",
+            "PROJECT_SPECIFIC_CORE_DATA_TABLES_VISIBLE_ON_HOME",
+            "HOME_DETAIL_LINKS_CANNOT_REPLACE_CORE_UNDERSTANDING",
+        ):
+            self.assertIn(term, text)
+
     def test_ai_interpretation_is_not_operational_metadata(self) -> None:
         text = POLICY.read_text(encoding="utf-8")
         self.assertIn("AI_INTERPRETATION_FOR_USER_CORRECTION", text)
