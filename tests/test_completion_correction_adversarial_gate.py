@@ -40,6 +40,19 @@ class CompletionCorrectionAdversarialGateTests(unittest.TestCase):
                 with self.subTest(token=token):
                     self.assertIn(token, text)
 
+    def test_completion_review_reuses_one_final_post_change_monitor_loop(self) -> None:
+        operating = read("docs/OPERATING_MODEL.md")
+        adversarial = read("skills/running-adversarial-review-and-refinement/SKILL.md")
+        project_os = read("skills/managing-game-project-operating-system/SKILL.md")
+
+        for text in (operating, adversarial, project_os):
+            self.assertIn("POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED", text)
+            self.assertIn("POST_CHANGE_MONITOR_LOOP", text)
+
+        self.assertIn("두 번째 독립 review cycle", operating)
+        self.assertIn("두 번째 5회 루프가 아니다", adversarial)
+        self.assertIn("별도 두 번째 검토 루프", project_os)
+
     def test_full_completion_does_not_hide_blocked_or_deferred_work(self) -> None:
         adversarial = read("skills/running-adversarial-review-and-refinement/SKILL.md")
         project_os = read("skills/managing-game-project-operating-system/SKILL.md")
