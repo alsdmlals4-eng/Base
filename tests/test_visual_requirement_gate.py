@@ -176,10 +176,16 @@ class VisualRequirementGateTests(unittest.TestCase):
             "docs/knowledge/game-development/NOTION_GPT_VISUAL_LAYOUT_CONTRACT.md"
         )
         dashboard_skill = read("skills/building-project-visual-dashboards/SKILL.md")
-        for content in (contract, dashboard_skill):
+        project_visual_gate = read(
+            "skills/designing-art-prompts-and-technique-cards/references/"
+            "notion-project-visual-continuity-gate.md"
+        )
+        for content in (contract, dashboard_skill, project_visual_gate):
             self.assertIn("IMAGE_CONVERSATION_APPROVAL_GATE.md", content)
             self.assertIn("TEXT_BRIEF_STOP_REQUIRED", content)
             self.assertIn("GENERATE_EXACTLY_ONE", content)
+        self.assertIn("NEXT_USER_EXPLICIT_APPROVAL", project_visual_gate)
+        self.assertIn("STOP_REQUIRED_AFTER_GENERATION", project_visual_gate)
 
 
 if __name__ == "__main__":
