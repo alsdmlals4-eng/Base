@@ -105,9 +105,19 @@ AND (
 
 Narrative-specific 화면은 필요한 경우 Gallery/Center Peek/toggle을 적극 사용하되, Home 자체의 사람용 교정 surface를 drilldown-only 정보로 밀어내지 않는다.
 
-## Image boundary
+## Image boundary · current main #628 compatible
 
-`내가 수정하는 방법`의 이미지 경로는 PR #620의 활성 image conversation gate를 그대로 따른다.
+`내가 수정하는 방법`의 이미지 경로는 Base가 선호하는 프로젝트 workflow를 사용하되, 현재 main의 #628 계약을 함께 적용한다.
+
+`HOST_PLATFORM_PRECEDENCE`
+
+`HOST_POLICY_OVERRIDE`
+
+`RUNTIME_ENFORCEMENT_NOT_GUARANTEED`
+
+즉 Base 문서는 프로젝트 수준의 선호 흐름을 정의할 뿐, 더 높은 우선순위의 host/system/platform/tool 계약을 덮어쓰거나 실제 runtime enforcement를 보장한다고 주장하지 않는다. 상위 계약이 실행 순서를 바꾸면 그 override를 명시적으로 기록하고 상위 계약을 따른다.
+
+host가 허용하는 범위의 기본 흐름은 다음과 같다.
 
 ```text
 current project / visual canon review
@@ -118,7 +128,7 @@ current project / visual canon review
 → STOP
 ```
 
-Narrative `Text Approval=APPROVED`는 Visual Gate 진입 자격일 뿐, 같은 assistant 응답에서 이미지 생성을 자동 승인하지 않는다.
+Narrative `Text Approval=APPROVED`는 Visual Gate 진입 자격일 뿐, 같은 assistant 응답에서 이미지 생성을 자동 승인하지 않는다. 또한 static policy 존재만으로 host runtime에서 이 순서가 기술적으로 강제됐다고 주장하지 않는다.
 
 ## Implementation Reality Gate
 
@@ -128,6 +138,7 @@ Verified:
 - #621 Narrative Method remains a separate narrative/world knowledge owner.
 - all ten Human Homes were restored with project-specific AI-understanding + edit-guide surfaces and read back by workspace search.
 - raw operational metadata remains separated from Human Home.
+- #628 host/platform precedence boundary is preserved in this compatibility record.
 - no project gameplay/runtime files were changed by this correction.
 - no image was generated.
 
@@ -137,14 +148,17 @@ Not claimed:
 - exact desktop/mobile Notion geometry: `UI_GEOMETRY_NOT_VERIFIED`.
 - COC Part 1 narrative migration: `NOT_RUN / STILL_APPROVAL_GATED`.
 - new visual quality/runtime integration: `NOT_RUN / N/A`.
+- static Base policy technically enforces host runtime behavior: `RUNTIME_ENFORCEMENT_NOT_GUARANTEED`.
 
 ## TDD evidence
 
-The regression test was committed before this file. The temporary focused PR runner then failed because this compatibility contract did not yet exist. This file is the minimal production-side change intended to turn that focused test GREEN.
+1. Human Home compatibility assertion was committed before this file. The one-shot focused runner failed because the compatibility file did not yet exist, then passed after the minimal compatibility record was added.
+2. After main advanced through #628, a second regression assertion required `HOST_PLATFORM_PRECEDENCE`, `HOST_POLICY_OVERRIDE`, and `RUNTIME_ENFORCEMENT_NOT_GUARANTEED`. The normal `unittest discover` core-regression failed on the missing host-precedence contract before this section was added.
+3. The P09 regression was converted from top-level pytest-style functions to `unittest.TestCase` so the existing core-regression discovers it without a permanent extra workflow. The temporary focused workflow was removed before final merge.
 
 ## Rollback
 
 - repository: revert this compatibility record and its regression assertion only if a later approved Human Home owner supersedes #620 explicitly.
 - Notion: restore the prior Home version only if a later explicit user decision removes or replaces the two human correction surfaces.
 
-Until such an explicit superseding decision exists, summary-first narrative work must remain compatible with the #620 Human Home contract.
+Until such an explicit superseding decision exists, summary-first narrative work must remain compatible with the #620 Human Home contract and current host/platform precedence.
