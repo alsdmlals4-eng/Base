@@ -140,21 +140,28 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
         self.assertEqual(199, omenward["followup_issue"])
         self.assertNotIn("runtime_rollout_policy", omenward)
 
-    def test_ten_paces_rollout_is_deferred_when_current_main_keeps_advancing(self) -> None:
+    def test_ten_paces_rollout_is_deferred_by_current_project_work_gate(self) -> None:
         ten = load_matrix()["projects"]["TEN_PACES"]
         installation = ten["manifest_installation"]
-        self.assertEqual("DEFERRED_CONCURRENT_MAIN_CHURN", installation["state"])
-        self.assertEqual([167, 169], installation["attempted_prs"])
+        self.assertEqual("DEFERRED_PHASE_GATE", ten["status"])
+        self.assertEqual("DEFERRED_PROJECT_WORK_GATE", installation["state"])
+        self.assertEqual([167, 169], installation["historical_attempted_prs"])
         self.assertEqual(
             [
                 "d1fbe2de9675401e6b5db1b2dd4463b516c261c2",
                 "f199eb7963b2012ff8a5ec8540117c1fd49db8cd",
                 "c5c54096829c1778996b32873203b85db7d9318a",
             ],
-            installation["observed_main_commits"],
+            installation["historical_observed_main_commits"],
         )
+        self.assertNotIn("attempted_prs", installation)
+        self.assertNotIn("observed_main_commits", installation)
         self.assertEqual("NOT_RUN_NO_MANIFEST_INSTALLED", installation["runtime_validation"])
-        self.assertIn("concurrent planning", ten["blocker"])
+        self.assertIn("historical", ten["evidence"].lower())
+        self.assertIn("current approved project task", ten["blocker"])
+        self.assertNotIn("concurrent planning main", ten["blocker"])
+        self.assertIn("next approved Ten Paces project task", ten["revisit"])
+        self.assertIn("exact Notion", ten["revisit"])
 
     def test_little_boat_defer_remains_and_omenward_defer_is_superseded(self) -> None:
         matrix = load_matrix()

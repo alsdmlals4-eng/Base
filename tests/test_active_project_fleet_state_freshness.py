@@ -48,6 +48,30 @@ class ActiveProjectFleetStateFreshnessTests(unittest.TestCase):
         self.assertNotIn("Issue #199 authority", omenward["next_project_work_action"])
         self.assertIn("resolved validator history", omenward["next_project_work_action"])
 
+    def test_ten_paces_historical_churn_is_not_current_reuse_blocker(self) -> None:
+        matrix = load_json("ACTIVE_PROJECT_ADOPTION_MATRIX.json")
+        ten = matrix["projects"]["TEN_PACES"]
+        installation = ten["manifest_installation"]
+
+        self.assertEqual("DEFERRED_PHASE_GATE", ten["status"])
+        self.assertEqual("DEFERRED_PROJECT_WORK_GATE", installation["state"])
+        self.assertIn("historical_attempted_prs", installation)
+        self.assertIn("historical_observed_main_commits", installation)
+        self.assertNotIn("attempted_prs", installation)
+        self.assertNotIn("observed_main_commits", installation)
+        self.assertNotIn("concurrent planning main advanced", ten.get("blocker", ""))
+        self.assertIn("current approved project task", ten.get("blocker", ""))
+        self.assertIn("Phase I–VI", ten.get("evidence", ""))
+        self.assertIn("historical", ten.get("evidence", "").lower())
+
+        handoff = load_json("PROJECT_WORK_REUSE_HANDOFF.json")
+        ten_handoff = handoff["projects"]["TEN_PACES"]
+        next_action = ten_handoff["next_project_work_action"]
+        self.assertNotIn("After planning main stabilizes", next_action)
+        self.assertIn("first-five-duel Phase I–VI", next_action)
+        self.assertIn("current main + exact Notion state + open PRs", next_action)
+        self.assertTrue(ten_handoff["do_not_flatten_project_identity"])
+
 
 if __name__ == "__main__":
     unittest.main()
