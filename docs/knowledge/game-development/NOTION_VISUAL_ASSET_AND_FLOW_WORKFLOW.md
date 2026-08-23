@@ -76,6 +76,30 @@ ARCHIVED
 
 Approval means the user or project authority accepted the candidate for the stated use. It does not prove runtime integration.
 
+### Image generation conversation gate
+
+`IMAGE_TWO_TURN_HARD_BARRIER`
+
+Notion에 시각 슬롯이나 missing visual requirement가 존재한다는 사실은 이미지 생성 권한이 아니다. 프로젝트 전체 맥락과 기존 승인 Visual/Asset을 먼저 확인하고, 실제 생성 필요가 확인되면 아래 대화 Gate를 따른다.
+
+```text
+PROJECT_REVIEW_COMPLETE
+→ VISUAL_NEED_DEFINED
+→ TEXT_BRIEF_COMPLETE
+→ STOP_REQUIRED
+
+[next user message]
+→ EXPLICIT_IMAGE_APPROVAL
+→ GENERATE_EXACTLY_ONE
+→ STOP_REQUIRED
+```
+
+- 동일 assistant 응답에서 brief 작성과 이미지 생성을 연속 실행하지 않는다.
+- 이미지 1장 생성 뒤 다음 후보·변형·후속 에셋을 자동 생성하지 않는다.
+- Notion Home의 빈 Hero/Visual slot을 채우기 위해 임의 이미지를 생성하지 않는다.
+- `TEXT_BRIEF_COMPLETE` 또는 `READY_TO_GENERATE`는 실제 승인 이미지가 아니며 Home/Visual Bible에서 placeholder를 승인 자산처럼 보이게 만들지 않는다.
+- 생성 이후에도 candidate review → explicit approval → Notion attach/readback → 필요 시 repository runtime handoff를 별도로 거친다.
+
 ### Approved project visual delivery gate
 
 `APPROVED_VISUAL_NOTION_DELIVERY_REQUIRED`
