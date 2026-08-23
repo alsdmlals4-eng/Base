@@ -111,7 +111,7 @@ hera_source_delta_guard:
 - 승인된 Decision은 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`와 workspace authority contract에 따라 Repository 정본과 적용 가능한 `NOTION_HUMAN_FACING_CANON`에 기록하고 **destination readback**한다. Google Sheets 쓰기는 active Decision sync 요구사항이 아니다.
 - `BEST_LONG_TERM_EFFICIENT_METHOD`를 운영체계의 작업목표로 사용한다. 응답 속도·최소 토큰보다 정확성, 출시 품질, 유지보수성, 재사용성, 되돌리기 가능성, 수명주기 총비용을 우선하고, 공식/1차 자료·벤치마크·현업 운영·실무 성공/실패 사례를 최소 3개 실질 대안과 비교한다.
 - `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`: GitHub 병합 뒤 exact new main을 재조회하고 전체 승인 범위를 적대적으로 검토한다. 유효 finding은 `POSTMERGE_CORRECTION_REQUIRED`로 latest main의 새 Branch/PR에서 교정·회귀 검증한다. 적용 가능한 Notion current-state는 GitHub 증거 뒤에만 갱신하고, GitHub/Notion 양쪽 destination을 다시 읽어 `PROGRESS_READBACK_REQUIRED`와 남은 작업 계산을 닫는다.
-- `REMAINING_WORK_COMPLETION_GATE`: Base 공용 완료 규칙을 모든 프로젝트 작업에도 적용한다. 계획된 작업을 끝낸 뒤 `REMAINING_WORK_RECALCULATION_REQUIRED`와 `IMPLEMENTATION_CORRECTION_RESCAN`을 수행하고, 새 유효 finding이 있으면 `NEW_FINDING_REOPENS_REMAINING_WORK`로 BUILD/verify를 재개한다. 최종 후보는 `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`를 거쳐 `CLEAN_REVIEW_EXIT`여야 한다.
+- `REMAINING_WORK_COMPLETION_GATE`: Base 공용 완료 규칙을 모든 프로젝트 작업에도 적용한다. 계획된 작업을 끝낸 뒤 `REMAINING_WORK_RECALCULATION_REQUIRED`와 `IMPLEMENTATION_CORRECTION_RESCAN`을 수행하고, 새 유효 finding이 있으면 `NEW_FINDING_REOPENS_REMAINING_WORK`로 BUILD/verify를 재개한다. 최종 후보의 기존 `POST_CHANGE_MONITOR_LOOP`가 곧 `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`이며 별도 두 번째 검토 루프를 만들지 않는다.
 
 ### `REMAINING_WORK_COMPLETION_GATE`
 
@@ -129,13 +129,14 @@ planned project work exhausted
    │  → regression + destination readback
    │  → remaining-work recalculation again
    └─ no required finding → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
+→ same final `POST_CHANGE_MONITOR_LOOP`
 → `running-adversarial-review-and-refinement` minimum-five full loops
 → CLEAN_REVIEW_EXIT
 → FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
 → completion report
 ```
 
-`IMPLEMENTATION_CORRECTION_RESCAN`은 `running-adversarial-review-and-refinement`가 소유하며 새 Skill이 아니다. 프로젝트 core/승인 intent와 실제 구현의 불일치, 정본·Notion/Repository drift, untouched Test·Template·consumer·reference, 동일 Goal PR, rollback/복구, runtime/readback evidence를 다시 공격한다. 검증된 finding은 현재 승인 범위의 남은 작업으로 편입한다.
+`IMPLEMENTATION_CORRECTION_RESCAN`은 `running-adversarial-review-and-refinement`가 소유하며 새 Skill이 아니다. 프로젝트 core/승인 intent와 실제 구현의 불일치, 정본·Notion/Repository drift, untouched Test·Template·consumer·reference, 동일 Goal PR, rollback/복구, runtime/readback evidence를 다시 공격한다. 검증된 finding은 현재 승인 범위의 남은 작업으로 편입한다. `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED` 역시 새 cycle이 아니라 최종 completion candidate를 입력으로 한 동일 `POST_CHANGE_MONITOR_LOOP`를 뜻한다.
 
 승인 범위 안에 완료 조건을 막는 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, 미해결 `DEFER`가 남으면 `전체 완료`라고 보고하지 않는다. 해당 상태와 재개 조건을 그대로 노출한다. 범위 밖 future improvement는 별도 후보로 `DEFER`할 수 있으나 현재 범위의 미완료를 숨기는 용도로 사용하지 않는다.
 
@@ -369,7 +370,7 @@ KEEP_UNRESOLVED
 14. Governance checker·회귀 테스트·GitHub Actions·브랜치 보호
 15. 과거 대화 없이 현재 Decision을 복원하는 콜드 스타트
 16. GitHub 병합 뒤 exact main·전체 적대 검토·필수 교정·적용 가능한 Notion 갱신·양쪽 readback·진행도 재계산
-17. `REMAINING_WORK_RECALCULATION_REQUIRED` 뒤 `IMPLEMENTATION_CORRECTION_RESCAN`을 수행하고, 새 finding이면 `NEW_FINDING_REOPENS_REMAINING_WORK`, clean이면 `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`와 `CLEAN_REVIEW_EXIT`를 확인
+17. `REMAINING_WORK_RECALCULATION_REQUIRED` 뒤 `IMPLEMENTATION_CORRECTION_RESCAN`을 수행하고, 새 finding이면 `NEW_FINDING_REOPENS_REMAINING_WORK`, clean이면 최종 후보의 동일 `POST_CHANGE_MONITOR_LOOP`로 `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`와 `CLEAN_REVIEW_EXIT`를 확인
 
 ```text
 결정
@@ -422,7 +423,7 @@ KEEP_UNRESOLVED
 - GUT/Hera adopted project이면 exact pin/pair, 실제 consumption, owner boundary, rollback/removal과 Hera source-delta guard가 기록됐다.
 - 신규·정리·마이그레이션·provider update 결과는 `verify` 증거를 가진다.
 - 병합 뒤 `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`, `POSTMERGE_CORRECTION_REQUIRED`, `PROGRESS_READBACK_REQUIRED`가 적용 범위에서 닫혔다.
-- `FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK`: 승인 범위의 actionable remaining work가 0이고 `IMPLEMENTATION_CORRECTION_RESCAN` 결과 필수 구현/교정 finding이 없으며 `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`가 `CLEAN_REVIEW_EXIT`로 닫혔다.
+- `FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK`: 승인 범위의 actionable remaining work가 0이고 `IMPLEMENTATION_CORRECTION_RESCAN` 결과 필수 구현/교정 finding이 없으며 최종 후보의 동일 `POST_CHANGE_MONITOR_LOOP`가 `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`와 `CLEAN_REVIEW_EXIT`를 닫았다.
 - 승인 범위 안에 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, 미해결 `DEFER`가 남은 상태를 `전체 완료`로 숨기지 않았다.
 - 실행하지 않은 검사와 권한은 `NOT_RUN` 또는 `[미검증]`이다.
 - 사용한 Skill Mode의 이유와 얻은 결과를 보고했다.
