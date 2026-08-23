@@ -171,6 +171,19 @@ class VisualRequirementGateTests(unittest.TestCase):
         ):
             self.assertIn(token, gate)
 
+    def test_image_conversation_gate_declares_host_platform_precedence(self) -> None:
+        gate = read(
+            "docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md"
+        )
+        for token in (
+            "HOST_PLATFORM_PRECEDENCE",
+            "HOST_POLICY_OVERRIDE",
+            "RUNTIME_ENFORCEMENT_NOT_GUARANTEED",
+        ):
+            self.assertIn(token, gate)
+        self.assertIn("상위", gate)
+        self.assertIn("시스템", gate)
+
     def test_current_visual_owners_route_to_image_conversation_gate(self) -> None:
         contract = read(
             "docs/knowledge/game-development/NOTION_GPT_VISUAL_LAYOUT_CONTRACT.md"
