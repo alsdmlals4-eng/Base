@@ -96,11 +96,17 @@ GitHub 댓글·Issue·PR·Discussion은 승인 결정의 추적 근거이지 최
 
 프로젝트 Notion은 `NOTION_HUMAN_FACING_CANON`이며 사용자가 전체 흐름을 확인하고 시각적 자료·예산·Tier·비교표를 직접 수정하는 기본 작업면이다.
 
+Project Home의 필수 구조는 `docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md`의 `HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`을 따른다. 이 Skill은 Home을 짧은 상태·링크 허브로 재축약하지 않고, 프로젝트별 핵심 데이터와 AI 해석 교정면, 사용자 수정 경로까지 같은 사람용 projection 안에서 보존한다.
+
 기본 책임은 다음과 같다.
 
 ```text
 PROJECT HOME
-→ 상태 / 핵심 재미 / 핵심 루프 / 방향 / blocker / 빠른 링크
+→ HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN
+→ PROJECT_SPECIFIC_CORE_DATA
+→ AI_INTERPRETATION_FOR_USER_CORRECTION
+→ HUMAN_EDIT_GUIDE_REQUIRED
+→ 상태 / 핵심 재미 / 핵심 루프 / 핵심 시스템 / UX·Visual / 구현·검증 상태 / blocker·다음 작업 / 중요한 결정·위험
 
 Visual or Story Bible
 → 승인된 시각·서사 North Star

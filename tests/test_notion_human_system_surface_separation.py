@@ -42,6 +42,16 @@ class NotionHumanSystemSurfaceSeparationTests(unittest.TestCase):
             "UPLOAD_ATTACH_READBACK_AND_APPROVED_RECORD_REQUIRED",
         )
 
+    def test_workspace_authority_contract_requires_rich_human_home_sections(self) -> None:
+        contract = json.loads(AUTHORITY.read_text(encoding="utf-8"))
+        required_sections = set(contract["human_home_required_sections"])
+        for term in (
+            "PROJECT_SPECIFIC_CORE_DATA",
+            "AI_INTERPRETATION_FOR_USER_CORRECTION",
+            "HUMAN_EDIT_GUIDE_REQUIRED",
+        ):
+            self.assertIn(term, required_sections)
+
     def test_approved_visual_requires_notion_delivery_and_readback(self) -> None:
         text = HUMAN_HOME.read_text(encoding="utf-8") + "\n" + VISUAL_WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("APPROVED_VISUAL_NOTION_DELIVERY_REQUIRED", text)

@@ -60,6 +60,7 @@ class P08AiOperationsContractTests(unittest.TestCase):
     def test_p08_test_is_exact_freshness_companion_and_permanent_ci_consumer(self) -> None:
         data = json.loads(FRESHNESS.read_text(encoding="utf-8"))
         rule = next(row for row in data["coupled_change_rules"] if row["name"] == "local-skill-contract-learning-test-sync")
+        self.assertEqual(["skills/**/SKILL.md"], rule["when_changed"])
         self.assertIn("tests/test_p08_ai_operations_contract.py", rule["require_any_changed"])
         workflow = BASE_V9_WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("tests.test_p08_ai_operations_contract", workflow)
