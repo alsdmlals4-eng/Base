@@ -166,17 +166,18 @@
         "RM-VIS-002": "planned"
       },
       "manifest_installation": {
-        "state": "DEFERRED_CONCURRENT_MAIN_CHURN",
-        "attempted_prs": [167, 169],
-        "observed_main_commits": [
+        "state": "DEFERRED_PROJECT_WORK_GATE",
+        "historical_attempted_prs": [167, 169],
+        "historical_observed_main_commits": [
           "d1fbe2de9675401e6b5db1b2dd4463b516c261c2",
           "f199eb7963b2012ff8a5ec8540117c1fd49db8cd",
           "c5c54096829c1778996b32873203b85db7d9318a"
         ],
         "runtime_validation": "NOT_RUN_NO_MANIFEST_INSTALLED"
       },
-      "blocker": "manifest-only rollout deferred because concurrent planning main advanced twice while two TDD attempts were open; protected runtime paths still require an approved BUILD package",
-      "revisit": "after the concurrent planning wave stabilizes, re-read current main and install the manifest; runtime modules remain gated by an approved BUILD package"
+      "evidence": "historical manifest-only attempts #167/#169 were deferred during concurrent planning churn; current Ten Paces later stabilized and the first-five-duel Phase I–VI implementation was authorized and merged, so that churn is historical evidence rather than the current blocker",
+      "blocker": "Base reuse preinstallation remains intentionally unrun; adoption now requires a current approved project task, fresh main + exact Notion + open-PR overlap checks, and an actually consumed module",
+      "revisit": "during the next approved Ten Paces project task, re-read current main, exact Notion state and open PRs, then install or adapt only modules actually consumed by that task while preserving hidden-information and Human/device evidence boundaries"
     },
     "OMENWARD": {
       "repository": "alsdmlals4-eng/omenward",
