@@ -38,10 +38,11 @@ Initial plan proposed editing `skills/developing-and-revising-serial-fiction/SKI
 
 ## Task 2 · Contract regression test
 
-- [x] Create `tests/test_narrative_world_knowledge_model.py`.
+- [x] Create `tests/test_p09_narrative_world_knowledge_contract.py`.
+- [x] Keep the test under P09 semantic ownership; avoid the P08 `tests/test_*model*.py` ownership glob.
 - [x] Guard required workflow tokens, DB names, status values, Visual Gate and Center Peek wording.
 - [x] Guard the Knowledge README routing entry.
-- [ ] Execute focused test on exact PR head through repository CI. Local clone/runtime is unavailable because the session container cannot resolve GitHub DNS.
+- [ ] Re-run focused/full test on the corrected exact PR head through repository CI. Local clone/runtime is unavailable because the session container cannot resolve GitHub DNS.
 
 ## Task 3 · Common Notion storage
 
@@ -96,12 +97,13 @@ Verified findings already fixed during loops include:
 - relationship direction made structured;
 - Visual Gate invalid state formula/audit added;
 - Asset Library inline clutter moved to separate visual pages;
-- polluted visual pages relabeled `REVERIFY`.
+- polluted visual pages relabeled `REVERIFY`;
+- initial contract-test filename overlapped P08/P09 semantic ownership; renamed under P09 without widening the partition manifest.
 
-- [ ] Record five full-loop review result on the branch.
-- [ ] Open current-task PR.
-- [ ] Run exact-head GitHub Actions/checks.
-- [ ] Confirm unresolved thread/review/ruleset gates.
+- [x] Record five full-loop review result on the branch.
+- [x] Open current-task PR #621.
+- [x] Run first exact-head GitHub Actions/checks and capture failure evidence.
+- [ ] Confirm corrected exact-head CI, unresolved thread/review/ruleset gates.
 
 ## Task 7 · Completion / merge
 
