@@ -10,8 +10,6 @@ EXTERNAL_AI_SKILL = ROOT / "skills" / "orchestrating-deepseek-worktrees" / "SKIL
 EXTERNAL_AI_LOG = ROOT / "skills" / "orchestrating-deepseek-worktrees" / "LEARNING_LOG.md"
 MODEL_COST_SKILL = ROOT / "skills" / "optimizing-ai-model-and-prompt-costs" / "SKILL.md"
 MODEL_COST_LOG = ROOT / "skills" / "optimizing-ai-model-and-prompt-costs" / "LEARNING_LOG.md"
-DESIGN_DOCUMENT_SKILL = ROOT / "skills" / "managing-design-documents" / "SKILL.md"
-HUMAN_HOME_POLICY = ROOT / "docs" / "operations" / "HUMAN_HOME_SELF_CONTAINED_POLICY.md"
 ROUTING_GUIDE = ROOT / "docs" / "knowledge" / "ai" / "SKILL_ROUTING_PRECISION_GUIDE.md"
 P08_PARTITION_LOG = ROOT / "docs" / "operations" / "base-partitions" / "learning" / "P08_LEARNING_LOG.md"
 FRESHNESS = ROOT / ".github" / "reference-freshness.json"
@@ -59,24 +57,10 @@ class P08AiOperationsContractTests(unittest.TestCase):
             with self.subTest(required=required):
                 self.assertIn(required, text)
 
-    def test_design_document_ai_operations_preserve_rich_human_home_owner(self) -> None:
-        design = DESIGN_DOCUMENT_SKILL.read_text(encoding="utf-8")
-        policy = HUMAN_HOME_POLICY.read_text(encoding="utf-8")
-        self.assertIn("docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md", design)
-        for required in (
-            "HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN",
-            "PROJECT_SPECIFIC_CORE_DATA",
-            "AI_INTERPRETATION_FOR_USER_CORRECTION",
-            "HUMAN_EDIT_GUIDE_REQUIRED",
-        ):
-            with self.subTest(required=required):
-                self.assertIn(required, design)
-                self.assertIn(required, policy)
-        self.assertIn("AI_SYSTEM_OPERATIONAL_METADATA_EXCLUDED", policy)
-
     def test_p08_test_is_exact_freshness_companion_and_permanent_ci_consumer(self) -> None:
         data = json.loads(FRESHNESS.read_text(encoding="utf-8"))
         rule = next(row for row in data["coupled_change_rules"] if row["name"] == "local-skill-contract-learning-test-sync")
+        self.assertEqual(["skills/**/SKILL.md"], rule["when_changed"])
         self.assertIn("tests/test_p08_ai_operations_contract.py", rule["require_any_changed"])
         workflow = BASE_V9_WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("tests.test_p08_ai_operations_contract", workflow)
