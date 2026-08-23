@@ -70,10 +70,10 @@ Official:
 - Steam Community updates: <https://steamcommunity.com/app/4459590/allnews/>
 
 Developer self-report, verified source URLs:
-- build/workflow report: <https://www.reddit.com/r/aigamedev/comments/1ug5f5w/i_still_cant_code_but_i_made_a_game_i_think_is/>
-- demo-feedback/Core-overhaul report: <https://www.reddit.com/r/aigamedev/comments/1usu78n/i_still_cant_code_but_my_steam_demo_reached_360/>
+- first public-playtest/build report: <https://www.reddit.com/r/aigamedev/comments/1ug5f5w/i_cant_code_but_after_8_months_of_building_with/>
+- Steam-demo reception/workflow report: <https://www.reddit.com/r/aigamedev/comments/1v6wsy0/i_spent_8_months_making_my_first_ai_assisted_game/>
 
-The 50,000-wishlist milestone is developer-announced/self-reported. It is useful as a traction signal, not evidence that AI caused the traction.
+The 50,000-wishlist milestone is developer-announced/self-reported through the official Steam community feed. It is useful as a traction signal, not evidence that AI caused the traction.
 
 ## 3.2 One-sentence hook and loop
 
@@ -105,7 +105,7 @@ RNG produces candidates
 
 ## 3.3 Public-feedback rebuild loop
 
-The public update history shows a significant Core-system rebuild rather than only parameter tuning. The developer also added a manual lock so units selected for preservation are not consumed by absorption, plus mid-run save and later performance/balance/stability fixes.
+The official Steam update history shows a significant Core-system rebuild rather than only parameter tuning. The developer also added a manual lock so units selected for preservation are not consumed by absorption, plus mid-run save and later performance/balance/stability fixes.
 
 Reusable shape:
 
@@ -124,7 +124,7 @@ This is strong evidence for `PLAYER_FEEDBACK_REBUILD_LOOP`.
 
 ## 3.4 AI-production lesson
 
-Developer self-report separates AI throughput from human judgement: AI coding tools were used to build and iterate, while the human repeatedly decided what was fun, readable, balanced, worth deleting, and worth rebuilding.
+Developer self-report separates AI throughput from human judgement: AI coding/visual tools were used to build and iterate, while the human repeatedly handled systems design, build testing, bug fixing, balance rework, idea removal and rebuilding. The public Steam disclosure separately confirms there is no live generative-AI system during gameplay.
 
 ```text
 ADOPT
@@ -634,7 +634,7 @@ Resolution: no paid/runtime dependency in this absorption; add `AI_VISIBLE_OUTPU
 
 ### Final source-integrity correction
 
-The final adversarial pass also found two inferred Slotbound Reddit URLs that did not point to the verified source posts. Both links were replaced with the verified developer posts above before merge verification. This correction is part of the evidence-quality gate, not a gameplay conclusion change.
+The final adversarial pass rejected inferred/uncertain Slotbound Reddit paths. The pack now uses the verified June public-playtest/build post and the verified July Steam-demo reception/workflow post, while the Core-system rebuild itself is grounded in the official Steam update history.
 
 ### Clean exit
 
