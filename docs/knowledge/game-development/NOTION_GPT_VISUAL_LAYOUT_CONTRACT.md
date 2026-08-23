@@ -92,13 +92,19 @@ When the ChatGPT Notion connector later exposes and verifies typed `file_upload`
 
 `HUMAN_HOME_IS_NOT_AI_CONTEXT_DUMP`
 
-Human-facing project surfaces prioritize comprehension and decision usefulness:
+`HUMAN_HOME_INFORMATION_RICHNESS_IS_ALLOWED`
+
+Human-facing project surfaces prioritize comprehension and decision usefulness. Information volume itself is not a defect: Home may contain the project's Core Loop, core systems, representative budget/economy/enemy/monster/item/growth/Route/roster data, approved visuals and correction guidance when those elements are necessary to understand the game. Long raw tables and processing metadata remain drilldown/system data so Home does not become a competing canon.
+
+Human-facing surfaces include:
 
 - Project Home
 - Visual Bible
 - human-facing Asset/Reference gallery
 - approved Visual Map / Flow
+- project-specific representative system/data views
 - current focus, important decisions and links
+- human-reviewable AI design interpretation and correction guidance
 
 AI/system surfaces retain processing metadata that is useful to automation but noisy to people:
 
@@ -181,7 +187,7 @@ identify project
 - `SUPPORTING`: useful detail/reference; keep in the relevant Visual Bible or asset gallery rather than crowding Home.
 - `ARCHIVE`: provenance/history only; not shown on normal human surfaces.
 
-Do not promote every approved image to Home. Home is a summary surface, not the asset archive.
+Do not promote every approved image to Home. Home is an information-rich summary/learning surface, not the asset archive.
 
 ## Layout grammar
 
@@ -194,10 +200,16 @@ Project title
 Hero visual when a true HERO exists
 one-line project promise / current focus
 
-Core experience
+Core experience + Core Loop
 Primary visual(s) adjacent to the matching explanation
 
-Core systems / world / UX
+Core systems + project-specific representative data
+Flow / budget / economy / opponent or monster / item / growth / Route / roster only when project-relevant
+
+AI가 이해한 설계 의도
+사용자가 수정하는 방법
+
+World / UX / approved Visual anchors
 Supporting approved visuals near their owning section
 
 Current state / decisions / important links
@@ -212,6 +224,30 @@ Rules:
 - Avoid duplicated canonical images. Reuse the same canonical record or link when possible.
 - A generated Visual Map is derived presentation. Structured Screen/Flow records remain authoritative when the rendered map disagrees.
 - Pixel-level width, crop, mask and exact visual balance are manual/UI-level refinements unless the active tool path exposes and verifies them.
+- Do not force universal data categories across projects; choose sections from the actual project core/data inventory.
+
+## Image generation barrier
+
+`IMAGE_TWO_TURN_HARD_BARRIER`
+
+A missing Hero slot, missing visual block, or attractive layout opportunity never authorizes generation. When a new project image is actually needed, the layout workflow delegates to the image policy and preserves the hard conversational boundary:
+
+```text
+PROJECT_REVIEW_COMPLETE
+→ VISUAL_NEED_DEFINED
+→ TEXT_BRIEF_COMPLETE
+→ STOP_REQUIRED
+
+[next user message]
+→ EXPLICIT_IMAGE_APPROVAL
+→ GENERATE_EXACTLY_ONE
+→ STOP_REQUIRED
+```
+
+- 동일 assistant 응답에서 brief와 generation을 연속 실행하지 않는다.
+- Layout/placement automation must never turn `TEXT_BRIEF_COMPLETE`, `READY_TO_GENERATE`, an empty image block, or a missing Hero into an automatic generation trigger.
+- After `GENERATE_EXACTLY_ONE`, do not automatically generate variants, follow-up assets, or the next visual requirement.
+- Existing approved visuals are reused/placed before proposing new generation when they satisfy the current need.
 
 ## Image understanding gate
 
@@ -231,7 +267,7 @@ NO_DIRECT_VISUAL_EVIDENCE + visual-content-dependent decision
 → BLOCKED_UNVERIFIED for that judgement
 ```
 
-Do not generate a missing image merely to satisfy this gate. Image generation remains subject to the user's explicit generation instruction and project policy.
+Do not generate a missing image merely to satisfy this gate. Image generation remains subject to the user's explicit generation instruction, `IMAGE_TWO_TURN_HARD_BARRIER`, and project policy.
 
 ## Delivery and readback
 
@@ -256,7 +292,7 @@ For Android/iOS/browser-visible image delivery, add a final client observation s
 During project planning/review:
 
 ```text
-read project Home + Visual Bible + approved assets + implementation state
+read project Home + Visual Bible + approved assets + project-specific core systems/data + implementation state
 → build only the visual inventory needed by that project
 → separate missing visual requirements from existing actual visuals
 → for each actual approved visual, record intended use + placement priority
@@ -287,9 +323,11 @@ Do not build infrastructure for hypothetical layout limitations.
 ## Failure modes to reject
 
 - treating a text art direction as an actual approved image;
+- bypassing `IMAGE_TWO_TURN_HARD_BARRIER` because Home would look better with an image;
 - claiming image semantic understanding from a filename/caption alone;
 - putting Prompt/Hash/AI notes on the human Home by default;
 - duplicating the same approved visual into competing canonical records;
+- forcing identical budget/monster/economy sections onto unrelated projects;
 - redesigning the entire Home during a bounded asset placement task;
 - claiming exact visual layout quality when only semantic block readback was available;
 - treating `self.current_tool_access=available` as proof that the current client can invoke the capability;
@@ -304,10 +342,12 @@ Do not build infrastructure for hypothetical layout limitations.
 
 The workflow is healthy when:
 
-- human Home remains concise and readable;
+- human Home is information-rich enough to teach the project while remaining readable and hierarchically structured;
 - AI/system metadata remains queryable without polluting the human page;
+- project-specific representative data/visuals are selected from actual project needs rather than a universal template;
 - every displayed project visual is traceable to an actual asset/reference and approval state;
 - GPT can select a semantic destination from metadata without repeatedly asking where the asset belongs;
+- missing visuals never trigger automatic generation and the two-turn barrier is preserved;
 - visual-content-dependent judgements require direct image evidence;
 - capability-dependent claims distinguish discovery, callable schema, invocation, readback and human-visible evidence;
 - binary media uses a verified typed `file_upload` path instead of known-broken external delivery when client rendering matters;
