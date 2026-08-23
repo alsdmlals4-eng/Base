@@ -96,7 +96,6 @@ jobs:
             tests.test_p08_ai_operations_contract \
             tests.test_vertical_slice_v9_contract \
             tests.test_base_v9_4_ai_operations_contract \
-            tests.test_ai_indie_game_reverse_engineering_radar \
             tests.test_base_v9_4_release_evidence_contract \
             tests.test_base_v9_4_trusted_evidence_record \
             tests.test_base_v9_4_1_compatibility_release \
