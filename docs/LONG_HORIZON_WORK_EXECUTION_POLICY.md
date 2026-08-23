@@ -86,6 +86,7 @@ RESEARCH
 → ONE USER APPROVAL
 → SMALL TESTABLE SLICES
 → TOOL / RUNTIME EXECUTION
+→ AT LEAST 5 FULL ADVERSARIAL LOOPS, THEN UNTIL CLEAN
 → LONG-TERM FIT CLOSURE
 → EXACT-HEAD PR GATE
 → MERGE
@@ -97,10 +98,11 @@ RESEARCH
 → if finding: NEW_FINDING_REOPENS_REMAINING_WORK → BUILD / VERIFY / RECALCULATE
 → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
 → SAME FINAL POST_CHANGE_MONITOR_LOOP
-→ AT LEAST 5 FULL ADVERSARIAL LOOPS, THEN UNTIL CLEAN
-→ CLEAN_REVIEW_EXIT
+→ CONTINUE same final-state lineage WITH POSTMERGE EVIDENCE UNTIL CLEAN_REVIEW_EXIT
 → FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
 ```
+
+병합 전 구현 후보는 기존 규칙대로 최소 5회의 완전한 전체 적대적 개선 루프와 clean-exit를 거친다. `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 이 pre-merge 검토를 제거하지 않으며, 같은 상태를 대상으로 5회를 다시 기계적으로 추가하는 별도 cycle도 아니다. 마지막 구현·교정과 merge/postmerge readback으로 갱신된 **same final-state lineage**를 기존 `POST_CHANGE_MONITOR_LOOP`에서 계속 공격·검증해 최종 `CLEAN_REVIEW_EXIT`을 닫는다.
 
 ### `DEEP_WORK_PREANSWER_GATE`
 
@@ -221,7 +223,7 @@ verification_plan: []
 
 `APPROVED_CONTRACT_CONTINUATION`이 활성이고 현재 승인된 작업 계약이 latest completed `main`에서 직접 만든 **단 하나의 명확한 `current-task PR`**이라면, continuation intent는 그 PR의 latest-main reconciliation, `exact HEAD` 재검증, repository가 요구하는 `required checks`·review·unresolved-thread·ruleset Gate 통과 뒤 merge와 `postmerge readback`까지 포함한다. 같은 작업의 PR 번호를 다시 요구하지 않는다.
 
-이 예외는 `pre-existing`, `unrelated`, `other-workstream`, `draft` PR, 복수의 모호한 PR 후보, 다른 작업의 material-delta takeover에는 적용하지 않는다. `force push`, direct `main` push, `--admin`, `ruleset bypass`는 계속 금지한다. 사용자가 `병합하지 마`, `PR만 열어`, `검토만`처럼 범위를 좁히면 최신 지시가 merge authority를 제거한다.
+이 예외는 `pre-existing`, `unrelated`, `other-workstream`, `draft` PR, 복수의 모호한 PR 후보, 다른 작업의 material-delta takeover에는 적용되지 않는다. `force push`, direct `main` push, `--admin`, `ruleset bypass`는 계속 금지한다. 사용자가 `병합하지 마`, `PR만 열어`, `검토만`처럼 범위를 좁히면 최신 지시가 merge authority를 제거한다.
 
 ### `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`
 
@@ -491,7 +493,7 @@ optional_backlog: []
 
 `REQUIRED_WORK_REMAINING: 0`은 승인된 필수 criterion이 계획상 소진된 **완료 후보**일 뿐이다. `REMAINING_WORK_RECALCULATION_REQUIRED`로 actual state를 다시 계산하고, 0이면 `IMPLEMENTATION_CORRECTION_RESCAN`으로 구현·정본·테스트·consumer·PR·readback·Evidence 누락을 다시 공격한다. 새 유효 finding은 `NEW_FINDING_REOPENS_REMAINING_WORK`로 현재 승인 범위의 작업을 다시 열어 교정·검증 후 재계산한다.
 
-필수 finding이 없을 때만 `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`로 최종 후보를 기존 `POST_CHANGE_MONITOR_LOOP`에 넣는다. 이는 두 번째 5회 검토 체계가 아니라 같은 final-state lineage의 최소 5회 full-scope review + `CLEAN_REVIEW_EXIT`다. 이 순서와 `FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK`를 모두 닫기 전에는 전체 완료라고 보고하지 않는다.
+필수 finding이 없을 때만 `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`로 최종 후보를 기존 `POST_CHANGE_MONITOR_LOOP`에 넣는다. 이는 두 번째 5회 검토 체계가 아니라 pre-merge부터 마지막 구현·교정·postmerge readback까지 이어지는 **same final-state lineage**의 기존 전체 검토 증거를 보존하면서 변경된 상태를 다시 공격해 `CLEAN_REVIEW_EXIT`를 닫는 절차다. 이 순서와 `FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK`를 모두 닫기 전에는 전체 완료라고 보고하지 않는다.
 
 외부 계정/사용자 PC/기기 검증은 external blocker로, 장기 개선 아이디어는 optional backlog로 분리한다. 승인 범위 안의 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, required `DEFER`는 전체 완료 상태에 숨기지 않는다.
 
