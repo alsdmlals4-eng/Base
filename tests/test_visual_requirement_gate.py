@@ -157,6 +157,24 @@ class VisualRequirementGateTests(unittest.TestCase):
             self.assertIn("PROJECT_ASSET_APPROVED", content)
             self.assertIn("title-specific identity", content)
 
+    def test_image_generation_requires_two_turn_hard_barrier(self) -> None:
+        policy = read("docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md")
+        workflow = read("docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md")
+        layout = read("docs/knowledge/game-development/NOTION_GPT_VISUAL_LAYOUT_CONTRACT.md")
+        combined = "\n".join((policy, workflow, layout))
+        for term in (
+            "IMAGE_TWO_TURN_HARD_BARRIER",
+            "PROJECT_REVIEW_COMPLETE",
+            "VISUAL_NEED_DEFINED",
+            "TEXT_BRIEF_COMPLETE",
+            "STOP_REQUIRED",
+            "EXPLICIT_IMAGE_APPROVAL",
+            "GENERATE_EXACTLY_ONE",
+        ):
+            self.assertIn(term, combined)
+        self.assertIn("동일 assistant 응답", combined)
+        self.assertIn("자동", combined)
+
 
 if __name__ == "__main__":
     unittest.main()
