@@ -134,6 +134,29 @@ rights_and_license_boundary:
 
 “화면이 비슷하다”, “유명 게임이 쓴다”만으로는 재사용 단위가 아니다.
 
+#### TOOL_INTERFACE_SURFACE_SELECTION
+
+`TOOL_PATTERN`이 실제 사람이 반복 조작하는 도구로 구체화될 때는 구현 난이도나 유행만 보고 CLI/TUI/GUI를 고르지 않는다. `docs/CAPABILITY_COMPOSITION_MAP.md`의 `TOOL_INTERFACE_SURFACE_SELECTION`을 적용해 **CLI-only / CLI+TUI / reusable core·CLI+thin GUI**를 materially applicable한 후보로 비교한다.
+
+- 자동화·CI·agent 호출·조합성이 중요하면 안정적인 CLI/programmatic contract를 우선한다.
+- SSH/tmux, 저대역폭 원격 운영, terminal residency 자체가 가치이면 TUI를 조건부 채택한다.
+- 이미지·프리뷰·시각 비교·drag-and-drop·공간 배치·다중 패널·표준 컨트롤처럼 반복 인간 작업의 마찰을 실질적으로 줄일 때만 thin GUI를 추가한다.
+- keyboard-first와 높은 정보 밀도는 TUI 전용 장점으로 간주하지 않는다. GUI에서도 같은 상호작용 목표를 설계할 수 있다.
+- CLI/TUI/GUI는 동일 domain core를 공유하며 어느 surface도 정본·상태·runtime truth를 새로 소유하지 않는다.
+- agent가 UI를 생성했거나 한 플랫폼에서 그럴듯하게 동작했다는 사실만으로 품질·접근성·크로스플랫폼 성공을 주장하지 않는다.
+
+검증 ceiling은 다음 순서로 제한한다.
+
+```text
+DESIGN_ONLY
+→ STATIC_BUILD_VERIFIED
+→ INTERACTION_PATH_VERIFIED
+→ TARGET_PLATFORM_VERIFIED
+→ HUMAN_WORKFLOW_VALUE_VERIFIED
+```
+
+`TARGET_PLATFORM_VERIFIED`가 없으면 다른 OS 지원을 추정하지 않는다. `HUMAN_WORKFLOW_VALUE_VERIFIED`가 없으면 GUI/TUI 추가가 CLI-only보다 실제 반복 작업 비용을 줄였다고 주장하지 않는다.
+
 ### 4. CONTRACT_ABSTRACTION
 
 특정 작품의 이름과 표현을 제거한 뒤 **무엇이 들어오면 어떤 상태 변화와 판단을 거쳐 무엇이 나가는가**를 다시 적는다.
