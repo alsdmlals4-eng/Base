@@ -94,6 +94,7 @@ docs/knowledge/
 | 인수인계 | `methods/PROJECT_HANDOFF_CONTEXT_METHOD.md` |
 | 이야기 발상·생성 | `methods/STORY_ORIGIN_AND_GENERATION_METHOD.md` |
 | 서사·관계 | `methods/NARRATIVE_AND_RELATIONSHIP_METHOD.md` |
+| 서사·세계관 정본 조사·구조화 | `methods/NARRATIVE_WORLD_KNOWLEDGE_MODEL.md` |
 | 아트 | `methods/ART_DIRECTION_METHOD.md` |
 | 캐릭터·서사 아트 | `methods/CHARACTER_AND_NARRATIVE_ART_METHOD.md` |
 | AI 이미지 프롬프트·디자인 기술 | `methods/AI_ART_PROMPT_TECHNIQUE_METHOD.md` |
@@ -167,7 +168,7 @@ docs/knowledge/
 → method·research·skill·template 갱신
 → 성공·실패·미검증 case 작성
 → 지식 상태 갱신
-→ Base 버전과 프로젝트 로컬 사본 동기화
+→ Base 버전과 프로젝트 로컬 사본 동기화 확인
 ```
 
 반드시 구분해 기록한다.
