@@ -39,7 +39,8 @@ class SkillEvalIntegrityContractTests(unittest.TestCase):
         workflow = (ROOT / ".github/workflows/validate-skill-behavior-evidence.yml").read_text(encoding="utf-8")
         self.assertIn('- "docs/AI_SKILL_ADOPTION_GUIDE.md"', workflow)
         self.assertIn('- "tests/test_skill_eval_integrity_contract.py"', workflow)
-        self.assertGreaterEqual(workflow.count("tests/test_skill_eval_integrity_contract.py"), 2)
+        focused_command_line = "tests/test_skill_eval_integrity_contract.py " + chr(92)
+        self.assertIn(focused_command_line, {line.strip() for line in workflow.splitlines()})
 
 
 if __name__ == "__main__":
