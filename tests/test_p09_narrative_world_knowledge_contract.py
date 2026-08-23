@@ -59,6 +59,15 @@ class NarrativeWorldKnowledgeContractTests(unittest.TestCase):
         self.assertIn("docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md", compat)
         self.assertIn("skills/building-project-visual-dashboards/SKILL.md", compat)
 
+    def test_human_home_compatibility_respects_host_image_precedence(self) -> None:
+        compat = HOME_COMPAT.read_text(encoding="utf-8")
+        for token in (
+            "HOST_PLATFORM_PRECEDENCE",
+            "HOST_POLICY_OVERRIDE",
+            "RUNTIME_ENFORCEMENT_NOT_GUARANTEED",
+        ):
+            self.assertIn(token, compat)
+
 
 if __name__ == "__main__":
     unittest.main()
