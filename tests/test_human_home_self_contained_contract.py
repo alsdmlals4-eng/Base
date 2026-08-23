@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 POLICY = ROOT / "docs" / "operations" / "HUMAN_HOME_SELF_CONTAINED_POLICY.md"
 NOTION_CONTRACT = ROOT / "docs" / "operations" / "NOTION_PROJECT_ISOLATION_AND_CORE_SYSTEM_CONTRACT.md"
 BASE_MODEL = ROOT / "docs" / "operations" / "BASE_PARTITION_OPERATING_MODEL.md"
+DASHBOARD_SKILL = ROOT / "skills" / "building-project-visual-dashboards" / "SKILL.md"
 
 
 class HumanHomeSelfContainedContractTests(unittest.TestCase):
@@ -31,6 +32,39 @@ class HumanHomeSelfContainedContractTests(unittest.TestCase):
         for term in (
             "Skill 목적", "호출 조건", "입력", "처리", "출력", "기대효과",
             "Module", "없으면", "P01~P09",
+        ):
+            self.assertIn(term, text)
+
+    def test_project_home_is_rich_not_minimal_and_exposes_human_core_data(self) -> None:
+        text = POLICY.read_text(encoding="utf-8")
+        for term in (
+            "PROJECT_HOME_INFORMATION_RICHNESS_ALLOWED",
+            "PROJECT_SPECIFIC_CORE_DATA",
+            "AI_INTERPRETATION_FOR_USER_CORRECTION",
+            "HUMAN_EDIT_GUIDE_REQUIRED",
+            "FLOW_MAP",
+            "CORE_SYSTEMS",
+            "VISUAL_ASSET_ANCHORS",
+        ):
+            self.assertIn(term, text)
+
+    def test_ai_interpretation_is_not_operational_metadata(self) -> None:
+        text = POLICY.read_text(encoding="utf-8")
+        self.assertIn("AI_INTERPRETATION_FOR_USER_CORRECTION", text)
+        self.assertIn("AI_SYSTEM_OPERATIONAL_METADATA_EXCLUDED", text)
+        for required_phrase in (
+            "raw PR/commit/CI history",
+            "Prompt / AI Note / Asset ID / Hash / Implementation Path",
+        ):
+            self.assertIn(required_phrase, text)
+
+    def test_dashboard_skill_builds_project_specific_rich_home(self) -> None:
+        text = DASHBOARD_SKILL.read_text(encoding="utf-8")
+        for term in (
+            "PROJECT_SPECIFIC_CORE_DATA",
+            "AI_INTERPRETATION_FOR_USER_CORRECTION",
+            "HUMAN_EDIT_GUIDE_REQUIRED",
+            "NO_UNIVERSAL_GAME_DATA_TEMPLATE",
         ):
             self.assertIn(term, text)
 

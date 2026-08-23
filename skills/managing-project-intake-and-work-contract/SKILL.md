@@ -9,9 +9,62 @@ description: Use when routing a project request, closing material ambiguity, def
 
 요청 접수는 `의도 파악 → Work Mode 자동 선택 → Skill 자동 선택 → 필요한 Skill Mode 선택 → 사실 조사 → first-prompt 방향 고정 → 실행 계약 → Grill Me 정합성 확인 → 필요 시 작업 분해·순서화 → 실행 보고`인 하나의 상태 흐름이다.
 
-사용자는 Skill 이름이나 mode를 선언할 필요가 없다. Registry trigger와 현재 작업 단계로 필요한 최소 Skill·Skill Mode를 자동 선택하고, 실제 사용 이유와 얻은 결과를 최종 보고에 남긴다.
+사용자는 Skill 이름이나 mode를 선언할 필요가 없다. Registry trigger와 현재 작업 단계로 필요한 최소 Skill·Skill Mode만 자동 선택하고, 실제 사용 이유와 얻은 결과를 최종 보고에 남긴다.
 
 모든 L1 이상 지시문 작성은 이 Skill에서 좋은 프롬프트 변환을 수행한 뒤 `Grill Me alignment gate`로 의도·기획·범위가 맞는지 확인한다. 유효한 승인 없이 제품·프로젝트 작업으로 진행하지 않는다.
+
+## Mandatory pre-build planning gate
+
+`FULL_CURRENT_STATE_AUDIT_BEFORE_PLAN`
+
+`PRE_BUILD_BEFORE_AFTER_EXPECTED_EFFECT_REPORT`
+
+`USER_APPROVAL_BEFORE_BUILD`
+
+`APPROVED_DECISION_GITHUB_NOTION_SYNC_DURING_WORK`
+
+`POST_BUILD_FULL_ADVERSARIAL_REVIEW_AND_PR_RECHECK`
+
+L1 이상 중요 Base/프로젝트 작업은 실행안을 먼저 정해 두고 근거를 맞추지 않는다. `FULL_CURRENT_STATE_AUDIT_BEFORE_PLAN`에서 현재 요청에 실제 영향을 주는 범위를 먼저 복원한다.
+
+```text
+latest user request
+→ Base current owners / relevant Skill / current main
+→ target project GitHub current main / canon / actual code·data·assets·tests
+→ exact Project Notion Home + relevant human/AI-System surfaces
+→ same-goal open/recent PR read-only reconciliation
+→ confirmed decisions / current implementation / evidence
+→ benchmark + professional practice + success/failure cases
+→ >= 3 materially distinct alternatives
+→ Implementation Reality Gate
+→ provisional best long-term option
+```
+
+모든 파일을 무작정 읽는다는 뜻이 아니라 Registry·Documentation Map·프로젝트 정본으로 **이번 변경의 실제 owner와 영향 consumer를 빠짐없이 식별**한다. Base 자체 작업에서는 적용되는 Base/Notion surface를 읽고, 프로젝트 작업에서는 프로젝트 GitHub와 Project Notion Home을 함께 읽는다. open/draft/ready PR은 `OPEN_PR_READ_ONLY_BY_DEFAULT`로 확인하되 명시적 권한 없이 흡수·수정하지 않는다.
+
+`PRE_BUILD_BEFORE_AFTER_EXPECTED_EFFECT_REPORT`: 위 조사가 끝난 뒤 BUILD 전에 사용자에게 최소 다음을 한 묶음으로 보고한다.
+
+```text
+현재 상태 / 발견 문제
+→ 변경 전
+→ 변경 후
+→ 기대효과
+→ 예상 위험·부작용
+→ 완화책
+→ 수정 대상/보호 대상
+→ 롤백
+→ 실제 검증 계획과 NOT_RUN ceiling
+```
+
+보고는 이미 수행한 조사·대안·적대적 검토 evidence를 요약하는 단계이며, “앞으로 조사하겠다”는 계획만으로 이 Gate를 통과하지 않는다.
+
+`USER_APPROVAL_BEFORE_BUILD`: 새 기획 결정·구조 변경·정책 변경·중요 제품 변경은 위 설계 묶음의 사용자 승인 뒤에만 BUILD한다. 기존 승인 계약의 동일 범위 continuation은 approval reference를 재사용하며 routine 단계마다 다시 묻지 않는다.
+
+`APPROVED_DECISION_GITHUB_NOTION_SYNC_DURING_WORK`: 승인된 작업 중 새로 확정된 사람이 봐야 할 결정·Flow·Visual·핵심 데이터는 작업 종료까지 미루지 않고 올바른 repository owner와 필요한 Notion human-facing surface에 같은 승인 단위로 동기화하고 destination readback한다. GitHub와 Notion의 역할을 복제하지 않으며, structured/runtime 의미가 바뀌면 repository를 먼저 동기화한다.
+
+`POST_BUILD_FULL_ADVERSARIAL_REVIEW_AND_PR_RECHECK`: 구현·문서·Notion 변경 뒤에는 결과가 “작성됐다”는 사실만 보지 않는다. 실제 변경 상태 전체를 `running-adversarial-review-and-refinement`의 완전한 개선 루프로 최소 5회, 이후 clean까지 다시 검토하고, 같은 Goal의 open/recent PR·current main·Notion readback·consumer/reference freshness·Implementation Reality evidence를 재확인한다. valid finding을 수정해 candidate가 바뀌면 수정 결과를 다시 전체 범위로 검토한다.
+
+이 Gate는 `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md`, `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`, `docs/CONFIRMED_DECISION_SYNC_POLICY.md`의 기존 owner를 재서술하는 새 정본이 아니라 intake에서 **그 owner들을 건너뛰지 못하게 만드는 실행 진입 계약**이다.
 
 `CONTINUATION_INTENT_ALIASES`는 `[연속작업] 진행해`뿐 아니라 이미 승인된 동일 계약에 대한 `진행해`, `계속해`, `남은 작업 진행` 같은 명확한 계속 실행 의도를 인식한다. 유효한 approval reference가 있을 때만 `APPROVED_CONTRACT_CONTINUATION`으로 `references/continuous-work-execution.md`를 적용해 남은 범위에 `CONTINUOUS_WORK_ACTIVE`를 결합한다. 이는 `PLAN / BUILD / REVIEW`를 대체하거나 새 범위를 승인하지 않으며, 사용자 전용 결정·미검증 차단·고위험 외부 행위의 확인 Gate를 제거하지 않는다. blocker가 생기면 즉시 전역 종료하지 않고 `recover → local defer → independent ready work → global stop last` 순서로 처리한다.
 
@@ -485,8 +538,13 @@ remaining_unknowns: []
 - direction anchor가 지시문 가장 앞에 있고 전체 범위·제약·산출물과 일치한다.
 - Task·Context·Source·Constraints·Output·Validation이 추적된다.
 - 범위·제외·보호·완료·검증이 추적된다.
-- 권장안이 있으면 사용자안과 AI 최초안에 동일한 평가 기준·대안·반증·위험·되돌리기 난이도를 적용했다.
+- `FULL_CURRENT_STATE_AUDIT_BEFORE_PLAN`으로 Base/Project GitHub/Project Notion Home/Skill/open-recent PR/실제 구현 상태가 현재 작업 범위에서 감사됐다.
+- `PRE_BUILD_BEFORE_AFTER_EXPECTED_EFFECT_REPORT`의 변경 전·변경 후·기대효과·위험·롤백·검증 계획이 BUILD 전에 보고됐다.
 - 필요한 사용자 확인 전에는 구현 계약이나 실행 순서를 확정하지 않았다.
+- `USER_APPROVAL_BEFORE_BUILD` 또는 유효한 기존 approval reference가 확인됐다.
+- 승인된 사람이 봐야 할 결정은 `APPROVED_DECISION_GITHUB_NOTION_SYNC_DURING_WORK`로 repository/Notion에 필요한 시점에 동기화되고 readback됐다.
+- BUILD 뒤 `POST_BUILD_FULL_ADVERSARIAL_REVIEW_AND_PR_RECHECK`로 전체 결과·PR·main·Notion·consumer를 다시 검토했다.
+- 권장안이 있으면 사용자안과 AI 최초안에 동일한 평가 기준·대안·반증·위험·되돌리기 난이도를 적용했다.
 - Grill Me alignment gate 또는 유효한 approval reference가 실행 전에 확인됐다.
 - 기존 승인 계약에는 중복 질문하지 않았다.
 - `CONTINUATION_INTENT_ALIASES`와 유효한 승인 계약이 함께 있을 때만 `CONTINUOUS_WORK_ACTIVE`를 사용했고, 승인된 계약 밖으로 범위를 넓히지 않았다.
@@ -510,6 +568,11 @@ remaining_unknowns: []
 - 핵심 방향 문장을 뒤쪽에 숨기거나 전체 계약과 다르게 작성함
 - 앞 문장의 순서를 근거로 `HARD_CONSTRAINT`·정본·상위 지시를 덮어씀
 - Task·Context·Source·Constraints·Output·Validation 중 필요한 항목을 누락함
+- `FULL_CURRENT_STATE_AUDIT_BEFORE_PLAN`의 실제 조사 없이 바로 계획·결론을 제시함
+- 계획만 말하고 `PRE_BUILD_BEFORE_AFTER_EXPECTED_EFFECT_REPORT`를 완료 증거처럼 취급함
+- `USER_APPROVAL_BEFORE_BUILD` 없이 중요 구조·기획·정책을 구현함
+- 승인된 human-facing 변경을 GitHub 또는 Notion 한쪽에만 남긴 채 `SYNCED`로 주장함
+- BUILD 뒤 전체 적대적 검토와 PR/main/Notion 재확인을 생략함
 - 기계적 작업에도 정석안·파격안·통합안을 강제함
 - 저장소에서 확인할 사실을 사용자에게 질문함
 - 주 책임 분야를 여러 개 지정함
