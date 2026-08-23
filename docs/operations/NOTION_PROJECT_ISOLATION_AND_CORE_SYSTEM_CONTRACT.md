@@ -8,7 +8,15 @@
 
 `HUMAN_HOME_PHYSICALLY_SEPARATE_FROM_REGISTRY_ROW`
 
-각 Project Home은 프로젝트 한 줄 정의·플레이어/사용자 가치·확정 방향·Core Loop/Flow·핵심 시스템 목적/상호작용·UX/UI/Visual·현재 구현상태·검증 evidence ceiling·blocker/다음 작업·중요 결정·위험/revisit condition을 본문에서 직접 설명한다. 하위 `08 · 핵심 시스템 · 상세` 같은 페이지는 상세 evidence와 긴 표를 위한 drilldown이며 Home의 핵심 이해를 대신하지 않는다.
+`SHALLOW_BY_DEFAULT`
+
+`NO_EMPTY_FOLDER_PAGE`
+
+`NO_FIXED_UNIVERSAL_GAME_TAXONOMY`
+
+`L4_EXCEPTION_REVIEW_REQUIRED`
+
+각 Project Home은 프로젝트 한 줄 정의·플레이어/사용자 가치·확정 방향·전체 game/session/story Flow·Core Loop·핵심 시스템 목적/상호작용·필요한 설정/플레이어 역할·프로젝트 고유 핵심 데이터 표·UX/UI/Visual·현재 구현상태·검증 evidence ceiling·blocker/다음 작업·중요 결정·위험/revisit condition을 본문에서 직접 설명한다. 하위 `08 · 핵심 시스템 · 상세` 같은 기존 상세 페이지는 상세 evidence와 긴 표를 위한 drilldown이며 Home의 핵심 이해를 대신하지 않는다.
 
 `PROJECT REGISTRY · Master`는 Project Key·Repository·동기화·실행환경 연결을 보존하는 AI/System Master다. `Codex Home`, `Project Local Path`, `Godot Port`, `Repo Main SHA`, `Record Key`, `Revision` 같은 machine metadata를 가진 Registry row를 사람용 Project Home으로 재사용하지 않는다. Human Home은 Registry row와 **별도 일반 페이지로 물리 분리**하고, 단순히 database view의 column을 숨기는 것으로 대체하지 않는다. 사람용 기본 화면에는 `Prompt`, `AI Note`, `Hash`, `Implementation Path` 같은 AI/asset processing metadata도 노출하지 않는다.
 
@@ -17,6 +25,61 @@
 여러 프로젝트가 같은 Notion workspace를 동시에 사용하더라도 서로의 작업·자산·핵심 시스템 데이터를 덮어쓰거나 섞지 않도록 한다. `PROJECT_NAMESPACE_ISOLATION`이 프로젝트 간 병렬 작업의 기본 쓰기 모델이다.
 
 Notion은 사람용 전체 그림과 시각/비교/핵심 시스템 표현의 정본이고, repository는 Markdown·JSON·game data·code·scene·resource·test·runtime evidence의 정본이다. Notion 변경이 구조화 또는 runtime 의미를 바꾸면 `SYNC_BEFORE_IMPLEMENTATION`을 적용한다.
+
+## 0. Shallow project information architecture
+
+일반 프로젝트 탐색 구조는 다음 4개 역할로 고정한다.
+
+```text
+L0 PROJECT_HUB
+→ 프로젝트 선택
+
+L1 HUMAN_PROJECT_HOME
+→ 사람이 프로젝트 전체를 이해·판단·교정하는 self-contained main
+
+L2 DOMAIN_WORKSPACE
+→ 4~6개 권장, 프로젝트 의미에 맞춘 책임 그룹
+
+L3 DETAIL_OR_RECORD
+→ 시스템/문서/dataset/view/atomic record의 정상 terminal navigation layer
+```
+
+### L0 · PROJECT_HUB
+
+- 프로젝트 선택만 책임진다.
+- default click은 dedicated Human Project Home으로 간다.
+- raw Project Registry/CI/SHA/automation 상태를 복제하지 않는다.
+
+### L1 · HUMAN_PROJECT_HOME
+
+- `docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md`를 따른다.
+- `FULL_GAME_FLOW_VISIBLE_ON_HOME`, `CORE_SYSTEMS_AND_SETTING_VISIBLE_ON_HOME`, `PROJECT_SPECIFIC_CORE_DATA_TABLES_VISIBLE_ON_HOME`, `HOME_DETAIL_LINKS_CANNOT_REPLACE_CORE_UNDERSTANDING`을 지킨다.
+- L2/L3 이동은 core understanding을 Home 밖으로 내보내는 이유가 될 수 없다.
+
+### L2 · DOMAIN_WORKSPACE
+
+- 프로젝트당 4~6개를 권장하되, 의미가 실제로 다른 경우에만 만든다.
+- `NO_FIXED_UNIVERSAL_GAME_TAXONOMY`: 프로젝트마다 Domain 이름과 조합을 바꿀 수 있다.
+- `NO_EMPTY_FOLDER_PAGE`: Domain은 빈 폴더가 아니다. 최소 Domain 목적/범위, current authority와 Home projection 관계, 주요 상태/결정/위험, L3 owner 또는 project-filtered view를 가진다.
+- 예: `Direction · Planning`, `Combat Design · Data`, `Visual · UX · Assets`, `Production · Validation`, `Reference · Benchmark`.
+
+### L3 · DETAIL_OR_RECORD
+
+- 한 시스템·한 문서·한 dataset/view·한 atomic record를 책임진다.
+- 더 세분화가 필요하면 일반 child page보다 database record, relation, linked/filter view, toggle/section, structured table을 먼저 검토한다.
+
+### L4+ exception
+
+정상 navigation은 L3에서 끝낸다. L4+ 일반 page nesting은 `L4_EXCEPTION_REVIEW_REQUIRED`다.
+
+예외 조건:
+
+- 별도 owner가 실제로 필요함.
+- DB Record/Relation/View/section으로 표현하면 책임이 더 모호해짐.
+- 해당 깊이가 사람 기본 navigation에는 노출되지 않음.
+- rollback/migration 비용보다 명확성 이득이 큼.
+
+기술적으로 page nesting을 금지하는 것이 아니라 `SHALLOW_BY_DEFAULT` 운영 규칙으로 관리한다.
 
 ## 1. Project namespace
 
@@ -37,7 +100,7 @@ AI/자동화는 unfiltered Master DB 전체에서 임의 대상을 고르지 않
 
 사람이 프로젝트의 핵심 시스템을 한 곳에서 자세히 탐색·비교·수정할 수 있도록 `CORE SYSTEM · Master`를 공용 System Master로 사용한다.
 
-각 GAME Project Home에는 `08 · 핵심 시스템 · 상세` 페이지를 두고, 이 페이지는 해당 Project relation으로 필터된 linked view만 노출한다.
+각 GAME Project에는 해당 Project relation으로 필터된 **Core System detail/linked view**가 존재해야 한다. 과거 `08 · 핵심 시스템 · 상세` 같은 직접-child 이름은 유효한 기존 L3 owner로 보존할 수 있지만, 공용 계약이 특정 번호나 Home 직속 위치를 강제하지 않는다. Shallow IA 적용 후에는 해당 project-specific Core System detail/view를 가장 적합한 L2 Domain 아래 L3로 두고 Home/L2에서 정상적으로 연결한다.
 
 공용 metadata는 다음을 기본으로 한다.
 
@@ -131,7 +194,8 @@ resolve exact Project
 
 - 특정 Project row property update.
 - exact Record Key를 가진 Core System row의 필요한 field만 update.
-- 기존 Project Home에 새 child page/link/view를 추가하는 작은 insert.
+- 기존 Project Home/L2 Domain에 새 child page/link/view를 추가하는 작은 insert.
+- 승인된 구조 migration의 page move/reparent.
 - 새 record 생성 전 exact key 중복 검사.
 
 금지:
@@ -143,8 +207,38 @@ resolve exact Project
 - 여러 프로젝트가 들어 있는 공용 페이지의 전체 `replace_content`를 기본 업데이트 방식으로 사용.
 - linked view filter 없이 공용 Master를 project user surface에 노출.
 - AI/System metadata를 보유한 Project Registry row를 Human Project Home으로 사용.
+- migration을 이유로 child page/database를 삭제하거나 branch-only content를 current truth로 승격.
 
-## 5A. ZERO_INCREMENTAL_COST Free-plan fallback
+### 5A. Page move / reparent migration contract
+
+승인된 shallow IA migration은 물리 parent를 바꿀 수 있다. 모든 move는 다음을 기록한다.
+
+```text
+page_id
+old_parent_id
+target_parent_id
+classification
+reason
+Home projection that must remain
+rollback_parent_id
+```
+
+실행 순서:
+
+```text
+current page + parent pre-read
+→ target L2 Domain pre-read
+→ bounded move/reparent
+→ moved page destination readback
+→ ancestor path 확인
+→ content/DB/mention 보존 확인
+→ Home/L2 link 확인
+→ failure 시 recorded rollback parent로 복귀
+```
+
+`UNIQUE_CURRENT / DUPLICATE_PROJECTION / STALE_CURRENT / HISTORICAL / SYSTEM_ONLY` 분류 없이 대량 이동하지 않는다.
+
+## 5B. ZERO_INCREMENTAL_COST Free-plan fallback
 
 기본 운영은 `ZERO_INCREMENTAL_COST`를 유지한다. Notion의 SQL형 `query_data_sources`는 `QUERY_DATA_SOURCES_OPTIONAL`이며 기본 작업 완료 조건이 아니다.
 
@@ -215,7 +309,7 @@ Source Path와 Source SHA를 남겨 교차검증한다.
 
 ## 9. 프로젝트별 사용자 surface
 
-`08 · 핵심 시스템 · 상세`은 다음 질문에 답해야 한다.
+Core System detail/linked view는 다음 질문에 답해야 한다.
 
 - 이 프로젝트의 핵심 시스템은 무엇인가?
 - 플레이어에게 어떤 의미가 있는가?
@@ -223,6 +317,8 @@ Source Path와 Source SHA를 남겨 교차검증한다.
 - 무엇과 연결되는가?
 - 무엇이 확정이고 무엇이 미정인가?
 - 구조화 정본과 runtime 근거는 어디에 있는가?
+
+기존 페이지 이름 `08 · 핵심 시스템 · 상세`은 migration 전후 provenance와 링크 호환성을 위해 유지할 수 있으며, 새 IA에서는 해당 프로젝트의 적합한 L2 Domain 아래 L3 owner로 위치할 수 있다.
 
 예:
 
@@ -277,19 +373,31 @@ Record Key prefix = TEN_PACES::
 Notion write는 저장 호출 성공만으로 완료가 아니다.
 
 ```text
-write
+write/move
 → destination readback
-→ Project 확인
-→ Record Key 확인
-→ Revision 확인
-→ intended field 확인
+→ Project/ancestor path 확인
+→ Record Key/Revision 확인 when applicable
+→ intended field/content/child relation 확인
 → source/status 확인
 → SYNCED 또는 명시적 비동기 상태 판정
 ```
 
 Project Registry에서 Project Key 중복, Core System Master에서 `(Project, Record Key)` 중복, Project relation 누락을 검사한다.
 
-기존 Project Home·child page·Work/Asset record를 삭제하거나 이동하지 않는다. 단, Human Home/AI-System 물리 분리 교정처럼 **명시적으로 승인된 구조 교정**은 기존 System Master를 보존한 채 링크/부모만 이동하고 destination readback과 rollback path를 남긴다.
+기존 Project Home·child page·Work/Asset record를 삭제하지 않는다. **명시적으로 승인된 구조 교정**은 기존 System Master와 content를 보존한 채 링크/부모를 이동할 수 있고 destination readback과 rollback path를 남긴다.
+
+Shallow IA migration 완료 조건:
+
+```text
+Hub → Home 유지
+Home direct L2 Domain = 4..6 권장
+normal navigation depth <= L3
+L2 empty folder = 0
+Full Game/Story Flow on Home = YES
+Core Systems + Setting on Home = YES 또는 NOT_APPLICABLE_WITH_REASON
+Project-specific Core Data Table on Home = YES
+Home core understanding dependent on detail links = NO
+```
 
 ## Human Home 상세 정책
 
