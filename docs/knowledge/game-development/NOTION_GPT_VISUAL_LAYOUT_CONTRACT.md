@@ -4,7 +4,7 @@
 
 This contract defines the minimum reliable workflow for using GPT with the project Notion workspace so that approved visuals are placed in useful human-facing locations without turning the Home page into an AI metadata dump.
 
-It extends `NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`; it does not replace repository runtime truth or project-specific visual authority.
+It extends `NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`; it does not replace repository runtime truth or project-specific visual authority. Human Home content density follows `docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md`: the Home may be information-rich when Flow, systems, project-specific core data, visuals, or edit guidance materially improve human understanding.
 
 ## Decision
 
@@ -98,6 +98,9 @@ Human-facing project surfaces prioritize comprehension and decision usefulness:
 - Visual Bible
 - human-facing Asset/Reference gallery
 - approved Visual Map / Flow
+- project-specific human-readable core data
+- AI interpretation of design intent for user correction
+- user edit guidance
 - current focus, important decisions and links
 
 AI/system surfaces retain processing metadata that is useful to automation but noisy to people:
@@ -181,7 +184,7 @@ identify project
 - `SUPPORTING`: useful detail/reference; keep in the relevant Visual Bible or asset gallery rather than crowding Home.
 - `ARCHIVE`: provenance/history only; not shown on normal human surfaces.
 
-Do not promote every approved image to Home. Home is a summary surface, not the asset archive.
+Do not promote every approved image to Home. Home is an information-rich learning surface, not the asset archive.
 
 ## Layout grammar
 
@@ -194,12 +197,13 @@ Project title
 Hero visual when a true HERO exists
 one-line project promise / current focus
 
-Core experience
+Core experience / Flow
 Primary visual(s) adjacent to the matching explanation
 
-Core systems / world / UX
+Core systems / project-specific core data / world / UX
 Supporting approved visuals near their owning section
 
+AI-understood design intent / how to edit
 Current state / decisions / important links
 ```
 
@@ -232,6 +236,27 @@ NO_DIRECT_VISUAL_EVIDENCE + visual-content-dependent decision
 ```
 
 Do not generate a missing image merely to satisfy this gate. Image generation remains subject to the user's explicit generation instruction and project policy.
+
+## Image generation conversation gate
+
+When the task actually asks to generate or edit a project image, apply `IMAGE_CONVERSATION_APPROVAL_GATE.md` at `docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md`.
+
+The minimum conversation contract is:
+
+```text
+project/visual canon review
+→ text brief
+→ TEXT_BRIEF_STOP_REQUIRED
+
+next user message
+→ explicit image approval
+→ GENERATE_EXACTLY_ONE
+→ STOP_REQUIRED_AFTER_GENERATION
+```
+
+Do not call image generation in the same assistant turn that first presents the text brief. Do not automatically chain the next image, pose, asset, UI variant, or decomposition step after generation.
+
+This conversation gate does not replace `Visual Requirement Gate`, candidate review, project approval, Notion delivery/readback, or runtime integration evidence.
 
 ## Delivery and readback
 
@@ -287,6 +312,8 @@ Do not build infrastructure for hypothetical layout limitations.
 ## Failure modes to reject
 
 - treating a text art direction as an actual approved image;
+- generating an image in the same assistant turn that first defines the project image brief;
+- chaining multiple project images without the required user checkpoint;
 - claiming image semantic understanding from a filename/caption alone;
 - putting Prompt/Hash/AI notes on the human Home by default;
 - duplicating the same approved visual into competing canonical records;
@@ -304,10 +331,11 @@ Do not build infrastructure for hypothetical layout limitations.
 
 The workflow is healthy when:
 
-- human Home remains concise and readable;
+- human Home is information-rich where needed while remaining readable and responsibility-separated;
 - AI/system metadata remains queryable without polluting the human page;
 - every displayed project visual is traceable to an actual asset/reference and approval state;
 - GPT can select a semantic destination from metadata without repeatedly asking where the asset belongs;
+- image generation/editing obeys `TEXT_BRIEF_STOP_REQUIRED` and `GENERATE_EXACTLY_ONE` through the image conversation gate;
 - visual-content-dependent judgements require direct image evidence;
 - capability-dependent claims distinguish discovery, callable schema, invocation, readback and human-visible evidence;
 - binary media uses a verified typed `file_upload` path instead of known-broken external delivery when client rendering matters;

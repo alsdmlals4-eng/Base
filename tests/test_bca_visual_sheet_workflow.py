@@ -46,6 +46,46 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
         self.assertNotIn("html-dashboard", entry["trigger_tags"])
         self.assertNotIn("standalone-dashboard", entry["trigger_tags"])
 
+    def test_rich_human_home_keeps_project_specific_data_and_ai_metadata_boundary(self) -> None:
+        skill = read("skills/building-project-visual-dashboards/SKILL.md")
+        policy = read("docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md")
+        for token in (
+            "PROJECT_HOME_INFORMATION_RICHNESS_ALLOWED",
+            "PROJECT_SPECIFIC_CORE_DATA",
+            "AI_INTERPRETATION_FOR_USER_CORRECTION",
+            "AI_SYSTEM_OPERATIONAL_METADATA_EXCLUDED",
+            "HUMAN_EDIT_GUIDE_REQUIRED",
+            "HOME_PROJECTION_IS_NOT_DUPLICATE_CANON",
+        ):
+            self.assertIn(token, policy)
+        for token in (
+            "PROJECT_SPECIFIC_CORE_DATA",
+            "AI_INTERPRETATION_FOR_USER_CORRECTION",
+            "HUMAN_EDIT_GUIDE_REQUIRED",
+            "NO_UNIVERSAL_GAME_DATA_TEMPLATE",
+        ):
+            self.assertIn(token, skill)
+        self.assertIn("30초 전체 그림", skill)
+        self.assertIn("5분 핵심 Flow/System/Data/Visual", skill)
+        self.assertIn("Prompt / AI Note / Hash / Implementation Path", skill)
+
+    def test_image_conversation_gate_is_consumed_by_human_visual_owner(self) -> None:
+        skill = read("skills/building-project-visual-dashboards/SKILL.md")
+        gate = read("docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md")
+        layout = read("docs/knowledge/game-development/NOTION_GPT_VISUAL_LAYOUT_CONTRACT.md")
+        for token in (
+            "TEXT_BRIEF_STOP_REQUIRED",
+            "NEXT_USER_EXPLICIT_APPROVAL",
+            "GENERATE_EXACTLY_ONE",
+            "STOP_REQUIRED_AFTER_GENERATION",
+            "NO_AUTOMATIC_IMAGE_CHAIN",
+        ):
+            self.assertIn(token, gate)
+        for consumer in (skill, layout):
+            self.assertIn("IMAGE_CONVERSATION_APPROVAL_GATE.md", consumer)
+            self.assertIn("TEXT_BRIEF_STOP_REQUIRED", consumer)
+            self.assertIn("GENERATE_EXACTLY_ONE", consumer)
+
     def test_art_skill_contains_generation_and_review_modes(self) -> None:
         skill = read("skills/designing-art-prompts-and-technique-cards/SKILL.md")
         for mode in (

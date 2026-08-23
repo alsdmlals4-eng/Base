@@ -157,6 +157,49 @@ class VisualRequirementGateTests(unittest.TestCase):
             self.assertIn("PROJECT_ASSET_APPROVED", content)
             self.assertIn("title-specific identity", content)
 
+    def test_image_conversation_requires_two_turn_barrier(self) -> None:
+        gate = read(
+            "docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md"
+        )
+        for token in (
+            "PROJECT_REVIEW_COMPLETE",
+            "TEXT_BRIEF_STOP_REQUIRED",
+            "NEXT_USER_EXPLICIT_APPROVAL",
+            "GENERATE_EXACTLY_ONE",
+            "STOP_REQUIRED_AFTER_GENERATION",
+            "NO_AUTOMATIC_IMAGE_CHAIN",
+        ):
+            self.assertIn(token, gate)
+
+    def test_image_conversation_gate_declares_host_platform_precedence(self) -> None:
+        gate = read(
+            "docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md"
+        )
+        for token in (
+            "HOST_PLATFORM_PRECEDENCE",
+            "HOST_POLICY_OVERRIDE",
+            "RUNTIME_ENFORCEMENT_NOT_GUARANTEED",
+        ):
+            self.assertIn(token, gate)
+        self.assertIn("상위", gate)
+        self.assertIn("시스템", gate)
+
+    def test_current_visual_owners_route_to_image_conversation_gate(self) -> None:
+        contract = read(
+            "docs/knowledge/game-development/NOTION_GPT_VISUAL_LAYOUT_CONTRACT.md"
+        )
+        dashboard_skill = read("skills/building-project-visual-dashboards/SKILL.md")
+        project_visual_gate = read(
+            "skills/designing-art-prompts-and-technique-cards/references/"
+            "notion-project-visual-continuity-gate.md"
+        )
+        for content in (contract, dashboard_skill, project_visual_gate):
+            self.assertIn("IMAGE_CONVERSATION_APPROVAL_GATE.md", content)
+            self.assertIn("TEXT_BRIEF_STOP_REQUIRED", content)
+            self.assertIn("GENERATE_EXACTLY_ONE", content)
+        self.assertIn("NEXT_USER_EXPLICIT_APPROVAL", project_visual_gate)
+        self.assertIn("STOP_REQUIRED_AFTER_GENERATION", project_visual_gate)
+
 
 if __name__ == "__main__":
     unittest.main()

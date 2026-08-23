@@ -135,6 +135,31 @@ class V47WorkflowAlignmentTests(unittest.TestCase):
             self.assertIn(term, partitions)
         self.assertIn("사용자 학습형 완료보고", agents)
 
+    def test_prebuild_report_and_live_github_notion_sync_are_explicit(self) -> None:
+        intake = read("skills/managing-project-intake-and-work-contract/SKILL.md")
+        documents = read("skills/managing-design-documents/SKILL.md")
+        planning = read("docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md")
+        combined = "\n".join((intake, documents, planning))
+
+        for term in (
+            "FULL_CURRENT_STATE_AUDIT_BEFORE_PLAN",
+            "PRE_BUILD_BEFORE_AFTER_EXPECTED_EFFECT_REPORT",
+            "USER_APPROVAL_BEFORE_BUILD",
+            "APPROVED_DECISION_GITHUB_NOTION_SYNC_DURING_WORK",
+            "POST_BUILD_FULL_ADVERSARIAL_REVIEW_AND_PR_RECHECK",
+        ):
+            self.assertIn(term, combined)
+
+        self.assertIn("Base", intake)
+        self.assertIn("Project Notion Home", intake)
+        self.assertIn("open/recent PR", intake)
+        self.assertIn("변경 전", intake)
+        self.assertIn("변경 후", intake)
+        self.assertIn("기대효과", intake)
+        self.assertIn("GitHub", documents)
+        self.assertIn("Notion", documents)
+        self.assertIn("readback", documents)
+
 
 if __name__ == "__main__":
     unittest.main()
