@@ -130,6 +130,34 @@ retained-change-or-merge
 
 `NO_MATERIAL_FOLLOWUP`이면 루프를 채우기 위해 **새 변경을 만들지 않는다**. 이 계약은 현재 작업·검토의 완료 조건이며 scheduler·webhook·**백그라운드 실행을 의미하지 않는다**. 실제 반복 감시가 별도 자동화로 실행되더라도 그 결과는 같은 evidence ceiling·authority·PR·exact-head Gate를 다시 따른다.
 
+### Completion-candidate remaining-work invariant
+
+`REMAINING_WORK_COMPLETION_GATE`는 Base와 모든 프로젝트 작업에서 계획된 남은 작업 목록이 소진된 순간을 **완료가 아니라 완료 후보**로 취급한다. 먼저 actual repository/project state를 기준으로 `REMAINING_WORK_RECALCULATION_REQUIRED`를 수행하고, actionable work가 0일 때만 `IMPLEMENTATION_CORRECTION_RESCAN`으로 진입한다.
+
+```text
+planned work exhausted
+→ REMAINING_WORK_RECALCULATION_REQUIRED
+   ├─ remaining > 0 → BUILD / verification 계속
+   └─ remaining = 0 → COMPLETION_CANDIDATE
+→ IMPLEMENTATION_CORRECTION_RESCAN
+   implementation / canon / test / consumer / PR / sync / readback / evidence
+   ├─ valid finding → NEW_FINDING_REOPENS_REMAINING_WORK
+   │  → refine through existing owner
+   │  → regression/readback
+   │  → remaining-work recalculation again
+   └─ no required finding → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
+→ final-candidate full-scope adversarial review, minimum 5 loops
+→ CLEAN_REVIEW_EXIT
+→ FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
+→ completion-report
+```
+
+`IMPLEMENTATION_CORRECTION_RESCAN`은 단순히 기존 체크리스트의 미체크 항목만 세지 않는다. 실제 diff/runtime, 승인 Intent, 정본과 applicable Notion/Repository sync, untouched consumer·Test·Template·reference, 동일 Goal의 열린/최근 PR, 실패·복구·rollback, evidence ceiling을 다시 공격해 “계획에는 없었지만 현재 완료를 막는 구현/교정 누락”을 찾는다. 유효한 `OMISSION`, `CONFLICT`, `COMPLEMENT_GAP` 또는 승인 범위의 blocking finding은 `NEW_FINDING_REOPENS_REMAINING_WORK`로 남은 작업에 편입한다.
+
+`POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 새 review framework가 아니라 이 Skill의 기존 `ADVERSARIAL_REVIEW_UNTIL_CLEAN`을 최종 후보 상태에 다시 적용한다. 마지막 구현·교정 뒤 만들어진 상태를 입력으로 최소 5회의 완전한 full-scope loop를 수행하고 `CLEAN_REVIEW_EXIT`를 닫는다. `NO_MATERIAL_FOLLOWUP`인 clean loop는 유효하지만 가짜 finding이나 불필요한 수정은 만들지 않는다.
+
+`FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK`는 **현재 승인 범위에서** 필요한 구현·교정·검증이 0이고 완료 acceptance에 필요한 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, 미해결 `DEFER`가 없을 때만 `전체 완료`를 허용한다. 범위 밖 future improvement는 `DEFER` 또는 후보로 남길 수 있지만 현재 범위의 미완료를 숨겨서는 안 된다. blocker/defer가 승인 범위 안에 남아 있으면 전체 완료가 아니라 partial/blocked/deferred 상태와 재개 조건을 보고한다.
+
 ## Required inputs
 
 ```yaml
@@ -195,6 +223,7 @@ repository_audit:
 13. 새 광역 Skill을 만들기 전에 이 mode와 reference-freshness·legacy-governance 조합으로 해결 가능한지 확인한다.
 14. 유지된 변경은 `POST_CHANGE_MONITOR_LOOP`의 PR·consumer·회귀·exact-head 검사를 닫기 전 완료로 보고하지 않는다.
 15. L1 이상 material decision은 `AGENTS.md`와 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`의 `MINIMUM_VIABLE_ALTERNATIVES: 3`, `BETTER_ALTERNATIVE_SEARCH`, `LONG_TERM_PLAN_FIT_REQUIRED`를 함께 적용한다.
+16. Base/project 완료 후보는 `REMAINING_WORK_RECALCULATION_REQUIRED → IMPLEMENTATION_CORRECTION_RESCAN → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`를 닫기 전 `전체 완료`로 보고하지 않는다. 새 유효 finding은 `NEW_FINDING_REOPENS_REMAINING_WORK`로 BUILD/refinement를 재개한다.
 
 ## Repository-wide attack lenses
 
@@ -255,6 +284,9 @@ GitHub와 Notion이 다르면 최신 사용자 승인, Decision ID, Commit SHA�
 ## stale·중복·고아·untouched 소비자·파생본 Finding
 ## MUST_FIX / SHOULD_FIX / USER_DECISION_REQUIRED / DEFER
 ## REJECTED_CRITIQUE / BLOCKED_UNVERIFIED / ALLOWED_LEGACY
+## REMAINING_WORK_RECALCULATION_REQUIRED 결과
+## IMPLEMENTATION_CORRECTION_RESCAN 결과와 NEW_FINDING_REOPENS_REMAINING_WORK 내역
+## POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED / CLEAN_REVIEW_EXIT 상태
 ## 실제 반영한 최소 변경과 회차별 verification
 ## BETTER_ALTERNATIVE_SEARCH 결과
 ## LONG_TERM_PLAN_FIT_RECHECK 결과
