@@ -131,11 +131,21 @@ project/build identity
 → release-near Vertical Slice·playtest·eval
 → 정본·정적·runtime·접근성·성능·회귀 검증
 → 플랫폼·권리 검증
-→ 최소 5회 전체 적대적 개선 루프, 이후 clean까지
 → exact-head PR / merge / postmerge readback
+→ REQUIRED_WORK_REMAINING 재계산
+→ REQUIRED_WORK_REMAINING: 0 이면 COMPLETION_CANDIDATE
+→ REMAINING_WORK_COMPLETION_GATE
+→ IMPLEMENTATION_CORRECTION_RESCAN
+   ├─ valid finding → NEW_FINDING_REOPENS_REMAINING_WORK → 구현·검증으로 복귀
+   └─ no required finding → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
+→ 같은 final POST_CHANGE_MONITOR_LOOP에서 최소 5회 전체 적대적 개선 루프, 이후 clean까지
+→ CLEAN_REVIEW_EXIT
+→ FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
 → 학습·필요 시 Base 승격
-→ REQUIRED_WORK_REMAINING: 0
+→ 완료 보고
 ```
+
+`REQUIRED_WORK_REMAINING: 0`은 전체 완료가 아니라 완료 후보입니다. 상세 완료 순서와 finding 재개방 권한은 `docs/OPERATING_MODEL.md`의 `REMAINING_WORK_COMPLETION_GATE`가 책임집니다.
 
 ## Active Skill Registry View
 
