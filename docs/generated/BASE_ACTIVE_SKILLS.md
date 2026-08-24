@@ -2,7 +2,7 @@
 
 > Artifact role: Registry-derived human navigation map; `skills/SKILL_REGISTRY.json` remains the sole routing authority.
 > Generated from `skills/SKILL_REGISTRY.json`. Do not edit this derivative.
-> Registry SHA-256: `cc99e71918d2b5e908f99415979c125e2af912b37d380256de611d2ac3d7ad26`
+> Registry SHA-256: `08f882d0c77339e8f7ff187c35b79501e0a2958ab1ff1c7aaa1c0ef8dbee45d6`
 > Current active Skill count: `30`
 > Regenerate: `python tools/build_base_v9_artifacts.py --write`
 > Verify: `python tools/build_base_v9_artifacts.py --check`

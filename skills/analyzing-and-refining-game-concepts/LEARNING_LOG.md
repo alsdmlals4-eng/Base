@@ -1,5 +1,27 @@
 # Analyzing and Refining Game Concepts Learning Log
 
+## 2026-08-24 — Registry route 중복은 strict-subsumption만 제거한다
+
+### Trigger
+
+Base 전수 감사에서 `analyzing-and-refining-game-concepts.use_when`의 짧은 설명이 같은 항목의 더 완전한 설명에 의미상 포함된 중복으로 확인됐다.
+
+### Lesson
+
+- 한 route가 다른 route의 의미·입력 범위·책임을 엄격히 포함할 때만 작은 route를 제거한다.
+- 표현이 비슷하다는 이유로 서로 다른 진입 책임까지 합치면 오라우팅과 발견성 손실이 생긴다.
+- 이번 변경은 게임 컨셉 owner의 strict-subsumption 1건만 제거하며, 변경 검증 Skill과 UI 감사 Skill의 서로 다른 복수 route는 유지한다.
+
+### Validation state
+
+- focused RED: 새 dedup 테스트 1건만 예상대로 실패했고 distinct-route 보존 테스트는 통과했다.
+- existing owner regression: `tests/test_game_design_difficulty_workflow.py`가 게임 컨셉 route와 Registry-derived Skill Map hash를 함께 검증한다.
+- runtime/player evidence: `NOT_APPLICABLE` — 라우팅 metadata 구조 정리이며 게임 런타임·플레이어 경험 변경이 아니다.
+
+### Guardrail
+
+이 사례 하나를 자동 semantic-dedup 알고리즘의 공용 삭제 규칙으로 승격하지 않는다. 다른 후보는 owner의 권한·입력·산출물·검증 의미를 다시 대조한 뒤 별도로 판단한다.
+
 ## 2026-08-05 — PC·Android 동시 목표는 조건부 기획 제약으로 다룬다
 
 ### Trigger
