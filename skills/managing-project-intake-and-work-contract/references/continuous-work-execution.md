@@ -126,9 +126,23 @@ explicit user-directed continue
       → 해당 high-risk task 보류
 → ready_tasks가 남아 있으면 다음 독립 작업 계속
 → 상태 변화 뒤 deferred_tasks 재평가
-→ 완료 기준 충족 또는 GLOBAL_TERMINAL_BLOCKER까지 반복
+→ REMAINING_WORK_RECALCULATION_REQUIRED
+   ├─ required work > 0 → ready/deferred queue 재구성 후 계속
+   └─ required work = 0 → COMPLETION_CANDIDATE
+→ IMPLEMENTATION_CORRECTION_RESCAN
+   ├─ valid omission/correction finding
+   │  → NEW_FINDING_REOPENS_REMAINING_WORK
+   │  → 기존 owner의 최소 BUILD/verify
+   │  → REMAINING_WORK_RECALCULATION_REQUIRED로 복귀
+   └─ no required finding
+      → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
+      → same final POST_CHANGE_MONITOR_LOOP
+      → minimum-five full-scope loops, then until CLEAN_REVIEW_EXIT
+      → FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
 → 최종 실행 보고
 ```
+
+`POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 **두 번째 5회 검토가 아니다.** 마지막 구현·교정 뒤의 completion candidate를 입력으로 하는 기존 `POST_CHANGE_MONITOR_LOOP` 자체이며, 같은 final-state lineage가 최소 5회와 `CLEAN_REVIEW_EXIT`를 충족한다. `NO_MATERIAL_FOLLOWUP`이면 가짜 finding이나 불필요한 변경을 만들지 않는다.
 
 진행 시간이 긴 경우 짧은 진행 업데이트를 제공할 수 있다. 다만 업데이트를 `진행할까요?`, `승인할까요?` 같은 승인 Gate로 바꾸지 않는다.
 
@@ -255,7 +269,7 @@ expected exact HEAD SHA 고정
 
 전체 루프는 다음에서만 끝난다.
 
-- 현재 승인된 작업 계약의 완료 기준을 모두 충족: `COMPLETE`
+- 현재 승인된 작업 계약의 `REMAINING_WORK_COMPLETION_GATE`가 `CLEAN_REVIEW_EXIT`까지 닫히고 `FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK`를 만족: `COMPLETE`
 - 사용자가 중지: `STOPPED_BY_USER`
 - 실행 가능한 독립 작업이 없고 진짜 사용자 결정만 남음: `STOPPED_USER_DECISION`
 - recovery ladder를 모두 소진했고 실행 가능한 독립 작업이 없는 필수 blocker: `GLOBAL_TERMINAL_BLOCKER`
@@ -307,12 +321,20 @@ merge
 → GitHub + Notion destination readback
 → postmerge regression evidence
 → acceptance criteria를 현재 main 기준으로 다시 대조
+→ REMAINING_WORK_RECALCULATION_REQUIRED
 → REQUIRED_WORK_REMAINING 계산
 → REQUIRED_WORK_REMAINING == 0
-   ├─ yes → COMPLETE 후보
-   └─ no  → REQUEUE_IN_SCOPE_WHEN_NONZERO
-             → 승인 범위 안의 미완료 항목만 ready_tasks / deferred_tasks로 재분류
-             → 실행 가능한 ready task 계속
+   ├─ no  → REQUEUE_IN_SCOPE_WHEN_NONZERO
+   │        → 승인 범위 안의 미완료 항목만 ready_tasks / deferred_tasks로 재분류
+   │        → 실행 가능한 ready task 계속
+   └─ yes → COMPLETION_CANDIDATE
+            → IMPLEMENTATION_CORRECTION_RESCAN
+            ├─ finding → NEW_FINDING_REOPENS_REMAINING_WORK → REQUEUE_IN_SCOPE_WHEN_NONZERO
+            └─ clean → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
+                       → same final POST_CHANGE_MONITOR_LOOP
+                       → minimum-five full loops, then until CLEAN_REVIEW_EXIT
+                       → FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
+                       → COMPLETE
 ```
 
 ### `REQUEUE_IN_SCOPE_WHEN_NONZERO`
@@ -321,7 +343,7 @@ merge
 - 남은 작업은 **현재 승인된 acceptance criteria에서 파생되는 항목만** 재큐잉한다. 새 Goal이나 optional idea를 required work로 몰래 승격하지 않는다.
 - external blocker와 optional backlog는 required work와 분리한다.
 - postmerge에서 새 회귀·stale consumer·대체 표시 누락·검증 실패가 발견되면 범위 안의 수정/재검증 task를 다시 queue에 넣는다.
-- 전역 종료는 required work 0 또는 앞에서 정의한 진짜 `GLOBAL_TERMINAL_BLOCKER` / 사용자 중지·결정 경계에서만 가능하다.
+- 전역 종료는 `REMAINING_WORK_COMPLETION_GATE`의 clean exit 또는 앞에서 정의한 진짜 `GLOBAL_TERMINAL_BLOCKER` / 사용자 중지·결정 경계에서만 가능하다.
 
 사용자 행동이 필수인 blocker라면 현재 상태와 막힌 stage를 먼저 특정하고, 사용자가 그대로 따라 할 수 있는 처음부터의 간단한 단계로 안내한다. PowerShell이 필요한 경우 `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`를 사용해 새 창·위치 세팅·한 블록 실행을 기본으로 한다.
 
@@ -336,6 +358,10 @@ ready_tasks: []
 deferred_tasks: []
 completed_tasks: []
 required_work_remaining: 0 | N
+remaining_work_recalculation_status: NOT_RUN | PASS | FAIL | BLOCKED_UNVERIFIED
+implementation_correction_rescan_status: NOT_RUN | PASS | FAIL | BLOCKED_UNVERIFIED
+completion_adversarial_review_status: NOT_RUN | IN_PROGRESS | PASS | FAIL | BLOCKED_UNVERIFIED
+clean_review_exit_status: NOT_RUN | PASS | FAIL | BLOCKED_UNVERIFIED
 external_blockers: []
 optional_backlog: []
 adversarial_findings: []
@@ -353,3 +379,5 @@ next_state:
 - `STRONGER_WORK_CONTRACT_OVERRIDES_COPY_INTEGRATION`을 무시하고 더 구체적인 read-only/no-absorption 작업 계약보다 standing authorization을 우선함
 - 다른 workstream PR을 `explicit absorption authorization` 없이 selective copy·재구현·흡수·close·supersede 처리함
 - 다른 PR을 읽는 것과 그 내용을 own PR에 흡수하는 것을 같은 권한으로 취급함
+- `REQUIRED_WORK_REMAINING == 0`을 `COMPLETION_CANDIDATE`가 아니라 즉시 `COMPLETE`로 승격함
+- `IMPLEMENTATION_CORRECTION_RESCAN`에서 새 유효 finding이 나왔는데 `NEW_FINDING_REOPENS_REMAINING_WORK`로 재큐잉하지 않음

@@ -186,6 +186,24 @@ audit
 
 외부 AI 결과가 있으면 external-source review를 추가한다. 실행하지 않은 검증은 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`와 사유로 기록한다.
 
+## Completion candidate and correction gate
+
+프로젝트가 채택한 Base `REMAINING_WORK_COMPLETION_GATE`는 모든 L1 이상 구현·교정·검증 작업의 전체 완료 주장에 적용한다. 계획된 task가 소진되거나 `required_work_remaining: 0`이 되어도 즉시 완료하지 않는다.
+
+```text
+REMAINING_WORK_RECALCULATION_REQUIRED
+→ remaining == 0 이면 COMPLETION_CANDIDATE
+→ IMPLEMENTATION_CORRECTION_RESCAN
+   ├─ valid finding → NEW_FINDING_REOPENS_REMAINING_WORK → 기존 owner에서 교정·검증·재계산
+   └─ no required finding → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
+→ same final POST_CHANGE_MONITOR_LOOP
+→ minimum-five full-scope adversarial loops, then until CLEAN_REVIEW_EXIT
+→ FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
+→ completion report
+```
+
+`POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 별도 두 번째 적대적 검토 체계가 아니다. current Base의 동일 final `POST_CHANGE_MONITOR_LOOP`를 소비한다. 프로젝트가 더 엄격한 완료 조건을 추가할 수는 있지만 이 Base 완료 Gate를 약화하거나 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, required `DEFER`를 숨기고 전체 완료를 주장할 수 없다.
+
 ## End-of-work and learning
 
 1. 프로젝트 고유 결정·수치·구현 상태를 올바른 Notion/repository owner와 테스트·Roadmap에 반영한다.
@@ -195,6 +213,7 @@ audit
 5. 공용화 가치가 있으면 current Base proposal lifecycle로 제안한다.
 6. 제안 PR과 승인된 구현 PR을 분리한다.
 7. 새 작업자가 콜드 스타트 질문에 답할 수 있는지 확인한다.
+8. `REMAINING_WORK_COMPLETION_GATE`의 재계산·구현/교정 rescan·final adversarial clean-exit가 Active Context와 완료 증거에 남았는지 확인한다.
 
 ## Report format
 
@@ -204,6 +223,7 @@ audit
 ## 핵심 컨셉·PoC·기획 재조정
 ## 구현·문서·발행 변경
 ## 검증 판정과 증거
+## REMAINING_WORK_COMPLETION_GATE·IMPLEMENTATION_CORRECTION_RESCAN·CLEAN_REVIEW_EXIT
 ## 미검증·사용자 확인
 ## 남은 위험·롤백
 ## Active Context·Roadmap·Skill 최신화
