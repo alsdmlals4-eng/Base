@@ -11,6 +11,13 @@ GUIDE_PATH = (
     / "serial-fiction"
     / "SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md"
 )
+SOURCE_RADAR_PATH = (
+    ROOT
+    / "docs"
+    / "knowledge"
+    / "game-development"
+    / "NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md"
+)
 
 
 class StoryCraftPlanningNormalizationTests(unittest.TestCase):
@@ -54,6 +61,20 @@ class StoryCraftPlanningNormalizationTests(unittest.TestCase):
 
         self.assertNotIn("픽사의 공식 22가지 법칙", guide)
         self.assertNotIn("캠벨의 12단계 영웅의 여정", guide)
+
+    def test_external_craft_claims_have_traceable_source_radar_entries(self) -> None:
+        radar = SOURCE_RADAR_PATH.read_text(encoding="utf-8")
+
+        for token in (
+            "Pixar in a Box",
+            "Emma Coats #storybasics archive",
+            "Open University — E. M. Forster story/plot",
+            "Christopher Vogler — Hero's Journey handout",
+            "Brandon Sanderson — Promise / Progress / Payoff",
+            "not official Pixar policy",
+            "not Campbell's fixed 12-stage list",
+        ):
+            self.assertIn(token, radar)
 
 
 if __name__ == "__main__":
