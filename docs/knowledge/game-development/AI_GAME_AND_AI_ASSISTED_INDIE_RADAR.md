@@ -6,6 +6,7 @@ status: ACTIVE_DISCOVERY_EXTENSION
 owner_policy: docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md
 reuse_owner: docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md
 ai_workflow_owner: docs/knowledge/game-development/AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md
+current_project_adoption_receipt: docs/knowledge/game-development/reuse/AI_ASSISTED_INDIE_PROJECT_ADOPTION_RECEIPT_2026-08-24.md
 scheduler_authority: EXTERNAL_TO_BASE
 recommended_cadence: weekly
 compare_with_previous_scan: true
@@ -24,7 +25,7 @@ project_auto_adoption: false
 - 두 번째 Watchlist가 되지 않는다.
 - Base scheduler를 소유하지 않는다.
 - 새 Skill/Agent를 만들지 않는다.
-- 프로젝트 정본을 바꾸지 않는다.
+- 프로젝트 정본을 자동으로 바꾸지 않는다.
 - AI 런타임 프레임워크를 자동 채택하지 않는다.
 - 외부 게임의 인기·평가를 곧바로 인과 증거로 취급하지 않는다.
 
@@ -240,7 +241,7 @@ stale_sources_to_recheck: []
 
 동일한 교훈이 반복되면 중복 문서를 늘리지 않고 기존 후보의 evidence count와 반례를 보강한다.
 
-## 12. 프로젝트 적용 경계
+## 12. 프로젝트 적용 경계와 current receipt
 
 주간 스캔 결과는 프로젝트에 대해 다음 중 하나만 제안한다.
 
@@ -248,7 +249,22 @@ stale_sources_to_recheck: []
 ADOPT | ADAPT | TEST | REJECT | REFERENCE_ONLY
 ```
 
-그러나 프로젝트의 최신 AGENTS/Active Context/Notion 기획 정본/GitHub 구현 사실을 읽지 않은 상태에서는 `PROJECT_ADOPTION_NOT_RUN`이다. 주간 조사 자체가 프로젝트 기획·코드·Notion을 자동 변경하지 않는다.
+프로젝트의 최신 AGENTS/Active Context/Notion 기획 정본/GitHub 구현 사실을 읽지 않은 상태에서는 항상 `PROJECT_ADOPTION_NOT_RUN`이다. 주간 조사 자체가 프로젝트 기획·코드·Notion을 자동 변경하지 않는다.
+
+`INITIAL_PATTERN_PACK_STATE_IS_HISTORICAL`: `AI_ASSISTED_INDIE_PATTERN_PACK_2026-08-24.md` 안의 `PROJECT_ADOPTION_NOT_RUN`은 **2026-08-24 초기 연구 캡처 당시 상태**다. 이후 사용자가 승인한 10개 프로젝트별 적용 실행은 별도 successor receipt인 `AI_ASSISTED_INDIE_PROJECT_ADOPTION_RECEIPT_2026-08-24.md`가 현재 실행 사실을 소유한다.
+
+따라서 과거 Pattern Pack을 current truth처럼 해석하지 않는다.
+
+```text
+initial research capture
+→ current project authority read
+→ project-specific bounded adoption
+→ project merge/readback
+→ Notion sync/readback when human-facing meaning changed
+→ current_project_adoption_receipt
+```
+
+새 주간 조사 결과는 위 receipt가 존재한다는 이유로 자동 프로젝트 적용하지 않는다. 새 프로젝트 의미 변경은 다시 해당 프로젝트 current authority와 승인 범위를 읽어야 한다.
 
 ## 13. 실패·폐기 조건
 
@@ -264,7 +280,7 @@ ADOPT | ADAPT | TEST | REJECT | REFERENCE_ONLY
 - provider/API 비용이 zero-incremental-cost 기본 정책과 충돌함
 - platform/privacy/rights/replay/debug 경로가 불명확함
 
-## 14. 산출물
+## 14. 산출물과 영속 흡수 경계
 
 주간 실행 결과는 최소 다음을 남긴다.
 
@@ -281,3 +297,19 @@ ADOPT | ADAPT | TEST | REJECT | REFERENCE_ONLY
 → IRG claim ceiling
 → 다음 재확인 조건
 ```
+
+Material reusable finding이 기존 Base owner를 실제로 개선해야 하는 경우에는 보고로 끝내지 않는다. 단, 자동으로 프로젝트 canon을 바꾸지 않고 Base의 정상 변경 경로를 따른다.
+
+```text
+MATERIAL_BASE_FINDING
+→ Existing Solution First / existing owner
+→ smallest bounded Base delta
+→ separate branch/PR
+→ applicable regression + exact-head CI
+→ adversarial/review gate
+→ merge only when repository gate is satisfied
+→ merged-main readback
+→ Radar/Pattern Pack/current receipt 또는 해당 canonical owner freshness 갱신
+```
+
+`NO_CHANGE`, `REFERENCE_ONLY`, `TEST` 수준이면 PR을 만들기 위해 churn을 제조하지 않는다. open/draft/ready same-goal PR이 있으면 그 workstream은 read-only로 보호하고 중복 변경을 만들지 않는다.
