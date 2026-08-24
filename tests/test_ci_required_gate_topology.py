@@ -68,6 +68,7 @@ jobs:
         env:
           CLASSIFY_RESULT: ${{ needs.classify-changes.result }}
           DOCS_RESULT: ${{ needs.docs-validation.result }}
+          CORE_REQUIRED: ${{ needs.classify-changes.outputs.run_core }}
           CORE_REGRESSION_RESULT: ${{ needs.core-regression.result }}
           CONTRACT_REQUIRED: ${{ needs.classify-changes.outputs.run_contract }}
           CONTRACT_RESULT: ${{ needs.ubuntu-contract.result }}

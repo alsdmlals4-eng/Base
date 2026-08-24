@@ -7,9 +7,9 @@ import os
 ALWAYS_REQUIRED = (
     ("classify-changes", "CLASSIFY_RESULT"),
     ("docs-validation", "DOCS_RESULT"),
-    ("core-regression", "CORE_REGRESSION_RESULT"),
 )
 CONDITIONAL = (
+    ("core-regression", "CORE_REQUIRED", "CORE_REGRESSION_RESULT"),
     ("ubuntu-contract", "CONTRACT_REQUIRED", "CONTRACT_RESULT"),
     ("publication-validation", "PUBLICATION_REQUIRED", "PUBLICATION_RESULT"),
     ("platform-smoke-windows", "WINDOWS_REQUIRED", "WINDOWS_RESULT"),
@@ -17,6 +17,7 @@ CONDITIONAL = (
 INPUT_NAMES = (
     "CLASSIFY_RESULT",
     "DOCS_RESULT",
+    "CORE_REQUIRED",
     "CORE_REGRESSION_RESULT",
     "CONTRACT_REQUIRED",
     "CONTRACT_RESULT",
