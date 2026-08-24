@@ -50,7 +50,11 @@ def read(path: Path) -> str:
 class CocosPatternAbsorptionIntoGodotTests(unittest.TestCase):
     maxDiff = None
 
+    def assert_pattern_note_exists(self) -> None:
+        self.assertTrue(NOTE.exists(), f"missing Cocos pattern note: {NOTE}")
+
     def test_pattern_note_keeps_godot_as_only_runtime(self) -> None:
+        self.assert_pattern_note_exists()
         note = read(NOTE)
         for term in (
             "GODOT_ONLY_RUNTIME",
@@ -68,6 +72,7 @@ class CocosPatternAbsorptionIntoGodotTests(unittest.TestCase):
         self.assertIn("PLATFORM_ADAPTER_STAYS_OUTSIDE_GAME_RULES", read(PLATFORM))
 
     def test_unverified_godot_capabilities_remain_test_only(self) -> None:
+        self.assert_pattern_note_exists()
         note = read(NOTE)
         for term in (
             "PCK_DEFERRED_CONTENT: TEST",
