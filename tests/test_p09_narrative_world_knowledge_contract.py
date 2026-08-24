@@ -5,6 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 METHOD = ROOT / "docs/knowledge/methods/NARRATIVE_WORLD_KNOWLEDGE_MODEL.md"
+FALLBACK = ROOT / "docs/knowledge/methods/NOTION_KNOWLEDGE_QUERY_FALLBACK.md"
 README = ROOT / "docs/knowledge/README.md"
 HUMAN_HOME = ROOT / "docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md"
 HOME_COMPAT = ROOT / "docs/coordination/2026-08-24_PR621_HUMAN_HOME_CONFLICT_CORRECTION.md"
@@ -32,6 +33,20 @@ class NarrativeWorldKnowledgeContractTests(unittest.TestCase):
             "CURRENT_CANDIDATE",
             "CONFLICT",
             "Center Peek",
+        ):
+            self.assertIn(token, text)
+
+    def test_notion_knowledge_query_fallback_contract(self) -> None:
+        text = FALLBACK.read_text(encoding="utf-8")
+        for token in (
+            "NOTION_QUERY_FALLBACK",
+            "VIEW_MODE_FIRST",
+            "DATA_SOURCE_SCOPED_SEARCH",
+            "PAGE_FETCH_READBACK",
+            "SOURCE_EXACT_CHECK",
+            "TARGETED_UPDATE_ONLY",
+            "SEARCH_NOT_EXHAUSTIVE",
+            "NO_AUTO_PROMOTION_FROM_SEARCH",
         ):
             self.assertIn(token, text)
 
