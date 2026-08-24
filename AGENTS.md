@@ -16,7 +16,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 
 - 전체 생명주기·상태·발행·완료: `docs/OPERATING_MODEL.md`
 - Work Mode·Skill·검토·병합: `docs/WORK_MODE_AND_SKILL_ROUTING.md`
-- 기획 우선·Grill Me: `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`
+- 기획 우선 원칙·Grill Me: `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`
 - 장기 작업·완료·비용·PR 안전: `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`
 - 연속작업 실행: `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`
 - UI/UX 설계·폴리싱·실행 결과 감사: `auditing-and-refining-ui-art`
