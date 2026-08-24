@@ -294,6 +294,14 @@ secondary_functions: []
 - `HERO_JOURNEY_12_IS_VOGLER_ADAPTATION`: Campbell의 monomyth가 이론적 원류이지만, `Ordinary World`에서 `Return with the Elixir`까지의 익숙한 실무용 12단계 배열은 Christopher Vogler의 각색으로 구분한다. 12단계를 Campbell의 원래 고정 목록으로 잘못 표기하지 않는다.
 - Brandon Sanderson의 `Promise / Progress / Payoff` 같은 현업 작법 모델도 특정 작가의 성공 공식이 아니라 중간 진행이 실제 보상을 향해 움직이는지 보는 optional diagnostic으로만 사용한다.
 
+근거 추적용 원출처·근접 원출처:
+
+- Pixar in a Box — `https://www.khanacademy.org/computing/pixar/storytelling`
+- Emma Coats `#storybasics` 동시대 아카이브 — `https://www.pixartouchbook.com/blog/2011/5/15/pixar-story-rules-one-version.html`
+- Open University의 E. M. Forster story/plot 설명 — `https://www.open.edu/openlearn/mod/oucontent/view.php?id=101090&section=_unit4.2`
+- Christopher Vogler의 Hero's Journey handout — `https://chrisvogler.wordpress.com/tag/the-heros-journey/`
+- Brandon Sanderson 공식 강의 `Promise, Progress, Payoff` — `https://www.youtube.com/watch?v=ihd76ijy9LU`
+
 외부 자료는 `ADOPT / ADAPT / REJECT`로 판단하고, 프로젝트 정본·독자 약속·실제 원고 증거보다 높은 권한을 갖지 않는다. 식별 가능한 문장·대사·장면 배열은 복제하지 않는다.
 
 ### 13-B. 최소 스토리 기획 — `STORY_PLANNING_MINIMUM`
@@ -394,6 +402,9 @@ END_STATE / CLIMAX_CHOICE
 ### 13-F. 아이디어·초고·피드백·재작성 단계를 분리한다
 
 `IDEA_DIVERGENCE_BEFORE_COMMIT`은 첫 번째 아이디어를 자동 폐기하라는 규칙이 아니다. 중요한 사건·해결·반전에서 첫 안이 관습적이거나 정본과 충돌할 위험이 있으면 **2개 이상의 대안**을 더 만들어 기능·비용·독창성으로 비교한다.
+
+- `NEGATIVE_NEXT_BEAT_LIST`: 다음 전개가 막힐 때 “절대 일어나지 않을 일”, “이 작품에서는 원치 않는 상투안”, “현재 정본상 불가능한 해결”을 먼저 적어 배제 기준을 드러낸 뒤, 남는 압력·선택·인과 후보를 다시 만든다. 이 목록 자체를 정답 공식으로 사용하지 않는다.
+- `IDEA_PARKING_LOT`: 지금 버린 아이디어는 current canon으로 억지 보존하지 않고 non-canon reference로 분리해 둘 수 있다. 나중에 다른 장면·프로젝트에서 기능이 맞을 때만 재평가하며, “이미 만들었으니 써야 한다”는 매몰비용으로 되살리지 않는다.
 
 `DRAFT_FEEDBACK_REWRITE`:
 
