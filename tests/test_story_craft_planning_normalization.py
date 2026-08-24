@@ -11,13 +11,6 @@ GUIDE_PATH = (
     / "serial-fiction"
     / "SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md"
 )
-SOURCE_RADAR_PATH = (
-    ROOT
-    / "docs"
-    / "knowledge"
-    / "game-development"
-    / "NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md"
-)
 
 
 class StoryCraftPlanningNormalizationTests(unittest.TestCase):
@@ -39,6 +32,8 @@ class StoryCraftPlanningNormalizationTests(unittest.TestCase):
             "PROMISE_PROGRESS_PAYOFF",
             "DRAFT_FEEDBACK_REWRITE",
             "IDEA_DIVERGENCE_BEFORE_COMMIT",
+            "NEGATIVE_NEXT_BEAT_LIST",
+            "IDEA_PARKING_LOT",
             "PARAGRAPH_SCREEN_BLOCK_PREFERENCE",
         ):
             self.assertIn(token, guide)
@@ -62,19 +57,17 @@ class StoryCraftPlanningNormalizationTests(unittest.TestCase):
         self.assertNotIn("픽사의 공식 22가지 법칙", guide)
         self.assertNotIn("캠벨의 12단계 영웅의 여정", guide)
 
-    def test_external_craft_claims_have_traceable_source_radar_entries(self) -> None:
-        radar = SOURCE_RADAR_PATH.read_text(encoding="utf-8")
+    def test_external_craft_claims_have_traceable_primary_or_near_primary_links(self) -> None:
+        guide = GUIDE_PATH.read_text(encoding="utf-8")
 
         for token in (
-            "Pixar in a Box",
-            "Emma Coats #storybasics archive",
-            "Open University — E. M. Forster story/plot",
-            "Christopher Vogler — Hero's Journey handout",
-            "Brandon Sanderson — Promise / Progress / Payoff",
-            "not official Pixar policy",
-            "not Campbell's fixed 12-stage list",
+            "https://www.khanacademy.org/computing/pixar/storytelling",
+            "https://www.pixartouchbook.com/blog/2011/5/15/pixar-story-rules-one-version.html",
+            "https://www.open.edu/openlearn/mod/oucontent/view.php?id=101090&section=_unit4.2",
+            "https://chrisvogler.wordpress.com/tag/the-heros-journey/",
+            "https://www.youtube.com/watch?v=ihd76ijy9LU",
         ):
-            self.assertIn(token, radar)
+            self.assertIn(token, guide)
 
 
 if __name__ == "__main__":
