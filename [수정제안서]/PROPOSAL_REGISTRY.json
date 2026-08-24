@@ -164,7 +164,7 @@
       "path": "[수정제안서]/BCP-2026-015-external-runtime-session-same-snapshot-recovery/PROPOSAL.md",
       "status": "IMPLEMENTED",
       "source_project": "alsdmlals4-eng/omenward",
-      "source_commit": "bde85549560fca90f7aa25fc4842bc0a3afb92e7",
+      "source_commit": "bde85549560fca90f7aa69643e5552086078b102",
       "submitted_at": "2026-08-10",
       "approval_ref": "[수정제안서]/BCP-2026-015-external-runtime-session-same-snapshot-recovery/PROPOSAL.md#승인과-구현",
       "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/266"
@@ -322,6 +322,17 @@
       "submitted_at": "2026-08-24",
       "approval_ref": "[수정제안서]/BCP-2026-029-cocos-ai-game-engine-machine-boundary/PROPOSAL.md#승인과-구현 (2026-08-24 current task user approval; proposal PR #643 merged; approval PR #644 merged)",
       "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/646"
+    },
+    {
+      "proposal_id": "BCP-2026-030-ttrpg-rule-design-reference-library",
+      "title": "TTRPG 룰 설계·룰북 설명 구조 Reference Library",
+      "path": "[수정제안서]/BCP-2026-030-ttrpg-rule-design-reference-library/PROPOSAL.md",
+      "status": "APPROVED_FOR_IMPLEMENTATION",
+      "source_project": "TRPG 룰 설계 조사",
+      "source_commit": "7de18bc6a941b7be11e747f1cf59ae60cb3e4657",
+      "submitted_at": "2026-08-24",
+      "approval_ref": "[수정제안서]/BCP-2026-030-ttrpg-rule-design-reference-library/PROPOSAL.md#승인과-구현 (2026-08-24 current-task user approval)",
+      "implementation_pr": null
     }
   ]
 }
