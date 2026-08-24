@@ -302,6 +302,25 @@ secondary_functions: []
 - Christopher Vogler의 Hero's Journey handout — `https://chrisvogler.wordpress.com/tag/the-heros-journey/`
 - Brandon Sanderson 공식 강의 `Promise, Progress, Payoff` — `https://www.youtube.com/watch?v=ihd76ijy9LU`
 
+`HERO_JOURNEY_OPTIONAL_12_STAGE_LENS`는 Vogler의 실무용 12단계를 **필요할 때만** 구조 진단에 사용한다.
+
+```text
+1. Ordinary World / 일상 세계
+2. Call to Adventure / 모험의 부름
+3. Refusal of the Call / 거부
+4. Meeting with the Mentor / 조력자와의 만남
+5. Crossing the Threshold / 첫 관문 통과
+6. Tests, Allies, Enemies / 시험·동료·적
+7. Approach / 가장 깊은 곳으로의 접근
+8. Ordeal / 중대한 시험
+9. Reward / 보상
+10. The Road Back / 귀환의 길
+11. Resurrection / 부활
+12. Return with the Elixir / 보물과 함께 귀환
+```
+
+모든 작품이 12단계를 순서대로 명시적으로 가져야 하는 것은 아니다. 짧은 작품·군상극·미스터리·비선형 서사에서는 단계가 압축·생략·재배열될 수 있으며, 이 Lens 때문에 기존 Reader Promise·정본 인과·캐릭터 고유 선택을 비틀면 `FRAMEWORK_OVERFIT`이다.
+
 외부 자료는 `ADOPT / ADAPT / REJECT`로 판단하고, 프로젝트 정본·독자 약속·실제 원고 증거보다 높은 권한을 갖지 않는다. 식별 가능한 문장·대사·장면 배열은 복제하지 않는다.
 
 ### 13-B. 최소 스토리 기획 — `STORY_PLANNING_MINIMUM`
@@ -405,6 +424,8 @@ END_STATE / CLIMAX_CHOICE
 
 - `NEGATIVE_NEXT_BEAT_LIST`: 다음 전개가 막힐 때 “절대 일어나지 않을 일”, “이 작품에서는 원치 않는 상투안”, “현재 정본상 불가능한 해결”을 먼저 적어 배제 기준을 드러낸 뒤, 남는 압력·선택·인과 후보를 다시 만든다. 이 목록 자체를 정답 공식으로 사용하지 않는다.
 - `IDEA_PARKING_LOT`: 지금 버린 아이디어는 current canon으로 억지 보존하지 않고 non-canon reference로 분리해 둘 수 있다. 나중에 다른 장면·프로젝트에서 기능이 맞을 때만 재평가하며, “이미 만들었으니 써야 한다”는 매몰비용으로 되살리지 않는다.
+- `SYMBOL_MOTIF_METAPHOR_OPTIONAL`: 상징·모티프·비유·은유는 특정 사물·이미지·행동을 반복해 주제·관계·감정 변화를 압축해서 보여줄 때 사용할 수 있다. 독자가 장면 자체를 이해하려면 숨은 상징 해석이 반드시 필요하도록 만들지 않고, 상징을 넣기 위해 기존 인과나 인물 행동을 비틀지 않는다.
+- `VOICE_TONE_CONTINUITY`: 작품의 genre promise, 현재 POV, 관계 거리와 장면 상태에 맞는 voice·tone을 유지한다. 큰 톤 변화는 사건·POV·상태 변화로 설명될 수 있어야 하며, “작가의 목소리”는 다른 작가의 식별 가능한 문체를 모사하는 것이 아니라 반복되는 정보 선택·판단·리듬 원칙에서 형성한다.
 
 `DRAFT_FEEDBACK_REWRITE`:
 
