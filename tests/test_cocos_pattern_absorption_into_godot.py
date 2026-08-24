@@ -41,6 +41,14 @@ WATCH = (
     / "game-development"
     / "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md"
 )
+REGISTRY = (
+    ROOT
+    / "docs"
+    / "knowledge"
+    / "game-development"
+    / "reuse"
+    / "REUSABLE_MODULE_REGISTRY.md"
+)
 
 
 def read(path: Path) -> str:
@@ -66,10 +74,30 @@ class CocosPatternAbsorptionIntoGodotTests(unittest.TestCase):
         ):
             self.assertIn(term, note)
 
-    def test_patterns_route_to_existing_owners(self) -> None:
-        self.assertIn("FIRST_LOAD_BUDGET_AND_DEFERRED_CONTENT", read(BUILD))
-        self.assertIn("REPRODUCIBLE_BUILD_PROFILE", read(TECH))
-        self.assertIn("PLATFORM_ADAPTER_STAYS_OUTSIDE_GAME_RULES", read(PLATFORM))
+    def test_patterns_reuse_existing_owner_contracts(self) -> None:
+        self.assert_pattern_note_exists()
+        note = read(NOTE)
+        for term in (
+            "FIRST_LOAD_BUDGET_AND_DEFERRED_CONTENT",
+            "REPRODUCIBLE_BUILD_PROFILE",
+            "PLATFORM_ADAPTER_STAYS_OUTSIDE_GAME_RULES",
+            "PACKAGE_BUDGET_DRIVES_CONTENT_BOUNDARIES",
+            "PARTIAL_REBUILD_CANDIDATE",
+            "GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md",
+            "TECHNICAL_PRODUCTION_AND_RELEASE_GUIDE.md",
+            "PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md",
+        ):
+            self.assertIn(term, note)
+
+        build = read(BUILD)
+        self.assertIn("first_launch_additional_download_bytes", build)
+        self.assertIn("delivery_separation_candidate", build)
+
+        platform = read(PLATFORM)
+        self.assertIn("shared_gameplay_rules", platform)
+        self.assertIn("platform_service_adapter", platform)
+
+        self.assertTrue(TECH.exists())
 
     def test_unverified_godot_capabilities_remain_test_only(self) -> None:
         self.assert_pattern_note_exists()
@@ -83,23 +111,29 @@ class CocosPatternAbsorptionIntoGodotTests(unittest.TestCase):
             self.assertIn(term, note)
 
     def test_cocos_uses_existing_periodic_source_pipeline(self) -> None:
-        watch = read(WATCH)
+        self.assert_pattern_note_exists()
+        note = read(NOTE)
         for term in (
-            "Cocos Creator official docs / releases",
+            "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md",
+            "Cocos Creator official docs/releases",
             "Cocos behavior",
             "Godot runtime authority",
         ):
-            self.assertIn(term, watch)
-        self.assertNotIn("COCOS_SPECIFIC_SCHEDULER", watch)
+            self.assertIn(term, note)
+        self.assertNotIn("COCOS_SPECIFIC_SCHEDULER", read(WATCH))
 
-    def test_no_cocos_runtime_dependency_or_new_broad_skill(self) -> None:
-        registry = read(ROOT / "skills" / "SKILL_REGISTRY.json")
+    def test_no_cocos_runtime_dependency_new_broad_skill_or_premature_module(self) -> None:
+        skill_registry = read(ROOT / "skills" / "SKILL_REGISTRY.json")
         for forbidden in (
             '"skill_id":"cocos-game-development"',
             '"skill_id":"dual-engine-game-development"',
             '"skill_id":"cocos-godot-bridge"',
         ):
-            self.assertNotIn(forbidden, registry)
+            self.assertNotIn(forbidden, skill_registry)
+
+        module_registry = read(REGISTRY)
+        self.assertNotIn("COCOS_PATTERN_ABSORPTION", module_registry)
+        self.assertNotIn("COCOS_RUNTIME", module_registry)
 
 
 if __name__ == "__main__":
