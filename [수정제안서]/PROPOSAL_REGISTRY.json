@@ -311,6 +311,17 @@
       "submitted_at": "2026-08-22",
       "approval_ref": "https://github.com/alsdmlals4-eng/Base/pull/596#issuecomment-5377786729",
       "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/575"
+    },
+    {
+      "proposal_id": "BCP-2026-029-cocos-ai-game-engine-machine-boundary",
+      "title": "Cocos AI-native game-engine machine boundary 패턴 흡수",
+      "path": "[수정제안서]/BCP-2026-029-cocos-ai-game-engine-machine-boundary/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "alsdmlals4-eng/Base",
+      "source_commit": "2828a74f60c1ed09546171040f4178c8848ea686",
+      "submitted_at": "2026-08-24",
+      "approval_ref": null,
+      "implementation_pr": null
     }
   ]
 }

@@ -1,0 +1,152 @@
+# BCP-2026-029 — Cocos AI-native game-engine machine boundary 패턴 흡수
+
+## 출처와 상태
+
+- 출처 프로젝트: `alsdmlals4-eng/Base` + COCOS 4 / Cocos CLI 공개 기술 벤치마크
+- 기준 Base 커밋: `2828a74f60c1ed09546171040f4178c8848ea686`
+- 외부 자료 확인일: `2026-08-24`
+- 제출일: `2026-08-24`
+- 상태: `SUBMITTED`
+- 지식 상태: `공식 원출처 관찰 + provider-neutral 패턴 후보`
+- 구현 후보 Draft PR: `https://github.com/alsdmlals4-eng/Base/pull/642` — 제안 lifecycle 누락 발견 후 merge 금지 상태로 유지하며, 정식 승인 상태 전에는 구현 권위로 사용하지 않는다.
+
+## 관찰과 증거
+
+2026-08-24 현재 COCOS 4와 Cocos CLI의 공개 자료에서 다음 machine-facing 구조를 확인했다.
+
+1. COCOS 4는 Cocos Creator에서 결합되어 있던 엔진과 에디터를 분리하고, AI 통합을 위해 cross-platform framework와 editor core component를 CLI tool로 옮겨 engine core capability로 통합하는 방향을 공개한다.
+2. Cocos CLI는 명시적 `--project` 경로를 사용하며 `cocos start-mcp-server --project <project-path>`를 제공한다. 전역 `--no-interactive`는 CI/자동화를 위해 제공되고 build에는 `--log-dest`가 있다.
+3. Cocos CLI 저장소는 unit/E2E test를 제공하며 CONTRIBUTING 문서는 MCP API schema/tool 변경 뒤 `npm run generate:mcp-types`로 E2E용 type-safe definition을 생성하도록 요구한다.
+4. COCOS 4 GitHub Releases의 최신 공개 릴리스는 확인일 기준 `4.0.0-alpha.28`(2026-08-03)이다. 따라서 구조적 학습 가치는 있지만 COCOS 4 자체의 production maturity나 Godot 대체 근거로 확대할 수 없다.
+
+1차 출처:
+
+- https://github.com/cocos/cocos4
+- https://github.com/cocos/cocos4/releases
+- https://github.com/cocos/cocos-cli
+- https://github.com/cocos/cocos-cli/blob/main/docs/en/commands.md
+- https://github.com/cocos/cocos-cli/blob/main/docs/en/quick-start.md
+- https://github.com/cocos/cocos-cli/blob/main/CONTRIBUTING.md
+
+Base 현행과의 비교 근거:
+
+- `docs/CAPABILITY_COMPOSITION_MAP.md`는 이미 `reusable core → stable CLI/programmatic contract → optional human surface`를 사용한다.
+- P06 Godot toolchain은 HiGodot single authoring authority를 유지하며 GUT/Hera의 책임을 분리한다.
+- 기존 Godot historical adapter 자료는 project identity, closed schema, evidence와 실제 behavior 검증을 분리해야 한다는 교훈을 이미 갖고 있다.
+
+따라서 외부 엔진을 설치하지 않고도 Cocos에서 관찰한 구조를 기존 Base owner에 더 엄격한 machine boundary로 추상화할 수 있다.
+
+## 일반화 후보
+
+새 Skill이나 새 Tool Hub를 만들지 않고 기존 `BENCHMARKING_REFERENCE_GUIDE`와 `CAPABILITY_COMPOSITION_MAP`에 `AI_GAME_ENGINE_MACHINE_BOUNDARY`를 추가하는 안이다.
+
+```text
+exact project identity
+→ typed operation
+→ reusable bounded operation core
+   ├─ CLI adapter
+   └─ MCP adapter
+→ representative behavior E2E
+→ Implementation Reality Gate
+→ structured execution evidence
+```
+
+공용 후보 계약:
+
+- `PROJECT_IDENTITY_BEFORE_OPERATION`: editor window/current directory/port를 추측하지 않고 exact project/ref/version을 먼저 결속한다.
+- `SHARED_CORE_FOR_CLI_AND_MCP`: CLI와 MCP가 별도 mutation/business logic을 소유하지 않고 같은 bounded core를 호출한다.
+- `SCHEMA_GENERATED_TOOL_SURFACE`: 구현 스택에 실익이 있을 때 하나의 closed schema/type source에서 CLI/MCP type·validator·fixture를 생성하거나 기계 검증해 drift를 막는다.
+- `MCP_E2E_BEHAVIOR_CONTRACT`: handshake/tool listing/schema load가 아니라 대표 operation이 실제 project/result/evidence boundary까지 도달하는지 E2E로 검증한다.
+- `MCP_CONNECTED_IS_NOT_BEHAVIOR_PASS`: MCP 연결 성공은 transport evidence일 뿐 engine action·persist·target identity·evidence 성공을 증명하지 않는다.
+- `NONINTERACTIVE_AUTOMATION_PATH`: 승인된 bounded operation은 가능한 경우 CI/agent용 non-interactive path를 제공하되 기존 승인·보안·보호 path Gate를 우회하지 않는다.
+- `STRUCTURED_EXECUTION_EVIDENCE`: exact project/ref, adapter/tool version, typed operation, result, changed/observed artifact, log/evidence location, `NOT_RUN`/`BLOCKED` 상태를 결속한다.
+- `ENGINE_AND_WRITER_AUTHORITY_PRESERVED`: 이 패턴은 엔진 선택이나 persistent writer 수를 바꾸지 않는다.
+
+## 프로젝트 전용으로 남길 내용
+
+이번 제안은 특정 게임 프로젝트의 기획·씬·데이터·밸런스·플레이 규칙을 Base에 넣지 않는다.
+
+또한 다음 Cocos 고유 구현은 공용 계약으로 승격하지 않는다.
+
+- COCOS 4 runtime 및 C++ core 구현.
+- TypeScript API 자체.
+- Cocos CLI/Node toolchain 패키지.
+- Cocos MCP server 구현.
+- Cocos Wizard/editor UI 또는 extension marketplace.
+- Cocos Asset Bundle 구현 세부.
+
+현재 게임 엔진은 **Godot을 유지**한다. 현재 Base의 Godot authoring/test/live-QA owner와 single-writer 경계도 그대로 유지한다.
+
+## 적용 조건과 비사용 조건
+
+적용 조건:
+
+- game engine/editor/QA tool이 사람 외에 CI 또는 AI Agent에서 반복 호출된다.
+- 잘못된 project identity, schema drift, transport-only false PASS, 실행 증거 누락이 실제 위험이다.
+- 기존 machine-facing interface를 유지하면서 adapter 간 의미를 통일할 필요가 있다.
+
+비사용 조건:
+
+- 일회성 수동 작업으로 별도 schema/codegen/E2E 계층의 유지비가 가치보다 큰 경우.
+- 기존 도구가 이미 exact identity + typed operation + behavior E2E + evidence를 충족하면 새 wrapper를 만들지 않고 그대로 재사용한다.
+- MCP가 필요하지 않은 작업에는 MCP를 추가하지 않는다. CLI 또는 기존 programmatic adapter만으로 충분하면 그 표면을 유지한다.
+- 단지 외부 엔진에서 좋은 패턴을 발견했다는 이유만으로 해당 엔진/CLI/SDK를 dependency로 설치하지 않는다.
+
+## 반례와 위험
+
+### 최소 3안 비교
+
+| 안 | 장점 | 위험·비용 | 판정 |
+| --- | --- | --- | --- |
+| A. COCOS 4로 엔진 이전 | Cocos의 최신 machine-facing 구조를 직접 사용 | 현재 Alpha, 기존 Godot 코드/도구/지식 이전비용, 제품 위험 증가 | `REJECT` |
+| B. Cocos CLI/MCP를 별도 Godot bridge처럼 추가 | 외부 패턴을 빠르게 체험 | Cocos/Node/TS dependency 증가, Godot authoring authority 중복 가능, 공급망·유지비 증가 | `REJECT` |
+| C. provider-neutral 계약만 기존 Base owner에 흡수 | Godot과 single-writer 유지, 비용 0, 여러 tool에 재사용 가능 | 문서 규칙만으로는 개별 tool behavior PASS를 보장하지 않으므로 후속 실제 E2E 필요 | `ADOPT` |
+
+주요 반례·위험:
+
+1. Cocos 한 사례에서 본 API를 그대로 보편 법칙으로 복제하면 과적합된다. 따라서 provider-specific syntax가 아니라 identity/core/schema/E2E/evidence 불변식만 승격한다.
+2. `SCHEMA_GENERATED_TOOL_SURFACE`를 무조건 code generation으로 강제하면 작은 도구에서는 오히려 유지비가 늘어난다. generation은 실익이 있을 때만 쓰고 schema/type drift 방지 자체를 필수로 둔다.
+3. MCP를 AI 친화성의 필수 조건으로 오해하면 불필요한 server/transport가 늘어난다. MCP는 adapter 중 하나이며 CLI/programmatic path가 충분하면 추가하지 않는다.
+4. 외부 Alpha 제품의 방향성을 production readiness로 오인할 수 있다. COCOS 4 자체의 adoption과 pattern extraction을 분리한다.
+5. 기존 HiGodot authoring authority와 충돌하는 두 번째 writer가 생기면 즉시 reject한다.
+
+## 영향 범위와 검증
+
+승인 후 최소 구현 후보:
+
+- `docs/CAPABILITY_COMPOSITION_MAP.md`: provider-neutral machine boundary owner.
+- `docs/BENCHMARKING_REFERENCE_GUIDE.md`: 외부 engine/tool에서 해당 패턴을 추출하는 routing.
+- `docs/knowledge/cases/COCOS_AI_NATIVE_ENGINE_INTERFACE_CASE.md`: dated source observation과 ADOPT/ADAPT/REJECT 사례.
+- `tests/test_ai_game_engine_machine_boundary_contract.py`: Godot 유지, Cocos benchmark-only, MCP transport≠behavior PASS 회귀.
+- 기존 Base v9 focused CI에 위 회귀 테스트 연결.
+
+검증 계획:
+
+1. TDD RED: 새 contract가 없을 때 focused regression이 실제 실패하는지 확인.
+2. GREEN: contract 적용 후 Base v9 integrity/release checks와 전체 focused suite 통과.
+3. 기존 `test_higodot_single_authority_policy`, `test_godot_higodot_gut_hera_toolchain`, tool-interface regression을 함께 통과시켜 writer/owner 퇴행을 확인한다.
+4. PR changed-file inventory에서 Cocos runtime, Node/TypeScript package, 새 MCP runtime, Tool Hub 파일이 추가되지 않았는지 확인한다.
+5. 최소 5회 전체 적대적 재검토 후 새 blocking finding 0일 때만 구현 PR을 ready/merge한다.
+
+현재 draft evidence:
+
+- Draft PR #642에서 새 회귀를 먼저 추가한 RED Actions run `32695035655`는 새 contract 부재로 의도한 실패를 재현했다.
+- 같은 draft의 구현 후 Actions run `32695347292`는 `385 tests`, `OK (skipped=1)` 및 Base integrity/release checks를 통과했다.
+- 이 draft evidence는 BCP 승인 이전에는 merge authority가 아니며, 정식 proposal lifecycle을 복구하기 위한 선행 검증 자료로만 사용한다.
+
+## 필요한 도구·파일·권한
+
+- 필요 항목: 기존 GitHub repository 문서·Python unittest·GitHub Actions만 사용.
+- 필요한 이유: 공용 contract와 회귀를 저장소 자체에서 재현하기 위함.
+- 설치·적용 방법: 신규 외부 dependency 설치 없음.
+- 설치 후 확인 명령: 기존 Base v9 focused CI와 `python -m unittest tests.test_ai_game_engine_machine_boundary_contract -v`.
+- 최소 권한: 현재 Base branch/PR 작성 및 정상 merge 권한. `--admin`, ruleset bypass, force push 불필요.
+- 추가 금전 비용: `0`.
+
+## 승인과 구현
+
+- 사용자 승인 근거: 2026-08-24 현재 작업 대화에서 사용자가 **“그렇게하자 / 기술만 흡수하고 godot엔진 계속 쓰는걸로”**라고 명시적으로 방향과 구현 의도를 승인했다. 다만 BCP 신규 등록 규칙에 따라 이 제안 PR의 registry 상태는 먼저 `SUBMITTED`로 시작하며, 병합 후 별도 상태 승격에서 이 승인 근거를 `approval_ref`로 결속한다.
+- 승인 범위: Cocos의 reusable AI/CLI/MCP/schema/E2E/evidence 기술 원리만 Base 기존 owner에 흡수하고 Godot 엔진·현재 Godot writer/test/QA authority를 유지한다.
+- 승인 제외: COCOS runtime/CLI/SDK 설치, Node/TypeScript 신규 dependency, 엔진 이전, 새 Tool Hub, 두 번째 Godot persistent writer, 모든 프로젝트에 MCP 강제 설치.
+- 구현 후보 PR: `https://github.com/alsdmlals4-eng/Base/pull/642` (현재 Draft, lifecycle 교정 전 merge 금지).
+- 롤백: 구현 contract/case/test/CI entry만 되돌린다. Cocos runtime이나 프로젝트 엔진 이전이 없으므로 프로젝트 migration rollback은 발생하지 않는다.
