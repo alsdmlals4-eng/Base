@@ -138,6 +138,104 @@ revisit_condition: >-
   engine migration.
 ```
 
+### 2026-08-25 · project Godot bootstrap and reviewed-update design lesson
+
+```yaml
+date: 2026-08-25
+work_ref: "Project execution instruction v4.8-r4 local bootstrap/update revision"
+baseline_and_result: >-
+  The prior project adapter delegated local Godot execution to the Base fresh-shell and
+  HiGodot owners but left the project-facing bootstrap order comparatively implicit. The
+  r4 design made fresh location, Git reconciliation, official update discovery, Editor
+  startup/reuse, exact Godot AI session binding, reviewed safe update, reconnect, and
+  runtime/readback order explicit. The design also prefers a shared approved Godot/Godot AI
+  pin and provider-default ports with exact session identity over routine per-project binary
+  and port proliferation. This checkpoint records a design/operational lesson only; the
+  revised bootstrap has not yet been runtime-proven across representative projects.
+what_worked:
+  - "Separate pre-Editor updates from Editor-bound plugin updates; otherwise a single update-before-Editor rule is incomplete."
+  - "Treat update discovery, compatibility review, rollback, canary, exact-pin promotion, and post-update verification as one lifecycle rather than 'latest exists' as a sufficient trigger."
+  - "Require exact project/worktree/editor/session identity before persistent mutation when shared infrastructure is reused."
+  - "Keep alternate ports as an exception recovery path rather than preallocating one permanent port pair per project without evidence of collision."
+what_failed_or_was_rejected:
+  - "A simple 'update first → open Editor' sequence was rejected because Godot AI/plugin updates may require an active Editor/reload path."
+  - "Floating latest/unreviewed auto-update was rejected because it breaks exact-pin, rollback, and evidence guarantees."
+  - "Per-project Godot binaries and ports as a universal default were rejected for this operating model because they multiply configuration state without a demonstrated need; isolation must still be proven by exact session identity."
+reusable_lesson: >-
+  Local Godot startup should be modeled as a recoverable identity-and-update transaction:
+  establish exact repository state, separate pre-Editor and Editor-bound updates, bind the
+  exact Editor/session, perform only reviewed safe updates with rollback/canary evidence,
+  then rebind and verify before authoring. Shared infrastructure is acceptable only when
+  project/session identity is explicit and runtime evidence confirms no cross-project leak.
+recurrence_response:
+  wrong_project_or_session:
+    - "Stop persistent mutation immediately; do not attempt to 'fix forward' in the ambiguous session."
+    - "Read current repo/worktree, Editor PID/project path, Godot AI session inventory, and changed-files/diff."
+    - "If an unintended project may have been mutated, preserve evidence, isolate the delta, and restore only through the authorized Git/Editor rollback path after confirming ownership."
+    - "Rebind the exact intended session and run a read-only canary before resuming writes."
+  update_failure_or_regression:
+    - "Stop further upgrades and capture installed old/new exact pins, release source, stage, logs, and current project state."
+    - "Consult Project/Base Case and Learning logs before retrying."
+    - "If rollback evidence exists, return to the previous exact pin, restart/reconnect only the affected component, and rerun focused regression/runtime smoke."
+    - "Do not bypass a failed canary by disabling tests, using an unreviewed mirror, or silently changing ports/authority boundaries."
+    - "Record a material repeatable failure through Incident → Solution → Lesson with a recurrence guard."
+  stale_or_dirty_git_start:
+    - "Do not force pull/reset/restore/clean. Read branch/worktree/dirty/diverged state first."
+    - "Fetch remote state, use fast-forward-only reconciliation only when safe, otherwise defer product mutation until the repository state is explicitly reconciled."
+prevention:
+  bootstrap_guards:
+    - "Fresh shell assumption and LOCATION_FIRST with `.git`/`project.godot` markers."
+    - "Git fetch and branch/worktree/dirty/diverged preflight before authoring."
+    - "Safe ff-only reconciliation only when current work is preserved."
+    - "Exact Godot binary pin and Godot AI pin readback; no floating latest."
+    - "Editor start/reuse must match exact project path, not only process name."
+    - "Multiple Godot AI sessions require explicit per-call session identity for persistent mutation."
+    - "After Editor-bound update, reconnect and re-read exact installed version/session before any authoring."
+  update_guards:
+    - "Official source/release notes/security/dependency/schema comparison before update."
+    - "Stable/project-approved channel only; breaking/migration/cost/authority changes escalate to USER_DECISION_REQUIRED."
+    - "Previous exact pin/package and rollback point retained before apply."
+    - "Bounded canary before promotion; focused regression/runtime smoke after apply."
+    - "New exact pin recorded only after post-update readback; failed update never becomes current canon."
+  shared_infrastructure_guards:
+    - "Default shared ports are not readiness evidence; session/project identity and readback are required."
+    - "Alternate port is recovery-only and must not silently restore per-project port sprawl."
+    - "Representative multi-project runtime validation is required before this design can be promoted from operational hypothesis to proven host default."
+anti_pattern:
+  - "process exists = correct project ready"
+  - "port listens = correct Godot AI session"
+  - "latest release exists = safe to update"
+  - "update applied = project regression passed"
+  - "shared server = session identity can be omitted"
+  - "port conflict = permanently allocate a new port pair for every project"
+affected_rules_skills_modules:
+  - "POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT"
+  - "HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION"
+  - "managing-game-project-operating-system provider upgrade"
+  - "Implementation Reality Gate"
+  - "CASE_LOOKUP_BEFORE_RETRY / INCIDENT_SOLUTION_LESSON_LOOP"
+evidence:
+  - "Project instruction r4 defines fresh-shell location→Git→update→Editor→session→authoring→runtime/readback order"
+  - "Project instruction r4 separates pre-Editor and Editor-bound update stages"
+  - "Project instruction r4 defines reviewed AUTO_UPDATE_ELIGIBLE rather than floating/unreviewed update"
+  - "Current Base provider owner already requires exact pin, rollback, canary, regression, and rejects automatic_unreviewed_update"
+  - "Representative multi-project runtime execution of the new shared-host bootstrap: NOT_RUN"
+reuse_scope: BASE_PROMOTION_CANDIDATE
+promotion_candidate: >-
+  Evaluate whether the existing fresh-shell and HiGodot/project-OS owners should absorb an
+  explicit two-stage update/bootstrap transaction and recovery checklist after representative
+  project runtime validation. Do not promote the shared-host/port default as proven until
+  cross-project runtime evidence exists.
+source_followup_questions:
+  - "Does Godot AI 3.1.5+ preserve exact session isolation under simultaneous representative project Editors in the user's actual host environment?"
+  - "Which update classes can be proven safely auto-applicable across projects without expanding authority or migration risk?"
+  - "Should the existing one-shot local bootstrap owner gain a formal rollback receipt for Editor-bound tool upgrades?"
+revisit_condition: >-
+  Revisit after the first representative project execution of r4, any Godot/Godot AI upgrade,
+  any wrong-session/port collision incident, or evidence that shared host defaults increase
+  cross-project risk or maintenance cost.
+```
+
 ## Source Learning
 
 - Source domains: GAME_DEVELOPMENT, CODE_ENGINEERING
