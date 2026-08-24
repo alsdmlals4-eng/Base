@@ -31,7 +31,7 @@ class RuntimeQaFreshArtifactContractTests(unittest.TestCase):
             "baseline identity를 pin",
             "baseline 교체는 별도 review",
             "fresh screenshot도 디자인 품질·가독성·접근성·재미·human approval을 자동 증명하지 않는다",
-            "structured assertion",
+            "구조화된 assertion",
         ):
             self.assertIn(marker, text)
 
