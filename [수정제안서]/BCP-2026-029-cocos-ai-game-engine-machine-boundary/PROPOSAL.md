@@ -7,9 +7,11 @@
 - 외부 자료 확인일: `2026-08-24`
 - 제출일: `2026-08-24`
 - 제안 제출 병합: PR `#643`, main `5672fb1bba267b9346c1938be8c5ac7a838256c4`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
-- 지식 상태: `공식 원출처 관찰 + 사용자 승인 provider-neutral 패턴`
-- 선행 Draft 구현 증거: `https://github.com/alsdmlals4-eng/Base/pull/642` — proposal lifecycle 누락을 발견해 merge하지 않았으며, 정식 구현은 승인된 최신 main에서 다시 시작해 검증한다.
+- 승인 상태 병합: PR `#644`, main `6d884218c4294608c8fe2ca9176420caad4eaae6`
+- 구현 병합: PR `#646`, main `db712a9a5ff1269ee2ef7519f297694ae78b8732`
+- 상태: `IMPLEMENTED`
+- 지식 상태: `공식 원출처 관찰 + 사용자 승인 provider-neutral 패턴 + Base 구현/회귀 검증 완료`
+- 선행 Draft 구현 증거: `https://github.com/alsdmlals4-eng/Base/pull/642` — proposal lifecycle 누락을 발견해 merge하지 않고 superseded 처리했다.
 
 ## 관찰과 증거
 
@@ -39,7 +41,7 @@ Base 현행과의 비교 근거:
 
 ## 일반화 후보
 
-새 Skill이나 새 Tool Hub를 만들지 않고 기존 `BENCHMARKING_REFERENCE_GUIDE`와 `CAPABILITY_COMPOSITION_MAP`에 `AI_GAME_ENGINE_MACHINE_BOUNDARY`를 추가하는 안이다.
+새 Skill이나 새 Tool Hub를 만들지 않고 기존 `BENCHMARKING_REFERENCE_GUIDE`와 `CAPABILITY_COMPOSITION_MAP`에 `AI_GAME_ENGINE_MACHINE_BOUNDARY`를 추가한다.
 
 ```text
 exact project identity
@@ -52,7 +54,7 @@ exact project identity
 → structured execution evidence
 ```
 
-공용 후보 계약:
+공용 계약:
 
 - `PROJECT_IDENTITY_BEFORE_OPERATION`: editor window/current directory/port를 추측하지 않고 exact project/ref/version을 먼저 결속한다.
 - `SHARED_CORE_FOR_CLI_AND_MCP`: CLI와 MCP가 별도 mutation/business logic을 소유하지 않고 같은 bounded core를 호출한다.
@@ -113,42 +115,43 @@ exact project identity
 
 ## 영향 범위와 검증
 
-승인된 최소 구현 범위:
+구현된 최소 범위:
 
 - `docs/CAPABILITY_COMPOSITION_MAP.md`: provider-neutral machine boundary owner.
 - `docs/BENCHMARKING_REFERENCE_GUIDE.md`: 외부 engine/tool에서 해당 패턴을 추출하는 routing.
 - `docs/knowledge/cases/COCOS_AI_NATIVE_ENGINE_INTERFACE_CASE.md`: dated source observation과 ADOPT/ADAPT/REJECT 사례.
+- `docs/operations/base-partitions/learning/P06_LEARNING_LOG.md`: 실제 BCP/RED/GREEN/권위 보존 교훈 checkpoint.
 - `tests/test_ai_game_engine_machine_boundary_contract.py`: Godot 유지, Cocos benchmark-only, MCP transport≠behavior PASS 회귀.
 - 기존 Base v9 focused CI에 위 회귀 테스트 연결.
 
-검증 계획:
+구현 검증:
 
-1. TDD RED: 새 contract가 없을 때 focused regression이 실제 실패하는지 확인.
-2. GREEN: contract 적용 후 Base v9 integrity/release checks와 전체 focused suite 통과.
-3. 기존 `test_higodot_single_authority_policy`, `test_godot_higodot_gut_hera_toolchain`, tool-interface regression을 함께 통과시켜 writer/owner 퇴행을 확인한다.
-4. PR changed-file inventory에서 Cocos runtime, Node/TypeScript package, 새 MCP runtime, Tool Hub 파일이 추가되지 않았는지 확인한다.
-5. 최소 5회 전체 적대적 재검토 후 새 blocking finding 0일 때만 구현 PR을 ready/merge한다.
+1. 정식 구현 RED Actions run `32696165900`: 승인된 최신 main에서 새 contract 부재로 의도한 실패를 재현했다.
+2. GREEN Actions run `32696469871`: Base integrity/release checks와 385 focused tests가 통과했고 기존 환경 skip 1건만 유지됐다.
+3. 최종 exact implementation HEAD `176bec7838802b2b7ec8aa01f3e9de4b4bad4978`: Base Partition Contract, Dependency Review, Base v9 Operating Contracts, Game Project Operating System, whole-core regression, publication validation, Windows smoke, `ci-gate`가 모두 PASS했다.
+4. 기존 `test_higodot_single_authority_policy`, `test_godot_higodot_gut_hera_toolchain`과 새 machine-boundary 회귀가 함께 통과해 writer/owner 퇴행이 없음을 확인했다.
+5. 최종 상태에서 최소 5회 full-scope adversarial review를 완료했고 새 유효 blocking finding 0, 회귀 0으로 pre-merge `CLEAN_REVIEW_EXIT`를 달성했다.
+6. PR #646은 exact HEAD `176bec7838802b2b7ec8aa01f3e9de4b4bad4978`에서 squash merge되어 main `db712a9a5ff1269ee2ef7519f297694ae78b8732`가 됐다.
 
-선행 draft evidence:
+Evidence ceiling:
 
-- Draft PR #642에서 새 회귀를 먼저 추가한 RED Actions run `32695035655`는 새 contract 부재로 의도한 실패를 재현했다.
-- 같은 draft의 구현 후 Actions run `32695347292`는 `385 tests`, `OK (skipped=1)` 및 Base integrity/release checks를 통과했다.
-- #642는 proposal lifecycle이 없던 상태에서 만들어졌기 때문에 merge하지 않고, 승인 상태가 main에 반영된 뒤 새 구현 branch/PR에서 RED→GREEN을 다시 재현한다.
+- 이번 BCP는 Base 공용 machine-boundary 계약과 회귀 구현 완료를 증명한다.
+- Cocos runtime 채택, Cocos production readiness, 개별 Godot 프로젝트의 `BEHAVIOR_E2E_VERIFIED`, Godot 프로젝트별 schema/tool adapter 개조 완료는 주장하지 않는다.
+- 실제 project/tool adapter를 변경할 때는 해당 프로젝트에서 대표 operation의 exact target/result/evidence E2E를 별도로 실행해야 한다.
 
 ## 필요한 도구·파일·권한
 
-- 필요 항목: 기존 GitHub repository 문서·Python unittest·GitHub Actions만 사용.
-- 필요한 이유: 공용 contract와 회귀를 저장소 자체에서 재현하기 위함.
-- 설치·적용 방법: 신규 외부 dependency 설치 없음.
-- 설치 후 확인 명령: 기존 Base v9 focused CI와 `python -m unittest tests.test_ai_game_engine_machine_boundary_contract -v`.
-- 최소 권한: 현재 Base branch/PR 작성 및 정상 merge 권한. `--admin`, ruleset bypass, force push 불필요.
+- 사용 항목: 기존 GitHub repository 문서·Python unittest·GitHub Actions만 사용.
+- 신규 외부 dependency 설치: 없음.
 - 추가 금전 비용: `0`.
+- 사용 권한: 정상 branch/PR/squash merge 범위만 사용. `--admin`, ruleset bypass, force push 미사용.
 
 ## 승인과 구현
 
 - 사용자 승인 근거: 2026-08-24 현재 작업 대화에서 사용자가 **“그렇게하자 / 기술만 흡수하고 godot엔진 계속 쓰는걸로”**라고 명시적으로 방향과 구현을 승인했다.
-- `approval_ref`: `[수정제안서]/BCP-2026-029-cocos-ai-game-engine-machine-boundary/PROPOSAL.md#승인과-구현` + 2026-08-24 현재 작업 사용자 승인 + 제출 PR `#643` 병합 기록.
+- `approval_ref`: `[수정제안서]/BCP-2026-029-cocos-ai-game-engine-machine-boundary/PROPOSAL.md#승인과-구현` + 2026-08-24 현재 작업 사용자 승인 + 제출 PR `#643` + 승인 PR `#644`.
 - 승인 범위: Cocos의 reusable AI/CLI/MCP/schema/E2E/evidence 기술 원리만 Base 기존 owner에 흡수하고 Godot 엔진·현재 Godot writer/test/QA authority를 유지한다.
 - 승인 제외: COCOS runtime/CLI/SDK 설치, Node/TypeScript 신규 dependency, 엔진 이전, 새 Tool Hub, 두 번째 Godot persistent writer, 모든 프로젝트에 MCP 강제 설치.
-- 정식 구현: 승인 상태가 main에 병합된 뒤 최신 main에서 새 implementation branch를 시작한다. Draft #642의 active changes를 직접 merge하지 않는다.
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/646`
+- 구현 merge SHA: `db712a9a5ff1269ee2ef7519f297694ae78b8732`
 - 롤백: 구현 contract/case/test/CI entry만 되돌린다. Cocos runtime이나 프로젝트 엔진 이전이 없으므로 프로젝트 migration rollback은 발생하지 않는다.
