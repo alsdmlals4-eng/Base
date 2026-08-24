@@ -30,6 +30,18 @@
 
 `HOME_DETAIL_LINKS_CANNOT_REPLACE_CORE_UNDERSTANDING`
 
+`PROJECT_HOME_TOP_VISUAL_GDD_REQUIRED`
+
+`PROJECT_HOME_PROJECT_SPECIFIC_PRIORITY`
+
+`EXPLANATORY_VISUAL_GDD_BEFORE_DECORATIVE_ART`
+
+`AI_WORKSPACE_DETAIL_COMPLETENESS_REQUIRED`
+
+`HOME_DETAIL_AI_RUNTIME_TRACEABILITY_REQUIRED`
+
+`PROJECT_HOME_BUILD_JUDGMENT_ACCEPTANCE`
+
 Notion의 Base Home과 Project Home은 링크 허브가 아니라 사람이 **추가 이동 없이 핵심을 이해하는 첫 화면**이다. GitHub/Repository의 structured/runtime truth를 복제해 새 정본을 만드는 것이 아니라, latest merged facts와 사용자 확정 방향을 사람이 읽기 쉬운 형태로 투영한다.
 
 `PROJECT_HOME_INFORMATION_RICHNESS_ALLOWED`: Human Home의 문제는 정보량이 아니라 **책임이 다른 정보의 혼재**다. 사람이 프로젝트 전체를 이해·학습·비교·수정하는 데 직접 필요한 Flow, 핵심 시스템, 핵심 데이터, 승인 Visual, 중요한 결정 이유, 현재 상태는 Home에 충분히 많이 들어갈 수 있다. 페이지를 짧게 만들기 위해 핵심 이해를 하위 링크로 밀어내지 않는다.
@@ -42,6 +54,25 @@ Notion의 Base Home과 Project Home은 링크 허브가 아니라 사람이 **�
 → drilldown: 전체 raw table·asset·reference·history·원시 evidence·구현 상세
 ```
 
+## Project Home 최상단 Visual GDD 계약
+
+`PROJECT_HOME_TOP_VISUAL_GDD_REQUIRED`: 각 프로젝트 Human Home은 제목·짧은 한 줄 정의 다음의 **최상단 핵심 구간**에서 그 프로젝트를 이해하고 제작하는 데 필요한 설명형 시각자료를 먼저 보여준다. Home의 첫 구간을 장식 이미지나 링크 목록으로 소비하지 않는다.
+
+`PROJECT_HOME_PROJECT_SPECIFIC_PRIORITY`: 모든 프로젝트를 같은 이미지 세트나 같은 taxonomy로 기계적으로 맞추지 않는다. 해당 프로젝트의 최신 Notion/GitHub 정본과 승인된 자료를 먼저 읽고, **무엇을 만들어야 하는지와 어떻게 플레이되는지를 가장 빨리 설명하는 자료**를 프로젝트별로 선정한다. 기본 우선순위는 다음과 같은 판단 가이드이며 고정 템플릿이 아니다.
+
+```text
+Core Concept / North Star
+→ Core Systems
+→ Core Gameplay Loop
+→ Full Game / Session / Story Flow Map
+→ Major Screens / UI Structure
+→ Visual / Design Guide
+```
+
+`EXPLANATORY_VISUAL_GDD_BEFORE_DECORATIVE_ART`: 최상단 시각자료는 장식용 Concept Art보다 **게임 구조·시스템·화면·플레이 방법을 설명하는 Visual GDD**를 우선한다. 승인된 Flow Map, System Diagram, UI Mockup, Character/Enemy Sheet, Battlefield/Stage Map, Visual Guide가 존재하면 해당 설명 가까이에서 직접 보이게 한다. 순수 분위기 Concept Art는 핵심 시각 방향을 설명하는 경우 보조 자료로 사용할 수 있다.
+
+승인된 기존 시각자료를 우선 재사용한다. 필요한 Visual GDD가 아직 존재하지 않으면 `VISUAL_GDD_GAP`으로 표시하고 제작 필요성을 제안할 수 있으나, 사용자가 별도로 이미지 생성·편집을 지시하지 않았다면 새 이미지를 임의 생성하지 않는다.
+
 `FULL_GAME_FLOW_VISIBLE_ON_HOME`: Home은 Core Loop 한 줄만 보여주고 전체 플레이 흐름을 하위 페이지로 밀어내지 않는다. 프로젝트에 맞는 **전체 session/run/story flow**를 직접 보여준다. encounter/core loop와 meta/progression loop가 모두 있으면 두 흐름이 어떻게 연결되는지도 Home에서 설명한다. 서사 프로젝트는 Part·사건·장면·독자 경험의 상위 흐름을 같은 역할로 사용한다.
 
 `CORE_SYSTEMS_AND_SETTING_VISIBLE_ON_HOME`: 핵심 시스템의 이름만 나열하지 않고 목적·작동·상호작용·플레이어 판단을 Home에서 직접 설명한다. 세계/설정이 시스템의 의미를 결정한다면 플레이어 역할, 세계 전제, 핵심 갈등·목표도 함께 보인다. 설정 비중이 낮은 프로젝트는 `NOT_APPLICABLE_WITH_REASON`으로 이유를 적을 수 있지만, 필요한 설정을 단순히 상세 페이지로 숨길 수는 없다.
@@ -50,7 +81,7 @@ Notion의 Base Home과 Project Home은 링크 허브가 아니라 사람이 **�
 
 `HOME_DETAIL_LINKS_CANNOT_REPLACE_CORE_UNDERSTANDING`: 하위 링크는 **더 자세히 보기**다. 사용자가 프로젝트의 전체 Flow, 핵심 시스템·설정, 핵심 데이터 관계를 처음 이해하기 위해 반드시 하위 페이지를 열어야 한다면 Human Home 계약 실패다.
 
-`HOME_PROJECTION_IS_NOT_DUPLICATE_CANON`: Home에 사람용 설명·표·필터 View·Visual anchor를 보여주는 것은 repository/Master의 구조화 원본을 독립 복제하는 것이 아니다. 긴 원시 데이터나 machine-consumed 규칙을 Home에 두 번째 정본으로 재구현하지 않는다.
+`HOME_PROJECTION_IS_NOT_DUPLICATE_CANON`: Home에 사람용 설명·표·필터 View·Visual anchor를 보여주는 것은 repository/Master의 구조화 원본을 독립 복제하는 것이 아니다. 긴 원시 데이터나 machine-consumed 규칙을 Home에 두 번째 정본으로 재구현하지 않는다. 동일 데이터를 Home용으로 복사해 따로 관리하는 대신 canonical Page/Database의 project-filtered linked view, table, gallery, board, toggle/section을 우선 사용한다.
 
 ## Human Home / AI-System 물리 분리
 
@@ -66,6 +97,27 @@ Human Home의 본문과 기본 노출 속성에는 사람이 프로젝트를 이
 - Prompt / AI Note / Asset ID / Hash / Implementation Path
 
 `AI_SYSTEM_OPERATIONAL_METADATA_EXCLUDED`: 위 정보는 사용자에게 숨기는 비밀 데이터가 아니라 **기본 Human Home의 이해 목적과 책임이 다른 운영 데이터**다. 필요한 경우 AI/System·Production/Handoff drilldown에서 확인한다.
+
+`AI_WORKSPACE_DETAIL_COMPLETENESS_REQUIRED`: Human Home과 AI/System surface를 분리한다는 이유로 AI가 구현·검증에 필요한 세부 데이터를 삭제하거나 축약하지 않는다. 별도 `AI Workspace` / `AI · System` / Production-Handoff surface에는 프로젝트에 필요한 범위의 다음 정보를 충분히 보존한다.
+
+- schema / field ID / internal ID / Record Key / machine-readable data
+- source mapping / provenance / assumption / unresolved conflict
+- implementation path / implementation state / sync state
+- evidence / validation / test / QA / runtime readback
+- issue / PR / commit / handoff / work receipt / automation metadata
+
+사람이 판단해야 하는 예산·경제·병종·테크트리·밸런스·핵심 시스템·콘텐츠 데이터를 단지 구조화되어 있다는 이유로 AI Workspace에만 숨기지 않는다. 반대로 raw machine metadata를 Human Home 상단에 복제하지 않는다.
+
+`HOME_DETAIL_AI_RUNTIME_TRACEABILITY_REQUIRED`:
+
+```text
+Human Project Home
+↔ human Detail Canon / project-filtered canonical views
+↔ AI Workspace / AI-System operational detail
+↔ Repository structured canon / implementation / runtime evidence
+```
+
+위 연결은 책임 경계를 유지하면서 서로 추적 가능해야 한다. Home은 사람용 전체 그림을, Detail Canon은 사람이 비교·수정하는 상세 정본을, AI Workspace는 구현·검증용 세부 운영 정보를, repository는 구조화/런타임 사실과 evidence를 소유한다.
 
 Human Home은 구현·동기화·검증 상태를 **사람이 판단할 수 있는 수준으로 요약**할 수 있다. 예를 들어 `Runtime NOT_RUN`, `현재 main과 동기화됨`, `Human playtest 미실행`은 허용하지만, 이를 설명하기 위해 원시 SHA·포트·로컬 경로·전체 CI 로그를 기본 화면에 노출하지 않는다. 사용자가 명시적으로 기술 evidence를 요청하면 분리된 AI/System 또는 Production/Handoff drilldown에서 확인한다.
 
@@ -133,30 +185,46 @@ Base Home은 raw PR/SHA/CI/receipt history를 학습 흐름보다 먼저 보여�
 1. 프로젝트 한 줄 정의
 2. 핵심 플레이어/사용자 가치
 3. 현재 확정 방향과 보호/금지 요소
-4. `FULL_GAME_FLOW_VISIBLE_ON_HOME`: 전체 session/run/story Flow와 Core Loop/주요 FLOW_MAP의 관계
-5. `CORE_SYSTEMS_AND_SETTING_VISIBLE_ON_HOME`: CORE_SYSTEMS별 목적·작동·상호작용·플레이어 의미·기대효과 + 필요한 설정/플레이어 역할/핵심 갈등
-6. `PROJECT_SPECIFIC_CORE_DATA_TABLES_VISIBLE_ON_HOME`: 사람이 비교·학습·수정해야 하는 프로젝트 고유 핵심 데이터의 대표 표/관계
-7. UX/UI/Visual 방향·승인 상태와 `VISUAL_ASSET_ANCHORS`
-8. `AI_INTERPRETATION_FOR_USER_CORRECTION`
-9. `HUMAN_EDIT_GUIDE_REQUIRED`
-10. 현재 구현상태와 Repository/runtime truth 연결
-11. 검증상태와 static/runtime/device/human/accessibility/platform/store evidence ceiling
-12. 현재 blocker / 다음 작업
-13. 최근 중요한 결정과 이유
-14. 주요 위험 / revisit condition
-15. L2/L3 drilldown은 위 핵심 이해를 대체하지 않고 전체 raw detail/evidence를 제공
+4. `PROJECT_HOME_TOP_VISUAL_GDD_REQUIRED`: 프로젝트별 Core Concept/North Star·핵심 시스템·Core Loop·Flow Map·주요 화면/UI·Visual/Design Guide 중 현재 제작 판단에 가장 중요한 설명형 시각자료
+5. `FULL_GAME_FLOW_VISIBLE_ON_HOME`: 전체 session/run/story Flow와 Core Loop/주요 FLOW_MAP의 관계
+6. `CORE_SYSTEMS_AND_SETTING_VISIBLE_ON_HOME`: CORE_SYSTEMS별 목적·작동·상호작용·플레이어 의미·기대효과 + 필요한 설정/플레이어 역할/핵심 갈등
+7. `PROJECT_SPECIFIC_CORE_DATA_TABLES_VISIBLE_ON_HOME`: 사람이 비교·학습·수정해야 하는 프로젝트 고유 핵심 데이터의 대표 표/관계
+8. UX/UI/Visual 방향·승인 상태와 `VISUAL_ASSET_ANCHORS`
+9. `AI_INTERPRETATION_FOR_USER_CORRECTION`
+10. `HUMAN_EDIT_GUIDE_REQUIRED`
+11. 현재 구현상태와 Repository/runtime truth 연결
+12. 검증상태와 static/runtime/device/human/accessibility/platform/store evidence ceiling
+13. 현재 blocker / 다음 작업
+14. 최근 중요한 결정과 이유
+15. 주요 위험 / revisit condition
+16. L2/L3 drilldown은 위 핵심 이해를 대체하지 않고 전체 raw detail/evidence를 제공
 
 ### PROJECT_SPECIFIC_CORE_DATA
 
 프로젝트마다 실제 핵심 데이터가 다르므로 공통 필드 강제를 금지한다. 예:
 
-- 제작/경영: 예산·경제·강화·내구·고객·생산 흐름
-- 전투/전략: 상대·몬스터·병종·건물·확률·전선·기술·자원
+- 제작/경영: 예산·경제·가격·강화·내구·고객·생산 흐름
+- 전투/전략: 상대·몬스터·병종·건물·전선·자원·테크트리·기술 관계
+- 밸런스/수치: 비용·확률·보상·성장값·예산/포인트 배분·대표 비교표
 - 퍼즐: 보드 규칙·목표·자원·콤보·스테이지 구조
 - 힐링/탐험: 환경·발견·수집·기록·관계·세션 흐름
 - 서사: 인물·세력·관계·장면·단서·타임라인·연속성
 
-Home에는 사람이 이해하는 대표 값·관계·요약표를 보여주고, 전체 원시 데이터와 machine schema는 기존 owner를 유지한다.
+Home에는 사람이 이해하는 대표 값·관계·요약표 또는 project-filtered linked view를 보여주고, 전체 원시 데이터와 machine schema는 기존 owner를 유지한다. 사람이 실제 기획 판단에 필요한 핵심 데이터를 `요약 몇 줄 + 상세 링크`만 남긴 채 숨기지 않는다.
+
+## Project Home / AI Workspace 완료 판정
+
+`PROJECT_HOME_BUILD_JUDGMENT_ACCEPTANCE`는 다음이 모두 충족되어야 한다.
+
+1. 처음 보는 사람이 Human Project Home을 스크롤하면서 **게임/작품 정체성 → 실제 플레이/사용 모습 → 핵심 시스템 → 전체 플레이 흐름 → UI/Visual 방향 → 핵심 데이터 → 상세 기획** 순으로 이해할 수 있다.
+2. 사용자가 핵심 시스템·Flow·예산/경제·병종·테크트리·밸런스 등 프로젝트 판단에 필요한 자료를 보기 위해 AI Workspace나 raw Registry/Repository metadata를 뒤질 필요가 없다.
+3. AI는 별도 AI Workspace/AI-System surface와 연결된 Detail Canon·Repository를 통해 구현·검증에 필요한 schema·ID·mapping·evidence·test·implementation 상태를 누락 없이 확인할 수 있다.
+4. Home projection은 canonical linked view/record를 재사용하며 서로 다른 독립 정본을 만들지 않는다.
+5. 프로젝트마다 최상단 시각자료 우선순위가 실제 핵심 시스템과 플레이 흐름에 맞게 개별 선정되어 있다.
+
+강한 acceptance criterion:
+
+> **각 프로젝트 Main Home만 보면 무엇을 만들 게임/작품인지와 어떻게 만들 것인지 판단할 수 있고, AI Workspace를 보면 그것을 실제로 구현·검증하는 데 필요한 세부 데이터가 하나도 부족하지 않아야 한다.**
 
 ## 사람이 수정하는 방법
 
