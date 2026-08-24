@@ -94,6 +94,43 @@ reusable_lesson: >-
   inventory executable semantics and evidence/recovery/completion contracts, then apply
   additions or explicit migrations. A rewrite is not an improvement if it is clearer or
   shorter but loses behavior that no current owner demonstrably replaces.
+recurrence_response:
+  trigger_signals:
+    - "사용자가 이전 버전보다 퇴행했다고 지적"
+    - "새 revision에서 major section, machine key, acceptance/evidence/recovery/completion block이 예상보다 감소"
+    - "새 문서가 더 짧아졌는데 replacement owner/migration evidence가 없음"
+    - "기존 프로젝트 작업에서 과거에 수행하던 필수 Gate가 새 지시문에서 라우팅되지 않음"
+  immediate_actions:
+    - "새 revision의 추가 수정/배포/정본 승격을 즉시 중단하고 REGRESSION_SUSPECTED로 분류한다."
+    - "마지막 승인된 known-good baseline의 exact file/hash를 다시 확보한다."
+    - "문제 revision을 복구 기준으로 사용하지 않고 baseline과 직접 비교한다."
+    - "machine keys → major sections → lifecycle → acceptance/evidence → recovery → completion → reporting capability 순으로 diff한다."
+    - "삭제·축약된 각 capability를 INTENTIONAL_MIGRATION / ACCIDENTAL_LOSS / DUPLICATE_OWNER_REMOVAL / TEMPORARY_FACT_REMOVAL로 분류한다."
+    - "ACCIDENTAL_LOSS는 known-good baseline에서 복원하고 신규 요구는 additive patch로 다시 적용한다."
+    - "INTENTIONAL_MIGRATION은 exact replacement owner, consumer path, evidence, rollback이 확인될 때만 유지한다."
+    - "복구 후 대표 프로젝트 시나리오와 전체 capability inventory를 다시 검증하고 최소 5회 적대적 검토를 수행한다."
+    - "퇴행 derivative는 active instruction으로 재사용하지 않고 superseded/rejected 상태를 명확히 남긴다."
+  completion_condition: >-
+    Baseline required capability 100% accounted for, every intentional removal has a
+    demonstrated replacement/migration, new requirements are present, representative
+    scenarios retain their gates, and adversarial review finds no unexplained loss.
+prevention:
+  before_revision:
+    - "항상 last approved revision의 exact hash와 capability inventory를 먼저 고정한다."
+    - "Task를 ADD / REPLACE / REMOVE / MOVE_OWNER로 분해하고 기본값은 ADD로 둔다."
+    - "일시적 프로젝트 순서·동시작업 수·현재 queue 같은 운영값은 durable contract와 분리한다."
+  during_revision:
+    - "요약문을 새 본문으로 사용하지 않고 known-good baseline을 직접 편집한다."
+    - "section 삭제나 대폭 축약 시 replacement owner와 migration evidence를 같은 diff에서 요구한다."
+    - "문서 길이보다 capability/evidence/recovery/completion semantics를 비교한다."
+    - "새 기능 추가 후에도 기존 owner routing, Notion/GitHub authority, PR/CI, IRG, failure recovery, completion gate를 다시 샘플링한다."
+  before_publish:
+    - "machine-key inventory diff PASS"
+    - "major-section/lifecycle inventory diff PASS"
+    - "acceptance/evidence/recovery/completion capability diff PASS"
+    - "대표 프로젝트 cold-start/plan/build/review/merge/completion 시나리오 PASS 또는 NOT_RUN 명시"
+    - "최소 5회 전체 적대적 검토 후 unexplained capability loss 0"
+    - "이전 revision보다 개선된 점과 trade-off를 사용자에게 기능 단위로 보고"
 anti_pattern:
   - "summary-first rewrite of a mature operational contract"
   - "shorter document = better prompt without representative capability comparison"
