@@ -176,12 +176,15 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
 
     def test_sheets_are_migration_only_until_verified_removal(self) -> None:
         policy = read("docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md")
+        prompt = read("templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md")
         self.assertIn("MIGRATION_ONLY_UNTIL_REMOVAL", policy)
         self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", policy)
         self.assertIn("UNIQUE / DUPLICATE / OBSOLETE", policy)
         self.assertIn("MIGRATED_READBACK_VERIFIED", policy)
         self.assertIn("active consumer/reference", policy)
         self.assertIn("Do not bulk-copy", policy)
+        self.assertIn("LEGACY_SHEET_COMPATIBILITY_MIGRATION", prompt)
+        self.assertNotIn("Google Sheet 쓰기", prompt)
 
     def test_project_asset_delivery_requires_readback_and_explicit_promotion(self) -> None:
         workflow = read("docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md")
