@@ -39,6 +39,7 @@ jobs:
       ci_toolchain_high_risk: ${{ steps.classify.outputs.ci_toolchain_high_risk }}
       full_matrix: ${{ steps.classify.outputs.full_matrix }}
       platform_smoke: ${{ steps.classify.outputs.platform_smoke }}
+      run_core: ${{ steps.classify.outputs.run_core }}
       run_contract: ${{ steps.classify.outputs.run_contract }}
       run_publication: ${{ steps.classify.outputs.run_publication }}
       run_windows: ${{ steps.classify.outputs.run_windows }}
@@ -124,6 +125,7 @@ jobs:
               code_or_engine=false
               ci_toolchain_high_risk=false
               full_matrix=false
+              run_core=false
               run_contract=false
               run_publication=false
               run_windows=false
@@ -134,6 +136,7 @@ jobs:
               code_or_engine=false
               ci_toolchain_high_risk=false
               full_matrix=false
+              run_core=true
               run_contract=true
               run_publication=false
               run_windows=false
@@ -144,6 +147,7 @@ jobs:
               code_or_engine=true
               ci_toolchain_high_risk=false
               full_matrix=false
+              run_core=true
               run_contract=true
               run_publication=true
               run_windows="$platform_smoke"
@@ -155,6 +159,7 @@ jobs:
               ci_toolchain_high_risk=true
               full_matrix=false
               platform_smoke=true
+              run_core=true
               run_contract=true
               run_publication=true
               run_windows=true
@@ -166,6 +171,7 @@ jobs:
               ci_toolchain_high_risk=false
               full_matrix=true
               platform_smoke=true
+              run_core=true
               run_contract=true
               run_publication=true
               run_windows=true
@@ -183,6 +189,7 @@ jobs:
             echo "ci_toolchain_high_risk=$ci_toolchain_high_risk"
             echo "full_matrix=$full_matrix"
             echo "platform_smoke=$platform_smoke"
+            echo "run_core=$run_core"
             echo "run_contract=$run_contract"
             echo "run_publication=$run_publication"
             echo "run_windows=$run_windows"
@@ -255,6 +262,8 @@ jobs:
 
   core-regression:
     name: core-regression
+    needs: classify-changes
+    if: needs.classify-changes.outputs.run_core == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -585,6 +594,7 @@ jobs:
         env:
           CLASSIFY_RESULT: ${{ needs.classify-changes.result }}
           DOCS_RESULT: ${{ needs.docs-validation.result }}
+          CORE_REQUIRED: ${{ needs.classify-changes.outputs.run_core }}
           CORE_REGRESSION_RESULT: ${{ needs.core-regression.result }}
           CONTRACT_REQUIRED: ${{ needs.classify-changes.outputs.run_contract }}
           CONTRACT_RESULT: ${{ needs.ubuntu-contract.result }}

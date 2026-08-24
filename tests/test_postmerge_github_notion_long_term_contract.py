@@ -98,7 +98,7 @@ class PostmergeGithubNotionLongTermContractTests(unittest.TestCase):
         self.assertIn("DO_NOT_INSTALL_NEW", template)
         self.assertNotIn("새 Sheet에 설치하는 권장 핵심 tab", template)
 
-    def test_core_ci_runs_whole_unittest_discovery(self) -> None:
+    def test_core_ci_keeps_whole_unittest_discovery_for_required_tiers(self) -> None:
         workflow = text(".github/workflows/validate-game-project-operating-system.yml")
         self.assertIn("core-regression", workflow)
         self.assertIn("python -m unittest discover -s tests -v", workflow)
@@ -107,8 +107,16 @@ class PostmergeGithubNotionLongTermContractTests(unittest.TestCase):
             "\n  ubuntu-contract:\n", 1
         )[0]
         job_header = core.split("\n    steps:\n", 1)[0]
-        self.assertNotIn("needs: classify-changes", job_header)
-        self.assertNotIn("if:", job_header)
+        self.assertIn("needs: classify-changes", job_header)
+        self.assertIn(
+            "if: needs.classify-changes.outputs.run_core == 'true'",
+            job_header,
+        )
+        for level in ("contract", "code", "ci", "full"):
+            case = workflow.split(f"\n            {level})\n", 1)[1].split(
+                "\n              ;;", 1
+            )[0]
+            self.assertIn("run_core=true", case, level)
 
     def test_local_validation_has_dependency_preflight_and_documented_setup(self) -> None:
         runner = text("tools/run_local_validation.py")
