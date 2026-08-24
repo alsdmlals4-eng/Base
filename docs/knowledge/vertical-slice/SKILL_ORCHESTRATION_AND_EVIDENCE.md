@@ -175,6 +175,28 @@ Base Work Mode·프로젝트 규칙·승인 계약이 Superpowers보다 상위�
 - `BLOCKED`
 - `FALLBACK_USED`
 
+### 5.1 `FRESH_RUNTIME_ARTIFACT_GATE`
+
+현재 build·commit의 runtime/render 결과를 근거로 PASS를 주장할 때 **기존 artifact가 존재한다는 사실은 fresh evidence가 아니다.** `PRIOR_ARTIFACT_EXISTENCE_IS_NOT_FRESH_EVIDENCE`를 적용한다. Godot 전용 실행·provider 권위는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`, 일반 완료 주장은 `reviewing-and-validating-project-changes: claim-and-intent-verification`이 계속 소유하며 이 reference는 중복 provider나 새 Skill을 만들지 않는다.
+
+```text
+exact build/commit + run identity 고정
+→ 이전 transient output을 삭제·격리하거나 unique run directory 사용
+→ 현재 producer/runtime를 실제 실행
+→ 이번 run이 expected artifact를 새로 생성했는지 확인
+→ artifact path + bytes/hash + run/build identity를 evidence에 묶음
+→ semantic/runtime assertion과 함께 판정
+```
+
+- baseline·golden artifact는 비교 기준이므로 transient output처럼 무조건 삭제하지 않는다. baseline identity를 pin하고 baseline 교체는 별도 review로 처리한다.
+- screenshot·video·runtime report·trace처럼 producer가 다시 만들 수 있는 material artifact는 가능하면 기존 결과를 재사용하지 않고 현재 run에서 재생성한다.
+- 동일 파일명을 재사용해야 하면 이전 파일을 먼저 격리하거나 제거하고, 새 파일의 생성 여부·크기 또는 digest를 확인한다.
+- capture/runtime 환경이 필요한데 unavailable, timeout, render 불가, producer 실패, 새 artifact 미생성이면 `INCONCLUSIVE_NOT_PASS` 또는 기존 owner의 `BLOCKED_UNVERIFIED`로 남긴다. 작업자·Agent의 성공 설명은 이를 PASS로 덮지 못한다.
+- artifact freshness는 품질 자체의 증거가 아니다. fresh screenshot도 디자인 품질·가독성·접근성·재미·human approval을 자동 증명하지 않는다.
+- deterministic state가 구조화된 assertion으로 판정 가능하면 screenshot을 강제하지 않는다. 반대로 pixel/layout이 acceptance 대상이면 fresh visual artifact를 요구한다.
+
+이 Gate의 목적은 과거 screenshot·log·report가 남아 있어 현재 run이 실패했는데도 완료로 오인하는 `STALE_ARTIFACT_FALSE_PASS`를 줄이는 것이다. 실제 프로젝트에 capture producer가 연결되지 않았다면 기능이 구현됐다고 추정하지 않고 해당 runtime/render evidence를 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 유지한다.
+
 ## 6. Gate별 Skill Coverage
 
 ### Gate 1
