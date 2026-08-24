@@ -77,6 +77,67 @@ revisit_condition: >-
   the historical Base adapter surface.
 ```
 
+### 2026-08-24 · BCP-2026-029 / PR #646 — Cocos machine-interface pattern extraction
+
+```yaml
+date: 2026-08-24
+work_ref: "BCP-2026-029 / Base PR #646"
+baseline_and_result: >-
+  Approved main kept Godot and the HiGodot/GUT/Hera authority split but did not yet have
+  a reusable game-engine machine-boundary contract tying exact project identity, typed
+  operations, shared CLI/MCP core semantics, behavior E2E, and structured evidence
+  together. The implementation branch added that provider-neutral contract and a dated
+  COCOS 4/Cocos CLI case without adopting Cocos runtime, Node/TypeScript, another MCP
+  writer, or another management surface.
+what_worked:
+  - "Formal BCP lifecycle separated proposal, approval, and implementation after the first draft exposed the governance omission."
+  - "TDD RED on the approved latest main proved the new contract was absent before documentation implementation."
+  - "GREEN run 32696469871 passed Base integrity/release checks and 385 focused tests with one pre-existing environment skip, including HiGodot single-authority and the three new machine-boundary regressions."
+  - "Provider-specific syntax was kept in the dated case while reusable identity/core/schema/E2E/evidence invariants were routed through existing Base owners."
+what_failed_or_was_rejected:
+  - "The pre-BCP draft PR #642 was closed unmerged after adversarial review found that active Base paths had been changed before formal proposal lifecycle completion."
+  - "COCOS 4 engine migration was rejected because the observed 4.x line was still Alpha and no target-project evidence justified replacing Godot."
+  - "Cocos CLI/MCP, Node/TypeScript dependencies, a new Tool Hub, and a second Godot persistent writer were rejected as unnecessary authority/dependency expansion."
+  - "MCP connectivity/tool discovery was rejected as a substitute for representative project/result/evidence behavior E2E."
+reusable_lesson: >-
+  When another engine or tool demonstrates a useful AI-native interface, separate the
+  provider from the invariant: preserve the current engine and writer authority unless
+  migration evidence exists, and extract exact identity, typed operation, shared adapter
+  core, behavior E2E, and structured evidence as reusable machine-boundary contracts.
+anti_pattern:
+  - "Treat a fashionable engine's CLI/MCP surface as a reason to migrate the production engine."
+  - "Add a second writer because its transport is convenient."
+  - "Report MCP handshake or tool listing as proof that a game-engine action succeeded."
+  - "Force schema code generation on tiny tools when mechanical drift validation is sufficient."
+affected_rules_skills_modules:
+  - "Existing Solution First"
+  - "HiGodot single persistent authoring authority"
+  - "Implementation Reality Gate"
+  - "BENCHMARK_REVERSE_ENGINEERING_PATTERN_REUSE"
+  - "AI_GAME_ENGINE_MACHINE_BOUNDARY"
+  - "TOOL_INTERFACE_SURFACE_SELECTION"
+evidence:
+  - "BCP submission PR #643 merged at 5672fb1bba267b9346c1938be8c5ac7a838256c4"
+  - "BCP approval PR #644 merged at 6d884218c4294608c8fe2ca9176420caad4eaae6"
+  - "Formal implementation RED run 32696165900: expected machine-boundary contract failures"
+  - "Formal implementation GREEN run 32696469871: integrity/release PASS; 385 tests OK (skipped=1)"
+  - "docs/knowledge/cases/COCOS_AI_NATIVE_ENGINE_INTERFACE_CASE.md"
+reuse_scope: BASE_PROMOTION_CANDIDATE
+promotion_candidate: >-
+  Realized by BCP-2026-029 through the existing benchmarking and capability-composition
+  owners. Do not create a new Skill, engine adapter, or provider dependency solely for
+  this lesson.
+source_followup_questions:
+  - "Has COCOS 4 moved from Alpha to a stable contract that materially changes the benchmark?"
+  - "Do current Godot machine-facing owners expose schema/type drift or behavior-E2E gaps in a real project?"
+  - "Can a smaller CLI/programmatic path solve a future machine-operation need without adding MCP?"
+revisit_condition: >-
+  Revisit when a current Godot tool/adapter is materially revised, when a representative
+  project exposes project-identity/schema/E2E failure, or when COCOS 4/CLI reaches a
+  materially different stable interface. None of these conditions alone authorize an
+  engine migration.
+```
+
 ## Source Learning
 
 - Source domains: GAME_DEVELOPMENT, CODE_ENGINEERING

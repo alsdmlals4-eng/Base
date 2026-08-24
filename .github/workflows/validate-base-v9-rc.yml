@@ -107,6 +107,7 @@ jobs:
             tests.test_base_shared_skill_routes \
             tests.test_neutral_adversarial_feature_lifecycle \
             tests.test_tool_interface_surface_selection_contract \
+            tests.test_ai_game_engine_machine_boundary_contract \
             -v
 
   adversarial-gate:
