@@ -164,7 +164,7 @@
       "path": "[수정제안서]/BCP-2026-015-external-runtime-session-same-snapshot-recovery/PROPOSAL.md",
       "status": "IMPLEMENTED",
       "source_project": "alsdmlals4-eng/omenward",
-      "source_commit": "bde85549560fca90f7aa69643e5552086078b102",
+      "source_commit": "bde85549560fca90f7aa25fc4842bc0a3afb92e7",
       "submitted_at": "2026-08-10",
       "approval_ref": "[수정제안서]/BCP-2026-015-external-runtime-session-same-snapshot-recovery/PROPOSAL.md#승인과-구현",
       "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/266"
