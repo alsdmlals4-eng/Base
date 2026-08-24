@@ -6,9 +6,10 @@
 - 기준 Base 커밋: `2828a74f60c1ed09546171040f4178c8848ea686`
 - 외부 자료 확인일: `2026-08-24`
 - 제출일: `2026-08-24`
-- 상태: `SUBMITTED`
-- 지식 상태: `공식 원출처 관찰 + provider-neutral 패턴 후보`
-- 구현 후보 Draft PR: `https://github.com/alsdmlals4-eng/Base/pull/642` — 제안 lifecycle 누락 발견 후 merge 금지 상태로 유지하며, 정식 승인 상태 전에는 구현 권위로 사용하지 않는다.
+- 제안 제출 병합: PR `#643`, main `5672fb1bba267b9346c1938be8c5ac7a838256c4`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 지식 상태: `공식 원출처 관찰 + 사용자 승인 provider-neutral 패턴`
+- 선행 Draft 구현 증거: `https://github.com/alsdmlals4-eng/Base/pull/642` — proposal lifecycle 누락을 발견해 merge하지 않았으며, 정식 구현은 승인된 최신 main에서 다시 시작해 검증한다.
 
 ## 관찰과 증거
 
@@ -112,7 +113,7 @@ exact project identity
 
 ## 영향 범위와 검증
 
-승인 후 최소 구현 후보:
+승인된 최소 구현 범위:
 
 - `docs/CAPABILITY_COMPOSITION_MAP.md`: provider-neutral machine boundary owner.
 - `docs/BENCHMARKING_REFERENCE_GUIDE.md`: 외부 engine/tool에서 해당 패턴을 추출하는 routing.
@@ -128,11 +129,11 @@ exact project identity
 4. PR changed-file inventory에서 Cocos runtime, Node/TypeScript package, 새 MCP runtime, Tool Hub 파일이 추가되지 않았는지 확인한다.
 5. 최소 5회 전체 적대적 재검토 후 새 blocking finding 0일 때만 구현 PR을 ready/merge한다.
 
-현재 draft evidence:
+선행 draft evidence:
 
 - Draft PR #642에서 새 회귀를 먼저 추가한 RED Actions run `32695035655`는 새 contract 부재로 의도한 실패를 재현했다.
 - 같은 draft의 구현 후 Actions run `32695347292`는 `385 tests`, `OK (skipped=1)` 및 Base integrity/release checks를 통과했다.
-- 이 draft evidence는 BCP 승인 이전에는 merge authority가 아니며, 정식 proposal lifecycle을 복구하기 위한 선행 검증 자료로만 사용한다.
+- #642는 proposal lifecycle이 없던 상태에서 만들어졌기 때문에 merge하지 않고, 승인 상태가 main에 반영된 뒤 새 구현 branch/PR에서 RED→GREEN을 다시 재현한다.
 
 ## 필요한 도구·파일·권한
 
@@ -145,8 +146,9 @@ exact project identity
 
 ## 승인과 구현
 
-- 사용자 승인 근거: 2026-08-24 현재 작업 대화에서 사용자가 **“그렇게하자 / 기술만 흡수하고 godot엔진 계속 쓰는걸로”**라고 명시적으로 방향과 구현 의도를 승인했다. 다만 BCP 신규 등록 규칙에 따라 이 제안 PR의 registry 상태는 먼저 `SUBMITTED`로 시작하며, 병합 후 별도 상태 승격에서 이 승인 근거를 `approval_ref`로 결속한다.
+- 사용자 승인 근거: 2026-08-24 현재 작업 대화에서 사용자가 **“그렇게하자 / 기술만 흡수하고 godot엔진 계속 쓰는걸로”**라고 명시적으로 방향과 구현을 승인했다.
+- `approval_ref`: `[수정제안서]/BCP-2026-029-cocos-ai-game-engine-machine-boundary/PROPOSAL.md#승인과-구현` + 2026-08-24 현재 작업 사용자 승인 + 제출 PR `#643` 병합 기록.
 - 승인 범위: Cocos의 reusable AI/CLI/MCP/schema/E2E/evidence 기술 원리만 Base 기존 owner에 흡수하고 Godot 엔진·현재 Godot writer/test/QA authority를 유지한다.
 - 승인 제외: COCOS runtime/CLI/SDK 설치, Node/TypeScript 신규 dependency, 엔진 이전, 새 Tool Hub, 두 번째 Godot persistent writer, 모든 프로젝트에 MCP 강제 설치.
-- 구현 후보 PR: `https://github.com/alsdmlals4-eng/Base/pull/642` (현재 Draft, lifecycle 교정 전 merge 금지).
+- 정식 구현: 승인 상태가 main에 병합된 뒤 최신 main에서 새 implementation branch를 시작한다. Draft #642의 active changes를 직접 merge하지 않는다.
 - 롤백: 구현 contract/case/test/CI entry만 되돌린다. Cocos runtime이나 프로젝트 엔진 이전이 없으므로 프로젝트 migration rollback은 발생하지 않는다.
