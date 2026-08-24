@@ -36,6 +36,7 @@
 | 어떤 외부 사이트를 주기적으로 확인하고 발견 글을 어떻게 원출처로 역추적하는가? | `PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md` | Source Pool·scan checkpoint·원출처 역추적·freshness·적용 판정 |
 | 프롬프트·기획·글쓰기 작법·작업구조·외부 Skill·Godot 자산 후보를 분야별로 어디서 찾고 어떻게 검증하는가? | `PERIODIC_SPECIALTY_SOURCE_RADAR.md` | 전문 Source 후보·기존 owner route·실행 위험·validation·rollback |
 | 세계관·캐릭터·장르·현실 고증·표현·현지화·추리 단서·중국 무협·서브컬처 밈을 어디서 조사하고 어떻게 검증하는가? | `NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md` | 후보 수 무제한 Source capture·매체/시대/지역 경계·기존 owner route·프로젝트 검증·폐기 조건 |
+| TRPG 판정·캐릭터 자유도·전투/조사/GM 절차와 룰북 설명 순서를 어떻게 비교하는가? | `TRPG_RULE_DESIGN_REFERENCE_RADAR.md` | 룰 계열 비교·teaching order·support artifact·권리 경계·`ADOPT / ADAPT / TEST / AVOID / REFERENCE_ONLY` |
 | 게임 코어·플레이어 경험·게임 필·보상·난이도를 어떻게 설계하는가? | `GAME_DESIGN_AND_PLAYER_EXPERIENCE_GUIDE.md` | 플레이어 약속·MDE 추적표·플레이테스트 계약 |
 | 튜토리얼·온보딩·첫 세션에서 규칙·필요·성장·독립 수행을 어떻게 가르치는가? | `TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md` | `RULE–NEED–DISCOVER–FEEL–PROVE–TRANSFER` 학습 계약·측정·적대적 검토 |
 | 프로젝트마다 어떤 이미지·시각 자산·UI 컴포넌트를 정말 만들어야 하는가? | `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate` | `requirement_id`·Delete Test·role·P0~P3·disposition·검증 |
@@ -56,6 +57,8 @@
 
 `NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md`는 상위 전문 Radar에 종속된 서사·세계관·캐릭터 하위 Reference다. 후보 수에는 최소·최대 상한을 두지 않지만, 관련성·원출처·현재 consumer·반례·권리/표현 위험·검증·폐기 조건 없는 후보를 채택하지 않는다. 프로젝트 고유 설정과 실제 정본은 각 프로젝트가 소유한다.
 
+`TRPG_RULE_DESIGN_REFERENCE_RADAR.md`는 TRPG 룰·룰북 pedagogy의 **비실행 비교 Reference**다. 새 TRPG Skill이나 두 번째 Source Watchlist가 아니며, 프로젝트의 실제 룰·세계관·수치보다 우선하지 않는다. 공개/SRD/Quickstart/사용자 제공 룰북의 메커닉뿐 아니라 `해결한 플레이 문제`, `설명 순서`, `예시·Reference 분리`, `support artifact`, `권리·접근 상태`를 같은 Schema로 비교하고 프로젝트에서는 기존 game-design·research·validation 경로로 `ADOPT / ADAPT / TEST / AVOID / REFERENCE_ONLY`를 결정한다.
+
 `TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md`는 실행 권한을 소유하지 않는다. 실제 작업은 `analyzing-and-refining-game-concepts: tutorial-and-onboarding-design`이 주 책임이며, 튜토리얼 이해도 연구 coverage 설치·누락 감사는 `governing-game-user-research-coverage`가 담당한다.
 
 `PIXEL_ART_STYLE_SYSTEM.md`와 `PIXEL_ART_VISUAL_REFERENCE_GALLERY.md`는 새 Art Skill이나 두 번째 Art Bible이 아니다. Base는 조합 가능한 픽셀 시각 어휘·비용·실패조건·Reference를 제공하고, 실제 선택과 승인·Figma Visual Bible·제품 자산 권위는 각 프로젝트가 소유한다.
@@ -66,6 +69,7 @@
 |---|---|---|
 | 요청 해석·범위·완료 기준·실행 순서 | `managing-project-intake-and-work-contract` | Method의 결정 질문·Coverage·Evidence Pack 계약 |
 | 코어 컨셉·DDD·벤치마킹·플레이테스트 | `analyzing-and-refining-game-concepts` | 게임 기획 Guide·Reference Catalog |
+| TRPG 룰·자유작성 능력·조사/전투/GM 절차·룰북 teaching order 비교 | `analyzing-and-refining-game-concepts` + 기존 research·validation·adversarial-review 책임 | `TRPG_RULE_DESIGN_REFERENCE_RADAR.md`; 프로젝트 룰은 프로젝트 정본과 플레이테스트가 최종 authority |
 | 프롬프트·기획·작법·작업구조·외부 Skill·Godot 자산 Source 조사 | 기존 intake·game design·fiction·Skill evolution·asset evaluation·validation Skill 조합 | `PERIODIC_SPECIALTY_SOURCE_RADAR.md`; 새 광역 Skill을 만들지 않음 |
 | 세계관·캐릭터·장르·현실 고증·표현·현지화·추리·중국 무협·밈 Source 조사 | 기존 fiction·game design·narrative·character-art·documentation·validation Skill 조합 | `NARRATIVE_WORLD_CHARACTER_SOURCE_RADAR.md`; 프로젝트 정본·원고·데이터·플레이테스트가 최종 consumer |
 | 튜토리얼·온보딩·첫 세션 학습·성장 체감 | `analyzing-and-refining-game-concepts: tutorial-and-onboarding-design` | 튜토리얼 Guide·프로젝트 Contract·공식 접근성 근거 |
@@ -114,7 +118,7 @@
 
 이 허브를 읽거나 문서를 작성한 것만으로 기획·구현·접근성·성능·출시가 검증된 것은 아니다. 합성 테스터 결과도 실제 사람 행동·재미·선호·조작감·접근성·성능을 검증하지 않는다. 등급·권리 Template도 법률 검토·플랫폼 제출·승인을 대신하지 않는다. PC·Android Profile도 실제 Windows build, Android 실기기, 모바일 UI·입력·중단 복구, 성능·발열, 상점 계정·테스트·심사 증거를 대신하지 않는다. 빌드 용량 Guide도 실제 프로젝트 build, store-served size, Steam patch preview, Android device, 사람의 시각·청각 품질 검증을 대신하지 않는다. Pixel Art System과 Gallery도 프로젝트 스타일 승인·실제 이미지 품질·엔진 렌더·제품 자산 권리를 대신하지 않는다. 완료는 선택한 기존 Skill의 Output Contract와 실제 프로젝트 증거를 따른다.
 
-계약·라우팅·중복 Skill 방지·Learning Log 연결은 `tests/test_evidence_based_game_development_knowledge.py`, `tests/test_evidence_knowledge_workflow_contract.py`, `tests/test_visual_requirement_gate.py`, `tests/test_pixel_art_style_system.py`, `tests/test_pc_android_cross_platform_delivery.py`, `tests/test_game_build_size_asset_optimization.py`, `tests/test_platform_review_asset_rights_reference_production.py`, `tests/test_human_validation_artifact_governance.py`, `tests/test_synthetic_tester_simulation_governance.py`, `tests/test_periodic_external_source_watchlist.py`, `tests/test_periodic_external_source_discovery_seeds.py`, `.github/workflows/validate-evidence-knowledge.yml`의 전용 GitHub Actions에서 검증한다. Workflow 파일 존재와 실제 실행 성공을 분리해 확인한다.
+계약·라우팅·중복 Skill 방지·Learning Log 연결은 `tests/test_evidence_based_game_development_knowledge.py`, `tests/test_evidence_knowledge_workflow_contract.py`, `tests/test_visual_requirement_gate.py`, `tests/test_pixel_art_style_system.py`, `tests/test_pc_android_cross_platform_delivery.py`, `tests/test_game_build_size_asset_optimization.py`, `tests/test_platform_review_asset_rights_reference_production.py`, `tests/test_human_validation_artifact_governance.py`, `tests/test_synthetic_tester_simulation_governance.py`, `tests/test_periodic_external_source_watchlist.py`, `tests/test_periodic_external_source_discovery_seeds.py`, `tests/test_trpg_rule_design_reference_radar.py`, `.github/workflows/validate-evidence-knowledge.yml`의 전용 GitHub Actions에서 검증한다. Workflow 파일 존재와 실제 실행 성공을 분리해 확인한다.
 
 ## 8. Cloud Run 게임 백엔드 Capability Pack
 

@@ -667,3 +667,12 @@ bias_and_limitations:
 - Godot asset importer·renderer·texture/audio/font behavior
 - Google Play App Bundle·Play Asset Delivery·texture targeting 정책
 - SteamPipe packaging·chunking·patch/update 권장사항
+
+## 13. 분야별 Source Router
+
+TRPG 룰·룰북 설명 순서·Quickstart·Player/GM aid·상업/공개 SRD의 권리 경계는 이 Catalog에 개별 작품 Record를 대량 복제하지 않는다.
+
+- 책임 Reference: `docs/knowledge/game-development/TRPG_RULE_DESIGN_REFERENCE_RADAR.md`
+- 사용 질문: 판정 구조, 캐릭터 자유도, 조사/전투/GM 절차, 룰북 teaching order, support artifact, VTT presentation layer, SRD/번역/상표 권리 경계.
+- 적용 판정: `ADOPT / ADAPT / TEST / AVOID / REFERENCE_ONLY`.
+- 권한 경계: Radar는 프로젝트 룰 정본이 아니며, 실제 수치·세계관·즐거움·이해도·상업 사용 권리는 프로젝트 Evidence와 적용 시점의 원출처 재검증이 필요하다.
