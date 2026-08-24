@@ -65,6 +65,69 @@ source_followup_questions:
 revisit_condition: "CP0 Registry/Manifest Integration 완료, stale schema-v1 test 교정, 또는 실제 프로젝트 Notion migration pilot에서 새로운 consumer gap이 발견될 때"
 ```
 
+## 2026-08-25 · project instruction revision non-regression recovery
+
+```yaml
+date: 2026-08-25
+work_ref: "PROJECT_TOTAL_PLANNING_IMPLEMENTATION_AND_DELIVERY_INSTRUCTION v4.8 r2→r3→r4 recovery"
+baseline_and_result: >-
+  The approved r2 contract had 1,721 lines and a broad project lifecycle covering planning,
+  benchmark/trade study, Notion delivery, IRG, TDD, recovery, PR/CI, and completion evidence.
+  A condensed r3 rewrite fell to 1,319 lines and removed multiple material capabilities.
+  The recovery rebuilt from r2 as the baseline instead of from the condensed rewrite; r4
+  reached 2,036 lines, preserved the prior capability set, and added an explicit revision
+  non-regression gate plus new local-execution/update requirements.
+what_worked:
+  - "Treat the last approved revision as the baseline and inventory machine keys, major sections, acceptance/evidence blocks, and required capabilities before rewriting."
+  - "Use additive change by default; require an explicit replacement owner plus migration evidence for any removal or compression of an existing capability."
+  - "Compare capability presence rather than trusting a shorter or cleaner-looking document to be semantically equivalent."
+  - "Keep temporary scheduling facts such as project order or simultaneous-project count out of the durable project execution contract unless they are intentionally promoted to policy."
+  - "After a regression is found, restart from the last known-good baseline rather than patching the already-regressed derivative."
+what_failed_or_was_rejected:
+  - "Rewriting the contract from a summary of the old document: r3 became easier to read but silently lost planning, evidence, recovery, and lifecycle capabilities."
+  - "Using line count alone as quality evidence: the r3 size drop was a useful alarm but capability inventory/diff was required to prove the regression."
+  - "Embedding short-lived workload choices into a long-lived common contract was rejected because user scheduling can change independently of project execution invariants."
+  - "Assuming that latest Base owner delegation makes any deleted project-specific invariant safe; the replacement owner and behavior must be demonstrated, not inferred."
+reusable_lesson: >-
+  Long-lived project instructions, agent contracts, and operating adapters must be revised
+  with a capability-level non-regression gate. Start from the last approved baseline,
+  inventory executable semantics and evidence/recovery/completion contracts, then apply
+  additions or explicit migrations. A rewrite is not an improvement if it is clearer or
+  shorter but loses behavior that no current owner demonstrably replaces.
+anti_pattern:
+  - "summary-first rewrite of a mature operational contract"
+  - "shorter document = better prompt without representative capability comparison"
+  - "delete a rule because a shared owner probably covers it"
+  - "mix temporary queue/order/capacity decisions into durable execution canon"
+  - "repair a regressed derivative instead of rebasing the revision on the last known-good contract"
+affected_rules_skills_modules:
+  - "managing-project-intake-and-work-contract"
+  - "managing-game-project-operating-system"
+  - "maintaining-project-context-and-handoff"
+  - "LONG_HORIZON_WORK_EXECUTION_POLICY / BEST_LONG_TERM_EFFICIENT_METHOD"
+  - "Base owner progressive-load / thin project adapter"
+  - "Implementation Reality Gate and completion evidence"
+evidence:
+  - "Conversation artifact r2 total_file_lines=1721"
+  - "Conversation artifact r3 total_file_lines=1319"
+  - "Conversation artifact r4 total_file_lines=2036"
+  - "r4 REVISION_NON_REGRESSION_GATE explicitly inventories baseline keys, sections, capabilities, additions/replacements/removals, replacement owner/evidence, and blocks unexplained capability loss"
+  - "User review identified r3 as materially regressed before the r4 recovery"
+reuse_scope: BASE_PROMOTION_CANDIDATE
+promotion_candidate: >-
+  Generalize a capability-preserving revision/eval gate inside the existing project-intake,
+  project-OS, or long-horizon owner. Do not create a separate broad Skill solely for this
+  lesson; prefer a focused reference/eval that can compare mature instructions and adapters.
+source_followup_questions:
+  - "Which existing Base owner should own a reusable capability inventory/eval for long-lived project instructions without duplicating CP0 validation?"
+  - "Which representative project adapters should become regression fixtures if this lesson is promoted?"
+  - "Can machine-key/section inventory be combined with behavior evals so semantic loss is detected even when wording changes?"
+revisit_condition: >-
+  Revisit on the next material project-instruction revision, on any simplification that
+  removes or delegates an existing invariant, or if another project adapter becomes shorter
+  while its acceptance/recovery/completion behavior is not demonstrably preserved.
+```
+
 ## Source Learning
 
 - Source domains: PROMPT_AND_AGENT_WORKFLOW, SKILL_AUTHORING_AND_EVOLUTION
