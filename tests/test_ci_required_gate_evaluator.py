@@ -25,6 +25,7 @@ EVALUATOR = ROOT / "tools/evaluate_ci_required_gate.py"
 PASSING_ENV = {
     "CLASSIFY_RESULT": "success",
     "DOCS_RESULT": "success",
+    "CORE_REQUIRED": "true",
     "CORE_REGRESSION_RESULT": "success",
     "CONTRACT_REQUIRED": "true",
     "CONTRACT_RESULT": "success",
@@ -58,7 +59,6 @@ class CiRequiredGateEvaluatorTests(unittest.TestCase):
         for variable, result_value, job_name in (
             ("CLASSIFY_RESULT", "failure", "classify-changes"),
             ("DOCS_RESULT", "skipped", "docs-validation"),
-            ("CORE_REGRESSION_RESULT", "failure", "core-regression"),
         ):
             with self.subTest(variable=variable):
                 result = self._run({variable: result_value})
@@ -67,6 +67,7 @@ class CiRequiredGateEvaluatorTests(unittest.TestCase):
 
     def test_each_required_conditional_job_must_succeed(self) -> None:
         for required, result_name, job_name in (
+            ("CORE_REQUIRED", "CORE_REGRESSION_RESULT", "core-regression"),
             ("CONTRACT_REQUIRED", "CONTRACT_RESULT", "ubuntu-contract"),
             ("PUBLICATION_REQUIRED", "PUBLICATION_RESULT", "publication-validation"),
             ("WINDOWS_REQUIRED", "WINDOWS_RESULT", "platform-smoke-windows"),
@@ -79,6 +80,8 @@ class CiRequiredGateEvaluatorTests(unittest.TestCase):
 
     def test_optional_skipped_jobs_pass(self) -> None:
         result = self._run({
+            "CORE_REQUIRED": "false",
+            "CORE_REGRESSION_RESULT": "skipped",
             "CONTRACT_REQUIRED": "false",
             "CONTRACT_RESULT": "skipped",
             "PUBLICATION_REQUIRED": "false",
@@ -89,7 +92,12 @@ class CiRequiredGateEvaluatorTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
 
     def test_invalid_required_flags_fail_closed(self) -> None:
-        for variable in ("CONTRACT_REQUIRED", "PUBLICATION_REQUIRED", "WINDOWS_REQUIRED"):
+        for variable in (
+            "CORE_REQUIRED",
+            "CONTRACT_REQUIRED",
+            "PUBLICATION_REQUIRED",
+            "WINDOWS_REQUIRED",
+        ):
             with self.subTest(variable=variable):
                 result = self._run({variable: "TRUE"})
                 self.assertNotEqual(0, result.returncode)
