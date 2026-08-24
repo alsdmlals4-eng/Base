@@ -1,15 +1,5 @@
 # Base Skill Learning Log
 
-## 2026-08-24 — Registry semantic deduplication must preserve routing distinctions
-
-- **상태:** `OBSERVATION`
-- **Trigger:** Base 전수 감사에서 `analyzing-and-refining-game-concepts.use_when`의 짧은 설명이 같은 항목의 더 완전한 설명에 의미상 포함된 중복으로 확인됐다.
-- **Finding:** Registry 문자열 수를 일괄 축소하면 `reviewing-and-validating-project-changes`의 변경 검증/완료 주장 검증, `auditing-and-refining-ui-art`의 일반 UX/UI 책임/A~E 결과 감사처럼 실제로 다른 진입 이유까지 합쳐 오라우팅을 만들 수 있다.
-- **Decision:** 한 route가 다른 route의 의미와 범위를 엄격히 포함할 때만 작은 route를 제거한다. 이번 변경은 게임 컨셉 owner의 strict-subsumption 1건만 제거하고, 서로 다른 책임을 가진 복수 route는 보존한다.
-- **Verification:** focused RED가 중복 1건만 실패하고 distinct-route 보존 테스트는 통과함을 확인했다. 기존 game-design owner 회귀와 Registry-derived Skill Map hash 동기화를 같은 변경 단위로 묶어 canonical-reference freshness가 실제 소비자를 검사하게 한다.
-- **Boundary:** 이 사례 하나를 자동 semantic-dedup 알고리즘의 공용 규칙으로 승격하지 않는다. 표현이 비슷해도 권한·입력·출력·검증 의미가 다르면 별도 route로 유지한다.
-- **Next trigger:** Registry에서 부분 포함 문장, 동일 trigger의 반복, 라우팅 오탐/누락이 다시 관찰되면 strict-subsumption 기준의 기계 후보 탐색을 검토하되 최종 삭제는 owner 계약 대조를 요구한다.
-
 ## 2026-08-21 — Behavior fixtures must move with active Skill contracts
 
 - **상태:** `PATTERN_CANDIDATE`
@@ -118,9 +108,9 @@
 ## 2026-07-30 — Verified agent merge execution
 
 - Status: `PATTERN`.
-- Decision: a non-Draft PR at its reviewed SHA must be merged by the responsible agent after required checks, independent review, unresolved-thread, and decision gates pass. A separate user click is not a normal merge gate. Repository auto-merge availability may vary, so direct merge is used only when its allowed method and every gate are confirmed.
+- Decision: a non-Draft PR at its reviewed SHA must be merged by the responsible agent after required checks, independent review, unresolved-thread, and decision gates pass. A separate user click is not a normal merge gate.
 - Boundary: `USER_REVIEW_REQUIRED` and `CHANGE_PROPOSAL` remain pre-implementation decision gates; P0/P1 findings, failed or missing checks, unresolved threads, conflicts, or unsupported merge methods block execution.
-- Verification trigger: the policy, implementation handoff Skill, active prompt, Registry, learning log, and contract tests must change together.
+- Verification trigger: the policy, implementation handoff Skill, active prompt, Registry, learning log, and contract tests must change together. Repository auto-merge availability may vary, so direct merge is used only when its allowed method and every gate are confirmed.
 
 ## 2026-07-30 — External authority for protected baselines
 
@@ -496,7 +486,7 @@
 
 - 프로젝트·작업: Base 변경 시 오래된 파일·경로·Skill ID·정책 참조와 갱신 누락을 찾는 전문 Skill·자동 검사 추가
 - 기준 스킬 커밋: `agent/add-reference-freshness-audit-v3`
-- 호출 트리거: 패치나 변경 뒤 모든 활성 파일이 최신 정본을 따르는지와 오래된 파일 참조·갱신 누락을 찾아야 한다는 사용자 요청
+- 호출 트리거: 패치나 변경 뒤 모든 활성 파일이 최신 정본을 따르는지, 오래된 파일을 참조하거나 갱신되지 않은 소비자가 있는지 찾는 Skill을 추가하라는 사용자 요청
 - 입력 범위: PR #19 최종 DDD head, 통합 Skill Registry, 범용 변경 검증 Skill, Operating Model, 프로젝트 AI Workflow, Legacy Alias, 구조·참조 회귀 테스트와 Actions
 - 실제 산출물: `auditing-canonical-reference-freshness`, `reference-freshness` 검증 mode, 감사 템플릿, `.github/reference-freshness.json`, 표준 라이브러리 기반 checker, 단위 테스트와 CI 연결, 13개 활성 Skill Registry
 - 실행한 검증: checker 단위 테스트 4개 추가, Registry·구조·활성 진입점 테스트 갱신, Python 문법·Actions 실행 대기
