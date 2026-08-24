@@ -20,6 +20,7 @@ class StoryCraftPlanningNormalizationTests(unittest.TestCase):
         for token in (
             "EMMA_COATS_STORYBASICS_NOT_OFFICIAL_PIXAR_POLICY",
             "HERO_JOURNEY_12_IS_VOGLER_ADAPTATION",
+            "HERO_JOURNEY_OPTIONAL_12_STAGE_LENS",
             "STORY_PLANNING_MINIMUM",
             "OPTIONAL_STORY_PLANNING_FIELDS",
             "FOCAL_AGENT_DECISION_OWNER",
@@ -34,6 +35,8 @@ class StoryCraftPlanningNormalizationTests(unittest.TestCase):
             "IDEA_DIVERGENCE_BEFORE_COMMIT",
             "NEGATIVE_NEXT_BEAT_LIST",
             "IDEA_PARKING_LOT",
+            "SYMBOL_MOTIF_METAPHOR_OPTIONAL",
+            "VOICE_TONE_CONTINUITY",
             "PARAGRAPH_SCREEN_BLOCK_PREFERENCE",
         ):
             self.assertIn(token, guide)
