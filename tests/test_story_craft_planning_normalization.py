@@ -21,6 +21,7 @@ class StoryCraftPlanningNormalizationTests(unittest.TestCase):
             "EMMA_COATS_STORYBASICS_NOT_OFFICIAL_PIXAR_POLICY",
             "HERO_JOURNEY_12_IS_VOGLER_ADAPTATION",
             "STORY_PLANNING_MINIMUM",
+            "OPTIONAL_STORY_PLANNING_FIELDS",
             "FOCAL_AGENT_DECISION_OWNER",
             "WANT_NEED_STAKES",
             "CAUSE_BEFORE_SEQUENCE",
