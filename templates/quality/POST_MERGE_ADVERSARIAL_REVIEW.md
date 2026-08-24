@@ -102,13 +102,29 @@ BLOCKED_UNVERIFIED
 | 롤백·복구 |  | PASS / FAIL / NOT_RUN |  |  |
 | repository + configured workspace readback |  | PASS / FAIL / NOT_CONFIGURED / NOT_RUN |  |  |
 
-## 8. 최종 판정
+## 8. Whole-state adversarial loop receipts
+
+각 loop는 현재 exact head와 전체 정본·소비처·검증 상태를 다시 읽은 뒤, 서로 다른 대안을 실제 근거로 비교하고 Finding을 비판·수정·회귀 검사·재공격까지 닫는다. 한 Finding만 반복하거나 이전 loop의 부분 결과를 전체 상태 검토로 승격하지 않는다.
+
+| loop_index | exact_head | whole_state_readback | alternatives | finding | validation | refinement | regression | whole_state_re_attack | result |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 |  |  |  |  |  |  |  |  |  |
+| 2 |  |  |  |  |  |  |  |  |  |
+| 3 |  |  |  |  |  |  |  |  |  |
+| 4 |  |  |  |  |  |  |  |  |  |
+| 5 |  |  |  |  |  |  |  |  |  |
+
+`CLEAN_REVIEW_EXIT`는 at least five completed rows가 있고, 모든 행에 `whole_state_re_attack` 증거가 있으며, 마지막 재공격에서 유효한 차단 Finding이 없을 때만 기록할 수 있다. 그 전에는 `REVIEW_INCOMPLETE`로 남긴다.
+
+## 9. 최종 판정
 
 ```text
 NO_CONFLICT
 CONFLICT_FIXED
 USER_DECISION_REQUIRED
 BLOCKED_UNVERIFIED
+REVIEW_INCOMPLETE
+CLEAN_REVIEW_EXIT
 ```
 
 - 판정:
@@ -120,8 +136,9 @@ BLOCKED_UNVERIFIED
 - 중복 구현·PR:
 - 회귀:
 - 미검증:
+- whole-state loop 상태:
 
-## 9. 후속 조치
+## 10. 후속 조치
 
 - 즉시 수정:
 - 사용자 결정 필요:
@@ -130,7 +147,7 @@ BLOCKED_UNVERIFIED
 - 롤백:
 - 다음 작업:
 
-## 10. 완료 점검
+## 11. 완료 점검
 
 - [ ] 병합 뒤 새 `main` HEAD를 재조회했다.
 - [ ] 병합 PR·Commit의 실제 diff를 확인했다.
@@ -142,5 +159,6 @@ BLOCKED_UNVERIFIED
 - [ ] 공격과 비판 검증을 분리했다.
 - [ ] 실행 가능한 구체적 Finding은 필요 시 fix-guided 반사실 검증으로 재판정했다.
 - [ ] 필요한 최소 수정 뒤 회귀 재검사를 수행했다.
+- [ ] 최소 다섯 개의 whole-state adversarial loop를 exact head 기준으로 완료하고 마지막 loop를 재공격했다.
 - [ ] 실행하지 못한 검사를 통과로 표시하지 않았다.
 - [ ] 최종 판정과 남은 위험을 보고했다.
