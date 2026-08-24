@@ -6,8 +6,9 @@
 - 기준 Base 커밋: `7de18bc6a941b7be11e747f1cf59ae60cb3e4657`
 - 외부 자료 확인일: `2026-08-24`
 - 제출일: `2026-08-24`
-- 상태: `SUBMITTED`
-- 지식 상태: `공식/SRD/공개판 관찰 + 설계 비교 가설`
+- 제안 제출 병합: PR `#651`, main `4c51250b7cf12b43b3baa70916ad6646ab733fa4`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 지식 상태: `공식/SRD/공개판 관찰 + 사용자 승인된 공용 Reference 범위`
 
 ## 관찰과 증거
 
@@ -167,7 +168,7 @@ Base는 비교 방법과 출처 레이더만 소유하며, 실제 TRPG 프로젝
 
 ## 영향 범위와 검증
 
-승인 후 제안하는 최소 구현 범위:
+승인된 최소 구현 범위:
 
 - `docs/knowledge/game-development/TRPG_RULE_DESIGN_REFERENCE_RADAR.md` 신규.
 - `docs/knowledge/game-development/README.md` 문서 지도에 TRPG Radar 라우팅 한 줄 추가.
@@ -200,7 +201,9 @@ Evidence ceiling:
 
 ## 승인과 구현
 
-- 사용자 승인 근거: 2026-08-24 현재 작업 대화에서 사용자가 `base에 trpg 자료로 추가하고. 더 많은 링크를 찾아봐`, `작업계속진행`이라고 명시했다.
-- 현재 제안 상태: 제출 후 Base BCP lifecycle에 따라 review/approval 상태를 기록하고 별도 구현 PR에서만 활성 지식 허브를 변경한다.
+- 사용자 승인 근거: 2026-08-24 현재 작업 대화에서 사용자가 `base에 trpg 자료로 추가하고. 더 많은 링크를 찾아봐`, `여기도 잊지말고`, `작업계속진행`이라고 반복해 Base 반영과 연속 진행을 명시했다.
+- `approval_ref`: `[수정제안서]/BCP-2026-030-trpg-rule-design-reference-radar/PROPOSAL.md#승인과-구현` + 2026-08-24 현재 작업 사용자 승인 + 제출 PR `#651`.
+- 승인 범위: 기존 game-development knowledge hub 아래에 비실행 TRPG Reference Radar를 추가하고, README/Catalog에는 최소 routing만 연결한다. 공개 원출처와 사용자 제공 룰북을 같은 비교 Schema로 분석하되 프로젝트 고유 룰은 자동 변경하지 않는다.
+- 승인 제외: 신규 Skill/Tool/유료 서비스, 외부 룰북 원문 복제, 미검증 Source의 권위 승격, 이클립스 임시 수치의 Base 강제 규칙화.
 - 구현 PR: `없음`
-- 롤백: 승인 전에는 `[수정제안서]/**` 제안 기록만 되돌린다. 구현 뒤에는 신규 Radar와 README/Catalog routing만 되돌리며 프로젝트 정본은 영향을 받지 않는다.
+- 롤백: 승인 기록과 구현 Radar/routing을 되돌릴 수 있으며 프로젝트 정본에는 영향을 주지 않는다.
