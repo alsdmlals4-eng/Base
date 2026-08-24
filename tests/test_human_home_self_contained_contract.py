@@ -59,6 +59,22 @@ class HumanHomeSelfContainedContractTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
 
+    def test_current_human_home_contract_reaches_active_dashboard_skill(self) -> None:
+        policy = POLICY.read_text(encoding="utf-8")
+        skill = DASHBOARD_SKILL.read_text(encoding="utf-8")
+        for term in (
+            "PROJECT_HOME_TOP_VISUAL_GDD_REQUIRED",
+            "PROJECT_HOME_PROJECT_SPECIFIC_PRIORITY",
+            "EXPLANATORY_VISUAL_GDD_BEFORE_DECORATIVE_ART",
+            "AI_WORKSPACE_DETAIL_COMPLETENESS_REQUIRED",
+            "HOME_DETAIL_AI_RUNTIME_TRACEABILITY_REQUIRED",
+            "PROJECT_HOME_BUILD_JUDGMENT_ACCEPTANCE",
+            "HUMAN_PROJECT_HOME_IS_LIVING_GDD_VISUAL_DASHBOARD",
+            "HUMAN_RELEVANT_PROJECT_OUTPUTS_VIEWABLE_FROM_HOME",
+        ):
+            self.assertIn(term, policy)
+            self.assertIn(term, skill)
+
     def test_ai_interpretation_is_not_operational_metadata(self) -> None:
         text = POLICY.read_text(encoding="utf-8")
         self.assertIn("AI_INTERPRETATION_FOR_USER_CORRECTION", text)
