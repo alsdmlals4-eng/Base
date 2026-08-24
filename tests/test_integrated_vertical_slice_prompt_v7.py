@@ -28,7 +28,7 @@ class IntegratedVerticalSlicePromptV7Tests(unittest.TestCase):
             'contract_name: VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT',
             'contract_version: "9.1"',
             'release_line: "Base v9.3"',
-            "usage: \"이 파일 하나만 첨부하면 저장소 우선 인터뷰부터 기획·Codex 인계·구현·검수·병합 후 동기화까지 현재 작업에 필요한 절차를 실행한다.\"",
+            "usage: \"이 파일 하나만 첨부하면 저장소 우선 인터뷰부터 기획·Codex 인계·구현·검수·병합 후 Notion/repository readback까지 현재 작업에 필요한 절차를 실행한다.\"",
             "execution_model: SINGLE_ATTACHMENT_RECONCILIATION_AWARE_INTEGRATED_EXECUTION",
             "APPLICATION_BINDING",
             "REPOSITORY_FIRST_INTERVIEW",
@@ -59,7 +59,7 @@ class IntegratedVerticalSlicePromptV7Tests(unittest.TestCase):
             "DEMO_FIRST_VERTICAL_SLICE",
             "DEMO_VALIDATION",
             "TECHNICAL_SPIKE",
-            "PROJECT_SHEET_SEMANTIC_TABS",
+            "LEGACY_SHEET_COMPATIBILITY_MIGRATION",
             "INTERMEDIATE_VISUAL_CHECKPOINT",
             "DRAFT_VISUAL",
             "Screen Interpretation Review",
@@ -86,7 +86,9 @@ class IntegratedVerticalSlicePromptV7Tests(unittest.TestCase):
             "PROJECT_BASE_ADAPTER.json",
             "PROJECT_SKILL_SNAPSHOT.json",
             "보호 경로",
-            "Google Sheet",
+            "NOTION_HUMAN_FACING_CANON",
+            "REPOSITORY_STRUCTURED_CANON",
+            "COMPATIBILITY_ONLY",
             "Source / Consumer / Propagation Map",
             "Approval Bundle",
             "PLAN_AND_CODEX_HANDOFF",
@@ -108,9 +110,12 @@ class IntegratedVerticalSlicePromptV7Tests(unittest.TestCase):
             "Codex 구현 인계",
             "독립 리뷰·적대적 검토",
             "병합된 main을 기준으로만",
-            "Sheet 단독 편집은 언제나 `PROPOSED_SHEET_CHANGE`",
+            "legacy Sheet 단독 변경은 언제나 `PROPOSED_SHEET_CHANGE`",
         ):
             self.assertIn(term, prompt)
+
+        self.assertNotIn("Google Sheet 쓰기", prompt)
+        self.assertNotIn("병합 후 Google Sheet 동기화", prompt)
 
     def test_existing_adversarial_skill_owns_repository_wide_audit_without_duplicate_skill(self) -> None:
         skill = read("skills/running-adversarial-review-and-refinement/SKILL.md")
