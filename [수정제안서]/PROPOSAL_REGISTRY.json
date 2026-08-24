@@ -332,9 +332,7 @@
       "source_commit": "7de18bc6a941b7be11e747f1cf59ae60cb3e4657",
       "submitted_at": "2026-08-24",
       "approval_ref": "[수정제안서]/BCP-2026-030-trpg-rule-design-reference-radar/PROPOSAL.md#승인과-구현 (2026-08-24 current task user instruction; proposal PR #651 merged)",
-      "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/656",
-      "implementation_commit": "8820ca9c0d46da0dda3256b52802dfb02d4c4954",
-      "closeout_path": "[수정제안서]/BCP-2026-030-trpg-rule-design-reference-radar/IMPLEMENTATION_CLOSEOUT.md"
+      "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/656"
     }
   ]
 }
