@@ -19,6 +19,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - 기획 우선·Grill Me: `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`
 - 장기 작업·완료·비용·PR 안전: `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`
 - 연속작업 실행: `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`
+- UI/UX 설계·폴리싱·실행 결과 감사: `auditing-and-refining-ui-art`
 - 문서 위치: `docs/DOCUMENTATION_MAP.md`
 - CI 비용/실행 계층: `docs/CI_EXECUTION_COST_POLICY.md`
 - Notion/Sheet migration: `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`
