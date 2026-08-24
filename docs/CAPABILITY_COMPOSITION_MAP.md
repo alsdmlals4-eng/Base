@@ -10,6 +10,7 @@ Capabilities are selected by the problem, not artificially restricted to one too
 | GitHub contract | GDD, external, both | decision → document/schema → implementation handoff | cannot claim unrun runtime/human validation | commit/PR and validation record |
 | Godot evidence | external, linked from GDD | pinned contract → render/input test → validation | cannot be inferred from a design tool | capture/test/log and explicit `NOT_RUN` gaps |
 | Tool interface surface (`TOOL_INTERFACE_SURFACE_SELECTION`) | BUILD, REVIEW, internal tools | reusable domain core → stable CLI/programmatic contract → optional TUI or thin GUI | surface cannot own canon/state or force GUI-only automation | selection trade study + target-platform/workflow evidence |
+| AI game-engine machine boundary (`AI_GAME_ENGINE_MACHINE_BOUNDARY`) | BUILD, TEST, CI, agent-assisted engine/tool operations | exact project identity → typed operation → shared core → CLI/MCP adapter → behavior E2E → IRG evidence | cannot create a second engine/editor writer, infer behavior PASS from MCP connectivity, or turn a benchmark provider into a required runtime | schema/type contract + representative behavior E2E + structured execution evidence |
 | External process overlay (`EXTERNAL_PROCESS_OVERLAY`) | PLAN, BUILD, REVIEW; environment-required process | environment/system process → Base routing → discipline owner → validation → execution report | execution-only; cannot own project canon or decisions, weaken Base gates, or manufacture duplicate approval | overlay source, actually applied process skills/gates, approval reuse/conflict, extra evidence |
 
 ## Tool interface surface selection contract
@@ -58,6 +59,35 @@ DESIGN_ONLY
 ```
 
 `TARGET_PLATFORM_VERIFIED` requires actual evidence on every platform being claimed. A macOS-only result cannot establish Windows/Linux support; accessibility claims likewise require evidence in the target environment. `HUMAN_WORKFLOW_VALUE_VERIFIED` additionally requires evidence that the added human surface actually reduces repeated-work friction or improves decision quality compared with the simpler machine-facing path.
+
+## AI game-engine machine boundary contract
+
+`AI_GAME_ENGINE_MACHINE_BOUNDARY` is a reusable pattern for game-engine and development-tool operations that must be callable by humans, CI, and agents without making a GUI, MCP transport, or benchmark provider a second authority. It extends the existing machine-facing surface rule; it does not select or replace the game engine.
+
+```text
+exact project identity
+→ typed operation
+→ reusable domain / engine-operation core
+   ├─ CLI adapter
+   └─ MCP adapter
+→ behavior E2E
+→ Implementation Reality Gate
+→ structured execution evidence
+```
+
+Machine-boundary rules:
+
+1. `PROJECT_IDENTITY_BEFORE_OPERATION`: resolve and validate the exact project identity, repository/workspace root, and relevant version/pin before an operation. Do not guess from whichever editor window, current directory, scene, port, or process happens to be active.
+2. `SHARED_CORE_FOR_CLI_AND_MCP`: CLI, MCP, and any optional human surface call the same bounded operation core. They must not duplicate engine mutation rules, state transitions, validation, or evidence semantics in separate adapters.
+3. `SCHEMA_GENERATED_TOOL_SURFACE`: when the implementation stack supports it, keep one closed operation schema/type source and generate or mechanically validate CLI arguments, MCP tool definitions/types, and representative test fixtures from that source. Code generation itself is optional when it adds no value; schema/type drift is not.
+4. `MCP_E2E_BEHAVIOR_CONTRACT`: representative operations must have behavior E2E coverage through the real machine-facing adapter into the project/result/evidence boundary. Tool discovery, schema listing, server startup, or a successful handshake is transport evidence only.
+5. `MCP_CONNECTED_IS_NOT_BEHAVIOR_PASS`: an MCP server being reachable does not establish that the requested engine action occurred, persisted correctly, targeted the intended project, or produced valid evidence. Promote the claim only after the applicable Implementation Reality Gate checks pass.
+6. `NONINTERACTIVE_AUTOMATION_PATH`: approved bounded CI/agent operations should have a non-interactive path when practical, while preserving existing approval, security, destructive-action, and protected-path gates. Headless convenience cannot bypass authority checks.
+7. `STRUCTURED_EXECUTION_EVIDENCE`: machine-facing execution records should bind the exact project/ref, tool or adapter version, typed operation, result state, changed artifacts or observed outputs, logs/evidence locations, and explicit `NOT_RUN`/`BLOCKED` gaps needed for the claim.
+8. `ENGINE_AND_WRITER_AUTHORITY_PRESERVED`: this composition rule does not create a new engine, editor, MCP writer, or persistent mutation authority. Provider-specific benchmarks remain evidence inputs. Current project/Base authority decides what engine and tool owns each action.
+9. `NO_BENCHMARK_RUNTIME_DEPENDENCY_BY_DEFAULT`: extracting a useful architecture from an external engine/tool does not install that engine, CLI, SDK, service, or paid dependency. Runtime adoption requires a separate Existing Solution First comparison and target-project evidence.
+
+For current Godot work, this pattern composes with the existing P06 authority model rather than replacing it: Godot remains the engine, current authoring/test/live-QA owners retain their existing scopes, and any machine-facing improvement must preserve the single-writer boundary.
 
 ## External process overlay contract
 
