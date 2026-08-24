@@ -157,6 +157,20 @@ DESIGN_ONLY
 
 `TARGET_PLATFORM_VERIFIED`가 없으면 다른 OS 지원을 추정하지 않는다. `HUMAN_WORKFLOW_VALUE_VERIFIED`가 없으면 GUI/TUI 추가가 CLI-only보다 실제 반복 작업 비용을 줄였다고 주장하지 않는다.
 
+#### AI_GAME_ENGINE_MACHINE_BOUNDARY
+
+게임 엔진·에디터·QA 도구 벤치마크에서 CLI, MCP, typed API, schema/code generation, headless automation 같은 machine-facing 구조가 관찰되면 제품 자체를 복제하거나 엔진 교체를 전제로 하지 않고 `docs/CAPABILITY_COMPOSITION_MAP.md`의 `AI_GAME_ENGINE_MACHINE_BOUNDARY`로 추상화한다.
+
+- `PROJECT_IDENTITY_BEFORE_OPERATION`: 자동화가 암묵적 현재 창·Scene·작업 폴더를 추측하지 않도록 정확한 project identity와 version/pin을 먼저 결속한다.
+- `SHARED_CORE_FOR_CLI_AND_MCP`: CLI와 MCP가 각각 별도 mutation/business logic을 갖지 않고 동일 bounded operation core를 호출하는지 본다.
+- `SCHEMA_GENERATED_TOOL_SURFACE`: 가능한 경우 하나의 closed schema/type source에서 CLI/MCP contract와 test fixture를 생성하거나 기계 검증해 surface drift를 줄인다.
+- `MCP_E2E_BEHAVIOR_CONTRACT`: MCP 연결·tool listing·schema load가 아니라 실제 대표 operation이 project/result/evidence까지 도달하는 behavior E2E를 요구한다.
+- `NONINTERACTIVE_AUTOMATION_PATH`: CI/agent가 승인된 bounded operation을 GUI prompt 없이 실행할 수 있는 경로가 있는지 보되 권한·보호 Gate는 유지한다.
+- `STRUCTURED_EXECUTION_EVIDENCE`: project/ref, adapter version, typed operation, 결과, 변경/관찰 artifact, log와 `NOT_RUN`/`BLOCKED` 상태를 구조적으로 남긴다.
+- 외부 엔진에서 이 패턴이 관찰됐다는 이유만으로 해당 엔진, CLI, SDK, MCP server를 Base나 프로젝트 dependency로 추가하지 않는다. 엔진·provider 채택은 별도 Existing Solution First와 실제 target-project evidence를 요구한다.
+
+COCOS 4/Cocos CLI에서 추출한 현재 사례는 `docs/knowledge/cases/COCOS_AI_NATIVE_ENGINE_INTERFACE_CASE.md`에 둔다. 이 사례의 채택 대상은 provider-neutral machine boundary이며 Cocos runtime이나 TypeScript/C++ stack 자체가 아니다.
+
 ### 4. CONTRACT_ABSTRACTION
 
 특정 작품의 이름과 표현을 제거한 뒤 **무엇이 들어오면 어떤 상태 변화와 판단을 거쳐 무엇이 나가는가**를 다시 적는다.
