@@ -17,6 +17,10 @@
 → 필요 시 reference-freshness·accessibility-review·performance-profile
 → 책임 원본·발행·Active Context 동기화
 → PR Required Checks·리뷰
+→ REMAINING_WORK_COMPLETION_GATE
+→ IMPLEMENTATION_CORRECTION_RESCAN
+→ POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
+→ CLEAN_REVIEW_EXIT
 → Learning Log·Base 제안
 ```
 
@@ -200,7 +204,8 @@ Intake·Context
 → Implementation
 → Verification
 → Documentation·Publication
-→ Integration·Completion
+→ Integration·Readback
+→ REMAINING_WORK_COMPLETION_GATE
 → Context·Learning
 ```
 
@@ -239,7 +244,17 @@ contract-check
 → 적용 시 performance-profile
 → regression
 → evidence-report
+→ REMAINING_WORK_RECALCULATION_REQUIRED
+→ if zero: COMPLETION_CANDIDATE
+→ IMPLEMENTATION_CORRECTION_RESCAN
+   ├─ valid finding → NEW_FINDING_REOPENS_REMAINING_WORK → Implementation/Verification 복귀
+   └─ no required finding → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
+→ same final POST_CHANGE_MONITOR_LOOP
+→ minimum-five full-scope loops, then until CLEAN_REVIEW_EXIT
+→ FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
 ```
+
+`POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 새 review 체계가 아니라 current Base의 동일 final `POST_CHANGE_MONITOR_LOOP`다. `required_work_remaining: 0`만으로 전체 완료를 선언하지 않는다. 새 유효 구현·교정 finding은 현재 승인 범위의 작업을 다시 열고 교정·회귀·destination readback 뒤 재계산한다.
 
 `reference-freshness`는 `auditing-canonical-reference-freshness`를 호출해 활성 파일의 오래된 참조, untouched 소비자, 정책·상태 drift, 원본·생성기와 맞지 않는 PDF·Manifest·해시, 허용된 Legacy·Change Log·과거 case를 구분한다.
 
@@ -318,6 +333,7 @@ Audit only
 - 생성한 PDF·선택 DOCX·다이어그램·Manifest:
 - 보호한 결정·동작·자산:
 - 검증 판정·증거:
+- REMAINING_WORK_COMPLETION_GATE / IMPLEMENTATION_CORRECTION_RESCAN / CLEAN_REVIEW_EXIT:
 - 사람 시각·플레이 검수:
 - 미검증·불일치·위험·롤백:
 - Learning Log·Base 제안:

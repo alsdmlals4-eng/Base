@@ -14,6 +14,14 @@ PACK = (
     / "reuse"
     / "AI_ASSISTED_INDIE_PATTERN_PACK_2026-08-24.md"
 )
+RECEIPT = (
+    ROOT
+    / "docs"
+    / "knowledge"
+    / "game-development"
+    / "reuse"
+    / "AI_ASSISTED_INDIE_PROJECT_ADOPTION_RECEIPT_2026-08-24.md"
+)
 
 
 class AiIndieGameReverseEngineeringRadarTests(unittest.TestCase):
@@ -53,6 +61,36 @@ class AiIndieGameReverseEngineeringRadarTests(unittest.TestCase):
             "Implementation Reality Gate",
             "Adversarial review 5/5",
             "PROJECT_ADOPTION_NOT_RUN",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, text)
+
+    def test_current_adoption_state_is_routed_to_execution_receipt(self) -> None:
+        radar = RADAR.read_text(encoding="utf-8")
+        self.assertIn(
+            "current_project_adoption_receipt: docs/knowledge/game-development/reuse/AI_ASSISTED_INDIE_PROJECT_ADOPTION_RECEIPT_2026-08-24.md",
+            radar,
+        )
+        self.assertIn("INITIAL_PATTERN_PACK_STATE_IS_HISTORICAL", radar)
+
+        self.assertTrue(RECEIPT.is_file())
+        text = RECEIPT.read_text(encoding="utf-8")
+        for required in (
+            "status: PROJECT_ADOPTION_EXECUTED",
+            "notion_sync: COMPLETE_READBACK",
+            "runtime_mutation: NONE",
+            "alsdmlals4-eng/omenward#203",
+            "alsdmlals4-eng/ninja-survival-godot#25",
+            "alsdmlals4-eng/Blacksmith#184",
+            "alsdmlals4-eng/GRIMOIRE-#156",
+            "alsdmlals4-eng/Switchy-Express-Cargo-Puzzle#163",
+            "alsdmlals4-eng/Tetris#15",
+            "alsdmlals4-eng/urban-legend#223",
+            "alsdmlals4-eng/MylittleBoat#3",
+            "alsdmlals4-eng/Ten-Paces-Hidden-Moves#190",
+            "alsdmlals4-eng/Coc-Fiction#51",
+            "RUNTIME_AI_NOT_PROMOTED",
+            "PROJECT_SPECIFIC_ADAPTATION_NOT_SHARED_RUNTIME_MODULE",
         ):
             with self.subTest(required=required):
                 self.assertIn(required, text)

@@ -97,6 +97,11 @@ SINGLE_INITIAL_APPROVAL_THEN_CONTINUE
 CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE
 FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS
 REQUIRED_WORK_REMAINING
+REMAINING_WORK_COMPLETION_GATE
+REMAINING_WORK_RECALCULATION_REQUIRED
+IMPLEMENTATION_CORRECTION_RESCAN
+POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
+FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
 POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP
 POSTMERGE_CORRECTION_REQUIRED
 PROGRESS_READBACK_REQUIRED
@@ -111,7 +116,7 @@ PAID_PLAN_COUNT: 1
 - 최초 권장안 뒤에도 새 증거·finding이 생기면 더 나은 방안을 다시 찾고, 선택안이 장기계획·유지보수·모듈화·비용·Base 신선도에 적합한지 재판정한다.
 - 완전한 작업 계약은 한 번 승인받고, 같은 범위의 구현·테스트·PR·적대적 검토·병합·postmerge는 routine approval로 멈추지 않는다. 핵심 방향 변경, 파괴적 migration, 비용·보안 권한 확대만 새 사용자 결정을 요구한다. `CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE`가 성립하면 현재 계약이 직접 만든 current-task PR의 ready merge와 postmerge readback도 이 연속 실행에 포함한다.
 - 적대적 검토는 `전체 범위 공격 → finding 검증 → 개선·보완 → 실제 검증·회귀 → 개선된 전체 상태 재공격`의 **완전한 개선 루프를 최소 5회** 수행한다. 다섯 공격면으로 쪼개서 한 번씩 보는 것은 이 계약을 충족하지 않는다.
-- 완료는 승인된 acceptance criteria의 `REQUIRED_WORK_REMAINING: 0`으로 판정한다. 외부 차단과 선택 backlog는 별도 축으로 남긴다.
+- `REQUIRED_WORK_REMAINING: 0`은 전체 완료가 아니라 `COMPLETION_CANDIDATE`다. `REMAINING_WORK_COMPLETION_GATE`에 따라 actual state를 `REMAINING_WORK_RECALCULATION_REQUIRED`로 다시 계산하고, 0이면 `IMPLEMENTATION_CORRECTION_RESCAN`으로 구현·정본·Test·consumer·PR·readback·Evidence 누락을 다시 공격한다. 새 유효 finding은 `NEW_FINDING_REOPENS_REMAINING_WORK`로 현재 승인 범위의 작업을 다시 열어 교정·검증 후 재계산한다. 필수 finding이 없을 때만 `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`를 기존 final `POST_CHANGE_MONITOR_LOOP`에 연결해 최소 5회 full-scope loop와 `CLEAN_REVIEW_EXIT`를 닫는다. 이는 별도 두 번째 5회 cycle이 아니다.
 - 게임 작업은 core loop·핵심 시스템·세계관/핵심 스토리라인 정합성·가역적 dummy `BALANCE_BUDGET`·playable build/test·재사용 가능한 모듈 경계를 함께 설계한다.
 - 새 프로젝트와 새 시각 작업의 기본 협업면은 단일 Notion workspace의 프로젝트별 filtered page다. `Project` relation으로 작업·자산·화면·Reference·Benchmark를 분리하며, balance/economy/schema/runtime config와 실제 구현은 repo-native structured source를 사용한다. 기존 Google Sheets는 검증된 migration이 끝날 때까지 compatibility-only migration source로 보존한다. 상세 compatibility/migration owner는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`다.
 - 사용자에게 PowerShell 실행이 필요하면 `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`를 적용한다. 매 작업을 새 PowerShell 창 기준으로 보고 위치 세팅을 첫 실행 단계에 두며, 가능한 절차는 한 번에 붙여넣는 단일 블록으로 제공한다.
@@ -216,7 +221,6 @@ Base와 Base를 채택한 프로젝트의 L1 이상 완료보고는 단순히 `�
 
 파일명·테스트명만 나열하지 말고 **왜 존재하고 무엇과 연결되며 없어지면 무엇이 깨지는지**까지 설명한다. 프로젝트 고유 내용은 프로젝트 전용으로, 반복 가능한 공용 교훈은 Base 승격 후보로 분리한다.
 
-
 L1 이상 완료 보고에는 다음을 실제 수행 증거와 함께 포함한다.
 
 - 사용한 Work Mode·Skill·Skill Mode와 선택 이유
@@ -224,6 +228,7 @@ L1 이상 완료 보고에는 다음을 실제 수행 증거와 함께 포함한
 - 변경한 문서·코드·데이터·자산·Skill과 유지한 기존 결정
 - 실행 단계·의존성·게이트와 실제 결과
 - 테스트·런타임·렌더·접근성·성능·참조 최신성·정확한 HEAD 증거
+- `REMAINING_WORK_COMPLETION_GATE`, `IMPLEMENTATION_CORRECTION_RESCAN`, `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`, `CLEAN_REVIEW_EXIT`의 실제 상태
 - 실행하지 않은 항목, 불일치, 남은 위험, 롤백, 다음 작업
 - 보존·통합·보류·제거 후보, Base 환류 여부
 
