@@ -7,6 +7,7 @@ engine_authority: GODOT_ONLY_RUNTIME
 absorption_mode: ABSORB_COCOS_PATTERNS_ONLY
 cocos_creator_reference_line: 3.8.x
 current_creator_release_verified: 3.8.8
+machine_boundary_main_ref: db712a9a5ff1269ee2ef7519f297694ae78b8732
 runtime_dependency_added: false
 typescript_dependency_added: false
 paid_dependency_added: false
@@ -74,19 +75,19 @@ The official Cocos update/download surfaces were rechecked on 2026-08-24. The cu
 
 These URLs are reference evidence, not a statement that the corresponding Base/project implementation has been run.
 
-### Parallel COCOS 4 benchmark boundary
+### Merged COCOS 4 machine-boundary owner
 
-A separate active workstream may inspect **COCOS 4 / Cocos CLI** machine-facing AI/CLI/MCP patterns. That is a materially different concern from this Creator 3.8 production-pattern absorption.
+Main commit `db712a9a5ff1269ee2ef7519f297694ae78b8732` (PR #646) separately owns the **COCOS 4 / Cocos CLI machine-facing AI/CLI/MCP benchmark**. That is materially different from this Creator 3.8 production-pattern absorption.
 
 ```text
 this note
 = packaging / first-load / build-profile / platform-isolation patterns
 
-separate machine-boundary workstream
+merged machine-boundary owner
 = project identity / CLI / MCP / schema / behavior-E2E patterns
 ```
 
-This work does not edit, absorb, supersede, or take ownership of that active workstream.
+This work does not duplicate, supersede, or take ownership of the merged machine-boundary contract. Where the two lessons overlap, the merged main owner remains canonical.
 
 ## 3. Pattern disposition matrix
 
@@ -219,7 +220,8 @@ Overlap inspection found that the current owners already contain the required un
 
 - `GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` already separates first-launch additional download, optional content, package/runtime budgets, and delivery separation candidates;
 - `PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md` already separates shared gameplay rules from `platform_service_adapter` and other platform adapters;
-- technical build/release and QA owners already own build/output/evidence validation boundaries.
+- technical build/release and QA owners already own build/output/evidence validation boundaries;
+- merged `AI_GAME_ENGINE_MACHINE_BOUNDARY` already owns machine-facing project identity, CLI/MCP/schema/E2E/evidence concerns.
 
 Therefore **renaming those responsibilities inside each owner would create duplicate policy rather than useful absorption**. This note is the bounded translation/evidence packet and points to those existing owners instead of duplicating their contracts.
 
@@ -274,19 +276,20 @@ The next promotion point is a **real Godot project consumer**, not more Cocos do
 
 ## 10. Post-correction adversarial review
 
-Earlier review found and corrected two valid issues before this checkpoint:
+Earlier review found and corrected three valid issues before this checkpoint:
 
 1. **renaming duplication risk** — the first implementation plan would have copied new marker sections into owners that already express the same responsibilities; corrected to existing-owner reuse plus semantic regression checks;
-2. **version/workstream ambiguity** — Creator 3.8 production patterns could be confused with the separate COCOS 4 machine-boundary benchmark; corrected with current Creator 3.8.8 freshness evidence and an explicit parallel-workstream boundary.
+2. **version/workstream ambiguity** — Creator 3.8 production patterns could be confused with the separate COCOS 4 machine-boundary benchmark; corrected with current Creator 3.8.8 freshness evidence and an explicit responsibility boundary;
+3. **main-drift wording** — while this branch was under review, PR #646 merged; stale “active workstream” wording was replaced with the exact merged main owner/ref.
 
-After those corrections, five full clean loops re-read the entire change:
+After those corrections, five full clean loops re-read the entire latest-main-reconciled change:
 
 | Loop | Full-change attack | Result |
 |---|---|---|
-| 1 | second-engine creep, TypeScript/Cocos CLI/runtime dependency, parallel PR takeover | `CLEAN` — all explicitly rejected; parallel workstream remains read-only |
+| 1 | second-engine creep, TypeScript/Cocos CLI/runtime dependency, merged machine-boundary owner collision | `CLEAN` — all dependencies rejected; merged main owner preserved |
 | 2 | duplicate owner/Skill/module authority, renamed existing contracts | `CLEAN` — no owner duplication, new Skill, or new `RM-*` allocation |
 | 3 | false portability, API-exists-equals-ready, Web/PCK/partial-build overclaim | `CLEAN` — `TEST`/`NOT_RUN` ceilings remain explicit |
 | 4 | stale package constants, source/version freshness, new cost/toolchain/scheduler | `CLEAN` — no numeric platform limit frozen; 3.8.8 release line rechecked; zero new dependency/cost/scheduler |
 | 5 | active-project/Notion migration drift, implementation-readiness inflation, rollback ambiguity | `CLEAN` — no project/Notion mutation; project adoption remains `NOT_RUN`; promotion requires real Godot evidence |
 
-The static design/review state is clean. Repository/PR CI, exact-HEAD reconciliation, and merge/postmerge evidence remain separate completion gates.
+The static design/review state is clean. Repository/PR CI, exact-HEAD verification, and merge/postmerge evidence remain separate completion gates.
