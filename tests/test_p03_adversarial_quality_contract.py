@@ -40,6 +40,26 @@ class P03AdversarialQualityContractTests(unittest.TestCase):
         ):
             self.assertIn(token, protocol)
 
+    def test_post_merge_template_records_five_whole_state_loops_before_clean_exit(self) -> None:
+        template = read("templates/quality/POST_MERGE_ADVERSARIAL_REVIEW.md")
+        for token in (
+            "Whole-state adversarial loop receipts",
+            "loop_index",
+            "exact_head",
+            "whole_state_readback",
+            "alternatives",
+            "finding",
+            "validation",
+            "refinement",
+            "regression",
+            "whole_state_re_attack",
+            "result",
+            "REVIEW_INCOMPLETE",
+            "CLEAN_REVIEW_EXIT",
+            "at least five completed rows",
+        ):
+            self.assertIn(token, template)
+
     def test_connector_only_git_preflight_has_explicit_execution_surface(self) -> None:
         skill = read("skills/synchronizing-local-and-github-state/SKILL.md")
         protocol = read(
