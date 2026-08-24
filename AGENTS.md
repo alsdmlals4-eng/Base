@@ -1,6 +1,6 @@
 # Base 공용 AI 작업 규칙
 
-Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skill·Template·Case·Test의 원본이다. 이 파일은 repository-wide **`ALWAYS_ON_CONTEXT_ONLY`** 규칙만 유지한다. 상세 절차·표·예시는 해당 책임 원본을 작업 필요 시 읽는 **`PROGRESSIVE_LOAD_DETAILED_CONTRACTS`** 방식으로 적용한다. root `AGENTS.md`에 세부 playbook을 다시 복제하지 않는다.
+Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skill·Template·Case·Test의 원본이다. 이 파일은 repository-wide **항상 적용되는 불변 규칙**(`ALWAYS_ON_CONTEXT_ONLY`)만 유지한다. 상세 절차·표·예시는 해당 책임 원본을 작업 필요 시 읽는 **`PROGRESSIVE_LOAD_DETAILED_CONTRACTS`** 방식으로 적용한다. root `AGENTS.md`에 세부 playbook을 다시 복제하지 않는다.
 
 ## 1. 권한·증거·읽기 경계
 
@@ -32,7 +32,8 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 
 - L1 이상은 **최신 main**, 현재 결정, 분야 정본, 같은 Goal의 열린·최근 병합 PR, **실제 구현**을 먼저 비교한다. 저장소 사실로 판단 가능한 오류·누락을 사용자에게 되묻지 않는다.
 - `DEEP_WORK_PREANSWER_GATE` / `REQUIRED_EVIDENCE_BEFORE_FINAL`: 요청된 조사·벤치마킹·검토·구현·검증은 실제 수행 뒤 substantive final을 낸다. `NOT_RUN_MANDATORY_GATE_BLOCKS_COMPLETION`: 필수 항목이 `NOT_RUN`이면 완료가 아니라 `BLOCKED_UNVERIFIED`다.
-- 중간보고 축소는 작업 축소가 아니다. 추론 강도는 evidence가 아니며, 현재 세션 도구로 필요한 증거를 얻을 수 있으면 실제 Tool 실행을 생략하지 않는다.
+- `INTERMEDIATE_REPORT_SUPPRESSION_IS_NOT_WORK_REDUCTION`: 중간보고 축소는 작업 축소가 아니다. `REASONING_EFFORT_IS_NOT_WORK_EVIDENCE`: 추론 강도는 evidence가 아니다. `REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF`: 현재 세션 도구로 필요한 필수 증거를 얻을 수 있으면 실제 Tool 실행을 optional executor handoff로 대체하거나 생략하지 않는다.
+- `GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY`: GPT primary는 판단·조정 책임을 뜻하며 텍스트 작성만으로 조사·실행·검증 책임을 충족한 것으로 보지 않는다.
 - **`CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY`**: 중요한 결정은 먼저 **현행 조사**를 하고, **최소 3개**의 materially distinct 유효 대안을 같은 기준으로 비교한다. `MINIMUM_VIABLE_ALTERNATIVES: 3`. 허수 대안으로 수를 채우지 않는다.
 - **`BETTER_ALTERNATIVE_SEARCH`**: 새 증거·실패·finding이 나오면 **더 나은 방안**을 다시 찾는다. 핵심 방향·플레이어 경험·비용·범위를 바꾸면 `USER_DECISION_REQUIRED`다.
 - **`LONG_TERM_PLAN_FIT_REQUIRED`**: 권장안은 사용자/플레이어 가치, 정확성, 위험, 수명주기 비용, 유지보수성, 재사용·모듈성, 증거 강도, **되돌리기 난이도**, **장기계획** 적합성과 재검토 조건까지 비교한다.
