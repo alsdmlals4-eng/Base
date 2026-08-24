@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import unittest
 from pathlib import Path
@@ -13,6 +14,7 @@ DELIVERY_GUIDE = (
 DELIVERY_PROFILE = "templates/planning/PC_ANDROID_DELIVERY_PROFILE.md"
 TUTORIAL_GUIDE = "docs/knowledge/game-development/TUTORIAL_AND_ONBOARDING_DESIGN_GUIDE.md"
 TUTORIAL_CONTRACT = "templates/planning/TUTORIAL_AND_ONBOARDING_DESIGN_CONTRACT.md"
+GENERATED_SKILL_MAP = "docs/generated/BASE_ACTIVE_SKILLS.md"
 
 
 def read(path: str) -> str:
@@ -153,7 +155,8 @@ class GameDesignDifficultyWorkflowTests(unittest.TestCase):
             self.assertIn(term, template)
 
     def test_registry_routes_without_duplicate_specialist_skill(self) -> None:
-        registry = json.loads(read("skills/SKILL_REGISTRY.json"))
+        registry_text = read("skills/SKILL_REGISTRY.json")
+        registry = json.loads(registry_text)
         skills = {item["skill_id"]: item for item in registry["skills"]}
         concept = skills["analyzing-and-refining-game-concepts"]
 
@@ -169,8 +172,22 @@ class GameDesignDifficultyWorkflowTests(unittest.TestCase):
         ):
             self.assertIn(trigger, concept["trigger_tags"])
 
+        self.assertEqual(
+            [
+                "핵심 컨셉·뾰족한 재미·제약·DDD, 게임 시스템 경계, 난이도·전투 AI, 비교 게임·플레이어 반응·행동 근거·플레이테스트를 개선안과 PoC·재조정 방향으로 변환한다."
+            ],
+            concept["use_when"],
+        )
         self.assertNotIn("designing-game-difficulty", skills)
         self.assertNotIn("designing-combat-ai", skills)
+
+        normalized = registry_text.replace("\r\n", "\n").replace("\r", "\n")
+        expected_hash = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+        self.assertIn(
+            f"> Registry SHA-256: `{expected_hash}`",
+            read(GENERATED_SKILL_MAP),
+            msg=f"generated skill map must use registry hash {expected_hash}",
+        )
 
     def test_human_routes_and_knowledge_guide_are_connected(self) -> None:
         start = read("START_HERE.md")
