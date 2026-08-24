@@ -42,7 +42,15 @@
 
 `PROJECT_HOME_BUILD_JUDGMENT_ACCEPTANCE`
 
+`HUMAN_PROJECT_HOME_IS_LIVING_GDD_VISUAL_DASHBOARD`
+
+`HUMAN_RELEVANT_PROJECT_OUTPUTS_VIEWABLE_FROM_HOME`
+
 Notion의 Base Home과 Project Home은 링크 허브가 아니라 사람이 **추가 이동 없이 핵심을 이해하는 첫 화면**이다. GitHub/Repository의 structured/runtime truth를 복제해 새 정본을 만드는 것이 아니라, latest merged facts와 사용자 확정 방향을 사람이 읽기 쉬운 형태로 투영한다.
+
+`HUMAN_PROJECT_HOME_IS_LIVING_GDD_VISUAL_DASHBOARD`: 각 프로젝트의 Human Project Home은 사람을 위한 **Project Living GDD + Visual Dashboard**다. 사용자는 이 Home을 중심으로 현재 승인된 기획·시각 방향·핵심 시스템·Flow·핵심 데이터와 구현 상태를 읽고 비교·교정할 수 있어야 한다.
+
+`HUMAN_RELEVANT_PROJECT_OUTPUTS_VIEWABLE_FROM_HOME`: AI 전용 운영 데이터를 제외한 **사람이 프로젝트를 이해·판단·수정하는 데 필요한 현재 작업물**은 Human Home에서 실제 내용을 볼 수 있어야 한다. 승인된 주요 이미지·Flow/System Map·UI/Visual Guide·예산/경제·병종·테크트리·밸런스·기타 프로젝트 고유 핵심 표를 단순 링크 제목만 두고 숨기지 않는다. 데이터가 크면 canonical Page/Database의 project-filtered linked table/gallery/board/view 또는 toggle/section으로 Home 안에서 조회 가능하게 하고, 상세 owner로 이동하는 경로를 함께 제공한다. raw machine schema·전체 로그·repository runtime data를 Home에 복제하라는 뜻은 아니다.
 
 `PROJECT_HOME_INFORMATION_RICHNESS_ALLOWED`: Human Home의 문제는 정보량이 아니라 **책임이 다른 정보의 혼재**다. 사람이 프로젝트 전체를 이해·학습·비교·수정하는 데 직접 필요한 Flow, 핵심 시스템, 핵심 데이터, 승인 Visual, 중요한 결정 이유, 현재 상태는 Home에 충분히 많이 들어갈 수 있다. 페이지를 짧게 만들기 위해 핵심 이해를 하위 링크로 밀어내지 않는다.
 
