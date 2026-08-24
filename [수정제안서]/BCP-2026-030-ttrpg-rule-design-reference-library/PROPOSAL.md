@@ -6,7 +6,7 @@
 - 기준 Base 커밋: `7de18bc6a941b7be11e747f1cf59ae60cb3e4657`
 - 조사일: `2026-08-24`
 - 제출일: `2026-08-24`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `SUBMITTED`
 - 지식 상태: `공식/공개 원출처 관찰 + 사용자 제공 seed source + 공용 분석 틀 제안`
 
 ## 관찰과 증거
@@ -172,8 +172,8 @@ Base에는 다음을 넣지 않는다.
 
 ## 승인과 구현
 
-- 사용자 승인 근거: 2026-08-24 현재 대화에서 사용자가 **“base에 trpg 자료로 추가하고. 더 많은 링크를 찾아봐”**, 이어 **“여기도 잊지말고”**라며 5개 seed source를 재확인했고, **“작업계속진행”**이라고 명시했다.
-- `approval_ref`: 본 제안의 이 절 + 2026-08-24 current-task user approval.
-- 승인 범위: TTRPG 룰 설계·룰북 설명 구조의 공용 Reference Library와 game-development hub routing 추가.
-- 승인 제외: 프로젝트별 룰 강제, 신규 Skill/Tool, 저작권 원문 저장, 접근 불가 자료 내용 추정.
+- 사용자 의도 근거: 2026-08-24 현재 대화에서 사용자가 **“base에 trpg 자료로 추가하고. 더 많은 링크를 찾아봐”**, 이어 **“여기도 잊지말고”**라며 5개 seed source를 재확인했고, **“작업계속진행”**이라고 명시했다.
+- lifecycle 상태: 신규 제안 PR은 기계 규칙에 따라 `SUBMITTED`로 시작한다. 위 사용자 지시는 승인 검토 때 재사용 가능한 범위 의도 증거이며, 별도 approval transition 없이 이 제안 PR에서 활성 Base 구현으로 넘어가지 않는다.
+- 향후 구현 후보 범위: TTRPG 룰 설계·룰북 설명 구조의 공용 Reference Library와 game-development hub routing 추가.
+- 제외: 프로젝트별 룰 강제, 신규 Skill/Tool, 저작권 원문 저장, 접근 불가 자료 내용 추정.
 - 롤백: 신규 Reference Library와 README routing 행만 되돌리면 된다.
