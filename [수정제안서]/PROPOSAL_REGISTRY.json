@@ -327,11 +327,11 @@
       "proposal_id": "BCP-2026-030-trpg-rule-design-reference-radar",
       "title": "TRPG 룰 설계 벤치마크·룰북 설명 구조 Reference Radar",
       "path": "[수정제안서]/BCP-2026-030-trpg-rule-design-reference-radar/PROPOSAL.md",
-      "status": "SUBMITTED",
+      "status": "APPROVED_FOR_IMPLEMENTATION",
       "source_project": "alsdmlals4-eng/Base",
       "source_commit": "7de18bc6a941b7be11e747f1cf59ae60cb3e4657",
       "submitted_at": "2026-08-24",
-      "approval_ref": null,
+      "approval_ref": "[수정제안서]/BCP-2026-030-trpg-rule-design-reference-radar/PROPOSAL.md#승인과-구현 (2026-08-24 current task user approval; proposal PR #651 merged)",
       "implementation_pr": null
     }
   ]
