@@ -10,6 +10,7 @@ EXTERNAL_AI_SKILL = ROOT / "skills" / "orchestrating-deepseek-worktrees" / "SKIL
 EXTERNAL_AI_LOG = ROOT / "skills" / "orchestrating-deepseek-worktrees" / "LEARNING_LOG.md"
 MODEL_COST_SKILL = ROOT / "skills" / "optimizing-ai-model-and-prompt-costs" / "SKILL.md"
 MODEL_COST_LOG = ROOT / "skills" / "optimizing-ai-model-and-prompt-costs" / "LEARNING_LOG.md"
+DASHBOARD_SKILL = ROOT / "skills" / "building-project-visual-dashboards" / "SKILL.md"
 ROUTING_GUIDE = ROOT / "docs" / "knowledge" / "ai" / "SKILL_ROUTING_PRECISION_GUIDE.md"
 P08_PARTITION_LOG = ROOT / "docs" / "operations" / "base-partitions" / "learning" / "P08_LEARNING_LOG.md"
 FRESHNESS = ROOT / ".github" / "reference-freshness.json"
@@ -53,6 +54,17 @@ class P08AiOperationsContractTests(unittest.TestCase):
             "목적이 겹치는 Tool",
             "현재 단계",
             "실측 model-run eval",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, text)
+
+    def test_human_home_dashboard_preserves_ai_workspace_detail_contract(self) -> None:
+        text = DASHBOARD_SKILL.read_text(encoding="utf-8")
+        for required in (
+            "AI_WORKSPACE_DETAIL_COMPLETENESS_REQUIRED",
+            "HOME_DETAIL_AI_RUNTIME_TRACEABILITY_REQUIRED",
+            "Human Home ↔ Detail Canon ↔ AI Workspace ↔ Repository/runtime evidence",
+            "schema·ID·source mapping·implementation/sync state·evidence·validation/test/QA·PR/commit/handoff metadata",
         ):
             with self.subTest(required=required):
                 self.assertIn(required, text)

@@ -27,6 +27,26 @@ Home은 짧은 요약 페이지가 아니다. 사람에게 필요한 정보라�
 
 `HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`
 
+`HUMAN_PROJECT_HOME_IS_LIVING_GDD_VISUAL_DASHBOARD`
+
+`PROJECT_HOME_TOP_VISUAL_GDD_REQUIRED`
+
+`PROJECT_HOME_PROJECT_SPECIFIC_PRIORITY`
+
+`EXPLANATORY_VISUAL_GDD_BEFORE_DECORATIVE_ART`
+
+`HUMAN_RELEVANT_PROJECT_OUTPUTS_VIEWABLE_FROM_HOME`
+
+`AI_WORKSPACE_DETAIL_COMPLETENESS_REQUIRED`
+
+`HOME_DETAIL_AI_RUNTIME_TRACEABILITY_REQUIRED`
+
+`PROJECT_HOME_BUILD_JUDGMENT_ACCEPTANCE`
+
+Project Home을 만들거나 교정할 때는 `docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md`의 현행 계약을 실행 기준으로 사용한다. 제목·짧은 정의 다음의 상단 핵심 구간에는 프로젝트별 **설명형 Visual GDD**를 장식 이미지보다 우선하고, 모든 프로젝트에 동일한 이미지 세트나 taxonomy를 강제하지 않는다. 승인된 Flow/System Map·UI/Visual Guide·프로젝트 고유 핵심 표처럼 사람이 판단해야 하는 현재 작업물은 단순 링크 제목으로 숨기지 않고 direct content 또는 canonical project-filtered linked view로 Home에서 실제 내용을 볼 수 있게 한다.
+
+Human Home을 정리한다는 이유로 AI 구현·검증 세부정보를 삭제하지 않는다. 별도 AI Workspace / AI-System surface에는 schema·ID·source mapping·implementation/sync state·evidence·validation/test/QA·PR/commit/handoff metadata를 보존하고, `Human Home ↔ Detail Canon ↔ AI Workspace ↔ Repository/runtime evidence` 추적성을 유지한다. 최종 판정은 **Home만으로 무엇을 만들고 어떻게 만들지 판단 가능하며, AI Workspace만으로 구현·검증 세부정보가 부족하지 않은가**를 기준으로 한다.
+
 Project Home에는 최소 다음을 직접 설명한다.
 
 - 프로젝트 한 줄 정의와 핵심 사용자/플레이어 가치
@@ -194,6 +214,9 @@ Project identity / latest user decisions
 ## 검증
 
 - Home만 읽어도 핵심 방향·흐름·시스템·프로젝트 고유 핵심 데이터·Visual·상태·다음 작업을 설명할 수 있는가
+- Home 상단이 프로젝트별 설명형 Visual GDD보다 장식 이미지나 링크 허브를 우선하지 않는가
+- 승인된 사람용 핵심 작업물이 Home에서 실제 내용 또는 canonical project-filtered view로 조회 가능한가
+- AI Workspace에 구현·검증 세부정보가 보존되고 Home/Detail/AI/Repository 간 추적성이 유지되는가
 - Home이 짧아 보이기 위해 핵심 표/Flow/System 이해를 링크로만 밀어내지 않았는가
 - AI interpretation이 human-facing 설계 의도이며 raw 운영 metadata가 아닌가
 - 사용자가 설명/기획/이미지 수정 경로의 차이를 이해할 수 있는가
@@ -218,6 +241,6 @@ Project identity / latest user decisions
 
 ## Quality gate
 
-Home만 읽어 프로젝트 핵심 가치·Core Loop·주요 시스템·프로젝트 고유 핵심 데이터·UX/Visual·AI가 이해한 설계 의도·수정 방법·구현/검증 상태·다음 작업을 설명할 수 있어야 한다. Notion과 repository/runtime truth가 충돌하거나 미실행 검증을 PASS로 표시하거나 raw AI/System metadata가 Home을 오염하거나 이미지 작업이 two-turn gate를 우회하거나 standalone HTML/local dashboard가 새 authority로 부활하면 실패다.
+Home만 읽어 프로젝트 핵심 가치·Core Loop·주요 시스템·프로젝트 고유 핵심 데이터·UX/Visual·AI가 이해한 설계 의도·수정 방법·구현/검증 상태·다음 작업을 설명할 수 있어야 한다. 또한 상단은 프로젝트별 설명형 Visual GDD를 우선하고, 사람이 판단해야 하는 현재 작업물은 Home에서 조회 가능하며, AI Workspace에는 구현·검증 세부정보가 보존되어야 한다. Notion과 repository/runtime truth가 충돌하거나 미실행 검증을 PASS로 표시하거나 raw AI/System metadata가 Home을 오염하거나 이미지 작업이 two-turn gate를 우회하거나 standalone HTML/local dashboard가 새 authority로 부활하면 실패다.
 
 Learning Log: `skills/building-project-visual-dashboards/LEARNING_LOG.md`

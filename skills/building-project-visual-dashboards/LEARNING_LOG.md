@@ -1,5 +1,16 @@
 # Learning Log
 
+## 2026-08-25 · Human Home 정본 변경은 실행 Skill과 회귀 검증까지 같이 승격한다
+
+- **상태:** `VERIFIED`
+- **Trigger:** `HUMAN_HOME_SELF_CONTAINED_POLICY.md`에 프로젝트별 설명형 Visual GDD 우선, Human Home에서 사람용 현재 작업물 직접 조회, AI Workspace 세부정보 완전성·추적성 계약을 추가한 뒤 post-change 검토에서 active `building-project-visual-dashboards` Skill과 전용 회귀 테스트가 새 계약을 직접 소비하지 않는 drift를 발견했다.
+- **Finding:** 정책 owner만 갱신하면 현재 문서에는 올바른 규칙이 있어도 실제 Home 구성 Skill이 구형 계약만 수행하거나 이후 변경에서 새 규칙이 조용히 사라질 수 있다. `문서 반영 완료`와 `실행·회귀 방지까지 교정 완료`는 같은 상태가 아니다.
+- **Decision:** 현행 Human Home 계약의 `PROJECT_HOME_TOP_VISUAL_GDD_REQUIRED`, `PROJECT_HOME_PROJECT_SPECIFIC_PRIORITY`, `EXPLANATORY_VISUAL_GDD_BEFORE_DECORATIVE_ART`, `HUMAN_RELEVANT_PROJECT_OUTPUTS_VIEWABLE_FROM_HOME`, `AI_WORKSPACE_DETAIL_COMPLETENESS_REQUIRED`, `HOME_DETAIL_AI_RUNTIME_TRACEABILITY_REQUIRED`, `PROJECT_HOME_BUILD_JUDGMENT_ACCEPTANCE`, `HUMAN_PROJECT_HOME_IS_LIVING_GDD_VISUAL_DASHBOARD`를 active dashboard Skill과 focused test에 직접 결합한다. AI Workspace 경계는 P08 AI operations contract에서도 최소 회귀 검증한다.
+- **TDD evidence:** test-only HEAD에서 `test_current_human_home_contract_reaches_active_dashboard_skill`이 `PROJECT_HOME_TOP_VISUAL_GDD_REQUIRED` 누락으로 정확히 RED가 되었고, Skill 동기화 뒤 Base Partition contract가 GREEN으로 전환됐다.
+- **Freshness lesson:** Skill body 변경은 의미 있는 test companion과 local Learning Log를 함께 갱신해야 한다. canonical freshness gate가 이를 막으면 우회하지 않고 실제 consumer test와 학습 기록을 추가한다.
+- **Evidence ceiling:** 이 항목은 Base repository contract/CI 회귀 방지를 증명한다. 각 실제 프로젝트 Notion Home이 새 구조로 모두 재배치되었다는 증거는 프로젝트별 destination readback이 별도로 필요하다.
+- **Next trigger:** Human Home owner와 active dashboard Skill의 mandatory token/acceptance가 다시 어긋나거나, 프로젝트 Home 작업에서 사람용 자료가 링크 뒤로 숨거나 AI Workspace 구현 데이터가 누락되면 동일한 owner→consumer→test 동기화 검사를 다시 수행한다.
+
 ## 2026-08-23 · Human Home의 문제는 정보량이 아니라 AI/System 정보 혼재다
 
 - **상태:** `PATTERN_CANDIDATE`
