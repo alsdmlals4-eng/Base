@@ -305,12 +305,16 @@ STORY_PLANNING_MINIMUM
 → ONE_SENTENCE_ESSENCE
 → READER_PROMISE
 → FOCAL_AGENT_DECISION_OWNER
-→ WANT_NEED_STAKES
 → PRESSURE / RESISTANCE
-→ CAUSAL_BEAT_CHAIN
+→ CAUSAL_DIRECTION
+
+OPTIONAL_STORY_PLANNING_FIELDS
+→ WANT_NEED_STAKES
 → CLIMAX_CHOICE
 → END_STATE
 ```
+
+`STORY_PLANNING_MINIMUM`은 모든 칸을 미리 채우는 beat sheet가 아니다. discovery writing이나 결말 탐색이 필요한 작품은 `OPTIONAL_STORY_PLANNING_FIELDS`를 비운 채 시작할 수 있다. 다만 현재 초점 인물, 압력과 저항, 다음 선택이 어떤 인과 방향을 만드는지는 추적 가능해야 한다. 이 packet은 `STORY_ORIGIN_ENGINE`을 대체하지 않고 그 출력과 기존 정본을 집필 전에 빠르게 확인하는 handoff Lens다.
 
 - `ONE_SENTENCE_ESSENCE`: “누가 어떤 압력 속에서 무엇을 선택하며 무엇이 달라지는가”를 한 문장으로 설명할 수 있는지 본다. 마케팅 로그라인 형식을 강제하지 않는다.
 - `FOCAL_AGENT_DECISION_OWNER`: 작품 전체에 주인공이 반드시 한 명이어야 한다는 규칙이 아니다. 개인·관계·팀·군상극도 가능하지만, **현재 장면·회차·아크에서 누구의 목표·판단·결정이 중심인지**는 독자가 추적할 수 있어야 한다.
