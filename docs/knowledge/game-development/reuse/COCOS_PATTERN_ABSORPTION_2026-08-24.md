@@ -5,6 +5,8 @@ status: BASE_PATTERN_TRANSLATION_ACTIVE
 date: 2026-08-24 KST
 engine_authority: GODOT_ONLY_RUNTIME
 absorption_mode: ABSORB_COCOS_PATTERNS_ONLY
+cocos_creator_reference_line: 3.8.x
+current_creator_release_verified: 3.8.8
 runtime_dependency_added: false
 typescript_dependency_added: false
 paid_dependency_added: false
@@ -49,10 +51,14 @@ GODOT_WEB_RELEASE_READY: NOT_RUN
 
 These states may be promoted only by the applicable Godot project build/run/runtime evidence and existing Implementation Reality Gate.
 
-## 2. Primary evidence surfaces
+## 2. Primary evidence surfaces and freshness
 
 ### Cocos Creator 3.8
 
+The official Cocos update/download surfaces were rechecked on 2026-08-24. The current Creator release line shown there is **Cocos Creator 3.8.8**, released 2025-12-16. The 3.8 manual therefore remains a current Creator-line reference for these production patterns; this does not make Cocos Creator part of the Base toolchain.
+
+- release/update surface: <https://www.cocos.com/en/update>
+- download/release surface: <https://www.cocos.com/creator-download>
 - Asset Bundle: <https://docs.cocos.com/creator/3.8/manual/en/asset/bundle.html>
 - Build Panel: <https://docs.cocos.com/creator/3.8/manual/en/editor/publish/build-panel.html>
 - command-line publishing: <https://docs.cocos.com/creator/3.8/manual/en/editor/publish/publish-in-command-line.html>
@@ -67,6 +73,20 @@ These states may be promoted only by the applicable Godot project build/run/runt
 - Web export constraints: <https://docs.godotengine.org/en/latest/tutorials/export/exporting_for_web.html>
 
 These URLs are reference evidence, not a statement that the corresponding Base/project implementation has been run.
+
+### Parallel COCOS 4 benchmark boundary
+
+A separate active workstream may inspect **COCOS 4 / Cocos CLI** machine-facing AI/CLI/MCP patterns. That is a materially different concern from this Creator 3.8 production-pattern absorption.
+
+```text
+this note
+= packaging / first-load / build-profile / platform-isolation patterns
+
+separate machine-boundary workstream
+= project identity / CLI / MCP / schema / behavior-E2E patterns
+```
+
+This work does not edit, absorb, supersede, or take ownership of that active workstream.
 
 ## 3. Pattern disposition matrix
 
@@ -84,6 +104,8 @@ These URLs are reference evidence, not a statement that the corresponding Base/p
 | Cocos runtime/Creator | second production engine | no translation | `REJECT` | n/a |
 
 ## 4. Absorbed production contracts
+
+These names are **translation lenses**, not new canonical owners. Where the responsibility already exists in Base, the existing owner remains authoritative and this note only maps the external pattern to it.
 
 ### 4.1 `FIRST_LOAD_BUDGET_AND_DEFERRED_CONTENT`
 
@@ -189,14 +211,17 @@ NO_COCOS_SPECIFIC_MODULE_ID_WITHOUT_PROMOTION_EVIDENCE
 
 This work also does not claim WeChat, Douyin, or any other mini-game platform support for Godot projects.
 
-## 7. Existing Solution First / module policy
+## 7. Existing Solution First / module and owner policy
 
 No new `RM-*` ID is allocated by this absorption pass.
 
-- first-load/package boundaries already belong to build-size/asset optimization;
-- reproducible builds already belong to technical production/release and QA evidence;
-- platform isolation already belongs to the cross-platform adapter owner;
-- PCK/deferred-content and partial rebuild still lack real Godot consumer evidence.
+Overlap inspection found that the current owners already contain the required underlying responsibilities:
+
+- `GAME_BUILD_SIZE_AND_ASSET_OPTIMIZATION_GUIDE.md` already separates first-launch additional download, optional content, package/runtime budgets, and delivery separation candidates;
+- `PC_ANDROID_CROSS_PLATFORM_DELIVERY_GUIDE.md` already separates shared gameplay rules from `platform_service_adapter` and other platform adapters;
+- technical build/release and QA owners already own build/output/evidence validation boundaries.
+
+Therefore **renaming those responsibilities inside each owner would create duplicate policy rather than useful absorption**. This note is the bounded translation/evidence packet and points to those existing owners instead of duplicating their contracts.
 
 A later new module requires all of the following:
 
@@ -221,7 +246,7 @@ BASE_PROMOTION_CANDIDATE
 REJECT
 ```
 
-They do not become Godot runtime authority, and no new scheduler is created.
+They do not become Godot runtime authority, and no new scheduler is created. This note is a bounded source-extension/evidence packet; it does not create a second Watchlist or source ledger.
 
 ## 9. Implementation Reality Gate
 
@@ -230,7 +255,7 @@ This Base change may claim, once its repository checks pass:
 ```text
 Cocos production patterns captured
 engine-independent translation contracts documented
-existing Base owner routing installed
+existing Base owner routing installed without owner duplication
 Godot remains sole production/runtime engine
 static regression/CI evidence recorded
 ```
@@ -246,3 +271,22 @@ project adoption complete
 ```
 
 The next promotion point is a **real Godot project consumer**, not more Cocos documentation.
+
+## 10. Post-correction adversarial review
+
+Earlier review found and corrected two valid issues before this checkpoint:
+
+1. **renaming duplication risk** — the first implementation plan would have copied new marker sections into owners that already express the same responsibilities; corrected to existing-owner reuse plus semantic regression checks;
+2. **version/workstream ambiguity** — Creator 3.8 production patterns could be confused with the separate COCOS 4 machine-boundary benchmark; corrected with current Creator 3.8.8 freshness evidence and an explicit parallel-workstream boundary.
+
+After those corrections, five full clean loops re-read the entire change:
+
+| Loop | Full-change attack | Result |
+|---|---|---|
+| 1 | second-engine creep, TypeScript/Cocos CLI/runtime dependency, parallel PR takeover | `CLEAN` — all explicitly rejected; parallel workstream remains read-only |
+| 2 | duplicate owner/Skill/module authority, renamed existing contracts | `CLEAN` — no owner duplication, new Skill, or new `RM-*` allocation |
+| 3 | false portability, API-exists-equals-ready, Web/PCK/partial-build overclaim | `CLEAN` — `TEST`/`NOT_RUN` ceilings remain explicit |
+| 4 | stale package constants, source/version freshness, new cost/toolchain/scheduler | `CLEAN` — no numeric platform limit frozen; 3.8.8 release line rechecked; zero new dependency/cost/scheduler |
+| 5 | active-project/Notion migration drift, implementation-readiness inflation, rollback ambiguity | `CLEAN` — no project/Notion mutation; project adoption remains `NOT_RUN`; promotion requires real Godot evidence |
+
+The static design/review state is clean. Repository/PR CI, exact-HEAD reconciliation, and merge/postmerge evidence remain separate completion gates.
