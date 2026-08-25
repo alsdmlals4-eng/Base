@@ -55,6 +55,8 @@ Notion 승인·이미지 업로드·정적 mockup·Sheet row는 runtime 구현 �
 
 ## Notion operation gate
 
+세부 실행 원본은 `templates/project-operations/NOTION_OPERATION_GATE.md`다. 아래 항목은 cold-start 요약이며 충돌 시 세부 실행 원본을 우선한다.
+
 프로젝트의 지속 Notion 변경은 `NOTION_OPERATION_GATE`를 통과한다. 같은 화면처럼 보여도 영향 범위가 다르므로 write 전에 최소 다음 객체 범위를 분류한다.
 
 ```text
