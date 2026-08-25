@@ -22,6 +22,7 @@ class ReuseFirstPreflightEnforcementTests(unittest.TestCase):
         self.assertIn("REUSE_LEARNING_HANDOFF_REQUIRED", agents)
         self.assertIn("PROJECT_WORK_REUSE_HANDOFF.json", intake)
         self.assertIn("Asset/Reference/Benchmark", intake)
+        self.assertIn("Base accumulated knowledge/case/reference", intake)
         self.assertIn("targeted", intake.lower())
         self.assertIn("NOT_RUN", intake)
         self.assertIn("REUSED_EVIDENCE", intake)
@@ -31,12 +32,14 @@ class ReuseFirstPreflightEnforcementTests(unittest.TestCase):
         project_pos = intake.find("target project GitHub current main")
         asset_pos = intake.find("Asset/Reference/Benchmark")
         reuse_pos = intake.find("PROJECT_WORK_REUSE_HANDOFF.json")
+        accumulated_pos = intake.find("Base accumulated knowledge/case/reference")
         targeted_pos = intake.lower().find("targeted cross-project")
         benchmark_pos = intake.find("benchmark + professional practice")
         self.assertGreaterEqual(project_pos, 0)
         self.assertGreater(asset_pos, project_pos)
         self.assertGreater(reuse_pos, asset_pos)
-        self.assertGreater(targeted_pos, reuse_pos)
+        self.assertGreater(accumulated_pos, reuse_pos)
+        self.assertGreater(targeted_pos, accumulated_pos)
         self.assertGreater(benchmark_pos, targeted_pos)
 
     def test_structured_handoff_is_fail_closed_and_targeted(self) -> None:
@@ -55,6 +58,7 @@ class ReuseFirstPreflightEnforcementTests(unittest.TestCase):
         self.assertIn("NOT_APPLICABLE", preflight["allowed_evidence_states"])
         self.assertIn("PROJECT_APPROVED_ASSET_REFERENCE_BENCHMARK_SURFACES", preflight["required_source_order"])
         self.assertIn("BASE_REUSE_HANDOFF_PROFILE_MATRIX_REGISTRY", preflight["required_source_order"])
+        self.assertIn("BASE_ACCUMULATED_KNOWLEDGE_CASE_REFERENCE", preflight["required_source_order"])
         self.assertIn("TARGETED_CROSS_PROJECT_VERIFIED_EVIDENCE", preflight["required_source_order"])
         self.assertIn("DECISION_RELEVANT_EXTERNAL_BENCHMARK", preflight["required_source_order"])
 
