@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/base-v9-4-4-release-evidence-v1.schema.json",
+  "title": "Base v9.4.4 Release Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_role",
+    "release_line",
+    "evidence_status",
+    "repository",
+    "release_issue",
+    "source_pr",
+    "payload_commit",
+    "registry_sha256",
+    "verification",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "BASE_V9_4_4_RELEASE_EVIDENCE"},
+    "release_line": {"const": "v9.4.4"},
+    "evidence_status": {"const": "CANDIDATE_VALIDATED_BEFORE_TRUSTED_EVIDENCE_PIN"},
+    "repository": {"const": "alsdmlals4-eng/Base"},
+    "release_issue": {"const": 670},
+    "source_pr": {"const": 669},
+    "payload_commit": {"const": "210ec78292fa12ed7563ba743b322dd36103ae4a"},
+    "registry_sha256": {"pattern": "^[0-9a-f]{64}$"},
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_exact_head",
+        "source_merge_commit",
+        "required_workflows",
+        "unresolved_review_threads"
+      ],
+      "properties": {
+        "source_exact_head": {"const": "e9a081b0aa9d046bfdec819ef2b88b7d1f115ec8"},
+        "source_merge_commit": {"const": "210ec78292fa12ed7563ba743b322dd36103ae4a"},
+        "required_workflows": {
+          "type": "array",
+          "minItems": 8,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "unresolved_review_threads": {"const": 0}
+      }
+    },
+    "limitations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "future_agent_execution_adherence",
+        "human_workflow_usability",
+        "real_project_adapter_execution",
+        "cross_project_reuse_quality",
+        "runtime_device_accessibility"
+      ],
+      "properties": {
+        "future_agent_execution_adherence": {"const": "NOT_RUN"},
+        "human_workflow_usability": {"const": "NOT_RUN"},
+        "real_project_adapter_execution": {"const": "NOT_RUN"},
+        "cross_project_reuse_quality": {"const": "NOT_RUN"},
+        "runtime_device_accessibility": {"const": "NOT_APPLICABLE"}
+      }
+    }
+  }
+}

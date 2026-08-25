@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "artifact_role": "BASE_V9_4_4_RELEASE_EVIDENCE",
+  "release_line": "v9.4.4",
+  "evidence_status": "CANDIDATE_VALIDATED_BEFORE_TRUSTED_EVIDENCE_PIN",
+  "repository": "alsdmlals4-eng/Base",
+  "release_issue": 670,
+  "source_pr": 669,
+  "payload_commit": "210ec78292fa12ed7563ba743b322dd36103ae4a",
+  "registry_sha256": "08f882d0c77339e8f7ff187c35b79501e0a2958ab1ff1c7aaa1c0ef8dbee45d6",
+  "verification": {
+    "source_exact_head": "e9a081b0aa9d046bfdec819ef2b88b7d1f115ec8",
+    "source_merge_commit": "210ec78292fa12ed7563ba743b322dd36103ae4a",
+    "required_workflows": [
+      "Validate Base v9 Operating Contracts",
+      "Validate Game Project Operating System",
+      "Validate Evidence-Based Game Development Knowledge",
+      "Validate Game UX UI System",
+      "Validate Skill Routing Precision",
+      "Validate Base Long-Horizon Work Contract",
+      "Validate v4.7 Workflow Alignment",
+      "Dependency Review"
+    ],
+    "unresolved_review_threads": 0
+  },
+  "limitations": {
+    "future_agent_execution_adherence": "NOT_RUN",
+    "human_workflow_usability": "NOT_RUN",
+    "real_project_adapter_execution": "NOT_RUN",
+    "cross_project_reuse_quality": "NOT_RUN",
+    "runtime_device_accessibility": "NOT_APPLICABLE"
+  }
+}
