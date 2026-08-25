@@ -360,11 +360,11 @@
       "proposal_id": "BCP-2026-034-visual-generation-scope-deliverable-integrity",
       "title": "Visual Generation Scope & Deliverable Integrity",
       "path": "[수정제안서]/BCP-2026-034-visual-generation-scope-deliverable-integrity/PROPOSAL.md",
-      "status": "SUBMITTED",
+      "status": "APPROVED_FOR_IMPLEMENTATION",
       "source_project": "alsdmlals4-eng/Switchy-Express-Cargo-Puzzle",
       "source_commit": "2659c914be720b1e42279cab8183df6379ad22b9",
       "submitted_at": "2026-08-25",
-      "approval_ref": null,
+      "approval_ref": "[수정제안서]/BCP-2026-034-visual-generation-scope-deliverable-integrity/PROPOSAL.md#승인과-구현 (2026-08-25 current task user instruction; proposal PR #711 merged)",
       "implementation_pr": null
     }
   ]
