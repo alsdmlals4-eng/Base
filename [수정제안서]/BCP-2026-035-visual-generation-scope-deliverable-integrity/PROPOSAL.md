@@ -10,17 +10,17 @@
 - 제출일: `2026-08-25`
 - historical proposal PR: `#711` · merged `04bf4f216aed42ae9ee18f83e7eecde6f6bd4430`
 - historical approval PR: `#712` · merged `3488cdff2f1ec7c2dd04ad2a53d2416fc35db431`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
-- 사용자 승인 근거: 2026-08-25 Switchy Express closeout에서 사용자가 `Base 승격, 문제-교훈 자료도 잘 올려줘`라고 명시하고 이후 `진행해`로 연속 실행을 승인했다.
+- 상태: `SUBMITTED`
+- 사용자 승인 이력: 2026-08-25 Switchy Express closeout에서 사용자가 `Base 승격, 문제-교훈 자료도 잘 올려줘`라고 명시하고 이후 `진행해`로 연속 실행을 승인했다. 이 이력은 후속 approval review의 근거이지만 신규 machine identity `BCP-035`의 lifecycle 단계를 건너뛰는 근거로 사용하지 않는다.
 
 ### ID reconciliation
 
 PR #711/#712 당시 Registry에 드러나지 않았던 기존 merged proposal `BCP-2026-034-notion-official-product-operating-reference`가 fresh readback에서 확인됐다. 동일 BCP ID를 유지하면 두 독립 workstream의 lifecycle/provenance가 충돌하므로 **Notion official-product workstream의 기존 BCP-034를 보존하고, Switchy visual-integrity workstream을 BCP-035로 재식별한다.**
 
-- 이 변경은 내용/승인 범위를 바꾸지 않는 identifier reconciliation이다.
+- 이 변경은 내용/제품 방향을 바꾸지 않는 identifier reconciliation이다.
 - BCP-034 Notion proposal/implementation PR #702/#704는 READ_ONLY이며 수정·흡수하지 않는다.
 - historical PR #711/#712의 제목/본문은 당시 snapshot으로 보존한다.
-- active registry/path/implementation은 BCP-035만 사용한다.
+- validator 기준으로 BCP-035는 신규 식별자이므로 `SUBMITTED`부터 lifecycle을 다시 시작한다.
 
 ## 관찰과 증거
 
@@ -51,7 +51,7 @@ Switchy Express의 2026-08-25 Visual GDD/이미지 반복 작업에서 다음 �
 
 따라서 BCP-035는 세 좁은 gap만 공용화한다.
 
-## 일반화 계약
+## 일반화 후보
 
 ### `VISUAL_TASK_SCOPE_FIDELITY`
 
@@ -61,7 +61,7 @@ bounded image 작업 전에 아래를 고정한다.
 visual_question / target_screen / target_state / excluded_scope
 ```
 
-생성물이 경계를 넘어 unrelated screen, broad dashboard, 새 게임 규칙/UI를 추가하면 보기 좋더라도 같은 deliverable PASS로 세지 않는다. 사용자가 처음부터 poster/dashboard/collage/broad concept board를 요청한 경우에는 적용하지 않는다.
+생성물이 경계를 넘어 unrelated screen, broad dashboard, 새 게임 규칙/UI를 추가하면 보기 좋더라도 같은 deliverable PASS로 세지 않는다.
 
 ### `BATCH_COUNT_MEANS_INDEPENDENT_DELIVERABLES`
 
@@ -96,6 +96,20 @@ Base에 승격하지 않는다.
 - Switchy Train/Station/Cargo/Switch 디자인
 - 특정 Notion page/file upload ID와 프로젝트 경로
 
+## 적용 조건과 비사용 조건
+
+적용 조건:
+- AI/생성형 이미지 도구로 single-screen mock, state sheet, before/after, visual QA reference처럼 명확한 bounded deliverable을 만들 때.
+- 사용자가 N개의 이미지/결과 수량을 명시했을 때.
+- decision-critical state가 art/background와 경쟁하고 기존 제품 정체성/asset을 보존할 가치가 있을 때.
+
+비사용 조건:
+- 사용자가 처음부터 poster, dashboard, collage, broad concept board를 요청했을 때.
+- N-panel 전체가 하나의 비교 문맥이어야 의미가 있고 사용자가 그 형식을 승인했을 때.
+- 실제 제품 fantasy가 transformation/style replacement 자체일 때.
+- color가 정보가 아닌 순수 장식일 때.
+- 생성 image가 아니라 단순 텍스트/기계 변경만 하는 작업.
+
 ## 반례와 위험
 
 - broad concept work까지 단일 질문으로 강제하면 발산 탐색을 방해할 수 있다.
@@ -105,7 +119,9 @@ Base에 승격하지 않는다.
 - visual mock만으로 human comprehension, accessibility, runtime/device correctness를 증명하지 않는다.
 - BCP-032 및 original-first owner의 책임을 중복 구현하지 않는다.
 
-## 승인된 최소 구현 범위
+## 영향 범위와 검증
+
+후속 approval 시 검토할 최소 구현 후보 범위:
 
 1. `skills/auditing-and-refining-ui-art/SKILL.md`
    - `VISUAL_TASK_SCOPE_FIDELITY`
@@ -125,15 +141,16 @@ Base에 승격하지 않는다.
 - Switchy-specific 값
 - 실제 게임/runtime/project 변경
 
-## 검증 및 evidence ceiling
-
-- 구현은 BCP-035 active identity가 main에 정착한 뒤 별도 fresh-main TDD PR에서 진행한다.
-- RED → GREEN, exact-head relevant CI, 최소 5회 whole-state adversarial review를 요구한다.
-- 이번 project evidence는 방법론/guardrail을 지지하지만 player comprehension/accessibility/Candidate 003 physical PASS를 증명하지 않는다.
+검증:
+- BCP-035 identifier reconciliation은 proposal/registry validation과 exact-head CI를 통과해야 한다.
+- 승인 및 구현은 각각 별도 fresh-main PR로 lifecycle을 분리한다.
+- 구현 단계에서는 RED → GREEN, exact-head relevant CI, 최소 5회 whole-state adversarial review를 요구한다.
+- project evidence는 방법론/guardrail을 지지하지만 player comprehension/accessibility/Candidate 003 physical PASS를 증명하지 않는다.
 
 ## 승인과 구현
 
-- 승인 상태: `APPROVED_FOR_IMPLEMENTATION` — BCP-034→035 identifier reconciliation은 승인 범위를 변경하지 않는다.
-- approval_ref: 이 문서의 `#승인과-구현` + 사용자 2026-08-25 closeout 지시 + historical proposal/approval PR #711/#712.
-- 구현 PR은 ID reconciliation 병합 후 BCP-035로 재개한다.
-- 롤백: ID correction은 proposal path/registry identity만 revert; active implementation은 별도 PR 단위로 revert.
+- 현재 lifecycle 상태: `SUBMITTED`.
+- historical user approval intent와 PR #711/#712는 후속 approval review의 evidence로 보존한다.
+- `approval_ref`: 아직 BCP-035 machine lifecycle에는 부여하지 않는다.
+- 구현 PR: 없음. 기존 draft PR #713은 BCP-035 approval이 main에 정착하기 전까지 active implementation으로 승격하지 않는다.
+- 롤백: ID correction은 proposal path/registry identity만 revert; 후속 active implementation은 별도 PR 단위로 revert.
