@@ -6,8 +6,9 @@
 - 기준 Base 커밋: `3c3376845b9a1b7921a4260aa6259cd61533ffc4`
 - 외부 자료 재확인일: `2026-08-25`
 - 제출일: `2026-08-25`
-- 상태: `SUBMITTED`
-- 지식 상태: `사용자 제공 관찰 + 공식 MDN 현재 지원 상태 교차검증`
+- 제안 제출 병합: PR `#665`, main `c0d55507260d1e7ea883efea74da149855685738`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 지식 상태: `사용자 제공 관찰 + 공식 MDN 현재 지원 상태 교차검증 + 사용자 승인된 공용 원칙 범위`
 
 ## 관찰과 증거
 
@@ -101,12 +102,12 @@ Base에는 이미 `Existing Solution First Gate`와 `TOOL_INTERFACE_SURFACE_SELE
 4. **device detection 오용** — user-agent/device label을 capability proxy로 사용하지 않는다.
 5. **접근성 회귀** — hover-only, scrollbar 제거, motion 강제, focus trapping 재구현 같은 패턴을 별도 경고한다.
 6. **퇴역 surface 부활** — 이 제안은 HTML 기반 UI 구현 방법만 다루며 Tool Hub/QA Studio/project-management HTML workspace의 authority를 변경하지 않는다.
-7. **라이브 데모 없는 코드 카탈로그화** — 실제 채택 기능은 코드 snippet 존재가 아니라 실제 렌더/interaction evidence로 검증한다.
+7. **라이브 데모 없는 코드 카탈로그화** — 실제 채택 기능은 code snippet 존재가 아니라 실제 render/interaction evidence로 검증한다.
 8. **동시 작업 소유권 충돌** — 현재 draft PR `#660`이 `docs/DOCUMENTATION_MAP.md`를 수정 중이므로 이번 구현은 그 파일을 건드리지 않는다. `docs/knowledge/README.md`에서 Guide 발견성을 보장하고, `#660` 병합 후에도 추가 전역 routing이 실제로 필요한 경우에만 latest main에서 별도 후속 검토한다.
 
 ## 영향 범위와 검증
 
-승인 시 최소 구현 범위:
+승인된 최소 구현 범위:
 
 - `docs/knowledge/research/WEB_PLATFORM_NATIVE_UI_CAPABILITY_GUIDE.md` 신규.
 - `docs/knowledge/README.md`에 필요한 최소 라우팅 추가.
@@ -137,8 +138,9 @@ Base에는 이미 `Existing Solution First Gate`와 `TOOL_INTERFACE_SURFACE_SELE
 ## 승인과 구현
 
 - 사용자 승인 근거: 2026-08-25 현재 작업 대화에서 본 제안의 핵심 방향(`Browser/Platform Native First + Capability Detection + Progressive Enhancement + Live Evidence Gate`, 기능 목록 복제 금지)을 설명한 뒤 사용자가 `좋아 진행해`라고 명시했다.
-- 현재 단계: 사용자 의도는 승인되었지만 BCP lifecycle상 먼저 proposal-only PR을 병합하고, 그 후 동일 승인 범위만 `APPROVED_FOR_IMPLEMENTATION`으로 기록한다.
-- 승인 범위: 위 `승인 시 최소 구현 범위`만 반영한다. draft PR `#660`과 겹치는 `docs/DOCUMENTATION_MAP.md`는 현재 승인 구현에서 제외한다.
+- `approval_ref`: `[수정제안서]/BCP-2026-031-web-platform-native-ui-capability/PROPOSAL.md#승인과-구현` + 2026-08-25 현재 작업 사용자 승인 + 제안 PR `#665`.
+- 승인 상태: `APPROVED_FOR_IMPLEMENTATION`.
+- 승인 범위: 위 `승인된 최소 구현 범위`만 반영한다. draft PR `#660`과 겹치는 `docs/DOCUMENTATION_MAP.md`는 현재 승인 구현에서 제외한다.
 - 승인 제외: 신규 Skill/Tool/dependency, 퇴역 surface 부활, AGENTS root 비대화, 특정 framework 전역 금지, Experimental 기능 production 강제.
 - 구현 PR: `없음`
 - 롤백: 구현 Guide/routing/test만 제거하면 기존 Base 동작과 authority 구조로 완전히 복귀한다.
