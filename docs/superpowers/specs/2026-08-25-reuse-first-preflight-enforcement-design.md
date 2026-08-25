@@ -2,7 +2,7 @@
 
 ## Goal
 
-프로젝트/Base의 신규·개정 설계·구현·시각 제작이 시작되기 전에 이미 존재하는 프로젝트 구현, Base 재사용 모듈, 다른 프로젝트의 검증된 패턴, 승인된 Asset/Reference/Benchmark 자료와 필요한 외부 벤치마크를 먼저 확인하고, 재사용·변형·참고·신규 제작 판정을 남기도록 작업 진입 게이트를 fail-closed로 연결한다.
+프로젝트/Base의 신규·개정 설계·구현·시각 제작이 시작되기 전에 이미 존재하는 프로젝트 구현, 승인된 Asset/Reference/Benchmark 자료, Base 재사용 모듈과 축적 knowledge/case/reference, 다른 프로젝트의 검증된 패턴, 필요한 외부 벤치마크를 순서대로 먼저 확인하고, 재사용·변형·참고·신규 제작 판정을 남기도록 작업 진입 게이트를 fail-closed로 연결한다.
 
 ## User-approved direction
 
@@ -10,7 +10,7 @@
 
 ## Root cause
 
-재사용 Registry, adoption profile, opportunity scan, Notion 재사용 모듈/에셋/레퍼런스 surface는 이미 존재한다. 그러나 최상위 intake의 `FULL_CURRENT_STATE_AUDIT_BEFORE_PLAN`에는 이 자원들을 신규 제작 전에 반드시 확인하는 명시적 fail-closed 단계가 없다. 따라서 분야별 Skill이 개별적으로 Existing Solution First를 갖고 있어도 실행자가 해당 owner를 로드하지 않으면 신규 제작으로 바로 진입할 수 있다.
+재사용 Registry, adoption profile, opportunity scan, Notion 재사용 모듈/에셋/레퍼런스 surface와 Base knowledge/case/reference는 이미 존재한다. 그러나 최상위 intake의 `FULL_CURRENT_STATE_AUDIT_BEFORE_PLAN`에는 이 자원들을 신규 제작·외부 재조사 전에 반드시 확인하는 명시적 fail-closed 단계가 없다. 따라서 분야별 Skill이 개별적으로 Existing Solution First를 갖고 있어도 실행자가 해당 owner를 로드하지 않으면 신규 제작이나 외부 조사로 바로 진입할 수 있다.
 
 두 번째 누락은 exit feedback이다. `PROJECT_WORK_REUSE_HANDOFF.json`에는 `selected_modules`, `project_only_lessons`, `base_promotion_candidates` 등 종료 필드가 있으나 intake 완료 게이트와 직접 연결되어 있지 않아 프로젝트에서 새로 확인된 재사용 가치가 Base로 되돌아오는 루프가 생략될 수 있다.
 
@@ -19,7 +19,7 @@
 ### Change
 
 - root `AGENTS.md`에 `REUSE_FIRST_PREFLIGHT_REQUIRED`와 `REUSE_LEARNING_HANDOFF_REQUIRED` 불변식을 추가한다.
-- intake의 current-state audit 순서를 `현재 프로젝트 → 기존 승인 Asset/Reference/Benchmark → Base reuse state → 필요한 targeted cross-project evidence → 필요한 외부 benchmark → 대안/IRG`로 연결한다.
+- intake의 current-state audit 순서를 `현재 프로젝트 → 기존 승인 Asset/Reference/Benchmark → Base reuse state → Base accumulated knowledge/case/reference → 필요한 targeted cross-project evidence → 필요한 외부 benchmark → 대안/IRG`로 연결한다.
 - `PROJECT_WORK_REUSE_HANDOFF.json`에 applicability, required source order, fail-closed 조건, targeted scan 경계, exit-learning handoff를 구조화한다.
 - `START_HERE.md`에 universal entry route를 짧게 노출한다.
 - focused contract test와 CI route를 추가해 향후 문구 삭제/우회가 회귀로 잡히게 한다.
@@ -45,11 +45,12 @@
 1. current project authority와 실제 구현/자산/테스트
 2. current project의 승인된 Asset/Reference/Benchmark surface
 3. Base `PROJECT_WORK_REUSE_HANDOFF`, adoption profile/matrix, `REUSABLE_MODULE_REGISTRY`
-4. Registry/profile가 가리키거나 현재 병목과 직접 관련 있는 다른 프로젝트의 검증된 구현/패턴만 targeted 확인
-5. 현재 결정을 실제로 바꿀 필요가 있을 때 공식/1차 자료와 성공/실패 사례를 포함한 외부 benchmark
-6. owner별 disposition과 reuse/no-reuse 근거
+4. 현재 결정과 관련된 기존 Base knowledge/case/reference owner
+5. Registry/profile가 가리키거나 현재 병목과 직접 관련 있는 다른 프로젝트의 검증된 구현/패턴만 targeted 확인
+6. 현재 결정을 실제로 바꿀 필요가 있을 때 공식/1차 자료와 성공/실패 사례를 포함한 외부 benchmark
+7. owner별 disposition과 reuse/no-reuse 근거
 
-적용 대상에서 이 preflight가 `NOT_RUN`이면 신규 설계/제작/`BUILD_NEW` readiness를 주장할 수 없다. 이미 같은 승인 계약에서 유효한 preflight evidence가 있고 범위가 변하지 않은 continuation은 `REUSED_EVIDENCE`로 재사용할 수 있다. 순수 기계적 변경은 이유를 기록한 `NOT_APPLICABLE`을 허용한다.
+적용 대상에서 이 preflight가 `NOT_RUN`이면 신규 설계/제작/`BUILD_NEW` readiness를 주장할 수 없다. 이미 같은 승인 계약에서 유효한 preflight evidence가 있고 범위·consumer·freshness가 변하지 않은 continuation은 `REUSED_EVIDENCE`로 재사용할 수 있다. 순수 기계적 변경은 이유를 기록한 `NOT_APPLICABLE`을 허용한다.
 
 ### Targeted cross-project boundary
 
@@ -68,6 +69,7 @@
 - 주기적 Source/AI-game benchmarking 자동화는 2026-08-25 기준 enabled 상태이며 관련 daily/weekly task에 최근 run evidence가 존재한다. 주간 AI-game task는 2026-08-24 09:06 KST경 생성되어 같은 날 09:00 예약을 지난 뒤 만들어졌으므로 첫 정상 실행은 2026-08-31 월요일이다. 이 항목은 교정 대상이 아니다.
 - 재사용 체계의 가장 큰 추가 누락은 exit learning handoff의 top-level enforcement 부재다. 이를 이번 변경에 포함한다.
 - Notion Asset/Reference/Benchmark surface가 존재하지만 intake current-state audit가 이를 명시적으로 호출하지 않으므로 신규 제작 전에 모아둔 자료가 건너뛰어질 수 있다. 이를 이번 변경에 포함한다.
+- Base knowledge/case/reference가 이미 축적되어 있어도 intake에서 외부 benchmark보다 먼저 읽는 순서가 강제되지 않았다. 같은 내용을 외부에서 다시 조사하거나 이미 흡수한 원리를 놓치는 원인이므로 이번 변경에 포함한다.
 
 ## Verification
 
