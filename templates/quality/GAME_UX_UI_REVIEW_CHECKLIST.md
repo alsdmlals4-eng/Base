@@ -70,6 +70,14 @@
 - [ ] keyboard/focus, disabled/error/loading, reduced motion, 긴 한국어, 최소 해상도와 접근성을 실제 렌더·입력으로 확인했다.
 - [ ] rollback 경로가 있고, 미검증이면 `BLOCKED_UNVERIFIED`로 유지했다.
 
+## 4B. 생성형 visual scope·deliverable Gate
+
+- [ ] `VISUAL_TASK_SCOPE_FIDELITY`: 생성 전에 `visual_question / target_screen / target_state / excluded_scope`를 고정했고, broad dashboard·unrelated screen·undeclared state를 같은 deliverable의 PASS로 세지 않았다.
+- [ ] `BATCH_COUNT_MEANS_INDEPENDENT_DELIVERABLES`: N개 결과 요청을 N개의 독립 검토·교체·배치 가능한 deliverable로 검증했고, collage는 요청·명시 승인된 경우에만 동등하게 셌다.
+- [ ] `DECISION_CRITICAL_VISUAL_SEMANTIC_REDUNDANCY`: 중요한 경로·선택·잠금·상태가 art/background와 경쟁할 때 style replacement, color/intensity-only, identity-preserving independent cues를 비교했다.
+- [ ] semantic cue를 특정 색·화살표·두께 같은 Base 전역 상수로 고정하지 않았다.
+- [ ] repository contract, mock, screenshot, Notion readback을 실제 `human comprehension`, 접근성, runtime/device correctness PASS로 승격하지 않았다.
+
 ## 5. 접근성
 
 - [ ] 중요한 의미가 색 하나에만 의존하지 않는다.
