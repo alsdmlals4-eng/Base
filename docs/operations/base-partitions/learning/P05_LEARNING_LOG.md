@@ -89,6 +89,44 @@ revisit_condition: "Revisit when #530/Integration changes visual routing, Godot 
 
 `CLEAN_REVIEW_EXIT` applies to PR #538's P05-owned scope only after the synchronized-head required CI, scope/concurrency validation, Notion readback, unresolved-thread check, merge, and post-merge readback complete. It does not claim that #530/CP0 legacy-routing cleanup is complete.
 
+## 2026-08-25 · Blacksmith layered Visual approval evidence
+
+```yaml
+date: 2026-08-25
+work_ref: "Blacksmith Visual GDD / art-direction transition / Decisions25~27"
+baseline_and_result: "Eight generated boards had been approved as explanatory Visual GDDs; later mechanic and art-direction decisions changed both gameplay semantics and rendering direction. The project preserved the boards as information references while explicitly invalidating stale system values and separating final asset/runtime approval."
+what_worked:
+  - "Keep an approved board usable for information hierarchy even when example numbers, mechanic semantics, or rendering language become stale."
+  - "Make current gameplay values flow from current canon/resolver rather than OCR or image text."
+  - "Separate user approval of art direction from final product asset/runtime/release evidence."
+  - "Regenerate a small representative screen set after system sync instead of bulk-regenerating every asset."
+what_failed_or_was_rejected:
+  - "A single Approved=true meaning all of layout, gameplay values, art style, and product-asset readiness was rejected because those claims changed independently during the same project."
+  - "The original black/gold generated look was accepted as explanatory GDD but later rejected as final style; keeping that style current merely because the image was approved would have frozen the wrong visual authority."
+  - "CURRENT/MAX and old multi-precision values inside approved boards became stale after successor mechanic decisions; image approval could not preserve those gameplay values."
+reusable_lesson: "Visual approval should be claim-scoped. At minimum distinguish INFORMATION_ARCHITECTURE/EXPLANATORY_GDD, GAMEPLAY_VALUE_AUTHORITY, ART_DIRECTION, and FINAL_PRODUCT_ASSET/RUNTIME evidence. A downstream consumer must know which layer it is allowed to reuse."
+anti_pattern:
+  - "one Approved flag treated as universal proof"
+  - "image text used as gameplay authority after successor canon"
+  - "art-direction approval inferred from explanatory-board approval"
+  - "bulk asset regeneration before representative-screen review"
+affected_rules_skills_modules:
+  - "auditing-and-refining-ui-art"
+  - "Visual GDD / Art Direction / Asset evidence"
+  - "canonical reference freshness"
+evidence:
+  - "Blacksmith BS-ART-20260825-03 = ILLUSTRATED_WORKSHOP_BOOK / USER_APPROVED_DIRECTION"
+  - "Blacksmith eight Asset records remain INFORMATION_ARCHITECTURE_AND_EXPLANATORY_GDD references"
+  - "Blacksmith Decisions25~27 supersede CURRENT/MAX/multi-precision/detailed dated-history semantics shown in earlier boards"
+  - "Base evidence packet docs/evidence/2026-08-25-blacksmith-canon-visual-handoff-learning.md"
+reuse_scope: BASE_PROMOTION_CANDIDATE
+promotion_candidate: "Add claim-scoped Visual approval/evidence semantics to an existing P05 owner rather than creating a new Skill. Promote globally only after Integration/cross-project review."
+source_followup_questions:
+  - "Which existing Asset/Visual contract should own the four approval layers without adding a duplicate status system?"
+  - "Can another project demonstrate the same need when a style changes but layout remains approved?"
+revisit_condition: "Revisit on the next project where approved Visual GDD layout survives a mechanic/style successor decision, or during the next P05/Integration contract revision."
+```
+
 ## Source Learning
 
 - Source domains: GAME_DEVELOPMENT
