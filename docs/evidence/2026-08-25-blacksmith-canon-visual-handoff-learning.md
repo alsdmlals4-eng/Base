@@ -10,7 +10,12 @@
 
 The Blacksmith work exposed reusable failures in **current-state propagation**, **Visual approval boundaries**, and **handoff evidence**. The first category is already owned by `auditing-canonical-reference-freshness`; therefore this work strengthens that existing owner instead of creating a new Skill.
 
-The other two categories are recorded as bounded Partition learning candidates because their broad portability is plausible but not yet proven across enough independent projects/tool surfaces.
+The other two categories are recorded as bounded Partition learning evidence. They do **not** create competing proposals because current open Base work already owns adjacent promotion candidates:
+
+- PR `#679 / BCP-2026-033` owns scoped generated-visual approval semantics;
+- PR `#678 / BCP-2026-032` owns visual reference batch/delivery readback and Notion attachment-readback concerns.
+
+Both PRs remain `OPEN_PR_READ_ONLY_BY_DEFAULT`; this Blacksmith branch does not edit, absorb, rebase, close, merge, or duplicate their proposal records. Blacksmith evidence may be consumed later as **additional recurrence/evidence** by those owners or Integration.
 
 ## 2. Verified recurrence — predecessor ceiling freeze
 
@@ -76,9 +81,9 @@ Observed failure mode:
 - an explanatory board can be approved for layout and decision hierarchy while its example numbers, old mechanic semantics, or rendering language later become stale;
 - treating one `Approved=true` flag as proof for all four meanings creates downstream implementation drift.
 
-Disposition: `BASE_PROMOTION_CANDIDATE / P05`.
+Disposition: `RECURRENCE_EVIDENCE_FOR_BCP-2026-033 / PR #679 / P05`.
 
-Reason for not making it a Base-wide invariant in this PR: Blacksmith is strong project evidence, but cross-project recurrence and consumer impact should be checked before hardening a new global contract. Existing Visual/asset owners should absorb the lesson if promoted.
+This PR does not create a second Visual-approval proposal or modify PR #679. Blacksmith is additional project evidence that can support or challenge #679 during its own lifecycle.
 
 ## 5. Notion image evidence lesson
 
@@ -99,9 +104,9 @@ APPROVED_TRUE != NOTION_PREVIEW_BINARY_EMBEDDED
 
 A native Notion image/embed claim requires an actual Preview/page-file readback.
 
-Disposition: `PROJECT_ONLY_CURRENT_TOOL_SURFACE / P01_CANDIDATE`.
+Disposition: `PROJECT_ONLY_CURRENT_TOOL_SURFACE + RECURRENCE_EVIDENCE_FOR_BCP-2026-032 / PR #678 / P01`.
 
-Reason for not promoting globally yet: the current connector exposes attachment creation from public direct URLs/text but not a verified local/private PNG upload path; another product/tool path may differ. The evidence supports fail-closed reporting, not a universal statement that Notion cannot upload files.
+The current connector limitation supports fail-closed reporting, not a universal statement that Notion cannot upload files. PR #678 remains the existing proposal owner for attachment-readback semantics.
 
 ## 6. Handoff lesson
 
@@ -141,6 +146,6 @@ This evidence does not prove:
 - final art quality;
 - Notion client geometry;
 - that every approved Blacksmith PNG is absent from Preview (representative fresh reads were used; records are additionally marked fail-closed where Preview is not verified);
-- cross-project recurrence for the P05/P01 candidates.
+- cross-project recurrence for the handoff candidate.
 
-Promotion beyond the existing freshness owner requires further verified recurrence or explicit Integration review.
+Promotion beyond the existing freshness owner or changes to #678/#679 require those owners' own review/merge lifecycle.
