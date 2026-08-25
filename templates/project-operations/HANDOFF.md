@@ -3,7 +3,7 @@
 공용 실행·동기화 기준: `docs/ONE_CLICK_PLAY_HANDOFF_POLICY.md`
 공용 콜드 스타트·재개 기준: `docs/knowledge/methods/PROJECT_HANDOFF_CONTEXT_METHOD.md`
 
-> 사용자가 `인수인계 진행`을 지시한 경우 이 문서는 단순 세션 요약이 아니다. 현재 작업을 안전한 checkpoint까지 닫고 GitHub·Notion 정본을 동기화한 뒤, 새 채팅이 과거 대화 없이 재개할 수 있는지 검증한 **종료 스냅샷**이어야 한다.
+> 사용자가 `인수인계 진행`을 지시한 경우 이 문서는 단순 세션 요약이 아니다. 현재 작업을 안전한 checkpoint까지 닫고 GitHub·Notion 정본을 동기화한 뒤, 새 채팅이 과거 대화 없이 재개할 수 있는지 검증한 **종료 스냅샷**이어야 한다. 송신 측 `PACKET_READY`와 수신 측 `TRANSFER_ACCEPTED`는 별도 상태다.
 
 ## 인수 시점 상태
 
@@ -13,7 +13,8 @@
 - 승인 상태:
 - 구현 상태:
 - 검증 상태:
-- handoff readiness: `READY | NOT_READY | BLOCKED`
+- handoff packet status: `PACKET_READY | NOT_READY | BLOCKED`
+- transfer status: `PREPARED | PENDING_RECEIVER_ACK | TRANSFER_ACCEPTED | CONTEXT_DRIFT_RECHECK_REQUIRED`
 
 ## 완료한 작업과 증거
 
@@ -21,12 +22,31 @@
 
 각 항목은 `IN_PROGRESS / BLOCKED / NOT_RUN / UNVERIFIED` 중 필요한 상태를 명시한다.
 
+## Resume checkpoint · 중복 실행 방지
+
+```yaml
+last_safe_checkpoint:
+next_safe_action:
+side_effects_already_applied:
+  - action:
+    destination:
+    evidence:
+idempotency:
+  retry_safe: true | false | unknown
+  verify_before_retry: []
+```
+
+- `last_safe_checkpoint`는 실제 검증된 마지막 완료 경계다.
+- commit/push/merge, Issue/PR mutation, Notion update/upload, 승인 상태 변경처럼 이미 적용된 side effect는 다시 실행하기 전에 목적지를 확인한다.
+- 동일 action이 이미 적용됐는지 모르면 `retry_safe: unknown`으로 두고 추정하지 않는다.
+
 ## GitHub 정본 동기화
 
 ```yaml
 repository:
 branch:
 commit SHA:
+prepared_from_main_sha:
 working_tree_expectation: CLEAN | USER_CHANGES_PRESERVED
 changed_files:
 issues_prs:
@@ -40,6 +60,21 @@ update_steps:
 ```
 
 `Fetch origin → Pull origin` 순서를 구분한다. Fetch만 수행한 상태는 로컬 파일 적용 완료가 아니다.
+
+## 적용 지침·Instruction surface
+
+```yaml
+instruction_surface_readback:
+  root_agents:
+  nearest_applicable_agents:
+  project_instruction:
+  path_specific_instruction:
+  status: PASS | FAIL | NOT_APPLICABLE
+```
+
+- 프로젝트 `AGENTS.md`와 작업 경로에 더 가까운 적용 가능한 `AGENTS.md`를 확인한다.
+- Handoff 요약이 현재 instruction surface를 대체하지 않는다.
+- 지침 간 충돌이 발견되면 임의로 합치지 않고 current authority와 범위를 재검토한다.
 
 ## Notion 정본 동기화
 
@@ -56,6 +91,21 @@ system_metadata_leak_check: PASS | FAIL | NOT_RUN
 - 사람용 Home에는 프로젝트 목적·핵심 Flow·표·승인 Visual·현재 상태를 남긴다.
 - 운영 receipt, SHA/PR/CI, 세부 검증·handoff 데이터는 AI/System 쪽에 둔다.
 - GitHub와 Notion 중 한쪽만 갱신한 상태를 `SYNC_COMPLETE`로 선언하지 않는다.
+
+## Pending user decisions
+
+```yaml
+pending_user_decisions:
+  - decision_or_question:
+    why_needed:
+    options_or_constraints:
+    safe_work_while_pending:
+approval_required_before_resume: true | false
+```
+
+- 이미 승인된 결정은 `CURRENT_CONFIRMED_DECISIONS`와 책임 원본을 가리키고 다시 질문하지 않는다.
+- 새 채팅이 임의 기본값을 선택하면 안 되는 미결 결정만 여기에 남긴다.
+- `approval_required_before_resume: true`이면 그 결정에 의존하는 mutation은 receiver가 자동 실행하지 않는다.
 
 ## Notion 이미지·Visual 전달 검증
 
@@ -108,7 +158,7 @@ base_promotion_status: NOT_REQUIRED | CANDIDATE_RECORDED | PROMOTED | DEFERRED_B
 ```
 
 - Base 승격은 기존 canonical owner에 흡수하는 것을 우선한다.
-- `BASE_PROMOTION_CANDIDATE`는 실제 Base learning/evidence 경로에 write + readback하기 전에는 handoff를 `READY`로 닫지 않는다.
+- `BASE_PROMOTION_CANDIDATE`는 실제 Base learning/evidence 경로에 write + readback하기 전에는 handoff를 `PACKET_READY`로 닫지 않는다.
 - 같은 owner를 열린 PR이 수정 중이면 그 PR을 변경·흡수하지 않는다. 충돌하지 않는 Base evidence/candidate 파일을 실제 기록·readback하고 `DEFERRED_BY_CONCURRENT_OWNER`로 남긴다.
 - `PROJECT_ONLY`는 프로젝트에 남기고 Base에 억지로 승격하지 않는다.
 - 새 광역 Skill·중복 정책은 반복 재사용 가치와 owner 부재가 입증되기 전 만들지 않는다.
@@ -129,6 +179,20 @@ base_promotion_status: NOT_REQUIRED | CANDIDATE_RECORDED | PROMOTED | DEFERRED_B
 2.
 3.
 
+## Context sanitation
+
+```yaml
+context_sanitation:
+  canonical_read_order_count: 3~7
+  raw_tool_logs_included: false
+  full_transcript_required: false
+  superseded_material_included_only_if_needed: true
+```
+
+- raw tool log와 전체 대화 transcript를 기본 Handoff payload로 사용하지 않는다.
+- 장문 evidence는 locator로 전달하고 receiver가 필요한 부분만 fresh-read한다.
+- 압축 과정에서 보호 범위, 미결 승인, NOT_RUN, 실패 원인, rollback을 제거하지 않는다.
+
 ## Fresh-chat resumability test
 
 새 채팅이 이전 대화·메모리 없이 GitHub + Notion current canon만 읽는다고 가정한다.
@@ -142,24 +206,52 @@ base_promotion_status: NOT_REQUIRED | CANDIDATE_RECORDED | PROMOTED | DEFERRED_B
 - 승인 Visual의 현재 위치·용도·교체 관계를 알 수 있는가? `PASS | FAIL | NOT_APPLICABLE`
 - 문제·교훈과 Base 승격 상태를 알 수 있는가? `PASS | FAIL | NOT_APPLICABLE`
 - Base 승격 후보의 실제 Base evidence/learning locator와 readback 결과를 찾을 수 있는가? `PASS | FAIL | NOT_APPLICABLE`
+- `last_safe_checkpoint`, `next_safe_action`, 이미 실행된 side effect를 구분할 수 있는가? `PASS | FAIL`
+- `pending_user_decisions`와 승인 전 안전한 작업 범위를 알 수 있는가? `PASS | FAIL | NOT_APPLICABLE`
+- 적용되는 `AGENTS.md`/프로젝트 instruction surface를 찾을 수 있는가? `PASS | FAIL`
 
 `FAIL`이 하나라도 있거나 과거 대화를 다시 붙여 넣어야 같은 품질로 이어갈 수 있으면 `HANDOFF_NOT_READY`다.
+
+## Receiver freshness + ACK
+
+새 채팅/담당자가 실제로 재개할 때 작성한다.
+
+```yaml
+resume_observed_main_sha:
+canon_freshness: SAME_BASELINE | DRIFT_DETECTED | BLOCKED_UNVERIFIED
+receiver_ack:
+  current_state_readback:
+  next_safe_action_readback:
+  protected_scope_readback:
+  pending_decisions_readback:
+  side_effects_readback:
+  status: TRANSFER_ACCEPTED | CONTEXT_DRIFT_RECHECK_REQUIRED | BLOCKED
+```
+
+- `prepared_from_main_sha`와 `resume_observed_main_sha`가 다르면 관련 diff/Notion 변화가 현재 작업에 영향을 주는지 먼저 확인한다.
+- packet과 current canon이 일치해야 `TRANSFER_ACCEPTED`다.
+- 실제 receiver가 없는 송신 세션에서는 `PENDING_RECEIVER_ACK`가 정상 종료 상태다. 이를 `TRANSFER_ACCEPTED`로 과장하지 않는다.
 
 ## 실행·미실행 검증
 
 ## 최종 Handoff Receipt
 
 ```yaml
-handoff_status: READY | NOT_READY | BLOCKED
+handoff_packet_status: PACKET_READY | NOT_READY | BLOCKED
+transfer_status: PREPARED | PENDING_RECEIVER_ACK | TRANSFER_ACCEPTED | CONTEXT_DRIFT_RECHECK_REQUIRED
 github_locator:
 notion_locator:
+prepared_from_main_sha:
 current_commit:
-next_action:
+last_safe_checkpoint:
+next_safe_action:
 visual_audit:
+pending_user_decisions:
 lesson_disposition:
 base_evidence_locator:
 base_write_readback:
 base_promotion:
+receiver_ack:
 rollback:
 ```
 
