@@ -344,6 +344,17 @@
       "submitted_at": "2026-08-25",
       "approval_ref": "[수정제안서]/BCP-2026-031-web-platform-native-ui-capability/PROPOSAL.md#승인과-구현 (2026-08-25 current task user approval; proposal PR #665 merged)",
       "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/667"
+    },
+    {
+      "proposal_id": "BCP-2026-032-visual-canon-approval-override-and-handoff-integrity",
+      "title": "Visual Canon Approval Override & Handoff Integrity",
+      "path": "[수정제안서]/BCP-2026-032-visual-canon-approval-override-and-handoff-integrity/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "alsdmlals4-eng/omenward",
+      "source_commit": "315d5e48b2a2d49f9d9863f3d07b66ba651bf9f7",
+      "submitted_at": "2026-08-25",
+      "approval_ref": null,
+      "implementation_pr": null
     }
   ]
 }
