@@ -20,18 +20,20 @@
 4. 승인 이미지의 용도·현재성·supersession이 불명확해 새 세션이 오래된 시안을 현행 정본처럼 소비한다.
 5. 작업 중 발견한 문제와 해결 교훈이 프로젝트 세션에만 남아 다른 프로젝트에서 같은 실패가 반복된다.
 6. 반대로 모든 교훈을 즉시 새 Skill/정책으로 만들면 Base canonical owner가 중복되고 routing/context 비용이 커진다.
+7. `BASE_PROMOTION_CANDIDATE`를 “승격 검토” 상태만 기록하고 실제 Base write/readback 없이 종료하면 사용자가 요구한 공용 학습 축적이 실행되지 않는다.
 
 ## What worked
 
-- Handoff를 `현재 작업 checkpoint → GitHub 정본 재확인 → Notion 정본 재확인 → Active Context 갱신 → Handoff snapshot → fresh-chat 재개 테스트 → Visual delivery audit → 문제/교훈 disposition → Base promotion 검토` 순서의 종료 트랜잭션으로 정의한다.
+- Handoff를 `현재 작업 checkpoint → GitHub 정본 재확인 → Notion 정본 재확인 → Active Context 갱신 → Handoff snapshot → fresh-chat 재개 테스트 → Visual delivery audit → 문제/교훈 disposition → Base 기록·readback` 순서의 종료 트랜잭션으로 정의한다.
 - 새 채팅 품질을 과거 대화 복사 여부가 아니라 **GitHub + Notion current canon만으로 복원 가능한가**로 판정한다.
 - Visual 전달은 `URL/metadata present`와 `upload/attach`, `destination readback`, `attachment/image readback`, `HUMAN_VISIBLE_PASS`, `runtime product asset approval`을 분리한다.
 - 문제/교훈은 `PROJECT_ONLY / PART_ONLY / BASE_PROMOTION_CANDIDATE / NO_NEW_REUSABLE_LESSON`로 분류하고, Base 승격은 기존 canonical owner 흡수를 기본값으로 한다.
-- 같은 owner를 열린 PR이 수정 중이면 해당 PR을 수정·흡수하지 않고 독립 evidence만 남겨 concurrency conflict를 피한다.
+- `BASE_PROMOTION_CANDIDATE`는 실제 Base learning/evidence write + destination readback을 Handoff READY 조건으로 둔다.
+- 같은 owner를 열린 PR이 수정 중이면 해당 PR을 수정·흡수하지 않고 독립 Base evidence/candidate를 실제 기록·readback해 `DEFERRED_BY_CONCURRENT_OWNER`로 남긴다.
 
 ## Reusable lesson
 
-**인수인계의 품질은 요약의 길이가 아니라 새 세션의 재현 가능성으로 검증해야 한다.**
+**인수인계의 품질은 요약의 길이가 아니라 새 세션의 재현 가능성과 필요한 학습의 실제 writeback으로 검증해야 한다.**
 
 좋은 handoff는 별도 제2정본이 아니라 현재 정본을 닫은 뒤 생성되는 압축 스냅샷이다. 완료 판정에는 다음이 함께 필요하다.
 
@@ -41,7 +43,7 @@
 - 승인 Visual의 실제 목적지 전달·현재성 검증
 - 과거 대화 없이 수행하는 fresh-chat cold-start test
 - 실제 문제의 원인/해결/증거와 재사용 범위 판정
-- 공용 가치가 있는 교훈의 Base promotion disposition
+- 공용 가치가 있는 교훈의 Base evidence/learning 실제 기록과 readback
 
 ## Anti-patterns
 
@@ -51,6 +53,7 @@
 - readback PASS를 human-visible/runtime PASS로 승격
 - superseded/rejected Visual을 현재 승인본과 같은 위치에 모호하게 남김
 - 모든 실패를 프로젝트 내부 메모로만 보존
+- `BASE_PROMOTION_CANDIDATE`를 실제 Base write/readback 없이 proposal 문구만 남김
 - 단일 프로젝트 경험만으로 새 광역 Skill을 즉시 생성
 - 열린 PR이 소유한 canonical owner를 새 branch에서 흡수·재작성
 
@@ -58,6 +61,7 @@
 
 - `docs/knowledge/methods/PROJECT_HANDOFF_CONTEXT_METHOD.md`: 공용 불변 원칙으로 직접 보강 후보
 - `templates/project-operations/HANDOFF.md`: 실행 receipt와 fresh-chat/Visual/lesson Gate를 직접 보강 후보
+- 이 evidence 파일 자체: Base에 실제 기록하고 branch readback 완료
 - P01/P05 Learning Log: 현재 열린 Base PR이 같은 learning owner를 수정하고 있으므로 이번 변경에서는 직접 수정하지 않고 `DEFERRED_BY_CONCURRENT_OWNER`
 - 별도 신규 broad Skill: `REJECT_DUPLICATE_OWNER`
 
