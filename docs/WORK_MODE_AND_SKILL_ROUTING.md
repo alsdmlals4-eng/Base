@@ -53,6 +53,47 @@ ACTUAL GODOT PRODUCT IMPLEMENTATION → Codex
 
 이 분류는 파일 확장자가 아니라 제품 책임을 기준으로 한다.
 
+## 2B. Skill / Skill Mode 자동 선택
+
+사용자는 Work Mode·Skill·Skill Mode를 매번 직접 고를 필요가 없다.
+
+```text
+사용자 Prompt
+→ 의도·현재 단계·위험 파악
+→ 주 Work Mode 자동 선택
+→ Skill Registry trigger 대조
+→ 필요한 최소 Skill 자동 선택
+→ 각 Skill의 Skill Mode 자동 선택
+→ 실행·검증·필요 시 재라우팅
+```
+
+- `load_by_default=false`는 자동 선택 금지가 아니라 trigger가 없을 때 불필요하게 읽지 않는다는 뜻이다.
+- 주 책임 Skill은 하나를 우선하고, Foundation·검증·handoff companion은 실제 필요할 때만 추가한다.
+- Skill을 읽은 것과 실제 절차를 실행한 것을 구분한다.
+- 새 사실·실패·범위·정본 변경이 생기면 자동 선택을 다시 수행한다.
+- 파일이 코드 형식이라는 이유로 Base 작업을 Codex Skill로 라우팅하지 않는다.
+
+## 2C. `CLAIM_AND_INTENT_VERIFICATION_GATE`
+
+사용자의 말·기존 보고·handoff에 포함된 **완료 주장과 실제 요청 의도**를 현재 정본·GitHub/Notion 상태·증거로 대조한 뒤 실행한다.
+
+Reference: `skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md`
+
+Continuous Work의 recovery/queue/승인범위 해석은 다음 reference와 함께 사용한다.
+
+Reference: `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`
+
+```text
+CLAIM_AND_INTENT_VERIFICATION_GATE
+→ user intent / approved scope 복원
+→ completion / implementation claim 분리
+→ current GitHub + Notion + evidence readback
+→ 사실과 의도 일치 여부 판정
+→ 실제 owner로 route
+```
+
+handoff summary나 과거 PASS를 current truth로 가정하지 않는다.
+
 ## 3. Codex Trigger
 
 Codex는 다음에만 기본 진입한다.
@@ -99,12 +140,12 @@ GitHub 비제품 문서/정본 교정
 
 - `동의 편향`을 막되 `반대를 위한 반대`를 요구하지 않는다.
 - `L0`: 오탈자·명백한 기계 수정·동일 검사 재실행은 전체 적대 검토 생략 가능.
-- `L1+`: 중요한 기능·설계·정책·방향 결정은 `running-adversarial-review-and-refinement` 적용.
-- 결정·권장안 없는 설명형 칭찬/균형 요약만 full adversarial exclusion 가능.
+- **`결정·권장안이 없는 설명형 칭찬·균형 요약`**만 full adversarial exclusion 가능하다.
+- **`L1 이상`** 중요한 기능·설계·아키텍처·정책·방향 결정과 중요 권장안은 PLAN 사전판정에서 `running-adversarial-review-and-refinement: attack → validate-critique → decision-report`를 적용한다.
 - finding은 먼저 validate한다.
-- 비코딩/Base/Notion finding은 GPT가 직접 교정한다.
-- **실제 Godot 제품 finding만** Codex Build로 넘긴다.
-- 구현된 finding은 GPT가 다시 중복 구현하지 않고 `regression-recheck → decision-report`로 검수한다.
+- 승인된 finding은 실제 owner의 BUILD에서 한 번만 구현·수정한다. 비코딩/Base/Notion finding은 GPT가 직접 교정하고, **실제 Godot 제품 finding만** Codex Build로 넘긴다.
+- 구현된 finding은 GPT가 다시 중복 구현하지 않고 REVIEW의 `regression-recheck → decision-report`로 이동한다.
+- 사용자안과 AI 최초안을 동일 기준으로 평가하며 무조건 동의나 무조건 반대 요청보다 정본·증거를 우선한다.
 - 최소 5회의 완전한 전체 개선 루프 후 clean exit까지 계속한다.
 
 ## 5. REVIEW finding 분류
@@ -123,6 +164,7 @@ review-scope-map
    └─ NO_CHANGE
 → correction
 → regression-recheck
+→ decision-report
 → whole-state re-attack
 ```
 
@@ -223,8 +265,10 @@ Codex 경로가 현재 없으면 Godot task만 DEFERRED_EXTERNAL_EXECUTOR
 독립 GPT 비코딩 task 계속
 ```
 
-- 기술적 단일 최소 안전 finding이 **비코딩/Base/Notion**이면 GPT가 같은 승인 범위에서 직접 교정한다.
-- 기술적 단일 최소 안전 finding이 **실제 Godot 제품 구현**이면 Codex가 구현하고 GPT가 검수한다.
+**`기술적 단일 최소 안전 finding이면 자동 승인`**은 새 제품 결정을 자동 승인한다는 뜻이 아니다. 정본·테스트·표준으로 하나의 최소 안전 교정이 결정되고 기존 승인 범위 안에 있을 때만 적용한다.
+
+- 해당 finding이 **비코딩/Base/Notion**이면 GPT가 같은 승인 범위에서 직접 교정한다.
+- 해당 finding이 **실제 Godot 제품 구현**이면 Codex가 구현하고 GPT가 `regression-recheck → decision-report`로 검수한다.
 - 진짜 사용자 결정·범위 확대·고위험 외부 행위만 새 승인 대상으로 올린다.
 
 ## 12. 동시작업·Git 안전
