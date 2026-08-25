@@ -165,6 +165,43 @@ revisit_condition: >-
   while its acceptance/recovery/completion behavior is not demonstrably preserved.
 ```
 
+## 2026-08-25 · Blacksmith cold-start handoff and Notion binary-evidence boundary
+
+```yaml
+date: 2026-08-25
+work_ref: "Blacksmith PR #207 / BS-OPS-20260825-08 session handoff"
+baseline_and_result: "Blacksmith planning state was spread across current successor canon, legacy Active Context, Human Notion surfaces, AI System Record, Sheet compatibility mirror, and Asset Library/Drive records; handoff now uses a current locator that requires fresh discovery and records explicit evidence ceilings."
+what_worked:
+  - "Treat the handoff as a cold-start locator, not a frozen source of truth: next session must re-read Base, repository main/open PRs, Sheet, Notion Human/AI surfaces before mutation."
+  - "Separate Human Home from AI/System evidence while keeping both linked to repository authority."
+  - "Demote a frozen legacy Active Context snapshot explicitly instead of rewriting historical evidence or allowing it to outrank the successor owner."
+  - "Verify Notion asset storage with actual record readback rather than inferring image upload from Approved=true or a Drive Source URL."
+what_failed_or_was_rejected:
+  - "Asset Library row + Approved=true + hash + durable Drive PNG was previously described too broadly as 'uploaded to Notion'; representative readback showed no Preview FILES evidence and one page was blank."
+  - "A handoff that copies current values without a fresh-read instruction was rejected because it would become the next predecessor ceiling."
+reusable_lesson: "A durable project handoff should store current owners, superseded semantics, protected PR boundaries, unresolved gates, and evidence ceilings, while explicitly requiring fresh discovery on resume. For Notion visual delivery, metadata/source-link evidence must be separated from native Preview/page-binary evidence."
+anti_pattern:
+  - "handoff as immutable replacement for fresh repository/workspace discovery"
+  - "Approved asset record or Drive URL treated as proof of native Notion image embedding"
+  - "legacy router retaining higher current authority after a successor owner is verified"
+affected_rules_skills_modules:
+  - "maintaining-project-context-and-handoff"
+  - "managing-project-intake-and-work-contract"
+  - "Notion human/AI workspace authority"
+  - "canonical reference freshness"
+evidence:
+  - "Blacksmith docs/operations/BS-OPS-20260825-08_SESSION_HANDOFF_CORE_SIMPLIFICATION.md"
+  - "Fresh Notion Asset readback: BS-VIS-20260820-01 page blank; BS-VIS-20260820-04/08 page bodies contain durable Drive links but no Preview FILES evidence"
+  - "Fresh Drive readback: BS-VIS-20260820-01 PNG exists, image/png, 2,165,251 bytes"
+  - "Base evidence packet: docs/evidence/2026-08-25-blacksmith-canon-visual-handoff-learning.md"
+reuse_scope: BASE_PROMOTION_CANDIDATE
+promotion_candidate: "Handoff-as-locator + explicit destination evidence ceilings; native Notion image claim requires Preview/page-file readback"
+source_followup_questions:
+  - "Does the available Notion native file-upload path differ by connector/product surface, and can a cross-project test prove the same Preview evidence rule?"
+  - "Should the handoff owner expose a standard destination-evidence matrix for Notion/Drive/GitHub/Sheet?"
+revisit_condition: "Revisit after another project exercises native Notion image upload/readback or a second project handoff exposes the same stale-router failure."
+```
+
 ## Source Learning
 
 - Source domains: PROMPT_AND_AGENT_WORKFLOW, SKILL_AUTHORING_AND_EVOLUTION
