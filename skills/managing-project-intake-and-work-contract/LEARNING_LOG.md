@@ -1,5 +1,15 @@
 # Managing Project Intake and Work Contracts — Learning Log
 
+## 2026-08-25 — Existing reuse assets need a fail-closed intake gate, not only a library
+
+- **상태:** `OBSERVATION`
+- **호출 트리거:** 사용자가 프로젝트 작업 전에 프로젝트 간 재사용 모듈·에셋·레퍼런스, 모아둔 자료와 외부 벤치마크를 먼저 확인하기로 했지만 실제 작업에서는 반복적으로 빠진다고 지적했다.
+- **Finding:** Base에는 `PROJECT_WORK_REUSE_HANDOFF.json`, Adoption Profile/Matrix, `REUSABLE_MODULE_REGISTRY`, Project Asset/Reference/Benchmark surface와 축적 knowledge/case/reference가 이미 있었지만 universal intake의 `FULL_CURRENT_STATE_AUDIT_BEFORE_PLAN`이 이들을 신규 제작 전에 fail-closed로 호출하지 않았다. 분야별 Existing Solution First만으로는 해당 분야 owner가 로드되지 않는 작업에서 reuse lookup이 생략될 수 있었다. 또한 handoff의 `project_only_lessons`·`base_promotion_candidates` 등 exit 필드가 완료 Gate에 연결되지 않아 project→Base 학습 환류도 선택적으로 빠질 수 있었다.
+- **Decision:** 새 Skill을 만들지 않고 intake에 `REUSE_FIRST_PREFLIGHT_REQUIRED`와 `REUSE_LEARNING_HANDOFF_REQUIRED`를 흡수한다. 적용 대상 신규/의미 있는 개정 작업은 `current project implementation → Project Asset/Reference/Benchmark → Base reuse handoff/profile/matrix/Registry → Base accumulated knowledge/case/reference → directly relevant targeted cross-project evidence → decision-relevant external benchmark → owner disposition` 순서를 통과한다. `NOT_RUN`은 신규 제작/`BUILD_NEW`를 차단하고, 동일 승인 범위의 fresh evidence는 `REUSED_EVIDENCE`, 순수 기계적 변경은 이유 있는 `NOT_APPLICABLE`을 허용한다. 모든 프로젝트를 전수 검색하지 않으며 project canon/identity가 Base reference보다 우선한다. 종료 시 새 재사용 교훈이 없으면 `NO_NEW_REUSE_LEARNING`으로 닫아 억지 Registry churn을 만들지 않는다.
+- **TDD / regression evidence:** PR #669에서 focused contract를 먼저 추가한 RED run `32797711261`이 preflight marker/structured gate 부재를 재현했다. 구현 후 exact head `1db18d7e69f1213b594b369bf0578be819a97a1a`의 `Validate v4.7 Workflow Alignment` run `32798352265`는 GREEN이었으나 Game Project OS의 canonical freshness가 companion regression과 Learning Log 동기화 누락을 정확히 차단했다. 이 기록과 `tests/test_reference_freshness.py`의 focused-companion assertion을 추가해 단순 문구 변경이 아니라 learning/test coupling까지 유지한다.
+- **추가 교훈:** Base shared Skill은 프로젝트에 본문을 복사하지 않고 release pin + project adapter로 소비하므로, Base payload 병합만으로 기존 프로젝트에 새 intake 동작이 전파됐다고 주장하면 안 된다. 호환 release 고정과 project adapter 갱신·검증이 별도 successor state로 필요하다.
+- **다음 검토 트리거:** 신규 기능·UI·에셋·도구가 기존 프로젝트/Base 자료 확인 없이 다시 만들어지거나, external research가 축적된 Base 자료보다 먼저 반복되거나, project adapter가 구 Base release에 고정되어 새 intake gate를 실제로 소비하지 못하거나, 모든 프로젝트 전수 검색으로 context/cost가 과도하게 늘거나, 새 학습이 없는데 Registry churn이 발생할 때.
+
 ## 2026-08-21 — Continue intent inherits only an already approved contract
 
 - **상태:** `PATTERN_CANDIDATE`
