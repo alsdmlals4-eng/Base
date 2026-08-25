@@ -1,5 +1,33 @@
 # Orchestrating DeepSeek Worktrees — Learning Log
 
+## 2026-08-25 · External AI optionality must not make implementation ownership optional
+
+```yaml
+work_ref: "PR #674 GPT-Codex role split"
+finding: >-
+  The old P08 contract correctly made external AI and extra executor use optional for planning-only work,
+  but the same OPTIONAL_CODEX_EXECUTOR literal became wrong after the user separated GPT planning/review/visual
+  from Codex implementation/coding. Reusing that literal for actual product mutation would let GPT or an external
+  model become the de facto implementation owner again.
+change:
+  - keep external AI optional and REVIEW_PENDING
+  - keep GPT as planning/review/visual owner
+  - when code/data/Scene/Resource/config/test/build/runtime mutation exists, route to CODEX_IMPLEMENTATION_HANDOFF
+  - require Codex to rehydrate current GitHub plus relevant Notion canon
+  - prohibit Codex image generation/generative editing and route missing visuals through GPT_VISUAL_REQUEST
+  - retain worktree isolation, protected-path, current branch/commit, and fail-closed evidence rules
+reusable_lesson: >-
+  Optionality belongs to optional planning helpers and optional technical preflight, not to an implementation owner
+  once the workflow has explicitly separated planning from implementation. Provider/worktree isolation and execution
+  ownership are independent dimensions and must be modeled separately.
+evidence:
+  - docs/GPT_CODEX_WORKFLOW_POLICY.md
+  - skills/orchestrating-deepseek-worktrees/SKILL.md
+  - docs/handoffs/2026-08-25-gpt-codex-consumer-migration-packet.md
+verification_status: PARTIAL_CONSUMER_MIGRATION_PENDING
+final_gate_owner: "PR #674 exact-head CI + canonical-reference freshness + GPT final review"
+```
+
 ## 2026-08-19 · P08 authority and freshness audit
 
 ```yaml
