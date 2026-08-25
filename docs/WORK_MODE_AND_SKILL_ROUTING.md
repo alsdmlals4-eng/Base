@@ -144,6 +144,7 @@ GitHub 비제품 문서/정본 교정
 - **`L1 이상`** 중요한 기능·설계·아키텍처·정책·방향 결정과 중요 권장안은 PLAN 사전판정에서 `running-adversarial-review-and-refinement: attack → validate-critique → decision-report`를 적용한다.
 - finding은 먼저 validate한다.
 - 승인된 finding은 실제 owner의 BUILD에서 한 번만 구현·수정한다. 비코딩/Base/Notion finding은 GPT가 직접 교정하고, **실제 Godot 제품 finding만** Codex Build로 넘긴다.
+- 호환 lifecycle 표현인 **`refine-approved-findings`에서 분야 Skill BUILD로 한 번만 구현·수정**은 현재 owner 분류를 따른다. Base/Notion/noncoding은 GPT BUILD, 실제 Godot 제품 구현은 Codex Build다.
 - 구현된 finding은 GPT가 다시 중복 구현하지 않고 REVIEW의 `regression-recheck → decision-report`로 이동한다.
 - 사용자안과 AI 최초안을 동일 기준으로 평가하며 무조건 동의나 무조건 반대 요청보다 정본·증거를 우선한다.
 - 최소 5회의 완전한 전체 개선 루프 후 clean exit까지 계속한다.
