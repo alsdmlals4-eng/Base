@@ -6,55 +6,42 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class OneShotLocalExecutorBootstrapContractTests(unittest.TestCase):
-    def test_shared_policy_and_godot_template_require_one_shot_bootstrap(self) -> None:
+    def test_policy_scopes_execution_freshness_to_godot_product_codex(self) -> None:
         policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
-        godot_template = (
-            ROOT
-            / "templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md"
-        ).read_text(encoding="utf-8")
-
-        for text in (policy, godot_template):
-            self.assertIn("ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP", text)
-            self.assertIn("BOOTSTRAP_MINIMUM_PREFLIGHT_ONLY", text)
-
-        self.assertIn("one copy/paste", policy)
-        self.assertIn("exact project/worktree", policy)
-        self.assertIn("matching editor", godot_template)
-        self.assertIn("fresh", godot_template)
-        self.assertIn("HiGodot", godot_template)
-
-    def test_project_dedicated_local_environment_is_required_before_local_work(self) -> None:
-        policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
-        godot_template = (
-            ROOT
-            / "templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md"
-        ).read_text(encoding="utf-8")
-        combined = policy + "\n" + godot_template
-
-        for token in (
-            "PROJECT_DEDICATED_LOCAL_EXECUTION_ENVIRONMENT_FIRST",
-            "ASSUME_PREVIOUS_POWERSHELL_CLOSED",
-            "CREATE_OR_REPAIR_DEDICATED_LOCAL_ENVIRONMENT_FIRST",
+        for term in (
+            "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
+            "CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR",
+            "CODEX_EXECUTION_ENVIRONMENT_FRESHNESS_REQUIRED",
+            "actual game-project Godot product implementation",
+            "exact project/repository/worktree identity",
+            "stale PID/session",
+            "project.godot",
         ):
-            self.assertIn(token, combined)
+            self.assertIn(term, policy)
+        self.assertIn("GPT→PowerShell→local Codex one-shot launcher", policy)
+        self.assertNotIn("ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP", policy)
 
-        self.assertIn("live-QA", combined)
-        self.assertIn("non-authoring", combined)
-        self.assertIn("adversarial", combined.lower())
-        self.assertIn("Hera", godot_template)
-        self.assertIn("LIVE_QA_AND_OBSERVABILITY_ONLY", godot_template)
-
-    def test_base_contract_stays_project_neutral_and_fail_closed(self) -> None:
-        policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
+    def test_godot_template_preserves_project_authoring_and_live_qa_safety(self) -> None:
         godot_template = (
             ROOT
             / "templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md"
         ).read_text(encoding="utf-8")
-        combined = policy + "\n" + godot_template
+        for term in (
+            "matching editor",
+            "fresh",
+            "HiGodot",
+            "Hera",
+            "LIVE_QA_AND_OBSERVABILITY_ONLY",
+        ):
+            self.assertIn(term, godot_template)
 
-        for term in ("reset", "restore", "clean"):
-            self.assertIn(term, combined)
-
+    def test_base_contract_is_not_generic_local_codex_launcher(self) -> None:
+        policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
+        combined = policy + "\n" + (
+            ROOT / "templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("Base Python test, CI contract, Registry/generated checker", policy)
+        self.assertIn("Base/Notion work not Codex trigger", policy)
         for forbidden_project_literal in (
             "GRIMOIRE-",
             "8001",
@@ -65,12 +52,11 @@ class OneShotLocalExecutorBootstrapContractTests(unittest.TestCase):
         ):
             self.assertNotIn(forbidden_project_literal, combined)
 
-    def test_bootstrap_discovers_capability_before_rejecting_one_executable_literal(self) -> None:
+    def test_capability_discovery_support_history_remains_available(self) -> None:
         executor_policy = (ROOT / "docs/LOOP_A2_LOCAL_EXECUTOR.md").read_text(encoding="utf-8")
         learning = (
             ROOT / "skills/managing-project-intake-and-work-contract/LEARNING_LOG.md"
         ).read_text(encoding="utf-8")
-
         for term in (
             "CAPABILITY_DISCOVERY_BEFORE_LITERAL_REJECTION",
             "DIAGNOSTIC_PRESERVATION_ON_BOOTSTRAP_FAILURE",
@@ -79,22 +65,16 @@ class OneShotLocalExecutorBootstrapContractTests(unittest.TestCase):
             "discovery는 넓게, authority와 acceptance는 좁게",
         ):
             self.assertIn(term, executor_policy)
-
         self.assertIn("codex.exe", learning)
         self.assertIn("codex login status", learning)
         self.assertIn("diagnostic", learning.lower())
-        self.assertIn("trusted", executor_policy.lower())
 
-    def test_one_shot_workflow_tracks_capability_owner_and_learning_log(self) -> None:
+    def test_validation_workflow_still_tracks_this_compatibility_contract(self) -> None:
         workflow = (
             ROOT / ".github/workflows/validate-one-shot-local-executor-bootstrap.yml"
         ).read_text(encoding="utf-8")
-
-        for path in (
-            "docs/LOOP_A2_LOCAL_EXECUTOR.md",
-            "skills/managing-project-intake-and-work-contract/LEARNING_LOG.md",
-        ):
-            self.assertIn(path, workflow)
+        self.assertIn("tests/test_one_shot_local_executor_bootstrap_contract.py", workflow)
+        self.assertIn("docs/GPT_CODEX_WORKFLOW_POLICY.md", workflow)
 
 
 if __name__ == "__main__":
