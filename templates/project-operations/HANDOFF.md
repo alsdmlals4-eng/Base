@@ -102,11 +102,15 @@ problems:
 reusable_lesson:
 reuse_scope: PROJECT_ONLY | PART_ONLY | BASE_PROMOTION_CANDIDATE | NO_NEW_REUSABLE_LESSON
 base_owner_candidate:
+base_evidence_locator:
+base_write_readback: PASS | FAIL | NOT_REQUIRED
 base_promotion_status: NOT_REQUIRED | CANDIDATE_RECORDED | PROMOTED | DEFERRED_BY_CONCURRENT_OWNER | BLOCKED_UNVERIFIED
 ```
 
 - Base 승격은 기존 canonical owner에 흡수하는 것을 우선한다.
-- 같은 owner를 열린 PR이 수정 중이면 그 PR을 변경·흡수하지 않고 독립 evidence/candidate만 남긴다.
+- `BASE_PROMOTION_CANDIDATE`는 실제 Base learning/evidence 경로에 write + readback하기 전에는 handoff를 `READY`로 닫지 않는다.
+- 같은 owner를 열린 PR이 수정 중이면 그 PR을 변경·흡수하지 않는다. 충돌하지 않는 Base evidence/candidate 파일을 실제 기록·readback하고 `DEFERRED_BY_CONCURRENT_OWNER`로 남긴다.
+- `PROJECT_ONLY`는 프로젝트에 남기고 Base에 억지로 승격하지 않는다.
 - 새 광역 Skill·중복 정책은 반복 재사용 가치와 owner 부재가 입증되기 전 만들지 않는다.
 
 ## 다음 작업자의 첫 행동
@@ -137,6 +141,7 @@ base_promotion_status: NOT_REQUIRED | CANDIDATE_RECORDED | PROMOTED | DEFERRED_B
 - 미확정·보류·위험을 알 수 있는가? `PASS | FAIL`
 - 승인 Visual의 현재 위치·용도·교체 관계를 알 수 있는가? `PASS | FAIL | NOT_APPLICABLE`
 - 문제·교훈과 Base 승격 상태를 알 수 있는가? `PASS | FAIL | NOT_APPLICABLE`
+- Base 승격 후보의 실제 Base evidence/learning locator와 readback 결과를 찾을 수 있는가? `PASS | FAIL | NOT_APPLICABLE`
 
 `FAIL`이 하나라도 있거나 과거 대화를 다시 붙여 넣어야 같은 품질로 이어갈 수 있으면 `HANDOFF_NOT_READY`다.
 
@@ -152,6 +157,8 @@ current_commit:
 next_action:
 visual_audit:
 lesson_disposition:
+base_evidence_locator:
+base_write_readback:
 base_promotion:
 rollback:
 ```
