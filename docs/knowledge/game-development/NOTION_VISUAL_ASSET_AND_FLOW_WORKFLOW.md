@@ -6,7 +6,7 @@
 
 For GPT-assisted semantic placement, Home/AI surface separation, image-understanding evidence ceilings and bounded layout/readback rules, apply `NOTION_GPT_VISUAL_LAYOUT_CONTRACT.md` together with this workflow.
 
-For complex gameplay/system logic represented as connected nodes, also apply `visual/NOTION_SYSTEM_BLUEPRINT_CONTRACT.md`. A System Blueprint is a derived human/implementation view, not a visual-scripting runtime or a third source of truth.
+For complex gameplay/system logic represented as connected nodes, also apply `docs/operations/project-workspace/NOTION_SYSTEM_BLUEPRINT_CONTRACT.md`. A System Blueprint is a derived human/implementation view, not a visual-scripting runtime or a third source of truth.
 
 Every project-scoped record must satisfy `PROJECT_RELATION_REQUIRED`. A record without a Project relation is unassigned working material, not project canon.
 
@@ -182,7 +182,7 @@ Keep a semantic graph or structured Screen records behind the rendered map. When
 
 ## System Blueprint node view
 
-`NOTION_SYSTEM_BLUEPRINT` extends the Visual Map concept for **complex system logic**. It is required only when the applicability gate in `visual/NOTION_SYSTEM_BLUEPRINT_CONTRACT.md` passes.
+`NOTION_SYSTEM_BLUEPRINT` extends the Visual Map concept for **complex system logic**. It is required only when the applicability gate in `docs/operations/project-workspace/NOTION_SYSTEM_BLUEPRINT_CONTRACT.md` passes.
 
 A Home-facing graph should emphasize player-readable meaning:
 
