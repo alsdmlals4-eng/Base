@@ -22,6 +22,9 @@ Base/Notion/문서/기획/이미지 작업을 Codex에 넘기지 않는다. Code
 
 Canonical policy: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
 Godot work-instruction template: `templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md`
+Packaged Godot handoff reference: [gpt-codex-implementation-handoff.md](references/gpt-codex-implementation-handoff.md)
+
+위 reference의 이름은 호환성을 위해 유지하지만 current 의미는 **GPT 비코딩 작업 완료 → Codex 실제 Godot 제품 구현 → GPT 최종 검수**에 한정한다.
 
 ## Skill Modes
 
