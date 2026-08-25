@@ -4,7 +4,8 @@
 
 - 출처 프로젝트: `alsdmlals4-eng/Switchy-Express-Cargo-Puzzle`
 - 프로젝트 증거 branch: `docs/visual-quality-handoff-20260825`
-- 프로젝트 증거 commit: `b45c45a0ad6d11e698289f3e44a80780716a76f6`
+- 프로젝트 증거 commit: `2659c914be720b1e42279cab8183df6379ad22b9`
+- 프로젝트 post-merge main: `4219f4e5e342c09024190e3fdaefa7a20051c988` · PR #177
 - 문제→교훈 owner: `docs/knowledge/2026-08-25-visual-iteration-problem-lessons.md`
 - 제출일: `2026-08-25`
 - 상태: `SUBMITTED`
@@ -30,6 +31,7 @@ Switchy Express의 2026-08-25 Visual GDD/이미지 반복 작업에서 다음 �
 - mock/reference에 `NOT_RUNTIME_PROOF` evidence ceiling을 명시했다.
 - Notion Visual owner에 durable preview를 attach/embed한 뒤 destination fetch와 attachment-content readback을 확인했다.
 - 최초 GitHub JPG transport는 byte corruption이 확인되어 제거했고 documentation-only reference path를 Godot scan에서 분리했다.
+- corrected project exact head에서 Project Contract, Thin Adapter, GUT, Godot Tests가 모두 GREEN이었고 PR #177은 exact-head merge 후 main `4219f4e5...`로 readback했다.
 
 ### Existing Solution First / 중복 검토
 
