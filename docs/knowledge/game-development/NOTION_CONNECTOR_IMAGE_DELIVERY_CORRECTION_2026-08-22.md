@@ -70,7 +70,10 @@ human-facing page image
 → client-visible verification when required
 
 if connector-only binary transport is unavailable or actually fails
-→ local Notion Native File Bridge (`ntn`) fallback
+→ if low-resolution preview is sufficient
+→ inline SVG raster preview fallback
+→ destination readback
+→ otherwise local Notion Native File Bridge (`ntn`) fallback
 
 Asset Library Files/Preview property
 → optional metadata convenience, not visual authority
@@ -177,14 +180,15 @@ This route is additive. It does not supersede the verified connector transport a
 
 `tools/notion-native-file-bridge` remains valid and maintained as a **fallback capability**, not the ordinary first step for page images.
 
-Use it when:
+Use it when the verified connector route is unavailable or fails **and** the inline SVG raster preview fallback is inapplicable, insufficient for the required quality, or itself fails. Typical cases include:
 
-- the connector cannot produce a usable temporary source URL;
+- the connector cannot produce a usable temporary source URL and a low-resolution preview is not sufficient;
 - `create-attachment` is unavailable or fails real invocation;
 - typed attachment is required by a surface the current connector cannot express **and that surface is actually required**;
-- a connector regression is reproduced by the Reality Gate.
+- a connector regression is reproduced by the Reality Gate;
+- production-quality or high-resolution source bytes themselves must be delivered and the preview-only route cannot satisfy acceptance.
 
-Do not delete the bridge solely because the connector path works today; retain it as a bounded fallback until the connector directly exposes stable typed binary upload/attachment for all required surfaces.
+Do not delete the bridge solely because the connector or preview path works today; retain it as a bounded fallback until the connector directly exposes stable typed binary upload/attachment for all required surfaces.
 
 ## Acceptance for future project images
 
