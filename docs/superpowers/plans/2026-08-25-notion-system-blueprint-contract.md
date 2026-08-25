@@ -1,6 +1,6 @@
 # Notion System Blueprint Contract Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for completed tracking.
 
 **Goal:** Add a Notion-facing System Blueprint contract that visualizes core gameplay/system logic as bounded nodes while preserving GitHub as structured/runtime canon and avoiding a third source of truth.
 
@@ -24,7 +24,6 @@
 ### Task 1: Define the System Blueprint contract in Base
 
 **Files:**
-- Modify: the existing Base planning/Notion authority owner identified from current `main`.
 - Canonical contract: `docs/operations/project-workspace/NOTION_SYSTEM_BLUEPRINT_CONTRACT.md` (P01 Project Planning/Notion owner).
 - Consumer integration: `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md` (P05 Notion Visual Flow consumer).
 
@@ -32,107 +31,101 @@
 - Consumes: Project Home human-facing authority, repository structured/runtime authority, existing planning and implementation reality gates.
 - Produces: canonical Blueprint applicability rules, node schema, authority boundary, validation/rollback rules.
 
-- [ ] **Step 1: Read the current authority owners and same-goal open/recent PRs**
+- [x] **Step 1: Read the current authority owners and same-goal open/recent PRs**
 
-Confirm exact `main`, relevant policy/skill owners, and that no active same-goal PR should be modified.
+Confirmed exact `main`, P01/P05 ownership, and protected PR #674 / #660 as read-only.
 
-- [ ] **Step 2: Add the minimal contract**
+- [x] **Step 2: Add the minimal contract**
 
-Define node fields: `Node ID`, `Type`, `Intent/Player Meaning`, `Trigger/Input`, `Condition`, `State/Data Change`, `Output/Next`, `Feedback`, `Owner`, `Godot Mapping`, `Validation`.
+Defined `Node ID`, `Type`, `Intent/Player Meaning`, `Trigger/Input`, `Condition`, `State/Data Change`, `Output/Next`, `Feedback`, `Owner`, `Godot Mapping`, `Validation`.
 
-- [ ] **Step 3: Add an applicability gate**
+- [x] **Step 3: Add an applicability gate**
 
-Require Blueprint for multi-state/multi-system logic; explicitly exempt trivial copy, simple numeric changes, cosmetic-only edits, and already-proven repetitive implementation.
+Complex multi-state/multi-system logic uses Blueprint; trivial copy, isolated numeric tuning, cosmetic-only edits, and already-proven repetitive implementation are exempt.
 
-- [ ] **Step 4: Verify authority semantics**
+- [x] **Step 4: Verify authority semantics**
 
-Check that Blueprint is labeled derived human/implementation view and cannot override repository runtime truth or approved project canon.
+Blueprint is a derived human/implementation view and cannot override repository runtime truth or approved project canon.
 
-- [ ] **Step 5: Commit the Base contract changes**
+- [x] **Step 5: Commit the Base contract changes**
 
-Commit on `feat/notion-system-blueprint-contract` with a focused message.
+Committed on `feat/notion-system-blueprint-contract`.
 
 ### Task 2: Add Blueprint presentation rules to the Notion operating surface
 
 **Files:**
-- Update: `P01 · Project Planning, Operations & Notion` in Notion.
-- Update: `Base · 작업 시스템 & Skill 지도` only if needed for discoverability.
+- Updated: `P01 · Project Planning, Operations & Notion`.
+- Created under P01: `System Blueprint · Node Contract & Template`.
+- `Base · 작업 시스템 & Skill 지도` did not require duplicate Blueprint content because P01 remains the semantic entry point.
 
-**Interfaces:**
-- Consumes: Task 1 Blueprint contract.
-- Produces: human-facing placement and rendering rules for Project Home and detailed Blueprint pages.
+- [x] **Step 1: Read the latest P01 and Base Notion guide**
 
-- [ ] **Step 1: Read the latest P01 and Base Notion guide**
+Confirmed current Home/Registry/AI Workspace boundaries before editing.
 
-Confirm current Home/Registry/AI Workspace boundaries before editing.
+- [x] **Step 2: Add Project Home placement rule**
 
-- [ ] **Step 2: Add Project Home placement rule**
+Blueprint is placed near Core Loop / Flow / Visual material when the applicability gate passes.
 
-Place `핵심 System Blueprint` near Core Loop/Flow/Visual at the top-level human view; use bounded Mermaid/node flow or equivalent readable node representation.
+- [x] **Step 3: Add detailed Blueprint page rule**
 
-- [ ] **Step 3: Add detailed Blueprint page rule**
+Detailed surfaces retain stable Node IDs, conditions, state/data ownership, Godot mapping, edge cases and validation; Home shows the readable human projection.
 
-Store node table, conditions, state/data ownership, Godot mapping, edge cases, and validation criteria in the detailed human/AI implementation surface without leaking raw operational metadata into Home.
+- [x] **Step 4: Add node lifecycle rule**
 
-- [ ] **Step 4: Add node lifecycle rule**
+Approved system-flow changes update the human Blueprint in the same approval unit; runtime evidence remains repository/AI-System owned.
 
-Require Blueprint updates when an approved system-flow decision changes; runtime implementation evidence remains in GitHub/AI Workspace.
+- [x] **Step 5: Read back the destination pages**
 
-- [ ] **Step 5: Read back the destination pages**
-
-Verify the new guidance is visible, unambiguous, and does not displace existing human-facing content.
+P01 and the child Blueprint template were fetched after writes and the parent/entry boundary was verified.
 
 ### Task 3: Validate with one project pattern without mass-editing every project
 
 **Files:**
-- Read: a current Project Home with clear system flow (e.g. 십보강호 or 블랙스미스).
-- Update only if a safe, representative insertion can be made without inventing project-specific design decisions.
+- Pilot: `십보강호 · Home`.
 
-**Interfaces:**
-- Consumes: Blueprint contract and Notion presentation rules.
-- Produces: feasibility evidence and a reusable project template pattern.
+- [x] **Step 1: Select a representative current Home from latest Notion state**
 
-- [ ] **Step 1: Select a representative current Home from latest Notion state**
+Selected 십보강호 because its approved duel-decision flow already existed and could be converted without new design decisions.
 
-Choose a project whose existing approved flow can be represented without adding new gameplay decisions.
+- [x] **Step 2: Convert one existing approved flow into Blueprint node form**
 
-- [ ] **Step 2: Convert one existing approved flow into Blueprint node form**
+Converted the existing `관찰 → 가설 → 3/3/4 계획 → COMMIT → 거리·합·대응·중단 → Combat Review → 다음 가설` flow only.
 
-Use only existing approved facts; do not invent conditions, values, or mappings that are not currently canonical.
+- [x] **Step 3: Check readability and duplication**
 
-- [ ] **Step 3: Check readability and duplication**
+Removed stable `BP-*` IDs from the Home-facing graph/table after adversarial review; Home now exposes human-readable stages and player meaning while detail contracts retain stable-ID capability.
 
-Confirm the Home still reads as a human design overview and the Blueprint links/summarizes rather than duplicating the full implementation record.
+- [x] **Step 4: Record NOT_RUN ceilings**
 
-- [ ] **Step 4: Record NOT_RUN ceilings**
-
-If no runtime execution or device test is performed, leave those verification claims as `NOT_RUN` in the system/evidence layer.
+No Godot/runtime/device/human-play claim was promoted. Runtime and human/device validation remain `NOT_RUN` for this workflow change.
 
 ### Task 4: Adversarial review, PR, and post-change readback
 
-**Files:**
-- Review all changed Base and Notion surfaces.
+- [x] **Step 1: Run five full adversarial review passes and continue until clean candidate**
 
-**Interfaces:**
-- Consumes: Tasks 1–3 outputs.
-- Produces: clean change set, rollback path, PR, and verified destination state.
+Minimum five whole-state loops were completed and review continued after findings changed the candidate. Validated corrections covered node vocabulary, canonical path ownership, Home metadata leakage, P01/P05 semantic ownership, stale plan references, and stale PR metadata.
 
-- [ ] **Step 1: Run five full adversarial review passes**
+- [x] **Step 2: Reconcile current `main` and same-goal PR state**
 
-Attack: third-canon risk, graph bloat, AI misinterpretation, Home clutter, unnecessary mandatory work.
+PR #674 and #660 remained read-only; no open PR delta was absorbed or modified.
 
-- [ ] **Step 2: Reconcile current `main` and same-goal PR state**
+- [x] **Step 3: Verify Implementation Reality Gate**
 
-Do not absorb open/draft/ready PR work; rebase/update only this new branch if required by current completed main.
+Notion and repository document writes/readbacks were performed. Runtime/human/device claims remain explicitly unverified.
 
-- [ ] **Step 3: Verify Implementation Reality Gate**
+- [x] **Step 4: Open a focused PR**
 
-Claim only document/Notion readback that was actually performed; runtime behavior remains unverified unless executed.
+PR #675 records before/after, expected effect, risks, rollback, Notion destinations, open-PR protection and evidence ceilings.
 
-- [ ] **Step 4: Open a focused PR**
+- [x] **Step 5: Final readback**
 
-Summarize before/after, expected effect, risks, rollback, Notion destinations, and verification evidence.
+Branch/PR, P01 Blueprint template, and the representative 십보강호 Home were read back after semantic writes. Final-head CI is rechecked after this completion-status commit before readiness is claimed.
 
-- [ ] **Step 5: Final readback**
+## Completion candidate
 
-Confirm branch/PR state and Notion content after writes; report remaining non-Blueprint project work separately.
+- Canonical owner: P01 `docs/operations/project-workspace/NOTION_SYSTEM_BLUEPRINT_CONTRACT.md`
+- P05 consumer: `NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`
+- Notion generic template: `System Blueprint · Node Contract & Template`
+- Representative pilot: `십보강호 · Home`
+- Runtime / human-device evidence: `NOT_RUN`
+- Merge/readiness: gated by final-head CI and final clean review.
