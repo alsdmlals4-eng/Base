@@ -35,6 +35,7 @@
 | `DIEGETIC_OPPONENT_INFORMATION_CASE.md` | 십보강호 | 내부 난도·성장 데이터를 일관된 세계관 표현으로 학습시키기 | 채택·구현 전 검증 필요 |
 | `TEN_PACES_RULE_PRESENTATION_TRACEABILITY_CASE.md` | 십보강호 | 규칙·UI·연출·QA를 같은 의미 단계로 추적 | 문서 구조 채택·구현 전 검증 필요 |
 | `TEN_PACES_OPTIONAL_HIGHLIGHT_VERTICAL_SLICE_CASE.md` | 십보강호 | 선택적 하이라이트와 정상 완주 경로를 함께 검증 | 채택·구현 전 검증 필요 |
+| `TETRIS_IMAGE_ARTIFACT_CARDINALITY_AND_CONNECTOR_READBACK_CASE.md` | Tetris 이미지 작업 | 독립 산출물 수량 계약, connector 재탐색/readback, style anchor·승인/폐기 분리 | 부분 검증 |
 | `AI_VISUAL_CONTINUITY_AND_NOTION_PREVIEW_FALLBACK_CASE.md` | 닌자서바이벌 Hybrid Visual closeout | 지속 캐릭터 identity + additive visual layers, Notion low-res preview fallback | 패턴·부분 검증 |
 
 ## OMENWARD 사례
@@ -73,6 +74,9 @@
 | 캐릭터 정체성을 유지하며 윙크·미소·시선을 편집 | `FACS_EXPRESSION_EDITING_PROMPT_CASE.md` |
 | 캐릭터 포스터·상세 페이지를 다른 캐릭터에도 재사용 | `CHARACTER_PROMO_POSTER_LAYOUT_CASE.md` |
 | 반복 도구를 CLI/TUI/GUI 중 무엇으로 노출할지 결정 | `AGENT_GENERATED_UI_SURFACE_SELECTION_CASE.md` |
+| 여러 독립 이미지/파일 요청이 합본 산출물로 섞임 | `TETRIS_IMAGE_ARTIFACT_CARDINALITY_AND_CONNECTOR_READBACK_CASE.md` |
+| 이전에 성공한 connector 작업을 불가로 오판하거나 write 후 실제 반영을 확인하지 않음 | `TETRIS_IMAGE_ARTIFACT_CARDINALITY_AND_CONNECTOR_READBACK_CASE.md` |
+| 새 채팅에서 style/reference/handoff가 stale 상태와 충돌 | `TETRIS_IMAGE_ARTIFACT_CARDINALITY_AND_CONNECTOR_READBACK_CASE.md`, `OMENWARD_CANONICAL_HANDOFF_CONTEXT_CASE.md` |
 | 화면에 정보가 많아 현재 행동이 묻힘 | `URBAN_LEGEND_SCENE_FIRST_UI_CASE.md` |
 | 공개 명칭 변경과 저장 호환 | `URBAN_LEGEND_DISPLAY_NAME_INTERNAL_ID_CASE.md` |
 | 캐릭터 대사가 기능 흐름을 방해함 | `URBAN_LEGEND_DIALOGUE_DENSITY_BY_CONTEXT_CASE.md` |
