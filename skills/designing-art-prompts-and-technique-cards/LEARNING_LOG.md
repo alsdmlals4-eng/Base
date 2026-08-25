@@ -1,5 +1,65 @@
 # Designing Art Prompts and Technique Cards Learning Log
 
+## 2026-08-26 — 이미지 생성 전 Visual Asset Coverage를 별도 preflight로 확인한다
+
+### Trigger
+
+이미지 생성 Skill이 선정된 `requirement_id`를 정확히 실행하더라도, 프로젝트·화면군·캐릭터군 차원에서는 버튼 state, enemy telegraph, interaction feedback, input prompt, accessibility cue, store/platform asset처럼 **인접한 필수 시각 자산 자체가 requirement 후보로 떠오르지 않는 누락**이 남을 수 있다는 문제가 확인됐다.
+
+### Evidence reviewed
+
+- Base `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`, `GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`, `VISUAL_COLLABORATION_TOOL_POLICY.md`, image plan과 current art Skill
+- Godot official multiple-resolution, import process, texture/compression guidance
+- Steamworks current graphical asset overview/rules/screenshot requirements
+- W3C WCAG 2.1 Use of Color의 non-color redundant visual cue 원칙
+- current open visual workstream의 path ownership과 existing explicit image approval boundary
+
+### Lesson
+
+이미지 생성 직전의 **누락 탐지**와 실제 **제작 선정·승인**은 다른 책임이어야 한다.
+
+```text
+Visual Asset Coverage Preflight
+→ relevant gap discovery
+→ Visual Requirement Gate
+→ explicit image approval
+→ generation / review / promotion / runtime evidence
+```
+
+- Coverage는 `COVERAGE_CHECK_ONLY`이며 second asset canon이 아니다.
+- `NOT_APPLICABLE`을 허용해 장르·단계와 무관한 asset scope explosion을 막는다.
+- 대표 이미지 하나가 아니라 consumer가 요구하는 `STATE_FAMILY_COMPLETENESS`를 확인한다.
+- gap 발견은 `NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS`; 다음 이미지·variant·batch를 자동 승인하지 않는다.
+- 실제 target resolution/aspect와 필요한 import/filter/mipmap/atlas/slicing/pivot/localization 조건을 requirement/handoff에 연결한다.
+- store/platform asset은 stale fixed size를 Base 장기 정답으로 두지 않고 `PLATFORM_SPEC_RECHECK_REQUIRED`로 release 시 current official rule을 다시 확인한다.
+
+### Base change
+
+- `GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`를 subordinate coverage guide로 추가한다.
+- `GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`가 넓은 시각 범위 작업에서 coverage preflight를 Visual Requirement Gate보다 먼저 확인한다.
+- 이 Skill은 `coverage_item_id / coverage_status / state_family_status`를 입력으로 소비하되 gap을 자동 생성 queue로 바꾸지 않는다.
+- 기존 Image Conversation Approval Gate, Asset lifecycle, Notion authority, runtime evidence는 유지한다.
+
+### Guardrail
+
+- coverage status != asset lifecycle
+- gap != generation approval
+- concept/reference != runtime/gameplay evidence
+- current platform specification은 release 시 official source를 다시 확인한다.
+
+### Validation state
+
+```yaml
+coverage_static_contract: IMPLEMENTED_ON_PR_717
+focused_regression: IN_CI
+canonical_freshness_companion_sync: IMPLEMENTED_ON_PR_717
+project_image_generation: NOT_RUN
+notion_delivery: NOT_RUN
+runtime_asset_validation: NOT_RUN
+```
+
+---
+
 ## 2026-08-19 — 시각 작업면은 Notion Project relation으로 통합하고 도구별 지식은 중립 모듈로 흡수한다
 
 ### Trigger
