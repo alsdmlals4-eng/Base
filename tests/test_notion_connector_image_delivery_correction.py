@@ -59,6 +59,29 @@ class NotionConnectorImageDeliveryCorrectionTests(unittest.TestCase):
             self.text,
         )
 
+    def test_inline_svg_raster_preview_fallback_is_bounded_and_secondary(self) -> None:
+        for token in (
+            "NOTION_INLINE_SVG_RASTER_PREVIEW_FALLBACK",
+            "preview-only",
+            "typed binary / verified primary transport first",
+            "downscale/compress raster",
+            "data URI inside UTF-8 SVG",
+            "file-upload://",
+            "prod-files-secure",
+            "HIGH_RES_PIXEL_EQUIVALENT: NOT_PROVEN",
+            "READBACK_PASS != HUMAN_VISIBLE_PASS",
+        ):
+            self.assertIn(token, self.text)
+
+    def test_preview_fallback_routing_precedes_local_bridge_when_sufficient(self) -> None:
+        ordered = [
+            "if low-resolution preview is sufficient",
+            "inline SVG raster preview fallback",
+            "local Notion Native File Bridge (`ntn`) fallback",
+        ]
+        positions = [self.text.index(marker) for marker in ordered]
+        self.assertEqual(positions, sorted(positions))
+
 
 if __name__ == "__main__":
     unittest.main()
