@@ -14,3 +14,18 @@
 - **Boundary:** 새 광역 Skill을 만들지 않는다. paid OpenAI API/API-key fallback, A3 auto-merge, Scheduler, 자동 product scope를 열지 않는다. 과거 evidence를 현재 값으로 rewrite하지 않는다.
 - **왜 글로벌 로그에 복제하지 않았는가:** 글로벌 `skills/SKILL_LEARNING_LOG.md`에는 이미 테스트 파일 미소비/false-GREEN과 정본 전파 누락의 유사 교훈이 존재한다. 이번에는 existing coupled-change contract가 허용하는 owner-local Learning Log에 exact #489~#494 provenance를 보존하고, 공용 동작은 Claim/Freshness 계약으로 승격한다.
 - **Next trigger:** 다른 lifecycle에서 machine summary 충돌, false-GREEN, `PREDECESSOR_CEILING_FREEZE`, stale-head gate 재사용, 또는 bounded zero-escape의 범위 과승격이 재발할 때 재검토한다.
+
+## 2026-08-25 — Blacksmith successor-state consumer recurrence
+
+- **상태:** `VERIFIED_RECURRENCE / PROMOTE_EXISTING_OWNER_EVIDENCE`
+- **Source project:** `alsdmlals4-eng/Blacksmith`, planning PR #207.
+- **Trigger:** 사용자 승인 successor Decisions25~27/Art03가 current planning authority를 전진시킨 뒤 세 개의 서로 다른 current consumer/regression이 predecessor 값을 계속 요구해 정상적인 successor state를 실패 처리했다.
+- **Recurrence 1 — Visual scrub:** `Validate Visual GDD Canon Scrub`이 과거 schema v1, CURRENT/MAX structure owner, `CURRENT=MAX` repair semantics를 current binding에 요구했다. 수정은 과거 scrub assertion을 역사로 보존하고 current binding assertion만 successor owner로 전진시켰다.
+- **Recurrence 2 — Living GDD art:** `Blacksmith Living GDD Home contract`가 `BS-ART-20260825-02 / REWORK_REQUIRED`를 current `AGENTS.md`에 요구했다. `BS-ART-20260825-03 / ILLUSTRATED_WORKSHOP_BOOK / USER_APPROVED_DIRECTION`이 current가 된 뒤에도 predecessor ceiling이 남아 있었다. 역사 Decision03 snapshot check는 유지하고 current AGENTS assertion만 전진시켰다.
+- **Recurrence 3 — current router:** `test_current_active_context_priority_overlay`가 구형 `BLOCKED_UNTIL_NEW_PLANNING_COMPLETE_DECLARATION`과 2026-08-20 Active Context snapshot을 current routing ceiling으로 고정했다. current resume owner를 `AGENTS.md + BS-OPS-20260825-08 handoff + successor canon`으로 분리하고 기존 Active Context snapshot은 `LEGACY_COMPATIBILITY_ROUTER / HISTORICAL`로 보존했다.
+- **Reinforced rule:** successor가 current로 VERIFIED되면 모든 consumer/assertion을 `CURRENT_MUTABLE | HISTORICAL_DISCOVERY`로 분류한다. 전자는 successor로 전진시키고 후자는 당시 값을 보존한다. current test를 통과시키려고 predecessor token을 current 문서에 재주입하는 compatibility fix를 금지한다.
+- **Execution proof rule:** 수정 후 실제 consumer workflow를 실행해 GREEN을 확인해야 한다. 새 standalone test 파일의 존재만으로 current propagation 완료를 주장하지 않는다.
+- **Owner decision:** 이미 `auditing-canonical-reference-freshness`가 `VERIFIED_SUCCESSOR_STATE / PREDECESSOR_CEILING_FREEZE`를 소유한다. **새 Skill/새 광역 policy를 만들지 않는다.** 이번 Blacksmith evidence는 기존 rule의 재발 증거와 future eval fixture 후보로 승격한다.
+- **Evidence packet:** `docs/evidence/2026-08-25-blacksmith-canon-visual-handoff-learning.md`.
+- **Boundary:** Blacksmith의 +10 정밀강화, 4단계 damage 명칭/확률, repair, customer event, art style 등 프로젝트 제품 규칙은 Base로 승격하지 않는다.
+- **Next trigger:** 다른 프로젝트에서 successor decision 후 current regression이 predecessor token을 강제하거나, history/current assertion ownership이 다시 섞일 때 cross-project promotion/eval 강화를 재검토한다.
