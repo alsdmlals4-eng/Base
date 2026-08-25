@@ -84,7 +84,13 @@ dominant_criterion:
 
 ### Conditional System Blueprint entry gate
 
-`SYSTEM_BLUEPRINT_ENTRY_CHECK_REQUIRED`는 새 first-prompt 규칙이 아니라 기존 Blueprint 계약으로 라우팅하는 조건부 Gate다.
+`SYSTEM_BLUEPRINT_ENTRY_CHECK_REQUIRED`
+
+`REUSE_EXISTING_BLUEPRINT_BEFORE_CREATING_NEW`
+
+`NO_MASS_BLUEPRINT_BACKFILL`
+
+위 literal은 새 first-prompt 규칙이 아니라 기존 Blueprint 계약으로 라우팅하기 위한 추적용 참조다.
 
 ```text
 current project facts + approved decisions
