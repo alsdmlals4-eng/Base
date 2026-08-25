@@ -7,7 +7,7 @@
 - 프로젝트 증거 commit: `b45c45a0ad6d11e698289f3e44a80780716a76f6`
 - 문제→교훈 owner: `docs/knowledge/2026-08-25-visual-iteration-problem-lessons.md`
 - 제출일: `2026-08-25`
-- 상태: `UNDER_REVIEW`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 사용자 승인 근거: 2026-08-25 현재 작업에서 사용자가 "인수인계 진행하자 ... Base 승격, 문제-교훈 자료도 잘 올려줘"라고 명시
 
 ## 관찰과 실제 문제
@@ -137,12 +137,12 @@ BCP-2026-032의 Notion preview fallback/readback owner는 변경하지 않고 �
 
 새 blocking finding: `0`.
 
-검토 판정 제안: `APPROVED_FOR_IMPLEMENTATION`.
+검토 판정: `APPROVED_FOR_IMPLEMENTATION`.
 
 ## 승인과 구현
 
 - 사용자 승인 근거: 2026-08-25 현재 Switchy Express closeout 작업에서 "Base 승격, 문제-교훈 자료도 잘 올려줘" 명시.
-- approval_ref 후보: `[수정제안서]/BCP-2026-033-visual-generation-scope-deliverable-integrity/PROPOSAL.md#승인과-구현` + current-task user instruction.
+- `approval_ref`: `[수정제안서]/BCP-2026-033-visual-generation-scope-deliverable-integrity/PROPOSAL.md#승인과-구현 (2026-08-25 current task user instruction)`.
 - 제안과 active Base 구현은 별도 PR로 유지한다.
 - 구현 전 proposal/registry merge를 먼저 완료한다.
 - 구현은 위 권장 최소 구현 범위를 넘기지 않는다.
