@@ -10,17 +10,14 @@
 - 제출일: `2026-08-25`
 - historical proposal PR: `#711` · merged `04bf4f216aed42ae9ee18f83e7eecde6f6bd4430`
 - historical approval PR: `#712` · merged `3488cdff2f1ec7c2dd04ad2a53d2416fc35db431`
-- 상태: `SUBMITTED`
-- 사용자 승인 이력: 2026-08-25 Switchy Express closeout에서 사용자가 `Base 승격, 문제-교훈 자료도 잘 올려줘`라고 명시하고 이후 `진행해`로 연속 실행을 승인했다. 이 이력은 후속 approval review의 근거이지만 신규 machine identity `BCP-035`의 lifecycle 단계를 건너뛰는 근거로 사용하지 않는다.
+- BCP-035 identity reconciliation: PR `#714` · merged `c10261b62611cd544c5f6f57134e5b267e5a6987`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 사용자 승인 근거: 2026-08-25 Switchy Express closeout에서 사용자가 `Base 승격, 문제-교훈 자료도 잘 올려줘`라고 명시하고 이후 `진행해`로 연속 실행을 승인했다.
+- approval_ref: 이 문서 `#승인과-구현` + 위 사용자 지시 + historical PR #711/#712 + lifecycle 재제출 PR #714.
 
 ### ID reconciliation
 
-PR #711/#712 당시 Registry에 드러나지 않았던 기존 merged proposal `BCP-2026-034-notion-official-product-operating-reference`가 fresh readback에서 확인됐다. 동일 BCP ID를 유지하면 두 독립 workstream의 lifecycle/provenance가 충돌하므로 **Notion official-product workstream의 기존 BCP-034를 보존하고, Switchy visual-integrity workstream을 BCP-035로 재식별한다.**
-
-- 이 변경은 내용/제품 방향을 바꾸지 않는 identifier reconciliation이다.
-- BCP-034 Notion proposal/implementation PR #702/#704는 READ_ONLY이며 수정·흡수하지 않는다.
-- historical PR #711/#712의 제목/본문은 당시 snapshot으로 보존한다.
-- validator 기준으로 BCP-035는 신규 식별자이므로 `SUBMITTED`부터 lifecycle을 다시 시작한다.
+기존 merged `BCP-2026-034-notion-official-product-operating-reference`를 보존하고 Switchy visual-integrity workstream을 `BCP-035`로 재식별했다. PR #714에서 validator가 요구하는 신규 identity lifecycle을 `SUBMITTED`부터 다시 시작해 exact-head CI를 통과한 뒤 병합했다. BCP-034 Notion proposal/implementation PR #702/#704는 READ_ONLY로 보존한다.
 
 ## 관찰과 증거
 
@@ -37,64 +34,37 @@ Switchy Express의 2026-08-25 Visual GDD/이미지 반복 작업에서 다음 �
 - 기존 art style/승인 asset은 유지하고 판단 정보만 semantic redundancy로 강화하는 방향을 사용자가 승인했다.
 - N장 요청을 N개의 독립 검토 가능한 deliverable로 분리했다.
 - mock/reference에 `NOT_RUNTIME_PROOF` evidence ceiling을 명시했다.
-- Notion Visual owner에 durable preview를 attach/embed한 뒤 destination fetch와 attachment-content readback을 확인했다.
+- Notion Visual owner에 durable preview를 attach/embed한 뒤 destination fetch/readback을 확인했다.
 - 최초 GitHub JPG transport byte corruption은 제거하고 documentation-only reference path를 Godot scan에서 분리했다.
 - corrected project exact head에서 Project Contract, Thin Adapter, GUT, Godot Tests가 GREEN이었고 PR #177은 main `4219f4e5...`로 병합됐다.
 
 ## Existing Solution First / 중복 검토
 
-현재 Base에는 이미 다음 강한 계약이 존재한다.
+현재 Base에는 이미 다음 계약이 존재한다.
 - `auditing-and-refining-ui-art`: 상태는 색 하나에만 의존하지 않고 텍스트·형태·아이콘 등 동등 신호를 둔다.
 - BCP-2026-032: Notion visual delivery의 destination readback과 evidence ceiling.
 - `NOTION_APPROVED_ORIGINAL_FIRST_GATE`: 승인 visual original-first 보존과 preview 경계.
 - Base evidence discipline: mock/자동 검증을 사람·기기·runtime 증거로 과장하지 않는다.
 
-따라서 BCP-035는 세 좁은 gap만 공용화한다.
+BCP-035는 아래 세 좁은 gap만 공용화한다.
 
 ## 일반화 후보
 
 ### `VISUAL_TASK_SCOPE_FIDELITY`
 
-bounded image 작업 전에 아래를 고정한다.
-
-```text
-visual_question / target_screen / target_state / excluded_scope
-```
-
-생성물이 경계를 넘어 unrelated screen, broad dashboard, 새 게임 규칙/UI를 추가하면 보기 좋더라도 같은 deliverable PASS로 세지 않는다.
+bounded image 작업 전에 `visual_question / target_screen / target_state / excluded_scope`를 고정한다. 생성물이 경계를 넘어 unrelated screen, broad dashboard, 새 게임 규칙/UI를 추가하면 보기 좋더라도 같은 deliverable PASS로 세지 않는다.
 
 ### `BATCH_COUNT_MEANS_INDEPENDENT_DELIVERABLES`
 
-사용자가 N장의 이미지/결과를 요청하면 기본 해석은 **독립 검토·교체·배치 가능한 N개 결과**다.
-
-- 한 collage의 N panel은 사용자가 collage를 요청한 경우에만 N장과 동등하다.
-- 의미 손실 없이 분리 가능하면 독립 파일로 분리할 수 있다.
-- panel 의존성이 있거나 crop으로 의미가 손상되면 재생성한다.
-- 프로젝트 고유 숫자 `3`은 Base 규칙에 넣지 않는다.
+사용자가 N장의 이미지/결과를 요청하면 기본 해석은 독립 검토·교체·배치 가능한 N개 결과다. 한 collage의 N panel은 사용자가 collage를 요청한 경우에만 N장과 동등하다. 의미 손실 없이 분리 가능하면 독립 파일로 분리하고, panel 의존성이 있거나 crop으로 의미가 손상되면 재생성한다. 프로젝트 고유 숫자 `3`은 Base 규칙에 넣지 않는다.
 
 ### `DECISION_CRITICAL_VISUAL_SEMANTIC_REDUNDANCY`
 
-플레이 판단에 직접 쓰는 정보가 art/background와 경쟁할 때 최소한 다음을 비교한다.
-
-| 대안 | 장점 | 위험 | 기본 판정 |
-| --- | --- | --- | --- |
-| 전체 art style 교체 | 큰 변화 | 기존 asset/identity 비용, 원인 오진 | 마지막 수단 |
-| color/intensity 한 축만 강화 | 빠름 | color-only/상태 혼동 | 단독 사용 회피 |
-| 기존 정체성 유지 + 독립 semantic cue 중복 | 기존 asset 보존, 판단성 직접 개선 | 상태 규칙 consistency 필요 | 우선 검토 |
-
-특정 색/화살표/두께를 Base에 고정하지 않는다. 프로젝트 의미에 맞게 color, direction, shape, text/icon, brightness/thickness, motion 중 필요한 독립 신호를 조합한다.
+플레이 판단 정보가 art/background와 경쟁할 때 전체 style 교체, color/intensity 단독 강화, 기존 정체성 유지 + 독립 semantic cue 중복을 비교하고 세 번째 안을 우선 검토한다. 특정 색/화살표/두께를 Base에 고정하지 않고 color, direction, shape, text/icon, brightness/thickness, motion 중 필요한 독립 신호를 조합한다.
 
 ## 프로젝트 전용으로 남길 내용
 
-Base에 승격하지 않는다.
-- `E+D Hybrid / Neo-Arcade Readability`
-- Cozy Miniature railway / 토끼 기관사
-- Switchy의 green/blue/red/yellow 의미색
-- 73 product PNG 수량
-- `SX59-POC-ACCEPT-003`
-- 사용자의 정확한 `3장씩` 숫자
-- Switchy Train/Station/Cargo/Switch 디자인
-- 특정 Notion page/file upload ID와 프로젝트 경로
+Base에 승격하지 않는다: `E+D Hybrid / Neo-Arcade Readability`, Cozy Miniature railway, 토끼 기관사, Switchy 의미색, 73 product PNG 수량, `SX59-POC-ACCEPT-003`, 정확한 `3장씩` 숫자, 실제 Train/Station/Cargo/Switch 디자인, 특정 Notion/file upload ID와 프로젝트 경로.
 
 ## 적용 조건과 비사용 조건
 
@@ -108,49 +78,27 @@ Base에 승격하지 않는다.
 - N-panel 전체가 하나의 비교 문맥이어야 의미가 있고 사용자가 그 형식을 승인했을 때.
 - 실제 제품 fantasy가 transformation/style replacement 자체일 때.
 - color가 정보가 아닌 순수 장식일 때.
-- 생성 image가 아니라 단순 텍스트/기계 변경만 하는 작업.
+- 단순 텍스트/기계 변경만 하는 작업.
 
 ## 반례와 위험
 
-- broad concept work까지 단일 질문으로 강제하면 발산 탐색을 방해할 수 있다.
-- 비교표/스토리보드처럼 panel 관계가 정보인 경우 collage가 올바른 deliverable일 수 있다.
-- semantic cue를 모두 최대 강도로 쓰면 오히려 과밀해질 수 있다.
-- 기존 style이 실제 문제 원인이거나 제품 방향이 바뀐 경우 style 유지가 자동 정답은 아니다.
-- visual mock만으로 human comprehension, accessibility, runtime/device correctness를 증명하지 않는다.
-- BCP-032 및 original-first owner의 책임을 중복 구현하지 않는다.
+broad concept work까지 단일 질문으로 강제하는 scope rigidity, meaningful collage 분할, semantic overload, style-preservation fetishism을 피한다. visual mock만으로 human comprehension, accessibility, runtime/device correctness를 증명하지 않으며 BCP-032/original-first 책임을 중복 구현하지 않는다.
 
 ## 영향 범위와 검증
 
-후속 approval 시 검토할 최소 구현 후보 범위:
+승인된 최소 구현 범위:
+1. `skills/auditing-and-refining-ui-art/SKILL.md`에 세 계약 추가/명시.
+2. `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`에 bounded Visual GDD scope fields와 independent-deliverable 기본값 추가, current original-first/readback gate 보존.
+3. 프로젝트 중립 problem→lesson case 1개 + 최소 discoverability 갱신.
+4. focused regression coverage.
 
-1. `skills/auditing-and-refining-ui-art/SKILL.md`
-   - `VISUAL_TASK_SCOPE_FIDELITY`
-   - `BATCH_COUNT_MEANS_INDEPENDENT_DELIVERABLES`
-   - `DECISION_CRITICAL_VISUAL_SEMANTIC_REDUNDANCY`
-2. `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`
-   - bounded Visual GDD 작업의 visual question / excluded scope 기록
-   - N장 요청의 independent-deliverable 기본값
-   - current original-first/readback gate 보존
-3. 프로젝트 중립 problem→lesson case 1개 + 최소 discoverability 갱신
-4. focused regression coverage
+명시적 제외: 신규 Skill/Tool/dependency/service/dashboard, BCP-032 재구현, original-first 약화, Switchy-specific 값, 실제 game/runtime/project 변경.
 
-명시적 제외:
-- 신규 Skill/Tool/dependency/service/dashboard
-- BCP-032 Notion preview fallback/readback 재구현
-- original-first 약화 또는 preview를 canonical original로 승격
-- Switchy-specific 값
-- 실제 게임/runtime/project 변경
-
-검증:
-- BCP-035 identifier reconciliation은 proposal/registry validation과 exact-head CI를 통과해야 한다.
-- 승인 및 구현은 각각 별도 fresh-main PR로 lifecycle을 분리한다.
-- 구현 단계에서는 RED → GREEN, exact-head relevant CI, 최소 5회 whole-state adversarial review를 요구한다.
-- project evidence는 방법론/guardrail을 지지하지만 player comprehension/accessibility/Candidate 003 physical PASS를 증명하지 않는다.
+구현은 fresh-main 별도 PR에서 TDD RED→GREEN, exact-head relevant CI, 최소 5회 whole-state adversarial review를 거친다. project evidence는 방법론/guardrail을 지지하지만 player comprehension/accessibility/Candidate 003 physical PASS를 증명하지 않는다.
 
 ## 승인과 구현
 
-- 현재 lifecycle 상태: `SUBMITTED`.
-- historical user approval intent와 PR #711/#712는 후속 approval review의 evidence로 보존한다.
-- `approval_ref`: 아직 BCP-035 machine lifecycle에는 부여하지 않는다.
-- 구현 PR: 없음. 기존 draft PR #713은 BCP-035 approval이 main에 정착하기 전까지 active implementation으로 승격하지 않는다.
-- 롤백: ID correction은 proposal path/registry identity만 revert; 후속 active implementation은 별도 PR 단위로 revert.
+- 현재 lifecycle 상태: `APPROVED_FOR_IMPLEMENTATION`.
+- `approval_ref`: `[수정제안서]/BCP-2026-035-visual-generation-scope-deliverable-integrity/PROPOSAL.md#승인과-구현 (2026-08-25 current task user instruction; historical PR #711/#712; ID reconciliation PR #714)`.
+- 기존 draft implementation PR #713은 이 승인 상태가 main에 병합된 뒤 BCP-035 identity로 재조정한다.
+- 롤백: approval은 proposal/registry status revert; 구현은 별도 PR 단위로 revert.
