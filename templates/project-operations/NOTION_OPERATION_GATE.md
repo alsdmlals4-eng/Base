@@ -2,6 +2,8 @@
 
 이 문서는 Base를 채택한 프로젝트에서 **Notion을 실제로 읽고 수정할 때의 공용 실행 계약**이다. Notion 제품 기능의 전체 설명서가 아니며, 프로젝트 기획 정본·Human Home 정책·Visual workflow·repository runtime truth를 대체하지 않는다.
 
+상위 제품 동작 참조는 `docs/knowledge/methods/NOTION_OFFICIAL_PRODUCT_OPERATING_REFERENCE.md`다. 이 문서는 그 공식 제품 동작을 프로젝트 실행 규칙으로 좁혀 적용하며, 제품 기능 자체의 의미·제약이 바뀌면 상위 참조를 먼저 확인한다.
+
 ```text
 NOTION_OPERATION_GATE
 != NOTION_PRODUCT_REFERENCE
