@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alsdmlals4-eng/Base/schemas/base-v9-4-4-release-lock-v1.schema.json",
+  "title": "Base v9.4.4 Compatibility Release Lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_role",
+    "release_line",
+    "release_state",
+    "repository",
+    "release_issue",
+    "source_pr",
+    "predecessor",
+    "candidate_release_commit",
+    "candidate_release_evidence_commit",
+    "candidate_registry",
+    "released_validator_paths"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_role": {"const": "BASE_V9_4_4_COMPATIBILITY_RELEASE_LOCK"},
+    "release_line": {"const": "v9.4.4"},
+    "release_state": {"enum": ["TRUSTED_EVIDENCE_PENDING", "BASE_RELEASED"]},
+    "repository": {"const": "alsdmlals4-eng/Base"},
+    "release_issue": {"const": 670},
+    "source_pr": {"const": 669},
+    "predecessor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "release_line", "release_commit", "release_evidence_commit"],
+      "properties": {
+        "path": {"const": "base-v9.4.3.lock.json"},
+        "release_line": {"const": "v9.4.3"},
+        "release_commit": {"const": "7dd1a4f80388bc5faca767ff74a3eb32dc9d0ac8"},
+        "release_evidence_commit": {"const": "da33a350d61b8adc52df97fccc7001708a933370"}
+      }
+    },
+    "candidate_release_commit": {"const": "210ec78292fa12ed7563ba743b322dd36103ae4a"},
+    "candidate_release_evidence_commit": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      ]
+    },
+    "candidate_registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "hash_definition"],
+      "properties": {
+        "path": {"const": "skills/SKILL_REGISTRY.json"},
+        "sha256": {"pattern": "^[0-9a-f]{64}$"},
+        "hash_definition": {"const": "RAW_FILE_BYTES_SHA256"}
+      }
+    },
+    "released_validator_paths": {
+      "type": "array",
+      "minItems": 6,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}
