@@ -118,6 +118,36 @@ When the task requests the same character, UI element or asset with a limited ed
 
 Change only the requested expression, pose, gaze, effect stage, state, text-free content or other scoped property. If a requested change would materially alter identity, surface that as a new variant rather than silently replacing the master.
 
+### Persistent character additive visual layering
+
+`PERSISTENT_CHARACTER_ADDITIVE_VISUAL_LAYER_GATE`
+
+Use this gate when one **persistent character identity** accumulates several class, faction, tradition, stance or affinity states over time and those states must remain recognizable together.
+
+Separate the visual contract into two owners before generating variants:
+
+```text
+persistent character identity
+→ face / hair / body proportion / core outfit / core silhouette invariants
+
+additive visual layers
+→ equipment accents / aura / energy / companion / shadow / state effects
+```
+
+The faction or class brief must not silently replace the persistent identity merely to make each variant easier to distinguish. Instead, define bounded layer ownership, priority, scale and spatial zones so the result still reads as one character.
+
+Before approval, include a **final composite** acceptance check when multiple layers can coexist:
+
+- the face and core silhouette remain readable,
+- accumulated layers do not become unrelated costume clutter,
+- dominant and supporting states have an explicit hierarchy when simultaneous maxima would conflict,
+- important gameplay information is not hidden,
+- the result still reads at the **small gameplay scale** actually used by the project.
+
+Key art, lore art and gameplay may use different rendering density. They may still belong to one visual system when **identity / motif / palette / hierarchy** invariants remain stable across surfaces.
+
+Do not apply this gate mechanically when the product promise is a set of genuinely different playable characters or a **true transformation** whose intended fantasy is full body/identity replacement. In those cases, replacement or transformation continuity is the correct contract.
+
 ## Candidate, promotion and reuse model
 
 Generated or edited output starts as a candidate. Do not promote a candidate merely because generation succeeded.

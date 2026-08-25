@@ -165,6 +165,19 @@ class VisualCollaborationCapabilityContractTests(unittest.TestCase):
         self.assertIn("reuse promotion", policy)
         self.assertIn("PROJECT_ASSET_APPROVED", workflow)
 
+    def test_persistent_character_additive_visual_layer_gate(self):
+        workflow = read("docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md")
+        for token in (
+            "PERSISTENT_CHARACTER_ADDITIVE_VISUAL_LAYER_GATE",
+            "persistent character identity",
+            "additive visual layers",
+            "final composite",
+            "small gameplay scale",
+            "identity / motif / palette / hierarchy",
+            "true transformation",
+        ):
+            self.assertIn(token, workflow)
+
     def test_deprecated_visual_execution_surfaces_stay_deleted(self):
         for path in (
             "tools/figma-bridge",
