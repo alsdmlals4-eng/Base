@@ -49,6 +49,15 @@ Codex는 일반 repository executor가 아니다. 실제 게임 프로젝트의 
 - Godot implementation/runtime/headless/play tests
 - 승인 범위의 성능·안정성·동작 보존 리팩터링
 
+### `Codex Plan` — 선택적 Godot 기술 preflight
+
+`Codex Plan`은 모든 작업의 의무 단계가 아니다. **고위험·다중 시스템의 실제 Godot 제품 구현**에서 구현 전에 repository를 읽기 전용으로 조사할 기술적 가치가 있을 때만 선택적으로 사용한다.
+
+- Base/Notion/문서/기획/이미지 작업을 Codex Plan으로 넘기지 않는다.
+- Codex Plan은 파일을 수정하지 않고 실제 Godot 구조·호출 관계·보호 경로·테스트·rollback 후보를 확인한다.
+- GPT가 확정한 플레이어 결과·승인 범위·보호 범위를 바꾸지 않는다.
+- Plan 결과가 제품 방향 변경을 요구하면 구현으로 진행하지 않고 `CHANGE_PROPOSAL`로 GPT에 반환한다.
+
 ### Codex를 호출하지 않는 대표 작업
 
 - Base 정책·Skill·Guide·Template 수정
