@@ -17,6 +17,8 @@ description: Use when routing a project request, closing material ambiguity, def
 
 `FULL_CURRENT_STATE_AUDIT_BEFORE_PLAN`
 
+`REUSE_FIRST_PREFLIGHT_REQUIRED`
+
 `PRE_BUILD_BEFORE_AFTER_EXPECTED_EFFECT_REPORT`
 
 `USER_APPROVAL_BEFORE_BUILD`
@@ -24,6 +26,8 @@ description: Use when routing a project request, closing material ambiguity, def
 `APPROVED_DECISION_GITHUB_NOTION_SYNC_DURING_WORK`
 
 `POST_BUILD_FULL_ADVERSARIAL_REVIEW_AND_PR_RECHECK`
+
+`REUSE_LEARNING_HANDOFF_REQUIRED`
 
 L1 이상 중요 Base/프로젝트 작업은 실행안을 먼저 정해 두고 근거를 맞추지 않는다. `FULL_CURRENT_STATE_AUDIT_BEFORE_PLAN`에서 현재 요청에 실제 영향을 주는 범위를 먼저 복원한다.
 
@@ -34,13 +38,22 @@ latest user request
 → exact Project Notion Home + relevant human/AI-System surfaces
 → same-goal open/recent PR read-only reconciliation
 → confirmed decisions / current implementation / evidence
-→ benchmark + professional practice + success/failure cases
+→ Project Asset/Reference/Benchmark surfaces already approved or collected
+→ docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json + current adoption profile/matrix + REUSABLE_MODULE_REGISTRY
+→ Base accumulated knowledge/case/reference owners relevant to the current decision
+→ targeted cross-project verified implementation/pattern evidence only when the registry/profile/current bottleneck points to it
+→ benchmark + professional practice + success/failure cases only when decision-relevant
+→ owner-specific reuse/adapt/reference/no-reuse disposition
 → >= 3 materially distinct alternatives
 → Implementation Reality Gate
 → provisional best long-term option
 ```
 
 모든 파일을 무작정 읽는다는 뜻이 아니라 Registry·Documentation Map·프로젝트 정본으로 **이번 변경의 실제 owner와 영향 consumer를 빠짐없이 식별**한다. Base 자체 작업에서는 적용되는 Base/Notion surface를 읽고, 프로젝트 작업에서는 프로젝트 GitHub와 Project Notion Home을 함께 읽는다. open/draft/ready PR은 `OPEN_PR_READ_ONLY_BY_DEFAULT`로 확인하되 명시적 권한 없이 흡수·수정하지 않는다.
+
+`REUSE_FIRST_PREFLIGHT_REQUIRED`: 신규 또는 의미 있게 개정하는 시스템·메커닉·데이터/콘텐츠 구조·UI/UX·시각/Asset·도구/자동화·workflow·Skill/Eval·QA/Test는 신규 설계·제작 전에 위 source order를 실제로 확인한다. 현재 프로젝트에서 이미 해결된 구현·컴포넌트·Scene·Resource·자산·테스트가 있으면 그것이 첫 후보이고, 프로젝트의 승인된 Asset/Reference/Benchmark와 Base의 reuse handoff/profile/matrix/Registry 및 **Base accumulated knowledge/case/reference**를 fresh external research보다 먼저 확인한다. 다른 프로젝트는 모든 프로젝트를 전수 검색하지 않고 Registry/profile/current bottleneck이 가리키는 직접 관련 consumer만 targeted cross-project evidence로 확인한다.
+
+적용 대상에서 preflight가 `NOT_RUN`이면 신규 제작·custom design·`BUILD_NEW` readiness는 `BLOCKED_UNVERIFIED`다. 동일 승인 범위에서 이미 수행한 preflight의 scope·consumer·freshness가 변하지 않았으면 `REUSED_EVIDENCE`로 재사용할 수 있다. 오탈자·형식 정리처럼 새 설계/제작 판단이 없는 기계적 작업은 이유가 있는 `NOT_APPLICABLE`을 허용한다. Base나 타 프로젝트 후보는 프로젝트 정본·고유 경험을 덮어쓰지 않으며, 발견만으로 project adoption·Asset 승인·runtime proof가 되지 않는다. disposition은 해당 owner가 이미 가진 `REUSE / ADAPT / REFERENCE_ONLY / NO_REUSE / BUILD_NEW` 등 기존 어휘를 사용하고 새 공용 taxonomy를 만들지 않는다.
 
 `PRE_BUILD_BEFORE_AFTER_EXPECTED_EFFECT_REPORT`: 위 조사가 끝난 뒤 BUILD 전에 사용자에게 최소 다음을 한 묶음으로 보고한다.
 
@@ -64,7 +77,9 @@ latest user request
 
 `POST_BUILD_FULL_ADVERSARIAL_REVIEW_AND_PR_RECHECK`: 구현·문서·Notion 변경 뒤에는 결과가 “작성됐다”는 사실만 보지 않는다. 실제 변경 상태 전체를 `running-adversarial-review-and-refinement`의 완전한 개선 루프로 최소 5회, 이후 clean까지 다시 검토하고, 같은 Goal의 open/recent PR·current main·Notion readback·consumer/reference freshness·Implementation Reality evidence를 재확인한다. valid finding을 수정해 candidate가 바뀌면 수정 결과를 다시 전체 범위로 검토한다.
 
-이 Gate는 `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md`, `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`, `docs/CONFIRMED_DECISION_SYNC_POLICY.md`의 기존 owner를 재서술하는 새 정본이 아니라 intake에서 **그 owner들을 건너뛰지 못하게 만드는 실행 진입 계약**이다.
+`REUSE_LEARNING_HANDOFF_REQUIRED`: reuse-first가 적용된 작업의 종료에서는 `PROJECT_WORK_REUSE_HANDOFF.json`이 이미 정의한 `selected_modules / reuse_mode / project_paths_changed / verification_evidence / evidence_ceiling / rollback / project_only_lessons / base_promotion_candidates`를 평가한다. 실제 새 학습이 없으면 `NO_NEW_REUSE_LEARNING`으로 닫고 Registry/Notion/Base 문서 churn을 만들지 않는다. Base 승격은 기존 promotion gate와 실제 consumer/regression evidence를 통과한 경우에만 수행하며 프로젝트 전용 교훈은 프로젝트 owner에 남긴다.
+
+이 Gate는 `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md`, `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`, `docs/CONFIRMED_DECISION_SYNC_POLICY.md`와 reuse owner의 기존 계약을 재서술하는 새 정본이 아니라 intake에서 **그 owner들을 건너뛰지 못하게 만드는 실행 진입 계약**이다.
 
 `CONTINUATION_INTENT_ALIASES`는 `[연속작업] 진행해`뿐 아니라 이미 승인된 동일 계약에 대한 `진행해`, `계속해`, `남은 작업 진행` 같은 명확한 계속 실행 의도를 인식한다. 유효한 approval reference가 있을 때만 `APPROVED_CONTRACT_CONTINUATION`으로 `references/continuous-work-execution.md`를 적용해 남은 범위에 `CONTINUOUS_WORK_ACTIVE`를 결합한다. 이는 `PLAN / BUILD / REVIEW`를 대체하거나 새 범위를 승인하지 않으며, 사용자 전용 결정·미검증 차단·고위험 외부 행위의 확인 Gate를 제거하지 않는다. blocker가 생기면 즉시 전역 종료하지 않고 `recover → local defer → independent ready work → global stop last` 순서로 처리한다.
 
@@ -170,6 +185,7 @@ project_start_here:
 active_context:
 current_confirmed_decisions:
 project_notion_workspace:
+project_asset_reference_benchmark_surfaces:
 google_sheet_compatibility_source:
 related_open_and_recent_prs:
 documentation_map:
@@ -190,6 +206,11 @@ continuous_work_trigger:
 continuation_intent:
 continuous_work_state: CONTINUOUS_WORK_ACTIVE | CONTINUOUS_WORK_INACTIVE
 copy_integration_standing_authorization: BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16
+reuse_handoff:
+reuse_preflight_state: NOT_RUN | COMPLETE | REUSED_EVIDENCE | NOT_APPLICABLE
+reuse_preflight_evidence: []
+reuse_disposition:
+reuse_learning_handoff:
 existing_solution_inventory:
 existing_solution_disposition:
 existing_solution_evidence:
@@ -200,18 +221,21 @@ existing_solution_user_approval:
 
 1. 최신 사용자 지시
 2. 프로젝트 `AGENTS.md`, `START_HERE`, Active Context, Documentation Map
-3. `CURRENT_CONFIRMED_DECISIONS.md`, 동일 Goal의 열린·최근 병합 PR, 정확한 Project Notion workspace
-4. legacy Sheet에 UNIQUE 미이관 material이 실제 있을 때만 `google_sheet_compatibility_source`
-5. `docs/WORK_MODE_AND_SKILL_ROUTING.md`
-6. 현재 Issue·Plan·책임 원본과 실제 파일
-7. `SKILL_REGISTRY.json`
-8. 신규 MCP·addon·CLI·framework·Skill·Mode이면 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`와 Godot 평가 Skill
-9. L1 이상 지시문 작성 시 `references/first-prompt-direction-anchoring.md`
-10. 필요한 경우 `references/question-and-source-model.md`
-11. 종료 판정이 필요한 경우 `references/ambiguity-and-closure.md`
-12. Grill Me 정합성 확인과 핵심 결정 인터뷰가 필요한 경우 `references/grill-me-protocol.md`
-13. `CONTINUATION_INTENT_ALIASES`와 유효한 승인 계약이 함께 있으면 `references/continuous-work-execution.md`
-14. 작업 분해·순서화가 필요한 경우 `references/work-decomposition-and-sequencing.md`
+3. `CURRENT_CONFIRMED_DECISIONS.md`, 동일 Goal의 열린·최근 병합 PR, 정확한 Project Notion workspace와 승인/수집된 Asset/Reference/Benchmark
+4. `docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json`, current adoption profile/matrix, `REUSABLE_MODULE_REGISTRY.md`
+5. 현재 결정과 관련된 기존 Base knowledge/case/reference owner
+6. Registry/profile/current bottleneck이 가리키는 경우에만 직접 관련 다른 프로젝트의 검증된 implementation/pattern evidence
+7. legacy Sheet에 UNIQUE 미이관 material이 실제 있을 때만 `google_sheet_compatibility_source`
+8. `docs/WORK_MODE_AND_SKILL_ROUTING.md`
+9. 현재 Issue·Plan·책임 원본과 실제 파일
+10. `SKILL_REGISTRY.json`
+11. 신규 MCP·addon·CLI·framework·Skill·Mode이면 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`와 Godot 평가 Skill
+12. L1 이상 지시문 작성 시 `references/first-prompt-direction-anchoring.md`
+13. 필요한 경우 `references/question-and-source-model.md`
+14. 종료 판정이 필요한 경우 `references/ambiguity-and-closure.md`
+15. Grill Me 정합성 확인과 핵심 결정 인터뷰가 필요한 경우 `references/grill-me-protocol.md`
+16. `CONTINUATION_INTENT_ALIASES`와 유효한 승인 계약이 함께 있으면 `references/continuous-work-execution.md`
+17. 작업 분해·순서화가 필요한 경우 `references/work-decomposition-and-sequencing.md`
 
 ## Workflow
 
@@ -252,6 +276,23 @@ current environment inventory
 ```
 
 `existing_solution_disposition`이 없으면 `AWAITING_EXISTING_SOLUTION_REVIEW`다. `BUILD_NEW`는 대안으로 해결할 수 없는 차단 결함과 사용자 승인이 모두 있어야 하며, 없으면 custom design·code·PR을 만들지 않는다.
+
+### 1.6 Reuse-First Project Preflight
+
+새로 만들거나 의미 있게 바꾸는 시스템·메커닉·데이터/콘텐츠 구조·UI/UX·시각/Asset·도구/자동화·workflow·Skill/Eval·QA/Test는 tool-only Existing Solution First보다 넓은 `REUSE_FIRST_PREFLIGHT_REQUIRED`를 적용한다.
+
+```text
+current project authority + actual implementation/assets/tests
+→ Project Asset/Reference/Benchmark already approved or collected
+→ PROJECT_WORK_REUSE_HANDOFF + adoption profile/matrix + REUSABLE_MODULE_REGISTRY
+→ Base accumulated knowledge/case/reference relevant to this decision
+→ targeted cross-project verified evidence only when directly pointed to
+→ decision-relevant external benchmark/professional practice/success-failure cases
+→ owner-specific reuse/adapt/reference/no-reuse disposition
+→ new creation only for the unresolved gap
+```
+
+`NOT_RUN`은 신규 제작·`BUILD_NEW`를 차단한다. `REUSED_EVIDENCE`는 동일 승인 범위·같은 consumer·freshness 확인을 만족할 때만 쓴다. `NOT_APPLICABLE`은 새 설계 판단이 없는 기계적 변경에만 이유와 함께 사용한다. 재사용 때문에 프로젝트 고유 규칙·표현·플레이어 경험을 평준화하지 않는다.
 
 ### 2. Inspect repository facts
 
@@ -367,6 +408,7 @@ agreement_or_disagreement_reason:
 ## Continuous Work State
 ## 맥락·정본·실제 근거
 ## 목표 사용자·플레이어 경험
+## Reuse-First Preflight and Disposition
 ## Existing Solution Inventory and Disposition
 ## 작업 범위
 ## 제약·제외·보호 범위
@@ -469,7 +511,7 @@ google_sheet_compatibility_source: OPTIONAL_LEGACY_MIGRATION_INPUT
 ```text
 RECEIVED
 → ROUTED
-→ AWAITING_EXISTING_SOLUTION_REVIEW | PROMPT_DRAFTED
+→ AWAITING_REUSE_PREFLIGHT | AWAITING_EXISTING_SOLUTION_REVIEW | PROMPT_DRAFTED
 → READY | AWAITING_USER_CONFIRMATION
 → CONFIRMED | REUSED_APPROVAL
 → CONTRACT_READY
@@ -503,6 +545,11 @@ discipline_skills: []
 deferred_skills: []
 read_first: []
 actual_paths: []
+reuse_preflight_state: NOT_RUN | COMPLETE | REUSED_EVIDENCE | NOT_APPLICABLE
+reuse_preflight_evidence: []
+reuse_candidates: []
+reuse_disposition:
+reuse_learning_handoff:
 existing_solution_inventory: []
 existing_solution_disposition:
 existing_solution_evidence: []
@@ -532,6 +579,8 @@ remaining_unknowns: []
 - 사용자가 Skill을 선언하지 않아도 trigger 기반으로 Work Mode·최소 Skill·Skill Mode를 자동 선택했다.
 - 같은 요청의 수준·분야·범위를 여러 Skill에서 다시 판정하지 않았다.
 - 저장소 사실과 사용자 판단이 구분됐다.
+- 적용 대상이면 `REUSE_FIRST_PREFLIGHT_REQUIRED`로 현재 프로젝트 → Project Asset/Reference/Benchmark → Base reuse + accumulated knowledge/case/reference → targeted cross-project → decision-relevant external benchmark 순서를 확인하고 disposition을 남겼다.
+- 적용 대상의 `reuse_preflight_state`가 `NOT_RUN`인 채 신규 제작·`BUILD_NEW`로 이동하지 않았다. `REUSED_EVIDENCE`와 `NOT_APPLICABLE`은 각각 동일 범위 freshness와 기계적 변경 근거를 남겼다.
 - 신규 실행 기술이면 current environment와 external alternative를 조사하고 `existing_solution_disposition`을 기록했다.
 - `BUILD_NEW`이면 대안으로 해결 불가능한 결함과 사용자 승인이 있다.
 - 모든 L1 이상 지시문 작성에서 `first-prompt → contract → clarify`가 실행됐다.
@@ -544,6 +593,7 @@ remaining_unknowns: []
 - `USER_APPROVAL_BEFORE_BUILD` 또는 유효한 기존 approval reference가 확인됐다.
 - 승인된 사람이 봐야 할 결정은 `APPROVED_DECISION_GITHUB_NOTION_SYNC_DURING_WORK`로 repository/Notion에 필요한 시점에 동기화되고 readback됐다.
 - BUILD 뒤 `POST_BUILD_FULL_ADVERSARIAL_REVIEW_AND_PR_RECHECK`로 전체 결과·PR·main·Notion·consumer를 다시 검토했다.
+- reuse-first가 적용된 작업 종료에서 `REUSE_LEARNING_HANDOFF_REQUIRED`를 평가했고, 새 학습이 없으면 `NO_NEW_REUSE_LEARNING`으로 종료해 억지 Base churn을 만들지 않았다.
 - 권장안이 있으면 사용자안과 AI 최초안에 동일한 평가 기준·대안·반증·위험·되돌리기 난이도를 적용했다.
 - Grill Me alignment gate 또는 유효한 approval reference가 실행 전에 확인됐다.
 - 기존 승인 계약에는 중복 질문하지 않았다.
@@ -562,6 +612,12 @@ remaining_unknowns: []
 - Work Mode와 Skill Mode를 같은 개념으로 혼용함
 - 전체 skills 폴더를 기본 로드함
 - trigger 없이 임의로 Skill을 호출함
+- 적용 대상 신규 설계·제작에서 `REUSE_FIRST_PREFLIGHT_REQUIRED`를 생략하거나 `NOT_RUN`인데 신규 제작·`BUILD_NEW`로 이동함
+- Base Registry/profile가 좁은 consumer를 가리키는데도 모든 프로젝트를 전수 검색해 비용·context를 불필요하게 늘림
+- Project Asset/Reference/Benchmark 또는 Base accumulated knowledge/case/reference를 확인하지 않고 같은 내용을 외부에서 처음부터 재조사함
+- stale/다른 범위 evidence를 `REUSED_EVIDENCE`로 재사용하거나 설계 판단이 있는데 `NOT_APPLICABLE`로 우회함
+- 후보 발견을 project adoption·Asset 승인·runtime proof로 승격함
+- reuse-first 적용 작업 종료에서 `REUSE_LEARNING_HANDOFF_REQUIRED`를 생략하거나 새 학습이 없는데 Registry churn을 만듦
 - 현재 사용 도구·connected MCP·addon·관련 PR 조사 없이 custom MCP/addon/Skill/framework 설계 시작
 - `existing_solution_disposition` 또는 사용자 승인 없이 `BUILD_NEW`
 - L1 이상 지시문을 intake·좋은 프롬프트 변환 없이 바로 작성하거나 실행함
