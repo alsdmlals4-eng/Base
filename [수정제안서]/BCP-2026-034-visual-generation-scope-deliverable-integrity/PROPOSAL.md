@@ -8,10 +8,11 @@
 - 프로젝트 post-merge main: `4219f4e5e342c09024190e3fdaefa7a20051c988` · PR #177
 - 문제→교훈 owner: `docs/knowledge/2026-08-25-visual-iteration-problem-lessons.md`
 - 제출일: `2026-08-25`
-- 상태: `SUBMITTED`
-- 사용자 promotion intent: 2026-08-25 현재 작업에서 사용자가 "인수인계 진행하자 ... Base 승격, 문제-교훈 자료도 잘 올려줘"라고 명시했다.
-- lifecycle boundary: 신규 proposal은 이 PR에서 `SUBMITTED`로만 등록한다. 승인 상태 변경과 active Base 구현은 proposal 병합 뒤 각각 별도 lifecycle 단계에서 수행한다.
-- ID collision note: current Base open PR #693/#679가 BCP-033을 이미 사용하므로 본 current-task proposal은 open-workstream ownership을 침범하지 않기 위해 BCP-034로 배정한다.
+- proposal PR: `https://github.com/alsdmlals4-eng/Base/pull/711` · merged as `04bf4f216aed42ae9ee18f83e7eecde6f6bd4430`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 사용자 승인 근거: 2026-08-25 현재 작업에서 사용자가 "인수인계 진행하자 ... Base 승격, 문제-교훈 자료도 잘 올려줘"라고 명시했다.
+- approval ref: `[수정제안서]/BCP-2026-034-visual-generation-scope-deliverable-integrity/PROPOSAL.md#승인과-구현 (2026-08-25 current task user instruction; proposal PR #711 merged)`
+- ID collision note: Base open PR #693/#679가 BCP-033을 이미 사용하므로 본 workstream은 BCP-034를 사용한다. 해당 PR은 계속 READ_ONLY다.
 
 ## 관찰과 증거
 
@@ -42,7 +43,7 @@ Switchy Express의 2026-08-25 Visual GDD/이미지 반복 작업에서 다음 �
 - `NOTION_APPROVED_ORIGINAL_FIRST_GATE`: 승인 visual의 original-first 보존과 preview/evidence 경계를 관리한다.
 - Base evidence discipline: mock/자동 검증을 실제 사람·기기·runtime 증거로 과장하지 않는다.
 
-따라서 본 제안은 위 계약을 복제하지 않는다. 새로 공용화할 좁은 gap은 다음 세 가지다.
+따라서 본 제안은 위 계약을 복제하지 않는다. 공용화할 좁은 gap은 다음 세 가지다.
 
 1. 이미지 생성 **scope fidelity**를 결과 acceptance에 명시적으로 연결하는 규칙.
 2. 사용자의 **N장 batch = N independent deliverables** 기본 해석.
@@ -124,51 +125,62 @@ Base에 승격하지 않는다.
 
 ## 영향 범위와 검증
 
-신규 Skill/Tool/service를 만들지 않는다.
-
-승인될 경우의 권장 최소 구현 후보:
+승인된 최소 구현 범위:
 
 1. `skills/auditing-and-refining-ui-art/SKILL.md`
-   - visual task scope acceptance
-   - decision-critical semantic redundancy recovery gate
-   - batch-independent deliverable 규칙
+   - bounded visual 작업의 `VISUAL_TASK_SCOPE_FIDELITY`
+   - `BATCH_COUNT_MEANS_INDEPENDENT_DELIVERABLES`
+   - 기존 state redundancy 규칙을 보존하면서 decision-critical visual recovery에서 `DECISION_CRITICAL_VISUAL_SEMANTIC_REDUNDANCY`를 명시
 2. `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`
-   - image generation/Visual GDD delivery에서 visual question + excluded scope + independent batch output를 기록
-3. focused regression test 1개
-   - 위 세 계약과 BCP provenance를 검증
-4. 문제→교훈 case 1개
-   - Switchy 프로젝트 값은 제거하고 문제/복구/반례/evidence ceiling만 남김
+   - bounded image generation / Visual GDD delivery에서 `visual_question / target_screen / target_state / excluded_scope` 기록
+   - N장 요청의 independent-deliverable 기본값 기록
+   - 승인 후 current original-first/readback gate를 그대로 적용
+3. 공용 problem→lesson case 1개 + 기존 case index의 최소 discoverability 갱신
+4. focused regression test 1개 또는 책임 owner별 최소 테스트
 
-Proposal 단계 검증:
+명시적 제외:
 
-- Base change proposal validator PASS
-- docs/core proposal-contract regression PASS
-- current Base main과 behind/conflict 재확인
-- 프로젝트 전용 값 누출 없음
-- BCP-032/original-first owner 중복 없음
+- 신규 Skill / Tool / dependency / service / dashboard
+- BCP-032의 Notion preview fallback/readback 계약 재구현
+- `NOTION_APPROVED_ORIGINAL_FIRST_GATE` 약화 또는 low-res preview를 canonical original로 승격
+- Switchy-specific style, palette, character, exact batch count, asset/Candidate ID
+- 실제 게임/runtime/프로젝트 변경
 
-### 5-pass adversarial review snapshot
+검증:
 
-1. **중복:** Base에는 상태 semantic redundancy/readback/original-first는 있으나 image-generation scope fidelity와 N-independent-deliverable 계약은 명시적 gap이 있다.
-2. **과잉 일반화:** Switchy 스타일·색·3장 숫자·Candidate/asset ID는 제외한다.
-3. **증거 한계:** 실제 player comprehension 개선은 미검증이며 방법론/guardrail만 제안한다.
-4. **비용/복잡도:** 신규 Skill/Tool 없이 기존 UI/Visual owner의 additive rule을 우선한다.
-5. **롤백/충돌:** proposal은 `[수정제안서]/**`만 포함하고 active owner 구현은 별도 승인/PR로 분리한다.
+- 구현은 별도 fresh-main branch/PR에서 TDD RED → GREEN
+- current Base relevant full regression
+- exact-head CI
+- 최소 5회 whole-state adversarial review
+- proposal/source provenance와 approval scope readback
 
-현재 proposal review finding: 새 blocking finding `0`.
+## Proposal review — 2026-08-25
+
+최소 5회 whole-state proposal review 결과:
+
+1. **Source evidence:** project PR #177의 corrected exact head와 merge/readback, Notion attachment/content readback이 존재하며 runtime/human-visible 범위를 분리했다.
+2. **Generalization boundary:** Switchy art style·캐릭터·색·73 PNG·Candidate ID·정확한 `3장` 수치는 Base 범위에서 제외했다.
+3. **Existing owner reuse:** state readability는 기존 `auditing-and-refining-ui-art`, visual delivery/readback은 BCP-032 및 current original-first owner에 흡수 가능하며 새 Skill/도구가 필요 없다.
+4. **Counterexamples/evidence ceiling:** broad moodboard, meaningful collage, true style replacement, semantic overload 반례를 보존하고 사람 이해/접근성 개선은 미검증으로 둔다.
+5. **Lifecycle/rollback/concurrency:** proposal #711은 `SUBMITTED`로 먼저 병합했고, approval은 proposal-only 변경으로 분리하며 open BCP-033 workstreams는 수정하지 않는다. 구현은 별도 PR로 rollback 가능하다.
+
+새 blocking finding: `0`.
+
+검토 판정: `APPROVED_FOR_IMPLEMENTATION`.
 
 ## 필요한 도구·파일·권한
 
-- GitHub repository proposal branch/PR
-- source project의 current handoff/problem→lesson evidence
-- Base current UI/Visual/Notion owner read access
+- GitHub repository approval/implementation branches and PR workflow
+- source project current handoff/problem→lesson evidence read access
+- Base current UI/Visual/Notion owner read/write access for the later approved implementation PR
 - 신규 도구·서비스·추가 금전 비용 없음
-- active Base owner write는 proposal 단계에서 사용하지 않는다.
+- force push/admin/ruleset bypass 불필요
 
 ## 승인과 구현
 
-- 사용자 promotion intent: 2026-08-25 Switchy Express closeout 작업에서 "Base 승격, 문제-교훈 자료도 잘 올려줘"라고 명시했다.
-- **현재 lifecycle 상태는 `SUBMITTED`**다. 신규 제안 첫 PR에서 `APPROVED_FOR_IMPLEMENTATION`으로 점프하지 않는다.
-- proposal PR 병합 후 current Base에서 별도 status-review PR을 만들고, 현재 사용자 지시를 재현 가능한 approval evidence로 기록하여 `APPROVED_FOR_IMPLEMENTATION` 이동 여부를 검증한다.
-- active Base 구현은 승인 상태와 비어 있지 않은 `approval_ref`가 확인된 뒤 **또 다른 별도 implementation PR**에서만 수행한다.
-- rollback: proposal 단계는 BCP directory + registry entry만 revert한다.
+- 사용자 승인 근거: `2026-08-25 Switchy Express closeout current task — "Base 승격, 문제-교훈 자료도 잘 올려줘"` 및 이후 `진행해` continuation.
+- proposal PR: `https://github.com/alsdmlals4-eng/Base/pull/711` · merged as `04bf4f216aed42ae9ee18f83e7eecde6f6bd4430`.
+- 검토 판정: `APPROVED_FOR_IMPLEMENTATION`.
+- `approval_ref`: `[수정제안서]/BCP-2026-034-visual-generation-scope-deliverable-integrity/PROPOSAL.md#승인과-구현 (2026-08-25 current task user instruction; proposal PR #711 merged)`.
+- 구현 PR: `없음 — approval merge 뒤 fresh main에서 별도 TDD PR`.
+- 롤백: approval은 proposal/registry status revert; 구현은 owner/case/test additive 변경을 implementation PR 단위로 revert.
