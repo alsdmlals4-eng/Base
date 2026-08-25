@@ -37,6 +37,7 @@
 | `TEN_PACES_OPTIONAL_HIGHLIGHT_VERTICAL_SLICE_CASE.md` | 십보강호 | 선택적 하이라이트와 정상 완주 경로를 함께 검증 | 채택·구현 전 검증 필요 |
 | `TETRIS_IMAGE_ARTIFACT_CARDINALITY_AND_CONNECTOR_READBACK_CASE.md` | Tetris 이미지 작업 | 독립 산출물 수량 계약, connector 재탐색/readback, style anchor·승인/폐기 분리 | 부분 검증 |
 | `AI_VISUAL_CONTINUITY_AND_NOTION_PREVIEW_FALLBACK_CASE.md` | 닌자서바이벌 Hybrid Visual closeout | 지속 캐릭터 identity + additive visual layers, Notion low-res preview fallback | 패턴·부분 검증 |
+| `AI_VISUAL_SCOPE_AND_BATCH_INTEGRITY_CASE.md` | BCP-2026-035 프로젝트 실행 교훈 | bounded visual scope, 독립 deliverable 수량, decision-critical semantic redundancy | 패턴·사람/실기기 검증 전 |
 
 ## OMENWARD 사례
 
@@ -66,6 +67,8 @@
 | Base 공용 원칙과 프로젝트 전용 결과가 분리되지 않음 | `BASE_PROJECT_BIDIRECTIONAL_LEARNING_CASE.md` |
 | 하나의 주인공이 여러 계열 특징을 누적하며 캐릭터 identity가 흔들림 | `AI_VISUAL_CONTINUITY_AND_NOTION_PREVIEW_FALLBACK_CASE.md` |
 | Notion connector에 local binary 입력이 없지만 durable low-res preview가 필요 | `AI_VISUAL_CONTINUITY_AND_NOTION_PREVIEW_FALLBACK_CASE.md` |
+| bounded visual 요청이 broad dashboard·unrelated screen으로 drift함 | `AI_VISUAL_SCOPE_AND_BATCH_INTEGRITY_CASE.md` |
+| 판단에 중요한 경로·상태가 art/background와 경쟁함 | `AI_VISUAL_SCOPE_AND_BATCH_INTEGRITY_CASE.md` |
 | 내부 난도·성장 정보를 몰입을 해치지 않고 전달 | `DIEGETIC_OPPONENT_INFORMATION_CASE.md` |
 | 규칙·UI·연출·QA가 같은 결과를 서로 다르게 설명 | `TEN_PACES_RULE_PRESENTATION_TRACEABILITY_CASE.md` |
 | 대표 하이라이트가 미획득 경로의 진행을 막음 | `TEN_PACES_OPTIONAL_HIGHLIGHT_VERTICAL_SLICE_CASE.md` |
@@ -74,7 +77,7 @@
 | 캐릭터 정체성을 유지하며 윙크·미소·시선을 편집 | `FACS_EXPRESSION_EDITING_PROMPT_CASE.md` |
 | 캐릭터 포스터·상세 페이지를 다른 캐릭터에도 재사용 | `CHARACTER_PROMO_POSTER_LAYOUT_CASE.md` |
 | 반복 도구를 CLI/TUI/GUI 중 무엇으로 노출할지 결정 | `AGENT_GENERATED_UI_SURFACE_SELECTION_CASE.md` |
-| 여러 독립 이미지/파일 요청이 합본 산출물로 섞임 | `TETRIS_IMAGE_ARTIFACT_CARDINALITY_AND_CONNECTOR_READBACK_CASE.md` |
+| 여러 독립 이미지/파일 요청이 합본 산출물로 섞임 | `AI_VISUAL_SCOPE_AND_BATCH_INTEGRITY_CASE.md`, `TETRIS_IMAGE_ARTIFACT_CARDINALITY_AND_CONNECTOR_READBACK_CASE.md` |
 | 이전에 성공한 connector 작업을 불가로 오판하거나 write 후 실제 반영을 확인하지 않음 | `TETRIS_IMAGE_ARTIFACT_CARDINALITY_AND_CONNECTOR_READBACK_CASE.md` |
 | 새 채팅에서 style/reference/handoff가 stale 상태와 충돌 | `TETRIS_IMAGE_ARTIFACT_CARDINALITY_AND_CONNECTOR_READBACK_CASE.md`, `OMENWARD_CANONICAL_HANDOFF_CONTEXT_CASE.md` |
 | 화면에 정보가 많아 현재 행동이 묻힘 | `URBAN_LEGEND_SCENE_FIRST_UI_CASE.md` |
