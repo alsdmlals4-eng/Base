@@ -12,6 +12,7 @@ NOT_RUN_MANDATORY_GATE_BLOCKS_COMPLETION
 INTERMEDIATE_REPORT_SUPPRESSION_IS_NOT_WORK_REDUCTION
 GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY
 REASONING_EFFORT_IS_NOT_WORK_EVIDENCE
+REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF
 GPT_NONCODING_PROJECT_OWNER
 GPT_BASE_NOTION_GOVERNANCE_OWNER
 CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER
@@ -138,6 +139,7 @@ RESEARCH
 → IMPLEMENTATION_CORRECTION_RESCAN
 → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
 → SAME FINAL POST_CHANGE_MONITOR_LOOP
+→ CONTINUE same final-state lineage WITH POSTMERGE EVIDENCE UNTIL CLEAN_REVIEW_EXIT
 → FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
 ```
 
@@ -150,6 +152,8 @@ L1 이상 또는 조사·벤치마킹·검토·구현·검증을 명시한 요�
 `NOT_RUN_MANDATORY_GATE_BLOCKS_COMPLETION`: 필수 evidence가 `NOT_RUN`이면 완료가 아니다. `BLOCKED_UNVERIFIED`와 해제 조건을 기록하고 독립 가능한 작업은 계속한다.
 
 `GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY`: GPT는 prose-only가 아니다. Base/Notion/문서/표/이미지/검증 인프라를 실제 도구로 수정·검증한다. 다만 실제 게임 프로젝트의 Godot 제품 구현 owner는 Codex다.
+
+`REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF`: 현재 GPT 세션의 연결 도구로 수행할 수 있는 **Base/Notion/문서/검증 인프라의 필수 read/write/test/readback**은 실제로 실행한다. Codex가 별도 실행자로 존재하는지와 혼동해 GPT-owned 필수 작업을 `NOT_RUN`으로 미루지 않는다. 실제 Godot 제품 구현만 별도의 Codex handoff 경계를 따른다.
 
 ## 5. `DIRECTION_FIRST`
 
@@ -266,7 +270,7 @@ FOLLOW_UP_TARGET_IS_MERGED_MAIN
 
 ### `RELEASE_NEAR_VERTICAL_SLICE_FIRST`
 
-기획·검수 뒤 첫 인간 플레이 테스트는 짧더라도 실제 출시 의도에 가까운 Vertical Slice를 대상으로 한다.
+기획·검수 뒤 첫 인간 플레이 테스트는 짧더라도 실제 출시 의도에 가까운 Vertical Slice를 대상으로 한다. 이 Slice의 UI·이미지·오디오·VFX·시스템은 단순 throwaway mock이 아니라 **실제 게임 사용 후보**를 우선해 전체 경험을 검증한다.
 
 ```text
 GAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE
@@ -355,6 +359,8 @@ FULL_SCOPE_REVIEW
 → CLEAN_REVIEW_EXIT
 ```
 
+병합 전 검토와 postmerge readback은 서로 다른 완료를 과장하기 위한 중복 cycle이 아니다. 마지막 교정부터 merge/postmerge 증거까지 **same final-state lineage**로 이어지는 동일 상태를 계속 공격·검증한다.
+
 `CLEAN_REVIEW_EXIT`에는 새 유효 오류·충돌·누락·blocking finding 0, 정본/owner/consumer/reference 충돌 0, acceptance failure 0, 회귀 0, evidence ceiling 위반 0이 필요하다.
 
 ## 15. 비용 경계
@@ -377,7 +383,7 @@ Notion은 Free 범위를 기본으로 하고 새 유료 API/SaaS/runner/compute/
 
 ### `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`
 
-병합 뒤 새 main과 Notion을 readback하고 전체 승인 범위를 재공격한다. 유효 finding은 `POSTMERGE_CORRECTION_REQUIRED`로 처리하고 `PROGRESS_READBACK_REQUIRED`에 따라 남은 작업을 다시 계산한다.
+병합 뒤 새 main과 Notion을 readback하고 전체 승인 범위를 재공격한다. 유효 finding은 `POSTMERGE_CORRECTION_REQUIRED`로 처리하고 `PROGRESS_READBACK_REQUIRED`에 따라 남은 작업을 다시 계산한다. 이 검증은 premerge 마지막 교정과 **same final-state lineage**를 유지한다.
 
 ## 17. 완료 조건
 
