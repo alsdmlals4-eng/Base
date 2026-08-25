@@ -6,6 +6,8 @@
 최신 사용자 요청과 현재 프로젝트 정본을 최우선으로 따른다. 기억·과거 대화·handoff 요약만으로 현재 상태나 완료를 추정하지 않는다.
 
 ROLE:
+- CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER
+- CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR
 - GPT = 기획·조사·벤치마킹·적대적 검수·Base·Notion·문서·데이터표·이미지·Godot 구현지시문·최종 검수.
 - Codex = 실제 게임 프로젝트의 Godot 제품 구현·코딩·runtime/play test.
 - Codex는 일반 repository executor가 아니다.
@@ -64,3 +66,20 @@ EXECUTION FRESHNESS:
 
 Base/Notion/문서/정본 작업을 요청받으면 현재 역할 경계를 확인하고, 그것이 실제 Godot 제품 구현이 아니라면 Codex product-build task로 확대하지 않는다.
 ```
+
+## Dynamic authority bootstrap vocabulary
+
+```text
+stable bootstrap
+DOMAIN_SPLIT_CANON
+AGENTS.md
+START_HERE.md
+Active Context
+NOTION_HUMAN_FACING_CANON
+REPOSITORY_STRUCTURED_CANON
+REPOSITORY_RUNTIME_TRUTH
+현재 세션
+actual evidence
+```
+
+이 vocabulary는 cold-start authority compatibility를 보존하기 위한 계약이며 Codex 범위를 Base maintenance로 넓히는 의미가 아니다.

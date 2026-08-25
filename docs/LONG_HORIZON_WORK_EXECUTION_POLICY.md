@@ -192,7 +192,7 @@ DIRECT_GENRE_BEST_IN_CLASS
 
 `FUN_HYPOTHESIS`와 실제 player evidence를 분리한다. 재미 PASS는 실제 사람 플레이 evidence 전에는 주장하지 않는다.
 
-`BETTER_ALTERNATIVE_SEARCH`와 `LONG_TERM_PLAN_FIT_REQUIRED`를 매 중요 checkpoint에서 재확인한다. 최종 보고에는 왜 현재 후보 중 **장기적으로 최선**인지와 재검토 조건을 남긴다.
+`BETTER_ALTERNATIVE_SEARCH`는 최초 권장안을 보호하지 않는다. 새 증거가 생기면 **장기적으로 더 강한 방안**인지 다시 비교한다. `LONG_TERM_PLAN_FIT_REQUIRED`를 매 중요 checkpoint에서 재확인하고 최종 보고에는 왜 현재 후보 중 **장기적으로 최선**인지와 재검토 조건을 남긴다.
 
 ## 7. 구현 전 Gate
 
@@ -332,6 +332,12 @@ GPT generate / edit / review
 
 Codex는 이미지 생성·생성형 편집·임의 AI placeholder를 만들지 않는다. 부족하면 `GPT_VISUAL_REQUEST`다.
 
+## 13A. Legacy 흡수·검증·제거
+
+`LEGACY_ABSORB_VERIFY_REMOVE`: 더 이상 사용하지 않는 Figma, 전용 local visual Tool/Hub, QA Evidence Studio, external HTML workspace, Google Sheets 같은 구형 surface는 `UNIQUE / DUPLICATE / OBSOLETE`로 한 번 분류한다. UNIQUE한 규칙·데이터·증거·재사용 원리만 현재 Notion/repository owner로 흡수하고 destination readback·consumer 확인 뒤 active route에서 retirement한다.
+
+`PAID_PLAN_GATE`: 현재 기본 유료 플랜은 **GPT Pro** 하나다. Notion은 Free 범위를 기본으로 하며 별도 API credit·SaaS·runner·compute/storage는 **새 사용자 승인** 전 도입하지 않는다.
+
 ## 14. 적대적 검토 종료 조건
 
 `ADVERSARIAL_REVIEW_UNTIL_CLEAN`은 **최소 5회 floor + 이후 clean-exit**다.
@@ -403,6 +409,10 @@ incident / solution
 ```
 
 한 번의 성공을 즉시 새 Skill·local tool·SaaS 권위로 승격하지 않는다.
+
+## 18A. 사용자 학습형 완료보고
+
+최종 보고는 파일 목록이 아니라 `작업 전 → 개선된 기능 → 실제 사용 예 → 기대효과 → 아직 개선되지 않은 범위`를 사람이 이해할 수 있게 설명한다.
 
 ## 19. 현재 한 줄
 

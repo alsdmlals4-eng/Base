@@ -249,8 +249,9 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         for token in (
             "ADVERSARIAL_REVIEW_UNTIL_CLEAN",
             "CLEAN_REVIEW_EXIT",
-            "GPT_FIRST_PLANNING_AND_REVIEW",
-            "OPTIONAL_CODEX_EXECUTOR",
+            "GPT_BASE_NOTION_GOVERNANCE_OWNER",
+            "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
+            "CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR",
             "RELEASE_NEAR_VERTICAL_SLICE_FIRST",
             "SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE",
             "LEGACY_ABSORB_VERIFY_REMOVE",
@@ -258,8 +259,9 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         ):
             self.assertIn(token, policy if token not in ("CLEAN_REVIEW_EXIT",) else policy + adversarial + agents)
         self.assertIn("사용자 학습형 완료보고", agents)
-        self.assertIn("GPT_FIRST_PLANNING_AND_REVIEW", codex)
-        self.assertIn("OPTIONAL_CODEX_EXECUTOR", codex)
+        self.assertIn("GPT_BASE_NOTION_GOVERNANCE_OWNER", codex)
+        self.assertIn("CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER", codex)
+        self.assertIn("CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR", codex)
         self.assertIn("RELEASE_NEAR_VERTICAL_SLICE_FIRST", visual)
         self.assertIn("SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE", visual)
         self.assertNotIn("VISUALIZED_POC_BEFORE_DEMO_TEST", visual)

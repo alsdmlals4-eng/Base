@@ -44,6 +44,15 @@ Godot 제품 구현 있음
 → GPT REVIEW
 ```
 
+## 2A. Owner classification literal
+
+```text
+BASE / NOTION / PLANNING / DOC / VISUAL → GPT
+ACTUAL GODOT PRODUCT IMPLEMENTATION → Codex
+```
+
+이 분류는 파일 확장자가 아니라 제품 책임을 기준으로 한다.
+
 ## 3. Codex Trigger
 
 Codex는 다음에만 기본 진입한다.

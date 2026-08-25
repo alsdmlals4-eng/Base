@@ -362,3 +362,23 @@ GPT는 Codex 결과를 다음 기준으로 검수한다.
 - Codex가 이미지 생성
 
 현재 정본은 **`GPT = 비코딩·기획·검수·Base·Notion·Visual`, `Codex = 실제 게임 프로젝트의 Godot 제품 구현·코딩`**이다.
+
+
+## 16. Consumer compatibility vocabulary
+
+```text
+Base Python test, CI contract, Registry/generated checker = GPT-owned Base governance
+Base/Notion work not Codex trigger
+actual game-project Godot product implementation = Codex product-build trigger
+CODEX_PREFLIGHT_OPTIONAL
+PLAN_REVIEW_ONLY
+CONTINUOUS_WORK_EXECUTOR_HANDOFF
+DEFERRED_EXTERNAL_EXECUTOR
+APPROVED_ITEM_INHERITS_MERGE_AUTHORITY
+AUTO_MERGE_AFTER_REQUIRED_CHECKS
+AGENT_MERGE_REQUIRED
+REPOSITORY_STRUCTURED_CANON
+NOTION_HUMAN_FACING_CANON
+```
+
+이 vocabulary는 기존 consumer가 안전 의미를 잃지 않도록 유지하는 호환 계약이다. `CODEX_PREFLIGHT_OPTIONAL`은 고위험 Godot 제품 구현의 선택적 read-only technical preflight다. `CONTINUOUS_WORK_EXECUTOR_HANDOFF`와 `DEFERRED_EXTERNAL_EXECUTOR`는 실제 Godot product task에만 적용하며 Base/Notion task를 Codex로 넘기는 뜻이 아니다. `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`, `AUTO_MERGE_AFTER_REQUIRED_CHECKS`, `AGENT_MERGE_REQUIRED`의 exact-head/review/ruleset 병합 안전성은 유지한다.

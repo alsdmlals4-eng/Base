@@ -36,6 +36,8 @@ CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR
 
 Base 내부에 `.py`, `.json`, workflow, checker가 있어도 Codex 작업으로 넘기지 않는다.
 
+`Base Python contract test·Registry/generated·CI policy` 역시 GPT-owned Base maintenance다.
+
 Codex는 이 Prompt가 다루는 Base repository 자체를 구현하는 worker가 아니다. 별도의 **게임 프로젝트에 실제 Godot 제품 구현이 필요해졌을 때만** 그 프로젝트용 Codex Godot Work Instruction을 작성한다.
 
 ## 1. Part 시작 절차
@@ -293,6 +295,10 @@ python tools/check_base_partition_scope.py --coordinator --base <BASELINE_SHA> -
 ## Clean exit token
 
 최소 5회 full-scope loop 이후 blocker·회귀·acceptance·정본·evidence 문제가 0이어야 `CLEAN_REVIEW_EXIT`다.
+
+## 사용자 학습형 완료보고
+
+최종 보고는 `작업 전 → 개선된 기능 → 실제 사용 예 → 기대효과 → 아직 개선되지 않은 범위`를 중심으로 사람이 이해할 수 있게 설명한다.
 
 ## 현재 역할 한 줄
 

@@ -48,7 +48,7 @@ BASE_NOTION = GPT
 CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR
 ```
 
-Base의 Python test, Registry/generated checker, CI workflow가 코드라는 이유로 Codex에 넘기지 않는다.
+Base의 Python test, Registry/generated checker, CI workflow가 코드라는 이유로 Codex에 넘기지 않는다. `Base Python tests, Registry/generated/CI`는 GPT-owned Base maintenance다.
 
 Codex가 등장하는 경우는 Base maintenance 자체가 아니라, **별도의 실제 게임 프로젝트에서 Godot 제품 구현 task가 생성됐을 때**다.
 
@@ -244,6 +244,19 @@ NO_NEW_REUSABLE_LESSON
 ```
 
 Source 발견 자체를 정본 승격으로 보지 않는다.
+
+## 대안 검토
+
+### A · 9개 별도 채팅 유지
+Context 재수화와 handoff 관리비가 커서 **REJECT**.
+
+### B · 한 coordinator 채팅
+Part별 semantic checkpoint와 rollback을 유지하면서 한 GPT coordinator가 순차 처리한다. **ADOPT**. 새 Part 채팅을 9개 만들지 않는다.
+
+### C · Part 자체 제거
+책임·학습·source coverage가 흐려져 **REJECT**.
+
+`BETTER_ALTERNATIVE_SEARCH`와 `LONG_TERM_PLAN_FIT_REQUIRED`를 유지하고, 동시작업·context 규모·Part 결합도가 달라지면 **재검토**한다.
 
 ## Final Integration
 
