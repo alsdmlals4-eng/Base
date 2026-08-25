@@ -358,6 +358,27 @@ class CanonicalReferenceFreshnessTests(unittest.TestCase):
         ):
             self.assertIn(marker, focused)
 
+    def test_reuse_first_preflight_has_a_recognized_freshness_companion(self) -> None:
+        live_config = json.loads((ROOT / ".github/reference-freshness.json").read_text(encoding="utf-8"))
+        rule = next(
+            item
+            for item in live_config["coupled_change_rules"]
+            if item["name"] == "local-skill-contract-learning-test-sync"
+        )
+        self.assertIn("tests/test_reference_freshness.py", rule["require_any_changed"])
+
+        focused = (ROOT / "tests/test_reuse_first_preflight_enforcement.py").read_text(
+            encoding="utf-8"
+        )
+        for marker in (
+            "REUSE_FIRST_PREFLIGHT_REQUIRED",
+            "REUSE_LEARNING_HANDOFF_REQUIRED",
+            "BASE_ACCUMULATED_KNOWLEDGE_CASE_REFERENCE",
+            "TARGETED_CROSS_PROJECT_VERIFIED_EVIDENCE",
+            "NO_NEW_REUSE_LEARNING",
+        ):
+            self.assertIn(marker, focused)
+
     def test_repository_freshness_skill_declares_verified_successor_state_contract(self) -> None:
         skill = (ROOT / "skills/auditing-canonical-reference-freshness/SKILL.md").read_text(
             encoding="utf-8"
