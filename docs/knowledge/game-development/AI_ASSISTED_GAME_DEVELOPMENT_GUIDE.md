@@ -317,7 +317,7 @@ ZERO_INCREMENTAL_COST_REQUIRED
 
 가능한 경우 기록한다.
 
-- 모델/도구/버전
+- 모델·도구·버전
 - 날짜
 - Prompt/Context Pack version
 - GitHub branch/commit
