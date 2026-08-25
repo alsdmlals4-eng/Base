@@ -2,7 +2,7 @@
   "schema_version": 1,
   "artifact_role": "BASE_V9_4_4_COMPATIBILITY_RELEASE_LOCK",
   "release_line": "v9.4.4",
-  "release_state": "TRUSTED_EVIDENCE_PENDING",
+  "release_state": "BASE_RELEASED",
   "repository": "alsdmlals4-eng/Base",
   "release_issue": 670,
   "source_pr": 669,
@@ -13,7 +13,7 @@
     "release_evidence_commit": "da33a350d61b8adc52df97fccc7001708a933370"
   },
   "candidate_release_commit": "210ec78292fa12ed7563ba743b322dd36103ae4a",
-  "candidate_release_evidence_commit": null,
+  "candidate_release_evidence_commit": "bb61e68dc3028421b60c11b87ba2abd297ee6f78",
   "candidate_registry": {
     "path": "skills/SKILL_REGISTRY.json",
     "sha256": "08f882d0c77339e8f7ff187c35b79501e0a2958ab1ff1c7aaa1c0ef8dbee45d6",
