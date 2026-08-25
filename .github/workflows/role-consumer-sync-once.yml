@@ -1,0 +1,124 @@
+name: One-shot GPT role consumer sync
+
+on:
+  push:
+    branches:
+      - workflow/gpt-codex-role-split-20260825
+    paths:
+      - ".github/workflows/role-consumer-sync-once.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+      - name: Sync active consumers
+        shell: python
+        run: |
+          from pathlib import Path
+
+          def replace(path, old, new):
+              p = Path(path)
+              text = p.read_text(encoding="utf-8")
+              if old not in text:
+                  raise SystemExit(f"missing expected text in {path}: {old[:100]!r}")
+              p.write_text(text.replace(old, new), encoding="utf-8")
+
+          # START_HERE: active Godot implementation route only.
+          replace(
+              "START_HERE.md",
+              "| Codex 작업 명세·전환 | `maintaining-project-context-and-handoff: on-demand-codex-handoff` | `docs/GPT_CODEX_WORKFLOW_POLICY.md` + `skills/maintaining-project-context-and-handoff/SKILL.md` |",
+              "| 실제 게임 프로젝트 Godot 제품 구현·Codex 인계 | `maintaining-project-context-and-handoff: codex-godot-implementation-handoff` | `docs/GPT_CODEX_WORKFLOW_POLICY.md` + `templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md` |",
+          )
+
+          # Documentation Map: make the ownership boundary visible in cold-start docs.
+          replace(
+              "docs/DOCUMENTATION_MAP.md",
+              "## 2. 권한 경계\n\n### Base",
+              "## 2. 권한 경계\n\n### GPT / Codex 작업 책임\n\n```text\nGPT = Base·Notion·기획·검수·문서·표·이미지·운영 인프라\nCodex = 실제 게임 프로젝트의 Godot 제품 구현·GDScript·Scene·Resource·runtime/play test\nCODEX_NOT_GENERAL_REPOSITORY_EXECUTOR\n```\n\nBase Python test·Registry/generated·CI contract는 코드 형식이어도 GPT governance 작업이다. Codex handoff는 `ACTUAL_GODOT_PRODUCT_IMPLEMENTATION_EXISTS`일 때만 프로젝트별로 만든다.\n\n### Base",
+          )
+          replace(
+              "docs/DOCUMENTATION_MAP.md",
+              "Notion 변경이 구조화 데이터나 구현 변경을 요구하면 `SYNC_BEFORE_IMPLEMENTATION`으로 repository에 동기화한 뒤 구현한다.",
+              "Notion 변경이 실제 게임 제품 runtime 변경을 요구하면 GPT가 기획/정본을 먼저 동기화하고, `ACTUAL_GODOT_PRODUCT_IMPLEMENTATION_EXISTS`인 범위만 프로젝트별 Codex Godot Work Instruction으로 넘긴다. Base/Notion/non-product 변경은 GPT가 직접 닫는다.",
+          )
+
+          # Keep dynamic cold-start authority tokens in Codex bootstrap.
+          p = Path("templates/custom-instructions.codex.md")
+          text = p.read_text(encoding="utf-8")
+          appendix = '''\n## Dynamic authority bootstrap vocabulary\n\n```text\nstable bootstrap\nDOMAIN_SPLIT_CANON\nAGENTS.md\nSTART_HERE.md\nActive Context\nNOTION_HUMAN_FACING_CANON\nREPOSITORY_STRUCTURED_CANON\nREPOSITORY_RUNTIME_TRUTH\n현재 세션\nactual evidence\n```\n\n이 vocabulary는 cold-start authority를 보존하기 위한 compatibility contract다. Codex 범위를 Base maintenance로 넓히는 의미가 아니다.\n'''
+          if "Dynamic authority bootstrap vocabulary" not in text:
+              p.write_text(text.rstrip() + "\n" + appendix, encoding="utf-8")
+
+          # Base common learning log: role routing lesson.
+          p = Path("skills/SKILL_LEARNING_LOG.md")
+          text = p.read_text(encoding="utf-8")
+          entry = '''## 2026-08-25 — Product responsibility, not code shape, determines Codex ownership\n\n- **상태:** `PATTERN_CANDIDATE`\n- **Trigger:** GPT↔Codex 역할 분리 중 Base Python test·Registry/generated·CI를 코드라는 이유로 Codex 영역에 잘못 포함했다.\n- **Finding:** Base governance code와 game product code는 모두 코드 형식일 수 있지만 책임 owner가 다르다. 파일 확장자나 GitHub write 여부를 owner 기준으로 쓰면 Base/Notion 유지보수와 Godot 제품 구현의 경계가 붕괴한다.\n- **Decision:** `GPT_BASE_NOTION_GOVERNANCE_OWNER`가 Base·Notion·문서·표·이미지·Registry/generated·CI/test contract를 소유하고, `CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER`는 실제 게임 프로젝트의 GDScript·Scene·Resource·runtime wiring·build/export·Godot implementation/runtime/play test에만 진입한다.\n- **Evidence:** `docs/GPT_CODEX_WORKFLOW_POLICY.md`, `docs/WORK_MODE_AND_SKILL_ROUTING.md`, `skills/maintaining-project-context-and-handoff/SKILL.md`, `templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md`, PR #674.\n- **Boundary:** 이 분리가 실제 프로젝트 runtime PASS를 증명하지 않는다. 실제 Godot 구현 시 project GitHub+Notion 재수화와 runtime/play evidence가 별도 필요하다.\n- **Next trigger:** Base 작업이 다시 Codex에 라우팅되거나 GPT가 실제 Godot 제품 구현을 직접 누적하려 할 때 재검토한다.\n\n'''
+          if "Product responsibility, not code shape, determines Codex ownership" not in text:
+              p.write_text(text.replace("# Base Skill Learning Log\n\n", "# Base Skill Learning Log\n\n" + entry, 1), encoding="utf-8")
+
+          # Long-horizon owner assertions.
+          p = Path("tests/test_base_long_horizon_work_contract.py")
+          text = p.read_text(encoding="utf-8")
+          text = text.replace(
+              '            "GPT_FIRST_PLANNING_AND_REVIEW",\n            "OPTIONAL_CODEX_EXECUTOR",',
+              '            "GPT_BASE_NOTION_GOVERNANCE_OWNER",\n            "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",\n            "CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR",',
+          )
+          text = text.replace(
+              '        self.assertIn("GPT_FIRST_PLANNING_AND_REVIEW", codex)\n        self.assertIn("OPTIONAL_CODEX_EXECUTOR", codex)',
+              '        self.assertIn("GPT_BASE_NOTION_GOVERNANCE_OWNER", codex)\n        self.assertIn("CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER", codex)\n        self.assertIn("CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR", codex)',
+          )
+          p.write_text(text, encoding="utf-8")
+
+          # Base partition test owner assertion.
+          p = Path("tests/test_base_partition_contract.py")
+          text = p.read_text(encoding="utf-8")
+          text = text.replace(
+              '        self.assertIn("OPTIONAL_CODEX_EXECUTOR", worker)',
+              '        self.assertIn("BASE_GOVERNANCE = GPT", worker)\n        self.assertIn("CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR", worker)',
+          )
+          p.write_text(text, encoding="utf-8")
+
+          # Preserve explicit three-strategy comparison in operating model.
+          p = Path("docs/operations/BASE_PARTITION_OPERATING_MODEL.md")
+          text = p.read_text(encoding="utf-8")
+          if "### A · 9개 별도 채팅 유지" not in text:
+              marker = "## Final Integration"
+              section = '''## 대안 검토\n\n### A · 9개 별도 채팅 유지\nContext 재수화와 handoff 관리비가 커서 **REJECT**.\n\n### B · 한 coordinator 채팅\nPart별 semantic checkpoint와 rollback을 유지하면서 한 GPT coordinator가 순차 처리한다. **ADOPT**. 새 Part 채팅을 9개 만들지 않는다.\n\n### C · Part 자체 제거\n책임·학습·source coverage가 흐려져 **REJECT**.\n\n`BETTER_ALTERNATIVE_SEARCH`와 `LONG_TERM_PLAN_FIT_REQUIRED`를 유지하고, 동시작업·context 규모·Part 결합도가 달라지면 재검토한다.\n\n'''
+              if marker not in text:
+                  raise SystemExit("BASE_PARTITION_OPERATING_MODEL final marker missing")
+              text = text.replace(marker, section + marker, 1)
+              p.write_text(text, encoding="utf-8")
+
+          # Skill routing governance companion for description/registry freshness.
+          p = Path("tests/test_skill_routing_governance.py")
+          text = p.read_text(encoding="utf-8")
+          method = '''\n    def test_base_handoff_registry_routes_only_godot_product_implementation(self) -> None:\n        registry = json.loads((REPOSITORY_ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))\n        handoff = next(item for item in registry["skills"] if item["skill_id"] == "maintaining-project-context-and-handoff")\n        self.assertIn("godot-product-implementation-handoff", handoff["trigger_tags"])\n        self.assertIn("실제 게임 프로젝트", "\\n".join(handoff["use_when"]))\n        self.assertIn("Base 정책", "\\n".join(handoff["do_not_use_when"]))\n        self.assertIn("Base/Notion 작업을 Codex에 넘김", "\\n".join(handoff["review_triggers"]))\n\n'''
+          if "test_base_handoff_registry_routes_only_godot_product_implementation" not in text:
+              text = text.replace("\n\nif __name__ == \"__main__\":", method + "\nif __name__ == \"__main__\":", 1)
+              p.write_text(text, encoding="utf-8")
+
+      - name: Validate focused files before commit
+        run: |
+          python -m unittest tests.test_gpt_codex_workflow_contract tests.test_p08_ai_operations_contract tests.test_one_shot_local_executor_bootstrap_contract tests.test_base_long_horizon_work_contract tests.test_base_partition_contract tests.test_pr530_selective_integration_contract -v
+          python tools/build_base_v9_artifacts.py --check
+      - name: Remove one-shot workflow and commit
+        run: |
+          rm .github/workflows/role-consumer-sync-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add START_HERE.md docs/DOCUMENTATION_MAP.md docs/operations/BASE_PARTITION_OPERATING_MODEL.md templates/custom-instructions.codex.md skills/SKILL_LEARNING_LOG.md tests/test_base_long_horizon_work_contract.py tests/test_base_partition_contract.py tests/test_skill_routing_governance.py .github/workflows/role-consumer-sync-once.yml
+          if git diff --cached --quiet; then
+            echo "No consumer sync delta"
+            exit 0
+          fi
+          git commit -m "chore: sync Godot-only Codex consumers [role-consumer]"
+          git push origin HEAD:workflow/gpt-codex-role-split-20260825
