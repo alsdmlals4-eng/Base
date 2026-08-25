@@ -12,7 +12,10 @@ NOT_RUN_MANDATORY_GATE_BLOCKS_COMPLETION
 INTERMEDIATE_REPORT_SUPPRESSION_IS_NOT_WORK_REDUCTION
 GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY
 REASONING_EFFORT_IS_NOT_WORK_EVIDENCE
-REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF
+GPT_TOOL_EVIDENCE_DOES_NOT_TRANSFER_BUILD_OWNERSHIP
+IMPLEMENTATION_REQUIRES_CODEX_HANDOFF
+CODEX_REHYDRATE_GITHUB_AND_NOTION
+CODEX_IMAGE_GENERATION_FORBIDDEN
 CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY
 MINIMUM_VIABLE_ALTERNATIVES: 3
 BENCHMARK_SYNTHESIS
@@ -85,7 +88,8 @@ RESEARCH
 → EXPECTED EFFECTS / RISKS / MITIGATIONS
 → ONE USER APPROVAL
 → SMALL TESTABLE SLICES
-→ TOOL / RUNTIME EXECUTION
+→ IMPLEMENTATION_READY
+→ CODEX BUILD / TOOL / RUNTIME EXECUTION when implementation exists
 → AT LEAST 5 FULL ADVERSARIAL LOOPS, THEN UNTIL CLEAN
 → LONG-TERM FIT CLOSURE
 → EXACT-HEAD PR GATE
@@ -112,7 +116,7 @@ L1 이상 또는 조사·벤치마킹·검토·구현·검증을 명시한 요�
 
 `NOT_RUN_MANDATORY_GATE_BLOCKS_COMPLETION`: 필수 evidence가 `NOT_RUN`이면 완료가 아니다. 현재 실행할 수 없으면 `BLOCKED_UNVERIFIED`와 해제 조건을 보고하고, 실행 가능한 독립 범위는 계속한다.
 
-`GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY`: GPT-first는 판단·통합 책임의 owner를 정하는 말이지 prose-only 경로가 아니다. `REASONING_EFFORT_IS_NOT_WORK_EVIDENCE`이므로 `매우 높음` 같은 추론 강도도 실제 source readback·Tool 호출·실행·테스트 증거를 대체하지 않는다. `REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF`에 따라 현재 세션 Tool로 필수 evidence를 얻을 수 있으면 실행하며, 별도 Codex 인계의 선택성과 혼동하지 않는다.
+`GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY`: GPT-first는 판단·통합·기획·검수 책임의 owner를 정하는 말이지 prose-only 경로가 아니다. `REASONING_EFFORT_IS_NOT_WORK_EVIDENCE`이므로 추론 강도도 실제 source readback·Tool 호출·실행·테스트 증거를 대체하지 않는다. GPT가 현재 browser/repository/Notion connector 등으로 기획·정본·검수 evidence를 직접 확보할 수 있으면 수행하지만, `GPT_TOOL_EVIDENCE_DOES_NOT_TRANSFER_BUILD_OWNERSHIP`에 따라 그 사실이 제품 BUILD ownership을 GPT로 옮기지 않는다. actual code/data/Scene/Resource/config/test/build/runtime mutation이 필요한 단계는 `IMPLEMENTATION_REQUIRES_CODEX_HANDOFF`로 Codex가 이어받는다.
 
 ### `DIRECTION_FIRST`
 
@@ -213,7 +217,7 @@ verification_plan: []
 
 ### `SINGLE_INITIAL_APPROVAL_THEN_CONTINUE`
 
-완전한 작업 계약을 한 번 승인받은 뒤 같은 범위의 구현, 테스트, 실패 진단, 가역적 수정, PR 생성, exact-head 검사, 적대적 검토, 회귀 검사, 저장소 정책이 허용하는 병합과 postmerge readback은 routine approval로 멈추지 않는다.
+완전한 작업 계약을 한 번 승인받은 뒤 같은 범위의 구현, 테스트, 실패 진단, 가역적 수정, PR 생성, exact-head 검사, 적대적 검토, 회귀 검사, 저장소 정책이 허용하는 병합과 postmerge readback은 routine approval로 멈추지 않는다. 구현 task는 승인 상속된 범위로 `CONTINUOUS_WORK_EXECUTOR_HANDOFF`를 사용해 Codex BUILD로 진행할 수 있으며 별도 “Codex로 넘길까요?” 재승인을 만들지 않는다.
 
 새 사용자 승인이 필요한 것은 핵심 게임 방향·플레이어 경험·중요 스토리 의미 변경, 승인 범위 확대, 파괴적 migration/삭제, 새 결제·별도 과금, 계정·보안 권한 확대, 사용자 취향 선택이 필요한 복수 유효안이다.
 
@@ -334,7 +338,7 @@ TOOL_HUB_RETIRED_FROM_ACTIVE_PROJECT_FLOW
 QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW
 ```
 
-Figma, 외부 HTML catalog/dashboard, project-management Tool Hub, QA Evidence Studio와 과거 localhost visual management surface는 신규 기본 작업면·필수 preflight·완료 조건이 아니다. 고유 정보·증거 vocabulary·재사용 원리가 있으면 현재 Notion/repository/PowerShell/Loop owner로 한 번 흡수하고 기본 탐색에서 제외한다.
+Figma, 외부 HTML catalog/dashboard, project-management Tool Hub, QA Evidence Studio와 과거 localhost visual management surface는 신규 기본 작업면·필수 preflight·완료 조건이 아니다. 고유 정보·증거 vocabulary·재사용 원리가 있으면 현재 Notion/repository/Codex execution/Loop owner로 한 번 흡수하고 기본 탐색에서 제외한다.
 
 Loop Engineering은 이 폐기 surface와 독립적이다. current operational checkpoint와 프로젝트 Package가 사용을 정당화할 때 직접 사용할 수 있다.
 
@@ -360,38 +364,51 @@ visualization_need:
   approval_state:
 ```
 
-이미지·flow·screen mock·diagram이 의사결정을 개선하면 기획 중에도 생성/정리해 exact Project Notion에 배치하고 readback한다. 단 장식 수량 채우기나 “이미지가 있으면 좋아 보인다”는 이유만으로 생성하지 않는다. 생성물은 `DRAFT_VISUAL`/candidate와 승인 자산/runtime evidence를 분리한다.
+이미지·flow·screen mock·diagram이 의사결정을 개선하면 GPT가 기획 중 생성/정리해 exact Project Notion에 배치하고 readback한다. 단 장식 수량 채우기나 “이미지가 있으면 좋아 보인다”는 이유만으로 생성하지 않는다. 생성물은 `DRAFT_VISUAL`/candidate와 승인 자산/runtime evidence를 분리한다.
 
 생성·수정 이미지의 성공 보고는 upload call만으로 끝나지 않는다.
 
 ```text
-generate / edit
+GPT generate / edit
 → correct Project target
 → upload / attach
 → readback
 → approval / rejection
 → version / replacement relation
-→ repository handoff
+→ Codex implementation handoff
 → runtime validation separately
 ```
 
-## GPT-first 기획·검수와 선택적 Codex 보조 계약
+## GPT 기획·검수 / Codex 구현 역할 계약
 
-`GPT_FIRST_PLANNING_AND_REVIEW`가 기본이다. GPT는 프로젝트 GitHub와 Notion의 현재 정본을 읽고 기획·조사·벤치마킹·대안 비교·시스템/데이터 설계·UI/UX 흐름·시각 방향·검수·적대적 검토를 닫는다. Codex는 실제 코드/Scene/Resource/data 변경, 저장소 규모가 큰 기계적 점검, 로컬 실행·테스트 등 **실행 권위가 필요한 경우에만** `OPTIONAL_CODEX_EXECUTOR`로 호출한다.
+```text
+GPT_PLANNING_REVIEW_VISUAL_OWNER
+CODEX_IMPLEMENTATION_EXECUTOR
+PLANNING_ONLY_NO_CODEX_REQUIRED
+IMPLEMENTATION_REQUIRES_CODEX_HANDOFF
+CODEX_REHYDRATE_GITHUB_AND_NOTION
+CODEX_IMAGE_GENERATION_FORBIDDEN
+CODEX_VISUAL_INPUT_NOTION_APPROVED_ONLY
+```
 
-`GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY`: GPT-primary는 prose-only가 아니다. `REASONING_EFFORT_IS_NOT_WORK_EVIDENCE`이며 추론 강도는 source readback·Tool 호출·runtime·test evidence를 대신하지 않는다. `REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF`에 따라 현재 GPT 세션이 필요한 browser/repository/connector/runtime Tool을 보유하면 직접 실행하고, 별도 Codex handoff만 선택적으로 판단한다.
+`GPT_FIRST_PLANNING_AND_REVIEW`는 GPT가 프로젝트 GitHub와 Notion의 현재 정본을 읽고 기획·조사·벤치마킹·대안 비교·시스템/데이터 설계·UI/UX 흐름·시각 방향·검수·적대적 검토를 닫는다는 의미로 유지한다. 제품 BUILD ownership을 뜻하지 않는다.
+
+planning-only 작업에는 Codex를 의무 호출하지 않는다. 실제 code/Scene/Resource/data/config/test/build/runtime mutation이 존재하면 `IMPLEMENTATION_REQUIRES_CODEX_HANDOFF`로 Codex가 실행한다. 별도 기술 Plan은 `CODEX_PREFLIGHT_OPTIONAL`이다.
+
+Codex는 구현 전에 current GitHub와 relevant Notion을 재수화한다. 프로젝트가 채택한 persistent authoring authority를 지키며 stale worktree/branch/PID/session/version을 current truth로 사용하지 않는다. Codex는 이미지를 생성·생성형 편집하지 않고 current-use 승인 + Notion attach/readback Visual만 소비한다. 누락된 Visual은 `GPT_VISUAL_REQUEST`로 GPT에 반환한다.
 
 ```text
 GPT planning/research/review
 → GitHub + Notion canon reconciliation
 → >=3 alternatives + creative benchmark frontier
 → UI/UX/visual requirement + PROJECT_VISUALIZATION_NEED_MAP
-→ when visuals improve decisions: generate/curate candidate visuals
+→ when visuals improve decisions: GPT generate/curate candidate visuals
 → attach to exact Project in Notion + readback
 → user/GPT review and approval state
-→ implementation-ready package
-→ OPTIONAL_CODEX_EXECUTOR when repository/runtime mutation is needed
-→ repository implementation/runtime evidence
+→ IMPLEMENTATION_READY
+→ Codex GitHub+Notion rehydration
+→ Codex repository implementation/runtime evidence
+→ missing visual? GPT_VISUAL_REQUEST → GPT visual → Notion readback → Codex resume
 → GPT final adversarial review
 → GitHub/Notion sync + readback
 ```
