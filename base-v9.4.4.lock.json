@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "artifact_role": "BASE_V9_4_4_COMPATIBILITY_RELEASE_LOCK",
+  "release_line": "v9.4.4",
+  "release_state": "TRUSTED_EVIDENCE_PENDING",
+  "repository": "alsdmlals4-eng/Base",
+  "release_issue": 670,
+  "source_pr": 669,
+  "predecessor": {
+    "path": "base-v9.4.3.lock.json",
+    "release_line": "v9.4.3",
+    "release_commit": "7dd1a4f80388bc5faca767ff74a3eb32dc9d0ac8",
+    "release_evidence_commit": "da33a350d61b8adc52df97fccc7001708a933370"
+  },
+  "candidate_release_commit": "210ec78292fa12ed7563ba743b322dd36103ae4a",
+  "candidate_release_evidence_commit": null,
+  "candidate_registry": {
+    "path": "skills/SKILL_REGISTRY.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "hash_definition": "RAW_FILE_BYTES_SHA256"
+  },
+  "released_validator_paths": [
+    "AGENTS.md",
+    "START_HERE.md",
+    "skills/managing-project-intake-and-work-contract/SKILL.md",
+    "docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json",
+    "tests/test_reuse_first_preflight_enforcement.py",
+    "tests/test_reference_freshness.py"
+  ]
+}
