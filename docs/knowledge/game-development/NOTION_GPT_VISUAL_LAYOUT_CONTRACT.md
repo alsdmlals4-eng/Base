@@ -6,6 +6,8 @@ This contract defines the minimum reliable workflow for using GPT with the proje
 
 It extends `NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`; it does not replace repository runtime truth or project-specific visual authority. Human Home content density follows `docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md`: the Home may be information-rich when Flow, systems, project-specific core data, visuals, or edit guidance materially improve human understanding.
 
+For current Notion page/database/view/data-source/layout/media/permission/Agent semantics, also apply `docs/knowledge/methods/NOTION_OFFICIAL_PRODUCT_OPERATING_REFERENCE.md`. That reference supplies product-behavior boundaries; this file remains the visual placement/evidence workflow owner.
+
 ## Decision
 
 Use the existing **Notion MCP + Visual Registry metadata + bounded Layout Contract + Human/AI surface separation**.
@@ -88,6 +90,47 @@ If a target client has already reproduced `422` or broken-image behavior for ext
 
 When the ChatGPT Notion connector later exposes and verifies typed `file_upload` attachment directly, prefer the connector-native path and retire the local bridge rather than maintaining duplicate infrastructure.
 
+### Official file-limit conflict guard
+
+`NOTION_FILE_LIMIT_CLAIM_CONFLICT_GUARD`
+
+As checked on 2026-08-25, Notion's official `Images, files & media` help page simultaneously presents a conservative paid-plan note (`PDF <20MB`, `PNG/JPG <5MB`) and an FAQ statement that paid plans allow files up to `5GB`. Do not collapse those different statements into one universal render/upload ceiling.
+
+Use this operational distinction:
+
+```text
+INLINE_IMAGE_DISPLAY_SAFE_TARGET
+→ human-visible PNG/JPG preview: conservatively target <=5MB
+
+SOURCE_MASTER_OR_LARGE_FILE
+→ use the currently supported file/API route
+→ upload status
+→ typed attach
+→ destination readback
+→ actual client observation when rendering is claimed
+```
+
+A large file being accepted by storage/API is not proof that the same bytes will render reliably as an inline image on every client.
+
+### Preview/master separation
+
+`NOTION_PREVIEW_MASTER_SEPARATION`
+
+When an approved image must remain high resolution, preserve the source master rather than overwriting it merely to satisfy a human-facing preview limit.
+
+```text
+DISPLAY_PREVIEW
+→ optimized for Home/Gallery/inline viewing
+→ can be resized/compressed for reliable display
+
+SOURCE_MASTER
+→ approved high-resolution source
+→ retained as file/Files & media/verified typed upload as appropriate
+→ version/provenance retained
+```
+
+Preview delivery is not source-master verification and is not runtime integration evidence.
+
 ## Human and AI surfaces
 
 `HUMAN_HOME_IS_NOT_AI_CONTEXT_DUMP`
@@ -159,6 +202,20 @@ Layout Readback:
 
 `Status=APPROVED` is required before an asset can be treated as a project-approved visual. A prompt, art direction, graybox description, rejected candidate or `READY_TO_GENERATE` record is not an approved image.
 
+### Gallery preview source
+
+`NOTION_GALLERY_EXPLICIT_MEDIA_PREVIEW`
+
+For a Visual Bible or Asset catalog where image identity is important, prefer an explicit approved `Files & media` property as the Gallery card preview source when the active schema supports it.
+
+Notion also supports `Page cover` and `Page content` previews. Use them intentionally:
+
+- `Page cover`: valid when the cover itself is the canonical presentation for that record.
+- `Page content`: acceptable for lightweight notes, but the preview can drift when the first page block changes.
+- `Files & media`: preferred for a stable approved asset/reference card whose preview identity should not depend on page-body order.
+
+Use `Fit image` when the full composition must remain visible; allow crop/reposition only when the intended thumbnail/hero use benefits from cropping. A cropped card preview never replaces the full approved asset.
+
 ## Placement decision sequence
 
 Before inserting or moving a visual, GPT applies this sequence:
@@ -211,6 +268,8 @@ Rules:
 
 - Prefer semantic proximity over decorative symmetry: a visual belongs next to the explanation it helps a person understand.
 - Use two-column arrangements only when the Notion tool representation can create/preserve columns reliably and the pair is genuinely comparative or mutually explanatory.
+- `NOTION_MOBILE_STACK_SEMANTIC_ORDER_REQUIRED`: phone clients do not preserve desktop multi-column geometry; right-column content stacks below left-column content. Design the source order so the page remains understandable as one vertical stream. Do not hide a required premise, warning or conclusion only in a right-hand column.
+- `NOTION_DATABASE_GLOBAL_LAYOUT_IMPACT_GATE`: database page layout applies across the database, not to one record/view. Do not use `Customize layout` for a bounded single-record polish request; use local page body/record-property edits unless a database-wide redesign is explicitly intended and its affected record family has been checked.
 - Do not create dense mosaics merely to use empty space.
 - Do not move unrelated sections to make room for an image.
 - Avoid duplicated canonical images. Reuse the same canonical record or link when possible.
@@ -264,6 +323,7 @@ Every Notion write that changes durable visual organization follows:
 
 ```text
 read current destination
+→ classify page/view/source/layout/file impact
 → smallest bounded edit
 → write
 → fetch/read back
@@ -273,6 +333,8 @@ read current destination
 A successful write call alone is not completion.
 
 Readback verifies semantic placement and persistence. If the tool output cannot expose exact width, crop, visual balance or on-screen geometry, mark those aspects `UI_GEOMETRY_NOT_VERIFIED` rather than inferring them.
+
+For file/image delivery, preserve `upload → status=uploaded → typed attach → destination readback` as separate evidence when the active route exposes those stages. Upload success alone is not attachment success.
 
 For Android/iOS/browser-visible image delivery, add a final client observation step. A Notion server image block, signed file URL, or successful page fetch can prove persistence but cannot prove that a specific client actually rendered the bytes.
 
@@ -285,6 +347,8 @@ read project Home + Visual Bible + approved assets + implementation state
 → build only the visual inventory needed by that project
 → separate missing visual requirements from existing actual visuals
 → for each actual approved visual, record intended use + placement priority
+→ choose explicit Gallery preview source when stable asset identity matters
+→ preserve source master when a smaller display preview is needed
 → update human surface through this contract
 → read back
 → hand runtime-bound assets to repository implementation explicitly
@@ -318,9 +382,16 @@ Do not build infrastructure for hypothetical layout limitations.
 - putting Prompt/Hash/AI notes on the human Home by default;
 - duplicating the same approved visual into competing canonical records;
 - redesigning the entire Home during a bounded asset placement task;
+- editing a linked data source record/property while reporting only a local view-presentation change;
+- changing a database-global page layout to polish one record;
+- designing a critical Home comparison that becomes semantically broken when mobile stacks the right column below the left;
+- relying on `Page content` as a stable Visual Bible card identity without accepting first-block preview drift;
+- treating one of Notion's currently conflicting `5MB`/`5GB` official statements as a universal upload-and-render cap for every file path;
+- overwriting a high-resolution approved master only to meet a smaller display-preview target;
 - claiming exact visual layout quality when only semantic block readback was available;
 - treating `self.current_tool_access=available` as proof that the current client can invoke the capability;
 - treating a successful write invocation as durable effect without destination readback;
+- treating a file-upload object as delivered before typed attachment and target readback;
 - treating server image readback as Android/browser render PASS;
 - using a different external CDN as a hidden workaround after the target client has reproduced media 422;
 - treating Notion Native File Bridge readback as `HUMAN_VISIBLE_PASS` without actual client observation;
@@ -335,10 +406,15 @@ The workflow is healthy when:
 - AI/system metadata remains queryable without polluting the human page;
 - every displayed project visual is traceable to an actual asset/reference and approval state;
 - GPT can select a semantic destination from metadata without repeatedly asking where the asset belongs;
+- database/view/source/global-layout impact is classified before non-trivial Notion writes;
+- desktop column use preserves a coherent mobile one-column reading order;
+- stable Visual Bible/Asset cards use an intentional preview source rather than accidental first-block drift;
+- high-resolution source masters are preserved separately when a smaller human-visible preview is needed;
 - image generation/editing obeys `TEXT_BRIEF_STOP_REQUIRED` and `GENERATE_EXACTLY_ONE` through the image conversation gate;
 - visual-content-dependent judgements require direct image evidence;
 - capability-dependent claims distinguish discovery, callable schema, invocation, readback and human-visible evidence;
 - binary media uses a verified typed `file_upload` path instead of known-broken external delivery when client rendering matters;
+- official file-size conflicts are treated as a freshness/capability probe problem rather than one universal hard cap;
 - all Notion writes receive destination readback;
 - exact UI geometry is not overstated when the tool cannot verify it;
 - repository runtime truth remains separate from Notion presentation state.
