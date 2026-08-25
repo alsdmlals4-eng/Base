@@ -101,6 +101,7 @@ docs/knowledge/
 | 애니메이션·전투 연출 | `methods/ANIMATION_AND_PRESENTATION_METHOD.md` |
 | 대화·이벤트 연출 | `methods/DIALOGUE_AND_EVENT_PRESENTATION_METHOD.md` |
 | 조사·벤치마킹 | `research/DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md` |
+| 웹 기반 thin GUI·내부 도구의 native HTML/CSS/Browser API 선택 | `research/WEB_PLATFORM_NATIVE_UI_CAPABILITY_GUIDE.md` |
 | 외부 AI·프롬프트 공식 자료 | `research/AI_WORKFLOW_AND_PROMPT_SOURCE_NOTES.md` |
 | 딥인터뷰 외부 소스 감사 | `research/OUROBOROS_DEEP_INTERVIEW_SOURCE_AUDIT.md` |
 | FACS 표정 제어 참고 | `research/FACS_ACTION_UNIT_PROMPT_REFERENCE.md` |
@@ -191,7 +192,7 @@ docs/knowledge/
 → 기존 책임 문서와 중복·충돌 확인
 → 적절한 지식 유형으로 반영
 → 사례와 지식 상태 갱신
-→ 프로젝트 로컬 사본·버전 동기화 확인
+→ Base 버전과 프로젝트 로컬 사본·버전 동기화 확인
 ```
 
 분류:
