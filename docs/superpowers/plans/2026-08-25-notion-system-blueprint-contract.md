@@ -25,7 +25,8 @@
 
 **Files:**
 - Modify: the existing Base planning/Notion authority owner identified from current `main`.
-- Create only if no canonical owner exists: `docs/NOTION_SYSTEM_BLUEPRINT_CONTRACT.md`.
+- Canonical contract: `docs/operations/project-workspace/NOTION_SYSTEM_BLUEPRINT_CONTRACT.md` (P01 Project Planning/Notion owner).
+- Consumer integration: `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md` (P05 Notion Visual Flow consumer).
 
 **Interfaces:**
 - Consumes: Project Home human-facing authority, repository structured/runtime authority, existing planning and implementation reality gates.
