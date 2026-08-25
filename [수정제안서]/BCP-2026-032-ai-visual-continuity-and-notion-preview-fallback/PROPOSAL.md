@@ -5,7 +5,7 @@
 - 출처 프로젝트: `alsdmlals4-eng/ninja-survival-godot`
 - 기준 커밋: `5b7c86e25c53e4a2667f1a70dc59938fc60c4c9a`
 - 제출일: `2026-08-25`
-- 상태: `SUBMITTED`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 지식 상태: `패턴 / 검증(부분)`
 
 ## 관찰과 증거
@@ -131,12 +131,13 @@ Base로 올리지 않는다:
 
 ## 영향 범위와 검증
 
-제안 구현 시 최소 영향 owner:
+승인된 최소 구현 owner:
 
-1. visual/game-art production workflow owner에 persistent-character additive-layer gate를 **추가**한다.
+1. `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`의 `Identity-preserving image edits` 뒤에 persistent-character additive-layer gate를 **추가**한다.
 2. `docs/knowledge/game-development/NOTION_CONNECTOR_IMAGE_DELIVERY_CORRECTION_2026-08-22.md`에 inline SVG raster **preview-only fallback**을 secondary route로 추가한다.
 3. 재사용 가능한 문제/해결/교훈 case를 Base knowledge case에 기록한다.
 4. 기존 primary Notion transport, local bridge fallback, `READBACK_PASS != HUMAN_VISIBLE_PASS`를 삭제/약화하지 않는다.
+5. 신규 Skill·MCP·서비스·대시보드는 만들지 않는다.
 
 검증:
 - 기존 visual requirement/Notion delivery contract tests non-regression,
@@ -144,10 +145,24 @@ Base로 올리지 않는다:
 - Base full relevant test regression,
 - proposal/source provenance readback.
 
+## Proposal review — 2026-08-25
+
+최소 5회 whole-state review 결과:
+
+1. **Source evidence:** project merge `5b7c86e...`와 Notion `prod-files-secure` destination readback 증거가 있고, runtime/human-visible 범위는 분리되어 있다.
+2. **Generalization boundary:** 닌자서바이벌의 유파명·motif·Stage-3·SD 비율·색/로고는 Base 승격 대상에서 제외되어 있다.
+3. **Existing owner reuse:** visual identity 원칙은 기존 `NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`, preview fallback은 기존 Notion connector delivery correction owner에 흡수 가능하며 새 Skill/도구가 필요 없다.
+4. **Evidence ceiling / counterexample:** true transformation/multi-character 게임, high-resolution delivery, target-client SVG 실패 등 비사용 조건이 명시되어 있다.
+5. **Regression / rollback:** 기존 typed binary / verified transport를 primary로 유지하고 additive section + focused test만 추가하므로 rollback과 non-regression 경계가 명확하다.
+
+새 blocking finding: `0`.
+
+검토 판정: `APPROVED_FOR_IMPLEMENTATION`.
+
 ## 필요한 도구·파일·권한
 
 - 필요 항목: Base GitHub repository write + PR workflow
-- 필요한 이유: BCP 제안과 별도 구현 PR
+- 필요한 이유: BCP 승인과 별도 구현 PR
 - 설치·적용 방법: 신규 도구 설치 없음
 - 설치 후 확인 명령: 해당 없음; repository-native tests/CI 사용
 - 최소 권한: 현재 Base repository branch/PR 작성 및 안전 병합 권한
@@ -155,6 +170,8 @@ Base로 올리지 않는다:
 ## 승인과 구현
 
 - 사용자 승인 근거: `2026-08-25 닌자서바이벌 프로젝트 closeout current task — "Base 승격, 문제-교훈 자료도 잘 올려줘"`
-- 검토 판정: `PENDING_PROPOSAL_REVIEW`
-- 구현 PR: `없음 — proposal merge 뒤 별도 PR`
-- 롤백: proposal은 proposal/registry revert; 구현은 owner별 additive section과 focused test를 implementation PR 단위로 revert.
+- proposal PR: `https://github.com/alsdmlals4-eng/Base/pull/683` · MERGED at `104d63c3136ea6b4b630d4721a6eb2380a17ab17`
+- 검토 판정: `APPROVED_FOR_IMPLEMENTATION`
+- approval_ref: `[수정제안서]/BCP-2026-032-ai-visual-continuity-and-notion-preview-fallback/PROPOSAL.md#승인과-구현 (2026-08-25 current task user instruction; proposal PR #683 merged)`
+- 구현 PR: `없음 — approval merge 뒤 별도 PR`
+- 롤백: approval은 proposal/registry status revert; 구현은 owner별 additive section과 focused test를 implementation PR 단위로 revert.
