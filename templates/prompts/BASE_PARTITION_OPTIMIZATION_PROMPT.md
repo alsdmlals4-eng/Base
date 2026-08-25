@@ -20,21 +20,27 @@ P01 → P02 → P03 → P04 → P05 → P06 → P07 → P08 → P09
 - 한 Part를 완료·병합한 뒤 최신 `main`을 다시 pin하고 다음 Part로 진행한다.
 - Part는 semantic responsibility / learning / validation checkpoint이지 write barrier가 아니다.
 - `PARTITION_IS_MAINTENANCE_AND_SPECIALIZATION_VIEW_NOT_RUNTIME_FRAGMENTATION`을 유지한다.
+- GPT coordinator는 기획·검수·Notion·운영 정본·Visual·handoff owner이며, actual machine/implementation BUILD는 Codex가 수행한다.
 
 ## 0A. Part 소유권
 
 `PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER`
 
-Manifest의 Part owner는 **누가 가장 깊게 검토하고 학습·보고할지**를 정한다. 현재 작업에서 검증된 오류·충돌·누락이 다른 Part 또는 CP0에 속하더라도, 증거·권한·검증경로가 충분하면 같은 coordinator가 직접 수정할 수 있다.
+Manifest의 Part owner는 **누가 가장 깊게 검토하고 학습·보고할지**를 정한다. 현재 작업에서 검증된 오류·충돌·누락이 다른 Part 또는 CP0에 속하더라도, 증거·권한·검증경로가 충분하면 같은 coordinator가 해결 경로를 닫는다.
 
-**다른 Part라는 이유만으로 수정 보류 금지.**
+**다른 Part라는 이유만으로 수정 보류 금지.** 단, current 역할 계약에 따라 execution owner를 구분한다.
 
-Cross-Part 직접 수정은 다음을 기록한다.
+- 기획·검수·Notion·운영 문서/정본 교정 → GPT bounded correction.
+- code/data/Scene/Resource/config/test/build/runtime, Registry/generated/checker 등 machine consumer mutation → `CODEX_IMPLEMENTATION_HANDOFF`.
+- GPT는 implementation finding을 Acceptance/보호 범위/검증 기준으로 명세하고 Codex 결과를 다시 REVIEW한다.
+
+Cross-Part 직접 수정/인계는 다음을 기록한다.
 
 ```yaml
 CROSS_PART_CHANGE:
   discovered_while: Pxx
   semantic_owner: Pyy | CP0
+  execution_owner: GPT_DOC_CANON | CODEX_IMPLEMENTATION
   affected_paths: []
   problem:
   evidence:
@@ -79,6 +85,15 @@ CROSS_PART_CHANGE:
 
 ## 2. GPT / Codex
 
+```text
+GPT_PLANNING_REVIEW_VISUAL_OWNER
+CODEX_IMPLEMENTATION_EXECUTOR
+PLANNING_ONLY_NO_CODEX_REQUIRED
+IMPLEMENTATION_REQUIRES_CODEX_HANDOFF
+CODEX_REHYDRATE_GITHUB_AND_NOTION
+CODEX_IMAGE_GENERATION_FORBIDDEN
+```
+
 GPT가 기본 planner/reviewer다.
 
 GPT가 책임지는 기본 범위:
@@ -89,11 +104,16 @@ GPT가 책임지는 기본 범위:
 - 벤치마킹과 대안 비교
 - 규칙/Skill/Mode/Module 감사
 - Notion/GitHub 정합성 검토
-- UX/UI/Visual 기획·검수
+- UX/UI/Visual 기획·검수와 이미지 제작/승인 delivery
 - 적대적 검토와 완료 검수
 - 사용자 학습형 설명
+- implementation Acceptance/보호 범위/handoff 작성
 
-`OPTIONAL_CODEX_EXECUTOR`는 실제 code/Scene/Resource/data 변경, 대량 기계 처리, 로컬 Godot/runtime/build/performance 검증처럼 실행 권위가 필요할 때만 사용한다. GPT 작업 다음 단계라는 이유로 자동 호출하지 않는다.
+planning-only 작업에는 Codex를 형식적으로 추가하지 않는다. 그러나 실제 code/data/Scene/Resource/config/test/build/runtime 또는 machine consumer mutation이 존재하면 Codex가 implementation executor다.
+
+Codex는 implementation 전에 current GitHub + relevant Notion을 재수화한다. `CODEX_PREFLIGHT_OPTIONAL` technical Plan은 고위험·불확실·다중 의존성일 때만 선택적이다. **optional인 것은 별도 Plan과 planning-only에서의 Codex 실행이지, implementation owner가 아니다.**
+
+Codex는 이미지를 생성·생성형 편집하지 않고 current-use 승인 + Notion upload/attach/readback Visual만 소비한다. 필요한 Visual이 없으면 `GPT_VISUAL_REQUEST`로 GPT에 반환한다.
 
 ## 3. 각 Part 구조 복원
 
@@ -120,6 +140,9 @@ GPT가 책임지는 기본 범위:
 - 실제 실행 증거 없는 PASS
 - 사용자 결정 누락
 - 동일 Goal 중복 PR/구현
+- GPT가 제품 implementation owner로 회귀하거나 Codex가 implementation에서 optional로 빠지는 drift
+- Codex가 Notion current canon/승인 Visual을 읽지 않는 drift
+- Codex image generation·미승인 placeholder 사용
 
 ## 5. Skill / Mode 감사
 
@@ -218,10 +241,15 @@ Project Home에는:
 시각 요소가 실제 판단에 중요하면:
 
 ```text
-기획 → UX/UI flow → Visual Requirement → 이미지/화면 후보
+GPT 기획 → UX/UI flow → Visual Requirement → GPT 이미지/화면 후보
 → 정확한 Project Notion 배치 + readback → 승인
-→ 승인 Visual을 구현 입력으로 사용 → PoC/demo → runtime UX/play test
+→ IMPLEMENTATION_READY
+→ Codex current GitHub+Notion rehydration
+→ 승인 Visual을 구현 입력으로 사용 → Codex PoC/demo runtime wiring/test
+→ GPT runtime UX/play evidence 검수
 ```
+
+Codex는 이미지 생성·생성형 편집을 하지 않는다. 필요한 Visual이 없으면 `GPT_VISUAL_REQUEST`로 반환한다.
 
 순수 로직이면 `VISUAL_NOT_MATERIAL_TO_THIS_POC`로 생략할 수 있다.
 
@@ -289,6 +317,7 @@ CURRENT STATE / CANON / ACTUAL IMPLEMENTATION READBACK
 - 현재 Part가 다른 Part/CP0 문제를 같이 고쳤다면 같은 PR에 `CROSS_PART_CHANGE`로 attribution한다.
 - 변경 범위를 작게 유지할 수 없을 정도로 독립적인 문제면 별도 coordinator PR로 분리한다.
 - 다른 활성 independent PR을 직접 수정하지 않는다.
+- GPT가 finding/Acceptance를 닫고 actual machine/implementation mutation은 Codex가 현재 branch에서 수행한다.
 
 Scope 감사:
 
@@ -310,7 +339,7 @@ python tools/check_base_partition_scope.py --coordinator --base <BASELINE_SHA> -
 6. 최소 3대안과 선택 이유
 7. BEFORE → AFTER → 기대효과 → trade-off
 8. actual tests / NOT_RUN / BLOCKED_UNVERIFIED
-9. cross-Part 직접 수정과 실제 requests
+9. cross-Part 직접 수정과 실제 requests/handoffs
 10. Learning / Source
 11. revisit conditions
 12. true full adversarial loop evidence
@@ -323,7 +352,7 @@ python tools/check_base_partition_scope.py --coordinator --base <BASELINE_SHA> -
 
 1. latest main을 다시 pin
 2. P01~P09 결과/학습/남은 cross-Part finding 재검증
-3. CP0·Registry·generated·Notion 정합성 마감
+3. CP0·Registry·generated·Notion 정합성 마감 — machine mutation은 Codex BUILD
 4. whole-Base regression/Required CI
 5. 최소 5회의 **진짜 full-scope adversarial loop**, 이후 오류 0까지
 6. exact-head merge
