@@ -25,6 +25,8 @@ Base START_HERE.md·AGENTS.md
 → 현재 책임 원본·실제 코드·데이터·자산·테스트
 ```
 
+`REUSE_FIRST_PREFLIGHT_REQUIRED`: 신규 또는 의미 있게 개정하는 시스템·UI/UX·시각/Asset·데이터/콘텐츠 구조·도구·workflow·Skill/Eval·QA/Test는 새 설계·제작 전에 `managing-project-intake-and-work-contract`를 통해 현재 프로젝트 구현/자산 → Project Asset/Reference/Benchmark → Base reuse handoff/profile/Registry와 축적 knowledge/case/reference → 직접 관련된 targeted cross-project evidence → 결정에 필요한 외부 benchmark 순으로 확인한다. 모든 프로젝트를 무작정 전수 검색하거나 Base reference를 프로젝트 정본보다 우선하지 않는다. 상세 계약은 `skills/managing-project-intake-and-work-contract/SKILL.md`와 `docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json`이 소유한다.
+
 기본 사람용 프로젝트 작업면은 `NOTION_DEFAULT_PROJECT_WORKSPACE`다. legacy Google Sheets는 **현재 작업이 실제 migration scope일 때만** `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`와 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`를 읽어 고유 자료를 Notion/repository owner로 이관한다. 통합 Vertical Slice 실행이 승인된 경우에만 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 사용한다. 이 Prompt와 과거 v6~v8 자료는 최신 사용자 결정·프로젝트 정본보다 높은 권한을 갖지 않는다.
 
 신규 MCP·addon·CLI·framework·Skill·Mode 또는 유사 실행 계층 제작 요청은 설계보다 먼저 `evaluating-godot-assets-and-plugins-before-creation: inventory-current-environment / disposition`으로 라우팅하고 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`의 Existing Solution First Gate를 통과한다. 이미 사용 중인 도구·연결된 MCP·enabled addon·dependency·관련 PR·외부 대안을 확인하지 않은 `BUILD_NEW`는 시작하지 않는다.

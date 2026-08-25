@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-08-23",
+  "updated_at": "2026-08-25",
   "state": "CURRENT_PROJECT_WORK_HANDOFF",
   "purpose": "Route each future project work session through current project authority, existing reusable modules, bounded project adaptation, truthful verification, and project-to-Base learning handoff.",
   "install_policy": "ONLY_DURING_APPROVED_PROJECT_WORK",
@@ -21,10 +21,44 @@
     "opportunity_scan_template": "templates/research/PROJECT_REUSE_OPPORTUNITY_SCAN.md",
     "adoption_kit": "docs/knowledge/game-development/reuse/adoption/README.md"
   },
+  "preflight_gate": {
+    "id": "REUSE_FIRST_PREFLIGHT_REQUIRED",
+    "applies_to": [
+      "NEW_OR_MATERIALLY_REVISED_SYSTEM_OR_MECHANIC",
+      "NEW_OR_MATERIALLY_REVISED_DATA_OR_CONTENT_STRUCTURE",
+      "NEW_OR_MATERIALLY_REVISED_UI_UX_OR_VISUAL_ASSET",
+      "NEW_OR_MATERIALLY_REVISED_TOOL_AUTOMATION_OR_WORKFLOW",
+      "NEW_OR_MATERIALLY_REVISED_SKILL_EVAL_OR_QA_TEST"
+    ],
+    "allowed_evidence_states": [
+      "COMPLETE",
+      "REUSED_EVIDENCE",
+      "NOT_APPLICABLE"
+    ],
+    "required_source_order": [
+      "CURRENT_PROJECT_AUTHORITY_AND_IMPLEMENTATION",
+      "PROJECT_APPROVED_ASSET_REFERENCE_BENCHMARK_SURFACES",
+      "BASE_REUSE_HANDOFF_PROFILE_MATRIX_REGISTRY",
+      "BASE_ACCUMULATED_KNOWLEDGE_CASE_REFERENCE",
+      "TARGETED_CROSS_PROJECT_VERIFIED_EVIDENCE",
+      "DECISION_RELEVANT_EXTERNAL_BENCHMARK",
+      "OWNER_SPECIFIC_DISPOSITION"
+    ],
+    "not_run_blocks_build_new": true,
+    "targeted_cross_project_only": true,
+    "no_bulk_project_scan": true,
+    "project_canon_overrides_reference": true,
+    "reused_evidence_requires_unchanged_scope_and_fresh_consumer_check": true,
+    "not_applicable_requires_mechanical_no_new_design_reason": true,
+    "fresh_external_research_follows_accumulated_sources": true
+  },
   "entry_contract": [
     "READ_CURRENT_PROJECT_AUTHORITY",
+    "READ_PROJECT_ASSET_REFERENCE_BENCHMARK_SURFACES",
     "READ_BASE_REUSE_STATE",
+    "READ_RELEVANT_BASE_ACCUMULATED_KNOWLEDGE",
     "EXISTING_MODULE_FIRST",
+    "TARGETED_CROSS_PROJECT_EVIDENCE_IF_DIRECTLY_RELEVANT",
     "PROJECT_REUSE_OPPORTUNITY_SCAN_IF_NEEDED",
     "ADAPT_OR_EXTRACT_WITH_PROJECT_IDENTITY",
     "IMPLEMENT_ONLY_INSIDE_APPROVED_PROJECT_SCOPE"
@@ -33,6 +67,7 @@
     "priority_reference_modules_are_starting_hypotheses": true,
     "profile_and_matrix_are_current_adoption_state": true,
     "no_bulk_install": true,
+    "no_bulk_project_scan": true,
     "no_forced_generalization": true,
     "project_canon_overrides_base_reference": true,
     "runtime_change_requires_project_authority": true,
@@ -57,6 +92,23 @@
     "project_only_lessons",
     "base_promotion_candidates"
   ],
+  "exit_learning_gate": {
+    "id": "REUSE_LEARNING_HANDOFF_REQUIRED",
+    "required_fields": [
+      "selected_modules",
+      "reuse_mode",
+      "project_paths_changed",
+      "verification_evidence",
+      "evidence_ceiling",
+      "rollback",
+      "project_only_lessons",
+      "base_promotion_candidates"
+    ],
+    "no_change_result": "NO_NEW_REUSE_LEARNING",
+    "promotion_is_not_automatic": true,
+    "project_only_default": true,
+    "no_forced_registry_churn": true
+  },
   "promotion_rule": {
     "project_only_default": true,
     "base_promotion_requires": [

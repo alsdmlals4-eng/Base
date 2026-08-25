@@ -31,6 +31,8 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 ## 2. L1+ 작업 진입·판단 불변식
 
 - L1 이상은 **최신 main**, 현재 결정, 분야 정본, 같은 Goal의 열린·최근 병합 PR, **실제 구현**을 먼저 비교한다. 저장소 사실로 판단 가능한 오류·누락을 사용자에게 되묻지 않는다.
+- **`REUSE_FIRST_PREFLIGHT_REQUIRED`**: 신규 또는 의미 있게 개정하는 시스템·메커닉·데이터/콘텐츠 구조·UI/UX·시각/Asset·도구/자동화·workflow·Skill/Eval·QA/Test는 새 설계·제작 전에 `managing-project-intake-and-work-contract`가 `docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json`을 통해 현재 프로젝트 구현·승인 Asset/Reference/Benchmark → 기존 Base reuse 및 축적 knowledge/case/reference → 직접 관련된 다른 프로젝트의 검증 evidence → 결정에 필요한 외부 benchmark 순으로 조사한다. 적용 대상에서 `NOT_RUN`이면 신규 제작/`BUILD_NEW` readiness를 주장하지 않는다. 동일 승인 범위의 유효한 기존 evidence는 `REUSED_EVIDENCE`, 순수 기계적 변경은 이유가 있는 `NOT_APPLICABLE`을 허용한다. 모든 프로젝트를 전수 검색하지 않고 Registry/profile/current bottleneck이 가리키는 대상만 targeted 확인하며 프로젝트 정본과 고유 정체성이 Base reference보다 우선한다.
+- **`REUSE_LEARNING_HANDOFF_REQUIRED`**: 위 preflight가 적용된 작업의 종료에서는 기존 reuse handoff의 `selected_modules / reuse_mode / project_paths_changed / verification_evidence / evidence_ceiling / rollback / project_only_lessons / base_promotion_candidates`를 평가한다. 새 재사용 교훈이 없으면 `NO_NEW_REUSE_LEARNING`으로 닫고 억지 Registry churn을 만들지 않으며, 후보 발견만으로 Base 승격·프로젝트 adoption·runtime proof를 주장하지 않는다.
 - `DEEP_WORK_PREANSWER_GATE` / `REQUIRED_EVIDENCE_BEFORE_FINAL`: 요청된 조사·벤치마킹·검토·구현·검증은 실제 수행 뒤 substantive final을 낸다. `NOT_RUN_MANDATORY_GATE_BLOCKS_COMPLETION`: 필수 항목이 `NOT_RUN`이면 완료가 아니라 `BLOCKED_UNVERIFIED`다.
 - `INTERMEDIATE_REPORT_SUPPRESSION_IS_NOT_WORK_REDUCTION`: 중간보고 축소는 작업 축소가 아니다. `REASONING_EFFORT_IS_NOT_WORK_EVIDENCE`: 추론 강도는 evidence가 아니다. `REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF`: 현재 세션 도구로 필요한 필수 증거를 얻을 수 있으면 실제 Tool 실행을 optional executor handoff로 대체하거나 생략하지 않는다.
 - `GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY`: GPT primary는 판단·조정 책임을 뜻하며 텍스트 작성만으로 조사·실행·검증 책임을 충족한 것으로 보지 않는다.
@@ -72,7 +74,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 
 ## 6. Existing Solution First·Godot·외부 도구
 
-- **Existing Solution First Gate**: 신규 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층은 기존 대안을 조사하고 `REUSE / ABSORB / REFACTOR / ARCHIVE / BUILD_NEW`를 판정한 뒤 선택한다.
+- **Existing Solution First Gate**: 프로젝트의 시스템·콘텐츠 구조·UI/UX·시각/Asset·reference·도구·workflow·Skill·QA는 위 `REUSE_FIRST_PREFLIGHT_REQUIRED`로 기존 프로젝트/Base/축적 자료를 먼저 확인한다. 신규 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층은 추가로 기존 외부 대안까지 조사하고 `REUSE / ABSORB / REFACTOR / ARCHIVE / BUILD_NEW`를 판정한 뒤 선택한다.
 - Godot 저작·편집 자동화 정본은 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`; 직접 제작 판단은 `evaluating-godot-assets-and-plugins-before-creation`이 소유한다.
 - **검증·승인된 애드온**이 실제 문제를 해결하면 **직접 중복 구현보다 활용을 우선**한다. 그러나 **모든 프로젝트에 일괄 설치하지 않는다**. 설치됐지만 실제 소비 경로가 없으면 `INSTALLED_UNUSED`로 구분한다.
 - 신규 제작은 기존 대안의 핵심 기능·보안·라이선스·유지·Godot/OS 적합성 결함을 설정·격리·bounded patch로 해결할 수 없다는 증거가 필요하다.
