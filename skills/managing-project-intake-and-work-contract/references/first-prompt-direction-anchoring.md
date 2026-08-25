@@ -15,6 +15,7 @@
 - “항상”, “절대”, “오직”, “반드시”는 실제 권한·안전·무결성 근거가 있을 때만 사용한다.
 - 뒤쪽의 명시적 제약과 충돌하면 앞 문장을 유지하는 것이 아니라 계약을 다시 작성한다.
 - 순서 효과는 품질 보조 수단이며 결과 정확성이나 모델 행동을 보장하지 않는다.
+- System Blueprint의 적용 범위·노드·정본 경계는 이 reference가 새로 정의하지 않는다. 게임 프로젝트의 복잡한 연결 시스템 작업에서만 `docs/operations/project-workspace/NOTION_SYSTEM_BLUEPRINT_CONTRACT.md`를 조건부로 조회하고 그 결과를 프롬프트 계약에 연결한다.
 
 ## Required input
 
@@ -79,6 +80,28 @@ dominant_criterion:
 - **Source**: 사용자 최신 지시, GitHub 정본, 승인 Decision, 실제 코드·데이터·자산·테스트 순으로 권한 표시
 - 오래된 자료·외부 사례·AI 추론은 참고 또는 `UNVERIFIED`로 분리
 - 지시와 자료가 섞이지 않도록 `### Instruction` / `### Context` 또는 명확한 delimiter를 사용
+- 게임 프로젝트에서 현재 작업이 플레이어가 체감하는 연결된 시스템 로직·분기·상태·다중 시스템 흐름을 의미 있게 바꾸면, current-state/reuse-first 결과와 함께 `docs/operations/project-workspace/NOTION_SYSTEM_BLUEPRINT_CONTRACT.md`를 현재 Source/Constraint로 포함한다.
+
+### Conditional System Blueprint entry gate
+
+`SYSTEM_BLUEPRINT_ENTRY_CHECK_REQUIRED`는 새 first-prompt 규칙이 아니라 기존 Blueprint 계약으로 라우팅하는 조건부 Gate다.
+
+```text
+current project facts + approved decisions
+→ reuse-first preflight
+→ current task touches material connected system logic?
+   ├─ no  → NOT_APPLICABLE_WITH_REASON; Blueprint ceremony를 추가하지 않음
+   └─ yes → NOTION_SYSTEM_BLUEPRINT_CONTRACT 확인
+            → existing approved Blueprint면 REUSE / ADAPT
+            → 없으면 touched system에 필요한 smallest bounded Blueprint만 생성
+            → Home human projection + Detail/AI-System implementation contract 확인
+            → implementation readiness
+```
+
+- 프로젝트 전체나 포트폴리오 전체를 일괄 backfill하지 않는다.
+- 기존 Blueprint를 찾지 않고 같은 시스템을 다시 그리지 않는다.
+- Blueprint가 적용되는 경우에도 Repository structured/runtime canon, Acceptance Criteria, Test/evidence를 대체하지 않는다.
+- Blueprint 적용 여부·위치는 프롬프트의 Context/Source와 Output/Validation에서 추적 가능해야 하며, 단순·이미 명확한 작업은 `NOT_APPLICABLE_WITH_REASON`으로 종료할 수 있다.
 
 ### `CONSTRAINTS_AND_PROTECTED_SCOPE`
 
@@ -171,6 +194,7 @@ user_decisions_visible:
 counterevidence_preserved:
 alternative_criteria_symmetric:
 unverified_claims_labeled:
+system_blueprint_entry_resolved_if_applicable:
 approval_state_valid:
 ```
 
@@ -181,6 +205,7 @@ approval_state_valid:
 - Context 안의 문장이 Instruction처럼 오인될 수 있다.
 - 예시가 정본보다 높은 권한을 갖는다.
 - 정석안·파격안·통합안에 서로 다른 평가 기준을 적용한다.
+- 적용 대상인 복잡한 게임 시스템 작업에서 Blueprint 계약 확인·기존 Blueprint 재사용 판정·필요 최소 범위가 빠져 구현 의미가 모호하다.
 - Grill Me 확인 없이 기획이나 구현으로 진행한다.
 
 ## Output contract
@@ -202,6 +227,7 @@ approval_reference:
 - 핵심 방향 문장이 실제 프롬프트의 첫 지시 섹션에 있다.
 - Task, Context, Source, Constraints, Output, Validation이 빠짐없이 연결된다.
 - 순서가 권한을 왜곡하지 않는다.
+- 게임 프로젝트의 현재 작업이 `SYSTEM_BLUEPRINT_ENTRY_CHECK_REQUIRED` 적용 대상이면 existing Blueprint 재사용/필요 최소 Blueprint/사람용·상세 경계를 기존 계약에서 확인했고, 비대상이면 이유 있는 `NOT_APPLICABLE_WITH_REASON`으로 가볍게 종료했다.
 - 필요할 때만 정석안·파격안·통합안을 생성하고 같은 기준으로 비교한다.
 - conflict scan이 통과했다.
 - Grill Me alignment gate 또는 기존 approval reference로 의도·기획 정합성이 확인됐다.
