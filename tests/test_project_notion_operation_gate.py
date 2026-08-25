@@ -7,11 +7,19 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 AGENTS_TEMPLATE = ROOT / "templates" / "AGENTS.project.md"
 PROJECT_OPERATIONS = ROOT / "templates" / "project-operations" / "README.md"
+OPERATION_GATE = ROOT / "templates" / "project-operations" / "NOTION_OPERATION_GATE.md"
 
 
 class ProjectNotionOperationGateTests(unittest.TestCase):
-    def test_project_agents_routes_notion_mutations_through_safe_bounded_gate(self) -> None:
-        text = AGENTS_TEMPLATE.read_text(encoding="utf-8")
+    def test_project_templates_route_to_single_notion_operation_owner(self) -> None:
+        agents = AGENTS_TEMPLATE.read_text(encoding="utf-8")
+        project_operations = PROJECT_OPERATIONS.read_text(encoding="utf-8")
+        owner_path = "templates/project-operations/NOTION_OPERATION_GATE.md"
+        self.assertIn(owner_path, agents)
+        self.assertIn(owner_path, project_operations)
+
+    def test_operation_owner_routes_notion_mutations_through_safe_bounded_gate(self) -> None:
+        text = OPERATION_GATE.read_text(encoding="utf-8")
         for required in (
             "NOTION_OPERATION_GATE",
             "PAGE_BLOCK",
@@ -26,26 +34,26 @@ class ProjectNotionOperationGateTests(unittest.TestCase):
         ):
             self.assertIn(required, text)
 
-    def test_project_operations_distinguishes_notion_automation_and_webhook_roles(self) -> None:
-        text = PROJECT_OPERATIONS.read_text(encoding="utf-8")
+    def test_operation_owner_distinguishes_notion_automation_and_webhook_roles(self) -> None:
+        text = OPERATION_GATE.read_text(encoding="utf-8")
         for required in (
-            "NOTION_OPERATION_GATE",
             "Webhook action",
             "Integration webhook",
             "Database automation",
-            "자동 연쇄 실행을 전제로 설계하지 않는다",
+            "자동 연쇄",
             "secret",
-            "destination readback",
+            "MANUAL_CONFIGURATION_REQUIRED",
         ):
             self.assertIn(required, text)
 
-    def test_project_operations_preserves_human_home_and_runtime_authority_boundaries(self) -> None:
-        text = PROJECT_OPERATIONS.read_text(encoding="utf-8")
+    def test_operation_owner_preserves_human_home_and_runtime_authority_boundaries(self) -> None:
+        text = OPERATION_GATE.read_text(encoding="utf-8")
         self.assertIn("NOTION_HUMAN_FACING_CANON", text)
         self.assertIn("REPOSITORY_STRUCTURED_CANON", text)
         self.assertIn("사람용 Home", text)
         self.assertIn("AI/System", text)
         self.assertIn("runtime truth", text)
+        self.assertIn("ZERO_INCREMENTAL_COST", text)
 
 
 if __name__ == "__main__":
