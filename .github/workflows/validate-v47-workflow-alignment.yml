@@ -15,9 +15,12 @@ on:
       - "docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md"
       - "docs/knowledge/game-development/reuse/PRODUCTION_TOOL_WORKFLOW_MODULES.md"
       - "docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md"
+      - "docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json"
+      - "skills/managing-project-intake-and-work-contract/SKILL.md"
       - "docs/evidence/2026-08-20-v47-workflow-alignment-adversarial-review.md"
       - "tests/test_v47_workflow_alignment.py"
       - "tests/test_v47_superseded_pr_closure.py"
+      - "tests/test_reuse_first_preflight_enforcement.py"
       - ".github/workflows/validate-v47-workflow-alignment.yml"
   workflow_dispatch:
 
@@ -39,4 +42,5 @@ jobs:
           python -m unittest \
             tests.test_v47_workflow_alignment \
             tests.test_v47_superseded_pr_closure \
+            tests.test_reuse_first_preflight_enforcement \
             -v
