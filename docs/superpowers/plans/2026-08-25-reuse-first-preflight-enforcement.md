@@ -18,6 +18,7 @@
 - Project canon/identity overrides Base references; candidate discovery is not project adoption or runtime proof.
 - Applicable `REUSE_FIRST_PREFLIGHT_REQUIRED=NOT_RUN` blocks new design/creation/`BUILD_NEW` readiness.
 - Mechanical no-design changes may record reasoned `NOT_APPLICABLE`; unchanged approved continuation may use `REUSED_EVIDENCE`.
+- Existing Base knowledge/case/reference is checked before fresh external research when it is relevant to the decision.
 - Completion must evaluate the existing reuse handoff fields without manufacturing Base churn when no new reusable lesson exists.
 
 ---
@@ -30,7 +31,7 @@
 
 **Interfaces:**
 - Consumes: current `AGENTS.md`, intake Skill, `START_HERE.md`, `PROJECT_WORK_REUSE_HANDOFF.json`.
-- Produces: explicit assertions for entry gate, source order, fail-closed behavior, targeted cross-project boundary, and exit learning handoff.
+- Produces: explicit assertions for entry gate, source order, fail-closed behavior, accumulated Base knowledge, targeted cross-project boundary, and exit learning handoff.
 
 - [ ] **Step 1: Create the focused test**
 
@@ -41,10 +42,12 @@ self.assertIn("REUSE_FIRST_PREFLIGHT_REQUIRED", agents)
 self.assertIn("REUSE_LEARNING_HANDOFF_REQUIRED", agents)
 self.assertIn("PROJECT_WORK_REUSE_HANDOFF.json", intake)
 self.assertIn("Asset/Reference/Benchmark", intake)
+self.assertIn("Base accumulated knowledge/case/reference", intake)
 self.assertIn("targeted", intake.lower())
 self.assertIn("NOT_RUN", intake)
 self.assertIn("REUSED_EVIDENCE", intake)
 self.assertIn("NOT_APPLICABLE", intake)
+self.assertIn("BASE_ACCUMULATED_KNOWLEDGE_CASE_REFERENCE", handoff["preflight_gate"]["required_source_order"])
 self.assertIn("REUSE_FIRST_PREFLIGHT_REQUIRED", handoff["preflight_gate"]["id"])
 self.assertTrue(handoff["preflight_gate"]["not_run_blocks_build_new"])
 self.assertTrue(handoff["preflight_gate"]["targeted_cross_project_only"])
@@ -70,7 +73,7 @@ Expected: the new focused test fails because current contracts do not yet contai
 - Modify: `START_HERE.md`
 
 **Interfaces:**
-- Consumes: existing current-state audit, Base reuse handoff/registry/profile, Notion workspace authority.
+- Consumes: existing current-state audit, Base reuse handoff/registry/profile, accumulated Base knowledge/case/reference, Notion workspace authority.
 - Produces: universal fail-closed reuse-first routing without a new Skill.
 
 - [ ] **Step 1: Add root invariants**
@@ -85,6 +88,7 @@ Required sequence:
 current project authority/implementation
 → approved Project Asset/Reference/Benchmark surfaces
 → Base PROJECT_WORK_REUSE_HANDOFF + adoption profile/matrix + REUSABLE_MODULE_REGISTRY
+→ relevant Base accumulated knowledge/case/reference
 → targeted cross-project evidence only when directly relevant
 → decision-relevant external benchmark/professional practice/success-failure evidence
 → owner-specific reuse/adapt/reference/no-reuse disposition
@@ -112,7 +116,7 @@ Expose the route but do not duplicate the detailed contract.
 
 - [ ] **Step 1: Add `preflight_gate`**
 
-Include `id`, applicability, `required_source_order`, `not_run_blocks_build_new=true`, `targeted_cross_project_only=true`, reuse evidence states (`REUSED_EVIDENCE`, `NOT_APPLICABLE`), and no-bulk-scan boundary.
+Include `id`, applicability, `required_source_order`, `not_run_blocks_build_new=true`, `targeted_cross_project_only=true`, Base accumulated knowledge/case/reference before fresh external research, reuse evidence states (`REUSED_EVIDENCE`, `NOT_APPLICABLE`), and no-bulk-scan boundary.
 
 - [ ] **Step 2: Add `exit_learning_gate`**
 
@@ -168,7 +172,7 @@ Add the visible workflow concept: reuse-first lookup happens before new design/c
 
 - [ ] **Step 2: Update the reuse-library page**
 
-Add the ordered lookup sources and targeted cross-project rule; state that no new reusable lesson means no forced registry churn.
+Add the ordered lookup sources including accumulated Base knowledge/case/reference and the targeted cross-project rule; state that no new reusable lesson means no forced registry churn.
 
 - [ ] **Step 3: Fetch both pages and verify readback**
 
