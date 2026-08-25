@@ -131,12 +131,14 @@ CODEX_PREFLIGHT_OPTIONAL
 
 ## 5. 경량 중립성 Gate와 전체 적대 검토 경계
 
-권장안·판정·설계 선택은 `평가 기준 → 대안 → 반증 → 이익·비용·위험 → 되돌리기 난이도 → 미검증 → 권장 결론` 순서의 경량 중립성 Gate를 사용한다.
+권장안·판정·설계 선택은 `평가 기준 → 대안 → 반증 → 이익·비용·위험 → 되돌리기 난이도 → 미검증 → 권장 결론` 순서의 경량 중립성 Gate를 사용한다. 이는 **동의 편향**을 막지만 **반대를 위한 반대**를 요구하지 않는다.
 
 - `L0`: 오탈자·명백한 기계 수정·동일 입력 검사 재실행은 전체 적대 검토 Skill을 호출하지 않는다.
-- `L1+`: 기능·설계·아키텍처·정책·방향 결정은 `running-adversarial-review-and-refinement`의 전체 lifecycle을 적용한다.
+- Registry의 `칭찬·균형 평가만 요청` 비사용 조건은 **결정·권장안이 없는 설명형 칭찬·균형 요약**에만 적용한다. 중요한 결정·권장안을 포함한 비교는 이 예외로 적대적 검토를 우회하지 않는다.
+- `L1 이상` PLAN 사전판정은 `running-adversarial-review-and-refinement: attack → validate-critique → decision-report`를 적용한다.
 - 승인된 finding이 **기획·정본 교정**이면 GPT PLAN/REVIEW owner에서 최소 수정한다.
-- 승인된 finding이 **제품 code/data/Scene/Resource/test/runtime 수정**이면 Codex BUILD로 한 번 구현하고 GPT REVIEW로 돌아온다.
+- 승인된 finding이 **제품 code/data/Scene/Resource/test/runtime 수정**이면 `refine-approved-findings`에서 분야 Skill BUILD로 한 번만 구현·수정한다. current role에서 실제 product mutation executor는 Codex이며, GPT가 같은 finding을 다시 직접 구현하지 않는다.
+- 수정 뒤 REVIEW의 `regression-recheck → decision-report`로 이동한다. 이미 구현된 finding을 다시 수정하지 않는다.
 - 적대적 검토 Skill은 분야 작성/구현 owner를 빼앗지 않는다.
 - 최소 full loop count와 clean exit는 latest Base adversarial owner를 따른다.
 - 증거가 부족하면 `BLOCKED_UNVERIFIED`와 필요한 확인 조건을 반환한다.
@@ -297,6 +299,7 @@ WAITING_GPT_VISUAL
 - `tool-output truncation`, queued/in-progress CI, 첫 exact-head 조회 실패는 `EVIDENCE_TRANSPORT_INCOMPLETE`로 재조회한다.
 - 구현 단계에서 현재 surface에 Codex/executor 실행 경로가 실제 없으면 **실행했다고 주장하지 않는다.** executor-ready handoff/checkpoint를 준비하고 해당 task를 `DEFERRED_EXTERNAL_EXECUTOR`로 둔다.
 - `[연속작업] 진행해`는 동일 승인 범위의 `CONTINUOUS_WORK_EXECUTOR_HANDOFF`를 허용하므로 `Codex로 넘길까요?` 같은 재승인을 만들지 않는다.
+- **기술적 단일 최소 안전 finding이면 자동 승인**할 수 있다. 여기서 자동 승인은 새 기획 결정을 만드는 것이 아니라, 이미 승인된 범위의 기술 finding을 Codex BUILD queue에 넣는 뜻이다. Codex가 최소 수정한 뒤 GPT가 `regression-recheck`와 whole-state REVIEW를 수행한다.
 - 같은 승인 목표의 구현·검증 방법, 테스트 규모 확대, 재조회·재실행, 동작 보존 최소 수정은 새 제품 결과·예산·권한을 만들지 않는 한 `USER_DECISION_REQUIRED`가 아니다.
 - 진짜 사용자 결정, 범위 확대, 고위험 외부 행위는 자동 승인하지 않지만 독립 ready task가 있으면 계속한다.
 - `GLOBAL_TERMINAL_BLOCKER`는 recovery path를 소진하고, 독립 ready task가 없고, 기존 approval/authorized executor로도 진행할 수 없을 때만 사용한다.
