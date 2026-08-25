@@ -83,6 +83,22 @@ description: Use when planning, polishing, or auditing game UX, UI structure, in
 11. 빠른 반복 입력, 중복 입력, 애니메이션 중단·재진입, modal 재진입에서 결과 중복과 시각 drift를 검사한다.
 12. 자동 검사와 사람 이해 증거를 분리하고 실행하지 않은 항목은 `NOT_RUN` 또는 `UNVERIFIED`로 둔다.
 
+## BCP-2026-035 · 생성형 visual 작업 무결성
+
+### `VISUAL_TASK_SCOPE_FIDELITY`
+
+single-screen mock, state sheet, before/after, visual QA reference처럼 경계가 있는 생성형 visual 작업은 생성 전에 `visual_question / target_screen / target_state / excluded_scope`를 고정한다. 결과가 unrelated screen, broad dashboard, 새 게임 규칙·UI처럼 제외 범위를 넘어가면 보기 좋더라도 같은 deliverable의 PASS로 세지 않는다. 먼저 원래 질문에 맞게 좁히거나 별도 작업으로 재분류한다.
+
+### `BATCH_COUNT_MEANS_INDEPENDENT_DELIVERABLES`
+
+사용자가 N개의 이미지·결과를 요청하면 기본값은 **독립 검토·교체·배치 가능한 N개 deliverable**이다. N-panel collage는 사용자가 collage를 명시적으로 요청하거나 승인한 경우에만 N개와 동등하게 센다. 의미 손실 없이 분리 가능하면 독립 결과로 분리하고, panel 의존성 때문에 crop이 의미를 훼손하면 원래 bounded brief로 재생성한다. Base는 특정 N값이나 이미지 공급자의 동작을 고정하지 않는다.
+
+### `DECISION_CRITICAL_VISUAL_SEMANTIC_REDUNDANCY`
+
+플레이 판단에 중요한 경로·선택·잠금·상태가 art/background와 경쟁하면 최소한 다음 세 방향을 비교한다: 전체 style 교체, color/intensity만 강화, 기존 정체성을 유지하면서 독립 semantic cue를 중복하는 안. 기존 제품 정체성 보존 가치가 있다면 세 번째 안을 우선 검토하고, 필요에 따라 color, direction, shape, text/icon, brightness/thickness, motion 중 서로 독립적인 신호를 조합한다. 특정 색·화살표·두께를 공용 상수로 만들지 않는다.
+
+이 세 계약은 생성 결과의 scope·산출물 단위·판단 정보 표현을 통제한다. mock/reference나 자동 검사가 `human comprehension`, 접근성, 실제 runtime/device correctness를 증명하지는 않는다. 최종 이미지 생성·아트 기술 카드 owner와 사람/실기기 검증 경계는 기존 책임을 유지한다.
+
 상세 방법은 필요할 때만 읽는다.
 
 - [ux-ui-design-system-method.md](references/ux-ui-design-system-method.md)
