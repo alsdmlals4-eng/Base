@@ -6,6 +6,8 @@
 
 For GPT-assisted semantic placement, Home/AI surface separation, image-understanding evidence ceilings and bounded layout/readback rules, apply `NOTION_GPT_VISUAL_LAYOUT_CONTRACT.md` together with this workflow.
 
+For complex gameplay/system logic represented as connected nodes, also apply `NOTION_SYSTEM_BLUEPRINT_CONTRACT.md`. A System Blueprint is a derived human/implementation view, not a visual-scripting runtime or a third source of truth.
+
 Every project-scoped record must satisfy `PROJECT_RELATION_REQUIRED`. A record without a Project relation is unassigned working material, not project canon.
 
 ## Standard project page
@@ -23,8 +25,9 @@ Each project page keeps large visual separation between three responsibilities:
 
 [large visual gap]
 
-03 · VISUAL MAP
+03 · VISUAL MAP / SYSTEM BLUEPRINT
   → semantic flow
+  → core-system node graph when applicable
   → approved project visuals
 ```
 
@@ -177,6 +180,26 @@ For narrative projects it may instead show:
 
 Keep a semantic graph or structured Screen records behind the rendered map. When the map disagrees with current records, regenerate or correct the map; do not treat the picture as a competing source of truth.
 
+## System Blueprint node view
+
+`NOTION_SYSTEM_BLUEPRINT` extends the Visual Map concept for **complex system logic**. It is required only when the applicability gate in `NOTION_SYSTEM_BLUEPRINT_CONTRACT.md` passes.
+
+A Home-facing graph should emphasize player-readable meaning:
+
+```text
+[Player Action / Trigger]
+→ [Condition / Choice]
+→ [State or Data Change]
+→ [Feedback / Reward / Failure]
+→ [Next System or State]
+```
+
+The detailed Blueprint surface keeps stable `Node ID` values and, when relevant, Trigger/Input, Condition, State/Data Change, Output/Next, Feedback, Owner, Godot Mapping and Validation. The Home may collapse those fields into a readable diagram, but the graph must not stand alone when implementation interpretation would otherwise be ambiguous.
+
+Place the most important System Blueprint near Core Loop / Full Flow / Visual GDD content on the Project Home. Do not force a universal ordering when another project-specific explanation communicates the game faster.
+
+Do not blueprint trivial work. Text-only changes, isolated numeric tuning, cosmetic edits and already-explicit repetitive implementation stay on the lighter existing workflow.
+
 ## Image/file delivery and readback
 
 A generated image or uploaded file is not considered delivered merely because an upload call returned success.
@@ -198,14 +221,14 @@ If readback fails, report the delivery as unverified and do not promote the asse
 Notion manages the project operating workspace; runtime integration remains repository-owned.
 
 ```text
-Notion approved asset / screen / decision
+Notion approved asset / screen / System Blueprint / decision
 → explicit implementation task
-→ repository asset / scene / resource / config
+→ repository asset / scene / resource / config / code
 → runtime build
 → QA evidence
 ```
 
-A Notion approval, screenshot or Visual Map is not evidence that Godot or another runtime consumed the asset correctly.
+A Notion approval, screenshot, Visual Map or System Blueprint is not evidence that Godot or another runtime consumed or implemented it correctly.
 
 ## Deprecated implementation boundary
 
