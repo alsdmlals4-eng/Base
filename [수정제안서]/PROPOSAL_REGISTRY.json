@@ -344,6 +344,17 @@
       "submitted_at": "2026-08-25",
       "approval_ref": "[수정제안서]/BCP-2026-031-web-platform-native-ui-capability/PROPOSAL.md#승인과-구현 (2026-08-25 current task user approval; proposal PR #665 merged)",
       "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/667"
+    },
+    {
+      "proposal_id": "BCP-2026-032-ai-visual-continuity-and-notion-preview-fallback",
+      "title": "AI 시각 제작 연속성·Notion Preview Fallback 강화",
+      "path": "[수정제안서]/BCP-2026-032-ai-visual-continuity-and-notion-preview-fallback/PROPOSAL.md",
+      "status": "SUBMITTED",
+      "source_project": "alsdmlals4-eng/ninja-survival-godot",
+      "source_commit": "5b7c86e25c53e4a2667f1a70dc59938fc60c4c9a",
+      "submitted_at": "2026-08-25",
+      "approval_ref": null,
+      "implementation_pr": null
     }
   ]
 }
