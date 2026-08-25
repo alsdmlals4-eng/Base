@@ -146,7 +146,7 @@ P06 Base 문서는 GPT가 관리한다. **P06의 설계가 특정 게임 프로�
 ## Part checkpoint 필수 설명
 
 1. 이 Part가 왜 존재하는가
-2. 중요한 규칙과 trigger
+2. 가장 중요한 규칙과 trigger
 3. Skill 목적 / 입력 / 처리 / 출력 / 기대효과 / consumer/Test
 4. Module 입력 → 판단/처리 → 출력
 5. 없으면 어떤 실패가 생기는가
