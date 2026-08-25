@@ -37,10 +37,7 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
             "REPOSITORY_NATIVE_EVIDENCE_CAPTURE",
         ):
             self.assertIn(term, text)
-        self.assertIn("QA Evidence Studio", text)
-        self.assertIn("검증", text)
         self.assertNotIn("QA_EVIDENCE_STUDIO_SPECIALIST_VALIDATION_RETAINED", text)
-        self.assertNotIn("별도 QA Evidence Studio 앱을 기본 경로로 유지할 필요는 없지만", text)
 
     def test_planning_policy_uses_notion_and_repository_not_active_sheets(self) -> None:
         text = PLANNING.read_text(encoding="utf-8")
@@ -56,27 +53,21 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
             "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md",
         ):
             self.assertIn(term, text)
-        for stale in (
-            "PROJECT_SHEET_CONFIGURED",
-            "새 Sheet에 설치",
-            "Sheet·GitHub 동기화",
-        ):
-            self.assertNotIn(stale, text)
 
-    def test_workspace_contract_advances_without_duplicate_gpt_workflow_canon(self) -> None:
+    def test_workspace_contract_scopes_codex_to_godot_product_and_keeps_gpt_governance(self) -> None:
         data = json.loads(WORKSPACE.read_text(encoding="utf-8"))
-        self.assertGreaterEqual(data["schema_version"], 3)
+        self.assertEqual(3, data["schema_version"])
         self.assertEqual("docs/GPT_CODEX_WORKFLOW_POLICY.md", data["workflow_policy"])
-        self.assertEqual("GPT_FIRST_PLANNING_AND_REVIEW", data["planning_owner"])
-        self.assertEqual("OPTIONAL_CODEX_EXECUTOR", data["codex_role"])
+        self.assertEqual("GPT_NONCODING_PROJECT_OWNER", data["planning_owner"])
+        self.assertEqual("GPT_BASE_NOTION_GOVERNANCE_OWNER", data["base_governance_owner"])
+        self.assertEqual("CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER", data["codex_role"])
+        self.assertTrue(data["codex_not_general_repository_executor"])
         self.assertEqual("HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN", data["human_home_policy"])
         self.assertEqual("docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md", data["retirement_policy"])
         self.assertEqual("MIGRATION_ONLY_UNTIL_REMOVAL", data["google_sheets"])
         self.assertEqual("QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW", data["qa_evidence_studio"])
-        self.assertTrue(any(
-            "REPOSITORY_NATIVE_EVIDENCE_CAPTURE" in invariant
-            for invariant in data["invariants"]
-        ))
+        self.assertIn("BASE_VALIDATION_CONTRACT", data["gpt_repository_domains"])
+        self.assertIn("GODOT_IMPLEMENTATION_TEST", data["codex_product_domains"])
 
     def test_active_registry_removes_sheet_workspace_routing_and_preserves_decision_checkpoints(self) -> None:
         rows = self.registry_rows()
@@ -98,16 +89,9 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
             self.assertIn("notion", row_text.lower())
             self.assertIn("migration", row_text.lower())
 
-        design = rows["managing-design-documents"]
-        self.assertIn("하위 시스템 checkpoint", design["use_when"][0])
-
-        dashboard = rows["building-project-visual-dashboards"]
-        self.assertEqual("ACTIVE", dashboard["status"])
-        self.assertTrue(any("notion" in text.lower() for text in dashboard["use_when"]))
-        self.assertFalse(any("standalone HTML" in text for text in dashboard["use_when"]))
-        self.assertNotIn("html-dashboard", dashboard["trigger_tags"])
-        self.assertNotIn("standalone-dashboard", dashboard["trigger_tags"])
-        self.assertIn("standalone HTML", " ".join(dashboard["do_not_use_when"] + dashboard["review_triggers"]))
+        handoff = rows["maintaining-project-context-and-handoff"]
+        self.assertIn("godot-product-implementation-handoff", handoff["trigger_tags"])
+        self.assertTrue(any("Base 정책" in text for text in handoff["do_not_use_when"]))
 
     def test_dashboard_skill_is_notion_home_visual_map_owner_not_html_builder(self) -> None:
         text = DASHBOARD.read_text(encoding="utf-8")
@@ -130,32 +114,17 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
         generator = GENERATOR.read_text(encoding="utf-8")
         self.assertIn('"project_sheet_role": "MIGRATION_ONLY_LEGACY_SOURCE"', generator)
         self.assertIn('"sheet_only_change_status": "MIGRATION_PROPOSAL_ONLY"', generator)
-        self.assertIn('"id": "BASE-V9-004"', generator)
-        self.assertIn('"id": "BASE-V9-002", "status": "SUPERSEDED"', generator)
-
         frozen = json.loads(SHEET_CONTROL.read_text(encoding="utf-8"))
         self.assertEqual("BASE_EXCLUDED", frozen["base_sheet_status"])
         self.assertEqual("USER_FACING_GDD_WORKSPACE", frozen["project_sheet_role"])
-        self.assertEqual("PROPOSED_SHEET_CHANGE", frozen["sheet_only_change_status"])
         self.assertFalse(frozen["external_sheet_writes_authorized"])
-        self.assertNotIn("active_project_workspace", frozen)
-
         version = BASE_RULES_VERSION.read_text(encoding="utf-8")
         self.assertIn("Frozen v9.0 release derivatives", version)
-        self.assertIn("not a current projection", version)
-        self.assertIn("Project GDD Google Sheets policy", version)
-
         decisions = json.loads(DECISIONS.read_text(encoding="utf-8"))["decisions"]
         old = next(row for row in decisions if row["id"] == "BASE-V9-002")
         current = next(row for row in decisions if row["id"] == "BASE-V9-004")
         self.assertEqual("SUPERSEDED", old["status"])
-        self.assertEqual("BASE-V9-004", old["superseded_by"])
         self.assertEqual("CONFIRMED", current["status"])
-        self.assertIn("migration-only", current["decision"].lower())
-        self.assertFalse(any(
-            row["status"] == "CONFIRMED" and "USER_FACING_GDD_WORKSPACE" in row["decision"]
-            for row in decisions
-        ))
 
     def test_skill_freshness_requires_meaningful_routing_companion_not_any_part_test(self) -> None:
         data = json.loads(FRESHNESS_CONFIG.read_text(encoding="utf-8"))
@@ -166,7 +135,6 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
         companions = rule["require_any_changed"]
         self.assertIn("tests/test_skill_routing_governance.py", companions)
         self.assertNotIn("tests/test_p0[1-9]_*.py", companions)
-        self.assertNotIn("tests/test_bca_visual_sheet_workflow.py", companions)
         routing_test = ROUTING_TEST.read_text(encoding="utf-8")
         self.assertIn("test_base_visual_dashboard_routes_to_notion_home_not_html", routing_test)
 

@@ -20,6 +20,16 @@ START_HERE.md
 
 ## 2. 권한 경계
 
+### GPT / Codex 작업 책임
+
+```text
+GPT = Base·Notion·기획·검수·문서·표·이미지·운영 인프라
+Codex = 실제 게임 프로젝트의 Godot 제품 구현·GDScript·Scene·Resource·runtime/play test
+CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR
+```
+
+Base Python test·Registry/generated·CI contract는 코드 형식이어도 GPT governance 작업이다. Codex handoff는 `ACTUAL_GODOT_PRODUCT_IMPLEMENTATION_EXISTS`일 때만 프로젝트별로 만든다.
+
 ### Base
 
 ```text
@@ -56,7 +66,7 @@ REPOSITORY_STRUCTURED_CANON
 
 `REPO_NATIVE_STRUCTURED_DATA`는 과거 공용 계약·검증의 발견성을 보존하기 위한 compatibility alias이며, 현재 공식 이름은 `REPOSITORY_STRUCTURED_CANON`이다.
 
-`DOMAIN_SPLIT_CANON`은 GitHub와 Notion 중 하나를 모든 질문의 단일 도구로 강제하지 않는다. **사람이 이해·비교·수정하는 전체 그림, 시각 자료, 예산표, Tier표, Flow/Storyboard는 Notion을 우선**하고, **Markdown·JSON·실제 게임 데이터·코드·Scene·Resource·Test·Runtime evidence는 repository를 우선**한다. Notion 변경이 구조화 데이터나 구현 변경을 요구하면 `SYNC_BEFORE_IMPLEMENTATION`으로 repository에 동기화한 뒤 구현한다.
+`DOMAIN_SPLIT_CANON`은 GitHub와 Notion 중 하나를 모든 질문의 단일 도구로 강제하지 않는다. **사람이 이해·비교·수정하는 전체 그림, 시각 자료, 예산표, Tier표, Flow/Storyboard는 Notion을 우선**하고, **Markdown·JSON·실제 게임 데이터·코드·Scene·Resource·Test·Runtime evidence는 repository를 우선**한다. Notion 변경이 실제 게임 제품 runtime 변경을 요구하면 GPT가 기획/정본을 먼저 동기화하고, `ACTUAL_GODOT_PRODUCT_IMPLEMENTATION_EXISTS`인 범위만 프로젝트별 Codex Godot Work Instruction으로 넘긴다. Base/Notion/non-product 변경은 GPT가 직접 닫는다.
 
 `PROJECT_RELATION_REQUIRED`: project-scoped Work, Asset, Component, Screen, Reference, Benchmark, Character, Faction, Scene, Clue, Location, Canon record는 Project relation 없이 프로젝트 정본이 될 수 없다.
 

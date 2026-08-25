@@ -135,7 +135,8 @@ class BasePartitionContractTests(unittest.TestCase):
             self.assertIn("MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5", text)
             self.assertIn("CLEAN_REVIEW_EXIT", text)
             self.assertIn("CROSS_PART_CHANGE_REQUEST", text)
-        self.assertIn("OPTIONAL_CODEX_EXECUTOR", worker)
+        self.assertIn("BASE_GOVERNANCE = GPT", worker)
+        self.assertIn("CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR", worker)
         self.assertIn("사용자 학습형 완료보고", worker)
         self.assertIn("CURRENT_COORDINATOR_CHAT", integration)
 

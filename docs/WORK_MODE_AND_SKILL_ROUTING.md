@@ -1,60 +1,61 @@
 # Work Mode·Skill·Skill Mode 라우팅 계약
 
-## 1. 용어
+## 1. Work Mode
 
-### Work Mode
-
-요청을 처리하는 동안 AI의 **주된 작업 자세·권한·증거 기준**을 정한다. 대화 전체에 영구 고정되는 성격이 아니라 현재 작업 단계의 운영 상태다.
-
-| Work Mode | 핵심 목적 | 기본 행동 |
+| Work Mode | Owner | 핵심 목적 |
 |---|---|---|
-| `PLAN` | 의도·요구·근거·설계·순서 확정 | 조사와 읽기 우선, 구현은 승인 전 보류 |
-| `BUILD` | 승인된 계약의 코드·데이터·문서·자산 구현 | 범위 내 쓰기, 단계별 테스트·롤백 |
-| `REVIEW` | 결과를 적대적으로 검토·검증·판정 | 기본 읽기 전용, 전체 영향 범위의 증거·반례·개선 후보 탐색, 승인된 수정은 `BUILD`로 전환 |
+| `PLAN` | GPT | 의도·요구·근거·기획·Notion·Visual·Acceptance 확정 |
+| `NONCODING_BUILD` | GPT | Base/Notion/문서/정본/표/이미지/운영 교정 |
+| `GODOT_PRODUCT_BUILD` | Codex | 실제 게임 프로젝트의 Godot 제품 구현·코딩·runtime 연결 |
+| `REVIEW` | GPT | 결과 적대적 검토·증거·회귀·기획 일치 판정 |
 
-복합 작업은 `PLAN → BUILD → REVIEW`처럼 순차 전환할 수 있다. 한 시점에는 주 Work Mode 하나만 둔다.
+`BUILD`라는 단어만으로 Codex를 호출하지 않는다. 먼저 **비코딩/Base/Notion 작업인지, 실제 Godot 제품 구현인지** 분류한다.
 
-### Skill
+```text
+CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR
+BASE_GOVERNANCE_BUILD_IS_GPT
+NOTION_BUILD_IS_GPT
+GODOT_PRODUCT_BUILD_IS_CODEX
+```
 
-특정 책임을 반복 수행하는 전문 작업 계약이다. trigger, 입력, 절차, 산출물, 실패 조건과 검증을 가진다.
+## 2. 기본 라우팅
 
-예: `managing-game-project-operating-system`, `reviewing-and-validating-project-changes`.
+공용 정본: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
 
-### Skill Mode
+```text
+사용자 Prompt
+→ current Project/Base/Notion/GitHub 정본 복원
+→ GPT PLAN
+→ 재사용 조사·벤치마킹·적대적 검토·IRG
+→ 기획/Flow/UI/UX/데이터/Visual/Acceptance 확정
+→ 비코딩 교정이 있으면 GPT NONCODING_BUILD
+→ 실제 Godot 제품 구현 필요 여부 판정
 
-한 Skill 내부에서 현재 필요한 세부 절차·권한을 선택한다.
+Godot 제품 구현 없음
+→ GPT REVIEW / readback / 종료
 
-예: 운영체계 Skill의 `audit / reconcile-legacy / migrate / verify`, 변경 검증 Skill의 `reference-freshness / regression`.
+Godot 제품 구현 있음
+→ GPT가 프로젝트별 Codex 작업지시문 작성
+→ CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF
+→ Codex가 해당 프로젝트 GitHub + Notion 재수화
+→ GODOT_PRODUCT_BUILD
+→ test/runtime/play evidence
+→ READY_FOR_GPT_REVIEW
+→ GPT REVIEW
+```
 
-문서에서 별도 수식어 없이 Skill 안에 적힌 `mode`는 **Skill Mode**를 뜻한다.
+## 2A. Owner classification literal
 
-### Grill Me
+```text
+BASE / NOTION / PLANNING / DOC / VISUAL → GPT
+ACTUAL GODOT PRODUCT IMPLEMENTATION → Codex
+```
 
-Grill Me는 독립 Skill ID가 아니라 `managing-project-intake-and-work-contract`의 `clarify` Skill Mode에서 실행하는 핵심 의사결정 인터뷰 프로토콜이다.
+이 분류는 파일 확장자가 아니라 제품 책임을 기준으로 한다.
 
-- 저장소에서 답할 수 있는 사실을 묻지 않는다.
-- 프로젝트 방향을 바꾸는 사용자 결정만 한 번에 하나씩 묻는다.
-- 선택지·장단점·GPT 권장안·확정 영향을 제공한다.
-- 답변을 결정 원장과 책임 원본에 즉시 반영한다.
-- 사용자가 `모두 권장안대로`라고 하면 남은 동등 유형 결정을 권장안으로 확정하고 질문을 계속 늘리지 않는다.
+## 2B. Skill / Skill Mode 자동 선택
 
-Reference: `skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md`
-
-### Prompt
-
-현재 사용자가 원하는 구체적인 목표·제약·산출물이다. Prompt가 Work Mode·Skill·Skill Mode를 직접 선언할 필요는 없다.
-
-### Continuous Work
-
-`[연속작업] 진행해`는 현재 승인된 작업 계약의 남은 범위를 중간 승인 대기로 끊지 않고 연속 수행하라는 **명시적 opt-in 실행 flag**다.
-
-- 상태: `CONTINUOUS_WORK_ACTIVE | CONTINUOUS_WORK_INACTIVE`
-- Work Mode를 대체하지 않는다. 각 단계는 계속 `PLAN / BUILD / REVIEW` 중 하나를 사용한다.
-- 새 Skill이나 장기 권한이 아니다.
-- 트리거가 없는 요청은 `CONTINUOUS_WORK_INACTIVE`이며 기존 승인·Grill Me 흐름을 유지한다.
-- blocker/종료 판정은 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`의 recovery ladder와 Global Progress Queue를 따른다.
-
-## 2. 자동 실행 순서
+사용자는 Work Mode·Skill·Skill Mode를 매번 직접 고를 필요가 없다.
 
 ```text
 사용자 Prompt
@@ -63,307 +64,262 @@ Reference: `skills/managing-project-intake-and-work-contract/references/grill-me
 → Skill Registry trigger 대조
 → 필요한 최소 Skill 자동 선택
 → 각 Skill의 Skill Mode 자동 선택
-→ [연속작업] 진행해 존재 여부와 승인 범위 확인
-→ 실행·검증·필요 시 Work Mode 전환
-→ CONTINUOUS_WORK_ACTIVE이면 승인 범위 안에서 recover/defer/continue
-→ 사용 이유·얻은 결과·증거 보고
+→ 실행·검증·필요 시 재라우팅
 ```
-
-사용자가 Skill 이름이나 mode를 지정하면 강한 힌트로 사용하지만, 실제 trigger·비사용 조건·권한과 충돌하면 그대로 실행하지 않고 이유를 설명한다.
-
-## 3. 자동 선택 규칙
 
 - `load_by_default=false`는 자동 선택 금지가 아니라 trigger가 없을 때 불필요하게 읽지 않는다는 뜻이다.
-- 사용자가 “어떤 Skill을 쓸지” 선택하지 않아도 Registry가 자동 라우팅한다.
-- 주 책임 분야 Skill은 최대 하나다.
-- Foundation·검증·발행·Handoff Skill은 현재 단계에 필요한 것만 추가한다.
-- 같은 책임을 여러 Skill로 중복 실행하지 않는다.
-- 새 사실·실패·범위 변경·정본 변경이 생기면 다시 라우팅한다.
-- Skill 파일을 읽은 것과 실제 절차를 실행한 것을 구분한다.
-- 새 독립 Skill보다 기존 통합 Skill의 Skill Mode·reference로 책임을 보존할 수 있는지 먼저 확인한다. 독립 입력·산출물·승인 권한이 새로 생기고 기존 owner에 넣으면 책임 경계가 무너지는 경우에만 새 Skill을 만든다.
-- `[연속작업] 진행해`는 사용자 승인 자체를 새로 만드는 문구가 아니다. 현재 계약의 `CONFIRMED` 또는 `REUSED_APPROVAL` 범위 안에서만 `CONTINUOUS_WORK_ACTIVE`를 부여한다.
+- 주 책임 Skill은 하나를 우선하고, Foundation·검증·handoff companion은 실제 필요할 때만 추가한다.
+- Skill을 읽은 것과 실제 절차를 실행한 것을 구분한다.
+- 새 사실·실패·범위·정본 변경이 생기면 자동 선택을 다시 수행한다.
+- 파일이 코드 형식이라는 이유로 Base 작업을 Codex Skill로 라우팅하지 않는다.
 
-### 경량 중립성 Gate와 전체 적대 검토 경계
+## 2C. `CLAIM_AND_INTENT_VERIFICATION_GATE`
 
-권장안·판정·설계 선택은 `평가 기준 → 대안 → 반증 → 이익·비용·위험 → 되돌리기 난이도 → 미검증 → 권장 결론` 순서의 경량 중립성 Gate를 사용한다. 이는 동의 편향을 막지만 반대를 위한 반대를 요구하지 않는다.
+사용자의 말·기존 보고·handoff에 포함된 **완료 주장과 실제 요청 의도**를 현재 정본·GitHub/Notion 상태·증거로 대조한 뒤 실행한다.
 
-- `L0`: 오탈자·명백한 기계 수정·동일 입력 검사 재실행은 전체 적대 검토 Skill을 호출하지 않는다.
-- Registry의 `칭찬·균형 평가만 요청` 비사용 조건은 결정·권장안이 없는 설명형 칭찬·균형 요약에만 적용한다. L1 이상 기능·설계·아키텍처·정책·방향 결정이나 중요 권장안을 포함한 균형 비교는 이 비사용 조건에 해당하지 않는다.
-- `L1 이상` PLAN 사전판정은 `running-adversarial-review-and-refinement: attack → validate-critique → decision-report`를 적용한다.
-- 승인된 finding은 `refine-approved-findings`에서 분야 Skill BUILD로 한 번만 구현·수정하고, REVIEW의 `regression-recheck → decision-report`로 이동한다. 적대 검토 Skill은 분야 작성 책임을 빼앗거나 이미 구현된 finding을 다시 수정하지 않는다. PLAN 사전판정과 이 후속 루트를 합쳐 전체 적대 검토 생명주기를 이룬다.
-- 사용자가 무조건 동의나 무조건 반대를 요구해도 정본·증거·동일 평가 기준을 우선한다.
-- 증거가 부족하면 `BLOCKED_UNVERIFIED`와 필요한 확인 조건을 반환한다.
+Reference: `skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md`
 
-## 4. 권한 전환
+Continuous Work의 recovery/queue/승인범위 해석은 다음 reference와 함께 사용한다.
+
+Reference: `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`
 
 ```text
-PLAN
-- 읽기·조사·제안·계약 작성
-- 사용자 승인 전 제품 동작·구조 변경 금지
-
-BUILD
-- 승인 범위만 수정
-- 단계별 검증과 롤백 유지
-
-REVIEW
-- 독립 검수와 반례 탐색
-- 발견 즉시 수정하지 않고 finding·심각도·증거를 먼저 기록
-- 사용자가 수정까지 요청했거나 승인 범위가 있으면 BUILD로 전환해 최소 수정
-- 수정 뒤 REVIEW로 돌아와 재검증
+CLAIM_AND_INTENT_VERIFICATION_GATE
+→ user intent / approved scope 복원
+→ completion / implementation claim 분리
+→ current GitHub + Notion + evidence readback
+→ 사실과 의도 일치 여부 판정
+→ 실제 owner로 route
 ```
 
-### REVIEW 기본 루트
+handoff summary나 과거 PASS를 current truth로 가정하지 않는다.
 
-`REVIEW`는 요청된 파일이나 diff만 수동 확인하는 모드가 아니다. Registry·Documentation Map·정본·참조 관계를 사용해 **변경 파일, 같은 책임의 원본, 활성 소비자, 인접 시스템, 변경됐어야 하지만 untouched인 파일, 테스트·템플릿·파생본**까지 영향 범위를 먼저 만든다.
+## 3. Codex Trigger
+
+Codex는 다음에만 기본 진입한다.
+
+```text
+GDScript / product code
+Godot Scene / Resource / Autoload
+runtime game-data wiring
+save/load product implementation
+UI runtime wiring
+shader/VFX/code-driven feedback
+Godot build/export
+Godot implementation/runtime/headless/play tests
+```
+
+다음은 **Codex Trigger가 아니다**.
+
+```text
+Base 정책·Skill·Guide·Template
+Base Python contract test / CI policy / Registry / generated governance
+Notion 생성·편집·표·Flow·AI Workspace
+GDD·기획서·밸런스표·테크트리·병종표
+벤치마킹·시장조사·검수
+이미지 생성·편집·승인
+문제→교훈→Base 승격
+GitHub 비제품 문서/정본 교정
+```
+
+파일 확장자가 `.py`, `.json`, `.md`인지가 owner를 결정하지 않는다. **게임 제품 runtime을 구현하는가**가 Codex 진입 기준이다.
+
+## 4. 경량 중립성 Gate와 적대적 검토
+
+권장안·판정·설계 선택은 다음 순서로 본다.
+
+```text
+평가 기준
+→ 대안
+→ 반증
+→ 이익·비용·위험
+→ 되돌리기 난이도
+→ 미검증
+→ 권장 결론
+```
+
+- `동의 편향`을 막되 `반대를 위한 반대`를 요구하지 않는다.
+- `L0`: 오탈자·명백한 기계 수정·동일 검사 재실행은 전체 적대 검토 생략 가능.
+- **`결정·권장안이 없는 설명형 칭찬·균형 요약`**만 full adversarial exclusion 가능하다.
+- **`L1 이상`** 중요한 기능·설계·아키텍처·정책·방향 결정과 중요 권장안은 PLAN 사전판정에서 `running-adversarial-review-and-refinement: attack → validate-critique → decision-report`를 적용한다.
+- finding은 먼저 validate한다.
+- 승인된 finding은 실제 owner의 BUILD에서 한 번만 구현·수정한다. 비코딩/Base/Notion finding은 GPT가 직접 교정하고, **실제 Godot 제품 finding만** Codex Build로 넘긴다.
+- 호환 lifecycle 표현인 **`refine-approved-findings`에서 분야 Skill BUILD로 한 번만 구현·수정**은 현재 owner 분류를 따른다. Base/Notion/noncoding은 GPT BUILD, 실제 Godot 제품 구현은 Codex Build다.
+- 구현된 finding은 GPT가 다시 중복 구현하지 않고 REVIEW의 `regression-recheck → decision-report`로 이동한다.
+- 사용자안과 AI 최초안을 동일 기준으로 평가하며 무조건 동의나 무조건 반대 요청보다 정본·증거를 우선한다.
+- 최소 5회의 완전한 전체 개선 루프 후 clean exit까지 계속한다.
+
+## 5. REVIEW finding 분류
 
 ```text
 review-scope-map
-→ running-adversarial-review-and-refinement: attack
+→ attack
 → validate-critique
-→ finding 분류
-   ├─ TECHNICAL_REVIEW_PROPOSAL
+→ finding
+   ├─ BASE_GOVERNANCE_CORRECTION → GPT
+   ├─ NOTION_OR_DOCUMENT_CORRECTION → GPT
+   ├─ PLANNING_OR_VISUAL_CORRECTION → GPT
+   ├─ GODOT_PRODUCT_IMPLEMENTATION_CORRECTION → Codex
    ├─ USER_DECISION_REQUIRED
    ├─ BLOCKED_UNVERIFIED
    └─ NO_CHANGE
-→ 기술적으로 판단 가능한 사항은 근거·우선순위·영향 파일·수정 방향·검증 방법을 검수안으로 일괄 정리
-→ 기획 결정을 요구하는 충돌만 가장 차단적인 것부터 한 번에 하나씩 사용자에게 제시
-→ 승인된 범위가 있으면 BUILD에서 최소 수정
-→ REVIEW로 복귀해 실제 diff·정적·런타임·회귀 검증
-→ evidence-report
+→ correction
+→ regression-recheck
+→ decision-report
+→ whole-state re-attack
 ```
 
-- 기술적으로 자동 판단 가능한 사항은 정본·계약·테스트·표준·관찰 증거로 최소 안전안이 결정되는 항목이다. 사용자가 검수만 요청했다면 자동 수정하지 않고 검수안으로 제시한다.
-- 사용자에게 묻는 항목은 둘 이상의 유효한 선택지가 프로젝트 코어, 플레이어 경험, 주요 UX, 콘텐츠 의미, 범위 또는 비용 우선순위를 다르게 만드는 충돌로 제한한다.
-- 저장소나 도구로 답할 수 있는 사실, 명백한 오류, 참조 누락, 테스트 실패, 표준 위반은 사용자 질문으로 전가하지 않는다.
-- 사용자 결정 질문에는 충돌, 선택지, 장단점, GPT 권장안, 확정 영향을 포함한다. 여러 충돌을 한꺼번에 묻지 않는다.
-- 답변을 받으면 결정 원장과 책임 원본을 갱신하고 다음 충돌로 이동한다. 사용자가 `모두 권장안대로`라고 하면 남은 동등 유형 충돌을 권장안으로 확정한다.
-- 전체 저장소를 무조건 정독하지 않는다. 영향 지도를 근거로 범위를 넓히며, 새로운 연결 누락이 발견되면 재라우팅한다.
+## 6. GPT 권한
 
-담당 절차:
+GPT는 다음을 직접 수행한다.
 
-- 공격·비판 검증·finding 분류·기획 충돌 큐: `running-adversarial-review-and-refinement`
-- 실제 diff·정적·런타임·접근성·성능·회귀 증거: `reviewing-and-validating-project-changes`
-- 사용자 결정 인터뷰: `managing-project-intake-and-work-contract: clarify`와 Grill Me 프로토콜
+- 조사·벤치마킹·기획·Acceptance
+- Base/Project 정책·문서·Skill·Guide·Template
+- Base Registry/generated/CI/test contract 유지보수
+- Notion Home/Domain/AI System 생성·편집
+- 사람용 데이터표·Flow·Storyboard
+- 이미지 brief·생성·편집·검수·Notion 승인 전달
+- 문제/교훈 정리·Base 승격
+- GitHub 비제품 정본 교정
+- Codex 구현지시문 작성
+- Codex 결과 최종 검수
 
-### 4.1 `[연속작업] 진행해` 권한 전환 루프
+GPT는 실제 게임 프로젝트의 Godot 제품 코드를 기본 구현하지 않는다.
 
-`CONTINUOUS_WORK_ACTIVE`에서는 현재 승인된 작업 계약의 실행 순서를 Global Progress Queue로 관리한다.
+## 7. Codex 권한
 
-```text
-현재 승인된 작업 계약
-→ ready task 수행
-→ REVIEW attack → validate-critique
-→ 기술적 단일 최소 안전 finding이면 자동 승인 → 최소 반영 → regression-recheck
-→ blocker면 RECOVERABLE_VERIFICATION / RECOVERABLE_EXECUTION_ROUTE / LOCAL_TASK / USER_DECISION / HIGH_RISK로 분류
-→ recoverable이면 재조회·대체 증거·authorized alternate executor 시도
-→ 당장 못 풀리면 해당 task만 deferred
-→ 독립 ready task 계속
-→ 상태 변화 뒤 deferred 재평가
-→ 모든 완료 기준 충족 또는 GLOBAL_TERMINAL_BLOCKER까지 반복
-```
+Codex는 실제 게임 프로젝트에서만 다음을 수행한다.
 
-- `BLOCKED_UNVERIFIED`는 task/evidence 상태일 수 있으며 그 자체로 전역 종료가 아니다.
-- `tool-output truncation`, queued/in-progress CI, 첫 exact-head 조회 실패는 `EVIDENCE_TRANSPORT_INCOMPLETE`로 재조회한다.
-- 현재 세션에 HiGodot 같은 권위 도구가 없으면 현재 세션 부재와 전체 실행 경로 부재를 구분하고, 같은 승인 범위에서 호출 가능한 authorized alternate executor를 탐색한다. `[연속작업] 진행해` 자체가 동일 승인 범위의 `CONTINUOUS_WORK_EXECUTOR_HANDOFF` 요청을 포함하므로 `Codex로 넘길까요?` 같은 재승인을 만들지 않는다. 실제 executor를 호출할 수 없으면 handoff/checkpoint만 준비하고 해당 task를 `DEFERRED_EXTERNAL_EXECUTOR`로 두며 다른 ready task를 계속한다.
-- 같은 승인 목표의 구현·검증 방법인 dedicated execution/test package, 테스트 규모 확대, 재조회·재실행, 동작 보존 최소 수정은 새 제품 결과·예산·권한을 만들지 않는 한 `USER_DECISION_REQUIRED`가 아니다.
-- 진짜 `USER_DECISION_REQUIRED`, 범위 확대, 고위험 외부 행위는 자동 승인하지 않지만 독립 작업이 남아 있으면 해당 task만 보류한다.
-- `GLOBAL_TERMINAL_BLOCKER`는 recovery path를 소진하고, 독립 ready task가 없고, 기존 approval/승인 상속/authorized executor로도 진행할 수 없을 때만 사용한다.
+- GDScript/product code
+- Scene/Resource/Autoload/runtime config
+- runtime game data 연결
+- save/load/migration 구현
+- UI runtime wiring
+- shader/VFX/code-driven feedback
+- build/export
+- Godot 구현 test/runtime/play evidence
+- 승인 범위 내 기술 리팩터링·오류 수정
 
-짧은 진행 업데이트는 허용하지만 승인 질문으로 사용하지 않는다. `CONTINUOUS_WORK_ACTIVE`는 현재 응답·에이전트 실행 세션의 orchestration이며 scheduler, webhook, 백그라운드 실행 또는 다른 채팅 자동 메시지 전달을 뜻하지 않는다. 상세 기준은 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`가 책임진다.
+Codex는 Base repository의 일반 maintenance executor가 아니다.
 
-## 5. GPT → Codex 구현 라우팅
+## 8. Codex 구현지시문
 
-공용 정본: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
+Base Template:
 
-기본 라우팅은 `ON_DEMAND_CODEX_HANDOFF`다. 단, `CONTINUOUS_WORK_ACTIVE`에서 승인된 task의 필수 executor가 현재 worker에 없으면 `[연속작업] 진행해`를 동일 승인 범위의 executor handoff 요청으로 재사용하고 별도 전환 승인을 요구하지 않는다.
+`templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md`
 
-```text
-GPT 평상시 작업
-→ 기획·조사·설계
-→ 필요한 범위의 Godot 구현 보조·POC·직접 플레이
-→ 문제 발견 시 GPT에서 재설계
-→ 기획·구현·POC 누적
-
-USER_REQUESTED_CODEX_HANDOFF | CONTINUOUS_WORK_EXECUTOR_HANDOFF
-→ GPT가 현재 의도·실제 상태·보호 범위·Acceptance Criteria를 Codex 실행 명세로 압축
-→ Codex가 실제 GitHub + 프로젝트 파일 + Godot 상태를 직접 조사
-
-CODEX_PREFLIGHT_OPTIONAL
-→ 고위험·불확실·다중 의존성일 때만 읽기 전용 Codex Plan
-→ 기술 개선·CHANGE_PROPOSAL·사용자 결정 보고
-
-Codex BUILD
-→ 지정 Branch에서 실제 구현·리팩터링·테스트·Godot 오류 확인·Commit·Push
-
-GPT REVIEW
-→ diff·Commit·테스트·기획 일치·과설계·성능·용량·회귀 적대 검수
-→ 패키지 게이트 판정
-
-담당 에이전트
-→ 필수 게이트 통과 시 AGENT_MERGE_REQUIRED 실행
-```
-
-### GPT 권한
-
-- 기획·조사·설계·비-Godot 파일·GitHub 계약
-- 승인 범위의 Godot 사전 제작·POC·코드 초안·구현 보조
-- L2 이상이면 마스터 구현계획과 패키지 계약
-- `USER_REQUESTED_CODEX_HANDOFF` 또는 `CONTINUOUS_WORK_EXECUTOR_HANDOFF` 시 실행 명세 작성
-- 선택적 Codex Plan 결과 반영과 구현 결과 검수
-
-### Codex Plan 권한
-
-`CODEX_PREFLIGHT_OPTIONAL`이 선택된 경우에만 별도 단계로 사용한다.
-
-- 최신 저장소 읽기·분석·제안
-- 파일·Commit·Push·PR·Issue 수정 금지
-
-### Codex Build 권한
-
-- 지정 Branch의 Godot 런타임 파일
-- 별도 Plan을 생략했어도 구현 전 실제 저장소·프로젝트·Godot 상태 선조사 필수
-- 독립 Commit과 지정 Branch Push
-- `main` 직접 Push, force push, amend, PR 생성·병합 금지
-
-### 변경 권한
-
-동일한 플레이어 결과와 데이터 계약을 유지하는 구조·성능·안정성·테스트 개선은 기술 변경이다. 프로젝트 코어, Core Loop, 플레이 규칙, MVP, 주요 UI·UX, 콘텐츠 의미, 승인 기능 제거, 저장 호환성 파괴는 `CHANGE_PROPOSAL`로 GPT 단계에 반환한다.
-
-## 6. 구현 패키지와 승인 게이트
-
-L2 이상·다중 의존성 작업은 전체 설계를 마스터 구현계획 하나로 유지하고 구현을 검증 가능한 결과 단위의 패키지로 순차 진행한다. 작은 국소 작업에는 패키지 체계를 형식적으로 강제하지 않는다.
-
-```text
-상위 구현 Issue
-├─ 패키지별 Branch / PR
-└─ Vertical Slice 통합 Branch / PR
-```
-
-기본 병렬성은 `SEQUENTIAL`이다.
-
-패키지 종료 상태:
-
-- `PACKAGE_APPROVED`
-- `PACKAGE_APPROVED_WITH_TECHNICAL_CHANGES`
-- `USER_REVIEW_REQUIRED`
-- `CHANGE_PROPOSAL`
-- `REVISE`
-- `BLOCKED`
-- `UNVERIFIED`
-
-기본 병합 정책은 `AUTO_MERGE_AFTER_REQUIRED_CHECKS`와 `AGENT_MERGE_REQUIRED`다. 별도 사용자 병합 승인은 필요하지 않다.
-
-`APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`: 사용자의 명시적 승인이 완료된 항목은 동일 승인 범위의 구현·검증·PR에 병합 권한도 상속된다. 동일 범위에 대해 추가 확인·재승인·병합 승인 요청 없이, 동일 HEAD·필수 검사·독립 검토 통과, unresolved thread 0, `USER_REVIEW_REQUIRED`·`CHANGE_PROPOSAL`·P0/P1 없음이 확인되면 저장소의 허용된 방식으로 병합한다.
-
-`CONTINUOUS_WORK_ACTIVE`는 이 병합 Gate를 삭제하지 않는다. 연속작업 중 다음 패키지로 이동할 수 있어도 각 PR은 기존 exact-head·필수 검사·독립 검토·thread·P0/P1 조건을 그대로 충족해야 하며, 조건을 충족한 승인 범위 PR에 별도 병합 승인을 다시 묻지 않는다.
-
-담당 Skill: `maintaining-project-context-and-handoff`의 `implementation-package-handoff`.
-
-## 7. 필수 실행 보고
-
-L1 이상 작업은 최종 보고에 실제 사용한 항목을 남긴다.
+GPT는 다음을 전달한다.
 
 ```yaml
-work_mode:
-skill_id:
-skill_mode:
-selection: automatic | user-directed
-reason:
-work_performed:
+project:
+repository:
+player_outcome:
+approved_scope: []
+protected_scope: []
+acceptance_criteria: []
+github_sources: []
+notion_sources: []
+approved_visual_records: []
+required_runtime_or_play_checks: []
+forbidden_changes: []
+change_proposal_boundary: []
+```
+
+지시문은 구현 방법을 고정하지 않는다. Codex는 프로젝트 GitHub+Notion과 실제 Godot 구조를 읽고 승인된 결과를 보존하는 기술 구현 방법을 결정한다.
+
+## 9. `CHANGE_PROPOSAL`
+
+Codex가 다음을 바꿔야 구현 가능하면 GPT로 반환한다.
+
+- Core Loop / 플레이 규칙
+- 주요 UX 의미
+- 경제·성장·밸런스 의미
+- 서사·세계관·정사
+- Art Direction
+- 기능 범위/MVP
+- 제품 호환성에 영향을 주는 중요 결정
+
+## 10. Visual 반환 경로
+
+```text
+Codex 구현 중 새 이미지 필요
+→ WAITING_GPT_VISUAL
+→ GPT_VISUAL_REQUEST
+→ GPT brief·제작·검수
+→ Notion current-use Approved + upload/attach/readback
+→ Codex fresh-read
+→ Godot Product Build 재개
+```
+
+Codex는 이미지 생성·생성형 편집·임의 AI placeholder를 만들지 않는다.
+
+## 11. `[연속작업] 진행해`
+
+`CONTINUOUS_WORK_ACTIVE`는 같은 승인 범위를 중간 승인 없이 이어가는 실행 flag다.
+
+```text
+ready PLAN/NONCODING task → GPT
+ready GODOT_PRODUCT_BUILD → Codex handoff
+Codex result → GPT REVIEW
+recoverable evidence failure → 재조회/재실행
+Codex 경로가 현재 없으면 Godot task만 DEFERRED_EXTERNAL_EXECUTOR
+독립 GPT 비코딩 task 계속
+```
+
+**`기술적 단일 최소 안전 finding이면 자동 승인`**은 새 제품 결정을 자동 승인한다는 뜻이 아니다. 정본·테스트·표준으로 하나의 최소 안전 교정이 결정되고 기존 승인 범위 안에 있을 때만 적용한다.
+
+- 해당 finding이 **비코딩/Base/Notion**이면 GPT가 같은 승인 범위에서 직접 교정한다.
+- 해당 finding이 **실제 Godot 제품 구현**이면 Codex가 구현하고 GPT가 `regression-recheck → decision-report`로 검수한다.
+- 진짜 사용자 결정·범위 확대·고위험 외부 행위만 새 승인 대상으로 올린다.
+
+## 12. 동시작업·Git 안전
+
+- 다른 open/draft/ready PR은 기본 read-only.
+- current task의 명시된 PR만 수정.
+- force push/history rewrite/destructive reset 금지.
+- current main/remote HEAD를 fresh-read.
+- 병합 전 exact HEAD·required checks·unresolved thread·ruleset 확인.
+- 병합 뒤 main readback.
+
+`APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`: 이미 명시 승인된 동일 범위는 새 차단 finding이 없으면 별도 병합 승인 없이 현재 repository gate를 통과해 병합할 수 있다.
+
+## 13. 완료 보고
+
+GPT 비코딩 작업:
+
+```yaml
 result:
-evidence:
-status: PASS | PARTIAL | FAIL | UNVERIFIED
+  changed_base_or_notion_items: []
+  validation: []
+  remaining_godot_implementation: []
 ```
 
-최소 사용자 표시:
+Codex Godot 구현:
 
-```text
-사용한 Work Mode·Skill·Skill Mode
-→ 사용한 이유
-→ 얻은 결과·증거
+```yaml
+codex_result:
+  changed_godot_files_and_reasons: []
+  tests_passed: []
+  tests_failed: []
+  tests_not_run: []
+  runtime_or_play_evidence: []
+  approved_notion_visuals_consumed: []
+  visual_requests_waiting: []
+  change_proposals: []
+  status: READY_FOR_GPT_REVIEW | BLOCKED | WAITING_GPT_VISUAL
 ```
 
-`CONTINUOUS_WORK_ACTIVE`였다면 완료한 작업, deferred 작업, blocker recovery, 적대 검토 finding, 자동 승인해 반영한 기술 권장안, 회귀 검증, 최종 종료 상태를 함께 보고한다.
+## 14. 실패 조건
 
-중요 후보를 사용하지 않았으면 `trigger 불일치 / 비사용 조건 / 현재 단계 아님 / 도구·입력 없음`을 기록한다. 모든 Skill을 나열하지 않는다.
+다음은 잘못된 라우팅이다.
 
-## 8. 예시
+- Base test/Registry/generated/CI를 “코드니까 Codex”로 넘김
+- Notion 작업을 Codex에 넘김
+- 기획·검수·이미지 작업을 Codex에 넘김
+- 모든 GitHub file mutation을 Codex Build로 분류
+- 실제 Godot 제품 구현을 GPT가 누적 구현
+- Codex가 이미지 생성
 
-### 기능 구현
+현재 역할은 다음 한 줄로 요약한다.
 
-```text
-Prompt: 전투 결과 저장 기능을 구현해줘.
-GPT PLAN/BUILD: 저장 책임·Schema·호환성 설계, 필요한 POC와 실행 명세 준비
-사용자: Codex 전환 요청
-GPT: USER_REQUESTED_CODEX_HANDOFF 실행 명세 작성
-Codex: 실제 Godot 저장 구조·파일·테스트 조사
-CODEX_PREFLIGHT_OPTIONAL: 저장 마이그레이션 위험이 크면 읽기 전용 Plan 추가
-Codex BUILD: 지정 Branch 구현·테스트·Commit·Push
-GPT REVIEW: 저장·불러오기·경계·회귀·기획 일치 검수
-담당 에이전트: 필수 게이트 통과 후 병합
-```
-
-### 연속작업
-
-```text
-Prompt: [연속작업] 진행해
-intake: 현재 승인된 계약과 남은 완료 기준 복원 → CONTINUOUS_WORK_ACTIVE
-BUILD/REVIEW: ready task 수행 → attack → validate-critique → 최소 안전 finding 자동 반영 → regression-recheck
-CI 결과가 잘림: EVIDENCE_TRANSPORT_INCOMPLETE → exact-head run/job 재조회
-현재 세션에 권위 도구 없음: authorized alternate executor 탐색 → 가능하면 CONTINUOUS_WORK_EXECUTOR_HANDOFF, 불가능하면 해당 task defer
-다른 ready task가 있으면 계속
-승인 범위 PR: merge gate 통과 시 별도 병합 승인 없이 병합
-모든 recovery가 소진되고 ready task가 없을 때만 GLOBAL_TERMINAL_BLOCKER
-전체 완료: 최종 보고
-```
-
-### 구형 파일 정리
-
-```text
-Prompt: 오래된 v2·final 파일을 최신화하고 불필요한 파일을 정리해줘.
-PLAN: 운영체계 Skill `audit → reconcile-legacy`
-BUILD: 승인된 UPDATE·MERGE·ARCHIVE·DELETE 처리
-REVIEW: reference-freshness·발행본·복구 경로 검증
-```
-
-### GDD 검수
-
-```text
-Prompt: GDD를 적대적으로 검토하고 개선해줘.
-REVIEW: 영향 범위 지도 → 적대적 공격·비판 검증
-→ 기술 검수안 일괄 정리
-→ 기획 충돌만 한 번에 하나씩 사용자 확정
-BUILD: 승인된 개선안 반영
-REVIEW: 모순·누락·구현 가능성·참조·회귀 재검증
-```
-
-### Grill Me
-
-```text
-Prompt: Grill Me로 프로젝트 방향을 확실히 정해줘.
-PLAN: 저장소·대화 조사
-→ `clarify` + Grill Me 프로토콜
-→ 결정 질문 하나와 권장안
-→ 답변을 결정 원장·책임 원본에 반영
-→ 차단 질문이 없으면 종료
-```
-
-## CLAIM_AND_INTENT_VERIFICATION_GATE
-
-완료·검증·병합 주장 또는 승인 의도와 실제 구현의 일치 판정은 `REVIEW`에서
-`reviewing-and-validating-project-changes: claim-and-intent-verification`으로 라우팅한다.
-
-```text
-material claim 원자화
-→ authority·freshness·counterevidence
-→ 승인 Intent·Acceptance와 실제 diff 연결
-→ exact HEAD 실행 Evidence
-→ Completion Claim Gate
-→ merge 뒤 post-merge main readback
-```
-
-검색 결과·생산자 설명·모델 자신감·테스트 정의·다른 SHA의 PASS는 직접 Evidence가 아니다.
-필수 Evidence가 없으면 `CLAIM_UNVERIFIED`, `IMPLEMENTATION_UNVERIFIED` 또는
-`BLOCKED_UNVERIFIED`를 유지한다.
-
-Reference: `skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md`
+> **GPT = 기획·검수·Base·Notion·문서·데이터표·이미지·작업지시문, Codex = 실제 게임 프로젝트의 Godot 구현·코딩·런타임 테스트.**

@@ -1,5 +1,15 @@
 # Base Skill Learning Log
 
+## 2026-08-25 — Product responsibility, not code shape, determines Codex ownership
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** GPT↔Codex 역할 분리 중 Base Python test·Registry/generated·CI를 코드라는 이유로 Codex 영역에 잘못 포함했다.
+- **Finding:** Base governance code와 game product code는 모두 코드 형식일 수 있지만 책임 owner가 다르다.
+- **Decision:** `GPT_BASE_NOTION_GOVERNANCE_OWNER`가 Base·Notion·문서·표·이미지·Registry/generated·CI/test contract를 소유하고, `CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER`는 실제 게임 프로젝트의 GDScript·Scene·Resource·runtime wiring·build/export·Godot implementation/runtime/play test에만 진입한다.
+- **Evidence:** `docs/GPT_CODEX_WORKFLOW_POLICY.md`, `docs/WORK_MODE_AND_SKILL_ROUTING.md`, `skills/maintaining-project-context-and-handoff/SKILL.md`, `templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md`, PR #674.
+- **Boundary:** 실제 Godot runtime PASS는 별도 project evidence가 필요하다.
+- **Next trigger:** Base 작업이 다시 Codex에 라우팅되거나 GPT가 실제 Godot 제품 구현을 직접 누적하려 할 때 재검토한다.
+
 ## 2026-08-21 — Behavior fixtures must move with active Skill contracts
 
 - **상태:** `PATTERN_CANDIDATE`

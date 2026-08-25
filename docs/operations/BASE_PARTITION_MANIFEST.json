@@ -4,7 +4,7 @@
   "design_baseline_sha": "f93016dbe90d3d1d906afaaaa75005b490220e90",
   "baseline_policy": "RESOLVE_LATEST_MAIN_AT_PART_START_AND_PIN_EXACT_SHA",
   "selected_strategy": "ONE_BASE_STABLE_PARTITIONS_SEQUENTIAL_COORDINATOR",
-  "worker_model": "GPT_PRIMARY_OPTIONAL_CODEX_EXECUTOR",
+  "worker_model": "GPT_BASE_MAINTENANCE_CODEX_GODOT_PRODUCT_ONLY",
   "notion_human_view": "Base · 작업 시스템 & Skill 지도",
   "path_state_model": [
     "PART_OWNED",
@@ -82,7 +82,8 @@
       "python tools/check_base_partition_scope.py --validate-manifest",
       "python -m unittest tests.test_base_partition_contract -v",
       "python tools/build_base_v9_artifacts.py --check"
-    ]
+    ],
+    "execution_owner": "GPT_BASE_MAINTENANCE"
   },
   "parts": [
     {
@@ -130,7 +131,8 @@
       ],
       "important_rules": [
         "DIRECTION_FIRST",
-        "GPT_FIRST_PLANNING_AND_REVIEW",
+        "GPT_NONCODING_PROJECT_OWNER",
+        "GPT_BASE_NOTION_GOVERNANCE_OWNER",
         "NOTION_DEFAULT_PROJECT_WORKSPACE",
         "PROJECT_RELATION_REQUIRED",
         "SINGLE_INITIAL_APPROVAL_THEN_CONTINUE"
@@ -149,7 +151,8 @@
       ],
       "acceptance_criteria": [
         "intake→decision→Notion/GitHub→handoff 흐름에 중복 권위 0",
-        "Codex가 의무 단계로 재승격되지 않음",
+        "Base/Notion/문서/Registry/generated/CI/test contract를 Codex에 넘기는 오라우팅 0",
+        "Codex handoff는 actual game-project Godot product implementation에만 생성",
         "프로젝트별 Notion 격리 유지",
         "사용자 학습형 완료보고 유지"
       ],
@@ -1083,8 +1086,9 @@
         "CP0 partition prompts protected first"
       ],
       "important_rules": [
-        "GPT primary",
-        "OPTIONAL_CODEX_EXECUTOR",
+        "GPT_BASE_NOTION_GOVERNANCE_OWNER",
+        "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
+        "CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR",
         "DEFAULT_SUPPORTING_SKILL_BUDGET: 1",
         "ZERO_INCREMENTAL_COST_REQUIRED",
         "CURRENT_PAID_PLANS: GPT_PRO"
@@ -1094,7 +1098,7 @@
         "Model/Cost Routing",
         "Source/Research Operations",
         "DeepSeek Worktree Orchestration",
-        "Optional Executor Handoff"
+        "Godot Product Implementation Handoff Boundary"
       ],
       "validation": [
         "python tools/check_base_partition_scope.py --part P08 --base <BASELINE_SHA> --head HEAD",
@@ -1103,7 +1107,9 @@
       "acceptance_criteria": [
         "불필요한 Skill/tool 호출 감소",
         "추가 유료 API/SaaS 기본 의존 0",
-        "외부 executor가 프로젝트 정본을 다시 읽음",
+        "Base/Notion/non-product work Codex routing 0",
+        "actual Godot product implementation에서만 Codex handoff",
+        "외부 executor가 current project canon을 다시 읽음",
         "다른 worktree/프로젝트 혼입 0"
       ],
       "revisit_conditions": [
@@ -1507,5 +1513,11 @@
       "BLOCKED_EXTERNAL"
     ],
     "rule": "Open, draft, and ready PRs are read-only by default. Mutation requires the user to name the PR and the allowed action."
+  },
+  "role_ownership": {
+    "base_and_notion": "GPT_BASE_NOTION_GOVERNANCE_OWNER",
+    "godot_product_implementation": "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
+    "codex_general_repository_executor": false,
+    "owner_decision_basis": "PRODUCT_RESPONSIBILITY_NOT_FILE_EXTENSION"
   }
 }

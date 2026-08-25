@@ -1,33 +1,117 @@
-# P08 · AI Operations & External Executors — Context Pack
+# P08 · AI Operations & External Executors
 
-## 현재 실행 계약
-`SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS` · `PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER`
+## 목적
 
-이 Part는 semantic responsibility / learning / validation checkpoint다. 현재 coordinator가 다른 Part/CP0의 검증된 오류·충돌·누락을 발견하면 다른 Part라는 이유만으로 보류하지 않고 `CROSS_PART_CHANGE`로 owner를 기록해 직접 수정할 수 있다. 단, 다른 독립 open/draft/ready PR·branch·worktree는 `ACTIVE_INDEPENDENT_WORKSTREAMS_REMAIN_PROTECTED`에 따라 read-only다.
+P08은 AI instruction/context, model/cost routing, 외부 executor, Codex handoff, worktree 격리와 실행 재수화의 semantic owner다.
 
+## 현재 역할 계약
 
-## 역할
-AI instruction/context, model/cost routing, source/research, DeepSeek/worktree와 선택적 외부 executor 운영을 책임진다.
+```text
+GPT_NONCODING_PROJECT_OWNER
+GPT_BASE_NOTION_GOVERNANCE_OWNER
+CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER
+CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR
+```
 
-## 핵심 Skill
-`orchestrating-deepseek-worktrees`, `optimizing-ai-model-and-prompt-costs`.
+### GPT
 
-## 중요 규칙
-GPT primary, OPTIONAL_CODEX_EXECUTOR, minimal Skill routing, ZERO_INCREMENTAL_COST_REQUIRED, CURRENT_PAID_PLANS: GPT_PRO.
+- 기획·조사·벤치마킹·대안 비교
+- 적대적 검토·IRG
+- Base 정책·Skill·Guide·Template·Learning
+- Base Registry/generated/CI/test contract
+- Notion Home/Domain/AI System
+- 문서·표·Flow·Storyboard
+- 이미지 생성·편집·검수
+- 프로젝트별 Codex Godot 구현지시문
+- Codex 구현 결과 최종 검수
 
-## 핵심 Module
-Instruction/Context → Model/Cost → Source Research → DeepSeek Worktree → Optional Executor Handoff.
+### Codex
 
-## 경계
-Part 경계는 수정 금지선이 아니라 semantic owner 지도다. 다른 Part/CP0 finding도 현재 coordinator가 증거와 검증 경로를 확보하면 직접 수정한다. 다른 독립 활성 workstream만 read-only로 보호하며, 실제 조정 blocker만 `CROSS_PART_CHANGE_REQUEST`로 남긴다.
+- 실제 게임 프로젝트의 Godot 제품 구현만 담당
+- GDScript/product code
+- Scene/Resource/Autoload/runtime wiring
+- runtime game data integration
+- save/load product implementation
+- UI runtime wiring
+- shader/VFX/code-driven feedback
+- build/export
+- Godot implementation/runtime/headless/play tests
 
-## 우선 공격 대상
-도구/Skill 과다 호출, 불필요 유료 API/SaaS, executor가 GitHub/Notion 실제 상태를 재확인하지 않음, 다른 프로젝트/worktree 혼입.
+Codex는 Base repository의 일반 maintenance executor가 아니다. Base Python test·CI contract·Registry/generated checker처럼 코드 형식인 운영 인프라도 GPT 작업이다.
 
-## 검증/완료
-AI/model/source 관련 focused tests와 scope 검사. 최소 5회 전체 적대적 개선 후 clean까지.
-## 학습 루프
-- 작업마다 `docs/operations/base-partitions/learning/P08_LEARNING_LOG.md`에 Learning Checkpoint를 남긴다.
-- 새 공용 교훈이 없으면 `NO_NEW_REUSABLE_LESSON`; 프로젝트 전용이면 `PROJECT_ONLY`; Base 승격 후보면 `BASE_PROMOTION_CANDIDATE`.
-- 주기 Source domains: PROMPT_AND_AGENT_WORKFLOW, SKILL_AUTHORING_AND_EVOLUTION, CODE_ENGINEERING.
-- 전역 Periodic Source Scan Queue에서 기존 Source 새/변경 자료와 신규 관련 사이트를 탐색하고, 원출처 검증 전에는 `UNVERIFIED_DISCOVERY`로 유지한다.
+## Handoff
+
+```text
+GPT 기획·검수·비코딩 작업 완료
+→ 실제 Godot 제품 구현 필요 여부 판정
+→ 필요하면 프로젝트별 Codex Work Instruction
+→ Codex가 해당 프로젝트 GitHub + Notion 재수화
+→ Godot 구현 방향 결정
+→ 구현·코딩·runtime/play test
+→ READY_FOR_GPT_REVIEW
+→ GPT 최종 검수
+```
+
+Base Template:
+
+`templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md`
+
+## 외부 AI
+
+DeepSeek 등 외부 AI는 대량 초안·분류·비교·독립 반례에 선택적으로 사용할 수 있다. 외부 AI 결과는 항상 `REVIEW_PENDING`이며 GPT가 검수한다.
+
+외부 AI optionality와 Codex 제품 구현 ownership을 혼동하지 않는다.
+
+- 외부 AI: optional assistant
+- Codex: 실제 Godot 제품 구현이 있을 때 product implementation owner
+
+## Rehydration
+
+Codex는 Godot 구현 전에:
+
+1. exact project/repository/worktree
+2. project AGENTS/Active Context
+3. current GitHub product paths
+4. relevant Notion Project Home/Domain/AI System
+5. approved Visual
+6. current open workstream
+7. actual runtime/test evidence
+
+를 fresh-read한다.
+
+## 이미지
+
+```text
+CODEX_IMAGE_GENERATION_FORBIDDEN
+CODEX_VISUAL_INPUT_NOTION_APPROVED_ONLY
+```
+
+Codex는 이미지를 만들거나 생성형 편집하지 않는다. 필요한 자산이 없으면 `GPT_VISUAL_REQUEST`로 GPT에 반환한다.
+
+## 비용
+
+```text
+ZERO_INCREMENTAL_COST_REQUIRED
+CURRENT_PAID_PLANS: GPT_PRO
+```
+
+별도 API/SaaS/compute 비용은 사용자 승인 없이 기본 경로로 만들지 않는다.
+
+## Open PR 보호
+
+다른 open/draft/ready PR은 기본 read-only다. exact branch/head를 fresh-read하고 force push/history rewrite/destructive reset을 하지 않는다.
+
+## 실패 조건
+
+- Base/Notion 작업을 Codex로 넘김
+- Python/JSON이라는 이유로 Base 운영 인프라를 Codex에 넘김
+- 실제 Godot 제품 구현을 GPT가 누적 수행
+- Codex가 이미지 생성
+- stale GitHub/Notion만 보고 구현
+- external AI 결과를 current canon으로 승격
+
+## 완료 기준
+
+P08 역할이 다음 한 줄과 일치해야 한다.
+
+> **GPT는 기획·검수·Base·Notion·문서·Visual을 담당하고, Codex는 실제 게임 프로젝트의 Godot 제품 구현·코딩을 담당한다.**

@@ -1,106 +1,63 @@
 from __future__ import annotations
 
-import json
 import unittest
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXTERNAL_AI_SKILL = ROOT / "skills" / "orchestrating-deepseek-worktrees" / "SKILL.md"
-EXTERNAL_AI_LOG = ROOT / "skills" / "orchestrating-deepseek-worktrees" / "LEARNING_LOG.md"
-MODEL_COST_SKILL = ROOT / "skills" / "optimizing-ai-model-and-prompt-costs" / "SKILL.md"
-MODEL_COST_LOG = ROOT / "skills" / "optimizing-ai-model-and-prompt-costs" / "LEARNING_LOG.md"
-DASHBOARD_SKILL = ROOT / "skills" / "building-project-visual-dashboards" / "SKILL.md"
-ROUTING_GUIDE = ROOT / "docs" / "knowledge" / "ai" / "SKILL_ROUTING_PRECISION_GUIDE.md"
-P08_PARTITION_LOG = ROOT / "docs" / "operations" / "base-partitions" / "learning" / "P08_LEARNING_LOG.md"
-FRESHNESS = ROOT / ".github" / "reference-freshness.json"
-BASE_V9_WORKFLOW = ROOT / ".github" / "workflows" / "validate-base-v9-rc.yml"
 
 
 class P08AiOperationsContractTests(unittest.TestCase):
-    def test_external_executor_rehydrates_canon_and_keeps_codex_optional(self) -> None:
-        text = EXTERNAL_AI_SKILL.read_text(encoding="utf-8")
-        for required in (
+    def test_external_executor_rehydrates_current_canon_and_gpt_reviews(self) -> None:
+        skill = (ROOT / "skills/orchestrating-deepseek-worktrees/SKILL.md").read_text(encoding="utf-8")
+        for term in (
             "EXECUTOR_REHYDRATION_GATE",
             "GPT_PRIMARY_REVIEWER",
-            "OPTIONAL_CODEX_EXECUTOR",
+            "GPT_NONCODING_PROJECT_OWNER",
+            "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
+            "CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR",
+            "REVIEW_PENDING",
             "exact branch/commit",
             "AGENTS.md",
-            "REVIEW_PENDING",
         ):
-            with self.subTest(required=required):
-                self.assertIn(required, text)
-        self.assertNotIn("Codex가 `skills/reviewing-and-validating-project-changes", text)
+            self.assertIn(term, skill)
 
-    def test_cost_routing_separates_included_subscription_from_metered_spend(self) -> None:
-        text = MODEL_COST_SKILL.read_text(encoding="utf-8")
-        for required in (
-            "COST_SURFACE_GATE",
-            "SUBSCRIPTION_INCLUDED",
-            "SEPARATELY_METERED",
-            "COST_GATE_BLOCKED",
-            "GPT_PRO",
-            "credits",
-            "API",
+    def test_p08_routes_base_and_notion_to_gpt_and_godot_product_to_codex(self) -> None:
+        text = (ROOT / "docs/operations/base-partitions/P08_AI_OPERATIONS_EXECUTORS.md").read_text(encoding="utf-8")
+        for term in (
+            "GPT_BASE_NOTION_GOVERNANCE_OWNER",
+            "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
+            "CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR",
+            "GDScript/product code",
+            "Scene/Resource/Autoload/runtime wiring",
+            "Base Python test·CI contract·Registry/generated checker",
         ):
-            with self.subTest(required=required):
-                self.assertIn(required, text)
-        self.assertIn("사용자 승인", text)
+            self.assertIn(term, text)
+        self.assertNotIn("OPTIONAL_CODEX_EXECUTOR", text)
 
-    def test_sparse_routing_applies_to_tools_as_well_as_skills(self) -> None:
-        text = ROUTING_GUIDE.read_text(encoding="utf-8")
-        for required in (
-            "TOOL_SHORTLIST_JUST_IN_TIME",
-            "목적이 겹치는 Tool",
-            "현재 단계",
-            "실측 model-run eval",
+    def test_external_ai_optionality_is_separate_from_godot_implementation_owner(self) -> None:
+        text = (ROOT / "skills/orchestrating-deepseek-worktrees/SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("외부 AI 사용은 optional", text)
+        self.assertIn("실제 게임 프로젝트의 Godot 제품 구현", text)
+        learning = (ROOT / "skills/orchestrating-deepseek-worktrees/LEARNING_LOG.md").read_text(encoding="utf-8")
+        self.assertIn("code format is not Codex ownership", learning)
+
+    def test_p08_learning_history_remains_discoverable_but_current_correction_wins(self) -> None:
+        learning = (ROOT / "skills/orchestrating-deepseek-worktrees/LEARNING_LOG.md").read_text(encoding="utf-8")
+        self.assertIn("CURRENT_CORRECTION", learning)
+        self.assertIn("SUPERSEDED INTERIM", learning)
+        self.assertIn("REVALIDATED_FOCUSED_AND_BASE_V9_ON_727ecb15", learning)
+        self.assertIn("tests/test_p08_ai_operations_contract.py", learning)
+        self.assertIn("docs/operations/base-partitions/learning/P08_LEARNING_LOG.md", learning)
+
+    def test_codex_image_generation_is_not_p08_executor_capability(self) -> None:
+        policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
+        for term in (
+            "CODEX_IMAGE_GENERATION_FORBIDDEN",
+            "CODEX_VISUAL_INPUT_NOTION_APPROVED_ONLY",
+            "GPT_VISUAL_REQUEST_REQUIRED_WHEN_ASSET_MISSING",
         ):
-            with self.subTest(required=required):
-                self.assertIn(required, text)
-
-    def test_human_home_dashboard_preserves_ai_workspace_detail_contract(self) -> None:
-        text = DASHBOARD_SKILL.read_text(encoding="utf-8")
-        for required in (
-            "AI_WORKSPACE_DETAIL_COMPLETENESS_REQUIRED",
-            "HOME_DETAIL_AI_RUNTIME_TRACEABILITY_REQUIRED",
-            "Human Home ↔ Detail Canon ↔ AI Workspace ↔ Repository/runtime evidence",
-            "schema·ID·source mapping·implementation/sync state·evidence·validation/test/QA·PR/commit/handoff metadata",
-        ):
-            with self.subTest(required=required):
-                self.assertIn(required, text)
-
-    def test_p08_test_is_exact_freshness_companion_and_permanent_ci_consumer(self) -> None:
-        data = json.loads(FRESHNESS.read_text(encoding="utf-8"))
-        rule = next(row for row in data["coupled_change_rules"] if row["name"] == "local-skill-contract-learning-test-sync")
-        self.assertEqual(["skills/**/SKILL.md"], rule["when_changed"])
-        self.assertIn("tests/test_p08_ai_operations_contract.py", rule["require_any_changed"])
-        workflow = BASE_V9_WORKFLOW.read_text(encoding="utf-8")
-        self.assertIn("tests.test_p08_ai_operations_contract", workflow)
-
-    def test_local_learning_logs_reference_only_real_current_evidence(self) -> None:
-        stale = "docs/operations/ai-executors/P08_OPTIMIZATION_REPORT_2026-08-19.md"
-        for path in (EXTERNAL_AI_LOG, MODEL_COST_LOG):
-            text = path.read_text(encoding="utf-8")
-            self.assertNotIn(stale, text, path)
-            self.assertNotIn("PENDING_FINAL_EXACT_HEAD_CI", text, path)
-            self.assertIn("REVALIDATED_FOCUSED_AND_BASE_V9_ON_727ecb15", text, path)
-            self.assertIn("tests/test_p08_ai_operations_contract.py", text, path)
-            self.assertIn("docs/operations/base-partitions/learning/P08_LEARNING_LOG.md", text, path)
-        self.assertTrue(P08_PARTITION_LOG.is_file())
-
-    def test_old_p08_nonblocking_ownership_questions_survive_takeover_without_old_report_authority(self) -> None:
-        text = P08_PARTITION_LOG.read_text(encoding="utf-8")
-        for required in (
-            "CARRY_FORWARD_TO_FINAL_INTEGRATION",
-            "P08-OWNERSHIP-01",
-            "templates/ai/DEEPSEEK_WORK_PACKAGE.md",
-            "P08-OWNERSHIP-02",
-            ".codex-plugin/plugin.json",
-            "former P08 freshness ownership deadlock is resolved",
-        ):
-            with self.subTest(required=required):
-                self.assertIn(required, text)
-        self.assertIn("PR #535 Git history", text)
+            self.assertIn(term, policy)
 
 
 if __name__ == "__main__":

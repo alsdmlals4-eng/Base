@@ -254,6 +254,14 @@ class SkillRoutingGovernanceTests(unittest.TestCase):
         self.assertIn("HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN", skill)
         self.assertIn("standalone HTML", skill)
 
+    def test_base_handoff_registry_routes_only_godot_product_implementation(self) -> None:
+        registry = json.loads((REPOSITORY_ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
+        handoff = next(item for item in registry["skills"] if item["skill_id"] == "maintaining-project-context-and-handoff")
+        self.assertIn("godot-product-implementation-handoff", handoff["trigger_tags"])
+        self.assertIn("실제 게임 프로젝트", "\n".join(handoff["use_when"]))
+        self.assertIn("Base 정책", "\n".join(handoff["do_not_use_when"]))
+        self.assertIn("Base/Notion 작업을 Codex에 넘김", "\n".join(handoff["review_triggers"]))
+
 
 if __name__ == "__main__":
     unittest.main()
