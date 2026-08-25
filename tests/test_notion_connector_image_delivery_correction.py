@@ -73,6 +73,15 @@ class NotionConnectorImageDeliveryCorrectionTests(unittest.TestCase):
         ):
             self.assertIn(token, self.text)
 
+    def test_preview_fallback_routing_precedes_local_bridge_when_sufficient(self) -> None:
+        ordered = [
+            "if low-resolution preview is sufficient",
+            "inline SVG raster preview fallback",
+            "local Notion Native File Bridge (`ntn`) fallback",
+        ]
+        positions = [self.text.index(marker) for marker in ordered]
+        self.assertEqual(positions, sorted(positions))
+
 
 if __name__ == "__main__":
     unittest.main()
