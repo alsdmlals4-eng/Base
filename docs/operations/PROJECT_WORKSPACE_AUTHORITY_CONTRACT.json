@@ -38,7 +38,7 @@
   "google_sheets": "MIGRATION_ONLY_UNTIL_REMOVAL",
   "figma": "DEPRECATED_NOT_ACTIVE_AUTHORITY",
   "default_cost_boundary": "ZERO_INCREMENTAL_COST",
-  "cross_domain_sync": "SYNC_BEFORE_GODOT_PRODUCT_IMPLEMENTATION",
+  "cross_domain_sync": "SYNC_BEFORE_IMPLEMENTATION",
   "role_split_policy": "docs/GPT_CODEX_WORKFLOW_POLICY.md",
   "planning_review_visual_owner": "GPT_PLANNING_RESEARCH_REVIEW_VISUAL_OWNER",
   "base_governance_owner": "GPT_BASE_NOTION_GOVERNANCE_OWNER",
@@ -60,6 +60,16 @@
     "CORE_SYSTEM_HUMAN_MODEL",
     "HUMAN_EDITABLE_FLOW_MAP",
     "STORYBOARD"
+  ],
+  "repository_priority_domains": [
+    "MARKDOWN_SPEC",
+    "JSON_DATA",
+    "GAME_DATA",
+    "CODE",
+    "SCENE",
+    "RESOURCE",
+    "TEST",
+    "RUNTIME_EVIDENCE"
   ],
   "gpt_repository_domains": [
     "BASE_GOVERNANCE",
@@ -88,6 +98,7 @@
     "Project Registry is an AI/System identity master and must not be used as the default human Project Home.",
     "Human Project Home must not expose raw AI/System metadata as default human-facing content.",
     "A Human Project Home remains self-contained and directly exposes the full game or story flow, core systems and necessary setting, and project-specific core data tables.",
+    "Core-system records use a deterministic Record Key scoped by Project and record type; duplicate keys fail closed instead of being guessed or merged.",
     "Same-record AI writes compare Revision and Last Edited immediately before a bounded record-level update; a stale read aborts instead of overwriting newer human or agent changes.",
     "A successful Notion write requires destination readback before completion may be reported.",
     "Notion is the primary human-facing canon for project overview, visual direction, visual asset catalogs, budget tables, tier tables, core-system human models, human-editable flow maps, and storyboards.",
