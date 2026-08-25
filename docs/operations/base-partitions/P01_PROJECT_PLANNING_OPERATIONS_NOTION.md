@@ -23,7 +23,7 @@
 - `NO_MASS_BLUEPRINT_BACKFILL`: 현재 작업과 무관한 프로젝트·시스템을 Blueprint 부재만으로 미완료 처리하거나 일괄 변환하지 않는다. 단순·이미 명확한 작업은 이유를 남긴 `NOT_APPLICABLE_WITH_REASON`으로 종료할 수 있다.
 
 ## 핵심 Module
-Intake & Work Contract → current-state / reuse-first → System Blueprint entry check (when applicable) → Project OS → Design Docs → Context/Handoff → Continuity → User Learning/Notion.
+Intake & Work Contract → Project OS → Design Docs → Context/Handoff → Continuity → User Learning/Notion.
 
 ## 경계
 Part 경계는 수정 금지선이 아니라 semantic owner 지도다. 다른 Part/CP0 finding도 현재 coordinator가 증거와 검증 경로를 확보하면 직접 수정한다. 다른 독립 활성 workstream만 read-only로 보호하며, 실제 조정 blocker만 `CROSS_PART_CHANGE_REQUEST`로 남긴다.
