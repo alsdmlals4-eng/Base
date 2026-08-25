@@ -16,12 +16,14 @@ RELEASE_LOCK_PATHS = {
     "9.4.1": Path("base-v9.4.1.lock.json"),
     "9.4.2": Path("base-v9.4.2.lock.json"),
     "9.4.3": Path("base-v9.4.3.lock.json"),
+    "9.4.4": Path("base-v9.4.4.lock.json"),
 }
 
 # Historical release locks bind payload and evidence. Compatibility releases are
 # promoted by a later immutable finalization commit, which project adapters also
 # pin. Keep that post-lock identity in the release index rather than rewriting a
-# released lock file.
+# released lock file. v9.4.4 is intentionally absent until its pin-finalization
+# PR has merged and that immutable merge commit can be recorded truthfully.
 RELEASE_FINALIZATION_COMMITS = {
     "9.4.3": "0b7c94f38d959efc0fc9442274c60b2e268a3c97",
 }
