@@ -41,6 +41,8 @@ P01 → P02 → P03 → P04 → P05 → P06 → P07 → P08 → P09
 - 한 Part를 병합한 뒤 다음 Part를 시작하기 전에 최신 `main`을 다시 pin한다.
 - Part 순서는 coverage와 사용자 학습을 위한 기본 순서이며, 긴급한 검증된 cross-Part blocker를 지금 고치는 것을 막는 장벽이 아니다.
 
+`GPT_PLANNING_REVIEW_VISUAL_OWNER + CODEX_IMPLEMENTATION_EXECUTOR` 역할 분리는 이 coordinator 모델 위에 적용된다. GPT coordinator가 전체 Part를 검수한다는 사실은 제품 implementation이나 machine consumer BUILD까지 GPT가 직접 수행한다는 뜻이 아니다.
+
 ## Part 소유권의 의미
 
 `PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER`
@@ -52,7 +54,13 @@ Manifest의 `owned_write_paths`, `owned_skill_ids`, Module은 다음을 뜻한�
 - 완료보고에서 어느 Part 성과로 설명할 것인가
 - 어떤 consumer/Test를 우선 검증할 것인가
 
-**다른 Part라는 이유만으로 검증된 오류·충돌·누락·MUST_FIX/가치 있는 SHOULD_FIX를 수정 보류하지 않는다.** 현재 coordinator가 문제를 발견했고 증거·수정권한·검증경로가 충분하면 semantic owner가 다른 경로와 CP0도 같은 작업에서 수정할 수 있다.
+**다른 Part라는 이유만으로 검증된 오류·충돌·누락·MUST_FIX/가치 있는 SHOULD_FIX를 수정 보류하지 않는다.** 현재 coordinator가 문제를 발견했고 증거·수정권한·검증경로가 충분하면 semantic owner가 다른 경로와 CP0도 같은 작업에서 해결할 수 있다.
+
+단, 해결 방식은 현재 역할 계약을 따른다.
+
+- 기획·검수·Notion·운영 정본·문서 교정 → GPT가 bounded correction 가능.
+- code/data/Scene/Resource/config/test/build/runtime 및 Registry/generated/checker 같은 machine consumer mutation → `CODEX_IMPLEMENTATION_HANDOFF`로 Codex BUILD.
+- GPT는 implementation finding을 직접 코드 수정으로 닫지 않고, Acceptance·보호 범위·검증 기준을 정리해 Codex에 인계한 뒤 결과를 REVIEW한다.
 
 그 경우 다음처럼 기록한다.
 
@@ -60,6 +68,7 @@ Manifest의 `owned_write_paths`, `owned_skill_ids`, Module은 다음을 뜻한�
 CROSS_PART_CHANGE:
   discovered_while: Pxx
   semantic_owner: Pyy | CP0
+  execution_owner: GPT_DOC_CANON | CODEX_IMPLEMENTATION
   affected_paths: []
   problem:
   evidence:
@@ -119,7 +128,7 @@ Part 경계와 PR 보호는 서로 다른 개념이다. 현재 작업 범위 안
 | **P03 · Adversarial Quality, Refactoring & Git Integrity** | 전체 적대적 검토, finding 검증, contract-preserving refactor, Git 상태·workstream 정합성 | `running-adversarial-review-and-refinement`, refactor, Git sync | 승인 범위·실제 diff·증거 → attack/validate/refine/regression → clean finding set·안전한 변경 | P02 freshness, P07 evidence | 잘못된 PASS·과잉 수정·동시작업 손상 감소 |
 | **P04 · Game Design, Core, Player Research & Vertical Slice** | 플레이어 가치·Concept·Core·기능/밸런스·연구질문·Vertical Slice 설계 | Concept/Core/User Research/Vertical Slice | player promise·시장/벤치마크 → 선택·경험·관찰신호 설계 → 검증 가능한 slice/acceptance | P05 Visual, P06 runtime, P07 evidence | 기능 나열이 아니라 플레이어 가치와 실제 검증 연결 |
 | **P05 · Art, UX/UI & Visual Assets** | 아트 방향, 이미지 후보 lifecycle, UX/UI 가독성, Visual QA, 재사용/구조화 | Art Prompt, UI Art Audit, Visual/Asset workflow | 시각 요구·프로젝트 분위기 → 후보 생성/비교/승인/구조화 → 승인 Visual·UX flow·재사용 자산 | P04 요구, P06 구현, P07 rights/evidence | AI 티·스타일 drift·가독성 저하·일회성 자산 낭비 감소 |
-| **P06 · Godot, Runtime & Technical Toolchain** | Godot authoring/runtime, diagnostics, addon/plugin 평가, adapter, local execution | Runtime Diagnostics, Godot Asset/Plugin Evaluation | 설계·Visual·프로젝트 상태 → 실제 editor/runtime/tool 검증 → 구현·diagnostic evidence | P04 acceptance, P05 visual, P07 validation | “설계됨”과 “실제로 돌아감” 혼동 감소 |
+| **P06 · Godot, Runtime & Technical Toolchain** | Godot authoring/runtime, diagnostics, addon/plugin 평가, adapter, local execution | Runtime Diagnostics, Godot Asset/Plugin Evaluation | 설계·Visual·프로젝트 상태 → Codex actual editor/runtime/tool implementation·검증 → 구현·diagnostic evidence | P04 acceptance, P05 visual, P07 validation | “설계됨”과 “실제로 돌아감” 혼동 감소 |
 | **P07 · Platform, Release & Execution Validation** | 실제 diff/정적/runtime evidence, platform/store/rights/build/release readiness | Change Validation, Evidence Ledger, Platform/Release | 구현·빌드·플랫폼 요구 → evidence ceiling으로 검증 → PASS/PARTIAL/NOT_RUN/blocked delivery state | P03 critique, P06 runtime, P01 evidence template | 문서 존재를 실행 증거로 오인하는 오류 감소 |
 | **P08 · AI Operations & External Executors** | GPT/외부 executor 역할, model/cost routing, source research, worktree/rehydration | AI Instruction/Context, Model/Cost, External Executor | 작업 요구·비용상태·현재 canon → 최소 Skill/Tool/executor 선택 → 검토 가능한 결과·handoff | P01 계약, P03 isolation, P07 evidence | 도구 과다 호출·불필요 과금·stale context 실행 감소 |
 | **P09 · Content, Narrative & Publication** | 연재서사, 캐릭터/voice, game-dev YouTube, publication evidence | Serial Fiction, Narrative/Voice, YouTube | project canon·실제 build evidence → 작성/편집/발행 판단 → 일관된 콘텐츠·학습 | P04 world fit, P05 visual, P07 rights/platform | 정사 drift·표현 복제·콘텐츠와 runtime 완료 혼동 감소 |
@@ -164,12 +173,13 @@ PASS  CONTROL_PLANE_COORDINATOR_WRITE  ...
 
 ## Control Plane (CP0)
 
-CP0는 전역 routing/registry/generated/partition 계약의 semantic owner다. coordinator는 현재 사용자 승인 범위에서 필요한 CP0 수정을 할 수 있지만 다음을 지킨다.
+CP0는 전역 routing/registry/generated/partition 계약의 semantic owner다. coordinator는 현재 사용자 승인 범위에서 필요한 CP0 **설계·검수·정본 변경**을 관리하되, tests/Registry/generated/checker 같은 machine consumer mutation은 Codex BUILD로 실행한다.
 
 - 전역 정본은 한 번만 수정한다.
-- generated artifact는 원본 변경 후 재생성한다.
+- generated artifact는 source-of-truth 변경 후 정식 생성 경로로 재생성한다.
 - Registry/route 의미를 바꾸면 실제 consumer와 focused regression을 함께 갱신한다.
 - 다른 active workstream이 동일 CP0 의미를 수정 중인지 먼저 확인한다.
+- GPT가 CP0 의미를 정했다고 해서 generated/test를 손으로 임시 맞춤하지 않고 Codex implementation packet으로 묶는다.
 
 대표 CP0:
 
@@ -182,9 +192,18 @@ CP0는 전역 routing/registry/generated/partition 계약의 semantic owner다. 
 
 ## GPT / Codex
 
-GPT가 기본 planner/reviewer다. 현행 조사·대안·벤치마킹·규칙/Skill/Module 검토·Notion/GitHub 대조·적대적 검토는 GPT에서 닫는다.
+```text
+GPT_PLANNING_REVIEW_VISUAL_OWNER
+CODEX_IMPLEMENTATION_EXECUTOR
+PLANNING_ONLY_NO_CODEX_REQUIRED
+IMPLEMENTATION_REQUIRES_CODEX_HANDOFF
+```
 
-`OPTIONAL_CODEX_EXECUTOR`는 실제 code/Scene/Resource/data 변경, 대량 기계 처리, 로컬 Godot/runtime/build/performance 검증처럼 실행 권위가 필요할 때만 사용한다. GPT 작업이 끝났다는 이유만으로 다음 단계처럼 강제하지 않는다.
+GPT가 기본 planner/reviewer다. 현행 조사·대안·벤치마킹·규칙/Skill/Module 검토·Notion/GitHub 대조·적대적 검토·문서/운영 정본·구현 명세는 GPT에서 닫는다.
+
+planning-only 작업에는 Codex를 형식적으로 추가하지 않는다. 그러나 실제 code/data/Scene/Resource/config/test/build/runtime 또는 machine consumer mutation이 존재하면 Codex가 `CODEX_IMPLEMENTATION_EXECUTOR`로 이어받는다. optional인 것은 Codex의 존재가 아니라 **planning-only에서 Codex 실행을 생략하는 것과 `CODEX_PREFLIGHT_OPTIONAL` technical Plan**이다.
+
+Codex는 구현 전에 current GitHub와 relevant Notion을 재수화하며, 이미지 생성·생성형 편집을 하지 않고 current-use 승인 + Notion attach/readback Visual만 소비한다. 이미지가 부족하면 `GPT_VISUAL_REQUEST`로 반환한다.
 
 ## Learning + Source
 
@@ -289,7 +308,7 @@ P01→P09 순차 작업 뒤 같은 coordinator 채팅이 whole-Base Integration�
 
 1. latest main pin
 2. 완료된 Part/PR/학습 readback
-3. 아직 유효한 cross-Part/CP0 finding 직접 해결
+3. 아직 유효한 cross-Part/CP0 finding 해결 — GPT doc/canon 또는 Codex implementation으로 execution owner 분리
 4. Registry/Documentation/generated/Notion 동기화
 5. repository-wide regression / Required CI
 6. 최소 5회 **진짜 full-scope adversarial loop**, 이후 clean까지 계속
