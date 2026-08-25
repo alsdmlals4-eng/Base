@@ -34,6 +34,7 @@ Registry의 hard ceiling을 매 요청에서 채우지 않는다. `docs/knowledg
 전체 활성 목록은 생성 뷰를 따르되, 사람이 자주 찾는 통합 책임은 안정 라우트로 유지한다.
 
 - 게임 UX/UI 설계·정보 구조·접근성·Godot UI 계약·폴리싱·구현 결과 감사: `auditing-and-refining-ui-art`
+- bounded 생성형 visual의 scope fidelity, 독립 deliverable 수량, decision-critical semantic redundancy 검토도 같은 `auditing-and-refining-ui-art` owner가 담당한다. 최종 이미지 생성 자체는 기존 art-prompt owner 경계를 유지한다.
 
 ## Package 배치
 
