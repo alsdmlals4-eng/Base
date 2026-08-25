@@ -9,22 +9,24 @@ AI는 사람의 결정을 대신하는 단일 자동 개발자가 아니다. 각
 기본 실행 책임:
 
 - 요청·작업 계약: `managing-project-intake-and-work-contract`
-- 선택적 GPT→Codex 인계: `maintaining-project-context-and-handoff`
+- GPT→Codex 구현 인계: `maintaining-project-context-and-handoff`
 - 외부 AI 격리: `orchestrating-deepseek-worktrees`
 - 모델·비용 surface: `optimizing-ai-model-and-prompt-costs`
 - 결과 검수: `reviewing-and-validating-project-changes: external-source-review`
 - 실패 가정·반례: `running-adversarial-review-and-refinement`
 - Skill 학습: `evolving-project-discipline-skills`
 
-`GPT_FIRST_PLANNING_AND_REVIEW`가 기본이며, GPT가 현재 도구와 승인 범위 안에서 안전하게 끝낼 수 있는 작업에 Codex를 의무 단계로 추가하지 않는다. Codex는 실제 filesystem/runtime/build 또는 대규모 기계 변경의 실행 권위가 필요할 때 `OPTIONAL_CODEX_EXECUTOR`로 사용한다.
+현재 역할 계약은 `GPT_PLANNING_REVIEW_VISUAL_OWNER + CODEX_IMPLEMENTATION_EXECUTOR`다. 기획·조사·검수·Notion 정리·이미지 제작만 필요한 작업은 GPT에서 끝낼 수 있지만, 실제 code/data/Scene/Resource/config/test/build/runtime 구현이 존재하면 `IMPLEMENTATION_REQUIRES_CODEX_HANDOFF`에 따라 Codex가 구현 owner가 된다.
 
 ```text
 GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY
 REASONING_EFFORT_IS_NOT_WORK_EVIDENCE
-REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF
+GPT_TOOL_EVIDENCE_DOES_NOT_TRANSFER_BUILD_OWNERSHIP
+CODEX_REHYDRATE_GITHUB_AND_NOTION
+CODEX_IMAGE_GENERATION_FORBIDDEN
 ```
 
-GPT-primary는 판단 owner이지 prose-only 실행면이 아니다. `매우 높음` 같은 추론 강도는 실제 인터넷 원출처 조사, 저장소 readback, Tool 호출, 테스트·런타임 증거를 대체하지 않는다. 현재 GPT가 필요한 Tool을 보유하면 직접 실행하고, 별도 Codex handoff만 선택적으로 판단한다. 필수 evidence를 어느 실행면에서도 만들 수 없으면 빠른 답변으로 대체하지 않고 `BLOCKED_UNVERIFIED`로 둔다.
+GPT-primary는 판단·기획·검수 owner라는 뜻이다. `매우 높음` 같은 추론 강도는 실제 인터넷 원출처 조사, 저장소 readback, Tool 호출, 테스트·런타임 증거를 대체하지 않는다. GPT가 연결된 도구로 기획 정본·Notion·GitHub 문서·검수 evidence를 직접 다룰 수 있어도 그 사실이 제품 BUILD ownership을 GPT로 이전하지 않는다. 필수 구현 evidence는 Codex가 실제 실행환경에서 만들며, 어느 실행면에서도 확보하지 못하면 `BLOCKED_UNVERIFIED`로 둔다.
 
 공식 참고:
 
@@ -45,32 +47,40 @@ GPT-primary는 판단 owner이지 prose-only 실행면이 아니다. `매우 높
 - 플레이어 경험·게임 기획·벤치마킹
 - 시스템·데이터 구조 설계
 - 아트·내러티브·UX·사운드 기획
-- GitHub 문서·Issue·실행 명세·검증 계약
-- 현재 연결 도구로 허용된 저장소/Notion 작업
+- GitHub 기획/운영 문서·Issue·실행 명세·검증 계약
+- 현재 연결 도구로 허용된 저장소/Notion 정본 작업
+- 이미지 생성·편집·검수와 승인 Visual의 Notion delivery/readback
 - 외부 자료 조사·근거 분류
-- Codex를 사용한 경우 Plan·diff·PR·테스트 검수
+- Codex Plan·diff·PR·테스트·runtime evidence의 최종 검수
 
 기본 제한:
 
+- 제품 GDScript/code, Scene, Resource, runtime data, build/runtime 구현 owner가 되지 않는다.
 - 실제 저장소와 실행 증거 없이 구현 완료를 주장하지 않는다.
 - 사용자 승인 없이 프로젝트 코어·중요 기획·제품 경로를 바꾸지 않는다.
 - 현재 surface에 없는 runtime/filesystem 권위를 가졌다고 주장하지 않는다.
+- PowerShell/local Codex launcher를 기본 프로젝트 실행 경로로 직접 운영하지 않는다.
 
 ### Codex Plan — 선택적 preflight
 
 - 모든 구현의 의무 단계가 아니다.
-- 저장소를 읽기 전용으로 조사하고 실제 호출 관계·파일·테스트·보호 경로를 확인한다.
+- 저장소와 관련 Notion 정본을 읽기 전용으로 조사하고 실제 호출 관계·파일·테스트·보호 경로·승인 Visual을 확인한다.
 - 고위험·다중 시스템 변경처럼 별도 구현 전 조사 가치가 클 때 변경 파일·Red Test·완료·회귀·롤백이 있는 제안서를 작성한다.
 - 질문과 부분 동의를 Codex Build 승인으로 해석하지 않는다.
+- Plan 자체는 파일·Commit·PR·Issue를 수정하지 않는다.
 
-### Codex Build — `OPTIONAL_CODEX_EXECUTOR`
+### Codex Build — `CODEX_IMPLEMENTATION_EXECUTOR`
 
-- 실제 code/Scene/Resource/data 수정, 대규모 기계 변경, 로컬 runtime/build/performance 증거처럼 실행 권위가 필요할 때 사용한다.
+- 실제 code/Scene/Resource/data/config/test/build/runtime 구현이 있으면 정상 BUILD owner다.
 - 사용자가 승인한 패키지·Branch·Issue·Goal 범위만 구현한다.
-- 시작 시 GPT 요약보다 현재 저장소·프로젝트 `AGENTS.md`·exact branch/commit·관련 테스트를 다시 읽는다.
-- 실제 파일 변경·테스트·Commit·PR을 남긴다.
+- 시작 시 GPT 요약보다 현재 GitHub 저장소·프로젝트 `AGENTS.md`·exact branch/commit·관련 테스트와 **relevant Notion 기획/Flow/AI-System/승인 Visual**을 다시 읽는다.
+- 실제 파일 변경·테스트·Commit·PR·runtime evidence를 남긴다.
+- 프로젝트가 채택한 persistent authoring authority를 우회하지 않는다.
 - 기획 변경을 “기술적 필요”로 위장하지 않는다.
-- 승인 범위 밖 리팩터링·기능·자산을 추가하지 않는다.
+- 승인 범위 밖 리팩터링·기능을 추가하지 않는다.
+- 이미지 생성·생성형 이미지 편집을 하지 않는다.
+- current-use 승인 + Notion upload/attach/readback가 확인된 Visual만 소비한다.
+- 필요한 Visual이 없으면 `GPT_VISUAL_REQUEST`로 GPT에 반환하고 독립 구현은 가능한 범위에서 계속한다.
 
 ### 외부 AI
 
@@ -183,9 +193,10 @@ Context Pack은 대화를 통째로 복사하는 것이 아니다.
 - `CURRENT_CONFIRMED_DECISIONS`를 질문 전에 읽는다.
 - 같은 책임의 활성 복제본을 만들지 않는다.
 - 과거 대화보다 저장소 정본을 우선한다.
+- Codex 구현 인계에서는 GitHub뿐 아니라 relevant Notion current canon과 승인 Visual 위치를 포함한다.
 - 전문을 여러 문서에 복사하지 않고 경로와 현재 차이를 기록한다.
 - 긴 작업은 checkpoint·resume 계약을 남긴다.
-- 모델이 바뀌어도 새로운 작업자가 저장소만으로 재개할 수 있어야 한다.
+- 모델이 바뀌어도 새로운 작업자가 GitHub+Notion current canon으로 재개할 수 있어야 한다.
 - 현재 단계에 필요하지 않은 Skill/Tool/context를 미리 로드하지 않는다.
 
 ## 6. AI 작업 라우팅
@@ -194,14 +205,14 @@ Context Pack은 대화를 통째로 복사하는 것이 아니다.
 |---|---|---|
 | 핵심 기획·방향 | ChatGPT PLAN + 필요한 사용자 승인 | 근거·반례·책임 원본 |
 | 대량 참고자료 분류 | 외부 AI 격리 또는 GPT 직접 처리 | 표본 독립 검수·원출처 |
-| Godot 구현 | GPT가 현재 승인된 authoring 권위로 직접 가능하면 직접 수행; 아니면 `OPTIONAL_CODEX_EXECUTOR` | diff·test·runtime·PR |
-| 고위험 구현 preflight | 필요할 때만 Codex Plan → 검수 → Build | 실제 저장소·보호 경로·Red/Green·rollback |
-| 코드 리뷰 | GPT/Copilot/외부 AI 보조 | 사람이 diff·테스트·권한 확인 |
-| 아트 후보 | GPT 이미지·승인된 도구·외부 도구 | 원출처·유사성·실제 인게임 검수 |
+| Godot/제품 구현 | `IMPLEMENTATION_READY → CODEX_IMPLEMENTATION_HANDOFF → Codex BUILD` | GitHub+Notion 재수화·diff·test·runtime·PR |
+| 고위험 구현 preflight | 필요할 때만 Codex Plan → GPT/계약 검수 → Codex Build | 실제 저장소·Notion·보호 경로·Red/Green·rollback |
+| 코드 리뷰 | GPT/Copilot/외부 AI 보조 | GPT가 diff·테스트·권한·기획 일치 확인 |
+| 아트 후보 | GPT 이미지·승인된 도구·외부 도구 | 원출처·유사성·Notion 승인/readback·실제 인게임 검수 |
 | 대사·콘텐츠 초안 | ChatGPT/외부 AI | 정본·연속성·사실·톤·사용자 승인 |
-| Base 공용화 | GPT BCP/기존 공용화 owner | 여러 사례·반례·승인·별도 구현 PR |
+| Base 공용화 | GPT BCP/기존 공용화 owner | 여러 사례·반례·승인·필요 시 Codex 구현 PR |
 
-하나의 모델을 모든 작업의 기본값으로 강제하지 않는다. 같은 이유로 “GPT 다음은 항상 Codex” 같은 고정 직렬 파이프라인도 만들지 않는다.
+하나의 모델을 모든 작업의 기본값으로 강제하지 않는다. **“GPT 작업 뒤에는 항상 Codex”가 아니라, planning-only 작업은 GPT에서 끝나고 실제 implementation/coding 단계가 존재할 때 Codex가 BUILD owner가 된다.**
 
 ## 7. Contextual Evals
 
@@ -447,17 +458,20 @@ stop_condition:
 AI 조사·제안
 → 필요한 사용자 핵심 결정
 → 책임 원본 갱신
-→ 현재 GPT가 승인 범위·도구로 직접 실행 가능한가?
-   ├─ YES → GPT 실행/변경 → 실제 증거 검수
-   └─ NO  → OPTIONAL_CODEX_EXECUTOR 필요성 확인
+→ GPT가 기획·검수·Visual·Implementation Ready를 닫음
+→ 실제 implementation/coding이 필요한가?
+   ├─ NO → GPT readback / 종료
+   └─ YES → CODEX_IMPLEMENTATION_HANDOFF
+            → Codex GitHub + Notion rehydration
             → 필요하면 선택적 Codex Plan
-            → Codex가 current canon/exact branch를 재조사
             → Codex Build
-→ 자동·수동 검증
+            → Visual missing이면 GPT_VISUAL_REQUEST
+→ 자동·수동 실행 evidence
+→ GPT 최종 검수
 → PR·허용된 병합
 ```
 
-Codex를 호출했다는 사실이 별도 사용자 결정이 필요한 새 제품 범위를 자동 승인하지 않는다. 반대로 동일 승인 범위의 실행만 남았는데 현재 worker에 권위가 없으면 상위 `CONTINUOUS_WORK_EXECUTOR_HANDOFF` 정책을 따른다.
+Codex를 호출했다는 사실이 별도 사용자 결정이 필요한 새 제품 범위를 자동 승인하지 않는다. 반대로 동일 승인 범위의 구현만 남았으면 별도 “Codex로 넘길까요?” 재승인을 요구하지 않는다. `CONTINUOUS_WORK_ACTIVE`이면 동일 승인 범위의 `CONTINUOUS_WORK_EXECUTOR_HANDOFF`와 recovery/defer/continue 규칙을 따른다.
 
 ### 독립 레드팀
 
@@ -465,9 +479,10 @@ Codex를 호출했다는 사실이 별도 사용자 결정이 필요한 새 제�
 작성 모델
 → 별도 Prompt/모델의 반례 제시
 → 비판 유효성 검증
-→ 기술 Finding 자동 수정 후보
+→ 기술 Finding은 Codex 구현 후보
 → 사용자 기획 결정만 승인
-→ 회귀 재검토
+→ Codex 수정 evidence
+→ GPT 회귀 재검토
 ```
 
 ### 모델 비교
@@ -487,7 +502,10 @@ Codex를 호출했다는 사실이 별도 사용자 결정이 필요한 새 제�
 - 외부 AI 결과를 main에 직접 반영함
 - 성공 한 번을 모든 프로젝트의 공용 Skill로 승격함
 - 비용을 이유로 필수 검증을 삭제함
-- GPT 다음 단계라는 이유만으로 Codex를 의무 호출함
+- planning-only 작업인데 Codex를 의무 호출함
+- 실제 implementation/coding이 있는데 GPT가 제품 BUILD owner로 계속 진행함
+- Codex가 GitHub만 읽고 relevant Notion current canon을 생략함
+- Codex가 이미지를 생성·생성형 편집하거나 미승인 Visual을 임의 사용함
 - `GPT_PRO`를 credits/API/auto top-up의 포괄 승인으로 취급함
 
 ## 17. Output Contract
