@@ -31,11 +31,11 @@ class VisualGenerationScopeAndBatchIntegrityTests(unittest.TestCase):
 
     def test_project_neutral_problem_lesson_case_is_discoverable_and_evidence_bounded(self):
         case_path = ROOT / "docs/knowledge/cases/AI_VISUAL_SCOPE_AND_BATCH_INTEGRITY_CASE.md"
-        self.assertTrue(case_path.exists(), "approved BCP-034 case study must exist")
+        self.assertTrue(case_path.exists(), "approved BCP-035 case study must exist")
         case = case_path.read_text(encoding="utf-8")
         index = read("docs/knowledge/cases/README.md")
         for token in (
-            "BCP-2026-034",
+            "BCP-2026-035",
             "VISUAL_TASK_SCOPE_FIDELITY",
             "BATCH_COUNT_MEANS_INDEPENDENT_DELIVERABLES",
             "DECISION_CRITICAL_VISUAL_SEMANTIC_REDUNDANCY",

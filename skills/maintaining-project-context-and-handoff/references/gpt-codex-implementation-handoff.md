@@ -1,6 +1,6 @@
-# GPT–Codex 단계별 구현 인계
+# GPT–Codex Godot 제품 구현 인계
 
-이 reference는 `maintaining-project-context-and-handoff`의 `on-demand-codex-handoff`와 `implementation-package-handoff` Skill Mode 상세 절차다.
+이 reference는 `maintaining-project-context-and-handoff`의 **실제 게임 프로젝트 Godot 제품 구현 인계** 상세 절차다.
 
 Canonical policy: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
 
@@ -8,250 +8,201 @@ Canonical policy: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
 
 ```text
 GPT
-= 평상시 기획·구현 보조·Godot POC + 사용자 요청 시 실행 명세 + 검수·자동 병합 적격성 판정
+= 기획·조사·벤치마킹·적대적 검수·Base·Notion·문서·표·이미지·Godot Work Instruction·최종 검수
 
-Codex Plan
-= CODEX_PREFLIGHT_OPTIONAL 읽기 전용 재검수와 기술 개선·변경 제안 보고
-
-Codex Build
-= 실제 저장소·프로젝트·Godot 상태 재조사 + 지정 패키지 Branch의 구현·테스트·Commit·Push
-
-사용자
-= 프로젝트 방향·체감·새 기획 변경 결정
+Codex
+= 실제 게임 프로젝트의 Godot 제품 구현·코딩·runtime/play test
 
 GitHub
-= 필수 병합 게이트 충족 후 자동/에이전트 병합
+= 프로젝트 structured/runtime truth
+
+Notion
+= 사람용 기획·Flow·시각 정본과 승인 Visual
 ```
 
-## 2. On-demand 인계 준비
+Codex는 일반 repository executor가 아니다. Base의 정책·Skill·Registry/generated·CI/test contract는 GPT가 담당한다.
 
-`USER_REQUESTED_CODEX_HANDOFF`가 발생하면 `ON_DEMAND_CODEX_HANDOFF`를 만든다.
+## 2. 인계 조건
 
-최소 계약:
+`CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF`는 다음이 실제로 남았을 때만 만든다.
+
+- GDScript / product code
+- Scene / Resource / Autoload
+- runtime game-data wiring
+- save/load product implementation
+- UI runtime wiring
+- shader/VFX/code-driven feedback
+- Godot build/export
+- Godot implementation/runtime/headless/play tests
+
+Notion 편집, Base maintenance, GDD/표/Flow, 이미지, 조사/검수만 남았다면 인계하지 않는다.
+
+## 3. GPT 인계 계약
 
 ```yaml
-mode: ON_DEMAND_CODEX_HANDOFF
-trigger: USER_REQUESTED_CODEX_HANDOFF
-intent_and_current_behavior:
-actual_state_verification_required: true
-repository_and_project_scope: []
-godot_scope: []
-known_problems_and_improvement_goals: []
-protected_behavior_and_contracts: []
-priority_order: []
+mode: CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF
+project:
+repository:
+player_outcome:
+approved_scope: []
+protected_scope: []
 acceptance_criteria: []
-required_tests_and_runtime_checks: []
-performance_size_structure_checks: []
-forbidden_or_high_risk_changes: []
-codex_preflight: CODEX_PREFLIGHT_OPTIONAL
+notion_sources:
+  project_home:
+  relevant_domain_pages: []
+  ai_system_detail_pages: []
+  approved_visual_records: []
+github_sources:
+  project_agents:
+  active_context:
+  godot_product_paths: []
+  runtime_tests_and_evidence: []
+required_runtime_or_play_checks: []
+forbidden_changes: []
+visual_policy:
+  generation_by_codex: FORBIDDEN
+  approved_notion_visuals_only: true
+  missing_visual_action: GPT_VISUAL_REQUEST
+change_proposal_boundary: []
 ```
 
-명세에는 다음 문장을 고정한다.
+이 명세는 구현 방법을 고정하지 않는다. Codex는 current project GitHub+Notion과 실제 Godot 구조를 읽고 승인된 결과를 보존하는 기술 구현 방법을 결정한다.
 
-> 이 명세는 현재까지의 기획 의도와 예상 상태를 설명한다. 실제 구현 상태는 반드시 현재 GitHub 저장소, 로컬 프로젝트 파일 및 Godot 프로젝트를 직접 조사하여 검증할 것. 명세와 실제 구현이 충돌하면 임의로 덮어쓰지 말고 원인을 분석한 뒤 가장 안전한 개선안을 선택할 것.
+## 4. Codex 재수화 Gate
 
-작은 국소 변경에는 마스터 계획·상위 Issue·별도 Codex Plan을 형식적으로 강제하지 않는다.
+```text
+exact game project/repository/worktree
+→ Project AGENTS / START_HERE / Active Context
+→ latest main + task branch + open independent PR
+→ Notion Project Home / Domain / AI System
+→ approved Visual + upload/attach/readback
+→ project.godot
+→ GDScript / Scene / Resource / runtime data / tests
+→ Work Instruction과 current truth 대조
+→ authoring/runtime readiness
+→ GODOT PRODUCT BUILD
+```
 
-## 3. L2 이상 패키지 준비 게이트
+과거 대화·stale handoff·로컬 캐시만으로 구현하지 않는다.
 
-다중 의존성·고위험·Vertical Slice 구현처럼 패키지화가 필요한 경우 다음을 확인한다.
+## 5. Visual Gate
 
-- 프로젝트 코어와 통합 설계가 승인됨
-- `READY_FOR_IMPLEMENTATION_HANDOFF`
-- 마스터 구현계획 존재
-- 상위 구현 Issue 존재 또는 생성 계약 존재
-- 현재 패키지 결과·포함·제외·수정 금지 범위 존재
-- 데이터·저장·ID·Schema 보호 조건 존재
-- 패키지 Branch가 최신 기준 Commit에서 준비됨
-- 테스트 명령과 rollback 존재
-- 사용자 기존 변경·보호 경로 파악
-- 저장소 병합 정책과 Required Check 선언
+Codex 금지:
 
-하나라도 차단되면 `BLOCKED` 또는 `UNVERIFIED`로 유지한다.
+- 이미지 신규 생성
+- 생성형 이미지 편집
+- 임시 AI placeholder 생성
+- 미승인 Visual 사용
 
-## 4. 패키지 경계
+허용:
 
-패키지는 파일 목록이 아니라 독립 결과로 정의한다.
+- current-use 승인 + Notion upload/attach/readback된 Visual 소비
+- 코드 기반 UI layout / shader / VFX / primitive drawing / animation wiring
+
+별도 이미지가 필요하면:
+
+```yaml
+GPT_VISUAL_REQUEST:
+  implementation_task:
+  why_required:
+  target_screen_or_scene:
+  asset_type:
+  visual_constraints:
+  notion_destination:
+  acceptance_criteria: []
+```
+
+## 6. 기술 자율성과 `CHANGE_PROPOSAL`
+
+Codex가 자율 결정 가능:
+
+- Node/Scene/Resource 구조
+- 함수/클래스/Signal/Autoload
+- 구현 순서
+- runtime data 연결
+- test structure
+- 오류 처리
+- 성능·안정성 개선
+- 동작 보존 리팩터링
+
+GPT로 반환:
+
+- Core Loop / 플레이 규칙
+- 주요 UX 의미
+- 경제·성장·밸런스 의미
+- 서사 정사
+- Art Direction
+- MVP/기능 범위
+- 제품 호환성을 깨는 중요 결정
+
+## 7. 실행환경 freshness
+
+- exact project/repository/worktree 확인
+- project.godot 확인
+- branch/main/dirty/diverged 확인
+- stale PID/session/port/editor를 current truth로 사용하지 않음
+- adopted authoring authority를 우회하지 않음
+- force push/history rewrite/destructive reset 금지
+- other open/draft/ready PR read-only
+
+## 8. 패키지
+
+큰 Godot 구현만 패키지로 나눈다.
 
 좋은 경계:
 
-- 핵심 상태 모델이 테스트 가능한 상태
-- 하나의 플레이 행동이 입력→반응→결과까지 동작
-- 실패·복구 루프가 독립 검증됨
-- 저장·불러오기 한 주기가 호환성 테스트됨
-- Vertical Slice 대표 구간이 플레이 가능
+- 플레이 가능한 독립 결과
+- 독립 test/runtime evidence
+- rollback 가능
+- 같은 Scene/Resource 경쟁 수정 최소화
 
-나쁜 경계:
+기본 병렬성은 `SEQUENTIAL`이다.
 
-- 스크립트 세 개 작성
-- UI 파일 모음
-- 여러 의존 시스템을 동시에 변경하지만 독립 결과가 없음
-- 같은 Scene·Schema를 여러 패키지가 경쟁 수정
+## 9. 선택적 Codex Godot technical preflight
 
-## 5. `CODEX_PREFLIGHT_OPTIONAL` Plan
-
-별도 Codex Plan은 다음에서만 사용한다.
-
-- 저장·Schema·마이그레이션·플랫폼 설정 같은 고위험 변경
-- GPT 명세와 실제 저장소의 drift 가능성이 큼
-- 여러 패키지·Scene·공용 Resource가 얽힘
-- 구현 전에 기술 대안·`CHANGE_PROPOSAL` 분리가 필요함
-- 사용자가 명시적으로 Plan 검토를 요청함
-
-사용할 경우 Codex Plan은 읽기 전용이다.
+고위험 Godot 구현에서만 별도 read-only 기술 preflight를 사용할 수 있다.
 
 ```yaml
-mode: PLAN_REVIEW_ONLY
+mode: CODEX_GODOT_TECHNICAL_PREFLIGHT
+scope: ACTUAL_GODOT_PRODUCT_IMPLEMENTATION_ONLY
 file_write: FORBIDDEN
 commit_push_pr_issue: FORBIDDEN
-baseline_branch:
-baseline_commit:
-allowed_branch:
-master_plan:
-package_contract:
-required_reading: []
 ```
 
-Codex가 제출할 보고서는 `templates/project-operations/CODEX_PACKAGE_PLAN_REPORT.md`를 따른다. Plan을 생략해도 Build의 실제 저장소 선조사는 필수다.
+이 preflight는 제품 방향을 설계하는 별도 PLAN 단계가 아니다. GPT가 이미 확정한 player outcome·approved scope·protected scope를 바꾸지 않고 실제 Godot 구조·위험·rollback을 읽기 전용으로 확인한다.
 
-## 6. Plan 판정
+preflight를 생략해도 project GitHub+Notion 재수화는 생략하지 않는다.
 
-### 기술 개선
-
-플레이어 결과와 승인된 데이터·저장 계약을 유지하면 GPT가 패키지 계약에 반영할 수 있다.
-
-### `CHANGE_PROPOSAL`
-
-프로젝트 코어, Core Loop, 플레이 규칙, MVP, 주요 UI·UX, 콘텐츠 의미, 승인 기능 제거, 호환성 파괴가 필요하면 구현과 분리한다.
-
-### 사용자 결정
-
-조작감, 난이도, 보상 체감, 아트·연출·사운드, 둘 이상의 유효한 UX 선택, Vertical Slice 승인에는 `USER_DECISION_REQUIRED`를 사용한다.
-
-## 7. GPT의 선택적 Plan 반영
-
-Codex Plan을 사용한 경우 Codex가 문서를 수정하지 않는다. GPT가 다음을 수행한다.
-
-1. 최신 저장소 조사 근거 확인
-2. 마스터 계약과 대조
-3. 기술 개선 승인·기각
-4. `CHANGE_PROPOSAL`·사용자 결정 분리
-5. 패키지 계약·Issue·체크리스트 갱신
-6. `READY_FOR_BUILD` 판정
-
-## 8. Codex Build 지시
-
-Codex Build에는 다음을 고정한다.
+## 10. 결과 반환
 
 ```yaml
-branch:
-  create_or_switch: FORBIDDEN
-  allowed_branch: <GPT가 지정>
-  push_target: ALLOWED_BRANCH_ONLY
-commit:
-  godot_runtime_files_only: true
-  unrelated_changes: FORBIDDEN
-  preserve_user_changes: true
-  force_push: FORBIDDEN
-  amend: FORBIDDEN
-  independent_commits: REQUIRED
-pull_request:
-  create_or_update: FORBIDDEN
-  merge: FORBIDDEN
+codex_result:
+  project:
+  repository:
+  baseline_commit:
+  final_commit:
+  changed_godot_files_and_reasons: []
+  tests_passed: []
+  tests_failed: []
+  tests_not_run: []
+  runtime_or_play_evidence: []
+  approved_notion_visuals_consumed: []
+  visual_requests_waiting: []
+  technical_improvements: []
+  change_proposals: []
+  remaining_risks: []
+  rollback:
+  status: READY_FOR_GPT_REVIEW | BLOCKED | WAITING_GPT_VISUAL
 ```
 
-Build 첫 단계는 최신 `main`, 지정 Branch, 실제 Godot Scene·Script·Resource·project.godot·테스트를 직접 확인하는 것이다. 비-Godot 변경이 필요하면 구현하지 않고 `non_godot_change_request`로 반환한다.
+GPT가 final review owner다.
 
-## 9. 구현 결과 검수
+## 11. 잘못된 라우팅
 
-GPT는 Push된 Commit과 PR diff에서 확인한다.
+- Base test/Registry/generated/CI를 Codex에 넘김
+- Notion 작업을 Codex에 넘김
+- 모든 code file을 Codex ownership으로 판단
+- 실제 Godot product work를 GPT가 누적 구현
+- Codex가 이미지 생성
 
-- 지정 Branch·Commit·변경 파일
-- Commit SHA와 원격 HEAD 일치
-- Godot 런타임 파일 외 혼입
-- 승인된 패키지 범위
-- 기술 개선과 기획 변경 구분
-- 데이터·저장 호환성
-- 정상·실패·경계·회귀 테스트
-- 미실행 검증·위험·롤백
-
-## 10. 패키지 종료 상태
-
-- `PACKAGE_APPROVED`
-- `PACKAGE_APPROVED_WITH_TECHNICAL_CHANGES`
-- `USER_REVIEW_REQUIRED`
-- `CHANGE_PROPOSAL`
-- `REVISE`
-- `BLOCKED`
-- `UNVERIFIED`
-
-`PACKAGE_APPROVED*`만 다음 패키지와 자동 병합 적격성 검토에 진입한다.
-
-## 11. 자동 병합 게이트
-
-기본 정책은 `AUTO_MERGE_AFTER_REQUIRED_CHECKS`와 `AGENT_MERGE_REQUIRED`다.
-
-`APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`: 이미 사용자의 명시적 승인이 완료된 동일 범위는 추가 확인·재승인·병합 승인 요청 없이 검증 후 병합한다.
-
-```yaml
-merge_policy: AUTO_MERGE_AFTER_REQUIRED_CHECKS
-reviewed_head_sha:
-current_head_sha:
-required_check: ci-gate
-required_checks_passed:
-unresolved_review_threads:
-repository_auto_merge:
-ruleset:
-user_review_required:
-change_proposal:
-merge_gate:
-```
-
-허용 조건:
-
-- `PACKAGE_APPROVED` 또는 `PACKAGE_APPROVED_WITH_TECHNICAL_CHANGES`
-- PR이 Draft가 아님
-- HEAD SHA가 검수 뒤 바뀌지 않음
-- Required Check 성공
-- unresolved review thread 0
-- Repository `Allow auto-merge` 또는 저장소가 허용한 병합 방식
-- active Ruleset 또는 동등한 branch protection
-- `USER_REVIEW_REQUIRED`·`CHANGE_PROPOSAL` 없음
-
-상태:
-
-- `AUTO_MERGE_ELIGIBLE`
-- `AUTO_MERGE_ENABLED`
-- `AUTO_MERGE_BLOCKED`
-- `UNVERIFIED_REPOSITORY_SETTING`
-
-사용자 최종 병합 클릭은 기본 필수가 아니다. 기존 승인 범위를 벗어난 새 사용자 결정이 필요한 상태에서는 결정을 반영한 뒤 다시 검수한다.
-
-## 12. GitHub 구조
-
-L2 이상 패키지 작업의 기본 구조:
-
-```text
-상위 구현 Issue
-├─ PKG-00 Branch / PR
-├─ PKG-01 Branch / PR
-├─ PKG-02 Branch / PR
-└─ Vertical Slice 통합 Branch / PR
-```
-
-기본 병렬성은 `SEQUENTIAL`이다. 완전히 독립적인 도구·자산 파이프라인만 병렬 허용한다.
-
-## 13. 중단·재개
-
-중단 시 Handoff에 다음을 남긴다.
-
-- 마지막 승인 범위와 Commit
-- 현재 패키지 상태
-- Codex Plan 사용 여부와 결과
-- Push된 Commit·테스트
-- `CHANGE_PROPOSAL`·사용자 결정
-- 자동 병합 상태와 차단 원인
-- 다음 첫 행동
-- 롤백 경로
-
-재개 시 최신 `main`과 패키지 Branch를 다시 대조하고 오래된 Plan이나 과거 대화만 그대로 사용하지 않는다.
+> 인계 기준은 **코드 파일 존재 여부가 아니라 실제 Godot 제품 구현 필요 여부**다.

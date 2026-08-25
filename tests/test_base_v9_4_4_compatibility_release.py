@@ -19,7 +19,7 @@ RELEASE_CONTRACT_PATH = ROOT / "docs/operations/BASE_V9_4_4_RELEASE_CONTRACT.md"
 VERSION_PATH = ROOT / "docs/BASE_RULES_VERSION.md"
 RELEASE_INDEX_PATH = ROOT / "tools/base_release_index.py"
 RELEASE_CHECKER_PATH = ROOT / "tools/check_base_v9_4_4_release.py"
-WORKFLOW_PATH = ROOT / ".github/workflows/validate-base-v9-rc.yml"
+WORKFLOW_PATH = ROOT / ".github" / "workflows" / "validate-base-v9-rc.yml"
 PREDECESSOR_LOCK_PATH = ROOT / "base-v9.4.3.lock.json"
 REGISTRY_PATH = ROOT / "skills/SKILL_REGISTRY.json"
 
@@ -83,11 +83,18 @@ class BaseV944CompatibilityReleaseTests(unittest.TestCase):
         self.assertEqual("NOT_RUN", evidence["limitations"]["real_project_adapter_execution"])
         self.assertEqual(lock["candidate_registry"]["sha256"], evidence["registry_sha256"])
 
-        actual_registry = hashlib.sha256(REGISTRY_PATH.read_bytes()).hexdigest()
+        registry_at_payload = subprocess.run(
+            ["git", "show", f"{PAYLOAD_COMMIT}:{REGISTRY_PATH.relative_to(ROOT).as_posix()}"],
+            cwd=ROOT,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(0, registry_at_payload.returncode, registry_at_payload.stderr.decode(errors="replace"))
+        payload_registry_sha = hashlib.sha256(registry_at_payload.stdout).hexdigest()
         self.assertEqual(
-            actual_registry,
+            payload_registry_sha,
             lock["candidate_registry"]["sha256"],
-            f"payload Registry SHA-256 is {actual_registry}",
+            f"frozen payload Registry SHA-256 is {payload_registry_sha}",
         )
 
     def test_reuse_first_payload_contains_release_markers(self) -> None:

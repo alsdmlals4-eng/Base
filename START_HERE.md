@@ -76,7 +76,7 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 | 기획 책임 원본 작성·구조 변경·발행 | `managing-design-documents` | `skills/managing-design-documents/SKILL.md` |
 | 프로젝트 Skill 생성·통합·학습 | `evolving-project-discipline-skills` | `skills/evolving-project-discipline-skills/SKILL.md` |
 | 현재 상태·다음 작업·Handoff | `maintaining-project-context-and-handoff` | `skills/maintaining-project-context-and-handoff/SKILL.md` |
-| Codex 작업 명세·전환 | `maintaining-project-context-and-handoff: on-demand-codex-handoff` | `docs/GPT_CODEX_WORKFLOW_POLICY.md` + `skills/maintaining-project-context-and-handoff/SKILL.md` |
+| 실제 게임 프로젝트 Godot 제품 구현·Codex 인계 | `maintaining-project-context-and-handoff: codex-godot-implementation-handoff` | `docs/GPT_CODEX_WORKFLOW_POLICY.md` + `templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md` |
 | 프로젝트 교훈의 Base 제안·승인 구현 | `managing-base-change-proposals` | `skills/managing-base-change-proposals/SKILL.md` |
 | Vertical Slice 품질·플레이·제작 파이프라인 | `designing-vertical-slices` | `skills/designing-vertical-slices/SKILL.md` |
 | 프로젝트별 필요 이미지·시각 자산·UI 컴포넌트 선정·우선순위·제작 방식 | 기존 아트·UX·자산 평가 Skill 조합 | `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate` |
