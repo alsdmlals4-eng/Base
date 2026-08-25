@@ -25,6 +25,7 @@ REGISTRY_PATH = ROOT / "skills/SKILL_REGISTRY.json"
 
 PAYLOAD_COMMIT = "210ec78292fa12ed7563ba743b322dd36103ae4a"
 EVIDENCE_COMMIT = "bb61e68dc3028421b60c11b87ba2abd297ee6f78"
+FINALIZATION_COMMIT = "5adc196c0185951f50e49ab5e51586eff8d60886"
 SOURCE_EXACT_HEAD = "e9a081b0aa9d046bfdec819ef2b88b7d1f115ec8"
 PREDECESSOR_PAYLOAD = "7dd1a4f80388bc5faca767ff74a3eb32dc9d0ac8"
 PREDECESSOR_EVIDENCE = "da33a350d61b8adc52df97fccc7001708a933370"
@@ -118,6 +119,25 @@ class BaseV944CompatibilityReleaseTests(unittest.TestCase):
         )
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertEqual("base-v9.4.4.lock.json", result.stdout.strip())
+
+    def test_release_index_pins_v944_finalization_identity(self) -> None:
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-c",
+                (
+                    "import sys; sys.path.insert(0, 'tools'); "
+                    "from base_release_index import RELEASE_FINALIZATION_COMMITS; "
+                    "print(RELEASE_FINALIZATION_COMMITS.get('9.4.4', 'MISSING'))"
+                ),
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertEqual(FINALIZATION_COMMIT, result.stdout.strip())
 
     def test_release_checker_accepts_released_candidate(self) -> None:
         result = subprocess.run(
