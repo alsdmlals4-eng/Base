@@ -8,7 +8,7 @@
 - target owners:
   - `docs/knowledge/methods/PROJECT_HANDOFF_CONTEXT_METHOD.md`
   - `templates/project-operations/HANDOFF.md`
-  - future Integration into existing P01/P05 learning owners when concurrent owner protection allows
+  - P01/P05 learning owners are recurrence/evidence consumers, not duplicate policy owners
 
 ## Problem
 
@@ -30,6 +30,7 @@
 - 문제/교훈은 `PROJECT_ONLY / PART_ONLY / BASE_PROMOTION_CANDIDATE / NO_NEW_REUSABLE_LESSON`로 분류하고, Base 승격은 기존 canonical owner 흡수를 기본값으로 한다.
 - `BASE_PROMOTION_CANDIDATE`는 실제 Base learning/evidence write + destination readback을 Handoff READY 조건으로 둔다.
 - 같은 owner를 열린 PR이 수정 중이면 해당 PR을 수정·흡수하지 않고 독립 Base evidence/candidate를 실제 기록·readback해 `DEFERRED_BY_CONCURRENT_OWNER`로 남긴다.
+- 작업 도중 관련 PR이 병합되면 stale한 `OPEN/DEFERRED` 주장을 그대로 유지하지 않고 최신 main을 다시 읽어 disposition을 교정한다.
 
 ## Reusable lesson
 
@@ -44,6 +45,7 @@
 - 과거 대화 없이 수행하는 fresh-chat cold-start test
 - 실제 문제의 원인/해결/증거와 재사용 범위 판정
 - 공용 가치가 있는 교훈의 Base evidence/learning 실제 기록과 readback
+- handoff 작성 중 main/PR 상태가 바뀌면 최종 receipt 전에 다시 읽는 freshness reconciliation
 
 ## Anti-patterns
 
@@ -56,33 +58,32 @@
 - `BASE_PROMOTION_CANDIDATE`를 실제 Base write/readback 없이 proposal 문구만 남김
 - 단일 프로젝트 경험만으로 새 광역 Skill을 즉시 생성
 - 열린 PR이 소유한 canonical owner를 새 branch에서 흡수·재작성
+- handoff 시작 시점의 open/merged 상태를 최종 상태처럼 고정
 
 ## Promotion disposition
 
-- `docs/knowledge/methods/PROJECT_HANDOFF_CONTEXT_METHOD.md`: 공용 불변 원칙으로 직접 보강 후보
-- `templates/project-operations/HANDOFF.md`: 실행 receipt와 fresh-chat/Visual/lesson Gate를 직접 보강 후보
-- 이 evidence 파일 자체: Base에 실제 기록하고 branch readback 완료
-- P01/P05 Learning Log: 현재 열린 Base PR이 같은 learning owner를 수정하고 있으므로 이번 변경에서는 직접 수정하지 않고 `DEFERRED_BY_CONCURRENT_OWNER`
-- 별도 신규 broad Skill: `REJECT_DUPLICATE_OWNER`
+- `docs/knowledge/methods/PROJECT_HANDOFF_CONTEXT_METHOD.md`: 공용 불변 원칙 직접 보강
+- `templates/project-operations/HANDOFF.md`: 실행 receipt와 fresh-chat/Visual/lesson Gate 직접 보강
+- 이 evidence 파일 자체: Base branch에 실제 기록하고 readback 완료
+- P01/P05 Learning Log: PR #681이 작업 중 main에 병합되어 adjacent cold-start/Visual evidence를 이미 기존 owner에 승격했다. 이번 공용 protocol 전문을 또 복제하지 않고 method/template을 owner로 유지한다.
+- 별도 신규 broad Skill: `REJECT_DUPLICATE_OWNER`; PR #674가 기존 `maintaining-project-context-and-handoff` Skill을 수정 중이므로 해당 open branch는 계속 read-only 보호한다.
 
-## Concurrent work protection observed on 2026-08-25
+## Concurrent work reconciliation observed on 2026-08-25
 
-현재 열린 Base PR 중 handoff/learning/visual owner와 겹칠 수 있는 작업은 읽기 전용으로 보호한다.
+- PR #674: **OPEN** · `maintaining-project-context-and-handoff` Skill 및 GPT/Codex role split 수정. 이번 PR은 해당 Skill 파일을 수정하지 않는다.
+- PR #693: **OPEN** · visual canon approval/handoff proposal. proposal owner를 수정하지 않는다.
+- PR #681: 작업 중 **MERGED** · merge SHA `34bb91257e1e7591b30939f5752aa5c00f627e84`. P01/P05 Learning Log의 adjacent handoff/Visual evidence를 최신 main context로 인정한다.
+- PR #695: 이번 branch의 baseline에 이미 **MERGED** · baseline `2ebccd87a0a44af86418da7700993743b2f4fdb3`. Tetris image-work case를 별도 owner로 보존한다.
 
-- PR #674: GPT/Codex role split 및 `maintaining-project-context-and-handoff` Skill 수정
-- PR #681: P01/P05 Learning Log에 Blacksmith handoff/visual learning evidence 추가
-- PR #693: visual canon approval/handoff proposal
-- PR #695: Tetris image-work learning case/index
-
-이번 evidence는 위 PR을 수정·rebase·merge·close하거나 그 branch를 흡수하지 않는다.
+이번 변경은 open #674/#693을 수정·rebase·merge·close하거나 branch를 흡수하지 않는다. 완료된 #681/#695의 지식은 latest-main readback 대상으로만 소비한다.
 
 ## Evidence ceiling
 
-이 문서는 handoff 운영 규칙과 재발 방지 구조의 Base promotion evidence다. 특정 프로젝트 runtime, 특정 Notion 이미지의 현재 human-visible 상태, 모든 프로젝트에서의 반복 재현, 또는 열린 PR의 최종 병합을 증명하지 않는다.
+이 문서는 handoff 운영 규칙과 재발 방지 구조의 Base promotion evidence다. 특정 프로젝트 runtime, 특정 Notion 이미지의 현재 human-visible 상태, 모든 프로젝트에서의 반복 재현, 또는 별도 열린 PR의 최종 병합을 증명하지 않는다.
 
 ## Revisit condition
 
 - 실제 프로젝트에서 `인수인계 진행`을 수행한 뒤 fresh-chat resume test가 실패할 때
 - Notion Visual readback와 사용자 화면 노출이 불일치할 때
 - 같은 handoff failure가 두 번째 프로젝트에서 반복될 때
-- PR #674/#681/#693/#695가 완료되어 P01/P05 learning owner에 conflict 없이 통합할 수 있을 때
+- PR #674/#693이 완료되어 Skill/proposal consumer에 별도 integration 필요성이 생길 때
