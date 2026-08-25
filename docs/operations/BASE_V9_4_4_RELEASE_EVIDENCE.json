@@ -7,7 +7,7 @@
   "release_issue": 670,
   "source_pr": 669,
   "payload_commit": "210ec78292fa12ed7563ba743b322dd36103ae4a",
-  "registry_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "registry_sha256": "08f882d0c77339e8f7ff187c35b79501e0a2958ab1ff1c7aaa1c0ef8dbee45d6",
   "verification": {
     "source_exact_head": "e9a081b0aa9d046bfdec819ef2b88b7d1f115ec8",
     "source_merge_commit": "210ec78292fa12ed7563ba743b322dd36103ae4a",
