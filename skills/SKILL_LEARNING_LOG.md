@@ -1,5 +1,14 @@
 # Base Skill Learning Log
 
+## 2026-08-25 — BCP-2026-035 bounded visual scope and deliverable integrity
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** bounded single-screen visual이 broad result로 drift하고, N개의 독립 결과가 승인되지 않은 collage로 합쳐지며, decision-critical cue가 art/background와 경쟁하는 실패가 한 프로젝트 작업에서 함께 관찰됐다.
+- **Decision:** 새 Skill을 만들지 않고 기존 `auditing-and-refining-ui-art` owner에 `VISUAL_TASK_SCOPE_FIDELITY`, `BATCH_COUNT_MEANS_INDEPENDENT_DELIVERABLES`, `DECISION_CRITICAL_VISUAL_SEMANTIC_REDUNDANCY`를 통합한다.
+- **Evidence:** PR #713의 exact RED head `9a8eac82142d15be3964736dae3fc71fc6284a35`에서 승인된 계약 부재 3건만 새 실패로 재현됐고, 프로젝트 중립 case와 focused regression으로 GREEN 경계를 정의했다.
+- **Boundary:** 프로젝트 고유 style·palette·asset·Candidate ID를 Base 규칙으로 복사하지 않는다. Repository contract·mock·Notion readback만으로 `human comprehension`, accessibility, runtime/device correctness를 PASS 처리하지 않는다.
+- **Next trigger:** 다른 프로젝트에서 같은 실패가 재현되거나, semantic redundancy가 과도한 cue 중복·시각 혼잡을 만드는 반례가 관찰될 때 재검토한다.
+
 ## 2026-08-25 — Product responsibility, not code shape, determines Codex ownership
 
 - **상태:** `PATTERN_CANDIDATE`
@@ -539,7 +548,7 @@
 - 프로젝트·작업: Base 활성 Skill과 공용 운영 문서 통합
 - 기준 스킬 커밋: `main@eb40b912e5f5a0e4d369105a4f0a770e0a6179a9`
 - 호출 트리거: 유사하거나 순차 의존하는 Skill·Method·Checklist가 과도해 최소 호출과 책임 원본 원칙을 위반한다는 사용자 검토
-- 입력 범위: 활성 Skill 17개, Skill Registry, START_HERE, AGENTS, README, Documentation Map, 공용 Rules·Workflow·Checklist, 운영·마이그레이션·발행·Handoff·Skill Evolution Method
+- 입력 범위: 활성 Skill 17개, Skill Registry, START_HERE, AGENTS, Documentation Map, 공용 Rules·Workflow·Checklist, 운영·마이그레이션·발행·Handoff·Skill Evolution Method
 - 실제 산출물: 활성 Skill 11개, 통합 Skill 4개, Legacy Alias, 통합 Operating Model, 축소된 라우터·원칙 문서, 발행 정책 3단계와 정책 선택 생성 도구
 - 실행한 검증: Python 문법, Base Skill Registry Schema·활성 경로, Legacy Alias·삭제 경로·잔여 템플릿 참조, Documentation·Skill Routing·Design Publication Governance, 정책 선택 생성기 통합, 구조·콜드 스타트·BCP·딥인터뷰·UI 감사·DOCX/PDF 생성 회귀 78개, Ubuntu와 Windows 실제 발행 검증, whitespace
 - 결과: 성공
