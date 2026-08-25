@@ -36,6 +36,7 @@
 | `TEN_PACES_RULE_PRESENTATION_TRACEABILITY_CASE.md` | 십보강호 | 규칙·UI·연출·QA를 같은 의미 단계로 추적 | 문서 구조 채택·구현 전 검증 필요 |
 | `TEN_PACES_OPTIONAL_HIGHLIGHT_VERTICAL_SLICE_CASE.md` | 십보강호 | 선택적 하이라이트와 정상 완주 경로를 함께 검증 | 채택·구현 전 검증 필요 |
 | `TETRIS_IMAGE_ARTIFACT_CARDINALITY_AND_CONNECTOR_READBACK_CASE.md` | Tetris 이미지 작업 | 독립 산출물 수량 계약, connector 재탐색/readback, style anchor·승인/폐기 분리 | 부분 검증 |
+| `AI_VISUAL_CONTINUITY_AND_NOTION_PREVIEW_FALLBACK_CASE.md` | 닌자서바이벌 Hybrid Visual closeout | 지속 캐릭터 identity + additive visual layers, Notion low-res preview fallback | 패턴·부분 검증 |
 
 ## OMENWARD 사례
 
@@ -63,6 +64,8 @@
 | 문제 | 우선 사례 |
 |---|---|
 | Base 공용 원칙과 프로젝트 전용 결과가 분리되지 않음 | `BASE_PROJECT_BIDIRECTIONAL_LEARNING_CASE.md` |
+| 하나의 주인공이 여러 계열 특징을 누적하며 캐릭터 identity가 흔들림 | `AI_VISUAL_CONTINUITY_AND_NOTION_PREVIEW_FALLBACK_CASE.md` |
+| Notion connector에 local binary 입력이 없지만 durable low-res preview가 필요 | `AI_VISUAL_CONTINUITY_AND_NOTION_PREVIEW_FALLBACK_CASE.md` |
 | 내부 난도·성장 정보를 몰입을 해치지 않고 전달 | `DIEGETIC_OPPONENT_INFORMATION_CASE.md` |
 | 규칙·UI·연출·QA가 같은 결과를 서로 다르게 설명 | `TEN_PACES_RULE_PRESENTATION_TRACEABILITY_CASE.md` |
 | 대표 하이라이트가 미획득 경로의 진행을 막음 | `TEN_PACES_OPTIONAL_HIGHLIGHT_VERTICAL_SLICE_CASE.md` |
