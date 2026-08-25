@@ -2,26 +2,24 @@
 
 ## 목적
 
-Base는 **하나의 통합 시스템(ONE BASE)** 이다. P01~P09는 Base를 9개의 실행 시스템이나 9개의 별도 채팅으로 분해하는 구조가 아니라, 큰 저장소를 분야별로 깊게 조사·학습·검증하고 결과를 추적하기 위한 **안정적인 semantic responsibility / maintenance / learning view**다.
+Base는 **하나의 통합 시스템(ONE BASE)** 이다. P01~P09는 별도 runtime이나 9개 채팅이 아니라 semantic responsibility / maintenance / learning view다.
 
-기계적 책임 지도는 `docs/operations/BASE_PARTITION_MANIFEST.json`이 소유한다. 실제 작업은 언제나 최신 `main`을 다시 읽어 exact baseline을 pin한 뒤 수행한다.
+기계 책임 지도는 `docs/operations/BASE_PARTITION_MANIFEST.json`이 소유한다.
 
 ## 현재 실행 계약
 
-`SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS`
+```text
+SINGLE_COORDINATOR_CHAT_SEQUENTIAL_PARTS
+BASE_FULL_PART_COORDINATOR_EXPLICIT_ONLY
+GENERAL_PROJECT_WORK_USES_GOAL_SCOPED_PHASES
+PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER
+```
 
-`BASE_FULL_PART_COORDINATOR_EXPLICIT_ONLY`
-
-`GENERAL_PROJECT_WORK_USES_GOAL_SCOPED_PHASES`
-
-이 실행 계약은 사용자가 **Base 전체 P01~P09 감사·최적화**를 명시적으로 요청한 maintenance session에만 활성화한다. 일반 프로젝트 작업, 단일 Goal 수정, 진단, 질문 답변의 기본 구조가 아니다. 일반 L1+ 작업은 현재 Goal에 필요한 범위만 `PLAN / RESEARCH / REVIEW → 승인된 BUILD / VERIFY`로 진행하며 모든 Part를 순회하지 않는다.
-
-한 GPT coordinator 채팅이 다음 순서로 Part를 하나씩 깊게 처리한다.
+Base 전체 감사를 명시 요청했을 때 한 GPT coordinator가 순차 처리한다.
 
 ```text
 latest main pin
-→ P01
-→ merge / post-merge readback
+→ P01 → merge/postmerge readback
 → latest main repin
 → P02
 → ...
@@ -29,46 +27,57 @@ latest main pin
 → final whole-Base integration
 ```
 
-정확한 기본 순서:
+정확한 순서:
 
 ```text
 P01 → P02 → P03 → P04 → P05 → P06 → P07 → P08 → P09
 ```
 
-- 새 Part 채팅을 9개 만들지 않는다.
-- Part가 바뀌어도 같은 coordinator 채팅의 사용자 결정·학습·미완료 finding 맥락을 유지한다.
-- rollback·변경 attribution·검증을 명확히 하기 위해 **Part별 PR/checkpoint는 유지**하는 것을 기본으로 한다.
-- 한 Part를 병합한 뒤 다음 Part를 시작하기 전에 최신 `main`을 다시 pin한다.
-- Part 순서는 coverage와 사용자 학습을 위한 기본 순서이며, 긴급한 검증된 cross-Part blocker를 지금 고치는 것을 막는 장벽이 아니다.
+새 Part 채팅을 만들지 않는다. Part checkpoint는 rollback·검증·학습 attribution을 위해 유지한다.
 
-`GPT_PLANNING_REVIEW_VISUAL_OWNER + CODEX_IMPLEMENTATION_EXECUTOR` 역할 분리는 이 coordinator 모델 위에 적용된다. GPT coordinator가 전체 Part를 검수한다는 사실은 제품 implementation이나 machine consumer BUILD까지 GPT가 직접 수행한다는 뜻이 아니다.
+## Base 작업의 실행 Owner
+
+**Base 자체 P01~P09와 CP0 maintenance는 전부 GPT가 담당한다.**
+
+```text
+BASE_PARTITION_MAINTENANCE_OWNER = GPT
+BASE_POLICY_SKILL_GUIDE_TEMPLATE = GPT
+BASE_REGISTRY_GENERATED_MANIFEST = GPT
+BASE_PYTHON_TEST_AND_CI_CONTRACT = GPT
+BASE_NOTION = GPT
+CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR
+```
+
+Base의 Python test, Registry/generated checker, CI workflow가 코드라는 이유로 Codex에 넘기지 않는다.
+
+Codex가 등장하는 경우는 Base maintenance 자체가 아니라, **별도의 실제 게임 프로젝트에서 Godot 제품 구현 task가 생성됐을 때**다.
+
+```text
+Base/P04/P05/P06 기획·검수 finding
+→ GPT가 Base/Notion/설계 정본화
+→ 특정 게임 프로젝트에 실제 Godot 구현이 필요함
+→ 그 프로젝트용 Codex Godot Work Instruction
+→ Codex가 해당 프로젝트 GitHub+Notion을 읽고 구현
+```
 
 ## Part 소유권의 의미
 
 `PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER`
 
-Manifest의 `owned_write_paths`, `owned_skill_ids`, Module은 다음을 뜻한다.
+Manifest의 owner는 다음을 뜻한다.
 
-- 누가 해당 의미를 가장 깊게 이해·감사해야 하는가
-- 어떤 Part의 Learning Log에 교훈을 남길 것인가
-- 완료보고에서 어느 Part 성과로 설명할 것인가
-- 어떤 consumer/Test를 우선 검증할 것인가
+- 누가 해당 의미를 가장 깊게 이해·감사하는가
+- 어느 Learning Log에 교훈을 남기는가
+- 완료보고에서 어느 Part 성과인가
+- 어떤 consumer/Test를 우선 검증하는가
 
-**다른 Part라는 이유만으로 검증된 오류·충돌·누락·MUST_FIX/가치 있는 SHOULD_FIX를 수정 보류하지 않는다.** 현재 coordinator가 문제를 발견했고 증거·수정권한·검증경로가 충분하면 semantic owner가 다른 경로와 CP0도 같은 작업에서 해결할 수 있다.
-
-단, 해결 방식은 현재 역할 계약을 따른다.
-
-- 기획·검수·Notion·운영 정본·문서 교정 → GPT가 bounded correction 가능.
-- code/data/Scene/Resource/config/test/build/runtime 및 Registry/generated/checker 같은 machine consumer mutation → `CODEX_IMPLEMENTATION_HANDOFF`로 Codex BUILD.
-- GPT는 implementation finding을 직접 코드 수정으로 닫지 않고, Acceptance·보호 범위·검증 기준을 정리해 Codex에 인계한 뒤 결과를 REVIEW한다.
-
-그 경우 다음처럼 기록한다.
+**다른 Part라는 이유만으로 수정 보류 금지.** GPT coordinator가 증거와 검증 경로를 확보하면 다른 Part/CP0의 Base finding도 현재 workstream 안에서 교정할 수 있다.
 
 ```yaml
 CROSS_PART_CHANGE:
   discovered_while: Pxx
   semantic_owner: Pyy | CP0
-  execution_owner: GPT_DOC_CANON | CODEX_IMPLEMENTATION
+  execution_owner: GPT_BASE_MAINTENANCE
   affected_paths: []
   problem:
   evidence:
@@ -77,30 +86,31 @@ CROSS_PART_CHANGE:
   rollback:
 ```
 
-`CROSS_PART_CHANGE_REQUEST`는 단순히 “다른 Part다”라는 이유로 쓰지 않는다. 다음처럼 **실제 조정 blocker**가 있을 때만 사용한다.
+`CROSS_PART_CHANGE_REQUEST`는 실제 조정 blocker에만 쓴다.
 
-- 다른 독립 활성 workstream이 같은 의미/경로를 이미 수정 중
-- 현재 세션에 필요한 권한·정본·실행 증거가 없음
-- 사용자 중요 방향 결정이 필요함
-- 현재 변경셋에서 안전하게 원자적으로 검증할 수 없음
+- 다른 독립 active workstream이 같은 의미/경로를 수정 중
+- 필요한 권한·정본·증거가 없음
+- 사용자 중요 제품 결정 필요
+- 현재 change set에서 안전한 원자 검증 불가
 
-## 독립 workstream과 open PR 보호
+## Open PR 보호
 
-`OPEN_PR_READ_ONLY_BY_DEFAULT`
+```text
+OPEN_PR_READ_ONLY_BY_DEFAULT
+OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION
+FOLLOW_UP_TARGET_IS_MERGED_MAIN
+```
 
-`OPEN_PR_MUTATION_REQUIRES_EXPLICIT_NAMED_AUTHORIZATION`
+모든 `open/draft/ready` PR·Branch는 기본 read-only다.
 
-`FOLLOW_UP_TARGET_IS_MERGED_MAIN`
+- head/diff/check 읽기: 허용
+- checkout/write/rebase/close/merge/selective-copy/material-delta 흡수: 금지
+- 일반 후속 작업은 latest completed main에서 시작
+- 열린 PR mutation은 사용자가 **PR 번호와 허용 동작**을 지정한 경우에만 수행
 
-Part 경계와 PR 보호는 서로 다른 개념이다. 현재 작업 범위 안에서 다른 Part의 **merged-main** 오류를 고칠 수는 있지만, `open/draft/ready` PR·Branch는 현재 작업자 증거와 무관하게 기본 read-only다.
+현재 task의 명시된 PR은 standing current-work authorization 범위에서만 처리한다.
 
-- 열린 PR의 head/diff/check는 현행·충돌·중복 확인을 위해 읽을 수 있다.
-- checkout/write/rebase/close/merge/selective-copy/material-delta 흡수는 하지 않는다.
-- 일반 후속 변경은 latest completed `main`에서 새 Branch로 시작하고 main에 실제 유지된 의미만 대상으로 한다.
-- 사용자가 열린 PR을 변경하려면 현재 작업에서 PR 번호와 허용 동작을 명시해야 한다.
-- “현재 채팅만 활성”, 같은 Goal, owner evidence 부재는 mutation 권한이 아니다.
-
-## ONE BASE와 P01~P09 관계
+## ONE BASE와 P01~P09
 
 ```text
                          ONE BASE
@@ -112,119 +122,93 @@ Part 경계와 PR 보호는 서로 다른 개념이다. 현재 작업 범위 안
           │                 │                 │
           └──────────── semantic links ──────┘
                             │
-                  Coordinator Integration
+                   GPT Coordinator
                             │
                          ONE BASE
 ```
 
-세 묶음은 설명용 cluster일 뿐 별도 채팅/동시 실행 요구가 아니다.
+## P01~P09 책임
 
-## P01~P09 상세 책임 지도
+| Part | 책임 | 대표 출력 |
+|---|---|---|
+| P01 | Project Planning, Operations & Notion | 작업 계약·Home·handoff·continuity |
+| P02 | Skill Governance, Canon Freshness & Legacy | Registry/owner/freshness/retirement |
+| P03 | Adversarial Quality, Refactoring & Git Integrity | finding·회귀·Git 안전 |
+| P04 | Game Design, Core, Player Research & Vertical Slice | player promise·Core·slice acceptance |
+| P05 | Art, UX/UI & Visual Assets | Visual direction·UX flow·승인 asset |
+| P06 | Godot, Runtime & Technical Toolchain | Godot 구현 요구·runtime 기준·toolchain 계약 |
+| P07 | Platform, Release & Execution Validation | evidence ceiling·build/release readiness |
+| P08 | AI Operations & External Executors | GPT/Codex/외부 AI 역할·cost/context routing |
+| P09 | Content, Narrative & Publication | canon/voice/publication evidence |
 
-| Part | 핵심 책임 | 대표 Skill / Module | 입력 → 처리 → 출력 | 주요 연결 | 기대효과 |
-|---|---|---|---|---|---|
-| **P01 · Project Planning, Operations & Notion** | 사용자 의도·범위·완료조건을 실행 가능한 계약으로 만들고 Project OS·Notion human view·handoff·continuity를 유지 | `managing-project-intake-and-work-contract`, `managing-game-project-operating-system`, Design Docs, Handoff/Continuity | 사용자 목표·현재 결정 → 범위/권위/계획/결정 복원 → 실행 계약·Notion Home·handoff | P02 정본, P03 검토, P04~P09 프로젝트 입력 | 반복 질문·결정 손실·Notion/GitHub 권위 혼동 감소 |
-| **P02 · Skill Governance, Canon Freshness & Legacy** | Skill 생명주기, canonical reference freshness, BCP, stale/legacy 흡수·보존·제거 | Skill Lifecycle, Reference Freshness, BCP, Simplification, Pruning, Legacy | Registry·정본·consumer → 중복/드리프트/UNIQUE 판정 → 단일 owner·신선한 참조·안전한 retirement | 모든 Part | Skill 과잉·구형 정본 부활·파괴적 삭제 감소 |
-| **P03 · Adversarial Quality, Refactoring & Git Integrity** | 전체 적대적 검토, finding 검증, contract-preserving refactor, Git 상태·workstream 정합성 | `running-adversarial-review-and-refinement`, refactor, Git sync | 승인 범위·실제 diff·증거 → attack/validate/refine/regression → clean finding set·안전한 변경 | P02 freshness, P07 evidence | 잘못된 PASS·과잉 수정·동시작업 손상 감소 |
-| **P04 · Game Design, Core, Player Research & Vertical Slice** | 플레이어 가치·Concept·Core·기능/밸런스·연구질문·Vertical Slice 설계 | Concept/Core/User Research/Vertical Slice | player promise·시장/벤치마크 → 선택·경험·관찰신호 설계 → 검증 가능한 slice/acceptance | P05 Visual, P06 runtime, P07 evidence | 기능 나열이 아니라 플레이어 가치와 실제 검증 연결 |
-| **P05 · Art, UX/UI & Visual Assets** | 아트 방향, 이미지 후보 lifecycle, UX/UI 가독성, Visual QA, 재사용/구조화 | Art Prompt, UI Art Audit, Visual/Asset workflow | 시각 요구·프로젝트 분위기 → 후보 생성/비교/승인/구조화 → 승인 Visual·UX flow·재사용 자산 | P04 요구, P06 구현, P07 rights/evidence | AI 티·스타일 drift·가독성 저하·일회성 자산 낭비 감소 |
-| **P06 · Godot, Runtime & Technical Toolchain** | Godot authoring/runtime, diagnostics, addon/plugin 평가, adapter, local execution | Runtime Diagnostics, Godot Asset/Plugin Evaluation | 설계·Visual·프로젝트 상태 → Codex actual editor/runtime/tool implementation·검증 → 구현·diagnostic evidence | P04 acceptance, P05 visual, P07 validation | “설계됨”과 “실제로 돌아감” 혼동 감소 |
-| **P07 · Platform, Release & Execution Validation** | 실제 diff/정적/runtime evidence, platform/store/rights/build/release readiness | Change Validation, Evidence Ledger, Platform/Release | 구현·빌드·플랫폼 요구 → evidence ceiling으로 검증 → PASS/PARTIAL/NOT_RUN/blocked delivery state | P03 critique, P06 runtime, P01 evidence template | 문서 존재를 실행 증거로 오인하는 오류 감소 |
-| **P08 · AI Operations & External Executors** | GPT/외부 executor 역할, model/cost routing, source research, worktree/rehydration | AI Instruction/Context, Model/Cost, External Executor | 작업 요구·비용상태·현재 canon → 최소 Skill/Tool/executor 선택 → 검토 가능한 결과·handoff | P01 계약, P03 isolation, P07 evidence | 도구 과다 호출·불필요 과금·stale context 실행 감소 |
-| **P09 · Content, Narrative & Publication** | 연재서사, 캐릭터/voice, game-dev YouTube, publication evidence | Serial Fiction, Narrative/Voice, YouTube | project canon·실제 build evidence → 작성/편집/발행 판단 → 일관된 콘텐츠·학습 | P04 world fit, P05 visual, P07 rights/platform | 정사 drift·표현 복제·콘텐츠와 runtime 완료 혼동 감소 |
+P06 Base 문서는 GPT가 관리한다. **P06의 설계가 특정 게임 프로젝트의 GDScript/Scene/Resource/runtime 변경으로 이어질 때만 그 프로젝트 구현을 Codex가 수행**한다.
 
-## Part checkpoint에서 반드시 설명할 것
+## Part checkpoint 필수 설명
 
-각 Part 작업은 파일 목록이 아니라 다음을 설명한다.
-
-1. 이 Part가 왜 존재하는가.
-2. 가장 중요한 규칙은 무엇이며 언제 작동하는가.
-3. 각 핵심 Skill은 **목적 / 호출 조건 / 입력 / 처리 / 출력 / 기대효과 / consumer/Test**가 무엇인가.
-4. 각 Module은 **이전 단계 입력 → 자체 판단/처리 → 다음 단계 출력**이 무엇인가.
-5. Module/Skill이 없으면 어떤 실패가 생기는가.
-6. 유지·개선·흡수·제거·의도적 비추가가 무엇인가.
-7. BEFORE → AFTER → 사용자/플레이어 효과 → trade-off.
-8. 실제 실행 증거, `NOT_RUN`, `BLOCKED_UNVERIFIED`, 남은 위험.
-9. 다음 Part로 넘겨야 할 학습과 재검토 조건.
+1. Part가 왜 존재하는가
+2. 중요한 규칙과 trigger
+3. Skill 목적 / 입력 / 처리 / 출력 / 기대효과 / consumer/Test
+4. Module 입력 → 판단/처리 → 출력
+5. 없으면 어떤 실패가 생기는가
+6. KEEP / IMPROVE / ABSORB / RETIRE
+7. BEFORE → AFTER → 효과 → trade-off
+8. actual evidence / `NOT_RUN` / `BLOCKED_UNVERIFIED`
+9. 다음 Part 학습과 revisit condition
 
 ## Scope Checker
 
-Strict Part 모드는 semantic owner 경계를 검증하는 **전문/legacy 모드**로 남긴다.
+Strict Part mode:
 
 ```powershell
 python tools/check_base_partition_scope.py --part P04 --files <paths...>
 ```
 
-현재 기본 coordinator 작업은 다음을 사용한다.
+GPT coordinator mode:
 
 ```powershell
 python tools/check_base_partition_scope.py --coordinator --base <BASELINE_SHA> --head HEAD
 ```
 
-Coordinator mode는 다른 Part/CP0 경로를 실패시키는 대신 semantic owner를 표시한다.
+예상:
 
 ```text
-PASS  SEMANTIC_OWNER:P01  ...
-PASS  SEMANTIC_OWNER:P04  ...
-PASS  CONTROL_PLANE_COORDINATOR_WRITE  ...
+PASS SEMANTIC_OWNER:P01
+PASS SEMANTIC_OWNER:P04
+PASS CONTROL_PLANE_COORDINATOR_WRITE
 ```
 
-경로가 어떤 Part에도 매핑되지 않으면 `SEMANTIC_OWNER:UNASSIGNED_REVIEW_REQUIRED`로 표시하고 실제 owner/consumer를 검토한다. 이 상태는 자동 자유영역을 뜻하지 않는다.
+경로가 매핑되지 않으면 `SEMANTIC_OWNER:UNASSIGNED_REVIEW_REQUIRED`다.
 
 ## Control Plane (CP0)
 
-CP0는 전역 routing/registry/generated/partition 계약의 semantic owner다. coordinator는 현재 사용자 승인 범위에서 필요한 CP0 **설계·검수·정본 변경**을 관리하되, tests/Registry/generated/checker 같은 machine consumer mutation은 Codex BUILD로 실행한다.
-
-- 전역 정본은 한 번만 수정한다.
-- generated artifact는 source-of-truth 변경 후 정식 생성 경로로 재생성한다.
-- Registry/route 의미를 바꾸면 실제 consumer와 focused regression을 함께 갱신한다.
-- 다른 active workstream이 동일 CP0 의미를 수정 중인지 먼저 확인한다.
-- GPT가 CP0 의미를 정했다고 해서 generated/test를 손으로 임시 맞춤하지 않고 Codex implementation packet으로 묶는다.
+CP0는 전역 routing/Registry/generated/partition 계약의 semantic owner다. **CP0 수정 역시 GPT Base maintenance 작업**이다.
 
 대표 CP0:
 
-- `AGENTS.md`, `START_HERE.md`, global operating/routing docs
-- Partition Manifest/Prompt/Context contracts
-- `skills/SKILL_REGISTRY.json`, shared routes, central evals
+- `AGENTS.md`, `START_HERE.md`, global routing docs
+- Partition Manifest / Prompt / Context contracts
+- `skills/SKILL_REGISTRY.json`
 - `docs/generated/**`
 - `.github/**`
-- Base global schemas/integrity/generation
+- Base schemas/integrity/generation
+- Base Python contract tests
 
-## GPT / Codex
+규칙:
 
-```text
-GPT_PLANNING_REVIEW_VISUAL_OWNER
-CODEX_IMPLEMENTATION_EXECUTOR
-PLANNING_ONLY_NO_CODEX_REQUIRED
-IMPLEMENTATION_REQUIRES_CODEX_HANDOFF
-```
-
-GPT가 기본 planner/reviewer다. 현행 조사·대안·벤치마킹·규칙/Skill/Module 검토·Notion/GitHub 대조·적대적 검토·문서/운영 정본·구현 명세는 GPT에서 닫는다.
-
-planning-only 작업에는 Codex를 형식적으로 추가하지 않는다. 그러나 실제 code/data/Scene/Resource/config/test/build/runtime 또는 machine consumer mutation이 존재하면 Codex가 `CODEX_IMPLEMENTATION_EXECUTOR`로 이어받는다. optional인 것은 Codex의 존재가 아니라 **planning-only에서 Codex 실행을 생략하는 것과 `CODEX_PREFLIGHT_OPTIONAL` technical Plan**이다.
-
-Codex는 구현 전에 current GitHub와 relevant Notion을 재수화하며, 이미지 생성·생성형 편집을 하지 않고 current-use 승인 + Notion attach/readback Visual만 소비한다. 이미지가 부족하면 `GPT_VISUAL_REQUEST`로 반환한다.
-
-## Learning + Source
-
-P01~P09 각각의 Learning Log와 Source Radar는 유지한다. 한 채팅을 사용하더라도 현재 Part가 바뀔 때:
-
-- 해당 Part Learning Checkpoint를 기록한다.
-- `PART_ONLY / PROJECT_ONLY / BASE_PROMOTION_CANDIDATE / NO_NEW_REUSABLE_LESSON`을 구분한다.
-- 기존 Periodic Source Scan Queue의 관련 domain/questions를 사용한다.
-- Source 발견 자체를 학습/정본 승격으로 간주하지 않는다.
+- 전역 정본은 한 번만 수정
+- generated는 source 변경 후 정식 생성 경로로 재생성
+- Registry/route 의미 변경 시 consumer/focused regression 함께 갱신
+- 독립 open workstream overlap 먼저 확인
 
 ## 적대적 검토
 
-`FULL_LOOP_COUNT_MINIMUM: 5`
+```text
+FULL_LOOP_COUNT_MINIMUM: 5
+MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
+FULL_LOOP_IS_NOT_A_REVIEW_LENS
+```
 
-`MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5`
-
-`FULL_LOOP_IS_NOT_A_REVIEW_LENS`
-
-각 회차는 관점 하나가 아니라 **현재 승인 범위 전체의 완전한 lifecycle**이다. `Loop 1=scope`, `Loop 2=UX`, `Loop 3=CI` 식으로 서로 다른 lens를 한 번씩 돌린 것은 3개의 full loop가 아니며 최소 5회 요건을 충족하지 않는다.
-
-한 counted loop는 최소 다음을 모두 반복한다.
+한 counted loop는 하나의 lens가 아니라 current scope 전체 lifecycle이다.
 
 ```text
 CURRENT STATE / CANON / ACTUAL IMPLEMENTATION READBACK
@@ -238,80 +222,45 @@ CURRENT STATE / CANON / ACTUAL IMPLEMENTATION READBACK
 → RE-ATTACK THE WHOLE RESULTING STATE
 ```
 
-회차 보고에 “이번 회차 대표 finding: CI”라고 적을 수는 있지만 **그 대표 finding이 회차의 검토 범위를 뜻하지 않는다.** 최소 5회의 전체 lifecycle을 수행하고, 5회 이후에도 유효 오류·충돌·누락·blocking finding·회귀가 있으면 6..N회를 계속한다.
+최소 5회 후에도 finding이 있으면 6..N회를 계속한다.
 
-## Human-facing Home 계약
+## Human-facing Home
 
 `HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`
 
-Notion의 Base Home과 Project Home은 링크 허브가 아니다. **사람이 Home 한 화면을 읽는 것만으로 핵심을 이해할 수 있어야 하고**, 하위 페이지는 심화·증거·긴 표·전체 asset/log를 보는 drilldown이어야 한다.
+Base Home과 Project Home은 링크 허브가 아니다. Home만 읽어도 핵심 목적·Flow·시스템·데이터·Visual·현재 상태·검증·위험을 이해할 수 있어야 한다.
 
-### Base Home에 직접 보여줄 것
+AI/System metadata·raw SHA·test receipt는 상세 운영면에 둔다.
 
-- Base 목적과 GitHub/Notion authority split
-- 전체 lifecycle의 각 단계가 왜 필요한지
-- 중요 규칙과 작동 조건
-- **Skill 목적 / 호출 조건 / 입력 / 처리 / 출력 / 기대효과 / 연결 Module·consumer·Test**
-- Module별 입력→판단/처리→출력→다음 단계, 그리고 **없으면** 생기는 실패
-- **P01~P09** 각 책임·대표 Skill/Module·진행 흐름·다른 Part 연결·기대효과·위험/revisit
-- 현재 `main`, 완료/미완료 상태, 실제 검증과 `NOT_RUN`
+## Learning + Source
 
-### Project Home에 직접 보여줄 것
+Part별 Learning Log와 Source Radar를 유지한다.
 
-- 프로젝트 한 줄 정의와 핵심 플레이어/사용자 가치
-- 현재 확정 방향·보호/금지 요소
-- Core Loop / 주요 Flow
-- 핵심 시스템별 목적·작동·상호작용
-- UX/UI/Visual 방향·승인 상태
-- 현재 구현상태와 repository/runtime truth 연결
-- 검증상태와 evidence ceiling
-- 현재 blocker / 다음 작업
-- 최근 중요한 결정·이유
-- 주요 위험 / revisit condition
+```text
+PART_ONLY
+PROJECT_ONLY
+BASE_PROMOTION_CANDIDATE
+NO_NEW_REUSABLE_LESSON
+```
 
-하위 페이지가 존재해도 Home의 핵심 설명을 “상세는 링크 참조”로 대체하지 않는다.
+Source 발견 자체를 정본 승격으로 보지 않는다.
 
-## 대안 검토
+## Final Integration
 
-### A · 9개 별도 채팅 유지 + cross-Part 예외 허용
-
-초기 변경량은 작지만 반복적인 context rehydration, completion packet 전달, chat 관리 비용이 남는다. **REJECT**.
-
-### B · 한 coordinator 채팅 + 순차 Part checkpoint + semantic ownership
-
-Part별 깊이·학습·rollback은 보존하면서 채팅 분산과 cross-Part deadlock을 제거한다. **ADOPT**.
-
-### C · Part 자체 제거 + Base 전체 단일 감사
-
-겉으로 단순하지만 분야별 coverage/학습/Source routing/책임 추적을 잃는다. **REJECT**.
-
-### BETTER_ALTERNATIVE_SEARCH
-
-한 채팅 + 하나의 거대한 P01~P09 PR도 검토했지만 rollback·회귀 원인 추적·사용자 학습 checkpoint가 약해진다. 따라서 **채팅은 하나, Part PR/checkpoint는 순차 유지**가 현재 규모에서 더 강하다.
-
-### LONG_TERM_PLAN_FIT_REQUIRED
-
-1인 개발 + GPT primary 환경에서는 coordinator 방식이 context와 관리비를 가장 적게 만든다. 다음이면 재검토한다.
-
-- 여러 독립 작업자가 Base를 실제로 동시에 자주 수정함
-- 한 Part 변경이 지속적으로 대부분의 다른 Part를 함께 바꿔 Part checkpoint 의미가 사라짐
-- Base가 한 coordinator conversation의 practical context를 반복적으로 초과함
-- semantic owner를 자동 dependency graph로 생성하는 편이 수동 Part map보다 안정적으로 검증됨
-
-## Legacy
-
-Figma, Google Sheets, external HTML workspace, 폐기된 custom local Tool/Hub는 신규 기본 작업면으로 부활시키지 않는다. `UNIQUE / DUPLICATE / OBSOLETE`를 판정하고 UNIQUE의 현행 owner 이관·readback·consumer 확인 후 retirement한다.
-
-## 완료
-
-P01→P09 순차 작업 뒤 같은 coordinator 채팅이 whole-Base Integration을 수행한다.
+P01→P09 뒤 같은 GPT coordinator가:
 
 1. latest main pin
-2. 완료된 Part/PR/학습 readback
-3. 아직 유효한 cross-Part/CP0 finding 해결 — GPT doc/canon 또는 Codex implementation으로 execution owner 분리
-4. Registry/Documentation/generated/Notion 동기화
+2. 모든 Part 결과/학습 readback
+3. cross-Part/CP0 Base finding 직접 교정
+4. Registry/generated/Documentation/Notion 정합성 마감
 5. repository-wide regression / Required CI
-6. 최소 5회 **진짜 full-scope adversarial loop**, 이후 clean까지 계속
+6. 최소 5회 full-scope adversarial loop 후 clean
 7. exact-head merge
-8. post-merge GitHub + Notion Home readback
+8. post-merge GitHub + Notion readback
 9. 사용자 학습형 최종보고
+
+를 수행한다.
+
+## Codex 경계 한 줄
+
+> **Base는 전부 GPT maintenance 영역이다. Codex는 Base 작업자가 아니라 실제 게임 프로젝트의 Godot 제품 구현자다.**
