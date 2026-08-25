@@ -33,6 +33,8 @@ class P01SystemBlueprintEntryContractTests(unittest.TestCase):
         contract_path = "docs/operations/project-workspace/NOTION_SYSTEM_BLUEPRINT_CONTRACT.md"
 
         self.assertIn("SYSTEM_BLUEPRINT_ENTRY_CHECK_REQUIRED", first_prompt)
+        self.assertIn("REUSE_EXISTING_BLUEPRINT_BEFORE_CREATING_NEW", first_prompt)
+        self.assertIn("NO_MASS_BLUEPRINT_BACKFILL", first_prompt)
         self.assertIn(contract_path, first_prompt)
         self.assertIn("NOT_APPLICABLE_WITH_REASON", first_prompt)
         self.assertIn("existing approved Blueprint", first_prompt)
