@@ -24,6 +24,8 @@ Google Sheets
 
 ## Notion project operation gate
 
+세부 실행 원본은 `templates/project-operations/NOTION_OPERATION_GATE.md`다. 아래 내용은 설치·콜드 스타트용 요약이며 충돌 시 세부 실행 원본을 우선한다.
+
 프로젝트에서 Notion을 읽거나 수정하는 AI/자동화는 `NOTION_OPERATION_GATE`를 기본 안전 계약으로 사용한다. 이 규칙은 사람용 Home에 새 메타데이터를 추가하는 규칙이 아니라, AI/System 작업면에서 **무엇을 어떤 범위로 수정할지** 통제하는 규칙이다.
 
 ```text
