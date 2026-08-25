@@ -1,5 +1,68 @@
 # Maintaining Project Context and Handoff Learning Log
 
+## 2026-08-25 — Role migration must classify consumers before rewriting contracts
+
+### Context
+
+GPT와 Codex의 역할을 `GPT planning/review/visual → Codex implementation`으로 바꾸는 과정에서 기존 Handoff·local-executor·test 계약에는 **실제 안전 capability와 과거 ownership 표현이 같은 문자열 집합에 섞여** 있었다.
+
+### Finding
+
+- `OPTIONAL_CODEX_EXECUTOR`, GPT Godot preproduction 같은 ownership literal은 current decision과 충돌하므로 폐기 대상이지만, 그 주변의 wrong-target 방지·stale PID/session 차단·rollback·exact remote HEAD·continuous recovery·post-merge history 보호는 계속 필요했다.
+- 문서를 짧게 만들며 old section을 통째로 제거하면 `동의 편향` 방지, 균형 요약의 좁은 예외, 승인 범위의 기술적 최소 finding 처리 같은 독립 capability까지 같이 사라질 수 있다.
+- machine schema/version이나 기존 sync token을 역할 변경과 함께 불필요하게 바꾸면 role migration이 unrelated compatibility break를 만든다.
+- bootstrap template과 Part Context Pack처럼 목적이 다른 문서를 같은 파일로 잘못 덮어쓰면 이름은 남아 있어도 cold-start contract가 붕괴한다.
+- test failure를 모두 stale assertion으로 취급하면 진짜 비퇴행 finding을 놓치고, 반대로 old literal을 전부 되살리면 새 역할 결정이 무효화된다.
+
+### Decision
+
+역할·executor·authority migration은 다음 순서로 수행한다.
+
+```text
+current authority / user decision
+→ active consumer inventory
+→ each consumer = PRESERVE_SEMANTIC | MIGRATE_OWNER | STALE_EXPECTATION | HISTORICAL_SNAPSHOT
+→ source contract 최소 교정
+→ schema/compatibility unrelated delta 되돌림
+→ paired test + Learning Log + Registry/generated migration
+→ exact-head regression
+→ whole-state adversarial re-attack
+```
+
+- `PRESERVE_SEMANTIC`: 안전성·복구·검증 의미는 owner가 바뀌어도 유지한다.
+- `MIGRATE_OWNER`: GPT local bootstrap의 wrong-target/session safety처럼 capability는 Codex execution-environment owner로 이동한다.
+- `STALE_EXPECTATION`: `OPTIONAL_CODEX_EXECUTOR`, GPT product preproduction 같은 superseded ownership assertion은 새 positive/negative regression으로 교체한다.
+- `HISTORICAL_SNAPSHOT`: 날짜/SHA/당시 계약을 설명하는 기록은 현재 문구로 소급 수정하지 않는다.
+
+### Current role boundary learned
+
+```text
+GPT_PLANNING_REVIEW_VISUAL_OWNER
+CODEX_IMPLEMENTATION_EXECUTOR
+IMPLEMENTATION_REQUIRES_CODEX_HANDOFF
+CODEX_REHYDRATE_GITHUB_AND_NOTION
+CODEX_IMAGE_GENERATION_FORBIDDEN
+CODEX_VISUAL_INPUT_NOTION_APPROVED_ONLY
+GPT_VISUAL_REQUEST
+CODEX_EXECUTION_ENVIRONMENT_FRESHNESS_REQUIRED
+```
+
+Codex image prohibition은 단순 “이미지 tool을 쓰지 않음”이 아니라 **현재 용도 승인 + Notion upload/attach/readback된 Visual만 구현 input으로 소비**하고 누락 시 `GPT_VISUAL_REQUEST`로 반환한다는 handoff 계약까지 포함한다.
+
+### Evidence
+
+- PR #674 초기 lightweight contract: 137 tests / 9 failures에서 non-regression 보강 뒤 5 failures로 축소.
+- whole-core baseline `c59fa9b...`: 2151 tests / 13 failures / 37 skips. 여기서 stale ownership assertion과 실제 neutral-review/one-shot/bootstrap finding을 분리했다.
+- `templates/custom-instructions.codex.md`가 P08 Context Pack으로 오염된 것을 independent bootstrap contract가 검출했고 `c322deab...`에서 stable bootstrap으로 복원했다.
+- `PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json`의 불필요한 schema 3→4 및 sync key 변경을 latest main과 대조해 schema v3 / `SYNC_BEFORE_IMPLEMENTATION`으로 복원하고 role fields만 additive로 유지했다.
+- canonical-reference freshness는 Handoff Skill 변경에 paired test + local Learning Log + common Skill Learning Log + behavior companion을 요구해 partial migration을 fail-closed로 차단했다.
+
+### Reuse boundary
+
+이 교훈은 역할·executor·authority·workspace owner를 교체하는 migration에 재사용한다. 단순 오탈자나 isolated L0 rename에는 전체 consumer classification을 강제하지 않는다.
+
+`CLEAN_REVIEW_EXIT`는 paired machine consumer migration과 exact-head regression이 닫힐 때까지 주장하지 않는다.
+
 ## 2026-08-10 — External runtime session resume needs current evidence
 
 ### Context
