@@ -355,6 +355,17 @@
       "submitted_at": "2026-08-25",
       "approval_ref": "[수정제안서]/BCP-2026-032-ai-visual-continuity-and-notion-preview-fallback/PROPOSAL.md#승인과-구현 (2026-08-25 current task user instruction; proposal PR #683 merged)",
       "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/703"
+    },
+    {
+      "proposal_id": "BCP-2026-033-visual-generation-scope-deliverable-integrity",
+      "title": "Visual Generation Scope & Deliverable Integrity",
+      "path": "[수정제안서]/BCP-2026-033-visual-generation-scope-deliverable-integrity/PROPOSAL.md",
+      "status": "APPROVED_FOR_IMPLEMENTATION",
+      "source_project": "alsdmlals4-eng/Switchy-Express-Cargo-Puzzle",
+      "source_commit": "b45c45a0ad6d11e698289f3e44a80780716a76f6",
+      "submitted_at": "2026-08-25",
+      "approval_ref": "[수정제안서]/BCP-2026-033-visual-generation-scope-deliverable-integrity/PROPOSAL.md#승인과-구현 (2026-08-25 current task user instruction)",
+      "implementation_pr": null
     }
   ]
 }
