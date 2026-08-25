@@ -7,8 +7,11 @@
 - 외부 자료 재확인일: `2026-08-25`
 - 제출일: `2026-08-25`
 - 제안 제출 병합: PR `#665`, main `c0d55507260d1e7ea883efea74da149855685738`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
-- 지식 상태: `사용자 제공 관찰 + 공식 MDN 현재 지원 상태 교차검증 + 사용자 승인된 공용 원칙 범위`
+- 상태: `IMPLEMENTED`
+- 지식 상태: `사용자 제공 관찰 + 공식 MDN 현재 지원 상태 교차검증 + 사용자 승인 범위 구현·회귀 검증 완료`
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/667`
+- 구현 merge: `dc8e5ed6b36b3937b38e56a40814aa464438d45e`
+- closeout: `[수정제안서]/BCP-2026-031-web-platform-native-ui-capability/IMPLEMENTATION_CLOSEOUT.md`
 
 ## 관찰과 증거
 
@@ -33,7 +36,7 @@
 - `https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40scope`
 - `https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API`
 
-Base에는 이미 `Existing Solution First Gate`와 `TOOL_INTERFACE_SURFACE_SELECTION`이 존재한다. 후자는 core/CLI/programmatic contract와 선택적 thin GUI를 분리하고, Tool Hub·QA Evidence Studio·external HTML workspace 같은 퇴역 작업면을 되살리지 말라고 명시한다. 그러나 **웹 기반 thin GUI/내부 도구를 실제로 구현할 때 Web Platform 자체를 기존 해법으로 먼저 평가하는 전용 판단·검증 계약**은 현재 명시적으로 라우팅되어 있지 않다.
+Base에는 이미 `Existing Solution First Gate`와 `TOOL_INTERFACE_SURFACE_SELECTION`이 존재한다. 후자는 core/CLI/programmatic contract와 선택적 thin GUI를 분리하고, Tool Hub·QA Evidence Studio·external HTML workspace 같은 퇴역 작업면을 되살리지 말라고 명시한다. 그러나 **웹 기반 thin GUI/내부 도구를 실제로 구현할 때 Web Platform 자체를 기존 해법으로 먼저 평가하는 전용 판단·검증 계약**은 현재 명시적으로 라우팅되어 있지 않았다.
 
 ## 일반화 후보
 
@@ -49,7 +52,7 @@ Base에는 이미 `Existing Solution First Gate`와 `TOOL_INTERFACE_SURFACE_SELE
 → 마지막에만 minimal custom implementation
 ```
 
-핵심 계약 후보:
+핵심 계약:
 
 - `PLATFORM_NATIVE_FIRST`: 웹 UI에서는 Web Platform 자체를 Existing Solution의 첫 후보로 평가한다.
 - `CAPABILITY_NOT_DEVICE_LABEL`: device type 추측 대신 실제 pointer/hover/touch/keyboard capability와 목표 입력 흐름을 본다.
@@ -103,11 +106,11 @@ Base에는 이미 `Existing Solution First Gate`와 `TOOL_INTERFACE_SURFACE_SELE
 5. **접근성 회귀** — hover-only, scrollbar 제거, motion 강제, focus trapping 재구현 같은 패턴을 별도 경고한다.
 6. **퇴역 surface 부활** — 이 제안은 HTML 기반 UI 구현 방법만 다루며 Tool Hub/QA Studio/project-management HTML workspace의 authority를 변경하지 않는다.
 7. **라이브 데모 없는 코드 카탈로그화** — 실제 채택 기능은 code snippet 존재가 아니라 실제 render/interaction evidence로 검증한다.
-8. **동시 작업 소유권 충돌** — 현재 draft PR `#660`이 `docs/DOCUMENTATION_MAP.md`를 수정 중이므로 이번 구현은 그 파일을 건드리지 않는다. `docs/knowledge/README.md`에서 Guide 발견성을 보장하고, `#660` 병합 후에도 추가 전역 routing이 실제로 필요한 경우에만 latest main에서 별도 후속 검토한다.
+8. **동시 작업 소유권 충돌** — draft PR `#660`이 `docs/DOCUMENTATION_MAP.md`를 수정 중이므로 구현에서 그 파일을 건드리지 않았다. `docs/knowledge/README.md`에서 Guide 발견성을 보장하고, `#660` 병합 후에도 추가 전역 routing이 실제로 필요한 경우에만 latest main에서 별도 후속 검토한다.
 
 ## 영향 범위와 검증
 
-승인된 최소 구현 범위:
+구현 완료 범위:
 
 - `docs/knowledge/research/WEB_PLATFORM_NATIVE_UI_CAPABILITY_GUIDE.md` 신규.
 - `docs/knowledge/README.md`에 필요한 최소 라우팅 추가.
@@ -115,16 +118,16 @@ Base에는 이미 `Existing Solution First Gate`와 `TOOL_INTERFACE_SURFACE_SELE
 
 명시적 제외/보류:
 
-- `docs/DOCUMENTATION_MAP.md` — 현재 draft PR `#660`의 변경 소유권과 겹치므로 이번 구현에서는 수정하지 않는다.
-- 신규 Skill, Tool, dependency, runtime 또는 별도 웹 workspace는 추가하지 않는다.
+- `docs/DOCUMENTATION_MAP.md` — draft PR `#660`의 변경 소유권과 겹치므로 수정하지 않았다.
+- 신규 Skill, Tool, dependency, runtime 또는 별도 웹 workspace를 추가하지 않았다.
 
-검증 조건:
+검증 결과:
 
-- Guide가 `PLATFORM_NATIVE_FIRST`, `CAPABILITY_NOT_DEVICE_LABEL`, `PROGRESSIVE_ENHANCEMENT_REQUIRED_FOR_NEWLY_AVAILABLE`, `NATIVE_IS_NOT_AUTOMATIC_UX_PASS`, `SUPPORT_STATUS_IS_DATED_EVIDENCE`, `LIVE_BEHAVIOR_EVIDENCE_OVER_CODE_SNIPPET`을 명시한다.
-- Guide가 Web Platform → existing implementation → dependency → custom 구현의 순서를 설명하되 framework 금지 규칙으로 오해되지 않는다.
-- `Tool Hub`, `QA Evidence Studio`, `external HTML workspace`를 active/default route로 복원하지 않는다.
-- `docs/knowledge/README.md`에서 Guide를 발견할 수 있다.
-- focused test와 기존 관련 회귀 테스트가 통과한다.
+- TDD RED: test-only HEAD `1116d82fd73a5929a789127a071ccdd0b5008341`, core job `97645016314`에서 `1 failed, 285 passed`; 유일한 실패는 승인된 Guide 부재 assertion이었다.
+- TDD GREEN: 최종 HEAD `9c620799971a1510339267cd2b80157c91fcdc1c`에서 workflow run `32795636633`, `32795636648`이 모두 `success`; core regression job `97646330259`도 `success`였다.
+- 구현 PR `#667`은 exact HEAD로 squash merge되어 main `dc8e5ed6b36b3937b38e56a40814aa464438d45e`에 반영됐다.
+- post-merge readback에서 Guide, knowledge routing, 기존 retirement marker를 재확인했다.
+- 상세 증거는 `IMPLEMENTATION_CLOSEOUT.md`에 기록한다.
 
 ## 필요한 도구·파일·권한
 
@@ -139,8 +142,10 @@ Base에는 이미 `Existing Solution First Gate`와 `TOOL_INTERFACE_SURFACE_SELE
 
 - 사용자 승인 근거: 2026-08-25 현재 작업 대화에서 본 제안의 핵심 방향(`Browser/Platform Native First + Capability Detection + Progressive Enhancement + Live Evidence Gate`, 기능 목록 복제 금지)을 설명한 뒤 사용자가 `좋아 진행해`라고 명시했다.
 - `approval_ref`: `[수정제안서]/BCP-2026-031-web-platform-native-ui-capability/PROPOSAL.md#승인과-구현` + 2026-08-25 현재 작업 사용자 승인 + 제안 PR `#665`.
-- 승인 상태: `APPROVED_FOR_IMPLEMENTATION`.
-- 승인 범위: 위 `승인된 최소 구현 범위`만 반영한다. draft PR `#660`과 겹치는 `docs/DOCUMENTATION_MAP.md`는 현재 승인 구현에서 제외한다.
-- 승인 제외: 신규 Skill/Tool/dependency, 퇴역 surface 부활, AGENTS root 비대화, 특정 framework 전역 금지, Experimental 기능 production 강제.
-- 구현 PR: `없음`
-- 롤백: 구현 Guide/routing/test만 제거하면 기존 Base 동작과 authority 구조로 완전히 복귀한다.
+- 최종 상태: `IMPLEMENTED`.
+- 승인 범위: 위 구현 완료 범위만 반영했다. draft PR `#660`과 겹치는 `docs/DOCUMENTATION_MAP.md`는 수정하지 않았다.
+- 승인 제외: 신규 Skill/Tool/dependency, 퇴역 surface 부활, AGENTS root 비대화, 특정 framework 전역 금지, Experimental 기능 production 강제는 반영하지 않았다.
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/667`
+- 구현 merge: `dc8e5ed6b36b3937b38e56a40814aa464438d45e`
+- closeout 증거: `[수정제안서]/BCP-2026-031-web-platform-native-ui-capability/IMPLEMENTATION_CLOSEOUT.md`
+- 롤백: 구현 Guide/routing/test만 제거하거나 구현 squash merge를 revert하면 기존 Base 동작과 authority 구조로 복귀한다.
