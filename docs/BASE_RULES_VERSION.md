@@ -16,7 +16,7 @@
 | Field | Authority |
 | --- | --- |
 | Immutable rules baseline | `v9.0.0` and `base.lock.json` at its trusted release history |
-| Latest released compatible line | `v9.4.3` and `base-v9.4.3.lock.json` |
+| Latest released compatible line | `v9.4.4` and `base-v9.4.4.lock.json` |
 | Current routing authority | `skills/SKILL_REGISTRY.json` plus each active Skill's frontmatter |
 | Frozen v9.0 release derivatives | `.codex-plugin/plugin.json`, `base.lock.json`, `skills/BASE_V9_SKILL_SNAPSHOT.json` |
 
@@ -97,6 +97,7 @@ evidence, or pin-finalization PR.
 - [Base v9.4.1 compatibility release contract](operations/BASE_V9_4_1_RELEASE_CONTRACT.md)
 - [Base v9.4.2 compatibility release contract](operations/BASE_V9_4_2_RELEASE_CONTRACT.md)
 - [Base v9.4.3 compatibility release contract](operations/BASE_V9_4_3_RELEASE_CONTRACT.md)
+- [Base v9.4.4 compatibility release contract](operations/BASE_V9_4_4_RELEASE_CONTRACT.md)
 
 ## Base v9.4 released compatible line
 
@@ -145,3 +146,15 @@ Its machine identity is recorded in `../base-v9.4.3.lock.json`:
 - Registry SHA-256: `693a0dff3f054ecdd653079909e044211473838e73dd9aff07734d1ce5694c59`
 
 Project adoption is a separate post-release wave and must pin this exact payload/evidence pair before claiming v9.4.3 first-prompt governance adoption. Cross-model behavior improvement, prompt rework reduction, human comprehension, and real project Adapter execution remain `NOT_RUN` until separately piloted.
+
+## Base v9.4.4 released compatible line
+
+Base v9.4.4 is the released reuse-first intake compatibility line over v9.4.3. It preserves the v9.4.3 history while adding a fail-closed preflight that checks current project implementation/assets/tests, approved Project Asset/Reference/Benchmark material, Base reuse and accumulated knowledge/case/reference, targeted cross-project evidence, and only then decision-relevant external research before new design or creation. It also requires the existing project-to-Base reuse learning handoff at completion.
+
+Its machine identity is recorded in `../base-v9.4.4.lock.json`:
+
+- payload commit: `210ec78292fa12ed7563ba743b322dd36103ae4a`
+- trusted evidence commit: `bb61e68dc3028421b60c11b87ba2abd297ee6f78`
+- Registry SHA-256: `08f882d0c77339e8f7ff187c35b79501e0a2958ab1ff1c7aaa1c0ef8dbee45d6`
+
+Project adoption is a separate post-release wave. Before a project can claim v9.4.4 adoption, the immutable v9.4.4 finalization commit must be indexed by `tools/base_release_index.py`, and the project Adapter must pin the exact payload/evidence/finalization identity. Future agent adherence, human workflow usability, real project Adapter execution, and cross-project reuse quality remain `NOT_RUN` until separately exercised.

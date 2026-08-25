@@ -116,9 +116,9 @@ class BaseV943CompatibilityReleaseTests(unittest.TestCase):
         self.assertIn("tests.test_base_v9_4_3_compatibility_release", workflow)
         self.assertIn("python tools/check_base_v9_4_3_release.py", workflow)
 
-    def test_version_document_declares_latest_compatible_release(self) -> None:
+    def test_version_document_preserves_v943_historical_identity(self) -> None:
         text = VERSION_PATH.read_text(encoding="utf-8")
-        self.assertIn("Latest released compatible line | `v9.4.3`", text)
+        self.assertIn("## Base v9.4.3 released compatible line", text)
         self.assertIn(PAYLOAD_COMMIT, text)
         self.assertIn(EVIDENCE_COMMIT, text)
         self.assertIn("base-v9.4.3.lock.json", text)

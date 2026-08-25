@@ -24,6 +24,7 @@ PREDECESSOR_LOCK_PATH = ROOT / "base-v9.4.3.lock.json"
 REGISTRY_PATH = ROOT / "skills/SKILL_REGISTRY.json"
 
 PAYLOAD_COMMIT = "210ec78292fa12ed7563ba743b322dd36103ae4a"
+EVIDENCE_COMMIT = "bb61e68dc3028421b60c11b87ba2abd297ee6f78"
 SOURCE_EXACT_HEAD = "e9a081b0aa9d046bfdec819ef2b88b7d1f115ec8"
 PREDECESSOR_PAYLOAD = "7dd1a4f80388bc5faca767ff74a3eb32dc9d0ac8"
 PREDECESSOR_EVIDENCE = "da33a350d61b8adc52df97fccc7001708a933370"
@@ -59,7 +60,7 @@ class BaseV944CompatibilityReleaseTests(unittest.TestCase):
         self.assertEqual([], list(Draft202012Validator(load_json(LOCK_SCHEMA_PATH)).iter_errors(lock)))
         self.assertEqual([], list(Draft202012Validator(load_json(EVIDENCE_SCHEMA_PATH)).iter_errors(evidence)))
 
-    def test_pending_identity_preserves_v943_and_binds_reuse_first_payload(self) -> None:
+    def test_released_identity_preserves_v943_and_binds_reuse_first_payload(self) -> None:
         predecessor = load_json(PREDECESSOR_LOCK_PATH)
         self.assertEqual("v9.4.3", predecessor["release_line"])
         self.assertEqual("BASE_RELEASED", predecessor["release_state"])
@@ -70,8 +71,8 @@ class BaseV944CompatibilityReleaseTests(unittest.TestCase):
         lock = load_json(LOCK_PATH)
         evidence = load_json(EVIDENCE_PATH)
         self.assertEqual("v9.4.4", lock["release_line"])
-        self.assertEqual("TRUSTED_EVIDENCE_PENDING", lock["release_state"])
-        self.assertIsNone(lock["candidate_release_evidence_commit"])
+        self.assertEqual("BASE_RELEASED", lock["release_state"])
+        self.assertEqual(EVIDENCE_COMMIT, lock["candidate_release_evidence_commit"])
         self.assertEqual(670, lock["release_issue"])
         self.assertEqual(669, lock["source_pr"])
         self.assertEqual(PAYLOAD_COMMIT, lock["candidate_release_commit"])
@@ -118,7 +119,7 @@ class BaseV944CompatibilityReleaseTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertEqual("base-v9.4.4.lock.json", result.stdout.strip())
 
-    def test_release_checker_accepts_pending_candidate_after_identity_is_correct(self) -> None:
+    def test_release_checker_accepts_released_candidate(self) -> None:
         result = subprocess.run(
             [sys.executable, str(RELEASE_CHECKER_PATH), "--trusted-history-commit", "HEAD"],
             cwd=ROOT,
@@ -135,10 +136,12 @@ class BaseV944CompatibilityReleaseTests(unittest.TestCase):
         self.assertIn("tests.test_base_v9_4_4_compatibility_release", workflow)
         self.assertIn("python tools/check_base_v9_4_4_release.py", workflow)
 
-    def test_version_document_does_not_claim_pending_v944_as_latest(self) -> None:
+    def test_version_document_declares_latest_compatible_release(self) -> None:
         text = VERSION_PATH.read_text(encoding="utf-8")
-        self.assertIn("Latest released compatible line | `v9.4.3`", text)
-        self.assertNotIn("Latest released compatible line | `v9.4.4`", text)
+        self.assertIn("Latest released compatible line | `v9.4.4`", text)
+        self.assertIn(PAYLOAD_COMMIT, text)
+        self.assertIn(EVIDENCE_COMMIT, text)
+        self.assertIn("base-v9.4.4.lock.json", text)
 
 
 if __name__ == "__main__":
