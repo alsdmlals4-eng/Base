@@ -11,17 +11,19 @@ description: Use when a large drafting, classification, comparison, or repetitiv
 
 이 Skill의 이름과 기존 `ai/deepseek-*` 경로는 현재 호환성을 위한 식별자다. 다른 외부 모델을 쓰더라도 같은 격리·권한·검수 계약을 충족해야 하며, provider 이름 때문에 별도 Skill을 자동 생성하지 않는다.
 
-## Review authority contract
+## Review / implementation authority contract
 
 ```text
-GPT_PRIMARY_REVIEWER
-OPTIONAL_CODEX_EXECUTOR
+GPT_PLANNING_REVIEW_VISUAL_OWNER
+CODEX_IMPLEMENTATION_EXECUTOR
+PLANNING_ONLY_NO_CODEX_REQUIRED
 EXTERNAL_AI_RESULT: REVIEW_PENDING
 ```
 
 - 기본 계획·검수 책임자는 GPT다.
-- Codex는 외부 AI 결과가 실제 코드·Scene·Resource·data 변경, 대규모 기계 변경, 로컬 runtime/build/performance 검증처럼 별도 실행 권위를 요구할 때만 `OPTIONAL_CODEX_EXECUTOR`로 사용한다.
-- 문서·분류·비교 결과를 현재 GPT가 직접 검수할 수 있으면 Codex를 의무 단계로 추가하지 않는다.
+- 외부 AI 사용 자체는 선택적이다. 문서·분류·비교 결과를 현재 GPT가 직접 검수할 수 있으면 Codex를 의무 단계로 추가하지 않는다.
+- 그러나 외부 AI 결과를 실제 code·Scene·Resource·data/config/test/build/runtime에 반영해야 한다면 **implementation owner는 Codex**다. 이 경우 Codex를 `OPTIONAL_CODEX_EXECUTOR`로 취급하지 않고 `CODEX_IMPLEMENTATION_HANDOFF`로 전환한다.
+- Codex는 구현 전에 current GitHub와 relevant Notion canon을 재수화하고, 외부 AI 결과를 current truth로 맹신하지 않는다.
 - 결과 검증 의미는 `reviewing-and-validating-project-changes`의 관련 계약을 따른다. 해당 Skill/Part의 소유권을 P08이 가져오지 않는다.
 
 ## Use when
@@ -47,7 +49,8 @@ EXTERNAL_AI_RESULT: REVIEW_PENDING
 - 산출물 형식과 검수 기준.
 - 기준 브랜치와 시작 커밋.
 - 외부 전송이 허용된 자료 범위.
-- 실제 검수 책임자와 optional executor 필요 조건.
+- 실제 검수 책임자.
+- 결과가 실제 implementation으로 이어지는지 여부와, 이어진다면 Codex handoff 기준.
 
 ## EXECUTOR_REHYDRATION_GATE
 
@@ -57,6 +60,7 @@ EXTERNAL_AI_RESULT: REVIEW_PENDING
 latest applicable user instruction
 → project AGENTS.md / repository authority
 → current Active Context / confirmed decisions when present
+→ relevant Notion current canon when configured
 → exact branch/commit
 → current allowlist / protected paths
 → relevant canonical files and tests
@@ -64,6 +68,7 @@ latest applicable user instruction
 ```
 
 - handoff의 SHA·경로·요약과 실제 GitHub/프로젝트 상태가 다르면 실제 상태를 우선하고 차이를 보고한다.
+- Codex implementation이면 `CODEX_REHYDRATE_GITHUB_AND_NOTION`을 추가로 충족한다.
 - 다른 프로젝트, 다른 worktree, 다른 branch의 상태를 편의상 재사용하지 않는다.
 - 외부 AI 결과가 오래된 canon을 전제로 했다면 결과를 그대로 승격하지 않고 필요한 부분만 재검수한다.
 - 실행 권위가 없는 surface에서 실행했다고 주장하지 않는다.
@@ -96,11 +101,11 @@ branch: ai/deepseek-<topic>   외부 AI 작업 브랜치
 7. 외부 AI 실행 직전에 `EXECUTOR_REHYDRATION_GATE`를 수행한다.
 8. 결과는 고정 Markdown 또는 JSON 스키마로 회수한다.
 9. 외부 AI는 근거, 가정, 미확인, 변경 후보를 분리하고 자체 완료를 주장하지 않는다.
-10. GPT가 기본 책임 검수자로 결과·현재 정본·실제 diff를 비교한다. 실행 권위가 추가로 필요한 경우에만 Codex를 `OPTIONAL_CODEX_EXECUTOR`로 호출해 필요한 파일/테스트/runtime 증거를 직접 재확인한다.
-11. 승인된 최소 diff만 실제 작업 브랜치에 재작성하거나 선택적으로 가져온다.
+10. GPT가 기본 책임 검수자로 결과·현재 정본·실제 diff를 비교한다.
+11. 결과가 planning/document/classification only이면 GPT가 승인된 최소 정본 변경을 처리할 수 있다. 실제 code/data/Scene/Resource/config/test/build/runtime mutation이 필요하면 `CODEX_IMPLEMENTATION_HANDOFF`로 Codex가 current GitHub+Notion을 재수화한 뒤 구현한다.
 12. 기준 테스트와 문서 동기화를 확인한 뒤 worktree를 정리한다.
 
-`templates/ai/DEEPSEEK_WORK_PACKAGE.md`의 기존 `Codex 인계` 표기는 Codex가 실제 optional executor로 선택된 경우에만 그대로 해석한다. GPT가 직접 검수하는 경우 같은 필드를 **책임 검수자 인계 정보**로 사용한다. 템플릿 자체의 provider/reviewer-neutral 명칭 변경은 P08 소유 범위 밖이면 `CROSS_PART_CHANGE_REQUEST`로 넘긴다.
+`templates/ai/DEEPSEEK_WORK_PACKAGE.md`의 기존 `Codex 인계` 표기는 **실제 implementation/coding 단계가 필요한 경우의 Codex implementation handoff**로 해석한다. planning-only 결과를 GPT가 검수하는 경우에는 Codex를 형식적으로 호출하지 않는다. 템플릿의 provider/reviewer-neutral 명칭 변경이 필요하면 current semantic owner와 consumer를 함께 갱신한다.
 
 ## Token and context efficiency
 
@@ -121,7 +126,9 @@ branch: ai/deepseek-<topic>   외부 AI 작업 브랜치
 - 생성·수정 후보 파일 목록.
 - 초안 산출물.
 - 근거·가정·미확인 목록.
-- 책임 검수자 검수 포인트와 optional executor 필요 여부.
+- 책임 검수자 검수 포인트.
+- `implementation_required: true | false`.
+- implementation이 필요하면 `codex_handoff_status`와 GitHub+Notion current sources.
 - 정리 또는 보존해야 할 worktree 상태.
 
 ## Failure conditions
@@ -131,16 +138,18 @@ branch: ai/deepseek-<topic>   외부 AI 작업 브랜치
 - 초안과 승인된 기준 문서를 같은 경로에서 혼합한다.
 - 모델 보고만 믿고 실제 diff·참조·테스트를 확인하지 않는다.
 - handoff 요약을 최신 canon으로 간주하고 `EXECUTOR_REHYDRATION_GATE`를 생략한다.
-- GPT가 검수 가능한 작업에도 Codex를 의무 단계로 호출한다.
+- planning-only로 GPT가 끝낼 수 있는 작업에도 Codex를 형식적으로 의무 호출한다.
+- 반대로 실제 implementation/coding이 필요한데 Codex BUILD를 optional로 생략하고 GPT나 외부 AI가 제품 구현 owner가 된다.
+- Codex가 relevant Notion current canon을 읽지 않고 GitHub만으로 구현한다.
 - 충돌을 자동 해결하거나 미검증 변경을 자동 push한다.
 - 토큰 절약을 이유로 보안·저장·호환성 검증을 생략한다.
 
 ## Validation scenarios
 
-1. 긴 기획서 통합은 외부 AI가 중복 후보와 통합안을 만들고, GPT가 현행 책임 원본과 참조를 확인한다. 실제 저장소 변경 권위가 필요할 때만 Codex를 추가한다.
-2. 데이터 카드 100개 생성은 고정 스키마로 분할하고, 책임 검수자가 표본·예외·스키마 검사를 수행한다. 실행 가능한 자동검사가 필요하면 optional executor를 사용한다.
-3. 실제 코드 수정이 필요한 버그는 외부 AI에 최종 수정을 맡기지 않고 조사 메모만 입력으로 사용하며, 구현 executor는 실제 저장소와 테스트를 다시 읽는다.
-4. handoff 후 main 또는 프로젝트 정본이 바뀐 경우 외부 AI 결과를 그대로 적용하지 않고 exact branch/commit과 현재 canon을 재수화한 뒤 차이를 먼저 검토한다.
+1. 긴 기획서 통합은 외부 AI가 중복 후보와 통합안을 만들고, GPT가 현행 책임 원본과 참조를 확인한다. 제품 구현이 없으면 Codex를 형식적으로 추가하지 않는다.
+2. 데이터 카드 100개 생성은 고정 스키마로 분할하고, 책임 검수자가 표본·예외·스키마 검사를 수행한다. 이 결과를 실제 runtime data/code에 반영해야 하면 Codex implementation handoff로 전환한다.
+3. 실제 코드 수정이 필요한 버그는 외부 AI에 최종 수정을 맡기지 않고 조사 메모만 입력으로 사용하며, Codex가 GitHub+Notion과 실제 저장소·테스트를 다시 읽어 구현한다.
+4. handoff 후 main 또는 프로젝트 정본이 바뀐 경우 외부 AI 결과를 그대로 적용하지 않고 exact branch/commit과 current GitHub+Notion canon을 재수화한 뒤 차이를 먼저 검토한다.
 
 Templates:
 
