@@ -82,12 +82,14 @@ Active Context와 Handoff는 전체 기획서·Roadmap·과거 대화를 복제�
 7. **문제 → 교훈 추출**
    - 작업 중 실제 발생한 문제, 원인, 해결/기각한 방법, 증거, 재발 방지 규칙을 기록한다.
    - `PROJECT_ONLY / PART_ONLY / BASE_PROMOTION_CANDIDATE / NO_NEW_REUSABLE_LESSON` 중 하나로 분류한다.
-8. **Base 승격 검토**
-   - 여러 프로젝트/Part에서 재사용 가치가 있거나 공용 운영 실패를 막는 교훈은 기존 Base canonical owner에 흡수하는 것을 우선한다.
-   - 새 광역 Skill/중복 정책을 자동 생성하지 않는다.
-   - 열린 PR이 같은 owner를 변경 중이면 그 PR을 흡수·수정·재작성하지 않고 evidence/candidate만 독립 경로에 남긴 뒤 안전한 Integration 시점으로 넘긴다.
+8. **Base 승격 기록·readback**
+   - `BASE_PROMOTION_CANDIDATE`라면 검토 문구만 남기고 끝내지 않는다. 기존 Base canonical owner의 Learning/Evidence 경로에 실제 기록하고 destination readback까지 수행한다.
+   - 열린 PR이 같은 owner를 변경 중이면 그 PR을 흡수·수정·재작성하지 않는다. 대신 충돌하지 않는 Base evidence/candidate 경로에 실제 파일을 기록·readback하고 `DEFERRED_BY_CONCURRENT_OWNER`로 남긴다. 이후 Integration에서 기존 owner에 흡수한다.
+   - `PROJECT_ONLY`는 프로젝트에 남기고 Base를 오염시키지 않는다. `PART_ONLY`는 해당 Part owner에만 기록한다.
+   - 새 광역 Skill/중복 정책을 자동 생성하지 않는다. 여러 프로젝트/Part에서 반복 재사용 가치가 입증될 때 기존 owner 흡수를 우선한다.
+   - Base에 기록해야 하는 교훈인데 write/readback 증거가 없으면 `HANDOFF_NOT_READY`다.
 9. **최종 인수인계 receipt**
-   - GitHub locator, Notion locator, current commit, 남은 일, 첫 행동, Visual audit 결과, 문제/교훈 disposition, Base 승격 상태를 한 번에 확인 가능하게 남긴다.
+   - GitHub locator, Notion locator, current commit, 남은 일, 첫 행동, Visual audit 결과, 문제/교훈 disposition, Base evidence locator와 readback 상태를 한 번에 확인 가능하게 남긴다.
 
 ## 동일 품질 재개 Gate
 
@@ -101,8 +103,9 @@ Active Context와 Handoff는 전체 기획서·Roadmap·과거 대화를 복제�
 - GitHub와 Notion 중 무엇이 어떤 사실의 정본인지 알 수 있다.
 - 승인 Visual의 실제 위치·용도·현재성·교체 관계를 알 수 있다.
 - 이번 작업의 문제와 재사용 가능한 교훈이 프로젝트에만 남을지 Base 후보인지 판단되어 있다.
+- `BASE_PROMOTION_CANDIDATE`의 Base 기록 위치와 write/readback 결과를 새 채팅에서 찾을 수 있다.
 
-위 조건 중 하나라도 과거 대화 추정에 의존하면 `HANDOFF_NOT_READY`다.
+위 조건 중 하나라도 과거 대화 추정에 의존하거나 필수 Base 기록이 누락되면 `HANDOFF_NOT_READY`다.
 
 ## 콜드 스타트 질문
 
@@ -116,6 +119,7 @@ Active Context와 Handoff는 전체 기획서·Roadmap·과거 대화를 복제�
 6. 미확정·보류·위험은 무엇인가?
 7. Notion에서 사람이 확인해야 할 핵심 Flow·표·승인 Visual은 어디인가?
 8. 이번 작업에서 반복 방지 가치가 있는 문제·교훈과 Base 승격 상태는 무엇인가?
+9. Base 승격 후보라면 실제 Base evidence/learning 기록과 readback 위치는 어디인가?
 
 ## 실패 조건
 
@@ -128,4 +132,5 @@ Active Context와 Handoff는 전체 기획서·Roadmap·과거 대화를 복제�
 - GitHub/Notion 중 한쪽만 갱신하고 동기화 완료로 선언함
 - 이미지 URL이나 파일명만 보고 Notion Visual 전달을 완료로 간주함
 - 작업 중 발견한 반복 가능한 문제를 프로젝트 로그에만 묻어 두고 Base promotion disposition을 생략함
+- `BASE_PROMOTION_CANDIDATE`를 실제 Base 기록·readback 없이 검토 완료로만 닫음
 - 새 채팅이 과거 대화를 요구하는데도 handoff PASS로 선언함
