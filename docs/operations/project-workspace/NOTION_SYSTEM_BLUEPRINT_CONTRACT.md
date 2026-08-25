@@ -168,6 +168,44 @@ approved design or changed system decision
 
 An approved Blueprint proves design clarity, not runtime correctness. Runtime or play behavior remains `NOT_RUN` until actually executed.
 
+## Project work entry and gradual rollout
+
+`SYSTEM_BLUEPRINT_ENTRY_CHECK_REQUIRED`
+
+`NO_MASS_BLUEPRINT_BACKFILL`
+
+`REUSE_EXISTING_BLUEPRINT_BEFORE_CREATING_NEW`
+
+Project work does **not** begin by converting every existing project or every system into Blueprint form. When a project task may materially change player-facing system logic or a connected flow, evaluate this contract after the existing reuse-first/current-state preflight and before implementation readiness.
+
+```text
+project task starts
+→ restore current Project Home + repository owner + approved decisions
+→ reuse-first preflight
+→ SYSTEM_BLUEPRINT applicability check
+   ├─ not applicable → NOT_APPLICABLE_WITH_REASON; continue lightweight workflow
+   └─ applicable
+       → existing approved Blueprint?
+          ├─ yes → REUSE / ADAPT only the touched graph
+          └─ no  → create the smallest bounded Blueprint needed for the touched system
+       → update Home human projection when it changes human understanding
+       → keep detailed Node ID / owner / mapping / validation in Detail or AI-System
+       → implementation readiness / handoff
+```
+
+Operational rules:
+
+- Untouched projects and unrelated systems are **not** incomplete merely because they have not been backfilled with Blueprint views.
+- Do not run a repository-wide or Notion-wide Blueprint migration unless the user explicitly requests an audit/migration or a specific project needs it for current work.
+- If a valid Blueprint already exists, update/reuse it instead of redrawing the same system from scratch.
+- If the current task touches only one bounded subsystem, Blueprint only that subsystem; do not expand the graph to adjacent systems without decision-relevant need.
+- `NOT_APPLICABLE_WITH_REASON` is a valid outcome for trivial or already-explicit work and must not become process debt.
+- A stale or missing Blueprint blocks implementation readiness only when the current change passes `SYSTEM_BLUEPRINT_REQUIRED_WHEN_COMPLEX` and the missing representation would leave material behavior ambiguous.
+- Handoff may reference the applicable Blueprint location, but the Blueprint does not replace repository canon, acceptance criteria, tests, or runtime evidence.
+- The rollout unit is **project work as it is touched**, not the number of projects in the portfolio.
+
+This gradual rollout preserves the existing project state while making Blueprint coverage grow naturally where it reduces planning-to-implementation interpretation loss.
+
 ## Review gates
 
 Adversarial review checks at minimum:
@@ -179,6 +217,7 @@ Adversarial review checks at minimum:
 5. **Process overhead** — Is the applicability gate preventing trivial work from requiring a Blueprint?
 6. **Player meaning loss** — Does the graph show choices, consequences and feedback rather than only technical plumbing?
 7. **Implementation reality** — Are unexecuted runtime claims still explicitly unverified?
+8. **Rollout overreach** — Did the current task trigger unnecessary backfill or redraw of untouched projects/systems?
 
 ## Reuse and cross-project use
 
