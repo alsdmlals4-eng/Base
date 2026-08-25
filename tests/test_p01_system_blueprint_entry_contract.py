@@ -37,9 +37,8 @@ class P01SystemBlueprintEntryContractTests(unittest.TestCase):
         self.assertIn("NO_MASS_BLUEPRINT_BACKFILL", first_prompt)
         self.assertIn(contract_path, first_prompt)
         self.assertIn("NOT_APPLICABLE_WITH_REASON", first_prompt)
-        self.assertIn("existing approved Blueprint", first_prompt)
-        self.assertIn("smallest bounded Blueprint", first_prompt)
         self.assertIn("system_blueprint_entry_resolved_if_applicable", first_prompt)
+        self.assertIn("세부 Blueprint 규칙을 이 reference에 복제하지 않는다", first_prompt)
 
     def test_blueprint_contract_preserves_incremental_rollout_guards(self):
         contract = (
