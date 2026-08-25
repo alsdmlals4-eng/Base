@@ -55,6 +55,24 @@ class ProjectGDDGoogleSheetsContractTests(unittest.TestCase):
             self.assertIn(term, visual)
         self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", visual)
 
+    def test_image_generation_routes_through_visual_asset_coverage_without_second_canon(self) -> None:
+        policy = read("docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md")
+        skill = read("skills/designing-art-prompts-and-technique-cards/SKILL.md")
+        coverage = read("docs/knowledge/game-development/GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md")
+
+        self.assertIn("Visual Asset Coverage Preflight", policy)
+        self.assertIn("GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md", skill)
+        for term in (
+            "COVERAGE_CHECK_ONLY",
+            "NOT_A_SECOND_ASSET_CANON",
+            "NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS",
+            "STATE_FAMILY_COMPLETENESS",
+            "PLATFORM_SPEC_RECHECK_REQUIRED",
+        ):
+            self.assertIn(term, coverage)
+        self.assertIn("NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS", policy)
+        self.assertIn("NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS", skill)
+
     def test_entrypoints_use_registry_derived_active_skill_view(self) -> None:
         for path in ("README.md", "AGENTS.md", "docs/OPERATING_MODEL.md", "docs/DOCUMENTATION_MAP.md"):
             text = read(path)
