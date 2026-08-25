@@ -91,7 +91,7 @@ Base에는 이미 `Existing Solution First Gate`와 `TOOL_INTERFACE_SURFACE_SELE
 | --- | --- | --- | --- |
 | A. HTMLcat 기능 42개를 AGENTS/체크리스트에 직접 복사 | 즉시 눈에 띄고 항목별 검색이 쉬움 | root 규칙 비대화, 지원 상태 노후화, 외부 목록 중복, 기능 나열이 판단 원칙을 가림 | `REJECT` |
 | B. `web-native-ui` 신규 Skill 생성 | 자동 라우팅과 실행 절차를 강제하기 쉬움 | 독립 실행 경계가 약하고 기존 UI/검증/Existing Solution 책임과 중복, Skill 증가 | `REJECT` |
-| C. 기존 knowledge/research + capability routing에 얇은 Guide 추가 | Web Platform 선택 원칙만 공용화하고 현재 surface retirement·Skill 구조를 보존, 지원 상태를 dated evidence로 관리 가능 | routing 누락을 막는 focused regression test 필요 | `ADOPT` |
+| C. 기존 knowledge/research 계층에 얇은 Guide와 focused routing 추가 | Web Platform 선택 원칙만 공용화하고 현재 surface retirement·Skill 구조를 보존, 지원 상태를 dated evidence로 관리 가능 | routing 누락을 막는 focused regression test 필요 | `ADOPT` |
 
 주요 위험과 대응:
 
@@ -102,6 +102,7 @@ Base에는 이미 `Existing Solution First Gate`와 `TOOL_INTERFACE_SURFACE_SELE
 5. **접근성 회귀** — hover-only, scrollbar 제거, motion 강제, focus trapping 재구현 같은 패턴을 별도 경고한다.
 6. **퇴역 surface 부활** — 이 제안은 HTML 기반 UI 구현 방법만 다루며 Tool Hub/QA Studio/project-management HTML workspace의 authority를 변경하지 않는다.
 7. **라이브 데모 없는 코드 카탈로그화** — 실제 채택 기능은 코드 snippet 존재가 아니라 실제 렌더/interaction evidence로 검증한다.
+8. **동시 작업 소유권 충돌** — 현재 draft PR `#660`이 `docs/DOCUMENTATION_MAP.md`를 수정 중이므로 이번 구현은 그 파일을 건드리지 않는다. `docs/knowledge/README.md`에서 Guide 발견성을 보장하고, `#660` 병합 후에도 추가 전역 routing이 실제로 필요한 경우에만 latest main에서 별도 후속 검토한다.
 
 ## 영향 범위와 검증
 
@@ -109,15 +110,19 @@ Base에는 이미 `Existing Solution First Gate`와 `TOOL_INTERFACE_SURFACE_SELE
 
 - `docs/knowledge/research/WEB_PLATFORM_NATIVE_UI_CAPABILITY_GUIDE.md` 신규.
 - `docs/knowledge/README.md`에 필요한 최소 라우팅 추가.
-- `docs/DOCUMENTATION_MAP.md`에 책임 원본 라우팅 추가.
 - `tests/test_web_platform_native_ui_capability.py`에 focused regression 추가.
+
+명시적 제외/보류:
+
+- `docs/DOCUMENTATION_MAP.md` — 현재 draft PR `#660`의 변경 소유권과 겹치므로 이번 구현에서는 수정하지 않는다.
+- 신규 Skill, Tool, dependency, runtime 또는 별도 웹 workspace는 추가하지 않는다.
 
 검증 조건:
 
 - Guide가 `PLATFORM_NATIVE_FIRST`, `CAPABILITY_NOT_DEVICE_LABEL`, `PROGRESSIVE_ENHANCEMENT_REQUIRED_FOR_NEWLY_AVAILABLE`, `NATIVE_IS_NOT_AUTOMATIC_UX_PASS`, `SUPPORT_STATUS_IS_DATED_EVIDENCE`, `LIVE_BEHAVIOR_EVIDENCE_OVER_CODE_SNIPPET`을 명시한다.
 - Guide가 Web Platform → existing implementation → dependency → custom 구현의 순서를 설명하되 framework 금지 규칙으로 오해되지 않는다.
 - `Tool Hub`, `QA Evidence Studio`, `external HTML workspace`를 active/default route로 복원하지 않는다.
-- docs routing에서 Guide를 발견할 수 있다.
+- `docs/knowledge/README.md`에서 Guide를 발견할 수 있다.
 - focused test와 기존 관련 회귀 테스트가 통과한다.
 
 ## 필요한 도구·파일·권한
@@ -133,7 +138,7 @@ Base에는 이미 `Existing Solution First Gate`와 `TOOL_INTERFACE_SURFACE_SELE
 
 - 사용자 승인 근거: 2026-08-25 현재 작업 대화에서 본 제안의 핵심 방향(`Browser/Platform Native First + Capability Detection + Progressive Enhancement + Live Evidence Gate`, 기능 목록 복제 금지)을 설명한 뒤 사용자가 `좋아 진행해`라고 명시했다.
 - 현재 단계: 사용자 의도는 승인되었지만 BCP lifecycle상 먼저 proposal-only PR을 병합하고, 그 후 동일 승인 범위만 `APPROVED_FOR_IMPLEMENTATION`으로 기록한다.
-- 승인 범위: 위 `승인 시 최소 구현 범위`만 반영한다.
+- 승인 범위: 위 `승인 시 최소 구현 범위`만 반영한다. draft PR `#660`과 겹치는 `docs/DOCUMENTATION_MAP.md`는 현재 승인 구현에서 제외한다.
 - 승인 제외: 신규 Skill/Tool/dependency, 퇴역 surface 부활, AGENTS root 비대화, 특정 framework 전역 금지, Experimental 기능 production 강제.
 - 구현 PR: `없음`
 - 롤백: 구현 Guide/routing/test만 제거하면 기존 Base 동작과 authority 구조로 완전히 복귀한다.
