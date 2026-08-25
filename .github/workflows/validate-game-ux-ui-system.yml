@@ -23,6 +23,7 @@ on:
       - "templates/research/UX_UI_REFERENCE_CARD.md"
       - "templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md"
       - "tests/test_game_ux_ui_system.py"
+      - "tests/test_visual_generation_scope_and_batch_integrity.py"
       - "tests/test_ui_ux_visual_design_rules.py"
       - "tests/test_ux_laws_completeness_matrix.py"
       - "tests/test_project_design_md_adapter.py"
@@ -58,6 +59,7 @@ on:
       - "templates/research/UX_UI_REFERENCE_CARD.md"
       - "templates/quality/GAME_UX_UI_REVIEW_CHECKLIST.md"
       - "tests/test_game_ux_ui_system.py"
+      - "tests/test_visual_generation_scope_and_batch_integrity.py"
       - "tests/test_ui_ux_visual_design_rules.py"
       - "tests/test_ux_laws_completeness_matrix.py"
       - "tests/test_project_design_md_adapter.py"
@@ -103,6 +105,7 @@ jobs:
           git diff --check
           python -m unittest \
             tests/test_game_ux_ui_system.py \
+            tests/test_visual_generation_scope_and_batch_integrity.py \
             tests/test_ui_ux_visual_design_rules.py \
             tests/test_ux_laws_completeness_matrix.py \
             tests/test_base_v9_4_ai_operations_contract.py \
