@@ -22,6 +22,44 @@ Google Sheets
 - Figma, 외부 HTML workspace, 폐기된 custom local Tool/Hub를 신규 기본 surface로 부활시키지 않는다.
 - legacy source는 `UNIQUE / DUPLICATE / OBSOLETE`로 판정하고, `UNIQUE`만 현행 owner로 이관 → destination readback/Test → consumer/reference 확인 뒤 원본 수명주기를 판정한다.
 
+## Notion project operation gate
+
+프로젝트에서 Notion을 읽거나 수정하는 AI/자동화는 `NOTION_OPERATION_GATE`를 기본 안전 계약으로 사용한다. 이 규칙은 사람용 Home에 새 메타데이터를 추가하는 규칙이 아니라, AI/System 작업면에서 **무엇을 어떤 범위로 수정할지** 통제하는 규칙이다.
+
+```text
+Project / destination 확인
+→ current page/database/data source fetch/read
+→ PAGE_BLOCK | DATABASE_RECORD | VIEW_PRESENTATION | DATA_SOURCE_SCHEMA_OR_RECORD | DATABASE_GLOBAL_LAYOUT | FILE_UPLOAD 판정
+→ schema/property/Project relation 확인
+→ smallest bounded edit
+→ write
+→ destination readback
+→ source mutation이면 source readback
+→ structured/runtime 의미 변경이면 repository owner 동기화
+```
+
+운영 규칙:
+
+- database page나 data source를 수정하기 전에는 현재 schema와 정확한 property 이름을 먼저 읽는다.
+- `VIEW_PRESENTATION`과 source record/schema mutation을 구분한다. linked view의 filter/sort/card 표현만 바꿨다면 source 자체를 바꿨다고 보고하지 않는다.
+- targeted update/insert가 가능하면 전체 page replace를 기본값으로 사용하지 않는다.
+- child page/database 삭제가 필요한 변경은 자동으로 강행하지 않고 삭제 대상을 제시한 뒤 사용자 확인을 받는다.
+- write 성공만으로 완료하지 않고 의도한 값과 Project relation을 `destination readback`으로 확인한다.
+- connector/API readback은 실제 화면 geometry, 모바일 표현, 첨부 렌더링, 게임 runtime truth를 대신하지 않는다.
+- Notion 조작용 raw ID, schema, Record Key, revision, prompt, automation metadata 같은 AI/System 정보는 사람용 Home의 기본 콘텐츠로 복제하지 않는다.
+
+### Automation / webhook route
+
+Notion의 자동화 관련 기능은 목적에 따라 구분한다.
+
+- **Webhook action**: 사용자가 누른 Button 또는 Database automation이 외부 endpoint로 POST를 보내는 outbound 기능이다.
+- **Integration webhook**: 외부 integration이 Notion page/database 변경 이벤트를 받아 처리하는 developer/event-listener 기능이다.
+- **Database automation**: Notion 내부 조건/트리거에 따라 action을 실행하는 기능이다. automation이 만든 변경이 다른 Database automation을 계속 깨우는 **자동 연쇄 실행을 전제로 설계하지 않는다**. 사용자가 직접 누른 Button처럼 명시적 user action은 별도 trigger 가능성을 확인한다.
+- webhook payload에 API key, password, access token 같은 `secret`을 직접 넣지 않는다. 외부 서비스 인증은 수신 측의 안전한 secret storage/header/verification 경로로 분리한다.
+- paid-only 자동화나 Agent 기능은 Base/프로젝트 필수 dependency로 만들지 않는다. 무료·현재 연결 도구·repository-native 경로로 충분한 경우 그 경로를 우선한다.
+
+자동화를 도입할 때는 UI에 기능이 존재한다는 사실과 현재 연결된 GPT/Notion 도구가 실제로 생성·수정·검증할 수 있다는 사실을 구분한다. 지원되지 않는 기능은 수동 설정이 필요한 것으로 남기고 구현 완료라고 주장하지 않는다.
+
 ## Repository design root
 
 프로젝트가 Base 운영 템플릿을 채택할 때 설계 문서 폴더 `[기획서]`는 **저장소 루트**에 둔다. `templates/project-operations/` 자체나 중첩된 하위 폴더를 프로젝트의 활성 design root로 사용하지 않는다. Notion 사람용 workspace와 Repository `[기획서]` 구조화 문서는 서로 역할이 다르며, 어느 한쪽도 다른 쪽의 복사본으로 운영하지 않는다.
@@ -97,6 +135,8 @@ Base 저장소 자체를 콜드 스타트할 때 이 디렉터리의 예시/빈 
 - 저장소 루트의 `[기획서]` design root가 유지된다.
 - 승인 Decision은 Branch/Commit과 적용 가능한 Notion record에 추적된다.
 - Notion write는 정확한 Project relation으로 격리되고 destination readback을 가진다.
+- `NOTION_OPERATION_GATE`가 적용되어 object scope, bounded edit, readback, automation/webhook 역할이 구분된다.
+- 사람용 Home과 AI/System 작업면이 섞이지 않으며 repository `runtime truth` 경계를 유지한다.
 - Google Sheets는 `COMPATIBILITY_ONLY`이며 신규 입력·active sync·완료 판정에 필요하지 않다.
 - legacy `UNIQUE` material은 현행 owner 이관·readback/Test·consumer 확인 없이 삭제하지 않는다.
 - 실제로 수행하지 않은 runtime/사용자 검증은 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 남긴다.
