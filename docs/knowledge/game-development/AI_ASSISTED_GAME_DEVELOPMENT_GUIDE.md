@@ -35,6 +35,18 @@ CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR
 
 GPT가 연결 도구로 Python/JSON/CI 파일을 수정하더라도 그것이 Base 운영/검증 인프라라면 GPT 책임이다.
 
+GPT primary는 텍스트만 작성하는 역할을 뜻하지 않는다. owner로 판정된 Base·Notion·기획·검수 작업에 필요한 실제 도구 실행·write·readback·검증까지 GPT가 닫는다.
+
+```text
+GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY
+REASONING_EFFORT_IS_NOT_WORK_EVIDENCE
+REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF
+```
+
+- 높은 reasoning effort 자체는 조사·도구 실행·검증·readback을 수행했다는 증거가 아니다.
+- 현재 단계에 필수인 도구 실행은 단지 다른 executor에게 넘길 수 있다는 이유로 생략하지 않는다.
+- 실제 Godot 제품 구현이면 Codex로 인계하지만, Base/Notion/noncoding의 필수 실행은 GPT가 직접 수행하고 증거를 남긴다.
+
 ### Codex
 
 Codex는 일반 repository executor가 아니다. 실제 게임 프로젝트의 Godot 제품 구현만 맡는다.
