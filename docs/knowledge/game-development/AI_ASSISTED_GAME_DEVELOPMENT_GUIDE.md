@@ -194,6 +194,15 @@ Codex Godot 구현 인계에서는 GitHub뿐 아니라 relevant Notion current c
 
 외부 AI는 optional helper다. **외부 AI optionality와 Codex Godot product ownership은 별개**다.
 
+### 외부 AI 결과 Gate
+
+외부 AI·외부 source에서 생성된 초안·분류·분석 결과는 곧바로 정본이나 승인 결과가 아니다. 기본 상태는 **`검수 대기 입력`**이며, 원출처·현재 정본·권리·사실성·누락을 GPT가 다시 검토한 뒤에만 채택한다.
+
+- 외부 AI draft/source review가 필요하면 현재 통합 review owner의 `external-source-review` 경로로 처리한다.
+- 외부 AI 결과는 `REVIEW_PENDING`으로 취급하고 main/Notion canon에 자동 승격하지 않는다.
+- 품질뿐 아니라 **토큰·비용·재시도**·실패 후 재작업 비용까지 함께 계산해 외부 AI 사용이 실제로 효율적인지 판단한다.
+- 외부 AI가 코드처럼 보이는 결과를 내더라도 Base/Notion/noncoding 결과는 GPT 검수·교정 범위다. 실제 게임 프로젝트의 Godot 제품 구현만 Codex owner 경계로 넘어간다.
+
 ## 9. Prompt 계약
 
 좋은 Prompt는 다음을 가진다.
@@ -302,7 +311,7 @@ UNVERIFIED_COST_SURFACE
 ZERO_INCREMENTAL_COST_REQUIRED
 ```
 
-현재 기본 유료 경로는 GPT Pro다. 별도 API credit·SaaS·compute/storage는 사용자 승인 없이 도입하지 않는다.
+현재 기본 유료 경로는 GPT Pro다. 별도 API credit·SaaS·compute/storage는 사용자 승인 없이 도입하지 않는다. 모델 선택은 단가만 보지 않고 토큰·비용·재시도·실패 후 재작업까지 포함한 총비용으로 평가한다.
 
 ## 15. 재현성
 
