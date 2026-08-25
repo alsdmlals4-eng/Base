@@ -9,7 +9,7 @@ source_pr: 669
 payload_commit: 210ec78292fa12ed7563ba743b322dd36103ae4a
 source_exact_head: e9a081b0aa9d046bfdec819ef2b88b7d1f115ec8
 release_issue: 670
-registry_sha256: <derived from payload raw bytes>
+registry_sha256: 08f882d0c77339e8f7ff187c35b79501e0a2958ab1ff1c7aaa1c0ef8dbee45d6
 ```
 
 ## 2. 포함 범위
@@ -75,7 +75,7 @@ base_release.version: 9.4.4
 base_release.release_commit: 210ec78292fa12ed7563ba743b322dd36103ae4a
 base_release.release_evidence_commit: <trusted evidence merge commit>
 base_release.finalization_commit: <v9.4.4 finalization merge commit>
-skill_registry.base.sha256: <payload Registry raw SHA-256>
+skill_registry.base.sha256: 08f882d0c77339e8f7ff187c35b79501e0a2958ab1ff1c7aaa1c0ef8dbee45d6
 reuse_first.base_contract_source: skills/managing-project-intake-and-work-contract/SKILL.md
 reuse_first.handoff_source: docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json
 reuse_first.required_gates:
