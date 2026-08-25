@@ -345,6 +345,40 @@ class GameUxUiSystemContractTests(unittest.TestCase):
         ):
             self.assertIn(required, text)
 
+    def test_bcp035_visual_generation_integrity_is_propagated(self) -> None:
+        planning = PLANNING_TEMPLATE.read_text(encoding="utf-8")
+        reference = REFERENCE_CARD.read_text(encoding="utf-8")
+        checklist = REVIEW_CHECKLIST.read_text(encoding="utf-8")
+        method = (REFERENCE_ROOT / "ux-ui-design-system-method.md").read_text(encoding="utf-8")
+        for required in (
+            "VISUAL_TASK_SCOPE_FIDELITY",
+            "BATCH_COUNT_MEANS_INDEPENDENT_DELIVERABLES",
+            "DECISION_CRITICAL_VISUAL_SEMANTIC_REDUNDANCY",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, SKILL.read_text(encoding="utf-8"))
+                self.assertIn(required, method)
+        for required in (
+            "visual_question",
+            "target_screen",
+            "target_state",
+            "excluded_scope",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, planning)
+                self.assertIn(required, reference)
+        self.assertIn("independent deliverable", planning)
+        self.assertIn("human comprehension", checklist)
+
+    def test_bcp035_registry_and_workflow_consume_focused_contract(self) -> None:
+        registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+        ui = next(item for item in registry["skills"] if item["skill_id"] == "auditing-and-refining-ui-art")
+        for required in ("visual-scope-fidelity", "visual-batch-integrity", "decision-critical-visual"):
+            with self.subTest(required=required):
+                self.assertIn(required, ui["trigger_tags"])
+        workflow = UX_UI_WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("tests/test_visual_generation_scope_and_batch_integrity.py", workflow)
+
 
 if __name__ == "__main__":
     unittest.main()
