@@ -1,11 +1,12 @@
 # GPT–Codex 역할·구현 인계 정책
 
-이 문서는 Base를 사용하는 프로젝트에서 GPT와 Codex의 책임, GitHub·Notion 정본 재수화, 구현 인계, 이미지 제작 경계, 검증과 병합 경계를 정의하는 공용 정본이다.
+이 문서는 Base를 사용하는 프로젝트에서 GPT와 Codex의 책임, GitHub·Notion 정본 재수화, 구현 인계, 이미지 제작 경계, 실행환경 안전성, 구현 패키지, 검증과 병합 경계를 정의하는 공용 정본이다.
 
 ## 0. 현재 역할 계약
 
 ```text
 GPT_PLANNING_REVIEW_VISUAL_OWNER
+GPT_FIRST_PLANNING_AND_REVIEW
 CODEX_IMPLEMENTATION_EXECUTOR
 PLANNING_ONLY_NO_CODEX_REQUIRED
 IMPLEMENTATION_REQUIRES_CODEX_HANDOFF
@@ -15,14 +16,21 @@ CODEX_VISUAL_INPUT_NOTION_APPROVED_ONLY
 GPT_VISUAL_REQUEST_REQUIRED_WHEN_ASSET_MISSING
 APPROVED_VISUAL_NOTION_READBACK_REQUIRED
 GPT_LOCAL_CODEX_ORCHESTRATION_RETIRED
+CODEX_EXECUTION_ENVIRONMENT_FRESHNESS_REQUIRED
 CODEX_PREFLIGHT_OPTIONAL
+CONTINUOUS_WORK_EXECUTOR_HANDOFF
+DEFERRED_EXTERNAL_EXECUTOR
 AUTO_MERGE_AFTER_REQUIRED_CHECKS
 AGENT_MERGE_REQUIRED
 ```
 
-이 계약은 과거의 `GPT_GODOT_PREPRODUCTION_ALLOWED`, GPT가 PowerShell에서 로컬 Codex를 직접 부트스트랩하는 경로, 사용자 요청이 있어야만 구현을 Codex로 넘기는 `ON_DEMAND_CODEX_HANDOFF` 의미를 대체한다.
+`GPT_FIRST_PLANNING_AND_REVIEW`는 GPT가 판단·기획·검수의 owner라는 뜻이지 제품 코드·Scene·Resource·runtime 구현 owner라는 뜻이 아니다.
 
-### 기본 흐름
+이 계약은 과거 `GPT_GODOT_PREPRODUCTION_ALLOWED`, GPT가 PowerShell에서 로컬 Codex를 직접 부트스트랩하는 기본 경로, 사용자 요청이 있어야만 구현을 Codex로 넘기는 `ON_DEMAND_CODEX_HANDOFF`의 기본 의미를 대체한다.
+
+과거 이름은 migration/history 검색을 위해 문서에 나타날 수 있지만 current authority는 이 섹션의 역할 계약이다.
+
+### 0.1 기본 흐름
 
 ```text
 GPT
@@ -71,11 +79,20 @@ Codex는 GPT의 대화 요약을 구현 사실로 믿지 않는다. 구현 전�
 
 명세와 실제가 충돌하면 Codex는 임의로 한쪽을 덮어쓰지 않는다. 구현 사실 drift인지 기획 정본 drift인지 구분하고, 안전하게 해결 가능한 기술 drift는 승인된 범위에서 교정한다. 프로젝트 코어·플레이 규칙·주요 UX·경제·서사 의미·범위를 바꿔야 하면 `CHANGE_PROPOSAL`로 GPT에 반환한다.
 
+### 1.1 Project authoring authority 보존
+
+프로젝트가 HiGodot 또는 다른 persistent authoring authority를 current canon으로 채택했다면 **Codex도 그 권위를 보존해야 한다.**
+
+- Codex가 호출 가능하다는 이유로 프로젝트가 정한 authoring authority를 우회하지 않는다.
+- 일반 GitHub 텍스트 수정이 persistent Scene/Resource authoring authority를 대체한다고 가정하지 않는다.
+- 현재 project/session/version/readiness를 실제로 확인하지 못하면 `BLOCKED_UNVERIFIED`로 둔다.
+- 테스트·live-QA·관찰 도구는 별도 승인 없이 두 번째 persistent writer가 되지 않는다.
+
 ## 2. GPT 책임
 
 GPT의 기본 책임은 **기획·검수·시각 제작·구현 인계·최종 검수**다.
 
-### 수행
+### 2.1 수행
 
 - 현재 사용자 목표·프로젝트 코어·플레이어 약속 복원
 - GitHub·Notion 최신 정본 대조와 충돌 탐지
@@ -89,8 +106,9 @@ GPT의 기본 책임은 **기획·검수·시각 제작·구현 인계·최종 �
 - Codex가 GitHub·Notion만 보고 이어받을 수 있는 구현 인계 명세 작성
 - Codex 구현 결과의 기획 일치·회귀·미검증·증거 검수
 - 필요한 사용자 결정·새 이미지 요청·기획 변경 제안 처리
+- L2 이상이면 마스터 구현계획·패키지 경계·Acceptance·rollback 계약 관리
 
-### 기본 금지
+### 2.2 기본 금지
 
 GPT는 기본 프로젝트 작업에서 다음을 직접 구현 단계로 수행하지 않는다.
 
@@ -98,12 +116,12 @@ GPT는 기본 프로젝트 작업에서 다음을 직접 구현 단계로 수행
 - 실제 Scene·Resource·game data의 구현 변경
 - Godot POC를 제품 구현으로 누적
 - 빌드·런타임 구현을 대신 수행
-- PowerShell에서 로컬 Codex를 실행하거나 로컬 Codex launcher를 사용자 기본 경로로 만드는 것
+- PowerShell에서 로컬 Codex를 실행하거나 local Codex launcher를 기본 사용자 경로로 만드는 것
 - Codex 대신 repository 구현 PR의 코드 변경을 떠맡는 것
 
 GPT는 코드·Scene·Resource·diff를 **읽고 검수하거나 구현 명세를 만들 수는 있지만**, 구현 소유권을 가져오지 않는다.
 
-Base 자체의 정책·기획 정본·Notion 운영 문서처럼 GPT 책임 범위인 문서 교정은 이 금지에 포함되지 않는다. 코드·테스트·자동화 변경이 필요해지는 순간 Codex 구현 인계로 전환한다.
+Base 자체의 정책·기획 정본·Notion 운영 문서처럼 GPT 책임 범위인 문서 교정은 이 금지에 포함되지 않는다. 코드·테스트·자동화·machine consumer 변경이 필요해지는 순간 Codex 구현 인계로 전환한다.
 
 ## 3. 이미지 책임 경계
 
@@ -186,10 +204,27 @@ GPT가 brief·사용자 승인·이미지 제작/편집·검수를 거쳐 Notion
 
 `USER_REQUESTED_CODEX_HANDOFF`는 호환 가능한 명시적 trigger로 남길 수 있지만 **필수 trigger는 아니다**. 구현 준비가 끝나고 구현 작업이 존재하면 인계가 정상 다음 단계다.
 
-### 4.2 최소 인계 계약
+### 4.2 연속작업 인계
+
+`CONTINUOUS_WORK_ACTIVE`에서 현재 승인 범위의 ready task가 구현 단계에 도달하면 `CONTINUOUS_WORK_EXECUTOR_HANDOFF`를 사용한다. 별도 `Codex로 넘길까요?` 재승인을 만들지 않는다.
+
+이 규칙은 새 제품 범위를 승인하는 것이 아니라 **이미 승인된 결과를 구현 executor에게 전달**하는 규칙이다.
+
+실제 Codex/executor 호출 경로가 현재 surface에 없으면 호출했다고 주장하지 않는다.
+
+```text
+executor unavailable
+→ executor-ready handoff/checkpoint 작성
+→ 해당 구현 task = DEFERRED_EXTERNAL_EXECUTOR
+→ 승인 범위의 독립 planning/review/Notion task가 있으면 계속
+→ 새 evidence 또는 executor availability 뒤 deferred task 재평가
+```
+
+### 4.3 최소 인계 계약
 
 ```yaml
 handoff_mode: CODEX_IMPLEMENTATION_HANDOFF
+trigger: IMPLEMENTATION_READY | USER_REQUESTED_CODEX_HANDOFF | CONTINUOUS_WORK_EXECUTOR_HANDOFF
 intent_and_player_outcome:
 implementation_ready: true
 actual_state_verification_required: true
@@ -233,23 +268,58 @@ completion_report_required:
 
 인계 문서는 구현 사실을 복제하지 않는다. **읽어야 할 정본의 위치, 승인된 요구, 금지 범위, 성공 기준**을 전달한다.
 
-## 5. Codex 시작 Gate — 재수화
+## 5. Codex 시작 Gate — GitHub + Notion 재수화
 
 Codex는 구현 전 `CODEX_REHYDRATE_GITHUB_AND_NOTION`을 통과한다.
 
 1. 정확한 프로젝트와 repository 확인
-2. 최신 main/작업 branch와 현재 open workstream 확인
+2. 최신 `main`, 작업 branch와 현재 open workstream 확인
 3. Project `AGENTS.md`, Active Context, 현재 결정 원본 확인
 4. Notion Project Home 및 관련 Domain/AI System 페이지 확인
 5. 현재 구현에 필요한 승인 Visual의 실제 attach/readback 상태 확인
-6. 대상 code/data/Scene/Resource/test와 runtime evidence 확인
+6. 대상 code/data/Scene/Resource/config/test와 runtime evidence 확인
 7. GPT 인계 명세와 current truth 대조
 8. 보호 범위·Acceptance Criteria·rollback 확인
 9. 충돌이 없거나 안전한 해결 경로가 확인된 뒤에만 persistent mutation 시작
 
 다른 프로젝트 relation, stale branch, 오래된 handoff, 과거 대화, 로컬 캐시만으로 구현을 시작하지 않는다.
 
-## 6. Codex Plan 책임 — 선택적 기술 preflight
+## 6. Codex 실행환경 freshness / wrong-target 안전성
+
+과거 Fresh PowerShell·local bootstrap의 **안전 capability는 삭제하지 않고 실행 책임자를 Codex execution environment로 이동**한다.
+
+`CODEX_EXECUTION_ENVIRONMENT_FRESHNESS_REQUIRED`:
+
+```text
+EXECUTION ENVIRONMENT START / REHYDRATE
+→ exact project/repository/worktree identity
+→ `.git` / engine project marker 확인
+→ branch/worktree/dirty/diverged/open independent workstream 확인
+→ remote fetch / current main 확인
+→ non-destructive reconciliation만 허용
+→ adopted engine/addon/test/QA version/readiness 확인
+→ runtime acceptance가 필요하면 exact editor/project/session 확인
+→ persistent mutation 전 current authority/session 확인
+→ IMPLEMENT / TEST / RUNTIME
+→ readback
+```
+
+### 6.1 보존되는 안전 원칙
+
+- stale PID/session, 이전 shell 환경 변수, 현재 디렉터리, process handle을 current truth로 재사용하지 않는다.
+- process가 존재한다는 사실을 readiness evidence로 승격하지 않는다.
+- `reset`, `restore`, `clean`, force push 등 사용자 작업을 잃을 수 있는 파괴적 복구를 자동 실행하지 않는다.
+- 다른 프로젝트 editor/server/process를 임의 kill/restart하지 않는다.
+- wrong worktree/branch, project identity, port/profile/session collision, global credential/profile leakage를 검사한다.
+- local tool이 필요하더라도 GPT가 매번 one copy/paste launcher를 사용자에게 제공하는 것을 기본 workflow로 만들지 않는다.
+- 프로젝트별 literal path/port/executable/version을 Base 공용 정본에 고정하지 않는다.
+- 실제 engine/editor/runtime을 사용하지 않은 작업은 runtime PASS가 아니다.
+
+과거 `ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP`, `BOOTSTRAP_MINIMUM_PREFLIGHT_ONLY`, `ASSUME_PREVIOUS_POWERSHELL_CLOSED`는 이 safety lineage의 historical/compatibility 이름이다. **current owner는 Codex execution environment freshness Gate이며 GPT local-Codex orchestration을 복원하는 근거가 아니다.**
+
+`PROJECT_DEDICATED_LOCAL_EXECUTION_ENVIRONMENT_FIRST`와 `CREATE_OR_REPAIR_DEDICATED_LOCAL_ENVIRONMENT_FIRST` 같은 과거 project-dedicated 기본 가정도 current project/toolchain policy와 충돌하면 재활성화하지 않는다. 현재 채택된 shared/dedicated 모델을 project canon에서 읽는다.
+
+## 7. Codex Plan 책임 — 선택적 기술 preflight
 
 `CODEX_PREFLIGHT_OPTIONAL`은 유지한다. 구현 그 자체는 Codex 책임이지만, 별도 읽기 전용 Plan을 매번 중복하지 않는다.
 
@@ -269,9 +339,46 @@ file_write: FORBIDDEN
 commit_push_pr_issue: FORBIDDEN
 ```
 
+### 7.1 Codex Plan 수행
+
+- 최신 `main`, target branch, current GitHub + Notion 정본 읽기
+- 예상 파일과 실제 파일 대조
+- 선행 패키지 결과와 의존성 확인
+- 기술 위험·데이터·저장 영향·rollback 분석
+- Red → Green → Refactor 작업 단위 제안
+- 성능·안정성·테스트 개선안 제안
+- `CHANGE_PROPOSAL`, `USER_DECISION_REQUIRED`, `WAITING_GPT_VISUAL` 분리
+
+### 7.2 Codex Plan 금지
+
+- **파일 생성·수정·삭제·이동**
+- **Commit·Push·PR·Issue 변경**
+- 마스터 구현계획 직접 덮어쓰기
+- 프로젝트 코어·MVP·플레이 규칙의 암묵 변경
+- 이미지 생성·생성형 편집
+- 존재하지 않는 파일 경로·API·테스트 명령 추측
+
 Plan은 기술 위험·테스트·rollback·`CHANGE_PROPOSAL`을 분리한다. 명확한 저위험 작업은 재수화 Gate 뒤 바로 Build할 수 있다.
 
-## 7. Codex Build 책임
+## 8. 마스터 구현계획과 패키지 계약
+
+L2 이상 또는 다중 패키지 작업은 GPT가 하나의 마스터 구현계획을 관리한다.
+
+마스터 구현계획은 최소 다음을 가진다.
+
+- 전체 구현 목표와 플레이어 가치
+- 승인된 프로젝트 코어와 불변 조건
+- 패키지 순서와 의존성
+- 공통 수정 금지 범위
+- 데이터·저장·ID·Schema 보호 조건
+- 공통 테스트 전략
+- Vertical Slice 완료 기준
+- 승인 Gate·rollback·기획 반환 조건
+- Notion 승인 Visual dependency
+
+`CODEX_PREFLIGHT_OPTIONAL`을 사용한 경우 Codex Plan은 마스터 구현계획을 직접 덮어쓰지 않는다. 기술 finding을 반환하고 GPT가 기획/계약 owner에서 반영한다.
+
+## 9. Codex Build 책임
 
 Codex는 승인된 구현 범위에서 다음을 수행한다.
 
@@ -287,19 +394,19 @@ Codex는 승인된 구현 범위에서 다음을 수행한다.
 - 승인 범위의 구현 문서·manifest·구조화 데이터 동기화
 - 독립 Commit·Push·현재 repository policy가 허용하는 PR 작업
 
-### 범위 밖
+### 9.1 범위 밖
 
 - 프로젝트 코어·플레이어 약속을 임의 변경
 - 중요 기획 결정을 새로 확정
 - 승인되지 않은 기능 추가·삭제
 - 승인 없는 데이터 호환성 파괴
 - Notion Human Home을 AI metadata dump로 변경
-- 이미지 생성·편집
-- 다른 독립 open PR/worktree의 변경 흡수
+- 이미지 생성·생성형 편집
+- 다른 독립 open/draft/ready PR/worktree의 변경 흡수
 
-## 8. 기술 변경과 기획 변경
+## 10. 기술 변경과 기획 변경
 
-### Codex 자동 반영 가능한 기술 변경
+### 10.1 Codex 자동 반영 가능한 기술 변경
 
 플레이어 결과와 승인 계약을 유지하는 경우:
 
@@ -311,7 +418,7 @@ Codex는 승인된 구현 범위에서 다음을 수행한다.
 - 오류 처리·방어 코드
 - 승인 결과를 더 정확히 구현하는 세부 조정
 
-### `CHANGE_PROPOSAL`
+### 10.2 `CHANGE_PROPOSAL`
 
 다음은 GPT 기획 단계로 반환한다.
 
@@ -327,7 +434,7 @@ Codex는 승인된 구현 범위에서 다음을 수행한다.
 
 Codex는 `CHANGE_PROPOSAL`과 무관한 독립 구현이 있으면 계속할 수 있다.
 
-## 9. 구현 패키지
+## 11. 구현 패키지
 
 L2 이상·다중 의존성 작업은 하나의 통합 설계와 마스터 구현계획을 유지하고 검증 가능한 결과 단위로 분리한다.
 
@@ -343,9 +450,50 @@ PKG-07 Vertical Slice 통합
 PKG-08 회귀·성능·접근성·마감
 ```
 
-패키지는 파일 수가 아니라 플레이 가능한 결과, 명확한 입력·출력, 독립 검증·rollback, 경쟁 수정 최소화로 나눈다.
+패키지는 파일 수가 아니라 다음으로 나눈다.
 
-## 10. 구현 결과와 GPT 최종 검수
+- 독립된 플레이 가능 결과 또는 검증 가능한 기반
+- 명확한 입력·출력·선행 조건
+- 독립 test·review·rollback 가능
+- 같은 file/Schema/Scene의 경쟁 수정 최소화
+
+기본 병렬성은 `SEQUENTIAL`이다. 완전히 독립적인 작업만 병렬화한다.
+
+## 12. Codex Build VCS·Push 전후 가드레일
+
+과거 구현 패키지 안전성을 유지하되 `godot_runtime_files_only` 같은 과도한 공용 제한은 제거하고 **승인된 구현 범위**로 일반화한다.
+
+### 12.1 Push 전
+
+- `git status` 또는 동등한 actual change inventory 확인
+- 기준 branch·commit·현재 main 확인
+- 변경 파일 목록 확인
+- 승인 범위 밖 변경 검사
+- 다른 open/draft/ready PR/worktree와 overlap 검사
+- 사용자 기존 변경 보존 확인
+- 필요한 static/headless/runtime/test 수행
+- failed/not-run 검사 명시
+- 이미지 입력이 모두 승인 Notion Visual인지 확인
+
+### 12.2 Git 금지
+
+- `main` 직접 push는 current repository policy와 task가 명시적으로 허용하지 않는 한 금지
+- force push 금지
+- 승인 없는 amend/history rewrite 금지
+- 다른 독립 PR branch 변경·흡수·종료·병합 금지
+- destructive reset/restore/clean 금지
+
+### 12.3 Push 후
+
+- Commit SHA 제출
+- **원격 HEAD** 일치 확인
+- 실행 명령·결과 제출
+- 기술 변경 목록 제출
+- 사용한 승인 Visual 목록 제출
+- `CHANGE_PROPOSAL`, `WAITING_GPT_VISUAL`, 미검증, 남은 위험 제출
+- rollback 경로 제출
+
+## 13. 구현 결과와 GPT 최종 검수
 
 Codex 완료 보고에는 최소 다음이 있어야 한다.
 
@@ -387,11 +535,11 @@ GPT는 결과를 다음으로 검수한다.
 - `BLOCKED`
 - `UNVERIFIED`
 
-## 11. 병합 정책
+## 14. 병합 정책
 
 `AUTO_MERGE_AFTER_REQUIRED_CHECKS`와 `AGENT_MERGE_REQUIRED`를 유지한다.
 
-`APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`: 명시적으로 승인된 동일 범위의 구현 PR은 검증을 통과하면 추가 확인·재승인·병합 승인 요청 없이 저장소가 허용한 방식으로 병합할 수 있다.
+`APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`: 명시적으로 승인된 동일 범위의 구현 PR은 검증을 통과하면 **추가 확인·재승인·병합 승인 요청 없이** 저장소가 허용한 방식으로 병합할 수 있다. 즉 **별도 사용자 병합 승인**은 같은 승인 범위의 정상 병합에 기본적으로 필요하지 않다.
 
 자동 병합/에이전트 병합 전에는 현재 repository에서 실제 required checks와 ruleset을 발견한다. 과거의 특정 check 이름을 공용 계약에서 무조건 가정하지 않는다.
 
@@ -402,6 +550,7 @@ GPT는 결과를 다음으로 검수한다.
 - 검수 기준 HEAD와 현재 HEAD 일치
 - 현재 Required Check 성공
 - unresolved review thread 0
+- current repository가 허용한 병합 방식
 - `USER_REVIEW_REQUIRED`, `CHANGE_PROPOSAL`, `REVISE`, `BLOCKED`, `UNVERIFIED`, `WAITING_GPT_VISUAL` 없음
 
 상태:
@@ -413,7 +562,7 @@ GPT는 결과를 다음으로 검수한다.
 
 다른 독립 open/draft/ready PR은 read-only로 보호한다.
 
-## 12. 중단·재개
+## 15. 중단·재개
 
 중단 시 다음을 남긴다.
 
@@ -429,11 +578,14 @@ GPT는 결과를 다음으로 검수한다.
 
 재개 시 과거 대화가 아니라 최신 GitHub·Notion을 다시 읽는다.
 
-## 13. 완료 조건
+resume에서 historical PID/session/port/editor existence를 현재 readiness로 재사용하지 않는다. 현재 process, transport ownership, server registration, exact target session 등 프로젝트가 요구하는 실제 authority evidence를 fresh-read한다.
+
+## 16. 완료 조건
 
 - GPT 단계에서 기획·검수·시각 요구·Implementation Ready가 실제로 닫혔다.
 - 구현·코딩이 필요한 범위는 Codex로 인계되었다.
 - Codex가 GitHub와 Notion을 fresh-read했다.
+- 프로젝트가 채택한 authoring authority를 Codex가 보존했다.
 - Codex는 승인된 Notion Visual만 사용했고 새 이미지를 생성·편집하지 않았다.
 - 이미지가 부족했다면 `GPT_VISUAL_REQUEST`로 반환되어 GPT 제작·승인·Notion upload/readback 뒤 재개되었다.
 - 구현은 승인 범위와 current repository policy를 지켰다.
@@ -443,7 +595,7 @@ GPT는 결과를 다음으로 검수한다.
 - Required Check·HEAD·review thread·ruleset을 실제 현재 상태에서 확인했다.
 - 사용자 결정이 필요한 상태를 자동 병합하지 않았다.
 
-## 14. 폐기된 기본 경로
+## 17. 폐기·이관된 기본 경로
 
 다음은 기본 운영에서 사용하지 않는다.
 
@@ -454,3 +606,5 @@ GPT는 결과를 다음으로 검수한다.
 - handoff 문서만 믿고 GitHub/Notion current truth 확인 생략
 
 필요한 구현 shell·CLI·MCP·engine 사용은 **Codex 자신의 실행 환경에서 Codex가 책임지고 선택**한다. GPT는 그 로컬 실행 환경을 기본 사용자 절차로 관리하지 않는다.
+
+과거 `GPT_GODOT_PREPRODUCTION_ALLOWED` 및 `기획·구현·POC 누적 → USER_REQUESTED_CODEX_HANDOFF`는 superseded flow를 설명하는 migration literal일 뿐 current 권한이 아니다.
