@@ -16,7 +16,7 @@
   "candidate_release_evidence_commit": null,
   "candidate_registry": {
     "path": "skills/SKILL_REGISTRY.json",
-    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "sha256": "08f882d0c77339e8f7ff187c35b79501e0a2958ab1ff1c7aaa1c0ef8dbee45d6",
     "hash_definition": "RAW_FILE_BYTES_SHA256"
   },
   "released_validator_paths": [
