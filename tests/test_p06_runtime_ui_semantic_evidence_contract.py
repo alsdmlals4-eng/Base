@@ -19,6 +19,7 @@ class P06RuntimeUISemanticEvidenceContractTests(unittest.TestCase):
         self.assertIn("EXACTLY_ONE_OR_FAIL", context)
         self.assertIn("COORDINATE_FALLBACK", context)
         self.assertIn("expected_count: 1", context)
+        self.assertIn("locale_when_textual:", context)
 
     def test_dispatch_ack_is_not_runtime_acceptance_completion(self):
         context = (
