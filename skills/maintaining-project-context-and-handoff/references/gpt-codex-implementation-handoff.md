@@ -158,17 +158,20 @@ GPT로 반환:
 
 기본 병렬성은 `SEQUENTIAL`이다.
 
-## 9. 선택적 Codex technical preflight
+## 9. 선택적 Codex Godot technical preflight
 
-고위험 Godot 구현에서만 별도 read-only 기술 Plan을 사용할 수 있다.
+고위험 Godot 구현에서만 별도 read-only 기술 preflight를 사용할 수 있다.
 
 ```yaml
-mode: PLAN_REVIEW_ONLY
+mode: CODEX_GODOT_TECHNICAL_PREFLIGHT
+scope: ACTUAL_GODOT_PRODUCT_IMPLEMENTATION_ONLY
 file_write: FORBIDDEN
 commit_push_pr_issue: FORBIDDEN
 ```
 
-Plan을 생략해도 project GitHub+Notion 재수화는 생략하지 않는다.
+이 preflight는 제품 방향을 설계하는 별도 PLAN 단계가 아니다. GPT가 이미 확정한 player outcome·approved scope·protected scope를 바꾸지 않고 실제 Godot 구조·위험·rollback을 읽기 전용으로 확인한다.
+
+preflight를 생략해도 project GitHub+Notion 재수화는 생략하지 않는다.
 
 ## 10. 결과 반환
 
