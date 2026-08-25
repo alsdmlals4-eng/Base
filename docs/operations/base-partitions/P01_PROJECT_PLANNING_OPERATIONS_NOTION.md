@@ -16,6 +16,8 @@
 - DIRECTION_FIRST
 - GPT_FIRST_PLANNING_AND_REVIEW
 - NOTION_DEFAULT_PROJECT_WORKSPACE / PROJECT_RELATION_REQUIRED
+- `NOTION_OFFICIAL_PRODUCT_OPERATING_REFERENCE_REQUIRED`: page/database/view/data source/layout/media/permission/Agent를 의미 있게 읽거나 수정하는 L1+ Notion 작업은 `docs/knowledge/methods/NOTION_OFFICIAL_PRODUCT_OPERATING_REFERENCE.md`를 progressive-load해 현재 제품 동작 경계를 먼저 확인한다. plan·file-size·Agent capability·API upload처럼 빠르게 변하는 사실은 작업 시점의 Notion 공식 Product/Help/Developer 문서로 다시 확인한다.
+- `NOTION_OBJECT_SCOPE_BEFORE_WRITE`: Notion write 전에 `PAGE_BLOCK / DATABASE_RECORD / VIEW_PRESENTATION / DATA_SOURCE_SCHEMA_OR_RECORD / DATABASE_GLOBAL_LAYOUT / FILE_UPLOAD / SHARING_PERMISSION / AGENT_CONFIGURATION` 중 영향 범위를 분류한다. linked view 표현 변경을 source mutation으로, single-record polish를 database-global layout 변경으로 오인하지 않는다.
 - SINGLE_INITIAL_APPROVAL_THEN_CONTINUE
 - GitHub runtime/structured truth와 Notion human-facing canon 분리
 - `SYSTEM_BLUEPRINT_ENTRY_CHECK_REQUIRED`: 게임 프로젝트 작업이 플레이어가 체감하는 연결된 시스템 로직·분기·상태·다중 시스템 흐름을 의미 있게 건드리면, current-state/reuse-first preflight 뒤 구현 준비 판정 전에 `docs/operations/project-workspace/NOTION_SYSTEM_BLUEPRINT_CONTRACT.md`의 적용 Gate를 확인한다.
@@ -23,13 +25,13 @@
 - `NO_MASS_BLUEPRINT_BACKFILL`: 현재 작업과 무관한 프로젝트·시스템을 Blueprint 부재만으로 미완료 처리하거나 일괄 변환하지 않는다. 단순·이미 명확한 작업은 이유를 남긴 `NOT_APPLICABLE_WITH_REASON`으로 종료할 수 있다.
 
 ## 핵심 Module
-Intake & Work Contract → Project OS → Design Docs → Context/Handoff → Continuity → User Learning/Notion.
+Intake & Work Contract → Project OS → Design Docs → Context/Handoff → Continuity → User Learning/Notion → Official Notion Product Semantics.
 
 ## 경계
 Part 경계는 수정 금지선이 아니라 semantic owner 지도다. 다른 Part/CP0 finding도 현재 coordinator가 증거와 검증 경로를 확보하면 직접 수정한다. 다른 독립 활성 workstream만 read-only로 보호하며, 실제 조정 blocker만 `CROSS_PART_CHANGE_REQUEST`로 남긴다.
 
 ## 우선 공격 대상
-중복 승인 Gate, GPT→Codex 강제 흐름, Notion 프로젝트 혼입, 사람이 읽는 계획과 repository runtime truth 혼동, 오래된 Sheets/HTML 참조, Blueprint의 제3 정본화·불필요한 일괄 backfill·기존 Blueprint 중복 제작.
+중복 승인 Gate, GPT→Codex 강제 흐름, Notion 프로젝트 혼입, 사람이 읽는 계획과 repository runtime truth 혼동, view-local 표현과 linked source mutation 혼동, single-record 요청의 database-global layout 확산, desktop column만 보고 mobile stacking을 누락하는 문제, 오래된 Sheets/HTML 참조, Blueprint의 제3 정본화·불필요한 일괄 backfill·기존 Blueprint 중복 제작.
 
 ## 검증/완료
 Manifest validation + P01 관련 focused tests + 최소 5회 전체 적대적 개선, 이후 blocker 0까지. 완료보고는 사용자 학습형으로 작성한다.

@@ -349,11 +349,22 @@
       "proposal_id": "BCP-2026-032-ai-visual-continuity-and-notion-preview-fallback",
       "title": "AI 시각 제작 연속성·Notion Preview Fallback 강화",
       "path": "[수정제안서]/BCP-2026-032-ai-visual-continuity-and-notion-preview-fallback/PROPOSAL.md",
-      "status": "APPROVED_FOR_IMPLEMENTATION",
+      "status": "IMPLEMENTED",
       "source_project": "alsdmlals4-eng/ninja-survival-godot",
       "source_commit": "5b7c86e25c53e4a2667f1a70dc59938fc60c4c9a",
       "submitted_at": "2026-08-25",
       "approval_ref": "[수정제안서]/BCP-2026-032-ai-visual-continuity-and-notion-preview-fallback/PROPOSAL.md#승인과-구현 (2026-08-25 current task user instruction; proposal PR #683 merged)",
+      "implementation_pr": "https://github.com/alsdmlals4-eng/Base/pull/703"
+    },
+    {
+      "proposal_id": "BCP-2026-034-visual-generation-scope-deliverable-integrity",
+      "title": "Visual Generation Scope & Deliverable Integrity",
+      "path": "[수정제안서]/BCP-2026-034-visual-generation-scope-deliverable-integrity/PROPOSAL.md",
+      "status": "APPROVED_FOR_IMPLEMENTATION",
+      "source_project": "alsdmlals4-eng/Switchy-Express-Cargo-Puzzle",
+      "source_commit": "2659c914be720b1e42279cab8183df6379ad22b9",
+      "submitted_at": "2026-08-25",
+      "approval_ref": "[수정제안서]/BCP-2026-034-visual-generation-scope-deliverable-integrity/PROPOSAL.md#승인과-구현 (2026-08-25 current task user instruction; proposal PR #711 merged)",
       "implementation_pr": null
     }
   ]
