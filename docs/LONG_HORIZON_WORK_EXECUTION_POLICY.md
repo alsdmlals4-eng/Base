@@ -272,6 +272,8 @@ FOLLOW_UP_TARGET_IS_MERGED_MAIN
 
 기획·검수 뒤 첫 인간 플레이 테스트는 짧더라도 실제 출시 의도에 가까운 Vertical Slice를 대상으로 한다. 이 Slice의 UI·이미지·오디오·VFX·시스템은 단순 throwaway mock이 아니라 **실제 게임 사용 후보**를 우선해 전체 경험을 검증한다.
 
+플레이어가 보는·듣는·조작하는 경로에는 임시 `player-facing placeholder`나 dummy 표현을 남겨 플레이 경험을 왜곡하지 않는다.
+
 ```text
 GAMEPLAY_VALIDATION_REQUIRES_SHIPPING_INTENT_SLICE
 SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED
