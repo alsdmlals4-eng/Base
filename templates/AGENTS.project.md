@@ -53,6 +53,44 @@ Google Sheets
 
 Notion 승인·이미지 업로드·정적 mockup·Sheet row는 runtime 구현 증거가 아니다. Notion 변경이 structured/runtime 의미를 바꾸면 repository owner에 동기화한 뒤 구현·완료를 주장한다.
 
+## Notion operation gate
+
+세부 실행 원본은 `templates/project-operations/NOTION_OPERATION_GATE.md`다. 아래 항목은 cold-start 요약이며 충돌 시 세부 실행 원본을 우선한다.
+
+프로젝트의 지속 Notion 변경은 `NOTION_OPERATION_GATE`를 통과한다. 같은 화면처럼 보여도 영향 범위가 다르므로 write 전에 최소 다음 객체 범위를 분류한다.
+
+```text
+PAGE_BLOCK
+DATABASE_RECORD
+VIEW_PRESENTATION
+DATA_SOURCE_SCHEMA_OR_RECORD
+DATABASE_GLOBAL_LAYOUT
+FILE_UPLOAD
+AUTOMATION_OR_WEBHOOK
+```
+
+기본 순서는 다음과 같다.
+
+```text
+정확한 Project / destination 확인
+→ current destination fetch/read
+→ database/data source면 schema와 정확한 property 이름 확인
+→ 영향 범위 분류
+→ smallest bounded edit
+→ write
+→ destination readback
+→ source mutation이면 source readback
+→ repository/runtime 의미가 바뀌면 repository owner 동기화
+```
+
+- `VIEW_PRESENTATION` 변경을 source mutation처럼 보고하지 않고, source record/property/schema 변경을 단순 local view 변경처럼 보고하지 않는다.
+- 전체 page `replace_content`보다 targeted update/insert가 가능하면 작은 수정 방식을 우선한다.
+- child page/database를 지울 수 있는 `allow_deleting_content=true`는 자동 사용하지 않는다. 영향을 받는 child 목록을 확인한 뒤 **사용자 확인**이 있어야 한다.
+- database page layout처럼 전체 record family에 영향을 주는 변경은 단일 record polish 요청으로 수행하지 않는다.
+- write 호출 성공만으로 완료하지 않는다. 의도한 값·배치·Project relation이 남았는지 `destination readback`으로 확인한다.
+- connector/API persistence는 화면 geometry·모바일 표시·runtime 동작의 PASS가 아니다. 확인하지 못한 층은 `BLOCKED_UNVERIFIED` 또는 해당 evidence ceiling으로 남긴다.
+- Notion 조작용 AI/System metadata는 사람용 Home에 복제하지 않는다. Home에는 사람이 게임/프로젝트를 이해하고 판단하는 데 필요한 결과만 둔다.
+
 ## Priority
 
 1. 최신 사용자 지시
