@@ -21,6 +21,29 @@ Google Sheets
 
 프로젝트 정본·최신 사용자 승인·실제 구현이 이 정책보다 우선한다. GPT 생성 이미지는 승인 전까지 정본·최종 자산·구현 완료 증거가 아니다. 생성 성공은 자동 승인이나 다음 이미지 생성 권한을 만들지 않는다.
 
+## 0. Visual Asset Coverage Preflight
+
+프로젝트 전체, 화면군, 캐릭터군, 적군, UI군, 아이템군, 환경군, 마케팅 asset set처럼 **한 장보다 넓은 시각 범위**를 다루거나, 현재 이미지 요청이 기존 asset set의 일부일 때는 `docs/knowledge/game-development/GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`를 먼저 확인한다.
+
+```text
+current Project canon / stage / consumer
+→ existing approved asset / implementation / reuse 조회
+→ relevant coverage item applicability 판정
+→ coverage_status + STATE_FAMILY_COMPLETENESS 확인
+→ 필요한 gap만 Visual Requirement Gate로 전달
+```
+
+- coverage checklist는 `COVERAGE_CHECK_ONLY`, `NOT_A_SECOND_ASSET_CANON`이다. 실제 requirement, 승인 asset, Manifest, Notion Asset, repository/runtime state를 복제 소유하지 않는다.
+- `coverage_item_id`와 `coverage_status`는 누락 탐지·추적용이며, 실제 자산 상태는 기존 `requirement_id`·Asset owner·runtime evidence에 link한다.
+- `GAP_BLOCKING`은 현재 목표의 실제 player-facing flow나 제출 요구를 막는 경우에만 사용한다. 장르·단계·소비처에 필요하지 않으면 이유 있는 `NOT_APPLICABLE`이 정상이다.
+- `STATE_FAMILY_COMPLETENESS`는 대표 한 장만 확인하지 않고 버튼 상태, enemy wind-up/active/recovery, interactable state처럼 소비처가 요구하는 상태군이 있는지 확인한다.
+- target resolution/aspect, crop/alpha, import/filter/mipmap/compression/atlas/slicing/pivot/localization 같은 engine consumption 조건은 해당 자산에 실제 필요한 항목만 requirement/handoff에 연결한다.
+- `PLATFORM_SPEC_RECHECK_REQUIRED`: store/capsule/screenshot/app icon 등 플랫폼 제출용 자산은 release 시점의 현재 공식 규격·콘텐츠 규칙을 다시 조회한다. Base의 오래된 고정 수치를 정답으로 사용하지 않는다.
+- **`NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS`**: coverage gap은 이미지 생성·batch 확대·다음 variant 자동 생산 권한이 아니다. 아래 Visual Requirement Gate와 Image Conversation Approval Gate를 그대로 적용한다.
+- 사용자가 특정 이미지 한 장만 요청한 경우 해당 요청과 직접 관련된 coverage item만 확인하며, 전체 프로젝트 inventory를 자동으로 확장하지 않는다.
+
+Coverage preflight는 **빠뜨린 종류·상태가 있는가**를 묻는다. 아래 Visual Requirement Gate는 그 후보를 **실제로 만들 가치가 있는가**로 다시 좁힌다.
+
 ## 1. Visual Requirement Gate
 
 프로젝트용 이미지·목업을 만들기 전에 `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate`에서 필요성·Delete Test·재사용 후보·역할·우선순위·제작 방식을 먼저 **선정**한다.
@@ -239,6 +262,12 @@ Harvest는 `PROJECT_ASSET_APPROVED`, tracked asset, rights 또는 Godot runtime 
 10. 승인자·사용처·Notion Asset/Visual과 repository tracked path 연결
 11. 프로젝트 자산 후보라면 `requirement_id`와 선정 근거
 12. 생성 전/후 conversation gate 준수
+13. 관련 `coverage_item_id / coverage_status`와 실제 source 또는 `requirement_id` 연결
+14. `state_family_status`가 consumer가 요구하는 상태를 빠뜨리지 않았는지
+15. 실제 target resolution/aspect에서 crop·UI·VFX와 함께 판독 가능한지
+16. engine consumption 조건(import/filter/mipmap/compression/atlas/slicing/pivot 등)이 필요한 자산에서 정의됐는지
+17. 중요한 상태가 색 하나에만 의존하지 않고 필요한 semantic redundancy를 갖는지
+18. `PLATFORM_REQUIRED`이면 release 시점의 current official spec/rule을 재조회했는지
 
 ## 9. 참조 기반 독립 제작
 
@@ -283,6 +312,11 @@ Notion approval, asset upload, tracked file, runtime application은 서로 다�
 
 이미지 작업 전체를 다음 실패 가정으로 다시 공격한다.
 
+- Visual Asset Coverage Preflight를 생략해 버튼 상태, enemy telegraph, feedback, input prompt, platform asset 같은 인접 필수 범위가 누락됐는가
+- coverage checklist를 second asset canon이나 자동 production queue로 만들었는가
+- `NOT_APPLICABLE`을 허용하지 않아 장르·단계와 무관한 asset scope가 폭증했는가
+- `STATE_FAMILY_COMPLETENESS` 없이 대표 이미지 한 장만으로 component 완성을 주장했는가
+- `NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS`를 어기고 gap 발견 뒤 사용자 승인 없는 image chain/batch를 만들었는가
 - Visual Requirement Gate에서 선정되지 않은 자산을 관성적으로 대량 생성했는가
 - `TEXT_BRIEF_STOP_REQUIRED` 없이 같은 응답에서 이미지를 바로 생성했는가
 - 승인 하나로 여러 이미지·포즈·컴포넌트를 자동 연쇄 생성했는가
@@ -295,6 +329,10 @@ Notion approval, asset upload, tracked file, runtime application은 서로 다�
 - Google Sheets·Figma·HTML·retired visual tool을 active authority로 되살렸는가
 - 원출처·라이선스·유사성 검토가 빠졌는가
 - 실제 화면 검수 없이 예쁜 원화만 승인했는가
+- target resolution/aspect 또는 Godot import 소비 조건을 확인하지 않아 실제 적용에서 재작업이 발생하는가
+- color-only cue 때문에 중요한 상태·위험·선택을 구별하기 어려운가
+- store/platform asset이 오래된 규격·콘텐츠 규칙을 따르는가
+- concept art/reference를 gameplay screenshot/runtime proof로 오인했는가
 - Primary Use 전에 재사용 편의를 위해 본 화면 품질·정체성을 희생했는가
 - `ONE_OFF_KEEP`가 정상인데도 모든 이미지를 강제 component/layer library로 승격했는가
 - `DERIVED_GENERATIVE_RECOVERY` 픽셀을 원본의 관측 사실로 기록했는가
