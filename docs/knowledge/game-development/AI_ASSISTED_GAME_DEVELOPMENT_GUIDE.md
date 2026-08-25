@@ -49,6 +49,8 @@ Codex는 일반 repository executor가 아니다. 실제 게임 프로젝트의 
 - Godot implementation/runtime/headless/play tests
 - 승인 범위의 성능·안정성·동작 보존 리팩터링
 
+`Codex Build`는 **실제 게임 프로젝트의 Godot 제품 구현·코딩·runtime/play test**를 의미한다. Base/Notion/문서/기획/이미지/공용 운영 인프라 작업을 뜻하지 않는다.
+
 ### `Codex Plan` — 선택적 Godot 기술 preflight
 
 `Codex Plan`은 모든 작업의 의무 단계가 아니다. **고위험·다중 시스템의 실제 Godot 제품 구현**에서 구현 전에 repository를 읽기 전용으로 조사할 기술적 가치가 있을 때만 선택적으로 사용한다.
