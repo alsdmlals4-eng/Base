@@ -126,6 +126,53 @@ Revisit this decision only when one of the following becomes true:
 7. `READBACK_PASS != HUMAN_VISIBLE_PASS`; only actual Android/iOS/browser pixel observation can close a rendering claim.
 8. Status text, filenames, empty Gallery cards, placeholders, or server-only signed URLs are not human-visible image evidence.
 
+## Inline SVG raster preview fallback
+
+`NOTION_INLINE_SVG_RASTER_PREVIEW_FALLBACK`
+
+This is a **preview-only** secondary route for a narrow connector gap. Use **typed binary / verified primary transport first**. Do not choose this route merely because it avoids the stronger delivery path.
+
+Use only when all of the following are true:
+
+- the current connector accepts small UTF-8 attachment `content` but does not expose a usable local-binary parameter,
+- a direct public HTTPS transport is unavailable, inappropriate or unnecessary,
+- a low-resolution durable preview is sufficient for the exact human-facing purpose,
+- the self-contained SVG stays inside the connector's text attachment size limit without destroying meaningful visual information.
+
+Bounded route:
+
+```text
+approved local raster
+→ downscale/compress raster to the minimum useful preview
+→ embed the raster as a data URI inside UTF-8 SVG
+→ create-attachment(content=<svg...>)
+→ require status=uploaded
+→ consume returned file-upload:// source directly
+→ attach to the exact human-facing page
+→ fetch destination
+→ require Notion-owned prod-files-secure readback
+→ record HIGH_RES_PIXEL_EQUIVALENT: NOT_PROVEN
+→ observe target client only when rendering acceptance requires it
+```
+
+The fallback does not turn a preview into a production asset. Keep these evidence limits explicit:
+
+```text
+SERVER_ATTACHMENT: PASS only after upload result
+DESTINATION_READBACK: PASS only after target fetch
+HIGH_RES_PIXEL_EQUIVALENT: NOT_PROVEN
+READBACK_PASS != HUMAN_VISIBLE_PASS
+```
+
+Reject this fallback when:
+
+- production-quality or high-resolution source bytes themselves must live in Notion,
+- the target client/workspace rejects or misrenders SVG/data-URI media,
+- a stronger typed binary or already-verified transport route is available and fits the task,
+- meeting the inline size ceiling requires unacceptable loss of visual meaning.
+
+This route is additive. It does not supersede the verified connector transport above or the local `ntn` bridge fallback below.
+
 ## Local bridge status
 
 `tools/notion-native-file-bridge` remains valid and maintained as a **fallback capability**, not the ordinary first step for page images.
