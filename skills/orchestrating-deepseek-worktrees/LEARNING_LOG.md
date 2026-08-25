@@ -1,31 +1,50 @@
 # Orchestrating DeepSeek Worktrees — Learning Log
 
-## 2026-08-25 · External AI optionality must not make implementation ownership optional
+## 2026-08-25 · Correction — code format is not Codex ownership
 
 ```yaml
-work_ref: "PR #674 GPT-Codex role split"
+work_ref: "PR #674 GPT-Codex role split correction"
+status: CURRENT_CORRECTION
 finding: >-
-  The old P08 contract correctly made external AI and extra executor use optional for planning-only work,
-  but the same OPTIONAL_CODEX_EXECUTOR literal became wrong after the user separated GPT planning/review/visual
-  from Codex implementation/coding. Reusing that literal for actual product mutation would let GPT or an external
-  model become the de facto implementation owner again.
+  The first 2026-08-25 role migration over-broadened Codex ownership from actual game implementation
+  to generic repository code/data/tests/Registry/generated/CI. That was incorrect. A Base Python test or
+  generated checker is code-shaped but remains Base governance work owned by GPT.
 change:
-  - keep external AI optional and REVIEW_PENDING
-  - keep GPT as planning/review/visual owner
-  - when code/data/Scene/Resource/config/test/build/runtime mutation exists, route to CODEX_IMPLEMENTATION_HANDOFF
-  - require Codex to rehydrate current GitHub plus relevant Notion canon
-  - prohibit Codex image generation/generative editing and route missing visuals through GPT_VISUAL_REQUEST
-  - retain worktree isolation, protected-path, current branch/commit, and fail-closed evidence rules
+  - external AI remains optional and REVIEW_PENDING
+  - GPT owns Base, Notion, planning, documents, tables, visuals, Registry/generated/CI/test-contract maintenance
+  - Codex owns only actual game-project Godot product implementation: GDScript, Scene/Resource/runtime wiring,
+    build/export, and implementation/runtime/play tests
+  - if external-AI output affects Base/non-product work, GPT applies and validates it
+  - if it produces an actual Godot implementation task, create a project-specific Codex Godot handoff
+  - Codex rehydrates that game project's GitHub + Notion before product mutation
+  - Codex image generation/editing remains forbidden; missing visual = GPT_VISUAL_REQUEST
 reusable_lesson: >-
-  Optionality belongs to optional planning helpers and optional technical preflight, not to an implementation owner
-  once the workflow has explicitly separated planning from implementation. Provider/worktree isolation and execution
-  ownership are independent dimensions and must be modeled separately.
+  Execution ownership follows product responsibility, not file extension or the existence of code.
+  External-AI optionality, Base maintenance ownership, and Godot product implementation ownership are
+  separate dimensions and must not be collapsed into one generic executor rule.
 evidence:
   - docs/GPT_CODEX_WORKFLOW_POLICY.md
+  - docs/WORK_MODE_AND_SKILL_ROUTING.md
   - skills/orchestrating-deepseek-worktrees/SKILL.md
-  - docs/handoffs/2026-08-25-gpt-codex-consumer-migration-packet.md
-verification_status: PARTIAL_CONSUMER_MIGRATION_PENDING
-final_gate_owner: "PR #674 exact-head CI + canonical-reference freshness + GPT final review"
+  - templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md
+verification_status: PENDING_EXACT_HEAD_BASE_VALIDATION
+final_gate_owner: "PR #674 GPT Base maintenance + exact-head CI + final adversarial review"
+```
+
+## 2026-08-25 · SUPERSEDED INTERIM — External AI optionality must not make implementation ownership optional
+
+이 기록은 같은 날의 중간 설계다. `code/data/... mutation이면 Codex`라는 범위가 너무 넓었으며 위 CURRENT_CORRECTION이 대체한다. 역사적 finding 과정만 보존한다.
+
+```yaml
+work_ref: "PR #674 GPT-Codex role split — superseded interim"
+finding: >-
+  The old P08 contract mixed external-AI optionality and executor ownership.
+interim_change:
+  - external AI optional and REVIEW_PENDING
+  - generic implementation was temporarily routed to Codex
+superseded_reason: >-
+  Generic Base/repository maintenance is not Codex work. Only actual game-project Godot product implementation is.
+verification_status: SUPERSEDED
 ```
 
 ## 2026-08-19 · P08 authority and freshness audit
@@ -34,11 +53,11 @@ final_gate_owner: "PR #674 exact-head CI + canonical-reference freshness + GPT f
 work_ref: "PR #535 historical P08 source; revalidated by current-main takeover PR #551"
 baseline: df8ef644d30fc96456da23a5157e5efb61b620bb
 finding: >-
-  External-AI orchestration had a Codex-specific review step even though Base now treats GPT as the primary planner/reviewer and Codex as an optional executor.
+  External-AI orchestration had a Codex-specific review step even though Base then treated GPT as the primary planner/reviewer and Codex as an optional executor.
 change:
   - keep external-AI results REVIEW_PENDING
   - make GPT the default responsible reviewer
-  - use Codex only when separate filesystem/runtime/build execution authority is needed
+  - use execution workers only when then-current scope required them
   - re-read current AGENTS.md, canon, exact branch/commit, protected paths, and tests immediately before executor work
 reusable_lesson: >-
   A handoff package is not current canon. External executors must rehydrate authority and exact repository state at execution time, and provider-specific naming must not silently create provider-specific authority.
