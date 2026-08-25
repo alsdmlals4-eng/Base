@@ -220,7 +220,7 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         ):
             self.assertIn(term, reference)
 
-    def test_grill_me_and_staged_codex_handoff_are_integrated_modes(self) -> None:
+    def test_grill_me_and_godot_product_handoff_are_integrated_modes(self) -> None:
         registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
         aliases = (ROOT / "skills/LEGACY_SKILL_ALIASES.md").read_text(encoding="utf-8")
         intake = skill_package_text("managing-project-intake-and-work-contract")
@@ -229,9 +229,11 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         for tag in (
             "grill-me",
             "decision-interview",
-            "implementation-package-handoff",
-            "codex-plan-review",
+            "godot-product-implementation-handoff",
+            "godot-work-instruction",
             "godot-package-handoff",
+            "gdscripting",
+            "godot-runtime-test",
             "ci-cost-optimization",
             "ci-gate",
         ):
@@ -242,9 +244,15 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         self.assertIn("managing-project-intake-and-work-contract", aliases)
         self.assertIn("한 번에 하나", intake)
         self.assertIn("모두 권장안대로", intake)
-        self.assertIn("PLAN_REVIEW_ONLY", handoff)
-        self.assertIn("godot_runtime_files_only", handoff)
-        self.assertIn("CHANGE_PROPOSAL", handoff)
+        for marker in (
+            "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
+            "CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR",
+            "CHANGE_PROPOSAL",
+            "GPT_VISUAL_REQUEST",
+        ):
+            self.assertIn(marker, handoff)
+        self.assertNotIn("PLAN_REVIEW_ONLY", handoff)
+        self.assertNotIn("godot_runtime_files_only", handoff)
 
         for path in (
             "skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md",
