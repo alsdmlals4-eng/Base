@@ -82,6 +82,11 @@ class WorkCodexMinimumTransitionAutomationContractTests(unittest.TestCase):
         ):
             self.assertIn(token, text)
 
+    def test_automated_readiness_requires_completed_codex_implementation(self) -> None:
+        text = self._profile_text()
+        self.assertIn("Codex one-window implementation completed", text)
+        self.assertNotIn("Codex one-window implementation attempted", text)
+
     def test_default_approval_and_owner_boundaries_are_preserved(self) -> None:
         text = self._profile_text()
         for token in (
