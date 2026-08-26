@@ -134,6 +134,22 @@ class AiBootstrapDriftContractTests(unittest.TestCase):
             text,
         )
 
+    def test_custom_instruction_guide_sets_default_project_memory_for_work_and_reuse(self) -> None:
+        text = self.read("docs/CUSTOM_INSTRUCTIONS_GUIDE.md")
+
+        for required in (
+            "Default memory",
+            "Project-only memory",
+            "ChatGPT Work",
+            "cross-project",
+            "격리 모드",
+            "2026-08-26",
+            "프로젝트 정본을 readback",
+        ):
+            self.assertIn(required, text)
+
+        self.assertIn("Memory는 맞춤설정을 보조하지만 프로젝트 정본은 아니다.", text)
+
 
 if __name__ == "__main__":
     unittest.main()
