@@ -114,6 +114,60 @@ class WorkCodexMinimumTransitionAutomationContractTests(unittest.TestCase):
             "IMAGE_CONVERSATION_APPROVAL_GATE.md",
             "skills/designing-vertical-slices/SKILL.md",
             "HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md",
+            "skills/synchronizing-local-and-github-state/SKILL.md",
+            "safe-sync-protocol.md",
+        ):
+            self.assertIn(token, text)
+
+    def test_automatic_git_fetch_and_safe_pull_are_explicit(self) -> None:
+        text = self._profile_text()
+        for token in (
+            "AUTOMATIC_GIT_FETCH_AUTHORIZED",
+            "AUTOMATIC_SAFE_PULL_AUTHORIZED",
+            "FETCH_BEFORE_START_RESUME_WRITE_PR_MERGE",
+            "PULL_FAST_FORWARD_ONLY",
+            "DIRTY_OR_DIVERGED_NO_BLIND_PULL",
+            "NO_AUTOMATIC_STASH_RESET_CLEAN_REBASE_FORCE",
+            "GITHUB_CONNECTOR_REFRESH_EQUIVALENT_WHEN_NO_LOCAL_WORKTREE",
+            "git fetch --prune <intended-remote>",
+            "git pull --ff-only",
+        ):
+            self.assertIn(token, text)
+
+    def test_automatic_git_sync_preserves_local_and_remote_work(self) -> None:
+        text = self._profile_text()
+        for token in (
+            "EXACT_REPOSITORY_BRANCH_UPSTREAM_IDENTITY_REQUIRED",
+            "CLEAN_TRACKING_BRANCH_REQUIRED_FOR_PULL",
+            "WRONG_WORKTREE_OR_UPSTREAM_ABORTS_PULL",
+            "NO_PR_BRANCH_TAKEOVER_FROM_PULL",
+            "POST_SYNC_EXACT_SHA_READBACK",
+        ):
+            self.assertIn(token, text)
+
+    def test_godot_launch_and_project_scoped_computer_control_are_authorized(self) -> None:
+        text = self._profile_text()
+        for token in (
+            "AUTOMATIC_GODOT_LAUNCH_AUTHORIZED",
+            "PROJECT_SCOPED_COMPUTER_CONTROL_AUTHORIZED",
+            "CALLABLE_TOOL_ONLY_NO_CAPABILITY_CLAIM",
+            "EXACT_PROJECT_WINDOW_PROCESS_IDENTITY_REQUIRED",
+            "SEMANTIC_CONTROL_BEFORE_PIXEL_COORDINATE_GUI",
+            "UNRELATED_USER_SESSION_AND_PROCESS_PROTECTED",
+            "godot --editor --path <project-directory>",
+            "godot --path <project-directory>",
+        ):
+            self.assertIn(token, text)
+
+    def test_computer_control_keeps_sensitive_and_destructive_actions_deferred(self) -> None:
+        text = self._profile_text()
+        for token in (
+            "CREDENTIAL_ACCOUNT_SECURITY_OS_SETTINGS_FORBIDDEN",
+            "UNRELATED_FILE_AND_APPLICATION_ACCESS_FORBIDDEN",
+            "UNRELATED_PROCESS_TERMINATION_FORBIDDEN",
+            "SOFTWARE_INSTALL_OR_UPDATE_REQUIRES_CURRENT_ADOPTION_AUTHORITY",
+            "PUBLIC_UPLOAD_RELEASE_PURCHASE_FORBIDDEN_WITHOUT_HIGH_RISK_APPROVAL",
+            "ACTIVE_USER_SESSION_CONFLICT_LOCAL_DEFER_OR_NEW_SESSION",
         ):
             self.assertIn(token, text)
 
