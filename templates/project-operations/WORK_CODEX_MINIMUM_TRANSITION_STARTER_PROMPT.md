@@ -91,19 +91,20 @@ GITHUB_CONNECTOR_REFRESH_EQUIVALENT_WHEN_NO_LOCAL_WORKTREE
 POST_MERGE_MAIN_READBACK_AND_SAFE_LOCAL_MAIN_REFRESH
 ```
 
-local Git이 callable하면 작업 진입, resume, first write 전, Work→Codex 인계 전, Codex mutation 전, PR 생성·merge 전, post-merge에 자동 동기화해. remote 이름을 `origin`, 기본 branch를 `main`이라고 추측하지 말고 실제 repository metadata와 branch tracking 상태에서 `<intended-remote>`, `<upstream-branch>`, `<default-branch>`를 먼저 발견·검증해.
+local Git이 callable하면 작업 진입, resume, first write 전, Work→Codex 인계 전, Codex mutation 전, PR 생성·merge 전, post-merge에 자동 동기화해. remote 이름을 `origin`, 기본 branch를 `main`이라고 추측하지 말고 실제 repository metadata와 branch tracking 상태에서 `<intended-remote>`, `<upstream-branch>`, `<default-branch>`를 먼저 발견·검증해. `@{upstream}` 결과는 이미 `<remote>/<branch>` 형태일 수 있으므로 remote 이름을 다시 붙이지 말고 그대로 readback해.
 
 ```text
 git status --short --branch
 git remote -v
 git branch --show-current
 git rev-parse --abbrev-ref --symbolic-full-name @{upstream}
+git symbolic-ref --short refs/remotes/<intended-remote>/HEAD
 git fetch --prune <intended-remote>
 git rev-parse HEAD
-git rev-parse <intended-remote>/<upstream-branch>
+git rev-parse @{upstream}
 ```
 
-fetch는 exact repository와 intended remote를 확인한 뒤 자동 수행해. clean·tracking·non-diverged 상태이며 현재 branch가 해당 upstream으로 fast-forward만 가능할 때만 다음과 동등한 pull을 자동 수행해.
+`git symbolic-ref --short refs/remotes/<intended-remote>/HEAD` 결과에서 `<default-branch>`를 확인하고, 현재 branch의 configured remote/merge ref에서 `<intended-remote>`와 `<upstream-branch>`를 정규화해. fetch는 exact repository와 intended remote를 확인한 뒤 자동 수행해. clean·tracking·non-diverged 상태이며 현재 branch가 해당 upstream으로 fast-forward만 가능할 때만 다음과 동등한 pull을 자동 수행해.
 
 ```text
 git pull --ff-only <intended-remote> <upstream-branch>
