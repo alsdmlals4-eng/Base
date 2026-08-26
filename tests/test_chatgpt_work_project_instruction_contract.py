@@ -22,10 +22,17 @@ class ChatGPTWorkProjectInstructionContractTests(unittest.TestCase):
         return self._text() + "\n" + self._appendix()
 
     def test_minimal_entry_and_memory_authority(self) -> None:
-        text = self._bundle()
+        primary = self._text()
         for term in (
             "PROJECT_PLUS_INSTRUCTION_IS_DEFAULT_SUFFICIENT_INPUT",
             "SEPARATE_GOAL_NOT_REQUIRED_BY_DEFAULT",
+        ):
+            self.assertIn(term, primary)
+        self.assertIn("기본 입력은 **`프로젝트명 + 이 공용 작업지시문`**", primary)
+        self.assertIn("별도 Goal은 필수가 아니다", primary)
+
+        text = self._bundle()
+        for term in (
             "PROJECT_PLUS_INSTRUCTION_PLUS_OPTIONAL_GOAL_IS_SUFFICIENT_INPUT",
             "WORK_SELF_STARTING_FRESH_READ_BOOTSTRAP",
             "DEFAULT_MEMORY_DISCOVERY_ONLY_NOT_CANON",
