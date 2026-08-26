@@ -348,7 +348,7 @@ class ClaimIntentProposalLifecycleTests(unittest.TestCase):
         self.assertEqual("IMPLEMENTED", entry["status"])
         self.assertEqual("https://github.com/alsdmlals4-eng/Base/pull/703", entry["implementation_pr"])
         proposal = (ROOT / entry["path"]).read_text(encoding="utf-8")
-        self.assertIn("- 상태: \`IMPLEMENTED\`", proposal)
+        self.assertIn("- 상태: `IMPLEMENTED`", proposal)
         self.assertIn("### 구현 closeout — PR #703", proposal)
         self.assertIn("5b241fce6623d4b0a152bff59ad6a257a18704ed", proposal)
 
