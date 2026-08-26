@@ -30,7 +30,9 @@ class WorkCodexStarterLocalExecutionContractTests(unittest.TestCase):
             "AUTO_GIT_FETCH_AND_SAFE_PULL",
             "DISCOVER_GIT_REMOTE_UPSTREAM_DEFAULT_BRANCH",
             "EXACT_REPOSITORY_BRANCH_UPSTREAM_IDENTITY_REQUIRED",
+            "git symbolic-ref --short refs/remotes/<intended-remote>/HEAD",
             "git fetch --prune <intended-remote>",
+            "git rev-parse @{upstream}",
             "git pull --ff-only <intended-remote> <upstream-branch>",
             "DIRTY_OR_DIVERGED_STATE_RECONCILE_NO_FORCE",
             "AUTO_PUSH_CURRENT_TASK_BRANCH_AFTER_VERIFICATION",
@@ -46,6 +48,7 @@ class WorkCodexStarterLocalExecutionContractTests(unittest.TestCase):
             self.assertIn(token, text)
         self.assertNotIn("git fetch --prune origin", text)
         self.assertNotIn("git pull --ff-only origin main", text)
+        self.assertNotIn("git rev-parse <intended-remote>/<upstream-branch>", text)
 
     def test_project_scoped_local_computer_and_godot_control_are_delegated(self) -> None:
         text = self._starter()
