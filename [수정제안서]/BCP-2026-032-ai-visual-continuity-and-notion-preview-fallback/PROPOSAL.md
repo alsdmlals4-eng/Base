@@ -5,7 +5,7 @@
 - 출처 프로젝트: `alsdmlals4-eng/ninja-survival-godot`
 - 기준 커밋: `5b7c86e25c53e4a2667f1a70dc59938fc60c4c9a`
 - 제출일: `2026-08-25`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `패턴 / 검증(부분)`
 
 ## 관찰과 증거
@@ -171,7 +171,16 @@ Base로 올리지 않는다:
 
 - 사용자 승인 근거: `2026-08-25 닌자서바이벌 프로젝트 closeout current task — "Base 승격, 문제-교훈 자료도 잘 올려줘"`
 - proposal PR: `https://github.com/alsdmlals4-eng/Base/pull/683` · MERGED at `104d63c3136ea6b4b630d4721a6eb2380a17ab17`
-- 검토 판정: `APPROVED_FOR_IMPLEMENTATION`
+- 검토 판정: `APPROVED_FOR_IMPLEMENTATION` — 역사적 approval decision
 - approval_ref: `[수정제안서]/BCP-2026-032-ai-visual-continuity-and-notion-preview-fallback/PROPOSAL.md#승인과-구현 (2026-08-25 current task user instruction; proposal PR #683 merged)`
-- 구현 PR: `없음 — approval merge 뒤 별도 PR`
-- 롤백: approval은 proposal/registry status revert; 구현은 owner별 additive section과 focused test를 implementation PR 단위로 revert.
+
+### 구현 closeout — PR #703
+
+- 구현 PR: `https://github.com/alsdmlals4-eng/Base/pull/703`
+- exact reviewed HEAD: `4b3b92b9cd7e83d65de571c5b28aab9bfc089ec9`
+- merge / implementation receipt: `5b241fce6623d4b0a152bff59ad6a257a18704ed`
+- exact-head CI: Evidence-Based Game Development Knowledge `32846956774`, Base v9 Operating Contracts `32846956725`, Game Project Operating System `32846956899` — 모두 `SUCCESS`.
+- current-owner readback: persistent-character additive-layer gate와 preview-only inline-SVG fallback은 current Base owner에 존재하며, registry가 가리키는 implementation PR과 일치한다.
+- 최종 Registry 상태: `IMPLEMENTED`.
+- 이 closeout은 새 정책·tool·service·runtime claim을 추가하지 않는다. preview-only/Notion server readback의 evidence ceiling과 기존 primary transport 우선순위는 보존된다.
+- 롤백: implementation 의미 변경은 PR #703의 owner별 additive section/focused test 단위로 revert하고, 이 lifecycle receipt만 되돌릴 때는 별도 documentation PR을 revert한다.

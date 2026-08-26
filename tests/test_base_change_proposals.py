@@ -336,5 +336,22 @@ class ClaimIntentProposalLifecycleTests(unittest.TestCase):
             self.assertIn(token, proposal + "\n" + evidence)
 
 
+    def test_bcp032_implemented_registry_entry_has_proposal_closeout_record(self) -> None:
+        """Prevent an IMPLEMENTED registry row from leaving its canonical proposal at approval-only."""
+        registry, errors = CHECKER.validate_repository(ROOT)
+        self.assertEqual([], errors)
+        entry = next(
+            item
+            for item in registry["proposals"]
+            if item["proposal_id"] == "BCP-2026-032-ai-visual-continuity-and-notion-preview-fallback"
+        )
+        self.assertEqual("IMPLEMENTED", entry["status"])
+        self.assertEqual("https://github.com/alsdmlals4-eng/Base/pull/703", entry["implementation_pr"])
+        proposal = (ROOT / entry["path"]).read_text(encoding="utf-8")
+        self.assertIn("- 상태: `IMPLEMENTED`", proposal)
+        self.assertIn("### 구현 closeout — PR #703", proposal)
+        self.assertIn("5b241fce6623d4b0a152bff59ad6a257a18704ed", proposal)
+
+
 if __name__ == "__main__":
     unittest.main()
