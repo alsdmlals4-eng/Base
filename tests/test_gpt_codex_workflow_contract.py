@@ -27,6 +27,41 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         self.assertNotIn("GPT_GODOT_PREPRODUCTION_ALLOWED", text)
         self.assertNotIn("OPTIONAL_CODEX_EXECUTOR", text)
 
+    def test_gpt_project_work_is_bounded_by_play_meaningful_slice(self) -> None:
+        policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
+        for term in (
+            "PLAY_MEANINGFUL_WORK_SLICE",
+            "TARGETED_CONTEXT_RECOVERY_NOT_FULL_PROJECT_REAUDIT",
+            "GPT_MINIMUM_IMPLEMENTATION_READY_PLANNING",
+            "EXISTING_SOLUTION_FIRST",
+            "PRE_HANDOFF_GPT_STOP",
+            "FIX | TUNE | REDESIGN",
+            "IMPACT_BOUNDED_REVALIDATION",
+            "CANON_SYNC_AFTER_VALIDATION",
+            "플레이어 행동",
+            "의미 있는 선택",
+            "제외 범위",
+            "필요한 데이터",
+            "필요한 이미지·사운드",
+        ):
+            self.assertIn(term, policy)
+
+    def test_codex_work_instruction_carries_slice_scope_without_prescribing_code(self) -> None:
+        text = (ROOT / "templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md").read_text(encoding="utf-8")
+        for term in (
+            "PLAY_MEANINGFUL_WORK_SLICE",
+            "work_slice_id",
+            "player_action_and_choice",
+            "explicit_non_scope",
+            "required_data_and_inputs",
+            "ui_ux_flow",
+            "asset_audio_dependencies",
+            "review_evidence_expected",
+            "PRE_HANDOFF_GPT_STOP",
+        ):
+            self.assertIn(term, text)
+        self.assertIn("구현 방향·기술 방법 결정", text)
+
     def test_work_mode_routes_base_notion_to_gpt_and_godot_product_to_codex(self) -> None:
         routing = (ROOT / "docs/WORK_MODE_AND_SKILL_ROUTING.md").read_text(encoding="utf-8")
         for term in (
