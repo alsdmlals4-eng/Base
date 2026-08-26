@@ -2,7 +2,35 @@
 
 > 이 appendix는 `CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md`와 함께 하나의 Work 실행 bundle을 구성한다. 본체가 current Base owner로 위임한 r5.4 호환 경계를 명시적으로 보존하며 독립적인 두 번째 정본이 아니다.
 
-## 1. Execution Scope Guard
+## 1. Default Project Entry — No Separate Goal Required
+
+```text
+PROJECT_PLUS_INSTRUCTION_IS_DEFAULT_SUFFICIENT_INPUT
+SEPARATE_GOAL_NOT_REQUIRED_BY_DEFAULT
+PROJECT_PLUS_INSTRUCTION_PLUS_OPTIONAL_GOAL_IS_SUFFICIENT_INPUT
+```
+
+일반적인 프로젝트 Work의 **기본 입력은 `프로젝트명 + 공용 작업지시문`만**이다.
+
+사용자가 별도 Goal을 주는 것은 특정 작업을 명시적으로 우선하고 싶을 때의 선택 사항이지, 정상적인 Work 시작 조건이 아니다.
+
+Goal이 별도로 없으면 Work가 current Project canon을 fresh-read해 다음 순서로 이번 작업 계약을 복원한다.
+
+```text
+current stage
+→ active / approved current work
+→ unresolved blockers and dependencies
+→ roadmap / accepted frontier
+→ next safe playable slice
+→ current work contract
+```
+
+- Memory나 과거 채팅에서 임의 Goal을 발명하지 않는다.
+- 여러 후보가 있어도 current canon이 한 방향을 명확히 가리키면 별도 질문 없이 그 방향으로 진행한다.
+- current canon만으로도 서로 다른 제품 의미를 가진 유효 선택지가 남거나 Core/UX/경제/서사/Art Direction/scope 같은 사용자 결정이 필요할 때만 `USER_DECISION_REQUIRED`로 묻는다.
+- 단순히 Goal 문장이 없다는 이유만으로 사용자에게 “무엇을 할까요?”를 다시 묻지 않는다.
+
+## 2. Execution Scope Guard
 
 ```text
 PROJECT_WORK_ONLY_WHEN_CURRENT_USER_REQUEST_AUTHORIZES_EXECUTION
@@ -21,7 +49,7 @@ REQUIRED_SOURCE_UNREADABLE
 
 로 처리한다. 검색 snippet, 제목, 과거 Memory, 주변 자료, 추론으로 원문을 대체하지 않는다.
 
-## 2. External Process Skill Trigger
+## 3. External Process Skill Trigger
 
 current 환경에서 다음 process skill 또는 동등 절차가 trigger와 맞으면 실제로 실행한다.
 
@@ -44,11 +72,11 @@ completion claim
 
 외부 process skill은 Project/Base canon 또는 사용자 Decision authority가 아니다. 읽은 Skill과 실제 실행한 Skill을 구분한다.
 
-## 3. Toolchain Freshness — Engine Baseline Exception
+## 4. Toolchain Freshness — Engine Baseline Exception
 
 `STABLE_ENGINE_BASELINE`은 모든 dependency를 영원히 업데이트하지 않는다는 뜻이 아니다.
 
-현재 Goal이 실제로 사용하는 engine 외 tool/addon/plugin/SDK/CLI/dependency의 freshness가 material하면:
+현재 작업 계약이 실제로 사용하는 engine 외 tool/addon/plugin/SDK/CLI/dependency의 freshness가 material하면:
 
 ```text
 installed exact identity
@@ -69,7 +97,7 @@ installed exact identity
 
 floating `latest`, unreviewed update, 신규 비용·권한·breaking migration은 자동 채택하지 않는다.
 
-## 4. Local Godot / Fresh Shell Compatibility
+## 5. Local Godot / Fresh Shell Compatibility
 
 사용자 로컬 Windows/Godot 실행·검증이 acceptance에 실제 필요할 때만 current Base의 Fresh Shell/P06/HiGodot owner를 progressive-load한다.
 
@@ -92,7 +120,7 @@ LOCATION: exact repository/worktree/project
 - Fresh PowerShell은 local Codex launcher가 아니다.
 - 로컬 접근이 없으면 `NOT_RUN / BLOCKED_NO_LOCAL_ACCESS`를 유지한다.
 
-## 5. Retired / Migration-only Surfaces
+## 6. Retired / Migration-only Surfaces
 
 current Project/Base가 다시 채택하지 않는 한 다음을 새 기본 authority로 되살리지 않는다.
 
@@ -106,7 +134,7 @@ local Codex launcher → retired
 
 UNIQUE 정보가 남은 legacy surface만 current owner로 이관하고 destination readback 후 active reference 0을 확인한다.
 
-## 6. Work Prompt Efficiency
+## 7. Work Prompt Efficiency
 
 ```text
 WORK_PROMPT_EFFICIENCY_WITHOUT_CAPABILITY_LOSS
@@ -116,7 +144,7 @@ WORK_PROMPT_EFFICIENCY_WITHOUT_CAPABILITY_LOSS
 
 ```text
 stable shared instruction
-→ current Goal
+→ current work contract
 → current Project fresh facts
 → triggered Skill/owner only
 → current Stage
@@ -128,7 +156,7 @@ stable shared instruction
 - scope/authority/new evidence가 바뀌면 필요한 Gate만 재진입한다.
 - prompt 길이를 줄이기 위해 safety/authority/evidence boundary를 삭제하지 않는다.
 
-## 7. Bundle completion
+## 8. Bundle completion
 
 다음 두 파일이 함께 discoverable해야 v4.9 Work bundle이 완전하다.
 
