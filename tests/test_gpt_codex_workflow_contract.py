@@ -48,6 +48,18 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         ):
             self.assertIn(term, policy)
 
+    def test_planning_sequence_consumes_current_gpt_codex_slice_boundary(self) -> None:
+        text = (ROOT / "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md").read_text(encoding="utf-8")
+        for term in (
+            "PLAY_MEANINGFUL_WORK_SLICE",
+            "PLANNING_CANON_BEFORE_HANDOFF",
+            "PRE_HANDOFF_GPT_STOP",
+            "ACTUAL GODOT PRODUCT IMPLEMENTATION → Codex",
+        ):
+            self.assertIn(term, text)
+        self.assertNotIn("OPTIONAL_CODEX_EXECUTOR", text)
+        self.assertNotIn("GPT-first / Codex optional", text)
+
     def test_codex_work_instruction_carries_slice_scope_without_prescribing_code(self) -> None:
         text = (ROOT / "templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md").read_text(encoding="utf-8")
         for term in (
@@ -72,6 +84,18 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             "explicit_non_scope",
             "PRE_HANDOFF_GPT_STOP",
             "PLANNING_CANON_BEFORE_HANDOFF",
+        ):
+            self.assertIn(term, text)
+
+    def test_active_handoff_skill_consumes_bounded_slice_contract(self) -> None:
+        text = (ROOT / "skills/maintaining-project-context-and-handoff/SKILL.md").read_text(encoding="utf-8")
+        for term in (
+            "PLAY_MEANINGFUL_WORK_SLICE",
+            "PLANNING_CANON_BEFORE_HANDOFF",
+            "PRE_HANDOFF_GPT_STOP",
+            "work_slice_id",
+            "explicit_non_scope",
+            "gpt-codex-implementation-handoff.md",
         ):
             self.assertIn(term, text)
 
