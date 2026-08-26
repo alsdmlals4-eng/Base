@@ -2,8 +2,11 @@
 
 공용 실행·동기화 기준: `docs/ONE_CLICK_PLAY_HANDOFF_POLICY.md`
 공용 콜드 스타트·재개 기준: `docs/knowledge/methods/PROJECT_HANDOFF_CONTEXT_METHOD.md`
+Fresh-read 재구성 companion: `skills/maintaining-project-context-and-handoff/references/fresh-read-project-bootstrap.md`
 
 > 사용자가 `인수인계 진행`을 지시한 경우 이 문서는 단순 세션 요약이 아니다. 현재 작업을 안전한 checkpoint까지 닫고 GitHub·Notion 정본을 동기화한 뒤, 새 채팅이 과거 대화 없이 재개할 수 있는지 검증한 **종료 스냅샷**이어야 한다. 송신 측 `PACKET_READY`와 수신 측 `TRANSFER_ACCEPTED`는 별도 상태다.
+>
+> 새 채팅은 과거 대화가 아니라 Fresh-read companion의 `project_identity / current_goal / current_quality_and_stage / protected_scope / next_safe_action / evidence_ceiling / instruction_surface`를 GitHub + Notion current truth에서 다시 구성한다. 불일치는 mutation 전에 `CONTEXT_DRIFT_RECHECK_REQUIRED`다.
 
 ## 인수 시점 상태
 
