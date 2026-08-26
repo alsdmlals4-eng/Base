@@ -34,10 +34,12 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             "TARGETED_CONTEXT_RECOVERY_NOT_FULL_PROJECT_REAUDIT",
             "GPT_MINIMUM_IMPLEMENTATION_READY_PLANNING",
             "EXISTING_SOLUTION_FIRST",
+            "PLANNING_CANON_BEFORE_HANDOFF",
             "PRE_HANDOFF_GPT_STOP",
             "FIX | TUNE | REDESIGN",
             "IMPACT_BOUNDED_REVALIDATION",
             "CANON_SYNC_AFTER_VALIDATION",
+            "DIRECT_RUN_OR_VERIFIED_EVIDENCE",
             "플레이어 행동",
             "의미 있는 선택",
             "제외 범위",
@@ -61,6 +63,17 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
         self.assertIn("구현 방향·기술 방법 결정", text)
+
+    def test_handoff_reference_consumes_bounded_slice_contract(self) -> None:
+        text = (ROOT / "skills/maintaining-project-context-and-handoff/references/gpt-codex-implementation-handoff.md").read_text(encoding="utf-8")
+        for term in (
+            "PLAY_MEANINGFUL_WORK_SLICE",
+            "work_slice_id",
+            "explicit_non_scope",
+            "PRE_HANDOFF_GPT_STOP",
+            "PLANNING_CANON_BEFORE_HANDOFF",
+        ):
+            self.assertIn(term, text)
 
     def test_work_mode_routes_base_notion_to_gpt_and_godot_product_to_codex(self) -> None:
         routing = (ROOT / "docs/WORK_MODE_AND_SKILL_ROUTING.md").read_text(encoding="utf-8")
