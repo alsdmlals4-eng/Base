@@ -89,6 +89,9 @@ AUTO_GIT_FETCH_AND_SAFE_PULL
 DIRTY_OR_DIVERGED_STATE_RECONCILE_NO_FORCE
 AUTO_PUSH_CURRENT_TASK_BRANCH_AFTER_VERIFICATION
 OPEN_PR_READ_ONLY_BY_DEFAULT
+CURRENT_TASK_BRANCH_IDENTITY_REQUIRED
+NO_DIRECT_MAIN_PUSH
+POST_MERGE_MAIN_READBACK_AND_SAFE_LOCAL_MAIN_REFRESH
 ```
 
 로컬 Git surface가 실제로 callable하면 작업 진입, first persistent write 전, Codex 인계 전, PR 전, merge 전, post-merge 시점에 remote/local 상태를 자동 동기화한다.
@@ -107,7 +110,7 @@ git pull --ff-only
 
 dirty·ahead/behind 동시 존재·diverged·충돌·다른 worktree 소유가 확인되면 blind pull, 자동 rebase, reset, clean, force를 하지 않는다. 현재 변경을 보존하고 exact SHA·diff·open PR·semantic overlap을 비교해 latest completed main 기준의 안전한 별도 branch/reconciliation 경로를 사용한다.
 
-검증된 current-task commit은 자동 push하고 exact remote HEAD를 readback한다. local auth/CLI가 없고 연결된 GitHub connector가 같은 capability를 제공하면 connector fallback을 사용한다. 다른 open/draft/ready PR은 사용자에게 PR 번호와 허용 동작이 명시되지 않는 한 read-only다.
+현재 task가 소유한 feature branch identity를 먼저 확인한다. 검증된 current-task commit은 그 branch에만 자동 push하고 exact remote HEAD를 readback한다. `main`에는 직접 push하지 않는다. 병합 뒤에는 remote new-main SHA를 먼저 읽고, local `main`이 clean하고 fast-forward 가능한 경우에만 안전하게 refresh한다. local auth/CLI가 없고 연결된 GitHub connector가 같은 capability를 제공하면 connector fallback을 사용한다. 다른 open/draft/ready PR은 사용자에게 PR 번호와 허용 동작이 명시되지 않는 한 read-only다.
 
 ## 5. Godot 자동 실행과 프로젝트 범위 컴퓨터 조작
 
@@ -118,6 +121,8 @@ EXACT_PROJECT_EDITOR_SESSION_REQUIRED
 PROJECT_SCOPED_OS_AUTOMATION_ONLY
 PROJECT_PROCESS_ONLY_CLOSE
 TOOL_NOT_CALLABLE_DO_NOT_CLAIM
+STABLE_ENGINE_BASELINE_NO_AUTO_UPDATE
+NO_NEW_TOOL_INSTALL_OR_UPDATE_WITHOUT_CURRENT_OWNER_GATE
 ```
 
 현재 host가 실제 computer/local-shell/HiGodot/Hera capability를 제공하면 별도 routine 승인 없이 다음 프로젝트 범위 행동을 수행해도 된다.
@@ -140,7 +145,7 @@ NO_OS_SECURITY_SETTINGS_OR_DESTRUCTIVE_SYSTEM_CHANGE
 NO_REMOTE_TUNNEL_OR_PUBLIC_PORT
 ```
 
-다른 프로젝트 Editor/session/process를 추측 재사용하지 않는다. exact project/session identity를 확인할 수 없으면 해당 로컬 조작만 `BLOCKED_UNVERIFIED`로 두고 독립 작업을 계속한다. 도구가 노출되지 않았으면 컴퓨터를 조작하거나 Godot을 실행했다고 주장하지 않는다.
+다른 프로젝트 Editor/session/process를 추측 재사용하지 않는다. exact project/session identity를 확인할 수 없으면 해당 로컬 조작만 `BLOCKED_UNVERIFIED`로 두고 독립 작업을 계속한다. 도구가 노출되지 않았으면 컴퓨터를 조작하거나 Godot을 실행했다고 주장하지 않는다. 설치된 stable engine baseline을 새 버전 존재만으로 바꾸지 않으며, 새 MCP·addon·CLI·소프트웨어 설치 또는 업데이트는 current Base/Project owner의 Existing Solution First·호환성·rollback Gate 없이는 자동 수행하지 않는다.
 
 ## 6. Work 준비 완료 조건
 
@@ -204,6 +209,7 @@ RUNNABLE_BY_USER_ONE_CLICK_PROJECT_PLAY_GATE
 BUILD_SHA256_AND_DURABLE_LOCATOR_REQUIRED
 CLEAN_EXTRACT_AND_LAUNCH_SMOKE_REQUIRED
 NO_PUBLIC_RELEASE_WITHOUT_HIGH_RISK_APPROVAL
+ARTIFACT_SECRET_AND_DEBUG_RESIDUE_SCAN_REQUIRED
 ```
 
 현재 Project Profile의 목표 플랫폼과 export preset이 있고 export template·toolchain이 callable하면 internal/debug 플레이 빌드를 자동 export한다. 실행 파일과 필수 data를 하나의 portable ZIP 또는 플랫폼 표준 패키지로 묶고 다음을 확인한다.
@@ -214,6 +220,7 @@ NO_PUBLIC_RELEASE_WITHOUT_HIGH_RISK_APPROVAL
 - 대표 Scene 진입과 성공 marker
 - 필요한 runtime asset 포함 여부
 - 다운로드 가능한 durable locator
+- package 내부 secret·credential·`.git`·불필요한 absolute local path·temp evidence·의도하지 않은 debug log 검사
 
 전달 우선순위:
 
@@ -227,6 +234,14 @@ NO_PUBLIC_RELEASE_WITHOUT_HIGH_RISK_APPROVAL
 local path만 존재하면 다운로드 제공 완료로 주장하지 않는다. artifact upload capability가 없으면 `BLOCKED_NO_DURABLE_ARTIFACT_ROUTE`로 남긴다. GitHub Release·store·외부 공개 업로드는 `PUBLIC_RELEASE_OR_EXTERNAL_PUBLICATION`이며 별도 high-risk 결정 전에는 수행하지 않는다.
 
 ## 11. Codex·검수·병합·사용자 인계
+
+```text
+CODEX_EXECUTOR_NOT_CALLABLE_DO_NOT_CLAIM_IMPLEMENTED
+DEFER_PRODUCT_IMPLEMENTATION_CONTINUE_WORK_READY_TASKS
+DURABLE_CODEX_HANDOFF_REQUIRED
+```
+
+현재 host에서 Codex/product executor가 실제 callable하지 않으면 구현했다고 주장하지 않는다. `WORK_PRODUCTION_INPUT_PACKET`과 exact durable handoff를 정본에 남기고 product implementation만 `DEFERRED_EXTERNAL_EXECUTOR`로 보류하며, 남아 있는 Work-owned ready task는 계속한다. executor가 callable해진 뒤 Project GitHub·Notion을 fresh-read하고 재개한다.
 
 Work 입력이 모두 준비되면 Codex가 Project GitHub·Notion을 fresh-read하게 하고 하나의 implementation window에서 actual product code·Scene·Resource·runtime wiring·test·build를 닫게 한다. 작은 finding은 한 건씩 되돌리지 말고 독립 작업을 계속한 뒤 consolidated packet으로 반환한다.
 
