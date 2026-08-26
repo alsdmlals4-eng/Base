@@ -9,6 +9,24 @@
 ## 역할
 Godot authoring/runtime/debugging, addon/plugin 평가, editor/runtime adapter, QA technical tooling과 로컬 실행환경을 책임진다.
 
+## Engine-neutral Core → Current Godot Adapter
+
+P06의 현재 제품 실행 adapter는 Godot이지만, 재사용 가능한 상위 계약은 `docs/knowledge/game-development/ENGINE_BASELINE_AND_ADAPTER_POLICY.md`의 `ENGINE_NEUTRAL_PRODUCT_IMPLEMENTATION_CORE`가 소유한다.
+
+```text
+ENGINE_NEUTRAL_PRODUCT_IMPLEMENTATION_CORE
+→ ENGINE_ADAPTER_SELECTED_FROM_PROJECT_CANON
+→ GODOT_DEFAULT_ACTIVE_ENGINE_ADAPTER
+→ Godot authoring / runtime / addon / test / build / export evidence
+```
+
+- `GODOT_DEFAULT_ACTIVE_ENGINE_ADAPTER`: 기존 게임 프로젝트는 별도 migration Reality Gate가 승인되지 않는 한 현재 승인된 Godot adapter를 유지한다.
+- `STABLE_ENGINE_BASELINE`: 프로젝트는 검증된 production baseline을 고정하며 새 Godot release를 자동 추종하지 않는다.
+- `NO_AUTOMATIC_LATEST_FOLLOW`: 새 patch/minor/major의 존재만으로 project baseline을 변경하지 않는다.
+- `CANARY_BEFORE_ENGINE_BASELINE_PROMOTION`: blocker·보안·플랫폼·호환성·측정 가능한 생산성 이득이 있을 때만 독립 canary에서 import/test/runtime/export/rollback을 검증한 뒤 계획된 maintenance window에서 승격을 검토한다.
+- HiGodot/GUT/Hera와 기존 Godot-specific evidence 계약은 폐기하지 않고 **current Godot adapter responsibility**로 유지한다.
+- Unity/Cocos/기타 엔진의 MCP/CLI/API에서 좋은 패턴을 흡수할 수 있지만, 그 자체는 current engine migration authority가 아니다.
+
 ## 핵심 Skill
 `diagnosing-game-engine-runtime-failures`, `evaluating-godot-assets-and-plugins-before-creation`.
 
