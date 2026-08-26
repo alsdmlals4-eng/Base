@@ -18,8 +18,11 @@ class ChatGPTWorkProjectInstructionContractTests(unittest.TestCase):
         self.assertTrue(APPENDIX.exists(), "Work-native compatibility appendix must exist")
         return APPENDIX.read_text(encoding="utf-8")
 
+    def _bundle(self) -> str:
+        return self._text() + "\n" + self._appendix()
+
     def test_minimal_entry_and_memory_authority(self) -> None:
-        text = self._text()
+        text = self._bundle()
         for term in (
             "PROJECT_PLUS_INSTRUCTION_IS_DEFAULT_SUFFICIENT_INPUT",
             "SEPARATE_GOAL_NOT_REQUIRED_BY_DEFAULT",
