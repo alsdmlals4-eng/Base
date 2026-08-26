@@ -166,3 +166,29 @@ templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9_COM
 ```
 
 사용자에게 전달하는 다운로드용 단일 파일은 본체 뒤에 이 appendix 내용을 합쳐 제공할 수 있다.
+
+## 9. Explicit Delegated Minimum-Transition Profile
+
+```text
+EXPLICIT_USER_DELEGATION_REQUIRED
+DELEGATED_RECOMMENDED_DEFAULT_APPROVAL
+```
+
+현재 사용자가 routine 권장안 자동 승인, 중간 승인·중단 최소화, Work에서 실제 인게임 production input 일괄 준비, Codex 단일 구현 구간, machine QA 우선, Human QA 후속 보류를 명시한 경우 다음 opt-in profile을 함께 사용한다.
+
+```text
+templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md
+```
+
+이 profile은 다음 3단계를 current Slice 범위에서 연결한다.
+
+```text
+Work planning/review/visual/audio/data preparation
+→ one consolidated Codex product implementation and machine-QA window
+→ Work final evidence/canon/merge review
+→ user vertical-slice validation
+```
+
+활성화 증거가 없으면 기본 v4.9 execution, 기존 image conversation approval, current Project user-decision Gate를 그대로 유지한다. 사용자가 더 좁은 제한을 주면 최신 제한이 profile보다 우선한다.
+
+이 profile은 current owner를 복제하지 않고 Work v4.9, continuous-work, GPT–Codex workflow, Visual, Vertical Slice, HiGodot/GUT/Hera 계약을 조합한다. Project canon·Base latest owner·상위 host/system/tool confirmation이 충돌 시 우선하며, direct main·force·admin/ruleset bypass 또는 Human/Player evidence 과장을 허용하지 않는다.
