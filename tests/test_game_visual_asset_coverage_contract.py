@@ -33,6 +33,35 @@ class GameVisualAssetCoverageContractTests(unittest.TestCase):
             text.index("## 1. Visual Requirement Gate"),
         )
 
+    def test_information_artifacts_remain_required_without_forcing_image_generation(self):
+        coverage_path = ROOT / "docs/knowledge/game-development/GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md"
+        policy_path = ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md"
+        coverage = coverage_path.read_text(encoding="utf-8")
+        policy = policy_path.read_text(encoding="utf-8")
+        for required in (
+            "PRODUCTION_INFORMATION",
+            "INFORMATION_ARTIFACT_NOT_IMAGE_ASSET",
+            "TEXT_TABLE_FLOW_DB_FIRST",
+        ):
+            self.assertIn(required, coverage)
+            self.assertIn(required, policy)
+        for information_kind in ("시스템 설명", "세계관", "관계도", "제작 체크리스트"):
+            self.assertIn(information_kind, policy)
+
+    def test_image_generation_requires_an_actual_game_or_product_consumer(self):
+        owner_paths = (
+            ROOT / "docs/knowledge/game-development/GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md",
+            ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md",
+            ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md",
+            ROOT / "templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md",
+        )
+        for path in owner_paths:
+            text = path.read_text(encoding="utf-8")
+            self.assertIn("ACTUAL_CONSUMER_REQUIRED", text, path.as_posix())
+        policy = (ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md").read_text(encoding="utf-8")
+        self.assertIn("PLAYER_FACING_EXPLANATORY", policy)
+        self.assertIn("DO_NOT_GENERATE", policy)
+
     def test_art_prompt_skill_consumes_coverage_without_expanding_scope(self):
         path = ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md"
         text = path.read_text(encoding="utf-8")
