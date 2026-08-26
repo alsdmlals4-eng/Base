@@ -21,6 +21,8 @@ class ChatGPTWorkProjectInstructionContractTests(unittest.TestCase):
     def test_minimal_entry_and_memory_authority(self) -> None:
         text = self._text()
         for term in (
+            "PROJECT_PLUS_INSTRUCTION_IS_DEFAULT_SUFFICIENT_INPUT",
+            "SEPARATE_GOAL_NOT_REQUIRED_BY_DEFAULT",
             "PROJECT_PLUS_INSTRUCTION_PLUS_OPTIONAL_GOAL_IS_SUFFICIENT_INPUT",
             "WORK_SELF_STARTING_FRESH_READ_BOOTSTRAP",
             "DEFAULT_MEMORY_DISCOVERY_ONLY_NOT_CANON",
@@ -28,6 +30,8 @@ class ChatGPTWorkProjectInstructionContractTests(unittest.TestCase):
             "PAST_CONVERSATION_NOT_REQUIRED",
         ):
             self.assertIn(term, text)
+        self.assertIn("Goal이 별도로 없으면", text)
+        self.assertIn("next safe playable slice", text)
 
     def test_work_codex_and_engine_boundaries(self) -> None:
         text = self._text()
