@@ -120,7 +120,7 @@ Default memory
 → 기본 프로젝트 운영값
 → 같은 프로젝트의 대화·파일을 우선 사용
 → 요금제/계정 설정이 허용하면 saved memory와 프로젝트 밖 대화도 연결 가능
-→ ChatGPT Work 사용 가능
+→ 계정/플랜에서 ChatGPT Work가 제공되는 경우 Project-only의 Work 차단을 피하고 사용 경로를 보존
 → cross-project 재사용 후보와 과거 조사 맥락을 발견하는 데 유리
 
 Project-only memory
@@ -141,7 +141,7 @@ Project-only memory
 - 다른 프로젝트의 context가 결과에 영향을 주는지 확인하는 독립 A/B 또는 오염 검증.
 - 공유 프로젝트처럼 제품이 `Project-only memory`를 강제하는 경우.
 
-반대로 `ChatGPT Work` 사용, Base↔프로젝트 학습 순환, 프로젝트 간 재사용/벤치마크 연결이 중요한 일반 1인 프로젝트에서는 `Default memory`를 유지한다.
+반대로 `ChatGPT Work` 사용, Base↔프로젝트 학습 순환, 프로젝트 간 재사용/벤치마크 연결이 중요한 일반 1인 프로젝트에서는 `Default memory`를 유지한다. 제품 설정 변경은 반영에 시간이 걸릴 수 있으므로 실제 UI 상태가 바뀌었는지는 별도로 확인한다.
 
 현재 제품 근거:
 
