@@ -111,11 +111,45 @@ Notion 승인, 이미지 업로드, static mockup, 맞춤설정 문구 자체는
 - Characteristics가 계정에 제공되면 formatting/structure를 높이고 emoji는 낮게, brevity는 낮거나 중립으로 두는 편이 장문 검수·초보자 설명에 적합하다. 기능 제공 여부와 UI는 OpenAI 제품에서 바뀔 수 있으므로 강제 Base contract로 취급하지 않는다.
 - Custom Instructions 제품 제한도 변할 수 있다. 2026-08-22 OpenAI Help 기준 Plus/Pro 계열의 저장 한도는 최대 5,000자지만, 실제 적용 전 현재 공식 Help를 재확인한다.
 
+### ChatGPT Project memory mode
+
+2026-08-26 OpenAI Help의 현재 제품 동작을 기준으로, **1인 프로젝트를 GPT/ChatGPT Work와 함께 운영하고 Base·다른 프로젝트의 검증된 지식·재사용 후보를 연결해야 하는 경우에는 `Default memory`를 기본 권장값으로 사용한다.** 제품 동작은 바뀔 수 있으므로 실제 설정 변경 전에는 현재 공식 Help를 다시 확인한다.
+
+```text
+Default memory
+→ 기본 프로젝트 운영값
+→ 같은 프로젝트의 대화·파일을 우선 사용
+→ 요금제/계정 설정이 허용하면 saved memory와 프로젝트 밖 대화도 연결 가능
+→ ChatGPT Work 사용 가능
+→ cross-project 재사용 후보와 과거 조사 맥락을 발견하는 데 유리
+
+Project-only memory
+→ 격리 모드
+→ saved memory와 프로젝트 밖 대화 참조 차단
+→ 프로젝트 밖 채팅에서도 이 프로젝트 대화를 참조하지 않음
+→ ChatGPT Work 사용 불가
+→ 공유 프로젝트·민감 작업·의도적인 context-isolation 실험처럼 격리가 목적일 때 사용
+```
+
+이 선택은 **authority를 바꾸지 않는다.** `Default memory`를 사용해도 다른 프로젝트의 기억이나 과거 대화를 현재 프로젝트 사실로 승격하지 않는다. 현재 프로젝트의 `AGENTS.md`, Active Context, 승인 계약, Notion/GitHub 분야별 정본과 actual evidence를 fresh-read하고 **프로젝트 정본을 readback**한 뒤 판단한다.
+
+교차 프로젝트 연결은 무제한 전체 탐색이 아니라 current Base의 Reuse-First 경계를 따른다. 현재 프로젝트 → 승인 Asset/Reference/Benchmark → Base reuse/knowledge → 현재 병목과 직접 관련된 targeted cross-project evidence → 필요한 외부 benchmark 순으로 좁혀 확인한다. 다른 프로젝트의 규칙·세계관·수치가 현재 프로젝트로 자동 전이되지 않게 한다.
+
+`Project-only memory`가 적절한 대표 예외는 다음과 같다.
+
+- 프로젝트 외부의 기억·대화를 의도적으로 차단해야 하는 민감/격리 작업.
+- 다른 프로젝트의 context가 결과에 영향을 주는지 확인하는 독립 A/B 또는 오염 검증.
+- 공유 프로젝트처럼 제품이 `Project-only memory`를 강제하는 경우.
+
+반대로 `ChatGPT Work` 사용, Base↔프로젝트 학습 순환, 프로젝트 간 재사용/벤치마크 연결이 중요한 일반 1인 프로젝트에서는 `Default memory`를 유지한다.
+
 현재 제품 근거:
 
 - https://help.openai.com/en/articles/8096356-chat-preferences-for-chatgpt
 - https://help.openai.com/en/articles/11899719
 - https://help.openai.com/en/articles/20001038-characteristics-in-chatgpt
+- https://help.openai.com/en/articles/10169521-projects-in-chatgpt
+- https://help.openai.com/ko-kr/articles/10169521-using-projects-in-chatgpt
 
 ## 6. ChatGPT 맞춤설정 기준
 
@@ -172,10 +206,11 @@ Base의 큰 운영 구조, 기본 project surface, domain canon, 비용 정책, 
 4. Memory나 과거 대화가 현재 정본보다 높은 것처럼 표현되었는가?
 5. 새 채팅/새 executor가 프로젝트 이름과 현재 상태를 모르더라도 현재 Base/프로젝트 authority로 스스로 진입할 수 있는가?
 6. repository-wide instructions에 path-specific 규칙이 불필요하게 누적되어 있는가?
+7. ChatGPT Project memory mode의 현재 제품 동작이 공식 Help와 달라졌거나, `Default memory` 권장이 Work/cross-project 재사용 목적과 더 이상 맞지 않는가?
 
 하나라도 실패하면 프로젝트 사실을 더 추가하기보다 **bootstrap을 줄이고 current authority routing을 강화**하는 방향을 우선한다.
 
-`tests/test_ai_bootstrap_drift_contract.py`는 GPT/Codex/Copilot/project scaffold/Sheet compatibility의 핵심 회귀를 자동으로 감지한다. 이 테스트를 통과시키기 위해 deprecated authority를 다른 이름으로 재도입하지 않는다.
+`tests/test_ai_bootstrap_drift_contract.py`는 GPT/Codex/Copilot/project scaffold/Sheet compatibility와 ChatGPT Project memory 선택 기준의 핵심 회귀를 자동으로 감지한다. 이 테스트를 통과시키기 위해 deprecated authority를 다른 이름으로 재도입하지 않는다.
 
 ## 10. 파일 변경 설명 규칙
 
