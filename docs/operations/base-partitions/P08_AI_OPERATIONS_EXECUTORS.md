@@ -92,6 +92,16 @@ Chat · quick discussion / decision shaping
 
 Work를 사용하더라도 `GPT_NONCODING_PROJECT_OWNER`, `GPT_BASE_NOTION_GOVERNANCE_OWNER`, `CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR` 경계는 바뀌지 않는다.
 
+## Shared Work project instruction
+
+프로젝트별 ChatGPT Work의 공용 실행 adapter는 다음 template을 사용한다.
+
+`templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md`
+
+이 template은 `프로젝트명 + 공용 작업지시문 + 선택적 Goal`만으로 Work가 self-starting fresh-read를 수행하도록 하는 사용자 진입 계약이다. Work 대화를 정본으로 만들지 않고, current Project GitHub/Notion과 Base current owner를 다시 읽으며 Default memory는 discovery-only 후보로만 사용한다.
+
+이 template은 P08·Base 상세 절차의 두 번째 정본이 아니다. 현재 `skills/SKILL_REGISTRY.json`을 inventory하고 Goal에 맞는 Skill만 progressive-load하며, 실제 세부 owner가 최신 Base에서 바뀌면 current Base owner가 우선한다.
+
 ## Handoff
 
 ```text
