@@ -92,6 +92,23 @@ Chat · quick discussion / decision shaping
 
 Work를 사용하더라도 `GPT_NONCODING_PROJECT_OWNER`, `GPT_BASE_NOTION_GOVERNANCE_OWNER`, `CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR` 경계는 바뀌지 않는다.
 
+## Shared Work project instruction
+
+프로젝트별 ChatGPT Work의 공용 실행 adapter는 다음 두 파일을 하나의 bundle로 사용한다.
+
+```text
+templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md
+templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9_COMPATIBILITY_APPENDIX.md
+```
+
+정상적인 기본 입력은 **`프로젝트명 + 공용 작업지시문`만**이다. 별도 Goal은 사용자가 특정 작업을 우선하고 싶을 때만 선택적으로 줄 수 있다. Goal이 없으면 Work가 current Project GitHub/Notion canon에서 `current stage → active/approved current work → blockers/dependencies → roadmap/accepted frontier → next safe playable slice → current work contract`를 복원한다. 단순히 Goal 문장이 없다는 이유로 사용자의 작업 목표를 다시 묻지 않는다.
+
+본체와 Compatibility appendix는 r5.4의 planning/reuse/verification 기능 및 execution-scope, external process, toolchain freshness, local Godot/Fresh Shell, retired-surface, prompt-efficiency 경계를 함께 보존한다. 두 파일은 서로 다른 정본이 아니라 하나의 실행 bundle이다.
+
+사용자에게 전달하는 단일 다운로드 파일은 본체와 appendix를 결합할 수 있다.
+
+Work 대화를 정본으로 만들지 않고 current Project GitHub/Notion과 Base current owner를 다시 읽으며 Default memory는 discovery-only 후보로만 사용한다. 이 bundle은 P08·Base 상세 절차의 두 번째 정본이 아니다. 현재 `skills/SKILL_REGISTRY.json`을 inventory하고 복원된 current work contract 또는 사용자가 명시한 특정 작업에 맞는 Skill만 progressive-load하며, 실제 세부 owner가 최신 Base에서 바뀌면 current Base owner가 우선한다.
+
 ## Handoff
 
 ```text
@@ -172,9 +189,10 @@ CURRENT_PAID_PLANS: GPT_PRO
 - Codex가 이미지 생성
 - stale GitHub/Notion만 보고 구현
 - external AI 결과를 current canon으로 승격
+- 별도 Goal이 없다는 이유만으로 current canon 조회 전에 사용자의 목표를 다시 질문
 
 ## 완료 기준
 
 P08 역할이 다음 한 줄과 일치해야 한다.
 
-> **Chat은 빠른 논의, Work는 긴 multi-step GPT-owned 기획·검수·Base·Notion 작업, Codex는 실제 게임 프로젝트의 제품 구현을 담당하며 현재 기존 게임은 Godot adapter를 사용한다.**
+> **Chat은 빠른 논의, Work는 프로젝트명+공용 지시문만으로도 current canon에서 작업 계약을 복원해 긴 multi-step GPT-owned 기획·검수·Base·Notion 작업을 수행하고, Codex는 실제 게임 프로젝트의 제품 구현을 담당하며 현재 기존 게임은 Godot adapter를 사용한다.**
