@@ -87,6 +87,23 @@ class WorkCodexMinimumTransitionAutomationContractTests(unittest.TestCase):
         self.assertIn("Codex one-window implementation completed", text)
         self.assertNotIn("Codex one-window implementation attempted", text)
 
+    def test_work_final_review_precedes_user_validation(self) -> None:
+        text = self._profile_text()
+        self.assertIn("WORK_FINAL_EVIDENCE_REVIEW_BEFORE_USER_VALIDATION", text)
+        self.assertLess(
+            text.index("CODEX_SINGLE_IMPLEMENTATION_WINDOW"),
+            text.index("WORK_FINAL_EVIDENCE_REVIEW_BEFORE_USER_VALIDATION"),
+        )
+        self.assertLess(
+            text.index("WORK_FINAL_EVIDENCE_REVIEW_BEFORE_USER_VALIDATION"),
+            text.index("READY_FOR_USER_VERTICAL_SLICE_VALIDATION"),
+        )
+
+    def test_missing_adopted_qa_tool_requires_evidence_equivalent_machine_qa(self) -> None:
+        text = self._profile_text()
+        self.assertIn("EVIDENCE_EQUIVALENT_MACHINE_QA_REQUIRED_WHEN_NOT_ADOPTED", text)
+        self.assertIn("BLOCKING_HIGH_RISK_PREVENTS_PHASE_ADVANCE", text)
+
     def test_profile_composes_current_owners_instead_of_becoming_second_canon(self) -> None:
         text = self._profile_text()
         for token in (
