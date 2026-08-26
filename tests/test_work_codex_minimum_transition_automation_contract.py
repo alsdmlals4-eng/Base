@@ -87,6 +87,19 @@ class WorkCodexMinimumTransitionAutomationContractTests(unittest.TestCase):
         self.assertIn("Codex one-window implementation completed", text)
         self.assertNotIn("Codex one-window implementation attempted", text)
 
+    def test_profile_composes_current_owners_instead_of_becoming_second_canon(self) -> None:
+        text = self._profile_text()
+        for token in (
+            "COMPOSE_CURRENT_OWNERS_NOT_SECOND_CANON",
+            "continuous-work-execution.md",
+            "docs/GPT_CODEX_WORKFLOW_POLICY.md",
+            "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md",
+            "IMAGE_CONVERSATION_APPROVAL_GATE.md",
+            "skills/designing-vertical-slices/SKILL.md",
+            "HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md",
+        ):
+            self.assertIn(token, text)
+
     def test_default_approval_and_owner_boundaries_are_preserved(self) -> None:
         text = self._profile_text()
         for token in (
