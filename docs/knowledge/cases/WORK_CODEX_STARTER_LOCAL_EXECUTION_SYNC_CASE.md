@@ -39,6 +39,14 @@
 - GitHub 공식 workflow artifact 문서는 binary·log·screenshot 같은 workflow 산출물을 보존하고 다운로드하는 용도를 정의한다.
 - GitHub auto-merge는 required review와 status check가 충족된 뒤에만 merge한다.
 
+## Source locators
+
+- Git pull: https://git-scm.com/docs/git-pull
+- Godot command line: https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.html
+- Godot export: https://docs.godotengine.org/en/stable/tutorials/export/exporting_projects.html
+- GitHub workflow artifacts: https://docs.github.com/en/actions/concepts/workflows-and-actions/workflow-artifacts
+- GitHub auto-merge: https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/automatically-merging-a-pull-request
+
 ## 비사용 조건
 
 - local/computer capability가 현재 host에 노출되지 않음
