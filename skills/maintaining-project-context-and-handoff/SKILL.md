@@ -25,6 +25,15 @@ Godot work-instruction template: `templates/project-operations/CODEX_IMPLEMENTAT
 Packaged Godot handoff reference: [gpt-codex-implementation-handoff.md](references/gpt-codex-implementation-handoff.md)
 Packaged fresh-read bootstrap reference: [fresh-read-project-bootstrap.md](references/fresh-read-project-bootstrap.md)
 
+현재 Godot 구현 인계는 canonical policy와 packaged handoff reference의 bounded Slice 계약을 얇게 소비한다.
+
+```text
+PLAY_MEANINGFUL_WORK_SLICE
+→ PLANNING_CANON_BEFORE_HANDOFF
+→ PRE_HANDOFF_GPT_STOP
+→ ACTUAL GODOT PRODUCT IMPLEMENTATION → Codex
+```
+
 위 reference의 이름은 호환성을 위해 유지하지만 current 의미는 **GPT 비코딩 작업 완료 → Codex 실제 Godot 제품 구현 → GPT 최종 검수**에 한정한다. 새 채팅/담당자의 재개는 `fresh-read-project-bootstrap.md`의 `FRESH_READ_PROJECT_BOOTSTRAP`을 사용해 현재 Project GitHub + Notion에서 다시 재구성한다.
 
 ## Skill Modes
@@ -70,9 +79,15 @@ next_work:
 codex_godot_handoff:
   mode: CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF
   implementation_ready: true
+  work_slice_id:
   player_outcome:
+  player_action_and_choice:
   approved_scope: []
+  explicit_non_scope: []
   protected_scope: []
+  required_data_and_inputs: []
+  ui_ux_flow: []
+  asset_audio_dependencies: []
   notion_sources:
     project_home:
     relevant_domain_pages: []
@@ -83,6 +98,7 @@ codex_godot_handoff:
     godot_product_paths: []
     runtime_tests_and_evidence: []
   acceptance_criteria: []
+  review_evidence_expected: []
   required_runtime_or_play_checks: []
   forbidden_changes: []
   visual_policy:
@@ -140,22 +156,26 @@ ACTUAL GODOT PRODUCT IMPLEMENTATION → Codex
 
 ### 4. `codex-godot-implementation-handoff`
 
-실제 Godot 제품 구현이 남았을 때만:
+실제 Godot 제품 구현이 남았을 때만 `docs/GPT_CODEX_WORKFLOW_POLICY.md`와 `gpt-codex-implementation-handoff.md`를 소비해 다음 경계를 확인한다.
 
 ```text
-player outcome
-→ 승인 범위/보호 범위
+PLAY_MEANINGFUL_WORK_SLICE
+→ player outcome / player action and choice
+→ approved scope / explicit_non_scope / protected scope
+→ required data / UI·UX Flow / asset·audio dependencies
+→ Acceptance Criteria / review evidence
+→ PLANNING_CANON_BEFORE_HANDOFF
+→ PRE_HANDOFF_GPT_STOP
 → GitHub project canon
 → Notion 기획/Flow/Visual
 → 승인 Visual
 → 실제 Godot 구현 대상
-→ Acceptance Criteria
 → runtime/play test
 → CHANGE_PROPOSAL boundary
 → GPT_VISUAL_REQUEST boundary
 ```
 
-Codex는 handoff를 그대로 기계 구현하지 않고 project GitHub+Notion을 fresh-read해 실제 기술 방향을 결정한다.
+`PRE_HANDOFF_GPT_STOP` 이후 GPT는 Node/Scene/함수 수준의 구현 방법을 더 고정하지 않는다. Codex는 handoff를 그대로 기계 구현하지 않고 project GitHub+Notion을 fresh-read해 실제 기술 방향을 결정한다.
 
 ### 5. Visual Gate
 
