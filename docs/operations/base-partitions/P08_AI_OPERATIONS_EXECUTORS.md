@@ -42,7 +42,12 @@ ENGINE_ADAPTER_SELECTED_FROM_PROJECT_CANON
 - build/export
 - implementation/runtime/headless/play tests
 
-현재 Godot 프로젝트에서는 위 항목이 기존과 동일하게 GDScript, Scene/Resource/Autoload, Godot build/export, Godot implementation/runtime/headless/play tests를 뜻한다.
+현재 Godot 프로젝트에서는 위 항목이 기존과 동일하게 다음 compatibility surface를 뜻한다.
+
+- `GDScript/product code`
+- `Scene/Resource/Autoload/runtime wiring`
+- Godot build/export
+- Godot implementation/runtime/headless/play tests
 
 Codex는 Base repository의 일반 maintenance executor가 아니다. Base Python test·CI contract·Registry/generated checker처럼 코드 형식인 운영 인프라도 GPT 작업이다.
 
