@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-TARGET = Path("templates/project-operations/CHATGPT_WORK_PROJECT_MASTER_INSTRUCTION_v4.9.md")
+TARGET = Path("templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md")
 REGISTRY = Path("skills/SKILL_REGISTRY.json")
 GENERATED = Path("docs/generated/BASE_ACTIVE_SKILLS.md")
 
