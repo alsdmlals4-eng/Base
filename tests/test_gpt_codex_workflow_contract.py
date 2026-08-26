@@ -80,6 +80,10 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             "CHANGE_PROPOSAL",
             "GPT_VISUAL_REQUEST",
             "READY_FOR_GPT_REVIEW",
+            "fresh-read-project-bootstrap.md",
+            "FRESH_READ_PROJECT_BOOTSTRAP",
+            "과거 대화",
+            "evidence ceiling",
         ):
             self.assertIn(term, text)
 

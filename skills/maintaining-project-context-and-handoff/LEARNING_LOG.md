@@ -1,5 +1,37 @@
 # Maintaining Project Context and Handoff Learning Log
 
+## 2026-08-26 — Fresh-read bootstrap must be discoverable from the owning Skill
+
+### Context
+
+PR #719 added a narrow fresh-read companion reference so a new chat can reconstruct project identity, current goal, quality/stage, protected scope, next safe action, evidence ceiling and instruction surface from the project's current GitHub + Notion without requiring the prior conversation.
+
+### Finding
+
+The first GREEN attempt created `references/fresh-read-project-bootstrap.md` and routed the project Handoff template to it, but did not link that packaged reference from the owning `SKILL.md`. Base package-integrity correctly failed closed even though the reference itself was valid.
+
+### Decision
+
+- Keep Fresh-Read inside the existing `maintaining-project-context-and-handoff` owner rather than adding a new broad Skill.
+- Link every packaged reference from the owning `SKILL.md`; indirect use from a template is not sufficient package discoverability.
+- `resume` explicitly consumes `FRESH_READ_PROJECT_BOOTSTRAP` and does not make past conversation history a required input.
+- Fresh-read remains a reconstruction/router contract, not a second project canon.
+
+### Reuse boundary
+
+This lesson applies to packaged Skill references/scripts generally: creating a useful companion artifact is incomplete unless its owning Skill makes it directly discoverable. It does not authorize registry expansion or duplicate broad Skills.
+
+### Evidence
+
+- PR #719 first GREEN attempt: exact head `54bdc0702dd5bf3725c12396e65034f2d40080fa`
+- Failing regression: `tests.test_skill_package_integrity.SkillPackageIntegrityTests.test_every_packaged_reference_or_script_is_linked_from_its_skill`
+- Corrected owner: `skills/maintaining-project-context-and-handoff/SKILL.md`
+- Companion: `skills/maintaining-project-context-and-handoff/references/fresh-read-project-bootstrap.md`
+
+### Status
+
+`CURRENT_CORRECTION`
+
 ## 2026-08-25 — Correction: product responsibility, not code shape, determines Codex ownership
 
 ### Context

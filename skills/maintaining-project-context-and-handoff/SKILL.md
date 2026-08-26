@@ -23,8 +23,9 @@ Base/Notion/문서/기획/이미지 작업을 Codex에 넘기지 않는다. Code
 Canonical policy: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
 Godot work-instruction template: `templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md`
 Packaged Godot handoff reference: [gpt-codex-implementation-handoff.md](references/gpt-codex-implementation-handoff.md)
+Packaged fresh-read bootstrap reference: [fresh-read-project-bootstrap.md](references/fresh-read-project-bootstrap.md)
 
-위 reference의 이름은 호환성을 위해 유지하지만 current 의미는 **GPT 비코딩 작업 완료 → Codex 실제 Godot 제품 구현 → GPT 최종 검수**에 한정한다.
+위 reference의 이름은 호환성을 위해 유지하지만 current 의미는 **GPT 비코딩 작업 완료 → Codex 실제 Godot 제품 구현 → GPT 최종 검수**에 한정한다. 새 채팅/담당자의 재개는 `fresh-read-project-bootstrap.md`의 `FRESH_READ_PROJECT_BOOTSTRAP`을 사용해 현재 Project GitHub + Notion에서 다시 재구성한다.
 
 ## Skill Modes
 
@@ -32,7 +33,7 @@ Packaged Godot handoff reference: [gpt-codex-implementation-handoff.md](referenc
 - `session-handoff`: 새 채팅/담당자/브랜치 경계의 재개 스냅샷을 만든다.
 - `codex-godot-implementation-handoff`: GPT 기획·검수·비코딩 작업 후 실제 Godot 제품 구현만 Codex로 넘긴다.
 - `implementation-package-handoff`: 큰 Godot 구현을 패키지로 나눠 GPT 설계 → Codex 제품 구현 → GPT 검수 흐름으로 관리한다.
-- `resume`: GitHub·Notion·branch·commit·Godot runtime/session identity를 fresh-read하고 재개한다.
+- `resume`: `FRESH_READ_PROJECT_BOOTSTRAP`으로 Project GitHub·Notion·branch·commit·Godot runtime/session identity를 fresh-read하고, 과거 대화를 필수 입력으로 요구하지 않은 채 현재 품질·보호 범위·다음 안전 작업·evidence ceiling을 재구성한다.
 - `post-merge-reconcile`: merge 뒤 LIVE_CONTINUATION_STATE를 새 main과 재조정한다.
 
 ## Use when
