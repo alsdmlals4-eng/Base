@@ -24,21 +24,28 @@ class WorkCodexStarterLocalExecutionContractTests(unittest.TestCase):
         ):
             self.assertIn(token, text)
 
-    def test_git_fetch_pull_push_are_automatic_but_safe(self) -> None:
+    def test_git_fetch_pull_push_are_automatic_but_safe_and_remote_agnostic(self) -> None:
         text = self._starter()
         for token in (
             "AUTO_GIT_FETCH_AND_SAFE_PULL",
-            "git fetch --prune origin",
-            "git pull --ff-only",
+            "DISCOVER_GIT_REMOTE_UPSTREAM_DEFAULT_BRANCH",
+            "EXACT_REPOSITORY_BRANCH_UPSTREAM_IDENTITY_REQUIRED",
+            "git fetch --prune <intended-remote>",
+            "git pull --ff-only <intended-remote> <upstream-branch>",
             "DIRTY_OR_DIVERGED_STATE_RECONCILE_NO_FORCE",
             "AUTO_PUSH_CURRENT_TASK_BRANCH_AFTER_VERIFICATION",
+            "REMOTE_HEAD_READBACK_AFTER_PUSH",
             "OPEN_PR_READ_ONLY_BY_DEFAULT",
             "CURRENT_TASK_BRANCH_IDENTITY_REQUIRED",
             "NO_DIRECT_MAIN_PUSH",
+            "NO_FORCE_PUSH",
+            "GITHUB_CONNECTOR_REFRESH_EQUIVALENT_WHEN_NO_LOCAL_WORKTREE",
             "POST_MERGE_MAIN_READBACK_AND_SAFE_LOCAL_MAIN_REFRESH",
-            "git pull --ff-only origin main",
+            "git pull --ff-only <intended-remote> <default-branch>",
         ):
             self.assertIn(token, text)
+        self.assertNotIn("git fetch --prune origin", text)
+        self.assertNotIn("git pull --ff-only origin main", text)
 
     def test_project_scoped_local_computer_and_godot_control_are_delegated(self) -> None:
         text = self._starter()
