@@ -192,3 +192,29 @@ Work planning/review/visual/audio/data preparation
 활성화 증거가 없으면 기본 v4.9 execution, 기존 image conversation approval, current Project user-decision Gate를 그대로 유지한다. 사용자가 더 좁은 제한을 주면 최신 제한이 profile보다 우선한다.
 
 이 profile은 current owner를 복제하지 않고 Work v4.9, continuous-work, GPT–Codex workflow, Visual, Vertical Slice, HiGodot/GUT/Hera 계약을 조합한다. Project canon·Base latest owner·상위 host/system/tool confirmation이 충돌 시 우선하며, direct main·force·admin/ruleset bypass 또는 Human/Player evidence 과장을 허용하지 않는다.
+
+## 10. Explicit Automatic Git·Godot·Local-Control Addendum
+
+현재 사용자가 작업 중 Git fetch·안전한 pull, 정확한 프로젝트의 Godot 자동 실행, 현재 Slice에 필요한 프로젝트 한정 컴퓨터 조작을 명시적으로 위임한 경우 다음 addendum을 minimum-transition profile과 함께 사용한다.
+
+```text
+templates/project-operations/WORK_CODEX_AUTOMATIC_GIT_GODOT_LOCAL_EXECUTION_ADDENDUM.md
+```
+
+```text
+AUTOMATIC_GIT_FETCH_AUTHORIZED
+AUTOMATIC_SAFE_PULL_AUTHORIZED
+AUTOMATIC_GODOT_LAUNCH_AUTHORIZED
+PROJECT_SCOPED_COMPUTER_CONTROL_AUTHORIZED
+```
+
+이 위임은 무조건적인 desktop 권한이나 blind Git integration이 아니다.
+
+- fetch는 exact repository·remote 확인 뒤 자동 수행한다.
+- pull은 clean tracking branch·correct upstream·fast-forward-only 조건에서만 자동 수행한다.
+- dirty·ahead·diverged·detached·wrong-worktree 상태는 stash/reset/clean/rebase/force로 덮지 않는다.
+- local worktree가 없으면 GitHub connector로 remote facts를 fresh-read하고 local pull을 수행했다고 주장하지 않는다.
+- Godot과 컴퓨터 조작은 exact current Project·current Slice·callable tool에 한정한다.
+- semantic CLI/API/MCP/element control을 좌표 클릭보다 우선한다.
+- unrelated app/file/process/session, credential, account, OS/security setting, purchase, public release는 보호한다.
+- 상위 host/tool confirmation과 current Git/Godot owner가 항상 우선한다.
