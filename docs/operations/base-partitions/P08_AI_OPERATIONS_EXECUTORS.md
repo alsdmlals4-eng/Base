@@ -76,6 +76,12 @@ Codex는 Base repository의 일반 maintenance executor가 아니다. Base Pytho
 
 Work는 GPT-owned 작업을 더 오래 수행하는 **실행 작업면**이며 새 정본 저장소가 아니다. Work의 대화/중간 산출물만으로 canon을 만들지 않고, 승인된 결과는 기존 Notion/GitHub owner에 기록하고 readback한다.
 
+Project Work 공용 실행 Template:
+
+`templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md`
+
+기본 진입은 **`프로젝트명 + 공용 작업지시문`**이며 별도 Goal은 선택사항이다. Goal이 없으면 Template이 current Project GitHub + Notion + Base를 fresh-read해 unfinished frontier와 다음 안전한 Playable Slice를 도출한다. Skill 목록은 이 Template에 복제하지 않고 current `skills/SKILL_REGISTRY.json`에서 inventory/trigger-match한다.
+
 ### `CODEX_GAME_PRODUCT_IMPLEMENTATION_OWNER`
 
 실제 software/game product implementation boundary에 들어가면 Codex가 담당한다. Codex는 해당 프로젝트의 GitHub + Notion을 fresh-read하고 `ENGINE_ADAPTER_SELECTED_FROM_PROJECT_CANON`에 따라 현재 엔진 adapter를 사용한다.
