@@ -6,8 +6,10 @@ REQUIRED_LITERALS = [
     "WORK_EXECUTION_SURFACE_NOT_CANON",
     "DEFAULT_MEMORY_DISCOVERY_HINT_ONLY",
     "FRESH_READ_PROJECT_BOOTSTRAP",
+    "DERIVE_CURRENT_GOAL_FROM_CANON_WHEN_OMITTED",
     "BASE_OWNER_PROGRESSIVE_LOAD",
     "SKILL_COVERAGE_AUDIT",
+    "CURRENT_REGISTRY_IS_ROUTING_AUTHORITY",
     "REUSE_FIRST_PREFLIGHT_REQUIRED",
     "CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY",
     "MINIMUM_VIABLE_ALTERNATIVES: 3",
@@ -29,31 +31,7 @@ REQUIRED_LITERALS = [
     "INCIDENT_SOLUTION_LESSON_LOOP",
     "REQUIRED_WORK_REMAINING",
     "COMPLETION_CANDIDATE",
-    "PROJECT_NAME + SHARED_INSTRUCTION + OPTIONAL_GOAL",
-]
-
-SKILL_ROUTING_LITERALS = [
-    "managing-project-intake-and-work-contract",
-    "managing-game-project-operating-system",
-    "managing-design-documents",
-    "maintaining-project-context-and-handoff",
-    "analyzing-and-refining-game-concepts",
-    "designing-vertical-slices",
-    "reviewing-and-validating-project-changes",
-    "auditing-canonical-reference-freshness",
-    "designing-art-prompts-and-technique-cards",
-    "auditing-and-refining-ui-art",
-    "managing-base-change-proposals",
-    "identifying-project-core",
-    "establishing-project-core",
-    "running-adversarial-review-and-refinement",
-    "maintaining-long-running-task-continuity",
-    "governing-game-user-research-coverage",
-    "building-project-visual-dashboards",
-    "diagnosing-game-engine-runtime-failures",
-    "evaluating-godot-assets-and-plugins-before-creation",
-    "optimizing-ai-model-and-prompt-costs",
-    "developing-and-revising-serial-fiction",
+    "PROJECT_NAME + SHARED_INSTRUCTION",
 ]
 
 
@@ -68,12 +46,12 @@ def test_work_master_instruction_preserves_required_operating_contracts():
     assert not missing, f"missing required Work contract literals: {missing}"
 
 
-def test_work_master_instruction_routes_current_active_skill_families_without_forcing_all_skills():
+def test_work_master_instruction_uses_dynamic_skill_routing_without_forcing_all_skills():
     text = read_target()
     assert "DO_NOT_LOAD_ALL_SKILLS" in text
     assert "TRIGGER_MATCHED_PROGRESSIVE_ROUTING" in text
-    missing = [item for item in SKILL_ROUTING_LITERALS if item not in text]
-    assert not missing, f"missing current Skill routing coverage: {missing}"
+    assert "skills/SKILL_REGISTRY.json" in text
+    assert "docs/generated/BASE_ACTIVE_SKILLS.md" in text
 
 
 def test_memory_and_authority_order_prevent_cross_project_contamination():
@@ -100,3 +78,11 @@ def test_work_stays_noncanonical_and_codex_stays_product_implementation_owner():
     assert "Work 대화/중간 산출물은 정본이 아니다" in text
     assert "Work가 실제 게임 product code를 누적 구현하지 않는다" in text
     assert "Codex는 이미지를 생성하거나 생성형 편집하지 않는다" in text
+
+
+def test_goal_is_optional_and_frontier_is_derived_from_current_canon():
+    text = read_target()
+    assert "별도 Goal은 필수가 아니다" in text
+    assert "unfinished frontier" in text
+    assert "next highest-value playable slice" in text
+    assert "사용자에게 Goal을 다시 묻지 않는다" in text
