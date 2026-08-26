@@ -191,11 +191,22 @@ VALIDATED | BLOCKED_UNVERIFIED
 MIGRATION_COMPLETE | MIGRATION_NOT_APPLICABLE | MIGRATION_PENDING
 ```
 
-## 5. GPT-first / Codex optional
+## 5. GPT planning / Codex Godot product implementation boundary
 
-기획·근거조사·대안 비교·UI/UX·아트 방향·시각 후보 검수·최종 판정은 `GPT_FIRST_PLANNING_AND_REVIEW`와 `GPT_PRIMARY_REVIEWER`가 기본이다.
+기획·근거조사·대안 비교·UI/UX·아트 방향·시각 후보 검수·최종 판정은 `GPT_FIRST_PLANNING_AND_REVIEW`와 `GPT_PRIMARY_REVIEWER`가 기본이다. 프로젝트 작업은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`의 `PLAY_MEANINGFUL_WORK_SLICE`를 기본 작업 단위로 삼고, 실제 구현 전에 승인된 기획 의미와 실행 계약을 `PLANNING_CANON_BEFORE_HANDOFF`로 정본화한다.
 
-`OPTIONAL_CODEX_EXECUTOR`는 실제 repository/engine mutation·다수 파일 구현·runtime reproduction이 필요할 때만 사용한다. Codex를 모든 계획의 의무 단계로 만들지 않는다. 사용자가 local implementation을 실행해야 할 때는 `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`의 location-first 한 블록을 사용한다.
+실제 Godot 제품 구현이 남지 않은 계획은 GPT가 비코딩 결과와 정본 readback을 닫고 종료한다. 실제 Godot 제품 구현이 남아 있으면 GPT가 `PRE_HANDOFF_GPT_STOP`을 통과한 뒤 구현 방법을 더 세분화하지 않고 다음 current boundary를 따른다.
+
+```text
+PLAY_MEANINGFUL_WORK_SLICE
+→ PLANNING_CANON_BEFORE_HANDOFF
+→ PRE_HANDOFF_GPT_STOP
+→ ACTUAL GODOT PRODUCT IMPLEMENTATION → Codex
+→ READY_FOR_GPT_REVIEW
+→ GPT final review
+```
+
+Codex는 모든 계획에 붙는 선택적 보조 실행자가 아니라 **실제 게임 프로젝트의 Godot 제품 구현 owner**다. 반대로 Base·Notion·기획·문서·Visual 같은 비제품 구현은 Codex로 넘기지 않는다. 사용자가 local implementation을 실행해야 할 때는 `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`의 location-first 한 블록을 사용한다.
 
 ```text
 GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY
@@ -203,7 +214,7 @@ REASONING_EFFORT_IS_NOT_WORK_EVIDENCE
 REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF
 ```
 
-GPT-primary는 답변 문장만 만드는 경로가 아니다. 추론 강도는 실제 조사·readback·Tool 실행·검증 증거가 아니며, 현재 세션이 필요한 browser/repository/connector/runtime Tool을 보유하면 직접 사용한다. 별도 Codex 인계가 선택적이라는 사실은 필수 실행 evidence도 선택적이라는 뜻이 아니다.
+GPT-primary는 답변 문장만 만드는 경로가 아니다. 추론 강도는 실제 조사·readback·Tool 실행·검증 증거가 아니며, 현재 세션이 필요한 browser/repository/connector/runtime Tool을 보유하면 직접 사용한다. Codex의 제품 구현 책임 경계와 별개로 필수 실행 evidence는 실제로 확보해야 한다.
 
 ## 6. 시각 checkpoint와 Demo-First
 
