@@ -1,5 +1,38 @@
 # Maintaining Project Context and Handoff Learning Log
 
+## 2026-08-26 — Slice handoff semantics must reach the active consumer
+
+### Context
+
+PR #721 added the canonical `PLAY_MEANINGFUL_WORK_SLICE → PLANNING_CANON_BEFORE_HANDOFF → PRE_HANDOFF_GPT_STOP` boundary to the GPT/Codex workflow, the packaged handoff reference, and the project work-instruction template.
+
+### Finding
+
+A packaged reference can be correct while the ACTIVE Handoff Skill still exposes older input fields and process wording. That leaves a consumer-propagation gap: the canonical boundary exists, but the active router can still construct a handoff without `work_slice_id`, explicit non-scope, required data/UI/asset dependencies, or the pre-handoff stop gate.
+
+### Decision
+
+- Keep `docs/GPT_CODEX_WORKFLOW_POLICY.md` as the canonical role/Slice owner.
+- Keep `references/gpt-codex-implementation-handoff.md` as the detailed packaged handoff method.
+- Make the ACTIVE Skill consume those owners through a thin pointer rather than duplicating their full policy text.
+- Preserve `CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER`: the correction does not broaden Codex into a general repository executor.
+- Planning surfaces that still describe `OPTIONAL_CODEX_EXECUTOR` as current protocol must route to the current Godot-product boundary instead.
+
+### Reuse boundary
+
+When a canonical workflow adds a handoff field or stop gate, validate the active router/consumer as well as the detailed reference and template. Do not infer consumer propagation from file presence alone.
+
+### Evidence
+
+- RED: PR #722 test-only head `d8e4fa8fea55a3b0b28bd8c4e12484ec6e4d8d0c`
+- Failing tests: `test_planning_sequence_consumes_current_gpt_codex_slice_boundary`, `test_active_handoff_skill_consumes_bounded_slice_contract`
+- Canonical owner: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
+- Active consumers: `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md`, `skills/maintaining-project-context-and-handoff/SKILL.md`
+
+### Status
+
+`CURRENT_CORRECTION`
+
 ## 2026-08-26 — Fresh-read bootstrap must be discoverable from the owning Skill
 
 ### Context
