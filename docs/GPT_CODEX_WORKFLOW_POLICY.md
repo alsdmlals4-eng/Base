@@ -24,7 +24,9 @@ PLAY_MEANINGFUL_WORK_SLICE
 TARGETED_CONTEXT_RECOVERY_NOT_FULL_PROJECT_REAUDIT
 GPT_MINIMUM_IMPLEMENTATION_READY_PLANNING
 EXISTING_SOLUTION_FIRST
+PLANNING_CANON_BEFORE_HANDOFF
 PRE_HANDOFF_GPT_STOP
+DIRECT_RUN_OR_VERIFIED_EVIDENCE
 IMPACT_BOUNDED_REVALIDATION
 CANON_SYNC_AFTER_VALIDATION
 ```
@@ -72,7 +74,7 @@ GPT
 → 적대적 검토·IRG
 → Player Outcome / Scope / Non-Scope / Acceptance / Evidence 확정
 → 필요한 이미지·사운드·Visual 요구를 실제 소비처 기준으로 확정
-→ 비코딩 정본·문서·Notion 준비
+→ PLANNING_CANON_BEFORE_HANDOFF
 → PRE_HANDOFF_GPT_STOP
 
 실제 Godot 제품 구현이 없음
@@ -87,7 +89,7 @@ GPT
 → 실제 Godot 구조에 맞는 구현 방향·기술 방법 결정
 → Godot 제품 구현·코딩·테스트·runtime/play evidence
 → READY_FOR_GPT_REVIEW
-→ GPT가 구현 일치·runtime·실제 play/UX/Visual/Audio를 검수
+→ GPT가 구현 일치·runtime·play/UX/Visual/Audio evidence를 검수
 → finding을 FIX | TUNE | REDESIGN으로 분류
 → 필요한 수정 후 IMPACT_BOUNDED_REVALIDATION
 → 승인 후 병합
@@ -172,7 +174,23 @@ Slice의 최소 기획이 만들어지면 적대적 검토·IRG를 수행한다.
 - Acceptance가 automated test와 실제 runtime/play 증거를 구분하는가.
 - 이번 Slice와 무관한 미래 범위를 끌어오고 있지 않은가.
 
-### 1.6 `PRE_HANDOFF_GPT_STOP`
+### 1.6 `PLANNING_CANON_BEFORE_HANDOFF`
+
+승인된 **기획 의미와 구현 계약**은 Codex가 재수화할 수 있도록 구현 인계 전에 정본에 기록한다. 이것은 구현 완료를 미리 주장하는 것이 아니다.
+
+인계 전 동기화 대상:
+
+- 승인된 player outcome / meaningful choice / 규칙 의미.
+- approved scope / explicit non-scope / protected scope.
+- UI/UX Flow와 data 의미, Acceptance Criteria.
+- 실제 소비처가 확정된 Visual/Audio requirement와 승인 상태.
+- 필요한 Decision ID와 관련 Notion/GitHub owner.
+
+상태 표기는 `PLANNED` / `APPROVED_FOR_IMPLEMENTATION` / `IMPLEMENTATION_PENDING`처럼 **기획 상태**로 둔다. runtime/play PASS, 구현 완료, UX 검증 완료 상태는 아직 올리지 않는다.
+
+`docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md`의 `CANONICAL_UPDATE`와 충돌하지 않는다. 그 단계는 승인된 기획 정본을 책임지고, 여기의 `CANON_SYNC_AFTER_VALIDATION`은 실제 구현·검증 상태 승격을 책임진다.
+
+### 1.7 `PRE_HANDOFF_GPT_STOP`
 
 다음이 충족되면 GPT의 **구현 전 기획 작업은 종료**한다.
 
@@ -180,6 +198,7 @@ Slice의 최소 기획이 만들어지면 적대적 검토·IRG를 수행한다.
 - approved scope와 explicit non-scope가 분리됨.
 - 관련 정본·재사용·benchmark·적대적 검토가 현재 Slice 수준에서 닫힘.
 - 필요한 data/UI/UX/asset/audio requirement와 Acceptance가 있음.
+- `PLANNING_CANON_BEFORE_HANDOFF` readback이 완료됨.
 - 사용자 결정이 필요한 core/UX/경제/서사/Art Direction 충돌이 남지 않음.
 - 구현 방법을 Codex가 current repository truth에서 선택할 수 있을 만큼 실행 계약이 명확함.
 
@@ -228,7 +247,7 @@ codex_work_instruction:
   change_proposal_boundary: []
 ```
 
-이 지시문은 구현 방법을 강제하는 스크립트가 아니다. **목표·승인 범위·보호 범위·Acceptance Criteria·정본 위치를 전달하는 실행 계약**이다. `PRE_HANDOFF_GPT_STOP` 이후 Node/Scene/함수 수준의 기술 설계를 GPT가 계속 확장하지 않는다.
+이 지시문은 구현 방법을 강제하는 스크립트가 아니다. **목표·승인 범위·보호 범위·Acceptance Criteria·정본 위치를 전달하는 실행 계약**이다. `PLANNING_CANON_BEFORE_HANDOFF` 후 `PRE_HANDOFF_GPT_STOP`을 통과하면 Node/Scene/함수 수준의 기술 설계를 GPT가 계속 확장하지 않는다.
 
 ## 3. Codex 책임 — 실제 Godot 제품 구현만
 
@@ -448,6 +467,7 @@ GPT는 코드 존재나 자동 테스트 PASS만 보고 승인하지 않는다.
 IMPLEMENTATION_MATCH_REVIEW
 → RUNTIME_REVIEW
 → ACTUAL_PLAY_UX_VISUAL_AUDIO_REVIEW
+→ DIRECT_RUN_OR_VERIFIED_EVIDENCE
 → FIX | TUNE | REDESIGN
 → CORRECTION
 → IMPACT_BOUNDED_REVALIDATION
@@ -456,14 +476,16 @@ IMPLEMENTATION_MATCH_REVIEW
 
 1. **IMPLEMENTATION_MATCH_REVIEW**: 승인 규칙·데이터 의미·UI/UX Flow·Visual/Audio requirement와 실제 구현이 일치하는지 본다.
 2. **RUNTIME_REVIEW**: 실제 실행에서 입력·상태변화·실패·저장·경계 동작이 의도대로 작동하는지 본다. test PASS와 runtime PASS를 분리한다.
-3. **ACTUAL_PLAY_UX_VISUAL_AUDIO_REVIEW**: 실제 플레이에서 선택이 전달되는지, 정보가 읽히는지, 피드백·타이밍·가독성·감정·이미지·사운드가 의도한 역할을 수행하는지 본다.
+3. **ACTUAL_PLAY_UX_VISUAL_AUDIO_REVIEW**: 플레이 evidence에서 선택이 전달되는지, 정보가 읽히는지, 피드백·타이밍·가독성·감정·이미지·사운드가 의도한 역할을 수행하는지 본다.
+
+`DIRECT_RUN_OR_VERIFIED_EVIDENCE`: GPT가 현재 도구로 직접 runtime/play를 실행·관찰할 수 있으면 직접 증거를 확보한다. 직접 실행할 수 없으면 Codex가 반환한 정확한 build/commit의 screenshot/video/log/test/play evidence를 검증하되 **보지 못한 플레이를 직접 플레이한 것으로 주장하지 않는다.** 인간의 재미·감정·첫인상처럼 별도 사람 playtest가 필요한 항목은 그 증거가 없으면 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 남기고 evidence ceiling을 넘지 않는다.
 
 ### 12.2 `FIX | TUNE | REDESIGN`
 
 모든 finding을 전체 재기획으로 돌리지 않는다.
 
 - `FIX`: 기획·승인 의미는 맞지만 구현이 잘못됐거나 결함·회귀가 있다. Codex 수정으로 반환한다.
-- `TUNE`: 구조와 의미는 맞지만 수치·속도·타이밍·배치·크기·가독성·피드백 강도 조정이 필요하다. 작은 조정 후 재검증한다.
+- `TUNE`: 구조와 의미는 맞지만 **기존 승인 tuning envelope 안에서** 수치·속도·타이밍·배치·크기·가독성·피드백 강도 조정이 필요하다. 작은 조정 후 재검증한다. tuning envelope를 벗어나 경제·성장·난이도 의미나 플레이어 선택 구조를 바꾸면 단순 `TUNE`이 아니라 `REDESIGN` 또는 `USER_DECISION_REQUIRED`다.
 - `REDESIGN`: 실제 플레이 증거가 현재 기획 가설·선택 구조·보상 구조·UX 의미 자체를 부정한다. **현재 Slice만** `GPT_MINIMUM_IMPLEMENTATION_READY_PLANNING`으로 되돌린다. 프로젝트 코어·주요 UX·경제 의미·서사·Art Direction을 바꾸면 기존 `USER_DECISION_REQUIRED` 경계를 적용한다.
 
 ### 12.3 `IMPACT_BOUNDED_REVALIDATION`
@@ -479,14 +501,16 @@ IMPLEMENTATION_MATCH_REVIEW
 
 ### 12.4 `CANON_SYNC_AFTER_VALIDATION`
 
-검증을 통과한 결과만 current canon으로 승격한다.
+이 Gate는 **구현 상태와 검증 주장**을 정본에 승격하는 단계다. 승인된 기획 자체는 이미 `PLANNING_CANON_BEFORE_HANDOFF`에서 기록되어 있어야 한다.
 
-- Notion: 사람이 이해·비교·수정해야 하는 시스템/Flow/UI/Visual/표/현재 플레이 상태.
+검증 뒤 갱신:
+
+- Notion: 사람이 이해·비교·수정해야 하는 시스템/Flow/UI/Visual/표의 **현재 구현·검증 상태**.
 - GitHub: Markdown/JSON/game data와 실제 구현·test/runtime truth.
 - AI Workspace: 검증 기록, evidence ceiling, 실패 가설, 미해결 risk, 폐기한 대안.
 - Base: 프로젝트에서 실제 검증된 뒤 여러 프로젝트에 재사용 가치가 있는 workflow/교훈만 일반화해 승격한다.
 
-`IMPLEMENTED`만 있고 runtime/play 검증이 없으면 플레이어 경험을 canon PASS로 올리지 않는다.
+`IMPLEMENTED`만 있고 runtime/play 검증이 없으면 플레이어 경험을 canon PASS로 올리지 않는다. 반대로 승인된 기획 Decision을 구현 검증 전이라는 이유로 숨기거나 미기록 상태로 두지도 않는다.
 
 ## 13. 병합·동시작업 안전
 
@@ -500,16 +524,17 @@ IMPLEMENTATION_MATCH_REVIEW
 
 ## 14. 완료 조건
 
-- 현재 `PLAY_MEANINGFUL_WORK_SLICE`의 기획·검수·비코딩 정본 작업이 필요한 범위에서 닫혔다.
+- 현재 `PLAY_MEANINGFUL_WORK_SLICE`의 기획·검수·비코딩 작업이 필요한 범위에서 닫혔다.
+- 승인된 기획 Decision과 구현 계약이 `PLANNING_CANON_BEFORE_HANDOFF`로 정본화·readback됐다.
 - `PRE_HANDOFF_GPT_STOP`을 넘기기 전에 approved scope / explicit non-scope / Acceptance / evidence plan이 정리됐다.
 - 실제 Godot 제품 구현이 필요한 범위만 Codex에 전달됐다.
 - Codex가 해당 프로젝트 GitHub + Notion을 fresh-read했다.
 - Codex가 승인 범위 안에서 기술 구현 방향을 결정했다.
 - Codex는 새 이미지를 만들지 않았다.
 - Godot 구현·테스트·runtime/play evidence가 반환됐다.
-- GPT가 최종 구현을 검수하고 finding을 `FIX | TUNE | REDESIGN`으로 처리했다.
+- GPT가 `DIRECT_RUN_OR_VERIFIED_EVIDENCE` 범위 안에서 최종 구현을 검수하고 finding을 `FIX | TUNE | REDESIGN`으로 처리했다.
 - 필요한 수정 뒤 `IMPACT_BOUNDED_REVALIDATION`이 끝났다.
-- 검증된 결과만 `CANON_SYNC_AFTER_VALIDATION`으로 GitHub/Notion에 반영됐다.
+- 검증된 구현 상태만 `CANON_SYNC_AFTER_VALIDATION`으로 GitHub/Notion에 반영됐다.
 - Base/Notion/문서/운영 교정은 GPT가 직접 닫았다.
 
 ## 15. 폐기된 잘못된 해석
@@ -526,6 +551,8 @@ IMPLEMENTATION_MATCH_REVIEW
 - 매 작은 Slice마다 프로젝트 전체 정본·벤치마킹·적대검토를 이유 없이 처음부터 반복
 - 구현 준비가 끝났는데도 GPT가 Node/Scene/함수 수준까지 계속 설계해 Codex 기술 자율성을 침범
 - 작은 FIX/TUNE를 전체 REDESIGN으로 확대
+- 승인된 기획 Decision을 구현 검증 뒤까지 정본에 기록하지 않음
+- 자동 테스트나 Codex 보고만으로 GPT가 직접 플레이했거나 플레이어 감정이 검증됐다고 과장
 
 현재 정본은 **`GPT = 비코딩·기획·검수·Base·Notion·Visual`, `Codex = 실제 게임 프로젝트의 Godot 제품 구현·코딩`**이다.
 
@@ -549,7 +576,9 @@ PLAY_MEANINGFUL_WORK_SLICE
 TARGETED_CONTEXT_RECOVERY_NOT_FULL_PROJECT_REAUDIT
 GPT_MINIMUM_IMPLEMENTATION_READY_PLANNING
 EXISTING_SOLUTION_FIRST
+PLANNING_CANON_BEFORE_HANDOFF
 PRE_HANDOFF_GPT_STOP
+DIRECT_RUN_OR_VERIFIED_EVIDENCE
 IMPACT_BOUNDED_REVALIDATION
 CANON_SYNC_AFTER_VALIDATION
 ```
