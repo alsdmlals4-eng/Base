@@ -6,12 +6,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TARGET = ROOT / "templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md"
+APPENDIX = ROOT / "templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9_COMPATIBILITY_APPENDIX.md"
 
 
 class ChatGPTWorkProjectInstructionContractTests(unittest.TestCase):
     def _text(self) -> str:
         self.assertTrue(TARGET.exists(), "Work-native project instruction must exist")
         return TARGET.read_text(encoding="utf-8")
+
+    def _appendix(self) -> str:
+        self.assertTrue(APPENDIX.exists(), "Work-native compatibility appendix must exist")
+        return APPENDIX.read_text(encoding="utf-8")
 
     def test_minimal_entry_and_memory_authority(self) -> None:
         text = self._text()
@@ -126,9 +131,29 @@ class ChatGPTWorkProjectInstructionContractTests(unittest.TestCase):
         self.assertIn("Skill을 전부 항상 실행하지 않는다", text)
         self.assertIn("고정 Skill 목록", text)
 
-    def test_p08_discovers_the_work_instruction(self) -> None:
+    def test_compatibility_appendix_restores_delegated_r54_boundaries(self) -> None:
+        text = self._appendix()
+        for term in (
+            "PROJECT_WORK_ONLY_WHEN_CURRENT_USER_REQUEST_AUTHORIZES_EXECUTION",
+            "REQUIRED_SOURCE_UNREADABLE",
+            "brainstorming/design exploration",
+            "writing-plans",
+            "systematic debugging",
+            "verification-before-completion",
+            "Toolchain Freshness",
+            "STABLE_ENGINE_BASELINE",
+            "Fresh Shell",
+            "HiGodot/GUT/Hera",
+            "COMPATIBILITY_ONLY migration source",
+            "local Codex launcher",
+            "WORK_PROMPT_EFFICIENCY_WITHOUT_CAPABILITY_LOSS",
+        ):
+            self.assertIn(term, text)
+
+    def test_p08_discovers_the_complete_work_bundle(self) -> None:
         p08 = (ROOT / "docs/operations/base-partitions/P08_AI_OPERATIONS_EXECUTORS.md").read_text(encoding="utf-8")
         self.assertIn("CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md", p08)
+        self.assertIn("CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9_COMPATIBILITY_APPENDIX.md", p08)
 
 
 if __name__ == "__main__":
