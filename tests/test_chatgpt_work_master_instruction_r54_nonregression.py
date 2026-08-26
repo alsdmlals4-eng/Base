@@ -1,6 +1,6 @@
 from pathlib import Path
 
-TARGET = Path("templates/project-operations/CHATGPT_WORK_PROJECT_MASTER_INSTRUCTION_v4.9.md")
+TARGET = Path("templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md")
 
 REQUIRED = [
     "BOUNDED_DECISION_EARLY_CANON_SYNC",
