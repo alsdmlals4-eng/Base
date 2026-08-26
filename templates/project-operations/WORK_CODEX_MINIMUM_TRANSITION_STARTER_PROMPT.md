@@ -78,25 +78,51 @@ NON_SLICE_NOTION_DEBT_DOES_NOT_BLOCK_CURRENT_SLICE
 
 ```text
 AUTO_GIT_FETCH_AND_SAFE_PULL
+DISCOVER_GIT_REMOTE_UPSTREAM_DEFAULT_BRANCH
+EXACT_REPOSITORY_BRANCH_UPSTREAM_IDENTITY_REQUIRED
 DIRTY_OR_DIVERGED_STATE_RECONCILE_NO_FORCE
 AUTO_PUSH_CURRENT_TASK_BRANCH_AFTER_VERIFICATION
+REMOTE_HEAD_READBACK_AFTER_PUSH
 OPEN_PR_READ_ONLY_BY_DEFAULT
 CURRENT_TASK_BRANCH_IDENTITY_REQUIRED
 NO_DIRECT_MAIN_PUSH
+NO_FORCE_PUSH
+GITHUB_CONNECTOR_REFRESH_EQUIVALENT_WHEN_NO_LOCAL_WORKTREE
 POST_MERGE_MAIN_READBACK_AND_SAFE_LOCAL_MAIN_REFRESH
 ```
 
-local Git이 callable하면 작업 진입, first write 전, Codex 인계 전, PR/merge 전, post-merge에 자동 동기화해.
+local Git이 callable하면 작업 진입, resume, first write 전, Work→Codex 인계 전, Codex mutation 전, PR 생성·merge 전, post-merge에 자동 동기화해. remote 이름을 `origin`, 기본 branch를 `main`이라고 추측하지 말고 실제 repository metadata와 branch tracking 상태에서 `<intended-remote>`, `<upstream-branch>`, `<default-branch>`를 먼저 발견·검증해.
 
 ```text
 git status --short --branch
 git remote -v
-git fetch --prune origin
+git branch --show-current
+git rev-parse --abbrev-ref --symbolic-full-name @{upstream}
+git fetch --prune <intended-remote>
+git rev-parse HEAD
+git rev-parse <intended-remote>/<upstream-branch>
 ```
 
-clean·tracking·non-diverged 상태에서 fast-forward만 가능할 때만 현재 branch에 `git pull --ff-only`를 실행해. dirty·diverged·다른 worktree 소유면 blind pull/rebase/reset/clean/force를 금지하고 exact SHA·diff·open PR·semantic overlap을 비교해 별도 branch에서 reconcile해.
+fetch는 exact repository와 intended remote를 확인한 뒤 자동 수행해. clean·tracking·non-diverged 상태이며 현재 branch가 해당 upstream으로 fast-forward만 가능할 때만 다음과 동등한 pull을 자동 수행해.
 
-검증된 current-task commit은 확인된 feature branch에 자동 push하고 remote HEAD를 readback해. `main` 직접 push는 금지해. merge 뒤 remote new-main을 readback하고 local `main`이 clean·fast-forward 가능할 때만 `git pull --ff-only origin main`으로 갱신해. local auth/CLI가 없으면 동등 capability의 GitHub connector를 사용해. 다른 open/draft/ready PR은 사용자가 PR 번호와 허용 동작을 명시하지 않는 한 read-only로 유지해.
+```text
+git pull --ff-only <intended-remote> <upstream-branch>
+```
+
+dirty·ahead·diverged·detached HEAD·wrong worktree·wrong upstream·다른 open PR 소유 branch이면 blind pull/stash/rebase/reset/clean/force를 금지해. exact SHA·diff·open PR·semantic overlap을 비교하고 현재 변경을 보존한 채 latest completed default branch에서 별도 branch/worktree로 reconcile하거나 해당 local task만 defer해.
+
+검증된 current-task commit은 exact current-task feature branch에 자동 push하고, push 뒤 remote branch HEAD가 expected local/connector HEAD와 같은지 반드시 readback해. `NO_FORCE_PUSH`와 `NO_DIRECT_MAIN_PUSH`를 유지해. 다른 open/draft/ready PR은 사용자가 PR 번호와 허용 동작을 명시하지 않는 한 read-only로 유지해.
+
+local worktree·CLI·auth가 없으면 `GITHUB_CONNECTOR_REFRESH_EQUIVALENT_WHEN_NO_LOCAL_WORKTREE`를 적용해 authenticated GitHub connector로 remote main/default branch·current-task branch·PR·check를 fresh-read하고 지원되는 push/PR/merge를 수행해. 이 경우 local fetch/pull·dirty-state를 실행했다고 주장하지 말고 `NOT_APPLICABLE_CONNECTOR_ONLY` 또는 `NOT_RUN`으로 기록해.
+
+merge 뒤 remote new-main/default branch SHA를 readback하고, local default branch가 정확히 식별됐으며 clean·tracking·fast-forward 가능한 경우에만 다음과 동등하게 갱신해.
+
+```text
+git switch <default-branch>
+git pull --ff-only <intended-remote> <default-branch>
+```
+
+모든 sync 경계에서 pre/post local·remote exact SHA, branch, upstream, fetch/pull/push 결과를 기록해.
 
 ## 4. Godot·컴퓨터·브라우저 자동 조작
 
