@@ -33,6 +33,9 @@ class WorkCodexStarterLocalExecutionContractTests(unittest.TestCase):
             "DIRTY_OR_DIVERGED_STATE_RECONCILE_NO_FORCE",
             "AUTO_PUSH_CURRENT_TASK_BRANCH_AFTER_VERIFICATION",
             "OPEN_PR_READ_ONLY_BY_DEFAULT",
+            "CURRENT_TASK_BRANCH_IDENTITY_REQUIRED",
+            "NO_DIRECT_MAIN_PUSH",
+            "POST_MERGE_MAIN_READBACK_AND_SAFE_LOCAL_MAIN_REFRESH",
         ):
             self.assertIn(token, text)
 
@@ -45,6 +48,8 @@ class WorkCodexStarterLocalExecutionContractTests(unittest.TestCase):
             "PROJECT_SCOPED_OS_AUTOMATION_ONLY",
             "PROJECT_PROCESS_ONLY_CLOSE",
             "TOOL_NOT_CALLABLE_DO_NOT_CLAIM",
+            "STABLE_ENGINE_BASELINE_NO_AUTO_UPDATE",
+            "NO_NEW_TOOL_INSTALL_OR_UPDATE_WITHOUT_CURRENT_OWNER_GATE",
         ):
             self.assertIn(token, text)
 
@@ -67,6 +72,7 @@ class WorkCodexStarterLocalExecutionContractTests(unittest.TestCase):
             "BUILD_SHA256_AND_DURABLE_LOCATOR_REQUIRED",
             "CLEAN_EXTRACT_AND_LAUNCH_SMOKE_REQUIRED",
             "NO_PUBLIC_RELEASE_WITHOUT_HIGH_RISK_APPROVAL",
+            "ARTIFACT_SECRET_AND_DEBUG_RESIDUE_SCAN_REQUIRED",
         ):
             self.assertIn(token, text)
 
@@ -78,6 +84,15 @@ class WorkCodexStarterLocalExecutionContractTests(unittest.TestCase):
             "INCIDENT_SOLUTION_LESSON_LOOP",
             "BASE_PROMOTION_DISPOSITION_REQUIRED",
             "destination readback",
+        ):
+            self.assertIn(token, text)
+
+    def test_uncallable_codex_executor_cannot_be_promoted_to_implementation(self) -> None:
+        text = self._starter()
+        for token in (
+            "CODEX_EXECUTOR_NOT_CALLABLE_DO_NOT_CLAIM_IMPLEMENTED",
+            "DEFER_PRODUCT_IMPLEMENTATION_CONTINUE_WORK_READY_TASKS",
+            "DURABLE_CODEX_HANDOFF_REQUIRED",
         ):
             self.assertIn(token, text)
 
