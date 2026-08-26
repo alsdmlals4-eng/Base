@@ -13,6 +13,11 @@ coverage_status: NOT_REVIEWED | NOT_APPLICABLE | COVERED_EXISTING | REQUIREMENT_
 state_family_status: NOT_REVIEWED | COMPLETE | PARTIAL | NOT_APPLICABLE
 platform_spec_status: NOT_APPLICABLE | CURRENT_OFFICIAL_VERIFIED | RECHECK_REQUIRED | BLOCKED_UNVERIFIED
 requirement_id:
+consumer_kind: GAME_RUNTIME | PLANNED_GAME_SURFACE | PLAYER_FACING_EXPLANATORY | PRODUCT_DISTRIBUTION
+consumer_surface:
+primary_use:
+consumer_validation:
+information_artifact_route: NOT_APPLICABLE | TEXT | TABLE | NOTION_DB | MERMAID | FLOW | JSON | OTHER_STRUCTURED
 image_phase: PLANNING_VISUALIZATION | INTERMEDIATE_VISUAL_CHECKPOINT | FINAL_VISUAL_CANDIDATE
 related_decisions: []
 canonical_sources: []
@@ -48,31 +53,52 @@ reference_similarity_status: PASS | REVISION_REQUIRED | BLOCKED_UNVERIFIED | NOT
 
 `coverage_item_id / coverage_status / state_family_status`는 `docs/knowledge/game-development/GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`의 누락 탐지 결과를 연결한다. 이 값들은 `requirement_id`, Asset status, Manifest, runtime evidence를 대체하지 않는다. `NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS`를 적용해 `GAP_BLOCKING / GAP_NONBLOCKING` 자체를 이미지 생성 승인으로 해석하지 않는다.
 
+`PRODUCTION_INFORMATION / INFORMATION_ARTIFACT_NOT_IMAGE_ASSET / TEXT_TABLE_FLOW_DB_FIRST`: 시스템 설명, 세계관, 관계도, 제작 체크리스트 등 제작자·AI가 알아야 할 기본 정보는 필요하면 해당 문서·표·DB·Mermaid·Flow owner에 생성·갱신한다. 이 계획의 Image backlog에 넣기 위해 설명용 이미지를 만들지 않는다. 비이미지 route를 확인한 경우 `information_artifact_route`에 기록하고 image row를 만들지 않는다.
+
+`ACTUAL_CONSUMER_REQUIRED`: Image backlog에 들어가는 모든 project image는 `consumer_kind / consumer_surface / primary_use / consumer_validation`이 있어야 한다. 유효 값은 실제 runtime, 구체적인 planned game surface, `PLAYER_FACING_EXPLANATORY`, 실제 store/marketing distribution surface다. `DOCUMENTATION_DECORATION / AI_EXPLANATION_ONLY / CHECKLIST_DECORATION / UNNAMED_FUTURE_USE`만 있으면 `DO_NOT_GENERATE`이며 backlog에 넣지 않는다.
+
 `approved_visual_reference_ids`가 있으면 `skills/designing-art-prompts-and-technique-cards/references/notion-project-visual-continuity-gate.md`에서 `Keep / Avoid / Do Not Drift`를 작업 계약에 반영한다. 현재 승인 기준을 읽을 수 없으면 `BLOCKED_UNVERIFIED`; 승인 기준 자체가 부족하면 `MISSING_CANON`; 최신 Decision과 충돌하면 `VISUAL_CANONICAL_CONFLICT`다.
 
 보존소가 `ENABLED`이면 `GENERATED_EXPLORATION / IN_REVIEW / APPROVED_CANDIDATE`는 기본적으로 local-only 후보로 유지한다. `PROJECT_ASSET_APPROVED` 뒤에만 `promotion_target`을 확정하고 `promote`하여 `promoted_path`를 만든다.
 
-`primary_use_status`는 이미지가 원래 목적을 달성했는지 기록한다. `harvest_status`와 `reuse_classification`은 그 뒤 재사용 가치를 별도 판정한다. `asset_vault_harvest_record_id`는 local-only Harvest metadata를 연결할 뿐 제품 자산 승인이나 tracked promotion을 뜻하지 않는다.
+`primary_use_status`는 이미지가 원래 actual consumer에서 목적을 달성했는지 기록한다. `harvest_status`와 `reuse_classification`은 그 뒤 재사용 가치를 별도 판정한다. `asset_vault_harvest_record_id`는 local-only Harvest metadata를 연결할 뿐 제품 자산 승인이나 tracked promotion을 뜻하지 않는다.
 
 ## 2. Image backlog
 
-| Image ID | Project | Screen/Flow ID | Record Type | 목적·사용처 | 관련 canon | 핵심 전달 | 비율·해상도 | 유지 요소 | 변경 축 | Approved Reference | 해석 상태 | Runtime 비교 | Reference | vault_source_key | promotion_target | promoted_path | 우선순위 | 구현 난이도 | 재사용성 | 상태 |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+`ACTUAL_CONSUMER_REQUIRED`를 통과한 결과만 이 표에 넣는다.
+
+| Image ID | Project | Consumer Kind | Consumer Surface | Screen/Flow ID | Record Type | Primary Use | 관련 canon | 핵심 전달 | 비율·해상도 | 유지 요소 | 변경 축 | Approved Reference | 해석 상태 | Runtime 비교 | Reference | vault_source_key | promotion_target | promoted_path | 우선순위 | 구현 난이도 | 재사용성 | 상태 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 
 - Project relation이 불명확한 row는 project canon으로 promotion하지 않는다.
-- `Record Type`: `ASSET / COMPONENT / SCREEN / REFERENCE / BENCHMARK` 중 해당 type.
+- `Consumer Kind`: `GAME_RUNTIME / PLANNED_GAME_SURFACE / PLAYER_FACING_EXPLANATORY / PRODUCT_DISTRIBUTION`만 사용한다.
+- `Record Type`: `ASSET / COMPONENT / SCREEN / REFERENCE / BENCHMARK` 중 해당 type. `REFERENCE / BENCHMARK`는 생성 제품 자산이 아니며 actual consumer 없이 production image로 승격하지 않는다.
 - 우선순위: `S / A / B`.
 - 상태: `PLANNED / GENERATED_EXPLORATION / IN_REVIEW / REVISION_REQUIRED / REJECTED / APPROVED_CANDIDATE / PROJECT_ASSET_APPROVED / APPLIED_AND_RUNTIME_VERIFIED`.
 - Approved Reference는 실제 current Project에서 확인한 `APPROVED_VISUAL_REFERENCE` ID만 기록한다.
 - `vault_source_key`는 local candidate를 가리키며 repository runtime canon이 아니다.
 - `promoted_path`는 `PROJECT_ASSET_APPROVED` 후 tracked asset이 실제 생성된 경우에만 채운다.
 
+### 2.1 Production-information route-out
+
+다음 정보가 필요하면 Image backlog가 아니라 해당 project documentation/structured owner를 갱신한다.
+
+| Information | Preferred editable form | Destination owner | Status / Readback |
+|---|---|---|---|
+| 시스템 설명·상태 전이 | text / table / Mermaid / Flow | System/GDD/Notion owner | |
+| 세계관·세력 | text / DB / table | World/Notion owner | |
+| 캐릭터·세력 관계/관계도 | relation DB / table / Mermaid | Character/Relation owner | |
+| 제작 체크리스트 | Markdown checklist / DB | Project/Base process owner | |
+| 밸런스·경제 | table / JSON / chart when useful | Balance/data owner | |
+
+이 표는 별도 정본이 아니라 route 확인 예시다. 실제 정보는 해당 owner에 기록한다.
+
 ## 2A. Visual asset coverage
 
 이 표는 `COVERAGE_CHECK_ONLY`이며 실제 Asset/Manifest/Notion/runtime 원장이 아니다.
 
-| Coverage Item | Category | Surface/Flow | Stage | Applicable | Coverage Status | State Family | State Family Status | Requirement / Existing Asset | Consumer | Validation | Gap Action |
-|---|---|---|---|---|---|---|---|---|---|---|---|
+| Coverage Item | Category | Surface/Flow | Stage | Applicable | Coverage Status | State Family | State Family Status | Requirement / Existing Asset | Consumer Kind | Consumer | Validation | Gap Action |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
 
 `Coverage Status`:
 
@@ -84,7 +110,7 @@ reference_similarity_status: PASS | REVISION_REQUIRED | BLOCKED_UNVERIFIED | NOT
 - `GAP_NONBLOCKING`: 필요한 누락이지만 current target 완료를 막지 않음.
 - `DEFERRED_BY_DECISION`: 명시적 Decision으로 현재 단계에서 보류.
 
-`GAP_BLOCKING`이 남아 있으면 해당 target을 visual-ready/final로 주장하지 않는다. 그러나 gap 발견만으로 이미지를 생성하거나 batch를 확대하지 않는다. `NOT_APPLICABLE`은 정상 판정이며 장르·camera·input·stage와 맞지 않는 asset을 억지로 만들지 않는다.
+`GAP_BLOCKING`이 남아 있으면 해당 target을 visual-ready/final로 주장하지 않는다. 그러나 gap 발견만으로 이미지를 생성하거나 batch를 확대하지 않는다. `NOT_APPLICABLE`은 정상 판정이며 장르·camera·input·stage와 맞지 않는 asset을 억지로 만들지 않는다. `PRODUCTION_INFORMATION` 누락은 이 coverage gap으로 해결하지 않고 적합한 text/table/Flow/DB owner로 보낸다.
 
 ### State family completeness
 
@@ -126,7 +152,9 @@ rights_or_provenance:
 ## 3. Prompt contract
 
 ```text
-coverage_item_id · coverage_status · state_family_status
+ACTUAL_CONSUMER_REQUIRED
+→ consumer_kind · consumer_surface · primary_use · consumer_validation
+→ coverage_item_id · coverage_status · state_family_status
 → requirement_id · project_relation · 목적과 사용자 경험
 → 프로젝트 canon / Decision 고정
 → approved_visual_reference_ids · Keep/Avoid/Do Not Drift
@@ -143,8 +171,10 @@ coverage_item_id · coverage_status · state_family_status
 
 ## 4. Review
 
-| Review ID | Image ID | Coverage/State Family | 기획 일치 | Approved Reference 일관성 | 핵심 경험 전달 | 실제 화면 가독성 | 구현 가능성 | 일관성 | 재사용·편집 | 권리·유사성 | 오류 | 판정 | 수정 요청 |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Review ID | Image ID | Consumer / Primary Use | Coverage/State Family | 기획 일치 | Approved Reference 일관성 | 핵심 경험 전달 | 실제 화면 가독성 | 구현 가능성 | 일관성 | 재사용·편집 | 권리·유사성 | 오류 | 판정 | 수정 요청 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+Consumer / Primary Use는 생성 결과가 실제 게임/제품 surface의 목적을 충족하는지 확인한다. 설명용 문서 장식이 실제 consumer처럼 둔갑했으면 `REVISION_REQUIRED` 또는 `REJECTED`다.
 
 Coverage/State Family은 관련 `coverage_item_id`의 어떤 상태를 실제로 충족하는지와 consumer에 필요한 상태 누락이 남는지를 확인한다. 생성 성공만으로 `COVERED_EXISTING`, `PROJECT_ASSET_APPROVED` 또는 runtime PASS를 만들지 않는다.
 
@@ -176,7 +206,7 @@ Primary Use Gate에서 원래 목적이 `ACCEPTED`된 결과만 Harvest 대상�
 
 여러 Screen이 연결되면 semantic Screen/flow record에 `screen_id / flow_id`, entry point, primary path, cancel/return, failure recovery를 연결한다. 사람용 `VISUAL_MAP_DERIVED`는 이 record와 approved preview에서 재생성 가능한 표현이다.
 
-Visual Map이나 clickable prototype은 runtime proof가 아니다.
+Visual Map이나 clickable prototype은 runtime proof가 아니다. 제작자/AI용 관계도·시스템 Flow는 실제 game image backlog가 아니라 structured information artifact로 유지할 수 있다.
 
 ### 4D. Runtime compare
 
@@ -221,9 +251,13 @@ generate / edit
 
 replace 작업이면 old version이 human current view에 남아 있지 않은지도 확인한다. readback 실패는 delivery success가 아니다.
 
+`PRODUCTION_INFORMATION`을 Notion에 기록할 때는 이미지 attachment가 없다는 이유로 미완료로 보지 않는다. text/table/DB/Mermaid/Flow readback이 해당 owner에서 확인되면 정보 산출물 자체는 완료될 수 있다.
+
 ## 6. Approval sync
 
 - [ ] `project_relation`과 Project Key 확인
+- [ ] 먼저 production information인지 image asset인지 분리하고, 정보면 `TEXT_TABLE_FLOW_DB_FIRST`로 적합한 owner에 반영
+- [ ] Image backlog row라면 `ACTUAL_CONSUMER_REQUIRED`의 consumer kind/surface/primary use/validation 확인
 - [ ] 관련 coverage item의 applicability, `coverage_status`, `state_family_status` 확인
 - [ ] coverage gap을 자동 image queue로 바꾸지 않았는지 확인
 - [ ] `CURRENT_CONFIRMED_DECISIONS` 또는 해당 project decision owner 반영
