@@ -1,6 +1,6 @@
 from pathlib import Path
 
-TARGET = Path("templates/project-operations/CHATGPT_WORK_PROJECT_MASTER_INSTRUCTION_v4.9.md")
+TARGET = Path("templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md")
 
 
 def test_work_product_surface_and_base_work_mode_are_not_conflated():
