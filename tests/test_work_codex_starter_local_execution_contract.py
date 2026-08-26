@@ -36,6 +36,7 @@ class WorkCodexStarterLocalExecutionContractTests(unittest.TestCase):
             "CURRENT_TASK_BRANCH_IDENTITY_REQUIRED",
             "NO_DIRECT_MAIN_PUSH",
             "POST_MERGE_MAIN_READBACK_AND_SAFE_LOCAL_MAIN_REFRESH",
+            "git pull --ff-only origin main",
         ):
             self.assertIn(token, text)
 
@@ -50,6 +51,7 @@ class WorkCodexStarterLocalExecutionContractTests(unittest.TestCase):
             "TOOL_NOT_CALLABLE_DO_NOT_CLAIM",
             "STABLE_ENGINE_BASELINE_NO_AUTO_UPDATE",
             "NO_NEW_TOOL_INSTALL_OR_UPDATE_WITHOUT_CURRENT_OWNER_GATE",
+            "PROJECT_SCOPED_BROWSER_AND_FILE_DIALOG_AUTOMATION_ALLOWED",
         ):
             self.assertIn(token, text)
 
@@ -61,6 +63,7 @@ class WorkCodexStarterLocalExecutionContractTests(unittest.TestCase):
             "NO_OS_SECURITY_SETTINGS_OR_DESTRUCTIVE_SYSTEM_CHANGE",
             "NO_REMOTE_TUNNEL_OR_PUBLIC_PORT",
             "HOST_SYSTEM_TOOL_CONFIRMATION_PRECEDENCE",
+            "NO_NEW_LOGIN_PERMISSION_OR_CONSENT_GRANT",
         ):
             self.assertIn(token, text)
 
@@ -84,6 +87,7 @@ class WorkCodexStarterLocalExecutionContractTests(unittest.TestCase):
             "INCIDENT_SOLUTION_LESSON_LOOP",
             "BASE_PROMOTION_DISPOSITION_REQUIRED",
             "destination readback",
+            "NON_SLICE_NOTION_DEBT_DOES_NOT_BLOCK_CURRENT_SLICE",
         ):
             self.assertIn(token, text)
 
@@ -104,6 +108,7 @@ class WorkCodexStarterLocalExecutionContractTests(unittest.TestCase):
             "HUMAN_USABILITY_EVIDENCE: NOT_RUN",
             "PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN",
             "READY_FOR_USER_VERTICAL_SLICE_VALIDATION",
+            "DO_NOT_AUTO_ADVANCE_TO_NEXT_SLICE_BEFORE_USER_VALIDATION",
         ):
             self.assertIn(token, text)
 
