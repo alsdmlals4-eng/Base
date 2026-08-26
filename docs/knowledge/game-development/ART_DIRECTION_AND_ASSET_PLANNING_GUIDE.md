@@ -61,10 +61,29 @@ Base의 Pixel Art Preset과 외부 예시는 프로젝트 정본이 아니며, �
 
 프로젝트에서 이미지·아이콘·일러스트·UI 컴포넌트·VFX·마케팅 시각물을 후보로 떠올렸다는 이유만으로 바로 제작하지 않는다. 먼저 **무엇을 왜 만들어야 하는지**를 같은 기준으로 판정한다.
 
+이 Gate에 들어오기 전에 **제작 정보가 필요한 것인지, 이미지/시각 자산 자체가 필요한 것인지**를 분리한다.
+
+```text
+PRODUCTION_INFORMATION
+→ 시스템 설명 / 세계관 / 캐릭터·세력 관계 / 관계도 / 제작 체크리스트 / 밸런스·경제 / Flow / 구현 계약
+→ TEXT_TABLE_FLOW_DB_FIRST
+→ Markdown / Notion text·table·DB / Mermaid / Flow / JSON 등 해당 정보 owner에 생성·갱신
+→ image requirement로 만들지 않음
+
+IMAGE_ASSET_OR_SURFACE
+→ ACTUAL_CONSUMER_REQUIRED
+→ GAME_RUNTIME | PLANNED_GAME_SURFACE | PLAYER_FACING_EXPLANATORY | PRODUCT_DISTRIBUTION
+→ Visual Requirement Gate 계속
+```
+
+`PRODUCTION_INFORMATION`은 이미지 생성 제한 때문에 생략하는 대상이 아니다. 필요한 정보는 계속 만들되, 제작자·AI 이해만을 위해 고해상도 설명용 시트·포스터·관계 이미지를 신규 생성하는 것을 기본값으로 삼지 않는다.
+
 표준 순서는 다음과 같다.
 
 ```text
-플레이어·사용자의 판단/행동
+정보 목적 분류: PRODUCTION_INFORMATION | IMAGE_ASSET_OR_SURFACE
+→ image 후보이면 ACTUAL_CONSUMER_REQUIRED
+→ 플레이어·사용자의 판단/행동
 → 필요한 정보·감정·피드백
 → 기존 텍스트·표준 컴포넌트로 충분한가
 → 기존 프로젝트·디자인 시스템 자산으로 재사용 가능한가
@@ -74,6 +93,22 @@ Base의 Pixel Art Preset과 외부 예시는 프로젝트 정본이 아니며, �
 → 제작·조달 disposition
 → 실제 소비처·검증 조건
 ```
+
+`ACTUAL_CONSUMER_REQUIRED`는 이미지 requirement에 최소한 다음을 요구한다.
+
+```yaml
+consumer_kind: GAME_RUNTIME | PLANNED_GAME_SURFACE | PLAYER_FACING_EXPLANATORY | PRODUCT_DISTRIBUTION
+consumer_surface:
+primary_use:
+validation:
+```
+
+- `GAME_RUNTIME`: 실제 scene/HUD/character/environment/VFX/item 등 게임이 소비한다.
+- `PLANNED_GAME_SURFACE`: 아직 구현 전이어도 실제 게임에 들어갈 구체적인 screen/scene/asset slot을 검증한다.
+- `PLAYER_FACING_EXPLANATORY`: 튜토리얼·도감·인게임 도움말·세력 관계 UI처럼 플레이어가 게임 안에서 소비한다.
+- `PRODUCT_DISTRIBUTION`: store capsule·key art·app icon·trailer thumbnail·press kit처럼 판매·배포·홍보 경로가 소비한다.
+
+`DOCUMENTATION_DECORATION / AI_EXPLANATION_ONLY / CHECKLIST_DECORATION / UNNAMED_FUTURE_USE`만 존재하면 이미지 requirement로 선정하지 않는다. 필요한 정보 자체는 `TEXT_TABLE_FLOW_DB_FIRST`로 보존한다.
 
 ### Delete Test
 
@@ -91,12 +126,14 @@ Base의 Pixel Art Preset과 외부 예시는 프로젝트 정본이 아니며, �
 | `FUNCTIONAL` | 행동을 시작·완료·취소하는 데 필요한가 | 버튼, 슬롯, 선택 카드 |
 | `INFORMATIONAL` | 판단에 필요한 상태·차이·위험을 더 빠르고 정확하게 전달하는가 | 상태 아이콘, 지도 기호 |
 | `FEEDBACK` | 입력 접수·처리·성공·실패를 전달하는가 | 피격, 선택됨, 잠김 |
-| `EXPLANATORY` | 텍스트만으로는 어려운 구조·규칙·공간 관계 이해를 개선하는가 | 튜토리얼 그림, 시스템 다이어그램 |
+| `EXPLANATORY` | **플레이어가 실제 제품 surface에서** 구조·규칙·공간 관계를 이해해야 하는가 | 인게임 튜토리얼 그림, 도감·세력 관계 UI |
 | `IDENTITY` | 캐릭터·진영·세계·제품의 식별성과 기억점을 소유하는가 | 캐릭터, 문장, 핵심 환경 |
 | `EMOTIONAL` | 감정·판타지·분위기 자체가 제품 가치인가 | 대표 장면, 이벤트 일러스트 |
 | `DECORATIVE` | 기능·정보보다 장식·마감이 주 역할인가 | 테두리, 배경 장식 |
 | `PLATFORM_REQUIRED` | 현재 플랫폼 제출·배포에 필수인가 | store capsule, app icon |
 | `REFERENCE_ONLY` | 비교·방향 탐색용이며 제품 자산이 아닌가 | mood board, concept reference |
+
+제작자·AI가 알아야 하는 **시스템 다이어그램, 세계관 구조, 관계도**는 `EXPLANATORY` 이미지 role로 자동 승격하지 않는다. 기본값은 `PRODUCTION_INFORMATION`이며 Mermaid·Flow·표·DB 등 수정 가능한 형식으로 만든다. 동일 내용이 실제 게임의 튜토리얼·도감·관계 화면에 들어가는 경우에만 별도 `PLAYER_FACING_EXPLANATORY` image requirement를 만들 수 있다.
 
 ### 우선순위
 
@@ -118,13 +155,13 @@ REUSE_SYSTEM         Godot·OS·플랫폼·디자인 시스템의 기존 요소 
 REUSE_PROJECT        현재 프로젝트의 기존 컴포넌트·자산 재사용
 ADAPT_EXISTING       현행 요소를 bounded 변형해 사용
 SOURCE_EXISTING      Asset Store·오픈소스·상용 패키지 등 기존 대안 조사
-GENERATE_EXPLORATION GPT/생성 도구로 방향·정보 위계를 탐색, 제품 자산 아님
-CREATE_CUSTOM        프로젝트 고유 요구를 신규 제작
+GENERATE_EXPLORATION 실제 planned game/product surface의 방향·정보 위계를 생성 도구로 탐색, 제품 자산 아님
+CREATE_CUSTOM        actual consumer가 있는 프로젝트 고유 요구를 신규 제작
 DEFER                가치는 있으나 현재 단계에서 만들지 않음
 CUT                  가치보다 비용·복잡도·혼란이 커 범위에서 제거
 ```
 
-`SOURCE_EXISTING`은 `evaluating-godot-assets-and-plugins-before-creation`의 기존 대안 평가로 넘긴다. `GENERATE_EXPLORATION`과 승인된 `CREATE_CUSTOM` 이미지 제작은 `designing-art-prompts-and-technique-cards`가 이어받는다. UI 컴포넌트의 상태·입력·정보 구조는 `auditing-and-refining-ui-art`가 상세화하고, Vertical Slice는 해당 구간을 증명하는 최소 requirement 집합만 소비한다.
+`SOURCE_EXISTING`은 `evaluating-godot-assets-and-plugins-before-creation`의 기존 대안 평가로 넘긴다. `GENERATE_EXPLORATION`과 승인된 `CREATE_CUSTOM` 이미지 제작은 `ACTUAL_CONSUMER_REQUIRED`를 충족한 경우에만 `designing-art-prompts-and-technique-cards`가 이어받는다. actual consumer가 없는 제작 정보는 이미지 Skill로 넘기지 않고 해당 structured owner로 보낸다. UI 컴포넌트의 상태·입력·정보 구조는 `auditing-and-refining-ui-art`가 상세화하고, Vertical Slice는 해당 구간을 증명하는 최소 requirement 집합만 소비한다.
 
 ### 프로젝트 기록
 
@@ -138,7 +175,9 @@ element_type:
 role:
 why_needed:
 delete_test:
+consumer_kind:
 consumer:
+primary_use:
 priority: P0_BLOCKER | P1_CLARITY | P2_CONSISTENCY | P3_DELIGHT
 reuse_candidate:
 disposition:
@@ -598,7 +637,7 @@ Brief
 
 **생성 이미지는 자동 최종 자산이 아니다.**
 
-기획 시각화, 후보 비교, mood·composition 탐색과 최종 후보 제작을 구분한다. 실제 자산은 Asset Specification과 Runtime 검수를 통과해야 한다.
+기획 시각화, 후보 비교, mood·composition 탐색과 최종 후보 제작을 구분한다. 실제 자산은 Asset Specification과 Runtime 검수를 통과해야 한다. 프로젝트용 생성 이미지는 `ACTUAL_CONSUMER_REQUIRED`를 충족해야 하며, 제작자·AI용 `PRODUCTION_INFORMATION`은 생성 이미지 대신 `TEXT_TABLE_FLOW_DB_FIRST`를 적용한다.
 
 ### Pinterest·커뮤니티 이미지
 
@@ -644,11 +683,15 @@ Brief
 - PC와 Android에 동일 texture import profile을 무조건 강제함
 - Delete Test 없이 “있으면 좋아 보인다”는 이유만으로 P3 시각물을 대량 제작함
 - 기존 컴포넌트·프로젝트 자산을 조사하지 않고 동일 역할을 신규 제작함
+- 제작자·AI가 알아야 할 시스템·세계관·관계 정보를 이미지 생성 제한 때문에 생략함
+- 반대로 제작자·AI용 설명 정보를 actual consumer가 없는 고해상도 생성 이미지 시트로 대체함
+- `PLAYER_FACING_EXPLANATORY`와 제작자용 구조 문서를 같은 image requirement로 취급함
 
 ## 15. Output Contract
 
 ```md
 ## 플레이어 경험·정보 역할·시장 첫인상
+## Production Information route · Actual Consumer
 ## Visual Requirement Gate·Delete Test·role·priority·disposition
 ## Visual Pillar·포함·금지 예시
 ## Shape Language·실루엣·Color·Value·Composition
