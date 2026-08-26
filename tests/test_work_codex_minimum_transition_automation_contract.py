@@ -10,6 +10,10 @@ PROFILE = ROOT / "templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_VER
 
 
 class WorkCodexMinimumTransitionAutomationContractTests(unittest.TestCase):
+    def _profile_text(self) -> str:
+        self.assertTrue(PROFILE.exists(), "opt-in minimum-transition profile must exist")
+        return PROFILE.read_text(encoding="utf-8")
+
     def test_profile_is_discoverable_from_the_work_bundle(self) -> None:
         appendix = APPENDIX.read_text(encoding="utf-8")
         self.assertTrue(PROFILE.exists(), "opt-in minimum-transition profile must exist")
@@ -17,7 +21,7 @@ class WorkCodexMinimumTransitionAutomationContractTests(unittest.TestCase):
         self.assertIn("EXPLICIT_USER_DELEGATION_REQUIRED", appendix)
 
     def test_profile_defines_three_stage_minimum_transition_flow(self) -> None:
-        text = PROFILE.read_text(encoding="utf-8")
+        text = self._profile_text()
         for token in (
             "WORK_PREP_COMPLETION_BEFORE_CODEX",
             "WORK_PRODUCTION_INPUT_BATCH",
@@ -31,7 +35,7 @@ class WorkCodexMinimumTransitionAutomationContractTests(unittest.TestCase):
         self.assertLess(text.index("CODEX_SINGLE_IMPLEMENTATION_WINDOW"), text.index("READY_FOR_USER_VERTICAL_SLICE_VALIDATION"))
 
     def test_routine_approval_is_delegated_but_high_risk_remains_deferred(self) -> None:
-        text = PROFILE.read_text(encoding="utf-8")
+        text = self._profile_text()
         for token in (
             "DELEGATED_RECOMMENDED_DEFAULT_APPROVAL",
             "NO_ROUTINE_APPROVAL_STOPS",
@@ -51,7 +55,7 @@ class WorkCodexMinimumTransitionAutomationContractTests(unittest.TestCase):
             self.assertIn(risk, text)
 
     def test_stall_recovery_and_scope_bounded_zero_are_explicit(self) -> None:
-        text = PROFILE.read_text(encoding="utf-8")
+        text = self._profile_text()
         for token in (
             "STALL_SIGNAL_ROUTE_SWITCH",
             "BOUNDED_RETRY_THEN_FALLBACK",
@@ -64,7 +68,7 @@ class WorkCodexMinimumTransitionAutomationContractTests(unittest.TestCase):
             self.assertIn(token, text)
 
     def test_machine_qa_is_required_without_claiming_human_or_player_pass(self) -> None:
-        text = PROFILE.read_text(encoding="utf-8")
+        text = self._profile_text()
         for token in (
             "MACHINE_QA_FIRST",
             "GUT_DETERMINISTIC_TESTS_WHEN_ADOPTED",
@@ -79,7 +83,7 @@ class WorkCodexMinimumTransitionAutomationContractTests(unittest.TestCase):
             self.assertIn(token, text)
 
     def test_default_approval_and_owner_boundaries_are_preserved(self) -> None:
-        text = PROFILE.read_text(encoding="utf-8")
+        text = self._profile_text()
         for token in (
             "OPT_IN_PROFILE_NOT_GLOBAL_DEFAULT",
             "DEFAULT_IMAGE_CONVERSATION_GATE_PRESERVED_WITHOUT_DELEGATION",
