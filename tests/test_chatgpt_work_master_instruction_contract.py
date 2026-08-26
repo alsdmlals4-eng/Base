@@ -1,6 +1,6 @@
 from pathlib import Path
 
-TARGET = Path("templates/project-operations/CHATGPT_WORK_PROJECT_MASTER_INSTRUCTION_v4.9.md")
+TARGET = Path("templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md")
 
 REQUIRED_LITERALS = [
     "WORK_EXECUTION_SURFACE_NOT_CANON",
@@ -36,17 +36,17 @@ REQUIRED_LITERALS = [
 
 
 def read_target() -> str:
-    assert TARGET.exists(), f"missing Work master instruction: {TARGET}"
+    assert TARGET.exists(), f"missing Work execution instruction: {TARGET}"
     return TARGET.read_text(encoding="utf-8")
 
 
-def test_work_master_instruction_preserves_required_operating_contracts():
+def test_work_instruction_preserves_required_operating_contracts():
     text = read_target()
     missing = [item for item in REQUIRED_LITERALS if item not in text]
     assert not missing, f"missing required Work contract literals: {missing}"
 
 
-def test_work_master_instruction_uses_dynamic_skill_routing_without_forcing_all_skills():
+def test_work_instruction_uses_dynamic_skill_routing_without_forcing_all_skills():
     text = read_target()
     assert "DO_NOT_LOAD_ALL_SKILLS" in text
     assert "TRIGGER_MATCHED_PROGRESSIVE_ROUTING" in text
