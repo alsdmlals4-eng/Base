@@ -35,6 +35,33 @@ class P08AiOperationsContractTests(unittest.TestCase):
             self.assertIn(term, text)
         self.assertNotIn("OPTIONAL_CODEX_EXECUTOR", text)
 
+    def test_p08_routes_chat_work_and_engine_adapter_without_replacing_godot_compatibility(self) -> None:
+        text = (ROOT / "docs/operations/base-partitions/P08_AI_OPERATIONS_EXECUTORS.md").read_text(encoding="utf-8")
+        for term in (
+            "CHAT_QUICK_DISCUSSION_DEFAULT",
+            "WORK_LONG_MULTISTEP_NONCODING_DEFAULT",
+            "CODEX_GAME_PRODUCT_IMPLEMENTATION_OWNER",
+            "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
+            "ENGINE_ADAPTER_SELECTED_FROM_PROJECT_CANON",
+        ):
+            self.assertIn(term, text)
+
+    def test_engine_baseline_policy_keeps_neutral_core_and_current_godot_adapter(self) -> None:
+        policy = (ROOT / "docs/knowledge/game-development/ENGINE_BASELINE_AND_ADAPTER_POLICY.md").read_text(encoding="utf-8")
+        for term in (
+            "ENGINE_NEUTRAL_PRODUCT_IMPLEMENTATION_CORE",
+            "GODOT_DEFAULT_ACTIVE_ENGINE_ADAPTER",
+            "STABLE_ENGINE_BASELINE",
+            "NO_AUTOMATIC_LATEST_FOLLOW",
+            "CANARY_BEFORE_ENGINE_BASELINE_PROMOTION",
+            "ENGINE_MIGRATION_REQUIRES_SEPARATE_REALITY_GATE",
+            "WORK_EXECUTION_SURFACE_NOT_CANON",
+        ):
+            self.assertIn(term, policy)
+        p06 = (ROOT / "docs/operations/base-partitions/P06_GODOT_RUNTIME_TOOLCHAIN.md").read_text(encoding="utf-8")
+        self.assertIn("ENGINE_NEUTRAL_PRODUCT_IMPLEMENTATION_CORE", p06)
+        self.assertIn("GODOT_DEFAULT_ACTIVE_ENGINE_ADAPTER", p06)
+
     def test_external_ai_optionality_is_separate_from_godot_implementation_owner(self) -> None:
         text = (ROOT / "skills/orchestrating-deepseek-worktrees/SKILL.md").read_text(encoding="utf-8")
         self.assertIn("외부 AI 사용은 optional", text)
