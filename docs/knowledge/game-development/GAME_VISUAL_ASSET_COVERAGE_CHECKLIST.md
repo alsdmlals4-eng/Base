@@ -8,6 +8,10 @@
 COVERAGE_CHECK_ONLY
 NOT_A_SECOND_ASSET_CANON
 NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS
+PRODUCTION_INFORMATION
+INFORMATION_ARTIFACT_NOT_IMAGE_ASSET
+TEXT_TABLE_FLOW_DB_FIRST
+ACTUAL_CONSUMER_REQUIRED
 ```
 
 이 체크리스트는 실제 자산 원장이나 승인 상태 머신이 아니다.
@@ -20,12 +24,45 @@ NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS
 
 따라서 coverage row에는 **기존 requirement/asset/evidence를 링크**하고, 동일 정보를 별도 정본으로 복제하지 않는다.
 
+### 0.1 정보 산출물과 이미지 자산 분리
+
+`PRODUCTION_INFORMATION`은 제작자와 AI가 프로젝트를 이해·비교·구현하기 위해 알아야 하는 정보다. 시스템 설명, 세계관, 인물·세력 관계, 관계도, 제작 체크리스트, 밸런스 구조, Flow, 구현 계약 같은 정보는 필요하면 **계속 생성·갱신한다**.
+
+다만 이런 정보의 존재만으로 이미지 생성 backlog를 만들지 않는다.
+
+```text
+INFORMATION_ARTIFACT_NOT_IMAGE_ASSET
+→ TEXT_TABLE_FLOW_DB_FIRST
+→ Markdown / Notion text / table / database / Mermaid / Flow / JSON 등으로 먼저 표현
+→ 실제 게임·제품 소비처가 이미지 자체를 요구할 때만 Visual Requirement Gate로 전달
+```
+
+- 제작자·AI 이해가 목적이면 텍스트·표·DB·Mermaid·Flow처럼 수정·검색·비교 가능한 형식을 우선한다.
+- 문서를 보기 좋게 꾸미기 위한 설명용 시트, 캐릭터 설명판, 세계관 설명 포스터, 관계 설명 이미지 자체는 기본 image-generation requirement가 아니다.
+- 관계도·시스템도·세계관 구조도는 필요하면 만든다. 다만 기본 형식은 구조화 데이터와 텍스트 기반 diagram이며, 그 자체를 고해상도 생성 이미지로 만들 이유가 되지 않는다.
+- 게임 내 튜토리얼·도감·세력 관계 UI처럼 플레이어가 실제로 소비하는 설명 visual은 `PLAYER_FACING_EXPLANATORY`로 image asset 후보가 될 수 있다.
+- store capsule·key art·trailer thumbnail처럼 게임 runtime 밖이라도 실제 배포·판매 경로가 소비하는 시각물은 `PRODUCT_DISTRIBUTION` consumer로 인정한다.
+
+`ACTUAL_CONSUMER_REQUIRED`: 이미지 생성 후보에는 최소한 다음이 특정되어야 한다.
+
+```yaml
+consumer_kind: GAME_RUNTIME | PLANNED_GAME_SURFACE | PLAYER_FACING_EXPLANATORY | PRODUCT_DISTRIBUTION
+consumer_surface:
+primary_use:
+validation:
+```
+
+`consumer_surface`가 단순 `문서 설명용`, `AI 이해용`, `체크리스트 장식용`뿐이면 이미지 생성 대상으로 올리지 않는다. 아직 구현 전이어도 실제 게임에 들어갈 구체적인 screen/scene/asset slot을 설계·검증하는 목업이면 `PLANNED_GAME_SURFACE`로 기록할 수 있다.
+
 ## 1. Visual Asset Coverage Preflight
 
 프로젝트 전체, 화면군, 캐릭터군, 적군, UI군, 아이템군, 환경군, 마케팅 asset set을 계획하거나 이미지 생성을 시작할 때 다음 순서로 확인한다.
 
 ```text
 current Project canon / stage / target flow
+→ production information인지 먼저 판정
+→ PRODUCTION_INFORMATION이면 TEXT_TABLE_FLOW_DB_FIRST로 route-out
+→ image asset 후보이면 actual consumer / consumer surface 확인
 → existing approved asset / current implementation / reusable source 조사
 → 이 문서에서 해당되는 coverage item만 선택
 → 적용 여부 + 누락 + STATE_FAMILY_COMPLETENESS 판정
@@ -45,6 +82,7 @@ current Project canon / stage / target flow
 - gap 발견은 사용자 승인 없는 batch 확대, 다음 포즈 자동 생성, 전체 캐릭터군 자동 생산 권한이 아니다.
 - 한 장의 명시적 사용자 요청을 전체 프로젝트 asset inventory 제작으로 확대하지 않는다.
 - 재사용·기존 자산·표준 UI로 해결되는 항목을 신규 생성으로 바꾸지 않는다.
+- `PRODUCTION_INFORMATION` 누락을 image coverage gap으로 바꾸지 않는다. 필요한 정보 자체는 적합한 텍스트·표·Flow·DB 형식으로 보완한다.
 
 ## 2. Coverage 상태
 
@@ -76,7 +114,9 @@ coverage_status:
 state_family:
 state_family_status: NOT_REVIEWED | COMPLETE | PARTIAL | NOT_APPLICABLE
 source_or_requirement_id:
+consumer_kind:
 consumer:
+primary_use:
 validation:
 note:
 ```
@@ -87,13 +127,13 @@ note:
 
 방향을 가르는 최소 세트만 본다.
 
-- 대표 gameplay 화면 또는 구조 목업
-- 핵심 캐릭터/대상/환경의 identity anchor
+- 대표 gameplay 화면 또는 구조 목업 — 실제 planned game surface를 검증할 때
+- 핵심 캐릭터/대상/환경의 identity anchor — 실제 제품 visual identity와 연결될 때
 - 핵심 정보 위계와 UI 방향
 - visual style / palette / value / material / lighting 기준
 - 필요하면 store first-impression 가설
 
-전체 production asset library를 완성 조건으로 만들지 않는다.
+세계관·관계·시스템 이해 자체가 목적이면 먼저 `PRODUCTION_INFORMATION`으로 문서화한다. 전체 production asset library를 완성 조건으로 만들지 않는다.
 
 ### PoC / Technical Spike
 
@@ -138,7 +178,7 @@ PoC placeholder를 최종 player-experience PASS로 해석하지 않는다.
 
 ## 4. 공용 Coverage Catalog
 
-아래는 **후보군**이다. 각 프로젝트에 전부 적용하지 않는다. `Delete Test`, current stage, genre, camera, input, target platform으로 applicability를 먼저 판정한다.
+아래는 **후보군**이다. 각 프로젝트에 전부 적용하지 않는다. `Delete Test`, current stage, genre, camera, input, target platform과 **actual consumer**로 applicability를 먼저 판정한다. Foundation/reference 항목이 필요하다는 사실만으로 생성 이미지를 만들지 않는다.
 
 ### A. Visual Direction / Foundation
 
@@ -304,9 +344,9 @@ PoC placeholder를 최종 player-experience PASS로 해석하지 않는다.
 - [ ] event CG / chapter image
 - [ ] cutscene background
 - [ ] intro/ending visual
-- [ ] faction/relationship/location visual가 사람 이해에 필요할 때
+- [ ] faction/relationship/location visual — 게임 내 도감·관계 UI·지도 등 실제 player-facing consumer가 있을 때
 
-서사 visual이 없는 장르에 억지로 추가하지 않는다.
+제작자·AI가 세력·관계·위치를 이해해야 한다는 이유만이면 `PRODUCTION_INFORMATION`으로 관계도/표/DB/Mermaid를 만들고 이미지 생성 requirement로 올리지 않는다. 서사 visual이 없는 장르에 억지로 추가하지 않는다.
 
 ### M. Tutorial / Guidance / Accessibility
 
@@ -319,6 +359,8 @@ PoC placeholder를 최종 player-experience PASS로 해석하지 않는다.
 - [ ] 중요한 상태가 **색 하나에만 의존하지 않는** shape/icon/pattern/text cue
 - [ ] scalable UI/text와 고대비 상황에서 식별 가능한 자산
 - [ ] 적/아군/위험/안전이 color-vision 차이에서도 구별되는 semantic cue
+
+튜토리얼·도감·도움말처럼 게임에서 직접 소비되는 설명 visual은 `PLAYER_FACING_EXPLANATORY`로 분류한다.
 
 ### N. Reward / Progress / Outcome
 
@@ -360,6 +402,8 @@ PoC placeholder를 최종 player-experience PASS로 해석하지 않는다.
 - [ ] platform rules에 맞는 text/logo/content 제한
 - [ ] store screenshot이 실제 gameplay를 정확히 보여주는지
 
+이 범주는 runtime 밖이지만 실제 storefront/홍보/배포 소비처가 명확한 `PRODUCT_DISTRIBUTION` 시각물이다.
+
 ### Q. Development / Debug / Placeholder
 
 최종 제품 asset과 명확히 분리한다.
@@ -374,7 +418,7 @@ PoC placeholder를 최종 player-experience PASS로 해석하지 않는다.
 - [ ] damage/range/telegraph debug
 - [ ] performance/overdraw/atlas debug가 필요할 때
 
-Technical Spike에서 유효한 placeholder라도 shipping-intent player-facing evidence로 승격하지 않는다.
+Technical Spike에서 유효한 placeholder라도 shipping-intent player-facing evidence로 승격하지 않는다. Debug 표현은 가능한 한 engine primitive·standard icon·text overlay를 사용하고, 개발 편의를 이유로 생성 이미지 제작을 기본값으로 만들지 않는다.
 
 ## 5. STATE_FAMILY_COMPLETENESS
 
@@ -542,12 +586,14 @@ PBR map을 “3D니까 전부 필요”로 판단하지 않는다.
 - Godot: image import/compression/filter/mipmap 선택을 asset usage에 맞춘다.
 - Steam: store asset은 역할별로 관리하고 release 시 current official rule/spec을 재확인한다.
 - 접근성: 중요한 의미를 color 하나에만 의존하지 않고 semantic redundancy를 제공한다.
+- 제작 정보: 구조화 텍스트·표·Flow·DB를 editable source of truth로 유지하고 이미지와 분리한다.
 
 ### ADAPT
 
 - sprite atlas/variant 관리: 반복 asset과 성능에 실제 이득이 있는 프로젝트에서만 사용한다.
 - naming convention: type/role/state/variant가 명확하도록 적용하되 Unreal 등 다른 엔진 고유 prefix를 그대로 강제하지 않는다.
 - marketing asset family: 실제 target storefront만 선택한다.
+- planning mockup: 실제 planned game surface를 검증하는 경우에만 이미지 후보로 사용한다.
 
 ### REJECT
 
@@ -556,6 +602,8 @@ PBR map을 “3D니까 전부 필요”로 판단하지 않는다.
 - 보기 좋은 concept art를 gameplay screenshot/runtime proof로 취급한다.
 - coverage gap을 사용자 승인 없는 자동 생성 queue로 바꾼다.
 - coverage table을 Manifest/Notion Asset/Runtime truth와 경쟁하는 second canon으로 만든다.
+- 제작자·AI 설명 정보가 필요하다는 이유만으로 별도 설명용 이미지 시트를 만든다.
+- actual consumer가 없는 이미지 후보를 production asset backlog에 넣는다.
 
 ## 9. 이미지 생성 직전 체크
 
@@ -563,6 +611,9 @@ PBR map을 “3D니까 전부 필요”로 판단하지 않는다.
 
 - [ ] 정확한 Project relation과 current canon을 읽었다.
 - [ ] 현재 목표 screen/flow/use를 확인했다.
+- [ ] 먼저 `PRODUCTION_INFORMATION`인지 판정했고, 정보 산출물이면 `TEXT_TABLE_FLOW_DB_FIRST`로 route-out했다.
+- [ ] `ACTUAL_CONSUMER_REQUIRED`: `consumer_kind / consumer_surface / primary_use / validation`이 구체적이다.
+- [ ] consumer가 문서 설명·AI 이해·체크리스트 장식뿐이면 이미지 생성을 중단한다.
 - [ ] 관련 coverage item의 applicability를 판정했다.
 - [ ] 기존 승인 asset/reference/reuse 후보를 먼저 확인했다.
 - [ ] `coverage_status`와 필요한 `state_family_status`를 확인했다.
@@ -608,6 +659,9 @@ candidate generated
 10. coverage row가 requirement/asset/manifest/runtime status를 중복 소유한다.
 11. gap 발견이 자동 image chain 또는 대량 batch 생성으로 이어졌다.
 12. project-approved identity보다 재사용 편의를 우선해 visual identity가 약화됐다.
+13. 시스템 설명·세계관·관계도·제작 체크리스트 같은 `PRODUCTION_INFORMATION`이 누락되거나, 반대로 그것을 생성 이미지로 대체했다.
+14. actual game/product consumer를 특정하지 못한 설명용 이미지 시트가 생성 backlog에 남았다.
+15. 실제 게임 내 설명 visual인데 `PLAYER_FACING_EXPLANATORY` 소비처를 기록하지 않아 문서용 이미지와 구분되지 않는다.
 
 ## 12. 완료 판정
 
@@ -615,6 +669,9 @@ Coverage 검사의 완료는 “모든 checkbox가 체크됨”이 아니다.
 
 ```text
 해당 목표 범위의 모든 relevant item
+→ production information과 image asset 후보가 분리됨
+→ 필요한 production information은 적합한 text/table/flow/db owner에 존재함
+→ image 후보는 ACTUAL_CONSUMER_REQUIRED 충족
 → applicability 판정됨
 → blocking gap 0 또는 명시적 Decision으로 처리됨
 → 필요한 state family 정의됨

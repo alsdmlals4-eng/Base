@@ -27,6 +27,8 @@ Google Sheets
 
 ```text
 current Project canon / stage / consumer
+→ production information인지 먼저 판정
+→ actual consumer가 있는 image asset 후보인지 판정
 → existing approved asset / implementation / reuse 조회
 → relevant coverage item applicability 판정
 → coverage_status + STATE_FAMILY_COMPLETENESS 확인
@@ -42,7 +44,71 @@ current Project canon / stage / consumer
 - **`NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS`**: coverage gap은 이미지 생성·batch 확대·다음 variant 자동 생산 권한이 아니다. 아래 Visual Requirement Gate와 Image Conversation Approval Gate를 그대로 적용한다.
 - 사용자가 특정 이미지 한 장만 요청한 경우 해당 요청과 직접 관련된 coverage item만 확인하며, 전체 프로젝트 inventory를 자동으로 확장하지 않는다.
 
-Coverage preflight는 **빠뜨린 종류·상태가 있는가**를 묻는다. 아래 Visual Requirement Gate는 그 후보를 **실제로 만들 가치가 있는가**로 다시 좁힌다.
+Coverage preflight는 **빠뜨린 종류·상태가 있는가**를 묻는다. 아래 Information Artifact / Actual Consumer Gate와 Visual Requirement Gate는 그 후보를 **어떤 형식으로 만들어야 하는가, 실제로 만들 가치가 있는가**로 다시 좁힌다.
+
+### 0A. Information Artifact / Actual Consumer Gate
+
+프로젝트를 이해하고 제작하기 위한 정보는 이미지 생성 제한 때문에 사라지면 안 된다.
+
+```text
+PRODUCTION_INFORMATION
+INFORMATION_ARTIFACT_NOT_IMAGE_ASSET
+TEXT_TABLE_FLOW_DB_FIRST
+ACTUAL_CONSUMER_REQUIRED
+```
+
+`PRODUCTION_INFORMATION`에는 제작자와 AI가 알아야 할 시스템 설명, 세계관, 캐릭터·세력 관계, 관계도, 제작 체크리스트, 밸런스·경제 구조, Flow, 상태 전이, 구현 계약 등이 포함된다. 이런 정보는 필요하면 생성·갱신한다.
+
+기본 routing:
+
+```text
+정보가 필요함
+→ 텍스트 / 표 / Notion DB / Mermaid / Flow / JSON 등 editable·searchable 형식으로 충분한가
+→ YES: TEXT_TABLE_FLOW_DB_FIRST
+→ 필요한 production information을 해당 정본 owner에 생성·갱신
+→ image generation은 하지 않음
+
+이미지 자체가 필요함
+→ ACTUAL_CONSUMER_REQUIRED
+→ 실제 게임/제품 소비처 확인
+→ Visual Requirement Gate
+→ Image Conversation Approval Gate
+→ generate/edit
+```
+
+`INFORMATION_ARTIFACT_NOT_IMAGE_ASSET`:
+
+- 시스템 설명, 세계관 설명, 관계도, 제작 체크리스트가 필요하다는 사실만으로 설명용 이미지 시트를 만들지 않는다.
+- 제작자·AI가 정보를 알아야 하는 목적이면 구조화 텍스트·표·DB·Mermaid·Flow를 우선한다.
+- 문서를 예쁘게 꾸미는 용도, AI에게 보여주기 위한 고해상도 설명판, 체크리스트 장식용 이미지는 project image backlog의 기본 대상이 아니다.
+- 정보 산출물에 diagram이 필요하면 Mermaid/Flow/노드처럼 수정 가능한 구조 표현을 먼저 사용한다.
+
+`ACTUAL_CONSUMER_REQUIRED`: project image generation 전에 아래 네 값을 구체적으로 기록한다.
+
+```yaml
+consumer_kind: GAME_RUNTIME | PLANNED_GAME_SURFACE | PLAYER_FACING_EXPLANATORY | PRODUCT_DISTRIBUTION
+consumer_surface:
+primary_use:
+validation:
+```
+
+유효 소비처:
+
+- `GAME_RUNTIME`: 실제 gameplay scene, character sprite, environment, HUD, VFX, item icon 등 게임이 직접 소비한다.
+- `PLANNED_GAME_SURFACE`: 아직 구현 전이어도 실제 게임에 들어갈 구체적 screen/scene/asset slot을 검증하는 목업이다.
+- `PLAYER_FACING_EXPLANATORY`: 튜토리얼, 도감, 인게임 도움말, 세력 관계 UI처럼 플레이어가 게임 안에서 직접 소비하는 설명 visual이다.
+- `PRODUCT_DISTRIBUTION`: store capsule, key art, app icon, trailer thumbnail, press kit처럼 판매·배포·홍보 경로가 실제 소비한다.
+
+다음만 존재하면 invalid consumer다.
+
+```text
+DOCUMENTATION_DECORATION
+AI_EXPLANATION_ONLY
+CHECKLIST_DECORATION
+UNNAMED_FUTURE_USE
+```
+
+invalid consumer뿐이면 `DO_NOT_GENERATE`다. 필요한 정보 자체는 `TEXT_TABLE_FLOW_DB_FIRST`로 계속 만든다.
 
 ## 1. Visual Requirement Gate
 
@@ -50,10 +116,11 @@ Coverage preflight는 **빠뜨린 종류·상태가 있는가**를 묻는다. �
 
 - 프로젝트 자산 후보는 가능한 한 `requirement_id`를 가진다.
 - `GENERATE_EXPLORATION` 또는 승인된 `CREATE_CUSTOM` 판정을 이미지 생성 입력으로 사용한다.
+- `GENERATE_EXPLORATION`도 `ACTUAL_CONSUMER_REQUIRED`를 우회하지 않는다. 실제 planned game surface/asset slot을 검증하는 exploration은 허용하지만 독립 설명용 시트 생성은 기본적으로 허용하지 않는다.
 - `DEFER / CUT / REUSE_SYSTEM / REUSE_PROJECT / ADAPT_EXISTING / SOURCE_EXISTING`을 이미지 생성으로 임의 변환하지 않는다.
 - 프로젝트 전체·화면군·캐릭터군을 다룰 때도 “있으면 좋을 것”이라는 이유만으로 선정되지 않은 자산을 자동 추가하지 않는다.
-- `REFERENCE_ONLY`와 `GENERATED_EXPLORATION`은 방향 비교·정보 위계 검토용이며 제품 자산 승인과 분리한다.
-- 사용자가 현재 대화에서 특정 이미지 한 장을 요청한 사실은 현재 requirement의 입력이 될 수 있지만, 지속 자산 목록·`ASSET_MANIFEST.yml`·승인 상태를 자동 생성하지 않는다.
+- `REFERENCE_ONLY`는 외부/기존 reference 활용을 포함할 수 있으나 새 생성 이미지가 자동으로 필요한 상태가 아니다.
+- 사용자가 현재 대화에서 특정 프로젝트 이미지 한 장을 요청한 사실은 현재 requirement의 입력이 될 수 있지만, 프로젝트 자산으로 만들 때는 실제 consumer를 기록한다. 지속 자산 목록·`ASSET_MANIFEST.yml`·승인 상태를 자동 생성하지 않는다.
 
 이 Gate는 **무엇을 만들 가치가 있는가**를 결정한다. 실제 생성 시점은 아래 Conversation Gate가 별도로 소유한다.
 
@@ -64,6 +131,7 @@ Coverage preflight는 **빠뜨린 종류·상태가 있는가**를 묻는다. �
 ```text
 PROJECT_REVIEW_COMPLETE
 → Visual Need
+→ ACTUAL_CONSUMER_REQUIRED
 → current Project/Visual canon
 → text brief
 → TEXT_BRIEF_STOP_REQUIRED
@@ -105,29 +173,37 @@ identity-preserving 편집에서는 얼굴 구조, 헤어, 의상, 장비, 팔�
 
 ### 4.1 기획 중 시각화
 
-목적은 텍스트 기획의 방향·가독성·구현 가능성을 비교하는 것이다.
+기획 중 생성 이미지는 **실제 planned game surface 또는 실제 제품 visual slot을 검증할 때만** 사용한다. 제작자·AI용 기본 정보 설명은 이 mode로 보내지 않는다.
 
 대표 산출물:
 
-- 세계관 분위기와 장소 톤 보드
-- 주요 인물·조연·세력 관계 장면
-- 핵심루프·핵심시스템 설명 목업
-- UI·카드·상점·전투·대화 화면 목업
-- Vertical Slice 대표 장면과 플레이 화면 가설
+- 실제 gameplay 화면에 들어갈 UI·카드·상점·전투·대화 screen mockup
+- 실제 게임 캐릭터·환경·오브젝트의 visual identity candidate
+- `PLAYER_FACING_EXPLANATORY`인 튜토리얼·도감·인게임 관계 UI mockup
+- Vertical Slice에 들어갈 대표 scene/composition 가설
+- 실제 store/product consumer가 예정된 key visual의 방향 가설
 
-상태는 `GENERATED_EXPLORATION`이며 제품 자산으로 자동 승격하지 않는다.
+다음은 기본적으로 이미지 생성하지 않는다.
+
+- 시스템 설명만을 위한 이미지 시트
+- 세계관·세력 관계를 제작자/AI에게 설명하기 위한 포스터
+- 제작 체크리스트를 그림으로 옮긴 시트
+- 구조화 문서로 충분한 캐릭터 설정 설명판
+
+이 정보들은 `PRODUCTION_INFORMATION`으로 유지하고 `TEXT_TABLE_FLOW_DB_FIRST`를 적용한다. 생성된 실제 surface mockup의 상태는 `GENERATED_EXPLORATION`이며 제품 자산으로 자동 승격하지 않는다.
 
 ### 4.2 기획 종료 후 실사용 후보
 
-기획 승인 뒤 Demo-First Vertical Slice·소개·상점·마케팅에 사용할 수 있는 후보를 만든다.
+기획 승인 뒤 Demo-First Vertical Slice·게임 runtime·소개·상점·마케팅의 **명시된 actual consumer**에 사용할 수 있는 후보를 만든다.
 
 대표 산출물:
 
-- 키아트·캡슐·배너·썸네일 후보
-- 캐릭터 승인 후보와 표정·포즈·상태 시트
-- UI 고도화 목업과 실제 화면 합성
-- 시스템 소개 이미지·카드·장비·스킬 예시
-- 상점·트레일러·프레스킷 시각 후보
+- 키아트·캡슐·배너·썸네일 후보 — `PRODUCT_DISTRIBUTION`
+- 캐릭터 gameplay representation, portrait, 표정·포즈·상태 세트 — 실제 screen/scene consumer가 있을 때
+- UI 고도화 목업과 실제 화면 합성 — `PLANNED_GAME_SURFACE` 또는 `GAME_RUNTIME`
+- 카드·장비·스킬 icon/visual — 실제 게임 UI consumer가 있을 때
+- 튜토리얼·도감·인게임 도움말 visual — `PLAYER_FACING_EXPLANATORY`
+- 상점·트레일러·프레스킷 시각 후보 — 실제 배포 경로가 있을 때
 
 이 단계도 `APPROVED_CANDIDATE`일 수 있으며 권리·실제 화면·규격·구현·후처리 검증 전에는 `PROJECT_ASSET_APPROVED`가 아니다.
 
@@ -179,7 +255,7 @@ AI/System surface는 다음을 보존한다.
 - Implementation Path
 - raw placement/readback evidence
 
-Prompt·Hash·AI Note가 필요하다는 이유로 Human Home을 AI context dump로 만들지 않는다.
+Prompt·Hash·AI Note가 필요하다는 이유로 Human Home을 AI context dump로 만들지 않는다. 반대로 시스템·세계관·관계·체크리스트 같은 `PRODUCTION_INFORMATION`을 이미지 파일 안에 가둬 검색·수정 불가능하게 만들지도 않는다.
 
 ## 6. 프로젝트 로컬 보존소와 자산 승격
 
@@ -212,6 +288,7 @@ GENERATED_EXPLORATION / IN_REVIEW / APPROVED_CANDIDATE
 
 ```text
 기존 승인 자산 / current Project Visual Bible
+→ ACTUAL_CONSUMER_REQUIRED
 → image conversation gate
 → 이미지 제작
 → Primary Use Gate
@@ -251,23 +328,25 @@ Harvest는 `PROJECT_ASSET_APPROVED`, tracked asset, rights 또는 Godot runtime 
 모든 이미지·목업은 다음을 검사한다.
 
 1. 기획·세계관·캐릭터·시스템 정본 일치성
-2. 핵심 경험·세일즈포인트 전달력
-3. 실제 화면 크기·HUD·VFX·배경 위 가독성
-4. 구현 가능성·제작 비용·기술 규격
-5. 다른 자산과의 형태·색·재질·광원 일관성
-6. 재사용성·편집 가능성·현지화 가능성
-7. 손·관절·무기·문자·로고·원근·광원 오류
-8. 특정 상업 IP·식별 가능한 표현·작가 스타일과의 과도한 유사성
-9. 원본·레퍼런스·모델·서비스·버전·프롬프트·생성일 provenance
-10. 승인자·사용처·Notion Asset/Visual과 repository tracked path 연결
-11. 프로젝트 자산 후보라면 `requirement_id`와 선정 근거
-12. 생성 전/후 conversation gate 준수
-13. 관련 `coverage_item_id / coverage_status`와 실제 source 또는 `requirement_id` 연결
-14. `state_family_status`가 consumer가 요구하는 상태를 빠뜨리지 않았는지
-15. 실제 target resolution/aspect에서 crop·UI·VFX와 함께 판독 가능한지
-16. engine consumption 조건(import/filter/mipmap/compression/atlas/slicing/pivot 등)이 필요한 자산에서 정의됐는지
-17. 중요한 상태가 색 하나에만 의존하지 않고 필요한 semantic redundancy를 갖는지
-18. `PLATFORM_REQUIRED`이면 release 시점의 current official spec/rule을 재조회했는지
+2. `ACTUAL_CONSUMER_REQUIRED`의 consumer kind/surface/primary use/validation이 실제인지
+3. 핵심 경험·세일즈포인트 전달력
+4. 실제 화면 크기·HUD·VFX·배경 위 가독성
+5. 구현 가능성·제작 비용·기술 규격
+6. 다른 자산과의 형태·색·재질·광원 일관성
+7. 재사용성·편집 가능성·현지화 가능성
+8. 손·관절·무기·문자·로고·원근·광원 오류
+9. 특정 상업 IP·식별 가능한 표현·작가 스타일과의 과도한 유사성
+10. 원본·레퍼런스·모델·서비스·버전·프롬프트·생성일 provenance
+11. 승인자·사용처·Notion Asset/Visual과 repository tracked path 연결
+12. 프로젝트 자산 후보라면 `requirement_id`와 선정 근거
+13. 생성 전/후 conversation gate 준수
+14. 관련 `coverage_item_id / coverage_status`와 실제 source 또는 `requirement_id` 연결
+15. `state_family_status`가 consumer가 요구하는 상태를 빠뜨리지 않았는지
+16. 실제 target resolution/aspect에서 crop·UI·VFX와 함께 판독 가능한지
+17. engine consumption 조건(import/filter/mipmap/compression/atlas/slicing/pivot 등)이 필요한 자산에서 정의됐는지
+18. 중요한 상태가 색 하나에만 의존하지 않고 필요한 semantic redundancy를 갖는지
+19. `PLATFORM_REQUIRED`이면 release 시점의 current official spec/rule을 재조회했는지
+20. `PRODUCTION_INFORMATION`을 이미지 하나로 대체해 정보 정본이 손실되지 않았는지
 
 ## 9. 참조 기반 독립 제작
 
@@ -306,14 +385,19 @@ CURRENT_CONFIRMED_DECISIONS
 
 Google Sheets는 `COMPATIBILITY_ONLY` migration source다. Sheet-only unique material이 실제 migration scope에 있을 때만 읽고, 신규 승인 결과를 Sheet에 동기화하는 것을 정상 완료 조건으로 만들지 않는다.
 
-Notion approval, asset upload, tracked file, runtime application은 서로 다른 상태다.
+Notion approval, asset upload, tracked file, runtime application은 서로 다른 상태다. `PRODUCTION_INFORMATION`은 해당 프로젝트의 문서·DB·structured canon에 유지하고 이미지 승인 lifecycle과 혼합하지 않는다.
 
 ## 11. 적대적 검토
 
 이미지 작업 전체를 다음 실패 가정으로 다시 공격한다.
 
 - Visual Asset Coverage Preflight를 생략해 버튼 상태, enemy telegraph, feedback, input prompt, platform asset 같은 인접 필수 범위가 누락됐는가
-- coverage checklist를 second asset canon이나 자동 production queue로 만들었는가
+- 시스템 설명·세계관·관계도·제작 체크리스트 같은 기본 `PRODUCTION_INFORMATION`이 이미지 제한 때문에 생성되지 않았는가
+- 반대로 `PRODUCTION_INFORMATION`을 검색·수정 가능한 text/table/flow/db 대신 설명용 생성 이미지로 대체했는가
+- `ACTUAL_CONSUMER_REQUIRED`가 비어 있는데도 설명용 시트·포스터·관계 이미지를 생성했는가
+- `PLAYER_FACING_EXPLANATORY`와 제작자/AI용 설명 자료를 혼동했는가
+- `PRODUCT_DISTRIBUTION` 소비처가 없는 marketing-style visual을 관성적으로 만들었는가
+- Visual Asset Coverage Preflight를 second asset canon이나 자동 production queue로 만들었는가
 - `NOT_APPLICABLE`을 허용하지 않아 장르·단계와 무관한 asset scope가 폭증했는가
 - `STATE_FAMILY_COMPLETENESS` 없이 대표 이미지 한 장만으로 component 완성을 주장했는가
 - `NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS`를 어기고 gap 발견 뒤 사용자 승인 없는 image chain/batch를 만들었는가
@@ -352,4 +436,4 @@ STATIC_POLICY_PRESENT
 != RUNTIME_VISUAL_PASS
 ```
 
-실행 플랫폼의 더 높은 시스템·안전·제품 정책과 충돌하는 경우 Base 계약이 그 상위 정책을 override한다고 주장하지 않는다. 가능한 범위에서는 프로젝트 계획 단계에서 먼저 text brief checkpoint를 만들고, 실제 tool call은 적용 가능한 상위 정책과 현재 사용자 승인 범위 안에서 수행한다. 상위 정책 때문에 two-turn barrier 자체를 적용할 수 없는 경우에는 `BLOCKED_POLICY_CONFLICT` 또는 해당 실행 환경의 evidence ceiling으로 기록하며 정적 테스트 통과를 실제 모델 행동 PASS로 승격하지 않는다.
+실행 플랫폼의 더 높은 시스템·안전·제품 정책과 충돌하는 경우 Base 계약이 그 상위 정책을 override한다고 주장하지 않는다. 가능한 범위에서는 프로젝트 계획 단계에서 먼저 information-vs-image route와 text brief checkpoint를 만들고, 실제 tool call은 적용 가능한 상위 정책과 현재 사용자 승인 범위 안에서 수행한다. 상위 정책 때문에 two-turn barrier 자체를 적용할 수 없는 경우에는 `BLOCKED_POLICY_CONFLICT` 또는 해당 실행 환경의 evidence ceiling으로 기록하며 정적 테스트 통과를 실제 모델 행동 PASS로 승격하지 않는다.
