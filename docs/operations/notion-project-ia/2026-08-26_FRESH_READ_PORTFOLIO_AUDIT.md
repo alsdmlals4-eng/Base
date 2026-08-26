@@ -29,7 +29,7 @@ FRESH_READ_RECONSTRUCTION_AUDITED
 | 십보강호 | `aec000790c416dd449eaa01b7e52187b35120ecc` | `3c41b237-eb1c-8105-a254-d860f3c21638` | REUSE | visual handoff postmerge와 다음 3-image batch가 current next work; 공용 bootstrap 표준화 필요 |
 | Tetris | `5f52c1c60bc12b2b4b49c7b39054921c048f2d6b` | `3c41b237-eb1c-8199-85b3-e798e938c80b` | REUSE | Living GDD Home architecture가 이미 새 IA를 소유; Draft BUILD PR 격리 유지 필요 |
 | Switchy Express | `4219f4e5e342c09024190e3fdaefa7a20051c988` | `3c41b237-eb1c-8103-9537-ede6dfc5f07e` | REUSE | fresh-chat visual handoff가 이미 구현됨; visual reference를 runtime proof로 올리지 않음 |
-| 마이 리틀 보트 | `d5482ca7b4b38a3a8d45932fe354a64f8f33eebc` | `3c41b237-eb1c-8194-8b8e-d88362cafafa` | REUSE | visual closeout/handoff evidence가 postmerge correction됨; 공용 bootstrap 표준화 필요 |
+| 마이 리틀 보트 | `d5482ca7b4b38a3d45932fe354a64f8f33eebc` | `3c41b237-eb1c-8194-8b8e-d88362cafafa` | REUSE | visual closeout/handoff evidence가 postmerge correction됨; 공용 bootstrap 표준화 필요 |
 
 ## Notion correction disposition
 
@@ -47,12 +47,33 @@ FRESH-READ BOOTSTRAP
 
 기존 프로젝트 고유 Home 내용·Visual·Domain link·현재 Decision을 덮어쓰지 않는다.
 
+## Post-write destination readback
+
+`NOTION_BOOTSTRAP_DESTINATION_READBACK_10_OF_10_PASS`
+
+2026-08-26 bounded insert 뒤 workspace search로 10개 대상 Human Home 모두에서 `FRESH-READ BOOTSTRAP`과 reconstruction chain을 다시 확인했고, 이어서 각 exact page ID를 직접 fetch해 상단 callout과 기존 프로젝트별 Living GDD/Visual/current decision 본문이 함께 보존되어 있음을 확인했다.
+
+| Project | exact destination fetch | Bootstrap at top | Existing project-specific content preserved |
+|---|---|---|---|
+| COC-Fiction | PASS | PASS | PASS |
+| 괴이기록국 | PASS | PASS | PASS |
+| 오멘워드 | PASS | PASS | PASS |
+| GRIMOIRE | PASS | PASS | PASS |
+| 닌자 서바이벌 | PASS | PASS | PASS |
+| 블랙스미스 | PASS | PASS | PASS |
+| 십보강호 | PASS | PASS | PASS |
+| Tetris | PASS | PASS | PASS |
+| Switchy Express | PASS | PASS | PASS |
+| 마이 리틀 보트 | PASS | PASS | PASS |
+
+이 PASS는 **Notion destination content readback**이다. 독립 사용자가 실제로 blind cold-start를 수행해 같은 판단 품질을 재현했다는 Human usability 증거로 승격하지 않는다.
+
 ## Implementation Reality Gate
 
 - GitHub: 10개 repository의 latest observed commit/current handoff direction을 fresh-read했다.
-- Notion: 10개 Human Home의 current content/IA를 live-read했다.
+- Notion: 10개 Human Home의 current content/IA를 live-read했고, bounded insert 뒤 10/10 exact destination fetch readback을 완료했다.
 - 구조 판정: 기존 physical IA를 재사용해도 된다는 evidence가 있다.
-- Fresh-Read Bootstrap: Base reference + Handoff template + Home callout의 실제 readback으로 검증한다.
+- Fresh-Read Bootstrap: Base reference + owning Skill direct discovery + Handoff template + 10개 Home callout의 실제 readback으로 검증한다.
 - Runtime/player evidence: 이 작업은 project runtime을 변경하지 않는다.
 - `HUMAN_USABILITY_NOT_RUN`: 완전히 독립된 새 인간/agent가 10개 프로젝트를 blind cold-start하여 동일 품질로 수행하는 실험은 이번 scope에서 실행하지 않았다.
 - 따라서 `TRANSFER_ACCEPTED`나 인간 사용성 PASS를 과장하지 않는다.
