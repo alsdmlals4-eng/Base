@@ -8,10 +8,10 @@ Canonical policy: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
 
 ```text
 GPT
-= 기획·조사·벤치마킹·적대적 검수·Base·Notion·문서·표·이미지·Godot Work Instruction·최종 검수
+= 현재 PLAY_MEANINGFUL_WORK_SLICE의 기획·조사·벤치마킹·적대적 검수·Base·Notion·문서·표·이미지·Godot Work Instruction·최종 검수
 
 Codex
-= 실제 게임 프로젝트의 Godot 제품 구현·코딩·runtime/play test
+= 승인된 Slice 범위의 실제 게임 프로젝트 Godot 제품 구현·코딩·runtime/play test
 
 GitHub
 = 프로젝트 structured/runtime truth
@@ -37,16 +37,38 @@ Codex는 일반 repository executor가 아니다. Base의 정책·Skill·Registr
 
 Notion 편집, Base maintenance, GDD/표/Flow, 이미지, 조사/검수만 남았다면 인계하지 않는다.
 
+인계 전 GPT는 current Slice에서 다음 Gate를 닫아야 한다.
+
+```text
+PLAY_MEANINGFUL_WORK_SLICE
+→ TARGETED_CONTEXT_RECOVERY_NOT_FULL_PROJECT_REAUDIT
+→ GPT_MINIMUM_IMPLEMENTATION_READY_PLANNING
+→ EXISTING_SOLUTION_FIRST
+→ 필요한 benchmark / adversarial review / IRG
+→ PLANNING_CANON_BEFORE_HANDOFF
+→ PRE_HANDOFF_GPT_STOP
+```
+
+`PLANNING_CANON_BEFORE_HANDOFF`는 승인된 기획 Decision과 구현 계약을 GitHub/Notion 정본에 기록하는 단계다. 구현·runtime·play PASS를 미리 주장하는 단계가 아니다.
+
 ## 3. GPT 인계 계약
 
 ```yaml
 mode: CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF
 project:
 repository:
+work_slice_mode: PLAY_MEANINGFUL_WORK_SLICE
+work_slice_id:
 player_outcome:
+player_action_and_choice:
 approved_scope: []
+explicit_non_scope: []
 protected_scope: []
+required_data_and_inputs: []
+ui_ux_flow: []
+asset_audio_dependencies: []
 acceptance_criteria: []
+review_evidence_expected: []
 notion_sources:
   project_home:
   relevant_domain_pages: []
@@ -68,6 +90,8 @@ change_proposal_boundary: []
 
 이 명세는 구현 방법을 고정하지 않는다. Codex는 current project GitHub+Notion과 실제 Godot 구조를 읽고 승인된 결과를 보존하는 기술 구현 방법을 결정한다.
 
+`explicit_non_scope`는 이번 Slice에서 의도적으로 제외한 미래 기능·콘텐츠·시스템을 Codex가 구현 편의상 끌어오지 못하게 하는 범위 계약이다.
+
 ## 4. Codex 재수화 Gate
 
 ```text
@@ -83,7 +107,7 @@ exact game project/repository/worktree
 → GODOT PRODUCT BUILD
 ```
 
-과거 대화·stale handoff·로컬 캐시만으로 구현하지 않는다.
+과거 대화·stale handoff·로컬 캐시만으로 구현하지 않는다. 재수화는 current Slice와 직접 의존하는 구현 truth를 확인하는 것이며, Codex가 프로젝트 전체를 재기획하는 단계가 아니다.
 
 ## 5. Visual Gate
 
@@ -133,6 +157,7 @@ GPT로 반환:
 - 서사 정사
 - Art Direction
 - MVP/기능 범위
+- `explicit_non_scope`의 범위 확대
 - 제품 호환성을 깨는 중요 결정
 
 ## 7. 실행환경 freshness
@@ -179,9 +204,11 @@ preflight를 생략해도 project GitHub+Notion 재수화는 생략하지 않는
 codex_result:
   project:
   repository:
+  work_slice_id:
   baseline_commit:
   final_commit:
   changed_godot_files_and_reasons: []
+  explicit_non_scope_preserved: []
   tests_passed: []
   tests_failed: []
   tests_not_run: []
@@ -195,7 +222,7 @@ codex_result:
   status: READY_FOR_GPT_REVIEW | BLOCKED | WAITING_GPT_VISUAL
 ```
 
-GPT가 final review owner다.
+GPT가 final review owner다. GPT는 구현 결과를 `FIX | TUNE | REDESIGN`으로 분류하고, 필요한 수정 뒤 current Slice와 실제 영향받은 직접 의존성만 재검증한다. 실제 구현·runtime/play PASS 상태는 검증 뒤에만 정본으로 승격한다.
 
 ## 11. 잘못된 라우팅
 
@@ -204,5 +231,7 @@ GPT가 final review owner다.
 - 모든 code file을 Codex ownership으로 판단
 - 실제 Godot product work를 GPT가 누적 구현
 - Codex가 이미지 생성
+- current Slice와 무관한 미래 기능을 implementation convenience로 함께 구현
+- GPT가 구현 준비 완료 뒤 Node/Scene/함수 수준 구현법을 계속 강제
 
-> 인계 기준은 **코드 파일 존재 여부가 아니라 실제 Godot 제품 구현 필요 여부**다.
+> 인계 기준은 **코드 파일 존재 여부가 아니라 실제 Godot 제품 구현 필요 여부**다. 인계 범위는 프로젝트 전체가 아니라 승인된 `PLAY_MEANINGFUL_WORK_SLICE`와 그 직접 의존성이다.
