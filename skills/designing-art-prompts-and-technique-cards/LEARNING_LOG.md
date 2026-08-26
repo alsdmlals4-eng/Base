@@ -1,5 +1,64 @@
 # Designing Art Prompts and Technique Cards Learning Log
 
+## 2026-08-26 — 제작 정보와 생성 이미지를 분리하고 실제 소비처를 이미지 진입 조건으로 둔다
+
+### Trigger
+
+Visual Asset Coverage를 강화하는 과정에서 “제작자와 AI가 알아야 할 정보도 중요하다”와 “설명용 시트 대신 실제 게임에서 쓰이는 이미지를 만든다”가 서로 다른 요구라는 점이 확인됐다. 시스템 설명·세계관·관계도·제작 체크리스트를 모두 이미지 생성 금지로 해석하면 프로젝트 정본이 빈약해지고, 반대로 필요한 정보를 고해상도 설명용 시트로 계속 만들면 이미지 생산량만 늘고 검색·수정·구현 연결성이 약해진다.
+
+### Lesson
+
+정보의 필요성과 이미지의 필요성을 분리한다.
+
+```text
+PRODUCTION_INFORMATION
+→ TEXT_TABLE_FLOW_DB_FIRST
+→ editable/searchable project owner에 생성·갱신
+
+IMAGE_ASSET_OR_SURFACE
+→ ACTUAL_CONSUMER_REQUIRED
+→ GAME_RUNTIME | PLANNED_GAME_SURFACE | PLAYER_FACING_EXPLANATORY | PRODUCT_DISTRIBUTION
+→ Visual Requirement Gate
+→ explicit image approval
+```
+
+- 시스템 설명, 세계관, 캐릭터·세력 관계, 관계도, 제작 체크리스트, 밸런스·경제, Flow와 구현 계약은 계속 만든다.
+- 제작자·AI 이해가 목적이면 Markdown·Notion text/table/DB·Mermaid·Flow·JSON처럼 수정·검색 가능한 표현을 우선한다.
+- `DOCUMENTATION_DECORATION / AI_EXPLANATION_ONLY / CHECKLIST_DECORATION / UNNAMED_FUTURE_USE`만 있는 신규 생성 이미지는 `DO_NOT_GENERATE`다.
+- 실제 게임에 들어갈 특정 screen/scene/asset slot을 검증하는 목업은 `PLANNED_GAME_SURFACE`로 허용한다.
+- 튜토리얼·도감·인게임 도움말·세력 관계 UI처럼 플레이어가 실제로 소비하는 설명 visual은 `PLAYER_FACING_EXPLANATORY`로 허용한다.
+- store capsule·key art·app icon·trailer thumbnail 등은 runtime 밖이어도 실제 배포 소비처가 있으므로 `PRODUCT_DISTRIBUTION`으로 허용한다.
+- actual consumer가 있다고 자동 생성하는 것은 아니다. 기존 재사용, Delete Test, Visual Requirement Gate, conversation approval가 그대로 남는다.
+
+### Base change
+
+- `GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`에 production-information route와 `ACTUAL_CONSUMER_REQUIRED`를 추가했다.
+- `GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`에서 독립 설명용 시트보다 실제 game/product surface를 우선하도록 생성 목적을 교정했다.
+- Art Skill의 `planning-visualization`은 실제 planned game surface 검증으로 한정하고, 제작자·AI용 정보는 text/table/Flow/DB route로 분리했다.
+- `GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md`의 Image backlog에 consumer kind/surface/primary use/validation을 추가하고 production-information route-out을 별도 기록했다.
+- 계약 테스트는 정보 산출물 보존과 실제 소비처 필수 조건을 함께 검사한다.
+
+### Guardrail
+
+- 정보가 필요함 != 이미지가 필요함
+- actual consumer 존재 != 자동 이미지 생성 승인
+- `PLAYER_FACING_EXPLANATORY` != 제작자·AI용 설명 자료
+- `PRODUCT_DISTRIBUTION` != 근거 없는 마케팅풍 이미지
+- text/table/Flow/DB 산출물은 이미지 attachment가 없어도 정상 완료될 수 있다.
+
+### Validation state
+
+```yaml
+red_regression: VERIFIED_ON_PR_720
+core_regression_after_owner_changes: PASS
+canonical_freshness_companion_sync: IN_PROGRESS_ON_PR_720
+actual_project_image_generation: NOT_RUN
+notion_project_information_readback: NOT_RUN
+runtime_visual_validation: NOT_RUN
+```
+
+---
+
 ## 2026-08-26 — 이미지 생성 전 Visual Asset Coverage를 별도 preflight로 확인한다
 
 ### Trigger

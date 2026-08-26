@@ -104,6 +104,30 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
             self.assertIn(status, skill)
         self.assertIn("생성 결과는 자동 최종 자산이 아니다", skill)
 
+    def test_information_artifacts_are_not_promoted_to_explanatory_image_sheets(self) -> None:
+        skill = read("skills/designing-art-prompts-and-technique-cards/SKILL.md")
+        policy = read("docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md")
+        plan = read("templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md")
+        for text in (skill, policy, plan):
+            self.assertIn("ACTUAL_CONSUMER_REQUIRED", text)
+            self.assertIn("PRODUCTION_INFORMATION", text)
+            self.assertIn("TEXT_TABLE_FLOW_DB_FIRST", text)
+        for token in (
+            "GAME_RUNTIME",
+            "PLANNED_GAME_SURFACE",
+            "PLAYER_FACING_EXPLANATORY",
+            "PRODUCT_DISTRIBUTION",
+        ):
+            self.assertIn(token, policy)
+            self.assertIn(token, plan)
+        self.assertIn("DO_NOT_GENERATE", skill)
+        self.assertIn("DO_NOT_GENERATE", policy)
+        self.assertIn("시스템 설명", policy)
+        self.assertIn("세계관", policy)
+        self.assertIn("관계도", policy)
+        self.assertIn("제작 체크리스트", policy)
+        self.assertIn("structured information artifact", plan)
+
     def test_visual_workflow_absorbs_old_tool_principles_without_tool_dependency(self) -> None:
         workflow = read("docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md")
         policy = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
