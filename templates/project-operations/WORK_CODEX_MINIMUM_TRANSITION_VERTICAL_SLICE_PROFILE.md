@@ -40,6 +40,7 @@ Current detailed owners:
 ```text
 WORK_PREP_COMPLETION_BEFORE_CODEX
 → CODEX_SINGLE_IMPLEMENTATION_WINDOW
+→ WORK_FINAL_EVIDENCE_REVIEW_BEFORE_USER_VALIDATION
 → AUTOMATED_VERTICAL_SLICE_READY
 → READY_FOR_USER_VERTICAL_SLICE_VALIDATION
 ```
@@ -80,7 +81,8 @@ Project GitHub·Notion fresh-read
 ### Stage C — Work final review and user handoff
 
 ```text
-actual diff·test·runtime evidence 검수
+WORK_FINAL_EVIDENCE_REVIEW_BEFORE_USER_VALIDATION
+→ actual diff·test·runtime evidence 검수
 → valid finding correction
 → impact-bounded revalidation
 → GitHub·Notion canon/readback
@@ -224,6 +226,7 @@ approved project audio
 DELEGATED_RECOMMENDED_DEFAULT_APPROVAL
 NO_ROUTINE_APPROVAL_STOPS
 HIGH_RISK_DECISIONS_DEFER_AND_BUNDLE
+BLOCKING_HIGH_RISK_PREVENTS_PHASE_ADVANCE
 NO_AUTOMATIC_SCOPE_EXPANSION
 ```
 
@@ -335,6 +338,7 @@ GUT_DETERMINISTIC_TESTS_WHEN_ADOPTED
 HERA_LIVE_QA_AND_SCREEN_EVIDENCE_WHEN_ADOPTED
 HERA_PERSISTENT_AUTHORING_FORBIDDEN
 HERA_PHASE_SOURCE_DELTA_NONE
+EVIDENCE_EQUIVALENT_MACHINE_QA_REQUIRED_WHEN_NOT_ADOPTED
 ```
 
 Use the project’s adopted current authority:
@@ -344,7 +348,7 @@ Use the project’s adopted current authority:
 - adopted Hera: normal gameplay run/input, runtime state/UI inspection, diagnostics, screenshot and bounded visual diff
 - Hera pre/post tracked source delta: `NONE`
 
-Do not auto-install GUT/Hera merely because this profile exists. Existing Solution First, exact version compatibility, adoption record, rollback, and current owner apply.
+Do not auto-install GUT/Hera merely because this profile exists. Existing Solution First, exact version compatibility, adoption record, rollback, and current owner apply. If GUT or Hera is not adopted, the current project must use an evidence-equivalent deterministic/runtime QA route; absence of an equivalent required route stays `NOT_RUN` and blocks automated readiness.
 
 Hera must not persistently mutate Scene/Node/Script/Resource/files, use diagnostic state cheating as normal-path acceptance, or turn screenshot diff into design/readability/fun approval.
 
