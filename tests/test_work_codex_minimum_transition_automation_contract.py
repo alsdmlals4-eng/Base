@@ -7,17 +7,27 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 APPENDIX = ROOT / "templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9_COMPATIBILITY_APPENDIX.md"
 PROFILE = ROOT / "templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md"
+LOCAL_EXECUTION_ADDENDUM = ROOT / "templates/project-operations/WORK_CODEX_AUTOMATIC_GIT_GODOT_LOCAL_EXECUTION_ADDENDUM.md"
 
 
 class WorkCodexMinimumTransitionAutomationContractTests(unittest.TestCase):
     def _profile_text(self) -> str:
         self.assertTrue(PROFILE.exists(), "opt-in minimum-transition profile must exist")
-        return PROFILE.read_text(encoding="utf-8")
+        self.assertTrue(LOCAL_EXECUTION_ADDENDUM.exists(), "automatic Git/Godot local-execution addendum must exist")
+        return "\n".join(
+            (
+                PROFILE.read_text(encoding="utf-8"),
+                APPENDIX.read_text(encoding="utf-8"),
+                LOCAL_EXECUTION_ADDENDUM.read_text(encoding="utf-8"),
+            )
+        )
 
     def test_profile_is_discoverable_from_the_work_bundle(self) -> None:
         appendix = APPENDIX.read_text(encoding="utf-8")
         self.assertTrue(PROFILE.exists(), "opt-in minimum-transition profile must exist")
+        self.assertTrue(LOCAL_EXECUTION_ADDENDUM.exists(), "automatic Git/Godot local-execution addendum must exist")
         self.assertIn("WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md", appendix)
+        self.assertIn("WORK_CODEX_AUTOMATIC_GIT_GODOT_LOCAL_EXECUTION_ADDENDUM.md", appendix)
         self.assertIn("EXPLICIT_USER_DELEGATION_REQUIRED", appendix)
 
     def test_profile_defines_three_stage_minimum_transition_flow(self) -> None:
