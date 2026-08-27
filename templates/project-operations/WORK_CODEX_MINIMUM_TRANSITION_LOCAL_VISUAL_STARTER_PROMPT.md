@@ -64,7 +64,7 @@ WORK_PRODUCTION_INPUT_PACKET
 → READY_FOR_USER_VERTICAL_SLICE_VALIDATION
 ```
 
-중요 결정은 current project → approved asset/reference → Base reuse → 직접 관련된 검증 사례 → 공식·현업·시장 성공/실패 사례 순으로 조사하고 ADOPT / ADAPT / REJECT와 최소 3개 실질 대안을 비교해. 실제 제품 구현·runtime·artifact 없이 완료를 주장하지 마.
+중요 결정은 current project → approved asset/reference → Base reuse → 직접 관련된 검증 사례 → 공식·현업·시장 성공/실패 사례 순으로 조사하고 ADOPT / ADAPT / REJECT와 최소 3개 실질 대안을 비교해. trigger가 맞는 Brainstorming/Superpowers·TDD·systematic debugging·verification-before-completion을 실제 실행하고, Skill을 읽은 것과 실행한 것을 구분해. 실제 제품 구현·runtime·artifact 없이 완료를 주장하지 마.
 
 Git은 exact remote/upstream/default branch를 발견하고 fetch, 안전한 ff-only pull, current-task branch push, remote readback을 자동 수행해. direct main, force, blind reset/clean/rebase, 다른 open PR takeover, admin/ruleset bypass는 금지해.
 
