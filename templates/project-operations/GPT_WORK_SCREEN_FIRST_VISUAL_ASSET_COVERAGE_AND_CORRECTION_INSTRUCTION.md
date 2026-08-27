@@ -4,6 +4,21 @@
 
 현재 이 채팅이 연결된 프로젝트를 대상으로, **목표 빌드에서 플레이어가 실제로 보게 되는 모든 화면과 그 화면을 구성하는 필수 시각 요소**를 전수조사하고 누락·충돌·중복을 실제 정본에 교정해.
 
+다음 공용 순서를 보존해.
+
+```text
+FIVE_STAGE_WORK_STAGE_3_IMAGE_ASSET_INPUT
+→ SCREEN_SURFACE_INVENTORY_FIRST
+→ CANONICAL_VISUAL_COVERAGE_OWNER
+→ STATE_FAMILY_COMPLETENESS
+→ IMPLEMENTATION_MODE_REQUIRED
+→ Visual Requirement Gate
+→ Image Conversation Approval Gate
+→ QA_READBACK
+```
+
+화면 인벤토리 문서는 subordinate preflight이며 기존 Visual Asset Coverage 문서가 단일 canonical coverage owner다.
+
 이 작업은 단순 이미지 종류 목록 작성이나 제안서 작성이 아니다.
 
 ```text
