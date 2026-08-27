@@ -14,10 +14,25 @@ GODOT_SAFETY = (
     / "godot"
     / "HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md"
 )
+EVIDENCE_OWNER = (
+    ROOT
+    / "docs"
+    / "knowledge"
+    / "vertical-slice"
+    / "SKILL_ORCHESTRATION_AND_EVIDENCE.md"
+)
 
 
 def read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
+
+
+def assert_ordered(test: unittest.TestCase, text: str, terms: tuple[str, ...]) -> None:
+    positions = []
+    for term in terms:
+        test.assertIn(term, text)
+        positions.append(text.index(term))
+    test.assertEqual(positions, sorted(positions), f"terms must be ordered: {terms}")
 
 
 class WorkGodotProcessLifecycleContractTests(unittest.TestCase):
@@ -60,6 +75,34 @@ class WorkGodotProcessLifecycleContractTests(unittest.TestCase):
             "residual check",
         ):
             self.assertIn(term, godot_safety)
+
+    def test_existing_evidence_owner_controls_full_completion_sequence(self) -> None:
+        evidence = read(EVIDENCE_OWNER)
+        self.assertIn("EXECUTION_EVIDENCE_CANONICAL_OWNER", evidence)
+        assert_ordered(
+            self,
+            evidence,
+            (
+                "EXECUTABLE_COVERAGE_OR_EXPLICIT_ENV_GATE",
+                "WORK_DIRECT_GODOT_VERIFICATION_WHEN_MATERIAL",
+                "FRESH_RUNTIME_ARTIFACT_GATE",
+                "TASK_OWNED_PROCESS_CLEANUP",
+                "RESIDUAL_PROCESS_READBACK",
+                "COMPLETION_CLAIM_AFTER_VERIFICATION_AND_CLEANUP",
+            ),
+        )
+        for term in (
+            "ENV_GATED_EXPECTED_SKIP",
+            "UNRUNNABLE_COVERAGE_GAP",
+            "CLEANUP_PASS_IS_NOT_RUNTIME_PASS",
+            "PROCESS_OWNERSHIP_UNVERIFIED",
+        ):
+            self.assertIn(term, evidence)
+
+    def test_all_lifecycle_routes_link_the_existing_evidence_owner(self) -> None:
+        owner_path = "docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md"
+        for path in (WORKFLOW, ROUTING, GODOT_SAFETY):
+            self.assertIn(owner_path, read(path), str(path))
 
     def test_direct_verification_does_not_expand_gpt_product_authoring(self) -> None:
         workflow = read(WORKFLOW)
