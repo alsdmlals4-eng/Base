@@ -7,6 +7,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 STARTER = ROOT / "templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md"
 PROFILE = ROOT / "templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md"
+APPENDIX = ROOT / "templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9_COMPATIBILITY_APPENDIX.md"
+LOCAL_PROFILE = ROOT / "templates/project-operations/WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md"
 START_CHECKLIST = ROOT / "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md"
 IMAGE_POLICY = ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md"
 VAULT_POLICY = ROOT / "docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md"
@@ -20,20 +22,40 @@ class WorkLocalVisualAssetDeliveryContractTests(unittest.TestCase):
             raise AssertionError(f"required contract file missing: {path}")
         return path.read_text(encoding="utf-8")
 
-    def test_explicit_work_profile_routes_local_project_visual_bytes(self) -> None:
-        starter = self._read(STARTER)
-        profile = self._read(PROFILE)
+    def test_existing_starter_routes_the_compatibility_appendix_and_start_checklist(self) -> None:
+        text = self._read(STARTER)
+        self.assertIn("CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9_COMPATIBILITY_APPENDIX.md", text)
+        self.assertIn("WORK_PROJECT_START_CANON_CHECKLIST.md", text)
+        self.assertIn("PROJECT_START_CANON_CHECKLIST_REQUIRED", text)
+
+    def test_appendix_routes_explicit_project_local_visual_binary_profile(self) -> None:
+        appendix = self._read(APPENDIX)
         for token in (
+            "WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md",
             "PROJECT_LOCAL_VISUAL_BINARY_FIRST",
             "NOTION_VISUAL_STRUCTURE_REFERENCE_ONLY",
             "NO_NOTION_BINARY_UPLOAD_REQUIRED",
-            "PROJECT_LOCAL_ASSET_VAULT_POLICY.md",
+            "NOTION_BINARY_DELIVERY_OPTIONAL_BY_EXPLICIT_PROJECT_POLICY",
+            "NOTION_UPLOAD_NOT_RUN",
+            "NO_FALSE_NOTION_UPLOAD_CLAIM",
         ):
-            self.assertIn(token, starter)
-            self.assertIn(token, profile)
+            self.assertIn(token, appendix)
+
+    def test_local_profile_composes_existing_visual_and_vault_owners(self) -> None:
+        text = self._read(LOCAL_PROFILE)
+        for token in (
+            "COMPOSE_PROJECT_LOCAL_ASSET_VAULT_NOT_SECOND_CANON",
+            "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md",
+            "docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md",
+            "WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md",
+            "WORK_PROJECT_START_CANON_CHECKLIST.md",
+        ):
+            self.assertIn(token, text)
+        self.assertIn("PROJECT_LOCAL_ASSET_VAULT_POLICY.md", self._read(IMAGE_POLICY))
+        self.assertIn(".asset-vault/library/", self._read(VAULT_POLICY))
 
     def test_local_gpt_can_write_candidates_but_codex_requires_durable_promotion(self) -> None:
-        text = self._read(VAULT_POLICY)
+        text = self._read(LOCAL_PROFILE)
         for token in (
             "LOCAL_GPT_DIRECT_PROJECT_WRITE_WHEN_CALLABLE",
             ".asset-vault/library/work-generated/",
@@ -45,9 +67,9 @@ class WorkLocalVisualAssetDeliveryContractTests(unittest.TestCase):
             self.assertIn(token, text)
 
     def test_visual_packet_records_local_paths_hash_manifest_and_durable_identity(self) -> None:
-        text = self._read(PROFILE)
-        visual_section = text.split("### 3.1 Delegated Visual production", 1)[1].split(
-            "### 3.2 Delegated Audio production", 1
+        text = self._read(LOCAL_PROFILE)
+        visual_section = text.split("### 4.1 Visual production packet override", 1)[1].split(
+            "### 4.2 Manifest 최소 필드", 1
         )[0]
         for field in (
             "project_local_candidate_path:",
@@ -61,18 +83,19 @@ class WorkLocalVisualAssetDeliveryContractTests(unittest.TestCase):
         self.assertNotIn("notion_destination:", visual_section)
 
     def test_candidate_and_runtime_promotion_are_separate_and_freshness_is_exact(self) -> None:
-        combined = "\n".join((self._read(PROFILE), self._read(VAULT_POLICY)))
+        text = self._read(LOCAL_PROFILE)
         for token in (
             "LOCAL_VISUAL_CANDIDATE",
             "RUNTIME_PROMOTED",
             "EXACT_CANDIDATE_FRESHNESS",
+            "EXACT_RUNTIME_CANDIDATE_FRESHNESS",
             "HISTORICAL_SUPERSEDED_BY_PRODUCT_BYTE_CHANGE",
             "TOOLING_TEST_DOC_ONLY_DOES_NOT_INVALIDATE_CANDIDATE",
         ):
-            self.assertIn(token, combined)
+            self.assertIn(token, text)
 
     def test_godot_import_cache_is_not_product_source_and_tracking_is_discovered(self) -> None:
-        text = self._read(VAULT_POLICY)
+        text = self._read(LOCAL_PROFILE)
         for token in (
             "IMPORT_CACHE_DIFF != PRODUCT_SOURCE_DIFF",
             "NEVER_STAGE_GENERATED_IMPORT_NOISE",
@@ -84,8 +107,8 @@ class WorkLocalVisualAssetDeliveryContractTests(unittest.TestCase):
             self.assertIn(token, text)
         self.assertIn("일괄 금지", text)
 
-    def test_startup_receipt_records_visual_binary_route_and_distinct_sha_meanings(self) -> None:
-        text = self._read(START_CHECKLIST)
+    def test_startup_receipt_extension_records_visual_route_and_distinct_sha_meanings(self) -> None:
+        text = self._read(LOCAL_PROFILE)
         for field in (
             "product_implementation_baseline:",
             "latest_router_or_canon_sync:",
@@ -97,20 +120,11 @@ class WorkLocalVisualAssetDeliveryContractTests(unittest.TestCase):
             "visual_asset_durability_gap:",
         ):
             self.assertIn(field, text)
+        self.assertIn("visual_audio_asset_state", text)
+        self.assertIn("PROJECT_START_CANON_CHECKLIST", self._read(START_CHECKLIST))
 
-    def test_notion_binary_is_optional_only_under_explicit_project_policy(self) -> None:
-        text = self._read(IMAGE_POLICY)
-        for token in (
-            "NOTION_BINARY_DELIVERY_OPTIONAL_BY_EXPLICIT_PROJECT_POLICY",
-            "NOTION_UPLOAD_NOT_RUN",
-            "NO_FALSE_NOTION_UPLOAD_CLAIM",
-            "NOTION_VISUAL_STRUCTURE_REFERENCE_ONLY",
-            "PROJECT_LOCAL_VISUAL_BINARY_FIRST",
-        ):
-            self.assertIn(token, text)
-
-    def test_ci_and_package_candidate_evidence_layers_remain_separate(self) -> None:
-        text = self._read(PROFILE)
+    def test_ci_package_candidate_and_optional_heartbeat_evidence_are_separate(self) -> None:
+        text = self._read(LOCAL_PROFILE)
         for token in (
             "TEST_LOGIC_PASS != CI_GATE_PASS",
             "CI_WORKFLOW_AND_ARTIFACT_CONTRACT_REQUIRED",
@@ -120,9 +134,9 @@ class WorkLocalVisualAssetDeliveryContractTests(unittest.TestCase):
             self.assertIn(token, text)
 
     def test_project_neutral_case_is_linked_without_absorbing_project_values(self) -> None:
-        profile = self._read(PROFILE)
+        local_profile = self._read(LOCAL_PROFILE)
         case = self._read(CASE)
-        self.assertIn(CASE.name, profile)
+        self.assertIn(CASE.name, local_profile)
         for token in (
             "NOTION_BINARY_IS_NOT_REQUIRED_FOR_PROJECT_OWNED_VISUAL_BYTES",
             "LOCAL_ONLY_IS_NOT_DURABLE_HANDOFF",
@@ -141,7 +155,7 @@ class WorkLocalVisualAssetDeliveryContractTests(unittest.TestCase):
             self.assertNotIn(project_only, case)
 
     def test_minimum_transition_and_evidence_boundaries_are_not_regressed(self) -> None:
-        combined = "\n".join((self._read(STARTER), self._read(PROFILE)))
+        combined = "\n".join((self._read(STARTER), self._read(PROFILE), self._read(LOCAL_PROFILE)))
         for token in (
             "PROJECT_START_CANON_CHECKLIST_REQUIRED",
             "WORK_PREP_COMPLETION_BEFORE_CODEX",
