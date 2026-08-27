@@ -7,7 +7,7 @@ PROJECT_CANON_AND_ACTUAL_IMPLEMENTATION_FIRST
 CURRENT_BASE_OWNER_WINS_ON_DRIFT
 ```
 
-> 프로젝트 사실·세부 절차를 복제하지 않고 현재 owner를 연결하는 얇은 진입점이다.
+> 프로젝트 사실·세부 절차를 복제하지 않고 current owner와 사용자용 5단계 interface를 연결한다.
 
 ## 1. 권위와 로드 순서
 
@@ -26,20 +26,37 @@ CURRENT_BASE_OWNER_WINS_ON_DRIFT
 2. Base latest main / root AGENTS / current Skill Registry inventory
 3. WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md
 4. WORK_PROJECT_START_CANON_CHECKLIST.md
-5. WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md
-6. WORK_EXECUTION_EVIDENCE_IDENTITY_INTEGRITY.md
-7. trigger되는 current Base·Project 전문 owner
+5. WORK_FIVE_PHASE_VERTICAL_SLICE_EXECUTION_CONTRACT.md
+6. WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md
+7. WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md when explicitly delegated
+8. WORK_EXECUTION_EVIDENCE_IDENTITY_INTEGRITY.md
+9. trigger되는 current Base·Project 전문 owner
 ```
 
 과거 대화와 Memory는 discovery 후보일 뿐이다. 충돌하면 `CONTEXT_DRIFT_RECHECK_REQUIRED`로 되돌린다.
 
-## 2. 시작 전 정본 교정
+## 2. 프로젝트 native state → 5단계 매핑
+
+`WORK_FIVE_PHASE_VERTICAL_SLICE_EXECUTION_CONTRACT.md`를 사용자용 lifecycle interface로 사용한다.
+
+```text
+PHASE_1_PLANNING_CO_DESIGN
+→ PHASE_2_PREPRODUCTION_REVIEW
+→ PHASE_3_WORK_INGAME_ELEMENT_PRODUCTION
+→ PHASE_4_CODEX_IMPLEMENTATION_AND_MACHINE_CLOSEOUT
+→ PHASE_5_USER_VERTICAL_SLICE_VALIDATION
+```
+
+Project의 `PLAN / BUILD / REVIEW`, Task, Decision, DoR, candidate, Human gate는 rename하지 않는다. current owner와 실제 evidence를 `FIVE_PHASE_PROJECT_MAPPING`으로 연결하고 stale stage·next gate·evidence ceiling만 bounded correction한다.
+
+## 3. 시작 전 정본 교정·핵심 기획
 
 새 production·Codex mutation 전에 `WORK_PROJECT_START_CANON_CHECKLIST.md`로 확인한다.
 
 ```text
-핵심 재미 / player promise
-핵심 시스템 / actual consumer
+핵심 재미 / player promise / core-session-meta loop
+핵심·지원 시스템 / actual consumer
+meaningful choice / reward / failure learning
 evidence-based SWOT
 current stage / active Slice / accepted frontier
 구현·test·Visual·Audio 상태
@@ -49,27 +66,28 @@ stale·duplicate·conflict·missing canon
 GitHub structured / Notion human canon readback
 ```
 
-승인 범위의 작은 정본 결함은 먼저 교정한다. Core·주요 UX·경제·서사·Art Direction처럼 제품 의미가 바뀌는 결정만 보류한다.
+새 core meaning이 남으면 current Grill Me owner와 benchmark·최소 3개 대안으로 사용자와 공동설계한다. routine 승인 위임은 새 핵심 재미·Core Loop·핵심 시스템·주요 UX·경제·서사·Art Direction 승인 권한이 아니다.
 
-## 3. Work↔Codex 최소 전환
+## 4. Work↔Codex 최소 전환
 
-`WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md`를 따른다.
+세부 packet·approval·QA·merge는 `WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md`를 따른다.
 
 ```text
-Work 기획·검수·UI·Data·Visual·Audio·VFX·권리·QA 입력 완료
-→ WORK_PRODUCTION_INPUT_PACKET
-→ Codex single implementation window
-→ actual code/Scene/Resource/runtime/test/build
-→ CONSOLIDATED_RETURN_PACKET
-→ Work final review·교정·canon sync·merge/readback
-→ READY_FOR_USER_VERTICAL_SLICE_VALIDATION
+Phase 1 confirmed planning
+→ Phase 2 reviewed production contract
+→ Phase 3 WORK_PRODUCTION_INPUT_PACKET
+→ CODEX_SINGLE_IMPLEMENTATION_WINDOW
+→ Work final implementation evidence review
+→ AUTOMATED_VERTICAL_SLICE_READY
+→ user actual build validation
+→ USER_VALIDATED_VERTICAL_SLICE or bounded phase reopen
 ```
 
 작은 누락마다 왕복하지 않고, 실제 구현이 필요할 때 current Codex handoff owner로 전환한다.
 
-## 4. Project-local Visual opt-in
+## 5. Project-local Visual opt-in
 
-사용자가 이미지 binary를 각 프로젝트가 소유하도록 명시하면 함께 적용한다.
+사용자가 이미지 binary를 각 프로젝트가 소유하도록 명시하면:
 
 ```text
 WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md
@@ -86,12 +104,12 @@ Notion 구조·Art Direction fresh-read
 → tracked project asset + ASSET_MANIFEST
 → commit/push/remote readback
 → Codex project-relative locator
-→ Godot import/runtime consumer evidence
+→ runtime consumer evidence
 ```
 
 Notion text/status를 수정했으면 readback한다. binary를 올리지 않았으면 업로드했다고 주장하지 않는다. Project별 binary owner가 있으면 그 결정이 우선한다.
 
-## 5. Evidence identity
+## 6. Evidence identity
 
 `WORK_EXECUTION_EVIDENCE_IDENTITY_INTEGRITY.md`로 분리한다.
 
@@ -101,13 +119,14 @@ current validation HEAD != build/runtime candidate HEAD
 TEST_LOGIC_PASS != CI_GATE_PASS
 Godot import cache != product source
 LOCAL_VISUAL_CANDIDATE != PROJECT_ASSET_APPROVED != RUNTIME_PROMOTED
+AUTOMATED_VERTICAL_SLICE_READY != USER_VALIDATED_VERTICAL_SLICE
 local commit != remote synchronized
 machine QA != Human usability != Player Experience
 ```
 
 player-facing bytes 또는 package 설정이 바뀌면 영향 후보를 supersede하고 필요한 Gate를 다시 수행한다.
 
-## 6. 안전 자동화
+## 7. 안전 자동화
 
 callable한 현재 Project 범위에서만 실행한다.
 
@@ -119,8 +138,8 @@ remote/upstream/default branch 발견
 → PR / exact-head required checks / squash merge
 → post-merge main readback
 
-exact project/worktree/Godot/session
-→ Editor/game/GUT/Hera 또는 adopted equivalent
+exact project/worktree/engine/session
+→ adopted test/live-QA route
 → runtime/screen/build evidence
 ```
 
@@ -133,26 +152,28 @@ direct main / force push / blind stash·reset·clean·rebase
 새 유료 비용 / 공개 Release·스토어 게시
 ```
 
-## 7. 계속 실행과 완료
+## 8. 계속 실행과 완료
 
 ```text
 bounded retry
 → evidence-equivalent fallback
 → 막힌 task만 defer
 → 독립 ready work 계속
-→ current Slice machine-executable required work = 0
+→ current phase required work = 0
 → completion rescan
 → 최소 5회 full-scope adversarial review
 → blocking finding 0
 ```
+
+Phase 4까지:
 
 ```text
 HUMAN_USABILITY_EVIDENCE: NOT_RUN
 PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN
 ```
 
-다운로드 가능한 internal build와 사용자 검증 패킷을 제공하고, 실제 사용자 검증 전 다음 Slice로 자동 진입하지 않는다.
+다운로드 가능한 internal build와 validation packet을 제공한다. 실제 사용자 검증 전 다음 Slice로 자동 진입하지 않는다.
 
-## 8. Project-specific 값
+## 9. Project-specific 값
 
-프로젝트명·캐릭터·세계관·특정 PR/Issue/Task/Decision·SHA·경로·해상도·HUD·palette·Art Style·완료 목록·우선순위는 exact Project canon에서 fresh-read하며 이 router에 고정하지 않는다.
+프로젝트명·캐릭터·세계관·특정 PR/Issue/Task/Decision·SHA·경로·해상도·HUD·palette·Art Style·완료 목록·우선순위는 exact Project canon에서 fresh-read하며 이 router에 고정하지 않는다. 비게임 프로젝트는 engine evidence를 `NOT_APPLICABLE`로 두고 domain production에 맞게 5단계를 적용한다.
