@@ -432,6 +432,44 @@ shared_or_public_pc: FORBIDDEN
 
 Hera는 제6절의 `LOCALHOST_ONLY`와 shared-token 경계를 추가로 따른다. GUT은 테스트 runner이며 별도 network authority를 갖지 않는다.
 
+## 10A. 작업 소유 Godot 프로세스 정리 계약
+
+### `TASK_LAUNCHED_GODOT_PROCESS_OWNERSHIP`
+
+Work 또는 자동화가 Godot 검증을 시작하기 전에 exact repository/worktree/`project.godot` identity와 현재 실행 중인 process/session을 기록한다. 이번 작업이 직접 시작한 다음 항목만 task-owned 대상으로 관리한다.
+
+- Godot Editor instance
+- game window 또는 headless/runtime process
+- debug/test runner와 이번 실행에서 파생된 child process
+- 검증을 위해 직접 시작한 HiGodot addon/MCP server 또는 Hera/live-QA server
+
+PID 하나나 stale session/port만 신뢰하지 않는다. 가능한 project path, launch time, parent-child relation, session/port를 함께 대조한다.
+
+### 종료 순서
+
+필요한 evidence를 확보했고 같은 작업에서 더 이상 Godot이 필요하지 않으면 다음 순서를 적용한다.
+
+```text
+evidence/readback capture
+→ graceful stop of game/debug/test
+→ no-longer-needed task-owned Editor/server stop
+→ child process·project lock·session/port residual check
+→ cleanup evidence 기록
+```
+
+`graceful stop`을 우선한다. 강제 종료는 정상 종료에 실패한 hung task-owned process에 한정하고 이유·대상·결과를 기록한다. 같은 bounded 검증 묶음에서 재실행이 예정돼 있으면 매 assertion 뒤 Editor를 반복 재시작하지 않고 마지막 사용 시점에 정리한다.
+
+### 보호 대상과 실패 안전
+
+- 사용자가 작업 전에 열어 둔 `pre-existing` Godot instance는 보존한다.
+- 다른 프로젝트·repository·worktree의 Editor/game/server를 종료하지 않는다.
+- 다른 승인 workstream이나 사용자가 직접 소유한 debug session을 종료하지 않는다.
+- 이번 작업이 시작했다는 증거가 없는 process를 종료하지 않는다.
+- `process-name 전체 종료 금지`: `godot*` 같은 이름 기반 broad kill을 사용하지 않는다.
+- port-wide destructive cleanup을 사용하지 않는다.
+
+소유권을 안전하게 구분할 수 없으면 broad kill 대신 `PROCESS_OWNERSHIP_UNVERIFIED`로 남기고 process·project lock·session/port 잔여와 수동 확인 필요성을 보고한다. 이 상태에서 residual check를 PASS로 과장하지 않는다.
+
 ## 11. 도입 기록
 
 프로젝트별 `HIGODOT_ADOPTION_RECORD.json`은 다음을 소유한다.
@@ -538,6 +576,9 @@ Base_PR_202:
 - 과거 Base Adapter·MCP 파일 존재를 현재 실행 권위로 해석
 - HiGodot 단일 권위를 비저작 검증 도구 전면 금지로 오해
 - 역할이 다른 도구라는 이유만으로 평가·소비 경로·rollback 없이 일괄 설치
+- task ownership 확인 없이 Godot process-name 전체 종료 또는 port-wide destructive cleanup 실행
+- pre-existing 또는 다른 프로젝트 instance를 작업용 process로 오인해 종료
+- Godot을 실행한 뒤 task-owned process 종료와 residual check 증거 없이 cleanup PASS 주장
 
 ## 15. 실행 보고
 
@@ -566,6 +607,12 @@ hera:
 tests:
 runtime:
 human:
+godot_process_cleanup:
+  task_owned_processes_started: []
+  task_owned_processes_stopped: []
+  preexisting_or_unrelated_preserved: []
+  residual_check: PASS | PARTIAL | NOT_RUN | NOT_APPLICABLE
+  residual_risk: []
 unverified:
 production_readiness: false
 ```
