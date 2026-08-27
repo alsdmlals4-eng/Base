@@ -86,6 +86,22 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
             self.assertIn("TEXT_BRIEF_STOP_REQUIRED", consumer)
             self.assertIn("GENERATE_EXACTLY_ONE", consumer)
 
+    def test_explicit_image_request_routes_anchor_pipeline_without_removing_assistant_gate(self) -> None:
+        policy = read("docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md")
+        gate = read("docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md")
+        pipeline = read(
+            "docs/knowledge/game-development/PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md"
+        )
+        for text in (policy, gate):
+            self.assertIn("PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md", text)
+            self.assertIn("CURRENT_TURN_EXPLICIT_IMAGE_REQUEST", text)
+            self.assertIn("EXPLICIT_REQUEST_IS_ONE_OUTPUT_AUTHORITY", text)
+            self.assertIn("ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE", text)
+            self.assertIn("NO_AUTOMATIC_IMAGE_CHAIN", text)
+        self.assertIn("APPROVED_VISUAL_ANCHOR_FOUND", pipeline)
+        self.assertIn("NO_USABLE_APPROVED_VISUAL_ANCHOR", pipeline)
+        self.assertIn("COMPARISON_SHEET_NOT_PRODUCTION_ASSET", pipeline)
+
     def test_art_skill_contains_generation_and_review_modes(self) -> None:
         skill = read("skills/designing-art-prompts-and-technique-cards/SKILL.md")
         for mode in (
