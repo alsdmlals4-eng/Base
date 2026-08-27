@@ -6,6 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 STARTER = ROOT / "templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md"
+LOCAL_STARTER = ROOT / "templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_LOCAL_VISUAL_STARTER_PROMPT.md"
 PROFILE = ROOT / "templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md"
 APPENDIX = ROOT / "templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9_COMPATIBILITY_APPENDIX.md"
 LOCAL_PROFILE = ROOT / "templates/project-operations/WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md"
@@ -27,6 +28,21 @@ class WorkLocalVisualAssetDeliveryContractTests(unittest.TestCase):
         self.assertIn("CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9_COMPATIBILITY_APPENDIX.md", text)
         self.assertIn("WORK_PROJECT_START_CANON_CHECKLIST.md", text)
         self.assertIn("PROJECT_START_CANON_CHECKLIST_REQUIRED", text)
+
+    def test_thin_local_visual_starter_reuses_current_owners_and_carries_delegation(self) -> None:
+        text = self._read(LOCAL_STARTER)
+        for token in (
+            "WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md",
+            "WORK_PROJECT_START_CANON_CHECKLIST.md",
+            "WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md",
+            "WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md",
+            "PROJECT_LOCAL_VISUAL_BINARY_FIRST",
+            "NOTION_VISUAL_STRUCTURE_REFERENCE_ONLY",
+            "NO_NOTION_BINARY_UPLOAD_REQUIRED",
+            "Human usability",
+            "Player Experience",
+        ):
+            self.assertIn(token, text)
 
     def test_appendix_routes_explicit_project_local_visual_binary_profile(self) -> None:
         appendix = self._read(APPENDIX)
@@ -155,7 +171,9 @@ class WorkLocalVisualAssetDeliveryContractTests(unittest.TestCase):
             self.assertNotIn(project_only, case)
 
     def test_minimum_transition_and_evidence_boundaries_are_not_regressed(self) -> None:
-        combined = "\n".join((self._read(STARTER), self._read(PROFILE), self._read(LOCAL_PROFILE)))
+        combined = "\n".join(
+            (self._read(STARTER), self._read(LOCAL_STARTER), self._read(PROFILE), self._read(LOCAL_PROFILE))
+        )
         for token in (
             "PROJECT_START_CANON_CHECKLIST_REQUIRED",
             "WORK_PREP_COMPLETION_BEFORE_CODEX",
