@@ -186,6 +186,30 @@ GPT는 다음을 직접 수행한다.
 
 GPT는 실제 게임 프로젝트의 Godot 제품 코드를 기본 구현하지 않는다.
 
+## 6A. Work 직접 Godot 기계검증과 작업 소유 프로세스 정리
+
+GPT Work의 `REVIEW`가 runtime·scene·input·UI·resource 연결·오류 로그·GUT/headless/live-QA 증거를 직접 확인해야 하고 현재 도구로 실행할 수 있으면 Godot을 기계검증에 사용한다. 문서·정적 diff·data schema 검사만으로 Acceptance를 충족할 수 있으면 불필요하게 실행하지 않는다.
+
+```text
+REVIEW
+→ exact repository/worktree/project identity 확인
+→ pre-existing Godot/game/debug/server 상태 기록
+→ materially-needed Godot verification 실행
+→ evidence와 readback 확보
+→ 같은 작업의 추가 검증 필요 여부 판정
+→ task-owned process만 정상 종료
+→ child process·project lock·session 잔여 확인
+→ 검증과 정리를 분리해 보고
+```
+
+- 이번 Work가 시작한 Editor, game window, headless/runtime, debug/test runner, HiGodot/MCP/live-QA server만 `task-owned`로 본다.
+- 사용자가 작업 전에 열어 둔 instance, 다른 프로젝트·repository·worktree, 다른 승인 workstream의 process는 종료하지 않는다.
+- process 소유권을 안전하게 구분할 수 없으면 broad kill을 하지 않고 `PROCESS_OWNERSHIP_UNVERIFIED`와 잔여 위험을 보고한다.
+- 같은 bounded verification group에서 재실행이 예정돼 있으면 매 assertion마다 Editor를 닫지 않아도 된다. 필요한 증거를 모두 확보했고 해당 도구가 더 이상 필요하지 않은 시점에 정리한다.
+- 이 경로는 검수·기계검증 권한이며 GPT의 persistent Godot 제품 구현 권한을 확장하지 않는다.
+
+공용 세부 계약은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`와 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`를 따른다.
+
 ## 7. Codex 권한
 
 Codex는 실제 게임 프로젝트에서만 다음을 수행한다.
@@ -292,7 +316,22 @@ result:
   changed_base_or_notion_items: []
   validation: []
   remaining_godot_implementation: []
+  godot_verification:
+    status: PASS | FAIL | PARTIAL | NOT_RUN
+    project_identity:
+    scenes_or_behaviors_checked: []
+    evidence: []
+    unverified: []
+  godot_process_cleanup:
+    status: PASS | PARTIAL | NOT_RUN | NOT_APPLICABLE
+    task_owned_processes_started: []
+    task_owned_processes_stopped: []
+    preexisting_or_unrelated_preserved: []
+    residual_check: PASS | PARTIAL | NOT_RUN | NOT_APPLICABLE
+    residual_risk: []
 ```
+
+Godot을 시작하지 않은 작업은 `godot_verification.status: NOT_RUN`, `godot_process_cleanup.status: NOT_APPLICABLE`로 기록할 수 있다. 실행했지만 종료 또는 잔여 확인 증거가 없으면 cleanup을 PASS로 올리지 않는다.
 
 Codex Godot 구현:
 
@@ -319,6 +358,8 @@ codex_result:
 - 모든 GitHub file mutation을 Codex Build로 분류
 - 실제 Godot 제품 구현을 GPT가 누적 구현
 - Codex가 이미지 생성
+- Work가 시작하지 않았거나 소유권을 확인하지 못한 Godot·게임·debug/server process를 종료
+- Godot 직접 검증 뒤 cleanup 증거 없이 완료를 과장
 
 현재 역할은 다음 한 줄로 요약한다.
 
