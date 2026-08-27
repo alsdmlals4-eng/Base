@@ -5,7 +5,7 @@
 - 출처 프로젝트: `alsdmlals4-eng/omenward`
 - 기준 커밋: `a94f95253206212a822402f002f100282f214323`
 - 제출일: 2026-08-27
-- 상태: `SUBMITTED`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 지식 상태: `검증`
 
 ## 관찰과 증거
@@ -53,6 +53,6 @@ clean tracked generator input의 source/legacy hash는 working-tree EOL 변환�
 
 ## 승인과 구현
 
-- 사용자 승인 근거: current Codex task의 autonomous continuation authority; implementation requires a separate approval-state record after this proposal is merged.
+- 사용자 승인 근거: current Codex task의 autonomous continuation authority; proposal PR #758 merged and Base Issue #757 scope is approved for a separate minimal implementation PR.
 - 구현 PR: `PENDING`
 - 롤백: canonical generator-input resolver와 regression test를 revert하면 existing raw working-tree behavior로 돌아간다.
