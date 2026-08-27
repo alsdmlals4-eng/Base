@@ -421,6 +421,31 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         for relative in self.core.COMPATIBILITY_VIEWS:
             self.assertFalse((self.project / relative).exists(), relative)
 
+    def test_generation_accepts_clean_eol_converted_generator_inputs(self) -> None:
+        """Clean tracked CRLF inputs must retain the LF-generated artifact bytes."""
+        legacy = self.project / "legacy/BASE_V9_ADAPTER.json"
+        legacy.parent.mkdir()
+        legacy.write_text('{"base_route": {}}\n', encoding="utf-8")
+        adapter = json.loads(self.adapter.read_text(encoding="utf-8"))
+        adapter["compatibility"]["views"] = ["skills/BASE_V9_ADAPTER.json"]
+        adapter["compatibility"]["legacy_inputs"] = {
+            "skills/BASE_V9_ADAPTER.json": "legacy/BASE_V9_ADAPTER.json"
+        }
+        self.adapter.write_text(json.dumps(adapter, sort_keys=True) + "\n", encoding="utf-8")
+        commit_all(self.project, "track generator inputs")
+        args = ["--project-root", str(self.project), "--base-repository", str(self.base)]
+        written = self.run_tool(BUILD, *args, "--write")
+        self.assertEqual(0, written.returncode, written.stderr)
+
+        for path in (self.adapter, legacy):
+            path.write_bytes(path.read_bytes().replace(b"\n", b"\r\n"))
+            git(self.project, "update-index", "--assume-unchanged", path.relative_to(self.project).as_posix())
+            self.assertEqual("", git(self.project, "diff", "--", path.relative_to(self.project).as_posix()))
+
+        checked = self.run_tool(BUILD, *args, "--check")
+
+        self.assertEqual(0, checked.returncode, checked.stdout + checked.stderr)
+
     def test_validator_fails_closed_for_hashes_aliases_duplicates_and_shared_body_copying(self) -> None:
         args = ["--project-root", str(self.project), "--base-repository", str(self.base), "--check"]
         generated = self.run_tool(BUILD, "--project-root", str(self.project), "--base-repository", str(self.base), "--write")
