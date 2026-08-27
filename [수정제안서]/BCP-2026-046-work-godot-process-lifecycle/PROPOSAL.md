@@ -5,8 +5,8 @@
 - 출처: GPT Work 작업 중 Godot 직접 기계검증과 검증 종료 후 프로세스 정리를 요구한 사용자 운영 지시
 - 기준 Base: `1117572df293b668271d473e7fcdca3794cd5aed`
 - 제출일: `2026-08-27`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
-- 지식 상태: `사용자 승인 운영 요구 + 현행 계약 누락 재현`
+- 상태: `IMPLEMENTED`
+- 지식 상태: `사용자 승인 운영 요구 + RED 재현 + exact-head GREEN 검증`
 - 승인 근거:
   - 사용자 메시지: `work 작업 중에 필요시 godot 켜서 기계검증하고 사용 종료시 해당 godot을 꺼달라고해줘`
   - 후속 사용자 메시지: `좋아 base에도 교정해줘`
@@ -153,7 +153,7 @@ Godot을 실행하지 않은 작업은 `NOT_RUN`이며 cleanup도 `NOT_APPLICABL
 - Codex 역할·이미지 승인·사용자 결정 Gate 변경 없음
 - broad process kill, 다른 프로젝트 instance 종료, stale PID 신뢰 금지
 - 새 provider, addon, dependency, paid service, remote tunnel 추가 없음
-- 열린 다른 PR·branch·Proposal Registry는 read-only
+- 열린 다른 PR·branch는 read-only
 
 ## 검증
 
@@ -164,6 +164,14 @@ Godot을 실행하지 않은 작업은 `NOT_RUN`이며 cleanup도 `NOT_APPLICABL
 5. 완료 보고가 runtime verification과 cleanup evidence를 분리하는지 검사한다.
 6. 기존 `DIRECT_RUN_OR_VERIFIED_EVIDENCE`, `stale PID/session 불신`, `다른 프로젝트 process 비조작`, HiGodot/GUT/Hera authority 경계를 회귀검사한다.
 
+## 승인과 구현
+
+- 제안 PR: [#761](https://github.com/alsdmlals4-eng/Base/pull/761), squash merge `c0e5d08f4f1068f736a510beb209995df0c4d06d`
+- 구현 PR: [#762](https://github.com/alsdmlals4-eng/Base/pull/762), exact reviewed head `7afb0fea3c8268074d4ddcae40faf5e33ad55cf1`, squash merge `dd50abbbc64077ad6860b9c2ee7ed63719b3b471`
+- 구현 검증: focused RED 재현 후 GREEN, whole core regression, Ubuntu contract, docs validation, publication validation, Base v9 contract, integrated Vertical Slice, required `ci-gate`, 5회 whole-state 적대적 검토, post-merge main readback PASS
+- 구현된 owner: `docs/GPT_CODEX_WORKFLOW_POLICY.md`, `docs/WORK_MODE_AND_SKILL_ROUTING.md`, `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`, `docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md`
+- 상태 한계: 이번 Base 문서·계약 작업에서는 게임 프로젝트 Godot runtime을 실행하지 않았으므로 `godot_verification: NOT_RUN`, `godot_process_cleanup: NOT_APPLICABLE`
+
 ## 롤백
 
-후속 구현 PR에서 추가한 Work Godot process lifecycle 문구, routing/report fields, Godot 안전 경계와 focused regression test를 한 단위로 revert한다. 기존 GPT–Codex 역할 분리와 Godot authoring authority 문서는 원래 상태로 복구한다.
+구현 PR #762에서 추가한 Work Godot process lifecycle 문구, routing/report fields, Godot 안전 경계, evidence-owner 연결과 focused regression test를 한 단위로 revert한다. 기존 GPT–Codex 역할 분리와 Godot authoring authority 문서는 원래 상태로 복구한다.
