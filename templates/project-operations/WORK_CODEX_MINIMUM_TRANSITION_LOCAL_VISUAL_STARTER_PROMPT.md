@@ -38,9 +38,9 @@ PHASE_1_PLANNING_CO_DESIGN
 
 Phase 1 전에 `PROJECT_START_CANON_CHECKLIST`로 핵심 재미·player promise·core/session/meta loop·핵심/지원 시스템·meaningful choice·reward/failure learning·SWOT·current stage·actual implementation·남은 작업·dependency/player-value 기반 순서를 확인하고 stale/conflict/missing canon을 선교정해.
 
-새 핵심 재미·Core Loop·핵심 시스템·주요 UX·경제·서사·Art Direction·차별점·Vertical Slice 가설은 current canon과 실제 구현을 먼저 읽고, Reuse First·벤치마킹·성공/실패 사례·최소 3개 실질 대안을 비교한 뒤 Grill Me로 사용자와 공동설계해. 이미 승인된 Decision은 다시 묻지 마. routine 권장안 자동 승인은 새 core meaning 승인 권한이 아니야.
+새 핵심 재미·Core Loop·핵심 시스템·주요 UX·경제·서사·Art Direction·차별점·Vertical Slice 가설은 current canon과 실제 구현을 먼저 읽고, Reuse First·벤치마킹·성공/실패 사례·최소 3개 실질 대안을 비교한 뒤 Grill Me로 사용자와 공동설계해. 이미 유효한 사용자 approval_ref와 confirmed Decision은 새 질문 없이 `PHASE_1_USER_CONFIRMED` evidence로 재사용해. routine 권장안 자동 승인은 새 core meaning 승인 권한이 아니야.
 
-Phase 2에서 Phase 1 결과를 핵심 재미 연결·대표성·scope·기술 가능성·UI/UX·Data/save/economy·actual consumer·Visual/Audio/VFX coverage·권리·Acceptance·QA·rollback·Work↔Codex 재작업 위험으로 전체 검수해. 통과 전 serial 요소 제작이나 Codex 구현을 시작하지 마.
+Phase 2에서 Phase 1 결과를 핵심 재미 연결·대표성·scope·기술 가능성·UI/UX·Data/save/economy·actual consumer·Visual/Audio/VFX coverage·권리·Acceptance·QA·rollback·Work↔Codex 재작업 위험으로 전체 검수해. 최소 5회 full-scope 적대검토와 Implementation Reality Gate를 통과하기 전 serial 요소 제작이나 Codex 구현을 시작하지 마.
 
 Phase 3에서 Work가 가능한 기획·검수·UI/UX·Data·Visual·Audio·VFX·권리·localization/accessibility·Acceptance·QA 입력을 모두 닫고 `WORK_PRODUCTION_INPUT_PACKET`을 `READY_FOR_SINGLE_CODEX_WINDOW`로 만들어.
 
@@ -52,7 +52,7 @@ NO_NOTION_BINARY_UPLOAD_REQUIRED
 
 Notion Project Home·Visual Bible·Asset Catalog·Flow·Production과 승인 Art Direction은 참고·교정·readback해. 이미지 binary는 exact project-local workflow에 저장하고, 구현할 승인 자산은 tracked project asset + ASSET_MANIFEST로 승격한 뒤 commit/push/remote HEAD readback 후 Codex에 project-relative locator와 exact commit으로 전달해. 실제 업로드하지 않은 Notion binary는 업로드했다고 주장하지 마.
 
-Phase 4는 `CODEX_SINGLE_IMPLEMENTATION_WINDOW`에서 actual code·Scene·Resource·runtime wiring·test·build를 구현하고, GUT/Hera 또는 evidence-equivalent Machine QA와 Work 최종 구현검수·교정·exact-head CI·safe merge·post-merge readback·`USER_DOWNLOADABLE_BUILD_ARTIFACT_REQUIRED`까지 닫아.
+Phase 4는 `CODEX_SINGLE_IMPLEMENTATION_WINDOW`에서 actual code·Scene·Resource·runtime wiring·test·build를 구현하고, GUT/Hera 또는 evidence-equivalent Machine QA와 Work 최종 구현검수·교정·exact-head CI·safe merge·post-merge readback·`USER_DOWNLOADABLE_BUILD_ARTIFACT_REQUIRED`까지 닫아. 현재 Slice의 대표 흐름은 release-near/shipping-intent UI·이미지·사운드·VFX·시스템 피드백을 연결하고 핵심 player-facing placeholder를 남기지 마.
 
 ```text
 AUTOMATED_VERTICAL_SLICE_READY != USER_VALIDATED_VERTICAL_SLICE
