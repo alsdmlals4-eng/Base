@@ -511,15 +511,67 @@ jobs:
       - name: Install Windows system publication dependencies
         shell: pwsh
         run: |
+          function Invoke-VerifiedDownload {
+            param(
+              [Parameter(Mandatory = $true)][string]$Uri,
+              [Parameter(Mandatory = $true)][string]$OutFile,
+              [Parameter(Mandatory = $true)][string]$ExpectedSha256
+            )
+
+            $maxAttempts = 3
+            $lastNativeError = "not attempted"
+
+            for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+              if (Test-Path -LiteralPath $OutFile) {
+                Remove-Item -LiteralPath $OutFile -Force
+              }
+
+              try {
+                Write-Host "Invoke-WebRequest download attempt $attempt/$maxAttempts: $Uri"
+                Invoke-WebRequest -Uri $Uri -OutFile $OutFile
+                $actualHash = (Get-FileHash -Algorithm SHA256 $OutFile).Hash.ToLowerInvariant()
+                if ($actualHash -ne $ExpectedSha256.ToLowerInvariant()) {
+                  throw "DOWNLOAD_SHA256_MISMATCH: expected $ExpectedSha256, got $actualHash"
+                }
+                return
+              }
+              catch {
+                $lastNativeError = $_.Exception.Message
+                if (Test-Path -LiteralPath $OutFile) {
+                  Remove-Item -LiteralPath $OutFile -Force
+                }
+                if ($attempt -lt $maxAttempts) {
+                  Start-Sleep -Seconds ([Math]::Min(8, [Math]::Pow(2, $attempt)))
+                }
+              }
+            }
+
+            Write-Warning "Invoke-WebRequest retry budget exhausted; using same-URI curl.exe fallback. Last error: $lastNativeError"
+            if (Test-Path -LiteralPath $OutFile) {
+              Remove-Item -LiteralPath $OutFile -Force
+            }
+
+            & curl.exe --fail --location --retry 3 --retry-all-errors --connect-timeout 30 --output $OutFile $Uri
+            $curlExitCode = $LASTEXITCODE
+            if ($curlExitCode -ne 0 -or -not (Test-Path -LiteralPath $OutFile)) {
+              if (Test-Path -LiteralPath $OutFile) {
+                Remove-Item -LiteralPath $OutFile -Force
+              }
+              throw "TRANSPORT_RETRY_EXHAUSTED: $Uri; Invoke-WebRequest error: $lastNativeError; curl.exe exit: $curlExitCode"
+            }
+
+            $actualHash = (Get-FileHash -Algorithm SHA256 $OutFile).Hash.ToLowerInvariant()
+            if ($actualHash -ne $ExpectedSha256.ToLowerInvariant()) {
+              Remove-Item -LiteralPath $OutFile -Force
+              throw "DOWNLOAD_SHA256_MISMATCH: expected $ExpectedSha256, got $actualHash"
+            }
+          }
+
           $libreOfficeVersion = "26.2.3"
           $libreOfficeSha256 = "468d1fb3880af3bcddac002e9054155912c70b45d105bfa1c82036f33456133d"
           $libreOfficeUrl = "https://download.documentfoundation.org/libreoffice/stable/$libreOfficeVersion/win/x86_64/LibreOffice_${libreOfficeVersion}_Win_x86-64.msi"
           $libreOfficeMsi = Join-Path $env:RUNNER_TEMP "LibreOffice_${libreOfficeVersion}_Win_x86-64.msi"
-          Invoke-WebRequest -Uri $libreOfficeUrl -OutFile $libreOfficeMsi
-          $actualLibreOfficeHash = (Get-FileHash -Algorithm SHA256 $libreOfficeMsi).Hash.ToLowerInvariant()
-          if ($actualLibreOfficeHash -ne $libreOfficeSha256) {
-            throw "LibreOffice MSI SHA-256 mismatch: expected $libreOfficeSha256, got $actualLibreOfficeHash"
-          }
+          Invoke-VerifiedDownload -Uri $libreOfficeUrl -OutFile $libreOfficeMsi -ExpectedSha256 $libreOfficeSha256
           $libreOfficeInstall = Start-Process msiexec.exe -ArgumentList @(
             "/i",
             "`"$libreOfficeMsi`"",
@@ -531,15 +583,11 @@ jobs:
           }
 
           $popplerVersion = "24.08.0-0"
+          $popplerSha256 = "58A6F9AE269756231D2F9AA6CBA39D75FEC6DEACAF3C4A50683383B5F3D5A527"
           $popplerUrl = "https://github.com/oschwartz10612/poppler-windows/releases/download/v$popplerVersion/Release-$popplerVersion.zip"
           $popplerZip = Join-Path $env:RUNNER_TEMP "poppler-$popplerVersion.zip"
           $popplerRoot = Join-Path $env:RUNNER_TOOL_CACHE "poppler-$popplerVersion"
-          Invoke-WebRequest -Uri $popplerUrl -OutFile $popplerZip
-          $actualHash = (Get-FileHash -Algorithm SHA256 $popplerZip).Hash
-          $expectedHash = "58A6F9AE269756231D2F9AA6CBA39D75FEC6DEACAF3C4A50683383B5F3D5A527"
-          if ($actualHash -ne $expectedHash) {
-            throw "Poppler archive SHA-256 mismatch: expected $expectedHash, got $actualHash"
-          }
+          Invoke-VerifiedDownload -Uri $popplerUrl -OutFile $popplerZip -ExpectedSha256 $popplerSha256
           Expand-Archive -LiteralPath $popplerZip -DestinationPath $popplerRoot
 
       - name: Install Windows Python publication dependencies
