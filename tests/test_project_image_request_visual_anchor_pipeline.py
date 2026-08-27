@@ -5,16 +5,11 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-POLICY = ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md"
+PIPELINE = (
+    ROOT
+    / "docs/knowledge/game-development/PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md"
+)
 GATE = ROOT / "docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md"
-CONTINUITY = (
-    ROOT
-    / "skills/designing-art-prompts-and-technique-cards/references/notion-project-visual-continuity-gate.md"
-)
-CANDIDATE = (
-    ROOT
-    / "skills/designing-art-prompts-and-technique-cards/references/candidate-review-and-reusable-harvest.md"
-)
 
 
 class ProjectImageRequestVisualAnchorPipelineTests(unittest.TestCase):
@@ -25,18 +20,19 @@ class ProjectImageRequestVisualAnchorPipelineTests(unittest.TestCase):
         return path.read_text(encoding="utf-8")
 
     def test_explicit_project_image_request_auto_loads_the_pipeline(self) -> None:
-        policy = self._read(POLICY)
+        pipeline = self._read(PIPELINE)
         for token in (
             "EXPLICIT_PROJECT_IMAGE_REQUEST_AUTO_PIPELINE",
             "NO_SEPARATE_LONG_IMAGE_INSTRUCTION_REQUIRED",
             "APPROVED_VISUAL_DIRECTION_RESOLUTION_REQUIRED",
             "EXACT_PROJECT_AND_ACTUAL_CONSUMER_REQUIRED",
         ):
-            self.assertIn(token, policy)
+            self.assertIn(token, pipeline)
 
     def test_current_turn_explicit_request_has_a_direct_one_output_route(self) -> None:
         gate = self._read(GATE)
         for token in (
+            "PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md",
             "CURRENT_TURN_EXPLICIT_IMAGE_REQUEST",
             "EXPLICIT_REQUEST_IS_ONE_OUTPUT_AUTHORITY",
             "ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE",
@@ -46,7 +42,7 @@ class ProjectImageRequestVisualAnchorPipelineTests(unittest.TestCase):
             self.assertIn(token, gate)
 
     def test_existing_approved_anchor_is_shown_and_reused(self) -> None:
-        combined = self._read(POLICY) + "\n" + self._read(CONTINUITY)
+        pipeline = self._read(PIPELINE)
         for token in (
             "APPROVED_VISUAL_ANCHOR_FOUND",
             "SURFACE_APPROVED_ANCHOR_TO_USER",
@@ -54,10 +50,10 @@ class ProjectImageRequestVisualAnchorPipelineTests(unittest.TestCase):
             "USE_CURRENT_APPROVED_ANCHOR",
             "APPROVED_VISUAL_REFERENCE",
         ):
-            self.assertIn(token, combined)
+            self.assertIn(token, pipeline)
 
     def test_missing_anchor_routes_to_one_comparison_deliverable_before_production(self) -> None:
-        combined = self._read(POLICY) + "\n" + self._read(CANDIDATE)
+        pipeline = self._read(PIPELINE)
         for token in (
             "NO_USABLE_APPROVED_VISUAL_ANCHOR",
             "GENERATE_CONCEPT_OPTION_COMPARISON",
@@ -66,10 +62,10 @@ class ProjectImageRequestVisualAnchorPipelineTests(unittest.TestCase):
             "THREE_MATERIALLY_DISTINCT_VISUAL_OPTIONS",
             "USER_SELECTS_ONE_DIRECTION_BEFORE_PRODUCTION",
         ):
-            self.assertIn(token, combined)
+            self.assertIn(token, pipeline)
 
     def test_selected_direction_becomes_a_bounded_continuity_packet(self) -> None:
-        continuity = self._read(CONTINUITY)
+        pipeline = self._read(PIPELINE)
         for token in (
             "VISUAL_DIRECTION_LOCK_PACKET",
             "global_style_anchor:",
@@ -80,20 +76,20 @@ class ProjectImageRequestVisualAnchorPipelineTests(unittest.TestCase):
             "do_not_drift:",
             "superseded_reference_ids:",
         ):
-            self.assertIn(token, continuity)
+            self.assertIn(token, pipeline)
 
     def test_conflict_and_inaccessible_anchor_fail_closed(self) -> None:
-        continuity = self._read(CONTINUITY)
+        pipeline = self._read(PIPELINE)
         for token in (
             "MULTIPLE_CURRENT_VISUAL_ANCHORS_CONFLICT",
             "APPROVED_ANCHOR_BINARY_UNREADABLE",
             "VISUAL_CANONICAL_CONFLICT",
             "BLOCKED_UNVERIFIED",
         ):
-            self.assertIn(token, continuity)
+            self.assertIn(token, pipeline)
 
     def test_production_results_are_reviewed_for_style_and_flow_consistency(self) -> None:
-        combined = self._read(POLICY) + "\n" + self._read(CONTINUITY)
+        pipeline = self._read(PIPELINE)
         for token in (
             "STYLE_CONTINUITY_REVIEW_REQUIRED",
             "FLOW_AND_SCREEN_SEMANTIC_CONSISTENCY_REQUIRED",
@@ -101,13 +97,25 @@ class ProjectImageRequestVisualAnchorPipelineTests(unittest.TestCase):
             "OBJECTIVE_DEFECT_CORRECTION_WITHIN_APPROVED_DELIVERABLE",
             "GENERATED_EXPLORATION != PROJECT_ASSET_APPROVED != RUNTIME_PROMOTED",
         ):
-            self.assertIn(token, combined)
+            self.assertIn(token, pipeline)
 
-    def test_no_anchor_pipeline_does_not_turn_a_comparison_sheet_into_runtime_asset(self) -> None:
-        candidate = self._read(CANDIDATE)
-        self.assertIn("COMPARISON_SHEET_NOT_PRODUCTION_ASSET", candidate)
-        self.assertIn("SELECTED_DIRECTION_REQUIRES_STANDALONE_ANCHOR", candidate)
-        self.assertIn("PROJECT_ASSET_APPROVED", candidate)
+    def test_comparison_sheet_is_not_a_runtime_asset(self) -> None:
+        pipeline = self._read(PIPELINE)
+        self.assertIn("COMPARISON_SHEET_NOT_PRODUCTION_ASSET", pipeline)
+        self.assertIn("SELECTED_DIRECTION_REQUIRES_STANDALONE_ANCHOR", pipeline)
+        self.assertIn("PROJECT_ASSET_APPROVED", pipeline)
+
+    def test_existing_specialist_owners_are_composed_not_replaced(self) -> None:
+        pipeline = self._read(PIPELINE)
+        for owner in (
+            "GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md",
+            "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md",
+            "notion-project-visual-continuity-gate.md",
+            "candidate-review-and-reusable-harvest.md",
+            "NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md",
+        ):
+            self.assertIn(owner, pipeline)
+        self.assertIn("THIN_PIPELINE_NOT_SECOND_VISUAL_CANON", pipeline)
 
 
 if __name__ == "__main__":
