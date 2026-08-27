@@ -5,7 +5,7 @@
 - 출처 프로젝트: `alsdmlals4-eng/omenward`
 - 기준 커밋: `a94f95253206212a822402f002f100282f214323`
 - 제출일: 2026-08-27
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `검증`
 
 ## 관찰과 증거
@@ -16,7 +16,7 @@
 
 ## 일반화 후보
 
-Git 추적 파일의 health evidence 무결성은 working-tree 변환 바이트가 아니라 현재 `HEAD`의 canonical Git blob bytes로 검증해야 한다. Git 객체를 확인할 수 없거나 추적되지 않은 evidence는 기존 working-tree raw-byte hash를 유지한다.
+Git 추적 파일의 clean health evidence 무결성은 기존 working-tree raw-byte hash와 현재 `HEAD`의 canonical Git blob hash를 함께 허용해야 한다. 이렇게 하면 기존 raw-byte record와 checkout EOL 변환 모두 호환한다. Git 객체를 확인할 수 없거나 추적되지 않은 evidence는 기존 working-tree raw-byte hash를 유지한다.
 
 ## 프로젝트 전용으로 남길 내용
 
@@ -30,7 +30,7 @@ Git 추적 파일의 health evidence 무결성은 working-tree 변환 바이트�
 
 ## 반례와 위험
 
-- Working tree가 `HEAD`와 다른 substantive content이면 canonical blob hash만으로는 변경을 놓칠 수 있다. 구현은 canonical hash 사용 전에 working-tree raw bytes가 canonical blob bytes와 같은 경우에만 canonical comparison을 허용하고, 내용이 실제로 다르면 working-tree raw-byte comparison을 유지한다.
+- Working tree가 `HEAD`와 다른 substantive content이면 canonical blob hash만으로는 변경을 놓칠 수 있다. 구현은 Git diff로 clean tracked 상태를 먼저 확인하고, 내용 변경이 있으면 canonical hash를 허용하지 않아 working-tree raw-byte comparison만 유지한다.
 - 이 규칙은 evidence source confinement, existence, unique source/ID, verdict/maturity gate를 약화하지 않는다.
 
 ## 영향 범위와 검증
@@ -51,6 +51,7 @@ Git 추적 파일의 health evidence 무결성은 working-tree 변환 바이트�
 
 ## 승인과 구현
 
-- 사용자 승인 근거: current Codex task의 “전환했어 진행해”가 Base Issue #751 범위를 승인했다. Proposal registration PR #752 병합 뒤 이 승인 상태를 별도 PR로 기록한다.
-- 구현 PR: `PENDING`
+- 사용자 승인 근거: current Codex task의 “전환했어 진행해”가 Base Issue #751 범위를 승인했다. Proposal registration PR #752 병합 뒤 이 승인 상태를 별도 PR로 기록했다.
+- 구현 PR: [#755](https://github.com/alsdmlals4-eng/Base/pull/755), squash merge `49598091d9cd1491b583a24602c4f852ee77e330`.
+- 구현 검증: focused autocrlf/health-evidence 회귀 2건 및 원격 `base-v9-contract`, `ubuntu-contract`, `core-regression`, `publication-validation`, `docs-validation`, `adversarial-gate` PASS. 로컬 전체 34건은 `publication_v3.py`의 선택 의존성 Pillow 부재로 1건 중단됐으며, 원격 publication validation에서 해당 의존성을 설치해 PASS했다.
 - 롤백: canonical resolver와 tests를 되돌리면 legacy raw working-tree behavior로 복귀한다.
