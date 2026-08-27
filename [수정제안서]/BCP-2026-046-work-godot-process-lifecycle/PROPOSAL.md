@@ -5,9 +5,9 @@
 - 출처: GPT Work 작업 중 Godot 직접 기계검증과 검증 종료 후 프로세스 정리를 요구한 사용자 운영 지시
 - 기준 Base: `1117572df293b668271d473e7fcdca3794cd5aed`
 - 제출일: `2026-08-27`
-- 상태: `SUBMITTED`
-- 상태 설명: 구현은 PR #762에서 이미 병합됐으나, Proposal Registry 최초 등록이 누락돼 현재 PR에서는 Base governance가 요구하는 최초 `SUBMITTED` 상태를 복구한다. 이 등록 PR 병합 뒤 별도 closeout PR에서 `IMPLEMENTED`로 승격한다.
-- 지식 상태: `사용자 승인 운영 요구 + 구현 완료 + Registry lifecycle 복구 중`
+- 상태: `IMPLEMENTED`
+- 상태 설명: Proposal PR #761과 구현 PR #762가 병합됐고, 누락됐던 최초 Registry `SUBMITTED` 기준점도 PR #766으로 복구했다. active owner 문서·focused regression·Registry가 구현 완료 상태로 일치한다.
+- 지식 상태: `사용자 승인 운영 요구 + RED 재현 + exact-head GREEN + Registry lifecycle 완료`
 - 승인 근거:
   - 사용자 메시지: `work 작업 중에 필요시 godot 켜서 기계검증하고 사용 종료시 해당 godot을 꺼달라고해줘`
   - 후속 사용자 메시지: `좋아 base에도 교정해줘`
@@ -139,7 +139,7 @@ Godot을 실행하지 않은 작업은 verification `NOT_RUN`, cleanup `NOT_APPL
 - 강제 kill을 기본값으로 사용하면 저장 중 Scene·Resource나 로그 flush가 손상될 수 있다. graceful stop을 우선하고 강제 종료는 hung task-owned process에 한정해 이유와 결과를 남긴다.
 - cleanup PASS가 runtime PASS를 대체하지 않는다. 실행 검증과 프로세스 정리는 별도 claim surface다.
 - GPT Work 검증 권한이 persistent product authoring 권한으로 확대되어서는 안 된다.
-- 구현이 이미 병합됐다는 이유로 Registry 최초 등록의 `SUBMITTED` Gate를 우회하면 Proposal lifecycle contract가 깨진다. 최초 등록 후 별도 상태 전이로 닫는다.
+- 구현이 이미 병합됐다는 이유로 Registry 최초 등록의 `SUBMITTED` Gate를 우회하면 Proposal lifecycle contract가 깨진다. PR #766으로 최초 기준점을 복구한 뒤 별도 상태 전이로 닫았다.
 
 ## 영향 범위와 검증
 
@@ -169,16 +169,18 @@ Godot을 실행하지 않은 작업은 verification `NOT_RUN`, cleanup `NOT_APPL
 5. 완료 보고가 runtime verification과 cleanup evidence를 분리하는지 검사했다.
 6. 기존 `DIRECT_RUN_OR_VERIFIED_EVIDENCE`, stale PID/session 불신, 다른 프로젝트 process 비조작, HiGodot/GUT/Hera authority 경계를 회귀검사했다.
 7. 구현 PR exact HEAD에서 focused regression, whole core regression, Ubuntu contract, docs validation, publication validation, Base v9 contract, integrated Vertical Slice, required `ci-gate`를 통과했다.
+8. Registry 등록 PR #766 exact HEAD에서 proposal validator, docs, Ubuntu contract, whole core regression, publication validation, required `ci-gate`를 통과했다.
 
 ## 승인과 구현
 
 - 사용자 승인: 2026-08-27 현재 대화의 Godot 실행 검증·작업 소유 프로세스 종료 지시와 Base 교정 승인
 - 제안 PR: [#761](https://github.com/alsdmlals4-eng/Base/pull/761), squash merge `c0e5d08f4f1068f736a510beb209995df0c4d06d`
 - 구현 PR: [#762](https://github.com/alsdmlals4-eng/Base/pull/762), exact reviewed head `7afb0fea3c8268074d4ddcae40faf5e33ad55cf1`, squash merge `dd50abbbc64077ad6860b9c2ee7ed63719b3b471`
+- Registry 등록 PR: [#766](https://github.com/alsdmlals4-eng/Base/pull/766), exact reviewed head `f12f0753f4e24429a9a29b61d0eab8450eb10be6`, squash merge `ecbeba7fa70348e5fb01317dce3f01299f8477dd`
 - 구현 검증: focused RED 재현 후 GREEN, whole core regression, Ubuntu contract, docs validation, publication validation, Base v9 contract, integrated Vertical Slice, required `ci-gate`, 5회 whole-state 적대적 검토, post-merge main readback PASS
-- 현재 lifecycle: Proposal Registry 최초 등록 누락을 복구하는 `SUBMITTED` 단계. 이 등록 PR이 병합된 뒤 별도 closeout PR에서 proposal·registry를 `IMPLEMENTED`로 승격한다.
+- lifecycle 결과: Proposal과 Registry가 `IMPLEMENTED`로 일치하며 active owner 문서와 focused regression이 `main`에 존재한다.
 - 상태 한계: 이번 Base 문서·계약 작업에서는 게임 프로젝트 Godot runtime을 실행하지 않았으므로 `godot_verification: NOT_RUN`, `godot_process_cleanup: NOT_APPLICABLE`
 
 ## 롤백
 
-구현 자체를 되돌릴 때는 구현 PR #762에서 추가한 Work Godot process lifecycle 문구, routing/report fields, Godot 안전 경계, evidence-owner 연결과 focused regression test를 한 단위로 revert한다. Registry lifecycle 복구만 되돌릴 때는 현재 등록 PR과 후속 closeout PR의 proposal metadata 변경만 revert한다.
+구현 자체를 되돌릴 때는 구현 PR #762에서 추가한 Work Godot process lifecycle 문구, routing/report fields, Godot 안전 경계, evidence-owner 연결과 focused regression test를 한 단위로 revert한다. Registry lifecycle만 되돌릴 때는 등록 PR #766과 구현 상태 closeout 변경을 순서에 맞게 revert한다.
