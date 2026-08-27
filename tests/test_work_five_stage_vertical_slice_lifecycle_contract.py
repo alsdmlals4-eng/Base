@@ -98,8 +98,12 @@ class WorkFiveStageVerticalSliceLifecycleContractTests(unittest.TestCase):
             self.assertIn(token, text)
 
     def test_current_entrypoints_route_the_five_stage_owner(self) -> None:
-        for path in (ROUTER, PROFILE, STARTER):
+        for path in (ROUTER, STARTER):
             self.assertIn("WORK_FIVE_STAGE_VERTICAL_SLICE_LIFECYCLE.md", self._read(path))
+        router = self._read(ROUTER)
+        self.assertIn("WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md", router)
+        self.assertIn("FIVE_STAGE_LIFECYCLE_IS_PUBLIC_WORK_SEQUENCE", router)
+        self.assertIn("EXISTING_WORK_MODES_AND_PROFILES_ARE_INTERNAL_OWNER_MAPPING", router)
 
     def test_non_game_exception_and_evidence_ceiling_are_preserved(self) -> None:
         text = self._read(LIFECYCLE)
@@ -125,6 +129,20 @@ class WorkFiveStageVerticalSliceLifecycleContractTests(unittest.TestCase):
             "IMPLEMENTATION_REALITY_GATE",
         ):
             self.assertIn(token, combined)
+
+    def test_starter_is_a_thin_copy_paste_entry(self) -> None:
+        starter = self._read(STARTER)
+        self.assertLess(len(starter.splitlines()), 90)
+        for token in (
+            "1. STAGE_1_PLANNING_WITH_USER",
+            "2. STAGE_2_PREPRODUCTION_REVIEW",
+            "3. STAGE_3_GAME_INPUT_PRODUCTION",
+            "4. STAGE_4_CODEX_IMPLEMENTATION_AND_MACHINE_CLOSEOUT",
+            "5. STAGE_5_USER_VERTICAL_SLICE_VALIDATION",
+            "ROUTINE_APPROVAL_DOES_NOT_AUTO_APPROVE_CORE_PLANNING",
+            "AUTOMATED_VERTICAL_SLICE_READY != VERTICAL_SLICE_COMPLETE",
+        ):
+            self.assertIn(token, starter)
 
 
 if __name__ == "__main__":
