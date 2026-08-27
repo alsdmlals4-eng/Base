@@ -457,6 +457,12 @@ def _health_evidence_hashes(repository: Path, source: Path) -> tuple[str, set[st
     return working, accepted
 
 
+def _generated_input_hash(repository: Path, source: Path) -> str:
+    """Use canonical Git bytes for clean tracked generator inputs across EOL checkouts."""
+    canonical, _ = _clean_tracked_blob_bytes(repository, source, "Generated artifact input")
+    return sha256_bytes(canonical) if canonical is not None else sha256_file(source)
+
+
 def _release_lock_contract(
     adapter: dict[str, Any], base_repository: Path
 ) -> tuple[list[str], dict[str, Any] | None, bytes | None]:
@@ -761,7 +767,10 @@ def _health_semantic_errors(
     return errors
 
 
-def _snapshot(adapter: dict[str, Any], adapter_path: Path) -> dict[str, Any]:
+def _snapshot(
+    adapter: dict[str, Any], adapter_path: Path, project_root: Path | None = None
+) -> dict[str, Any]:
+    project_root = project_root or adapter_path.parent.parent
     routing = adapter["routing"]
     return {
         "schema_version": 1,
@@ -770,7 +779,7 @@ def _snapshot(adapter: dict[str, Any], adapter_path: Path) -> dict[str, Any]:
         "source_registry": {
             "hash_definition": "RAW_FILE_BYTES_SHA256",
             "path": CANONICAL_ADAPTER.as_posix(),
-            "sha256": sha256_file(adapter_path),
+            "sha256": _generated_input_hash(project_root, adapter_path),
         },
         "base_registry": dict(adapter["skill_registry"]["base"]),
         "project_registry": dict(adapter["skill_registry"]["project"]),
@@ -784,8 +793,9 @@ def _snapshot(adapter: dict[str, Any], adapter_path: Path) -> dict[str, Any]:
 
 
 def _compatibility_view(
-    adapter: dict[str, Any], adapter_path: Path, view: Path, legacy_path: Path, legacy: dict[str, Any]
+    adapter: dict[str, Any], adapter_path: Path, project_root: Path | None, view: Path, legacy_path: Path, legacy: dict[str, Any]
 ) -> dict[str, Any]:
+    project_root = project_root or adapter_path.parent.parent
     projection = dict(legacy)
     projection.update({
         "schema_version": 1,
@@ -794,10 +804,10 @@ def _compatibility_view(
         "lifecycle": "ONE_CYCLE",
         "view_name": view.name,
         "canonical_source": CANONICAL_ADAPTER.as_posix(),
-        "canonical_source_sha256": sha256_file(adapter_path),
+        "canonical_source_sha256": _generated_input_hash(project_root, adapter_path),
         "hash_definition": "RAW_FILE_BYTES_SHA256",
         "legacy_source": legacy_path.as_posix(),
-        "legacy_source_sha256": sha256_file(adapter_path.parent.parent / legacy_path),
+        "legacy_source_sha256": _generated_input_hash(project_root, project_root / legacy_path),
         "base_release": adapter["base_release"],
         "project": adapter["project"],
         "routing_precedence": adapter["routing"]["precedence"],
@@ -934,7 +944,7 @@ def build_artifacts(
     health_errors = validate_schema(health, HEALTH_SCHEMA, "PROJECT_OPERATING_HEALTH")
     if health_errors:
         raise ContractError("\n".join(health_errors))
-    snapshot = _snapshot(adapter, adapter_path)
+    snapshot = _snapshot(adapter, adapter_path, project_root)
     snapshot_errors = validate_schema(snapshot, SNAPSHOT_SCHEMA, "PROJECT_SKILL_SNAPSHOT")
     if snapshot_errors:
         raise ContractError("\n".join(snapshot_errors))
@@ -962,7 +972,9 @@ def build_artifacts(
         if legacy_absolute == output:
             raise ContractError(f"Legacy compatibility input cannot equal generated output: {view.as_posix()}")
         legacy = load_object(legacy_absolute)
-        artifacts[output] = canonical_json(_compatibility_view(adapter, adapter_path, view, legacy_path, legacy))
+        artifacts[output] = canonical_json(
+            _compatibility_view(adapter, adapter_path, project_root, view, legacy_path, legacy)
+        )
     return artifacts
 
 
