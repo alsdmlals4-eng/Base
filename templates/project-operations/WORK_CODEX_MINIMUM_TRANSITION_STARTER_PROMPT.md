@@ -22,12 +22,41 @@ Base latest completed main / AGENTS.md / START_HERE.md / current SKILL_REGISTRY
 → templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md
 → templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9_COMPATIBILITY_APPENDIX.md
 → templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md
+→ templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md
 → exact Project GitHub latest completed main / AGENTS / decisions / handoff / open PR
 → exact Project Notion Home / active Domain / Visual / Asset / Flow / Production
 → actual code·data·Scene·Resource·asset·test·runtime evidence
 ```
 
 이 시작문은 상세 계약의 두 번째 정본이 아니다. 위 current Base profile과 분야별 current owner가 drift 시 우선한다.
+
+## 0.1 작업 시작 정본 체크리스트와 선교정
+
+```text
+STARTUP_CANON_RECONCILIATION_AND_CORRECTION_FIRST
+PROJECT_START_CANON_CHECKLIST_REQUIRED
+NO_NEW_SLICE_WORK_BEFORE_STARTUP_CORRECTION_OR_EXPLICIT_DEFER
+CHECKLIST_IS_ROUTING_RECEIPT_NOT_SECOND_CANON
+```
+
+안전한 read-only bootstrap·Git remote refresh 뒤, 새 기획·에셋 production·Codex mutation 전에 `WORK_PROJECT_START_CANON_CHECKLIST.md`를 실행해 다음을 current canon과 actual evidence로 확인해.
+
+```text
+핵심 재미 / player promise / core loop
+→ 핵심·지원 시스템과 actual consumer
+→ 의미 있는 선택·보상·실패 학습
+→ evidence-based SWOT
+→ current stage / active Playable Slice
+→ actual implementation / test / Visual·Audio 상태
+→ blocker / dependency / protected scope
+→ remaining required work
+→ dependency·player-value 기반 work order
+→ next safe action
+```
+
+`CURRENT / HISTORICAL / SUPERSEDED / CONFLICT / UNKNOWN_UNVERIFIED`를 분류하고, 현재 승인 범위의 stale·중복·누락·충돌은 가장 작은 안전 변경으로 먼저 교정해. 변경된 의미는 GitHub structured canon과 Notion human canon의 exact destination readback까지 확인해. 핵심 재미·핵심 시스템의 제품 의미·주요 UX·경제·서사·Art Direction·scope를 바꾸는 선택만 `USER_DECISION_REQUIRED`로 보류해.
+
+material drift가 없고 최근 receipt가 유효하면 전체 전수 감사를 매 응답마다 반복하지 말고 affected owner·consumer만 targeted recheck해. `READY_AFTER_CORRECTION` 또는 명시적인 안전 defer 전에는 새 Slice 작업으로 넘어가지 마.
 
 ## 1. 목표와 승인 경계
 
@@ -160,7 +189,7 @@ NO_NEW_LOGIN_PERMISSION_OR_CONSENT_GRANT
 
 ## 5. Work 준비와 Codex 단일 구현
 
-Codex 전환 전 current profile의 `WORK_PRODUCTION_INPUT_PACKET`을 닫아.
+Codex 전환 전 `PROJECT_START_CANON_CHECKLIST`의 `READY_AFTER_CORRECTION`·`remaining_required_work`·`work_order`를 입력으로 사용해 current profile의 `WORK_PRODUCTION_INPUT_PACKET`을 닫아.
 
 - player promise·행동·선택·결과·실패 학습·보상
 - approved scope / explicit non-scope / protected scope
