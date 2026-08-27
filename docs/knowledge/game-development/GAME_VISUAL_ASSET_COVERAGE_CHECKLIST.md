@@ -5,6 +5,8 @@
 이 문서는 게임 프로젝트에서 **필요한 이미지·시각 자산의 종류와 상태군을 빠뜨리지 않았는지** 확인하는 공용 coverage 기준이다.
 
 ```text
+CANONICAL_VISUAL_COVERAGE_OWNER
+SCREEN_SURFACE_INVENTORY_SUBORDINATE_CONTRACT
 COVERAGE_CHECK_ONLY
 NOT_A_SECOND_ASSET_CANON
 NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS
@@ -16,6 +18,7 @@ ACTUAL_CONSUMER_REQUIRED
 
 이 체크리스트는 실제 자산 원장이나 승인 상태 머신이 아니다.
 
+- 화면·overlay·transition을 먼저 찾는 subordinate preflight는 `docs/knowledge/game-development/GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md`가 소유하며, 그 결과를 이 canonical owner에 handoff한다.
 - 무엇을 만들 가치가 있는지는 `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate`가 소유한다.
 - 생성·편집·검수·명시적 승인 경계는 `GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`와 `designing-art-prompts-and-technique-cards`가 소유한다.
 - 실제 승인 파일·경로·권리·promotion은 프로젝트 Asset/Manifest/Vault owner가 소유한다.
@@ -60,6 +63,9 @@ validation:
 
 ```text
 current Project canon / stage / target flow
+→ docs/knowledge/game-development/GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md
+→ SCREEN_SURFACE_INVENTORY_FIRST
+→ screen / overlay / transition별 SCREEN_TO_ASSET_COVERAGE_MATRIX handoff
 → production information인지 먼저 판정
 → PRODUCTION_INFORMATION이면 TEXT_TABLE_FLOW_DB_FIRST로 route-out
 → image asset 후보이면 actual consumer / consumer surface 확인

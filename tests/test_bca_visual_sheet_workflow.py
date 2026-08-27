@@ -259,5 +259,24 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
         self.assertNotIn("VISUAL_NOT_MATERIAL_TO_THIS_POC", visual_policy)
 
 
+    def test_screen_first_visual_route_keeps_one_coverage_owner(self) -> None:
+        screen_path = "docs/knowledge/game-development/GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md"
+        owner_path = "docs/knowledge/game-development/GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md"
+        consumers = (
+            read("docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md"),
+            read("skills/designing-art-prompts-and-technique-cards/SKILL.md"),
+            read("templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md"),
+        )
+        for text in consumers:
+            self.assertIn(screen_path, text)
+            self.assertIn(owner_path, text)
+            self.assertLess(text.index(screen_path), text.index(owner_path))
+        screen = read(screen_path)
+        owner = read(owner_path)
+        self.assertIn("SUBORDINATE_TO_GAME_VISUAL_ASSET_COVERAGE_OWNER", screen)
+        self.assertIn("CANONICAL_VISUAL_COVERAGE_OWNER", owner)
+        self.assertNotIn("SCREEN_COVERAGE_CLEAN_EXIT", screen)
+
+
 if __name__ == "__main__":
     unittest.main()

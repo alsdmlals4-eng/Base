@@ -1,5 +1,16 @@
 # GPT Image Generation and Review Plan
 
+Screen-first route:
+
+```text
+docs/knowledge/game-development/GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md
+→ docs/knowledge/game-development/GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md
+→ selected requirement only
+→ explicit image approval
+```
+
+화면 인벤토리는 subordinate input이고 기존 Visual Asset Coverage가 canonical coverage owner다. gap은 이미지 생성 권한이 아니다.
+
 ## 1. Context
 
 ```yaml

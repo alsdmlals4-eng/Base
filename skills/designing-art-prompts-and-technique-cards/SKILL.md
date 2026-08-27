@@ -7,7 +7,7 @@ description: Use when designing art or UI image prompts, generating planning or 
 
 이 Skill은 생성·편집 전 프롬프트, GPT 이미지·목업 후보, 기술 카드와 승인 전 시각 검수를 책임진다. 이미 구현된 Godot/Web UI의 실제 시각 품질 감사와 승인된 개선은 `auditing-and-refining-ui-art`를 사용한다.
 
-프로젝트용 이미지 후보의 **누락 탐지**는 `docs/knowledge/game-development/GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`의 `Visual Asset Coverage Preflight`를 먼저 사용하고, **필요성·우선순위·재사용·제작 방식 선정**은 이 Skill이 새로 판단하지 않는다. `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate`가 선정 책임을 소유하고, 이 Skill은 선정된 requirement를 생성·편집·검수 계약으로 변환한다.
+프로젝트용 이미지 후보의 **누락 탐지**는 subordinate `docs/knowledge/game-development/GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md`의 화면 인벤토리를 먼저 수행하고 canonical `docs/knowledge/game-development/GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`의 `Visual Asset Coverage Preflight`로 교차 검사하며, **필요성·우선순위·재사용·제작 방식 선정**은 이 Skill이 새로 판단하지 않는다. `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate`가 선정 책임을 소유하고, 이 Skill은 선정된 requirement를 생성·편집·검수 계약으로 변환한다.
 
 `NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS`: coverage gap은 이미지 생성·batch 확대·다음 variant 자동 제작 권한이 아니다. 기존 사용자 승인과 Image Conversation Approval Gate를 그대로 적용한다.
 
@@ -19,7 +19,8 @@ description: Use when designing art or UI image prompts, generating planning or 
 
 현재 task에 필요한 reference만 추가로 읽는다. 매 이미지 작업에서 전부 로드하지 않는다.
 
-- Visual asset coverage: `docs/knowledge/game-development/GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`
+- Screen-first subordinate preflight: `docs/knowledge/game-development/GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md`
+- Visual asset coverage canonical owner: `docs/knowledge/game-development/GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`
 - Technique card output: `templates/planning/ART_TECHNIQUE_CARD.md`
 - Prompt-recipe research card: `templates/research/AI_IMAGE_PROMPT_RECIPE_CARD.md`
 - Project continuity / approval / screen-flow: `references/notion-project-visual-continuity-gate.md`

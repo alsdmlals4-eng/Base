@@ -1,5 +1,16 @@
 # Base Skill Learning Log
 
+## 2026-08-27 — Screen inventory is a subordinate input, not a second visual coverage owner
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** 화면-first audit를 추가하면서 별도 companion 문서가 기존 Visual Asset Coverage와 같은 완료·READBACK 책임을 갖도록 구현됐다.
+- **Finding:** 화면 누락을 먼저 찾는 계약은 필요하지만, screen inventory와 asset coverage가 각각 완료 상태를 소유하면 공용 소비자가 둘 중 하나만 읽거나 서로 다른 PASS를 만들 수 있다.
+- **Decision:** `GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`를 `CANONICAL_VISUAL_COVERAGE_OWNER`로 유지하고, screen inventory는 `SUBORDINATE_TO_GAME_VISUAL_ASSET_COVERAGE_OWNER` preflight와 handoff만 소유한다. 이미지 정책·Art Skill·생성 계획·Work 지시문은 screen inventory 뒤 canonical coverage owner를 호출한다.
+- **Evidence:** `tests/test_game_visual_asset_coverage_contract.py`, `tests/test_bca_visual_sheet_workflow.py`, PR #763.
+- **Boundary:** gap 발견은 이미지 생성 승인, runtime PASS, human visual approval이 아니다.
+- **Next trigger:** 새 화면·UI·asset checklist가 독립 완료 status 또는 READBACK owner를 추가할 때 single-owner reconciliation을 다시 수행한다.
+
+
 ## 2026-08-25 — Product responsibility, not code shape, determines Codex ownership
 
 - **상태:** `PATTERN_CANDIDATE`
