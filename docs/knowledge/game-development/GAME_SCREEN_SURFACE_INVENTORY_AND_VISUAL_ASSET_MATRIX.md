@@ -5,15 +5,17 @@
 이 문서는 게임 제작의 필수 이미지·시각 표현을 **자산 종류 목록이 아니라 플레이어가 실제로 거치는 화면 전체**에서 역산하기 위한 공용 companion contract다.
 
 ```text
+SUBORDINATE_TO_GAME_VISUAL_ASSET_COVERAGE_OWNER
 SCREEN_SURFACE_INVENTORY_FIRST
 SCREEN_LEVEL_COMPOSITION_REQUIRED
+SCREEN_INVENTORY_HANDOFF_ONLY
 COVERAGE_CHECK_ONLY
 NOT_A_SECOND_ASSET_CANON
 ACTUAL_CONSUMER_REQUIRED
 NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS
 ```
 
-이 문서는 `GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`를 대체하지 않는다.
+이 문서는 `GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`를 대체하지 않는 subordinate preflight contract다. 최종 visual coverage 상태와 완료 판정의 단일 canonical owner는 기존 `GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`다.
 
 - 이 문서: 목표 흐름의 모든 화면·오버레이·전환을 먼저 찾고 화면별 시각 소비처를 분해한다.
 - `GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`: 캐릭터, 환경, UI, VFX, 상태군, 기술 조건 등 자산 종류별 누락을 교차 검사한다.
@@ -382,7 +384,7 @@ NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS
 
 ## 10. 완료 조건
 
-`SCREEN_COVERAGE_CLEAN_EXIT`는 다음을 모두 만족할 때만 사용한다.
+`SCREEN_INVENTORY_HANDOFF_READY`는 다음을 모두 만족할 때만 사용한다.
 
 ```text
 목표 build의 모든 relevant screen / overlay / transition이 row로 존재
@@ -399,3 +401,5 @@ NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS
 ```
 
 이 완료는 모든 이미지가 생성됐다는 뜻이 아니다. 실제 이미지가 필요한 항목은 별도의 생성·승인·promotion·Godot runtime 검증을 통과해야 한다.
+
+`SCREEN_INVENTORY_HANDOFF_READY`는 화면 row와 화면별 matrix가 canonical coverage owner에 전달될 준비가 됐다는 뜻이다. 최종 coverage status, Visual Requirement Gate 전달, 이미지 승인, runtime QA와 READBACK은 `GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`와 기존 owner가 판정한다.
