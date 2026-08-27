@@ -26,7 +26,7 @@ class WindowsPublicationDependencyDownloadRecoveryTests(unittest.TestCase):
         self.assertIsNotNone(match)
         return match.group("body")
 
-    def test_windows_dependency_download_uses_bounded_retry_and_fallback(self) -> None:
+    def test_windows_dependency_download_uses_bounded_retry_and_transport_fallback(self) -> None:
         body = self._windows_install_step()
         for token in (
             "function Invoke-VerifiedDownload",
@@ -41,11 +41,27 @@ class WindowsPublicationDependencyDownloadRecoveryTests(unittest.TestCase):
         ):
             self.assertIn(token, body)
 
+    def test_libreoffice_uses_verified_tdf_mirror_and_source_fallback(self) -> None:
+        body = self._windows_install_step()
+        for token in (
+            "https://mirror.clarkson.edu/tdf/libreoffice/stable/",
+            "https://download.documentfoundation.org/libreoffice/stable/",
+            "$libreOfficeFallbackUrl",
+            "Direct TDF mirror route failed",
+        ):
+            self.assertIn(token, body)
+        self.assertRegex(
+            body,
+            r"Invoke-VerifiedDownload\s+"
+            r"-Uri \$libreOfficeFallbackUrl\s+"
+            r"-OutFile \$libreOfficeMsi\s+"
+            r"-ExpectedSha256 \$libreOfficeSha256",
+        )
+
     def test_partial_downloads_are_removed_and_hash_verification_is_not_weakened(self) -> None:
         body = self._windows_install_step()
         for token in (
-            "if (Test-Path -LiteralPath $OutFile)",
-            "Remove-Item -LiteralPath $OutFile -Force",
+            "Remove-Item -LiteralPath $OutFile -Force -ErrorAction SilentlyContinue",
             "Get-FileHash -Algorithm SHA256",
             "DOWNLOAD_SHA256_MISMATCH",
             "$ExpectedSha256.ToLowerInvariant()",
@@ -56,7 +72,7 @@ class WindowsPublicationDependencyDownloadRecoveryTests(unittest.TestCase):
             body,
         )
         self.assertIn(
-            '$popplerSha256 = "58A6F9AE269756231D2F9AA6CBA39D75FEC6DEACAF3C4A50683383B5F3D5A527"',
+            '$expectedHash = "58A6F9AE269756231D2F9AA6CBA39D75FEC6DEACAF3C4A50683383B5F3D5A527"',
             body,
         )
 
@@ -74,7 +90,7 @@ class WindowsPublicationDependencyDownloadRecoveryTests(unittest.TestCase):
             r"Invoke-VerifiedDownload\s+"
             r"-Uri \$popplerUrl\s+"
             r"-OutFile \$popplerZip\s+"
-            r"-ExpectedSha256 \$popplerSha256",
+            r"-ExpectedSha256 \$expectedHash",
         )
 
     def test_incident_case_and_approved_proposal_are_durable(self) -> None:
@@ -89,6 +105,7 @@ class WindowsPublicationDependencyDownloadRecoveryTests(unittest.TestCase):
             "NO_TEST_OR_HASH_WEAKENING",
             "bounded retry",
             "curl.exe fallback",
+            "TDF mirror",
         ):
             self.assertIn(token, case)
 
@@ -97,6 +114,7 @@ class WindowsPublicationDependencyDownloadRecoveryTests(unittest.TestCase):
         self.assertIn("BCP-2026-041", proposal)
         self.assertIn("APPROVED_FOR_IMPLEMENTATION", proposal)
         self.assertIn("ZERO_INCREMENTAL_COST_REQUIRED", proposal)
+        self.assertIn("official TDF mirror", proposal)
 
 
 if __name__ == "__main__":
