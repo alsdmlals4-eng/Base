@@ -15,7 +15,15 @@ THIN_ROUTER_NOT_SECOND_CANON
 CURRENT_BASE_OWNER_WINS_ON_DRIFT
 ```
 
-Router가 current owner를 resolve하며 이 파일의 오래된 문구보다 current Project/Base owner가 우선한다.
+Router가 current owner를 resolve하며 이 파일의 오래된 문구보다 current Project/Base owner가 우선한다. Router가 현재 연결하는 주요 owner는 다음이며 상세 순서·successor는 Router에서 다시 확인해.
+
+```text
+WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md
+WORK_PROJECT_START_CANON_CHECKLIST.md
+WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md
+WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md
+WORK_EXECUTION_EVIDENCE_IDENTITY_INTEGRITY.md
+```
 
 ```text
 1. STAGE_1_PLANNING_WITH_USER · 기획
@@ -73,6 +81,6 @@ VERTICAL_SLICE_COMPLETE_REQUIRES_USER_VALIDATION
 NO_NEXT_SLICE_BEFORE_USER_DECISION_GATE
 ```
 
-각 Stage의 machine-executable required work를 0으로 만든 뒤 actual-state rescan과 최소 5회 full-scope 적대적 검토에서 blocker 0을 확인해. 사용자 실제 검증과 canonical reflection/readback 전에는 `VERTICAL_SLICE_COMPLETE` 또는 다음 Slice 진입을 주장하지 마.
+Human usability와 Player Experience는 사용자가 실제 다운로드 빌드를 플레이하기 전까지 NOT_RUN이다. 각 Stage의 machine-executable required work를 0으로 만든 뒤 actual-state rescan과 최소 5회 full-scope 적대적 검토에서 blocker 0을 확인해. 사용자 실제 검증과 canonical reflection/readback 전에는 `VERTICAL_SLICE_COMPLETE` 또는 다음 Slice 진입을 주장하지 마.
 
 중요 결정은 Existing Solution First와 ADOPT / ADAPT / REJECT로 비교하고 trigger가 맞는 Brainstorming/Superpowers·TDD·systematic debugging·verification-before-completion을 실제 실행해. 읽은 Skill과 실행한 Skill을 구분하고, 실제 구현·runtime·artifact·사용자 검증 없이 완료를 주장하지 마.
