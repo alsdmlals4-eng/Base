@@ -5,6 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+POLICY = ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md"
 PIPELINE = (
     ROOT
     / "docs/knowledge/game-development/PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md"
@@ -28,6 +29,17 @@ class ProjectImageRequestVisualAnchorPipelineTests(unittest.TestCase):
             "EXACT_PROJECT_AND_ACTUAL_CONSUMER_REQUIRED",
         ):
             self.assertIn(token, pipeline)
+
+    def test_main_policy_routes_current_turn_requests_without_stale_summary(self) -> None:
+        policy = self._read(POLICY)
+        for token in (
+            "PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md",
+            "CURRENT_TURN_EXPLICIT_IMAGE_REQUEST",
+            "EXPLICIT_REQUEST_IS_ONE_OUTPUT_AUTHORITY",
+            "ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE",
+        ):
+            self.assertIn(token, policy)
+        self.assertIn("NO_AUTOMATIC_IMAGE_CHAIN", policy)
 
     def test_current_turn_explicit_request_has_a_direct_one_output_route(self) -> None:
         gate = self._read(GATE)
