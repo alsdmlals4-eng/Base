@@ -989,6 +989,31 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
         self.assertNotEqual(linked_result.returncode, 0)
         self.assertRegex(linked_result.stderr.lower(), r"symlink|reparse")
 
+    def test_health_evidence_accepts_clean_autocrlf_checkout_bytes(self) -> None:
+        """Tracked evidence must compare against its canonical Git bytes, not CRLF checkout bytes."""
+        health_path = self.project / "docs/PROJECT_OPERATING_HEALTH.json"
+        health = json.loads(health_path.read_text(encoding="utf-8"))
+        canonical = subprocess.run(
+            ["git", "-C", str(self.project), "show", f"{self.project_commit}:evidence/adapter-installed.txt"],
+            capture_output=True,
+            check=True,
+        ).stdout
+        health["evidence"]["operating"][0]["sha256"] = hashlib.sha256(canonical).hexdigest()
+        health_path.write_text(json.dumps(health, sort_keys=True) + "\n", encoding="utf-8")
+        git(self.project, "config", "core.autocrlf", "true")
+        self.operating_evidence.write_bytes(b"adapter installed\r\n")
+        self.assertEqual("", git(self.project, "diff", "--", "evidence/adapter-installed.txt"))
+
+        result = self.run_tool(
+            CHECK,
+            "--project-root",
+            str(self.project),
+            "--base-repository",
+            str(self.base),
+        )
+
+        self.assertEqual(0, result.returncode, result.stderr)
+
     def test_standard_check_uses_required_adapter_protected_baseline(self) -> None:
         adapter = json.loads(self.adapter.read_text(encoding="utf-8"))
         protected_baseline = adapter.pop("protected_baseline")
