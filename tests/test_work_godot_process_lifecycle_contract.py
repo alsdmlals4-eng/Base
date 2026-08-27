@@ -104,6 +104,24 @@ class WorkGodotProcessLifecycleContractTests(unittest.TestCase):
         for path in (WORKFLOW, ROUTING, GODOT_SAFETY):
             self.assertIn(owner_path, read(path), str(path))
 
+    def test_existing_wrong_target_and_provider_boundaries_remain(self) -> None:
+        workflow = read(WORKFLOW)
+        for term in (
+            "stale PID/session을 current truth로 쓰지 않음",
+            "다른 프로젝트 editor/server/process를 임의 조작하지 않음",
+            "실제 Godot/runtime을 실행하지 않았으면 runtime PASS 아님",
+        ):
+            self.assertIn(term, workflow)
+
+        godot_safety = read(GODOT_SAFETY)
+        for term in (
+            "DETERMINISTIC_GDSCRIPT_TEST_AUTHORITY_WHEN_ADOPTED",
+            "LIVE_QA_AND_OBSERVABILITY_ONLY",
+            "persistent_source_mutation: forbidden",
+            "LOOPBACK_ONLY",
+        ):
+            self.assertIn(term, godot_safety)
+
     def test_direct_verification_does_not_expand_gpt_product_authoring(self) -> None:
         workflow = read(WORKFLOW)
         routing = read(ROUTING)
