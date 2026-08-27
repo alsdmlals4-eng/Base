@@ -12,6 +12,10 @@ baseline_main: b146e939a7ed4019fe85ce5135b29a28c5d7b98f
 incremental_cost: 0
 ```
 
+```text
+ZERO_INCREMENTAL_COST_REQUIRED
+```
+
 ## 문제
 
 Base main의 `Validate Game Project Operating System` 전체 검증에서 Windows publication smoke가 pinned LibreOffice MSI 다운로드 도중 두 번 연속 실패했다.
