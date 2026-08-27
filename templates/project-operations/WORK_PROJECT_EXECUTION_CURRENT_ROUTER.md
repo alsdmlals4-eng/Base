@@ -8,7 +8,7 @@ CURRENT_BASE_OWNER_WINS_ON_DRIFT
 ```
 
 > 프로젝트 사실·세부 절차를 복제하지 않고 current owner와 사용자용 5단계 interface를 연결한다.
-
+`MINIMAL_PROJECT_RESTART_ONE_LINE_ENTRY` · `BASE_AND_PROJECT_FRESH_READ_IS_ROUTING_INPUT` · `NO_PROJECT_CHAT_INSTRUCTION_FILE_ATTACHMENT_REQUIRED` · `CURRENT_BASE_ROUTER_AND_SPECIALIST_OWNERS_PROGRESSIVE_LOAD` · `EXACT_PROJECT_IDENTITY_REQUIRED` — 표준 routine 입력은 `[프로젝트명] 작업 재개. Base 최신 main과 프로젝트 고유 GitHub·Notion·actual implementation을 fresh-read하고, 현재 5단계 위치를 복원한 뒤 다음 안전 작업부터 진행해.`다. exact Project와 필수 source가 확인되면 이 한 줄이 current Starter·전문 owner를 progressive-load하며 장문 지시문 첨부는 필요 없다. 범위·이미지·비용·권한·권리·공개 배포 Gate를 우회하지 않으며 확인 불가 시 `BLOCKED_UNVERIFIED`다.
 ## 1. 권위와 로드 순서
 
 ```text
@@ -34,7 +34,7 @@ CURRENT_BASE_OWNER_WINS_ON_DRIFT
 ```
 
 과거 대화와 Memory는 discovery 후보일 뿐이다. 충돌하면 `CONTEXT_DRIFT_RECHECK_REQUIRED`로 되돌린다.
-
+`LEGACY_INSTRUCTION_ATTACHMENT_NOT_ROUTINE_INPUT` · `LEGACY_INSTRUCTION_IS_DISCOVERY_ONLY_NOT_CURRENT_CANON` · `UNMIGRATED_UNIQUE_LEGACY_INSTRUCTION_CONTENT_MUST_BE_RECONCILED` · `NO_SILENT_DROP_OF_PROJECT_SPECIFIC_UNIQUE_RULES` — 과거 지시문은 discovery-only다. 아직 정본에 없는 유효한 고유 규칙은 한 번 Project/Base current canon으로 reconcile한 뒤 historical 처리하며, 읽지 않은 unique 내용을 이관됐다고 추측하거나 버리지 않는다.
 ## 2. 프로젝트 native state → 5단계 매핑
 
 `WORK_FIVE_PHASE_VERTICAL_SLICE_EXECUTION_CONTRACT.md`를 사용자용 lifecycle interface로 사용한다.
