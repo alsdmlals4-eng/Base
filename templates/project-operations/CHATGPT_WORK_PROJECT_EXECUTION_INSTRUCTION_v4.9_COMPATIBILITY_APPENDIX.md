@@ -192,3 +192,41 @@ Work planning/review/visual/audio/data preparation
 활성화 증거가 없으면 기본 v4.9 execution, 기존 image conversation approval, current Project user-decision Gate를 그대로 유지한다. 사용자가 더 좁은 제한을 주면 최신 제한이 profile보다 우선한다.
 
 이 profile은 current owner를 복제하지 않고 Work v4.9, continuous-work, GPT–Codex workflow, Visual, Vertical Slice, HiGodot/GUT/Hera 계약을 조합한다. Project canon·Base latest owner·상위 host/system/tool confirmation이 충돌 시 우선하며, direct main·force·admin/ruleset bypass 또는 Human/Player evidence 과장을 허용하지 않는다.
+
+## 10. Explicit Project-local Visual Binary Profile
+
+```text
+PROJECT_LOCAL_VISUAL_BINARY_FIRST
+NOTION_VISUAL_STRUCTURE_REFERENCE_ONLY
+NO_NOTION_BINARY_UPLOAD_REQUIRED
+```
+
+현재 사용자가 로컬 GPT/컴퓨터가 이미지 파일을 exact Project에 직접 저장할 수 있고, Notion은 구조·Visual 방향 참고용으로만 사용하며 image binary는 각 프로젝트가 소유하도록 명시하면 다음 좁은 adapter를 함께 사용한다.
+
+```text
+templates/project-operations/WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md
+```
+
+적용 범위:
+
+```text
+Notion Visual/Asset structure fresh-read
+→ local project candidate bytes
+→ SHA/provenance/rights
+→ current-Slice approval
+→ tracked project asset + ASSET_MANIFEST
+→ exact commit/remote readback
+→ Codex/runtime consumer
+```
+
+이 profile은 minimum-transition profile의 Visual packet 중 `notion_destination`과 Notion binary upload/attachment/readback 필수조건만 좁게 supersede한다. Notion의 Project Home·Visual Bible·Asset Catalog·Flow·Art Direction human canon은 계속 읽고 필요한 텍스트/상태 sync만 수행한다.
+
+```text
+NOTION_BINARY_DELIVERY_OPTIONAL_BY_EXPLICIT_PROJECT_POLICY
+NOTION_UPLOAD_NOT_RUN
+NO_FALSE_NOTION_UPLOAD_CLAIM
+```
+
+local-only candidate를 durable Codex input으로 가장하지 않는다. 실제 current-Slice 구현에 사용할 승인 Visual은 project-owned tracked path와 manifest로 승격하고, feature branch commit/push·remote readback 뒤 Codex에 전달한다.
+
+이 opt-in은 default global image policy, 다른 프로젝트의 Notion binary requirement, Art Direction/identity/rights Gate 또는 상위 host confirmation을 무효화하지 않는다. Project-specific Visual binary owner가 따로 있으면 current Project owner가 우선한다.
