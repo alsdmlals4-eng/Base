@@ -447,6 +447,16 @@ def _clean_tracked_blob_bytes(
         return None, str(error)
 
 
+def _health_evidence_hashes(repository: Path, source: Path) -> tuple[str, set[str]]:
+    """Return working and canonical hashes for clean tracked evidence without breaking legacy raw records."""
+    working = sha256_file(source)
+    canonical, _ = _clean_tracked_blob_bytes(repository, source, "Health evidence")
+    accepted = {working}
+    if canonical is not None:
+        accepted.add(sha256_bytes(canonical))
+    return working, accepted
+
+
 def _release_lock_contract(
     adapter: dict[str, Any], base_repository: Path
 ) -> tuple[list[str], dict[str, Any] | None, bytes | None]:
@@ -700,8 +710,8 @@ def _health_semantic_errors(
                     errors.append(f"Health evidence source does not exist as a file: {record['source']}")
                     valid = False
                 else:
-                    actual_hash = sha256_file(source)
-                    if actual_hash != record["sha256"]:
+                    actual_hash, accepted_hashes = _health_evidence_hashes(project_root, source)
+                    if record["sha256"] not in accepted_hashes:
                         errors.append(
                             f"Health evidence raw-byte hash mismatch for {record['source']}: "
                             f"expected {record['sha256']}, got {actual_hash}"
