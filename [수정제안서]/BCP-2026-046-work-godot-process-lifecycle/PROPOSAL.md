@@ -5,15 +5,16 @@
 - 출처: GPT Work 작업 중 Godot 직접 기계검증과 검증 종료 후 프로세스 정리를 요구한 사용자 운영 지시
 - 기준 Base: `1117572df293b668271d473e7fcdca3794cd5aed`
 - 제출일: `2026-08-27`
-- 상태: `IMPLEMENTED`
-- 지식 상태: `사용자 승인 운영 요구 + RED 재현 + exact-head GREEN 검증`
+- 상태: `SUBMITTED`
+- 상태 설명: 구현은 PR #762에서 이미 병합됐으나, Proposal Registry 최초 등록이 누락돼 현재 PR에서는 Base governance가 요구하는 최초 `SUBMITTED` 상태를 복구한다. 이 등록 PR 병합 뒤 별도 closeout PR에서 `IMPLEMENTED`로 승격한다.
+- 지식 상태: `사용자 승인 운영 요구 + 구현 완료 + Registry lifecycle 복구 중`
 - 승인 근거:
   - 사용자 메시지: `work 작업 중에 필요시 godot 켜서 기계검증하고 사용 종료시 해당 godot을 꺼달라고해줘`
   - 후속 사용자 메시지: `좋아 base에도 교정해줘`
 
 ## 관찰과 증거
 
-현행 Base는 다음을 이미 요구한다.
+기존 Base는 다음을 이미 요구했다.
 
 - GPT가 현재 도구로 runtime/play를 직접 실행·관찰할 수 있으면 직접 증거를 확보한다.
 - 실제 Godot/runtime을 실행하지 않았으면 runtime PASS가 아니다.
@@ -21,7 +22,7 @@
 - 다른 프로젝트의 Editor·server·process를 임의 조작하지 않는다.
 - 필요하지 않을 때 HiGodot addon과 MCP server를 종료하거나 비활성화한다.
 
-그러나 GPT Work가 검수를 위해 Godot Editor, 게임 창, headless/debug runner 또는 관련 QA process를 직접 시작한 경우 다음이 명시되어 있지 않다.
+그러나 GPT Work가 검수를 위해 Godot Editor, 게임 창, headless/debug runner 또는 관련 QA process를 직접 시작한 경우 다음이 명시되어 있지 않았다.
 
 1. 어떤 process/session이 이번 작업이 시작한 것인지 식별·기록하는 규칙
 2. 기계검증 종료 후 해당 작업 소유 process와 파생 child process를 종료하는 시점
@@ -60,7 +61,7 @@ PID 하나만 영구 신뢰하지 않고 project path, launch time, parent-child
 
 ### 3. `STOP_TASK_OWNED_GODOT_WHEN_NO_LONGER_NEEDED`
 
-필요한 evidence를 확보했고 같은 작업에서 추가 Godot 검증이 남지 않았으면, 완료 보고 전에 이번 Work가 시작한 Godot·게임·debug/test·관련 server process를 정상 종료한다.
+필요한 evidence를 확보했고 같은 작업에서 추가 Godot 검증이 남지 않았으면 완료 보고 전에 이번 Work가 시작한 Godot·게임·debug/test·관련 server process를 정상 종료한다.
 
 ```text
 verification complete
@@ -97,23 +98,15 @@ godot_verification:
   unverified: []
 
 godot_process_cleanup:
+  status: PASS | PARTIAL | NOT_RUN | NOT_APPLICABLE
   task_owned_processes_started: []
   task_owned_processes_stopped: []
   preexisting_or_unrelated_preserved: []
-  residual_check: PASS | PARTIAL | NOT_RUN
+  residual_check: PASS | PARTIAL | NOT_RUN | NOT_APPLICABLE
   residual_risk: []
 ```
 
-Godot을 실행하지 않은 작업은 `NOT_RUN`이며 cleanup도 `NOT_APPLICABLE`로 설명할 수 있다. 실행했지만 종료 확인이 없으면 완료 자체를 과장하지 않고 cleanup evidence를 `PARTIAL` 또는 `NOT_RUN`으로 남긴다.
-
-## 프로젝트 전용으로 남길 내용
-
-- 각 프로젝트의 Godot executable path와 version
-- exact repository/worktree/project path
-- project별 addon, GUT, Hera, HiGodot 채택 상태
-- OS별 process name, PID, port, session ID와 종료 명령
-- 사용자가 열어 둔 instance 여부와 프로젝트별 예외
-- 실제 scene/test/runtime acceptance와 evidence path
+Godot을 실행하지 않은 작업은 verification `NOT_RUN`, cleanup `NOT_APPLICABLE`로 기록할 수 있다. 실행했지만 종료 확인이 없으면 완료 자체를 과장하지 않고 cleanup evidence를 `PARTIAL` 또는 `NOT_RUN`으로 남긴다.
 
 ## 적용 조건과 비사용 조건
 
@@ -130,6 +123,15 @@ Godot을 실행하지 않은 작업은 `NOT_RUN`이며 cleanup도 `NOT_APPLICABL
 - 외부 executor가 이미 정확한 build/commit의 검증 증거를 제공하고 Work가 직접 실행하지 않은 경우
 - 현재 도구로 process ownership을 식별하거나 종료할 수 없는 환경. 이 경우 강제 종료 대신 `BLOCKED_UNVERIFIED` 또는 cleanup `PARTIAL`을 보고한다.
 
+프로젝트 전용으로 남기는 항목:
+
+- 각 프로젝트의 Godot executable path와 version
+- exact repository/worktree/project path
+- project별 addon, GUT, Hera, HiGodot 채택 상태
+- OS별 process name, PID, port, session ID와 종료 명령
+- 사용자가 열어 둔 instance 여부와 프로젝트별 예외
+- 실제 scene/test/runtime acceptance와 evidence path
+
 ## 반례와 위험
 
 - process name만 보고 `godot*` 전체를 종료하면 사용자 작업을 잃을 수 있다. task-owned 식별이 우선이다.
@@ -137,16 +139,19 @@ Godot을 실행하지 않은 작업은 `NOT_RUN`이며 cleanup도 `NOT_APPLICABL
 - 강제 kill을 기본값으로 사용하면 저장 중 Scene·Resource나 로그 flush가 손상될 수 있다. graceful stop을 우선하고 강제 종료는 hung task-owned process에 한정해 이유와 결과를 남긴다.
 - cleanup PASS가 runtime PASS를 대체하지 않는다. 실행 검증과 프로세스 정리는 별도 claim surface다.
 - GPT Work 검증 권한이 persistent product authoring 권한으로 확대되어서는 안 된다.
+- 구현이 이미 병합됐다는 이유로 Registry 최초 등록의 `SUBMITTED` Gate를 우회하면 Proposal lifecycle contract가 깨진다. 최초 등록 후 별도 상태 전이로 닫는다.
 
-## 승인된 구현 범위
+## 영향 범위와 검증
 
-1. `docs/GPT_CODEX_WORKFLOW_POLICY.md`에 Work 직접 Godot 검증과 작업 소유 process lifecycle을 추가
-2. `docs/WORK_MODE_AND_SKILL_ROUTING.md`에 실행·종료·보고 routing을 노출
-3. `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`에 task-owned cleanup과 pre-existing instance 보호 경계를 추가
-4. focused regression contract를 RED-first로 추가한 뒤 GREEN 구현
-5. exact-head 검증, 최소 5회 whole-state 적대적 검토, safe squash merge와 post-merge readback
+### 구현된 영향 범위
 
-## 제외·보호 범위
+1. `docs/GPT_CODEX_WORKFLOW_POLICY.md`에 Work 직접 Godot 검증과 작업 소유 process lifecycle 추가
+2. `docs/WORK_MODE_AND_SKILL_ROUTING.md`에 실행·종료·보고 routing 노출
+3. `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`에 task-owned cleanup과 pre-existing instance 보호 경계 추가
+4. `docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md`의 기존 완료 증거 owner 재사용
+5. `tests/test_work_godot_process_lifecycle_contract.py`에 focused RED→GREEN regression contract 추가
+
+### 제외·보호 범위
 
 - 실제 게임 프로젝트의 GDScript·Scene·Resource·runtime code 수정 없음
 - GPT의 persistent Godot product authoring 권한 확대 없음
@@ -155,23 +160,25 @@ Godot을 실행하지 않은 작업은 `NOT_RUN`이며 cleanup도 `NOT_APPLICABL
 - 새 provider, addon, dependency, paid service, remote tunnel 추가 없음
 - 열린 다른 PR·branch는 read-only
 
-## 검증
+### 검증
 
-1. Work 직접 실행은 materially 필요한 검수에만 허용되고 product implementation과 구분되는지 검사한다.
-2. exact project identity와 task-launched process ownership 기록을 요구하는지 검사한다.
-3. evidence 확보 뒤 task-owned Editor/game/debug/test/server 종료와 residual check를 요구하는지 검사한다.
-4. pre-existing/unrelated instance 보호와 ownership-unverified fail-safe가 유지되는지 검사한다.
-5. 완료 보고가 runtime verification과 cleanup evidence를 분리하는지 검사한다.
-6. 기존 `DIRECT_RUN_OR_VERIFIED_EVIDENCE`, `stale PID/session 불신`, `다른 프로젝트 process 비조작`, HiGodot/GUT/Hera authority 경계를 회귀검사한다.
+1. Work 직접 실행은 materially 필요한 검수에만 허용되고 product implementation과 구분되는지 검사했다.
+2. exact project identity와 task-launched process ownership 기록을 요구하는지 검사했다.
+3. evidence 확보 뒤 task-owned Editor/game/debug/test/server 종료와 residual check를 요구하는지 검사했다.
+4. pre-existing/unrelated instance 보호와 ownership-unverified fail-safe가 유지되는지 검사했다.
+5. 완료 보고가 runtime verification과 cleanup evidence를 분리하는지 검사했다.
+6. 기존 `DIRECT_RUN_OR_VERIFIED_EVIDENCE`, stale PID/session 불신, 다른 프로젝트 process 비조작, HiGodot/GUT/Hera authority 경계를 회귀검사했다.
+7. 구현 PR exact HEAD에서 focused regression, whole core regression, Ubuntu contract, docs validation, publication validation, Base v9 contract, integrated Vertical Slice, required `ci-gate`를 통과했다.
 
 ## 승인과 구현
 
+- 사용자 승인: 2026-08-27 현재 대화의 Godot 실행 검증·작업 소유 프로세스 종료 지시와 Base 교정 승인
 - 제안 PR: [#761](https://github.com/alsdmlals4-eng/Base/pull/761), squash merge `c0e5d08f4f1068f736a510beb209995df0c4d06d`
 - 구현 PR: [#762](https://github.com/alsdmlals4-eng/Base/pull/762), exact reviewed head `7afb0fea3c8268074d4ddcae40faf5e33ad55cf1`, squash merge `dd50abbbc64077ad6860b9c2ee7ed63719b3b471`
 - 구현 검증: focused RED 재현 후 GREEN, whole core regression, Ubuntu contract, docs validation, publication validation, Base v9 contract, integrated Vertical Slice, required `ci-gate`, 5회 whole-state 적대적 검토, post-merge main readback PASS
-- 구현된 owner: `docs/GPT_CODEX_WORKFLOW_POLICY.md`, `docs/WORK_MODE_AND_SKILL_ROUTING.md`, `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`, `docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md`
+- 현재 lifecycle: Proposal Registry 최초 등록 누락을 복구하는 `SUBMITTED` 단계. 이 등록 PR이 병합된 뒤 별도 closeout PR에서 proposal·registry를 `IMPLEMENTED`로 승격한다.
 - 상태 한계: 이번 Base 문서·계약 작업에서는 게임 프로젝트 Godot runtime을 실행하지 않았으므로 `godot_verification: NOT_RUN`, `godot_process_cleanup: NOT_APPLICABLE`
 
 ## 롤백
 
-구현 PR #762에서 추가한 Work Godot process lifecycle 문구, routing/report fields, Godot 안전 경계, evidence-owner 연결과 focused regression test를 한 단위로 revert한다. 기존 GPT–Codex 역할 분리와 Godot authoring authority 문서는 원래 상태로 복구한다.
+구현 자체를 되돌릴 때는 구현 PR #762에서 추가한 Work Godot process lifecycle 문구, routing/report fields, Godot 안전 경계, evidence-owner 연결과 focused regression test를 한 단위로 revert한다. Registry lifecycle 복구만 되돌릴 때는 현재 등록 PR과 후속 closeout PR의 proposal metadata 변경만 revert한다.
