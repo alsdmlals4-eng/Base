@@ -5,6 +5,10 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+CONTRACT = (
+    ROOT
+    / "docs/knowledge/game-development/VISUAL_CONCEPT_EXPLORATION_AND_CONTINUITY_LOCK.md"
+)
 IMAGE_POLICY = ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md"
 APPROVAL_GATE = ROOT / "docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md"
 ART_GUIDE = ROOT / "docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md"
@@ -38,34 +42,49 @@ class VisualConceptExplorationAndContinuityLockTests(unittest.TestCase):
         ):
             self.assertIn(token, text)
 
-    def test_image_policy_requires_explore_select_lock_then_scale(self) -> None:
-        text = self._read(IMAGE_POLICY)
+    def test_visual_continuity_gate_routes_the_new_composed_contract(self) -> None:
+        text = self._read(CONTINUITY_GATE)
+        self.assertIn("VISUAL_CONCEPT_EXPLORATION_AND_CONTINUITY_LOCK.md", text)
+        self.assertIn("VISUAL_DIRECTION_EXPLORATION_BEFORE_SCALE", text)
+        self.assertIn("APPROVED_VISUAL_DIRECTION_PACKET", text)
+
+    def test_contract_composes_current_owners_instead_of_replacing_them(self) -> None:
+        text = self._read(CONTRACT)
+        for owner in (
+            "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md",
+            "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md",
+            "IMAGE_CONVERSATION_APPROVAL_GATE.md",
+            "candidate-review-and-reusable-harvest.md",
+            "notion-project-visual-continuity-gate.md",
+            "WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md",
+        ):
+            self.assertIn(owner, text)
+        self.assertIn("THIN_CONTRACT_NOT_SECOND_ART_BIBLE", text)
+
+    def test_contract_requires_explore_select_lock_then_scale(self) -> None:
+        text = self._read(CONTRACT)
+        stages = (
+            "CONCEPT_OPTIONS_BEFORE_PRODUCTION_LOCK",
+            "USER_SELECTED_VISUAL_DIRECTION_REQUIRED",
+            "APPROVED_VISUAL_DIRECTION_PACKET",
+            "CONSISTENCY_REVIEW_AGAINST_VISUAL_DIRECTION_LOCK",
+        )
         for token in (
             "VISUAL_DIRECTION_EXPLORATION_BEFORE_SCALE",
-            "CONCEPT_OPTIONS_BEFORE_PRODUCTION_LOCK",
             "MINIMUM_VIABLE_CONCEPT_DIRECTIONS: 3",
             "NO_FAKE_CONCEPT_OPTION",
             "SAME_CONSUMER_CONTROLLED_COMPARISON",
-            "USER_SELECTED_VISUAL_DIRECTION_REQUIRED",
-            "APPROVED_VISUAL_DIRECTION_PACKET",
             "FLOW_AND_SCREEN_ANCHORS_LOCKED_BEFORE_SCALE",
-            "CONSISTENCY_REVIEW_AGAINST_VISUAL_DIRECTION_LOCK",
             "ALLOWED_VARIATION_WITHOUT_UNAUTHORIZED_STYLE_DRIFT",
+            *stages,
         ):
             self.assertIn(token, text)
-        self.assertLess(
-            text.index("CONCEPT_OPTIONS_BEFORE_PRODUCTION_LOCK"),
-            text.index("USER_SELECTED_VISUAL_DIRECTION_REQUIRED"),
-        )
-        self.assertLess(
-            text.index("USER_SELECTED_VISUAL_DIRECTION_REQUIRED"),
-            text.index("CONSISTENCY_REVIEW_AGAINST_VISUAL_DIRECTION_LOCK"),
-        )
+        self.assertEqual([text.index(s) for s in stages], sorted(text.index(s) for s in stages))
 
     def test_comparison_board_is_one_explicit_exploration_result_not_runtime_asset_compression(self) -> None:
-        policy = self._read(IMAGE_POLICY)
+        text = self._read(CONTRACT)
         gate = self._read(APPROVAL_GATE)
-        combined = policy + "\n" + gate
+        combined = text + "\n" + gate
         for token in (
             "EXPLICIT_CONCEPT_COMPARISON_BOARD",
             "ONE_EXPLORATION_BOARD_NOT_N_RUNTIME_DELIVERABLES",
@@ -79,23 +98,14 @@ class VisualConceptExplorationAndContinuityLockTests(unittest.TestCase):
         self.assertIn("explicit comparison artifact", combined)
         self.assertIn("independent runtime asset", combined)
 
-    def test_candidate_selection_records_adopted_rejected_and_lock_output(self) -> None:
-        text = self._read(CANDIDATE_REVIEW)
+    def test_selection_and_visual_direction_packets_record_decision_and_continuity(self) -> None:
+        text = self._read(CONTRACT)
         for token in (
             "CONCEPT_DIRECTION_SELECTION",
             "selected_candidate_id:",
             "adopted_elements:",
             "rejected_elements:",
             "selection_reason:",
-            "allowed_variation:",
-            "visual_direction_lock_output:",
-        ):
-            self.assertIn(token, text)
-
-    def test_visual_continuity_gate_carries_direction_and_flow_anchors(self) -> None:
-        text = self._read(CONTINUITY_GATE)
-        for token in (
-            "APPROVED_VISUAL_DIRECTION_PACKET",
             "visual_direction_lock_id:",
             "source_candidate_ids:",
             "approved_flow_or_screen_anchor_ids:",
@@ -107,32 +117,48 @@ class VisualConceptExplorationAndContinuityLockTests(unittest.TestCase):
             "avoid:",
             "do_not_drift:",
             "allowed_variation:",
-            "VISUAL_DIRECTION_OR_FLOW_DRIFT_REVALIDATION_REQUIRED",
         ):
             self.assertIn(token, text)
 
-    def test_local_visual_packet_delivers_lock_identity_to_codex_and_runtime_review(self) -> None:
-        text = self._read(LOCAL_VISUAL_PROFILE)
-        packet = text.split("### 4.1 Visual production packet override", 1)[1].split(
-            "### 4.2 Manifest 최소 필드", 1
-        )[0]
-        for field in (
-            "visual_direction_lock_id:",
-            "approved_flow_or_screen_anchor_ids:",
-            "approved_reference_or_style_anchor:",
-            "continuity_acceptance:",
-            "runtime_consistency_validation:",
+    def test_existing_candidate_and_continuity_owners_remain_inputs(self) -> None:
+        candidate = self._read(CANDIDATE_REVIEW)
+        continuity = self._read(CONTINUITY_GATE)
+        for token in (
+            "canon / approved-reference fit",
+            "actual-use readability",
+            "APPROVED_CANDIDATE",
         ):
-            self.assertIn(field, packet)
+            self.assertIn(token, candidate)
+        for token in (
+            "APPROVED_VISUAL_REFERENCE",
+            "Keep",
+            "Avoid",
+            "Do Not Drift",
+        ):
+            self.assertIn(token, continuity)
+
+    def test_contract_maps_lock_identity_into_existing_local_visual_packet(self) -> None:
+        contract = self._read(CONTRACT)
+        profile = self._read(LOCAL_VISUAL_PROFILE)
+        for field in (
+            "approved_reference_or_style_anchor:",
+            "notion_reference_surface:",
+            "objective_acceptance:",
+            "runtime_validation:",
+        ):
+            self.assertIn(field, profile)
+            self.assertIn(field, contract)
+        for token in (
+            "visual_direction_lock_id",
+            "approved_flow_or_screen_anchor_ids",
+            "runtime_consistency_validation",
+        ):
+            self.assertIn(token, contract)
 
     def test_exploration_approval_and_runtime_promotion_remain_separate(self) -> None:
-        combined = "\n".join(
-            (
-                self._read(IMAGE_POLICY),
-                self._read(CONTINUITY_GATE),
-                self._read(LOCAL_VISUAL_PROFILE),
-            )
-        )
+        text = self._read(CONTRACT)
+        image_policy = self._read(IMAGE_POLICY)
+        combined = text + "\n" + image_policy
         for token in (
             "GENERATED_EXPLORATION",
             "APPROVED_CANDIDATE",
@@ -140,8 +166,17 @@ class VisualConceptExplorationAndContinuityLockTests(unittest.TestCase):
             "APPLIED_AND_RUNTIME_VERIFIED",
         ):
             self.assertIn(token, combined)
-        self.assertIn("comparison board", combined)
-        self.assertIn("not runtime evidence", combined)
+        self.assertIn("comparison board", text)
+        self.assertIn("not runtime evidence", text)
+
+    def test_material_direction_or_flow_change_reopens_only_affected_visual_scope(self) -> None:
+        text = self._read(CONTRACT)
+        for token in (
+            "VISUAL_DIRECTION_OR_FLOW_DRIFT_REVALIDATION_REQUIRED",
+            "EARLIEST_AFFECTED_VISUAL_SCOPE_REOPENS",
+            "NO_FULL_PROJECT_VISUAL_RESTART_FOR_LOCAL_DRIFT",
+        ):
+            self.assertIn(token, text)
 
 
 if __name__ == "__main__":
