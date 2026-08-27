@@ -37,6 +37,18 @@ polishing_evidence:
   motion_audio_haptic_dependency:
   reduced_motion_mute_haptic_off_path:
   before_after_validation:
+visual_generation_integrity:
+  visual_question:
+  target_screen:
+  target_state:
+  excluded_scope:
+  requested_deliverable_count:
+  delivered_independent_count:
+  collage_explicitly_requested_or_approved: false
+  decision_critical_information:
+  semantic_cue_channels:
+  scope_fidelity: NOT_RUN | PASS | FAIL | BLOCKED
+  human_comprehension: HUMAN_NOT_RUN | PARTIAL | PASSED | FAILED
 external_ui_procurement:
   registry_source:
   source_repository:
@@ -114,3 +126,5 @@ review_status: DRAFT | REVIEWED | APPLIED | REJECTED | SUPERSEDED
 12. AnimationPlayer·Tween 표현이 구매·보상·저장·진행의 실제 결과를 소유하는 사례는 `AVOID`한다.
 13. MCP 연결·Registry 조회·소스 획득·설치·빌드·실제 렌더·접근성·프로젝트 채택을 서로 다른 증거로 기록한다.
 14. 공식 브랜드 문서가 아닌 커뮤니티 분석은 `independent_analysis: true`, `official_brand_source: false`로 표시하고 고유 자산·표현을 복제하지 않는다.
+15. bounded 생성형 visual은 `visual_question / target_screen / target_state / excluded_scope`를 생성 전에 기록하고, 요청된 N개 결과는 collage가 명시된 경우를 제외하면 독립 deliverable 수량으로 검증한다.
+16. decision-critical visual은 색·방향·형태·텍스트/아이콘·밝기/두께·모션 같은 cue 중 프로젝트에 맞는 독립 신호를 비교한다. 이 기록만으로 `human_comprehension`이나 runtime/device PASS를 주장하지 않는다.

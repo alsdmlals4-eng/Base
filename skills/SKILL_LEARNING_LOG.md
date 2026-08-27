@@ -1,5 +1,14 @@
 # Base Skill Learning Log
 
+## 2026-08-25 — BCP-2026-035 bounded visual scope and deliverable integrity
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** bounded single-screen visual이 broad result로 drift하고, N개의 독립 결과가 승인되지 않은 collage로 합쳐지며, decision-critical cue가 art/background와 경쟁하는 실패가 한 프로젝트 작업에서 함께 관찰됐다.
+- **Decision:** 새 Skill을 만들지 않고 기존 `auditing-and-refining-ui-art` owner에 `VISUAL_TASK_SCOPE_FIDELITY`, `BATCH_COUNT_MEANS_INDEPENDENT_DELIVERABLES`, `DECISION_CRITICAL_VISUAL_SEMANTIC_REDUNDANCY`를 통합한다.
+- **Evidence:** PR #713의 exact RED head `9a8eac82142d15be3964736dae3fc71fc6284a35`에서 승인된 계약 부재 3건만 새 실패로 재현됐고, 프로젝트 중립 case와 focused regression으로 GREEN 경계를 정의했다.
+- **Boundary:** 프로젝트 고유 style·palette·asset·Candidate ID를 Base 규칙으로 복사하지 않는다. Repository contract·mock·Notion readback만으로 `human comprehension`, accessibility, runtime/device correctness를 PASS 처리하지 않는다.
+- **Next trigger:** 다른 프로젝트에서 같은 실패가 재현되거나, semantic redundancy가 과도한 cue 중복·시각 혼잡을 만드는 반례가 관찰될 때 재검토한다.
+
 ## 2026-08-25 — Product responsibility, not code shape, determines Codex ownership
 
 - **상태:** `PATTERN_CANDIDATE`
@@ -457,7 +466,7 @@
 - 호출 트리거: 벤치마킹 게임·유저 반응을 인터넷에서 조사해 분석·반영·개선하고, 작업 순서·스텝을 나누며, 추가로 필요한 게임 개발 스킬을 공식 자료에서 찾아 통합하라는 사용자 요청
 - 입력 범위: PR #19 DDD 기준선, PR #22 정본 최신성 구조, Steamworks Reviews·Playtest·Testing, Unity Analytics Events·Funnels·A/B testing, Scrum Guide, GitHub Issues·Dependencies·Milestones, Xbox Accessibility Guidelines, Unreal performance profiling, Unity Edit·Play·target player test 문서
 - 실제 산출물: `decompose-and-sequence`, `benchmark-and-player-research`, `playtest-and-experiment`, `accessibility-review`, `performance-profile`, Vertical Slice의 `slice-contract/quality-bar/pipeline-proof/playtest-evidence/decision-gate`, 3개 상세 reference, 2개 템플릿, Registry·Operating Model·프로젝트 Workflow·Skill Adoption Guide·회귀 테스트 동기화
-- 실행한 검증: 독립 Skill 추가 없이 활성 Skill 13개 유지, mode·trigger·공식 출처·참조 파일·라우팅 회귀 추가, 전체 GitHub Actions 실행 대기
+- 실행한 검증: 독립 Skill 추가 없이 활성 Skill 13개 유지, mode·trigger·공식 출처·참조 파일·라우팅 회귀 추가, Python 문법·Actions 실행 대기
 - 결과: 부분 성공
 - 성공 조건: 벤치마크가 기능 복사가 아니라 근거 층위와 `ADOPT/ADAPT/AVOID/TEST/IGNORE` 결정으로 연결되고, 작업 단계가 의존성·게이트·롤백을 가지며, 플레이테스트·접근성·성능이 실제 증거 계약으로 연결됨
 - 실패·예외·재현 조건: 리뷰 표본·버전·플랫폼 편향, 이벤트와 감정의 혼동, 한 실험에서 여러 변수 변경, 근거 없는 일정 추정, 접근성의 법적 준수 과장, 평균 FPS만으로 성능 통과를 주장할 위험이 있음
@@ -496,7 +505,7 @@
 
 - 프로젝트·작업: Base 변경 시 오래된 파일·경로·Skill ID·정책 참조와 갱신 누락을 찾는 전문 Skill·자동 검사 추가
 - 기준 스킬 커밋: `agent/add-reference-freshness-audit-v3`
-- 호출 트리거: 패치나 변경 뒤 모든 활성 파일이 최신 정본을 따르는지, 오래된 파일을 참조하거나 갱신되지 않은 소비자가 있는지 찾는 Skill을 추가하라는 사용자 요청
+- 호출 트리거: 패치나 변경 뒤 모든 활성 파일이 최신 정본을 따르는지와 오래된 파일 참조·갱신 누락을 찾아야 하며, 완료된 DDD 스킬과 최종 검증 결과를 기준선에 포함할 것
 - 입력 범위: PR #19 최종 DDD head, 통합 Skill Registry, 범용 변경 검증 Skill, Operating Model, 프로젝트 AI Workflow, Legacy Alias, 구조·참조 회귀 테스트와 Actions
 - 실제 산출물: `auditing-canonical-reference-freshness`, `reference-freshness` 검증 mode, 감사 템플릿, `.github/reference-freshness.json`, 표준 라이브러리 기반 checker, 단위 테스트와 CI 연결, 13개 활성 Skill Registry
 - 실행한 검증: checker 단위 테스트 4개 추가, Registry·구조·활성 진입점 테스트 갱신, Python 문법·Actions 실행 대기
@@ -518,7 +527,7 @@
 - 프로젝트·작업: Base 핵심 컨셉·뾰족한 재미·PoC 기획 분석 스킬 추가와 외부 AI 검수의 범용 변경 검증 통합
 - 기준 스킬 커밋: `agent/consolidate-skills-and-structure@e679219ab1e2f993602d9e928ddf98640b69df41`
 - 호출 트리거: SWOT·DDD 요소 분석과 개선 방향, 핵심 컨셉→제약→뾰족한 재미→구체화→PoC→재조정→Production 흐름을 반복 가능한 스킬로 만들고 일반 변경 검증 공백을 해소하라는 사용자 요청
-- 입력 범위: 활성 Skill Registry, Operating Model, START_HERE, AGENTS, Documentation Map, Workflow·Checklist, 프로젝트 템플릿, 기존 Vertical Slice·외부 AI 검수 스킬과 구조 회귀 테스트
+- 입력 범위: 활성 Skill Registry, Operating Model, START_HERE, AGENTS, README, Documentation Map, Workflow·Checklist, 프로젝트 템플릿, 기존 Vertical Slice·외부 AI 검수 스킬과 구조 회귀 테스트
 - 실제 산출물: `analyzing-and-refining-game-concepts`, `reviewing-and-validating-project-changes`, 기획 방향·변경 검증 템플릿, 12개 활성 Skill Registry, Legacy Alias와 프로젝트 라우터 갱신
 - 실행한 검증: Registry Schema·활성 경로, 12개 선택적 라우팅, 기획 8개 mode·7단계 상태 흐름·SWOT 전략·MDA/DDE·DDD 계약, 변경 검증 6개 mode·5개 판정, 삭제 경로·Legacy Alias·프로젝트 템플릿 참조, Python 문법·BCP·Documentation·Skill Routing·Design Publication Governance, 구조·생성 회귀 78개, Windows 실제 발행 스모크 테스트, whitespace
 - 결과: 성공
@@ -541,7 +550,7 @@
 - 호출 트리거: 유사하거나 순차 의존하는 Skill·Method·Checklist가 과도해 최소 호출과 책임 원본 원칙을 위반한다는 사용자 검토
 - 입력 범위: 활성 Skill 17개, Skill Registry, START_HERE, AGENTS, README, Documentation Map, 공용 Rules·Workflow·Checklist, 운영·마이그레이션·발행·Handoff·Skill Evolution Method
 - 실제 산출물: 활성 Skill 11개, 통합 Skill 4개, Legacy Alias, 통합 Operating Model, 축소된 라우터·원칙 문서, 발행 정책 3단계와 정책 선택 생성 도구
-- 실행한 검증: Python 문법, Base Skill Registry Schema·활성 경로, Legacy Alias·삭제 경로·잔여 템플릿 참조, Documentation·Skill Routing·Design Publication Governance, 정책 선택 생성기 통합, 구조·콜드 스타트·BCP·딥인터뷰·UI 감사·DOCX/PDF 생성 회귀 78개, Ubuntu와 Windows 실제 발행 검증, whitespace
+- 실행한 검증: Python 문법, Base Skill Registry Schema·활성 경로, Legacy Alias·삭제 경로·잔여 템플릿 참조, Documentation·Skill Routing Governance, 정책 선택 생성기 통합, 구조·콜드 스타트·BCP·딥인터뷰·UI 감사·DOCX/PDF 생성 회귀 78개, Ubuntu와 Windows 실제 발행 검증, whitespace
 - 결과: 성공
 - 성공 조건: 기존 고유 절차 보존, 활성 이전 ID 제거, 새 ID 라우팅, 자동 검사·회귀·Actions 통과, 콜드 스타트에서 최소 Skill 탐색
 - 실패·예외·재현 조건: 1차 CI에서 역인터뷰와 별도 구현 PR 계약 문구 2개가 불일치해 통합 Skill 표현을 정렬했다. 추가 감사에서 3단계 발행 정책이 기존 Schema의 `always_sync` 단일 허용과 충돌한 것을 발견해 Schema·정책 선택기·Governance·회귀 테스트까지 함께 구현했다.

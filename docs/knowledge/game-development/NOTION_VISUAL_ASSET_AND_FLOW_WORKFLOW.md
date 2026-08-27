@@ -102,6 +102,22 @@ actual visual exists
 - Human-facing Visual Bible/Home shows the visual and human-useful approval context. Prompt, AI Note, Hash, Implementation Path and similar processing metadata stay in `AI / System` surfaces.
 - If an approved visual is stored ad hoc outside the project Visual Bible/Asset lifecycle, move or link it into the correct project human surface and create/update the project-scoped Approved asset record without duplicating the visual as competing canon.
 
+### Bounded generated-visual record
+
+For a bounded generated visual such as a single-screen mock, state sheet, before/after comparison or visual QA reference, record the task boundary before generation:
+
+```text
+visual_question / target_screen / target_state / excluded_scope
+```
+
+A result that answers a broader dashboard, unrelated screen or undeclared state is a separate candidate, not silent completion of the bounded record.
+
+`BATCH_COUNT_MEANS_INDEPENDENT_DELIVERABLES`
+
+When a user requests N images or visual results, the default Notion representation is N independently reviewable, replaceable and placeable deliverables. A single N-panel collage counts as N only when collage is the requested or explicitly approved format. Keep each deliverable's intended use, approval state and version independently addressable.
+
+This bounded-output record does not weaken `NOTION_APPROVED_ORIGINAL_FIRST_GATE`. The approved original remains the preservation source; a reduced-size, recompressed, cropped or otherwise derived image used for durable viewing is a **preview derivative**, not a silent source-master replacement. Destination attachment/readback can prove that the preview is consumable in Notion, but it does not promote the preview derivative to runtime truth or prove player comprehension.
+
 ## Identity-preserving image edits
 
 When the task requests the same character, UI element or asset with a limited edit, treat unchanged identity attributes as hard constraints. Depending on the asset this can include:

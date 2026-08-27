@@ -354,3 +354,34 @@ haptic-off:
 ```
 
 프로젝트별 timing·easing 값은 실제 반복 빈도와 목표 플랫폼에서 검증한다.
+
+## 생성형 Visual 범위·독립 산출물 계약
+
+### `VISUAL_TASK_SCOPE_FIDELITY`
+
+bounded visual 작업은 생성 전에 아래 범위를 고정한다.
+
+```yaml
+visual_question:
+target_screen:
+target_state:
+excluded_scope:
+```
+
+결과가 broad dashboard, unrelated screen, undeclared state 또는 새 규칙·UI로 확대되면 같은 deliverable의 완료로 세지 않는다.
+
+### `BATCH_COUNT_MEANS_INDEPENDENT_DELIVERABLES`
+
+사용자가 N개 visual 결과를 요청하면 기본값은 N개의 **independent deliverable**이다. 각 결과는 독립 검토·교체·배치 가능해야 한다. collage는 요청되거나 명시적으로 승인된 경우에만 N개와 동등하다.
+
+### `DECISION_CRITICAL_VISUAL_SEMANTIC_REDUNDANCY`
+
+판단에 중요한 경로·선택·잠금·상태가 art/background와 경쟁하면 style 전체 교체, color/intensity만 강화, 기존 identity를 유지한 독립 semantic cue 중 최소 세 방향을 비교한다. cue는 프로젝트 상황에 맞춰 color, direction, shape, text/icon, brightness/thickness, motion 등에서 고르며 특정 값은 Base 상수로 만들지 않는다.
+
+- scope_contract: NOT_RUN | PASS | FAIL | BLOCKED
+- deliverable_count_contract: NOT_RUN | PASS | FAIL | BLOCKED
+- semantic_redundancy_review: NOT_RUN | PASS | FAIL | BLOCKED
+- human_comprehension: HUMAN_NOT_RUN | PARTIAL | PASSED | FAILED
+- runtime_device_validation: NOT_RUN | PARTIAL | PASSED | FAILED | BLOCKED
+
+문서·mock·repository test만으로 마지막 두 상태를 PASS 처리하지 않는다.

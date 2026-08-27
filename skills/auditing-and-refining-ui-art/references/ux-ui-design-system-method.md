@@ -398,3 +398,19 @@ before_after:
 - 외부 컴포넌트가 도메인 상태를 소유하거나 기존 시스템을 이중화하는가.
 - default styling을 그대로 배치해 프로젝트 고유 방향과 접근성을 잃었는가.
 - rollback이 source receipt와 실제 변경 파일을 복원할 수 있는가.
+
+## 7. BCP-2026-035 · bounded generated-visual integrity
+
+### `VISUAL_TASK_SCOPE_FIDELITY`
+
+single-screen mock, state sheet, before/after, visual QA reference처럼 범위가 고정된 visual 작업은 생성 전 `visual_question / target_screen / target_state / excluded_scope`를 기록한다. 결과가 broad dashboard, unrelated screen, undeclared state 또는 새 게임 규칙·UI로 확대되면 같은 deliverable의 PASS가 아니다. 탐색 가치가 있으면 별도 candidate로 보존할 수 있지만 원래 visual question을 대신하지 않는다.
+
+### `BATCH_COUNT_MEANS_INDEPENDENT_DELIVERABLES`
+
+사용자가 N개의 결과를 요청하면 기본 계약은 N개의 independent deliverable이다. 각 결과는 독립 검토·교체·배치할 수 있어야 한다. N-panel collage는 collage가 요청되거나 명시적으로 승인된 경우에만 동등하다. 의미 손실 없이 분리 가능하면 분리하고, panel 문맥에 종속돼 crop 시 의미가 깨지면 bounded brief로 재생성한다.
+
+### `DECISION_CRITICAL_VISUAL_SEMANTIC_REDUNDANCY`
+
+경로·선택·잠금·상태 같은 판단 정보가 art/background와 경쟁하면 `whole-style replacement / color-intensity-only / identity-preserving independent semantic cues`를 비교한다. 기존 제품 정체성을 보존할 가치가 있으면 세 번째 방향을 먼저 검토한다. cue는 color, direction, shape, text/icon, brightness/thickness, motion 중 프로젝트에 맞는 서로 독립적인 신호를 조합하며 Base는 특정 값이나 표현을 상수화하지 않는다.
+
+이 계약은 생성 작업의 process integrity를 다룬다. repository contract, mock, screenshot 또는 Notion readback만으로 `human comprehension`, 접근성, runtime/device correctness를 PASS 처리하지 않는다.
