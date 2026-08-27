@@ -34,6 +34,32 @@ visual_map_status:
 
 If a required approved direction does not exist, use `MISSING_CANON`. Do not infer canon from a draft Gallery card, archived candidate, rejected image, old chat, or another project.
 
+## Visual direction exploration route
+
+새 프로젝트의 첫 material Visual Direction, 새 핵심 visual family, approved direction 부재·충돌, 그림체·분위기·카메라·렌더 문법의 material 재설계에서는 다음 composed contract를 조건부로 읽는다.
+
+```text
+VISUAL_DIRECTION_EXPLORATION_BEFORE_SCALE
+→ docs/knowledge/game-development/VISUAL_CONCEPT_EXPLORATION_AND_CONTINUITY_LOCK.md
+→ controlled concept options
+→ user selection
+→ APPROVED_VISUAL_DIRECTION_PACKET
+→ bounded production continuity review
+```
+
+이 route는 `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 Concept Exploration, current image policy, candidate review와 conversation approval을 대체하지 않고 연결한다.
+
+현재 Project에 유효한 `APPROVED_VISUAL_DIRECTION_PACKET` 또는 동등 Art Bible/Decision이 있고 actual consumer·Flow/Screen·protected identity 전제가 유지되면 이를 재사용한다. 같은 lock 안의 bounded asset마다 concept exploration을 반복하지 않는다.
+
+다음이면 새 contract를 다시 적용하거나 affected scope를 reopen한다.
+
+- current direction이 없음, conflict 또는 superseded
+- user Decision이 mood/style/camera/proportion을 material하게 변경
+- confirmed Flow/Screen이 바뀌어 기존 anchor가 stale
+- runtime evidence가 current lock의 readability/continuity 실패를 증명
+
+방향 탐색 결과와 후속 production asset은 별도 상태다. comparison board나 candidate 승인만으로 `PROJECT_ASSET_APPROVED` 또는 runtime evidence를 주장하지 않는다.
+
 ## APPROVED_VISUAL_REFERENCE continuity
 
 For each applicable `APPROVED_VISUAL_REFERENCE`, extract a bounded continuity card:
@@ -77,6 +103,7 @@ next user message
 
 Load only what the current task needs:
 
+- unresolved/material visual direction exploration and lock → `docs/knowledge/game-development/VISUAL_CONCEPT_EXPLORATION_AND_CONTINUITY_LOCK.md`
 - character face/expression/gaze/head controls → `character-identity-expression-controls.md`
 - pose/action/sprite sequence controls → `sprite-pose-sequence-controls.md`
 - effect/VFX stage/compositing controls → `effect-stage-compositing-controls.md`
