@@ -5,7 +5,7 @@
 - 출처 프로젝트: `alsdmlals4-eng/omenward`
 - 기준 커밋: `a94f95253206212a822402f002f100282f214323`
 - 제출일: 2026-08-27
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `SUBMITTED`
 - 지식 상태: `검증`
 
 ## 관찰과 증거
@@ -51,6 +51,6 @@ Git 추적 파일의 health evidence 무결성은 working-tree 변환 바이트�
 
 ## 승인과 구현
 
-- 사용자 승인 근거: current Codex task의 “전환했어 진행해” — Base Issue #751에서 기술한 bounded validator correction 범위를 승인함.
+- 사용자 승인 근거: current Codex task의 “전환했어 진행해”가 Base Issue #751 범위를 승인했다. 다만 Base proposal lifecycle에 따라 이 PR은 `SUBMITTED` 등록만 수행하며, 승인 상태 승격은 등록 병합 뒤 별도 PR에서 기록한다.
 - 구현 PR: `PENDING`
 - 롤백: canonical resolver와 tests를 되돌리면 legacy raw working-tree behavior로 복귀한다.
