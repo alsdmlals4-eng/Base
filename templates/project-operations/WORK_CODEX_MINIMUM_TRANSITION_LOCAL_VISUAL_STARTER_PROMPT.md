@@ -27,6 +27,10 @@ WORK_EXECUTION_EVIDENCE_IDENTITY_INTEGRITY.md
 이 메시지는 current approved Playable Slice에 대해 routine 권장안, bounded Visual·Audio 제작, 안전한 Git 동기화·current-task PR/merge, project-scoped Godot·컴퓨터 조작을 승인한다. 되돌릴 수 없는 손실, 새 비용·권한·권리 불확실성, 공개 배포, Core identity·대규모 호환성 변경만 해당 항목을 보류하고 독립 작업을 계속해.
 
 ```text
+DELEGATED_RECOMMENDED_DEFAULT_APPROVAL
+NO_ROUTINE_APPROVAL_STOPS
+HIGH_RISK_DECISIONS_DEFER_AND_BUNDLE
+
 PROJECT_LOCAL_VISUAL_BINARY_FIRST
 NOTION_VISUAL_STRUCTURE_REFERENCE_ONLY
 NO_NOTION_BINARY_UPLOAD_REQUIRED
@@ -67,6 +71,10 @@ Git은 exact remote/upstream/default branch를 발견하고 fetch, 안전한 ff-
 프로젝트가 채택한 GUT/Hera 또는 evidence-equivalent route로 deterministic·runtime·화면·build Machine QA를 수행해. 같은 원인 반복 시 bounded retry → evidence-equivalent fallback → local defer → independent ready work 순으로 진행하고 material Incident/Solution/Lesson을 Project와 재사용 가능한 경우 Base에 반영해.
 
 ```text
+IMPLEMENTATION_REALITY_GATE
+ADVERSARIAL_REVIEW_UNTIL_CLEAN
+STALL_SIGNAL_ROUTE_SWITCH
+SCOPE_BOUNDED_REQUIRED_WORK_ZERO
 TEST_LOGIC_PASS != CI_GATE_PASS
 LOCAL_VISUAL_CANDIDATE != PROJECT_ASSET_APPROVED != RUNTIME_PROMOTED
 HUMAN_USABILITY_EVIDENCE: NOT_RUN
