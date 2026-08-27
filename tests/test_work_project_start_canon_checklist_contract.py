@@ -43,10 +43,14 @@ class WorkProjectStartCanonChecklistContractTests(unittest.TestCase):
             "meaningful_choices:",
             "reward_and_failure_learning:",
             "current_stage:",
+            "roadmap_or_milestones:",
+            "accepted_frontier:",
             "active_playable_slice:",
+            "next_playable_slice_candidate:",
             "remaining_required_work:",
             "work_order:",
             "next_safe_action:",
+            "STARTUP_CANON_CHECKLIST_USER_REPORT_REQUIRED",
         ):
             self.assertIn(token, text)
 
@@ -97,13 +101,41 @@ class WorkProjectStartCanonChecklistContractTests(unittest.TestCase):
             "AUTO_GIT_FETCH_AND_SAFE_PULL",
             "AUTO_PUSH_CURRENT_TASK_BRANCH_AFTER_VERIFICATION",
             "USER_DOWNLOADABLE_BUILD_ARTIFACT_REQUIRED",
+            "CURRENT_SKILL_REGISTRY_COVERAGE_GATE",
+            "DOMAIN_SPLIT_CANON",
+            "TEXT_BRIEF_STOP_REQUIRED",
+            "VISUAL_ASSET_COVERAGE",
+            "ART_STYLE_LOCK",
+            "DECISION_SCREEN_COMPREHENSION_GATE",
+            "MULTI_PLATFORM_SHARED_CORE_GATE",
+            "AUDIO_VISUAL_POC_EVIDENCE",
+            "CANONICAL_REFLECTION_AFTER_PLAY",
+            "EVIDENCE_EQUIVALENT_FALLBACK_ONLY",
+            "INCIDENT_SOLUTION_LESSON_LOOP",
+            "REQUIRED_WORK_REMAINING: 0",
+            "COMPLETION_CANDIDATE",
+            "HUMAN_USABILITY_EVIDENCE: NOT_RUN",
+            "PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN",
+            "REMOTE_HEAD_READBACK_AFTER_PUSH",
+            "NO_DIRECT_MAIN_PUSH",
+            "NO_FORCE_PUSH",
+            "LOCAL_COMPUTER_CONTROL_DELEGATED",
+            "AUTO_LAUNCH_GODOT_WHEN_CALLABLE",
         ):
             self.assertIn(token, bundle)
+
+    def test_checklist_defines_receipt_format_without_becoming_project_canon(self) -> None:
+        text = self._read(CHECKLIST)
+        self.assertIn("project-specific 실행 receipt의 형식과 Gate", text)
+        self.assertIn("CHECKLIST_IS_ROUTING_RECEIPT_NOT_SECOND_CANON", text)
+        self.assertIn("durable 사실과 결정은 분야별 GitHub structured canon과 Notion human canon이 소유", text)
 
     def test_work_order_is_dependency_and_player_value_driven(self) -> None:
         text = self._read(CHECKLIST)
         for token in (
             "priority:",
+            "status:",
+            "why_now:",
             "dependency:",
             "player_value:",
             "risk_or_blocker:",
