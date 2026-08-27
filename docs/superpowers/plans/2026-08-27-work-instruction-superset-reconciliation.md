@@ -11,9 +11,11 @@ The implementation preserves the merged startup checklist from PR #735 and the p
 ## Current authority
 
 - original RED baseline: `1df8878d8a99d91a318ad4adff722d78c763a69a`
-- latest completed main reconciled during GREEN: `b0335f834b4a5d82f0e5978eb8ca88ab25fc47f4`
-- proposal: BCP-2026-039 / PR #737
+- project-local Visual main: `b0335f834b4a5d82f0e5978eb8ca88ab25fc47f4`
+- proposal merged main: `b9c10d33e9096a5e213c081ddcfca7db9db4a58d`
+- proposal: BCP-2026-039 / PR #737 / merged
 - implementation: PR #738
+- current implementation reconciliation commit: `67db7332a4cb1c2ac9264e0734048cefe3eb6825`
 - current owners retained:
   - `templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md`
   - `templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md`
@@ -77,13 +79,13 @@ The focused/core regression failed because the required owner/router/case did no
 
 ### Task 2 — minimal GREEN owner
 
-Add only:
+Added only:
 
 - `templates/project-operations/WORK_EXECUTION_EVIDENCE_IDENTITY_INTEGRITY.md`
 - `templates/project-operations/WORK_PROJECT_EXECUTION_CURRENT_ROUTER.md`
 - `docs/knowledge/cases/WORK_INSTRUCTION_SUPERSET_RECONCILIATION_CASE.md`
 
-Update the focused test so Visual details are delegated to the merged PR #736 owner:
+Updated the focused test so Visual details are delegated to the merged PR #736 owner:
 
 ```text
 WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md
@@ -93,7 +95,7 @@ LOCAL_VISUAL_CANDIDATE
 NO_NOTION_BINARY_UPLOAD_REQUIRED
 ```
 
-The evidence owner remains conditional and project-neutral.
+The first GREEN attempt found one valid regression: the router was 218 lines and violated its thin-router contract. It was reduced to 158 lines without removing routed capability.
 
 ### Task 3 — regression and adversarial verification
 
@@ -123,7 +125,6 @@ A valid finding reopens correction and resulting-state verification.
 - mark ready only after current required checks pass;
 - squash merge only with exact expected head;
 - read back new `main` and new files;
-- update/merge proposal PR #737 without taking over its Registry-owned conflict;
 - recalculate remaining machine-executable work;
 - generate the final single copy-paste Work instruction artifact for the user.
 
@@ -131,4 +132,4 @@ A valid finding reopens correction and resulting-state verification.
 
 Revert the implementation squash commit and remove the evidence owner link from the current router, then rerun focused/core regression.
 
-Existing v4.9 Starter, PR #735 startup checklist, PR #736 local Visual owner, project canons, product code, assets, engine baseline and CI workflow remain intact because this implementation is additive and thin-routed.
+Existing v4.9 Starter, PR #735 startup checklist, PR #736 local Visual owner, PR #737 proposal record, project canons, product code, assets, engine baseline and CI workflow remain intact because this implementation is additive and thin-routed.
