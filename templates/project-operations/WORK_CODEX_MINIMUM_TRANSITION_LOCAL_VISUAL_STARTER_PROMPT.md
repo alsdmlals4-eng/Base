@@ -14,61 +14,49 @@ THIN_ROUTER_NOT_SECOND_CANON
 CURRENT_BASE_OWNER_WINS_ON_DRIFT
 ```
 
-Router가 현재 상태에서 다음 owner를 resolve하도록 하며, 이 파일의 오래된 문구보다 current owner가 우선한다.
+Router가 current owner를 resolve하며, 특히 `WORK_FIVE_PHASE_VERTICAL_SLICE_EXECUTION_CONTRACT.md`의 5단계 macro interface가 이 파일의 오래된 표현보다 우선한다.
 
 ```text
-WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md
-WORK_PROJECT_START_CANON_CHECKLIST.md
-WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md
-WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md
-WORK_EXECUTION_EVIDENCE_IDENTITY_INTEGRITY.md
+PHASE_1_PLANNING_CO_DESIGN
+→ PHASE_2_PREPRODUCTION_REVIEW
+→ PHASE_3_WORK_INGAME_ELEMENT_PRODUCTION
+→ PHASE_4_CODEX_IMPLEMENTATION_AND_MACHINE_CLOSEOUT
+→ PHASE_5_USER_VERTICAL_SLICE_VALIDATION
 ```
 
-이 메시지는 current approved Playable Slice에 대해 routine 권장안, bounded Visual·Audio 제작, 안전한 Git 동기화·current-task PR/merge, project-scoped Godot·컴퓨터 조작을 승인한다. 되돌릴 수 없는 손실, 새 비용·권한·권리 불확실성, 공개 배포, Core identity·대규모 호환성 변경만 해당 항목을 보류하고 독립 작업을 계속해.
+이 메시지는 current approved Slice의 routine 세부안, bounded Visual·Audio 제작, 안전한 current-task Git/PR/merge, project-scoped Godot 조작을 승인한다. 단 Core 제품 의미는 standing approval로 확정하지 말고 Phase 1에서 current canon·Grill Me·benchmark·최소 3개 실질 대안으로 사용자와 함께 결정해.
 
 ```text
 DELEGATED_RECOMMENDED_DEFAULT_APPROVAL
 NO_ROUTINE_APPROVAL_STOPS
 HIGH_RISK_DECISIONS_DEFER_AND_BUNDLE
-
 PROJECT_LOCAL_VISUAL_BINARY_FIRST
 NOTION_VISUAL_STRUCTURE_REFERENCE_ONLY
 NO_NOTION_BINARY_UPLOAD_REQUIRED
 ```
 
-Notion의 Project Home·Visual Bible·Asset Catalog·Flow·Production과 승인 Art Direction은 계속 참고·교정·readback한다. 이미지 binary는 exact project-local workflow에 저장하고, current Slice 구현에 사용할 승인 자산은 tracked project asset + ASSET_MANIFEST로 승격한 뒤 commit/push/remote HEAD readback을 완료해 Codex에 project-relative locator와 exact commit으로 전달해. 실제 업로드하지 않은 Notion binary는 업로드했다고 주장하지 마.
+새 기획·production·Codex mutation 전에 `PROJECT_START_CANON_CHECKLIST`로 핵심 재미·player promise·loop·system·actual consumer·meaningful choice·reward/failure learning·SWOT·current Slice/implementation/Visual/Audio·blocker/dependency/protected scope·remaining work·stale/conflict canon을 fresh-read/교정/readback해.
 
-새 기획·production·Codex mutation 전에 반드시 다음을 실행해.
+Phase 1 기획을 사용자와 확정한 뒤 Phase 2에서 scope/reuse/feasibility/UI·Data/consumer/rights/acceptance를 검수해. Phase 2 통과 전 serial production asset이나 Codex 구현을 시작하지 마.
 
-```text
-PROJECT_START_CANON_CHECKLIST
-→ 핵심 재미·player promise·core/session/meta loop
-→ 핵심·지원 시스템·actual consumer
-→ meaningful choice·reward·failure learning
-→ evidence-based SWOT
-→ current stage·active Slice·actual implementation/test/Visual/Audio
-→ blocker·dependency·protected scope
-→ remaining required work와 dependency·player-value 기반 work order
-→ stale·conflict·missing canon 선교정과 destination readback
-```
-
-Work에서 current Slice에 필요한 기획·조사·벤치마킹·검수·UI/UX·Data·Visual·Audio·VFX·권리·Acceptance·QA 입력을 모두 닫고 전환을 최소화해.
+Phase 3에서는 current Slice의 actual consumer가 있는 Visual·Audio·UI·Data·VFX 등 실제 인게임 입력만 제작하고, 승인 Visual binary는 project-local tracked asset + ASSET_MANIFEST로 승격해 commit/push/remote readback 후 Codex locator로 전달해.
 
 ```text
 WORK_PRODUCTION_INPUT_PACKET
 → CODEX_SINGLE_IMPLEMENTATION_WINDOW
 → actual code·Scene·Resource·runtime wiring·test·build
-→ Work final evidence review·교정·canon sync
+→ Work final implementation review·교정·canon sync
 → exact-head CI·safe squash merge·post-merge readback
 → USER_DOWNLOADABLE_BUILD_ARTIFACT_REQUIRED
+→ AUTOMATED_VERTICAL_SLICE_READY
 → READY_FOR_USER_VERTICAL_SLICE_VALIDATION
 ```
 
-중요 결정은 current project → approved asset/reference → Base reuse → 직접 관련된 검증 사례 → 공식·현업·시장 성공/실패 사례 순으로 조사하고 ADOPT / ADAPT / REJECT와 최소 3개 실질 대안을 비교해. trigger가 맞는 Brainstorming/Superpowers·TDD·systematic debugging·verification-before-completion을 실제 실행하고, Skill을 읽은 것과 실행한 것을 구분해. 실제 제품 구현·runtime·artifact 없이 완료를 주장하지 마.
+중요 결정은 current project → approved asset/reference → Base reuse → 직접 관련된 검증 사례 → 공식·현업·시장 성공/실패 사례 순으로 조사하고 `ADOPT / ADAPT / REJECT`와 최소 3개 실질 대안을 비교해. 실제 제품 구현·runtime·artifact 없이 완료를 주장하지 마.
 
-Git은 exact remote/upstream/default branch를 발견하고 fetch, 안전한 ff-only pull, current-task branch push, remote readback을 자동 수행해. direct main, force, blind reset/clean/rebase, 다른 open PR takeover, admin/ruleset bypass는 금지해.
+Git은 safe fetch/ff-only sync/current-task branch/readback만 사용하고 direct main, force, blind reset/clean/rebase, 다른 open PR takeover, admin/ruleset bypass는 금지해. 고위험 항목만 local defer하고 독립 작업은 계속해.
 
-프로젝트가 채택한 GUT/Hera 또는 evidence-equivalent route로 deterministic·runtime·화면·build Machine QA를 수행해. 같은 원인 반복 시 bounded retry → evidence-equivalent fallback → local defer → independent ready work 순으로 진행하고 material Incident/Solution/Lesson을 Project와 재사용 가능한 경우 Base에 반영해.
+프로젝트가 채택한 GUT/Hera 또는 evidence-equivalent route로 deterministic·runtime·화면·build Machine QA를 수행해. 같은 원인 반복은 bounded retry → evidence-equivalent fallback → local defer → independent ready work로 전환해.
 
 ```text
 IMPLEMENTATION_REALITY_GATE
@@ -79,6 +67,7 @@ TEST_LOGIC_PASS != CI_GATE_PASS
 LOCAL_VISUAL_CANDIDATE != PROJECT_ASSET_APPROVED != RUNTIME_PROMOTED
 HUMAN_USABILITY_EVIDENCE: NOT_RUN
 PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN
+AUTOMATED_VERTICAL_SLICE_READY != USER_VALIDATED_VERTICAL_SLICE
 ```
 
-Human usability와 Player Experience는 사용자가 실제 다운로드 빌드를 플레이하기 전까지 NOT_RUN이다. current Slice의 machine-executable required work를 0으로 만든 뒤 actual-state rescan과 최소 5회 full-scope 적대적 검토에서 blocking finding 0을 확인해. 사용자 검증 전에는 다음 Slice로 자동 진입하지 마.
+current Slice의 machine-executable required work를 0으로 만들고 최소 5회 full-scope 적대적 검토에서 blocking finding 0을 확인해. 사용자가 exact build를 실제 플레이하고 Phase 5 evidence/next decision을 기록하기 전에는 `USER_VALIDATED_VERTICAL_SLICE`나 다음 Slice 진입을 주장하지 마.
