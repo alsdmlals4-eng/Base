@@ -3,6 +3,16 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+SCREEN_CONTRACT = "docs/knowledge/game-development/GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md"
+COVERAGE_OWNER = "docs/knowledge/game-development/GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md"
+
+
+def assert_ordered(test: unittest.TestCase, text: str, terms: tuple[str, ...]) -> None:
+    positions = []
+    for term in terms:
+        test.assertIn(term, text)
+        positions.append(text.index(term))
+    test.assertEqual(positions, sorted(positions), f"terms must be ordered: {terms}")
 
 
 class GameVisualAssetCoverageContractTests(unittest.TestCase):
@@ -11,6 +21,8 @@ class GameVisualAssetCoverageContractTests(unittest.TestCase):
         self.assertTrue(path.exists(), "visual asset coverage guide must exist")
         text = path.read_text(encoding="utf-8")
         for required in (
+            "CANONICAL_VISUAL_COVERAGE_OWNER",
+            "SCREEN_SURFACE_INVENTORY_SUBORDINATE_CONTRACT",
             "COVERAGE_CHECK_ONLY",
             "NOT_A_SECOND_ASSET_CANON",
             "coverage_status",
@@ -94,9 +106,10 @@ class GameVisualAssetCoverageContractTests(unittest.TestCase):
             ROOT
             / "docs/knowledge/game-development/GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md"
         )
-        self.assertTrue(path.exists(), "screen-first visual coverage owner must exist")
+        self.assertTrue(path.exists(), "subordinate screen-first contract must exist")
         text = path.read_text(encoding="utf-8")
         for required in (
+            "SUBORDINATE_TO_GAME_VISUAL_ASSET_COVERAGE_OWNER",
             "SCREEN_SURFACE_INVENTORY_FIRST",
             "SCREEN_LEVEL_COMPOSITION_REQUIRED",
             "SCREEN_DESIGN_REFERENCE",
@@ -141,6 +154,51 @@ class GameVisualAssetCoverageContractTests(unittest.TestCase):
             self.assertIn(required, text)
         self.assertNotIn("[프로젝트명]", text)
         self.assertNotIn("TBD", text)
+
+
+    def test_screen_contract_hands_off_completion_to_canonical_coverage_owner(self):
+        screen_path = ROOT / SCREEN_CONTRACT
+        coverage_path = ROOT / COVERAGE_OWNER
+        screen = screen_path.read_text(encoding="utf-8")
+        coverage = coverage_path.read_text(encoding="utf-8")
+        self.assertIn("SUBORDINATE_TO_GAME_VISUAL_ASSET_COVERAGE_OWNER", screen)
+        self.assertIn("SCREEN_INVENTORY_HANDOFF_READY", screen)
+        self.assertNotIn("SCREEN_COVERAGE_CLEAN_EXIT", screen)
+        self.assertIn("CANONICAL_VISUAL_COVERAGE_OWNER", coverage)
+        self.assertIn("SCREEN_SURFACE_INVENTORY_SUBORDINATE_CONTRACT", coverage)
+        self.assertIn(SCREEN_CONTRACT, coverage)
+
+    def test_reusable_consumers_route_screen_contract_before_coverage_owner(self):
+        consumers = (
+            ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md",
+            ROOT / "skills/designing-art-prompts-and-technique-cards/SKILL.md",
+            ROOT / "templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md",
+            ROOT / "templates/project-operations/GPT_WORK_SCREEN_FIRST_VISUAL_ASSET_COVERAGE_AND_CORRECTION_INSTRUCTION.md",
+        )
+        for path in consumers:
+            text = path.read_text(encoding="utf-8")
+            assert_ordered(self, text, (SCREEN_CONTRACT, COVERAGE_OWNER))
+
+    def test_work_instruction_preserves_plan_to_qa_order(self):
+        path = (
+            ROOT
+            / "templates/project-operations/GPT_WORK_SCREEN_FIRST_VISUAL_ASSET_COVERAGE_AND_CORRECTION_INSTRUCTION.md"
+        )
+        text = path.read_text(encoding="utf-8")
+        assert_ordered(
+            self,
+            text,
+            (
+                "FIVE_STAGE_WORK_STAGE_3_IMAGE_ASSET_INPUT",
+                "SCREEN_SURFACE_INVENTORY_FIRST",
+                "CANONICAL_VISUAL_COVERAGE_OWNER",
+                "STATE_FAMILY_COMPLETENESS",
+                "IMPLEMENTATION_MODE_REQUIRED",
+                "Visual Requirement Gate",
+                "Image Conversation Approval Gate",
+                "QA_READBACK",
+            ),
+        )
 
 
 if __name__ == "__main__":
