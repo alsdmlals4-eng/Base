@@ -522,9 +522,7 @@ jobs:
             $lastNativeError = "not attempted"
 
             for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
-              if (Test-Path -LiteralPath $OutFile) {
-                Remove-Item -LiteralPath $OutFile -Force
-              }
+              Remove-Item -LiteralPath $OutFile -Force -ErrorAction SilentlyContinue
 
               try {
                 Write-Host "Invoke-WebRequest download attempt $attempt/${maxAttempts}: $Uri"
@@ -537,9 +535,7 @@ jobs:
               }
               catch {
                 $lastNativeError = $_.Exception.Message
-                if (Test-Path -LiteralPath $OutFile) {
-                  Remove-Item -LiteralPath $OutFile -Force
-                }
+                Remove-Item -LiteralPath $OutFile -Force -ErrorAction SilentlyContinue
                 if ($attempt -lt $maxAttempts) {
                   Start-Sleep -Seconds ([Math]::Min(8, [Math]::Pow(2, $attempt)))
                 }
@@ -547,31 +543,37 @@ jobs:
             }
 
             Write-Warning "Invoke-WebRequest retry budget exhausted; using same-URI curl.exe fallback. Last error: $lastNativeError"
-            if (Test-Path -LiteralPath $OutFile) {
-              Remove-Item -LiteralPath $OutFile -Force
-            }
+            Remove-Item -LiteralPath $OutFile -Force -ErrorAction SilentlyContinue
 
-            & curl.exe --fail --location --retry 3 --retry-all-errors --connect-timeout 30 --output $OutFile $Uri
+            & curl.exe --fail --location --retry 3 --retry-delay 2 --retry-all-errors --connect-timeout 30 --output $OutFile $Uri
             $curlExitCode = $LASTEXITCODE
             if ($curlExitCode -ne 0 -or -not (Test-Path -LiteralPath $OutFile)) {
-              if (Test-Path -LiteralPath $OutFile) {
-                Remove-Item -LiteralPath $OutFile -Force
-              }
+              Remove-Item -LiteralPath $OutFile -Force -ErrorAction SilentlyContinue
               throw "TRANSPORT_RETRY_EXHAUSTED: $Uri; Invoke-WebRequest error: $lastNativeError; curl.exe exit: $curlExitCode"
             }
 
             $actualHash = (Get-FileHash -Algorithm SHA256 $OutFile).Hash.ToLowerInvariant()
             if ($actualHash -ne $ExpectedSha256.ToLowerInvariant()) {
-              Remove-Item -LiteralPath $OutFile -Force
+              Remove-Item -LiteralPath $OutFile -Force -ErrorAction SilentlyContinue
               throw "DOWNLOAD_SHA256_MISMATCH: expected $ExpectedSha256, got $actualHash"
             }
           }
 
           $libreOfficeVersion = "26.2.3"
           $libreOfficeSha256 = "468d1fb3880af3bcddac002e9054155912c70b45d105bfa1c82036f33456133d"
-          $libreOfficeUrl = "https://download.documentfoundation.org/libreoffice/stable/$libreOfficeVersion/win/x86_64/LibreOffice_${libreOfficeVersion}_Win_x86-64.msi"
+          $libreOfficeUrl = "https://mirror.clarkson.edu/tdf/libreoffice/stable/$libreOfficeVersion/win/x86_64/LibreOffice_${libreOfficeVersion}_Win_x86-64.msi"
+          $libreOfficeFallbackUrl = "https://download.documentfoundation.org/libreoffice/stable/$libreOfficeVersion/win/x86_64/LibreOffice_${libreOfficeVersion}_Win_x86-64.msi"
           $libreOfficeMsi = Join-Path $env:RUNNER_TEMP "LibreOffice_${libreOfficeVersion}_Win_x86-64.msi"
-          Invoke-VerifiedDownload -Uri $libreOfficeUrl -OutFile $libreOfficeMsi -ExpectedSha256 $libreOfficeSha256
+          try {
+            Invoke-VerifiedDownload -Uri $libreOfficeUrl -OutFile $libreOfficeMsi -ExpectedSha256 $libreOfficeSha256
+          }
+          catch {
+            if ($_.Exception.Message -like "DOWNLOAD_SHA256_MISMATCH*") {
+              throw
+            }
+            Write-Warning "Direct TDF mirror route failed; trying the TDF download endpoint with the same pinned hash. $($_.Exception.Message)"
+            Invoke-VerifiedDownload -Uri $libreOfficeFallbackUrl -OutFile $libreOfficeMsi -ExpectedSha256 $libreOfficeSha256
+          }
           $libreOfficeInstall = Start-Process msiexec.exe -ArgumentList @(
             "/i",
             "`"$libreOfficeMsi`"",
@@ -583,11 +585,11 @@ jobs:
           }
 
           $popplerVersion = "24.08.0-0"
-          $popplerSha256 = "58A6F9AE269756231D2F9AA6CBA39D75FEC6DEACAF3C4A50683383B5F3D5A527"
+          $expectedHash = "58A6F9AE269756231D2F9AA6CBA39D75FEC6DEACAF3C4A50683383B5F3D5A527"
           $popplerUrl = "https://github.com/oschwartz10612/poppler-windows/releases/download/v$popplerVersion/Release-$popplerVersion.zip"
           $popplerZip = Join-Path $env:RUNNER_TEMP "poppler-$popplerVersion.zip"
           $popplerRoot = Join-Path $env:RUNNER_TOOL_CACHE "poppler-$popplerVersion"
-          Invoke-VerifiedDownload -Uri $popplerUrl -OutFile $popplerZip -ExpectedSha256 $popplerSha256
+          Invoke-VerifiedDownload -Uri $popplerUrl -OutFile $popplerZip -ExpectedSha256 $expectedHash
           Expand-Archive -LiteralPath $popplerZip -DestinationPath $popplerRoot
 
       - name: Install Windows Python publication dependencies
