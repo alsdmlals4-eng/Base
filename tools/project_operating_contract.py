@@ -767,7 +767,10 @@ def _health_semantic_errors(
     return errors
 
 
-def _snapshot(adapter: dict[str, Any], adapter_path: Path, project_root: Path) -> dict[str, Any]:
+def _snapshot(
+    adapter: dict[str, Any], adapter_path: Path, project_root: Path | None = None
+) -> dict[str, Any]:
+    project_root = project_root or adapter_path.parent.parent
     routing = adapter["routing"]
     return {
         "schema_version": 1,
@@ -790,8 +793,9 @@ def _snapshot(adapter: dict[str, Any], adapter_path: Path, project_root: Path) -
 
 
 def _compatibility_view(
-    adapter: dict[str, Any], adapter_path: Path, project_root: Path, view: Path, legacy_path: Path, legacy: dict[str, Any]
+    adapter: dict[str, Any], adapter_path: Path, project_root: Path | None, view: Path, legacy_path: Path, legacy: dict[str, Any]
 ) -> dict[str, Any]:
+    project_root = project_root or adapter_path.parent.parent
     projection = dict(legacy)
     projection.update({
         "schema_version": 1,
