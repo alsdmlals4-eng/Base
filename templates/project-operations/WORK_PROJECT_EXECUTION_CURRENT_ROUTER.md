@@ -5,9 +5,13 @@ WORK_PROJECT_EXECUTION_CURRENT_ROUTER
 THIN_ROUTER_NOT_SECOND_CANON
 PROJECT_CANON_AND_ACTUAL_IMPLEMENTATION_FIRST
 CURRENT_BASE_OWNER_WINS_ON_DRIFT
+FIVE_STAGE_VERTICAL_SLICE_FLOW_REQUIRED
+MACRO_STAGE_IS_NOT_WORK_MODE
+GAME_PROJECT_ONLY
+NON_GAME_PROJECT_NOT_APPLICABLE
 ```
 
-> 프로젝트 사실·세부 절차를 복제하지 않고 현재 owner를 연결하는 얇은 진입점이다.
+> 프로젝트 사실·세부 절차를 복제하지 않고 현재 owner를 연결하는 얇은 진입점이다. 게임 프로젝트의 공용 macro flow는 아래 5단계이며, Project의 `PLAN / BUILD / REVIEW` 같은 Work Mode는 각 단계 안에서 쓰는 작업 방식이지 이 5단계를 대체하지 않는다. 비게임 프로젝트는 `NON_GAME_PROJECT_NOT_APPLICABLE`이다.
 
 ## 1. 권위와 로드 순서
 
@@ -35,7 +39,7 @@ CURRENT_BASE_OWNER_WINS_ON_DRIFT
 
 ## 2. 시작 전 정본 교정
 
-새 production·Codex mutation 전에 `WORK_PROJECT_START_CANON_CHECKLIST.md`로 확인한다.
+새 기획·production·Codex mutation 전에 `WORK_PROJECT_START_CANON_CHECKLIST.md`로 확인한다.
 
 ```text
 핵심 재미 / player promise
@@ -49,23 +53,77 @@ stale·duplicate·conflict·missing canon
 GitHub structured / Notion human canon readback
 ```
 
-승인 범위의 작은 정본 결함은 먼저 교정한다. Core·주요 UX·경제·서사·Art Direction처럼 제품 의미가 바뀌는 결정만 보류한다.
+승인 범위의 작은 정본 결함은 먼저 교정한다. Core·주요 UX·경제·서사·Art Direction처럼 제품 의미가 바뀌는 결정만 사용자 결정으로 남긴다.
 
-## 3. Work↔Codex 최소 전환
+## 3. 게임 프로젝트 Work 5단계 macro flow
 
-`WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md`를 따른다.
+`WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md`가 상세 Gate를 소유한다. `MINIMIZE_WORK_CODEX_TRANSITIONS`는 단계를 합친다는 뜻이 아니라 **1~3단계를 Work에서 닫고 4단계 Codex를 한 번의 구현 window로 묶는다**는 뜻이다.
+
+### 1단계 — 기획
 
 ```text
-Work 기획·검수·UI·Data·Visual·Audio·VFX·권리·QA 입력 완료
-→ WORK_PRODUCTION_INPUT_PACKET
-→ Codex single implementation window
-→ actual code/Scene/Resource/runtime/test/build
-→ CONSOLIDATED_RETURN_PACKET
-→ Work final review·교정·canon sync·merge/readback
-→ READY_FOR_USER_VERTICAL_SLICE_VALIDATION
+STAGE_1_PLANNING
+USER_COLLABORATIVE_CORE_PLANNING_REQUIRED
+GRILL_ME_FOR_MATERIAL_CORE_DECISIONS
+DECISION_RELEVANT_BENCHMARK_REQUIRED
+THREE_MATERIALLY_DISTINCT_APPROACHES
+ADOPT / ADAPT / REJECT
 ```
 
-작은 누락마다 왕복하지 않고, 실제 구현이 필요할 때 current Codex handoff owner로 전환한다.
+Project canon·실제 구현·기존 승인 자산·Base reusable evidence를 먼저 읽는다. 아직 승인되지 않은 핵심 player promise·대표 행동·meaningful choice·trade-off·보상/실패 학습·목표 감정/기억·첫인상·세일즈포인트·Slice 가설/acceptance처럼 제품 의미를 바꾸는 항목은 Grill Me와 결정 관련 벤치마킹으로 사용자와 함께 닫는다. 저장소에서 이미 확인되는 사실, 구현 세부, 가역적 초기값은 다시 묻지 않는다.
+
+### 2단계 — 검수
+
+```text
+STAGE_2_PRE_PRODUCTION_REVIEW
+PRE_PRODUCTION_REVIEW_CLEAN
+NO_ASSET_PRODUCTION_BEFORE_REVIEW_CLEAN
+NO_CODEX_PRODUCT_MUTATION_BEFORE_REVIEW_CLEAN
+```
+
+1단계 계약을 Project/Notion/actual implementation, Existing Solution First, benchmark applicability, player choice, UI/UX, data/state/save, actual consumer, rights/provenance, acceptance, QA/evidence ceiling 관점에서 적대적으로 검수·교정한다. 제품 의미가 바뀌는 finding은 1단계 사용자 결정으로 되돌리고, `PRE_PRODUCTION_REVIEW_CLEAN` 전에는 production asset 제작이나 Codex 제품 mutation을 시작하지 않는다.
+
+### 3단계 — 이미지·요소 생성
+
+```text
+STAGE_3_ASSET_AND_ELEMENT_PRODUCTION
+ACTUAL_CONSUMER_REQUIRED
+WORK_PRODUCTION_INPUT_PACKET
+READY_FOR_SINGLE_CODEX_WINDOW
+```
+
+검수된 current Slice의 실제 consumer가 있는 Visual·Audio·UI source·VFX·runtime-consumed data/content만 제작·정리한다. 설명용 시트나 consumer 없는 이미지를 production asset으로 만들지 않는다. Project/host의 별도 이미지 승인 Gate가 있으면 그대로 우선한다. durable locator·provenance·rights·format/import·acceptance까지 닫아 Codex 입력 패킷으로 만든다.
+
+### 4단계 — 구현(Codex) + machine closure
+
+```text
+STAGE_4_CODEX_IMPLEMENTATION_AND_MACHINE_CLOSURE
+CODEX_SINGLE_IMPLEMENTATION_WINDOW
+WORK_FINAL_EVIDENCE_REVIEW_IS_STAGE4_CLOSEOUT
+WORK_FINAL_EVIDENCE_REVIEW_BEFORE_USER_VALIDATION
+```
+
+Codex가 actual code·Scene·Resource·runtime wiring·test·build를 한 구현 window에서 처리한다. 반환 뒤 Work의 diff/runtime/evidence 검수, valid correction, canon sync, exact-head CI, safe merge, post-merge readback은 별도 6단계가 아니라 **4단계 closeout**이다.
+
+```text
+AUTOMATED_VERTICAL_SLICE_READY
+READY_FOR_USER_VERTICAL_SLICE_VALIDATION
+HUMAN_USABILITY_EVIDENCE: NOT_RUN
+PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN
+```
+
+이 시점은 machine-executable current-Slice required work가 0이고 사용자에게 줄 exact build/launch route가 준비된 상태이지, 버티컬 슬라이스 최종 완료가 아니다.
+
+### 5단계 — 사용자 검증
+
+```text
+STAGE_5_USER_VALIDATION
+ACTUAL_USER_PLAY_REQUIRED
+AUTOMATED_VERTICAL_SLICE_READY != VERTICAL_SLICE_VALIDATED_COMPLETE
+NEXT_SLICE_REQUIRES_STAGE5_DECISION
+```
+
+사용자가 4단계의 exact build/scene을 실제 플레이하고 조작 이해, meaningful choice, 피드백·보상·실패 학습, UI/Visual/Audio 지각, 감정·기억·첫인상·핵심 세일즈포인트를 검증한다. 실제 플레이 evidence와 `EXPAND / REWORK / REPEAT_SLICE / HOLD / STOP` 계열 Decision Gate가 기록·readback된 뒤에만 `VERTICAL_SLICE_VALIDATED_COMPLETE`를 사용할 수 있다. 사용자 검증 전에는 다음 Slice로 자동 진입하지 않는다.
 
 ## 4. Project-local Visual opt-in
 
@@ -107,9 +165,7 @@ machine QA != Human usability != Player Experience
 
 player-facing bytes 또는 package 설정이 바뀌면 영향 후보를 supersede하고 필요한 Gate를 다시 수행한다.
 
-## 6. 안전 자동화
-
-callable한 현재 Project 범위에서만 실행한다.
+## 6. 안전 자동화와 완료
 
 ```text
 remote/upstream/default branch 발견
@@ -124,16 +180,7 @@ exact project/worktree/Godot/session
 → runtime/screen/build evidence
 ```
 
-금지:
-
-```text
-direct main / force push / blind stash·reset·clean·rebase
-다른 open PR takeover
-무관한 앱·파일·credential·OS 보안 조작
-새 유료 비용 / 공개 Release·스토어 게시
-```
-
-## 7. 계속 실행과 완료
+금지: direct main / force push / blind stash·reset·clean·rebase / 다른 open PR takeover / 무관한 앱·파일·credential·OS 보안 조작 / 새 유료 비용 / 공개 Release·스토어 게시.
 
 ```text
 bounded retry
@@ -146,13 +193,13 @@ bounded retry
 → blocking finding 0
 ```
 
+다운로드 가능한 internal build와 사용자 검증 패킷을 제공한다. `AUTOMATED_VERTICAL_SLICE_READY`는 Stage 5 입장 조건이며 `VERTICAL_SLICE_VALIDATED_COMPLETE`가 아니다.
+
+## 7. Project-specific 값
+
+프로젝트명·캐릭터·세계관·특정 PR/Issue/Task/Decision·SHA·경로·해상도·HUD·palette·Art Style·완료 목록·우선순위·현재 `macro_stage`는 exact Project canon에서 fresh-read한다.
+
 ```text
-HUMAN_USABILITY_EVIDENCE: NOT_RUN
-PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN
+PROJECT_WORK_MACRO_FLOW = CURRENT_BASE_FIVE_STAGE_VERTICAL_SLICE_FLOW
+PROJECT_SPECIFIC_STAGE_STATE = RESOLVE_FROM_CURRENT_PROJECT_CANON
 ```
-
-다운로드 가능한 internal build와 사용자 검증 패킷을 제공하고, 실제 사용자 검증 전 다음 Slice로 자동 진입하지 않는다.
-
-## 8. Project-specific 값
-
-프로젝트명·캐릭터·세계관·특정 PR/Issue/Task/Decision·SHA·경로·해상도·HUD·palette·Art Style·완료 목록·우선순위는 exact Project canon에서 fresh-read하며 이 router에 고정하지 않는다.
