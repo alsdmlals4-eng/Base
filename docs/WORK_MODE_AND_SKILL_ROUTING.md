@@ -191,7 +191,8 @@ GPT는 실제 게임 프로젝트의 Godot 제품 코드를 기본 구현하지 
 GPT Work의 `REVIEW`가 runtime·scene·input·UI·resource 연결·오류 로그·GUT/headless/live-QA 증거를 직접 확인해야 하고 현재 도구로 실행할 수 있으면 Godot을 기계검증에 사용한다. 문서·정적 diff·data schema 검사만으로 Acceptance를 충족할 수 있으면 불필요하게 실행하지 않는다.
 
 ```text
-REVIEW
+EXECUTABLE_COVERAGE_OR_EXPLICIT_ENV_GATE
+→ REVIEW
 → exact repository/worktree/project identity 확인
 → pre-existing Godot/game/debug/server 상태 기록
 → materially-needed Godot verification 실행
@@ -208,7 +209,7 @@ REVIEW
 - 같은 bounded verification group에서 재실행이 예정돼 있으면 매 assertion마다 Editor를 닫지 않아도 된다. 필요한 증거를 모두 확보했고 해당 도구가 더 이상 필요하지 않은 시점에 정리한다.
 - 이 경로는 검수·기계검증 권한이며 GPT의 persistent Godot 제품 구현 권한을 확장하지 않는다.
 
-공용 세부 계약은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`와 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`를 따른다.
+완료 증거의 단일 owner는 `docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md`다. 공용 Work 계약은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`, process 안전 세부 계약은 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`를 따른다.
 
 ## 7. Codex 권한
 
