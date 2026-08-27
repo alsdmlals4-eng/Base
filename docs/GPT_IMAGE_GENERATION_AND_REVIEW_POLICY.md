@@ -23,10 +23,11 @@ Google Sheets
 
 ## 0. Visual Asset Coverage Preflight
 
-프로젝트 전체, 화면군, 캐릭터군, 적군, UI군, 아이템군, 환경군, 마케팅 asset set처럼 **한 장보다 넓은 시각 범위**를 다루거나, 현재 이미지 요청이 기존 asset set의 일부일 때는 `docs/knowledge/game-development/GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`를 먼저 확인한다.
+프로젝트 전체, 화면군, 캐릭터군, 적군, UI군, 아이템군, 환경군, 마케팅 asset set처럼 **한 장보다 넓은 시각 범위**를 다루거나 현재 이미지 요청이 기존 asset set의 일부일 때는 subordinate `docs/knowledge/game-development/GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md`로 화면을 먼저 열거한 뒤 canonical `docs/knowledge/game-development/GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`로 교차 검사한다.
 
 ```text
 current Project canon / stage / consumer
+→ SCREEN_SURFACE_INVENTORY_FIRST + screen-to-asset matrix handoff
 → production information인지 먼저 판정
 → actual consumer가 있는 image asset 후보인지 판정
 → existing approved asset / implementation / reuse 조회
