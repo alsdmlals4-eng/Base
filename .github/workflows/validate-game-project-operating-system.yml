@@ -527,7 +527,7 @@ jobs:
               }
 
               try {
-                Write-Host "Invoke-WebRequest download attempt $attempt/$maxAttempts: $Uri"
+                Write-Host "Invoke-WebRequest download attempt $attempt/${maxAttempts}: $Uri"
                 Invoke-WebRequest -Uri $Uri -OutFile $OutFile
                 $actualHash = (Get-FileHash -Algorithm SHA256 $OutFile).Hash.ToLowerInvariant()
                 if ($actualHash -ne $ExpectedSha256.ToLowerInvariant()) {
