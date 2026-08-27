@@ -26,6 +26,7 @@ class WorkInstructionSupersetReconciliationContractTests(unittest.TestCase):
             "WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md",
             "WORK_PROJECT_START_CANON_CHECKLIST.md",
             "WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md",
+            "WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md",
             "WORK_EXECUTION_EVIDENCE_IDENTITY_INTEGRITY.md",
             "CURRENT_BASE_OWNER_WINS_ON_DRIFT",
             "PROJECT_CANON_AND_ACTUAL_IMPLEMENTATION_FIRST",
@@ -79,7 +80,7 @@ class WorkInstructionSupersetReconciliationContractTests(unittest.TestCase):
             "test runner exit status",
             "formal result",
             "summary/parser",
-            "required artifact",
+            "required diagnostic/build artifact",
             "exact current HEAD",
             "NO_TEST_OR_WORKFLOW_WEAKENING_TO_FORCE_GREEN",
         ):
@@ -100,21 +101,22 @@ class WorkInstructionSupersetReconciliationContractTests(unittest.TestCase):
         ):
             self.assertIn(token, text)
 
-    def test_visual_candidate_and_runtime_promotion_remain_distinct(self) -> None:
+    def test_visual_candidate_and_runtime_promotion_delegate_to_current_local_owner(self) -> None:
         text = self._read(POLICY)
         for token in (
             "VISUAL_CANDIDATE_RUNTIME_PROMOTION_SEPARATION",
-            "USER_APPROVED_VISUAL_CANDIDATE",
+            "WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md",
+            "LOCAL_VISUAL_CANDIDATE",
+            "PROJECT_ASSET_APPROVED",
             "RUNTIME_PROMOTED",
-            "same source bytes",
-            "local archive",
-            "Notion direct attachment",
+            "NO_NOTION_BINARY_UPLOAD_REQUIRED",
             "SHA-256",
             "actual consumer",
             "runtime evidence",
             "NO_VISUAL_GENERATION_AUTHORITY_EXPANSION",
         ):
             self.assertIn(token, text)
+        self.assertNotIn("Notion direct attachment", text)
 
     def test_remote_sync_and_completed_automation_cleanup_are_explicit(self) -> None:
         text = self._read(POLICY)
@@ -125,7 +127,7 @@ class WorkInstructionSupersetReconciliationContractTests(unittest.TestCase):
             "COMPLETED_AUTOMATION_HEARTBEAT_CLEANUP",
             "merge",
             "post-merge main readback",
-            "Notion readback",
+            "Notion",
             "durable completion receipt",
         ):
             self.assertIn(token, text)
@@ -142,7 +144,7 @@ class WorkInstructionSupersetReconciliationContractTests(unittest.TestCase):
         ):
             self.assertIn(token, combined)
 
-    def test_case_records_preserved_improved_delegated_and_rejected_items(self) -> None:
+    def test_case_records_preserved_improved_delegated_rejected_and_corrected_items(self) -> None:
         text = self._read(CASE)
         for token in (
             "PRESERVED",
@@ -152,10 +154,12 @@ class WorkInstructionSupersetReconciliationContractTests(unittest.TestCase):
             "CORRECTED_AS_UNSAFE_GENERALIZATION",
             "BCP-2026-039",
             "PR #735",
+            "PR #736",
             "official evidence",
             "rollback",
         ):
             self.assertIn(token, text)
+        self.assertNotIn("Notion direct attachment", text)
 
 
 if __name__ == "__main__":
