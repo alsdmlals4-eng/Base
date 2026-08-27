@@ -20,8 +20,19 @@ class WorkCodexMinimumTransitionAutomationContractTests(unittest.TestCase):
         self.assertIn("WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md", appendix)
         self.assertIn("EXPLICIT_USER_DELEGATION_REQUIRED", appendix)
 
-    def test_profile_defines_three_stage_minimum_transition_flow(self) -> None:
+    def test_profile_defines_five_macro_stages_with_one_codex_window(self) -> None:
         text = self._profile_text()
+        stages = (
+            "STAGE_1_PLANNING",
+            "STAGE_2_PRE_PRODUCTION_REVIEW",
+            "STAGE_3_ASSET_AND_ELEMENT_PRODUCTION",
+            "STAGE_4_CODEX_IMPLEMENTATION_AND_MACHINE_CLOSURE",
+            "STAGE_5_USER_VALIDATION",
+        )
+        for stage in stages:
+            self.assertIn(stage, text)
+        positions = [text.index(stage) for stage in stages]
+        self.assertEqual(positions, sorted(positions))
         for token in (
             "WORK_PREP_COMPLETION_BEFORE_CODEX",
             "WORK_PRODUCTION_INPUT_BATCH",
@@ -31,8 +42,9 @@ class WorkCodexMinimumTransitionAutomationContractTests(unittest.TestCase):
             "READY_FOR_USER_VERTICAL_SLICE_VALIDATION",
         ):
             self.assertIn(token, text)
-        self.assertLess(text.index("WORK_PREP_COMPLETION_BEFORE_CODEX"), text.index("CODEX_SINGLE_IMPLEMENTATION_WINDOW"))
-        self.assertLess(text.index("CODEX_SINGLE_IMPLEMENTATION_WINDOW"), text.index("READY_FOR_USER_VERTICAL_SLICE_VALIDATION"))
+        self.assertNotIn("## 1. Three-stage minimum-transition flow", text)
+        self.assertLess(text.index("STAGE_1_PLANNING"), text.index("CODEX_SINGLE_IMPLEMENTATION_WINDOW"))
+        self.assertLess(text.index("CODEX_SINGLE_IMPLEMENTATION_WINDOW"), text.index("STAGE_5_USER_VALIDATION"))
 
     def test_routine_approval_is_delegated_but_high_risk_remains_deferred(self) -> None:
         text = self._profile_text()
@@ -87,17 +99,24 @@ class WorkCodexMinimumTransitionAutomationContractTests(unittest.TestCase):
         self.assertIn("Codex one-window implementation completed", text)
         self.assertNotIn("Codex one-window implementation attempted", text)
 
-    def test_work_final_review_precedes_user_validation(self) -> None:
+    def test_work_final_review_is_stage4_closeout_before_user_validation(self) -> None:
         text = self._profile_text()
         self.assertIn("WORK_FINAL_EVIDENCE_REVIEW_BEFORE_USER_VALIDATION", text)
+        self.assertIn("WORK_FINAL_EVIDENCE_REVIEW_IS_STAGE4_CLOSEOUT", text)
         self.assertLess(
             text.index("CODEX_SINGLE_IMPLEMENTATION_WINDOW"),
             text.index("WORK_FINAL_EVIDENCE_REVIEW_BEFORE_USER_VALIDATION"),
         )
         self.assertLess(
             text.index("WORK_FINAL_EVIDENCE_REVIEW_BEFORE_USER_VALIDATION"),
-            text.index("READY_FOR_USER_VERTICAL_SLICE_VALIDATION"),
+            text.index("STAGE_5_USER_VALIDATION"),
         )
+
+    def test_automated_ready_is_not_validated_vertical_slice_complete(self) -> None:
+        text = self._profile_text()
+        self.assertIn("AUTOMATED_VERTICAL_SLICE_READY != VERTICAL_SLICE_VALIDATED_COMPLETE", text)
+        self.assertIn("ACTUAL_USER_PLAY_REQUIRED", text)
+        self.assertIn("NEXT_SLICE_REQUIRES_STAGE5_DECISION", text)
 
     def test_missing_adopted_qa_tool_requires_evidence_equivalent_machine_qa(self) -> None:
         text = self._profile_text()
