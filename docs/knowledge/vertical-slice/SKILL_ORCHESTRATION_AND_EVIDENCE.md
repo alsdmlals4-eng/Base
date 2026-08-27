@@ -175,7 +175,28 @@ Base Work Mode·프로젝트 규칙·승인 계약이 Superpowers보다 상위�
 - `BLOCKED`
 - `FALLBACK_USED`
 
-### 5.1 `FRESH_RUNTIME_ARTIFACT_GATE`
+### 5.1 Godot 실행·증거·프로세스 생명주기 연결
+
+이 문서는 실행 여부, fresh evidence, task-owned cleanup, 잔여 확인, 완료 주장을 한 경로로 묶는 `EXECUTION_EVIDENCE_CANONICAL_OWNER`다. Godot 안전 정책은 프로세스 조작 방법을 소유하지만 완료 증거를 별도로 소유하지 않는다.
+
+```text
+EXECUTABLE_COVERAGE_OR_EXPLICIT_ENV_GATE
+→ WORK_DIRECT_GODOT_VERIFICATION_WHEN_MATERIAL
+→ FRESH_RUNTIME_ARTIFACT_GATE
+→ TASK_OWNED_PROCESS_CLEANUP
+→ RESIDUAL_PROCESS_READBACK
+→ COMPLETION_CLAIM_AFTER_VERIFICATION_AND_CLEANUP
+```
+
+- 현재 환경에서 실행 가능하면 실제 실행하고 current run evidence를 남긴다.
+- 정당한 필수 환경에서만 실행 가능하면 `ENV_GATED_EXPECTED_SKIP`으로 환경·버전·device·tool을 기록하며 현재 환경을 PASS로 승격하지 않는다.
+- 어느 합법적 owned layer에서도 실행할 수 없으면 `UNRUNNABLE_COVERAGE_GAP`으로 남겨 driver를 만들거나 owner를 재배치하고, 영구 SKIP을 정상 coverage로 숨기지 않는다.
+- runtime assertion과 프로세스 정리는 별도 판정이다. `CLEANUP_PASS_IS_NOT_RUNTIME_PASS`이며, runtime PASS도 cleanup/readback 누락을 덮지 못한다.
+- 이번 작업이 시작한 exact process만 `TASK_OWNED_PROCESS_CLEANUP` 대상으로 삼는다. 소유권을 안전하게 증명할 수 없으면 broad kill 대신 `PROCESS_OWNERSHIP_UNVERIFIED`와 residual risk를 보고한다.
+- `RESIDUAL_PROCESS_READBACK`은 child process, project lock, editor/game/test/server session 잔여와 pre-existing/unrelated instance 보존을 확인한다.
+- 세부 실행·정리 안전 경계는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`, Work 라우팅은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`와 `docs/WORK_MODE_AND_SKILL_ROUTING.md`를 따른다.
+
+### 5.2 `FRESH_RUNTIME_ARTIFACT_GATE`
 
 현재 build·commit의 runtime/render 결과를 근거로 PASS를 주장할 때 **기존 artifact가 존재한다는 사실은 fresh evidence가 아니다.** `PRIOR_ARTIFACT_EXISTENCE_IS_NOT_FRESH_EVIDENCE`를 적용한다. Godot 전용 실행·provider 권위는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`, 일반 완료 주장은 `reviewing-and-validating-project-changes: claim-and-intent-verification`이 계속 소유하며 이 reference는 중복 provider나 새 Skill을 만들지 않는다.
 

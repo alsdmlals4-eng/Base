@@ -27,6 +27,12 @@ EXISTING_SOLUTION_FIRST
 PLANNING_CANON_BEFORE_HANDOFF
 PRE_HANDOFF_GPT_STOP
 DIRECT_RUN_OR_VERIFIED_EVIDENCE
+WORK_DIRECT_GODOT_VERIFICATION_WHEN_MATERIAL
+TASK_LAUNCHED_GODOT_PROCESS_OWNERSHIP
+STOP_TASK_OWNED_GODOT_WHEN_NO_LONGER_NEEDED
+PRESERVE_PREEXISTING_AND_UNRELATED_GODOT_INSTANCES
+PROCESS_OWNERSHIP_UNVERIFIED
+GODOT_VERIFICATION_AND_SHUTDOWN_REPORT
 IMPACT_BOUNDED_REVALIDATION
 CANON_SYNC_AFTER_VALIDATION
 ```
@@ -405,6 +411,69 @@ exact project/repository/worktree identity
 
 GPT→PowerShell→local Codex one-shot launcher는 기본 workflow가 아니다. Codex가 사용하는 shell/CLI/MCP/engine은 Codex 자신의 실제 Godot 구현 환경에 속한다.
 
+### 9.1 Work 직접 Godot 검증과 작업 소유 프로세스 수명주기
+
+#### `WORK_DIRECT_GODOT_VERIFICATION_WHEN_MATERIAL`
+
+GPT Work는 승인된 구현 결과를 `REVIEW`하는 과정에서 runtime·scene·input·UI·resource 연결·오류 로그·GUT/headless/live-QA를 직접 확인해야 하고 현재 도구로 실행할 수 있을 때 Godot을 실행한다. 문서·정적 diff·data schema·기존의 exact-build evidence만으로 현재 Acceptance를 충족할 수 있으면 Godot을 불필요하게 시작하지 않는다.
+
+이 권한은 **검수·기계검증**에 한정된다. GPT가 Godot 제품 코드를 직접 누적 구현하거나 persistent product authoring authority를 얻는다는 뜻이 아니다.
+
+#### `TASK_LAUNCHED_GODOT_PROCESS_OWNERSHIP`
+
+Godot 실행 전 다음을 fresh-read한다.
+
+1. exact repository, branch/worktree, `project.godot` 경로
+2. 실행 대상 Scene·test·build와 기대 증거
+3. Work 시작 전 이미 존재한 Editor, game, debug/test, addon/MCP/live-QA process 또는 session
+4. 현재 환경에서 사용할 수 있는 project path, launch time, parent-child relation, PID/session/port 식별자
+
+이번 Work가 직접 시작한 Editor, game window, headless/runtime, debug/test runner와 관련 local server만 task-owned 대상으로 기록한다. PID 하나나 오래된 session/port만으로 소유권을 단정하지 않는다.
+
+#### `STOP_TASK_OWNED_GODOT_WHEN_NO_LONGER_NEEDED`
+
+필요한 evidence와 readback을 확보했고 같은 작업에서 추가 Godot 검증이 남지 않았으면 완료 보고 전에 task-owned process를 정상 종료한다.
+
+```text
+verification complete
+→ evidence/readback capture
+→ graceful game/debug stop
+→ no-longer-needed task-owned Editor/server stop
+→ child-process, project-lock, session/port residual check
+→ completion report
+```
+
+같은 bounded verification group 안에서 재실행이 예정돼 있으면 매 assertion마다 Editor를 반복 종료하지 않는다. 정상 종료가 실패한 hung process를 강제 종료해야 할 때도 **task-owned임이 확인된 대상에 한정**하고 이유와 결과를 남긴다.
+
+#### `PRESERVE_PREEXISTING_AND_UNRELATED_GODOT_INSTANCES`
+
+사용자가 Work 시작 전에 열어 둔 pre-existing instance, 다른 프로젝트·repository·worktree의 Editor/game/server, 다른 승인 workstream의 debug session, 이번 작업이 시작했다는 증거가 없는 process는 종료하지 않는다. process-name 전체 종료나 port-wide destructive cleanup을 사용하지 않는다.
+
+소유권을 안전하게 구분할 수 없으면 broad kill을 하지 않고 `PROCESS_OWNERSHIP_UNVERIFIED`로 남긴다. 이때 잔여 process, project lock, 수동 확인 필요성과 다음 작업의 wrong-target 위험을 보고한다.
+
+#### `GODOT_VERIFICATION_AND_SHUTDOWN_REPORT`
+
+Godot 실행 검증과 process cleanup은 서로 다른 claim surface다. 완료 보고는 필요 시 다음을 분리한다.
+
+```yaml
+godot_verification:
+  status: PASS | FAIL | PARTIAL | NOT_RUN
+  project_identity:
+  scenes_or_behaviors_checked: []
+  evidence: []
+  unverified: []
+
+godot_process_cleanup:
+  status: PASS | PARTIAL | NOT_RUN | NOT_APPLICABLE
+  task_owned_processes_started: []
+  task_owned_processes_stopped: []
+  preexisting_or_unrelated_preserved: []
+  residual_check: PASS | PARTIAL | NOT_RUN | NOT_APPLICABLE
+  residual_risk: []
+```
+
+Godot을 실행하지 않은 작업은 verification `NOT_RUN`, cleanup `NOT_APPLICABLE`로 기록할 수 있다. 실행했지만 종료·잔여 확인 evidence가 없으면 cleanup PASS를 주장하지 않는다. cleanup PASS도 runtime/play PASS를 대신하지 않는다.
+
 ## 10. Godot 구현 테스트·증거
 
 Codex는 구현 범위에 맞게 다음을 실행한다.
@@ -480,6 +549,8 @@ IMPLEMENTATION_MATCH_REVIEW
 
 `DIRECT_RUN_OR_VERIFIED_EVIDENCE`: GPT가 현재 도구로 직접 runtime/play를 실행·관찰할 수 있으면 직접 증거를 확보한다. 직접 실행할 수 없으면 Codex가 반환한 정확한 build/commit의 screenshot/video/log/test/play evidence를 검증하되 **보지 못한 플레이를 직접 플레이한 것으로 주장하지 않는다.** 인간의 재미·감정·첫인상처럼 별도 사람 playtest가 필요한 항목은 그 증거가 없으면 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 남기고 evidence ceiling을 넘지 않는다.
 
+GPT가 이 직접 실행 경로로 Godot을 시작했다면 제9.1절의 task-owned process cleanup과 `GODOT_VERIFICATION_AND_SHUTDOWN_REPORT`를 함께 적용한다.
+
 ### 12.2 `FIX | TUNE | REDESIGN`
 
 모든 finding을 전체 재기획으로 돌리지 않는다.
@@ -533,6 +604,7 @@ IMPLEMENTATION_MATCH_REVIEW
 - Codex는 새 이미지를 만들지 않았다.
 - Godot 구현·테스트·runtime/play evidence가 반환됐다.
 - GPT가 `DIRECT_RUN_OR_VERIFIED_EVIDENCE` 범위 안에서 최종 구현을 검수하고 finding을 `FIX | TUNE | REDESIGN`으로 처리했다.
+- Work가 Godot을 직접 실행했다면 task-owned process 종료와 residual check를 완료하거나 미확인 위험을 정직하게 남겼다.
 - 필요한 수정 뒤 `IMPACT_BOUNDED_REVALIDATION`이 끝났다.
 - 검증된 구현 상태만 `CANON_SYNC_AFTER_VALIDATION`으로 GitHub/Notion에 반영됐다.
 - Base/Notion/문서/운영 교정은 GPT가 직접 닫았다.
@@ -553,6 +625,7 @@ IMPLEMENTATION_MATCH_REVIEW
 - 작은 FIX/TUNE를 전체 REDESIGN으로 확대
 - 승인된 기획 Decision을 구현 검증 뒤까지 정본에 기록하지 않음
 - 자동 테스트나 Codex 보고만으로 GPT가 직접 플레이했거나 플레이어 감정이 검증됐다고 과장
+- task ownership 확인 없이 모든 Godot process를 종료하거나 cleanup 확인 없이 작업 완료를 주장
 
 현재 정본은 **`GPT = 비코딩·기획·검수·Base·Notion·Visual`, `Codex = 실제 게임 프로젝트의 Godot 제품 구현·코딩`**이다.
 
@@ -579,8 +652,16 @@ EXISTING_SOLUTION_FIRST
 PLANNING_CANON_BEFORE_HANDOFF
 PRE_HANDOFF_GPT_STOP
 DIRECT_RUN_OR_VERIFIED_EVIDENCE
+WORK_DIRECT_GODOT_VERIFICATION_WHEN_MATERIAL
+TASK_LAUNCHED_GODOT_PROCESS_OWNERSHIP
+STOP_TASK_OWNED_GODOT_WHEN_NO_LONGER_NEEDED
+PRESERVE_PREEXISTING_AND_UNRELATED_GODOT_INSTANCES
+PROCESS_OWNERSHIP_UNVERIFIED
+GODOT_VERIFICATION_AND_SHUTDOWN_REPORT
 IMPACT_BOUNDED_REVALIDATION
 CANON_SYNC_AFTER_VALIDATION
 ```
 
 이 vocabulary는 기존 consumer가 안전 의미를 잃지 않도록 유지하는 호환 계약이다. `CODEX_PREFLIGHT_OPTIONAL`은 고위험 Godot 제품 구현의 선택적 read-only technical preflight다. `CONTINUOUS_WORK_EXECUTOR_HANDOFF`와 `DEFERRED_EXTERNAL_EXECUTOR`는 실제 Godot product task에만 적용하며 Base/Notion task를 Codex로 넘기는 뜻이 아니다. `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`, `AUTO_MERGE_AFTER_REQUIRED_CHECKS`, `AGENT_MERGE_REQUIRED`의 exact-head/review/ruleset 병합 안전성은 유지한다.
+
+완료 주장과 실행 evidence의 canonical owner는 `docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md`다. 이 정책의 Godot verification·shutdown report는 해당 owner의 environment gate, fresh evidence, cleanup, residual readback 순서로 판정한다.
