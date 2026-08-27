@@ -89,6 +89,59 @@ class GameVisualAssetCoverageContractTests(unittest.TestCase):
         ):
             self.assertIn(required, text)
 
+    def test_screen_surface_inventory_precedes_asset_category_decomposition(self):
+        path = (
+            ROOT
+            / "docs/knowledge/game-development/GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md"
+        )
+        self.assertTrue(path.exists(), "screen-first visual coverage owner must exist")
+        text = path.read_text(encoding="utf-8")
+        for required in (
+            "SCREEN_SURFACE_INVENTORY_FIRST",
+            "SCREEN_LEVEL_COMPOSITION_REQUIRED",
+            "SCREEN_DESIGN_REFERENCE",
+            "RUNTIME_COMPONENT_ASSET",
+            "NO_NEW_IMAGE_FILE_REQUIRED",
+            "SCREEN_TO_ASSET_COVERAGE_MATRIX",
+            "PLAYER_VISIBLE_SCREEN_FAMILIES",
+            "MAIN_TITLE_MENU",
+            "RESULT_REWARD",
+            "PAUSE_SETTINGS",
+            "LOADING_TRANSITION_ERROR",
+            "GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md",
+            "NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS",
+        ):
+            self.assertIn(required, text)
+        self.assertLess(
+            text.index("SCREEN_SURFACE_INVENTORY_FIRST"),
+            text.index("SCREEN_TO_ASSET_COVERAGE_MATRIX"),
+        )
+
+    def test_work_template_is_paste_ready_and_executes_correction(self):
+        path = (
+            ROOT
+            / "templates/project-operations/GPT_WORK_SCREEN_FIRST_VISUAL_ASSET_COVERAGE_AND_CORRECTION_INSTRUCTION.md"
+        )
+        self.assertTrue(path.exists(), "paste-ready Work instruction must exist")
+        text = path.read_text(encoding="utf-8")
+        for required in (
+            "현재 이 채팅이 연결된 프로젝트",
+            "SCREEN_SURFACE_INVENTORY_FIRST",
+            "메인/타이틀 화면",
+            "화면별 구성요소",
+            "Godot",
+            "Notion",
+            "GitHub",
+            "NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS",
+            "교정 로그",
+            "남은 blocking gap",
+            "GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md",
+            "GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md",
+        ):
+            self.assertIn(required, text)
+        self.assertNotIn("[프로젝트명]", text)
+        self.assertNotIn("TBD", text)
+
 
 if __name__ == "__main__":
     unittest.main()
