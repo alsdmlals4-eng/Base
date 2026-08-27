@@ -501,7 +501,9 @@ rollback_or_removal:
 unverified:
 ```
 
-`NOT_CONFIGURED`, `NOT_RUN`, `PARTIAL`, `PASS`, `FAIL`을 구분한다. 연결 성공, tools/list, test discovery 또는 한 번의 live QA 성공은 production readiness 증거가 아니다. 설치됐지만 소비 경로가 없으면 `INSTALLED_UNUSED`로 판정해 제거하거나 필요 시점까지 `DEFERRED`로 되돌린다.
+`NOT_CONFIGURED`, `NOT_RUN`, `PARTIAL`, `PASS`, `FAIL`을 구분한다.
+
+실행 evidence와 완료 판정의 canonical owner는 `docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md`다. 이 문서는 process 안전만 소유하며 cleanup 성공을 runtime PASS로 승격하지 않는다. 연결 성공, tools/list, test discovery 또는 한 번의 live QA 성공은 production readiness 증거가 아니다. 설치됐지만 소비 경로가 없으면 `INSTALLED_UNUSED`로 판정해 제거하거나 필요 시점까지 `DEFERRED`로 되돌린다.
 
 ## 12. 업데이트와 Rollback
 
