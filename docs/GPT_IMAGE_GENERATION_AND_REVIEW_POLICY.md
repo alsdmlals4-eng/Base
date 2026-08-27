@@ -126,13 +126,32 @@ invalid consumer뿐이면 `DO_NOT_GENERATE`다. 필요한 정보 자체는 `TEXT
 
 ## 2. Image Conversation Approval Gate
 
-프로젝트 이미지 생성·편집은 `docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md`를 적용한다.
+프로젝트 이미지 생성·편집은 `docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md`를 적용한다. 사용자가 current turn에서 실제 이미지 출력을 명시했는지, AI가 검토 중 Visual Need를 먼저 제안했는지를 구분한다.
 
 ```text
-PROJECT_REVIEW_COMPLETE
-→ Visual Need
+CURRENT_TURN_EXPLICIT_IMAGE_REQUEST
+→ PROJECT_REVIEW_COMPLETE
 → ACTUAL_CONSUMER_REQUIRED
-→ current Project/Visual canon
+→ PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md
+→ current approved visual anchor resolution
+→ EXPLICIT_REQUEST_IS_ONE_OUTPUT_AUTHORITY
+→ GENERATE_EXACTLY_ONE
+→ STOP_REQUIRED_AFTER_GENERATION
+```
+
+사용자가 `이미지 만들어줘`, `그려줘`, `이 Brief대로 생성해`, `이 이미지를 편집해줘`처럼 current output을 명시한 경우 별도 장문 이미지 작업지시문이나 다음 turn의 중복 승인을 요구하지 않는다. `PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md`가 다음을 판정한다.
+
+- usable current approved visual anchor가 있으면 실제 preview/source readback 뒤 사용자에게 surface하고 해당 방향으로 요청 deliverable 1건을 만든다.
+- usable anchor가 없으면 final production을 추측하지 않고 사용자가 1안을 고를 concept comparison deliverable 1건을 만든다.
+- comparison board는 `GENERATED_EXPLORATION`이며 production/runtime asset이 아니다.
+- 사용자 선택 뒤 selected direction은 clean standalone anchor로 제작·승인·readback한 뒤 후속 production에 사용한다.
+
+사용자가 current turn에서 이미지 출력을 명시하지 않았고 AI가 필요성을 먼저 발견한 경우 기존 two-turn barrier를 유지한다.
+
+```text
+ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE
+→ PROJECT_REVIEW_COMPLETE
+→ Visual Need / current Project canon / actual consumer
 → text brief
 → TEXT_BRIEF_STOP_REQUIRED
 
@@ -143,13 +162,13 @@ PROJECT_REVIEW_COMPLETE
 → STOP_REQUIRED_AFTER_GENERATION
 ```
 
-`NO_AUTOMATIC_IMAGE_CHAIN`을 적용한다.
+`NO_AUTOMATIC_IMAGE_CHAIN`을 두 경로 모두에 적용한다.
 
-- Text Brief를 처음 제시한 같은 assistant turn에서 이미지 생성/편집으로 바로 이어가지 않는다.
-- 한 번의 승인 뒤 기본 생성은 이미지 또는 편집 결과 1건이다.
+- 한 authority 뒤 기본 생성은 이미지·편집·comparison deliverable 1건이다.
 - 생성 직후 다음 포즈·캐릭터·화면·분해 에셋·재합성을 자동 연속 실행하지 않는다.
-- 기존 승인 이미지를 Notion에 배치·링크·readback하는 작업은 새 이미지 생성이 아니므로 이 생성 checkpoint를 만들지 않는다.
+- 기존 승인 이미지를 Notion에 배치·링크·readback하는 작업은 새 이미지 생성이 아니므로 generation checkpoint를 만들지 않는다.
 - 생성 성공은 `APPROVED_CANDIDATE`, `PROJECT_ASSET_APPROVED`, runtime 적용을 뜻하지 않는다.
+- host/system 정책이 더 엄격하거나 다른 호출 순서를 강제하면 `HOST_PLATFORM_PRECEDENCE`를 따른다.
 
 ## 3. 프로젝트 Visual continuity
 
@@ -347,6 +366,8 @@ Harvest는 `PROJECT_ASSET_APPROVED`, tracked asset, rights 또는 Godot runtime 
 18. 중요한 상태가 색 하나에만 의존하지 않고 필요한 semantic redundancy를 갖는지
 19. `PLATFORM_REQUIRED`이면 release 시점의 current official spec/rule을 재조회했는지
 20. `PRODUCTION_INFORMATION`을 이미지 하나로 대체해 정보 정본이 손실되지 않았는지
+21. explicit current-turn request이면 current approved visual anchor를 실제 readback·surface했는지, 없으면 concept comparison으로 방향을 먼저 선택했는지
+22. 후속 production이 `STYLE_CONTINUITY_REVIEW_REQUIRED`와 `FLOW_AND_SCREEN_SEMANTIC_CONSISTENCY_REQUIRED`를 통과했는지
 
 ## 9. 참조 기반 독립 제작
 
@@ -402,8 +423,13 @@ Notion approval, asset upload, tracked file, runtime application은 서로 다�
 - `STATE_FAMILY_COMPLETENESS` 없이 대표 이미지 한 장만으로 component 완성을 주장했는가
 - `NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS`를 어기고 gap 발견 뒤 사용자 승인 없는 image chain/batch를 만들었는가
 - Visual Requirement Gate에서 선정되지 않은 자산을 관성적으로 대량 생성했는가
-- `TEXT_BRIEF_STOP_REQUIRED` 없이 같은 응답에서 이미지를 바로 생성했는가
+- `CURRENT_TURN_EXPLICIT_IMAGE_REQUEST`인데 current approved anchor resolution·actual preview readback·found/reuse 또는 concept comparison 분기를 생략하고 blind final production으로 갔는가
+- `ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE`인데 `TEXT_BRIEF_STOP_REQUIRED`와 다음-turn 승인을 생략했는가
 - 승인 하나로 여러 이미지·포즈·컴포넌트를 자동 연쇄 생성했는가
+- concept comparison board나 panel을 final master·runtime asset으로 사용했는가
+- 선택된 방향을 standalone anchor로 잠그지 않고 panel crop·기억만으로 후속 자산을 만들었는가
+- 후속 이미지가 current Flow/Screen에 없는 버튼·상태·시스템을 새 요구사항처럼 발명했는가
+- 모든 layer를 같은 렌더링 밀도로 강제해 UI·VFX·marketing의 역할이 손상됐거나, 반대로 project global grammar가 사라졌는가
 - 승인 전 이미지가 final/production asset처럼 사용됐는가
 - 승인 전 vault 후보가 tracked Repo 자산으로 자동 승격됐는가
 - tracked Scene/Resource가 local-only vault를 참조하는가
@@ -436,4 +462,4 @@ STATIC_POLICY_PRESENT
 != RUNTIME_VISUAL_PASS
 ```
 
-실행 플랫폼의 더 높은 시스템·안전·제품 정책과 충돌하는 경우 Base 계약이 그 상위 정책을 override한다고 주장하지 않는다. 가능한 범위에서는 프로젝트 계획 단계에서 먼저 information-vs-image route와 text brief checkpoint를 만들고, 실제 tool call은 적용 가능한 상위 정책과 현재 사용자 승인 범위 안에서 수행한다. 상위 정책 때문에 two-turn barrier 자체를 적용할 수 없는 경우에는 `BLOCKED_POLICY_CONFLICT` 또는 해당 실행 환경의 evidence ceiling으로 기록하며 정적 테스트 통과를 실제 모델 행동 PASS로 승격하지 않는다.
+실행 플랫폼의 더 높은 시스템·안전·제품 정책과 충돌하는 경우 Base 계약이 그 상위 정책을 override한다고 주장하지 않는다. 가능한 범위에서는 current-turn explicit request와 assistant-initiated Visual Need를 먼저 분류하고, 전자는 visual anchor pipeline의 one-output route로, 후자는 text brief two-turn route로 실행한다. 실제 tool call은 적용 가능한 상위 정책과 현재 사용자 승인 범위 안에서 수행한다. 상위 정책 때문에 해당 route를 그대로 적용할 수 없으면 `HOST_POLICY_OVERRIDE`, `BLOCKED_POLICY_CONFLICT` 또는 해당 실행 환경의 evidence ceiling을 기록하며 정적 테스트 통과를 실제 모델 행동 PASS로 승격하지 않는다.
