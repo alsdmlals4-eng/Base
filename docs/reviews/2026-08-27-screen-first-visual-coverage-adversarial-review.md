@@ -3,15 +3,15 @@
 - 날짜: `2026-08-27`
 - Base 변경 제안: `BCP-2026-045`
 - 제안 PR: `#760`
-- 구현 PR: `#761`
-- 범위: project-neutral documentation contract, paste-ready Work instruction, focused regression
+- 구현 PR: `#763`
+- 범위: project-neutral screen-first subordinate contract, canonical visual-coverage routing, paste-ready Work instruction, focused regression
 - evidence ceiling: 정적 Base 계약과 GitHub CI 검증. 개별 프로젝트의 이미지 품질, Notion 반영, Godot runtime, player UX PASS는 주장하지 않는다.
 
 ## 1. 문제 재현
 
 기존 `GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`는 캐릭터, 환경, UI, VFX, 상태군, 기술 소비 조건과 `Main Menu / System Screens` 범주까지 폭넓게 포함한다.
 
-그러나 audit 순서가 asset category 중심이어서 다음 실패가 가능했다.
+그러나 audit 시작점이 asset category 중심이어서 다음 실패가 가능했다.
 
 ```text
 캐릭터 있음
@@ -46,28 +46,29 @@ pause/settings와 error/loading surface 없음
 
 판정: `REJECT`.
 
-### B. 화면 인벤토리 companion contract + 기존 자산 catalog 교차 검사
+### B. subordinate 화면 인벤토리 + 단일 canonical visual coverage owner
 
 장점:
 
 - `화면 → component → state/variant → asset category` 순서를 명확히 고정한다.
-- 기존 자산 체크리스트와 승인 state machine을 대체하지 않는다.
+- 기존 `GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`가 coverage 상태와 완료 판정의 단일 owner로 남는다.
 - 화면 자체의 visual design 필요성과 신규 bitmap 필요성을 분리할 수 있다.
-- Work 채팅에서 바로 실행할 수 있는 correction instruction으로 연결할 수 있다.
+- 이미지 정책, Art Skill, 생성 계획, Work 지시문이 같은 순서로 route된다.
 
 위험:
 
-- companion 문서가 두 번째 GDD·Asset Manifest가 될 수 있다.
+- companion 문서가 두 번째 GDD·Asset Manifest 또는 두 번째 coverage owner가 될 수 있다.
 - 모든 화면을 신규 고해상도 이미지로 만들라는 오해가 생길 수 있다.
 
 완화:
 
-- `COVERAGE_CHECK_ONLY`, `NOT_A_SECOND_ASSET_CANON`, 기존 owner link를 명시한다.
+- `SUBORDINATE_TO_GAME_VISUAL_ASSET_COVERAGE_OWNER`와 `SCREEN_INVENTORY_HANDOFF_READY`만 subordinate 문서가 소유한다.
+- canonical 문서에 `CANONICAL_VISUAL_COVERAGE_OWNER`와 `SCREEN_SURFACE_INVENTORY_SUBORDINATE_CONTRACT`를 명시한다.
 - `SCREEN_DESIGN_REFERENCE`, `RUNTIME_COMPONENT_ASSET`, `NO_NEW_IMAGE_FILE_REQUIRED`를 분리한다.
 
 판정: `ADOPT`.
 
-### C. 화면·자산·승인·runtime을 하나의 통합 master schema로 재설계
+### C. 화면·자산·승인·runtime을 하나의 신규 master schema로 재설계
 
 장점:
 
@@ -83,28 +84,68 @@ pause/settings와 error/loading surface 없음
 
 ## 3. TDD 증거
 
-### RED
+### RED 1 — screen owner와 Work template 부재
 
 - head: `bbcd57b86dbb5e540fcc6cfc3d9e48456bfd8c20`
 - workflow run: `33075476173`
 - `core-regression`: 실패
-- 전체 결과: `failures=2`, 기존 관련 회귀는 유지
+- 결과: `failures=2`
 - 의도한 실패:
   1. `screen-first visual coverage owner must exist`
   2. `paste-ready Work instruction must exist`
 
-syntax, dependency, proposal validation, canonical-reference 오류가 아니라 새 owner와 template이 실제로 없어서 실패했다.
+syntax, dependency, proposal validation 오류가 아니라 새 contract와 template이 실제로 없어서 실패했다.
 
-### GREEN — 최소 구현 확인
+### GREEN 1 — 최소 screen-first 구현
 
-- pre-review head: `8ea99ab37eba07c20555a30ee5ec0eda1d6d9d32`
+- head: `8ea99ab37eba07c20555a30ee5ec0eda1d6d9d32`
 - workflow run: `33076058316`
 - `docs-validation`: PASS
 - `ubuntu-contract`: PASS
 - `core-regression`: PASS
-- 별도 Evidence-Based Knowledge와 Base v9 workflow: PASS
+- Evidence-Based Knowledge와 Base v9 workflow: PASS
 
-최종 merge 전에는 이 review receipt까지 포함한 exact head에서 전체 required check를 다시 확인한다.
+이 상태는 화면-first 문서와 Work template의 존재를 증명했지만, 독립 review에서 **두 coverage owner 위험과 공용 consumer routing 누락**이 추가로 발견됐다.
+
+### RED 2 — single-owner와 routing review finding
+
+- head: `b002c6934258ffb0f369b92e05558a55716b2fef`
+- workflow run: `33076471181`
+- `core-regression`: 실패
+- 결과: `failures=5`, 기존 suite는 유지
+- 의도한 실패 범위:
+  1. canonical owner에 `CANONICAL_VISUAL_COVERAGE_OWNER`가 없음
+  2. screen contract가 handoff-only subordinate임을 고정하지 못함
+  3. 이미지 정책이 screen contract보다 canonical catalog를 먼저 읽을 수 있음
+  4. Art Skill과 생성 계획의 reusable routing이 screen-first를 강제하지 못함
+  5. Work 지시문의 `기획 입력 → screen inventory → canonical coverage → state family → implementation mode → requirement/approval → QA readback` 순서가 기계적으로 고정되지 않음
+
+이 RED는 최초 제안을 그대로 수용하지 않고 전체 owner 구조와 소비자 routing을 다시 공격한 review 결과다.
+
+### GREEN 2 — single-owner와 routed workflow 구현
+
+교정 범위:
+
+- `GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`를 `CANONICAL_VISUAL_COVERAGE_OWNER`로 명시
+- screen contract를 `SUBORDINATE_TO_GAME_VISUAL_ASSET_COVERAGE_OWNER` + `SCREEN_INVENTORY_HANDOFF_READY`로 제한
+- 이미지 정책, Art Skill, 생성 계획, Work template에서 screen contract를 canonical owner보다 먼저 route
+- Work 실행 순서를 다음처럼 고정
+
+```text
+FIVE_STAGE_WORK_STAGE_3_IMAGE_ASSET_INPUT
+→ SCREEN_SURFACE_INVENTORY_FIRST
+→ CANONICAL_VISUAL_COVERAGE_OWNER
+→ STATE_FAMILY_COMPLETENESS
+→ IMPLEMENTATION_MODE_REQUIRED
+→ Visual Requirement Gate
+→ Image Conversation Approval Gate
+→ QA_READBACK
+```
+
+- focused contract와 BCA visual workflow regression으로 single-owner/routing을 보호
+- latest completed main을 merge commit `1f3631eff801f7e4f1abe42192875c5a4f129bc2`에서 non-force로 reconciliation
+
+최종 merge 판정은 이 receipt correction을 포함한 exact final head의 required checks로 별도 확인한다.
 
 ## 4. 전체 상태 적대적 검토 — Loop 1
 
@@ -113,18 +154,19 @@ syntax, dependency, proposal validation, canonical-reference 오류가 아니라
 공격:
 
 - 새 screen matrix가 기존 GDD, Flow, Asset Manifest, Notion Asset Library를 복제할 수 있다.
-- 기존 coverage owner와 책임이 겹칠 수 있다.
+- screen contract와 기존 checklist가 서로 다른 완료 상태를 소유할 수 있다.
 
 검사:
 
-- 새 owner 첫 부분에서 `GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`를 대체하지 않는다고 명시했다.
-- screen row는 기존 project canon, requirement, asset record, scene, evidence에 link하도록 제한했다.
-- Work instruction은 기존 owner가 있으면 그 owner를 교정하고 새 owner를 만들지 않도록 했다.
+- canonical owner는 기존 `GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md` 하나다.
+- screen contract는 화면 row와 matrix의 `SCREEN_INVENTORY_HANDOFF_READY`까지만 소유한다.
+- 최종 coverage status, Visual Requirement Gate 전달, 이미지 승인, runtime QA/READBACK은 기존 canonical owner와 기존 lifecycle이 소유한다.
+- Work instruction은 기존 project owner가 있으면 그 owner를 교정하고 새 정본을 만들지 않도록 한다.
 
 교정:
 
-- `COVERAGE_CHECK_ONLY`, `NOT_A_SECOND_ASSET_CANON`을 상단 hard boundary로 고정했다.
-- Notion은 사람용 정본, GitHub는 구조·runtime 정본이라는 domain split을 명시했다.
+- `CANONICAL_VISUAL_COVERAGE_OWNER`와 `SUBORDINATE_TO_GAME_VISUAL_ASSET_COVERAGE_OWNER`를 양쪽 문서에 고정했다.
+- `SCREEN_COVERAGE_CLEAN_EXIT` 같은 독립 완료 상태를 제거했다.
 
 결과: blocking finding `0`.
 
@@ -164,13 +206,13 @@ syntax, dependency, proposal validation, canonical-reference 오류가 아니라
 
 - 화면 전체의 composition evidence는 요구하지만 runtime file type은 별도로 판정한다.
 - `SCREEN_DESIGN_REFERENCE`와 `RUNTIME_COMPONENT_ASSET`을 분리했다.
-- Godot Control/Theme/StyleBox, text layer, SVG, shader, procedural draw를 공식 production mode로 포함했다.
+- Godot Control/Theme/StyleBox, text layer, SVG, shader, procedural draw를 production mode로 포함했다.
 
 교정:
 
-- `NO_NEW_IMAGE_FILE_REQUIRED`를 추가해 “시각 표현 필수”와 “신규 bitmap 필수”를 분리했다.
+- `NO_NEW_IMAGE_FILE_REQUIRED`로 “시각 표현 필수”와 “신규 bitmap 필수”를 분리했다.
 - 전체 목업을 runtime UI 한 장으로 쓰지 않고 layer/component로 분해하도록 했다.
-- `NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS`를 owner와 Work instruction 양쪽에 유지했다.
+- `NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS`를 canonical owner와 Work instruction에 유지했다.
 
 결과: blocking finding `0`.
 
@@ -206,6 +248,7 @@ syntax, dependency, proposal validation, canonical-reference 오류가 아니라
 - 기존 이미지 승인 Gate를 우회할 수 있다.
 - open PR을 takeover하거나 Registry path를 충돌 수정할 수 있다.
 - template이 프로젝트마다 placeholder 편집을 요구해 복사 즉시 실행되지 않을 수 있다.
+- 정책·Skill·계획 중 하나가 screen-first route를 생략할 수 있다.
 
 검사:
 
@@ -213,12 +256,13 @@ syntax, dependency, proposal validation, canonical-reference 오류가 아니라
 - pre-existing open PR은 read-only, current work는 latest completed main 기반 별도 PR로 제한했다.
 - `[수정제안서]/PROPOSAL_REGISTRY.json`은 다른 open PR ownership 때문에 건드리지 않았다.
 - template은 `[프로젝트명]`, `TBD` 없이 `현재 이 채팅이 연결된 프로젝트`를 기준으로 작성했다.
-- test가 owner와 template의 경로·핵심 token·paste-ready 조건을 고정한다.
+- 이미지 정책, Art Skill, 생성 계획, Work template 모두 screen contract → canonical coverage owner 순서를 regression으로 고정한다.
 
 교정:
 
 - Work instruction에 actual correction, readback, remaining-work rescan, no-auto-generation, Godot 종료를 명시했다.
-- owner와 template을 additive path로 두고 기존 대형 owner를 불필요하게 재작성하지 않았다.
+- single-owner와 routed consumer를 두 focused test surface에서 보호했다.
+- 재사용 가능한 교훈은 `skills/SKILL_LEARNING_LOG.md`에 `PATTERN_CANDIDATE`로 기록했다.
 
 결과: blocking finding `0`.
 
@@ -228,7 +272,7 @@ syntax, dependency, proposal validation, canonical-reference 오류가 아니라
 full review loops: 5
 new valid P0 finding after loop 5: 0
 new valid P1 finding after loop 5: 0
-duplicate canon introduced: NO
+duplicate coverage owner introduced: NO
 automatic image-generation authority introduced: NO
 new dependency/provider/paid service: NO
 project-specific value promoted to Base: NO
@@ -248,11 +292,13 @@ latest main reconciliation
 
 ## 10. 롤백
 
-구현 PR을 한 단위로 revert한다.
+구현 PR `#763`을 한 단위로 revert한다.
 
-- screen-first companion owner 제거
+- screen-first subordinate contract 제거
+- canonical coverage owner routing 문구 원복
+- 이미지 정책·Art Skill·생성 계획 routing 원복
 - paste-ready Work instruction 제거
-- focused regression 원복
+- focused regression과 learning-log entry 원복
 - 이 review receipt 제거
 
-기존 `GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`, image policy, approval gate, project Asset/Notion/runtime authority는 그대로 유지한다.
+기존 image approval gate, project Asset/Notion/runtime authority와 사용자 current-turn explicit image-generation boundary는 그대로 유지한다.
