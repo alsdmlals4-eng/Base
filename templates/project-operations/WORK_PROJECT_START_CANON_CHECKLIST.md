@@ -1,6 +1,6 @@
 # Work 프로젝트 시작 정본 확인·선교정 체크리스트
 
-> 이 파일은 프로젝트 사실을 새로 소유하는 두 번째 정본이 아니다. 현재 Base·Project owner를 찾아 읽고, 작업 시작 상태를 검증하며, 누락·충돌을 먼저 교정했다는 실행 receipt다.
+> 이 파일은 프로젝트 사실을 새로 소유하는 두 번째 정본이 아니다. 현재 Base·Project owner를 찾아 읽고, 작업 시작 상태를 검증하며, 누락·충돌을 먼저 교정하는 **project-specific 실행 receipt의 형식과 Gate**를 정의한다.
 
 ```text
 PROJECT_START_CANON_CHECKLIST
@@ -14,6 +14,7 @@ SWOT_IS_CURRENT_EVIDENCE_BASED_NOT_GENERIC_MARKETING
 REMAINING_WORK_AND_ORDER_DERIVED_FROM_CURRENT_CANON
 PROJECT_CANON_AND_ACTUAL_IMPLEMENTATION_FIRST
 REUSE_VALID_RECEIPT_UNTIL_MATERIAL_DRIFT
+STARTUP_CANON_CHECKLIST_USER_REPORT_REQUIRED
 ```
 
 ## 1. 목적
@@ -77,6 +78,9 @@ PROJECT_START_CANON_CHECKLIST:
     exact_project_default_branch_and_sha:
     exact_notion_home_and_active_domains:
     actual_implementation_evidence:
+    source_locators: []
+    current_task_branch_or_connector_ref:
+    git_sync_evidence:
     open_workstreams_and_prs:
     observed_at:
 
@@ -114,7 +118,10 @@ PROJECT_START_CANON_CHECKLIST:
 
   execution_state:
     current_stage:
+    roadmap_or_milestones:
+    accepted_frontier:
     active_playable_slice:
+    next_playable_slice_candidate:
     actual_implementation_state:
     implementation_and_test_state:
     visual_audio_asset_state:
@@ -125,7 +132,9 @@ PROJECT_START_CANON_CHECKLIST:
     remaining_required_work: []
     work_order:
       - priority:
+        status: READY | BLOCKED | USER_DECISION_REQUIRED | DEFERRED | DONE
         task:
+        why_now:
         dependency:
         player_value:
         risk_or_blocker:
@@ -144,9 +153,31 @@ PROJECT_START_CANON_CHECKLIST:
   evidence_and_exit:
     human_usability_evidence: NOT_RUN
     player_experience_evidence: NOT_RUN
+    deferred_decisions: []
+    decision_state: NONE | USER_DECISION_REQUIRED | EXPLICITLY_DEFERRED
     next_safe_action:
     result: READY_AFTER_CORRECTION | BLOCKED_UNVERIFIED
 ```
+
+## 4.1 사용자에게 보여줄 시작 보고
+
+`STARTUP_CANON_CHECKLIST_USER_REPORT_REQUIRED`
+
+첫 material 작업에서는 내부 YAML만 만들고 숨기지 말고, 사용자에게 다음을 짧은 체크리스트로 보여준다. 이미 유효한 receipt를 재사용할 때는 변경된 항목만 보고한다.
+
+```text
+정본 identity와 current stage
+→ 핵심 재미·player promise·핵심 시스템
+→ SWOT 핵심 변화와 evidence ceiling
+→ 실제 구현·test·Visual/Audio 상태
+→ 발견한 stale/conflict/missing canon
+→ 먼저 교정한 항목과 destination readback
+→ 남은 작업과 우선 작업순서
+→ 보류된 사용자 결정
+→ 다음 안전 작업
+```
+
+이 보고는 기획서를 다시 쓰는 절차가 아니다. 작업 시작 시 무엇을 믿고, 무엇을 먼저 고쳤으며, 왜 이 순서로 진행하는지를 확인하는 실행 요약이다.
 
 ## 5. 핵심 재미·핵심 시스템 확인
 
@@ -203,7 +234,7 @@ SWOT은 자동 scope 확장 권한이 아니며, 재미·독창성·시장성을
 
 ## 7. 남은 작업과 작업순서
 
-`remaining_required_work`는 전체 희망 목록이 아니라 현재 Goal과 승인된 Playable Slice를 완료하는 데 필요한 gap이다.
+`remaining_required_work`는 전체 희망 목록이 아니라 현재 Goal과 승인된 Playable Slice를 완료하는 데 필요한 gap이다. 활성 Slice가 아직 없으면 current stage·roadmap_or_milestones·accepted_frontier·blocker를 대조해 `next_playable_slice_candidate`를 복원한 뒤 그 후보의 gap만 우선 계산한다.
 
 먼저 다음을 재계산한다.
 
@@ -226,7 +257,7 @@ confirmed requirement
 5. 재작업·권리·보안·save/schema 위험 완화
 6. polish와 후속 확장
 
-각 작업에는 `priority`, `dependency`, `player_value`, `risk_or_blocker`, `owner`, `acceptance`, `verification`, `fallback_or_defer`가 있어야 한다. 문서량·commit 수가 아니라 playable progress를 기준으로 순서를 정한다.
+각 작업에는 `priority`, `status`, `why_now`, `dependency`, `player_value`, `risk_or_blocker`, `owner`, `acceptance`, `verification`, `fallback_or_defer`가 있어야 한다. 문서량·commit 수가 아니라 playable progress를 기준으로 순서를 정한다.
 
 서로 독립적인 작업은 병렬화할 수 있지만, 선행 Decision·consumer·asset·schema가 없는 downstream 구현을 먼저 시작하지 않는다.
 
@@ -282,7 +313,8 @@ exact project/source identity known
 AND core fun / player promise / core loop aligned
 AND core/supporting systems and consumers mapped
 AND SWOT evidence ceiling explicit
-AND current stage / active Slice / blockers known
+AND current stage / roadmap / accepted frontier / blockers known
+AND active Slice or next playable Slice candidate identified
 AND remaining work and work order recalculated
 AND approved-scope stale/conflict/missing canon corrected
 AND GitHub structured canon destination readback complete when changed
