@@ -45,7 +45,7 @@ Notion용 별도 산출물은 기본 생성하지 않는다.
 
 ### 2.1 AI용 상세 기획·구현 명세
 
-프로젝트 저장소의 `docs/canon/AI_GAME_SPEC.md` 또는 프로젝트가 선언한 동등 owner가 소유한다. 최소 포함 범위:
+프로젝트 저장소의 `docs/canon/AI_GAME_SPEC.md`, `docs/design/PROJECT_AI_PRODUCTION_SPEC.md` 또는 프로젝트가 선언한 동등 owner가 소유한다. 최소 포함 범위:
 
 - 프로젝트 정의와 판매·차별 가치;
 - 플레이어 행동, 감정, 의미 있는 선택과 trade-off;
@@ -87,6 +87,66 @@ blockers:
 4. Release Candidate 점검.
 
 매 작은 변경마다 PDF를 다시 만들지 않는다. PDF 생성 비용과 drift를 줄이되, 구현 인계와 주요 승인 시점에는 오래된 파생본을 사용하지 않는다.
+
+### 2.3 Desktop GPT 2파일 통합 기획서 프로필
+
+`[수정제안서]/BCP-2026-047-desktop-two-artifact-master-gdd/PROPOSAL.md`의 승인 계약을 `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD` 호환 하위 프로필로 흡수한다.
+
+```text
+EXACTLY_TWO_DELIVERABLES
+├─ HUMAN_MASTER_GDD_PDF
+└─ AI_PRODUCTION_SPEC_MARKDOWN
+```
+
+이 프로필은 프로젝트 정본을 상세 통합 기획서로 생성·갱신하는 작업에 적용한다. 단일 기능 Spec, 짧은 Decision, 일반 handoff, 버그 수정마다 두 파일을 의무 재생성하지 않는다. 그러나 그 작업들도 repository-first 정본과 Notion 신규 쓰기 금지 원칙은 따른다.
+
+#### `CORE_SYSTEM_AND_CONTENT_IMPLEMENTATION_DETAIL_REQUIRED`
+
+사람용 PDF와 AI Markdown 모두 다음을 누락하지 않는다.
+
+- 프로젝트 비전·플레이어 약속·핵심 감정·의미 있는 선택·차별점·판매 포인트;
+- Core / Session / Meta Loop와 전체 game flow;
+- 핵심·서브 시스템의 목적, 규칙, 상태, 예외, 피드백, 의존성;
+- 콘텐츠 역할, 등장·획득 조건, 변주, 보상과 요구 asset/audio;
+- Godot scene·node·script 책임, data owner, signal/event payload, 상태 전이, save/load, 구현 순서;
+- UI/UX·입력·접근성·Visual Direction과 실제 runtime consumer;
+- Acceptance Criteria와 automated/runtime/visual/play/UX/release evidence ceiling.
+
+#### `SHARED_ID_AND_SOURCE_SHA_REQUIRED`
+
+- PDF와 AI Markdown은 동일한 `SYS / CNT / UI / UX / AST / AUD / DAT / QA / DEC` ID를 사용한다.
+- 두 산출물에 동일한 기준 branch와 exact source SHA를 기록한다.
+- `DOCUMENTED`, `CONFIRMED`, `IMPLEMENTED`, `AUTOMATED_TEST_PASS`, `RUNTIME_VERIFIED`, `UX_VERIFIED`, `RELEASE_READY`를 분리한다.
+- PDF export 전에 AI 명세·실제 repository 상태와 ID/SHA drift를 검사한다.
+
+#### `PDF_ONLY_USER_DOWNLOAD`
+
+최종 사용자 응답의 기본 다운로드 링크는 사람용 PDF 하나만 제공한다. AI Markdown은 repository에 저장하고 다음만 보고한다.
+
+```text
+repository path
+branch
+commit SHA
+PR
+validation result
+```
+
+사용자가 별도로 요청하지 않은 AI Markdown·DOCX·ZIP·appendix·image bundle 다운로드 링크를 추가하지 않는다.
+
+#### `NOTION_INPUT_ONLY_NO_OUTPUT`
+
+기존 Notion에 repository로 이관되지 않은 고유 자료가 남아 있으면 migration 입력으로만 fresh-read한다. 같은 내용을 새 page/database로 재생성하지 않으며 master GDD 완료에 Notion write·upload·sync·readback을 요구하지 않는다.
+
+#### 산출물·이미지 경계
+
+```text
+NO_DOCX_NO_ZIP_NO_SEPARATE_APPENDIX
+NO_SEPARATE_IMAGE_BUNDLE
+NO_NOTION_OUTPUT
+NO_AUTOMATIC_IMAGE_GENERATION
+```
+
+필요한 traceability, benchmark, asset matrix와 부록은 두 파일 내부에 통합한다. 승인된 기존 이미지와 실제 build capture를 우선 사용하며, 승인 visual이 없으면 누락 상태를 표시한다. 사용자가 명시적으로 이미지 생성·편집을 요청하지 않은 경우 새 이미지를 자동 생성하지 않는다.
 
 ## 3. 권장 프로젝트 정본 묶음
 
@@ -240,6 +300,10 @@ POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP
 과거 token이 검색된다는 이유만으로 **현재 기본값으로 복원하지 않는다**. 현재 root `AGENTS.md`와 `docs/operations/REPOSITORY_FIRST_PROJECT_WORKSPACE_CONTRACT.json`이 더 높은 current owner다.
 
 `NOTION_DEFAULT_PROJECT_WORKSPACE_LEGACY_ALIAS`는 오래된 문서·테스트·인수인계의 의미를 찾기 위한 별칭이지 신규 write route가 아니다.
+
+BCP-2026-047은 `APPROVED_PROFILE_ABSORBED` 상태의 현재 호환 프로필이다. 해당 제안의 2파일·PDF-only download·Notion input-only·동일 ID/SHA·자동 이미지 생성 금지 요구는 이 정책의 2.3절이 소유한다. 제안서의 “전역 Notion 권한 유지” 문구는 그 제안 당시 범위 제한이며, 이후 사용자가 승인한 repository-first 전환보다 높은 권한을 갖지 않는다.
+
+세부 부분 supersession은 `docs/operations/REPOSITORY_FIRST_WORKSPACE_SUPERSESSION_MAP.json`이 소유한다.
 
 ## 9. 검증과 완료
 
