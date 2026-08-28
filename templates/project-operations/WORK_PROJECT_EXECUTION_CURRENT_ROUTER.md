@@ -5,36 +5,53 @@ WORK_PROJECT_EXECUTION_CURRENT_ROUTER
 THIN_ROUTER_NOT_SECOND_CANON
 PROJECT_CANON_AND_ACTUAL_IMPLEMENTATION_FIRST
 CURRENT_BASE_OWNER_WINS_ON_DRIFT
+DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE
+NO_NEW_NOTION_WRITE_BY_DEFAULT
 ```
 
 > 프로젝트 사실·세부 절차를 복제하지 않고 current owner와 사용자용 5단계 interface를 연결한다.
-`MINIMAL_PROJECT_RESTART_ONE_LINE_ENTRY` · `BASE_AND_PROJECT_FRESH_READ_IS_ROUTING_INPUT` · `NO_PROJECT_CHAT_INSTRUCTION_FILE_ATTACHMENT_REQUIRED` · `CURRENT_BASE_ROUTER_AND_SPECIALIST_OWNERS_PROGRESSIVE_LOAD` · `EXACT_PROJECT_IDENTITY_REQUIRED` — 표준 routine 입력은 `[프로젝트명] 작업 재개. Base 최신 main과 프로젝트 고유 GitHub·Notion·actual implementation을 fresh-read하고, 현재 5단계 위치를 복원한 뒤 다음 안전 작업부터 진행해.`다. exact Project와 필수 source가 확인되면 이 한 줄이 current Starter·전문 owner를 progressive-load하며 장문 지시문 첨부는 필요 없다. 범위·이미지·비용·권한·권리·공개 배포 Gate를 우회하지 않으며 확인 불가 시 `BLOCKED_UNVERIFIED`다.
+
+`MINIMAL_PROJECT_RESTART_ONE_LINE_ENTRY` · `BASE_AND_PROJECT_FRESH_READ_IS_ROUTING_INPUT` · `NO_PROJECT_CHAT_INSTRUCTION_FILE_ATTACHMENT_REQUIRED` · `CURRENT_BASE_ROUTER_AND_SPECIALIST_OWNERS_PROGRESSIVE_LOAD` · `EXACT_PROJECT_IDENTITY_REQUIRED`
+
+표준 routine 입력은 다음 한 줄이다.
+
+> `[프로젝트명] 작업 재개. Base 최신 completed main과 프로젝트 repository exact SHA·actual implementation을 fresh-read하고, 현재 5단계 위치를 복원한 뒤 다음 안전 작업부터 진행해.`
+
+exact Project와 필수 source가 확인되면 이 한 줄이 current Starter·전문 owner를 progressive-load한다. 범위·이미지·비용·권한·권리·공개 배포 Gate를 우회하지 않으며 확인 불가 시 `BLOCKED_UNVERIFIED`다.
+
 ## 1. 권위와 로드 순서
 
 ```text
 사용자의 최신 명시 지시
-→ Project AGENTS / Active Context / 승인 Decision
-→ Project GitHub·Notion 분야별 current canon
+→ Project AGENTS / START_HERE / Active Context / 승인 Decision
+→ Project repository exact SHA의 structured/runtime canon
 → 실제 code/data/Scene/Resource/asset/test/runtime evidence
 → Project가 채택한 current Base owner
 → Base latest completed main
-→ 과거 채팅·Memory·handoff
+→ 과거 채팅·Memory·handoff·PDF
 ```
 
 ```text
-1. exact Project identity / GitHub / Notion / actual implementation
+1. exact Project identity / repository / exact SHA / actual implementation
 2. Base latest main / root AGENTS / current Skill Registry inventory
-3. WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md
-4. WORK_PROJECT_START_CANON_CHECKLIST.md
-5. WORK_FIVE_PHASE_VERTICAL_SLICE_EXECUTION_CONTRACT.md
-6. WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md
-7. WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md when explicitly delegated
-8. WORK_EXECUTION_EVIDENCE_IDENTITY_INTEGRITY.md
-9. trigger되는 current Base·Project 전문 owner
+3. docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md
+4. docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json
+5. WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md
+6. WORK_PROJECT_START_CANON_CHECKLIST.md
+7. WORK_FIVE_PHASE_VERTICAL_SLICE_EXECUTION_CONTRACT.md
+8. WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md when delegated
+9. WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md for legacy consumer compatibility when needed
+10. WORK_EXECUTION_EVIDENCE_IDENTITY_INTEGRITY.md
+11. trigger되는 current Base·Project 전문 owner
+12. actual migration scope일 때만 legacy Notion/Sheet unique source
 ```
 
 과거 대화와 Memory는 discovery 후보일 뿐이다. 충돌하면 `CONTEXT_DRIFT_RECHECK_REQUIRED`로 되돌린다.
-`LEGACY_INSTRUCTION_ATTACHMENT_NOT_ROUTINE_INPUT` · `LEGACY_INSTRUCTION_IS_DISCOVERY_ONLY_NOT_CURRENT_CANON` · `UNMIGRATED_UNIQUE_LEGACY_INSTRUCTION_CONTENT_MUST_BE_RECONCILED` · `NO_SILENT_DROP_OF_PROJECT_SPECIFIC_UNIQUE_RULES` — 과거 지시문은 discovery-only다. 아직 정본에 없는 유효한 고유 규칙은 한 번 Project/Base current canon으로 reconcile한 뒤 historical 처리하며, 읽지 않은 unique 내용을 이관됐다고 추측하거나 버리지 않는다.
+
+`LEGACY_INSTRUCTION_ATTACHMENT_NOT_ROUTINE_INPUT` · `LEGACY_INSTRUCTION_IS_DISCOVERY_ONLY_NOT_CURRENT_CANON` · `UNMIGRATED_UNIQUE_LEGACY_INSTRUCTION_CONTENT_MUST_BE_RECONCILED` · `NO_SILENT_DROP_OF_PROJECT_SPECIFIC_UNIQUE_RULES`
+
+과거 지시문·Notion·Sheet는 discovery/migration source다. 아직 repository 정본에 없는 유효한 고유 규칙은 한 번 current canon으로 reconcile한 뒤 historical 처리하며, 읽지 않은 unique 내용을 이관됐다고 추측하거나 버리지 않는다.
+
 ## 2. 프로젝트 native state → 5단계 매핑
 
 `WORK_FIVE_PHASE_VERTICAL_SLICE_EXECUTION_CONTRACT.md`를 사용자용 lifecycle interface로 사용한다.
@@ -63,7 +80,9 @@ current stage / active Slice / accepted frontier
 남은 required work
 dependency·player value·risk 기반 작업순서
 stale·duplicate·conflict·missing canon
-GitHub structured / Notion human canon readback
+repository Decision/spec/data/manifest/handoff readback
+source-SHA-bound Human GDD PDF freshness when applicable
+legacy migration counters when applicable
 ```
 
 새 core meaning이 남으면 current Grill Me owner와 benchmark·최소 3개 대안으로 사용자와 공동설계한다. routine 승인 위임은 새 핵심 재미·Core Loop·핵심 시스템·주요 UX·경제·서사·Art Direction 승인 권한이 아니다.
@@ -83,23 +102,21 @@ Phase 1 confirmed planning
 → USER_VALIDATED_VERTICAL_SLICE or bounded phase reopen
 ```
 
-작은 누락마다 왕복하지 않고, 실제 구현이 필요할 때 current Codex handoff owner로 전환한다.
+Codex는 `CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA`로 시작하고 승인 Visual은 `APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`로 소비한다. 작은 누락마다 왕복하지 않고, 실제 구현이 필요할 때만 current Codex handoff owner로 전환한다.
 
-## 5. Project-local Visual opt-in
-
-사용자가 이미지 binary를 각 프로젝트가 소유하도록 명시하면:
+## 5. Project-local Visual binary — current default
 
 ```text
-WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md
 PROJECT_LOCAL_VISUAL_BINARY_FIRST
-NOTION_VISUAL_STRUCTURE_REFERENCE_ONLY
 NO_NOTION_BINARY_UPLOAD_REQUIRED
+APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST
 ```
 
 ```text
-Notion 구조·Art Direction fresh-read
+actual runtime consumer
 → project-local candidate
 → format/dimensions/SHA-256/provenance/rights readback
+→ user current-use approval
 → PROJECT_ASSET_APPROVED
 → tracked project asset + ASSET_MANIFEST
 → commit/push/remote readback
@@ -107,7 +124,9 @@ Notion 구조·Art Direction fresh-read
 → runtime consumer evidence
 ```
 
-Notion text/status를 수정했으면 readback한다. binary를 올리지 않았으면 업로드했다고 주장하지 않는다. Project별 binary owner가 있으면 그 결정이 우선한다.
+`NOTION_VISUAL_STRUCTURE_REFERENCE_ONLY`는 legacy compatibility token이다. Notion에만 고유 Art Direction/Visual 자료가 남았을 때 migration discovery에 한해 읽을 수 있으며, 신규 binary upload·중간 승인·Codex handoff에 Notion을 요구하지 않는다.
+
+`WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md`는 이 경로를 이미 참조하는 기존 consumer의 compatibility detail이다. 새 프로젝트는 active V4 workspace contract를 직접 따른다.
 
 ## 6. Evidence identity
 
@@ -122,6 +141,7 @@ LOCAL_VISUAL_CANDIDATE != PROJECT_ASSET_APPROVED != RUNTIME_PROMOTED
 AUTOMATED_VERTICAL_SLICE_READY != USER_VALIDATED_VERTICAL_SLICE
 local commit != remote synchronized
 machine QA != Human usability != Player Experience
+PDF source SHA current != human comprehension verified
 ```
 
 player-facing bytes 또는 package 설정이 바뀌면 영향 후보를 supersede하고 필요한 Gate를 다시 수행한다.
@@ -176,4 +196,4 @@ PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN
 
 ## 9. Project-specific 값
 
-프로젝트명·캐릭터·세계관·특정 PR/Issue/Task/Decision·SHA·경로·해상도·HUD·palette·Art Style·완료 목록·우선순위는 exact Project canon에서 fresh-read하며 이 router에 고정하지 않는다. 비게임 프로젝트는 engine evidence를 `NOT_APPLICABLE`로 두고 domain production에 맞게 5단계를 적용한다.
+프로젝트명·캐릭터·세계관·특정 PR/Issue/Task/Decision·SHA·경로·해상도·HUD·palette·Art Style·완료 목록·우선순위는 exact Project repository에서 fresh-read하며 이 router에 고정하지 않는다. 비게임 프로젝트는 engine evidence를 `NOT_APPLICABLE`로 두고 domain production에 맞게 5단계를 적용한다.
