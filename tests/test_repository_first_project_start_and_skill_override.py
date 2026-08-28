@@ -145,6 +145,52 @@ class RepositoryFirstProjectStartAndSkillOverrideTests(unittest.TestCase):
             intake["replacement"],
         )
 
+    def test_planning_design_visual_and_engine_policies_are_partially_superseded(self) -> None:
+        data = json.loads(
+            text("docs/operations/REPOSITORY_FIRST_WORKSPACE_SUPERSESSION_MAP.json")
+        )
+        by_path = {entry["path"]: entry for entry in data["entries"]}
+
+        expectations = {
+            "skills/managing-design-documents/SKILL.md": (
+                "content-modeling, UX-flow and data-owner checks",
+                "Notion Project Home as the mandatory human-facing publishing destination",
+                "AI_DETAILED_PLANNING_IMPLEMENTATION_MARKDOWN",
+            ),
+            "docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md": (
+                "one-question Grill Me discipline",
+                "NOTION_HUMAN_FACING_CANON as required Decision destination",
+                "repository CURRENT_CONFIRMED_DECISIONS and domain-owner update",
+            ),
+            "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md": (
+                "planning sequence and evidence tiers",
+                "NOTION_HUMAN_FACING_CANON as the default planning surface",
+                "REPOSITORY_PRIMARY_PROJECT_CANON baseline recovery",
+            ),
+            "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md": (
+                "explicit image-request approval gate",
+                "Notion attachment or Asset record as implementation readiness",
+                "REPOSITORY_PATH_MANIFEST_SHA256_READBACK",
+            ),
+            "docs/VISUAL_COLLABORATION_TOOL_POLICY.md": (
+                "intermediate visual checkpoint state semantics",
+                "NOTION_DEFAULT_PROJECT_WORKSPACE as the current default surface",
+                "HUMAN_GDD_PDF_DERIVED_VIEW",
+            ),
+            "docs/knowledge/game-development/ENGINE_BASELINE_AND_ADAPTER_POLICY.md": (
+                "stable engine baseline and no automatic latest following",
+                "NOTION_HUMAN_FACING_CANON token as the current human authority",
+                "REPOSITORY_PRIMARY_PROJECT_CANON",
+            ),
+        }
+
+        for path, (retained, superseded, replacement) in expectations.items():
+            entry = by_path[path]
+            self.assertEqual("PARTIAL_SUPERSESSION", entry["status"])
+            self.assertIn(retained, entry["retained_use"])
+            self.assertIn(superseded, entry["superseded"])
+            self.assertIn(replacement, entry["replacement"])
+
     def test_long_horizon_and_decision_sync_keep_non_workspace_safety(self) -> None:
         data = json.loads(
             text("docs/operations/REPOSITORY_FIRST_WORKSPACE_SUPERSESSION_MAP.json")
