@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ACTIVE_CONTRACT = ROOT / "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json"
 ACTIVE_POLICY = ROOT / "docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md"
+CODEX_POLICY = ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md"
 MIGRATION_CHECKLIST = ROOT / "templates/project-operations/NOTION_TO_REPOSITORY_MIGRATION_CHECKLIST.md"
 
 
@@ -113,6 +114,57 @@ class RepositoryFirstWorkspaceContractTests(unittest.TestCase):
         self.assertNotIn(
             "새 프로젝트와 새 기획·시각 작업의 기본 인간 작업면은 `NOTION_DEFAULT_PROJECT_WORKSPACE`",
             readme,
+        )
+
+    def test_start_here_cold_start_does_not_require_notion(self) -> None:
+        start_here = text("START_HERE.md")
+
+        for token in (
+            "docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md",
+            "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json",
+            "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
+            "REPOSITORY_PRIMARY_CANON",
+            "HUMAN_GDD_PDF_DERIVED_VIEW",
+            "NO_NEW_NOTION_WRITE_BY_DEFAULT",
+            "NOTION_DEFAULT_PROJECT_WORKSPACE_RETIRED",
+            "ASSET_MANIFEST.json",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, start_here)
+
+        self.assertNotIn(
+            "→ exact Project Notion Home·filtered human-facing surfaces",
+            start_here,
+        )
+        self.assertNotIn(
+            "기본 사람용 프로젝트 작업면은 `NOTION_DEFAULT_PROJECT_WORKSPACE`다",
+            start_here,
+        )
+
+    def test_codex_policy_rehydrates_exact_repository_and_manifest(self) -> None:
+        codex = text(CODEX_POLICY)
+
+        for token in (
+            "CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA",
+            "CODEX_VISUAL_INPUT_REPOSITORY_MANIFEST_ONLY",
+            "APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST",
+            "NO_NEW_NOTION_WRITE_BY_DEFAULT",
+            "exact_source_sha",
+            "asset_manifest",
+            "approved_repository_visuals_consumed",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, codex)
+
+        self.assertIn("CODEX_REHYDRATE_PROJECT_GITHUB_AND_NOTION_RETIRED", codex)
+        self.assertIn("CODEX_VISUAL_INPUT_NOTION_APPROVED_ONLY_RETIRED", codex)
+        self.assertNotIn(
+            "→ Codex가 해당 프로젝트의 GitHub + Notion을 fresh-read",
+            codex,
+        )
+        self.assertNotIn(
+            "Codex가 사용할 수 있는 것은 현재 용도로 승인되고 Notion에 실제 업로드·attach·readback된 Visual뿐이다",
+            codex,
         )
 
     def test_active_policy_defines_two_artifacts_and_noncanon_surfaces(self) -> None:
