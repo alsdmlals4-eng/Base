@@ -4,40 +4,48 @@
 
 | Work Mode | Owner | 핵심 목적 |
 |---|---|---|
-| `PLAN` | GPT | 의도·요구·근거·기획·Notion·Visual·Acceptance 확정 |
-| `NONCODING_BUILD` | GPT | Base/Notion/문서/정본/표/이미지/운영 교정 |
+| `PLAN` | GPT | 의도·요구·근거·repository 기획 정본·Visual·Acceptance 확정 |
+| `NONCODING_BUILD` | GPT | Base/repository 문서·Decision·spec·manifest·표·이미지·PDF·운영 교정과 legacy migration |
 | `GODOT_PRODUCT_BUILD` | Codex | 실제 게임 프로젝트의 Godot 제품 구현·코딩·runtime 연결 |
 | `REVIEW` | GPT | 결과 적대적 검토·증거·회귀·기획 일치 판정 |
 
-`BUILD`라는 단어만으로 Codex를 호출하지 않는다. 먼저 **비코딩/Base/Notion 작업인지, 실제 Godot 제품 구현인지** 분류한다.
+`BUILD`라는 단어만으로 Codex를 호출하지 않는다. 먼저 **비코딩/Base/repository planning/legacy migration 작업인지, 실제 Godot 제품 구현인지** 분류한다.
 
 ```text
 CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR
 BASE_GOVERNANCE_BUILD_IS_GPT
 NOTION_BUILD_IS_GPT
+NOTION_BUILD_SCOPE = LEGACY_MIGRATION_ONLY
+REPOSITORY_PLANNING_AND_CANON_BUILD_IS_GPT
 GODOT_PRODUCT_BUILD_IS_CODEX
 ```
+
+`NOTION_BUILD_IS_GPT`는 기존 consumer 호환 토큰이다. current 의미는 Notion을 새 기본 작업면으로 유지한다는 뜻이 아니라, Notion-only 고유 자료의 read-only inventory·repository 이관을 Codex에 넘기지 않는다는 뜻이다.
 
 ## 2. 기본 라우팅
 
 공용 정본: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
+Workspace authority: `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`
+Machine contract: `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`
 
 ```text
 사용자 Prompt
-→ current Project/Base/Notion/GitHub 정본 복원
+→ current Project/Base repository 정본 복원
+→ 실제 migration scope이면 legacy Notion/Sheet 고유 자료만 targeted read
 → GPT PLAN
 → 재사용 조사·벤치마킹·적대적 검토·IRG
-→ 기획/Flow/UI/UX/데이터/Visual/Acceptance 확정
+→ 기획/Flow/UI/UX/데이터/Visual/Acceptance를 repository 정본에 확정
 → 비코딩 교정이 있으면 GPT NONCODING_BUILD
+→ 필요 Gate에서 source-SHA-bound 사람용 상세 PDF 점검
 → 실제 Godot 제품 구현 필요 여부 판정
 
 Godot 제품 구현 없음
-→ GPT REVIEW / readback / 종료
+→ GPT REVIEW / repository readback / 종료
 
 Godot 제품 구현 있음
 → GPT가 프로젝트별 Codex 작업지시문 작성
 → CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF
-→ Codex가 해당 프로젝트 GitHub + Notion 재수화
+→ Codex가 exact repository SHA + project entrypoints + asset manifest 재수화
 → GODOT_PRODUCT_BUILD
 → test/runtime/play evidence
 → READY_FOR_GPT_REVIEW
@@ -51,7 +59,7 @@ BASE / NOTION / PLANNING / DOC / VISUAL → GPT
 ACTUAL GODOT PRODUCT IMPLEMENTATION → Codex
 ```
 
-이 분류는 파일 확장자가 아니라 제품 책임을 기준으로 한다.
+여기서 `NOTION`은 legacy migration scope이며 신규 일상 기획·승인·handoff를 Notion에 복제하는 active route가 아니다. 이 분류는 파일 확장자가 아니라 제품 책임을 기준으로 한다.
 
 ## 2B. Skill / Skill Mode 자동 선택
 
@@ -75,7 +83,7 @@ ACTUAL GODOT PRODUCT IMPLEMENTATION → Codex
 
 ## 2C. `CLAIM_AND_INTENT_VERIFICATION_GATE`
 
-사용자의 말·기존 보고·handoff에 포함된 **완료 주장과 실제 요청 의도**를 현재 정본·GitHub/Notion 상태·증거로 대조한 뒤 실행한다.
+사용자의 말·기존 보고·handoff에 포함된 **완료 주장과 실제 요청 의도**를 current repository 정본·PR·actual evidence로 대조한 뒤 실행한다.
 
 Reference: `skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md`
 
@@ -87,12 +95,13 @@ Reference: `skills/managing-project-intake-and-work-contract/references/continuo
 CLAIM_AND_INTENT_VERIFICATION_GATE
 → user intent / approved scope 복원
 → completion / implementation claim 분리
-→ current GitHub + Notion + evidence readback
+→ current repository exact SHA + evidence readback
+→ migration scope이면 legacy source와 repository receipt 대조
 → 사실과 의도 일치 여부 판정
 → 실제 owner로 route
 ```
 
-handoff summary나 과거 PASS를 current truth로 가정하지 않는다.
+handoff summary·과거 PASS·PDF·memory를 current truth로 가정하지 않는다.
 
 ## 3. Codex Trigger
 
@@ -114,10 +123,10 @@ Godot implementation/runtime/headless/play tests
 ```text
 Base 정책·Skill·Guide·Template
 Base Python contract test / CI policy / Registry / generated governance
-Notion 생성·편집·표·Flow·AI Workspace
-GDD·기획서·밸런스표·테크트리·병종표
+repository Decision·AI production spec·GDD·밸런스표·Flow·PDF
+Notion legacy inventory·이관
 벤치마킹·시장조사·검수
-이미지 생성·편집·승인
+이미지 생성·편집·승인·asset manifest 준비
 문제→교훈→Base 승격
 GitHub 비제품 문서/정본 교정
 ```
@@ -143,8 +152,8 @@ GitHub 비제품 문서/정본 교정
 - **`결정·권장안이 없는 설명형 칭찬·균형 요약`**만 full adversarial exclusion 가능하다.
 - **`L1 이상`** 중요한 기능·설계·아키텍처·정책·방향 결정과 중요 권장안은 PLAN 사전판정에서 `running-adversarial-review-and-refinement: attack → validate-critique → decision-report`를 적용한다.
 - finding은 먼저 validate한다.
-- 승인된 finding은 실제 owner의 BUILD에서 한 번만 구현·수정한다. 비코딩/Base/Notion finding은 GPT가 직접 교정하고, **실제 Godot 제품 finding만** Codex Build로 넘긴다.
-- 호환 lifecycle 표현인 **`refine-approved-findings`에서 분야 Skill BUILD로 한 번만 구현·수정**은 현재 owner 분류를 따른다. Base/Notion/noncoding은 GPT BUILD, 실제 Godot 제품 구현은 Codex Build다.
+- 승인된 finding은 실제 owner의 BUILD에서 한 번만 구현·수정한다. 비코딩/Base/repository planning/legacy migration finding은 GPT가 직접 교정하고, **실제 Godot 제품 finding만** Codex Build로 넘긴다.
+- 호환 lifecycle 표현인 **`refine-approved-findings`에서 분야 Skill BUILD로 한 번만 구현·수정**은 현재 owner 분류를 따른다. Base/Notion/noncoding은 GPT BUILD, 실제 Godot 제품 구현은 Codex Build다. 여기서 Notion은 legacy migration이다.
 - 구현된 finding은 GPT가 다시 중복 구현하지 않고 REVIEW의 `regression-recheck → decision-report`로 이동한다.
 - 사용자안과 AI 최초안을 동일 기준으로 평가하며 무조건 동의나 무조건 반대 요청보다 정본·증거를 우선한다.
 - 최소 5회의 완전한 전체 개선 루프 후 clean exit까지 계속한다.
@@ -157,7 +166,8 @@ review-scope-map
 → validate-critique
 → finding
    ├─ BASE_GOVERNANCE_CORRECTION → GPT
-   ├─ NOTION_OR_DOCUMENT_CORRECTION → GPT
+   ├─ REPOSITORY_CANON_OR_DOCUMENT_CORRECTION → GPT
+   ├─ NOTION_LEGACY_MIGRATION_CORRECTION → GPT
    ├─ PLANNING_OR_VISUAL_CORRECTION → GPT
    ├─ GODOT_PRODUCT_IMPLEMENTATION_CORRECTION → Codex
    ├─ USER_DECISION_REQUIRED
@@ -169,6 +179,8 @@ review-scope-map
 → whole-state re-attack
 ```
 
+`NOTION_OR_DOCUMENT_CORRECTION`은 retired compatibility alias이며 새 Notion workspace 구축을 의미하지 않는다.
+
 ## 6. GPT 권한
 
 GPT는 다음을 직접 수행한다.
@@ -176,9 +188,10 @@ GPT는 다음을 직접 수행한다.
 - 조사·벤치마킹·기획·Acceptance
 - Base/Project 정책·문서·Skill·Guide·Template
 - Base Registry/generated/CI/test contract 유지보수
-- Notion Home/Domain/AI System 생성·편집
-- 사람용 데이터표·Flow·Storyboard
-- 이미지 brief·생성·편집·검수·Notion 승인 전달
+- repository Decision·AI production spec·구조화 데이터·Flow·asset manifest 정리
+- 사람용 데이터표·Flow·Storyboard와 source-SHA-bound 상세 PDF
+- 이미지 brief·생성·편집·검수·사용자 승인·repository binary/manifest 전달
+- 기존 Notion-only 고유 자료의 read-only inventory·repository 이관
 - 문제/교훈 정리·Base 승격
 - GitHub 비제품 정본 교정
 - Codex 구현지시문 작성
@@ -238,19 +251,29 @@ GPT는 다음을 전달한다.
 ```yaml
 project:
 repository:
+base_branch:
+exact_source_sha:
 player_outcome:
 approved_scope: []
+explicit_non_scope: []
 protected_scope: []
 acceptance_criteria: []
-github_sources: []
-notion_sources: []
+repository_sources:
+  project_agents:
+  active_context:
+  confirmed_decisions: []
+  ai_production_spec:
+  current_handoff:
+  asset_manifest:
 approved_visual_records: []
 required_runtime_or_play_checks: []
 forbidden_changes: []
 change_proposal_boundary: []
 ```
 
-지시문은 구현 방법을 고정하지 않는다. Codex는 프로젝트 GitHub+Notion과 실제 Godot 구조를 읽고 승인된 결과를 보존하는 기술 구현 방법을 결정한다.
+지시문은 구현 방법을 고정하지 않는다. Codex는 exact project repository SHA와 실제 Godot 구조를 읽고 승인된 결과를 보존하는 기술 구현 방법을 결정한다.
+
+`github_sources`, `notion_sources`, `approved_notion_visuals_consumed`는 구형 consumer 호환 문자열이며 새 handoff schema에서는 각각 `repository_sources`, optional legacy migration receipt, `approved_repository_visuals_consumed`로 대체한다.
 
 ## 9. `CHANGE_PROPOSAL`
 
@@ -270,13 +293,13 @@ Codex가 다음을 바꿔야 구현 가능하면 GPT로 반환한다.
 Codex 구현 중 새 이미지 필요
 → WAITING_GPT_VISUAL
 → GPT_VISUAL_REQUEST
-→ GPT brief·제작·검수
-→ Notion current-use Approved + upload/attach/readback
-→ Codex fresh-read
+→ GPT brief·제작·검수·사용자 승인
+→ repository binary + SHA-256 + consumer + provenance + ASSET_MANIFEST readback
+→ Codex exact SHA fresh-read
 → Godot Product Build 재개
 ```
 
-Codex는 이미지 생성·생성형 편집·임의 AI placeholder를 만들지 않는다.
+Codex는 이미지 생성·생성형 편집·임의 AI placeholder를 만들지 않는다. Library·PDF·Notion preview는 runtime binary가 아니다.
 
 ## 11. `[연속작업] 진행해`
 
@@ -293,7 +316,7 @@ Codex 경로가 현재 없으면 Godot task만 DEFERRED_EXTERNAL_EXECUTOR
 
 **`기술적 단일 최소 안전 finding이면 자동 승인`**은 새 제품 결정을 자동 승인한다는 뜻이 아니다. 정본·테스트·표준으로 하나의 최소 안전 교정이 결정되고 기존 승인 범위 안에 있을 때만 적용한다.
 
-- 해당 finding이 **비코딩/Base/Notion**이면 GPT가 같은 승인 범위에서 직접 교정한다.
+- 해당 finding이 **비코딩/Base/repository planning/legacy Notion migration**이면 GPT가 같은 승인 범위에서 직접 교정한다.
 - 해당 finding이 **실제 Godot 제품 구현**이면 Codex가 구현하고 GPT가 `regression-recheck → decision-report`로 검수한다.
 - 진짜 사용자 결정·범위 확대·고위험 외부 행위만 새 승인 대상으로 올린다.
 
@@ -314,7 +337,8 @@ GPT 비코딩 작업:
 
 ```yaml
 result:
-  changed_base_or_notion_items: []
+  changed_base_or_repository_items: []
+  legacy_migration_items: []
   validation: []
   remaining_godot_implementation: []
   godot_verification:
@@ -338,12 +362,14 @@ Codex Godot 구현:
 
 ```yaml
 codex_result:
+  baseline_exact_source_sha:
+  final_head:
   changed_godot_files_and_reasons: []
   tests_passed: []
   tests_failed: []
   tests_not_run: []
   runtime_or_play_evidence: []
-  approved_notion_visuals_consumed: []
+  approved_repository_visuals_consumed: []
   visual_requests_waiting: []
   change_proposals: []
   status: READY_FOR_GPT_REVIEW | BLOCKED | WAITING_GPT_VISUAL
@@ -354,14 +380,15 @@ codex_result:
 다음은 잘못된 라우팅이다.
 
 - Base test/Registry/generated/CI를 “코드니까 Codex”로 넘김
-- Notion 작업을 Codex에 넘김
+- repository planning·PDF·Notion migration 작업을 Codex에 넘김
 - 기획·검수·이미지 작업을 Codex에 넘김
 - 모든 GitHub file mutation을 Codex Build로 분류
 - 실제 Godot 제품 구현을 GPT가 누적 구현
 - Codex가 이미지 생성
+- Codex가 GitHub+Notion dual canon을 기본 재수화 경로로 사용
 - Work가 시작하지 않았거나 소유권을 확인하지 못한 Godot·게임·debug/server process를 종료
 - Godot 직접 검증 뒤 cleanup 증거 없이 완료를 과장
 
 현재 역할은 다음 한 줄로 요약한다.
 
-> **GPT = 기획·검수·Base·Notion·문서·데이터표·이미지·작업지시문, Codex = 실제 게임 프로젝트의 Godot 구현·코딩·런타임 테스트.**
+> **GPT = 기획·검수·Base·repository canon·문서·데이터표·이미지·작업지시문과 Notion legacy migration, Codex = 실제 게임 프로젝트의 Godot 구현·코딩·런타임 테스트.**
