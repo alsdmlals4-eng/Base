@@ -75,9 +75,11 @@ class WorkProjectStartCanonChecklistContractTests(unittest.TestCase):
             "CORRECTION_BEFORE_PRODUCTION",
             "CHECKLIST_IS_ROUTING_RECEIPT_NOT_SECOND_CANON",
             "CURRENT / HISTORICAL / SUPERSEDED / CONFLICT / UNKNOWN_UNVERIFIED",
-            "GitHub structured canon",
-            "Notion human canon",
-            "destination readback",
+            "REPOSITORY_PRIMARY_CANON",
+            "repository_canon_readback:",
+            "asset_manifest_readback:",
+            "human_pdf_freshness_readback:",
+            "legacy_migration:",
             "USER_DECISION_REQUIRED",
             "READY_AFTER_CORRECTION | BLOCKED_UNVERIFIED",
         ):
@@ -121,6 +123,10 @@ class WorkProjectStartCanonChecklistContractTests(unittest.TestCase):
             "NO_FORCE_PUSH",
             "LOCAL_COMPUTER_CONTROL_DELEGATED",
             "AUTO_LAUNCH_GODOT_WHEN_CALLABLE",
+            "REPOSITORY_PRIMARY_CANON",
+            "CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA",
+            "APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST",
+            "NO_NEW_NOTION_WRITE_BY_DEFAULT",
         ):
             self.assertIn(token, bundle)
 
@@ -128,7 +134,11 @@ class WorkProjectStartCanonChecklistContractTests(unittest.TestCase):
         text = self._read(CHECKLIST)
         self.assertIn("project-specific 실행 receipt의 형식과 Gate", text)
         self.assertIn("CHECKLIST_IS_ROUTING_RECEIPT_NOT_SECOND_CANON", text)
-        self.assertIn("durable 사실과 결정은 분야별 GitHub structured canon과 Notion human canon이 소유", text)
+        self.assertIn(
+            "durable 사실과 결정은 project repository의 분야별 structured/runtime canon이 소유",
+            text,
+        )
+        self.assertIn("사람용 PDF와 이 receipt가 그 사실을 덮어쓰지 않는다", text)
 
     def test_work_order_is_dependency_and_player_value_driven(self) -> None:
         text = self._read(CHECKLIST)
@@ -145,6 +155,21 @@ class WorkProjectStartCanonChecklistContractTests(unittest.TestCase):
             "fallback_or_defer:",
         ):
             self.assertIn(token, text)
+
+    def test_legacy_notion_is_migration_only_not_a_startup_requirement(self) -> None:
+        checklist = self._read(CHECKLIST)
+        starter = self._read(STARTER)
+        for token in (
+            "NOTION_UNIQUE_CANON_COUNT",
+            "CODEX_NOTION_DEPENDENCY_COUNT",
+            "ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT",
+            "NO_NEW_NOTION_WRITE_BY_DEFAULT",
+        ):
+            self.assertIn(token, checklist + "\n" + starter)
+        self.assertNotIn(
+            "→ exact Project Notion Home / active Domain / Visual / Asset / Flow / Production",
+            starter,
+        )
 
 
 if __name__ == "__main__":
