@@ -16,10 +16,15 @@ HUMAN_PLAYER_EVIDENCE_SEPARATION_PRESERVED
 HOST_SYSTEM_TOOL_CONFIRMATION_PRECEDENCE
 DEFAULT_IMAGE_CONVERSATION_GATE_PRESERVED_WITHOUT_DELEGATION
 NO_AUTOMATIC_SCOPE_EXPANSION
+REPOSITORY_PRIMARY_CANON
+NO_NEW_NOTION_WRITE_BY_DEFAULT
+CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA
 ```
 
 Current detailed owners:
 
+- Workspace/canon/PDF/migration: `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`
+- Machine authority: `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`
 - Work continuation/recovery: `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`
 - Work↔Codex role and handoff: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
 - Visual production/approval: `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`
@@ -29,7 +34,7 @@ Current detailed owners:
 
 이 프로필은 위 owner의 두 번째 정본이 아니다. 세부 owner가 바뀌면 current Base owner가 이 adapter의 오래된 문구보다 우선한다.
 
-활성화에는 현재 사용자의 명시적 위임 evidence가 필요하다. 사용자가 routine 권장안 승인, 중간 정지 최소화, Work에서 actual game input 일괄 준비, Codex 단일 구현 window, machine QA 우선, Human QA 후속 보류를 명시해야 한다. evidence가 없거나 사용자가 더 좁은 제한을 주면 default Work v4.9와 default image approval이 유지된다.
+활성화에는 현재 사용자의 명시적 위임 evidence가 필요하다. routine 권장안 승인, 중간 정지 최소화, Work에서 actual game input 일괄 준비, Codex 단일 구현 window, machine QA 우선, Human QA 후속 보류를 명시해야 한다. evidence가 없거나 사용자가 더 좁은 제한을 주면 default Work v4.9와 default image approval이 유지된다.
 
 상위 system·developer·host·tool이 confirmation을 강제하면 `HOST_SYSTEM_TOOL_CONFIRMATION_PRECEDENCE`를 따른다. 이 profile은 host Gate, repository ruleset, account/security confirmation을 우회하지 않는다.
 
@@ -54,12 +59,15 @@ CONSOLIDATED_RETURN_PACKET
 ### Stage A — Work preparation
 
 ```text
-Project GitHub·Notion·Base fresh-read
+Project repository exact SHA·actual implementation·Base fresh-read
 → current Playable Slice 복원
 → Reuse-First + decision-relevant benchmark
 → 기획·규칙·UI/UX·data·Flow 검수 마감
 → actual-consumer Visual·Audio·VFX 입력 준비
+→ approved binary repository path + SHA-256 + manifest
 → provenance·rights·Acceptance·machine-QA scenario
+→ repository Decision/spec/data/handoff readback
+→ 필요 Gate에서 source-SHA-bound Human GDD PDF 점검
 → adversarial review + IRG
 → WORK_PRODUCTION_INPUT_PACKET readback
 → READY_FOR_SINGLE_CODEX_WINDOW
@@ -68,7 +76,7 @@ Project GitHub·Notion·Base fresh-read
 ### Stage B — Codex implementation
 
 ```text
-Project GitHub·Notion fresh-read
+exact Project repository SHA + entrypoints + ASSET_MANIFEST fresh-read
 → packet 소비
 → product code·Scene·Resource·runtime wiring 구현
 → 승인 범위 bug fix·reversible refactor
@@ -85,9 +93,11 @@ WORK_FINAL_EVIDENCE_REVIEW_BEFORE_USER_VALIDATION
 → actual diff·test·runtime evidence 검수
 → valid finding correction
 → impact-bounded revalidation
-→ GitHub·Notion canon/readback
+→ repository Decision/spec/data/manifest/evidence readback
 → exact-head PR gate·safe merge·new-main readback
+→ 필요 시 merged source SHA의 Human GDD PDF 재생성
 → scope-bounded remaining-work rescan
+→ legacy migration counters가 있으면 별도 상태 갱신
 → AUTOMATED_VERTICAL_SLICE_READY
 → READY_FOR_USER_VERTICAL_SLICE_VALIDATION
 ```
@@ -124,6 +134,10 @@ WORK_PRODUCTION_INPUT_PACKET:
   deterministic_test_requirements: []
   runtime_qa_scenarios: []
   build_or_export_checks: []
+  repository_decision_and_spec_locators: []
+  asset_manifest:
+  current_handoff:
+  human_gdd_pdf_when_required:
   required_canon_updates: []
   rollback:
   unresolved_nonblocking: []
@@ -138,6 +152,7 @@ Rules:
 - 여러 Slice·장기 roadmap·미래 content를 전환 절감 명목으로 합치지 않는다.
 - 승인된 player outcome과 보호 의미를 고정하되 Codex의 Node·함수·Scene 내부 기술 구조를 불필요하게 선행 고정하지 않는다.
 - blocking input 하나가 있어도 독립 Work 준비는 계속하고 마지막에 blocking batch를 판정한다.
+- Notion page/database/attachment를 Codex 구현의 필수 입력으로 만들지 않는다.
 
 ## 3. Actual in-game Visual, Audio, UI, Data, and VFX
 
@@ -145,7 +160,7 @@ Rules:
 PRODUCTION_INFORMATION != ACTUAL_GAME_INPUT
 ```
 
-제작자·AI용 설명은 text/table/DB/Flow owner에 둔다. Codex packet의 asset/spec은 concrete game/product consumer가 있어야 한다.
+제작자·AI용 설명은 repository Markdown/table/JSON/Flow owner에 둔다. Codex packet의 asset/spec은 concrete game/product consumer가 있어야 한다.
 
 ### 3.1 Delegated Visual production
 
@@ -155,6 +170,7 @@ BOUNDED_VISUAL_PRODUCTION_PACKET_REQUIRED
 CURRENT_SLICE_USE_ONLY
 DELEGATED_RECOMMENDED_DEFAULT_APPROVAL
 NO_ROUTINE_APPROVAL_STOPS
+APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST
 ```
 
 ```yaml
@@ -171,12 +187,15 @@ VISUAL_PRODUCTION_PACKET:
   excluded_scope: []
   objective_acceptance: []
   provenance_and_rights:
-  notion_destination:
-  repository_or_runtime_destination:
+  project_local_candidate_path:
+  project_owned_tracked_path:
+  asset_manifest_path:
+  sha256:
+  repository_commit_or_artifact:
   runtime_validation:
 ```
 
-명시적 delegation과 완전한 packet이 있으면 current Slice의 생성·선정·revision·Notion delivery를 per-result 질문 없이 진행할 수 있다. 생성 성공은 project asset approval, runtime consumption, Human/Player PASS가 아니다. upload/attach/readback, import, actual consumer, runtime QA가 별도 필요하다.
+명시적 delegation과 완전한 packet이 있으면 current Slice의 생성·선정·revision을 per-result 질문 없이 진행할 수 있다. 생성 성공은 project asset approval, runtime consumption, Human/Player PASS가 아니다. user current-use approval, tracked binary, manifest readback, import, actual consumer, runtime QA가 별도 필요하다.
 
 Art Direction master, 대표 캐릭터 identity master, 장기 store key art, 권리 불명확 자산, 승인 수량·consumer·Slice를 넘는 batch는 자동 위임 범위가 아니다.
 
@@ -199,8 +218,10 @@ AUDIO_PRODUCTION_PACKET:
   protected_audio_direction:
   excluded_scope: []
   provenance_and_rights:
-  notion_destination:
-  repository_or_runtime_destination:
+  project_owned_tracked_path:
+  sha256:
+  asset_manifest_path:
+  repository_commit_or_artifact:
   runtime_validation:
 ```
 
@@ -236,7 +257,7 @@ Auto-approved only inside the current approved Slice:
 - tunable default와 safe test range
 - bounded actual-consumer Visual/Audio candidate
 - 기술 구현 선택·국소 bug fix·reversible refactor
-- 누락 test·consumer·reference·small canon sync
+- 누락 test·consumer·reference·small repository canon sync
 - actual evidence가 결정하는 최소 안전 correction
 - evidence-equivalent fallback
 - current-task branch·PR·exact-head safe merge
@@ -268,8 +289,6 @@ high-risk item이 current Slice acceptance를 차단하면 automated readiness�
 
 ## 5. Stall signal and fallback ladder
 
-시간 숫자 하나가 아니라 진전 부재 evidence를 사용한다.
-
 ```text
 STALL_SIGNAL_ROUTE_SWITCH
 BOUNDED_RETRY_THEN_FALLBACK
@@ -277,7 +296,7 @@ EVIDENCE_EQUIVALENT_FALLBACK_ONLY
 DEFER_BLOCKED_TASK_CONTINUE_INDEPENDENT_READY_WORK
 ```
 
-Stall signals include repeated same-root-cause failure, no new evidence after bounded retry/readback, non-terminal external state without progress identity, repeated output transport failure, unavailable required executor, structurally incapable route, stale project/session/head.
+Stall signal은 repeated same-root-cause failure, no new evidence after bounded retry/readback, non-terminal external state without progress identity, repeated output transport failure, unavailable required executor, structurally incapable route, stale project/session/head다.
 
 ```text
 current-state readback
@@ -299,9 +318,10 @@ No infinite retry, source substitution by snippet/memory, permission bypass, new
 ```text
 CODEX_SINGLE_IMPLEMENTATION_WINDOW
 MINIMIZE_WORK_CODEX_TRANSITIONS
+CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA
 ```
 
-Codex fresh-reads current Project GitHub·Notion and executes the approved Slice continuously. Routine technical choices, reversible refactors, local bug fixes, fixtures, QA scenarios, and canon-resolvable small ambiguity do not bounce one-by-one to Work.
+Codex는 exact Project repository SHA·entrypoints·ASSET_MANIFEST를 fresh-read하고 approved Slice를 연속 실행한다. Routine technical choices, reversible refactors, local bug fixes, fixtures, QA scenarios, and canon-resolvable small ambiguity do not bounce one-by-one to Work.
 
 ```yaml
 CONSOLIDATED_RETURN_PACKET:
@@ -314,7 +334,7 @@ CONSOLIDATED_RETURN_PACKET:
   deterministic_tests_completed: []
   runtime_qa_completed: []
   build_or_export_checks: []
-  approved_visuals_consumed: []
+  approved_repository_visuals_consumed: []
   approved_audio_consumed: []
   missing_input_batch: []
   change_proposal_batch: []
@@ -327,7 +347,7 @@ CONSOLIDATED_RETURN_PACKET:
   work_reentry: NONE | FINAL_REVIEW | BLOCKING_INPUT_BATCH | HIGH_RISK_DECISION_BATCH
 ```
 
-Immediate Work re-entry is limited to an actually blocking input batch with no approved alternative, project/core meaning replacement, high-risk action, or final evidence review. Missing Visual/Audio is batched while independent implementation/test work continues; player-facing placeholders cannot fake acceptance.
+Immediate Work re-entry는 actual blocking input batch with no approved alternative, project/core meaning replacement, high-risk action, final evidence review에 한정한다. Missing Visual/Audio is batched while independent implementation/test work continues; player-facing placeholders cannot fake acceptance.
 
 ## 7. Machine QA first; Human QA deferred
 
@@ -348,7 +368,7 @@ Use the project’s adopted current authority:
 - adopted Hera: normal gameplay run/input, runtime state/UI inspection, diagnostics, screenshot and bounded visual diff
 - Hera pre/post tracked source delta: `NONE`
 
-Do not auto-install GUT/Hera merely because this profile exists. Existing Solution First, exact version compatibility, adoption record, rollback, and current owner apply. If GUT or Hera is not adopted, the current project must use an evidence-equivalent deterministic/runtime QA route; absence of an equivalent required route stays `NOT_RUN` and blocks automated readiness.
+Do not auto-install GUT/Hera merely because this profile exists. Existing Solution First, exact version compatibility, adoption record, rollback, and current owner apply. If GUT or Hera is not adopted, use evidence-equivalent deterministic/runtime QA; absence of an equivalent required route stays `NOT_RUN` and blocks automated readiness.
 
 Hera must not persistently mutate Scene/Node/Script/Resource/files, use diagnostic state cheating as normal-path acceptance, or turn screenshot diff into design/readability/fun approval.
 
@@ -387,7 +407,7 @@ ready task execute→verify→correct
 → remaining machine-executable work recalculate
 ```
 
-If remaining work is not zero, continue. At zero, re-scan actual implementation, planning/canon, Visual/Audio/Data consumers, deterministic tests, runtime/Hera/build evidence, PR/merge/readback, evidence ceiling, and high-risk blockers. Any valid finding reopens remaining work.
+If remaining work is not zero, continue. At zero, re-scan actual implementation, repository planning/canon, Visual/Audio/Data consumers, deterministic tests, runtime/Hera/build evidence, PR/merge/readback, PDF source identity when required, asset manifest, evidence ceiling, and high-risk blockers. Any valid finding reopens remaining work.
 
 Automated readiness is blocked by missing product implementation, missing required input/consumer, mandatory machine QA `NOT_RUN`, required merge/readback missing, high-risk acceptance blocker, or unresolved P0/P1/evidence overclaim.
 
@@ -418,7 +438,8 @@ latest-main reconciliation
 → high-risk blocker 0
 → repository-supported squash merge
 → new-main readback
-→ required GitHub·Notion readback
+→ required repository Decision/spec/data/manifest/handoff/evidence readback
+→ required source-SHA-bound PDF readback when applicable
 → post-merge adversarial review
 ```
 
@@ -468,3 +489,15 @@ blocking finding = 0
 AUTOMATED_VERTICAL_SLICE_READY
 READY_FOR_USER_VERTICAL_SLICE_VALIDATION
 ```
+
+## 11. Legacy migration boundary
+
+Notion/Sheet에만 고유 자료가 남은 project에서는 Work/GPT가 별도 migration receipt로 다음을 추적한다.
+
+```text
+NOTION_UNIQUE_CANON_COUNT
+CODEX_NOTION_DEPENDENCY_COUNT
+ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT
+```
+
+이 profile은 해당 자료를 무시하거나 삭제하지 않지만, Codex 구현과 routine current-Slice 완료를 위해 신규 Notion 쓰기·upload·dual sync를 복원하지 않는다.
