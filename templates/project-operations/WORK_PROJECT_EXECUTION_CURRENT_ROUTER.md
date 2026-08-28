@@ -9,17 +9,17 @@ DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE
 NO_NEW_NOTION_WRITE_BY_DEFAULT
 ```
 
-> 프로젝트 사실·세부 절차를 복제하지 않고 current owner와 사용자용 5단계 interface를 연결한다.
+> 프로젝트 사실과 세부 절차를 복제하지 않고, fresh-read 진입점과 current owner만 연결한다.
 
 `MINIMAL_PROJECT_RESTART_ONE_LINE_ENTRY` · `BASE_AND_PROJECT_FRESH_READ_IS_ROUTING_INPUT` · `NO_PROJECT_CHAT_INSTRUCTION_FILE_ATTACHMENT_REQUIRED` · `CURRENT_BASE_ROUTER_AND_SPECIALIST_OWNERS_PROGRESSIVE_LOAD` · `EXACT_PROJECT_IDENTITY_REQUIRED`
 
-표준 routine 입력은 다음 한 줄이다.
+표준 routine 입력:
 
 > `[프로젝트명] 작업 재개. Base 최신 completed main과 프로젝트 repository exact SHA·actual implementation을 fresh-read하고, 현재 5단계 위치를 복원한 뒤 다음 안전 작업부터 진행해.`
 
-exact Project와 필수 source가 확인되면 이 한 줄이 current Starter·전문 owner를 progressive-load한다. 범위·이미지·비용·권한·권리·공개 배포 Gate를 우회하지 않으며 확인 불가 시 `BLOCKED_UNVERIFIED`다.
+확인할 수 없으면 `BLOCKED_UNVERIFIED`다. 과거 대화·Memory·PDF는 current canon이 아니다.
 
-## 1. 권위와 로드 순서
+## 1. Fresh-read 권위 순서
 
 ```text
 사용자의 최신 명시 지시
@@ -31,30 +31,24 @@ exact Project와 필수 source가 확인되면 이 한 줄이 current Starter·�
 → 과거 채팅·Memory·handoff·PDF
 ```
 
-```text
-1. exact Project identity / repository / exact SHA / actual implementation
-2. Base latest main / root AGENTS / current Skill Registry inventory
-3. docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md
-4. docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json
-5. WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md
-6. WORK_PROJECT_START_CANON_CHECKLIST.md
-7. WORK_FIVE_PHASE_VERTICAL_SLICE_EXECUTION_CONTRACT.md
-8. WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md when delegated
-9. WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md for legacy consumer compatibility when needed
-10. WORK_EXECUTION_EVIDENCE_IDENTITY_INTEGRITY.md
-11. trigger되는 current Base·Project 전문 owner
-12. actual migration scope일 때만 legacy Notion/Sheet unique source
-```
+필수 owner:
 
-과거 대화와 Memory는 discovery 후보일 뿐이다. 충돌하면 `CONTEXT_DRIFT_RECHECK_REQUIRED`로 되돌린다.
+```text
+docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md
+docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json
+WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md
+WORK_PROJECT_START_CANON_CHECKLIST.md
+WORK_FIVE_PHASE_VERTICAL_SLICE_EXECUTION_CONTRACT.md
+WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md
+WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md
+WORK_EXECUTION_EVIDENCE_IDENTITY_INTEGRITY.md
+```
 
 `LEGACY_INSTRUCTION_ATTACHMENT_NOT_ROUTINE_INPUT` · `LEGACY_INSTRUCTION_IS_DISCOVERY_ONLY_NOT_CURRENT_CANON` · `UNMIGRATED_UNIQUE_LEGACY_INSTRUCTION_CONTENT_MUST_BE_RECONCILED` · `NO_SILENT_DROP_OF_PROJECT_SPECIFIC_UNIQUE_RULES`
 
-과거 지시문·Notion·Sheet는 discovery/migration source다. 아직 repository 정본에 없는 유효한 고유 규칙은 한 번 current canon으로 reconcile한 뒤 historical 처리하며, 읽지 않은 unique 내용을 이관됐다고 추측하거나 버리지 않는다.
+Notion·Sheet·구형 지시문은 고유 미이관 자료가 실제로 있을 때만 migration source로 읽는다. 신규 중간 쓰기나 두 번째 정본으로 복원하지 않는다.
 
-## 2. 프로젝트 native state → 5단계 매핑
-
-`WORK_FIVE_PHASE_VERTICAL_SLICE_EXECUTION_CONTRACT.md`를 사용자용 lifecycle interface로 사용한다.
+## 2. 프로젝트 상태를 5단계에 매핑
 
 ```text
 PHASE_1_PLANNING_CO_DESIGN
@@ -64,32 +58,27 @@ PHASE_1_PLANNING_CO_DESIGN
 → PHASE_5_USER_VERTICAL_SLICE_VALIDATION
 ```
 
-Project의 `PLAN / BUILD / REVIEW`, Task, Decision, DoR, candidate, Human gate는 rename하지 않는다. current owner와 실제 evidence를 `FIVE_PHASE_PROJECT_MAPPING`으로 연결하고 stale stage·next gate·evidence ceiling만 bounded correction한다.
+Project의 기존 Stage·Task·Decision 이름은 유지하고 `FIVE_PHASE_PROJECT_MAPPING`으로 현재 위치, next gate, evidence ceiling만 연결한다.
 
-## 3. 시작 전 정본 교정·핵심 기획
+## 3. 새 작업 전 교정
 
-새 production·Codex mutation 전에 `WORK_PROJECT_START_CANON_CHECKLIST.md`로 확인한다.
+`WORK_PROJECT_START_CANON_CHECKLIST.md`로 다음을 확인한다.
 
 ```text
 핵심 재미 / player promise / core-session-meta loop
 핵심·지원 시스템 / actual consumer
 meaningful choice / reward / failure learning
-evidence-based SWOT
 current stage / active Slice / accepted frontier
 구현·test·Visual·Audio 상태
-남은 required work
-dependency·player value·risk 기반 작업순서
-stale·duplicate·conflict·missing canon
+remaining required work / dependency·player value 순서
 repository Decision/spec/data/manifest/handoff readback
 source-SHA-bound Human GDD PDF freshness when applicable
 legacy migration counters when applicable
 ```
 
-새 core meaning이 남으면 current Grill Me owner와 benchmark·최소 3개 대안으로 사용자와 공동설계한다. routine 승인 위임은 새 핵심 재미·Core Loop·핵심 시스템·주요 UX·경제·서사·Art Direction 승인 권한이 아니다.
+stale·duplicate·conflict·missing canon은 승인 범위 안에서 먼저 교정한다. 새 core meaning·주요 UX·경제·서사·Art Direction·scope 변경만 `USER_DECISION_REQUIRED`다.
 
-## 4. Work↔Codex 최소 전환
-
-세부 packet·approval·QA·merge는 `WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md`를 따른다.
+## 4. Work↔Codex
 
 ```text
 Phase 1 confirmed planning
@@ -102,9 +91,9 @@ Phase 1 confirmed planning
 → USER_VALIDATED_VERTICAL_SLICE or bounded phase reopen
 ```
 
-Codex는 `CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA`로 시작하고 승인 Visual은 `APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`로 소비한다. 작은 누락마다 왕복하지 않고, 실제 구현이 필요할 때만 current Codex handoff owner로 전환한다.
+Codex는 `CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA`로 시작한다. 승인 Visual은 `APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`로 소비하며, Notion attachment를 기본 입력으로 요구하지 않는다.
 
-## 5. Project-local Visual binary — current default
+## 5. Visual binary
 
 ```text
 PROJECT_LOCAL_VISUAL_BINARY_FIRST
@@ -124,44 +113,21 @@ actual runtime consumer
 → runtime consumer evidence
 ```
 
-`NOTION_VISUAL_STRUCTURE_REFERENCE_ONLY`는 legacy compatibility token이다. Notion에만 고유 Art Direction/Visual 자료가 남았을 때 migration discovery에 한해 읽을 수 있으며, 신규 binary upload·중간 승인·Codex handoff에 Notion을 요구하지 않는다.
+`NOTION_VISUAL_STRUCTURE_REFERENCE_ONLY`는 legacy compatibility token이다. 고유 Visual 자료 이관 범위에서만 사용한다.
 
-`WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md`는 이 경로를 이미 참조하는 기존 consumer의 compatibility detail이다. 새 프로젝트는 active V4 workspace contract를 직접 따른다.
+## 6. Evidence identity·안전 자동화
 
-## 6. Evidence identity
-
-`WORK_EXECUTION_EVIDENCE_IDENTITY_INTEGRITY.md`로 분리한다.
+`WORK_EXECUTION_EVIDENCE_IDENTITY_INTEGRITY.md`가 다음 구분을 소유한다.
 
 ```text
 product baseline SHA != documentation/router sync SHA
-current validation HEAD != build/runtime candidate HEAD
 TEST_LOGIC_PASS != CI_GATE_PASS
-Godot import cache != product source
 LOCAL_VISUAL_CANDIDATE != PROJECT_ASSET_APPROVED != RUNTIME_PROMOTED
 AUTOMATED_VERTICAL_SLICE_READY != USER_VALIDATED_VERTICAL_SLICE
-local commit != remote synchronized
 machine QA != Human usability != Player Experience
-PDF source SHA current != human comprehension verified
 ```
 
-player-facing bytes 또는 package 설정이 바뀌면 영향 후보를 supersede하고 필요한 Gate를 다시 수행한다.
-
-## 7. 안전 자동화
-
-callable한 현재 Project 범위에서만 실행한다.
-
-```text
-remote/upstream/default branch 발견
-→ fetch
-→ clean·tracking·non-diverged일 때만 pull --ff-only
-→ current-task branch commit/push/remote readback
-→ PR / exact-head required checks / squash merge
-→ post-merge main readback
-
-exact project/worktree/engine/session
-→ adopted test/live-QA route
-→ runtime/screen/build evidence
-```
+현재 Project 범위에서만 fetch → safe ff-only pull → current-task branch push/readback → exact-head PR/check/squash merge → post-merge main readback을 수행한다.
 
 금지:
 
@@ -172,28 +138,17 @@ direct main / force push / blind stash·reset·clean·rebase
 새 유료 비용 / 공개 Release·스토어 게시
 ```
 
-## 8. 계속 실행과 완료
+## 7. 완료
 
 ```text
-bounded retry
-→ evidence-equivalent fallback
-→ 막힌 task만 defer
-→ 독립 ready work 계속
+bounded retry → evidence-equivalent fallback → blocked task만 defer
+→ independent ready work 계속
 → current phase required work = 0
 → completion rescan
 → 최소 5회 full-scope adversarial review
 → blocking finding 0
 ```
 
-Phase 4까지:
+Phase 4까지 `HUMAN_USABILITY_EVIDENCE: NOT_RUN`, `PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN`이다. 사용자 검증 전 다음 Slice로 자동 진입하지 않는다.
 
-```text
-HUMAN_USABILITY_EVIDENCE: NOT_RUN
-PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN
-```
-
-다운로드 가능한 internal build와 validation packet을 제공한다. 실제 사용자 검증 전 다음 Slice로 자동 진입하지 않는다.
-
-## 9. Project-specific 값
-
-프로젝트명·캐릭터·세계관·특정 PR/Issue/Task/Decision·SHA·경로·해상도·HUD·palette·Art Style·완료 목록·우선순위는 exact Project repository에서 fresh-read하며 이 router에 고정하지 않는다. 비게임 프로젝트는 engine evidence를 `NOT_APPLICABLE`로 두고 domain production에 맞게 5단계를 적용한다.
+프로젝트별 값은 exact Project repository에서 fresh-read하며 이 router에 고정하지 않는다.
