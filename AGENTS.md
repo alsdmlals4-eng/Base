@@ -22,7 +22,9 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - UI/UX 설계·폴리싱·실행 결과 감사: `auditing-and-refining-ui-art`
 - 문서 위치: `docs/DOCUMENTATION_MAP.md`
 - CI 비용/실행 계층: `docs/CI_EXECUTION_COST_POLICY.md`
-- Notion/Sheet migration: `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`
+- 프로젝트 정본·PDF·legacy migration: `docs/REPOSITORY_FIRST_PROJECT_WORKSPACE_POLICY.md` + `docs/operations/REPOSITORY_FIRST_PROJECT_WORKSPACE_CONTRACT.json`
+- GPT–Codex repository-first 인계: `docs/REPOSITORY_FIRST_GPT_CODEX_HANDOFF_POLICY.md`
+- Legacy Notion/Sheet migration compatibility: `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`
 - 플랫폼 심사·자산 권리·reference production: `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`
 - Godot 단일 저작 권위: `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`
 - PowerShell fresh shell: `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`
@@ -66,10 +68,12 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 ## 5. 비용·workspace·프로젝트 정본
 
 - **`ZERO_INCREMENTAL_COST_REQUIRED`**: 기본 경로는 추가 금전 지출 0이다. 포함된 구독 기능도 별도 **separately metered** API·credit·runner·storage·SaaS 과금으로 바뀌지 않는 범위에서만 사용한다. **pay-as-you-go**나 신규 유료 서비스는 승인 전 실행하지 않으며 불명확하면 `COST_GATE_BLOCKED`다.
-- `CURRENT_PAID_PLANS: GPT_PRO`, `PAID_PLAN_COUNT: 1`. 현재 기본 유료 플랜은 **GPT Pro** 하나다. **Notion**은 별도 유료 기능 없이 현재 범위에서 사용하고 다른 유료 기능은 **새 사용자 승인**이 필요하다.
-- 새 프로젝트·새 시각 기획의 사람용 기본 협업면은 `NOTION_DEFAULT_PROJECT_WORKSPACE`; 프로젝트별 Work/Asset/Screen/Reference/Benchmark는 `PROJECT_RELATION_REQUIRED`로 분리한다. runtime·구현 사실은 repository source와 실제 실행 증거가 소유한다.
-- `USER_FACING_GDD_WORKSPACE`는 현재 Notion 사람용 Project Home으로 라우팅하는 compatibility alias다. 기존 Google Sheets는 `COMPATIBILITY_ONLY` migration source이며 `PROPOSED_SHEET_CHANGE`를 승인 Decision으로 자동 승격하지 않는다.
-- Base 자체는 프로젝트 Sheet 동기화 대상이 아니다. HTML/Figma/Sheet를 독립 정본으로 복원하지 않는다.
+- `CURRENT_PAID_PLANS: GPT_PRO`, `PAID_PLAN_COUNT: 1`. 현재 기본 유료 플랜은 **GPT Pro** 하나다. Notion 유료 기능이나 별도 storage·API·SaaS는 기본 경로에 필요하지 않으며 새 비용은 **새 사용자 승인**이 필요하다.
+- 신규 프로젝트·신규 Slice의 기획·결정·표·Flow·승인 자산·구현 인계 기본 정본은 `REPOSITORY_PRIMARY_PROJECT_CANON`이다. 사람용 기본 결과는 exact commit에서 생성한 `HUMAN_GDD_PDF_DERIVED_VIEW`, AI용 정본은 `AI_DETAILED_PLANNING_IMPLEMENTATION_MARKDOWN`이다. PDF는 독립 정본이 아니다.
+- 데스크톱 GPT 작업면은 `CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON`, ChatGPT Library는 `CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON`이다. 대화·memory·Library에만 존재하는 현재 결정이나 구현 입력은 완료 정본이 아니다.
+- 승인 visual의 기본 구현 인계는 `REPOSITORY_PATH_MANIFEST_SHA256_READBACK`이다. 실제 consumer, repository path, approval/version, SHA-256, provenance와 implementation status가 일치해야 하며 Notion attachment 부재만으로 Codex를 막지 않는다.
+- 기존 Notion의 `NOTION_DEFAULT_PROJECT_WORKSPACE_LEGACY_ALIAS`와 기존 Google Sheets는 `LEGACY_READ_ONLY_MIGRATION_SOURCE`다. `PROJECT_RELATION_REQUIRED`를 보존해 고유 자료를 `UNIQUE / DUPLICATE / OBSOLETE / BLOCKED_UNVERIFIED`로 분류하고 destination readback 뒤에만 퇴역을 주장한다. 신규 Notion 쓰기와 GitHub+Notion 이중 동기화는 기본 요구가 아니다.
+- Base 자체는 프로젝트 Notion/Sheet 동기화 대상이 아니다. HTML/Figma/Notion/Sheet를 독립 정본으로 복원하지 않는다.
 - 기존 승인 이미지·자산은 별도 승인 없이 새 시안으로 제거·교체하지 않는다.
 
 ## 6. Existing Solution First·Godot·외부 도구
@@ -100,7 +104,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - 일반 변경은 `reviewing-and-validating-project-changes`, 실패 가정 공격은 `running-adversarial-review-and-refinement`, 정본·경로·ID·Schema 전파는 필요 시 `auditing-canonical-reference-freshness`로 검증한다.
 - 전체 로컬 계약은 `python tools/run_local_validation.py --trusted-history-commit <trusted-main-commit-sha>`로 실행하며 이동 ref가 아니라 검증한 40자 main SHA를 사용한다. 환경 미준비 skip을 pass로 바꾸지 않는다.
 - 사용자에게 PowerShell 실행이 필요하면 `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`를 적용한다.
-- `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`, `POSTMERGE_CORRECTION_REQUIRED`, `PROGRESS_READBACK_REQUIRED`로 merge 후 GitHub/Notion/readback과 남은 작업을 다시 확인한다.
+- `POSTMERGE_REPOSITORY_AND_DERIVED_VIEW_READBACK_LOOP`, `POSTMERGE_CORRECTION_REQUIRED`, `PROGRESS_READBACK_REQUIRED`로 merge 후 exact main의 repository owner·asset manifest·파생 PDF identity·legacy migration 잔여와 남은 작업을 다시 확인한다.
 
 ### 사용자 학습형 완료보고
 
