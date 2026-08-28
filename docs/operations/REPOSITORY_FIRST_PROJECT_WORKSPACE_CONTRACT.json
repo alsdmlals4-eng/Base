@@ -86,6 +86,7 @@
   "postmerge_readback": "POSTMERGE_REPOSITORY_AND_DERIVED_VIEW_READBACK_LOOP",
   "current_policy": "docs/REPOSITORY_FIRST_PROJECT_WORKSPACE_POLICY.md",
   "gpt_codex_handoff_policy": "docs/REPOSITORY_FIRST_GPT_CODEX_HANDOFF_POLICY.md",
+  "supersession_map": "docs/operations/REPOSITORY_FIRST_WORKSPACE_SUPERSESSION_MAP.json",
   "legacy_contracts": [
     "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json",
     "docs/GPT_CODEX_WORKFLOW_POLICY.md",
