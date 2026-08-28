@@ -3,6 +3,8 @@
 > Status: `PROJECT_TEMPLATE`
 > Authority: repository canonical Markdown
 > Human derivative: `HUMAN_GDD_PDF_DERIVED_VIEW`
+> Delivery profile: `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD`
+> User download policy: `PDF_ONLY_USER_DOWNLOAD`
 > Notion requirement: none by default
 
 ## 0. Canon identity
@@ -11,7 +13,10 @@
 project_id:
 project_name:
 canon_version:
+source_branch:
 source_commit:
+shared_id_registry_version:
+human_pdf_source_commit:
 last_approved_at:
 last_approved_by:
 project_agents_path: AGENTS.md
@@ -19,8 +24,32 @@ active_context_path: ACTIVE_CONTEXT.md
 confirmed_decisions_path: CURRENT_CONFIRMED_DECISIONS.md
 current_codex_handoff_path: docs/handoffs/CURRENT_CODEX_HANDOFF.md
 asset_manifest_path: assets/ASSET_MANIFEST.json
+human_pdf_output_path:
 supersedes:
 ```
+
+### SHARED_ID_AND_SOURCE_SHA_REQUIRED
+
+AI Markdown과 사람용 PDF는 같은 프로젝트 상태를 설명해야 한다.
+
+| ID Prefix | Domain | Canon owner | Human PDF section | Runtime consumer example |
+|---|---|---|---|---|
+| `SYS` | 시스템 | 이 문서의 system card 또는 등록된 system owner | 핵심 시스템 | Scene/Script/Resource |
+| `CNT` | 콘텐츠 | content catalog 또는 project data owner | 핵심 콘텐츠 | data/resource/spawner |
+| `UI` | 화면·컴포넌트 | UI owner map | UI/화면 | Control scene/theme |
+| `UX` | Flow·상호작용 | UX flow owner | UX Flow | input/state transition |
+| `AST` | 이미지·시각 asset | `ASSET_MANIFEST.json` | 시각 자료·에셋 | texture/sprite/material |
+| `AUD` | 음악·효과음 | audio manifest/data owner | 사운드·피드백 | AudioStream/AudioBus |
+| `DAT` | 데이터·상태 | data owner map | 데이터·밸런스 | JSON/Resource/save |
+| `QA` | Acceptance·검증 | acceptance table | 검증 상태 | test/runtime evidence |
+| `DEC` | 승인 결정 | confirmed decision owner | 중요 결정 | protected behavior |
+
+- 모든 ID는 프로젝트 안에서 안정적으로 유지하며 rename·merge·폐기 시 supersession을 기록한다.
+- AI Markdown과 PDF는 동일한 `source_branch`, 정확한 40자 `source_commit`, `shared_id_registry_version`을 사용한다.
+- `human_pdf_source_commit`이 이 문서의 `source_commit`과 다르면 PDF는 `STALE_DERIVED_VIEW`다.
+- PDF에만 신규 규칙·수치·asset approval·Decision을 만들지 않는다.
+- `DOCUMENTED`, `CONFIRMED`, `IMPLEMENTED`, `AUTOMATED_TEST_PASS`, `RUNTIME_VERIFIED`, `UX_VERIFIED`, `RELEASE_READY`를 서로 다른 상태로 기록한다.
+- `PDF_ONLY_USER_DOWNLOAD`: 사용자에게는 기본적으로 PDF만 다운로드 링크로 제공하고, 이 AI Markdown은 repository path·branch·exact commit·PR·validation result로 보고한다.
 
 ## 1. Project definition and player value
 
@@ -121,7 +150,7 @@ evidence_ceiling:
 
 | Content ID | 유형 | 플레이 역할 | 획득·등장 조건 | 시스템 소비처 | 변형·상태 | 구현 상태 |
 |---|---|---|---|---|---|---|
-| CONTENT-001 |  |  |  |  |  |  |
+| CNT-001 |  |  |  |  |  |  |
 
 ### Progression and economy
 
@@ -139,7 +168,7 @@ evidence_ceiling:
 
 | Screen ID | 화면 목적 | 진입 | 핵심 정보 | 주요 조작 | 상태·오류 | 다음 화면 | runtime consumer |
 |---|---|---|---|---|---|---|---|
-| SCREEN-001 |  |  |  |  |  |  |  |
+| UI-001 |  |  |  |  |  |  |  |
 
 ### Interaction states
 
@@ -166,7 +195,7 @@ evidence_ceiling:
 
 | Data ID | 의미 | 저장 형식 | canonical path | runtime consumer | migration/version | validation |
 |---|---|---|---|---|---|---|
-| DATA-001 |  |  |  |  |  |  |
+| DAT-001 |  |  |  |  |  |  |
 
 ### State model
 
@@ -185,7 +214,7 @@ save_load_boundary:
 
 | Asset ID | repository_path | actual_consumer | required states/variants | approval_status | version | sha256 | implementation_status |
 |---|---|---|---|---|---|---|---|
-| ASSET-001 |  |  |  |  |  |  |  |
+| AST-001 |  |  |  |  |  |  |  |
 
 ### Asset rules
 
@@ -195,6 +224,7 @@ save_load_boundary:
 - UI 상태 패밀리, 방향·애니메이션·피격·사망 등 필요한 상태 전체를 추적한다.
 - 사운드·VFX도 trigger, consumer, 상태와 구현 경로를 기록한다.
 - large editable master는 Library/local source에 둘 수 있으나 runtime input은 repository path와 manifest readback을 가져야 한다.
+- `NO_AUTOMATIC_IMAGE_GENERATION`: 사용자가 명시적으로 이미지 생성·편집을 요청하지 않았다면 누락을 기록하되 새 이미지를 만들지 않는다.
 
 ## 8. implementation_contract
 
@@ -234,16 +264,18 @@ Codex가 current repository truth에서 결정:
 
 | Claim ID | Acceptance | Automated evidence | Runtime evidence | Play/UX evidence | Current state | Evidence ceiling |
 |---|---|---|---|---|---|---|
-| AC-001 |  |  |  |  | NOT_RUN |  |
+| QA-001 |  |  |  |  | NOT_RUN |  |
 
 구분:
 
-- static/contract PASS;
-- automated test PASS;
-- runtime PASS;
+- `DOCUMENTED` / static contract 존재;
+- `CONFIRMED` / 사용자 또는 승인 결정 확정;
+- `IMPLEMENTED` / 실제 프로젝트 파일에 구현;
+- `AUTOMATED_TEST_PASS` / exact-head 자동 테스트;
+- `RUNTIME_VERIFIED` / 실제 Godot 실행;
 - visual/audio consumption PASS;
-- UX/player PASS;
-- release readiness.
+- `UX_VERIFIED` / 실제 사용·플레이 증거;
+- `RELEASE_READY` / 별도 출시 Gate 통과.
 
 하나가 다른 하나를 자동 증명하지 않는다.
 
