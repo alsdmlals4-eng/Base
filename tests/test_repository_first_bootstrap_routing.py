@@ -91,6 +91,25 @@ class RepositoryFirstBootstrapRoutingTests(unittest.TestCase):
         self.assertNotIn("DOMAIN_SPLIT_CANON", template)
         self.assertNotIn("NOTION_HUMAN_FACING_CANON", template)
 
+    def test_copilot_template_uses_repository_authority(self) -> None:
+        template = text("templates/copilot-instructions.md")
+        for token in (
+            "REPOSITORY_PRIMARY_PROJECT_CANON",
+            "AI_DETAILED_PLANNING_IMPLEMENTATION_MARKDOWN",
+            "HUMAN_GDD_PDF_DERIVED_VIEW",
+            "CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON",
+            "CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON",
+            "LEGACY_READ_ONLY_MIGRATION_SOURCE",
+            "EXACT_REPOSITORY_COMMIT",
+            "REPOSITORY_PATH_MANIFEST_SHA256_READBACK",
+            "GPT_VISUAL_REQUEST",
+        ):
+            self.assertIn(token, template)
+        self.assertIn("신규 Notion page/database/write/upload/sync/readback을 기본 작업이나 완료 조건으로 만들지 않는다", template)
+        self.assertNotIn("## DOMAIN_SPLIT_CANON", template)
+        self.assertNotIn("NOTION_HUMAN_FACING_CANON", template)
+        self.assertNotIn("Notion 승인·정적 mockup·문서 문구를 runtime 성공으로 간주하지 않는다", template)
+
     def test_custom_instruction_guide_routes_to_current_contract(self) -> None:
         guide = text("docs/CUSTOM_INSTRUCTIONS_GUIDE.md")
         for token in (
