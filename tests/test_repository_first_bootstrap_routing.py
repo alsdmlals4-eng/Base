@@ -69,6 +69,28 @@ class RepositoryFirstBootstrapRoutingTests(unittest.TestCase):
         self.assertNotIn("해당 프로젝트 저장소와 연결된 Notion에서 필요한 최신 정본", template)
         self.assertNotIn("승인된 결정이나 변경은 필요한 GitHub/Notion 정본에 동기화", template)
 
+    def test_codex_custom_instruction_template_uses_exact_repository_inputs(self) -> None:
+        template = text("templates/custom-instructions.codex.md")
+        for token in (
+            "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
+            "CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR",
+            "EXACT_REPOSITORY_COMMIT",
+            "REPOSITORY_PRIMARY_PROJECT_CANON",
+            "AI_DETAILED_PLANNING_IMPLEMENTATION_MARKDOWN",
+            "CURRENT_CODEX_HANDOFF",
+            "REPOSITORY_PATH_MANIFEST_SHA256_READBACK",
+            "NOTION_ABSENCE_IS_NOT_A_BLOCKER",
+            "GPT_VISUAL_REQUEST",
+            "READY_FOR_GPT_REVIEW",
+        ):
+            self.assertIn(token, template)
+        self.assertIn("Notion page, attachment 또는 readback이 없다는 이유만으로 구현을 막지 않는다", template)
+        self.assertNotIn("시작 시 CODEX_REHYDRATE_PROJECT_GITHUB_AND_NOTION", template)
+        self.assertNotIn("current-use 승인 + Notion upload/attach/readback된 Visual만 사용", template)
+        self.assertNotIn("approved Notion Visuals consumed", template)
+        self.assertNotIn("DOMAIN_SPLIT_CANON", template)
+        self.assertNotIn("NOTION_HUMAN_FACING_CANON", template)
+
     def test_custom_instruction_guide_routes_to_current_contract(self) -> None:
         guide = text("docs/CUSTOM_INSTRUCTIONS_GUIDE.md")
         for token in (
