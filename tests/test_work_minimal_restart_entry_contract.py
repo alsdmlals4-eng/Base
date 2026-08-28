@@ -24,10 +24,16 @@ class WorkMinimalRestartEntryContractTests(unittest.TestCase):
             "NO_PROJECT_CHAT_INSTRUCTION_FILE_ATTACHMENT_REQUIRED",
             "CURRENT_BASE_ROUTER_AND_SPECIALIST_OWNERS_PROGRESSIVE_LOAD",
             "EXACT_PROJECT_IDENTITY_REQUIRED",
+            "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
+            "NO_NEW_NOTION_WRITE_BY_DEFAULT",
         ):
             self.assertIn(token, router)
         self.assertIn(
-            "[프로젝트명] 작업 재개. Base 최신 main과 프로젝트 고유 GitHub·Notion·actual implementation을 fresh-read하고, 현재 5단계 위치를 복원한 뒤 다음 안전 작업부터 진행해.",
+            "[프로젝트명] 작업 재개. Base 최신 completed main과 프로젝트 repository exact SHA·actual implementation을 fresh-read하고, 현재 5단계 위치를 복원한 뒤 다음 안전 작업부터 진행해.",
+            router,
+        )
+        self.assertNotIn(
+            "[프로젝트명] 작업 재개. Base 최신 main과 프로젝트 고유 GitHub·Notion·actual implementation을 fresh-read",
             router,
         )
 
@@ -48,6 +54,8 @@ class WorkMinimalRestartEntryContractTests(unittest.TestCase):
             "INCIDENT_SOLUTION_LESSON_LOOP",
             "BASE_PROMOTION_DISPOSITION_REQUIRED",
             "DO_NOT_AUTO_ADVANCE_TO_NEXT_SLICE_BEFORE_USER_VALIDATION",
+            "CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA",
+            "APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST",
         ):
             self.assertIn(preserved_capability, starter)
 
