@@ -184,14 +184,34 @@ class RepositoryFirstProjectWorkspaceContractTests(unittest.TestCase):
             "actual_asset_consumers",
             "acceptance_and_evidence",
             "explicit_non_scope",
+            "SHARED_ID_AND_SOURCE_SHA_REQUIRED",
+            "shared_id_registry_version",
+            "human_pdf_source_commit",
+            "SYS / CNT / UI / UX / AST / AUD / DAT / QA / DEC",
+            "PDF_ONLY_USER_DOWNLOAD",
+            "REPOSITORY_PATH_BRANCH_COMMIT_PR_VALIDATION_ONLY",
+            "STALE_DERIVED_VIEW",
+            "NO_AUTOMATIC_IMAGE_GENERATION",
         ):
             self.assertIn(token, ai_spec)
         for token in (
+            "source_branch",
             "source_commit",
             "canon_version",
+            "shared_id_registry_version",
+            "ai_spec_source_commit",
             "included_scope",
             "evidence_ceiling",
             "HUMAN_GDD_PDF_DERIVED_VIEW",
+            "DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD",
+            "SHARED_ID_AND_SOURCE_SHA_REQUIRED",
+            "SYS / CNT / UI / UX / AST / AUD / DAT / QA / DEC",
+            "STALE_DERIVED_VIEW",
+            "PDF_ONLY_USER_DOWNLOAD",
+            "REPOSITORY_PATH_BRANCH_COMMIT_PR_VALIDATION_ONLY",
+            "NO_AUTOMATIC_IMAGE_GENERATION",
+            "NO_NOTION_OUTPUT",
+            "user_download_link_count: 1",
         ):
             self.assertIn(token, pdf)
         for token in (
