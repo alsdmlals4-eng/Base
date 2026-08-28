@@ -1,168 +1,159 @@
 # AGENTS.md
 
-이 파일은 현재 프로젝트의 최상위 작업 규칙이다. Base의 공용 원칙을 프로젝트의 엔진, 구조, 세계관, 용어, 금지 범위와 검증 방식에 맞게 분화한다.
+이 파일은 현재 프로젝트의 최상위 작업 규칙이다. Base 공용 원칙을 프로젝트의 엔진, 구조, 세계관, 용어, 보호 범위와 검증 방식에 맞게 분화한다.
 
-## Top-level continuity rule
+## 1. Top-level continuity rule
 
-새 채팅, 새 AI, 새 작업자가 과거 대화 없이 저장소만으로 프로젝트의 방향, 현재 상태, 다음 작업, 보호 범위, 책임 원본과 검증 방법을 찾을 수 있어야 한다.
+새 채팅, 새 GPT, 새 Codex와 새 작업자가 과거 대화 없이 **프로젝트 저장소만으로** 방향, 현재 상태, 다음 작업, 보호 범위, 책임 원본과 검증 방법을 찾을 수 있어야 한다.
 
-- 프로젝트 기획서는 핵심 경험·방향·범위·금지 방향을 책임진다.
+- 프로젝트 기획 정본은 핵심 경험·방향·범위·금지 방향을 책임진다.
 - Roadmap은 단계·우선순위·선행 조건·종료 기준을 책임진다.
-- Active Context는 현재 상태의 기본 원본이며 Handoff는 경계 시점의 스냅샷이다.
-- Documentation Map은 질문별 현행 책임 원본을 연결한다.
-- 같은 정보의 활성 복제본을 만들지 않는다.
+- Active Context는 현재 상태 원본이며 Handoff는 경계 시점 스냅샷이다.
+- Documentation Map과 registry는 질문별 current owner를 연결한다.
+- 같은 정보의 경쟁하는 활성 복제본을 만들지 않는다.
+- PDF·대화·memory·Library·legacy workspace를 repository current truth로 승격하지 않는다.
 
-## Project
+## 2. Project identity
 
 - Project name:
+- Repository:
+- Default branch:
 - Engine:
 - Language:
 - Genre:
+- Target platform:
 - Core player promise:
 - Pointed fun hypothesis:
 - Current concept·PoC stage:
-- Project definition of ambiguous terms such as DDD:
+- Ambiguous project terms:
 
-## Base and current authority bootstrap
+## 3. Base and current authority bootstrap
 
 - Base repository: `alsdmlals4-eng/Base`
 - Adopted Base version/freshness record: `docs/BASE_RULES_VERSION.md`
-- Project-local Base copy: 존재하는 경우에만 compatibility/cache로 사용하며 기준 commit·동기화 날짜를 확인한다.
+- Project-local Base copy: compatibility/cache가 있을 때만 사용하며 source commit과 동기화 날짜를 확인한다.
 
-`current Base` 규칙은 과거 고정 파일목록으로 추정하지 않는다. Base의 최신 `AGENTS.md`·`START_HERE.md`와 현재 Documentation Map/Skill Registry가 가리키는 최소 관련 owner를 읽는다. 프로젝트-local copy가 더 오래되면 최신 사용자 지시와 현재 프로젝트 정본을 보호한 채 freshness 차이를 명시하고 current Base와 reconcile한다.
+`current Base`는 과거 고정 파일 목록으로 추정하지 않는다. Base의 최신 completed `main`, `AGENTS.md`, `START_HERE.md`, current Documentation Map/Skill Registry와 현재 작업에 필요한 최소 owner를 확인한다. 프로젝트-local copy가 오래되면 최신 사용자 지시와 프로젝트 정본을 보호하며 current Base와 reconcile한다.
 
-## DOMAIN_SPLIT_CANON
-
-```text
-NOTION_HUMAN_FACING_CANON
-→ 사람이 읽고 비교·수정하는 프로젝트 개요·기획·Visual/Story Bible
-→ Asset/Reference/Benchmark catalog
-→ 사람용 budget/tier/roster/economy/progression table
-→ Flow / Storyboard / visual relationship surface
-
-REPOSITORY_STRUCTURED_CANON
-→ Markdown / JSON / game data / code / scene / resource / config / tests
-
-REPOSITORY_RUNTIME_TRUTH
-→ 실제 build / runtime / automated test / log / screenshot-video evidence
-
-Google Sheets
-→ MIGRATION_ONLY_UNTIL_REMOVAL
-→ unique unmigrated material이 남은 경우의 compatibility source only
-```
-
-Notion 승인·이미지 업로드·정적 mockup·Sheet row는 runtime 구현 증거가 아니다. Notion 변경이 structured/runtime 의미를 바꾸면 repository owner에 동기화한 뒤 구현·완료를 주장한다.
-
-## Notion operation gate
-
-세부 실행 원본은 `templates/project-operations/NOTION_OPERATION_GATE.md`다. 아래 항목은 cold-start 요약이며 충돌 시 세부 실행 원본을 우선한다.
-
-프로젝트의 지속 Notion 변경은 `NOTION_OPERATION_GATE`를 통과한다. 같은 화면처럼 보여도 영향 범위가 다르므로 write 전에 최소 다음 객체 범위를 분류한다.
+## 4. Repository-first project authority
 
 ```text
-PAGE_BLOCK
-DATABASE_RECORD
-VIEW_PRESENTATION
-DATA_SOURCE_SCHEMA_OR_RECORD
-DATABASE_GLOBAL_LAYOUT
-FILE_UPLOAD
-AUTOMATION_OR_WEBHOOK
+latest user instruction
+→ this AGENTS.md + project security / engine / data rules
+→ ACTIVE_CONTEXT + approved work contract + confirmed decisions
+→ registered repository canon + actual code/data/assets/tests/runtime evidence
+→ adopted current Base contract
+→ Base remote
+→ LEGACY_READ_ONLY_MIGRATION_SOURCE when unique material remains
+→ external references / past conversation / memory / inference
 ```
 
-기본 순서는 다음과 같다.
+### REPOSITORY_PRIMARY_PROJECT_CANON
 
 ```text
-정확한 Project / destination 확인
-→ current destination fetch/read
-→ database/data source면 schema와 정확한 property 이름 확인
-→ 영향 범위 분류
-→ smallest bounded edit
-→ write
-→ destination readback
-→ source mutation이면 source readback
-→ repository/runtime 의미가 바뀌면 repository owner 동기화
+AI_DETAILED_PLANNING_IMPLEMENTATION_MARKDOWN
+→ project meaning / systems / content / UX / data / implementation contract
+
+repository structured and runtime truth
+→ Markdown / JSON / game data / code / Scene / Resource / config
+→ tracked implementation asset / ASSET_MANIFEST
+→ tests / build / runtime / play evidence
+→ exact commit / PR / rollback history
+
+HUMAN_GDD_PDF_DERIVED_VIEW
+→ exact repository commit에서 생성한 사람용 상세 기획서 PDF
+
+CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON
+CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON
 ```
 
-- `VIEW_PRESENTATION` 변경을 source mutation처럼 보고하지 않고, source record/property/schema 변경을 단순 local view 변경처럼 보고하지 않는다.
-- 전체 page `replace_content`보다 targeted update/insert가 가능하면 작은 수정 방식을 우선한다.
-- child page/database를 지울 수 있는 `allow_deleting_content=true`는 자동 사용하지 않는다. 영향을 받는 child 목록을 확인한 뒤 **사용자 확인**이 있어야 한다.
-- database page layout처럼 전체 record family에 영향을 주는 변경은 단일 record polish 요청으로 수행하지 않는다.
-- write 호출 성공만으로 완료하지 않는다. 의도한 값·배치·Project relation이 남았는지 `destination readback`으로 확인한다.
-- connector/API persistence는 화면 geometry·모바일 표시·runtime 동작의 PASS가 아니다. 확인하지 못한 층은 `BLOCKED_UNVERIFIED` 또는 해당 evidence ceiling으로 남긴다.
-- Notion 조작용 AI/System metadata는 사람용 Home에 복제하지 않는다. Home에는 사람이 게임/프로젝트를 이해하고 판단하는 데 필요한 결과만 둔다.
+- PDF는 독립 정본이 아니다.
+- Work와 Library는 작업·참고·후보·PDF 보관 surface이며 repository version control을 대체하지 않는다.
+- 신규 Notion page/database/write/upload/sync/readback은 기본 workspace, 승인 Gate, Codex 인계 또는 완료 조건이 아니다.
+- 기존 Notion과 Google Sheets는 고유 미이관 자료가 있을 때만 `LEGACY_READ_ONLY_MIGRATION_SOURCE`로 읽는다.
+- 과거 `DOMAIN_SPLIT_CANON`, `NOTION_DEFAULT_PROJECT_WORKSPACE`, `NOTION_HUMAN_FACING_CANON`은 `LEGACY_DISCOVERY_ONLY` migration alias다.
 
-## Priority
-
-1. 최신 사용자 지시
-2. 이 `AGENTS.md`와 프로젝트 보안·엔진·데이터 규칙
-3. 프로젝트 Active Context와 승인된 작업 계약·확정 결정
-4. 등록된 분야별 책임 원본과 실제 파일·테스트·runtime evidence
-5. 프로젝트가 채택한 current Base 계약
-6. Base 원격 원본
-7. compatibility/legacy 자료
-8. 외부 자료·과거 대화·Memory·추정
-
-## Default reading order
+## 5. Default reading order
 
 작업 계약은 `github_issue` 또는 `approved_direct_request`다.
 
 ```text
-AGENTS.md
-→ 프로젝트 START_HERE / Active Context / Documentation Map
-→ 현재 승인 계약·Decision / Roadmap / 분야별 책임 원본
-→ 현재 작업에 필요한 Skill/router owner
-→ same Goal의 current open PR·최근 병합 PR 현황
-→ 실제 수정 대상·참조·테스트·runtime evidence
-→ 필요한 경우 adopted current Base owner 확인
+this AGENTS.md
+→ project START_HERE.md
+→ ACTIVE_CONTEXT.md
+→ CURRENT_CONFIRMED_DECISIONS.md
+→ Documentation Map / registry / current AI canon
+→ CURRENT_CODEX_HANDOFF / ASSET_MANIFEST when relevant
+→ same-Goal open and recent PR read-only reconciliation
+→ actual code / data / Scene / Resource / assets / tests / runtime evidence
+→ adopted current Base owner when required
+→ legacy Notion/Sheet only when unique migration input may remain
 ```
 
-`모두 확인`은 저장소 전체를 읽거나 모든 과거 Base 문서를 로드한다는 뜻이 아니다. Archive·backup·deprecated·migration-only 자료는 현재 질문에 필요한 경우에만 progressive-load한다.
+`모두 확인`은 저장소 전체와 모든 과거 Base 문서를 무작정 읽는다는 뜻이 아니다. Archive·backup·deprecated·migration-only 자료는 현재 질문에 필요할 때만 progressive-load한다.
 
-## Current PR protection
+## 6. Project-specific rules
 
-`current open PR`은 번호를 이 template에 고정하지 않는다. 작업 시작 시 실제 GitHub 상태를 조회하고 current Base의 open-PR protection/continuation 규칙을 적용한다. 다른 workstream의 open/draft/ready PR을 명시적 권한 없이 수정·흡수·종료·병합하지 않는다.
+- Project terminology:
+- Engine and language rules:
+- Scene/Node/Resource responsibility:
+- Data and save compatibility contract:
+- UI/UX and input rules:
+- Art/visual/audio rules:
+- Protected approved assets:
+- Story/canon protection:
+- Security/privacy rules:
+- Protected paths:
+- Forbidden structures:
+- Out-of-scope refactoring:
+- Preserve current user changes:
 
-## Required environment
+## 7. Request-to-work rule
 
-- 필수 도구·입력 파일:
-- 필수 계정·저장소 권한:
-- 설치·적용 확인 명령:
-
-필요한 도구·파일·폰트·인증·권한이 없으면 사용자에게 이유, 설치·적용 방법, 확인 명령과 최소 권한을 요청한다. 사용자 승인 없이 시스템 전역 설치·권한 확대·Branch protection 변경을 하지 않는다.
-
-## Project-specific rules
-
-- 프로젝트 전용 용어:
-- 엔진·언어 규칙:
-- 데이터·저장 계약:
-- UI·아트·연출 규칙:
-- 금지 구조:
-- 보호 경로:
-- 범위 밖 리팩터링 금지:
-- 정상 사용자 변경 보존:
-
-## Request-to-work rule
-
-기능·게임 경험·아트 방향·구조·워크플로 변경은 current Base의 통합 intake owner인 `managing-project-intake-and-work-contract`를 사용한다. Skill Registry가 successor/alias를 선언하면 current registry route를 따르되, 프로젝트 template에서 별도 intake Skill을 새로 만들지 않는다.
+기능·게임 경험·아트 방향·구조·workflow 변경은 current Base의 intake owner인 `managing-project-intake-and-work-contract`를 사용한다. Registry가 successor/alias를 선언하면 current route를 따른다.
 
 ```text
 route
-→ current repository/Notion facts 조사
-→ 필요한 경우 clarify
-→ 사용자 마지막 재진술 확인
-→ executable contract
+→ current repository facts and actual implementation
+→ reuse-first preflight
+→ current project identity and protected scope
+→ meaningful alternatives when required
+→ implementation reality gate
+→ bounded work contract
+→ user approval for material new decisions
+→ execution and evidence
 ```
 
-오탈자, 명확한 단일 파일 기계 수정, 입력이 같은 검사 재실행은 예외다. 인터뷰 Registry를 사용하는 프로젝트는 `CONFIRMED`와 사용자 확인 근거가 있을 때만 실행 계약을 확정한다.
+오탈자, 명확한 단일 파일 기계 수정, 입력이 같은 검사 재실행은 불필요하게 확대하지 않는다. 저장소에서 확인할 수 있는 사실은 사용자에게 다시 묻지 않는다.
 
 - Work contract type: `github_issue` / `approved_direct_request`
-- Current intake Skill/mode: `managing-project-intake-and-work-contract`
-- Interview ID·status·confirmation:
+- Current intake Skill/mode:
+- Approval reference:
 - Current executable contract:
+- Protected scope:
+- Explicit non-scope:
+- Rollback:
 
-## Core concept and PoC
+Skill의 legacy Notion-first clause가 current repository-first workspace owner와 충돌하면 current owner가 우선한다.
 
-핵심 컨셉·제약·뾰족한 재미·기획 요소 정렬·SWOT·MDA/DDE·PoC·기획 재조정은 current Base/project router가 지정한 game-concept Skill을 사용한다.
+## 8. Existing Solution First
+
+신규 또는 의미 있게 개정하는 시스템·데이터/콘텐츠 구조·UI/UX·시각/asset·도구·workflow·Skill·QA/Test는 다음 순서로 확인한다.
+
+```text
+current project implementation / assets / tests
+→ approved Project Asset / Reference / Benchmark
+→ adopted Base reuse / knowledge / cases
+→ directly related verified cross-project evidence
+→ decision-relevant external benchmark
+→ REUSE / ADAPT / REFERENCE_ONLY / NO_REUSE / BUILD_NEW
+```
+
+모든 프로젝트를 전수 검색하지 않는다. 프로젝트 정체성과 current canon이 Base reference보다 우선한다.
+
+## 9. Core concept and PoC
+
+핵심 컨셉·제약·뾰족한 재미·SWOT·MDA/DDE·PoC·기획 재조정은 current router가 지정한 game-concept Skill을 사용한다.
 
 ```text
 frame
@@ -176,96 +167,175 @@ frame
 ```
 
 - 기능 목록을 핵심 컨셉으로 대체하지 않는다.
-- SWOT은 SO·WO·ST·WT 실행안으로 변환한다.
-- `DDD`처럼 의미가 여러 개인 약어는 프로젝트 정의 없이 임의 해석하지 않는다.
 - PoC는 가장 위험한 가설의 최소 검증이며 전체 게임이나 Vertical Slice로 팽창시키지 않는다.
-- PoC 결과는 기획의 유지·증폭·변경·삭제·보류·재검증 결정에 반영한다.
+- PoC 결과는 유지·증폭·변경·삭제·보류·재검증 결정에 반영한다.
 
-## Project operating-system changes
+## 10. Desktop GPT two-artifact master GDD
 
-기존 프로젝트 구조 변경은 current Base/project operating-system Skill의 승인·보존·rollback 계약을 따른다.
+프로젝트 정본을 통합 상세 기획서로 정리할 때는 `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD`를 사용한다.
 
 ```text
-audit
-→ 목표 구조·보존·롤백 제안
-→ 사용자 승인
-→ 승인된 처리표만 migrate
-→ verify
+EXACTLY_TWO_DELIVERABLES
+├─ HUMAN_MASTER_GDD_PDF
+└─ AI_PRODUCTION_SPEC_MARKDOWN
 ```
 
-사용자 승인 전 대량 삭제·이동·통합·강제 개명을 하지 않는다.
+- 사용자 기본 다운로드: `PDF_ONLY_USER_DOWNLOAD`.
+- AI Markdown은 repository path·branch·exact commit SHA·PR·validation result로 보고한다.
+- PDF와 AI Markdown은 같은 `SYS / CNT / UI / UX / AST / AUD / DAT / QA / DEC` ID와 source SHA를 사용한다.
+- 두 산출물에 플레이어 가치, Core/Session/Meta Loop, 핵심·서브 시스템, 콘텐츠, UX/UI, 데이터·상태, 실제 asset/audio/VFX consumer, Godot Scene/Node/Script/Resource 구현 원리, Acceptance와 evidence ceiling을 포함한다.
+- PDF review에서 승인된 변경은 repository canon에 먼저 반영한다.
+- 별도 DOCX·ZIP·appendix·image bundle·Notion output을 기본 생성하지 않는다.
+- 이미지 생성·편집은 사용자가 명시적으로 요청했을 때만 진행한다.
 
-## Design documents and publication
+## 11. Asset and visual contract
 
-기획 책임 원본은 프로젝트 Documentation Map에 등록된 current owner에서 작성·갱신한다.
+이미지·사운드·VFX 요구는 실제 game consumer, screen/scene/object/action/state에서 역산한다.
 
-- `source_only`
-- `milestone_sync`
-- `always_sync`
+`REPOSITORY_PATH_MANIFEST_SHA256_READBACK` 최소 필드:
 
-한 질문에 경쟁하는 활성 원본을 만들지 않는다. 사람용 비교·시각 표면은 Notion, structured/runtime 원본은 repository라는 `DOMAIN_SPLIT_CANON`을 우선한다. DOCX·PDF는 명시적으로 publication artifact인 경우가 아니면 독립 정본으로 수정하지 않는다.
+```text
+asset_id
+repository_path
+actual_consumer
+approval_status
+version
+sha256
+source_or_provenance
+rights_or_license_state
+implementation_status
+supersedes_or_replaced_by
+```
 
-## Validation
+- candidate/reference/rejected와 current-use approved runtime asset을 구분한다.
+- Notion preview나 attachment만으로 implementation-ready가 아니다.
+- repository asset과 manifest가 없으면 `GPT_VISUAL_REQUEST` 또는 명시적 blocker다.
+- 사용자가 명시하지 않은 새 이미지 생성·교체를 자동 승인으로 해석하지 않는다.
 
-일반 변경은 현재 작업 계약과 실제 diff·실행 증거를 대조한다.
+## 12. GPT–Codex role boundary
 
-- Contract·diff check:
-- Format·lint:
+GPT는 기획·조사·검수·명시적으로 승인된 이미지 작업·repository AI canon·Codex handoff·최종 검수를 담당한다.
+
+Codex는 actual Godot product implementation이 필요한 `PLAY_MEANINGFUL_WORK_SLICE`에서만 진입한다.
+
+```text
+repository AI canon and current handoff
+→ EXACT_REPOSITORY_COMMIT
+→ actual code/data/Scene/Resource/asset/test fresh-read
+→ bounded Godot implementation
+→ automated/runtime/play evidence
+→ READY_FOR_GPT_REVIEW
+→ CANON_SYNC_AFTER_VALIDATION
+```
+
+Notion 부재만으로 Codex를 막지 않는다. 코어·경제·주요 UX·서사·Art Direction·승인 asset 의미·플랫폼/비용/보안 경계 변경이 필요하면 `CHANGE_PROPOSAL`로 반환한다.
+
+## 13. Legacy migration gate
+
+기존 Notion/Sheet의 고유 자료를 이관할 때만 `NOTION_OPERATION_GATE.md`와 migration checklist를 적용한다.
+
+```text
+exact project and source identity
+→ current source read
+→ UNIQUE / DUPLICATE / OBSOLETE / BLOCKED_UNVERIFIED
+→ smallest bounded migration
+→ repository canon / tracked asset / non-canon Library reference
+→ provenance
+→ destination readback
+→ consumer check
+→ legacy read-only
+```
+
+- 읽지 못한 자료를 duplicate/obsolete로 추정하지 않는다.
+- 전체 page replacement보다 targeted read/write를 우선한다.
+- 사용자 승인 없이 page/database/attachment를 삭제하지 않는다.
+- project retirement claim:
+
+```text
+NOTION_UNIQUE_CANON_COUNT = 0
+CODEX_NOTION_DEPENDENCY_COUNT = 0
+ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT = 0
+```
+
+이 count의 0은 runtime·UX·release PASS가 아니다.
+
+## 14. GitHub and concurrency
+
+- current open PR 번호를 template에 고정하지 않는다.
+- 작업 시작 시 실제 GitHub 상태를 확인한다.
+- 다른 workstream open/draft/ready PR은 read-only다.
+- 명시적 권한 없이 수정·흡수·close·rebase·merge하지 않는다.
+- current task PR도 exact head, required checks, review, unresolved thread, ruleset과 current main freshness를 확인한다.
+- force push, direct main, destructive reset/clean, admin/ruleset bypass를 사용하지 않는다.
+- repository가 squash-only면 squash merge만 사용한다.
+
+## 15. Required environment and cost
+
+- Required tools and files:
+- Required accounts and repository permissions:
+- Installation/readback commands:
+- Current paid plan:
+- Separately metered dependency:
+
+기본 경로는 추가 금전 지출 0이다. 승인 없이 신규 유료 SaaS·API·credit·runner·storage를 필수화하지 않는다. 필요한 도구·권한이 없으면 이유, 최소 설치·적용 방법과 확인 명령을 제시한다.
+
+## 16. Validation
+
+- Contract and diff check:
+- Format/lint:
 - Automated tests:
-- Run path:
-- Save·load:
-- Edge·failure·counterexample:
+- Godot run path:
+- Save/load:
+- Asset manifest readback:
+- Edge/failure/counterexample:
 - Adjacent regression:
 - Manual review:
 - Cold-start review:
+- PDF render/readback when generated:
 - Evidence report:
 - Destination readback:
 - Rollback:
 
-외부 AI 결과가 있으면 external-source review를 추가한다. 실행하지 않은 검증은 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`와 사유로 기록한다.
+`DOCUMENTED`, `CONFIRMED`, `IMPLEMENTED`, `AUTOMATED_TEST_PASS`, `RUNTIME_VERIFIED`, `UX_VERIFIED`, `RELEASE_READY`를 분리한다. 실행하지 않은 검증은 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`와 사유를 기록한다.
 
-## Completion candidate and correction gate
+## 17. Completion and correction gate
 
-프로젝트가 채택한 Base `REMAINING_WORK_COMPLETION_GATE`는 모든 L1 이상 구현·교정·검증 작업의 전체 완료 주장에 적용한다. 계획된 task가 소진되거나 `required_work_remaining: 0`이 되어도 즉시 완료하지 않는다.
+계획된 task가 소진되거나 `required_work_remaining: 0`이어도 즉시 완료하지 않는다.
 
 ```text
 REMAINING_WORK_RECALCULATION_REQUIRED
-→ remaining == 0 이면 COMPLETION_CANDIDATE
+→ remaining == 0이면 COMPLETION_CANDIDATE
 → IMPLEMENTATION_CORRECTION_RESCAN
-   ├─ valid finding → NEW_FINDING_REOPENS_REMAINING_WORK → 기존 owner에서 교정·검증·재계산
+   ├─ valid finding → NEW_FINDING_REOPENS_REMAINING_WORK
    └─ no required finding → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
-→ same final POST_CHANGE_MONITOR_LOOP
-→ minimum-five full-scope adversarial loops, then until CLEAN_REVIEW_EXIT
+→ final POST_CHANGE_MONITOR_LOOP
+→ minimum required full-scope loops, then until CLEAN_REVIEW_EXIT
 → FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
 → completion report
 ```
 
-`POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 별도 두 번째 적대적 검토 체계가 아니다. current Base의 동일 final `POST_CHANGE_MONITOR_LOOP`를 소비한다. 프로젝트가 더 엄격한 완료 조건을 추가할 수는 있지만 이 Base 완료 Gate를 약화하거나 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, required `DEFER`를 숨기고 전체 완료를 주장할 수 없다.
+병합 뒤에는 `POSTMERGE_REPOSITORY_AND_DERIVED_VIEW_READBACK_LOOP`로 exact main의 repository owner, actual implementation, asset manifest, evidence, PDF source identity와 legacy migration 잔여를 다시 확인한다.
 
-## End-of-work and learning
+## 18. End-of-work and learning
 
-1. 프로젝트 고유 결정·수치·구현 상태를 올바른 Notion/repository owner와 테스트·Roadmap에 반영한다.
-2. Active Context를 최신화하고 필요 시 Handoff 스냅샷을 만든다.
+1. 프로젝트 고유 결정·수치·구현 상태를 올바른 repository owner와 tests/Roadmap에 반영한다.
+2. Active Context를 최신화하고 필요 시 Handoff snapshot을 만든다.
 3. Skill·Documentation Map·Issue·Plan 연결을 확인한다.
-4. 실패·중요 결정·재사용 교훈·실제 검증 결과를 Learning Log에 기록한다.
+4. 실패·중요 결정·재사용 교훈·검증 결과를 Learning Log에 기록한다.
 5. 공용화 가치가 있으면 current Base proposal lifecycle로 제안한다.
-6. 제안 PR과 승인된 구현 PR을 분리한다.
-7. 새 작업자가 콜드 스타트 질문에 답할 수 있는지 확인한다.
-8. `REMAINING_WORK_COMPLETION_GATE`의 재계산·구현/교정 rescan·final adversarial clean-exit가 Active Context와 완료 증거에 남았는지 확인한다.
+6. 새 작업자가 cold-start 질문에 답할 수 있는지 확인한다.
+7. remaining-work recalculation·correction rescan·adversarial clean exit evidence를 남긴다.
 
-## Report format
+## 19. Report format
 
 ```md
 ## 변경 파일과 이유
 ## 유지한 기존 동작·결정·자산
-## 핵심 컨셉·PoC·기획 재조정
-## 구현·문서·발행 변경
-## 검증 판정과 증거
-## REMAINING_WORK_COMPLETION_GATE·IMPLEMENTATION_CORRECTION_RESCAN·CLEAN_REVIEW_EXIT
-## 미검증·사용자 확인
-## 남은 위험·롤백
-## Active Context·Roadmap·Skill 최신화
-## 콜드 스타트 검수
-## 프로젝트 전용 최신화
-## Base 공용 학습 데이터·제안 상태
+## 플레이어 경험·핵심 시스템·콘텐츠 변화
+## 구현·문서·asset 변경
+## 검증 판정과 evidence ceiling
+## 작업 전 → 개선 기능 → 실제 사용 예 → 기대효과 → trade-off
+## legacy migration status
+## 미검증·남은 위험·rollback
+## next single milestone
 ```
