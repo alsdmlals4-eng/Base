@@ -59,7 +59,7 @@ Desktop GPT Work
 → repository 정본·AI production spec·asset manifest 갱신
 → PR·diff·test·readback
 → 의미 있는 Gate에서 HUMAN_MASTER_GDD_PDF 생성
-→ exact repository SHA로 Codex 인계
+→ CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA로 Codex 인계
 → Godot 구현·runtime/play evidence
 → repository 정본 상태 승격
 ```
@@ -180,7 +180,7 @@ project/build identity
 
 현재 Active Skill 수·목록·owner·positive/negative trigger는 [Base Skill Map](docs/generated/BASE_ACTIVE_SKILLS.md)에서 생성해서 봅니다. 이 README는 두 번째 Skill 목록을 유지하지 않습니다.
 
-활성 Skill 수는 Registry 관찰값이며 설계 제약이 아닙니다. 새 Skill은 고정 개수 목표가 아니라 독립 입력·산출물·검증·승인 경계가 실제로 필요한지로 판단합니다.
+활성 Skill 수는 Registry 관찰값이며 설계 제약이 아니다. 새 Skill은 고정 개수 목표가 아니라 독립 입력·산출물·검증·승인 경계가 실제로 필요한지로 판단합니다.
 
 현재 routing authority는 `skills/SKILL_REGISTRY.json`과 각 active `SKILL.md`입니다. Release lock과 고정 payload는 frozen v9.0 release derivatives이며 현행 Registry를 되돌리는 권한이 아닙니다.
 
