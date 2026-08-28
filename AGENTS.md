@@ -22,7 +22,8 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - UI/UX 설계·폴리싱·실행 결과 감사: `auditing-and-refining-ui-art`
 - 문서 위치: `docs/DOCUMENTATION_MAP.md`
 - CI 비용/실행 계층: `docs/CI_EXECUTION_COST_POLICY.md`
-- Notion/Sheet migration: `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`
+- 프로젝트 workspace·정본·PDF·Codex 인계: `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md` + `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`
+- Notion/Sheet legacy 이관: `templates/project-operations/NOTION_TO_REPOSITORY_MIGRATION_CHECKLIST.md` + `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`
 - 플랫폼 심사·자산 권리·reference production: `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`
 - Godot 단일 저작 권위: `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`
 - PowerShell fresh shell: `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`
@@ -66,10 +67,13 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 ## 5. 비용·workspace·프로젝트 정본
 
 - **`ZERO_INCREMENTAL_COST_REQUIRED`**: 기본 경로는 추가 금전 지출 0이다. 포함된 구독 기능도 별도 **separately metered** API·credit·runner·storage·SaaS 과금으로 바뀌지 않는 범위에서만 사용한다. **pay-as-you-go**나 신규 유료 서비스는 승인 전 실행하지 않으며 불명확하면 `COST_GATE_BLOCKED`다.
-- `CURRENT_PAID_PLANS: GPT_PRO`, `PAID_PLAN_COUNT: 1`. 현재 기본 유료 플랜은 **GPT Pro** 하나다. **Notion**은 별도 유료 기능 없이 현재 범위에서 사용하고 다른 유료 기능은 **새 사용자 승인**이 필요하다.
-- 새 프로젝트·새 시각 기획의 사람용 기본 협업면은 `NOTION_DEFAULT_PROJECT_WORKSPACE`; 프로젝트별 Work/Asset/Screen/Reference/Benchmark는 `PROJECT_RELATION_REQUIRED`로 분리한다. runtime·구현 사실은 repository source와 실제 실행 증거가 소유한다.
-- `USER_FACING_GDD_WORKSPACE`는 현재 Notion 사람용 Project Home으로 라우팅하는 compatibility alias다. 기존 Google Sheets는 `COMPATIBILITY_ONLY` migration source이며 `PROPOSED_SHEET_CHANGE`를 승인 Decision으로 자동 승격하지 않는다.
-- Base 자체는 프로젝트 Sheet 동기화 대상이 아니다. HTML/Figma/Sheet를 독립 정본으로 복원하지 않는다.
+- `CURRENT_PAID_PLANS: GPT_PRO`, `PAID_PLAN_COUNT: 1`. 현재 기본 유료 플랜은 **GPT Pro** 하나다. Notion·Google Sheets·Figma·외부 storage를 새 필수 유료 경로로 추가하지 않으며 다른 유료 기능은 **새 사용자 승인**이 필요하다.
+- 새 프로젝트·새 기획·시각 작업의 기본 계약은 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`다. 프로젝트 repository가 기획·결정·구조화 데이터·승인 runtime asset·코드·Scene·Resource·Test·Evidence를 소유하는 `REPOSITORY_PRIMARY_CANON`이며, 사람용 상세 기획서 PDF는 `HUMAN_GDD_PDF_DERIVED_VIEW`다.
+- `NO_NEW_NOTION_WRITE_BY_DEFAULT`: 신규 기획·결정·이미지 승인·Codex handoff를 완료하기 위해 Notion에 중간 복제하지 않는다. 기존 `NOTION_DEFAULT_PROJECT_WORKSPACE`는 `NOTION_DEFAULT_PROJECT_WORKSPACE_RETIRED`이며, 고유 자료가 남은 프로젝트에서만 `NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE`로 읽는다.
+- active machine owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`이다. 기존 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json` V3와 과거 Notion 문서는 `V3_COMPATIBILITY_AND_HISTORY_ONLY`이며 새 작업의 기본 route가 아니다.
+- ChatGPT Work는 `CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON`, Library는 `CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON`이다. 채팅·memory·Library·PDF·Notion preview만으로 current canon이나 구현 완료를 주장하지 않는다.
+- 승인 runtime asset은 project-controlled repository path, SHA-256, actual consumer, approval/implementation status, provenance를 manifest에서 readback한다. Codex는 `CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA`를 사용하며 Notion attachment를 기본 구현 입력으로 요구하지 않는다.
+- 기존 Google Sheets는 `COMPATIBILITY_ONLY` migration source이며 `PROPOSED_SHEET_CHANGE`를 승인 Decision으로 자동 승격하지 않는다. Base 자체는 프로젝트 Sheet 동기화 대상이 아니고 HTML/Figma/Sheet를 독립 정본으로 복원하지 않는다.
 - 기존 승인 이미지·자산은 별도 승인 없이 새 시안으로 제거·교체하지 않는다.
 
 ## 6. Existing Solution First·Godot·외부 도구
@@ -100,7 +104,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - 일반 변경은 `reviewing-and-validating-project-changes`, 실패 가정 공격은 `running-adversarial-review-and-refinement`, 정본·경로·ID·Schema 전파는 필요 시 `auditing-canonical-reference-freshness`로 검증한다.
 - 전체 로컬 계약은 `python tools/run_local_validation.py --trusted-history-commit <trusted-main-commit-sha>`로 실행하며 이동 ref가 아니라 검증한 40자 main SHA를 사용한다. 환경 미준비 skip을 pass로 바꾸지 않는다.
 - 사용자에게 PowerShell 실행이 필요하면 `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`를 적용한다.
-- `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`, `POSTMERGE_CORRECTION_REQUIRED`, `PROGRESS_READBACK_REQUIRED`로 merge 후 GitHub/Notion/readback과 남은 작업을 다시 확인한다.
+- `POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP`, `POSTMERGE_CORRECTION_REQUIRED`, `PROGRESS_READBACK_REQUIRED`로 merge 후 repository exact SHA·정본·asset manifest·파생 PDF source SHA·Codex handoff·runtime evidence와 남은 Notion migration counter를 다시 확인한다. 이전 `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`는 `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP_RETIRED` compatibility alias이며 Notion write/readback은 기본 완료 조건이 아니다.
 
 ### 사용자 학습형 완료보고
 
