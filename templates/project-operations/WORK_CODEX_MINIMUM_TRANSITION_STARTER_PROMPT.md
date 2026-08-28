@@ -103,7 +103,9 @@ FORCE_DIRECT_MAIN_ADMIN_BYPASS
 
 ```text
 LEGACY_WORKSPACE_AUDIT_ONLY_WHEN_UNIQUE_MATERIAL_EVIDENCE_EXISTS
-NON_SLICE_MIGRATION_DEBT_DOES_NOT_BLOCK_CURRENT_SLICE
+ONE_TIME_ACTIVE_PROJECT_NOTION_AUDIT_IF_NOT_EVIDENCED_RETIRED
+TARGETED_NOTION_AUDIT_AFTER_BASELINE_RETIRED
+NON_SLICE_NOTION_DEBT_DOES_NOT_BLOCK_CURRENT_SLICE
 NO_NEW_NOTION_WRITE_BY_DEFAULT
 ```
 
@@ -141,9 +143,11 @@ git status --short --branch
 git remote -v
 git branch --show-current
 git rev-parse --abbrev-ref --symbolic-full-name @{upstream}
+git symbolic-ref --short refs/remotes/<intended-remote>/HEAD
 git fetch --prune <intended-remote>
 git rev-parse HEAD
 git rev-parse @{upstream}
+git pull --ff-only <intended-remote> <upstream-branch>
 ```
 
 clean·tracking·non-diverged 상태이며 fast-forward만 가능할 때만 `git pull --ff-only`를 사용해. dirty·ahead·diverged·detached HEAD·wrong worktree·wrong upstream·다른 open PR branch이면 blind pull/stash/rebase/reset/clean/force를 금지해.
@@ -152,7 +156,12 @@ clean·tracking·non-diverged 상태이며 fast-forward만 가능할 때만 `git
 
 local worktree·CLI·auth가 없으면 authenticated GitHub connector로 remote main/default branch·current-task branch·PR·check를 fresh-read하고 지원되는 mutation을 수행해. 이 경우 local fetch/pull을 실행했다고 주장하지 말고 `NOT_APPLICABLE_CONNECTOR_ONLY` 또는 `NOT_RUN`으로 기록해.
 
-merge 뒤 new-main exact SHA를 readback하고 local default branch가 clean·tracking·fast-forward 가능한 경우에만 안전하게 갱신해.
+merge 뒤 new-main exact SHA를 readback하고 local default branch가 clean·tracking·fast-forward 가능한 경우에만 다음과 동등한 경로로 안전하게 갱신해.
+
+```text
+git switch <default-branch>
+git pull --ff-only <intended-remote> <default-branch>
+```
 
 ## 4. Godot·컴퓨터 자동 조작
 
@@ -250,7 +259,7 @@ INCIDENT_SOLUTION_LESSON_LOOP
 BASE_PROMOTION_DISPOSITION_REQUIRED
 ```
 
-동일 root cause를 무한 재시도하지 말고 readback → root-cause → bounded retry → authorized fallback A/B → local defer → independent work 순으로 진행해. material failure는 environment/version/SHA/tool, root cause, attempts, final solution, evidence, recurrence guard, rollback을 Project owner에 기록하고 project-neutral 반복 원리만 Base case/BCP 후보로 판정해. 새 공용 학습이 없으면 `NO_BASE_PROMOTION`으로 닫아.
+동일 root cause를 무한 재시도하지 말고 readback → root-cause → bounded retry → authorized fallback A/B → local defer → independent work 순으로 진행해. material failure는 environment/version/SHA/tool, root cause, attempts, final solution, evidence, recurrence guard, rollback을 Project owner에 기록하고 project-neutral 반복 원리만 Base case/BCP 후보로 판정해. 새 공용 학습이 없으면 `NO_BASE_PROMOTION`으로 닫아. 관련 공용 사례는 `docs/knowledge/cases/WORK_CODEX_STARTER_LOCAL_EXECUTION_SYNC_CASE.md`다.
 
 현재 approved Slice의 machine-executable required work를 0까지 진행해. 0이면 implementation/canon/consumer/test/runtime/build/PR/merge/readback/evidence를 재검사하고 valid finding을 다시 열어 교정해. 최소 5회 full-scope 적대적 검토 후 blocking finding 0에서만 clean exit해.
 
