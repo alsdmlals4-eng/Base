@@ -94,6 +94,7 @@ actual evidence
 ## Retired compatibility vocabulary
 
 ```text
+DOMAIN_SPLIT_CANON_RETIRED_BY_REPOSITORY_PRIMARY_CANON
 CODEX_REHYDRATE_PROJECT_GITHUB_AND_NOTION_RETIRED
 NOTION_HUMAN_FACING_CANON_RETIRED
 Notion Project Home = legacy migration source only
