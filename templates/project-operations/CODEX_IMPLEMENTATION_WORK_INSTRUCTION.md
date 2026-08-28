@@ -2,7 +2,7 @@
 
 > 이 Template은 **GPT가 기획·검수·비코딩 작업을 끝낸 뒤, 실제 게임 프로젝트의 Godot 제품 구현이 남았을 때만 Codex에 전달하는 작업지시문**이다.
 >
-> Base/Notion/문서/기획/이미지/운영 정본 작업에는 사용하지 않는다. Codex는 일반 repository executor가 아니다.
+> Base/Notion/문서/기획/이미지/운영 정본 작업에는 사용하지 않는다. 여기서 Notion은 legacy inventory·이관 작업까지 포함한다. Codex는 일반 repository executor가 아니다.
 
 ## 0. Handoff Contract
 
@@ -10,7 +10,9 @@
 handoff_mode: CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF
 project:
 repository:
+base_branch:
 target_branch_or_pr:
+exact_source_sha:
 work_slice_mode: PLAY_MEANINGFUL_WORK_SLICE
 work_slice_id:
 work_instruction_status: GPT_REVIEWED_GODOT_IMPLEMENTATION_READY
@@ -18,9 +20,12 @@ planning_stop_gate: PRE_HANDOFF_GPT_STOP
 implementation_owner: CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER
 final_review_owner: GPT_FINAL_IMPLEMENTATION_REVIEW
 actual_state_verification_required: true
-notion_rehydration_required: true
+repository_rehydration_required: true
 github_rehydration_required: true
+notion_rehydration_required: false
+legacy_notion_migration_source_optional: true
 codex_image_generation: FORBIDDEN
+visual_input_contract: APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST
 missing_visual_action: GPT_VISUAL_REQUEST
 ```
 
@@ -40,9 +45,10 @@ missing_visual_action: GPT_VISUAL_REQUEST
 ### 사용하지 않는 조건
 
 - Base 정책·Skill·Guide·Template·Registry/generated/CI/test contract
-- Notion 편집
-- GDD·기획서·밸런스표·Flow
-- 이미지 작업
+- repository Decision·AI production spec·GDD·기획서·밸런스표·Flow 교정
+- 사람용 상세 기획서 PDF 생성·검수
+- Notion 편집·legacy inventory·이관
+- 이미지 생성·편집·승인 정리
 - 조사·벤치마킹·검수
 - 문제→교훈→Base 승격
 - GitHub 비제품 문서/정본 교정
@@ -50,6 +56,7 @@ missing_visual_action: GPT_VISUAL_REQUEST
 ## 1. GPT가 전달하는 것
 
 ### Slice / Player Outcome
+
 ```yaml
 work_slice_id:
 player_outcome:
@@ -60,6 +67,7 @@ expected_feedback_or_reward:
 현재 지시문은 `PLAY_MEANINGFUL_WORK_SLICE` 하나를 구현·검증하기 위한 계약이다. 프로젝트 전체 장기 기획이나 아직 소비되지 않을 미래 범위를 끌어오지 않는다.
 
 ### 승인된 구현 범위
+
 ```yaml
 approved_scope: []
 explicit_non_scope: []
@@ -67,12 +75,14 @@ changeable_godot_areas: []
 ```
 
 ### 보호 범위
+
 - 바꾸면 안 되는 프로젝트 코어:
 - 유지해야 할 플레이 동작:
 - 저장/Schema/API compatibility:
 - 다른 진행 중 workstream:
 
 ### 구현 입력 의미
+
 ```yaml
 required_data_and_inputs: []
 ui_ux_flow: []
@@ -84,11 +94,13 @@ asset_audio_dependencies: []
 - `asset_audio_dependencies`: 실제 게임 소비처가 있는 승인 이미지·UI·VFX·사운드 요구를 적는다.
 
 ### Acceptance Criteria
+
 1.
 2.
 3.
 
 ### 검증 요구
+
 ```yaml
 review_evidence_expected: []
 ```
@@ -100,34 +112,48 @@ review_evidence_expected: []
 - GPT final review에서 확인해야 할 player-facing evidence:
 
 ### Visual 입력
-- approved Notion visual records:
+
+```yaml
+approved_visual_records:
+  - asset_id:
+    consumer:
+    repository_path:
+    sha256:
+    approval_status: APPROVED
+    implementation_status: READY
+    provenance:
+```
+
 - allowed intended use:
 - rights/provenance constraints:
 
-Codex는 승인된 Visual만 소비하며 새 이미지를 생성·생성형 편집하지 않는다.
+Codex는 `APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`를 충족한 Visual만 소비하며 새 이미지를 생성·생성형 편집하지 않는다.
 
 ## 2. Codex가 다시 읽을 프로젝트 정본
 
-### GitHub
 ```yaml
-github_sources:
+repository_sources:
   repository:
+  base_branch:
+  exact_source_sha:
   project_agents:
   start_here:
   active_context:
   confirmed_decisions: []
+  ai_production_spec:
+  current_codex_handoff:
+  asset_manifest:
   godot_product_paths: []
   runtime_tests_and_evidence: []
   current_open_prs: true
 ```
 
-### Notion
+기존 Notion에만 고유 자료가 남아 있으면 GPT가 별도 migration 작업에서 repository로 옮긴다. Codex 구현 지시문은 Notion page/database/attachment 조회를 필수 재수화 경로로 만들지 않는다.
+
 ```yaml
-notion_sources:
-  project_home:
-  relevant_domain_pages: []
-  ai_system_detail_pages: []
-  approved_visual_records: []
+optional_legacy_migration_context:
+  status: NOT_APPLICABLE | ALREADY_MIGRATED | GPT_MIGRATION_BLOCKED
+  repository_receipt:
 ```
 
 재수화는 current Slice와 직접 의존하는 구현 사실을 정확히 확인하기 위한 것이다. GPT 지시문에 없는 프로젝트 전체를 임의로 재기획하는 단계가 아니다.
@@ -137,10 +163,11 @@ notion_sources:
 ```text
 GPT-reviewed Godot Work Instruction 수신
 → work_slice_id / approved_scope / explicit_non_scope 확인
-→ project/repository identity 확인
+→ project/repository identity + exact_source_sha 확인
 → latest user decision 확인
-→ GitHub current project canon 재수화
-→ Notion Project Home / relevant Domain / AI System / approved Visual 재수화
+→ repository current project canon 재수화
+→ Decision / AI production spec / current handoff 대조
+→ approved Visual repository path / SHA-256 / manifest readback
 → 실제 project.godot / code / Scene / Resource / runtime data / test 상태 조사
 → open PR/worktree/branch overlap 확인
 → Work Instruction과 current truth 대조
@@ -187,7 +214,9 @@ GPT가 예상 구현 경로를 적었더라도 더 안전하고 단순한 Godot 
 ```text
 CODEX_IMAGE_GENERATION_FORBIDDEN
 CODEX_GENERATIVE_IMAGE_EDITING_FORBIDDEN
-CODEX_VISUAL_INPUT_NOTION_APPROVED_ONLY
+CODEX_VISUAL_INPUT_REPOSITORY_MANIFEST_ONLY
+APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST
+CODEX_VISUAL_INPUT_NOTION_APPROVED_ONLY_RETIRED
 ```
 
 이미지가 부족하면:
@@ -202,15 +231,19 @@ GPT_VISUAL_REQUEST:
   required_dimensions_or_ratio:
   visual_constraints:
   existing_approved_references: []
-  notion_destination:
+  repository_destination:
+  manifest_destination:
   acceptance_criteria: []
 ```
 
-GPT가 제작·검수 → Notion current-use 승인 + upload/attach/readback → Codex fresh-read 후 재개한다.
+GPT가 제작·검수·사용자 승인 → repository binary 저장 → SHA-256·consumer·provenance·상태 manifest readback → Codex exact SHA fresh-read 후 재개한다.
+
+Library·PDF·Notion preview에 보인다는 사실만으로 구현 입력이 되지 않는다.
 
 ## 7. Git / Concurrent Work
 
 - current main과 target branch/head를 시작 시 재확인한다.
+- `exact_source_sha`가 stale이면 구현을 계속하지 않고 reconcile한다.
 - 다른 open/draft/ready PR은 명시적 authorization 없이는 read-only.
 - force push / destructive reset / unrelated work absorption 금지.
 - 사용자 기존 변경을 보존한다.
@@ -224,6 +257,7 @@ codex_result:
   repository:
   work_slice_id:
   baseline_main:
+  baseline_exact_source_sha:
   final_head:
   implementation_direction_chosen:
   changed_godot_files_and_reasons: []
@@ -233,7 +267,7 @@ codex_result:
   tests_failed: []
   tests_not_run: []
   runtime_or_play_evidence: []
-  approved_notion_visuals_consumed: []
+  approved_repository_visuals_consumed: []
   visual_requests_waiting: []
   technical_improvements: []
   change_proposals: []
@@ -248,18 +282,19 @@ Codex는 구현 결과와 evidence를 반환하며 `FIX | TUNE | REDESIGN`의 �
 
 ```text
 GPT
-현재 PLAY_MEANINGFUL_WORK_SLICE 정본 복원
+현재 PLAY_MEANINGFUL_WORK_SLICE repository 정본 복원
 → 최소 구현 준비 기획
 → Existing Solution First / 필요한 벤치마킹
 → 적대적 검수·IRG
 → approved scope / explicit non-scope / Acceptance 확정
-→ Base/Notion/문서/Visual 등 필요한 비코딩 작업 완료
+→ repository Decision / AI production spec / asset manifest 등 비코딩 작업 완료
+→ 필요 Gate에서 source-SHA-bound 사람용 상세 PDF 점검
 → PRE_HANDOFF_GPT_STOP
 → 실제 Godot 제품 구현 필요 판정
 → 프로젝트별 Codex Godot Work Instruction
 
 Codex
-해당 프로젝트 GitHub + Notion current truth 재수화
+exact repository SHA + project entrypoints + asset manifest 재수화
 → 승인 범위 안에서 Godot 구현 방향·기술 방법 결정
 → 구현·코딩·runtime/play test
 → READY_FOR_GPT_REVIEW
@@ -269,7 +304,8 @@ GPT
 → FIX / TUNE / REDESIGN 분류
 → 필요한 영향 범위만 재검증
 → APPROVED면 merge gate
-→ 검증된 결과만 post-merge GitHub + Notion 정본 반영
+→ 검증된 결과만 post-merge repository 정본에 반영
+→ 필요 시 merged source SHA로 사람용 상세 PDF 재생성
 ```
 
-> 현재 역할 한 줄: **GPT는 현재 플레이 의미 Slice의 비코딩·기획·검수·Base·Notion·Visual을 담당하고, Codex는 승인된 Slice 범위의 실제 게임 프로젝트 Godot 제품 구현·코딩을 담당한다.**
+> 현재 역할 한 줄: **GPT는 현재 플레이 의미 Slice의 비코딩·기획·검수·Base·repository canon·Visual을 담당하고, Codex는 승인된 Slice 범위의 실제 게임 프로젝트 Godot 제품 구현·코딩을 담당한다.** Notion은 고유 자료가 남은 기존 프로젝트의 GPT-owned legacy migration source일 뿐 Codex의 기본 구현 입력이 아니다.
