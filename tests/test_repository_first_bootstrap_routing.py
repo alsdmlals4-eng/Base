@@ -55,10 +55,13 @@ class RepositoryFirstBootstrapRoutingTests(unittest.TestCase):
             "DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD",
             "PDF_ONLY_USER_DOWNLOAD",
             "SYS/CNT/UI/UX/AST/AUD/DAT/QA/DEC",
-            "REPOSITORY_PATH_BRANCH_COMMIT_PR_VALIDATION_ONLY",
             "GPT_VISUAL_REQUEST",
         ):
             self.assertIn(token, template)
+        self.assertIn(
+            "AI Markdown은 repository path·branch·exact commit SHA·PR·validation result로 보고한다",
+            template,
+        )
         self.assertIn("이미지 생성·편집은 내가 명시적으로 요청했을 때만 진행한다", template)
         self.assertIn("새 Notion output이나 GitHub+Notion 이중 동기화를 기본 완료 조건으로 만들지 않는다", template)
         self.assertNotIn("프로젝트 정보는 DOMAIN_SPLIT_CANON을 따른다", template)
