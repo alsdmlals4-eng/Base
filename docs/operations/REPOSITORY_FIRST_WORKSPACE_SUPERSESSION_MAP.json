@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "current_owner": "docs/operations/REPOSITORY_FIRST_PROJECT_WORKSPACE_CONTRACT.json",
+  "current_policy": "docs/REPOSITORY_FIRST_PROJECT_WORKSPACE_POLICY.md",
+  "precedence": "CURRENT_SPECIFIC_WORKSPACE_OWNER_OVERRIDES_OLDER_GENERAL_OR_COMPATIBILITY_TEXT",
+  "entries": [
+    {
+      "path": "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json",
+      "status": "LEGACY_DISCOVERY_ONLY",
+      "retained_use": [
+        "migration provenance",
+        "historical Notion schema interpretation",
+        "rollback and old handoff discovery"
+      ],
+      "superseded": [
+        "DOMAIN_SPLIT_CANON as the current project authority model",
+        "NOTION_DEFAULT_PROJECT_WORKSPACE as the default workspace",
+        "NOTION_HUMAN_FACING_CANON as current human canon",
+        "mandatory Notion write and readback",
+        "Notion-attached visual as the only Codex visual input"
+      ]
+    },
+    {
+      "path": "docs/OPERATING_MODEL.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "Base lifecycle",
+        "priority and evidence rules",
+        "adversarial review and remaining-work gates",
+        "continuous execution and Loop Engineering",
+        "Skill lifecycle and completion semantics"
+      ],
+      "superseded": [
+        "DOMAIN_SPLIT_CANON workspace paragraph",
+        "exact Project Notion Home in project start routes",
+        "POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP workspace synchronization",
+        "Notion human-facing canon in responsibility originals",
+        "exact Project Notion priority in the project GDD boundary",
+        "Notion human-facing mode as the default project visualization owner"
+      ],
+      "replacement": [
+        "REPOSITORY_PRIMARY_PROJECT_CANON",
+        "POSTMERGE_REPOSITORY_AND_DERIVED_VIEW_READBACK_LOOP",
+        "HUMAN_GDD_PDF_DERIVED_VIEW",
+        "LEGACY_READ_ONLY_MIGRATION_SOURCE"
+      ]
+    },
+    {
+      "path": "docs/GPT_CODEX_WORKFLOW_POLICY.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "GPT and Codex product-responsibility split",
+        "PLAY_MEANINGFUL_WORK_SLICE",
+        "minimum implementation-ready planning",
+        "Codex technical autonomy",
+        "runtime and final-review evidence separation",
+        "Godot process ownership and shutdown safety"
+      ],
+      "superseded": [
+        "CODEX_REHYDRATE_PROJECT_GITHUB_AND_NOTION",
+        "CODEX_VISUAL_INPUT_NOTION_APPROVED_ONLY",
+        "Notion upload and readback as a mandatory Codex input gate"
+      ],
+      "replacement": "docs/REPOSITORY_FIRST_GPT_CODEX_HANDOFF_POLICY.md"
+    },
+    {
+      "path": "docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "COMPATIBILITY_ONLY classification",
+        "unique, duplicate and obsolete migration discipline",
+        "provenance and destination readback",
+        "no runtime claim from Sheet content"
+      ],
+      "superseded": [
+        "Notion as the default migration destination",
+        "Notion as the default new project workspace"
+      ],
+      "replacement": "templates/project-operations/NOTION_RETIREMENT_AND_REPOSITORY_MIGRATION_CHECKLIST.md"
+    },
+    {
+      "path": "docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md",
+      "status": "LEGACY_PRACTICE_AND_MIGRATION_REFERENCE",
+      "retained_use": [
+        "historical visual-record interpretation",
+        "legacy attachment and database migration",
+        "rollback evidence"
+      ],
+      "superseded": [
+        "Notion as the required active visual workspace",
+        "Notion attachment readback as implementation readiness"
+      ],
+      "replacement": "REPOSITORY_PATH_MANIFEST_SHA256_READBACK"
+    },
+    {
+      "path": "tests/test_notion_project_workspace_contract.py",
+      "status": "LEGACY_COMPATIBILITY_ASSERTIONS",
+      "retained_use": [
+        "old contract remains readable",
+        "deprecated Figma and Sheet behavior remains bounded"
+      ],
+      "current_default_proof": "tests/test_repository_first_project_workspace_contract.py"
+    },
+    {
+      "path": "tests/test_gpt_codex_workflow_contract.py",
+      "status": "LEGACY_ROLE_SPLIT_AND_COMPATIBILITY_ASSERTIONS",
+      "retained_use": [
+        "Codex remains scoped to actual Godot product implementation",
+        "old handoff vocabulary remains discoverable"
+      ],
+      "current_default_proof": "tests/test_repository_first_project_workspace_contract.py"
+    }
+  ],
+  "invariants": [
+    "PARTIAL_SUPERSESSION does not discard unrelated safety, lifecycle, evidence or role-split rules in the older document.",
+    "A legacy token found by search is not current routing authority.",
+    "New project work must not create a Notion write, attachment or readback requirement unless the latest project-specific user decision explicitly opts in.",
+    "Existing Notion content remains read-only migration input and is not deleted by this Base transition.",
+    "The focused repository-first contract test is the current default-workspace proof."
+  ]
+}
