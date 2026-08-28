@@ -14,7 +14,8 @@ START_HERE.md
 → skills/SKILL_REGISTRY.json
 → docs/generated/BASE_ACTIVE_SKILLS.md
 → 현재 작업에 필요한 Skill·mode·reference·Template·Case
-→ 대상 프로젝트 Notion Project Home·정본과 실제 파일
+→ 대상 프로젝트 AGENTS.md·START_HERE·Active Context·AI canon
+→ 실제 코드·데이터·자산·테스트와 exact commit
 ```
 
 - [Base 시작 지점](START_HERE.md)
@@ -23,8 +24,14 @@ START_HERE.md
 - [문서·스킬 역할표](docs/DOCUMENTATION_MAP.md)
 - [기획 작업순서·근거 정책](docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md)
 - [장기 작업 실행 정책](docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md)
-- [프로젝트 Workspace 권한 계약](docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json)
-- [Notion 시각 자산·Flow Workflow](docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md)
+- [Repository-first 프로젝트 Workspace 정책](docs/REPOSITORY_FIRST_PROJECT_WORKSPACE_POLICY.md)
+- [Repository-first machine 권한 계약](docs/operations/REPOSITORY_FIRST_PROJECT_WORKSPACE_CONTRACT.json)
+- [Repository-first GPT–Codex 인계 정책](docs/REPOSITORY_FIRST_GPT_CODEX_HANDOFF_POLICY.md)
+- [AI 프로젝트 상세 기획·구현 명세 Template](templates/project-operations/AI_PROJECT_CANON_SPEC.md)
+- [사람용 상세 기획서 PDF Export Checklist](templates/project-operations/HUMAN_GDD_PDF_EXPORT_CHECKLIST.md)
+- [Notion 퇴역·저장소 이관 Checklist](templates/project-operations/NOTION_RETIREMENT_AND_REPOSITORY_MIGRATION_CHECKLIST.md)
+- [Legacy Project Workspace 권한 계약](docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json)
+- [Legacy Notion 시각 자산·Flow Workflow](docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md)
 - [시각 협업 정책](docs/VISUAL_COLLABORATION_TOOL_POLICY.md)
 - [폐기 프로젝트 작업면 정책](docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md)
 - [Google Sheets migration-only 정책](docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md)
@@ -44,54 +51,62 @@ START_HERE.md
 
 ## 프로젝트 기본 작업면
 
-새 프로젝트와 새 기획·시각 작업의 기본 인간 작업면은 `NOTION_DEFAULT_PROJECT_WORKSPACE`입니다.
+새 프로젝트와 신규 Slice의 기본 정본은 `REPOSITORY_PRIMARY_PROJECT_CANON`입니다.
 
 ```text
-00 · PROJECT HUB
-→ Project Registry
-
-project page
-  → 사람용 PROJECT HOME
-  → 01 PROJECT CONTROL
-  → 02 VISUAL / STORY BIBLE
-  → 03 FLOW / STORYBOARD
-  → 04 ASSET / CHARACTER LIBRARY
-  → 05 REFERENCE / BENCHMARK
-  → 06+ PRODUCTION / SPECIALIZED PAGES
-
-90 · SYSTEM MASTERS
-→ unfiltered master data sources
+project repository
+├─ AGENTS.md
+├─ START_HERE.md
+├─ ACTIVE_CONTEXT.md
+├─ CURRENT_CONFIRMED_DECISIONS.md
+├─ docs/canon/AI_GAME_SPEC.md
+├─ docs/handoffs/CURRENT_CODEX_HANDOFF.md
+├─ assets/ASSET_MANIFEST.json
+├─ 실제 코드·데이터·Scene·Resource·asset·test·evidence
+└─ docs/exports/HUMAN_GDD_<milestone>_<source-sha>.pdf
 ```
 
-`PROJECT_RELATION_REQUIRED`로 프로젝트 간 Work·Asset·Component·Screen·Reference·Benchmark를 분리합니다. 일반 프로젝트 페이지에는 다른 프로젝트의 unfiltered record를 노출하지 않습니다.
+프로젝트마다 경로가 다르면 `AGENTS.md`와 registry에서 동등 owner를 명시합니다. 같은 질문에 여러 활성 정본을 만들지 않습니다.
 
-Visual Map은 `VISUAL_MAP_DERIVED`이며 두 번째 정본이 아닙니다. 코드·Scene·Resource·runtime config·tracked implementation asset·build/test는 repository-native runtime truth가 책임집니다.
+기본 기획 산출물은 두 개입니다.
 
-기존 프로젝트 Google Sheet는 고유 unmigrated material이 남아 있을 때만 `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL` source로 읽고, unique material을 Notion/repository로 이관·readback한 뒤 active route에서 제거합니다.
+1. `AI_DETAILED_PLANNING_IMPLEMENTATION_MARKDOWN` — 저장소의 상세 AI 기획·구현 명세 정본
+2. `HUMAN_GDD_PDF_DERIVED_VIEW` — exact source commit에서 생성한 사용자용 상세 기획서 PDF
+
+PDF는 독립 정본이 아닙니다. PDF 검토에서 승인된 수정은 repository canon으로 되돌린 뒤 다음 의미 있는 Gate에서 새 PDF를 생성합니다.
+
+데스크톱 GPT Work는 `CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON`, ChatGPT Library는 `CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON`입니다. Work와 Library는 작업·이미지 후보·참고 자료·PDF 보관을 지원하지만 repository version control을 대체하지 않습니다.
+
+기존 Notion의 `NOTION_DEFAULT_PROJECT_WORKSPACE_LEGACY_ALIAS`와 Google Sheets는 `LEGACY_READ_ONLY_MIGRATION_SOURCE`입니다. `PROJECT_RELATION_REQUIRED`를 유지하며 고유 자료만 repository canon, tracked asset 또는 비정본 Library reference로 이관하고 destination readback을 검증합니다. 기존 페이지·DB는 사용자 삭제 지시 없이 제거하지 않습니다.
+
+`VISUAL_MAP_DERIVED`와 사람용 PDF는 이해·검토를 위한 파생물입니다. 코드·Scene·Resource·runtime config·tracked implementation asset·build/test는 repository runtime truth가 책임집니다.
 
 ## 이미지·자산 Workflow
 
 ```text
-need / brief
+actual game consumer / screen / scene / state inventory
+→ need / bounded brief
 → generate or edit candidate
-→ correct Project record
-→ attach / upload
-→ readback
 → approval or rejection
-→ version / replacement
-→ repository implementation task
-→ REPOSITORY_NATIVE_EVIDENCE_CAPTURE
+→ repository implementation path
+→ ASSET_MANIFEST identity / version / provenance / rights / consumer
+→ REPOSITORY_PATH_MANIFEST_SHA256_READBACK
+→ Codex implementation task
+→ runtime consumption and REPOSITORY_NATIVE_EVIDENCE_CAPTURE
 ```
 
-사람용 Gallery에는 Preview·Name·Usage·Style·Approved·Reuse처럼 판단에 필요한 정보만 보여주고, AI/System view에는 Asset ID·Version·Status·Prompt·source provenance·Rights/License·Hash·Implementation Path 등을 보존할 수 있습니다.
+승인 asset은 최소한 `asset_id`, `repository_path`, `actual_consumer`, `approval_status`, `version`, `sha256`, `source_or_provenance`, `rights_or_license_state`, `implementation_status`를 추적합니다.
+
+대형 editable master나 비교 시안은 Library/local source에 둘 수 있지만 실제 게임이 소비하는 입력은 Codex가 exact commit에서 찾을 수 있는 repository path와 manifest를 가져야 합니다. Notion attachment 부재는 구현 blocker가 아니며, repository asset 또는 manifest가 없으면 Notion에 preview가 보여도 구현 준비 완료가 아닙니다.
 
 Reference와 Benchmark는 자산 정본이 아닙니다. 필요할 때 `ADOPT / ADAPT / TEST / REFERENCE_ONLY / AVOID / IGNORE`로 적용 판정을 기록합니다.
 
-## 폐기된 프로젝트 작업면
+## Legacy·폐기 프로젝트 작업면
 
 다음은 현재 active/default project surface가 아닙니다.
 
 ```text
+Notion mandatory intermediate writing / attachment gate after migration
 Figma / Figma Bridge / project Figma route registry
 external HTML workspace / dashboard / catalog
 legacy Google Sheets after migration
@@ -100,7 +115,9 @@ QA Evidence Studio
 localhost Expression / Sprite management surfaces
 ```
 
-Git history와 과거 plan/test/evidence는 rollback·학습 기록으로 남을 수 있습니다. 고유 정보나 재사용 가능한 원리만 current Notion/repository/PowerShell/Loop owner로 흡수하고, 존재한다는 이유만으로 다시 기본 경로로 라우팅하지 않습니다.
+기존 Notion은 프로젝트별 `NOTION_UNIQUE_CANON_COUNT`, `CODEX_NOTION_DEPENDENCY_COUNT`, `ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT`가 모두 0이 될 때까지 read-only migration source로 남을 수 있습니다. 이 count가 0이라는 사실은 runtime·UX·release PASS를 의미하지 않습니다.
+
+Git history와 과거 plan/test/evidence는 rollback·학습 기록으로 남을 수 있습니다. 고유 정보나 재사용 가능한 원리만 current repository owner로 흡수하고, 과거 문서가 존재한다는 이유만으로 `NOTION_DEFAULT_PROJECT_WORKSPACE`, `NOTION_HUMAN_FACING_CANON`, `CODEX_REHYDRATE_PROJECT_GITHUB_AND_NOTION` 같은 legacy route를 다시 기본값으로 복원하지 않습니다.
 
 검증은 별도 QA 관리 앱을 기본으로 두지 않고 `REPOSITORY_NATIVE_EVIDENCE_CAPTURE`를 사용합니다.
 
@@ -109,7 +126,7 @@ project/build identity
 → acceptance contract
 → existing tests / GUT / Godot·Hera runtime / logs / screenshots·video / CI artifacts
 → exact commit/PR identity
-→ optional Notion human-facing link
+→ optional legacy provenance locator
 → PASS | FAIL | BLOCKED | NOT_RUN + evidence ceiling
 ```
 
@@ -123,16 +140,20 @@ project/build identity
 
 ```text
 요청·현재 상태 조사
+→ 프로젝트 repository canon과 actual implementation fresh-read
 → 최소 3개 실질 대안·벤치마킹·창의성 frontier·장기 적합성
 → 승인된 작업 계약
-→ Notion Project-filtered planning / asset / visual workspace
-→ 필요 시 PROJECT_VISUALIZATION_NEED_MAP와 기획 시각화
-→ repository-native 구현
+→ AI_DETAILED_PLANNING_IMPLEMENTATION_MARKDOWN 갱신·readback
+→ 실제 소비처 기준 asset/audio 준비
+→ REPOSITORY_PATH_MANIFEST_SHA256_READBACK
+→ exact planning commit
+→ 필요 시 Codex repository-first Godot 구현 인계
 → release-near Vertical Slice·playtest·eval
 → 정본·정적·runtime·접근성·성능·회귀 검증
 → 플랫폼·권리 검증
+→ 의미 있는 Gate에서 HUMAN_GDD_PDF_DERIVED_VIEW 생성·render readback
 → 구현 후보 전체 적대적 개선 루프 최소 5회, 이후 clean까지
-→ exact-head PR / merge / postmerge readback
+→ exact-head PR / merge / POSTMERGE_REPOSITORY_AND_DERIVED_VIEW_READBACK_LOOP
 → REQUIRED_WORK_REMAINING 재계산
 → REQUIRED_WORK_REMAINING: 0 이면 COMPLETION_CANDIDATE
 → REMAINING_WORK_COMPLETION_GATE
@@ -145,7 +166,7 @@ project/build identity
 → 완료 보고
 ```
 
-병합 전 구현 후보 적대 검토는 유지한다. `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 그 검토를 무효화하거나 같은 상태에 대해 별도 5회를 기계적으로 추가하는 규칙이 아니다. 마지막 구현·교정과 merge/postmerge로 갱신된 final-state lineage를 기존 `POST_CHANGE_MONITOR_LOOP`로 계속 검증해 최소 5회 floor와 `CLEAN_REVIEW_EXIT` 조건을 충족한다.
+병합 전 구현 후보 적대 검토는 유지합니다. `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 그 검토를 무효화하거나 같은 상태에 대해 별도 5회를 기계적으로 추가하는 규칙이 아닙니다. 마지막 구현·교정과 merge/postmerge로 갱신된 final-state lineage를 기존 `POST_CHANGE_MONITOR_LOOP`로 계속 검증해 최소 5회 floor와 `CLEAN_REVIEW_EXIT` 조건을 충족합니다.
 
 `REQUIRED_WORK_REMAINING: 0`은 전체 완료가 아니라 완료 후보입니다. 상세 완료 순서와 finding 재개방 권한은 `docs/OPERATING_MODEL.md`의 `REMAINING_WORK_COMPLETION_GATE`가 책임집니다.
 
@@ -153,7 +174,7 @@ project/build identity
 
 현재 Active Skill 수·목록·owner·positive/negative trigger는 [Base Skill Map](docs/generated/BASE_ACTIVE_SKILLS.md)에서 생성해서 봅니다. 이 README는 두 번째 Skill 목록을 유지하지 않습니다.
 
-활성 Skill 수는 Registry 관찰값이며 설계 제약이 아니다. 새 Skill은 고정 개수 목표가 아니라 독립 입력·산출물·검증·승인 경계가 실제로 필요한지로 판단합니다.
+활성 Skill 수는 Registry 관찰값이며 설계 제약이 아닙니다. 새 Skill은 고정 개수 목표가 아니라 독립 입력·산출물·검증·승인 경계가 실제로 필요한지로 판단합니다.
 
 현재 routing authority는 `skills/SKILL_REGISTRY.json`과 각 active `SKILL.md`입니다. Release lock과 고정 payload는 frozen v9.0 release derivatives이며 현행 Registry를 되돌리는 권한이 아닙니다.
 
@@ -169,15 +190,17 @@ Skill 수 자체는 목표가 아닙니다. 기존 owner/mode/reference로 책�
 ## 프로젝트 책임 원본
 
 ```text
-Notion Project page
-→ Project-filtered planning / asset / visual records
+project AGENTS.md / START_HERE.md
+→ ACTIVE_CONTEXT.md / CURRENT_CONFIRMED_DECISIONS.md
+→ AI_DETAILED_PLANNING_IMPLEMENTATION_MARKDOWN
+→ registered Markdown / JSON / tracked asset owners
+→ 실제 코드·데이터·Scene·Resource·자산·테스트·evidence
 
-DESIGN_DOCUMENT_REGISTRY.json
-→ 등록된 Markdown/JSON 책임 원본
-→ 실제 코드·데이터·자산·테스트
+HUMAN_GDD_PDF_DERIVED_VIEW
+→ exact source commit의 사람용 검토 파생물
 ```
 
-한 질문에는 현행 책임 원본 하나만 둡니다. Notion 시각 자료·외부 벤치마크·리뷰·과거 대화는 실제 구현 상태를 대신하지 않습니다.
+한 질문에는 현행 책임 원본 하나만 둡니다. PDF, Library, legacy Notion 시각 자료, 외부 벤치마크, 리뷰와 과거 대화는 실제 구현 상태나 repository canon을 대신하지 않습니다.
 
 ## 저장소 구조
 
