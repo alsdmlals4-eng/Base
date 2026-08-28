@@ -269,6 +269,20 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         self.assertIn("product responsibility, not code shape", learning)
         self.assertIn("SUPERSEDED INTERIM", learning)
 
+    def test_repository_first_workspace_routes_fresh_read_and_codex_inputs(self) -> None:
+        policy = (ROOT / "docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md").read_text(encoding="utf-8")
+        skill = (ROOT / "skills/maintaining-project-context-and-handoff/SKILL.md").read_text(encoding="utf-8")
+        combined = policy + "\n" + skill
+        for term in (
+            "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
+            "REPOSITORY_PRIMARY_CANON",
+            "NO_NEW_NOTION_WRITE_BY_DEFAULT",
+            "CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA",
+            "APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST",
+            "FRESH_READ_PROJECT_BOOTSTRAP",
+        ):
+            self.assertIn(term, combined)
+
 
 if __name__ == "__main__":
     unittest.main()

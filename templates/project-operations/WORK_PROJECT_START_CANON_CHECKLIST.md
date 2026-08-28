@@ -1,6 +1,6 @@
 # Work 프로젝트 시작 정본 확인·선교정 체크리스트
 
-> 이 파일은 프로젝트 사실을 새로 소유하는 두 번째 정본이 아니다. 현재 Base·Project owner를 찾아 읽고, 작업 시작 상태를 검증하며, 누락·충돌을 먼저 교정하는 **project-specific 실행 receipt의 형식과 Gate**를 정의한다.
+> 이 파일은 프로젝트 사실을 새로 소유하는 두 번째 정본이 아니다. 현재 Base·Project repository owner를 찾아 읽고, 작업 시작 상태를 검증하며, 누락·충돌을 먼저 교정하는 **project-specific 실행 receipt의 형식과 Gate**를 정의한다.
 
 ```text
 PROJECT_START_CANON_CHECKLIST
@@ -15,6 +15,8 @@ REMAINING_WORK_AND_ORDER_DERIVED_FROM_CURRENT_CANON
 PROJECT_CANON_AND_ACTUAL_IMPLEMENTATION_FIRST
 REUSE_VALID_RECEIPT_UNTIL_MATERIAL_DRIFT
 STARTUP_CANON_CHECKLIST_USER_REPORT_REQUIRED
+REPOSITORY_PRIMARY_CANON
+NO_NEW_NOTION_WRITE_BY_DEFAULT
 ```
 
 ## 1. 목적
@@ -23,11 +25,13 @@ STARTUP_CANON_CHECKLIST_USER_REPORT_REQUIRED
 
 ```text
 안전한 read-only authority bootstrap와 Git remote refresh
-→ 현재 Project GitHub·Notion·actual implementation·open workstream 확인
+→ current Project repository exact SHA·actual implementation·open workstream 확인
 → 핵심 재미·핵심 시스템·SWOT·남은 작업·작업순서 체크리스트 작성
 → 정본 상태 분류
 → 현재 승인 범위의 누락·충돌·stale 상태 선교정
-→ GitHub structured canon / Notion human canon destination readback
+→ repository Decision/spec/data/asset manifest/handoff destination readback
+→ 필요 Gate에서 source-SHA-bound Human GDD PDF freshness 확인
+→ legacy Notion/Sheet 고유 자료가 있을 때만 migration receipt 확인
 → 체크리스트 재평가
 → READY_AFTER_CORRECTION
 → 새 기획·제작·Codex 구현
@@ -42,7 +46,8 @@ STARTUP_CANON_CHECKLIST_USER_REPORT_REQUIRED
 - 새 Work 또는 새 채팅의 첫 material 프로젝트 작업
 - handoff·context gap 이후 작업 재개
 - Goal·scope·authority·핵심 Decision이 material하게 바뀐 경우
-- GitHub↔Notion↔actual implementation drift가 발견된 경우
+- repository canon↔actual implementation drift가 발견된 경우
+- legacy migration source와 repository receipt가 충돌한 경우
 - 새 test/runtime/player/market evidence가 기존 상태를 바꾼 경우
 - major closeout 또는 다음 Playable Slice 진입 전
 
@@ -55,10 +60,12 @@ STARTUP_CANON_CHECKLIST_USER_REPORT_REQUIRED
 ```text
 current user instruction
 → Base latest completed main / root AGENTS / current routing owners
-→ Project default branch / AGENTS / Active Context / confirmed decisions
-→ Project Notion Home / relevant Domain / Flow / Visual / Production
+→ Project default branch / exact SHA / AGENTS / START_HERE / Active Context / confirmed decisions
+→ AI production spec / current handoff / ASSET_MANIFEST
 → actual code·data·Scene·Resource·asset·test·runtime evidence
 → open/draft/ready PR and protected other workstreams
+→ 필요하면 source-SHA-bound Human GDD PDF
+→ actual migration scope이면 legacy Notion/Sheet unique source와 repository receipt
 ```
 
 material source를 읽지 못하면 snippet·Memory·과거 대화로 대체하지 않는다.
@@ -68,17 +75,23 @@ REQUIRED_SOURCE_UNREADABLE
 → BLOCKED_UNVERIFIED
 ```
 
+Notion을 조회하지 않았다는 이유만으로 block하지 않는다. 고유 unmigrated 자료가 존재한다는 evidence가 있을 때만 해당 migration task를 계산한다.
+
 ## 4. 프로젝트 시작 receipt
 
 ```yaml
 PROJECT_START_CANON_CHECKLIST:
   identity_and_sources:
     exact_project_identity:
+    repository:
     exact_base_main:
     exact_project_default_branch_and_sha:
-    exact_notion_home_and_active_domains:
+    project_entrypoints: []
+    current_decision_and_spec_locators: []
+    asset_manifest:
     actual_implementation_evidence:
-    source_locators: []
+    source_sha_bound_human_pdf:
+    legacy_migration_sources: []
     current_task_branch_or_connector_ref:
     git_sync_evidence:
     open_workstreams_and_prs:
@@ -147,8 +160,18 @@ PROJECT_START_CANON_CHECKLIST:
     stale_conflict_missing_canon: []
     corrections_applied: []
     corrections_deferred_with_reason: []
-    github_structured_canon_readback:
-    notion_human_canon_readback:
+    repository_canon_readback:
+    decision_spec_data_readback:
+    asset_manifest_readback:
+    handoff_readback:
+    human_pdf_freshness_readback:
+
+  legacy_migration:
+    notion_unique_canon_count:
+    codex_notion_dependency_count:
+    active_notion_write_requirement_count:
+    repository_receipts: []
+    status: NOT_APPLICABLE | IN_PROGRESS | BLOCKED | COMPLETE
 
   evidence_and_exit:
     human_usability_evidence: NOT_RUN
@@ -166,12 +189,14 @@ PROJECT_START_CANON_CHECKLIST:
 첫 material 작업에서는 내부 YAML만 만들고 숨기지 말고, 사용자에게 다음을 짧은 체크리스트로 보여준다. 이미 유효한 receipt를 재사용할 때는 변경된 항목만 보고한다.
 
 ```text
-정본 identity와 current stage
+repository identity와 exact SHA / current stage
 → 핵심 재미·player promise·핵심 시스템
 → SWOT 핵심 변화와 evidence ceiling
 → 실제 구현·test·Visual/Audio 상태
 → 발견한 stale/conflict/missing canon
-→ 먼저 교정한 항목과 destination readback
+→ 먼저 교정한 항목과 repository destination readback
+→ PDF freshness가 필요한 Gate인지
+→ legacy migration counter와 blocker가 있는지
 → 남은 작업과 우선 작업순서
 → 보류된 사용자 결정
 → 다음 안전 작업
@@ -181,7 +206,7 @@ PROJECT_START_CANON_CHECKLIST:
 
 ## 5. 핵심 재미·핵심 시스템 확인
 
-`pointed_fun`은 기능 목록의 요약이 아니다. 다음 연결을 확인한다.
+`pointed_fun`은 기능 목록의 요약이 아니다.
 
 ```text
 player promise
@@ -196,7 +221,7 @@ player promise
 
 ```text
 핵심 재미에 대한 역할
-→ current canon owner
+→ current repository owner
 → actual implementation 또는 planned consumer
 → 현재 evidence
 → 남은 gap
@@ -215,8 +240,6 @@ SWOT은 홍보 문구를 채우는 표가 아니라 현재 의사결정의 위�
 - `opportunities`: 프로젝트 정체성과 맞는 외부 시장·플랫폼·기술·플레이어 요구의 기회
 - `threats`: 경쟁 혼잡, scope/콘텐츠 비용, 기술·권리·플랫폼·시장 위험
 
-각 항목은 가능한 범위에서 다음을 기록한다.
-
 ```yaml
 SWOT_ITEM:
   statement:
@@ -228,19 +251,17 @@ SWOT_ITEM:
   disposition: PROTECT | IMPROVE | TEST | MITIGATE | MONITOR | REJECT
 ```
 
-외부 기회·위협이 현재 material decision에 영향을 주면 `MARKET_SUCCESS_FAILURE_COMPARISON`을 실행하고 공식·현업·성공·실패/혼합·player report를 구분한다. L0 기계 수정처럼 시장조사가 불필요한 작업에서는 억지 SWOT 조사를 만들지 말고 `NOT_RUN` 또는 `NOT_APPLICABLE`과 이유를 기록한다.
+외부 기회·위협이 current material decision에 영향을 주면 `MARKET_SUCCESS_FAILURE_COMPARISON`을 실행한다. L0 기계 수정처럼 시장조사가 불필요한 작업에서는 `NOT_RUN` 또는 `NOT_APPLICABLE`과 이유를 기록한다.
 
 SWOT은 자동 scope 확장 권한이 아니며, 재미·독창성·시장성을 실제 player/market evidence보다 높게 주장하지 않는다.
 
 ## 7. 남은 작업과 작업순서
 
-`remaining_required_work`는 전체 희망 목록이 아니라 현재 Goal과 승인된 Playable Slice를 완료하는 데 필요한 gap이다. 활성 Slice가 아직 없으면 current stage·roadmap_or_milestones·accepted_frontier·blocker를 대조해 `next_playable_slice_candidate`를 복원한 뒤 그 후보의 gap만 우선 계산한다.
-
-먼저 다음을 재계산한다.
+`remaining_required_work`는 전체 희망 목록이 아니라 현재 Goal과 승인된 Playable Slice를 완료하는 데 필요한 gap이다. 활성 Slice가 아직 없으면 current stage·roadmap_or_milestones·accepted_frontier·blocker를 대조해 `next_playable_slice_candidate`를 복원한다.
 
 ```text
 confirmed requirement
-→ owner
+→ repository owner
 → current canon/implementation
 → consumer
 → test/readback/runtime/play evidence
@@ -259,8 +280,6 @@ confirmed requirement
 
 각 작업에는 `priority`, `status`, `why_now`, `dependency`, `player_value`, `risk_or_blocker`, `owner`, `acceptance`, `verification`, `fallback_or_defer`가 있어야 한다. 문서량·commit 수가 아니라 playable progress를 기준으로 순서를 정한다.
 
-서로 독립적인 작업은 병렬화할 수 있지만, 선행 Decision·consumer·asset·schema가 없는 downstream 구현을 먼저 시작하지 않는다.
-
 ## 8. 정본 선교정
 
 `STARTUP_CANON_RECONCILIATION_AND_CORRECTION_FIRST`
@@ -274,10 +293,10 @@ CURRENT / HISTORICAL / SUPERSEDED / CONFLICT / UNKNOWN_UNVERIFIED
 현재 승인 범위에서 자동 교정 가능한 것:
 
 - stale stage·status·remaining-work·work-order
-- 승인된 Decision이 current owner에 누락된 상태
+- 승인된 Decision이 repository owner에 누락된 상태
 - 동일 의미의 중복·서로 모순되는 current 문구
 - owner·consumer·test·readback locator 누락
-- completed/merged 사실과 맞지 않는 handoff·Notion 상태
+- completed/merged 사실과 맞지 않는 handoff·spec·manifest 상태
 - 보호된 다른 workstream을 침범하지 않는 bounded canon sync
 
 교정 흐름:
@@ -285,15 +304,15 @@ CURRENT / HISTORICAL / SUPERSEDED / CONFLICT / UNKNOWN_UNVERIFIED
 ```text
 validated finding
 → smallest safe correction
-→ GitHub structured canon
-→ Notion human canon
+→ repository Decision/spec/data/manifest/handoff
 → exact destination readback
+→ 필요한 경우 source-SHA-bound Human GDD PDF 재생성
 → checklist recalculation
 ```
 
-기존 검증된 Notion IA는 wholesale remigration하지 않는다. 고유 프로젝트 내용·승인 Visual·Decision을 보존하고 검증된 결함만 bounded correction한다.
+legacy Notion/Sheet에서 고유 자료가 발견되면 원본을 파괴하지 않고 provenance와 source relation을 보존해 repository에 이관한다. 신규 Notion 페이지·DB·중간 sync를 만들지 않는다.
 
-다음은 해당 항목을 `USER_DECISION_REQUIRED`로 보류한다.
+다음은 `USER_DECISION_REQUIRED`로 보류한다.
 
 - core fun·core identity 변경
 - core system의 제품 의미 변경
@@ -302,14 +321,14 @@ validated finding
 - 파괴적 migration/delete
 - 새 비용·계정·보안 권한·공개 배포
 
-독립적인 안전 교정은 계속할 수 있다. 그러나 unresolved conflict가 현재 Slice 의미·acceptance·consumer를 바꾸면 `NO_NEW_SLICE_WORK_BEFORE_STARTUP_CORRECTION_OR_EXPLICIT_DEFER`를 적용한다.
+독립적인 안전 교정은 계속할 수 있다. unresolved conflict가 현재 Slice 의미·acceptance·consumer를 바꾸면 `NO_NEW_SLICE_WORK_BEFORE_STARTUP_CORRECTION_OR_EXPLICIT_DEFER`를 적용한다.
 
 ## 9. 통과 조건
 
 다음을 모두 만족해야 `READY_AFTER_CORRECTION`이다.
 
 ```text
-exact project/source identity known
+exact project/repository/source SHA known
 AND core fun / player promise / core loop aligned
 AND core/supporting systems and consumers mapped
 AND SWOT evidence ceiling explicit
@@ -317,8 +336,10 @@ AND current stage / roadmap / accepted frontier / blockers known
 AND active Slice or next playable Slice candidate identified
 AND remaining work and work order recalculated
 AND approved-scope stale/conflict/missing canon corrected
-AND GitHub structured canon destination readback complete when changed
-AND Notion human canon destination readback complete when changed
+AND repository destination readback complete when changed
+AND approved runtime asset path/SHA/manifest recoverable when applicable
+AND PDF source SHA current when a human review Gate requires it
+AND legacy migration counters explicit when applicable
 AND protected other workstreams preserved
 AND unresolved product-meaning decisions explicitly deferred
 ```
@@ -333,28 +354,42 @@ AND unresolved product-meaning decisions explicitly deferred
 
 | 책임 | 처리 |
 |---|---|
-| Authority Recovery / Fresh-read / Entry Reconciliation | PRESERVED · 시작 receipt에서 가시화 |
+| Authority Recovery / Fresh-read / Entry Reconciliation | PRESERVED · repository exact SHA 기반 |
 | Whole Project Audit / Requirement Traceability | PRESERVED |
 | core fun / player promise / Project Direction | IMPROVED · 작업 시작 필수 확인 |
 | core systems / meaningful choice / reward-failure learning | IMPROVED · owner·consumer·evidence 연결 |
-| SWOT | NEW · evidence-based decision snapshot |
+| SWOT | PRESERVED · evidence-based decision snapshot |
 | remaining required work / completion rescan | IMPROVED · 시작 시 재계산 |
-| dependency·player-value work order | NEW/IMPROVED |
-| Reuse First / benchmark / 3 alternatives / long-term fit | PRESERVED · current v4.9 owner 사용 |
-| Visual Delete Test / actual consumer / image approval / Notion upload | PRESERVED |
-| Work↔Codex role / engine adapter / Implementation Ready | PRESERVED |
+| dependency·player-value work order | PRESERVED |
+| Reuse First / benchmark / 3 alternatives / long-term fit | PRESERVED |
+| Visual Delete Test / actual consumer / image approval | IMPROVED · repository path/SHA/manifest |
+| 사람용 전체 시각 점검 | IMPROVED · exact source SHA의 derived PDF |
+| Work↔Codex role / engine adapter / Implementation Ready | IMPROVED · exact repository SHA rehydrate |
 | automatic safe Git fetch·pull·push / PR·merge readback | PRESERVED |
-| project-scoped Godot·computer·browser operation | PRESERVED |
+| project-scoped Godot·computer operation | PRESERVED |
 | user-downloadable build / machine QA / Human evidence ceiling | PRESERVED |
 | failure recovery / Incident-Solution-Lesson | PRESERVED |
 | minimum 5 full adversarial loops / Completion Candidate | PRESERVED |
+| Notion human canon / upload / dual sync | INTENTIONALLY_SUPERSEDED · legacy read-only migration only |
 
 세부 알고리즘은 다음 current owner를 따른다.
 
 ```text
+docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md
+docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json
 templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md
 templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9_COMPATIBILITY_APPENDIX.md
 templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md
 ```
 
-이 파일은 `CHECKLIST_IS_ROUTING_RECEIPT_NOT_SECOND_CANON`을 유지한다. durable 사실과 결정은 분야별 GitHub structured canon과 Notion human canon이 소유하며, 이 receipt가 그 사실을 덮어쓰지 않는다.
+이 파일은 `CHECKLIST_IS_ROUTING_RECEIPT_NOT_SECOND_CANON`을 유지한다. durable 사실과 결정은 project repository의 분야별 structured/runtime canon이 소유하며, 사람용 PDF와 이 receipt가 그 사실을 덮어쓰지 않는다.
+
+## 11. Retired compatibility vocabulary
+
+```text
+GitHub structured canon = repository structured/runtime canon
+Notion human canon = retired legacy human surface
+GitHub structured canon / Notion human canon destination readback = retired dual-write route
+```
+
+위 문자열은 역사·구형 test 탐색용이며 active completion condition이 아니다.

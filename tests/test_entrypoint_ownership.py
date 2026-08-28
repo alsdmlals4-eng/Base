@@ -60,7 +60,7 @@ class EntrypointOwnershipTests(unittest.TestCase):
             "[수정제안서]",
             "별도 구현 PR",
             "released lock",
-            "USER_FACING_GDD_WORKSPACE",
+            "HUMAN_GDD_PDF_DERIVED_VIEW",
             "PROPOSED_SHEET_CHANGE",
             "정확한 HEAD",
             "소유 경계 없이 병렬",

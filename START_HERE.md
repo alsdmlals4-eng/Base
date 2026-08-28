@@ -4,7 +4,7 @@
 > Registry-derived active Skill view: `docs/generated/BASE_ACTIVE_SKILLS.md`
 > Game-system routes: `system-design` / `difficulty-and-combat-ai` → `skills/analyzing-and-refining-game-concepts/SKILL.md`
 
-이 문서는 새 채팅, 새 GPT, 새 Codex 또는 새 작업자가 Base와 프로젝트 작업의 책임 원본을 찾는 요청별 한 단계 라우터다. 전체 운영 설명은 `docs/OPERATING_MODEL.md`, 항상 적용되는 규칙은 `AGENTS.md`, Work Mode·Skill 선택은 `docs/WORK_MODE_AND_SKILL_ROUTING.md`, 공용 용어 정의·컨텍스트 압축은 `docs/CONTROLLED_VOCABULARY.md`, 문서 위치는 `docs/DOCUMENTATION_MAP.md`가 책임진다.
+이 문서는 새 채팅, 새 GPT, 새 Codex 또는 새 작업자가 Base와 프로젝트 작업의 책임 원본을 찾는 요청별 한 단계 라우터다. 전체 운영 설명은 `docs/OPERATING_MODEL.md`, 항상 적용되는 규칙은 `AGENTS.md`, 프로젝트 workspace·정본 계약은 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`와 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`, Work Mode·Skill 선택은 `docs/WORK_MODE_AND_SKILL_ROUTING.md`, 공용 용어 정의·컨텍스트 압축은 `docs/CONTROLLED_VOCABULARY.md`, 문서 위치는 `docs/DOCUMENTATION_MAP.md`가 책임진다.
 
 ## 사용자가 기억할 최소 요청
 
@@ -16,18 +16,21 @@
 
 ```text
 Base START_HERE.md·AGENTS.md
+→ docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md
+→ docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json
 → docs/OPERATING_MODEL.md
 → docs/WORK_MODE_AND_SKILL_ROUTING.md
 → docs/DOCUMENTATION_MAP.md
 → skills/SKILL_REGISTRY.json
 → 대상 프로젝트 AGENTS.md·프로젝트 START_HERE
-→ exact Project Notion Home·filtered human-facing surfaces
+→ ACTIVE_CONTEXT·승인 Decision·AI production spec·asset manifest·현재 handoff
 → 현재 책임 원본·실제 코드·데이터·자산·테스트
+→ 실제 migration scope일 때만 legacy Notion/Google Sheets 고유 자료
 ```
 
 `REUSE_FIRST_PREFLIGHT_REQUIRED`: 신규 또는 의미 있게 개정하는 시스템·UI/UX·시각/Asset·데이터/콘텐츠 구조·도구·workflow·Skill/Eval·QA/Test는 새 설계·제작 전에 `managing-project-intake-and-work-contract`를 통해 현재 프로젝트 구현/자산 → Project Asset/Reference/Benchmark → Base reuse handoff/profile/Registry와 축적 knowledge/case/reference → 직접 관련된 targeted cross-project evidence → 결정에 필요한 외부 benchmark 순으로 확인한다. 모든 프로젝트를 무작정 전수 검색하거나 Base reference를 프로젝트 정본보다 우선하지 않는다. 상세 계약은 `skills/managing-project-intake-and-work-contract/SKILL.md`와 `docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json`이 소유한다.
 
-기본 사람용 프로젝트 작업면은 `NOTION_DEFAULT_PROJECT_WORKSPACE`다. legacy Google Sheets는 **현재 작업이 실제 migration scope일 때만** `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`와 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`를 읽어 고유 자료를 Notion/repository owner로 이관한다. 통합 Vertical Slice 실행이 승인된 경우에만 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 사용한다. 이 Prompt와 과거 v6~v8 자료는 최신 사용자 결정·프로젝트 정본보다 높은 권한을 갖지 않는다.
+기본 프로젝트 작업 계약은 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`다. repository가 `REPOSITORY_PRIMARY_CANON`, 사람용 상세 기획서 PDF가 `HUMAN_GDD_PDF_DERIVED_VIEW`, AI용 상세 기획·구현 명세 Markdown이 repository canon이다. `NO_NEW_NOTION_WRITE_BY_DEFAULT`이며 기존 `NOTION_DEFAULT_PROJECT_WORKSPACE`는 `NOTION_DEFAULT_PROJECT_WORKSPACE_RETIRED`다. legacy Notion과 Google Sheets는 **현재 작업이 실제 migration scope일 때만** `templates/project-operations/NOTION_TO_REPOSITORY_MIGRATION_CHECKLIST.md`, `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`, `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`를 읽어 고유 자료를 repository 또는 명시적 non-canon 보관소로 이관한다. 통합 Vertical Slice 실행이 승인된 경우에만 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 사용한다. 이 Prompt와 과거 v6~v8 자료는 최신 사용자 결정·프로젝트 정본보다 높은 권한을 갖지 않는다.
 
 신규 MCP·addon·CLI·framework·Skill·Mode 또는 유사 실행 계층 제작 요청은 설계보다 먼저 `evaluating-godot-assets-and-plugins-before-creation: inventory-current-environment / disposition`으로 라우팅하고 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`의 Existing Solution First Gate를 통과한다. 이미 사용 중인 도구·연결된 MCP·enabled addon·dependency·관련 PR·외부 대안을 확인하지 않은 `BUILD_NEW`는 시작하지 않는다.
 
@@ -36,7 +39,7 @@ Base START_HERE.md·AGENTS.md
 Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 상태 파일을 Base의 활성 현재 상태로 오인하지 않는다.
 
 - `templates/project-operations/`: 대상 프로젝트에 설치할 Template이며 Base의 활성 상태가 아니다.
-- 확정된 운영 계약: `AGENTS.md`, `START_HERE.md`, `docs/OPERATING_MODEL.md`, `docs/DOCUMENTATION_MAP.md`
+- 확정된 운영 계약: `AGENTS.md`, `START_HERE.md`, `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`, `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`, `docs/OPERATING_MODEL.md`, `docs/DOCUMENTATION_MAP.md`
 - 사용자 PowerShell 실행이 필요한 작업: `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md` — 새 PowerShell 기준, 위치 세팅 우선, 한 번에 붙여넣는 단일 블록, stage별 오류 위치 표시
 - `RETIRED_HISTORY_ONLY`: 폐기된 Tool Hub·Expression Studio·Sprite Animation Studio의 과거 설계와 migration 증거는 Git 이력·명시적 archive에서만 찾는다. 현재 실행 경로·신규 설치 경로로 안내하지 않는다.
 - `QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW`: historical implementation `tools/qa-evidence-studio/README.md` is history/reference only; active project QA uses repository-native evidence and does not route through this tool.
@@ -107,7 +110,7 @@ PC·Android Delivery Guide도 새 광역 Skill이 아니다. `analyzing-and-refi
 | 불필요 자료 판정 | `pruning-stale-and-nonfunctional-material` |
 | 게임 사용자 연구 11영역 | `governing-game-user-research-coverage` |
 | 사용자 학습 자료 | `creating-user-learning-notes` |
-| 프로젝트 상태·시각화 | `building-project-visual-dashboards` — 현재 owner는 Notion human-facing view이며 외부 HTML workspace를 만들지 않음 |
+| 프로젝트 상태·사람용 시각화 | `building-project-visual-dashboards` — repository 정본에서 생성한 `HUMAN_GDD_PDF_DERIVED_VIEW`가 기본이며 외부 HTML/Notion workspace를 새 정본으로 만들지 않음 |
 | Godot·Unity 런타임 오류 | `diagnosing-game-engine-runtime-failures` |
 | Godot live Editor·MCP·addon·Scene·Resource 자동화 | HiGodot persistent authoring → GUT deterministic GDScript test → Hera live QA (`LIVE_QA_AND_OBSERVABILITY_ONLY`) |
 
@@ -119,13 +122,14 @@ Godot 자동화는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERA
 
 ```text
 프로젝트 AGENTS.md
-→ 루트 [기획서]/00_프로젝트_허브/START_HERE.md
-→ exact Project Notion Home·Project-filtered views
+→ 프로젝트 START_HERE.md
 → ACTIVE_CONTEXT.md·DOCUMENTATION_MAP.md·DEVELOPMENT_GATES.md
+→ CURRENT_CONFIRMED_DECISIONS·AI production spec·현재 Codex handoff
 → DESIGN_DOCUMENT_REGISTRY.json·현재 책임 원본
+→ ASSET_MANIFEST.json·실제 파일·자산·테스트
 → SKILL_REGISTRY.json·필요한 Skill과 mode
 → Roadmap·Issue·Plan·실행 순서
-→ 실제 파일·자산·테스트
+→ 실제 migration scope일 때만 legacy Notion/Google Sheets 고유 자료
 ```
 
 변경 후 `DOCUMENT_UPDATE_MATRIX.md`로 영향 범위를 확인한다. 과거 Skill ID는 `skills/LEGACY_SKILL_ALIASES.md`에서 현재 Skill·mode로 해석하며, 새 문서와 Registry에는 현행 ID만 사용한다.

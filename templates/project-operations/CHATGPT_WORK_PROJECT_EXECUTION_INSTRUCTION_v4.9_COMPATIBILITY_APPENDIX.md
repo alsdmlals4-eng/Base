@@ -1,6 +1,8 @@
 # ChatGPT Work Project Execution Instruction v4.9 — Compatibility Appendix
 
-> 이 appendix는 `CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md`와 함께 하나의 Work 실행 bundle을 구성한다. 본체가 current Base owner로 위임한 r5.4 호환 경계를 명시적으로 보존하며 독립적인 두 번째 정본이 아니다.
+> 이 appendix는 `CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md`와 함께 하나의 Work 실행 bundle을 구성한다. 본체가 current Base owner로 위임한 r5.4 호환 경계를 보존하지만 독립적인 두 번째 정본은 아니다.
+>
+> Current authority는 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`와 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`이다. 과거 Notion-first 표현은 legacy migration provenance를 보존할 때만 해석한다.
 
 ## 1. Default Project Entry — No Separate Goal Required
 
@@ -12,23 +14,22 @@ PROJECT_PLUS_INSTRUCTION_PLUS_OPTIONAL_GOAL_IS_SUFFICIENT_INPUT
 
 일반적인 프로젝트 Work의 **기본 입력은 `프로젝트명 + 공용 작업지시문`만**이다.
 
-사용자가 별도 Goal을 주는 것은 특정 작업을 명시적으로 우선하고 싶을 때의 선택 사항이지, 정상적인 Work 시작 조건이 아니다.
-
-Goal이 별도로 없으면 Work가 current Project canon을 fresh-read해 다음 순서로 이번 작업 계약을 복원한다.
+Goal이 별도로 없으면 Work가 current project repository를 fresh-read해 다음 순서로 작업 계약을 복원한다.
 
 ```text
 current stage
 → active / approved current work
 → unresolved blockers and dependencies
 → roadmap / accepted frontier
+→ remaining required work
 → next safe playable slice
 → current work contract
 ```
 
 - Memory나 과거 채팅에서 임의 Goal을 발명하지 않는다.
-- 여러 후보가 있어도 current canon이 한 방향을 명확히 가리키면 별도 질문 없이 그 방향으로 진행한다.
-- current canon만으로도 서로 다른 제품 의미를 가진 유효 선택지가 남거나 Core/UX/경제/서사/Art Direction/scope 같은 사용자 결정이 필요할 때만 `USER_DECISION_REQUIRED`로 묻는다.
-- 단순히 Goal 문장이 없다는 이유만으로 사용자에게 “무엇을 할까요?”를 다시 묻지 않는다.
+- current repository가 한 방향을 명확히 가리키면 별도 질문 없이 진행한다.
+- 서로 다른 제품 의미를 가진 유효 선택지가 남거나 Core/UX/경제/서사/Art Direction/scope 결정이 필요할 때만 `USER_DECISION_REQUIRED`다.
+- 단순히 Goal 문장이 없다는 이유로 “무엇을 할까요?”를 반복 질문하지 않는다.
 
 ## 2. Execution Scope Guard
 
@@ -38,7 +39,7 @@ PROJECT_WORK_ONLY_WHEN_CURRENT_USER_REQUEST_AUTHORIZES_EXECUTION
 
 이 bundle은 `진행해`, `계속해`, `남은 작업 진행`, 동일 승인 계약 continuation처럼 실제 실행 의도가 있을 때만 승인 범위의 write/correction/PR closeout을 수행한다.
 
-사용자가 `검토만`, `분석만`, `제안만`, `PR만 열어`, `병합하지 마`, `Notion은 건드리지 마`, `GitHub는 읽기만`처럼 범위를 제한하면 최신 지시가 우선하며 그 범위를 넘어 mutation/merge하지 않는다.
+사용자가 `검토만`, `분석만`, `제안만`, `PR만 열어`, `병합하지 마`, `GitHub는 읽기만`처럼 범위를 제한하면 최신 지시가 우선한다.
 
 필수 source가 material한데 실제로 읽을 수 없으면:
 
@@ -48,6 +49,8 @@ REQUIRED_SOURCE_UNREADABLE
 ```
 
 로 처리한다. 검색 snippet, 제목, 과거 Memory, 주변 자료, 추론으로 원문을 대체하지 않는다.
+
+Notion을 읽지 않았다는 사실만으로 block하지 않는다. 다만 `NOTION_UNIQUE_CANON_COUNT > 0`이라는 구체적 evidence가 있으면 해당 legacy source의 이관 범위를 분리해 추적한다.
 
 ## 3. External Process Skill Trigger
 
@@ -93,7 +96,7 @@ installed exact identity
 
 을 사용한다.
 
-그러나 **Engine 자체는** 새 release 존재만으로 production baseline을 자동 승격하지 않고 `STABLE_ENGINE_BASELINE + concrete trigger + CANARY_BEFORE_ENGINE_BASELINE_PROMOTION`이 우선한다.
+Engine 자체는 새 release 존재만으로 production baseline을 자동 승격하지 않고 `STABLE_ENGINE_BASELINE + concrete trigger + CANARY_BEFORE_ENGINE_BASELINE_PROMOTION`이 우선한다.
 
 floating `latest`, unreviewed update, 신규 비용·권한·breaking migration은 자동 채택하지 않는다.
 
@@ -125,6 +128,7 @@ LOCATION: exact repository/worktree/project
 current Project/Base가 다시 채택하지 않는 한 다음을 새 기본 authority로 되살리지 않는다.
 
 ```text
+Notion → LEGACY_OPTIONAL_READ_ONLY_MIGRATION_SOURCE
 Google Sheets → COMPATIBILITY_ONLY migration source
 Figma project workspace → retired/non-authoritative unless explicitly re-adopted
 external HTML project dashboard/workspace → retired/non-authoritative unless explicitly re-adopted
@@ -132,7 +136,7 @@ legacy Tool Hub / QA Evidence Studio default project-management route → not de
 local Codex launcher → retired
 ```
 
-UNIQUE 정보가 남은 legacy surface만 current owner로 이관하고 destination readback 후 active reference 0을 확인한다.
+UNIQUE 정보가 남은 legacy surface만 current owner로 이관하고 destination readback 후 active reference 0을 확인한다. 원본 surface 삭제는 의무가 아니다.
 
 ## 7. Work Prompt Efficiency
 
@@ -145,7 +149,7 @@ WORK_PROMPT_EFFICIENCY_WITHOUT_CAPABILITY_LOSS
 ```text
 stable shared instruction
 → current work contract
-→ current Project fresh facts
+→ current Project repository facts
 → triggered Skill/owner only
 → current Stage
 → evidence/checkpoint
@@ -174,13 +178,11 @@ EXPLICIT_USER_DELEGATION_REQUIRED
 DELEGATED_RECOMMENDED_DEFAULT_APPROVAL
 ```
 
-현재 사용자가 routine 권장안 자동 승인, 중간 승인·중단 최소화, Work에서 실제 인게임 production input 일괄 준비, Codex 단일 구현 구간, machine QA 우선, Human QA 후속 보류를 명시한 경우 다음 opt-in profile을 함께 사용한다.
+사용자가 routine 권장안 자동 승인, 중간 승인·중단 최소화, Work에서 실제 인게임 production input 일괄 준비, Codex 단일 구현 구간, machine QA 우선, Human QA 후속 보류를 명시한 경우 다음 opt-in profile을 함께 사용한다.
 
 ```text
 templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md
 ```
-
-이 profile은 다음 3단계를 current Slice 범위에서 연결한다.
 
 ```text
 Work planning/review/visual/audio/data preparation
@@ -189,11 +191,11 @@ Work planning/review/visual/audio/data preparation
 → user vertical-slice validation
 ```
 
-활성화 증거가 없으면 기본 v4.9 execution, 기존 image conversation approval, current Project user-decision Gate를 그대로 유지한다. 사용자가 더 좁은 제한을 주면 최신 제한이 profile보다 우선한다.
+이 profile은 direct main·force·admin/ruleset bypass 또는 Human/Player evidence 과장을 허용하지 않는다. Notion을 구현 인계의 필수 경로로 복원하지 않으며, current repository exact SHA와 asset manifest를 사용한다.
 
-이 profile은 current owner를 복제하지 않고 Work v4.9, continuous-work, GPT–Codex workflow, Visual, Vertical Slice, HiGodot/GUT/Hera 계약을 조합한다. Project canon·Base latest owner·상위 host/system/tool confirmation이 충돌 시 우선하며, direct main·force·admin/ruleset bypass 또는 Human/Player evidence 과장을 허용하지 않는다.
+## 10. Project-local Visual Binary Is Now the Default
 
-## 10. Explicit Project-local Visual Binary Profile
+다음 세 token은 더 이상 좁은 opt-in profile이 아니라 repository-first 기본 계약이다.
 
 ```text
 PROJECT_LOCAL_VISUAL_BINARY_FIRST
@@ -201,32 +203,45 @@ NOTION_VISUAL_STRUCTURE_REFERENCE_ONLY
 NO_NOTION_BINARY_UPLOAD_REQUIRED
 ```
 
-현재 사용자가 로컬 GPT/컴퓨터가 이미지 파일을 exact Project에 직접 저장할 수 있고, Notion은 구조·Visual 방향 참고용으로만 사용하며 image binary는 각 프로젝트가 소유하도록 명시하면 다음 좁은 adapter를 함께 사용한다.
+active route:
 
 ```text
-templates/project-operations/WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md
-```
-
-적용 범위:
-
-```text
-Notion Visual/Asset structure fresh-read
-→ local project candidate bytes
+actual runtime consumer
+→ local/Work candidate bytes
+→ user approval
 → SHA/provenance/rights
-→ current-Slice approval
-→ tracked project asset + ASSET_MANIFEST
+→ project-controlled repository path
+→ ASSET_MANIFEST
 → exact commit/remote readback
 → Codex/runtime consumer
 ```
 
-이 profile은 minimum-transition profile의 Visual packet 중 `notion_destination`과 Notion binary upload/attachment/readback 필수조건만 좁게 supersede한다. Notion의 Project Home·Visual Bible·Asset Catalog·Flow·Art Direction human canon은 계속 읽고 필요한 텍스트/상태 sync만 수행한다.
+`templates/project-operations/WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md`는 기존 프로젝트가 해당 좁은 adapter를 이미 참조할 때의 compatibility 문서다. 새 프로젝트는 별도 opt-in 없이 active V4 workspace contract를 따른다.
 
 ```text
-NOTION_BINARY_DELIVERY_OPTIONAL_BY_EXPLICIT_PROJECT_POLICY
+NOTION_BINARY_DELIVERY_OPTIONAL_BY_EXPLICIT_PROJECT_POLICY_RETIRED
 NOTION_UPLOAD_NOT_RUN
 NO_FALSE_NOTION_UPLOAD_CLAIM
 ```
 
-local-only candidate를 durable Codex input으로 가장하지 않는다. 실제 current-Slice 구현에 사용할 승인 Visual은 project-owned tracked path와 manifest로 승격하고, feature branch commit/push·remote readback 뒤 Codex에 전달한다.
+Library/local-only candidate를 durable Codex input으로 가장하지 않는다. 실제 current-Slice 구현에 사용할 승인 Visual은 tracked repository path와 manifest로 승격하고 exact SHA를 전달한다.
 
-이 opt-in은 default global image policy, 다른 프로젝트의 Notion binary requirement, Art Direction/identity/rights Gate 또는 상위 host confirmation을 무효화하지 않는다. Project-specific Visual binary owner가 따로 있으면 current Project owner가 우선한다.
+## 11. Retired dual-canon compatibility
+
+```text
+DOMAIN_SPLIT_CANON_RETIRED
+NOTION_IMAGE_UPLOAD_ROUTING_RETIRED
+NOTION_HUMAN_FACING_CANON_RETIRED
+PROJECT_GITHUB_NOTION_ONLY_RETIRED
+```
+
+이 token은 과거 receipt·test·문서 검색을 위한 compatibility vocabulary다. current behavior는 다음이다.
+
+```text
+REPOSITORY_PRIMARY_CANON
+HUMAN_GDD_PDF_DERIVED_VIEW
+AI_PRODUCTION_SPEC_MARKDOWN
+CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA
+APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST
+NO_NEW_NOTION_WRITE_BY_DEFAULT
+```

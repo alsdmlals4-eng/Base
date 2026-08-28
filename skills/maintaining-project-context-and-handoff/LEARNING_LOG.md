@@ -1,5 +1,44 @@
 # Maintaining Project Context and Handoff Learning Log
 
+## 2026-08-28 — Fresh-read continuity must terminate in repository authority
+
+### Context
+
+Desktop GPT Work가 로컬·repository 파일을 직접 다루고 사람용 통합 점검을 source-SHA-bound PDF로 수행하게 되면서, Notion을 모든 작업의 필수 중간 workspace와 Codex 재수화 입력으로 유지할 이유가 사라졌다.
+
+### Finding
+
+- root 정책만 repository-first로 바꾸고 Handoff Skill·fresh-read reference·Codex template·Work router가 GitHub+Notion 동시 재수화를 계속 요구하면 새 작업자는 다시 Notion dependency를 복원한다.
+- 반대로 구형 문자열을 전부 삭제하면 historical test와 consumer가 의미를 잃고, 자료 이관 전 Notion-only 고유 정보까지 누락될 수 있다.
+- fresh-read 가능성은 새 정책 파일의 존재가 아니라 `README → START_HERE → AGENTS → active workspace contract → Project entrypoints → actual evidence`의 소비 경로가 같은 권위를 말하는지로 판정해야 한다.
+
+### Decision
+
+- active project authority는 `REPOSITORY_PRIMARY_CANON`과 exact commit이다.
+- Work는 `CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON`, Library는 `CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON`이다.
+- 사람용 PDF는 `HUMAN_GDD_PDF_DERIVED_VIEW`이며 current canon을 직접 수정하지 않는다.
+- Codex는 `CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA`와 `APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`로 재수화한다.
+- Notion은 고유 미이관 자료가 있을 때만 `NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE`로 읽고 신규 중간 쓰기를 요구하지 않는다.
+- 구형 GitHub+Notion vocabulary는 `_RETIRED` compatibility marker로만 보존하며 active route로 해석하지 않는다.
+
+### Reuse boundary
+
+이 교정은 Base의 기본 작업 권위를 바꾼다. 각 프로젝트의 Notion-only 자료가 실제로 모두 이관됐거나 runtime/UX/player 검증이 끝났다는 증거는 아니다. 프로젝트별 zero-count migration gate와 exact repository readback이 별도로 필요하다.
+
+### Evidence
+
+- PR #771
+- `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`
+- `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`
+- `skills/maintaining-project-context-and-handoff/SKILL.md`
+- `skills/maintaining-project-context-and-handoff/references/fresh-read-project-bootstrap.md`
+- `tests/test_repository_first_workspace_contract.py`
+- `tests/test_gpt_codex_workflow_contract.py`
+
+### Status
+
+`CURRENT_CORRECTION`
+
 ## 2026-08-26 — Slice handoff semantics must reach the active consumer
 
 ### Context
