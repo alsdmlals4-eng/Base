@@ -92,6 +92,29 @@ class RepositoryFirstWorkspaceContractTests(unittest.TestCase):
         # The active root must explicitly mark it retired rather than silently treating it as current.
         self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE_RETIRED", agents)
 
+    def test_readme_routes_new_workers_to_repository_first_authority(self) -> None:
+        readme = text("README.md")
+
+        for token in (
+            "docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md",
+            "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json",
+            "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
+            "REPOSITORY_PRIMARY_CANON",
+            "HUMAN_GDD_PDF_DERIVED_VIEW",
+            "CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA",
+            "APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST",
+            "NO_NEW_NOTION_WRITE_BY_DEFAULT",
+            "NOTION_DEFAULT_PROJECT_WORKSPACE_RETIRED",
+            "POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, readme)
+
+        self.assertNotIn(
+            "새 프로젝트와 새 기획·시각 작업의 기본 인간 작업면은 `NOTION_DEFAULT_PROJECT_WORKSPACE`",
+            readme,
+        )
+
     def test_active_policy_defines_two_artifacts_and_noncanon_surfaces(self) -> None:
         policy = text(ACTIVE_POLICY)
 
