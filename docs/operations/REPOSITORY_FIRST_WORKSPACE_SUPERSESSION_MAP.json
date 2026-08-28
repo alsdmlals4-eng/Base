@@ -46,6 +46,132 @@
       ]
     },
     {
+      "path": "skills/managing-game-project-operating-system/SKILL.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "install, audit, reconcile-legacy, migrate and verify modes",
+        "project isolation and exact identity checks",
+        "legacy preservation and destination readback",
+        "provider adoption and rollback safety",
+        "remaining-work and adversarial completion gates"
+      ],
+      "superseded": [
+        "DOMAIN_SPLIT_CANON as current workspace authority",
+        "NOTION_DEFAULT_PROJECT_WORKSPACE as default install destination",
+        "NOTION_HUMAN_FACING_CANON as required decision destination",
+        "exact Project Notion workspace in the default read order",
+        "POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP as mandatory dual synchronization",
+        "Notion current-state as a completion precondition"
+      ],
+      "replacement": [
+        "REPOSITORY_PRIMARY_PROJECT_CANON",
+        "AI_DETAILED_PLANNING_IMPLEMENTATION_MARKDOWN",
+        "HUMAN_GDD_PDF_DERIVED_VIEW",
+        "NOTION_RETIREMENT_AND_REPOSITORY_MIGRATION_CHECKLIST",
+        "POSTMERGE_REPOSITORY_AND_DERIVED_VIEW_READBACK_LOOP"
+      ]
+    },
+    {
+      "path": "skills/managing-project-intake-and-work-contract/SKILL.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "request intake and work-contract routing",
+        "reuse-first preflight",
+        "minimum alternatives and implementation reality gate",
+        "approval, continuation and blocker recovery",
+        "open-PR read-only safety",
+        "post-build adversarial review"
+      ],
+      "superseded": [
+        "APPROVED_DECISION_GITHUB_NOTION_SYNC_DURING_WORK",
+        "exact Project Notion Home as mandatory current-state input",
+        "Base/Notion surface as the default Base-work input",
+        "Notion destination readback as a mandatory build-completion gate",
+        "PROJECT_WORKSPACE_AUTHORITY_CONTRACT as the current workspace owner"
+      ],
+      "replacement": [
+        "repository owner update and destination readback during work",
+        "legacy Notion input only when unique unmigrated material may remain",
+        "docs/operations/REPOSITORY_FIRST_PROJECT_WORKSPACE_CONTRACT.json",
+        "docs/REPOSITORY_FIRST_PROJECT_WORKSPACE_POLICY.md"
+      ]
+    },
+    {
+      "path": "docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "long-running task continuity",
+        "continuous-work execution and blocker recovery",
+        "cost, PR and completion safety"
+      ],
+      "superseded": [
+        "POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP as dual-surface synchronization",
+        "Notion write/readback as an unconditional completion step"
+      ],
+      "replacement": "POSTMERGE_REPOSITORY_AND_DERIVED_VIEW_READBACK_LOOP"
+    },
+    {
+      "path": "docs/CONFIRMED_DECISION_SYNC_POLICY.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "stable decision identity",
+        "supersession and duplicate-question prevention",
+        "repository readback and exact-main synchronization"
+      ],
+      "superseded": [
+        "Notion human-facing write as a mandatory approved-decision destination",
+        "GitHub plus Notion readback as the default decision-sync completion condition"
+      ],
+      "replacement": [
+        "repository confirmed-decision owner",
+        "AI canon and actual consumer updates",
+        "legacy migration only when approval evidence exists only in Notion"
+      ]
+    },
+    {
+      "path": "docs/DOCUMENTATION_MAP.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "document discovery and owner routing",
+        "historical and domain reference locations"
+      ],
+      "superseded": [
+        "NOTION_DEFAULT_PROJECT_WORKSPACE as current default project route",
+        "NOTION_HUMAN_FACING_CANON as current human-document owner"
+      ],
+      "replacement": [
+        "docs/operations/REPOSITORY_FIRST_PROJECT_WORKSPACE_CONTRACT.json",
+        "docs/REPOSITORY_FIRST_PROJECT_WORKSPACE_POLICY.md",
+        "templates/project-operations/DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD_WORK_INSTRUCTION.md"
+      ]
+    },
+    {
+      "path": "docs/POSTMERGE_ISSUE_SUCCESSOR_FRESHNESS_POLICY.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "issue successor freshness",
+        "linked-issue readback",
+        "issue-state non-authority rule"
+      ],
+      "superseded": [
+        "POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP as the current postmerge workspace loop"
+      ],
+      "replacement": "POSTMERGE_REPOSITORY_AND_DERIVED_VIEW_READBACK_LOOP"
+    },
+    {
+      "path": "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "continuous execution state machine",
+        "recover, defer and independent-work sequencing",
+        "completion and clean-exit behavior"
+      ],
+      "superseded": [
+        "Notion synchronization as an unconditional postmerge continuation step"
+      ],
+      "replacement": "repository and derived-view readback with legacy migration only when applicable"
+    },
+    {
       "path": "docs/GPT_CODEX_WORKFLOW_POLICY.md",
       "status": "PARTIAL_SUPERSESSION",
       "retained_use": [
@@ -93,6 +219,41 @@
       "replacement": "REPOSITORY_PATH_MANIFEST_SHA256_READBACK"
     },
     {
+      "path": "templates/planning/GAME_UX_UI_SYSTEM.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "UX/UI system structure",
+        "screen, flow, state and accessibility planning"
+      ],
+      "superseded": [
+        "NOTION_DEFAULT_PROJECT_WORKSPACE as the current template destination"
+      ],
+      "replacement": "repository AI canon plus HUMAN_GDD_PDF_DERIVED_VIEW"
+    },
+    {
+      "path": "templates/planning/TUTORIAL_AND_ONBOARDING_DESIGN_CONTRACT.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "tutorial and onboarding design contract"
+      ],
+      "superseded": [
+        "NOTION_DEFAULT_PROJECT_WORKSPACE as the current template destination"
+      ],
+      "replacement": "repository AI canon plus HUMAN_GDD_PDF_DERIVED_VIEW"
+    },
+    {
+      "path": "docs/operations/base-partitions/P01_PROJECT_PLANNING_OPERATIONS_NOTION.md",
+      "status": "LEGACY_PRACTICE_AND_MIGRATION_REFERENCE",
+      "retained_use": [
+        "historical partition interpretation",
+        "legacy migration provenance"
+      ],
+      "superseded": [
+        "Notion-first project planning as current operation"
+      ],
+      "replacement": "docs/REPOSITORY_FIRST_PROJECT_WORKSPACE_POLICY.md"
+    },
+    {
       "path": "tests/test_notion_project_workspace_contract.py",
       "status": "LEGACY_COMPATIBILITY_ASSERTIONS",
       "retained_use": [
@@ -109,13 +270,22 @@
         "old handoff vocabulary remains discoverable"
       ],
       "current_default_proof": "tests/test_repository_first_project_workspace_contract.py"
+    },
+    {
+      "path": "tests/test_postmerge_github_notion_long_term_contract.py",
+      "status": "LEGACY_COMPATIBILITY_ASSERTIONS",
+      "retained_use": [
+        "old postmerge token remains discoverable for historical contracts"
+      ],
+      "current_default_proof": "tests/test_repository_first_project_workspace_contract.py"
     }
   ],
   "invariants": [
     "PARTIAL_SUPERSESSION does not discard unrelated safety, lifecycle, evidence or role-split rules in the older document.",
     "A legacy token found by search is not current routing authority.",
+    "Active Skills retain their non-workspace behavior, but their Notion-first source order, write gate and completion clauses are replaced by the current repository-first owner.",
     "New project work must not create a Notion write, attachment or readback requirement unless the latest project-specific user decision explicitly opts in.",
     "Existing Notion content remains read-only migration input and is not deleted by this Base transition.",
-    "The focused repository-first contract test is the current default-workspace proof."
+    "The focused repository-first contract and bootstrap tests are the current default-workspace proof."
   ]
 }
