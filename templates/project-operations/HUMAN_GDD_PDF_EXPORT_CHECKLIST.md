@@ -2,7 +2,9 @@
 
 > Status: `PROJECT_TEMPLATE`
 > Artifact role: `HUMAN_GDD_PDF_DERIVED_VIEW`
+> Delivery profile: `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD`
 > Canon owner: repository AI planning and implementation specification
+> User delivery: `PDF_ONLY_USER_DOWNLOAD`
 > Default output: one downloadable human-facing detailed GDD PDF at a meaningful review gate
 
 ## 0. Export identity
@@ -12,8 +14,12 @@ project:
 project_id:
 milestone:
 document_title:
+source_branch:
 source_commit:
 canon_version:
+shared_id_registry_version:
+ai_spec_path:
+ai_spec_source_commit:
 generated_at:
 generator_or_method:
 included_scope:
@@ -28,10 +34,19 @@ output_path: docs/exports/HUMAN_GDD_<milestone>_<source-sha>.pdf
 ### Identity Gate
 
 - [ ] `source_commit`은 검토한 repository의 정확한 40자 commit SHA다.
-- [ ] `canon_version`은 AI canon의 현재 version과 일치한다.
+- [ ] `ai_spec_source_commit`과 PDF의 `source_commit`이 일치한다.
+- [ ] `canon_version`과 `shared_id_registry_version`은 AI canon의 현재 값과 일치한다.
 - [ ] `included_scope`가 전체 프로젝트인지 특정 Slice인지 명확하다.
 - [ ] `implementation_status`와 `evidence_ceiling`이 계획·구현·검증 상태를 과장하지 않는다.
 - [ ] 오래된 PDF를 최신 정본으로 오인하지 않도록 표지 또는 첫 페이지에 identity를 표시한다.
+
+### SHARED_ID_AND_SOURCE_SHA_REQUIRED
+
+- [ ] PDF와 AI Markdown이 같은 `SYS / CNT / UI / UX / AST / AUD / DAT / QA / DEC` ID를 사용한다.
+- [ ] PDF의 시스템·콘텐츠·화면·asset·Decision 표가 AI canon의 동일 ID로 추적된다.
+- [ ] PDF에만 존재하는 신규 규칙·수치·asset approval·Decision이 없다.
+- [ ] `DOCUMENTED`, `CONFIRMED`, `IMPLEMENTED`, `AUTOMATED_TEST_PASS`, `RUNTIME_VERIFIED`, `UX_VERIFIED`, `RELEASE_READY` 상태를 혼합하지 않는다.
+- [ ] `source_branch`, `source_commit`, `canon_version`, `shared_id_registry_version` 중 하나라도 다르면 `STALE_DERIVED_VIEW`로 표시하고 current export로 배포하지 않는다.
 
 ## 1. Export timing
 
@@ -83,10 +98,12 @@ output_path: docs/exports/HUMAN_GDD_<milestone>_<source-sha>.pdf
 - [ ] 승인된 asset과 candidate/reference/rejected asset을 구분한다.
 - [ ] asset의 구현 경로와 상태를 사람이 이해할 수 있는 수준으로 설명한다.
 - [ ] 사운드·VFX trigger와 플레이어 피드백 역할을 설명한다.
+- [ ] `NO_AUTOMATIC_IMAGE_GENERATION`: 이번 작업에서 사용자가 이미지 생성·편집을 명시하지 않았다면 승인된 기존 이미지·실제 build capture만 사용하고 누락은 누락 상태로 표시한다.
 
 ### F. Implementation method
 
 - [ ] 각 핵심 시스템이 Godot에서 어떤 데이터·상태·씬·노드 책임으로 구현되는지 원리 수준에서 설명한다.
+- [ ] scene·node·script·resource·data owner·signal/event payload·상태 전이·구현 순서를 필요한 상세도로 포함한다.
 - [ ] AI canon의 의미 계약을 보존하되, 검증되지 않은 구체 코드 존재를 주장하지 않는다.
 - [ ] 저장·불러오기, 입력, UI wiring, asset integration, 테스트 경로를 포함한다.
 - [ ] 구현 완료·테스트 PASS·runtime PASS·UX PASS를 분리한다.
@@ -110,10 +127,11 @@ output_path: docs/exports/HUMAN_GDD_<milestone>_<source-sha>.pdf
 ## 4. Canon and drift Gate
 
 ```text
-repository canon at source_commit
+repository AI canon at exact source_commit
+→ verify SHARED_ID_AND_SOURCE_SHA_REQUIRED
 → generate HUMAN_GDD_PDF_DERIVED_VIEW
 → render/readback every page
-→ compare key decisions, systems, asset states and evidence ceiling
+→ compare decisions, systems, content, asset states and evidence ceiling
 → user review
 → approved changes return to repository canon
 → regenerate only when the next meaningful Gate requires it
@@ -140,6 +158,7 @@ PDF가 보여줄 수 있는 것과 없는 것을 명시한다.
 
 ```yaml
 planning_canon_readback: PASS | FAIL | BLOCKED | NOT_RUN
+shared_id_and_source_sha_readback: PASS | FAIL | BLOCKED | NOT_RUN
 pdf_render_readback: PASS | FAIL | BLOCKED | NOT_RUN
 asset_manifest_readback: PASS | FAIL | BLOCKED | NOT_RUN
 automated_tests: PASS | FAIL | BLOCKED | NOT_RUN
@@ -150,19 +169,38 @@ release_readiness: PASS | FAIL | BLOCKED | NOT_RUN
 
 정적 문서와 PDF render PASS는 runtime, 실제 플레이, UX 또는 출시 준비 PASS가 아니다.
 
-## 7. Final export record
+## 7. PDF-only delivery Gate
+
+`PDF_ONLY_USER_DOWNLOAD`
+
+- [ ] 최종 사용자 응답의 다운로드 링크는 사람용 PDF 하나다.
+- [ ] AI Markdown은 다운로드 링크로 제공하지 않고 repository path, branch, exact commit SHA, PR, validation result로 보고한다.
+- [ ] 사용자가 별도로 요구하지 않은 `DOCX`, `ZIP`, separate appendix, separate image bundle을 만들지 않는다.
+- [ ] 필요한 traceability·benchmark·asset matrix·부록은 PDF와 AI Markdown 내부에 통합했다.
+- [ ] `NO_NOTION_OUTPUT`: PDF 전달을 위해 새 Notion page/database/upload/sync/readback을 만들지 않았다.
+- [ ] Library에 PDF를 보관하더라도 repository source identity와 canon authority를 바꾸지 않는다.
+
+## 8. Final export record
 
 ```yaml
 output_path:
 file_name:
 sha256:
 page_count:
+source_branch:
 source_commit:
+canon_version:
+shared_id_registry_version:
+ai_spec_path:
+ai_spec_source_commit:
 render_readback_result:
+shared_id_and_source_sha_result:
 reviewed_sections:
 known_limits:
 user_review_state:
 repository_changes_from_review:
 superseded_pdf:
+user_download_link_count: 1
+ai_markdown_delivery: REPOSITORY_PATH_BRANCH_COMMIT_PR_VALIDATION_ONLY
 rollback_or_regeneration_route:
 ```
