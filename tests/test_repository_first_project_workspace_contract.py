@@ -172,6 +172,7 @@ class RepositoryFirstProjectWorkspaceContractTests(unittest.TestCase):
     def test_root_entrypoints_route_to_repository_first_owner(self) -> None:
         agents = text("AGENTS.md")
         readme = text("README.md")
+        start_here = text("START_HERE.md")
         for token in (
             "docs/operations/REPOSITORY_FIRST_PROJECT_WORKSPACE_CONTRACT.json",
             "docs/REPOSITORY_FIRST_PROJECT_WORKSPACE_POLICY.md",
@@ -191,6 +192,56 @@ class RepositoryFirstProjectWorkspaceContractTests(unittest.TestCase):
             "REPOSITORY_PATH_MANIFEST_SHA256_READBACK",
         ):
             self.assertIn(token, readme)
+        for token in (
+            "docs/operations/REPOSITORY_FIRST_PROJECT_WORKSPACE_CONTRACT.json",
+            "docs/REPOSITORY_FIRST_PROJECT_WORKSPACE_POLICY.md",
+            "REPOSITORY_PRIMARY_PROJECT_CANON",
+            "HUMAN_GDD_PDF_DERIVED_VIEW",
+            "AI_DETAILED_PLANNING_IMPLEMENTATION_MARKDOWN",
+            "NOTION_DEFAULT_PROJECT_WORKSPACE_LEGACY_ALIAS",
+        ):
+            self.assertIn(token, start_here)
+        self.assertNotIn("exact Project Notion Home", start_here)
+        self.assertNotIn(
+            "기본 사람용 프로젝트 작업면은 `NOTION_DEFAULT_PROJECT_WORKSPACE`",
+            start_here,
+        )
+        self.assertNotIn(
+            "새 프로젝트와 새 기획·시각 작업의 기본 인간 작업면은 `NOTION_DEFAULT_PROJECT_WORKSPACE`",
+            readme,
+        )
+
+    def test_partial_supersession_preserves_non_workspace_safety_rules(self) -> None:
+        data = json.loads(
+            text("docs/operations/REPOSITORY_FIRST_WORKSPACE_SUPERSESSION_MAP.json")
+        )
+        self.assertEqual(1, data["schema_version"])
+        self.assertEqual(
+            "CURRENT_SPECIFIC_WORKSPACE_OWNER_OVERRIDES_OLDER_GENERAL_OR_COMPATIBILITY_TEXT",
+            data["precedence"],
+        )
+        by_path = {entry["path"]: entry for entry in data["entries"]}
+        operating_model = by_path["docs/OPERATING_MODEL.md"]
+        self.assertEqual("PARTIAL_SUPERSESSION", operating_model["status"])
+        self.assertIn("Base lifecycle", operating_model["retained_use"])
+        self.assertIn(
+            "POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP workspace synchronization",
+            operating_model["superseded"],
+        )
+        self.assertIn(
+            "POSTMERGE_REPOSITORY_AND_DERIVED_VIEW_READBACK_LOOP",
+            operating_model["replacement"],
+        )
+        gpt_codex = by_path["docs/GPT_CODEX_WORKFLOW_POLICY.md"]
+        self.assertEqual("PARTIAL_SUPERSESSION", gpt_codex["status"])
+        self.assertIn(
+            "GPT and Codex product-responsibility split",
+            gpt_codex["retained_use"],
+        )
+        self.assertIn(
+            "CODEX_VISUAL_INPUT_NOTION_APPROVED_ONLY",
+            gpt_codex["superseded"],
+        )
 
     def test_legacy_notion_contracts_are_discovery_only_not_current_default(self) -> None:
         policy = text("docs/REPOSITORY_FIRST_PROJECT_WORKSPACE_POLICY.md")
