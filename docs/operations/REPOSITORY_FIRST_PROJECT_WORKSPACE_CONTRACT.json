@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "authority_model": "REPOSITORY_PRIMARY_CANON",
+  "project_workspace": "REPOSITORY_PRIMARY_PROJECT_CANON",
+  "human_facing_view": "HUMAN_GDD_PDF_DERIVED_VIEW",
+  "ai_facing_canon": "AI_DETAILED_PLANNING_IMPLEMENTATION_MARKDOWN",
+  "default_project_deliverables": [
+    "HUMAN_DETAILED_GDD_PDF",
+    "AI_DETAILED_PLANNING_IMPLEMENTATION_MARKDOWN"
+  ],
+  "human_pdf_is_independent_canon": false,
+  "chatgpt_work_surface": "CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON",
+  "chatgpt_work_is_canon": false,
+  "chatgpt_library_surface": "CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON",
+  "chatgpt_library_is_canon": false,
+  "notion_status": "LEGACY_READ_ONLY_MIGRATION_SOURCE",
+  "new_notion_write": "FORBIDDEN_BY_DEFAULT",
+  "notion_default_alias": "NOTION_DEFAULT_PROJECT_WORKSPACE_LEGACY_ALIAS",
+  "google_sheets_status": "LEGACY_READ_ONLY_MIGRATION_SOURCE",
+  "repository_structured_canon": "MARKDOWN_JSON_TRACKED_ASSET_CANON",
+  "runtime_truth": "REPOSITORY_RUNTIME_AND_EXECUTION_EVIDENCE",
+  "codex_rehydration": "EXACT_REPOSITORY_COMMIT",
+  "codex_role": "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
+  "codex_not_general_repository_executor": true,
+  "notion_absence_for_codex": "NOTION_ABSENCE_IS_NOT_A_BLOCKER",
+  "approved_visual_delivery": "REPOSITORY_PATH_MANIFEST_SHA256_READBACK",
+  "missing_visual_route": "GPT_VISUAL_REQUEST_THEN_REPOSITORY_DELIVERY",
+  "approved_asset_required_fields": [
+    "asset_id",
+    "repository_path",
+    "actual_consumer",
+    "approval_status",
+    "version",
+    "sha256",
+    "source_or_provenance",
+    "rights_or_license_state",
+    "implementation_status",
+    "supersedes_or_replaced_by"
+  ],
+  "project_canonical_bundle_recommended": [
+    "AGENTS.md",
+    "START_HERE.md",
+    "ACTIVE_CONTEXT.md",
+    "CURRENT_CONFIRMED_DECISIONS.md",
+    "docs/canon/AI_GAME_SPEC.md",
+    "docs/handoffs/CURRENT_CODEX_HANDOFF.md",
+    "assets/ASSET_MANIFEST.json",
+    "docs/exports/HUMAN_GDD_<milestone>_<source-sha>.pdf"
+  ],
+  "human_pdf_export_gates": [
+    "CORE_DIRECTION_AND_SYSTEM_APPROVAL",
+    "PRE_CODEX_IMPLEMENTATION_HANDOFF",
+    "MEANINGFUL_SLICE_OR_VERTICAL_SLICE_COMPLETION",
+    "RELEASE_CANDIDATE_REVIEW"
+  ],
+  "human_pdf_required_identity_fields": [
+    "project",
+    "milestone",
+    "source_commit",
+    "canon_version",
+    "generated_at",
+    "included_scope",
+    "approval_status",
+    "implementation_status",
+    "evidence_ceiling",
+    "unresolved_decisions",
+    "blockers"
+  ],
+  "legacy_material_classifications": [
+    "UNIQUE",
+    "DUPLICATE",
+    "OBSOLETE",
+    "BLOCKED_UNVERIFIED"
+  ],
+  "legacy_migration_destination_types": [
+    "REPOSITORY_CANON",
+    "REPOSITORY_TRACKED_RUNTIME_ASSET",
+    "CHATGPT_LIBRARY_NON_CANON_REFERENCE"
+  ],
+  "notion_retirement_exit_counts": {
+    "NOTION_UNIQUE_CANON_COUNT": 0,
+    "CODEX_NOTION_DEPENDENCY_COUNT": 0,
+    "ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT": 0
+  },
+  "legacy_delete_policy": "NO_DELETE_IN_BASE_TRANSITION",
+  "postmerge_readback": "POSTMERGE_REPOSITORY_AND_DERIVED_VIEW_READBACK_LOOP",
+  "current_policy": "docs/REPOSITORY_FIRST_PROJECT_WORKSPACE_POLICY.md",
+  "gpt_codex_handoff_policy": "docs/REPOSITORY_FIRST_GPT_CODEX_HANDOFF_POLICY.md",
+  "legacy_contracts": [
+    "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json",
+    "docs/GPT_CODEX_WORKFLOW_POLICY.md",
+    "docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md",
+    "docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md"
+  ],
+  "legacy_contract_status": "LEGACY_DISCOVERY_ONLY",
+  "legacy_contract_precedence": "CURRENT_REPOSITORY_FIRST_OWNER_WINS",
+  "default_cost_boundary": "ZERO_INCREMENTAL_COST",
+  "default_paid_plans": [
+    "GPT_PRO"
+  ],
+  "invariants": [
+    "New project planning, asset approval, Codex handoff and completion do not require a Notion write, upload or readback.",
+    "Repository Markdown, JSON, tracked assets and implementation evidence own current project truth for their declared domains.",
+    "The human GDD PDF is generated from an exact repository commit and never becomes an independently editable canon.",
+    "ChatGPT Work and ChatGPT Library support execution, review and reference storage but do not replace repository version control.",
+    "Codex rehydrates the current project at an exact repository commit before Godot product mutation.",
+    "Codex may consume an approved visual only when repository path, actual consumer, approval state and SHA-256 manifest readback agree.",
+    "A missing Notion page or attachment is not a Codex blocker; a missing required asset remains GPT_VISUAL_REQUEST until repository delivery succeeds.",
+    "Existing Notion and Sheets material is never deleted by the Base transition and unique material is not silently classified as duplicate or obsolete.",
+    "A project claims Notion retirement only when all three retirement exit counts are zero.",
+    "Historical Notion-first contracts remain discoverable for migration and rollback but cannot restore the mandatory default workflow."
+  ]
+}
