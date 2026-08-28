@@ -16,6 +16,8 @@
 
 프로젝트 정보는 DOMAIN_SPLIT_CANON을 따른다. Notion은 사람이 읽고 비교·수정하는 프로젝트 개요·기획·시각 방향·에셋 카탈로그·표·Flow/Storyboard의 정본이고, GitHub repository는 Markdown·JSON·게임 데이터·코드·씬·리소스·테스트·런타임 사실의 정본이다. Google Sheets는 고유한 미이관 자료가 남은 경우의 migration compatibility 자료일 뿐 신규 기본 작업공간이 아니다.
 
+사용자가 master GDD 작업에 `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD`를 명시적으로 선택하면 결과를 사용자용 상세 PDF와 AI용 repository Markdown의 정확히 2개로 제한한다. 이 profile에서는 기존 Notion은 입력 자료로만 사용하고 신규 출력·동기화하지 않지만, 기존 DOMAIN_SPLIT_CANON을 전역 폐기하지 않는다.
+
 GPT 유료 플랜 외 추가 비용은 기본적으로 늘리지 않고 무료·로컬·현재 연결된 도구를 우선한다. 유료 도구는 무료 대안보다 장기 가치가 명확할 때만 제안한다.
 
 게임 기획에서는 기능 수보다 플레이어의 감정, 선택, 고민, 보상, 기억, 첫인상, 차별점과 판매 포인트를 우선한다. 벤치마킹은 복사가 아니라 ADOPT / ADAPT / REJECT 관점으로 흡수한다.
@@ -42,9 +44,11 @@ L1 이상의 기획·정책·아키텍처·중요 권장안에서는 현재 프�
 
 DOMAIN_SPLIT_CANON을 지킨다. Notion 승인·이미지 업로드·정적 mockup은 runtime 구현 성공의 증거가 아니다. 사람용 Notion Project Home에는 사람이 이해하는 핵심 정보만 우선하고 Prompt, Hash, 내부 ID, Implementation Path 등 machine metadata는 기본 Human surface에서 분리한다.
 
+사용자가 통합 master GDD를 `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD`로 명시한 경우 `docs/PROJECT_MASTER_GDD_TWO_ARTIFACT_POLICY.md`와 붙여넣기용 실행 원본을 읽고 사용자용 상세 PDF 1개와 AI용 repository Markdown 1개만 만든다. Notion은 입력 자료로만 읽고 신규 출력·갱신·동기화하지 않으며, PDF에 핵심 시스템·핵심 콘텐츠·플레이어 경험과 Godot 씬·노드·스크립트·데이터·상태·신호·저장·테스트·구현 순서를 상세히 포함한다. 최종 사용자 download는 PDF만 제공하고 AI 문서는 repository path·branch·commit SHA·PR·검증 결과만 보고한다. 이 선택형 profile은 기존 DOMAIN_SPLIT_CANON을 전역 폐기하지 않는다.
+
 GitHub의 기존 사용자 변경을 보호하고 범위 밖 기능 추가, 불필요한 리팩터링, 대량 삭제를 피한다. 열린 PR과 병합은 현재 Base의 보호·권한·검증 규칙을 따른다.
 
-승인된 결정이나 변경은 필요한 GitHub/Notion 정본에 동기화하고 destination readback으로 실제 반영을 확인한다. 파일 생성·삭제·이동·이름 변경·대규모 수정 시 이유, 연결 영향, 참조 갱신, 후속 동기화와 롤백을 고려한다.
+승인된 결정이나 변경은 필요한 GitHub/Notion 정본에 동기화하고 destination readback으로 실제 반영을 확인한다. 파일 생성·삭제·이동·이름 변경·대규모 수정 시 이유, 연결 영향, 참조 갱신, 후속 동기화와 롤백을 고려한다. `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD`가 적용된 master-GDD 작업에서는 AI repository 명세가 기획·구현 계약 owner이며 Notion 동기화는 완료 조건에서 제외한다.
 
 게임 관련 판단은 플레이어 가치와 핵심 경험을 먼저 보고 구현 현실성, 유지보수성, 재사용성, 출시 품질, 되돌리기 가능성, 장기 비용을 함께 비교한다. 가장 빠른 방법보다 가장 효율적이고 장기적인 방법을 찾는다.
 
