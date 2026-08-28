@@ -1,0 +1,86 @@
+{
+  "schema_version": 4,
+  "status": "ACTIVE_DEFAULT",
+  "effective_date": "2026-08-28",
+  "authority_model": "REPOSITORY_PRIMARY_CANON_WITH_DERIVED_HUMAN_PDF",
+  "project_workspace": "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
+  "project_canon": "REPOSITORY_PRIMARY_CANON",
+  "human_facing_view": "HUMAN_GDD_PDF_DERIVED_VIEW",
+  "pdf_policy": "PDF_IS_DERIVED_SNAPSHOT_NOT_CANON",
+  "ai_design_spec": "AI_PRODUCTION_SPEC_MARKDOWN",
+  "work_surface": "CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON",
+  "library_surface": "CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON",
+  "notion": "LEGACY_OPTIONAL_READ_ONLY_MIGRATION_SOURCE",
+  "no_new_notion_write_by_default": true,
+  "google_sheets": "MIGRATION_COMPATIBILITY_ONLY",
+  "figma": "OPTIONAL_REFERENCE_NOT_AUTHORITY",
+  "runtime_truth": "REPOSITORY_RUNTIME_TRUTH",
+  "codex_rehydration": "CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA",
+  "codex_visual_input": "APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST",
+  "missing_visual_route": "GPT_CREATE_REVIEW_APPROVE_THEN_REPOSITORY_MANIFEST",
+  "required_project_entrypoints": [
+    "AGENTS.md",
+    "docs/START_HERE.md",
+    "docs/ACTIVE_CONTEXT.md",
+    "docs/canon/CURRENT_CONFIRMED_DECISIONS.md",
+    "docs/design/PROJECT_AI_PRODUCTION_SPEC.md",
+    "docs/handoffs/CURRENT_CODEX_HANDOFF.md",
+    "assets/ASSET_MANIFEST.json"
+  ],
+  "required_asset_manifest_fields": [
+    "asset_id",
+    "consumer",
+    "repository_path",
+    "sha256",
+    "approval_status",
+    "implementation_status",
+    "provenance"
+  ],
+  "human_pdf_required_metadata": [
+    "project",
+    "document_type",
+    "source_commit",
+    "canon_version",
+    "generated_at",
+    "included_scope",
+    "implementation_evidence_ceiling",
+    "approval_status"
+  ],
+  "publication_profile": "DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD",
+  "publication_policy": "docs/PROJECT_MASTER_GDD_TWO_ARTIFACT_POLICY.md",
+  "migration_checklist": "templates/project-operations/NOTION_TO_REPOSITORY_MIGRATION_CHECKLIST.md",
+  "migration_exit_gates": {
+    "NOTION_UNIQUE_CANON_COUNT": 0,
+    "CODEX_NOTION_DEPENDENCY_COUNT": 0,
+    "ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT": 0
+  },
+  "retirement_state_before_zero": "LEGACY_READ_ONLY",
+  "retirement_deletion_requirement": "NO_DELETE_REQUIRED_FOR_RETIREMENT",
+  "exception_policy": "EXPLICIT_USER_APPROVAL_AND_LONG_TERM_VALUE_REQUIRED",
+  "allowed_exception_reasons": [
+    "EXTERNAL_COLLABORATIVE_EDITING",
+    "PUBLIC_ALWAYS_CURRENT_WEB_PAGE",
+    "NONDEVELOPER_RELATIONAL_DATABASE_MAINTENANCE",
+    "EXPLICIT_PROJECT_SPECIFIC_CONTRACT"
+  ],
+  "legacy_contract": {
+    "path": "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json",
+    "status": "V3_COMPATIBILITY_AND_HISTORY_ONLY",
+    "active_route_for_new_work": false
+  },
+  "invariants": [
+    "The project repository owns current planning, design, structured data, approved runtime assets, code, scenes, resources, tests, and validation evidence for its domains.",
+    "ChatGPT Work is an execution surface and ChatGPT Library is reference storage; neither replaces repository paths, diffs, commits, or exact SHA authority.",
+    "The human-facing GDD PDF is a derived snapshot and must identify the exact source commit and evidence ceiling; editing the PDF alone does not change canon.",
+    "AI and Codex continuity is carried by repository Markdown, JSON, manifests, implementation files, tests, and handoffs rather than chat history or memory.",
+    "New Notion writes are not required by default. Existing Notion content may be read only to discover and migrate unique project information.",
+    "A project remains in LEGACY_READ_ONLY migration state until all three migration exit counters are zero and readback evidence is recorded.",
+    "Codex rehydrates the current project at an exact repository SHA before product mutation and does not assume chat or PDF state is newer than the repository.",
+    "An approved visual consumed by the product resolves to a project-controlled repository path, SHA-256 value, actual consumer, approval state, implementation state, and provenance record.",
+    "A generated or uploaded visual is not implementation-ready merely because it appears in chat, Library, a PDF, or a preview; the approved binary and manifest readback are required.",
+    "Human PDF review, document generation, static tests, and repository write success are distinct from runtime PASS, UX PASS, player PASS, and release PASS.",
+    "Notion retirement does not require destructive deletion. Historical workspaces may remain read-only for audit and rollback.",
+    "A project-specific Notion exception requires explicit user approval, a recorded scope and owner, a measurable value unavailable from the repository-first path, and an exit or revisit condition.",
+    "Google Sheets, Figma, HTML dashboards, ChatGPT Work, ChatGPT Library, and legacy Notion pages are not parallel project canon unless an explicit project-specific contract says otherwise."
+  ]
+}
