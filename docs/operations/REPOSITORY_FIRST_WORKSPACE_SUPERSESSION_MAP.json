@@ -97,6 +97,150 @@
       ]
     },
     {
+      "path": "skills/managing-design-documents/SKILL.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "audit, plan, write, publish, sync, verify, retire and compact modes",
+        "responsibility-owner and registry integrity",
+        "implementation-status and evidence-ceiling separation",
+        "content-modeling, UX-flow and data-owner checks",
+        "stale-reference, supersession and rollback validation"
+      ],
+      "superseded": [
+        "DOMAIN_SPLIT_CANON as current design-document authority",
+        "NOTION_HUMAN_FACING_CANON as the default human document owner",
+        "Notion Project Home as the mandatory human-facing publishing destination",
+        "Notion write and readback as an unconditional publish or sync gate",
+        "Notion visual/table surface as a second active canon"
+      ],
+      "replacement": [
+        "AI_DETAILED_PLANNING_IMPLEMENTATION_MARKDOWN",
+        "HUMAN_GDD_PDF_DERIVED_VIEW",
+        "REPOSITORY_PRIMARY_PROJECT_CANON",
+        "PDF_ONLY_USER_DOWNLOAD",
+        "legacy Notion migration only when unique material remains"
+      ]
+    },
+    {
+      "path": "docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "planning-before-build gate",
+        "numeric-default and planning-conflict classification",
+        "one-question Grill Me discipline",
+        "stable Decision ID and bounded batch PR",
+        "exact-head checks, review and merge-state semantics"
+      ],
+      "superseded": [
+        "DOMAIN_SPLIT_CANON workspace authority",
+        "NOTION_HUMAN_FACING_CANON as required Decision destination",
+        "Project Notion relation update and readback as mandatory APPROVED_PENDING_MERGE evidence",
+        "GitHub plus Notion dual synchronization as the default batch-completion condition"
+      ],
+      "replacement": [
+        "repository CURRENT_CONFIRMED_DECISIONS and domain-owner update",
+        "repository destination and consumer readback",
+        "optional HUMAN_GDD_PDF_DERIVED_VIEW at a meaningful gate",
+        "legacy Notion migration only when approval evidence remains unique there"
+      ]
+    },
+    {
+      "path": "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "planning sequence and evidence tiers",
+        "duplicate, omission and conflict audit",
+        "benchmark, player-response and professional evidence",
+        "propagation, validation and gate-close discipline",
+        "no runtime claim from static planning artifacts"
+      ],
+      "superseded": [
+        "NOTION_HUMAN_FACING_CANON as the default planning surface",
+        "exact Project Notion Home as mandatory baseline input",
+        "Notion human-facing synchronization as MISSING_SYNC",
+        "Notion Home self-contained requirement as the current project dashboard owner",
+        "legacy Sheet migration destination defaulting to Notion"
+      ],
+      "replacement": [
+        "REPOSITORY_PRIMARY_PROJECT_CANON baseline recovery",
+        "AI_DETAILED_PLANNING_IMPLEMENTATION_MARKDOWN",
+        "HUMAN_GDD_PDF_DERIVED_VIEW at meaningful review gates",
+        "repository owner, consumer and exact-commit drift audit",
+        "legacy migration checklist and destination readback"
+      ]
+    },
+    {
+      "path": "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "actual-consumer requirement",
+        "screen-surface and visual-asset coverage preflight",
+        "information-artifact versus image-asset distinction",
+        "explicit image-request approval gate",
+        "generate-exactly-one and stop-after-generation behavior",
+        "no automatic image generation from coverage gaps",
+        "rights, provenance and runtime-evidence separation"
+      ],
+      "superseded": [
+        "DOMAIN_SPLIT_CANON as current visual workspace authority",
+        "NOTION_HUMAN_FACING_CANON as required approval surface",
+        "Notion attachment or Asset record as implementation readiness",
+        "Notion DB as the default editable information destination",
+        "mandatory Notion delivery after visual approval"
+      ],
+      "replacement": [
+        "REPOSITORY_PATH_MANIFEST_SHA256_READBACK",
+        "repository AI canon for structured production information",
+        "HUMAN_GDD_PDF_DERIVED_VIEW for milestone human review",
+        "CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON for candidates and source references",
+        "explicit user request remains mandatory for image generation"
+      ]
+    },
+    {
+      "path": "docs/VISUAL_COLLABORATION_TOOL_POLICY.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "project isolation and Project relation discipline for legacy data",
+        "intermediate visual checkpoint state semantics",
+        "candidate, approved asset and runtime-evidence separation",
+        "benchmark adoption classification",
+        "rights, provenance and no-second-runtime-canon rules"
+      ],
+      "superseded": [
+        "NOTION_DEFAULT_PROJECT_WORKSPACE as the current default surface",
+        "NOTION_HUMAN_FACING_CANON priority for project overview, visual direction, flows and confirmed tables",
+        "standard Notion Project Home, Control, Visual Bible and Asset Library as mandatory active structure",
+        "attaching every visual candidate to a Notion Project record",
+        "Notion sync date as the current human-table freshness owner"
+      ],
+      "replacement": [
+        "REPOSITORY_PRIMARY_PROJECT_CANON",
+        "HUMAN_GDD_PDF_DERIVED_VIEW",
+        "REPOSITORY_PATH_MANIFEST_SHA256_READBACK",
+        "CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON",
+        "LEGACY_READ_ONLY_MIGRATION_SOURCE for existing Notion records"
+      ]
+    },
+    {
+      "path": "docs/knowledge/game-development/ENGINE_BASELINE_AND_ADAPTER_POLICY.md",
+      "status": "PARTIAL_SUPERSESSION",
+      "retained_use": [
+        "engine-neutral implementation core",
+        "Godot default adapter",
+        "stable engine baseline and no automatic latest following",
+        "canary, migration and rollback gates",
+        "test, runtime and human-evidence separation"
+      ],
+      "superseded": [
+        "NOTION_HUMAN_FACING_CANON token as the current human authority"
+      ],
+      "replacement": [
+        "REPOSITORY_PRIMARY_PROJECT_CANON",
+        "HUMAN_GDD_PDF_DERIVED_VIEW",
+        "CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON"
+      ]
+    },
+    {
       "path": "docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md",
       "status": "PARTIAL_SUPERSESSION",
       "retained_use": [
@@ -284,6 +428,7 @@
     "PARTIAL_SUPERSESSION does not discard unrelated safety, lifecycle, evidence or role-split rules in the older document.",
     "A legacy token found by search is not current routing authority.",
     "Active Skills retain their non-workspace behavior, but their Notion-first source order, write gate and completion clauses are replaced by the current repository-first owner.",
+    "Planning, design-document, visual and engine policies retain their domain logic while their Notion-first destination and completion clauses are replaced.",
     "New project work must not create a Notion write, attachment or readback requirement unless the latest project-specific user decision explicitly opts in.",
     "Existing Notion content remains read-only migration input and is not deleted by this Base transition.",
     "The focused repository-first contract and bootstrap tests are the current default-workspace proof."
