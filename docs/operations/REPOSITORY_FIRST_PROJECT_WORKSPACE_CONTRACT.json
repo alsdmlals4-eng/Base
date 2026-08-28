@@ -98,6 +98,7 @@
   "postmerge_readback": "POSTMERGE_REPOSITORY_AND_DERIVED_VIEW_READBACK_LOOP",
   "current_policy": "docs/REPOSITORY_FIRST_PROJECT_WORKSPACE_POLICY.md",
   "gpt_codex_handoff_policy": "docs/REPOSITORY_FIRST_GPT_CODEX_HANDOFF_POLICY.md",
+  "master_gdd_work_instruction": "templates/project-operations/DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD_WORK_INSTRUCTION.md",
   "supersession_map": "docs/operations/REPOSITORY_FIRST_WORKSPACE_SUPERSESSION_MAP.json",
   "approved_profile_source": "[수정제안서]/BCP-2026-047-desktop-two-artifact-master-gdd/PROPOSAL.md",
   "approved_profile_disposition": "APPROVED_PROFILE_ABSORBED",
