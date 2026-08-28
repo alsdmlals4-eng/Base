@@ -12,25 +12,32 @@ def read(path: str) -> str:
 
 
 class FreshReadProjectBootstrapContractTests(unittest.TestCase):
-    def test_companion_reference_defines_github_notion_reconstruction_gate(self) -> None:
+    def test_companion_reference_reconstructs_repository_exact_sha_with_optional_legacy_source(self) -> None:
         path = ROOT / "skills/maintaining-project-context-and-handoff/references/fresh-read-project-bootstrap.md"
         self.assertTrue(path.exists())
         text = path.read_text(encoding="utf-8")
         for term in (
             "FRESH_READ_PROJECT_BOOTSTRAP",
-            "PROJECT_GITHUB_NOTION_ONLY",
+            "PROJECT_REPOSITORY_EXACT_SHA_PRIMARY",
+            "LEGACY_NOTION_OPTIONAL_MIGRATION_SOURCE",
+            "PROJECT_GITHUB_NOTION_ONLY_RETIRED",
             "PAST_CONVERSATION_NOT_REQUIRED",
             "CONTEXT_DRIFT_RECHECK_REQUIRED",
             "project_identity",
+            "exact_source_sha",
             "current_goal",
             "current_quality_and_stage",
             "protected_scope",
             "next_safe_action",
             "evidence_ceiling",
             "instruction_surface",
+            "asset_manifest",
+            "legacy_migration_status",
             "HUMAN_USABILITY_NOT_RUN",
         ):
             self.assertIn(term, text)
+
+        self.assertIn("Notion을 조회하지 않았다는 이유만으로 block하지 않는다", text)
 
     def test_existing_handoff_template_routes_to_companion_without_second_canon(self) -> None:
         text = read("templates/project-operations/HANDOFF.md")
