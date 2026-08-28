@@ -42,12 +42,36 @@ class RepositoryFirstProjectWorkspaceContractTests(unittest.TestCase):
             text("docs/operations/REPOSITORY_FIRST_PROJECT_WORKSPACE_CONTRACT.json")
         )
         self.assertEqual(
+            "DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD",
+            data["master_gdd_profile"],
+        )
+        self.assertEqual(
             [
                 "HUMAN_DETAILED_GDD_PDF",
                 "AI_DETAILED_PLANNING_IMPLEMENTATION_MARKDOWN",
             ],
             data["default_project_deliverables"],
         )
+        self.assertEqual("PDF_ONLY_USER_DOWNLOAD", data["user_download_policy"])
+        self.assertEqual(
+            "REPOSITORY_PATH_BRANCH_COMMIT_PR_VALIDATION_ONLY",
+            data["ai_markdown_delivery"],
+        )
+        self.assertTrue(data["shared_id_and_source_sha_required"])
+        self.assertTrue(data["core_system_and_content_implementation_detail_required"])
+        self.assertEqual(
+            "EXPLICIT_USER_REQUEST_ONLY",
+            data["automatic_image_generation"],
+        )
+        self.assertEqual(
+            "NOTION_INPUT_ONLY_NO_OUTPUT",
+            data["notion_master_gdd_profile"],
+        )
+        self.assertEqual(
+            "templates/project-operations/DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD_WORK_INSTRUCTION.md",
+            data["master_gdd_work_instruction"],
+        )
+        self.assertEqual("APPROVED_PROFILE_ABSORBED", data["approved_profile_disposition"])
         self.assertFalse(data["human_pdf_is_independent_canon"])
         self.assertFalse(data["chatgpt_work_is_canon"])
         self.assertFalse(data["chatgpt_library_is_canon"])
@@ -109,6 +133,16 @@ class RepositoryFirstProjectWorkspaceContractTests(unittest.TestCase):
             "REPOSITORY_PATH_MANIFEST_SHA256_READBACK",
             "NOTION_DEFAULT_PROJECT_WORKSPACE_LEGACY_ALIAS",
             "LEGACY_READ_ONLY_MIGRATION_SOURCE",
+            "DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD",
+            "EXACTLY_TWO_DELIVERABLES",
+            "CORE_SYSTEM_AND_CONTENT_IMPLEMENTATION_DETAIL_REQUIRED",
+            "SHARED_ID_AND_SOURCE_SHA_REQUIRED",
+            "PDF_ONLY_USER_DOWNLOAD",
+            "NOTION_INPUT_ONLY_NO_OUTPUT",
+            "NO_DOCX_NO_ZIP_NO_SEPARATE_APPENDIX",
+            "NO_SEPARATE_IMAGE_BUNDLE",
+            "NO_AUTOMATIC_IMAGE_GENERATION",
+            "APPROVED_PROFILE_ABSORBED",
             "NOTION_UNIQUE_CANON_COUNT = 0",
             "CODEX_NOTION_DEPENDENCY_COUNT = 0",
             "ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT = 0",
@@ -139,6 +173,9 @@ class RepositoryFirstProjectWorkspaceContractTests(unittest.TestCase):
         migration = text(
             "templates/project-operations/NOTION_RETIREMENT_AND_REPOSITORY_MIGRATION_CHECKLIST.md"
         )
+        work_instruction = text(
+            "templates/project-operations/DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD_WORK_INSTRUCTION.md"
+        )
         for token in (
             "player_outcome",
             "meaningful_choices",
@@ -168,6 +205,31 @@ class RepositoryFirstProjectWorkspaceContractTests(unittest.TestCase):
             "destination_readback",
         ):
             self.assertIn(token, migration)
+        for token in (
+            "DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD",
+            "EXACTLY_TWO_DELIVERABLES",
+            "PDF_ONLY_USER_DOWNLOAD",
+            "NOTION_INPUT_ONLY_NO_OUTPUT",
+            "CORE_SYSTEM_AND_CONTENT_IMPLEMENTATION_DETAIL_REQUIRED",
+            "SHARED_ID_AND_SOURCE_SHA_REQUIRED",
+            "NO_DOCX_NO_ZIP_NO_SEPARATE_APPENDIX",
+            "NO_SEPARATE_IMAGE_BUNDLE",
+            "NO_AUTOMATIC_IMAGE_GENERATION",
+            "사용자 다운로드: 사람용 PDF 링크 1개만 제공",
+        ):
+            self.assertIn(token, work_instruction)
+
+    def test_approved_two_artifact_proposal_is_present_as_absorbed_input(self) -> None:
+        proposal_path = (
+            "[수정제안서]/BCP-2026-047-desktop-two-artifact-master-gdd/PROPOSAL.md"
+        )
+        proposal = text(proposal_path)
+        self.assertIn("APPROVED_FOR_IMPLEMENTATION", proposal)
+        self.assertIn("EXACTLY_TWO_DELIVERABLES", proposal)
+        self.assertIn("PDF_ONLY_USER_DOWNLOAD", proposal)
+        self.assertIn("NOTION_INPUT_ONLY_NO_OUTPUT", proposal)
+        self.assertIn("SHARED_ID_AND_SOURCE_SHA_REQUIRED", proposal)
+        self.assertIn("NO_AUTOMATIC_IMAGE_GENERATION", proposal)
 
     def test_root_entrypoints_route_to_repository_first_owner(self) -> None:
         agents = text("AGENTS.md")
