@@ -22,6 +22,19 @@ Google Sheets
 - Figma, 외부 HTML workspace, 폐기된 custom local Tool/Hub를 신규 기본 surface로 부활시키지 않는다.
 - legacy source는 `UNIQUE / DUPLICATE / OBSOLETE`로 판정하고, `UNIQUE`만 현행 owner로 이관 → destination readback/Test → consumer/reference 확인 뒤 원본 수명주기를 판정한다.
 
+## 선택형 Desktop GPT 2파일 통합 제작 기획서 프로필
+
+사용자가 프로젝트 정본을 **사람용 상세 PDF와 AI용 repository Markdown의 정확히 2개 산출물**로 정리하라고 명시적으로 선택한 경우 `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD` profile을 사용한다.
+
+- 정책 owner: `docs/PROJECT_MASTER_GDD_TWO_ARTIFACT_POLICY.md`
+- 붙여넣기용 실행 원본: `templates/project-operations/GPT_WORK_PROJECT_MASTER_GDD_TWO_ARTIFACT_INSTRUCTION.md`
+- 결과: 사용자용 상세 제작 기획서 PDF 1개 + `docs/design/PROJECT_AI_PRODUCTION_SPEC.md` 1개
+- 사용자 download surface: PDF만 제공하고 AI 문서는 repository path·branch·commit SHA·PR·검증 결과만 보고한다.
+- Notion: 기존 고유 미이관 자료가 있을 때 입력 자료로만 읽으며 신규 출력·갱신·동기화·readback 대상에서 제외한다.
+- 보호 경계: DOCX·ZIP·별도 appendix·이미지 묶음을 만들지 않고, 새 이미지 생성은 사용자의 별도 명시적 요청이 있을 때만 진행한다.
+
+이 profile은 master-GDD 작업에 사용자가 명시적으로 선택한 경우에만 적용한다. 기존 `DOMAIN_SPLIT_CANON`, 일반 Notion 프로젝트 운영, 다른 publication profile을 전역 폐기하거나 자동 대체하지 않는다.
+
 ## Notion project operation gate
 
 세부 실행 원본은 `templates/project-operations/NOTION_OPERATION_GATE.md`다. 아래 내용은 설치·콜드 스타트용 요약이며 충돌 시 세부 실행 원본을 우선한다.
@@ -66,6 +79,8 @@ Notion의 자동화 관련 기능은 목적에 따라 구분한다.
 
 프로젝트가 Base 운영 템플릿을 채택할 때 설계 문서 폴더 `[기획서]`는 **저장소 루트**에 둔다. `templates/project-operations/` 자체나 중첩된 하위 폴더를 프로젝트의 활성 design root로 사용하지 않는다. Notion 사람용 workspace와 Repository `[기획서]` 구조화 문서는 서로 역할이 다르며, 어느 한쪽도 다른 쪽의 복사본으로 운영하지 않는다.
 
+`DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD`를 선택한 master-GDD 작업에서는 `docs/design/PROJECT_AI_PRODUCTION_SPEC.md`가 AI 기획·구현 계약 owner이고 PDF는 동일 SHA의 사람용 snapshot이다. 이 선택형 경로는 저장소의 실제 code/data/scene/resource/test/runtime truth를 대체하지 않는다.
+
 ## 핵심 템플릿
 
 | 경로 | 역할 |
@@ -84,6 +99,7 @@ Notion의 자동화 관련 기능은 목적에 따라 구분한다.
 | `SKILL_EXECUTION_REPORT.md` | 실제 Work Mode/Skill/Mode 사용 증거 |
 | `LEGACY_ARTIFACT_RECONCILIATION.md` | 폐기·중복·고유 legacy 자료 이관 판정 |
 | `PROJECT_GOOGLE_SHEET_WORKBOOK_CONTRACT.md` | **COMPATIBILITY_ONLY legacy migration aid**; 신규 Sheet 설계 계약이 아님 |
+| `GPT_WORK_PROJECT_MASTER_GDD_TWO_ARTIFACT_INSTRUCTION.md` | `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD` 선택 시 사용하는 붙여넣기용 전체 실행 지시문 |
 
 ## Vertical Slice 실행 진입점
 
@@ -103,6 +119,8 @@ Notion의 자동화 관련 기능은 목적에 따라 구분한다.
 → destination readback/Test + consumer/reference 확인
 → 프로젝트 작업 시작
 ```
+
+`DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD`를 명시적으로 선택한 master-GDD 작업에서는 기존 Notion의 `UNIQUE` 자료 유무만 확인하고, Notion 신규 출력·동기화 없이 policy의 2파일 순서로 진행한다.
 
 Base 저장소 자체를 콜드 스타트할 때 이 디렉터리의 예시/빈 템플릿을 활성 프로젝트 상태로 오인하지 않는다.
 
@@ -124,6 +142,8 @@ Base 저장소 자체를 콜드 스타트할 때 이 디렉터리의 예시/빈 
 → SYNCED_TO_MAIN
 ```
 
+`DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD` profile의 master-GDD 산출 작업에서는 승인 Decision과 현재 구현 사실을 AI spec/repository owner에 추적하며 Notion 동기화는 완료 조건에서 제외한다.
+
 `COMPATIBILITY_ONLY` legacy Sheet의 존재·쓰기 권한·행 상태는 active Decision sync 완료 조건이 아니다.
 
 ## Legacy Sheet 관련 파일
@@ -142,3 +162,4 @@ Base 저장소 자체를 콜드 스타트할 때 이 디렉터리의 예시/빈 
 - Google Sheets는 `COMPATIBILITY_ONLY`이며 신규 입력·active sync·완료 판정에 필요하지 않다.
 - legacy `UNIQUE` material은 현행 owner 이관·readback/Test·consumer 확인 없이 삭제하지 않는다.
 - 실제로 수행하지 않은 runtime/사용자 검증은 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 남긴다.
+- 선택형 `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD`를 사용한 경우 두 파일·동일 ID/SHA·PDF-only download·Notion input-only 경계를 검증했다.
