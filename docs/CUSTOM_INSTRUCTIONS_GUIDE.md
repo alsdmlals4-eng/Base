@@ -4,7 +4,7 @@
 
 ## 1. 핵심 원칙
 
-맞춤형 지침은 **짧고 안정적이며 장기간 유지되는 행동 기준**만 담는다. 프로젝트 사실이나 Base의 세부 절차를 복제하는 두 번째 정본으로 만들지 않는다.
+맞춤형 지침은 짧고 안정적이며 장기간 유지되는 행동 기준만 담는다. 프로젝트 사실, 현재 상태나 Base의 세부 절차를 복제하는 두 번째 정본으로 만들지 않는다.
 
 ```text
 Custom Instructions
@@ -16,66 +16,67 @@ Memory
 latest user request
 → current task intent
 
-project AGENTS + Active Context + approved contract
-→ current project operating authority
-
-Notion / repository
-→ domain-specific canon and evidence
+project AGENTS + current repository canon + actual evidence
+→ current project authority
 
 adopted Base contract
 → current shared operating rules
+
+legacy Notion / Sheets
+→ migration discovery only when unique unmigrated material remains
 ```
 
 맞춤설정이나 Memory와 현재 정본이 충돌하면 최신 사용자 지시와 현재 Base/프로젝트 authority를 우선한다.
-
-AI 지시의 `HARD_CONSTRAINT / RECOMMENDED_DEFAULT / JUDGMENT_SPACE`, Context curation, Example-as-Fixture, Artifact claim limit 같은 상세 Method는 `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`가 소유한다. Custom Instructions Guide는 제품 맞춤설정의 stable bootstrap 경계만 소유한다.
 
 ## 2. Stable bootstrap에 넣을 것
 
 다음은 여러 채팅과 프로젝트에서 장기간 재사용되므로 맞춤설정에 적합하다.
 
-- 사용자 역할과 숙련도처럼 장기적으로 안정적인 작업 맥락.
-- 기본 언어와 설명 깊이: 예를 들어 초보 개발자가 따라 할 수 있도록 경로·명령·이유·확인 방법을 설명한다는 선호.
-- 플레이어 가치, 핵심 경험, 차별점, 판매 포인트처럼 지속적인 기획 판단 기준.
-- 비용 경계: 무료·로컬·현재 연결된 도구 우선, 추가 유료비용은 장기 가치가 명확할 때만 제안.
-- 이미지 생성·편집처럼 사용자가 명시적 요청을 요구하는 capability boundary.
-- 기억·과거 대화를 현재 정본으로 승격하지 않는 규칙.
-- Base 작업에서는 최신 Base `AGENTS.md`, `START_HERE.md`, 책임 원본과 실제 evidence를 다시 읽는 bootstrap.
-- 프로젝트 작업에서는 최신 프로젝트 `AGENTS.md`, Active Context, 승인 계약, 분야별 정본, 실제 evidence를 다시 읽는 bootstrap.
-- `DOMAIN_SPLIT_CANON`처럼 장기적인 정본 분할 원칙.
-- 세부 Gate를 복제하지 않고 현재 채택된 Base 규칙을 실제로 읽고 실행한다는 dynamic lookup rule.
+- 사용자 역할과 숙련도처럼 안정적인 작업 맥락.
+- 기본 언어와 설명 깊이.
+- 플레이어 가치, 핵심 경험, 차별점, 판매 포인트를 우선하는 기획 기준.
+- 비용 경계: 무료·로컬·현재 연결된 도구 우선, 추가 유료비용은 사용자 승인 필요.
+- 이미지 생성·편집은 명시적 요청이 있을 때만 진행한다는 capability boundary.
+- 기억·과거 대화·PDF·Library·legacy workspace를 현재 정본으로 승격하지 않는 규칙.
+- Base 작업은 최신 Base `AGENTS.md`, `START_HERE.md`, current owner와 실제 evidence를 다시 읽는 bootstrap.
+- 프로젝트 작업은 최신 프로젝트 repository의 `AGENTS.md`, `START_HERE`, Active Context, confirmed decisions, registered owners와 실제 파일을 다시 읽는 bootstrap.
+- `REPOSITORY_PRIMARY_PROJECT_CANON`과 `HUMAN_GDD_PDF_DERIVED_VIEW`처럼 장기적인 권한 경계.
+- 통합 기획서의 기본 두 산출물과 PDF-only 사용자 전달 정책.
+- 세부 Gate를 복제하지 않고 current Base contract를 dynamic lookup한다는 원칙.
 
 ## 3. 맞춤설정에 넣지 않을 것
 
-다음은 시간이 지나면 쉽게 stale해지므로 프로젝트/Base 정본에 둔다.
+다음은 쉽게 stale해지므로 프로젝트 또는 Base 정본에 둔다.
 
-- 현재 프로젝트 진행률, 현재 milestone, 현재 blocker.
+- 현재 진행률, milestone, blocker, 다음 작업.
 - PR·Issue 번호와 open/merged 상태.
 - 특정 시스템의 최신 수치, 밸런스 값, 구현 완료 여부.
 - 긴 세계관·캐릭터·아이템·콘텐츠 명세.
-- 구체적인 코드 파일 전체 목록이나 현재 branch/SHA.
+- 구체 코드 파일 전체 목록이나 현재 branch/SHA.
 - 일회성 작업 지시와 임시 오류/성공 로그.
-- 현재 Base의 세부 Gate 횟수·체크리스트를 독립 authority처럼 복사한 내용.
+- Base 세부 Gate 횟수와 체크리스트의 복사본.
 - 폐기되었거나 migration-only인 도구를 기본 작업면으로 만드는 지시.
+- 특정 프로젝트의 Notion URL이나 attachment locator.
 - 장기간 유지할 이유가 없는 특정 벤치마크 목록.
 
-Base의 현재 Gate가 최소 대안 수, 적대적 검토 횟수, PR 보호, runtime evidence 등의 세부값을 바꾸더라도 맞춤설정은 다시 복사할 필요가 없어야 한다. **맞춤설정은 current Base contract를 읽는 방법을 소유하고, Base가 실제 절차를 소유한다.**
+맞춤설정은 current Base와 project owner를 읽는 방법을 소유하고, Base와 프로젝트 저장소가 실제 절차·정본·증거를 소유한다.
 
-## 4. 권위와 `DOMAIN_SPLIT_CANON`
+## 4. Repository-first authority bootstrap
 
-프로젝트 작업의 기본 권위는 다음과 같이 해석한다.
+프로젝트 작업의 기본 권위는 다음과 같다.
 
 ```text
 latest user instruction
-→ project AGENTS/security/engine/data rules
+→ project AGENTS / security / engine / data rules
 → Active Context + approved work contract + confirmed decisions
-→ registered domain canon + actual code/data/assets/tests/runtime evidence
+→ registered repository canon + actual code/data/assets/tests/runtime evidence
 → adopted Base contract
 → Base remote
+→ legacy migration sources
 → external references / memory / past conversation / inference
 ```
 
-Base 자체 작업은 프로젝트 Notion을 억지로 거치지 않는다.
+Base 자체 작업은 프로젝트 workspace를 억지로 거치지 않는다.
 
 ```text
 latest user instruction
@@ -84,141 +85,156 @@ latest user instruction
 → external references / memory / past conversation / inference
 ```
 
-도구별 정본은 하나의 도구에 몰아넣지 않는다.
+### 4.1 Current project surfaces
 
 ```text
-NOTION_HUMAN_FACING_CANON
-→ 사람이 읽고 비교·수정하는 프로젝트 개요·기획·시각 방향·에셋 카탈로그
-→ human-editable budget/tier/roster/economy/progression tables
-→ Flow / Storyboard / visual relationship surface
+REPOSITORY_PRIMARY_PROJECT_CANON
+→ Markdown / JSON / game data / code / scene / resource / config
+→ approved implementation asset and ASSET_MANIFEST
+→ tests / build / runtime evidence
+→ exact commit / PR / rollback history
 
-REPOSITORY_STRUCTURED_CANON + REPOSITORY_RUNTIME_TRUTH
-→ Markdown / JSON / game data / code / scene / resource / config / tests
-→ build/runtime evidence
+AI_DETAILED_PLANNING_IMPLEMENTATION_MARKDOWN
+→ project meaning, systems, content, UX, data and implementation contract
 
-Google Sheets
-→ unique unmigrated material이 남은 경우의 migration compatibility only
+HUMAN_GDD_PDF_DERIVED_VIEW
+→ exact repository commit에서 생성된 사람용 상세 기획서 PDF
+
+CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON
+CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON
+
+LEGACY_READ_ONLY_MIGRATION_SOURCE
+→ unique unmigrated Notion / Sheet material only
 ```
 
-Notion 승인, 이미지 업로드, static mockup, 맞춤설정 문구 자체는 runtime 구현 증거가 아니다.
+- PDF는 독립 정본이 아니다.
+- Work와 Library는 실행·참고·후보·PDF 보관을 지원하지만 version control을 대체하지 않는다.
+- Notion과 Sheets는 신규 기본 workspace가 아니며 새 write/upload/sync/readback을 완료 조건으로 만들지 않는다.
+- 기존 고유 자료를 읽지 못하면 `BLOCKED_UNVERIFIED`로 남기며 중복·폐기로 추정하지 않는다.
 
-## 5. ChatGPT 제품 Personalization
+## 5. Desktop GPT 2파일 통합 기획서 bootstrap
 
-제품 설정은 작업 authority와 분리해서 본다.
-
-- 이 작업 방식의 기본 Base style and tone 권장값은 **Professional**이다. 정제된 구조와 정확한 표현이 문서·검수·기술 설명에 적합하다.
-- Personality는 응답의 스타일과 톤을 조정할 뿐 프로젝트 정본, 도구 권한, 안전 규칙, 실제 실행 증거를 바꾸지 않는다.
-- Characteristics가 계정에 제공되면 formatting/structure를 높이고 emoji는 낮게, brevity는 낮거나 중립으로 두는 편이 장문 검수·초보자 설명에 적합하다. 기능 제공 여부와 UI는 OpenAI 제품에서 바뀔 수 있으므로 강제 Base contract로 취급하지 않는다.
-- Custom Instructions 제품 제한도 변할 수 있다. 2026-08-22 OpenAI Help 기준 Plus/Pro 계열의 저장 한도는 최대 5,000자지만, 실제 적용 전 현재 공식 Help를 재확인한다.
-
-### ChatGPT Project memory mode
-
-2026-08-26 OpenAI Help의 현재 제품 동작을 기준으로, **1인 프로젝트를 GPT/ChatGPT Work와 함께 운영하고 Base·다른 프로젝트의 검증된 지식·재사용 후보를 연결해야 하는 경우에는 `Default memory`를 기본 권장값으로 사용한다.** 제품 동작은 바뀔 수 있으므로 실제 설정 변경 전에는 현재 공식 Help를 다시 확인한다.
+프로젝트 정본을 상세 통합 기획서로 정리할 때는 `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD`를 사용한다.
 
 ```text
-Default memory
-→ 기본 프로젝트 운영값
-→ 같은 프로젝트의 대화·파일을 우선 사용
-→ 요금제/계정 설정이 허용하면 saved memory와 프로젝트 밖 대화도 연결 가능
-→ 계정/플랜에서 ChatGPT Work가 제공되는 경우 Project-only의 Work 차단을 피하고 사용 경로를 보존
-→ cross-project 재사용 후보와 과거 조사 맥락을 발견하는 데 유리
-
-Project-only memory
-→ 격리 모드
-→ saved memory와 프로젝트 밖 대화 참조 차단
-→ 프로젝트 밖 채팅에서도 이 프로젝트 대화를 참조하지 않음
-→ ChatGPT Work 사용 불가
-→ 공유 프로젝트·민감 작업·의도적인 context-isolation 실험처럼 격리가 목적일 때 사용
+EXACTLY_TWO_DELIVERABLES
+├─ HUMAN_MASTER_GDD_PDF
+└─ AI_PRODUCTION_SPEC_MARKDOWN
 ```
 
-이 선택은 **authority를 바꾸지 않는다.** `Default memory`를 사용해도 다른 프로젝트의 기억이나 과거 대화를 현재 프로젝트 사실로 승격하지 않는다. 현재 프로젝트의 `AGENTS.md`, Active Context, 승인 계약, Notion/GitHub 분야별 정본과 actual evidence를 fresh-read하고 **프로젝트 정본을 readback**한 뒤 판단한다.
+맞춤설정에는 세부 목차 전체를 넣지 않고 다음 안정 규칙만 둔다.
 
-교차 프로젝트 연결은 무제한 전체 탐색이 아니라 current Base의 Reuse-First 경계를 따른다. 현재 프로젝트 → 승인 Asset/Reference/Benchmark → Base reuse/knowledge → 현재 병목과 직접 관련된 targeted cross-project evidence → 필요한 외부 benchmark 순으로 좁혀 확인한다. 다른 프로젝트의 규칙·세계관·수치가 현재 프로젝트로 자동 전이되지 않게 한다.
+- 사람용 PDF와 repository AI Markdown 두 종류를 기본 산출물로 한다.
+- 사용자에게 기본 다운로드 링크로 제공하는 것은 PDF 하나다: `PDF_ONLY_USER_DOWNLOAD`.
+- AI Markdown은 repository path·branch·exact commit SHA·PR·validation result로 보고한다.
+- 두 산출물은 같은 `SYS / CNT / UI / UX / AST / AUD / DAT / QA / DEC` ID와 source SHA를 사용한다.
+- 핵심 시스템·콘텐츠·UX/UI·데이터·실제 asset consumer·Godot 구현 원리·Acceptance와 evidence ceiling을 상세히 포함한다.
+- DOCX·ZIP·별도 appendix·별도 image bundle·Notion output을 기본으로 만들지 않는다.
+- 이미지 생성은 명시적 사용자 요청이 있을 때만 한다.
 
-`Project-only memory`가 적절한 대표 예외는 다음과 같다.
+세부 실행 계약은 다음 owner가 가진다.
 
-- 프로젝트 외부의 기억·대화를 의도적으로 차단해야 하는 민감/격리 작업.
-- 다른 프로젝트의 context가 결과에 영향을 주는지 확인하는 독립 A/B 또는 오염 검증.
-- 공유 프로젝트처럼 제품이 `Project-only memory`를 강제하는 경우.
+- `docs/REPOSITORY_FIRST_PROJECT_WORKSPACE_POLICY.md`
+- `templates/project-operations/DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD_WORK_INSTRUCTION.md`
+- `templates/project-operations/AI_PROJECT_CANON_SPEC.md`
+- `templates/project-operations/HUMAN_GDD_PDF_EXPORT_CHECKLIST.md`
 
-반대로 `ChatGPT Work` 사용, Base↔프로젝트 학습 순환, 프로젝트 간 재사용/벤치마크 연결이 중요한 일반 1인 프로젝트에서는 `Default memory`를 유지한다. 제품 설정 변경은 반영에 시간이 걸릴 수 있으므로 실제 UI 상태가 바뀌었는지는 별도로 확인한다.
-
-현재 제품 근거:
-
-- https://help.openai.com/en/articles/8096356-chat-preferences-for-chatgpt
-- https://help.openai.com/en/articles/11899719
-- https://help.openai.com/en/articles/20001038-characteristics-in-chatgpt
-- https://help.openai.com/en/articles/10169521-projects-in-chatgpt
-- https://help.openai.com/ko-kr/articles/10169521-using-projects-in-chatgpt
-
-## 6. ChatGPT 맞춤설정 기준
+## 6. ChatGPT 맞춤설정 원본
 
 ChatGPT용 공용 원본은 `templates/custom-instructions.gpt.md`다.
 
 템플릿은 두 책임을 분리한다.
 
-1. **ChatGPT가 알아야 할 안정적 사용자 맥락**
-2. **ChatGPT가 최신 정본으로 진입하고 작업하는 방법**
+1. ChatGPT가 알아야 할 안정적인 사용자 맥락.
+2. ChatGPT가 최신 Base·프로젝트 정본으로 진입하고 작업하는 방법.
 
-UI가 두 입력란을 제공하면 각각 넣고, 단일 입력란이면 같은 순서로 합친다. 프로젝트별 실제 작업에서는 템플릿에 프로젝트명·현재 상태를 계속 덧붙이지 말고 해당 프로젝트의 현재 `AGENTS.md`와 정본을 읽는다.
+UI가 두 입력란을 제공하면 각각 넣고, 단일 입력란이면 같은 순서로 합친다. 프로젝트별 실제 상태를 맞춤설정에 계속 덧붙이지 말고 해당 프로젝트의 current owner를 fresh-read한다.
 
-ChatGPT가 현재 세션에서 GitHub, Notion, 웹, 연결 도구 등으로 필요한 evidence를 직접 확인하거나 작업할 수 있으면 실제 Tool 실행을 우선한다. 수행 가능한 일을 단순히 다른 AI에게 넘기거나 기억으로 추정하지 않는다. 반대로 filesystem/runtime/build 권위가 없는 작업은 완료했다고 주장하지 않는다.
+현재 세션에서 GitHub, 파일, 웹, 연결 도구로 필요한 evidence를 직접 확인하거나 작업할 수 있으면 실제 Tool 실행을 우선한다. 수행 가능한 일을 추정이나 불필요한 다른 AI handoff로 대체하지 않는다. 반대로 filesystem/runtime/build 권위가 없는 작업은 완료했다고 주장하지 않는다.
 
-## 7. Memory 기준
+## 7. Memory와 Project context
 
-Memory는 맞춤설정을 보조하지만 프로젝트 정본은 아니다.
+Memory와 프로젝트 대화는 발견·연속성 보조 수단이지 정본이 아니다.
 
 ### 유지 가치가 높은 예
 
 - 장기적인 개발 숙련도와 선호 설명 방식.
-- 주 개발 엔진/언어처럼 오래 유지되는 기본 환경.
-- 비용 정책처럼 반복적으로 영향을 주는 선호.
-- 플레이어 경험을 우선하는 기획 성향.
+- 주 개발 엔진·언어처럼 오래 유지되는 기본 환경.
+- 비용 정책.
+- 플레이어 경험 우선 기획 성향.
+- 이미지 생성 승인 경계.
+- repository-first 프로젝트 운영과 두 산출물 정책.
 
 ### 프로젝트에서 다시 확인해야 하는 예
 
 - 현재 구현 상태와 다음 작업.
 - PR/Issue 상태.
 - 특정 시스템 최신 수치.
-- 승인 자산의 최신 버전.
+- 승인 asset의 최신 version과 hash.
 - 최근 변경된 도구 정책.
-- 이미 종료된 일회성 작업 결과.
+- 일회성 작업 결과.
 
-현재 프로젝트 사실을 말할 때는 Memory가 아니라 프로젝트 정본을 readback한다.
+다른 프로젝트의 기억·대화·자료는 reuse 후보 discovery에는 사용할 수 있지만 현재 프로젝트 사실로 자동 승격하지 않는다. 현재 프로젝트 → 승인 Asset/Reference/Benchmark → Base reuse/knowledge → 직접 관련된 targeted cross-project evidence → 필요한 외부 benchmark 순으로 좁힌다.
+
+제품의 Memory·Project·Work 기능과 제한은 바뀔 수 있다. 실제 설정 변경이나 제품 동작에 의존하는 결정을 내리기 전에는 현재 공식 문서를 다시 확인한다. 제품 설정은 repository authority를 바꾸지 않는다.
 
 ## 8. Codex/Copilot bootstrap
 
-Codex용 stable bootstrap 원본은 `templates/custom-instructions.codex.md`, Copilot의 repository-wide bootstrap 원본은 `templates/copilot-instructions.md`다. 둘 다 현재 프로젝트 `AGENTS.md`와 최신 실행 계약보다 높은 authority가 아니다.
+Codex용 stable bootstrap 원본은 `templates/custom-instructions.codex.md`, Copilot의 repository-wide bootstrap 원본은 `templates/copilot-instructions.md`다. 둘 다 current project `AGENTS.md`, exact repository commit과 최신 구현 계약보다 높은 authority가 아니다.
 
-GPT·Codex·Copilot의 제품 이름을 `기획 전용` / `구현 전용`처럼 영구 역할과 동일시하지 않는다. **dynamic authority** 원칙에 따라 현재 세션에서 실제로 사용할 수 있는 repository/filesystem/runtime/test 권한과 사용자 요청을 먼저 보고 조사·계획·구현·검증 역할을 정한다.
+GPT·Codex·Copilot 제품 이름을 영구 역할과 동일시하지 않는다. 다만 현재 기본 역할 분리는 다음과 같다.
 
-Codex/Copilot bootstrap은 과거 Base 파일의 긴 고정 read-order를 복제하지 않는다. Base 작업은 current Base `AGENTS.md`/`START_HERE.md`, 프로젝트 작업은 project `AGENTS.md`/Active Context/분야별 정본에서 시작하고, Documentation Map·router·Skill Registry가 지시하는 최소 owner만 progressive-load한다.
+```text
+GPT
+→ planning / research / review / image generation when explicitly requested
+→ repository canon and Codex handoff preparation
 
-Copilot의 **repository-wide** instructions는 공통 프로젝트 지도·정본 경계·검증 진입점만 가진다. 특정 폴더·언어·기능에만 필요한 규칙은 nearest `AGENTS.md` 또는 **path-specific** instructions로 분리해 전역 context를 과적재하지 않는다.
+Codex
+→ actual Godot product implementation for PLAY_MEANINGFUL_WORK_SLICE
+→ tests / runtime / build evidence
 
-## 9. 유지보수와 drift 검수
+Copilot
+→ repository coding assistance under the same current owners
+```
 
-Base의 큰 운영 구조, 기본 project surface, domain canon, 비용 정책, executor 역할이 변경될 때 다음을 확인한다.
+Codex handoff는 `docs/REPOSITORY_FIRST_GPT_CODEX_HANDOFF_POLICY.md`를 따른다. exact repository commit과 actual asset path/manifest/SHA를 사용하며 Notion 부재만으로 구현을 막지 않는다.
 
-1. `templates/custom-instructions.gpt.md` 또는 Codex/Copilot bootstrap이 새 정본과 충돌하는 고정 사실을 갖고 있는가?
-2. 맞춤설정에 복사된 세부 Gate 때문에 Base 변경이 이중 수정 작업이 되었는가?
-3. deprecated/migration-only tool이 active/default route로 남았는가?
-4. Memory나 과거 대화가 현재 정본보다 높은 것처럼 표현되었는가?
-5. 새 채팅/새 executor가 프로젝트 이름과 현재 상태를 모르더라도 현재 Base/프로젝트 authority로 스스로 진입할 수 있는가?
-6. repository-wide instructions에 path-specific 규칙이 불필요하게 누적되어 있는가?
-7. ChatGPT Project memory mode의 현재 제품 동작이 공식 Help와 달라졌거나, `Default memory` 권장이 Work/cross-project 재사용 목적과 더 이상 맞지 않는가?
+## 9. Legacy migration bootstrap
 
-하나라도 실패하면 프로젝트 사실을 더 추가하기보다 **bootstrap을 줄이고 current authority routing을 강화**하는 방향을 우선한다.
+기존 Notion 또는 Sheets에 고유 자료가 남을 수 있는 프로젝트에서만 다음을 bootstrap에 적용한다.
 
-`tests/test_ai_bootstrap_drift_contract.py`는 GPT/Codex/Copilot/project scaffold/Sheet compatibility와 ChatGPT Project memory 선택 기준의 핵심 회귀를 자동으로 감지한다. 이 테스트를 통과시키기 위해 deprecated authority를 다른 이름으로 재도입하지 않는다.
+```text
+legacy inventory
+→ UNIQUE | DUPLICATE | OBSOLETE | BLOCKED_UNVERIFIED
+→ UNIQUE migration to repository canon / tracked runtime asset / non-canon Library reference
+→ provenance
+→ destination readback
+→ consumer check
+→ legacy read-only
+```
 
-## 10. 파일 변경 설명 규칙
+프로젝트가 Notion dependency 제거를 주장하려면 다음이 모두 0이어야 한다.
 
-AI가 파일을 생성, 수정, 삭제, 이동, 이름 변경할 때는 변경 이유, 연결되는 문서/코드, 다른 작업자에 미치는 영향, 참조 갱신, 후속 동기화와 rollback을 확인한다. 사용자의 정상 변경을 덮어쓰거나 범위 밖 리팩터링을 하지 않는다.
+```text
+NOTION_UNIQUE_CANON_COUNT = 0
+CODEX_NOTION_DEPENDENCY_COUNT = 0
+ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT = 0
+```
 
-## 11. 실제 지침 템플릿
+세 count의 0은 runtime·UX·release PASS를 의미하지 않는다. 기존 page/database는 사용자 삭제 지시 없이 제거하지 않는다.
 
-- ChatGPT: `templates/custom-instructions.gpt.md`
-- Codex: `templates/custom-instructions.codex.md`
-- Copilot repository bootstrap: `templates/copilot-instructions.md`
-- 프로젝트 최상위 작업 규칙 예시: `templates/AGENTS.project.md`
+## 10. 검증과 유지보수
+
+맞춤설정을 변경할 때 다음을 확인한다.
+
+- [ ] current Base `AGENTS.md`, `START_HERE.md`, machine authority와 충돌하지 않는다.
+- [ ] 프로젝트 사실이나 현재 PR 상태를 장기 지침으로 복제하지 않았다.
+- [ ] repository-first authority와 PDF derived-view 경계가 있다.
+- [ ] Work·Library·Memory·legacy workspace를 정본으로 승격하지 않는다.
+- [ ] 새 Notion write나 이중 동기화를 기본 요구하지 않는다.
+- [ ] 두 산출물·PDF-only·공통 ID/SHA 정책이 보존된다.
+- [ ] 이미지 생성 명시적 승인 경계가 보존된다.
+- [ ] 비용·보안·증거 상한이 보존된다.
+- [ ] 실행하지 않은 test/runtime/UX를 PASS로 만들지 않는다.
+
+Base 정책이 바뀌면 맞춤설정에 모든 세부 절차를 복사하지 않는다. bootstrap의 authority pointer와 장기 기본값만 교정하고, 상세 owner는 Base 문서에서 계속 유지한다.
