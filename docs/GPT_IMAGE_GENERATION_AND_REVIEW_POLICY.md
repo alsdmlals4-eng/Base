@@ -33,6 +33,7 @@ docs/knowledge/game-development/GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_M
 → Visual Requirement Gate
 → Image Conversation Approval Gate
 → docs/knowledge/game-development/IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md
+→ docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md
 → docs/knowledge/game-development/PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md
 ```
 
@@ -40,9 +41,16 @@ docs/knowledge/game-development/GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_M
 
 - `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`
 - `IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`
+- `PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`
 - `PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md`
 - project `AGENTS.md`, current Decisions, Visual owner, asset manifest
 - rights/provenance와 runtime implementation owner
+
+권리·플랫폼·유통 evidence가 필요한 제품 또는 출시 이미지는 전문 owner의 판정이 닫히기 전까지 다음 상태를 유지한다.
+
+```text
+RELEASE_BLOCKED_UNVERIFIED
+```
 
 ## Visual Asset Coverage Preflight
 
@@ -259,6 +267,8 @@ NO_IMPLEMENTATION_BEFORE_USER_FINAL_APPROVAL
 
 사용자 final lock 뒤 프로젝트 asset owner가 repository path, SHA-256, provenance, license/rights, consumer, state family와 superseded asset을 등록한다. 실제 implementation과 runtime evidence는 별도다.
 
+권리·플랫폼·유통 판정이 필요한 경우 `PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md` receipt가 없으면 `RELEASE_BLOCKED_UNVERIFIED`를 유지한다.
+
 정적 이미지 inspection은 runtime PASS가 아니다. 실제 Scene·UI·state·input·platform에서 소비된 증거가 없으면 `IMPLEMENTED` 또는 `RUNTIME_VERIFIED`라고 쓰지 않는다.
 
 ## 8. Implementation feasibility for image systems
@@ -341,6 +351,7 @@ NO_AUTOMATIC_IMAGE_GENERATION
 - objective defect와 취향·direction change를 구분했는가
 - user final lock 전 canon/runtime을 주장하지 않았는가
 - provenance·SHA-256·consumer readback이 있는가
+- platform/release rights owner가 필요한 경우 `RELEASE_BLOCKED_UNVERIFIED`를 지켰는가
 - implementation·runtime evidence가 별도인가
 - material pipeline 선택을 current official docs와 actual project structure에서 검증했는가
 - 작업 후 실제 adversarial correction evidence가 있는가
