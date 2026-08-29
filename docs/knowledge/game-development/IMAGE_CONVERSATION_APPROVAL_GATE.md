@@ -14,7 +14,7 @@
 → LOCK 뒤에만 canon/runtime promotion
 ```
 
-이 파일은 conversation-level current owner다. `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`, `Visual Requirement Gate`, project Visual Canon, rights/provenance, asset manifest와 runtime evidence를 대체하지 않는다.
+이 파일은 conversation-level current owner다. `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`, `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`, project Visual Canon, rights/provenance, asset manifest와 runtime evidence를 대체하지 않는다.
 
 ## Machine contract
 
@@ -36,7 +36,11 @@ GENERATE_EXACTLY_ONE
 BOUNDED_STATE_FAMILY_ALLOWED_WHEN_CONSUMER_REQUIRES
 STOP_REQUIRED_AFTER_GENERATION
 NO_AUTOMATIC_IMAGE_CHAIN
+PRIMARY_USE_GATE_REQUIRED_AFTER_USER_LOCK
+REUSABLE_VISUAL_HARVEST_ONLY_AFTER_PRIMARY_USE_SUCCESS
 HOST_PLATFORM_PRECEDENCE
+HOST_POLICY_OVERRIDE
+RUNTIME_ENFORCEMENT_NOT_GUARANTEED
 ```
 
 ## 1. 공통 Preflight
@@ -209,7 +213,10 @@ host가 사용자 노출 전 내부 correction을 허용하지 않으면 결함�
 LOCK
 → USER_APPROVED
 → repository owner / provenance / SHA-256 / consumer / state mapping 등록 가능
+→ Primary Use Gate
 → 구현 권한이 별도로 있으면 implementation
+→ primary-use success 확인
+→ Reusable Visual Harvest Gate
 → runtime evidence
 
 REVISE
@@ -235,7 +242,27 @@ GENERATED_CANDIDATE
 
 사용자 lock 전에 `PROJECT_ASSET_APPROVED`, `CANON_REGISTERED`, runtime-ready 또는 implementation complete로 보고하지 않는다.
 
-## 9. Blueprint relationship
+## 9. Primary Use Gate와 Reusable Visual Harvest Gate
+
+사용자 lock은 재사용 자산 승격을 자동 승인하지 않는다. 세부 기준은 기존 책임 원본 `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`가 소유한다.
+
+```text
+USER_APPROVED / CANON_REGISTERED
+→ Primary Use Gate
+→ actual consumer에서 primary-use success
+→ Reusable Visual Harvest Gate
+→ 재사용 가치가 있는 요소만 분류·분해·재구축
+```
+
+`PRIMARY_USE_GATE_REQUIRED_AFTER_USER_LOCK`과 `REUSABLE_VISUAL_HARVEST_ONLY_AFTER_PRIMARY_USE_SUCCESS`를 적용한다.
+
+- `title-specific identity`, 감정, 정보 위계와 구도를 재사용성 때문에 약화시키지 않는다.
+- `primary-use success`와 `reuse promotion`은 별도 판정이다.
+- `REUSE_AS_IS`, `VARIANT_SEED`, `STRUCTURE_PATTERN`, `STYLE_DNA`, `REBUILD_FOR_REUSE`, `ONE_OFF_KEEP`, `REJECT_REUSE`는 Art Direction 책임 원본에서 판정한다.
+- `SOURCE_LAYER`, `MASK_CUTOUT`, `MANUAL_OR_SEMANTIC_REBUILD`, `DERIVED_GENERATIVE_RECOVERY`는 관측 source와 새로 생성한 영역을 분리한다.
+- Harvest는 `PROJECT_ASSET_APPROVED`, rights, tracked asset 또는 Godot runtime proof를 자동 생성하지 않는다.
+
+## 10. Blueprint relationship
 
 Blueprint 검수에 필요한 이미지·시각자료 candidate는 최종 Blueprint 승인 전에 만들 수 있다.
 
@@ -250,13 +277,15 @@ PLAN
 
 candidate 선제작은 신규 제품 구현 승인과 다르다. Blueprint 최종 승인을 요구하는 implementation package는 승인 전 runtime 구현으로 넘어가지 않는다.
 
-## 10. Host/system precedence
+## 11. Host/system precedence
 
 `HOST_PLATFORM_PRECEDENCE`
 
 상위 system/developer/host 정책이 이미지 생성 시점, 도구 호출, 사용자 이미지 요구, 응답 형식을 더 엄격하게 규정하면 상위 정책을 따른다. 상위 정책 때문에 현재 sequence를 그대로 실행할 수 없으면 `HOST_POLICY_OVERRIDE`와 실제 evidence ceiling을 기록한다.
 
-## 11. Legacy compatibility markers
+`RUNTIME_ENFORCEMENT_NOT_GUARANTEED`: 이 정적 repository 계약은 host가 제공하지 않는 이미지 호출 권한이나 숨은 runtime 동작을 만들어 내지 않는다. 실제 호출 가능 여부와 결과는 current host evidence로 확인한다.
+
+## 12. Legacy compatibility markers
 
 아래 문자열은 과거 test·문서 검색 호환을 위해 남기는 비활성 marker다. 현재 실행 Gate가 아니다.
 
