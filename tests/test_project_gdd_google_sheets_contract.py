@@ -60,7 +60,17 @@ class ProjectGDDGoogleSheetsContractTests(unittest.TestCase):
         skill = read("skills/designing-art-prompts-and-technique-cards/SKILL.md")
         coverage = read("docs/knowledge/game-development/GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md")
 
-        self.assertIn("Visual Asset Coverage Preflight", policy)
+        for term in (
+            "Visual Asset Coverage Preflight",
+            "GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md",
+            "NEED_DRIVEN_GENERATE_THEN_LOCK",
+            "CONCRETE_CONSUMER_OR_PLANNING_BOARD_REQUIRED",
+            "NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS",
+            "GENERATED_CANDIDATE != USER_LOCKED != PROJECT_ASSET_APPROVED != IMPLEMENTED != RUNTIME_VERIFIED",
+            "docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md",
+            "explicit promote",
+        ):
+            self.assertIn(term, policy)
         self.assertIn("GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md", skill)
         for term in (
             "COVERAGE_CHECK_ONLY",
@@ -70,7 +80,6 @@ class ProjectGDDGoogleSheetsContractTests(unittest.TestCase):
             "PLATFORM_SPEC_RECHECK_REQUIRED",
         ):
             self.assertIn(term, coverage)
-        self.assertIn("NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS", policy)
         self.assertIn("NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS", skill)
 
     def test_entrypoints_use_registry_derived_active_skill_view(self) -> None:
