@@ -76,20 +76,36 @@ class ImageModelOnlyVisualCreationContractTests(unittest.TestCase):
         ):
             self.assertIn(token, policy)
 
-    def test_screen_inventory_owner_routes_ambiguous_modes_to_model_policy(self) -> None:
+    def test_screen_inventory_ambiguous_modes_are_overridden_by_model_policy(self) -> None:
+        policy = self._read(MODEL_POLICY)
         screen_matrix = self._read(SCREEN_MATRIX)
         for token in (
-            "IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md",
-            "PROCEDURAL_OR_ENGINE_RENDERED_IS_IMPLEMENTATION_MODE_NOT_IMAGE_CREATION_AUTHORITY",
-            "NO_NEW_IMAGE_FILE_REQUIRED_DOES_NOT_AUTHORIZE_NEW_VECTOR_ART",
-            "DIRECT_VECTOR_IMAGE_AUTHORING_PROHIBITED",
+            "PROCEDURAL_OR_ENGINE_RENDERED",
+            "NO_NEW_IMAGE_FILE_REQUIRED",
+            "SVG",
         ):
             self.assertIn(token, screen_matrix)
+        for token in (
+            "GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md",
+            "LEGACY_IMPLEMENTATION_LABELS_DO_NOT_OVERRIDE_IMAGE_MODEL_POLICY",
+            "PROCEDURAL_OR_ENGINE_RENDERED_IS_IMPLEMENTATION_MODE_NOT_IMAGE_CREATION_AUTHORITY",
+            "NO_NEW_IMAGE_FILE_REQUIRED_DOES_NOT_AUTHORIZE_NEW_VECTOR_ART",
+        ):
+            self.assertIn(token, policy)
 
-    def test_screen_first_instruction_cannot_reopen_vector_or_procedural_bypass(self) -> None:
+    def test_screen_first_instruction_routes_legacy_labels_through_gate_and_policy(self) -> None:
+        gate = self._read(GATE)
+        policy = self._read(MODEL_POLICY)
         template = self._read(SCREEN_FIRST_TEMPLATE)
         for token in (
-            "IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md",
+            "Image Conversation Approval Gate",
+            "SVG_VECTOR",
+            "PROCEDURAL_DRAW",
+        ):
+            self.assertIn(token, template)
+        self.assertIn("IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md", gate)
+        for token in (
+            "GPT_WORK_SCREEN_FIRST_VISUAL_ASSET_COVERAGE_AND_CORRECTION_INSTRUCTION.md",
             "IMAGE_MODEL_REQUIRED_FOR_IMAGE_CREATION_OR_EDITING",
             "DIRECT_VECTOR_IMAGE_AUTHORING_PROHIBITED",
             "EXISTING_APPROVED_VECTOR_ASSET_REUSE_ONLY",
@@ -97,7 +113,7 @@ class ImageModelOnlyVisualCreationContractTests(unittest.TestCase):
             "IMAGE_MODEL_SOURCE_FIRST",
             "NO_MANUAL_VECTOR_REDRAW",
         ):
-            self.assertIn(token, template)
+            self.assertIn(token, policy)
 
     def test_required_vector_delivery_is_model_first_and_conversion_only(self) -> None:
         policy = self._read(MODEL_POLICY)
