@@ -81,6 +81,43 @@ class ProjectMasterGddTwoArtifactContractTests(unittest.TestCase):
         ):
             self.assertIn(required, text)
 
+    def test_policy_requires_user_final_blueprint_approval_before_implementation(self):
+        text = POLICY.read_text(encoding="utf-8")
+        for required in (
+            "BLUEPRINT_PRE_IMPLEMENTATION_REVIEW_GATE",
+            "REQUIRED_IMAGE_AND_MATERIAL_PREPARATION",
+            "USER_FINAL_REVIEW_APPROVAL_REQUIRED",
+            "NO_IMPLEMENTATION_BEFORE_USER_FINAL_APPROVAL",
+            "FRAME → RESEARCH → DESIGN → SPECIFY",
+            "CREATIVE → STRUCTURAL → RULE → CONTINUITY → ADVERSARIAL → POLISH",
+            "DRAFT | INTERNAL_REVIEW | GENERATED_IMAGE | AUTOMATED_TEST | ASSISTANT_INFERENCE",
+            "USER_FINAL_APPROVAL_DECISION_ID",
+            "TASK_BREAKDOWN_READY_IMPLEMENTATION_EXECUTION_BLOCKED",
+            "PROSPECTIVE_ONLY_EXISTING_IMPLEMENTATION_EVIDENCE_PRESERVED",
+            "IMAGE_CONVERSATION_APPROVAL_GATE.md",
+            "IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md",
+            "STRUCTURED_INFORMATION_ARTIFACTS_REMAIN_TEXT_NATIVE",
+        ):
+            self.assertIn(required, text)
+        self.assertIn(
+            "PLAN\n"
+            "→ REQUIRED_IMAGE_AND_MATERIAL_PREPARATION\n"
+            "→ BLUEPRINT_REVIEW_PUBLICATION\n"
+            "→ USER_FINAL_REVIEW_APPROVAL\n"
+            "→ IMPLEMENTATION_AUTHORIZED",
+            text,
+        )
+
+    def test_policy_preserves_only_exact_pre_adoption_approved_unstarted_package(self):
+        text = POLICY.read_text(encoding="utf-8")
+        for required in (
+            "PROSPECTIVE_ONLY_PREEXISTING_EXACT_USER_APPROVED_IMPLEMENTATION_AUTHORITY_PRESERVED",
+            "PRE_ADOPTION_USER_APPROVED_BUT_IMPLEMENTATION_NOT_STARTED",
+            "EXACT_APPROVED_SCOPE_AND_REVISION_ONLY",
+            "SCOPE_EXPANSION | SUCCESSOR_PACKAGE | INFERRED_BLANKET_APPROVAL",
+        ):
+            self.assertIn(required, text)
+
     def test_human_pdf_requires_system_content_and_implementation_depth(self):
         text = POLICY.read_text(encoding="utf-8")
         for required in (
@@ -253,6 +290,43 @@ class ProjectMasterGddTwoArtifactContractTests(unittest.TestCase):
                 "VERIFICATION READ",
             ),
         )
+
+    def test_work_instruction_stops_implementation_until_recorded_final_approval(self):
+        text = INSTRUCTION.read_text(encoding="utf-8")
+        for required in (
+            "BLUEPRINT_PRE_IMPLEMENTATION_REVIEW_GATE",
+            "REQUIRED_IMAGE_AND_MATERIAL_PREPARATION",
+            "USER_FINAL_REVIEW_APPROVAL_REQUIRED",
+            "NO_IMPLEMENTATION_BEFORE_USER_FINAL_APPROVAL",
+            "FRAME → RESEARCH → DESIGN → SPECIFY",
+            "CREATIVE → STRUCTURAL → RULE → CONTINUITY → ADVERSARIAL → POLISH",
+            "DRAFT | INTERNAL_REVIEW | GENERATED_IMAGE | AUTOMATED_TEST | ASSISTANT_INFERENCE",
+            "USER_FINAL_APPROVAL_DECISION_ID",
+            "TASK_BREAKDOWN_READY_IMPLEMENTATION_EXECUTION_BLOCKED",
+            "PROSPECTIVE_ONLY_EXISTING_IMPLEMENTATION_EVIDENCE_PRESERVED",
+            "IMAGE_CONVERSATION_APPROVAL_GATE.md",
+            "IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md",
+            "STRUCTURED_INFORMATION_ARTIFACTS_REMAIN_TEXT_NATIVE",
+        ):
+            self.assertIn(required, text)
+        self.assertIn(
+            "PLAN\n"
+            "→ REQUIRED_IMAGE_AND_MATERIAL_PREPARATION\n"
+            "→ BLUEPRINT_REVIEW_PUBLICATION\n"
+            "→ USER_FINAL_REVIEW_APPROVAL\n"
+            "→ IMPLEMENTATION_AUTHORIZED",
+            text,
+        )
+
+    def test_work_instruction_preserves_only_exact_pre_adoption_approved_unstarted_package(self):
+        text = INSTRUCTION.read_text(encoding="utf-8")
+        for required in (
+            "PROSPECTIVE_ONLY_PREEXISTING_EXACT_USER_APPROVED_IMPLEMENTATION_AUTHORITY_PRESERVED",
+            "PRE_ADOPTION_USER_APPROVED_BUT_IMPLEMENTATION_NOT_STARTED",
+            "EXACT_APPROVED_SCOPE_AND_REVISION_ONLY",
+            "SCOPE_EXPANSION | SUCCESSOR_PACKAGE | INFERRED_BLANKET_APPROVAL",
+        ):
+            self.assertIn(required, text)
 
     def test_selected_profile_skips_notion_blueprint_output_and_readback(self):
         text = NOTION_BLUEPRINT_CONTRACT.read_text(encoding="utf-8")

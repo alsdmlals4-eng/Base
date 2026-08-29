@@ -60,6 +60,36 @@ PDF의 목차·요약·cross-reference와 AI Markdown의 registry·상세 sectio
 - `REUSE_OR_ADAPT_EXISTING_BLUEPRINT_BEFORE_NEW_REPRESENTATION`: current authority에 유효한 Blueprint·flow·system representation이 있으면 먼저 재사용하고, 현재 profile과 touched scope에 필요한 부분만 adapt한다.
 - `NO_MASS_BLUEPRINT_BACKFILL`: 이 profile을 선택해도 untouched project/system을 일괄 변환하지 않는다. 현재 GDD 범위의 material flow/system만 두 산출물 안에 필요한 최소 깊이로 구성한다.
 
+### 1.2 Prospective Blueprint 사전 구현 승인 Gate
+
+`BLUEPRINT_PRE_IMPLEMENTATION_REVIEW_GATE`
+
+`REQUIRED_IMAGE_AND_MATERIAL_PREPARATION`
+
+`USER_FINAL_REVIEW_APPROVAL_REQUIRED`
+
+`NO_IMPLEMENTATION_BEFORE_USER_FINAL_APPROVAL`
+
+이 profile을 선택한 이후 새 implementation package는 다음 lifecycle을 순서대로 통과해야 한다.
+
+```text
+PLAN
+→ REQUIRED_IMAGE_AND_MATERIAL_PREPARATION
+→ BLUEPRINT_REVIEW_PUBLICATION
+→ USER_FINAL_REVIEW_APPROVAL
+→ IMPLEMENTATION_AUTHORIZED
+```
+
+1. **PLAN** — Game Design Loop의 `FRAME → RESEARCH → DESIGN → SPECIFY`로 player promise, 현재 근거, 규칙·flow·상태, 콘텐츠·UX, acceptance, non-goal과 미결정을 구현 전 명세한다.
+2. **REQUIRED_IMAGE_AND_MATERIAL_PREPARATION** — Blueprint 판단에 필요한 기존 승인 image/build capture/reference/data/material과 누락 상태를 실제 consumer별로 준비한다. 새 image deliverable은 `IMAGE_CONVERSATION_APPROVAL_GATE.md`와 `IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`를 통과해야 하며 이 Gate 자체가 생성 authority가 아니다. `STRUCTURED_INFORMATION_ARTIFACTS_REMAIN_TEXT_NATIVE`: Mermaid / Flow / table은 정확한 구조 정보를 위한 text-native artifact로 유지한다.
+3. **BLUEPRINT_REVIEW_PUBLICATION** — Section 1.1의 layer를 정확히 두 산출물 안에 합성하고 `CREATIVE → STRUCTURAL → RULE → CONTINUITY → ADVERSARIAL → POLISH` pass를 실행한 뒤, 사용자가 검토할 PDF와 exact AI Markdown revision을 발행한다.
+4. **USER_FINAL_REVIEW_APPROVAL** — `USER_FINAL_APPROVAL_DECISION_ID`로 `DEC-` ID를 부여하고, AI Markdown의 Confirmed Decisions에 사용자가 검토한 artifact의 branch/SHA, scope, known risk·N/A·미결정을 기록한다. 프로젝트에 별도 repository Decision owner가 있으면 같은 ID로 동기화하되 세 번째 artifact를 만들지 않는다. `DRAFT | INTERNAL_REVIEW | GENERATED_IMAGE | AUTOMATED_TEST | ASSISTANT_INFERENCE`는 `USER_FINAL_REVIEW_APPROVAL`을 대체하지 않는다.
+5. **IMPLEMENTATION_AUTHORIZED** — 위 exact revision에 대한 명시적 사용자 최종 승인이 기록된 뒤에만 새 구현 실행·Codex implementation package를 시작한다. `TASK_BREAKDOWN_READY_IMPLEMENTATION_EXECUTION_BLOCKED`: 구현 task breakdown, dependency, acceptance 순서는 승인 전에 준비할 수 있지만 실행 상태는 승인 전까지 blocked다.
+
+`PROSPECTIVE_ONLY_EXISTING_IMPLEMENTATION_EVIDENCE_PRESERVED`: 이 Gate는 앞으로 시작하는 구현에만 적용한다. 이미 merge된 code/data/scene/test와 기존 runtime·UX evidence의 역사적 상태를 무효화하거나 하향 재분류하지 않으며, 이 profile 채택을 이유로 mass backfill하지 않는다.
+
+`PROSPECTIVE_ONLY_PREEXISTING_EXACT_USER_APPROVED_IMPLEMENTATION_AUTHORITY_PRESERVED`: Gate 채택 전에 package ID, exact scope와 artifact revision/branch/SHA에 연결된 명시적 사용자 구현 승인이 기록되어 있었다면 `PRE_ADOPTION_USER_APPROVED_BUT_IMPLEMENTATION_NOT_STARTED`여도 그 package의 authority는 유지한다. `EXACT_APPROVED_SCOPE_AND_REVISION_ONLY`: grandfathering은 승인 기록과 동일한 package·scope·revision의 실행만 허용한다. `SCOPE_EXPANSION | SUCCESSOR_PACKAGE | INFERRED_BLANKET_APPROVAL`에는 이 authority를 재사용할 수 없으며 새 범위는 Section 1.2 lifecycle과 별도 사용자 최종 승인을 거쳐야 한다.
+
 ## 2. 사용자용 상세 PDF 계약
 
 `CORE_SYSTEM_AND_CONTENT_IMPLEMENTATION_DETAIL_REQUIRED`
@@ -227,6 +257,8 @@ Master GDD를 새로 만들거나 대규모 갱신할 때는 현재 장르·플�
 
 `CURRENT_IMAGE_CREATION_POLICY_REQUIRED`
 
+`STRUCTURED_INFORMATION_ARTIFACTS_REMAIN_TEXT_NATIVE`
+
 - 기존 승인 이미지와 실제 build capture를 우선 사용한다.
 - 승인 visual이 없으면 `현재 승인 Visual 없음`과 필요한 consumer·상태·규격을 기록한다.
 - flow/state/sequence/system 관계/data처럼 의미가 정확해야 하는 문서 도식은 `Mermaid / Flow / table`의 text-native source로 작성하고 두 산출물 안에 렌더링한다.
@@ -248,6 +280,8 @@ fresh-read current authority
 → focused regression + repository checks
 → final delivery
 ```
+
+위 `final delivery`는 `BLUEPRINT_REVIEW_PUBLICATION`으로서 사용자의 최종 검토 입력을 제공한다. 그 delivery, 내부 review, render inspection 또는 test 통과만으로 `IMPLEMENTATION_AUTHORIZED`가 되지 않으며 Section 1.2의 별도 `USER_FINAL_REVIEW_APPROVAL` decision이 필요하다.
 
 PDF 검증에는 파일 열기, 페이지 수, 목차·페이지 번호, 한글 font, 표·도식 잘림, 이미지 해상도, caption, 내부 link, 빈 페이지, 기준 SHA, 실제 page render inspection을 포함한다.
 
@@ -272,6 +306,10 @@ AI 명세는 별도 다운로드 링크를 제공하지 않고 다음 정보만 
 ## 10. 완료 조건
 
 - 정확히 두 프로젝트 산출물만 생성됨
+- 사전 구현 lifecycle의 네 stable Gate token과 순서 누락 0
+- exact Blueprint revision에 대한 명시적 사용자 최종 승인 전 신규 구현 실행 0
+- draft·내부 review·생성 이미지·자동 test·assistant inference를 최종 승인으로 대체한 사례 0
+- 기존 구현·runtime evidence의 소급 무효화·하향 재분류 0
 - 최신 정본 누락·미표시 충돌 0
 - 핵심 시스템·핵심 콘텐츠 누락 0
 - 시스템·콘텐츠별 Godot 구현 설명 누락 0
