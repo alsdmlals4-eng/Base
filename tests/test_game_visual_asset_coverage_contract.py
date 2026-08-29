@@ -41,8 +41,8 @@ class GameVisualAssetCoverageContractTests(unittest.TestCase):
         self.assertIn("GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md", text)
         self.assertIn("NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS", text)
         self.assertLess(
-            text.index("Visual Asset Coverage Preflight"),
-            text.index("## 1. Visual Requirement Gate"),
+            text.index("## 4. Visual Asset Coverage Preflight"),
+            text.index("### 4.1 Visual Requirement Gate"),
         )
 
     def test_information_artifacts_remain_required_without_forcing_image_generation(self):
@@ -58,7 +58,8 @@ class GameVisualAssetCoverageContractTests(unittest.TestCase):
         coverage = owner_paths[0].read_text(encoding="utf-8")
         policy = owner_paths[2].read_text(encoding="utf-8")
         self.assertIn("INFORMATION_ARTIFACT_NOT_IMAGE_ASSET", coverage)
-        self.assertIn("INFORMATION_ARTIFACT_NOT_IMAGE_ASSET", policy)
+        self.assertIn("생성하지 않는 정보 산출물", policy)
+        self.assertIn("DO_NOT_GENERATE", policy)
         for information_kind in ("시스템 설명", "세계관", "관계도", "제작 체크리스트"):
             self.assertIn(information_kind, policy)
 
@@ -154,7 +155,6 @@ class GameVisualAssetCoverageContractTests(unittest.TestCase):
             self.assertIn(required, text)
         self.assertNotIn("[프로젝트명]", text)
         self.assertNotIn("TBD", text)
-
 
     def test_screen_contract_hands_off_completion_to_canonical_coverage_owner(self):
         screen_path = ROOT / SCREEN_CONTRACT
