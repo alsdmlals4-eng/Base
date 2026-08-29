@@ -281,7 +281,7 @@ candidate 선제작은 신규 제품 구현 승인과 다르다. Blueprint 최�
 
 `HOST_PLATFORM_PRECEDENCE`
 
-상위 system/developer/host 정책이 이미지 생성 시점, 도구 호출, 사용자 이미지 요구, 응답 형식을 더 엄격하게 규정하면 상위 정책을 따른다. 상위 정책 때문에 현재 sequence를 그대로 실행할 수 없으면 `HOST_POLICY_OVERRIDE`와 실제 evidence ceiling을 기록한다.
+상위 시스템(system)·developer·host 정책이 이미지 생성 시점, 도구 호출, 사용자 이미지 요구, 응답 형식을 더 엄격하게 규정하면 상위 정책을 따른다. 상위 정책 때문에 현재 sequence를 그대로 실행할 수 없으면 `HOST_POLICY_OVERRIDE`와 실제 evidence ceiling을 기록한다.
 
 `RUNTIME_ENFORCEMENT_NOT_GUARANTEED`: 이 정적 repository 계약은 host가 제공하지 않는 이미지 호출 권한이나 숨은 runtime 동작을 만들어 내지 않는다. 실제 호출 가능 여부와 결과는 current host evidence로 확인한다.
 
