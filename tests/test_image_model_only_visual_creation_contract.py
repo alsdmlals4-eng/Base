@@ -14,6 +14,10 @@ SCREEN_MATRIX = (
     ROOT
     / "docs/knowledge/game-development/GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md"
 )
+SCREEN_FIRST_TEMPLATE = (
+    ROOT
+    / "templates/project-operations/GPT_WORK_SCREEN_FIRST_VISUAL_ASSET_COVERAGE_AND_CORRECTION_INSTRUCTION.md"
+)
 
 
 class ImageModelOnlyVisualCreationContractTests(unittest.TestCase):
@@ -71,6 +75,29 @@ class ImageModelOnlyVisualCreationContractTests(unittest.TestCase):
             "TEXT_TABLE_FLOW_DB_FIRST",
         ):
             self.assertIn(token, policy)
+
+    def test_screen_inventory_owner_routes_ambiguous_modes_to_model_policy(self) -> None:
+        screen_matrix = self._read(SCREEN_MATRIX)
+        for token in (
+            "IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md",
+            "PROCEDURAL_OR_ENGINE_RENDERED_IS_IMPLEMENTATION_MODE_NOT_IMAGE_CREATION_AUTHORITY",
+            "NO_NEW_IMAGE_FILE_REQUIRED_DOES_NOT_AUTHORIZE_NEW_VECTOR_ART",
+            "DIRECT_VECTOR_IMAGE_AUTHORING_PROHIBITED",
+        ):
+            self.assertIn(token, screen_matrix)
+
+    def test_screen_first_instruction_cannot_reopen_vector_or_procedural_bypass(self) -> None:
+        template = self._read(SCREEN_FIRST_TEMPLATE)
+        for token in (
+            "IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md",
+            "IMAGE_MODEL_REQUIRED_FOR_IMAGE_CREATION_OR_EDITING",
+            "DIRECT_VECTOR_IMAGE_AUTHORING_PROHIBITED",
+            "EXISTING_APPROVED_VECTOR_ASSET_REUSE_ONLY",
+            "ENGINE_NATIVE_UI_AND_EFFECT_IMPLEMENTATION_IS_NOT_IMAGE_DELIVERABLE_CREATION",
+            "IMAGE_MODEL_SOURCE_FIRST",
+            "NO_MANUAL_VECTOR_REDRAW",
+        ):
+            self.assertIn(token, template)
 
     def test_required_vector_delivery_is_model_first_and_conversion_only(self) -> None:
         policy = self._read(MODEL_POLICY)
