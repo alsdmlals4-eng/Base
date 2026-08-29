@@ -48,6 +48,7 @@ Notion과 Google Sheets는 프로젝트 current authority가 명시한 고유 mi
 
 ```text
 PROJECT_REVIEW_COMPLETE
+Visual Asset Coverage Preflight
 Visual Requirement Gate
 ACTUAL_CONSUMER_REQUIRED
 PRODUCTION_INFORMATION
@@ -59,6 +60,7 @@ CONCRETE_CONSUMER_OR_PLANNING_BOARD_REQUIRED
 CURRENT_APPROVED_VISUAL_ANCHOR_READBACK_REQUIRED
 APPROVED_VISUAL_DIRECTION_RESOLUTION_REQUIRED
 EXISTING_APPROVED_ASSET_REUSE_FIRST
+NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS
 IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md
 GENERATE_ONE_CANDIDATE_BEFORE_LOCK
 GENERATE_EXACTLY_ONE
@@ -77,7 +79,19 @@ GENERATED_CANDIDATE != USER_LOCKED != PROJECT_ASSET_APPROVED != IMPLEMENTED != R
 ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE__SUPERSEDED
 ```
 
-## 4. Visual Requirement Gate
+## 4. Visual Asset Coverage Preflight
+
+에셋 coverage 표는 누락을 찾는 검수 owner이며 자체 생성 queue가 아니다.
+
+```text
+COVERAGE_CHECK_ONLY
+NOT_A_SECOND_ASSET_CANON
+NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS
+```
+
+coverage gap을 발견했다는 사실만으로 후보를 만들지 않는다. gap이 actual consumer, planned player-facing surface, product distribution 또는 현재 Blueprint 결정용 planning-board에 연결되고, current canon·승인 anchor·기존 asset 재사용 검토까지 끝난 경우에만 `NEED_DRIVEN_GENERATE_THEN_LOCK`으로 진입한다.
+
+### 4.1 Visual Requirement Gate
 
 이미지 생성 전에 단순 목록이 아니라 실제 필요성을 검증한다.
 
@@ -98,7 +112,7 @@ rights_and_reference_boundary:
 fallback_if_unconsumed:
 ```
 
-### 4.1 허용되는 consumer class
+### 4.2 허용되는 consumer class
 
 - `GAME_RUNTIME`: 실제 Scene·Node·material·UI slot·sprite·texture·cut-in 등 exact runtime consumer.
 - `PLANNED_GAME_SURFACE`: 승인 Blueprint에서 구현할 실제 화면·씬·상태의 visual candidate.
@@ -107,7 +121,7 @@ fallback_if_unconsumed:
 
 Blueprint 검수용 planning-board는 production asset이 아니지만, 구체적인 제품·화면·Flow 결정을 비교하는 목적이 있을 때 `GENERATED_EXPLORATION` 후보를 만들 수 있다.
 
-### 4.2 생성하지 않는 정보 산출물
+### 4.3 생성하지 않는 정보 산출물
 
 다음 제작 정보는 `PRODUCTION_INFORMATION`이며 이미지 파일보다 수정 가능한 정본이 우선이다.
 
