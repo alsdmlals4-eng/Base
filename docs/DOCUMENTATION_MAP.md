@@ -113,6 +113,7 @@ Google Sheets는 `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL` source다. Figma·
 | GitHub governance | `docs/GITHUB_PRO_OPERATING_POLICY.md`, `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` | GitHub Pro 저장소 운영, GitHub Pro 보호·Ruleset·자동 병합, PR/check/work-item lifecycle |
 | Decision sync | `docs/CONFIRMED_DECISION_SYNC_POLICY.md` | approved Decision 정본화·중복질문 방지·Notion/repository cross-sync |
 | Planning sequence/evidence | `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` | evidence, approval bundle, `PROJECT_VISUALIZATION_NEED_MAP`, Demo-First |
+| 선택형 2산출물 Master GDD | `docs/PROJECT_MASTER_GDD_TWO_ARTIFACT_POLICY.md`, `templates/project-operations/GPT_WORK_PROJECT_MASTER_GDD_TWO_ARTIFACT_INSTRUCTION.md` | `HUMAN_GAME_BLUEPRINT_GDD_LAYERED_PROFILE`을 PDF + AI Markdown 내부에 구성하며 `NO_SEPARATE_BLUEPRINT_ARTIFACT` 유지 |
 | Integrated vertical slice | `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md` | active integrated single-attachment execution route |
 | Capability composition | `docs/CAPABILITY_COMPOSITION_MAP.md` | capability 조합·금지 경계·필수 증거 |
 | Project local Asset Vault | `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`, `tools/project_asset_vault.py` | local candidate preservation, explicit promotion, tombstone |

@@ -9,9 +9,9 @@
 1. 사용자용 상세 기획서 PDF
 2. AI용 상세 기획·구현 명세 Markdown
 
-Notion용 신규 page/database/view, DOCX, ZIP, 별도 appendix, 별도 이미지 묶음, 별도 benchmark 보고서는 만들지 마. 필요한 표·부록·traceability·benchmark·asset matrix는 두 파일 안에 통합해.
+`HUMAN_GAME_BLUEPRINT_GDD_LAYERED_PROFILE`을 적용하되 `NO_SEPARATE_BLUEPRINT_ARTIFACT`를 지켜. Blueprint는 이 두 파일의 읽기·구성 layer이며 세 번째 파일, Notion page/view, 보드, 부록이 아니다. Notion용 신규 page/database/view, DOCX, ZIP, 별도 appendix, 별도 이미지 묶음, 별도 benchmark 보고서는 만들지 마. 필요한 flow/system card, state/evidence legend, 표·traceability·benchmark·asset matrix는 두 파일 안에 통합해.
 
-새 이미지 생성·편집은 이 지시문의 범위가 아니다. `NO_AUTOMATIC_IMAGE_GENERATION`을 적용하고, 기존 승인 이미지와 실제 build capture만 우선 사용해. 승인된 시각자료가 없으면 임의로 채우지 말고 `현재 승인 Visual 없음`과 필요한 consumer·상태·규격을 기록해.
+새 이미지 생성·편집은 이 지시문의 범위가 아니다. `NO_AUTOMATIC_IMAGE_GENERATION`과 `CURRENT_IMAGE_CREATION_POLICY_REQUIRED`를 적용하고, 기존 승인 이미지와 실제 build capture만 우선 사용해. 승인된 시각자료가 없으면 임의로 채우지 말고 `현재 승인 Visual 없음`과 필요한 consumer·상태·규격을 기록해. 새 image deliverable이 별도로 필요해져도 자동 생성하거나 세 번째 산출물로 추가하지 말고, 별도 사용자 명시적 요청과 현행 `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`로 넘겨.
 
 이미 저장소·연결 자료에서 확인할 수 있는 사실을 사용자에게 다시 묻지 마. 안전한 범위의 조사·정리·교정·파일 생성·검증·GitHub 반영은 중간 승인 없이 연속 수행하고, 정말 위험한 정본 의미 변경이나 복구 불가능한 변경만 보류해.
 
@@ -31,6 +31,8 @@ Notion용 신규 page/database/view, DOCX, ZIP, 별도 appendix, 별도 이미�
 10. legacy Google Sheets·HTML·Figma·기타 자료는 현재 owner에 없는 `UNIQUE` 정보 확인용으로만 사용
 
 기존 Notion은 고유 미이관 자료가 있을 때 입력 자료로만 읽는다. 이 작업의 결과를 Notion에 신규 출력·갱신·동기화하지 말고, Notion write/readback을 완료 조건으로 두지 마. Notion-only 고유 정보가 사용되면 AI 명세의 Source Registry에 정확한 출처와 migration gap을 기록해.
+
+`REUSE_OR_ADAPT_EXISTING_BLUEPRINT_BEFORE_NEW_REPRESENTATION`: 기존 정본에 유효한 Blueprint·flow·system representation이 있으면 먼저 재사용하고 현재 범위에 필요한 부분만 adapt해. `NO_MASS_BLUEPRINT_BACKFILL`: untouched project/system을 일괄 변환하지 말고 이번 Master GDD에서 실제로 중요한 flow/system만 두 산출물 안에 구성해.
 
 정본 충돌을 발견하면 임의로 혼합하지 말고 다음 순서로 판정해.
 
@@ -96,6 +98,8 @@ DEC- : 결정
 
 구현 현실은 다음 상태를 분리해.
 
+`STATE_AND_EVIDENCE_LEGEND`를 두 산출물에 넣고 각 상태의 의미, 필요한 evidence, 그 evidence 없이 주장할 수 없는 상위 상태를 설명해.
+
 ```text
 DOCUMENTED
 CONFIRMED
@@ -126,9 +130,11 @@ exports/<project-slug>_MASTER_PRODUCTION_GDD_<YYYYMMDD>.pdf
 
 프로젝트에 해당하는 범위에서 다음 구조를 사용해. 해당하지 않는 장은 억지로 채우지 말고 N/A 이유를 짧게 기록해.
 
+`CONDITIONAL_MODULE_NA_WITH_REASON`: 적용되지 않는 장·card field·시각 모듈은 빈 placeholder나 추정 내용으로 채우지 말고 `N/A — 이유`로 닫아.
+
 00. 문서 기준, Canon Snapshot, source branch/SHA
 01. 프로젝트 한눈에 보기
-02. 플레이어 경험과 첫 5·15·30분
+02. 플레이어 경험과 `FIRST_5_15_30` 첫 5·15·30분
 03. Design Pillars, 차별점, 판매 포인트
 04. 벤치마킹과 시장 포지셔닝
 05. Core Loop / Session Loop / Meta Loop
@@ -152,6 +158,29 @@ exports/<project-slug>_MASTER_PRODUCTION_GDD_<YYYYMMDD>.pdf
 23. 로드맵·위험·의존성·삭제 후보
 24. 결정 기록·정본 충돌·미해결 항목
 25. 용어집·출처·부록
+
+### Layered reading/composition profile
+
+PDF와 AI Markdown에서 같은 ID와 cross-reference를 사용해 다음 네 layer를 합성해.
+
+| Layer token | 필수 구성 |
+|---|---|
+| `PROJECT_PLAYER_LAYER` | One-Page Vision, player promise/pillar, loop, `FIRST_5_15_30` |
+| `SYSTEM_LAYER` | 핵심 flow/system card, choice/condition, state/data change, output/feedback, 시스템 관계 |
+| `CONTENT_UX_PRESENTATION_LAYER` | content card, UX flow, UI state, visual/audio consumer와 presentation rule |
+| `PRODUCTION_EVIDENCE_LAYER` | scene/node/script/data owner, 구현 순서, acceptance, test/runtime/UX evidence |
+
+표지·목차·요약·cross-reference를 다음 읽기 순서로 실제 탐색할 수 있게 배치해.
+
+```text
+3-MINUTE PROJECT / PLAYER READ
+→ 10-MINUTE SYSTEM + CONTENT / UX / PRESENTATION READ
+→ DETAIL READ
+→ IMPLEMENTATION READ
+→ VERIFICATION READ
+```
+
+`REUSABLE_FLOW_AND_SYSTEM_CARDS`: 중요한 flow와 system은 같은 card schema를 사용해. 각 card에 ID, player purpose, trigger/input, choice/condition, state/data change, output/feedback, 연결 콘텐츠·UX, implementation owner, acceptance/evidence를 넣고 두 산출물에서 같은 의미로 재사용해.
 
 ### 4.2 핵심 시스템 표준
 
@@ -246,7 +275,7 @@ exports/<project-slug>_MASTER_PRODUCTION_GDD_<YYYYMMDD>.pdf
 
 ### 4.4 필수 시각자료
 
-승인된 기존 자료와 실제 구현 증거를 우선 사용하고, 문서용 도식은 Mermaid·vector·표 등 편집 가능한 구조로 작성해.
+승인된 기존 자료와 실제 구현 증거를 우선 사용해. `TEXT_NATIVE_EXACT_DIAGRAMS`: flow/state/sequence/system 관계/data처럼 의미가 정확해야 하는 문서 도식은 `Mermaid / Flow / table`의 text-native source로 작성하고 두 산출물 안에 렌더링해.
 
 - 승인 대표 이미지 또는 실제 플레이 화면
 - One-Page Project Vision
@@ -335,6 +364,8 @@ docs/design/PROJECT_AI_PRODUCTION_SPEC.md
 ### 5.3 구현 추적
 
 다음 연결이 한 방향 링크가 아니라 양방향으로 추적되게 해.
+
+`LAYERED_TRACEABILITY_REQUIRED`를 적용해 각 layer의 promise/card/consumer/owner/evidence 사이가 끊기지 않게 해.
 
 ```text
 플레이어 경험
@@ -441,6 +472,11 @@ DOCX, ZIP, 별도 appendix, 개별 이미지, AI Markdown 다운로드 링크, N
 다음을 모두 만족할 때까지 연속 진행해.
 
 - 프로젝트 산출물 정확히 2개
+- `HUMAN_GAME_BLUEPRINT_GDD_LAYERED_PROFILE`이 두 산출물 안에만 있고 별도 Blueprint artifact 0
+- 3분 → 10분 → 상세 → 구현 → 검증 읽기 경로 누락 0
+- four layer, `FIRST_5_15_30`, reusable flow/system card, traceability, state/evidence legend 누락 0
+- 조건부 module의 빈 placeholder 0, 비적용 항목의 `N/A — 이유` 누락 0
+- 기존 유효 Blueprint 재사용/adapt 누락 0, untouched 범위 mass backfill 0
 - 최신 정본·open/draft PR·실제 구현 source 누락 0
 - 미표시 정본 충돌 0
 - 핵심 시스템 누락 0
