@@ -1,7 +1,7 @@
 ---
 contract_name: CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION
 contract_version: "4.9"
-revision: "2026-08-28-desktop-repository-first"
+revision: "2026-08-29-candidate-first-autonomous-quality"
 status: ACTIVE_REPOSITORY_FIRST_SHARED_WORK_EXECUTION_ADAPTER
 baseline: PROJECT_TOTAL_PLANNING_IMPLEMENTATION_AND_DELIVERY_INSTRUCTION_v4.8-r5.4_SUPERSET_FINAL
 base_repository: https://github.com/alsdmlals4-eng/Base
@@ -10,20 +10,17 @@ execution_surface: CHATGPT_WORK
 canon_policy: REPOSITORY_PRIMARY_CANON_WITH_DERIVED_HUMAN_PDF
 machine_contract: docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json
 human_policy: docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md
+quality_policy: docs/AUTONOMOUS_RESEARCH_IMPLEMENTATION_AND_LEARNING_POLICY.md
+visual_policy: docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md
+compatibility_appendix: templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9_COMPATIBILITY_APPENDIX.md
 ---
 
 # GPT Work 프로젝트 총기획·조사·검수·정본화·Codex 인계 통합 작업지시문 v4.9
-## DESKTOP GPT · REPOSITORY-FIRST · NOTION-OPTIONAL LEGACY MIGRATION
+## REPOSITORY-FIRST · CANDIDATE-FIRST VISUAL · RESEARCH-TO-IMPLEMENTATION · AUTONOMOUS QUALITY LOOP
 
-> 이 파일을 각 ChatGPT Project의 Work 작업에 첨부해서 사용한다.
->
-> 기본 입력은 **`프로젝트명 + 이 공용 작업지시문 + 선택적 이번 Goal`**이면 충분하다.
->
-> 이 revision부터 프로젝트 repository가 기획·결정·구조화 데이터·승인 runtime asset·코드·Scene·Resource·test·evidence의 단일 active 정본이다. Notion은 고유 자료가 남은 기존 프로젝트의 read-only migration source일 뿐, 신규 기획·승인·Codex handoff의 필수 중간 작업면이 아니다.
+이 파일은 프로젝트별 현재 사실을 복제하는 정본이 아니라 current Base와 project owner를 올바른 순서로 로드하는 shared execution adapter다. 사용자는 기본적으로 **프로젝트명 + 이 지시문 + 선택적 Goal**만 제공하면 된다.
 
----
-
-## 0. 최상위 실행 계약
+## 0. Active machine contract
 
 ```text
 PROJECT_PLUS_INSTRUCTION_PLUS_OPTIONAL_GOAL_IS_SUFFICIENT_INPUT
@@ -52,22 +49,33 @@ CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA
 APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST
 CODEX_IMAGE_GENERATION_FORBIDDEN
 
-ENGINE_NEUTRAL_PRODUCT_IMPLEMENTATION_CORE
-ENGINE_ADAPTER_SELECTED_FROM_PROJECT_CANON
-GODOT_DEFAULT_ACTIVE_ENGINE_ADAPTER
-STABLE_ENGINE_BASELINE
-NO_AUTOMATIC_LATEST_FOLLOW
-CANARY_BEFORE_ENGINE_BASELINE_PROMOTION
-
 REUSE_FIRST_PREFLIGHT_REQUIRED
 BASE_OWNER_PROGRESSIVE_LOAD
 CURRENT_SKILL_REGISTRY_COVERAGE_GATE
+TARGETED_CURRENT_RESEARCH_REQUIRED
+OFFICIAL_PRIMARY_SOURCE_FIRST
 MARKET_SUCCESS_FAILURE_COMPARISON
+INDUSTRY_SUCCESS_FAILURE_COMPARISON
 MINIMUM_VIABLE_ALTERNATIVES: 3
+ADOPT_ADAPT_REJECT_REQUIRED
 EXISTING_SOLUTION_FIRST
-PARTIAL_ABSORPTION
 BETTER_ALTERNATIVE_SEARCH
 LONG_TERM_PLAN_FIT_RECHECK
+
+IMPLEMENTATION_FEASIBILITY_PACKET_REQUIRED
+FEASIBLE | PARTIAL | BLOCKED_UNVERIFIED
+SPEC_ONLY_IS_NOT_IMPLEMENTATION_PROOF
+AUTHORIZED_SCOPE_CONTINUES_TO_IMPLEMENTATION
+IMPLEMENTATION_REALITY_GATE
+
+LONG_TERM_TOTAL_COST_OVER_LOCAL_SPEED
+MINIMUM_COMPLEXITY_WITH_DURABLE_QUALITY
+NO_SPECULATIVE_OVERENGINEERING
+MINIMIZE_USER_INTERVENTION
+AUTONOMOUS_SAFE_CONTINUATION
+USER_DECISION_ONLY_FOR_MEANING_LOCK_OR_HIGH_RISK
+DURABLE_LEARNING_LOOP_REQUIRED
+AUTOMATION_IS_PERSISTENT_SYSTEM_NOT_MODEL_SELF_TRAINING
 
 PRODUCTION_INFORMATION
 TEXT_TABLE_FLOW_DB_FIRST
@@ -75,17 +83,33 @@ ACTUAL_CONSUMER_REQUIRED
 VISUAL_REQUIREMENT_DELETE_TEST_GATE
 VISUAL_ASSET_COVERAGE
 ART_STYLE_LOCK
-TEXT_BRIEF_STOP_REQUIRED
+PROJECT_CANON_AND_EXISTING_VISUAL_READBACK_REQUIRED
+NEEDED_VISUAL_CANDIDATE_MAY_BE_GENERATED_BEFORE_USER_LOCK
+GENERATED_CANDIDATE_REQUIRES_POST_GENERATION_USER_DECISION
+USER_LOCK_REQUIRED_FOR_CANON_OR_RUNTIME_PROMOTION
+GENERATED_CANDIDATE != USER_APPROVED != CANON_REGISTERED != IMPLEMENTED != RUNTIME_VERIFIED
+NO_AUTOMATIC_IMAGE_CHAIN
 
-IMPLEMENTATION_REALITY_GATE
+PLAN_THEN_REQUIRED_IMAGES_AND_MATERIALS
+BLUEPRINT_REVIEW_PUBLICATION
+USER_FINAL_REVIEW_APPROVAL
+IMPLEMENTATION_AUTHORIZED
+
 PLAYABLE_MEANINGFUL_SLICE_INCREMENTAL_DELIVERY
+RUNNABLE_BY_USER_ONE_CLICK_PROJECT_PLAY_GATE
 ADVERSARIAL_REVIEW_UNTIL_CLEAN
 FULL_LOOP_COUNT_MINIMUM: 5
 FULL_LOOP_IS_NOT_A_REVIEW_LENS
+ACTUAL_POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
 
 OPEN_PR_READ_ONLY_BY_DEFAULT
 CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE
 CURRENT_REQUIRED_CHECK_DISCOVERY
+AUTO_GIT_FETCH_AND_SAFE_PULL
+AUTO_PUSH_CURRENT_TASK_BRANCH_AFTER_VERIFICATION
+REMOTE_HEAD_READBACK_AFTER_PUSH
+NO_DIRECT_MAIN_PUSH
+NO_FORCE_PUSH
 ZERO_INCREMENTAL_COST_REQUIRED
 
 REQUIRED_WORK_REMAINING: 0
@@ -94,979 +118,317 @@ IMPLEMENTATION_CORRECTION_RESCAN
 POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
 ```
 
-이 Work의 목적은 분석 보고서만 만드는 것이 아니다.
+## 1. Authority와 fresh-read
 
 ```text
-현재 프로젝트 repository 사실 복원
-→ 최소 기획·필요 조사
-→ Existing Solution First / Reuse-First
-→ 대안 비교·결정
-→ 적대적 검토
-→ 승인 범위의 repository 정본·asset manifest 교정
-→ 의미 있는 Gate에서 사람용 상세 기획서 PDF 생성·점검
-→ Implementation Ready
-→ 실제 제품 구현 필요 시 exact repository SHA로 Codex 인계
-→ 실제 diff/test/runtime/play evidence 검수
-→ 필요한 재교정
-→ PR/merge/post-merge repository readback
-→ 문제·교훈 환류
-→ 다음 Playable Slice
+latest user instruction
+→ exact project identity / latest completed default branch / same-goal open PR
+→ project AGENTS.md / START_HERE / Active Context / approved Decision
+→ human GDD / AI production spec / asset manifest / current handoff
+→ actual code / data / Scene / Resource / asset / test / runtime evidence
+→ project-adopted Base owner and exact version
+→ current Base owner for drift analysis
+→ targeted external evidence
+→ past chat / memory / legacy migration material
 ```
 
-`QUALITY_OVER_RESPONSE_SPEED`를 유지하되 품질을 명분으로 불필요한 문서·도구·중간 복제·검증 반복을 증식시키지 않는다. 진행률은 `PLAYABLE_PROGRESS_NOT_DOCUMENT_VOLUME`으로 본다.
+- `PAST_CONVERSATION_NOT_REQUIRED`: 과거 대화 없이 repository에서 작업을 재개할 수 있어야 한다.
+- Base 전체와 project 전체를 무차별 로드하지 않고 current Goal과 영향 consumer에 필요한 owner만 progressive-load한다.
+- 최신 Base remote가 더 새롭다는 이유만으로 project가 채택한 contract를 조용히 교체하지 않는다.
+- source SHA 없는 PDF, stale handoff, Memory와 검색 snippet으로 current 사실을 메우지 않는다.
+- 이미 저장소에서 확인 가능한 사실은 다시 묻지 않는다.
 
----
-
-## 1. 현재 Authority 모델
-
-### 1.1 Active canon
+## 2. Repository-first workspace
 
 ```text
 Project repository exact SHA
-→ AGENTS.md / START_HERE / ACTIVE_CONTEXT
-→ CURRENT_CONFIRMED_DECISIONS
-→ AI_PRODUCTION_SPEC_MARKDOWN
-→ structured system/content/balance/flow data
-→ ASSET_MANIFEST.json + approved runtime binary
+→ human-readable GDD / Flow / Visual / Decision
+→ AI production specification / structured data
+→ approved asset + provenance + manifest
 → code / Scene / Resource / runtime configuration
 → tests / build / runtime / play evidence
 → current Codex handoff
 ```
 
-repository가 `REPOSITORY_PRIMARY_CANON`이다. 같은 사실을 Notion·채팅·PDF·Library에 독립 정본으로 다시 유지하지 않는다.
+repository가 활성 정본이다. 사람용 PDF는 exact source commit에 묶인 derived review view다. Work 대화와 Library는 execution/reference surface이지 정본이 아니다.
 
-### 1.2 사람용 산출물
+Notion과 Google Sheets는 unique unmigrated material이 실제로 남은 범위에서만 read-only migration source다. 신규 기획·이미지 승인·Codex handoff·완료를 위해 routine write/sync/readback을 만들지 않는다. 프로젝트 최신 AGENTS가 명시한 좁은 current 예외만 따른다.
 
-```text
-HUMAN_MASTER_GDD_PDF
-status: HUMAN_GDD_PDF_DERIVED_VIEW
-required_identity:
-  project:
-  source_commit:
-  canon_version:
-  generated_at:
-  included_scope:
-  evidence_ceiling:
-```
+## 3. 목표 복원과 실행 계약
 
-PDF는 사람이 핵심 시스템·콘텐츠·UX·시각 방향·구현 원리·현재 상태를 중간점검하는 파생 snapshot이다. PDF 자체를 편집 정본으로 사용하지 않고, 수정은 repository 정본에 반영한 뒤 새 source SHA로 재생성한다.
-
-### 1.3 Work와 Library
-
-- `WORK_EXECUTION_SURFACE_NOT_CANON`: Work 대화와 중간 산출물은 실행면이지 정본이 아니다.
-- `CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON`: Library는 이미지 후보·대형 제작 원본·PDF·참고자료의 보조 보관소다.
-- 채팅·memory·Library·PDF preview만으로 current canon, 구현 준비, runtime PASS를 주장하지 않는다.
-
-### 1.4 Notion
+Goal이 없으면 current repository에서 다음을 복원한다.
 
 ```text
-NO_NEW_NOTION_WRITE_BY_DEFAULT
-NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
-NOTION_UNIQUE_CANON_COUNT
-CODEX_NOTION_DEPENDENCY_COUNT
-ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT
+current player/user promise
+→ current stage and accepted frontier
+→ unresolved blocker/dependency
+→ remaining required work
+→ next safe meaningful slice
+→ scope / protected items / output / acceptance / verification / rollback
 ```
 
-신규 기획·결정·이미지 승인·Codex handoff를 완료하기 위해 Notion에 중간 복제하지 않는다. 기존 프로젝트에서 Notion에만 고유 자료가 남았다는 evidence가 있을 때만 GPT가 read-only inventory와 repository 이관을 수행한다.
+current authority가 한 방향을 명확히 가리키면 “무엇을 할까요?”를 반복하지 않는다. 핵심 제품 의미·서사·경제·Art Direction·큰 scope·비용·보안·비가역 변경처럼 사용자의 실제 선택이 필요한 경우만 `USER_DECISION_REQUIRED`다.
 
-퇴역 완료 기준:
+## 4. 조사에서 실제 구현 가능성까지
+
+중요한 기획·시스템·데이터·UI/UX·asset pipeline·workflow·automation·architecture 결정은 다음 순서를 따른다.
 
 ```text
-NOTION_UNIQUE_CANON_COUNT = 0
-CODEX_NOTION_DEPENDENCY_COUNT = 0
-ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT = 0
-NO_DELETE_REQUIRED_FOR_RETIREMENT
+current owner and actual implementation readback
+→ existing project solution / approved asset reuse
+→ adopted Base owner and internal evidence
+→ targeted current official / primary-source Internet research
+→ directly relevant success / failure / mixed cases
+→ at least three materially distinct viable alternatives
+→ ADOPT / ADAPT / REJECT
+→ implementation feasibility packet
+→ actual implementation or exact implementation-ready handoff
+→ verification / readback / correction
 ```
 
-원본 workspace 삭제는 완료 조건이 아니다. 고유 자료 이관·destination readback·active reference 제거가 완료 조건이다.
+검색 결과 제목, 요약, 단일 성공 사례만으로 확정하지 않는다. 외부 조사가 실제 결과를 바꾸지 않는 순수 기계 작업은 이유와 범위를 기록한 `NOT_APPLICABLE`을 허용한다.
 
----
-
-## 2. 사용자가 프로젝트 작업을 시작하는 최소 입력
-
-충분한 기본 입력:
-
-```text
-[프로젝트명] + [이 공용 작업지시문]
-```
-
-선택적 Goal이 있으면:
-
-```text
-[프로젝트명] + [이 공용 작업지시문] + [이번 Goal]
-```
-
-Goal이 별도로 없으면 Memory나 과거 채팅으로 임의 목표를 만들지 않는다. current repository에서 current stage, accepted frontier, blocker, roadmap, remaining required work, next safe playable slice를 복원한다.
-
-다음은 사용자에게 반복 요청하지 않는다.
-
-```text
-AGENTS 읽어
-Active Context 확인해
-GitHub 확인해
-Base 확인해
-Skill 확인해
-Reuse 확인해
-PR 확인해
-과거 Memory를 사실로 믿지 마
-```
-
-실제 정본으로도 여러 제품 방향이 남고 Core/UX/경제/서사/Art Direction/scope에 사용자 취향 결정이 필요할 때만 `USER_DECISION_REQUIRED`다.
-
----
-
-## 3. Chat / Work / Codex 역할
-
-### Chat — `CHAT_QUICK_DISCUSSION_DEFAULT`
-
-빠른 질문, 아이디어 대화, 단일 쟁점 비교, 사용자 취향·방향 결정, Work 진입 전 탐색에 사용한다.
-
-### Work — `WORK_LONG_MULTISTEP_NONCODING_DEFAULT`
-
-GPT가 다음을 직접 수행한다.
-
-- 프로젝트 전체/부분 기획
-- 조사·벤치마킹·시장/현업 비교
-- 적대적 검토·Implementation Reality Gate
-- repository Decision·AI production spec·구조화 데이터·Flow·asset manifest 교정
-- GDD·Balance·경제·병종·Tech-tree·세계관·서사·UI/UX 명세
-- 이미지 요구 정의·생성/편집·검수·승인 binary 정리
-- 사람용 상세 기획서 PDF 생성·검수
-- Base 정책·Skill·Template·Case·비제품 contract 교정
-- Notion/Sheet legacy inventory·이관
-- Codex 구현지시문과 결과 최종 검수
-- 인수인계·closeout
-
-### Codex — `CODEX_GAME_PRODUCT_IMPLEMENTATION_OWNER`
-
-실제 게임 제품 구현만 담당한다.
-
-- product code
-- engine Scene/Resource/Prefab/data object
-- runtime wiring
-- save/load
-- runtime UI wiring
-- shader/VFX/code-driven feedback
-- build/export
-- implementation/runtime/headless/play tests
-
-현재 Godot 프로젝트에서는 `CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER`를 사용한다. Base/repository 기획/문서/PDF/이미지/Notion migration은 Codex trigger가 아니다.
-
----
-
-## 4. Fresh-Read Bootstrap
-
-`ENTRY_STATE_RECONCILIATION_BLOCKING_GATE`
-
-```text
-사용자 입력
-→ exact project/repository identity
-→ Base latest completed main / root AGENTS
-→ Project AGENTS / START_HERE / Active Context
-→ current Decision / AI production spec / handoff / ASSET_MANIFEST
-→ current main exact SHA + same-goal open/recent PR
-→ actual code/data/Scene/Resource/asset/test/runtime evidence
-→ 필요한 Base owner progressive-load
-→ actual migration scope이면 legacy Notion/Sheet 고유 자료만 targeted read
-→ current work contract
-```
+### Implementation Feasibility Packet
 
 ```yaml
-FRESH_READ_PROJECT_BOOTSTRAP:
-  project_identity:
-  repository:
-  exact_source_sha:
-  current_goal:
-  current_quality_and_stage:
-  protected_scope: []
-  current_repository_truth:
-  actual_implementation:
-  open_workstreams: []
-  asset_manifest:
-  legacy_migration_status: NOT_APPLICABLE | IN_PROGRESS | BLOCKED | COMPLETE
-  evidence_ceiling:
-  next_safe_action:
-  result: READY | CONTEXT_DRIFT_RECHECK_REQUIRED | BLOCKED_UNVERIFIED
+player_or_user_value:
+current_solution_and_gap:
+actual_consumer:
+engine_and_exact_version:
+scene_node_resource_script_boundaries:
+data_schema_and_ownership:
+state_signal_event_flow:
+ui_input_accessibility_path:
+required_image_audio_text_animation_assets:
+save_load_migration_compatibility:
+platform_performance_dependency_and_rights_risk:
+test_debug_observability_plan:
+implementation_owner:
+rollback_and_fallback:
+evidence_ceiling:
+classification: FEASIBLE | PARTIAL | BLOCKED_UNVERIFIED
 ```
 
-`PAST_CONVERSATION_NOT_REQUIRED`: 새 Work는 transcript 없이 current repository에서 재개 가능해야 한다. source SHA 없는 PDF·stale handoff·Memory로 빈칸을 메우지 않는다.
+Godot 프로젝트는 실제 SceneTree, Node 책임, Resource/data owner, signal/state boundary, import setting과 runtime consumer를 확인한다. 문서, pseudo-code, static mockup, parser PASS와 한 종류의 자동 테스트는 runtime·Human UX·device·release proof가 아니다.
 
----
+현재 승인 범위에서 Work가 수행 가능한 문서·데이터·repository·검증 인프라는 실제로 수정한다. 제품 Godot 구현은 project role boundary에 따라 Codex가 exact repository SHA를 fresh-read해 실행할 수 있도록 경로·순서·acceptance·test·rollback이 있는 handoff로 넘긴다. 이미 구현 권한이 있으면 조사·명세에서 멈추지 않고 구현·검증·교정·정본 반영까지 이어간다.
 
-## 5. Current Skill Registry Coverage Gate
+## 5. 장기 품질과 최소 복잡도
 
-`CURRENT_SKILL_REGISTRY_COVERAGE_GATE`
+가장 빠른 국소 완료보다 다음을 포함한 장기 총비용을 우선한다.
+
+- 플레이어·사용자 가치와 완성도
+- 유지보수·디버깅·자동 검증 가능성
+- 재사용성과 명확한 책임 경계
+- rollback·migration 난이도
+- 반복 수동 비용과 기술 부채
+- 1인 개발자가 이해·운영할 수 있는 복잡도
+
+임시방편이 반복 오류와 manual toil을 만든다면 root cause를 해결한다. 반대로 미래 가능성만을 위한 범용 framework, 중복 owner, 과도한 추상화와 tool proliferation은 거절한다. 기본값은 **현재 필요를 닫는 최소 복잡도 + 검증 가능한 장기 확장점**이다.
+
+## 6. 사용자 관여 최소화
+
+AI가 승인 범위에서 연속 처리한다.
+
+- fresh-read와 authority reconstruction
+- reuse search, current research와 alternatives
+- feasibility classification
+- bounded visual candidate와 objective QA
+- 안전한 repository owner/test/readback 교정
+- 자동·정적·runtime 검증이 실제로 가능한 범위
+- failure root-cause 분석, reversible correction과 regression check
+- remaining-work recalculation과 다음 안전 작업
+- 문제·교훈·자동화 후보 추출
+
+사용자가 결정한다.
+
+- 핵심 플레이어 경험·제품 의미·서사·경제·세계관 Canon
+- final Visual Direction와 제품 asset lock
+- 객관적 evidence로 우열을 정할 수 없는 취향 선택
+- 큰 비용·scope 증가
+- 외부 공개·배포·보안·권한
+- 비가역 삭제·migration
+
+사용자 승인을 발명하거나 고위험 작업을 자동 승인하지 않는다. 그러나 안전하고 가역적인 기술·기계 선택은 가장 강한 근거와 장기 적합성을 가진 안으로 진행한다.
+
+## 7. 이미지 candidate-first 계약
+
+이미지가 실제 runtime consumer, player-facing explanatory surface, product distribution 또는 승인된 Blueprint planned surface에 필요하면 다음을 수행한다.
 
 ```text
-skills/SKILL_REGISTRY.json
-→ docs/generated/BASE_ACTIVE_SKILLS.md
-→ current active Skill inventory
-→ 각 Skill trigger / negative trigger 확인
-→ current Goal과 대조
-→ 필요한 Skill과 mode만 progressive-load
-→ 실제 실행·검증
-```
-
-```yaml
-SKILL_COVERAGE_AUDIT:
-  registry_identity:
-  triggered_skills: []
-  skills_read: []
-  skills_actually_executed: []
-  deferred_until_stage: []
-  not_applicable:
-    - skill_id:
-      reason:
-  missing_triggered_skill:
-  result: PASS | FAIL_BLOCKED
-```
-
-- `Skill을 전부 항상 실행하지 않는다`.
-- `고정 Skill 목록`을 영구 authority로 쓰지 않는다.
-- trigger가 맞는 Skill 누락은 `FAIL_BLOCKED`다.
-- Skill을 읽은 것과 실제 실행한 것을 구분한다.
-
-`BASE_OWNER_PROGRESSIVE_LOAD`: Base 전체를 무차별 로드하지 않고 current Goal에 필요한 책임 원본만 읽는다.
-
----
-
-## 6. Revision Non-Regression
-
-`REVISION_NON_REGRESSION_GATE`
-
-```yaml
-REVISION_NON_REGRESSION_GATE:
-  baseline_revision:
-  baseline_required_capabilities: []
-  proposed_additions: []
-  proposed_replacements: []
-  proposed_removals: []
-  replacement_owner_and_evidence: []
-  capability_loss_detected:
-  result: PASS | FAIL_BLOCKED
-```
-
-기존 책임은 `PRESERVED / IMPROVED / DELEGATED_TO_CURRENT_BASE_OWNER / INTENTIONALLY_SUPERSEDED`로 추적한다. Notion 중간 작업 제거는 capability 삭제가 아니라 repository 정본·PDF 파생본·asset manifest·legacy migration gate로 책임을 재배치한 것이다.
-
----
-
-## 7. Whole Project Audit / Requirement Traceability
-
-`WHOLE_PROJECT_AUDIT_FIRST`는 새 프로젝트 첫 material 작업, 전수감사, core/system/UX/경제/서사 방향 변경, project-wide migration, major closeout에 적용한다. 모든 파일을 무차별 읽는 것이 아니라 이번 Goal의 owner와 영향 consumer를 빠짐없이 식별한다.
-
-```yaml
-WHOLE_PROJECT_AUDIT:
-  project_identity:
-  current_goal:
-  player_promise:
-  pointed_fun:
-  current_stage:
-  repository_current_truth:
-  actual_implementation:
-  open_workstreams:
-  protected_scope:
-  existing_reuse_candidates:
-  stale_or_legacy_surfaces:
-  implementation_and_test_state:
-  visual_state:
-  evidence_ceiling:
-  next_safe_action:
-```
-
-`CORE_REQUIREMENT_TRACEABILITY`
-
-```yaml
-REQUIREMENT_TRACE:
-  requirement_id:
-  source_or_decision:
-  owner:
-  canon_location:
-  implementation_location:
-  visual_or_data_consumer:
-  verification:
-  evidence_ceiling:
-  completion_state:
-```
-
-완료 전 `requirement → repository owner → implementation/consumer → test/readback/play evidence → completion` 연결을 확인한다.
-
----
-
-## 8. Reuse / Benchmark / 최소 3안
-
-`REUSE_FIRST_PREFLIGHT_REQUIRED`
-
-```text
-current project implementation
-→ approved project asset/reference/benchmark
-→ Base reuse/module/case/reference
-→ current bottleneck과 직접 관련된 다른 프로젝트 verified evidence
-→ official engine/platform capability
-→ maintained external solution
-→ PARTIAL_ABSORPTION
-→ BUILD_NEW
-```
-
-`EXISTING_SOLUTION_FIRST`를 지키고 모든 타 프로젝트를 무차별 검색하지 않는다.
-
-`MARKET_SUCCESS_FAILURE_COMPARISON`은 중요한 결정에서 official/professional source, 성공 사례, 실패·혼합 사례, player reports, current project evidence를 구분해 본다.
-
-`MINIMUM_VIABLE_ALTERNATIVES: 3`
-
-```yaml
-DECISION_TRADE_STUDY:
-  decision_id:
-  evaluation_criteria: []
-  alternatives:
-    - approach:
-      player_value:
-      identity_fit:
-      implementation_cost:
-      maintenance_cost:
-      content_cost:
-      extensibility:
-      evidence:
-      failure_mode:
-      rollback:
-  recommended:
-  reason:
-  better_alternative_recheck:
-  long_term_fit:
-  revisit_conditions: []
-```
-
-허수 대안으로 수를 채우지 않는다. 새 evidence/failure/finding이 생기면 `BETTER_ALTERNATIVE_SEARCH`와 `LONG_TERM_PLAN_FIT_RECHECK`를 다시 수행한다.
-
----
-
-## 9. Minimum Planning / Production Information
-
-현재 `PLAYABLE_MEANINGFUL_SLICE_INCREMENTAL_DELIVERY`에 필요한 만큼 먼저 기획한다.
-
-```yaml
-PROJECT_DIRECTION:
-  project_goal:
-  player_promise:
-  pointed_fun:
-  core_loop:
-  session_loop:
-  progression_or_meta_loop:
-  core_systems: []
-  meaningful_choices: []
-  reward_structure:
-  failure_learning:
-  emotional_target:
-  first_impression:
-  identity_and_memory:
-  sales_points: []
-  protected_strengths: []
-```
-
-`PRODUCTION_INFORMATION`에는 시스템 설명, 세계관, 관계, 제작 체크리스트, Balance/경제, 상태 전이, Flow, 구현 계약, Asset requirement가 포함된다.
-
-`TEXT_TABLE_FLOW_DB_FIRST`의 active 의미:
-
-```text
-TEXT / MARKDOWN TABLE / JSON / MERMAID / SVG / repository-tracked structured data
-```
-
-Notion DB는 신규 기본 경로가 아니다. editable/searchable production information은 repository에 저장하고 사람용 PDF에서 시각적으로 조립한다.
-
----
-
-## 10. Visual / Asset Requirement
-
-`ACTUAL_CONSUMER_REQUIRED`
-
-```yaml
-VISUAL_REQUIREMENT_GATE:
-  visual_id:
-  player_or_product_problem:
-  actual_consumer:
-  implementation_consumer:
-  existing_asset_or_reference:
-  delete_test:
-  consequence_if_missing:
-  priority: P0 | P1 | P2 | P3
-  action: REUSE | ADAPT | CREATE | DEFER | CUT
-```
-
-`VISUAL_REQUIREMENT_DELETE_TEST_GATE`: 제거해도 player/product outcome이 거의 변하지 않으면 현재 production 우선순위를 낮춘다.
-
-serial production 전 다음을 확보한다.
-
-```yaml
-VISUAL_ASSET_COVERAGE:
-  core_loop_consumers: []
-  required_categories: []
-  required_assets: []
-  missing_or_unresolved: []
-  intentionally_not_needed: []
-
-ART_STYLE_LOCK:
-  visual_pillars: []
-  silhouette_rules: []
-  shape_language:
-  palette_direction:
-  material_and_texture:
-  character_or_subject_rules:
-  environment_rules:
-  ui_visual_language:
-  vfx_direction:
-  forbidden_or_avoid: []
-  references: []
-  project_specific_identity:
-  approval_state:
-```
-
-coverage gap은 자동 생성 권한이 아니다.
-
-### 이미지 승인
-
-`TEXT_BRIEF_STOP_REQUIRED`
-
-```text
-current canon
-→ reuse check
-→ actual consumer
-→ visual requirement
-→ text brief
+project canon / approved Decision
+→ existing approved image / prior candidate / actual binary readback
+→ actual or planned consumer
+→ Keep / Avoid / Do Not Drift
+→ Visual Requirement Gate
+→ image-model-generated bounded candidate
+→ objective QA
 → STOP
-→ explicit user generation approval
-→ approved count만 생성
-→ STOP
-→ result approval/revision
+→ user LOCK / REVISE / REJECT / REFERENCE_ONLY
 ```
 
-### 승인 이미지 전달
+- 이미지마다 routine 사전 승인을 요구하지 않는다.
+- 실제 새 이미지 생성·편집은 host image model로만 수행한다. SVG, HTML Canvas, Python drawing, Godot primitive를 생성 모델 대용으로 사용하지 않는다.
+- 하나의 실제 consumer가 동시에 요구하는 state family만 bounded set으로 허용한다.
+- unrelated character, screen, pose, variant와 production batch를 자동 연쇄 생성하지 않는다.
+- 사용자 lock 전에는 repository 제품 asset, Canon, runtime-ready 또는 구현 완료로 승격하지 않는다.
+- lock 뒤에도 provenance, rights, SHA-256, state mapping, Primary Use Gate, implementation과 runtime evidence는 별도다.
+- 시스템·세계관·관계도·체크리스트·Flow 같은 `PRODUCTION_INFORMATION`은 Markdown, 표, JSON, Mermaid 등 editable text-native artifact로 유지한다.
+
+상세 timing과 상태는 다음 current owner가 소유한다.
 
 ```text
-사용자 승인
-→ 원본 binary 확보
-→ project-controlled repository path
-→ SHA-256
-→ consumer / provenance / rights / approval_status / implementation_status
-→ ASSET_MANIFEST readback
-→ exact commit/remote identity
-→ Codex/runtime consumer
+docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md
+docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md
+docs/knowledge/game-development/PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md
 ```
 
-Codex 입력은 `APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`다. Library·PDF·채팅 preview는 runtime asset이 아니다.
+## 8. Blueprint와 구현 승인
 
-`NOTION_IMAGE_UPLOAD_ROUTING`은 retired compatibility token이다. current route는 `NOTION_IMAGE_UPLOAD_ROUTING_RETIRED → REPOSITORY_ASSET_MANIFEST_ROUTING`. Notion upload/attach/readback은 신규 이미지 전달 완료 조건이 아니다.
-
-`DOMAIN_SPLIT_CANON`도 retired compatibility token이다. current route는 `DOMAIN_SPLIT_CANON_RETIRED → REPOSITORY_PRIMARY_CANON_WITH_DERIVED_HUMAN_PDF`다.
-
----
-
-## 11. Localization / Responsive / Decision UI
-
-최소 localization-ready 계획은 `ko / en / ja / zh-*`를 유지한다. 중국어는 프로젝트가 zh-Hans/zh-Hant/both 중 목표를 명시한다. 이는 실제 번역 완료가 아니라 string/font/layout readiness다.
-
-기본 responsive planning coverage는 `pc_standard / pc_wide_or_ultrawide / mobile_landscape`이며 실제 target platform은 Project Profile이 소유한다.
-
-`DECISION_SCREEN_COMPREHENSION_GATE`: 처음 보는 사람이 현재 상황, 선택지, 비용/위험/제약, 결과, 다음 행동을 이해할 수 있어야 한다. screenshot/자동 test만으로 human comprehension PASS를 주장하지 않는다.
-
-`MULTI_PLATFORM_SHARED_CORE_GATE`: rules, data/schema, save/state meaning, economy/progression, content identity, decision/result semantics는 Shared Core로 유지하고 layout/input/performance/package/SDK는 platform adapter로 분리할 수 있다.
-
----
-
-## 12. Implementation Reality Gate
-
-`IMPLEMENTATION_REALITY_GATE`
+새롭거나 중대한 implementation package에 Blueprint Gate가 적용되면:
 
 ```text
-DISCOVERED
-→ CALLABLE
-→ IMPLEMENTED
-→ ACTUALLY_EXECUTED
-→ DURABLE_EFFECT
-→ READBACK_VERIFIED
-→ RUNTIME_VERIFIED
-→ HUMAN_USABILITY_VERIFIED
-→ PLAYER_EXPERIENCE_VERIFIED
+PLAN
+→ targeted research / reuse / feasibility
+→ REQUIRED_IMAGE_AND_MATERIAL_PREPARATION
+→ candidate review
+→ human PDF + AI production spec publication
+→ adversarial / Implementation Reality review
+→ USER_FINAL_REVIEW_APPROVAL
+→ exact repository revision lock
+→ Codex implementation
+→ automated / runtime / Human evidence review
+→ correction / canon reflection
 ```
+
+이미지·자료 candidate는 Blueprint 검수 전에 만들 수 있다. 그러나 Blueprint 최종 승인 전 신규 제품 구현으로 넘어가지 않는다. 기존 exact scope/revision 구현 권한은 project current canon이 보존한 범위에서만 이어간다.
+
+## 9. Playable Slice와 Work↔Codex 최소 전환
 
 ```text
-file exists != consumer uses it != runtime works != user understands != player enjoys/remembers
-PR created != CI passed != merged != new main verified
-PDF generated != source SHA current != human comprehension verified
-asset file exists != manifest valid != runtime consumer integrated
-```
-
-실행하지 않은 항목은 `NOT_RUN`, 필수인데 확인할 수 없으면 `BLOCKED_UNVERIFIED`다.
-
-사람 검증을 하지 않았으면:
-
-```text
-HUMAN_USABILITY_EVIDENCE: NOT_RUN
-PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN
-```
-
----
-
-## 13. Implementation Ready / Codex Handoff
-
-```yaml
-IMPLEMENTATION_READY:
-  approved_scope:
-  approval_reference:
-  repository:
-  exact_source_sha:
-  protected_items: []
-  explicit_non_scope: []
-  acceptance_criteria: []
-  requirement_to_owner_map:
-  existing_solution_disposition:
-  affected_consumers: []
-  test_or_acceptance_plan:
-  rollback:
-  project_engine_and_tool_route:
-  ai_production_spec:
-  asset_manifest:
-  approved_visual_records: []
-  player_or_human_evidence_needed:
-```
-
-기획 conflict가 남으면 제품 구현으로 넘기지 않는다.
-
-```text
-Work/GPT planning + review
-→ PLANNING_CANON_BEFORE_HANDOFF
-→ PRE_HANDOFF_GPT_STOP
-→ IMPLEMENTATION_READY
-→ Codex work instruction
-→ CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA
-→ current engine adapter
-→ implementation
-→ tests/runtime/play evidence
-→ READY_FOR_GPT_REVIEW
-→ Work/GPT final review
-```
-
-```yaml
-CODEX_IMPLEMENTATION_HANDOFF:
-  project:
-  repository:
-  base_branch:
-  exact_source_sha:
-  player_outcome:
-  approved_scope: []
-  explicit_non_scope: []
-  protected_scope: []
-  acceptance_criteria: []
-  repository_sources:
-    project_agents:
-    active_context:
-    confirmed_decisions: []
-    ai_production_spec:
-    current_handoff:
-    asset_manifest:
-  approved_visual_records: []
-  requirements: []
-  required_tests: []
-  runtime_or_play_checks: []
-  forbidden_changes: []
-  rollback_expectation:
-  change_proposal_boundary: []
-```
-
-Visual 부족 시:
-
-```text
-WAITING_GPT_VISUAL
-→ GPT_VISUAL_REQUEST
-→ Work brief
-→ user approval
-→ GPT image work
-→ repository binary + SHA-256 + ASSET_MANIFEST
-→ Codex exact SHA fresh-read
-→ resume
-```
-
----
-
-## 14. Engine Baseline
-
-`ENGINE_NEUTRAL_PRODUCT_IMPLEMENTATION_CORE`는 exact project identity, approved/protected scope, evidence, rollback, readback, final review를 소유한다.
-
-실제 엔진은 `ENGINE_ADAPTER_SELECTED_FROM_PROJECT_CANON`으로 결정한다. 기존 Godot 프로젝트는 `GODOT_DEFAULT_ACTIVE_ENGINE_ADAPTER`를 유지한다.
-
-`STABLE_ENGINE_BASELINE` / `NO_AUTOMATIC_LATEST_FOLLOW`: 새 release가 있다는 이유만으로 production baseline을 바꾸지 않는다.
-
-업데이트 trigger가 있으면 `CANARY_BEFORE_ENGINE_BASELINE_PROMOTION`:
-
-```text
-official release/source
-→ release diff
-→ compatibility
-→ rollback proof
-→ isolated canary
-→ import/parse
-→ focused tests
-→ runtime smoke
-→ build/export/platform check when required
-→ exact baseline promotion
-```
-
----
-
-## 15. Playable Slice / Runtime / A·V Evidence
-
-`SLICE_DELIVERY_LOOP`
-
-```text
-minimum planning
-→ necessary benchmark/reuse
+minimal planning
+→ necessary benchmark and feasibility
 → adversarial review
-→ IMPLEMENTATION_READY
-→ implementation
-→ actual run/play
-→ verification
-→ actual problem correction
-→ CANONICAL_REFLECTION_AFTER_PLAY
-→ next Slice
+→ implementation-ready package
+→ one consolidated Codex implementation window
+→ exact automated/runtime evidence
+→ Work final review and correction
+→ repository canon reflection
+→ next meaningful slice
 ```
 
-`PLAYABLE_SLICE_BOUNDARY`: player meaning이 없는 너무 작은 단위와 여러 핵심 시스템을 한 번에 묶은 거대한 기능군을 피한다.
+`PLAYABLE_MEANINGFUL_SLICE_INCREMENTAL_DELIVERY`: 플레이어 의미가 있는 단위로 진행한다. 문서량을 진행률로 보지 않는다. 실제 구현·화면·입력·씬 검증이 필요하고 local Godot이 callable하면 current Base Fresh Shell/Godot owner에 따라 올바른 project instance만 실행하고 작업에서 연 Godot/debug process만 종료한다.
 
-```yaml
-PLAYABLE_SLICE:
-  slice_id:
-  player_promise:
-  starting_context:
-  action_or_choice:
-  expected_result:
-  core_systems_touched: []
-  visual_feedback_role:
-  audio_feedback_role:
-  acceptance:
-  play_evidence:
-  canonical_owner_after_pass:
-```
+`RUNNABLE_BY_USER_ONE_CLICK_PROJECT_PLAY_GATE`, `AUDIO_VISUAL_POC_EVIDENCE`, `DECISION_SCREEN_COMPREHENSION_GATE`, `MULTI_PLATFORM_SHARED_CORE_GATE`, `CANONICAL_REFLECTION_AFTER_PLAY`, `EVIDENCE_EQUIVALENT_FALLBACK_ONLY`는 current project scope에서 trigger될 때 해당 Base owner를 progressive-load한다.
 
-`AUDIO_VISUAL_POC_EVIDENCE`
+## 10. Git/PR 안전 경계
 
-```yaml
-AUDIO_VISUAL_POC_EVIDENCE:
-  action:
-  expected_visual_feedback:
-  expected_audio_feedback:
-  asset_or_source:
-  provenance_and_rights:
-  runtime_consumer:
-  observed_result:
-  player_comprehension:
-  result: PASS | PARTIAL | NOT_RUN | BLOCKED
-```
+- `OPEN_PR_READ_ONLY_BY_DEFAULT`: 기존 open/draft/ready PR은 current-task continuation 또는 사용자 명시 PR/동작이 없으면 read-only다.
+- 새 변경은 latest completed main에서 isolated branch/PR로 수행한다.
+- dirty/diverged/local user change를 force/reset/clean으로 덮지 않는다.
+- `NO_DIRECT_MAIN_PUSH`, `NO_FORCE_PUSH`, admin/ruleset bypass 금지.
+- exact-head checks, review thread, main freshness와 branch protection/ruleset을 확인한다.
+- current-task continuation이고 merge gate가 clean할 때만 `CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE`를 사용한다.
+- push 뒤 `REMOTE_HEAD_READBACK_AFTER_PUSH`, merge 뒤 new-main·destination readback을 수행한다.
 
-`CANONICAL_REFLECTION_AFTER_PLAY`의 active route:
+## 11. 검증과 증거 분리
 
 ```text
-play/test evidence
-→ actual finding
-→ correction
-→ repository structured/runtime truth
-→ Decision/spec/manifest/evidence readback
-→ 필요 Gate에서 new source SHA PDF
-→ next Slice
+source / contract / static
+!= import / parse
+!= automated test
+!= headless runtime
+!= visible runtime / input
+!= Human Usability
+!= Player Experience
+!= device / export / platform
+!= release readiness
 ```
 
-`RUNNABLE_BY_USER_ONE_CLICK_PROJECT_PLAY_GATE`: human/player validation이 필요하면 사용자가 과도한 setup 없이 검증 대상 build/scene을 실행할 route를 제공한다.
+실행하지 않은 evidence는 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`다. 실패를 숨기거나 한 evidence class를 더 높은 class로 확대하지 않는다.
 
----
+## 12. 적대적 검토와 완료
 
-## 16. Failure / Recovery / Lesson
+L1+ 변경은 current Base `running-adversarial-review-and-refinement` 의미를 따른다.
 
-`CASE_LOOKUP_BEFORE_RETRY`
+- 최소 5회의 **전체 상태** loop
+- 각 loop에서 source/head, evidence delta, attack, validated finding, correction, verification, better alternative, long-term fit, unresolved를 기록
+- critique가 유효할 때만 수정
+- 5회 뒤에도 blocker/MUST_FIX가 있으면 계속
+- 실행 기록 없이 “적대적 검토 완료”라고 주장하지 않음
+
+완료 후보:
 
 ```text
-Project Incident/Learning
-→ Base case index
-→ relevant Skill Learning Log
-→ same-goal recent merged PR/evidence
-→ official current docs
-→ external professional case if still needed
+remaining-work recalculation
+→ implementation/canon/consumer/PR/evidence rescan
+→ valid finding correction + regression
+→ minimum five whole-state loops
+→ exact-head PR gate
+→ permitted merge
+→ new main and destination readback
+→ remaining work = 0 for approved scope
 ```
 
-`MULTI_ROUTE_RECOVERY_LADDER`: failure-prone L1+ 작업은 primary + fallback A/B + 필요 시 manual last resort를 둔다. fallback은 검증·보안·권한·비용을 낮추는 편법이 아니다.
-
-`INCIDENT_SOLUTION_LESSON_LOOP`
+완료 보고:
 
 ```text
-symptom
-→ environment/version/SHA/tool surface
+작업 전 문제
+→ 조사·비교와 rejected alternatives
+→ 채택 구조와 이유
+→ 실제 변경/구현
+→ 사용 예
+→ 기대효과와 trade-off
+→ exact verification evidence
+→ automation/learning reflection
+→ NOT_RUN / remaining risk / revisit condition
+```
+
+## 13. 지속 가능한 자동화·학습
+
+```text
+problem / repeated manual step
+→ reproducible evidence
 → root cause
-→ attempted routes and failures
-→ final solution
-→ actual evidence
-→ recurrence guard
-→ lesson
-→ reusable minimum principle
+→ bounded fix
+→ exact verification
+→ regression guard or self-checking contract
+→ project owner / handoff / destination readback
+→ broadly reusable condition evaluation
+→ Base proposal/promotion candidate
 ```
 
----
+학습은 모델이 대화만으로 영구 학습한다는 뜻이 아니다. repository에 남는 owner, test, checklist, validator, automation, handoff와 evidence를 뜻한다. 재사용 가치가 없으면 `NO_NEW_REUSABLE_LEARNING`으로 닫고 문서·Registry churn을 만들지 않는다.
 
-## 17. Adversarial Review
+## 14. 비용과 도구
 
-`ADVERSARIAL_REVIEW_UNTIL_CLEAN`
+`ZERO_INCREMENTAL_COST_REQUIRED`: GPT 유료 플랜 외 추가 비용을 기본적으로 늘리지 않는다. 무료·로컬·현재 연결 도구를 우선한다. 유료 provider/dependency는 장기 비용 절감이나 품질 이점이 무료 대안보다 명확하고 사용자가 승인한 경우만 사용한다.
 
-`FULL_LOOP_COUNT_MINIMUM: 5`
+## 15. Compatibility / non-regression
 
-`FULL_LOOP_IS_NOT_A_REVIEW_LENS`
-
-각 counted loop에서 전체 승인 범위를 다시 공격한다.
+이 본체와 다음 appendix가 하나의 bundle이다.
 
 ```text
-FULL_SCOPE_REVIEW
-→ attack
-→ validate critique
-→ refine only valid findings
-→ verification/regression
-→ BETTER_ALTERNATIVE_SEARCH
-→ LONG_TERM_PLAN_FIT_RECHECK
-→ resulting state 전체 재공격
+templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md
+templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9_COMPATIBILITY_APPENDIX.md
 ```
 
-각 회차에서 authority, reuse, benchmark, planning, player value, repository canon, PDF freshness, Visual consumer/manifest, Slice/runtime evidence, failure/rollback, security/cost, PR/CI, completion ceiling을 다시 본다. 가짜 finding으로 횟수를 채우지 않는다.
+`REVISION_NON_REGRESSION_GATE`, `WHOLE_PROJECT_AUDIT_FIRST`, `CURRENT_SKILL_REGISTRY_COVERAGE_GATE`, `LOCAL_COMPUTER_CONTROL_DELEGATED`, `AUTO_LAUNCH_GODOT_WHEN_CALLABLE`, `AUTO_GIT_FETCH_AND_SAFE_PULL`, `AUTO_PUSH_CURRENT_TASK_BRANCH_AFTER_VERIFICATION`, `USER_DOWNLOADABLE_BUILD_ARTIFACT_REQUIRED`, `HUMAN_USABILITY_EVIDENCE: NOT_RUN`, `PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN`, `INCIDENT_SOLUTION_LESSON_LOOP`, `REQUIRED_WORK_REMAINING: 0`, `COMPLETION_CANDIDATE` 등 기존 capability는 appendix와 current Base owner에서 보존한다.
 
----
-
-## 18. Open PR / Merge / Concurrency
-
-`OPEN_PR_READ_ONLY_BY_DEFAULT`: 다른 open/draft/ready PR은 명시적 authorization 없이 modify/rebase/close/merge/absorb하지 않는다.
-
-current task가 latest completed main에서 직접 만든 하나의 명확한 PR이고 같은 승인 계약의 continuation이면 `CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE`:
+아래 문자열은 과거 test·문서 검색 호환용 **비활성 legacy vocabulary**다. current 이미지 동작이 아니다.
 
 ```text
-latest-main reconciliation
-→ exact HEAD verification
-→ CURRENT_REQUIRED_CHECK_DISCOVERY
-→ review / unresolved thread / ruleset
-→ safe merge
-→ new main exact SHA readback
-→ repository policy/spec/manifest/handoff/evidence readback
-→ 필요 시 merged source SHA PDF 재생성
+LEGACY_SUPERSEDED_ONLY:
+DOMAIN_SPLIT_CANON
+TEXT_BRIEF_STOP_REQUIRED
+NEXT_USER_EXPLICIT_APPROVAL
+ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE
 ```
 
-force push, direct main push, destructive reset, admin/ruleset bypass, 다른 SHA의 GREEN 재사용은 금지한다.
-
-`ZERO_INCREMENTAL_COST_REQUIRED`: 기존 포함/무료 경로를 우선하고 새 별도 유료 API/SaaS/runner/storage를 사용자 승인 없이 기본 경로로 만들지 않는다.
-
----
-
-## 19. Asset / Audio Provenance
-
-`ASSET_PROVENANCE`
+current 이미지 동작:
 
 ```text
-source
-→ provenance
-→ rights/license
-→ exact version/identity
-→ technical fit
-→ user approval
-→ project-owned repository path
-→ SHA-256 + ASSET_MANIFEST
-→ import/config
-→ runtime consumer
-→ verification
+NEEDED_VISUAL_CANDIDATE_MAY_BE_GENERATED_BEFORE_USER_LOCK
+GENERATED_CANDIDATE_REQUIRES_POST_GENERATION_USER_DECISION
+USER_LOCK_REQUIRED_FOR_CANON_OR_RUNTIME_PROMOTION
 ```
-
-외부 reference, Library file, local-only absolute path가 존재한다는 사실은 project adoption이 아니다.
-
----
-
-## 20. Work-Owned Noncoding Execution
-
-Work/GPT가 담당하는 Base/repository 기획/조사/검수/문서/데이터/Flow/Visual/PDF/legacy migration은 분석만 하고 멈추지 않고 승인 범위의 실제 write/readback까지 닫는다.
-
-정책·계약·검증 가능한 코드 변경:
-
-```text
-RED
-→ failure reason verification
-→ minimal GREEN
-→ regression
-→ adversarial case
-```
-
-기획·조사·문서·PDF·migration:
-
-```text
-acceptance/evidence question
-→ research/artifact
-→ compare
-→ decision
-→ repository write
-→ exact SHA / destination readback
-```
-
----
-
-## 21. Long-Running Continuity
-
-Work transcript 자체를 정본으로 만들지 않는다.
-
-```yaml
-WORK_CHECKPOINT:
-  project:
-  repository:
-  exact_source_sha:
-  current_goal:
-  current_stage:
-  confirmed_decisions: []
-  canon_changed: []
-  evidence_obtained: []
-  open_findings: []
-  protected_scope: []
-  waiting_codex_or_external: []
-  legacy_migration_status:
-  next_safe_action:
-  blockers: []
-```
-
-새 Work는 `current repository exact SHA + current Base + durable checkpoint locator`로 재개한다.
-
----
-
-## 22. Completion Gate
-
-`REQUIRED_WORK_REMAINING: 0`은 완료가 아니라 `COMPLETION_CANDIDATE`다.
-
-```text
-remaining work recalculation
-→ 0
-→ COMPLETION_CANDIDATE
-→ actual state rescan
-→ IMPLEMENTATION_CORRECTION_RESCAN
-   canon / asset consumer / test / PR / merge / readback / evidence / migration counters
-→ valid finding?
-   YES → reopen remaining work → fix → verify → recalculate
-   NO  → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
-→ final full-scope adversarial lineage
-→ minimum 5 full loops and clean exit
-→ completion allowed
-```
-
-```yaml
-COMPLETION_EVIDENCE:
-  project:
-  approved_scope:
-  exact_base_main:
-  exact_project_main:
-  changed_scope:
-  requirement_to_implementation:
-  skill_coverage_audit:
-  reuse_first_receipt:
-  benchmark_and_trade_study:
-  tests_and_results:
-  runtime_evidence:
-  human_or_player_evidence:
-  source_sha_bound_pdf:
-  asset_manifest_readback:
-  legacy_migration_counters:
-  current_task_pr:
-  exact_review_head:
-  required_checks:
-  merge_sha:
-  new_main_readback:
-  incident_or_lesson:
-  remaining_required_work:
-  final_adversarial_state:
-  not_run: []
-  blockers: []
-```
-
-`NOT_RUN`을 PASS로 바꾸지 않는다.
-
----
-
-## 23. 사용자 행동 요청
-
-GPT/Work/connector/Codex가 직접 할 수 있는 일을 사용자에게 떠넘기지 않는다. 사용자만 가능한 작업은 `왜 필요한가 → 어디를 열 것 → 무엇을 클릭/복사 → 어디에 붙여넣기 → 실행 → 성공 표시 → 실패 시 제공할 exact evidence` 순으로 설명한다.
-
----
-
-## 24. 최종 사용자 보고
-
-가능한 범위에서 다음을 설명한다.
-
-1. 작업 전 상태와 이번 Goal
-2. 실제 발견 문제
-3. 적용 Work Mode / Skill / process
-4. Skill coverage audit
-5. Existing Solution First와 benchmark/3안 비교
-6. 선택안과 이유
-7. 핵심 변경과 player experience 영향
-8. repository canon·asset·PDF 영향
-9. Codex 인계/구현 상태
-10. test/runtime/play evidence와 IRG ceiling
-11. adversarial findings/corrections
-12. BEFORE → AFTER → 기대효과
-13. trade-off·NOT_RUN·blocker·rollback
-14. PR/merge/new-main readback
-15. legacy Notion migration 상태
-16. 현재 남은 작업과 다음 Playable Slice
-
----
-
-## 25. 자동 실행 순서
-
-```text
-1. 지정 Project와 repository를 정확히 식별한다.
-2. Project repository current canon과 exact SHA를 fresh-read한다.
-3. Base latest completed main/root AGENTS를 확인한다.
-4. current Goal에 필요한 Base owner만 progressive-load한다.
-5. current SKILL_REGISTRY.json의 Active inventory와 trigger를 대조한다.
-6. Memory/과거 대화는 candidate discovery에만 사용한다.
-7. Entry State Reconciliation과 Whole Project Audit 적용 여부를 판정한다.
-8. Reuse-First와 필요한 benchmark/success-failure/3안 비교를 수행한다.
-9. 최소 기획과 current Playable Slice를 확정한다.
-10. repository Decision/spec/data/Flow/Visual requirement/asset manifest를 교정한다.
-11. 새 생성 이미지는 actual consumer + text brief + 사용자 approval을 요구한다.
-12. 승인 binary를 repository path + SHA-256 + manifest로 승격한다.
-13. 의미 있는 Gate에서 사람용 상세 기획서 PDF를 생성·점검한다.
-14. 전체 결과를 최소 5회 full adversarial loop로 검토하고 clean exit까지 교정한다.
-15. Implementation Reality Gate를 적용한다.
-16. 제품 구현이 없으면 Work/GPT가 repository readback까지 닫는다.
-17. 제품 구현이 있으면 exact repository SHA 기반 Codex work instruction을 만든다.
-18. Codex 결과의 actual diff/test/runtime/play evidence를 검수한다.
-19. Canonical Reflection After Play로 repository 정본을 갱신한다.
-20. current-task PR은 실제 gate를 통과해 허용 범위에서 merge/post-merge readback까지 닫는다.
-21. legacy Notion/Sheet 고유 자료가 있을 때만 별도 migration counter를 닫는다.
-22. material failure는 Incident/Solution/Lesson으로 환류한다.
-23. REQUIRED_WORK_REMAINING을 다시 계산한다.
-24. 0이면 Completion Candidate를 재공격한다.
-25. required finding 0 + evidence 충족 + clean review일 때만 완료한다.
-```
-
-새 사용자 결정이 필요하지 않으면 분석만 하고 멈추지 말고 현재 승인 범위의 교정·검증·readback까지 연속 진행한다.
-
----
-
-## 26. Retired compatibility vocabulary
-
-다음 token은 기존 r5.4/v4.9 consumer가 의미를 잃지 않도록 문자열을 보존하지만 current 행동이 아니다.
-
-```text
-DOMAIN_SPLIT_CANON_RETIRED
-NOTION_IMAGE_UPLOAD_ROUTING_RETIRED
-NOTION_HUMAN_FACING_CANON_RETIRED
-PROJECT_GITHUB_NOTION_FRESH_READ_RETIRED
-NOTION_GITHUB_SYNC_RETIRED
-POSTMERGE_GITHUB_NOTION_READBACK_RETIRED
-```
-
-active successor:
-
-```text
-REPOSITORY_PRIMARY_CANON
-HUMAN_GDD_PDF_DERIVED_VIEW
-AI_PRODUCTION_SPEC_MARKDOWN
-REPOSITORY_ASSET_MANIFEST_ROUTING
-CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA
-POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP
-```
-
-이 appendix·호환 token이 Notion을 active default로 복원하는 권한은 없다.
