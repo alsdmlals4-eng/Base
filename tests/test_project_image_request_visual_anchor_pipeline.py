@@ -30,28 +30,67 @@ class ProjectImageRequestVisualAnchorPipelineTests(unittest.TestCase):
         ):
             self.assertIn(token, pipeline)
 
-    def test_main_policy_routes_current_turn_requests_without_stale_summary(self) -> None:
+    def test_main_policy_routes_explicit_and_candidate_first_generation(self) -> None:
         policy = self._read(POLICY)
         for token in (
             "PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md",
             "CURRENT_TURN_EXPLICIT_IMAGE_REQUEST",
             "EXPLICIT_REQUEST_IS_ONE_OUTPUT_AUTHORITY",
-            "ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE",
+            "NEEDED_VISUAL_CANDIDATE_MAY_BE_GENERATED_BEFORE_USER_LOCK",
+            "GENERATED_CANDIDATE_REQUIRES_POST_GENERATION_USER_DECISION",
+            "USER_LOCK_REQUIRED_FOR_CANON_OR_RUNTIME_PROMOTION",
+            "NO_AUTOMATIC_IMAGE_CHAIN",
         ):
             self.assertIn(token, policy)
-        self.assertIn("NO_AUTOMATIC_IMAGE_CHAIN", policy)
 
-    def test_current_turn_explicit_request_has_a_direct_one_output_route(self) -> None:
+    def test_gate_allows_needed_candidate_before_user_lock(self) -> None:
         gate = self._read(GATE)
         for token in (
-            "PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md",
-            "CURRENT_TURN_EXPLICIT_IMAGE_REQUEST",
-            "EXPLICIT_REQUEST_IS_ONE_OUTPUT_AUTHORITY",
-            "ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE",
+            "PROJECT_CANON_AND_EXISTING_VISUAL_READBACK_REQUIRED",
+            "ACTUAL_OR_PLANNED_CONSUMER_REQUIRED",
+            "VISUAL_NEED_CONFIRMED_DURING_APPROVED_WORK",
+            "NEEDED_VISUAL_CANDIDATE_MAY_BE_GENERATED_BEFORE_USER_LOCK",
+            "GENERATED_CANDIDATE_REQUIRES_POST_GENERATION_USER_DECISION",
+            "USER_LOCK_REQUIRED_FOR_CANON_OR_RUNTIME_PROMOTION",
+            "GENERATED_CANDIDATE != USER_APPROVED != CANON_REGISTERED != IMPLEMENTED != RUNTIME_VERIFIED",
             "HOST_PLATFORM_PRECEDENCE",
             "STOP_REQUIRED_AFTER_GENERATION",
         ):
             self.assertIn(token, gate)
+
+    def test_legacy_two_turn_markers_are_explicitly_inactive(self) -> None:
+        gate = self._read(GATE)
+        policy = self._read(POLICY)
+        for text in (gate, policy):
+            self.assertIn("LEGACY_SUPERSEDED_ONLY", text)
+            self.assertIn("ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE", text)
+            self.assertIn("TEXT_BRIEF_STOP_REQUIRED", text)
+            self.assertIn("NEXT_USER_EXPLICIT_APPROVAL", text)
+            self.assertLess(
+                text.index("NEEDED_VISUAL_CANDIDATE_MAY_BE_GENERATED_BEFORE_USER_LOCK"),
+                text.rindex("LEGACY_SUPERSEDED_ONLY"),
+            )
+
+    def test_candidate_promotion_states_remain_separate(self) -> None:
+        for text in (self._read(POLICY), self._read(GATE)):
+            for token in (
+                "GENERATED_CANDIDATE",
+                "USER_APPROVED",
+                "CANON_REGISTERED",
+                "IMPLEMENTED",
+                "RUNTIME_VERIFIED",
+            ):
+                self.assertIn(token, text)
+        self.assertIn(
+            "GENERATED_CANDIDATE != USER_APPROVED != CANON_REGISTERED != IMPLEMENTED != RUNTIME_VERIFIED",
+            self._read(GATE),
+        )
+
+    def test_one_consumer_can_request_a_bounded_state_family(self) -> None:
+        gate = self._read(GATE)
+        self.assertIn("BOUNDED_STATE_FAMILY_ALLOWED_WHEN_CONSUMER_REQUIRES", gate)
+        self.assertIn("NO_AUTOMATIC_IMAGE_CHAIN", gate)
+        self.assertIn("GENERATE_EXACTLY_ONE", gate)
 
     def test_existing_approved_anchor_is_shown_and_reused(self) -> None:
         pipeline = self._read(PIPELINE)
