@@ -39,10 +39,11 @@ Notion과 Google Sheets는 프로젝트 current authority가 명시한 고유 mi
 4. `docs/knowledge/game-development/PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md`
 5. `docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md`
 6. `docs/knowledge/game-development/IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`
-7. `docs/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`
-8. project Visual Canon / approved decisions / asset manifest / actual consumer
+7. `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`
+8. `docs/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`
+9. project Visual Canon / approved decisions / asset manifest / actual consumer
 
-`GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md`는 실제 화면·상태·consumer를 먼저 역산하고, `GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`가 에셋 패밀리 전체 coverage를 책임진다.
+`GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md`는 실제 화면·상태·consumer를 먼저 역산하고, `GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md`가 에셋 패밀리 전체 coverage를 책임진다. 생성 후보의 local-only 보관, tombstone, sync와 tracked production path로의 명시적 promotion은 `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`가 책임진다.
 
 ## 3. Machine contract
 
@@ -62,6 +63,7 @@ APPROVED_VISUAL_DIRECTION_RESOLUTION_REQUIRED
 EXISTING_APPROVED_ASSET_REUSE_FIRST
 NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS
 IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md
+PROJECT_LOCAL_ASSET_VAULT_POLICY.md
 GENERATE_ONE_CANDIDATE_BEFORE_LOCK
 GENERATE_EXACTLY_ONE
 STOP_REQUIRED_AFTER_GENERATION
@@ -274,7 +276,19 @@ GENERATED_CANDIDATE != USER_LOCKED != PROJECT_ASSET_APPROVED != IMPLEMENTED != R
 
 `image generation success != user approval != PROJECT_ASSET_APPROVED != runtime integration`.
 
-### 10.1 Repository registration
+### 10.1 Local candidate vault와 명시적 promotion
+
+생성 후보는 `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`에 따라 local-only vault에서 보관·sync할 수 있다.
+
+```text
+LOCAL_CANDIDATE
+!= TRACKED_PRODUCTION_ASSET
+!= PROJECT_ASSET_APPROVED
+```
+
+local vault 존재, 다운로드 감지, sync 또는 recovery harvest는 tracked production path로 승격하지 않는다. 사용자 `LOCK`, current rights/provenance/consumer readback, 명시적 `promote` 동작과 repository manifest 갱신이 있어야만 production candidate로 이동한다. 삭제 tombstone과 workspace cleanup 규칙도 local vault owner를 따른다.
+
+### 10.2 Repository registration
 
 `LOCK` 뒤에도 product asset이 자동 승인되는 것은 아니다. 필요한 경우 current owner에 다음을 기록한다.
 
@@ -402,7 +416,8 @@ need and consumer
 → approved visual anchor
 → candidate result and QA
 → user LOCK / REVISE / REJECT
-→ repository path / SHA-256 / provenance / rights
+→ local vault or repository path / SHA-256 / provenance / rights
+→ explicit promotion receipt
 → implementation consumer
 → runtime evidence
 → NOT_RUN / remaining risk
