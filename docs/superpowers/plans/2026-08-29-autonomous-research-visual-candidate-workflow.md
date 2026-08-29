@@ -1,6 +1,6 @@
 # Autonomous research and candidate-first visual policy implementation plan
 
-**Date:** 2026-08-29  
+**Date:** 2026-08-29
 **Approved design:** `docs/superpowers/specs/2026-08-29-autonomous-research-visual-candidate-workflow-design.md`
 
 ## Task 1. Base current-state and conflict audit
