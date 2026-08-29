@@ -113,6 +113,34 @@ Mermaid, Flow, 표, JSON, database, 문서 native diagram, 데이터 chart, 기�
 
 화면 인벤토리의 `PROCEDURAL_OR_ENGINE_RENDERED`, `NO_NEW_IMAGE_FILE_REQUIRED`, `SVG` 표기는 **runtime 구현 방식 또는 기존 자산 형식**을 나타낼 수 있을 뿐, 새 SVG/vector artwork를 직접 제작하거나 이미지 모델을 우회할 authority가 아니다.
 
+### 4.5 기존 화면 인벤토리·실행 지시문의 호환 판정
+
+`LEGACY_IMPLEMENTATION_LABELS_DO_NOT_OVERRIDE_IMAGE_MODEL_POLICY`
+
+다음 기존 owner·실행 지시문은 이미 `Image Conversation Approval Gate`를 통과하므로, 해당 Gate가 routing하는 이 정책을 반드시 함께 적용한다.
+
+- `GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md`
+- `GPT_WORK_SCREEN_FIRST_VISUAL_ASSET_COVERAGE_AND_CORRECTION_INSTRUCTION.md`
+
+이 문서들에 남아 있는 제작·구현 mode는 아래처럼 제한 해석한다.
+
+```text
+SVG_VECTOR
+→ EXISTING_APPROVED_VECTOR_ASSET_REUSE_ONLY
+  OR IMAGE_MODEL_SOURCE_FIRST + NON_CREATIVE_VECTORIZATION_POSTPROCESS_ONLY
+
+PROCEDURAL_DRAW
+→ ENGINE_NATIVE_UI_AND_EFFECT_IMPLEMENTATION_IS_NOT_IMAGE_DELIVERABLE_CREATION
+
+RASTER_IMAGE
+→ IMAGE_MODEL_REQUIRED_FOR_IMAGE_CREATION_OR_EDITING
+
+NO_NEW_IMAGE_FILE_REQUIRED
+→ NO_NEW_IMAGE_FILE_REQUIRED_DOES_NOT_AUTHORIZE_NEW_VECTOR_ART
+```
+
+따라서 `SVG_VECTOR`는 새 SVG/path를 직접 그리라는 의미가 아니며, `PROCEDURAL_DRAW`는 artwork·mockup·icon·texture·sprite·UI art를 코드로 대신 만들라는 의미가 아니다. 기존 지시문의 표현이 이 정책과 다르게 읽힐 수 있으면 이 정책의 금지·fail-closed 계약이 우선한다.
+
 ---
 
 ## 5. 최종 vector 형식이 필요한 경우에도 model-first를 지킨다
@@ -189,6 +217,7 @@ image generation success != user approval != PROJECT_ASSET_APPROVED != runtime i
 - image model unavailable 상태에서 fail closed 했는가
 - 기존 vector 재사용과 새 vector authoring을 구분했는가
 - runtime-native 구현을 이미지 모델 우회 산출물로 쓰지 않았는가
+- 기존 화면 인벤토리의 `SVG_VECTOR`·`PROCEDURAL_DRAW`를 좁은 구현 mode로만 해석했는가
 - vector 형식이 필요하면 model-first source와 비창작 변환 증거가 있는가
 - actual consumer, Visual Requirement Gate, conversation approval, one-output, stop 규칙을 함께 지켰는가
 - 생성·승인·자산 승격·runtime 통합 상태를 분리했는가
