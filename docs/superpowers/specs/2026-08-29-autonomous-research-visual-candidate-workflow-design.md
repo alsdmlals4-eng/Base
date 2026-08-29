@@ -1,7 +1,7 @@
 # Candidate-first visual · research-to-implementation · autonomous learning design
 
-**Date:** 2026-08-29  
-**Status:** USER_APPROVED / IMPLEMENTATION_IN_PROGRESS  
+**Date:** 2026-08-29
+**Status:** USER_APPROVED / IMPLEMENTATION_IN_PROGRESS
 **Scope:** Base 공용 정책과 프로젝트별 충돌 교정
 
 ## Goal
