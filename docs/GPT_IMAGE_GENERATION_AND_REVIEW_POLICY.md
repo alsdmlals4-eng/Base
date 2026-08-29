@@ -213,6 +213,29 @@ GENERATED_CANDIDATE
 
 정적 mockup, 채팅 preview, PDF 삽입, 자동 테스트 PASS를 runtime proof로 확대하지 않는다.
 
+### 4.1 Local candidate vault와 명시적 promotion
+
+후보 binary의 로컬 보관·동기화·승격 세부 동작은 `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`가 소유한다. 이 문서는 그 owner를 복제하지 않고 다음 경계만 합성한다.
+
+```text
+GENERATED_CANDIDATE / REVIEWED
+→ .asset-vault/library/ 또는 work-generated candidate source
+→ assets/_vault_local/ 검수 workspace
+→ 사용자 LOCK
+→ rights / provenance / SHA-256 / consumer / state mapping
+→ PROJECT_ASSET_APPROVED
+→ explicit `promote`
+→ tracked assets/<approved-path>/
+→ ASSET_MANIFEST readback
+→ Scene / Resource integration
+→ RUNTIME_VERIFIED
+```
+
+- `assets/_vault_local/`는 candidate 검수 workspace이며 제품 정본 경로가 아니다.
+- 사용자 LOCK 전 candidate를 `promote`하거나 tracked runtime asset으로 자동 이동하지 않는다.
+- 사용자 LOCK 뒤에도 권리·출처·hash·consumer·상태군·target path가 완전하지 않으면 `PROJECT_ASSET_APPROVED` 또는 promotion을 주장하지 않는다.
+- reusable harvest는 primary-use success 뒤에만 평가하며, reuse promotion이 title-specific identity나 primary 품질을 덮어쓰지 않는다.
+
 ## 5. Blueprint와 구현 경계
 
 Blueprint 검수 전에 필요한 이미지·시각자료 candidate를 제작할 수 있다.
