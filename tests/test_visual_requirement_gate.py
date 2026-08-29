@@ -83,9 +83,13 @@ class VisualRequirementGateTests(unittest.TestCase):
             self.assertIn("Visual Requirement Gate", read(path), path)
 
         image_policy = read("docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md")
-        self.assertIn("Visual Requirement Gate", image_policy)
-        self.assertIn("requirement_id", image_policy)
-        self.assertIn("선정", image_policy)
+        for term in (
+            "Visual Requirement Gate",
+            "requirement_id",
+            "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md",
+            "EXISTING_APPROVED_ASSET_REUSE_FIRST",
+        ):
+            self.assertIn(term, image_policy)
 
         registry = read("skills/SKILL_REGISTRY.json")
         self.assertNotIn("selecting-project-visual-assets", registry)
@@ -117,23 +121,31 @@ class VisualRequirementGateTests(unittest.TestCase):
         policy = read("docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md")
         plan = read("templates/planning/GPT_IMAGE_GENERATION_AND_REVIEW_PLAN.md")
 
-        for content in (guide, policy):
-            for token in (
-                "Primary Use Gate",
-                "Reusable Visual Harvest Gate",
-                "REUSE_AS_IS",
-                "VARIANT_SEED",
-                "STRUCTURE_PATTERN",
-                "STYLE_DNA",
-                "REBUILD_FOR_REUSE",
-                "ONE_OFF_KEEP",
-                "REJECT_REUSE",
-                "SOURCE_LAYER",
-                "MASK_CUTOUT",
-                "MANUAL_OR_SEMANTIC_REBUILD",
-                "DERIVED_GENERATIVE_RECOVERY",
-            ):
-                self.assertIn(token, content)
+        for token in (
+            "Primary Use Gate",
+            "Reusable Visual Harvest Gate",
+            "REUSE_AS_IS",
+            "VARIANT_SEED",
+            "STRUCTURE_PATTERN",
+            "STYLE_DNA",
+            "REBUILD_FOR_REUSE",
+            "ONE_OFF_KEEP",
+            "REJECT_REUSE",
+            "SOURCE_LAYER",
+            "MASK_CUTOUT",
+            "MANUAL_OR_SEMANTIC_REBUILD",
+            "DERIVED_GENERATIVE_RECOVERY",
+        ):
+            self.assertIn(token, guide)
+
+        for token in (
+            "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md",
+            "PROJECT_LOCAL_ASSET_VAULT_POLICY.md",
+            "EXISTING_APPROVED_ASSET_REUSE_FIRST",
+            "LOCAL_CANDIDATE",
+            "explicit promotion",
+        ):
+            self.assertIn(token, policy)
 
         for token in (
             "primary_use_status",
@@ -151,23 +163,35 @@ class VisualRequirementGateTests(unittest.TestCase):
             "ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md"
         )
         policy = read("docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md")
-        for content in (guide, policy):
-            self.assertIn("primary-use success", content)
-            self.assertIn("reuse promotion", content)
-            self.assertIn("PROJECT_ASSET_APPROVED", content)
-            self.assertIn("title-specific identity", content)
+        for token in (
+            "primary-use success",
+            "reuse promotion",
+            "PROJECT_ASSET_APPROVED",
+            "title-specific identity",
+        ):
+            self.assertIn(token, guide)
+        for token in (
+            "LOCAL_CANDIDATE",
+            "TRACKED_PRODUCTION_ASSET",
+            "PROJECT_ASSET_APPROVED",
+            "명시적 `promote`",
+            "GENERATED_CANDIDATE != USER_LOCKED != PROJECT_ASSET_APPROVED != IMPLEMENTED != RUNTIME_VERIFIED",
+        ):
+            self.assertIn(token, policy)
 
-    def test_image_conversation_requires_two_turn_barrier(self) -> None:
+    def test_image_conversation_uses_generate_then_lock_and_marks_two_turn_route_superseded(self) -> None:
         gate = read(
             "docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md"
         )
         for token in (
             "PROJECT_REVIEW_COMPLETE",
-            "TEXT_BRIEF_STOP_REQUIRED",
-            "NEXT_USER_EXPLICIT_APPROVAL",
+            "NEED_DRIVEN_GENERATE_THEN_LOCK",
+            "GENERATE_ONE_CANDIDATE_BEFORE_LOCK",
+            "USER_LOCK_REVISE_REJECT_AFTER_GENERATION",
             "GENERATE_EXACTLY_ONE",
             "STOP_REQUIRED_AFTER_GENERATION",
             "NO_AUTOMATIC_IMAGE_CHAIN",
+            "ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE__SUPERSEDED",
         ):
             self.assertIn(token, gate)
 
@@ -182,7 +206,7 @@ class VisualRequirementGateTests(unittest.TestCase):
         ):
             self.assertIn(token, gate)
         self.assertIn("상위", gate)
-        self.assertIn("시스템", gate)
+        self.assertIn("system", gate)
 
     def test_current_visual_owners_route_to_image_conversation_gate(self) -> None:
         contract = read(
