@@ -30,28 +30,38 @@ class ProjectImageRequestVisualAnchorPipelineTests(unittest.TestCase):
         ):
             self.assertIn(token, pipeline)
 
-    def test_main_policy_routes_current_turn_requests_without_stale_summary(self) -> None:
+    def test_main_policy_routes_explicit_and_need_driven_requests(self) -> None:
         policy = self._read(POLICY)
         for token in (
             "PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md",
             "CURRENT_TURN_EXPLICIT_IMAGE_REQUEST",
             "EXPLICIT_REQUEST_IS_ONE_OUTPUT_AUTHORITY",
-            "ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE",
+            "NEED_DRIVEN_GENERATE_THEN_LOCK",
+            "GENERATE_ONE_CANDIDATE_BEFORE_LOCK",
+            "USER_LOCK_REVISE_REJECT_AFTER_GENERATION",
         ):
             self.assertIn(token, policy)
         self.assertIn("NO_AUTOMATIC_IMAGE_CHAIN", policy)
 
-    def test_current_turn_explicit_request_has_a_direct_one_output_route(self) -> None:
+    def test_concrete_need_has_a_direct_candidate_route_without_preapproval(self) -> None:
         gate = self._read(GATE)
         for token in (
             "PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md",
             "CURRENT_TURN_EXPLICIT_IMAGE_REQUEST",
             "EXPLICIT_REQUEST_IS_ONE_OUTPUT_AUTHORITY",
-            "ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE",
+            "NEED_DRIVEN_GENERATE_THEN_LOCK",
+            "CONCRETE_CONSUMER_OR_PLANNING_BOARD_REQUIRED",
+            "CURRENT_APPROVED_VISUAL_ANCHOR_READBACK_REQUIRED",
+            "GENERATE_ONE_CANDIDATE_BEFORE_LOCK",
+            "USER_LOCK_REVISE_REJECT_AFTER_GENERATION",
             "HOST_PLATFORM_PRECEDENCE",
             "STOP_REQUIRED_AFTER_GENERATION",
         ):
             self.assertIn(token, gate)
+        self.assertIn(
+            "ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE__SUPERSEDED",
+            gate,
+        )
 
     def test_existing_approved_anchor_is_shown_and_reused(self) -> None:
         pipeline = self._read(PIPELINE)
