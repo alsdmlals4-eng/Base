@@ -16,13 +16,17 @@ class AiBootstrapDriftContractTests(unittest.TestCase):
         text = self.read("templates/custom-instructions.gpt.md")
 
         for required in (
-            "bootstrap layer",
+            "bootstrap",
+            "REPOSITORY_FIRST_CURRENT_CANON",
+            "PAST_CHAT_AND_MEMORY_DISCOVERY_ONLY",
+            "PROJECT_INSTRUCTIONS_OVERRIDE_GLOBAL_CUSTOM_INSTRUCTIONS",
             "DOMAIN_SPLIT_CANON",
             "AGENTS.md",
-            "START_HERE.md",
+            "START_HERE",
             "Active Context",
-            "현재 채택된 Base 계약",
-            "migration compatibility",
+            "프로젝트가 현재 채택한 Base 계약",
+            "legacy/migration input",
+            "NO_MUTABLE_SHA_PR_OR_CURRENT_TASK_IN_GLOBAL_CUSTOM_INSTRUCTIONS",
         ):
             self.assertIn(required, text)
 
@@ -30,6 +34,7 @@ class AiBootstrapDriftContractTests(unittest.TestCase):
             "HTML 대시보드 설계",
             "Google Sheets를 기본",
             "너는 구현 담당자다",
+            "Notion은 사람용 정본",
         ):
             self.assertNotIn(forbidden, text)
 
