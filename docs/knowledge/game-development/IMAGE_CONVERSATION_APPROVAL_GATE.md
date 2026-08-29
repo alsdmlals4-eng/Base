@@ -15,6 +15,21 @@ EXPLICIT_REQUEST_IS_ONE_OUTPUT_AUTHORITY
 ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE
 ```
 
+## Image production method owner
+
+모든 실제 이미지 생성·편집 경로는 authority 판정 뒤, tool 호출 전에 반드시 `IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`를 적용한다.
+
+```text
+IMAGE_MODEL_REQUIRED_FOR_IMAGE_CREATION_OR_EDITING
+DIRECT_VECTOR_IMAGE_AUTHORING_PROHIBITED
+IMAGE_MODEL_UNAVAILABLE_BLOCKS_IMAGE_CREATION
+NO_VECTOR_OR_CODE_DRAWN_FALLBACK
+```
+
+따라서 이미지 deliverable은 host image generation/editing model로만 생성·편집한다. SVG/vector path, HTML/CSS/Canvas, Python drawing, Godot primitive drawing으로 이미지 모델을 대신하지 않는다. 이미지 모델을 사용할 수 없으면 Brief·consumer·규격 정리는 계속할 수 있지만 이미지 제작은 `BLOCKED_IMAGE_MODEL_UNAVAILABLE`로 닫는다.
+
+기존 승인 vector asset의 수정 없는 재사용, 실제 runtime-native UI·shader·VFX 구현, Mermaid·Flow·표 같은 구조 정보 작성의 좁은 경계도 새 owner가 판정한다. 이 예외는 새 vector artwork를 직접 제작하거나 이미지 모델을 우회하는 authority가 아니다.
+
 ## Host / system precedence and evidence ceiling
 
 `HOST_PLATFORM_PRECEDENCE`
@@ -39,6 +54,10 @@ ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE
 TEXT_BRIEF_COMPLETE
 TEXT_BRIEF_STOP_REQUIRED
 NEXT_USER_EXPLICIT_APPROVAL
+IMAGE_MODEL_REQUIRED_FOR_IMAGE_CREATION_OR_EDITING
+DIRECT_VECTOR_IMAGE_AUTHORING_PROHIBITED
+IMAGE_MODEL_UNAVAILABLE_BLOCKS_IMAGE_CREATION
+NO_VECTOR_OR_CODE_DRAWN_FALLBACK
 GENERATE_EXACTLY_ONE
 STOP_REQUIRED_AFTER_GENERATION
 NO_AUTOMATIC_IMAGE_CHAIN
@@ -55,6 +74,8 @@ CURRENT_TURN_EXPLICIT_IMAGE_REQUEST
 → PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md
 → current approved visual anchor resolution
 → EXPLICIT_REQUEST_IS_ONE_OUTPUT_AUTHORITY
+→ IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md
+→ image model availability and no-bypass check
 → GENERATE_EXACTLY_ONE
 → STOP_REQUIRED_AFTER_GENERATION
 ```
@@ -98,6 +119,7 @@ GENERATE_EXACTLY_ONE
 - comparison board 속 panel은 각각 production asset으로 계산하지 않는다.
 - current request가 여러 독립 파일을 명시하지 않았다면 다음 캐릭터·포즈·화면·variant로 자동 확장하지 않는다.
 - 현재 명시 요청은 생성 결과의 사용자 승인, `PROJECT_ASSET_APPROVED`, runtime 적용을 뜻하지 않는다.
+- 생성·편집 수단은 항상 `IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`를 따르며 직접 vector/code-drawn fallback을 사용하지 않는다.
 
 ### Anchor 부재 시
 
@@ -133,6 +155,8 @@ ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE
 [반드시 다음 사용자 메시지]
 
 → NEXT_USER_EXPLICIT_APPROVAL
+→ IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md
+→ image model availability and no-bypass check
 → 승인된 Brief 범위의 이미지/편집 1건 실행
 → GENERATE_EXACTLY_ONE
 → 결과 제시
@@ -214,6 +238,10 @@ image generation success
 - Notion에 이미 승인된 이미지를 재배치/링크하는 작업
 - 이미지 없는 Flow/표/텍스트 문서 편집
 - 생성 도구를 호출하지 않는 이미지 requirement inventory 작성
+- 기존 승인 vector asset을 새로 그리지 않고 재사용하는 작업
+- 실제 runtime-native UI·shader·VFX 구현
+
+예외의 세부 경계는 `IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`가 소유한다. 위 작업을 새 artwork, mockup, icon, texture, sprite, UI art 또는 이미지 후보 제작의 우회 수단으로 사용하면 예외가 아니며 이미지 모델을 사용해야 한다.
 
 ## Verification
 
@@ -225,6 +253,10 @@ image generation success
 - approved anchor를 실제로 읽고 사용자에게 surface했는가
 - anchor 부재 시 comparison deliverable만 만들고 production으로 건너뛰지 않았는가
 - assistant-initiated need이면 text brief와 다음-turn 승인을 지켰는가
+- 실제 생성·편집 전에 `IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`를 적용했는가
+- 이미지 자체가 deliverable이면 image generation/editing model을 사용했는가
+- SVG/vector path 또는 code-drawn fallback으로 이미지 모델을 우회하지 않았는가
+- image model unavailable 상태에서 `BLOCKED_IMAGE_MODEL_UNAVAILABLE`로 닫았는가
 - 한 authority당 기본 deliverable이 `GENERATE_EXACTLY_ONE`인가
 - 생성 뒤 `STOP_REQUIRED_AFTER_GENERATION`을 지켰는가
 - 자동 image chain이 없었는가
