@@ -278,7 +278,7 @@ GENERATED_CANDIDATE != USER_LOCKED != PROJECT_ASSET_APPROVED != IMPLEMENTED != R
 
 ### 10.1 Local candidate vault와 명시적 promotion
 
-생성 후보는 `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`에 따라 local-only vault에서 보관·sync할 수 있다.
+생성 후보는 `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`에 따라 local-only vault에서 보관·sync할 수 있다. 기본 local candidate workspace는 `assets/_vault_local/`이며 Git에 tracked되는 production path가 아니다.
 
 ```text
 LOCAL_CANDIDATE
@@ -286,7 +286,7 @@ LOCAL_CANDIDATE
 != PROJECT_ASSET_APPROVED
 ```
 
-local vault 존재, 다운로드 감지, sync 또는 recovery harvest는 tracked production path로 승격하지 않는다. 사용자 `LOCK`, current rights/provenance/consumer readback, 명시적 `promote` 동작과 repository manifest 갱신이 있어야만 production candidate로 이동한다. 삭제 tombstone과 workspace cleanup 규칙도 local vault owner를 따른다.
+`assets/_vault_local/` 존재, 다운로드 감지, sync 또는 recovery harvest는 tracked production path로 승격하지 않는다. 사용자 `LOCK`, current rights/provenance/consumer readback, 명시적 `promote` 동작과 repository manifest 갱신이 있어야만 production candidate로 이동한다. 삭제 tombstone과 workspace cleanup 규칙도 local vault owner를 따른다.
 
 ### 10.2 Repository registration
 
