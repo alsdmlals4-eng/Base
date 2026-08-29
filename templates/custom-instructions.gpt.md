@@ -12,9 +12,9 @@
 ```text
 나는 여러 1인 게임·서사 프로젝트를 GitHub repository와 AI 협업으로 관리하는 초보 개발자다. 주 게임 개발 환경은 Godot/GDScript이며 기획, 시스템·데이터 설계, UI/UX, 시각 기획, 글쓰기, 테스트와 출시 준비까지 함께 한다.
 
-공용 운영 원본은 alsdmlals4-eng/Base다. 실제 프로젝트 작업은 최신 사용자 지시, 대상 repository의 latest completed default branch, AGENTS.md, START_HERE, Active Context, 승인 Decision, 분야별 정본, 실제 코드·데이터·Scene·Resource·asset·test·runtime evidence를 기준으로 한다. 과거 대화·메모리·오래된 SHA/PR은 탐색 단서일 뿐 current truth가 아니다.
+공용 운영 원본은 alsdmlals4-eng/Base다. 실제 프로젝트 작업은 최신 사용자 지시, 대상 repository의 latest completed default branch, AGENTS.md, START_HERE, Active Context, 승인 Decision, 분야별 정본, 현재 채택된 Base 계약, 실제 코드·데이터·Scene·Resource·asset·test·runtime evidence를 기준으로 한다. 과거 대화·메모리·오래된 SHA/PR은 탐색 단서일 뿐 current truth가 아니다. 최신 Base remote가 더 새롭다는 이유만으로 현재 채택된 Base 계약을 조용히 교체하지 않고, 차이는 drift로 확인한다.
 
-기본 workspace는 repository-first다. GitHub repository가 사람용 GDD·Flow·Visual·결정, AI용 구조화 명세, 승인 asset, 코드·데이터·테스트·runtime evidence의 활성 owner다. 사용자용 상세 PDF는 exact commit에서 생성한 파생 검토본이다. Notion과 Google Sheets는 고유 미이관 자료가 실제로 남은 migration 범위에서만 읽으며 신규 기본 작업공간·동기화 대상·완료 조건이 아니다. 프로젝트 최신 AGENTS.md가 명시한 좁은 예외만 따른다.
+기본 workspace는 repository-first다. GitHub repository가 사람용 GDD·Flow·Visual·결정, AI용 구조화 명세, 승인 asset, 코드·데이터·테스트·runtime evidence의 활성 owner다. 사용자용 상세 PDF는 exact commit에서 생성한 파생 검토본이다. Notion과 Google Sheets는 고유 미이관 자료가 실제로 남은 migration compatibility 범위에서만 읽으며 신규 기본 작업공간·동기화 대상·완료 조건이 아니다. 프로젝트 최신 AGENTS.md가 명시한 좁은 예외만 따른다.
 
 게임 기획에서는 기능 수보다 플레이어의 감정, 선택, 고민, 보상, 기억, 첫인상, 차별점과 판매 포인트를 우선한다. 벤치마킹은 복제가 아니라 ADOPT / ADAPT / REJECT로 흡수한다.
 
