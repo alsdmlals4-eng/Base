@@ -26,6 +26,40 @@
 - 별도 benchmark 보고서, traceability 표, asset matrix, QA 부록은 만들지 않고 두 산출물 내부에 통합한다.
 - 외부 제출처가 다른 형식을 명시한 경우에만 별도 profile 또는 사용자 승인으로 예외를 둔다.
 
+### 1.1 두 산출물 내부의 사람용 Game Blueprint 계층 profile
+
+`HUMAN_GAME_BLUEPRINT_GDD_LAYERED_PROFILE`
+
+`NO_SEPARATE_BLUEPRINT_ARTIFACT`
+
+이 profile의 Blueprint는 세 번째 파일·Notion page/view·보드·부록이 아니라, `HUMAN_MASTER_GDD_PDF`와 `AI_PRODUCTION_SPEC_MARKDOWN` 안에 같은 ID로 합성하는 읽기 구조다. `EXACTLY_TWO_DELIVERABLES`가 항상 상위 경계이며 Blueprint, flow card, system card, legend, traceability를 별도 산출물로 발행하지 않는다.
+
+네 reading/composition layer는 다음과 같다.
+
+| Layer token | 사람이 먼저 답할 질문 | 두 산출물 안의 구성 |
+|---|---|---|
+| `PROJECT_PLAYER_LAYER` | 어떤 게임이며 플레이어가 무엇을 느끼고 배우고 선택하는가? | One-Page Vision, promise/pillar, loop, `FIRST_5_15_30` 경험 |
+| `SYSTEM_LAYER` | 핵심 flow와 system은 어떤 선택·규칙·상태·피드백으로 작동하는가? | 핵심 flow/system card, 상태·처리 흐름, 시스템 관계 |
+| `CONTENT_UX_PRESENTATION_LAYER` | 어떤 콘텐츠·화면·입력·시청각 표현이 시스템을 전달하는가? | content card, UX flow, UI state, visual/audio consumer |
+| `PRODUCTION_EVIDENCE_LAYER` | 누가 어떻게 구현하고 무엇으로 완료를 증명하는가? | scene/node/script/data owner, 구현 순서, test/runtime/UX evidence |
+
+PDF의 목차·요약·cross-reference와 AI Markdown의 registry·상세 section은 다음 읽기 순서를 명시적으로 지원한다.
+
+```text
+3-MINUTE PROJECT / PLAYER READ
+→ 10-MINUTE SYSTEM + CONTENT / UX / PRESENTATION READ
+→ DETAIL READ
+→ IMPLEMENTATION READ
+→ VERIFICATION READ
+```
+
+- `REUSABLE_FLOW_AND_SYSTEM_CARDS`: 중요한 flow와 system은 같은 card schema와 공통 ID를 사용한다. Card에는 player purpose, trigger/input, choice/condition, state/data change, output/feedback, 연결 콘텐츠·UX, implementation owner, acceptance/evidence를 포함하며 PDF와 AI Markdown에서 재사용한다.
+- `LAYERED_TRACEABILITY_REQUIRED`: project/player promise → flow/system card → content/UX/presentation consumer → scene/node/script/data → test/runtime/UX evidence를 양방향으로 추적한다.
+- `STATE_AND_EVIDENCE_LEGEND`: 상태 token의 의미, 필요한 evidence, 아직 주장할 수 없는 상위 상태를 한 legend로 설명하고 모든 layer에서 같은 상태를 사용한다.
+- `CONDITIONAL_MODULE_NA_WITH_REASON`: 프로젝트에 적용되지 않는 장·card field·시각 모듈은 억지로 채우거나 빈 placeholder를 만들지 않고 `N/A — 이유`를 남긴다.
+- `REUSE_OR_ADAPT_EXISTING_BLUEPRINT_BEFORE_NEW_REPRESENTATION`: current authority에 유효한 Blueprint·flow·system representation이 있으면 먼저 재사용하고, 현재 profile과 touched scope에 필요한 부분만 adapt한다.
+- `NO_MASS_BLUEPRINT_BACKFILL`: 이 profile을 선택해도 untouched project/system을 일괄 변환하지 않는다. 현재 GDD 범위의 material flow/system만 두 산출물 안에 필요한 최소 깊이로 구성한다.
+
 ## 2. 사용자용 상세 PDF 계약
 
 `CORE_SYSTEM_AND_CONTENT_IMPLEMENTATION_DETAIL_REQUIRED`
@@ -38,7 +72,7 @@
 - 플레이어 역할·판타지·핵심 약속
 - 플레이어 감정, 선택, 고민, 보상, 기억, 첫인상
 - 디자인 필러, 차별점, 판매 포인트, 범위 안/밖
-- 첫 5분·15분·30분 경험과 학습 순서
+- `FIRST_5_15_30`: 첫 5분·15분·30분 경험과 학습 순서
 - Core Loop, Session Loop, Meta Loop, 실패·복구 Loop
 
 ### 2.2 핵심 시스템
@@ -92,7 +126,7 @@
 - Runtime Asset/Audio Consumer 연결도
 - 실제 구현 증거 화면 또는 실제 build capture
 
-모든 도식·이미지에는 목적, 관련 ID, source, 승인 상태, consumer, 구현 상태, runtime 검증 상태를 표시한다.
+모든 도식·이미지에는 목적, 관련 ID, source, 승인 상태, consumer, 구현 상태, runtime 검증 상태를 표시한다. 정확한 구조를 전달하는 도식은 Section 7의 text-native 경계를 따른다.
 
 ## 3. AI용 상세 기획·구현 명세 계약
 
@@ -189,10 +223,14 @@ Master GDD를 새로 만들거나 대규모 갱신할 때는 현재 장르·플�
 
 `NO_AUTOMATIC_IMAGE_GENERATION`
 
+`TEXT_NATIVE_EXACT_DIAGRAMS`
+
+`CURRENT_IMAGE_CREATION_POLICY_REQUIRED`
+
 - 기존 승인 이미지와 실제 build capture를 우선 사용한다.
 - 승인 visual이 없으면 `현재 승인 Visual 없음`과 필요한 consumer·상태·규격을 기록한다.
-- 문서용 flow/state/system diagram은 편집 가능한 text/Mermaid/vector 방식으로 만들 수 있다.
-- 새로운 concept/runtime/store image 생성·편집은 별도의 사용자 명시적 요청이 있을 때만 진행한다.
+- flow/state/sequence/system 관계/data처럼 의미가 정확해야 하는 문서 도식은 `Mermaid / Flow / table`의 text-native source로 작성하고 두 산출물 안에 렌더링한다.
+- 새로운 concept/runtime/store image나 별도 image deliverable의 생성·편집은 별도의 사용자 명시적 요청과 현행 `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`를 따라야 하며 자동 생성하거나 이 profile의 세 번째 산출물로 추가하지 않는다.
 - 이미지 존재를 runtime consumer 연결 또는 UX 검증 완료로 간주하지 않는다.
 
 ## 8. 생성·검증 순서

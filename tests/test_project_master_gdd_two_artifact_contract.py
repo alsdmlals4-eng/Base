@@ -10,6 +10,11 @@ INSTRUCTION = (
 )
 PROJECT_OPERATIONS_README = ROOT / "templates/project-operations/README.md"
 CUSTOM_INSTRUCTIONS = ROOT / "templates/custom-instructions.gpt.md"
+NOTION_BLUEPRINT_CONTRACT = (
+    ROOT
+    / "docs/operations/project-workspace/NOTION_SYSTEM_BLUEPRINT_CONTRACT.md"
+)
+DOCUMENTATION_MAP = ROOT / "docs/DOCUMENTATION_MAP.md"
 
 
 def assert_ordered(test: unittest.TestCase, text: str, terms: tuple[str, ...]) -> None:
@@ -33,6 +38,46 @@ class ProjectMasterGddTwoArtifactContractTests(unittest.TestCase):
             "docs/design/PROJECT_AI_PRODUCTION_SPEC.md",
             "NO_DOCX_NO_ZIP_NO_SEPARATE_APPENDIX",
             "NO_SEPARATE_IMAGE_BUNDLE",
+        ):
+            self.assertIn(required, text)
+
+    def test_layered_human_blueprint_profile_stays_inside_two_artifacts(self):
+        text = POLICY.read_text(encoding="utf-8")
+        for required in (
+            "HUMAN_GAME_BLUEPRINT_GDD_LAYERED_PROFILE",
+            "NO_SEPARATE_BLUEPRINT_ARTIFACT",
+            "PROJECT_PLAYER_LAYER",
+            "SYSTEM_LAYER",
+            "CONTENT_UX_PRESENTATION_LAYER",
+            "PRODUCTION_EVIDENCE_LAYER",
+            "FIRST_5_15_30",
+            "REUSABLE_FLOW_AND_SYSTEM_CARDS",
+            "LAYERED_TRACEABILITY_REQUIRED",
+            "STATE_AND_EVIDENCE_LEGEND",
+            "CONDITIONAL_MODULE_NA_WITH_REASON",
+            "REUSE_OR_ADAPT_EXISTING_BLUEPRINT_BEFORE_NEW_REPRESENTATION",
+            "NO_MASS_BLUEPRINT_BACKFILL",
+        ):
+            self.assertIn(required, text)
+        assert_ordered(
+            self,
+            text,
+            (
+                "3-MINUTE PROJECT / PLAYER READ",
+                "10-MINUTE SYSTEM + CONTENT / UX / PRESENTATION READ",
+                "DETAIL READ",
+                "IMPLEMENTATION READ",
+                "VERIFICATION READ",
+            ),
+        )
+
+    def test_layered_profile_uses_text_native_exact_diagrams_and_image_gate(self):
+        text = POLICY.read_text(encoding="utf-8")
+        for required in (
+            "TEXT_NATIVE_EXACT_DIAGRAMS",
+            "Mermaid / Flow / table",
+            "CURRENT_IMAGE_CREATION_POLICY_REQUIRED",
+            "NO_AUTOMATIC_IMAGE_GENERATION",
         ):
             self.assertIn(required, text)
 
@@ -176,6 +221,58 @@ class ProjectMasterGddTwoArtifactContractTests(unittest.TestCase):
                 "## 8. 완료 기준",
             ),
         )
+
+    def test_work_instruction_operationalizes_same_layered_profile(self):
+        text = INSTRUCTION.read_text(encoding="utf-8")
+        for required in (
+            "HUMAN_GAME_BLUEPRINT_GDD_LAYERED_PROFILE",
+            "NO_SEPARATE_BLUEPRINT_ARTIFACT",
+            "PROJECT_PLAYER_LAYER",
+            "SYSTEM_LAYER",
+            "CONTENT_UX_PRESENTATION_LAYER",
+            "PRODUCTION_EVIDENCE_LAYER",
+            "FIRST_5_15_30",
+            "REUSABLE_FLOW_AND_SYSTEM_CARDS",
+            "LAYERED_TRACEABILITY_REQUIRED",
+            "STATE_AND_EVIDENCE_LEGEND",
+            "CONDITIONAL_MODULE_NA_WITH_REASON",
+            "REUSE_OR_ADAPT_EXISTING_BLUEPRINT_BEFORE_NEW_REPRESENTATION",
+            "NO_MASS_BLUEPRINT_BACKFILL",
+            "TEXT_NATIVE_EXACT_DIAGRAMS",
+            "CURRENT_IMAGE_CREATION_POLICY_REQUIRED",
+        ):
+            self.assertIn(required, text)
+        assert_ordered(
+            self,
+            text,
+            (
+                "3-MINUTE PROJECT / PLAYER READ",
+                "10-MINUTE SYSTEM + CONTENT / UX / PRESENTATION READ",
+                "DETAIL READ",
+                "IMPLEMENTATION READ",
+                "VERIFICATION READ",
+            ),
+        )
+
+    def test_selected_profile_skips_notion_blueprint_output_and_readback(self):
+        text = NOTION_BLUEPRINT_CONTRACT.read_text(encoding="utf-8")
+        for required in (
+            "TWO_ARTIFACT_PROFILE_NO_NOTION_BLUEPRINT_OUTPUT_READBACK",
+            "DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD",
+            "NO_SEPARATE_BLUEPRINT_ARTIFACT",
+            "Notion Blueprint output/readback",
+        ):
+            self.assertIn(required, text)
+
+    def test_documentation_map_routes_the_layered_profile(self):
+        text = DOCUMENTATION_MAP.read_text(encoding="utf-8")
+        for required in (
+            "HUMAN_GAME_BLUEPRINT_GDD_LAYERED_PROFILE",
+            "docs/PROJECT_MASTER_GDD_TWO_ARTIFACT_POLICY.md",
+            "templates/project-operations/GPT_WORK_PROJECT_MASTER_GDD_TWO_ARTIFACT_INSTRUCTION.md",
+            "NO_SEPARATE_BLUEPRINT_ARTIFACT",
+        ):
+            self.assertIn(required, text)
 
     def test_project_operations_readme_routes_the_optional_profile(self):
         text = PROJECT_OPERATIONS_README.read_text(encoding="utf-8")

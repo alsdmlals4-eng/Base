@@ -29,6 +29,14 @@ player action / system event
 
 `SYSTEM_BLUEPRINT_REQUIRED_WHEN_COMPLEX`
 
+### Selected two-artifact profile exception
+
+`TWO_ARTIFACT_PROFILE_NO_NOTION_BLUEPRINT_OUTPUT_READBACK`
+
+`DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD`가 명시적으로 선택되면 `NO_SEPARATE_BLUEPRINT_ARTIFACT`가 이 계약의 일반 Notion presentation/lifecycle 규칙보다 우선한다. 사람용 Blueprint layer와 machine mapping은 정확히 두 산출물인 PDF + repository AI Markdown 안에 통합하며, 새 Notion Blueprint output/readback을 생성하거나 완료 조건으로 요구하지 않는다.
+
+기존 Notion Blueprint에 repository로 이관되지 않은 고유 정보가 있으면 input-only source로 fresh-read하고 Source Registry에 provenance와 migration gap을 남긴다. 유효한 기존 Blueprint 구조는 두 산출물 안에서 reuse/adapt할 수 있지만 Notion에 write back하지 않는다. 이 예외는 선택된 profile의 출력 경계일 뿐이며 다른 프로젝트나 일반 `DOMAIN_SPLIT_CANON`의 Blueprint 적용성을 전역 폐기하지 않는다.
+
 Create or maintain a System Blueprint when at least one of these is true:
 
 - multiple states or branches interact;
