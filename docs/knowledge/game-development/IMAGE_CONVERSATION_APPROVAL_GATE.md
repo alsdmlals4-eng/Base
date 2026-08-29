@@ -2,22 +2,49 @@
 
 ## Purpose
 
-프로젝트용 이미지·목업·UI 시각화·캐릭터/배경/에셋 생성·편집에서 **사용자가 현재 이미지 출력을 직접 요청한 경우**와 **AI가 이미지 필요성을 먼저 제안한 경우**를 분리하는 Base 수준의 conversation gate다.
+프로젝트용 이미지·목업·UI 시각화·캐릭터·배경·에셋 생성·편집의 **실행 시점과 승인 상태**를 소유한다.
 
-이 계약은 기존 `Visual Requirement Gate`, 프로젝트 Visual Canon, 승인/자산 promotion, Notion delivery/readback 계약을 대체하지 않는다. 이미지가 정말 필요한지와 어떤 이미지를 만들지는 기존 owner가 판단하고, 이 문서는 **현재 사용자 메시지가 어떤 generation authority를 제공하는가**를 책임진다.
+이 revision의 active 기본값은 다음과 같다.
 
-사용자가 current turn에서 프로젝트 이미지 제작을 명시하면 `PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md`를 적용한다.
+```text
+CANDIDATE_FIRST_VISUAL_PRODUCTION
+VISUAL_NEED_CONFIRMED
+→ CURRENT_PROJECT_AND_VISUAL_CANON_READBACK
+→ ACTUAL_OR_EXPLICITLY_PLANNED_CONSUMER_REQUIRED
+→ EXISTING_APPROVED_ASSET_AND_CANDIDATE_REUSE_CHECK
+→ BOUNDED_BRIEF_READY
+→ CANDIDATE_GENERATION_PREAUTHORIZED_AFTER_PROJECT_REVIEW
+→ IMAGE_MODEL_GENERATES_ONE_CANDIDATE
+→ OBJECTIVE_QA_AND_BOUNDED_CORRECTION
+→ PRESENT_FOR_USER_FINAL_LOCK
+```
+
+사용자가 현재 turn에서 직접 생성·편집을 요청한 경우와, AI가 fresh-read 중 실제 Visual Need를 발견한 경우를 모두 처리한다. 두 경로 모두 프로젝트 정본·기존 승인 이미지·시안·실제 또는 명시적으로 계획된 consumer를 확인한 뒤 **후보 한 건**을 만들 수 있다. 후보 제작 전 같은 내용을 다시 승인받기 위해 멈추지 않는다.
+
+그러나 후보 제작 권한은 다음 권한을 만들지 않는다.
+
+```text
+CANDIDATE_PRODUCTION_MAY_PRECEDE_BLUEPRINT_FINAL_REVIEW
+CANDIDATE_PRODUCTION_IS_NOT_IMPLEMENTATION_AUTHORITY
+NO_IMPLEMENTATION_BEFORE_USER_FINAL_APPROVAL
+```
+
+생성 결과를 본 뒤 사용자가 최종 확정·수정·폐기·참고 보존 여부를 결정한다. 최종 확정 뒤에도 repository asset promotion과 runtime 구현·검증은 프로젝트 current owner를 별도로 따른다.
+
+## Related owners
 
 ```text
 PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md
-CURRENT_TURN_EXPLICIT_IMAGE_REQUEST
-EXPLICIT_REQUEST_IS_ONE_OUTPUT_AUTHORITY
-ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE
+IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md
+GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md
+GAME_VISUAL_ASSET_COVERAGE_CHECKLIST.md
 ```
+
+이 Gate는 Visual Need, Art Direction, asset manifest, Blueprint, rights/provenance owner를 대체하지 않는다.
 
 ## Image production method owner
 
-모든 실제 이미지 생성·편집 경로는 authority 판정 뒤, tool 호출 전에 반드시 `IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`를 적용한다.
+모든 실제 이미지 생성·편집은 tool 호출 전에 `IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`를 적용한다.
 
 ```text
 IMAGE_MODEL_REQUIRED_FOR_IMAGE_CREATION_OR_EDITING
@@ -26,241 +53,208 @@ IMAGE_MODEL_UNAVAILABLE_BLOCKS_IMAGE_CREATION
 NO_VECTOR_OR_CODE_DRAWN_FALLBACK
 ```
 
-따라서 이미지 deliverable은 host image generation/editing model로만 생성·편집한다. SVG/vector path, HTML/CSS/Canvas, Python drawing, Godot primitive drawing으로 이미지 모델을 대신하지 않는다. 이미지 모델을 사용할 수 없으면 Brief·consumer·규격 정리는 계속할 수 있지만 이미지 제작은 `BLOCKED_IMAGE_MODEL_UNAVAILABLE`로 닫는다.
+SVG/vector path, HTML/CSS/Canvas, Python drawing, Godot primitive drawing으로 이미지 모델을 대신하지 않는다. 이미지 모델을 사용할 수 없으면 brief·consumer·규격·재사용 조사는 계속할 수 있지만 제작은 `BLOCKED_IMAGE_MODEL_UNAVAILABLE`로 닫는다.
 
-기존 승인 vector asset의 수정 없는 재사용, 실제 runtime-native UI·shader·VFX 구현, Mermaid·Flow·표 같은 구조 정보 작성의 좁은 경계도 새 owner가 판정한다. 이 예외는 새 vector artwork를 직접 제작하거나 이미지 모델을 우회하는 authority가 아니다.
+기존 승인 vector asset의 수정 없는 재사용, runtime-native UI·shader·VFX 구현, Mermaid·Flow·표 같은 구조 정보는 좁은 예외다. 이 예외는 새 artwork를 직접 그리거나 이미지 모델을 우회할 권한이 아니다.
 
 ## Host / system precedence and evidence ceiling
 
-`HOST_PLATFORM_PRECEDENCE`
+```text
+HOST_PLATFORM_PRECEDENCE
+```
 
-이 Gate는 Base 프로젝트 작업 규칙이며 **상위 시스템·developer·host platform 정책이나 도구 계약보다 높은 실행 권한을 가지지 않는다**. 상위 정책이 이미지 생성 시점·도구 호출·응답 형태를 다르게 요구하면 해당 상위 정책을 우선한다.
+상위 system·developer·host platform·tool contract가 이미지 생성 시점이나 응답 형태를 더 엄격하게 제한하면 상위 정책을 따른다.
 
-그 때문에 이 Gate의 정상 sequence를 그대로 실행할 수 없는 경우 작업 기록은 다음 상태를 명시한다.
+```text
+HOST_POLICY_OVERRIDE
+RUNTIME_ENFORCEMENT_NOT_GUARANTEED
+```
 
-- `HOST_POLICY_OVERRIDE` — 상위 시스템/host 정책이 Base workflow보다 우선되어 실행 순서가 달라짐
-- `RUNTIME_ENFORCEMENT_NOT_GUARANTEED` — 이 정적 문서만으로 실제 host runtime 동작을 강제했다고 주장할 수 없음
+Base 문서만으로 host runtime을 강제했다고 주장하지 않는다.
 
-이 경우에도 호환 가능한 프로젝트 정본·Visual Need·승인/자산 lifecycle·Notion delivery·evidence ceiling은 유지한다. 상위 정책을 위반해서 Base Gate를 강제하거나, host가 보장하지 않은 동작을 `PASS` 또는 runtime-enforced로 과장하지 않는다.
+## Preconditions
 
-## Machine contract
+후보 제작 전 다음 receipt가 있어야 한다.
+
+```yaml
+VISUAL_CANDIDATE_PREFLIGHT:
+  exact_project:
+  current_project_source_sha:
+  visual_need:
+  consumer:
+  consumer_state_or_slot:
+  current_approved_visual_anchor:
+  existing_approved_asset_reuse_result:
+  existing_candidate_reuse_result:
+  required_dimensions_and_format:
+  keep: []
+  avoid: []
+  do_not_drift: []
+  rights_and_provenance_constraints:
+  bounded_deliverable:
+  result: READY | BLOCKED_UNVERIFIED | DO_NOT_GENERATE
+```
 
 ```text
 PROJECT_REVIEW_COMPLETE
 VISUAL_NEED_DEFINED
-CURRENT_TURN_EXPLICIT_IMAGE_REQUEST
-EXPLICIT_REQUEST_IS_ONE_OUTPUT_AUTHORITY
-ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE
+VISUAL_NEED_CONFIRMED
+CURRENT_PROJECT_AND_VISUAL_CANON_READBACK
+ACTUAL_OR_EXPLICITLY_PLANNED_CONSUMER_REQUIRED
+EXISTING_APPROVED_ASSET_AND_CANDIDATE_REUSE_CHECK
 TEXT_BRIEF_COMPLETE
-TEXT_BRIEF_STOP_REQUIRED
-NEXT_USER_EXPLICIT_APPROVAL
-IMAGE_MODEL_REQUIRED_FOR_IMAGE_CREATION_OR_EDITING
-DIRECT_VECTOR_IMAGE_AUTHORING_PROHIBITED
-IMAGE_MODEL_UNAVAILABLE_BLOCKS_IMAGE_CREATION
-NO_VECTOR_OR_CODE_DRAWN_FALLBACK
-GENERATE_EXACTLY_ONE
-STOP_REQUIRED_AFTER_GENERATION
-NO_AUTOMATIC_IMAGE_CHAIN
+BOUNDED_BRIEF_READY
+CANDIDATE_GENERATION_PREAUTHORIZED_AFTER_PROJECT_REVIEW
 ```
 
----
+### Fail-closed conditions
 
-## Path A — 사용자가 현재 이미지 출력을 명시한 경우
+다음이면 임의 생성하지 않는다.
+
+- exact project identity가 없다.
+- current visual owner·approved anchor·기존 시안을 읽지 못했다.
+- 서로 다른 current anchor가 충돌한다.
+- 실제 또는 명시적으로 계획된 consumer가 없다.
+- 기존 승인 asset 또는 candidate로 충족되는지 확인하지 않았다.
+- rights·format·scope가 제품 결과를 바꿀 정도로 불명확하다.
+- host policy가 명시 요청 없이 tool 호출을 금지한다.
+
+이 경우 `BLOCKED_UNVERIFIED`, `MISSING_CANON`, `VISUAL_CANONICAL_CONFLICT`, `DO_NOT_GENERATE` 중 정확한 상태로 닫는다.
+
+## Path A — current-turn explicit request
 
 ```text
 CURRENT_TURN_EXPLICIT_IMAGE_REQUEST
-→ exact Project / actual consumer / current requirement resolve
+→ exact project / actual consumer / current requirement resolve
 → PROJECT_REVIEW_COMPLETE
 → PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md
-→ current approved visual anchor resolution
+→ APPROVED_VISUAL_DIRECTION_RESOLUTION_REQUIRED
 → EXPLICIT_REQUEST_IS_ONE_OUTPUT_AUTHORITY
 → IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md
-→ image model availability and no-bypass check
-→ GENERATE_EXACTLY_ONE
+→ IMAGE_MODEL_GENERATES_ONE_CANDIDATE
+→ OBJECTIVE_QA_AND_BOUNDED_CORRECTION
+→ PRESENT_FOR_USER_FINAL_LOCK
 → STOP_REQUIRED_AFTER_GENERATION
 ```
 
-### Explicit request 판정
-
-다음처럼 현재 turn의 실제 생성·편집을 명확히 요구한 경우다.
-
-- `이미지 만들어줘`
-- `그려줘`
-- `이 화면을 제작해줘`
-- `이 이미지에서 ○○를 바꿔줘`
-- `이 Brief대로 생성해`
-
-다음은 current-turn explicit image request가 아니다.
-
-- 이미지가 필요한지 검토해 달라는 요청
-- requirement inventory나 brief만 작성해 달라는 요청
-- 기존 이미지 분석·비평·정리 요청
-- 과거 대화에서의 생성 승인
-- Base/Notion 구조 변경 승인
-
-### One-output authority
-
-```text
-EXPLICIT_REQUEST_IS_ONE_OUTPUT_AUTHORITY
-```
-
-사용자의 현재 명시 요청은 별도 장문 이미지 pipeline 지시문이나 다음 turn의 중복 승인을 요구하지 않고, current request 범위의 **시각 deliverable 1건**을 실행할 authority가 된다.
-
-그 deliverable은 `PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md` 판정에 따라 다음 중 하나다.
-
-1. usable approved visual anchor가 있으면 해당 앵커를 사용한 요청 image/edit candidate 1건
-2. usable approved visual anchor가 없으면 사용자가 1안을 고르기 위한 concept comparison deliverable 1건
+`EXPLICIT_REQUEST_IS_ONE_OUTPUT_AUTHORITY`는 current request의 bounded visual deliverable 한 건을 생성할 권한이다. current request가 여러 독립 파일을 명시하지 않았다면 다음 캐릭터·화면·variant로 확장하지 않는다.
 
 ```text
 GENERATE_EXACTLY_ONE
+NO_AUTOMATIC_IMAGE_CHAIN
+NO_AUTOMATIC_SCOPE_EXPANSION
 ```
 
-- concept comparison board 하나는 deliverable 1건으로 계산한다.
-- comparison board 속 panel은 각각 production asset으로 계산하지 않는다.
-- current request가 여러 독립 파일을 명시하지 않았다면 다음 캐릭터·포즈·화면·variant로 자동 확장하지 않는다.
-- 현재 명시 요청은 생성 결과의 사용자 승인, `PROJECT_ASSET_APPROVED`, runtime 적용을 뜻하지 않는다.
-- 생성·편집 수단은 항상 `IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`를 따르며 직접 vector/code-drawn fallback을 사용하지 않는다.
+## Path B — fresh-read 중 확인된 actual visual need
 
-### Anchor 부재 시
+사용자가 매 이미지마다 다시 `그려줘`라고 쓰지 않아도 다음 precondition이 확인되면 후보 제작을 진행할 수 있다.
 
-usable current 1안이 없으면 final production asset을 추측하지 않는다.
+```text
+VISUAL_NEED_CONFIRMED
+→ PROJECT_REVIEW_COMPLETE
+→ CURRENT_PROJECT_AND_VISUAL_CANON_READBACK
+→ ACTUAL_OR_EXPLICITLY_PLANNED_CONSUMER_REQUIRED
+→ EXISTING_APPROVED_ASSET_AND_CANDIDATE_REUSE_CHECK
+→ TEXT_BRIEF_COMPLETE
+→ BOUNDED_BRIEF_READY
+→ CANDIDATE_GENERATION_PREAUTHORIZED_AFTER_PROJECT_REVIEW
+→ IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md
+→ IMAGE_MODEL_GENERATES_ONE_CANDIDATE
+→ OBJECTIVE_QA_AND_BOUNDED_CORRECTION
+→ PRESENT_FOR_USER_FINAL_LOCK
+→ STOP_REQUIRED_AFTER_GENERATION
+```
+
+후보는 기존 프로젝트 내용·승인 시안·Art Direction·Keep/Avoid/Do Not Drift와 일관되어야 한다. 하나의 consumer에 정상·hover·selected·disabled·damaged 같은 필수 state family가 필요하면 requirement에서 상태군을 정의하되, 한 candidate authority로 독립 이미지를 무제한 연쇄 생성하지 않는다.
+
+## Missing anchor route
+
+usable current anchor가 없으면 final production asset을 추측하지 않는다.
 
 ```text
 NO_USABLE_APPROVED_VISUAL_ANCHOR
 → GENERATE_CONCEPT_OPTION_COMPARISON
-→ STOP_REQUIRED_AFTER_GENERATION
-→ next user message selects one direction
+→ COMPARISON_BOARD_ONE_DELIVERABLE
+→ PRESENT_FOR_USER_FINAL_LOCK
 ```
 
-사용자의 선택 메시지는 selected direction의 standalone anchor 제작·검수 authority가 될 수 있다. production 파생물은 standalone anchor와 project approval/readback 뒤에 진행한다.
+comparison board는 exploration candidate 한 건이며 production asset이 아니다. 사용자가 한 방향을 선택한 뒤 standalone anchor를 만들고 current project owner에서 등록·readback한다.
 
----
+## Objective QA and bounded correction
 
-## Path B — AI가 이미지 필요성을 먼저 제안한 경우
+후보 생성 뒤 AI는 다음 객관 항목을 먼저 검사한다.
+
+- brief·consumer·규격 준수
+- 승인 visual anchor·색·실루엣·재질·시대·세계관 일관성
+- 읽기 쉬운 UI·화면 의미와 state 구분
+- 명백한 해부학·텍스트·투명도·seam·crop·artifact 오류
+- rights·provenance·금지 요소
+
+명백한 결함만 같은 bounded deliverable 안에서 한정 교정할 수 있다.
 
 ```text
-ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE
+OBJECTIVE_DEFECT_CORRECTION_WITHIN_APPROVED_DELIVERABLE
 ```
 
-사용자가 current turn에서 이미지 출력을 명시하지 않았는데 검토 중 Visual Need를 발견한 경우 기존 two-turn barrier를 유지한다.
+새 Art Direction, 다른 캐릭터·화면·asset family, 취향 선택은 교정이 아니라 scope expansion이다.
+
+## Final lock and lifecycle
 
 ```text
-프로젝트 전체 또는 현재 이미지 결정에 필요한 정본 검토
-→ PROJECT_REVIEW_COMPLETE
-→ Visual Need / 사용처 / 보호 요소 / 금지 drift 정의
-→ 텍스트 Brief 작성
-→ TEXT_BRIEF_COMPLETE
-→ TEXT_BRIEF_STOP_REQUIRED
-
-[반드시 다음 사용자 메시지]
-
-→ NEXT_USER_EXPLICIT_APPROVAL
-→ IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md
-→ image model availability and no-bypass check
-→ 승인된 Brief 범위의 이미지/편집 1건 실행
-→ GENERATE_EXACTLY_ONE
-→ 결과 제시
-→ STOP_REQUIRED_AFTER_GENERATION
+NEEDED
+→ BRIEF_READY
+→ GENERATED_CANDIDATE
+→ OBJECTIVE_QA_PASSED | REVISION_REQUIRED | REJECTED
+→ USER_FINAL_LOCKED
+→ CANON_REGISTERED
+→ IMPLEMENTED
+→ RUNTIME_VERIFIED
 ```
 
-### TEXT_BRIEF_STOP_REQUIRED
+```text
+GENERATED_CANDIDATE != USER_FINAL_LOCKED
+USER_FINAL_LOCKED != PROJECT_ASSET_APPROVED
+image generation success != user approval != PROJECT_ASSET_APPROVED != runtime integration
+```
 
-AI가 먼저 제안한 이미지 생성/편집 전에는 텍스트로 최소 다음을 합의한다.
+- `GENERATED_CANDIDATE`: 생성·검수 가능한 후보.
+- `USER_FINAL_LOCKED`: 사용자가 결과를 보고 최종 방향을 확정.
+- `PROJECT_ASSET_APPROVED`: 프로젝트 asset owner와 manifest가 제품 사용을 승인.
+- `CANON_REGISTERED`: repository current owner·path·provenance·SHA-256·consumer가 readback됨.
+- `IMPLEMENTED`: 실제 consumer가 asset을 사용함.
+- `RUNTIME_VERIFIED`: 실제 화면·상태·입력·플랫폼에서 검증됨.
 
-- 어떤 프로젝트/작품인가
-- 이 이미지가 어디에 쓰이는가
-- 무엇을 보여줘야 하는가
-- 유지해야 하는 기존 캐릭터/세계관/UI/스타일 정본
-- 바꾸면 안 되는 것
-- 레이아웃/화면/Flow에서의 역할
-- 후보가 exploration인지 production candidate인지
-
-Brief를 작성한 **같은 assistant 응답에서 AI가 임의로 image generation tool을 호출하지 않는다**. Brief 제시 후 작업을 종료하고 다음 사용자 메시지를 기다린다.
-
-### NEXT_USER_EXPLICIT_APPROVAL
-
-다음 메시지에서 사용자가 `진행해`, `그려줘`, `이대로 만들어`, `승인`처럼 방금 제시된 Brief의 이미지 제작/편집을 명확히 승인해야 생성 단계로 이동한다.
-
-다음은 assistant-initiated Brief의 생성 승인으로 보지 않는다.
-
-- 이전 기획 단계에서의 포괄적 작업 승인
-- Base/Notion 구조 변경 승인
-- 이미지 필요성만 승인
-- `좋아`, `그 방향 괜찮아`처럼 제작 실행 여부가 모호한 반응
-- 과거 대화의 이미지 생성 승인
-
----
+Notion·Sheets는 프로젝트가 명시적으로 보존한 unique migration 자료가 있을 때만 읽는다. candidate, final lock, current asset approval의 기본 destination은 repository owner다.
 
 ## STOP_REQUIRED_AFTER_GENERATION
 
-이미지 deliverable 생성 직후:
+후보 한 건과 필요한 bounded correction 뒤 결과를 사용자에게 제시한다. 같은 작업에서 다음 독립 asset family로 자동 확장하지 않는다. 사용자는 승인·수정·폐기·참고 보존을 선택한다.
 
-- 결과를 사용자가 검토할 수 있게 제시한다.
-- 같은 assistant turn에서 자동으로 다음 이미지·독립 variant·개별 에셋 생성으로 넘어가지 않는다.
-- 다음 사용자 메시지에서 승인·수정·폐기·방향 선택·다음 생성 여부를 받는다.
+## Retired compatibility aliases
 
-`NO_AUTOMATIC_IMAGE_CHAIN`은 이미지 deliverable 하나 뒤 `다음 캐릭터`, `다음 포즈`, `다음 UI`, `분해 에셋`, `다음 option set`을 자동 호출하는 것을 금지한다.
-
-현재 승인된 deliverable의 객관적 결함 correction은 `PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md`의 bounded correction 규칙을 따른다. host가 사용자 노출 전 내부 retry를 지원하지 않으면 visible automatic chain으로 교정하지 않고 `REVISION_REQUIRED`로 둔다.
-
-## Project context requirement
-
-이미지 작업은 현재 프로젝트의 필요한 범위를 먼저 읽는다.
+다음 token은 historical test·proposal·adapter를 찾기 위한 alias이며 **active 실행 순서가 아니다**.
 
 ```text
-latest user decision
-→ exact Project relation
-→ project canon / current decisions
-→ Home / Visual Bible / approved asset references
-→ related Flow/Screen/System when relevant
-→ actual implementation state when visual must match runtime
-→ visual anchor resolution / brief
+RETIRED_COMPATIBILITY_ALIAS
+ASSISTANT_INITIATED_VISUAL_NEED_RETAINS_TWO_TURN_GATE
+TEXT_BRIEF_STOP_REQUIRED
+NEXT_USER_EXPLICIT_APPROVAL
 ```
 
-프로젝트 identity나 approved direction이 모호하면 `BLOCKED_UNVERIFIED` 또는 `MISSING_CANON`으로 멈춘다. 다른 프로젝트의 시각자료를 편의상 가져오지 않는다.
-
-## Approval and asset lifecycle remain separate
-
-```text
-image generation success
-!= user approval
-!= PROJECT_ASSET_APPROVED
-!= runtime integration
-```
-
-생성 결과는 후보일 뿐이다. 프로젝트용으로 승인되면 기존 Notion Visual Bible/Asset workflow에 첨부·상태 기록·destination readback을 수행한다. Runtime 사용이 필요하면 repository implementation과 실제 runtime evidence가 별도로 필요하다.
-
-## Exceptions
-
-이 Gate는 사용자가 명시적으로 요청하거나 AI가 제안한 **프로젝트 시각 자산 생성/편집**에 적용한다. 다음은 이미지 생성이 아니므로 generation checkpoint를 만들지 않는다.
-
-- 기존 이미지에 대한 텍스트 분석/비평
-- Notion에 이미 승인된 이미지를 재배치/링크하는 작업
-- 이미지 없는 Flow/표/텍스트 문서 편집
-- 생성 도구를 호출하지 않는 이미지 requirement inventory 작성
-- 기존 승인 vector asset을 새로 그리지 않고 재사용하는 작업
-- 실제 runtime-native UI·shader·VFX 구현
-
-예외의 세부 경계는 `IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`가 소유한다. 위 작업을 새 artwork, mockup, icon, texture, sprite, UI art 또는 이미지 후보 제작의 우회 수단으로 사용하면 예외가 아니며 이미지 모델을 사용해야 한다.
+과거 two-turn gate는 current project·consumer·visual canon이 확인되지 않은 작업에서 안전 정지 역할을 했다. 현재 active replacement는 `CANDIDATE_FIRST_VISUAL_PRODUCTION`이다. 상위 host policy가 명시 요청을 요구하면 `HOST_PLATFORM_PRECEDENCE`로 같은 안전 경계를 유지한다.
 
 ## Verification
 
-작업 기록 또는 검토 시 다음을 확인한다.
+- current project exact SHA와 visual owner를 읽었는가
+- actual/planned consumer·slot·state·format이 있는가
+- 기존 승인 asset·candidate 재사용을 먼저 확인했는가
+- candidate가 current visual anchor와 일치하는가
+- 이미지 모델을 사용했고 vector/code fallback이 없는가
+- 한 bounded candidate 뒤 자동 scope expansion이 없는가
+- 객관 결함과 취향·방향 변경을 구분했는가
+- 사용자 final lock 전 product approval·canon·runtime을 주장하지 않았는가
+- repository provenance·SHA-256·consumer readback이 있는가
+- implementation·runtime evidence가 별도인가
+- host override가 있으면 숨기지 않았는가
 
-- `PROJECT_REVIEW_COMPLETE` 증거가 있는가
-- current-turn explicit request인지 assistant-initiated need인지 분류했는가
-- explicit request이면 `PROJECT_IMAGE_REQUEST_VISUAL_ANCHOR_PIPELINE.md`로 current 1안을 확인했는가
-- approved anchor를 실제로 읽고 사용자에게 surface했는가
-- anchor 부재 시 comparison deliverable만 만들고 production으로 건너뛰지 않았는가
-- assistant-initiated need이면 text brief와 다음-turn 승인을 지켰는가
-- 실제 생성·편집 전에 `IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`를 적용했는가
-- 이미지 자체가 deliverable이면 image generation/editing model을 사용했는가
-- SVG/vector path 또는 code-drawn fallback으로 이미지 모델을 우회하지 않았는가
-- image model unavailable 상태에서 `BLOCKED_IMAGE_MODEL_UNAVAILABLE`로 닫았는가
-- 한 authority당 기본 deliverable이 `GENERATE_EXACTLY_ONE`인가
-- 생성 뒤 `STOP_REQUIRED_AFTER_GENERATION`을 지켰는가
-- 자동 image chain이 없었는가
-- 생성/승인/Notion delivery/runtime 상태를 서로 과장하지 않았는가
-- host/system 우선권이 개입했다면 `HOST_POLICY_OVERRIDE`와 `RUNTIME_ENFORCEMENT_NOT_GUARANTEED`를 숨기지 않았는가
-
-위 조건을 충족하지 않으면 해당 프로젝트 이미지 작업은 `REVIEW_REQUIRED`이며, 존재하는 결과물을 자동 승인하거나 다음 생성의 근거로 사용하지 않는다.
+하나라도 불충분하면 해당 state만 `REVIEW_REQUIRED` 또는 `BLOCKED_UNVERIFIED`로 둔다.
