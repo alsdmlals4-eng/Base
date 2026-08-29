@@ -1,0 +1,172 @@
+review_contract:
+  policy: docs/AUTONOMOUS_RESEARCH_IMPLEMENTATION_AND_LEARNING_POLICY.md
+  minimum_full_loops_before_clean_exit: 5
+  claim_only_review_is_invalid: true
+
+work_item:
+  repository: alsdmlals4-eng/Base
+  pull_request: 782
+  base_sha: f80ae737619d300cedf906b544961066ed373312
+  reviewed_functional_head: 4c21c755a92245df2391114309c5c220ed148370
+  executed_at_kst: 2026-08-29T13:44:24+09:00
+  scope:
+    - candidate-first image production with post-generation user final lock
+    - official/primary research and actual implementation feasibility
+    - long-term total-cost, minimized intervention and repository learning
+    - GPT custom instructions and affected active owners/tests
+    - actual post-work adversarial review and correction
+  evidence_ceiling:
+    repository_policy_and_contract_tests: PASS
+    image_generation: NOT_RUN
+    godot_runtime: NOT_RUN
+    human_ux_device_release: NOT_RUN
+
+loops:
+  - index: 1
+    exact_input: 4c21c755a92245df2391114309c5c220ed148370
+    full_scope_read:
+      - PR 782 metadata and 13-file changed-path inventory
+      - main f80ae737619d300cedf906b544961066ed373312
+      - same-goal PR 780 and PR 781
+    checks:
+      - GitHub.fetch_pr / list_pr_changed_filenames / main branch readback: PASS
+      - same-goal open-PR uniqueness: FAIL
+    validated_findings:
+      - id: BASE-PR-DUP-001
+        severity: MUST_FIX
+        finding: PR 780 and PR 781 duplicated the same active-owner rollout and would preserve conflicting future merge paths.
+    corrections:
+      - PR 780 comment 5460393517 and close at 2026-08-29T04:43:48Z
+      - PR 781 comment 5460394294 and close at 2026-08-29T04:44:03Z
+    verification:
+      - PR 780 state=closed: PASS
+      - PR 781 state=closed: PASS
+      - PR 782 remains the single current implementation line: PASS
+    alternatives:
+      - merge PR 780: REJECT; superseded owner structure and weaker final evidence
+      - continue RED PR 781: REJECT; intentionally incomplete
+      - retain PR 782: ADOPT
+    long_term_fit: PASS__ONE_OWNER_LINE_LOWERS_DRIFT_AND_MAINTENANCE
+    output: 4c21c755a92245df2391114309c5c220ed148370 plus corrected PR metadata
+
+  - index: 2
+    exact_input: 69e0371879cbd21234e5c668020ee2a992c02eeb_to_17ae70f0f94af26e3a98b4c6ff813f09ec9a2fa7
+    full_scope_read:
+      - downloaded core-regression diagnostics for failing head 69e0371879cbd21234e5c668020ee2a992c02eeb
+      - v4.9 execution adapter after concurrent correction 17ae70f0f94af26e3a98b4c6ff813f09ec9a2fa7
+      - docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md after 8e52730d00f90e4db4d2ca14e45edfe3b9b4d386
+    checks:
+      - old whole-core regression: FAIL__V49_AND_LOCAL_VAULT_BOUNDARIES_REGRESSED
+      - restored head whole-core regression: FAIL__ONLY_ONE_UNRELATED_BOOTSTRAP_WORDING_FAILURE_REMAINED
+    validated_findings:
+      - id: BASE-CAPABILITY-REGRESSION-001
+        severity: MUST_FIX
+        finding: the initial rewrite removed existing engine/Skill/recovery capability and local candidate-vault explicit-promotion routing.
+    corrections:
+      - semantic local-vault/user-lock/explicit-promote restoration at 8e52730d00f90e4db4d2ca14e45edfe3b9b4d386
+      - v4.9 capability restoration at 17ae70f0f94af26e3a98b4c6ff813f09ec9a2fa7
+    verification:
+      - prior v4.9 and asset-delivery failures disappeared from the 17ae70f exact-head regression: PASS
+      - Blueprint approval and non-Godot boundaries remained intact: PASS
+    alternatives:
+      - token-only compatibility: REJECT
+      - wholesale concise rewrite: REJECT
+      - restore existing semantic owners and acceptance boundaries: ADOPT
+    long_term_fit: PASS__PRESERVES_REUSE_AND_AVOIDS_ADAPTER_REGRESSION
+    output: 17ae70f0f94af26e3a98b4c6ff813f09ec9a2fa7
+
+  - index: 3
+    exact_input: 17ae70f0f94af26e3a98b4c6ff813f09ec9a2fa7
+    full_scope_read:
+      - artifact 9709420620 core-regression-results.txt
+      - templates/custom-instructions.gpt.md blob ca1046a5944da6a033fc51daae9d74c9b536af19
+      - tests/test_ai_bootstrap_drift_contract.py
+    checks:
+      - 2342-test whole-core regression: FAIL__ONE_ASSERTION
+      - exact failing assertion extraction: PASS
+    validated_findings:
+      - id: BASE-BOOTSTRAP-MIGRATION-001
+        severity: MUST_FIX
+        finding: the pasteable active instruction said migration scope but did not explicitly preserve migration compatibility semantics.
+    corrections:
+      - templates/custom-instructions.gpt.md clarified at 4c21c755a92245df2391114309c5c220ed148370
+    verification:
+      - Validate Base v9 Operating Contracts run 33234411408: PASS
+      - Validate Evidence-Based Game Development Knowledge run 33234411431: PASS
+      - Validate Game Project Operating System run 33234411439: PASS
+    alternatives:
+      - weaken the regression test: REJECT
+      - add a non-pasteable legacy token: REJECT
+      - clarify the active user-facing rule: ADOPT
+    long_term_fit: PASS__LOW_COST_ACTIVE_BEHAVIOR_FIX
+    output: 4c21c755a92245df2391114309c5c220ed148370
+
+  - index: 4
+    exact_input: 4c21c755a92245df2391114309c5c220ed148370
+    full_scope_read:
+      - docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md
+      - docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md blob fa0ae5a87862c5fb40adf97b538112271efd84c8
+      - image anchor/visual requirement regression tests
+      - exact-head workflow triad
+    checks:
+      - actual/planned consumer and existing visual readback: PASS
+      - bounded image-model candidate before lock: PASS
+      - LOCK / REVISE / REJECT / REFERENCE_ONLY: PASS
+      - user lock before canon/runtime promotion: PASS
+      - local vault and explicit promote boundary: PASS
+      - no automatic image chain and host precedence: PASS
+      - exact-head regressions: PASS
+    validated_findings: []
+    corrections: []
+    alternatives:
+      - mandatory per-image preapproval: REJECT
+      - unrestricted automatic batch generation: REJECT
+      - bounded candidate-first with post-generation final lock: ADOPT
+    long_term_fit: PASS__LOWER_APPROVAL_TOIL_WITHOUT_HIDDEN_ASSET_DEBT
+    output: 4c21c755a92245df2391114309c5c220ed148370
+
+  - index: 5
+    exact_input: 4c21c755a92245df2391114309c5c220ed148370
+    full_scope_read:
+      - docs/AUTONOMOUS_RESEARCH_IMPLEMENTATION_AND_LEARNING_POLICY.md
+      - docs/reviews/2026-08-29-autonomous-research-visual-policy-project-audit.md blob a305eae7fe63f33786d15062fe67061e70ffe999
+      - templates/project-operations/ADVERSARIAL_REVIEW_EVIDENCE_RECEIPT.yml blob e021c715c453f3bb74c66ac3630992fc0dd7685d
+      - current official Godot Best Practices
+      - current official GitHub protected-branch/status-check documentation
+      - Google SRE Eliminating Toil and Postmortem Culture
+    checks:
+      - current official/primary research, success/failure evidence and alternatives: PASS
+      - actual implementation feasibility packet and evidence ceiling: PASS
+      - long-term total-cost plus anti-overengineering: PASS
+      - safe autonomy with high-risk/final-lock human fallback: PASS
+      - repository-backed root-cause/verification/regression learning: PASS
+      - exact functional-head workflow triad: PASS
+    validated_findings: []
+    corrections: []
+    alternatives:
+      - copy full generic policy into every project AGENTS: REJECT
+      - rely on chat memory/custom instructions only: REJECT
+      - central Base owner plus thin project-local conflict correction: ADOPT
+    long_term_fit: PASS__CENTRAL_REUSABLE_CONTRACT_WITH_NARROW_PROJECT_OVERLAYS
+    output: 4c21c755a92245df2391114309c5c220ed148370
+
+final_exit_candidate:
+  completed_full_loop_count: 5
+  validated_must_fix_count: 3
+  corrected_must_fix_count: 3
+  new_valid_must_fix_after_loop_5: 0
+  regression_count_after_loop_5: 0
+  canon_or_consumer_drift_after_loop_5: 0
+  reviewed_functional_head_checks:
+    - run 33234411408: PASS
+    - run 33234411431: PASS
+    - run 33234411439: PASS
+  receipt_bearing_head_checks: PENDING
+  post_merge_main_readback: NOT_RUN
+  clean_review_exit: CANDIDATE_PENDING_RECEIPT_HEAD_CI
+  remaining_work:
+    - verify receipt-bearing exact head
+    - confirm review and merge gates
+    - merge PR 782 if permitted
+    - read back new main
+    - apply only validated project-local conflict corrections
