@@ -4,7 +4,7 @@
 
 현재 이 채팅이 연결된 프로젝트의 최신 정본과 실제 구현 상태를 기준으로, 프로젝트 전체를 재구성한 통합 제작 기획서를 완성해.
 
-이 작업은 기존 문서를 단순 병합하거나 요약하는 작업이 아니다. 사람이 프로젝트의 핵심 경험·핵심 시스템·핵심 콘텐츠·시각 방향과 Godot 구현 원리를 한 파일에서 이해하고, GPT/Codex가 후속 구현·검증을 정확히 이어갈 수 있도록 다음 산출물을 **정확히 2개**만 만든다.
+이 작업은 기존 문서를 단순 병합하거나 요약하는 작업이 아니다. 사람이 프로젝트의 핵심 경험·핵심 시스템·핵심 콘텐츠·시각 방향과 Godot 구현 원리를 한 파일에서 이해하고, 사용자 최종 승인 뒤 GPT/Codex가 후속 구현·검증을 정확히 이어갈 수 있도록 다음 산출물을 **정확히 2개**만 만든다.
 
 1. 사용자용 상세 기획서 PDF
 2. AI용 상세 기획·구현 명세 Markdown
@@ -13,7 +13,37 @@
 
 새 이미지 생성·편집은 이 지시문의 범위가 아니다. `NO_AUTOMATIC_IMAGE_GENERATION`과 `CURRENT_IMAGE_CREATION_POLICY_REQUIRED`를 적용하고, 기존 승인 이미지와 실제 build capture만 우선 사용해. 승인된 시각자료가 없으면 임의로 채우지 말고 `현재 승인 Visual 없음`과 필요한 consumer·상태·규격을 기록해. 새 image deliverable이 별도로 필요해져도 자동 생성하거나 세 번째 산출물로 추가하지 말고, 별도 사용자 명시적 요청과 현행 `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`로 넘겨.
 
-이미 저장소·연결 자료에서 확인할 수 있는 사실을 사용자에게 다시 묻지 마. 안전한 범위의 조사·정리·교정·파일 생성·검증·GitHub 반영은 중간 승인 없이 연속 수행하고, 정말 위험한 정본 의미 변경이나 복구 불가능한 변경만 보류해.
+이미 저장소·연결 자료에서 확인할 수 있는 사실을 사용자에게 다시 묻지 마. 안전한 범위의 조사·정리·교정·두 문서 생성·검증·GitHub 반영은 중간 승인 없이 연속 수행하고, 정말 위험한 정본 의미 변경이나 복구 불가능한 변경만 보류해. 이 연속 수행 권한은 product implementation 실행 권한이 아니다.
+
+### Prospective Blueprint 사전 구현 승인 Gate
+
+`BLUEPRINT_PRE_IMPLEMENTATION_REVIEW_GATE`
+
+`REQUIRED_IMAGE_AND_MATERIAL_PREPARATION`
+
+`USER_FINAL_REVIEW_APPROVAL_REQUIRED`
+
+`NO_IMPLEMENTATION_BEFORE_USER_FINAL_APPROVAL`
+
+새 implementation package에는 다음 순서를 적용해.
+
+```text
+PLAN
+→ REQUIRED_IMAGE_AND_MATERIAL_PREPARATION
+→ BLUEPRINT_REVIEW_PUBLICATION
+→ USER_FINAL_REVIEW_APPROVAL
+→ IMPLEMENTATION_AUTHORIZED
+```
+
+- **PLAN**: 이 지시문의 정본 재구성·벤치마킹·ID/상태·PDF/AI 명세 작업을 Game Design Loop의 `FRAME → RESEARCH → DESIGN → SPECIFY`로 묶어. player promise와 결정 target을 frame하고, 질문에 필요한 근거만 research하고, player loop에서 system/content/UX를 design한 뒤 rule/state/acceptance/non-goal을 specify해.
+- **REQUIRED_IMAGE_AND_MATERIAL_PREPARATION**: Blueprint 판단에 실제로 필요한 기존 승인 image, build capture, reference, data, audio/material과 누락 상태를 consumer별로 준비해. 새 image deliverable은 `docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md`와 `docs/knowledge/game-development/IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`로 넘기고, 이 지시문만으로 생성 authority를 추정하지 마. `STRUCTURED_INFORMATION_ARTIFACTS_REMAIN_TEXT_NATIVE`: Mermaid / Flow / table은 이미지 후보가 아니라 정확한 구조 정보 artifact로 유지해.
+- **BLUEPRINT_REVIEW_PUBLICATION**: layered Blueprint를 정확히 두 산출물 안에 합성하고 `CREATIVE → STRUCTURAL → RULE → CONTINUITY → ADVERSARIAL → POLISH` pass를 모두 실행한 뒤 검토용 exact revision을 사용자에게 제공해.
+- **USER_FINAL_REVIEW_APPROVAL**: `USER_FINAL_APPROVAL_DECISION_ID`로 `DEC-` ID를 부여하고 AI Markdown의 CONFIRMED DECISIONS에 사용자가 검토한 PDF와 AI Markdown의 branch/SHA, 승인 scope, known risk·N/A·미결정을 기록해. 프로젝트에 별도 repository Decision owner가 있으면 같은 ID로 동기화하되 새 artifact를 만들지 마. `DRAFT | INTERNAL_REVIEW | GENERATED_IMAGE | AUTOMATED_TEST | ASSISTANT_INFERENCE`는 `USER_FINAL_REVIEW_APPROVAL`이 아니야.
+- **IMPLEMENTATION_AUTHORIZED**: 위 exact revision에 대한 명시적 사용자 최종 승인이 기록된 뒤에만 실제 구현 execution이나 Codex implementation package를 시작해. `TASK_BREAKDOWN_READY_IMPLEMENTATION_EXECUTION_BLOCKED`: 구현 task breakdown·dependency·acceptance는 미리 준비할 수 있지만 승인 전에는 실행하지 마.
+
+`PROSPECTIVE_ONLY_EXISTING_IMPLEMENTATION_EVIDENCE_PRESERVED`: 이 Gate는 앞으로 시작할 구현에만 적용해. 이미 merge된 code/data/scene/test와 기존 runtime·UX evidence를 무효화하거나 상태를 낮추지 말고, 소급 backfill도 하지 마.
+
+`PROSPECTIVE_ONLY_PREEXISTING_EXACT_USER_APPROVED_IMPLEMENTATION_AUTHORITY_PRESERVED`: Gate 채택 전에 package ID, exact scope와 artifact revision/branch/SHA에 연결된 명시적 사용자 구현 승인 기록이 있으면 `PRE_ADOPTION_USER_APPROVED_BUT_IMPLEMENTATION_NOT_STARTED`여도 그 package는 다시 승인받지 않고 실행할 수 있어. `EXACT_APPROVED_SCOPE_AND_REVISION_ONLY`: 승인 기록과 동일한 package·scope·revision만 grandfathering해. `SCOPE_EXPANSION | SUCCESSOR_PACKAGE | INFERRED_BLANKET_APPROVAL`에는 기존 authority를 적용하지 말고 이 Gate의 새 lifecycle과 사용자 최종 승인을 요구해.
 
 ## 1. 최신 정본 재구성
 
@@ -425,6 +455,12 @@ current authority fresh-read
 
 최소 다음 관점으로 whole-state를 반복 검토해.
 
+Game Design Loop review는 다음 여섯 pass를 순서대로 실행하고 finding을 교정한 뒤 영향받은 규칙·example·traceability를 다시 확인해.
+
+```text
+CREATIVE → STRUCTURAL → RULE → CONTINUITY → ADVERSARIAL → POLISH
+```
+
 1. 최신 정본 누락·open PR 누락·과거 정보 혼입
 2. 핵심 시스템·핵심 콘텐츠·플레이어 경험 누락
 3. Godot 구현 설명의 가상 경로·불명확한 책임·데이터 owner 누락
@@ -439,6 +475,8 @@ current authority fresh-read
 ## 7. 최종 제공 방식
 
 최종 사용자 응답에는 **사용자용 PDF만 다운로드 링크**로 제공해.
+
+이 제공은 `BLUEPRINT_REVIEW_PUBLICATION`이며 구현 승인이 아니다. 응답에 `AWAITING_USER_FINAL_REVIEW_APPROVAL` 상태를 명시하고, 사용자가 현재 PDF와 AI Markdown exact revision을 검토한 뒤 승인·수정 요청·보류 중 하나를 명시하도록 요청해. 명시적 승인 전에는 다음 구현을 시작하거나 기존 포괄 승인에서 구현 authority를 추론하지 마.
 
 AI용 Markdown은 다운로드 링크를 제공하지 말고 다음만 보고해.
 
@@ -472,6 +510,12 @@ DOCX, ZIP, 별도 appendix, 개별 이미지, AI Markdown 다운로드 링크, N
 다음을 모두 만족할 때까지 연속 진행해.
 
 - 프로젝트 산출물 정확히 2개
+- `BLUEPRINT_PRE_IMPLEMENTATION_REVIEW_GATE` lifecycle 순서 누락 0
+- required image/material 준비 상태·consumer·approval gap 누락 0
+- creative/structural/rule/continuity/adversarial/polish pass 누락 0
+- exact revision의 명시적 사용자 최종 승인 전 신규 구현 execution 0
+- draft·내부 review·생성 이미지·자동 test·assistant inference를 최종 승인으로 대체한 사례 0
+- 기존 구현·runtime evidence의 소급 무효화·하향 재분류 0
 - `HUMAN_GAME_BLUEPRINT_GDD_LAYERED_PROFILE`이 두 산출물 안에만 있고 별도 Blueprint artifact 0
 - 3분 → 10분 → 상세 → 구현 → 검증 읽기 경로 누락 0
 - four layer, `FIRST_5_15_30`, reusable flow/system card, traceability, state/evidence legend 누락 0
