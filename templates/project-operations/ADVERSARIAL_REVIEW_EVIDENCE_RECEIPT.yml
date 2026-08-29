@@ -1,0 +1,83 @@
+# L1 이상 retained change의 각 full-scope 적대적 검토 회차에 실제 값을 기록한다.
+# 문구만 채운 receipt, 실행하지 않은 PASS, 같은 검토를 관점 이름만 바꾼 복제는 무효다.
+
+review_contract:
+  policy: docs/AUTONOMOUS_RESEARCH_IMPLEMENTATION_AND_LEARNING_POLICY.md
+  specialist_skill: skills/running-adversarial-review-and-refinement/SKILL.md
+  minimum_full_loops_before_clean_exit: 5
+  claim_only_review_is_invalid: true
+
+work_item:
+  repository:
+  branch_or_workspace:
+  base_exact_sha_or_state:
+  scope: []
+  protected_out_of_scope: []
+  acceptance_criteria: []
+  evidence_ceiling: []
+
+loop:
+  loop_index:
+  input_exact_head_or_state:
+  full_scope_re_read_completed: false
+  actual_reads:
+    # - path_or_resource: ""
+    #   exact_revision_or_state: ""
+    #   finding_relevance: ""
+  actual_commands_or_checks:
+    # - command_or_check: ""
+    #   exact_target: ""
+    #   result: PASS | FAIL | NOT_RUN | BLOCKED_UNVERIFIED
+    #   evidence_locator: ""
+  attack_coverage:
+    user_intent_and_value: NOT_RUN
+    authority_canon_and_supersession: NOT_RUN
+    actual_diff_and_untouched_consumers: NOT_RUN
+    implementation_data_asset_boundaries: NOT_RUN
+    failure_recovery_security_cost: NOT_RUN
+    research_and_better_alternative: NOT_RUN
+    long_term_maintainability: NOT_RUN
+    evidence_ceiling_and_completion: NOT_RUN
+  findings: []
+  validated_findings:
+    # - id: ""
+    #   severity: MUST_FIX | SHOULD_FIX | USER_DECISION_REQUIRED | DEFER | REJECTED_CRITIQUE | BLOCKED_UNVERIFIED
+    #   validation_evidence: []
+  corrections_applied:
+    # - finding_id: ""
+    #   files_or_state_changed: []
+    #   exact_change_revision: ""
+  explicit_blockers:
+    # - finding_id: ""
+    #   blocker: ""
+    #   unblock_condition: ""
+  verification_results:
+    # - target: ""
+    #   result: PASS | FAIL | NOT_RUN | BLOCKED_UNVERIFIED
+    #   evidence_locator: ""
+  untouched_consumers_rechecked: []
+  better_alternative_search:
+    candidates_checked: []
+    result:
+    adopted_change:
+  long_term_fit_recheck:
+    total_lifecycle_cost:
+    maintainability:
+    rollback:
+    overengineering_risk:
+    result:
+  unresolved: []
+  output_exact_head_or_state:
+  clean_exit_candidate: false
+
+final_exit:
+  completed_full_loop_count:
+  new_valid_must_fix_count:
+  regression_count:
+  canon_or_consumer_drift_count:
+  acceptance_blocker_count:
+  exact_head_checks: []
+  post_merge_main_readback: NOT_APPLICABLE | PASS | FAIL | NOT_RUN | BLOCKED_UNVERIFIED
+  clean_review_exit: false
+  remaining_work_recalculated: false
+  required_work_remaining:

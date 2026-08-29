@@ -9,6 +9,7 @@ POLICY = ROOT / "docs/AUTONOMOUS_RESEARCH_IMPLEMENTATION_AND_LEARNING_POLICY.md"
 CUSTOM = ROOT / "templates/custom-instructions.gpt.md"
 IMAGE_POLICY = ROOT / "docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md"
 IMAGE_GATE = ROOT / "docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md"
+RECEIPT = ROOT / "templates/project-operations/ADVERSARIAL_REVIEW_EVIDENCE_RECEIPT.yml"
 
 
 class AutonomousResearchImplementationLearningPolicyTests(unittest.TestCase):
@@ -96,6 +97,7 @@ class AutonomousResearchImplementationLearningPolicyTests(unittest.TestCase):
         for token in (
             "repository-first",
             "targeted fresh-read",
+            "현재 채택된 Base 계약",
             "최신 공식/1차 자료",
             "FEASIBLE / PARTIAL / BLOCKED_UNVERIFIED",
             "장기 총비용",
@@ -115,6 +117,52 @@ class AutonomousResearchImplementationLearningPolicyTests(unittest.TestCase):
             "Blueprint 최종 승인을 요구하는 implementation package는 승인 전 runtime 구현으로 넘어가지 않는다",
             self._read(IMAGE_GATE),
         )
+
+    def test_adversarial_review_requires_actual_evidence_and_correction(self) -> None:
+        policy = self._read(POLICY)
+        custom = self._read(CUSTOM)
+        receipt = self._read(RECEIPT)
+        for token in (
+            "CLAIM_ONLY_ADVERSARIAL_REVIEW_INVALID",
+            "EVIDENCE_RECEIPT_REQUIRED_PER_FULL_LOOP",
+            "EXACT_HEAD_OR_STATE_REQUIRED",
+            "ACTUAL_READS_AND_CHECK_RESULTS_REQUIRED",
+            "VALIDATED_FINDING_REQUIRES_CORRECTION_OR_EXPLICIT_BLOCKER",
+            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5",
+        ):
+            self.assertIn(token, policy)
+        for token in (
+            "CLAIM_ONLY_ADVERSARIAL_REVIEW_INVALID",
+            "EVIDENCE_RECEIPT_REQUIRED_PER_FULL_LOOP",
+            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5",
+            "같은 검토에 관점 이름만 바꿔 횟수를 채우지 않는다",
+        ):
+            self.assertIn(token, custom)
+        for token in (
+            "minimum_full_loops_before_clean_exit: 5",
+            "claim_only_review_is_invalid: true",
+            "input_exact_head_or_state:",
+            "actual_reads:",
+            "actual_commands_or_checks:",
+            "validated_findings:",
+            "corrections_applied:",
+            "verification_results:",
+            "better_alternative_search:",
+            "long_term_fit_recheck:",
+            "output_exact_head_or_state:",
+        ):
+            self.assertIn(token, receipt)
+
+    def test_image_policy_preserves_local_candidate_vault_and_explicit_promotion(self) -> None:
+        text = self._read(IMAGE_POLICY)
+        for token in (
+            "docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md",
+            ".asset-vault/library/",
+            "assets/_vault_local/",
+            "explicit promote",
+            "VAULT_LOCAL_STATE_UNVERIFIED",
+        ):
+            self.assertIn(token, text)
 
 
 if __name__ == "__main__":

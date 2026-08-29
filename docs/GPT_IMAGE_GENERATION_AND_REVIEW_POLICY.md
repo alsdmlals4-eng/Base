@@ -53,6 +53,7 @@ PRODUCTION_INFORMATION
 INFORMATION_ARTIFACT_NOT_IMAGE_ASSET
 TEXT_TABLE_FLOW_DB_FIRST
 ACTUAL_CONSUMER_REQUIRED
+CONCRETE_CONSUMER_OR_PLANNING_BOARD_REQUIRED
 ```
 
 `PRODUCTION_INFORMATION`에는 시스템 설명, 세계관, 캐릭터·세력 관계, 관계도, 제작 체크리스트, 밸런스·경제 구조, Flow, 상태 전이, 구현 계약이 포함된다.
@@ -80,6 +81,25 @@ validation:
 
 `DOCUMENTATION_DECORATION`, `AI_EXPLANATION_ONLY`, `CHECKLIST_DECORATION`, `UNNAMED_FUTURE_USE`만 존재하면 `DO_NOT_GENERATE`다. 필요한 정보는 `TEXT_TABLE_FLOW_DB_FIRST`로 계속 만든다.
 
+### 0B. Local candidate vault와 명시적 승격
+
+로컬 GPT/Work가 생성하거나 수집한 candidate의 비정본 보관·동기화·승격은 `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`가 소유한다.
+
+```text
+.asset-vault/library/
+→ assets/_vault_local/
+→ REVIEWED / USER LOCK
+→ explicit promote
+→ project-owned tracked asset path
+→ ASSET_MANIFEST / provenance / SHA-256
+→ implementation / runtime evidence
+```
+
+- `.asset-vault/library/`와 `assets/_vault_local/`은 candidate workspace이며 프로젝트 정본이나 Codex durable input이 아니다.
+- 사용자 lock 뒤에도 자동 승격하지 않는다. `promote`와 repository tracked destination readback을 명시적으로 수행해야 한다.
+- vault sync·preview·파일 존재는 `PROJECT_ASSET_APPROVED`, `CANON_REGISTERED`, `IMPLEMENTED`, `RUNTIME_VERIFIED`를 증명하지 않는다.
+- 프로젝트가 local vault를 채택하지 않았거나 현재 local filesystem을 읽을 수 없으면 `VAULT_LOCAL_STATE_UNVERIFIED`로 남기고 존재를 추정하지 않는다.
+
 ## 1. Visual Requirement Gate
 
 프로젝트용 이미지·목업을 만들기 전에 `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate`를 적용한다.
@@ -105,7 +125,9 @@ need / Delete Test
 현재 기본 계약:
 
 ```text
+NEED_DRIVEN_GENERATE_THEN_LOCK
 PROJECT_CANON_AND_EXISTING_VISUAL_READBACK_REQUIRED
+CONCRETE_CONSUMER_OR_PLANNING_BOARD_REQUIRED
 NEEDED_VISUAL_CANDIDATE_MAY_BE_GENERATED_BEFORE_USER_LOCK
 CURRENT_TURN_EXPLICIT_IMAGE_REQUEST
 EXPLICIT_REQUEST_IS_ONE_OUTPUT_AUTHORITY
@@ -205,6 +227,12 @@ GENERATED_CANDIDATE
 != RUNTIME_VERIFIED
 ```
 
+호환 machine marker:
+
+```text
+GENERATED_CANDIDATE != USER_LOCKED != PROJECT_ASSET_APPROVED != IMPLEMENTED != RUNTIME_VERIFIED
+```
+
 - `GENERATED_EXPLORATION`: 방향·구성 검토 후보.
 - `REVISION_REQUIRED`: 결함이나 drift 수정 필요.
 - `PROJECT_ASSET_APPROVED`: 사용자가 해당 결과를 제품 자산 방향으로 lock.
@@ -212,29 +240,6 @@ GENERATED_CANDIDATE
 - `APPLIED_AND_RUNTIME_VERIFIED`: 실제 소비처에 연결하고 실행 evidence로 확인.
 
 정적 mockup, 채팅 preview, PDF 삽입, 자동 테스트 PASS를 runtime proof로 확대하지 않는다.
-
-### 4.1 Local candidate vault와 명시적 promotion
-
-후보 binary의 로컬 보관·동기화·승격 세부 동작은 `docs/PROJECT_LOCAL_ASSET_VAULT_POLICY.md`가 소유한다. 이 문서는 그 owner를 복제하지 않고 다음 경계만 합성한다.
-
-```text
-GENERATED_CANDIDATE / REVIEWED
-→ .asset-vault/library/ 또는 work-generated candidate source
-→ assets/_vault_local/ 검수 workspace
-→ 사용자 LOCK
-→ rights / provenance / SHA-256 / consumer / state mapping
-→ PROJECT_ASSET_APPROVED
-→ explicit `promote`
-→ tracked assets/<approved-path>/
-→ ASSET_MANIFEST readback
-→ Scene / Resource integration
-→ RUNTIME_VERIFIED
-```
-
-- `assets/_vault_local/`는 candidate 검수 workspace이며 제품 정본 경로가 아니다.
-- 사용자 LOCK 전 candidate를 `promote`하거나 tracked runtime asset으로 자동 이동하지 않는다.
-- 사용자 LOCK 뒤에도 권리·출처·hash·consumer·상태군·target path가 완전하지 않으면 `PROJECT_ASSET_APPROVED` 또는 promotion을 주장하지 않는다.
-- reusable harvest는 primary-use success 뒤에만 평가하며, reuse promotion이 title-specific identity나 primary 품질을 덮어쓰지 않는다.
 
 ## 5. Blueprint와 구현 경계
 
