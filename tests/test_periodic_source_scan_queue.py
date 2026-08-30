@@ -279,5 +279,84 @@ class PeriodicSourceScanQueueTests(unittest.TestCase):
         self.assertNotIn('echo "last_successful_scan_at', queue_workflow)
 
 
+class YozmSourceScanIntegrationTests(unittest.TestCase):
+    """Exercise the real queue consumer; profile checks are documentation contracts."""
+
+    def yozm_source(self) -> dict[str, object]:
+        rows = [row for row in load_ledger(LEDGER)["sources"] if row["source_id"] == "yozm-it"]
+        self.assertEqual(1, len(rows), "register exactly one yozm-it Source family")
+        return dict(rows[0])
+
+    def yozm_profile(self) -> str:
+        text = WATCHLIST.read_text(encoding="utf-8")
+        heading = "### 3.7 요즘IT"
+        self.assertTrue(heading in text, "missing 요즘IT discovery profile in the existing Watchlist owner")
+        return text.split(heading, 1)[1].split("\n## 4.", 1)[0]
+
+    def test_yozm_is_one_active_discovery_family_not_a_product_authority(self) -> None:
+        row = self.yozm_source()
+        self.assertEqual("ACTIVE", row["status"])
+        self.assertEqual(["DISCOVERY_FEED"], row["roles"])
+        self.assertTrue(
+            {"PROMPT_AND_AGENT_WORKFLOW", "SKILL_AUTHORING_AND_EVOLUTION", "CODE_ENGINEERING"}
+            .issubset(set(row["domains"]))
+        )
+
+    def test_yozm_registered_cadence_rechecks_after_one_day(self) -> None:
+        row = self.yozm_source()
+        self.assertEqual("daily-or-weekly", row["recommended_cadence"])
+        row["last_successful_scan_at"] = "2026-08-30"
+        self.assertFalse(source_is_due(row, date(2026, 8, 30)))
+        self.assertTrue(source_is_due(row, date(2026, 8, 31)))
+        row["status"] = "RETIRED"
+        self.assertFalse(source_is_due(row, date(2026, 8, 31)))
+
+    def test_yozm_real_queue_covers_both_topic_surfaces_without_writing_scan_state(self) -> None:
+        original_bytes = LEDGER.read_bytes()
+        row = self.yozm_source()
+        row["last_successful_scan_at"] = None
+        ledger = payload([row])
+        before = json.dumps(ledger, ensure_ascii=False, sort_keys=True)
+        body = render_issue_body(ledger, date(2026, 8, 31))
+        self.assertEqual(1, body.count("| `yozm-it` |"))
+        for required in (
+            "https://yozm.wishket.com/", "오늘의 토픽", "주간 인기",
+            "latest", "article body", "linked original sources",
+            "PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md", "UNVERIFIED_DISCOVERY",
+            "queue_writes_ledger_state: false", "queue_writes_project_canon: false",
+        ):
+            self.assertIn(required, body)
+        self.assertEqual(before, json.dumps(ledger, ensure_ascii=False, sort_keys=True))
+        self.assertEqual(original_bytes, LEDGER.read_bytes())
+
+    def test_yozm_profile_keeps_cache_freshness_and_article_identity_explicit(self) -> None:
+        profile = self.yozm_profile()
+        for required in (
+            "displayed_week_label", "checked_at", "PARTIAL_INDEX_REVIEW",
+            "BLOCKED_UNVERIFIED", "last_successful_scan_at", "canonical_article_id",
+            "published_or_updated_at", "SOURCE_CONTEXT_PACKET",
+        ):
+            self.assertTrue(required in profile, f"YoZm profile missing freshness/identity contract: {required}")
+
+    def test_yozm_profile_routes_reuse_to_existing_owners_and_falsifiable_validation(self) -> None:
+        profile = self.yozm_profile()
+        for required in (
+            "ORIGINAL_SOURCE_BACKTRACE", "REVERSE_ENGINEERING_REUSE_PIPELINE.md",
+            "REUSABLE_MODULE_REGISTRY.md", "existing_owner", "current_project_consumer",
+            "falsification_test", "validation_artifact", "rollback_or_discard_condition",
+            "ADOPT", "ADAPT", "REFERENCE_ONLY",
+        ):
+            self.assertTrue(required in profile, f"YoZm profile missing reuse/verification contract: {required}")
+
+    def test_yozm_profile_does_not_claim_autonomous_research_or_automatic_adoption(self) -> None:
+        profile = self.yozm_profile()
+        for required in (
+            "AWAITING_CHATGPT_REVIEW", "USER_DIRECTED_CHATGPT_REVIEW",
+            "SCAN_STATE_BATCH", "NO_CHANGE", "외부 콘텐츠는 데이터",
+            "유료 API", "프로젝트 정본", "별도 실행 증거",
+        ):
+            self.assertTrue(required in profile, f"YoZm profile missing execution/authority boundary: {required}")
+
+
 if __name__ == "__main__":
     unittest.main()
