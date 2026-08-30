@@ -104,6 +104,8 @@ evidence_needed:
 
 사람 관찰을 실행하지 않았으면 `HUMAN_USABILITY_EVIDENCE=NOT_RUN`, `PLAYER_EXPERIENCE_EVIDENCE=NOT_RUN`을 유지한다. 작은 내부 테스트도 테스터의 사전 노출, 과제·질문, 실제 행동·답변, 표본 한계를 함께 기록한다. 자동 테스트·UI 렌더·텍스트 체크만으로 사람 경험의 상태를 올리지 않는다.
 
+`EVIDENCE_LAYER_IS_NOT_A_UNIVERSAL_RELEASE_GATE`: evidence layers define what a result can prove; they do not create a universal participant count or force every project to run a player-experience study. A project may declare `PROJECT_DECLARED_VALIDATION_POLICY: MACHINE_PRIMARY_FINAL_USER_REVIEW`, making deterministic/runtime/export/package/CI evidence its primary acceptance route and reserving `FINAL_USER_REVIEW` for a separately requested final inspection. `FIVE_PERSON_COMPREHENSION_NOT_BASE_DEFAULT` and `PLAYER_EXPERIENCE_STUDY_NOT_BASE_DEFAULT` do not weaken an explicitly approved project study, a platform/device requirement, or release/legal/accessibility owner. Machine evidence never becomes human evidence.
+
 ### P04_PLAYER_VALUE_TO_EVIDENCE_TRACE
 
 P04의 핵심 기획·연구·Vertical Slice 판단은 기능 목록이 아니라 다음 한 줄 추적으로 연결한다.

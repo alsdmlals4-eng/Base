@@ -60,6 +60,8 @@ PHASE_1_PLANNING_CO_DESIGN
 
 Project의 기존 Stage·Task·Decision 이름은 유지하고 `FIVE_PHASE_PROJECT_MAPPING`으로 현재 위치, next gate, evidence ceiling만 연결한다.
 
+`VALIDATION_POLICY_PROJECT_DECLARED`: project canon may select `MACHINE_PRIMARY_FINAL_USER_REVIEW`. In that policy, exact-head deterministic/runtime/export/package/CI evidence can produce `MACHINE_PRIMARY_ACCEPTANCE_READY`; `FINAL_USER_REVIEW_ONLY` is a separately requested final inspection, not an automatic Phase 5 blocker. `FIVE_PERSON_COMPREHENSION_NOT_BASE_DEFAULT` and `PLAYER_EXPERIENCE_STUDY_NOT_BASE_DEFAULT` never convert missing human evidence to PASS and never override project-specific platform, release, accessibility, legal, or explicit research requirements.
+
 ## 3. 새 작업 전 교정
 
 `WORK_PROJECT_START_CANON_CHECKLIST.md`로 다음을 확인한다.
@@ -87,8 +89,9 @@ Phase 1 confirmed planning
 → CODEX_SINGLE_IMPLEMENTATION_WINDOW
 → Work final implementation evidence review
 → AUTOMATED_VERTICAL_SLICE_READY
-→ user actual build validation
-→ USER_VALIDATED_VERTICAL_SLICE or bounded phase reopen
+→ MACHINE_PRIMARY_ACCEPTANCE_READY when the project declares machine-primary validation
+→ FINAL_USER_REVIEW_ONLY when the user requests final inspection
+→ USER_VALIDATED_VERTICAL_SLICE or bounded phase reopen when the project declares actual user evidence as required
 ```
 
 Codex는 `CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA`로 시작한다. 승인 Visual은 `APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`로 소비하며, Notion attachment를 기본 입력으로 요구하지 않는다.
