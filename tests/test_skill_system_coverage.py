@@ -110,6 +110,19 @@ class SkillSystemCoverageTests(unittest.TestCase):
         self.assertTrue(numbered[0].startswith("1. "))
         self.assertTrue(numbered[-1].startswith("11. "))
 
+    def test_games_user_research_allows_a_project_declared_machine_primary_validation_policy(self) -> None:
+        text = (ROOT / "skills/governing-game-user-research-coverage/SKILL.md").read_text(encoding="utf-8")
+
+        for term in (
+            "PROJECT_DECLARED_VALIDATION_POLICY",
+            "MACHINE_PRIMARY_FINAL_USER_REVIEW",
+            "FINAL_USER_REVIEW",
+            "FIVE_PERSON_COMPREHENSION_NOT_BASE_DEFAULT",
+            "PLAYER_EXPERIENCE_STUDY_NOT_BASE_DEFAULT",
+            "never promotes a machine result into human evidence",
+        ):
+            self.assertIn(term, text)
+
     def test_optimized_existing_skills_preserve_legacy_capabilities(self) -> None:
         required_terms = {
             "identifying-project-core": (

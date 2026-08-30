@@ -718,3 +718,12 @@
 - 안전 경계: connector/local Git/gh 어느 것도 필요한 정확한 capability와 증거를 제공하지 못할 때만 `BLOCKED_UNVERIFIED`로 유지한다. 사용자 Windows token 복사, 비밀이 아닌 `GH_TOKEN` 지속, force ref update, exact-SHA·Required Check·리뷰·post-merge gate 우회는 금지한다.
 - 검증: Registry 라우팅, 현실적인 행동 평가, Skill system coverage, reference freshness, 전체 회귀와 실제 PR Actions를 각각 확인한다. connector 게시 성공은 CI·merge·release 성공과 분리한다.
 - 다음 검토 트리거: connector coverage 확인 전 반복 인증 요구, missing optional CLI를 전체 작업 중단으로 확대, stale parent 위 Git-object write, 다른 HEAD의 CI를 병합 증거로 사용.
+
+## 2026-08-30 — 프로젝트 선언형 머신 우선 검증 정책
+
+- 상태: `OBSERVATION`
+- 호출 트리거: 명시적 사용자 결정으로, 특정 Godot 프로젝트는 결정적·runtime·export·package·CI 머신 증거를 주 acceptance route로 사용하고 5인 이해도 및 player-experience 연구를 필수 Gate로 두지 않는다.
+- 결정: `governing-game-user-research-coverage`와 Work five-phase template/router에 `PROJECT_DECLARED_VALIDATION_POLICY`의 선택형 `MACHINE_PRIMARY_FINAL_USER_REVIEW` 경로를 추가한다. Base는 고정 표본 수나 보편적 human-study 순서를 강제하지 않는다.
+- 안전 경계: 이 경로는 machine evidence를 human evidence로 승격하지 않으며, 프로젝트가 명시적으로 승인한 연구 질문, target-platform/device, 법무·접근성·release 의무를 제거하지 않는다. `FINAL_USER_REVIEW`는 같은 exact candidate/build에 대해 사용자가 요청할 때만 기록한다.
+- 검증: 전용 정책 회귀, Games User Research coverage companion test, five-phase/work-template/evidence-knowledge 회귀, canonical-reference freshness를 실행한다. 전 저장소 release-baseline 검증 실패는 별도 pinned evidence drift로 분리한다.
+- 다음 검토 트리거: 프로젝트가 machine evidence를 human PASS로 오기재하는 경우, participant study를 명시 승인 없이 재도입하는 경우, 또는 platform/release 의무와 충돌하는 경우.
