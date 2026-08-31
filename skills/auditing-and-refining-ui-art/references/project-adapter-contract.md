@@ -130,3 +130,13 @@ Base UX/UI 변경 main 병합
 - 기존 프로젝트 Skill·문서의 고유 기능이 보존된다.
 - 제품 경로 변경 여부와 검증·미검증이 명시된다.
 - 새 작업자가 프로젝트 저장소만으로 UX/UI 작업 시작점과 검증 경로를 찾을 수 있다.
+
+## 10. 외부 벤치마크 우선·모듈형 제작 추가 계약
+
+`PRESERVE_ADOPTED_CONTRACT_PIN`
+
+신규 UI/시각/시스템 설계는 [benchmark-first-modular-production.md](benchmark-first-modular-production.md)를 사용한다. 외부 게임의 기능·화면·공개 구현을 먼저 비교해 구조 후보를 만든 뒤 프로젝트 정본·기존 consumer·고유 규칙에 맞춘다. 기존 contract/engine/version pin은 보존하고 새 사용자 승인 workflow overlay와 조회한 Base exact commit만 추가한다. 새 core·경제·저장 의미나 최종 시각 승격은 이 링크로 승인되지 않는다.
+
+현재 프로젝트 UX owner·시작 router에 reference/modes/적용 범위·제외·검증·Base source identity를 최소 기록한다. 이미 동등한 구조/캡처 검증기가 있으면 그대로 사용하고, 필요할 때만 공용 `validate_player_surface_plan.py`에 정본의 파생 packet을 입력한다. 도구 설치만으로 실행·runtime·Human PASS를 주장하지 않는다.
+
+기본 제작 단위는 승인 가능한 개별 이미지 부품이며, 공통 테두리·본문·아이콘·초상·상태 layer를 named assembly로 조합한다. 필수 screen/action/state/slot을 승인 범위와 대조하고, 기획 시안·부품 승인·조합 승인·runtime binding·보존된 인게임 캡처를 분리한다. 기존 열린 PR이 owner인 경로는 수정·흡수하지 않는다.
