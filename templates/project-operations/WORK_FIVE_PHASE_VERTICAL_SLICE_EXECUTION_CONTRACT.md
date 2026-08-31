@@ -14,6 +14,7 @@ NO_AUTOMATIC_NEXT_SLICE_BEFORE_USER_DECISION
 
 ## 0. 현재 owner 조합
 - 시작 정본·핵심 재미·시스템·SWOT·작업순서: `WORK_PROJECT_START_CANON_CHECKLIST.md`
+- 복잡한 시스템의 압축 Blueprint 형식: `docs/operations/project-workspace/NOTION_SYSTEM_BLUEPRINT_CONTRACT.md`
 - 기획 우선·Grill Me: `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`
 - Grill Me 질문: `skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md`
 - packet·승인·Codex·QA·Git closeout: `WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md`
@@ -35,11 +36,14 @@ PHASE_1_PLANNING_CO_DESIGN
 ```text
 VALIDATION_POLICY_PROJECT_DECLARED
 MACHINE_PRIMARY_FINAL_USER_REVIEW
+PROJECT_DECLARED_FINAL_USER_REVIEW_ONCE
+USER_DECLARED_EXACT_CANDIDATE_ONLY
+MACHINE_EVIDENCE_DOES_NOT_BECOME_HUMAN_EVIDENCE
 FIVE_PERSON_COMPREHENSION_NOT_BASE_DEFAULT
 PLAYER_EXPERIENCE_STUDY_NOT_BASE_DEFAULT
 ```
 
-The default five-phase interface keeps Phase 5 available for actual user evidence. A project can instead declare `MACHINE_PRIMARY_FINAL_USER_REVIEW` in its current canonical owner: Phase 4 exact-head machine evidence may produce `MACHINE_PRIMARY_ACCEPTANCE_READY`, while Phase 5 becomes `FINAL_USER_REVIEW_ONLY` and runs only when the user requests final inspection of the same exact candidate/build. This does not relabel an unrun human result as PASS, erase platform/device obligations, or override an explicit project research/release requirement.
+The default five-phase interface keeps Phase 5 available for actual user evidence. A project can instead declare `MACHINE_PRIMARY_FINAL_USER_REVIEW` in its current canonical owner: Phase 4 exact-head machine evidence may produce `MACHINE_PRIMARY_ACCEPTANCE_READY`, while Phase 5 becomes `FINAL_USER_REVIEW_ONLY` and runs only when the user requests final inspection of the same exact candidate/build. `PROJECT_DECLARED_FINAL_USER_REVIEW_ONCE` means one user-declared final inspection for that exact candidate; a later changed candidate requires its own explicit request rather than silently reusing or promoting prior human evidence. `MACHINE_EVIDENCE_DOES_NOT_BECOME_HUMAN_EVIDENCE`: this policy does not relabel an unrun human result as PASS, erase platform/device obligations, or override an explicit project research/release requirement.
 
 ## 1. PHASE_1_PLANNING_CO_DESIGN — 기획·사용자 공동설계
 ```text
@@ -98,8 +102,9 @@ PHASE_1_USER_CONFIRMED
 NO_SERIAL_ELEMENT_PRODUCTION_BEFORE_PHASE_2_PASS
 NO_CODEX_IMPLEMENTATION_BEFORE_PHASE_3_READY
 CORE_MEANING_FINDING_REOPENS_PHASE_1
+BLUEPRINT_EFFICIENCY_REUSE_ADAPT_REQUIRED
 ```
-Phase 1 packet을 핵심 재미·선택·보상, 대표성·scope, reuse, `implementation_feasibility`, UI/UX, data/save/economy, `actual_consumer_and_asset_coverage`, 권리·비용, `acceptance_test_runtime_and_rollback`, `work_codex_transition_cost`, untouched consumer·canon drift 관점으로 전체 검수한다. 최소 5회 full-scope 적대검토와 IRG를 통과한다.
+Phase 1 packet을 핵심 재미·선택·보상, 대표성·scope, reuse, `implementation_feasibility`, UI/UX, data/save/economy, `actual_consumer_and_asset_coverage`, 권리·비용, `acceptance_test_runtime_and_rollback`, `work_codex_transition_cost`, untouched consumer·canon drift 관점으로 전체 검수한다. 복잡한 player-facing system이면 기존 System Blueprint를 먼저 `REUSE / ADAPT`하고, player meaning → choice/condition → state/data → feedback → owner/validation을 한 bounded decision chain으로 확인한다. 새 별도 Blueprint, 전체 backfill 또는 장식용 노드는 만들지 않으며 상세 규칙은 `NOTION_SYSTEM_BLUEPRINT_CONTRACT.md`가 소유한다. 최소 5회 full-scope 적대검토와 IRG를 통과한다.
 ```yaml
 REVIEWED_SLICE_PRODUCTION_CONTRACT:
   phase_1_packet_identity:
@@ -107,6 +112,7 @@ REVIEWED_SLICE_PRODUCTION_CONTRACT:
   reviewed_scope: []
   explicit_non_scope: []
   protected_scope: []
+  system_blueprint_entry: REUSE | ADAPT | NEW_MINIMUM | NOT_APPLICABLE_WITH_REASON
   system_and_data_contract:
   ui_ux_flow:
   actual_consumers: []
@@ -248,7 +254,7 @@ CANONICAL_REFLECTION_AFTER_PLAY
 ```
 `USER_VALIDATED_VERTICAL_SLICE`는 actual user play, representative flow, blocking usability 처리, 핵심 경험 방향 판단, feedback 기록과 필요한 canon readback을 요구한다. 이는 전체 콘텐츠·모든 플랫폼·최종 밸런스·모든 언어·store/legal/release 완료가 아니다.
 
-For `MACHINE_PRIMARY_FINAL_USER_REVIEW`, this phase is `FINAL_USER_REVIEW_ONLY`: it is not a prerequisite for `MACHINE_PRIMARY_ACCEPTANCE_READY`, it does not require five people by Base default, and it must only record a requested final user inspection on the exact candidate/build. `FIVE_PERSON_COMPREHENSION_NOT_BASE_DEFAULT` and `PLAYER_EXPERIENCE_STUDY_NOT_BASE_DEFAULT` preserve the evidence boundary rather than convert an unrun study into a pass.
+For `MACHINE_PRIMARY_FINAL_USER_REVIEW`, this phase is `FINAL_USER_REVIEW_ONLY`: it is not a prerequisite for `MACHINE_PRIMARY_ACCEPTANCE_READY`, it does not require five people by Base default, and `USER_DECLARED_EXACT_CANDIDATE_ONLY` means it records only the one requested final user inspection for the exact candidate/build. `MACHINE_EVIDENCE_DOES_NOT_BECOME_HUMAN_EVIDENCE`; `FIVE_PERSON_COMPREHENSION_NOT_BASE_DEFAULT` and `PLAYER_EXPERIENCE_STUDY_NOT_BASE_DEFAULT` preserve the evidence boundary rather than convert an unrun study into a pass.
 
 ## 6. 사용자 evidence 기반 bounded reopen
 ```text

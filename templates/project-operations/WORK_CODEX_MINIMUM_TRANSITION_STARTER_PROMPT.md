@@ -16,6 +16,10 @@ HOST_SYSTEM_TOOL_CONFIRMATION_PRECEDENCE
 DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE
 REPOSITORY_PRIMARY_CANON
 NO_NEW_NOTION_WRITE_BY_DEFAULT
+PROJECT_WORK_DISCIPLINE_GATE_REQUIRED
+FRESH_READ_BEFORE_PROJECT_WORK_REQUIRED
+GENRE_WORLD_VISUAL_BENCHMARK_RECEIPT_REQUIRED
+NO_UNSUPPORTED_IMPLEMENTATION_CLAIM
 ```
 
 과거 채팅·Memory를 current truth로 사용하지 말고 다음을 fresh-read해.
@@ -49,6 +53,8 @@ CHECKLIST_IS_ROUTING_RECEIPT_NOT_SECOND_CANON
 ```text
 핵심 재미 / player promise / core loop
 → 핵심·지원 시스템과 actual consumer
+→ genre/subgenre·world/setting tone·visual style/composition anchor
+→ current/approved benchmark의 evidence·project difference·`ADOPT / ADAPT / REJECT`
 → 의미 있는 선택·보상·실패 학습
 → evidence-based SWOT
 → current stage / active Playable Slice
@@ -123,6 +129,7 @@ ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT
 
 ```text
 AUTO_GIT_FETCH_AND_SAFE_PULL
+FETCH_PULL_PUSH_PR_COMPLETE_PATH_REQUIRED
 DISCOVER_GIT_REMOTE_UPSTREAM_DEFAULT_BRANCH
 EXACT_REPOSITORY_BRANCH_UPSTREAM_IDENTITY_REQUIRED
 DIRTY_OR_DIVERGED_STATE_RECONCILE_NO_FORCE
@@ -168,6 +175,7 @@ git pull --ff-only <intended-remote> <default-branch>
 ```text
 LOCAL_COMPUTER_CONTROL_DELEGATED
 AUTO_LAUNCH_GODOT_WHEN_CALLABLE
+CALLABLE_GODOT_DIRECT_LAUNCH_REQUIRED
 EXACT_PROJECT_EDITOR_SESSION_REQUIRED
 PROJECT_SCOPED_OS_AUTOMATION_ONLY
 PROJECT_PROCESS_ONLY_CLOSE
@@ -195,6 +203,8 @@ NO_NEW_LOGIN_PERMISSION_OR_CONSENT_GRANT
 
 다른 프로젝트 session/process를 추측 재사용하지 마. exact project/session 또는 tool capability를 확인할 수 없으면 해당 조작만 `BLOCKED_UNVERIFIED`로 두고 독립 작업을 계속해.
 
+현재 task가 Scene·Resource·GDScript·import·runtime UI·input·build처럼 engine 확인이 필요한 material 변경이면, callable한 Godot를 직접 실행해 exact project와 필요한 runtime/import evidence를 확인한다. 실행하지 않았다면 그 사유와 `NOT_RUN`을 기록하며 실행 검증을 했다고 주장하지 않는다.
+
 ## 5. Work 준비와 Codex 단일 구현
 
 Codex 전환 전 `PROJECT_START_CANON_CHECKLIST`의 `READY_AFTER_CORRECTION`·`remaining_required_work`·`work_order`를 입력으로 사용해 current profile의 `WORK_PRODUCTION_INPUT_PACKET`을 닫아.
@@ -209,6 +219,16 @@ Codex 전환 전 `PROJECT_START_CANON_CHECKLIST`의 `READY_AFTER_CORRECTION`·`r
 - 필요 시 exact source SHA의 Human GDD PDF
 
 신규 제작 전에 current project → approved asset/reference → Base reuse → 직접 관련된 검증 사례 → 공식/현업 benchmark 순으로 확인하고 `ADOPT / ADAPT / REJECT`해. 중요 결정은 최소 3개 실질안을 비교해.
+
+benchmark는 장르·세계관·setting tone·시각 언어·구도·정보 우선순위를 현재 프로젝트의 player promise와 actual consumer에 연결하는 비교 근거다. 발견한 작품의 설정·그림체·화면을 그대로 복제하지 말고, source fact·project fit·`ADOPT / ADAPT / REJECT`와 남은 검증을 구분해 receipt에 남겨.
+
+```text
+TASK_OWNED_TEMPORARY_OUTPUT_IMMEDIATE_CLEANUP
+EXISTING_PROJECT_PATH_OR_DECLARED_TEMP_ROOT_ONLY
+NO_UNSUPPORTED_IMPLEMENTATION_CLAIM
+```
+
+작업 산출물은 current project의 기존 owner path 또는 사전에 선언한 task-owned temporary root에만 만든다. 테스트·PDF render·import/export 확인처럼 일시 출력물이 소비·검수된 뒤에는 그 task-owned 파일만 즉시 삭제하고 readback한다. 다른 workstream, untracked file, consumer·참조를 확인하지 못한 파일은 용량 절감을 이유로 삭제하지 않는다. 구현·통합·runtime 완료 주장은 actual diff, consumer, test 또는 실제 실행 evidence가 있을 때만 한다.
 
 ```text
 CODEX_EXECUTOR_NOT_CALLABLE_DO_NOT_CLAIM_IMPLEMENTED
@@ -227,11 +247,16 @@ callable하면 Codex가 exact repository SHA·project entrypoints·asset manifes
 ```text
 MACHINE_QA_FIRST
 HUMAN_QA_DEFERRED_BY_CURRENT_USER
+PROJECT_DECLARED_FINAL_USER_REVIEW_ONCE
+USER_DECLARED_EXACT_CANDIDATE_ONLY
+MACHINE_EVIDENCE_DOES_NOT_BECOME_HUMAN_EVIDENCE
 HUMAN_USABILITY_EVIDENCE: NOT_RUN
 PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN
 ```
 
 프로젝트가 채택한 current test/runtime authority를 사용해. GUT은 deterministic test, Hera는 live QA/observability only이며 persistent authoring은 금지해. 미채택 도구를 자동 설치하지 말고 evidence-equivalent route를 사용해. 필수 route가 없으면 `NOT_RUN`이며 automated readiness를 막아.
+
+프로젝트가 `MACHINE_PRIMARY_FINAL_USER_REVIEW`을 current owner에 선언했다면 machine QA와 exact-head readback을 기본 acceptance로 사용한다. human validation은 사용자가 final inspection을 선언한 exact candidate/build에 한 번만 실행하며, machine evidence를 human evidence로 승격하지 않는다.
 
 ```text
 USER_DOWNLOADABLE_BUILD_ARTIFACT_REQUIRED

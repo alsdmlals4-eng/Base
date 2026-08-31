@@ -122,6 +122,20 @@ class WorkCodexStarterLocalExecutionContractTests(unittest.TestCase):
         ):
             self.assertIn(token, text)
 
+    def test_starter_requires_actual_project_work_discipline_before_claiming_completion(self) -> None:
+        text = self._starter()
+        for token in (
+            "PROJECT_WORK_DISCIPLINE_GATE_REQUIRED",
+            "FRESH_READ_BEFORE_PROJECT_WORK_REQUIRED",
+            "GENRE_WORLD_VISUAL_BENCHMARK_RECEIPT_REQUIRED",
+            "FETCH_PULL_PUSH_PR_COMPLETE_PATH_REQUIRED",
+            "CALLABLE_GODOT_DIRECT_LAUNCH_REQUIRED",
+            "TASK_OWNED_TEMPORARY_OUTPUT_IMMEDIATE_CLEANUP",
+            "NO_UNSUPPORTED_IMPLEMENTATION_CLAIM",
+            "PROJECT_DECLARED_FINAL_USER_REVIEW_ONCE",
+        ):
+            self.assertIn(token, text)
+
     def test_problem_lesson_case_is_linked_and_project_neutral(self) -> None:
         text = self._starter()
         self.assertTrue(CASE.exists(), "starter correction learning case must exist")
