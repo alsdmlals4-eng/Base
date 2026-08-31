@@ -11,10 +11,21 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECKER_PATH = ROOT / "tools/check_skill_behavior_evals.py"
+BUILDER_PATH = ROOT / "tools/build_skill_implementation_evidence.py"
 
 
 def load_checker():
     spec = importlib.util.spec_from_file_location("check_skill_behavior_evals", CHECKER_PATH)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_builder():
+    spec = importlib.util.spec_from_file_location(
+        "build_skill_implementation_evidence", BUILDER_PATH
+    )
     module = importlib.util.module_from_spec(spec)
     assert spec.loader is not None
     spec.loader.exec_module(module)
@@ -206,6 +217,7 @@ def expected_results(cases: list[dict]) -> list[dict]:
 class SkillBehaviorCoverageTests(unittest.TestCase):
     def setUp(self) -> None:
         self.checker = load_checker()
+        self.builder = load_builder()
 
     def build_root(
         self,
@@ -316,6 +328,17 @@ class SkillBehaviorCoverageTests(unittest.TestCase):
         errors = self.checker.validate_contract(root)
 
         self.assertEqual([], errors)
+
+    def test_implementation_digest_ignores_checkout_newlines(self) -> None:
+        directory, root = self.build_root(complete_cases())
+        self.addCleanup(directory.cleanup)
+        path = root / "skills/SKILL_BEHAVIOR_EVALS.json"
+        path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n"))
+        lf_digest = self.builder.behavior_source_digest(root)
+
+        path.write_bytes(path.read_bytes().replace(b"\n", b"\r\n"))
+
+        self.assertEqual(lf_digest, self.builder.behavior_source_digest(root))
 
     def test_result_rejects_stale_registry_hash(self) -> None:
         cases = complete_cases()

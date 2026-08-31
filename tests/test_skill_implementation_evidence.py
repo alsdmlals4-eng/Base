@@ -187,6 +187,28 @@ class SkillImplementationEvidenceTests(unittest.TestCase):
             markdown,
         )
 
+    def test_behavior_source_digest_is_newline_invariant(self) -> None:
+        builder = load_builder()
+        directory, root = self.build_root()
+        self.addCleanup(directory.cleanup)
+
+        for relative in builder.EVAL_PATHS:
+            path = root / relative
+            if not path.is_file():
+                continue
+            lf_bytes = path.read_bytes().replace(b"\r\n", b"\n")
+            path.write_bytes(lf_bytes)
+        lf_digest = builder.behavior_source_digest(root)
+
+        for relative in builder.EVAL_PATHS:
+            path = root / relative
+            if not path.is_file():
+                continue
+            path.write_bytes(path.read_bytes().replace(b"\n", b"\r\n"))
+        crlf_digest = builder.behavior_source_digest(root)
+
+        self.assertEqual(lf_digest, crlf_digest)
+
     def test_youtube_skill_has_executable_repository_evidence(self) -> None:
         builder = load_builder()
         self.assertEqual([], builder.validate_evidence_index(ROOT))
