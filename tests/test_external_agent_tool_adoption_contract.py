@@ -273,5 +273,21 @@ class ExternalAgentToolAdoptionContractTests(unittest.TestCase):
         self.assertNotIn("human approval obtained for any cost, auth, external write", adapter)
 
 
+    def test_reader_rollback_example_preserves_no_replay_boundary(self) -> None:
+        briefing = BRIEFING.read_text(encoding="utf-8")
+        self.assertFalse(
+            "원본 명령으로 재검증하는 것입니다" in briefing,
+            "reader example must recover captured evidence before considering replay",
+        )
+        for marker in (
+            "RECOVER_CAPTURED_OUTPUT_BEFORE_NEW_EXECUTION",
+            "이미 저장된 원본 출력",
+            "명령을 자동 재실행하지 않습니다",
+            "docs/knowledge/ai/agent-tools/EXTERNAL_AGENT_ADAPTER_CONTRACT.md",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, briefing)
+
+
 if __name__ == "__main__":
     unittest.main()
