@@ -897,12 +897,32 @@ scan_surfaces:
 | Notion VIP — https://www.notion.vip/insights/streamline-project-management-with-notion | `PROFESSIONAL_PRACTICE` | Projects/Tasks/Resources와 contextual view 원리를 비교한다. 컨설팅·템플릿 판매 이해관계가 있으며 특정 DB 수를 공용 규칙으로 복사하지 않는다. |
 | Thomas Frank — https://thomasjfrank.com/docs/ultimate-tasks/databases/ | `PROFESSIONAL_PRACTICE` | 원저자의 Master DB·linked view 구조와 유지비를 비교한다. affiliate·template 사업 맥락을 기록하고 복잡한 전체 시스템을 자동 도입하지 않는다. |
 | 인디/솔로 개발자·스튜디오의 공개 GDD, devlog, production workflow, postmortem | 원저자·프로젝트·조건 확인 후 `PROFESSIONAL_PRACTICE`; 그 전 `DISCOVERY_FEED` | 기존 GDC/Game Developer source에서 원 발표·개발자 자료로 역추적한다. 작업·버그·빌드·에셋·플레이테스트·출시/마케팅 연결과 실패 사례를 함께 본다. |
-| Video Game Project Management Anti-patterns — https://arxiv.org/abs/2202.06183 | 원 연구의 표본·방법에 한정한 연구 근거 | 440개 postmortem **문제** 분석이다. 440개 게임 조사나 Notion 효과 실험이 아니다. Feature Creep·여러 프로젝트·도구 부적합을 검토 질문으로 사용한다. |
+| Video Game Project Management Anti-patterns — https://arxiv.org/abs/2202.06183 | `AUTHORITY_TARGET` — 원 연구 자신의 표본·방법에 한정 | 440개 postmortem **문제** 분석이다. 440개 게임 조사나 Notion 효과 실험이 아니다. Feature Creep·여러 프로젝트·도구 부적합을 검토 질문으로 사용한다. |
 | Notion Marketplace의 게임 제작 템플릿·리뷰, Reddit·커뮤니티 | `DISCOVERY_FEED` | 제작자 원문·실제 사용 조건을 찾는 입력이다. 인기·별점·판매 문구·자기선택 후기만으로 생산성이나 게임 성공을 증명하지 않는다. |
 
-원문의 `published_or_updated_at`과 이번 `checked_at`을 구분하고 `commercial_interest`, 표본·팀 규모·장르·도구·비용, `counterevidence`, 기존 owner, `actual_consumer`, 최소 변경과 폐기 조건을 기존 `SOURCE_CONTEXT_PACKET`에 기록한다. 원문을 못 읽은 범위는 `BLOCKED_UNVERIFIED`다. 문서 길이만으로 상세 GDD/PDF를 기각하지 않고 플레이어 경험·구현 이해에 필요한 설명인지, 중복 유지비를 만드는지를 판단한다.
+원문의 `published_or_updated_at`과 이번 `checked_at`을 구분하고 `commercial_or_vendor_interest`, 표본·팀 규모·장르·도구·비용, `counterevidence`, `existing_owner`, 실제 소비처, 최소 변경과 폐기 조건을 기존 `SOURCE_CONTEXT_PACKET`에 기록한다. 기계 packet에서는 실제 소비처를 `context_conditions`의 `actual_consumer: …` 문자열로 남기며 새 top-level 필드를 추가하지 않는다. 원문을 못 읽은 범위는 `BLOCKED_UNVERIFIED`다. 문서 길이만으로 상세 GDD/PDF를 기각하지 않고 플레이어 경험·구현 이해에 필요한 설명인지, 중복 유지비를 만드는지를 판단한다.
 
 실질 대안은 ① 기존 repository owner/template/view에 흡수, ② 승인된 프로젝트 전용 작은 실험, ③ 현행 유지·`NO_CHANGE`로 비교한다. setup/유지비·검색/문맥 전환·AI 연동·정본 충돌·다중 프로젝트·백업/이식성·비용·초보 사용성·플레이어 가치를 같은 기준으로 검토한다. `ADOPT / ADAPT / TEST / AVOID / REFERENCE_ONLY` 판정과 기존 5회 적대적 개선·회귀 재검사 절차를 따른다. 공용 DB 수·WIP 수·새 Skill을 먼저 고정하지 않는다.
+
+### 12.3.1 기존 분석 스키마로의 투영
+
+`tools/periodic_source_analysis_contract.py`의 `CANDIDATE_PROPERTIES`가 기계 candidate 필드를 소유한다. 아래 JSON은 **부분 필드 예시**이며 실제 scan receipt나 완성 packet이 아니다. 나머지 ID·출처·날짜·Evidence·판정 필드는 기존 schema로 채우고 `validate_analysis_packet`을 통과시킨다. 별도 schema·Watchlist·queue 필드를 만들지 않는다.
+
+```json
+{
+  "commercial_or_vendor_interest": "원문에서 확인한 판매·컨설팅·후원 이해관계 또는 미확인 범위",
+  "existing_owner": "docs/AI_SKILL_ADOPTION_GUIDE.md",
+  "context_conditions": [
+    "actual_consumer: 검증한 project namespace와 repository consumer 경로",
+    "표본·팀 규모·장르·도구·비용 조건을 원문 근거로 기록"
+  ],
+  "counterevidence": ["반례·실패·혼합 증거 또는 확인하지 못한 범위를 기록"],
+  "validation_artifact": "실제 검증 receipt 경로 또는 NOT_RUN",
+  "rollback_or_discard_condition": "중복 owner·추가 유지비·효과 미입증이면 폐기 또는 TEST 유지"
+}
+```
+
+원문에 없는 소비처를 만들어 채우지 않는다. 소비처를 검증하지 못했다면 같은 `context_conditions` 안에 `actual_consumer: NOT_VERIFIED`와 이유를 남기고 실제 적용 가능성을 주장하지 않는다. 독립 필드 `commercial_interest`나 `actual_consumer`를 추가하면 closed schema가 거부한다. 이미 허용된 필드에 의미를 보존하는 최소 투영을 우선한다.
 
 ### 12.4 Skill 자동 선택과 로컬 이식의 증거 경계
 

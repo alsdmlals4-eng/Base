@@ -1,20 +1,21 @@
-"""Regression contracts for Notion research and loss-aware legacy migration.
+"""Notion research guidance and the real periodic-analysis schema boundary.
 
-These tests inspect repository guidance, not a live Notion workspace. Passing
-cannot establish scheduler execution, export completeness, or runtime parity.
+These are document/schema regressions, not a live Notion scan, paid API call,
+project migration, scheduler execution, or cross-agent runtime evaluation.
 """
 
+from datetime import date
+import json
 from pathlib import Path
 import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
 SEEDS = ROOT / "docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_DISCOVERY_SEEDS.md"
-MIGRATION = ROOT / "templates/project-operations/NOTION_TO_REPOSITORY_MIGRATION_CHECKLIST.md"
 
 
 def section(text: str, heading: str, following: str) -> str:
-    """Return an existing bounded section, failing clearly on a broken route."""
+    """Return a bounded section and fail clearly if its route is missing."""
     _, found, tail = text.partition(heading)
     if not found:
         raise AssertionError(f"Missing section: {heading}")
@@ -24,12 +25,11 @@ def section(text: str, heading: str, following: str) -> str:
     return body
 
 
-class NotionResearchMigrationBoundaryTests(unittest.TestCase):
+class NotionResearchBoundaryTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.seeds = SEEDS.read_text(encoding="utf-8")
         cls.notion = section(cls.seeds, "## 12. Notion", "## 13. Game market")
-        cls.migration = MIGRATION.read_text(encoding="utf-8")
 
     def assert_terms(self, text: str, *terms: str) -> None:
         for term in terms:
@@ -62,7 +62,7 @@ class NotionResearchMigrationBoundaryTests(unittest.TestCase):
         self.assert_terms(
             self.notion,
             "published_or_updated_at",
-            "commercial_interest",
+            "commercial_or_vendor_interest",
             "counterevidence",
             "actual_consumer",
             "ADOPT / ADAPT / TEST / AVOID / REFERENCE_ONLY",
@@ -100,40 +100,83 @@ class NotionResearchMigrationBoundaryTests(unittest.TestCase):
             "NOT_RUN",
         )
 
-    def test_export_surface_and_account_rollout_are_distinct(self) -> None:
-        backup = section(self.migration, "## 2.", "## 3.")
-        self.assert_terms(
-            backup,
-            "2026-08-31",
-            "HTML",
-            "Markdown",
-            "CSV",
-            "개별 페이지 PDF",
-            "back-up-your-data",
-            "계정별",
-            "완전 복원",
-        )
+    def test_primary_research_has_an_explicit_bounded_authority_role(self) -> None:
+        row = next(line for line in self.notion.splitlines() if line.startswith("| Video Game Project Management Anti-patterns"))
+        role = row.split("|")[2]
+        self.assertIn("`AUTHORITY_TARGET`", role)
+        self.assertIn("표본", role)
+        self.assertIn("방법", role)
 
-    def test_unknown_inventory_cannot_be_retired_as_zero(self) -> None:
-        counters = section(self.migration, "## 10.", "## 11.")
-        self.assert_terms(
-            counters,
-            "INCOMPLETE_INVENTORY_IS_NOT_ZERO",
-            "UNKNOWN",
-            "inventory_complete == true",
-            "LEGACY_READ_ONLY",
-        )
+    def projection(self) -> dict[str, object]:
+        body = section(self.notion, "### 12.3.1", "### 12.4")
+        _, marker, tail = body.partition("```json\n")
+        self.assertTrue(marker, "The documented schema projection must be JSON")
+        encoded, marker, _ = tail.partition("\n```")
+        self.assertTrue(marker, "The schema projection code fence must close")
+        projection = json.loads(encoded)
+        self.assertIsInstance(projection, dict)
+        return projection
 
-    def test_receipt_exposes_export_coverage_not_only_blank_counters(self) -> None:
-        receipt = self.migration.split("## 12. 완료 receipt", 1)[1]
-        self.assert_terms(
-            receipt,
-            "inventory_complete:",
-            "export_coverage_status:",
-            "unreadable_scope:",
-            "archive_sha256:",
-            "missing_attachment_count:",
+    def packet_fixture(self) -> tuple[dict[str, object], str, str, date]:
+        # Read the actual documented projection, not a separately mirrored schema.
+        projection = self.projection()
+        from tools.periodic_source_analysis_contract import CANDIDATE_PROPERTIES
+
+        run_date = date(2026, 8, 31)
+        source_id = "fixture-notion-practice"
+        url = "https://www.notion.vip/insights/streamline-project-management-with-notion"
+        candidate: dict[str, object] = {key: "SCHEMA_TEST_ONLY" for key in CANDIDATE_PROPERTIES}
+        candidate.update(
+            candidate_id="fixture-candidate",
+            source_id=source_id,
+            original_url=url,
+            published_or_updated_at="UNKNOWN",
+            checked_at=run_date.isoformat(),
+            source_role="PROFESSIONAL_PRACTICE",
+            evidence_tier="T6_AI_INFERENCE",
+            evidence_status="UNVERIFIED",
+            context_conditions=["Fixture; no source scan occurred"],
+            counterevidence=["No operational effect was measured"],
+            base_overlap="PARTIAL",
+            disposition="TEST",
+            work_disposition="NO_CHANGE",
         )
+        candidate.update(projection)
+        packet = {
+            "run_date": run_date.isoformat(),
+            "scanned_sources": [source_id],
+            "candidates": [candidate],
+            "new_source_candidates": [],
+            "no_change_reason": "Schema fixture only; no source-state write",
+        }
+        return packet, url, source_id, run_date
+
+    def test_documented_projection_passes_real_analysis_validator(self) -> None:
+        packet, url, source_id, run_date = self.packet_fixture()
+        from tools.periodic_source_analysis_contract import validate_analysis_packet
+
+        normalized = validate_analysis_packet(packet, {url}, {source_id}, run_date)
+        row = normalized["candidates"][0]
+        projection = self.projection()
+        for key, value in projection.items():
+            with self.subTest(field=key):
+                self.assertEqual(value, row[key])
+        self.assertNotIn("commercial_interest", row)
+        self.assertNotIn("actual_consumer", row)
+        self.assertTrue(any(value.startswith("actual_consumer:") for value in row["context_conditions"]))
+
+    def test_real_analysis_validator_rejects_undeclared_top_level_aliases(self) -> None:
+        # The first read also makes the pre-correction failure about missing routing.
+        self.projection()
+        from tools.periodic_source_analysis_contract import AnalysisBlocked, validate_analysis_packet
+
+        for alias in ("commercial_interest", "actual_consumer"):
+            with self.subTest(alias=alias):
+                packet, url, source_id, run_date = self.packet_fixture()
+                packet["candidates"][0][alias] = "unapproved schema expansion"
+                with self.assertRaises(AnalysisBlocked) as caught:
+                    validate_analysis_packet(packet, {url}, {source_id}, run_date)
+                self.assertEqual("BLOCKED_CONTEXT_SCHEMA", caught.exception.code)
 
 
 if __name__ == "__main__":
