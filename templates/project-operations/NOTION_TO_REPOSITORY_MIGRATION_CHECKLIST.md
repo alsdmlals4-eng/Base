@@ -45,6 +45,19 @@ status: INVENTORY | MIGRATING | VERIFYING | LEGACY_READ_ONLY | RETIRED
 - [ ] URL만 남은 외부 자료는 접근 가능성과 provenance를 확인했다.
 - [ ] 중복·후보·폐기 자료를 current canon과 분리했다.
 
+### 2.1 Export 범위·복구 한계 확인
+
+Export를 사용하는 경우 아래 항목을 적용한다. 승인된 connector/API read로 전체 inventory를 입증하는 경로도 허용하며, export를 사용하지 않았으면 `NOT_USED`를 기록한다.
+
+공식 backup 문서 확인: `checked_at: 2026-08-31`, https://www.notion.com/help/back-up-your-data . Workspace 전체 PDF export는 2026-08-31까지 단계적으로 제거된다는 안내이며, **계정별 rollout을 이 문서 작성으로 확인한 것은 아니다**. HTML·Markdown·CSV와 원본 첨부 파일을 이관 입력으로 사용하고, 개별 페이지 PDF는 보조 검토본으로 구분한다. Repository 정본에서 새로 생성하는 사용자용 GDD PDF에는 이 제품 변경을 적용하지 않는다.
+
+- [ ] export 수행 주체·시간·범위와 포함 page/DB/attachment 목록, archive 경로·`SHA-256`을 기록했다.
+- [ ] export에 접근 권한이 없는 private page·teamspace 자료가 빠질 수 있음을 점검하고 `unreadable_scope`로 남겼다. 권한을 임의 확대하지 않았다.
+- [ ] export sitemap/목록과 실제 page·record·attachment inventory를 대조했다. linked DB·relation·rollup·formula 의미는 별도 확인했다.
+- [ ] export 성공이나 ZIP 존재를 완전 복원 또는 전체 이관 완료로 처리하지 않았다. 재업로드로 원래 workspace를 즉시 복원할 수 있다고 가정하지 않았다.
+- [ ] 문서 locale·수정 시점과 실제 계정 UI가 다르면 차이를 기록하고 기능 지원을 추정하지 않았다.
+- [ ] export 누락·미확인 범위가 있으면 `export_coverage_status: PARTIAL | UNKNOWN`, `inventory_complete: false`로 남겼다. 각 항목을 다른 승인된 read 경로로 확인하기 전에는 이관 카운터를 0으로 확정하지 않았다.
+
 ## 3. 정본 대상 매핑
 
 | 기존 Notion 역할 | 기본 이관 대상 | 확인 항목 |
@@ -152,7 +165,9 @@ status: INVENTORY | MIGRATING | VERIFYING | LEGACY_READ_ONLY | RETIRED
 
 ## 10. 이관 잔여 카운터
 
-아래 값을 실제 inventory에서 계산한다.
+아래 0은 완료 목표값이며 기본 측정값이 아니다. 실제 inventory에서 계산한다.
+
+`INCOMPLETE_INVENTORY_IS_NOT_ZERO`: 접근 불가·누락·미검증 범위가 남으면 해당 카운터는 `UNKNOWN`으로 기록하고 `LEGACY_READ_ONLY`를 유지한다. Export가 부분적이어도 다른 승인된 read 경로로 누락 항목을 전부 확인·이관·readback했다면 전체 inventory 완료를 별도로 입증할 수 있다.
 
 ```text
 NOTION_UNIQUE_CANON_COUNT = 0
@@ -174,7 +189,7 @@ ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT = 0
 → active workflow에서는 신규 쓰기 금지
 → 고유 항목 이관을 계속 추적
 
-모두 0
+inventory_complete == true + 미확인 범위 없음 + 모든 카운터 실제 0
 → NOTION_RETIRED_FROM_ACTIVE_FLOW
 → NO_DELETE_REQUIRED_FOR_RETIREMENT
 ```
@@ -228,6 +243,11 @@ asset_manifest:
   path:
   verified_asset_count:
 notion_state: LEGACY_READ_ONLY | NOTION_RETIRED_FROM_ACTIVE_FLOW
+inventory_complete: false # true는 대상 전체의 inventory/readback 증거가 있을 때만
+export_coverage_status: UNKNOWN # COMPLETE | PARTIAL | UNKNOWN | NOT_USED
+unreadable_scope: # 빈 목록도 전체 범위 확인 뒤에만 확정
+archive_sha256: # export를 사용한 경우; 미사용이면 NOT_USED
+missing_attachment_count: UNKNOWN # 미확인 항목을 0으로 바꾸지 않는다
 counters:
   NOTION_UNIQUE_CANON_COUNT:
   CODEX_NOTION_DEPENDENCY_COUNT:
