@@ -64,6 +64,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - 현재 작업도 병합 전 검토한 **정확한 HEAD**, 필수 검사, 독립 검토, unresolved thread 0, 결정 Gate를 다시 확인한다.
 - 같은 파일·Schema·자산을 **소유 경계 없이 병렬** 수정하지 않는다. 동시 변경 증거가 있으면 stale 가정을 버리고 latest main을 다시 읽는다.
 - GitHub 게시·검토는 연결된 **GitHub plugin/connector** capability를 우선 사용한다. connector가 필요한 동작을 지원하면 **missing `gh` alone is not a blocker**다.
+- **`CONNECTED_TOOL_CAPABILITY_DISCOVERY_BEFORE_UNAVAILABLE_CLAIM` / `NO_NEW_PLUGIN_WHEN_CONNECTED_CAPABILITY_EXISTS`**: 필요한 외부 앱·connector 동작이 처음 schema에 보이지 않는다는 이유만으로 unavailable이라고 결론내리지 않는다. 먼저 `api_tool.list_resources`로 설치된 connector의 관련 action(`write`, `merge`, `resolve`, `create` 등)을 찾고, 반환된 action을 비파괴 read/metadata 또는 현재 승인 범위의 bounded operation에서 실제 invoke한다. 실패는 `SCHEMA_NOT_LOADED`, `CONNECTOR_NOT_CONNECTED`, `PERMISSION_DENIED`, `RULESET_OR_REQUIRED_CHECK_BLOCKED`, `ACTION_UNSUPPORTED`로 구분한다. 연결 capability가 있으면 새 plugin·token·CLI 설치를 제안하지 않는다. **`DISCOVERY_IS_NOT_EXECUTION_EVIDENCE`**: discovery/read/no-ref probe는 쓰기·병합 성공이 아니며, 실제 성공은 `actual connector attempt`, 허용된 `branch/ref mutation`, 검증한 `exact HEAD`, required checks, unresolved threads와 ruleset 증거를 각각 확인한다.
 - 보호 경로 밖에서 `skills/SKILL_REGISTRY.json`, `[수정제안서]`, released lock/frozen/generated release artifact bytes를 건드리지 않는다.
 
 ## 5. 비용·workspace·프로젝트 정본
