@@ -71,7 +71,7 @@ jobs:
             skills/managing-project-intake-and-work-contract/SKILL.md \
             tests/test_ai_solution_layer_selection_contract.py
 
-          git diff --cached --name-only | LC_ALL=C sort > /tmp/actual-paths.txt
+          git diff --cached --name-only --no-renames | LC_ALL=C sort > /tmp/actual-paths.txt
           printf '%s\n' \
             '.github/workflows-support/temp_ai_solution_layer_runner.py' \
             '.github/workflows-support/temp_ai_solution_layer_runner_v2.py' \
