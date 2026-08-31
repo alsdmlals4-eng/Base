@@ -348,7 +348,7 @@ Codex는 다음을 하지 않는다.
 
 ### 6.2 이관 완료 Gate
 
-프로젝트별로 다음 세 값이 모두 0이어야 active dependency 제거를 완료했다고 판정한다.
+다음 0은 실제 Notion 고유 자료 이관 범위에서 검증할 완료 목표값이며 기본값이 아니다. 권한 제한·불완전한 목록·미회수 자료가 남으면 `INVENTORY_INCOMPLETE`와 해당 카운터 `UNKNOWN`을 기록하고 `LEGACY_READ_ONLY`를 유지한다. UNKNOWN을 0으로 바꾸지 않는다.
 
 ```text
 NOTION_UNIQUE_CANON_COUNT = 0
@@ -362,7 +362,7 @@ ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT = 0
 - `CODEX_NOTION_DEPENDENCY_COUNT`: 구현 시작·재개·asset 회수에 Notion 조회가 필수인 경로 수
 - `ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT`: 완료 계약이 여전히 Notion 쓰기/readback을 요구하는 활성 규칙 수
 
-모두 0이 되면 상태를 `NOTION_RETIRED_FROM_ACTIVE_FLOW`로 기록할 수 있다.
+다음 세 카운터의 검증된 0, `inventory.status == COMPLETE`, 각 이관 대상의 `inventory.destination_owner_readback_receipt` 검증을 모두 충족한 경우에만 `NOTION_RETIRED_FROM_ACTIVE_FLOW`로 기록할 수 있다.
 
 `NO_DELETE_REQUIRED_FOR_RETIREMENT`
 
