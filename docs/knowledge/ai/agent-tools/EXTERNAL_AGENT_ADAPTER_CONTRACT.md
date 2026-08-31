@@ -48,9 +48,11 @@ Use three explicit stages:
 
 1. **Inspect:** read current authority and collect evidence without changing repository or external state.
 2. **Mutate:** apply only the approved bounded change and emit an exact change receipt.
-3. **Verify:** read back the resulting state and run Base/project-owned checks independently of the mutating model or service.
+3. **Verify:** read back the resulting state and run Base/project-owned checks, without treating the mutating agent's self-attestation as verification.
 
-An adapter must not combine inspection, mutation, and self-attested verification into one opaque success claim. A generated explanation or review is not verification evidence by itself. Delegating review to the same authoring model does not establish a separate independent reviewer; preserve the review requirements of the existing owner.
+An adapter must not combine inspection, mutation, and self-attested verification into one opaque success claim. A generated explanation or review is not verification evidence by itself.
+
+`INDEPENDENCE_IS_CONTEXT_NOT_MODEL`: preserve the existing owner's independent-review requirements using actual author/reviewer context or run identity, role, reviewed revision, and read-only review evidence. A separate reviewer execution may use the same model and provider; a different paid model is not required. Conversely, relabeling a same-context self-review or switching model names does not establish independence. Assigned labels without evidence of separate execution are not sufficient. Deterministic checks, repeated self-review, and an independent review remain distinct evidence types.
 
 ## 4. Process execution safety
 
