@@ -449,8 +449,8 @@ def check_record(
 
     try:
         record = read_json(record_path)
-        record_schema = read_json(root / RECORD_SCHEMA)
-        result_schema = read_json(root / RESULT_SCHEMA)
+        record_schema = read_json(ROOT / RECORD_SCHEMA)
+        result_schema = read_json(ROOT / RESULT_SCHEMA)
     except (OSError, json.JSONDecodeError) as error:
         errors = [f"record or schema unavailable: {error}"]
         result["errors"] = errors
