@@ -103,9 +103,12 @@ class ExternalAgentToolAdoptionContractTests(unittest.TestCase):
             "REJECT_AS_REQUIRED_DEPENDENCY",
             "REVALIDATION_TRIGGER",
             "ROLLBACK_BOUNDARY",
+            "docs/knowledge/ai/agent-tools/EXTERNAL_AGENT_ADAPTER_CONTRACT.md",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, review)
+
+        self.assertNotIn("`external-agent-adapter-contract.md`", review)
 
     def test_external_adapter_contract_preserves_authority_cost_and_raw_evidence(self) -> None:
         adapter = ADAPTER.read_text(encoding="utf-8")
