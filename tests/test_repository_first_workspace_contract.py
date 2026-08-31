@@ -210,5 +210,48 @@ class RepositoryFirstWorkspaceContractTests(unittest.TestCase):
         self.assertIn("readback", checklist)
 
 
+    def test_migration_export_has_current_format_and_restore_limits(self) -> None:
+        checklist = text(MIGRATION_CHECKLIST)
+        heading = "### Export·백업의 증거 한계"
+        self.assertIn(heading, checklist)
+        section = checklist.split(heading, 1)[1].split("## 2.", 1)[0]
+        for token in (
+            "https://www.notion.com/help/back-up-your-data",
+            "2026-08-31",
+            "HTML",
+            "Markdown",
+            "CSV",
+            "개별 페이지 PDF",
+            "EXPORT_SUCCESS_IS_NOT_MIGRATION_COMPLETE",
+            "권한",
+            "원상 복원",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, section)
+
+    def test_migration_incomplete_inventory_cannot_be_counted_as_zero(self) -> None:
+        checklist = text(MIGRATION_CHECKLIST)
+        section = checklist.split("## 10. 이관 잔여 카운터", 1)[1].split("## 11.", 1)[0]
+        self.assertIn("INVENTORY_INCOMPLETE", section)
+        self.assertIn("UNKNOWN", section)
+        self.assertIn("완료 목표값", section)
+        self.assertIn("inventory COMPLETE + 모두 0 + 대상 owner readback 완료", section)
+        self.assertLess(section.index("INVENTORY_INCOMPLETE"), section.index("inventory COMPLETE + 모두 0"))
+        self.assertIn("NO_DELETE_REQUIRED_FOR_RETIREMENT", section)
+
+    def test_migration_receipt_records_inventory_and_export_evidence(self) -> None:
+        checklist = text(MIGRATION_CHECKLIST)
+        section = checklist.split("## 12. 완료 receipt", 1)[1]
+        for token in (
+            "inventory:",
+            "status: NOT_CHECKED | INCOMPLETE | COMPLETE",
+            "scope_and_access_receipt:",
+            "excluded_or_unreadable:",
+            "export_or_read_receipt:",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, section)
+
+
 if __name__ == "__main__":
     unittest.main()
