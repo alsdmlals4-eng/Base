@@ -65,7 +65,7 @@ def _raster_target_ownership_errors(packet: dict[str, Any]) -> list[str]:
             continue
         valid_targets = {target for target in targets if isinstance(target, str) and target}
         for module_id in module_ids:
-            if module_id in modules:
+            if isinstance(module_id, str) and module_id in modules:
                 owned_targets[module_id].update(valid_targets)
 
     unowned: set[tuple[str, str]] = set()
@@ -78,7 +78,8 @@ def _raster_target_ownership_errors(packet: dict[str, Any]) -> list[str]:
             if not isinstance(part, dict):
                 continue
             module_id = part.get("module_id")
-            if module_id in modules and surface not in owned_targets.get(module_id, set()):
+            if (isinstance(module_id, str) and module_id in modules
+                    and surface not in owned_targets.get(module_id, set())):
                 unowned.add((surface, module_id))
     return [
         f"RASTER_MODULE_TARGET_UNOWNED: {surface}/{module_id}"
