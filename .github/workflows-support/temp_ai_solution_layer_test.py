@@ -67,6 +67,8 @@ class AISolutionLayerSelectionContractTests(unittest.TestCase):
             "MODEL_CAPABILITY_IS_NOT_APPLICATION_ARCHITECTURE",
             "MULTIMODAL_INPUT_IS_NOT_TASK_COMPETENCE",
             "RLHF_IS_POST_TRAINING_NOT_RUNTIME_CONTROL",
+            "human demonstrations or preference comparisons",
+            "reward-based post-training stages",
             "PROMPT_AND_CONTEXT_BEFORE_FINE_TUNING",
             "CURRENT_KNOWLEDGE_IS_NOT_FINE_TUNING_DEFAULT",
             "EVAL_BEFORE_LAYER_ESCALATION",
@@ -120,6 +122,8 @@ class AISolutionLayerSelectionContractTests(unittest.TestCase):
             "MODEL_VS_HARNESS_IS_AN_EVAL_QUESTION",
             "BASE_ALREADY_COMPOSES_A_HARNESS_NO_NEW_FRAMEWORK",
             "exact model/tool version",
+            "materially changes behavior",
+            "component's value in doubt",
         ):
             self.assertIn(term, capability)
 
