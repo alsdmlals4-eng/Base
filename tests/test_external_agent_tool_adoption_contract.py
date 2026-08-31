@@ -5,28 +5,75 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EVALUATION_REFERENCES = (
+AI_KNOWLEDGE = ROOT / "docs" / "knowledge" / "ai"
+REVIEW = (
+    AI_KNOWLEDGE
+    / "agent-tools"
+    / "EXTERNAL_AGENT_TOOL_ADOPTION_REVIEW_2026-08-31.md"
+)
+ADAPTER = AI_KNOWLEDGE / "agent-tools" / "EXTERNAL_AGENT_ADAPTER_CONTRACT.md"
+BRIEFING = AI_KNOWLEDGE / "READER_ADAPTIVE_ACTION_BRIEFING.md"
+SOURCE_CATALOG = (
     ROOT
     / "skills"
     / "evaluating-godot-assets-and-plugins-before-creation"
     / "references"
+    / "source-catalog.md"
 )
-INTAKE_REFERENCES = (
+FIRST_PROMPT = (
     ROOT
     / "skills"
     / "managing-project-intake-and-work-contract"
     / "references"
+    / "first-prompt-direction-anchoring.md"
 )
-REVIEW = EVALUATION_REFERENCES / "agent-tool-adoption-review-2026-08-31.md"
-ADAPTER = EVALUATION_REFERENCES / "external-agent-adapter-contract.md"
-BRIEFING = INTAKE_REFERENCES / "reader-adaptive-action-briefing.md"
+OLD_PACKAGED_REFERENCES = (
+    ROOT
+    / "skills"
+    / "evaluating-godot-assets-and-plugins-before-creation"
+    / "references"
+    / "agent-tool-adoption-review-2026-08-31.md",
+    ROOT
+    / "skills"
+    / "evaluating-godot-assets-and-plugins-before-creation"
+    / "references"
+    / "external-agent-adapter-contract.md",
+    ROOT
+    / "skills"
+    / "managing-project-intake-and-work-contract"
+    / "references"
+    / "reader-adaptive-action-briefing.md",
+)
 
 
 class ExternalAgentToolAdoptionContractTests(unittest.TestCase):
-    def test_reference_owners_exist_without_creating_parallel_skills(self) -> None:
+    def test_shared_references_exist_without_creating_parallel_skills(self) -> None:
         for path in (REVIEW, ADAPTER, BRIEFING):
             with self.subTest(path=path):
                 self.assertTrue(path.is_file(), f"missing contract reference: {path}")
+
+        for path in OLD_PACKAGED_REFERENCES:
+            with self.subTest(path=path):
+                self.assertFalse(
+                    path.exists(),
+                    f"shared AI knowledge must not remain as an orphan skill reference: {path}",
+                )
+
+    def test_existing_owner_loaders_route_shared_references(self) -> None:
+        source_catalog = SOURCE_CATALOG.read_text(encoding="utf-8")
+        first_prompt = FIRST_PROMPT.read_text(encoding="utf-8")
+
+        for relative_path in (
+            "docs/knowledge/ai/agent-tools/EXTERNAL_AGENT_TOOL_ADOPTION_REVIEW_2026-08-31.md",
+            "docs/knowledge/ai/agent-tools/EXTERNAL_AGENT_ADAPTER_CONTRACT.md",
+        ):
+            with self.subTest(relative_path=relative_path):
+                self.assertIn(relative_path, source_catalog)
+
+        self.assertIn(
+            "docs/knowledge/ai/READER_ADAPTIVE_ACTION_BRIEFING.md",
+            first_prompt,
+        )
 
     def test_review_covers_every_candidate_and_records_bounded_dispositions(self) -> None:
         review = REVIEW.read_text(encoding="utf-8")
