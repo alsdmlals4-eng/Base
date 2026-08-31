@@ -30,6 +30,17 @@ PHASE_1_PLANNING_CO_DESIGN
 ```
 각 phase는 산출물과 exit Gate를 실제 readback해야 한다.
 
+## 0A. Project-declared validation policy
+
+```text
+VALIDATION_POLICY_PROJECT_DECLARED
+MACHINE_PRIMARY_FINAL_USER_REVIEW
+FIVE_PERSON_COMPREHENSION_NOT_BASE_DEFAULT
+PLAYER_EXPERIENCE_STUDY_NOT_BASE_DEFAULT
+```
+
+The default five-phase interface keeps Phase 5 available for actual user evidence. A project can instead declare `MACHINE_PRIMARY_FINAL_USER_REVIEW` in its current canonical owner: Phase 4 exact-head machine evidence may produce `MACHINE_PRIMARY_ACCEPTANCE_READY`, while Phase 5 becomes `FINAL_USER_REVIEW_ONLY` and runs only when the user requests final inspection of the same exact candidate/build. This does not relabel an unrun human result as PASS, erase platform/device obligations, or override an explicit project research/release requirement.
+
 ## 1. PHASE_1_PLANNING_CO_DESIGN — 기획·사용자 공동설계
 ```text
 CORE_PLANNING_CO_DESIGN_REQUIRED
@@ -181,6 +192,7 @@ Phase 4 완료에는 `USER_DOWNLOADABLE_BUILD_ARTIFACT_REQUIRED`, exact build id
 ```text
 AUTOMATED_VERTICAL_SLICE_READY
 READY_FOR_USER_VERTICAL_SLICE_VALIDATION
+MACHINE_PRIMARY_ACCEPTANCE_READY
 AUTOMATED_VERTICAL_SLICE_READY_IS_PHASE_4_ONLY
 AUTOMATED_VERTICAL_SLICE_READY != USER_VALIDATED_VERTICAL_SLICE
 ```
@@ -198,7 +210,7 @@ PHASE_4_COMPLETION:
   PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN
   WHOLE_GAME_COMPLETE: false
   RELEASE_READY: false
-  result: AUTOMATED_VERTICAL_SLICE_READY | BLOCKED_UNVERIFIED
+  result: AUTOMATED_VERTICAL_SLICE_READY | MACHINE_PRIMARY_ACCEPTANCE_READY | BLOCKED_UNVERIFIED
 ```
 
 ## 5. PHASE_5_USER_VERTICAL_SLICE_VALIDATION — 사용자 실제 검증
@@ -235,6 +247,8 @@ USER_VALIDATED_VERTICAL_SLICE
 CANONICAL_REFLECTION_AFTER_PLAY
 ```
 `USER_VALIDATED_VERTICAL_SLICE`는 actual user play, representative flow, blocking usability 처리, 핵심 경험 방향 판단, feedback 기록과 필요한 canon readback을 요구한다. 이는 전체 콘텐츠·모든 플랫폼·최종 밸런스·모든 언어·store/legal/release 완료가 아니다.
+
+For `MACHINE_PRIMARY_FINAL_USER_REVIEW`, this phase is `FINAL_USER_REVIEW_ONLY`: it is not a prerequisite for `MACHINE_PRIMARY_ACCEPTANCE_READY`, it does not require five people by Base default, and it must only record a requested final user inspection on the exact candidate/build. `FIVE_PERSON_COMPREHENSION_NOT_BASE_DEFAULT` and `PLAYER_EXPERIENCE_STUDY_NOT_BASE_DEFAULT` preserve the evidence boundary rather than convert an unrun study into a pass.
 
 ## 6. 사용자 evidence 기반 bounded reopen
 ```text

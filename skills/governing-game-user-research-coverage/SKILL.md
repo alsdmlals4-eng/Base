@@ -13,6 +13,20 @@ description: Use when a game project must install, audit, plan, or synthesize Ga
 
 `DECISION_RELEVANT_COVERAGE`: 현재 결정·위험·플레이어 약속에 영향을 주는 영역만 실제 연구·계측·플레이테스트 우선순위를 요구한다. 나머지 영역은 책임 위치와 상태를 유지하되 조사량을 부풀리지 않는다.
 
+### Project-declared validation policy
+
+`PROJECT_DECLARED_VALIDATION_POLICY` is required before turning a research or human-evidence state into an implementation, candidate, release, or cutover blocker. Base provides evidence vocabulary and a coverage taxonomy; it does not impose one fixed participant count, a universal player-experience study, or a mandatory human-study sequence on every project.
+
+```text
+MACHINE_PRIMARY_FINAL_USER_REVIEW
+→ deterministic/runtime/export/package/CI evidence is the primary acceptance route
+→ FINAL_USER_REVIEW is separately recorded only when the project/user requests it
+→ FIVE_PERSON_COMPREHENSION_NOT_BASE_DEFAULT
+→ PLAYER_EXPERIENCE_STUDY_NOT_BASE_DEFAULT
+```
+
+This selectable policy never promotes a machine result into human evidence. It also never suppresses an explicitly approved project research question, a target-platform/device requirement, a legal/accessibility obligation, or a user-requested human study. Those requirements remain decision-specific and must be recorded by their existing owners.
+
 ## Modes
 
 `install → audit → plan-evidence → synthesize → verify-coverage`

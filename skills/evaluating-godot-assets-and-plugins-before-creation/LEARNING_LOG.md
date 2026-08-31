@@ -43,3 +43,16 @@
 - **Boundary:** GUT은 C#/.NET·native·platform test authority를 강제 대체하지 않는다. Hera persistent editor/source mutation은 금지하며 `game set` 또는 state-changing runtime `call`은 `DIAGNOSTIC_ONLY`, acceptance evidence false, restore/restart required다. 모든 프로젝트 일괄 설치는 금지하고 소비 경로가 없으면 `INSTALLED_UNUSED` 또는 `DEFERRED`다.
 - **Verification state:** GitHub Actions RED에서 Base 생성물·무결성 단계는 PASS했고 새 focused contract 단계가 의도대로 실패했다. Base static GREEN과 project runtime E2E는 후속 단계이며 실제 프로젝트 addon 설치·Hera runtime QA·human validation은 아직 `NOT_RUN`이다.
 - **Next trigger:** Godot/GUT/Hera version change, project adoption, Hera command surface change, McpTestSuite migration, or real project live-QA evidence가 생기면 exact pin·authority boundary·source-delta guard를 재검증한다.
+
+## 2026-08-31 — External agent tool absorption is not runtime enforcement
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** 사용자 승인 “좋아 확인 후 교정,병합,흡수 진행해”에 따라 PR #788의 외부 도구 10종 평가·연결·검증 상태를 fresh-read함.
+- **Finding:** 최초 `91fbcc0a89f3c1b3ce1eb5a68a9a619074fabdf6`는 Draft·미병합인데 완료 보고가 흡수 상태를 과장했다. 검토 관점 5개를 실행 루프처럼 표시했고, 출력 필터 실패 뒤 원문 복구가 명령 재실행으로 해석될 여지와 실제 프로젝트에 없는 Godot 검증 명령 예시가 있었다.
+- **Decision:** 새 Skill·hook·reviewer·CLI·memory engine·running-mate를 만들거나 설치하지 않는다. 기존 owner의 reference 연결과 계약 검사만 강화하고, 기존 학습·재사용·handoff·검증 책임을 그대로 재사용한다. 상세 흡수 기록은 `docs/knowledge/ai/agent-tools/EXTERNAL_AGENT_TOOL_ADOPTION_REVIEW_2026-08-31.md`가 소유한다.
+- **Evidence contract:** `CONTRACT_TESTS_ARE_NOT_BEHAVIOR_EVALUATIONS`, `EXISTING_OWNER_REUSE_NOT_NEW_HOOK_IMPLEMENTATION`, `RAW_CAPTURE_BEFORE_TRANSFORM`, `PRESERVE_UPSTREAM_EXIT_STATUS`, `NO_AUTOMATIC_COMMAND_REPLAY`를 구분한다. 원문 복구는 기존 호출의 기록과 부작용 readback이 먼저이며 성공했을 수 있는 변경 명령을 자동 반복하지 않는다.
+- **Historical RED receipt:** `32232d523c52bc02f963bc64652f711988f5e6cb`, Actions run `33345247103`, 2,360 tests 중 의도한 7 failures·37 skips. 진단 ZIP SHA-256 `7fa047b9e68b395e2f30e0f574bf37bd26c8b9e6a906416a50fd6f110d7b6d43`를 다운로드한 실제 bytes와 대조했다. 이는 당시 RED 증거이며 최신 GREEN·병합 여부를 대신하지 않는다.
+- **Boundary:** 소스 제작자 벤치마크는 우리 프로젝트의 A/B 실험이 아니다. 동일 작성자의 자기검토와 CI는 독립 검토가 아니다. 사용자 결정은 정본에 즉시 기록하고, 프로젝트 교훈의 공용 일반화에 필요한 반복 증거와 혼동하지 않는다. 프로젝트 채택 pin·승인 자산·비용·권한은 이 변경으로 바꾸지 않는다.
+- **Closeout correction:** 어댑터 본문의 재실행 금지와 달리 사람용 briefing의 rollback 예시가 원본 명령 재실행을 권하는 형태로 남아 있었다. 기존 원본 출력과 현재 상태를 먼저 확인하도록 예시를 고치고, 새 실행은 기존 owner의 승인·멱등성·재시도 경계로 위임한다. 같은 7개 파일의 exact-blob 스냅샷에서 기존 17개 계약 검사는 통과했고, 예시 회귀검사를 추가한 18개 검사에서 새 1개만 실패하는 RED를 확인했다. 이는 문서 충돌의 재현이며 실제 외부 명령이나 도구 runtime을 실행한 증거가 아니다.
+- **Current-state owner:** 최종 exact HEAD, 전체 CI, 별도 독립 검토, 허용된 merge와 postmerge main readback은 PR #788의 최신 기록에서 확인한다. 문서 존재·브랜치 GREEN만으로 merged-main absorption이나 실제 도구 동작 PASS를 선언하지 않는다.
+- **Next trigger:** 실제 프로젝트가 하나의 선택형 도구를 필요로 할 때 현재 환경·exact version·데이터/비용/권한·동등한 격리 baseline·원문 복구·rollback을 확인한 뒤 별도 trial gate를 적용한다. 기존 작업 중 HEAD가 바뀌면 새 diff를 읽고 다른 변경을 보존하며 stale 문서로 덮어쓰지 않는다.
