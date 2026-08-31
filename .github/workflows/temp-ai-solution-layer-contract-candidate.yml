@@ -6,29 +6,85 @@ on:
       - work/video-ai-terms-absorption-20260901
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  build-candidate:
+  publish-candidate:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout task branch
+      - name: Checkout exact task head
         uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
-          persist-credentials: false
+          fetch-depth: 1
 
-      - name: Run RED-GREEN and negative controls
+      - name: Rebuild and verify exact candidate
         shell: bash
-        run: python .github/workflows-support/temp_ai_solution_layer_runner_v2.py
+        run: |
+          set -euo pipefail
+          expected_main='32f4dd5ba6042dc34611e2c8912f300b90491e0a'
+          observed_main="$(git ls-remote origin refs/heads/main | awk '{print $1}')"
+          observed_branch="$(git ls-remote origin "refs/heads/${GITHUB_REF_NAME}" | awk '{print $1}')"
+          test "${observed_main}" = "${expected_main}"
+          test "${observed_branch}" = "${GITHUB_SHA}"
 
-      - name: Upload bounded candidate and evidence
-        uses: actions/upload-artifact@v4
-        with:
-          name: ai-solution-layer-contract-candidate
-          path: |
-            candidate/
-            tests-evidence/
-          if-no-files-found: error
-          retention-days: 1
+          python .github/workflows-support/temp_ai_solution_layer_runner_v2.py
+
+          printf '%s  %s\n' \
+            '0cdbc6215f2084cca1e9c94a63d778a45f415c313dfb5c0d763c398cb67b395f' \
+            'candidate/skills/managing-project-intake-and-work-contract/SKILL.md' \
+            '8e3fc50e7e1c60bef886af30e6c8ba14d728849dcec0580b129df147e91dbd99' \
+            'candidate/docs/CAPABILITY_COMPOSITION_MAP.md' \
+            '4c774c2dd7b5ac2856b6749eefd3e116885afc68a4df4301012aad6b843a3995' \
+            'candidate/tests/test_ai_solution_layer_selection_contract.py' \
+            | sha256sum --check --strict
+
+          cp candidate/skills/managing-project-intake-and-work-contract/SKILL.md \
+            skills/managing-project-intake-and-work-contract/SKILL.md
+          cp candidate/docs/CAPABILITY_COMPOSITION_MAP.md \
+            docs/CAPABILITY_COMPOSITION_MAP.md
+          cp candidate/tests/test_ai_solution_layer_selection_contract.py \
+            tests/test_ai_solution_layer_selection_contract.py
+
+          python -m unittest discover -s tests -p test_ai_solution_layer_selection_contract.py -v
+          python -m unittest discover -s tests -p 'test_public_video*.py' -v
+          python -m unittest discover -s tests -p test_skill_implementation_evidence.py -v
+          python -m unittest discover -s tests -p test_first_prompt_intake_contract.py -v
+          python -m unittest discover -s tests -p test_entrypoint_ownership.py -v
+          python tools/build_skill_implementation_evidence.py --check
+          python -m py_compile tests/test_ai_solution_layer_selection_contract.py
+          git diff --check
+
+      - name: Commit only final Base paths and remove temporary executor
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf candidate tests-evidence
+          git rm \
+            .github/workflows/temp-ai-solution-layer-contract-candidate.yml \
+            .github/workflows-support/temp_ai_solution_layer_test.py \
+            .github/workflows-support/temp_ai_solution_layer_runner.py \
+            .github/workflows-support/temp_ai_solution_layer_runner_v2.py
+          git add \
+            docs/CAPABILITY_COMPOSITION_MAP.md \
+            skills/managing-project-intake-and-work-contract/SKILL.md \
+            tests/test_ai_solution_layer_selection_contract.py
+
+          actual_paths="$(git diff --cached --name-only | LC_ALL=C sort)"
+          expected_paths="$(printf '%s\n' \
+            '.github/workflows-support/temp_ai_solution_layer_runner.py' \
+            '.github/workflows-support/temp_ai_solution_layer_runner_v2.py' \
+            '.github/workflows-support/temp_ai_solution_layer_test.py' \
+            '.github/workflows/temp-ai-solution-layer-contract-candidate.yml' \
+            'docs/CAPABILITY_COMPOSITION_MAP.md' \
+            'skills/managing-project-intake-and-work-contract/SKILL.md' \
+            'tests/test_ai_solution_layer_selection_contract.py' \
+            | LC_ALL=C sort)"
+          test "${actual_paths}" = "${expected_paths}"
+          git diff --cached --check
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'docs(ai): route video evidence and select solution layers'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
