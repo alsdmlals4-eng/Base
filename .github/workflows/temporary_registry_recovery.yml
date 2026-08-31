@@ -1,0 +1,23 @@
+name: Temporary Registry Recovery
+
+on:
+  push:
+    branches:
+      - work/feature-code-contract-modularity-20260901
+
+permissions:
+  contents: read
+
+jobs:
+  recover-registry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out exact branch head
+        uses: actions/checkout@v4
+      - name: Upload exact registry source
+        uses: actions/upload-artifact@v4
+        with:
+          name: registry-recovery-${{ github.sha }}
+          path: skills/SKILL_REGISTRY.json
+          if-no-files-found: error
+          retention-days: 1
