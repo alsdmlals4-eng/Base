@@ -28,7 +28,9 @@ Selected structure:
 5. code review remains owned by `reviewing-and-validating-project-changes` plus deterministic project tests;
 6. optional external executors use `docs/knowledge/ai/agent-tools/EXTERNAL_AGENT_ADAPTER_CONTRACT.md` and remain advisory.
 
-`EXISTING_OWNER_REUSE_NOT_NEW_HOOK_IMPLEMENTATION`: naming these owners reuses their existing responsibilities. This change adds briefing/adapter references, the two existing reference-loader links, and document regression checks. It does not implement Ballast's keyword hook, Click's state machine, a new memory system, or an external reviewer/CLI integration.
+`EXISTING_OWNER_REUSE_NOT_NEW_HOOK_IMPLEMENTATION`: naming these owners reuses their existing responsibilities. This change adds briefing/adapter references, the two existing reference-loader links, document regression checks, and an entry in the existing evaluation learning log. It does not implement Ballast's keyword hook, Click's state machine, a new memory system, or an external reviewer/CLI integration.
+
+`EXPLICIT_USER_DECISION_IS_NOT_LEARNED_HEURISTIC`: Record an explicit user-approved decision immediately in its current canonical owner, with scope, approval source, and supersession links when applicable. Do not wait for recurrence before honoring or recording it. Repeated evidence and counterexamples are required when generalizing an observed correction into a reusable heuristic across tasks/projects; that is a different operation owned by `skills/evolving-project-discipline-skills/SKILL.md`.
 
 ## 2. Alternatives compared
 
@@ -47,7 +49,7 @@ Installing every package globally and rejecting all useful concepts are excluded
 | Candidate | Observed mechanism | Base overlap | Disposition | Adopted or bounded result |
 |---|---|---|---|---|
 | `i-have-adhd` | Action-first briefing, visible next action, compact numbered output, session hook | Intake/reporting and user-update rules | `ADAPT` | Adopt action/conclusion first, visible state, and matter-of-fact error reporting. Do not require a diagnosis, fixed universal list limit, mandatory time estimate, or always-on vendor hook. |
-| `ballast` | Keyword-triggered rule delivery, correction pinning, compaction/session hooks, decision and goal traces | Discipline-skill promotion, context handoff, decision ledger | `ADAPT` | Reuse evidence-backed promotion with owner, trigger, counterexample, revalidation, consumer, and regression test. Do not create a second decision canon, install a hook, or log full prompts. Rule delivery is not proof of model obedience. |
+| `ballast` | Keyword-triggered rule delivery, correction pinning, compaction/session hooks, decision and goal traces | Discipline-skill promotion, context handoff, decision ledger | `ADAPT` | Record explicit approved decisions immediately; generalize learned rules only through evidence-backed promotion with owner, trigger, counterexample, revalidation, consumer, and regression test. No second decision canon, installed hook, or full-prompt log. |
 | `ponytail` | Reuse/deletion-first pressure against speculative code | Existing-solution-first and reuse-first preflight | `ADAPT` | Reinforce reuse/standard-library/configuration options before new code. Removal remains subject to ownership, preservation, and user safety gates; shorter code is not sufficient evidence of a better result. |
 | `open-code-review` | Deterministic pipeline plus LLM review, line-level findings, managed and delegated modes | Review and validation skill, CI, project tests | `TRIAL_OPTIONAL` | Advisory review only on bounded diffs. Confirm actual mode, applicable language/ruleset, model/data/cost path, and reviewer independence. A delegated host model is not automatically a separate reviewer. |
 | `rtk` | Command-output compression proxy | Prompt/token cost optimization and evidence capture | `TRIAL_OPTIONAL` | Trial only on noisy output with safe original-invocation capture. Compare correctness, omissions, total tokens/cost, retries, and raw rereads. Preserve child status; never replay a side-effecting command merely because its output filter failed. |
@@ -56,6 +58,8 @@ Installing every package globally and rejecting all useful concepts are excluded
 | `click` | Approved compact contract, persistent stage hooks, bounded execution, revision-bound evidence reuse | Intake/work contract, scope lock, verification and handoff | `ADAPT` | Retain explicit inspect/mutate/verify boundaries, no implicit shell, bounded retries/output, and current-evidence reuse. Do not establish a second approval authority or claim to have installed its hook state machine. |
 | `antigravity-cli` | Terminal-first external-agent product | Optional external executor and model-routing concerns | `TRIAL_OPTIONAL` | Evaluate only a named task class after current account/model/quota, permissions, telemetry, data, and billing documentation is verified. No claim that it universally replaces another CLI or outperforms a model. |
 | `macro` | Unified communication, documents, tasks, agents, and shared memory | Repository workspace, connectors, task/PR lifecycle, derived memory | `REFERENCE_ONLY` plus `REJECT_AS_REQUIRED_DEPENDENCY` | Reuse observation and linked task→branch→PR UX ideas. Repository remains canon. A future separately approved running mate may use Macro as an optional adapter; no running-mate implementation or Macro deployment is authorized by this review. |
+
+GDScript-specific review quality remains unverified. Open Code Review's availability and generic review architecture do not replace actual Godot parsing, GUT/project tests, runtime evidence, or the existing review owner at `skills/reviewing-and-validating-project-changes/SKILL.md`.
 
 ## 4. Primary-source and license observations
 
@@ -84,9 +88,9 @@ Record:
 
 - exact repository/project revision and bounded task class;
 - tool version, configuration, applicable source/model/endpoint, account tier, and telemetry state;
-- baseline and candidate paths receiving equivalent inputs;
+- baseline and candidate paths receiving equivalent isolated starting states, one intentional treatment difference, declared cache/order conditions, and predeclared acceptance criteria;
 - task success, expected coverage, and deterministic verification result;
-- input/output tokens where observable, measurement method, elapsed time, retries, failure rate, and total marginal cost;
+- input/output tokens where observable, measurement kind, elapsed time, retries, failure rate, and total marginal cost;
 - omitted or altered evidence, false positives, false negatives, and original-output rereads;
 - secrets/data classes exposed and retention/logging behavior;
 - kill switch, original-output recovery, and provider-independent rollback result.
@@ -137,9 +141,28 @@ Observed baseline: PR #788 at `91fbcc0a89f3c1b3ce1eb5a68a9a619074fabdf6` contain
 | A generic Godot runner path and zero exit were offered without a target project | Discover the real validator and check expected executed coverage and revision | Reject the invented runner and require coverage-aware examples |
 | Future running-mate advice was phrased as an implementation instruction | Keep it conditional, reference-only, and outside current scope | Reject the imperative build instruction |
 | Source metrics and static contracts could be mistaken for local effectiveness | Remove the unsourced cost-regression assertion and label source/runtime boundaries | Require explicit local-A/B and behavior-evaluation limits |
+| Equivalent prompts alone could hide different starting state, cache, or prior mutations | Isolate/reset both trial arms and declare the single treatment and acceptance criteria | Check starting-state identity and measurement-kind requirements |
+| A repeated-learning threshold could delay an explicit user decision | Record approved decisions immediately; require recurrence only for generalizing heuristics | Check the separate explicit-decision rule |
+| A new Base reference could overwrite an adopted project pin or demand duplicate approval | Preserve project authority and reuse valid scoped approval; recheck before writes/merge | Check no-silent-rollout and approval freshness |
 
 `CONTRACT_TESTS_ARE_NOT_BEHAVIOR_EVALUATIONS`: `tests/test_external_agent_tool_adoption_contract.py` checks document content, reference locations, and guardrail presence. It does not execute source hooks, measure reader comprehension, run RTK, or prove an adapter's process semantics. Those require the separate trial gate.
 
-The new seven regression cases were committed before the corrections at `32232d523c52bc02f963bc64652f711988f5e6cb`. GitHub Actions run `33345247103` executed 2,360 tests and reported exactly seven intended failures with 37 environment-gated skips. The downloaded diagnostic artifact `9741787788` matched its published SHA-256 `7fa047b9e68b395e2f30e0f574bf37bd26c8b9e6a906416a50fd6f110d7b6d43`. This is a historical RED receipt, not the final validation state. Final exact-head CI, full-loop records, independent-review disposition, and merge/readback state belong to the current PR record: <https://github.com/alsdmlals4-eng/Base/pull/788>.
+Historical RED receipts:
 
-Actual consumers remain the existing `source-catalog.md` reference in the evaluation Skill and `first-prompt-direction-anchoring.md` in intake. Other named owners keep their existing responsibilities; no additional automatic loader, global hook, registry entry, paid integration, or project-local installation is claimed. Further shared rule promotion follows the existing learning owner; this bounded case is not a new source of project truth.
+- The new seven regression cases were committed before corrections at `32232d523c52bc02f963bc64652f711988f5e6cb`. GitHub Actions run `33345247103` executed 2,360 tests and reported exactly seven intended failures with 37 skips. Diagnostic artifact `9741787788` matched its published SHA-256 `7fa047b9e68b395e2f30e0f574bf37bd26c8b9e6a906416a50fd6f110d7b6d43`.
+- A compatible concurrent test-only change `52eafa58a3e25af068d366f1778c996947987395` added five cases and was preserved. At `2cb76ba164d3dd0bd847d82c4bdea1ebc7725d26`, run `33345827640` executed 2,365 tests with exactly those five failures and 37 skips; the prior twelve cases passed. Artifact `9741970546` matched SHA-256 `eea9039124570347cf184bf1c5f902eb65548339ddc6420170fc2a75f00946cb`.
+
+These are historical failure/correction receipts, not final validation or independent-review claims. Final exact-head CI, full-loop records, independent-review disposition, and merge/readback state belong to the current PR record: <https://github.com/alsdmlals4-eng/Base/pull/788>.
+
+The existing owner learning entry is `skills/evaluating-godot-assets-and-plugins-before-creation/LEARNING_LOG.md`; this case supplies bounded evidence rather than creating a parallel learning registry. Other owners are referenced only for their already defined responsibilities.
+
+## 9. Absorption state and actual consumers
+
+| State | Applied scope | Evidence limit |
+|---|---|---|
+| `NEW_REFERENCE_ROUTING` | Evaluation `references/source-catalog.md` reaches this review and the adapter contract; intake `references/first-prompt-direction-anchoring.md` reaches the reader briefing | Loader/document checks prove discoverability, not that every future model obeys |
+| `REUSED_EXISTING_CONTRACT` | Existing learning, reuse-first, context/handoff, and review owners retain decision/verification authority | No new hook, duplicate decision ledger, or project rollout is implied |
+| `CONTRACT_ONLY_NO_HOOK_ENFORCEMENT` | This PR specifies boundaries and regression checks on their text | Ballast/Click execution mechanisms and external adapters are not implemented here |
+| `OPTIONAL_TOOL_NOT_ACTIVATED` | Open Code Review, RTK, Antigravity CLI, and Macro remain outside active project execution | No actual A/B, quota saving, Godot/runtime, human UX, or deployment PASS |
+
+No extra automatic loader, global hook, registry entry, paid integration, or project-local installation is claimed. Further shared rule promotion follows the existing learning owner; this bounded case is not a new source of project truth.
