@@ -223,6 +223,9 @@ class RepositoryFirstWorkspaceContractTests(unittest.TestCase):
             "CSV",
             "개별 페이지 PDF",
             "EXPORT_SUCCESS_IS_NOT_MIGRATION_COMPLETE",
+            "export/API 요청 성공이나 ZIP 생성만으로 전체 자료 회수·의미 보존·이관 완료를 판정하지 않았다.",
+            "export 결과를 다시 올려도 workspace의 **원상 복원**이 보장되지 않음을 확인했다.",
+            "일반 프로젝트 작업의 Notion 조회·export 의무를 다시 만들지 않는다.",
             "권한",
             "원상 복원",
         ):
@@ -254,6 +257,36 @@ class RepositoryFirstWorkspaceContractTests(unittest.TestCase):
         ):
             with self.subTest(token=token):
                 self.assertIn(token, section)
+
+
+    def test_migration_exit_gate_is_aligned_across_active_owners(self) -> None:
+        contract = json.loads(text(ACTIVE_CONTRACT))
+        gates = contract["migration_exit_gates"]
+        self.assertEqual("ALL_OF", contract.get("migration_exit_gate_logic"))
+        for name in (
+            "NOTION_UNIQUE_CANON_COUNT",
+            "CODEX_NOTION_DEPENDENCY_COUNT",
+            "ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT",
+        ):
+            with self.subTest(counter=name):
+                self.assertIs(int, type(gates.get(name)))
+                self.assertEqual(0, gates[name])
+        self.assertEqual("COMPLETE", gates.get("inventory.status"))
+        self.assertEqual(
+            "ALL_SCOPED_ITEMS_VERIFIED",
+            gates.get("inventory.destination_owner_readback_receipt"),
+        )
+        policy = text(ACTIVE_POLICY).split("### 6.2 이관 완료 Gate", 1)[1].split("### 6.3", 1)[0]
+        self.assertIn("UNKNOWN을 0으로 바꾸지 않는다.", policy)
+        self.assertIn("INVENTORY_INCOMPLETE", policy)
+        self.assertIn(
+            "다음 세 카운터의 검증된 0, `inventory.status == COMPLETE`, "
+            "각 이관 대상의 `inventory.destination_owner_readback_receipt` 검증을 모두 충족한 경우에만 "
+            "`NOTION_RETIRED_FROM_ACTIVE_FLOW`로 기록할 수 있다.",
+            policy,
+        )
+        self.assertNotIn("모두 0이 되면 상태를 `NOTION_RETIRED_FROM_ACTIVE_FLOW`로 기록할 수 있다.", policy)
+
 
 
 if __name__ == "__main__":
