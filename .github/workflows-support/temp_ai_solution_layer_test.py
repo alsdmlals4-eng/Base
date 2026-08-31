@@ -42,6 +42,31 @@ class AISolutionLayerSelectionContractTests(unittest.TestCase):
             section.index("BLOCKED_UNVERIFIED"),
         )
 
+    def test_ai_feature_requests_route_to_solution_layer_before_build(self) -> None:
+        intake = read("skills/managing-project-intake-and-work-contract/SKILL.md")
+        start = "AI_SOLUTION_LAYER_SELECTION_BEFORE_BUILD"
+        end = "새 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층 요청"
+        self.assertIn(start, intake)
+        section = bounded_section(intake, start, end)
+        for term in (
+            "docs/CAPABILITY_COMPOSITION_MAP.md",
+            "AI_SOLUTION_LAYER_SELECTION",
+            "LLM",
+            "multimodal",
+            "RLHF/fine-tuning",
+            "knowledge base/RAG",
+            "API/MCP",
+            "agent/workflow/harness",
+            "AGI/ASI",
+            "measured bottleneck",
+            "smallest sufficient layer",
+            "NO_AUTO_FEATURE_FROM_VOCABULARY",
+            "actual consumer",
+            "Existing Solution First",
+            "BUILD_NEW",
+        ):
+            self.assertIn(term, section)
+
     def test_layer_map_separates_model_context_integration_orchestration_and_harness(self) -> None:
         capability = read("docs/CAPABILITY_COMPOSITION_MAP.md")
         start = "## AI solution layer selection contract"
