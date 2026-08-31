@@ -833,7 +833,9 @@ BLOCKED_UNVERIFIED
 
 ## 12. Notion skills, work structure, and utilization workflow
 
-Notion은 Base의 정본이나 필수 workspace로 승격하지 않는다. 이 seed는 **Notion 자체 기능의 현재 동작과 반복 가능한 지식·작업 구조를 조사하는 공식 source**이며, 발견한 원리는 Existing Solution First와 적대적 검토를 통과한 뒤 기존 Base owner에 최소 흡수한다.
+Notion은 Base의 정본이나 필수 workspace로 승격하지 않는다. 이 seed는 **공식 기능 자료와 비공식 실무·게임 개발 사례를 구분해 조사하는 입력**이며, 발견한 원리는 Existing Solution First와 적대적 검토를 통과한 뒤 기존 Base owner에 최소 흡수한다.
+
+현행 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`의 `REPOSITORY_PRIMARY_CANON`과 `NO_NEW_NOTION_WRITE_BY_DEFAULT`를 유지한다. `FIGMA_USAGE: DISABLED_BY_USER`: Figma/Huddling을 활성 Source나 권장 작업도구로 재도입하지 않는다. 아래 YAML의 authority는 **Notion 공식 제품 동작에만** 적용하며, 12.3의 비공식 자료로 확장하지 않는다.
 
 ```yaml
 seed_group: notion-skills-work-structure
@@ -880,6 +882,34 @@ scan_surfaces:
 - 별도 유료 플랜·AI credit·API 비용·automation quota가 필요한 경로는 `ZERO_INCREMENTAL_COST_REQUIRED`와 새 사용자 승인을 통과하기 전 활성화하지 않는다.
 - 실제 연결 workspace를 읽거나 쓰지 않은 조사에서는 Notion 사용 완료·자동화 동작을 주장하지 않는다.
 - 실질 개선이 없으면 `NO_CHANGE`로 닫고 source scan 기록만 갱신한다.
+
+### 12.3 비공식 실무·게임 개발 조사 lane
+
+공식 자료만으로 주간 조사를 닫지 않는다. 현재 프로젝트의 병목에 관련된 아래 lane의 원문과 실패·혼합 사례를 비교한다. 자료가 없거나 본문을 읽지 못한 lane은 `BLOCKED_UNVERIFIED` 또는 이유 있는 미적용으로 남기며, 모든 lane의 확인 완료를 추정하지 않는다.
+
+| Source / 실제 조사 진입점 | role | 확인할 내용과 한계 |
+|---|---|---|
+| Notion VIP — https://www.notion.vip/insights/streamline-project-management-with-notion ; Thomas Frank — https://thomasjfrank.com/docs/ultimate-tasks/databases/ | `PROFESSIONAL_PRACTICE` | 원저자의 master DB·contextual view·반복 작업 구조. 유료 템플릿·교육·컨설팅 등 상업 이해관계와 유지보수 비용을 기록하며 DB 수나 인기 템플릿을 공용 표준으로 복사하지 않는다. |
+| 인디/솔로 게임 개발자의 원 devlog·공개 저장소·회고 | `PROFESSIONAL_PRACTICE` | 현재 프로젝트와 비슷한 장르·팀 규모·Godot/AI 협업 조건에서 GDD·작업·버그·빌드·플레이테스트·마케팅이 실제 어떻게 연결되는지 확인한다. 원문 URL·작성자·사용 기간·실패/중단·증거를 남기며 template 광고를 실사용 성과로 보지 않는다. |
+| 게임 스튜디오·프로듀서가 직접 공개한 GDD·production workflow·postmortem | `PROFESSIONAL_PRACTICE` | 설계 의도→작업→검증의 연결 원리를 비교하되 대규모 조직의 역할·회의·DB 구조를 1인 개발에 그대로 강제하지 않는다. 재게시·요약은 원 발표로 역추적한다. |
+| 원 연구 — https://arxiv.org/abs/2202.06183 | `AUTHORITY_TARGET` (해당 연구 범위만) | 방법·표본·한계·후속 검증 상태를 확인한다. 440개는 postmortem에서 추출한 문제 단위이지 440개 게임이나 생산성 실험이 아니다. feature creep·다중 프로젝트·부적절한 도구를 검토 질문으로 쓰며 Notion 효과의 인과 증거로 승격하지 않는다. |
+| Notion Marketplace의 제작자 설명·리뷰 — https://www.notion.com/templates/game-design-document | `OBSERVATIONAL_DATA_OR_VENDOR_GUIDE` | 정보구조·초보 탐색·실패 리뷰의 후보를 찾는다. 판매·자기선택 편향, 본문/템플릿 접근 범위와 실제 날짜를 기록한다. 비정상적인 갱신일 표시는 freshness 증거로 쓰지 않는다. |
+| Reddit / Notion·gamedev 커뮤니티의 원 게시물 | `DISCOVERY_FEED` | 원 작성자의 사용·포기·불편 사례와 반례를 찾는다. 추천 수·평점·조회수는 공식 제품 사실·개발 효율·플레이어 가치의 증명이 아니다. |
+
+비공식 자료로 공식 제품 사실을 확정하지 않는다. `SOURCE_CONTEXT_PACKET`에 원문/게시·수정일/checked_at, 버전·권한·팀 규모·장르, 상업 이해관계·표본 편향·반례, 기존 owner/consumer, 최소 개선·검증·rollback을 남긴다. `ADOPT / ADAPT / TEST / AVOID / REFERENCE_ONLY`를 판정하고, 중요한 변경은 최소 3개의 실질 대안과 기존 owner의 최소 5회 **전체 상태** 적대적 개선 루프로 검증한다.
+
+우리 환경의 우선 전이 대상은 **단일 repository owner → 필요한 맥락별 파생 뷰**다. 새 Notion DB·이중 task tracker·대형 dashboard 대신 기존 Decision/Asset/AI spec/Handoff를 재사용한다. DB/property/automation 수나 GDD 페이지 수를 품질 기준으로 삼지 않는다. 상세한 사람용 GDD PDF는 필요한 설명량으로 판단하며 길다는 이유만으로 줄이지 않는다. 새 Skill은 기존 owner로 흡수할 수 없고 반복 가치가 입증된 경우에만 후보로 남긴다.
+
+이 lane은 기존 `ACTIVE_DISCOVERY_SEED`의 조사 입력이며 새 scheduler나 자동 연구 실행기가 아니다. `last_successful_scan_at`은 **실제로 읽은** Source만 갱신한다. 문서 등록·Queue 준비·PR 생성은 실제 scan/교정/병합의 실행 증거가 아니며, 기존 Watchlist/Ledger 승격 Gate와 exact-head 검증·postmerge readback을 생략하지 않는다.
+
+### 12.4 Skill 호출·이식성의 현재 검증 경계
+
+2026-08-31 확인한 Notion 공식 문서: https://www.notion.com/help/create-and-manage-skills . 사용 시점에 다시 확인하며 이 자료가 Base `SKILL.md`의 정본을 대체하지 않는다.
+
+- Skill은 수동 호출뿐 아니라 현재 요청에 맞춘 자동 선택도 가능하다. 자동 선택에는 skills database의 description이 필요하며, 일정/이벤트 기반 자율 실행과는 다른 책임이다. 지속 Instructions·Skill·Custom Agent를 혼동하지 않는다.
+- 로컬 agent에 보내는 `SKILL.md`와 승인된 첨부파일은 다운로드한 사본이며 자동 동기화가 아니다. Notion 원문 변경 후에는 다시 다운로드해야 한다. Base에서는 repository 원본·reviewed diff·검증을 우선하고 별도 이중 쓰기 정본을 만들지 않는다.
+- 같은 instruction 파일은 모델·tool·권한·harness가 다른 환경에서 동일 결과를 보장하지 않는다. 외부 Skill과 첨부는 검토 전 실행하지 않고, provenance·권한·기존 Skill 중복·대표 작업 회귀를 확인한다. 자동 선택/Agent/MCP/Workers/CLI/SDK의 존재나 편의는 새 설치·구매·유료 경로 활성화 승인이 아니다.
+
 ## 13. Game market intelligence + verified success cases
 
 시장조사는 인기순위 수집이 아니라 **비교 차원 → table-stakes → failure/mixed cases → 검증 가능한 성과 → transferable principle → project kick candidate**로 이어진다. 상세 판정 owner는 `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md`다.
