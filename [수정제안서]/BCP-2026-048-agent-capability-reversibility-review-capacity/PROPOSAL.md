@@ -25,8 +25,8 @@
 
 - 실제로 확인한 작업·구현·검증:
   - Base main `32f4dd5ba6042dc34611e2c8912f300b90491e0a`의 `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`는 Interface-first Prompt에서 authority/source, invariants, failure conditions와 validation을 요구한다.
-  - `docs/knowledge/ai/agent-tools/EXTERNAL_AGENT_ADAPTER_CONTRACT.md`는 inspect/mutate/verify 분리, argument-array/no-shell 실행, capability별 network/filesystem/credential/remote-write 승인, bounded retry, raw fallback, kill switch와 provider-independent rollback을 소유한다.
-  - `templates/project-operations/LOOP_ENGINEERING_PROFILE.md`는 초기 기본을 `A2_EXECUTE_ISOLATED`, `max_parallel_agents: 1`로 두고, resource lock·protected surfaces·evidence levels·autonomy maturity를 소유한다.
+  - `skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md`가 optional external-agent/tool adoption의 authoritative owner이고, 그 active reference인 `docs/knowledge/ai/agent-tools/EXTERNAL_AGENT_ADAPTER_CONTRACT.md`는 inspect/mutate/verify 분리, argument-array/no-shell 실행, capability별 network/filesystem/credential/remote-write 승인, bounded retry, raw fallback, kill switch와 provider-independent rollback을 정의한다.
+  - `docs/OPERATING_MODEL.md`가 `LOOP_ENGINEERING_CONTROL_PLANE`의 상위 계약을 소유하고, `templates/project-operations/LOOP_ENGINEERING_PROFILE.md`는 프로젝트별 자율권·resource lock·budget 값을 선언하며 초기 기본을 `A2_EXECUTE_ISOLATED`, `max_parallel_agents: 1`로 둔다.
   - `templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md`는 승인 범위, 보호 범위, acceptance criteria, runtime/play evidence와 exact repository rehydration을 요구한다.
   - `schemas/loop-run-contract-v1.schema.json`에는 planning gate, resource lease/lock, execution budget, evidence, blocker와 approval ref가 존재한다.
   - AWS 공식 글은 고성과 팀의 공통점으로 agent context, 초기 기반 투자, 검증 가능한 완료 조건, 의도 명세와 test-first를 설명하지만, 내부 생산성 수치를 다른 조직의 보장치로 제시하지 않는다: <https://aws.amazon.com/blogs/machine-learning/how-frontier-teams-are-reinventing-ai-native-development/>.
@@ -86,7 +86,8 @@ completion_evidence:
 ```
 
 - 이 projection은 권한을 새로 부여하지 않는다. 상위 정본·도구 capability·repository ruleset보다 넓은 `allow`를 만들 수 없다.
-- 동일 capability에 충돌이 있으면 더 제한적인 결과를 적용하고, `DENY`나 보호 범위를 낮은 권위의 prompt가 완화하지 못하게 한다.
+- 외부 문서·Issue/PR 본문·모델 출력·다운로드 파일 같은 `untrusted_data_sources`는 permission rule이나 approval source를 정의하지 못한다. 선언된 trusted authority의 적용 가능한 규칙만 평가하고, 그 trusted 규칙끼리 충돌할 때 더 제한적인 결과를 적용한다.
+- `DENY`나 보호 범위를 낮은 권위의 prompt가 완화하지 못하게 한다.
 - secret 값 자체, credential material, 민감한 원문 경로를 공개 기록에 복제하지 않는다.
 
 ### 후보 원칙 2 — Human Review Capacity Gate
@@ -131,17 +132,17 @@ completion_evidence:
 - 현재 owner·경로:
   - 작업 의도·정본·입출력·불변조건: `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`;
   - 요청 접수와 실행 계약: `skills/managing-project-intake-and-work-contract/SKILL.md`;
-  - 외부 agent/tool 실행 안전: `docs/knowledge/ai/agent-tools/EXTERNAL_AGENT_ADAPTER_CONTRACT.md`;
-  - 자율화·병렬 budget·resource lock: `templates/project-operations/LOOP_ENGINEERING_PROFILE.md`;
+  - optional external-agent/tool adoption owner와 실행 안전 reference: `skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md` + `docs/knowledge/ai/agent-tools/EXTERNAL_AGENT_ADAPTER_CONTRACT.md`;
+  - 자율 실행 Control Plane과 프로젝트별 profile: `docs/OPERATING_MODEL.md` + `templates/project-operations/LOOP_ENGINEERING_PROFILE.md`;
   - 제품 구현 인계: `templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md`;
   - 실제 변경·증거 검증: `skills/reviewing-and-validating-project-changes/SKILL.md`.
 - 확인한 gap 또는 충돌:
   - owner 충돌은 확인되지 않았다.
   - capability·reversibility·completion evidence는 분산돼 있어 mutating task의 bounded 실행 계약에서 한 번에 확인하기 어렵다.
-  - Loop profile은 agent 수·repair·CI budget을 소유하지만 human review backlog로 병렬성을 감속하는 명시적 조건은 없다.
+  - Control Plane과 project profile은 agent 수·repair·CI budget을 소유하지만 human review backlog로 병렬성을 감속하는 명시적 조건은 없다.
 - 최소 수정 요청:
   1. `AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`의 Interface-first Prompt에 **적용 조건이 있는 선택적 capability/reversibility projection**을 추가하고, 실제 process safety는 기존 External Agent Adapter Contract를 참조한다.
-  2. `LOOP_ENGINEERING_PROFILE.md`에 `UNREVIEWED_AGENT_OUTPUT_IS_WIP_NOT_PROGRESS`와 review backlog·explainability·rework 기반 병렬성 downshift/stop 조건을 추가한다. `max_parallel_agents: 1` 기본값은 유지한다.
+  2. `docs/OPERATING_MODEL.md`의 `LOOP_ENGINEERING_CONTROL_PLANE`에 `UNREVIEWED_AGENT_OUTPUT_IS_WIP_NOT_PROGRESS`와 review-capacity 기반 병렬성 downshift 원칙을 추가하고, `LOOP_ENGINEERING_PROFILE.md`에는 프로젝트별 signal/stop 조건만 선언한다. `max_parallel_agents: 1` 기본값은 유지한다.
   3. `tests/test_external_agent_tool_adoption_contract.py`와 `tests/test_loop_engineering_control_plane_contract.py`의 기존 owner-local consumer를 먼저 사용해 “optional projection, no new Skill/schema/vendor dependency, no fixed productivity promise”를 검증한다. 새 broad test file은 현재 consumer가 부족하다는 증거가 있을 때만 검토한다.
   4. `CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md`와 `loop-run-contract-v1.schema.json`은 먼저 readback만 하고, 중복 필드나 migration 필요가 확인되지 않으면 변경하지 않는다.
 - 새 Skill·문서·registry가 필요 없는 이유:
