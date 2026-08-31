@@ -49,15 +49,19 @@ When an answer requires user action, give a compact block in this order:
 4. **확인 방법** — observable success signal, test, readback, or expected output.
 5. **되돌리기/주의** — only when the action mutates state or carries risk.
 
-Example:
+`DISCOVER_PROJECT_VALIDATOR_BEFORE_COMMAND`: first read the target project's current `AGENTS.md`, declared validator, actual runner file, engine/tool pin, working directory, and acceptance contract. Do not invent a convenient test path or assume that a generic Godot command matches the project. When connected tools can execute the approved check, execute it rather than delegating an already executable action to the user.
+
+The following is a **format illustration, not an executable command**. Replace its placeholders only with verified project values:
 
 ```text
-해야 할 일: Godot 프로젝트 루트에서 테스트를 실행합니다.
-명령: godot --headless --path . -s res://tests/run_all.gd
-이유: 문서상 설계가 아니라 현재 씬·스크립트 통합이 실제로 깨지지 않았는지 확인하기 위해서입니다.
-확인 방법: 프로세스 종료 코드가 0이고 실패 테스트가 0개인지 확인합니다.
-주의: 사용자가 별도로 실행한 Godot 인스턴스는 종료하지 않습니다.
+해야 할 일: 현재 프로젝트가 지정한 검증기를 실행합니다.
+위치/명령: [확인한 프로젝트 경로]에서 [정본이 지정한 실제 검증 명령]
+이유: 이번 변경의 요구사항과 기존 기능이 보존됐는지 확인하기 위해서입니다.
+확인 방법: [필수 검사 ID/예상 실행 수/성공 표시]와 종료 코드, 실패·건너뜀 결과를 함께 확인합니다.
+주의: 이 작업이 직접 실행한 프로세스만 정리하고 사용자가 별도로 연 인스턴스는 보존합니다.
 ```
+
+`ZERO_EXIT_IS_NOT_TEST_COVERAGE`: exit code zero and zero failures are insufficient when no expected tests ran, required tests were skipped, the wrong project/revision was checked, or a wrapper masked a child failure. Report actual executed/expected coverage, required success markers, skips, and the tested revision. Preserve the distinction between a command succeeding, tests passing, and runtime behavior being verified.
 
 ## 5. Conclusion block
 
@@ -160,8 +164,8 @@ Before sending:
 
 - Is the requested conclusion or next action visible in the first paragraph?
 - Is current state separated from future work and uncertainty?
-- Can the user execute the action from the path/command/UI information provided?
-- Is the success signal observable?
+- Can the user execute the action from verified path/command/UI information rather than an invented example?
+- Is the success signal observable and bound to the expected coverage and revision?
 - Are exact identifiers preserved?
 - Did I remove tangents without removing safety, authority, evidence, rollback, or verification?
 - Did I avoid repeating a question already answered by current files or connected sources?
