@@ -21,7 +21,7 @@ jobs:
 
       - name: Run RED-GREEN and negative controls
         shell: bash
-        run: python .github/workflows-support/temp_ai_solution_layer_runner.py
+        run: python .github/workflows-support/temp_ai_solution_layer_runner_v2.py
 
       - name: Upload bounded candidate and evidence
         uses: actions/upload-artifact@v4
