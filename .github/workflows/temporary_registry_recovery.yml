@@ -14,15 +14,12 @@ jobs:
     steps:
       - name: Check out exact branch head
         uses: actions/checkout@v4
-      - name: Upload exact correction source set
+      - name: Archive exact tracked tree
+        run: git archive --format=zip --output=base-source-${GITHUB_SHA}.zip HEAD
+      - name: Upload exact tracked tree
         uses: actions/upload-artifact@v4
         with:
-          name: correction-source-${{ github.sha }}
-          path: |
-            skills/SKILL_REGISTRY.json
-            skills/managing-project-intake-and-work-contract/SKILL.md
-            skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md
-            templates/planning/EXECUTION_SEQUENCE_PLAN.md
-            tests/test_feature_code_contract_modularity.py
+          name: base-source-${{ github.sha }}
+          path: base-source-${{ github.sha }}.zip
           if-no-files-found: error
           retention-days: 1
