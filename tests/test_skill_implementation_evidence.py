@@ -225,6 +225,24 @@ class SkillImplementationEvidenceTests(unittest.TestCase):
             self.assertIn("EXECUTABLE_EVIDENCE", row)
             self.assertIn(path, row)
 
+    def test_base_change_proposal_candidate_boundary_has_learning_record(self) -> None:
+        skill = (ROOT / "skills/managing-base-change-proposals/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        learning_log = (ROOT / "skills/SKILL_LEARNING_LOG.md").read_text(encoding="utf-8")
+
+        for token in (
+            "CANDIDATE_REPORT_IS_NOT_BASE_CANON",
+            "COMMON_LESSON_AND_CORRECTION_REQUEST_REQUIRED",
+            "MINIMUM_OWNER_CORRECTION_REQUEST",
+            "EVIDENCE_CEILING_AND_NONUSE_CONDITIONS",
+        ):
+            self.assertIn(token, skill)
+        self.assertIn(
+            "CANDIDATE_REPORT_BOUNDARY_AND_MINIMAL_CORRECTION_REQUEST",
+            learning_log,
+        )
+
     def test_serial_fiction_skill_has_executable_repository_evidence(self) -> None:
         builder = load_builder()
         self.assertEqual([], builder.validate_evidence_index(ROOT))
