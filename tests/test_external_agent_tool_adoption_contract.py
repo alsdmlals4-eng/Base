@@ -223,6 +223,55 @@ class ExternalAgentToolAdoptionContractTests(unittest.TestCase):
         self.assertIn("NO_NEW_RUNNING_MATE_IMPLEMENTATION", adapter)
         self.assertNotIn("Build the running mate as", adapter)
 
+    def test_ab_comparison_uses_isolated_equivalent_starting_state(self) -> None:
+        adapter = ADAPTER.read_text(encoding="utf-8")
+        for marker in (
+            "A_B_ISOLATED_EQUIVALENT_STATE", "starting_state_hash",
+            "separate disposable workspaces", "one intentional treatment difference",
+            "order and cache conditions", "predeclared acceptance criteria",
+        ):
+            self.assertIn(marker, adapter)
+
+    def test_token_estimates_do_not_claim_provider_usage_or_quota_savings(self) -> None:
+        adapter = ADAPTER.read_text(encoding="utf-8")
+        for marker in (
+            "TOKEN_MEASUREMENT_KIND", "OBSERVED_PROVIDER", "BYTE_HEURISTIC",
+            "UNAVAILABLE", "ESTIMATE_IS_NOT_PROVIDER_USAGE", "ChatGPT/Codex quota",
+        ):
+            self.assertIn(marker, adapter)
+        self.assertNotIn(
+            "public counter-evidence includes low-output overhead",
+            REVIEW.read_text(encoding="utf-8"),
+        )
+
+    def test_explicit_decisions_are_not_delayed_until_recurrence(self) -> None:
+        review = REVIEW.read_text(encoding="utf-8")
+        self.assertIn("EXPLICIT_USER_DECISION_IS_NOT_LEARNED_HEURISTIC", review)
+        self.assertIn("Record an explicit user-approved decision immediately", review)
+        self.assertNotIn("Promote only repeated evidence-backed corrections", review)
+
+    def test_absorption_and_learning_remain_under_existing_owners(self) -> None:
+        review = REVIEW.read_text(encoding="utf-8")
+        for marker in (
+            "NEW_REFERENCE_ROUTING", "REUSED_EXISTING_CONTRACT",
+            "CONTRACT_ONLY_NO_HOOK_ENFORCEMENT", "OPTIONAL_TOOL_NOT_ACTIVATED",
+            "skills/evolving-project-discipline-skills/SKILL.md",
+            "skills/reviewing-and-validating-project-changes/SKILL.md",
+            "skills/evaluating-godot-assets-and-plugins-before-creation/LEARNING_LOG.md",
+            "GDScript-specific review quality remains unverified",
+        ):
+            self.assertIn(marker, review)
+
+    def test_project_pin_and_valid_scoped_approval_are_preserved(self) -> None:
+        adapter = ADAPTER.read_text(encoding="utf-8")
+        for marker in (
+            "PROJECT_ADOPTED_VERSION_REMAINS_AUTHORITY", "REUSE_VALID_SCOPED_APPROVAL",
+            "NO_SILENT_PROJECT_ROLLOUT", "current project AGENTS.md",
+            "before any remote write or merge",
+        ):
+            self.assertIn(marker, adapter)
+        self.assertNotIn("human approval obtained for any cost, auth, external write", adapter)
+
 
 if __name__ == "__main__":
     unittest.main()
