@@ -27,6 +27,10 @@ This contract governs optional external code reviewers, command-output proxies, 
 
 The repository remains the primary writable canon for project facts, approved decisions, code, data, assets, tests, and implementation evidence. A project's current `AGENTS.md`, adopted contracts, and explicit current exceptions remain authoritative; this shared reference does not silently migrate them.
 
+`PROJECT_ADOPTED_VERSION_REMAINS_AUTHORITY` / `NO_SILENT_PROJECT_ROLLOUT`: read the current project AGENTS.md and its declared owner/version lock before use. A newer Base reference is drift information, not permission to replace the project's adopted contract or install the candidate in every project.
+
+`REUSE_VALID_SCOPED_APPROVAL`: preserve an already valid user approval for the same task, exact allowed operations, and unchanged risk boundary. Do not ask again merely because another stage or session starts. Recheck current project/branch identity, main/head, approval scope, applicable checks, and unresolved review state before any remote write or merge. Changed product meaning, new cost/auth/permissions, unrelated PRs, or destructive scope are not covered by the prior approval.
+
 External workspaces, shared-memory products, model outputs, compressed command output, and LLM review comments are derived or advisory. They may point to evidence but cannot silently promote a decision, mark a gate complete, overwrite approved meaning, or replace repository readback.
 
 Each adapter must define:
@@ -118,6 +122,8 @@ Before a cost-bearing invocation, record:
 
 Cost evaluation uses total task cost, not a vendor's per-command token-reduction claim. Include retries, raw rereads, validation, latency, setup, maintenance, and failure recovery. Label estimated token counts separately from tokenizer/provider measurements; unavailable measurements remain unknown, not zero.
 
+`TOKEN_MEASUREMENT_KIND`: identify each number as `OBSERVED_PROVIDER`, `OBSERVED_TOKENIZER`, `BYTE_HEURISTIC`, or `UNAVAILABLE`, with the source and method. `ESTIMATE_IS_NOT_PROVIDER_USAGE`: a local bytes-based estimate or tokenizer count is not an observed bill or ChatGPT/Codex quota saving. Record account usage only when it is actually exposed for the relevant run/window; otherwise leave that metric unavailable rather than deriving a percentage from output length. Compare like-for-like measurement kinds and keep unobserved costs explicit.
+
 ## 8. Privacy, secrets, and telemetry
 
 - Pass credentials through the platform's secret facility or short-lived environment injection; never commit them.
@@ -134,6 +140,8 @@ Ambiguous retention, auth, or telemetry blocks mutation and canon-impacting use.
 ## 9. A/B promotion gate
 
 `READINESS_PRECEDES_TRIAL`: optional use starts disabled. Evaluate version/license, authority, permissions, data flow, cost, bounded execution, and rollback before authorizing an isolated trial. Reuse the existing adoption owner's states: a `CANDIDATE` can become `TRIAL_APPROVED` for an exact task/environment without already possessing the A/B result that the trial is intended to produce. Run safety/fallback smoke checks on disposable inputs before exposing project data.
+
+`A_B_ISOLATED_EQUIVALENT_STATE`: record a `starting_state_hash` or equivalent immutable input identity for both arms. Use separate disposable workspaces, resettable external fixtures, and equivalent model/configuration/permission budgets so one arm's mutations, learned context, or warm cache cannot silently become the other's starting state. Keep one intentional treatment difference: the evaluated adapter/package. Declare order and cache conditions, control or counterbalance them when material, and use predeclared acceptance criteria. For a pure deterministic text filter, two copies of the same captured immutable input may replace separate workspaces; record why no mutable environment exists. Neither arm may modify canonical project state to obtain the comparison.
 
 Compare the raw Base-owned path against the adapter on representative bounded tasks. Record:
 
@@ -217,13 +225,13 @@ A possible Macro UI adapter must not own the only durable state or recovery path
 
 Before a bounded trial, confirm:
 
-- current owner, project authority, and exact authorized scope;
+- current owner, project authority, adopted version, and exact authorized scope;
 - version/license/data path read from current primary sources;
 - overlap and viable alternatives reviewed;
 - inspect/mutate/verify capabilities separated;
 - proposed argument-array/no-shell, timeout, output cap, retry, exit-status, capture, and task-owned termination controls;
-- source/model/version applicability, cost limits, and secret/telemetry policy;
-- a disposable safety test plan, raw fallback, kill switch, and provider-independent rollback;
-- authorization for any new account/auth, external write, cost, or canon-impacting behavior.
+- source/model/version applicability, measurement kinds, cost limits, and secret/telemetry policy;
+- isolated equivalent starting states, predeclared criteria, a disposable safety test plan, raw fallback, kill switch, and provider-independent rollback;
+- valid existing authorization, or new approval only where scope/risk actually changes.
 
 Before project activation, require actual safety/fallback/rollback results, representative A/B evidence, implemented applicable receipts, and the project's recorded adoption decision. Documentation checks do not prove these runtime controls are implemented. Do not require completed A/B measurements as a prerequisite to the very trial that will obtain them.
