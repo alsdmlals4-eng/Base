@@ -31,6 +31,10 @@ exact video/source identity readback
 - local transcript는 원 영상 binding과 생성 출처가 별도 검증되기 전 `UNVERIFIED`다. `TRANSCRIPT_READY_IS_NOT_FACT_OR_PROJECT_FIT_PASS`: caption ingest 성공도 발언의 사실성·프로젝트 적합성·Base 흡수 승인이 아니다.
 - 내용 증거를 확보한 뒤 `PROJECT_REUSE_OPPORTUNITY_SCAN`과 현재 owner 비교로 `ADOPT / ADAPT / REJECT`를 판정한다. 제목·검색 스니펫·주변 자료를 본문 대신 사용하지 않는다.
 
+`AI_SOLUTION_LAYER_SELECTION_BEFORE_BUILD`: 새 LLM·multimodal·RLHF/fine-tuning·prompt/context·knowledge base/RAG·API/MCP·agent/workflow/harness·AGI/ASI 관련 기능·도구·구조 요청은 `docs/CAPABILITY_COMPOSITION_MAP.md`의 `AI_SOLUTION_LAYER_SELECTION`으로 먼저 라우팅한다. 용어 목록을 feature backlog로 바꾸지 않고 `measured bottleneck → smallest sufficient layer → existing owner/actual consumer → eval/evidence` 순서로 판정한다.
+
+- `NO_AUTO_FEATURE_FROM_VOCABULARY`: 영상·기사에서 유용한 용어를 발견했다는 사실만으로 runtime, dependency, paid service, provider, framework, fine-tuning, vector database 또는 MCP server를 추가하지 않는다. 실제 consumer와 Existing Solution First 비교를 거친 최소 `BUILD_NEW`만 별도 승인·검증한다.
+
 '''
 
 old_rlhf = "| RLHF and related preference post-training | Adjust learned behavior from demonstrations, preferences or reward signals | a live policy engine, current knowledge source, per-run approval, or factual correctness |"
