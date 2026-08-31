@@ -163,8 +163,8 @@ NEEDED → BRIEF_READY → GENERATED_CANDIDATE → REVIEWED
 기존 project validator가 같은 계약을 검사하면 그것을 우선한다. 공통 보완이 필요하면 같은 정본을 **파생 packet**으로 투영해 실행한다:
 
 ```text
-python <Base>/skills/auditing-and-refining-ui-art/scripts/validate_player_surface_plan.py --packet <derived-packet.json> --gate plan
-python <Base>/skills/auditing-and-refining-ui-art/scripts/validate_player_surface_plan.py --packet <derived-packet.json> --gate handoff
+python <Base>/tools/validate_player_surface_plan.py --packet <derived-packet.json> --gate plan
+python <Base>/tools/validate_player_surface_plan.py --packet <derived-packet.json> --gate handoff
 ```
 
 packet shape는 실행 테스트 `tests/test_player_surface_plan.py`의 `packet()`과 `add_modular_parts()`를 최소 fixture로 읽는다. fixture 값은 실제 승인·게임 데이터가 아니다. `schema_version=1`, `artifact_role=DERIVED_REVIEW_PACKET`, exact `source_revision`, repository/scope/approval locator, `benchmark_order=EXTERNAL_THEN_PROJECT_FIT`, `asset_strategy=MODULAR_PARTS_FIRST`가 필요하다.

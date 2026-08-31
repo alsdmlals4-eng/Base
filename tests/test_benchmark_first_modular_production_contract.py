@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-GUIDE = 'skills/auditing-and-refining-ui-art/references/benchmark-first-modular-production.md'
+GUIDE = 'docs/knowledge/game-development/BENCHMARK_FIRST_MODULAR_UI_PRODUCTION.md'
 ADAPTER = 'skills/auditing-and-refining-ui-art/references/project-adapter-contract.md'
 
 
@@ -17,7 +17,7 @@ class ProductionContractTests(unittest.TestCase):
 
     def test_project_adapter_reaches_guide_without_contract_repin(self):
         text = (ROOT / ADAPTER).read_text(encoding='utf-8')
-        self.assertIn('benchmark-first-modular-production.md', text)
+        self.assertIn('BENCHMARK_FIRST_MODULAR_UI_PRODUCTION.md', text)
         self.assertIn('PRESERVE_ADOPTED_CONTRACT_PIN', text)
 
     def test_order_and_scope_ceilings(self):
@@ -55,6 +55,16 @@ class ProductionContractTests(unittest.TestCase):
         self.assertIn('고유 규칙', text)
         self.assertIn('이미 채택한', text)
         self.assertIn('validate_player_surface_plan.py', text)
+
+    def test_new_skill_packaged_artifacts_have_direct_discovery(self):
+        # Preserve the existing package-integrity rule, not an exception to it.
+        skill_path = ROOT / 'skills/auditing-and-refining-ui-art/SKILL.md'
+        skill_text = skill_path.read_text(encoding='utf-8')
+        for path in [GUIDE, 'tools/validate_player_surface_plan.py']:
+            if path.startswith('skills/auditing-and-refining-ui-art/'):
+                relative = path.removeprefix('skills/auditing-and-refining-ui-art/')
+                self.assertTrue(path in skill_text or relative in skill_text,
+                                f'Packaged artifact is not linked directly from SKILL.md: {path}')
 
     def test_no_hosted_service_or_new_game_engine_required(self):
         text = self.guide()

@@ -11,7 +11,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPT = ROOT / 'skills/auditing-and-refining-ui-art/scripts/validate_player_surface_plan.py'
+SCRIPT = ROOT / 'tools/validate_player_surface_plan.py'
 
 
 def packet():

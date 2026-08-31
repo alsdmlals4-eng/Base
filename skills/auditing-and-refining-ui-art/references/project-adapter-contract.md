@@ -135,7 +135,7 @@ Base UX/UI 변경 main 병합
 
 `PRESERVE_ADOPTED_CONTRACT_PIN`
 
-신규 UI/시각/시스템 설계는 [benchmark-first-modular-production.md](benchmark-first-modular-production.md)를 사용한다. 외부 게임의 기능·화면·공개 구현을 먼저 비교해 구조 후보를 만든 뒤 프로젝트 정본·기존 consumer·고유 규칙에 맞춘다. 기존 contract/engine/version pin은 보존하고 새 사용자 승인 workflow overlay와 조회한 Base exact commit만 추가한다. 새 core·경제·저장 의미나 최종 시각 승격은 이 링크로 승인되지 않는다.
+신규 UI/시각/시스템 설계는 [공용 벤치마크·모듈 제작 계약](../../../docs/knowledge/game-development/BENCHMARK_FIRST_MODULAR_UI_PRODUCTION.md)를 사용한다. 외부 게임의 기능·화면·공개 구현을 먼저 비교해 구조 후보를 만든 뒤 프로젝트 정본·기존 consumer·고유 규칙에 맞춘다. 기존 contract/engine/version pin은 보존하고 새 사용자 승인 workflow overlay와 조회한 Base exact commit만 추가한다. 새 core·경제·저장 의미나 최종 시각 승격은 이 링크로 승인되지 않는다.
 
 현재 프로젝트 UX owner·시작 router에 reference/modes/적용 범위·제외·검증·Base source identity를 최소 기록한다. 이미 동등한 구조/캡처 검증기가 있으면 그대로 사용하고, 필요할 때만 공용 `validate_player_surface_plan.py`에 정본의 파생 packet을 입력한다. 도구 설치만으로 실행·runtime·Human PASS를 주장하지 않는다.
 

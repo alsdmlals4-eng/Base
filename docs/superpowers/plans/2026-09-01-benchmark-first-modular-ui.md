@@ -5,7 +5,7 @@
 **Goal:** make external comparison, modular image assembly and complete player-surface planning an executable path reached from Base and project adapters.
 **Architecture:** extend the existing UI Skill reference path, not a new Skill or game framework. A read-only standard-library Python checker validates declared projections; current game/data/asset/evidence owners remain authoritative.
 **Tech Stack:** repository Markdown, Python 3 standard library, existing GitHub checks.
-**Spec:** `skills/auditing-and-refining-ui-art/references/benchmark-first-modular-production.md` plus the current user's explicit approval and external-first/modular-parts refinement.
+**Spec:** `docs/knowledge/game-development/BENCHMARK_FIRST_MODULAR_UI_PRODUCTION.md` plus the current user's explicit approval and external-first/modular-parts refinement.
 
 ## Constraints
 
@@ -17,7 +17,7 @@
 
 ## Task 1 — read-only structural checker
 
-Files: `skills/auditing-and-refining-ui-art/scripts/validate_player_surface_plan.py`, `tests/test_player_surface_plan.py`.
+Files: `tools/validate_player_surface_plan.py`, `tests/test_player_surface_plan.py`.
 Interface: `validate_packet(packet, gate='plan') -> list[str]`; CLI `--packet <file> --gate plan|handoff`.
 
 1. Execute negative fixtures for missing required routes, return traps, malformed values and nine-slice geometry.
@@ -28,7 +28,7 @@ Interface: `validate_packet(packet, gate='plan') -> list[str]`; CLI `--packet <f
 
 ## Task 2 — attach the approved method to active routing
 
-Files: `AGENTS.md`, existing `references/project-adapter-contract.md`, new `references/benchmark-first-modular-production.md`, `tests/test_benchmark_first_modular_production_contract.py`.
+Files: `AGENTS.md`, existing `references/project-adapter-contract.md`, `docs/knowledge/game-development/BENCHMARK_FIRST_MODULAR_UI_PRODUCTION.md`, `tests/test_benchmark_first_modular_production_contract.py`.
 
 1. Run routing tests against unmodified baseline and record failure.
 2. Add the one-line always-on route and adapter section; retain existing Skill body and registry unchanged because another open PR owns them.
@@ -47,3 +47,9 @@ Files: `AGENTS.md`, existing `references/project-adapter-contract.md`, new `refe
 ## Verification and rollback
 
 Focused tests use exact source blobs in an isolated snapshot; full local clone is unavailable because container DNS cannot resolve GitHub. The full repository regression is a separate remote CI gate, not a local PASS. Revert only current-task additions/route deltas as one unit; preserve images, source evidence, other PRs and project data.
+
+## Remote integration correction
+
+The exact-head Actions run `33418832589` executed 2,443 core tests and 485 contract tests. Each had the same one failure: newly packaged reference/script artifacts were not directly linked from the protected UI `SKILL.md`. Actual downloaded diagnostic artifacts, not the earlier truncated log interpretation, establish this cause.
+
+Reproduced the package-discovery failure in a focused regression. Retain the existing package rule and protected PR #713 boundary by moving only current-task new artifacts to the normal shared `docs/knowledge/game-development/` and `tools/` owners, updating both root and the already discoverable project-adapter reference. No pre-existing file, test or gate is deleted or weakened. The final-line formatting hypothesis was disproved; no formatting validator change is made.
