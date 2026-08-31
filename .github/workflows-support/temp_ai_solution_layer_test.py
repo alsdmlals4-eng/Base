@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def read(path: str) -> str:
@@ -20,11 +20,11 @@ def bounded_section(text: str, start: str, end: str) -> str:
 class AISolutionLayerSelectionContractTests(unittest.TestCase):
     def test_public_video_uses_existing_reader_ladder_before_blocker(self) -> None:
         intake = read("skills/managing-project-intake-and-work-contract/SKILL.md")
-        section = bounded_section(
-            intake,
-            "PUBLIC_VIDEO_SOURCE_RECOVERY_BEFORE_BLOCKER",
-            "새 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층 요청",
-        )
+        start = "PUBLIC_VIDEO_SOURCE_RECOVERY_BEFORE_BLOCKER"
+        end = "새 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층 요청"
+        self.assertIn(start, intake)
+        self.assertIn(end, intake)
+        section = bounded_section(intake, start, end)
         for term in (
             "VIDEO_LINK_IS_NOT_UNREADABLE_UNTIL_DECLARED_READER_LADDER_EXHAUSTED",
             "RM-TOOL-005 PUBLIC_VIDEO_RESEARCH_INGEST_ADAPTER",
@@ -43,11 +43,11 @@ class AISolutionLayerSelectionContractTests(unittest.TestCase):
 
     def test_layer_map_separates_model_context_integration_orchestration_and_harness(self) -> None:
         capability = read("docs/CAPABILITY_COMPOSITION_MAP.md")
-        section = bounded_section(
-            capability,
-            "## AI solution layer selection contract",
-            "## AI game-engine machine boundary contract",
-        )
+        start = "## AI solution layer selection contract"
+        end = "## AI game-engine machine boundary contract"
+        self.assertIn(start, capability)
+        self.assertIn(end, capability)
+        section = bounded_section(capability, start, end)
         for term in (
             "AI_SOLUTION_LAYER_SELECTION",
             "MODEL_AND_TRAINING_LAYER",
@@ -96,11 +96,11 @@ class AISolutionLayerSelectionContractTests(unittest.TestCase):
 
     def test_predictable_process_prefers_workflow_before_agent(self) -> None:
         capability = read("docs/CAPABILITY_COMPOSITION_MAP.md")
-        section = bounded_section(
-            capability,
-            "DETERMINISTIC_WORKFLOW_BEFORE_OPEN_ENDED_AGENT",
-            "HARNESS_IS_COMPOSED_CONTROL_AND_EVIDENCE_SYSTEM",
-        )
+        start = "DETERMINISTIC_WORKFLOW_BEFORE_OPEN_ENDED_AGENT"
+        end = "HARNESS_IS_COMPOSED_CONTROL_AND_EVIDENCE_SYSTEM"
+        self.assertIn(start, capability)
+        self.assertIn(end, capability)
+        section = bounded_section(capability, start, end)
         for term in (
             "fixed and testable path",
             "open-ended",
