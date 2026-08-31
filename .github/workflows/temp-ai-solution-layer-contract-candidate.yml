@@ -1,0 +1,405 @@
+name: Temporary AI solution-layer TDD candidate
+
+on:
+  push:
+    branches:
+      - work/video-ai-terms-absorption-20260901
+
+permissions:
+  contents: read
+
+jobs:
+  build-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact reviewed Base main
+        uses: actions/checkout@v4
+        with:
+          ref: 32f4dd5ba6042dc34611e2c8912f300b90491e0a
+          persist-credentials: false
+
+      - name: RED — add focused contract before owner changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p candidate tests-evidence
+          cat > tests/test_ai_solution_layer_selection_contract.py <<'PY'
+          from __future__ import annotations
+
+          import unittest
+          from pathlib import Path
+
+
+          ROOT = Path(__file__).resolve().parents[1]
+
+
+          def read(path: str) -> str:
+              return (ROOT / path).read_text(encoding="utf-8")
+
+
+          def bounded_section(text: str, start: str, end: str) -> str:
+              start_index = text.index(start)
+              end_index = text.index(end, start_index)
+              return text[start_index:end_index]
+
+
+          class AISolutionLayerSelectionContractTests(unittest.TestCase):
+              def test_public_video_uses_existing_reader_ladder_before_blocker(self) -> None:
+                  intake = read("skills/managing-project-intake-and-work-contract/SKILL.md")
+                  section = bounded_section(
+                      intake,
+                      "PUBLIC_VIDEO_SOURCE_RECOVERY_BEFORE_BLOCKER",
+                      "새 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층 요청",
+                  )
+                  for term in (
+                      "VIDEO_LINK_IS_NOT_UNREADABLE_UNTIL_DECLARED_READER_LADDER_EXHAUSTED",
+                      "RM-TOOL-005 PUBLIC_VIDEO_RESEARCH_INGEST_ADAPTER",
+                      "tools/public_video_research_ingest.py",
+                      "manual caption",
+                      "automatic caption",
+                      "caller-supplied local",
+                      "BLOCKED_UNVERIFIED",
+                      "PROJECT_REUSE_OPPORTUNITY_SCAN",
+                      "TRANSCRIPT_READY_IS_NOT_FACT_OR_PROJECT_FIT_PASS",
+                  ):
+                      self.assertIn(term, section)
+                  self.assertLess(section.index("manual caption"), section.index("automatic caption"))
+                  self.assertLess(section.index("automatic caption"), section.index("caller-supplied local"))
+                  self.assertLess(section.index("caller-supplied local"), section.index("BLOCKED_UNVERIFIED"))
+
+              def test_layer_map_separates_model_context_integration_orchestration_and_harness(self) -> None:
+                  capability = read("docs/CAPABILITY_COMPOSITION_MAP.md")
+                  section = bounded_section(
+                      capability,
+                      "## AI solution layer selection contract",
+                      "## AI game-engine machine boundary contract",
+                  )
+                  for term in (
+                      "AI_SOLUTION_LAYER_SELECTION",
+                      "MODEL_AND_TRAINING_LAYER",
+                      "CONTEXT_AND_KNOWLEDGE_LAYER",
+                      "TOOL_AND_INTEGRATION_LAYER",
+                      "ORCHESTRATION_LAYER",
+                      "HARNESS_LAYER",
+                      "HORIZON_VOCABULARY",
+                      "DO_NOT_STACK_EVERY_LAYER_BY_DEFAULT",
+                  ):
+                      self.assertIn(term, section)
+
+              def test_model_and_training_capabilities_do_not_replace_task_evidence(self) -> None:
+                  capability = read("docs/CAPABILITY_COMPOSITION_MAP.md")
+                  for term in (
+                      "MODEL_CAPABILITY_IS_NOT_APPLICATION_ARCHITECTURE",
+                      "MULTIMODAL_INPUT_IS_NOT_TASK_COMPETENCE",
+                      "RLHF_IS_POST_TRAINING_NOT_RUNTIME_CONTROL",
+                      "PROMPT_AND_CONTEXT_BEFORE_FINE_TUNING",
+                      "CURRENT_KNOWLEDGE_IS_NOT_FINE_TUNING_DEFAULT",
+                      "EVAL_BEFORE_LAYER_ESCALATION",
+                  ):
+                      self.assertIn(term, capability)
+
+              def test_knowledge_storage_and_rag_preserve_provenance_and_truth_boundaries(self) -> None:
+                  capability = read("docs/CAPABILITY_COMPOSITION_MAP.md")
+                  for term in (
+                      "KNOWLEDGE_BASE_IS_STORAGE_NOT_RETRIEVAL_OR_TRUTH",
+                      "RAG_RETRIEVES_EVIDENCE_BUT_DOES_NOT_GUARANTEE_TRUTH",
+                      "authoritative source",
+                      "retrieval relevance",
+                      "source freshness",
+                      "provenance",
+                  ):
+                      self.assertIn(term, capability)
+
+              def test_mcp_is_interoperability_not_agent_authority(self) -> None:
+                  capability = read("docs/CAPABILITY_COMPOSITION_MAP.md")
+                  for term in (
+                      "MCP_IS_INTEROPERABILITY_NOT_AGENT_AUTHORITY_OR_APPROVAL",
+                      "capability negotiation",
+                      "host authority",
+                      "MCP_CONNECTED_IS_NOT_BEHAVIOR_PASS",
+                  ):
+                      self.assertIn(term, capability)
+
+              def test_predictable_process_prefers_workflow_before_agent(self) -> None:
+                  capability = read("docs/CAPABILITY_COMPOSITION_MAP.md")
+                  section = bounded_section(
+                      capability,
+                      "DETERMINISTIC_WORKFLOW_BEFORE_OPEN_ENDED_AGENT",
+                      "HARNESS_IS_COMPOSED_CONTROL_AND_EVIDENCE_SYSTEM",
+                  )
+                  for term in (
+                      "fixed and testable path",
+                      "open-ended",
+                      "dynamic planning",
+                      "stopping condition",
+                      "environment readback",
+                  ):
+                      self.assertIn(term, section)
+
+              def test_harness_components_require_load_bearing_evidence_and_pruning(self) -> None:
+                  capability = read("docs/CAPABILITY_COMPOSITION_MAP.md")
+                  for term in (
+                      "HARNESS_IS_COMPOSED_CONTROL_AND_EVIDENCE_SYSTEM",
+                      "HARNESS_COMPONENTS_REQUIRE_LOAD_BEARING_EVIDENCE",
+                      "HARNESS_ABLATION_AND_PRUNING",
+                      "MODEL_VS_HARNESS_IS_AN_EVAL_QUESTION",
+                      "BASE_ALREADY_COMPOSES_A_HARNESS_NO_NEW_FRAMEWORK",
+                      "exact model/tool version",
+                  ):
+                      self.assertIn(term, capability)
+
+              def test_agi_and_asi_are_horizon_terms_not_operational_authority(self) -> None:
+                  capability = read("docs/CAPABILITY_COMPOSITION_MAP.md")
+                  for term in (
+                      "AGI_ASI_AWARENESS_ONLY",
+                      "AGI/ASI",
+                      "implementation feature",
+                      "schedule assumption",
+                      "approval",
+                      "NO_NEW_AI_GLOSSARY_OR_SKILL",
+                  ):
+                      self.assertIn(term, capability)
+
+
+          if __name__ == "__main__":
+              unittest.main()
+          PY
+
+          set +e
+          python -m unittest discover -s tests -p test_ai_solution_layer_selection_contract.py -v > tests-evidence/red.log 2>&1
+          red_status=$?
+          set -e
+          if [[ ${red_status} -eq 0 ]]; then
+            cat tests-evidence/red.log
+            echo 'Expected focused contract to fail before owner changes' >&2
+            exit 1
+          fi
+          grep -Eq 'FAILED|ERROR' tests-evidence/red.log
+          printf 'RED_EXIT=%s\n' "${red_status}" > tests-evidence/red-status.txt
+
+      - name: GREEN — minimally patch existing owners
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          intake_path = Path("skills/managing-project-intake-and-work-contract/SKILL.md")
+          intake = intake_path.read_text(encoding="utf-8")
+          intake_marker = "새 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층 요청은 일반 설계보다 먼저"
+          if intake_marker not in intake:
+              raise SystemExit("intake insertion marker missing")
+          public_video_contract = r'''`PUBLIC_VIDEO_SOURCE_RECOVERY_BEFORE_BLOCKER` / `VIDEO_LINK_IS_NOT_UNREADABLE_UNTIL_DECLARED_READER_LADDER_EXHAUSTED`: 사용자가 YouTube 같은 공개 영상의 내용 확인·요약·역공학·흡수를 요청하면 일반 웹 페이지 렌더 실패만으로 링크를 읽을 수 없다고 판정하지 않는다. 먼저 현재 Base의 `RM-TOOL-005 PUBLIC_VIDEO_RESEARCH_INGEST_ADAPTER`와 `tools/public_video_research_ingest.py`를 읽고 다음 source-type-specific reader ladder를 실제로 시도한다.
+
+```text
+exact video identity/title/channel readback
+→ accessible manual caption
+→ accessible automatic caption
+→ current connected capability or caller-supplied local .vtt/.srt/.txt normalized by the existing adapter
+→ already-installed bounded local ASR when authorized and necessary
+→ BLOCKED_UNVERIFIED
+```
+
+- 이 ladder는 root `AGENTS.md`의 unreadable external-link blocker를 약화하지 않는다. 선언된 전용 reader와 허용 fallback을 소진하기 전에는 “현재 도구로 읽지 못함”이 확정되지 않았다는 source-specific 해석이다.
+- 영상·오디오 자체를 자동 다운로드하거나 `yt-dlp`·ASR·새 패키지를 자동 설치하지 않는다. 별도 유료 transcript API·계정·credit를 기본 fallback으로 추가하지 않는다.
+- 자막 전문은 local research evidence로만 다루고 repository에는 결정에 필요한 파생 요약·짧은 인용·timestamp·source identity만 남긴다.
+- local transcript는 원 영상 binding과 생성 출처가 별도 검증되기 전 `UNVERIFIED`다. `TRANSCRIPT_READY_IS_NOT_FACT_OR_PROJECT_FIT_PASS`: caption ingest 성공도 발언의 사실성·프로젝트 적합성·Base 흡수 승인이 아니다.
+- 내용 증거를 확보한 뒤 `PROJECT_REUSE_OPPORTUNITY_SCAN`과 현재 owner 비교로 `ADOPT / ADAPT / REJECT`를 판정한다. 제목·검색 스니펫·주변 자료를 본문 대신 사용하지 않는다.
+
+'''
+          intake = intake.replace(intake_marker, public_video_contract + intake_marker, 1)
+          intake_path.write_text(intake, encoding="utf-8", newline="\n")
+
+          capability_path = Path("docs/CAPABILITY_COMPOSITION_MAP.md")
+          capability = capability_path.read_text(encoding="utf-8")
+          table_marker = "| AI game-engine machine boundary (`AI_GAME_ENGINE_MACHINE_BOUNDARY`)"
+          if table_marker not in capability:
+              raise SystemExit("capability table marker missing")
+          table_row = "| AI solution layer selection (`AI_SOLUTION_LAYER_SELECTION`) | PLAN, BUILD, REVIEW; AI-assisted products and internal workflows | task evidence → simplest sufficient model/context/retrieval/tool/workflow-or-agent layer → harness evidence | cannot treat model training, current knowledge, MCP connectivity, agent autonomy, or AGI vocabulary as interchangeable proof | task-specific eval + source/provenance + exact integration/runtime evidence |\n"
+          capability = capability.replace(table_marker, table_row + table_marker, 1)
+
+          section_marker = "## AI game-engine machine boundary contract"
+          if section_marker not in capability:
+              raise SystemExit("capability section marker missing")
+          layer_contract = r'''## AI solution layer selection contract
+
+`AI_SOLUTION_LAYER_SELECTION` prevents a familiar architecture error: treating every AI term as another feature that should be installed, or using one layer's success as proof that a different layer works. These are composable choices, not a mandatory maturity ladder.
+
+```text
+task failure and acceptance evidence
+→ MODEL_AND_TRAINING_LAYER when base capability or learned behavior is the bottleneck
+→ CONTEXT_AND_KNOWLEDGE_LAYER when instructions or current/private facts are the bottleneck
+→ TOOL_AND_INTEGRATION_LAYER when the model must inspect or change external state
+→ ORCHESTRATION_LAYER: deterministic workflow first, open-ended agent only when justified
+→ HARNESS_LAYER for authority, context management, evals, state, recovery, evidence and cost control
+→ HORIZON_VOCABULARY remains awareness-only
+```
+
+`DO_NOT_STACK_EVERY_LAYER_BY_DEFAULT`: select the smallest combination that closes the measured failure. A larger model, RAG, MCP, an agent and a new harness do not become one required bundle merely because all can appear in the same product.
+
+### Layer and term boundaries
+
+| Term | Operational role | Does not prove |
+| --- | --- | --- |
+| LLM | Parametric language/reasoning capability used by an application | current facts, project canon, tool access, or completed work |
+| Multimodal model/input | Accepts and represents one or more declared modalities such as text, image, audio or video | accuracy on the exact task, cross-modal grounding quality, or runtime integration |
+| RLHF and related preference post-training | Adjust learned behavior from demonstrations, preferences or reward signals | a live policy engine, current knowledge source, per-run approval, or factual correctness |
+| Fine-tuning | Changes model behavior for measured recurring task patterns using curated training examples | automatic ingestion of changing company/project documents or a replacement for retrieval |
+| Prompt and context engineering | Supplies goals, constraints, examples, current source material, history and tool results at inference time | durable model learning or source truth without readback and evaluation |
+| Knowledge base | Stores and governs documents or structured facts under an owner | relevant retrieval, complete coverage, freshness, truth, or model access by itself |
+| Retrieval/RAG | Selects external evidence and conditions generation on retrieved material | correct retrieval, authoritative sources, faithful synthesis, or a true answer by default |
+| API/tool/MCP | Exposes typed external capabilities and context through an integration contract | agent autonomy, user approval, permission to mutate, successful action, or semantic correctness |
+| Deterministic workflow | Runs a predefined, observable and testable sequence | good handling of unbounded unknown steps outside the declared path |
+| Agent | Dynamically plans and uses tools from environment feedback for an open-ended goal | unrestricted autonomy, independent truth, or completion without external evidence |
+| Harness | Composes instructions, context policy, tools, workflow/agent loop, state, evals, recovery, observability, evidence and cost controls around a model | that every component is necessary, current, secure, or effective without measurement |
+| AGI/ASI | Horizon vocabulary for hypothetical broadly general or superhuman capability | a currently available component, delivery date, implementation plan, permission or completion state |
+
+### Selection rules
+
+1. `MODEL_CAPABILITY_IS_NOT_APPLICATION_ARCHITECTURE`: model capability and the application around it are separate evidence surfaces. Record the model/version and also test the actual input, tool, state and result path.
+2. `MULTIMODAL_INPUT_IS_NOT_TASK_COMPETENCE`: accepting an image, audio track or video does not establish useful perception or reasoning for the target task. Test the exact modality, resolution/duration, language and required output.
+3. `RLHF_IS_POST_TRAINING_NOT_RUNTIME_CONTROL`: RLHF is a post-training/alignment method. Runtime authority, project rules, safety gates and user approval remain application/harness responsibilities.
+4. `EVAL_BEFORE_LAYER_ESCALATION` / `PROMPT_AND_CONTEXT_BEFORE_FINE_TUNING`: establish representative evals, then try clear instructions, examples and relevant context. Fine-tuning is justified only when a recurring learned-behavior gap remains and measured benefit repays data, training, versioning and maintenance cost.
+5. `CURRENT_KNOWLEDGE_IS_NOT_FINE_TUNING_DEFAULT`: current, private or frequently changing facts should normally come from an authoritative source through bounded context or retrieval with provenance. Do not retrain merely to make a model read the latest project documents.
+6. `KNOWLEDGE_BASE_IS_STORAGE_NOT_RETRIEVAL_OR_TRUTH`: define the canonical owner, scope, freshness and access boundary separately from indexing or search. A populated store can still be stale, incomplete, inaccessible or non-authoritative.
+7. `RAG_RETRIEVES_EVIDENCE_BUT_DOES_NOT_GUARANTEE_TRUTH`: evaluate retrieval relevance, source freshness, provenance, authorization, missing evidence and answer faithfulness. Preserve a route from generated claims to the retrieved authoritative source.
+8. `MCP_IS_INTEROPERABILITY_NOT_AGENT_AUTHORITY_OR_APPROVAL`: MCP standardizes context/tool interoperability and capability negotiation. The host authority, consent, project permissions, typed operation contract, readback and `MCP_CONNECTED_IS_NOT_BEHAVIOR_PASS` remain in force.
+9. `DETERMINISTIC_WORKFLOW_BEFORE_OPEN_ENDED_AGENT`: use a fixed and testable path when steps and failure handling are predictable. Use an agent only for genuinely open-ended work requiring dynamic planning, and give it a bounded tool set, stopping condition, environment readback, recovery path and task-specific eval.
+10. `HARNESS_IS_COMPOSED_CONTROL_AND_EVIDENCE_SYSTEM`: a harness is not one framework or wrapper. It is the composed system that makes model behavior usable and inspectable across authority, context, tools, orchestration, state, validation and recovery.
+11. `HARNESS_COMPONENTS_REQUIRE_LOAD_BEARING_EVIDENCE` / `HARNESS_ABLATION_AND_PRUNING`: each extra prompt, memory layer, retriever, tool, reviewer, retry or coordinator must close a measured failure. Re-run ablation or equivalent baseline comparisons after an exact model/tool version change and remove components that no longer improve quality, reliability, cost or maintainability.
+12. `MODEL_VS_HARNESS_IS_AN_EVAL_QUESTION`: do not assume either the model or the surrounding harness dominates in every task. Compare representative outcomes, interventions, latency, cost and failure recovery under equivalent inputs.
+13. `AGI_ASI_AWARENESS_ONLY`: AGI/ASI discussion may inform long-range research awareness, but it cannot create an implementation feature, schedule assumption, budget, approval, permission, project scope or completion claim.
+14. `NO_NEW_AI_GLOSSARY_OR_SKILL`: this section is a decision and composition route under the existing capability owner. It does not create a broad AI glossary, a new Skill, a provider dependency or automatic project adoption.
+
+### Base mapping
+
+`BASE_ALREADY_COMPOSES_A_HARNESS_NO_NEW_FRAMEWORK`: Base already composes repository instructions, progressive context loading, Skill/Tool routing, canonical owners, approvals, deterministic checks, runtime evidence, recovery and reporting. Improve the specific weak owner or consumer instead of installing a second generic “harness” authority.
+
+Use this mapping when a new AI feature is proposed:
+
+| Observed need | First candidate | Required proof before escalation |
+| --- | --- | --- |
+| New image/audio/video input | a model and adapter that explicitly support the modality | representative task eval and end-to-end input/result evidence |
+| Inconsistent format or recurring behavior | eval → prompt/examples/context | repeated residual gap and fine-tuning cost/maintenance case |
+| Current/private/changeable facts | authoritative source → bounded retrieval/context | coverage, freshness, provenance, access and faithful-answer eval |
+| External inspection or mutation | typed API/tool/MCP adapter | exact capability, host authority, approval, result readback and rollback |
+| Predictable repeated procedure | deterministic workflow | normal/failure/boundary tests and observable state transitions |
+| Unknown steps that depend on environment feedback | bounded agent loop | sandboxed trials, stopping/recovery, compounding-error and cost evidence |
+| Long-running reliability | minimal load-bearing harness components | exact model/tool version, state continuity, eval, recovery and ablation evidence |
+
+Evidence ceilings:
+
+```text
+MODEL_SUPPORTS_MODALITY != PROJECT_TASK_PASS
+RLHF_OR_FINE_TUNING != CURRENT_FACT_ACCESS
+KNOWLEDGE_BASE_EXISTS != RELEVANT_RETRIEVAL
+RAG_RETRIEVAL_SUCCESS != ANSWER_TRUE
+MCP_CONNECTED != ACTION_AUTHORIZED_OR_SUCCEEDED
+AGENT_COMPLETION_MESSAGE != VERIFIED_RESULT
+HARNESS_EXISTS != EACH_COMPONENT_LOAD_BEARING
+AGI_ASI_TERM != AVAILABLE_CAPABILITY
+```
+
+Primary comparison basis: OpenAI model-optimization guidance (evals → prompt/context → optional task-specific fine-tuning), Lewis et al. `arXiv:2005.11401` for parametric plus retrieved non-parametric memory, Anthropic's *Building Effective Agents* and *Effective context engineering for AI agents*, and the current Model Context Protocol architecture/specification. Recheck current primary documentation before provider-specific implementation because models, training surfaces and protocol details change.
+
+'''
+          capability = capability.replace(section_marker, layer_contract + section_marker, 1)
+          capability_path.write_text(capability, encoding="utf-8", newline="\n")
+          PY
+
+          python -m unittest discover -s tests -p test_ai_solution_layer_selection_contract.py -v > tests-evidence/green.log 2>&1
+          python -m unittest discover -s tests -p 'test_public_video*.py' -v > tests-evidence/public-video-regression.log 2>&1
+          python -m py_compile tests/test_ai_solution_layer_selection_contract.py
+          git diff --check
+
+          mkdir -p candidate/skills/managing-project-intake-and-work-contract candidate/docs candidate/tests
+          cp skills/managing-project-intake-and-work-contract/SKILL.md candidate/skills/managing-project-intake-and-work-contract/SKILL.md
+          cp docs/CAPABILITY_COMPOSITION_MAP.md candidate/docs/CAPABILITY_COMPOSITION_MAP.md
+          cp tests/test_ai_solution_layer_selection_contract.py candidate/tests/test_ai_solution_layer_selection_contract.py
+
+      - name: Negative controls and final readback
+        shell: bash
+        run: |
+          set -euo pipefail
+          : > tests-evidence/negative-controls.log
+
+          expect_failure() {
+            local label="$1"
+            set +e
+            python -m unittest discover -s tests -p test_ai_solution_layer_selection_contract.py -v > "tests-evidence/${label}.log" 2>&1
+            local status=$?
+            set -e
+            printf '%s exit=%s\n' "${label}" "${status}" >> tests-evidence/negative-controls.log
+            if [[ ${status} -eq 0 ]]; then
+              cat "tests-evidence/${label}.log"
+              echo "Negative control unexpectedly passed: ${label}" >&2
+              exit 1
+            fi
+          }
+
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('skills/managing-project-intake-and-work-contract/SKILL.md')
+          s = p.read_text(encoding='utf-8')
+          p.write_text(s.replace('PUBLIC_VIDEO_SOURCE_RECOVERY_BEFORE_BLOCKER', 'REMOVED_VIDEO_RECOVERY', 1), encoding='utf-8')
+          PY
+          expect_failure mutation-video-route
+          cp candidate/skills/managing-project-intake-and-work-contract/SKILL.md skills/managing-project-intake-and-work-contract/SKILL.md
+
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('docs/CAPABILITY_COMPOSITION_MAP.md')
+          s = p.read_text(encoding='utf-8')
+          p.write_text(s.replace('RAG_RETRIEVES_EVIDENCE_BUT_DOES_NOT_GUARANTEE_TRUTH', 'REMOVED_RAG_BOUNDARY', 1), encoding='utf-8')
+          PY
+          expect_failure mutation-rag-boundary
+          cp candidate/docs/CAPABILITY_COMPOSITION_MAP.md docs/CAPABILITY_COMPOSITION_MAP.md
+
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('docs/CAPABILITY_COMPOSITION_MAP.md')
+          s = p.read_text(encoding='utf-8')
+          p.write_text(s.replace('DETERMINISTIC_WORKFLOW_BEFORE_OPEN_ENDED_AGENT', 'REMOVED_WORKFLOW_BOUNDARY', 1), encoding='utf-8')
+          PY
+          expect_failure mutation-workflow-boundary
+          cp candidate/docs/CAPABILITY_COMPOSITION_MAP.md docs/CAPABILITY_COMPOSITION_MAP.md
+
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('docs/CAPABILITY_COMPOSITION_MAP.md')
+          s = p.read_text(encoding='utf-8')
+          p.write_text(s.replace('HARNESS_COMPONENTS_REQUIRE_LOAD_BEARING_EVIDENCE', 'REMOVED_HARNESS_EVIDENCE', 1), encoding='utf-8')
+          PY
+          expect_failure mutation-harness-evidence
+          cp candidate/docs/CAPABILITY_COMPOSITION_MAP.md docs/CAPABILITY_COMPOSITION_MAP.md
+
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('docs/CAPABILITY_COMPOSITION_MAP.md')
+          s = p.read_text(encoding='utf-8')
+          p.write_text(s.replace('AGI_ASI_AWARENESS_ONLY', 'REMOVED_HORIZON_BOUNDARY', 1), encoding='utf-8')
+          PY
+          expect_failure mutation-horizon-boundary
+          cp candidate/docs/CAPABILITY_COMPOSITION_MAP.md docs/CAPABILITY_COMPOSITION_MAP.md
+
+          python -m unittest discover -s tests -p test_ai_solution_layer_selection_contract.py -v > tests-evidence/final-focused.log 2>&1
+          python -m unittest discover -s tests -p 'test_public_video*.py' -v > tests-evidence/final-public-video.log 2>&1
+          git diff --check
+          git diff -- skills/managing-project-intake-and-work-contract/SKILL.md docs/CAPABILITY_COMPOSITION_MAP.md tests/test_ai_solution_layer_selection_contract.py > candidate/task.diff
+          sha256sum \
+            candidate/skills/managing-project-intake-and-work-contract/SKILL.md \
+            candidate/docs/CAPABILITY_COMPOSITION_MAP.md \
+            candidate/tests/test_ai_solution_layer_selection_contract.py \
+            candidate/task.diff > candidate/sha256.txt
+          git status --short > candidate/status.txt
+
+      - name: Upload bounded candidate and evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-solution-layer-contract-candidate
+          path: |
+            candidate/
+            tests-evidence/
+          if-no-files-found: error
+          retention-days: 1
