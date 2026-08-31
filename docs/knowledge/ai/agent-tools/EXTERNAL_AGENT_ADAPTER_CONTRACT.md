@@ -21,11 +21,11 @@
 
 This contract governs optional external code reviewers, command-output proxies, model CLIs, agent workspaces, and future running-mate adapters.
 
-It does not approve a tool by name. A project may activate an adapter only after the current repository authority, the candidate's current behavior, and a bounded A/B gate have been read and recorded.
+`DISPOSITION_NOT_INSTALLATION_AUTHORITY`: a research disposition does not authorize installation, new account access, execution hooks, external writes, or a project adoption. A project may activate an adapter only after its current authority, the candidate's current behavior, a safely authorized trial, and the resulting bounded A/B evidence have been read and recorded. This document supplies requirements, not an implemented adapter or a second execution owner.
 
 ## 2. Authority and data ownership
 
-The repository remains the primary writable canon for project facts, approved decisions, code, data, assets, tests, and implementation evidence.
+The repository remains the primary writable canon for project facts, approved decisions, code, data, assets, tests, and implementation evidence. A project's current `AGENTS.md`, adopted contracts, and explicit current exceptions remain authoritative; this shared reference does not silently migrate them.
 
 External workspaces, shared-memory products, model outputs, compressed command output, and LLM review comments are derived or advisory. They may point to evidence but cannot silently promote a decision, mark a gate complete, overwrite approved meaning, or replace repository readback.
 
@@ -46,7 +46,7 @@ Use three explicit stages:
 2. **Mutate:** apply only the approved bounded change and emit an exact change receipt.
 3. **Verify:** read back the resulting state and run Base/project-owned checks independently of the mutating model or service.
 
-An adapter must not combine inspection, mutation, and self-attested verification into one opaque success claim. A generated explanation or review is not verification evidence by itself.
+An adapter must not combine inspection, mutation, and self-attested verification into one opaque success claim. A generated explanation or review is not verification evidence by itself. Delegating review to the same authoring model does not establish a separate independent reviewer; preserve the review requirements of the existing owner.
 
 ## 4. Process execution safety
 
@@ -59,8 +59,9 @@ Local wrappers and CLIs must use argument arrays rather than interpolated shell 
 - Treat filenames, prompts, issue text, model output, and repository content as untrusted data, never executable fragments.
 - Separate read-only commands from write-capable commands.
 - Require an explicit adapter capability for network, filesystem mutation, credential use, or remote write.
+- Reuse the current approved executor and its platform-specific safety contract rather than building another wrapper merely to satisfy this reference.
 
-Retries must be finite and cause-aware. Authentication, permission, billing, schema, and deterministic validation failures do not receive blind retries. The receipt records every retry and the final failure class.
+Retries must be finite and cause-aware. Authentication, permission, billing, schema, and deterministic validation failures do not receive blind retries. The receipt records every retry and the final failure class. Termination applies only to the task-owned process tree, not unrelated user processes.
 
 ## 5. Evidence and raw fallback
 
@@ -68,21 +69,25 @@ Every transformed or generated result must retain a route to the underlying evid
 
 For command-output compression:
 
-- store or make reproducible the exact raw command, arguments, working directory, exit code, tool version, and relevant environment identifiers;
-- preserve raw stderr and any omitted/aggregated sections needed to diagnose failure;
-- bypass compression for exact source reads, exact diffs, test failures, security findings, migration output, release evidence, and any task whose correctness depends on line-level fidelity;
-- automatically fall back to raw output when the proxy returns an error, an unknown schema, truncation, contradictory counts, or a verification discrepancy.
+- `RAW_CAPTURE_BEFORE_TRANSFORM`: the approved execution path must retain the original invocation's diagnostically relevant stdout/stderr and completion metadata before lossy filtering, with bounded retention, access control, and required secret redaction. Redaction and truncation are declared; raw does not mean permission to persist secrets or private prompts.
+- Store the exact command, argument array, working directory, tool version, relevant environment identifiers, and upstream completion status without recording credential values.
+- `PRESERVE_UPSTREAM_EXIT_STATUS`: retain the child exit code, timeout/signal state, and expected test counts separately from the filter's status. A successful filter cannot convert a failing child into success.
+- Bypass compression for exact source reads, exact diffs, test failures, security findings, migration output, release evidence, and any task whose correctness depends on line-level fidelity.
+- `FILTER_FAILURE_IS_NOT_COMMAND_FAILURE`: an error, unknown schema, truncation, contradictory count, or verification discrepancy in the proxy invalidates its transformed view; it does not prove that the underlying command failed or never executed.
+- `NO_AUTOMATIC_COMMAND_REPLAY`: fall back by retrieving the already captured original output, not by automatically running the command again. Build, test, migration, and remote-write commands can have side effects even when they sound like verification.
+- When the original evidence is absent or incomplete, mark the affected claim `UNVERIFIED`. Replay is a separate operation allowed only after current-state readback and proof that the exact action is read-only or safely idempotent within the existing authorization and retry budget. Otherwise defer the action; never duplicate a possibly successful mutation to recover its log.
 
 For LLM review or model delegation:
 
-- retain the bounded input revision/diff and model response receipt;
+- retain the bounded input revision/diff and a secret-safe model response receipt;
 - map each finding to exact repository evidence;
 - verify proposed fixes using project-owned tests and readback;
-- record dismissed findings when they reveal a repeatable false-positive pattern.
+- record dismissed findings when they reveal a repeatable false-positive pattern;
+- do not turn a model critique, a prompt instruction, or a hook delivery receipt into semantic correctness evidence.
 
 ## 6. Source, model, and version receipt
 
-Each invocation that can affect a decision or change must record, when observable:
+Each invocation that can affect a decision or change must record, when applicable and observable:
 
 - adapter and upstream tool name/version/commit;
 - source or provider;
@@ -91,10 +96,14 @@ Each invocation that can affect a decision or change must record, when observabl
 - configuration hash or stable configuration summary;
 - repository and project revision;
 - permission policy and telemetry state;
-- start/end timestamps, exit status, retries, and output locator;
-- deterministic verification command and result.
+- start/end timestamps, child and adapter exit statuses, retries, and output locator;
+- deterministic verification command, expected coverage, and result.
 
-Unknown source/model/version is acceptable only for disposable exploration. It blocks promotion, mutation, approval, and completion claims.
+`MODEL_NOT_APPLICABLE_FOR_DETERMINISTIC_TOOL`: a local deterministic output filter has no inference model. Record `model: NOT_APPLICABLE` with the reason instead of inventing a model or treating its absence as unknown. Apply the same explicit not-applicable distinction to endpoints or accounts that the operation genuinely does not use.
+
+An unknown tool/version or an unknown model/provider that the operation actually uses permits disposable exploration only. It blocks promotion, mutation, approval, and completion claims until the required identity is established.
+
+`FRESHNESS_BOUND_TO_REVISION_AND_INPUT`: reusable evidence is bound to the exact repository revision or unchanged relevant content hashes, effective inputs, configuration, tool/model versions, and any material external-state observation. Mutation or drift invalidates affected evidence. An unaffected result may be linked as `REUSED_EVIDENCE` with an explicit equivalence basis; neither a conversation summary nor an earlier PASS silently refreshes it.
 
 ## 7. Cost and billing boundary
 
@@ -107,7 +116,7 @@ Before a cost-bearing invocation, record:
 - the approved budget owner and ceiling when non-zero cost is allowed;
 - stop behavior at quota, rate, or billing boundaries.
 
-Cost evaluation uses total task cost, not a vendor's per-command token-reduction claim. Include retries, raw rereads, validation, latency, setup, maintenance, and failure recovery.
+Cost evaluation uses total task cost, not a vendor's per-command token-reduction claim. Include retries, raw rereads, validation, latency, setup, maintenance, and failure recovery. Label estimated token counts separately from tokenizer/provider measurements; unavailable measurements remain unknown, not zero.
 
 ## 8. Privacy, secrets, and telemetry
 
@@ -117,25 +126,26 @@ Cost evaluation uses total task cost, not a vendor's per-command token-reduction
 - Minimize transmitted context to the bounded task.
 - Record telemetry, retention, training-use, region, and deletion settings when available.
 - Disable optional content telemetry by default for private or unreleased project work.
+- Keep authorized diagnostic captures in the approved access-controlled evidence location, not public issues or unrestricted shared memory.
 - A local wrapper does not make a remote endpoint local; document the complete data path.
 
 Ambiguous retention, auth, or telemetry blocks mutation and canon-impacting use.
 
 ## 9. A/B promotion gate
 
-Optional use starts disabled. Compare the raw Base-owned path against the adapter on representative bounded tasks.
+`READINESS_PRECEDES_TRIAL`: optional use starts disabled. Evaluate version/license, authority, permissions, data flow, cost, bounded execution, and rollback before authorizing an isolated trial. Reuse the existing adoption owner's states: a `CANDIDATE` can become `TRIAL_APPROVED` for an exact task/environment without already possessing the A/B result that the trial is intended to produce. Run safety/fallback smoke checks on disposable inputs before exposing project data.
 
-Record:
+Compare the raw Base-owned path against the adapter on representative bounded tasks. Record:
 
 - equivalent input and exact revision;
 - task success and deterministic verification;
-- total input/output tokens where measurable;
+- total input/output tokens where measurable and the measurement method;
 - elapsed time and operator interventions;
 - retries, crashes, and fallback frequency;
 - false positives, false negatives, omissions, and altered evidence;
 - marginal cost and exposed data classes.
 
-Promote only when repeated results show meaningful net benefit without authority drift or information loss. Keep the baseline path operational after promotion.
+`TRIAL_EVIDENCE_PRECEDES_ACTIVATION`: only repeated meaningful net benefit, no authority drift or material information loss, and the existing project adoption decision permit `ADOPTED_ACTIVE`. A failed or incomplete trial remains deferred/rejected or trial-scoped; installation or a successful smoke test is not activation. Keep the baseline path operational after promotion.
 
 ## 10. Kill switch and rollback
 
@@ -145,13 +155,13 @@ Trigger the kill switch when:
 
 - deterministic checks disagree with adapter output;
 - raw and transformed evidence cannot be reconciled;
-- model/tool/version cannot be identified;
+- an applicable model/tool/version cannot be identified;
 - billing, auth, telemetry, or retention changes unexpectedly;
 - retries exceed the bounded policy;
 - output causes scope, canon, or approved-meaning drift;
 - the provider is unavailable and blocks ordinary repository work.
 
-Rollback must not require the failed provider. Re-run the task from repository evidence through the raw path, then archive the failure receipt for revalidation.
+Rollback must not require the failed provider. Read current state, disable the adapter, recover original evidence, and use the raw path for the next authorized operation. Re-executing an earlier command remains subject to section 5's no-replay rule. Archive only the secret-safe failure receipt needed for revalidation; preserve repository facts, tests, approved assets, and user changes.
 
 ## 11. Adapter profiles
 
@@ -162,13 +172,15 @@ Rollback must not require the failed provider. Re-run the task from repository e
 - Existing project tests and Base review contracts remain the completion gate.
 - Do not transmit secrets or unrelated repository history.
 - Endpoint and telemetry configuration must be explicit.
+- Its delegated host-model mode is not automatically an independent reviewer. Confirm actual execution mode, reviewer independence, language/ruleset coverage, and cost route before use; GDScript-specific effectiveness is not established by this reference.
 
 ### 11.2 RTK profile
 
-- Eligible only for noisy, reconstructable command output.
-- Raw command escape must remain obvious and immediate.
+- Eligible only for noisy, reconstructable command output with safe original-invocation capture.
+- Raw command escape must remain obvious and immediate for subsequent authorized commands.
 - Exact failures, diffs, source, security output, migration output, and release evidence bypass the proxy.
-- Auto-disable on count mismatch, truncation, schema drift, negative task-cost result, or repeated raw rereads.
+- Auto-disable filtering on count mismatch, truncation, schema drift, negative task-cost result, or repeated raw rereads; never auto-repeat the underlying command.
+- Record upstream exit status and filter status separately; do not promote a bytes-based token estimate into measured account savings.
 
 ### 11.3 Antigravity CLI profile
 
@@ -188,7 +200,9 @@ Rollback must not require the failed provider. Re-run the task from repository e
 
 ## 12. Future game-development running mate
 
-Build the running mate as a provider-neutral core with explicit ports for:
+`FUTURE_ARCHITECTURE_REFERENCE_ONLY` / `NO_NEW_RUNNING_MATE_IMPLEMENTATION`: the shared example is an architectural consideration, not a current build request. It does not authorize a new product, generic orchestration framework, Macro deployment, or project refactor.
+
+If a later separately approved running-mate need exists, compare current implementations first and consider a provider-neutral core with only the ports actually needed for:
 
 - repository authority and revision reads;
 - task/decision/status receipts;
@@ -197,20 +211,19 @@ Build the running mate as a provider-neutral core with explicit ports for:
 - review and deterministic verification;
 - notifications and human decision gates.
 
-A Macro adapter may be the first UI integration, but the core must run headlessly and export all durable state without Macro. Keep connectors replaceable and capability-scoped. Do not merge project canon, agent memory, chat history, and operational telemetry into one undifferentiated store.
+A possible Macro UI adapter must not own the only durable state or recovery path. Keep any genuinely needed connectors replaceable and capability-scoped. Do not merge project canon, agent memory, chat history, and operational telemetry into one undifferentiated store. Do not implement the full example merely because these concerns are listed here.
 
-## 13. Activation checklist
+## 13. Readiness and activation checklist
 
-An adapter is implementation-ready only when all are true:
+Before a bounded trial, confirm:
 
-- current owner and repository authority confirmed;
+- current owner, project authority, and exact authorized scope;
 - version/license/data path read from current primary sources;
-- overlap and alternatives reviewed;
+- overlap and viable alternatives reviewed;
 - inspect/mutate/verify capabilities separated;
-- argument-array/no-shell, timeout, output cap, retry, and termination behavior tested where applicable;
-- source/model/version and cost receipts implemented;
-- raw fallback and kill switch tested;
-- secret and telemetry policy verified;
-- representative A/B evidence passes;
-- rollback succeeds without the provider;
-- project-specific human approval obtained for any cost, auth, external write, or canon-impacting behavior.
+- proposed argument-array/no-shell, timeout, output cap, retry, exit-status, capture, and task-owned termination controls;
+- source/model/version applicability, cost limits, and secret/telemetry policy;
+- a disposable safety test plan, raw fallback, kill switch, and provider-independent rollback;
+- authorization for any new account/auth, external write, cost, or canon-impacting behavior.
+
+Before project activation, require actual safety/fallback/rollback results, representative A/B evidence, implemented applicable receipts, and the project's recorded adoption decision. Documentation checks do not prove these runtime controls are implemented. Do not require completed A/B measurements as a prerequisite to the very trial that will obtain them.
