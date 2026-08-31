@@ -49,10 +49,13 @@
   "publication_profile": "DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD",
   "publication_policy": "docs/PROJECT_MASTER_GDD_TWO_ARTIFACT_POLICY.md",
   "migration_checklist": "templates/project-operations/NOTION_TO_REPOSITORY_MIGRATION_CHECKLIST.md",
+  "migration_exit_gate_logic": "ALL_OF",
   "migration_exit_gates": {
     "NOTION_UNIQUE_CANON_COUNT": 0,
     "CODEX_NOTION_DEPENDENCY_COUNT": 0,
-    "ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT": 0
+    "ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT": 0,
+    "inventory.status": "COMPLETE",
+    "inventory.destination_owner_readback_receipt": "ALL_SCOPED_ITEMS_VERIFIED"
   },
   "retirement_state_before_zero": "LEGACY_READ_ONLY",
   "retirement_deletion_requirement": "NO_DELETE_REQUIRED_FOR_RETIREMENT",
@@ -74,7 +77,7 @@
     "The human-facing GDD PDF is a derived snapshot and must identify the exact source commit and evidence ceiling; editing the PDF alone does not change canon.",
     "AI and Codex continuity is carried by repository Markdown, JSON, manifests, implementation files, tests, and handoffs rather than chat history or memory.",
     "New Notion writes are not required by default. Existing Notion content may be read only to discover and migrate unique project information.",
-    "A project remains in LEGACY_READ_ONLY migration state until all three migration exit counters are zero and readback evidence is recorded.",
+    "All migration_exit_gates are required together for actual scoped migration: inventory.status is COMPLETE, all three counters are known zero, and destination-owner readback verifies every scoped item at an exact ref. UNKNOWN or incomplete/unverified scope remains LEGACY_READ_ONLY and is never treated as zero.",
     "Codex rehydrates the current project at an exact repository SHA before product mutation and does not assume chat or PDF state is newer than the repository.",
     "An approved visual consumed by the product resolves to a project-controlled repository path, SHA-256 value, actual consumer, approval state, implementation state, and provenance record.",
     "A generated or uploaded visual is not implementation-ready merely because it appears in chat, Library, a PDF, or a preview; the approved binary and manifest readback are required.",
