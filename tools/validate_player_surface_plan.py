@@ -28,6 +28,15 @@ REFERENCE_KINDS = {'OFFICIAL_API', 'SOURCE_CODE', 'PRODUCT_OBSERVATION', 'INTERN
 MODULE_ROLES = {'FRAME', 'FILL', 'NAMEPLATE', 'ICON', 'PORTRAIT', 'BACKGROUND', 'PROP', 'SHADOW', 'OVERLAY', 'VFX', 'MASK', 'FLATTENED_STATIC'}
 
 
+class _StructuredArgumentError(ValueError):
+    """Argparse validation failure that is rendered by the common JSON envelope."""
+
+
+class _StructuredArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        raise _StructuredArgumentError(message)
+
+
 def _text(value: Any) -> bool:
     return isinstance(value, str) and bool(value.strip())
 
@@ -55,6 +64,58 @@ def _safe_consumer_path(value: Any) -> bool:
     return bool(relative) and not PurePosixPath(relative).is_absolute() and ':' not in relative and '..' not in relative.split('/')
 
 
+def _repository_key(value: Any) -> str | None:
+    if not _text(value):
+        return None
+    value = value.strip('/').casefold().removesuffix('.git')
+    return value if re.fullmatch(r'[a-z0-9_.-]+/[a-z0-9_.-]+', value) else None
+
+
+def _external_source(row: dict[str, Any], project: Any) -> bool:
+    """Check declared origin and locator, not source authenticity or chronology."""
+    project_repository = _repository_key(project)
+    if project_repository is None:
+        return False
+    source = row.get('source')
+    if not _text(source) or any(char.isspace() or ord(char) < 32 or ord(char) == 127 for char in source):
+        return False
+    try:
+        url = urlsplit(source)
+        host = (url.hostname or '').lower().rstrip('.')
+        # No fetch is made. Local/opaque locators cannot establish external research.
+        if (url.scheme not in {'http', 'https'} or '.' not in host
+                or host in {'localhost', '127.0.0.1', '0.0.0.0'}
+                or host.endswith(('.local', '.localhost'))
+                or url.username is not None or url.password is not None):
+            return False
+        try:
+            address = ip_address(host)
+        except ValueError:
+            address = None
+        if address is not None and not address.is_global:
+            return False
+        url.port  # Reject malformed ports without using or connecting to them.
+    except ValueError:
+        return False
+    parts = [part for part in unquote(url.path).split('/') if part]
+    repository = None
+    if host in {'github.com', 'www.github.com', 'raw.githubusercontent.com', 'codeload.github.com'}:
+        repository = _repository_key('/'.join(parts[:2]))
+        if repository is None:
+            return False
+    elif host == 'api.github.com':
+        if len(parts) < 3 or parts[0] != 'repos':
+            return False
+        repository = _repository_key('/'.join(parts[1:3]))
+    declared = row.get('source_repository')
+    if declared is not None:
+        declared_key = _repository_key(declared)
+        if declared_key is None or (repository is not None and repository != declared_key):
+            return False
+        repository = declared_key
+    return repository is None or repository != project_repository
+
+
 def validate_packet(packet: Any, gate: str = 'plan') -> list[str]:
     """Return deterministic errors; a clean result is only structural evidence."""
     errors: list[str] = []
@@ -66,8 +127,9 @@ def validate_packet(packet: Any, gate: str = 'plan') -> list[str]:
             or packet.get('artifact_role') != 'DERIVED_REVIEW_PACKET'
             or not isinstance(packet.get('source_revision'), str)
             or not re.fullmatch(r'[0-9a-f]{40}', packet.get('source_revision', ''))
-            or not all(_text(packet.get(k)) for k in ('repository', 'scope_owner', 'approval_ref'))):
-        errors.append('SOURCE_IDENTITY: version, derived role, exact revision, owner and approval locator required')
+            or not all(_text(packet.get(k)) for k in ('repository', 'scope_owner', 'approval_ref'))
+            or _repository_key(packet.get('repository')) is None):
+        errors.append('SOURCE_IDENTITY: version, derived role, exact revision, canonical owner/repo, owner and approval locator required')
 
     if packet.get('benchmark_order') != 'EXTERNAL_THEN_PROJECT_FIT':
         errors.append('BENCHMARK_ORDER: external comparison precedes project fit and reuse mapping')
@@ -160,7 +222,6 @@ def validate_packet(packet: Any, gate: str = 'plan') -> list[str]:
             if key in surfaces and key not in can_return:
                 errors.append(f'NO_RETURN_OR_EXIT: {key}')
 
-    if entry is not None:
         for action_id in required['required_actions']:
             source = actions.get(action_id, {}).get('from')
             if _text(source) and source in surfaces and source not in reached:
@@ -247,55 +308,6 @@ def validate_packet(packet: Any, gate: str = 'plan') -> list[str]:
     compositions = indexed('compositions')
     _validate_modules(modules, compositions, families, surfaces, gate, errors)
     return errors
-
-
-def _repository_key(value: Any) -> str | None:
-    if not _text(value):
-        return None
-    value = value.strip('/').casefold().removesuffix('.git')
-    return value if re.fullmatch(r'[a-z0-9_.-]+/[a-z0-9_.-]+', value) else None
-
-
-def _external_source(row: dict[str, Any], project: Any) -> bool:
-    """Check declared origin and locator, not source authenticity or chronology."""
-    source = row.get('source')
-    if not _text(source) or any(char.isspace() or ord(char) < 32 or ord(char) == 127 for char in source):
-        return False
-    try:
-        url = urlsplit(source)
-        host = (url.hostname or '').lower().rstrip('.')
-        # No fetch is made. Local/opaque locators cannot establish external research.
-        if (url.scheme not in {'http', 'https'} or '.' not in host
-                or host in {'localhost', '127.0.0.1', '0.0.0.0'}
-                or host.endswith(('.local', '.localhost'))
-                or url.username is not None or url.password is not None):
-            return False
-        try:
-            address = ip_address(host)
-        except ValueError:
-            address = None
-        if address is not None and not address.is_global:
-            return False
-        url.port  # Reject malformed ports without using or connecting to them.
-    except ValueError:
-        return False
-    parts = [part for part in unquote(url.path).split('/') if part]
-    repository = None
-    if host in {'github.com', 'www.github.com', 'raw.githubusercontent.com', 'codeload.github.com'}:
-        repository = _repository_key('/'.join(parts[:2]))
-        if repository is None:
-            return False
-    elif host == 'api.github.com':
-        if len(parts) < 3 or parts[0] != 'repos':
-            return False
-        repository = _repository_key('/'.join(parts[1:3]))
-    declared = row.get('source_repository')
-    if declared is not None:
-        declared_key = _repository_key(declared)
-        if declared_key is None or (repository is not None and repository != declared_key):
-            return False
-        repository = declared_key
-    return repository is None or repository != _repository_key(project)
 
 
 def _validate_surface_states(surfaces: dict, families: dict, errors: list[str]) -> None:
@@ -397,16 +409,22 @@ def _validate_modules(modules: dict, compositions: dict, families: dict,
             used_by_surface[surface].append(composition_modules)
 
     contracted_frames: set[str] = set()
+    contracted_raster_modules: set[str] = set()
     for key, family in families.items():
+        module_ids = family.get('module_ids')
         if family.get('production') == 'NATIVE_UI':
+            if module_ids not in (None, []):
+                errors.append(f'NATIVE_FAMILY_RASTER_CONTRADICTION: {key}')
             continue
-        module_ids, targets = family.get('module_ids'), family.get('surfaces')
+        targets = family.get('surfaces')
         if not _strings(module_ids):
             errors.append(f'MISSING_MODULE: family/{key}')
             continue
         for module_id in module_ids:
             if module_id not in modules:
                 errors.append(f'MISSING_MODULE: {key}/{module_id}')
+            else:
+                contracted_raster_modules.add(module_id)
         if family.get('kind') == 'FRAME':
             frame_ids = [mid for mid in module_ids if modules.get(mid, {}).get('role') == 'FRAME']
             if not frame_ids:
@@ -423,6 +441,8 @@ def _validate_modules(modules: dict, compositions: dict, families: dict,
                 elif not any(set(module_ids).issubset(parts) for parts in used_by_surface[target]):
                     errors.append(f'MISSING_FAMILY_MODULE_USE: {key}/{target}')
     for key, module in modules.items():
+        if key not in contracted_raster_modules:
+            errors.append(f'RASTER_MODULE_UNCONTRACTED: {key}')
         if module.get('role') == 'FRAME' and key not in contracted_frames:
             errors.append(f'FRAME_MODULE_UNCONTRACTED: {key}')
         if key not in used_modules:
@@ -438,28 +458,40 @@ def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     return result
 
 
+def _print_input_error(error: BaseException) -> None:
+    print(json.dumps({
+        'result': 'INPUT_ERROR',
+        'type': type(error).__name__,
+        'message': str(error),
+        'evidence_ceiling': CEILING,
+    }, ensure_ascii=True))
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = _StructuredArgumentParser(description=__doc__)
     parser.add_argument('--packet', required=True, type=Path)
     parser.add_argument('--gate', choices=['plan', 'handoff'], default='plan')
-    args = parser.parse_args()
     try:
+        args = parser.parse_args()
         with args.packet.open('rb') as stream:
             raw = stream.read(MAX_PACKET_BYTES + 1)
         if len(raw) > MAX_PACKET_BYTES:
             raise ValueError('packet exceeds bounded input size')
+
         def reject_constant(value: str) -> None:
             raise ValueError('non-finite JSON number')
+
         def finite_float(value: str) -> float:
             number = float(value)
             if not math.isfinite(number):
                 raise ValueError('non-finite JSON exponent')
             return number
+
         packet = json.loads(raw.decode('utf-8-sig'), object_pairs_hook=_unique_object,
                             parse_constant=reject_constant, parse_float=finite_float)
         errors = validate_packet(packet, args.gate)
-    except (OSError, UnicodeError, ValueError, RecursionError) as error:
-        print(json.dumps({'result': 'INPUT_ERROR', 'type': type(error).__name__, 'evidence_ceiling': CEILING}))
+    except (_StructuredArgumentError, OSError, UnicodeError, ValueError, RecursionError) as error:
+        _print_input_error(error)
         return 2
     print(json.dumps({'result': 'STRUCTURE_INVALID' if errors else 'STRUCTURE_VALID',
                       'gate': args.gate, 'errors': errors, 'evidence_ceiling': CEILING}, ensure_ascii=True))
