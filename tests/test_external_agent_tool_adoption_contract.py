@@ -47,6 +47,8 @@ OLD_PACKAGED_REFERENCES = (
 
 
 class ExternalAgentToolAdoptionContractTests(unittest.TestCase):
+    """Check documentation contracts; these are not external-tool runtime tests."""
+
     def test_shared_references_exist_without_creating_parallel_skills(self) -> None:
         for path in (REVIEW, ADAPTER, BRIEFING):
             with self.subTest(path=path):
@@ -161,6 +163,65 @@ class ExternalAgentToolAdoptionContractTests(unittest.TestCase):
         ):
             with self.subTest(forbidden=forbidden):
                 self.assertNotIn(forbidden, briefing)
+
+    def test_review_lenses_cannot_claim_executed_or_independent_loops(self) -> None:
+        review = REVIEW.read_text(encoding="utf-8")
+        self.assertNotIn("## 6. Five adversarial review loops", review)
+        for marker in (
+            "REVIEW_LENSES_ARE_NOT_FULL_LOOPS",
+            "FULL_LOOP_RECEIPT_REQUIRED",
+            "SAME_AUTHOR_REVIEW_IS_NOT_INDEPENDENT_REVIEW",
+            "EXTERNAL_TOOL_RUNTIME_NOT_RUN",
+        ):
+            self.assertIn(marker, review)
+
+    def test_raw_fallback_preserves_command_outcome_without_side_effect_replay(self) -> None:
+        adapter = ADAPTER.read_text(encoding="utf-8")
+        for marker in (
+            "RAW_CAPTURE_BEFORE_TRANSFORM",
+            "PRESERVE_UPSTREAM_EXIT_STATUS",
+            "NO_AUTOMATIC_COMMAND_REPLAY",
+            "FILTER_FAILURE_IS_NOT_COMMAND_FAILURE",
+        ):
+            self.assertIn(marker, adapter)
+
+    def test_receipts_distinguish_inapplicable_models_and_stale_evidence(self) -> None:
+        adapter = ADAPTER.read_text(encoding="utf-8")
+        self.assertIn("MODEL_NOT_APPLICABLE_FOR_DETERMINISTIC_TOOL", adapter)
+        self.assertIn("FRESHNESS_BOUND_TO_REVISION_AND_INPUT", adapter)
+
+    def test_trial_readiness_precedes_measurement_and_activation(self) -> None:
+        adapter = ADAPTER.read_text(encoding="utf-8")
+        for marker in (
+            "DISPOSITION_NOT_INSTALLATION_AUTHORITY",
+            "READINESS_PRECEDES_TRIAL",
+            "TRIAL_EVIDENCE_PRECEDES_ACTIVATION",
+            "TRIAL_APPROVED",
+            "ADOPTED_ACTIVE",
+        ):
+            self.assertIn(marker, adapter)
+
+    def test_briefing_does_not_invent_a_project_runner_or_inflate_zero_exit(self) -> None:
+        briefing = BRIEFING.read_text(encoding="utf-8")
+        self.assertNotIn("res://tests/run_all.gd", briefing)
+        self.assertIn("DISCOVER_PROJECT_VALIDATOR_BEFORE_COMMAND", briefing)
+        self.assertIn("ZERO_EXIT_IS_NOT_TEST_COVERAGE", briefing)
+
+    def test_learning_and_absorption_are_owned_and_evidence_bounded(self) -> None:
+        review = REVIEW.read_text(encoding="utf-8")
+        for marker in (
+            "## 8. Corrections and reusable learning",
+            "CONTRACT_TESTS_ARE_NOT_BEHAVIOR_EVALUATIONS",
+            "EXISTING_OWNER_REUSE_NOT_NEW_HOOK_IMPLEMENTATION",
+            "UPSTREAM_BENCHMARK_NOT_LOCAL_A_B_RESULT",
+        ):
+            self.assertIn(marker, review)
+
+    def test_future_running_mate_reference_does_not_authorize_implementation(self) -> None:
+        adapter = ADAPTER.read_text(encoding="utf-8")
+        self.assertIn("FUTURE_ARCHITECTURE_REFERENCE_ONLY", adapter)
+        self.assertIn("NO_NEW_RUNNING_MATE_IMPLEMENTATION", adapter)
+        self.assertNotIn("Build the running mate as", adapter)
 
 
 if __name__ == "__main__":
