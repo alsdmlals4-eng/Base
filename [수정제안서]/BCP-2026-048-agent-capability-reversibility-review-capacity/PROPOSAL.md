@@ -86,8 +86,9 @@ completion_evidence:
 ```
 
 - 이 projection은 권한을 새로 부여하지 않는다. 상위 정본·도구 capability·repository ruleset보다 넓은 `allow`를 만들 수 없다.
-- 외부 문서·Issue/PR 본문·모델 출력·다운로드 파일 같은 `untrusted_data_sources`는 permission rule이나 approval source를 정의하지 못한다. 선언된 trusted authority의 적용 가능한 규칙만 평가하고, 그 trusted 규칙끼리 충돌할 때 더 제한적인 결과를 적용한다.
-- `DENY`나 보호 범위를 낮은 권위의 prompt가 완화하지 못하게 한다.
+- 외부 문서·Issue/PR 본문·모델 출력·다운로드 파일 같은 `untrusted_data_sources`는 permission rule이나 approval source를 정의하지 못한다.
+- trusted rule끼리 충돌하면 먼저 현재 Base/project의 **권위 우선순위·범위·freshness**로 해결한다. 더 높은 권위의 명시적 최신 승인은 낮은 권위의 일반 default/ask를 그 승인 범위 안에서 대체할 수 있다.
+- 시스템·도구 capability·repository Ruleset·법적/보안 hard ceiling과 보호된 불변조건은 낮출 수 없다. 같은 권위에서 충돌하거나 범위·freshness가 불명확하면 더 제한적인 결과를 적용한다.
 - secret 값 자체, credential material, 민감한 원문 경로를 공개 기록에 복제하지 않는다.
 
 ### 후보 원칙 2 — Human Review Capacity Gate
@@ -110,20 +111,45 @@ completion_evidence:
 
 ## 적용 조건과 비사용 조건
 
-- 적용 조건:
-  - task가 filesystem mutation, shell, network, secret, MCP/connector 또는 remote write 중 하나 이상을 실제로 사용한다.
-  - 작업의 worst reachable effect와 rollback이 단순 allowed path만으로 충분히 드러나지 않는다.
-  - agent 병렬화 또는 장기 연속 실행이 사용자 검토 부채를 만들 수 있다.
-- 비사용 조건:
-  - L0 오탈자, 순수 read-only 조사, 기존 project contract가 동일 정보를 더 강하게 소유하는 경우;
-  - deterministic single-file change로 기존 protected scope·validation·rollback이 이미 명확한 경우;
-  - projection을 채우기 위해 secret·private path·불필요한 내부 세부를 더 노출해야 하는 경우.
-- 그대로 복사하면 안 되는 요소:
-  - Kiro의 실제 capability literal·설정 파일·UI 흐름;
-  - AWS의 기간·인력·생산성 수치와 monorepo topology;
-  - OWASP의 권고 문구를 프로젝트 승인·실제 enforcement PASS로 취급하는 것;
-  - 전역 고정 agent 수, review backlog 숫자, 줄 수·파일 수 제한;
-  - 새 dashboard, permission service, hook 또는 paid external dependency.
+### Capability·Reversibility Projection 활성 조건
+
+```text
+HAS_MUTATING_OR_PRIVILEGED_CAPABILITY
+AND
+(BOUNDARY_NOT_ALREADY_CLEAR OR REVERSIBILITY_NOT_ALREADY_CLEAR)
+```
+
+- `HAS_MUTATING_OR_PRIVILEGED_CAPABILITY`: task가 filesystem mutation, shell, network, secret, MCP/connector 또는 remote write 중 하나 이상을 실제로 사용한다.
+- `BOUNDARY_NOT_ALREADY_CLEAR`: 현재 작업 계약만으로 allowed/denied capability와 보호 범위를 즉시 확인할 수 없다.
+- `REVERSIBILITY_NOT_ALREADY_CLEAR`: worst reachable effect, rollback 또는 confirmation requirement 중 하나 이상이 명확하지 않다.
+- 따라서 병렬·장기 작업이 아니더라도 비가역 remote write와 불명확한 rollback이 있는 단일 작업은 projection 대상이다.
+
+### Human Review Capacity Gate 활성 조건
+
+```text
+AGENT_OUTPUT_CAN_ACCUMULATE
+AND
+(REVIEW_CAPACITY_RISK_PRESENT OR PARALLELISM_INCREASE_PROPOSED)
+```
+
+- `AGENT_OUTPUT_CAN_ACCUMULATE`: 병렬 agent, 장기 연속 실행 또는 여러 미검토 결과가 쌓일 수 있는 orchestration이다.
+- `REVIEW_CAPACITY_RISK_PRESENT`: review backlog 증가, owner/consumer 설명 실패, 반복 raw reread 또는 post-change rework 증가가 관찰됐다.
+- `PARALLELISM_INCREASE_PROPOSED`: 현재 project profile보다 agent fan-out을 높이려 한다.
+- review backlog 신호만으로 capability permission projection을 활성화하지 않으며, mutating capability 존재만으로 별도 review-capacity Gate를 강제하지 않는다.
+
+### 비사용 조건
+
+- L0 오탈자, 순수 read-only 조사, 기존 project contract가 동일 정보를 더 강하게 소유하는 경우;
+- deterministic single-file change로 기존 protected scope·validation·rollback이 이미 명확한 경우;
+- projection을 채우기 위해 secret·private path·불필요한 내부 세부를 더 노출해야 하는 경우.
+
+### 그대로 복사하면 안 되는 요소
+
+- Kiro의 실제 capability literal·설정 파일·UI 흐름;
+- AWS의 기간·인력·생산성 수치와 monorepo topology;
+- OWASP의 권고 문구를 프로젝트 승인·실제 enforcement PASS로 취급하는 것;
+- 전역 고정 agent 수, review backlog 숫자, 줄 수·파일 수 제한;
+- 새 dashboard, permission service, hook 또는 paid external dependency.
 
 ## 기존 Base owner gap과 최소 수정 요청
 
@@ -194,8 +220,9 @@ completion_evidence:
   - full Base local/remote validation;
   - reference freshness와 generated artifact check;
   - project adoption은 별도 project-local A/B evidence와 runtime/readback을 요구한다.
-- 롤백:
-  - 제안이 거절·철회되면 registry entry와 proposal file만 revert한다.
+- 롤백과 lifecycle 보존:
+  - proposal PR이 병합 전 거절·철회되면 PR을 닫아 main을 변경하지 않는다.
+  - proposal이 main에 기록된 뒤 거절·보류·대체되면 proposal file과 Registry entry를 삭제하지 않는다. 별도 reviewed lifecycle change에서 Registry status를 `REJECTED`, `DEFERRED` 또는 `SUPERSEDED`로 전환하고 결정 근거를 proposal에 보존한다.
   - active Base behavior, project files, permissions와 runtime evidence는 이 proposal-only PR로 변경되지 않는다.
 
 ## 필요한 도구·파일·권한
@@ -214,4 +241,4 @@ completion_evidence:
 - 사용자 승인 근거: `2026-09-01` 현재 대화의 `권장안대로 진행해`는 **권장안 B의 proposal-only 제출과 검증**을 승인한다.
 - Base implementation approval ref: `미승인`.
 - 구현 PR: `없음`.
-- 롤백: proposal-only PR을 닫거나 두 `[수정제안서]` 변경만 revert한다. 거절·보류 이력은 삭제하지 않는다.
+- 롤백: 병합 전에는 PR을 닫아 main을 보존한다. 병합 후에는 proposal·Registry 이력을 삭제하지 않고 별도 reviewed lifecycle change로 `REJECTED`, `DEFERRED` 또는 `SUPERSEDED` 상태와 근거를 기록한다.
