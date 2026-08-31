@@ -96,7 +96,9 @@ On first use, give a one-sentence plain-language definition, then keep the exact
 
 Good:
 
-> `rollback`은 변경 전 상태로 안전하게 되돌리는 절차입니다. 이 작업의 `rollback`은 새 어댑터를 끄고 원본 명령으로 재검증하는 것입니다.
+> `rollback`은 문제가 생긴 변경을 안전하게 되돌리는 절차입니다. 출력 압축 어댑터에 문제가 생기면 먼저 어댑터를 끄고 현재 상태와 이미 저장된 원본 출력을 확인합니다. 로그를 복구하려고 명령을 자동 재실행하지 않습니다.
+
+`RECOVER_CAPTURED_OUTPUT_BEFORE_NEW_EXECUTION`: this example delegates to the original-output recovery and no-replay rules in `docs/knowledge/ai/agent-tools/EXTERNAL_AGENT_ADAPTER_CONTRACT.md`, section 5. A new execution requires current-state readback and verified read-only or safely idempotent behavior within the existing approval and retry budget; recovering a log alone does not authorize replay.
 
 Avoid:
 
