@@ -75,6 +75,9 @@ class PlayerSurfacePlanReviewRound3Tests(unittest.TestCase):
         }
         self.rejected(packet, "RASTER_MODULE_TARGET_UNOWNED", "handoff")
 
+    def test_checker_exposes_target_ownership_diagnostic(self):
+        self.assertIn("RASTER_MODULE_TARGET_UNOWNED", CHECKER.read_text(encoding="utf-8"))
+
     def test_guide_documents_final_packet_boundaries(self):
         text = GUIDE.read_text(encoding="utf-8")
         for token in [
