@@ -53,3 +53,38 @@ Focused tests use exact source blobs in an isolated snapshot; full local clone i
 The exact-head Actions run `33418832589` executed 2,443 core tests and 485 contract tests. Each had the same one failure: newly packaged reference/script artifacts were not directly linked from the protected UI `SKILL.md`. Actual downloaded diagnostic artifacts, not the earlier truncated log interpretation, establish this cause.
 
 Reproduced the package-discovery failure in a focused regression. Retain the existing package rule and protected PR #713 boundary by moving only current-task new artifacts to the normal shared `docs/knowledge/game-development/` and `tools/` owners, updating both root and the already discoverable project-adapter reference. No pre-existing file, test or gate is deleted or weakened. The final-line formatting hypothesis was disproved; no formatting validator change is made.
+
+## 2026-09-01 approved continuation — review correction
+
+The user's latest `맞아 진행해` continues PR #803. Fresh readback still has Base main `32f4dd5ba6042dc34611e2c8912f300b90491e0a` and task HEAD `9f426d129d5a8f2e7080f2d846ac6e163fe1d3bc`. No prior local 84-test payload is present in this executor; that earlier report is not reused as present verification. Restore exact remote source bytes, compare Git blob hashes and execute new evidence instead.
+
+Scope remains the seven-file PR. This continuation changes only the existing checker, its tests, this plan, and §12.1 of the guide; root route, project adapter, registry, Skill body and other workstreams are preserved. PR #804 independently touches the same project-adapter path and similar topic; it is read-only and is not absorbed, closed or merged by this continuation. Do not claim fleet adoption while Base integration is unfinished.
+
+### Verified review findings and minimal corrections
+
+| Inline review ID | Reproduced issue | Correction |
+|---|---|---|
+| 3896830617 | Required action can lead to an optional return trap | Check required action targets against return/exit reachability |
+| 3896830623 | Honest OVERLAY surface is rejected | Accept OVERLAY without forcing a scene or modal |
+| 3896830631 | Declared loading/error states have no expression mapping | Resolve surface state_bindings through family target/state/method |
+| 3896830636 | Local SOURCE_CODE is counted as external | Explicit origin, HTTP(S) locator and normalized repository identity |
+| 3896830639 | FRAME role/kind can bypass frame geometry | Require a contracted FRAME module/family relationship |
+| 3896830644 | Documented lifecycle stages are rejected | Full lifecycle plus explicit approval locators; preserve candidate alias |
+| 3896830648 | Surrogate in diagnostic crashes stdout | ASCII-escaped structured JSON output |
+| 3896977426 | Two incomplete compositions masquerade as one complete assembly | Per-composition membership, never a surface-wide union |
+
+The original flattening exception fixture was incorrectly a FRAME family. It now uses an ILLUSTRATION family, while separate regressions reject disguising an icon or unconstrained frame. Other original test methods are retained, and fixture metadata now explicitly supplies the state/origin/approval contract.
+
+### Execution evidence from this continuation
+
+- Exact original checker blob: `e83f59769eaad6b3be4427856f4225186fc40dc4`; original tests: `eafbbe2ec3d0196c33b80ebdcc9b5583d8385835`.
+- Baseline run: 58 checker tests, OK.
+- Review RED: 79 tests, 24 failed assertions/subtests, no unhandled test errors; then 79 tests, OK after the eight finding corrections.
+- Origin-hardening RED: 81 tests, 4 failed assertions/subtests for nonpublic/control-character URLs and case-insensitive .GIT self-reference; then 81 tests, OK.
+- Test command: `python -m unittest discover -s tests -p test_player_surface_plan.py -v` in an isolated exact-blob snapshot. This is not a full repository checkout or a Godot runtime run.
+- Python JSON primary reference rechecked: https://docs.python.org/3/library/json.html . `ensure_ascii` and decoder hooks support bounded, structured output; no third-party dependency was added.
+- Current-head remote full CI, independent review, unresolved-thread handling, normal expected-head merge and postmerge readback remain distinct gates. Historical CI on 9f426d1 is not evidence for changed bytes.
+
+### Reusable lessons
+
+Check relationships between records, not just valid individual records: action → destination recovery, surface state → family method, frame role → geometry owner, family → one complete composition, lifecycle → approval locator. Keep method documents and executable interchange rules aligned. Preserve exact remote blob identities when normal checkout is blocked, and never confuse a partial local test suite with full repository or runtime verification.

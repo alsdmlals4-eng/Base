@@ -12,14 +12,18 @@ import json
 import math
 import re
 from pathlib import Path, PurePosixPath
+from ipaddress import ip_address
 from typing import Any
+from urllib.parse import unquote, urlsplit
 
 CEILING = 'STRUCTURE_ONLY_NOT_RUNTIME_OR_USER_APPROVAL'
 MAX_PACKET_BYTES = 2 * 1024 * 1024
 MAX_RECORDS = 10000
-KINDS = {'SCREEN', 'PAGE', 'TAB', 'MODAL', 'DIALOGUE', 'PANEL'}
+KINDS = {'SCREEN', 'PAGE', 'TAB', 'MODAL', 'DIALOGUE', 'PANEL', 'OVERLAY'}
 PRODUCTIONS = {'NATIVE_UI', 'REUSE_APPROVED', 'GENERATE_CANDIDATE'}
-ASSET_STATES = {'NOT_REQUIRED', 'NEEDED', 'CANDIDATE', 'REVIEWED', 'USER_APPROVED'}
+APPROVED_ASSET_STATES = {'USER_APPROVED', 'CANON_REGISTERED', 'IMPLEMENTED', 'RUNTIME_VERIFIED'}
+# CANDIDATE remains a compatibility alias for GENERATED_CANDIDATE, never approval.
+ASSET_STATES = APPROVED_ASSET_STATES | {'NOT_REQUIRED', 'NEEDED', 'BRIEF_READY', 'GENERATED_CANDIDATE', 'CANDIDATE', 'REVIEWED'}
 REFERENCE_KINDS = {'OFFICIAL_API', 'SOURCE_CODE', 'PRODUCT_OBSERVATION', 'INTERNAL_REUSE'}
 MODULE_ROLES = {'FRAME', 'FILL', 'NAMEPLATE', 'ICON', 'PORTRAIT', 'BACKGROUND', 'PROP', 'SHADOW', 'OVERLAY', 'VFX', 'MASK', 'FLATTENED_STATIC'}
 
@@ -161,6 +165,9 @@ def validate_packet(packet: Any, gate: str = 'plan') -> list[str]:
             source = actions.get(action_id, {}).get('from')
             if _text(source) and source in surfaces and source not in reached:
                 errors.append(f'UNREACHABLE_ACTION: {action_id}')
+            target = actions.get(action_id, {}).get('to')
+            if _text(target) and target in surfaces and target not in can_return:
+                errors.append(f'NO_RETURN_OR_EXIT: required action {action_id} targets {target}')
 
     covered = set()
     for family in families.values():
@@ -196,9 +203,11 @@ def validate_packet(packet: Any, gate: str = 'plan') -> list[str]:
             errors.append(f'ASSET_CONTRADICTION: {key} raster needs a manifest locator')
         if production != 'NATIVE_UI' and status == 'NOT_REQUIRED':
             errors.append(f'ASSET_CONTRADICTION: {key} raster requirement cannot be NOT_REQUIRED')
-        if production == 'REUSE_APPROVED' and status != 'USER_APPROVED':
+        if production == 'REUSE_APPROVED' and not _enum(status, APPROVED_ASSET_STATES):
             errors.append(f'ASSET_CONTRADICTION: {key} approved reuse needs an approval locator')
-        if gate == 'handoff' and not _enum(status, {'USER_APPROVED', 'NOT_REQUIRED'}):
+        if _enum(status, APPROVED_ASSET_STATES) and not _text(row.get('approval_ref')):
+            errors.append(f'ASSET_APPROVAL_REF_REQUIRED: {key}')
+        if gate == 'handoff' and not _enum(status, APPROVED_ASSET_STATES | {'NOT_REQUIRED'}):
             errors.append(f'ASSET_NOT_READY: {key}')
         if row.get('kind') == 'FRAME':
             frame = row.get('frame')
@@ -216,6 +225,8 @@ def validate_packet(packet: Any, gate: str = 'plan') -> list[str]:
                         or slices[1] + slices[3] >= size[1]):
                     errors.append(f'FRAME_GEOMETRY: {key}')
 
+    _validate_surface_states(surfaces, families, errors)
+
     references = records('references')
     if not references:
         errors.append('REFERENCE_REQUIRED: cite observed source and concrete adaptation method')
@@ -223,13 +234,96 @@ def validate_packet(packet: Any, gate: str = 'plan') -> list[str]:
         fields = ('source', 'version', 'observed', 'apply', 'reject', 'verification')
         if not _enum(row.get('evidence_kind'), REFERENCE_KINDS) or not all(_text(row.get(f)) for f in fields):
             errors.append(f'REFERENCE_CONTRACT: {index}')
-    if not any(_enum(row.get('evidence_kind'), {'SOURCE_CODE', 'PRODUCT_OBSERVATION'}) for row in references):
+        if (not _enum(row.get('origin'), {'EXTERNAL', 'PROJECT'})
+                or (row.get('evidence_kind') == 'INTERNAL_REUSE' and row.get('origin') != 'PROJECT')
+                or (row.get('origin') == 'EXTERNAL' and not _external_source(row, packet.get('repository')))):
+            errors.append(f'REFERENCE_ORIGIN: {index}')
+    if not any(_enum(row.get('evidence_kind'), {'SOURCE_CODE', 'PRODUCT_OBSERVATION'})
+               and row.get('origin') == 'EXTERNAL'
+               and _external_source(row, packet.get('repository')) for row in references):
         errors.append('EXTERNAL_BENCHMARK_REQUIRED: comparable product/source observation, not internal reuse or API alone')
 
     modules = indexed('modules')
     compositions = indexed('compositions')
     _validate_modules(modules, compositions, families, surfaces, gate, errors)
     return errors
+
+
+def _repository_key(value: Any) -> str | None:
+    if not _text(value):
+        return None
+    value = value.strip('/').casefold().removesuffix('.git')
+    return value if re.fullmatch(r'[a-z0-9_.-]+/[a-z0-9_.-]+', value) else None
+
+
+def _external_source(row: dict[str, Any], project: Any) -> bool:
+    """Check declared origin and locator, not source authenticity or chronology."""
+    source = row.get('source')
+    if not _text(source) or any(char.isspace() or ord(char) < 32 or ord(char) == 127 for char in source):
+        return False
+    try:
+        url = urlsplit(source)
+        host = (url.hostname or '').lower().rstrip('.')
+        # No fetch is made. Local/opaque locators cannot establish external research.
+        if (url.scheme not in {'http', 'https'} or '.' not in host
+                or host in {'localhost', '127.0.0.1', '0.0.0.0'}
+                or host.endswith(('.local', '.localhost'))
+                or url.username is not None or url.password is not None):
+            return False
+        try:
+            address = ip_address(host)
+        except ValueError:
+            address = None
+        if address is not None and not address.is_global:
+            return False
+        url.port  # Reject malformed ports without using or connecting to them.
+    except ValueError:
+        return False
+    parts = [part for part in unquote(url.path).split('/') if part]
+    repository = None
+    if host in {'github.com', 'www.github.com', 'raw.githubusercontent.com', 'codeload.github.com'}:
+        repository = _repository_key('/'.join(parts[:2]))
+        if repository is None:
+            return False
+    elif host == 'api.github.com':
+        if len(parts) < 3 or parts[0] != 'repos':
+            return False
+        repository = _repository_key('/'.join(parts[1:3]))
+    declared = row.get('source_repository')
+    if declared is not None:
+        declared_key = _repository_key(declared)
+        if declared_key is None or (repository is not None and repository != declared_key):
+            return False
+        repository = declared_key
+    return repository is None or repository != _repository_key(project)
+
+
+def _validate_surface_states(surfaces: dict, families: dict, errors: list[str]) -> None:
+    """Every declared surface state resolves to a family state with a method."""
+    for key, surface in surfaces.items():
+        states, bindings = surface.get('states'), surface.get('state_bindings')
+        if not _strings(states):
+            continue  # The surface contract already reports malformed states.
+        if not isinstance(bindings, dict) or len(bindings) > MAX_RECORDS:
+            errors.append(f'MISSING_SURFACE_STATE_BINDING: {key}')
+            continue
+        if set(bindings) - set(states):
+            errors.append(f'UNDECLARED_SURFACE_STATE_BINDING: {key}')
+        for state in states:
+            binding = bindings.get(state)
+            if not isinstance(binding, dict):
+                errors.append(f'MISSING_SURFACE_STATE_BINDING: {key}/{state}')
+                continue
+            family_id, family_state = binding.get('family_id'), binding.get('state')
+            if not _text(family_id) or not _text(family_state) or family_id not in families:
+                errors.append(f'SURFACE_STATE_BINDING: {key}/{state}')
+                continue
+            family = families[family_id]
+            targets, declared, methods = family.get('surfaces'), family.get('required_states'), family.get('state_methods')
+            if (not _strings(targets) or key not in targets
+                    or not _strings(declared) or family_state not in declared
+                    or not isinstance(methods, dict) or not _text(methods.get(family_state))):
+                errors.append(f'SURFACE_STATE_BINDING: {key}/{state}')
 
 
 def _validate_modules(modules: dict, compositions: dict, families: dict,
@@ -250,10 +344,12 @@ def _validate_modules(modules: dict, compositions: dict, families: dict,
             errors.append(f'BAKED_FUNCTIONAL_TEXT: module/{key}')
         if module.get('role') == 'FLATTENED_STATIC' and not _text(module.get('flattened_exception')):
             errors.append(f'FLATTENED_EXCEPTION_REQUIRED: {key}')
-        if gate == 'handoff' and module.get('readiness') != 'USER_APPROVED':
+        if _enum(module.get('readiness'), APPROVED_ASSET_STATES) and not _text(module.get('approval_ref')):
+            errors.append(f'MODULE_APPROVAL_REF_REQUIRED: {key}')
+        if gate == 'handoff' and not _enum(module.get('readiness'), APPROVED_ASSET_STATES):
             errors.append(f'MODULE_NOT_READY: {key}')
 
-    used_by_surface = {key: set() for key in surfaces}
+    used_by_surface: dict[str, list[set[str]]] = {key: [] for key in surfaces}
     used_modules: set[str] = set()
     for key, composition in compositions.items():
         surface = composition.get('surface')
@@ -273,6 +369,7 @@ def _validate_modules(modules: dict, compositions: dict, families: dict,
             errors.append(f'COMPOSITION_PARTS: {key}')
             parts = []
         seen: set[str] = set()
+        composition_modules: set[str] = set()
         for part in parts:
             if not isinstance(part, dict):
                 errors.append(f'COMPOSITION_PART: {key}'); continue
@@ -290,14 +387,16 @@ def _validate_modules(modules: dict, compositions: dict, families: dict,
             if not _text(module_id) or module_id not in modules:
                 errors.append(f'MISSING_MODULE: {key}'); continue
             used_modules.add(module_id)
-            if surface is not None:
-                used_by_surface[surface].add(module_id)
+            composition_modules.add(module_id)
             if modules[module_id].get('style_family') != composition.get('style_family'):
                 errors.append(f'STYLE_FAMILY_MISMATCH: {key}/{module_id}')
         for slot in required:
             if slot not in seen:
                 errors.append(f'MISSING_COMPOSITION_SLOT: {key}/{slot}')
+        if surface is not None:
+            used_by_surface[surface].append(composition_modules)
 
+    contracted_frames: set[str] = set()
     for key, family in families.items():
         if family.get('production') == 'NATIVE_UI':
             continue
@@ -308,18 +407,24 @@ def _validate_modules(modules: dict, compositions: dict, families: dict,
         for module_id in module_ids:
             if module_id not in modules:
                 errors.append(f'MISSING_MODULE: {key}/{module_id}')
-        if family.get('kind') == 'FRAME' and isinstance(family.get('frame'), dict):
-            for module_id in module_ids:
-                module = modules.get(module_id, {})
-                if module.get('role') == 'FRAME' and module.get('canvas') != family['frame'].get('source_size'):
-                    errors.append(f'FRAME_SOURCE_SIZE_MISMATCH: {key}/{module_id}')
+        if family.get('kind') == 'FRAME':
+            frame_ids = [mid for mid in module_ids if modules.get(mid, {}).get('role') == 'FRAME']
+            if not frame_ids:
+                errors.append(f'FRAME_MODULE_REQUIRED: {key}')
+            contracted_frames.update(frame_ids)
+            if isinstance(family.get('frame'), dict):
+                for module_id in frame_ids:
+                    if modules[module_id].get('canvas') != family['frame'].get('source_size'):
+                        errors.append(f'FRAME_SOURCE_SIZE_MISMATCH: {key}/{module_id}')
         if _strings(targets):
             for target in targets:
                 if target not in used_by_surface or not used_by_surface[target]:
                     errors.append(f'MISSING_SURFACE_COMPOSITION: {key}/{target}')
-                elif not set(module_ids).issubset(used_by_surface[target]):
+                elif not any(set(module_ids).issubset(parts) for parts in used_by_surface[target]):
                     errors.append(f'MISSING_FAMILY_MODULE_USE: {key}/{target}')
-    for key in modules:
+    for key, module in modules.items():
+        if module.get('role') == 'FRAME' and key not in contracted_frames:
+            errors.append(f'FRAME_MODULE_UNCONTRACTED: {key}')
         if key not in used_modules:
             errors.append(f'ORPHAN_MODULE: {key}')
 
@@ -357,7 +462,7 @@ def main() -> int:
         print(json.dumps({'result': 'INPUT_ERROR', 'type': type(error).__name__, 'evidence_ceiling': CEILING}))
         return 2
     print(json.dumps({'result': 'STRUCTURE_INVALID' if errors else 'STRUCTURE_VALID',
-                      'gate': args.gate, 'errors': errors, 'evidence_ceiling': CEILING}, ensure_ascii=False))
+                      'gate': args.gate, 'errors': errors, 'evidence_ceiling': CEILING}, ensure_ascii=True))
     return 1 if errors else 0
 
 

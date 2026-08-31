@@ -173,6 +173,24 @@ required surface/action IDs는 승인된 범위를 독립 대조해 투영한다
 
 plan은 미구현 계약과 후보를 허용한다. handoff는 선언한 부품과 조합의 승인 locator를 요구한다. 실행 결과는 `STRUCTURE_VALID / STRUCTURE_INVALID / INPUT_ERROR`와 **`STRUCTURE_ONLY_NOT_RUNTIME_OR_USER_APPROVAL`**다. 이 검사는 파일 생성·네트워크·프로젝트 수정·이미지 승인·캡처·Godot 실행을 하지 않으며 **선언된 분모 자체의 완전성은 증명하지 않는다**. 승인 authenticity, source freshness, 실제 texture/hash/consumer 존재는 native owner readback·runtime 검사로 따로 증명한다.
 
+### 12.1 파생 packet의 연결 규칙
+
+이 필드는 프로젝트 정본을 대체하지 않는 구조 검사 입력이다. 기존 schema/version pin을 바꾸지 않고 owner의 값을 명시적으로 투영한다.
+
+- 모든 reference는 `origin=EXTERNAL|PROJECT`를 구분한다. 외부 비교를 충족하려면 `EXTERNAL`인 공개 HTTP(S) locator와 `SOURCE_CODE` 또는 `PRODUCT_OBSERVATION`이 함께 필요하다. 로컬 경로, loopback/private IP, 자기 GitHub 저장소 URL은 외부 비교로 세지 않는다. `source_repository`를 기록할 때는 `owner/repo` identity를 사용하며 GitHub URL identity와 일치시킨다. 다른 호스트의 저장소도 이 필드로 자기 저장소 여부를 대조할 수 있다. origin 선언이나 URL 형태만으로 원문 진위·실제 조사 순서를 증명하지 않는다.
+- 각 surface의 `states`에는 같은 surface의 `state_bindings`가 필요하다. 각 binding은 `{family_id, state}`로 실제 대상 surface를 포함한 visual family, 그 family의 `required_states`, 비어 있지 않은 `state_methods`까지 연결된다. 화면 상태와 부품 상태 이름이 같을 필요는 없다. 여러 부품의 상태 표현이 필요한 경우 그 표현을 소유하는 기존 composite family에 연결한다. 상태를 선언만 하고 표현 경로를 빠뜨릴 수 없다.
+- `OVERLAY`는 `SCREEN/PAGE/TAB/MODAL/DIALOGUE/PANEL`과 별도의 지원 종류다. required action이 진입하는 보조 surface도 required surface 목록에 빠져 있다는 이유로 복귀/종료 검사에서 제외하지 않는다. 이 검사는 선언된 경로의 존재만 확인하며 조건부 입력·모든 상태의 실행 가능성은 runtime에서 별도 확인한다.
+- raster `FRAME` family에는 실제 `FRAME` module이 하나 이상 필요하다. 모든 `FRAME` module은 해당 규격을 검사하는 raster `FRAME` family에 연결되어야 한다. 공통 frame은 그 계약을 유지한 채 다른 종류의 family에도 재사용할 수 있다. 고정 삽화 예외는 `ILLUSTRATION` 같은 실제 family 종류와 `FLATTENED_STATIC` 사유로 표현하며 frame 검사 우회에 쓰지 않는다.
+- family가 선언한 부품은 대상 화면마다 **하나 이상의 완결된 composition 안에 함께** 있어야 한다. A만 가진 조합과 B만 가진 다른 조합의 합집합을 A+B 완성 조합으로 판정하지 않는다. 별도 variants는 별도 family/assembly로 표현한다.
+- `asset_status`와 module `readiness`는 §10의 전체 lifecycle을 지원한다. `CANDIDATE`는 이전 packet의 `GENERATED_CANDIDATE` 호환 별칭일 뿐이며 승인 상태가 아니다. `USER_APPROVED/CANON_REGISTERED/IMPLEMENTED/RUNTIME_VERIFIED`는 각각의 `approval_ref`가 있을 때 handoff의 선언적 승인 조건을 충족한다. family와 module의 승인 근거는 각각 필요하고, composition의 `approval_ref`는 별도로 유지한다. 어느 상태도 검사기 자체의 runtime 또는 사용자 승인 증거가 되지 않는다.
+
+최소 state binding 예시(실제 승인 receipt 아님):
+```json
+{"normal": {"family_id": "screen-controls", "state": "normal"}}
+```
+
+오류 결과도 JSON으로 처리한다. CLI는 잘못된 Unicode surrogate나 ASCII 출력 환경에서 traceback을 내지 않도록 비ASCII 문자를 escape한다. JSON을 파싱하면 한글을 포함한 원래 문자열을 다시 얻는다. 이는 UI용 문구를 영문으로 바꾸거나 승인되지 않은 데이터를 실행하는 기능이 아니다.
+
 ## 13. 프로젝트 흡수·종료
 
 Base의 root route에서 이 reference를 읽고, 기존 프로젝트 UX owner/Skill adapter에 최소 연결을 둔다. Base의 공용 계약을 통째로 복사하거나 프로젝트 engine/contract pin을 조용히 올리지 않는다. 별도의 additive workflow approval과 사용한 Base exact commit을 남긴다. 기존 열린 PR은 read-only이며 같은 경로를 소유하면 그 경로의 변경을 보류하거나 충돌 없는 기존 router에서 연결한다.
