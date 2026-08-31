@@ -29,16 +29,36 @@ class PlayerSurfacePlanReviewRound3Tests(unittest.TestCase):
         errors = self.checker.validate_packet(packet, gate)
         self.assertTrue(any(code in error for error in errors), (code, errors))
 
+    def frame_packet(self):
+        packet = self.fixtures.packet()
+        family = packet["visual_families"][0]
+        family.update(
+            kind="FRAME",
+            production="REUSE_APPROVED",
+            asset_status="USER_APPROVED",
+            asset_manifest_ref="assets/manifest.json#frame",
+            approval_ref="fixture-only-family-approval",
+            frame={
+                "source_size": [128, 128],
+                "slice": [16, 16, 16, 16],
+                "padding": [24, 16, 24, 16],
+                "text_is_live": True,
+                "stretch_policy": "tile sides; preserve corners",
+                "small_size_test": "tests/frame_narrow",
+            },
+        )
+        self.fixtures.add_modular_parts(packet)
+        return packet
+
     def test_dot_only_repository_segments_are_not_canonical_identity(self):
         packet = self.fixtures.packet()
         packet["repository"] = "./."
         self.rejected(packet, "SOURCE_IDENTITY")
 
     def test_composed_raster_module_requires_family_ownership_on_that_surface(self):
-        packet = self.fixtures.frame_packet()
+        packet = self.frame_packet()
         frame_family = packet["visual_families"][0]
         frame_family["surfaces"] = ["title"]
-        frame_family["approval_ref"] = "fixture-only-family-approval"
         packet["visual_families"].append({
             "id": "settings-native",
             "surfaces": ["settings"],
