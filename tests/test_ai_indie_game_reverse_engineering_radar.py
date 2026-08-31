@@ -22,6 +22,14 @@ RECEIPT = (
     / "reuse"
     / "AI_ASSISTED_INDIE_PROJECT_ADOPTION_RECEIPT_2026-08-24.md"
 )
+WEEKLY = (
+    ROOT
+    / "docs"
+    / "knowledge"
+    / "game-development"
+    / "reuse"
+    / "AI_ASSISTED_INDIE_WEEKLY_SCAN_2026-08-31.md"
+)
 
 
 class AiIndieGameReverseEngineeringRadarTests(unittest.TestCase):
@@ -94,6 +102,40 @@ class AiIndieGameReverseEngineeringRadarTests(unittest.TestCase):
         ):
             with self.subTest(required=required):
                 self.assertIn(required, text)
+
+    def test_weekly_scan_routes_runtime_ai_deployment_budget_to_existing_radar(self) -> None:
+        radar = RADAR.read_text(encoding="utf-8")
+        self.assertIn(
+            "latest_weekly_scan_receipt: docs/knowledge/game-development/reuse/AI_ASSISTED_INDIE_WEEKLY_SCAN_2026-08-31.md",
+            radar,
+        )
+        for required in (
+            "RUNTIME_AI_DEPLOYMENT_MODE_BUDGET",
+            "LOCAL_MODEL_RESOURCE_BUDGET",
+            "REMOTE_PROVIDER_TRANSPORT_BUDGET",
+            "LOCAL_IS_NOT_FREE",
+            "REMOTE_IS_NOT_ZERO_FOOTPRINT",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, radar)
+
+        self.assertTrue(WEEKLY.is_file())
+        weekly = WEEKLY.read_text(encoding="utf-8")
+        for required in (
+            "Matchinko",
+            "CODEX MORTIS",
+            "Express 404",
+            "Slotbound",
+            "The Last Admiral",
+            "Neon Angora",
+            "Wanderfolk",
+            "Suck Up!",
+            "RUNTIME_AI_DEPLOYMENT_MODE_BUDGET",
+            "MATERIAL_BASE_FINDING",
+            "PROJECT_ADOPTION_NOT_RUN",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, weekly)
 
 
 if __name__ == "__main__":

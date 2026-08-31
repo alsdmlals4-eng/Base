@@ -7,6 +7,7 @@ owner_policy: docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST
 reuse_owner: docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md
 ai_workflow_owner: docs/knowledge/game-development/AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md
 current_project_adoption_receipt: docs/knowledge/game-development/reuse/AI_ASSISTED_INDIE_PROJECT_ADOPTION_RECEIPT_2026-08-24.md
+latest_weekly_scan_receipt: docs/knowledge/game-development/reuse/AI_ASSISTED_INDIE_WEEKLY_SCAN_2026-08-31.md
 scheduler_authority: EXTERNAL_TO_BASE
 recommended_cadence: weekly
 compare_with_previous_scan: true
@@ -165,6 +166,9 @@ rollback_or_discard:
 - deterministic validator와 capability contract가 있는가?
 - latency/offline/provider failure에서 게임이 계속 가능한가?
 - memory/canon/privacy/moderation/replay/debug 비용을 감당할 수 있는가?
+- runtime AI가 local model인지 remote provider인지 hybrid인지 명시했는가?
+- local model이면 model/backend/download/RAM/VRAM/CPU/GPU/latency/device fallback을 실제 target hardware에서 검증했는가?
+- remote provider이면 network/provider/version/rate-limit/outage/auth/privacy/recurring-cost/migration fallback을 검증했는가?
 
 ## 8. 재사용 후보 추출 규칙
 
@@ -219,7 +223,45 @@ PRIVACY_MODERATION_SECURITY
 COST_SURFACE_APPROVED
 PLATFORM_STORE_COMPLIANCE
 REPLAY_DEBUG_EVIDENCE
+RUNTIME_AI_DEPLOYMENT_MODE_BUDGET
 ```
+
+`RUNTIME_AI_DEPLOYMENT_MODE_BUDGET`은 runtime AI를 `LOCAL_MODEL | REMOTE_PROVIDER | HYBRID`로 먼저 분리한다. 같은 생성형 기능이라도 failure/cost/performance surface가 다르므로 하나의 `AI 비용`으로 뭉개지 않는다.
+
+```text
+LOCAL_MODEL
+→ LOCAL_MODEL_RESOURCE_BUDGET
+   model / quantization / inference backend
+   download + installed footprint
+   RAM / VRAM
+   CPU / GPU capability
+   cold-start + response latency
+   thermal / power / game-performance contention
+   minimum + recommended device matrix
+   unsupported-device fallback
+
+REMOTE_PROVIDER
+→ REMOTE_PROVIDER_TRANSPORT_BUDGET
+   provider / model / version authority
+   network requirement
+   request / response latency
+   outage / rate-limit / authentication failure
+   recurring cost
+   privacy / data-transfer boundary
+   moderation / safety surface
+   provider migration / offline fallback
+
+HYBRID
+→ both budgets
+→ failover consistency + state/memory ownership
+```
+
+```text
+LOCAL_IS_NOT_FREE
+REMOTE_IS_NOT_ZERO_FOOTPRINT
+```
+
+Local inference can reduce provider/network exposure while increasing install/hardware/performance constraints. Remote inference can reduce local model footprint while adding transport/provider/cost/privacy dependencies. Neither deployment mode receives a PASS from architecture alone; evidence must come from the target platform/device/runtime path.
 
 AI가 자연어를 해석할 수는 있어도 authoritative state mutation은 프로젝트 규칙/validator가 소유하는 방향을 우선 시험한다.
 
@@ -278,6 +320,8 @@ initial research capture
 - 런타임 AI가 deterministic rule로 더 싸고 안정적으로 해결 가능함
 - player-facing AI output이 현재 quality bar를 통과하지 못함
 - provider/API 비용이 zero-incremental-cost 기본 정책과 충돌함
+- local model의 hardware/install/performance budget이 target platform에서 증명되지 않음
+- remote provider의 network/outage/rate-limit/privacy/cost fallback이 증명되지 않음
 - platform/privacy/rights/replay/debug 경로가 불명확함
 
 ## 14. 산출물과 영속 흡수 경계
