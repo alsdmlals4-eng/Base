@@ -26,7 +26,7 @@ Selected structure:
 3. reuse-before-build remains owned by the existing reuse-first and plugin-evaluation contracts;
 4. context compression and handoff remain owned by `maintaining-project-context-and-handoff`;
 5. code review remains owned by `reviewing-and-validating-project-changes` plus deterministic project tests;
-6. optional external executors use `external-agent-adapter-contract.md` and remain advisory.
+6. optional external executors use `docs/knowledge/ai/agent-tools/EXTERNAL_AGENT_ADAPTER_CONTRACT.md` and remain advisory.
 
 ## 2. Alternatives compared
 
