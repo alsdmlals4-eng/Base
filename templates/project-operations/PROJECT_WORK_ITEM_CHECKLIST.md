@@ -8,6 +8,8 @@ CHECKLIST_IS_DERIVED_OPERATIONAL_VIEW_NOT_CANON
 PASS_ONLY_COUNTS_COMPLETE
 NOT_APPLICABLE_EXCLUDED_FROM_DENOMINATOR
 NO_APPLICABLE_CHECKLIST
+PARENT_GOAL_PROGRESS_USES_REQUIRED_CHILD_DONE_COUNT
+DO_NOT_AVERAGE_CHILD_PERCENTAGES
 NO_HTML_DASHBOARD
 NO_NEW_PAID_PM_TOOL
 NO_FLEET_WIDE_EMPTY_ARTIFACT_ROLLOUT
@@ -17,7 +19,9 @@ NO_FLEET_WIDE_EMPTY_ARTIFACT_ROLLOUT
 
 ```yaml
 work_item_id:
+work_item_type: GOAL_SLICE | INDEPENDENT_TASK
 parent_issue_ref:
+required_child_work_item_refs: []
 project:
 goal_or_slice:
 title:
@@ -44,6 +48,7 @@ required_evidence: []
 evidence_ceiling:
 
 progress:
+  progress_basis: CHECKLIST_PASS | REQUIRED_CHILD_WORK_ITEM_DONE
   completed_items:
   applicable_items:
   display:
@@ -109,13 +114,26 @@ last_updated:
 
 ### 진행률 계산
 
+독립 작업 카드는 카드 내부 적용 항목을 사용한다.
+
 ```text
 applicable_items = all checklist items - NOT_APPLICABLE items
 completed_items = PASS items only
 progress = completed_items / applicable_items
 ```
 
-- `READY`, `IN_PROGRESS`, `VERIFY_REVIEW`, `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, `DEFERRED`, `FAIL`은 완료 수에 포함하지 않는다.
+부모 Goal·Playable Slice 카드는 세부 체크 수가 아니라 **현재 Goal 완료에 필수인 자식 work item**을 사용한다.
+
+```text
+applicable_items = required child work items in current approved Goal
+completed_items = required child work items whose status is DONE
+progress = completed_items / applicable_items
+```
+
+- 자식 카드의 서로 다른 퍼센트를 평균내지 않는다. 각 자식의 규모·위험·증거 수준이 다르므로 평균은 전체 완료를 왜곡한다.
+- future scope, 선택적 polish, 명시적으로 현재 Goal에서 제외된 자식은 분모에 넣지 않는다.
+- `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, `DEFERRED`, `VERIFY_REVIEW`인 필수 자식은 분모에 남고 완료 수에는 포함하지 않는다.
+- 독립 작업의 `READY`, `IN_PROGRESS`, `VERIFY_REVIEW`, `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, `DEFERRED`, `FAIL`도 완료 수에 포함하지 않는다.
 - 적용 가능한 항목이 0개이면 `0/0`, `100%` 또는 `DONE`이 아니라 `NO_APPLICABLE_CHECKLIST`로 표시한다.
 - 진행률은 상태 요약일 뿐 Acceptance Criteria와 증거를 대체하지 않는다.
 
