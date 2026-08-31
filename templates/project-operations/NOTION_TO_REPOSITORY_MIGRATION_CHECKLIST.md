@@ -228,6 +228,8 @@ inventory COMPLETE + 모두 0 + 대상 owner readback 완료
 
 ## 12. 완료 receipt
 
+`inventory.destination_owner_readback_receipt`는 2절 inventory의 각 이관 대상 ID → destination owner 경로/locator → 검증한 exact ref(SHA 등) → 확인 결과·증거를 연결하는 기록이다. AI spec·asset manifest뿐 아니라 Decision·구조화 데이터·Active Context·handoff·evidence 등 실제 이관 대상 전체를 포함한다. 미확인·불일치·누락이 남으면 10절의 퇴역 완료 조건을 충족하지 못한다.
+
 ```yaml
 project:
 repository:
@@ -249,6 +251,7 @@ inventory:
   scope_and_access_receipt:
   excluded_or_unreadable:
   export_or_read_receipt:
+  destination_owner_readback_receipt:
 counters:
   NOTION_UNIQUE_CANON_COUNT:
   CODEX_NOTION_DEPENDENCY_COUNT:
