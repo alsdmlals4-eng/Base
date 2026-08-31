@@ -148,6 +148,40 @@ class ReviewRecordBehaviorTests(unittest.TestCase):
         self.assertEqual("BLOCKED_UNVERIFIED", result["gates"]["integration"]["status"])
         self.assertEqual("CLAIM_VERIFIED", result["claims"][0]["status"])
 
+    def test_valid_record_passes_without_vendored_review_schemas(self) -> None:
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        root = Path(directory.name)
+        git(root, "init", "-b", "main")
+        git(root, "config", "user.email", "thin-adapter@example.invalid")
+        git(root, "config", "user.name", "Thin Adapter Test")
+        (root / "src").mkdir()
+        (root / "src/feature.txt").write_text("old\n", encoding="utf-8")
+        git(root, "add", ".")
+        git(root, "commit", "-m", "baseline")
+        base = git(root, "rev-parse", "HEAD").stdout.strip()
+
+        record_path = root / "records/review.json"
+        record_path.parent.mkdir()
+        record_path.write_text(
+            json.dumps(self.record(), indent=2) + "\n", encoding="utf-8"
+        )
+        (root / "src/feature.txt").write_text("implemented\n", encoding="utf-8")
+        git(root, "add", ".")
+        git(root, "commit", "-m", "feature")
+
+        self.assertFalse((root / "skills").exists())
+        result, errors = self.checker.check_record(
+            root,
+            record_path,
+            base,
+            execute_checks=True,
+            allowed_programs=(),
+            approved_levels={},
+        )
+        self.assertEqual([], errors)
+        self.assertEqual("PASS", result["final_status"])
+
     def test_no_execution_is_not_pass(self) -> None:
         result, errors = self.check(execute=False)
         self.assertEqual("NOT_RUN", result["gates"]["verification"]["status"])
