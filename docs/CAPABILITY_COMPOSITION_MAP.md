@@ -10,6 +10,7 @@ Capabilities are selected by the problem, not artificially restricted to one too
 | GitHub contract | GDD, external, both | decision → document/schema → implementation handoff | cannot claim unrun runtime/human validation | commit/PR and validation record |
 | Godot evidence | external, linked from GDD | pinned contract → render/input test → validation | cannot be inferred from a design tool | capture/test/log and explicit `NOT_RUN` gaps |
 | Tool interface surface (`TOOL_INTERFACE_SURFACE_SELECTION`) | BUILD, REVIEW, internal tools | reusable domain core → stable CLI/programmatic contract → optional TUI or thin GUI | surface cannot own canon/state or force GUI-only automation | selection trade study + target-platform/workflow evidence |
+| AI solution layer selection (`AI_SOLUTION_LAYER_SELECTION`) | PLAN, BUILD, REVIEW; AI-assisted products and internal workflows | task evidence → simplest sufficient model/context/retrieval/tool/workflow-or-agent layer → harness evidence | cannot treat model training, current knowledge, MCP connectivity, agent autonomy, or AGI vocabulary as interchangeable proof | task-specific eval + source/provenance + exact integration/runtime evidence |
 | AI game-engine machine boundary (`AI_GAME_ENGINE_MACHINE_BOUNDARY`) | BUILD, TEST, CI, agent-assisted engine/tool operations | exact project identity → typed operation → shared core → CLI/MCP adapter → behavior E2E → IRG evidence | cannot create a second engine/editor writer, infer behavior PASS from MCP connectivity, or turn a benchmark provider into a required runtime | schema/type contract + representative behavior E2E + structured execution evidence |
 | External process overlay (`EXTERNAL_PROCESS_OVERLAY`) | PLAN, BUILD, REVIEW; environment-required process | environment/system process → Base routing → discipline owner → validation → execution report | execution-only; cannot own project canon or decisions, weaken Base gates, or manufacture duplicate approval | overlay source, actually applied process skills/gates, approval reuse/conflict, extra evidence |
 
@@ -59,6 +60,87 @@ DESIGN_ONLY
 ```
 
 `TARGET_PLATFORM_VERIFIED` requires actual evidence on every platform being claimed. A macOS-only result cannot establish Windows/Linux support; accessibility claims likewise require evidence in the target environment. `HUMAN_WORKFLOW_VALUE_VERIFIED` additionally requires evidence that the added human surface actually reduces repeated-work friction or improves decision quality compared with the simpler machine-facing path.
+
+## AI solution layer selection contract
+
+`AI_SOLUTION_LAYER_SELECTION` prevents a familiar architecture error: treating every AI term as another feature that should be installed, or using one layer's success as proof that a different layer works. These are composable choices, not a mandatory maturity ladder.
+
+```text
+task failure and acceptance evidence
+→ MODEL_AND_TRAINING_LAYER when base capability or learned behavior is the bottleneck
+→ CONTEXT_AND_KNOWLEDGE_LAYER when instructions or current/private facts are the bottleneck
+→ TOOL_AND_INTEGRATION_LAYER when the model must inspect or change external state
+→ ORCHESTRATION_LAYER: deterministic workflow first, open-ended agent only when justified
+→ HARNESS_LAYER for authority, context management, evals, state, recovery, evidence and cost control
+→ HORIZON_VOCABULARY remains awareness-only
+```
+
+`DO_NOT_STACK_EVERY_LAYER_BY_DEFAULT`: select the smallest combination that closes the measured failure. A larger model, RAG, MCP, an agent and a new harness do not become one required bundle merely because all can appear in the same product.
+
+### Layer and term boundaries
+
+| Term | Operational role | Does not prove |
+| --- | --- | --- |
+| LLM | Parametric language/reasoning capability used by an application | current facts, project canon, tool access, or completed work |
+| Multimodal model/input | Accepts and represents one or more declared modalities such as text, image, audio or video | accuracy on the exact task, cross-modal grounding quality, or runtime integration |
+| RLHF and adjacent human-feedback post-training | Uses human demonstrations or preference comparisons across supervised and reward-based post-training stages to shape model behavior | a live policy engine, current knowledge source, per-run approval, or factual correctness |
+| Fine-tuning | Changes model behavior for measured recurring task patterns using curated training examples | automatic ingestion of changing company/project documents or a replacement for retrieval |
+| Prompt and context engineering | Supplies goals, constraints, examples, current source material, history and tool results at inference time | durable model learning or source truth without readback and evaluation |
+| Knowledge base | Stores and governs documents or structured facts under an owner | relevant retrieval, complete coverage, freshness, truth, or model access by itself |
+| Retrieval/RAG | Selects external evidence and conditions generation on retrieved material | correct retrieval, authoritative sources, faithful synthesis, or a true answer by default |
+| API/tool/MCP | Exposes typed external capabilities and context through an integration contract | agent autonomy, user approval, permission to mutate, successful action, or semantic correctness |
+| Deterministic workflow | Runs a predefined, observable and testable sequence | good handling of unbounded unknown steps outside the declared path |
+| Agent | Dynamically plans and uses tools from environment feedback for an open-ended goal | unrestricted autonomy, independent truth, or completion without external evidence |
+| Harness | Composes instructions, context policy, tools, workflow/agent loop, state, evals, recovery, observability, evidence and cost controls around a model | that every component is necessary, current, secure, or effective without measurement |
+| AGI/ASI | Horizon vocabulary for hypothetical broadly general or superhuman capability | a currently available component, delivery date, implementation plan, permission or completion state |
+
+### Selection rules
+
+1. `MODEL_CAPABILITY_IS_NOT_APPLICATION_ARCHITECTURE`: model capability and the application around it are separate evidence surfaces. Record the model/version and also test the actual input, tool, state and result path.
+2. `MULTIMODAL_INPUT_IS_NOT_TASK_COMPETENCE`: accepting an image, audio track or video does not establish useful perception or reasoning for the target task. Test the exact modality, resolution/duration, language and required output.
+3. `RLHF_IS_POST_TRAINING_NOT_RUNTIME_CONTROL`: RLHF is a post-training/alignment method. Runtime authority, project rules, safety gates and user approval remain application/harness responsibilities.
+4. `EVAL_BEFORE_LAYER_ESCALATION` / `PROMPT_AND_CONTEXT_BEFORE_FINE_TUNING`: establish representative evals, then try clear instructions, examples and relevant context. Fine-tuning is justified only when a recurring learned-behavior gap remains and measured benefit repays data, training, versioning and maintenance cost.
+5. `CURRENT_KNOWLEDGE_IS_NOT_FINE_TUNING_DEFAULT`: current, private or frequently changing facts should normally come from an authoritative source through bounded context or retrieval with provenance. Do not retrain merely to make a model read the latest project documents.
+6. `KNOWLEDGE_BASE_IS_STORAGE_NOT_RETRIEVAL_OR_TRUTH`: define the canonical owner, scope, freshness and access boundary separately from indexing or search. A populated store can still be stale, incomplete, inaccessible or non-authoritative.
+7. `RAG_RETRIEVES_EVIDENCE_BUT_DOES_NOT_GUARANTEE_TRUTH`: evaluate retrieval relevance, source freshness, provenance, authorization, missing evidence and answer faithfulness. Preserve a route from generated claims to the retrieved authoritative source.
+8. `MCP_IS_INTEROPERABILITY_NOT_AGENT_AUTHORITY_OR_APPROVAL`: MCP standardizes context/tool interoperability and capability negotiation. The host authority, consent, project permissions, typed operation contract, readback and `MCP_CONNECTED_IS_NOT_BEHAVIOR_PASS` remain in force.
+9. `DETERMINISTIC_WORKFLOW_BEFORE_OPEN_ENDED_AGENT`: use a fixed and testable path when steps and failure handling are predictable. Use an agent only for genuinely open-ended work requiring dynamic planning, and give it a bounded tool set, stopping condition, environment readback, recovery path and task-specific eval.
+10. `HARNESS_IS_COMPOSED_CONTROL_AND_EVIDENCE_SYSTEM`: a harness is not one framework or wrapper. It is the composed system that makes model behavior usable and inspectable across authority, context, tools, orchestration, state, validation and recovery.
+11. `HARNESS_COMPONENTS_REQUIRE_LOAD_BEARING_EVIDENCE` / `HARNESS_ABLATION_AND_PRUNING`: each extra prompt, memory layer, retriever, tool, reviewer, retry or coordinator must close a measured failure. Re-run targeted ablation or an equivalent baseline comparison when an exact model/tool version materially changes behavior or evidence puts a component's value in doubt; remove components that no longer improve quality, reliability, cost or maintainability.
+12. `MODEL_VS_HARNESS_IS_AN_EVAL_QUESTION`: do not assume either the model or the surrounding harness dominates in every task. Compare representative outcomes, interventions, latency, cost and failure recovery under equivalent inputs.
+13. `AGI_ASI_AWARENESS_ONLY`: AGI/ASI discussion may inform long-range research awareness, but it cannot create an implementation feature, schedule assumption, budget, approval, permission, project scope or completion claim.
+14. `NO_NEW_AI_GLOSSARY_OR_SKILL`: this section is a decision and composition route under the existing capability owner. It does not create a broad AI glossary, a new Skill, a provider dependency or automatic project adoption.
+
+### Base mapping
+
+`BASE_ALREADY_COMPOSES_A_HARNESS_NO_NEW_FRAMEWORK`: Base already composes repository instructions, progressive context loading, Skill/Tool routing, canonical owners, approvals, deterministic checks, runtime evidence, recovery and reporting. Improve the specific weak owner or consumer instead of installing a second generic “harness” authority.
+
+Use this mapping when a new AI feature is proposed:
+
+| Observed need | First candidate | Required proof before escalation |
+| --- | --- | --- |
+| New image/audio/video input | a model and adapter that explicitly support the modality | representative task eval and end-to-end input/result evidence |
+| Inconsistent format or recurring behavior | eval → prompt/examples/context | repeated residual gap and fine-tuning cost/maintenance case |
+| Current/private/changeable facts | authoritative source → bounded retrieval/context | coverage, freshness, provenance, access and faithful-answer eval |
+| External inspection or mutation | typed API/tool/MCP adapter | exact capability, host authority, approval, result readback and rollback |
+| Predictable repeated procedure | deterministic workflow | normal/failure/boundary tests and observable state transitions |
+| Unknown steps that depend on environment feedback | bounded agent loop | sandboxed trials, stopping/recovery, compounding-error and cost evidence |
+| Long-running reliability | minimal load-bearing harness components | exact model/tool version, state continuity, eval, recovery and ablation evidence |
+
+Evidence ceilings:
+
+```text
+MODEL_SUPPORTS_MODALITY != PROJECT_TASK_PASS
+RLHF_OR_FINE_TUNING != CURRENT_FACT_ACCESS
+KNOWLEDGE_BASE_EXISTS != RELEVANT_RETRIEVAL
+RAG_RETRIEVAL_SUCCESS != ANSWER_TRUE
+MCP_CONNECTED != ACTION_AUTHORIZED_OR_SUCCEEDED
+AGENT_COMPLETION_MESSAGE != VERIFIED_RESULT
+HARNESS_EXISTS != EACH_COMPONENT_LOAD_BEARING
+AGI_ASI_TERM != AVAILABLE_CAPABILITY
+```
+
+Primary comparison basis: OpenAI model-optimization guidance (evals → prompt/context → optional task-specific fine-tuning), Lewis et al. `arXiv:2005.11401` for parametric plus retrieved non-parametric memory, Anthropic's *Building Effective Agents* and *Effective context engineering for AI agents*, and the current Model Context Protocol architecture/specification. Recheck current primary documentation before provider-specific implementation because models, training surfaces and protocol details change.
 
 ## AI game-engine machine boundary contract
 
