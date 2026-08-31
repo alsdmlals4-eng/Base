@@ -115,6 +115,15 @@ class NotionResearchAndExportBoundaries(unittest.TestCase):
         self.assertIn("미확정(null)", decision)
         self.assertIn("모두 0 + inventory_scope_status=COMPLETE + source/export/repository readback 완료", decision)
 
+    def test_five_loops_are_not_five_separate_review_lenses(self) -> None:
+        review = section(self.migration, "## 11. 적대적 검토 5회")
+        self.assertIn("매 회차", review)
+        self.assertIn("다섯 관점을 모두", review)
+        self.assertIn("최소 5회", review)
+        self.assertIn("running-adversarial-review-and-refinement/SKILL.md", review)
+        self.assertNotRegex(review, r"(?m)^### Loop [1-5]",
+                            msg="Review lenses must not be counted as full loops")
+
     def test_existing_binary_and_no_delete_safeguards_remain(self) -> None:
         binary = section(self.migration, "## 5. 이미지·파일·binary 이관")
         for token in ("원본 binary", "SHA-256", "actual consumer", "readback"):
