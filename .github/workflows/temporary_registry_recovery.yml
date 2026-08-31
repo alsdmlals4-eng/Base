@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   apply-correction:
-    if: github.event.head_commit.message == 'chore: prepare atomic feature-contract correction'
+    if: "${{ github.event.head_commit.message == 'chore: prepare atomic feature-contract correction' }}"
     runs-on: ubuntu-latest
     steps:
       - name: Check out exact preparation head
