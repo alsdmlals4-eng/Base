@@ -1,10 +1,14 @@
 """Guard the intake authoring contract, not real project modularity/runtime."""
 from pathlib import Path
+import json
 import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
 OWNER = ROOT / "skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md"
+SKILL = ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md"
+REGISTRY = ROOT / "skills/SKILL_REGISTRY.json"
+TEMPLATE = ROOT / "templates/planning/EXECUTION_SEQUENCE_PLAN.md"
 HEADING = "## 2.2 기능별 코드·계약 모듈화"
 
 
@@ -101,6 +105,41 @@ class FeatureCodeContractModularityTests(unittest.TestCase):
             "프로젝트 고유 규칙·수치·경로는 프로젝트에 남긴다.",
             "기능 계약 작성은 Base 공용 구현·프로젝트 채택 완료를 뜻하지 않는다.",
         )
+
+
+class FeatureCodeContractRoutingTests(unittest.TestCase):
+    def test_registry_routes_small_feature_contract_changes(self):
+        registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+        intake = next(item for item in registry["skills"] if item["skill_id"] == "managing-project-intake-and-work-contract")
+        self.assertIn("feature-code-contract-modularity", intake["trigger_tags"])
+        self.assertIn("feature-contract-change", intake["trigger_tags"])
+        self.assertIn("작업 크기·단계 수와 무관하게", " ".join(intake["use_when"]))
+        self.assertIn("기능 계약·공개 경계 변경이 없는 승인된 작은 구현", " ".join(intake["do_not_use_when"]))
+
+    def test_skill_loads_the_feature_contract_reference_for_small_changes(self):
+        source = SKILL.read_text(encoding="utf-8")
+        for clause in (
+            "새 기능 또는 기능 계약·공개 경계를 의미 있게 바꾸는 요청은",
+            "작은 단일 파일·단일 단계라도 L1 intake 대상",
+            "승인된 작은 작업 비사용 조건은 이미 승인·정의된 기능 경계를 그대로 구현하는 continuation에만 적용",
+            "작업 분해가 필요하지 않은 작은 기능을 포함해 `references/work-decomposition-and-sequencing.md`",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, source)
+
+    def test_execution_template_keeps_small_feature_contract_fields(self):
+        source = TEMPLATE.read_text(encoding="utf-8")
+        for clause in (
+            "## 기능별 코드·계약 경계",
+            "기능·모듈 ID",
+            "계약 정본 owner",
+            "공개 출력·통합 경계",
+            "실제 consumer·의존 방향",
+            "단일 단계·단일 파일의 작은 기능",
+            "`N/A`",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, source)
 
 
 if __name__ == "__main__":

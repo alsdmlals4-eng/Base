@@ -13,6 +13,10 @@ description: Use when routing a project request, closing material ambiguity, def
 
 모든 L1 이상 지시문 작성은 이 Skill에서 좋은 프롬프트 변환을 수행한 뒤 `Grill Me alignment gate`로 의도·기획·범위가 맞는지 확인한다. 유효한 승인 없이 제품·프로젝트 작업으로 진행하지 않는다.
 
+새 기능 또는 기능 계약·공개 경계를 의미 있게 바꾸는 요청은 작업 크기와 무관하게 이 Skill의 intake를 거친다. 작은 단일 파일·단일 단계라도 L1 intake 대상이며, 작업 분해가 필요하지 않더라도 기능 계약의 정본 owner, 공개·통합 경계, 실제 consumer·의존 방향, 검증·롤백을 기존 실행 계약과 실행계획에 연결한다.
+
+Registry의 승인된 작은 작업 비사용 조건은 이미 승인·정의된 기능 경계를 그대로 구현하는 continuation에만 적용한다. 새 기능 또는 공개 계약·상태 소유권·consumer 연결이 생기거나 바뀌면 작은 변경으로 intake를 우회하지 않는다.
+
 ## Mandatory pre-build planning gate
 
 `FULL_CURRENT_STATE_AUDIT_BEFORE_PLAN`
@@ -147,6 +151,7 @@ legacy Google Sheets 해석·이관이 필요한 경우에만 `docs/PROJECT_GDD_
 - 사용자가 Skill·Skill Mode를 언급하지 않아도 현재 요청과 Registry trigger를 비교한다.
 - `load_by_default=false`는 자동 선택 금지가 아니라 trigger 불일치 시 읽지 않는다는 뜻이다.
 - trigger가 일치하고 `do_not_use_when`에 걸리지 않는 최소 집합만 사용한다.
+- 새 기능 또는 기능 계약·공개 경계의 의미 변경은 trigger가 일치한 것으로 보고, 작업 크기·단계 수와 무관하게 intake와 기능 계약 reference를 사용한다.
 - 주 책임 분야 Skill은 최대 하나다. Foundation·검증·발행·Handoff는 현재 단계에 필요한 것만 추가한다.
 - 사용자에게 “어떤 Skill을 쓸까요?”라고 선택을 전가하지 않는다.
 - 사용자가 Skill을 지정해도 trigger·권한·비사용 조건과 충돌하면 그대로 실행하지 않고 이유를 설명한다.
@@ -160,6 +165,7 @@ legacy Google Sheets 해석·이관이 필요한 경우에만 `docs/PROJECT_GDD_
 
 - 새 L1 이상 요청 또는 여러 분야에 걸친 요청을 접수한다.
 - 기능·게임 경험·아트 방향·아키텍처·워크플로·Base 변경을 결정한다.
+- 새 기능 또는 기능 계약·공개 경계·상태 소유권·consumer 연결을 만들거나 의미 있게 바꾼다. 단일 파일·단일 단계의 작은 기능도 포함한다.
 - 요청이 짧거나 모호하거나 여러 파일·산출물에 영향을 준다.
 - 승인된 요구를 Issue·Goal·Plan 또는 실행 프롬프트로 넘긴다.
 - GPT·Codex·외부 AI용 작업 지시문을 작성하거나 개선한다.
@@ -170,9 +176,9 @@ legacy Google Sheets 해석·이관이 필요한 경우에만 `docs/PROJECT_GDD_
 
 ## Do not use when
 
-- 오탈자나 명확한 단일 파일 기계 수정인 L0 작업이다.
+- 새 기능·기능 계약·공개 경계 변경이 없는 오탈자나 명확한 단일 파일 기계 수정인 L0 작업이다.
 - 입력과 판정 기준이 동일한 검사를 재실행한다.
-- 승인된 Plan에 분야·범위·완료·검증·실행 순서가 이미 확정됐고 범위가 변하지 않았다. 이때 기존 approval reference를 재사용한다.
+- 승인된 Plan에 분야·범위·완료·검증·실행 순서가 이미 확정됐고 기능 계약·공개 경계·상태 소유권·consumer가 변하지 않았다. 이때 기존 approval reference를 재사용한다.
 - 저장소 변경·결정·검증이 없는 단순 설명이다.
 - 요구가 확정되지 않았는데 구현 세부 순서부터 고정하려 한다.
 
@@ -235,7 +241,7 @@ existing_solution_user_approval:
 14. 종료 판정이 필요한 경우 `references/ambiguity-and-closure.md`
 15. Grill Me 정합성 확인과 핵심 결정 인터뷰가 필요한 경우 `references/grill-me-protocol.md`
 16. `CONTINUATION_INTENT_ALIASES`와 유효한 승인 계약이 함께 있으면 `references/continuous-work-execution.md`
-17. 작업 분해·순서화가 필요한 경우 `references/work-decomposition-and-sequencing.md`
+17. 새 기능 또는 기능 계약·공개 경계를 만들거나 의미 있게 바꾸는 경우에는 작업 분해가 필요하지 않은 작은 기능을 포함해 `references/work-decomposition-and-sequencing.md`; 그 밖에는 작업 분해·순서화가 필요할 때만 읽는다.
 
 ## Workflow
 
@@ -246,6 +252,8 @@ existing_solution_user_approval:
 - `L2`: 시스템 선택·여러 파일 영향
 - `L3`: 여러 분야·핵심 구조·장기 방향
 - `L4`: 여러 프로젝트에 재사용 가능한 공용 방법
+
+새 기능 또는 기능 계약·공개 경계의 의미 변경은 크기가 작아도 `L1` 이상으로 분류한다. 이미 승인된 기능 경계를 그대로 구현하는 작은 continuation만 기존 approval reference로 intake 재작성을 생략할 수 있다.
 
 최종 결정을 소유하는 `primary_discipline`은 하나만 지정한다. 실제 입력·산출물·검증이 바뀌는 분야만 `affected_disciplines`에 추가한다.
 
@@ -602,6 +610,7 @@ remaining_unknowns: []
 - 승인된 동일 범위의 구현·검증 방법과 병합에는 기존 approval reference와 `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`를 재사용했다.
 - `STRONGER_WORK_CONTRACT_OVERRIDES_COPY_INTEGRATION`이 적용되는 다른 workstream PR은 `explicit absorption authorization` 없이 흡수하지 않았다.
 - `NOTION_DEFAULT_PROJECT_WORKSPACE` / `NOTION_HUMAN_FACING_CANON`과 `REPOSITORY_STRUCTURED_CANON`의 역할이 분리됐고 Google Sheets는 `COMPATIBILITY_ONLY`다.
+- 새 기능 또는 의미 있는 기능 계약 변경은 크기와 무관하게 정본 owner·공개/통합 경계·실제 consumer/의존 방향·검증·롤백이 `execution_sequence_path`의 기능별 코드·계약 경계에 연결됐다.
 - 큰 작업은 독립 검증 가능한 결과·의존성·병렬 묶음·게이트로 분해됐다.
 - 실제 사용한 Work Mode·Skill·Skill Mode의 이유와 결과·증거를 보고했다.
 - 새 작업자가 같은 입력에서 동등한 계약·라우팅·실행 보고를 복원할 수 있다.
@@ -612,6 +621,8 @@ remaining_unknowns: []
 - Work Mode와 Skill Mode를 같은 개념으로 혼용함
 - 전체 skills 폴더를 기본 로드함
 - trigger 없이 임의로 Skill을 호출함
+- 작은 단일 파일·단일 단계라는 이유로 새 기능 또는 기능 계약·공개 경계 변경을 intake와 기능 계약 reference 없이 실행함
+- 실행계획에서 기능 계약 정본 owner·공개/통합 경계·실제 consumer/의존 방향을 누락함
 - 적용 대상 신규 설계·제작에서 `REUSE_FIRST_PREFLIGHT_REQUIRED`를 생략하거나 `NOT_RUN`인데 신규 제작·`BUILD_NEW`로 이동함
 - Base Registry/profile가 좁은 consumer를 가리키는데도 모든 프로젝트를 전수 검색해 비용·context를 불필요하게 늘림
 - Project Asset/Reference/Benchmark 또는 Base accumulated knowledge/case/reference를 확인하지 않고 같은 내용을 외부에서 처음부터 재조사함

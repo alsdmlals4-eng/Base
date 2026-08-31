@@ -1,5 +1,15 @@
 # Base Skill Learning Log
 
+## 2026-09-01 — 기능별 코드·계약 모듈화의 소형 기능 라우팅과 실행계획 전파
+
+- **상태:** `OBSERVATION`
+- **Trigger:** 기능별 코드·계약 모듈화 계약을 작업 분해 reference에 추가했지만, 승인된 작은 작업은 intake Registry의 비사용 조건에 걸리고 일반 실행계획 Template에는 계약 owner·공개 경계·실제 consumer 입력란이 없었다.
+- **Finding:** 기능이 작거나 한 파일·한 단계라는 이유만으로 intake를 우회하면 새 공개 계약과 상태 소유권이 정본·소비자·검증에 연결되지 않는다. 반대로 모든 작은 구현을 새 계약 작업으로 승격하면 불필요한 절차와 중복 정본이 생긴다.
+- **Decision:** 새 기능 또는 기능 계약·공개 경계·상태 소유권·consumer 연결의 의미 변경만 크기와 무관하게 `managing-project-intake-and-work-contract`로 라우팅한다. 이미 승인·정의된 경계를 그대로 구현하는 작은 continuation은 기존 approval reference를 재사용한다. `EXECUTION_SEQUENCE_PLAN.md`의 한 행에 계약 정본 owner, 구현·데이터·테스트 위치, 공개·통합 경계, 실제 consumer·의존 방향, 검증·롤백을 연결하며 별도 Registry나 중복 정본은 만들지 않는다.
+- **Evidence:** `tests/test_feature_code_contract_modularity.py`의 기존 11개와 신규 라우팅·Skill·Template 회귀 3개를 RED에서 재현한 뒤 14개 GREEN으로 교정했고, `tools/build_base_v9_artifacts.py --check`로 Registry 파생 Skill Map의 해시·trigger·negative trigger 전파를 확인했다. exact-head 원격 CI와 독립 재검토는 병합 전 별도 Gate다.
+- **Boundary:** 이 변경은 작성·라우팅·Template 계약을 검증하며 기존 프로젝트 코드가 이미 모듈화됐거나 Godot runtime·UX가 검증됐다는 뜻이 아니다. 프로젝트별 적용은 최신 `AGENTS.md`, 실제 consumer, 코드·데이터·씬·테스트를 다시 읽어야 한다.
+- **Next trigger:** 작은 기능이 다시 intake를 우회하거나, 실행계획에서 contract owner·public boundary·consumer path가 누락되거나, 단순 내부 구현까지 과도하게 L1 계약 작업으로 분류될 때 라우팅 경계를 재검토한다.
+
 ## 2026-08-27 — Screen inventory is a subordinate input, not a second visual coverage owner
 
 - **상태:** `PATTERN_CANDIDATE`

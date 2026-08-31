@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import unittest
 from pathlib import Path
 
@@ -151,6 +153,46 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
             "templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md",
         ):
             self.assertTrue((ROOT / path).is_file(), path)
+
+    def test_feature_code_contract_modularity_routes_through_intake_and_plan(self) -> None:
+        registry_path = ROOT / "skills/SKILL_REGISTRY.json"
+        registry = json.loads(registry_path.read_text(encoding="utf-8"))
+        intake_entry = next(
+            item for item in registry["skills"]
+            if item["skill_id"] == "managing-project-intake-and-work-contract"
+        )
+        intake = (ROOT / intake_entry["path"]).read_text(encoding="utf-8")
+        plan = (ROOT / "templates/planning/EXECUTION_SEQUENCE_PLAN.md").read_text(encoding="utf-8")
+        generated = (ROOT / "docs/generated/BASE_ACTIVE_SKILLS.md").read_text(encoding="utf-8")
+
+        for tag in (
+            "feature-code-contract-modularity",
+            "feature-contract-change",
+            "feature-boundary-change",
+        ):
+            self.assertIn(tag, intake_entry["trigger_tags"])
+            self.assertIn(tag, generated)
+
+        self.assertIn("작업 크기·단계 수와 무관하게", " ".join(intake_entry["use_when"]))
+        self.assertIn(
+            "기능 계약·공개 경계 변경이 없는 승인된 작은 구현",
+            " ".join(intake_entry["do_not_use_when"]),
+        )
+        self.assertIn("작은 단일 파일·단일 단계라도 L1 intake 대상", intake)
+        self.assertIn(
+            "작업 분해가 필요하지 않은 작은 기능을 포함해 `references/work-decomposition-and-sequencing.md`",
+            intake,
+        )
+        for field in (
+            "계약 정본 owner",
+            "공개 출력·통합 경계",
+            "실제 consumer·의존 방향",
+            "검증·롤백",
+        ):
+            self.assertIn(field, plan)
+
+        digest = hashlib.sha256(registry_path.read_bytes()).hexdigest()
+        self.assertIn(f"Registry SHA-256: `{digest}`", generated)
 
     def test_benchmark_reverse_engineering_pipeline_is_required_check_consumed(self) -> None:
         guide = (ROOT / "docs/BENCHMARKING_REFERENCE_GUIDE.md").read_text(encoding="utf-8")
@@ -393,8 +435,6 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
 
 class ClaimIntentConsolidatedReferenceTests(unittest.TestCase):
     def test_claim_intent_gate_is_integrated_without_a_duplicate_skill(self) -> None:
-        import json
-
         registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
         active = [entry for entry in registry["skills"] if entry["status"] == "ACTIVE"]
         self.assertEqual(30, len(active))
