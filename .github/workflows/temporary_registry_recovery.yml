@@ -14,10 +14,15 @@ jobs:
     steps:
       - name: Check out exact branch head
         uses: actions/checkout@v4
-      - name: Upload exact registry source
+      - name: Upload exact correction source set
         uses: actions/upload-artifact@v4
         with:
-          name: registry-recovery-${{ github.sha }}
-          path: skills/SKILL_REGISTRY.json
+          name: correction-source-${{ github.sha }}
+          path: |
+            skills/SKILL_REGISTRY.json
+            skills/managing-project-intake-and-work-contract/SKILL.md
+            skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md
+            templates/planning/EXECUTION_SEQUENCE_PLAN.md
+            tests/test_feature_code_contract_modularity.py
           if-no-files-found: error
           retention-days: 1
