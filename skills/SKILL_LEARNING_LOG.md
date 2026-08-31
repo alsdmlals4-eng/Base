@@ -727,3 +727,13 @@
 - 안전 경계: 이 경로는 machine evidence를 human evidence로 승격하지 않으며, 프로젝트가 명시적으로 승인한 연구 질문, target-platform/device, 법무·접근성·release 의무를 제거하지 않는다. `FINAL_USER_REVIEW`는 같은 exact candidate/build에 대해 사용자가 요청할 때만 기록한다.
 - 검증: 전용 정책 회귀, Games User Research coverage companion test, five-phase/work-template/evidence-knowledge 회귀, canonical-reference freshness를 실행한다. 전 저장소 release-baseline 검증 실패는 별도 pinned evidence drift로 분리한다.
 - 다음 검토 트리거: 프로젝트가 machine evidence를 human PASS로 오기재하는 경우, participant study를 명시 승인 없이 재도입하는 경우, 또는 platform/release 의무와 충돌하는 경우.
+
+## 2026-08-31 — CANDIDATE_REPORT_BOUNDARY_AND_MINIMAL_CORRECTION_REQUEST
+
+- 상태: `OBSERVATION`
+- 호출 트리거: 서로 다른 Godot 프로젝트의 수정제안서·후보 보고서를 Base에 제출하기 전에, 후보 자료를 곧바로 공용 규칙·구현 증거로 승격하지 않으면서도 공통 교훈과 실제 수정 요청을 재사용 가능하게 정리할 필요가 확인됐다.
+- 실제 관찰: 후보 보고서는 프로젝트별 경로·런타임 상태·기획 결론을 포함할 수 있으며, 생성·정리·검수됐다는 사실만으로 다른 프로젝트의 구현, 사용자 검증 또는 Base 정본 변경을 증명하지 않는다. 반대로 단순 제목·요약만 있으면 공통화 조건, 기존 owner의 빈틈, 최소 수정 범위를 판정할 수 없다.
+- 결정: 새 Skill·새 정본·후보 보고서 사본을 만들지 않고 `managing-base-change-proposals`와 `BASE_CHANGE_PROPOSAL.md`에 `CANDIDATE_REPORT_IS_NOT_BASE_CANON`, 공통 교훈, 기존 owner gap, 최소 correction request, project-only 제외 범위, evidence ceiling·non-use condition을 함께 요구한다. 제안은 `ADOPT`·`ADAPT`·`REJECT` 또는 보류 판단의 근거를 남기되, 실제 구현과 검증은 별도 exact revision 증거가 있을 때만 주장한다.
+- 검증: `tests/test_base_change_proposals.py`, `tests/test_skill_implementation_evidence.py`, exact-head canonical-reference freshness.
+- 안전 경계: 이 기록과 템플릿은 후보 보고서의 주장이나 첨부 PDF를 Base canon·runtime PASS·human PASS·사용자 승인으로 바꾸지 않는다. 특정 프로젝트의 세계관·경로·자산·수치·개별 결론은 project-only로 유지한다.
+- 다음 검토 트리거: 후보 보고서가 공통 교훈 없이 다시 Base 변경으로 승격되려 할 때, 동일한 correction request가 서로 다른 owner를 중복할 때, 또는 actual observation과 추측이 혼합돼 evidence ceiling을 잃을 때.

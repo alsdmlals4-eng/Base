@@ -91,6 +91,7 @@ class WorkFivePhaseVerticalSliceContractTests(unittest.TestCase):
             "actual_consumer_and_asset_coverage",
             "acceptance_test_runtime_and_rollback",
             "work_codex_transition_cost",
+            "BLUEPRINT_EFFICIENCY_REUSE_ADAPT_REQUIRED",
         ):
             self.assertIn(token, text)
 
@@ -164,6 +165,15 @@ class WorkFivePhaseVerticalSliceContractTests(unittest.TestCase):
         ):
             self.assertIn(token, text)
         self.assertTrue(VERTICAL_SLICE_SKILL.exists())
+
+    def test_machine_primary_policy_limits_human_review_to_declared_final_candidate(self) -> None:
+        text = self._read(CONTRACT)
+        for token in (
+            "PROJECT_DECLARED_FINAL_USER_REVIEW_ONCE",
+            "USER_DECLARED_EXACT_CANDIDATE_ONLY",
+            "MACHINE_EVIDENCE_DOES_NOT_BECOME_HUMAN_EVIDENCE",
+        ):
+            self.assertIn(token, text)
 
     def test_user_feedback_reopens_earliest_affected_phase(self) -> None:
         text = self._read(CONTRACT)

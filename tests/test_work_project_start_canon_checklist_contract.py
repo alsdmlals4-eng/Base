@@ -68,6 +68,21 @@ class WorkProjectStartCanonChecklistContractTests(unittest.TestCase):
         ):
             self.assertIn(token, text)
 
+    def test_material_project_work_receipt_recovers_genre_world_visual_and_benchmark_context(self) -> None:
+        text = self._read(CHECKLIST)
+        for token in (
+            "FRESH_READ_BEFORE_PROJECT_WORK_REQUIRED",
+            "GENRE_WORLD_VISUAL_BENCHMARK_RECEIPT_REQUIRED",
+            "ACTUAL_IMPLEMENTATION_EVIDENCE_NO_SPECULATION",
+            "genre_and_subgenre:",
+            "world_and_setting_tone:",
+            "visual_style_and_composition_anchor:",
+            "benchmark_decisions:",
+            "ADOPT | ADAPT | REJECT | NOT_APPLICABLE",
+            "BLOCKED_UNVERIFIED",
+        ):
+            self.assertIn(token, text)
+
     def test_canon_correction_precedes_new_planning_production_or_implementation(self) -> None:
         text = self._read(CHECKLIST)
         for token in (

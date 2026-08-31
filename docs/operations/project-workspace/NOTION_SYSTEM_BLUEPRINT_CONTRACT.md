@@ -106,6 +106,30 @@ Recommended node semantics:
 
 A diagram alone is not an implementation contract. Stable Node IDs and the detailed text fields must allow an AI or developer to interpret the graph without guessing arrow meaning.
 
+## Efficient Blueprint form
+
+```text
+BLUEPRINT_COMPACT_DECISION_CHAIN_REQUIRED
+BLUEPRINT_BENCHMARK_CONTEXT_BOUND
+NO_DUPLICATED_CANON_OR_DECORATIVE_NODES
+```
+
+Reuse the existing Node contract before creating a new presentation. A touched complex system should be readable as one compact decision chain:
+
+```text
+Player Meaning / Intent
+→ Trigger / Input
+→ material Choice / Condition
+→ State / Data Change
+→ Feedback
+→ Output / Next
+→ Owner and Validation
+```
+
+Only retain nodes that change player understanding, a meaningful branch, state/data ownership, visible feedback, implementation responsibility, or validation. Split unrelated loops instead of adding decorative labels, duplicated canon values, raw operational receipts, or every implementation detail to one graph. The detailed owner remains the source for values, IDs, code paths and runtime evidence.
+
+When genre, world/setting tone, visual language, composition, or information priority materially shapes the player decision, keep the selected reference context once in the Blueprint header or linked design owner: source fact, project difference, and `ADOPT / ADAPT / REJECT`. Do not repeat it on every node, treat it as canon, or infer it from a name, image, or prior chat. The Blueprint communicates how the approved context affects player choices; it does not copy another project's setting or artwork.
+
 ## Project Home presentation
 
 `PROJECT_HOME_CORE_SYSTEM_BLUEPRINT_VISIBLE`

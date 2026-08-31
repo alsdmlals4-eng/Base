@@ -9,6 +9,15 @@ description: Use when extracting project learning for Base, submitting or review
 
 프로젝트 교훈의 추출·제출·검토·승인된 구현은 하나의 BCP 생명주기다. 하나의 상태 머신으로 추적하되, 제안 PR과 활성 Base 구현 PR의 승인 경계는 절대 합치지 않는다.
 
+```text
+CANDIDATE_REPORT_IS_NOT_BASE_CANON
+COMMON_LESSON_AND_CORRECTION_REQUEST_REQUIRED
+MINIMUM_OWNER_CORRECTION_REQUEST
+EVIDENCE_CEILING_AND_NONUSE_CONDITIONS
+```
+
+프로젝트의 후보보고서·학습보고서·수정제안서는 Base 변경의 입력 증거일 뿐, 보고서 자체·첨부 PDF·프로젝트 고유 결론을 Base 정본이나 구현 지시로 만들지 않는다. 제출자는 실제 관찰과 공용화 가능한 교훈을 분리하고, 기존 Base owner의 구체 gap과 최소 교정 요청을 적는다. 증거가 부족하면 `NO_NEW_BASE_PROPOSAL` 또는 `DEFERRED`가 유효한 결론이다.
+
 ## Modes
 
 - `extract`: 프로젝트 결과에서 공용 원리와 프로젝트 전용 값을 분리한다.
@@ -59,7 +68,7 @@ protected_and_excluded_scope:
 ### 2. Submit proposal only
 
 1. `[수정제안서]/PROPOSAL_REGISTRY.json`에서 ID를 정한다.
-2. `templates/BASE_CHANGE_PROPOSAL.md`로 출처·관찰·일반화 후보·반례·영향·검증·롤백을 작성한다.
+2. `templates/BASE_CHANGE_PROPOSAL.md`로 출처·실제 관찰·프로젝트 전용 제외·공통 교훈·기존 owner gap·최소 수정 요청·반례·evidence ceiling·영향·검증·롤백을 작성한다.
 3. 제안 PR에는 원칙적으로 `[수정제안서]/**`만 포함한다.
 4. 상태를 `SUBMITTED` 또는 `UNDER_REVIEW`로 둔다.
 5. 승인 전에는 활성 Method·Skill·Template·Tool·Schema·Test를 변경하지 않는다.
@@ -69,6 +78,8 @@ protected_and_excluded_scope:
 - 제안 ID·상태·출처 커밋과 실제 증거를 확인한다.
 - 프로젝트 전용 값이 공용 규칙에 유입되지 않았는지 검사한다.
 - 기존 Base 책임과 중복·충돌·대체 관계를 찾는다.
+- 요청이 새 Skill·문서·registry를 만들지 않아도 기존 owner의 최소 수정으로 해결되는지 먼저 판단한다.
+- 후보보고서의 결론이 아니라 실제 관찰·반례·비사용 조건·evidence ceiling이 공용 교훈과 수정 요청을 지지하는지 확인한다.
 - 성공 증거뿐 아니라 반례·비사용 조건·보안·라이선스·비용·호환성·마이그레이션·롤백을 평가한다.
 - `APPROVED_FOR_IMPLEMENTATION`, `DEFERRED`, `REJECTED` 중 하나를 사용자에게 제안한다.
 - 사용자의 명시적 결정과 근거를 `approval_ref`에 기록한다.
@@ -96,8 +107,10 @@ protected_and_excluded_scope:
 
 ```md
 ## Base 변경 제안 생명주기
-## 공용화 가능한 원리
+## 후보보고서 상태와 정본 경계
+## 실제 관찰과 공통 교훈
 ## 프로젝트 전용으로 남긴 요소
+## 기존 Base owner gap과 최소 수정 요청
 ## 제안 ID·상태·출처
 ## 중복·충돌·반례·위험
 ## 사용자 승인 상태와 근거
@@ -110,6 +123,8 @@ protected_and_excluded_scope:
 ## Definition of Done
 
 - 공용 원리와 프로젝트 전용 값이 분리됐다.
+- 후보보고서·첨부물과 Base 정본/구현 지시의 경계가 명시됐다.
+- 공통 교훈, 기존 owner gap, 최소 수정 요청과 비사용 조건이 재현 가능하다.
 - 미검증 교훈을 확정 규칙으로 승격하지 않았다.
 - 제안과 구현이 다른 승인 단계와 PR에 있다.
 - 구현은 승인된 최소 범위만 포함한다.
@@ -122,6 +137,8 @@ protected_and_excluded_scope:
 - 사용자 승인 없이 구현 상태로 이동함
 - 프로젝트 고유 코드·아트·수치·경로를 공용 규칙으로 복사함
 - 한 번의 성공을 검증된 스킬로 승격함
+- 후보보고서의 문구·프로젝트 결론을 실제 증거와 owner 비교 없이 Base 규칙으로 승격함
+- 공통 교훈 또는 최소 수정 요청 없이 모호한 개선 요구만 제출함
 - 반례·비사용 조건·롤백을 누락함
 - 실행하지 않은 테스트나 권한 확인을 통과 처리함
 - 거절·보류 기록을 삭제함

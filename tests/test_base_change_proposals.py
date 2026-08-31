@@ -19,6 +19,18 @@ SPEC.loader.exec_module(CHECKER)
 
 
 class BaseChangeProposalTests(unittest.TestCase):
+    def test_candidate_report_and_proposal_template_require_common_lesson_and_minimal_correction(self) -> None:
+        skill = (ROOT / "skills/managing-base-change-proposals/SKILL.md").read_text(encoding="utf-8")
+        template = (ROOT / "templates/BASE_CHANGE_PROPOSAL.md").read_text(encoding="utf-8")
+        combined = skill + "\n" + template
+        for token in (
+            "CANDIDATE_REPORT_IS_NOT_BASE_CANON",
+            "COMMON_LESSON_AND_CORRECTION_REQUEST_REQUIRED",
+            "MINIMUM_OWNER_CORRECTION_REQUEST",
+            "EVIDENCE_CEILING_AND_NONUSE_CONDITIONS",
+        ):
+            self.assertIn(token, combined)
+
     def test_current_proposals_validate(self) -> None:
         registry, errors = CHECKER.validate_repository(ROOT)
         self.assertEqual(errors, [])

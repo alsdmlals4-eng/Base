@@ -53,6 +53,17 @@ class MachinePrimaryFinalUserReviewPolicyTests(unittest.TestCase):
         self.assertIn("AUTOMATED_VERTICAL_SLICE_READY != USER_VALIDATED_VERTICAL_SLICE", contract)
         self.assertIn("PHASE_5_USER_VERTICAL_SLICE_VALIDATION", contract)
 
+    def test_machine_primary_contract_requires_a_user_declared_single_final_review(self) -> None:
+        contract = read("templates/project-operations/WORK_FIVE_PHASE_VERTICAL_SLICE_EXECUTION_CONTRACT.md")
+        starter = read("templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md")
+        combined = contract + "\n" + starter
+        for required in (
+            "PROJECT_DECLARED_FINAL_USER_REVIEW_ONCE",
+            "USER_DECLARED_EXACT_CANDIDATE_ONLY",
+            "MACHINE_EVIDENCE_DOES_NOT_BECOME_HUMAN_EVIDENCE",
+        ):
+            self.assertIn(required, combined)
+
 
 if __name__ == "__main__":
     unittest.main()

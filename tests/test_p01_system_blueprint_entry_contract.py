@@ -55,6 +55,24 @@ class P01SystemBlueprintEntryContractTests(unittest.TestCase):
         self.assertIn("NOT_APPLICABLE_WITH_REASON", contract)
         self.assertIn("SYSTEM_BLUEPRINT_REQUIRED_WHEN_COMPLEX", contract)
 
+    def test_blueprint_contract_reuses_a_compact_player_to_validation_decision_chain(self):
+        contract = (
+            ROOT
+            / "docs"
+            / "operations"
+            / "project-workspace"
+            / "NOTION_SYSTEM_BLUEPRINT_CONTRACT.md"
+        ).read_text(encoding="utf-8")
+
+        for token in (
+            "BLUEPRINT_COMPACT_DECISION_CHAIN_REQUIRED",
+            "BLUEPRINT_BENCHMARK_CONTEXT_BOUND",
+            "NO_DUPLICATED_CANON_OR_DECORATIVE_NODES",
+            "Player Meaning / Intent",
+            "Validation",
+        ):
+            self.assertIn(token, contract)
+
 
 if __name__ == "__main__":
     unittest.main()
