@@ -234,6 +234,7 @@ class RepositoryFirstWorkspaceContractTests(unittest.TestCase):
         section = checklist.split("## 10. 이관 잔여 카운터", 1)[1].split("## 11.", 1)[0]
         self.assertIn("INVENTORY_INCOMPLETE", section)
         self.assertIn("UNKNOWN", section)
+        self.assertIn("UNKNOWN을 0으로 바꾸지 않는다.", section)
         self.assertIn("완료 목표값", section)
         self.assertIn("inventory COMPLETE + 모두 0 + 대상 owner readback 완료", section)
         self.assertLess(section.index("INVENTORY_INCOMPLETE"), section.index("inventory COMPLETE + 모두 0"))
@@ -242,12 +243,14 @@ class RepositoryFirstWorkspaceContractTests(unittest.TestCase):
     def test_migration_receipt_records_inventory_and_export_evidence(self) -> None:
         checklist = text(MIGRATION_CHECKLIST)
         section = checklist.split("## 12. 완료 receipt", 1)[1]
+        self.assertIn("inventory.destination_owner_readback_receipt", section)
         for token in (
             "inventory:",
             "status: NOT_CHECKED | INCOMPLETE | COMPLETE",
             "scope_and_access_receipt:",
             "excluded_or_unreadable:",
             "export_or_read_receipt:",
+            "\n  destination_owner_readback_receipt:\n",
         ):
             with self.subTest(token=token):
                 self.assertIn(token, section)
