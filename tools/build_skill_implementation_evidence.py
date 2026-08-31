@@ -201,6 +201,7 @@ def build_evidence_markdown(root: Path = ROOT) -> str:
         f"> External model behavior run: `{model_run_status}`",
         f"> Behavior evaluation case count: `{len(cases)}`",
         f"> Behavior evaluation source SHA-256: `{behavior_digest}`",
+        "> Source digest newline policy: `CRLF normalized to LF`.",
         "",
         "`EXECUTABLE_EVIDENCE` means a repository test, tool, workflow, or package script is linked. It does not mean that evidence passed on the current commit. `CONTRACT_EVIDENCE` means only a contract or documentation consumer is linked. Actual model, runtime, device, and human validation remain separate.",
         "",

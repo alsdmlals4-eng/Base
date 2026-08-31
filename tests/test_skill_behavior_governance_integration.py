@@ -115,6 +115,7 @@ class SkillBehaviorGovernanceIntegrationTests(unittest.TestCase):
         generated = (ROOT / "docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md").read_text(encoding="utf-8")
         self.assertIn("Behavior evaluation case count", generated)
         self.assertIn("Behavior evaluation source SHA-256", generated)
+        self.assertIn("CRLF normalized to LF", generated)
 
 
     def test_serial_fiction_skill_coupled_change_and_entrypoint_contract_is_explicit(self) -> None:
