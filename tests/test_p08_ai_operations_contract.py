@@ -87,5 +87,24 @@ class P08AiOperationsContractTests(unittest.TestCase):
             self.assertIn(term, policy)
 
 
+    def test_intake_ai_solution_layer_selection_routes_before_build(self) -> None:
+        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        capability = (ROOT / "docs/CAPABILITY_COMPOSITION_MAP.md").read_text(encoding="utf-8")
+        for term in (
+            "PUBLIC_VIDEO_SOURCE_RECOVERY_BEFORE_BLOCKER",
+            "AI_SOLUTION_LAYER_SELECTION_BEFORE_BUILD",
+            "NO_AUTO_FEATURE_FROM_VOCABULARY",
+            "smallest sufficient layer",
+        ):
+            self.assertIn(term, intake)
+        for term in (
+            "AI_SOLUTION_LAYER_SELECTION",
+            "DETERMINISTIC_WORKFLOW_BEFORE_OPEN_ENDED_AGENT",
+            "HARNESS_COMPONENTS_REQUIRE_LOAD_BEARING_EVIDENCE",
+            "AGI_ASI_AWARENESS_ONLY",
+        ):
+            self.assertIn(term, capability)
+
+
 if __name__ == "__main__":
     unittest.main()

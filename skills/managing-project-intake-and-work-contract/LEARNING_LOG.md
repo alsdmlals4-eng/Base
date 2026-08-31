@@ -1,5 +1,16 @@
 # Managing Project Intake and Work Contracts — Learning Log
 
+
+## 2026-09-01 — Public video evidence and AI vocabulary need reader recovery and smallest-layer routing
+
+- **상태:** `OBSERVATION`
+- **호출 트리거:** 사용자가 공개 YouTube 영상의 실제 내용을 확인하고 Base에 없는 기능·구조만 흡수하라고 요청했지만, 첫 시도는 일반 웹 자막 경로 실패를 곧바로 `BLOCKED_UNVERIFIED`로 처리하고 영상의 보안·권한 측면만 추정하려 했다.
+- **Finding:** Base에는 이미 `RM-TOOL-005 PUBLIC_VIDEO_RESEARCH_INGEST_ADAPTER`, `tools/public_video_research_ingest.py`, local transcript binding, 출처 ladder와 저작권·비용 경계가 있었지만 universal intake가 이 reader owner를 외부 링크 blocker보다 먼저 호출한다고 명시하지 않았다. 또한 LLM·multimodal·RLHF·fine-tuning·prompt engineering·knowledge base·RAG·MCP·agent·workflow·harness·AGI/ASI 같은 용어를 접했을 때 실제 병목과 consumer를 기준으로 최소 충분 계층을 고르는 공용 route가 없어, 용어 목록이 불필요한 기능 backlog로 변할 위험이 있었다.
+- **Decision:** 새 Skill·RAG·MCP server·agent framework·harness product를 만들지 않는다. Intake가 공개 영상에 대해 기존 reader ladder를 먼저 소진하고, 원문을 확보한 뒤 Base 현행 owner와 비교한다. AI 구조 제안은 `measured bottleneck → smallest sufficient layer → actual consumer → deterministic eval/readback` 순서로 판단하며 predictable process는 workflow를, genuinely open-ended dynamic planning만 agent를 후보로 둔다. 현재·변경 가능한 사실은 prompt/context/retrieval을 먼저 사용하고 fine-tuning은 task-specific repeated eval evidence가 있을 때만 별도 후보로 둔다.
+- **TDD / regression evidence:** PR #810의 최초 exact head `e430c5bf49908cfcfff650fa2f0f060d831c1aa5`에서 신규 9개 계약과 기존 관련 회귀는 통과했지만 Game Project OS run `33452544294`의 canonical freshness가 기존 companion test와 Skill Learning Log 동기화 누락을 정확히 차단했다. 이 기록과 `tests/test_p08_ai_operations_contract.py`의 기존-suite companion assertion을 추가해 standalone 신규 테스트만 통과하는 거짓 GREEN을 방지한다.
+- **Evidence ceiling:** 공개 자막 확보는 source inspection evidence일 뿐 영상의 모든 기술 설명을 사실로 만들지 않는다. 문서·계약 테스트는 RAG/MCP/agent/harness runtime, 프로젝트 채택, 품질 향상이나 비용 절감을 입증하지 않는다.
+- **다음 검토 트리거:** 공개 영상이 있는데 기존 reader ladder를 거치지 않고 다시 조기 차단하거나, AI 용어만으로 신규 서비스·모델·벡터 DB·agent framework를 추가하거나, predictable workflow를 이유 없이 agent화하거나, model 업그레이드 뒤 load-bearing evidence 없는 harness 구성요소를 유지할 때.
+
 ## 2026-08-25 — Existing reuse assets need a fail-closed intake gate, not only a library
 
 - **상태:** `OBSERVATION`
