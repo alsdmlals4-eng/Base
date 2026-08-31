@@ -221,3 +221,13 @@ approval_reference:
 - conflict scan이 통과했다.
 - Grill Me alignment gate 또는 기존 approval reference로 의도·기획 정합성이 확인됐다.
 - 승인 전 실행하지 않았다.
+
+## Reader-adaptive execution briefing
+
+L1 이상 계약의 사용자-facing 결론·액션·진행 상태·오류·완료 보고를 만들 때 `docs/knowledge/ai/READER_ADAPTIVE_ACTION_BRIEFING.md`를 함께 적용한다.
+
+- 이 문서는 표현 순서와 설명 난이도를 조정할 뿐 정본·승인·안전·검증 권한을 만들지 않는다.
+- 실행 가능한 상태면 액션을, 결정이 끝났으면 결론을 먼저 보여 주되 미확정·고위험·실패 상태를 숨기지 않는다.
+- 한국어 초보 개발자 기본 설명에서도 코드 식별자·경로·명령·오류 원문은 유지하고, 경로·명령·이유·확인 방법을 연결한다.
+- 고정 목록 길이, 진단명 전제, 근거 없는 시간 약속은 사용하지 않는다.
+- L0 기계 작업이나 사용자가 별도 형식·대상 독자를 지정한 경우에는 필요한 만큼만 적용한다.
