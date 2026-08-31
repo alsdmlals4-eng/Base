@@ -259,6 +259,19 @@ class SkillBehaviorAdversarialBoundaryTests(unittest.TestCase):
             errors,
         )
 
+    def test_implementation_digest_ignores_newlines_but_not_semantic_changes(self) -> None:
+        path = self.root / "skills/SKILL_BEHAVIOR_EVALS.json"
+        path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n"))
+        baseline = self.builder.behavior_source_digest(self.root)
+
+        path.write_bytes(path.read_bytes().replace(b"\n", b"\r\n"))
+        self.assertEqual(baseline, self.builder.behavior_source_digest(self.root))
+
+        path.write_bytes(
+            path.read_bytes().replace(b'"model_run_status": "NOT_RUN"', b'"model_run_status": "COMPLETED"')
+        )
+        self.assertNotEqual(baseline, self.builder.behavior_source_digest(self.root))
+
     def test_bcp008_procurement_cases_block_platform_mismatch_and_overclaim(self) -> None:
         evals = json.loads((ROOT / "skills/SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8"))
         cases = {case["case_id"]: case for case in evals["cases"]}
