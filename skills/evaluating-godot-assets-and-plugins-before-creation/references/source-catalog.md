@@ -135,3 +135,12 @@ validation:
 | omenward | 룰렛·결정론 테스트·3라인 전투·상태 머신·디버그 시각화·데이터 검증 |
 
 이 표는 검색 우선순위이며 자동 채택 목록이 아니다. 각 프로젝트의 코어 경험과 실제 구현 상태를 먼저 확인한다.
+
+## 7. 외부 Agent·CLI·Skill·Workspace 후보
+
+Godot addon 범위를 넘어 코드 리뷰 도구, 출력 압축 프록시, 외부 모델 CLI, 에이전트 Skill·hook, 통합 workspace를 평가할 때도 이 Skill의 현재 환경 인벤토리·중복 권위·비용·라이선스·보안·제거 가능성 Gate를 재사용한다.
+
+- 2026-08-31 후보 10종의 원문 대조와 `ADOPT / ADAPT / TRIAL_OPTIONAL / REFERENCE_ONLY / REJECT_AS_REQUIRED_DEPENDENCY` 판정: `docs/knowledge/ai/agent-tools/EXTERNAL_AGENT_TOOL_ADOPTION_REVIEW_2026-08-31.md`
+- 선택형 외부 reviewer·output proxy·model CLI·agent workspace의 권위·원문 fallback·비용·비밀·실행 안전·킬 스위치 계약: `docs/knowledge/ai/agent-tools/EXTERNAL_AGENT_ADAPTER_CONTRACT.md`
+
+이 두 문서는 새 실행 권위나 설치 승인이 아니다. 후보의 버전·라이선스·가격·telemetry·auth·model·hook·출력 의미가 바뀌거나 프로젝트별 A/B 결과가 달라지면 현재 1차 자료로 재검증한다. ordinary Godot 에셋 검색에서는 불필요하게 로드하지 않는다.
