@@ -66,7 +66,9 @@ class ProjectWorkKanbanChecklistContractTests(unittest.TestCase):
         text = self._read(CARD)
         for token in (
             "work_item_id:",
+            "work_item_type:",
             "parent_issue_ref:",
+            "required_child_work_item_refs:",
             "goal_or_slice:",
             "player_or_user_value:",
             "why_now:",
@@ -80,15 +82,36 @@ class ProjectWorkKanbanChecklistContractTests(unittest.TestCase):
             "required_evidence:",
             "evidence_ceiling:",
             "progress:",
+            "progress_basis:",
             "next_action:",
             "resume_condition:",
             "Repository readback",
         ):
             self.assertIn(token, text)
 
+    def test_card_distinguishes_parent_and_independent_progress(self) -> None:
+        text = self._read(CARD)
+        for token in (
+            "PARENT_GOAL_PROGRESS_USES_REQUIRED_CHILD_DONE_COUNT",
+            "DO_NOT_AVERAGE_CHILD_PERCENTAGES",
+            "CHECKLIST_PASS",
+            "REQUIRED_CHILD_WORK_ITEM_DONE",
+            "required child work items whose status is DONE",
+        ):
+            self.assertIn(token, text)
+
     def test_card_template_checks_only_pass_items(self) -> None:
         text = self._read(CARD)
-        self.assertIn("- [x] PASS —", text)
+        checked_lines = [
+            line.strip()
+            for line in text.splitlines()
+            if re.match(r"^\s*-\s*\[x\]", line)
+        ]
+        self.assertTrue(checked_lines, "card must show at least one evidence-backed PASS example")
+        self.assertTrue(
+            all(line.startswith("- [x] PASS —") for line in checked_lines),
+            f"all checked examples must be PASS only: {checked_lines}",
+        )
         for forbidden in (
             "- [x] READY —",
             "- [x] IN_PROGRESS —",
