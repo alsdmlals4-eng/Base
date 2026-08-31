@@ -3,7 +3,6 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import subprocess
-import sys
 from pathlib import Path
 
 
@@ -33,6 +32,15 @@ exact video/source identity readback
 - 내용 증거를 확보한 뒤 `PROJECT_REUSE_OPPORTUNITY_SCAN`과 현재 owner 비교로 `ADOPT / ADAPT / REJECT`를 판정한다. 제목·검색 스니펫·주변 자료를 본문 대신 사용하지 않는다.
 
 '''
+
+old_rlhf = "| RLHF and related preference post-training | Adjust learned behavior from demonstrations, preferences or reward signals | a live policy engine, current knowledge source, per-run approval, or factual correctness |"
+new_rlhf = "| RLHF and adjacent human-feedback post-training | Uses human demonstrations or preference comparisons across supervised and reward-based post-training stages to shape model behavior | a live policy engine, current knowledge source, per-run approval, or factual correctness |"
+old_harness = "11. `HARNESS_COMPONENTS_REQUIRE_LOAD_BEARING_EVIDENCE` / `HARNESS_ABLATION_AND_PRUNING`: each extra prompt, memory layer, retriever, tool, reviewer, retry or coordinator must close a measured failure. Re-run ablation or equivalent baseline comparisons after an exact model/tool version change and remove components that no longer improve quality, reliability, cost or maintainability."
+new_harness = "11. `HARNESS_COMPONENTS_REQUIRE_LOAD_BEARING_EVIDENCE` / `HARNESS_ABLATION_AND_PRUNING`: each extra prompt, memory layer, retriever, tool, reviewer, retry or coordinator must close a measured failure. Re-run targeted ablation or an equivalent baseline comparison when an exact model/tool version materially changes behavior or evidence puts a component's value in doubt; remove components that no longer improve quality, reliability, cost or maintainability."
+if old_rlhf not in runner.AI_LAYER_CONTRACT or old_harness not in runner.AI_LAYER_CONTRACT:
+    raise RuntimeError("AI layer precision patch source missing")
+runner.AI_LAYER_CONTRACT = runner.AI_LAYER_CONTRACT.replace(old_rlhf, new_rlhf, 1)
+runner.AI_LAYER_CONTRACT = runner.AI_LAYER_CONTRACT.replace(old_harness, new_harness, 1)
 
 
 def write_final_artifacts() -> None:
