@@ -18,7 +18,7 @@ def bounded_section(text: str, start: str, end: str) -> str:
 
 
 class AISolutionLayerSelectionContractTests(unittest.TestCase):
-    def test_public_video_uses_existing_reader_ladder_before_blocker(self) -> None:
+    def test_public_video_uses_existing_reader_owner_before_blocker(self) -> None:
         intake = read("skills/managing-project-intake-and-work-contract/SKILL.md")
         start = "PUBLIC_VIDEO_SOURCE_RECOVERY_BEFORE_BLOCKER"
         end = "새 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층 요청"
@@ -28,18 +28,19 @@ class AISolutionLayerSelectionContractTests(unittest.TestCase):
         for term in (
             "VIDEO_LINK_IS_NOT_UNREADABLE_UNTIL_DECLARED_READER_LADDER_EXHAUSTED",
             "RM-TOOL-005 PUBLIC_VIDEO_RESEARCH_INGEST_ADAPTER",
+            "docs/knowledge/game-development/reuse/PRODUCTION_TOOL_WORKFLOW_MODULES.md",
             "tools/public_video_research_ingest.py",
-            "manual caption",
-            "automatic caption",
-            "caller-supplied local",
+            "source_ladder",
+            "ASR_FALLBACK_REQUIRED",
             "BLOCKED_UNVERIFIED",
             "PROJECT_REUSE_OPPORTUNITY_SCAN",
             "TRANSCRIPT_READY_IS_NOT_FACT_OR_PROJECT_FIT_PASS",
         ):
             self.assertIn(term, section)
-        self.assertLess(section.index("manual caption"), section.index("automatic caption"))
-        self.assertLess(section.index("automatic caption"), section.index("caller-supplied local"))
-        self.assertLess(section.index("caller-supplied local"), section.index("BLOCKED_UNVERIFIED"))
+        self.assertLess(
+            section.index("PRODUCTION_TOOL_WORKFLOW_MODULES.md"),
+            section.index("BLOCKED_UNVERIFIED"),
+        )
 
     def test_layer_map_separates_model_context_integration_orchestration_and_harness(self) -> None:
         capability = read("docs/CAPABILITY_COMPOSITION_MAP.md")
