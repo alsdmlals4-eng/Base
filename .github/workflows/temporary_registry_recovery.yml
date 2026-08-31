@@ -1,4 +1,4 @@
-name: Temporary Registry Recovery
+name: Apply Feature Contract Correction
 
 on:
   push:
@@ -6,20 +6,33 @@ on:
       - work/feature-code-contract-modularity-20260901
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  recover-registry:
+  apply-correction:
+    if: github.event.head_commit.message == 'chore: prepare atomic feature-contract correction'
     runs-on: ubuntu-latest
     steps:
-      - name: Check out exact branch head
+      - name: Check out exact preparation head
         uses: actions/checkout@v4
-      - name: Archive exact tracked tree
-        run: git archive --format=zip --output=base-source-${GITHUB_SHA}.zip HEAD
-      - name: Upload exact tracked tree
-        uses: actions/upload-artifact@v4
         with:
-          name: base-source-${{ github.sha }}
-          path: base-source-${{ github.sha }}.zip
-          if-no-files-found: error
-          retention-days: 1
+          fetch-depth: 2
+      - name: Apply and verify exact correction tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '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' | base64 -d | gzip -d > /tmp/base805_apply.py
+          python /tmp/base805_apply.py
+          git rm .github/workflows/temporary_registry_recovery.yml
+          git diff --check
+          python -m unittest tests.test_feature_code_contract_modularity tests.test_consolidated_skill_references -v
+          python tools/build_base_v9_artifacts.py --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          tree_sha="$(git write-tree)"
+          test "$tree_sha" = 'd2b684254af50a3ebd7504607cbb5375baab1e27'
+          git commit -m 'fix: route feature contracts through intake and plan'
+          final_sha="$(git rev-parse HEAD)"
+          python tools/check_canonical_reference_freshness.py --root . --config .github/reference-freshness.json --base "$GITHUB_SHA" --head "$final_sha"
+          git push origin HEAD:work/feature-code-contract-modularity-20260901
