@@ -1,89 +1,195 @@
-from pathlib import Path
+from __future__ import annotations
+
 import json
 import re
 import unittest
+from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-
-
-def read(path: str) -> str:
-    return (ROOT / path).read_text(encoding="utf-8")
+POLICY = ROOT / "docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md"
+START_CHECKLIST = ROOT / "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md"
+CARD = ROOT / "templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md"
+GOAL_FORM = ROOT / ".github/ISSUE_TEMPLATE/01-goal-playable-slice.yml"
+TASK_FORM = ROOT / ".github/ISSUE_TEMPLATE/02-independent-work-item.yml"
 
 
 class ProjectWorkKanbanChecklistContractTests(unittest.TestCase):
-    def test_owner_defines_kanban_checklist_without_new_canon(self):
-        owner = read("docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md")
-        for token in (
-            "PROJECT_WORK_KANBAN_CHECKLIST", "CHECKLIST_IS_DERIVED_OPERATIONAL_VIEW_NOT_CANON",
-            "PM_WORK_BREAKDOWN_REQUIRED", "REUSE_EXISTING_WORK_ITEM_BEFORE_CREATE",
-            "NO_ISSUE_EXPLOSION", "BACKLOG", "READY", "IN_PROGRESS", "VERIFY_REVIEW",
-            "BLOCKED_DECISION", "BLOCKED_UNVERIFIED", "USER_DECISION_REQUIRED", "DEFERRED", "DONE",
-            "PROJECTS_DERIVED_VIEW_NOT_CANON", "NO_PROJECTS_WRITE_CAPABILITY_IS_NOT_BLOCKER",
-            "UNVERIFIED_PROJECTS_CONFIGURATION", "UNVERIFIED_SUB_ISSUE_RELATION",
-            "NO_PROJECT_FACT_WRITEBACK_FROM_CARD", "Progress = PASS 항목 수 / 적용 가능한 항목 수",
-            "REQUIRED_CHILD_WORK_ITEM_DONE", "NO_APPLICABLE_CHECKLIST", "서로 다른 퍼센트를 평균내지 않는다",
-            "NO_NEW_PAID_PM_TOOL", "NO_HTML_DASHBOARD", "NO_FLEET_WIDE_EMPTY_ARTIFACT_ROLLOUT",
-        ):
-            self.assertIn(token, owner)
+    def _read(self, path: Path) -> str:
+        self.assertTrue(path.exists(), f"required project work surface must exist: {path}")
+        return path.read_text(encoding="utf-8")
 
-    def test_template_has_operational_card_and_evidence_ceiling(self):
-        template = read("templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md")
+    def test_lifecycle_policy_defines_canonical_and_derived_roles(self) -> None:
+        text = self._read(POLICY)
         for token in (
-            "work_item_id:", "GOAL_SLICE | INDEPENDENT_TASK", "required_child_work_item_refs:",
-            "CHECKLIST_IS_DERIVED_OPERATIONAL_VIEW_NOT_CANON", "canon_owner:", "actual_consumers:",
-            "acceptance_criteria:", "required_evidence:", "source_main_sha:", "task_branch_or_pr:",
-            "blocker:", "next_action:", "resume_condition:", "[x] PASS", "[ ] IN_PROGRESS",
-            "[ ] READY", "[ ] BLOCKED_UNVERIFIED", "[ ] USER_DECISION_REQUIRED", "[ ] DEFERRED",
-            "[ ] NOT_APPLICABLE", "NOT_APPLICABLE_EXCLUDED_FROM_DENOMINATOR",
-            "PARENT_GOAL_PROGRESS_USES_REQUIRED_CHILD_DONE_COUNT", "DO_NOT_AVERAGE_CHILD_PERCENTAGES",
-            "NO_APPLICABLE_CHECKLIST", "E0_CONTRACT", "E1_STATIC", "E2_TEST", "E3_RUNTIME",
-            "E4_VISUAL", "E5_PLAY", "E6_HUMAN_PLAYTEST", "NOT_RUN",
-            "자동 테스트 PASS는 runtime·화면·UX·Human/Player·사용자 승인·출시 PASS를 의미하지 않는다.",
+            "PROJECT_WORK_KANBAN_CHECKLIST",
+            "GOAL_OR_PLAYABLE_SLICE_PARENT_ISSUE",
+            "INDEPENDENT_WORK_ITEM",
+            "CHECKLIST_IS_DERIVED_OPERATIONAL_VIEW_NOT_CANON",
+            "PROJECTS_DERIVED_VIEW_NOT_CANON",
+            "NO_PROJECTS_WRITE_CAPABILITY_IS_NOT_BLOCKER",
+            "UNVERIFIED_PROJECTS_CONFIGURATION",
+            "UNVERIFIED_SUB_ISSUE_RELATION",
         ):
-            self.assertIn(token, template)
+            self.assertIn(token, text)
 
-    def test_startup_materializes_existing_work_items_before_new_cards(self):
-        startup = read("templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md")
+    def test_policy_defines_status_wip_and_queue_mapping(self) -> None:
+        text = self._read(POLICY)
         for token in (
-            "PROJECT_WORK_KANBAN_CHECKLIST_REQUIRED", "REUSE_EXISTING_WORK_ITEM_BEFORE_CREATE",
-            "PROJECTS_DERIVED_VIEW_NOT_CANON", "UNVERIFIED_PROJECTS_CONFIGURATION",
-            "UNVERIFIED_SUB_ISSUE_RELATION", "작은 순차 단계는 부모 카드 내부 체크리스트로 유지",
-            "완료 후보에서 remaining-work recalculation", "progress_summary",
+            "BACKLOG",
+            "READY",
+            "IN_PROGRESS",
+            "VERIFY_REVIEW",
+            "BLOCKED_UNVERIFIED",
+            "USER_DECISION_REQUIRED",
+            "DEFERRED",
+            "DONE",
+            "IN_PROGRESS_WIP_LIMIT: 1",
+            "VERIFY_REVIEW_WIP_LIMIT: 1",
+            "ready_tasks",
+            "deferred_tasks",
+            "completed_tasks",
         ):
-            self.assertIn(token, startup)
-        # The startup contract now publishes executable JSON, not the retired YAML sketch.
-        section = startup.split("### 12.1 Receipt extension", 1)[1].split("### 12.2", 1)[0]
+            self.assertIn(token, text)
+
+    def test_policy_counts_only_pass_and_excludes_not_applicable(self) -> None:
+        text = self._read(POLICY)
+        for token in (
+            "PASS_ONLY_COUNTS_COMPLETE",
+            "NOT_APPLICABLE_EXCLUDED_FROM_DENOMINATOR",
+            "NO_APPLICABLE_CHECKLIST",
+            "completed_items / applicable_items",
+            "PLAIN_MARKDOWN_TASK_LIST_NOT_RETIRED_TASKLIST_BLOCK",
+        ):
+            self.assertIn(token, text)
+
+    def test_card_template_has_authority_scope_evidence_and_readback(self) -> None:
+        text = self._read(CARD)
+        for token in (
+            "work_item_id:",
+            "work_item_type:",
+            "parent_issue_ref:",
+            "required_child_work_item_refs:",
+            "goal_or_slice:",
+            "player_or_user_value:",
+            "why_now:",
+            "depends_on:",
+            "blocked_by:",
+            "protected_scope:",
+            "canon_owner:",
+            "actual_consumers:",
+            "source_main_sha:",
+            "acceptance_criteria:",
+            "required_evidence:",
+            "evidence_ceiling:",
+            "progress:",
+            "progress_basis:",
+            "next_action:",
+            "resume_condition:",
+            "Repository readback",
+        ):
+            self.assertIn(token, text)
+
+    def test_card_distinguishes_parent_and_independent_progress(self) -> None:
+        text = self._read(CARD)
+        for token in (
+            "PARENT_GOAL_PROGRESS_USES_REQUIRED_CHILD_DONE_COUNT",
+            "DO_NOT_AVERAGE_CHILD_PERCENTAGES",
+            "CHECKLIST_PASS",
+            "REQUIRED_CHILD_WORK_ITEM_DONE",
+            "required child work items whose status is DONE",
+        ):
+            self.assertIn(token, text)
+
+    def test_card_template_checks_only_pass_items(self) -> None:
+        text = self._read(CARD)
+        checked_lines = [
+            line.strip()
+            for line in text.splitlines()
+            if re.match(r"^\s*-\s*\[x\]", line)
+        ]
+        self.assertTrue(checked_lines, "card must show at least one evidence-backed PASS example")
+        self.assertTrue(
+            all(line.startswith("- [x] PASS —") for line in checked_lines),
+            f"all checked examples must be PASS only: {checked_lines}",
+        )
+        for forbidden in (
+            "- [x] READY —",
+            "- [x] IN_PROGRESS —",
+            "- [x] BLOCKED_UNVERIFIED —",
+            "- [x] USER_DECISION_REQUIRED —",
+            "- [x] DEFERRED —",
+            "- [x] FAIL —",
+            "- [x] NOT_APPLICABLE —",
+        ):
+            self.assertNotIn(forbidden, text)
+
+    def test_start_checklist_materializes_remaining_work_into_existing_or_new_cards(self) -> None:
+        text = self._read(START_CHECKLIST)
+        for token in (
+            "PROJECT_WORK_KANBAN_CHECKLIST_REQUIRED",
+            "PROJECT_WORK_ITEM_CHECKLIST.md",
+            "REUSE_EXISTING_WORK_ITEM_BEFORE_CREATE",
+            "NO_ISSUE_EXPLOSION",
+            "READY / IN_PROGRESS / VERIFY_REVIEW / BLOCKED_DECISION / DONE",
+            "progress_summary",
+            "work_item_refs",
+        ):
+            self.assertIn(token, text)
+
+        section = text.split("### 12.1 Receipt extension", 1)[1].split("### 12.2", 1)[0]
         match = re.search(r"```json\s*\n(.*?)\n```", section, re.S)
-        self.assertIsNotNone(match)
+        self.assertIsNotNone(match, "startup checklist must publish one executable root JSON example")
         projection = json.loads(match.group(1))
         board = projection["project_work_kanban"]
+        self.assertIn("source_main_sha", board)
         self.assertIn("work_item_refs", board)
         self.assertIn("work_items", board)
-        self.assertEqual(board["work_item_refs"], [item["work_item_id"] for item in board["work_items"]])
+        self.assertEqual(
+            board["work_item_refs"],
+            [item["work_item_id"] for item in board["work_items"]],
+        )
 
-    def test_issue_forms_use_same_checklist_contract(self):
-        for path in (".github/ISSUE_TEMPLATE/feature-task.yml", ".github/ISSUE_TEMPLATE/goal.yml"):
-            form = read(path)
-            for token in ("id: work_tracking", "PROJECT_WORK_ITEM_CHECKLIST.md", "PM_WORK_TRACKING", "Verification Matrix"):
-                self.assertIn(token, form)
-            self.assertNotIn("HTML", form)
-            self.assertNotIn("Figma", form)
+    def test_issue_forms_collect_goal_and_independent_task_contracts(self) -> None:
+        goal = self._read(GOAL_FORM)
+        task = self._read(TASK_FORM)
+        for token in (
+            "name:",
+            "description:",
+            "id: project",
+            "id: player_or_user_value",
+            "id: scope",
+            "id: acceptance_criteria",
+            "id: canon_owner",
+            "id: evidence",
+        ):
+            self.assertIn(token, goal)
+        for token in (
+            "name:",
+            "description:",
+            "id: parent_issue_ref",
+            "id: why_now",
+            "id: dependencies",
+            "id: actual_consumers",
+            "id: acceptance_criteria",
+            "id: verification",
+        ):
+            self.assertIn(token, task)
 
-    def test_intake_and_continuation_reuse_existing_pm_owner(self):
-        intake = read("skills/managing-project-intake-and-work-contract/SKILL.md")
-        sequencing = read("skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md")
-        continuous = read("skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md")
-        for content in (intake, sequencing, continuous):
-            self.assertIn("PROJECT_WORK_KANBAN_CHECKLIST", content)
-            self.assertIn("docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md", content)
-        self.assertIn("GPT_PM_CONTINUOUS_CHECKLIST_UPDATE", continuous)
-        self.assertIn("NO_BOARD_CREATION_WITHOUT_CAPABILITY_READBACK", continuous)
-        self.assertIn("PM_BOARD_UPDATE_AFTER_MATERIAL_TASK_STATE_CHANGE", continuous)
-
-    def test_bootstrap_and_index_route_to_template(self):
-        for path in ("templates/project-operations/PROJECT_OPERATING_SYSTEM_BOOTSTRAP_INDEX.md", "templates/project-operations/TEMPLATE_INDEX.md"):
-            self.assertIn("PROJECT_WORK_ITEM_CHECKLIST.md", read(path))
+    def test_policy_and_templates_reject_second_canon_and_extra_pm_products(self) -> None:
+        bundle = "\n".join(
+            self._read(path)
+            for path in (POLICY, START_CHECKLIST, CARD, GOAL_FORM, TASK_FORM)
+        )
+        for token in (
+            "NO_HTML_DASHBOARD",
+            "NO_NEW_PAID_PM_TOOL",
+            "NO_FLEET_WIDE_EMPTY_ARTIFACT_ROLLOUT",
+            "repository",
+            "derived",
+        ):
+            self.assertIn(token, bundle)
+        self.assertNotRegex(bundle, re.compile(r"(?i)projects?\s*=\s*canonical"))
 
 
 if __name__ == "__main__":
