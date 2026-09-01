@@ -85,14 +85,28 @@ class ReuseFirstPreflightEnforcementTests(unittest.TestCase):
             entry_rules["legacy_workspace_requires_current_project_authority"]
         )
 
-        switchy_action = handoff["projects"]["SWITCHY"]["next_project_work_action"]
-        ten_paces_action = handoff["projects"]["TEN_PACES"]["next_project_work_action"]
+        actions = {
+            project_id: handoff["projects"][project_id]["next_project_work_action"]
+            for project_id in (
+                "SWITCHY",
+                "TETRIS",
+                "NINJA_SURVIVAL",
+                "TEN_PACES",
+                "OMENWARD",
+            )
+        }
+        for project_id, action in actions.items():
+            with self.subTest(project_id=project_id):
+                self.assertIn("current project authority", action.lower())
 
-        self.assertIn("current project authority", switchy_action.lower())
-        self.assertNotIn("SX-DEC-", switchy_action)
-        self.assertIn("current project authority", ten_paces_action.lower())
-        self.assertNotIn("exact Notion state", ten_paces_action)
-        self.assertIn("migration/history", ten_paces_action)
+        self.assertNotIn("SX-DEC-", actions["SWITCHY"])
+        self.assertNotIn("TETRIS-CORE-024", actions["TETRIS"])
+        self.assertNotIn("TETRIS-TIME-025", actions["TETRIS"])
+        self.assertNotIn("Phase-C", actions["NINJA_SURVIVAL"])
+        self.assertNotIn("exact Notion state", actions["TEN_PACES"])
+        self.assertIn("migration/history", actions["TEN_PACES"])
+        self.assertNotIn("Issue #", actions["OMENWARD"])
+        self.assertNotIn("PR #", actions["OMENWARD"])
 
     def test_gate_does_not_force_unbounded_research_or_project_adoption(self) -> None:
         intake = read("skills/managing-project-intake-and-work-contract/SKILL.md")
