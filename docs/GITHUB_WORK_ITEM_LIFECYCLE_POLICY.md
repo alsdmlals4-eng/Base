@@ -315,3 +315,169 @@ Base 정책·Template·Test
 4. WIP 한도를 권장값으로만 유지하고 강제 자동화를 해제한다.
 5. Required Check·Workflow 참조를 원래 값으로 복구한다.
 6. 원인, 손실 여부, 재개 조건을 Issue에 기록한다.
+
+## 14. 프로젝트 작업 칸반·증거 체크리스트
+
+`PROJECT_WORK_KANBAN_CHECKLIST`
+
+이 절은 프로젝트 작업을 이미지와 같은 카드·체크리스트로 확인하며 진행하기 위한 공용 운영 계약이다. 새 정본이나 독립 PM framework가 아니라 기존 Issue·Goal·PR 생명주기, 프로젝트 시작 receipt, continuous work queue와 개발 검증 Gate를 연결한다.
+
+```text
+GOAL_OR_PLAYABLE_SLICE_PARENT_ISSUE
+INDEPENDENT_WORK_ITEM
+CHECKLIST_IS_DERIVED_OPERATIONAL_VIEW_NOT_CANON
+PROJECTS_DERIVED_VIEW_NOT_CANON
+REUSE_EXISTING_WORK_ITEM_BEFORE_CREATE
+NO_ISSUE_EXPLOSION
+PLAIN_MARKDOWN_TASK_LIST_NOT_RETIRED_TASKLIST_BLOCK
+PASS_ONLY_COUNTS_COMPLETE
+NOT_APPLICABLE_EXCLUDED_FROM_DENOMINATOR
+NO_APPLICABLE_CHECKLIST
+NO_PROJECTS_WRITE_CAPABILITY_IS_NOT_BLOCKER
+UNVERIFIED_PROJECTS_CONFIGURATION
+UNVERIFIED_SUB_ISSUE_RELATION
+NO_HTML_DASHBOARD
+NO_NEW_PAID_PM_TOOL
+NO_FLEET_WIDE_EMPTY_ARTIFACT_ROLLOUT
+IN_PROGRESS_WIP_LIMIT: 1
+VERIFY_REVIEW_WIP_LIMIT: 1
+```
+
+### 14.1 권한과 작업 계층
+
+| Surface | 책임 | 정본 여부 |
+|---|---|---:|
+| 프로젝트 repository owner | 기획·Decision·data·code·Scene·Resource·승인 asset·test·runtime evidence | 정본 |
+| Goal 또는 Playable Slice 부모 Issue | 승인 Goal의 가치·범위·제외 범위·완료 기준·하위 작업 관계 | 지속 work item |
+| 독립 작업 Issue | 별도 실행·차단·검증·재개가 필요한 작업 단위 | 지속 work item |
+| `templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md` 기반 카드 | owner 상태·진행·증거·다음 행동을 요약한 receipt | derived |
+| GitHub Projects | Issue·PR과 field를 board/table/roadmap으로 보여 주는 선택형 View | derived |
+
+충돌 시 최신 사용자 지시 → 프로젝트 `AGENTS.md`와 Active Context → 실제 repository owner·implementation·evidence → 승인 Goal Issue 순으로 다시 읽고 카드와 Projects field를 교정한다. 카드나 보드만 바꿔 프로젝트 Decision·구현·검증 상태를 확정하지 않는다.
+
+```text
+Project
+└─ Goal 또는 Playable Slice 부모 Issue
+   ├─ 독립 작업 Issue
+   │  ├─ bounded checklist item
+   │  └─ verification item
+   └─ 독립 작업 또는 사용자 결정 Issue
+```
+
+다음 중 하나가 있을 때만 `INDEPENDENT_WORK_ITEM`으로 분리한다.
+
+- 별도 owner 또는 PR이 있다.
+- 독립적으로 block·defer·resume될 수 있다.
+- 별도 Acceptance Criteria 또는 검증이 있다.
+- 다른 작업이 명시적으로 의존한다.
+- reviewer가 해당 작업만 독립적으로 판정할 수 있다.
+
+동일 파일의 작은 순차 수정, 몇 분 단위 확인, 하나의 검증 사이클 안에서 분리 가치가 없는 단계는 카드 내부 Markdown task list로 유지한다. GitHub의 과거 tasklist block 문법을 새로 도입하지 않는다.
+
+### 14.2 상태와 WIP
+
+기본 흐름:
+
+```text
+BACKLOG
+→ READY
+→ IN_PROGRESS
+→ VERIFY_REVIEW
+→ DONE
+
+BLOCKED_DECISION
+```
+
+`BLOCKED_DECISION`은 정상 완료 단계가 아니라 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, `DEFERRED`를 한눈에 보는 파생 board column이다. blocker가 해제되면 실제 상태와 원래 흐름으로 복귀한다.
+
+| Work item 상태 | 의미 | 완료 수 포함 |
+|---|---|---:|
+| `BACKLOG` | 승인 범위 후보지만 현재 실행 순서 밖 | 아니오 |
+| `READY` | owner·dependency·Acceptance·검증 준비 완료 | 아니오 |
+| `IN_PROGRESS` | 현재 수행 중인 active task | 아니오 |
+| `VERIFY_REVIEW` | 구현·준비 뒤 증거·검토·readback 대기 | 아니오 |
+| `BLOCKED_UNVERIFIED` | 필수 source·executor·permission·evidence 부재 | 아니오 |
+| `USER_DECISION_REQUIRED` | 제품 의미·범위·비용·권한·공개 배포 결정 필요 | 아니오 |
+| `DEFERRED` | 재개 조건과 함께 현재 실행에서 뒤로 이동 | 아니오 |
+| `DONE` | Acceptance와 요구 evidence·readback 충족 | 예 |
+| `NOT_APPLICABLE` | 현재 항목에 적용되지 않으며 이유 기록 | 분모 제외 |
+
+1인 개발 기본 WIP는 `IN_PROGRESS_WIP_LIMIT: 1`, `VERIFY_REVIEW_WIP_LIMIT: 1`이다. 차단 작업이 있어도 독립 `READY` 작업이 있으면 continuous work recovery ladder에 따라 계속한다. WIP 초과는 기존 Issue·PR을 자동 종료하거나 작업을 숨길 권한이 아니다.
+
+### 14.3 진행률과 evidence
+
+```text
+applicable_items = all checklist items - NOT_APPLICABLE items
+completed_items = PASS items only
+progress = completed_items / applicable_items
+```
+
+사용자 표시식은 `completed_items / applicable_items`다. `[x]`는 실제 evidence가 있는 `PASS`에만 사용한다. `READY`, `IN_PROGRESS`, `VERIFY_REVIEW`, `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, `DEFERRED`, `FAIL`은 완료가 아니다. 적용 항목이 0개이면 `0/0` 또는 `100%`가 아니라 `NO_APPLICABLE_CHECKLIST`로 표시한다.
+
+진행률은 상태 요약일 뿐 완료 판정을 대체하지 않는다. 카드 전체 `DONE`에는 최소 다음이 필요하다.
+
+1. 모든 필수 Acceptance Criteria가 evidence와 함께 PASS다.
+2. 해당 카드에 요구된 `E0_CONTRACT`부터 `E6_HUMAN_PLAYTEST` 중 필요한 수준이 PASS다.
+3. 열린 `MUST_FIX`, `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`가 없다.
+4. repository owner·actual consumer·handoff의 필요한 readback이 끝났다.
+5. 실제 변경에는 exact diff·HEAD 또는 merged main·rollback이 연결됐다.
+
+자동 테스트 PASS는 runtime·화면·UX·Human/Player·사용자 승인·release PASS가 아니다.
+
+### 14.4 Continuous work queue 매핑
+
+새 queue schema를 만들지 않고 기존 continuous work 실행 상태를 재사용한다.
+
+```text
+READY                  ↔ ready_tasks
+IN_PROGRESS            ↔ ready_tasks 중 현재 owner/lease가 잡힌 단일 작업
+BLOCKED_UNVERIFIED     ↔ deferred_tasks + blocker와 recovery route
+USER_DECISION_REQUIRED ↔ deferred_tasks + decision packet
+DEFERRED               ↔ deferred_tasks + resume condition
+DONE                   ↔ completed_tasks
+```
+
+카드와 queue가 불일치하면 실제 owner·evidence를 다시 읽고 둘을 교정한다. queue 이동만으로 repository 사실이나 Acceptance 결과를 바꾸지 않는다.
+
+### 14.5 선택형 GitHub Projects 파생 View
+
+권장 board columns:
+
+```text
+Backlog | Ready | In Progress | Verify/Review | Blocked/Decision | Done
+```
+
+권장 fields:
+
+| Field | 값·용도 |
+|---|---|
+| Status | 위 board column |
+| Project | 프로젝트 식별 |
+| Goal/Slice | 부모 Goal 또는 Slice |
+| Priority | P0 / P1 / P2 / P3 |
+| Category | Planning / System-Data / Code / UI-UX / Visual / Audio-VFX / Bug / QA / Canon-Docs / Release |
+| Evidence | Not Run / Partial / Pass / Fail / Blocked |
+| Next action | 다음 안전 작업 |
+
+Projects API·connector나 account 권한으로 실제 생성·field 설정·readback을 수행하지 못하면 `NO_PROJECTS_WRITE_CAPABILITY_IS_NOT_BLOCKER`를 적용한다. Issue와 `PROJECT_WORK_ITEM_CHECKLIST.md`를 코어로 계속 사용하고 `UNVERIFIED_PROJECTS_CONFIGURATION`을 기록한다. 부모·하위 Issue 관계를 실제로 쓰거나 다시 읽지 못하면 plain Issue reference를 유지하고 `UNVERIFIED_SUB_ISSUE_RELATION`으로 남긴다. 설정하지 않은 board·automation·relation을 완료로 주장하지 않는다.
+
+동일 의미를 repository owner, Issue 본문, Projects field에 각각 별도 사실로 중복 소유하지 않는다. 프로젝트가 이미 같은 목적의 Issue field·label·Project view를 채택했다면 기존 구조를 재사용하고 Base 명칭을 강제 복제하지 않는다.
+
+### 14.6 생성·갱신·적용 순서
+
+```text
+프로젝트 fresh-read와 start canon reconciliation
+→ 현재 Goal 또는 Playable Slice 복원
+→ 같은 Goal의 기존 Issue·PR·work item 검색
+→ remaining work를 독립 작업 기준으로 분류
+→ 기존 work item 재사용 또는 필요한 최소 Issue 생성
+→ READY / BLOCKED / DECISION queue 구성
+→ active task 하나를 IN_PROGRESS로 선택
+→ 작업·검증·readback 뒤 checklist와 evidence 갱신
+→ VERIFY_REVIEW 또는 실제 blocker 상태
+→ remaining-work recalculation과 적대적 검토
+→ 요구 작업과 blocker 0일 때 DONE
+→ 다음 READY 작업
+```
+
+모든 기존 프로젝트에 빈 Issue·카드·board를 일괄 생성하지 않는다. 새 material 작업, 재개, Goal 변경, major closeout 또는 다음 Playable Slice 진입에서 현재 프로젝트 규칙에 맞게 적용한다. 첫 pilot의 실제 사용 evidence 전에는 PM 효율·개발 속도·품질 향상을 측정 완료로 주장하지 않는다.
