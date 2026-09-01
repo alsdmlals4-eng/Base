@@ -1,16 +1,16 @@
 # Notion Visual Asset and Flow Workflow
 
-## Authority
+## V3 compatibility / V4 exception authority
 
-`NOTION_DEFAULT_PROJECT_WORKSPACE` is the default human-facing project workspace. It organizes planning, reusable assets, references, benchmarks and derived visual maps. It does not replace repository runtime truth.
+`NOTION_DEFAULT_PROJECT_WORKSPACE_RETIRED`: this document preserves V3 layout and migration guidance only. The V4 default is `REPOSITORY_PRIMARY_CANON` plus `HUMAN_GDD_PDF_DERIVED_VIEW` from `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`. `V4_NOTION_EXCEPTION_ONLY` / `NO_NEW_NOTION_WRITE_BY_DEFAULT`: Notion may organize a bounded approved exception or legacy material, but is not the default human-facing workspace and never replaces repository runtime truth.
 
-For GPT-assisted semantic placement, Home/AI surface separation, image-understanding evidence ceilings and bounded layout/readback rules, apply `NOTION_GPT_VISUAL_LAYOUT_CONTRACT.md` together with this workflow.
+For an approved V4 exception or migration scope, apply `NOTION_GPT_VISUAL_LAYOUT_CONTRACT.md` together with this workflow. Otherwise use repository-native planning/visual owners and derived PDFs.
 
 For complex gameplay/system logic represented as connected nodes, also apply `docs/operations/project-workspace/NOTION_SYSTEM_BLUEPRINT_CONTRACT.md`. A System Blueprint is a derived human/implementation view, not a visual-scripting runtime or a third source of truth.
 
 Every project-scoped record must satisfy `PROJECT_RELATION_REQUIRED`. A record without a Project relation is unassigned working material, not project canon.
 
-## Standard project page
+## Legacy/exception project page pattern
 
 Each project page keeps large visual separation between three responsibilities:
 

@@ -42,7 +42,7 @@ class PostmergeGithubNotionLongTermContractTests(unittest.TestCase):
             operating_model,
         )
 
-    def test_project_merge_closes_github_notion_review_correction_and_progress(self) -> None:
+    def test_project_merge_closes_repository_artifact_review_correction_and_progress(self) -> None:
         sources = (
             text("AGENTS.md"),
             text("docs/OPERATING_MODEL.md"),
@@ -51,7 +51,7 @@ class PostmergeGithubNotionLongTermContractTests(unittest.TestCase):
         )
         for source in sources:
             with self.subTest(source=source[:40]):
-                self.assertIn("POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP", source)
+                self.assertIn("POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP", source)
                 self.assertIn("POSTMERGE_CORRECTION_REQUIRED", source)
                 self.assertIn("PROGRESS_READBACK_REQUIRED", source)
 
@@ -68,7 +68,7 @@ class PostmergeGithubNotionLongTermContractTests(unittest.TestCase):
             "COMPLETED",
             "SUPERSEDED",
             "CONFLICT_WITH_CURRENT_CANON",
-            "POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP",
+            "POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP",
         ):
             self.assertIn(token, policy)
 
@@ -147,7 +147,7 @@ class PostmergeGithubNotionLongTermContractTests(unittest.TestCase):
             "BEST_LONG_TERM_EFFICIENT_METHOD",
             "QUALITY_OVER_RESPONSE_SPEED",
             "BENCHMARK_PRACTICE_COMPARISON",
-            "POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP",
+            "POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP",
             "PROGRESS_READBACK_REQUIRED",
         ):
             self.assertIn(token, start)

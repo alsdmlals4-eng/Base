@@ -2,33 +2,31 @@
 
 이 문서는 Base와 Base를 적용한 프로젝트에서 기획 작업을 어떤 순서로 묶고, 무엇을 먼저 비교하며, 어떤 근거로 승인하고, 새 정책·Template·Skill을 어디까지 전파 검증할지 정하는 공용 책임 원본이다.
 
-프로젝트 기본 역할은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`와 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`, 승인 결정 동기화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`, 분야 횡단 게임개발 근거 허브는 `docs/knowledge/game-development/README.md`, 최신 외부 Source 후보와 주기 학습은 `docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md`, Notion 시각·asset·flow는 `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`, legacy Sheet 이관·삭제는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`와 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`, 데모 Gate는 `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md`가 책임진다.
+프로젝트 기본 역할은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`와 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`, 승인 결정 동기화는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`, workspace 권위는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`, 분야 횡단 게임개발 근거 허브는 `docs/knowledge/game-development/README.md`, 최신 외부 Source 후보와 주기 학습은 `docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md`, legacy 시각·asset·flow 자료는 `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`의 V4 exception/migration 경계에서만 읽고, legacy Sheet 이관·삭제는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`와 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`, 데모 Gate는 `docs/knowledge/vertical-slice/INTEGRATED_DEMO_STAGE_GATES.md`가 책임진다.
 
 공통 조사 기록은 `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md`, 성공·실패·혼합 사례는 `templates/research/GAME_DEVELOPMENT_CASE_CARD.md`를 사용한다. Watchlist와 Source Queue는 조사 후보를 제공할 뿐 정본이나 학습 완료 증거가 아니며, 원출처 검토와 Evidence disposition 뒤에만 현재 결정에 사용한다.
 
 ## 1. 작업면과 정본
 
 ```text
-NOTION_HUMAN_FACING_CANON
-→ Project Home
-→ Project Control
-→ Reference / Benchmark
-→ Visual / Story Bible
-→ Core System / confirmed human tables
-→ Production / Handoff
+REPOSITORY_PRIMARY_CANON
+→ Markdown / JSON / game data / code / scene / resource / config / tests / approval and validation evidence
 
-REPOSITORY_STRUCTURED_CANON
-→ Markdown / JSON / game data / code / scene / resource / config / tests
+HUMAN_GDD_PDF_DERIVED_VIEW
+→ exact source SHA / scope / evidence ceiling / person-facing snapshot
 
 REPOSITORY_RUNTIME_TRUTH
 → actual build / runtime / evidence
+
+V4_NOTION_EXCEPTION_ONLY / NO_NEW_NOTION_WRITE_BY_DEFAULT
+→ explicit exception or legacy migration source only; never the default Project Home or active decision-sync owner
 
 Google Sheets
 → `BASE_EXCLUDED` (Base repository)
 → `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL` (legacy project sources only)
 ```
 
-Google Sheets는 새 기획·GDD·상태관리의 작업면이 아니다. 고유 미이관 정보가 실제로 남아 있는 migration scope에서만 unique / duplicate / obsolete를 분류해 Notion 또는 repository-native owner로 옮기고 destination readback 뒤 active reference를 제거한다.
+Google Sheets와 Notion은 새 기획·GDD·상태관리의 작업면이 아니다. 고유 미이관 정보가 실제로 남아 있는 migration scope에서만 unique / duplicate / obsolete를 분류해 repository-native owner로 옮기고 destination readback 뒤 active reference를 제거한다. V4 exception은 explicit user approval, owner, scope, measurable value, exit/revisit 조건이 있는 경우에만 적용한다.
 
 Figma, 독립 HTML dashboard/catalog, project-management Tool Hub, QA Evidence Studio와 프로젝트 관리용 user-facing localhost apps도 새 기획 surface가 아니다. Project Home은 `HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`에 따라 핵심 방향·Core Loop·시스템·UX/Visual·구현·검증·blocker를 본문에서 직접 설명한다.
 
@@ -48,9 +46,9 @@ latest user request
 → relevant canonical owner
 → same-goal open/recent PR read-only reconciliation (`OPEN_PR_READ_ONLY_BY_DEFAULT`)
 → actual code / data / Scene / Resource / assets / tests
-→ exact Project Notion Home and relevant filtered surfaces (`HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`)
+→ exact-SHA repository derived PDF and repository-native human view; V4 exception/legacy source only when its recorded scope applies
 → optional RETIRED_MIGRATION_ONLY Sheet only when migration is the current scope
-→ Decision ID / Commit / Notion sync / current stage comparison
+→ Decision ID / Commit / repository/PDF readback / current stage comparison
 → duplicate / omission / conflict / stale reference / missing sync verdict
 ```
 
@@ -63,7 +61,7 @@ latest user request
 - `CANON_CONFLICT`: 현행 책임 원본끼리 결정 충돌.
 - `IMPLEMENTATION_CONFLICT`: 정본과 실제 구현 불일치.
 - `STALE_REFERENCE`: 구형 경로·ID·policy·retired surface 참조.
-- `MISSING_SYNC`: repository structured owner와 필요한 Notion human-facing surface의 동기화 누락.
+- `MISSING_SYNC`: repository structured owner와 required exact-SHA derived view의 동기화 누락, 또는 실제 V4 exception destination의 agreed scope readback 누락.
 - `MIGRATION_PENDING`: legacy Sheet 등 폐기 surface의 고유 material 이관이 아직 완료되지 않음.
 - `NO_CONFLICT`: 현재 범위 진행 가능.
 - `BLOCKED_UNVERIFIED`: 필요한 권위·접근·증거 부족.
@@ -85,7 +83,7 @@ latest user request
 
 ### 4.1 BASELINE_RECOVERY
 
-GitHub main, Decision, canonical owner, actual implementation, PR, exact Project Notion 상태를 복원한다. migration scope일 때만 legacy Sheet의 고유 material을 추가로 읽는다. 이미 확인 가능한 사실은 사용자에게 되묻지 않는다.
+GitHub main, Decision, canonical owner, actual implementation, PR, repository의 exact-SHA 사람용 PDF/Markdown projection 상태를 복원한다. 명시적으로 승인·범위가 정해진 V4 Notion 예외 또는 migration scope일 때만 해당 surface와 legacy Sheet의 고유 material을 추가로 읽는다. 이미 확인 가능한 사실은 사용자에게 되묻지 않는다.
 
 ### 4.2 DUPLICATE_OMISSION_CONFLICT_AUDIT
 
@@ -134,7 +132,7 @@ Approval Bundle:
   approved_decisions: []
   dependencies: []
   affected_repository_owners: []
-  affected_notion_surfaces: []
+  affected_human_projection_or_v4_notion_exception: []
   migration_sources: []
   validation_gate:
 ```
@@ -143,7 +141,7 @@ Approval Bundle:
 
 ### 4.5 CANONICAL_UPDATE
 
-승인 Decision을 `CURRENT_CONFIRMED_DECISIONS.md`, 분야 repository owner, 필요한 Active Context·Issue·Plan에 반영한다. 사람이 이해·비교·수정해야 하는 변화는 exact Project Notion의 해당 filtered surface에 반영하고 readback한다.
+승인 Decision을 `CURRENT_CONFIRMED_DECISIONS.md`, 분야 repository owner, 필요한 Active Context·Issue·Plan과 exact-SHA 사람이 읽는 PDF/Markdown projection에 반영하고 readback한다. 명시적으로 승인·범위가 정해진 V4 Notion 예외만 해당 filtered surface에도 반영한다.
 
 legacy Sheet는 migration input일 뿐 승인 결과의 정상 sync target이 아니다.
 
@@ -158,7 +156,7 @@ legacy Sheet는 migration input일 뿐 승인 결과의 정상 sync target이 �
 - `docs/knowledge/game-development/README.md`와 관련 분야 Skill/Reference/data contract.
 - Evidence Pack, Case Card, benchmark source와 `PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md`.
 - reference freshness, regression, publication/generation, governance.
-- exact Project Notion의 해당 human-facing surface.
+- exact-SHA repository human projection 또는 명시된 V4 Notion exception surface.
 - tests / runtime evidence / postmerge readback.
 
 retired Figma/Tool Hub/QA/Sheet/HTML/local app는 active consumer 목록에 넣지 않는다. 이관 작업에서는 migration/history source로만 기록한다.
@@ -184,7 +182,7 @@ retired Figma/Tool Hub/QA/Sheet/HTML/local app는 active consumer 목록에 넣�
 ```text
 APPROVED
 CANON_UPDATED
-NOTION_UPDATED | NOTION_NOT_APPLICABLE
+HUMAN_PROJECTION_UPDATED | V4_NOTION_EXCEPTION_UPDATED | HUMAN_PROJECTION_NOT_APPLICABLE
 CONSUMERS_UPDATED
 IMPLEMENTED | IMPLEMENTATION_PENDING
 VALIDATED | BLOCKED_UNVERIFIED
@@ -227,7 +225,7 @@ PROJECT_VISUALIZATION_NEED_MAP
 → DEMO_VALIDATION
 ```
 
-이미지·UI·UX가 테스트 판단을 바꿀 수 있으면 대표 화면 상태를 GPT에서 기획·검수하고 exact Project Notion에 배치·readback·승인한 뒤 PoC/demo 입력으로 사용한다. 생성 성공/업로드 성공만으로 승인이나 runtime 적용을 주장하지 않는다.
+이미지·UI·UX가 테스트 판단을 바꿀 수 있으면 대표 화면 상태를 GPT에서 기획·검수하고 repository의 exact-SHA visual manifest와 사람용 PDF/Markdown projection에 배치·readback·승인한 뒤 PoC/demo 입력으로 사용한다. 명시적으로 승인·범위가 정해진 V4 Notion 예외만 해당 Notion surface에 배치한다. 생성 성공/업로드 성공만으로 승인이나 runtime 적용을 주장하지 않는다.
 
 별도 `CORE_POC`를 모든 프로젝트의 필수 독립 단계로 만들지 않는다. 가장 큰 기술 불확실성만 격리해야 하면 `TECHNICAL_SPIKE`를 사용한다. 시스템-only Spike는 알고리즘·데이터·호환성 질문을 푸는 내부 증거이고, 플레이어 경험 검증은 **shipping-intent UI/UX·art/image·audio·VFX·system/content가 연결된 release-near Vertical Slice**에서 수행한다.
 
@@ -254,17 +252,17 @@ material approval은 다음 상태까지 같은 승인 단위로 닫는다.
 user approval
 → adversarial review (minimum five full loops for L1+ long-horizon scope, then clean exit)
 → repository structured update
-→ Notion human-facing update/readback when relevant
+→ exact-SHA human PDF/Markdown projection update/readback; V4 Notion exception update/readback only when expressly scoped
 → branch / commit / PR
 → exact-head required checks
 → merge
 → postmerge GitHub main readback
-→ Notion destination/status readback
+→ repository projection destination/status readback; V4 Notion exception readback only when applicable
 → incident/solution/lesson classification
 → learning-oriented completion report
 ```
 
-이미지 파일도 implementation-bound approval이면 provenance, repository asset path, PR/merge, runtime consumption evidence를 구분해 확인한다. planning-only visual은 exact Notion readback/approval을 닫되 runtime PASS로 승격하지 않는다.
+이미지 파일도 implementation-bound approval이면 provenance, repository asset path, PR/merge, runtime consumption evidence를 구분해 확인한다. planning-only visual은 exact-SHA repository visual manifest/human projection readback을 닫되 runtime PASS로 승격하지 않는다. V4 Notion exception은 실제 적용됐을 때만 추가 readback한다.
 
 ## 9. 재검토 조건
 

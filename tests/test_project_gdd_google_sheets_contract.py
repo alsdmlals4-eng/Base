@@ -13,16 +13,19 @@ def read(path: str) -> str:
 
 
 class ProjectGDDGoogleSheetsContractTests(unittest.TestCase):
-    def test_policy_is_compatibility_only_and_routes_to_notion(self) -> None:
+    def test_policy_is_compatibility_only_and_routes_to_repository_first_v4(self) -> None:
         policy = read("docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md")
         for term in (
             "COMPATIBILITY_ONLY",
-            "NOTION_DEFAULT_PROJECT_WORKSPACE",
+            "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
+            "REPOSITORY_PRIMARY_CANON",
+            "V4_NOTION_EXCEPTION_ONLY",
+            "NO_NEW_NOTION_WRITE_BY_DEFAULT",
             "PROPOSED_SHEET_CHANGE",
             "MIGRATION_PENDING",
             "MIGRATED_READBACK_VERIFIED",
             "PROJECT_RELATION_REQUIRED",
-            "ASSET_KNOWLEDGE_MASTER",
+            "repository asset manifest/catalog",
         ):
             self.assertIn(term, policy)
         self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", policy)
@@ -44,10 +47,12 @@ class ProjectGDDGoogleSheetsContractTests(unittest.TestCase):
             self.assertIn(term, template)
         self.assertNotIn("새 Sheet에 설치하는 권장 핵심 tab", template)
 
-    def test_visual_policy_uses_notion_project_boundary(self) -> None:
+    def test_visual_policy_uses_repository_first_project_boundary(self) -> None:
         visual = read("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
         for term in (
-            "NOTION_DEFAULT_PROJECT_WORKSPACE",
+            "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
+            "REPOSITORY_PRIMARY_CANON",
+            "V4_NOTION_EXCEPTION_ONLY",
             "PROJECT_RELATION_REQUIRED",
             "ASSET_KNOWLEDGE_MASTER",
             "VISUAL_MAP_DERIVED",

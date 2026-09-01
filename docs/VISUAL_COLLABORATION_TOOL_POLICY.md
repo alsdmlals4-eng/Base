@@ -1,27 +1,29 @@
 # Visual Collaboration Tool Policy
 
-## Current authority
+## Current V4 authority
 
-The default project operating surface is `NOTION_DEFAULT_PROJECT_WORKSPACE`.
+The default project operating surface is `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE` from `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`.
 
-Authority is split by domain instead of forcing one tool to own every representation.
+`REPOSITORY_PRIMARY_CANON` owns current planning, structured data, approved assets, code and evidence; `HUMAN_GDD_PDF_DERIVED_VIEW` is the exact-SHA person-facing snapshot. `V4_NOTION_EXCEPTION_ONLY` / `NO_NEW_NOTION_WRITE_BY_DEFAULT`: Notion can be a bounded exception or read-only migration source, never the default Project Home, visual owner or active decision-sync route.
 
 ```text
-Notion project workspace
-→ NOTION_HUMAN_FACING_CANON
-→ project overview / visual direction / visual asset catalog
-→ budget tables / tier tables / human-editable Flow Map / Storyboard
-→ the primary surface a person reads, compares, and edits
-
 repository-native Markdown / JSON / game data / code / scenes / resources / tests
-→ REPOSITORY_STRUCTURED_CANON
+→ REPOSITORY_PRIMARY_CANON
 → REPOSITORY_RUNTIME_TRUTH for implemented/runtime facts
+
+exact-source-SHA PDF and repository-native visual/flow artifacts
+→ HUMAN_GDD_PDF_DERIVED_VIEW
+→ person-facing review without a second editable canon
+
+approved Notion exception or legacy source only
+→ explicit owner / scope / measurable value / exit-or-revisit condition
+→ non-default readback or bounded write according to the V4 exception contract
 
 legacy Google Sheets
 → COMPATIBILITY_ONLY when an existing migration source still contains unique material
 ```
 
-`DOMAIN_SPLIT_CANON` means neither side is a disposable copy. Notion has priority for the human-facing visual/table/overview domains above; the repository has priority for structured specifications, data and implementation/runtime domains. When a Notion edit implies a Markdown/data/code/scene/resource/test change, synchronize that structured change to the repository before implementation or runtime claims (`SYNC_BEFORE_IMPLEMENTATION`).
+The historical `DOMAIN_SPLIT_CANON` / `NOTION_HUMAN_FACING_CANON` terms are V3 compatibility markers, not active default routes. When an approved V4 exception edit implies a Markdown/data/code/scene/resource/test change, synchronize that structured change to the repository before implementation or runtime claims (`SYNC_BEFORE_IMPLEMENTATION`).
 
 No visual collaboration tool becomes a second runtime or implementation canon.
 
@@ -31,7 +33,7 @@ The same project-boundary rules apply whether the immediate work context is `GDD
 
 ## Project boundary
 
-`PROJECT_RELATION_REQUIRED` is mandatory for project-scoped Work, Asset, Component, Screen, Reference and Benchmark records.
+`PROJECT_RELATION_REQUIRED` is mandatory for project-scoped Work, Asset, Component, Screen, Reference and Benchmark records, regardless of whether the artifact is repository-native or an approved exception.
 
 One workspace may contain many projects, but a normal project page exposes only Project-filtered views. Unfiltered Master views belong under the system-master area and are not the default human work surface.
 
@@ -105,7 +107,7 @@ External references are evidence and inspiration, not project canon. Record why 
 
 ## Confirmed planning tables
 
-Budget, tier, roster, economy and progression tables that are primarily for human comparison belong in Notion as `NOTION_HUMAN_FACING_CANON`.
+Budget, tier, roster, economy and progression tables that are primarily for human comparison are repository-owned Markdown/structured sources with an exact-SHA derived PDF or repository-native view. An approved V4 Notion exception may provide a bounded collaboration view but cannot become the canonical table.
 
 Each confirmed table must preserve enough traceability to cross-check the repository:
 
@@ -115,7 +117,7 @@ Project
 → Decision ID or canonical repository path
 → confirmed / provisional / deferred / rejected state
 → repository main SHA or equivalent freshness locator when practical
-→ last Notion sync date
+→ derived-view generation or approved exception destination readback date
 ```
 
 Do not turn a human table into an undocumented second data model. Machine-consumed JSON/game data stays in the repository. Conversely, do not force the user to inspect raw Markdown/JSON when a visual table is the clearer primary human representation.
@@ -144,11 +146,11 @@ Reusable visual harvest and reuse promotion happen in `ASSET_KNOWLEDGE_MASTER`, 
 
 ## Visual Map
 
-`VISUAL_MAP_DERIVED` means the map may be generated from current Screen/relationship records and approved previews; it does **not** mean the human must treat the map as disposable. Once approved in Notion, that Notion view is the primary human-facing representation for visual planning and review.
+`VISUAL_MAP_DERIVED` means the map may be generated from current Screen/relationship records and approved previews; it does **not** mean the human must treat the map as disposable. Once approved, the repository source and its exact-SHA derived view are the human-facing representation for visual planning and review; an approved V4 exception may mirror only its recorded scope.
 
 Game projects may visualize screen IDs, thumbnails, entry points, primary/secondary/conditional routes and key systems. Narrative projects may visualize canon, character, faction, clue, scene and continuity relationships.
 
-If a visual edit changes structured semantics, reconcile the semantic records/repository before implementation. If repository runtime facts change, refresh the Notion map so the person-facing view does not drift.
+If a visual edit changes structured semantics, reconcile the semantic records/repository before implementation. If repository runtime facts change, refresh the repository-derived map/PDF so the person-facing view does not drift; an approved V4 exception receives a bounded readback only when its scope requires it.
 
 ## Human and AI views
 
@@ -168,7 +170,7 @@ planning + UX/UI/audio/VFX flow
 → PROJECT_VISUALIZATION_NEED_MAP
 → visual/audio/effect requirements
 → generate/select/reuse candidate assets
-→ Notion Project placement + readback
+→ repository project path + exact-SHA derived-view readback; V4 exception placement only when approved
 → approval/rejection
 → repository implementation package
 → shipping-intent UI + image/art + audio + VFX + system/content integration
@@ -180,23 +182,23 @@ planning + UX/UI/audio/VFX flow
 
 ## Repository handoff and runtime evidence
 
-Notion approval means the project accepted the human-facing planning, table, visual direction or asset candidate for its stated use. It does not prove runtime implementation.
+An approved V4 Notion exception means the project accepted that bounded collaboration representation for its stated use. It does not prove runtime implementation or replace repository approval.
 
 ```text
-Notion approved human-facing record
+repository-approved human-facing record
 → synchronize any required Markdown / JSON / game data contract
 → repository implementation task
 → code / asset / scene / resource / config
 → build or runtime
 → REPOSITORY_NATIVE_EVIDENCE_CAPTURE
-→ Notion readback/status refresh
+→ repository/PDF readback/status refresh; V4 exception destination only when applicable
 ```
 
-`REPOSITORY_NATIVE_EVIDENCE_CAPTURE`는 별도 QA GUI/app을 요구하지 않는다. 현재 프로젝트가 이미 쓰는 tests, GUT, Godot/Hera runtime, logs, screenshots/video, CI artifacts를 exact project/build identity에 묶고 `PASS / FAIL / BLOCKED / NOT_RUN`과 evidence ceiling을 기록한다. Notion preview는 사람이 보는 연결면이며 runtime truth를 대체하지 않는다.
+`REPOSITORY_NATIVE_EVIDENCE_CAPTURE`는 별도 QA GUI/app을 요구하지 않는다. 현재 프로젝트가 이미 쓰는 tests, GUT, Godot/Hera runtime, logs, screenshots/video, CI artifacts를 exact project/build identity에 묶고 `PASS / FAIL / BLOCKED / NOT_RUN`과 evidence ceiling을 기록한다. V4 exception preview는 사람이 보는 보조 연결면이며 runtime truth를 대체하지 않는다.
 
 ## Legacy and deprecated visual execution paths
 
-Dedicated Figma routing, Figma Bridge, localhost Expression/Sprite Studios, visual-delivery/project-management Tool Hub, QA Evidence Studio, and external HTML workspace/catalog/dashboard are not active authorities or required project surfaces. 재사용 가능한 아이디어—project identity, provenance, bounded edits, approval, versioning, reuse classification, readback, evidence ceiling, explicit handoff—만 current Notion/repository/PowerShell/Loop owner에 흡수한다.
+Dedicated Figma routing, Figma Bridge, localhost Expression/Sprite Studios, visual-delivery/project-management Tool Hub, QA Evidence Studio, and external HTML workspace/catalog/dashboard are not active authorities or required project surfaces. 재사용 가능한 아이디어—project identity, provenance, bounded edits, approval, versioning, reuse classification, readback, evidence ceiling, explicit handoff—만 current repository/PowerShell/Loop owner와 적용 가능한 V4 exception에 흡수한다.
 
 Do not restore a deprecated execution surface merely because historical docs, Git history or archived evidence mention it. Reintroduction requires a new Existing Solution First comparison, lifecycle-cost justification and user approval.
 

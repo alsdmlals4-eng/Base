@@ -173,7 +173,7 @@ class PixelArtStyleSystemTests(unittest.TestCase):
     def test_notion_reference_sync_requires_project_relation_and_readback(self) -> None:
         preferred = read(PREFERRED_LIBRARY)
         for term in (
-            "NOTION_DEFAULT_PROJECT_WORKSPACE",
+            "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
             "PROJECT_RELATION_REQUIRED",
             "Record Type: REFERENCE",
             "NOTION_READBACK_REQUIRED",

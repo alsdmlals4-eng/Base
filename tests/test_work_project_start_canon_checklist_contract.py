@@ -10,6 +10,11 @@ CHECKLIST = ROOT / "templates/project-operations/WORK_PROJECT_START_CANON_CHECKL
 V49 = ROOT / "templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md"
 APPENDIX = ROOT / "templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9_COMPATIBILITY_APPENDIX.md"
 PROFILE = ROOT / "templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md"
+AGENTS = ROOT / "AGENTS.md"
+INTAKE_SKILL = ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md"
+DECOMPOSITION_OWNER = ROOT / "skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md"
+EXECUTION_PLAN = ROOT / "templates/planning/EXECUTION_SEQUENCE_PLAN.md"
+RECEIPT_VALIDATOR = ROOT / "tools/validate_work_contract_receipt.py"
 
 
 class WorkProjectStartCanonChecklistContractTests(unittest.TestCase):
@@ -82,6 +87,66 @@ class WorkProjectStartCanonChecklistContractTests(unittest.TestCase):
             "BLOCKED_UNVERIFIED",
         ):
             self.assertIn(token, text)
+
+    def test_material_work_requires_benchmark_and_reverse_engineering_preflight_before_execution(self) -> None:
+        bundle = "\n".join(
+            self._read(path)
+            for path in (AGENTS, INTAKE_SKILL, CHECKLIST, DECOMPOSITION_OWNER)
+        )
+        for token in (
+            "MANDATORY_BENCHMARK_REVERSE_ENGINEERING_PREFLIGHT",
+            "BENCHMARK_PREFLIGHT_BEFORE_WORK_REQUIRED",
+            "benchmark_preflight_state:",
+            "PASS | REUSED_EVIDENCE | NOT_APPLICABLE | BLOCKED_UNVERIFIED",
+            "source_and_evidence:",
+            "observed_pattern:",
+            "project_fit_and_difference:",
+            "ADOPT | ADAPT | REJECT | NOT_APPLICABLE",
+        ):
+            self.assertIn(token, bundle)
+
+    def test_material_work_hygiene_classifies_legacy_context_and_configuration_before_safe_cleanup(self) -> None:
+        bundle = "\n".join(
+            self._read(path)
+            for path in (AGENTS, INTAKE_SKILL, CHECKLIST, DECOMPOSITION_OWNER)
+        )
+        for token in (
+            "LEGACY_CONTEXT_CONFIGURATION_HYGIENE_REQUIRED",
+            "ACTIVE_OWNER | COMPATIBILITY | ARCHIVE | OBSOLETE_CANDIDATE | UNKNOWN_UNVERIFIED",
+            "NO_DELETION_BY_AGE_OR_NAME",
+            "REFERENCES_AND_CONSUMERS_ZERO_BEFORE_REMOVAL",
+            "GIT_RECOVERABLE_REMOVAL_AND_READBACK",
+            "NO_BROAD_SWEEP_WITHOUT_SCOPE",
+        ):
+            self.assertIn(token, bundle)
+
+    def test_receipt_is_machine_validated_in_the_base_contract_and_project_templates(self) -> None:
+        intake = self._read(INTAKE_SKILL)
+        checklist = self._read(CHECKLIST)
+        decomposition = self._read(DECOMPOSITION_OWNER)
+        plan = self._read(EXECUTION_PLAN)
+        validator = self._read(RECEIPT_VALIDATOR)
+
+        for source in (intake, checklist):
+            for token in (
+                "benchmark_preflight_receipt",
+                "context_configuration_hygiene",
+                "source_and_evidence",
+                "observed_pattern",
+                "project_fit_and_difference",
+                "owner_or_provenance",
+                "references_and_consumers",
+            ):
+                self.assertIn(token, source)
+        for source in (intake, checklist, decomposition, plan):
+            self.assertIn("validate_work_contract_receipt.py", source)
+        for token in (
+            "NOT_APPLICABLE is restricted to L0",
+            "blocked_sources is required for BLOCKED_UNVERIFIED",
+            "references_and_consumers_zero_before_removal is required",
+            "git_recoverable_removal_and_readback is required",
+        ):
+            self.assertIn(token, validator)
 
     def test_canon_correction_precedes_new_planning_production_or_implementation(self) -> None:
         text = self._read(CHECKLIST)

@@ -1,6 +1,6 @@
 # GRILL_ME_DECISION_RECORD
 
-> Grill Me 질문 하나의 근거·사용자 답변·승인 결정·반영 상태를 보존한다. 사람용 결정 기록은 `NOTION_HUMAN_FACING_CANON`, 구조화 추적과 Commit은 `REPOSITORY_STRUCTURED_CANON`을 따른다. Google Sheets는 `COMPATIBILITY_ONLY` legacy migration source다.
+> Grill Me 질문 하나의 근거·사용자 답변·승인 결정·반영 상태를 보존한다. 결정 기록·Flow/Wireframe·구조화 추적과 Commit은 V4 `REPOSITORY_PRIMARY_CANON`을 따른다. 사람용 PDF는 exact-SHA 파생본이고, Notion·Google Sheets는 `COMPATIBILITY_ONLY` legacy migration 또는 명시된 V4 exception에서만 사용한다.
 
 ```yaml
 질문 ID: GRILL-ME-YYYY-NNN
@@ -62,11 +62,12 @@ legacy_sheet_role: COMPATIBILITY_ONLY
 ## 6. 반영 위치
 
 ```yaml
-repository_structured_canon: REPOSITORY_STRUCTURED_CANON
+repository_primary_canon: REPOSITORY_PRIMARY_CANON
 branch:
 반영 Commit:
 merge_commit:
-notion_human_facing_canon: NOTION_HUMAN_FACING_CANON
+human_gdd_pdf_derived_view:
+notion_exception_or_legacy_source:
 notion_record_url:
 notion_project_relation:
 notion_readback: PASS | NOT_APPLICABLE | BLOCKED_UNVERIFIED
@@ -74,7 +75,7 @@ google_sheet_compatibility_source:
 legacy_migration_status: NOT_PRESENT | UNMIGRATED_UNIQUE_MATERIAL | MIGRATED_READBACK_VERIFIED | ARCHIVED_APPROVED
 ```
 
-`Project relation`이 적용되는 프로젝트 사람용 결정이면 정확한 Notion record를 갱신한 뒤 **destination readback**한다. Base 자체처럼 프로젝트 Notion destination이 적용되지 않으면 `NOT_APPLICABLE`로 기록하고 목적지를 만들지 않는다.
+V4 exception/migration scope에 실제 Notion 목적지가 있으면 정확한 `Project relation` record를 갱신한 뒤 **destination readback**한다. 그런 scope가 없으면 `NOT_APPLICABLE`로 기록하고 목적지를 만들지 않는다.
 
 ## 7. 상태 전이
 
@@ -83,11 +84,10 @@ DRAFT
 → USER_DECISION_REQUIRED
 → 사용자 승인
 → GitHub 추적 + Branch 정본 반영
-→ 적용 가능한 Notion 사람용 record 반영
-→ destination readback
+→ 필요하면 V4 exception/migration record 반영 및 destination readback
 → APPROVED_PENDING_MERGE
 → exact-head 검증·리뷰·merge
-→ main readback + 적용 가능한 Notion readback
+→ main readback + 필요했던 V4 exception/migration readback
 → SYNCED_TO_MAIN
 ```
 
@@ -100,19 +100,19 @@ legacy Google Sheets는 `COMPATIBILITY_ONLY`다. 아직 이관되지 않은 **UN
 - 프로젝트 방향을 실제로 바꾸는가:
 - 사용자 답을 특정 선택지로 유도했는가:
 - 승인 후 다른 consumer가 빠졌는가:
-- Notion 사람용 기록과 Repository 구조화 정본이 의미상 충돌하는가:
+- repository 정본과 파생 PDF 또는 실제 exception record가 의미상 충돌하는가:
 - legacy Sheet를 active canon처럼 다시 취급했는가:
 
 ## 9. 승인 후 체크
 
 - [ ] 동일 Decision ID를 Branch 정본에 기록했다.
 - [ ] 반영 Commit을 기록했다.
-- [ ] 적용 가능한 Project Notion record를 갱신했다.
-- [ ] destination readback을 완료했거나 `NOT_APPLICABLE` 근거를 남겼다.
+- [ ] 실제 필요했던 V4 exception/migration record만 갱신했다.
+- [ ] 필요한 destination readback을 완료했거나 `NOT_APPLICABLE` 근거를 남겼다.
 - [ ] PR exact-head required checks를 확인했다.
 - [ ] unresolved thread 0을 확인했다.
 - [ ] 병합 후 exact merge SHA와 main을 재조회했다.
-- [ ] 적용 가능한 Notion destination을 다시 재조회했다.
+- [ ] 필요한 V4 exception/migration destination만 다시 재조회했다.
 - [ ] Google Sheets가 `COMPATIBILITY_ONLY`를 넘어 active workspace로 승격되지 않았음을 확인했다.
 
 ## 10. 완료 조건
@@ -120,5 +120,5 @@ legacy Google Sheets는 `COMPATIBILITY_ONLY`다. 아직 이관되지 않은 **UN
 - 질문 ID, GPT 권장안, 사용자 답변, 최종 결정, 반영 Commit을 복원할 수 있다.
 - 비타협 조건·변경 가능한 요소·제거·보류 요소가 분리된다.
 - 승인 Decision이 대화 메모리에만 남지 않는다.
-- `NOTION_HUMAN_FACING_CANON`과 `REPOSITORY_STRUCTURED_CANON`을 같은 권위로 오해하지 않는다.
+- V4 `REPOSITORY_PRIMARY_CANON`을 Notion/정적 파생본과 같은 권위로 오해하지 않는다.
 - active Decision sync는 legacy Sheet의 존재나 쓰기 권한에 의존하지 않는다.

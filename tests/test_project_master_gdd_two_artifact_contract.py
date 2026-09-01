@@ -352,13 +352,14 @@ class ProjectMasterGddTwoArtifactContractTests(unittest.TestCase):
         ):
             self.assertIn(required, text)
 
-    def test_selected_profile_skips_notion_blueprint_output_and_readback(self):
+    def test_selected_profile_skips_separate_blueprint_output_and_readback(self):
         text = NOTION_BLUEPRINT_CONTRACT.read_text(encoding="utf-8")
         for required in (
             "TWO_ARTIFACT_PROFILE_NO_NOTION_BLUEPRINT_OUTPUT_READBACK",
             "DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD",
             "NO_SEPARATE_BLUEPRINT_ARTIFACT",
-            "Notion Blueprint output/readback",
+            "human-projection lifecycle",
+            "Notion에 write back하지 않는다",
         ):
             self.assertIn(required, text)
 

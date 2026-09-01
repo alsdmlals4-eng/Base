@@ -216,15 +216,15 @@
     {
       "case_id": "SBE-031",
       "case_type": "boundary",
-      "prompt": "프로젝트의 핵심 방향, Core Loop, 시스템 관계, UX·Visual, 구현·검증 상태, 위험과 다음 작업을 저장소 정본 경로에 연결한 자체 완결형 Notion Project Home과 필요한 Visual Map으로 구성하고, 작성 뒤 정확한 destination을 다시 읽어 검증해줘.",
+      "prompt": "프로젝트의 핵심 방향, Core Loop, 시스템 관계, UX·Visual, 구현·검증 상태, 위험과 다음 작업을 저장소 정본 경로에 연결한 자체 완결형 repository human projection과 필요한 Visual Map으로 구성하고, 작성 뒤 exact-SHA destination을 다시 읽어 검증해줘. Notion은 명시된 V4 exception일 때만 사용해.",
       "expected_work_mode": "BUILD",
       "expected_primary_skill": "building-project-visual-dashboards",
       "expected_supporting_skills": ["reviewing-and-validating-project-changes"],
       "expected_skill_modes": ["frame-project-home", "map-canonical-sources", "build-project-home", "bind-evidence-status", "verify-destination-readback"],
       "forbidden_skills": ["auditing-canonical-reference-freshness", "maintaining-long-running-task-continuity", "managing-game-project-operating-system", "managing-design-documents"],
-      "required_evidence": ["정본 경로", "Notion Project Home", "Visual Map", "구현·검증 상태", "위험", "destination readback"],
+      "required_evidence": ["정본 경로", "repository human projection", "Visual Map", "구현·검증 상태", "위험", "exact-SHA destination readback"],
       "expected_user_decision_state": "NOT_REQUIRED",
-      "rationale": "Repository/runtime 정본을 대체하지 않는 self-contained Notion Project Home과 Visual Map 제작이며 standalone HTML이나 운영체계 설치가 주 책임이 아니다."
+      "rationale": "Repository/runtime 정본을 대체하지 않는 self-contained repository human projection과 Visual Map 제작이며 standalone HTML이나 운영체계 설치가 주 책임이 아니다. V4 Notion exception은 명시된 경우에만 추가한다."
     },
     {
       "case_id": "SBE-032",

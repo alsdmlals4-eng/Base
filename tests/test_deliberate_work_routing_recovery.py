@@ -136,7 +136,7 @@ class DeliberateWorkRoutingRecoveryTests(unittest.TestCase):
             cases["SBE-028"]["expected_skill_modes"],
         )
         self.assertNotIn("HTML", cases["SBE-031"]["prompt"])
-        self.assertIn("Notion Project Home", cases["SBE-031"]["prompt"])
+        self.assertIn("repository human projection", cases["SBE-031"]["prompt"])
         self.assertEqual(
             [
                 "frame-project-home",

@@ -8,8 +8,9 @@ project:
   status: DRAFT | REVIEW | APPROVED | BLOCKED_UNVERIFIED
   base_commit:
   project_commit:
-  project_workspace: NOTION_DEFAULT_PROJECT_WORKSPACE
-  notion_project_page:
+  project_workspace: DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE
+  repository_human_projection:
+  v4_notion_exception_scope: NONE | EXPLICITLY_APPROVED
   repository_structured_canon:
   legacy_sheet_migration_evidence: NONE | READ_ONLY_REFERENCE
 ```
@@ -21,7 +22,7 @@ latest_user_instruction:
 current_confirmed_decisions:
 project_agents_and_start_here:
 current_gdd_owner:
-project_notion_and_repository_state:
+repository_human_projection_and_v4_notion_exception_state:
 actual_code_data_scene_resource_ui_paths:
 open_and_recent_merged_prs:
 legacy_sheet_migration_evidence:
@@ -29,7 +30,7 @@ existing_tutorial_help_and_first_session:
 blocked_or_unverified:
 ```
 
-- [ ] 프로젝트 Notion/GitHub 정본과 실제 코드·데이터·Scene·Resource·UI·입력·테스트를 확인했다.
+- [ ] 프로젝트 repository 정본·exact-SHA human projection·실제 코드·데이터·Scene·Resource·UI·입력·테스트를 확인했다. 명시된 V4 Notion exception 또는 legacy migration source만 추가로 대조했다.
 - [ ] 폐기된 Google Sheets는 프로젝트가 명시적으로 보존한 migration/read-only evidence가 있을 때만 비교했고 신규 입력·활성 정본으로 사용하지 않았다.
 - [ ] 확인하지 못한 사실을 `BLOCKED_UNVERIFIED`로 분리했다.
 

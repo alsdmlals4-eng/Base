@@ -318,7 +318,7 @@ PLAYER_EVIDENCE_REQUIRED_FOR_FUN_PASS
 
 - 게임 규칙·시스템·콘텐츠 → 프로젝트 기획 정본과 해당 설계 Skill.
 - UI/UX → 현재 UI/UX 설계 owner와 실제 화면/입력 검증.
-- Asset/Image material → Project Notion Asset/Visual workflow + repository implementation owner.
+- Asset/Image material → repository asset manifest/catalog + exact-SHA human projection + repository implementation owner. A V4 Notion exception is an explicitly scoped extra destination, not the default workflow.
 - Tool/addon → Existing Solution First, 도구 계약, Godot addon/plugin 평가 owner.
 - Workflow → 기존 Base 운영 정책·reference·Mode에 먼저 흡수.
 - Skill/Eval → `AI_SKILL_ADOPTION_GUIDE.md`의 재사용·흡수·평가 절차.

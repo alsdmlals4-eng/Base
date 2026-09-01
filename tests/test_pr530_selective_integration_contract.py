@@ -39,11 +39,12 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
             self.assertIn(term, text)
         self.assertNotIn("QA_EVIDENCE_STUDIO_SPECIALIST_VALIDATION_RETAINED", text)
 
-    def test_planning_policy_uses_notion_and_repository_not_active_sheets(self) -> None:
+    def test_planning_policy_uses_repository_first_v4_and_not_active_sheets(self) -> None:
         text = PLANNING.read_text(encoding="utf-8")
         for term in (
-            "NOTION_HUMAN_FACING_CANON",
-            "REPOSITORY_STRUCTURED_CANON",
+            "REPOSITORY_PRIMARY_CANON",
+            "HUMAN_GDD_PDF_DERIVED_VIEW",
+            "V4_NOTION_EXCEPTION_ONLY",
             "REPOSITORY_RUNTIME_TRUTH",
             "GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL",
             "HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN",
@@ -93,11 +94,12 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
         self.assertIn("godot-product-implementation-handoff", handoff["trigger_tags"])
         self.assertTrue(any("Base 정책" in text for text in handoff["do_not_use_when"]))
 
-    def test_dashboard_skill_is_notion_home_visual_map_owner_not_html_builder(self) -> None:
+    def test_dashboard_skill_is_repository_projection_visual_map_owner_not_html_builder(self) -> None:
         text = DASHBOARD.read_text(encoding="utf-8")
         for token in (
-            "NOTION_PROJECT_HOME_AND_VISUAL_MAP",
-            "Notion Project Home",
+            "REPOSITORY_HUMAN_PROJECTION_AND_VISUAL_MAP",
+            "repository human projection",
+            "V4_NOTION_EXCEPTION_ONLY",
             "HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN",
             "dashboard-information-architecture.md",
             "## Output contract",
@@ -136,7 +138,7 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
         self.assertIn("tests/test_skill_routing_governance.py", companions)
         self.assertNotIn("tests/test_p0[1-9]_*.py", companions)
         routing_test = ROUTING_TEST.read_text(encoding="utf-8")
-        self.assertIn("test_base_visual_dashboard_routes_to_notion_home_not_html", routing_test)
+        self.assertIn("test_base_visual_dashboard_routes_to_repository_projection_not_html", routing_test)
 
     def test_qa_evidence_studio_files_remain_present(self) -> None:
         for relative in (

@@ -15,7 +15,7 @@
 
 공용 운영 원본은 alsdmlals4-eng/Base다. 실제 프로젝트 작업은 최신 사용자 지시, 대상 repository의 latest completed default branch, AGENTS.md, START_HERE, Active Context, 승인 Decision, 분야별 정본, 실제 코드·데이터·Scene·Resource·asset·test·runtime evidence를 기준으로 한다. 프로젝트가 현재 채택된 Base 계약은 최신 Base remote와 구분하며, 과거 대화·메모리·오래된 SHA/PR은 탐색 단서일 뿐 current truth가 아니다.
 
-기본 workspace는 repository-first다. GitHub repository가 사람용 GDD·Flow·Visual·결정, AI용 구조화 명세, 승인 asset, 코드·데이터·테스트·runtime evidence의 활성 owner다. 사용자용 상세 PDF는 exact commit에서 생성한 파생 검토본이다. Notion과 Google Sheets는 고유 미이관 자료가 실제로 남은 migration compatibility 범위에서만 읽으며 신규 기본 작업공간·동기화 대상·완료 조건이 아니다. 프로젝트 최신 AGENTS.md가 명시한 좁은 예외만 따른다.
+기본 workspace는 repository-first다. `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`의 `REPOSITORY_PRIMARY_CANON`이 사람용 GDD·Flow·Wireframe·Visual·결정, AI용 구조화 명세, 승인 asset, 코드·데이터·테스트·runtime evidence의 활성 owner다. 사용자용 상세 PDF는 exact commit에서 생성한 `HUMAN_GDD_PDF_DERIVED_VIEW` 파생 검토본이다. Notion과 Google Sheets는 고유 미이관 자료가 실제로 남은 migration compatibility 범위에서만 읽으며 신규 기본 작업공간·동기화 대상·완료 조건이 아니다. 프로젝트 최신 AGENTS.md가 명시한 좁은 예외만 따른다.
 
 게임 기획에서는 기능 수보다 플레이어의 감정, 선택, 고민, 보상, 기억, 첫인상, 차별점과 판매 포인트를 우선한다. 벤치마킹은 복제가 아니라 ADOPT / ADAPT / REJECT로 흡수한다.
 

@@ -17,7 +17,8 @@ class AiBootstrapDriftContractTests(unittest.TestCase):
 
         for required in (
             "bootstrap layer",
-            "DOMAIN_SPLIT_CANON",
+            "기본 workspace는 repository-first다.",
+            "REPOSITORY_PRIMARY_CANON",
             "AGENTS.md",
             "START_HERE.md",
             "Active Context",
@@ -38,11 +39,11 @@ class AiBootstrapDriftContractTests(unittest.TestCase):
 
         for required in (
             "stable bootstrap",
-            "DOMAIN_SPLIT_CANON",
+            "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
+            "REPOSITORY_PRIMARY_CANON",
             "AGENTS.md",
             "START_HERE.md",
             "Active Context",
-            "NOTION_HUMAN_FACING_CANON",
             "REPOSITORY_STRUCTURED_CANON",
             "REPOSITORY_RUNTIME_TRUTH",
             "현재 세션",
@@ -63,11 +64,10 @@ class AiBootstrapDriftContractTests(unittest.TestCase):
 
         for required in (
             "repository bootstrap",
-            "DOMAIN_SPLIT_CANON",
+            "V4 repository-first authority",
+            "REPOSITORY_PRIMARY_CANON",
             "AGENTS.md",
             "Active Context",
-            "NOTION_HUMAN_FACING_CANON",
-            "REPOSITORY_STRUCTURED_CANON",
             "REPOSITORY_RUNTIME_TRUTH",
             "path-specific",
         ):
@@ -83,9 +83,9 @@ class AiBootstrapDriftContractTests(unittest.TestCase):
         text = self.read("templates/AGENTS.project.md")
 
         for required in (
-            "DOMAIN_SPLIT_CANON",
-            "NOTION_HUMAN_FACING_CANON",
-            "REPOSITORY_STRUCTURED_CANON",
+            "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
+            "REPOSITORY_PRIMARY_CANON",
+            "HUMAN_GDD_PDF_DERIVED_VIEW",
             "REPOSITORY_RUNTIME_TRUTH",
             "MIGRATION_ONLY_UNTIL_REMOVAL",
             "current Base",
@@ -111,8 +111,9 @@ class AiBootstrapDriftContractTests(unittest.TestCase):
 
         for required in (
             "MIGRATION_ONLY_UNTIL_REMOVAL",
-            "NOTION_DEFAULT_PROJECT_WORKSPACE",
-            "Google Sheets is not the default workspace",
+            "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
+            "V4_NOTION_EXCEPTION_ONLY",
+            "Google Sheets and Notion are not the default workspace",
             "repository runtime truth",
             "MIGRATED_READBACK_VERIFIED",
         ):

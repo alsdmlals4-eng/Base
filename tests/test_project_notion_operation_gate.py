@@ -48,8 +48,9 @@ class ProjectNotionOperationGateTests(unittest.TestCase):
 
     def test_operation_owner_preserves_human_home_and_runtime_authority_boundaries(self) -> None:
         text = OPERATION_GATE.read_text(encoding="utf-8")
-        self.assertIn("NOTION_HUMAN_FACING_CANON", text)
-        self.assertIn("REPOSITORY_STRUCTURED_CANON", text)
+        self.assertIn("V4 exception 또는 legacy migration", text)
+        self.assertIn("REPOSITORY_PRIMARY_CANON", text)
+        self.assertIn("HUMAN_GDD_PDF_DERIVED_VIEW", text)
         self.assertIn("사람용 Home", text)
         self.assertIn("AI/System", text)
         self.assertIn("runtime truth", text)

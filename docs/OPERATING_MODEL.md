@@ -18,7 +18,9 @@ Base는 게임·연재소설 등 등록된 창작·개발 프로젝트가 공용
 → 반복 가능한 스킬 학습
 ```
 
-Base에는 여러 프로젝트에서 재사용 가능한 판단·절차·검증만 둔다. 프로젝트 고유 세계관·원고·수치·경로·자산·구현 상태는 대상 프로젝트가 책임진다. 프로젝트 정본은 `DOMAIN_SPLIT_CANON`을 따른다. 사람의 기획·시각 판단과 협업 상태는 프로젝트별 Notion page인 `NOTION_HUMAN_FACING_CANON`이며 기본 사람용 workspace 계약은 `NOTION_DEFAULT_PROJECT_WORKSPACE`다. 구조화 데이터·코드·Scene·Resource·Test는 `REPOSITORY_STRUCTURED_CANON`, 실제 build/test/runtime 상태는 `REPOSITORY_RUNTIME_TRUTH`가 책임진다. 기존 Google Sheets는 고유 자료의 검증된 이관이 끝날 때까지만 `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL`인 `COMPATIBILITY_ONLY` migration source이며 신규 기본 작업면이 아니다. 상세 계약은 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`가 책임진다.
+Base에는 여러 프로젝트에서 재사용 가능한 판단·절차·검증만 둔다. 프로젝트 고유 세계관·원고·수치·경로·자산·구현 상태는 대상 프로젝트가 책임진다. 현재 프로젝트 정본은 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`의 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`다. `REPOSITORY_PRIMARY_CANON`이 현재 기획·결정·구조화 데이터·코드·Scene·Resource·Test·검증 evidence를 소유하고, 사람이 보는 `HUMAN_GDD_PDF_DERIVED_VIEW`는 exact source SHA와 evidence ceiling이 있는 파생 snapshot이다. 실제 build/test/runtime 상태는 `REPOSITORY_RUNTIME_TRUTH`가 책임진다. 기존 Notion과 Google Sheets는 고유 자료 이관이 필요할 때만 읽는 `LEGACY_READ_ONLY` / `COMPATIBILITY_ONLY` source이며 신규 기본 작업면이나 active decision sync 정본이 아니다. 상세 V4 정책은 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`가 책임진다.
+
+`DOMAIN_SPLIT_CANON`은 이 역할 분리를 설명하기 위한 호환성 표지다. V4에서 현행 구조화 정본은 `REPOSITORY_STRUCTURED_CANON`의 후속인 `REPOSITORY_PRIMARY_CANON` 하나이며, 과거의 `NOTION_HUMAN_FACING_CANON`은 이관이 끝나지 않은 프로젝트에서만 `COMPATIBILITY_ONLY`로 읽을 수 있다. 이 표지는 Notion이나 Sheets를 새 작업의 active owner로 되돌리지 않는다.
 
 ### `BEST_LONG_TERM_EFFICIENT_METHOD`
 
@@ -47,7 +49,7 @@ Base START_HERE
 → Base Skill Registry
 → 대상 프로젝트 AGENTS
 → 프로젝트 START_HERE·Active Context·Documentation Map
-→ exact Project Notion Home·filtered human-facing surfaces
+→ exact repository human PDF/Markdown projection; explicitly scoped V4 Notion exception only when applicable
 → 현재 책임 원본·Issue·Plan
 → Prompt 의도·현재 단계
 → PLAN / BUILD / REVIEW Work Mode
@@ -144,15 +146,15 @@ approved-scope remaining work
       → completion-report
 ```
 
-`IMPLEMENTATION_CORRECTION_RESCAN`은 새 정본이나 별도 검토 시스템이 아니다. 기존 `running-adversarial-review-and-refinement`와 `reviewing-and-validating-project-changes`를 사용해 구현 누락, 승인 의도와 실제 diff의 불일치, 정본·Notion/Repository sync drift, Test·consumer·Template·reference 누락, 열린/최근 PR 충돌, runtime/readback evidence gap을 다시 찾는다. 검증된 새 finding이 있으면 `NEW_FINDING_REOPENS_REMAINING_WORK`로 현재 승인 범위의 남은 작업에 편입해 교정하고 다시 계산한다.
+`IMPLEMENTATION_CORRECTION_RESCAN`은 새 정본이나 별도 검토 시스템이 아니다. 기존 `running-adversarial-review-and-refinement`와 `reviewing-and-validating-project-changes`를 사용해 구현 누락, 승인 의도와 실제 diff의 불일치, 정본·repository human-projection sync drift, Test·consumer·Template·reference 누락, 열린/최근 PR 충돌, runtime/readback evidence gap을 다시 찾는다. 명시된 V4 Notion exception이 있을 때만 그 destination drift도 대조한다. 검증된 새 finding이 있으면 `NEW_FINDING_REOPENS_REMAINING_WORK`로 현재 승인 범위의 남은 작업에 편입해 교정하고 다시 계산한다.
 
 `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 **최종 후보 상태에서 수행하는 기존 `POST_CHANGE_MONITOR_LOOP` 자체**이며 두 번째 독립 review cycle이나 framework가 아니다. 그 동일 루프가 기존 최소 5회 full-loop + `CLEAN_REVIEW_EXIT` 규칙을 충족한다. 마지막 구현·교정 이후의 최종 후보 상태가 입력이어야 하며, 이미 최종 후보를 대상으로 수행한 같은 full loop를 중복 계수하거나 다시 처음부터 반복하지 않는다. `NO_MATERIAL_FOLLOWUP`이면 횟수를 채우기 위해 가짜 finding이나 불필요한 변경을 만들지 않는다.
 
 `FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK`는 **현재 승인 범위에서** 필요한 실행·교정이 0이고, 완료 조건에 필요한 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, 미해결 `DEFER`가 없을 때만 `전체 완료`를 허용한다. 범위 밖 future improvement나 명시적으로 다음 단계로 분리된 항목은 별도 후보로 보존할 수 있지만 현재 범위의 미완료를 숨겨서는 안 된다. 승인 범위 안의 blocker·defer가 남으면 `PARTIAL / BLOCKED_UNVERIFIED / DEFERRED`와 재개 조건을 보고한다.
 
-#### `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`
+#### `POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP`
 
-Base 또는 프로젝트 변경을 GitHub에 병합한 뒤에는 병합 자체를 완료로 보지 않는다. 새 `main`의 정확한 SHA를 다시 가져와 전체 승인 범위를 적대적으로 검토하고, 검증된 finding은 `POSTMERGE_CORRECTION_REQUIRED`에 따라 최신 main에서 새 Branch/PR로 교정한다. 해당 프로젝트에 Notion 사람용 정본이 적용되면 GitHub 병합 증거 뒤에만 관련 현재 블록을 갱신하고, GitHub와 Notion을 모두 다시 읽어 `PROGRESS_READBACK_REQUIRED`를 닫는다.
+Base 또는 프로젝트 변경을 GitHub에 병합한 뒤에는 병합 자체를 완료로 보지 않는다. 새 `main`의 정확한 SHA를 다시 가져와 전체 승인 범위를 적대적으로 검토하고, 검증된 finding은 `POSTMERGE_CORRECTION_REQUIRED`에 따라 최신 main에서 새 Branch/PR로 교정한다. repository primary canon, asset manifest, exact-SHA human projection과 runtime evidence를 다시 읽어 `PROGRESS_READBACK_REQUIRED`를 닫는다. 명시된 V4 Notion exception이 있을 때만 GitHub 병합 증거 뒤에 해당 destination을 추가 갱신·readback한다.
 
 ```text
 GitHub merge
@@ -161,13 +163,13 @@ GitHub merge
 → finding validation
 → required correction on a new branch/PR
 → regression + exact-head verification
-→ applicable Notion current-state update after GitHub evidence
-→ GitHub/Notion destination readback
+→ repository primary/asset manifest/human projection current-state update after GitHub evidence
+→ GitHub/repository artifact destination readback; V4 Notion exception only when applicable
 → progress, remaining work, blockers recalculation
 → repeat until clean
 ```
 
-열린 다른 PR은 계속 read-only이며, Notion이 실제 적용되지 않는 저장소 작업에 가짜 동기화 증거를 만들지 않는다. 과거 기록은 현재 상태처럼 일괄 치환하지 않고 명시적 역사로 보존한다.
+열린 다른 PR은 계속 read-only이며, V4 Notion exception이 실제 적용되지 않는 저장소 작업에 가짜 동기화 증거를 만들지 않는다. 과거 기록은 현재 상태처럼 일괄 치환하지 않고 명시적 역사로 보존한다.
 
 ### 연속작업 실행 루프
 
@@ -532,9 +534,9 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 사람용 발행 → Registry 정책이 요구하는 PDF·선택 DOCX·assets
 발행 최신성 → Publication Manifest
 실제 상태 → 코드·데이터·자산·테스트·캡처·프로파일
-사람용 기획·시각 작업면 → 프로젝트별 Notion page(`NOTION_HUMAN_FACING_CANON`)
-구조화·runtime 정본 → repository(`REPOSITORY_STRUCTURED_CANON`)
-기존 Google Sheets → `COMPATIBILITY_ONLY` migration source, 미확정 편집은 `PROPOSED_SHEET_CHANGE`
+현재 기획·시각·구조화 정본 → repository(`REPOSITORY_PRIMARY_CANON`)
+사람용 milestone 검토 → exact-SHA PDF(`HUMAN_GDD_PDF_DERIVED_VIEW`)
+기존 Notion / Google Sheets → V4 exception 또는 `LEGACY_READ_ONLY` / `COMPATIBILITY_ONLY` migration source
 과거 상태 → Git 이력
 ```
 
@@ -641,13 +643,13 @@ Base 저장소 자체에서는 프로젝트 설치 템플릿을 활성 상태로
 
 ## 프로젝트 GDD와 폐기 작업면 경계
 
-일반 프로젝트의 전체 흐름 확인·사람용 정보 수정·시각 검토는 exact Project Notion을 우선한다. 구조화 데이터·실제 구현·테스트는 repository owner가 우선한다. Google Sheets migration 상세는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`, Figma·project-management Tool Hub·QA Evidence Studio·외부 HTML dashboard/catalog·과거 localhost visual management surface는 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`에 따라 고유 정보만 한 번 흡수한 뒤 active/default 작업면으로 사용하지 않는다.
+일반 프로젝트의 전체 흐름 확인·사람용 정보 수정·시각 검토는 repository의 exact-SHA PDF/Markdown human projection을 우선한다. 구조화 데이터·실제 구현·테스트는 repository owner가 우선한다. 명시적으로 승인·범위가 정해진 V4 Notion exception만 추가 surface로 사용한다. Google Sheets migration 상세는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`, Figma·project-management Tool Hub·QA Evidence Studio·외부 HTML dashboard/catalog·과거 localhost visual management surface는 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`에 따라 고유 정보만 한 번 흡수한 뒤 active/default 작업면으로 사용하지 않는다.
 
 ## 구조 최적화·작업 지원 Skill
 
 Base와 프로젝트 구조를 줄이거나 바꿀 때는 `pruning-stale-and-nonfunctional-material → simplifying-skill-bodies → refactoring-with-contract-preservation → running-adversarial-review-and-refinement → reviewing-and-validating-project-changes` 순서로 기능 보존과 회귀를 확인한다.
 
-Git 상태는 `synchronizing-local-and-github-state`, 긴 실행의 checkpoint는 `maintaining-long-running-task-continuity`, Games User Research 11영역은 `governing-game-user-research-coverage`, 학습 자료는 `creating-user-learning-notes`, 프로젝트 상태·시각화는 `building-project-visual-dashboards`의 Notion human-facing mode, 엔진 런타임 오류는 `diagnosing-game-engine-runtime-failures`가 책임진다.
+Git 상태는 `synchronizing-local-and-github-state`, 긴 실행의 checkpoint는 `maintaining-long-running-task-continuity`, Games User Research 11영역은 `governing-game-user-research-coverage`, 학습 자료는 `creating-user-learning-notes`, 프로젝트 상태·시각화는 `building-project-visual-dashboards`의 repository human-projection mode, 엔진 런타임 오류는 `diagnosing-game-engine-runtime-failures`가 책임진다.
 
 책임 coverage 원본은 `skills/SKILL_COVERAGE.json`이며 사람용 설명은 `docs/SKILL_COVERAGE_MAP.md`다.
 

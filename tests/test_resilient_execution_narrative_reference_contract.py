@@ -117,11 +117,11 @@ class ResilientExecutionNarrativeReferenceContractTests(unittest.TestCase):
     def test_documentation_map_uses_current_workspace_authority_split(self) -> None:
         docs = read("docs/DOCUMENTATION_MAP.md")
         for term in (
-            "NOTION_DEFAULT_PROJECT_WORKSPACE",
-            "PROJECT_RELATION_REQUIRED",
-            "REPO_NATIVE_STRUCTURED_DATA",
-            "COMPATIBILITY_ONLY",
-            "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json",
+            "PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json",
+            "REPOSITORY_PRIMARY_CANON",
+            "HUMAN_GDD_PDF_DERIVED_VIEW",
+            "NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE",
+            "V3_COMPATIBILITY_AND_HISTORY_ONLY",
             "docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md",
             "NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md",
         ):

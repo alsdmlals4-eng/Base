@@ -7,7 +7,7 @@
 
 
 ## 역할
-사용자 요청을 실행 가능한 작업계약으로 만들고 프로젝트 운영·설계문서·handoff·continuity·사람용 Notion/학습 흐름을 책임진다.
+사용자 요청을 실행 가능한 작업계약으로 만들고 프로젝트 운영·설계문서·handoff·continuity·repository 사람용 projection/학습 흐름을 책임진다. Notion은 명시된 V4 예외 또는 legacy migration source일 때만 다룬다.
 
 ## 핵심 Skill
 `managing-project-intake-and-work-contract`, `managing-game-project-operating-system`, `managing-design-documents`, `maintaining-project-context-and-handoff`, `maintaining-long-running-task-continuity`, `creating-user-learning-notes`.
@@ -15,11 +15,11 @@
 ## 중요 규칙
 - DIRECTION_FIRST
 - GPT_FIRST_PLANNING_AND_REVIEW
-- NOTION_DEFAULT_PROJECT_WORKSPACE / PROJECT_RELATION_REQUIRED
+- DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE / REPOSITORY_PRIMARY_CANON / PROJECT_RELATION_REQUIRED
 - `NOTION_OFFICIAL_PRODUCT_OPERATING_REFERENCE_REQUIRED`: page/database/view/data source/layout/media/permission/Agent를 의미 있게 읽거나 수정하는 L1+ Notion 작업은 `docs/knowledge/methods/NOTION_OFFICIAL_PRODUCT_OPERATING_REFERENCE.md`를 progressive-load해 현재 제품 동작 경계를 먼저 확인한다. plan·file-size·Agent capability·API upload처럼 빠르게 변하는 사실은 작업 시점의 Notion 공식 Product/Help/Developer 문서로 다시 확인한다.
 - `NOTION_OBJECT_SCOPE_BEFORE_WRITE`: Notion write 전에 `PAGE_BLOCK / DATABASE_RECORD / VIEW_PRESENTATION / DATA_SOURCE_SCHEMA_OR_RECORD / DATABASE_GLOBAL_LAYOUT / FILE_UPLOAD / SHARING_PERMISSION / AGENT_CONFIGURATION` 중 영향 범위를 분류한다. linked view 표현 변경을 source mutation으로, single-record polish를 database-global layout 변경으로 오인하지 않는다.
 - SINGLE_INITIAL_APPROVAL_THEN_CONTINUE
-- GitHub runtime/structured truth와 Notion human-facing canon 분리
+- GitHub runtime/structured truth와 exact-SHA repository human projection 분리; `V4_NOTION_EXCEPTION_ONLY`
 - `SYSTEM_BLUEPRINT_ENTRY_CHECK_REQUIRED`: 게임 프로젝트 작업이 플레이어가 체감하는 연결된 시스템 로직·분기·상태·다중 시스템 흐름을 의미 있게 건드리면, current-state/reuse-first preflight 뒤 구현 준비 판정 전에 `docs/operations/project-workspace/NOTION_SYSTEM_BLUEPRINT_CONTRACT.md`의 적용 Gate를 확인한다.
 - `REUSE_EXISTING_BLUEPRINT_BEFORE_CREATING_NEW`: 현재 승인 Blueprint가 있으면 같은 시스템을 다시 만들지 않고 현재 변경 범위만 REUSE/ADAPT한다.
 - `NO_MASS_BLUEPRINT_BACKFILL`: 현재 작업과 무관한 프로젝트·시스템을 Blueprint 부재만으로 미완료 처리하거나 일괄 변환하지 않는다. 단순·이미 명확한 작업은 이유를 남긴 `NOT_APPLICABLE_WITH_REASON`으로 종료할 수 있다.

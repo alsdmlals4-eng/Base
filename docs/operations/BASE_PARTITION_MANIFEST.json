@@ -109,6 +109,7 @@
         "docs/GPT_CODEX_WORKFLOW_POLICY.md",
         "docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md",
         "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json",
+        "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json",
         "templates/handoff/**",
         "templates/project-operations/**",
         "tests/test_gpt_codex_workflow_contract.py",
@@ -133,7 +134,8 @@
         "DIRECTION_FIRST",
         "GPT_NONCODING_PROJECT_OWNER",
         "GPT_BASE_NOTION_GOVERNANCE_OWNER",
-        "NOTION_DEFAULT_PROJECT_WORKSPACE",
+        "REPOSITORY_PRIMARY_CANON",
+        "NO_NEW_NOTION_WRITE_BY_DEFAULT",
         "PROJECT_RELATION_REQUIRED",
         "SINGLE_INITIAL_APPROVAL_THEN_CONTINUE"
       ],

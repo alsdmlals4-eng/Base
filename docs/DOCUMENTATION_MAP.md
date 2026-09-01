@@ -49,26 +49,24 @@ Git history / archive
 → 과거 구현·복구 증거
 ```
 
-### 프로젝트 — 도메인 분할 정본
+### 프로젝트 — V4 repository-first 정본
 
 ```text
-NOTION_DEFAULT_PROJECT_WORKSPACE
-→ NOTION_HUMAN_FACING_CANON
-→ Project Registry / 사람용 Project Home
-→ Visual or Story Bible / Flow or Storyboard / Asset Gallery
-→ 예산표 / Tier표 / 로스터·경제·성장표 / 사람이 수정하는 전체 그림
-
-REPOSITORY_STRUCTURED_CANON
-→ REPO_NATIVE_STRUCTURED_DATA (compatibility alias)
-→ Markdown / JSON / game data / code / scene / resource / config / tests
+REPOSITORY_PRIMARY_CANON
+→ current planning / decisions / Markdown / JSON / game data / code / scene / resource / config / tests / evidence
 → REPOSITORY_RUNTIME_TRUTH
+
+HUMAN_GDD_PDF_DERIVED_VIEW
+→ exact repository SHA와 evidence ceiling이 연결된 사람이 보는 milestone snapshot
+
+NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
+→ unique legacy material 발견·이관에만 사용
+→ 새 기본 workspace, active decision sync, runtime handoff 정본이 아님
 ```
 
-`REPO_NATIVE_STRUCTURED_DATA`는 과거 공용 계약·검증의 발견성을 보존하기 위한 compatibility alias이며, 현재 공식 이름은 `REPOSITORY_STRUCTURED_CANON`이다.
+현재 machine authority는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`의 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`다. 사람용 PDF는 파생본이며 repository를 대체하지 않는다.
 
-`DOMAIN_SPLIT_CANON`은 GitHub와 Notion 중 하나를 모든 질문의 단일 도구로 강제하지 않는다. **사람이 이해·비교·수정하는 전체 그림, 시각 자료, 예산표, Tier표, Flow/Storyboard는 Notion을 우선**하고, **Markdown·JSON·실제 게임 데이터·코드·Scene·Resource·Test·Runtime evidence는 repository를 우선**한다. Notion 변경이 실제 게임 제품 runtime 변경을 요구하면 GPT가 기획/정본을 먼저 동기화하고, `ACTUAL_GODOT_PRODUCT_IMPLEMENTATION_EXISTS`인 범위만 프로젝트별 Codex Godot Work Instruction으로 넘긴다. Base/Notion/non-product 변경은 GPT가 직접 닫는다.
-
-`PROJECT_RELATION_REQUIRED`: project-scoped Work, Asset, Component, Screen, Reference, Benchmark, Character, Faction, Scene, Clue, Location, Canon record는 Project relation 없이 프로젝트 정본이 될 수 없다.
+`DOMAIN_SPLIT_CANON`, `NOTION_HUMAN_FACING_CANON`, `PROJECT_RELATION_REQUIRED`는 V3 compatibility/history와 실제 legacy migration에서만 해석한다. V3 계약은 새 작업의 active route가 아니며 V4 예외를 통과한 프로젝트만 한정된 Notion surface를 별도 owner·scope·exit 조건과 함께 둘 수 있다.
 
 Google Sheets는 `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL` source다. Figma·Figma Bridge·Expression/Sprite Studio·external HTML workspace·project-management Tool Hub·QA Evidence Studio는 active/default authority가 아니다. 상세 retirement는 `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`가 소유한다.
 
@@ -81,9 +79,9 @@ Google Sheets는 `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL` source다. Figma·
 | 통합 운영 모델 | `docs/OPERATING_MODEL.md` | 생명주기·정본·상태·발행·근거·검증 |
 | Work Mode / Skill | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | PLAN/BUILD/REVIEW와 Skill 자동 라우팅 |
 | 장기 작업 | `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md` | 현행조사→>=3 대안→creative benchmark frontier→최소 5회 전체 적대적 개선→5회 이후 오류·충돌·누락·blocker 0까지 추가 전체 루프→장기 최선안 |
-| 프로젝트 workspace machine authority | `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json` | `DOMAIN_SPLIT_CANON`, `NOTION_HUMAN_FACING_CANON`, `REPOSITORY_STRUCTURED_CANON`, `PROJECT_RELATION_REQUIRED`, `REPOSITORY_RUNTIME_TRUTH` |
-| 시각 협업 | `docs/VISUAL_COLLABORATION_TOOL_POLICY.md` | Notion 사람용 시각·표 정본, project-filtered human/AI view, repository runtime handoff |
-| Notion asset/flow workflow | `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md` | provenance·bounded edit·approval·version·reuse·benchmark·readback·handoff |
+| 프로젝트 workspace machine authority | `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` | `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`, `REPOSITORY_PRIMARY_CANON`, derived human PDF, legacy-only Notion migration boundary |
+| 시각 협업 | `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`, `docs/VISUAL_COLLABORATION_TOOL_POLICY.md` | repository-owned visual canon·manifest·exact-SHA PDF review가 현행 owner; 뒤의 정책은 V3 compatibility/history terminology·migration reference이며 V4 기본 작업면을 되살리지 않음 |
+| Notion asset/flow workflow | `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md` | `V3_COMPATIBILITY_AND_HISTORY_ONLY`; legacy provenance/migration reference, active default 아님 |
 | 폐기 작업면 | `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md` | Figma/HTML/Sheets/Tool Hub/QA Studio/local management surface의 unique 흡수→active route 제거 |
 | Google Sheets migration compatibility | `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md` | `MIGRATION_ONLY_UNTIL_REMOVAL`, unique/duplicate/obsolete migration, destination readback |
 | 이미지 생성·검수 | `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md` | Visual Requirement Gate, candidate QA, 명시적 approval/promotion |
@@ -131,9 +129,9 @@ Google Sheets는 `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL` source다. Figma·
 
 Skill 수 자체는 목표·완료조건·경고 임계값이 아니다. 책임 중복·trigger 충돌·사용되지 않는 mode·과도한 컨텍스트 비용처럼 **실제 구조 문제**가 있을 때 consolidation 또는 새 Skill 필요성을 판단한다.
 
-## 4. 프로젝트 Notion 표준
+## 4. Legacy Notion migration reference
 
-Project Notion은 `PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json`과 `docs/operations/NOTION_PROJECT_ISOLATION_AND_CORE_SYSTEM_CONTRACT.md`의 shallow IA를 따른다.
+이 절의 V3 Notion IA·record·flow 예시는 이미 존재하는 legacy workspace를 읽고 고유 자료를 repository로 이관할 때만 참고한다. 새 프로젝트 또는 새 project work의 기본 진입점은 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`와 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`이다. V3 내용을 신규 Notion workspace·active decision sync·Codex handoff의 기본 계약으로 복원하지 않는다.
 
 ```text
 L0 · PROJECT_HUB
@@ -316,7 +314,7 @@ project/build identity
 → acceptance contract
 → tests / GUT / Godot·Hera runtime / logs / screenshot·video / CI artifact
 → exact commit/PR identity
-→ optional Notion human-facing link
+→ optional exact-SHA derived PDF or V4 exception/migration link
 → PASS | FAIL | BLOCKED | NOT_RUN + evidence ceiling
 ```
 
@@ -325,11 +323,14 @@ project/build identity
 도메인별 active canonical owner는 하나만 둔다.
 
 ```text
-사람용 전체 그림 / Visual / 예산·Tier·비교표
-→ NOTION_HUMAN_FACING_CANON
+사람용 전체 그림 / Visual / 예산·Tier·비교표 / Flow·Wireframe / Markdown / JSON / game data / code / scene / resource / test
+→ REPOSITORY_PRIMARY_CANON
 
-Markdown / JSON / game data / code / scene / resource / test
-→ REPOSITORY_STRUCTURED_CANON
+사람용 milestone 검토
+→ HUMAN_GDD_PDF_DERIVED_VIEW (exact source SHA)
+
+실제 V4 exception 또는 legacy migration source
+→ NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
 
 실제 구현·runtime 상태
 → REPOSITORY_RUNTIME_TRUTH
@@ -341,7 +342,7 @@ Markdown / JSON / game data / code / scene / resource / test
 GitHub 추적 근거
 → CURRENT_CONFIRMED_DECISIONS.md
 → 분야 책임 원본 / structured data
-→ 필요한 Notion 사람용 표·시각 표현 동기화
+→ 필요한 exact-SHA derived PDF 또는 실제 exception/migration readback
 ```
 
 `DESIGN_DOCUMENT_REGISTRY.json`은 registered Markdown/JSON owner와 publication 경로를 관리한다. PDF/DOCX/dashboard는 선언된 publication/derived surface일 뿐 독립 canon이 아니다.

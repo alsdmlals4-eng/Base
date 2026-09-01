@@ -9,13 +9,13 @@
 
 ## 시각 협업 Artifact
 
-- usage_context: `NOTION_PROJECT / REPOSITORY_HANDOFF / BOTH`
-- project_workspace: `NOTION_DEFAULT_PROJECT_WORKSPACE`
-- Notion Project·Screen·Asset 관계:
+- usage_context: `REPOSITORY_PRIMARY / REPOSITORY_HUMAN_PROJECTION / V4_NOTION_EXCEPTION`
+- project_workspace: `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`
+- repository Project·Screen·Asset owner / explicitly scoped V4 Notion exception:
 - Decision ID·repository 책임 원본:
 - 승인 Preview·Source Commit·구현 제외 범위:
 
-시각 Artifact는 현재 Project 관계와 책임 원본을 찾기 위한 사람용 보조 표현이다. 외부 보드나 과거 링크가 남아 있어도 활성 정본으로 복구하지 않으며, 현재 의미·승인 상태·구현 사실은 Notion 관계와 repository owner에서 확인한다.
+시각 Artifact는 현재 Project 관계와 책임 원본을 찾기 위한 사람용 보조 표현이다. 외부 보드나 과거 링크가 남아 있어도 활성 정본으로 복구하지 않으며, 현재 의미·승인 상태·구현 사실은 repository owner와 exact-SHA 사람이 읽는 projection에서 확인한다. Notion은 명시된 V4 예외일 때만 추가 readback 대상이다.
 
 ```text
 <플레이어가 무엇을 보고>

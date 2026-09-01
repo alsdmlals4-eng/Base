@@ -15,6 +15,8 @@ external_deliveries:
 milestone_or_deadline:
 validation_environment:
 rollback_constraints:
+benchmark_preflight_receipt:
+context_configuration_hygiene:
 ```
 
 요구가 확정되지 않았거나 중요한 사용자 결정이 남아 있으면 실행 순서를 확정하지 않는다.
@@ -22,6 +24,12 @@ rollback_constraints:
 ## 1.1 분해 전 누락·충돌 감사
 
 분해 전에 최신 main, 현재 Decision, 관련 분야 정본, 동일 Goal의 열린·최근 병합 PR, 실제 구현과 개별 프로젝트 Sheet를 비교한다. `DUPLICATE_WORK`, `DUPLICATE_QUESTION`, `MISSING_CANON`, `MISSING_CONSUMER`, `CANON_CONFLICT`, `IMPLEMENTATION_CONFLICT`, `STALE_REFERENCE`, `MISSING_SYNC`가 있으면 새 작업 목록보다 복원과 정리를 먼저 배치한다. Base 저장소 자체의 Sheet 상태는 `BASE_EXCLUDED`다.
+
+### 1.2 필수 benchmark·역공학 preflight와 범위 한정 hygiene
+
+`MANDATORY_BENCHMARK_REVERSE_ENGINEERING_PREFLIGHT` / `BENCHMARK_PREFLIGHT_BEFORE_WORK_REQUIRED`: Base·프로젝트의 모든 L1+ 작업은 분해·작성·구현보다 먼저 exact repository revision의 같은 책임·실제 consumer를 비교하고, task-appropriate current Base 사례·승인 Reference/Benchmark·직접 관련 유사 구현·필요한 공식 원출처를 조사한다. 결과는 repository-owned `benchmark_preflight_receipt`에 `state: PASS | REUSED_EVIDENCE | NOT_APPLICABLE | BLOCKED_UNVERIFIED`, entry별 `source_and_evidence`, `observed_pattern`, `project_fit_and_difference`, `disposition: ADOPT | ADAPT | REJECT`로 남기고 `python tools/validate_work_contract_receipt.py --receipt <receipt.json>`을 통과한다. `PASS`/`REUSED_EVIDENCE`는 최소 한 entry, `BLOCKED_UNVERIFIED`는 unreadable source/blocker, `NOT_APPLICABLE`은 L0의 이유를 요구한다. benchmark는 프로젝트의 장르·세계관·화면·버튼·시각 구도를 고정하는 catalog가 아니라, 현재 consumer와 계약에 맞는 더 효율적인 방향을 찾는 evidence다.
+
+`LEGACY_CONTEXT_CONFIGURATION_HYGIENE_REQUIRED`: 시작 시 이번 scope의 context·설정·entrypoint·문서·생성물을 `context_configuration_hygiene`의 scoped `inventory`에 `ACTIVE_OWNER | COMPATIBILITY | ARCHIVE | OBSOLETE_CANDIDATE | UNKNOWN_UNVERIFIED`로 분류하고, 각 항목에 path·owner/provenance·references/consumers readback을 남긴다. `NO_BROAD_SWEEP_WITHOUT_SCOPE`와 `NO_DELETION_BY_AGE_OR_NAME`을 지킨다. `OBSOLETE_CANDIDATE`를 실제 제거할 때만 receipt validator가 `REFERENCES_AND_CONSUMERS_ZERO_BEFORE_REMOVAL` 및 `GIT_RECOVERABLE_REMOVAL_AND_READBACK`을 요구하게 하고, 연결 문서·생성물·검증을 다시 확인한다. source나 consumer가 불명확하면 `UNKNOWN_UNVERIFIED`로 보존하고 entrypoint의 오인만 최소 교정한다.
 
 ## 2. 분해 단위
 
@@ -98,6 +106,14 @@ UI·시스템·데이터·이미지/아트·문서/Skill처럼 여러 요소가 
 - 책임·변경 이유·상태 소유권·검증 경계가 달라질 때 분리를 검토한다. 늘 함께 바뀌고 별도 소비·검증 가치가 없는 조각은 합친다. 모듈별 검증 뒤에도 상위 플레이 흐름의 통합 검증을 생략하지 않는다.
 - 코드·계약·데이터·테스트는 같은 기능 경계로 연결하되 물리적으로 같은 폴더에 둘 의무는 없다. 기존 저장소 경로와 문서 owner를 유지하며 상호 참조한다. 파일 이동이 필요하면 Scene/Resource 참조·NodePath·외부 consumer·저장 호환성과 롤백을 먼저 확인한다.
 
+### 소프트 코딩과 고정 경계
+
+프로젝트·장르·벤치마크·플랫폼·난이도·표현·화면 흐름처럼 달라질 수 있는 값은 명시된 데이터·구성·Resource·계약 입력 또는 project-local 설정 owner에서 한 번만 정의한다. 코드는 그 owner의 유효한 입력을 해석하고 적용하며, 동일한 가변 값을 조건문·문서·Scene·테스트 fixture에 따로 하드코딩해 두 번째 정본을 만들지 않는다.
+
+보안 경계, 프로토콜 식별자, 저장 키, 공개 호환 계약처럼 고정이 필요한 값은 하드코딩을 허용하는 이유·owner·변경/마이그레이션 경로와 함께 기록한다. 이 고정 경계는 임의의 프로젝트 취향·밸런스·화면 버튼·벤치마크 결론을 대신하지 않는다. 가변 값의 초기값, 허용 범위, fallback, version, consumer 영향과 정상·경계·잘못된 구성 fixture를 계약에 연결한다. 구성값이 누락되거나 유효하지 않으면 추측으로 기본 동작을 발명하지 않고 명시된 fallback 또는 `BLOCKED_UNVERIFIED` 처리로 남긴다.
+
+모든 값을 추상화하거나 범용 configuration framework를 새로 만들지 않는다. 한 번만 쓰이고 프로젝트 의미가 변하지 않는 내부 구현 상수는 가까운 책임 코드에 둘 수 있다. 반대로 같은 값을 둘 이상의 consumer가 해석하거나 프로젝트별로 바뀔 가능성이 있으면 기존 data/resource/config owner 또는 얇은 project adapter에 올린다. external JSON, Resource, Scene metadata, environment/config, 코드 상수 중 무엇을 쓸지는 현재 프로젝트의 엔진·저장·검증·배포 제약과 실제 consumer를 비교해 정하며, Base가 하나의 형식을 강제하지 않는다.
+
 ### 기존 작업 계약에 연결할 정보
 
 별도 Registry·추적표·문서 세트를 의무 생성하지 않는다. 다음 정보는 위 작업 항목과 현재 기능 계약의 기존 필드·절·링크에 담는다. 아래 표는 새 공용 Schema가 아니다. 적용되지 않는 항목은 이유를 기록하고, 아직 없는 구현은 계획 상태로 구분한다.
@@ -108,6 +124,7 @@ UI·시스템·데이터·이미지/아트·문서/Skill처럼 여러 요소가 
 | `files_or_systems / owner_or_skill` | 기능 계약의 정본 owner, 실제 구현·데이터·테스트 위치, 변경 책임. 계획 경로는 실제 존재하는 consumer로 표시하지 않는다. |
 | `inputs / output / integration_interface` | 입력·출력 타입, 공개 함수·signal/event, 상태 소유권·전이, 불변조건. 적용되는 오류·취소·재시도·중복 실행의 의미와 부작용·초기화/종료 조건도 포함한다. |
 | `dependencies / parallel_with` | 의존 방향과 실제 consumer 경로를 기록한다. 공유 상태·자원, 연결 지점과 병렬 수정 금지 경계를 확인한다. |
+| `variation_owner / fixed_boundary` | 프로젝트별 변동 값의 단일 data/config/Resource/adapter owner, 초기값·허용 범위·fallback·version과 consumer를 기록한다. 하드코딩한 불변 보안·호환 경계는 이유·owner·변경/마이그레이션 경로를 기록한다. |
 | `acceptance_criteria / validation` | 정상·경계·실패 fixture, 공개 계약 일치 검사, consumer 통합 검사와 해당 실행 명령·환경·결과·증거. |
 | `rollback` | 실패 시 복원 방법, 영향을 받는 공개 계약·저장 형식의 호환성, 필요한 이관·백업·복구 검증. |
 

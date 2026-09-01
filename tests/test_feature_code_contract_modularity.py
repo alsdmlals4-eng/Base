@@ -58,6 +58,16 @@ class FeatureCodeContractModularityTests(unittest.TestCase):
             "기존 프로젝트를 일괄 재구성하지 않는다.",
         )
 
+    def test_soft_coding_separates_project_variation_from_required_invariants(self) -> None:
+        self.require(
+            "## 소프트 코딩과 고정 경계",
+            "프로젝트·장르·벤치마크·플랫폼·난이도·표현·화면 흐름처럼 달라질 수 있는 값은",
+            "명시된 데이터·구성·Resource·계약 입력 또는 project-local 설정 owner에서 한 번만 정의한다.",
+            "보안 경계, 프로토콜 식별자, 저장 키, 공개 호환 계약처럼 고정이 필요한 값은",
+            "하드코딩을 허용하는 이유·owner·변경/마이그레이션 경로",
+            "모든 값을 추상화하거나 범용 configuration framework를 새로 만들지 않는다.",
+        )
+
 
 class FeatureCodeContractRoutingTests(unittest.TestCase):
     def test_meaningful_feature_contract_changes_route_through_existing_intake(self) -> None:
@@ -90,6 +100,7 @@ class FeatureCodeContractRoutingTests(unittest.TestCase):
         for field in (
             "## 기능별 코드·계약 경계",
             "계약 정본 owner",
+            "변동 값 owner·고정 경계",
             "공개 출력·통합 경계",
             "실제 consumer·의존 방향",
             "검증·롤백",
