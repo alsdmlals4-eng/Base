@@ -19,8 +19,8 @@ player action / system event
 
 ## Authority boundary
 
-- Human-facing Blueprint summaries belong in the Project Notion Home or the relevant human Detail Canon.
-- Detailed mapping, edge cases and implementation traceability may live in the project Detail Canon / AI-System surface as appropriate.
+- Human-facing Blueprint summaries belong in repository Markdown and its exact-SHA PDF/Markdown human projection.
+- Detailed mapping, edge cases and implementation traceability live beside the repository project Detail Canon / AI-System surface as appropriate. An explicitly approved V4 Notion exception may receive a derived human view, but is never required.
 - Repository Markdown, JSON/game data, Godot scenes/resources, GDScript, tests and runtime evidence remain structured/runtime canon.
 - A Blueprint is a derived projection of approved design and current implementation ownership. It cannot silently override repository runtime truth or an approved project decision.
 - If the Blueprint disagrees with current canon, reconcile the approved decision and correct the derived Blueprint rather than creating a third competing canon.
@@ -33,7 +33,7 @@ player action / system event
 
 `TWO_ARTIFACT_PROFILE_NO_NOTION_BLUEPRINT_OUTPUT_READBACK`
 
-`DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD`가 명시적으로 선택되면 `NO_SEPARATE_BLUEPRINT_ARTIFACT`가 이 계약의 일반 Notion presentation/lifecycle 규칙보다 우선한다. 사람용 Blueprint layer와 machine mapping은 정확히 두 산출물인 PDF + repository AI Markdown 안에 통합하며, 새 Notion Blueprint output/readback을 생성하거나 완료 조건으로 요구하지 않는다.
+`DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD`가 명시적으로 선택되면 `NO_SEPARATE_BLUEPRINT_ARTIFACT`가 이 계약의 일반 human-projection lifecycle 규칙보다 우선한다. 사람용 Blueprint layer와 machine mapping은 정확히 두 산출물인 PDF + repository AI Markdown 안에 통합하며, 별도 Blueprint output/readback을 생성하거나 완료 조건으로 요구하지 않는다.
 
 기존 Notion Blueprint에 repository로 이관되지 않은 고유 정보가 있으면 input-only source로 fresh-read하고 Source Registry에 provenance와 migration gap을 남긴다. 유효한 기존 Blueprint 구조는 두 산출물 안에서 reuse/adapt할 수 있지만 Notion에 write back하지 않는다. 이 예외는 선택된 profile의 출력 경계일 뿐이며 다른 프로젝트나 일반 `DOMAIN_SPLIT_CANON`의 Blueprint 적용성을 전역 폐기하지 않는다.
 

@@ -250,7 +250,7 @@ repository_audit:
 - 실제 diff가 승인 범위나 프로젝트 코어를 벗어났는가
 - 관련 정본·Registry·Template·Test·파생본 일부가 untouched인가
 - 동일 Goal·기능·문서·질문·PR이 중복됐는가
-- GitHub `main`과 프로젝트 Notion의 Decision·Commit·대체 관계가 다른가
+- GitHub `main`과 repository human projection의 Decision·Commit·대체 관계가 다른가; 명시된 V4 Notion exception이 있으면 그 destination과도 다른가
 - 기존 정상 경로·저장 호환성·롤백 경로가 회귀했는가
 - 임시값·플레이스홀더·미검증 주장이 확정 상태로 남았는가
 - 병합된 head branch가 안전 조건을 만족했는데 불필요하게 남았는가
@@ -264,12 +264,12 @@ merged PR or direct commit
 → affected domain canon
 → recent approved Decision IDs
 → actual code·data·assets·tests
-→ Project Notion
+→ exact-SHA repository human projection; explicitly scoped V4 Notion exception only when applicable
 → open and recent PRs
 → reference freshness·static·runtime·regression evidence
 ```
 
-GitHub와 Notion이 다르면 최신 사용자 승인, Decision ID, Commit SHA와 분야 책임 원본을 비교해 어느 쪽이 누락됐는지 판정한다. 자동으로 양쪽 중 하나를 진실로 가정하지 않는다.
+GitHub와 repository human projection이 다르면 최신 사용자 승인, Decision ID, Commit SHA와 분야 책임 원본을 비교해 어느 쪽이 누락됐는지 판정한다. 명시된 V4 Notion exception이 있으면 그 destination도 동일하게 비교한다. 자동으로 어느 한쪽을 진실로 가정하지 않는다.
 
 ## Output contract
 
@@ -278,7 +278,7 @@ GitHub와 Notion이 다르면 최신 사용자 승인, Decision ID, Commit SHA�
 ## 기준 Branch·Commit·Decision·정본·실제 diff
 ## 최소 3개 실질 대안·벤치마크·trade study
 ## 열린·최근 병합 PR·중복 작업 비교
-## Notion/GitHub 동기화 비교
+## repository human projection/GitHub 동기화 비교와 V4 Notion exception
 ## 저장소 감사 범위·권한 지도·미검증 범위
 ## stale·중복·고아·untouched 소비자·파생본 Finding
 ## MUST_FIX / SHOULD_FIX / USER_DECISION_REQUIRED / DEFER

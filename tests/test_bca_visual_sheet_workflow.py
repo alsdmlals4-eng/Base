@@ -32,13 +32,14 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
         self.assertEqual(machine["visual_map"], "VISUAL_MAP_DERIVED")
         self.assertEqual(machine["runtime_truth"], "REPOSITORY_RUNTIME_TRUTH")
 
-    def test_dashboard_skill_routes_to_notion_home_not_standalone_html(self) -> None:
+    def test_dashboard_skill_routes_to_repository_projection_not_standalone_html(self) -> None:
         skill = read("skills/building-project-visual-dashboards/SKILL.md")
         registry = json.loads(read("skills/SKILL_REGISTRY.json"))
         entry = next(item for item in registry["skills"] if item["skill_id"] == "building-project-visual-dashboards")
-        self.assertIn("NOTION_PROJECT_HOME_AND_VISUAL_MAP", skill)
+        self.assertIn("REPOSITORY_HUMAN_PROJECTION_AND_VISUAL_MAP", skill)
+        self.assertIn("V4_NOTION_EXCEPTION_ONLY", skill)
         self.assertIn("HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN", skill)
-        self.assertIn("Notion Project Home", skill)
+        self.assertIn("repository human projection", skill)
         self.assertIn("standalone HTML", skill)
         self.assertIn("금지", skill)
         self.assertEqual("ACTIVE", entry["status"])
@@ -162,7 +163,8 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
             self.assertIn(token, workflow)
         self.assertIn("Figma Bridge", workflow)
         self.assertIn("not required", workflow)
-        self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", policy)
+        self.assertIn("DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE", policy)
+        self.assertIn("V4_NOTION_EXCEPTION_ONLY", policy)
         self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", policy)
 
     def test_visual_requirement_gate_is_consumed_without_duplicate_skill(self) -> None:
@@ -217,7 +219,8 @@ class BCAVisualSheetWorkflowTests(unittest.TestCase):
     def test_sheets_are_migration_only_until_verified_removal(self) -> None:
         policy = read("docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md")
         self.assertIn("MIGRATION_ONLY_UNTIL_REMOVAL", policy)
-        self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", policy)
+        self.assertIn("REPOSITORY_PRIMARY_CANON", policy)
+        self.assertIn("V4_NOTION_EXCEPTION_ONLY", policy)
         self.assertIn("UNIQUE / DUPLICATE / OBSOLETE", policy)
         self.assertIn("MIGRATED_READBACK_VERIFIED", policy)
         self.assertIn("active consumer/reference", policy)

@@ -77,6 +77,63 @@ class RepositoryFirstWorkspaceContractTests(unittest.TestCase):
             contract["notion"],
         )
 
+    def test_active_operating_routes_do_not_require_notion_without_an_explicit_v4_exception(self) -> None:
+        active_routes = (
+            "skills/managing-project-intake-and-work-contract/SKILL.md",
+            "skills/managing-game-project-operating-system/SKILL.md",
+            "skills/managing-design-documents/SKILL.md",
+            "docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md",
+            "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md",
+            "docs/VISUAL_COLLABORATION_TOOL_POLICY.md",
+        )
+        for path in active_routes:
+            with self.subTest(path=path):
+                source = text(path)
+                self.assertIn("PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json", source)
+                self.assertIn("V4_NOTION_EXCEPTION_ONLY", source)
+                self.assertIn("NO_NEW_NOTION_WRITE_BY_DEFAULT", source)
+
+        intake = text(active_routes[0])
+        self.assertIn("REPOSITORY_DERIVED_VIEW_SYNC_DURING_WORK", intake)
+        self.assertNotIn("APPROVED_DECISION_GITHUB_NOTION_SYNC_DURING_WORK", intake)
+
+    def test_active_skill_registry_routes_core_work_through_repository_first_receipts(self) -> None:
+        registry = json.loads(text("skills/SKILL_REGISTRY.json"))
+        rows = {item["skill_id"]: item for item in registry["skills"]}
+
+        for skill_id in (
+            "managing-project-intake-and-work-contract",
+            "managing-game-project-operating-system",
+            "managing-design-documents",
+        ):
+            with self.subTest(skill_id=skill_id):
+                row = rows[skill_id]
+                self.assertIn("repository-first-workspace", row["trigger_tags"])
+                self.assertIn("repository-human-projection", row["trigger_tags"])
+                self.assertNotIn("notion-project-workspace", row["trigger_tags"])
+                self.assertNotIn("Project Notion", "\n".join(row["use_when"]))
+
+        intake = rows["managing-project-intake-and-work-contract"]
+        for trigger in (
+            "benchmark-preflight",
+            "benchmark-reverse-engineering",
+            "legacy-context-hygiene",
+        ):
+            with self.subTest(trigger=trigger):
+                self.assertIn(trigger, intake["trigger_tags"])
+
+    def test_v4_contract_has_a_single_partition_owner_and_v3_is_compatibility_only(self) -> None:
+        manifest = json.loads(text("docs/operations/BASE_PARTITION_MANIFEST.json"))
+        p01 = next(part for part in manifest["parts"] if part["part_id"] == "P01")
+
+        self.assertIn(
+            "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json",
+            p01["owned_write_paths"],
+        )
+        self.assertIn("REPOSITORY_PRIMARY_CANON", p01["important_rules"])
+        self.assertIn("NO_NEW_NOTION_WRITE_BY_DEFAULT", p01["important_rules"])
+        self.assertNotIn("NOTION_DEFAULT_PROJECT_WORKSPACE", p01["important_rules"])
+
     def test_codex_and_visual_handoff_use_exact_repository_evidence(self) -> None:
         contract = json.loads(text(ACTIVE_CONTRACT))
 

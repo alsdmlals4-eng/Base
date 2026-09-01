@@ -42,7 +42,7 @@ ADVERSARIAL_REVIEW_UNTIL_CLEAN
 FULL_LOOP_COUNT_MINIMUM: 5
 MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
 POSTMERGE_PROMOTION_AND_SUPERSESSION
-POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP
+POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP
 POSTMERGE_CORRECTION_REQUIRED
 PROGRESS_READBACK_REQUIRED
 RELEASE_NEAR_VERTICAL_SLICE_FIRST
@@ -54,7 +54,9 @@ SHIPPING_INTENT_UI_IMAGE_AUDIO_VFX_SYSTEM_REQUIRED
 BALANCE_BUDGET
 WORLD_STORYLINE_FIT_REQUIRED
 REUSABLE_SYSTEM_EXTRACTION
-NOTION_DEFAULT_PROJECT_WORKSPACE
+REPOSITORY_PRIMARY_CANON
+HUMAN_GDD_PDF_DERIVED_VIEW
+V4_NOTION_EXCEPTION_ONLY
 PROJECT_RELATION_REQUIRED
 WORK_MASTER
 ASSET_KNOWLEDGE_MASTER
@@ -291,9 +293,9 @@ REUSABLE_SYSTEM_EXTRACTION
 
 ## 12. 프로젝트 작업면·데이터 권위
 
-### `NOTION_DEFAULT_PROJECT_WORKSPACE`
+### `REPOSITORY_PRIMARY_CANON` + `HUMAN_GDD_PDF_DERIVED_VIEW`
 
-Notion은 사람용 프로젝트 개요·Flow·Visual·표·핵심 시스템 이해의 기본 작업면이다. 모든 project record는 `PROJECT_RELATION_REQUIRED`를 지킨다.
+repository는 사람용 프로젝트 개요·Flow·Visual·표·핵심 시스템 이해의 정본이며 exact-SHA `HUMAN_GDD_PDF_DERIVED_VIEW`는 사람이 보는 파생 snapshot이다. `V4_NOTION_EXCEPTION_ONLY` / `NO_NEW_NOTION_WRITE_BY_DEFAULT`: Notion은 explicit exception 또는 legacy migration source일 때만 사용한다. 모든 project record는 `PROJECT_RELATION_REQUIRED`를 지킨다.
 
 ```text
 WORK_MASTER
@@ -326,8 +328,9 @@ QA_EVIDENCE_STUDIO_RETIRED_FROM_ACTIVE_PROJECT_FLOW
 
 ```text
 GPT generate / edit / review
-→ exact Project Notion upload / attach
+→ repository candidate path / manifest / exact-SHA derived view
 → readback
+→ V4 exception upload/attach only when explicitly approved
 → approval / rejection
 → 실제 Godot 제품 구현 필요?
    ├─ NO → GPT 종료
@@ -340,7 +343,7 @@ Codex는 이미지 생성·생성형 편집·임의 AI placeholder를 만들지 
 
 ## 13A. Legacy 흡수·검증·제거
 
-`LEGACY_ABSORB_VERIFY_REMOVE`: 더 이상 사용하지 않는 Figma, 전용 local visual Tool/Hub, QA Evidence Studio, external HTML workspace, Google Sheets 같은 구형 surface는 `UNIQUE / DUPLICATE / OBSOLETE`로 한 번 분류한다. UNIQUE한 규칙·데이터·증거·재사용 원리만 현재 Notion/repository owner로 흡수하고 destination readback·consumer 확인 뒤 active route에서 retirement한다.
+`LEGACY_ABSORB_VERIFY_REMOVE`: 더 이상 사용하지 않는 Figma, 전용 local visual Tool/Hub, QA Evidence Studio, external HTML workspace, Google Sheets 같은 구형 surface는 `UNIQUE / DUPLICATE / OBSOLETE`로 한 번 분류한다. UNIQUE한 규칙·데이터·증거·재사용 원리만 현재 repository owner와 exact-SHA derived view로 흡수하고 destination readback·consumer 확인 뒤 active route에서 retirement한다. V4 exception destination은 실제 적용된 경우에만 별도로 확인한다.
 
 `PAID_PLAN_GATE`: 현재 기본 유료 플랜은 **GPT Pro** 하나다. Notion은 Free 범위를 기본으로 하며 별도 API credit·SaaS·runner·compute/storage는 **새 사용자 승인** 전 도입하지 않는다.
 
@@ -383,9 +386,9 @@ Notion은 Free 범위를 기본으로 하고 새 유료 API/SaaS/runner/compute/
 
 병합 뒤 main을 다시 읽고 replacement pointer와 실제 consumer를 확인한다.
 
-### `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`
+### `POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP`
 
-병합 뒤 새 main과 Notion을 readback하고 전체 승인 범위를 재공격한다. 유효 finding은 `POSTMERGE_CORRECTION_REQUIRED`로 처리하고 `PROGRESS_READBACK_REQUIRED`에 따라 남은 작업을 다시 계산한다. 이 검증은 premerge 마지막 교정과 **same final-state lineage**를 유지한다.
+병합 뒤 새 main, repository primary canon, asset manifest, exact-SHA human projection과 runtime evidence를 readback하고 전체 승인 범위를 재공격한다. 명시된 V4 Notion exception이 있을 때만 해당 destination을 추가 readback한다. 유효 finding은 `POSTMERGE_CORRECTION_REQUIRED`로 처리하고 `PROGRESS_READBACK_REQUIRED`에 따라 남은 작업을 다시 계산한다. 이 검증은 premerge 마지막 교정과 **same final-state lineage**를 유지한다.
 
 ## 17. 완료 조건
 

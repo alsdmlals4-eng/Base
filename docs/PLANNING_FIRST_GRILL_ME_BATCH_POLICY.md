@@ -8,26 +8,26 @@
 - `docs/WORK_MODE_AND_SKILL_ROUTING.md`
 - `docs/CONFIRMED_DECISION_SYNC_POLICY.md`
 - `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md`
-- `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json`
+- `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`
 - `skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md`
 
 ## 0. Workspace authority
 
-프로젝트의 활성 계획·결정 동기화는 `PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json`의 `DOMAIN_SPLIT_CANON`을 따른다.
+프로젝트의 활성 계획·결정 동기화는 `PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`의 `REPOSITORY_PRIMARY_CANON`을 따른다. `V4_NOTION_EXCEPTION_ONLY` / `NO_NEW_NOTION_WRITE_BY_DEFAULT`이며 V3 `DOMAIN_SPLIT_CANON`은 compatibility/history source다.
 
 ```yaml
-workspace_authority: DOMAIN_SPLIT_CANON
-human_workspace: NOTION_HUMAN_FACING_CANON
-structured_workspace: REPOSITORY_STRUCTURED_CANON
+workspace_authority: REPOSITORY_PRIMARY_CANON_WITH_DERIVED_HUMAN_PDF
+human_workspace: HUMAN_GDD_PDF_DERIVED_VIEW
+structured_workspace: REPOSITORY_PRIMARY_CANON
 legacy_google_sheets: COMPATIBILITY_ONLY
 ```
 
-- 사람용 프로젝트 계획·결정·설명은 정확한 Project relation 아래의 `NOTION_HUMAN_FACING_CANON`에 둔다.
-- 구조화 상태·실행 계약·runtime truth·Git 추적은 `REPOSITORY_STRUCTURED_CANON`이 소유한다.
+- 사람용 프로젝트 계획·결정·설명은 repository source의 exact-SHA `HUMAN_GDD_PDF_DERIVED_VIEW` 또는 repository-native view로 제공한다.
+- 구조화 상태·실행 계약·runtime truth·Git 추적은 `REPOSITORY_PRIMARY_CANON`이 소유한다.
 - Google Sheets는 `COMPATIBILITY_ONLY` legacy migration source다. 신규 입력·활성 동기화·완료 판정의 필수 surface로 사용하지 않는다.
-- Base 자체 작업처럼 프로젝트 Notion destination이 적용되지 않는 경우에는 Notion 기록을 발명하지 않는다. 적용 가능한 목적지만 동기화하고 **destination readback**으로 확인한다.
+- V4 exception이 실제로 승인된 경우에만 Notion destination을 owner·scope·value·exit/revisit 조건과 함께 동기화하고 **destination readback**으로 확인한다. 그 외에는 Notion 기록을 발명하지 않는다.
 
-충돌 시 최신 사용자 지시와 프로젝트 `AGENTS.md` 다음으로 Base `AGENTS.md`와 이 정책을 적용한다. 기존 문서의 “승인 Decision 즉시 동기화”는 계속 유효하지만, Grill Me 승인에서는 **활성 배치 Branch에 즉시 내구 기록**하고 적용 가능한 Notion 사람용 목적지를 갱신·재조회하는 것을 뜻한다. 배치 PR이 병합되기 전에는 main 동기화 완료를 주장하지 않는다.
+충돌 시 최신 사용자 지시와 프로젝트 `AGENTS.md` 다음으로 Base `AGENTS.md`와 이 정책을 적용한다. 기존 문서의 “승인 Decision 즉시 동기화”는 계속 유효하지만, Grill Me 승인에서는 **활성 배치 Branch의 repository owner에 즉시 내구 기록**하고 exact-SHA derived view를 갱신·재조회하는 것을 뜻한다. V4 exception은 실제 적용된 경우에만 추가 목적지를 갱신한다. 배치 PR이 병합되기 전에는 main 동기화 완료를 주장하지 않는다.
 
 ## 1. 기획 우선 원칙
 
@@ -169,7 +169,7 @@ BATCH_PR_OPEN
 - destination readback 실패
 - 범위 밖 제품 코드·자산·정본 변경
 
-병합 후 `REPOSITORY_STRUCTURED_CANON`과 적용 가능한 `NOTION_HUMAN_FACING_CANON`의 Decision ID·결정·대체 관계·merge Commit이 일치하고 destination readback이 끝났을 때만 `SYNCED_TO_MAIN`을 사용한다. `COMPATIBILITY_ONLY` Sheet의 migration state는 별도 상태이며 active sync 완료를 좌우하지 않는다.
+병합 후 `REPOSITORY_PRIMARY_CANON`과 `HUMAN_GDD_PDF_DERIVED_VIEW`의 Decision ID·결정·대체 관계·merge Commit이 일치하고 source/readback이 끝났을 때만 `SYNCED_TO_MAIN`을 사용한다. V4 exception destination은 실제 적용됐을 때만 별도 readback한다. `COMPATIBILITY_ONLY` Sheet의 migration state는 별도 상태이며 active sync 완료를 좌우하지 않는다.
 
 ## 6. 적대적 검토 체크리스트
 

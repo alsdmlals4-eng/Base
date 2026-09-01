@@ -12,7 +12,7 @@
 - `BEST_LONG_TERM_EFFICIENT_METHOD`: 가장 빠른 답변이나 최소 토큰이 아니라 사용자·플레이어 가치, 정확성, 출시 품질, 유지보수성, 재사용성, 되돌리기 가능성, 수명주기 총비용을 함께 보아 가장 효율적이고 장기적인 방법을 선택한다.
 - `QUALITY_OVER_RESPONSE_SPEED`: 중요한 작업은 필요한 만큼 조사·추론·도구 실행·검증에 더 많은 시간과 토큰을 사용하고, 증거 없는 빠른 답변을 완료로 보지 않는다.
 - `BENCHMARK_PRACTICE_COMPARISON`: 현행 정본·실제 구현과 최소 3개 실질 대안을 공식/1차 자료, 벤치마크, 현업 운영 방식, 실무 성공·실패 사례로 비교한다.
-- `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`: GitHub 병합 뒤 exact new main에서 전체 승인 범위를 적대적으로 다시 검토하고 필수 교정을 새 Branch/PR로 처리한다. 적용 가능한 Notion current-state는 GitHub 증거 뒤에 갱신하며, 양쪽 destination readback과 `PROGRESS_READBACK_REQUIRED`로 진행도·남은 작업을 다시 계산해야 완료다.
+- `POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP`: GitHub 병합 뒤 exact new main에서 전체 승인 범위를 적대적으로 다시 검토하고 필수 교정을 새 Branch/PR로 처리한다. repository primary canon·asset manifest·exact-SHA human projection과 runtime evidence를 readback하고 `PROGRESS_READBACK_REQUIRED`로 진행도·남은 작업을 다시 계산해야 완료다. V4 Notion exception은 실제 적용될 때만 추가 destination으로 갱신한다.
 - `ISSUE_SUCCESSOR_FRESHNESS_REQUIRED`: GitHub Issues를 사용하는 프로젝트는 병합 뒤 exact new main·current canon·실제 구현·증거와 open Issue를 다시 대조한다. `MERGE_LINKED_ISSUE_READBACK_REQUIRED`로 이번 merge에 연결되어 자동 종료된 Issue도 전체 책임 완료 여부를 다시 읽는다. `open`/`closed` 상태만으로 현재 권한이나 완료를 만들지 않으며, `CURRENT_VALID / DEFERRED_VALID / COMPLETED / SUPERSEDED / CONFLICT_WITH_CURRENT_CANON / REVIEW_REQUIRED`로 판정한 뒤 필요한 disposition·reopen/review routing과 readback을 수행한다. 상세 계약은 `docs/POSTMERGE_ISSUE_SUCCESSOR_FRESHNESS_POLICY.md`를 따른다.
 
 ## 한눈에 보기

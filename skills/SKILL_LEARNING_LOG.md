@@ -746,3 +746,13 @@
 - 검증: `tests/test_base_change_proposals.py`, `tests/test_skill_implementation_evidence.py`, exact-head canonical-reference freshness.
 - 안전 경계: 이 기록과 템플릿은 후보 보고서의 주장이나 첨부 PDF를 Base canon·runtime PASS·human PASS·사용자 승인으로 바꾸지 않는다. 특정 프로젝트의 세계관·경로·자산·수치·개별 결론은 project-only로 유지한다.
 - 다음 검토 트리거: 후보 보고서가 공통 교훈 없이 다시 Base 변경으로 승격되려 할 때, 동일한 correction request가 서로 다른 owner를 중복할 때, 또는 actual observation과 추측이 혼합돼 evidence ceiling을 잃을 때.
+
+## 2026-09-01 — V4 benchmark receipt와 repository-first active-route 교정
+
+- 상태: `OBSERVATION`
+- 호출 트리거: repository-first V4를 선언한 뒤에도 일부 intake·planning·visual consumer가 historical Notion default를 mandatory route로 요구했고, L1+ benchmark/hygiene 규칙이 prose와 template token에만 남아 빈 receipt를 막지 못한다는 독립 검토 finding.
+- 실제 관찰: V4 vocabulary를 active entrypoint에 포함하는 것만으로는 충분하지 않다. active imperative route가 `NO_NEW_NOTION_WRITE_BY_DEFAULT`와 충돌하면 기존 V3 token이 다시 기본 workflow가 된다. 또한 `PASS`/`REUSED_EVIDENCE`가 evidence entry 없이 허용되거나 L1 `NOT_APPLICABLE`을 허용하면 benchmark-first는 검증 가능한 gate가 아니다.
+- 결정: `REPOSITORY_PRIMARY_CANON`과 exact-SHA `HUMAN_GDD_PDF_DERIVED_VIEW`를 active sync/readback route로 사용한다. `V4_NOTION_EXCEPTION_ONLY`는 explicit owner·scope·measurable value·exit/revisit 조건이 있을 때만 적용한다. Base/project L1+ receipt는 repository-owned JSON으로 남기고 `validate_work_contract_receipt.py`가 observed benchmark entry, L0-only N/A, blocked source, scope inventory, removal reference-zero/recoverable-readback proof를 fail closed로 검사한다.
+- 안전 경계: 이 validator와 Base contract는 실제 프로젝트의 genre·world·wireframe·button·asset·runtime 결론을 고정하거나 human/runtime PASS로 승격하지 않는다. V3 자료는 compatibility/history 또는 migration evidence로 보존하며, old 이름·날짜만으로 삭제하지 않는다.
+- 검증: receipt validator의 positive/negative unit tests, V4 active-route/partition-owner regression, focused intake/template tests, canonical-reference freshness와 exact-head CI를 차례로 실행한다.
+- 다음 검토 트리거: active consumer가 V3 Notion default write를 재도입하는 경우, L1 receipt가 evidence 없이 통과하는 경우, V4 contract semantic owner가 다시 unassigned가 되는 경우, 실제 프로젝트 migration/exception pilot.

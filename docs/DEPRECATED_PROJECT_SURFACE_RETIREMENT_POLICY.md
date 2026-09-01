@@ -86,7 +86,7 @@ Google Sheets는 신규 기획·승인·상태관리의 입력면이 아니다.
 ```text
 legacy Sheet
 → UNIQUE / DUPLICATE / OBSOLETE
-→ UNIQUE human-facing meaning → exact Project Notion owner
+→ UNIQUE human-facing meaning → repository human PDF/Markdown projection owner; explicitly scoped V4 Notion exception only when applicable
 → UNIQUE structured/runtime meaning → repository owner
 → provenance / source locator 보존
 → destination readback
@@ -100,7 +100,7 @@ legacy Sheet
 
 ### `FIGMA_DEPRECATED_NOT_ACTIVE_AUTHORITY`
 
-Figma는 신규 active visual workspace가 아니다. 과거 링크/asset에 UNIQUE provenance가 있으면 현재 Project Notion/Repository owner로 이관·readback한 뒤 active reference를 제거한다.
+Figma는 신규 active visual workspace가 아니다. 과거 링크/asset에 UNIQUE provenance가 있으면 현재 repository owner와 exact-SHA human projection으로 이관·readback한 뒤 active reference를 제거한다. 명시된 V4 Notion exception만 추가 destination으로 사용한다.
 
 ## 3. `REPOSITORY_NATIVE_EVIDENCE_CAPTURE`
 

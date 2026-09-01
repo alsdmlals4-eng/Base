@@ -128,6 +128,16 @@ PROJECT_START_CANON_CHECKLIST:
     benchmark_preflight_state: PASS | REUSED_EVIDENCE | NOT_APPLICABLE | BLOCKED_UNVERIFIED
     benchmark_preflight_scope:
     benchmark_preflight_reason_not_applicable:
+    benchmark_preflight_receipt:
+      state: PASS | REUSED_EVIDENCE | NOT_APPLICABLE | BLOCKED_UNVERIFIED
+      entries:
+        - source_and_evidence:
+          observed_pattern:
+          project_fit_and_difference:
+          disposition: ADOPT | ADAPT | REJECT
+      reason_not_applicable: # L0 only
+      blocked_sources: []
+    receipt_validation_command: python tools/validate_work_contract_receipt.py --receipt <repository-owned-json-receipt>
     player_promise:
     pointed_fun:
     core_loop:
@@ -189,8 +199,14 @@ PROJECT_START_CANON_CHECKLIST:
 
   context_configuration_hygiene:
     scope:
-    inventory: []
-    classification: ACTIVE_OWNER | COMPATIBILITY | ARCHIVE | OBSOLETE_CANDIDATE | UNKNOWN_UNVERIFIED
+    inventory:
+      - path:
+        classification: ACTIVE_OWNER | COMPATIBILITY | ARCHIVE | OBSOLETE_CANDIDATE | UNKNOWN_UNVERIFIED
+        owner_or_provenance:
+        references_and_consumers:
+        removal_proposed: false
+        references_and_consumers_zero_before_removal:
+        git_recoverable_removal_and_readback:
     entrypoint_or_token_saving_correction: []
     references_and_consumers_zero_before_removal:
     git_recoverable_removal_and_readback:

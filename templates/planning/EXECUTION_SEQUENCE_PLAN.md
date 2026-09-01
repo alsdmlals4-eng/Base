@@ -25,6 +25,43 @@
 
 `BENCHMARK_PREFLIGHT_BEFORE_WORK_REQUIRED`: L1+ 작업은 이 표를 완료한 뒤에만 새 설계·제작·구현으로 진행한다. benchmark는 프로젝트에 맞는 flow·wireframe·기능·시각 방향을 찾는 비교이며, 고정된 메뉴·버튼·장르·구도를 주입하지 않는다. `NO_DELETION_BY_AGE_OR_NAME`: hygiene의 실제 제거는 references·consumer 0, Git recoverability, destination readback와 재검증을 확보한 경우에만 허용한다.
 
+### 기계 검증 work-contract receipt (L1+ 필수)
+
+아래 repository-owned JSON receipt를 실제 값으로 작성하고, 새 설계·제작·구현 전에 `python tools/validate_work_contract_receipt.py --receipt <receipt.json>`을 실행한다. `PASS`/`REUSED_EVIDENCE`는 비어 있는 표나 추측으로 통과할 수 없고, `NOT_APPLICABLE`은 L0의 순수 기계 수정만 허용한다.
+
+```json
+{
+  "work_level": "L1",
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [
+      {
+        "source_and_evidence": "exact repository SHA, official source, or approved benchmark path",
+        "observed_pattern": "directly observed reusable pattern",
+        "project_fit_and_difference": "why the pattern fits here and what must not be copied",
+        "disposition": "ADOPT | ADAPT | REJECT"
+      }
+    ],
+    "reason_not_applicable": "L0 only",
+    "blocked_sources": ["required unreadable source when BLOCKED_UNVERIFIED"]
+  },
+  "context_configuration_hygiene": {
+    "scope": "only files and consumers in this task",
+    "inventory": [
+      {
+        "path": "repository-relative path",
+        "classification": "ACTIVE_OWNER | COMPATIBILITY | ARCHIVE | OBSOLETE_CANDIDATE | UNKNOWN_UNVERIFIED",
+        "owner_or_provenance": "current owner or verified source",
+        "references_and_consumers": "actual readback result",
+        "removal_proposed": false,
+        "references_and_consumers_zero_before_removal": true,
+        "git_recoverable_removal_and_readback": true
+      }
+    ]
+  }
+}
+```
+
 ## 선행 조건
 
 | ID | 환경·권한·결정·입력 | 상태 | 해결 방법 | 차단 작업 |

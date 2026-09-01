@@ -9,7 +9,7 @@ Base v9.1 projects use the focused [project adapter and routing contract](refere
 
 ## Core principle
 
-신규 설치, 기존 구조 감사, 구형 파일 정리, 승인된 마이그레이션과 운영체계 검수는 같은 책임 원본·참조·복구 계약을 공유한다. `Work Mode`와 `Skill Mode`를 구분하며, 읽기 전용 조사와 승인된 쓰기 작업을 혼동하지 않는다. 프로젝트 workspace는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`의 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`를 따른다. `REPOSITORY_PRIMARY_CANON`이 현재 기획·구조화·runtime truth를 소유하고, `HUMAN_GDD_PDF_DERIVED_VIEW`는 exact-SHA 사람이 보는 파생본이다. Notion과 Google Sheets는 V4 exception 또는 read-only/compatibility migration input이며 V3 `DOMAIN_SPLIT_CANON`은 history-only다.
+신규 설치, 기존 구조 감사, 구형 파일 정리, 승인된 마이그레이션과 운영체계 검수는 같은 책임 원본·참조·복구 계약을 공유한다. `Work Mode`와 `Skill Mode`를 구분하며, 읽기 전용 조사와 승인된 쓰기 작업을 혼동하지 않는다. 프로젝트 workspace는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`의 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`를 따른다. `REPOSITORY_PRIMARY_CANON`이 현재 기획·구조화·runtime truth를 소유하고, `HUMAN_GDD_PDF_DERIVED_VIEW`는 exact-SHA 사람이 보는 파생본이다. `V4_NOTION_EXCEPTION_ONLY` / `NO_NEW_NOTION_WRITE_BY_DEFAULT`: Notion과 Google Sheets는 explicit V4 exception 또는 read-only/compatibility migration input이며 V3 `DOMAIN_SPLIT_CANON`은 history-only다.
 
 Google Sheets legacy migration의 공용 의미·폐기 경계는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 따른다. 이 참조는 Sheet를 신규 입력면이나 active project workspace로 재승격하지 않는다. 기존 consumer가 사용하는 legacy literal `project_google_sheet`는 `google_sheet_compatibility_source`의 호환 alias일 뿐이며 신규 install·active sync·정본 권위를 뜻하지 않는다.
 
@@ -86,7 +86,7 @@ hera_source_delta_guard:
 → AGENTS·README·START_HERE
 → Work Mode·Skill 라우팅 계약
 → Active Context·Documentation Map·Roadmap·Development Gates
-→ CURRENT_CONFIRMED_DECISIONS.md·동일 Goal의 열린·최근 병합 PR·정확한 Project Notion workspace
+→ CURRENT_CONFIRMED_DECISIONS.md·동일 Goal의 열린·최근 병합 PR·exact-SHA derived PDF; V4 exception/legacy source는 적용될 때만
 → Google Sheets legacy source는 UNIQUE 미이관 material 확인이 필요할 때만
 → Design Document Registry·Skill Registry
 → 관련 책임 원본·Skill·Learning Log
@@ -249,7 +249,7 @@ floating_latest: forbidden
 
 1. 신규·빈 프로젝트인지 확인한다. 고유 문서·자산·이력이 있으면 `audit`로 전환한다.
 2. 루트 `[기획서]/00_프로젝트_허브/`와 시작 문서·`CURRENT_CONFIRMED_DECISIONS.md`·Registry·게이트를 설치한다.
-3. 정확한 Project Notion workspace와 Project relation을 확인·연결한다. 적용되지 않으면 `NOT_APPLICABLE`로 두며 새 Google Sheet를 만들거나 요구하지 않는다. 기존 legacy Sheet가 실제 존재하면 `google_sheet_compatibility_source`로만 기록한다.
+3. repository entrypoints·exact-SHA derived PDF와 asset manifest를 설치한다. `V4_NOTION_EXCEPTION_ONLY`: 명시 승인된 exception 또는 기존 legacy source만 owner·scope·value·exit/revisit 조건으로 기록하고, 적용되지 않으면 `NOT_APPLICABLE`로 둔다. 새 Notion workspace나 Google Sheet를 만들거나 요구하지 않는다.
 4. 프로젝트가 실제 선택한 책임 분야만 등록한다.
 5. 서술은 Markdown, 구조·상태·게임 데이터는 JSON을 선택한다.
 6. 발행 생성기·Manifest·선택 파생본 정책을 설치한다.
@@ -272,7 +272,7 @@ floating_latest: forbidden
 - 현재 책임 문서·Skill·자산·파생본 지도
 - enabled addon·connected MCP·CLI·provider pin·host profile inventory
 - GUT/Hera exact pin·consumption·owner boundary·source-delta guard 상태
-- `CURRENT_CONFIRMED_DECISIONS.md`·분야 정본·GitHub `main`·정확한 Project Notion record의 Decision·Commit·대체 관계 대조
+- `CURRENT_CONFIRMED_DECISIONS.md`·분야 정본·GitHub `main`·exact-SHA derived PDF의 source Commit·evidence ceiling·대체 관계 대조; V4 exception record는 실제 적용된 경우에만 추가 대조
 - 실제 legacy Sheet가 있으면 `COMPATIBILITY_ONLY` 범위의 UNIQUE/DUPLICATE/OBSOLETE migration inventory
 - 중복·충돌·누락·구형 참조 목록
 - 목표 Registry와 책임 원본 구조
@@ -356,7 +356,7 @@ KEEP_UNRESOLVED
 
 1. 루트와 시작 문서
 2. Work Mode·Skill 자동 라우팅과 실행 보고
-3. `CURRENT_CONFIRMED_DECISIONS.md`·분야 정본·GitHub `main`·적용 가능한 Project Notion 동기화와 destination readback
+3. `CURRENT_CONFIRMED_DECISIONS.md`·분야 정본·GitHub `main`·exact-SHA derived PDF의 source/commit/evidence ceiling readback; V4 exception은 적용 가능한 경우에만 destination readback
 4. legacy Google Sheets가 있으면 `COMPATIBILITY_ONLY` migration 상태와 active authority 미승격
 5. Design Document Registry와 단일 책임 원본
 6. 구형본 처리표·Legacy Alias·활성 stale reference 부재
@@ -369,7 +369,7 @@ KEEP_UNRESOLVED
 13. adopted Hera exact CLI/addon pair·`LIVE_QA_AND_OBSERVABILITY_ONLY`·localhost/shared-token·live-QA consumption·source-delta `NONE`
 14. Governance checker·회귀 테스트·GitHub Actions·브랜치 보호
 15. 과거 대화 없이 현재 Decision을 복원하는 콜드 스타트
-16. GitHub 병합 뒤 exact main·전체 적대 검토·필수 교정·적용 가능한 Notion 갱신·양쪽 readback·진행도 재계산
+16. GitHub 병합 뒤 exact main·전체 적대 검토·필수 교정·repository/PDF readback·진행도 재계산; V4 exception은 적용 가능한 경우에만 destination 갱신·readback
 17. `REMAINING_WORK_RECALCULATION_REQUIRED` 뒤 `IMPLEMENTATION_CORRECTION_RESCAN`을 수행하고, 새 finding이면 `NEW_FINDING_REOPENS_REMAINING_WORK`, clean이면 최종 후보의 동일 `POST_CHANGE_MONITOR_LOOP`로 `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`와 `CLEAN_REVIEW_EXIT`를 확인
 
 ```text
@@ -389,7 +389,7 @@ KEEP_UNRESOLVED
 ## Work Mode와 Skill Mode
 ## 자동 선택 이유
 ## 현재 구조·증거
-## Project Notion·Repository workspace authority
+## Repository-first workspace authority and V4 Notion exception
 ## Legacy Google Sheets compatibility/migration 상태
 ## Third-party provider와 HiGodot exact pin
 ## GUT/Hera adoption·consumption·owner boundary
@@ -398,11 +398,11 @@ KEEP_UNRESOLVED
 ## 실제 갱신·통합·아카이브·삭제
 ## 제안만 한 변경
 ## 보존·참조·롤백 대조
-## CURRENT_CONFIRMED_DECISIONS·Repository·Notion 동기화
+## CURRENT_CONFIRMED_DECISIONS·Repository·human projection 동기화
 ## Registry·책임 원본·발행본
 ## Skill·Learning·Routing
 ## 자동화·GitHub 강제
-## 병합 후 GitHub·Notion 적대 검토·교정·진행도 readback
+## 병합 후 GitHub·repository projection 적대 검토·교정·진행도 readback
 ## REMAINING_WORK_COMPLETION_GATE·IMPLEMENTATION_CORRECTION_RESCAN·CLEAN_REVIEW_EXIT
 ## 콜드 스타트
 ## PASS·PARTIAL·FAIL·NOT_RUN
@@ -422,7 +422,7 @@ KEEP_UNRESOLVED
 - HiGodot project이면 exact pin, DeepSeek 금지, loopback, canary, regression, rollback 상태가 기록됐다.
 - GUT/Hera adopted project이면 exact pin/pair, 실제 consumption, owner boundary, rollback/removal과 Hera source-delta guard가 기록됐다.
 - 신규·정리·마이그레이션·provider update 결과는 `verify` 증거를 가진다.
-- 병합 뒤 `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`, `POSTMERGE_CORRECTION_REQUIRED`, `PROGRESS_READBACK_REQUIRED`가 적용 범위에서 닫혔다.
+- 병합 뒤 `POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP`, `POSTMERGE_CORRECTION_REQUIRED`, `PROGRESS_READBACK_REQUIRED`가 repository/PDF 범위에서 닫혔고 V4 exception destination은 실제 적용된 경우에만 재확인했다.
 - `FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK`: 승인 범위의 actionable remaining work가 0이고 `IMPLEMENTATION_CORRECTION_RESCAN` 결과 필수 구현/교정 finding이 없으며 최종 후보의 동일 `POST_CHANGE_MONITOR_LOOP`가 `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`와 `CLEAN_REVIEW_EXIT`를 닫았다.
 - 승인 범위 안에 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, 미해결 `DEFER`가 남은 상태를 `전체 완료`로 숨기지 않았다.
 - 실행하지 않은 검사와 권한은 `NOT_RUN` 또는 `[미검증]`이다.

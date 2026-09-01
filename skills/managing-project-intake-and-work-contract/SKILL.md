@@ -27,7 +27,7 @@ Registry의 승인된 작은 작업 비사용 조건은 이미 승인·정의된
 
 `USER_APPROVAL_BEFORE_BUILD`
 
-`APPROVED_DECISION_GITHUB_NOTION_SYNC_DURING_WORK`
+`REPOSITORY_DERIVED_VIEW_SYNC_DURING_WORK`
 
 `POST_BUILD_FULL_ADVERSARIAL_REVIEW_AND_PR_RECHECK`
 
@@ -39,7 +39,7 @@ L1 이상 중요 Base/프로젝트 작업은 실행안을 먼저 정해 두고 �
 latest user request
 → Base current owners / relevant Skill / current main
 → target project GitHub current main / canon / actual code·data·assets·tests
-→ exact Project Notion Home + relevant human/AI-System surfaces
+→ V4 Notion exception / legacy migration source only when its recorded scope applies
 → same-goal open/recent PR read-only reconciliation
 → confirmed decisions / current implementation / evidence
 → Project Asset/Reference/Benchmark surfaces already approved or collected
@@ -53,7 +53,7 @@ latest user request
 → provisional best long-term option
 ```
 
-모든 파일을 무작정 읽는다는 뜻이 아니라 Registry·Documentation Map·프로젝트 정본으로 **이번 변경의 실제 owner와 영향 consumer를 빠짐없이 식별**한다. Base 자체 작업에서는 적용되는 Base/Notion surface를 읽고, 프로젝트 작업에서는 프로젝트 GitHub와 Project Notion Home을 함께 읽는다. open/draft/ready PR은 `OPEN_PR_READ_ONLY_BY_DEFAULT`로 확인하되 명시적 권한 없이 흡수·수정하지 않는다.
+모든 파일을 무작정 읽는다는 뜻이 아니라 Registry·Documentation Map·프로젝트 정본으로 **이번 변경의 실제 owner와 영향 consumer를 빠짐없이 식별**한다. Base 자체 작업은 Base repository owner를, 프로젝트 작업은 exact project repository와 파생 PDF를 먼저 읽는다. `V4_NOTION_EXCEPTION_ONLY`: `NO_NEW_NOTION_WRITE_BY_DEFAULT`이며 Notion은 명시된 V4 exception 또는 UNIQUE material을 가진 legacy migration source일 때만 그 scope를 read-only로 대조하거나 승인된 예외 쓰기·destination readback을 수행한다. open/draft/ready PR은 `OPEN_PR_READ_ONLY_BY_DEFAULT`로 확인하되 명시적 권한 없이 흡수·수정하지 않는다.
 
 `REUSE_FIRST_PREFLIGHT_REQUIRED`: 신규 또는 의미 있게 개정하는 시스템·메커닉·데이터/콘텐츠 구조·UI/UX·시각/Asset·도구/자동화·workflow·Skill/Eval·QA/Test는 신규 설계·제작 전에 위 source order를 실제로 확인한다. 현재 프로젝트에서 이미 해결된 구현·컴포넌트·Scene·Resource·자산·테스트가 있으면 그것이 첫 후보이고, 프로젝트의 승인된 Asset/Reference/Benchmark와 Base의 reuse handoff/profile/matrix/Registry 및 **Base accumulated knowledge/case/reference**를 fresh external research보다 먼저 확인한다. 다른 프로젝트는 모든 프로젝트를 전수 검색하지 않고 Registry/profile/current bottleneck이 가리키는 직접 관련 consumer만 targeted cross-project evidence로 확인한다.
 
@@ -81,9 +81,9 @@ latest user request
 
 `USER_APPROVAL_BEFORE_BUILD`: 새 기획 결정·구조 변경·정책 변경·중요 제품 변경은 위 설계 묶음의 사용자 승인 뒤에만 BUILD한다. 기존 승인 계약의 동일 범위 continuation은 approval reference를 재사용하며 routine 단계마다 다시 묻지 않는다.
 
-`APPROVED_DECISION_GITHUB_NOTION_SYNC_DURING_WORK`: 승인된 작업 중 새로 확정된 사람이 봐야 할 결정·Flow·Visual·핵심 데이터는 작업 종료까지 미루지 않고 올바른 repository owner와 필요한 Notion human-facing surface에 같은 승인 단위로 동기화하고 destination readback한다. GitHub와 Notion의 역할을 복제하지 않으며, structured/runtime 의미가 바뀌면 repository를 먼저 동기화한다.
+`REPOSITORY_DERIVED_VIEW_SYNC_DURING_WORK`: 승인된 작업 중 새로 확정된 결정·Flow·Visual·핵심 데이터는 작업 종료까지 미루지 않고 올바른 repository owner에 같은 승인 단위로 반영하고 commit/readback한다. 사람이 보는 정보는 exact source SHA를 지닌 `HUMAN_GDD_PDF_DERIVED_VIEW` 또는 repository-native view로 갱신한다. `V4_NOTION_EXCEPTION_ONLY`인 경우에만 예외 contract의 owner·scope·value·exit/revisit 조건에 맞는 destination을 추가 갱신·readback하며, GitHub와 Notion의 역할을 복제하지 않는다. structured/runtime 의미가 바뀌면 repository를 먼저 동기화한다.
 
-`POST_BUILD_FULL_ADVERSARIAL_REVIEW_AND_PR_RECHECK`: 구현·문서·Notion 변경 뒤에는 결과가 “작성됐다”는 사실만 보지 않는다. 실제 변경 상태 전체를 `running-adversarial-review-and-refinement`의 완전한 개선 루프로 최소 5회, 이후 clean까지 다시 검토하고, 같은 Goal의 open/recent PR·current main·Notion readback·consumer/reference freshness·Implementation Reality evidence를 재확인한다. valid finding을 수정해 candidate가 바뀌면 수정 결과를 다시 전체 범위로 검토한다.
+`POST_BUILD_FULL_ADVERSARIAL_REVIEW_AND_PR_RECHECK`: 구현·문서·파생 view·적용 가능한 V4 exception 변경 뒤에는 결과가 “작성됐다”는 사실만 보지 않는다. 실제 변경 상태 전체를 `running-adversarial-review-and-refinement`의 완전한 개선 루프로 최소 5회, 이후 clean까지 다시 검토하고, 같은 Goal의 open/recent PR·current main·repository/PDF readback·consumer/reference freshness·Implementation Reality evidence를 재확인한다. V4 exception이 실제 적용됐을 때만 해당 destination readback을 추가한다. valid finding을 수정해 candidate가 바뀌면 수정 결과를 다시 전체 범위로 검토한다.
 
 `REUSE_LEARNING_HANDOFF_REQUIRED`: reuse-first가 적용된 작업의 종료에서는 `PROJECT_WORK_REUSE_HANDOFF.json`이 이미 정의한 `selected_modules / reuse_mode / project_paths_changed / verification_evidence / evidence_ceiling / rollback / project_only_lessons / base_promotion_candidates`를 평가한다. 실제 새 학습이 없으면 `NO_NEW_REUSE_LEARNING`으로 닫고 Registry/Notion/Base 문서 churn을 만들지 않는다. Base 승격은 기존 promotion gate와 실제 consumer/regression evidence를 통과한 경우에만 수행하며 프로젝트 전용 교훈은 프로젝트 owner에 남긴다.
 
@@ -214,7 +214,7 @@ project_agents:
 project_start_here:
 active_context:
 current_confirmed_decisions:
-project_notion_workspace:
+  project_notion_exception_or_legacy_source:
 project_asset_reference_benchmark_surfaces:
 google_sheet_compatibility_source:
 related_open_and_recent_prs:
@@ -244,14 +244,25 @@ reuse_learning_handoff:
 existing_solution_inventory:
 existing_solution_disposition:
 existing_solution_evidence:
-existing_solution_user_approval:
+  existing_solution_user_approval:
+  benchmark_preflight_receipt:
+    state: PASS | REUSED_EVIDENCE | NOT_APPLICABLE | BLOCKED_UNVERIFIED
+    entries: [] # each: source_and_evidence, observed_pattern, project_fit_and_difference, disposition ADOPT|ADAPT|REJECT
+    reason_not_applicable:
+    blocked_sources: []
+  context_configuration_hygiene:
+    scope:
+    inventory: [] # each: path, classification, owner_or_provenance, references_and_consumers
+    classification: ACTIVE_OWNER | COMPATIBILITY | ARCHIVE | OBSOLETE_CANDIDATE | UNKNOWN_UNVERIFIED
+    removal_evidence: [] # required only when removal is proposed: REFERENCES_AND_CONSUMERS_ZERO_BEFORE_REMOVAL + GIT_RECOVERABLE_REMOVAL_AND_READBACK
+  receipt_validation_command: python tools/validate_work_contract_receipt.py --receipt <repository-owned-json-receipt>
 ```
 
 ## Read first
 
 1. 최신 사용자 지시
 2. 프로젝트 `AGENTS.md`, `START_HERE`, Active Context, Documentation Map
-3. `CURRENT_CONFIRMED_DECISIONS.md`, 동일 Goal의 열린·최근 병합 PR, 정확한 Project Notion workspace와 승인/수집된 Asset/Reference/Benchmark
+3. `CURRENT_CONFIRMED_DECISIONS.md`, 동일 Goal의 열린·최근 병합 PR, repository-owned Asset/Reference/Benchmark와 exact-SHA derived PDF; V4 exception/legacy source는 적용 조건이 기록됐을 때만
 4. `docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json`, current adoption profile/matrix, `REUSABLE_MODULE_REGISTRY.md`
 5. 현재 결정과 관련된 기존 Base knowledge/case/reference owner
 6. Registry/profile/current bottleneck이 가리키는 경우에만 직접 관련 다른 프로젝트의 검증된 implementation/pattern evidence
@@ -618,12 +629,12 @@ remaining_unknowns: []
 - direction anchor가 지시문 가장 앞에 있고 전체 범위·제약·산출물과 일치한다.
 - Task·Context·Source·Constraints·Output·Validation이 추적된다.
 - 범위·제외·보호·완료·검증이 추적된다.
-- `FULL_CURRENT_STATE_AUDIT_BEFORE_PLAN`으로 Base/Project GitHub/Project Notion Home/Skill/open-recent PR/실제 구현 상태가 현재 작업 범위에서 감사됐다.
+- `FULL_CURRENT_STATE_AUDIT_BEFORE_PLAN`으로 Base/Project repository·exact-SHA derived view·Skill/open-recent PR/실제 구현 상태가 현재 작업 범위에서 감사됐고, V4 exception/legacy source는 적용될 때만 대조됐다.
 - `PRE_BUILD_BEFORE_AFTER_EXPECTED_EFFECT_REPORT`의 변경 전·변경 후·기대효과·위험·롤백·검증 계획이 BUILD 전에 보고됐다.
 - 필요한 사용자 확인 전에는 구현 계약이나 실행 순서를 확정하지 않았다.
 - `USER_APPROVAL_BEFORE_BUILD` 또는 유효한 기존 approval reference가 확인됐다.
-- 승인된 사람이 봐야 할 결정은 `APPROVED_DECISION_GITHUB_NOTION_SYNC_DURING_WORK`로 repository/Notion에 필요한 시점에 동기화되고 readback됐다.
-- BUILD 뒤 `POST_BUILD_FULL_ADVERSARIAL_REVIEW_AND_PR_RECHECK`로 전체 결과·PR·main·Notion·consumer를 다시 검토했다.
+- 승인된 사람이 봐야 할 결정은 `REPOSITORY_DERIVED_VIEW_SYNC_DURING_WORK`로 repository와 exact-SHA derived view에 필요한 시점에 반영·readback됐고, V4 exception은 실제 적용됐을 때만 별도 destination readback됐다.
+- BUILD 뒤 `POST_BUILD_FULL_ADVERSARIAL_REVIEW_AND_PR_RECHECK`로 전체 결과·PR·main·repository/PDF·consumer를 다시 검토했고, V4 exception은 적용됐을 때만 재확인했다.
 - reuse-first가 적용된 작업 종료에서 `REUSE_LEARNING_HANDOFF_REQUIRED`를 평가했고, 새 학습이 없으면 `NO_NEW_REUSE_LEARNING`으로 종료해 억지 Base churn을 만들지 않았다.
 - 권장안이 있으면 사용자안과 AI 최초안에 동일한 평가 기준·대안·반증·위험·되돌리기 난이도를 적용했다.
 - Grill Me alignment gate 또는 유효한 approval reference가 실행 전에 확인됐다.
@@ -661,8 +672,8 @@ remaining_unknowns: []
 - `FULL_CURRENT_STATE_AUDIT_BEFORE_PLAN`의 실제 조사 없이 바로 계획·결론을 제시함
 - 계획만 말하고 `PRE_BUILD_BEFORE_AFTER_EXPECTED_EFFECT_REPORT`를 완료 증거처럼 취급함
 - `USER_APPROVAL_BEFORE_BUILD` 없이 중요 구조·기획·정책을 구현함
-- 승인된 human-facing 변경을 GitHub 또는 Notion 한쪽에만 남긴 채 `SYNCED`로 주장함
-- BUILD 뒤 전체 적대적 검토와 PR/main/Notion 재확인을 생략함
+- 승인된 human-facing 변경을 repository 및 exact-SHA derived view에 반영하지 않거나, V4 exception을 일반 기본 Notion write로 바꾼 채 `SYNCED`로 주장함
+- BUILD 뒤 전체 적대적 검토와 PR/main/repository-derived-view 재확인을 생략함
 - 기계적 작업에도 정석안·파격안·통합안을 강제함
 - 저장소에서 확인할 사실을 사용자에게 질문함
 - 주 책임 분야를 여러 개 지정함

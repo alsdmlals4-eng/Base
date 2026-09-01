@@ -170,10 +170,13 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
             self.assertIn(term, policy)
         self.assertNotIn("CORE_LOOP_DUMMY_BALANCE_BUILD_TEST", policy)
 
-    def test_notion_visual_and_structured_data_authority_is_split_safely(self) -> None:
+    def test_repository_first_visual_and_structured_data_authority_is_split_safely(self) -> None:
         policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
         for term in (
-            "NOTION_DEFAULT_PROJECT_WORKSPACE",
+            "REPOSITORY_PRIMARY_CANON",
+            "HUMAN_GDD_PDF_DERIVED_VIEW",
+            "V4_NOTION_EXCEPTION_ONLY",
+            "NO_NEW_NOTION_WRITE_BY_DEFAULT",
             "PROJECT_RELATION_REQUIRED",
             "WORK_MASTER",
             "ASSET_KNOWLEDGE_MASTER",
@@ -191,7 +194,8 @@ class BaseLongHorizonWorkContractTests(unittest.TestCase):
         self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", policy)
         self.assertNotIn("TOOL_HUB: REQUIRED_WHEN_RELEVANT", policy)
         self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", visual_policy)
-        self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", visual_policy)
+        self.assertIn("DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE", visual_policy)
+        self.assertIn("V4_NOTION_EXCEPTION_ONLY", visual_policy)
 
     def test_adversarial_review_requires_minimum_five_then_until_clean(self) -> None:
         skill = read("skills/running-adversarial-review-and-refinement/SKILL.md")

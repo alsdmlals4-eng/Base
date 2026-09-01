@@ -14,8 +14,9 @@ class DemoFirstPlanningSequenceTests(unittest.TestCase):
     def test_policy_declares_current_workspace_scope_and_prework_audit(self) -> None:
         policy = read("docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md")
         for term in (
-            "NOTION_HUMAN_FACING_CANON",
-            "REPOSITORY_STRUCTURED_CANON",
+            "REPOSITORY_PRIMARY_CANON",
+            "HUMAN_GDD_PDF_DERIVED_VIEW",
+            "V4_NOTION_EXCEPTION_ONLY",
             "REPOSITORY_RUNTIME_TRUTH",
             "GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL",
             "OPEN_PR_READ_ONLY_BY_DEFAULT",

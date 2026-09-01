@@ -67,15 +67,18 @@ class NotionProjectWorkspaceContractTests(unittest.TestCase):
         self.assertNotIn("USER_FACING_GDD_WORKSPACE", policy)
         self.assertNotIn("Google Sheets가 갱신되고 재조회 결과가 일치했다", policy)
 
-    def test_visual_policy_deprecates_figma_authority(self) -> None:
+    def test_visual_policy_uses_v4_repository_first_authority_and_deprecates_figma_default(self) -> None:
         policy = text("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
         for token in (
-            "NOTION_DEFAULT_PROJECT_WORKSPACE", "PROJECT_RELATION_REQUIRED",
+            "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE", "REPOSITORY_PRIMARY_CANON",
+            "HUMAN_GDD_PDF_DERIVED_VIEW", "V4_NOTION_EXCEPTION_ONLY",
+            "NO_NEW_NOTION_WRITE_BY_DEFAULT", "PROJECT_RELATION_REQUIRED",
             "ASSET_KNOWLEDGE_MASTER", "VISUAL_MAP_DERIVED", "Record Type",
             "ADOPT / ADAPT / TEST / REFERENCE_ONLY / AVOID / IGNORE",
             "source provenance", "version", "readback", "human", "AI / System",
         ):
             self.assertIn(token, policy)
+        self.assertNotIn("The default project operating surface is `NOTION_DEFAULT_PROJECT_WORKSPACE`", policy)
         self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", policy)
         self.assertIn("Figma Bridge", policy)
         self.assertIn("not active authorities", policy)
@@ -103,7 +106,8 @@ class NotionProjectWorkspaceContractTests(unittest.TestCase):
     def test_google_sheets_is_compatibility_only(self) -> None:
         policy = text("docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md")
         self.assertIn("COMPATIBILITY_ONLY", policy)
-        self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", policy)
+        self.assertIn("DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE", policy)
+        self.assertIn("V4_NOTION_EXCEPTION_ONLY", policy)
         self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", policy)
 
     def test_active_paid_plan_does_not_require_figma(self) -> None:

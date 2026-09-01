@@ -149,7 +149,7 @@ Codex는 제품 구현 전에:
 1. exact project/repository/worktree
 2. project AGENTS/Active Context
 3. current GitHub product paths
-4. relevant Notion Project Home/Domain/AI System
+4. relevant repository human projection/Domain/AI-System surface; explicitly scoped V4 Notion exception only when applicable
 5. approved Visual
 6. current open workstream
 7. actual runtime/test evidence

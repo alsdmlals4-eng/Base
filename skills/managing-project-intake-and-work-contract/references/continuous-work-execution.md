@@ -310,7 +310,7 @@ executor handoff는 실제로 연결·호출 가능한 실행 환경이 있을 �
 
 연속작업에서 merge는 종료 신호가 아니다. 현재 승인된 계약이 PR/merge 이후 readback·후속 검증·교훈 정리까지 포함하면 다음을 수행한다.
 
-이 단계는 `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`를 소비한다. 새 main의 exact SHA에서 전체 범위를 다시 공격하고, 유효 finding은 `POSTMERGE_CORRECTION_REQUIRED`로 새 Branch/PR에 교정한다. 적용 가능한 Notion 사람용 정본은 GitHub 증거 뒤에만 갱신하며, 두 목적지를 다시 읽은 `PROGRESS_READBACK_REQUIRED` 없이는 완료율을 확정하지 않는다.
+이 단계는 `POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP`를 소비한다. 새 main의 exact SHA에서 전체 범위를 다시 공격하고, 유효 finding은 `POSTMERGE_CORRECTION_REQUIRED`로 새 Branch/PR에 교정한다. repository primary canon·asset manifest·exact-SHA human projection을 다시 읽은 `PROGRESS_READBACK_REQUIRED` 없이는 완료율을 확정하지 않는다. 명시된 V4 Notion exception은 GitHub 증거 뒤에만 별도 갱신·readback한다.
 
 ```text
 merge

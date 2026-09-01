@@ -22,7 +22,7 @@ NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
 → existing unique material의 migration input 또는 명시적 V4 exception
 ```
 
-승인된 기획 결정은 대화나 checkpoint 대기열에만 남기지 않는다. 결정 직후 GitHub 추적 근거와 `CURRENT_CONFIRMED_DECISIONS.md`, 영향받는 repository 책임 원본을 갱신하고 commit/readback한다. 사람이 실제로 이해·수정할 내용은 같은 source SHA의 PDF milestone view로 제공하며, PDF 교정은 repository source에 먼저 반영한 뒤 재발행한다. Notion은 V4 exception 또는 legacy migration scope에서만 사용하며 repository current decision을 대체하지 않는다.
+승인된 기획 결정은 대화나 checkpoint 대기열에만 남기지 않는다. 결정 직후 GitHub 추적 근거와 `CURRENT_CONFIRMED_DECISIONS.md`, 영향받는 repository 책임 원본을 갱신하고 commit/readback한다. 사람이 실제로 이해·수정할 내용은 같은 source SHA의 PDF milestone view로 제공하며, PDF 교정은 repository source에 먼저 반영한 뒤 재발행한다. `V4_NOTION_EXCEPTION_ONLY` / `NO_NEW_NOTION_WRITE_BY_DEFAULT`: Notion은 V4 exception 또는 legacy migration scope에서만 사용하며 repository current decision을 대체하지 않는다.
 
 공용 승인 동기화 계약은 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`, workspace 권위는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`, 사람용 PDF·시각 계약은 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`를 따른다. V3 visual/Notion 자료는 compatibility/history 또는 V4 exception 경계에서만 읽는다.
 
@@ -336,7 +336,7 @@ PR 또는 직접 `main` Decision Commit 뒤에는 `running-adversarial-review-an
 
 - Registry가 한 structured 문서의 단일 책임 원본과 발행 정책을 선언한다.
 - 같은 서술을 여러 structured 형식의 독립 원본으로 유지하지 않는다.
-- 사람용 전체 그림·Visual·예산·Tier·비교표가 필요한 프로젝트는 Notion에서 찾을 수 있다.
+- 사람용 전체 그림·Visual·예산·Tier·비교표는 repository-native 문서와 exact-SHA PDF derived view에서 찾을 수 있으며, V4 exception Notion은 실제 승인된 scope에서만 보조한다.
 - 문서 변경이 실제 파일·테스트·상태와 연결된다.
 - 질문 전에 기존 Decision·repository 정본·열린 PR·최근 병합 PR·필요한 derived view/exception source를 대조했다.
 - 승인 Decision이 GitHub 추적 근거에 기록됐다.

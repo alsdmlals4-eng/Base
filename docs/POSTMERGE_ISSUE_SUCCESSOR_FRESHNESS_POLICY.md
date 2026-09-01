@@ -1,7 +1,7 @@
 # Postmerge Issue Successor Freshness Policy
 
 Status: `ISSUE_SUCCESSOR_FRESHNESS_REQUIRED`
-Owner loop: `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`
+Owner loop: `POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP`
 Invariant: `OPEN_ISSUE_STATUS_IS_NOT_AUTHORITY`
 Linked-close guard: `MERGE_LINKED_ISSUE_READBACK_REQUIRED`
 
@@ -11,7 +11,7 @@ Linked-close guard: `MERGE_LINKED_ISSUE_READBACK_REQUIRED`
 
 Issue가 `open`이라는 사실만으로 다음 구현 권한·현재 정본·남은 작업을 만들지 않는다. 반대로 linked PR이 merge되며 Issue가 자동으로 `closed`됐다는 사실만으로 전체 책임 완료를 단정하지 않는다. 현재 책임은 최신 사용자 지시, 프로젝트 current canon, exact new main의 실제 구현·테스트·증거가 소유한다.
 
-이 정책은 새 Skill이나 별도 수명주기를 만들지 않는다. 기존 `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`의 postmerge readback 단계에 Issue successor freshness를 추가한다.
+이 정책은 새 Skill이나 별도 수명주기를 만들지 않는다. 기존 `POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP`의 postmerge readback 단계에 Issue successor freshness를 추가한다.
 
 ## 왜 필요한가
 

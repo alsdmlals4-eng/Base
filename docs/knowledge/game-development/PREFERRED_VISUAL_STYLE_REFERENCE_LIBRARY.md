@@ -4,7 +4,7 @@
 > 권위: `REFERENCE_ONLY · NOT_PROJECT_CANON · NOT_PROJECT_ASSET_APPROVED`
 > 연결: `ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md` → `PIXEL_ART_STYLE_SYSTEM.md` → 이 Library → 프로젝트 Visual Decision
 > 지속 탐색: `VISUAL_STYLE_SOURCE_RADAR.md` — 기존 `PERIODIC_SPECIALTY_SOURCE_RADAR.md`의 bounded child reference
-> 프로젝트 작업면: `NOTION_DEFAULT_PROJECT_WORKSPACE`의 Project-filtered Asset & Knowledge Master
+> 프로젝트 작업면: `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`의 repository asset manifest/catalog와 exact-SHA human projection. V4 Notion exception은 명시적으로 승인·범위가 정해진 경우에만 사용한다.
 
 ## 1. 목적과 권위 경계
 

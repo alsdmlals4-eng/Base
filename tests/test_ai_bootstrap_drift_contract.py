@@ -111,8 +111,9 @@ class AiBootstrapDriftContractTests(unittest.TestCase):
 
         for required in (
             "MIGRATION_ONLY_UNTIL_REMOVAL",
-            "NOTION_DEFAULT_PROJECT_WORKSPACE",
-            "Google Sheets is not the default workspace",
+            "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
+            "V4_NOTION_EXCEPTION_ONLY",
+            "Google Sheets and Notion are not the default workspace",
             "repository runtime truth",
             "MIGRATED_READBACK_VERIFIED",
         ):

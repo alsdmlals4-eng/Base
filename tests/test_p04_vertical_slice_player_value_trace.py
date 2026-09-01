@@ -56,7 +56,8 @@ class P04VerticalSlicePlayerValueTraceTests(unittest.TestCase):
     def test_tutorial_template_uses_current_project_workspace(self) -> None:
         tutorial = read("templates/planning/TUTORIAL_AND_ONBOARDING_DESIGN_CONTRACT.md")
 
-        self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", tutorial)
+        self.assertIn("DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE", tutorial)
+        self.assertIn("v4_notion_exception_scope", tutorial)
         self.assertNotIn("connected_google_sheet:", tutorial)
         self.assertNotIn("configured_google_sheets_state:", tutorial)
         self.assertNotIn("Google Sheets가 구성된 경우", tutorial)
