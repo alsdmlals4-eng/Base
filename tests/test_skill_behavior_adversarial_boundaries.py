@@ -334,6 +334,16 @@ class ClaimIntentAdversarialBoundaryTests(unittest.TestCase):
             self.assertIn(token, required)
         self.assertEqual("NOT_REQUIRED", case["expected_user_decision_state"])
 
+    def test_sbe_031_rejects_default_notion_home_reintroduction(self) -> None:
+        coverage = json.loads(
+            (ROOT / "skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json").read_text(encoding="utf-8")
+        )
+        case = next(item for item in coverage["cases"] if item["case_id"] == "SBE-031")
+        self.assertIn("repository human projection", case["prompt"])
+        self.assertIn("V4 exception", case["prompt"])
+        self.assertNotIn("Notion Project Home", case["prompt"])
+        self.assertIn("exact-SHA destination readback", case["required_evidence"])
+
 
 if __name__ == "__main__":
     unittest.main()

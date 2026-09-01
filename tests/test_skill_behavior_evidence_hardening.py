@@ -469,6 +469,15 @@ class ClaimIntentBehaviorEvidenceHardeningTests(unittest.TestCase):
             self.assertIn(token, required)
         self.assertEqual("NOT_RUN", documents[0]["model_run_status"])
 
+    def test_sbe_031_requires_repository_projection_evidence(self) -> None:
+        coverage = json.loads(
+            (ROOT / "skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json").read_text(encoding="utf-8")
+        )
+        case = next(item for item in coverage["cases"] if item["case_id"] == "SBE-031")
+        self.assertEqual("building-project-visual-dashboards", case["expected_primary_skill"])
+        self.assertIn("repository human projection", case["prompt"])
+        self.assertIn("exact-SHA destination readback", case["required_evidence"])
+
 
 if __name__ == "__main__":
     unittest.main()

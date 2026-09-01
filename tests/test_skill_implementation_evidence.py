@@ -439,6 +439,19 @@ class ReviewEvidenceExecutionIntegrationTests(unittest.TestCase):
 
 
 class ClaimIntentImplementationEvidenceIntegrationTests(unittest.TestCase):
+    def test_repository_projection_coverage_is_bound_to_generated_evidence(self) -> None:
+        coverage = json.loads(
+            (ROOT / "skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json").read_text(encoding="utf-8")
+        )
+        case = next(item for item in coverage["cases"] if item["case_id"] == "SBE-031")
+        self.assertIn("repository human projection", case["prompt"])
+        self.assertIn("exact-SHA destination readback", case["required_evidence"])
+        markdown = load_builder().build_evidence_markdown(ROOT)
+        self.assertIn(
+            f"> Behavior evaluation source SHA-256: `{load_builder().behavior_source_digest(ROOT)}`",
+            markdown,
+        )
+
     def test_claim_intent_contract_is_linked_without_claiming_a_model_run(self) -> None:
         index = json.loads((ROOT / "skills/SKILL_IMPLEMENTATION_EVIDENCE.json").read_text(encoding="utf-8"))
         owner = next(entry for entry in index["entries"] if entry["skill_id"] == "reviewing-and-validating-project-changes")
