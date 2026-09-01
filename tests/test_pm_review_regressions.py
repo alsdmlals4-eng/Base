@@ -63,6 +63,29 @@ class ReviewRegressions(unittest.TestCase):
         board.update(active_work_item_ref='PM-02', next_action='Execute approved PM-02')
         self.assertEqual([], check(value, phase='resume'))
 
+    def test_closeout_binds_done_evidence_to_trusted_current_head(self):
+        value = done_receipt()
+        wrong_head_errors = validate_execution_receipt(
+            value,
+            phase='closeout',
+            expected_source_sha=SOURCE,
+            expected_head_sha='b' * 40,
+        )
+        self.assertIn(
+            'verified_head_sha does not match trusted expected head',
+            '\n'.join(wrong_head_errors),
+        )
+
+        missing_head_errors = validate_execution_receipt(
+            value,
+            phase='closeout',
+            expected_source_sha=SOURCE,
+        )
+        self.assertIn(
+            'expected_head_sha from the trusted final-head caller is required for closeout',
+            missing_head_errors,
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
