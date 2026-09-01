@@ -7,6 +7,8 @@ import json
 from datetime import date
 from pathlib import Path
 
+from tools.periodic_source_operations_state import reconcile_operations_ledger_from_receipts
+
 
 def _parse_ids(value: str) -> list[str]:
     return [item.strip() for item in value.split(",") if item.strip()]
@@ -41,13 +43,46 @@ def record(path: Path, scan_date: str, source_ids: list[str], material_ids: list
     path.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
 
 
-def main() -> int:
+def _load_json_object(path: Path, label: str) -> dict[str, object]:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise ValueError(f"invalid {label} JSON: {path}") from error
+    if not isinstance(payload, dict):
+        raise ValueError(f"{label} JSON root must be an object")
+    return payload
+
+
+def record_receipt_corpus(ledger_path: Path, receipt_corpus_path: Path) -> None:
+    """Validate a trusted receipt corpus and reconcile the reviewed weekly Ledger."""
+
+    ledger = _load_json_object(ledger_path, "operations Ledger")
+    corpus = _load_json_object(receipt_corpus_path, "receipt corpus")
+    receipts = corpus.get("receipts")
+    if not isinstance(receipts, list):
+        raise ValueError("receipt corpus receipts must be a list")
+    reconciled = reconcile_operations_ledger_from_receipts(ledger, receipts)
+    ledger_path.write_text(
+        json.dumps(reconciled, ensure_ascii=False, separators=(",", ":")) + "\n",
+        encoding="utf-8",
+    )
+
+
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--ledger", type=Path, required=True)
-    parser.add_argument("--date", required=True)
-    parser.add_argument("--sources", required=True)
+    parser.add_argument("--receipt-corpus", type=Path)
+    parser.add_argument("--date")
+    parser.add_argument("--sources")
     parser.add_argument("--material", default="")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+    if args.receipt_corpus is not None:
+        if args.date is not None or args.sources is not None or args.material:
+            parser.error("--receipt-corpus cannot be combined with --date/--sources/--material")
+        record_receipt_corpus(args.ledger, args.receipt_corpus)
+        return 0
+    if args.date is None or args.sources is None:
+        parser.error("--date and --sources are required without --receipt-corpus")
     record(args.ledger, args.date, _parse_ids(args.sources), _parse_ids(args.material))
     return 0
 
