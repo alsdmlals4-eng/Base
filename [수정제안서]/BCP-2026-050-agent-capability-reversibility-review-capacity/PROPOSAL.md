@@ -123,13 +123,18 @@ completion_evidence:
 ```text
 HAS_MUTATING_OR_PRIVILEGED_CAPABILITY
 AND
-(BOUNDARY_NOT_ALREADY_CLEAR OR REVERSIBILITY_NOT_ALREADY_CLEAR)
+(
+  BOUNDARY_NOT_ALREADY_CLEAR
+  OR REVERSIBILITY_NOT_ALREADY_CLEAR
+  OR COMPLETION_EVIDENCE_NOT_ALREADY_CLEAR
+)
 ```
 
-- `HAS_MUTATING_OR_PRIVILEGED_CAPABILITY`: task가 filesystem mutation, shell, network, secret, MCP/connector 또는 remote write 중 하나 이상을 실제로 사용한다.
+- `HAS_MUTATING_OR_PRIVILEGED_CAPABILITY`: task가 filesystem mutation, shell, network, secret, MCP/connector 또는 remote write 중 하나 이상을 실제로 사용한다. read-only API/MCP 조사라도 network, secret 또는 privileged connector capability를 사용하면 이 조건에 포함된다.
 - `BOUNDARY_NOT_ALREADY_CLEAR`: 현재 작업 계약만으로 allowed/denied capability와 보호 범위를 즉시 확인할 수 없다.
 - `REVERSIBILITY_NOT_ALREADY_CLEAR`: worst reachable effect, rollback 또는 confirmation requirement 중 하나 이상이 명확하지 않다.
-- 따라서 병렬·장기 작업이 아니더라도 비가역 remote write와 불명확한 rollback이 있는 단일 작업은 projection 대상이다.
+- `COMPLETION_EVIDENCE_NOT_ALREADY_CLEAR`: validation command, expected result, destination readback 또는 evidence ceiling 중 하나 이상이 없거나 현재 task에 적용되는지 명확하지 않다.
+- 따라서 병렬·장기 작업이 아니더라도 비가역 remote write와 불명확한 rollback이 있는 단일 작업, 또는 mutation 경계는 명확하지만 완료 증거가 불명확한 작업은 projection 대상이다.
 
 ### Human Review Capacity Gate 활성 조건
 
@@ -146,11 +151,13 @@ AND
 
 ### 비사용 조건
 
-- L0 오탈자와 순수 read-only 조사;
-- existing project contract가 같은 capability·worst effect·rollback·confirmation 정보를 더 강하게 소유하고 현재 task에서 즉시 readback되는 경우;
-- deterministic single-file change로 protected scope·validation·rollback이 이미 명확한 경우.
+비사용 조건은 위 활성 predicate를 우회하지 않는다. `HAS_MUTATING_OR_PRIVILEGED_CAPABILITY`와 세 불명확성 조건 중 하나가 함께 참이면 projection을 유지한다.
 
-민감한 세부를 공개할 수 없다는 사실은 비사용 조건이 아니다. 활성 조건을 만족하면 opaque/redacted projection을 유지하고 raw secret·private locator만 생략한다.
+- network·secret·MCP/connector·remote write를 사용하지 않는 local unprivileged read-only 조사;
+- existing project contract가 같은 capability·worst effect·rollback·confirmation·completion evidence 정보를 더 강하게 소유하고 현재 task에서 즉시 readback되는 경우;
+- L0 오탈자 또는 deterministic single-file change에서 protected scope·reversibility·validation·destination readback·evidence ceiling이 이미 명확한 경우.
+
+read-only라는 이름만으로 면제하지 않는다. API/MCP/network/secret을 사용하는 read-only 조사는 활성 predicate를 그대로 적용한다. 민감한 세부를 공개할 수 없다는 사실도 비사용 조건이 아니다. 활성 조건을 만족하면 opaque/redacted projection을 유지하고 raw secret·private locator만 생략한다.
 
 ### 그대로 복사하면 안 되는 요소
 
