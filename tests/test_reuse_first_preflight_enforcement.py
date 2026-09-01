@@ -85,6 +85,7 @@ class ReuseFirstPreflightEnforcementTests(unittest.TestCase):
             entry_rules["legacy_workspace_requires_current_project_authority"]
         )
 
+        # Base must route mutable state; it must not freeze historical project snapshots.
         actions = {
             project_id: handoff["projects"][project_id]["next_project_work_action"]
             for project_id in (
