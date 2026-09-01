@@ -69,6 +69,9 @@ class BalanceScenarioBatchSourcePatternTests(unittest.TestCase):
         self.assertFalse(sweep["automatic_best_value"])
         self.assertTrue(sweep["non_authoritative"])
         self.assertTrue(sweep["seed_set_equal_across_points"])
+        self.assertEqual(2, sweep["seed_count_per_point"])
+        self.assertTrue(sweep["metric_seed_set_equal_across_points"])
+        self.assertEqual(2, sweep["metric_seed_count_per_point"])
         self.assertEqual("DECLARED_NOT_RUNTIME_VERIFIED", sweep["locked_parameter_verification"])
         self.assertEqual(["player_damage", "armor"], sweep["locked_parameters"])
         self.assertEqual(2, sweep["threshold_crossing_count"])
@@ -193,6 +196,34 @@ class BalanceScenarioBatchSourcePatternTests(unittest.TestCase):
 
         manifest["parameter_sweeps"][0]["locked_parameters"] = ["armor"]
         with self.assertRaisesRegex(ValueError, "sweep point values must be unique"):
+            module.analyze_manifest(manifest)
+
+    def test_parameter_sweep_rejects_metric_samples_from_different_seed_sets(self) -> None:
+        module = load_module()
+        runs = make_runs()
+        for run in runs:
+            if run["variant"] == "hp_30" and run["seed"] == 2:
+                run["metrics"] = {}
+            if run["variant"] == "hp_50" and run["seed"] == 1:
+                run["metrics"] = {}
+        manifest = {
+            "schema_version": 1,
+            "project_id": "TEST",
+            "runs": runs,
+            "parameter_sweeps": [
+                {
+                    "parameter": "enemy_hp",
+                    "metric": "score",
+                    "target": 20,
+                    "points": [
+                        {"value": 30, "variant": "hp_30"},
+                        {"value": 50, "variant": "hp_50"},
+                    ],
+                }
+            ],
+        }
+
+        with self.assertRaisesRegex(ValueError, "metric .* every seed"):
             module.analyze_manifest(manifest)
 
 
