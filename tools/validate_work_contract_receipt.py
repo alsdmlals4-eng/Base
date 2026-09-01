@@ -7,6 +7,11 @@ import json
 from pathlib import Path
 from typing import Any
 
+if __package__:
+    from .project_work_tracking import choice, render_tracking, validate_tracking
+else:
+    from project_work_tracking import choice, render_tracking, validate_tracking
+
 
 BENCHMARK_STATES = {"PASS", "REUSED_EVIDENCE", "NOT_APPLICABLE", "BLOCKED_UNVERIFIED"}
 DISPOSITIONS = {"ADOPT", "ADAPT", "REJECT"}
@@ -28,13 +33,16 @@ def _nonempty_list(value: Any) -> bool:
 
 
 def validate_receipt(receipt: object) -> list[str]:
-    """Return all contract errors; an empty list means the receipt is valid."""
+    """Validate the historical record shape, NOT readiness to execute a task.
+
+    The CLI and execution callers must use validate_execution_receipt instead.
+    """
     if not isinstance(receipt, dict):
         return ["receipt must be a JSON object"]
 
     errors: list[str] = []
     work_level = receipt.get("work_level")
-    if work_level not in {"L0", "L1", "L2", "L3", "L4"}:
+    if not choice(work_level, {"L0", "L1", "L2", "L3", "L4"}):
         errors.append("work_level must be one of L0, L1, L2, L3, L4")
 
     benchmark = receipt.get("benchmark_preflight_receipt")
@@ -42,9 +50,9 @@ def validate_receipt(receipt: object) -> list[str]:
         errors.append("benchmark_preflight_receipt is required")
     else:
         state = benchmark.get("state")
-        if state not in BENCHMARK_STATES:
+        if not choice(state, BENCHMARK_STATES):
             errors.append("benchmark_preflight_receipt.state is invalid")
-        if state in {"PASS", "REUSED_EVIDENCE"}:
+        if choice(state, {"PASS", "REUSED_EVIDENCE"}):
             entries = benchmark.get("entries")
             if not _nonempty_list(entries):
                 errors.append(f"benchmark_preflight_receipt.entries is required for {state}")
@@ -62,7 +70,7 @@ def validate_receipt(receipt: object) -> list[str]:
                             errors.append(
                                 f"benchmark_preflight_receipt.entries[{index}].{field} is required"
                             )
-                    if entry.get("disposition") not in DISPOSITIONS:
+                    if not choice(entry.get("disposition"), DISPOSITIONS):
                         errors.append(
                             f"benchmark_preflight_receipt.entries[{index}].disposition must be ADOPT, ADAPT, or REJECT"
                         )
@@ -93,7 +101,7 @@ def validate_receipt(receipt: object) -> list[str]:
                         errors.append(
                             f"context_configuration_hygiene.inventory[{index}].{field} is required"
                         )
-                if item.get("classification") not in HYGIENE_CLASSIFICATIONS:
+                if not choice(item.get("classification"), HYGIENE_CLASSIFICATIONS):
                     errors.append(
                         f"context_configuration_hygiene.inventory[{index}].classification is invalid"
                     )
@@ -105,22 +113,42 @@ def validate_receipt(receipt: object) -> list[str]:
     return errors
 
 
+def validate_execution_receipt(receipt: object, *, phase: str = "start", expected_source_sha: str | None = None) -> list[str]:
+    """Check execution readiness plus the existing PM operational receipt."""
+    errors = validate_receipt(receipt)
+    if not isinstance(receipt, dict):
+        return errors
+    if not choice(phase, {"start", "resume", "closeout"}):
+        errors.append("phase must be start, resume or closeout")
+    benchmark = receipt.get("benchmark_preflight_receipt")
+    if isinstance(benchmark, dict) and benchmark.get("state") == "BLOCKED_UNVERIFIED":
+        errors.append("BLOCKED_UNVERIFIED benchmark is a record, not execution authorization")
+    if receipt.get("work_level") != "L0" or "project_work_kanban" in receipt:
+        errors.extend(validate_tracking(receipt.get("project_work_kanban"), phase=phase, expected_source_sha=expected_source_sha))
+    return errors
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--receipt", required=True, type=Path)
+    parser.add_argument("--phase", choices=("start", "resume", "closeout"), default="start")
+    parser.add_argument("--expected-source-sha", help="Exact source SHA supplied by the trusted caller")
+    parser.add_argument("--render-markdown", action="store_true", help="Print a derived PM view after successful validation")
     args = parser.parse_args()
     try:
         receipt = json.loads(args.receipt.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         print(f"WORK CONTRACT RECEIPT: FAIL\n- cannot read JSON receipt: {exc}")
         return 2
-    errors = validate_receipt(receipt)
+    errors = validate_execution_receipt(receipt, phase=args.phase, expected_source_sha=args.expected_source_sha)
     if errors:
         print("WORK CONTRACT RECEIPT: FAIL")
         for error in errors:
             print(f"- {error}")
         return 1
-    print("WORK CONTRACT RECEIPT: PASS")
+    print(f"WORK CONTRACT RECEIPT: PASS (execution phase={args.phase}; recorded evidence only)")
+    if args.render_markdown and isinstance(receipt.get("project_work_kanban"), dict):
+        print(render_tracking(receipt["project_work_kanban"]))
     return 0
 
 
