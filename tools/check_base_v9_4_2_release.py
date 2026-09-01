@@ -63,6 +63,14 @@ def blob(commit: str, path: str) -> bytes | None:
     return result.stdout if result.returncode == 0 else None
 
 
+def working_tree_path_is_clean(path: Path) -> bool:
+    relative_path = path.relative_to(ROOT).as_posix()
+    return (
+        git("diff", "--quiet", "--", relative_path).returncode == 0
+        and git("diff", "--cached", "--quiet", "--", relative_path).returncode == 0
+    )
+
+
 def schema_errors(document: dict[str, Any], schema: dict[str, Any], label: str) -> list[str]:
     return [
         f"{label} {'.'.join(str(part) for part in error.path) or '<root>'}: {error.message}"
@@ -136,7 +144,12 @@ def release_errors(trusted_ref: str) -> list[str]:
             if not ancestor(EXPECTED_PAYLOAD, evidence_commit) or not ancestor(evidence_commit, trusted):
                 errors.append("v9.4.2 payload/evidence trusted-history ancestry is invalid")
             evidence_blob = blob(evidence_commit, "docs/operations/BASE_V9_4_2_RELEASE_EVIDENCE.json")
-            if evidence_blob != EVIDENCE_PATH.read_bytes():
+            working_tree_evidence = blob("HEAD", EVIDENCE_PATH.relative_to(ROOT).as_posix())
+            if not working_tree_path_is_clean(EVIDENCE_PATH):
+                errors.append("working tree evidence file is dirty")
+            elif working_tree_evidence is None:
+                errors.append("current commit evidence JSON is unavailable")
+            elif evidence_blob != working_tree_evidence:
                 errors.append("trusted evidence JSON differs from the pinned evidence commit")
             pinned_registry = blob(evidence_commit, "skills/SKILL_REGISTRY.json")
             if pinned_registry is None or sha256(pinned_registry) != EXPECTED_REGISTRY_SHA256:

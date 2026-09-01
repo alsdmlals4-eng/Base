@@ -75,6 +75,14 @@ def blob_at(commit: str, path: str) -> bytes | None:
     return result.stdout if result.returncode == 0 else None
 
 
+def working_tree_path_is_clean(path: Path) -> bool:
+    relative_path = path.relative_to(ROOT).as_posix()
+    return (
+        run_git("diff", "--quiet", "--", relative_path).returncode == 0
+        and run_git("diff", "--cached", "--quiet", "--", relative_path).returncode == 0
+    )
+
+
 def schema_errors(document: dict[str, Any], schema: dict[str, Any], label: str) -> list[str]:
     errors = sorted(Draft202012Validator(schema).iter_errors(document), key=lambda item: list(item.path))
     return [
@@ -182,9 +190,14 @@ def release_errors(trusted_history_reference: str) -> list[str]:
             if not is_ancestor(evidence_commit, trusted_history):
                 errors.append("v9.4.1 evidence commit is not in trusted history")
             evidence_blob = blob_at(evidence_commit, "docs/operations/BASE_V9_4_1_RELEASE_EVIDENCE.json")
+            working_tree_evidence = blob_at("HEAD", EVIDENCE_PATH.relative_to(ROOT).as_posix())
             if evidence_blob is None:
                 errors.append("trusted evidence JSON is unavailable at the evidence commit")
-            elif evidence_blob != EVIDENCE_PATH.read_bytes():
+            elif not working_tree_path_is_clean(EVIDENCE_PATH):
+                errors.append("working tree evidence file is dirty")
+            elif working_tree_evidence is None:
+                errors.append("current commit evidence JSON is unavailable")
+            elif evidence_blob != working_tree_evidence:
                 errors.append("trusted evidence JSON bytes differ from the pinned evidence commit")
             pinned_registry = blob_at(evidence_commit, "skills/SKILL_REGISTRY.json")
             if pinned_registry is None or sha256_bytes(pinned_registry) != EXPECTED_REGISTRY_SHA256:
