@@ -22,6 +22,9 @@ ACTUAL_IMPLEMENTATION_EVIDENCE_NO_SPECULATION
 REUSE_VALID_RECEIPT_UNTIL_MATERIAL_DRIFT
 STARTUP_CANON_CHECKLIST_USER_REPORT_REQUIRED
 TRUSTED_VERIFICATION_TARGET_HEAD
+VERIFIED_SUBJECT_HEAD
+RECEIPT_ONLY_TAIL_COMMIT
+FINAL_PR_HEAD_CI_REVIEW_REQUIRED
 REPOSITORY_PRIMARY_CANON
 NO_NEW_NOTION_WRITE_BY_DEFAULT
 ```
@@ -553,7 +556,9 @@ GPT는 현재 승인 범위에서 다음을 연속 수행한다.
 3. 작업·검증·readback 뒤 PASS·FAIL·blocker와 exact evidence를 카드에 반영한다.
 4. `[x]`는 evidence-backed `PASS`에만 사용하고 `NOT_APPLICABLE`은 이유와 함께 진행률 분모에서 제외한다.
 5. blocker가 생기면 해당 작업만 defer하고 독립 `READY` 작업을 먼저 active로 선택·기록한 뒤 resume Gate를 통과해 계속한다.
-6. 완료 후보에서 remaining-work recalculation, implementation correction rescan과 adversarial review를 실행한다. `--phase closeout --expected-source-sha <fresh-read-project-source-sha> --expected-head-sha <fresh-read-final-head-sha> --render-markdown`은 모든 필수 작업 DONE, active null, `STOP_APPROVED_SCOPE_COMPLETE`일 때만 통과한다.
+6. 완료 후보에서 remaining-work recalculation, implementation correction rescan과 adversarial review를 실행한다. `--phase closeout --expected-source-sha <fresh-read-project-source-sha> --expected-head-sha <fresh-read-verified-subject-head-sha> --render-markdown`은 모든 필수 작업 DONE, active null, `STOP_APPROVED_SCOPE_COMPLETE`일 때만 통과한다.
 7. 사용자에게는 전체 진행률, 현재 작업, 차단·결정 항목, 다음 안전 작업을 요약한다. 완료 task의 오래된 next-action은 실행 지시로 출력하지 않는다.
 
-`TRUSTED_VERIFICATION_TARGET_HEAD`: closeout의 expected head는 receipt 내부가 아니라 신뢰한 caller가 current branch/PR에서 별도로 fresh-read한다. 모든 DONE 항목의 `verified_head_sha`와 적용 evidence가 그 동일한 최종 HEAD에 묶여야 한다. closeout 뒤 새 commit이 추가되면 evidence를 영향 범위에 맞게 다시 확인하고 closeout을 재실행한다. start/resume은 이전 완료 기록을 보존하지만 최종 closeout은 현재 최종 HEAD와 일치해야 한다.
+`TRUSTED_VERIFICATION_TARGET_HEAD` · `VERIFIED_SUBJECT_HEAD`: closeout의 expected head는 receipt 내부가 아니라 신뢰한 caller가 별도로 fresh-read한 검증 대상 HEAD다. 모든 DONE 항목의 `verified_head_sha`와 적용 evidence가 그 동일한 HEAD에 묶여야 하며, 해당 HEAD에는 승인 범위의 모든 제품·정본·consumer·검증 evidence 영향 변경이 들어 있어야 한다.
+
+`RECEIPT_ONLY_TAIL_COMMIT`: closeout 뒤에는 receipt·상태 metadata만 기록하는 tail commit만 허용한다. 제품·정본·consumer·검증 evidence 영향 변경이 추가되면 새 `VERIFIED_SUBJECT_HEAD`에서 evidence와 closeout을 다시 실행한다. `FINAL_PR_HEAD_CI_REVIEW_REQUIRED`: receipt-only tail을 포함한 최종 PR HEAD는 exact-head CI·독립 review·changed-path readback을 별도로 통과해야 하며 예상하지 않은 tail 경로가 있으면 완료가 아니다. start/resume은 이전 완료 기록을 보존한다.
